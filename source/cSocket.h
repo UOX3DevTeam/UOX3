@@ -38,7 +38,7 @@ public:
 
 	void			InternalReset( void );
 
-protected:
+private:
 	ACCOUNTSBLOCK	actbAccount;
 
 	CChar *			currCharObj;

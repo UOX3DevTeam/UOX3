@@ -32,12 +32,6 @@ enum PackTypes
 class cItem
 {
 public:
-				cItem()
-				{
-				}
-				~cItem()
-				{
-				}
 	CItem *		DupeItem( CSocket *s, CItem *i, UI32 amount );
 	void		GlowItem( CItem *i );
 	void		AddRespawnItem( CItem *s, std::string x, bool inCont, bool randomItem = false );

@@ -35,17 +35,12 @@ private:
 public:
 	bool changeAT; // flag -> set if author and title changed		
 
-	cBooks();
-
 	void OpenPreDefBook( CSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
 	void OpenBook( CSocket *s, CItem *i, bool isWriteable ); // opens new books
 	void ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p ); // reads books from misc.scp, readonly = old books
 	void ReadNonWritableBook( CSocket *s, CItem *i, UI16 p );	// reads new books readonly ( from *.bok file )
 	void ReadWritableBook( CSocket *s, CItem *i, UI16 p, UI16 l ); // writes changes to a new book opened in writable mode 
 	void DeleteBook( CItem *id ); // deletes bok-file.
-
-	~cBooks();
-
 };
 
 extern cBooks *Books;

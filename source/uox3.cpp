@@ -2703,7 +2703,7 @@ void doLight( CSocket *s, UI08 level )
 	}
 
 	CTownRegion *curRegion	= mChar->GetRegion();
-	CWeather *wSys			=  Weather->Weather( curRegion->GetWeather() );
+	CWeather *wSys			= Weather->Weather( curRegion->GetWeather() );
 	LIGHTLEVEL toShow;
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();

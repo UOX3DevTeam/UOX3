@@ -26,7 +26,7 @@ enum CWM_TID
 
 class CServerProfile
 {
-protected:
+private:
 	UI32 networkTime;
 	UI32 timerTime;
 	UI32 autoTime;
@@ -81,7 +81,7 @@ public:
 
 class CWorldMain  
 {
-protected:
+private:
 	// Timers
 	TIMERVAL	worldTimers[tWORLD_COUNT];
 

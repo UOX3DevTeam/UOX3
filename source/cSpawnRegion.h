@@ -6,7 +6,7 @@ namespace UOX
 
 class CSpawnRegion	//Regionspawns
 {
-protected:
+private:
 	std::string name;			// Any Name to show up when this region is spawned [512]
 
 	STRINGLIST	sNpcs;				// Individual Npcs

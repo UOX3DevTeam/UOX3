@@ -96,7 +96,7 @@ public:
 	bool	LogEcho(void);
 	void	LogEcho(bool value);	
 	void	PrintSpecial(UI08 color, const char *toPrint,...);
-protected:
+private:
 	UI16	left, top, height, width;	// for differing windows
 	UI16	curLeft, curTop;
 	UI16	filterSettings;

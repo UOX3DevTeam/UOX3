@@ -25,7 +25,7 @@ namespace UOX
 		std::string toString( void );
 		void *		toObject( void );
 //		operator const char *()
-	protected:
+	private:
 
 		void			InternalReset( void );
 		void			Init( void );

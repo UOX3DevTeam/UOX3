@@ -238,7 +238,7 @@ public:
 };
 class CTile : public BaseTile
 {
-protected:
+private:
 	SI32 unknown1;  // longs must go at top to avoid bus errors - fur
 	SI32 animation;
 	UI08 weight;
@@ -329,7 +329,7 @@ public:
 
 class CLand : public BaseTile
 {
-protected:
+private:
 	UI16 textureID;
 	SI08 name[20];
 public:
@@ -365,7 +365,7 @@ public:
 
 class CTileUni : public BaseTile
 {
-protected:
+private:
 	SI08 basez;
 	char mType;		// 0 = Terrain, 1 = Item
 	UI16 id;

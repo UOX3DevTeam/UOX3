@@ -100,10 +100,6 @@ public:
 	static UString number (double n) ;
 	//static UString sprintf(std::string format,...) ;
 	static UString sprintf(const char* format,...) ;
-
-
-protected:
-
 };
 
 }

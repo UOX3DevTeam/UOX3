@@ -26,7 +26,7 @@ struct ColourPair
 	SI16			HPMod;
 	SI16			ManaMod;
 	SI16			StamMod;
-protected:
+private:
 
 	SKILLVAL		iSkills[SKILLS];
 	std::string			raceName;

@@ -29,7 +29,7 @@ struct MessagePassed
 
 class CThreadQueue : public ThreadSafeObject
 {
-protected:
+private:
 	std::queue< MessagePassed >	internalQueue;
 public:
 					CThreadQueue();

@@ -10,7 +10,7 @@ namespace UOX
 
 class socket_error : public std::runtime_error
 {
-protected:
+private:
 	long		errorNum;
 public:
 				socket_error( const std::string& what_arg );

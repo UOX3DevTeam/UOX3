@@ -155,7 +155,7 @@ oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
 	id		= 0x0190;
 	origID	= id;
 	objType = OT_CHAR;
-	name		= "Mr. noname";
+	name	= "Mr. noname";
 	petFriends.resize( 0 );
 	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
 	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );

@@ -13,7 +13,6 @@ typedef	std::stack< std::string > dirList;
 
 class cDirectoryListing
 {
-protected:
 private:
 	typedef std::vector< cDirectoryListing > DIRLIST;
 	typedef std::vector< cDirectoryListing >::iterator DIRLIST_ITERATOR;
@@ -54,7 +53,6 @@ public:
 
 class cServerDefinitions
 {
-protected:
 private:
 	std::vector< VECSCRIPTLIST >			ScriptListings;
 	std::map< std::string, SI16 >	priorityMap;

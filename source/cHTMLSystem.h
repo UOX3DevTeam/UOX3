@@ -27,7 +27,7 @@ enum ETemplateType
 
 class cHTMLTemplate
 {
-protected:
+private:
 	UI32			UpdateTimer;
 	std::string		InputFile;
 	bool			Loaded;
@@ -57,7 +57,7 @@ public:
 
 class cHTMLTemplates
 {
-protected:
+private:
 	std::vector < cHTMLTemplate* > Templates;
 
 public:

@@ -35,7 +35,7 @@ typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
 
 class CGuild
 {
-protected:
+private:
 	std::string		name;
 	char			abbreviation[4];
 	GuildType		gType;
@@ -129,7 +129,7 @@ public:
 typedef std::map< GUILDID, CGuild * > GUILDLIST;
 class CGuildCollection
 {
-protected:
+private:
 	GUILDLIST		gList;
 
 	void			ToggleAbbreviation( CSocket *s );

@@ -36,7 +36,7 @@ namespace UOX
 	template < typename T > 
 	class CDataList
 	{
-	protected:
+	private:
 		typedef std::deque< T >						DATALIST;
 		typedef typename std::deque< T >::iterator			DATALIST_ITERATOR;
 

@@ -1,9 +1,9 @@
 //o--------------------------------------------------------------------------o
-//|	File					-	cBaseObject.h
-//|	Date					-	
+//|	File			-	cBaseObject.h
+//|	Date			-	
 //|	Developers		-	
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o

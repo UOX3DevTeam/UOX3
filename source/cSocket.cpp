@@ -907,10 +907,10 @@ ACCOUNTSBLOCK &CSocket::GetAccount( void )
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	void CSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
-//|	Date					-	1/17/2003 7:01:23 AM
+//|	Date			-	1/17/2003 7:01:23 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o

@@ -344,22 +344,22 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	}
 	else // play random mystic-sounds also if no creature is in range
 	{
-	if( RandomNum( 0, 3332 ) == 33 ) 
-	{
-		switch( RandomNum( 0, 6 ) )
+		if( RandomNum( 0, 3332 ) == 33 ) 
 		{
-			case 0: basesound = 595;	break; // gnome sound
-			case 1: basesound = 287;	break; // bigfoot 1
-			case 2: basesound = 288;	break; // bigfoot 2
-			case 3: basesound = 639;	break; // old snake sound
-			case 4: basesound = 179;	break; // lion sound 
-			case 5: basesound = 246;	break; // mystic
-			case 6: basesound = 253;	break; // mystic II
-		}
-		if( basesound != 0 )
-		{ 
+			switch( RandomNum( 0, 6 ) )
+			{
+				case 0: basesound = 595;	break; // gnome sound
+				case 1: basesound = 287;	break; // bigfoot 1
+				case 2: basesound = 288;	break; // bigfoot 2
+				case 3: basesound = 639;	break; // old snake sound
+				case 4: basesound = 179;	break; // lion sound 
+				case 5: basesound = 246;	break; // mystic
+				case 6: basesound = 253;	break; // mystic II
+			}
+			if( basesound != 0 )
+			{ 
 				CPPlaySoundEffect toSend = mChar;
-			toSend.Model( basesound );
+				toSend.Model( basesound );
 				mSock.Send( &toSend );
 			}
 		}

@@ -14,7 +14,7 @@ namespace UOX
 
 	class ObjectFactory : public Singleton< ObjectFactory >
 	{
-	protected:
+	private:
 		typedef std::multimap< SERIAL, CBaseObject *>	OBJECTMAP;
 		typedef OBJECTMAP::iterator						OBJECTMAP_ITERATOR;
 		typedef OBJECTMAP::const_iterator				OBJECTMAP_CITERATOR;

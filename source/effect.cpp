@@ -16,14 +16,6 @@ namespace UOX
 
 bool isDoorBlocked( CItem *door );
 
-cEffects::cEffects()
-{
-}
-
-cEffects::~cEffects()
-{
-}
-
 //o---------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x )
 //|	Programmer	-	Unknown

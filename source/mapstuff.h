@@ -73,7 +73,7 @@ typedef std::vector< StaCache_st > StaCacheLine;
 
 class StaWorldCache
 {
-protected:
+private:
 	std::vector< StaCacheLine >	CacheList;
 
 public:

@@ -312,7 +312,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 
 class CSpeechEntry
 {
-protected:
+private:
 	SpeechType		typeOfSpeech;
 	bool			antiSpam;
 	bool			unicode;
@@ -339,113 +339,113 @@ public:
 	{
 	}
 
-	inline SpeechType Type( void )
+	SpeechType Type( void )
 	{
 		return typeOfSpeech;
 	}
-	inline bool AntiSpam( void )
+	bool AntiSpam( void )
 	{
 		return antiSpam;
 	}
-	inline bool Unicode( void )
+	bool Unicode( void )
 	{
 		return unicode;
 	}
-	inline COLOUR Colour( void )
+	COLOUR Colour( void )
 	{
 		return speechColour;
 	}
-	inline SERIAL Speaker( void )
+	SERIAL Speaker( void )
 	{
 		return speaker;
 	}
-	inline SERIAL SpokenTo( void )
+	SERIAL SpokenTo( void )
 	{
 		return spokenTo;
 	}
-	inline SpeechTarget	TargType( void )
+	SpeechTarget	TargType( void )
 	{
 		return targType;
 	}
-	inline FontType Font( void )
+	FontType Font( void )
 	{
 		return targFont;
 	}
-	inline UnicodeTypes	Language( void )
+	UnicodeTypes	Language( void )
 	{
 		return targLanguage;
 	}
-	inline long At( void )
+	long At( void )
 	{
 		return timeToSayAt;
 	}
-	inline const std::string Speech( void )
+	const std::string Speech( void )
 	{
 		return toSay;
 	}
-	inline const std::string SpeakerName( void )
+	const std::string SpeakerName( void )
 	{
 		return sName;
 	}
-	inline UI08 CmdLevel( void )
+	UI08 CmdLevel( void )
 	{
 		return minCmdLevelToReceive;
 	}
 
-	inline void Type( SpeechType type )
+	void Type( SpeechType type )
 	{
 		typeOfSpeech = type;
 	}
-	inline void AntiSpam( bool value )
+	void AntiSpam( bool value )
 	{
 		antiSpam = value;
 	}
-	inline void Unicode( bool value )
+	void Unicode( bool value )
 	{
 		unicode = value;
 	}
-	inline void Colour( COLOUR value )
+	void Colour( COLOUR value )
 	{
 		speechColour = value;
 	}
-	inline void Speaker( SERIAL value )
+	void Speaker( SERIAL value )
 	{
 		speaker = value;
 	}
-	inline void SpokenTo( SERIAL value )
+	void SpokenTo( SERIAL value )
 	{
 		spokenTo = value;
 	}
-	inline void TargType( SpeechTarget type )
+	void TargType( SpeechTarget type )
 	{
 		targType = type;
 	}
-	inline void Font( FontType type )
+	void Font( FontType type )
 	{
 		targFont = type;
 	}
-	inline void Language( UnicodeTypes val )
+	void Language( UnicodeTypes val )
 	{
 		targLanguage = val;
 	}
-	inline void At( long newTime )
+	void At( long newTime )
 	{
 		timeToSayAt = newTime;
 	}
-	inline void Speech( const std::string said )
+	void Speech( const std::string said )
 	{
 		toSay = said;
 	}
-	inline void SpeakerName( const std::string spkName )
+	void SpeakerName( const std::string spkName )
 	{
 		sName = spkName;
 	}
-	inline void CmdLevel( UI08 nLevel )
+	void CmdLevel( UI08 nLevel )
 	{
 		minCmdLevelToReceive = nLevel;
 	}
 
-	inline SpeakerType	SpkrType( void )
+	SpeakerType	SpkrType( void )
 	{
 		if( speaker == INVALIDSERIAL )
 			return SPK_SYSTEM;
@@ -463,7 +463,7 @@ typedef std::vector< CSpeechEntry >::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue
 {
-protected:
+private:
 	int				pollTime;		// MILLISECONDS How often to poll the queue
 	SPEECHLIST		speechList;
 	bool			runAsThread;

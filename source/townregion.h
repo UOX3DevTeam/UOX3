@@ -40,12 +40,12 @@ private:
 	UI08				priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 								// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 								// 0x80 Dungeon region
-	std::string				guardowner;
-	std::vector< std::string >		guards;
-	std::vector< orePref >	orePreferences;
-	std::vector< townPers >	townMember;
-	std::vector< UI08 >		alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
-	std::vector< regLocs >	locations;
+	std::string			guardowner;
+	std::vector< std::string >	guards;
+	std::vector< orePref >		orePreferences;
+	std::vector< townPers >		townMember;
+	std::vector< UI08 >			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
+	std::vector< regLocs >		locations;
 	std::string			guardList;
 	UI16				numGuards;
 	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always

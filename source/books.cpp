@@ -15,13 +15,6 @@ namespace UOX
 {
 
 cBooks *Books;
-cBooks::cBooks()//Constructor
-{
-}
-
-cBooks::~cBooks()//Destructor
-{
-}
 
 // opens old (readonly) books == old, bugfixed readbook function
 void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )

@@ -1287,10 +1287,10 @@ void ShowSkillTarget( CSocket *s )
 	GumpDisplay showSkills( s, 300, 300 );
 	showSkills.SetTitle( "Skills Info" );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
-		{
+	{
 		if( dispType == 0 || dispType == 1 )
 			skillVal = mChar->GetBaseSkill( i );
-			else 
+		else
 			skillVal = mChar->GetSkill( i );
 
 		if( skillVal > 0 || dispType%2 == 0 )
