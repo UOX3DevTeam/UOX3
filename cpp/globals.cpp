@@ -27,8 +27,6 @@
 
 #include <uox3.h>
 
-int MapTileWidth = 768 ;
-int MaptileHeight = 512 ;
 
 creat_st creatures[2048];
 

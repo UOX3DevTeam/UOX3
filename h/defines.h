@@ -101,5 +101,6 @@ const int MapTileHeight = 512;
 const signed char illegal_z = -128;	// reduced from -1280 to -128, to fit in with a valid signed char
 
 //  Need for ILSHENAR
+#define ILSHENAR 0 
 
 #endif
