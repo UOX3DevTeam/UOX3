@@ -26,7 +26,7 @@ function onCallback1( socket, ourObj )
 		}
 
 		var resID = ourObj.id;
-		if( ( resID >= 0x0F95 && resID <= 0x0F9C ) || ( resID >= 0x175D && resID <= 0x1764 ) || resID == 0x1078 )	// A valid tinker resource
+		if( ( resID >= 0x0F95 && resID <= 0x0F9C ) || ( resID >= 0x175D && resID <= 0x1764 ) || resID == 0x1078 )	// A valid tailoring resource
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )

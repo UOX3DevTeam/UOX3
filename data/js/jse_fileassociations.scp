@@ -130,10 +130,17 @@
 4004=skill/tailoring.js
 4005=skill/fletching.js
 4006=skill/carpentry.js
+4007=skill/alchemy.js
 
 // Miscellaneous Item Types
 5000=item/teleportrune.js
 5001=item/food.js
+5002=item/scissors.js
+5003=item/potion.js
+5004=item/moongate.js
+5005=item/unspunfabric.js
+5006=item/spunfabric.js
+5007=item/cottonplant.js
 }
 
 [COMMAND_SCRIPTS]
