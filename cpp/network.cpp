@@ -472,9 +472,20 @@ void cNetworkStuff::GoodAuth(int s) // Revana*
 	tlen=4+(5*60)+1+(startcount*63);
 	login04a[1]=tlen>>8;
 	login04a[2]=tlen%256;
-	login04a[3]=5;
-	xSend(s, login04a, 4, 0);
+//	login04a[3]=5;
+//	xSend(s, login04a, 4, 0);
 	j=0;
+	for (i=0;i<charcount;i++)
+	{
+		if ((chars[i].account==acctno[s])&&(chars[i].free==0))			
+		{		
+			j++;
+		}
+	}
+
+	login04a[3]=j;
+        xSend(s, login04a, 4, 0);       
+	j=0 ;
 	for (i=0;i<charcount;i++)
 	{
 		if ((chars[i].account==acctno[s])&&(chars[i].free==0)&&(strlen(chars[i].name)>0))

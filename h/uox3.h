@@ -593,7 +593,7 @@ void vialtarget( UOXSOCKET nSocket);
 void MakeNecroReg( UOXSOCKET nSocket, ITEM nItem, unsigned char cItemID1, unsigned char cItemID2 );
 
 unsigned long int getclock();
-#define MY_CLOCKS_PER_SEC 1
+#define MY_CLOCKS_PER_SEC 1000
 
 void cleanup(int s);
 void npcaction(int npc, int x);

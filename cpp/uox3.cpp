@@ -8538,9 +8538,11 @@ void respawn(unsigned int currenttime)
 
 unsigned long int getclock( void )
 {
-	time_t seconds ;
-	seconds = time(NULL) ;
-	return (unsigned long) seconds ;
+	timeb buffer  ;
+	unsigned long milliseconds ;
+	ftime(&buffer) ;
+	milliseconds = (buffer.time * 1000) + (buffer.millitm) ;
+	return milliseconds ;
 }
 
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)
