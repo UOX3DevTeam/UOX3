@@ -1315,7 +1315,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			else if( JSVAL_IS_INT( argv[0] ) )
 			{
 				size_t placeNum = JSVAL_TO_INT( argv[0] );
-				if( placeNum < cwmWorldState->goPlaces.size() )
+				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 					x		= toGoTo.x;
@@ -4379,7 +4379,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	else
 	{
 		size_t placeNum = JSVAL_TO_INT( argv[0] );
-		if( placeNum < cwmWorldState->goPlaces.size() )
+		if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 		{
 			GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 			destX		= toGoTo.x;

@@ -223,12 +223,13 @@ void HandleTeleporters( CChar *s )
 			{
 				if( getTeleLoc->TargetWorld() != charWorld )
 				{
-					s->SetLocation( (SI16)getTeleLoc->SourceLocation().x, (SI16)getTeleLoc->SourceLocation().y, (UI08)getTeleLoc->SourceLocation().z, getTeleLoc->TargetWorld() );
+					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld() );
 					if( !s->IsNpc() )
 						SendMapChange( getTeleLoc->TargetWorld(), calcSocketObjFromChar( s ) );
 				}
 				else
-					s->SetLocation( (SI16)getTeleLoc->SourceLocation().x, (SI16)getTeleLoc->SourceLocation().y, (UI08)getTeleLoc->SourceLocation().z );
+					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z );
+				break;
 			}
 			else if( s->GetY() < getTeleLoc->SourceLocation().y || s->GetX() < getTeleLoc->SourceLocation().x )
 				break;

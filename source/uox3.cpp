@@ -374,15 +374,16 @@ void CollectGarbage( void )
 //o--------------------------------------------------------------------------o	
 void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 {
+	if( s->IsOnHorse() )
+		return;
+
 	if( !objInRange( s, x, DIST_NEXTTILE ) )
 		return;
 	if( x->GetOwnerObj() == s || s->IsGM() )
 	{
-		if( s->IsOnHorse() )
-		{
-			if( !cwmWorldState->ServerData()->CharHideWhileMounted() )
-				s->ExposeToView();
-		}
+		if( !cwmWorldState->ServerData()->CharHideWhileMounted() )
+			s->ExposeToView();
+
 		s->SetOnHorse( true );
 		CItem *c = Items->CreateItem( NULL, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
 		c->SetName( x->GetName() );

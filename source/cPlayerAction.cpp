@@ -888,7 +888,13 @@ void DropOnItem( CSocket *mSock )
 				Magic->AddSpell( nCont, targSpellNum );
 		}
 		Effects->PlaySound( mSock, 0x0042, false );
-		nItem->Delete();
+		if( nItem->GetAmount() > 1 )
+		{
+			nItem->IncAmount( -1 );
+			Bounce( mSock, nItem );
+		}
+		else
+			nItem->Delete();
 		return;
 	}
 	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )

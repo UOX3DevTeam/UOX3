@@ -718,6 +718,7 @@ void LoadPlaces( void )
 {
 	cwmWorldState->goPlaces.clear();
 
+	GoPlaces_st *toAdd = NULL;
 	UString data, UTag, entryName;
 	ScriptSection *toScan	= NULL;
 	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( location_def );
@@ -733,24 +734,26 @@ void LoadPlaces( void )
 			if( toScan == NULL )
 				continue;
 			entryName			= locScp->EntryName();
-			size_t	entryNum	= entryName.section( " ", 1, 1 ).toULong();
+			size_t entryNum		= entryName.section( " ", 1, 1 ).toULong();
 			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
 			{
-				GoPlaces_st toAdd;
-				for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+				toAdd = &cwmWorldState->goPlaces[entryNum];
+				if( toAdd != NULL )
 				{
-					data = toScan->GrabData();
-					UTag = tag.upper();
-					if( UTag == "X" )
-						toAdd.x = data.toShort();
-					else if( UTag == "Y" )
-						toAdd.y = data.toShort();
-					else if( UTag == "Z" )
-						toAdd.z = data.toByte();
-					else if( UTag == "WORLD" )
-						toAdd.worldNum = data.toUByte();
+					for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+					{
+						data = toScan->GrabData();
+						UTag = tag.upper();
+						if( UTag == "X" )
+							toAdd->x = data.toShort();
+						else if( UTag == "Y" )
+							toAdd->y = data.toShort();
+						else if( UTag == "Z" )
+							toAdd->z = data.toByte();
+						else if( UTag == "WORLD" )
+							toAdd->worldNum = data.toUByte();
+					}
 				}
-				cwmWorldState->goPlaces[entryNum] = toAdd;
 			}
 		}
 	}

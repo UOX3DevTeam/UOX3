@@ -281,7 +281,12 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 				{
 					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
 					if( n != NULL && n->GetLayer() != IL_NONE )
-						n->SetCont( c );
+					{
+						if( c->GetItemAtLayer( n->GetLayer() ) != NULL )
+							n->SetCont( c->GetPackItem() );
+						else
+							n->SetCont( c );
+					}
 				}
 				if( n != NULL )
 					n->SetNewbie( true );

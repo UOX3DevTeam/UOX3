@@ -695,10 +695,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
 												if( retitem != NULL )
 												{
-													if( !retitem->SetCont( applyTo ) )
-														retitem = NULL;
-													else if( retitem->GetLayer() == IL_NONE )
+													if( retitem->GetLayer() == IL_NONE )
 														Console << "Warning: Bad NPC Script with problem item " << cdata << " executed!" << myendl;
+													else if( !retitem->SetCont( applyTo ) )
+													{
+														if( !retitem->SetCont( applyTo->GetPackItem() )
+															retitem = NULL;
+													}
 												}
 											}
 											break;

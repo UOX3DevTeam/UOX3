@@ -1223,8 +1223,8 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			{
 				if( data.empty() )
 					return;
-				SI32 placeNum = data.toLong();
-				if( cwmWorldState->goPlaces.size() > placeNum )
+				size_t placeNum = data.toULong();
+				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum );

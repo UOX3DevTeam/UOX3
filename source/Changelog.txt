@@ -1,4 +1,11 @@
-2/20/2005 - giwo (0.98-2.8)
+2/27/2005 - giwo (0.98-2.8a)
+	Fixed an issue causing 'GO PLACE to reach an invalid location after about 140.
+	Fixed an issue causing teleport locations to not function properly.
+	Fixed characters attempting to mount a creature when already on a mount.
+	Fixed an issue causing dropping a stack of scrolls onto a spellbook to delete all of them.
+	Fixed an issue causing items equipped to an NPC on creation or newbie at creation to be deleted.
+
+2/26/2005 - giwo (0.98-2.8)
 	Added support for "EQUIPITEM" tag in newbie.dfn.
 	Added JS Character Prop skillToTame.
 	Added JS Item Prop murdertime.
