@@ -1,3 +1,14 @@
+//o--------------------------------------------------------------------------o
+//|	File					-	calcfuncs.cpp
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 
 //o---------------------------------------------------------------------------o
@@ -171,6 +182,7 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 		return NULL;
 }
 
+/* 
 //o---------------------------------------------------------------------------o
 //|	Function	-	UI32 calcLastContainerFromSer( SERIAL ser, SI08& exiMode )
 //|	Programmer	-	Unknown
@@ -180,7 +192,7 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 UI32 calcLastContainerFromSer( SERIAL ser, SI08& exiMode )
 {
 	exiMode = 0;
-	int exi = 0;
+	UI08 exi = 0;
 	SERIAL newser = ser;
 	UI32 a = INVALIDSERIAL;
 	do
@@ -216,6 +228,7 @@ UI32 calcLastContainerFromSer( SERIAL ser, SI08& exiMode )
 		return a; // item
 	}
 }
+*/
 
 //o--------------------------------------------------------------------------
 //|	Function		-	cSocket *calcSocketObjFromSock( UOXSOCKET s )
@@ -263,18 +276,18 @@ UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 				return location[i].region;
 		}
 	}
-	return 255;
+	return 0xff;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	int calcValue( CItem *i, int value )
+//|	Function	-	UI32 calcValue( CItem *i, UI32 value )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of an item
 //o---------------------------------------------------------------------------o
-int calcValue( CItem *i, int value)
+UI32 calcValue( CItem *i, UI32 value)
 {
-	int mod = 10;
+	UI32 mod = 10;
 	
 	if( i->GetType() == 19 )
 	{
@@ -290,40 +303,40 @@ int calcValue( CItem *i, int value)
 	}
 	
 	if( i->GetRank() > 0 && i->GetRank() < 10 && cwmWorldState->ServerData()->GetRankSystemStatus() )
-		value = (int)( i->GetRank() * value ) / 10;
+		value = (UI32)( i->GetRank() * value ) / 10;
 	if( value < 1 ) 
 		value = 1;
 	
 	if( !i->GetRndValueRate() ) 
 		i->SetRndValueRate( 0 );
 	if( i->GetRndValueRate() != 0 && cwmWorldState->ServerData()->GetTradeSystemStatus() )
-		value += (int)(value*i->GetRndValueRate())/1000;
+		value += (UI32)(value*i->GetRndValueRate())/1000;
 	if( value < 1 ) 
 		value = 1;
 	return value;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	int calcGoodValue( int npcnum2, ITEM i, int value, int goodtype )
+//|	Function	-	UI32 calcGoodValue( UI32 npcnum2, ITEM i, UI32 value, UI32 goodtype )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
 //o---------------------------------------------------------------------------o
-int calcGoodValue( CChar *npcnum2, CItem *i, int value, int goodtype )
+UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling)
 {
 	UI08 actreg = calcRegionFromXY( npcnum2->GetX(), npcnum2->GetY(), npcnum2->WorldNumber() );
 	SI32 good = i->GetGood();
-	int regvalue = 0;
+	SI32 regvalue = 0;
 	
 	if( good <= -1 )
 		return value;
 	
-	if( goodtype == 1 )
-		regvalue = region[actreg]->GetGoodSell( i->GetGood() );
-	if( goodtype == 0 )
-		regvalue = region[actreg]->GetGoodBuy( i->GetGood() );
+	if(isSelling)
+		regvalue = region[actreg]->GetGoodSell( static_cast<UI08>(i->GetGood()) );
+	else
+		regvalue = region[actreg]->GetGoodBuy( static_cast<UI08>(i->GetGood()) );
 	
-	int x = (int)( value * abs( regvalue ) ) / 1000;
+	UI32 x = (UI32)( value * abs( regvalue ) ) / 1000;
 	
 	if( regvalue < 0 )
 		value -= x;
@@ -342,9 +355,9 @@ int calcGoodValue( CChar *npcnum2, CItem *i, int value, int goodtype )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total gold in a pack
 //o---------------------------------------------------------------------------o
-SI32 calcGoldInPack( CItem *item )
+UI32 calcGoldInPack( CItem *item )
 {
-	SI32 total = 0;
+	UI32 total = 0;
 	
 	for( CItem *i = item->FirstItemObj(); !item->FinishedItems(); i = item->NextItemObj() )
 	{
@@ -360,12 +373,12 @@ SI32 calcGoldInPack( CItem *item )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 calcGold( CChar *p )
+//|	Function	-	UI32 calcGold( CChar *p )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total gold on a character
 //o---------------------------------------------------------------------------o
-SI32 calcGold( CChar *p )
+UI32 calcGold( CChar *p )
 {
 	CItem *i = getPack( p );
 	if( i != NULL )
