@@ -1753,7 +1753,6 @@ void item_test( void )
 		if( serial == items[a].spawnserial )
 		{
 			printf("\nALERT ! item %s [%i] [serial: %i] has dangerous spawner value\n", items[a].name, a, items[a].serial );
-//			items[a].spawnserial = -1;
 			items[a].spawnserial = 0;
 			removefromptr( &spawnsp[serial%HASHMAX], a );
 			items[a].spawn1 = 255;
@@ -6434,6 +6433,7 @@ void processkey( int c )
 					printf( "Account 0 disconnected\n" );
 					break;
 				}
+				printf( "Account 0 was not connected\n" );
 			break;
 		case 'H':                // Enable/Disable heartbeat
 			if (heartbeat==1) printf("UOX3: Heartbeat Disabled\n");
@@ -6581,8 +6581,8 @@ void checkkey( void )
 void checkkey( void )
 {
 	char c;
-	int j=0;	// i was unused - Warning fix
-	int indexcount=0,kill=0;
+	int j=0;	
+	int indexcount=0, kill=0;
 	
 #ifdef __NT__
 	
@@ -6940,65 +6940,81 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 	if (chars[i].hp<=0 && !chars[i].dead) deathstuff(i);
 }
 
-void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
+void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 {
-	int y,x, pcalc, timer;
+	int pcalc, timer;
 	char t[120];
 	
 	LIGHTLEVEL toShow;
-	int s=calcSocketFromChar(i);//Only calc socket once!
+	int s = calcSocketFromChar(i);// Only calc socket once!
 	
-	Magic->CheckFieldEffects2(currenttime, i, 1);//Lag fix
+	Magic->CheckFieldEffects2(currenttime, i, 1);// Lag fix
 	
-	if( !chars[i].dead && chars[i].swingtarg == -1 )
-		Combat->DoCombat( i, currenttime );
-	else if( !chars[i].dead && (chars[i].swingtarg != -1 && chars[i].timeout <= currenttime ) )
-		Combat->CombatHit( i, chars[i].swingtarg, currenttime );
+	if (!chars[i].dead && chars[i].swingtarg == -1)
+		Combat->DoCombat(i, currenttime);
+	else if (!chars[i].dead &&(chars[i].swingtarg != -1 && chars[i].timeout <= currenttime))
+		Combat->CombatHit(i, chars[i].swingtarg, currenttime);
 	
 	
 	//	if( lighttime <= currenttime || (overflow)) // saves tons of bandwidth -> LB
-	if( doWeather )
+	if (doWeather)
 	{
-		if( Races->getVisLevel( chars[i].race ) > worldcurlevel )
+		if (Races->getVisLevel(chars[i].race) > worldcurlevel)
 			toShow = 0;
 		else
-			toShow = worldcurlevel - Races->getVisLevel( chars[i].race );
+			toShow = worldcurlevel - Races->getVisLevel(chars[i].race);
 		dolight(s, toShow);
-		Weather->doPlayerStuff( i );
+		Weather->doPlayerStuff(i);
 	}
 	
-	if( chars[i].smoketimer > currenttime )
+	if (chars[i].smoketimer > currenttime)
 	{
-		if( chars[i].smokedisplaytimer <= currenttime )
+		if (chars[i].smokedisplaytimer <= currenttime)
 		{
 			chars[i].smokedisplaytimer = currenttime + 5*CLOCKS_PER_SEC;
-			staticeffect( i, 0x37, 0x35, 0, 30 );
-			soundeffect2( i, 0x00, 0x2B );
+			staticeffect(i, 0x37, 0x35, 0, 30);
+			soundeffect2(i, 0x00, 0x2B);
 			int j = rand()%14;
-			switch( j )
+			switch (j)
 			{
-			case 0:		npcemote( s, i, "*Drags in deep*", 1 ); break;
-			case 1:		npcemote( s, i, "*Coughs*", 1 ); break;
-			case 2:		npcemote( s, i, "*Retches*", 1 ); break;
-			case 3:		npcemote( s, i, "*Hacking cough*", 1 ); break;
-			case 4:		npcemote( s, i, "*Sighs in contentment*", 1 ); break;
-			case 5:		npcemote( s, i, "*Puff puff*", 1 ); break;
-			case 6:		npcemote( s, i, "Wheeeee!!! Xuri's smoking!", 1 ); break;
-			default:	break;
+				case 0:		
+					npcemote(s, i, "*Drags in deep*", 1);
+					break;
+				case 1:		
+					npcemote(s, i, "*Coughs*", 1);
+					break;
+				case 2:		
+					npcemote(s, i, "*Retches*", 1);
+					break;
+				case 3:		
+					npcemote(s, i, "*Hacking cough*", 1);
+					break;
+				case 4:		
+					npcemote(s, i, "*Sighs in contentment*", 1);
+					break;
+				case 5:		
+					npcemote(s, i, "*Puff puff*", 1);
+					break;
+				case 6:		
+					npcemote(s, i, "Wheeeee!!! Xuri's smoking!", 1);
+					break;
+				default:	
+					break;
 			}
 		}
 	}
 	
-	if( LSD[s] ) do_lsd( s ); // LB's LSD potion-stuff
+	if (LSD[s])
+		do_lsd(s); // LB's LSD potion-stuff
 	
 	
-	if (!chars[i].npc && online(i) && chars[i].squelched==2)
+	if (!chars[i].npc && online(i) && chars[i].squelched == 2)
 	{
 		if (chars[i].mutetime!=-1)
 		{
-			if (chars[i].mutetime<=currenttime||overflow)
+			if (chars[i].mutetime <= currenttime || overflow)
 			{
-				chars[i].squelched=0;
+				chars[i].squelched = 0;
 				chars[i].mutetime=-1;
 				sysmessage(s, "You are no longer squelched!");
 			}
@@ -7007,69 +7023,69 @@ void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
 	
 	if (!chars[i].npc && online(i))
 	{
-//		if ((chars[i].crimflag<=currenttime||overflow)&&(chars[i].flag==0x02))
-		if( (chars[i].crimflag > 0 ) && ( chars[i].crimflag <= currenttime || overflow ) && ( chars[i].flag & 0x02 ) )
+		if ((chars[i].crimflag > 0) &&(chars[i].crimflag <= currenttime || overflow) &&(chars[i].flag & 0x02))
 		{
-			sysmessage(s,"You are no longer a criminal.");
+			sysmessage(s, "You are no longer a criminal.");
 			chars[i].crimflag=-1;
-			setcharflag( i );
-			//printf("Chars[%i] no longer a ciminal (Flag %i - Crimtime %i)\n",i,chars[i].flag, chars[i].crimflag);
+			setcharflag(i);
 		}
 		chars[i].murderrate--;
 		
-		if (chars[i].murderrate<=currenttime)
+		if (chars[i].murderrate <= currenttime)
 		{
 			if (chars[i].kills>0)
 				chars[i].kills--;
-			if ((chars[i].kills==repsys.maxkills)&&(repsys.maxkills>0))
+			if ((chars[i].kills == repsys.maxkills) && (repsys.maxkills>0))
 				sysmessage(s, "You are no longer a murderer.");
-			//printf("%i Murderrate (Decay %i) (%i kills)",chars[i].murderrate,repsys.murderdecay,chars[i].kills);
-			chars[i].murderrate=(repsys.murderdecay*CLOCKS_PER_SEC) + currenttime;//Murder rate (in mins) to seconds. (checkauto is done about 25 times per second)
+			// printf("%i Murderrate (Decay %i) (%i kills)",chars[i].murderrate,repsys.murderdecay,chars[i].kills);
+			chars[i].murderrate = (repsys.murderdecay*CLOCKS_PER_SEC) + currenttime;// Murder rate (in mins) to seconds. (checkauto is done about 25 times per second)
 		}
 		setcharflag(i);
 	}
 	
-	if( !chars[i].npc && chars[i].casting == 1 )//PC casting a spell
+	if (!chars[i].npc && chars[i].casting == 1)// PC casting a spell
 	{
 		chars[i].nextact--;
-		if( chars[i].spelltime <= currenttime || overflow )//Spell is complete target it.
+		if (chars[i].spelltime <= currenttime || overflow)// Spell is complete target it.
 		{
-			if( Magic->requireTarget( chars[i].spellCast ) )
+			if (Magic->requireTarget(chars[i].spellCast))
 			{
-				target( s, 0, 1, 0, 100, spells[chars[i].spellCast].strToSay );
+				target(s, 0, 1, 0, 100, spells[chars[i].spellCast].strToSay);
 			}
 			else
 			{
-				Magic->NewCastSpell( s );
+				Magic->NewCastSpell(s);
 			}
 			chars[i].casting = -1;
 			chars[i].spelltime = 0;
 			chars[i].priv2 &= 0xFD;
 		} 
-		else if ( chars[i].nextact <= 0 )//redo the spell action
+		else if (chars[i].nextact <= 0)// redo the spell action
 		{
 			chars[i].nextact = 75;
-			if( !chars[i].onhorse )
-				impaction( s, chars[i].spellaction );
+			if (!chars[i].onhorse)
+				impaction(s, chars[i].spellaction);
 		}
 	}
 	
-	if(server_data.bg_sounds>=1)
+	if (server_data.bg_sounds >= 1)
 	{
-		if(server_data.bg_sounds>10) server_data.bg_sounds=10;
-		timer=server_data.bg_sounds*100;
-		if((online(i))&&(!(chars[i].npc))&&(!(chars[i].dead))&&((rand()%(timer))==(timer/2))) bgsound(i); //lb, bgsound uses array positions not sockets !
+		if (server_data.bg_sounds>10)
+			server_data.bg_sounds = 10;
+		timer = server_data.bg_sounds*100;
+		if ((online(i)) && (!(chars[i].npc)) && (!(chars[i].dead)) && ((rand()%(timer)) == (timer/2)))
+			bgsound(i); // lb, bgsound uses array positions not sockets !
 	}
 	
 	
 	//	if(chars[i].spiritspeaktimer) chars[i].spiritspeaktimer--;
 	// modifyed by AntiChrist
-	if( chars[i].spiritspeaktimer > 0 && chars[i].spiritspeaktimer < uiCurrentTime )
+	if (chars[i].spiritspeaktimer > 0 && chars[i].spiritspeaktimer < uiCurrentTime)
 		chars[i].spiritspeaktimer = 0;
 	
-	if(chars[i].trackingtimer>currenttime && online( i ))
+	if (chars[i].trackingtimer>currenttime && online(i))
 	{
-		if( chars[i].trackingdisplaytimer <= currenttime )
+		if (chars[i].trackingdisplaytimer <= currenttime)
 		{
 			chars[i].trackingdisplaytimer = currenttime + tracking_data.redisplaytime*CLOCKS_PER_SEC;
 			Skills->Track(i);
@@ -7077,84 +7093,83 @@ void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
 	}
 	else
 	{
-		if( chars[i].trackingtimer > ( currenttime / 10 ) ) // dont send arrow-away packet all the time
+		if (chars[i].trackingtimer >(currenttime / 10)) // dont send arrow-away packet all the time
 		{
 			chars[i].trackingtimer = 0;
-#if CLIENTVERSION_M==26
+#if CLIENTVERSION_M == 26
 			unsigned char arrow[7];
-			arrow[0]=0xBA;
-			arrow[1]=0;
-			arrow[2]=(chars[chars[currchar[s]].trackingtarget].x-1)>>8;
+			arrow[0] = 0xBA;
+			arrow[1] = 0;
+			arrow[2] = (chars[chars[currchar[s]].trackingtarget].x - 1) >> 8;
 			//			arrow[3]=(chars[chars[currcha
-			arrow[3]=(chars[chars[currchar[s]].trackingtarget].x-1)%256;
-			arrow[4]=(chars[chars[currchar[s]].trackingtarget].y)>>8;
-			arrow[5]=(chars[chars[currchar[s]].trackingtarget].y)%256;
-			Network->xSend(s,arrow,6,0);
+			arrow[3] = (chars[chars[currchar[s]].trackingtarget].x - 1)%256;
+			arrow[4] = (chars[chars[currchar[s]].trackingtarget].y) >> 8;
+			arrow[5] = (chars[chars[currchar[s]].trackingtarget].y)%256;
+			Network->xSend(s, arrow, 6, 0);
 #endif
 		}
 	}
 	
-	if( chars[i].fishingtimer )
+	if (chars[i].fishingtimer)
 	{
-		if( chars[i].fishingtimer <= uiCurrentTime )
+		if (chars[i].fishingtimer <= uiCurrentTime)
 		{
-			Skills->Fish( i );
+			Skills->Fish(i);
 			chars[i].fishingtimer = 0;
 		}
 	}
-	if (server_data.hungerrate>1 && (chars[i].hungertime<=currenttime || overflow))
+	if (server_data.hungerrate>1 &&(chars[i].hungertime <= currenttime || overflow))
 	{
-		if( chars[i].npc)
+		if (chars[i].npc)
 		{
-			if ( chars[i].hunger ) chars[i].hunger--; //Morrolan GMs and Counselors don't get hungry
+			if (chars[i].hunger)
+				chars[i].hunger--; // Morrolan GMs and Counselors don't get hungry
 		}
 		else
 		{
-			if ( !( chars[i].priv&0x80 ) && !( chars[i].priv&0x01 ) && ( chars[i].hunger ) && ( online( i ) ) )
+			if (!(chars[i].priv&0x80) && !(chars[i].priv&0x01) &&(chars[i].hunger) &&(online(i)))
 			{
-				chars[i].hunger--; //Morrolan GMs and Counselors don't get hungry
+				chars[i].hunger--; // Morrolan GMs and Counselors don't get hungry
 			}
 		}
 		
-		switch(chars[i].hunger)
+		switch (chars[i].hunger)
 		{
-		case 6: break; //Morrolan
-		case 5:
-			sysmessage(s,"You are still stuffed from your last meal");
-			break;
-		case 4:
-			sysmessage(s,"You are not very hungry but could eat more");
-			break;
-		case 3:
-			sysmessage(s,"You are feeling fairly hungry");
-			break;
-		case 2:
-			sysmessage(s,"You are extremely hungry");
-			break;
-		case 1:
-			sysmessage(s,"You are very weak from starvation");
-			break;
-		case 0:
-			if (chars[i].priv&0x80==0) 
-				sysmessage(s,"You must eat very soon or you will die!");
-			break;
-			
+			case 6: 
+				break; // Morrolan
+			case 5:
+				sysmessage(s, "You are still stuffed from your last meal");
+				break;
+			case 4:
+				sysmessage(s, "You are not very hungry but could eat more");
+				break;
+			case 3:
+				sysmessage(s, "You are feeling fairly hungry");
+				break;
+			case 2:
+				sysmessage(s, "You are extremely hungry");
+				break;
+			case 1:
+				sysmessage(s, "You are very weak from starvation");
+				break;
+			case 0:
+				if (chars[i].priv&0x80 == 0) 
+					sysmessage(s, "You must eat very soon or you will die!");
+				break;
 		}
-		chars[i].hungertime=currenttime+(server_data.hungerrate*CLOCKS_PER_SEC); // Bookmark
+		chars[i].hungertime = currenttime + (server_data.hungerrate*CLOCKS_PER_SEC); // Bookmark
 	}
-	if (((hungerdamagetimer<=currenttime)||(overflow))&&(server_data.hungerdamage>0)) // Damage them if they are very hungry
+	if (((hungerdamagetimer <= currenttime) || (overflow)) && (server_data.hungerdamage>0)) // Damage them if they are very hungry
 	{
-		hungerdamagetimer=currenttime+(server_data.hungerdamagerate*CLOCKS_PER_SEC); /** set new hungertime **/	     
-		if (chars[i].hp>0 && chars[i].hunger<2 && (!(chars[i].priv&0x80)) && (!(chars[i].dead)))
+		hungerdamagetimer = currenttime + (server_data.hungerdamagerate*CLOCKS_PER_SEC); /** set new hungertime **/	     
+		if (chars[i].hp>0 && chars[i].hunger < 2 &&(!(chars[i].priv&0x80)) &&(!(chars[i].dead)))
 		{     
-			
-			sysmessage(s,"You are starving !");
-			// printf("hungerdamage : %i, char: %s,  charconut: %i\n",server_data.hungerdamage,chars[i].name,charcount);
-			chars[i].hp=chars[i].hp-server_data.hungerdamage;
+			sysmessage(s, "You are starving !");
+			chars[i].hp -= server_data.hungerdamage;
 			updatestats(i, 0);
-			if(chars[i].hp<=0 && !chars[i].dead )
+			if (chars[i].hp <= 0 && !chars[i].dead)
 			{ 
-				sysmessage(s,"You have died of starvation");
+				sysmessage(s, "You have died of starvation");
 				deathstuff(i);
 			}
 		}
@@ -7162,225 +7177,208 @@ void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
 	
 	// new math + poison wear off timer added by lord binary !
 	
-	if ((chars[i].poisoned) && (online(i) || (chars[i].npc)) && !(chars[i].priv&4) )
+	if ((chars[i].poisoned) &&(online(i) ||(chars[i].npc)) && !(chars[i].priv&4))
 	{
-		if ((chars[i].poisontime<=currenttime)||(overflow))
+		if ((chars[i].poisontime <= currenttime) || (overflow))
 		{
 			if (chars[i].poisonwearofftime>currenttime) // lb, makes poison wear off pc's
 			{
 				switch (chars[i].poisoned)
 				{
-				case 1:
-					chars[i].poisontime=currenttime+(5*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks a bit nauseous *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-					}
-					//npctalkall(i,t);
-					chars[i].hp=chars[i].hp-RandomNum(1,2);
-					updatestats(i, 0);
-					break;
-				case 2:
-					chars[i].poisontime=currenttime+(4*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks disoriented and nauseous! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);     
-					}
-					x=RandomNum(0,2);
-					y=RandomNum(2,5);
-					pcalc=(chars[i].hp*y/100)+x; // damage: 1..2..5% of hp's+ 1..2 constant
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break;
-				case 3:
-					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s is in severe pain! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);
-					}
-					x=RandomNum(1,3);
-					y=RandomNum(5,10);
-					y=10;
-					pcalc=(chars[i].hp*y/100)+x; // damage: 5..10% of hp's+ 1..2 constant
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break; // lb !!!
-				case 4:
-					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks extremely weak and is wrecked in pain! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);
-					}
-					
-					
-					x=RandomNum(3,6);
-					y=20;
-					pcalc=(chars[i].hp*y/100)+x; // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break;
-				default:
-					printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkPC()\n"); //Morrolan
-					chars[i].poisoned=0;
-					return;
+					case 1:
+						chars[i].poisontime = currenttime + (5*CLOCKS_PER_SEC);
+						if ((chars[i].poisontxt <= currenttime) || (overflow))
+						{
+							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							sprintf(t, "* %s looks a bit nauseous *", chars[i].name);
+							chars[i].emotecolor1 = 0x00;
+							// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;
+							// buffer[s][5];
+							npcemoteall(i, t, 1);
+						}
+						// npctalkall(i,t);
+						chars[i].hp -= RandomNum(1, 2);
+						updatestats(i, 0);
+						break;
+					case 2:
+						chars[i].poisontime = currenttime + (4*CLOCKS_PER_SEC);
+						if ((chars[i].poisontxt <= currenttime) || (overflow))
+						{
+							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							sprintf(t, "* %s looks disoriented and nauseous! *", chars[i].name);
+							chars[i].emotecolor1 = 0x00;
+							// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;
+							// buffer[s][5];
+							npcemoteall(i, t, 1);
+							// npctalkall(i,t);     
+						}
+						pcalc = (chars[i].hp*RandomNum(2, 5)/100) + RandomNum(0, 2); // damage: 1..2..5% of hp's+ 1..2 constant
+						chars[i].hp -= pcalc;
+						updatestats(i, 0);
+						break;
+					case 3:
+						chars[i].poisontime = currenttime + (3*CLOCKS_PER_SEC);
+						if ((chars[i].poisontxt <= currenttime) || (overflow))
+						{
+							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							sprintf(t, "* %s is in severe pain! *", chars[i].name);
+							chars[i].emotecolor1 = 0x00;
+							// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;
+							// buffer[s][5];
+							npcemoteall(i, t, 1);
+						}
+						pcalc = (chars[i].hp/10) + RandomNum(1, 3); // damage: 5..10% of hp's+ 1..2 constant
+						chars[i].hp -= pcalc;
+						updatestats(i, 0);
+						break;
+					case 4:
+						chars[i].poisontime = currenttime + (3*CLOCKS_PER_SEC);
+						if ((chars[i].poisontxt <= currenttime) || (overflow))
+						{
+							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							sprintf(t, "* %s looks extremely weak and is wrecked in pain! *", chars[i].name);
+							chars[i].emotecolor1 = 0x00;
+							// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;
+							// buffer[s][5];
+							npcemoteall(i, t, 1);
+							// npctalkall(i,t);
+						}
+						pcalc = (chars[i].hp/5) + RandomNum(3, 6); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
+						chars[i].hp -= pcalc;
+						updatestats(i, 0);
+						break;
+					default:
+						printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkPC()\n"); // Morrolan
+						chars[i].poisoned = 0;
+						return;
 				}
-				if (chars[i].hp<1)
+				if (chars[i].hp < 1)
 				{
 					deathstuff(i);
 					sysmessage(s, "The poison has killed you.");
 				} 
 			} // end switch
-			
 		}  // end if poison-wear off-timer
 	} // end if poison-damage timer
 	
-	if ((chars[i].poisonwearofftime<=currenttime))
+	if (chars[i].poisonwearofftime <= currenttime && chars[i].poisoned && online(i))
 	{
-		if ((chars[i].poisoned) && (online(i)))
-		{
-            chars[i].poisoned=0; 
-			impowncreate(s,i,1); // updating to blue stats-bar ...
-            sysmessage(s, "The poison has worn off.");
-		}
+		chars[i].poisoned = 0; 
+		impowncreate(s, i, 1); // updating to blue stats-bar ...
+		sysmessage(s, "The poison has worn off.");
 	}
-
-	if( chars[i].onhorse )
+	
+	if (chars[i].onhorse)
 	{
 		int horseItem = -1;
 		ITEM toCheck = -1;
-		for( int counter = 0; counter < contsp[chars[i].serial%HASHMAX].max; counter++ )
+		for (int counter = 0; counter < contsp[chars[i].serial%HASHMAX].max; counter++)
 		{
 			toCheck = contsp[chars[i].serial%HASHMAX].pointer[counter];
-			if( toCheck != -1 && items[toCheck].contserial == chars[i].serial )
+			if (toCheck != -1 && items[toCheck].contserial == chars[i].serial)
 			{
-				if( items[toCheck].layer == 0x19 )	
+				if (items[toCheck].layer == 0x19)	
 				{
 					horseItem = toCheck;
 				}
 			}
 		}
-		if( horseItem == -1 )
+		if (horseItem == -1)
 			chars[i].onhorse = false;	// turn it off, we aren't on one because there's no item!
 		else
-			if( items[horseItem].decaytime != 0 && ( items[horseItem].decaytime <= uiCurrentTime || overflow ) )
+			if (items[horseItem].decaytime != 0 &&(items[horseItem].decaytime <= uiCurrentTime || overflow))
 			{
 				chars[i].onhorse = false;
-				Items->DeleItem( horseItem );
+				Items->DeleItem(horseItem);
 			}
 	}
-	
 }
 
-void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting and regeneration)
+void checkauto(void) // Check automatic/timer controlled stuff (Like fighting and regeneration)
 {
-	//char zbuf[10];
-	unsigned int i, currenttime=uiCurrentTime; //\/ getclock only once
-	//char t[120];
-	static unsigned int checkspawnregions=0; 
-	static unsigned int checknpcs=0;
-	static unsigned int checkitemstime=0;
-	//	static unsigned int lighttime=0;
-	static unsigned int htmltime=0;
-	static unsigned int generateweather=0;
+	unsigned int currenttime = uiCurrentTime; //\/ getclock only once
+	static unsigned int checkspawnregions = 0; 
+	static unsigned int checknpcs = 0;
+	static unsigned int checkitemstime = 0;
+	static unsigned int htmltime = 0;
+	static unsigned int generateweather = 0;
 	static unsigned int uiSetFlagTime = 0;
 	static unsigned int uiAccountCheck = 0;
 	static unsigned int accountFlush = 0;
 	static unsigned char counter = 0;
 	bool doWeather = false;
+	int i;
 	
-	if( uiAccountCheck <= currenttime || overflow )
+	if (uiAccountCheck <= currenttime || overflow)
 	{
-		for( int a = 0; a < acctcount; a++ )
+		for (int a = 0; a < acctcount; a++)
 		{
-			if( acctx[a].ban == 1 && acctx[a].banTime != -1 )
+			if (acctx[a].ban == 1 && acctx[a].banTime != -1 && acctx[a].banTime < uiCurrentTime)
 			{
-				if( acctx[a].banTime < uiCurrentTime )
-				{
-					acctx[a].ban = 0;
-					acctx[a].banTime = -1;
-				}
+				acctx[a].ban = 0;
+				acctx[a].banTime = -1;
 			}
 		}
-		uiAccountCheck = (unsigned int)(30*CLOCKS_PER_SEC+currenttime );
+		uiAccountCheck = (unsigned int)(60*CLOCKS_PER_SEC + currenttime); // 1 min per check won't hurt
 	}
-
-	if( speed.accountFlush != 0 && accountFlush <= currenttime || overflow )
+	
+	if (speed.accountFlush != 0 && accountFlush <= currenttime || overflow)
 	{
 		int accountVerify = 0;
 		bool reallyOn = false;
-		// time to flush our account status!
-		for( int accountCheck = 0; accountCheck < MAXACCT; accountCheck++ )	// let's see if each account is in use
+		for (int accountCheck = 0; accountCheck < MAXACCT; accountCheck++)	// let's see if each account is in use
 		{
-			if( acctinuse[accountCheck] )	// it's considered in use
+			if (acctinuse[accountCheck])	// it's considered in use
 			{
 				reallyOn = false;	// to start with, there's no one really on
-				for( accountVerify = 0; accountVerify < now; accountVerify++ )	// only need to check logged on players!
+				accountVerify = 0;
+				do
 				{
-					if( chars[currchar[accountVerify]].account == accountCheck )	// if we really have an online player, flag it
+					if (chars[currchar[accountVerify]].account == accountCheck)	// if we really have an online player, flag it
 						reallyOn = true;
-				}
-				if( !reallyOn )	// no one's really on, let's set that
+					accountVerify++;
+				} while (accountVerify < now && !reallyOn);                     // Stop searching when found.
+				
+				if (!reallyOn)	// no one's really on, let's set that
 					acctinuse[accountCheck] = 0;
 			}
 		}
-		accountFlush = (unsigned int)( speed.accountFlush*60*CLOCKS_PER_SEC + currenttime );
-	}
-
-	for( signed int ij = now - 1; ij >= 0; ij-- )
-	{
-		if( !(chars[currchar[ij]].priv&0x01) && idleTimeout[ij] != -1 && uiCurrentTime >= idleTimeout[ij] )
-		{
-			idleTimeout[ij] = -1;
-			sysmessage( ij, "You're being disconnected because you were idle too long" );
-			Network->Disconnect( ij );
-		}
-		else
-		{
-			// put check in here to send idle warning packet
-		}
-	}
-
-	if(checkspawnregions<=currenttime && speed.srtime != -1)//Regionspawns
-	{
-		for(i=1;i<totalspawnregions;i++)
-		{
-			if(spawnregion[i].nexttime<=currenttime)
-			{
-				doregionspawn(i);
-				spawnregion[i].nexttime=currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime,spawnregion[i].maxtime));
-			}
-		}
-		checkspawnregions=uiCurrentTime+speed.srtime*CLOCKS_PER_SEC;//Don't check them TOO often (Keep down the lag)
+		accountFlush = (unsigned int)(speed.accountFlush*60*CLOCKS_PER_SEC + currenttime);
 	}
 	
-    if(server_data.html>0)
+	for (i = now - 1; i >= 0; i--)
 	{
-		if(htmltime<=currenttime||overflow)
+		if (!(chars[currchar[i]].priv&0x01) && idleTimeout[i] != -1 && uiCurrentTime >= idleTimeout[i])
 		{
-			updatehtml();
-			//printf("DEBUG: Updating HTML\n");
-			htmltime=currenttime+(server_data.html*CLOCKS_PER_SEC);
-		}
+			idleTimeout[i] = -1;
+			sysmessage(i, "You're being disconnected because you were idle too long");
+			Network->Disconnect(i);
+		} // put else here to send idle warning packet
 	}
+	
+	if (checkspawnregions <= currenttime && speed.srtime != -1)// Regionspawns
+	{
+		for (i = 1; i < totalspawnregions; i++)
+		{
+			if (spawnregion[i].nexttime <= currenttime)
+			{
+				doregionspawn(i);
+				spawnregion[i].nexttime = currenttime + (CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime, spawnregion[i].maxtime));
+			}
+		}
+		checkspawnregions = uiCurrentTime + speed.srtime*CLOCKS_PER_SEC;// Don't check them TOO often (Keep down the lag)
+	}
+	
+    if (server_data.html > 0 && (htmltime <= currenttime || overflow) )
+	{
+		updatehtml();
+		htmltime = currenttime + (server_data.html*CLOCKS_PER_SEC);
+	}
+
 	
 	if (saveinterval != 0)
 	{
@@ -7398,165 +7396,193 @@ void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting 
 #else
 		time(&newtime);
 #endif
-		if (difftime(newtime, oldtime)>=saveinterval || cwmWorldState->Saving() )
+		if (difftime(newtime, oldtime) >= saveinterval || cwmWorldState->Saving())
 		{
 			// Dupois - Added Dec 20, 1999
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
-			if( !now && !cwmWorldState->Saving() )
+			if (!now && !cwmWorldState->Saving())
 			{
-				printf("UOX3: No players currently online. Starting bulletin board maintenance.\n" );
-				savelog( "Bulletin Board Maintenance routine running (AUTO)\n", "server.log" );
+				printf("UOX3: No players currently online. Starting bulletin board maintenance.\n");
+				savelog("Bulletin Board Maintenance routine running (AUTO)\n", "server.log");
 				MsgBoardMaintenance();
 			}
-
+			
 			autosaved = 0;
 			cwmWorldState->savenewworld(0);
 		}
 	}
 	
-	//Time functions
-	if (uotickcount<=currenttime||(overflow))
+	// Time functions
+	if (uotickcount <= currenttime || (overflow))
 	{
-		if (minute < 59) {minute++;hbu++;}
+		if (minute < 59)
+		{
+			minute++;
+			hbu++;
+		}
 		else
 		{
-			minute=0;
-			if (hour < 12) hour++;
+			minute = 0;
+			if (hour < 12)
+				hour++;
 			else
 			{
 				hour = 1;
 				ampm = !ampm;
-				if (!ampm) day++;
+				if (!ampm)
+					day++;
 			}
 		}
-		uotickcount=currenttime+secondsperuominute*CLOCKS_PER_SEC;
-		if (minute%8==0)
-			moon1=(moon1+1)%8;
-		if (minute%3==0)
-			moon2=(moon2+1)%8;
+		uotickcount = currenttime + secondsperuominute*CLOCKS_PER_SEC;
+		if (minute%8 == 0)
+			moon1 = (moon1 + 1)%8;
+		if (minute%3 == 0)
+			moon2 = (moon2 + 1)%8;
 	}
 	
-	if(lighttime<=currenttime || (overflow))
-		//	if( counter++ >= 250 )
+	if (lighttime <= currenttime ||(overflow))
 	{
 		counter = 0;		
-		doworldlight();  //Changes lighting, if it is currently time to.
+		doworldlight();  // Changes lighting, if it is currently time to.
 		Weather->doStuff();	// updates the weather types
-		if( !ampm && ( hour == 0 && minute == 0 ) )
+		if (!ampm &&(hour == 0 && minute == 0))
 		{
 			Weather->newDay();
 		}
-		//		lighttime=currenttime+30*CLOCKS_PER_SEC;
-		lighttime = currenttime+server_data.weathertime*CLOCKS_PER_SEC;	// for testing purposes
+		lighttime = currenttime + server_data.weathertime*CLOCKS_PER_SEC;	// for testing purposes
 		doWeather = true;
 	}
 	else
 		doWeather = false;
 	
-	for(i=0;i<now;i++)
+	for (i = 0; i < now; i++)
 	{
-		if (perm[i] && online(currchar[i]) && chars[currchar[i]].account==acctno[i])
+		if (perm[i] && online(currchar[i]) && chars[currchar[i]].account == acctno[i])
 		{
-			if( uiSetFlagTime <= currenttime || (overflow) )
-				setcharflag( i ); // only set flag on npcs every 60 seconds (save a little extra lag)
-			genericCheck(currchar[i],currenttime);
-			checkPC( currchar[i], currenttime, doWeather );
+			if (uiSetFlagTime <= currenttime ||(overflow))
+				setcharflag(i); // only set flag on npcs every 60 seconds (save a little extra lag)
+			genericCheck(currchar[i], currenttime);
+			checkPC(currchar[i], currenttime, doWeather);
 			
-			int	StartGrid=mapRegions->StartGrid(chars[currchar[i]].x,chars[currchar[i]].y);
+			int	StartGrid = mapRegions->StartGrid(chars[currchar[i]].x, chars[currchar[i]].y);
 			
-			unsigned int increment=0;
-			for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
+			unsigned int increment = 0;
+			for (unsigned int checkgrid = StartGrid + (increment*mapRegions->GetColSize()); increment < 3; increment++, checkgrid = StartGrid + (increment*mapRegions->GetColSize()))
 			{
-				for (int a=0;a<3;a++)
+				for (int a = 0; a < 3; a++)
 				{
 					int mapitemptr=-1;
 					int	mapitem=-1;
 					int mapchar=-1;
-					do //check all items in this cell
+					do // check all items in this cell
 					{
 						mapchar=-1;
-						mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-						if (mapitemptr==-1) break;
-						mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-						if(mapitem>999999) mapchar=mapitem-1000000;
-						if (mapitem>-1 && mapitem>=1000000 && (checknpcs<=currenttime||overflow))
+						mapitemptr = mapRegions->GetNextItem(checkgrid + a, mapitemptr);
+						if (mapitemptr==-1)
+							break;
+						mapitem = mapRegions->GetItem(checkgrid + a, mapitemptr);
+						if (mapitem>999999)
+							mapchar = mapitem - 1000000;
+						if (mapitem>-1 && mapitem >= 1000000 &&(checknpcs <= currenttime || overflow))
 						{ // Instalog // AntiChrist
-							if (mapchar>-1 && mapchar<cmem) // Characters
+							if (mapchar>-1 && mapchar < cmem) // Characters
 							{
-								if( chars[mapchar].npc ) genericCheck( mapchar, currenttime ); // lb, lagfix
-								if( uiSetFlagTime <= currenttime || (overflow) )
-									setcharflag( i ); // only set flag on npcs every 60 seconds (save a little extra lag)
-								if(chardist(currchar[i],mapchar)<=speed.tilecheck && chars[mapchar].npc)  //Zippy Changed to 'tilecheck' in scripts
+								if (chars[mapchar].npc)
+									genericCheck(mapchar, currenttime); // lb, lagfix
+								if (uiSetFlagTime <= currenttime ||(overflow))
+									setcharflag(i); // only set flag on npcs every 60 seconds (save a little extra lag)
+								if (chardist(currchar[i], mapchar) <= speed.tilecheck && chars[mapchar].npc)  // Zippy Changed to 'tilecheck' in scripts
 									checkNPC(mapchar, currenttime);
 								
 								else if (!chars[mapchar].npc && 
-									inworld[chars[mapchar].account]==mapchar && chars[mapchar].logout>0 &&
-									(chars[mapchar].logout<=currenttime || (overflow)))
+									inworld[chars[mapchar].account] == mapchar && chars[mapchar].logout>0 &&
+									(chars[mapchar].logout <= currenttime ||(overflow)))
 								{
 									inworld[chars[mapchar].account]=-1;
 									chars[mapchar].logout=-1;
 									updatechar(mapchar);
 								}
 							}
-						} else if (mapitem<999999 && mapitem>-1 && (checkitemstime<=currenttime||(overflow))) // 'Normal' world items
+						}
+						else if (mapitem < 999999 && mapitem>-1 &&(checkitemstime <= currenttime || (overflow))) // 'Normal' world items
 						{ // BugFix
-							if( mapitem < imem ) 
+							if (mapitem < imem) 
 							{
-								Items->RespawnItem( currenttime, mapitem );
-								if( items[mapitem].type == 51 || items[mapitem].type == 52 )
+								Items->RespawnItem(currenttime, mapitem);
+								if (items[mapitem].type == 51 || items[mapitem].type == 52)
 								{
-									if(items[mapitem].gatetime<=currenttime) 
+									if (items[mapitem].gatetime <= currenttime) 
 									{
-										Items->DeleItem( mapitem );	// no guarentee on sequential nature of gates
-//										for (k=0;k<2;k++) Items->DeleItem(mapitem+k); // no +k in LBs code.... somebody look and choose
+										Items->DeleItem(mapitem);	// no guarentee on sequential nature of gates
 									}
 								}
 								Items->DecayItem(currenttime, mapitem);
 								
-								if( items[mapitem].type == 88 && items[mapitem].morey < 25 && items[mapitem].morey >= 0 )
+								if (items[mapitem].type == 88 && items[mapitem].morey < 25 && items[mapitem].morey >= 0)
 								{
-									if( itemdist( currchar[i], mapitem ) <= items[mapitem].morey )
+									if (itemdist(currchar[i], mapitem) <= items[mapitem].morey)
 									{
-										if( RandomNum( 1, 100 ) <= items[mapitem].morez )
-											soundeffect4( mapitem, i, items[mapitem].morex>>8, items[mapitem].morex%256 );
+										if (RandomNum(1, 100) <= items[mapitem].morez)
+											soundeffect4(mapitem, i, items[mapitem].morex >> 8, items[mapitem].morex%256);
 									}
 								}
 							}
-						} else if (mapitem!=-1 && mapitem<imem) {//Boats
-							if(items[mapitem].type==117 && 
-								(items[mapitem].type2==1 || items[mapitem].type2==2)&&
-								(items[mapitem].gatetime<=currenttime||overflow))
+						}
+						else if (mapitem!=-1 && mapitem < imem)
+						{
+							// Boats
+							if (items[mapitem].type == 117 && 
+								(items[mapitem].type2 == 1 || items[mapitem].type2 == 2)&&
+								(items[mapitem].gatetime <= currenttime || overflow))
 							{
-								if (items[mapitem].type2==1) Boats->Move(i,items[mapitem].dir,mapitem);
-								else {
-									int dir=items[mapitem].dir+4;
+								if (items[mapitem].type2 == 1)
+									Boats->Move(i, items[mapitem].dir, mapitem);
+								else 
+								{
+									int dir = items[mapitem].dir + 4;
 									
-									if (dir>7) dir-=8; // LB, BUGKILLING !!!
+									if (dir>7)
+										dir -= 8; // LB, BUGKILLING !!!
 									
-									Boats->Move(i,dir,mapitem);
+									Boats->Move(i, dir, mapitem);
 								}
-								items[mapitem].gatetime=(unsigned int)(currenttime+(double)(server_data.boatspeed*CLOCKS_PER_SEC));
+								items[mapitem].gatetime = (unsigned int)(currenttime + (double)(server_data.boatspeed*CLOCKS_PER_SEC));
 							}
 						}
 					} while (mapitem!=-1); 
-				}//a<3
-			}//for checkgrid
-		}//if online
-	}//for i<now
+				}// a<3
+			}// for checkgrid
+		}// if online
+	}// for i<now
 	
 	checktempeffects();
-	if( uiSetFlagTime <= currenttime ) uiSetFlagTime = (unsigned int)( 30 * CLOCKS_PER_SEC + currenttime ); // Slow down lag "needed" for setting flags, they are set often enough ;-)
-	if(checknpcs<=currenttime) checknpcs=(unsigned int)((double)(speed.npctime*CLOCKS_PER_SEC+currenttime)); //lb
-	if(checkitemstime<=currenttime) checkitemstime=(unsigned int)((double)(speed.itemtime*CLOCKS_PER_SEC+currenttime)); //lb
-	//2-24-00 homeys temp fix for vendor restocks, this solves the bad timer updates
-	if((shoprestocktime+10000)<=currenttime) shoprestocktime=currenttime+(shoprestockrate*60*CLOCKS_PER_SEC);
-	//	Homey	-	End
-	if(nextnpcaitime<=currenttime) nextnpcaitime=(unsigned int)((double) currenttime+(speed.npcaitime*CLOCKS_PER_SEC)); //lb
-	if(nextfieldeffecttime<=currenttime) nextfieldeffecttime=(unsigned int)((double)currenttime+(0.5*CLOCKS_PER_SEC));
-	if(server_data.UOXBot) checkdumpdata(currenttime); // This dumps data for Ridcully's UOXBot
-	if(nextdecaytime<=currenttime) nextdecaytime=currenttime+(15*CLOCKS_PER_SEC); // lb ...	
+	if (uiSetFlagTime <= currenttime)
+		uiSetFlagTime = (unsigned int)(30 * CLOCKS_PER_SEC + currenttime);
+
+	// Slow down lag "needed" for setting flags, they are set often enough ;-)
+	if (checknpcs <= currenttime)
+		checknpcs = (unsigned int)((double)(speed.npctime*CLOCKS_PER_SEC + currenttime)); // lb
+
+	if (checkitemstime <= currenttime)
+		checkitemstime = (unsigned int)((double)(speed.itemtime*CLOCKS_PER_SEC + currenttime)); // lb
+	// 2-24-00 homeys temp fix for vendor restocks, this solves the bad timer updates
+	
+	if ((shoprestocktime + 10000) <= currenttime)
+		shoprestocktime = currenttime + (shoprestockrate*60*CLOCKS_PER_SEC);
+	
+	if (nextnpcaitime <= currenttime)
+		nextnpcaitime = (unsigned int)((double) currenttime + (speed.npcaitime*CLOCKS_PER_SEC)); // lb
+	
+	if (nextfieldeffecttime <= currenttime)
+		nextfieldeffecttime = (unsigned int)((double)currenttime + (0.5*CLOCKS_PER_SEC));
+	
+	if (server_data.UOXBot)
+		checkdumpdata(currenttime); // This dumps data for Ridcully's UOXBot
+	
+	if (nextdecaytime <= currenttime)
+		nextdecaytime = currenttime + (15*CLOCKS_PER_SEC); // lb ...	
 }
 
 //NEW LAGFIX ZIPPY CODE ENDS HERE -- AntiChrist merging codes --
@@ -7567,7 +7593,6 @@ void scriptlist(int x, int spc, int all)
 	int pos, i;
 	char file[512];
 	
-	//openscript("addmenus.scp");
 	openscript("items.scp");
 	sprintf(temp, "ITEMMENU %i", x);
 	if (!i_scripts[items_script]->find(temp))
@@ -7618,11 +7643,12 @@ void scriptlist(int x, int spc, int all)
 
 void scriptmax(char *txt)
 {
-	int /*ok, */i, x, highest, current;
+	int i, x, highest, current;
 	char str[512];
 	int tempLen;
 	highest=-1;
 	bool ok = true;
+
 	printf( "Doing %s.....", txt );
 	if( !( strcmp( "ITEM", txt ) ) || !( strcmp( "ITEMMENU", txt ) ) )
 		openscript( "items.scp" );
@@ -13437,53 +13463,46 @@ void restockitem(int i, unsigned int currenttime)
 		serial=items[i].contserial;
 		if( serial == -1 ) return;
 		ci=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (ci!=-1)
-			if ((items[ci].layer==0x1A))
-			{
-				if (items[i].restock>0)
-				{
-					a=min(items[i].restock, (items[i].restock/2)+1);
-					items[i].amount=items[i].amount+a;
-					items[i].restock=items[i].restock-a;
-				}
-			}
+		if ( ci != -1 && items[ci].layer == 0x1A && items[i].restock>0 )
+		{
+			a=min(items[i].restock, (items[i].restock/2)+1);
+			items[i].amount += a;
+			items[i].restock -= a;
+		}
 	}
 }
 //NEW RESTOCKITEM FUNCTION ENDS HERE -- AntiChrist merging codes --
 void restock(int s)
 {
 	int i, a, ci;
-	for( i = 0; i < itemcount; i++ )
+	for (i = 0; i < itemcount; i++)
 	{
 		// Dupois - added this check to only restock items that ... well ... have a restock value >0
 		// Added Oct 25, 1998
-		if( items[i].restock && items[i].cont1 >= 0x40 )
+		if (items[i].restock && items[i].cont1 >= 0x40)
 		{
-			if( items[i].contserial > -1 )
+			if (items[i].contserial > -1)
 			{
-				ci = calcItemFromSer( items[i].contserial );
-				if( ci != -1 )
+				ci = calcItemFromSer(items[i].contserial);
+				if (ci != -1 && items[ci].layer == 0x1A)
 				{
-					if( items[ci].layer == 0x1A )
+					int tChar = GetPackOwner(ci);
+					if (tChar != -1)
 					{
-						int tChar = GetPackOwner( ci );
-						if( tChar != -1 )
+						if (chars[tChar].npc && chars[tChar].shop)
 						{
-							if( chars[tChar].npc && chars[tChar].shop )
+							if (s)
 							{
-								if( s )
+								items[i].amount += items[i].restock;
+								items[i].restock = 0;
+							}
+							else
+							{
+								if (items[i].restock > 0)
 								{
-									items[i].amount = items[i].amount + items[i].restock;
-									items[i].restock = 0;
-								}
-								else
-								{
-									if (items[i].restock>0)
-									{
-										a=min(items[i].restock, (items[i].restock/2)+1);
-										items[i].amount=items[i].amount+a;
-										items[i].restock=items[i].restock-a;
-									}
+									a = min(items[i].restock, (items[i].restock/2) + 1);
+									items[i].amount += a;
+									items[i].restock -= a;
 								}
 							}
 						}
@@ -13491,8 +13510,8 @@ void restock(int s)
 				}
 			}
 			// MAgius(CHE): All items in shopkeeper need a new randomvaluerate.
-			if( server_data.trade_system == 1 )
-				StoreItemRandomValue( i, -1 ); // Magius(CHE) (2)
+			if (server_data.trade_system == 1)
+				StoreItemRandomValue(i, -1); // Magius(CHE) (2)
 		}
 	}// printf(UOX3:  restock() - time to execute =%d\n", (uiCurrentTime-tt));
 }

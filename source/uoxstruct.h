@@ -821,8 +821,8 @@ struct server_st
 	int showloggedoutpcs;
 	int attackstamina;		// AntiChrist (6) - for ATTACKSTAMINA
 
-	unsigned int skillcap; // LB skill cap
-	unsigned int statcap; // AntiChrist stat cap
+	unsigned int skillcap;
+	unsigned int statcap;
 	char specialbanktrigger[50]; // special bank trigger - AntiChrist
 	int usespecialbank; // special bank - AntiChrist
 
@@ -872,14 +872,14 @@ struct guild_st
 // extern	guild_st guilds[MAXGUILDS];
 // End of new structure for guilds
 
-struct statcap_st
+/*struct statcap_st
 {
 	int statmax; //250 stat points (100 str, 100 int, 50 dex?)
 	int skillmax; //900 BASE skill points
 	long int skilldecay; //12000 seconds
 	int numsktrk; //track the last numsktrk (10) skills SUCCESSFULLY used
 }; // Morrolan - stat/skill cap
-
+*/
 struct reag_st
 {
 	char ginseng;

@@ -392,7 +392,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			if (items[x].contserial != -1)   // It's inside another container, we need root container to calculate distance
 			{
 				int maxloops = 50; // Prevent endless loops
-				while (items[x].contserial != -1 && maxloops > 0)
+				while (x >= 0 && items[x].contserial != -1 && maxloops > 0)
 				{
 					x = findbyserial( &itemsp[items[x].contserial%HASHMAX], items[x].contserial, 0);
 					maxloops--;

@@ -28,6 +28,25 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 -------------------------------------------------------------------------------
+14.02.2001               Thiago A. Corrêa
+  uox3.cpp               Code clean-ups
+  network.cpp            Minor performance tweaks.
+  boats.cpp
+  npcs.cpp
+  uoxstruct.h
+  uoxlist.h
+  skills.cpp
+  magic.cpp
+  house.cpp
+  guildstones.cpp
+  fileio.cpp
+  dbl_sinlge_click.cpp
+  craces.h
+  craces.cpp
+  classes.h
+  boarts.cpp
+
+-------------------------------------------------------------------------------
 11.02.2001               Thiago A. Corrêa
   skills.cpp             Code clean-ups
   uox3.cpp               Pack animals won't speek while been snooped.

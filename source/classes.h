@@ -747,12 +747,11 @@ public:
 	void ParalyzeSpellItem(int attacker, int defender);
 	void ExplosionSpellItem(int attacker, int defender);
 	void FlameStrikeSpellItem(int attacker, int defender);
-	int CheckBook(int circle, int spell, int i);
+	int  CheckBook(int circle, int spell, int i);
 	char CheckReagents( int s, reag_st reagents );
 	char CheckMana( int s, int num );
 	bool CheckStamina( CHARACTER s, int num );
 	bool CheckHealth( CHARACTER s, int num );
-	void DeleReagents(int s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk);
 	void Recall( UOXSOCKET s); // we need these four for the commands (separately) !!!
 	void Mark( UOXSOCKET s);
 	void Gate( UOXSOCKET s);
@@ -771,7 +770,7 @@ private:
 	void SummonMonster( UOXSOCKET s, unsigned char d1, unsigned char id2, char *monstername, unsigned char color1, unsigned char color2, int x, int y, int z);
 	void MagicReflect(int s);
 	void BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2);
-	int RegMsg( CHARACTER s, reag_st failmsg );
+	int  RegMsg( CHARACTER s, reag_st failmsg );
 	void DirectDamage(int p, int amount);
 	void PolymorphMenu( int s, int gmindex ); // added by AntiChrist (9/99)
 

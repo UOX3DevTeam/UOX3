@@ -25,6 +25,7 @@
 //------------------------------------------------------------------------
 #ifndef __LIST_H
 #define __LIST_H
+#define NDEBUG
 #include <assert.h>
 template <class T> struct Node 
 {

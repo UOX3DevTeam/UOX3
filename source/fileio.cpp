@@ -129,9 +129,8 @@ char *UOXFile::gets(char *lnBuff, int lnSize)
 
 int UOXFile::puts(char *lnBuff)
 {
-  if(fmode == 1)
+  if(fmode == 1 && lnBuff)
   {
-    if(lnBuff)
      return fwrite(lnBuff, sizeof(char), strlen(lnBuff), theFile);
   }
 
@@ -189,49 +188,6 @@ void UOXFile::getLong(SI32 *buff, unsigned int number)
     buff[i] |= this->getch() << 24;
   }
 }
-/*
-** this implementation of tell is broken since it doesn't take into account that
-** the buffer may already hold xxx number of characters. so i've taken it out for now
-** (nothing was really needing to use it) - fur
-
-long UOXFile::tell()
-{
-  return ftell(theFile);
-}
-
-int UOXFile::getChkSum()
-{
-  long pos, chksum;
-
-  pos = ftell(theFile);
-  rewind();
-  ftell(theFile);
-  chksum = 0L;
-  do
-  {
-    if(qRefill()) refill();
-    while(bIndex != bSize) chksum += ioBuff[(int)bIndex++];
-  }
-  while(bSize != 0);
-
-  fseek(theFile, pos, SEEK_SET);
-
-  return chksum;
-}
-
-int UOXFile::getLength()
-{
-  long currentPos = ftell(theFile);
-  
-  fseek(theFile, 0L, SEEK_END);
-
-  long pos = ftell(theFile);
-
-  fseek(theFile, currentPos, SEEK_SET);
-
-  return pos-1;
-}
-*/
 
 void UOXFile::get_versionrecord(struct versionrecord *buff, unsigned int number)
 {

@@ -206,62 +206,55 @@ void setLastOn(UOXSOCKET s)
 	safeCopy(chars[currchar[s]].laston, t, MAX_LASTON);
 }
 
-void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instalog
+void cNetworkStuff::Disconnect(int s) // Force disconnection of player //Instalog
 {
-	int j;
 	
-	setLastOn( s );
-	if( xgm  )
+	setLastOn(s);
+	if (xgm)
 	{
-		if ( xGM[s]->isClient )
+		if (xGM[s]->isClient)
 		{
-		
-			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
+			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now - 1);
 			xGM[s]->isClient = 0;
-		} else
-			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
-
-	} else
-		printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
-
-	FlushBuffer( s );
-	closesocket( client[s] );
-	
-	if ((chars[currchar[s]].account==acctno[s])&&(server_data.partmsg)) 
-	{
-		sprintf(temp,"%s has left the realm",chars[currchar[s]].name);
-		sysbroadcast(temp);//message upon leaving a server 
-	} 
-	if (acctno[s]!=-1) 
-		acctinuse[acctno[s]]=0; //Bug clearing logged in accounts!
-	acctno[s]=-1;
-	idleTimeout[s] = -1;
-	for( j = s; j < now - 1; j++ )
-	{
-		client[j] = client[j+1];
-		newclient[j] = newclient[j+1];
-		currchar[j] = currchar[j+1];
-		clientip[j][0] = clientip[j+1][0];
-		clientip[j][1] = clientip[j+1][1];
-		clientip[j][2] = clientip[j+1][2];
-		clientip[j][3] = clientip[j+1][3];
-		acctno[j] = acctno[j+1];
-		//  war[j]=war[j+1];
-		perm[j] = perm[j+1];
-		addid1[j] = addid1[j+1];
-		addid2[j] = addid2[j+1];
-		addid3[j] = addid3[j+1];
-		addid4[j] = addid4[j+1];
-		addx[j] = addx[j+1];
-		addy[j] = addy[j+1];
-		addz[j] = addz[j+1];
-		cryptclient[j] = cryptclient[j+1];
-		idleTimeout[j] = idleTimeout[j+1];
-		firstpacket[j] = firstpacket[j+1];
+		}
+		else
+			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1);
 	}
-	//Instalog
+	else
+		printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1);
+	
+	FlushBuffer(s);
+	closesocket(client[s]);
+	
+	if ((chars[currchar[s]].account == acctno[s]) && (server_data.partmsg)) 
+	{
+		sprintf(temp, "%s has left the realm", chars[currchar[s]].name);
+		sysbroadcast(temp);// message upon leaving a server 
+	} 
+
+	if (acctno[s]!=-1) 
+		acctinuse[acctno[s]] = 0; // Bug clearing logged in accounts!
+	
+	// Moving everything up
+	memmove(&client[s], &client[s + 1], (now - s - 1) * sizeof(int));
+	memmove(&newclient[s], &newclient[s + 1], (now - s - 1) * sizeof(int));
+	memmove(&clientip[s], &clientip[s + 1], (now - s - 1) * 4 * sizeof(char));
+	memmove(&acctno[s], &acctno[s + 1], (now - s - 1) * sizeof(int));
+	memmove(&perm[s], &perm[s + 1], (now - s - 1) * sizeof(char));
+	memmove(&addid1[s], &addid1[s + 1], (now - s - 1) * sizeof(char));
+	memmove(&addid2[s], &addid2[s + 1], (now - s - 1) * sizeof(char));
+    memmove(&addid3[s], &addid3[s + 1], (now - s - 1) * sizeof(char));	
+    memmove(&addid4[s], &addid4[s + 1], (now - s - 1) * sizeof(char));
+	memmove(&addx[s], &addx[s + 1], (now - s - 1) * sizeof(int));
+	memmove(&addy[s], &addy[s + 1], (now - s - 1) * sizeof(int));
+	memmove(&addz[s], &addz[s + 1], (now - s - 1) * sizeof(int));
+    memmove(&cryptclient[s], &cryptclient[s + 1], (now - s - 1) * sizeof(char));
+	memmove(&idleTimeout[s], &idleTimeout[s + 1], (now - s - 1) * sizeof(long));
+	memmove(&firstpacket[s], &firstpacket[s + 1], (now - s - 1) * sizeof(bool));
+	
+	// Instalog
 	LogOut(s);
-	currchar[now]=0;
+	currchar[now] = 0;
 	now--;
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
@@ -393,55 +386,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 			t=0;
 		}
 	}
-/*	
-	if (acctno[s]!=-1)
-	{
-		printf("Password Sent: %s\n", &buffer[s][31] );
-		pSplit( (char *)&buffer[s][31]);
-		t=0;
-		printf("The password [%s], the account password: [%i] [%s]\n", pass1, acctno[s], acctx[acctno[s]].pass );
-		if (strlen(pass1)==strlen(acctx[acctno[s]].pass))
-		{
-			t=1;
-			for (j=0;j<strlen(pass1);j++)
-				if (toupper(pass1[j])!=toupper(acctx[acctno[s]].pass[j])) t=0;
-				if (strlen(pass1)==0) t=0;
-				//if ((acctx[acctno[s]][1][0]=='x')&&(acctx[acctno[s]][1][1]=='x')&&(acctx[acctno[s]][1][2]=='x'))
-				//account banning by Anthracks 1-3-99
-//				printf("Wipe %i Ban %i\n", acctx[acctno[s]].wipe, acctx[acctno[s]].ban );
-				if( acctx[acctno[s]].ban==1 ) // They are banned
-					t = 2;
-				if( acctx[acctno[s]].wipe == 1 )
-				{
-					t = 3;
-					acctno[s] = -1;
-				}
-		}
-		
-		if( t == 0 )
-		{
-			acctno[s]=-1;
-			xSend(s, nopass, 2, 0);
-			Disconnect( s );
-		}
-		if( t == 2 )
-		{
-			acctno[s]=-1;
-			xSend(s, acctblock, 2, 0);
-			Disconnect( s );
-		}
-		if( t == 3 )
-		{
-			acctno[s] = -1;
-			xSend( s, noaccount, 2, 0 );
-			Disconnect( s );
-		}
-	}
-	else
-	{
-		xSend(s, noaccount, 2, 0);
-		Disconnect( s );
-	}*/
+
 	if( acctinuse[acctno[s]] )
 	{
 		for( int tmpJ = 0; tmpJ < now; tmpJ++ )
@@ -451,9 +396,6 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 				Disconnect( tmpJ );
 			}
 		}
-//		acctno[s]=-1;
-//		xSend(s, acctused, 2, 0);
-//		Disconnect( s );
 	}
 	if (acctno[s]!=-1)
 	{
@@ -552,13 +494,16 @@ void cNetworkStuff::GoodAuth(int s) // Revana*
 			}
 		}
 	}
-	for (i=0;i<60;i++) login04b[i]=0;
+
+	memset(&login04b, 0, sizeof(login04b));
+
 	for (i=j;i<5;i++)
 	{
 		xSend(s, login04b, 60, 0);
 	}
 	buffer[s][0]=startcount;
 	xSend(s, buffer[s], 1, 0);
+
 	for (i=0;i<startcount;i++)
 	{
 		login04d[0]=i;

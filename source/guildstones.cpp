@@ -1210,22 +1210,26 @@ void cGuilds::ChangeWebpage(int s, char *text)
 void cGuilds::SetType(int guildnumber, int type)
 {
 	int member;
-
-	guilds[guildnumber].type=type;
-	if (type==0) Broadcast(guildnumber,"Your guild is now a Standard guild.");
-	if (type==1) Broadcast(guildnumber,"Your guild is now an Order guild.");
-	if (type==2) Broadcast(guildnumber,"Your guild is now a Chaos guild.");
-	if (type!=0)
+	
+	guilds[guildnumber].type = type;
+	if (type == 0) 
 	{
-		for (member=1;member<MAXGUILDMEMBERS;member++)
+		Broadcast(guildnumber, "Your guild is now a Standard guild.");
+		return;
+	}
+	else if (type == 1)
+		Broadcast(guildnumber, "Your guild is now an Order guild.");
+	else if (type == 2)
+		Broadcast(guildnumber, "Your guild is now a Chaos guild.");
+	for (member = 1; member < MAXGUILDMEMBERS; member++)
+	{
+		if (guilds[guildnumber].member[member] != 0)
 		{
-			if (guilds[guildnumber].member[member]!=0)
-			{
-				chars[calcCharFromSer(guilds[guildnumber].member[member])].guildtoggle=1;
-			}
+			chars[calcCharFromSer(guilds[guildnumber].member[member])].guildtoggle = 1;
 		}
 	}
 }
+
 
 
 
@@ -1288,19 +1292,30 @@ int cGuilds::SearchByStone(int s)
 int cGuilds::SearchSlot(int guildnumber, int type)
 {
 	int counter;
-
-	if (type==1)
-		for (counter=1; counter<MAXGUILDS; counter++)
-		if (guilds[counter].free==1) return counter;
-	if (type==2)
-		for (counter=1; counter<MAXGUILDMEMBERS; counter++)
-		if (guilds[guildnumber].member[counter]==0) return counter;
-	if (type==3)
-		for (counter=1; counter<MAXGUILDRECRUITS; counter++)
-		if (guilds[guildnumber].recruit[counter]==0) return counter;
-	if (type==4)
-		for (counter=1; counter<MAXGUILDWARS; counter++)
-		if (guilds[guildnumber].war[counter]==0) return counter;
+	
+	switch (type)
+	{
+		case 1:
+			for (counter = 1; counter < MAXGUILDS; counter++)
+				if (guilds[counter].free == 1)
+					return counter;
+				break;
+		case 2:
+			for (counter = 1; counter < MAXGUILDMEMBERS; counter++)
+				if (guilds[guildnumber].member[counter] == 0)
+					return counter;
+				break;
+		case 3:
+			for (counter = 1; counter < MAXGUILDRECRUITS; counter++)
+				if (guilds[guildnumber].recruit[counter] == 0)
+					return counter;
+				break;
+		case 4:
+			for (counter = 1; counter < MAXGUILDWARS; counter++)
+				if (guilds[guildnumber].war[counter] == 0)
+					return counter;
+				break;
+	}
 	return -1;
 }
 

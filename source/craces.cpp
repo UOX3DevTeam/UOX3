@@ -85,7 +85,7 @@ void cRaces::load( void )
 	}
 	printf("Found right number of races! (%i)\n", raceCount );
 	iCount = raceCount;
-	races = new internalStruct[iCount];
+	races = new Races_st[iCount];
 	modifierCount = 0;
 	strcpy( sect, "COMBAT MODS" );
 	if( !i_scripts[race_script]->find( sect ) )

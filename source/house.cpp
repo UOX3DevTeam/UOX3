@@ -601,39 +601,6 @@ int add_hlist(int c, int h, int t)
 
 	return 3;
 }
-/*
-int add_hlist(int c, int h, int t)
-{
-	int sx, sy, ex, ey, i;
-
-	if(on_hlist(h, chars[c].ser1, chars[c].ser2, chars[c].ser3, chars[c].ser4, NULL))
-		return 2;
-
-	Map->MultiArea(h, &sx,&sy,&ex,&ey);
-	// Make an object with the character's serial & the list type
-	// and put it "inside" the house item.
-	if(chars[c].x>=sx&&chars[c].y>=sy&&chars[c].x<=ex&&chars[c].y<=ey) {
-		i=Items->MemItemFree();
-		Items->InitItem(i);
-		items[i].morex=t;
-		items[i].more1=chars[c].ser1;
-		items[i].more2=chars[c].ser2;
-		items[i].more3=chars[c].ser3;
-		items[i].more4=chars[c].ser4;
-		items[i].contserial=items[h].serial;
-		items[i].cont1=items[h].ser1;
-		items[i].cont2=items[h].ser2;
-		items[i].cont3=items[h].ser3;
-		items[i].cont4=items[h].ser4;
-		items[i].x=items[h].x;
-		items[i].y=items[h].y;
-		items[i].z=items[h].z;
-		mapRegions->AddItem(i);
-		return 1;
-	}
-
-	return 3;
-}*/
 
 // Removes somebody from a house list.
 // del_hlist(int c (chars[] index), int h (items[] index for house))

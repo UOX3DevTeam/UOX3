@@ -3265,7 +3265,11 @@ void cSkills::AdvanceStats(int s, int sk)
 	{
 		if( rand()%(server_data.statcap) <= ttl && !(chars[s].npc || chars[s].priv&1 || chars[s].priv&80))
 		{
-			/* Let's not take away stats until we reach the stat cap. The reasoning for the -1 in the line below is to avoid introducing a new bug. If we use just >=, then we will atrophy at stat_cap - 1. If we use a simple = comparison, then someone with an odd situation that jumpstheir strength over 100 (as an example) would no longer atrophy in any stat. Hence, the total stats -1 -Gunther			*/
+			/* Let's not take away stats until we reach the stat cap. The reasoning for the -1 in
+			   the line below is to avoid introducing a new bug. If we use just >=, then we will 
+			   atrophy at stat_cap - 1. If we use a simple = comparison, then someone with an odd 
+			   situation that jumpstheir strength over 100 (as an example) would no longer atrophy
+			   in any stat. Hence, the total stats -1 -Gunther		*/
 			if( (chars[s].in + chars[s].dx + chars[s].st - 1) >= server_data.statcap) 
 			{
 				switch( u )

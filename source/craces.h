@@ -27,7 +27,7 @@
 #ifndef __Races__
 #define __Races__
 
-struct internalStruct {
+struct Races_st {
 	SKILLVAL      iSkills[SKILLS];
 	char          *raceName;
 	bool          reqBeard;
@@ -59,7 +59,7 @@ class cRaces
 	private:
 		// data
 		unsigned int   iCount;
-		internalStruct *races;
+		Races_st *races;
 		combatModifiers *combat;
 		unsigned int modifierCount;
 
