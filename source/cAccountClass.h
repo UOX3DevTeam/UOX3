@@ -25,9 +25,11 @@
 #include <cstdio>
 #include <iosfwd>
 #include <algorithm>
-#include <cctype>
-#include <vector>
+//#include <cctype>
+//#include <vector>
 #include <map>
+
+#include "uox3.h"
 
 #ifdef __LINUX__
 	#include <dirent.h>
@@ -39,8 +41,6 @@
 	#include <direct.h>
 	#define _mkdir(s1,s2) _mkdir(s1)
 #endif
-
-#include "uox3.h"
 
 /* Enums */
 enum __ACCOUNTBBLOCK_FLAGS__
@@ -68,14 +68,14 @@ enum __ACCOUNTBLOCK_FLAGS__
 {
 	AB_BLAGS_NONE=0x0000,
 	AB_FLAGS_BANNED=0x0001,
-	AB_FLAGS_UNUSED0=0x0002,
+	AB_FLAGS_SUSPENDED=0x0002,
 	AB_FLAGS_PUBLIC=0x0004,
 	AB_FLAGS_ONLINE=0x0008,
-	AB_FLAGS_UNUSED1=0x0010,
-	AB_FLAGS_UNUSED2=0x0020,
-	AB_FLAGS_UNUSED3=0x0040,
-	AB_FLAGS_UNUSED4=0x0080,
-	AB_FLAGS_UNUSED5=0x0100,
+	AB_FLAGS_CHARACTER1=0x0010,
+	AB_FLAGS_CHARACTER2=0x0020,
+	AB_FLAGS_CHARACTER3=0x0040,
+	AB_FLAGS_CHARACTER4=0x0080,
+	AB_FLAGS_CHARACTER5=0x0100,
 	AB_FLAGS_UNUSED6=0x0200,
 	AB_FLAGS_UNUSED8=0x0400,
 	AB_FLAGS_UNUSED9=0x0800,
@@ -197,3 +197,4 @@ private:
 };
 
 #endif
+

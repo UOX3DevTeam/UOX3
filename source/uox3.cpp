@@ -5125,7 +5125,7 @@ int main( int argc, char *argv[] )
 
 		Console << "Loading Accounts               ";
 		Accounts->Load();
-		Console.PrintDone(); 
+		//Console.PrintDone(); 
 
 		savelog( "-=Server Startup=-\n=======================================================================\n", "server.log" );
 		uiCurrentTime = getclock();
