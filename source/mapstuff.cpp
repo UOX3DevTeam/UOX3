@@ -1352,6 +1352,7 @@ void cMapStuff::CacheMultis( void )
 	{
 		Console.PrintFailed();
 		Console.Error( 1, "Can't cache %s!  File cannot be opened", temp.c_str() );
+		fclose(multiIDXRec);
 		return;
 	}
 
@@ -1366,6 +1367,7 @@ void cMapStuff::CacheMultis( void )
 	if( multiIDX == NULL || !multiIDX->ready() )
 	{
 		Console.Error( 1, "Can't cache %s!  File cannot be opened", temp.c_str() );
+		fclose(multiIDXRec);
 		return;
 	}
 
@@ -1410,6 +1412,7 @@ void cMapStuff::CacheMultis( void )
 	// reenable the caching now that its filled
 	Console.PrintDone();
 	Console << "Multi caching taking up " << indexMemoryUsed + multiMemoryUsed << " bytes, " << indexMemoryUsed << " in index, " << multiMemoryUsed << " in data..." << myendl;
+	fclose(multiIDXRec);
 }
 
 void cMapStuff::SeekMulti( UI32 multinum, SI32 *length )
