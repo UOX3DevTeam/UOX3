@@ -526,9 +526,6 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 //|									so it should order it accordingly we only have to look for
 //|									the entries.
 //o---------------------------------------------------------------------------o
-
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-
 void BuildAddMenuGump( cSocket *s, UI16 m )
 {
 	UI32 pagenum	= 1, position = 40, linenum = 1, buttonnum = 7;
@@ -744,7 +741,6 @@ void BuildAddMenuGump( cSocket *s, UI16 m )
 					continue;
 				}
 				// m contains the groupId that we need to do fetch the auto-addmenu items
-				typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
 				std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( m );
 				for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;CI++)
 				{
@@ -865,7 +861,6 @@ void BuildAddMenuGump( cSocket *s, UI16 m )
 					continue;
 				}
 				// m contains the groupId that we need to do fetch the auto-addmenu items
-				typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
 				std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( m );
 				for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;CI++)
 				{
@@ -1357,7 +1352,6 @@ void HandleAddMenuButton( cSocket *s, long button )
 		return;
 	
 	// If we get here we have to check to see if there are any other entryies added via the auto-addmenu code. Each item == 2 entries IE: IDNUM=Text name of Item, and ADDITEM=itemID to add
-	typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
 	std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( addMenuLoc );
 	UI32 autoAddMenuItemCount = 0;
 	for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;++CI)

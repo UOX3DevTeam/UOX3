@@ -94,6 +94,7 @@ void WhichResponse( cSocket *mSock, CChar *mChar, std::string text )
 	case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
 	case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
 	case TW_BOATSTOP:
+	case TW_STOP2:
 	case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
 	case TW_BOATTURNRIGHT:
 	case TW_BOATSTARBOARD:

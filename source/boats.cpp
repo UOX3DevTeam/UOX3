@@ -289,7 +289,7 @@ bool BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 	//small = 5,11 
 	//medium = 5, 13
 	//large = 5, 15
-	switch( dir )
+	switch( dir&0x0F )
 	{
 		case NORTHEAST:	// U
 		case SOUTHWEST:	// D
@@ -399,7 +399,6 @@ bool CreateBoat( cSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	if( tiller == NULL )
 		return false;
 	tiller->SetName( Dictionary->GetEntry( 1409 ) );
-	tiller->SetPriv( 0 );
 	tiller->SetType( IT_TILLER );
 	tiller->SetTempVar( CITV_MORE, serial );
 	tiller->SetTempVar( CITV_MOREX, boattype );
@@ -409,21 +408,18 @@ bool CreateBoat( cSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		return false;
 	p2->SetType( IT_PLANK );
 	p2->SetTempVar( CITV_MORE, serial );
-	p2->SetPriv( 0 );//Nodecay
 
 	CItem *p1 = Items->CreateItem( NULL, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
 	if( p1 == NULL )
 		return false;
 	p1->SetType( IT_PLANK );//Boat type
 	p1->SetTempVar( CITV_MORE, serial );
-	p1->SetPriv( 0 );
 
 	CItem *hold = Items->CreateItem( NULL, mChar, 0x3EAE, 1, 0, OT_ITEM );
 	if( hold == NULL )
 		return false;
 	hold->SetTempVar( CITV_MORE, serial );
 	hold->SetType( IT_CONTAINER );//Conatiner
-	hold->SetPriv( 0 );
 
 	b->SetTiller( tiller->GetSerial() );
 	b->SetPlank( 0, p1->GetSerial() );// Store the other stuff anywhere it will fit :-)
@@ -712,7 +708,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 void TurnBoat( cSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn )
 {
 	SI16 tx = 0, ty = 0;
-	CheckDirection( dir, tx, ty );
+	CheckDirection( dir&0x0F, tx, ty );
 
 	if( !BlockBoat( myBoat, tx, ty, dir ) )
 	{
@@ -753,14 +749,14 @@ void CBoatResponse::Handle( cSocket *mSock, CChar *mChar )
 			dir -= 2;
 		else
 			dir	+= 6;
-		TurnBoat( mSock, boat, tiller, dir&0x0F, true );
+		TurnBoat( mSock, boat, tiller, dir, true );
 		break;
 	case TW_BOATTURNLEFT:
 	case TW_BOATPORT:
 		dir += 2;
 		if( dir > 7 )
 			dir -= 8;
-		TurnBoat( mSock, boat, tiller, dir&0x0F, false );
+		TurnBoat( mSock, boat, tiller, dir, false );
 		break;
 	case TW_BOATTURNAROUND:
 		tiller->itemTalk( mSock, 10 );

@@ -19,6 +19,7 @@ enum TriggerWords
 	TW_KILLS			= 0x0032,		// I must consider my sins
 	TW_HOUSEEJECT		= 0x0033,		// Remove Thyself
 	TW_HOUSEBAN			= 0x0034,		// I Ban Thee
+	TW_STOP2			= 0x0036,
 	TW_VENDORBUY		= 0x003C,		// Vendor Buy
 	TW_VENDORGOLD		= 0x003E,		// Vendor Gold
 	TW_SETNAME			= 0x0042,		// Set Name

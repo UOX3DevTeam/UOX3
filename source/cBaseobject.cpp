@@ -2095,65 +2095,6 @@ void cBaseObject::SetCarve( SI16 newValue )
 	carve = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool Update()
-//|   Date        -  10/31/2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Toggle UpdateTypes
-//o---------------------------------------------------------------------------o
-void cBaseObject::SetUpdate( void )
-{
-	updateTypes |= 0x01;
-}
-void cBaseObject::SetUpdateLocation( void )
-{
-	updateTypes |= 0x02;
-}
-void cBaseObject::SetUpdateHitpoints( void )
-{
-	updateTypes |= 0x04;
-}
-void cBaseObject::SetUpdateStamina( void )
-{
-	updateTypes |= 0x08;
-}
-void cBaseObject::SetUpdateMana( void )
-{
-	updateTypes |= 0x10;
-}
-
-bool cBaseObject::GetUpdate( void )
-{
-	bool update = ( (updateTypes&0x01) == 0x01 );
-	updateTypes &= ~0x01;
-	return update;
-}
-bool cBaseObject::GetUpdateLocation( void )
-{
-	bool updateLoc = ( (updateTypes&0x02) == 0x02 );
-	updateTypes &= ~0x02;
-	return updateLoc;
-}
-bool cBaseObject::GetUpdateHitpoints( void )
-{
-	bool updateStats = ( (updateTypes&0x04) == 0x04 );
-	updateTypes &= ~0x04;
-	return updateStats;
-}
-bool cBaseObject::GetUpdateStamina( void )
-{
-	bool updateStats = ( (updateTypes&0x04) == 0x08 );
-	updateTypes &= ~0x08;
-	return updateStats;
-}
-bool cBaseObject::GetUpdateMana( void )
-{
-	bool updateStats = ( (updateTypes&0x04) == 0x10 );
-	updateTypes &= ~0x10;
-	return updateStats;
-}
-
 
 bool cBaseObject::isFree( void ) const
 {
@@ -2265,15 +2206,39 @@ void cBaseObject::Dirty( UpdateTypes updateType )
 {
 	switch( updateType )
 	{
-	case UT_UPDATE:			SetUpdate();			break;
-	case UT_LOCATION:		SetUpdateLocation();	break;
-	case UT_HITPOINTS:		SetUpdateHitpoints();	break;
-	case UT_STAMINA:		SetUpdateStamina();		break;
-	case UT_MANA:			SetUpdateMana();		break;
+	case UT_UPDATE:			updateTypes |= 0x01;	break;
+	case UT_LOCATION:		updateTypes |= 0x02;	break;
+	case UT_HITPOINTS:		updateTypes |= 0x04;	break;
+	case UT_STAMINA:		updateTypes |= 0x08;	break;
+	case UT_MANA:			updateTypes |= 0x10;	break;
 	default:										break;
 	}
 	if( isPostLoaded() )
 		++(refreshQueue[this]);
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool Update()
+//|   Date        -  10/31/2003
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Toggle UpdateTypes
+//o---------------------------------------------------------------------------o
+bool cBaseObject::GetUpdate( UpdateTypes updateType )
+{
+	UI08 modifier;
+	switch( updateType )
+	{
+	case UT_UPDATE:			modifier = 0x01;		break;
+	case UT_LOCATION:		modifier = 0x02;		break;
+	case UT_HITPOINTS:		modifier = 0x04;		break;
+	case UT_STAMINA:		modifier = 0x08;		break;
+	case UT_MANA:			modifier = 0x10;		break;
+	default:										return false;
+	}
+	bool update = ( (updateTypes&modifier) == modifier );
+	updateTypes &= ~modifier;
+	return update;
 }
 
 void cBaseObject::CopyData( cBaseObject *target )

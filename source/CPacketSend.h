@@ -595,6 +595,7 @@ public:
 					CPPauseResume();
 					CPPauseResume( UI08 mode );
 	virtual void	Mode( UI08 mode );
+	virtual bool	ClientCanReceive( cSocket *mSock );
 };
 
 class CPWebLaunch : public cPUOXBuffer

@@ -53,7 +53,13 @@ cSocket *calcSocketObjFromChar( CChar *i )
 //o---------------------------------------------------------------------------o
 CChar *calcCharObjFromSer( SERIAL targSerial )
 {
-	CChar *toRet = static_cast< CChar * >(ObjectFactory::getSingleton().FindObject( targSerial ));
+	cBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CChar *toRet = NULL;
+	if( findItem != NULL )
+	{
+		if( findItem->CanBeObjType( OT_CHAR ) )
+			toRet = static_cast<CChar *>(findItem);
+	}
 	return toRet;
 }
 
@@ -65,7 +71,13 @@ CChar *calcCharObjFromSer( SERIAL targSerial )
 //o---------------------------------------------------------------------------o
 CItem *calcItemObjFromSer( SERIAL targSerial )
 {
-	CItem *toRet = static_cast< CItem * >(ObjectFactory::getSingleton().FindObject( targSerial ));
+	cBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CItem *toRet = NULL;
+	if( findItem != NULL )
+	{
+		if( findItem->CanBeObjType( OT_ITEM ) )
+			toRet = static_cast<CItem *>(findItem);
+	}
 	return toRet;
 }
 

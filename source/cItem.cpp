@@ -29,6 +29,9 @@
 //|						cBaseObject initial implementation plus rework of CItem to deal with only what it needs to
 //|						Proper constructor written
 //|						Plans for CItem derived classes thought upon
+//|
+//|						1.4		giwo		17th July, 2004
+//|						Added CSpawnItem to begin breaking CItem into smaller subclasses
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "weight.h"
@@ -2439,6 +2442,13 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 	return rvalue;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  Dupe()
+//|   Date        -  7/11/2004
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Creates a new CSpawnItem and copies all of this objects properties to the new one
+//o---------------------------------------------------------------------------o
 CSpawnItem * CSpawnItem::Dupe( void )
 {
 	CSpawnItem *target = static_cast< CSpawnItem * >(ObjectFactory::getSingleton().CreateObject( OT_SPAWNER ));
@@ -2450,6 +2460,13 @@ CSpawnItem * CSpawnItem::Dupe( void )
 	return target;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  CopyData( CSpawnItem *target )
+//|   Date        -  7/11/2004
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Copies all of this objects properties to the new one
+//o---------------------------------------------------------------------------o
 void CSpawnItem::CopyData( CSpawnItem *target )
 {
 	CItem::CopyData( target );

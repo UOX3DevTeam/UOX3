@@ -76,23 +76,21 @@ void closeCall( cSocket *s, bool isGM )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 	{
+		UI16 sysMessage = 1285;
+		PageVector *tmpVector = NULL;
 		if( isGM )
-		{
-			if( GMQueue->GotoPos( GMQueue->FindCallNum( mChar->GetCallNum() ) ) )
-			{
-				GMQueue->Remove();
-				mChar->SetCallNum( 0 );
-				s->sysmessage( 1285 );
-			}
-		}
+			tmpVector = GMQueue;
 		else
 		{
-			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( mChar->GetCallNum() ) ) )
-			{
-				CounselorQueue->Remove();
-				mChar->SetCallNum( 0 );
-				s->sysmessage( 1286 );
-			}
+			tmpVector = CounselorQueue;
+			++sysMessage;
+		}
+
+		if( tmpVector->GotoPos( tmpVector->FindCallNum( mChar->GetCallNum() ) ) )
+		{
+			tmpVector->Remove();
+			mChar->SetCallNum( 0 );
+			s->sysmessage( sysMessage );
 		}
 	}
 	else
@@ -104,40 +102,26 @@ void currentCall( cSocket *s, bool isGM )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 	{
-		CChar *i = NULL;
-		HelpRequest *currentPage = NULL;
+		PageVector *tmpVector = NULL;
 		if( isGM )
+			tmpVector = GMQueue;
+
+		else
+			tmpVector = CounselorQueue;
+
+		if( tmpVector->GotoPos( tmpVector->FindCallNum( mChar->GetCallNum() ) ) )
 		{
-			if( GMQueue->GotoPos( GMQueue->FindCallNum( mChar->GetCallNum() ) ) )
+			HelpRequest *currentPage	= tmpVector->Current();
+			CChar *i					= calcCharObjFromSer( currentPage->WhoPaging() );
+			if( ValidateObject( i ) )
 			{
-				currentPage = GMQueue->Current();
-				i			= calcCharObjFromSer( currentPage->WhoPaging() );
-				if( ValidateObject( i ) )
-				{
-					s->sysmessage( 73 );
-					mChar->SetLocation( i );
-				}
-				currentPage->IsHandled( true );
+				s->sysmessage( 73 );
+				mChar->SetLocation( i );
 			}
-			else
-				s->sysmessage( 75 );
+			currentPage->IsHandled( true );
 		}
 		else
-		{
-			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( mChar->GetCallNum() ) ) )
-			{
-				currentPage		= CounselorQueue->Current();
-				i				= calcCharObjFromSer( currentPage->WhoPaging() );
-				if( ValidateObject( i ) )
-				{
-					s->sysmessage( 73 );
-					mChar->SetLocation( i );
-				}
-				currentPage->IsHandled( true );
-			}
-			else
-				s->sysmessage( 75 );
-		}
+			s->sysmessage( 75 );
 	}
 	else
 		s->sysmessage( 72 );
@@ -151,67 +135,19 @@ void currentCall( cSocket *s, bool isGM )
 //o---------------------------------------------------------------------------o
 void nextCall( cSocket *s, bool isGM )
 {
-	CChar *j = NULL;
-	int x = 0;
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 		closeCall( s, isGM );
 	HelpRequest *tempPage = NULL;
 	if( isGM )
 	{
-		for( tempPage = GMQueue->First(); !GMQueue->AtEnd(); tempPage = GMQueue->Next() )
-		{
-			if( !tempPage->IsHandled() )
-			{
-				j = calcCharObjFromSer( tempPage->WhoPaging() );
-				if( ValidateObject( j ) )
-				{
-					GumpDisplay GMNext( s, 300, 200 );
-					GMNext.AddData( "Pager: ", j->GetName() );
-					GMNext.AddData( "Problem: ", tempPage->Reason() );
-					GMNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-					GMNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
-					GMNext.Send( 4, false, INVALIDSERIAL );
-					tempPage->IsHandled( true );
-					mChar->SetLocation( j );
-					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
-					++x;
-				}
-				if( x > 0 )
-					break;
-			}
-		}
-		if( x == 0 )
-			s->sysmessage( 347 );
+		if( !GMQueue->AnswerNextCall( s, mChar ) )
+			s->sysmessage( 347 );	
 	}
 	else //Player is a counselor
 	{
-		x = 0;
-		for( tempPage = CounselorQueue->First(); !CounselorQueue->AtEnd(); tempPage = CounselorQueue->Next() )
-		{
-			if( !tempPage->IsHandled() )
-			{
-				j = calcCharObjFromSer( tempPage->WhoPaging() );
-				if( ValidateObject( j ) )
-				{
-					GumpDisplay CNext( s, 300, 200 );
-					CNext.AddData( "Pager: ", j->GetName() );
-					CNext.AddData( "Problem: ", tempPage->Reason() );
-					CNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-					CNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
-					CNext.Send( 4, false, INVALIDSERIAL );
-					tempPage->IsHandled( true );
-					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID()) );
-					mChar->SetLocation( j );
-					++x;
-					break;
-				}
-			}
-			if( x > 0 )
-				break;
-		}
-		if( x == 0 )
-			s->sysmessage( 348 );
+		if( !CounselorQueue->AnswerNextCall( s, mChar ) )
+			s->sysmessage( 348 );		
 	}
 }
 
@@ -297,18 +233,6 @@ void command_addaccount( cSocket *s)
 	}
 }
 
-void command_setrace( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
-		RACEID race = (RACEID)Commands->Argument( 1 );
-		if( race < Races->Count() || race == 65535 )
-			Races->gate( s->CurrcharObj(), race, 1 );
-		else
-			s->sysmessage( 13 );
-	}
-}
 void command_getlight( cSocket *s )
 // needs redoing to support new lighting system
 {
@@ -325,67 +249,20 @@ void command_getlight( cSocket *s )
 		s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 }
 
-void command_resend( cSocket *s )
-// Resends server data to client.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-	mChar->Teleport();
-}
-// Returns the current bulletin board posting mode for the player
-void command_post( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-
-	UnicodeTypes sLang	= s->Language();
-	std::string temp	= Dictionary->GetEntry( 269, sLang );
-
-	switch( mChar->GetPostType() )
-	{
-		case LOCALPOST:		temp += Dictionary->GetEntry( 270, sLang );		break;
-		case REGIONALPOST:	temp += Dictionary->GetEntry( 271, sLang );		break;
-		case GLOBALPOST:	temp += Dictionary->GetEntry( 272, sLang );		break;
-		default:			temp += Dictionary->GetEntry( 273, sLang );
-							mChar->SetPostType( LOCALPOST );
-							break;
-	}
-	s->sysmessage( temp.c_str() );
-}
-
 void command_setpost( cSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
+
+	UI08 type;
 	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
 	if( upperCommand == "GLOBAL" )
-	{
-		// Sets the current bulletin board posting mode for the player to GLOBAL
-		// ALL bulletin boards will see the next message posted to any bulletin board
-		mChar->SetPostType( GLOBALPOST );
-		s->sysmessage( 16 );
-	}
+		type = GLOBALPOST;
 	else if( upperCommand == "REGIONAL" )
-	{
-		// Sets the current bulletin board posting mode for the player to REGIONAL
-		// All bulletin boards in the same region as the board posted to will show the
-		// next message posted
-		mChar->SetPostType( REGIONALPOST );
-		s->sysmessage( 17 );
-	}
+		type = REGIONALPOST;
 	else if( upperCommand == "LOCAL" )
-	{
-		// Sets the current bulletin board posting mode for the player to LOCAL
-		// Only this bulletin board will have this post
-		mChar->SetPostType( LOCALPOST );
-		s->sysmessage( 18 );
-	}
+		type = LOCALPOST;
+
+	MsgBoardSetPostType( s, type );
 }
 
 void command_where( cSocket *s )
@@ -470,60 +347,6 @@ void command_showids( cSocket *s )
 			s->ShowCharName( toShow, true );
 	}
 	Cell->PopChar();
-}
-
-void command_poly( cSocket *s )
-// (h h) Polymorph yourself into any other creature.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->NumArguments() < 2 || Commands->NumArguments() > 3 || !mChar )
-		return;
-	UI16 targBody = INVALIDID;
-	if( Commands->NumArguments() == 2 )
-		targBody = static_cast<UI16>(Commands->Argument( 1 ));
-	else if( Commands->NumArguments() == 3 )
-		targBody = static_cast<UI16>((Commands->Argument( 1 ) << 8 ) + Commands->Argument( 2 ));
-
-	if( targBody <= 0x7CF )	// body-values > 0x3E crash the client
-	{
-		mChar->SetID( targBody );
-		mChar->SetOrgID( targBody );
-
-		// if polymorphing from monster to player we have to switch from transparent to semi-transparent
-		// or we have that sit-down-client crash
-		UI16 c1 = mChar->GetSkin();
-		UI16 b	= c1&0x4000;
-		if( b == 16384 && targBody >= 0x0190 && targBody <= 0x03E1 )
-		{
-			if( c1 != 0x8000 )
-			{
-				mChar->SetSkin( 0xF000 );
-				mChar->SetOrgSkin( 0xF000 );
-			}
-		}
-	}
-}
-
-void command_skin( cSocket *s )
-// (h h) Change the hue of your skin.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->NumArguments() == 2 && ValidateObject( mChar ) )
-	{
-		int body = mChar->GetID();
-		COLOUR k = (COLOUR)Commands->Argument( 1 );
-		int b = k&0x4000;
-		if( b == 16384 && ( body >= 0x0190 && body <= 0x03E1 ) )
-			k = 0xF000;
-		
-		if( k != 0x8000 )
-		{
-			mChar->SetSkin( k );
-			mChar->SetOrgSkin( k );
-		}
-	}
 }
 
 void command_xtele( cSocket *s )
@@ -669,10 +492,7 @@ void command_tile( cSocket *s )
 			{
 				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), targID, 1, 0, OT_ITEM );
 				if( a != NULL )	// Antichrist crash prevention
-				{
-					a->SetPriv( 0 ); //Make them not decay
 					a->SetLocation( x, y, z );
-				}
 			}
 		}
 	}
@@ -884,10 +704,7 @@ void command_addx( cSocket *s )
 	Map->SeekTile( addID, &tile );
 	CItem *c = Items->CreateItem( NULL, mChar, addID, 1, 0, OT_ITEM );
 	if( c != NULL )
-	{
 		c->SetLocation( mChar->GetX(), mChar->GetY(), targZ );
-		c->SetPriv( 0 );
-	}
 }
 
 void command_save( void )
@@ -919,19 +736,6 @@ void command_dye( cSocket *s )
 		s->AddID2( 0xFF );
 	}
 	s->target( 0, TARGET_DYE, 31 );
-}
-
-void command_showtime( cSocket *s )
-// Displays the current UO time.
-{
-	VALIDATESOCKET( s );
-	bool ampm	= cwmWorldState->ServerData()->ServerTimeAMPM();
-	UI08 hour	= cwmWorldState->ServerData()->ServerTimeHours();
-	UI08 minute	= cwmWorldState->ServerData()->ServerTimeMinutes();
-	if( ampm || ( !ampm && hour == 12 ) )
-		s->sysmessage( "%s %2.2d %s %2.2d %s", "Time: ", hour, ":", minute, "PM" );
-	else
-		s->sysmessage( "%s %2.2d %s %2.2d %s", "Time: ", hour, ":", minute, "AM" );
 }
 
 void command_settime( void )
@@ -966,27 +770,6 @@ void command_shutdown( void )
 		}
 		else
 			endmessage( 0 );
-	}
-}
-
-void command_wholist( cSocket *s )
-// Brings up an interactive listing of online users.
-{
-	VALIDATESOCKET( s );
-	if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
-		OffList->SendSocket( s );
-	else
-		WhoList->SendSocket( s );
-}
-
-void command_sfx( cSocket *s )
-// (h h) Plays the specified sound effect.
-{
-	VALIDATESOCKET( s );
-	switch( Commands->NumArguments() )
-	{
-		case 2:	Effects->PlaySound( s, static_cast<UI16>(Commands->Argument( 1 )), true );								break;
-		case 3:	Effects->PlaySound( s, static_cast<UI16>((Commands->Argument( 1 ) << 8 ) + Commands->Argument( 2 )), true );	break;
 	}
 }
 
@@ -1062,45 +845,6 @@ void command_command( cSocket *s )
 		HandleGumpCommand( s, Commands->CommandString( 2, 2 ).upper(), Commands->CommandString( 3 ).upper() );
 }
 
-void command_allmove( cSocket *s )
-// Enables GM ability to pick up all objects.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
-	{
-		mChar->SetAllMove( true );
-		mChar->Teleport();
-		s->sysmessage( 39 );
-	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
-	{
-		mChar->SetAllMove( false );
-		mChar->Teleport();
-		s->sysmessage( 40 );
-	}
-}
-
-void command_houseicons( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
-	{
-		// Makes houses appear as deeds. (The walls disappear and there's a deed on the ground in their place.)
-		mChar->SetViewHouseAsIcon( true );
-		mChar->Teleport();
-		s->sysmessage( 41 );
-	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
-	{
-		mChar->SetViewHouseAsIcon( false );
-		mChar->Teleport();
-		s->sysmessage( 42 );
-	}
-	mChar->Teleport();
-}
-
 //o--------------------------------------------------------------------------
 //|	Function		-	void command_set( cSocket *s )
 //|	Date			-	February 22, 2002
@@ -1125,14 +869,6 @@ void command_set( cSocket *s )
 	s->XText( temp );
 
 	s->target( 0, TARGET_ALLSET, 1741, temp.c_str() );
-}
-
-void command_readini( cSocket *s )
-// Re-loads the UOX3.INI file.
-{
-	VALIDATESOCKET( s );
-	cwmWorldState->ServerData()->load();
-	s->sysmessage( 45 );
 }
 
 void command_gumpmenu( cSocket *s )
@@ -1218,56 +954,6 @@ void command_secondsperuominute( cSocket *s )
 	}
 }
 
-void command_brightlight( cSocket *s )
-// (h) Sets default daylight level.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
-		cwmWorldState->ServerData()->WorldLightBrightLevel( static_cast<UI08>(Commands->Argument( 1 )) );
-		s->sysmessage( 50 );
-	}
-}
-
-void command_darklight( cSocket *s )
-// (h) Sets default nighttime light level.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
-		cwmWorldState->ServerData()->WorldLightDarkLevel( static_cast<UI08>(Commands->Argument( 1 )) );
-		s->sysmessage( 51 );
-	}
-}
-
-void command_dungeonlight( cSocket *s )
-// (h) Sets default dungeon light level.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
-		cwmWorldState->ServerData()->DungeonLightLevel( static_cast<LIGHTLEVEL>(Commands->Argument( 1 )) );
-		s->sysmessage( 52 );
-	}
-}
-
-void command_gmopen( cSocket *s )
-// (h / nothing) Opens specified layer on player/NPC, or player's pack if no layer specified.
-// Useful hex codes for this command are:
-// 0x15	Backpack
-// 0x1A	NPC Buy Restock container
-// 0x1B	NPC Buy no restock container
-// 0x1C	NPC Sell container
-// 0x1D	Bank Box
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-		s->TempInt( Commands->Argument( 1 ) );
-	else
-		s->TempInt( 0x15 );
-	s->target( 0, TARGET_GMOPEN, 53 );
-}
-
 void command_restock( cSocket *s )
 // Forces a manual vendor restock.
 {
@@ -1295,16 +981,6 @@ void command_setshoprestockrate( cSocket *s )
 	}
 	else
 		s->sysmessage( 57 );
-}
-
-void command_midi( cSocket *s )
-// (d d) Plays the specified MIDI file.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-		Effects->playMidi( s, static_cast<UI16>(Commands->Argument( 1 )) );
-	else if( Commands->NumArguments() == 3 )
-		Effects->playMidi( s, static_cast<UI16>( ( Commands->Argument( 1 ) << 8 ) + Commands->Argument( 2 ) ) );
 }
 
 bool RespawnFunctor( cBaseObject *a, UI32 &b, void *extraData )
@@ -1560,33 +1236,6 @@ void command_pdump( cSocket *s )
 	s->sysmessage( "Simulation Cycles/Sec: %f", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount ) ) ) );
 }
 
-void command_gy( cSocket *s )
-// (text) GM Yell - Announce a message to all online GMs.
-{
-	VALIDATESOCKET( s );
-
-	if( cwmWorldState->GetPlayersOnline() == 1 )
-	{
-		s->sysmessage( 69 );
-		return;
-	}
-	CChar *me = s->CurrcharObj();
-	if( !ValidateObject( me ) )
-		return;
-
-	UString tmpString = UString::sprintf( "%s (GM ONLY): %s", me->GetName(), Commands->CommandString( 2 ).c_str() );
-
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( tmpString );
-	toAdd->Font( (FontType)me->GetFontType() );
-	toAdd->Speaker( INVALIDSERIAL );
-	toAdd->Colour( s->GetWord( 4 ) );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_BROADCASTALL );
-	toAdd->CmdLevel( 2 );
-}
-
 void command_spawnkill( cSocket *s )
 // (d) Kills spawns from the specified spawn region in SPAWN.SCP.
 {
@@ -1690,24 +1339,6 @@ void command_cleanup( cSocket *s )
 	s->sysmessage( 85, corpses );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function			-	void command_reloadaccounts( cSocket *s )
-//|	Date					-	
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Reload accounts from the console interface.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void command_reloadaccounts( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( Accounts->Load() )
-		s->sysmessage( 86 );
-}
-
 void command_reportbug( cSocket *s )
 // DESC:	Writes out a bug to the bug file
 // DATE:	9th February, 2000
@@ -1786,51 +1417,6 @@ void command_forcewho( cSocket *s )
 	VALIDATESOCKET( s );
 	WhoList->ZeroWho();
 	WhoList->SendSocket( s );
-}
-
-void command_cy( cSocket *s )
-// (text) Counselor Yell - Announce a message to all online counselors and above.
-{
-	VALIDATESOCKET( s );
-	if( cwmWorldState->GetPlayersOnline() == 1 )
-	{
-		s->sysmessage( 69 );
-		return;
-	}
-	UString tmpString = UString::sprintf( "(CY): %s", Commands->CommandString( 2 ).c_str() );
-
-	CChar *me			= s->CurrcharObj();
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( tmpString );
-	toAdd->Font( (FontType)me->GetFontType() );
-	toAdd->Speaker( me->GetSerial() );
-	toAdd->Colour( s->GetWord( 4 ) );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_BROADCASTPC );
-	toAdd->CmdLevel( 1 );
-}
-void command_sgy( cSocket *s )
-// (text) GM Yell - Announce a message to all online GMs.
-{
-	VALIDATESOCKET( s );
-	if( cwmWorldState->GetPlayersOnline() == 1 )
-	{
-		s->sysmessage( 69 );
-		return;
-	}
-	UString tmpString = UString::sprintf( "(SuperGM): %s", Commands->CommandString( 2 ).c_str() );
-
-	CChar *me			= s->CurrcharObj();
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( tmpString );
-	toAdd->Font( (FontType)me->GetFontType() );
-	toAdd->Speaker( me->GetSerial() );
-	toAdd->Colour( s->GetWord( 4 ) );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_BROADCASTPC );
-	toAdd->CmdLevel( 3 );
 }
 
 void command_validcmd( cSocket *s )
@@ -2013,25 +1599,6 @@ void command_xgate( cSocket *s )
 	}
 }
 
-void command_reloaddefs( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	sysBroadcast( Dictionary->GetEntry( 1746 ) );
-	s->sysmessage( 1747 );
-	SpeechSys->Poll();
-	delete FileLookup;
-	s->sysmessage( 1748 );
-	SpeechSys->Poll();
-	if( ( FileLookup = new cServerDefinitions() ) == NULL )
-	{
-		sysBroadcast( Dictionary->GetEntry( 1749 ) );
-		Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
-	}
-	else
-		sysBroadcast( Dictionary->GetEntry( 1750 ) );
-	SpeechSys->Poll();
-}
-
 void command_temp( cSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -2062,23 +1629,15 @@ void cCommands::CommandReset( void )
 {
 	// TargetMap[Command Name] = TargetMapEntry(Required Command Level, Command Type, Target ID, Dictionary Entry);
 	// A
-	TargetMap["ACTION"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETID1,	TARGET_NPCACT,			213);
 	// B
-	TargetMap["BAN"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_BAN,				253);
-	TargetMap["BOLT"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_BOLT,			195);
-	TargetMap["BUY"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_BUYSHOP,			233);
 	// C
 	TargetMap["CSTATS"]			= TargetMapEntry( CNS_CMDLEVEL,		CMD_TARGET,		TARGET_CSTATS,			183);
 	// D
 	TargetMap["DELETECHAR"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_DELETECHAR,		1618);
 	// E
 	// F
-	TargetMap["FULLSTATS"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_FULLSTATS,		243);
 	// G
-	TargetMap["GLOW"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_GLOW,			258);
-	TargetMap["GATE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_GATE,			226);
 	// H
-	TargetMap["HEAL"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_HEAL,			227);
 	TargetMap["HIDE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_PERMHIDE,		244);
 	// I
 	TargetMap["INCX"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETX,	TARGET_INCX,			254);
@@ -2094,30 +1653,20 @@ void cCommands::CommandReset( void )
 	// M
 	TargetMap["MAKE"]			= TargetMapEntry( ADMIN_CMDLEVEL,	CMD_TARGETTXT,	TARGET_MAKESTATUS,		279);
 	TargetMap["MAKESHOP"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_MAKESHOP,		232);
-	TargetMap["MANA"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_MANA,			230);
-	TargetMap["MARK"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_MARK,			225);
-	TargetMap["MOVETOBAG"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_MOVETOBAG,		197);
 	TargetMap["MUTE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETID1,	TARGET_SQUELCH,			71 );
 	// N
-	TargetMap["NPCTARGET"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_NPCFOLLOW,		228);
 	TargetMap["NPCWANDER"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETINT,	TARGET_NPCWANDER,		48);
 	// O
 	// P
 	TargetMap["POSSESS"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_POSSESS,			249);
 	// Q
 	// R
-	TargetMap["RECALL"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_RECALL,			224);
 	TargetMap["RELEASE"]		= TargetMapEntry( CNS_CMDLEVEL,		CMD_TARGET,		TARGET_RELEASE,			181);
-	TargetMap["REMOVE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_REMOVE,			188);
 	TargetMap["RESURRECT"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_RESURRECT,		194);
-	TargetMap["REMOVESHOP"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_REMOVESHOP,		262);
 	// S
 	TargetMap["SETSCPTRIG"]		= TargetMapEntry( ADMIN_CMDLEVEL,	CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
 	TargetMap["SHOWSKILLS"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	TargetMap["SHOWDETAIL"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_INFO,			261);
-	TargetMap["SETPOISONED"]	= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETINT,	TARGET_SETPOISONED,		240);
-	TargetMap["SELL"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_SELL,			236);
-	TargetMap["STAMINA"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_STAMINA,			231);
 	TargetMap["SQUELCH"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETID1,	TARGET_SQUELCH,			71 );
 	// T
 	TargetMap["TELESTUFF"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_TELESTUFF,		250);
@@ -2125,12 +1674,10 @@ void cCommands::CommandReset( void )
 	TargetMap["TELE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_TELE,			185);
 	// U
 	TargetMap["UNHIDE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_UNHIDE,			245);
-	TargetMap["UNGLOW"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_UNGLOW,			259);
 	// V
 	// W
 	TargetMap["WSTATS"]			= TargetMapEntry( CNS_CMDLEVEL,		CMD_TARGET,		TARGET_WSTATS,			183);
 	// X
-	TargetMap["XBANK"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_XBANK,			186);
 	TargetMap["XGO"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETXYZ,	TARGET_XGO,				198);
 	// Y
 	// Z
@@ -2140,19 +1687,14 @@ void cCommands::CommandReset( void )
 	CommandMap["ADD"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_add);
 	CommandMap["ADDACCOUNT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
 	CommandMap["ADDX"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addx);
-	CommandMap["ALLMOVE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_allmove);
 	CommandMap["ANNOUNCE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
 	CommandMap["AREACOMMAND"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_areaCommand);
 	//B
-	CommandMap["BRIGHTLIGHT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_brightlight);
 	//C
-	CommandMap["CY"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_cy);
 	CommandMap["CLEANUP"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_cleanup);
 	CommandMap["CQ"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_cq);
 	CommandMap["COMMAND"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_command);
 	//D
-	CommandMap["DARKLIGHT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_darklight);
-	CommandMap["DUNGEONLIGHT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dungeonlight);
 	CommandMap["DUPE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dupe);
 	CommandMap["DISCONNECT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_disconnect);
 	CommandMap["DYE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dye);
@@ -2164,17 +1706,14 @@ void cCommands::CommandReset( void )
 	CommandMap["FIXSPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_fixspawn);
 	//G,
 	CommandMap["GETLIGHT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getlight);
-	CommandMap["GY"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gy);
 	CommandMap["GUARDS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_guards);
 	CommandMap["GMS"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_gms);
 	CommandMap["GUMPMENU"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gumpmenu);
 	CommandMap["GMMENU"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmmenu);
 	CommandMap["GO"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_go);
-	CommandMap["GMOPEN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmopen);
 	CommandMap["GCOLLECT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_gcollect);
 	CommandMap["GQ"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gq);
 	//H
-	CommandMap["HOUSEICONS"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_houseicons);
 	CommandMap["HOWTO"]				= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
 	//I
 	CommandMap["IWIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_iwipe);
@@ -2187,39 +1726,28 @@ void cCommands::CommandReset( void )
 	//M
 	CommandMap["MEMSTATS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_memstats);
 	CommandMap["MINECHECK"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_minecheck);
-	CommandMap["MIDI"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_midi);
 	//N
 	CommandMap["NACCT"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_nacct );
 	CommandMap["NPCBOUND"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_npcbound);
 	//O
 	//P
 	CommandMap["PDUMP"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_pdump);
-	CommandMap["POLY"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_poly);
-	CommandMap["POST"]    			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_post);
+	CommandMap["POST"]    			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&MsgBoardGetPostType);
 	//Q
 	//R
-	CommandMap["RESEND"]			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_resend);
-	CommandMap["READINI"]			= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_readini);
 	CommandMap["RESTOCK"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_restock);
 	CommandMap["RESPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_respawn);
 	CommandMap["REGSPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_regspawn);
-	CommandMap["RELOADACCOUNTS"]	= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_reloadaccounts);
 	CommandMap["REPORTBUG"]			= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_reportbug);
-	CommandMap["RELOADDEFS"]		= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_reloaddefs );
 	//S
-	CommandMap["SGY"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_sgy);
 	CommandMap["SETPOST"]			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_setpost);
-	CommandMap["SETRACE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_setrace);
 	CommandMap["SPAWNKILL"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_spawnkill);
 	CommandMap["SETSHOPRESTOCKRATE"]= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_setshoprestockrate);
 	CommandMap["SECONDSPERUOMINUTE"]= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_secondsperuominute);
 	CommandMap["SET"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_set);
-	CommandMap["SFX"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_sfx);
-	CommandMap["SHOWTIME"]			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_showtime);
 	CommandMap["SETTIME"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_settime);
 	CommandMap["SHUTDOWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_shutdown);
 	CommandMap["SAVE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_save);
-	CommandMap["SKIN"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_skin);
 	CommandMap["STATUS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_status);
 	CommandMap["SHOWIDS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_showids);
 	//T
@@ -2233,7 +1761,6 @@ void cCommands::CommandReset( void )
 	//W
 	CommandMap["WF"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_wf);
 	CommandMap["WHO"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_who);
-	CommandMap["WHOLIST"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_wholist);
 	CommandMap["WIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_wipe);
 	CommandMap["WHERE"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_where);
 	//X

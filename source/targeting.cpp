@@ -263,24 +263,19 @@ void cTargets::MultiTarget( cSocket *s )
 				case TARGET_ADDSCRIPTSPAWNER:	AddScriptItem( s, OT_SPAWNER );		break;
 				case TARGET_BUILDHOUSE:			BuildHouseTarget( s );						break;
 				case TARGET_TELE:			TeleTarget( s );					break;	
-				case TARGET_REMOVE:			RemoveTarget( s );					break;
 				case TARGET_DYE:			DyeTarget( s );						break;
 				case TARGET_KEY:			KeyTarget( s );						break;
 				case TARGET_ISTATS:			IstatsTarget( s );					break;
 				case TARGET_CSTATS:			CstatsTarget( s );					break;
 				case TARGET_KILL:			KillTarget( s );					break;
 				case TARGET_RESURRECT:		ResurrectionTarget( s );			break;
-				case TARGET_BOLT:			BoltTarget( s );					break;
 				case TARGET_KICK:			CloseTarget( s );					break;
 				case TARGET_DYEALL:			ColorsTarget( s );					break;
 				case TARGET_DVAT:			DvatTarget( s );					break;
 				case TARGET_ALLSET:			AllSetTarget( s );					break;
 				case TARGET_INFO:			InfoTarget( s );					break;
 				case TARGET_SHOWDETAIL:		ShowDetail( s );					break;
-				case TARGET_NPCACT:			DoActionTarget( s );				break;
 				case TARGET_WSTATS:			WstatsTarget( s );					break;
-				case TARGET_NPCFOLLOW:		NpcTarget( s );						break;
-				case TARGET_NPCFOLLOW2:		NpcTarget2( s );					break;
 				case TARGET_NPCRESURRECT:	NpcResurrectTarget( mChar );		break;
 				case TARGET_TWEAK:			TweakTarget( s );					break;
 				case TARGET_MAKESTATUS:		MakeStatusTarget( s );				break;
@@ -290,18 +285,12 @@ void cTargets::MultiTarget( cSocket *s )
 				case TARGET_SWORD:			SwordTarget( s );					break;
 				case TARGET_AREACOMMAND:	AreaCommand( s );					break;
 				case TARGET_DUPE:			DupeTarget( s );					break;
-				case TARGET_MOVETOBAG:		MoveToBagTarget( s );				break;
-				case TARGET_MANA:			ManaTarget( s );					break;
-				case TARGET_STAMINA:		StaminaTarget( s );					break;
-				case TARGET_GMOPEN:			GmOpenTarget( s );					break;
 				case TARGET_JAIL:			JailTarget( s, s->GetDWord( 7 ) );		break;
 				case TARGET_RELEASE:		ReleaseTarget( s, s->GetDWord( 7 ) );	break;
 				case TARGET_PERMHIDE:		permHideTarget( s );				break;
 				case TARGET_UNHIDE:			unHideTarget( s );					break;
 				case TARGET_XTELEPORT:		XTeleport( s, 0 );					break;
-				case TARGET_FULLSTATS:		FullStatsTarget( s );				break;
 				case TARGET_LOADCANNON:		LoadCannon( s );					break;
-				case TARGET_SETPOISONED:	SetPoisonedTarget( s );				break;
 				case TARGET_VIAL:			VialTarget( s );					break;
 				case TARGET_TILING:			Tiling( s );						break;
 				case TARGET_WIPING:			Wiping( s );						break;
@@ -309,15 +298,9 @@ void cTargets::MultiTarget( cSocket *s )
 				case TARGET_TELESTUFF:		TeleStuff( s );						break;        
 				case TARGET_TELESTUFF2:		TeleStuff2( s );					break;
 				case TARGET_SQUELCH:		SquelchTarg( s );					break;
-				case TARGET_BAN:			BanTarg( s );						break;
 				case TARGET_SHOWSKILLS:		ShowSkillTarget( s );				break;
-				case TARGET_GLOW:			GlowTarget( s );					break;
-				case TARGET_UNGLOW:			UnglowTarget( s );					break;
 				// Vendors
 				case TARGET_MAKESHOP:		MakeShopTarget( s );				break;
-				case TARGET_REMOVESHOP:		RemoveShopTarget( s );				break;
-				case TARGET_BUYSHOP:		BuyShopTarget( s );					break;
-				case TARGET_SELL:			SellStuffTarget( s );				break;
 				case TARGET_PLVBUY:			PlVBuy( s );						break;
 				// Town Stuff
 				case TARGET_TOWNALLY:		MakeTownAlly( s );					break;
@@ -337,11 +320,7 @@ void cTargets::MultiTarget( cSocket *s )
 				case TARGET_GUARD:			GuardTarget( s );					break;
 				case TARGET_FRIEND:			FriendTarget( s );					break;
 				// Magic
-				case TARGET_CASTSPELL:		Magic->CastSpell( s, mChar );		break;
-				case TARGET_RECALL:			Magic->Recall( s );					break;					
-				case TARGET_MARK:			Magic->Mark( s );					break;
-				case TARGET_GATE:			Magic->Gate( s );					break;					
-				case TARGET_HEAL:			Magic->Heal( s );					break;
+				case TARGET_CASTSPELL:		Magic->CastSpell( s, mChar );		break;					
 				// Skills Functions
 				case TARGET_ARMSLORE:		Skills->ArmsLoreTarget( s );		break;
 				case TARGET_ANATOMY:		Skills->AnatomyTarget( s );			break;
@@ -406,8 +385,7 @@ void cTargets::MultiSetCharTarget( cSocket *s, TargetIDs targetID )
 		{
 		case TARGET_INCX:			i->SetLocation( static_cast<SI16>(i->GetX() + s->AddX( 0 )), i->GetY(), i->GetZ() );	break;
 		case TARGET_INCY:			i->SetLocation( i->GetX(), static_cast<SI16>(i->GetY() + s->AddX( 0 )), i->GetZ() );	break;
-		case TARGET_INCZ:			i->SetZ( static_cast<SI08>(i->GetZ() + s->AddX( 0 )) );	break;
-		case TARGET_XBANK:			s->openBank( i );											break;
+		case TARGET_INCZ:			i->SetZ( static_cast<SI08>(i->GetZ() + s->AddX( 0 )) );	break;											break;
 		case TARGET_XGO:			i->SetLocation( s->AddX( 0 ), s->AddY( 0 ), s->AddZ(), s->AddID4() );	break;
 		case TARGET_NPCRECT:		if( i->IsNpc() )
 									{
@@ -450,14 +428,6 @@ void cTargets::MultiSetItemTarget( cSocket *s, TargetIDs targetID )
 	}
 	else
 		s->sysmessage( 1076 );
-}
-
-#if defined( _MSC_VER )
-#pragma note( "Function Warning: cTargets::BanTarg() does nothing" )
-#endif
-void cTargets::BanTarg( cSocket *s )
-{
-
 }
 
 void DoAddTarget( cSocket *mSock, CItem *mItem )
@@ -552,11 +522,11 @@ void cTargets::AddScriptNpc( cSocket *s )
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 	
-	CChar *mChar	= s->CurrcharObj();
-	SI16 coreX		= s->GetWord( 11 );
-	SI16 coreY		= s->GetWord( 13 );
-	SI08 coreZ		= static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
-	CChar *cCreated	= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber() );
+	CChar *mChar			= s->CurrcharObj();
+	const SI16 coreX		= s->GetWord( 11 );
+	const SI16 coreY		= s->GetWord( 13 );
+	const SI08 coreZ		= static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
+	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber() );
 }
 
 void cTargets::TeleTarget( cSocket *s )
@@ -567,21 +537,19 @@ void cTargets::TeleTarget( cSocket *s )
 
 	SERIAL serial = s->GetDWord( 7 );
 
-	CItem *i = calcItemObjFromSer( serial );
-	if( ValidateObject( i ) )
-	{
-		s->sysmessage( 717 );
-		return;
-	}
+	cBaseObject *mObj = NULL;
+	if( serial >= BASEITEMSERIAL )
+		mObj = calcItemObjFromSer( serial );
+	else
+		mObj = calcCharObjFromSer( serial );
 
 	SI16 targX, targY;
 	SI08 targZ;
-	CChar *c = calcCharObjFromSer( serial );
-	if( ValidateObject( c ) )
+	if( ValidateObject( mObj ) )
 	{
-		targX = c->GetX();
-		targY = c->GetY();
-		targZ = c->GetZ();
+		targX = mObj->GetX();
+		targY = mObj->GetY();
+		targZ = mObj->GetZ();
 	}
 	else
 	{
@@ -610,31 +578,6 @@ void cTargets::TeleTarget( cSocket *s )
 		mChar->SetLocation( targX, targY, targZ );
 		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	} 
-}
-
-void cTargets::RemoveTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	SERIAL serial	= s->GetDWord( 7 );
-	CItem *i		= calcItemObjFromSer( serial );
-	if( ValidateObject( i ) )
-	{
-		s->sysmessage( 1013 );
-		i->Delete();
-    } 
-	else 
-	{
-		CChar *c = calcCharObjFromSer( serial );
-		if( !ValidateObject( c ) )
-			return;
-		if( c->GetAccount().wAccountIndex != AB_INVALID_ID && !c->IsNpc() )
-		{ 
-			s->sysmessage( 1014 );
-			return;
-		}
-		s->sysmessage( 1015 );
-		c->Delete();
-	}
 }
 
 void cTargets::DyeTarget( cSocket *s )
@@ -1071,17 +1014,6 @@ void cTargets::KillTarget( cSocket *s )
 			if( ValidateObject( i ) )
 				i->Delete();
 		}
-	}
-}
-
-void cTargets::BoltTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		Effects->bolteffect( i );
-		Effects->PlaySound( i, 0x0029 );
 	}
 }
 
@@ -1616,12 +1548,13 @@ void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls thi
 			c = Items->CreateItem( NULL, s->CurrcharObj(), addid, 1, 0, OT_ITEM );
 			if( c == NULL ) 
 				return;
-			c->SetPriv( 0 );	//Make them not decay
 			c->SetLocation( x, y, s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
 		}
 	}
 	s->AddID1( 0 );
 	s->AddID2( 0 );
+	s->ClickX( -1 );
+	s->ClickY( -1 );
 }
 
 enum AreaCommandTypes
@@ -2216,32 +2149,6 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 	}
 }
 
-void cTargets::NpcTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		s->TempObj( i );
-		s->target( 0, TARGET_NPCFOLLOW2, 1742 );
-	}
-}
-
-void cTargets::NpcTarget2( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		if( i->IsNpc() )
-		{
-			i->SetFTarg( static_cast<CChar *>(s->TempObj()) );
-			i->SetNpcWander( 1 );
-		}
-	}
-	s->TempObj( NULL );
-}
-
 void cTargets::DupeTarget( cSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -2255,31 +2162,6 @@ void cTargets::DupeTarget( cSocket *s )
 				Commands->DupeItem( s, i, i->GetAmount() );
 		}
 	}
-}
-
-void cTargets::MoveToBagTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	SERIAL serial	= s->GetDWord( 7 );
-	CItem *i		= calcItemObjFromSer( serial );
-	if( !ValidateObject( i ) )
-		return;
-	CChar *mChar	= s->CurrcharObj();
-	CItem *p		= mChar->GetPackItem();
-	if( ValidateObject( p ) && i->GetSerial() == serial )
-	{
-		i->SetCont( p );
-		i->PlaceInPack();
-		i->SetDecayTime( 0 );//reset decaytimer
-	}
-}
-
-void cTargets::SellStuffTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-		sendSellStuff( s, i );
 }
 
 void cTargets::ReleaseTarget( cSocket *s, SERIAL c )
@@ -2296,53 +2178,6 @@ void cTargets::ReleaseTarget( cSocket *s, SERIAL c )
 			s->sysmessage( 1065, i->GetName().c_str() );
 		}
 	}
-}
-
-void cTargets::GmOpenTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *toCheck = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( toCheck ) )
-	{
-		s->sysmessage( 1066 );
-		return;
-	}
-
-	CItem *i = toCheck->GetItemAtLayer( static_cast<UI08>(s->TempInt()) );
-	if( ValidateObject( i ) )
-	{
-		s->openPack( i );
-		return;
-	}
-	s->sysmessage( 1067 );
-}
-
-void cTargets::StaminaTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->PlayStaticAnimation( i, 0x376A, 0x09, 0x06 );
-		i->SetStamina( i->GetMaxStam() );
-		return;
-	}
-	s->sysmessage( 1066 );
-}
-
-void cTargets::ManaTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->PlayStaticAnimation( i, 0x376A, 0x09, 0x06 );
-		i->SetMana( i->GetMaxMana() );
-		return;
-	}
-	s->sysmessage( 1066 );
 }
 
 void cTargets::MakeShopTarget( cSocket *s )
@@ -2442,19 +2277,6 @@ void cTargets::TransferTarget( cSocket *s )
 	char1->SetNpcWander( 0 );
 }
 
-void cTargets::BuyShopTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	SERIAL serial	= s->GetDWord( 7 );
-	CChar *i		= calcCharObjFromSer( serial );
-	if( ValidateObject( i ) )
-	{
-		BuyShop( s, i );
-		return;
-	}
-	s->sysmessage( 1075 );
-}
-
 bool cTargets::BuyShop( cSocket *s, CChar *c )
 {
 	if( s == NULL )
@@ -2524,35 +2346,6 @@ void cTargets::unHideTarget( cSocket *s )
 			i->SetVisible( false );
 	}
 }
-
-void cTargets::SetPoisonedTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		i->SetPoisoned( static_cast<SI08>(s->TempInt()) );
-		i->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON ) )) );
-		i->Dirty( UT_UPDATE );
-	}
-}
-
-void cTargets::FullStatsTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->PlayStaticAnimation( i, 0x376A, 0x09, 0x06 );
-		i->SetMana( i->GetMaxMana() );
-		i->SetHP( i->GetMaxHP() );
-		i->SetStamina( i->GetMaxStam() );
-		return;
-	}
-	s->sysmessage( 1077 );
-}
-
 
 void cTargets::AxeTarget( cSocket *s )
 {
@@ -2771,109 +2564,6 @@ void cTargets::HouseUnlistTarget( cSocket *s )
 		else 
 			s->sysmessage( 1093 );
 	}
-}
-
-void cTargets::GlowTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) ) 
-	{ 
-		s->sysmessage( 1095 ); 
-		return; 
-	}
-	CChar *mChar = s->CurrcharObj(), *k = NULL;
-	if( !ValidateObject( mChar ) )
-		return;
-
-	if( i->GetGlow() != INVALIDSERIAL ) 
-	{
-		s->sysmessage( 1097 );
-		return;
-	}
-
-	cBaseObject *getCont = i->GetCont();
-	if( getCont != NULL )
-	{
-		if( getCont->GetObjType() == OT_ITEM )
-			k = FindItemOwner( (CItem *)getCont );
-		else
-			k = (CChar *)getCont;
-
-		if( k != mChar )
-		{
-			s->sysmessage( 1096 );
-			return;
-		}
-	}
-
-	i->SetGlowColour( i->GetColour() );
-
-	CItem *c = Items->CreateItem( s, mChar, 0x1647, 1, 0, OT_ITEM ); // spawn light emitting object
-	if( c == NULL )
-		return;
-	c->SetName( "glower" );
-    c->SetDir( 29 );
-	c->SetVisible( 0 );
-	c->SetMovable( 2 );
-	if( getCont == NULL || getCont->GetObjType() == OT_ITEM ) // if not equipped -> coords of the light-object = coords of the 
-		c->SetLocation( i );
-	else // if equipped -> place lightsource at player ( height= approx hand level )
-	{ 
-		c->SetLocation( mChar );
-		c->SetZ( mChar->GetZ() + 4 );
-	}
-
-    c->SetPriv( 0 ); // doesnt decay
-
-	i->SetGlow( c->GetSerial() ); // set glow-identifier
-
-	mChar->Update( s );
-	s->sysmessage( 1098 );
-}
-
-void cTargets::UnglowTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-	{ 
-		s->sysmessage( 1099 ); 
-		return; 
-	}
-	CChar *mChar = s->CurrcharObj(), *k = NULL;
-	if( !ValidateObject( mChar ) )
-		return;
-
-	cBaseObject *getCont = i->GetCont();
-	if( getCont != NULL ) 
-	{      
-		if( getCont->GetObjType() == OT_ITEM )
-			k = FindItemOwner( (CItem *)getCont );
-		else
-			k = (CChar *)getCont;
-
-		if( k != mChar )
-		{
-			s->sysmessage( 1100 );
-			return;
-		}
-	}
-
-	CItem *j = calcItemObjFromSer( i->GetGlow() );
-	if( i->GetGlow() == INVALIDSERIAL || !ValidateObject( j ) ) 
-	{
-		s->sysmessage( 1101 );
-		return;
-	}
-
-	i->SetColour( i->GetGlowColour() );
-
-	j->Delete();
-	i->SetGlow( INVALIDSERIAL );
-	mChar->Update( s );
-
-	s->sysmessage( 1102 );
 }
 
 void cTargets::ShowSkillTarget( cSocket *s )
@@ -3638,35 +3328,6 @@ void cTargets::PossessTarget( cSocket *s )
 	s->sysmessage( 1635 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cTargets::RemoveShop( cSocket *s )
-//|	Programmer	-	Abaddon
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Removes shopkeeper layers from a character
-//o---------------------------------------------------------------------------o
-void cTargets::RemoveShopTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-	{
-		s->sysmessage( 366 );
-		return;
-	}
-
-	i->SetShop( false );
-	CItem *buyLayer   = i->GetItemAtLayer( IL_BUYCONTAINER );
-	CItem *sellLayer  = i->GetItemAtLayer( IL_BOUGHTCONTAINER );
-	CItem *otherLayer = i->GetItemAtLayer( IL_SELLCONTAINER );
-	if( ValidateObject( buyLayer ) )
-		buyLayer->Delete();
-	if( ValidateObject( sellLayer ) )
-		sellLayer->Delete();
-	if( ValidateObject( otherLayer ) )
-		otherLayer->Delete();
-	s->sysmessage( 367 );
-}
-
 void cTargets::VialTarget( cSocket *mSock )
 {
 	VALIDATESOCKET( mSock );
@@ -3750,20 +3411,6 @@ void cTargets::VialTarget( cSocket *mSock )
 			Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 		}
 	}	
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void DoActionTarget( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	NPC Action
-//o---------------------------------------------------------------------------o
-void cTargets::DoActionTarget( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-		Effects->PlayCharacterAnimation( i, s->AddID1() );
 }
 
 }

@@ -74,6 +74,7 @@ public:
 	SI32			CurrentPos( void ) const;
 	SERIAL			GetCallNum( void ) const;
 	SI32			FindCallNum( SERIAL callNum );
+	bool			AnswerNextCall( cSocket *mSock, CChar *mChar );
 };
 
 extern PageVector	*GMQueue;

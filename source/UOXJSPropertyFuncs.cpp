@@ -122,6 +122,7 @@ namespace UOX
 				case CSP_REFLECTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->SpellReflectable() );	break;
 				case CSP_AGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
 				case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
+				case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->SoundEffect().Effect() );	break;
 				default:																			break;
 			}
 		}
@@ -547,6 +548,8 @@ namespace UOX
 				case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( gPriv->GetPetList()->size() );			break;
 				case CCP_OWNEDITEMSCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetOwnedItems()->size() );	break;
 				case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
+				case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;
+				case CCP_HOUSEICONS:	*vp = BOOLEAN_TO_JSVAL( gPriv->ViewHouseAsIcon() );			break;
 				default:
 					break;
 			}
@@ -572,12 +575,12 @@ namespace UOX
 				case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
 				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
 				case CCP_ID:		
-					gPriv->SetID( encaps.toInt() );
-					gPriv->SetOrgID( encaps.toInt() );
+					gPriv->SetID( (UI16)encaps.toInt() );
+					gPriv->SetOrgID( (UI16)encaps.toInt() );
 					break;
 				case CCP_COLOUR:	
-					gPriv->SetColour( encaps.toInt() );
-					gPriv->SetOrgSkin( encaps.toInt() );
+					gPriv->SetColour( (UI16)encaps.toInt() );
+					gPriv->SetOrgSkin( (UI16)encaps.toInt() );
 					break;
 				case CCP_OWNER:		
 					if( *vp != JSVAL_NULL )
@@ -597,7 +600,6 @@ namespace UOX
 					// We want other players to see the change don't we
 				case CCP_HEALTH:
 					gPriv->SetHP( encaps.toInt() ); 
-					gPriv->Update();
 					break;
 				case CCP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
 				case CCP_PRIVATEWORD:
@@ -693,10 +695,12 @@ namespace UOX
 				case CCP_LIGHTLEVEL:	
 					gPriv->SetFixedLight( (UI08)encaps.toInt() );
 					if( calcSocketObjFromChar( gPriv ) != NULL )
+					{
 						if( (UI08)encaps.toInt() == 255 )
 							doLight( calcSocketObjFromChar( gPriv ), cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 						else
 							doLight( calcSocketObjFromChar( gPriv ), (UI08)encaps.toInt() );
+					}
 					break;
 				case CCP_ARMOUR:		gPriv->SetDef( (UI16)encaps.toInt() );			break;
 				case CCP_VULNERABLE:	gPriv->SetInvulnerable( !encaps.toBool() );		break;
@@ -733,6 +737,8 @@ namespace UOX
 				case CCP_DEATHS:		gPriv->SetDeaths( (UI16)encaps.toInt() );			break;
 				case CCP_NEXTACT:		gPriv->SetNextAct( (UI08)encaps.toInt() );			break;
 				case CCP_CELL:			gPriv->SetCell( (SI08)encaps.toInt() );				break;
+				case CCP_ALLMOVE:		gPriv->SetAllMove( encaps.toBool() );				break;
+				case CCP_HOUSEICONS:	gPriv->SetViewHouseAsIcon( encaps.toBool() );		break;
 			}
 		}
 		return JS_TRUE;
@@ -973,7 +979,7 @@ namespace UOX
 				case CIP_ID:		gPriv->SetID( (UI16)encaps.toInt() );		break;
 				case CIP_COLOUR:	gPriv->SetColour( (UI16)encaps.toInt() );	break;
 				case CIP_OWNER:		
-					if( *vp != JSVAL_NULL ) 
+					if( *vp == JSVAL_NULL ) 
 					{	 
 						CChar *myChar = (CChar*)encaps.toObject(); 
 						if( !ValidateObject( myChar ) ) 
@@ -1004,6 +1010,8 @@ namespace UOX
 							break;
 						gPriv->SetCont( myObj );
 					}
+					else
+						gPriv->SetCont( NULL );
 					break;
 				case CIP_TYPE:		gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 		break;
 				case CIP_MORE:		gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 				break;
@@ -1058,8 +1066,13 @@ namespace UOX
 					break;
 				case CSOCKP_WASIDLEWARNED:		gPriv->WasIdleWarned( encaps.toBool() );				break;
 				case CSOCKP_TEMPINT:			gPriv->TempInt( encaps.toInt() );						break;
+				case CSOCKP_TEMPOBJ:
+												if( *vp == JSVAL_NULL )
+													gPriv->TempObj( NULL );
+												else
+													gPriv->TempObj( (cBaseObject *)encaps.toObject() );		break;
 				case CSOCKP_BUFFER:
-				case CSOCKP_XTEXT:
+				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );
 				case CSOCKP_ADDX:
 				case CSOCKP_ADDY:
 					break;
@@ -1104,7 +1117,7 @@ namespace UOX
 	{
 		cSocket *gPriv = (cSocket *)JS_GetPrivate( cx, obj );
 		CChar *myChar;
-
+		JSString *tString = NULL;
 		if( gPriv == NULL )
 			return JS_FALSE;
 		if( JSVAL_IS_INT( id ) ) 
@@ -1129,9 +1142,28 @@ namespace UOX
 				case CSOCKP_IDLETIMEOUT:
 					break;
 				case CSOCKP_WASIDLEWARNED:		*vp = BOOLEAN_TO_JSVAL( gPriv->WasIdleWarned() );		break;
-				case CSOCKP_TEMPINT:
+				case CSOCKP_TEMPINT:			*vp = INT_TO_JSVAL( gPriv->TempInt() );					break;
+				case CSOCKP_TEMPOBJ:
+					{
+						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cBaseObject *mObj	= gPriv->TempObj();
+						if( !ValidateObject( mObj ) )
+							*vp = JSVAL_NULL;
+						else
+						{
+							JSObject *myObj = NULL;
+							if( mObj->CanBeObjType( OT_ITEM ) )
+								myObj = myScript->AcquireObject( IUE_ITEM );
+							else
+								myObj = myScript->AcquireObject( IUE_CHAR );
+							JS_SetPrivate( cx, myObj, mObj );
+							*vp = OBJECT_TO_JSVAL( myObj );
+						}
+					}
+					break;
 				case CSOCKP_BUFFER:
-				case CSOCKP_XTEXT:
+				case CSOCKP_XTEXT:				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
+												*vp = STRING_TO_JSVAL( tString );
 				case CSOCKP_ADDX:
 				case CSOCKP_ADDY:
 					break;

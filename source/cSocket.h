@@ -99,7 +99,7 @@ protected:
 	char			titlebuffer[62];
 	char			pagebuffer[512]; // 256 may be enough but 512 is for safety
 
-	int				Pack( void *pvIn, void *pvOut, int len );
+	UI32			Pack( void *pvIn, void *pvOut, int len );
 
 	UnicodeTypes	lang;
 	UI32			clientVersion;

@@ -22,9 +22,9 @@ namespace UOX
 				nativeType	= JSOT_BOOL;
 			else if( JSVAL_IS_STRING( (*vp) ) )
 				nativeType	= JSOT_STRING;
-			else if( JSVAL_IS_OBJECT( (*vp) ) )
-				nativeType	= JSOT_OBJECT;
 		}
+		else if( JSVAL_IS_OBJECT( (*vp) ) )
+			nativeType	= JSOT_OBJECT;
 	}
 
 	bool JSEncapsulate::isType( JSObjectType toCheck )

@@ -175,6 +175,36 @@ HelpRequest *PageVector::Current( void )
 		return NULL;
 }
 
+bool PageVector::AnswerNextCall( cSocket *mSock, CChar *mChar )
+{
+	bool retVal		= false;
+	CChar *isPaging = NULL;
+	for( HelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
+	{
+		if( !tempPage->IsHandled() )
+		{
+			isPaging = calcCharObjFromSer( tempPage->WhoPaging() );
+			if( ValidateObject( isPaging ) )
+			{
+				GumpDisplay QNext( mSock, 300, 200 );
+				QNext.AddData( "Pager: ", isPaging->GetName() );
+				QNext.AddData( "Problem: ", tempPage->Reason() );
+				QNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
+				QNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
+				QNext.Send( 4, false, INVALIDSERIAL );
+				tempPage->IsHandled( true );
+				mChar->SetLocation( isPaging );
+				mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
+				retVal = true;
+				break;
+			}
+		}
+	}
+	return retVal;
+}
+
+
+
 //o---------------------------------------------------------------------------o
 //|	Class		:	~HelpRequest()
 //|	Date		:	10 September 2001

@@ -40,6 +40,9 @@
 #include "cServerDefinitions.h"
 #include "commands.h"
 #include "movement.h"
+#include "wholist.h"
+#include "townregion.h"
+#include "Dictionary.h"
 
 namespace UOX
 {
@@ -48,6 +51,8 @@ extern cCommands *Commands;
 #ifndef va_start
 	#include <cstdarg>
 #endif
+
+void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
 
 void MethodError( char *txt, ... )
 {
@@ -973,16 +978,51 @@ JSBool JS_CharbySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-JSBool JS_GetWorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool JS_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 0 ) 
+	if( argc > 1 )
 	{
 		MethodError( "Unknown Count of Arguments: %d", argc );
 		return JS_FALSE;
 	}
-
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL brightLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
+	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightBrightLevel() );
+	return JS_TRUE;
+}
 
+JSBool JS_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Unknown Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL darkLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightDarkLevel() );
+	return JS_TRUE;
+}
+
+JSBool JS_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Unknown Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL dungeonLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() );
 	return JS_TRUE;
 }
 
@@ -1794,6 +1834,31 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( myChar ) )
+	{
+		MethodError( "OpenLayer: Invalid Character object assigned" );
+		return JS_FALSE;
+	}
+
+	if( argc != 2 )
+	{
+		MethodError( "OpenLayer, Invalid count of Paramters: %d", argc );
+		return JS_FALSE;
+	}
+	cSocket *mySock = (cSocket*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
+	if( mySock != NULL )
+	{
+		CItem *iLayer = myChar->GetItemAtLayer( (UI08)JSVAL_TO_INT( argv[1] ) );
+		if( ValidateObject( iLayer ) )
+			mySock->openPack( iLayer );
+	}
+
+	return JS_TRUE;
+}
+
 JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	//	
@@ -2005,6 +2070,15 @@ JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 	Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myChar->GetName().c_str(), realID, itemColour, amount );
 	DeleteItemAmount( myChar, amount, realID, itemColour );
+	return JS_TRUE;
+}
+
+JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+	if( ValidateObject( myChar ) )
+		Effects->bolteffect( myChar );
+
 	return JS_TRUE;
 }
 
@@ -2836,6 +2910,22 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 	myItem->RemoveAsOwner( toFind );
 	return JS_TRUE;
 }
+JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(PlaceInPack) Invalid Number of Arguments %d, needs: 0", argc );
+		return JS_FALSE;
+	}
+	CItem *myItem = (CItem *)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_ITEM ) )
+	{
+		MethodError( "(PlaceInPack) Invalid object assigned" );
+		return JS_FALSE;
+	}
+	myItem->PlaceInPack();
+	return JS_TRUE;
+}
 
 JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -2891,6 +2981,47 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	int offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
     return JS_TRUE;
+}
+JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "WhoList: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	bool sendOnList = true;
+	if( argc == 1 )
+		sendOnList = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+
+	if( sendOnList )
+		WhoList->SendSocket( mySock );
+	else
+		OffList->SendSocket( mySock );
+
+	return JS_TRUE;
+}
+
+JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Midi: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSClass *myClass = JS_GetClass( obj );
+
+	UI16 midi = (UI16)JSVAL_TO_INT( argv[0] );
+
+	cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+	if( mySock != NULL )
+		Effects->playMidi( mySock, midi );
+
+	return JS_TRUE;
 }
 
 //o--------------------------------------------------------------------------o
@@ -3946,6 +4077,192 @@ JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	
 	*rval = INT_TO_JSVAL( getDist( myChar, myObj ) );
+	return JS_TRUE;
+}
+
+JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock	= (cSocket *)JS_GetPrivate( cx, mSock );
+
+	CItem *mItem	= static_cast<CItem *>(JS_GetPrivate( cx, obj ) );
+
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "Glow: Invalid item" );
+		mySock->sysmessage( 1095 ); 
+		return JS_FALSE;
+	}
+
+	CChar *mChar = mySock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return JS_FALSE;
+
+	if( mItem->GetGlow() != INVALIDSERIAL ) 
+	{
+		mySock->sysmessage( 1097 );
+		return JS_FALSE;
+	}
+	if( mItem->GetCont() == NULL && FindItemOwner( mItem ) != mChar )
+	{
+		mySock->sysmessage( 1096 );
+		return JS_FALSE;
+	}
+
+	mItem->SetGlowColour( mItem->GetColour() );
+
+	CItem *glowItem = Items->CreateItem( mySock, mChar, 0x1647, 1, 0, OT_ITEM ); // spawn light emitting object
+	if( glowItem == NULL )
+		return JS_FALSE;
+	glowItem->SetName( "glower" );;
+	glowItem->SetVisible( 0 );
+	glowItem->SetMovable( 2 );
+
+	mItem->SetGlow( glowItem->GetSerial() );
+	Items->GlowItem( mItem );
+
+	mChar->Update( mySock );
+	mySock->sysmessage( 1098 );
+
+	return JS_TRUE;
+}
+
+JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock	= (cSocket *)JS_GetPrivate( cx, mSock );
+
+	CItem *mItem	= static_cast<CItem *>(JS_GetPrivate( cx, obj ) );
+
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "UnGlow: Invalid item" );
+		mySock->sysmessage( 1099 ); 
+		return JS_FALSE;
+	}
+
+	CChar *mChar = mySock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return JS_FALSE;
+
+	if( mItem->GetCont() == NULL && FindItemOwner( mItem ) != mChar )
+	{
+		mySock->sysmessage( 1100 );
+		return JS_FALSE;
+	}
+
+	CItem *glowItem = calcItemObjFromSer( mItem->GetGlow() );
+	if( mItem->GetGlow() == INVALIDSERIAL || !ValidateObject( glowItem ) ) 
+	{
+		mySock->sysmessage( 1101 );
+		return JS_FALSE;
+	}
+
+	mItem->SetColour( mItem->GetGlowColour() );
+
+	glowItem->Delete();
+	mItem->SetGlow( INVALIDSERIAL );
+
+	mChar->Update( mySock );
+	mySock->sysmessage( 1102 );
+
+	return JS_TRUE;
+}
+
+JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Gate: Invalid number of arguments (takes 1, item)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Gate: Invalid source character" );
+		return JS_FALSE;
+	}
+
+	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "Gate: Invalid item passed" );
+		return JS_FALSE;
+	}
+
+	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
+	SI08 destZ = mItem->GetTempVar( CITV_MOREZ );
+	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), destX, destY, destZ );
+
+	return JS_TRUE;
+}
+
+JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Recall: Invalid number of arguments (takes 1, item)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Recall: Invalid source character" );
+		return JS_FALSE;
+	}
+
+	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "Recall: Invalid item passed" );
+		return JS_FALSE;
+	}
+
+	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
+	SI08 destZ = mItem->GetTempVar( CITV_MOREZ );
+	mChar->SetLocation( destX, destY, destZ );
+
+	return JS_TRUE;
+}
+
+JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Mark: Invalid number of arguments (takes 1, character)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Mark: Invalid source character" );
+		return JS_FALSE;
+	}
+
+	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "Mark: Invalid item passed" );
+		return JS_FALSE;
+	}
+
+	mItem->SetTempVar( CITV_MOREX, mChar->GetX() );
+	mItem->SetTempVar( CITV_MOREY, mChar->GetY() );
+	mItem->SetTempVar( CITV_MOREZ, mChar->GetZ() );
+
+	char tempname[512];
+	if( mChar->GetRegion()->GetName()[0] != 0 )
+		sprintf( tempname, Dictionary->GetEntry( 684 ).c_str(), mChar->GetRegion()->GetName().c_str() );
+	else 
+		strcpy( tempname, Dictionary->GetEntry( 685 ).c_str() );
+	mItem->SetName( tempname );
+
 	return JS_TRUE;
 }
 

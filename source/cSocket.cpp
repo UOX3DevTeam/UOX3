@@ -635,19 +635,15 @@ bool cSocket::FlushBuffer( bool doLog )
 {
 	if( outlength > 0 )
 	{
-		int len;
+		UI32 len;
 		if( cryptclient )
 		{
-			char xoutbuffer[MAXBUFFER*2];
+			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
-			send( cliSocket, xoutbuffer, len, 0 );
+			send( cliSocket, (char *)xoutbuffer, len, 0 );
 		}
 		else
-		{
-			//char xoutbuffer[MAXBUFFER*2];
-			//len = Pack( outbuffer,xoutbuffer,outlength);
 			send( cliSocket, (char *)&outbuffer[0], outlength, 0 );
-		}
 		if( Logging() && doLog )
 		{
 			SERIAL toPrint;
@@ -752,52 +748,58 @@ static UI32 bit_table[257][2] =
 	{0x04, 0x0D}
 };
 
-int cSocket::Pack( void *pvIn, void *pvOut, int len )
+UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
 {
-	UI08 *pIn = (UI08 *)pvIn;
-	UI08 *pOut = (UI08 *)pvOut;
-
-	int actByte = 0, bitByte = 0;
+	UI32 packedLength	= 0;
+	int bitByte			= 0;
 	int nrBits;
 	UI32 value;
 
 	while( len-- )
 	{
-		nrBits = bit_table[*pIn][0];
-		value = bit_table[*pIn++][1];
+		nrBits	= bit_table[*pIn][0];
+		value	= bit_table[*pIn++][1];
 
 		while( nrBits-- )
 		{
-			pOut[actByte] = static_cast<UI08>((pOut[actByte] << 1) | (UI08)((value >> nrBits) & 0x1));
+			pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
 
 			bitByte = (bitByte + 1) & 0x07;
 			if( !bitByte )
-				++actByte;
+				++packedLength;
 		}
 	}
 
-	nrBits = bit_table[256][0];
-	value = bit_table[256][1];
+	nrBits	= bit_table[256][0];
+	value	= bit_table[256][1];
 
 	while( nrBits-- )
 	{
-		pOut[actByte] = static_cast<UI08>((pOut[actByte] << 1) | (UI08)((value >> nrBits) & 0x1));
+		pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
 
 		bitByte = (bitByte + 1) & 0x07;
 		if( !bitByte )
-			++actByte;
+			++packedLength;
 	}
 
 	if( bitByte )
 	{
 		while( bitByte < 8 )
 		{
-			pOut[actByte] <<= 1;
+			pOut[packedLength] <<= 1;
 			++bitByte;
 		}
-		++actByte;
+		++packedLength;
 	}
-	return actByte;
+	return packedLength;
+}
+
+UI32 cSocket::Pack( void *pvIn, void *pvOut, int len )
+{
+	UI08 *pIn = (UI08 *)pvIn;
+	UI08 *pOut = (UI08 *)pvOut;
+
+	return DoPack( pIn, pOut, len );
 }
 
 void cSocket::Send( const void *point, int length ) // Buffering send function
@@ -806,29 +808,21 @@ void cSocket::Send( const void *point, int length ) // Buffering send function
 		FlushBuffer();
 	if( outlength > 0 )
 		Console.Print( "Fragmented packet! [packet: %i]\n", outbuffer[0] );
-	if( cryptclient )
+		// sometimes we send enormous packets... oh what fun
+	if( length > MAXBUFFER )
 	{
-		char packbuff[MAXBUFFER+2];
-		int count = Pack( (void*)point, packbuff, length );
-		memcpy( &outbuffer[outlength], packbuff, count );
+#ifdef _DEBUG
+		Console.Print( "Large packet found [%i]\n", outbuffer[0] );
+#endif
+		largeBuffer.resize( length );
+		memcpy( &largeBuffer[0], point, length );
+		outlength = length;
+		FlushLargeBuffer();
+		return;
 	}
 	else
-	{
-		// sometimes we send enormous packets... oh what fun
-		if( length > MAXBUFFER )
-		{
-#ifdef _DEBUG
-			Console.Print( "Large packet found [%i]\n", outbuffer[0] );
-#endif
-			largeBuffer.resize( length );
-			memcpy( &largeBuffer[0], point, length );
-			outlength = length;
-			FlushLargeBuffer();
-			return;
-		}
-		else
-			memcpy( &outbuffer[outlength], point, length );
-	}
+		memcpy( &outbuffer[outlength], point, length );
+
 	outlength += length;
 }
 
@@ -1471,48 +1465,9 @@ UI32 cPUOXBuffer::Pack( void )
 	UI08 *pIn	= (UI08 *)&internalBuffer[0];
 	UI08 *pOut	= (UI08 *)&packedBuffer[0];
 
-	packedLength	= 0;
-	int bitByte		= 0;
-	int nrBits;
-	UI32 value;
-
-	while( len-- )
-	{
-		nrBits	= bit_table[*pIn][0];
-		value	= bit_table[*pIn++][1];
-
-		while( nrBits-- )
-		{
-			pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
-
-			bitByte = (bitByte + 1) & 0x07;
-			if( !bitByte )
-				++packedLength;
-		}
-	}
-
-	nrBits	= bit_table[256][0];
-	value	= bit_table[256][1];
-
-	while( nrBits-- )
-	{
-		pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
-
-		bitByte = (bitByte + 1) & 0x07;
-		if( !bitByte )
-			++packedLength;
-	}
-
-	if( bitByte )
-	{
-		while( bitByte < 8 )
-		{
-			pOut[packedLength] <<= 1;
-			++bitByte;
-		}
-		++packedLength;
-	}
 	isPacked	= true;
+
+	packedLength = DoPack( pIn, pOut, len );
 	return packedLength;
 }
 

@@ -14,7 +14,6 @@ namespace UOX
 {
 
 cCommands *Commands = NULL;
-void BuildAddMenuGump( cSocket *s, UI16 m );	// Menus for item creation
 
 cCommands::cCommands()
 {
@@ -359,47 +358,46 @@ void cCommands::Load( void )
 
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == NULL )
-	{
 		InitClearance();
-		return;
-	}
-
-	size_t currentWorking;
-	for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+	else
 	{
-		data			= cmdClearance->GrabData();
-		currentWorking	= clearance.size();
-		clearance.push_back( new commandLevel_st );
-		clearance[currentWorking]->name			= tag;
-		clearance[currentWorking]->commandLevel = data.toUByte();
-	}
-	std::vector< commandLevel_st * >::iterator cIter;
-	for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
-	{
-		commandLevel_st *ourClear = (*cIter);
-		if( ourClear == NULL )
-			continue;
-		cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
-		if( cmdClearance == NULL )
-			continue;
+		size_t currentWorking;
 		for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 		{
-			UTag = tag.upper();
-			data = cmdClearance->GrabData();
-			if( UTag == "NICKCOLOUR" )
-				ourClear->nickColour = data.toUShort();
-			else if( UTag == "DEFAULTPRIV" )
-				ourClear->defaultPriv = data.toUShort();
-			else if( UTag == "BODYID" )
-				ourClear->targBody = data.toUShort();
-			else if( UTag == "ALLSKILL" )
-				ourClear->allSkillVals = data.toUShort();
-			else if( UTag == "BODYCOLOUR" )
-				ourClear->bodyColour = data.toUShort();
-			else if( UTag == "STRIPOFF" )
-				ourClear->stripOff = ( data.toUShort() != 0 );
-			else
-				Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+			data			= cmdClearance->GrabData();
+			currentWorking	= clearance.size();
+			clearance.push_back( new commandLevel_st );
+			clearance[currentWorking]->name			= tag;
+			clearance[currentWorking]->commandLevel = data.toUByte();
+		}
+		std::vector< commandLevel_st * >::iterator cIter;
+		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
+		{
+			commandLevel_st *ourClear = (*cIter);
+			if( ourClear == NULL )
+				continue;
+			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
+			if( cmdClearance == NULL )
+				continue;
+			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+			{
+				UTag = tag.upper();
+				data = cmdClearance->GrabData();
+				if( UTag == "NICKCOLOUR" )
+					ourClear->nickColour = data.toUShort();
+				else if( UTag == "DEFAULTPRIV" )
+					ourClear->defaultPriv = data.toUShort();
+				else if( UTag == "BODYID" )
+					ourClear->targBody = data.toUShort();
+				else if( UTag == "ALLSKILL" )
+					ourClear->allSkillVals = data.toUShort();
+				else if( UTag == "BODYCOLOUR" )
+					ourClear->bodyColour = data.toUShort();
+				else if( UTag == "STRIPOFF" )
+					ourClear->stripOff = ( data.toUShort() != 0 );
+				else
+					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+			}
 		}
 	}
 
@@ -412,6 +410,7 @@ void cCommands::Load( void )
 	{
 		toRegister->commandRegistration();
 	}
+	Console << myendl << "   o Loaded " << JSCommandMap.size() << " Commands from JavaScript" << myendl;
 }
 
 //o---------------------------------------------------------------------------o

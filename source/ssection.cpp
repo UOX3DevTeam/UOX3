@@ -784,10 +784,6 @@ const UString ScriptSection::NpcListData( void ) const
 //|	Purpose			-	Creates section data from the input stream passed in
 //o--------------------------------------------------------------------------
 
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-extern std::multimap<ULONG,ADDMENUITEM>::iterator ADDMENUMAP_ITERATOR;
-extern std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
-
 UI32 groupHolder = 0;
 UI32 itemIndexHolder = 0;
 

@@ -2184,6 +2184,22 @@ void CPPauseResume::Mode( UI08 mode )
 	internalBuffer[1] = mode;
 }
 
+bool CPPauseResume::ClientCanReceive( cSocket *mSock )
+{
+	if( mSock == NULL )
+		return false;
+	switch( mSock->ClientType() )
+	{
+	case CV_NORMAL:
+	case CV_T2A:
+	case CV_UO3D:
+		if( mSock->ClientVersionMajor() >= 4 )
+			return false;
+		break;
+	}
+	return true;
+}
+
 //0xA5 Packet
 //Last Modified on Wednesday, 06-May-1998 23:30:48 EDT 
 //Open Web Browser (Variable # of bytes) 
@@ -4859,20 +4875,20 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 	else if( cItem.GetType() == IT_HOUSESIGN )
 	{
 		tempEntry.stringNum = 1061112;
-		tempEntry.ourText = UString::sprintf( "%s",cItem.GetName() );
+		tempEntry.ourText = cItem.GetName();
 		FinalizeData( tempEntry, totalStringLen );
 
 		if( cItem.GetOwnerObj() != NULL )
 		{
 			tempEntry.stringNum = 1061113;
-			tempEntry.ourText = UString::sprintf( "%s", cItem.GetOwnerObj()->GetName().c_str() );
+			tempEntry.ourText = cItem.GetOwnerObj()->GetName();
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
 		tempEntry.stringNum = 1060584;
-		tempEntry.ourText = UString::sprintf( "%i",cItem.GetHP() );
+		tempEntry.ourText = UString::number( cItem.GetHP() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
@@ -4881,14 +4897,14 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 		if( cItem.GetHiDamage() > 0 )
 		{	
 			tempEntry.stringNum = 1060403;
-			tempEntry.ourText = UString::sprintf( "%i", cItem.GetHiDamage() );
+			tempEntry.ourText = UString::number( cItem.GetHiDamage() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 
 		if( cItem.GetDef() > 0 )
 		{	
 			tempEntry.stringNum = 1060448;
-			tempEntry.ourText = UString::sprintf( "%u",cItem.GetDef() );
+			tempEntry.ourText = UString::number( cItem.GetDef() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 
@@ -4902,26 +4918,26 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 		if( cItem.GetStrength2() > 0 )
 		{
 			tempEntry.stringNum = 1060485;
-			tempEntry.ourText = UString::sprintf( "%i", cItem.GetStrength2() );
+			tempEntry.ourText = UString::number( cItem.GetStrength2() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 		if( cItem.GetDexterity2() > 0 )
 		{
 			tempEntry.stringNum = 1060409;
-			tempEntry.ourText = UString::sprintf( "%i", cItem.GetDexterity2() );
+			tempEntry.ourText = UString::number( cItem.GetDexterity2() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 		if( cItem.GetIntelligence2() > 0 )
 		{
 			tempEntry.stringNum = 1060432;
-			tempEntry.ourText = UString::sprintf( "%i", cItem.GetIntelligence2() );
+			tempEntry.ourText = UString::number( cItem.GetIntelligence2() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 
 		if( cItem.GetStrength() > 1 )
 		{	
 			tempEntry.stringNum = 1061170;
-			tempEntry.ourText = UString::sprintf( "%i",cItem.GetStrength() );
+			tempEntry.ourText = UString::number( cItem.GetStrength() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -4952,7 +4968,7 @@ void CPToolTip::CopyData( SERIAL objSer )
 			CopyItemData( (*cItem), totalStringLen );
 	}
 
-	size_t packetLen = 14 + totalStringLen + 4;
+	size_t packetLen = 14 + totalStringLen + 5;
 	internalBuffer.resize( packetLen );
 	internalBuffer[1] = static_cast<UI08>(packetLen>>8);
 	internalBuffer[2] = static_cast<UI08>(packetLen%256);
@@ -4971,7 +4987,7 @@ void CPToolTip::CopyData( SERIAL objSer )
 		internalBuffer[++modifier] = static_cast<UI08>(stringLen%256);
 
 		//convert to uni character
-		for( size_t j = 0; j < stringLen; j = j+2 )
+		for( size_t j = 0; j < stringLen; j += 2 )
 		{	
 			internalBuffer[++modifier] = ourEntries[i].ourText[j/2];
 			internalBuffer[++modifier] = 0x00;

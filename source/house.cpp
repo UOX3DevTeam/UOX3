@@ -118,7 +118,6 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 					else
 					{
 						hItem->SetMovable( 2 );//Non-Moveable by default
-						hItem->SetPriv( 0 );//since even things in houses decay, no-decay by default
 						hItem->SetLocation( house );
 						hItem->SetOwner( mChar );
 						if( houseID >= 0x4000 )
@@ -247,7 +246,6 @@ void BuildHouse( cSocket *mSock, UI08 houseEntry )
 			return;
 
 		house->SetLocation( x, y, z );
-		house->SetPriv( 0 );
 		house->SetDecayable( itemsWillDecay );
 		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
 		house->SetOwner( mChar );
@@ -258,7 +256,6 @@ void BuildHouse( cSocket *mSock, UI08 houseEntry )
 		if( fakeHouse == NULL )
 			return;
 		fakeHouse->SetLocation( x, y, z );
-		fakeHouse->SetPriv( 0 );
 		fakeHouse->SetOwner( mChar );
 		fakeHouse->SetDecayable( false );
 	}

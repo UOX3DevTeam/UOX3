@@ -726,8 +726,6 @@ void UnloadRegions( void )
 //|									at the current time of writing, but will be when possible.
 //o---------------------------------------------------------------------------o
 
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-
 void processkey( int c )
 {
 	char outputline[128], temp[1024];
@@ -784,7 +782,7 @@ void processkey( int c )
 						indexcount = 0;
 						kill = true;
 						std::cout << std::endl;
-						messageLoop << "| CMD: System broadcast canceled.";
+						messageLoop << "CMD: System broadcast canceled.";
 						break;
 					case 0x08:
 						--indexcount;
@@ -800,7 +798,7 @@ void processkey( int c )
 						indexcount = 0;
 						kill = true;
 						std::cout << std::endl;
-						sprintf( temp, "| CMD: System broadcast sent message \"%s\"", outputline );
+						sprintf( temp, "CMD: System broadcast sent message \"%s\"", outputline );
 						memset( outputline, 0x00, sizeof( outputline ) );
 						messageLoop << temp;
 						break;
@@ -823,7 +821,6 @@ void processkey( int c )
 				messageLoop << "  ";
 				char szBuffer[128];
 				// We need to get an iteration into the map first of all the top level ULONGs then we can get an equal range.
-				typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
 				std::map<ULONG,UI08> localMap;
 				localMap.clear();
 				for(ADDMENUMAP_CITERATOR CJ=g_mmapAddMenuMap.begin();CJ != g_mmapAddMenuMap.end();CJ++)
@@ -863,117 +860,169 @@ void processkey( int c )
 				break;
 			case '1':
 				// Reload server ini file
-				messageLoop << "CMD: Loading Server INI... ";
-				cwmWorldState->SetReloadingScripts( true );
-				cwmWorldState->ServerData()->load();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading Server INI... ";
+					cwmWorldState->SetReloadingScripts( true );
+					cwmWorldState->ServerData()->load();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '2':
 				// Reload accounts, and update Access.adm if new accounts available.
-				messageLoop << "CMD: Loading Accounts... ";
-				cwmWorldState->SetReloadingScripts( true );
-				Accounts->Load();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading Accounts... ";
+					cwmWorldState->SetReloadingScripts( true );
+					Accounts->Load();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '3':
 				// Reload Region Files
-				messageLoop << "CMD: Loading Regions... ";
-				cwmWorldState->SetReloadingScripts( true );
-				UnloadRegions();
-				LoadRegions();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading Regions... ";
+					cwmWorldState->SetReloadingScripts( true );
+					UnloadRegions();
+					LoadRegions();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '4':
 				// Reload the serve spawn regions
-				messageLoop << "CMD: Loading Spawn Regions... ";
-				cwmWorldState->SetReloadingScripts( true );
-				UnloadSpawnRegions();
-				LoadSpawnRegions();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading Spawn Regions... ";
+					cwmWorldState->SetReloadingScripts( true );
+					UnloadSpawnRegions();
+					LoadSpawnRegions();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '5':
-				// Reload the current Spells 
-				messageLoop << "CMD: Loading spells... ";
-				cwmWorldState->SetReloadingScripts( true );
-				Magic->LoadScript();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				// Reload the current Spells
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading spells... ";
+					cwmWorldState->SetReloadingScripts( true );
+					Magic->LoadScript();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '6':
 				// Reload the server command list
-				messageLoop << "CMD: Loading commands... ";
-				cwmWorldState->SetReloadingScripts( true );
-				Commands->Load();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading commands... ";
+					cwmWorldState->SetReloadingScripts( true );
+					Commands->Load();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '7':
 				// Reload the server defantion files
-				messageLoop << "CMD: Loading Server DFN... ";
-				cwmWorldState->SetReloadingScripts( true );
-				FileLookup->Reload();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading Server DFN... ";
+					cwmWorldState->SetReloadingScripts( true );
+					FileLookup->Reload();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '8':
 				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-				messageLoop << "CMD: Loading JSE Scripts... ";
-				messageLoop << MSG_RELOADJS;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading JSE Scripts... ";
+					cwmWorldState->SetReloadingScripts( true );
+					messageLoop << MSG_RELOADJS;
+					cwmWorldState->SetReloadingScripts( false );
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '9':
 				// Reload the HTML output templates
-				messageLoop << "CMD: Loading HTML Templates... ";
-				cwmWorldState->SetReloadingScripts( true );
-				HTMLTemplates->Unload();
-				HTMLTemplates->Load();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					messageLoop << "CMD: Loading HTML Templates... ";
+					cwmWorldState->SetReloadingScripts( true );
+					HTMLTemplates->Unload();
+					HTMLTemplates->Load();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case '0':
-				cwmWorldState->SetReloadingScripts( true );
-				// Reload all the files. If there are issues with these files change the order reloaded from here first.
-				cwmWorldState->ServerData()->load();
-				messageLoop << "CMD: Loading All";
-				messageLoop << "     Server INI... ";
-				// Reload accounts, and update Access.adm if new accounts available.
-				messageLoop << "     Loading Accounts... ";
-				Accounts->Load();
-				messageLoop << MSG_PRINTDONE;
-				// Reload Region Files
-				messageLoop << "     Loading Regions... ";
-				UnloadRegions();
-				LoadRegions();
-				messageLoop << MSG_PRINTDONE;
-				// Reload the serve spawn regions
-				messageLoop << "     Loading Spawn Regions... ";
-				UnloadSpawnRegions();
-				LoadSpawnRegions();
-				messageLoop << MSG_PRINTDONE;
-				// Reload the server command list
-				messageLoop << "     Loading commands... ";
-				Commands->Load();
-				messageLoop << MSG_PRINTDONE;
-				// Reload DFN's
-				messageLoop << "     Loading Server DFN... ";
-				FileLookup->Reload();
-				messageLoop << MSG_PRINTDONE;
-				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-				messageLoop << "     Loading JSE Scripts... ";
-				messageLoop << MSG_RELOADJS;
-				// Reload the current Spells 
-				messageLoop << "     Loading spells... ";
-				Magic->LoadScript();
-				messageLoop << MSG_PRINTDONE;
-				// Reload the HTML output templates
-				messageLoop << "     Loading HTML Templates... ";
-				HTMLTemplates->Unload();
-				HTMLTemplates->Load();
-				cwmWorldState->SetReloadingScripts( false );
-				messageLoop << MSG_PRINTDONE;
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					cwmWorldState->SetReloadingScripts( true );
+					// Reload all the files. If there are issues with these files change the order reloaded from here first.
+					cwmWorldState->ServerData()->load();
+					messageLoop << "CMD: Loading All";
+					messageLoop << "     Server INI... ";
+					// Reload accounts, and update Access.adm if new accounts available.
+					messageLoop << "     Loading Accounts... ";
+					Accounts->Load();
+					messageLoop << MSG_PRINTDONE;
+					// Reload Region Files
+					messageLoop << "     Loading Regions... ";
+					UnloadRegions();
+					LoadRegions();
+					messageLoop << MSG_PRINTDONE;
+					// Reload the serve spawn regions
+					messageLoop << "     Loading Spawn Regions... ";
+					UnloadSpawnRegions();
+					LoadSpawnRegions();
+					messageLoop << MSG_PRINTDONE;
+					// Reload the server command list
+					messageLoop << "     Loading commands... ";
+					Commands->Load();
+					messageLoop << MSG_PRINTDONE;
+					// Reload DFN's
+					messageLoop << "     Loading Server DFN... ";
+					FileLookup->Reload();
+					messageLoop << MSG_PRINTDONE;
+					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
+					messageLoop << "     Loading JSE Scripts... ";
+					messageLoop << MSG_RELOADJS;
+					// Reload the current Spells 
+					messageLoop << "     Loading spells... ";
+					Magic->LoadScript();
+					messageLoop << MSG_PRINTDONE;
+					// Reload the HTML output templates
+					messageLoop << "     Loading HTML Templates... ";
+					HTMLTemplates->Unload();
+					HTMLTemplates->Load();
+					cwmWorldState->SetReloadingScripts( false );
+					messageLoop << MSG_PRINTDONE;
+				}
+				else
+					messageLoop << "Server can only load one script at a time";
 				break;
 			case 'T':
 				// Timed shut down(10 minutes)
@@ -1723,7 +1772,7 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 				{
 					UI08 dir = (UI08)( itemCheck->GetDir() + 4 );
 					if( dir > 7 )
-						dir -= 8;
+						dir %= 8;
 					MoveBoat( dir, mBoat );
 				}
 				mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
@@ -2038,15 +2087,15 @@ void CWorldMain::CheckAutoTimers( void )
 			if( mObj->GetObjType() == OT_CHAR )
 			{
 				CChar *uChar = static_cast<CChar *>(mObj);
-				if( uChar->GetUpdateHitpoints() )
+				if( uChar->GetUpdate( UT_HITPOINTS ) )
 					updateStats( uChar, 0 );
-				if( uChar->GetUpdateMana() )
+				if( uChar->GetUpdate( UT_STAMINA ) )
 					updateStats( uChar, 1 );
-				if( uChar->GetUpdateStamina() )
+				if( uChar->GetUpdate( UT_MANA ) )
 					updateStats( uChar, 2 );
-				if( uChar->GetUpdateLocation() )
+				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
-				else if( uChar->GetUpdate() )
+				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
 			}
 			else
@@ -3632,7 +3681,7 @@ int main( int argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 			
 			if( !cwmWorldState->GetReloadingScripts() )
-			cwmWorldState->CheckAutoTimers();
+				cwmWorldState->CheckAutoTimers();
 			
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );

@@ -1588,7 +1588,6 @@ void CGuildCollection::PlaceStone( cSocket *s, CItem *deed )
 		nGuild->Webpage( DEFAULTWEBPAGE );
 		nGuild->Charter( DEFAULTCHARTER );
 		stone->SetType( IT_GUILDSTONE );
-		stone->SetPriv( 0 );
 		stone->SetTempVar( CITV_MORE, gNum );
 		stone->SetWipeable( false );
 		stone->SetDecayable( false );

@@ -1941,10 +1941,11 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->target( 0, TARGET_REPAIRBOW, 485 );	// What do we wish to repair?
 			return true;
 		case IT_TILLER:	// Tillerman
-			if( !ValidateObject( GetBoat( mSock ) ) )
+			if( ValidateObject( GetBoat( mSock ) ) )
 			{
 				CBoatObj *boat = static_cast<CBoatObj *>(calcItemObjFromSer( x->GetTempVar( CITV_MORE ) ));
-				ModelBoat( mSock, boat );
+				if( ValidateObject( boat ) )
+					ModelBoat( mSock, boat );
 			}
 			return true;
 		case IT_GUILDSTONE:	// Guildstone Deed

@@ -91,7 +91,11 @@ JSBool CChar_WalkTo( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsva
 JSBool CChar_RunTo( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CChar_GetTimer( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CChar_SetTimer( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-
+JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Item Methods
 JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -108,6 +112,9 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 JSBool CItem_SetPoison( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 
 // BaseObject Methods
@@ -134,6 +141,8 @@ JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Guild Methods
 JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -152,7 +161,9 @@ JSBool JS_CharbySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 JSBool JS_ItembySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool JS_AddNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool JS_AddItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_GetWorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool JS_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool JS_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool JS_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Race methods
 JSBool CRace_CanWearArmour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -259,6 +270,11 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "WalkTo",				CChar_WalkTo,			1, 0, 0 },
 	{ "RunTo",				CChar_RunTo,			1, 0, 0 },
 	{ "DistanceTo",			CBase_DistanceTo,		1, 0, 0 },
+	{ "OpenLayer",			CChar_OpenLayer,		2, 0, 0 },
+	{ "BoltEffect",			CChar_BoltEffect,		0, 0, 0 },
+	{ "Gate",				CChar_Gate,				1, 0, 0 },
+	{ "Recall",				CChar_Recall,			1, 0, 0 },
+	{ "Mark",				CChar_Mark,				1, 0, 0 },
 
 	{ "GetTimer",			CChar_GetTimer,			1, 0, 0 },
 	{ "SetTimer",			CChar_SetTimer,			2, 0, 0 },
@@ -301,6 +317,9 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "NextItem",			CBase_NextItem,				0, 0, 0 },
 	{ "FinishedItems",		CBase_FinishedItems,		0, 0, 0 },
 	{ "DistanceTo",			CBase_DistanceTo,			1, 0, 0 },
+	{ "Glow",				CItem_Glow,					1, 0, 0 },
+	{ "UnGlow",				CItem_UnGlow,				1, 0, 0 },
+	{ "PlaceInPack",		CItem_PlaceInPack,			1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 
@@ -320,6 +339,10 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "GetWord",			CSocket_GetWord,	1, 0, 0 },
 	{ "OpenGump",			CSocket_OpenGump,	1, 0, 0 },
 	{ "OpenURL",			CSocket_OpenURL,    1, 0, 0 },
+	{ "BuyFrom",			CMisc_BuyFrom,		1, 0, 0 },
+	{ "SellTo",				CMisc_SellTo,		1, 0, 0 },
+	{ "WhoList",			CSocket_WhoList,	0, 0, 0 },
+	{ "Midi",				CSocket_Midi,		1, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 

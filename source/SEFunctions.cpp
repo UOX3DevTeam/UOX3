@@ -23,6 +23,8 @@
 #include "cThreadQueue.h"
 #include "cHTMLSystem.h"
 #include "cServerDefinitions.h"
+#include "Dictionary.h"
+#include "speech.h"
 
 namespace UOX
 {
@@ -454,11 +456,6 @@ JSBool SE_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
-JSBool SE_GlowItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_TRUE;
-}
-
 JSBool SE_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -691,20 +688,17 @@ JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 4 && argc != 6 )
+	if( argc != 5 )
 	{
-		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 4 or 6)" );
+		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 5)" );
 		return JS_FALSE;
 	}
-	cSocket *s			= NULL;
 	CChar *cMade		= NULL;
-	UOXSOCKET Socket	= (UOXSOCKET)JSVAL_TO_INT( argv[0] );
-	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	UI16 x				= (UI16)JSVAL_TO_INT( argv[2] );
-	UI16 y				= (UI16)JSVAL_TO_INT( argv[3] );
-	SI08 z				= (SI08)JSVAL_TO_INT( argv[4] );
-	UI08 wrld			= (UI08)JSVAL_TO_INT( argv[5] );
-	s					= Network->GetSockPtr( Socket );
+	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	UI16 x				= (UI16)JSVAL_TO_INT( argv[1] );
+	UI16 y				= (UI16)JSVAL_TO_INT( argv[2] );
+	SI08 z				= (SI08)JSVAL_TO_INT( argv[3] );
+	UI08 wrld			= (UI08)JSVAL_TO_INT( argv[4] );
 	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, wrld );
 	if( cMade != NULL )
 	{
@@ -720,32 +714,29 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 
 JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 4 )
+	if( argc < 3 )
 	{
-		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 4)" );
+		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 3)" );
 		return JS_FALSE;
 	}
 	
-	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
-	JSObject *mChar		= JSVAL_TO_OBJECT( argv[1] );
-	cSocket *mySock		= (cSocket *)JS_GetPrivate( cx, mSock );
-	CChar *myChar		= (CChar *)JS_GetPrivate( cx, mChar );
+	JSObject *mSock				= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mChar				= JSVAL_TO_OBJECT( argv[1] );
+	cSocket *mySock				= (cSocket *)JS_GetPrivate( cx, mSock );
+	CChar *myChar				= (CChar *)JS_GetPrivate( cx, mChar );
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	bool bpRandValue			= ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 	bool bAutoStack				= false;
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
-	ObjectType itemType		= OT_ITEM;
+	ObjectType itemType			= OT_ITEM;
 
+	if( argc > 3 )
+		iAmount					= static_cast< UI16 >(JSVAL_TO_INT( argv[3] ));
 	if( argc > 4 )
-		iAmount		= static_cast< UI16 >(JSVAL_TO_INT( argv[4] ));
+		itemType				= static_cast<ObjectType>(JSVAL_TO_INT( argv[4] ));
 	if( argc > 5 )
-		itemType		= static_cast<ObjectType>( JSVAL_TO_INT( argv[5] ));
-	if( argc > 6 )
-		bInPack		= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
-	if( argc > 7 )
-		bAutoStack	= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	
 	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
 	if( newItem != NULL )
@@ -761,9 +752,9 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 }
 JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 9 )
+	if( argc != 7 )
 	{
-		DoSEErrorMessage( "CreateBlankItem: Invalid number of arguments (takes 9)" );
+		DoSEErrorMessage( "CreateBlankItem: Invalid number of arguments (takes 7)" );
 		return JS_FALSE;
 	}
 	CItem *newItem			= NULL;
@@ -773,21 +764,19 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	CChar *myChar			= (CChar *)JS_GetPrivate( cx, mChar );
 	int amount				= (int)JSVAL_TO_INT( argv[2] );
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );
-	bool stackable			= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );	
 	bool isString			= false;
 	std::string szItemName;
 	UI16 itemID				= INVALIDID;
-	if( JSVAL_IS_STRING( argv[5] ) )
+	if( JSVAL_IS_STRING( argv[4] ) )
 	{
-		szItemName = JS_GetStringBytes( JS_ValueToString( cx, argv[5] ) );
+		szItemName = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) );
 		isString = true;
 	}
 	else
-		itemID = (UI16)JSVAL_TO_INT( argv[5] );
-	UI16 colour				= (UI16)JSVAL_TO_INT( argv[6] );
-	ObjectType itemType	= static_cast<ObjectType>(JSVAL_TO_INT( argv[7] ));
-	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
-	bool bSend				= ( JSVAL_TO_BOOLEAN( argv[9] ) == JS_TRUE );
+		itemID				= (UI16)JSVAL_TO_INT( argv[4] );
+	UI16 colour				= (UI16)JSVAL_TO_INT( argv[5] );
+	ObjectType itemType		= static_cast<ObjectType>(JSVAL_TO_INT( argv[6] ));
+	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
 
 	newItem = Items->CreateItem( mySock, myChar, itemID, amount, colour, itemType, inPack );
 	if( newItem != NULL )
@@ -853,6 +842,25 @@ JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	RACEID r1 = (RACEID)JSVAL_TO_INT( argv[1] );
 	*rval = INT_TO_JSVAL( Races->CompareByRace( r0, r1 ) );
 
+	return JS_TRUE;
+}
+
+JSBool SE_RaceGate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "RaceGate: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock		= (cSocket *)JS_GetPrivate( cx, mSock );
+	JSObject *mChar		= JSVAL_TO_OBJECT( argv[1] );
+	CChar *myChar		= (CChar *)JS_GetPrivate( cx, mChar );
+	RACEID race			= (RACEID)JSVAL_TO_INT( argv[2] );
+	if( race < Races->Count() || race == 65535 )
+		Races->gate( myChar, race, true );
+	else
+		mySock->sysmessage( 13 );
 	return JS_TRUE;
 }
 
@@ -1520,7 +1528,87 @@ JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	} 	
 	*rval = INT_TO_JSVAL( Commands->NumArguments() ); 	
 	return JS_TRUE; 
-} 
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	7/17/2004
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows the JSScripts to pull entries from the dictionaries
+//|						and convert them to a string.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 1 )
+	{
+		DoSEErrorMessage( "GetDictionaryEntry: Invalid number of arguments (takes at least 1)" );
+		return JS_FALSE;
+	}
+
+	SI32 dictEntry = (SI32)JSVAL_TO_INT( argv[0] );
+	UnicodeTypes language = ZERO;
+	if( argc == 2 )
+		language = (UnicodeTypes)JSVAL_TO_INT( argv[1] );
+	std::string txt = Dictionary->GetEntry( dictEntry, language );
+
+	JSString *strTxt = NULL;
+	strTxt = JS_NewStringCopyZ( cx, txt.c_str() );
+	*rval = STRING_TO_JSVAL( strTxt );
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	7/17/2004
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Globally yell a message from JS (Based on Commandlevel)
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 3 )
+	{
+		DoSEErrorMessage( "Yell: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock			= (cSocket *)JS_GetPrivate( cx, mSock );
+	CChar *myChar			= mySock->CurrcharObj();
+	std::string textToYell	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	UI08 commandLevel		= (UI08)JSVAL_TO_INT( argv[2] );
+
+	std::string yellTo = "";
+	switch( (CommandLevels)commandLevel )
+	{
+	case PLAYER_CMDLEVEL:	yellTo = " (GLOBAL YELL): ";	break;
+	case CNS_CMDLEVEL:		yellTo = " (CNS YELL): ";		break;
+	case GM_CMDLEVEL:		yellTo = " (GM YELL): ";		break;
+	case ADMIN_CMDLEVEL:	yellTo = " (ADMIN YELL): ";		break;
+	}
+
+	UString tmpString = myChar->GetName() + yellTo + textToYell;
+
+	CSpeechEntry *toAdd = SpeechSys->Add();
+	toAdd->Speech( tmpString );
+	toAdd->Font( (FontType)myChar->GetFontType() );
+	toAdd->Speaker( INVALIDSERIAL );
+	toAdd->Colour( mySock->GetWord( 4 ) );
+	toAdd->Type( SYSTEM );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
+	toAdd->TargType( SPTRG_BROADCASTALL );
+	toAdd->CmdLevel( commandLevel );
+	return JS_TRUE;
+}
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -1584,6 +1672,9 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();
 			cwmWorldState->ServerData()->load();
+			break;
+	case 9: // Reload Accounts
+			Accounts->Load();
 			break;
 	default:
 		break;

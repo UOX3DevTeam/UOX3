@@ -82,12 +82,7 @@ const std::string dirnames[NUM_DEFS] =
 	"creatures"
 };
 
-#include "ssection.h"
-
 std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-std::multimap<ULONG,ADDMENUITEM>::iterator ADDMENUMAP_ITERATOR;
-std::multimap<ULONG,ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
 
 cServerDefinitions::cServerDefinitions() : defaultPriority( 0 )
 {
@@ -126,8 +121,6 @@ cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPri
 //o--------------------------------------------------------------------------o
 //|	Returns				-	[TRUE] if succesfull
 //o--------------------------------------------------------------------------o	
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-
 bool cServerDefinitions::Reload( void )
 {
 	// We need to clear out the AddMenuItem Map

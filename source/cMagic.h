@@ -35,10 +35,6 @@ public:
 	bool CheckMana( CChar *s, int num );
 	bool CheckStamina( CChar *s, int num );
 	bool CheckHealth( CChar *s, int num );
-	void Recall( cSocket *s ); // we need these four for the commands (separately) !!!
-	void Mark( cSocket *s );
-	void Gate( cSocket *s );
-	void Heal( cSocket *s );
 	bool CheckMagicReflect( CChar *i );
 	void MagicDamage( CChar *p, int amount, CChar *attacker = NULL );
 	void SpellFail( cSocket *s );

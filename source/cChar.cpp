@@ -3172,17 +3172,17 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'I':
 				if( UTag == "ISNPC" )
 				{
-					SetNpc( data.toShort() == 1 );
+					SetNpc( (data.toShort() == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSHOP" )
 				{
-					SetShop( data.toShort() == 1 );
+					SetShop( (data.toShort() == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISWARRING" )
 				{
-					SetWar( data.toShort() == 1 );
+					SetWar( (data.toShort() == 1) );
 					rvalue = true;
 				}
 				break;
@@ -3196,7 +3196,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'M':
 				if( UTag == "MAYLEVITATE" )
 				{
-					SetLevitate( data.toShort() == 1 );
+					SetLevitate( (data.toShort() == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "MAKING" ) // Depreciated
@@ -3973,12 +3973,15 @@ void CChar::SendWornItems( cSocket *mSock )
 
 void CChar::WalkXY( SI16 newX, SI16 newY )
 {
+	oldLocX = x;
+	oldLocY = y;
 	x = newX;
 	y = newY;
 }
 
 void CChar::WalkZ( SI08 newZ )
 {
+	oldLocZ = z;
 	z		= newZ;
 	dispz	= newZ;
 }

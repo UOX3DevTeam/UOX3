@@ -67,8 +67,6 @@ SEngineFunc SE_SetDWord;			//											***
 SEngineFunc SE_SetString;			//											***
 SEngineFunc SE_ReadBytes;			//											***
 
-SEngineFunc SE_GlowItem;			//											*
-
 SEngineFunc SE_MakeMenu;			//											***
 SEngineFunc SE_MakeItem;			//											***
 
@@ -142,6 +140,10 @@ SEngineFunc SE_NumToString;
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
 SEngineFunc SE_Reload;
+
+SEngineFunc SE_GetDictionaryEntry;
+SEngineFunc SE_RaceGate;
+SEngineFunc SE_Yell;
 
 #endif
 

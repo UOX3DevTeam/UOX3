@@ -52,6 +52,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "reflectable",		CSP_REFLECTABLE,		JSPROP_ENUMANDPERM },
 	{ "agressiveSpell",		CSP_AGRESSIVESPELL,		JSPROP_ENUMANDPERM },
 	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM },
+	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM },
 	{ NULL,			-1,			(UI08)0	   }
 };
 
@@ -197,6 +198,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "petCount",		CCP_PETCOUNT,		JSPROP_ENUMPERMRO  },
 	{ "ownedItemsCount",CCP_OWNEDITEMSCOUNT,JSPROP_ENUMPERMRO  },
 	{ "cell",			CCP_CELL,			JSPROP_ENUMANDPERM },
+	{ "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM },
+	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
@@ -282,6 +285,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "clientLetterVer",	CSOCKP_CLIENTLETTERVER,		JSPROP_ENUMANDPERM },
 	{ "clientType",			CSOCKP_CLIENTTYPE,			JSPROP_ENUMANDPERM },
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM },
+	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,				(UI08)0}
 };
 

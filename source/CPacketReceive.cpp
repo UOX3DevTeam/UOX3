@@ -22,7 +22,7 @@ cPInputBuffer *WhichLoginPacket( UI08 packetID, cSocket *s )
 	switch( packetID )
 	{
 		case 0x00:	return ( new CPICreateCharacter( s )	);	// Character Create
-		case 0x01:	return NULL;	// Main Menu on the character select screen
+		case 0x01:	return NULL;								// Main Menu on the character select screen
 		case 0x04:	return ( new CPIGodModeToggle( s )		);
 		case 0x5D:	return ( new CPIPlayCharacter( s )		);	// Character Select
 		case 0x73:	return ( new CPIKeepAlive( s )			);
@@ -31,10 +31,10 @@ cPInputBuffer *WhichLoginPacket( UI08 packetID, cSocket *s )
 		case 0x91:	return ( new CPISecondLogin( s )		);
 		case 0xA0:	return ( new CPIServerSelect( s )		);
 		case 0xA4:	return ( new CPISpy( s )				);
-		case 0xBB:	return NULL;	// No idea
+		case 0xBB:	return NULL;								// No idea
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return NULL;	
-		case 0xD9:	return NULL;	// New un-documented packet
+		case 0xD9:	return NULL;								// Client Hardware
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
@@ -94,6 +94,7 @@ cPInputBuffer *WhichPacket( UI08 packetID, cSocket *s )
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
+		case 0xD9:	return NULL;								// Client Hardware
 		default:	return NULL;
 	}
 	return NULL;

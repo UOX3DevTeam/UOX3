@@ -13,7 +13,6 @@ enum TargetIDs
 	TARGET_ADDSPAWNER,
 	TARGET_ADDSCRIPTSPAWNER,
 	TARGET_TELE,
-	TARGET_REMOVE,
 	TARGET_DYE,
 	TARGET_XGO,
 	TARGET_KEY,
@@ -23,7 +22,6 @@ enum TargetIDs
 	TARGET_REPAIRBOW,
 	TARGET_KILL,
 	TARGET_RESURRECT,
-	TARGET_BOLT,
 	TARGET_REPAIRMETAL,
 	TARGET_KICK,
 	TARGET_ARMSLORE,
@@ -34,13 +32,9 @@ enum TargetIDs
 	TARGET_UNFREEZE,
 	TARGET_ALLSET,
 	TARGET_ANATOMY,
-	TARGET_RECALL,
-	TARGET_MARK,
 	TARGET_ITEMID,
 	TARGET_EVALINT,
 	TARGET_TAME,
-	TARGET_GATE,
-	TARGET_HEAL,
 	TARGET_FISH,
 	TARGET_INFO,
 	TARGET_SHOWDETAIL,
@@ -48,10 +42,7 @@ enum TargetIDs
 	TARGET_SMITH,
 	TARGET_MINE,
 	TARGET_SMELTORE,
-	TARGET_NPCACT,
 	TARGET_WSTATS,
-	TARGET_NPCFOLLOW,
-	TARGET_NPCFOLLOW2,
 	TARGET_NPCRESURRECT,
 	TARGET_NPCCIRCLE,
 	TARGET_NPCWANDER,
@@ -69,21 +60,13 @@ enum TargetIDs
 	TARGET_SWORD,
 	TARGET_AREACOMMAND,
 	TARGET_CASTSPELL,
-	TARGET_REMOVESHOP,
-	TARGET_XBANK,
 	TARGET_ALCHEMY,
 	TARGET_DUPE,
-	TARGET_MOVETOBAG,
-	TARGET_SELL,
-	TARGET_MANA,
-	TARGET_STAMINA,
-	TARGET_GMOPEN,
 	TARGET_MAKESHOP,
 	TARGET_FOLLOW,
 	TARGET_ATTACK,
 	TARGET_TRANSFER,
 	TARGET_GUARD,
-	TARGET_BUYSHOP,
 	TARGET_RESTOCK,
 	TARGET_FRIEND,
 	TARGET_JAIL,
@@ -94,7 +77,6 @@ enum TargetIDs
 	TARGET_UNHIDE,
 	TARGET_CARPENTRY,
 	TARGET_XTELEPORT,
-	TARGET_FULLSTATS,
 	TARGET_BEGGING,
 	TARGET_ANIMALLORE,
 	TARGET_FORENSICS,
@@ -109,7 +91,6 @@ enum TargetIDs
 	TARGET_COOKING,
 	TARGET_LOADCANNON,
 	TARGET_FLETCHING,
-	TARGET_SETPOISONED,
 	TARGET_TINKERING,
 	TARGET_TINKERAXEL,
 	TARGET_TINKERAWG,
@@ -130,14 +111,11 @@ enum TargetIDs
 	TARGET_HOUSEUNLIST,
 	TARGET_HOUSELOCKDOWN,
 	TARGET_HOUSERELEASE,
-	TARGET_BAN,
 	TARGET_SMELT,
 	TARGET_SHOWSKILLS,
-	TARGET_UNGLOW,
 	TARGET_INCZ,
 	TARGET_INCX,
 	TARGET_INCY,
-	TARGET_GLOW,
 	TARGET_BUILDHOUSE,
 	TARGET_NOFUNC
 };
@@ -154,9 +132,6 @@ private:
 	TargetFunc AreaCommand;
 	TargetFunc AttackTarget;
 	TargetFunc AxeTarget;
-	TargetFunc BanTarg;
-	TargetFunc BoltTarget;
-	TargetFunc BuyShopTarget;
 	TargetFunc CloseTarget;
 	TargetFunc ColorsTarget;
 	TargetFunc CorpseTarget;
@@ -165,9 +140,6 @@ private:
 	TargetFunc DvatTarget;
 	TargetFunc DyeTarget;
 	TargetFunc FollowTarget;
-	TargetFunc FullStatsTarget;
-	TargetFunc GlowTarget;
-	TargetFunc GmOpenTarget;
 	TargetFunc GuardTarget;
 	TargetFunc FriendTarget;
 	TargetFunc HandleGuildTarget;
@@ -186,34 +158,23 @@ private:
 	TargetFunc MakeShopTarget;
 	TargetFunc MakeStatusTarget;
 	TargetFunc MakeTownAlly;
-	TargetFunc ManaTarget;
-	TargetFunc MoveToBagTarget;
-	TargetFunc NpcTarget;
-	TargetFunc NpcTarget2;
 	TargetFunc permHideTarget;
 	TargetFunc PlVBuy;
 	TargetFunc PossessTarget;
-	TargetFunc RemoveShopTarget;
-	TargetFunc RemoveTarget;
 	TargetFunc ResurrectionTarget;
-	TargetFunc SellStuffTarget;
-	TargetFunc SetPoisonedTarget;
 	TargetFunc ShowDetail;
 	TargetFunc ShowSkillTarget;
 	TargetFunc SmeltTarget;
 	TargetFunc SquelchTarg;
-	TargetFunc StaminaTarget;
 	TargetFunc SwordTarget;
 	TargetFunc TeleStuff;
 	TargetFunc TeleStuff2;
 	TargetFunc TeleTarget;
 	TargetFunc Tiling;
 	TargetFunc TransferTarget;
-	TargetFunc UnglowTarget;
 	TargetFunc unHideTarget;
 	TargetFunc WstatsTarget;
 	TargetFunc VialTarget;
-	TargetFunc DoActionTarget;
 	TargetFunc BuildHouseTarget;
 
 	TargetFunc KillTarget;

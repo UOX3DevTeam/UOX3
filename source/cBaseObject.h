@@ -248,17 +248,7 @@ public:
 	virtual void			SendToSocket( cSocket *mSock ) = 0;
 	void					Dirty( UpdateTypes updateType );
 
-	void					SetUpdate( void );
-	void					SetUpdateLocation( void );
-	void					SetUpdateHitpoints( void );
-	void					SetUpdateStamina( void );
-	void					SetUpdateMana( void );
-
-	bool					GetUpdate( void );
-	bool					GetUpdateLocation( void );
-	bool					GetUpdateHitpoints( void );
-	bool					GetUpdateStamina( void );
-	bool					GetUpdateMana( void );
+	bool					GetUpdate( UpdateTypes updateType );
 
 	virtual void			Delete( void ) = 0;
 	virtual void			Cleanup( void );

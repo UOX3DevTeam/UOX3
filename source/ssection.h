@@ -225,7 +225,15 @@ typedef struct __ADDMENUITEM__
 	//UI32	typeID;				// At this point unused.
 	UI32	objectFlags;
 	UI32	objectID;
+	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ), 
+		weightPosition( 0 ), objectFlags( 0 ), objectID( 0 )
+	{
+	}
 } ADDMENUITEM, *LPADDMENUITEM;
+
+extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
+typedef std::multimap<ULONG,ADDMENUITEM>::iterator			ADDMENUMAP_ITERATOR;
+typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator	ADDMENUMAP_CITERATOR;
 
 class ScriptSection
 {

@@ -358,6 +358,7 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool 
 	mCreated->SetID( iID );
 	GetScriptItemSettings( iCreated );
 	mCreated->WorldNumber( mChar->WorldNumber() );
+	mCreated->SetDecayable( false );
 	if( !cName.empty() )
 		mCreated->SetName( cName );
 
@@ -374,6 +375,9 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool 
 //o--------------------------------------------------------------------------o
 CItem * cItem::CreateBaseItem( UI08 worldNum, ObjectType itemType )
 {
+	if( itemType != OT_ITEM && itemType != OT_SPAWNER )
+		return NULL;
+
 	CItem *iCreated = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( itemType ));
 	if( iCreated == NULL )
 		return NULL;
