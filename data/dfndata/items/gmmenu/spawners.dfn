@@ -1,1593 +1,1062 @@
+[base_spawner]
+{
+get=base_item
+weight=500
+interval=1 5
+visible=1
+decay=0
+}
+
 [orcspawn]
 {
-NAME=Orc Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Orc Spawner
+id=0x1F14
+type=62
 spawnobj=orc
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [orclordspawn]
 {
-NAME=Orc Lord Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Orc Lord Spawner
+id=0x1F14
+type=62
 spawnobj=orclord
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [orccaptspawn]
 {
-NAME=Orc Capt Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-spawnobj=orccaptian
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Orc Capt Spawner
+id=0x1F14
+type=62
+spawnobj=orccaptain
+amount=2
 }
 
 [orcmagespawn]
 {
-NAME=Orc Mage Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Orc Mage Spawner
+id=0x1F14
+type=62
 spawnobj=orcmage
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [ettinspawn]
 {
-NAME=Ettin Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Ettin Spawner
+id=0x1F14
+type=62
 spawnobj=ettin
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [goatspawn]
 {
-NAME=Goat Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Goat Spawner
+id=0x1F14
+type=62
 spawnobj=goat
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [harpyspawn]
 {
-NAME=Harpy Spawner
+get=base_spawner
+name=Harpy Spawner
 spawnobj=harpy
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+id=0x1F14
+type=62
+amount=3
 }
 
 //random spawners
 [randorcspawn]
 {
-NAME=Random Orc Spawner
+get=base_spawner
+name=Random Orc Spawner
 spawnobjlist=allorc
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+id=0x1F14
+type=62
+amount=3
 }
 
 [randlizardspawn]
 {
-NAME=Random Lizard Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Random Lizard Spawner
+id=0x1F14
+type=62
 spawnobjlist=alllizardlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [randratmanspawn]
 {
-NAME=Random Ratman Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Random Ratman Spawner
+id=0x1F14
+type=62
 spawnobjlist=allratmenlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [randdragon]
 {
-NAME=Random Dragon Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Random Dragon Spawner
+id=0x1F14
+type=62
 spawnobjlist=alldragonlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [randbarn]
 {
-NAME=Random Barn Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Random Barn Spawner
+id=0x1F14
+type=62
 spawnobjlist=barnlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [airelemspawn]
 {
-NAME=Air Elemental Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+name=Air Elemental Spawner
+id=0x1F14
+type=62
 spawnobj=airele
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [earthelemspawn]
 {
-NAME=Earth Elemental Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Earth Elemental Spawner
+id=0x1F14
+type=62
 spawnobj=earthele
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [fireelemspawn]
 {
-NAME=Fire Elemental Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Fire Elemental Spawner
+id=0x1F14
+type=62
 spawnobj=firele
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [waterelemspawn]
 {
-NAME=Water Elemental Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Water Elemental Spawner
+id=0x1F14
+type=62
 spawnobj=waterele
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [poiselemspawn]
 {
-NAME=Poison Elemental Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Poison Elemental Spawner
+id=0x1F14
+type=62
 spawnobj=poisonel
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [gserpentspawn]
 {
-NAME=Giant Serpent Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Giant Serpent Spawner
+id=0x1F14
+type=62
 spawnobj=giantserpent
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [gspiderspawn]
 {
-NAME=Giant Spider Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Giant Spider Spawner
+id=0x1F14
+type=62
 spawnobj=giantspider
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [gscorppawn]
 {
-NAME=Giant Scorpion Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Giant Scorpion Spawner
+id=0x1F14
+type=62
 spawnobj=giantscorpion
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [lichspawn]
 {
-NAME=Lich Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Lich Spawner
+id=0x1F14
+type=62
 spawnobj=lich
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [lichlordspawn]
 {
-NAME=Lich Lord Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Lich Lord Spawner
+id=0x1F14
+type=62
 spawnobj=lichlord
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [bonemagespawn]
 {
-NAME=Bone Mage Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Bone Mage Spawner
+id=0x1F14
+type=62
 spawnobj=bonemage
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [boneknightspawn]
 {
-NAME=Bone Knight Spawner
+get=base_spawner
+name=Bone Knight Spawner
 spawnobj=boneknight
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+id=0x1F14
+type=62
+amount=2
 }
 
 [boneaxespawn]
 {
-NAME=Bone Axeman Spawner
+get=base_spawner
+name=Bone Axeman Spawner
 spawnobj=boneaxeman
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+id=0x1F14
+type=62
+amount=2
 }
 
 [arcticspawn]
 {
-NAME=Arctic Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Arctic Spawner
+id=0x1F14
+type=62
 spawnobjlist=arcticlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [cavespawn]
 {
-NAME=Cave Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Cave Spawner
+id=0x1F14
+type=62
 spawnobjlist=cavelist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [desertspawn]
 {
-NAME=Desert Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Desert Spawner
+id=0x1F14
+type=62
 spawnobjlist=desertlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [dungeonspawn]
 {
-NAME=Dungeon Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Dungeon Spawner
+id=0x1F14
+type=62
 spawnobjlist=dungeonlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=3
 }
 
 [eeriespawn]
 {
-NAME=Eerie Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Eerie Spawner
+id=0x1F14
+type=62
 MOREX=1040
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [farmspawn]
 {
-NAME=Farm Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Farm Spawner
+id=0x1F14
+type=62
 spawnobjlist=farmlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [forestspawn]
 {
-NAME=Forest Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Forest Spawner
+id=0x1F14
+type=62
 spawnobjlist=forestlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [junglespawn]
 {
-NAME=Jungle Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Jungle Spawner
+id=0x1F14
+type=62
 spawnobjlist=junglelist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [mountainspawn]
 {
-NAME=Mountain Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Mountain Spawner
+id=0x1F14
+type=62
 spawnobjlist=mountainlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [oceanspawn]
 {
-NAME=Ocean Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Ocean Spawner
+id=0x1F14
+type=62
 spawnobjlist=oceanlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [swampspawn]
 {
-NAME=Swamp Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Swamp Spawner
+id=0x1F14
+type=62
 spawnobjlist=swamplist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [townspawn]
 {
-NAME=Town Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Town Spawner
+id=0x1F14
+type=62
 spawnobjlist=townlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [volcanicspawn]
 {
-NAME=Volcanic Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Volcanic Spawner
+id=0x1F14
+type=62
 spawnobjlist=volcaniclist
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[drowspawn]
-{
-NAME=Drow Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-spawnobjlist=drowlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [diablospawn]
 {
-NAME=Diablo Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Diablo Spawner
+id=0x1F14
+type=62
 spawnobjlist=diablolist
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[highelfspawn]
-{
-NAME=High Elf Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREX=1051
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[woodelfspawn]
-{
-NAME=Wood Elf Spawner
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
-MOREX=1052
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [dogandcat]
 {
-NAME=Dog and Cat spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Dog and Cat spawn
+id=0x1F14
+type=62
 spawnobjlist=dogandcatlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [allbears]
 {
-NAME=All Bear Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Bear Spawn
+id=0x1F14
+type=62
 spawnobjlist=allbearlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [swampcreatures]
 {
-NAME=Swamp Creature Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Swamp Creature Spawn
+id=0x1F14
+type=62
 spawnobjlist=swampcreaturelist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [junglecreatures]
 {
-NAME=Jungle Creature Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Jungle Creature Spawn
+id=0x1F14
+type=62
 spawnobjlist=junglecreaturelist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [livestock]
 {
-NAME=Livestock Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Livestock Spawn
+id=0x1F14
+type=62
 spawnobjlist=livestocklist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [allbirds]
 {
-NAME=All Birds Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Birds Spawn
+id=0x1F14
+type=62
 spawnobjlist=allbirdlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [allanimals]
 {
-NAME=All Animals Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Animals Spawn
+id=0x1F14
+type=62
 spawnobjlist=animallist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [smallanimals]
 {
-NAME=Small Animal Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Small Animal Spawn
+id=0x1F14
+type=62
 spawnobjlist=smallanimallist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [prodanimals]
 {
-NAME=Productive Animal Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Productive Animal Spawn
+id=0x1F14
+type=62
 spawnobjlist=productiveanimallist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [strongundead]
 {
-NAME=Strong Undead Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Strong Undead Spawn
+id=0x1F14
+type=62
 spawnobjlist=strongundeadlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [weakundead]
 {
-NAME=Weak Undead Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Weak Undead Spawn
+id=0x1F14
+type=62
 spawnobjlist=weakundeadlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [allundead]
 {
-NAME=All Undead Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Undead Spawn
+id=0x1F14
+type=62
 spawnobjlist=allundeadlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [ettinsogres]
 {
-NAME=Ettins,Ogres and Trolls
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Ettins,Ogres and Trolls
+id=0x1F14
+type=62
 spawnobjlist=ettinogre
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [weakorcs]
 {
-NAME=Weak Orc Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Weak Orc Spawn
+id=0x1F14
+type=62
 spawnobjlist=weakorc
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [strongorcs]
 {
-NAME=Strong Orc Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Strong Orc Spawn
+id=0x1F14
+type=62
 spawnobjlist=strongorc
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [orckin]
 {
-NAME=Orc Kin Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Orc Kin Spawn
+id=0x1F14
+type=62
 spawnobjlist=allorckin
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [daemons]
 {
-NAME=All Daemons Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Daemons Spawn
+id=0x1F14
+type=62
 spawnobjlist=alldaemonlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [elemsdaemons]
 {
-NAME=Elemental & Daemon Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=Elemental & Daemon Spawn
+id=0x1F14
+type=62
 spawnobjlist=elementalsdaemons
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [elementals]
 {
-NAME=All Elementals Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Elementals Spawn
+id=0x1F14
+type=62
 spawnobjlist=allelementals
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
 [overworld]
 {
-NAME=All Overworld Spawn
-ID=0x1F14
-weight=1
-good=32
-TYPE=62
+get=base_spawner
+name=All Overworld Spawn
+id=0x1F14
+type=62
 spawnobjlist=overworldlist
-MOREY=1
-MOREZ=5
-VISIBLE=1
+amount=2
 }
 
-[m-alch-spawn]
+//Vendor Spawners
+[alch-spawn]
 {
-NAME=Male Achemist Spawn
-spawnobj=m-alchemist
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Achemist Spawn
+spawnobjlist=alchemist
+id=0x1397
+type=62
+amount=2
 }
 
-[m-anim-spawn]
+[anim-spawn]
 {
-NAME=Male Anim Trainer Spawn
-spawnobj=m-animaltrainer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Anim Trainer Spawn
+spawnobjlist=animaltrainer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-armor-spawn]
+[armourer-spawn]
 {
-NAME=Male Armorer Spawn
-spawnobj=m-armorer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Armourer Spawn
+spawnobjlist=armourer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-architect-spawn]
+[architect-spawn]
 {
-NAME=Male Architect Spawn
-spawnobj=m-architect
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Architect Spawn
+spawnobjlist=architect
+id=0x1397
+type=62
+amount=2
 }
 
-[m-baker-spawn]
+[baker-spawn]
 {
-NAME=Male Baker Spawn
-spawnobj=m-baker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Baker Spawn
+spawnobjlist=baker
+id=0x1397
+type=62
+amount=2
 }
 
-[m-banker-spawn]
+[banker-spawn]
 {
-NAME=Male Banker Spawn
-spawnobj=m-banker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Banker Spawn
+spawnobjlist=banker
+id=0x1397
+type=62
+amount=100
 }
 
-[m-bard-spawn]
+[bard-spawn]
 {
-NAME=Male Bard Spawn
-spawnobj=m-bard
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Bard Spawn
+spawnobjlist=bard
+id=0x1397
+type=62
+amount=2
 }
 
-[m-smith-spawn]
+[smith-spawn]
 {
-NAME=Male Blacksmith Spawn
-spawnobj=m-blacksmith
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Blacksmith Spawn
+spawnobjlist=blacksmith
+id=0x1397
+type=62
+amount=2
 }
 
-[m-bee-spawn]
+[bee-spawn]
 {
-NAME=Male Beekeeper Spawn
-spawnobj=m-beekeeper
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Beekeeper Spawn
+spawnobjlist=beekeeper
+id=0x1397
+type=62
+amount=2
 }
 
-[m-bowyer-spawn]
+[bowyer-spawn]
 {
-NAME=Male Bowyer Spawn
-spawnobj=m-bowyer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Bowyer Spawn
+spawnobjlist=bowyer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-butcher-spawn]
+[butcher-spawn]
 {
-NAME=Male Butcher Spawn
-spawnobj=m-butcher
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Butcher Spawn
+spawnobjlist=butcher
+id=0x1397
+type=62
+amount=2
 }
 
-[m-carptenter-spawn]
+[carptenter-spawn]
 {
-NAME=Male Carpenter Spawn
-spawnobj=m-carpenter
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Carpenter Spawn
+spawnobjlist=carpenter
+id=0x1397
+type=62
+amount=2
 }
 
-[m-cobbler-spawn]
+[cobbler-spawn]
 {
-NAME=Male Cobbler Spawn
-spawnobj=m-cobbler
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Cobbler Spawn
+spawnobjlist=cobbler
+id=0x1397
+type=62
+amount=2
 }
 
-[m-cook-spawn]
+[cook-spawn]
 {
-NAME=Male Cook Spawn
-spawnobj=m-cook
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Cook Spawn
+spawnobjlist=cook
+id=0x1397
+type=62
+amount=2
 }
 
-[m-farmer-spawn]
+[farmer-spawn]
 {
-NAME=Male Farmer Spawn
-spawnobj=m-farmer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Farmer Spawn
+spawnobjlist=farmer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-fisher-spawn]
+[fisher-spawn]
 {
-NAME=Male Fisherman Spawn
-spawnobj=m-fisher
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Fisherman Spawn
+spawnobjlist=fisher
+id=0x1397
+type=62
+amount=2
 }
 
-[m-healer-spawn]
+[healer-spawn]
 {
-NAME=Male Healer Spawn
-spawnobj=m-healer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Healer Spawn
+spawnobjlist=healer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-whealer-spawn]
+[whealer-spawn]
 {
-NAME=Male Wandering Healer Spawn
-spawnobj=m-whealer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Wandering Healer Spawn
+spawnobjlist=whealer
+id=0x1397
+type=62
+amount=2
 }
 
-[m-herbal-spawn]
+[herbal-spawn]
 {
-NAME=Male Herbalist Spawn
-spawnobj=m-herbalist
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Herbalist Spawn
+spawnobjlist=herbalist
+id=0x1397
+type=62
+amount=2
 }
 
-[m-innkeep-spawn]
+[innkeep-spawn]
 {
-NAME=Male Innkeeper Spawn
-spawnobj=m-innkeeper
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Innkeeper Spawn
+spawnobjlist=innkeeper
+id=0x1397
+type=62
+amount=2
 }
 
-[m-jewler-spawn]
+[jewler-spawn]
 {
-NAME=Male Jewler Spawn
-spawnobj=m-jeweler
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Jewler Spawn
+spawnobjlist=jeweler
+id=0x1397
+type=62
+amount=2
 }
 
-[m-leather-spawn]
+[leather-spawn]
 {
-NAME=Male Leatherworker Spawn
-spawnobj=m-leatherworker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Leatherworker Spawn
+spawnobjlist=leatherworker
+id=0x1397
+type=62
+amount=2
 }
 
-[m-mage-spawn]
+[mage-spawn]
 {
-NAME=Male Mage Spawn
-spawnobj=m-mage
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Mage Spawn
+spawnobjlist=mage
+id=0x1397
+type=62
+amount=2
 }
 
-[m-miner-spawn]
+[miner-spawn]
 {
-NAME=Male Miner Spawn
-spawnobj=m-miner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Miner Spawn
+spawnobjlist=miner
+id=0x1397
+type=62
+amount=2
 }
 
-[m-provision-spawn]
+[provision-spawn]
 {
-NAME=Male Provisioner Spawn
-spawnobj=m-provisioner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Provisioner Spawn
+spawnobjlist=provisioner
+id=0x1397
+type=62
+amount=2
 }
 
-[m-shipwright-spawn]
+[shipwright-spawn]
 {
-NAME=Male Shipwright Spawn
-spawnobj=m-shipwright
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Shipwright Spawn
+spawnobjlist=shipwright
+id=0x1397
+type=62
+amount=2
 }
 
-[m-spinner-spawn]
+[spinner-spawn]
 {
-NAME=Male Spinner Spawn
-spawnobj=m-spinner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Spinner Spawn
+spawnobjlist=spinner
+id=0x1397
+type=62
+amount=2
 }
 
-[m-tailor-spawn]
+[tailor-spawn]
 {
-NAME=Male Tailor Spawn
-spawnobj=m-tailor
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Tailor Spawn
+spawnobjlist=tailor
+id=0x1397
+type=62
+amount=2
 }
 
-[m-tinker-spawn]
+[tinker-spawn]
 {
-NAME=Male Tinker Spawn
-spawnobj=m-tinker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Tinker Spawn
+spawnobjlist=tinker
+id=0x1397
+type=62
+amount=2
 }
 
-[m-weaponsmith-spawn]
+[weaponsmith-spawn]
 {
-NAME=Male Weaponsmith Spawn
-spawnobj=m-weaponsmith
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Weaponsmith Spawn
+spawnobjlist=weaponsmith
+id=0x1397
+type=62
+amount=2
 }
 
-
-////
-
-[f-alch-spawn]
+//Human non-Vendor spawns
+[basichuman-spawn]
 {
-NAME=Female Achemist Spawn
-spawnobj=f-alchemist
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Basic Human Spawn
+spawnobjlist=basichuman
+id=0x1397
+type=62
+amount=2
 }
 
-[f-anim-spawn]
+[guard-spawn]
 {
-NAME=Female Anim Trainer Spawn
-spawnobj=f-animaltrainer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Guard Spawn
+spawnobjlist=guards
+id=0x1397
+type=62
+amount=2
 }
 
-[f-armor-spawn]
+[archmage-spawn]
 {
-NAME=Female Armorer Spawn
-spawnobj=f-armorer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Archmage Spawn
+spawnobjlist=murderer-archmage
+id=0x1397
+type=62
+amount=2
 }
 
-[f-architect-spawn]
+[pirate-spawn]
 {
-NAME=Female Architect Spawn
-spawnobj=f-architect
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Pirate Spawn
+spawnobjlist=pirate
+id=0x1397
+type=62
+amount=2
 }
 
-[f-baker-spawn]
+[fighter-spawn]
 {
-NAME=Female Baker Spawn
-spawnobj=f-baker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Fighter Spawn
+spawnobjlist=fighter
+id=0x1397
+type=62
+amount=2
 }
 
-[f-banker-spawn]
+[sailor-spawn]
 {
-NAME=Female Banker Spawn
-spawnobj=f-banker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Sailor Spawn
+spawnobjlist=sailor
+id=0x1397
+type=62
+amount=2
 }
 
-[f-bard-spawn]
+[brigand-spawn]
 {
-NAME=Female Bard Spawn
-spawnobj=f-bard
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Brigand Spawn
+spawnobjlist=brigand
+id=0x1397
+type=62
+amount=2
 }
 
-[f-smith-spawn]
+[beggar-spawn]
 {
-NAME=Female Blacksmith Spawn
-spawnobj=f-blacksmith
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Beggar Spawn
+spawnobjlist=beggar
+id=0x1397
+type=62
+amount=2
 }
 
-[f-bee-spawn]
+[noble-spawn]
 {
-NAME=Female Beekeeper Spawn
-spawnobj=f-beekeeper
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Noble Spawn
+spawnobjlist=noble
+id=0x1397
+type=62
+amount=2
 }
 
-[f-bowyer-spawn]
+[thief-spawn]
 {
-NAME=Female Bowyer Spawn
-spawnobj=f-bowyer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Thief Spawn
+spawnobjlist=thief
+id=0x1397
+type=62
+amount=2
 }
 
-[f-butcher-spawn]
+[peasant-spawn]
 {
-NAME=Female Butcher Spawn
-spawnobj=f-butcher
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Peasant Spawn
+spawnobjlist=peasant
+id=0x1397
+type=62
+amount=2
 }
 
-[f-carptenter-spawn]
+[gypsy-spawn]
 {
-NAME=Female Carpenter Spawn
-spawnobj=f-carpenter
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Gypsy Spawn
+spawnobjlist=gypsy
+id=0x1397
+type=62
+amount=2
 }
 
-[f-cobbler-spawn]
+[seeker-spawn]
 {
-NAME=Female Cobbler Spawn
-spawnobj=f-cobbler
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Seeker Spawn
+spawnobjlist=seeker
+id=0x1397
+type=62
+amount=2
 }
 
-[f-cook-spawn]
+[jailer-spawn]
 {
-NAME=Female Cook Spawn
-spawnobj=f-cook
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Jailer Spawn
+spawnobjlist=jailer
+id=0x1397
+type=62
+amount=2
 }
 
-[f-farmer-spawn]
+[towncrier-spawn]
 {
-NAME=Female Farmer Spawn
-spawnobj=f-farmer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Towncrier Spawn
+spawnobjlist=towncrier
+id=0x1397
+type=62
+amount=2
 }
 
-[f-fisher-spawn]
+[artist-spawn]
 {
-NAME=Female Fisherman Spawn
-spawnobj=f-fisher
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
+get=base_spawner
+name=Artist Spawn
+spawnobjlist=artist
+id=0x1397
+type=62
+amount=2
 }
-
-[f-healer-spawn]
-{
-NAME=Female Healer Spawn
-spawnobj=f-healer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-whealer-spawn]
-{
-NAME=Female Wandering Healer Spawn
-spawnobj=f-whealer
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-
-[f-herbal-spawn]
-{
-NAME=Female Herbalist Spawn
-spawnobj=f-herbalist
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-innkeep-spawn]
-{
-NAME=Female Innkeeper Spawn
-spawnobj=f-innkeeper
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-jewler-spawn]
-{
-NAME=Female Jewler Spawn
-spawnobj=f-jeweler
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-leather-spawn]
-{
-NAME=Female Leatherworker Spawn
-spawnobj=f-leatherworker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-mage-spawn]
-{
-NAME=Female Mage Spawn
-spawnobj=f-mage
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-miner-spawn]
-{
-NAME=Female Miner Spawn
-spawnobj=f-miner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-provision-spawn]
-{
-NAME=Female Provisioner Spawn
-spawnobj=f-provisioner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-shipwright-spawn]
-{
-NAME=Female Shipwright Spawn
-spawnobj=f-shipwright
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-spinner-spawn]
-{
-NAME=Female Spinner Spawn
-spawnobj=f-spinner
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-tailor-spawn]
-{
-NAME=Female Tailor Spawn
-spawnobj=f-tailor
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-tinker-spawn]
-{
-NAME=Female Tinker Spawn
-spawnobj=f-tinker
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
-[f-weaponsmith-spawn]
-{
-NAME=Female Weaponsmith Spawn
-spawnobj=f-weaponsmith
-ID=0x1397
-weight=1
-good=32
-TYPE=62
-MOREY=1
-MOREZ=5
-VISIBLE=1
-}
-
 
 EOF

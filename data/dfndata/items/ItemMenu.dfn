@@ -33,7 +33,7 @@ ITEMMENU=110
 <=Hairs & Beards
 ITEMMENU=149
 <=Moongates
-ITEMMENU=17
+ITEMMENU=107
 <=Polymorphing
 ITEMMENU=1000
 <=Quest-Items
@@ -69,6 +69,21 @@ ITEMMENU=12
 ITEMMENU=18
 <=Previous Menu
 ITEMMENU=1
+}
+
+[ITEMMENU 13]
+{
+doors=Menu
+<=Secret Doors
+ITEMMENU=154
+<=Metal Doors
+ITEMMENU=155
+<=Wooden Doors
+ITEMMENU=156
+<=Gates
+ITEMMENU=157
+<=Previous Menu
+ITEMMENU=2
 }
 
 [ITEMMENU 16]
@@ -135,12 +150,16 @@ ITEMMENU=51
 ITEMMENU=31
 <=Siege
 ITEMMENU=41
-<=Siege2
+<=Siege 2
 ITEMMENU=47
+<=Siege 3
+ITEMMENU=160
 <=Skeletons
 ITEMMENU=42
 <=Stoneart
 ITEMMENU=43
+<=Stoneart 2
+ITEMMENU=161
 <=Trophies
 ITEMMENU=32
 <=Tapestries & Paintings
@@ -159,7 +178,7 @@ ITEMMENU=52
 <=Trees
 ITEMMENU=54
 <=Previous Menu
-ITEMMENU=07
+ITEMMENU=17
 }
 
 [ITEMMENU 18]
@@ -173,6 +192,8 @@ ITEMMENU=57
 ITEMMENU=58
 <=Stone Walls
 ITEMMENU=56
+<=Stone Walls 2
+ITEMMENU=162
 <=Tent Walls
 ITEMMENU=59
 <=Wooden Walls
@@ -348,10 +369,21 @@ ITEMMENU=75
 houseaddons=Menu
 <=House Addons
 ITEMMENU=112
-<=Monsterstatues
+<=NPC Statues
 ITEMMENU=111
 <=Previous Menu
 ITEMMENU=1
+}
+
+[ITEMMENU 111]
+{
+npc statues=Menu
+<=Monster Statues
+ITEMMENU=158
+<=Animal Statues
+ITEMMENU=159
+<=Previous Menu
+ITEMMENU=7
 }
 
 [ITEMMENU 8]
@@ -405,6 +437,21 @@ ITEMMENU=125
 ITEMMENU=127
 <=Previous Menu
 ITEMMENU=1
+}
+
+[ITEMMENU 109]
+{
+spawners=Menu
+<=Shopkeeper Spawners
+ITEMMENU=150
+<=Human Spawners
+ITEMMENU=151
+<=Monster Spawners
+ITEMMENU=152
+<=Animal Spawners
+ITEMMENU=153
+<=Previous Menu
+ITEMMENU=0
 }
 
 [ITEMMENU 125]

@@ -201,4 +201,25 @@ movable=1
 decay=1
 }
 
+[0x1422]
+{ small
+get=base_item
+name=beeswax
+id=0x1422
+weight=10
+movable=1
+decay=1
+pileable=1
+}
+
+[0x1423]
+{ small
+get=base_item
+name=beeswax
+id=0x1423
+weight=10
+movable=1
+decay=1
+pileable=1
+}
 

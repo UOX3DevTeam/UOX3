@@ -23,7 +23,7 @@ GMMENU=2
 INFO:=Shows the version of UOX3 this server is running.
 VERSION
 SERVER=STATUS: Shows some status information about this server.
-BATCH=1
+GUIINFORMATION
 }
 
 [GMMENU 2]

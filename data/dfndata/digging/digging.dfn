@@ -128,34 +128,15 @@ itemlist=1001
 0x140C
 0x140E
 }
-[item 1002]
-{
-name=Random Bones
-itemlist=1002
-}
-[itemlist 1002]
-{
-0x1b11
-0x1b12
-0x1b13
-0x1b14
-0x1b15
-0x1b16
-0x1b17
-0x1b18
-0x1b19
-0x1b1a
-0x1b1b
-0x1b1c
-}
+
 // This be the monster section
 
-[npc 1000]
+[UNDEAD 1000]
 {
-name=Random LowLevel Undead
-npclist=1000
+NAME=RANDOM LOW LEV UNDEAD
+NPCLIST=1000
 }
-[npclist 1000]
+[NPCLIST 1000]
 {
 skeleton
 boneaxeman
@@ -164,23 +145,23 @@ spectre
 boneknight
 }
 
-[npc 1001]
+[UNDEAD 1001]
 {
-name=Random MidLevel Undead
-npclist=1001
+NAME=RANDOM MID LEV UNDEAD
+NPCLIST=1001
 }
-[npclist 1001]
+[NPCLIST 1001]
 {
 lich
 bonemage
 }
 
-[npc 1002]
+[UNDEAD 1002]
 {
-name=Random HighLevel Undead
-npclist=1002
+NAME=RANDOM HI LEV UNDEAD
+NPCLIST=1002
 }
-[npclist 1002]
+[NPCLIST 1002]
 {
 lich
 lichlord

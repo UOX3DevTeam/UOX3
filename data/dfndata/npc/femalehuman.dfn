@@ -29,9 +29,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-guard]
+[f_guard]
 {
 NAMELIST=2
 TITLE=the guard
@@ -66,11 +67,12 @@ NPCAI=4
 TAMING=1100
 RUNS
 RACE=0
+SCRIPT=3000
 }
 
-[f-murderer-archmage]
+[f_murderer-archmage]
 {
-NAMELIST=103
+NAMELIST=1
 TITLE=the archmage
 ID=0x0191
 EQUIPITEM=listobject13
@@ -112,18 +114,17 @@ SPATTACK=8191
 SPADELAY=10
 MAGERY=900 990
 RACE=0
+SCRIPT=3000
 }
 
-[f-whealer]
+[f_whealer]
 {
-GET=m-whealer
 NAMELIST=2
 TITLE=the wandering healer
 ID=0x0191
 SKINLIST=16
 EQUIPITEM=listobject15
 HAIRCOLOR=15
-DIRECTION=W
 BACKPACK
 EQUIPITEM=listobject40
 COLORLIST=5
@@ -134,10 +135,32 @@ COLORLIST=5
 EQUIPITEM=listobject43
 EQUIPITEM=listobject45
 COLORLIST=5
+STR=304 400
+DEX=102 150
+INT=204 300
+KARMA=1000
+FAME=1000
+HEALING=750 975
+ANATOMY=750 975
+TACTICS=820 1000
+MAGICRESISTANCE=820 1000
+EVALUATINGINTEL=820 1000
+MAGERY=820 1000
+DAMAGE=10 23
+DEF=5
+DIRECTION=W
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=40
+NPCAI=1
+TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[f-pirate]
+[f_pirate]
 {
 NAMELIST=2
 TITLE=the pirate
@@ -176,9 +199,10 @@ DAMAGE=3 10
 DEF=5
 TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[f-fighter]
+[f_fighter]
 {
 NAMELIST=2
 TITLE=the fighter
@@ -214,9 +238,10 @@ WRESTLING=800 1000
 DAMAGE=10 17
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-sailor]
+[f_sailor]
 {
 NAMELIST=2
 TITLE=the sailor
@@ -253,9 +278,10 @@ DAMAGE=3 10
 DEF=5
 TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[f-brigand]
+[f_brigand]
 {
 NAMELIST=2
 ID=0x0191
@@ -291,9 +317,10 @@ FX2=20
 NPCAI=2
 TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[f-beggar]
+[f_beggar]
 {
 NAMELIST=2
 TITLE=the beggar
@@ -330,9 +357,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-noble]
+[f_noble]
 {
 NAMELIST=2
 TITLE=the noble
@@ -374,9 +402,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-thief]
+[f_thief]
 {
 NAMELIST=2
 TITLE=the thief
@@ -420,9 +449,10 @@ DAMAGE=3 10
 DEF=5
 NPCAI=2
 RACE=0
+SCRIPT=3000
 }
 
-[f-peasant]
+[f_peasant]
 {
 NAMELIST=2
 TITLE=the peasant
@@ -458,9 +488,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-gypsy]
+[f_gypsy]
 {
 NAMELIST=2
 TITLE=the gypsy
@@ -497,9 +528,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-seeker]
+[f_seeker]
 {
 NAMELIST=2
 TITLE=a seeker of adventure
@@ -536,9 +568,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-jailer]
+[f_jailer]
 {
 NAMELIST=2
 TITLE=the jailer
@@ -573,9 +606,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[f-towncrier]
+[f_towncrier]
 {
 NAMELIST=2
 TITLE=the Town Crier
@@ -619,9 +653,10 @@ COLORLIST=11
 EQUIPITEM=listobject56
 COLORLIST=11
 RACE=0
+SCRIPT=3000
 }
 
-[f-artist]
+[f_artist]
 {
 NAMELIST=2
 TITLE=the Artist
@@ -658,5 +693,6 @@ COLORLIST=11
 EQUIPITEM=listobject56
 COLORLIST=11
 RACE=0
+SCRIPT=3000
 }
 

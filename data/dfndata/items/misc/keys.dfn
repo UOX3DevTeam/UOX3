@@ -1,14 +1,13 @@
-[0x1010]
+[0x100E]
 {
 get=base_item
-name=iron key
-id=0x1010
+name=copper key
+id=0x100E
 weight=100
-value=9,4
+value=2,1
 restock=100
 decay=1
 }
-
 [0x100F]
 {
 get=base_item
@@ -20,24 +19,13 @@ restock=100
 decay=1
 }
 
-[0x1013]
+[0x1010]
 {
 get=base_item
-name=rusty iron key
-id=0x1013
+name=iron key
+id=0x1010
 weight=100
 value=9,4
-restock=100
-decay=1
-}
-
-[0x100E]
-{
-get=base_item
-name=copper key
-id=0x100E
-weight=100
-value=2,1
 restock=100
 decay=1
 }
@@ -47,6 +35,28 @@ decay=1
 get=base_item
 name=key ring
 id=0x1011
+weight=100
+value=9,4
+restock=100
+decay=1
+}
+
+[0x1012]
+{
+get=base_item
+name=magic key
+id=0x1012
+weight=100
+value=9,4
+restock=100
+decay=1
+}
+
+[0x1013]
+{
+get=base_item
+name=rusty iron key
+id=0x1013
 weight=100
 value=9,4
 restock=100

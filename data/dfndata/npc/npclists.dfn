@@ -27,17 +27,10 @@ snake
 efreet
 stonegargoyle
 stoneharpy
-lizardman
-spearlizardman
-macelizardman
+npclist=alllizardmen
 mummy
-ophwarrior
-ophapprentice
-ratman
-axeratman
-swordratman
-ratmanarcher
-ratman-mage
+npclist=weakophidians
+npclist=allratmen
 scorpion
 }
 
@@ -51,86 +44,53 @@ sewerrat
 
 [NPCLIST eerielist]
 {
-zombie
-spectre
-headless
-mummy
-skeleton
-boneaxeman
-headless
-wraith
+npclist=weakundeadlist
 }
 
 [NPCLIST forestlist]
 {
-orc
-m-whealer
-f-whealer
-grizbear
-brownhorse
-raven
+npclist=allorc
+m_whealer
+f_whealer
+npclist=allbearlist
+npclist=allhorselist
 ogre
-ettin
+npclist=allettin
 corpser
 giantspider
-bird
+npclist=allbirdlist
 harpy
-lizardman
-ratman
-ratmanarcher
+npclist=alllizardmen
+npclist=allratmen
 reaper
 snake
 silverserpent
 mongbat
-axetroll
-brownbear
-blackbear
+npclist=alltroll
 chicken
 hind
 dog
-raven
 rabbit
 jackrabbit
 sheep
-bird
-eagle
 llama
 panther
 cow
 goat
 cat
 sewerrat
-hammerettin
-bird
-cluborc
-axeratman
 wisp
 rat
-swordratman
-spearlizardman
-macelizardman
-troll
-hammertroll
-orcmage
-orccaptain
-orclord
-m-noble
-m-seeker
-f-seeker
+m_noble
+m_seeker
+f_seeker
 frenziedostard
 forestostard
-brownbear
-blackbear
 bull
 timberwolf
 graywolf
 direwolf
 cougar
-hawk
-falcon
-ratman-mage
-m-murderer-archmage
-m-murderer-archer
 }
 
 [NPCLIST junglelist]
@@ -139,17 +99,12 @@ wisp
 giantspider
 snake
 panther
-bird
-eagle
-hawk
-falcon
+npclist=allbirdlist
 gorilla
 corpser
-bird
 reaper
 giantserpent
-teradrone
-terawarrior
+npclist=weakterathans
 }
 
 [NPCLIST mountainlist]
@@ -162,16 +117,13 @@ llama
 panther
 airele
 earthele
-ettin
-hammerettin
+npclist=allettin
 stonegargoyle
 harpy
 stoneharpy
 headless
 ogre
-axetroll
-troll
-hammertroll
+npclist=alltroll
 }
 
 [NPCLIST oceanlist]
@@ -187,15 +139,9 @@ slime
 alligator
 bullfrog
 corpser
-lizardman
-spearlizardman
-macelizardman
+npclist=alllizardmen
 nightmare
-ratman
-ratmanarcher
-axeratman
-swordratman
-ratman-mage
+npclist=allratmen
 reaper
 swamptentacle
 gianttoad
@@ -215,20 +161,6 @@ lavaserpent
 imp
 }
 
-[NPCLIST drowlist]
-{
-m-drow-lord
-m-drow-assassin
-f-matron-mistress
-giantspider
-m-drow-warrior
-f-drow-priestess
-f-drow-high-priestess
-m-drow-archer
-m-drow-wizard
-m-drow-archmage
-}
-
 [NPCLIST diablolist]
 {
 balron
@@ -237,14 +169,9 @@ daemon
 
 [NPCLIST strongundeadlist]
 {
-zombie
 gazer
 lich
-spectre
-harpy
-headless
 wisp
-skeleton
 lichlord
 boneaxeman
 boneknight
@@ -255,26 +182,17 @@ bonemage
 {
 zombie
 spectre
-harpy
 headless
 skeleton
 boneaxeman
+mummy
+wraith
 }
 
 [NPCLIST allundeadlist]
 {
-zombie
-gazer
-lich
-spectre
-harpy
-headless
-wisp
-skeleton
-lichlord
-boneaxeman
-boneknight
-bonemage
+npclist=weakundeadlist
+npclist=strongundeadlist
 }
 
 [NPCLIST alllizardlist]
@@ -288,9 +206,8 @@ macelizardman
 {
 ratman
 ratmanarcher
-axeratman
 swordratman
-ratman-mage
+ratmanmage
 }
 
 [NPCLIST alldragonlist]
@@ -341,53 +258,30 @@ veriteele
 
 [NPCLIST elementalsdaemons]
 {
-balron
-daemon
-airele
-earthele
-firele
-waterele
-balron
-daemon
-bloodele
-poisonele
+npclist=alldaemonlist
+npclist=allelementals
 }
 
 [NPCLIST overworldlist]
 {
-orc
 ogre
-ettin
+npclist=allettin
 zombie
 scorpion
 spectre
 giantspider
 harpy
 headless
-lizardman
-ratman
-ratmanarcher
+npclist=allratmen
 wisp
 skeleton
 snake
 mongbat
-axetroll
+npclist=alltroll
 sewerrat
-hammerettin
-cluborc
-axeratman
-swordratman
-spearlizardman
-macelizardman
-troll
-hammertroll
+npclist=alllizardmen
 boneaxeman
-ogrelord
-orcmage
-orccaptain
-orclord
-ratman-mage
-m-archmage
+npclist=allorc
 }
 
 [NPCLIST barnlist]
@@ -403,10 +297,7 @@ dog
 dog
 dog
 goat
-brownhorse
-grayhorse
-horse
-darkhorse
+npclist=allhorselist
 pig
 sewerrat
 sheep
@@ -416,14 +307,12 @@ sheep
 [NPCLIST dogandcatlist]
 {
 dog
-dog
 cat
 }
 
 [NPCLIST allbearlist]
 {
 grizbear
-brownbear
 brownbear
 blackbear
 }
@@ -434,15 +323,9 @@ slime
 alligator
 bullfrog
 corpser
-lizardman
-spearlizardman
-macelizardman
+npclist=alllizardmen
 nightmare
-ratman
-ratmanarcher
-axeratman
-swordratman
-ratman-mage
+npclist=allratmen
 reaper
 swamptentacle
 gianttoad
@@ -463,16 +346,11 @@ gorilla
 corpser
 reaper
 giantserpent
-teradrone
-terawarrior
+npclist=weakterathans
 }
 
 [NPCLIST livestocklist]
 {
-brownhorse
-grayhorse
-horse
-darkhorse
 hind
 llama
 cow
@@ -483,14 +361,9 @@ cow
 
 [NPCLIST animallist]
 {
-brownhorse
-grayhorse
-horse
-darkhorse
-grizbear
+npclist=allhorselist
+npclist=allbearlist
 gorilla
-brownbear
-blackbear
 chicken
 panther
 dog
@@ -499,7 +372,7 @@ polarbear
 rabbit
 jackrabbit
 sheep
-bird
+npclist=allbirdlist
 eagle
 llama
 pig
@@ -530,7 +403,7 @@ dog
 rabbit
 jackrabbit
 sheep
-bird
+npclist=allbirdlist
 eagle
 pig
 goat
@@ -565,19 +438,14 @@ bull
 
 [NPCLIST randomwhealer]
 {
-m-whealer
-f-whealer
+m_whealer
+f_whealer
 }
 
 [NPCLIST allophidians]
 {
-ophwarrior
-ophknight
-ophavenger
-ophapprentice
-ophshaman
-ophenforcer
-ophmatriarch
+npclist=weakophidians
+npclist=strongophidians
 }
 
 [NPCLIST weakophidians]
@@ -597,10 +465,8 @@ ophavenger
 
 [NPCLIST allorc]
 {
-orc
-cluborc
-orcmage
-orclorg
+npclist=weakorc
+npclist=strongorc
 }
 
 [NPCLIST weakorc]
@@ -612,7 +478,7 @@ cluborc
 [NPCLIST strongorc]
 {
 orcmage
-orclorg
+orclord
 orccaptain
 }
 
@@ -631,10 +497,8 @@ hammerettin
 
 [NPCLIST ettinogre]
 {
-ettin
-hammerettin
-ogre
-ogrelord
+npclist=allettin
+npclist=allogre
 }
 
 [NPCLIST allogre]
@@ -645,46 +509,29 @@ ogrelord
 
 [NPCLIST ogretroll]
 {
-ogre
-ogrelord
-troll
-axetroll
-hammertroll
+npclist=allorgre
+npclist=alltroll
 }
 
 [NPCLIST ogretrollettin]
 {
-ogre
-ogrelord
-troll
-axetroll
-hammertroll
-ettin
-hammerettin
+npclist=allogre
+npclist=alltroll
+npclist=allettin
 }
 
 [NPCLIST trollettin]
 {
-troll
-axetroll
-hammertroll
-ettin
-hammerettin
+npclist=alltroll
+npclist=allettin
 }
 
 [NPCLIST allorckin]
 {
-ogre
-ogrelord
-troll
-axetroll
-hammertroll
-ettin
-hammerettin
-orc
-cluborc
-orcmage
-orclorg
+npclist=allorc
+npclist=allorgre
+npclist=alltroll
+npclist=allettin
 }
 
 [NPCLIST alllizardmen]
@@ -710,21 +557,14 @@ mongbat
 wisp
 giantspider
 giantscorpion
-lizardman
-ratman
-macelizardman
-spearlizardman
-ratmanmage
-maceratman
-swordratman
+npclist=alllizardmen
+npclist=allratmen
 }
 
 [NPCLIST allterathans]
 {
-teradrone
-terawarrior
-teraavenger
-teramatriarch
+npclist=weakterathans
+npclist=strongterathans
 }
 
 [NPCLIST strongterathans]
@@ -741,73 +581,53 @@ terawarrior
 
 [NPCLIST tamewoods]
 {
-bird
+npclist=allbirdlist
 blackbear
 brownbear
 boar
-canary
-crow
-eagle
-falcon
 goat
 graywolf
 hart
-hawk
 hind
 jackrabbit
 rabbit
-raven
 timberwolf
 }
 
 [NPCLIST ruralwoods]
 {
-bird
+npclist=allbirdlist
 boar
 bull
-canary
 cat
 chicken
 cow
-crow
 dog
-eagle
-falcon
 goat
 graywolf
 hart
-hawk
 hind
 jackrabbit
 pig
 sheep
 rabbit
 rat
-raven
 timberwolf
 }
 
 [NPCLIST wilderness]
 {
-bird
-blackbear
+npclist=allbirdlist
+npclist=allbearlist
 boar
-brownbear
-canary
 cougar
-crow
-eagle
-falcon
 goat
 graywolf
-grizbear
 hart
-hawk
 hind
 jackrabbit
 mountaingoat
 rabbit
-raven
 timberwolf
 }
 
@@ -846,6 +666,323 @@ pig
 sheep
 }
 
+[NPCLIST randompeople]
+{
+f_guard
+m_guard
+f_pirate
+m_pirate
+f_brigand
+m_brigand
+f_fighter
+m_fighter
+f_sailor
+m_sailor
+f_beggar
+m_beggar
+f_noble
+m_noble
+f_thief
+m_thief
+f_peasant
+m_peasant
+f_gypsy
+m_gypsy
+f_seeker
+m_seeker
+f_jailer
+m_jailer
+f_artist
+m_artist
+}
+
+[NPCLIST allhorselist]
+{
+brownhorse
+grayhorse
+horse
+darkhorse
+}
+
+
+//NPCLists for Uni-sex vendor-spawners =)
+[NPCLIST banker]
+{
+m_banker
+f_banker
+}
+
+[NPCLIST bard]
+{
+m_bard
+f_bard
+}
+
+[NPCLIST miner]
+{
+m_miner
+f_miner
+}
+
+[NPCLIST weaponsmith]
+{
+m_weaponsmith
+f_weaponsmith
+}
+
+[NPCLIST baker]
+{
+m_baker
+f_baker
+}
+
+[NPCLIST provisioner]
+{
+m_provisioner
+f_provisioner
+}
+
+[NPCLIST cobbler]
+{
+m_cobbler
+f_cobbler
+}
+
+[NPCLIST innkeeper]
+{
+m_innkeeper
+f_innkeeper
+}
+
+[NPCLIST herbalist]
+{
+m_herbalist
+f_herbalist
+}
+
+[NPCLIST butcher]
+{
+m_butcher
+f_butcher
+}
+
+[NPCLIST tailor]
+{
+m_tailor
+f_tailor
+}
+
+[NPCLIST bowyer]
+{
+m_bowyer
+f_bowyer
+}
+
+[NPCLIST jeweler]
+{
+m_jeweler
+f_jeweler
+}
+
+[NPCLIST leatherworker]
+{
+m_leatherworker
+f_leatherworker
+}
+
+[NPCLIST mage]
+{
+m_mage
+f_mage
+}
+
+[NPCLIST shipwright]
+{
+m_shipwright
+f_shipwright
+}
+
+[NPCLIST spinner]
+{
+m_spinner
+f_spinner
+}
+
+[NPCLIST armourer]
+{
+m_armourer
+f_armourer
+}
+
+[NPCLIST blacksmith]
+{
+m_blacksmith
+f_blacksmith
+}
+
+[NPCLIST architect]
+{
+m_architect
+f_architect
+}
+
+[NPCLIST carpenter]
+{
+m_carpenter
+f_carpenter
+}
+
+[NPCLIST farmer]
+{
+m_farmer
+f_farmer
+}
+
+[NPCLIST cook]
+{
+m_cook
+f_cook
+}
+
+[NPCLIST animaltrainer]
+{
+m_animaltrainer
+f_animaltrainer
+}
+
+[NPCLIST fisher]
+{
+m_fisher
+f_fisher
+}
+
+[NPCLIST alchemist]
+{
+m_alchemist
+f_alchemist
+}
+
+[NPCLIST tinker]
+{
+m_tinker
+f_tinker
+}
+
+[NPCLIST beekeeper]
+{
+m_beekeeper
+f_beekeeper
+}
+
+[NPCLIST healer]
+{
+m_healer
+f_healer
+}
+
+//Non-vendor Human Spawns
+
+[NPCLIST basichuman]
+{
+male
+female
+}
+
+[NPCLIST guard]
+{
+m_guard
+f_guard
+}
+
+[NPCLIST murderer-archmage]
+{
+m_murderer-archmage
+f_murderer-archmage
+}
+
+[NPCLIST whealer]
+{
+m_whealer
+f_whealer
+}
+
+[NPCLIST pirate]
+{
+m_pirate
+f_pirate
+}
+
+[NPCLIST fighter]
+{
+m_fighter
+f_fighter
+}
+
+[NPCLIST sailor]
+{
+m_sailor
+f_sailor
+}
+
+[NPCLIST brigand]
+{
+m_brigand
+f_brigand
+}
+
+[NPCLIST beggar]
+{
+m_beggar
+f_beggar
+}
+
+[NPCLIST noble]
+{
+m_noble
+f_noble
+}
+
+[NPCLIST thief]
+{
+m_thief
+f_thief
+}
+
+[NPCLIST peasant]
+{
+m_peasant
+f_peasant
+}
+
+[NPCLIST gypsy]
+{
+m_gypsy
+f_gypsy
+}
+
+[NPCLIST seeker]
+{
+m_seeker
+f_seeker
+}
+
+[NPCLIST jailer]
+{
+m_jailer
+f_jailer
+}
+
+[NPCLIST towncrier]
+{
+m_towncrier
+f_towncrier
+}
+
+[NPCLIST artist]
+{
+m_artist
+f_artist
+}
 // NPCLIST 10000 is the list used by the Summon Creature spell!!!!
 [NPCLIST 10000]
 {

@@ -6,6 +6,7 @@
 [gargoyle]
 {
 NAME=a gargoyle
+NAMELIST=12
 ID=0x0004
 DIRECTION=N
 STR=146 175
@@ -108,7 +109,7 @@ runs
 
 [firegargoyle]
 name=a fire gargoyle
-namelist=12
+namelist=13
 id=0x0082
 backpack
 gold=190 230
@@ -219,6 +220,7 @@ runs
 
 [gargoylealchemist]
 name=a gargoyle alchemist
+namelist=12
 title=the gargoyle alchemist
 id=0x02f6
 backpack
@@ -250,6 +252,7 @@ runs
 
 [gargoylemason]
 name=a gargoyle stone worker
+namelist=12
 title=the gargoyle stone worker
 id=0x02f6
 backpack

@@ -516,6 +516,7 @@ weight=200
 value=3,1
 type=105
 restock=10
+pileable=1
 }
 
 [0x09f0]

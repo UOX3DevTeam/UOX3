@@ -545,7 +545,7 @@ Z=27
 }
 
 [HOUSE ITEM 11]
-{ 2 Story Outter door (left)
+{ 2 Story Outer door (left)
 ITEM=0x06A5
 LOCK
 X=-3
@@ -554,7 +554,7 @@ Z=8
 }
 
 [HOUSE ITEM 12]
-{ 2 Story Outter door (right)
+{ 2 Story Outer door (right)
 ITEM=0x06A7
 LOCK
 X=-2

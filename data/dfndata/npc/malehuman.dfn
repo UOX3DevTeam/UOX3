@@ -31,9 +31,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-guard]
+[m_guard]
 {
 NAMELIST=1
 TITLE=the guard
@@ -70,11 +71,13 @@ NPCAI=4
 TAMING=1100
 RUNS
 RACE=0
+SCRIPT=3000
+SCRIPT=3000
 }
 
-[m-murderer-archmage]
+[m_murderer-archmage]
 {
-NAMELIST=103
+NAMELIST=1
 TITLE=the archmage
 ID=0x0190
 EQUIPITEM=listobject13
@@ -118,9 +121,10 @@ SPATTACK=8191
 SPADELAY=10
 MAGERY=900 990
 RACE=0
+SCRIPT=3000
 }
 
-[m-whealer]
+[m_whealer]
 {
 NAMELIST=1
 TITLE=the wandering healer
@@ -163,9 +167,10 @@ FX2=40
 NPCAI=1
 TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[m-pirate]
+[m_pirate]
 {
 NAMELIST=1
 TITLE=the pirate
@@ -208,9 +213,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-fighter]
+[m_fighter]
 {
 NAMELIST=1
 TITLE=the fighter
@@ -248,9 +254,10 @@ WRESTLING=800 1000
 DAMAGE=10 17
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-sailor]
+[m_sailor]
 {
 NAMELIST=1
 TITLE=the sailor
@@ -289,9 +296,10 @@ DAMAGE=3 10
 DEF=5
 TOTAME=1100
 RACE=0
+SCRIPT=3000
 }
 
-[m-brigand]
+[m_brigand]
 {
 NAMELIST=1
 TITLE=the brigand
@@ -339,9 +347,10 @@ TOTAME=1100
 FLEEAT=20
 REATTACKAT=50
 RACE=0
+SCRIPT=3000
 }
 
-[m-beggar]
+[m_beggar]
 {
 NAMELIST=1
 TITLE=the beggar
@@ -380,9 +389,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-noble]
+[m_noble]
 {
 NAMELIST=1
 TITLE=the noble
@@ -426,9 +436,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-thief]
+[m_thief]
 {
 NAMELIST=1
 TITLE=the thief
@@ -473,9 +484,10 @@ DAMAGE=3 10
 DEF=5
 NPCAI=2
 RACE=0
+SCRIPT=3000
 }
 
-[m-peasant]
+[m_peasant]
 {
 NAMELIST=1
 TITLE=the peasant
@@ -514,9 +526,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-gypsy]
+[m_gypsy]
 {
 NAMELIST=1
 TITLE=the gypsy
@@ -556,9 +569,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-seeker]
+[m_seeker]
 {
 NAMELIST=1
 TITLE=a seeker of adventure
@@ -598,9 +612,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-jailer]
+[m_jailer]
 {
 NAMELIST=1
 TITLE=the jailer
@@ -638,9 +653,10 @@ WRESTLING=400 600
 DAMAGE=3 10
 DEF=5
 RACE=0
+SCRIPT=3000
 }
 
-[m-towncrier]
+[m_towncrier]
 {
 NAMELIST=1
 TITLE=the Town Crier
@@ -676,9 +692,10 @@ COLORLIST=11
 EQUIPITEM=listobject36
 COLORLIST=11
 RACE=0
+SCRIPT=3000
 }
 
-[m-artist]
+[m_artist]
 {
 NAMELIST=1
 TITLE=the Artist
@@ -717,4 +734,5 @@ COLORLIST=11
 EQUIPITEM=listobject36
 COLORLIST=11
 RACE=0
+SCRIPT=3000
 }

@@ -1,4 +1,4 @@
-[f-banker]
+[f_banker]
 {
 NAMELIST=2
 TITLE=the banker
@@ -38,7 +38,7 @@ NPCAI=8
 TOTAME=1100
 }
 
-[f-bard]
+[f_bard]
 {
 NAMELIST=2
 TITLE=the bard
@@ -79,7 +79,7 @@ SHOPLIST=BardShopping
 TOTAME=1100
 }
 
-[f-miner]
+[f_miner]
 {
 NAMELIST=2
 TITLE=the miner
@@ -116,7 +116,7 @@ SHOPLIST=MinerShopping
 TOTAME=1100
 }
 
-[f-weaponsmith]
+[f_weaponsmith]
 {
 NAMELIST=2
 TITLE=the Weaponsmith
@@ -162,7 +162,7 @@ SHOPKEEPER
 SHOPLIST=WeaponsmithShopping
 }
 
-[f-baker]
+[f_baker]
 {
 NAMELIST=2
 TITLE=the baker
@@ -199,7 +199,7 @@ SHOPKEEPER
 SHOPLIST=BakerShopping
 }
 
-[f-provisioner]
+[f_provisioner]
 {
 NAMELIST=2
 TITLE=the provisioner
@@ -236,7 +236,7 @@ SHOPKEEPER
 SHOPLIST=ProvisionerShopping
 }
 
-[f-cobbler]
+[f_cobbler]
 {
 NAMELIST=2
 TITLE=the cobbler
@@ -272,7 +272,7 @@ SHOPKEEPER
 SHOPLIST=CobblerShopping
 }
 
-[f-innkeeper]
+[f_innkeeper]
 {
 NAMELIST=2
 TITLE=the innkeeper
@@ -307,7 +307,7 @@ SHOPKEEPER
 SHOPLIST=InnkeeperShopping
 }
 
-[f-herbalist]
+[f_herbalist]
 {
 NAMELIST=2
 TITLE=the herbalist
@@ -342,7 +342,7 @@ SHOPKEEPER
 SHOPLIST=HerbalistShopping
 }
 
-[f-butcher]
+[f_butcher]
 {
 NAMELIST=2
 TITLE=the butcher
@@ -379,7 +379,7 @@ SHOPLIST=ButcherShopping
 TOTAME=1100
 }
 
-[f-tailor]
+[f_tailor]
 {
 NAMELIST=2
 TITLE=the tailor
@@ -415,7 +415,7 @@ SHOPKEEPER
 SHOPLIST=TailorShopping
 }
 
-[f-bowyer]
+[f_bowyer]
 {
 NAMELIST=2
 TITLE=the bowyer
@@ -455,7 +455,7 @@ SHOPKEEPER
 SHOPLIST=BowyerShopping
 }
 
-[f-jeweler]
+[f_jeweler]
 {
 NAMELIST=2
 TITLE=the jeweler
@@ -493,7 +493,7 @@ SHOPKEEPER
 SHOPLIST=JewlerShopping
 }
 
-[f-leatherworker]
+[f_leatherworker]
 {
 NAMELIST=2
 TITLE=the leather worker
@@ -528,7 +528,7 @@ SHOPKEEPER
 SHOPLIST=LeatherShopping
 }
 
-[f-shipwright]
+[f_shipwright]
 {
 NAMELIST=2
 TITLE=the shipwright
@@ -567,7 +567,7 @@ SHOPKEEPER
 SHOPLIST=ShipwrightShopping
 }
 
-[f-spinner]
+[f_spinner]
 {
 NAMELIST=2
 TITLE=the spinner
@@ -603,7 +603,7 @@ SHOPKEEPER
 SHOPLIST=SpinnerShopping
 }
 
-[f-armourer]
+[f_armourer]
 {
 NAMELIST=2
 TITLE=the armourer
@@ -649,7 +649,7 @@ SHOPKEEPER
 SHOPLIST=ArmorShopping
 }
 
-[f-blacksmith]
+[f_blacksmith]
 {
 NAMELIST=2
 TITLE=the Blacksmith
@@ -695,7 +695,7 @@ SHOPKEEPER
 SHOPLIST=BlacksmithShopping
 }
 
-[f-architect]
+[f_architect]
 {
 NAMELIST=2
 TITLE=the architect
@@ -733,7 +733,7 @@ SHOPKEEPER
 SHOPLIST=ArchitectShopping
 }
 
-[f-carpenter]
+[f_carpenter]
 {
 NAMELIST=2
 TITLE=the Carpenter
@@ -769,7 +769,7 @@ SHOPKEEPER
 SHOPLIST=CarpenterShopping
 }
 
-[f-farmer]
+[f_farmer]
 {
 NAMELIST=2
 TITLE=the Farmer
@@ -806,7 +806,7 @@ SHOPKEEPER
 SHOPLIST=FarmerShopping
 }
 
-[f-cook]
+[f_cook]
 {
 NAMELIST=2
 TITLE=the cook
@@ -842,7 +842,7 @@ SHOPKEEPER
 SHOPLIST=CookShopping
 }
 
-[f-animaltrainer]
+[f_animaltrainer]
 {
 NAMELIST=2
 TITLE=the Animal Trainer
@@ -883,7 +883,7 @@ SHOPKEEPER
 SHOPLIST=TrainerShopping
 }
 
-[f-fisher]
+[f_fisher]
 {
 NAMELIST=2
 TITLE=The Fisherlady
@@ -921,7 +921,7 @@ SHOPKEEPER
 SHOPLIST=FisherShopping
 }
 
-[f-alchemist]
+[f_alchemist]
 {
 NAMELIST=2
 TITLE=the Alchemist
@@ -958,7 +958,7 @@ FX2=5
 TOTAME=1100
 }
 
-[f-tinker]
+[f_tinker]
 {
 NAMELIST=2
 TITLE=the Tinker
@@ -998,7 +998,7 @@ SHOPKEEPER
 SHOPLIST=TinkerShopping
 }
 
-[f-beekeeper]
+[f_beekeeper]
 {
 NAMELIST=2
 TITLE=the beekeeper
@@ -1033,7 +1033,7 @@ SHOPKEEPER
 SHOPLIST=BeekeeperShopping
 }
 
-[f-healer]
+[f_healer]
 {
 NAMELIST=2
 TITLE=the healer
@@ -1078,7 +1078,7 @@ SHOPKEEPER
 SHOPLIST=HealerShopping
 }
 
-[f-mage]
+[f_mage]
 {
 NAMELIST=2
 TITLE=the mage

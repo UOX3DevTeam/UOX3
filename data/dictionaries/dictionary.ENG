@@ -696,7 +696,7 @@
 711=That is not a valid item.
 712=You can't cast on someone that far away!
 713=They are invulnerable merchants!
-714=There seems to be something in the way.
+714=UNUSED.
 715=That is not a person.
 716=You must target a location, not an item or character.
 717=That is not a valid location.
@@ -1096,7 +1096,7 @@
 1107=That item is not in your house!
 1108=Invalid item!
 1109=You can't release something that's not in your house!
-1110=No such player exists!
+1110=No such character exists!
 1111=You were unable to do that.
 1112=No such clearance level!
 1113=You can melt only player made items.
@@ -1370,7 +1370,7 @@
 1383=Being perfectly rested, you shove %s out of the way.
 1384=Being perfectly rested, you shove something invisible out of the way.
 // weight.cpp
-1385=Your backpack is full!
+1385=That pack cannot hold any more weight
 1386=You are overloaded! You can't hold all this weight.
 // wholist.cpp
 1387=Selected character not found.
@@ -1699,6 +1699,27 @@
 1733=Select item to set spwanobj on.
 1734=Select item to set spwanobjlist on.
 1735=Select player to own the object.
+1736=[squelched]
+1737=[%x %x %x %x]
+1738=Mayor %s
+1739=Lord %s
+1740=Lady %s
+1741=Choose target to set '%s'.
+1742=Select NPC to follow this player.
+1743=That person can not possibly hold more weight
+1744=You can't equip two items in the same slot.
+1745=No such socket exists
+1746=Possible pause... reloading server scripts
+1747=Deallocating old scripts...
+1748=Reloading new scripts...
+1749=Server scripts reload failure, shutting server down
+1750=Server scripts reloaded
+1751=It is currently %f degrees
+1752=No such script is known to the server
+1753=Unknown command type
+1754=That character is not online
+1755=This command requires additional arguments
+1756=Value successfully set.
 }
 
 EOF

@@ -40,6 +40,7 @@ weight=300
 value=8,4
 restock=20
 decay=1
+type=208
 }
 
 [0x0fab]
