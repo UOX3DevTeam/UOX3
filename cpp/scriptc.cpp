@@ -76,6 +76,7 @@ void Script::reload() {
     // Snarf the part of SECTION... until EOL
     while(fgets(buf, sizeof(buf), fp))
         if (sscanf(buf, "SECTION %256[^\n]", section_name) == 1) {
+			section_name[length(section_name)-1] = 0;			//Removes trailing \n
             entries->insert(new ScriptEntry(section_name, ftell(fp)));	
             count++;
         }
@@ -121,23 +122,15 @@ char Script::find(const char *section) {
         reload();
         last_modification = current;
     }
-
-#ifndef __linux__
+	unsigned int lensection = strlen(section);
     for (sc = entries->rewind(); sc; sc = entries->next())
 	{
-		if( strlen( sc->name ) == strlen( section ) )
+		if( strlen( sc->name ) == lensection )
 		{
 			if(!strncmp( sc->name, section, strlen(section)))
 	            break;
 		}
 	}
-#else
-	for( sc = entries->rewind(); sc; sc = entries->next() )
-	{
-		if( !strncmp( sc->name, section, strlen( section ) ) )
-			break;
-	}
-#endif
     if (!sc)
         return 0;
 

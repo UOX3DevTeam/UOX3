@@ -234,6 +234,7 @@ int str2num(char *s) // Convert string to integer
 	int n = 0;
 	int neg = 0;
 	unsigned int length = strlen(s);
+	while (length > 0 && isspace(s[length-1])) length--;  //remove trailing spaces.
 	for (i = 0; i < length; i++)
 	{
 		if (s[i] == '-') 
@@ -445,7 +446,7 @@ void read2( void ) // Read line from script
 	i=0;
 	script1[0]=0;
 	script2[0]=0;
-	while(temp[i]!=0 && temp[i]!=' ' && temp[i]!='=')
+	while(temp[i]!=0 && !isspace(temp[i]) && temp[i]!='=')
 	{
 		i++;
 	}
@@ -4211,8 +4212,8 @@ void pack_item(int s) // Item is put into container
 		} 
 		else 
 		{
-			items[nItem].x=95;
-			items[nItem].y=80;
+			items[nItem].x = (short int) RandomNum(20, 120);
+			items[nItem].y = (short int) RandomNum(40, 120);
 			j=GetPackOwner(nCont);
 			if( j > -1 )
 			{
@@ -11985,7 +11986,12 @@ void responsevendor(int s) //Modified by AntiChrist
 								npctalk(s,k,"What would you like to buy?", 0);
 								target(s,0,1,0,224," ");
 								k=charcount;
-							} else if(Targ->BuyShop(s, k)) k=charcount;
+								return;
+							} else if(Targ->BuyShop(s, k)) 
+							{
+								k = charcount;
+								return;
+							}
 						}
 					}
 				}
@@ -12058,6 +12064,7 @@ void responsevendor(int s) //Modified by AntiChrist
 							chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
 							//if (sellstuff(s, k)) k=charcount; //Morrolan bugfix
 							sellstuff(s, k);
+							return; //Fix double sell.
 						}
 					}
 				}
@@ -13656,6 +13663,8 @@ void loadspawnregions()//Regionspawns
 			spawnregion[i].y2=0;
 			spawnregion[i].totalnpcs=0;
 			spawnregion[i].totalitemlists=0;
+			spawnregion[i].nexttime = 0;
+			spawnregion[i].current = 0;
 			spawnregion[i].call = 1;
 			
 			do

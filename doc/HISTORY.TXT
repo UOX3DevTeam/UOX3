@@ -28,6 +28,12 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 -------------------------------------------------------------------------------
+14.03.2001               TTP (Unknown Real Name)    Correa               
+   uox3.cpp              Some small clean-up.
+                         Changed pack_item to place items in random position inside
+                         packs.
+                         
+-------------------------------------------------------------------------------
 04.03.2001               Thiago A. Corrêa
    uox3.cpp              Won't create offline html when HTML is disabled in 
    trigger.cpp           server.scp
