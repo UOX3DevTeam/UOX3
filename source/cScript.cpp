@@ -193,6 +193,7 @@ static JSFunctionSpec my_functions[] =
 	{ "Write",						SE_Write,					2, 0, 0 },
 	{ "Read",						SE_Read,					2, 0, 0 },
 	{ "ReadUntil",					SE_ReadUntil,				2, 0, 0 },
+	{ "EndOfFile", SE_EndOfFile, 1, 0, 0 },
 
 	// Added by DarkStorm
 	{ "GetRaceCount",				SE_GetRaceCount,			0, 0, 0 },
@@ -1135,7 +1136,7 @@ bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
 	
 	if( Func == JSVAL_VOID )
 	{
-		SetEventExists( seOnUse, false );
+		SetEventExists( seOnDropItemOnNpc, false );
 		return false;
 	}
 
@@ -1150,7 +1151,7 @@ bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnNpc", 3, params, &rval );
 	if( retVal == JS_FALSE )
-		SetEventExists( seOnUse, false );
+		SetEventExists( seOnDropItemOnNpc, false );
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );

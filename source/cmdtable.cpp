@@ -13,96 +13,124 @@
 #include "cmdtable.h"
 #include "debug.h"
 #include "mstring.h"
+#include "cAccount.h"
 
-TARGET_S target_use = { 0, 1, 0, 24, 179 };
-TARGET_S target_jail = { 0, 1, 0, 126, 180 };
-TARGET_S target_release = { 0, 1, 0, 127, 181 };
-TARGET_S target_istats = { 0, 1, 0, 12, 182 };
-TARGET_S target_cstats = { 0, 1, 0, 13, 183 };
-TARGET_S target_wstats = { 0, 1, 0, 55, 183 };
-TARGET_S target_tele = { 0, 1, 0, 2, 185 };
-TARGET_S target_xbank = { 0, 1, 0, 107, 186 };
-TARGET_S target_xsbank = { 0, 1, 0, 107, 187 }; // AntiChrist
-TARGET_S target_remove = { 0, 1, 0, 3, 188 };
-TARGET_S target_killhair = { 0, 1, 0, 16, 191 };
-TARGET_S target_killbeard = { 0, 1, 0, 17, 192 };
-TARGET_S target_kill = { 0, 1, 0, 20, 193 };
-TARGET_S target_resurrect = { 0, 1, 0, 21, 194 };
-TARGET_S target_bolt = { 0, 1, 0, 22, 195 };
+TARGET_S target_bolt =				{ 0, 1, 0, 22, 195 };
 // This fires a harmless bolt at the user.
-TARGET_S target_kick = { 0, 1, 0, 25, 196 };
 // This disconnects the player targeted from the game. They
 // can still log back in.
-TARGET_S target_movetobag = { 0, 1, 0, 111, 197 };
-TARGET_S target_xgo = { 0, 1, 0, 8, 198 };
-TARGET_S target_setmorex = { 0, 1, 0, 63, 199 };
-TARGET_S target_setmorey = { 0, 1, 0, 64, 200 };
-TARGET_S target_setmorez = { 0, 1, 0, 65, 201 };
-TARGET_S target_setmorexyz = { 0, 1, 0, 66, 202 };
-TARGET_S target_sethexmorexyz = { 0, 1, 0, 66, 203 };
-TARGET_S target_setnpcai = { 0, 1, 0, 106, 204 };
-TARGET_S target_newz = { 0, 1, 0, 5, 205 };
-TARGET_S target_settype = { 0, 1, 0, 6, 206 };
-TARGET_S target_itrig = { 0, 1, 0, 200, 207 };
-TARGET_S target_ctrig = { 0, 1, 0, 201, 208 };
-TARGET_S target_ttrig = { 0, 1, 0, 202, 209 };
-TARGET_S target_setid = { 0, 1, 0, 7, 210 };
-TARGET_S target_setmore = { 0, 1, 0, 10, 211 };
-TARGET_S target_setfont = { 0, 1, 0, 19, 212 };
-TARGET_S target_npcaction = { 0, 1, 0, 53, 213 };
-TARGET_S target_setamount = { 0, 1, 0, 23, 214 };
-TARGET_S target_setmovable = { 0, 1, 0, 28, 216 };
-TARGET_S target_setvisible = { 0, 1, 0, 61, 217 };
-TARGET_S target_setdir = { 0, 1, 0, 88, 218 };
-TARGET_S target_setspeech = { 0, 1, 0, 135, 219 };
-TARGET_S target_setowner = { 0, 1, 0, 30, 220 };
-TARGET_S target_freeze = { 0, 1, 0, 34, 221 };
-TARGET_S target_unfreeze = { 0, 1, 0, 35, 222 };
-TARGET_S target_tiledata = { 0, 1, 0, 46, 223 };
-TARGET_S target_recall = { 0, 1, 0, 38, 224 };
-TARGET_S target_mark = { 0, 1, 0, 39, 225 };
-TARGET_S target_gate = { 0, 1, 0, 43, 226 };
-TARGET_S target_heal = { 0, 1, 0, 44, 227 };
-TARGET_S target_npctarget = { 0, 1, 0, 56, 228 };
-TARGET_S target_tweak = { 0, 1, 0, 62, 229 };
-TARGET_S target_mana = { 0, 1, 0, 113, 230 };
-TARGET_S target_stamina = { 0, 1, 0, 114, 231 };
-TARGET_S target_makeshop = { 0, 1, 0, 116, 232 };
-TARGET_S target_buy = { 0, 1, 0, 121, 233 };
-TARGET_S target_setvalue = { 0, 1, 0, 122, 234 };
-TARGET_S target_setrestock = { 0, 1, 0, 123, 235 };
-TARGET_S target_sell = { 0, 1, 0, 112, 236 };
+
+//A
+//B
+TARGET_S target_ban =					{ 0, 1, 0, 235, 253 };
+TARGET_S target_buy =					{ 0, 1, 0, 121, 233 };
+//C
+TARGET_S target_cstats =			{ 0, 1, 0, 13, 183 };
+TARGET_S target_ctrig =				{ 0, 1, 0, 201, 208 };
+TARGET_S target_commandlevel=	{ 0, 1, 0, 104, 264 };
+//D
+TARGET_S target_devinelock =	{ 0, 1, 0, 68, 265 };
+TARGET_S target_devineunlock=	{ 0, 1, 0, 69, 266 };
+TARGET_S target_deletechar =	{ 0, 1, 0, 72, 1618 };
+//E
+//F
+TARGET_S target_freeze =			{ 0, 1, 0, 34, 221 };
+TARGET_S target_fullstats =		{ 0, 1, 0, 151, 243 };
+//G
+TARGET_S target_gate =				{ 0, 1, 0, 43, 226 };
+TARGET_S target_glow =				{ 0, 1, 0, 255, 258 };
+//H
+TARGET_S target_heal =				{ 0, 1, 0, 44, 227 };
+TARGET_S target_hide =				{ 0, 1, 0, 131, 244 };
+//I
+TARGET_S target_istats=				{ 0, 1, 0, 12, 182 };
+TARGET_S target_itrig=				{ 0, 1, 0, 200, 207 };
+TARGET_S target_incx =				{ 0, 1, 0, 253, 254 };
+TARGET_S target_incy =				{ 0, 1, 0, 254, 254 };
+TARGET_S target_incz =				{ 0, 1, 0, 250, 268 };
+//J
+TARGET_S target_jail =				{ 0, 1, 0, 126, 180 };
+//K
+TARGET_S target_killhair =		{ 0, 1, 0, 16, 191 };
+TARGET_S target_killbeard =		{ 0, 1, 0, 17, 192 };
+TARGET_S target_kill =				{ 0, 1, 0, 20, 193 };
+TARGET_S target_kick =				{ 0, 1, 0, 25, 196 };
+TARGET_S target_killpack =		{ 0, 1, 0, 18, 251 };
+//L
+//M
+TARGET_S target_movetobag =		{ 0, 1, 0, 111, 197 };
+TARGET_S target_mark =				{ 0, 1, 0, 39, 225 };
+TARGET_S target_mana =				{ 0, 1, 0, 113, 230 };
+TARGET_S target_makeshop =		{ 0, 1, 0, 116, 232 };
+//N
+TARGET_S target_newz =				{ 0, 1, 0, 5, 205 };
+TARGET_S target_npcaction =		{ 0, 1, 0, 53, 213 };
+TARGET_S target_newx =				{ 0, 1, 0, 251, 254 };
+TARGET_S target_newy =				{ 0, 1, 0, 252, 254 };
+TARGET_S target_npctarget =		{ 0, 1, 0, 56, 228 };
+//O
+//P
+TARGET_S target_possess =			{ 0, 1, 0, 212, 249 };
+//Q
+//R
+TARGET_S target_release =			{ 0, 1, 0, 127, 181 };
+TARGET_S target_remove =			{ 0, 1, 0, 3, 188 };
+TARGET_S target_resurrect =		{ 0, 1, 0, 21, 194 };
+TARGET_S target_recall =			{ 0, 1, 0, 38, 224 };
+TARGET_S target_removeshop =	{ 0, 1, 0, 105, 262 };
+//S
+TARGET_S target_setmorex =		{ 0, 1, 0, 63, 199 };
+TARGET_S target_setmorey =		{ 0, 1, 0, 64, 200 };
+TARGET_S target_setmorez =		{ 0, 1, 0, 65, 201 };
+TARGET_S target_setmorexyz =	{ 0, 1, 0, 66, 202 };
+TARGET_S target_sethexmorexyz={ 0, 1, 0, 66, 203 };
+TARGET_S target_setnpcai =		{ 0, 1, 0, 106, 204 };
+TARGET_S target_settype =			{ 0, 1, 0, 6, 206 };
+TARGET_S target_setid =				{ 0, 1, 0, 7, 210 };
+TARGET_S target_setmore =			{ 0, 1, 0, 10, 211 };
+TARGET_S target_setfont =			{ 0, 1, 0, 19, 212 };
+TARGET_S target_setamount =		{ 0, 1, 0, 23, 214 };
+TARGET_S target_setmovable =	{ 0, 1, 0, 28, 216 };
+TARGET_S target_setvisible =	{ 0, 1, 0, 61, 217 };
+TARGET_S target_setdir =			{ 0, 1, 0, 88, 218 };
+TARGET_S target_setspeech =		{ 0, 1, 0, 135, 219 };
+TARGET_S target_setowner =		{ 0, 1, 0, 30, 220 };
+TARGET_S target_stamina =			{ 0, 1, 0, 114, 231 };
+TARGET_S target_setvalue =		{ 0, 1, 0, 122, 234 };
+TARGET_S target_setrestock =	{ 0, 1, 0, 123, 235 };
+TARGET_S target_sell =				{ 0, 1, 0, 112, 236 };
 TARGET_S target_setspattack = { 0, 1, 0, 150, 237 };
 TARGET_S target_setspadelay = { 0, 1, 0, 177, 238 };
-TARGET_S target_setpoison = { 0, 1, 0, 175, 239 };
+TARGET_S target_setpoison =		{ 0, 1, 0, 175, 239 };
 TARGET_S target_setpoisoned = { 0, 1, 0, 176, 240 };
-TARGET_S target_setadvobj = { 0, 1, 0, 178, 241 };
-TARGET_S target_setwipe = { 0, 1, 0, 133, 242 };
-TARGET_S target_fullstats = { 0, 1, 0, 151, 243 };
-TARGET_S target_hide = { 0, 1, 0, 131, 244 };
-TARGET_S target_unhide = { 0, 1, 0, 132, 245 };
-TARGET_S target_split = { 0, 1, 0, 209, 247 };
+TARGET_S target_setadvobj =		{ 0, 1, 0, 178, 241 };
+TARGET_S target_setwipe =			{ 0, 1, 0, 133, 242 };
+TARGET_S target_split =				{ 0, 1, 0, 209, 247 };
 TARGET_S target_splitchance = { 0, 1, 0, 210, 248 };
-TARGET_S target_possess = { 0, 1, 0, 212, 249 };
-TARGET_S target_telestuff = { 0, 1, 0, 222, 250 };
-TARGET_S target_killpack = { 0, 1, 0, 18, 251 };
-TARGET_S target_trainer = { 0, 1, 0, 206, 252 };
-TARGET_S target_ban = { 0, 1, 0, 235, 253 };
-TARGET_S target_newx = { 0, 1, 0, 251, 254 };
-TARGET_S target_newy = { 0, 1, 0, 252, 254 };
-TARGET_S target_incx = { 0, 1, 0, 253, 254 };
-TARGET_S target_incy = { 0, 1, 0, 254, 254 };
-TARGET_S target_glow = { 0, 1, 0, 255, 258 };
-TARGET_S target_unglow = { 0, 1, 0, 249, 259 };
-TARGET_S target_showskills = { 0, 1, 0, 247, 260 };
-TARGET_S target_showdetail = { 0, 1, 0, 48, 261 };
-TARGET_S target_removeshop = { 0, 1, 0, 105, 262 };
-TARGET_S target_commandlevel = { 0, 1, 0, 104, 264 };
-TARGET_S target_devinelock = { 0, 1, 0, 68, 265 };
-TARGET_S target_devineunlock = { 0, 1, 0, 69, 266 };
+TARGET_S target_showskills =	{ 0, 1, 0, 247, 260 };
+TARGET_S target_showdetail =	{ 0, 1, 0, 48, 261 };
 TARGET_S target_setscripttrigger = { 0, 1, 0, 71, 267 };
-TARGET_S target_incz = { 0, 1, 0, 250, 268 };
-TARGET_S target_deletechar = { 0, 1, 0, 72, 1618 };
+//T
+TARGET_S target_tele =				{ 0, 1, 0, 2, 185 };
+TARGET_S target_ttrig =				{ 0, 1, 0, 202, 209 };
+TARGET_S target_tiledata =		{ 0, 1, 0, 46, 223 };
+TARGET_S target_tweak =				{ 0, 1, 0, 62, 229 };
+TARGET_S target_telestuff =		{ 0, 1, 0, 222, 250 };
+TARGET_S target_trainer =			{ 0, 1, 0, 206, 252 };
+//U
+TARGET_S target_use =					{ 0, 1, 0, 24, 179 };
+TARGET_S target_unfreeze =		{ 0, 1, 0, 35, 222 };
+TARGET_S target_unhide =			{ 0, 1, 0, 132, 245 };
+TARGET_S target_unglow =			{ 0, 1, 0, 249, 259 };
+//V
+//W
+TARGET_S target_wstats =			{ 0, 1, 0, 55, 183 };
+//X
+TARGET_S target_xbank =				{ 0, 1, 0, 107, 186 };
+TARGET_S target_xsbank =			{ 0, 1, 0, 107, 187 }; // AntiChrist
+TARGET_S target_xgo =					{ 0, 1, 0, 8, 198 };
+//Y
+//Z
 
 map< string, cmdtable_mapentry > cmd_table;
 
@@ -110,212 +138,240 @@ void CommandReset( void )
 {
 	cmdtable_entry command_table[] = 
 	{
-		{"USE",					2,	CMD_TARGET,		(CMD_DEFINE)&target_use},
-		{"RESEND",				1,	CMD_FUNC,		(CMD_DEFINE)&command_resend},
-		{"STATUS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_status},
-		{"POST",    			1,  CMD_FUNC,		(CMD_DEFINE)&command_post},
-		{"GPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_gpost},
-		{"RPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_rpost},
-		{"LPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_lpost},
-		{"POINT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_teleport},
-		{"WHERE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_where},
+		//A
 		{"ADDU",				2,	CMD_ITEMMENU,	(CMD_DEFINE)1}, // Opens the GM add menu.
-		{"Q",					1,	CMD_FUNC,		(CMD_DEFINE)&command_q},
-		{"NEXT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_next},
-		{"CLEAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_clear},
-		{"GOTOCUR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_gotocur},
-		{"GMTRANSFER",			1,	CMD_FUNC,		(CMD_DEFINE)&command_gmtransfer},
-		{"JAIL",				1,	CMD_TARGET,		(CMD_DEFINE)&target_jail},
-		{"RELEASE",				1,	CMD_TARGET,		(CMD_DEFINE)&target_release},
-		{"ISTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_istats},
-		{"CSTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_cstats},
-		{"WSTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_wstats},
-		{"GOPLACE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_goplace},
-		{"GOCHAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_gochar},
-		{"FIX",					1,	CMD_FUNC,		(CMD_DEFINE)&command_fix},
-		{"XGOPLACE",			2,	CMD_FUNC,		(CMD_DEFINE)&command_xgoplace},
-		{"SHOWIDS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_showids},
-		{"POLY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_poly},
-		{"SKIN",				2,	CMD_FUNC,		(CMD_DEFINE)&command_skin},
+		{"AREACOMMAND",			2,	CMD_FUNC,		(CMD_DEFINE)&command_areaCommand},
+		{"ADDACCOUNT",	2,	CMD_FUNC,		(CMD_DEFINE)&command_addaccount},
 		{"ACTION",				2,	CMD_FUNC,		(CMD_DEFINE)&command_action},
-		{"TELE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_tele},
-		{"XTELE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_xtele},
-		{"GO",					2,	CMD_FUNC,		(CMD_DEFINE)&command_go},
-		{"XGO",					2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_xgo},
-		{"SETMOREX",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorex},
-		{"SETMOREY",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorey},
-		{"SETMOREZ",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorez},
-		{"DEVINELOCK",			3,  CMD_TARGET,		(CMD_DEFINE)&target_devinelock},
-		{"DEVINEUNLOCK",		3,  CMD_TARGET,		(CMD_DEFINE)&target_devineunlock},
-		{"ZEROKILLS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_zerokills},
-		{"SETMOREXYZ",			2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_setmorexyz},
-		{"SETHEXMOREXYZ",		2,	CMD_TARGETHXYZ,	(CMD_DEFINE)&target_sethexmorexyz},
-		{"SETNPCAI",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setnpcai},
-		{"XBANK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_xbank},
-		{"XSBANK",				2,  CMD_TARGET,		(CMD_DEFINE)&target_xsbank }, 
-		{"TILE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tile},
-		{"WIPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_wipe},
-		{"IWIPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_iwipe},
 		{"ADD",					2,	CMD_FUNC,		(CMD_DEFINE)&command_add},
 		{"ADDX",				2,	CMD_FUNC,		(CMD_DEFINE)&command_addx},
-		{"RENAME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_rename},
-		{"TITLE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_title},
-		{"SAVE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_save},
-		{"REMOVE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_remove},
-		{"TRAINER",				2,	CMD_TARGET,		(CMD_DEFINE)&target_trainer},
-		{"DYE",					2,	CMD_FUNC,		(CMD_DEFINE)&command_dye},
-		{"NEWZ",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newz},
-		{"SETTYPE",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_settype},
-		{"ITRIG",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_itrig},
+		{"ADDITEM",				2,	CMD_FUNC,		(CMD_DEFINE)&command_additem},
+		{"ALLMOVEON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_allmoveon},
+		{"ALLMOVEOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_allmoveoff},
+		{"ADDNPC",				2,	CMD_FUNC,		(CMD_DEFINE)&command_addnpc},
+		{"ANNOUNCEON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_announceon},
+		{"ANNOUNCEOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_announceoff},
+		//B
+		{"BAN",					2,	CMD_TARGET,		(CMD_DEFINE)&target_ban},
+		{"BUY",					2,	CMD_TARGET,		(CMD_DEFINE)&target_buy},
+		{"BOLT",				2,	CMD_TARGET,		(CMD_DEFINE)&target_bolt},
+		{"BRIGHTLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_brightlight},
+		//C
+		{"CY",					1,	CMD_FUNC,		(CMD_DEFINE)&command_cy},
+		{"COMMANDLEVEL",		2,	CMD_TARGETX,	(CMD_DEFINE)&target_commandlevel},
+		{"CLEANUP",				2,	CMD_FUNC,		(CMD_DEFINE)&command_cleanup},
+		{"CNEXT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_cnext},
+		{"CCLEAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_cclear},
+		{"CQ",					1,	CMD_FUNC,		(CMD_DEFINE)&command_cq},
+		{"CACHESTATS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_cachestats},
+		{"COMMAND",				2,	CMD_FUNC,		(CMD_DEFINE)&command_command},
 		{"CTRIG",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_ctrig},
-		{"TTRIG",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_ttrig},
-		{"SETID",				2,	CMD_TARGETHID2,	(CMD_DEFINE)&target_setid},
-		{"SETPRIV",				2,	CMD_FUNC,		(CMD_DEFINE)&command_setpriv},
-		{"NODECAY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_nodecay},
-		{"SHOWTIME",			1,	CMD_FUNC,		(CMD_DEFINE)&command_showtime},
-		{"SETTIME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_settime},
-		{"SETMORE",				2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setmore},
-		{"SHUTDOWN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_shutdown},
+		{"CSTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_cstats},
+		{"CLEAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_clear},
+		//D
+		{"DECAY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_decay},
+		{"DARKLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_darklight},
+		{"DUNGEONLIGHT",		2,	CMD_FUNC,		(CMD_DEFINE)&command_dungeonlight},
+		{"DUPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_dupe},
+		{"DISCONNECT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_disconnect},
+		{"DYE",					2,	CMD_FUNC,		(CMD_DEFINE)&command_dye},
+		{"DEVINELOCK",			3,  CMD_TARGET,		(CMD_DEFINE)&target_devinelock},
+		{"DEVINEUNLOCK",		3,  CMD_TARGET,		(CMD_DEFINE)&target_devineunlock},
+		{"DELID",				2,	CMD_FUNC,		(CMD_DEFINE)&command_delid},
+		{"DELETECHAR",			2,	CMD_TARGET,		(CMD_DEFINE)&target_deletechar },
+		//E
+		//F
+		{"FORCEWHO",			2,	CMD_FUNC,		(CMD_DEFINE)&command_forcewho},
+		{"FULLSTATS",			2,	CMD_TARGET,		(CMD_DEFINE)&target_fullstats},
+		{"FREEZE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_freeze},
+		{"FIX",					1,	CMD_FUNC,		(CMD_DEFINE)&command_fix},
+		//G
+		{"GLOW",				2,	CMD_TARGET,		(CMD_DEFINE)&target_glow },
+		{"GETLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_getlight},
+		{"GY",					2,	CMD_FUNC,		(CMD_DEFINE)&command_gy},
+		{"GUARDSON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_guardson},
+		{"GUARDSOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_guardsoff},
+		{"GUMPOPEN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gumpopen},
+		{"GMS",					1,	CMD_FUNC,		(CMD_DEFINE)&command_gms},
+		{"GATE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_gate},
+		{"GUMPMENU",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gumpmenu},
+		{"GMMENU",				2,	CMD_FUNC,		(CMD_DEFINE)&command_gmmenu},
+		{"GMTRANSFER",			1,	CMD_FUNC,		(CMD_DEFINE)&command_gmtransfer},
+		{"GO",					2,	CMD_FUNC,		(CMD_DEFINE)&command_go},
+		{"GOPLACE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_goplace},
+		{"GOCHAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_gochar},
+		{"GOTOCUR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_gotocur},
+		{"GPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_gpost},
+		{"GMOPEN",				2,	CMD_FUNC,		(CMD_DEFINE)&command_gmopen},
+		{"GCOLLECT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gcollect},
+		//H
+		{"HIDEHS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_hidehs},
+		{"HEAL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_heal},				// to here
+		{"HIDE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_hide},
+		{"HOWTO",				0,	CMD_FUNC,		(CMD_DEFINE)&command_howto },
+		//I
+		{"INCX",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_incx},
+		{"INCY",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_incy},
+		{"INCZ",				2,  CMD_TARGETX,	(CMD_DEFINE)&target_incz},
+		{"INVUL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_invul},
+		{"ITRIG",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_itrig},
+		{"IWIPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_iwipe},
+		{"ISTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_istats},
+		{"ITEMMENU",			2,	CMD_FUNC,		(CMD_DEFINE)&command_itemmenu},
+		//J
+		{"JAIL",				1,	CMD_TARGET,		(CMD_DEFINE)&target_jail},
+		//K
+		{"KILLALL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_killall},
+		{"KICK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_kick},
 		{"KILLHAIR",			2,	CMD_TARGET,		(CMD_DEFINE)&target_killhair},
 		{"KILLBEARD",			2,	CMD_TARGET,		(CMD_DEFINE)&target_killbeard},
 		{"KILLPACK",			2,	CMD_TARGET,		(CMD_DEFINE)&target_killpack},
-		{"SETFONT",				2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_setfont},
-		{"WHOLIST",				2,	CMD_FUNC,		(CMD_DEFINE)&command_wholist},
 		{"KILL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_kill},
-		{"RESURRECT",			2,	CMD_TARGET,		(CMD_DEFINE)&target_resurrect},
-		{"BOLT",				2,	CMD_TARGET,		(CMD_DEFINE)&target_bolt},
-		{"SFX",					2,	CMD_FUNC,		(CMD_DEFINE)&command_sfx},
-		{"NPCACTION",			2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_npcaction},
+		//L
 		{"LIGHT",				2,	CMD_FUNC,		(CMD_DEFINE)&command_light},
-		{"SETAMOUNT",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setamount},
-		{"DISCONNECT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_disconnect},
-		{"KICK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_kick},
-		{"TELL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tell},
-		{"GMMENU",				2,	CMD_FUNC,		(CMD_DEFINE)&command_gmmenu},
-		{"ITEMMENU",			2,	CMD_FUNC,		(CMD_DEFINE)&command_itemmenu},
-		{"ADDITEM",				2,	CMD_FUNC,		(CMD_DEFINE)&command_additem},
-		{"DUPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_dupe},
-		{"MOVETOBAG",			2,	CMD_TARGET,		(CMD_DEFINE)&target_movetobag},
-		{"COMMAND",				2,	CMD_FUNC,		(CMD_DEFINE)&command_command},
-		{"GCOLLECT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gcollect},
-		{"ALLMOVEON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_allmoveon},
-		{"ALLMOVEOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_allmoveoff},
-		{"SHOWHS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_showhs},
-		{"HIDEHS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_hidehs},
-		{"SETMOVABLE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmovable},
-		{"SET",					2,	CMD_FUNC,		(CMD_DEFINE)&command_set},
-		{"SETVISIBLE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvisible},
-		{"SETDIR",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_setdir},
-		{"SETSPEECH",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setspeech},
-		{"SETOWNER",			2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setowner},
-		{"ADDNPC",				2,	CMD_FUNC,		(CMD_DEFINE)&command_addnpc},
-		{"FREEZE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_freeze},
-		{"UNFREEZE",			2,	CMD_TARGET,		(CMD_DEFINE)&target_unfreeze},
-		{"READINI",				2,	CMD_FUNC,		(CMD_DEFINE)&command_readini},
-		{"GUMPMENU",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gumpmenu},
-		{"TILEDATA",			2,	CMD_TARGET,		(CMD_DEFINE)&target_tiledata},
-		{"RECALL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_recall},			// these need to be updated for new magic system (Abaddon)
+		{"LPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_lpost},
+		{"LOADDEFAULTS",		2,	CMD_FUNC,		(CMD_DEFINE)&command_loaddefaults},
+		//M
+		{"MAKE",				3,	CMD_FUNC,		(CMD_DEFINE)&command_make },
+		{"MINECHECK",			2,	CMD_FUNC,		(CMD_DEFINE)&command_minecheck},
+		{"MUTE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_squelch},
+		{"MAKESHOP",			2,	CMD_TARGET,		(CMD_DEFINE)&target_makeshop},
+		{"MANA",				2,	CMD_TARGET,		(CMD_DEFINE)&target_mana},
 		{"MARK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_mark},
-		{"GATE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_gate},
-		{"HEAL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_heal},				// to here
+		{"MOVETOBAG",			2,	CMD_TARGET,		(CMD_DEFINE)&target_movetobag},
+		{"MIDI",				2,	CMD_FUNC,		(CMD_DEFINE)&command_midi},
+		//N
 		{"NPCTARGET",			2,	CMD_TARGET,		(CMD_DEFINE)&target_npctarget},
-		{"CACHESTATS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_cachestats},
+		{"NACCT",				3,	CMD_FUNC,		(CMD_DEFINE)&command_nacct },
+		{"NEWX",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newx},
+		{"NEWY",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newy},
+		{"NOINVUL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_noinvul},
 		{"NPCRECT",				2,	CMD_FUNC,		(CMD_DEFINE)&command_npcrect},
 		{"NPCCIRCLE",			2,	CMD_FUNC,		(CMD_DEFINE)&command_npccircle},
 		{"NPCWANDER",			2,	CMD_FUNC,		(CMD_DEFINE)&command_npcwander},
-		{"TWEAK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_tweak},
-		{"SECONDSPERUOMINUTE",	2,	CMD_FUNC,		(CMD_DEFINE)&command_secondsperuominute},
-		{"BRIGHTLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_brightlight},
-		{"DARKLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_darklight},
-		{"DUNGEONLIGHT",		2,	CMD_FUNC,		(CMD_DEFINE)&command_dungeonlight},
-		{"TIME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_time},
-		{"MANA",				2,	CMD_TARGET,		(CMD_DEFINE)&target_mana},
-		{"STAMINA",				2,	CMD_TARGET,		(CMD_DEFINE)&target_stamina},
-		{"GMOPEN",				2,	CMD_FUNC,		(CMD_DEFINE)&command_gmopen},
-		{"MAKESHOP",			2,	CMD_TARGET,		(CMD_DEFINE)&target_makeshop},
-		{"BUY",					2,	CMD_TARGET,		(CMD_DEFINE)&target_buy},
-		{"SETVALUE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvalue},
-		{"SETRESTOCK",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setrestock},
+		{"NPCACTION",			2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_npcaction},
+		{"NODECAY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_nodecay},
+		{"NEWZ",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newz},
+		{"NEXT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_next},
+		//O
+		//P
+		{"PDUMP",				2,	CMD_FUNC,		(CMD_DEFINE)&command_pdump},
+		{"POSSESS",				2,	CMD_TARGET,		(CMD_DEFINE)&target_possess},
+		{"POLY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_poly},
+		{"POST",    			1,  CMD_FUNC,		(CMD_DEFINE)&command_post},
+		{"POINT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_teleport},
+		//Q
+		{"Q",					1,	CMD_FUNC,		(CMD_DEFINE)&command_q},
+		//R
+		{"RECALL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_recall},			// these need to be updated for new magic system (Abaddon)
+		{"RPOST",   			1,  CMD_FUNC,		(CMD_DEFINE)&command_rpost},
+		{"RENAME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_rename},
+		{"RELEASE",				1,	CMD_TARGET,		(CMD_DEFINE)&target_release},
+		{"RESEND",				1,	CMD_FUNC,		(CMD_DEFINE)&command_resend},
+		{"REMOVE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_remove},
+		{"RESURRECT",			2,	CMD_TARGET,		(CMD_DEFINE)&target_resurrect},
+		{"READINI",				2,	CMD_FUNC,		(CMD_DEFINE)&command_readini},
 		{"RESTOCK",				2,	CMD_FUNC,		(CMD_DEFINE)&command_restock},
 		{"RESTOCKALL",			2,	CMD_FUNC,		(CMD_DEFINE)&command_restockall},
-		{"SETSHOPRESTOCKRATE",	2,	CMD_FUNC,		(CMD_DEFINE)&command_setshoprestockrate},
-		{"WHO",					1,	CMD_FUNC,		(CMD_DEFINE)&command_who},
-		{"GMS",					1,	CMD_FUNC,		(CMD_DEFINE)&command_gms},
-		{"SELL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_sell},
-		{"MIDI",				2,	CMD_FUNC,		(CMD_DEFINE)&command_midi},
-		{"GUMPOPEN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_gumpopen},
 		{"RESPAWN",				2,	CMD_FUNC,		(CMD_DEFINE)&command_respawn},
 		{"REGSPAWNALL",			2,	CMD_FUNC,		(CMD_DEFINE)&command_regspawnall},
 		{"REGSPAWNMAX",			2,	CMD_FUNC,		(CMD_DEFINE)&command_regspawnmax},
 		{"REGSPAWN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_regspawn},
+		{"RELOADSERVER",		2,	CMD_FUNC,		(CMD_DEFINE)&command_reloadserver},
+		{"RELOADACCOUNTS",		2,  CMD_FUNC,		(CMD_DEFINE)&command_reloadaccounts},
+		{"RENAME2",				2,	CMD_FUNC,		(CMD_DEFINE)&command_rename2},
+		{"READSPAWNREGIONS",	2,	CMD_FUNC,		(CMD_DEFINE)&command_readspawnregions},
+		{"REPORTBUG",			0,	CMD_FUNC,		(CMD_DEFINE)&command_reportbug},
+		{"REMOVESHOP",			2,	CMD_TARGET,		(CMD_DEFINE)&target_removeshop},
+		{"RELOADDEFS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_reloaddefs },
+		//S
+		{"SGY",					3,	CMD_FUNC,		(CMD_DEFINE)&command_sgy},
+		{"SETSCPTRIG",			3,	CMD_TARGETX,	(CMD_DEFINE)&target_setscripttrigger},
+		{"SHOWSKILLS",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_showskills},
+		{"SHOWDETAIL",			2,	CMD_TARGET,		(CMD_DEFINE)&target_showdetail},
+		{"SETRACE",				2,  CMD_FUNC,		(CMD_DEFINE)&command_setrace},
+		{"SPAWNKILL",			2,	CMD_FUNC,		(CMD_DEFINE)&command_spawnkill},
+		{"SQUELCH",				2,	CMD_FUNC,		(CMD_DEFINE)&command_squelch},
+		{"SPLIT",				2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_split},
+		{"SPLITCHANCE",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_splitchance},
 		{"SETSPATTACK",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setspattack},
 		{"SETSPADELAY",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setspadelay},
 		{"SETPOISON",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setpoison},
 		{"SETPOISONED",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setpoisoned},
 		{"SETADVOBJ",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setadvobj},
 		{"SETWIPE",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_setwipe},
-		{"FULLSTATS",			2,	CMD_TARGET,		(CMD_DEFINE)&target_fullstats},
-		{"HIDE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_hide},
-		{"UNHIDE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_unhide},
-		{"RELOADSERVER",		2,	CMD_FUNC,		(CMD_DEFINE)&command_reloadserver},
-		{"RELOADACCOUNTS",		2,  CMD_FUNC,		(CMD_DEFINE)&command_reloadaccounts},
-		{"LOADDEFAULTS",		2,	CMD_FUNC,		(CMD_DEFINE)&command_loaddefaults},
-		{"CQ",					1,	CMD_FUNC,		(CMD_DEFINE)&command_cq},
-		{"WIPENPCS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_wipenpcs},
-		{"CNEXT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_cnext},
-		{"CCLEAR",				1,	CMD_FUNC,		(CMD_DEFINE)&command_cclear},
-		{"MINECHECK",			2,	CMD_FUNC,		(CMD_DEFINE)&command_minecheck},
-		{"INVUL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_invul},
-		{"NOINVUL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_noinvul},
-		{"GUARDSON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_guardson},
-		{"GUARDSOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_guardsoff},
-		{"ANNOUNCEON",			2,	CMD_FUNC,		(CMD_DEFINE)&command_announceon},
-		{"ANNOUNCEOFF",			2,	CMD_FUNC,		(CMD_DEFINE)&command_announceoff},
-		{"WF",					2,	CMD_FUNC,		(CMD_DEFINE)&command_wf},
-		{"DECAY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_decay},
-		{"SPLIT",				2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_split},
-		{"SPLITCHANCE",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_splitchance},
-		{"POSSESS",				2,	CMD_TARGET,		(CMD_DEFINE)&target_possess},
-		{"KILLALL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_killall},
-		{"PDUMP",				2,	CMD_FUNC,		(CMD_DEFINE)&command_pdump},
-		{"RENAME2",				2,	CMD_FUNC,		(CMD_DEFINE)&command_rename2},
-		{"READSPAWNREGIONS",	2,	CMD_FUNC,		(CMD_DEFINE)&command_readspawnregions},
-		{"CLEANUP",				2,	CMD_FUNC,		(CMD_DEFINE)&command_cleanup},
-		{"GY",					2,	CMD_FUNC,		(CMD_DEFINE)&command_gy},
-		{"TILEW",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tilew},
-		{"SQUELCH",				2,	CMD_FUNC,		(CMD_DEFINE)&command_squelch},
-		{"MUTE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_squelch},
-		{"TELESTUFF",			2,	CMD_TARGET,		(CMD_DEFINE)&target_telestuff},
-		{"SPAWNKILL",			2,	CMD_FUNC,		(CMD_DEFINE)&command_spawnkill},
-		{"NEWX",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newx},
-		{"NEWY",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newy},
-		{"INCX",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_incx},
-		{"INCY",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_incy},
-		{"INCZ",				2,  CMD_TARGETX,	(CMD_DEFINE)&target_incz},
-		{"BAN",					2,	CMD_TARGET,		(CMD_DEFINE)&target_ban},
-		{"SETRACE",				2,  CMD_FUNC,		(CMD_DEFINE)&command_setrace},
-		{"GLOW",				2,	CMD_TARGET,		(CMD_DEFINE)&target_glow },
-		{"UNGLOW",				2,	CMD_TARGET,		(CMD_DEFINE)&target_unglow},
-		{"SHOWSKILLS",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_showskills},
-		{"SHOWDETAIL",			2,	CMD_TARGET,		(CMD_DEFINE)&target_showdetail},
-		{"GETLIGHT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_getlight},
-		{"REPORTBUG",			0,	CMD_FUNC,		(CMD_DEFINE)&command_reportbug},
-		{"REMOVESHOP",			2,	CMD_TARGET,		(CMD_DEFINE)&target_removeshop},
-		{"DELID",				2,	CMD_FUNC,		(CMD_DEFINE)&command_delid},
-		{"FORCEWHO",			2,	CMD_FUNC,		(CMD_DEFINE)&command_forcewho},
-		{"COMMANDLEVEL",		2,	CMD_TARGETX,	(CMD_DEFINE)&target_commandlevel},
-		{"CY",					1,	CMD_FUNC,		(CMD_DEFINE)&command_cy},
-		{"SGY",					3,	CMD_FUNC,		(CMD_DEFINE)&command_sgy},
-		{"VALIDCMD",			0,	CMD_FUNC,		(CMD_DEFINE)&command_validcmd },
-		{"NACCT",				3,	CMD_FUNC,		(CMD_DEFINE)&command_nacct },
-		{"MAKE",				3,	CMD_FUNC,		(CMD_DEFINE)&command_make },
-		{"SETSCPTRIG",			3,	CMD_TARGETX,	(CMD_DEFINE)&target_setscripttrigger},
-		{"HOWTO",				0,	CMD_FUNC,		(CMD_DEFINE)&command_howto },
-		{"DELETECHAR",			2,	CMD_TARGET,		(CMD_DEFINE)&target_deletechar },
-		{"XGATE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_xgate },
-		{"RELOADDEFS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_reloaddefs },
+		{"SELL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_sell},
+		{"SETVALUE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvalue},
+		{"SETRESTOCK",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setrestock},
+		{"SETSHOPRESTOCKRATE",	2,	CMD_FUNC,		(CMD_DEFINE)&command_setshoprestockrate},
+		{"STAMINA",				2,	CMD_TARGET,		(CMD_DEFINE)&target_stamina},
+		{"SECONDSPERUOMINUTE",	2,	CMD_FUNC,		(CMD_DEFINE)&command_secondsperuominute},
+		{"SETMOVABLE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmovable},
+		{"SET",					2,	CMD_FUNC,		(CMD_DEFINE)&command_set},
+		{"SETVISIBLE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvisible},
+		{"SETDIR",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_setdir},
+		{"SETSPEECH",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setspeech},
+		{"SETOWNER",			2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setowner},
+		{"SHOWHS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_showhs},
+		{"SETAMOUNT",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setamount},
+		{"SFX",					2,	CMD_FUNC,		(CMD_DEFINE)&command_sfx},
+		{"SETFONT",				2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_setfont},
+		{"SHOWTIME",			1,	CMD_FUNC,		(CMD_DEFINE)&command_showtime},
+		{"SETTIME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_settime},
+		{"SETMORE",				2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setmore},
+		{"SHUTDOWN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_shutdown},
+		{"SETID",				2,	CMD_TARGETHID2,	(CMD_DEFINE)&target_setid},
+		{"SETPRIV",				2,	CMD_FUNC,		(CMD_DEFINE)&command_setpriv},
+		{"SETTYPE",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_settype},
+		{"SAVE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_save},
+		{"SETMOREXYZ",			2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_setmorexyz},
+		{"SETHEXMOREXYZ",		2,	CMD_TARGETHXYZ,	(CMD_DEFINE)&target_sethexmorexyz},
+		{"SETNPCAI",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setnpcai},
+		{"SETMOREX",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorex},
+		{"SETMOREY",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorey},
+		{"SETMOREZ",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorez},
+		{"SKIN",				2,	CMD_FUNC,		(CMD_DEFINE)&command_skin},
+		{"STATUS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_status},
+		{"SHOWIDS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_showids},
+		//T
 		{"TEMP",				2,	CMD_FUNC,		(CMD_DEFINE)&command_temp },
-		{"AREACOMMAND",			2,	CMD_FUNC,		(CMD_DEFINE)&command_areaCommand},
+		{"TELESTUFF",			2,	CMD_TARGET,		(CMD_DEFINE)&target_telestuff},
+		{"TILEW",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tilew},
+		{"TIME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_time},
+		{"TWEAK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_tweak},
+		{"TILEDATA",			2,	CMD_TARGET,		(CMD_DEFINE)&target_tiledata},
+		{"TELL",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tell},
+		{"TTRIG",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_ttrig},
+		{"TILE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_tile},
+		{"TITLE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_title},
+		{"TRAINER",				2,	CMD_TARGET,		(CMD_DEFINE)&target_trainer},
+		{"TELE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_tele},
+		//U
+		{"USE",					2,	CMD_TARGET,		(CMD_DEFINE)&target_use},
+		{"UNHIDE",				2,	CMD_TARGET,		(CMD_DEFINE)&target_unhide},
+		{"UNGLOW",				2,	CMD_TARGET,		(CMD_DEFINE)&target_unglow},
+		{"UNFREEZE",			2,	CMD_TARGET,		(CMD_DEFINE)&target_unfreeze},
+		//V
+		{"VALIDCMD",			0,	CMD_FUNC,		(CMD_DEFINE)&command_validcmd },
+		//W
+		{"WIPENPCS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_wipenpcs},
+		{"WF",					2,	CMD_FUNC,		(CMD_DEFINE)&command_wf},
+		{"WHO",					1,	CMD_FUNC,		(CMD_DEFINE)&command_who},
+		{"WHOLIST",				2,	CMD_FUNC,		(CMD_DEFINE)&command_wholist},
+		{"WIPE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_wipe},
+		{"WSTATS",				1,	CMD_TARGET,		(CMD_DEFINE)&target_wstats},
+		{"WHERE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_where},
+		//X
+		{"XTELE",				1,	CMD_FUNC,		(CMD_DEFINE)&command_xtele},
+		{"XGATE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_xgate },
+		{"XBANK",				2,	CMD_TARGET,		(CMD_DEFINE)&target_xbank},
+		{"XSBANK",				2,  CMD_TARGET,		(CMD_DEFINE)&target_xsbank }, 
+		{"XGO",					2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_xgo},
+		{"XGOPLACE",			2,	CMD_FUNC,		(CMD_DEFINE)&command_xgoplace},
+		//Y
+		//Z
+		{"ZEROKILLS",			2,	CMD_FUNC,		(CMD_DEFINE)&command_zerokills},
+		// End of Table
 		{ NULL,					0,	0,				NULL }
 	};
 
@@ -330,6 +386,54 @@ void CommandReset( void )
 
 
 static char *ch="abcdefg";
+
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	10/17/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o
+//|	Notes					-	
+//o--------------------------------------------------------------------------o	
+void command_addaccount( cSocket *s)
+{
+	char szBuffer[128];
+	char *szCommandLine, *szCommand, *szUsername, *szPassword, *szPrivs;
+	ACTREC *actrecTemp=NULL;
+	UI16 nFlags=0x0000;
+	szPassword=szUsername=szCommand=szCommandLine=NULL;
+	if( tnum > 1 )
+	{
+		szCommandLine=(char *)&(s->TBuffer()[Commands->cmd_offset+0]);
+		szCommand =strtok(szCommandLine," ");
+		szUsername=strtok(NULL," ");
+		szPassword=strtok(NULL," ");
+		szPrivs=strtok(NULL,"\0");
+		nFlags=atoi(szPrivs);		
+		if(szPassword==NULL||szUsername==NULL)
+			return;
+		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
+		actrecTemp=Accounts->GetAccount(szUsername);
+		if(!actrecTemp)
+		{
+			Accounts->AddAccount(szUsername,szPassword,"",nFlags);
+			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
+			sprintf(szBuffer,"Account Added: %s:%s:%i",szUsername,szPassword,nFlags);
+			sysmessage(s,szBuffer);
+		}
+		else
+		{
+			Console << "o Account was not added" << myendl;
+			sysmessage(s,"Account not added");
+		}
+	}
+}
 
 void command_setrace( cSocket *s )
 {
@@ -609,7 +713,7 @@ void command_poly( cSocket *s )
 	else if( tnum == 3 )
 		targBody = (UI16)((makenumber( 1 ) << 8 ) + makenumber( 2 ));
 
-	if( targBody <= 0x3E1 ) // body-values > 0x3E crash the client
+	if( targBody <= 0x2FF ) // body-values > 0x3E crash the client
 	{ 
 		mChar->SetID( targBody );
 		mChar->SetxID( targBody );
@@ -1922,8 +2026,10 @@ void command_reportbug( cSocket *s )
 	}
 	CChar *mChar = s->CurrcharObj();
 	if( mChar == NULL )
+	{
+		fclose(bugs);
 		return;
-
+	}
 	char dateTime[1024];
 	time_t ltime;
 	time( &ltime );
