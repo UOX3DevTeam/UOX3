@@ -1088,7 +1088,6 @@ UI16 cAccountClass::Load(void)
 	std::fstream fsAccountsADMTest(sAccountsADM.c_str());
 	if(!fsAccountsADMTest.is_open())
 	{
-		std::cout << "Error: " << GetLastError();
 		// we were unable to load any accounts
 		return 0x0000;
 	}
