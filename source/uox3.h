@@ -124,7 +124,6 @@
 #include <sys/types.h>
 #include <assert.h>
 #include <sstream>
-#include "cVersionClass.h"
 
 //o---------------------------------------------------------------------------o
 // OS specific includes
@@ -139,7 +138,6 @@
 	#include <winbase.h>
 	#include <limits.h>
 	#include <conio.h>
-	#include <sstream>
 	#include <sys/timeb.h>
 	typedef long int32;
 #else
@@ -149,7 +147,6 @@
 	#include <sys/time.h>
 	#include <netdb.h>
 	#include <sys/signal.h>
-	#include <sstream>
 	#if defined(__unix__)				// Tseramed's stuff
 		#include <unistd.h>
 		#include <arpa/inet.h>
@@ -179,28 +176,48 @@
 //o---------------------------------------------------------------------------o
 #include "typedefs.h"
 #include "uoxstruct.h"
-class UOXFile;
-#include "mapclasses.h"
-#include "fileio.h"
-#include "scriptc.h"
+#include "hash.h"
+#include "cAccountClass.h"
 #include "classes.h"
+#include "handlers.h"
 #include "cConsole.h"
-#include "msgboard.h"
-#include "books.h"
-#include "boats.h"	// Boats
+class cPBuffer;
+#include "cSocket.h"
 #include "worldmain.h"
 #include "regions.h"
-#include "cRaces.h"
-#include "cWeather.hpp"
-#include "townregion.h"
-#include "speech.h"
 #include "Dictionary.h"
-#include "cAccountClass.h"
 #include "funcdecl.h"
-#include "hash.h"
-#include "cGuild.h"
-#include "cServerDefinitions.h"
 
+//o---------------------------------------------------------------------------o
+// Class Declarations
+//o---------------------------------------------------------------------------o
+class cWeight;
+class cBoat;
+class cBooks;
+class CGuildCollection;
+class cCombat;
+class cTownRegion;
+class JailSystem;
+class cWeatherAb;
+class cMovement;
+class cRaces;
+class cServerDefinitions;
+class cCommands;
+class cWhoList;
+class cSkills;
+class cMagic;
+class cTargets;
+class PageVector;
+class CSpeechQueue;
+class cHTMLTemplates;
+class cGump;
+class Triggers;
+class cMapStuff;
+class Script;
+class cTEffect;
+class cEffects;
+class cNetworkStuff;
+class cFileIO;
 
 //o---------------------------------------------------------------------------o
 // LINUX Definitions
@@ -221,11 +238,6 @@ char *strupr(char *);
 //o---------------------------------------------------------------------------o
 
 //o---------------------------------------------------------------------------o
-//Time variables
-//o---------------------------------------------------------------------------o
-extern timeval uoxtimeout;
-
-//o---------------------------------------------------------------------------o
 // Socket Stuff
 //o---------------------------------------------------------------------------o
 extern fd_set conn;
@@ -244,41 +256,29 @@ extern JSClass uox_class;
 //o---------------------------------------------------------------------------o
 // Item / Character Variables
 //o---------------------------------------------------------------------------o
-extern creat_st creatures[2048]; // stores the base-sound+sound flags of monsters, animals
-extern skill_st skill[SKILLS+1];
-extern title_st title[ALLSKILLS+1];
+extern creat_st creatures[2048];
 extern char skillname[SKILLS+1][20];
 extern UI16 doorbase[DOORTYPES];
 
 //o---------------------------------------------------------------------------o
 // Misc Variables
 //o---------------------------------------------------------------------------o
-extern std::vector< TeleLocationEntry > teleLocs;
-extern location_st location[4000];
-extern logout_st logout[1024];			// Instalog
+extern HashTable< ITEM >			nitemsp;
+extern HashTableMulti< ITEM >		nspawnsp;
+extern HashTable< CHARACTER >		ncharsp;
+extern HashTableMulti< CHARACTER >	ncspawnsp;
+
 extern cTownRegion *region[256];
 extern cSpawnRegion *spawnregion[4098];	// Zippy
-extern std::vector< JailCell > jails;
 extern char *comm[CMAX];
 extern int *loscache;
 extern int *itemids;
 extern CEndL myendl;
-extern std::vector< MurderPair > murdererTags;
 extern std::vector< SpellInfo > spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 #if !defined(__unix__)
   extern WSADATA wsaData;
   extern WORD wVersionRequested;
 #endif
-
-
-//o---------------------------------------------------------------------------o
-// The below structure is for looking up items based on serial #
-// item's serial, owner's serial, char's serial, and container's serial
-//o---------------------------------------------------------------------------o
-extern HashTable< ITEM >			nitemsp;
-extern HashTableMulti< ITEM >		nspawnsp;
-extern HashTable< CHARACTER >		ncharsp;
-extern HashTableMulti< CHARACTER >	ncspawnsp;
 
 //tables for data lengths in binary save files (located in worldmain.cpp)
 extern const UI08 CharSaveTable[256];
@@ -348,7 +348,7 @@ extern cWeatherAb				*Weather;
 extern cMovement				*Movement;
 extern cWhoList					*WhoList;
 extern cWhoList					*OffList;
-extern cTEffect					*Effects;
+extern cTEffect					*TEffects;
 extern cBooks					*Books;
 extern PageVector				*GMQueue;
 extern PageVector				*CounselorQueue;
@@ -361,10 +361,12 @@ extern CSpeechQueue				*SpeechSys;
 extern CGuildCollection			*GuildSys;
 extern cServerDefinitions		*FileLookup;
 extern JailSystem				*JailSys;
+extern cEffects					*Effects;
+extern cFileIO					*FileIO;
 #include "cThreadQueue.h"
 extern CThreadQueue				messageLoop;
-extern cItemHandle items;
-extern cCharacterHandle chars;
+extern cItemHandle				items;
+extern cCharacterHandle			chars;
 
 inline UI32 BuildTimeValue( R32 timeFromNow ) { return (UI32)( cwmWorldState->GetUICurrentTime() + ( (R32)(CLOCKS_PER_SEC) * timeFromNow ) );	}
 
