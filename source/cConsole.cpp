@@ -12,8 +12,12 @@
 //o---------------------------------------------------------------------------o
 
 // Header
+#include "uox3.h"
 #include "cConsole.h"
-#include <cstdarg>
+
+#ifndef va_start
+	#include <cstdarg>
+#endif
 
 const UI08 NORMALMODE = 0;
 const UI08 WARNINGMODE = 1;

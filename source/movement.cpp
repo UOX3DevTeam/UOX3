@@ -46,7 +46,19 @@
 // behind what I've done to make things easier.
 
 #include "uox3.h"
+#include "movement.h"
 
+#include "weight.h"
+#include "cGuild.h"
+#include "combat.h"
+#include "msgboard.h"
+#include "cRaces.h"
+#include "cMagic.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 // These are defines that I'll use. I have a history of working with properties, so that's why
 // I'm using custom definitions here versus what may be defined in the other includes.
@@ -180,6 +192,47 @@ UI08 FlagColour( CChar *a, CChar *b )
 **
 */
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	void teleporters( CChar *s )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	If character is on a teleport location, teleport him
+//o---------------------------------------------------------------------------o
+void teleporters( CChar *s )
+{
+	if( s == NULL )
+		return;
+	UI08 charWorld = s->WorldNumber();
+	for( UI32 i = 0; i < cwmWorldState->teleLocs.size(); i++ )
+	{
+		if( cwmWorldState->teleLocs[i].srcWorld == -1 || cwmWorldState->teleLocs[i].srcWorld == charWorld )
+		{
+			if( s->GetX() == cwmWorldState->teleLocs[i].src[0] )
+			{
+				if( s->GetY() == cwmWorldState->teleLocs[i].src[1] )
+				{
+					if( cwmWorldState->teleLocs[i].src[2] == 999 || s->GetZ() == cwmWorldState->teleLocs[i].src[2] )
+					{
+						if( cwmWorldState->teleLocs[i].trgWorld != charWorld )
+						{
+							s->SetLocation( cwmWorldState->teleLocs[i].trg[0], cwmWorldState->teleLocs[i].trg[1], (SI08)cwmWorldState->teleLocs[i].trg[2], cwmWorldState->teleLocs[i].trgWorld );
+							if( !s->IsNpc() )
+								SendMapChange( cwmWorldState->teleLocs[i].trgWorld, calcSocketObjFromChar( s ) );
+						}
+						else
+							s->SetLocation( cwmWorldState->teleLocs[i].trg[0], cwmWorldState->teleLocs[i].trg[1], (SI08)cwmWorldState->teleLocs[i].trg[2] );
+						s->Teleport();
+					}
+				}
+				else if( s->GetY() < cwmWorldState->teleLocs[i].src[1] )
+					break;
+			}
+			else if( s->GetX() < cwmWorldState->teleLocs[i].src[0] )
+				break;
+		}
+	}
+}
+
 void cMovement::Walking( CChar *c, UI08 dir, SI16 sequence )
 {
 	// sometimes the NPC movement code comes up with -1, for example, if we are following someone
@@ -283,7 +336,7 @@ void cMovement::Walking( CChar *c, UI08 dir, SI16 sequence )
 
 		// i moved this down after we are certain we are moving
 		if( cwmWorldState->ServerData()->GetAmbientFootsteps() )
-  			playTileSound( mSock );
+  			Effects->playTileSound( mSock );
 		
 		// since we actually moved, update the regions code
 		HandleRegionStuffAfterMove( c, oldx, oldy );
@@ -404,7 +457,7 @@ bool cMovement::isFrozen( CChar *c, cSocket *mSock, SI16 sequence )
 bool cMovement::isOverloaded( CChar *c, cSocket *mSock, SI16 sequence )
 {
 	// Who are we going to check for weight restrictions?
-	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CNSCMDLEVEL )
+	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CNS_CMDLEVEL )
 	{
 		if( mSock != NULL )
 		{
@@ -645,7 +698,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 		c->SetRegen( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) )), 1 );
 		c->SetRunning( c->GetRunning() + 1 );
 
-		if( !c->IsDead() && c->GetCommandLevel() < CNSCMDLEVEL )
+		if( !c->IsDead() && c->GetCommandLevel() < CNS_CMDLEVEL )
 		{
 			bool reduceStamina = ( c->IsOnHorse() && c->GetRunning() > ( cwmWorldState->ServerData()->GetMaxStaminaMovement() * 2 ) );
 			if( !reduceStamina )
@@ -988,7 +1041,7 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 		return;
 
 	// GMs, counselors, and ghosts don't shove things
-	if( c->GetCommandLevel() >= CNSCMDLEVEL || c->GetID() == 0x03DB || c->IsDead() )
+	if( c->GetCommandLevel() >= CNS_CMDLEVEL || c->GetID() == 0x03DB || c->IsDead() )
 		return;
 	// lets cache these vars in advance
 	UI08 worldNumber = c->WorldNumber();
@@ -1022,7 +1075,7 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 					c->SetStamina( max( c->GetStamina() - 4, 0 ) );
 					updateStats( c, 2 );  // arm code
 				}
-				else if( ourChar->GetCommandLevel() < CNSCMDLEVEL )
+				else if( ourChar->GetCommandLevel() < CNS_CMDLEVEL )
 				{
 					sysmessage( mSock, 1384 );
 					c->SetStamina( max( c->GetStamina() - 4, 0 ) );
@@ -1135,10 +1188,10 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, bool amTurnin
 						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNS_CMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( mChar, 520 );
+						Effects->PlaySound( mChar, 520 );
 						if( !Magic->CheckResist( NULL, mChar, 4 ) )
 							Magic->MagicDamage( mChar, tItem->GetMoreX() / 300 );
 
@@ -1148,10 +1201,10 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, bool amTurnin
 						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNS_CMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( mChar, 520 );
+						Effects->PlaySound( mChar, 520 );
 						if( !Magic->CheckResist( NULL, mChar, 5 ) )
 							Magic->PoisonDamage( mChar, 1 );
 
@@ -1161,12 +1214,12 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, bool amTurnin
 						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNS_CMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( mChar, 0x0204 );
+						Effects->PlaySound( mChar, 0x0204 );
 						if( !Magic->CheckResist( NULL, mChar, 6 ) )
-							tempeffect( mChar, mChar, 1, 0, 0, 0 );
+							Effects->tempeffect( mChar, mChar, 1, 0, 0, 0 );
 
 						break;
 					default:

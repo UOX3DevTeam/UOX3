@@ -10,6 +10,10 @@
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
+#include "cRaces.h"
+#include "targeting.h"
+#include "cEffects.h"
+#include "network.h"
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"
@@ -39,7 +43,7 @@ void cCharStuff::CheckAI( CChar *i )
 					{
 						npcAction( i, 0x10 );
 						Targ->NpcResurrectTarget( realChar );
-						staticeffect( realChar, 0x376A, 0x09, 0x06 );
+						Effects->staticeffect( realChar, 0x376A, 0x09, 0x06 );
 						npcTalkAll( i, ( 316 + RandomNum( 0, 4 ) ), false );
 					} 
 					else if( realChar->IsDead() && inRange && realChar->IsMurderer() )
@@ -60,7 +64,7 @@ void cCharStuff::CheckAI( CChar *i )
 				{
 					npcAction( i, 0x10 );
 					Targ->NpcResurrectTarget( realChar );
-					staticeffect( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
+					Effects->staticeffect( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 					npcTalkAll( i, ( 323 + RandomNum( 0, 4 ) ), false ); 
 				} 
 				else if( !realChar->IsMurderer() && realChar->IsDead() && inRange ) 

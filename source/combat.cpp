@@ -1,5 +1,14 @@
 #include "uox3.h"
 
+#include "cGuild.h"
+#include "combat.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "skills.h"
+#include "cMagic.h"
+#include "cEffects.h"
+#include "packets.h"
+
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
 #define SWINGAT (UI32)1.75 * CLOCKS_PER_SEC
@@ -13,6 +22,8 @@ const UI08 OTHERPERCENT = 5;
 const UI08 TOTALTARGETSPOTS = 6;
 
 const UI08 LOCPERCENTAGES[TOTALTARGETSPOTS] = { 44, 14, 14, 14, 7, 7 };
+
+void npcSimpleAttackTarget( CChar *defender, CChar *attacker );
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	UI08 cCombat::getBowType( CChar *i )
@@ -78,8 +89,8 @@ void cCombat::ItemCastSpell( cSocket *mSock, CChar *c, CItem *i )
 		CastSpell( ourChar, c, spellnum );
 		break;
 	default:
-		staticeffect( ourChar, 0x3735, 0, 30 );
-		soundeffect( ourChar, 0x005C );
+		Effects->staticeffect( ourChar, 0x3735, 0, 30 );
+		Effects->PlaySound( ourChar, 0x005C );
 		break;
 	}
 
@@ -338,11 +349,11 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 		Skills->CheckSkill( attack, TACTICS, 0, 1000 );
 
 		if( defend->GetID() == 0x0191 )
-			soundeffect( defend, 0x014B );
+			Effects->PlaySound( defend, 0x014B );
 		else if( defend->GetID() == 0x0190 ) 
-			soundeffect( defend, 0x0156 );
+			Effects->PlaySound( defend, 0x0156 );
 		else
-			playMonsterSound( defend, defend->GetID(), SND_DEFEND );
+			Effects->playMonsterSound( defend, defend->GetID(), SND_DEFEND );
 
 		if( attack->GetPoison() && defend->GetPoisoned() < attack->GetPoison() )
 		{
@@ -435,7 +446,7 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 		// Armor / Skin Absorbtion
 		UI16 getDef;
 		SI08 hitMsg = DoHitMessage( defend, attack, dSock, damage );
-		if( isHuman( defend ) )
+		if( defend->isHuman() )
 		{
 			getDef = calcDef( defend, hitMsg, true );
 			getDef = RandomNum( ((int)(getDef / 2)), getDef );
@@ -478,7 +489,7 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 				if( defend->IsNpc() ) 
 					damage1 *= cwmWorldState->ServerData()->GetCombatNPCDamageRate();
 				attack->IncHP( -damage1 );
-				staticeffect( defend, 0x374A, 0, 15 );
+				Effects->staticeffect( defend, 0x374A, 0, 15 );
 			}
 			else 
 				defend->IncHP( -damage );
@@ -499,7 +510,7 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 			}
 		}
 
-		if( !attack->IsNpc() || isHuman( attack ) )
+		if( !attack->IsNpc() || attack->isHuman() )
 			doSoundEffect( attack, weapon );
 
 		if( defend->GetHP() < 0 ) 
@@ -572,8 +583,8 @@ void cCombat::DoCombat( CChar *attack )
 		{
 			attack->SetLocation( defend );
 			attack->Teleport();
-			soundeffect( attack, 0x01FE );
-			staticeffect( attack, 0x372A, 0x09, 0x06 );
+			Effects->PlaySound( attack, 0x01FE );
+			Effects->staticeffect( attack, 0x372A, 0x09, 0x06 );
 			npcTalkAll( attack, 1616, true );
 			npcAttackTarget( defend, attack );
 		}
@@ -625,7 +636,7 @@ void cCombat::DoCombat( CChar *attack )
 						attack->Teleport();
 					}
 				}
-				if( abs( cwmWorldState->ServerData()->GetCombatAttackStamina() ) > 0 && attack->GetCommandLevel() < CNSCMDLEVEL )
+				if( abs( cwmWorldState->ServerData()->GetCombatAttackStamina() ) > 0 && attack->GetCommandLevel() < CNS_CMDLEVEL )
 				{
 					attack->SetStamina( attack->GetStamina() + cwmWorldState->ServerData()->GetCombatAttackStamina() );
 					if( attack->GetStamina() > attack->GetMaxStam() ) 
@@ -653,7 +664,7 @@ void cCombat::DoCombat( CChar *attack )
 					}
 					npcAction( attack, aa ); 
 					if( RandomNum( 0, 4 ) ) 
-						playMonsterSound( attack, attack->GetID(), SND_ATTACK );
+						Effects->playMonsterSound( attack, attack->GetID(), SND_ATTACK );
 				}
 				else if( attack->IsOnHorse() )
 					CombatOnHorse( attack );
@@ -671,12 +682,12 @@ void cCombat::DoCombat( CChar *attack )
 					if( bowType == BOWS )
 					{
 						DeleteQuantity( attack, 0x0F3F, 1 );
-						movingeffect( attack, defend, 0x0F42, 0x08, 0x00, 0x00 );
+						Effects->movingeffect( attack, defend, 0x0F42, 0x08, 0x00, 0x00 );
 					}
 					else
 					{
 						DeleteQuantity( attack, 0x1BFB, 1 );
-						movingeffect( attack, defend, 0x1BFE, 0x08, 0x00, 0x00 );
+						Effects->movingeffect( attack, defend, 0x1BFE, 0x08, 0x00, 0x00 );
 					}
 					CombatHit( attack, defend );
 				}
@@ -1064,7 +1075,7 @@ UI16 cCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 		return 0;
 
 	SI32 total = mChar->GetDef();
-	if( !mChar->IsNpc() || isHuman( mChar ) )	// Polymorphed Characters and GM's can still wear armor
+	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
 	{
 		CItem *defendItem = NULL;
 		if( hitLoc == 0 )
@@ -1523,35 +1534,35 @@ void cCombat::doSoundEffect( CChar *p, CItem *weapon )
 	case TWOHND_AXES:
 	case DEF_MACES:
 	case LG_MACES:
-		soundeffect( p, 0x0232 ); // Whoosh Weapons
+		Effects->PlaySound( p, 0x0232 ); // Whoosh Weapons
 		break;
 	case DEF_SWORDS:
 	case DEF_FENCING:
 	case TWOHND_FENCING:
-		soundeffect( p, 0x023C ); // Stabbing Weapons
+		Effects->PlaySound( p, 0x023C ); // Stabbing Weapons
 		break;
 	case BARDICHE:
-		soundeffect( p, 0x0236 ); // Bardiche
+		Effects->PlaySound( p, 0x0236 ); // Bardiche
 		break;
 	case SLASH_SWORDS:
-		soundeffect( p, 0x023B ); // Slashing Weapons
+		Effects->PlaySound( p, 0x023B ); // Slashing Weapons
 		break;
 	case ONEHND_LG_SWORDS:
 	case TWOHND_LG_SWORDS:
-		soundeffect( p, 0x0237 ); // Large Swords
+		Effects->PlaySound( p, 0x0237 ); // Large Swords
 		break;
 	case BOWS:
 	case XBOWS:
-		soundeffect( p, 0x0223 ); // Bows
+		Effects->PlaySound( p, 0x0223 ); // Bows
 		break;
 	case WRESTLING:
 	default:
 		switch( RandomNum( 0, 3 ) ) // Wrestling
 		{
-		case 0:		soundeffect( p, 0x0135 );	break;
-		case 1:		soundeffect( p, 0x0137 );	break;
-		case 2:		soundeffect( p, 0x013D );	break;
-		default:	soundeffect( p, 0x013B );	break;
+		case 0:		Effects->PlaySound( p, 0x0135 );	break;
+		case 1:		Effects->PlaySound( p, 0x0137 );	break;
+		case 2:		Effects->PlaySound( p, 0x013D );	break;
+		default:	Effects->PlaySound( p, 0x013B );	break;
 		}
 	}
 }
@@ -1569,9 +1580,9 @@ void cCombat::doMissedSoundEffect( CChar *p )
 
 	switch( RandomNum( 0, 2 ) )
 	{
-	case 0:	soundeffect( p, 0x0238 );	break;
-	case 1:	soundeffect( p, 0x0239 );	break;
-	default: soundeffect( p, 0x023A );	break;
+	case 0:	Effects->PlaySound( p, 0x0238 );	break;
+	case 1:	Effects->PlaySound( p, 0x0239 );	break;
+	default: Effects->PlaySound( p, 0x023A );	break;
 	}
 }
 
@@ -1591,7 +1602,7 @@ void cCombat::Kill( CChar *attack, CChar *defend )
 	if( attack->GetNPCAiType() == 4 && defend->IsNpc() )
 	{
 		npcAction( defend, 0x15 );
-		playDeathSound( defend );
+		Effects->playDeathSound( defend );
 
 		Npcs->DeleteChar( defend ); // Guards, don't give body
 		npcToggleCombat( attack );
@@ -1703,8 +1714,8 @@ void cCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z 
 				getGuard->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
 				getGuard->SetSummonTimer( BuildTimeValue( 25 ) );
 
-				soundeffect( getGuard, 0x01FE );
-				staticeffect( getGuard, 0x372A, 0x09, 0x06 );
+				Effects->PlaySound( getGuard, 0x01FE );
+				Effects->staticeffect( getGuard, 0x372A, 0x09, 0x06 );
 				
 				getGuard->Update();
 				npcTalkAll( getGuard, 313, true );
@@ -1772,7 +1783,7 @@ void PlayerAttack( cSocket *s )
 					{	//let's resurrect him!
 						npcAction( i, 0x10 );
 						Targ->NpcResurrectTarget( ourChar );
-						staticeffect( ourChar, 0x376A, 0x09, 0x06 );
+						Effects->staticeffect( ourChar, 0x376A, 0x09, 0x06 );
 						npcTalkAll( i, ( 316 + RandomNum( 0, 4 ) ), false );
 					} 
 					else
@@ -1788,7 +1799,7 @@ void PlayerAttack( cSocket *s )
 					{
 						npcAction( i, 0x10 );
 						Targ->NpcResurrectTarget( ourChar );
-						staticeffect( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
+						Effects->staticeffect( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 						npcTalkAll( i, ( 323 + RandomNum( 0, 4 ) ), false );
 					} 
 					else
@@ -1843,7 +1854,7 @@ void PlayerAttack( cSocket *s )
 		if( WillResultInCriminal( ourChar, i ) ) //REPSYS
 		{
 			bool regionGuarded = ( region[i->GetRegion()]->IsGuarded() );
-			if( cwmWorldState->ServerData()->GetGuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != 4 && isHuman( i ) )
+			if( cwmWorldState->ServerData()->GetGuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != 4 && i->isHuman() )
 				npcTalkAll( i, 335, true );
 			criminal( ourChar );
 		}
@@ -1890,7 +1901,7 @@ void npcAttackTarget( CChar *cTarg, CChar *cNpc )
 	if( !LineOfSight( NULL, cNpc, cTarg->GetX(), cTarg->GetY(), cTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 		return;
 
-	playMonsterSound( cNpc, cNpc->GetID(), SND_STARTATTACK );
+	Effects->playMonsterSound( cNpc, cNpc->GetID(), SND_STARTATTACK );
 
 	CHARACTER target = calcCharFromSer( cTarg->GetSerial() );
 	CHARACTER npc = calcCharFromSer( cNpc->GetSerial() );
@@ -1948,7 +1959,7 @@ void npcAttackTarget( CChar *cTarg, CChar *cNpc )
 		bool regionGuarded = ( region[cTarg->GetRegion()]->IsGuarded() );
 		if( cwmWorldState->ServerData()->GetGuardsStatus() && regionGuarded )
 		{
-			if( cTarg->IsNpc() && cTarg->GetNPCAiType() != 4 && isHuman( cTarg ) )
+			if( cTarg->IsNpc() && cTarg->GetNPCAiType() != 4 && cTarg->isHuman() )
 				npcTalkAll( cTarg, 1282, true );
 			criminal( cNpc );
 #ifdef DEBUG
@@ -2026,7 +2037,7 @@ void petGuardAttack( CChar *mChar, CChar *owner, SERIAL guarded )
 	if( mChar == NULL || owner == NULL || guarded == INVALIDSERIAL )
 		return;
 
-	if( mChar->GetSerial() == owner->GetSerial() || mChar->GetCommandLevel() >= CNSCMDLEVEL )
+	if( mChar->GetSerial() == owner->GetSerial() || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
 		return;
 
 	CChar *petGuard = Npcs->getGuardingPet( owner, guarded );

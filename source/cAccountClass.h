@@ -19,17 +19,9 @@
 #endif // _MSC_VER > 1000
 #endif
 
-#include <iostream>
 #include <sstream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <cstdio>
 #include <iosfwd>
 #include <algorithm>
-#include <map>
-
-#include "uox3.h"
 
 #if defined(__unix__)
 	#include <dirent.h>

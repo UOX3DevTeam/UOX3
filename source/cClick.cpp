@@ -1,6 +1,21 @@
 #include "uox3.h"
-#include "cmdtable.h"
 #include "magic.h"
+
+#include "books.h"
+#include "boats.h"
+#include "cGuild.h"
+#include "msgboard.h"
+#include "combat.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "skills.h"
+#include "cMagic.h"
+#include "gump.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "cClick.cpp"
@@ -18,13 +33,13 @@ void prowessTitle( CChar *p, char *prowesstitle )
 	if( p == NULL )
 		return;
 	UI16 titlenum = 0;
-	UI16 x = p->GetBaseSkill( bestskill( p ) );
+	UI16 x = p->GetBaseSkill( p->GetBestSkill() );
   
 	if( x < 1000 ) 
 		titlenum = (UI16)((x - 10) / 100 - 2);
 	else
 		titlenum = 8;
-	strncpy( prowesstitle, title[titlenum].prowess, MAX_TITLE );
+	strncpy( prowesstitle, cwmWorldState->title[titlenum].prowess, MAX_TITLE );
 }
 
 //o---------------------------------------------------------------------------o
@@ -35,8 +50,8 @@ void prowessTitle( CChar *p, char *prowesstitle )
 //o---------------------------------------------------------------------------o
 void skillTitle( CChar *p, char *skilltitle )
 {
-	UI08 titlenum = (UI08)( bestskill( p ) + 1 );
-	strncpy( skilltitle, title[titlenum].skill, MAX_TITLE );
+	UI08 titlenum = (UI08)( p->GetBestSkill() + 1 );
+	strncpy( skilltitle, cwmWorldState->title[titlenum].skill, MAX_TITLE );
 }
 
 //o---------------------------------------------------------------------------o
@@ -182,9 +197,9 @@ void fameTitle( CChar *p, char *fametitle )
 			titlenum = 42;
 	}
 	if( p->GetRace() != 0 && p->GetRace() != 65535 )
-		sprintf( thetitle, "%s %s ", title[titlenum].fame, Races->Name( p->GetRace() ) );
+		sprintf( thetitle, "%s %s ", cwmWorldState->title[titlenum].fame, Races->Name( p->GetRace() ) );
 	else
-		sprintf( thetitle, "%s ", title[titlenum].fame );
+		sprintf( thetitle, "%s ", cwmWorldState->title[titlenum].fame );
 	if( f >= 10000 ) // Morollans bugfix for repsys
 	{
 		if( p->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
@@ -242,23 +257,23 @@ void paperdoll( cSocket *s, CChar *pdoll )
 	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
 	{
-		if( murdererTags.size() < 1 )
+		if( cwmWorldState->murdererTags.size() < 1 )
 			sprintf( tempstr, Dictionary->GetEntry( 374, sLang ), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
-		else if( pdoll->GetKills() < murdererTags[0].loBound )	// not a real murderer
+		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].loBound )	// not a real murderer
 			bContinue = true;
 		else
 		{
 			SI16 mKills = pdoll->GetKills();
 			UI32 kCtr;
-			for( kCtr = 0; kCtr < murdererTags.size() - 1; kCtr++ )
+			for( kCtr = 0; kCtr < cwmWorldState->murdererTags.size() - 1; kCtr++ )
 			{
-				if( mKills >= murdererTags[kCtr].loBound && mKills < murdererTags[kCtr+1].loBound )
+				if( mKills >= cwmWorldState->murdererTags[kCtr].loBound && mKills < cwmWorldState->murdererTags[kCtr+1].loBound )
 					break;
 			}
-			if( kCtr >= murdererTags.size() )
+			if( kCtr >= cwmWorldState->murdererTags.size() )
 				bContinue = true;
 			else
-				sprintf( tempstr, "%s %s, %s%s %s", murdererTags[kCtr].toDisplay.c_str(), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
+				sprintf( tempstr, "%s %s, %s%s %s", cwmWorldState->murdererTags[kCtr].toDisplay.c_str(), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
 		}
 	}
 	else if( pdoll->IsCriminal() )
@@ -548,7 +563,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		}
 		else
 		{
-			soundeffect( mChar, 0x003A + RandomNum( 0, 2 ) );
+			Effects->PlaySound( mChar, 0x003A + RandomNum( 0, 2 ) );
 			if( mChar->GetHunger() >= 0 && mChar->GetHunger() <= 6 )
 				sysmessage( mSock, 408 + mChar->GetHunger() );
 			else
@@ -557,7 +572,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			if( x->GetPoisoned() && mChar->GetPoisoned() < x->GetPoisoned() )
 			{
 				sysmessage( mSock, 416 + RandomNum( 0, 2 ) );
-				soundeffect( mChar, 0x0246 ); //poison sound - SpaceDog
+				Effects->PlaySound( mChar, 0x0246 ); //poison sound - SpaceDog
 				mChar->SetPoisoned( x->GetPoisoned() );
 				mChar->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) )) );
 				mChar->SendToSocket( mSock, true, mChar );
@@ -586,7 +601,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 18: // Crystal Ball
 		objMessage( mSock, 419 + RandomNum( 0, 9 ), x );
-		soundeffect( mSock, 0x01EC, true );
+		Effects->PlaySound( mSock, 0x01EC, true );
 		return true;
 	case 19: // Potions
 		if( mChar->IsUsingPotion() )
@@ -597,8 +612,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 	case 35: // Townstone and Townstone Deed
 		if( x->GetID() == 0x14F0 )		// Check for Deed
 		{
-			comm[1] = "3298";
-			command_additem( mSock );
+			CItem *c = Items->CreateScriptItem( mSock, "townstone", false, mChar->WorldNumber() );
 			Items->DeleItem( x );
 		}
 		else	// Display Townstone gump
@@ -655,7 +669,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		mChar->Teleport();
 		return true;
 	case 105:  // Drink
-		soundeffect( mChar, 0x30 + RandomNum( 0, 1 ) );
+		Effects->PlaySound( mChar, 0x30 + RandomNum( 0, 1 ) );
 		if( RandomNum( 0, 1 ) )
 			npcTalk( mSock, mChar, 435, false );
 		else
@@ -739,14 +753,14 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		{
 			SI16 wx = ( mChar->GetX() + RandomNum( 0, 10 ) - 5 );
 			SI16 wy = ( mChar->GetY() + RandomNum( 0, 10 ) - 5 );
-			movingeffect( mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
+			Effects->movingeffect( mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
 			switch( RandomNum( 0, 4 ) )
 			{
-			case 0:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x373A, 0x09, 0, 0 );		break;
-			case 1:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x374A, 0x09, 0, 0 );		break;
-			case 2:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x375A, 0x09, 0, 0 );		break;
-			case 3:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x376A, 0x09, 0, 0 );		break;
-			case 4:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x377A, 0x09, 0, 0 );		break;
+			case 0:	Effects->staticeffect( wx, wy, mChar->GetZ() + 10, 0x373A, 0x09, 0, 0 );		break;
+			case 1:	Effects->staticeffect( wx, wy, mChar->GetZ() + 10, 0x374A, 0x09, 0, 0 );		break;
+			case 2:	Effects->staticeffect( wx, wy, mChar->GetZ() + 10, 0x375A, 0x09, 0, 0 );		break;
+			case 3:	Effects->staticeffect( wx, wy, mChar->GetZ() + 10, 0x376A, 0x09, 0, 0 );		break;
+			case 4:	Effects->staticeffect( wx, wy, mChar->GetZ() + 10, 0x377A, 0x09, 0, 0 );		break;
 			}
 		}
 		return true;
@@ -835,27 +849,27 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 212:	// Drum
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0038 );
+			Effects->PlaySound( mChar, 0x0038 );
 		else 
-			soundeffect( mChar, 0x0039 );
+			Effects->PlaySound( mChar, 0x0039 );
 		return true;
 	case 213:	// Tambourine
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0052 );
+			Effects->PlaySound( mChar, 0x0052 );
 		else 
-			soundeffect( mChar, 0x0053 );
+			Effects->PlaySound( mChar, 0x0053 );
 		return true;
 	case 214:	// Harps
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0045 );
+			Effects->PlaySound( mChar, 0x0045 );
 		else 
-			soundeffect( mChar, 0x0046 );
+			Effects->PlaySound( mChar, 0x0046 );
 		return true;
 	case 215:	// Lute
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x004C );
+			Effects->PlaySound( mChar, 0x004C );
 		else 
-			soundeffect( mChar, 0x004D );
+			Effects->PlaySound( mChar, 0x004D );
 		return true;
 	case 216:	// Axes
 		target( mSock, 0, 76, 443 );
@@ -1063,10 +1077,10 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 248:	// cotton plants
 		if( !mChar->IsOnHorse() ) 
-			action( mSock, 0x0D );
+			Effects->action( mSock, 0x0D );
 		else 
-			action( mSock, 0x1D );
-		soundeffect( mSock, 0x013E, true );
+			Effects->action( mSock, 0x1D );
+		Effects->PlaySound( mSock, 0x013E, true );
 		i = Items->SpawnItem( mSock, mChar, 1, "#", true, 0x0DF9, 0, true, true );
 		if( i == NULL )
 			return true;
@@ -1179,30 +1193,30 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 		return true;
 	case 0x0E9C: // Drum
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0038 );
+			Effects->PlaySound( mChar, 0x0038 );
 		else 
-			soundeffect( mChar, 0x0039 );
+			Effects->PlaySound( mChar, 0x0039 );
 		return true;
 	case 0x0E9D: // Tambourine
 	case 0x0E9E:
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0052 );
+			Effects->PlaySound( mChar, 0x0052 );
 		else 
-			soundeffect( mChar, 0x0053 );
+			Effects->PlaySound( mChar, 0x0053 );
 		return true;
 	case 0x0EB1: // Standing harp
 	case 0x0EB2: // Lap harp
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x0045 );
+			Effects->PlaySound( mChar, 0x0045 );
 		else 
-			soundeffect( mChar, 0x0046 );
+			Effects->PlaySound( mChar, 0x0046 );
 		return true;
 	case 0x0EB3: // Lute
 	case 0x0EB4: // Lute
 		if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) ) 
-			soundeffect( mChar, 0x004C );
+			Effects->PlaySound( mChar, 0x004C );
 		else 
-			soundeffect( mChar, 0x004D );
+			Effects->PlaySound( mChar, 0x004D );
 		return true;
 	// SMITHY
 	case 0x102A: // hammer
@@ -1479,10 +1493,10 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x0C53:
 	case 0x0C54: // cotton plants
 		if( !mChar->IsOnHorse() ) 
-			action( mSock, 0x0D );
+			Effects->action( mSock, 0x0D );
 		else 
-			action( mSock, 0x1D );
-		soundeffect( mSock, 0x013E, true );
+			Effects->action( mSock, 0x1D );
+		Effects->PlaySound( mSock, 0x013E, true );
 		i = Items->SpawnItem( mSock, mChar, 1, "#", true, 0x0DF9, 0, true, true );
 		if( i == NULL )
 			return true;
@@ -1881,7 +1895,7 @@ void singleClick( cSocket *mSock )
 				{
 					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 					if( mCreater != NULL )
-						sprintf( temp2, "%s %s by %s", i->GetDesc(), skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
+						sprintf( temp2, "%s %s by %s", i->GetDesc(), cwmWorldState->skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
 					else
 						strcpy( temp2, i->GetDesc() );
 				}
@@ -1967,7 +1981,7 @@ void singleClick( cSocket *mSock )
 	{
 		CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 		if( mCreater != NULL )
-			sprintf( temp2, "%s %s by %s", realname, skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
+			sprintf( temp2, "%s %s by %s", realname, cwmWorldState->skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
 		else
 			strcpy( temp2, realname );
 	}

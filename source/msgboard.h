@@ -16,9 +16,12 @@
 #define MAXENTRIES      256
 
 // Different types of user posts
-#define LOCALPOST       0
-#define REGIONALPOST    1
-#define GLOBALPOST      2
+enum PostTypes
+{
+	LOCALPOST =		0,
+	REGIONALPOST,
+	GLOBALPOST
+};
 
 // Different types of QUESTS (nQuestType)
 // Added for Quests (ESCORTS)

@@ -29,28 +29,50 @@
 */
 
 #include "uox3.h"
-#include "cmdtable.h"
+
+#include "weight.h"
+#include "boats.h"
+#include "books.h"
+#include "cGuild.h"
+#include "combat.h"
+#include "msgboard.h"
+#include "townregion.h"
+#include "cWeather.hpp"
+#include "movement.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "commands.h"
+#include "cSpawnRegion.h"
+#include "wholist.h"
+#include "cMagic.h"
+#include "skills.h"
+#include "PageVector.h"
+#include "speech.h"
+#include "cVersionClass.h"
 #include "ssection.h"
+#include "cHTMLSystem.h"
+#include "gump.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "teffect.h"
+#include "packets.h"
+#include "fileio.h"
 
 #if defined(__unix__)
 #include <errno.h>
 #include <signal.h>
 #endif
 
-#include "stream.h"
-#include <queue>
 #include <set>
-
-#include "cVersionClass.h"
 
 //using namespace std;
 
 extern cVersionClass CVC;
 
 void Bounce( cSocket *bouncer, CItem *bouncing );
-void LoadCreatures( void );
 void DumpCreatures( void );
-void LoadINIFile( void );
 
 #if defined(__unix__)
 	typedef void *HANDLE;
@@ -89,7 +111,7 @@ int cl_getch( void )
 	fd_set KEYBOARD;
 	FD_ZERO( &KEYBOARD );
 	FD_SET( 0, &KEYBOARD );
-	int s = select( 1, &KEYBOARD, NULL, NULL, &uoxtimeout );
+	int s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s < 0 )
 	{
 		Console.Error( 1, "Error scanning key press" );
@@ -293,97 +315,13 @@ bool isOnline( CChar *c )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  UI08 bestskill( CChar *p )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Return characters highest skill
-//o---------------------------------------------------------------------------o
-UI08 bestskill( CChar *p )
-{
-	if( p == NULL )
-		return 0;
-	UI16 b = 0;
-	UI08 a = 0;
-
-	for( UI08 i = 0; i < TRUESKILLS; i++ )
-	{
-		if( p->GetBaseSkill( i ) > b )
-		{
-			a = i;
-			b = p->GetBaseSkill( i );
-		}
-	}
-	return a;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void loadcustomtitle( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Loads players titles (Karma, Fame, Murder, ect)
-//o---------------------------------------------------------------------------o
-void loadcustomtitle( void )
-{ 
-	int titlecount = 0;
-	char sect[512]; 
-	
-	strcpy( sect, "SKILL" );
-	ScriptSection *CustomTitle = FileLookup->FindEntry( sect, titles_def );
-	if( CustomTitle == NULL)
-		return;
-	const char *tag = NULL;
-	const char *data = NULL;
-	char tempSkill[256];
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
-	{
-		data = CustomTitle->GrabData();
-		sprintf( tempSkill, "%s %s", tag, data );
-		strcpy( title[titlecount++].skill, tempSkill );
-	}
-	strcpy( sect, "PROWESS" );
-	CustomTitle = FileLookup->FindEntry( sect, titles_def );
-	if( CustomTitle == NULL)
-		return;
-	titlecount = 0;
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
-		strcpy( title[titlecount++].prowess, tag );
-
-	strcpy( sect, "FAME" );
-	CustomTitle = FileLookup->FindEntry( sect, titles_def );
-	titlecount = 0;
-
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
-	{
-		strcpy( title[titlecount].fame, tag );
-		if( titlecount == 23 )
-		{
-			title[titlecount].fame[0] = 0;
-			strcpy( title[++titlecount].fame, tag );
-		}
-		titlecount++;
-	}
-
-	// Murder tags now scriptable in SECTION MURDER - Titles.scp - Thanks Ab - Zane
-	CustomTitle = FileLookup->FindEntry( "MURDERER", titles_def );
-	if( CustomTitle == NULL )	// couldn't find it
-		return;
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
-	{
-		data = CustomTitle->GrabData();
-		murdererTags.push_back( MurderPair( (SI16)makeNum( tag ), data ) );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void gcollect( void )
+//|	Function	-	void doGCollect( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remove items in invalid locations (cleanup deleted packs and
 //|					their items)
 //o---------------------------------------------------------------------------o
-void gcollect( void )
+void doGCollect( void )
 {
 	CChar *c;
 	CItem *j;
@@ -567,9 +505,9 @@ CItem *getPack( CChar *p )
 {
 	if( p == NULL ) 
 		return NULL;
+
 	CItem *i = p->GetPackItem();
-	
-	if( i != NULL && p != NULL )
+	if( i != NULL )
 	{
 		if( i->GetCont() == p && i->GetLayer() == 0x15 )
 			return i;
@@ -884,10 +822,6 @@ void sendItem( cSocket *s, CItem *i )
 	bool pack = false;
 	UI08 itmput[20] = "\x1A\x00\x13\x40\x01\x02\x03\x20\x42\x00\x32\x06\x06\x06\x4A\x0A\x00\x00\x00";
 
-	// meaning of the item's attribute visible
-	// Visible 0 -> visible to everyone
-	// Visible 1 -> only visible to owner and gm's (for owners normal for gm's grayish/hidden color)
-	// Visible 2 -> only visible to gm's (greyish/hidden color)
 	if( i->GetGlow() > 0 )
 		Items->GlowItem( i );
 
@@ -953,17 +887,12 @@ void sendItem( cSocket *s, CItem *i )
 			itmput[17] = i->GetColour( 2 );
 		}
 		itmput[18] = 0;
-		if( i->GetVisible() == 1 && !mChar->IsGM() )
+		if( i->GetVisible() > 0 )
 		{
-			if( mChar != i->GetOwnerObj() )
-			{
-				itmput[18] |= 0x80;
+			if( !mChar->IsGM() && ( i->GetVisible() == 2 || ( i->GetVisible() == 1 && mChar != i->GetOwnerObj() ) ) )
 				return;
-			}
-		}
-		if( i->GetVisible() >= 2 )
 			itmput[18] |= 0x80;
-		
+		}
 		if( i->GetMovable() == 1 ) 
 			itmput[18]+=0x20;
 		else if( mChar->AllMove() ) 
@@ -994,49 +923,6 @@ void sendItem( cSocket *s, CItem *i )
 		s->Send( itmput, 19 + dir );
 		if( i->GetID() == 0x2006 )
 			openCorpse( s, i->GetSerial() );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void sendItemsInRange( cSocket *mSock )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send all nearby items to a player
-//o---------------------------------------------------------------------------o
-void sendItemsInRange( cSocket *mSock )
-{
-	if( mSock == NULL )
-		return;
-
-	CChar *mChar = mSock->CurrcharObj();
-	if( mChar == NULL )
-		return;
-
-	int xOffset = MapRegion->GetGridX( mChar->GetX() );
-	int yOffset = MapRegion->GetGridY( mChar->GetY() );
-	UI08 worldNumber = mChar->WorldNumber();
-	SI16 visrange = mSock->Range() + Races->VisRange( mChar->GetRace() );
-	SubRegion *toCheck = NULL;
-
-	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
-	{
-		for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
-		{
-			toCheck = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
-			if( toCheck == NULL )
-				continue;
-
-			toCheck->PushItem();
-			for( CItem *j = toCheck->FirstItem(); !toCheck->FinishedItems(); j = toCheck->GetNextItem() )
-			{
-				if( objInRange( mChar, j, visrange ) ) 
-				{
-					if( !j->GetVisible() || ( j->GetVisible() && mChar->IsGM() ) )
-						sendItem( mSock, j );
-				}
-			}
-			toCheck->PopItem();
-		}
 	}
 }
 
@@ -1081,113 +967,6 @@ void target( cSocket *s, SERIAL ser, const char *txt )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void teleporters( CChar *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	If character is on a teleport location, teleport him
-//o---------------------------------------------------------------------------o
-void teleporters( CChar *s )
-{
-	if( s == NULL )
-		return;
-	UI08 charWorld = s->WorldNumber();
-	for( UI32 i = 0; i < teleLocs.size(); i++ )
-	{
-		if( teleLocs[i].srcWorld == -1 || teleLocs[i].srcWorld == charWorld )
-		{
-			if( s->GetX() == teleLocs[i].src[0] )
-			{
-				if( s->GetY() == teleLocs[i].src[1] )
-				{
-					if( teleLocs[i].src[2] == 999 || s->GetZ() == teleLocs[i].src[2] )
-					{
-						if( teleLocs[i].trgWorld != charWorld )
-						{
-							s->SetLocation( teleLocs[i].trg[0], teleLocs[i].trg[1], (SI08)teleLocs[i].trg[2], teleLocs[i].trgWorld );
-							if( !s->IsNpc() )
-								SendMapChange( teleLocs[i].trgWorld, calcSocketObjFromChar( s ) );
-						}
-						else
-							s->SetLocation( teleLocs[i].trg[0], teleLocs[i].trg[1], (SI08)teleLocs[i].trg[2] );
-						s->Teleport();
-					}
-				}
-				else if( s->GetY() < teleLocs[i].src[1] )
-					break;
-			}
-			else if( s->GetX() < teleLocs[i].src[0] )
-				break;
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void read_in_teleport( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load teleport locations
-//o---------------------------------------------------------------------------o
-void read_in_teleport( void )
-{
-	char text[256];
-	int i;
-	char seps[]   = " ,\t\n";
-	char *token;
-	char filename[MAX_PATH];
-	sprintf( filename, "%steleport.scp", cwmWorldState->ServerData()->GetScriptsDirectory() ); 
-	FILE *fp = fopen( filename, "r" );
-	teleLocs.resize( 0 );
-	
-	if( fp == NULL )
-	{
-		Console << myendl;
-		Console.Error( 1, " Failed to open teleport data script %s", filename );
-		Console.Error( 1, " Teleport Data not found" );
-		cwmWorldState->SetKeepRun( false );
-		cwmWorldState->SetError( true );
-		return;
-	}
-	
-	while( !feof( fp ) )
-	{
-		fgets( text, 255, fp );
-		
-		if( text[0] != ';' )
-		{
-			TeleLocationEntry toAdd;
-			token = strtok( text, seps );
-			i = 0;
-			while( token != NULL )
-			{
-				if( i == 2 )
-				{
-					if( token[0] == 'A' )
-						toAdd.src[2] = 999;
-					else
-						toAdd.src[2] = (UI16)(makeNum( token ) );
-				}
-				else if( i < 2 )
-					toAdd.src[i] = (UI16)(makeNum( token ) );
-				else if( i > 2 && i < 6 )
-					toAdd.trg[i - 3] = (UI16)(makeNum( token ) );
-				else if( i == 6 )
-					toAdd.srcWorld = (SI16)(makeNum( token ) );
-				else if( i == 7 )
-					toAdd.trgWorld = (UI08)(makeNum( token ) );
-					
-				i++;
-				if( i == 8 )
-					break;
-				
-				token = strtok( NULL, seps );
-			}
-			teleLocs.push_back( toAdd );
-		}
-	}
-	fclose( fp );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void explodeItem( cSocket *mSock, CItem *nItem )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -1201,15 +980,15 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 	// - send the effect (visual and sound)
 	if( nItem->GetCont() != NULL )
 	{
-		staticeffect( c, 0x36B0, 0x00, 0x09 );
+		Effects->staticeffect( c, 0x36B0, 0x00, 0x09 );
 		nItem->SetCont( NULL );
 		nItem->SetLocation(  c );
-		soundeffect( c, 0x0207 );
+		Effects->PlaySound( c, 0x0207 );
 	}
 	else
 	{
-		staticeffect( nItem, 0x36B0, 0x00, 0x09, 0x00);
-		soundeffect( nItem, 0x0207 );
+		Effects->staticeffect( nItem, 0x36B0, 0x00, 0x09, 0x00);
+		Effects->PlaySound( nItem, 0x0207 );
 	}
 	UI32 len = nItem->GetMoreX() / 250; //4 square max damage at 100 alchemy
 	dmg = RandomNum( nItem->GetMoreZ() * 5, nItem->GetMoreZ() * 10 );
@@ -1267,7 +1046,7 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 						{
 							if( RandomNum( 0, 1 ) == 1 ) 
 								chain = true;
-							tempeffect( c, tempItem, 17, 0, 1, 0 );
+							Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
 						}
 					}
 				}
@@ -1385,7 +1164,7 @@ bool doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 		if( mSock != NULL )
 		{
 			statwindow( mSock, mChar );
-			itemSound( mSock, stack, false );
+			Effects->itemSound( mSock, stack, false );
 		}
 		return true;
 	}
@@ -1435,7 +1214,7 @@ bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 	if( mSock != NULL )
 	{
 		statwindow( mSock, mChar );
-		itemSound( mSock, i, false );
+		Effects->itemSound( mSock, i, false );
 	}
 	return false;
 }
@@ -1519,7 +1298,7 @@ void grabItem( cSocket *mSock )
 						// Default item pick up sound sent to other player involved in trade
 						cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 						if( zSock != NULL )
-							soundeffect( zSock, 0x0057, false );
+							Effects->PlaySound( zSock, 0x0057, false );
 					}
 				}
 			}
@@ -1588,7 +1367,7 @@ void grabItem( cSocket *mSock )
 	}
 	else
 	{
-		soundeffect( mSock, 0x0057, true );
+		Effects->PlaySound( mSock, 0x0057, true );
 		if( i->GetAmount() > 1 )
 		{
 			UI16 amount = mSock->GetWord( 5 );
@@ -1619,15 +1398,9 @@ void grabItem( cSocket *mSock )
 		CPRemoveItem remove( *i );
 		Network->PushConn();
 		for( cSocket *pSock = Network->FirstSocket(); !Network->FinishedSockets(); pSock = Network->NextSocket() )
-		{
-			if( !pSock )
-				continue;
-			if( isOnline( pSock->CurrcharObj() ) )
-				pSock->Send( &remove );
-		}
+			pSock->Send( &remove );
 		Network->PopConn();
 	}
-
 	if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		statwindow( mSock, mChar );
 }
@@ -1663,8 +1436,7 @@ void wearItem( cSocket *mSock )
 		}
 		Bounce( mSock, i );
 		sysmessage( mSock, 1186 );
-		if( i->GetID( 1 ) >= 0x40 )
-			sendItem( mSock, i );
+		RefreshItem( i );
 		return;
 	}
 /*
@@ -1695,8 +1467,7 @@ void wearItem( cSocket *mSock )
 	{
 		sysmessage( mSock, 1187 );
 		Bounce( mSock, i );
-		if( i->GetID( 1 ) >= 0x40 ) 
-			sendItem( mSock, i );
+		RefreshItem( i );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, i );
@@ -1718,18 +1489,16 @@ void wearItem( cSocket *mSock )
 		if( !canWear )
 		{
 			Bounce( mSock, i );
-
-			if( i->GetID( 1 ) >= 0x40 )  //????
-				sendItem( mSock, i );
+			RefreshItem( i );
 
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
 				Weight->subtractItemWeight( mChar, i );
 				statwindow( mSock, mChar );
-				itemSound( mSock, i, true );
+				Effects->itemSound( mSock, i, true );
 			}
 			else
-				itemSound( mSock, i, false );
+				Effects->itemSound( mSock, i, false );
 			RefreshItem( i );
 			return;
 		}
@@ -1743,8 +1512,7 @@ void wearItem( cSocket *mSock )
 			Weight->subtractItemWeight( mChar, i );
 
 		Bounce( mSock, i );
-		if( i->GetID( 1 ) >= 0x40 ) 
-			sendItem( mSock, i );
+		RefreshItem( i );
 		return;
 	}
 
@@ -1761,8 +1529,6 @@ void wearItem( cSocket *mSock )
 		statwindow( mSock, mChar );
 		Bounce( mSock, i );
 		RefreshItem( i );
-		if( i->GetID( 1 ) >= 0x40 )
-			sendItem( mSock, i );
 		return;
 	}
 
@@ -1782,7 +1548,7 @@ void wearItem( cSocket *mSock )
 
 	RefreshItem( i );
 
-	soundeffect( mSock, 0x0057, false );
+	Effects->PlaySound( mSock, 0x0057, false );
 	statwindow( mSock, mChar );
 }
 
@@ -1820,12 +1586,12 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 		if( !( targChar->GetTaming() > 1000 || targChar->GetTaming() == 0 ) && i->GetType() == 14 && 
 			targChar->GetHunger() <= (SI32)( targChar->ActualStrength() / 10 ) ) // do food stuff
 		{
-			soundeffect( mSock, 0x003A + RandomNum( 0, 2 ), true );
+			Effects->PlaySound( mSock, 0x003A + RandomNum( 0, 2 ), true );
 			npcAction( targChar, 3 );
 
 			if( i->GetPoisoned() && targChar->GetPoisoned() < i->GetPoisoned() )
 			{
-				soundeffect( mSock, 0x0246, true ); //poison sound - SpaceDog
+				Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
 				targChar->SetPoisoned( i->GetPoisoned() );
 				targChar->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON )) ) );
 				targChar->SendToSocket( mSock, true, mChar );
@@ -1836,7 +1602,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 			if( i == NULL )
 				return true; //stackdeleted
 		}
-		if( !isHuman( targChar ) )
+		if( !targChar->isHuman() )
 		{
 			// Sept 25, 2002 - Xuri - Weight fixes
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
@@ -1885,7 +1651,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				}
 				mChar->SetTrainer( INVALIDSERIAL );
 				targChar->SetTrainingPlayerIn( 255 );
-				goldSound( mSock, getAmount, false );
+				Effects->goldSound( mSock, getAmount, false );
 			}
 			else // Did not give gold
 			{
@@ -1918,7 +1684,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				RefreshItem( i );
 			}
 		}
-		else if( mChar->GetCommandLevel() >= CNSCMDLEVEL )
+		else if( mChar->GetCommandLevel() >= CNS_CMDLEVEL )
 		{
 			CItem *p = getPack( targChar );
 			if( p == NULL )
@@ -1964,9 +1730,8 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 	
 	CPBounce bounce( 5 );
 	if( i == NULL ) 
-	{ 
-		sendItemsInRange( mSock );
-		Console << "ALERT: sendItemsInRange() called in dropItem().  This function could cause a lot of lag!" << myendl;
+	{
+		nChar->Teleport();
 		return;
 	}
 /*	if( i->GetCont() != NULL )
@@ -2034,7 +1799,7 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 			if( multi != NULL )
 				i->SetMulti( multi );
 		}
-		itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
 	statwindow( mSock, nChar );
 }
@@ -2077,7 +1842,7 @@ void packItem( cSocket *mSock )
 			}
 			cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 			if( zSock != NULL )
-				itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 		}
 		return;
 	}
@@ -2091,7 +1856,7 @@ void packItem( cSocket *mSock )
 			if( nItem->GetID() == 0x0EED )
 			{
 				nItem->SetCont( nCont );
-				goldSound( mSock, 2 );
+				Effects->goldSound( mSock, 2 );
 			}
 			else // If not gold, bounce to the ground
 			{
@@ -2101,7 +1866,7 @@ void packItem( cSocket *mSock )
 				nItem->SetLocation( mChar );
 			}
 			RefreshItem( nItem );
-			itemSound( mSock, nItem, false );
+			Effects->itemSound( mSock, nItem, false );
 			statwindow( mSock, mChar );
 			return;
 		}
@@ -2130,7 +1895,7 @@ void packItem( cSocket *mSock )
 
 	if( nCont->GetType() == 87 )	// Trash container
 	{
-		soundeffect( mSock, 0x0042, false );
+		Effects->PlaySound( mSock, 0x0042, false );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
 		statwindow( mSock, mChar );
@@ -2205,7 +1970,7 @@ void packItem( cSocket *mSock )
 			else
 				Magic->AddSpell( nCont, targSpellNum );
 		}
-		soundeffect( mSock, 0x0042, false );
+		Effects->PlaySound( mSock, 0x0042, false );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
 		statwindow( mSock, mChar );
@@ -2242,7 +2007,7 @@ void packItem( cSocket *mSock )
 				mChar->SetSpeechItem( nItem->GetSerial() );
 				sysmessage( mSock, 1207 );
 			}
-			else if( j != mChar && mChar->GetCommandLevel() < CNSCMDLEVEL )
+			else if( j != mChar && mChar->GetCommandLevel() < CNS_CMDLEVEL )
 			{
 				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 					Weight->subtractItemWeight( mChar, nItem );
@@ -2329,7 +2094,7 @@ void packItem( cSocket *mSock )
 		statwindow( mSock, mChar );
 	}
 	if( !stackDeleted )
-		itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+		Effects->itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2544,7 +2309,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 		else if( !strcmp( "GMPAGE", cmd ) )
 			Commands->GMPage( s, data );
 		else if( !strcmp( "GCOLLECT", cmd ) )
-			gcollect();
+			doGCollect();
 		else if( !strcmp( "GOPLACE", cmd ) )
 		{
 			tmp = makeNum( data );
@@ -2944,13 +2709,13 @@ void processkey( int c )
 			case '3':
 				// Reload Region Files
 				messageLoop << "CMD: Loading Regions... ";
-				loadregions();
+				FileIO->LoadRegions();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '4':
 				// Reload the serve spawn regions
 				messageLoop << "CMD: Loading Spawn Regions... ";
-				loadSpawnRegions();
+				FileIO->LoadSpawnRegions();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '5':
@@ -2993,11 +2758,11 @@ void processkey( int c )
 				messageLoop << MSG_PRINTDONE;
 				// Reload Region Files
 				messageLoop << "     Loading Regions... ";
-				loadregions();
+				FileIO->LoadRegions();
 				messageLoop << MSG_PRINTDONE;
 				// Reload the serve spawn regions
 				messageLoop << "     Loading Spawn Regions... ";
-				loadSpawnRegions();
+				FileIO->LoadSpawnRegions();
 				messageLoop << MSG_PRINTDONE;
 				// Reload the current Spells 
 				messageLoop << "     Loading spells... ";
@@ -3118,7 +2883,7 @@ void processkey( int c )
 			messageLoop << temp;
 			sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
 			messageLoop << temp;
-			sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
+			sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * TEffects->Count() );
 			messageLoop << temp;
 			total += tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
 			sprintf( temp, "        Approximate Total: %i bytes", total );
@@ -3380,7 +3145,7 @@ bool genericCheck( CChar *i )
 		s = calcSocketObjFromChar( i );
 	if( isOn || isNPC )
 	{
-		if( cwmWorldState->ServerData()->GetHungerRate() > 1 && ( i->GetHungerTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+		if( cwmWorldState->ServerData()->GetHungerRate() > 1 && i->GetHungerStatus() && ( i->GetHungerTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
 			if( i->GetHunger() > 0 && !i->IsCounselor() && !i->IsGM() )
 				i->DecHunger(); //Morrolan GMs and Counselors don't get hungry
@@ -3411,7 +3176,7 @@ bool genericCheck( CChar *i )
 		if( ( cwmWorldState->GetHungerDamageTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && cwmWorldState->ServerData()->GetHungerDamage() > 0 ) // Damage them if they are very hungry
 		{
 			cwmWorldState->SetHungerDamageTimer( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetHungerDamageRateTimer() ) ); // set new hungertime
-			if( i->GetHP() > 0 && i->GetHunger() < 2 && !i->IsCounselor() && !i->IsDead() )
+			if( i->GetHungerStatus() && i->GetHP() > 0 && i->GetHunger() < 2 && !i->IsCounselor() && !i->IsDead() )
 			{     
 				sysmessage( s, 1228 );
 				i->IncHP( (SI16)( -cwmWorldState->ServerData()->GetHungerDamage() ) );
@@ -3609,7 +3374,7 @@ void checkPC( CChar *i, bool doWeather )
 		{
 			i->SetNextAct( 75 );
 			if( !i->IsOnHorse() )
-				impaction( mSock, i->GetSpellAction() );
+				Effects->impaction( mSock, i->GetSpellAction() );
 		}
 	}
 	
@@ -3619,7 +3384,7 @@ void checkPC( CChar *i, bool doWeather )
 			cwmWorldState->ServerData()->SetWorldAmbientSounds( 10 );
 		SI16 soundTimer = cwmWorldState->ServerData()->GetWorldAmbientSounds() * 100;
 		if( isOn && !i->IsDead() && ( rand()%( soundTimer ) ) == ( soundTimer / 2 ) ) 
-			bgsound( i ); // bgsound uses array positions not sockets!
+			Effects->bgsound( i ); // bgsound uses array positions not sockets!
 	}
 	
 	if( i->GetSpiritSpeakTimer() > 0 && i->GetSpiritSpeakTimer() < cwmWorldState->GetUICurrentTime() )
@@ -3693,12 +3458,13 @@ void checkNPC( CChar *i )
 		Npcs->CheckAI( i );
 	Movement->NpcMovement( i );
 	setcharflag( i );		// possibly not... How many times do we want to set this? We've set it twice in the calling function
-	
-	restockNPC( i );
+
+	if( cwmWorldState->GetShopRestockTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		restockNPC( i, false );
 
 	if( i->GetOwnerObj() != NULL && i->GetHunger() == 0 && i->GetNPCAiType() != 17 ) // tamed animals but not player vendors ;)=
 	{
-		tempeffect( i, i, 44, 0, 0, 0 ); // (go wild in some minutes ...)-effect
+		Effects->tempeffect( i, i, 44, 0, 0, 0 ); // (go wild in some minutes ...)-effect
 		i->SetHunger( -1 );
 	}
 	
@@ -3724,7 +3490,7 @@ void checkNPC( CChar *i )
 				i->SetSummonTimer( BuildTimeValue( 25 ) );
 				return;
 			}
-			soundeffect( i, 0x01FE );
+			Effects->PlaySound( i, 0x01FE );
 			i->SetDead( true );
 			Npcs->DeleteChar( i );
 			return;
@@ -3783,16 +3549,16 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 
 			if( itemCheck->GetType() == 88 && itemCheck->GetMoreY() < 25 )
 			{
-				Network->PushConn();
-				for( cSocket *eSock = Network->FirstSocket(); !Network->FinishedSockets(); eSock = Network->NextSocket() )
+				if( (UI32)RandomNum( 1, 100 ) <= itemCheck->GetMoreZ() )
 				{
-					if( objInRange( eSock, itemCheck, itemCheck->GetMoreY() ) )
+					Network->PushConn();
+					for( cSocket *eSock = Network->FirstSocket(); !Network->FinishedSockets(); eSock = Network->NextSocket() )
 					{
-						if( (UI32)RandomNum( 1, 100 ) <= itemCheck->GetMoreZ() )
-							soundeffect( itemCheck, eSock, (UI16)itemCheck->GetMoreX() );
+						if( objInRange( eSock, itemCheck, itemCheck->GetMoreY() ) )
+								Effects->PlaySound( eSock, (UI16)itemCheck->GetMoreX(), false );
 					}
+					Network->PopConn();
 				}
-				Network->PopConn();
 			}
 		} 
 		if( itemCheck->GetType() == 117 && ( itemCheck->GetType2() == 1 || itemCheck->GetType2() == 2 ) && 
@@ -4069,7 +3835,7 @@ void checkauto( void )
 		toCheck->PopItem();
 		tcCheck++;
 	}
-	checktempeffects();
+	Effects->checktempeffects();
 	SpeechSys->Poll();
 	if( uiSetFlagTime <= cwmWorldState->GetUICurrentTime() )
 		uiSetFlagTime = BuildTimeValue( 30 ); // Slow down lag "needed" for setting flags, they are set often enough ;-)
@@ -4137,20 +3903,20 @@ void InitClasses( void )
 {
 	Console << "Initializing and creating class pointers... " << myendl;
 	
-	Boats = NULL;		Gumps = NULL;		
-	Combat = NULL;		Commands = NULL;
-	Items = NULL;		Map = NULL;
-	Npcs = NULL;		Skills = NULL;	
-	Weight = NULL;		Targ = NULL;
-	Network = NULL;		Magic = NULL;		
-	Races = NULL;		Weather = NULL;
-	Movement = NULL;	Effects = NULL;	
-	WhoList = NULL;		OffList = NULL;
-	Books = NULL;		GMQueue = NULL;	
-	Dictionary = NULL;	Accounts = NULL;
-	MapRegion = NULL;	SpeechSys = NULL;
+	Boats = NULL;			Gumps = NULL;	
+	Combat = NULL;			Commands = NULL;
+	Items = NULL;			Map = NULL;
+	Npcs = NULL;			Skills = NULL;	
+	Weight = NULL;			Targ = NULL;
+	Network = NULL;			Magic = NULL;		
+	Races = NULL;			Weather = NULL;
+	Movement = NULL;		TEffects = NULL;	
+	WhoList = NULL;			OffList = NULL;
+	Books = NULL;			GMQueue = NULL;	
+	Dictionary = NULL;		Accounts = NULL;
+	MapRegion = NULL;		SpeechSys = NULL;
 	CounselorQueue = NULL;	GuildSys = NULL;
-	HTMLTemplates = NULL;
+	HTMLTemplates = NULL;	Effects = NULL;
 
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
 	if(( Dictionary = new CDictionaryContainer ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
@@ -4169,7 +3935,7 @@ void InitClasses( void )
 	if(( Races = new cRaces )             == NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
 	if(( Weather = new cWeatherAb )       == NULL ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
 	if(( Movement = new cMovement )       == NULL ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
-	if(( Effects = new cTEffect )         == NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );	// addition of TEffect class, memory reduction (Abaddon, 17th Feb 2000)
+	if(( TEffects = new cTEffect )         == NULL ) Shutdown( FATAL_UOX3_ALLOC_TEMPEFFECTS );	// addition of TEffect class, memory reduction (Abaddon, 17th Feb 2000)
 	if(( WhoList = new cWhoList )         == NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
 	if(( OffList = new cWhoList( false ) )== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
 	if(( Books = new cBooks )			  == NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );	// temp value
@@ -4177,6 +3943,8 @@ void InitClasses( void )
 	if(( CounselorQueue = new PageVector( "Counselor Queue" ) )== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
 	if(( Trigger = new Triggers )		  == NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
 	if(( MapRegion = new cMapRegion )	  == NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
+	if(( Effects = new cEffects )		  == NULL )	Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
+	if(( FileIO = new cFileIO )			  == NULL ) Shutdown( FATAL_UOX3_ALLOC_FILEIO );
 	
 	HTMLTemplates = new cHTMLTemplates;
 
@@ -4322,58 +4090,56 @@ void ResetVars( void )
 	Console << "Initializing global variables  ";
 	globalSent = 0;
 	globalRecv = 0;
-	uoxtimeout.tv_sec = 0;
-	uoxtimeout.tv_usec = 0;
 	
-	strcpy( skill[ALCHEMY].madeword,		"mixed" );
-	strcpy( skill[ANATOMY].madeword,		"made" );
-	strcpy( skill[ANIMALLORE].madeword,		"made" );
-	strcpy( skill[ITEMID].madeword,			"made" );
-	strcpy( skill[ARMSLORE].madeword,		"made" );
-	strcpy( skill[PARRYING].madeword,		"made" );
-	strcpy( skill[BEGGING].madeword,		"made" );
-	strcpy( skill[BLACKSMITHING].madeword,	"forged" );
-	strcpy( skill[BOWCRAFT].madeword,		"bowcrafted" );
-	strcpy( skill[PEACEMAKING].madeword,	"made" );
-	strcpy( skill[CAMPING].madeword,		"made" );
-	strcpy( skill[CARPENTRY].madeword,		"made" );
-	strcpy( skill[CARTOGRAPHY].madeword,	"wrote" );
-	strcpy( skill[COOKING].madeword,		"cooked" );
-	strcpy( skill[DETECTINGHIDDEN].madeword, "made" );
-	strcpy( skill[ENTICEMENT].madeword,		"made" );
-	strcpy( skill[EVALUATINGINTEL].madeword, "made" );
-	strcpy( skill[HEALING].madeword,		"made" );
-	strcpy( skill[FISHING].madeword,		"made" );
-	strcpy( skill[FORENSICS].madeword,		"made" );
-	strcpy( skill[HERDING].madeword,		"made" );
-	strcpy( skill[HIDING].madeword,			"made" );
-	strcpy( skill[PROVOCATION].madeword,	"made" );
-	strcpy( skill[INSCRIPTION].madeword,	"wrote" );
-	strcpy( skill[LOCKPICKING].madeword,	"made" );
-	strcpy( skill[MAGERY].madeword,			"envoked" );
-	strcpy( skill[MAGICRESISTANCE].madeword, "made" );
-	strcpy( skill[TACTICS].madeword,		"made" );
-	strcpy( skill[SNOOPING].madeword,		"made" );
-	strcpy( skill[MUSICIANSHIP].madeword,	"made" );
-	strcpy( skill[POISONING].madeword,		"made" );
-	strcpy( skill[ARCHERY].madeword,		"made" );
-	strcpy( skill[SPIRITSPEAK].madeword,	"made" );
-	strcpy( skill[STEALING].madeword,		"made" );
-	strcpy( skill[TAILORING].madeword,		"sewn" );
-	strcpy( skill[TAMING].madeword,			"made" );
-	strcpy( skill[TASTEID].madeword,		"made" );
-	strcpy( skill[TINKERING].madeword,		"made" );
-	strcpy( skill[TRACKING].madeword,		"made" );
-	strcpy( skill[VETERINARY].madeword,		"made" );
-	strcpy( skill[SWORDSMANSHIP].madeword,	"made" );
-	strcpy( skill[MACEFIGHTING].madeword,	"made" );
-	strcpy( skill[FENCING].madeword,		"made" );
-	strcpy( skill[WRESTLING].madeword,		"made" );
-	strcpy( skill[LUMBERJACKING].madeword,	"made" );
-	strcpy( skill[MINING].madeword,			"smelted" );
-	strcpy( skill[MEDITATION].madeword,		"envoked" );
-	strcpy( skill[STEALTH].madeword,		"made" );
-	strcpy( skill[REMOVETRAPS].madeword,	"made" );
+	strcpy( cwmWorldState->skill[ALCHEMY].madeword,			"mixed" );
+	strcpy( cwmWorldState->skill[ANATOMY].madeword,			"made" );
+	strcpy( cwmWorldState->skill[ANIMALLORE].madeword,		"made" );
+	strcpy( cwmWorldState->skill[ITEMID].madeword,			"made" );
+	strcpy( cwmWorldState->skill[ARMSLORE].madeword,		"made" );
+	strcpy( cwmWorldState->skill[PARRYING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[BEGGING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[BLACKSMITHING].madeword,	"forged" );
+	strcpy( cwmWorldState->skill[BOWCRAFT].madeword,		"bowcrafted" );
+	strcpy( cwmWorldState->skill[PEACEMAKING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[CAMPING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[CARPENTRY].madeword,		"made" );
+	strcpy( cwmWorldState->skill[CARTOGRAPHY].madeword,		"wrote" );
+	strcpy( cwmWorldState->skill[COOKING].madeword,			"cooked" );
+	strcpy( cwmWorldState->skill[DETECTINGHIDDEN].madeword, "made" );
+	strcpy( cwmWorldState->skill[ENTICEMENT].madeword,		"made" );
+	strcpy( cwmWorldState->skill[EVALUATINGINTEL].madeword, "made" );
+	strcpy( cwmWorldState->skill[HEALING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[FISHING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[FORENSICS].madeword,		"made" );
+	strcpy( cwmWorldState->skill[HERDING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[HIDING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[PROVOCATION].madeword,		"made" );
+	strcpy( cwmWorldState->skill[INSCRIPTION].madeword,		"wrote" );
+	strcpy( cwmWorldState->skill[LOCKPICKING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[MAGERY].madeword,			"envoked" );
+	strcpy( cwmWorldState->skill[MAGICRESISTANCE].madeword, "made" );
+	strcpy( cwmWorldState->skill[TACTICS].madeword,			"made" );
+	strcpy( cwmWorldState->skill[SNOOPING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[MUSICIANSHIP].madeword,	"made" );
+	strcpy( cwmWorldState->skill[POISONING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[ARCHERY].madeword,			"made" );
+	strcpy( cwmWorldState->skill[SPIRITSPEAK].madeword,		"made" );
+	strcpy( cwmWorldState->skill[STEALING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[TAILORING].madeword,		"sewn" );
+	strcpy( cwmWorldState->skill[TAMING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[TASTEID].madeword,			"made" );
+	strcpy( cwmWorldState->skill[TINKERING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[TRACKING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[VETERINARY].madeword,		"made" );
+	strcpy( cwmWorldState->skill[SWORDSMANSHIP].madeword,	"made" );
+	strcpy( cwmWorldState->skill[MACEFIGHTING].madeword,	"made" );
+	strcpy( cwmWorldState->skill[FENCING].madeword,			"made" );
+	strcpy( cwmWorldState->skill[WRESTLING].madeword,		"made" );
+	strcpy( cwmWorldState->skill[LUMBERJACKING].madeword,	"made" );
+	strcpy( cwmWorldState->skill[MINING].madeword,			"smelted" );
+	strcpy( cwmWorldState->skill[MEDITATION].madeword,		"envoked" );
+	strcpy( cwmWorldState->skill[STEALTH].madeword,			"made" );
+	strcpy( cwmWorldState->skill[REMOVETRAPS].madeword,		"made" );
 
 	Console.PrintDone();
 }
@@ -4551,7 +4317,7 @@ int main( int argc, char *argv[] )
 
 		if(( cwmWorldState = new CWorldMain ) == NULL ) 
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
-		LoadINIFile();
+		FileIO->LoadINIFile();
 		InitClasses();
 		cwmWorldState->SetUICurrentTime( currentTime );
 
@@ -4559,7 +4325,7 @@ int main( int argc, char *argv[] )
 		ResetVars();
 		
 		Console << "Loading skill advancement      ";
-		loadskills();
+		FileIO->LoadSkills();
 		Console.PrintDone();
 		
 		cwmWorldState->SetKeepRun( Network->kr ); // for some technical reasons global varaibles CANT be changed in constructors in c++.
@@ -4571,7 +4337,7 @@ int main( int argc, char *argv[] )
 		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
 
 		Console << "Loading teleport               ";
-		read_in_teleport();
+		FileIO->LoadTeleportLocations();
 		Console.PrintDone();
 		
 		srand( cwmWorldState->GetUICurrentTime() ); // initial randomization call
@@ -4582,11 +4348,11 @@ int main( int argc, char *argv[] )
 		Skills->Load();
 		
 		Console << "Loading Spawn Regions          ";
-		loadSpawnRegions();
+		FileIO->LoadSpawnRegions();
 		Console.PrintDone();
 
 		Console << "Loading Regions                ";
-		loadregions();
+		FileIO->LoadRegions();
 		Console.PrintDone();
 
 		Magic->LoadScript();
@@ -4606,13 +4372,13 @@ int main( int argc, char *argv[] )
 		
 		// Rework that...
 		Console << "Loading World now              ";
-		loadnewworld();
+		FileIO->LoadNewWorld();
 
 		StartupClearTrades();
 		InitMultis();
 		
 		cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
-		gcollect();
+		doGCollect();
 
 		FD_ZERO( &conn );
 		cwmWorldState->SetEndTime( 0 );
@@ -4629,11 +4395,11 @@ int main( int argc, char *argv[] )
 		Console.PrintDone();
 
 		Console << "Loading custom titles          ";
-		loadcustomtitle();
+		FileIO->LoadCustomTitle();
 		Console.PrintDone();
 
 		Console << "Loading temporary Effects      ";
-		LoadEffects();
+		Effects->LoadEffects();
 		Console.PrintDone();
 			
 
@@ -4643,7 +4409,7 @@ int main( int argc, char *argv[] )
 		else
 			cwmWorldState->announce( 0 );
 
-		LoadCreatures();
+		FileIO->LoadCreatures();
 		DisplayBanner();
 		//DisplaySettings(); << Moved that to the configuration
 		item_test();
@@ -4786,38 +4552,6 @@ int main( int argc, char *argv[] )
 	return( 0 );	
 }
 
-void LoadINIFile( void )
-{
-	// hmm, fileExists isn't a valid func... let's call our
-	bool uox3test = FileExists( "uox3test.ini" );
-	bool uox3     = FileExists( "uox3.ini" );
-	bool uox      = FileExists( "uox.ini" );
-	if( !uox )
-	{
-		if( uox3 ) 
-		{
-			Console << "NOTICE: uox3.ini is no longer needed." << myendl;
-			Console << "Rewriting as uox.ini." << myendl;
-			cwmWorldState->ServerData()->load( "uox3.ini" );//load this anyway, in case they don't have the other one.
-			cwmWorldState->ServerData()->save();
-		}
-		else if( uox3test ) 
-		{
-			Console << "NOTICE: uox3test.ini is no longer needed." << myendl;
-			Console << "Rewriting as uox.ini." << myendl;
-			cwmWorldState->ServerData()->load( "uox3test.ini" );//load this anyway, in case they don't have the other one.
-			cwmWorldState->ServerData()->save();
-		}
-	}
-	else if( uox3 || uox3test )
-	{
-		Console << "You have both old style (uox3.ini and/or uox3test.ini) and new style (uox.ini) files." << myendl;
-		Console << "We will only be reading the uox.ini file" << myendl;
-	}
-	cwmWorldState->ServerData()->load();
-}
-
-
 //o---------------------------------------------------------------------------o
 //|            Function     - Restart()
 //|            Date         - 1/7/00
@@ -4919,7 +4653,7 @@ void Shutdown( SI32 retCode )
 	delete Weather;
 	delete Movement;
 	delete Network;
-	delete Effects;
+	delete TEffects;
 	delete WhoList;
 	delete OffList;
 	delete Books;
@@ -4936,6 +4670,8 @@ void Shutdown( SI32 retCode )
 	delete GuildSys;
 	delete FileLookup;
 	delete JailSys;
+	delete Effects;
+	delete FileIO;
 	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
@@ -5060,7 +4796,7 @@ void objTeleporters( CChar *s )
 						break;
 					case 86:														// sound objects
 						if( (UI32)RandomNum(1,100) <= itemCheck->GetMoreZ() )
-							soundeffect( itemCheck, (UI16)( (itemCheck->GetMoreX()<<8) + itemCheck->GetMoreY() ) );
+							Effects->PlaySound( itemCheck, (UI16)( (itemCheck->GetMoreX()<<8) + itemCheck->GetMoreY() ) );
 						break;
 
 					case 89:
@@ -5177,7 +4913,7 @@ void doLight( cSocket *s, char level )
 	}
 	else
 	{
-		if( inDungeon( mChar ) )
+		if( mChar->inDungeon() )
 		{
 			if( Races->VisLevel( mChar->GetRace() ) > dunLevel )
 				toShow = 0;
@@ -5356,17 +5092,6 @@ UI08 getFieldDir( CChar *s, SI16 x, SI16 y )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool indungeon( CChar *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Determine if player is inside a dungeon
-//o---------------------------------------------------------------------------o
-bool inDungeon( CChar *s )
-{
-	return region[s->GetRegion()]->IsDungeon();
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void openBank( cSocket *s, CChar *i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -5477,37 +5202,6 @@ void openSpecialBank( cSocket *s, CChar *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void deathAction( CChar *s, CItem *x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Plays a characters death animation
-//o---------------------------------------------------------------------------o
-void deathAction( CChar *s, CItem *x )
-{
-	CPDeathAction toSend( (*s), (*x) );
-	toSend.FallDirection( (UI08)RandomNum( 0, 1 ) );
-	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{
-		if( tSock->CurrcharObj() != s && charInRange( s, tSock->CurrcharObj() ) )
-			tSock->Send( &toSend );
-	}
-	Network->PopConn();
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void deathMenu( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Called when player dies, sends the "death menu"
-//o---------------------------------------------------------------------------o
-void deathMenu( cSocket *s )
-{
-	CPResurrectMenu toSend( 0 );
-	s->Send( &toSend );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void gettokennum( char *s, int num )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -5549,94 +5243,43 @@ void gettokennum( const char * s, int num, char *gettokenstr )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void setRandomName( CChar *s, char *namelist )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets a character with a random name from NPC.scp namelist
-//o---------------------------------------------------------------------------o
-void setRandomName( CChar *s, const char *namelist )
-{
-	char sect[512];
-	
-	sprintf( sect, "RANDOMNAME %s", namelist );
-	
-	char tempName[512];
-
-	ScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
-	if( RandomName == NULL )
-	{
-		sprintf( tempName, "Error Namelist %s Not Found", namelist );
-		s->SetName( tempName );
-		return;
-	}
-	
-	int i = RandomName->NumEntries();
-
-	sprintf( tempName, "namecount %i", i );
-	s->SetName( tempName );
-	if( i > 0 )
-	{
-		i = rand()%(i);
-		const char *tag = RandomName->MoveTo( (SI16)i );
-		s->SetName( tag );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *getRootPack( CItem *p )
-//|	Programmer	-	Unknown
+//|	Function	-	CItem *getRootPack( CItem *item )
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Gets the root container an item is in (if any)
 //o---------------------------------------------------------------------------o
-CItem *getRootPack( CItem *p )
+CItem *getRootPack( CItem *item )
 {
-	UI08 a = 0;
-	CItem *currentContainer = NULL;
-	while( a < 50 ) 
+	if( item == NULL || item->GetCont() == NULL || item->GetCont( 1 ) < 0x40 )	// Item has no containing item
+		return NULL;
+
+	while( item != NULL )
 	{
-		if( p == NULL )				// Non existent item
-			return currentContainer;
-		if( p->GetCont() == NULL )	// It's on the ground, so it MUST be the root pack
-			return p;
-		if( p->GetCont( 1 ) < 0x40 )		// It's a character
-			return currentContainer;	// Return current container
-		
-		p = (CItem *)p->GetCont();
-		if( p != NULL )
-			currentContainer = p;
-		a++;
+		if( item->GetCont() == NULL || item->GetCont( 1 ) < 0x40 )		// Item is on the ground or on a character
+			break;
+		item = (CItem *)item->GetCont();
 	}
-	return currentContainer;
+	return item;
 }
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	CChar *getPackOwner( CItem *p )
-//|	Programmer	-	Unknown
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Returns a containers owner
 //o---------------------------------------------------------------------------o
 CChar *getPackOwner( CItem *p )
 {
-	if( p == NULL || p->GetCont() == NULL ) 
+	if( p == NULL || p->GetCont() == NULL )
 		return NULL;
-	if( p->GetCont( 1 ) < 0x40 ) 
+
+	if( p->GetCont( 1 ) < 0x40 )								// Items container is a character, return it
 		return (CChar *)p->GetCont();
-	UI08 b = 0xFF;
-	CItem *x = p;
-	for( UI08 a = 0; b >= 0x40; a++ )
-	{
-		if( a >= 50 || x == NULL ) 
-			return NULL; // Too many packs! must stop endless loop!
-		if( x->GetCont() == NULL ) 
-			return NULL;
-		if( x->GetCont( 1 ) >= 0x40 )
-			x = (CItem *)x->GetCont();
-		if( x != NULL ) 
-			b = x->GetCont( 1 ); 
-		else 
-			b = 0x42;
-	}
-	return (CChar *)x->GetCont();
+
+	CItem *rootPack = getRootPack( p );							// Find the root container for the item
+	if( rootPack != NULL && rootPack->GetCont( 1 ) < 0x40 )		// Ensure the root packs container is a character
+		return (CChar *)rootPack->GetCont();					// Return the root packs owner
+	return NULL;
 }
 
 //o---------------------------------------------------------------------------o
@@ -5686,17 +5329,6 @@ int getTileName( CItem *i, char *itemname )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	addgold( cSocket *s, UI32 totgold )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Adds gold to characters total gold
-//o---------------------------------------------------------------------------o
-void addgold( cSocket *s, UI32 totgold )
-{
-	Items->SpawnItem( s, s->CurrcharObj(), totgold, "#", true, 0x0EED, 0, true, true );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void usePotion( CChar *p, CItem *i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -5710,26 +5342,26 @@ void usePotion( CChar *p, CItem *i )
 
 	cSocket *mSock = calcSocketObjFromChar( p );
 	if( cwmWorldState->ServerData()->GetPotionDelay() != 0 )
-		tempeffect( p, p, 26, 0, 0, 0 );
+		Effects->tempeffect( p, p, 26, 0, 0, 0 );
 	switch( i->GetMoreY() )
 	{
 	case 1: // Agility Potion
-		staticeffect( p, 0x373A, 0, 15 );
+		Effects->staticeffect( p, 0x373A, 0, 15 );
 		switch( i->GetMoreZ() )
 		{
 		case 1:
-			tempeffect( p, p, 6, (UI16)RandomNum( 6, 15 ), 0, 0 );
+			Effects->tempeffect( p, p, 6, (UI16)RandomNum( 6, 15 ), 0, 0 );
 			sysmessage( mSock, 1608 );
 			break;
 		case 2:
-			tempeffect( p, p, 6, (UI16)RandomNum( 11, 30 ), 0, 0 );
+			Effects->tempeffect( p, p, 6, (UI16)RandomNum( 11, 30 ), 0, 0 );
 			sysmessage( mSock, 1609 );
 			break;
 		default:
 			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
 			return;
 		}
-		soundeffect( p, 0x01E7 );
+		Effects->PlaySound( p, 0x01E7 );
 		if( mSock != NULL ) 
 			updateStats( p, 2 );
 		break;
@@ -5782,8 +5414,8 @@ void usePotion( CChar *p, CItem *i )
 				sysmessage( mSock, 1345 ); 
 			else
 			{
-				staticeffect( p, 0x373A, 0, 15 );
-				soundeffect( p, 0x01E0 ); 
+				Effects->staticeffect( p, 0x373A, 0, 15 );
+				Effects->PlaySound( p, 0x01E0 ); 
 				sysmessage( mSock, 1346 );
 			} 
 		}
@@ -5797,10 +5429,10 @@ void usePotion( CChar *p, CItem *i )
 		}
 		mSock->AddID( i->GetSerial() );
 		sysmessage( mSock, 1348 );
-		tempeffect( p, p, 16, 0, 1, 3 );
-		tempeffect( p, p, 16, 0, 2, 2 );
-		tempeffect( p, p, 16, 0, 3, 1 );
-		tempeffect( p, i, 17, 0, 4, 0 );
+		Effects->tempeffect( p, p, 16, 0, 1, 3 );
+		Effects->tempeffect( p, p, 16, 0, 2, 2 );
+		Effects->tempeffect( p, p, 16, 0, 3, 1 );
+		Effects->tempeffect( p, i, 17, 0, 4, 0 );
 		target( mSock, 0, 207, "" );
 		return;
 	case 4: // Heal Potion
@@ -5824,14 +5456,14 @@ void usePotion( CChar *p, CItem *i )
 		}
 		if( mSock != NULL ) 
 			updateStats( p, 0 );
-		staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
-		soundeffect( p, 0x01F2 ); //Healing Sound - SpaceDog
+		Effects->staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
+		Effects->PlaySound( p, 0x01F2 ); //Healing Sound - SpaceDog
 		break;
 	case 5: // Night Sight Potion
 		//{
-		staticeffect( p, 0x376A, 0x09, 0x06 );
-		tempeffect( p, p, 2, 0, 0, 0 );
-		soundeffect( p, 0x01E3 );
+		Effects->staticeffect( p, 0x376A, 0x09, 0x06 );
+		Effects->tempeffect( p, p, 2, 0, 0, 0 );
+		Effects->PlaySound( p, 0x01E3 );
 		break;
 		//}
 	case 6: // Poison Potion
@@ -5841,7 +5473,7 @@ void usePotion( CChar *p, CItem *i )
 			i->SetMoreZ( 4 );
 		p->SetPoisonWearOffTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
 		p->SendToSocket( mSock, true, p );
-		soundeffect( p, 0x0246 );
+		Effects->PlaySound( p, 0x0246 );
 		sysmessage( mSock, 1352 );
 		break;
 	case 7: // Refresh Potion
@@ -5861,26 +5493,26 @@ void usePotion( CChar *p, CItem *i )
 		}
 		if( mSock != NULL ) 
 			updateStats( p, 2 );
-		staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
-		soundeffect( p, 0x01F2 ); //Healing Sound
+		Effects->staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
+		Effects->PlaySound( p, 0x01F2 ); //Healing Sound
 		break;
 	case 8: // Strength Potion
-		staticeffect( p, 0x373A, 0, 15 );
+		Effects->staticeffect( p, 0x373A, 0, 15 );
 		switch( i->GetMoreZ() )
 		{
 		case 1:
-			tempeffect( p, p, 8, (UI16)( 5 + RandomNum( 1, 10 ) ), 0, 0);
+			Effects->tempeffect( p, p, 8, (UI16)( 5 + RandomNum( 1, 10 ) ), 0, 0);
 			sysmessage( mSock, 1355 );
 			break;
 		case 2:
-			tempeffect( p, p, 8, (UI16)( 10 + RandomNum( 1, 20 ) ), 0, 0);
+			Effects->tempeffect( p, p, 8, (UI16)( 10 + RandomNum( 1, 20 ) ), 0, 0);
 			sysmessage( mSock, 1356 );
 			break;
 		default:
 			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
 			return;
 		}
-		soundeffect( p, 0x01EE );     
+		Effects->PlaySound( p, 0x01EE );     
 		break;
 	case 9: // Mana Potion
 		switch( i->GetMoreZ() )
@@ -5897,14 +5529,14 @@ void usePotion( CChar *p, CItem *i )
 		}
 		if( mSock != NULL ) 
 			updateStats( p, 1 );
-		staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
-		soundeffect( p, 0x01E7); //agility sound - SpaceDog
+		Effects->staticeffect( p, 0x376A, 0x09, 0x06); // Sparkle effect
+		Effects->PlaySound( p, 0x01E7); //agility sound - SpaceDog
 		break;
 	default:
 		Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
 		return;
 	}
-	soundeffect( p, 0x0030 );
+	Effects->PlaySound( p, 0x0030 );
 	if( p->GetID( 1 ) >= 1 && p->GetID( 2 )>90 && !p->IsOnHorse() ) 
 		npcAction( p, 0x22);
 	DecreaseItemAmount( i );
@@ -5916,66 +5548,6 @@ void usePotion( CChar *p, CItem *i )
 		bPotion->SetDecayable( true );
 		RefreshItem( bPotion );
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void loadSpawnRegions( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads spawning regions
-//o---------------------------------------------------------------------------o
-void loadSpawnRegions( void )
-{
-	UI16 i = 0;
-
-	spawnregion[i] = new cSpawnRegion( i );
-	
-	i++;
-	cwmWorldState->SetTotalSpawnRegions( 0 );
-	
-	ScriptSection *toScan = NULL;
-	VECSCRIPTLIST *tScn = FileLookup->GetFiles( spawn_def );
-	if( tScn == NULL )
-		return;
-	for( UI32 iCtr = 0; iCtr < tScn->size(); iCtr++ )
-	{
-		Script *spnScp = (*tScn)[iCtr];
-		if( spnScp == NULL )
-			continue;
-		for( toScan = spnScp->FirstEntry(); toScan != NULL; toScan = spnScp->NextEntry() )
-		{
-			if( toScan == NULL )
-				continue;
-			if( !strncmp( "REGIONSPAWN", spnScp->EntryName(), 11 ) ) // Is it a region spawn entry?
-			{
-				spawnregion[i] = new cSpawnRegion( i );
-				spawnregion[i]->Load( toScan );
-				i++;
-			}
-		}
-	}
-	cwmWorldState->SetTotalSpawnRegions( i );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void loadPreDefSpawnRegion( UI16 r, std::string name )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load scripted spawn regions
-//o---------------------------------------------------------------------------o
-void loadPreDefSpawnRegion( UI16 r, std::string name )
-{
-	char sect[512];
-	sprintf( sect, "PREDEFINED_SPAWN %s", name.c_str() );
-	ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
-	if( predefSpawn == NULL )
-	{
-		Console << "WARNING: Undefined region spawn " << name << ", check your regions.scp and spawn.scp files" << myendl;
-		return;
-	}
-
-	spawnregion[r]->Load( predefSpawn );
-	Console << sect << " loaded into spawn region #" << r << myendl;
 }
 
 //o---------------------------------------------------------------------------o
@@ -6077,178 +5649,9 @@ void checkRegion( CChar *i )
 		i->SetRegion( calcReg );
 		if( s != NULL ) 
 		{
-			dosocketmidi( s );
+			Effects->dosocketmidi( s );
 			doLight( s, (SI08)cwmWorldState->ServerData()->GetWorldLightCurrentLevel() );	// force it to update the light level straight away
 			Weather->DoPlayerStuff( i );	// force a weather update too
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void dosocketmidi( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send midi to client
-//o---------------------------------------------------------------------------o
-void dosocketmidi( cSocket *s )
-{
-	int i = 0;
-	char midiarray[50];
-	char sect[512];
-
-	CChar *mChar = s->CurrcharObj();
-	int midiList = region[mChar->GetRegion()]->GetMidiList();
-	
-	if( midiList != 0 )
-		return;
-
-	if( mChar->IsAtWar() )
-		strcpy( sect, "MIDILIST COMBAT" );
-	else
-		sprintf(sect, "MIDILIST %i", midiList );
-
-	ScriptSection *MidiList = FileLookup->FindEntry( sect, regions_def );
-	if( MidiList == NULL )
-		return;
-	const char *data = NULL;
-	for( const char *tag = MidiList->First(); !MidiList->AtEnd(); tag = MidiList->Next() )
-	{
-		data = MidiList->GrabData();
-		if( !strcmp( "MIDI", tag ) )
-			midiarray[i++] = (SI08)makeNum( data );
-	}
-	if( i != 0 )
-	{
-		i = rand()%(i);
-		playMidi( s, midiarray[i] );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void respawnnow( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	NPC / Item spawning stuff
-//o---------------------------------------------------------------------------o
-void respawnnow( void )
-{
-	for( UI16 region = 1; region < cwmWorldState->GetTotalSpawnRegions(); region++ )
-	{
-		if( spawnregion[region] != NULL )
-			spawnregion[region]->doRegionSpawn();
-	}
-
-	bool k = false;
-	UI32 ci;
-	ITEM j;
-	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )  // Item Spawner
-	{
-		if( items[i].GetType() == 61 )
-		{
-			k = false;
-			HashBucketMulti< ITEM > *hashBucket = nspawnsp.GetBucket( (items[i].GetSerial())%HASHMAX );
-			for( ci = 0; ci < hashBucket->NumEntries(); ci++ )
-			{
-				j = hashBucket->GetEntry( ci );
-				if( j != INVALIDSERIAL )
-				{
-					if( i != j && items[j].GetX() == items[i].GetX() && items[j].GetY() == items[i].GetY() && items[j].GetZ() == items[i].GetZ() )
-					{
-						if( items[i].GetSerial() == items[j].GetSpawn() )
-						{
-							k = true;
-							break;
-						}
-					}
-				}
-			}
-			if( !k )
-			{
-				const char *nDesc = items[i].GetDesc();
-				if( nDesc[0] != 0 )	// not NULL terminated, so we can do something!
-					Items->AddRespawnItem( &items[i], nDesc, true, items[i].isSpawnerList() );
-				else if( items[i].GetMoreX() != 0 )
-					Items->AddRespawnItem( &items[i], items[i].GetMoreX(), false );
-				items[i].SetGateTime( 0 );
-			}
-		}
-		
-		if( items[i].GetType() == 62 || items[i].GetType() == 69 || items[i].GetType() == 125 )  // NPC Spawner
-		{
-			int amt = 0;
-			HashBucketMulti< CHARACTER > *hashBucket = ncspawnsp.GetBucket( (items[i].GetSerial())%HASHMAX );
-			for( ci = 0; ci < hashBucket->NumEntries(); ci++ )
-			{
-				j = hashBucket->GetEntry( ci );
-				if( j != INVALIDSERIAL )
-				{
-					if( items[i].GetSerial() == items[j].GetSpawn() )
-						amt++;
-				}
-			} 
-			
-			if( amt < items[i].GetAmount() )
-			{
-				const char *mDesc = items[i].GetDesc();
-				if( mDesc[0] != 0 )	// not NULL terminated, so we can do something!
-				{
-					Npcs->SpawnNPC( &items[i], mDesc, items[i].WorldNumber(), items[i].isSpawnerList() );
-				}
-				else if( items[i].GetMoreX() != 0 )
-				{
-					char temp[512];
-					sprintf( temp, "%i", items[i].GetMoreX() );
-					Npcs->SpawnNPC( &items[i], temp, items[i].WorldNumber(), false );
-				}
-				items[i].SetGateTime( 0 );
-			}
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void loadskills( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load skills
-//o---------------------------------------------------------------------------o
-void loadskills( void )
-{
-	char sect[512];
-	ScriptSection *SkillList = NULL;
-	const char *tag = NULL;
-	const char *data = NULL;
-	for( UI08 i = 0; i <= ALLSKILLS + 3; i++)
-	{
-		skill[i].strength = 0;
-		skill[i].dexterity = 0;
-		skill[i].intelligence = 0;
-		sprintf( sect, "SKILL %i", i );
-		SkillList = FileLookup->FindEntry( sect, skills_def );
-		if( SkillList != NULL )
-		{
-			for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )
-			{
-				data = SkillList->GrabData();
-				if( !strcmp( "STR", tag ) )
-					skill[i].strength = (UI16)makeNum( data );
-				else if( !strcmp( "DEX", tag ) )
-					skill[i].dexterity = (UI16)makeNum( data );
-				else if( !strcmp( "INT", tag ) )
-					skill[i].intelligence = (UI16)makeNum( data );
-				else if( !strcmp( "SKILLPOINT", tag ) )
-				{
-					advance_st tempAdvance;
-					char temp[256];
-					gettokennum( data, 0, temp );
-					tempAdvance.base = (UI16)makeNum( temp );
-					gettokennum( data, 1, temp );
-					tempAdvance.success = (UI16)makeNum( temp );
-					gettokennum( data, 2, temp );
-					tempAdvance.failure = (UI16)makeNum( temp );
-					skill[i].advancement.push_back( tempAdvance );
-				}
-			}
 		}
 	}
 }
@@ -6289,8 +5692,8 @@ void advanceObj( CChar *s, UI16 x, bool multiUse )
 	CItem *retitem = NULL;
 	if( s->GetAdvObj() == 0 || multiUse )
 	{
-		staticeffect( s, 0x373A, 0, 15);
-		soundeffect( s, 0x01E9 );
+		Effects->staticeffect( s, 0x373A, 0, 15);
+		Effects->PlaySound( s, 0x01E9 );
 		s->SetAdvObj( x );
 		sprintf( sect, "ADVANCEMENT %i", x );
 		ScriptSection *Advancement = FileLookup->FindEntry( sect, advance_def );
@@ -6608,700 +6011,6 @@ void DumpCreatures( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void LoadCreatures( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads creatures from npc.dat
-//o---------------------------------------------------------------------------o
-void LoadCreatures( void )
-{
-	FILE *npcExists = fopen( "npc.dat", "r" );
-	if( npcExists == NULL )
-	{
-		Console << "Loading creatures from internal memory...";
-		init_creatures();
-	}
-	else
-	{
-		fclose( npcExists );
-		Script *npcData = new Script( "npc.dat", NUM_DEFS );
-		Console << "Loading creatures from file...";
-		memset( creatures, 0, sizeof( creat_st ) * 2048 );	// init all creatures to 0
-		char sect[128];
-		const char *tag = NULL;
-		const char *data = NULL;
-		for( int iCounter = 0; iCounter < 2048; iCounter++ )
-		{
-			sprintf( sect, "CREATURE %i", iCounter );
-			ScriptSection *creatureData = npcData->FindEntry( sect );
-			if( creatureData != NULL )
-			{
-				for( tag = creatureData->First(); !creatureData->AtEnd(); tag = creatureData->Next() )
-				{
-					if( tag == NULL )
-						continue;
-					data = creatureData->GrabData();
-					switch( tag[0] )
-					{
-					case 'A':
-						if( !strcmp( "ANTIBLINK", tag ) )
-							creatures[iCounter].AntiBlink( true );
-						else if( !strcmp( "ANIMAL", tag ) )
-							creatures[iCounter].IsAnimal( true );
-						break;
-					case 'B':
-						if( !strcmp( "BASESOUND", tag ) )
-							creatures[iCounter].BaseSound( makeNum( data ) );
-						break;
-					case 'F':
-						if( !strcmp( "FLIES", tag ) )
-							creatures[iCounter].CanFly( true );
-						break;
-					case 'I':
-						if( !strcmp( "ICON", tag ) )
-							creatures[iCounter].Icon( makeNum( data ) );
-						break;
-					case 'S':
-						if( !strcmp( "SOUNDFLAG", tag ) )
-							creatures[iCounter].SoundFlag( (UI08)makeNum( data ) );
-						break;
-					case 'W':
-						if( !strcmp( "WATERCREATURE", tag ) )
-							creatures[iCounter].IsWater( true );
-						break;
-					}
-				}
-			}
-		}
-		delete npcData;
-	}
-	Console.PrintDone();
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void init_creatures( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Initialize NPC's, assigning basesound, soundflag, and
-//|					who_am_i flag
-//o---------------------------------------------------------------------------o
-void init_creatures(void)
-{
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying, see uox.h)
-    //             1: birds .. only one "bird-shape" and zillions of sounds ...
-	//             2: only 3 sounds ->  (attack,defence,dying)    
-	//             3: only 4 sounds ->   (attack-started,attack,defnce,dying)
-	//             4: only 1 sound !!
-	//
-	// who_am_i bit # 1 creature can fly (must have the animations, so better not change)
-	//              # 2 anti-blink: these creatures don't have animation #4, if not set creature will randomly disappear in battle
-	//                              if you find a creature that blinks while fighting, set that bit
-	//              # 3 animal-bit (currently not used/set)
-	//              # 4 water creatures (currently not used/set)
-	// icon: used for tracking, to set the appropriate icon
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	creatures[0x01].BaseSound( 0x01AB );                            // Ogre
-	creatures[0x01].Icon( 8415 );
-    creatures[0x02].BaseSound( 0x016F );                            // Ettin 				
-	creatures[0x02].Icon( 8408 );
-    creatures[0x03].BaseSound( 0x01D7 );                            // Zombie
-	creatures[0x03].Icon( 8428 );
-    creatures[0x04].BaseSound( 0x0174 );                            // Gargoyle
-	creatures[0x04].CanFly( true ); // set can_fly_bit
-	creatures[0x04].Icon( 8409 );
-    creatures[0x05].BaseSound( 0x008F );                            // Eagle
-	creatures[0x05].CanFly( true ); // set can_fly bit
-	creatures[0x05].AntiBlink( true ); // set anti blink bit
-	creatures[0x05].IsAnimal( true ); // set anti blink bit
-	creatures[0x05].Icon( 8434 );
-    creatures[0x06].BaseSound( 0x007D );                            // Bird
-	creatures[0x06].CanFly( true ); //set fly bit
-	creatures[0x06].IsAnimal( true );
-	creatures[0x06].SoundFlag( 1 ); // birds need special treatment cause there are about 20 bird-sounds
-	creatures[0x06].Icon( 8430 );
-	creatures[0x07].BaseSound( 0x01B0 );                            // Orc	                      
-	creatures[0x07].Icon( 8416 );
-    creatures[0x08].BaseSound( 0x01BA );                            // corpser
-	creatures[0x08].SoundFlag( 3 );
-	creatures[0x08].Icon( 8402 );
-	creatures[0x09].BaseSound( 0x0165 );                            // daemon 
-	creatures[0x09].CanFly( true );
-	creatures[0x09].Icon( 8403 );
-	creatures[0x0a].BaseSound( 0x0165 );                            // daemon 2
-	creatures[0x0a].CanFly( true );
-	creatures[0x0a].Icon( 8403 );
-	
-	
-	creatures[0x0c].BaseSound( 362 );                               // Green dragon
-	creatures[0x0c].CanFly( true ); // flying creature
-	creatures[0x0c].Icon( 8406 );
-	creatures[0x0d].BaseSound( 263 );                               // air-ele
-	creatures[0x0d].Icon( 8429 );
-	creatures[0x0e].BaseSound( 268 );                               // earth-ele		
-	creatures[0x0e].Icon( 8407 );
-	creatures[0x0f].BaseSound( 273 );                               // fire-ele
-	creatures[0x0f].Icon( 8435 );
-	creatures[0x10].BaseSound( 0x0116 ); 	                         // water ele
-	creatures[0x10].Icon( 8459 );
-    creatures[0x11].BaseSound( 0x01B0 );                            // Orc	2
-	creatures[0x11].Icon( 8416 );
-    creatures[0x12].BaseSound( 0x016F );                           // Ettin 2
-	creatures[0x12].Icon( 8408 );
-	
-	
-	creatures[0x15].BaseSound( 219 );                               // Giant snake
-	creatures[0x15].Icon( 8446 );
-	creatures[0x16].BaseSound( 377 );                               // gazer
-	creatures[0x16].Icon( 8426 );
-	
-	creatures[0x18].BaseSound( 412 );                               // liche
-	creatures[0x18].Icon( 8440 );									// counldnt find a better one :(
-	
-	creatures[0x1a].BaseSound( 382 );                               // ghost 1
-	creatures[0x1a].Icon( 8457 );
-	
-	creatures[0x1c].BaseSound( 387 );                               // giant spider
-    creatures[0x1c].Icon( 8445 );
-	creatures[0x1d].BaseSound( 158 );                               // gorialla
-	creatures[0x1d].Icon( 8437 );
-	creatures[0x1e].BaseSound( 402 );                               // harpy			
-	creatures[0x1e].Icon( 8412 );
-	creatures[0x1f].BaseSound( 407 );                               // headless
-	creatures[0x1f].Icon( 8458 );
-	
-	creatures[0x21].BaseSound( 417 );                               // lizardman
-	creatures[0x23].BaseSound( 417 );                            
-	creatures[0x24].BaseSound( 417 );        
-	creatures[0x25].BaseSound( 417 );
-	creatures[0x26].BaseSound( 417 );
-	creatures[0x21].Icon( 8414 );
-	creatures[0x23].Icon( 8414 );
-	creatures[0x24].Icon( 8414 );
-	creatures[0x25].Icon( 8414 );
-	creatures[0x26].Icon( 8414 );
-	
-	
-	creatures[0x27].BaseSound( 422 );                               // mongbat
-	creatures[0x27].CanFly( true ); // yes, they can fly
-	creatures[0x27].Icon( 8441 );
-	
-	creatures[0x29].BaseSound( 0x01B0 );                            // orc 3
-	creatures[0x29].Icon( 8416 );
-
-	creatures[0x2A].BaseSound( 437 );                               // ratman
-	creatures[0x2C].BaseSound( 437 );                            
-	creatures[0x2D].BaseSound( 437 );                            
-	creatures[0x2A].Icon( 8419 );
-	creatures[0x2C].Icon( 8419 );
-	creatures[0x2D].Icon( 8419 );
-	
-	creatures[0x2F].BaseSound( 0x01BA );                            // Reaper			
-	creatures[0x2F].Icon( 8442 );
-	creatures[0x30].BaseSound( 397 );                               // giant scorprion	
-	creatures[0x30].Icon( 8420 );
-	
-	creatures[0x32].BaseSound( 452 );                               // skeleton 2
-	creatures[0x32].Icon( 8423 );
-	creatures[0x33].BaseSound( 456 );                               // slime	
-    creatures[0x33].Icon( 8424 );
-	creatures[0x34].BaseSound( 219 );                               // Snake
-	creatures[0x34].Icon( 8444 );
-	creatures[0x34].IsAnimal( true ); // set anti blink bit
-    creatures[0x35].BaseSound( 461 );                               // troll 				
-    creatures[0x35].Icon( 8425 );
-    creatures[0x36].BaseSound( 461 );                               // troll 2
-	creatures[0x36].Icon( 8425 );
-    creatures[0x37].BaseSound( 461 );                               // troll 3
-	creatures[0x37].Icon( 8425 );
-    creatures[0x38].BaseSound( 452 );                               // skeleton 3
-	creatures[0x38].Icon( 8423 );
-    creatures[0x39].BaseSound( 452 );                               // skeleton 4
-	creatures[0x39].Icon( 8423 );
-	creatures[0x3A].BaseSound( 466 );                               // wisp	                      
-	creatures[0x3A].Icon( 8448 );
-    creatures[0x3B].BaseSound( 362 );                               // red dragon
-	creatures[0x3B].CanFly( true ); // set fly bit
-	creatures[0x3C].BaseSound( 362 );                               // smaller red dragon
-	creatures[0x3C].CanFly( true );
-	creatures[0x3D].BaseSound( 362 );                               // smaller green dragon
-	creatures[0x3D].CanFly( true );
-	creatures[0x3B].Icon( 8406 );
-	creatures[0x3C].Icon( 8406 );
-	creatures[0x3D].Icon( 8406 );
-	
-	
-	creatures[0x96].BaseSound( 477 );                               // sea serpant
-	creatures[0x96].SoundFlag( 3 );
-	creatures[0x96].Icon( 8446 ); // normal serpant icon
-	creatures[0x97].BaseSound( 138 );                               // dolphin
-	creatures[0x97].Icon( 8433 ); // correct icon ???
-	
-	creatures[0xC8].BaseSound( 168 );                               // white horse		
-    creatures[0xC8].Icon( 8479 );
-	creatures[0xC8].IsAnimal( true ); // set anti blink bit
-	creatures[0xC9].BaseSound( 105 );                               // cat
-	creatures[0xC9].AntiBlink( true ); // set blink flag
-	creatures[0xC9].IsAnimal( true );
-    creatures[0xC9].Icon( 8475 );
-	creatures[0xCA].BaseSound( 90 );   	                         // alligator
-    creatures[0xCA].Icon( 8410 );
-	creatures[0xCA].IsAnimal( true );
-    creatures[0xCB].BaseSound( 196 );                               // small pig
-    creatures[0xCB].Icon( 8449 );
-	creatures[0xCB].IsAnimal( true );
-    creatures[0xCC].BaseSound( 168 );                               // brown horse
-    creatures[0xCC].Icon( 8481 );
-	creatures[0xCC].IsAnimal( true );
-	creatures[0xCD].BaseSound( 201 );                               // rabbit
-	creatures[0xCD].SoundFlag( 2 );                                 // rabbits only have 3 sounds, thus need special treatment
-	creatures[0xCD].Icon( 8485 );
-	creatures[0xCD].IsAnimal( true );
-	
-	creatures[0xCF].BaseSound( 214 );                               // wooly sheep
-	creatures[0xCF].Icon( 8427 );
-	creatures[0xCF].IsAnimal( true );
-	
-	creatures[0xD0].BaseSound( 110 );                               // chicken
-	creatures[0xD0].Icon( 8401 );
-	creatures[0xD0].IsAnimal( true );
-	creatures[0xD1].BaseSound( 153 );                               // goat
-	creatures[0xD1].Icon( 8422 ); // theres no goat icon, so i took a (differnt) sheep
-	creatures[0xD1].IsAnimal( true );
-	
-	creatures[0xD3].BaseSound( 95 );                                // brown bear
-    creatures[0xD3].Icon( 8399 );
-	creatures[0xD3].IsAnimal( true );
-	creatures[0xD4].BaseSound( 95 );                                // grizzly bear
-	creatures[0xD4].Icon( 8411 );
-	creatures[0xD4].IsAnimal( true );
-	creatures[0xD5].BaseSound( 95 );                                // polar bear	
-	creatures[0xD5].Icon( 8417 );
-	creatures[0xD5].IsAnimal( true );
-	creatures[0xD6].BaseSound( 186 );                               // panther
-	creatures[0xD6].AntiBlink( true );
-    creatures[0xD6].Icon( 8473 );
-	creatures[0xD7].BaseSound( 392 );                               // giant rat
-	creatures[0xD7].Icon( 8400 );
-	creatures[0xD8].BaseSound( 120 );                               // cow
-    creatures[0xD8].Icon( 8432 );
-	creatures[0xD8].IsAnimal( true );
-	creatures[0xD9].BaseSound( 133 );                               // dog
-	creatures[0xD9].Icon( 8405 );
-	creatures[0xD9].IsAnimal( true );
-	
-	creatures[0xDC].BaseSound( 183 );                               // llama
-	creatures[0xDC].SoundFlag( 2 );
-	creatures[0xDC].Icon( 8438 );
-	creatures[0xDC].IsAnimal( true );
-	
-	creatures[0xDD].BaseSound( 224 );                               // walrus
-	creatures[0xDD].Icon( 8447 );
-	creatures[0xDD].IsAnimal( true );
-	
-	creatures[0xDF].BaseSound( 216 );                               // lamb/shorn sheep
-	creatures[0xDF].SoundFlag( 2 );
-	creatures[0xDF].Icon( 8422 );
-	creatures[0xDF].IsAnimal( true );
-	creatures[0xE1].BaseSound( 229 );                               // jackal
-	creatures[0xE1].SoundFlag( 2 );
-	creatures[0xE1].AntiBlink( true ); // set anti blink bit
-    creatures[0xE1].Icon( 8426 );
-	creatures[0xE2].BaseSound( 168 );                               // yet another horse
-	creatures[0xE2].Icon( 8484 );
-	creatures[0xE2].IsAnimal( true );
-	
-	creatures[0xE4].BaseSound( 168 );                               // horse ...
-	creatures[0xE4].Icon( 8480 );
-	creatures[0xE4].IsAnimal( true );
-	
-	creatures[0xE7].BaseSound( 120 );                               // brown cow
-	creatures[0xE7].AntiBlink( true );
-	creatures[0xE7].Icon( 8432 );
-	creatures[0xE7].IsAnimal( true );
-
-	creatures[0xE8].BaseSound( 100 );                               // bull
-	creatures[0xE8].AntiBlink( true );
-	creatures[0xE8].Icon( 8431 );
-	creatures[0xE8].IsAnimal( true );
-
-	creatures[0xE9].BaseSound( 120 );                               // b/w cow
-	creatures[0xE9].AntiBlink( true );
-	creatures[0xE9].Icon( 8451 );
-	creatures[0xE9].IsAnimal( true );
-
-	creatures[0xEA].BaseSound( 130 );                               // deer
-	creatures[0xEA].SoundFlag( 2 );
-	creatures[0xEA].Icon( 8404 );
-	creatures[0xEA].IsAnimal( true );
-	
-	creatures[0xED].BaseSound( 130 );                               // small deer
-	creatures[0xED].SoundFlag( 2 );
-    creatures[0xED].Icon( 8404 );
-	creatures[0xED].IsAnimal( true );
-
-	creatures[0xEE].BaseSound( 204 );                               // rat
-	creatures[0xEE].Icon( 8483 );
-	creatures[0xEE].IsAnimal( true );
-	
-	creatures[0x122].BaseSound( 196 );                                // large pig
-    creatures[0x122].Icon( 8449 );
-	creatures[0x122].IsAnimal( true );
-
-	creatures[0x123].BaseSound( 168 );                                // pack horse
-	creatures[0x123].Icon( 8486 );
-	creatures[0x123].IsAnimal( true );
-
-	creatures[0x124].BaseSound( 183 );                                // pack llama	
-	creatures[0x124].SoundFlag( 2 );
-	creatures[0x124].Icon( 8487 );
-	creatures[0x124].IsAnimal( true );
-	
-	creatures[0x23D].BaseSound( 263 );                                 // e-vortex
-	creatures[0x23E].BaseSound( 512 );                                 // blade spritit
-	creatures[0x23E].SoundFlag( 4 );
-	
-	creatures[0x600].BaseSound( 115 );                                // cougar;
-	creatures[0x600].Icon( 8473 );
-	creatures[0x600].IsAnimal( true );
-	
-	creatures[0x190].Icon( 8454 );
-	creatures[0x191].Icon( 8455 );
-	
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void MonsterGate( CChar *s, SI32 x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handle monster gates (polymorphs players into monster bodies)
-//o---------------------------------------------------------------------------o
-void MonsterGate( CChar *s, SI32 x )
-{
-	CItem *mypack = NULL, *retitem = NULL;
-	char sect[512];
-	char rndlootlist[20];
-	
-	if( s->IsNpc() ) 
-		return;
-
-	sprintf( sect, "%i", x );
-	ScriptSection *Monster = FileLookup->FindEntry( sect, npc_def );
-	if( Monster == NULL )
-		return;
-	
-	s->SetTitle( "\0" );
-
-	CItem *n;
-	for( CItem *z = s->FirstItem(); !s->FinishedItems(); z = s->NextItem() )
-	{
-		if( z != NULL )
-		{
-			if( z->isFree() )
-				continue;
-			if( z->GetLayer() != 0x15 && z->GetLayer() != 0x1D && z->GetLayer() != 0x10 && z->GetLayer() != 0x0B )
-			{
-				if( mypack == NULL )
-					mypack = getPack( s );
-				if( mypack == NULL )
-				{
-					n = Items->SpawnItem( NULL, s, 1, "#", false, 0x0E75, 0, false, false );
-					s->SetPackItem( n );
-					if( n == NULL ) 
-						return;
-					n->SetLayer( 0x15 );
-					if( n->SetCont( s ) )
-					{
-						n->SetType( 1 );
-						n->SetDye( true );
-						mypack = n;
-						retitem = n;
-					}
-				}
-				z->SetX( (SI16)( ( RandomNum( 0, 79 ) ) + 50 ) );
-				z->SetY( (SI16)( ( RandomNum( 0, 79 ) ) + 50 ) );
-				z->SetZ( 9 );
-				z->SetCont( mypack );
-				
-				RefreshItem( z );
-			}
-			else if( z->GetLayer() == 0x0B || z->GetLayer() == 0x10 )
-				Items->DeleItem( z );
-		}
-	}
-	
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
-	const char *cdata = NULL;
-	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
-	for( tag = Monster->FirstTag(); !Monster->AtEndTags(); tag = Monster->NextTag() )
-	{
-		cdata = Monster->GrabData( ndata, odata );
-		switch( tag )
-		{
-		case DFNTAG_ALCHEMY:			s->SetBaseSkill( RandomNum( ndata, odata ), ALCHEMY );			break;
-		case DFNTAG_ANATOMY:			s->SetBaseSkill( RandomNum( ndata, odata ), ANATOMY );			break;
-		case DFNTAG_ANIMALLORE:			s->SetBaseSkill( RandomNum( ndata, odata ), ANIMALLORE );		break;
-		case DFNTAG_ARMSLORE:			s->SetBaseSkill( RandomNum( ndata, odata ), ARMSLORE );			break;
-		case DFNTAG_ARCHERY:			s->SetBaseSkill( RandomNum( ndata, odata ), ARCHERY );			break;
-		case DFNTAG_BEGGING:			s->SetBaseSkill( RandomNum( ndata, odata ), BEGGING );			break;
-		case DFNTAG_BLACKSMITHING:		s->SetBaseSkill( RandomNum( ndata, odata ), BLACKSMITHING );	break;
-		case DFNTAG_BOWCRAFT:			s->SetBaseSkill( RandomNum( ndata, odata ), BOWCRAFT );			break;
-		case DFNTAG_DAMAGE:
-		case DFNTAG_ATT:				s->SetLoDamage( static_cast<SI16>(ndata) );	s->SetHiDamage( static_cast<SI16>(odata ));			break;
-		case DFNTAG_COLOUR:				if( retitem != NULL )
-											retitem->SetColour( static_cast<UI16>(ndata ));
-										break;
-		case DFNTAG_CAMPING:			s->SetBaseSkill( RandomNum( ndata, odata ), CAMPING );			break;
-		case DFNTAG_CARPENTRY:			s->SetBaseSkill( RandomNum( ndata, odata ), CARPENTRY );		break;
-		case DFNTAG_CARTOGRAPHY:		s->SetBaseSkill( RandomNum( ndata, odata ), CARTOGRAPHY );		break;
-		case DFNTAG_COOKING:			s->SetBaseSkill( RandomNum( ndata, odata ), COOKING );			break;
-		case DFNTAG_DEX:				s->SetDexterity( RandomNum( ndata, odata ) );
-										s->SetStamina( (SI16)s->GetMaxStam() );
-										break;
-		case DFNTAG_DEF:				s->SetDef( RandomNum( ndata, odata ) );							break;
-		case DFNTAG_DETECTINGHIDDEN:	s->SetBaseSkill( RandomNum( ndata, odata ), DETECTINGHIDDEN );	break;
-		case DFNTAG_ENTICEMENT:			s->SetBaseSkill( RandomNum( ndata, odata ), ENTICEMENT );		break;
-		case DFNTAG_EVALUATINGINTEL:	s->SetBaseSkill( RandomNum( ndata, odata ), EVALUATINGINTEL );	break;
-		case DFNTAG_FAME:				s->SetFame( static_cast<SI16>(ndata) );											break;
-		case DFNTAG_FISHING:			s->SetBaseSkill( RandomNum( ndata, odata ), FISHING );			break;
-		case DFNTAG_FORENSICS:			s->SetBaseSkill( RandomNum( ndata, odata ), FORENSICS );		break;
-		case DFNTAG_FENCING:			s->SetBaseSkill( RandomNum( ndata, odata ), FENCING );			break;
-		case DFNTAG_GOLD:				retitem = n = Items->SpawnItem( NULL, s, 1, "#", true, 0x0EED, 0, true, false );
-										if( n == NULL ) 
-											break;
-										n->SetAmount( (UI32)(ndata + ( rand()%( odata - ndata ) )) );
-										break;
-		case DFNTAG_HIDAMAGE:			s->SetHiDamage(static_cast<SI16>( ndata ));										break;
-		case DFNTAG_HEALING:			s->SetBaseSkill( RandomNum( ndata, odata ), HEALING );			break;
-		case DFNTAG_HERDING:			s->SetBaseSkill( RandomNum( ndata, odata ), HERDING );			break;
-		case DFNTAG_HIDING:				s->SetBaseSkill( RandomNum( ndata, odata ), HIDING );			break;
-		case DFNTAG_ID:					s->SetID( static_cast<UI16>(ndata ));
-										s->SetxID( static_cast<UI16>(ndata ));
-										s->SetOrgID( static_cast<UI16>(odata) );
-										break;
-		case DFNTAG_ITEM:				retitem = Items->CreateScriptItem( NULL, cdata, false, s->WorldNumber() );
-										if( retitem != NULL )
-										{
-											if( !retitem->SetCont( s ) )
-												retitem = NULL;
-											else if( retitem->GetLayer() == 0 )
-												Console << "Warning: Bad NPC Script " << x << " with problem item " << cdata << " executed!" << myendl;
-										}
-										break;
-		case DFNTAG_INTELLIGENCE:		s->SetIntelligence( RandomNum( ndata, odata ) );
-										s->SetMana( s->GetMaxMana() );
-										break;
-		case DFNTAG_ITEMID:				s->SetBaseSkill( RandomNum( ndata, odata ), ITEMID );			break;
-		case DFNTAG_INSCRIPTION:		s->SetBaseSkill( RandomNum( ndata, odata ), INSCRIPTION );		break;
-		case DFNTAG_KARMA:				s->SetKarma( static_cast<SI16>(ndata) );
-		case DFNTAG_LOOT:				strcpy( rndlootlist, cdata );
-										retitem = Npcs->addRandomLoot( mypack, rndlootlist );
-										break;
-		case DFNTAG_LODAMAGE:			s->SetLoDamage( static_cast<SI16>(ndata) );										break;
-		case DFNTAG_LOCKPICKING:		s->SetBaseSkill( RandomNum( ndata, odata ), LOCKPICKING );		break;
-		case DFNTAG_LUMBERJACKING:		s->SetBaseSkill( RandomNum( ndata, odata ), LUMBERJACKING );	break;
-		case DFNTAG_MACEFIGHTING:		s->SetBaseSkill( RandomNum( ndata, odata ), MACEFIGHTING );		break;
-		case DFNTAG_MINING:				s->SetBaseSkill( RandomNum( ndata, odata ), MINING );			break;
-		case DFNTAG_MEDITATION:			s->SetBaseSkill( RandomNum( ndata, odata ), MEDITATION );		break;
-		case DFNTAG_MAGERY:				s->SetBaseSkill( RandomNum( ndata, odata ), MAGERY );			break;
-		case DFNTAG_MAGICRESISTANCE:	s->SetBaseSkill( RandomNum( ndata, odata ), MAGICRESISTANCE );	break;
-		case DFNTAG_MUSICIANSHIP:		s->SetBaseSkill( RandomNum( ndata, odata ), MUSICIANSHIP );		break;
-		case DFNTAG_NAME:				s->SetName( cdata );											break;
-		case DFNTAG_NAMELIST:			setRandomName( s, cdata );										break;
-		case DFNTAG_PACKITEM:			retitem = Items->CreateScriptItem( NULL, cdata, false, s->WorldNumber() );
-										if( retitem != NULL )
-										{
-											retitem->SetCont( mypack );
-											retitem->SetX( (UI16)( 50 + RandomNum( 0, 79 ) ) );
-											retitem->SetY( (UI16)( 50 + RandomNum( 0, 79 ) ) );
-											retitem->SetZ( 9 );
-										}
-										break;
-		case DFNTAG_POISON:				s->SetPoison( static_cast<SI08>(ndata) );											break;
-		case DFNTAG_PARRYING:			s->SetBaseSkill( RandomNum( ndata, odata ), PARRYING );			break;
-		case DFNTAG_PEACEMAKING:		s->SetBaseSkill( RandomNum( ndata, odata ), PEACEMAKING );		break;
-		case DFNTAG_PROVOCATION:		s->SetBaseSkill( RandomNum( ndata, odata ), PROVOCATION );		break;
-		case DFNTAG_POISONING:			s->SetBaseSkill( RandomNum( ndata, odata ), POISONING );		break;
-		case DFNTAG_REMOVETRAPS:		s->SetBaseSkill( RandomNum( ndata, odata ), REMOVETRAPS );		break;
-		case DFNTAG_SKIN:				s->SetSkin( static_cast<UI16>(ndata ));	s->SetxSkin( static_cast<UI16>(ndata) );					break;
-		case DFNTAG_STRENGTH:			s->SetStrength( RandomNum( ndata, odata ) );
-										s->SetHP( s->GetMaxHP() );
-										break;
-		case DFNTAG_SKILL:				s->SetBaseSkill( static_cast<SI16>(odata), static_cast<UI08>(ndata) );								break;
-/*			else if( !strncmp( tag, "SKILL", 5 ) )
-			{
-				skill = makeNum( &tag[5] );
-				s->SetBaseSkill( (UI16)makeNum( data ), (UI08)skill );
-			}*/
-		case DFNTAG_SNOOPING:			s->SetBaseSkill( RandomNum( ndata, odata ), SNOOPING );			break;
-		case DFNTAG_SPIRITSPEAK:		s->SetBaseSkill( RandomNum( ndata, odata ), SPIRITSPEAK );		break;
-		case DFNTAG_STEALING:			s->SetBaseSkill( RandomNum( ndata, odata ), STEALING );			break;
-		case DFNTAG_SWORDSMANSHIP:		s->SetBaseSkill( RandomNum( ndata, odata ), SWORDSMANSHIP );	break;
-		case DFNTAG_STEALTH:			s->SetBaseSkill( RandomNum( ndata, odata ), STEALTH );			break;
-		case DFNTAG_TITLE:				s->SetTitle( cdata );											break;
-		case DFNTAG_TAILORING:			s->SetBaseSkill( RandomNum( ndata, odata ), TAILORING );		break;
-		case DFNTAG_TAMING:				s->SetBaseSkill( RandomNum( ndata, odata ), TAMING );			break;
-		case DFNTAG_TASTEID:			s->SetBaseSkill( RandomNum( ndata, odata ), TASTEID );			break;
-		case DFNTAG_TINKERING:			s->SetBaseSkill( RandomNum( ndata, odata ), TINKERING );		break;
-		case DFNTAG_TRACKING:			s->SetBaseSkill( RandomNum( ndata, odata ), TRACKING );			break;
-		case DFNTAG_TACTICS:			s->SetBaseSkill( RandomNum( ndata, odata ), TACTICS );			break;
-		case DFNTAG_VETERINARY:			s->SetBaseSkill( RandomNum( ndata, odata ), VETERINARY );		break;
-		case DFNTAG_WRESTLING:			s->SetBaseSkill( RandomNum( ndata, odata ), WRESTLING );		break;
-		case DFNTAG_ID2:
-			s->SetID2(static_cast<UI16>(ndata));
-			break;
-		case DFNTAG_SKIN2:
-			s->SetSkin2(static_cast<UI16>(ndata));
-			break;
-		case DFNTAG_STAMINA:
-			s->SetStamina(static_cast<UI16>(ndata));
-			break;
-		case DFNTAG_MANA:
-			s->SetMana(static_cast<SI16>(ndata));
-			break;
-		case DFNTAG_NOMOVE:
-			s->SetNoMove(static_cast<UI16>(ndata));
-			break;
-		case DFNTAG_POISONCHANCE:
-			s->SetPoisonChance(static_cast<UI16>(ndata));
-			break;
-		case DFNTAG_POISONSTRENGTH:
-			s->SetPoisonStrength(static_cast<UI16>(ndata));
-			break;
-		default:						break;
-		}
-	}
- 
-	//Now find real 'skill' based on 'baseskill' (stat modifiers)
-	for( UI08 j = 0; j < TRUESKILLS; j++ )
-		Skills->updateSkillLevel( s, j );
-	s->Teleport();
-	staticeffect( s, 0x373A, 0, 15 );
-	soundeffect( s, 0x01E9 );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handle karma addition/subtraction when character kills
-//|					another Character / NPC
-//o---------------------------------------------------------------------------o
-void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
-{	// nEffect = 1 positive karma effect
-	SI16 nChange = 0;
-	bool nEffect = false;
-	//
-	SI16 nCurKarma = nCharID->GetKarma();
-	if(nCurKarma > 10000 )
-		nCharID->SetKarma( 10000 );
-	else if( nCurKarma < -10000 ) 
-		nCharID->SetKarma( -10000 );
-	//
-	if( nCurKarma < nKarma && nKarma > 0 )
-	{
-		nChange = ( ( nKarma - nCurKarma ) / 75 );
-		nCharID->SetKarma( (SI16)( nCurKarma + nChange ) );
-		nEffect = true;
-	}
-	if( nCurKarma > nKarma && ( nKilledID == NULL || nKilledID->GetKarma() > 0 ) )
-	{
-		nChange = ( ( nCurKarma - nKarma ) / 50 );
-		nCharID->SetKarma( (SI16)( nCurKarma - nChange ) );
-		nEffect = false;
-	}
-	if( nChange == 0 )	// NPCs CAN gain/lose karma
-		return;
-
-	cSocket *mSock = calcSocketObjFromChar( nCharID );
-	if( nCharID->IsNpc() || mSock == NULL )
-		return;
-	if( nChange <= 25 )
-	{
-		if( nEffect )
-			sysmessage( mSock, 1367 );
-		else
-			sysmessage( mSock, 1368 );
-		return;
-	}
-	if( nChange <= 50 )
-	{
-		if( nEffect )
-			sysmessage( mSock, 1369 );
-		else
-			sysmessage( mSock, 1370 );
-		return;
-	}
-	if( nEffect )
-		sysmessage( mSock, 1371 );
-	else
-		sysmessage( mSock, 1372 );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void Fame( CChar *nCharID, SI16 nFame )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handle fame addition when character kills another
-//|					Character / NPC
-//o---------------------------------------------------------------------------o
-void Fame( CChar *nCharID, SI16 nFame )
-{
-	SI16 nChange = 0;
-	bool nEffect = false;
-	SI16 nCurFame = nCharID->GetFame();
-	if( nCharID->IsDead() )
-	{
-		if( nCurFame <= 0 )
-			nCharID->SetFame( 0 );
-		else
-		{
-			nChange = ( nCurFame - 0 ) / 25;
-			nCharID->SetFame( (SI16)( nCurFame - nChange ) );
-		}
-		nCharID->SetDeaths( (UI16)( nCharID->GetDeaths() + 1 ) );
-		nEffect = false;
-	}
-	else if( nCurFame <= nFame )
-	{
-		nChange = ( nFame - nCurFame ) / 75;
-		nCharID->SetFame( (SI16)( nCurFame + nChange ) );
-		nEffect = true;
-		if( nCharID->GetFame() > 10000 )
-			nCharID->SetFame( 10000 );
-	}
-	else
-		return;	// current fame is greater than target fame, and we're not dead
-	if( nChange == 0 )
-		return;
-	cSocket *mSock = calcSocketObjFromChar( nCharID );
-	if( mSock == NULL || nCharID->IsNpc() )
-		return;
-	if( nChange <= 25 )
-	{
-		if( nEffect )
-			sysmessage( mSock, 1373 );
-		else
-			sysmessage( mSock, 1374 );
-	}
-	else if( nChange <= 50 )
-	{
-		if( nEffect )
-			sysmessage( mSock, 1375 );
-		else
-			sysmessage( mSock, 1376 );
-	}
-	else
-	{
-		if( nEffect )
-			sysmessage( mSock, 1377 );
-		else
-			sysmessage( mSock, 1378 );
-	}
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void enlist( cSocket *mSock, SI32 listnum )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -7460,123 +6169,6 @@ void setcharflag( CChar *c )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void playTileSound cSocket *mSock )
-//|	Programmer	-	Abaddon
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Play a sound based on the tile character is on
-//o---------------------------------------------------------------------------o
-void playTileSound( cSocket *mSock )
-{
-	if( mSock == NULL )
-		return;
-
-	CTile tile;
-	char search1[10];
-	UI16 sndid = 0;
-	enum TileType
-	{
-		TT_NORMAL = 0,
-		TT_WATER,
-		TT_STONE,
-		TT_OTHER,
-		TT_WOODEN,
-		TT_GRASS
-	};
-	TileType tileType = TT_NORMAL;
-	bool onHorse = false;
-
-	CChar *mChar = mSock->CurrcharObj();
-	
-	if( mChar->GetHidden() || mChar->GetCommandLevel() >= CNSCMDLEVEL )
-		return;
-	
-	if( mChar->IsOnHorse() )
-		onHorse = true;
-	
-	if( mChar->GetStep() == 1 || mChar->GetStep() == 0 )	// if we play a sound
-	{
-		SI16 x = mChar->GetX();
-		SI16 y = mChar->GetY();
-		
-		MapStaticIterator msi( x, y, mChar->WorldNumber() );
-		staticrecord *stat = msi.Next();
-		if( stat )
-			msi.GetTile(&tile);
-	}
-	
-	if( tile.LiquidWet() )
-		tileType = TT_WATER;
-	strcpy( search1, "wood" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_WOODEN;
-	strcpy( search1, "ston" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_STONE;
-	strcpy( search1, "gras" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_GRASS;
-	
-	switch( mChar->GetStep() )	// change step info
-	{
-	case 0:
-		mChar->SetStep( 3 );	// step 2
-		switch( tileType )
-		{
-		case TT_NORMAL:
-			if( onHorse )
-				sndid = 0x024C;
-			else
-				sndid = 0x012B; 
-			break;
-		case TT_WATER:	// water
-			break;
-		case TT_STONE: // stone
-			sndid = 0x0130;
-			break;
-		case TT_OTHER: // other
-		case TT_WOODEN: // wooden
-			sndid = 0x0123;
-			break;
-		case TT_GRASS: // grass
-			sndid = 0x012D;
-			break;
-		}
-		break;
-	case 1:
-		mChar->SetStep( 0 );	// step 1
-		switch( tileType )
-		{
-		case TT_NORMAL:
-			if( onHorse )
-				sndid = 0x024B;
-			else
-				sndid = 0x012C; 
-			break;
-		case TT_WATER:	// water
-			break;
-		case TT_STONE: // stone
-			sndid = 0x012F;
-			break;
-		case TT_OTHER: // other
-		case TT_WOODEN: // wooden
-			sndid = 0x0122;
-			break;
-		case TT_GRASS: // grass
-			sndid = 0x012E;
-			break;
-		}
-		break;
-	case 2:
-	case 3:
-	default:
-		mChar->SetStep( 1 );	// pause
-		break;
-	}
-	if( sndid )			// if we have a valid sound
-		soundeffect( mSock, sndid, true );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void RefreshItem( CItem *i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -7604,10 +6196,7 @@ void RefreshItem( CItem *i )
 				continue;
 
 			if( objInRange( aChar, i, aSock->Range() + Races->VisRange( aChar->GetRace() ) ) )
-			{
-				if( i->GetVisible() == 0 || ( ( i->GetVisible() == 1 || i->GetVisible() == 2 ) && aChar->IsGM() ) )// we're a GM, or not hidden
-					sendItem( aSock, i );
-			}
+				sendItem( aSock, i );
 		}
 		Network->PopConn();
 		return;
@@ -7644,62 +6233,6 @@ void RefreshItem( CItem *i )
 		}
 	}
 	Console.Error( 2, " RefreshItem(%i): cannot determine container type!", i );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void loadregions( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load regions from regions.wsc
-//o---------------------------------------------------------------------------o
-void loadregions( void )
-{
-	int l = 0;
-	const char *tag = NULL;
-	const char *data = NULL;
-	bool performLoad = false;
-	Script *ourRegions = NULL;
-	char regionsFile[MAX_PATH];
-	sprintf(regionsFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "regions.wsc");
-	FILE *ourReg = fopen( regionsFile, "r" );
-	if( ourReg != NULL )
-	{
-		performLoad = true;
-		fclose( ourReg );
-		ourRegions = new Script( regionsFile, NUM_DEFS, false );
-	}
-	for( UI16 i = 0; i < 256; i++ )
-	{
-		region[i] = new cTownRegion( (UI08)i );
-		region[i]->InitFromScript( l );
-		if( performLoad )
-			region[i]->Load( ourRegions );
-	}
-	if( performLoad )
-	{
-		delete ourRegions;
-		ourRegions = NULL;
-	}
-	cwmWorldState->SetLocationCount( (UI16)l );
-	cwmWorldState->SetLogoutCount( 0 );	//Instalog
-	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
-	if( InstaLog == NULL ) 
-		return;
-	for( tag = InstaLog->First(); !InstaLog->AtEnd(); tag = InstaLog->Next() )
-	{
-		data = InstaLog->GrabData();
-		if( !strcmp( tag,"X1" ) ) 
-			logout[cwmWorldState->GetLogoutCount()].x1 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Y1" ) ) 
-			logout[cwmWorldState->GetLogoutCount()].y1 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "X2" ) ) 
-			logout[cwmWorldState->GetLogoutCount()].x2 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Y2" ) )
-		{
-			logout[cwmWorldState->GetLogoutCount()].y2 = (SI16)makeNum( data );
-			cwmWorldState->IncLogoutCount();
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -7745,7 +6278,7 @@ void doDeathStuff( CChar *i )
 	else
 		i->SetID( 0x192 );
 	}
-	playDeathSound( i );
+	Effects->playDeathSound( i );
 	i->SetSkin( 0x0000 );
 	i->SetDead( true );
 	i->StopSpell();
@@ -7767,12 +6300,15 @@ void doDeathStuff( CChar *i )
 			c->SetDef( 1 );
 	}
 	if( cwmWorldState->ServerData()->GetDeathAnimationStatus() )
-		deathAction( i, corpsenum );
+		Effects->deathAction( i, corpsenum );
 	if( i->GetAccount().wAccountIndex != AB_INVALID_ID )
 	{
 		i->Teleport();
-		if( pSock != NULL ) 
-			deathMenu( pSock );
+		if( pSock != NULL )
+		{
+			CPResurrectMenu toSend( 0 );
+			pSock->Send( &toSend );
+		}
 	}		
 	
 	RefreshItem( corpsenum );
@@ -7817,7 +6353,7 @@ CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 			return NULL;
 		c->SetCorpse( false );
 	}
-	c->SetMoreY( isHuman( i ) );
+	c->SetMoreY( i->isHuman() );
 	c->SetName2( i->GetName() );
 
 	c->SetType( 1 );
@@ -7956,8 +6492,8 @@ void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
 	default:
 		//if( tWorldNum <= 1 )
 			toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), tWorldNum );
-		//else
-		//	toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), 0 );
+//		else
+//			toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), 0 );
 		break;
 	}
 	toMove->RemoveFromSight();

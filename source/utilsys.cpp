@@ -22,6 +22,7 @@
 //	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 //	A PARTICULAR PURPOSE ARE DISCLAIMED. .
 //========================================================================
+#include "uox3.h"
 #include "utilsys.h"
 //========================================================================
 // Begin getNormalizedTime

@@ -4,11 +4,11 @@
 class cWhoList
 {
 private:
-	bool needsUpdating;					// true if the list needs updating (new player online, new char made)
-	int  gmCount;						// number of GMs already in it
-	bool	  online;
+	bool		needsUpdating;					// true if the list needs updating (new player online, new char made)
+	int			gmCount;						// number of GMs already in it
+	bool		online;
 
-	SERLIST whoMenuData;
+	SERLIST		whoMenuData;
 	STRINGLIST one, two;				// replacement for entries1, entries2
 
 	void Update( void );				// force the list to update

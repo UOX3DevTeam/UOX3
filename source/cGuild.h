@@ -1,13 +1,6 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include <map>
-
-//using namespace std;
-
 const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknown" };
 const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
 const SI16 BasePage = 8000;

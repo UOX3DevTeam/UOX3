@@ -20,7 +20,6 @@ public:
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
 	SI32			tempint;
-//	make_st			itemmake;
 	char			dyeall;
 
 	UI08			buffer[MAXBUFFER];

@@ -10,6 +10,8 @@
 
 
 #include "uox3.h"
+#include "PageVector.h"
+#include "gump.h"
 #include <algorithm>
 
 inline bool operator==( const HelpRequest& x, const HelpRequest& y )

@@ -17,6 +17,14 @@
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
 
+#include "cGuild.h"
+#include "combat.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "skills.h"
+#include "trigger.h"
+#include "cScript.h"
+
 JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	*vp = INT_TO_JSVAL(0);
@@ -500,6 +508,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
 		case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );	break;
 		case CCP_ARMOUR:		*vp = INT_TO_JSVAL( gPriv->GetDef() );			break;
+		case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
+		case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetHungerStatus() ); break;
 		default:
 			break;
 		}
@@ -669,6 +679,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					doLight( calcSocketObjFromChar( gPriv ), (UI08)JSVAL_TO_INT( *vp ) );
 			break;
 		case CCP_ARMOUR:	gPriv->SetDef( (UI16)JSVAL_TO_INT( *vp ) );						break;
+		case CCP_VULNERABLE:	gPriv->SetInvulnerable( !( JSVAL_TO_BOOLEAN( *vp ) == JS_TRUE ) );	break;
+		case CCP_HUNGERSTATUS:	gPriv->SetHungerStatus( ( JSVAL_TO_BOOLEAN( *vp ) == JS_TRUE ) ); break;
 		}
 	}
 	return JS_TRUE;

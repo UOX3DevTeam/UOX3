@@ -1,4 +1,7 @@
 #include "uox3.h"
+#include "wholist.h"
+#include "targeting.h"
+#include "network.h"
 
 void cWhoList::ResetUpdateFlag( void )
 // PRE:		WhoList class is active

@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "cmath"
+#include "mapstuff.h"
 #define MAX_COLLISIONS 1024
 
 // Contains all current line of sight functionality

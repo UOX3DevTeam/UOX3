@@ -13,11 +13,6 @@
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
-#include <vector>
-#include <cstdio>
-#include "typedefs.h"
-//using namespace std;
-
 enum DFNTAGS
 {
 	DFNTAG_AC = 0,
@@ -229,8 +224,8 @@ private:
 	bool					npcList;
 	bool					itemList;
 
-	const char		*npcListData;
-	const char		*itemListData;
+	const char				*npcListData;
+	const char				*itemListData;
 
 public:
 							ScriptSection( void );

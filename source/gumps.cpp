@@ -1,5 +1,18 @@
 #include "uox3.h"
+#include "gump.h"
+
+#include "cGuild.h"
+#include "townregion.h"
+#include "cServerDefinitions.h"
+#include "wholist.h"
+#include "skills.h"
+#include "cMagic.h"
+#include "cVersionClass.h"
 #include "ssection.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "gumps.cpp"
@@ -306,8 +319,8 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 		targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 		for( UI08 counter = 0; counter < RandomNum( 5, 10 ); counter++ )
 		{
-			movingeffect( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
-			staticeffect( mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x373A + RandomNum( 0, 4 ) * 0x10, 0x09, 0, 0 );
+			Effects->movingeffect( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
+			Effects->staticeffect( mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x373A + RandomNum( 0, 4 ) * 0x10, 0x09, 0, 0 );
 		}
 		region[targetRegion]->DoDamage( RandomNum( 0, region[targetRegion]->GetHealth() / 8) );	// we reduce the region's health by half
 		break;
@@ -631,13 +644,13 @@ void HandleTweakItemText( cSocket *s, long index )
 		case 27:	j->SetDecayable( makeNum( text ) != 0 );	break;	// Decay
 		case 28:	j->SetGood( makeNum( text ) );				break;	// Good
 		case 29:	j->SetBuyValue( makeNum( text ) );			break;	// Buy Value
-		//case ??:	j->SetSellValue( makeNum( text ) );			break;	// Sell Value - Not implimented yet
-		case 30:	j->SetCarve( makeNum( text ) );				break;	// Carve
-		case 31: 	j->SetPileable( makeNum( text ) != 0 );		break;	// Stackable
-		case 32:	j->SetDye( makeNum( text ) != 0 );			break;	// Dyable
-		case 33:	j->SetCorpse( makeNum( text ) != 0 );		break;	// Corpse
-		case 34:	j->SetVisible( static_cast<SI08>(makeNum( text ) ));			break;	// Visible
-		case 35:	j->SetCreator( makeNum( text ) );			break;	// Creator
+		case 30:	j->SetSellValue( makeNum( text ) );			break;	// Sell Value - Not implimented yet
+		case 31:	j->SetCarve( makeNum( text ) );				break;	// Carve
+		case 32: 	j->SetPileable( makeNum( text ) != 0 );		break;	// Stackable
+		case 33:	j->SetDye( makeNum( text ) != 0 );			break;	// Dyable
+		case 34:	j->SetCorpse( makeNum( text ) != 0 );		break;	// Corpse
+		case 35:	j->SetVisible( static_cast<SI08>(makeNum( text ) ));			break;	// Visible
+		case 36:	j->SetCreator( makeNum( text ) );			break;	// Creator
 		}
 		RefreshItem( j );
 		tweakItemMenu( s, j );
@@ -1033,7 +1046,7 @@ void tweakItemMenu( cSocket *s, CItem *i )
 	tweakItem.AddData( "Decay", i->isDecayable()?1:0 );
 	tweakItem.AddData( "Good", i->GetGood() );
 	tweakItem.AddData( "Value", i->GetBuyValue() );
-	//tweakItem.AddData( "SellValue", i->GetSellValue() );
+	tweakItem.AddData( "SellValue", i->GetSellValue() );
 	tweakItem.AddData( "Carve", i->GetCarve() );
 	tweakItem.AddData( "Stackable", i->isPileable()?1:0 );
 	tweakItem.AddData( "Dyeable", i->isDyeable()?1:0 );

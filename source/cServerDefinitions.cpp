@@ -1,5 +1,7 @@
+#include "uox3.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
+#include "scriptc.h"
 
 #if defined(__unix__)
 	#include <dirent.h>

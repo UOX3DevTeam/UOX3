@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "mapstuff.h"
 
 #undef DBGFILE
 #define DBGFILE "mapstuff.cpp"

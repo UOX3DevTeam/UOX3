@@ -1,7 +1,13 @@
 // House code for deed creation by Tal Strake, revised by Cironian
 
 #include "uox3.h"
+#include "boats.h"
+#include "movement.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "mapstuff.h"
+#include "packets.h"
+
 
 #undef DBGFILE
 #define DBGFILE "house.cpp"
@@ -177,7 +183,6 @@ void buildHouse( cSocket *s, UI32 i )
 		if( !hitem[0] && !boat )
 		{
 			mChar->Teleport();
-			sendItemsInRange( s );
 			return;//If there's no extra items, we don't really need a key, or anything else do we? ;-)
 		}
 
@@ -269,7 +274,6 @@ void buildHouse( cSocket *s, UI32 i )
 					MapRegion->AddItem( hItem );
 			}
 		}
-		sendItemsInRange( s );//make sure they have all the items Sent....
 		// map regions not done here... hmmm... not good!!!  Not a safe assumption we're in same region
 		mChar->SetLocation( x + cx, y + cy, z + cz );
 		mChar->Teleport();

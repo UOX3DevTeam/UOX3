@@ -9,15 +9,9 @@
 #pragma warning( disable : 4786 )
 
 #include <sys/stat.h>
-#include <cstdlib>
-#include <cstdio>
-#include <string>
-#include <errno.h>
 #include "uox3.h"
-#include <assert.h>
 #include "ssection.h"
-
-//using namespace std;
+#include "scriptc.h"
 
 #undef DBGFILE
 #define DBGFILE "scriptc.cpp"
@@ -61,11 +55,11 @@ void Script::reload( bool disp )
     
 	deleteMap();
 	FILE *fp = fopen( filename.c_str(), "r" );
-  if( fp == NULL ) 
+	if( fp == NULL ) 
 	{
 		fprintf(stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
-    errorState = true;
-  }
+		errorState = true;
+	}
 	if( disp )
 		Console.Print( "Reloading %-15s: ", filename.c_str() );
 	
@@ -105,11 +99,11 @@ void Script::reload( bool disp )
 Script::Script( const std::string _filename, DEFINITIONCATEGORIES d, bool disp ) : errorState( false ), dfnCat( d )
 {
 	filename = _filename;
-  if( !get_modification_date( filename.c_str(), &last_modification ) ) 
+	if( !get_modification_date( filename.c_str(), &last_modification ) ) 
 	{
 		fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
-    errorState = true;
-  }
+		errorState = true;
+	}
   reload( disp );
 }
 

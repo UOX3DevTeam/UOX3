@@ -1,7 +1,3 @@
-#include <string>
-#include <vector>
-//using namespace std;
-
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
 
@@ -210,8 +206,6 @@ const UI08 RUNNORTHWEST	= NORTHWEST|0x80;
 #define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically
 #define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
 #define LAVA_WATER 32  // Don't know what all to use this for yet
-
-#define HASHMAX 1031 // hashmax must be a prime for maximum performce.
 
 #define DEFAULTCHARTER "UOX3 DevTeam Guildstone"
 #define DEFAULTWEBPAGE "http://www.uox3dev.net/"

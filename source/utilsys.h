@@ -23,8 +23,6 @@
 //	A PARTICULAR PURPOSE ARE DISCLAIMED. .
 //========================================================================
 //Directives
-#include "uox3.h"
-
 #ifndef	IN_UTILSYS_H
 #define IN_UTILSYS_H
 //========================================================================
@@ -42,11 +40,6 @@
 #endif
 //========================================================================
 //System Files
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cstdio>
 
 #include <errno.h>
 #include <sys/types.h>

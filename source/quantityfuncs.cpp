@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "weight.h"
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	UI32 getAmount( CChar *s, UI16 realID )

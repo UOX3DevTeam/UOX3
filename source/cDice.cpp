@@ -6,6 +6,7 @@
 #endif
 #endif
 
+#include <string>
 #include "cdice.h"
 
 inline int RandomNum( int nLowNum, int nHighNum )

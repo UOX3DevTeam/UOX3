@@ -1,5 +1,11 @@
 #include "uox3.h"
+#include "cWeather.hpp"
+#include "townregion.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "cEffects.h"
+#include "packets.h"
 
 // Version History
 // 1.0		Abaddon		Unknown
@@ -1372,12 +1378,12 @@ void cWeatherAb::DoPlayerWeather( cSocket *s, UI08 weathType, SI08 currentTemp )
 	case 0:								break;
 	case 1:		s->Send( &rain );		break;
 	case 2:
-		soundeffect( mChar, 0x14 + RandomNum( 0, 1 ) );
+		Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
 		s->Send( &snow );
 		break;
 	case 3:
 		s->Send( &rain );
-		soundeffect( mChar, 0x14 + RandomNum( 0, 1 ) );
+		Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
 		s->Send( &snow );
 		break;
 	default:							break;
@@ -1435,8 +1441,8 @@ bool doLightEffect( CChar *i )
 					sysmessage( mSock, 1216 );
 					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
 					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-					staticeffect( i, 0x3709, 0x09, 0x19 );
-					soundeffect( i, 0x0208 );     
+					Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+					Effects->PlaySound( i, 0x0208 );     
 					didDamage = true;
 				}
 			}
@@ -1453,8 +1459,8 @@ bool doLightEffect( CChar *i )
 					sysmessage( mSock, 1217 );
 					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
 					i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-					staticeffect( i, 0x3709, 0x09, 0x19 );
-					soundeffect( i, 0x0208 );     
+					Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+					Effects->PlaySound( i, 0x0208 );     
 					didDamage = true;
 				}
 			}
@@ -1468,7 +1474,7 @@ bool doLightEffect( CChar *i )
 	}
 	else
 	{
-		if( !inDungeon( i ) )
+		if( !i->inDungeon() )
 		{
 			if( hour < 5 && ampm || hour >= 5 && !ampm )
 			{
@@ -1479,8 +1485,8 @@ bool doLightEffect( CChar *i )
 						sysmessage( mSock, 1216 );
 						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
 						i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-						staticeffect( i, 0x3709, 0x09, 0x19 );
-						soundeffect( i, 0x0208 );     
+						Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+						Effects->PlaySound( i, 0x0208 );     
 						didDamage = true;
 					}
 				}
@@ -1497,8 +1503,8 @@ bool doLightEffect( CChar *i )
 						sysmessage( mSock, 1217 );
 						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
 						i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-						staticeffect( i, 0x3709, 0x09, 0x19 );
-						soundeffect( i, 0x0208 );     
+						Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+						Effects->PlaySound( i, 0x0208 );     
 						didDamage = true;
 					}
 				}
@@ -1529,15 +1535,15 @@ bool doRainEffect( CChar *i )
 	if( i->IsNpc() || !isOnline( i ) || !Races->RainAffect( i->GetRace() ) )
 		return false;
 	bool didDamage = false;
-	if( !inDungeon( i ) && Weather->RainActive( region[i->GetRegion()]->GetWeather() ) )
+	if( !i->inDungeon() && Weather->RainActive( region[i->GetRegion()]->GetWeather() ) )
 	{
 		if( i->GetWeathDamage( RAIN ) != 0 && i->GetWeathDamage( RAIN ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			sysmessage( calcSocketObjFromChar( i ), 1219 );
 			i->SetHP( i->GetHP() - Races->RainDamage( i->GetRace() ) );
 			i->SetWeathDamage( BuildTimeValue( Races->RainSecs( i->GetRace() ) ), RAIN );
-			staticeffect( i, 0x3709, 0x09, 0x19 );
-			soundeffect( i, 0x0208 );     
+			Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+			Effects->PlaySound( i, 0x0208 );     
 			didDamage = true;
 		}
 		else
@@ -1555,15 +1561,15 @@ bool doSnowEffect( CChar *i )
 	if( i->IsNpc() || !isOnline( i ) || !Races->SnowAffect( i->GetRace() ) )
 		return false;
 	bool didDamage = false;
-	if( !inDungeon( i ) && Weather->SnowActive( region[i->GetRegion()]->GetWeather() ) )
+	if( !i->inDungeon() && Weather->SnowActive( region[i->GetRegion()]->GetWeather() ) )
 	{
 		if( i->GetWeathDamage( SNOW ) != 0 && i->GetWeathDamage( SNOW ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			sysmessage( calcSocketObjFromChar( i ), 1220 );
 			i->SetHP( i->GetHP() - Races->SnowDamage( i->GetRace() ) );
 			i->SetWeathDamage( BuildTimeValue( Races->SnowSecs( i->GetRace() ) ), SNOW );
-			staticeffect( i, 0x3709, 0x09, 0x19 );
-			soundeffect( i, 0x0208 );     
+			Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+			Effects->PlaySound( i, 0x0208 );     
 			didDamage = true;
 		}
 		else
@@ -1596,8 +1602,8 @@ bool doHeatEffect( CChar *i )
 				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->HeatDamage( i->GetRace() ) * damageModifier )) );
 				i->SetStamina( i->GetStamina() - 2 );
 				sysmessage( calcSocketObjFromChar( i ), 1221 );
-				staticeffect( i, 0x3709, 0x09, 0x19 );
-				soundeffect( i, 0x0208 );     
+				Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+				Effects->PlaySound( i, 0x0208 );     
 				didDamage = true;
 			}
 			i->SetWeathDamage( BuildTimeValue( Races->HeatSecs( i->GetRace() ) ), HEAT );
@@ -1627,8 +1633,8 @@ bool doColdEffect( CChar *i )
 				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
 				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->ColdDamage( i->GetRace() ) * damageModifier ) ));
 				sysmessage( calcSocketObjFromChar( i ), 1606 );
-				staticeffect( i, 0x3709, 0x09, 0x19 );
-				soundeffect( i, 0x0208 );     
+				Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
+				Effects->PlaySound( i, 0x0208 );     
 				didDamage = true;
 			}
 			i->SetWeathDamage( BuildTimeValue( Races->HeatSecs( i->GetRace() ) ), HEAT );

@@ -1,9 +1,20 @@
 #include "uox3.h"
+#include "townregion.h"
+
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "cSpawnRegion.h"
+#include "skills.h"
+#include "speech.h"
+#include "ssection.h"
+#include "gump.h"
+#include "mapstuff.h"
+#include "scriptc.h"
+
 #ifndef va_start
 	#include <cstdarg>
 //	using namespace std;
 #endif
-#include "ssection.h"
 
 // Implementation of town regions
 
@@ -494,11 +505,11 @@ bool cTownRegion::InitFromScript( int& l )
 					cSpawnRegion *spawnReg = spawnregion[cwmWorldState->GetTotalSpawnRegions()];
 					if( spawnReg != NULL )
 					{
-						spawnReg->SetX1( location[l-1].x1 );
-						spawnReg->SetY1( location[l-1].y1 );
-						spawnReg->SetX2( location[l-1].x2 );
-						spawnReg->SetY2( location[l-1].y2 );
-						loadPreDefSpawnRegion( cwmWorldState->GetTotalSpawnRegions(), data );
+						spawnReg->SetX1( cwmWorldState->location[l-1].x1 );
+						spawnReg->SetY1( cwmWorldState->location[l-1].y1 );
+						spawnReg->SetX2( cwmWorldState->location[l-1].x2 );
+						spawnReg->SetY2( cwmWorldState->location[l-1].y2 );
+						FileIO->LoadPreDefSpawnRegion( cwmWorldState->GetTotalSpawnRegions(), data );
 					}
 					cwmWorldState->IncTotalSpawnRegions();
 				}
@@ -512,19 +523,19 @@ bool cTownRegion::InitFromScript( int& l )
 			case 'x':
 			case 'X':
 				if( !strcmp( "X1", tag ) )
-					location[l].x1 = (SI16)makeNum( data );
+					cwmWorldState->location[l].x1 = (SI16)makeNum( data );
 				else if( !strcmp( "X2", tag ) )
-					location[l].x2 = (SI16)makeNum( data );
+					cwmWorldState->location[l].x2 = (SI16)makeNum( data );
 				break;
 			case 'y':
 			case 'Y':
 
 				if( !strcmp( "Y1", tag ) )
-					location[l].y1 = (SI16)makeNum( data );
+					cwmWorldState->location[l].y1 = (SI16)makeNum( data );
 				else if( !strcmp( "Y2", tag ) )
 				{
-					location[l].y2 = (SI16)makeNum( data );
-					location[l].region = regionNum;
+					cwmWorldState->location[l].y2 = (SI16)makeNum( data );
+					cwmWorldState->location[l].region = regionNum;
 					l++;
 				}
 				break;

@@ -3,8 +3,17 @@
 // Code added to update when shutting down  -avtotar (16/09/02) 
 // Slight modification on avotars fix (19/09/02)
 
+#include "uox3.h"
 #include "cHTMLSystem.h"
 #include "cVersionClass.h"
+#include "cGuild.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "ssection.h"
+#include "gump.h"
+#include "scriptc.h"
+#include "packets.h"
 
 extern cVersionClass CVC;
 

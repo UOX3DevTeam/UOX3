@@ -5,7 +5,10 @@
 //	History:	None
 
 #include "uox3.h"
+#include "combat.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "cEffects.h"
 
 #undef DBGFILE
 #define DBGFILE "necro.cpp"
@@ -186,10 +189,10 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
 		npcEmoteAll( iCharID, 741, true, iCharID->GetName() );
-		tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
+		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
+		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
+		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
+		Effects->tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
 		iItem = Items->SpawnItem( nSocket, iCharID, 1, "bone powder", true, 0x0F8F, 0, true, true );
 		if( iItem == NULL ) 
 			return;

@@ -1,6 +1,8 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
+#include "mapclasses.h"
+
 #define P_C_IS_GM_BODY		0x01	// Bits for different movement types
 #define P_C_IS_PLAYER		0x02
 #define P_C_IS_BIRD			0x20

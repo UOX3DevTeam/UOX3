@@ -1,4 +1,6 @@
 #include "uox3.h"
+#include "fileio.h"
+#include "teffect.h"
 
 cTEffect::cTEffect()
 {

@@ -1,9 +1,6 @@
 // Dictionary.h: interface for the CDictionary class.
 //
 //////////////////////////////////////////////////////////////////////
-//#include "uox3.h"
-#include <vector>
-#include <map>
 
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
@@ -59,4 +56,4 @@ public:
 	void			SetDefaultLang( UnicodeTypes newType );
 };
 
-#endif 
+#endif

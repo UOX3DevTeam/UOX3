@@ -1,5 +1,8 @@
+#include "uox3.h"
 #include "jail.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "scriptc.h"
 
 bool JailCell::IsEmpty( void ) const		
 { 

@@ -5,7 +5,7 @@ template< class EntryType, class LookupType = SERIAL >
 class HashBucketUnique
 {
 	typedef std::map< LookupType, EntryType >	LEMap;
-	typedef LEMap::iterator					iterator;
+	typedef typename LEMap::iterator				HASHITERATOR;
 
 protected:
 	LEMap	listData;
@@ -17,7 +17,7 @@ public:
 
 	void GarbageCollect( void )
 	{
-		for( iterator i = listData.begin(); i != listData.end(); i++ )
+		for( HASHITERATOR i = listData.begin(); i != listData.end(); i++ )
 		{
 			if( i->second == INVALIDSERIAL )
 				listData.erase( i );
@@ -26,7 +26,7 @@ public:
 	
 	virtual EntryType FindBySerial( LookupType toFind )
 	{
-		iterator i = listData.find( toFind );
+		HASHITERATOR i = listData.find( toFind );
 		if( i != listData.end() )
 			return i->second;
 		else
@@ -37,7 +37,7 @@ public:
 	{
 		if( hashSafety )
 		{
-			iterator i = listData.find( toAdd );
+			HASHITERATOR i = listData.find( toAdd );
 			if( i != listData.end() )
 			{
 				Console.Error( 4, "Hash Bucket error: index already exists (%i for serial %i)", index, toAdd );
@@ -49,7 +49,7 @@ public:
 
 	virtual void Remove( EntryType index )
 	{
-		for( iterator i = listData.begin(); i != listData.end(); i++ )
+		for( HASHITERATOR i = listData.begin(); i != listData.end(); i++ )
 		{
 			if( i->second == index )
 			{
@@ -61,7 +61,7 @@ public:
 
 	virtual void RemoveBySer( LookupType removing )
 	{
-		iterator i = listData.find( removing );
+		HASHITERATOR i = listData.find( removing );
 		if( i != listData.end() )
 			listData.erase( i );
 	}
@@ -73,7 +73,7 @@ public:
 
 	EntryType GetEntry( UI32 entryNum )
 	{//DO NOT USE THIS...
-		iterator i = listData.begin();
+		HASHITERATOR i = listData.begin();
 		if( entryNum >= NumEntries() )
 			return INVALIDSERIAL;
 		else 

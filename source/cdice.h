@@ -1,9 +1,6 @@
 #ifndef __CDICE__
 #define __CDICE__
 
-#include <string>
-//using namespace std;
-
 class cDice
 {
 private:

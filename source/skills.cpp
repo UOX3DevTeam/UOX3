@@ -1,12 +1,24 @@
-
+#include "uox3.h"
 #include "magic.h"
 #include "cdice.h"
+#include "skills.h"
+
+#include "cGuild.h"
+#include "combat.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "cMagic.h"
 #include "ssection.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "scriptc.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "skills.cpp"
-
-UI08 carptype = 0;
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::Tailoring( cSocket *s )
@@ -152,9 +164,9 @@ void cSkills::BowCraft( cSocket *s )
 			return;
 		}
 		if( mChar->IsOnHorse() )
-			action( s, 0x1C );	// moved here rather then the top of fun
+			Effects->action( s, 0x1C );	// moved here rather then the top of fun
 		else 
-			action( s, 0x0D );	// so that we don't make a motion if invalid target!
+			Effects->action( s, 0x0D );	// so that we don't make a motion if invalid target!
 
 		NewMakeMenu( s, 49, BOWCRAFT );
 	} 
@@ -207,13 +219,7 @@ void cSkills::Carpentry( cSocket *s )
 		{	 
 			sysmessage( s, 782 );
 			return;
-		}
-		switch( realID )
-		{
-		case 0x1BD7:	carptype = 2;	break;
-		case 0x1BE0:	
-		default:		carptype = 1;	break;
-		}           
+		}       
 		NewMakeMenu( s, 19, CARPENTRY );
 	}
 }
@@ -451,11 +457,11 @@ void cSkills::Mine( cSocket *s )
 		return;
 	}
 	if( mChar->IsOnHorse() != 0 )	// do action and sound
-		action( s, 0x1A );
+		Effects->action( s, 0x1A );
 	else
-		action( s, 0x0B );
+		Effects->action( s, 0x0B );
 	
-	soundeffect( s, 0x0125, true ); 
+	Effects->PlaySound( s, 0x0125, true ); 
 	
 	if( !CheckSkill( mChar, MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
@@ -508,10 +514,10 @@ void cSkills::GraveDig( cSocket *s )
 	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
 	
 	if( nCharID->IsOnHorse() )
-		action( s, 0x1A );
+		Effects->action( s, 0x1A );
 	else
-		action( s, 0x0b );
-	soundeffect( s, 0x0125, true );
+		Effects->action( s, 0x0b );
+	Effects->PlaySound( s, 0x0125, true );
 	if( !CheckSkill( nCharID, MINING, 0, 800 ) ) 
 	{
 		sysmessage( s, 805 );
@@ -520,10 +526,10 @@ void cSkills::GraveDig( cSocket *s )
 	
 	nFame = nCharID->GetFame();
 	if( nCharID->IsOnHorse() )
-		action( s, 0x1A );
+		Effects->action( s, 0x1A );
 	else  
-		action( s, 0x0B );
-	soundeffect( s, 0x0125, true );
+		Effects->action( s, 0x0B );
+	Effects->PlaySound( s, 0x0125, true );
 	switch( RandomNum( 0, 12 ) )
 	{
 	case 2:
@@ -549,8 +555,8 @@ void cSkills::GraveDig( cSocket *s )
 		else
 		{  // Create between 1 and 15 goldpieces and place directly in backpack
 			UI08 nAmount = RandomNum( 1, 15 );
-			addgold( s, nAmount );
-			goldSound( s, nAmount );
+			Items->addGold( s, nAmount );
+			Effects->goldSound( s, nAmount );
 			if( nAmount == 1 )
 				sysmessage( s, 810, nAmount );
 			else
@@ -1030,10 +1036,10 @@ void cSkills::TreeTarget( cSocket *s )
 	}
 	
 	if( mChar->IsOnHorse() ) 
-		action( s, 0x1C );
+		Effects->action( s, 0x1C );
 	else 
-		action( s, 0x0D );
-	soundeffect( s, 0x013E, true );
+		Effects->action( s, 0x0D );
+	Effects->PlaySound( s, 0x013E, true );
 	
 	if( !CheckSkill( mChar, LUMBERJACKING, 0, 1000 ) ) 
 	{
@@ -1244,30 +1250,30 @@ void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
 	{
 	case 0x9C:
 		if( wellPlayed )
-			soundeffect( s, 0x0038, true );	
+			Effects->PlaySound( s, 0x0038, true );	
 		else
-			soundeffect( s, 0x0039, true );	
+			Effects->PlaySound( s, 0x0039, true );	
 		break;
 	case 0x9D:
 	case 0x9E:	
 		if( wellPlayed )
-			soundeffect( s, 0x0052, true );	
+			Effects->PlaySound( s, 0x0052, true );	
 		else
-			soundeffect( s, 0x0053, true );	
+			Effects->PlaySound( s, 0x0053, true );	
 		break;
 	case 0xB1:
 	case 0xB2:	
 		if( wellPlayed )
-			soundeffect( s, 0x0043, true );	
+			Effects->PlaySound( s, 0x0043, true );	
 		else
-			soundeffect( s, 0x0044, true );	
+			Effects->PlaySound( s, 0x0044, true );	
 		break;
 	case 0xB3:
 	case 0xB4:	
 		if( wellPlayed )
-			soundeffect( s, 0x004C, true );	
+			Effects->PlaySound( s, 0x004C, true );	
 		else
-			soundeffect( s, 0x004D, true );	
+			Effects->PlaySound( s, 0x004D, true );	
 		break;
 	default:
 		Console.Error( 2, " Fallout of switch statement without default. skills.cpp, cSkills::PlayInstrument()" );
@@ -1643,9 +1649,9 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 
 		chanceskillsuccess = (SI32)( (R32)( ( (R32)( s->GetSkill( sk ) - lowSkill ) / 1000.0f ) +
-									 (R32)( (R32)( s->GetStrength() * skill[sk].strength ) / 100000.0f ) +
-									 (R32)( (R32)( s->GetDexterity() * skill[sk].dexterity ) / 100000.0f ) +
-									 (R32)( (R32)( s->GetIntelligence() * skill[sk].intelligence  ) / 100000.0f ) ) * 1000 );
+									 (R32)( (R32)( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 100000.0f ) +
+									 (R32)( (R32)( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 100000.0f ) +
+									 (R32)( (R32)( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence  ) / 100000.0f ) ) * 1000 );
 		
 		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
 		skillCheck = ( chanceskillsuccess >= RandomNum( 0, 1000 ) );
@@ -1698,7 +1704,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	UI16 skillTrig = c->GetScriptTrigger();
 	cScript *scpSkill = Trigger->GetScript( skillTrig );
 		
-	if( c->IsNpc() || c->GetCommandLevel() >= CNSCMDLEVEL || mSock == NULL )	// GM's and NPC's dont atrophy
+	if( c->IsNpc() || c->GetCommandLevel() >= CNS_CMDLEVEL || mSock == NULL )	// GM's and NPC's dont atrophy
 	{
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
 		if( scpSkill != NULL )
@@ -1835,7 +1841,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 	// Gain 2 bandages per Folded Cloth
 	if( myID >= 0x175D && myID <= 0x1764 )
 	{
-		soundeffect( s, 0x0248, true );
+		Effects->PlaySound( s, 0x0248, true );
 		sysmessage( s, 1488 );
 		c = Items->SpawnItem( s, myChar, 2, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
 		if( c == NULL ) 
@@ -1886,7 +1892,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 					DecreaseItemAmount( mItem );
 					return;
 				}
-				tempeffect( mChar, i, 23, HEALING, 0, 0, mItem );	// sets up timer for resurrect
+				Effects->tempeffect( mChar, i, 23, HEALING, 0, 0, mItem );	// sets up timer for resurrect
 				return;
 			}
 			sysmessage( s, 1493 );
@@ -1905,7 +1911,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 					DecreaseItemAmount( mItem );
 					return;
 				}
-				tempeffect( mChar, i, 24, HEALING, 0, 0, mItem );
+				Effects->tempeffect( mChar, i, 24, HEALING, 0, 0, mItem );
 				return;
 			}
 			else
@@ -1941,7 +1947,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 				sysmessage( s, 1500 );
 			return;
 		}
-		tempeffect( mChar, i, 22, targetSkill, 0, 0, mItem );
+		Effects->tempeffect( mChar, i, 22, targetSkill, 0, 0, mItem );
 	}
 }
 
@@ -1969,8 +1975,8 @@ void cSkills::SpiritSpeak( cSocket *s )
 		return;
 	}
 	
-	impaction( s,0x11 );
-	soundeffect( s, 0x024A, true );
+	Effects->impaction( s,0x11 );
+	Effects->PlaySound( s, 0x024A, true );
 	sysmessage( s, 1502 );
 	
 	mChar->SetSpiritSpeakTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSpiritSpeakTimer() + mChar->GetSkill( SPIRITSPEAK ) / 10 + mChar->GetIntelligence() )) ); // spirit speak duration
@@ -2125,9 +2131,9 @@ void cSkills::ItemIDTarget( cSocket *s )
 			if( mCreater != NULL )
 			{
 				if( i->GetMadeWith() > 0 ) 
-					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), cwmWorldState->skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
 				else if( i->GetMadeWith() < 0 )
-					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), skill[0-i->GetMadeWith() - 1].madeword, mCreater->GetName() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), cwmWorldState->skill[0-i->GetMadeWith() - 1].madeword, mCreater->GetName() );
 				else
 					sprintf( temp, Dictionary->GetEntry( 1549, sLang ), mCreater->GetName() );
 		}
@@ -2424,12 +2430,12 @@ void cSkills::FishTarget( cSocket *s )
 			return;
 		}
 		mChar->SetStamina( mChar->GetStamina() - 2 );
-		action( s, 0x0b );
+		Effects->action( s, 0x0b );
 		R32 baseTime;
 		baseTime = static_cast<R32>(cwmWorldState->ServerData()->GetFishingBaseTime() / 25);
 		baseTime += RandomNum( 0, cwmWorldState->ServerData()->GetFishingRandomTime() / 15 );
 		mChar->SetFishingTimer( BuildTimeValue( baseTime ) ); //2x faster at war and can run
-		soundeffect( s, 0x023F, true );
+		Effects->PlaySound( s, 0x023F, true );
 	}
 	else
 		sysmessage( s, 846 );
@@ -2477,8 +2483,8 @@ void cSkills::Fish( CChar *i )
 		else
 		{	// Create between 200 and 1300 gold
 			UI16 nAmount = RandomNum( 200, 1300 );
-			addgold( s, nAmount );
-			goldSound( s, nAmount );
+			Items->addGold( s, nAmount );
+			Effects->goldSound( s, nAmount );
 			sysmessage( s, 851, nAmount );
 		}
 		break;
@@ -2713,8 +2719,6 @@ void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			item->SetCont( pack );
 			sysmessage( s, 880 );
 			RefreshItem( item );
-
-//			sendItemsInRange( s );
 
 			UI16 targTrig = item->GetScriptTrigger();
 			cScript *toExecute = Trigger->GetScript( targTrig );
@@ -3143,7 +3147,7 @@ void cSkills::BeggingTarget( cSocket *s )
 		else
 		{
 			npcTalkAll( targChar, 903, false ); 
-			addgold( s, ( 10 + RandomNum( 0, mChar->GetSkill( BEGGING ) + 1 ) / 25 ) );
+			Items->addGold( s, ( 10 + RandomNum( 0, mChar->GetSkill( BEGGING ) + 1 ) / 25 ) );
 			sysmessage( s, 904 );
 		}
 	}
@@ -3315,14 +3319,14 @@ void cSkills::PoisoningTarget( cSocket *s )
 	}
 	if( canPoison ) 
 	{
-		soundeffect( mChar, 0x0247 );	// poisoning effect
+		Effects->PlaySound( mChar, 0x0247 );	// poisoning effect
 		if( toPoison->GetPoisoned() < poison->GetMoreZ() ) 
 			toPoison->SetPoisoned( static_cast<UI08>(poison->GetMoreZ() ));
 		sysmessage( s, 919 );
 	} 
 	else 
 	{
-		soundeffect( mChar, 0x0247 ); // poisoning effect
+		Effects->PlaySound( mChar, 0x0247 ); // poisoning effect
 		sysmessage( s, 1649 );
 	}
 
@@ -3546,7 +3550,7 @@ bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
 	int num = ( 8 * ( getCir - 1 ) ) + getSpell;
 	
 	if( spells[num].Action() ) 
-		impaction( s, spells[num].Action() ); // Should have a default action instead
+		Effects->impaction( s, spells[num].Action() ); // Should have a default action instead
 	if( !Magic->CheckReagents( mChar, spells[num].ReagantsPtr() ) || !Magic->CheckMana( mChar, num ) )
 	{
 		Magic->SpellFail( s );
@@ -3744,9 +3748,9 @@ bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
 //o---------------------------------------------------------------------------o
 void cSkills::updateSkillLevel( CChar *c, UI08 s )
 {
-	UI16 sstr = skill[s].strength, astr = c->ActualStrength();
-	UI16 sdex = skill[s].dexterity, adex = c->ActualDexterity();
-	UI16 sint = skill[s].intelligence, aint = c->ActualIntelligence();
+	UI16 sstr = cwmWorldState->skill[s].strength, astr = c->ActualStrength();
+	UI16 sdex = cwmWorldState->skill[s].dexterity, adex = c->ActualDexterity();
+	UI16 sint = cwmWorldState->skill[s].intelligence, aint = c->ActualIntelligence();
 	UI16 bskill = c->GetBaseSkill( s );
 
 	UI16 temp = ( ( (sstr * astr) / 100 + (sdex * adex) / 100 + (sint + aint) / 100) * ( 1000 - bskill ) ) / 1000 + bskill;
@@ -3783,7 +3787,7 @@ void cSkills::LockPick( cSocket *s )
 		if( mChar->GetSkill( LOCKPICKING ) < 300 )
 		{
 			CheckSkill( mChar, LOCKPICKING, 0, 1000 );	// check their skill
-			soundeffect(s, 0x0241, true );						// lockpicking sound
+			Effects->PlaySound(s, 0x0241, true );						// lockpicking sound
 		}
 		else
 		{
@@ -3837,7 +3841,7 @@ void cSkills::LockPick( cSocket *s )
 				case 64:	i->SetType( 63 ); break;
 				default:	Console.Error( 2, " cSkills::LockPick -> Fallout of switch statement without default" ); return;
 				}
-				soundeffect( i, 0x01FF );
+				Effects->PlaySound( i, 0x01FF );
 				sysmessage( s, 935 );
 			}
 		} 
@@ -3875,9 +3879,9 @@ void cSkills::TDummy( cSocket *s )
 	
 	switch( RandomNum( 0, 2 ) )
 	{
-	case 0: soundeffect( s, 0x013B, true );	break;
-	case 1: soundeffect( s, 0x013C, true );	break;        
-	case 2: soundeffect( s, 0x013D, true );	break;
+	case 0: Effects->PlaySound( s, 0x013B, true );	break;
+	case 1: Effects->PlaySound( s, 0x013C, true );	break;        
+	case 2: Effects->PlaySound( s, 0x013D, true );	break;
 	default:	Console.Error( 2, " cSkills::TDummy -> Fallout of switch statement without default" );	return;
 	}            
 	CItem *j = calcItemObjFromSer( (s->GetDWord( 1 ))&0x7FFFFFFF );
@@ -3887,7 +3891,7 @@ void cSkills::TDummy( cSocket *s )
 			j->SetID( 0x71, 2 );
 		else if( j->GetID( 2 ) == 0x74 ) 
 			j->SetID( 0x75, 2 );
-		tempeffect( NULL, j, 14, 0, 0, 0 );
+		Effects->tempeffect( NULL, j, 14, 0, 0, 0 );
 		RefreshItem( j );
 	}
 	UI16 skillused = Combat->getCombatSkill( mChar );
@@ -4075,29 +4079,29 @@ void cSkills::AButte( cSocket *s, CItem *x )
 		case 0:
 		case 1:		
 			sysmessage( s, 951 );	
-			soundeffect( s, 0x0238, true );	
+			Effects->PlaySound( s, 0x0238, true );	
 			break;
 		case 2:
 		case 3:		
 			sysmessage( s, 952 );	
-			soundeffect( s, 0x0234, true );	
+			Effects->PlaySound( s, 0x0234, true );	
 			break;
 		case 4:
 		case 5:
 		case 6:		
 			sysmessage( s, 953 );	
-			soundeffect( s, 0x0234, true );	
+			Effects->PlaySound( s, 0x0234, true );	
 			break;
 		case 7:
 		case 8:
 		case 9:		
 			sysmessage( s, 954 );	
-			soundeffect( s, 0x0234, true );	
+			Effects->PlaySound( s, 0x0234, true );	
 			break;
 		case 10:
 		case 11:	
 			sysmessage( s, 955 );	
-			soundeffect( s, 0x0234, true );	
+			Effects->PlaySound( s, 0x0234, true );	
 			break;
 		default:																						break;
 		}
@@ -4329,7 +4333,7 @@ void cSkills::Meditation( cSocket *s )
 	}
 	sysmessage( s, 971 );
 	mChar->SetMed( 1 );
-	soundeffect( s, 0x00F9, true );
+	Effects->PlaySound( s, 0x00F9, true );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5026,9 +5030,9 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 	SI08 skillAdvance = FindSkillPoint( sk, s->GetBaseSkill( sk ) );
 	
 	if( skillUsed )
-		skillGain = ( skill[sk].advancement[skillAdvance].success ) * 10;
+		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success ) * 10;
 	else
-		skillGain = ( skill[sk].advancement[skillAdvance].failure ) * 10;
+		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].failure ) * 10;
 
 	if( skillGain > RandomNum( 0, 1000 ) )
 	{
@@ -5057,16 +5061,16 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 {
 	SI08 retVal = -1;
-	for( unsigned int iCounter = 0; iCounter < skill[sk].advancement.size() - 1; iCounter++ )
+	for( unsigned int iCounter = 0; iCounter < cwmWorldState->skill[sk].advancement.size() - 1; iCounter++ )
 	{
-		if( skill[sk].advancement[iCounter].base <= value && value < skill[sk].advancement[iCounter+1].base )
+		if( cwmWorldState->skill[sk].advancement[iCounter].base <= value && value < cwmWorldState->skill[sk].advancement[iCounter+1].base )
 		{
 			retVal = iCounter;
 			break;
 		}
 	}
 	if( retVal == -1 )
-		retVal = skill[sk].advancement.size() - 1;
+		retVal = cwmWorldState->skill[sk].advancement.size() - 1;
 	return retVal;
 }
 
@@ -5085,7 +5089,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     if( pRace == NULL )
 		pRace = Races->Race( 0 );
 	
-    bool IsPlayer = ( !s->IsNpc() && s->GetCommandLevel() < CNSCMDLEVEL ); 
+    bool IsPlayer = ( !s->IsNpc() && s->GetCommandLevel() < CNS_CMDLEVEL ); 
 	if( !IsPlayer ) 
 		return;
 	
@@ -5098,7 +5102,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     int StatCount, nCount; 
 	int maxChance = 1000;
     SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() }; 
-    UI16 StatModifier[3] = { skill[sk].strength , skill[sk].dexterity , skill[sk].intelligence }; 
+    UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence }; 
 	
 	UI16 skillUpdTrig = s->GetScriptTrigger();
 	cScript *skillTrig = Trigger->GetScript( skillUpdTrig );
@@ -5123,7 +5127,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 
 		//  k, first let us calculate both dices
 		chanceStatGain = (SI16)                               
-			(((float)skill[StatCount-1].advancement[ FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) ) ].success / 100) 
+			(((float)cwmWorldState->skill[StatCount-1].advancement[ FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) ) ].success / 100) 
 			* 
 			((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000); 
 		// some mathematics in it ;) 
@@ -5504,7 +5508,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 	}
 	bool canMake = true;
 	// we need to check ALL skills, even if the first one fails
-	if( player->GetCommandLevel() < CNSCMDLEVEL )
+	if( player->GetCommandLevel() < CNS_CMDLEVEL )
 	{
 		for( unsigned int sCounter = 0; sCounter < toMake.skillReqs.size(); sCounter++ )
 		{
@@ -5526,7 +5530,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 			targID = toMake.resourceNeeded[resCounter].itemID;
 			DeleteItemAmount( player, targID, targColour, toDelete );
 		}
-		soundeffect( sock, toMake.soundPlayed, true );
+		Effects->PlaySound( sock, toMake.soundPlayed, true );
 		sysmessage( sock, 984 );
 	}
 	else
@@ -5563,11 +5567,11 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 		}
 		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.skillReqs.size(); resCounter++ )
 			player->SkillUsed( true, toMake.skillReqs[resCounter].skillNumber );
-		tempeffect( player, player, 41, toMake.delay, itemEntry, 0 );
+		Effects->tempeffect( player, player, 41, toMake.delay, itemEntry, 0 );
 		if( toMake.delay > 300 )
 		{
 			for( int i = 0; i < ( toMake.delay / 300 ); i++ )
-				tempeffect( player, player, 42, 300 * i, toMake.soundPlayed, 0 );
+				Effects->tempeffect( player, player, 42, 300 * i, toMake.soundPlayed, 0 );
 		}
 	}
 }
@@ -5632,7 +5636,7 @@ void cSkills::RepairMetal( cSocket *s )
 	{
 		j->SetHP( j->GetMaxHP() );
 		sysmessage( s, 989 );
-		soundeffect( s, 0x002A, true );
+		Effects->PlaySound( s, 0x002A, true );
 	}
 	else
 		sysmessage( s, 990 );
@@ -5698,7 +5702,7 @@ void cSkills::RepairLeather( cSocket *s )
 	{
 		j->SetHP( j->GetMaxHP() );
 		sysmessage( s, 989 );
-		soundeffect( s, 0x002A, true );
+		Effects->PlaySound( s, 0x002A, true );
 	}
 	else
 		sysmessage( s, 990 );
@@ -5764,7 +5768,7 @@ void cSkills::RepairBow( cSocket *s )
 	{
 		j->SetHP( j->GetMaxHP() );
 		sysmessage( s, 989 );
-		soundeffect( s, 0x002A, true );
+		Effects->PlaySound( s, 0x002A, true );
 	}
 	else
 		sysmessage( s, 990 );
@@ -5810,7 +5814,7 @@ void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack )
 			sysmessage( s, 991 );
 			if( target->IsNpc() )
 			{
-				if( isHuman( target ) )
+				if( target->isHuman() )
 				{
 					npcTalk( s, target, 994 + RandomNum( 0, 2 ), false );
 					if( cwmWorldState->ServerData()->GetSnoopIsCrime() )
@@ -5820,7 +5824,7 @@ void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack )
 					}
 				}
 				else
-					playMonsterSound( target, target->GetID(), SND_IDLE );	// Play idle sound, if not human
+					Effects->playMonsterSound( target, target->GetID(), SND_IDLE );	// Play idle sound, if not human
 			}
 			else
 				sysmessage( tSock, 997, mChar->GetName() );

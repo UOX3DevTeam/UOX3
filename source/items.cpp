@@ -1,5 +1,14 @@
 #include "uox3.h"
+#include "townregion.h"
+#include "cServerDefinitions.h"
+#include "cSpawnRegion.h"
 #include "ssection.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "scriptc.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "items.cpp"
@@ -341,21 +350,22 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		case DFNTAG_TYPE2:			applyTo->SetType2( (UI08)ndata );			break;
 		case DFNTAG_VISIBLE:		applyTo->SetVisible( (SI08)ndata );			break;
 		case DFNTAG_VALUE:
-									char *sellValueOff;
-									sellValueOff = strstr( cdata, "," );
-									if( sellValueOff != NULL )
+									if( cdata != NULL )
 									{
-										char tmp[32];
-										strncpy( tmp, cdata, sellValueOff - cdata );
-										tmp[sellValueOff - cdata] = 0;
-										applyTo->SetBuyValue( (UI08)makeNum( tmp ) );
-										applyTo->SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+										char *sellValueOff;
+										sellValueOff = strstr( cdata, "," );
+										if( sellValueOff != NULL )
+										{
+											char tmp[32];
+											strncpy( tmp, cdata, sellValueOff - cdata );
+											tmp[sellValueOff - cdata] = 0;
+											applyTo->SetBuyValue( (UI08)makeNum( tmp ) );
+											applyTo->SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+											break;
+										}
 									}
-									else
-									{
-										applyTo->SetBuyValue( ndata );
-										applyTo->SetSellValue( (ndata / 2) );
-									}
+									applyTo->SetBuyValue( ndata );
+									applyTo->SetSellValue( (ndata / 2) );
 									break;
 		case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
 		case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
@@ -649,7 +659,10 @@ CItem * cItem::SpawnItemToPack( cSocket *s, CChar *mChar, std::string name, bool
 	if( nDigging ) 
 	{
 		if( c->GetBuyValue() != 0 )
+		{
 			c->SetBuyValue( RandomNum( 1, c->GetBuyValue() ) );
+			c->SetSellValue( (SI32)c->GetBuyValue() / 2 );
+		}
 		if( c->GetHP() != 0 ) 
 			c->SetHP( RandomNum( 1, c->GetHP() ) );
 	}
@@ -1147,7 +1160,7 @@ void cItem::CheckEquipment( CChar *p )
 			Network->PopConn();
 			RefreshItem( i );
 			sysmessage( pSock, 1604, temp );
-			itemSound( pSock, i );
+			Effects->itemSound( pSock, i );
 		}
 	}
 }
@@ -1176,4 +1189,17 @@ void cItem::StoreItemRandomValue( CItem *i, UI08 tmpreg )
 	
 	if( max != 0 || min != 0 )
 		i->SetRndValueRate( (SI32) RandomNum( min, max ) );
+}
+
+
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	cItem::addGold( cSocket *s, UI32 amt )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Adds gold to characters total gold
+//o---------------------------------------------------------------------------o
+void cItem::addGold( cSocket *s, UI32 amt )
+{
+	SpawnItem( s, s->CurrcharObj(), amt, "#", true, 0x0EED, 0, true, true );
 }

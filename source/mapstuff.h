@@ -1,6 +1,8 @@
 #ifndef __MAPSTUFF_H__
 #define __MAPSTUFF_H__
 
+#include "mapclasses.h"
+
 // full comments on this class are available in mapstuff.cpp
 class MapStaticIterator
 {

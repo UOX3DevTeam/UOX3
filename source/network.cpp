@@ -1,4 +1,17 @@
 #include "uox3.h"
+#include "network.h"
+#include "books.h"
+#include "msgboard.h"
+#include "movement.h"
+#include "wholist.h"
+#include "commands.h"
+#include "skills.h"
+#include "cMagic.h"
+#include "PageVector.h"
+#include "gump.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "cEffects.h"
 
 #if defined(__unix__)
 #include <unistd.h>
@@ -138,13 +151,13 @@ void cNetworkStuff::LogOut( UOXSOCKET s )
 	SI16 x = p->GetX(), y = p->GetY();
 	CMultiObj *multi = NULL;
 
-	if( p->GetCommandLevel() >= CNSCMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
+	if( p->GetCommandLevel() >= CNS_CMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
 		valid = true;
 	else 
 	{
 		for( a = 0; static_cast<UI32>(a) < cwmWorldState->GetLogoutCount(); a++ )
 		{
-			if( logout[a].x1 <= x && logout[a].y1 <= y && logout[a].x2 >= x && logout[a].y2 >= y )
+			if( cwmWorldState->logout[a].x1 <= x && cwmWorldState->logout[a].y1 <= y && cwmWorldState->logout[a].x2 >= x && cwmWorldState->logout[a].y2 >= y )
 			{
 				valid = true;
 				break;
@@ -272,7 +285,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	FD_ZERO( &conn );
 	FD_SET( a_socket, &conn );
 	int nfds = a_socket + 1;
-	int s = select( nfds, &conn, NULL, NULL, &uoxtimeout );
+	int s = select( nfds, &conn, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		int len = sizeof( struct sockaddr_in );
@@ -396,7 +409,7 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	int s = select( nfds, &all, NULL, &errsock, &uoxtimeout );
+	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		int oldnow = cwmWorldState->GetPlayersOnline();
@@ -872,7 +885,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						ourChar->SetTimeout( ourChar->GetTimeout() + CLOCKS_PER_SEC );
 					mSock->Send( buffer, 5 );
 					Movement->CombatWalk( ourChar );
-					dosocketmidi( mSock );
+					Effects->dosocketmidi( mSock );
 					ourChar->BreakConcentration( mSock );
 					break;
 				case 0x12:// Ext. Command
@@ -887,16 +900,16 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							if( ( (ourChar->GetID() >= 0x190) &&
 								(ourChar->GetID() <= 0x193) ) ||
 								(ourChar->GetID() == 0x3DB) )
-								action( mSock, 0x20 );
+								Effects->action( mSock, 0x20 );
 							else
-								action( mSock, 0x12 );
+								Effects->action( mSock, 0x12 );
 						if( !strcmp( (char *)&buffer[4], "salute" ) ) 
 							if( ( (ourChar->GetID() >= 0x190) &&
 								(ourChar->GetID() <= 0x193) ) ||
 								(ourChar->GetID() == 0x3DB) )
-								action( mSock, 0x21 );
+								Effects->action( mSock, 0x21 );
 							else
-								action( mSock, 0x11 );
+								Effects->action( mSock, 0x11 );
 						break;
 					} 
 					else if( buffer[3] == 0x58 )
@@ -1170,7 +1183,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 
 					case 14:	// UOTD actions
 						// 9 bytes long
-						action( mSock, mSock->GetWord( 7 ) );
+						Effects->action( mSock, mSock->GetWord( 7 ) );
 						break;
 					}
 					break;
@@ -1183,7 +1196,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 					FD_SET( mSock->CliSocket(), &all );
 					int nfds;
 					nfds = mSock->CliSocket() + 1;
-					if( select( nfds, &all, NULL, NULL, &uoxtimeout ) > 0 ) 
+					if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
 						mSock->Receive( 2560 );
 					sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
 					Console << temp << myendl;
@@ -1203,8 +1216,8 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	fd_set errsock;
 	int i;
 	
-	uoxtimeout.tv_sec = 0;
-	uoxtimeout.tv_usec = 1;
+	cwmWorldState->uoxtimeout.tv_sec = 0;
+	cwmWorldState->uoxtimeout.tv_usec = 1;
 
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
@@ -1218,7 +1231,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	int s = select( nfds, &all, NULL, &errsock, &uoxtimeout );
+	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		int oldnow = loggedInClients.size();
@@ -1444,7 +1457,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 					FD_ZERO( &all );
 					FD_SET( mSock->CliSocket(), &all );
 					nfds = mSock->CliSocket() + 1;
-					if( select( nfds, &all, NULL, NULL, &uoxtimeout ) > 0 ) 
+					if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
 						mSock->Receive( 2560 );
 					sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
 					messageLoop << temp;
@@ -1604,7 +1617,7 @@ void cNetworkStuff::CheckXGM( void )
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	int s = select( nfds, &all, NULL, &errsock, &uoxtimeout );
+	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		int oldnow = xgmClients.size();
@@ -1724,7 +1737,7 @@ void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
 			FD_ZERO( &all );
 			FD_SET( mSock->CliSocket(), &all );
 			int nfds = mSock->CliSocket() + 1;
-			if( select( nfds, &all, NULL, NULL, &uoxtimeout ) > 0 ) 
+			if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
 				mSock->Receive( 2560 );
 			sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
 			Console << temp << myendl;
@@ -1746,7 +1759,7 @@ void cNetworkStuff::CheckXGMConn( void )
 	FD_ZERO( &xgmConn );
 	FD_SET( xgmSocket, &xgmConn );
 	int nfds = xgmSocket + 1;
-	int s = select( nfds, &xgmConn, NULL, NULL, &uoxtimeout );
+	int s = select( nfds, &xgmConn, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		sockaddr_in client_addr;

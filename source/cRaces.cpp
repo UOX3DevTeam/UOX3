@@ -3,7 +3,10 @@
 // solidly, along with EviLDeD, over the next few months.  
 
 #include "uox3.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "cEffects.h"
 
 const RACEREL MIN_ENEMY = -1;
 const RACEREL MIN_ALLY  = -1;
@@ -219,8 +222,8 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				return;
 			}
 		}
-		staticeffect( s, 0x373A, 0, 15 );
-		soundeffect( s, 0x01E9 );
+		Effects->staticeffect( s, 0x373A, 0, 15 );
+		Effects->PlaySound( s, 0x01E9 );
 		s->SetRaceGate( x );
 		s->SetRace( x );
 

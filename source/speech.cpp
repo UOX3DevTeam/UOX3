@@ -3,6 +3,17 @@
 #include "uox3.h"
 #include "speech.h"
 #include "cVersionClass.h"
+#include "boats.h"
+#include "cGuild.h"
+#include "msgboard.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "commands.h"
+#include "skills.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 extern cVersionClass CVC;
 
@@ -120,7 +131,7 @@ void textflags( cSocket *s, CChar *i, const char *name )
 	char temp2[150];
 	CChar *mChar = s->CurrcharObj();
 	strcpy( name2, name );
-	if( !i->IsNpc() && !( i->GetCommandLevel() >= CNSCMDLEVEL ) && (i->GetFame() >= 10000 ) ) // Morollan, only normal players have titles now
+	if( !i->IsNpc() && !( i->GetCommandLevel() >= CNS_CMDLEVEL ) && (i->GetFame() >= 10000 ) ) // Morollan, only normal players have titles now
 	{
 		if( i->GetID( 2 ) == 0x91 ) 
 			sprintf( name2, "Lady %s", name ); //Morrolan, added Lord/Lady to title overhead
@@ -1497,7 +1508,7 @@ bool response( cSocket *mSock )
 						{
 							if( Npc->IsNpc() )
 							{
-								if( objInRange( Npc, mChar, 3 ) && isHuman( Npc ) )
+								if( objInRange( Npc, mChar, 3 ) && Npc->isHuman() )
 								{
 									if( !Npc->CanTrain() )
 									{
@@ -1603,7 +1614,7 @@ bool response( cSocket *mSock )
 								{
 									Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
 									Npc->SetNpcWander( 1 );
-									playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
+									Effects->playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
 									retval = true;
 								}
 								else
@@ -1618,7 +1629,7 @@ bool response( cSocket *mSock )
 									{
 										Npc->SetFTarg( FTarg );
 										Npc->SetNpcWander( 1 );
-										playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
+										Effects->playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
 									}
 									retval = true;
 								}
@@ -1767,7 +1778,7 @@ bool response( cSocket *mSock )
 								npcTalkAll( Npc, 1325, false, Npc->GetName() );
 								if( Npc->GetSummonTimer() )
 								{
-									soundeffect( &chars[i], 0x01FE );
+									Effects->PlaySound( &chars[i], 0x01FE );
 									Npcs->DeleteChar( Npc );
 								}
 								CellResponse->PopChar();

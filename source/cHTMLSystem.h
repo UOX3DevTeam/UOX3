@@ -11,9 +11,6 @@
 #endif // _MSC_VER > 1000
 #endif
 
-#include "uox3.h"
-#include "ssection.h"
-
 enum ETemplateType {
 	ETT_PERIODIC = 1,
 	ETT_OFFLINE,
@@ -67,4 +64,4 @@ public:
 	void TemplateInfoGump( cSocket *mySocket );
 };
 
-#endif // !defined(AFX_CHTMLSYSTEM_H__5B019431_A3D8_4968_8527_0789FDDB5A1D__INCLUDED_)
+#endif

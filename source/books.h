@@ -34,7 +34,7 @@ class cBooks
 	
 	    cBooks();
 
-    void OpenPreDefBook( cSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
+        void OpenPreDefBook( cSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
 		void OpenBook( cSocket *s, CItem *i, bool isWriteable ); // opens new books
 		void ReadPreDefBook( cSocket *mSock, CItem *i, UI16 p ); // reads books from misc.scp, readonly = old books
 		void ReadNonWritableBook( cSocket *s, CItem *i, UI16 p );     // reads new books readonly ( from *.bok file )

@@ -1,6 +1,7 @@
 // All funcs in this file are used for item/char distance related situations
 // There's a chance that a number of these could become inline
 #include "uox3.h"
+#include "cRaces.h"
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool checkItemRange( CChar *mChar, CItem *i, UI16 distance )
@@ -94,11 +95,7 @@ bool itemInRange( CChar *mChar, CItem *i )
 	else
 		vr = MAX_VISRANGE + Races->VisRange( mChar->GetRace() );
 	point3 difference = mChar->GetLocation() - i->GetLocation();
-	if( abs( (UI16)difference.x ) > vr )
-		return false;
-	if( abs( (UI16)difference.y ) > vr )
-		return false;
-	return true;
+	return ( difference.MagSquared() <= ( vr * vr ) );
 }
 
 //o---------------------------------------------------------------------------o

@@ -1,8 +1,6 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
 
-#include "uox3.h"
-
 #define MAGIC_CHARTARG_LIST cSocket *, CChar *, CChar *, CChar *
 #define MAGIC_ITEMTARG_LIST cSocket *, CChar *, CItem *
 #define MAGIC_LOCATION_LIST cSocket *, CChar *, SI16, SI16, SI08

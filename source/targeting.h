@@ -1,10 +1,11 @@
 #ifndef __TARGETING_H__
 #define __TARGETING_H__
 
+typedef void (TargetFunc)( cSocket *s );
+
 class cTargets
 {
 private:
-#if !defined(__unix__)
 	TargetFunc AddNpcTarget;
 	TargetFunc AddTarget;
 	TargetFunc AllSetTarget;
@@ -112,121 +113,11 @@ private:
 	TargetFunc XgoTarget;
 	TargetFunc xSpecialBankTarget;
 	TargetFunc DeleteCharTarget;
-#else
-	void AddNpcTarget(cSocket *s);
-	void AddTarget(cSocket *s);
-	void AllSetTarget(cSocket *s);
-	void AmountTarget(cSocket *s);
-	void AttackTarget(cSocket *s);
-	void AxeTarget(cSocket *s);
-	void BanTarg(cSocket *s);
-	void BoltTarget(cSocket *s);
-	void BuyShopTarget(cSocket *s);
-	void CanTrainTarget(cSocket *s);
-	void CloseTarget(cSocket *s);
-	void CnsTarget(cSocket *s);
-	void ColorsTarget(cSocket *s);
-	void CommandLevel(cSocket *s);
-	void CorpseTarget(cSocket *s);
-	void DupeTarget(cSocket *s);
-	void DvatTarget(cSocket *s);
-	void DyeTarget(cSocket *s);
-	void ExpPotionTarget(cSocket *s);
-	void FollowTarget(cSocket *s);
-	void FontTarget(cSocket *s);
-	void FreezeTarget(cSocket *s);
-	void FullStatsTarget(cSocket *s);
-	void GhostTarget(cSocket *s);
-	void GlowTarget(cSocket *s);
-	void GmOpenTarget(cSocket *s);
-	void GMTarget(cSocket *s);
-	void GuardTarget(cSocket *s);
-	void FriendTarget(cSocket *s);
-	void HandleGuildTarget(cSocket *s);
-	void HouseBanTarget(cSocket *s);
-	void HouseEjectTarget(cSocket *s);
-	void HouseFriendTarget(cSocket *s);
-	void HouseLockdown(cSocket *s);
-	void HouseOwnerTarget(cSocket *s);
-	void HouseRelease(cSocket *s);
-	void HouseUnlistTarget(cSocket *s);
-	void IncXTarget(cSocket *s);
-	void IncYTarget(cSocket *s);
-	void IncZTarget(cSocket *s);
-	void InfoTarget(cSocket *s);
-	void IstatsTarget(cSocket *s);
-	void KeyTarget(cSocket *s);
-	void LoadCannon(cSocket *s);
-	void MakeShopTarget(cSocket *s);
-	void MakeStatusTarget(cSocket *s);
-	void MakeTownAlly(cSocket *s);
-	void ManaTarget(cSocket *s);
-	void MoreTarget(cSocket *s);
-	void MoreXTarget(cSocket *s);
-	void MoreXYZTarget(cSocket *s);
-	void MoreYTarget(cSocket *s);
-	void MoreZTarget(cSocket *s);
-	void MovableTarget(cSocket *s);
-	void MoveToBagTarget(cSocket *s);
-	void NewXTarget(cSocket *s);
-	void NewYTarget(cSocket *s);
-	void NewzTarget(cSocket *s);
-	void NpcAITarget(cSocket *s);
-	void NpcCircleTarget(cSocket *s);
-	void NpcRectTarget(cSocket *s);
-	void NpcTarget(cSocket *s);
-	void NpcTarget2(cSocket *s);
-	void NpcWanderTarget(cSocket *s);
-	void ObjPrivTarget(cSocket *s);
-	void OwnerTarget(cSocket *s);
-	void permHideTarget(cSocket *s);
-	void PlVBuy(cSocket *s);
-	void PrivTarget(cSocket *s);
-	void RemoveTarget(cSocket *s);
-	void RenameTarget(cSocket *s);
-	void ResurrectionTarget(cSocket *s);
-	void SellStuffTarget(cSocket *s);
-	void SetAdvObjTarget(cSocket *s);
-	void SetDirTarget(cSocket *s);
-	void SetInvulFlag(cSocket *s);
-	void SetPoisonedTarget(cSocket *s);
-	void SetPoisonTarget(cSocket *s);
-	void SetRestockTarget(cSocket *s);
-	void SetSpaDelayTarget(cSocket *s);
-	void SetSpAttackTarget(cSocket *s);
-	void SetSplitChanceTarget(cSocket *s);
-	void SetSplitTarget(cSocket *s);
-	void SetBuyValueTarget(cSocket *s);
-	void SetSellValueTarget(cSocket *s);
-	void SetWipeTarget(cSocket *s);
-	void ShowDetail(cSocket *s);
-	void ShowSkillTarget(cSocket *s);
-	void SmeltTarget(cSocket *s);
-	void SquelchTarg(cSocket *s);
-	void StaminaTarget(cSocket *s);
-	void SwordTarget(cSocket *s);
-	void TeleStuff(cSocket *s);
-	void TeleTarget(cSocket *s);
-	void Tiling(cSocket *s);
-	void TitleTarget(cSocket *s);
-	void TransferTarget(cSocket *s);
-	void TypeTarget(cSocket *s);
-	void UnfreezeTarget(cSocket *s);
-	void UnglowTarget(cSocket *s);
-	void unHideTarget(cSocket *s);
-	void VisibleTarget(cSocket *s);
-	void WstatsTarget(cSocket *s);
-	void xBankTarget(cSocket *s);
-	void XgoTarget(cSocket *s);
-	void xSpecialBankTarget(cSocket *s);
-	void DeleteCharTarget( cSocket *s );
-#endif
 
 	void KillTarget( cSocket *s, UI08 ly);
 	void newCarveTarget( cSocket *s, CItem *i );
 //	void triggertarget( int ts ); // By Magius(CHE)
 public:
-#if !defined(__unix__)
 	TargetFunc CstatsTarget;
 	TargetFunc TweakTarget;
 	TargetFunc GetAccount;
@@ -234,15 +125,7 @@ public:
 	TargetFunc MultiTarget;
 	TargetFunc Wiping;
 	TargetFunc AreaCommand;
-#else
-	void	CstatsTarget( cSocket *s );
-	void	TweakTarget( cSocket *s );
-	void	GetAccount( cSocket *s );
-	void	IDtarget( cSocket *s );
-	void	MultiTarget( cSocket *s );
-	void	Wiping( cSocket *s );
-	void	AreaCommand( cSocket *s );
-#endif
+
 	CChar *	NpcMenuTarget( cSocket *s );
 	void	NpcResurrectTarget( CChar *s );
 	void	JailTarget( cSocket *s, SERIAL c );

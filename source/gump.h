@@ -70,6 +70,8 @@ public:
 	void Delete( void );
 };
 
+class CPIGumpMenuSelect;
+
 class cGump
 {
 public:

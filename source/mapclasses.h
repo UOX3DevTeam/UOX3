@@ -1,6 +1,8 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
+#include "fileio.h"
+
 class BaseTile
 {
 protected:

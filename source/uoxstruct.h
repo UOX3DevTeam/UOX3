@@ -1,15 +1,5 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
-#include "uox3.h"
-#include "cmath"
-
-struct r2Data
-{
-	std::string tag;
-	std::string data;
-	r2Data( char *t, char *d ) : tag( t ), data( d ) { }
-	r2Data() : tag( "" ), data( "" ) { }
-};
 
 class CMagicMove
 {
@@ -150,54 +140,6 @@ struct st_multi
 	SI08 empty;
 } PACK_NEEDED;
 
-struct location_st
-{
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
-	UI08 region;
-};
-
-struct logout_st//Instalog
-{
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
-};
-
-struct advance_st
-{
-	UI16 base;
-	UI16 success;
-	UI16 failure;
-};
-struct skill_st
-{
-	UI16 strength;
-	UI16 dexterity;
-	UI16 intelligence;
-	char madeword[50];
-	std::vector< advance_st > advancement;
-};
-
-struct title_st // For custom titles
-{
-	char fame[50];
-	char skill[50];
-	char prowess[50];
-};
-
-// Scriptable Murder Tags - Zane
-
-struct MurderPair
-{
-	SI16 loBound;
-	std::string toDisplay;
-	MurderPair() : loBound( 0 ) { }
-	MurderPair( SI16 lB, const char *toDisp ) : loBound( lB ) { toDisplay = toDisp; }
-};
 struct reag_st
 {
 	UI08 ginseng;
@@ -294,16 +236,6 @@ struct commandLevel_st
 	UI16 targBody;		// target body value
 	UI16 bodyColour;	// target body colour
 	bool stripOff;		// strips off hair, beard and clothes
-};
-
-struct miningData
-{
-	UI16 colour;		// colour of the ore, for colour of ingot
-	UI16 minSkill;		// minimum skill needed to make the ingot
-	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
-	bool foreign;		// if not iron, then it can print out that it's a stranger ore when failing
-	int makemenu;		// the makemenu required for making with
-	UI08 minAmount;		// min number of ingots to load anything
 };
 
 struct vector2D
@@ -482,20 +414,6 @@ struct resSkillReq
 	UI08 skillNumber;
 	UI16 minSkill;
 	UI16 maxSkill;
-};
-
-struct createMenu
-{
-	std::vector< UI16 > itemEntries;
-	std::vector< UI16 > menuEntries;
-};
-struct createMenuEntry
-{
-	UI16 targID;
-	UI16 colour;
-	std::string name;
-	UI16 subMenu;
-	createMenuEntry() : targID( 0 ), colour( 0 ), name( "" ), subMenu( 0 ) { }
 };
 
 struct createEntry

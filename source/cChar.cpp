@@ -1,7 +1,16 @@
 #include "uox3.h"
 #include "power.h"
 
-#include "stream.h"
+#include "weight.h"
+#include "cGuild.h"
+#include "msgboard.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "skills.h"
+#include "trigger.h"
+#include "fileio.h"
+#include "cScript.h"
+#include "packets.h"
 
 // New class written based upon old UOX char_st.  Number of old members removed
 // and a number of members types modified as well
@@ -1883,7 +1892,7 @@ UI08 CChar::GetStep( void ) const
 }
 UI08 CChar::GetRegion( void ) const
 {
-	return region;
+	return regionNum;
 }
 void CChar::SetDispZ( SI08 newZ )
 {
@@ -1985,7 +1994,7 @@ void CChar::SetStep( UI08 newValue )
 }
 void CChar::SetRegion( UI08 newValue )
 {
-	region = newValue;
+	regionNum = newValue;
 }
 CItem * CChar::GetPackItem( void ) const
 {
@@ -2356,22 +2365,31 @@ void CChar::SetPoisoned( SI08 newValue )
 	poisoned = newValue;
 }
 
+bool CChar::GetHungerStatus( void ) const
+{
+	return willHunger;
+}
+void CChar::SetHungerStatus( bool newValue )
+{
+	willHunger = newValue;
+}
+
 CChar::CChar( CHARACTER c, bool zeroSer ) : robe( INVALIDSERIAL ), townvote( INVALIDSERIAL ), bools( 0 ), antispamtimer( 0 ), 
 account( -1 ), dispz( 0 ), xskin( colour ), fonttype( 3 ), maxHP( 0 ), maxHP_oldstr( 0 ), maxHP_oldrace( 0 ), maxMana( 0 ), maxMana_oldint( 0 ), maxMana_oldrace( 0 ),
 maxStam( 0 ), maxStam_olddex( 0 ), maxStam_oldrace( 0 ),
 saycolor( 0x0058 ), emotecolor( 0x0023 ), cell( -1 ), deaths( 0 ), packitem( NULL ), fixedlight( 255 ), weight( 0 ), 
 targ( INVALIDSERIAL ), timeout( 0 ), attacker( INVALIDSERIAL ), npcmovetime( 0 ), npcWander( 0 ), oldnpcWander( 0 ), ftarg( INVALIDSERIAL ), fx1( -1 ),
 fx2( -1 ), fy1( -1 ), fy2( -1 ), fz1( -1 ), invistimeout( 0 ), hunger( 6 ), hungertime( 0 ), smeltitem( NULL ), skillitem( INVALIDSERIAL ),
-npcaitype( 0 ), callnum( -1 ), playercallnum( -1 ), pagegm( 0 ), region( 255 ), skilldelay( 0 ), objectdelay( 0 ), making( INVALIDSERIAL ),
+npcaitype( 0 ), callnum( -1 ), playercallnum( -1 ), pagegm( 0 ), regionNum( 255 ), skilldelay( 0 ), objectdelay( 0 ), making( INVALIDSERIAL ),
 blocked( 0 ), dir2( 0 ), spiritspeaktimer( 0 ), spattack( 0 ), spadelay( 0 ), spatimer( 0 ), taming( 0 ), summontimer( 0 ),
 trackingtimer( 0 ), trackingtarget( 0 ), fishingtimer( 0 ), town( 255 ), townpriv( 0 ), advobj( 0 ), poison( 0 ), poisoned( 0 ),
 poisontime( 0 ), poisontxt( 0 ), poisonwearofftime( 0 ), fleeat( 0 ), reattackat( 0 ), split( 0 ),
 splitchnc( 0 ), trainer( 0 ), trainingplayerin( 0 ), guildfealty( INVALIDSERIAL ), guildnumber( -1 ), flag( 0x04 ), murderrate( 0 ),
 crimflag( -1 ), casting( 0 ), spelltime( 0 ), spellCast( -1 ), spellaction( 0 ), nextact( 0 ), poisonserial( INVALIDSERIAL ),
 squelched( 0 ), mutetime( 0 ), med( 0 ), stealth( -1 ), running( 0 ), logout( 0 ), swingtarg( INVALIDSERIAL ), holdg( 0 ), raceGate( 65535 ),
-fly_steps( 0 ), carve( -1 ), commandLevel( 0 ), postType( LOCALPOST ), questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount(),
+fly_steps( 0 ), carve( -1 ), commandLevel( PLAYER_CMDLEVEL ), postType( LOCALPOST ), questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount(),
 step( 0 ), hairstyle( INVALIDID ), beardstyle( INVALIDID ), haircolor( INVALIDCOLOUR ), beardcolour( INVALIDCOLOUR ), orgSkin( colour ), petguarding( INVALIDSERIAL ),
-trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 ), speechItem( INVALIDSERIAL ), SavedAt( 0 ), addMenuLoc( INVALIDSERIAL ), remove( 0 )
+trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 ), speechItem( INVALIDSERIAL ), SavedAt( 0 ), addMenuLoc( INVALIDSERIAL ), remove( 0 ), willHunger( true )
 {
 	id = 0x0190;
 	xid = id;
@@ -2709,7 +2727,7 @@ CChar *CChar::Dupe( void )
 	target->SetCallNum( callnum );
 	target->SetPlayerCallNum( playercallnum );
 	target->SetPageGM( pagegm );
-	target->SetRegion( region );
+	target->SetRegion( regionNum );
 	target->SetSkillDelay( skilldelay );
 	target->SetObjectDelay( objectdelay );
 	target->SetMaking( making );
@@ -2913,7 +2931,7 @@ void CChar::SendToSocket( cSocket *s, bool sendDispZ, CChar *c )
 
 void CChar::Teleport( void )
 {
-	SI16 visrange = MAX_VISRANGE + Races->VisRange( GetRace() );
+	UI16 visrange = MAX_VISRANGE + Races->VisRange( GetRace() );
 	cSocket *mSock = calcSocketObjFromChar( this ), *tSock = NULL;
 
 	RemoveFromSight();
@@ -2959,10 +2977,7 @@ void CChar::Teleport( void )
 				for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
 				{
 					if( objInRange( this, tempItem, visrange ) )
-					{
-						if( !tempItem->GetVisible() || ( tempItem->GetVisible() && IsGM() ) )
-							sendItem( mSock, tempItem );
-					}
+						sendItem( mSock, tempItem );
 				}
 				MapArea->PopChar();
 				MapArea->PopItem();
@@ -5170,12 +5185,12 @@ bool CChar::LoadRemnants( int arrayOffset )
 	if( IsNpc() && IsAtWar() ) 
 		SetWar( false );
 
-	if( IsCounselor() && GetCommandLevel() < CNSCMDLEVEL && !IsGM() ) // SI32erim line to retain compatibility, MUST BE TAKEN out in the SI32 term!
-		SetCommandLevel( CNSCMDLEVEL );
-	if( IsGM() && GetCommandLevel() < GMCMDLEVEL )	// SI32erim line to retain compatibility, MUST BE TAKEN out in the SI32 term!
-		SetCommandLevel( GMCMDLEVEL );
+	if( IsCounselor() && GetCommandLevel() < CNS_CMDLEVEL && !IsGM() ) // SI32erim line to retain compatibility, MUST BE TAKEN out in the SI32 term!
+		SetCommandLevel( CNS_CMDLEVEL );
+	if( IsGM() && GetCommandLevel() < GM_CMDLEVEL )	// SI32erim line to retain compatibility, MUST BE TAKEN out in the SI32 term!
+		SetCommandLevel( GM_CMDLEVEL );
 	//if(ourAccount->lpaarHolding->->bFlags|=0x8000)
-	//	SetCommandLevel( GMCMDLEVEL );
+	//	SetCommandLevel( GM_CMDLEVEL );
 	////////////////////////////////////////////////////////////////////
 
 	SetRegion( calcRegionFromXY( GetX(), GetY(), worldNumber ) );
@@ -5289,17 +5304,16 @@ void CChar::FlushPath( void )
 void CChar::PostLoadProcessing( UI32 index )
 {
 	cBaseObject::PostLoadProcessing( index );
-	SERIAL tempSerial = (SERIAL)packitem;
-	if(tempSerial != INVALIDSERIAL )
+	SERIAL tempSerial = (SERIAL)packitem;		// we stored the serial in packitem
+	if( tempSerial != INVALIDSERIAL )
 		SetPackItem( calcItemObjFromSer( tempSerial ) );
 	else
 		SetPackItem( NULL );
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT)
 			SetWeight( Weight->calcCharWeight( this ) );
-	//
 	for( UI08 i = 0; i < TRUESKILLS; i++ )
 		Skills->updateSkillLevel( this, i );
-	// Need to add things to petlists, so can can clean up properly
+	// We need to add things to petlists, so we can cleanup after ourselves properly - Zane
 	cBaseObject *newOwner = GetOwnerObj();
 	SetOwner( newOwner );
 }
@@ -5427,8 +5441,55 @@ bool CChar::IsInBank( CItem* i )
 	if( i->GetMoreX() == 1 )
 		return true;
 	else if( i->GetCont() != NULL && i->GetContSerial() >= BASEITEMSERIAL )
-		return this->IsInBank( calcItemObjFromSer( i->GetContSerial() ) );
+		return IsInBank( calcItemObjFromSer( i->GetContSerial() ) );
 	else
 		return false;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    :  UI08 CChar::GetBestSkill( void )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Return characters highest skill
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetBestSkill( void )
+{
+	UI16 b = 0;
+	UI08 a = 0;
+	for( UI08 i = 0; i < TRUESKILLS; i++ )
+	{
+		if( GetBaseSkill( i ) > b )
+		{
+			a = i;
+			b = GetBaseSkill( i );
+		}
+	}
+	return a;
+}
+
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool CChar::isHuman( void )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check if character is Human or NPC
+//o---------------------------------------------------------------------------o
+bool CChar::isHuman( void )
+{
+	if( GetxID() == 0x0190 || GetxID() == 0x0191 )
+		return true;
+	else 
+		return false;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool CChar::inDungeon( void )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Determine if player is inside a dungeon
+//o---------------------------------------------------------------------------o
+bool CChar::inDungeon( void )
+{
+	return region[GetRegion()]->IsDungeon();
+}

@@ -10,6 +10,8 @@
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
+#include "townregion.h"
+#include "network.h"
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	UOXSOCKET calcSocketFromChar( CHARACTER i )
@@ -220,12 +222,12 @@ UOXSOCKET calcSocketFromSockObj( cSocket *s )
 //o--------------------------------------------------------------------------
 UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 {
-	for( int i = 0; i < cwmWorldState->GetLocationCount(); i++ )
+	for( UI16 i = 0; i < cwmWorldState->GetLocationCount(); i++ )
 	{
-		if( location[i].x1 <= x && location[i].y1 <= y && location[i].x2 >= x && location[i].y2 >= y )
+		if( cwmWorldState->location[i].x1 <= x && cwmWorldState->location[i].y1 <= y && cwmWorldState->location[i].x2 >= x && cwmWorldState->location[i].y2 >= y )
 		{
-			if( region[location[i].region]->WorldNumber() == worldNumber )
-				return location[i].region;
+			if( region[cwmWorldState->location[i].region]->WorldNumber() == worldNumber )
+				return cwmWorldState->location[i].region;
 		}
 	}
 	return 0xFF;

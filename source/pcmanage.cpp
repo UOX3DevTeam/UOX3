@@ -1,7 +1,13 @@
 #include "uox3.h"
 #include "cVersionClass.h"
 #include "cSkillClass.h"
+#include "cServerDefinitions.h"
+#include "wholist.h"
+#include "skills.h"
 #include "ssection.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "packets.h"
 
 extern cVersionClass CVC;
 
@@ -387,7 +393,7 @@ void createChar( cSocket *mSock )
 	if(actbTemp2.wAccountIndex!=AB_INVALID_ID&&((actbTemp2.wFlags&AB_FLAGS_GM)==AB_FLAGS_GM))
 	{ 
 		mChar->SetPriv( 0xFF );
-		mChar->SetCommandLevel( GMCMDLEVEL );
+		mChar->SetCommandLevel( GM_CMDLEVEL );
 	}
 	LPSTARTLOCATION toGo = cwmWorldState->ServerData()->GetServerLocation( Buffer[0x5B] );
 	if( toGo == NULL )

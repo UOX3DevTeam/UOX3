@@ -1,6 +1,8 @@
 #include "uox3.h"
 #include "cGuild.h"
+#include "speech.h"
 #include "ssection.h"
+#include "scriptc.h"
 #ifndef va_start
 	#include <cstdarg>
 	//using namespace std;

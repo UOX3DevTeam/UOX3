@@ -1,5 +1,8 @@
 #include "uox3.h"
 #include "boats.h"
+#include "weight.h"
+#include "mapstuff.h"
+#include "packets.h"
 
 #define XP 0
 #define YP 1

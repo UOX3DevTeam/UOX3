@@ -1,4 +1,7 @@
 #include "uox3.h"
+#include "weight.h"
+#include "fileio.h"
+#include "packets.h"
 
 // New class written based upon old UOX char_st.  Number of old members removed
 // and a number of members types modified as well

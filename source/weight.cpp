@@ -1,4 +1,7 @@
 #include "uox3.h"
+#include "weight.h"
+
+#include "mapstuff.h"
 
 /*
 New Weight Design

@@ -3,6 +3,21 @@
 #include "cdice.h"
 #include "SEFunctions.h"
 
+#include "cGuild.h"
+#include "combat.h"
+#include "movement.h"
+#include "townregion.h"
+#include "cWeather.hpp"
+#include "cRaces.h"
+#include "commands.h"
+#include "cMagic.h"
+#include "skills.h"
+#include "targeting.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+
 #ifndef va_start
 	#include <cstdarg>
 	//using namespace std;
@@ -498,10 +513,10 @@ JSBool SE_DoStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc == 6 )
 	{
 		bool explode = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-		staticeffect( &items[targThing], effectID, speed, loop, explode );
+		Effects->staticeffect( &items[targThing], effectID, speed, loop, explode );
 	}
 	else
-		staticeffect( &chars[targThing], effectID, speed, loop );
+		Effects->staticeffect( &chars[targThing], effectID, speed, loop );
 
 	return JS_TRUE;
 }
@@ -547,9 +562,9 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			return JS_FALSE;
 		}
 		if( argc == 8 )
-			tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3, myItemPtr );
+			Effects->tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3, myItemPtr );
 		else
-			tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3 );
+			Effects->tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	else
 	{
@@ -562,9 +577,9 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			return JS_FALSE;
 		}
 		if( argc == 8 )
-			tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
+			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 		else
-			tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
+			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	return JS_TRUE;
 }
@@ -1472,9 +1487,9 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		renderMode = (UI32)JSVAL_TO_INT( argv[7+offset] );
 
 	if( targLocation )
-		movingeffect( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+		Effects->movingeffect( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
 	else
-		movingeffect( src, trg, effect, speed, loop, explode, hue, renderMode );
+		Effects->movingeffect( src, trg, effect, speed, loop, explode, hue, renderMode );
 	return JS_TRUE;
 }
 
@@ -1851,8 +1866,8 @@ JSBool SE_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	// can't use the magic subsystem stuff, it deletes reags :<
-	staticeffect( &chars[player], 0x3735, 0, 30 );
-	soundeffect( &chars[player], 0x005C );
+	Effects->staticeffect( &chars[player], 0x3735, 0, 30 );
+	Effects->PlaySound( &chars[player], 0x005C );
 	if( socket != -1 )
 		npcEmote( calcSocketObjFromSock( socket ), &chars[player], 771, false );
 	return JS_TRUE;

@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "packets.h"
 
 #if defined(__unix__)
 #include <unistd.h>
@@ -616,30 +617,6 @@ void cSocket::AddID5( SI08 newValue )
 	addid5 = newValue;
 }
 
-/*
-//o---------------------------------------------------------------------------o
-//|   Function    -  make_st& cSocket::AddID4( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the make_st associated with the socket
-//o---------------------------------------------------------------------------o
-make_st& cSocket::ItemMake( void )
-{
-	return itemmake;
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID4( make_st& newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the make_st associated with the socket
-//o---------------------------------------------------------------------------o
-void cSocket::ItemMake( make_st& newValue )
-{
-	itemmake = newValue;
-}
-*/
 cSocket::cSocket() : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID( AB_INVALID_ID ),
 tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( NULL ), newClient( true ), firstPacket( true ), range( 15 ),
 cryptclient( false ), cliSocket( INVALID_SOCKET ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),

@@ -1,10 +1,6 @@
 #ifndef __SPEECH_H__
 #define __SPEECH_H__
 
-#include <string>
-#include <vector>
-//using namespace std;
-
 const std::string DistinctLanguageNames[DL_COUNT] =
 {
 	"UNK",

@@ -1,8 +1,6 @@
 #ifndef __XGM_H_
 #define __XGM_H_
 
-#include "packets.h"
-
 const UI32 XGMVersion = calcserial( 0, 0, 1, 0 );
 
 enum XGMServerStat

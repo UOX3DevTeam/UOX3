@@ -1,10 +1,3 @@
-#include "uox3.h"
-#include <vector>
-#include <string>
-#include <iostream>
-#include <fstream>
-
-//using namespace std;
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__

@@ -1,7 +1,5 @@
 #pragma warning( disable : 4786 )
 
-#include "uox3.h"
-
 class ScriptSection;
 
 typedef std::map< std::string, ScriptSection * >	SSMAP;
@@ -18,7 +16,7 @@ public:
 	ScriptSection *	FirstEntry( void );
 	ScriptSection *	NextEntry( void );
 
-  bool isin( const std::string section );
+	bool isin( const std::string section );
 	const char * EntryName( void );
 	long NumEntries( void ) const { return defEntries.size(); }
 	bool IsErrored( void ) const { return errorState; }

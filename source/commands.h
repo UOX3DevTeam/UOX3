@@ -10,6 +10,7 @@ private:
 	void InitClearance( void );
 	CmdTableIterator	cmdPointer;
 	SI32				tnum;			// Amount of arguments in a command
+	void			CommandReset( void );
 
 public:
 	SI32			GetNumArguments( void );

@@ -1,8 +1,21 @@
 #include "uox3.h"
-#include "cmdtable.h"
 #include "cdice.h"
-#include "ssection.h"
 #include "mstring.h"
+#include "skills.h"
+#include "boats.h"
+#include "cGuild.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "commands.h"
+#include "cMagic.h"
+#include "ssection.h"
+#include "gump.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "targeting.cpp"
@@ -654,11 +667,11 @@ void cTargets::TeleTarget( cSocket *s )
 			}
 		}
 		
-		soundeffect( s, 0x01FE, true );
+		Effects->PlaySound( s, 0x01FE, true );
 		
 		mChar->SetLocation( targX, targY, targZ );
 		mChar->Teleport();
-		staticeffect( mChar, 0x372A, 0x09, 0x06 );
+		Effects->staticeffect( mChar, 0x372A, 0x09, 0x06 );
 	} 
 }
 
@@ -973,14 +986,14 @@ void cTargets::KeyTarget( cSocket *s )
 		{
 			i->SetType( 13 );
 			sysmessage( s, 1021 );
-			soundeffect( s, 0x0049, true );
+			Effects->PlaySound( s, 0x0049, true );
 			return;
 		}
 		if( i->GetType() == 13 && objInRange( mChar, i, 2 ) )
 		{
 			i->SetType( 12 );
 			sysmessage( s, 1022 );
-			soundeffect( s, 0x0049, true );
+			Effects->PlaySound( s, 0x0049, true );
 			return;
 		}
 		if( i->GetID() == 0x0BD2 )
@@ -1219,8 +1232,8 @@ void cTargets::GhostTarget( cSocket *s )
 	if( !i->IsDead() )
 	{
 		i->SetAttacker( s->Currchar() );
-		bolteffect( i );
-		soundeffect( i, 0x0029 );
+		Effects->bolteffect( i );
+		Effects->PlaySound( i, 0x0029 );
 		doDeathStuff( i );
 	} 
 	else 
@@ -1233,8 +1246,8 @@ void cTargets::BoltTarget( cSocket *s )
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		bolteffect( i );
-		soundeffect( i, 0x0029 );
+		Effects->bolteffect( i );
+		Effects->PlaySound( i, 0x0029 );
 	}
 }
 
@@ -1375,7 +1388,7 @@ void cTargets::DvatTarget( cSocket *s )
 		}
 		i->SetColour( ( ( s->AddID1() )<<8) + s->AddID2() );
 		RefreshItem( i );
-		soundeffect( s, 0x023E, true );
+		Effects->PlaySound( s, 0x023E, true );
 	}
 	else
 		sysmessage( s, 1033 );
@@ -2121,7 +2134,7 @@ void cTargets::ExpPotionTarget( cSocket *s ) //Throws the potion and places it (
 				i->SetCont( NULL );
 				i->SetLocation( x, y, z );
 				i->SetMovable( 2 ); //make item unmovable once thrown
-				movingeffect( mChar, i, 0x0F0D, 0x11, 0x00, 0x00 );
+				Effects->movingeffect( mChar, i, 0x0F0D, 0x11, 0x00, 0x00 );
 				RefreshItem( i );
 			}
 		} 
@@ -2240,7 +2253,7 @@ void cTargets::SwordTarget( cSocket *s )
 			cDice myDice( 2, 3, 0 );
 			UI32 Delay = myDice.roll();
 
-			tempeffect( p, p, 43, static_cast<UI16>(Delay*300), 0, 0 );
+			Effects->tempeffect( p, p, 43, static_cast<UI16>(Delay*300), 0, 0 );
 		}
 		else
 		{
@@ -2291,10 +2304,10 @@ void cTargets::SwordTarget( cSocket *s )
 				return;
 			}
 			if( !mChar->IsOnHorse() )
-				action( s, 0x0D );
+				Effects->action( s, 0x0D );
 			else 
-				action( s, 0x1D );
-			soundeffect( s, 0x013E, true );
+				Effects->action( s, 0x1D );
+			Effects->PlaySound( s, 0x013E, true );
 			CItem *c = Items->SpawnItem( NULL, mChar, 1, "#", true, 0x0DE1, 0, false, false ); //Kindling
 			if( c == NULL ) 
 				return;
@@ -2325,7 +2338,7 @@ void cTargets::SwordTarget( cSocket *s )
 					sysmessage( s, 776 ); 
 					return; 
 				} 
-				soundeffect( s, 0x013E, true); // I'm not sure 
+				Effects->PlaySound( s, 0x013E, true); // I'm not sure 
 				CItem *c = Items->SpawnItem( s, mChar, 4, "raw fish steak", true, 0x097A, 0, true, true); 
 				if( c == NULL ) 
 				{ 
@@ -2359,7 +2372,7 @@ void cTargets::CorpseTarget( cSocket *s )
 	if( objInRange( s, i, 1 ) ) 
 	{
 		s->AddMItem( i );
-		action( s, 0x20 );
+		Effects->action( s, 0x20 );
 		n = true;
 		if( i->GetMore( 1 ) == 0 )
 		{
@@ -2707,8 +2720,8 @@ void cTargets::StaminaTarget( cSocket *s )
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		soundeffect( i, 0x01F2 );
-		staticeffect( i, 0x376A, 0x09, 0x06 );
+		Effects->PlaySound( i, 0x01F2 );
+		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
 		i->SetStamina( i->GetMaxStam() );
 		updateStats( i, 2 );
 		return;
@@ -2721,8 +2734,8 @@ void cTargets::ManaTarget( cSocket *s )
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		soundeffect( i, 0x01F2 );
-		staticeffect( i, 0x376A, 0x09, 0x06 );
+		Effects->PlaySound( i, 0x01F2 );
+		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
 		i->SetMana( i->GetMaxMana() );
 		updateStats( i, 1 );
 		return;
@@ -2968,8 +2981,8 @@ void cTargets::FullStatsTarget( cSocket *s )
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		soundeffect( i, 0x01F2 );
-		staticeffect( i, 0x376A, 0x09, 0x06 );
+		Effects->PlaySound( i, 0x01F2 );
+		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
 		i->SetMana( i->GetMaxMana() );
 		i->SetHP( i->GetMaxHP() );
 		i->SetStamina( i->GetMaxStam() );
@@ -3108,7 +3121,7 @@ void cTargets::NpcResurrectTarget( CChar *i )
 	if( i->IsDead() && mSock != NULL )
 	{
 		Fame( i, 0 );
-		soundeffect( i, 0x0214 );
+		Effects->PlaySound( i, 0x0214 );
 		i->SetID( i->GetOrgID() );
 		i->SetxID( i->GetOrgID() );
 		i->SetSkin( i->GetxSkin() );

@@ -7,16 +7,15 @@
 
 #include "uox3.h"
 #include "books.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
 
 cBooks::cBooks()//Constructor
 {
-	return;
 }
 
 cBooks::~cBooks()//Destructor
 {
-
 }
 
 // opens old (readonly) books == old, bugfixed readbook function

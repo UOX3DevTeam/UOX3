@@ -1,6 +1,8 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+class CPIGumpMenuSelect;
+
 enum ScriptEvent
 {
 	seOnCreate = 0,			//	*	Done for PCs on global script

@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "cEffects.h"
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void useDoor( cSocket *s, CItem *item )
@@ -37,8 +38,8 @@ void useDoor( cSocket *s, CItem *item )
 			}
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 1) )
 		{
@@ -50,7 +51,7 @@ void useDoor( cSocket *s, CItem *item )
 			}
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 2) )
@@ -60,8 +61,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 3) )
 		{
@@ -70,7 +71,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 4) )
@@ -79,8 +80,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncX( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 5) )
 		{
@@ -88,7 +89,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncX( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 6) )
@@ -98,8 +99,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 7) )
 		{
@@ -108,7 +109,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 8) )
@@ -118,8 +119,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 9) )
 		{
@@ -128,7 +129,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 10) )
@@ -138,8 +139,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 11) )
 		{
@@ -148,7 +149,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 12) )
@@ -156,15 +157,15 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncID( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 13) )
 		{
 			item->IncID( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 		else if( x == (db + 14) )
@@ -173,8 +174,8 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( -1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, false );
-			tempeffect( mChar, item, 13, 0, 0, 0 );
+			Effects->doorSound( item, x, false );
+			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 		}
 		else if( x == (db + 15) )
 		{
@@ -182,7 +183,7 @@ void useDoor( cSocket *s, CItem *item )
 			item->IncY( 1 );
 			RefreshItem( item );
 			changed = true;
-			doorsfx( item, x, true );
+			Effects->doorSound( item, x, true );
 			item->SetDoorOpen( false );
 		}
 	}

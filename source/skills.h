@@ -1,7 +1,21 @@
 #ifndef __SKILLS_H__
 #define __SKILLS_H__
 
-typedef void (TargetFunc)( cSocket *s );
+#include "targeting.h"
+
+struct createMenu
+{
+	std::vector< UI16 > itemEntries;
+	std::vector< UI16 > menuEntries;
+};
+struct createMenuEntry
+{
+	UI16 targID;
+	UI16 colour;
+	std::string name;
+	UI16 subMenu;
+	createMenuEntry() : targID( 0 ), colour( 0 ), name( "" ), subMenu( 0 ) { }
+};
 
 struct resourceEntry
 {
@@ -10,6 +24,17 @@ struct resourceEntry
 	SI16	logAmt;
 	int		logTime;
 };
+
+struct miningData
+{
+	UI16 colour;		// colour of the ore, for colour of ingot
+	UI16 minSkill;		// minimum skill needed to make the ingot
+	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
+	bool foreign;		// if not iron, then it can print out that it's a stranger ore when failing
+	int makemenu;		// the makemenu required for making with
+	UI08 minAmount;		// min number of ingots to load anything
+};
+
 class cSkills
 {
 private:
@@ -57,7 +82,6 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-#if !defined(__unix__)
 	TargetFunc AlchemyTarget;
 	TargetFunc AnatomyTarget;
 	TargetFunc AnimalLoreTarget;
@@ -101,51 +125,6 @@ public:
 	TargetFunc Tinkering;
 	TargetFunc TreeTarget;
 	TargetFunc Inscribe;
-#else
-	void AlchemyTarget(cSocket *s);
-	void AnatomyTarget(cSocket *s);
-	void AnimalLoreTarget(cSocket *s);
-	void ArmsLoreTarget(cSocket *s);
-	void BeggingTarget(cSocket *s);
-	void BottleTarget(cSocket *s);
-	void BowCraft(cSocket *s);
-	void Carpentry(cSocket *s);
-	void CreateBandageTarget(cSocket *s);
-	void DetectHidden(cSocket *s);
-	void EnticementTarget1(cSocket *s);
-	void EnticementTarget2(cSocket *s);
-	void EvaluateIntTarget(cSocket *s);
-	void FishTarget(cSocket *s);
-	void Fletching(cSocket *s);
-	void ForensicsTarget(cSocket *s);
-	void GraveDig(cSocket *s);
-	void HealingSkillTarget(cSocket *s);
-	void ItemIDTarget(cSocket *s);
-	void LockPick(cSocket *s);
-	void Loom(cSocket *s);
-	void handleCooking( cSocket *s );
-	void Mine(cSocket *s);
-	void Persecute(cSocket *s);
-	void PoisoningTarget(cSocket *s);
-	void ProvocationTarget1(cSocket *s);
-	void ProvocationTarget2(cSocket *s);
-	void RepairMetal( cSocket *s );
-	void RepairLeather( cSocket *s );
-	void RepairBow( cSocket *s );
-	void SmeltOre(cSocket *s);
-	void Smith(cSocket *s);
-	void SpiritSpeak(cSocket *s);
-	void StealingTarget(cSocket *s);
-	void Tailoring(cSocket *s);
-	void TameTarget(cSocket *s);
-	void TDummy(cSocket *s);
-	void TinkerAwg(cSocket *s);
-	void TinkerAxel(cSocket *s);
-	void TinkerClock(cSocket *s);
-	void Tinkering(cSocket *s);
-	void TreeTarget(cSocket *s);
-	void Inscribe( cSocket *s );
-#endif
 
 	void Load( void );
 	void SaveResources( void );

@@ -1,10 +1,6 @@
 #ifndef __Races__
 #define __Races__
 
-#include <vector>
-#include <string>
-//using namespace std;
-
 struct ColourPair
 {
 	COLOUR cMin;

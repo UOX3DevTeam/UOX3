@@ -3,6 +3,13 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "uox3.h"
+#include "cGuild.h"
+#include "townregion.h"
+#include "cSpawnRegion.h"
+#include "skills.h"
+#include "speech.h"
+#include "cEffects.h"
+#include "network.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -652,7 +659,7 @@ UI16 CWorldMain::GetLocationCount( void )
 }
 void CWorldMain::SetLocationCount( UI16 newVal )
 {
-	executebatch = newVal;
+	locationcount = newVal;
 }
 
 //o--------------------------------------------------------------------------
@@ -784,6 +791,11 @@ void CWorldMain::ResetDefaults( void )
 	SetEscortRegions( 0 );
 	memset( validEscortRegion, 0, sizeof( validEscortRegion[0] ) * 256 );
 	memset( erroredLayers, 0, sizeof( erroredLayers[0] ) * MAXLAYERS );
+	murdererTags.resize( 0 );
+	jails.resize( 0 );
+	teleLocs.resize( 0 );
+	uoxtimeout.tv_sec = 0;
+	uoxtimeout.tv_usec = 0;
 }
 
 //o---------------------------------------------------------------------------o
@@ -891,7 +903,7 @@ void CWorldMain::savenewworld( bool x )
 		GuildSys->Save();
 		JailSys->WriteData();
 		Skills->SaveResources();
-		SaveEffects();
+		Effects->SaveEffects();
 
 		if( announce() )
 			sysbroadcast("World Save Complete.");

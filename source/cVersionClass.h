@@ -14,8 +14,6 @@
 #ifndef __CVERSIONCLASS_H__
 #define __CVERSIONCLASS_H__
 
-#include <string.h>
-
 #if defined(_MSC_VER)
 #if _MSC_VER > 1000
 #pragma once

@@ -11,6 +11,56 @@
 #endif // _MSC_VER > 1000
 #endif
 #include "cServerData.h"
+#include "jail.h"
+
+struct location_st
+{
+	SI16 x1;
+	SI16 y1;
+	SI16 x2;
+	SI16 y2;
+	UI08 region;
+};
+
+struct logout_st//Instalog
+{
+	SI16 x1;
+	SI16 y1;
+	SI16 x2;
+	SI16 y2;
+};
+
+struct advance_st
+{
+	UI16 base;
+	UI16 success;
+	UI16 failure;
+};
+
+struct skill_st
+{
+	UI16 strength;
+	UI16 dexterity;
+	UI16 intelligence;
+	char madeword[50];
+	std::vector< advance_st > advancement;
+};
+
+struct title_st // For custom titles
+{
+	char fame[MAX_FAMETITLE];
+	char skill[MAX_TITLE];
+	char prowess[MAX_TITLE];
+};
+
+// Scriptable Murder Tags - Zane
+struct MurderPair
+{
+	SI16 loBound;
+	std::string toDisplay;
+	MurderPair() : loBound( 0 ) { }
+	MurderPair( SI16 lB, const char *toDisp ) : loBound( lB ) { toDisplay = toDisp; }
+};
 
 class CWorldMain  
 {
@@ -162,6 +212,16 @@ public:
 	void	SetErroredLayer( UI08 part, SI32 newVal );
 	SI32	GetErroredLayer( UI08 part );
 	void	IncErroredLayer( UI08 part );
+
+	// Structs
+	timeval								uoxtimeout;
+	location_st							location[4000];				// Locations ( for town regions)
+	logout_st							logout[1024];					// Instalog
+	skill_st							skill[SKILLS+1];				// Skill data
+	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
+	std::vector< MurderPair >			murdererTags;
+	std::vector< JailCell >				jails;
+	std::vector< TeleLocationEntry >	teleLocs;
 
 	void	ResetDefaults( void );
 	void	CheckTimers( void );

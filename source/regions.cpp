@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "fileio.h"
 
 SI16 upperArrayX[UOMT_COUNT];
 SI16 upperArrayY[UOMT_COUNT];

@@ -4,8 +4,6 @@
 //									-- Side note, I wanted regions to be more generic, but
 //									now that I have to do this, time doesn't allow for it yet.
 
-#include "typedefs.h"
-
 #ifndef __Region_h
 #define __Region_h
 

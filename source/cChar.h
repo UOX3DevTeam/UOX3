@@ -1,8 +1,6 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
 
-#include "cAccountClass.h"
-
 class CChar : public cBaseObject
 {
 		ACCOUNTSBLOCK ourAccount;
@@ -77,6 +75,7 @@ class CChar : public cBaseObject
 		UI16		emotecolor;
 
 		bool		may_levitate;
+		bool		willHunger;
 
 		SI16		fx1; //NPC Wander Point 1 x	// this, plus fx2, are being used to store item indices.  WRONG WRONG WRONG!!!
 		SI16		fx2; //NPC Wander Point 2 x	// DON'T USE IT PEOPLE!!!
@@ -96,14 +95,14 @@ class CChar : public cBaseObject
 		UI08		running; // Stamina Loose while running
 		UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
-		UI08		region;
+		UI08		regionNum;
 		
 		CItem *		packitem; // Only used during character creation
 		CHARACTER	targ; // Current combat target
 		CHARACTER	attacker; // Character who attacked this character
 		CHARACTER	ftarg; // NPC Follow Target
-		CItem *	smeltitem;
-		SERIAL  skillitem;
+		CItem *		smeltitem;
+		SERIAL		skillitem;
 		UI16		advobj; //Has used advance gate?
 		CHARACTER	swingtarg; //Tagret they are going to hit after they swing
 		CHARACTER	trackingtarget; // Tracking target ID
@@ -474,9 +473,9 @@ class CChar : public cBaseObject
 		CHARACTER	GetTarg( void ) const;
 		CHARACTER	GetAttacker( void ) const;
 		CHARACTER	GetFTarg( void ) const;
-		CItem * GetSmeltItem( void ) const;
-		SERIAL	GetSkillItemSerial( void ) const;
-		CItem * GetSkillItem( void ) const;
+		CItem *		GetSmeltItem( void ) const;
+		SERIAL		GetSkillItemSerial( void ) const;
+		CItem *		GetSkillItem( void ) const;
 		UI16		GetAdvObj( void ) const;
 		CHARACTER	GetSwingTarg( void ) const;
 		CHARACTER	GetTrackingTarget( void ) const;
@@ -646,6 +645,9 @@ class CChar : public cBaseObject
 
 		bool		IsValidMount( void ) const;
 
+		bool		GetHungerStatus( void ) const;
+		void		SetHungerStatus( bool );
+
 		virtual bool	Save( std::ofstream &outStream, SI32 mode ) const;
 		virtual bool	DumpHeader( std::ofstream &outStream, SI32 mode ) const;
 		virtual bool	DumpBody( std::ofstream &outStream, SI32 mode ) const;
@@ -702,7 +704,9 @@ class CChar : public cBaseObject
 		void			SetMana( SI16 mn );
 		
 		bool			IsInBank( CItem* i );
-
+		UI08			GetBestSkill( void );
+		bool			isHuman( void );
+		bool			inDungeon( void );
 };
 
 

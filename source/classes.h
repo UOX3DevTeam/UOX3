@@ -8,23 +8,16 @@ class CChar;
 class CItem;
 class cSocket;
 class CMultiObj;
-#include "mapstuff.h"
+class cSpawnRegion;
+class BinBuffer;
+
 #include "cBaseObject.h"
-
-
 #include "cChar.h"
 #include "cItem.h"
+#include "cMultiObj.h"
 
 class ScriptSection;	// forward declaration
 class cScript;
-
-#include "cSpawnRegion.h"
-#include "combat.h"
-#include "commands.h"
-
-class cHTMLTemplate;
-class cHTMLTemplates;
-#include "cHTMLSystem.h"
 
 class cItem
 {
@@ -45,6 +38,7 @@ public:
 	void		CheckEquipment( CChar *p );
 	void		StoreItemRandomValue( CItem *i, UI08 tmpreg );
 	CItem *		SpawnRandomItem( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cItemID);
+	void		addGold( cSocket *s, UI32 amt );
 
 private:
 	CItem *		CreateItem( cSocket *s, std::string name, UI08 worldNumber );
@@ -79,24 +73,6 @@ public:
 	void		stopPetGuarding( CChar *pet );
 	CChar *		SpawnRandomMonster( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cNpcID);
 };
-
-#include "skills.h"
-#include "weight.h"
-#include "targeting.h"
-#include "network.h"
-#include "cMagic.h"
-#include "movement.h"
-#include "teffect.h"
-#include "packets.h"
-#include "gump.h"
-#include "PageVector.h"
-#include "cMultiObj.h"
-#include "wholist.h"
-#include "handlers.h"
-#include "trigger.h"
-#include "cScript.h"
-#include "cSocket.h"
-#include "jail.h"
 
 #endif
 

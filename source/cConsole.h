@@ -1,4 +1,3 @@
-#include "uox3.h"
 #ifndef __CCONSOLE__
 #define __CCONSOLE__
 

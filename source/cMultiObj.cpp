@@ -1,4 +1,5 @@
 #include "uox3.h"
+#include "fileio.h"
 
 //	1.0		Abaddon		28th July, 2000
 //			Very basically fleshed out

@@ -1,5 +1,11 @@
 #include "uox3.h"
+#include "msgboard.h"
+
+#include "townregion.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "cEffects.h"
+#include "packets.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // LOCAL - GLOBAL DATA
@@ -1813,8 +1819,8 @@ void MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock )
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
 		if( servicePay < 75 ) 
 			servicePay += RandomNum( 75, 100 );
-		addgold( mSock, servicePay );
-		goldSound( mSock, servicePay );
+		Items->addGold( mSock, servicePay );
+		Effects->goldSound( mSock, servicePay );
 		npcTalk( mSock, npcIndex, 739, false, mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
 	}
 	

@@ -12,7 +12,6 @@
 #ifndef __CMDTABLE_H
 #define __CMDTABLE_H
 
-#include "uox3.h"
 // Types of commands
 enum commandTypes
 {
@@ -44,6 +43,23 @@ struct cmdtable_mapentry
 	cmdtable_mapentry() : cmdLevelReq( 0 ), cmdType( CMD_FUNC ), cmd_extra( NULL ) { }
 	cmdtable_mapentry( UI32 cLR, UI32 cT, void (*ce)() ) : cmdLevelReq( cLR ), cmdType( cT ), cmd_extra( ce ) { }
 };
+
+struct targtable_entry {
+    const char		*name;
+	UI08			cmdLevelReq;
+	UI08			cmdType;
+    UI08			targID;
+    SI32			dictEntry;
+};
+struct targtable_mapentry {
+	UI08			cmdLevelReq;
+	UI08			cmdType;
+    UI08			targID;
+    SI32			dictEntry;
+	targtable_mapentry() : cmdLevelReq( 0 ), cmdType( CMD_TARGET ), targID( 0 ), dictEntry( 0 ) { }
+	targtable_mapentry( UI08 cLR, UI08 cT, UI08 tID, SI32 dE ) : cmdLevelReq( cLR ), cmdType( cT ), targID( tID ), dictEntry( dE ) { }
+};
+
 typedef std::map< std::string, cmdtable_mapentry >	CmdTableDataType;
 typedef CmdTableDataType::iterator			CmdTableIterator;
 extern	CmdTableDataType					cmd_table;
@@ -51,282 +67,161 @@ extern	CmdTableDataType					cmd_table;
 #define CMD_EXEC	void (*) ( cSocket * )
 #define CMD_DEFINE	void (*)()
 
-typedef struct target_s TARGET_S;
-struct target_s 
-{	// arguments to the target() function
-	UI08	targType, targID;
-	SI32	dictEntry;
-};
+typedef std::map< std::string, targtable_mapentry >	TargetTableDataType;
+typedef TargetTableDataType::iterator			TargetTableIterator;
+extern	TargetTableDataType					targ_table;
 
 // Defined commands that are just being mapped to internal functions
 #define command_time telltime
 
-
-// All command_ functions take an int value of the player that triggered the command.
-#define CMD_HANDLER( name ) void name ( cSocket * )
-#define TAR_HANDLER( name ) extern target_s name
-
-
+typedef void (CommandFunc)( cSocket *s );
 // All defined commands
 // A
-CMD_HANDLER( command_add );
-CMD_HANDLER( command_addx );
-CMD_HANDLER( command_allmoveon );
-CMD_HANDLER( command_allmoveoff );
-CMD_HANDLER( command_additem );
-CMD_HANDLER( command_areaCommand );
-CMD_HANDLER( command_action );
-CMD_HANDLER( command_announceon );
-CMD_HANDLER( command_announceoff );
-CMD_HANDLER( command_addnpc );
-CMD_HANDLER( command_addcharacter );
-CMD_HANDLER( command_addaccount );
+CommandFunc command_add;
+CommandFunc command_addx;
+CommandFunc command_allmoveon;
+CommandFunc command_allmoveoff;
+CommandFunc command_additem;
+CommandFunc command_areaCommand;
+CommandFunc command_action;
+CommandFunc command_announceon;
+CommandFunc command_announceoff;
+CommandFunc command_addnpc;
+CommandFunc command_addcharacter;
+CommandFunc command_addaccount;
 // B
-CMD_HANDLER( command_brightlight );
+CommandFunc command_brightlight;
 // C
-CMD_HANDLER( command_cleanup );
-CMD_HANDLER( command_clear );
-CMD_HANDLER( command_command );
-CMD_HANDLER( command_cq );
-CMD_HANDLER( command_cnext );
-CMD_HANDLER( command_cclear );
-CMD_HANDLER( command_cachestats );
-CMD_HANDLER( command_cy );
+CommandFunc command_cleanup;
+CommandFunc command_clear;
+CommandFunc command_command;
+CommandFunc command_cq;
+CommandFunc command_cnext;
+CommandFunc command_cclear;
+CommandFunc command_cachestats;
+CommandFunc command_cy;
 // D
-CMD_HANDLER( command_dye );
-CMD_HANDLER( command_dupe );
-CMD_HANDLER( command_disconnect );
-CMD_HANDLER( command_dungeonlight );
-CMD_HANDLER( command_darklight );
-CMD_HANDLER( command_decay );
-CMD_HANDLER( command_delid );
+CommandFunc command_dye;
+CommandFunc command_dupe;
+CommandFunc command_disconnect;
+CommandFunc command_dungeonlight;
+CommandFunc command_darklight;
+CommandFunc command_decay;
+CommandFunc command_delid;
 // E
 // F
-CMD_HANDLER( command_fix );
-CMD_HANDLER( command_forcewho );
+CommandFunc command_fix;
+CommandFunc command_forcewho;
 // G
-CMD_HANDLER( command_gms );
-CMD_HANDLER( command_gmtransfer );
-CMD_HANDLER( command_gotocur );
-CMD_HANDLER( command_gpost );
-CMD_HANDLER( command_goplace );
-CMD_HANDLER( command_gochar );
-CMD_HANDLER( command_go );
-CMD_HANDLER( command_gcollect );
-CMD_HANDLER( command_gmmenu );
-CMD_HANDLER( command_gumpmenu );
-CMD_HANDLER( command_gmopen );
-CMD_HANDLER( command_gumpopen );
-CMD_HANDLER( command_guardson );
-CMD_HANDLER( command_guardsoff );
-CMD_HANDLER( command_getlight );
-CMD_HANDLER( command_gy );
+CommandFunc command_gms;
+CommandFunc command_gmtransfer;
+CommandFunc command_gotocur;
+CommandFunc command_gpost;
+CommandFunc command_goplace;
+CommandFunc command_gochar;
+CommandFunc command_go;
+CommandFunc command_gcollect;
+CommandFunc command_gmmenu;
+CommandFunc command_gumpmenu;
+CommandFunc command_gmopen;
+CommandFunc command_gumpopen;
+CommandFunc command_guardson;
+CommandFunc command_guardsoff;
+CommandFunc command_getlight;
+CommandFunc command_gy;
 // H
-CMD_HANDLER( command_hidehs );
-CMD_HANDLER( command_howto );
+CommandFunc command_hidehs;
+CommandFunc command_howto;
 // I
-CMD_HANDLER( command_iwipe );
-CMD_HANDLER( command_itemmenu );
-CMD_HANDLER( command_invul );
+CommandFunc command_iwipe;
+CommandFunc command_itemmenu;
+CommandFunc command_invul;
 // J
 // K
-CMD_HANDLER( command_killall );
+CommandFunc command_killall;
 // L
-CMD_HANDLER( command_lpost );
-CMD_HANDLER( command_light );
-CMD_HANDLER( command_loaddefaults );
+CommandFunc command_lpost;
+CommandFunc command_light;
+CommandFunc command_loaddefaults;
 // M
-CMD_HANDLER( command_midi );
-CMD_HANDLER( command_minecheck );
-CMD_HANDLER( command_make );
+CommandFunc command_midi;
+CommandFunc command_minecheck;
+CommandFunc command_make;
 // N
-CMD_HANDLER( command_next );
-CMD_HANDLER( command_noinvul );
-CMD_HANDLER( command_nodecay );
-CMD_HANDLER( command_npcrect );
-CMD_HANDLER( command_npccircle );
-CMD_HANDLER( command_npcwander );
-CMD_HANDLER( command_nacct );
+CommandFunc command_next;
+CommandFunc command_noinvul;
+CommandFunc command_nodecay;
+CommandFunc command_npcrect;
+CommandFunc command_npccircle;
+CommandFunc command_npcwander;
+CommandFunc command_nacct;
 // O
 // P
-CMD_HANDLER( command_post );
-CMD_HANDLER( command_poly );
-CMD_HANDLER( command_pdump );
+CommandFunc command_post;
+CommandFunc command_poly;
+CommandFunc command_pdump;
 // Q
-CMD_HANDLER( command_q );
+CommandFunc command_q;
 // R
-CMD_HANDLER( command_regspawnall );
-CMD_HANDLER( command_resend );
-CMD_HANDLER( command_rpost );
-CMD_HANDLER( command_rename );
-CMD_HANDLER( command_restock );
-CMD_HANDLER( command_restockall );
-CMD_HANDLER( command_respawn );
-CMD_HANDLER( command_regspawnmax );
-CMD_HANDLER( command_regspawn );
-CMD_HANDLER( command_reloadserver );
-CMD_HANDLER( command_reloadaccounts );
-CMD_HANDLER( command_readspawnregions );
-CMD_HANDLER( command_reportbug );
-CMD_HANDLER( command_readini );
-CMD_HANDLER( command_reloaddefs );
-CMD_HANDLER( command_rename2 );
+CommandFunc command_regspawnall;
+CommandFunc command_resend;
+CommandFunc command_rpost;
+CommandFunc command_rename;
+CommandFunc command_restock;
+CommandFunc command_restockall;
+CommandFunc command_respawn;
+CommandFunc command_regspawnmax;
+CommandFunc command_regspawn;
+CommandFunc command_reloadserver;
+CommandFunc command_reloadaccounts;
+CommandFunc command_readspawnregions;
+CommandFunc command_reportbug;
+CommandFunc command_readini;
+CommandFunc command_reloaddefs;
+CommandFunc command_rename2;
 // S
-CMD_HANDLER( command_status );
-CMD_HANDLER( command_showids );
-CMD_HANDLER( command_skin );
-CMD_HANDLER( command_save );
-CMD_HANDLER( command_showtime );
-CMD_HANDLER( command_setpriv );
-CMD_HANDLER( command_settime );
-CMD_HANDLER( command_shutdown );
-CMD_HANDLER( command_setshoprestockrate );
-CMD_HANDLER( command_showhs );
-CMD_HANDLER( command_set );
-CMD_HANDLER( command_squelch );
-CMD_HANDLER( command_spawnkill );
-CMD_HANDLER( command_setrace );
-CMD_HANDLER( command_sfx );
-CMD_HANDLER( command_secondsperuominute );
-CMD_HANDLER( command_sgy );
+CommandFunc command_status;
+CommandFunc command_showids;
+CommandFunc command_skin;
+CommandFunc command_save;
+CommandFunc command_showtime;
+CommandFunc command_setpriv;
+CommandFunc command_settime;
+CommandFunc command_shutdown;
+CommandFunc command_setshoprestockrate;
+CommandFunc command_showhs;
+CommandFunc command_set;
+CommandFunc command_squelch;
+CommandFunc command_spawnkill;
+CommandFunc command_setrace;
+CommandFunc command_sfx;
+CommandFunc command_secondsperuominute;
+CommandFunc command_sgy;
 // T
-CMD_HANDLER( command_teleport );
-CMD_HANDLER( command_tile );
-CMD_HANDLER( command_title );
-CMD_HANDLER( command_tell );
-CMD_HANDLER( command_tilew );
-CMD_HANDLER( command_time );
-CMD_HANDLER( command_temp );
+CommandFunc command_teleport;
+CommandFunc command_tile;
+CommandFunc command_time;
+CommandFunc command_title;
+CommandFunc command_tell;
+CommandFunc command_tilew;
+CommandFunc command_temp;
 // U
 // V
-CMD_HANDLER( command_validcmd );
+CommandFunc command_validcmd;
 // W
-CMD_HANDLER( command_who );
-CMD_HANDLER( command_wipenpcs );
-CMD_HANDLER( command_where );
-CMD_HANDLER( command_wipe );
-CMD_HANDLER( command_wholist );
-CMD_HANDLER( command_wf );
+CommandFunc command_who;
+CommandFunc command_wipenpcs;
+CommandFunc command_where;
+CommandFunc command_wipe;
+CommandFunc command_wholist;
+CommandFunc command_wf;
 // X
-CMD_HANDLER( command_xgoplace );
-CMD_HANDLER( command_xtele );
-CMD_HANDLER( command_xgate );
+CommandFunc command_xgoplace;
+CommandFunc command_xtele;
+CommandFunc command_xgate;
 // Y
 // Z
-CMD_HANDLER( command_zerokills );
-
-// all defined target commands
-// A
-// B
-TAR_HANDLER( target_bolt );
-TAR_HANDLER( target_ban );
-TAR_HANDLER( target_buy );
-// C
-TAR_HANDLER( target_cstats );
-TAR_HANDLER( target_ctrig );
-TAR_HANDLER( target_commandlevel );
-// D
-TAR_HANDLER( target_devinelock );
-TAR_HANDLER( target_devineunlock );
-TAR_HANDLER( target_deletechar );
-// E
-// F
-TAR_HANDLER( target_freeze );
-TAR_HANDLER( target_fullstats );
-// G
-TAR_HANDLER( target_gate );
-TAR_HANDLER( target_glow );
-// H
-TAR_HANDLER( target_heal );
-TAR_HANDLER( target_hide );
-// I
-TAR_HANDLER( target_istats );
-TAR_HANDLER( target_itrig );
-TAR_HANDLER( target_incx );
-TAR_HANDLER( target_incy );
-TAR_HANDLER( target_incz );
-// J
-// K
-TAR_HANDLER( target_killhair );
-TAR_HANDLER( target_killbeard );
-TAR_HANDLER( target_killpack );
-TAR_HANDLER( target_kill );
-TAR_HANDLER( target_kick );
-// L
-// M
-TAR_HANDLER( target_movetobag );
-TAR_HANDLER( target_mark );
-TAR_HANDLER( target_mana );
-TAR_HANDLER( target_makeshop );
-// N
-TAR_HANDLER( target_newz );
-TAR_HANDLER( target_npcaction );
-TAR_HANDLER( target_npctarget );
-TAR_HANDLER( target_newx );
-TAR_HANDLER( target_newy );
-// O
-// P
-TAR_HANDLER( target_possess );
-// Q
-TAR_HANDLER( target_jail );
-// R
-TAR_HANDLER( target_recall );
-TAR_HANDLER( target_removeshop );	// allows us to remove the shopkeeper layers for an npc/pc
-TAR_HANDLER( target_resurrect );
-TAR_HANDLER( target_remove );
-TAR_HANDLER( target_release );
-// S
-TAR_HANDLER( target_setfont );
-TAR_HANDLER( target_setmorex );
-TAR_HANDLER( target_setmorey );
-TAR_HANDLER( target_setmorez );
-TAR_HANDLER( target_setmorexyz );
-TAR_HANDLER( target_sethexmorexyz );
-TAR_HANDLER( target_setnpcai );
-TAR_HANDLER( target_settype );
-TAR_HANDLER( target_setid );
-TAR_HANDLER( target_setmore );
-TAR_HANDLER( target_setamount );
-TAR_HANDLER( target_setmovable );
-TAR_HANDLER( target_setvisible );
-TAR_HANDLER( target_setdir );
-TAR_HANDLER( target_setspeech );
-TAR_HANDLER( target_setowner );
-TAR_HANDLER( target_stamina );
-TAR_HANDLER( target_setvalue );
-TAR_HANDLER( target_setrestock );
-TAR_HANDLER( target_sell );
-TAR_HANDLER( target_setspattack );
-TAR_HANDLER( target_setspadelay );
-TAR_HANDLER( target_setpoison );
-TAR_HANDLER( target_setpoisoned );
-TAR_HANDLER( target_setadvobj );
-TAR_HANDLER( target_setwipe );
-TAR_HANDLER( target_split );
-TAR_HANDLER( target_splitchance );
-TAR_HANDLER( target_showskills );
-TAR_HANDLER( target_showdetail );
-TAR_HANDLER( target_setscripttrigger );
-// T
-TAR_HANDLER( target_tele );
-TAR_HANDLER( target_ttrig );
-TAR_HANDLER( target_trainer );
-TAR_HANDLER( target_tiledata );
-TAR_HANDLER( target_tweak );
-TAR_HANDLER( target_telestuff );
-// U
-TAR_HANDLER( target_unglow );	
-TAR_HANDLER( target_unhide );
-TAR_HANDLER( target_unfreeze );
-TAR_HANDLER( target_use );
-// V
-// W
-// X
-TAR_HANDLER( target_xgo );
-TAR_HANDLER( target_xbank );
-TAR_HANDLER( target_xsbank );
-// Y
-// Z
+CommandFunc command_zerokills;
 
 void HandleHowTo( cSocket *sock, int cmdNumber );
 

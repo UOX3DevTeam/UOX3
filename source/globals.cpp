@@ -1,4 +1,3 @@
-
 //o---------------------------------------------------------------------------o
 //| Globals.cpp
 //o---------------------------------------------------------------------------o
@@ -8,9 +7,6 @@
 //| 1.3		Added comments and changed int variables into typefefs
 //|         (Mr. Fixit 5. November 2001)
 //o---------------------------------------------------------------------------o
-
-
-// Global Variables
 
 #include "uox3.h"
 
@@ -36,36 +32,24 @@ WORD wVersionRequested;
 fd_set conn;
 fd_set all;
 fd_set errsock;
-timeval uoxtimeout;
-
-std::vector< TeleLocationEntry > teleLocs;
-
-std::vector< MurderPair > murdererTags;
-
-std::vector< SpellInfo > spells;					//:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 
 HashTable< ITEM >			nitemsp;
 HashTableMulti< ITEM >		nspawnsp;
 HashTable< CHARACTER >		ncharsp;
 HashTableMulti< CHARACTER >	ncspawnsp;
 
-cItemHandle items;
-cCharacterHandle chars;
+cItemHandle					items;
+cCharacterHandle			chars;
+
+std::vector< SpellInfo > spells;					//:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 
 creat_st creatures[2048];
 
-int *loscache;								
-int *itemids;								
+int *loscache;
+int *itemids;
 
-location_st location[4000];
 cTownRegion *region[256];
-
-logout_st logout[1024];					// Instalog
 cSpawnRegion *spawnregion[4098];				//Regionspawns
-
-skill_st skill[SKILLS+1];
-title_st title[ALLSKILLS+1];				// For custom titles reads titles.scp
-std::vector< JailCell > jails;
 
 char *comm[CMAX];
 
@@ -96,7 +80,6 @@ char *strupr( char *str )
 	return str;
 }
 #endif
-//int lenConnAddr;							// Not used anywhere (Mr. Fixit)
 
 //-=-=-=-=-=-=-Classes Definitions=-=-=-=-=-=//
 CWorldMain			*cwmWorldState = NULL;
@@ -115,7 +98,7 @@ cMagic				*Magic = NULL;
 cRaces				*Races = NULL;
 cWeatherAb			*Weather = NULL;
 cMovement			*Movement = NULL;
-cTEffect			*Effects = NULL;
+cTEffect			*TEffects = NULL;
 cWhoList			*WhoList = NULL;
 cWhoList			*OffList = NULL;
 cBooks				*Books = NULL;
@@ -129,6 +112,8 @@ CSpeechQueue		*SpeechSys = NULL;
 cHTMLTemplates		*HTMLTemplates = NULL;
 CGuildCollection	*GuildSys = NULL;
 cServerDefinitions	*FileLookup = NULL;
+cEffects			*Effects = NULL;
+cFileIO				*FileIO = NULL;
 
 CConsole			Console;	// no *, else we can't overload <<
 CThreadQueue		messageLoop;

@@ -1,7 +1,20 @@
 #include "uox3.h"
 #include "magic.h" 
 #include "power.h"
+
+#include "weight.h"
+#include "cGuild.h"
+#include "townregion.h"
+#include "cRaces.h"
+#include "cServerDefinitions.h"
+#include "cMagic.h"
+#include "skills.h"
 #include "ssection.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "magic.cpp"
@@ -166,7 +179,7 @@ bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 #pragma note( "Param Warning: in splClumsy(), sock is unrefrenced" )
 bool splClumsy( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
 #pragma note( "Param Warning: in splCreateFood(), sock is unrefrenced" )
@@ -183,7 +196,7 @@ bool splCreateFood( cSocket *sock, CChar *caster )
 #pragma note( "Param Warning: in splFeeblemind(), sock is unrefrenced" )
 bool splFeeblemind( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
 #pragma note( "Param Warning: in splHeal(), sock, src is unrefrenced" )
@@ -209,7 +222,7 @@ bool splMagicArrow( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 #pragma note( "Param Warning: in splNightSight(), sock is unrefrenced" )
 bool splNightSight( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 2, 0, 0, 0);
+	Effects->tempeffect( src, target, 2, 0, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -217,20 +230,20 @@ bool splNightSight( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 #pragma note( "Param Warning: in splReactiveArmor(), sock is unrefrenced" )
 bool splReactiveArmor( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
+	Effects->tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
 	target->SetReactiveArmour( true );
 	return true;
 }
 #pragma note( "Param Warning: in splWeaken(), sock is unrefrenced" )
 bool splWeaken( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
 #pragma note( "Param Warning: in splAgility(), sock is unrefrenced" )
 bool splAgility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -238,7 +251,7 @@ bool splAgility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 #pragma note( "Param Warning: in splCunning(), sock is unrefrenced" )
 bool splCunning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -267,7 +280,7 @@ bool splMagicTrap( cSocket *sock, CChar *caster, CItem *target )
 	if( target->IsContType() && target->GetID() != 0x0E75 )  
 	{
 		target->SetMoreB( 1, caster->GetSkill( MAGERY )/20, caster->GetSkill( MAGERY )/10, target->GetMoreB( 4 ) );
-		soundeffect( target, 0x01F0 );
+		Effects->PlaySound( target, 0x01F0 );
 	} 
 	else 
 		sysmessage( sock, 663 );
@@ -282,7 +295,7 @@ bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
 			if( RandomNum( 1, 100 ) <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetMoreB( 3 ) )
 			{
 				target->SetMoreB( 0, 0, 0, target->GetMoreB( 4 ) );
-				soundeffect(target, 0x01F1 );
+				Effects->PlaySound(target, 0x01F1 );
 				sysmessage( sock, 664 );
 			}
 			else 
@@ -298,7 +311,7 @@ bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
 #pragma note( "Param Warning: in splProtection(), sock is unrefrenced" )
 bool splProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
+	Effects->tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -306,7 +319,7 @@ bool splProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 #pragma note( "Param Warning: in splStrength(), sock is unrefrenced" )
 bool splStrength( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
+	Effects->tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -314,7 +327,7 @@ bool splStrength( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 bool splBless( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	int j = caster->GetSkill( MAGERY )/100;
-	tempeffect( src, target, 11, j, j, j);
+	Effects->tempeffect( src, target, 11, j, j, j);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -341,7 +354,7 @@ bool splMagicLock( cSocket *sock, CChar *caster, CItem *target )
 			Console.Error( 2, "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
 			break;
 		}
-		soundeffect( target, 0x0200 );
+		Effects->PlaySound( target, 0x0200 );
 	}
 	else 
 		sysmessage( sock, 669 ); 
@@ -439,8 +452,8 @@ void ArchCureStub( CChar *caster, CChar *target )
 {
 	if( target->GetPoisoned() )
 	{
-		staticeffect( target, 0x376A, 0x09, 0x06 );
-		soundeffect( target, 0x01E9 );
+		Effects->staticeffect( target, 0x376A, 0x09, 0x06 );
+		Effects->PlaySound( target, 0x01E9 );
 		target->SetPoisoned( 0 );
 	}
 }
@@ -455,7 +468,7 @@ void ArchProtectionStub( CChar *caster, CChar *target )
 {
 	Magic->playSound( target, 26 );
 	Magic->doStaticEffect( target, 15 );	// protection
-	tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
+	Effects->tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 }
 #pragma note( "Param Warning: in splArchProtection(), x, y, z is unrefrenced" )
 bool splArchProtection( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
@@ -468,7 +481,7 @@ bool splCurse( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 	if( !Magic->CheckResist( caster, target, 1 ) )
 	{
 		int j = caster->GetSkill( MAGERY ) / 100;
-		tempeffect(caster, target, 12, j, j, j);
+		Effects->tempeffect(caster, target, 12, j, j, j);
 	}
 	return true;
 }
@@ -496,7 +509,7 @@ bool splGreaterHeal( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 }
 bool splLightning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
-	bolteffect( target );
+	Effects->bolteffect( target );
 	if( Magic->CheckResist( caster, target, 4 ) )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1, 2 ), caster );
 	else 
@@ -521,7 +534,7 @@ bool splRecall( cSocket *sock, CChar *caster, CItem *i )
 		sysmessage( sock, 679 );
 		return false;
 	}
-	else if( caster->GetCommandLevel() < CNSCMDLEVEL && !Weight->isOverloaded( caster ) ) // no recall if too heavy, GM's excempt
+	else if( caster->GetCommandLevel() < CNS_CMDLEVEL && !Weight->isOverloaded( caster ) ) // no recall if too heavy, GM's excempt
 	{
 		sysmessage( sock, 680 );
 		sysmessage( sock, 681 );
@@ -558,7 +571,7 @@ bool splDispelField( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 					tScript->OnDispel( i );
 				Items->DeleItem( i );
 			}
-			soundeffect( caster, 0x0201 );
+			Effects->PlaySound( caster, 0x0201 );
 		}
 		else
 			sysmessage( sock, 683 );
@@ -641,8 +654,8 @@ bool splIncognito( cSocket *sock, CChar *caster )
 	//only refresh once
 	wornItems( sock, caster );
 	caster->Teleport();
-	soundeffect( caster, 0x0203 );
-	tempeffect( caster, caster, 19, 0, 0, 0 );
+	Effects->PlaySound( caster, 0x0203 );
+	Effects->tempeffect( caster, caster, 19, 0, 0, 0 );
 	caster->IsIncognito( true );
 	return true;
 }
@@ -672,7 +685,7 @@ bool splMindBlast( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 bool splParalyze( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	if( !Magic->CheckResist( caster, target, 7 ) )
-		tempeffect( caster, target, 1, 0, 0, 0 );
+		Effects->tempeffect( caster, target, 1, 0, 0, 0 );
 	return true;
 }
 bool splPoisonField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
@@ -698,7 +711,7 @@ bool splDispel( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	if( target->IsDispellable() )
 	{
-		staticeffect( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
+		Effects->staticeffect( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
 		if( target->IsNpc() ) 
 		{
 			cScript *tScript = NULL;
@@ -724,9 +737,9 @@ bool splEnergyBolt( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 bool splExplosion( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 6 ) )
-		tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 120 + RandomNum( 1, 5 ) ), 0, 0 );
+		Effects->tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 120 + RandomNum( 1, 5 ) ), 0, 0 );
 	else 
-		tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 40 + RandomNum( 1, 10 ) ), 0, 0 );
+		Effects->tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 40 + RandomNum( 1, 10 ) ), 0, 0 );
 	return true;
 }
 bool splInvisibility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
@@ -786,13 +799,13 @@ void MassCurseStub( CChar *caster, CChar *target )
 	int j;
 	if( target->IsNpc() ) 
 		npcAttackTarget( target, caster );
-	staticeffect( target, 0x374A, 0, 15 );
-	soundeffect( target, 0x01FC );
+	Effects->staticeffect( target, 0x374A, 0, 15 );
+	Effects->PlaySound( target, 0x01FC );
 	if( Magic->CheckResist( caster, target, 6 ) )
 		j = caster->GetSkill( MAGERY )/200;
 	else 
 		j = caster->GetSkill( MAGERY )/75;
-	tempeffect( caster, target, 12, j, j, j );
+	Effects->tempeffect( caster, target, 12, j, j, j );
 
 }
 #pragma note( "Param Warning: in splMassCurse(), x, y, z is unrefrenced" )
@@ -850,7 +863,7 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 				MapArea->PopChar();
 			}
 		}
-		soundeffect( sock, 0x01FD, true );
+		Effects->PlaySound( sock, 0x01FD, true );
 	}
 	else
 		sysmessage( sock, 687 );
@@ -865,7 +878,7 @@ void ChainLightningStub( CChar *caster, CChar *target )
 		return;	// GMs/Invuls can't be killed
 	if( target->IsNpc() )
 		npcAttackTarget( caster, target );
-	soundeffect( caster, 0x0029 );
+	Effects->PlaySound( caster, 0x0029 );
 	CChar *def = NULL;
 	CChar *att = NULL;
 	if( Magic->CheckMagicReflect( target ) )
@@ -873,7 +886,7 @@ void ChainLightningStub( CChar *caster, CChar *target )
 	else
 		def = target;
 
-	bolteffect( def );
+	Effects->bolteffect( def );
 	if( Magic->CheckResist( caster, def, 7 ) )
 		Magic->MagicDamage( def, caster->GetSkill( MAGERY )/70, att );
 	else 
@@ -957,8 +970,8 @@ void MassDispelStub( CChar *caster, CChar *target )
 				tScript->OnDispel( target );
 			doDeathStuff(target);
 		}
-		soundeffect(target, 0x0204);
-		staticeffect(target, 0x372A, 0x09, 0x06);
+		Effects->PlaySound(target, 0x0204);
+		Effects->staticeffect(target, 0x372A, 0x09, 0x06);
 	}
 }
 
@@ -976,8 +989,8 @@ void MeteorSwarmStub( CChar *caster, CChar *target )
 		return;	// GMs/Invuls can't be killed
 	if( target->IsNpc() ) 
 		npcAttackTarget( caster, target );
-	soundeffect( target, 0x160 ); 
-	movingeffect( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+	Effects->PlaySound( target, 0x160 ); 
+	Effects->movingeffect( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
 	if( Magic->CheckResist( caster, target, 7 ) )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster );
 	else 
@@ -1463,8 +1476,8 @@ void cMagic::SpellBook( cSocket *mSock )
 		sysmessage( mSock, 403 );
 		return;
 	}
-	item = spellBook;		
-	sendItem( mSock, item );
+	item = spellBook;
+	RefreshItem( item );
 	
 	sbookstart[1] = item->GetSerial( 1 );
 	sbookstart[2] = item->GetSerial( 2 );
@@ -1587,8 +1600,8 @@ bool cMagic::GateCollision( CChar *s )
 				}
 				s->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
 				s->Teleport();
-				soundeffect( calcSocketObjFromChar( s ), 0x01FE, true );
-				staticeffect( s, 0x372A, 0x09, 0x06 );
+				Effects->PlaySound( calcSocketObjFromChar( s ), 0x01FE, true );
+				Effects->staticeffect( s, 0x372A, 0x09, 0x06 );
 			}
 		}
 	}
@@ -1624,7 +1637,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 	{
 	case 0x0000:	// summon monster
 		Npcs->DeleteChar( newChar );
-		soundeffect( s, 0x0217, true );
+		Effects->PlaySound( s, 0x0217, true );
 		newChar = Npcs->CreateRandomNpc( "10000", caster->WorldNumber() );
 		if( newChar == NULL )
 		{
@@ -1643,7 +1656,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 	case 0x000D: // Energy Vortex & Air elemental
 		if( colour == 0x0075 )
 		{
-			soundeffect( s, 0x0216, true ); // EV
+			Effects->PlaySound( s, 0x0216, true ); // EV
 			newChar->SetDef( 22 );
 			newChar->SetLoDamage( 10 );	// Damage may be high, but 10-30 did on average 4 to a troll...
 			newChar->SetHiDamage( 70 );
@@ -1664,7 +1677,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		}
 		else
 		{
-			soundeffect( s, 0x0217, true ); // AE
+			Effects->PlaySound( s, 0x0217, true ); // AE
 			newChar->SetDef( 19 );
 			newChar->SetLoDamage( 5 );
 			newChar->SetHiDamage( 13 );
@@ -1682,7 +1695,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		}
 		break;
 	case 0x000A: // Daemon
-		soundeffect( s, 0x0216, true );
+		Effects->PlaySound( s, 0x0216, true );
 		newChar->SetDef( 20 );
 		newChar->SetLoDamage( 10 );
 		newChar->SetHiDamage( 45 );
@@ -1699,7 +1712,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetMana( 400 );
 		break;
 	case 0x000E: //Earth
-		soundeffect( s, 0x0217, true );
+		Effects->PlaySound( s, 0x0217, true );
 		newChar->SetDef( 15 );
 		newChar->SetLoDamage( 3 );
 		newChar->SetHiDamage( 18 );
@@ -1715,7 +1728,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		break;
 	case 0x000F: //Fire
 	case 0x0010: //Water
-		soundeffect( s, 0x0217, true );
+		Effects->PlaySound( s, 0x0217, true );
 		newChar->SetDef( 19 );
 		newChar->SetLoDamage( 4 );
 		newChar->SetHiDamage( 12 );
@@ -1732,7 +1745,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetMana( 70 );
 		break;
 	case 0x023E: //Blade Spirits
-		soundeffect( s, 0x0212, true ); // I don't know if this is the right effect...
+		Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
 		newChar->SetDef( 24 );
 		newChar->SetLoDamage( 5 );
 		newChar->SetHiDamage( 10 );
@@ -1750,7 +1763,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetPoison( 2 );
 		break;
 	case 0x03e2: // Dupre The Hero
-		soundeffect( s, 0x0246, true );
+		Effects->PlaySound( s, 0x0246, true );
 		newChar->SetDef( 50 );
 		newChar->SetLoDamage( 50 );
 		newChar->SetHiDamage( 100 );
@@ -1770,7 +1783,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetKarma( 10000 );
 		break;
 	case 0x000B: // Black Night
-		soundeffect( s, 0x0216, true );
+		Effects->PlaySound( s, 0x0216, true );
 		newChar->SetDef( 50 );
 		newChar->SetLoDamage( 50 );
 		newChar->SetHiDamage( 100 );
@@ -1788,7 +1801,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetMana( 100 );
 		break;
 	case 0x0190: // Death Knight
-		soundeffect( s, 0x0246, true );
+		Effects->PlaySound( s, 0x0246, true );
 		newChar->SetDef( 20 );
 		newChar->SetLoDamage( 10 );
 		newChar->SetHiDamage( 45 );
@@ -1808,7 +1821,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 		newChar->SetKarma( -10000 );
 		break;
 	default:
-		soundeffect( s, 0x0215, true );
+		Effects->PlaySound( s, 0x0215, true );
 	}
 	newChar->SetName( monstername );
 	newChar->SetID( id );
@@ -2001,7 +2014,7 @@ bool cMagic::CheckMagicReflect( CChar *i )
 	if( i->IsPermReflected() )
 	{
 		i->SetPermReflected( false );
-		staticeffect( i, 0x373A, 0, 15 );
+		Effects->staticeffect( i, 0x373A, 0, 15 );
 		return true;
 	}
 	return false;
@@ -2176,7 +2189,7 @@ void cMagic::CheckFieldEffects2( CChar *c, char timecheck )
 							else
 								MagicDamage( c, itemCheck->GetMoreX() / 200 );
 						}
-						soundeffect( c, 520 );
+						Effects->PlaySound( c, 520 );
 						toCheck->PopItem();
 						return;
 					case 0x3915:
@@ -2199,7 +2212,7 @@ void cMagic::CheckFieldEffects2( CChar *c, char timecheck )
 							else 
 								PoisonDamage( c, 1 );
 						}
-						soundeffect( c, 520 );
+						Effects->PlaySound( c, 520 );
 						toCheck->PopItem();
 						return;
 					case 0x3979:
@@ -2211,8 +2224,8 @@ void cMagic::CheckFieldEffects2( CChar *c, char timecheck )
 								criminal( caster );
 						}
 						if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, c, 6 ) )
-							tempeffect( c, c, 1, 0, 0, 0 );
-						soundeffect( c, 520 );     
+							Effects->tempeffect( c, c, 1, 0, 0, 0 );
+						Effects->PlaySound( c, 520 );     
 						toCheck->PopItem();
 						return;
 					}
@@ -2275,8 +2288,8 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
 {
 	if( s == NULL || i == NULL )
 		return;
-    staticeffect( s, 0x36B0, 0x09, 0x09 );
-    soundeffect( s, 0x0207 );
+    Effects->staticeffect( s, 0x36B0, 0x09, 0x09 );
+    Effects->PlaySound( s, 0x0207 );
 	if( CheckResist( NULL, s, 4 ) ) 
 		MagicDamage( s, i->GetMoreB( 2 ) / 2 );
 	else 
@@ -2373,8 +2386,8 @@ void cMagic::SpellFail( cSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	if( s->CurrentSpellType() == 0 )
 		DelReagents( mChar, spells[mChar->GetSpellCast()].Reagants() );
-	staticeffect( mChar, 0x3735, 0, 30 );
-	soundeffect( mChar, 0x005C );
+	Effects->staticeffect( mChar, 0x3735, 0, 30 );
+	Effects->PlaySound( mChar, 0x005C );
 	npcEmote( s, mChar, 771, false );
 }
 
@@ -2601,7 +2614,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 	// Delay measurement end
 	
 	if( !mChar->IsOnHorse() )
-		impaction( mSock, curSpellCasting.Action() ); // do the action
+		Effects->impaction( mSock, curSpellCasting.Action() ); // do the action
 	
 	char temp[128];
 	if( spells[num].FieldSpell() )
@@ -3150,14 +3163,14 @@ void cMagic::playSound( CChar *source, int num )
 	CMagicSound temp = spells[num].SoundEffect();
 	
 	if( temp.Effect() != INVALIDID )
-		soundeffect( source, temp.Effect() );
+		Effects->PlaySound( source, temp.Effect() );
 }
 
 void cMagic::doStaticEffect( CChar *source, int num )
 {
 	CMagicStat temp = spells[num].StaticEffect();
 	if( temp.Effect() != INVALIDID )
-		staticeffect( source, temp.Effect(), temp.Speed(), temp.Loop() );
+		Effects->staticeffect( source, temp.Effect(), temp.Speed(), temp.Loop() );
 }
 
 void cMagic::doMoveEffect( int num, cBaseObject *target, CChar *source )
@@ -3165,7 +3178,7 @@ void cMagic::doMoveEffect( int num, cBaseObject *target, CChar *source )
 	CMagicMove temp = spells[num].MoveEffect();
 	
 	if( temp.Effect() != INVALIDID )
-		movingeffect( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ) );
+		Effects->movingeffect( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ) );
 }
 
 void cMagic::PolymorphMenu( cSocket *s, int gmindex )
@@ -3261,8 +3274,8 @@ void cMagic::Polymorph( cSocket *s, int gmindex, int creaturenumber)
 	id1 = (UI08)(k>>8);
 	id2 = (UI08)(k%256);
 	CChar *mChar = s->CurrcharObj();
-	soundeffect( mChar, 0x020F );
-	tempeffect( mChar, mChar, 18, id1, id2, 0 );
+	Effects->PlaySound( mChar, 0x020F );
+	Effects->tempeffect( mChar, mChar, 18, id1, id2, 0 );
 	
 	mChar->SetOrgID(k);
 	mChar->SetID(k);

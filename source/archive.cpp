@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "cAccountClass.h"
 #ifdef __unix__
 	#include <dirent.h>
 #else

@@ -1,11 +1,19 @@
 #include "uox3.h"
-#include "cmdtable.h"
+#include "commands.h"
+
+#include "cSpawnRegion.h"
+#include "cServerDefinitions.h"
+#include "PageVector.h"
 #include "ssection.h"
+#include "gump.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "network.h"
 
 #undef DBGFILE
 #define DBGFILE "commands.cpp"
-
-void CommandReset( void );
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	void splitline( char *toSplit )
@@ -33,14 +41,14 @@ cCommands::cCommands()
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	static inline void doTarget( cSocket *s, target_s *ts )
-//|	Programmer	-	Unknown
+//|	Function	-	static inline void doTarget( cSocket *s, UI08 targID, SI32 dictEntry )
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do targeting stuff
 //o---------------------------------------------------------------------------o
-static inline void doTarget( cSocket *s, target_s *ts )
+static inline void doTarget( cSocket *s, UI08 targID, SI32 dictEntry )
 {
-	target( s, ts->targType, ts->targID, ts->dictEntry );
+	target( s, 0, targID, dictEntry );
 }
 
 //o--------------------------------------------------------------------------
@@ -114,18 +122,10 @@ void cCommands::Command( cSocket *s )
 		comm = &nonuni[1];
 	} 
 
-	CmdTableIterator toFind = cmd_table.find( comm );
-	if( toFind == cmd_table.end() ) 
-	{ 	
-		cScript *toGrab=Trigger->GetScript( mChar->GetScriptTrigger() ); 	
-		if( toGrab == NULL || !toGrab->OnCommand( s ) ) 		
-			sysmessage( s, 336 ); 	
-		return; 
-	} 	
-	else
+	TargetTableIterator findTarg = targ_table.find( comm );
+	if( findTarg != targ_table.end() )
 	{
-		bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
-		// from now on, account 0 ALWAYS has admin access, regardless of command level
+		bool plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		if( !plClearance )
 		{
 			Log( comm, mChar, NULL, "Insufficient clearance" );
@@ -133,24 +133,17 @@ void cCommands::Command( cSocket *s )
 			return;
 		}
 		Log( comm, mChar, NULL, "Cleared" );
-
-		switch( toFind->second.cmdType ) 
+		switch( findTarg->second.cmdType )
 		{
-		case CMD_FUNC:
-			(*((CMD_EXEC)toFind->second.cmd_extra)) (s);
-			break;
-		case CMD_ITEMMENU:
-			NewAddMenu( s, (int)toFind->second.cmd_extra );
-			break;
 		case CMD_TARGET:
-			doTarget(s, (target_s *)toFind->second.cmd_extra );
+			doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			break;
 		case CMD_TARGETX:
 			if( GetNumArguments() == 2 ) 
 			{
 				s->AddX( makenumber( 1 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
-			} 
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
+			}
 			else 
 				sysmessage( s, 338 );
 			break;
@@ -159,8 +152,8 @@ void cCommands::Command( cSocket *s )
 			{
 				s->AddX( makenumber( 1 ) );
 				s->AddY( makenumber( 2 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
-			} 
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
+			}
 			else 
 				sysmessage( s, 339 );
 			break;
@@ -170,17 +163,16 @@ void cCommands::Command( cSocket *s )
 				s->AddX( makenumber( 1 ) );
 				s->AddY( makenumber( 2 ) );
 				s->AddZ( makenumber( 3 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
 				sysmessage( s, 340 );
-			break;
 			break;
 		case CMD_TARGETID1:
 			if( GetNumArguments() == 2 ) 
 			{
 				s->AddID1( makenumber( 1 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
 				sysmessage( s, 338 );
@@ -190,10 +182,10 @@ void cCommands::Command( cSocket *s )
 			{
 				s->AddID1( makenumber( 1 ) );
 				s->AddID2( makenumber( 2 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
-				sysmessage( s, 339 );
+				sysmessage( s, 339 );	
 			break;
 		case CMD_TARGETID3:
 			if( GetNumArguments() == 4 ) 
@@ -201,7 +193,7 @@ void cCommands::Command( cSocket *s )
 				s->AddID1( makenumber( 1 ) );
 				s->AddID2( makenumber( 2 ) );
 				s->AddID3( makenumber( 3 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
 				sysmessage( s, 340 );
@@ -213,7 +205,7 @@ void cCommands::Command( cSocket *s )
 				s->AddID2( makenumber( 2 ) );
 				s->AddID3( makenumber( 3 ) );
 				s->AddID4( makenumber( 4 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
 				sysmessage( s, 344 );
@@ -222,16 +214,50 @@ void cCommands::Command( cSocket *s )
 			if( GetNumArguments() == 2 ) 
 			{
 				s->TempInt( makenumber( 1 ) );
-				doTarget( s, (target_s *)toFind->second.cmd_extra );
+				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
 			} 
 			else 
 				sysmessage( s, 338 );
 			break;
-		default:
-			sysmessage( s, 346 );
-			break;
 		}
 		return;
+	}
+	else
+	{
+		CmdTableIterator toFind = cmd_table.find( comm );
+		if( toFind == cmd_table.end() ) 
+		{ 	
+			cScript *toGrab=Trigger->GetScript( mChar->GetScriptTrigger() ); 	
+			if( toGrab == NULL || !toGrab->OnCommand( s ) ) 		
+				sysmessage( s, 336 ); 	
+			return; 
+		} 	
+		else
+		{
+			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			// from now on, account 0 ALWAYS has admin access, regardless of command level
+			if( !plClearance )
+			{
+				Log( comm, mChar, NULL, "Insufficient clearance" );
+				sysmessage( s, 337 );
+				return;
+			}
+			Log( comm, mChar, NULL, "Cleared" );
+
+			switch( toFind->second.cmdType ) 
+			{
+			case CMD_FUNC:
+				(*((CMD_EXEC)toFind->second.cmd_extra)) (s);
+				break;
+			case CMD_ITEMMENU:
+				NewAddMenu( s, (int)toFind->second.cmd_extra );
+				break;
+			default:
+				sysmessage( s, 346 );
+				break;
+			}
+			return;
+		}
 	}
 	sysmessage( s, "BUG: Should never reach end of command() function!" );
 }
@@ -434,13 +460,13 @@ void cCommands::KillSpawn( cSocket *s, int r )
 		if( chars[i].GetSpawn( 1 ) < 0x40 && chars[i].GetSpawn( 3 ) == r && chars[i].GetSpawn( 2 ) == 1 ) // spawn2 == 1 if spawned by region
 		{
 			CChar *iDead = &chars[i];
-			bolteffect( iDead );
-			soundeffect( iDead, 0x0029 );
+			Effects->bolteffect( iDead );
+			Effects->PlaySound( iDead, 0x0029 );
 			Npcs->DeleteChar( iDead );
             killed++;
 		}
 	}
-	gcollect();
+	doGCollect();
 	sysmessage( s, "Done." );
 	sysmessage( s, 350, killed, r );
 }
@@ -518,8 +544,8 @@ void cCommands::KillAll( cSocket *s, int percent, const char* sysmsg )
 			if( RandomNum( 0, 99 ) + 1 <= percent )
 			{
 				CChar *iDead = &chars[i];
-				bolteffect( iDead );
-				soundeffect( iDead, 0x0029 );
+				Effects->bolteffect( iDead );
+				Effects->PlaySound( iDead, 0x0029 );
 				doDeathStuff( iDead );
 			}
 		}
@@ -662,7 +688,7 @@ void cCommands::DyeTarget( cSocket *s )
 		i->SetColour( colour );
 		RefreshItem( i );
 		
-		soundeffect( s, 0x023E, true );
+		Effects->PlaySound( s, 0x023E, true );
 		return;
 	}
 
@@ -690,7 +716,7 @@ void cCommands::DyeTarget( cSocket *s )
 			c->Teleport();
 		} 
 	}
-	soundeffect( s, 0x023E, true );
+	Effects->PlaySound( s, 0x023E, true );
 }
 
 //o---------------------------------------------------------------------------o
@@ -842,15 +868,16 @@ void cCommands::Load( void )
 	{
 		data = commands->GrabData();
 		CmdTableIterator toFind = cmd_table.find( tag );
-		if( toFind == cmd_table.end() )
-		{
-		  // make sure we don't index into array at -1
-			badCommands.push_back( tag );
-		}
+		TargetTableIterator findTarg = targ_table.find( tag );
+		if( toFind == cmd_table.end() && findTarg == targ_table.end() )
+			badCommands.push_back( tag ); // make sure we don't index into array at -1
 		else
 		{
 			commandCount++;
-			toFind->second.cmdLevelReq = makeNum( data );
+			if( toFind != cmd_table.end() )
+				toFind->second.cmdLevelReq = makeNum( data );
+			else if ( findTarg != targ_table.end() )
+				findTarg->second.cmdLevelReq = makeNum( data );
 //			if( commandCount % 10 == 0 )
 //				Console << ".";
 		}
@@ -1134,4 +1161,3 @@ cmdtable_mapentry *cCommands::CommandDetails( char *cmdName )
 	CmdTableIterator toFind = cmd_table.find( cmdName );
 	return &(toFind->second);
 }
-

@@ -2,22 +2,9 @@
 #ifndef __FILEIO_H
 #define __FILEIO_H
 
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-
-class UOXFile;
 class BinBuffer;
-
-#ifndef __UOX3_H
-#include "uox3.h"
-#endif
-
-#ifndef __CLASSES_H
-//#include "classes.h"
-#endif
-
-//using namespace std;
+class CLand;
+class CTile;
 
 class UOXFile
 {
@@ -105,6 +92,21 @@ protected:
 	std::vector<char> Buff;
 	int fp;
 	UI08 myType;
+};
+
+class cFileIO
+{
+	void	initCreatures( void );
+public:
+	void	LoadNewWorld( void );
+	void	LoadCustomTitle( void );
+	void	LoadSkills( void );
+	void	LoadPreDefSpawnRegion( UI16 r, std::string name );
+	void	LoadSpawnRegions( void );
+	void	LoadRegions( void );
+	void	LoadTeleportLocations( void );
+	void	LoadCreatures( void );
+	void	LoadINIFile( void );
 };
 
 #endif

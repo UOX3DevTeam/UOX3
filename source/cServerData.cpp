@@ -1,3 +1,4 @@
+#include "uox3.h"
 #include "cServerData.h"
 
 #if defined(__unix__)

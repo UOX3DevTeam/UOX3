@@ -23,6 +23,18 @@
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 
+#include "cMagic.h"
+#include "boats.h"
+#include "cGuild.h"
+#include "skills.h"
+#include "speech.h"
+#include "gump.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "teffect.h"
+#include "network.h"
+
 #ifndef va_start
 	#include <cstdarg>
 #endif
@@ -1108,10 +1120,10 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 	SERIAL mySer = myObj->GetSerial();
-	for(teffect_st *Effect=Effects->First(); !Effects->AtEnd(); Effect = Effects->Next())
+	for(teffect_st *Effect=TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next())
 	{
 		if(mySer==Effect->Destination())
-			Effects->DelCurrent();
+			TEffects->DelCurrent();
 	}
 	return JS_TRUE;
 }
@@ -1447,11 +1459,11 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !strcmp( myClass->name, "UOXItem" ) )
 	{
 		bool explode = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-		staticeffect( myObj, effectID, speed, loop, explode );		
+		Effects->staticeffect( myObj, effectID, speed, loop, explode );		
 	}
 	else
 	{
-		staticeffect( myObj, effectID, speed, loop );
+		Effects->staticeffect( myObj, effectID, speed, loop );
 	}
 
 	return JS_TRUE;
@@ -1476,7 +1488,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 		if( myObj != NULL )
 		{
-			scpSoundEffect( myObj, sound, allHear );
+			Effects->PlaySound( myObj, sound, allHear );
 		}
 	}
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
@@ -1484,9 +1496,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
 
 		if( mySock != NULL )
-		{
-			scpSoundEffect( mySock, sound, allHear );
-		}
+			Effects->PlaySound( mySock, sound, allHear );
 	}
 
 	return JS_TRUE;
@@ -2169,7 +2179,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	Effect.Number( 40 );
 	Effect.More1( TriggerNum );
 
-	Effects->Add( Effect );
+	TEffects->Add( Effect );
 	
 	return JS_TRUE;
 }

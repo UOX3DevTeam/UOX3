@@ -4,6 +4,7 @@
 /***************************/
 
 #include "uox3.h"
+#include "gump.h"
 
 CGump::CGump( bool myNoMove, bool myNoClose )
 {

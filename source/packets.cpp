@@ -1,4 +1,11 @@
 #include "uox3.h"
+#include "packets.h"
+#include "movement.h"
+#include "cServerDefinitions.h"
+#include "targeting.h"
+#include "speech.h"
+#include "ssection.h"
+#include "gump.h"
 
 void PackString( UI08 *toPack, int offset, std::string value, int maxLen )
 {

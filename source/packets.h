@@ -1,6 +1,8 @@
 #ifndef __PACKETS_H__
 #define __PACKETS_H__
 
+#include "network.h"
+
 void PackString( UI08 *toPack, int offset, std::string value, int maxLen );
 void UnpackString( UI08 *toPack, int offset, std::string &value, int maxLen );
 void PackLong( UI08 *toPack, int offset, SI32 value );

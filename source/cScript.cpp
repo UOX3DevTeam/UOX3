@@ -1,10 +1,12 @@
 #include "uox3.h"
-#include "power.h"
 #include "cScript.h"
+#include "power.h"
 #include "UOXJSClasses.h"
 #include "SEFunctions.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
+#include "trigger.h"
+#include "packets.h"
 
 // Version History
 // 1.0		Abaddon		26th August, 2000

@@ -1,4 +1,7 @@
 #include "uox3.h"
+#include "commands.h"
+#include "cEffects.h"
+#include "packets.h"
 
 #undef DBGFILE
 #define DBGFILE "vendor.cpp"
@@ -119,7 +122,7 @@ void buyItem( cSocket *mSock )
 				else
 					npcTalkAll( npc, 1339, false, mChar->GetName(), goldtotal );
 
-				goldSound( mSock, goldtotal );
+				Effects->goldSound( mSock, goldtotal );
 			}
 			
 			clear = true;
@@ -249,54 +252,6 @@ void buyItem( cSocket *mSock )
 		mSock->Send( &clrSend );
 	}
 	statwindow( mSock, mChar );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void restock( bool stockAll )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Restock NPC Vendors buy and sell containers
-//o---------------------------------------------------------------------------o
-void restock( bool stockAll )
-{
-	cBaseObject *getCont;
-	CItem *ci;
-	int a;
-
-	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
-	{
-		if( items[i].GetRestock() && items[i].GetCont( 1 ) >= 0x40 )
-		{
-			getCont = items[i].GetCont();
-			if( getCont != NULL )
-			{
-				ci = (CItem *)getCont;
-				if( ci != NULL )
-				{
-					if( ( ci->GetLayer() == 0x1A ) )
-					{
-						if( stockAll )
-						{
-							items[i].SetAmount( items[i].GetAmount() + items[i].GetRestock() );
-							items[i].SetRestock( 0 );
-						}
-						else
-						{
-							if( items[i].GetRestock() > 0 )
-							{
-								a = min( items[i].GetRestock(), (items[i].GetRestock() / 2 ) + 1 );
-								items[i].SetAmount( items[i].GetAmount() + a );
-								items[i].SetRestock( items[i].GetRestock() - a );
-							}
-						}
-					}
-				}
-			}
-			if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-				Items->StoreItemRandomValue( &items[i], 0xFF );
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -548,8 +503,8 @@ void sellItem( cSocket *mSock )
 				}
 			} 
 		}
-		addgold( mSock, totgold );
-		goldSound( mSock, totgold );
+		Items->addGold( mSock, totgold );
+		Effects->goldSound( mSock, totgold );
 	}
 	
 	CPBuyItem clrSend;
@@ -558,34 +513,53 @@ void sellItem( cSocket *mSock )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void restockNPC( CChar *i )
+//|   Function    :  void restock( bool stockAll )
+//|   Date        :  3/15/2003
+//|   Programmer  :	 Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Restock all NPC Vendors
+//o---------------------------------------------------------------------------o
+void restock( bool stockAll )
+{
+	for( CHARACTER c = 0; c < cwmWorldState->GetCharCount(); c++ )
+	{
+		if( c != INVALIDSERIAL && chars[c].IsShop() )
+			restockNPC( &chars[c], stockAll );
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void restockNPC( CChar *i, bool stockAll )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Restock NPC Vendors
 //o---------------------------------------------------------------------------o
-void restockNPC( CChar *i )
+void restockNPC( CChar *i, bool stockAll )
 {
 	if( i == NULL || !i->IsShop() )
 		return;	// if we aren't a shopkeeper, why bother?
-	if( cwmWorldState->GetShopRestockTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+
+	CItem *ci = i->GetItemAtLayer( 0x1A );
+	if( ci != NULL )
 	{
-		CItem *ci = i->GetItemAtLayer( 0x1A );
-		if( ci != NULL )
+		for( CItem *c = ci->FirstItemObj(); !ci->FinishedItems(); c = ci->NextItemObj() )
 		{
-			for( CItem *c = ci->FirstItemObj(); !ci->FinishedItems(); c = ci->NextItemObj() )
+			if( c != NULL )
 			{
-				if( c != NULL )
+				if( stockAll )
 				{
-					if( c->GetRestock() )
-					{
-						UI16 stockAmt = min( c->GetRestock(), ( c->GetRestock() / 2 ) + 1 );
-						c->SetAmount( c->GetAmount() + stockAmt );
-						c->SetRestock( c->GetRestock() - stockAmt );
-					}
-					if( cwmWorldState->ServerData()->GetTradeSystemStatus() ) 
-						Items->StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
+					c->SetAmount( c->GetAmount() + c->GetRestock() );
+					c->SetRestock( 0 );
 				}
+				else if( c->GetRestock() )
+				{
+					UI16 stockAmt = min( c->GetRestock(), ( c->GetRestock() / 2 ) + 1 );
+					c->SetAmount( c->GetAmount() + stockAmt );
+					c->SetRestock( c->GetRestock() - stockAmt );
+				}
+				if( cwmWorldState->ServerData()->GetTradeSystemStatus() ) 
+					Items->StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
 			}
 		}
 	}

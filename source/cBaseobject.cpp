@@ -24,6 +24,9 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "power.h"
+#include "trigger.h"
+#include "fileio.h"
+#include "cScript.h"
 
 //o--------------------------------------------------------------------------
 //|	Function		-	cBaseObject destructor
@@ -1208,8 +1211,8 @@ UI08 cBaseObject::GetDir( void ) const
 //|	Purpose			-	Sets the visibility property of the object
 //|						Generally it is
 //|						0	Visible
-//|						1	GM only/hidden
-//|						2	Owner||GM / Magically invisible
+//|						1	Owner||GM / Magically invisible
+//|						2	GM only/hidden
 //o--------------------------------------------------------------------------
 void cBaseObject::SetVisible( SI08 newValue )
 {

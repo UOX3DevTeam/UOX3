@@ -1,6 +1,42 @@
 #include "uox3.h"
+#include "skills.h"
+#include "cMagic.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "teffect.h"
+#include "packets.h"
 
-void movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+
+cEffects::cEffects()
+{
+}
+
+cEffects::~cEffects()
+{
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void deathAction( CChar *s, CItem *x )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Plays a characters death animation
+//o---------------------------------------------------------------------------o
+void cEffects::deathAction( CChar *s, CItem *x )
+{
+	CPDeathAction toSend( (*s), (*x) );
+	toSend.FallDirection( (UI08)RandomNum( 0, 1 ) );
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	{
+		if( tSock->CurrcharObj() != s && charInRange( s, tSock->CurrcharObj() ) )
+			tSock->Send( &toSend );
+	}
+	Network->PopConn();
+}
+
+void cEffects::movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( source == NULL || dest == NULL ) 
 		return;
@@ -23,7 +59,7 @@ void movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 spe
 	Network->PopConn();
 }
 
-void movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( source == NULL ) 
 		return;
@@ -53,7 +89,7 @@ void movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI0
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Character does a certain action
 //o---------------------------------------------------------------------------o
-void action( cSocket *s, SI16 x )
+void cEffects::action( cSocket *s, SI16 x )
 {
 	CChar *mChar = s->CurrcharObj();
 	
@@ -75,7 +111,7 @@ void action( cSocket *s, SI16 x )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 //o---------------------------------------------------------------------------o
-void impaction( cSocket *s, SI16 act )
+void cEffects::impaction( cSocket *s, SI16 act )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsOnHorse() && ( act == 0x10 || act == 0x11 ) )
@@ -83,13 +119,13 @@ void impaction( cSocket *s, SI16 act )
 		action( s, 0x1B );
 		return;
 	}
-	if( ( mChar->IsOnHorse() || !isHuman( mChar ) ) && act == 0x22 )
+	if( ( mChar->IsOnHorse() || !mChar->isHuman() ) && act == 0x22 )
 		return;
 	action( s, act );
 }
 
 
-void staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
+void cEffects::staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
 	if( target == NULL ) 
 		return;
@@ -117,7 +153,7 @@ void staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool
 }
 
 // for effects on items
-void staticeffect( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode )
+void cEffects::staticeffect( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
 	CPGraphicalEffect toSend( 2 );
 	toSend.Model( effect );
@@ -135,7 +171,7 @@ void staticeffect( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, b
 	Network->PopConn();
 }
 
-void bolteffect( CChar *player )
+void cEffects::bolteffect( CChar *player )
 {
 	if( player == NULL ) 
 		return;
@@ -153,13 +189,13 @@ void bolteffect( CChar *player )
 	Network->PopConn();
 }
 
-void tempeffectsoff( void )
+void cEffects::tempeffectsoff( void )
 {
 	CChar *s = NULL;
 	cBaseObject *myObj = NULL;
 	bool equipCheckNeeded = false;
 
-	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
+	for( teffect_st *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
 	{
 		s = calcCharObjFromSer( Effect->Destination() );
 		if( s != NULL )
@@ -225,7 +261,7 @@ void tempeffectsoff( void )
 					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
 					// do OnTimer stuff here
 				}
-				Effects->DelCurrent();
+				TEffects->DelCurrent();
 				if( s != NULL && equipCheckNeeded )
 					Items->CheckEquipment( s ); // checks equipments for stat requirements
 				break;
@@ -238,10 +274,10 @@ void tempeffectsoff( void )
 	}
 }
 
-void tempeffectson( void )
+void cEffects::tempeffectson( void )
 {
 	CChar *s = NULL;
-	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
+	for( teffect_st *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
 	{
 		s = calcCharObjFromSer( Effect->Destination() );
 		if( s != NULL )
@@ -277,7 +313,7 @@ void tempeffectson( void )
 	}
 }
 
-void HandleMakeItemEffect( teffect_st *tMake )
+void cEffects::HandleMakeItemEffect( teffect_st *tMake )
 {
 	if( tMake == NULL )
 		return;
@@ -327,13 +363,13 @@ void HandleMakeItemEffect( teffect_st *tMake )
 
 	// Make sure it's movable
 	targItem->SetMovable( 1 );
-	soundeffect( sock, toMake->soundPlayed, true );
+	PlaySound( sock, toMake->soundPlayed, true );
 
 	sysmessage( sock, 985 );
 	statwindow( sock, src );
 }
 
-void checktempeffects( void )
+void cEffects::checktempeffects( void )
 {
 	CItem *i = NULL;
 	CChar *s = NULL, *src = NULL, *targ = NULL;
@@ -342,7 +378,7 @@ void checktempeffects( void )
 
 	UI32 j = cwmWorldState->GetUICurrentTime();
 	char temp[1024];
-	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
+	for( teffect_st *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
 	{
 		if( Effect == NULL )
 			continue;
@@ -411,7 +447,7 @@ void checktempeffects( void )
 			case 0:
 				if( Effect->More2() != 0 )
 					npcEmoteAll( s, 1270, true, s->GetName() );
-				soundeffect( s, 0x0242 );
+				PlaySound( s, 0x0242 );
 				break;
 			}
 			break;
@@ -557,7 +593,7 @@ void checktempeffects( void )
 						if( targSock != NULL )
 						{
 							staticeffect( targ, 0x373A, 0, 15 );
-							soundeffect( targSock, 0x01E0, false );
+							PlaySound( targSock, 0x01E0, false );
 							sysmessage( targSock, 1273 );
 							targ->SendToSocket( targSock, true, targ );
 						}
@@ -628,7 +664,7 @@ void checktempeffects( void )
 			break;
 		case 42:
 			src = calcCharObjFromSer( Effect->Source() );
-			soundeffect( src, Effect->More2() );
+			PlaySound( src, Effect->More2() );
 			break;
 		case 43:
 			src = calcCharObjFromSer( Effect->Source() );
@@ -651,13 +687,13 @@ void checktempeffects( void )
 			Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
 			return;
 		}
-		Effects->DelCurrent();
+		TEffects->DelCurrent();
 		if( s != NULL && equipCheckNeeded )
 			Items->CheckEquipment( s ); // checks equipments for stat requirements
 	}
 }
 
-void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
+void cEffects::tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
 {
 	teffect_st toAdd;
 	teffect_st *Effect = NULL;
@@ -671,7 +707,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 	toAdd.Destination( targSer );
 
 	UI16 ic;
-	for( Effect = Effects->First(), ic = 0; !Effects->AtEnd(); Effect = Effects->Next(), ic++ )
+	for( Effect = TEffects->First(), ic = 0; !TEffects->AtEnd(); Effect = TEffects->Next(), ic++ )
 	{
 		if( Effect->Destination() == targSer )
 		{
@@ -852,7 +888,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 		CHARACTER oldTarg;
 		if( source->SkillUsed( static_cast<UI08>(more1) ) )
 		{
-			for( Test = Effects->First(); !Effects->AtEnd(); Test = Effects->Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
+			for( Test = TEffects->First(); !TEffects->AtEnd(); Test = TEffects->Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
 			{	// another option would be to do a bit set, to specify already healing
 				if( Test == NULL )
 					continue;
@@ -870,7 +906,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 							npcEmoteAll( source, 1276, false, source->GetName(), chars[oldTarg].GetName() );
 						else if( Test->Number() == 24 )
 							npcEmoteAll( source, 1277, false, source->GetName(), chars[oldTarg].GetName() );
-						Effects->DelCurrent();		// we're already involved in some form of healing, BREAK IT
+						TEffects->DelCurrent();		// we're already involved in some form of healing, BREAK IT
 					}
 					break;
 				default:
@@ -944,11 +980,11 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 		return;
 	}
 
-	Effects->Add( toAdd );
+	TEffects->Add( toAdd );
 }
 
 #pragma note( "Param Warning: in tempeffect(), more3 is unrefrenced" )
-void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3 )
+void cEffects::tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3 )
 {
 	teffect_st toAdd;
 	if( source != NULL )
@@ -1003,7 +1039,7 @@ void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, U
 		Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
 		return;
 	}
-	Effects->Add( toAdd );
+	TEffects->Add( toAdd );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1012,9 +1048,9 @@ void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, U
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Reverse a temp effect
 //o---------------------------------------------------------------------------o
-void reverseEffect( UI16 i )
+void cEffects::reverseEffect( UI16 i )
 {
-	teffect_st *Effect = Effects->GrabSpecific( i );
+	teffect_st *Effect = TEffects->GrabSpecific( i );
 	CChar *s = calcCharObjFromSer( Effect->Destination() );
 	if( s != NULL )
 	{
@@ -1088,7 +1124,7 @@ void reverseEffect( UI16 i )
 			return;
 		}
 	}
-	Effects->DelCurrent();
+	TEffects->DelCurrent();
 	
 	Items->CheckEquipment( s );
 }
@@ -1101,7 +1137,7 @@ void reverseEffect( UI16 i )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Saves out the TempEffects
 //o--------------------------------------------------------------------------
-void SaveEffects( void )
+void cEffects::SaveEffects( void )
 {
 	char filename[MAX_PATH];
 	std::ofstream writeDestination, effectDestination;
@@ -1137,7 +1173,7 @@ void SaveEffects( void )
 		}
 	}
 
-	for( teffect_st *currEffect = Effects->First(); currEffect != NULL; currEffect = Effects->Next() )
+	for( teffect_st *currEffect = TEffects->First(); currEffect != NULL; currEffect = TEffects->Next() )
 	{
 		currEffect->Save( effectDestination, Mode );
 
@@ -1163,7 +1199,7 @@ void SaveEffects( void )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Loads in Effects from disk
 //o--------------------------------------------------------------------------
-void LoadEffects( void )
+void cEffects::LoadEffects( void )
 {
 	char filename[MAX_PATH];
 	std::ifstream readDestination;
@@ -1214,7 +1250,7 @@ void LoadEffects( void )
 				}
 				else
 					toLoad.ObjPtr( NULL );
-				Effects->Add( toLoad );
+				TEffects->Add( toLoad );
 				break;
 			case 0xFF:
 				break;
@@ -1326,7 +1362,7 @@ void LoadEffects( void )
 						}
 						bFinished = ( strcmp( tag, "o---o" ) == 0 );
 					}
-					Effects->Add( toLoad );
+					TEffects->Add( toLoad );
 				}
 			}
 		} while( strcmp( line, "EOF" ) && !readDestination.eof() );

@@ -1,5 +1,10 @@
 #include "uox3.h"
+#include "packets.h"
 #include "xgm.h"
+#include "townregion.h"
+#include "cWeather.hpp"
+#include "cRaces.h"
+#include "PageVector.h"
 
 void cPXGMLoginResponse::InternalReset( void )
 {
@@ -298,12 +303,12 @@ inline UI32 BlueCount( void )
 
 bool GMLoggedInStub( CChar *toCheck )
 {
-	return ( toCheck->IsGM() || toCheck->GetCommandLevel() >= GMCMDLEVEL );
+	return ( toCheck->IsGM() || toCheck->GetCommandLevel() >= GM_CMDLEVEL );
 }
 
 bool CnsLoggedInStub( CChar *toCheck )
 {
-	return ( toCheck->IsCounselor() || ( toCheck->GetCommandLevel() >= CNSCMDLEVEL && toCheck->GetCommandLevel() < GMCMDLEVEL ) );
+	return ( toCheck->IsCounselor() || ( toCheck->GetCommandLevel() >= CNS_CMDLEVEL && toCheck->GetCommandLevel() < GM_CMDLEVEL ) );
 }
 
 inline UI32 CharCountLoop( bool (*trgFunc)( CChar *toCheck ) )

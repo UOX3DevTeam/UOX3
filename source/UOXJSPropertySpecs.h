@@ -174,6 +174,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "poison",			CCP_POISON,			JSPROP_ENUMANDPERM },
 	{ "lightlevel",		CCP_LIGHTLEVEL,		JSPROP_ENUMANDPERM },
 	{ "armour",			CCP_ARMOUR,			JSPROP_ENUMANDPERM },
+	{ "vulnerable",		CCP_VULNERABLE,		JSPROP_ENUMANDPERM },
+	{ "willhunger",		CCP_HUNGERSTATUS,	JSPROP_ENUMANDPERM },
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 

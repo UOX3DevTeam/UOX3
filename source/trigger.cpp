@@ -23,8 +23,12 @@
 
 
 #include <errno.h>
+#if defined(__unix__)
+#include <stdexcept>
+#endif
 #include "uox3.h"
-#include "stream.h"
+#include "trigger.h"
+#include "cScript.h"
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	void readscript( FILE *toReadFrom, char *temp )

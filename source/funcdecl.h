@@ -1,6 +1,5 @@
 #ifndef __FUNCDECLS_H__
 #define __FUNCDECLS_H__
-//#include "uox3.h"
 
 // Pack functions
 CItem *	getRootPack( CItem *p );
@@ -53,42 +52,6 @@ UI16	GetFlagColour( CChar *src, CChar *trg );
 void	doubleClick( cSocket *mSock );
 void	singleClick( cSocket *mSock );
 
-// Effect functions
-void	staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode = false );
-void	staticeffect( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode );
-void	movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
-void	movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
-void	action( cSocket *s, SI16 x );
-void	impaction( cSocket *s, SI16 act );
-void	bolteffect( CChar *player );
-void	tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr = NULL);
-void	tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3 );
-void	tempeffectsoff( void );
-void	tempeffectson( void );
-void	checktempeffects( void );
-void	reverseEffect( UI16 i );
-void	SaveEffects( void );
-void	LoadEffects( void );
-
-
-// Sound functions
-void	soundeffect( cSocket *s, UI16 effect, bool allHear );
-void	soundeffect( CChar *p, UI16 effect );
-void	soundeffect( CItem *p, UI16 effect );
-void	soundeffect( CItem *p, cSocket *s, UI16 effect );
-void	itemSound( cSocket *s, CItem *item, bool bAllHear = false );
-void	bgsound( CChar *s );
-void	doorsfx( CItem *item, UI16 id, bool isOpen );
-void	goldSound( cSocket *s, UI32 goldtotal, bool bAllHear = false);
-void	playMonsterSound( CChar *monster, UI16 id, UI08 sfx );
-void	playTileSound( cSocket *mSock );
-void	playDeathSound( CChar *i );
-void	playMidi( cSocket *s, UI16 number );
-void	dosocketmidi( cSocket *s );
-void	scpSoundEffect( cSocket *mSock, UI16 soundID, bool bAllHear );
-void	scpSoundEffect( cBaseObject *baseObj, UI16 soundID, bool bAllHear );
-//void	Reticulate( void );
-
 // Calculation functions (socket, char, item and so forth)
 UOXSOCKET	calcSocketFromChar( CHARACTER i );
 UOXSOCKET	calcSocketFromChar( CChar *i );
@@ -120,7 +83,6 @@ void	updates( cSocket *s );
 void	startChar( cSocket *mSock, bool onCreate = false );
 void	sendItem( cSocket *s, CItem *i );
 void	sendPackItem( cSocket *s, CItem *i );
-void	sendItemsInRange( cSocket *s );
 void	wornItems( cSocket *s, CChar *j );
 void	RefreshItem( CItem *i );
 void	updateStats( CChar *c, char x );
@@ -128,28 +90,11 @@ bool	isOnline( CChar *c );
 void	updateskill( cSocket *mSock, UI08 skillnum );
 void	playChar( cSocket *mSock ); // After hitting "Play Character" button //Instalog
 
-// File IO
-void	loadPreDefSpawnRegion( UI16 r, std::string name );
-void	loadcustomtitle( void );
-void	saveserverscript( char x );
-void	loadskills( void );
-r2Data	readline( std::ifstream &toRead );
-void	loadnewworld( void );
-void	loadSpawnRegions( void );
-void	loadregions( void );
-
-// Skill related functions
-UI08	bestskill( CChar *p );
-
 // Target functions
 void	vialtarget( cSocket *nSocket );
-
 void	target( cSocket *s, UI08 targType, UI08 targID, const char *txt );
 void	target( cSocket *s, UI08 targType, UI08 targID,  SI32 dictEntry );
 void	target( cSocket *s, SERIAL ser, const char *txt );
-
-void	mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, const char *txt );
-void	mtarget( cSocket *s, SERIAL ser, UI16 itemID, const char *txt );
 
 // String related functions
 int		makenumber( int countx );
@@ -158,7 +103,6 @@ void	scriptcommand( cSocket *s, const char *cmd, const char *data );
 void	endmessage( int x );
 void	consolebroadcast( const char *txt );
 void	gettokennum( const char * s, int num, char *gettokenstr );
-void	setRandomName( CChar *s, const char *namelist );
 void	numtostr( int i, char *string );
 SI32	makeNum( const char *s );
 SI32	makeNum( const std::string *s );
@@ -167,8 +111,6 @@ int		getStringValue( const char *string );
 
 // Light related functions
 void	doLight( cSocket *s, char level );
-bool	inDungeon( CChar *s );
-//void	weather(int s, char bolt);
 
 // Amount related
 UI32	GetAmount( CChar *s, UI16 realID );
@@ -196,13 +138,13 @@ void	killTrades( CChar *i );
 
 // Vendor Stuff
 void	restock( bool stockAll );
-void	restockNPC( CChar *i );
+void	restockNPC( CChar *i, bool stockAll );
 bool	sendSellStuff( cSocket *s, CChar *i );
 void	sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t);
 void	buyItem( cSocket *mSock );
 void	sellItem( cSocket *mSock );
-UI32		calcValue( CItem *i, UI32 value);
-UI32		calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling );
+UI32	calcValue( CItem *i, UI32 value );
+UI32	calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling );
 void	PlVGetgold( cSocket *mSock, CChar *v );
 
 // Region related
@@ -232,7 +174,7 @@ void	dropItem( cSocket *s ); // Item is dropped on ground
 void	deleteChar( cSocket *s ); // Deletion of character
 void	createChar( cSocket *mSock ); // All the character creation stuff
 UI16	addRandomColor( const char *colorlist );
-bool	isHuman( CChar *p );
+void	setRandomName( CChar *s, const char *namelist );
 
 // Reputation Stuff
 void	Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma );
@@ -241,7 +183,6 @@ void	Fame( CChar *nCharID, SI16 nFame );
 // Combat Stuff
 void	PlayerAttack( cSocket *s );
 void	npcAttackTarget( CChar *target2, CChar *target );
-void	npcSimpleAttackTarget( CChar *target2, CChar *target );
 void	petGuardAttack( CChar *mChar, CChar *owner, SERIAL guarded );
 void	criminal( CChar *c );
 void	callGuards( CChar *mChar );
@@ -250,8 +191,6 @@ void	callGuards( CChar *mChar, CChar *targChar );
 // Death Handling
 void	doDeathStuff( CChar *i );
 CItem *	GenerateCorpse( CChar *i, UI08 nType, CChar *murderer );
-void	deathAction( CChar *s, CItem *x );
-void	deathMenu( cSocket *s);
 
 // NPC Actions
 void	npcAction( CChar *npc, SI16 x );
@@ -280,8 +219,6 @@ bool	doSnowEffect( CChar *i );
 // Misc Functions
 void	explodeItem( cSocket *mSock, CItem *nItem );
 void	MonsterGate( CChar *s, SI32 x );
-void	init_creatures( void );
-void	teleporters( CChar *s );
 void	MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID );
 void	objTeleporters( CChar *s );
 bool	checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2, UI08 worldNumber );
@@ -292,27 +229,15 @@ void	telltime( cSocket *s );
 UI08	getCharDir( CChar *a, SI16 x, SI16 y );
 UI08	getFieldDir( CChar *s, SI16 x, SI16 y );
 SI08	validTelePos( cSocket *s );
-void	gcollect( void );
+void	doGCollect( void );
 void	checkkey( void );
 void	openBank( cSocket *s, CChar *i );
 void	openSpecialBank( cSocket *s, CChar *i );
 int		getTileName( CItem *i, char* itemname);
-
-void	addgold( cSocket *s, UI32 totgold );
 void	usePotion( CChar *p, CItem *i );
-void	respawnnow( void );
 void	advanceObj( CChar *s, UI16 x, bool multiUse );
 void	statwindow( cSocket *s, CChar *i );
-
-inline int RandomNum( int nLowNum, int nHighNum )
-{
-	if( nHighNum - nLowNum + 1 )
-		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
-	else
-		return nLowNum;
-}
 void	fileArchive( void );
-void	ArchiveID(char archiveid[MAX_ARCHID]);
 void	enlist( cSocket *mSock, SI32 listnum ); // For enlisting in army
 bool	LineOfSight( cSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor );
 void	Shutdown( SI32 retCode );
@@ -321,8 +246,15 @@ void	weblaunch( cSocket *s, const char *txt );
 void	setcharflag( CChar *c );
 void	UseHairDye( cSocket *s, UI16 colour, CItem *x );	// s for socket, colour to dye, x is the item
 void	SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
+bool	FileExists( const char *filepath );
 
-bool FileExists( const char *filepath );
+inline int RandomNum( int nLowNum, int nHighNum )
+{
+	if( nHighNum - nLowNum + 1 )
+		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
+	else
+		return nLowNum;
+}
 
 #if defined(__unix__)
 void	*CheckConsoleKeyThread( void *params );

@@ -1,5 +1,8 @@
 #include "uox3.h"
+#include "cSpawnRegion.h"
+#include "cServerDefinitions.h"
 #include "ssection.h"
+#include "mapstuff.h"
 
 cSpawnRegion::cSpawnRegion( UI16 spawnregion ) : nexttime( 0 ), call( 1 ), x1( 0 ), x2( 0 ), y1( 0 ), y2( 0 ),
 maxcspawn( 0 ), maxispawn( 0 ), maxtime( 0 ), mintime( 0 ), regionnum( spawnregion ), curcspawn( 0 ), curispawn( 0 ),
