@@ -97,7 +97,6 @@ public:
 	TargetFunc Fletching;
 	TargetFunc ForensicsTarget;
 	TargetFunc GraveDig;
-	TargetFunc HealingSkillTarget;
 	TargetFunc ItemIDTarget;
 	TargetFunc LockPick;
 	TargetFunc Loom;

@@ -2214,16 +2214,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_SCISSORS:	// scissors
 			mSock->target( 0, TARGET_CREATEBANDAGE, 471 );
 			return true;
-		case IT_BANDAGE:	// healing
-			if( mSock->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() )
-			{
-				mSock->TempObj( x );
-				mSock->target( 0, TARGET_HEALING, 472 );
-				mSock->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			}
-			else
-				mSock->sysmessage( 473 );
-			return true;
 		case IT_SEXTANT:	// sextants
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
 			return true;
@@ -2299,7 +2289,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return true;
 		default:
 			if( iType )
-				Console << "Unhandled item type for item: " << x->GetName() << "[" << x->GetSerial() << "] of type: " << static_cast<UI08>(iType) << myendl;
+				Console << "Unhandled item type for item: " << x->GetName() << "[" << x->GetSerial() << "] of type: " << static_cast<UI16>(iType) << myendl;
 			break;
 	}
 	return false;
@@ -2573,9 +2563,9 @@ bool CPIDblClick::Handle( void )
 		}
 		//check this on trigger in the event that the .trigger property is not set on the item
 		//trigger code.  Check to see if item is envokable by id
-		else if( Trigger->GetEnvokeByType()->Check( iType ) )
+		else if( Trigger->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
-			envTrig = Trigger->GetEnvokeByType()->GetScript( iType );
+			envTrig = Trigger->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
 			cScript *envExecute = Trigger->GetScript( envTrig );
 			if( envExecute->OnUse( ourChar, x ) == 1 )
 				return true;

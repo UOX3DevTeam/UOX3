@@ -600,9 +600,9 @@ void cEffects::checktempeffects( void )
 				}
 				if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
 				{
-					if( Trigger->GetEnvokeByType()->Check( ((CItem *)myObj)->GetType() ) )
+					if( Trigger->GetEnvokeByType()->Check( static_cast<UI16>(((CItem *)myObj)->GetType()) ) )
 					{
-						scpNum	= Trigger->GetEnvokeByType()->GetScript( ((CItem *)myObj)->GetType() );
+						scpNum	= Trigger->GetEnvokeByType()->GetScript( static_cast<UI16>(((CItem *)myObj)->GetType()) );
 						tScript = Trigger->GetScript( scpNum );
 					}
 					else if( Trigger->GetEnvokeByID()->Check( myObj->GetID() ) )

@@ -1870,7 +1870,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_ALCHEMY:		Skills->AlchemyTarget( tSock );			break;
 					case TARGET_CREATEBANDAGE:	Skills->CreateBandageTarget( tSock );	break;
-					case TARGET_HEALING:		Skills->HealingSkillTarget( tSock );	break;
 					case TARGET_CARPENTRY:		Skills->Carpentry( tSock );				break;
 					case TARGET_BEGGING:		Skills->BeggingTarget( tSock );			break;
 					case TARGET_ANIMALLORE:		Skills->AnimalLoreTarget( tSock );		break;

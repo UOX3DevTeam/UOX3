@@ -1,3 +1,8 @@
+1/8/2005 - giwo
+	Fixed some minor issues with the new jse_typeassociations.scp handling.
+	Included skills/healing.js in a first step toward putting skills in JS.
+	Removed Skills::HealingSkillTarget
+
 1/7/2005 - giwo
 	Made some adjustments to the Client update range.
 	Converted many functions to use references rather than pointers.

@@ -104,9 +104,7 @@ void CTrigger::ParseScript( void )
 					scriptTriggers.erase( p );
 				UString fullpath = basePath + data;
 				if( !FileExists( fullpath ) )
-				{	// doesn't exist
 					Console.Error( 3, "SE mapping of %i to %s failed, file does not exist!", trigNum, data.c_str() );
-				}
 				else
 				{
 					try
