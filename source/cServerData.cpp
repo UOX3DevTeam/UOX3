@@ -74,6 +74,8 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 
 void CServerData::ServerName( std::string setname )
 {
+	if( serverList.size() == 0 )
+		serverList.resize( 1 );
 	serverList[0].setName( setname );
 	if( setname.empty() )
 	{
@@ -93,6 +95,8 @@ std::string CServerData::ServerName( void ) const
 
 void CServerData::ServerDomain( std::string setdomain )
 {
+	if( serverList.size() == 0 )
+		serverList.resize( 1 );
 	if( setdomain.empty() )
 		serverList[0].setDomain("");
 	else
@@ -106,6 +110,8 @@ std::string CServerData::ServerDomain( void ) const
 
 void CServerData::ServerIP( std::string setip )
 {
+	if( serverList.size() == 0 )
+		serverList.resize( 1 );
 	if( setip.empty() )
 		serverList[0].setIP("127.0.0.1");
 	else
