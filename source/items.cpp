@@ -1225,7 +1225,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 		{  // decaytime = 5 minutes, * 60 secs per min, * clocks_per_sec
 			if (items[i].decaytime==0) 
 			{
-				items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
+				items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
 			}
 			
 			if (items[i].decaytime<=currenttime)
@@ -1242,7 +1242,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 					{
 						if( items[multi].more4==0) //JustMichael -- set more to 1 and stuff can decay in the building
 						{
-							items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
+							items[i].decaytime = (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
 							setserial(i,multi,7);
 							return;
 						}
@@ -1250,7 +1250,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 				} 
 				  else if (items[i].multis>0 && !items[i].corpse) 
 				{					
-					  items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
+					  items[i].decaytime = (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
 					  return;
 				}
 				}
@@ -1274,7 +1274,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 					if( preservebody > 1 && items[i].more4 )
 					{
 						items[i].more4--;
-						items[i].decaytime = server_data.decaytimer * CLOCKS_PER_SEC + currenttime;
+						items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
 						return;
 					}
 				}
@@ -1297,14 +1297,14 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 							items[j].cont4=255;
 							items[j].contserial=-1;
 							//mapRegions->RemoveItem(i);
-							mapRegions->RemoveItem(j); // bugfix - AntiChrist
+							mapRegions->RemoveItem(j); 
 							items[j].x=items[i].x;
 							items[j].y=items[i].y;
 							items[j].z=items[i].z;
 							mapRegions->AddItem(j); //add this item to a map cell
 
-							items[j].decaytime = ( uiCurrentTime + (server_data.decaytimer*CLOCKS_PER_SEC ) ); // AntiChrist - make the item decay
-							RefreshItem( j ); // AntiChrist
+							items[j].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer*CLOCKS_PER_SEC ) ); // AntiChrist - make the item decay
+							RefreshItem( j ); 
 /*							for (k=0;k<now;k++) 
 							{
 								if (perm[k] && inrange2(k, j)) 
@@ -1330,7 +1330,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 					}
 					else
 					{
-						items[i].decaytime = server_data.decaytimer*CLOCKS_PER_SEC + currenttime;
+						items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
 					}
 				}
 			}
@@ -1428,15 +1428,13 @@ void cItem::RespawnItem(unsigned int currenttime, int i)
 				{
 					if (items[i].gatetime==0)
 					{
-						items[i].gatetime=(rand()%((int)(1+
-							((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-							
-							(items[i].morey*CLOCKS_PER_SEC*60)+currenttime;
+						items[i].gatetime = (unsigned int) ((rand()%((int)( 1 +
+							((items[i].morez - items[i].morey) * (CLOCKS_PER_SEC * 60))))) +
+							 (items[i].morey*CLOCKS_PER_SEC*60)+currenttime);
 					}
 					if ((items[i].gatetime<=currenttime || (overflow)) && items[i].morex!=0)
 					{
 						Npcs->AddRespawnNPC(i,-1,items[i].morex,1);
-//						Npcs->AddRespawnNPC( i, items[i].morex, 1 );
 						items[i].gatetime=0;
 					}
 				}

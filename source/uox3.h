@@ -110,6 +110,12 @@ typedef unsigned char BYTE;
 	#include <conio.h>
 	#include <sys/timeb.h>
 	typedef long int32;
+
+    #ifdef __MINGW32__              // knox, there is a smeal tweak in the mingw target-spec headers
+      #undef  CLOCKS_PER_SEC        //       I'll report that to these guys... maybe it'll be fixed in future releases
+      #define CLOCKS_PER_SEC 1000   //       CLOCKS_PER_SEC is defined as "1000.0" there
+    #endif
+
 #else
 	#include <ctype.h>
 	#include <netinet/in.h>

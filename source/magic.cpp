@@ -381,7 +381,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].y = chars[currchar[s]].y;
 		chars[c].z = chars[currchar[s]].z;
 		mapRegions->AddItem( c + 1000000 );
-		chars[c].summontimer=(uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
+		chars[c].summontimer = (unsigned int) (uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
 		updatechar(c);
 		npcaction( c, 0x0C);
 		return;
@@ -549,18 +549,20 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].dispz=chars[c].z=z;
 	}
 	
-	mapRegions->AddItem(c+1000000); //lb
+	mapRegions->AddItem(c+1000000); 
 	
 	chars[c].spadelay=10;
-	chars[c].summontimer=(uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
+	chars[c].summontimer = (unsigned int) (uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
 	updatechar(c);
 	npcaction(c, 0x0C);
 	// AntiChrist (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
-	if( buffer[s][7] == 0xFF && buffer[s][8] == 0xFF && buffer[s][9] == 0xFF && buffer[s][10] == 0xFF ) return;
+	if( buffer[s][7] == 0xFF && buffer[s][8] == 0xFF && buffer[s][9] == 0xFF && buffer[s][10] == 0xFF ) 
+      return;
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-	if( i == -1 ) return;
+	if (i == -1)
+      return;
 	npcattacktarget( i, c );
 }
 
@@ -886,7 +888,7 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 		if( poison < 0 ) 
 			poison = 1;
 		chars[p].poisoned = poison;
-		chars[p].poisonwearofftime = uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer );
+		chars[p].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer));
 		if( !chars[p].npc ) 
 			impowncreate( calcSocketFromChar( p ), p, 1 );
 		
@@ -2204,7 +2206,7 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 				SpellFail( s );
 				chars[currchar[s]].spellCast = 0;
 				chars[currchar[s]].casting = 0;
-				chars[currchar[s]].spelltime = ((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
+				chars[currchar[s]].spelltime = (unsigned int) (((curSpellCasting.delay / 10) * CLOCKS_PER_SEC) + uiCurrentTime);
 				return false;
 			}
 		}
@@ -2215,8 +2217,8 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 	chars[currchar[s]].nextact = 75;		// why 75?
 	if( type==0 && (!(chars[currchar[s]].priv&1 ))) // if they are a gm they don't have a delay :-)
 	{
-		chars[currchar[s]].spelltime = ((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
-		chars[currchar[s]].priv2 = (unsigned char) chars[currchar[s]].priv2|2; //freeze
+		chars[currchar[s]].spelltime = (unsigned int) (((curSpellCasting.delay / 10) * CLOCKS_PER_SEC) + uiCurrentTime);
+		chars[currchar[s]].priv2 = (unsigned char) chars[currchar[s]].priv2 | 2; //freeze
 	}
 	else
 	{
@@ -2374,7 +2376,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 										items[c].x = gatex[gatecount][n];
 										items[c].y = gatey[gatecount][n];
 										items[c].z = gatez[gatecount][n];
-										items[c].gatetime=(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
+										items[c].gatetime = (unsigned int) (uiCurrentTime + (server_data.gatetimer * CLOCKS_PER_SEC));
 										items[c].gatenumber=gatecount;
 										items[c].dir=1;
 										
@@ -2525,8 +2527,8 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						if(CheckResist(currchar[s], i, 1)) return;
 						{
 							chars[i].poisoned=2;   
-							chars[i].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer); // LB
-							impowncreate( s, i, 1); //Lb, sends the green bar ! 
+							chars[i].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer)); 
+							impowncreate(s, i, 1); //Lb, sends the green bar ! 
 						}
 						break; 
 					case 27: // Curse
@@ -2602,7 +2604,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 					case 44: // Invisibility
 						chars[i].hidden=2;
 						updatechar(i);
-						chars[i].invistimeout=uiCurrentTime+(server_data.invisibiliytimer*CLOCKS_PER_SEC);
+						chars[i].invistimeout = (unsigned int) (uiCurrentTime + (server_data.invisibiliytimer * CLOCKS_PER_SEC));
 						break; 
 					case 51: // Flamestrike
 						if (CheckResist(currchar[s], i, 7))

@@ -1,5 +1,5 @@
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-#  makefile
+#  makefile.mingw
 #
 #"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #  This File is part of UOX3
@@ -25,12 +25,11 @@
 #""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # This is a unified GNU Makfefile for all "other" targets - type "make"
 # to get a list of targets!
-
 ifdef WITH_DEP
 include depend
 endif
 
-CC = gcc
+CC = g++
 
 # Optimization
 OPT = -O2
@@ -45,10 +44,15 @@ EXE = uox3.exe
 LIBS = -lwsock32
 
 # Warning level
-WARN = -w
+WARN = -Werror # treat warinigs as error.
+# hopefully one day uox will compile warning free....
+# knox - I've already hunted down some warning which I've considered to be dangerous.
+#        however I complete warning free code, is always code, since you quickly if notice new warnings arise. 
+#        (which could become a major bug)
 
 # Other c-flags
-OTHER = -funsigned-char -fconserve-space -fkeep-inline-functions -D__LINUX__ --static
+# OTHER = -D__MINGW32__
+# Activate this if your gcc distrubtion does not define it, newer do, olders seem to do not.
 
 # Source
 SRC := $(wildcard *.cpp)
@@ -56,33 +60,13 @@ SRC := $(wildcard *.cpp)
 # Objects
 OBJS := $(patsubst %.cpp, %.o, $(SRC))
 
-C_FLAGS = $(WARN) $(OTHER) $(OPT) $(DEBUG)
-
-all:
-	@echo Please specify one of the following:
-	@echo -------------------------------------------------------------------
-	@echo make mingw32            - Compile native Win32 binary usign mingw32
-	@echo make cross              - Cross compile Win32 binary on Linux
-	@echo make linux              - Compile Linux/UNIX binary
-	@echo make egcs               - As above, but using egcs - for Redhat!
+C_FLAGS = $(WARN) $(OTHER) $(OPT) $(DEBUG) 
 
 mingw32:
-	$(MAKE) $(EXE)
-
-cross:
-	$(MAKE) $(EXE) "CC=gnuwin32gcc"
-
-linux:
-	$(MAKE) uox3_dep "EXE=uox3" "LIBS=-lm -lg++"
-
-egcs:
-	$(MAKE) uox3_dep "EXE=uox3" "LIBS=-lm -lg++" "CC=egcs"
-
-uox3_dep:  depend
-	$(MAKE) uox3 "EXE=$(EXE)" "LIBS=$(LIBS)" "CC=$(CC)" "WITH_DEP=1"
+	$(MAKE) $(EXE) 
 
 $(EXE): $(OBJS)
-	$(CC) -o $@ $(OBJS) $(LIBS)
+	$(CC) -o $@ $(OBJS) $(LIBS) -s
 
 %.o: %.cpp
 	$(CC) -c $(C_FLAGS) $< -o $@
@@ -90,13 +74,5 @@ $(EXE): $(OBJS)
 clean:
 	rm -f *.o uox3
 	rm depend
-
-tags:
-	ctag *.cpp *.h
-
-depend:    mkdep
-	mkdep *.cpp *h > depend
 	
-mkdep:
-	$(CC) mkdep.c -o mkdep 
 	

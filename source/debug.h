@@ -35,6 +35,10 @@
 #else
  #include <stdarg.h>
  #include <time.h>
+ #ifdef __MINGW32__ // knox, small failure in the mingw target headers, they define CLOCKS_PER_SEC as 1000.0
+   #undef  CLOCKS_PER_SEC
+   #define CLOCKS_PER_SEC 1000
+ #endif
  //#include <varargs.h>
 #endif
           

@@ -1128,7 +1128,7 @@ void cMovement::HandleItemCollision( CHARACTER c, UOXSOCKET socket, bool amTurni
 	const int visibleRange = Races->getVisRange( chars[c].race );
 	const short int newx = chars[c].x;
 	const short int newy = chars[c].y;
-	char id1, id2;
+	unsigned char id1, id2;
 	bool EffRange;
 	short int oldd, newd;
 	

@@ -1875,7 +1875,7 @@ void cTargets::LoadCannon(int s)
 	{
 		if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
 			(items[i].more3==addid3[s])&&(items[i].more4==addid4[s]))||
-			(addid1[s]=='\xFF'))
+			(addid1[s] == 0xFF))
 		{
 			if ((items[i].morez==0)&&(iteminrange(s,i,2)))
 			{
@@ -2073,7 +2073,7 @@ void cTargets::SquelchTarg(int s)//Squelch
 			sysmessage(calcSocketFromChar(p), "You have been squelched!");
 			if (addid1[s]!=255 || addid1[s]!=0)			// 255 used to be -1, not good for unsigned chars
 			{
-				chars[p].mutetime=uiCurrentTime+(addid1[s]*CLOCKS_PER_SEC);
+				chars[p].mutetime = (unsigned int) (uiCurrentTime + (addid1[s] * CLOCKS_PER_SEC));
 				addid1[s]=255;
 				chars[p].squelched=2;
 			}
@@ -2355,7 +2355,7 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 	mapRegions->RemoveItem(c);
     mapRegions->AddItem(c); // lord Binary
 	
-	items[c].decaytime=(uiCurrentTime+(server_data.decaytimer*CLOCKS_PER_SEC));
+	items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
 	RefreshItem( c ); // AntiChrist
 	
 	if( feat )
@@ -2422,10 +2422,10 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 {
 	bool deletecorpse = false;
-	int c;
 
-	c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 ); // add the blood puddle
-	if( c == -1 ) return;
+	int c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 ); // add the blood puddle
+	if (c == -1) 
+      return;
 	items[c].x = items[npcshape[0]].x;
 	items[c].y = items[npcshape[0]].y;
 	items[c].z = items[npcshape[0]].z;
@@ -2433,10 +2433,10 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 	items[c].magic = 2; // AntiChrist - makes the item unmovable
 
 	mapRegions->RemoveItem( c );
-	mapRegions->AddItem( c ); // lord Binary
+	mapRegions->AddItem( c ); 
 
-	items[c].decaytime = ( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
-	RefreshItem( c ); // AntiChrist
+	items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
+	RefreshItem( c ); 
 
 	// if it's a human corpse
 	if( items[i].morey )
@@ -2596,7 +2596,7 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 					items[c].y = items[i].y;
 					items[c].z = items[i].z;
 					mapRegions->AddItem( c ); // add this item to a map cell
-					items[c].decaytime = ( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+					items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
 					RefreshItem( c ); // AntiChrist
 				} // if contserial == serial
 			} // if c != -1 
@@ -2622,12 +2622,9 @@ void cTargets::TitleTarget(int s)
 
 void cTargets::NpcTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	if (i != -1)
 	{
 		
 		addid1[s]=chars[i].ser1;
@@ -2640,11 +2637,8 @@ void cTargets::NpcTarget(int s)
 
 void cTargets::NpcTarget2(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 		if (chars[i].npc==1)
 		{
@@ -2655,11 +2649,8 @@ void cTargets::NpcTarget2(int s)
 
 void cTargets::NpcRectTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 		if ((chars[i].npc==1))
 		{
@@ -2674,10 +2665,8 @@ void cTargets::NpcRectTarget(int s)
 
 void cTargets::NpcCircleTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	
 	if (i!=-1)
 		if ((chars[i].npc==1))
@@ -2692,11 +2681,8 @@ void cTargets::NpcCircleTarget(int s)
 
 void cTargets::NpcWanderTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 		if ((chars[i].npc==1)) 
 			chars[i].npcWander=npcshape[0];
@@ -2704,10 +2690,8 @@ void cTargets::NpcWanderTarget(int s)
 
 void cTargets::NpcAITarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	
 	if (i!=-1)
 	{
@@ -2717,11 +2701,8 @@ void cTargets::NpcAITarget(int s)
 
 void cTargets::xBankTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 	{
 		openbank(s, i);
@@ -2729,10 +2710,8 @@ void cTargets::xBankTarget(int s)
 }
 void cTargets::xSpecialBankTarget( int s ) // AntiChrist
 {
-	int i, serial;
-
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[ serial%HASHMAX ], serial, 1 );
+	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	int i = findbyserial( &charsp[ serial%HASHMAX ], serial, 1 );
 	if( i != -1 )
 	{
 		openspecialbank( s, i );
@@ -2805,11 +2784,8 @@ void cTargets::MoveToBagTarget(int s)
 
 void cTargets::SellStuffTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 	{
 		sellstuff(s, i);
@@ -3284,11 +3260,8 @@ void cTargets::SetAdvObjTarget(int s)
 //o---------------------------------------------------------------------------o
 void cTargets::CanTrainTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
 	{
 		if (chars[i].npc==0)
@@ -3410,11 +3383,8 @@ void cTargets::AxeTarget(int s)
 
 void cTargets::ObjPrivTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
 	if (i!=-1)
 	{
 		if(addid1[s]==0) items[i].priv=items[i].priv&0xFE; // lb ...
@@ -3425,7 +3395,7 @@ void cTargets::ObjPrivTarget(int s)
 
 void cTargets::SetDirTarget(int s)
 {
-	int i/*,j*/,serial;
+	int i, serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	

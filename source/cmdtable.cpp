@@ -436,10 +436,11 @@ void command_resend(int s)
 // Resends server data to client.
 {
 	all_items(s); 
-	printf("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!\n" );
+	printf("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!\n");
 	teleport(currchar[s]);
 	return;
 }
+
 // Returns the current bulletin board posting mode for the player
 void command_post(int s)
 {
@@ -1158,7 +1159,7 @@ void command_shutdown(int s)
 	if (tnum==2)
 	{
 		//				endtime=getclock()+(CLOCKS_PER_SEC*makenumber(1));
-		endtime=(unsigned int) (uiCurrentTime+(CLOCKS_PER_SEC*makenumber(1)));
+		endtime = (uiCurrentTime+(CLOCKS_PER_SEC*makenumber(1)));
 		if (makenumber(1)==0)
 		{
 			endtime=0;

@@ -38,7 +38,7 @@ void offlinehtml()//HTML
 	unsigned int total,hr,min,sec; // bugfix LB
 	FILE *html;
 	
-	total = (unsigned int)( ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
+	total = (unsigned int) (( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
 	hr=total/3600;
 	total-=hr*3600;
 	min=total/60;
@@ -161,7 +161,7 @@ void updatehtml()//HTML
 		}
 		else if(!(strcmp(script1,"UPTIME")))
 		{
-			total = (unsigned int)( ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
+			total = (unsigned int) ((uiCurrentTime - starttime ) / CLOCKS_PER_SEC);
 			hr=total/3600;
 			if(hr<10 && hr<=60) sprintf(sh,"0%i",hr);
 			else sprintf(sh,"%i",hr);

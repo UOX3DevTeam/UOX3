@@ -165,9 +165,9 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 	{	// invalidate attacker here!!!
 		if( chars[attack].npcaitype==4 ) //LB change from 0x40 to 4
 		{
-			chars[attack].summontimer = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*20));    
+			chars[attack].summontimer = (uiCurrentTime + (CLOCKS_PER_SEC * 20));
 			chars[attack].npcWander=2;
-			chars[attack].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+			chars[attack].npcmovetime = (unsigned int) ((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
 			npctalkall(attack,"Thou have suffered thy punishment, scoundrel.", 0);
 		}
 		chars[attack].targ = -1;
@@ -274,9 +274,9 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				{
 					//if(chars[defend].poisoned<chars[attack].poison) chars[defend].poisoned=chars[attack].poison; //this's a double check - look at the if above - AntiChrist
 					chars[defend].poisoned=chars[attack].poison;
-					chars[defend].poisontime = (unsigned int) (uiCurrentTime+(CLOCKS_PER_SEC*(40/chars[defend].poisoned))); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
+					chars[defend].poisontime = (uiCurrentTime+(CLOCKS_PER_SEC*(40/chars[defend].poisoned))); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
 					//chars[defend].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer); // lb, poison wear off timer setting
-					chars[defend].poisonwearofftime = (unsigned int) (chars[defend].poisontime+(CLOCKS_PER_SEC*server_data.poisontimer)); //wear off starts after poison takes effect - AntiChrist
+					chars[defend].poisonwearofftime = (chars[defend].poisontime + (CLOCKS_PER_SEC * server_data.poisontimer)); //wear off starts after poison takes effect - AntiChrist
 					if (s2!=-1) impowncreate(s2,defend,1); //Lb, sends the green bar ! 
 					//npctalkall(s2,"You have been poisoned!");
 					if (s2!=-1) sysmessage(s2,"You have been poisoned!");//AntiChrist 
@@ -294,7 +294,7 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				{
 					chars[attack].poisoned=chars[defend].poison;
 					chars[attack].poisontime= (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * (40 / chars[attack].poisoned))); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
-					chars[attack].poisonwearofftime = (unsigned int) (chars[attack].poisontime+(CLOCKS_PER_SEC*server_data.poisontimer)); //wear off starts after poison takes effect - AntiChrist
+					chars[attack].poisonwearofftime = (chars[attack].poisontime+(CLOCKS_PER_SEC*server_data.poisontimer)); //wear off starts after poison takes effect - AntiChrist
 					//chars[attack].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer); // lb, poison wear off timer setting
 					if (s1!=-1) impowncreate(s1,attack,1); //Lb, sends the green bar ! 
 					//sprintf(temp,"*%s has poisoned %s!*",chars[defend].name,chars[attack].name);
@@ -590,9 +590,9 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 			npcToggleCombat( defend );
 		if(chars[attack].npcaitype == 4)
 		{
-			chars[attack].summontimer = (unsigned int) (uiCurrentTime+(CLOCKS_PER_SEC*20));
+			chars[attack].summontimer = (uiCurrentTime+(CLOCKS_PER_SEC*20));
 			chars[attack].npcWander = 2;
-			chars[attack].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+			chars[attack].npcmovetime = (unsigned int) ((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
 			npctalkall(attack,"Thou have suffered thy punishment, scoundrel.", 0);
 		}
 		chars[attack].targ = -1;

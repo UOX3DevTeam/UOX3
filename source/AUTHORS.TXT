@@ -28,6 +28,27 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 
+
+-------------------------------------------------------------------------------
+28.01.2001              Axel Kittenberger               Axel
+
+  cmdtable.cpp           with GCC-2.95.2 on mingw32 targets with    
+  combat.cpp             DEFAULT warning 
+  cweather.cpp           compiles now WARNING-FREE!!!
+  dbl_single_click.cpp     YUPPIYAEIIIII!
+  debug.h                now we "only" have to takeout also the 
+  html.cpp               high-warning level (-Wall) ... next time :o)
+  items.cpp
+  magic.cpp
+  npcs.cpp
+  skills.cpp
+  targeting.cpp
+  trigger.cpp
+  uox3.cpp
+  uox3.h
+  walking.cpp
+    
+
 -------------------------------------------------------------------------------
 27.01.2001              Thiago A. Correa                Thiago, Axel 
 

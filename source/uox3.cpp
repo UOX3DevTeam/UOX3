@@ -8165,7 +8165,7 @@ void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting 
 					acctinuse[accountCheck] = 0;
 			}
 		}
-		accountFlush = (unsigned int)( speed.accountFlush*60*CLOCKS_PER_SEC + currenttime );
+		accountFlush = (unsigned int) (speed.accountFlush * 60 * CLOCKS_PER_SEC + currenttime );
 	}
 
 	for( signed int ij = now - 1; ij >= 0; ij-- )
@@ -8939,7 +8939,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				Network->Receive(s, 5, 1);
 				chars[currchar[s]].war=buffer[s][1];
 				chars[currchar[s]].targ=-1;
-				chars[currchar[s]].timeout = uiCurrentTime + CLOCKS_PER_SEC;
+				chars[currchar[s]].timeout = (SI32) (uiCurrentTime + CLOCKS_PER_SEC);
 				Network->xSend(s, buffer[s], 5, 0);
 				Movement->CombatWalk(currchar[s]);
 				dosocketmidi(s);
@@ -11816,7 +11816,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		}
 		break;
 	case 19: // incognito spell - AntiChrist (10/99)
-		toAdd.expiretime = uiCurrentTime + ( 90 * CLOCKS_PER_SEC ); // 90 seconds
+		toAdd.expiretime = uiCurrentTime + 90 * CLOCKS_PER_SEC; // 90 seconds
 		toAdd.num = 19;
 		toAdd.dispellable = 0;
 		break;
@@ -11827,7 +11827,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			return 0;
 		sysmessage( k, "Hmmm, tasty, LSD, you feel ... strong ... and .. allmighty and ... strange ..." );
 		LSD[k] = 1;
-		toAdd.expiretime = uiCurrentTime + ( 90 * CLOCKS_PER_SEC ); // 90 seconds
+		toAdd.expiretime = uiCurrentTime + 90 * CLOCKS_PER_SEC; // 90 seconds
 		toAdd.num = 20;
 		toAdd.dispellable = 0;
 		chars[source].hp = chars[source].st;
@@ -11835,7 +11835,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		impowncreate( k, source, 0 );
 		break;
 	case 21:		// protection
-		toAdd.expiretime=uiCurrentTime+(120*CLOCKS_PER_SEC);
+		toAdd.expiretime = uiCurrentTime + 120 * CLOCKS_PER_SEC;
 		toAdd.dispellable=1;
 		toAdd.more1=more1;
 		toAdd.num=21;
@@ -11881,13 +11881,13 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			if( dest == source )
 				toAdd.expiretime = uiCurrentTime + ( 13 * CLOCKS_PER_SEC ) + ( ( 5 - RandomNum( 0, chars[source].skill[HEALING] / 200 ) ) * CLOCKS_PER_SEC );
 			else
-				toAdd.expiretime = uiCurrentTime + ( 4 * CLOCKS_PER_SEC ) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + (4 * CLOCKS_PER_SEC) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to heal %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
 		else if( num == 23 )
 		{
-			toAdd.expiretime = uiCurrentTime + ( 15 * CLOCKS_PER_SEC );
+			toAdd.expiretime = uiCurrentTime + (15 * CLOCKS_PER_SEC);
 			sprintf( temp, "*%s begins to resurrect %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
@@ -11905,12 +11905,12 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.more1 = more1;			// the skill we end up using (HEALING for players, VETERINARY for monsters)
 		break;
 	case 25:
-		toAdd.expiretime = uiCurrentTime + (CLOCKS_PER_SEC * server_data.potiondelay);
+		toAdd.expiretime = uiCurrentTime + CLOCKS_PER_SEC * server_data.potiondelay;
 		toAdd.num = 25;
 		chars[dest].usepotion = 1;
 		break;
 	case 26:
-		toAdd.expiretime = uiCurrentTime + (CLOCKS_PER_SEC * combat.explodeDelay );
+		toAdd.expiretime = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * combat.explodeDelay);
 		toAdd.num = 26;
 		toAdd.more1 = more1;
 		break;
@@ -11937,7 +11937,7 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 	switch (num)
 	{
 	case 10:
-		toAdd.expiretime=uiCurrentTime+(12*CLOCKS_PER_SEC);
+		toAdd.expiretime = (unsigned int) (uiCurrentTime + (12 * CLOCKS_PER_SEC));
 		toAdd.dispellable=0;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -11949,20 +11949,20 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 			items[dest].dooropen=0;
 			return 0;
 		}
-		toAdd.expiretime=uiCurrentTime+(10*CLOCKS_PER_SEC);
+		toAdd.expiretime = uiCurrentTime + 10 * CLOCKS_PER_SEC;
 		toAdd.num=13;
 		toAdd.dispellable=0;
 		items[dest].dooropen=1;
 		break;
 	case 14: //Tauriel training dummies swing for 5(?) seconds
-		toAdd.expiretime=uiCurrentTime+(5*CLOCKS_PER_SEC);
+		toAdd.expiretime = uiCurrentTime + 5 * CLOCKS_PER_SEC;
 		toAdd.num=14;
 		toAdd.dispellable=0;
 		toAdd.itemptr=dest; //used to try and cut search time down
 		toAdd.more2=0;
 		break;
 	case 17: //Explosion potion (explosion)  Tauriel (explode in 4 seconds)
-		toAdd.expiretime=uiCurrentTime+(4*CLOCKS_PER_SEC);
+		toAdd.expiretime = uiCurrentTime + 4 * CLOCKS_PER_SEC;
 		toAdd.num=17;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -13075,7 +13075,7 @@ int response(int s)
 										chars[k].npcWander = 1;
 										
 										// Set the expire time if nobody excepts the quest
-										chars[k].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortactiveexpire ) );
+										chars[k].summontimer = uiCurrentTime + (CLOCKS_PER_SEC * server_data.escortactiveexpire);
 										
 										// Send out the rant about accepting the escort
 										sprintf(temp, "Lead on! Payment shall be made when we arrive at %s.", region[chars[k].questDestRegion].name);
@@ -13206,7 +13206,7 @@ int response(int s)
 			if (response1 || response2 || response3) //if the player wants to train
 			{
 				// Stop the NPC from moving for a minute while talking with the player
-				chars[k].npcmovetime = ( uiCurrentTime + ( 60 * CLOCKS_PER_SEC ) );
+				chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (60 * CLOCKS_PER_SEC));
 				unsigned int nChar=currchar[s];  //for the chars[] #
 				chars[nChar].trainer=-1; //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				for(i=0;i<ALLSKILLS;i++)
@@ -13828,7 +13828,7 @@ void responsevendor(int s) //Modified by AntiChrist
 				{
 					k=mapchar;
 					// Stop the NPC from moving for a minute while talking with the player
-					chars[k].npcmovetime = ( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
+					chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * 60));
 					strcpy(search3,chars[k].name);
 					strupr(search3);
 					response3=(strstr( comm, search3));
@@ -13914,7 +13914,7 @@ void responsevendor(int s) //Modified by AntiChrist
 							abs(chars[currchar[s]].z-chars[k].z)<=5)
 						{
 							// Stop the NPC from moving for a minute while talking with the player
-							chars[k].npcmovetime = ( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
+							chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * 60));
 							//if (sellstuff(s, k)) k=charcount; //Morrolan bugfix
 							sellstuff(s, k);
 						}
@@ -14838,7 +14838,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 	case 6: // Poison Potion
 		if(chars[p].poisoned<items[i].morez) chars[p].poisoned=items[i].morez;
 		if(items[i].morez>4) items[i].morez=4;
-		chars[p].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer); // lb, poison wear off timer setting
+		chars[p].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer)); // lb, poison wear off timer setting
 		impowncreate(calcSocketFromChar(p),p,1); //Lb, sends the green bar ! 
 		soundeffect2(p, 0x02, 0x46); //poison sound - SpaceDog
 		sysmessage(s, "You poisoned yourself! *sigh*"); //message -SpaceDog
@@ -18534,7 +18534,10 @@ Look at uox3.h to see options. Works like npc magic.
 		target
 		*/
 		
-		if ((x2==65535)&&(y2==65535))  return not_blocked;  // target cancled
+        // knox - THIS CAN NEVER BE TRUE!, x2 any y2 have 32768 as maximum!!!
+		//         so i commented it out, hope it wasn't important %)
+        // if ((x2==65535) && (y2==65535))  return not_blocked;  // target cancled                
+        //
 		
 		
 		
@@ -18949,7 +18952,7 @@ void criminal( CHARACTER c ) //Repsys
 {
 	if( !(chars[c].flag&0x02) )	// if we're not a criminal already
 	{
-		chars[c].crimflag = (repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime;
+		chars[c].crimflag = (int) ((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
 		sysmessage( calcSocketFromChar( c ), "You are now a criminal!" );
 		setcharflag( c );
 		if( (region[chars[c].region].priv&1) && server_data.guardsactive )//guarded
@@ -18957,7 +18960,7 @@ void criminal( CHARACTER c ) //Repsys
 	}
 	else	// they're already a criminal, and have done something MORE criminal
 	{	// let's update their flag, as another criminal act will reset the timer
-		chars[c].crimflag = (repsys.crimtime * CLOCKS_PER_SEC ) + uiCurrentTime;
+		chars[c].crimflag = (int) ((repsys.crimtime * CLOCKS_PER_SEC ) + uiCurrentTime);
 		// check to see if there is a guard nearby, otherwise spawn us a new one
 		if( !(region[chars[c].region].priv&1) || !server_data.guardsactive )
 			return;

@@ -191,7 +191,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		return;
 	}
 	else
-		chars[currchar[s]].objectdelay = server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime;
+		chars[currchar[s]].objectdelay = (unsigned int) (server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime);
 	
 	x = calcItemFromSer( serial );
 	//PlayerVendors
@@ -243,7 +243,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		// Begin Items/Guildstones Section 
 		itype=items[x].type;
 		itemids = (unsigned long int)items[x].id1 << 8;
-		itemids += (unsigned int)items[x].id2;
+		itemids += (unsigned int) items[x].id2;
 		if( itype == 16 )			// Check for 'resurrect item type' this is the ONLY type one can use if dead.
 		{
 			if (chars[currchar[s]].dead==1)
@@ -618,22 +618,22 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					sysmessage(s,"You have been poisoned!");
 					soundeffect2(currchar[s], 0x02, 0x46); //poison sound - SpaceDog
 					chars[currchar[s]].poisoned=items[x].poisoned;
-					chars[currchar[s]].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer);
+					chars[currchar[s]].poisonwearofftime= (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer));
 					impowncreate(s,currchar[s],1); //Lb, sends the green bar ! 
 				}
 				//Remove a food item
 				if (items[x].amount!=1)
 				{
 					items[x].amount--;
-					//								for (j=0;j<now;j++) if (perm[j] && inrange2(j,x)) senditem(j,x);
-					RefreshItem( x ); // AntiChrist
+					//for (j=0;j<now;j++) if (perm[j] && inrange2(j,x)) senditem(j,x);
+					RefreshItem(x); 
 				}
 				else
 				{
 					Items->DeleItem(x);
 				}
 				chars[currchar[s]].hunger++;
-			}//else
+			}
 			return; //case 14 (food)
 		case 15: //magic items (do we still need this with itemspell?) //Morrolan
 			if (items[x].morez!=0)
@@ -737,8 +737,8 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				}
 				return; // case Moongates
 			case 185: // let's smoke! :)
-				chars[currchar[s]].smoketimer = items[x].morex * CLOCKS_PER_SEC + uiCurrentTime;
-				sysmessage(s,"You feel much better after you smoke");
+				chars[currchar[s]].smoketimer = (items[x].morex * CLOCKS_PER_SEC + uiCurrentTime);
+				sysmessage(s,"You think you feel much better after you smoke... *cough* cough* *ughh*"); // knox, I simply couldn't resist modifing this :o)
 				Items->DeleItem( x );
 				return;
 			case 186: // rename deed! -- eagle 1/29/00
@@ -1185,9 +1185,9 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						mapRegions->RemoveItem(c);
 						mapRegions->AddItem(c); // lord Binary
 						items[c].priv=items[c].priv|1;
-						items[c].decaytime=(uiCurrentTime+(server_data.decaytimer*CLOCKS_PER_SEC));
+						items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
 						//							for (k=0;k<now;k++) if (perm[k]) senditem(k,c);
-						RefreshItem( c ); // AntiChrist
+						RefreshItem( c ); 
 						Items->DeleItem(x);
 					}
 					else
@@ -1331,7 +1331,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				case 0x0E21: // healing
 					addmitem[s] = x;
 					target(s, 0, 1, 0, 130, "Who will you use the bandages on?");
-					chars[currchar[s]].skilldelay = (unsigned int)(uiCurrentTime + ( server_data.skilldelay*CLOCKS_PER_SEC ));
+					chars[currchar[s]].skilldelay = (uiCurrentTime + ( server_data.skilldelay*CLOCKS_PER_SEC ));
 					return;
 				case 0x1057:
 				case 0x1058: // sextants
