@@ -1,6 +1,6 @@
 // jse_typeassociations.scp
 // Mapping of Item Types to Script ID's
-// Format: itemID=scriptID
+// Format: itemType=scriptID
 // The OnUse function of the script will be called
 
 [ENVOKE]
@@ -96,7 +96,7 @@
 //	IT_CLOCK			= 241,
 //	IT_MORTAR			= 242,
 //	IT_SCISSORS			= 243,
-//	IT_BANDAGE			= 244,
+244=4000	// BANDAGE
 //	IT_SEXTANT			= 245,
 //	IT_HAIRDYE			= 246,
 //	IT_LOCKPICK			= 247,

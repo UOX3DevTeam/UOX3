@@ -122,6 +122,8 @@
 // pets from pet static end
 // ------------------------
 
+// Healing
+4000=skill/healing.js
 }
 
 [COMMAND_SCRIPTS]
