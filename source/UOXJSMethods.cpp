@@ -191,11 +191,11 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
-	SI16 x1 = (SI16)JSVAL_TO_INT( argv[3] );
-	SI16 x2 = (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 tL			= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR			= (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage		= (UI16)JSVAL_TO_INT( argv[2] );
+	SI16 initState	= (SI16)JSVAL_TO_INT( argv[3] );
+	SI16 relay		= (SI16)JSVAL_TO_INT( argv[4] );
 
 
 	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
@@ -207,7 +207,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	char temp[256];
-	sprintf( temp, "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, x1, x2 );
+	sprintf( temp, "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initState, relay );
 	gList->one->push_back( temp );
 	
 	return JS_TRUE;
@@ -225,12 +225,137 @@ JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	
 	if( gList == NULL )
 	{
-		MethodError( "Gump_NoClose: Couldn't find gump associated with object");
+		MethodError( "NoClose: Couldn't find gump associated with object");
 		return JS_FALSE;
 	}
 
 	gList->one->push_back( "noclose" );
 	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	9th February, 2003
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to specify nomove on gumps created
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "NoMove: Wrong count of Parameters, needs 0" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	
+	if( gList == NULL )
+	{
+		MethodError( "NoMove: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	gList->one->push_back( "nomove" );
+	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to specify nodispose on create
+//| Comments		-	What nodispose is, I have no idea what so ever
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "NoDispose: Wrong count of Parameters, needs 0" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	
+	if( gList == NULL )
+	{
+		MethodError( "NoDispose: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	gList->one->push_back( "nodispose" );
+	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to specify noresize on create
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "NoResize: Wrong count of Parameters, needs 0" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump *)JS_GetPrivate( cx, obj );
+	
+	if( gList == NULL )
+	{
+		MethodError( "NoResize: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	gList->one->push_back( "noresize" );
+	
+	return JS_TRUE;
+}
+
+JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		MethodError( "AddBackground: Invalid number of arguments (takes 5)" );
+		return JS_FALSE;
+	}
+
+	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
+	SI16 bL = (SI16)JSVAL_TO_INT( argv[2] );
+	SI16 bR = (SI16)JSVAL_TO_INT( argv[3] );
+	UI16 gImage = (UI16)JSVAL_TO_INT( argv[4] );
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddBackground: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	char temp[256];
+	sprintf( temp, "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR );
+	gList->one->push_back( temp );
+
 	return JS_TRUE;
 }
 
@@ -256,6 +381,278 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	char temp[256];
 	sprintf( temp, "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, x1, x2, x3 );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to tile a particular gump image
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		MethodError( "AddCheckerTrans: Invalid number of arguments (takes 5 x y width height)" );
+		return JS_FALSE;
+	}
+
+	SI16 x		= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y		= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width	= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height	= (SI16)JSVAL_TO_INT( argv[3] ); // height
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddCheckerTrans: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	char temp[256];
+	sprintf( temp, "checkertrans %i %i %i %i", x, y, width, height );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to specify a text field cropped to certain
+//|						dimensions
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		MethodError( "AddCroppedText: Invalid number of arguments (takes 6 x y hue width height text)" );
+		return JS_FALSE;
+	}
+
+	SI16 TextX		= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 TextY		= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 TextHue	= (SI16)JSVAL_TO_INT( argv[2] ); // Hue
+	SI16 TextWidth	= (SI16)JSVAL_TO_INT( argv[3] ); // width
+	SI16 TextHeight	= (SI16)JSVAL_TO_INT( argv[4] ); // height
+
+ 	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[5] ) );
+
+	if( TextString == NULL )
+	{
+		MethodError( "AddCroppedText: Text is required" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddCroppedText: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	UI32 TextID = gList->TextID;
+	gList->TextID++;
+	
+	char temp[256];
+	sprintf( temp, "croppedtext %i %i %i %i %i %i", TextX, TextY, TextWidth, TextHeight, TextHue, TextID );
+	gList->one->push_back( temp );
+	gList->two->push_back( TextString );
+
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to specify a new group to work with
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddGroup: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddGroup: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "group %i", JSVAL_TO_INT( argv[0] ) );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		MethodError( "AddGump: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	
+	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
+	
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddGump: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "gumppic %i %i %i", tL, tR, gImage );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	16th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds a new HTML gump to the stream of the gump
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 7 )
+	{
+		MethodError( "AddHTMLGump: Invalid number of arguments (takes 7)" );
+		return JS_FALSE;
+	}
+
+	SI16 x				= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y				= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width			= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height			= (SI16)JSVAL_TO_INT( argv[3] ); // height
+	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+
+ 	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[6] ) );
+
+	if( TextString == NULL )
+	{
+		MethodError( "AddHTMLGump: Text is required" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddHTMLGump: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	UI32 TextID = gList->TextID;
+	gList->TextID++;
+	
+	SI32 iBrd	= (hasBorder?1:0);
+	SI32 iScrl	= (hasScrollbar?1:0);
+	char temp[256];
+	sprintf( temp, "htmlgump %i %i %i %i %i %i %i", x, y, width, height, TextID, iBrd, iScrl );
+	gList->one->push_back( temp );
+	gList->two->push_back( TextString );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddPage: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddPage: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "page %i", JSVAL_TO_INT( argv[0] ) );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		MethodError( "AddPicture: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddPicture: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "tilepic %i %i %i", tL, tR, gImage );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		MethodError( "Gump_AddRadio: Invalid number of arguments (takes 5)" );
+		return JS_FALSE;
+	}
+
+	SI16 tL				= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR				= (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage			= (UI16)JSVAL_TO_INT( argv[2] );
+	SI16 initialState	= (SI16)JSVAL_TO_INT( argv[3] );
+	SI16 relay			= (SI16)JSVAL_TO_INT( argv[4] );
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddRadio: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "radio %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initialState, relay );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -308,13 +705,13 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	SI16 x1 = (SI16)JSVAL_TO_INT( argv[2] );
-	SI16 x2 = (SI16)JSVAL_TO_INT( argv[3] );
-	SI16 x3 = (SI16)JSVAL_TO_INT( argv[4] );
-	SI16 x4 = (SI16)JSVAL_TO_INT( argv[5] );
-	SI16 x5 = (SI16)JSVAL_TO_INT( argv[6] );
+	SI16 tL					= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR					= (SI16)JSVAL_TO_INT( argv[1] );
+	SI16 width				= (SI16)JSVAL_TO_INT( argv[2] );
+	SI16 height				= (SI16)JSVAL_TO_INT( argv[3] );
+	SI16 hue				= (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 relay				= (SI16)JSVAL_TO_INT( argv[5] );
+	SI16 initialTextIndex	= (SI16)JSVAL_TO_INT( argv[6] );
  	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ) );
 
 	if( test == NULL )
@@ -330,130 +727,133 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "textentry %i %i %i %i %i %i %i", tL, tR, x1, x2, x3, x4, x5 );
+	sprintf( temp, "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex );
 	gList->one->push_back( temp );
 	gList->two->push_back( test );
 
 	return JS_TRUE;
 }
-
-JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	14th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Allows you to tile a particular gump image
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 5 )
 	{
-		MethodError( "Gump_AddRadio: Invalid number of arguments (takes 5)" );
+		MethodError( "AddTiledGump: Invalid number of arguments (takes 5 x y width height gump)" );
 		return JS_FALSE;
 	}
 
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
-	SI16 bL = (SI16)JSVAL_TO_INT( argv[3] );
-	SI16 bR = (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 x		= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y		= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width	= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height	= (SI16)JSVAL_TO_INT( argv[3] ); // height
+	SI16 gumpID = (SI16)JSVAL_TO_INT( argv[4] ); // gump to tile
 
 	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
 	if( gList == NULL )
 	{
-		MethodError( "AddRadio: Couldn't find gump associated with object");
+		MethodError( "AddTiledGump: Couldn't find gump associated with object" );
 		return JS_FALSE;
 	}
+
 	char temp[256];
-	sprintf( temp, "radio %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, bL, bR );
+	sprintf( temp, "gumppictiled %i %i %i %i %i", x, y, width, height, gumpID );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
 }
-JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	16th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds a new HTML gump to the stream of the gump
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 7 )
 	{
-		MethodError( "AddPage: Invalid number of arguments (takes 1)" );
+		MethodError( "AddXMFHTMLGump: Invalid number of arguments (takes 7)" );
 		return JS_FALSE;
 	}
+
+	SI16 x				= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y				= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width			= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height			= (SI16)JSVAL_TO_INT( argv[3] ); // height
+	SI32 number			= (SI32)JSVAL_TO_INT( argv[4] ); // number
+	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
 
 	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
 	if( gList == NULL )
 	{
-		MethodError( "AddPage: Couldn't find gump associated with object");
+		MethodError( "AddXMFHTMLGump: Couldn't find gump associated with object" );
 		return JS_FALSE;
 	}
+
+	SI32 iBrd	= (hasBorder?1:0);
+	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "page %i", JSVAL_TO_INT(argv[0]) );
+	sprintf( temp, "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
 }
-JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	16th February, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds a new HTML gump to the stream of the gump
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 3 )
+	if( argc != 8 )
 	{
-		MethodError( "AddPicture: Invalid number of arguments (takes 3)" );
+		MethodError( "AddXMFHTMLGumpColor: Invalid number of arguments (takes 8)" );
 		return JS_FALSE;
 	}
 
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
+	SI16 x				= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y				= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width			= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height			= (SI16)JSVAL_TO_INT( argv[3] ); // height
+	SI32 number			= (SI32)JSVAL_TO_INT( argv[4] ); // number
+	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	SI32 rgbColour		= (SI32)JSVAL_TO_INT( argv[7] );	// colour
 
 	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
 	if( gList == NULL )
 	{
-		MethodError( "Gump_AddPicture: Couldn't find gump associated with object");
+		MethodError( "AddXMFHTMLGumpColor: Couldn't find gump associated with object" );
 		return JS_FALSE;
 	}
+
+	SI32 iBrd	= (hasBorder?1:0);
+	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "tilepic %i %i %i", tL, tR, gImage );
-	gList->one->push_back( temp );
-
-	return JS_TRUE;
-}
-JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		MethodError( "AddGump: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
-	
-	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
-	if( gList == NULL )
-	{
-		MethodError( "AddGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
-	}
-	char temp[256];
-	sprintf( temp, "gumppic %i %i %i", tL, tR, gImage );
-	gList->one->push_back( temp );
-
-	return JS_TRUE;
-}
-JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 5 )
-	{
-		MethodError( "AddBackground: Invalid number of arguments (takes 5)" );
-		return JS_FALSE;
-	}
-
-	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
-	SI16 bL = (SI16)JSVAL_TO_INT( argv[2] );
-	SI16 bR = (SI16)JSVAL_TO_INT( argv[3] );
-	UI16 gImage = (UI16)JSVAL_TO_INT( argv[4] );
-
-	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
-	if( gList == NULL )
-	{
-		MethodError( "AddBackground: Couldn't find gump associated with object" );
-		return JS_FALSE;
-	}
-
-	char temp[256];
-	sprintf( temp, "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR );
+	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -666,8 +1066,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			MethodError( "TextMessage: Invalid Item" );
 			return JS_FALSE;
 		}
-
-		MethodSpeech( *myItem, trgMessage, TALK, 0x0026, FNT_SMALL_LIGHT );
+		MethodSpeech( *myItem, trgMessage, OBJ, 0x0026, FNT_SMALL_LIGHT );
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) ) 
 	{
@@ -912,7 +1311,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
 
-	UI16 x, y;
+	SI16 x = -1, y = -1;
 	SI08 z = myObj->GetZ();
 	UI08 world = myObj->WorldNumber();
 
@@ -968,26 +1367,27 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 	// 2 Parameters, x + y
 	case 2: 
-		x = (UI16)JSVAL_TO_INT( argv[0] );
-		y = (UI16)JSVAL_TO_INT( argv[1] );
+		x = (SI16)JSVAL_TO_INT( argv[0] );
+		y = (SI16)JSVAL_TO_INT( argv[1] );
 		break;
 
 	// x,y,z
 	case 3:
-		x = (UI16)JSVAL_TO_INT( argv[0] );
-		y = (UI16)JSVAL_TO_INT( argv[1] );
+		x = (SI16)JSVAL_TO_INT( argv[0] );
+		y = (SI16)JSVAL_TO_INT( argv[1] );
 		z = (SI08)JSVAL_TO_INT( argv[2] );
 		break;
 
 	// x,y,z,world
 	case 4:
-		x		= (UI16)JSVAL_TO_INT( argv[0] );
-		y		= (UI16)JSVAL_TO_INT( argv[1] );
+		x		= (SI16)JSVAL_TO_INT( argv[0] );
+		y		= (SI16)JSVAL_TO_INT( argv[1] );
 		z		= (SI08)JSVAL_TO_INT( argv[2] );
 		world	= (UI08)JSVAL_TO_INT( argv[3] );
 		break;
 	default:
 		MethodError( "Invalid number of arguments passed to Teleport, needs either 1, 2, 3 or 4" );
+		break;
 	}
 
 	if( !strcmp( myClass->name, "UOXItem" ) ) 
@@ -1014,13 +1414,16 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if ( world != myChar->WorldNumber() && !myChar->IsNpc() )
 		{
 			cSocket *mySock = calcSocketObjFromChar( myChar );
-			if ( mySock == NULL ) return JS_TRUE;
+			if( mySock == NULL ) 
+				return JS_TRUE;
 
 			myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world );
 			SendMapChange( world, mySock );
 			myChar->Teleport();
-		} else {
+		} 
+		else 
+		{
 			myChar->SetLocation( x, y, z, world );
 			myChar->Teleport();
 		}
@@ -1342,6 +1745,25 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
+JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Invalid Count of Parameters: %d, need: 0", argc );
+	}
+	
+	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
+
+	if( myObj == NULL )
+	{
+		MethodError( "Invalid Object assigned (GetTag)" );
+		return JS_FALSE;
+	}
+	
+	*rval = INT_TO_JSVAL( myObj->GetNumTags() );
+	return JS_TRUE;
+}
+
 JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
@@ -1561,8 +1983,7 @@ JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		itemColour = (UI16)JSVAL_TO_INT( argv[2] );
 	}
-	printf("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmmount: %i\n*****\n",
-		myChar->GetName(), realID, itemColour, amount);
+	Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmmount: %i\n*****\n", myChar->GetName(), realID, itemColour, amount );
 	deleItemAmt( myChar, realID, itemColour, amount );
 	return JS_TRUE;
 }
@@ -1621,6 +2042,58 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if(( argc > 2 ) || ( argc < 1 ))
+	{
+		MethodError( "(PopUpTarget) Invalid count of parameters: %d, either needs 1 or 2", argc );
+		return JS_FALSE;
+	}
+
+	// Either useable with sockets OR characters
+	JSClass *myClass = JS_GetClass( obj );
+
+	cSocket *mySock = NULL;
+
+	if( !strcmp( myClass->name, "UOXChar" ) )
+	{
+		// Character
+		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+
+		if( myChar == NULL )
+		{
+			MethodError( "(PopUpTarget) Invalid Character assigned" );
+			return JS_FALSE;
+		}
+
+		mySock = calcSocketObjFromChar( myChar );
+	}
+
+	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	{
+		// We have a socket here
+		mySock = (cSocket*)JS_GetPrivate( cx, obj );
+	}
+
+	if( mySock == NULL )
+	{
+		// COULD be a NPC too so just exit here!
+		// and DONT create a non-running jscript
+		return JS_TRUE;
+	}
+
+	UI08 tNum = (UI08)JSVAL_TO_INT( argv[0] );
+	char toSay[512] = { 0, }; // Could become long (make sure it's NULL )
+
+	if( argc == 2 )
+	{
+		sprintf( toSay, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) );
+	}
+
+	target( mySock, 0, 1, 0, tNum, toSay );
+	return JS_TRUE;
+}
+
 JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -1648,7 +2121,7 @@ JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	if( ( them->GetObjType() == OT_ITEM ) && ( me->GetObjType() == OT_CHAR ) )
 	{
 		CItem *myItem = static_cast< CItem * >(them);
-		if( myItem->GetCont() != INVALIDSERIAL )
+		if( myItem->GetCont() != NULL )
 		{
 			*rval = BOOLEAN_TO_JSVAL( getPackOwner( myItem ) == me );
 			return JS_TRUE;
@@ -1669,9 +2142,9 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	if( argc != 2 )
+	if( argc != 2 && argc != 3 )
 	{
-		MethodError( "(StartTimer) Invalid count of parameter: %d (needs 2)", argc );
+		MethodError( "(StartTimer) Invalid count of parameter: %d (needs 2 or 3)", argc );
 		return JS_FALSE;
 	}
 
@@ -1680,6 +2153,19 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI08 TriggerNum = (UI08)JSVAL_TO_INT( argv[1] );
 	
 	teffect_st Effect;
+
+	if( argc == 3 && myObj->GetSerial() < BASEITEMSERIAL )
+	{
+		if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
+		{
+			UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
+			Effect.More2( myScpTrig );
+		}
+		else
+			Effect.More2( 0xFFFF );
+	}
+	else
+		Effect.More2( 0xFFFF );
 
 	Effect.Destination( myObj->GetSerial() );
 	Effect.ExpireTime( ExpireTime );
@@ -2104,7 +2590,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	
-	myItem->SetCont( trgObj->GetSerial() );
+	myItem->SetCont( trgObj );
 	
 	return JS_TRUE;
 }
@@ -2348,4 +2834,158 @@ JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     char *url=JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
     weblaunch(mySock,url);
     return JS_TRUE;
+}
+
+JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "OpenURL: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( mySock->GetByte( offset ) );
+    return JS_TRUE;
+}
+JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "GetWord: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
+    return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	January 30, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Yells a text message to those in range
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "YellMessage: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSClass *myClass = JS_GetClass( obj );
+	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
+
+	JSString *targMessage = JSVAL_TO_STRING( argv[0] );
+	char *trgMessage = JS_GetStringBytes( targMessage );
+
+	if( trgMessage == NULL )
+	{
+		MethodError( "YellMessage: You have to supply a messagetext" );
+	}
+	
+	CChar *myChar = (CChar*)myObj;
+	if( myChar == NULL )  
+	{
+		MethodError( "YellMessage: Invalid Character" );
+		return JS_FALSE;
+	}
+
+	if( myChar->GetNPCAiType() == 0x02 )
+		MethodSpeech( *myChar, trgMessage, YELL, 0x0026, (FontType)myChar->GetFontType() );
+	else
+		MethodSpeech( *myChar, trgMessage, YELL, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
+
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	January 30, 2003
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Whispers a text message to those in range
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "WhisperMessage: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSClass *myClass = JS_GetClass( obj );
+	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
+
+	JSString *targMessage = JSVAL_TO_STRING( argv[0] );
+	char *trgMessage = JS_GetStringBytes( targMessage );
+
+	if( trgMessage == NULL )
+	{
+		MethodError( "WhisperMessage: You have to supply a messagetext" );
+	}
+	
+	CChar *myChar = (CChar*)myObj;
+	if( myChar == NULL )  
+	{
+		MethodError( "WhisperMessage: Invalid Character" );
+		return JS_FALSE;
+	}
+
+	if( myChar->GetNPCAiType() == 0x02 )
+		MethodSpeech( *myChar, trgMessage, WHISPER, 0x0026, (FontType)myChar->GetFontType() );
+	else
+		MethodSpeech( *myChar, trgMessage, WHISPER, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
+
+	return JS_TRUE;
+}
+
+JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Send: Invalid number of arguments (takes 1, number)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+	{
+		MethodError( "You have to pass a valid menu number" );
+	}
+
+	int menuNumber = JSVAL_TO_INT( argv[0] );
+	cSocket *mySock = (cSocket *)JS_GetPrivate( cx, obj );
+
+	if( mySock == NULL )
+	{
+		MethodError( "OpenGump: Unknown Object has been passed" );
+		return JS_FALSE;
+	}
+	
+	Gumps->Menu( mySock, menuNumber );
+
+	return JS_TRUE;
 }

@@ -30,7 +30,6 @@
 
 #include "uox3.h"
 #include "cmdtable.h"
-#include "debug.h"
 #include "ssection.h"
 
 #ifdef __LINUX__
@@ -153,7 +152,7 @@ void DoMessageLoop( void )
 		case MSG_SHUTDOWN:		keeprun = false;								break;
 		case MSG_COUNT:															break; 
 		case MSG_WORLDSAVE:		oldtime = 0;									break;
-		case MSG_PRINT:			Console << tVal.data << myendl;				break;
+		case MSG_PRINT:			Console << tVal.data << myendl;					break;
 		case MSG_RELOADJS:		Trigger->ReloadJS();	Console.PrintDone();	break;
 		case MSG_CONSOLEBCAST:	consolebroadcast( tVal.data );					break;
 		case MSG_PRINTDONE:		Console.PrintDone();							break;
@@ -306,7 +305,7 @@ UI08 bestskill( CChar *p )
 {
 	if( p == NULL )
 		return 0;
-	int b = 0;
+	UI16 b = 0;
 	UI08 a = 0;
 
 	for( UI08 i = 0; i < TRUESKILLS; i++ )
@@ -391,11 +390,11 @@ char *title1( CChar *p )
 {
 	if( p == NULL )
 		return NULL;
-	int titlenum = 0;
-	int x = p->GetBaseSkill( bestskill( p ) );
+	UI16 titlenum = 0;
+	UI16 x = p->GetBaseSkill( bestskill( p ) );
   
 	if( x < 1000 ) 
-		titlenum = (int)((x - 10) / 100 - 2);
+		titlenum = (UI16)((x - 10) / 100 - 2);
 	else
 		titlenum = 8;
 	strcpy( prowesstitle, title[titlenum].prowess );
@@ -410,7 +409,7 @@ char *title1( CChar *p )
 //o---------------------------------------------------------------------------o
 char *title2( CChar *p )
 {
-	int titlenum = bestskill( p ) + 1;
+	UI08 titlenum = (UI08)( bestskill( p ) + 1 );
 	strcpy( skilltitle, title[titlenum].skill );
 	return skilltitle;
 }
@@ -428,8 +427,8 @@ char *title3( CChar *p )
 	char thetitle[50];
 	UI08 titlenum = 0;
 	
-	SI32 k = p->GetKarma();
-	UI32 f = p->GetFame();
+	SI16 k = p->GetKarma();
+	SI16 f = p->GetFame();
 	thetitle[0] = 0;
 	
 	if( k >= 10000 )
@@ -598,8 +597,8 @@ void gcollect( void )
 {
 	CChar *c;
 	CItem *j;
-	SERIAL serial;
-	SI32 rtotal = 0, removed = 0;
+	cBaseObject *iCont;
+	UI32 rtotal = 0, removed = 0;
 	bool idelete = false;
 	uiCurrentTime = 0;
 	
@@ -612,13 +611,13 @@ void gcollect( void )
 			if( !items[i].isFree() )
 			{
 				idelete = false; 
-				serial = items[i].GetCont();
-				if( serial != INVALIDSERIAL )
+				iCont = items[i].GetCont();
+				if( iCont != NULL )
 				{
 					idelete = true;
-					if( items[i].GetCont( 1 ) < 0x40 ) // container is a character...verify the character??
+					if( iCont->GetObjType() == OT_CHAR ) // container is a character...verify the character??
 					{
-						c = calcCharObjFromSer( serial );
+						c = (CChar *)iCont;
 						if( c != NULL )
 						{
 							if( !c->isFree() )
@@ -627,7 +626,7 @@ void gcollect( void )
 					} 
 					else 
 					{// find the container if there is one.
-						j = calcItemObjFromSer( serial );
+						j = (CItem *)iCont;
 						if( j != NULL )
 						{
 							if( !j->isFree() )
@@ -673,17 +672,17 @@ void item_test( void )
 				continue;
 			}
 
-			if( serial == items[a].GetCont() )
+			if( serial == items[a].GetContSerial() )
 			{
 				Console << "ALERT ! item " << items[a].GetName() << " [" << a << "] [serial: " << items[a].GetSerial() << "] has dangerous container value, autocorrecting" << myendl;
-				items[a].SetCont( INVALIDSERIAL );
+				items[a].SetCont( NULL );
 			}
 			if( serial == items[a].GetOwner() )
 			{
 				Console << "ALERT ! item " << items[a].GetName() << " [" << a << "] [serial: " << items[a].GetSerial() << "] has dangerous owner value" << myendl;
-				items[a].SetOwner( INVALIDSERIAL );
+				items[a].SetOwner( NULL );
 			}
-			if( serial != 0 && serial == items[a].GetSpawn()  )
+			if( serial != INVALIDSERIAL && serial == items[a].GetSpawn()  )
 			{
 				Console << "ALERT ! item " << items[a].GetName() << " [" << a << "] [serial: " << items[a].GetSerial() << "] has dangerous spawner value" << myendl;
 				items[a].SetSpawn( INVALIDSERIAL, a );
@@ -782,39 +781,17 @@ CItem *getPack( CChar *p )
 	
 	if( i != NULL && p != NULL )
 	{
-		if( i->GetCont() == p->GetSerial() && i->GetLayer() == 0x15 )
+		if( i->GetCont() == p && i->GetLayer() == 0x15 )
 			return i;
 	}
 
-	CItem *packItem = FindItemOnLayer( p, 0x15 );
+	CItem *packItem = p->GetItemAtLayer( 0x15 );
 	if( packItem != NULL )
 	{
 		p->SetPackItem( packItem );
 		return packItem;
 	}
 	return NULL;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void action( cSocket *s, SI16 x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Character does a certain action
-//o---------------------------------------------------------------------------o
-void action( cSocket *s, SI16 x )
-{
-	CChar *mChar = s->CurrcharObj();
-	
-	CPCharacterAnimation toSend = (*mChar);
-	toSend.Action( x );
-	s->Send( &toSend );
-	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{
-		if( tSock != s && charInRange( s, tSock ) )
-			tSock->Send( &toSend );
-	}
-	Network->PopConn();
 }
 
 //o---------------------------------------------------------------------------o
@@ -839,24 +816,6 @@ void wornItems( cSocket *s, CChar *j )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void openPack( cSocket *s, SERIAL serial )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Open backpack and display contents
-//o---------------------------------------------------------------------------o
-void openPack( cSocket *s, SERIAL serial )
-{
-	if( serial == INVALIDSERIAL ) 
-		return;
-	CItem *i = calcItemObjFromSer( serial );
-	if( i == NULL )
-	{
-		Console << "WARNING: openPack() couldn't find backpack: " << serial << myendl;
-		return;
-	}
-	openPack( s, i );
-}
 //o---------------------------------------------------------------------------o
 //|	Function	-	void openPack( cSocket *s, CItem *i )
 //|	Programmer	-	Unknown
@@ -883,8 +842,8 @@ void openPack( cSocket *s, CItem *i )
 			contSend.Model( 0x09 );
 			break;
 		case 0x0E75:      // backpack
-		case 0x0E79:      // box/pouch
-		case 0x09B0:
+		case 0x0E79:      // pouch
+		case 0x09B0:	  // pouch
 			contSend.Model( 0x3C );
 			break;
 		case 0x0E76:      // leather bag
@@ -1146,15 +1105,12 @@ void sendItem( cSocket *s, CItem *i )
 		pack = true;
 		if( i->GetCont( 1 ) < 0x40 )
 		{
-			SERIAL serial = i->GetCont();
-			if( serial == INVALIDSERIAL ) 
+			cBaseObject *iCont = i->GetCont();
+			if( iCont == NULL ) 
 				return;
-			CChar *j = calcCharObjFromSer( serial );
-			if( j != NULL )
-			{
-				if( j->GetSerial() == serial )
-					pack = false;
-			}
+			CChar *j = (CChar *)iCont;
+			if( j != NULL && j == iCont )
+				pack = false;
 		}
 		if( pack )
 		{
@@ -1166,7 +1122,7 @@ void sendItem( cSocket *s, CItem *i )
 		}
 	}
 	
-	if( i->GetCont() == INVALIDSERIAL && itemInRange( mChar, i ) )
+	if( i->GetCont() == NULL && itemInRange( mChar, i ) )
 	{
 		itmput[3] = (UI08)((i->GetSerial( 1 ) )+0x80); // Enable Piles
 		itmput[4] = i->GetSerial( 2 );
@@ -1206,25 +1162,22 @@ void sendItem( cSocket *s, CItem *i )
 			itmput[17] = i->GetColour( 2 );
 		}
 		itmput[18] = 0;
-		bool dontsendcandidate = false;
-		if( i->GetVisible() == 1 )
+		if( i->GetVisible() == 1 && !mChar->IsGM() )
 		{
-			if( mChar->GetSerial() != i->GetOwner() )
+			if( mChar != i->GetOwnerObj() )
 			{
-				dontsendcandidate = true;
 				itmput[18] |= 0x80;
+				return;
 			}
 		}
-		if( dontsendcandidate && !mChar->IsGM() ) 
-			return;
 		if( i->GetVisible() >= 2 )
 			itmput[18] |= 0x80;
 		
 		if( i->GetMagic() == 1 ) 
 			itmput[18]+=0x20;
-		if( mChar->AllMove() ) 
+		else if( mChar->AllMove() ) 
 			itmput[18]+=0x20;
-		if( ( i->GetMagic() == 3 || i->GetMagic() == 4 ) && mChar->GetSerial() == i->GetOwner() )
+		else if( i->IsLockedDown() && mChar == i->GetOwnerObj() )
 			itmput[18]+=0x20;
 		if( mChar->ViewHouseAsIcon() )
 		{
@@ -1255,9 +1208,9 @@ void sendItem( cSocket *s, CItem *i )
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	void sendItemsInRange( cSocket *mSock )
-//|	Programmer	-	Unknown
+//|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Send all items to a player
+//|	Purpose		-	Send all nearby items to a player
 //o---------------------------------------------------------------------------o
 void sendItemsInRange( cSocket *mSock )
 {
@@ -1285,7 +1238,7 @@ void sendItemsInRange( cSocket *mSock )
 			toCheck->PushItem();
 			for( CItem *j = toCheck->FirstItem(); !toCheck->FinishedItems(); j = toCheck->GetNextItem() )
 			{
-				if( itemInRange( mChar, j, visrange ) ) 
+				if( objInRange( mChar, j, visrange ) ) 
 				{
 					if( !j->GetVisible() || ( j->GetVisible() && mChar->IsGM() ) )
 						sendItem( mSock, j );
@@ -1466,10 +1419,10 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 	UI32 dmg = 0;
 	UI32 dx, dy, dz;
 	// - send the effect (visual and sound)
-	if( nItem->GetCont() != INVALIDSERIAL )
+	if( nItem->GetCont() != NULL )
 	{
 		staticeffect( c, 0x36B0, 0x00, 0x09 );
-		nItem->SetCont( INVALIDSERIAL );
+		nItem->SetCont( NULL );
 		nItem->SetLocation(  c );
 		soundeffect( c, 0x0207 );
 	}
@@ -1485,12 +1438,13 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 		dmg = RandomNum( 5, 10 );  // 5 points minimum damage
 	if( len < 2 ) 
 		len = 2;  // 2 square min damage range
-	SI16 xOffset = MapRegion->GetGridX( nItem->GetX() );
-	SI16 yOffset = MapRegion->GetGridY( nItem->GetY() );
+	int xOffset = MapRegion->GetGridX( nItem->GetX() );
+	int yOffset = MapRegion->GetGridY( nItem->GetY() );
 	
 	UI08 worldNumber = nItem->WorldNumber();
 
 	for( dx = 0xffffffff; dx <= 1; dx++ )
+	{
 		for( dy = 0xffffffff; dy <= 1; dy++ )
 		{
 			SubRegion *Cell = MapRegion->GetGrid( xOffset+dx, yOffset+dy, worldNumber );
@@ -1540,19 +1494,8 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 			}
 			Cell->PopItem();
 		}
+	}
 	Items->DeleItem( nItem );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void skillwindow( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Opens the skills list
-//o---------------------------------------------------------------------------o
-void skillwindow( cSocket *s )
-{
-	CPSkillsValues toSend = (*(s->CurrcharObj()));
-	s->Send( &toSend );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1588,25 +1531,11 @@ void statwindow( cSocket *s, CChar *i )
 	
 	CChar *mChar = s->CurrcharObj();
 	//Zippy 9/17/01 : fixed bug of your name on your own stat window
-	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwner() == mChar->GetSerial() ) );
+	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwnerObj() == mChar ) );
 	toSend.Gold( calcGold( i ) );
 	toSend.AC( Combat->calcDef( i, 0, false ) );
-	toSend.Weight( i->GetWeight() );
+	toSend.Weight( (SI32)(i->GetWeight() / 100) );
 	s->Send( &toSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void srequest( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Updates players status
-//o---------------------------------------------------------------------------o
-void srequest( cSocket *s )
-{
-	if( s->GetByte( 5 ) == 4 )
-		statwindow( s, calcCharObjFromSer( s->GetDWord( 6 ) ) );
-	if( s->GetByte( 5 ) == 5 )
-		skillwindow( s );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1617,10 +1546,12 @@ void srequest( cSocket *s )
 //o---------------------------------------------------------------------------o
 void updates( cSocket *s )
 {
+	if( s == NULL )
+		return;
 	ScriptSection *Updates = FileLookup->FindEntry( "MOTD", misc_def );
 	if( Updates == NULL )
 		return;
-	int y = 0;
+
 	char updateData[2048];
 	const char *tag = NULL;
 	const char *data = NULL;
@@ -1630,70 +1561,10 @@ void updates( cSocket *s )
 		data = Updates->GrabData();
 		sprintf( updateData, "%s%s %s ", updateData, tag, data );
 	}
-	y += strlen( updateData );
-	y += 10;
-	updscroll[1] = (UI08)(y>>8);
-	updscroll[2] = (UI08)(y%256);
-	updscroll[3] = 2;
-	updscroll[8] = (UI08)((y-10)>>8);
-	updscroll[9] = (UI08)((y-10)%256);
-	s->Send( updscroll, 10 );
-	s->Send( updateData, strlen( updateData ) );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void tips( cSocket *s, int I )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Opens Tip of the Day window
-//o---------------------------------------------------------------------------o
-void tips( cSocket *s, UI08 i )
-{
-	ScriptSection *Tips = FileLookup->FindEntry( "TIPS", misc_def );
-	if( Tips == NULL )
-		return;
-
-	if( i == 0 ) 
-		i = 1;
-
-	int x = i;
-	const char *tag = NULL;
-	const char *data = NULL;
-	char temp[1024];
-	for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
-	{
-		if( tag != NULL && !strcmp( tag, "TIP" ) )
-			x--;
-		if( x <= 0 )
-			break;
-	}
-	if( x > 0 )
-		tag = Tips->Prev();
-	data = Tips->GrabData();
-	sprintf(temp, "TIP %i", makeNum( data ) );
-	Tips = FileLookup->FindEntry( temp, misc_def );
-	if( Tips == NULL )
-		return;
-	x = -1;
-	int y = 0;
-	char tipData[2048];
-	tipData[0] = 0;
-	for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
-	{
-		data = Tips->GrabData();
-		sprintf( tipData, "%s%s %s ", tipData, tag, data );
-	}
-
-	y += strlen( tipData );
-	y += 10;
-	updscroll[1] = (UI08)(y>>8);
-	updscroll[2] = (UI08)(y%256);
-	updscroll[3] = 0;
-	updscroll[7] = i;
-	updscroll[8]= (UI08)((y-10)>>8);
-	updscroll[9]= (UI08)((y-10)%256);
-	s->Send( updscroll, 10 );
-	s->Send( tipData, strlen( tipData ) );
+	CPUpdScroll toSend( 2 );
+	toSend.AddString( updateData );
+	toSend.Finalize();
+	s->Send( &toSend );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1711,6 +1582,35 @@ void tips( cSocket *s, UI08 i )
 //|									
 //|	Modification	-	09/25/2002	-	Brakthus - Weight fixes
 //o---------------------------------------------------------------------------o
+bool doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
+{
+	UI32 newAmt = stack->GetAmount() + i->GetAmount();
+	if( newAmt > MAX_STACK )
+	{
+		i->SetAmount( ( newAmt - MAX_STACK ) );
+		stack->SetAmount( MAX_STACK );
+		RefreshItem( stack );
+	}
+	else
+	{
+		CPRemoveItem toRemove = (*i);
+		Network->PushConn();
+		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+			tSock->Send( &toRemove );
+		Network->PopConn();
+
+		stack->SetAmount( newAmt );
+		Items->DeleItem( i );
+		RefreshItem( stack );
+		if( mSock != NULL )
+		{
+			statwindow( mSock, mChar );
+			itemSound( mSock, stack, false );
+		}
+		return true;
+	}
+	return false;
+}
 bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 {
 	if( !mSock ) 
@@ -1719,11 +1619,11 @@ bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 	if( mChar == NULL || i == NULL || pack == NULL )
 		return false;
 
-	UI32 newAmt;
-	cSocket *tSock = NULL;
-
+	i->SetCont( pack );
 	if( i->isPileable() )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
 		for( CItem *stack = pack->FirstItemObj(); !pack->FinishedItems(); stack = pack->NextItemObj() )
 		{
 			if( stack == NULL )
@@ -1733,46 +1633,20 @@ bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 				stack->GetID() == i->GetID() && stack->GetColour() == i->GetColour() &&
 				stack->GetAmount() < MAX_STACK )
 			{ // Autostack
-				newAmt = stack->GetAmount() + i->GetAmount();
-				if( newAmt > MAX_STACK )
-				{
-					i->SetAmount( ( newAmt - MAX_STACK ) );
-					stack->SetAmount( MAX_STACK );
-					RefreshItem( stack );
-				}
-				else
-				{
-					CPRemoveItem toRemove = (*i);
-					Network->PushConn();
-					for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-						tSock->Send( &toRemove );
-					Network->PopConn();
-
-					stack->SetAmount( newAmt );
-					// Sept 25, 2002 - Brakthus
-					Weight->AddItemWeight(i, mChar); 
-					Items->DeleItem( i );
-					RefreshItem( stack );
-					if( mSock != NULL )
-					{
-						statwindow( mSock, mChar );
-						itemsfx( mSock, stack->GetID(), false );
-					}
+				if( doStacking( mSock, mChar, i, stack ) )
 					return true;
-				}
 			}
 		}
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->addItemWeight( mChar, i );
 	}
-
-	i->SetCont( pack->GetSerial() );
-
 	i->SetX( (UI16)( 20 + RandomNum( 0, 79 ) ) );
 	i->SetY( (UI16)( 40 + RandomNum( 0, 99 ) ) );
 	i->SetZ( 9 );
 
 	CPRemoveItem toRemove = (*i);
 	Network->PushConn();
-	for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		tSock->Send( &toRemove );
 	Network->PopConn();
 
@@ -1781,7 +1655,7 @@ bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 	if( mSock != NULL )
 	{
 		statwindow( mSock, mChar );
-		itemsfx( mSock, i->GetID(), false );
+		itemSound( mSock, i, false );
 	}
 	return false;
 }
@@ -1810,10 +1684,11 @@ void grabItem( cSocket *mSock )
 
 	CItem *x = i;
 	CChar *npc = NULL;
-	if( i->GetCont() != INVALIDSERIAL )  //Find character owning item
+	cBaseObject *iCont = i->GetCont();
+	if( iCont != NULL )  //Find character owning item
 	{
-		mSock->PickupSerial( i->GetCont() );
-		if( i->GetCont() < 0x40000000 )
+		mSock->PickupSerial( i->GetContSerial() );
+		if( iCont->GetObjType() == OT_CHAR )
 			mSock->PickupSpot( PL_PAPERDOLL );
 		else
 		{
@@ -1825,7 +1700,7 @@ void grabItem( cSocket *mSock )
 		CChar *npc = getPackOwner( i );
 		if( npc != NULL )
 		{
-			if( !mChar->IsGM() && npc != mChar && npc->GetOwner() != mChar->GetSerial() )
+			if( !mChar->IsGM() && npc != mChar && npc->GetOwnerObj() != mChar )
 			{
 				mSock->Send( &bounce );
 				return;
@@ -1862,7 +1737,8 @@ void grabItem( cSocket *mSock )
 							sendTradeStatus( z, x );
 						}
 						// Default item pick up sound sent to other player involved in trade
-						cSocket *zSock = calcSocketObjFromChar( calcCharFromSer( z->GetCont() ) );
+						#pragma note( "Param Warning: in grabItem(), zSock is unrefrenced" )
+						cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 					}
 				}
 			}
@@ -1880,9 +1756,9 @@ void grabItem( cSocket *mSock )
 		return;
 	}
 
-	if( x->GetMulti() != INVALIDSERIAL )
+	if( x->GetMultiObj() != NULL )
 	{
-		if( ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) && x->GetMulti() != mChar->GetMulti() ) 
+		if( ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) && x->GetMultiObj() != mChar->GetMultiObj() ) 
 		{
 			mSock->Send( &bounce );
 			return;
@@ -1890,21 +1766,23 @@ void grabItem( cSocket *mSock )
 		i->SetMulti( INVALIDSERIAL );
 	}
 
-	if(i->isDecayable())
+	if( i->isDecayable() )
 		i->SetDecayTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
 
-	SERIAL OwnSer = i->GetCont();
-	if( OwnSer < 0x40000000  )
+	if( iCont != NULL )
 	{
-		CChar *pChar = calcCharObjFromSer( OwnSer );
-		if( pChar ) 
-			pChar->TakeOffItem( i->GetLayer() );
-	} 
-	else 
-	{
-		CItem *pItem = calcItemObjFromSer( OwnSer );
-		if( pItem ) 
-			pItem->ReleaseItem( i );
+		if( iCont->GetObjType() == OT_CHAR )
+		{
+			CChar *pChar = (CChar *)iCont;
+			if( pChar ) 
+				pChar->TakeOffItem( i->GetLayer() );
+		} 
+		else 
+		{
+			CItem *pItem = (CItem *)iCont;
+			if( pItem ) 
+				pItem->ReleaseItem( i );
+		}
 	}
 
 	if( i->isGuarded() )
@@ -1920,8 +1798,8 @@ void grabItem( cSocket *mSock )
 
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile );
-	if( ( ( i->GetMagic() == 2 || ( tile.Weight() == 255 && i->GetMagic() != 1 ) ) && !mChar->AllMove() ) || 
-		( i->GetMagic() == 3 &&  i->GetOwner() != mChar->GetSerial() ) )
+	if( !mChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
 	{
 		mSock->Send( &bounce );
 		if( i->GetID( 1 ) >= 0x40 )
@@ -1937,34 +1815,25 @@ void grabItem( cSocket *mSock )
 				amount = i->GetAmount();
 			if( amount < i->GetAmount() )
 			{
-				ITEM tItem;
-				CItem *c = i->Dupe( tItem );
+				CItem *c = i->Dupe();
 				if( c != NULL )
 				{
 					c->SetAmount( i->GetAmount() - amount );
 					c->SetCont( i->GetCont() );
-					if( c->GetSpawn() != 0 )
-						nspawnsp.AddSerial( c->GetSpawn(), tItem );
-
+					if( c->GetSpawnObj() != NULL )
+						nspawnsp.AddSerial( c->GetSpawn(), calcItemFromSer( c->GetSerial() ) );
 					RefreshItem( c );
 				}
 			}
 			i->SetAmount( amount );
 			if( i->GetID() == 0x0EED )
 			{
-				CItem *packnum = getPack( mChar );
-				if( packnum != NULL )
-				{
-					if( x->GetCont() == packnum->GetSerial() )
-						statwindow( mSock, mChar );
-				}
+				if( mSock->PickupSpot() == PL_OWNPACK )
+					statwindow( mSock, mChar );
 			}
 		}
-		
-		i->SetCont( INVALIDSERIAL );
-		// Sept 25, 2002 - Brakthus - Weight fixes
-		if(mSock->PickupSpot()!=PL_OWNPACK && mSock->PickupSpot()!=PL_PAPERDOLL)
-			Weight->AddItemWeight(i, mChar);
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->addItemWeight( mChar, i );
 		MapRegion->RemoveItem( i );
 		CPRemoveItem remove( *i );
 		Network->PushConn();
@@ -1979,11 +1848,7 @@ void grabItem( cSocket *mSock )
 	}
 
 	if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-	{
-		// EviLDeD: 031002: Why would we be adding weight when the object bounces?
-		// Weight->AddItemWeight( i, mChar );
 		statwindow( mSock, mChar );
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -2010,19 +1875,30 @@ void wearItem( cSocket *mSock )
 
 	if( !mChar->IsGM() && k != mChar )	// players cant equip items on other players or npc`s paperdolls.  // GM PRIVS
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, i );
+			statwindow( mSock, mChar );
+		}
 		Bounce( mSock, i );
 		sysmessage( mSock, 1186 );
 		if( i->GetID( 1 ) >= 0x40 )
 			sendItem( mSock, i );
 		return;
 	}
-	if( i->GetCont() != INVALIDSERIAL )
+/*
+	if( i->GetCont() != NULL )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, i );
+			statwindow( mSock, mChar );
+		}
 		Bounce( mSock, i );
-		if( i->GetID( 1 ) >= 0x40 )
-			sendItem( mSock, i );
+		RefreshItem( i );
 		return;
 	}
+*/
 	if( mChar->IsDead() )
 	{
 		sysmessage( mSock, 1185 );
@@ -2031,8 +1907,8 @@ void wearItem( cSocket *mSock )
 	if( k == NULL ) 
 		return;
 
-	UI08 ac1 = Races->ArmorRestrict( k->GetRace() );
-	UI08 ac2 = i->GetArmourClass();
+	ARMORCLASS ac1 = Races->ArmorRestrict( k->GetRace() );
+	ARMORCLASS ac2 = i->GetArmourClass();
 
 	if( ac1 != 0 && ( (ac1&ac2) == 0 ) )	// bit comparison, if they have ANYTHING in common, they can wear it
 	{
@@ -2042,7 +1918,7 @@ void wearItem( cSocket *mSock )
 			sendItem( mSock, i );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
-			//Weight->SubtractItemWeight( i, mChar );
+			Weight->subtractItemWeight( mChar, i );
 			statwindow( mSock, mChar );
 		}
 		return;
@@ -2067,24 +1943,24 @@ void wearItem( cSocket *mSock )
 
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
-				Weight->SubtractItemWeight( i, mChar );
+				Weight->subtractItemWeight( mChar, i );
 				statwindow( mSock, mChar );
-				itemsfx( mSock, i->GetID(), true );
-				
+				itemSound( mSock, i, true );
 			}
 			else
-				itemsfx( mSock, i->GetID(), false );
-
+				itemSound( mSock, i, false );
 			RefreshItem( i );
-
 			return;
 		}
 	}
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile);
-	if( ( ( i->GetMagic() == 2 || ( tile.Weight() == 255 && i->GetMagic() != 1 ) ) && !mChar->AllMove() ) ||
-		( i->GetMagic() == 3 && i->GetOwner() != mChar->GetSerial() ) )
+	if( !mChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
+
 		Bounce( mSock, i );
 		if( i->GetID( 1 ) >= 0x40 ) 
 			sendItem( mSock, i );
@@ -2094,54 +1970,24 @@ void wearItem( cSocket *mSock )
 	if( i->GetLayer() == 0 )
 		i->SetLayer( mSock->GetByte( 5 ) );
 
-	CItem *j = NULL;
-
-  int layer = i->GetLayer();
 	// 1/13/2003 - Xuri - Fix for equiping an item to more than one hand, or multiple equiping.
-  j = FindItemOnLayer( k, layer );
-  if( j != NULL )
-  {
+	CItem *j = k->GetItemAtLayer( i->GetLayer() );
+	if( j != NULL )
+	{
 		sysmessage( mSock, "You can't equip two items in the same slot." );
-    if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->SubtractItemWeight( i, mChar );
-    statwindow( mSock, mChar );
-    Bounce( mSock, i );
-    RefreshItem( i );
-    if( i->GetID( 1 ) >= 0x40 )
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
+		statwindow( mSock, mChar );
+		Bounce( mSock, i );
+		RefreshItem( i );
+		if( i->GetID( 1 ) >= 0x40 )
 			sendItem( mSock, i );
-    return;
-  }
-
-/*	if( i->GetLayer() == 1 )
-	{
-		j = Combat->getWeapon( k );
-		if( j != NULL )
-		{
-			Bounce( mSock, i );
-			// Sept 25, 2002 - Xuri - Weight Fixes
-			RefreshItem(i);
-			sysmessage( mSock, 1192 );
-			if( i->GetID( 1 ) >= 0x40 )
-				sendItem( mSock, i );
-			return;
-		}
+		return;
 	}
-	else if( i->GetLayer() == 2 )
-	{
-		j = FindItemOnLayer( k, 2 );
-		if( j != NULL )
-		{
-			Bounce( mSock, i );
-			sysmessage( mSock, 1191 );
-			if( i->GetID( 1 ) >= 0x40 )
-				sendItem( mSock, i );
-			return;
-		}
-	}
-*/
-	i->SetCont( cserial );
 
-	// Add item weight if pickupspot is not ownpack or paperdoll
+	if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		Weight->subtractItemWeight( mChar, i ); // SetCont() adds the weight for us (But we also had to add the weight in grabItem() since it sets cont as INVALIDSERIAL
+	i->SetCont( k );
 
 	if( showlayer ) 
 		Console << "Item equipped on layer " << i->GetLayer() << myendl;
@@ -2155,7 +2001,6 @@ void wearItem( cSocket *mSock )
 
 	RefreshItem( i );
 
-	// Moved that here from Grabitem.
 	soundeffect( mSock, 0x0057, false );
 	statwindow( mSock, mChar );
 }
@@ -2181,19 +2026,13 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 	{
 		CItem *pack = getPack( mChar );
 		if( pack == NULL ) // if player has no pack, put it at its feet
-		{ 
+		{
+			i->SetCont( NULL );
 			i->SetLocation( mChar );
-			// Sept 25, 2002 - Xuri - Weight bugs
-			Weight->SubtractItemWeight(i, mChar);
 			RefreshItem( i );
 		} 
 		else
-		{
-			//if( targChar == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
-			//	Weight->AddItemWeight( i, mChar );
 			stackDeleted = autoStack( mSock, i, pack );
-			return true;
-		}
 	}
 	else if( targChar->IsNpc() )
 	{
@@ -2207,7 +2046,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 			{
 				soundeffect( mSock, 0x0246, true ); //poison sound - SpaceDog
 				targChar->SetPoisoned( i->GetPoisoned() );
-				targChar->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+				targChar->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON )) ) );
 				targChar->SendToSocket( mSock, true, mChar );
 			}
 			//Remove a food item
@@ -2216,43 +2055,29 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 			if( i == NULL )
 				return true; //stackdeleted
 		}
-		if( targChar->GetID() != 0x0190 && targChar->GetID() != 0x0191 )
+		if( !isHuman( targChar ) )
 		{
 			// Sept 25, 2002 - Xuri - Weight fixes
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->SubtractItemWeight( i, mChar );
-			//
+				Weight->subtractItemWeight( mChar, i );
+
 			Bounce( mSock, i );
-			if( i->GetCont() == INVALIDSERIAL )
-			{
-				if( i->GetID( 1 ) >= 0x40 ) 
-					sendItem( mSock, i );
-			}
-			else
-				sendItem( mSock, i );
+			RefreshItem( i );
 		}
 		else if( mChar->GetTrainer() != targChar->GetSerial() )
 		{
 			// Sept 25, 2002 - Xuri - weight fix
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->SubtractItemWeight( i, mChar );
-			//
+				Weight->subtractItemWeight( mChar, i );
+
 			npcTalk( mSock, targChar, 1197, false );
 			Bounce( mSock, i );
-			if( i->GetCont() == INVALIDSERIAL )
-			{
-				if( i->GetID( 1 ) >= 0x40 ) 
-					sendItem( mSock, i );
-			}
-			else
-				sendItem( mSock, i );
+			RefreshItem( i );
 		}
 		else // This NPC is training the player
 		{
 			if( i->GetID() == 0x0EED ) // They gave the NPC gold
 			{
-				Weight->SubtractItemWeight( i, mChar );
-
 				UI08 trainedIn = targChar->GetTrainingPlayerIn();
 				npcTalk( mSock, targChar, 1198, false );
 				UI16 oldskill = mChar->GetBaseSkill( trainedIn ); 
@@ -2261,43 +2086,34 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 					mChar->SetBaseSkill( 250, trainedIn );
 				Skills->updateSkillLevel( mChar, trainedIn );
 				updateskill( mSock, trainedIn );
-				UI16 sfxID = i->GetID();
+				UI16 getAmount = i->GetAmount();
 				if( i->GetAmount() > 250 ) // Paid too much
 				{
 					i->SetAmount( i->GetAmount() - 250 - oldskill );
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+						Weight->subtractItemWeight( mChar, i );
 					Bounce( mSock, i );
-					if( i->GetCont() == INVALIDSERIAL )
-					{
-						if( i->GetID( 1 ) >= 0x40 ) 
-							RefreshItem(i);
-							//sendItem( mSock, i );
-					}
-					else
-						sendItem( mSock, i );
+					RefreshItem( i );
 				}
 				else  // Gave exact change
 				{
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+						Weight->subtractItemWeight( mChar, i );
 					Items->DeleItem( i );
 					stackDeleted = true;
 				}
 				mChar->SetTrainer( INVALIDSERIAL );
 				targChar->SetTrainingPlayerIn( 255 );
-				itemsfx( mSock, sfxID, false );
+				goldSound( mSock, getAmount, false );
 			}
 			else // Did not give gold
 			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
 				npcTalk( mSock, targChar, 1199, false );
 				Bounce( mSock, i );
-				if( i->GetCont() == INVALIDSERIAL )
-				{
-					if( i->GetID( 1 ) >= 0x40 ) 
-						RefreshItem(i);
-						//sendItem( mSock, i );
-				}
-				else
-					sendItem( mSock, i );
+				RefreshItem( i );
 			}
-			//RefreshItem(i); 
 		}
 	}
 	else // Trade stuff
@@ -2307,7 +2123,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 			CItem *j = startTrade( mSock, targChar );
 			if ( j )
 			{
-				i->SetCont( j->GetSerial() );
+				i->SetCont( j );
 				i->SetX( 30 );
 				i->SetY( 30 );
 				i->SetZ( 9 );
@@ -2326,6 +2142,8 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 			CItem *p = getPack( targChar );
 			if( p == NULL )
 			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
 				Bounce( mSock, i );
 				return stackDeleted;
 			}
@@ -2335,16 +2153,16 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				tSock->Send( &toRemove );
 			Network->PopConn();
 
-			Weight->SubtractItemWeight( i, mChar );
-			if( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->AddItemWeight( i, targChar );
-
 			stackDeleted = autoStack( calcSocketObjFromChar( targChar ), i, p );
 			if( !stackDeleted )
 				RefreshItem( i );
 		}
 		else
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
 			Bounce( mSock, i );
+		}
 	}
 	return stackDeleted;
 }
@@ -2367,75 +2185,77 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 	if( i == NULL ) 
 	{ 
 		sendItemsInRange( mSock );
-		Console << "ALERT: sendItemsInRange() called in dump_item().  This function could cause a lot of lag!" << myendl;
+		Console << "ALERT: sendItemsInRange() called in dropItem().  This function could cause a lot of lag!" << myendl;
 		return;
 	}
-	if( i->GetCont() != INVALIDSERIAL )
+/*	if( i->GetCont() != NULL )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
 		Bounce( mSock, i );
-		if( i->GetID( 1 ) >= 0x40 ) 
-			RefreshItem(i);
-			//sendItem( mSock, i );
+		RefreshItem( i );
 		return;
 	}
-
+*/
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile);
-	if( ( ( i->GetMagic() == 2 || ( tile.Weight() == 255 && i->GetMagic() != 1 ) ) && !nChar->AllMove() ) ||
-		( i->GetMagic() == 3 &&  i->GetOwner() != nChar->GetSerial() ) )
+	if( !nChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
 		Bounce( mSock, i );
-		if( i->GetID( 1 ) >= 0x40 )
-			RefreshItem(i);
-			//sendItem( mSock, i );
+		RefreshItem( i );
 		return;
 	}
 	
-	if( mSock->GetByte( 5 ) != 0xFF )
+	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
-		// No Glow - Zane
-		//Items->GlowItem( i );
-
 		CPRemoveItem toRemove = (*i);
 		
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			tSock->Send( &toRemove );
 		Network->PopConn();
+
+		i->SetCont( NULL );
 		i->SetLocation( mSock->GetWord( 5 ), mSock->GetWord( 7 ), mSock->GetByte( 9 ), nChar->WorldNumber() );
 		RefreshItem( i );
-		Weight->SubtractItemWeight( i, nChar );
 	}
-  else
-  {
+	else
+	{
 		CChar *t = calcCharObjFromSer( mSock->GetDWord( 10 ) );
-    if( t != NULL )
+		if( t != NULL )
 			stackDeleted = dropItemOnChar( mSock, t, i );
-    else
-    {
+		else
+		{
 			//Bounces items dropped in illegal locations in 3D UO client!!!
-      if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->SubtractItemWeight( i, nChar );
-      statwindow( mSock, nChar );
-      Bounce( mSock, i );
-      RefreshItem( i );
-      if( i->GetID( 1 ) >= 0x40 )
-				sendItem( mSock, i );
-      return;
-    }
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( nChar, i );
+			statwindow( mSock, nChar );
+			Bounce( mSock, i );
+			RefreshItem( i );
+			return;
+		}
 	}
-	
-	statwindow( mSock, nChar );
+
 	if( !stackDeleted )
 	{
-		if( nChar->GetMulti() != INVALIDSERIAL )
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
+
+		if( i->isDecayable() )
+			i->SetDecayTime( BuildTimeValue( static_cast< R32 >(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) ) );
+
+		if( nChar->GetMultiObj() != NULL )
 		{
-			CMultiObj *multi = findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
+			CMultiObj *multi = findMulti( i );
 			if( multi != NULL )
 				i->SetMulti( multi );
 		}
-		itemsfx( mSock, i->GetID(), ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+		itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
+	statwindow( mSock, nChar );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2448,10 +2268,7 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 void packItem( cSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	SERIAL serial = mSock->GetDWord( 10 );
-	bool stackDeleted = false;
-
-	CItem *nCont = calcItemObjFromSer( serial );
+	CItem *nCont = calcItemObjFromSer( mSock->GetDWord( 10 ) );
 	if( nCont == NULL || mChar == NULL )
 		return;
 
@@ -2459,11 +2276,16 @@ void packItem( cSocket *mSock )
 	if( nItem == NULL ) 
 		return;
 
+	bool stackDeleted = false;
+
 	char temp[1024];
 	CPBounce bounce( 5 );
 
-	if( nCont->GetLayer() == 0 && nCont->GetID() == 0x1E5E && nCont->GetCont() == mChar->GetSerial() )
+	if( nCont->GetLayer() == 0 && nCont->GetID() == 0x1E5E && nCont->GetCont() == mChar )
 	{	// Trade window
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
+		nItem->SetCont( mChar );
 		CItem *z = calcItemObjFromSer( nCont->GetMoreB() );
 		if( z != NULL )
 		{
@@ -2473,9 +2295,9 @@ void packItem( cSocket *mSock )
 				nCont->SetMoreZ( 0 );
 				sendTradeStatus( z, nCont );
 			}
-			cSocket *zSock = calcSocketObjFromChar( calcCharObjFromSer( z->GetCont() ) );
+			cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 			if( zSock != NULL )
-				itemsfx( zSock, nCont->GetID(), ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+				itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 		}
 		return;
 	}
@@ -2484,48 +2306,53 @@ void packItem( cSocket *mSock )
 	{
 		if( nCont->GetMoreY() == 123 && nCont->GetMoreX() == 1 && nCont->GetType() == 1 )
 		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
 			if( nItem->GetID() == 0x0EED )
-				goldsfx( mSock, 2 );
+			{
+				nItem->SetCont( nCont );
+				goldSound( mSock, 2 );
+			}
 			else // If not gold, bounce to the ground
 			{
 				sysmessage( mSock, 1200 );
 
-				nItem->SetCont( INVALIDSERIAL );
+				nItem->SetCont( NULL );
 				nItem->SetLocation( mChar );
-				RefreshItem( nItem );
-				itemsfx( mSock, nItem->GetID(), false );
 			}
-			Weight->SubtractItemWeight( nItem, mChar );
+			RefreshItem( nItem );
+			itemSound( mSock, nItem, false );
 			statwindow( mSock, mChar );
 			return;
 		}
 	}
-
-	if( nItem->GetCont() != INVALIDSERIAL )
+/*
+	if( nItem->GetCont() != NULL )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
 		Bounce( mSock, nItem );
-		if( nItem->GetID( 1 ) >= 0x40 )
-			RefreshItem(nItem);
-			//sendItem( mSock, nItem );
+		RefreshItem( nItem );
 		return;
 	}
-
+*/
 	CTile tile;
 	Map->SeekTile( nItem->GetID(), &tile);
-	if( ( ( nItem->GetMagic() == 2 || ( tile.Weight() == 255 && nItem->GetMagic() != 1 && !nCont->isCorpse() ) ) && mChar->AllMove() ) ||
-		( nItem->GetMagic() == 3 && nItem->GetOwner() != mChar->GetSerial() ) )
+	if( !mChar->AllMove() && ( nItem->GetMagic() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && nItem->GetMagic() != 1 ) ) )
 	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
 		Bounce( mSock, nItem );
-		RefreshItem(nItem);
-		if( nCont->GetID( 1 ) >= 0x40 ) 
-			sendItem( mSock, nCont );
+		RefreshItem( nItem );
 		return;
 	}
 
 	if( nCont->GetType() == 87 )	// Trash container
 	{
 		soundeffect( mSock, 0x0042, false );
-		Weight->SubtractItemWeight( nItem, mChar );
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
 		statwindow( mSock, mChar );
 		Items->DeleItem( nItem );
 		sysmessage( mSock, 1201 );
@@ -2535,20 +2362,21 @@ void packItem( cSocket *mSock )
 	{
 		if( nItem->GetID( 1 ) != 0x1F || nItem->GetID( 2 ) < 0x2D || nItem->GetID( 2 ) > 0x72 )
 		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
 			Bounce( mSock, nItem );
 			sysmessage( mSock, 1202 );
-			if( nCont->GetID( 1 ) >= 0x40 ) 
-				sendItem( mSock, nCont );
+			RefreshItem( nItem );
 			return;
 		}
 		CChar *c = getPackOwner( nCont );
 		if( c != NULL && c != mChar && !mChar->CanSnoop() )
 		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
 			Bounce( mSock, nItem );
-			RefreshItem(nItem);
+			RefreshItem( nItem );
 			sysmessage( mSock, 1203 );
-			if( nCont->GetID( 1 ) >= 0x40 ) 
-				sendItem( mSock, nCont );
 			return;
 		}
 		if( nItem->GetName()[0] == '#' )
@@ -2558,8 +2386,11 @@ void packItem( cSocket *mSock )
 
 		if( nCont->GetMore( 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
 		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
 			sysmessage( mSock, 1204 );
 			Bounce( mSock, nItem );
+			RefreshItem( nItem );
 			return;
 		}
 
@@ -2567,8 +2398,11 @@ void packItem( cSocket *mSock )
 		{
 			if( nCont->GetMoreX() == 0xFFFFFFFF && nCont->GetMoreY() == 0xFFFFFFFF && nCont->GetMoreZ() == 0xFFFFFFFF )
 			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
 				sysmessage( mSock, 1205 );
 				Bounce( mSock, nItem );
+				RefreshItem( nItem );
 				return;
 			}
 			nCont->SetMoreX( 0xFFFFFFFF );
@@ -2580,84 +2414,80 @@ void packItem( cSocket *mSock )
 			int targSpellNum = nItem->GetID() - 0x1F2D;
 			if( Magic->HasSpell( nCont, targSpellNum ) )
 			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
 				sysmessage( mSock, 1206 );
 				Bounce( mSock, nItem );
+				RefreshItem( nItem );
 				return;
 			}
 			else
 				Magic->AddSpell( nCont, targSpellNum );
 		}
 		soundeffect( mSock, 0x0042, false );
-		Weight->SubtractItemWeight( nItem, mChar );
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
 		statwindow( mSock, mChar );
 		Items->DeleItem( nItem );
 		return;
 	}
 	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
-	{	// Stacking		
-		if( (UI32)(nCont->GetAmount() + nItem->GetAmount()) > MAX_STACK )
+	{	// Stacking
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
+		if( nCont->GetCont( 1 ) >= 0x40 && !Weight->checkPackWeight( (CItem *)nCont->GetCont(), nItem ) )
 		{
-			nItem->SetAmount( ( nItem->GetAmount() + nCont->GetAmount() ) - MAX_STACK );
-			nCont->SetAmount( MAX_STACK );
+			sysmessage( mSock, "That pack cannold hold any more weight" );
+			Bounce( mSock, nItem );
+			RefreshItem( nItem );
+			return;
+		}
+		nItem->SetCont( nCont );
+		stackDeleted = doStacking( mSock, mChar, nItem, nCont );
+		if( !stackDeleted )
+		{
 			Bounce( mSock, nItem );
 			RefreshItem( nItem );
 		}
-		else
-		{
-			CPRemoveItem toRemove = (*nItem);
-			
-			CChar *nChar = getPackOwner( nCont );
-			nCont->SetAmount( nCont->GetAmount() + nItem->GetAmount() );
-			RefreshItem(nCont);
-			if(nChar)
-				Weight->AddItemWeight(nItem,nChar);
-			if(mChar)
-				Weight->SubtractItemWeight( nItem, mChar );
-
-			Items->DeleItem( nItem );
-
-			Network->PushConn();
-			for( cSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
-				bSock->Send( &toRemove );
-			Network->PopConn();
-		}
-
-		RefreshItem( nCont );
-		itemsfx( mSock, nCont->GetID(), true );
-		statwindow( mSock, mChar );
-		return;
-	}                                                                                                                     
+	}
 	else if( nCont->GetType() == 1 )
 	{
-		CChar *j = NULL;
-		j = getPackOwner( nCont );
-
-		nItem->SetCont( nCont->GetSerial() );
-		if( mSock->GetByte( 5 ) != 0xFF )
+		CChar *j = getPackOwner( nCont );
+		if( j != NULL )
 		{
+			if( j->IsNpc() && j->GetNPCAiType() == 17 && j->GetOwnerObj() == mChar )
+			{
+				mChar->SetSpeechMode( 3 );
+				mChar->SetSpeechItem( nItem->GetSerial() );
+				sysmessage( mSock, 1207 );
+			}
+			else if( j != mChar && mChar->GetCommandLevel() < CNSCMDLEVEL )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+				sysmessage( mSock, 1630 );
+				Bounce( mSock, nItem );
+				RefreshItem( nItem );
+				return;
+			}
+		}
+		if( mSock->GetByte( 5 ) != 0xFF )	// In a specific spot in a container
+		{
+			if( !Weight->checkPackWeight( nCont, nItem ) )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+				sysmessage( mSock, "That pack cannold hold any more weight" );
+				Bounce( mSock, nItem );
+				RefreshItem( nItem );
+				return;
+			}
 			nItem->SetX( mSock->GetWord( 5 ) );
 			nItem->SetY( mSock->GetWord( 7 ) );
-			if( j != NULL )
-			{
-				if( j->IsNpc() && j->GetNPCAiType() == 17 && j->GetOwner() == mChar->GetSerial() )
-				{
-					mChar->SetSpeechMode( 3 );
-					mChar->SetSpeechItem( nItem->GetSerial() );
-					sysmessage( mSock, 1207 );
-					Weight->SubtractItemWeight(nItem,mChar);
-				}
-				else if( j != mChar && mChar->GetCommandLevel() < CNSCMDLEVEL )
-				{
-					sysmessage( mSock, 1630 );
-					Bounce( mSock, nItem );
-					RefreshItem(nItem);
-					return;
-				}
-			}
-			else
-			{
-				Weight->SubtractItemWeight(nItem,mChar);
-			}
+
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
+			nItem->SetCont( nCont );
 			nItem->SetZ( 9 );
 
 			CPRemoveItem toRemove = (*nItem);
@@ -2667,80 +2497,58 @@ void packItem( cSocket *mSock )
 			Network->PopConn();
 
 			RefreshItem( nItem );
-
-			//if( j != NULL && j != mChar )
-			//	Weight->SubtractItemWeight( nItem, mChar );
-			//else if( j != NULL && j == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
-			//	Weight->AddItemWeight( nItem, mChar );
-
 			statwindow( mSock, mChar );
-
-		} 
+		}
 		else
 		{
-			if( j != NULL )
+			if( !Weight->checkPackWeight( nCont, nItem ) )
 			{
-				if( j->GetNPCAiType() == 17 && j->IsNpc() && j->GetOwner() == mChar->GetSerial() )
-				{
-					mChar->SetSpeechMode( 3 );
-					mChar->SetSpeechItem( nItem->GetSerial() );
-					sysmessage( mSock, 1207 );
-				}
-				else if( j->GetSerial() != mChar->GetSerial() && !mChar->IsGM() && !mChar->IsCounselor() )
-				{
-					sysmessage( mSock, 1630 );
-					Bounce( mSock, nItem );
-					return;
-				}
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+				sysmessage( mSock, "That pack cannold hold any more weight" );
+				Bounce( mSock, nItem );
+				RefreshItem( nItem );
+				return;
 			}
+			nItem->SetCont( nCont );
 			stackDeleted = autoStack( mSock, nItem, nCont );
+			if( !stackDeleted )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+			}
+			statwindow( mSock, mChar );
 		}
-	}
-	else if( nCont->GetType() == 63 || nCont->GetType() == 65 )
-	{	// - Unlocked item spawner or unlockable item spawner
-		MapRegion->RemoveItem( nItem );
-		nItem->SetCont( mSock->GetDWord( 10 ) );
-		
-		nItem->SetX( mSock->GetWord( 5 ) );
-		nItem->SetY( mSock->GetWord( 7 ) );
-		nItem->SetZ( mSock->GetByte( 9 ) );
-
-		CPRemoveItem toRemove = (*nItem);
-		Network->PushConn();
-		for( cSocket *jSock = Network->FirstSocket(); !Network->FinishedSockets(); jSock = Network->NextSocket() )
-			jSock->Send( &toRemove );
-		Network->PopConn();
-		RefreshItem( nItem );
-		Weight->SubtractItemWeight( nItem, mChar );
-		statwindow( mSock, mChar );
 	}
 	else
 	{
 		MapRegion->RemoveItem( nItem );
+
 		nItem->SetX( mSock->GetWord( 5 ) );
 		nItem->SetY( mSock->GetWord( 7 )  );
 		nItem->SetZ( mSock->GetByte( 9 ) );
-		nItem->SetCont( INVALIDSERIAL );
-		MapRegion->AddItem( nItem );
+
+		if( nCont->GetType() == 63 || nCont->GetType() == 65 ) // - Unlocked item spawner or unlockable item spawner
+			nItem->SetCont( nCont );
+		else
+		{
+			nItem->SetCont( NULL );
+			MapRegion->AddItem( nItem );
+		}
 		
 		CPRemoveItem toRemove = (*nItem);
 		Network->PushConn();
 		for( cSocket *aSock = Network->FirstSocket(); !Network->FinishedSockets(); aSock = Network->NextSocket() )
 			aSock->Send( &toRemove );
 		Network->PopConn();
+
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
 		RefreshItem( nCont );
-		Weight->SubtractItemWeight( nItem, mChar );
 		statwindow( mSock, mChar );
 	}
 	if( !stackDeleted )
-	{
-		// No Glow - Zane
-		// Items->GlowItem( nItem );
-		if( getPackOwner( nItem ) == mChar )
-			soundeffect( mSock, 0x0057, false );
-		else
-			itemsfx( mSock, nItem->GetID(), ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
-	}
+		itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2751,24 +2559,24 @@ void packItem( cSocket *mSock )
 //|									
 //|	Modification	-	09/22/2002	-	Xuri - Unhide players when mounting horses etc.
 //o---------------------------------------------------------------------------o
-//|	Returns				- N/A
+//|	Returns			- N/A
 //o--------------------------------------------------------------------------o	
 void MountCreature( CChar *s, CChar *x )
 {
 	cSocket *sockPtr = calcSocketObjFromChar( s );
-	if( objInRange( s, x, 2 ) == 0 ) 
+	if( !objInRange( s, x, 2 ) ) 
 		return;
 	char temp[1024];
-	if( x->GetOwner() == s->GetSerial() || s->IsGM() )
+	if( x->GetOwnerObj() == s || s->IsGM() )
 	{
-		if(s->IsOnHorse() )
+		if( s->IsOnHorse() )
 		{
 			if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
 				s->ExposeToView();
 		}
 		strcpy( temp, x->GetName() );
 		s->SetOnHorse( true );
-		CItem *c = Items->SpawnItem( sockPtr, 1, temp, false, 0x0915, x->GetSkin(), false, false );
+		CItem *c = Items->SpawnItem( NULL, s, 1, temp, false, 0x0915, x->GetSkin(), false, false );
 
 		// Weazel 12 July, 2001 - Not all 3rd dawn creature mount id's are correct still missing a faction horse/dragon horse and
 		// the ethereal llama and ostards.
@@ -2805,7 +2613,7 @@ void MountCreature( CChar *s, CChar *x )
 		
 		c->SetLayer( 0x19 );
 
-		if( !c->SetCont( s->GetSerial() ) )
+		if( !c->SetCont( s ) )
 		{
 			s->SetOnHorse( false );	// let's get off our horse again
 			return;
@@ -2815,7 +2623,7 @@ void MountCreature( CChar *s, CChar *x )
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() ) // and to all inrange sockets (without re-sending to current socket )
 		{
-			if( sockPtr != tSock && charInRange( sockPtr, tSock ) )
+			if( sockPtr != tSock && charInRange( s, tSock->CurrcharObj() ) )
 				wornItems( tSock, s );
 		}
 		Network->PopConn();
@@ -2936,10 +2744,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 	{
 	case 'A':
 		if( !strcmp( "ADDITEM", cmd ) )
-		{
-			Skills->MakeMenuTarget( s, data, mChar->GetMaking() );
-			mChar->SetMaking( 0 );
-		}
+			Items->menuAddItem( s, data );
 		break;
 	case 'B':
 		if( !strcmp( "BATCH", cmd ) )
@@ -3029,7 +2834,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 		if( !strcmp( "NPC", cmd ) )
 		{
 			s->XText( data );
-			sprintf( tstring, Dictionary->GetEntry( 1212 ), s->XText() );
+			sprintf( tstring, Dictionary->GetEntry( 1212, s->Language() ), s->XText() );
 			target( s, 0, 1, 0, 27, tstring );
 		}
 		break;
@@ -3278,6 +3083,12 @@ void processkey( int c )
 		
 		switch( c )
 		{
+			case '!':
+				// Force server to save accounts file
+				messageLoop << "CMD: Saving Accounts... ";
+				Accounts->Save();
+				messageLoop << MSG_PRINTDONE;
+				break;
 			case '@':
 				// Force server to save all files.(Manual save)
 				messageLoop << MSG_WORLDSAVE;
@@ -3333,107 +3144,111 @@ void processkey( int c )
 			case 0x1B:
 			case 'Q':
 				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << "| CMD: Immediate Shutdown initialized!";
+				messageLoop << "CMD: Immediate Shutdown initialized!";
 				messageLoop << MSG_SHUTDOWN;
 				break;
 			case '1':
 				// Reload server ini file
-				messageLoop << "| CMD: Loading Server INI... ";
+				messageLoop << "CMD: Loading Server INI... ";
 				cwmWorldState->ServerData()->load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '2':
 				// Reload accounts, and update Access.adm if new accounts available.
-				messageLoop << "| CMD: Loading Accounts... ";
+				messageLoop << "CMD: Loading Accounts... ";
 				Accounts->Load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '3':
 				// Reload Region Files
-				messageLoop << "| CMD: Loading Regions... ";
+				messageLoop << "CMD: Loading Regions... ";
 				loadregions();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '4':
 				// Reload the serve spawn regions
-				messageLoop << "| CMD: Loading Spawn Regions... ";
+				messageLoop << "CMD: Loading Spawn Regions... ";
 				loadSpawnRegions();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '5':
 				// Reload the current Spells 
-				messageLoop << "| CMD: Loading spells... ";
+				messageLoop << "CMD: Loading spells... ";
 				Magic->LoadScript();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '6':
 				// Reload the server command list
-				messageLoop << "| CMD: Loading commands... ";
+				messageLoop << "CMD: Loading commands... ";
 				Commands->Load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '7':
 				// Reload the server defantion files
-				messageLoop << "| CMD: Loading Server DFN... ";
+				messageLoop << "CMD: Loading Server DFN... ";
 				FileLookup->Reload();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '8':
 				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-				messageLoop << "| CMD| Loading JSE Scripts... ";
+				messageLoop << "CMD: Loading JSE Scripts... ";
 				messageLoop << MSG_RELOADJS;
 				break;
 			case '9':
 				// Reload the HTML output templates
-				messageLoop << "| CMD: Loading HTML Templates... ";
+				messageLoop << "CMD: Loading HTML Templates... ";
 				HTMLTemplates->Load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '0':
 				// Reload all the files. If there are issues with these files change the order reloaded from here first.
 				cwmWorldState->ServerData()->load();
-				messageLoop << "| CMD: Loading All";
-				messageLoop << "|      Server INI... ";
+				messageLoop << "CMD: Loading All";
+				messageLoop << "     Server INI... ";
 				// Reload accounts, and update Access.adm if new accounts available.
-				messageLoop << "|      Loading Accounts... ";
+				messageLoop << "     Loading Accounts... ";
 				Accounts->Load();
 				messageLoop << MSG_PRINTDONE;
 				// Reload Region Files
-				messageLoop << "|      Loading Regions... ";
+				messageLoop << "     Loading Regions... ";
 				loadregions();
 				messageLoop << MSG_PRINTDONE;
 				// Reload the serve spawn regions
-				messageLoop << "|      Loading Spawn Regions... ";
+				messageLoop << "     Loading Spawn Regions... ";
 				loadSpawnRegions();
 				messageLoop << MSG_PRINTDONE;
 				// Reload the current Spells 
-				messageLoop << "|      Loading spells... ";
+				messageLoop << "     Loading spells... ";
 				Magic->LoadScript();
 				messageLoop << MSG_PRINTDONE;
 				// Reload the server command list
-				messageLoop << "|      Loading commands... ";
+				messageLoop << "     Loading commands... ";
 				Commands->Load();
 				messageLoop << MSG_PRINTDONE;
+				// Reload DFN's
+				messageLoop << "     Loading Server DFN... ";
+				FileLookup->Reload();
+				messageLoop << MSG_PRINTDONE;
 				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-				messageLoop << "|      Loading JSE Scripts... ";
+				messageLoop << "     Loading JSE Scripts... ";
 				messageLoop << MSG_RELOADJS;
 				// Reload the HTML output templates
-				messageLoop << "|      Loading HTML Templates... ";
+				messageLoop << "     Loading HTML Templates... ";
 				HTMLTemplates->Load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 		case 'T':
 			// Timed shut down(10 minutes)
-			messageLoop << "| CMD: 10 Minute Server Shutdown Announced(Timed)";
+			messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
 			endtime = BuildTimeValue( 600 );
 			endmessage(0);
 			break;
 		case 'L':
 			// Show Layer info
 			if( showlayer )
-				messageLoop << "| CMD: Show Layer Disabled";
+				messageLoop << "CMD: Show Layer Disabled";
 			else
-				messageLoop << "| CMD: Show Layer Enabled";
+				messageLoop << "CMD: Show Layer Enabled";
 			showlayer = !showlayer;
 			break;
 		case  'D':    
@@ -3444,25 +3259,25 @@ void processkey( int c )
 				if( tSock->AcctNo() == 0 )
 					Network->Disconnect( calcSocketFromSockObj( tSock ) );
 			}
-			messageLoop << "| CMD: Socket Disconnected(Account 0).";
+			messageLoop << "CMD: Socket Disconnected(Account 0).";
 			break;
 		case 'K':		
 			// mass disconnect
 			for( i = now - 1; i >= 0; i-- )
 				Network->Disconnect( i );
-			messageLoop << "| CMD: All Connections Closed.";
+			messageLoop << "CMD: All Connections Closed.";
 			break;
 		case 'H':                
 			// Enable/Disable heartbeat
 			if( heartbeat == 1 ) 
-				messageLoop << "| CMD: Heartbeat Disabled";
+				messageLoop << "CMD: Heartbeat Disabled";
 			else 
-				messageLoop << "| CMD: Heartbeat Enabled";
+				messageLoop << "CMD: Heartbeat Enabled";
 			heartbeat = !heartbeat;
 			break;
 		case 'P':                
 			// 1/13/2003 - Dreoth - Log Performance Information enhancements
-			messageLoop << "CMD: Performance Dump ";
+			Console.LogEcho( true );
 			Console.Log( "--- Starting Performance Dump ---", "performance.log");
 			Console.Log( "Performace Dump:", "performance.log");
 			Console.Log( "Network code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)networkTime/(R32)networkTimeCount), networkTimeCount);
@@ -3474,22 +3289,11 @@ void processkey( int c )
 			Console.Log( "Bytes sent: %i", "performance.log", globalSent);
 			Console.Log( "Bytes Received: %i", "performance.log", globalRecv);
 			Console.Log( "--- Performance Dump Complete ---", "performance.log");
-			messageLoop << "Performance Dump Complete ";
-			// Echo output to console as well.
-			printf("| Performance Dump:\n");
-			printf("|   Network code: %.2fmsec [%i samples]\n", (R32)((R32)networkTime/(R32)networkTimeCount), networkTimeCount);
-			printf("|   Timer code: %.2fmsec [%i samples]\n", (R32)((R32)timerTime/(R32)timerTimeCount), timerTimeCount);
-			printf("|   Auto code: %.2fmsec [%i samples]\n", (R32)((R32)autoTime/(R32)autoTimeCount), autoTimeCount);
-			printf("|   Loop Time: %.2fmsec [%i samples]\n", (R32)((R32)loopTime/(R32)loopTimeCount), loopTimeCount);
-			printf("|   Characters: %i/%i - Items: %i/%i (Dynamic)\n", chars.Count(), cmem, items.Count(), imem);
-			printf("|   Simulation Cycles: %f per sec\n", (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
-			printf("|   Bytes sent: %i\n", globalSent);
-			printf("|   Bytes Received: %i\n", globalRecv);
-			printf("| Performance Dump Complete.\n");
+			Console.LogEcho( false );
 			break;
 		case 'W':                
 			// Display logged in chars
-			messageLoop << "| CMD: Current Users in the World:";
+			messageLoop << "CMD: Current Users in the World:";
 			j = 0;
 			cSocket *iSock;
 			Network->PushConn();
@@ -3497,45 +3301,45 @@ void processkey( int c )
 			{
 				j++;
 				CChar *mChar = iSock->CurrcharObj();
-				sprintf( temp, "|      %i) %s [%i %i %i %i]", j - 1, mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
+				sprintf( temp, "     %i) %s [%i %i %i %i]", j - 1, mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
 				messageLoop << temp;
 			}
 			Network->PopConn();
-			sprintf( temp, "|      Total users online: %i", j );
+			sprintf( temp, "     Total users online: %i", j );
 			messageLoop << temp;
 			break;
 		case 'M':
 			UI32 tmp, total;
 			total = 0;
 			tmp = 0;
-			messageLoop << "| CMD: UOX Memory Information:";
-			messageLoop << "|      Cache:";
-			sprintf( temp, "|         Tiles: %i bytes", Map->TileMem );
+			messageLoop << "CMD: UOX Memory Information:";
+			messageLoop << "     Cache:";
+			sprintf( temp, "        Tiles: %i bytes", Map->TileMem );
 			messageLoop << temp;
-			sprintf( temp, "|         Statics: %i bytes", Map->StaMem );
+			sprintf( temp, "        Statics: %i bytes", Map->StaMem );
 			messageLoop << temp;
-			sprintf( temp, "|         Version: %i bytes", Map->versionMemory );
+			sprintf( temp, "        Version: %i bytes", Map->versionMemory );
 			messageLoop << temp;
-			sprintf( temp, "|         Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
+			sprintf( temp, "        Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
 			messageLoop << temp;
 			total += tmp = chars.Size() + cmem*sizeof( teffect_st ) + cmem*sizeof(char) + cmem*sizeof(int)*5;
-			sprintf( temp, "|      Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cmem );
+			sprintf( temp, "     Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cmem );
 			messageLoop << temp;
 			total += tmp = items.Size() + imem*sizeof(int)*4;
-			sprintf( temp, "|      Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), imem );
+			sprintf( temp, "     Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), imem );
 			messageLoop << temp;
-			sprintf( temp, "|         You save I: %i & C: %i bytes!", imem * sizeof(CItem) - items.Size(), cmem * sizeof( CChar ) - chars.Size() );
+			sprintf( temp, "        You save I: %i & C: %i bytes!", imem * sizeof(CItem) - items.Size(), cmem * sizeof( CChar ) - chars.Size() );
 			total += tmp = 69 * sizeof( SpellInfo );
-			sprintf( temp, "|      Spells: %i bytes", tmp );
-			messageLoop << "|      Sizes:";
-			sprintf( temp, "|         CItem  : %i bytes", sizeof( CItem ) );
+			sprintf( temp, "     Spells: %i bytes", tmp );
+			messageLoop << "     Sizes:";
+			sprintf( temp, "        CItem  : %i bytes", sizeof( CItem ) );
 			messageLoop << temp;
-			sprintf( temp, "|         CChar  : %i bytes", sizeof( CChar ) );
+			sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
 			messageLoop << temp;
-			sprintf( temp, "|         TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
+			sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
 			messageLoop << temp;
 			total += tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
-			sprintf( temp, "|         Approximate Total: %i bytes", total );
+			sprintf( temp, "        Approximate Total: %i bytes", total );
 			messageLoop << temp;
 			break;
 		case 'e':
@@ -3558,34 +3362,34 @@ void processkey( int c )
 			messageLoop << temp;
 			break;
 		case '?':
-			messageLoop << "o-------------------------";
-			messageLoop << "| Console commands:";
-			messageLoop << "o-------------------------";
-			messageLoop << "|  ShardOP:";
-			messageLoop << "|     * - Lock/Unlock Console ? - Commands list(this)";
-			messageLoop << "|     C - Configuration       H - Heart Beat";
-			messageLoop << "|     Y - Console Broadcast   Q - Quit/Exit           ";
-			messageLoop << "|  Load Commands:";
-			messageLoop << "|     1 - Ini                 2 - Accounts";
-			messageLoop << "|     3 - Regions             4 - Spawn Regions";
-			messageLoop << "|     5 - Spells              6 - Commands";
-			messageLoop << "|     7 - Dfn's               8 - JavaScript";
-			messageLoop << "|     9 - HTML Templates      0 - ALL(1-9)";
-			messageLoop << "|  Save Commands:";
-			messageLoop << "|     ! - Accounts            @ - World";
-			messageLoop << "|     # - Unused              $ - Unused";
-			messageLoop << "|     % - Unused              ^ - Unused";
-			messageLoop << "|     & - Unused              ( - Unused";
-			messageLoop << "|     ) - Unused";
-			messageLoop << "|  Server Maintenence:";
-			messageLoop << "|     P - Performance         W - Characters Online";
-			messageLoop << "|     M - Memory Information  T - 10 Minute Shutdown";
-			messageLoop << "|     V - Dump Lookups(Devs)  N - Dump Npc.Dat";
-			messageLoop << "|     L - Layer Information"; 
-			messageLoop << "|  Network Maintenence:";
-			messageLoop << "|     D - Disconnect Acct0    K - Disconnect All";
-			messageLoop << "|     Z - Socket Logging      ";
-			messageLoop << "o-------------------------";
+			messageLoop << MSG_SECTIONBEGIN;
+			messageLoop << "Console commands:";
+			messageLoop << MSG_SECTIONBEGIN;
+			messageLoop << " ShardOP:";
+			messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
+			messageLoop << "    C - Configuration       H - Heart Beat";
+			messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
+			messageLoop << " Load Commands:";
+			messageLoop << "    1 - Ini                 2 - Accounts";
+			messageLoop << "    3 - Regions             4 - Spawn Regions";
+			messageLoop << "    5 - Spells              6 - Commands";
+			messageLoop << "    7 - Dfn's               8 - JavaScript";
+			messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
+			messageLoop << " Save Commands:";
+			messageLoop << "    ! - Accounts            @ - World";
+			messageLoop << "    # - Unused              $ - Unused";
+			messageLoop << "    % - Unused              ^ - Unused";
+			messageLoop << "    & - Unused              ( - Unused";
+			messageLoop << "    ) - Unused";
+			messageLoop << " Server Maintenence:";
+			messageLoop << "    P - Performance         W - Characters Online";
+			messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
+			messageLoop << "    V - Dump Lookups(Devs)  N - Dump Npc.Dat";
+			messageLoop << "    L - Layer Information"; 
+			messageLoop << " Network Maintenence:";
+			messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
+			messageLoop << "    Z - Socket Logging      ";
+			messageLoop << MSG_SECTIONBEGIN;
 			break;
 		case 'v':
 		case 'V':
@@ -3598,25 +3402,25 @@ void processkey( int c )
 			break;
 		case 'z':
 		case 'Z':
+		{
 			// Log socket activity
-			cSocket *snSock;
 			Network->PushConn();
-			for( snSock = Network->FirstSocket(); !Network->FinishedSockets(); snSock = Network->NextSocket() )
+			bool loggingEnabled = false;
+			cSocket *snSock = Network->FirstSocket();
+			if( snSock != NULL )
+				loggingEnabled = !snSock->Logging();
+			for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
 			{
 				if( snSock != NULL )
-				{
-					if(	snSock->Logging() )
-						snSock->Logging( false );
-					else
-						snSock->Logging( true );
-				}
+					snSock->Logging( !snSock->Logging() );
 			}
 			Network->PopConn();
-			if( snSock->Logging() )
-				messageLoop << "| CMD: Network Logging Enabled.";
+			if( loggingEnabled )
+				messageLoop << "CMD: Network Logging Enabled.";
 			else
-				messageLoop << "| CMD: Network Logging Disabled.";
+				messageLoop << "CMD: Network Logging Disabled.";
 			break;
+		}
 		case 'N':
 			//. Dump a file that contains the id and sound some toher misc data about monster NPC.
 			DumpCreatures();
@@ -3690,7 +3494,7 @@ bool genericCheck( CChar *i )
 	if( i->IsDead() )
 		return false;
 
-	SI32 c;
+	UI16 c;
 	bool strUpdate = false;
 	bool intUpdate = false;
 	bool dexUpdate = false;
@@ -3861,7 +3665,6 @@ bool genericCheck( CChar *i )
 		{
 			if( i->GetPoisonWearOffTime() > uiCurrentTime )
 			{
-				char t[128];
 				SI16 pcalc = 0;
 				switch( i->GetPoisoned() )
 				{
@@ -3870,8 +3673,7 @@ bool genericCheck( CChar *i )
 					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
-						sprintf( t, Dictionary->GetEntry( 1240 ), i->GetName() );
-						npcEmoteAll( i, t, true );
+						npcEmoteAll( i, 1240, true, i->GetName() );
 					}
 					i->IncHP( (SI16)( -RandomNum( 1, 2 ) ) );
 					strUpdate = true;
@@ -3881,8 +3683,7 @@ bool genericCheck( CChar *i )
 					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
-						sprintf( t, Dictionary->GetEntry( 1241 ), i->GetName() );
-						npcEmoteAll( i, t, true );
+						npcEmoteAll( i, 1241, true, i->GetName() );
 					}
 					pcalc = (SI16)( ( i->GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
 					i->IncHP( (SI16)( -pcalc ) );
@@ -3893,8 +3694,7 @@ bool genericCheck( CChar *i )
 					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
-						sprintf( t, Dictionary->GetEntry( 1242 ), i->GetName() );
-						npcEmoteAll( i, t, true );
+						npcEmoteAll( i, 1242, true, i->GetName() );
 					}
 					pcalc = (SI16)( ( i->GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
 					i->IncHP( (SI16)( -pcalc ) );
@@ -3905,8 +3705,7 @@ bool genericCheck( CChar *i )
 					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow ) 
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
-						sprintf( t, Dictionary->GetEntry( 1243 ), i->GetName() );
-						npcEmoteAll( i, t, true );
+						npcEmoteAll( i, 1243, true, i->GetName() );
 					}
 					pcalc = (SI16)( i->GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
 					i->IncHP( (SI16)( -pcalc ) );
@@ -3967,8 +3766,6 @@ bool genericCheck( CChar *i )
 //o---------------------------------------------------------------------------o
 void checkPC( CChar *i, bool doWeather )
 {
-	int timer;
-	
 	LIGHTLEVEL toShow;
 	cSocket *mSock = calcSocketObjFromChar( i );
 	
@@ -4066,8 +3863,8 @@ void checkPC( CChar *i, bool doWeather )
 	{
 		if( cwmWorldState->ServerData()->GetWorldAmbientSounds() > 10 ) 
 			cwmWorldState->ServerData()->SetWorldAmbientSounds( 10 );
-		timer = cwmWorldState->ServerData()->GetWorldAmbientSounds() * 100;
-		if( isOn && !i->IsDead() && ( rand()%( timer ) ) == ( timer / 2 ) ) 
+		SI16 soundTimer = cwmWorldState->ServerData()->GetWorldAmbientSounds() * 100;
+		if( isOn && !i->IsDead() && ( rand()%( soundTimer ) ) == ( soundTimer / 2 ) ) 
 			bgsound( i ); // bgsound uses array positions not sockets!
 	}
 	
@@ -4104,7 +3901,7 @@ void checkPC( CChar *i, bool doWeather )
 	
 	if( i->IsOnHorse() )
 	{
-		CItem *horseItem = FindItemOnLayer( i, 0x19 );
+		CItem *horseItem = i->GetItemAtLayer( 0x19 );
 		if( horseItem == NULL )
 			i->SetOnHorse( false );	// turn it off, we aren't on one because there's no item!
 		else if( horseItem->GetDecayTime() != 0 && ( horseItem->GetDecayTime() <= uiCurrentTime || overflow ) )
@@ -4235,7 +4032,7 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 				Network->PushConn();
 				for( cSocket *eSock = Network->FirstSocket(); !Network->FinishedSockets(); eSock = Network->NextSocket() )
 				{
-					if( getItemDist( eSock->CurrcharObj(), itemCheck ) <= itemCheck->GetMoreY() )
+					if( objInRange( eSock, itemCheck, itemCheck->GetMoreY() ) )
 					{
 						if( (UI32)RandomNum( 1, 100 ) <= itemCheck->GetMoreZ() )
 							soundeffect( itemCheck, eSock, (UI16)itemCheck->GetMoreX() );
@@ -4250,7 +4047,7 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 			Network->PushConn();
 			for( cSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
 			{
-				if( getItemDist( bSock->CurrcharObj(), itemCheck ) <= 18 )
+				if( objInRange( bSock, itemCheck, 18 ) )
 				{
 					if( itemCheck->GetType2() == 1 ) 
 						Boats->MoveBoat( bSock, itemCheck->GetDir(), itemCheck );
@@ -4277,7 +4074,6 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 //o---------------------------------------------------------------------------o
 void checkauto( void )
 {
-	UI32 i; //\/ getclock only once
 	static UI32 checkspawnregions=0; 
 	static UI32 checknpcs=0;
 	static UI32 checkitemstime=0;
@@ -4377,7 +4173,7 @@ void checkauto( void )
 
 	if( checkspawnregions <= uiCurrentTime && cwmWorldState->ServerData()->GetCheckSpawnRegionSpeed() != -1 )//Regionspawns
 	{
-		for( i = 1; i < totalspawnregions; i++ )
+		for( UI16 i = 1; i < totalspawnregions; i++ )
 		{
 			cSpawnRegion *spawnReg = spawnregion[i];
 			if( spawnReg != NULL && (UI32)spawnReg->GetNextTime() <= uiCurrentTime )
@@ -4418,7 +4214,7 @@ void checkauto( void )
 			if( !now && !cwmWorldState->Saving() )
 			{
 				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
-				savelog( "Bulletin Board Maintenance routine running (AUTO)\n", "server.log" );
+				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
 			}
 
@@ -4789,7 +4585,7 @@ void ResetVars( void )
 	charcount = 0;
 	itemcount = 0;
 	charcount2 = 1;
-	itemcount2 = 0x40000000;
+	itemcount2 = BASEITEMSERIAL;
 	executebatch = 0;
 	showlayer = false;
 	autosaved = false;
@@ -4862,7 +4658,7 @@ void InitMultis( void )
 	{
 		if( !chars[c].isFree() )
 		{
-			multi = findMulti( chars[c].GetX(), chars[c].GetY(), chars[c].GetZ(), chars[c].WorldNumber() );
+			multi = findMulti( &chars[c] );
 			if( multi != NULL )
 				chars[c].SetMulti( multi );
 			else
@@ -4874,9 +4670,9 @@ void InitMultis( void )
 		fiveCount = 1;
 	for( ITEM i = 0; i < itemcount; i++ )
 	{
-		if( !items[i].isFree() && items[i].GetCont() == INVALIDSERIAL )
+		if( !items[i].isFree() && items[i].GetCont() == NULL )
 		{
-			multi = findMulti( items[i].GetX(), items[i].GetY(), items[i].GetZ(), items[i].WorldNumber() );
+			multi = findMulti( &items[i] );
 			if( multi != NULL )
 			{
 				if( multi != &items[i] ) 
@@ -5033,10 +4829,6 @@ int main( int argc, char *argv[] )
 		loadskills();
 		Console.PrintDone();
 		
-		Console << "Loading IM Menus               ";
-		im_loadmenus( "inscribe.gmp", TellScroll ); //loading gump for inscribe()
-		Console.PrintDone();
-		
 		keeprun = Network->kr; // for some technical reasons global varaibles CANT be changed in constructors in c++.
 		error = Network->faul;  // i hope i can find a cleaner solution for that, but this works !!!
 		// has to here and not at the cal cause it would get overriten later
@@ -5127,7 +4919,7 @@ int main( int argc, char *argv[] )
 		Accounts->Load();
 		//Console.PrintDone(); 
 
-		savelog( "-=Server Startup=-\n=======================================================================\n", "server.log" );
+		Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 		uiCurrentTime = getclock();
 
 		Console << "Initialize Console Thread      ";
@@ -5228,8 +5020,6 @@ int main( int argc, char *argv[] )
 		
 		Console.PrintSectionBegin();
 		sysbroadcast( "The server is shutting down." );
-		Console << "Clearing IM Menus...";
-		im_clearmenus();
 		Console.PrintDone();
 		Console << "Closing sockets...";
 		netpollthreadclose = true;
@@ -5247,7 +5037,7 @@ int main( int argc, char *argv[] )
 		
 		cwmWorldState->ServerData()->save();
 
-		savelog("Server Shutdown!\n=======================================================================\n\n\n","server.log");
+		Console.Log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 
 		conthreadcloseok = true;	//	This will signal the console thread to close
 		Shutdown( 0 );
@@ -5316,7 +5106,7 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 			ErrorCount++;
 			
 			sprintf( temp, "Server crash #%i from unknown error, restarting.", ErrorCount );
-			savelog( temp, "server.log" );
+			Console.Log( temp, "server.log" );
 			Console << temp << myendl;
 			
 			sprintf(temp, "uox.exe -ERROR %i", ErrorCount);
@@ -5329,12 +5119,12 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 		} 
 		else 
 		{
-			savelog("10th Server crash, server shutting down.", "server.log");
+			Console.Log( "10th Server crash, server shutting down.", "server.log" );
 			Console << "10th Server crash, server shutting down" << myendl;
 		}
 	} 
 	else 
-		savelog("Server crash!","server.log");
+		Console.Log( "Server crash!", "server.log" );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5468,20 +5258,6 @@ void Shutdown( SI32 retCode )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool isHuman( CChar *p )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Check if character is Human or NPC
-//o---------------------------------------------------------------------------o
-bool isHuman( CChar *p )
-{
-	if( p->GetxID() == 0x0190 || p->GetxID() == 0x0191 )
-		return true;
-	else 
-		return false;
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void objTeleporters( CChar *s )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -5526,15 +5302,15 @@ void objTeleporters( CChar *s )
 							if( itemCheck->GetMore() != 0 )
 							{
 								if( s->GetSerial() == itemCheck->GetMore() )
-									advanceObj( s, itemCheck->GetMoreX(), ( itemCheck->GetType() == 81 ) );
+									advanceObj( s, (UI16)itemCheck->GetMoreX(), ( itemCheck->GetType() == 81 ) );
 							}
 							else
-								advanceObj( s, itemCheck->GetMoreX(), ( itemCheck->GetType() == 81 ) );
+								advanceObj( s, (UI16)itemCheck->GetMoreX(), ( itemCheck->GetType() == 81 ) );
 						}
 						break;
 					case 82:	MonsterGate( s, itemCheck->GetMoreX() );	break;	// monster gates
 					case 83:														// race gates
-						Races->gate( s, itemCheck->GetMoreX(), itemCheck->GetMoreY() != 0 );
+						Races->gate( s, static_cast<RACEID>(itemCheck->GetMoreX()), itemCheck->GetMoreY() != 0 );
 						break;
 					case 85:														// damage objects
 						if( !s->IsInvulnerable() )
@@ -5652,17 +5428,17 @@ void doLight( cSocket *s, char level )
 	{
 		R32 lightMin = wSys->LightMin();
 		R32 lightMax = wSys->LightMax();
-		//if( lightMin > 300 && lightMax < 300 )
-		//{
-		//	R32 i = wSys->CurrentLight();
-		//	if( Races->VisLevel( mChar->GetRace() ) > i )
-		//		toShow = 0;
-		//	else
-		//		toShow = static_cast<LIGHTLEVEL>(i - Races->VisLevel( mChar->GetRace() ));
-			toSend.Level( level /*toShow*/ );
-		//}
-		//else
-			//toSend.Level( 0 );
+		if( lightMin < 300 && lightMax < 300 )
+		{
+			R32 i = wSys->CurrentLight();
+			if( Races->VisLevel( mChar->GetRace() ) > i )
+				toShow = 0;
+			else
+				toShow = static_cast<LIGHTLEVEL>(i - Races->VisLevel( mChar->GetRace() ));
+			toSend.Level( level );
+		}
+		else
+			toSend.Level( level );
 	}
 	else
 	{
@@ -5708,31 +5484,32 @@ void telltime( cSocket *s )
 {
 	char tstring[100];
 	char tstring2[100];
-	UI08 hour = cwmWorldState->ServerData()->GetServerTimeHours();
-	UI08 minute = cwmWorldState->ServerData()->GetServerTimeMinutes();
-	bool ampm = cwmWorldState->ServerData()->GetServerTimeAMPM();
+	UI08 hour			= cwmWorldState->ServerData()->GetServerTimeHours();
+	UI08 minute			= cwmWorldState->ServerData()->GetServerTimeMinutes();
+	bool ampm			= cwmWorldState->ServerData()->GetServerTimeAMPM();
+	UnicodeTypes sLang	= s->Language();
 
 	int lhour = hour;
 	
 	if( minute <= 14 ) 
-		strcpy( tstring, Dictionary->GetEntry( 1248 ) );
+		strcpy( tstring, Dictionary->GetEntry( 1248, sLang ) );
 	else if( minute >= 15 && minute <= 30 ) 
-		strcpy( tstring, Dictionary->GetEntry( 1249 ) );
+		strcpy( tstring, Dictionary->GetEntry( 1249, sLang ) );
 	else if( minute >= 30 && minute <= 45 ) 
-		strcpy( tstring, Dictionary->GetEntry( 1250 ) );
+		strcpy( tstring, Dictionary->GetEntry( 1250, sLang ) );
 	else
 	{
-		strcpy( tstring, Dictionary->GetEntry( 1251 ) );
+		strcpy( tstring, Dictionary->GetEntry( 1251, sLang ) );
 		lhour++;
 		if( lhour == 12 ) 
 			lhour = 0;
 	}
 	if( lhour >= 1 && lhour <= 11 )
-		sprintf( tstring2, Dictionary->GetEntry( 1252 ), tstring );
+		sprintf( tstring2, Dictionary->GetEntry( 1252, sLang ), tstring );
 	else if( lhour == 1 && ampm )
-		sprintf( tstring2, Dictionary->GetEntry( 1263 ), tstring );
+		sprintf( tstring2, Dictionary->GetEntry( 1263, sLang ), tstring );
 	else
-		sprintf( tstring2, Dictionary->GetEntry( 1264 ), tstring );
+		sprintf( tstring2, Dictionary->GetEntry( 1264, sLang ), tstring );
 	
 	if( lhour == 0 ) 
 		strcpy( tstring, tstring2 );
@@ -5782,25 +5559,6 @@ void updateskill( cSocket *mSock, UI08 skillnum )
 	CChar *mChar = mSock->CurrcharObj();
 	CPUpdIndSkill toSend( (*mChar), (UI08)skillnum );
 	mSock->Send( &toSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void impaction( cSocket *s, int act )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Unknown
-//o---------------------------------------------------------------------------o
-void impaction( cSocket *s, int act )
-{
-	CChar *mChar = s->CurrcharObj();
-	if( mChar->IsOnHorse() && ( act == 0x10 || act == 0x11 ) )
-	{
-		action( s, 0x1B );
-		return;
-	}
-	if( ( mChar->IsOnHorse() || ( mChar->GetID( 1 ) && mChar->GetID( 2 ) < 90 ) ) && act == 0x22 )
-		return;
-	action( s, (SI16)act );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5937,11 +5695,11 @@ void openBank( cSocket *s, CChar *i )
 	}
 	
 	sprintf( temp, Dictionary->GetEntry( 1283 ), i->GetName() );
-	CItem *c = Items->SpawnItem( s, 1, temp, false, 0x09AB, 0, false, false );
+	CItem *c = Items->SpawnItem( NULL, i, 1, temp, false, 0x09AB, 0, false, false );
 	
 	c->SetLayer( 0x1D );
-	c->SetOwner( i->GetSerial() );
-	if( !c->SetCont( i->GetSerial() ) )
+	c->SetOwner( (cBaseObject *)i );
+	if( !c->SetCont( i ) )
 		return;
 	c->SetMoreX( 1 );
 	if( cwmWorldState->ServerData()->GetWildernessBankStatus() ) // Special Bank
@@ -5985,11 +5743,11 @@ void openSpecialBank( cSocket *s, CChar *i )
 
 	char temp[1024];
 	sprintf( temp, Dictionary->GetEntry( 1284 ), i->GetName() );
-	CItem *c = Items->SpawnItem( s, 1, temp, false, 0x09AB, 0, false, false );
+	CItem *c = Items->SpawnItem( NULL, i, 1, temp, false, 0x09AB, 0, false, false );
 	
 	c->SetLayer( 0x1D );
-	c->SetOwner( i->GetSerial() );
-	if( !c->SetCont( i->GetSerial() ) )
+	c->SetOwner( (cBaseObject *)i );
+	if( !c->SetCont( i ) )
 		return;
 	c->SetMoreX( 1 );
 	c->SetMoreY( 0 ); // this's an all-items bank
@@ -6121,12 +5879,12 @@ CItem *getRootPack( CItem *p )
 	{
 		if( p == NULL )				// Non existent item
 			return currentContainer;
-		if( p->GetCont() == INVALIDSERIAL )	// It's on the ground, so it MUST be the root pack
+		if( p->GetCont() == NULL )	// It's on the ground, so it MUST be the root pack
 			return p;
 		if( p->GetCont( 1 ) < 0x40 )		// It's a character
 			return currentContainer;	// Return current container
 		
-		p = calcItemObjFromSer( p->GetCont() );
+		p = (CItem *)p->GetCont();
 		if( p != NULL )
 			currentContainer = p;
 		a++;
@@ -6142,27 +5900,26 @@ CItem *getRootPack( CItem *p )
 //o---------------------------------------------------------------------------o
 CChar *getPackOwner( CItem *p )
 {
-	if( p == NULL || p->GetCont() == INVALIDSERIAL ) 
+	if( p == NULL || p->GetCont() == NULL ) 
 		return NULL;
 	if( p->GetCont( 1 ) < 0x40 ) 
-		return calcCharObjFromSer( p->GetCont() );
-	int a = 0, b;
+		return (CChar *)p->GetCont();
+	UI08 b = 0xFF;
 	CItem *x = p;
-	do 
+	for( UI08 a = 0; b >= 0x40; a++ )
 	{
 		if( a >= 50 || x == NULL ) 
 			return NULL; // Too many packs! must stop endless loop!
-		if( x->GetCont() == INVALIDSERIAL ) 
+		if( x->GetCont() == NULL ) 
 			return NULL;
 		if( x->GetCont( 1 ) >= 0x40 )
-			x = calcItemObjFromSer( x->GetCont() );
+			x = (CItem *)x->GetCont();
 		if( x != NULL ) 
 			b = x->GetCont( 1 ); 
 		else 
 			b = 0x42;
-		a++;
-	} while( b >= 0x40 );
-	return calcCharObjFromSer( x->GetCont() );
+	}
+	return (CChar *)x->GetCont();
 }
 
 //o---------------------------------------------------------------------------o
@@ -6212,14 +5969,14 @@ int getTileName( CItem *i, char *itemname )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void addgold( cSocket *s, int totgold )
+//|	Function	-	addgold( cSocket *s, UI32 totgold )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Adds gold to characters total gold
 //o---------------------------------------------------------------------------o
-void addgold( cSocket *s, SI32 totgold )
+void addgold( cSocket *s, UI32 totgold )
 {
-	Items->SpawnItem( s, totgold, "#", true, 0x0EED, 0, true, true );
+	Items->SpawnItem( s, s->CurrcharObj(), totgold, "#", true, 0x0EED, 0, true, true );
 }
 
 //o---------------------------------------------------------------------------o
@@ -6434,10 +6191,10 @@ void usePotion( CChar *p, CItem *i )
 	if( p->GetID( 1 ) >= 1 && p->GetID( 2 )>90 && !p->IsOnHorse() ) 
 		npcAction( p, 0x22);
 	decItemAmount( i );
-	CItem *bPotion = Items->SpawnItem( mSock, p, 1, "#", true, 0x0F0E, 0, true, false );
+	CItem *bPotion = Items->SpawnItem( NULL, p, 1, "#", true, 0x0F0E, 0, true, false );
 	if( bPotion != NULL )
 	{
-		if( bPotion->GetCont() == INVALIDSERIAL )
+		if( bPotion->GetCont() == NULL )
 			bPotion->SetLocation( p );
 		bPotion->SetDecayable( true );
 		RefreshItem( bPotion );
@@ -6452,7 +6209,7 @@ void usePotion( CChar *p, CItem *i )
 //o---------------------------------------------------------------------------o
 void loadSpawnRegions( void )
 {
-	UI32 i = 0;
+	UI16 i = 0;
 
 	spawnregion[i] = new cSpawnRegion( i );
 	
@@ -6484,12 +6241,12 @@ void loadSpawnRegions( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void loadpredefspawnregion( SI32 r, char *name )
+//|	Function	-	void loadPreDefSpawnRegion( UI16 r, std::string name )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Load scripted spawn regions
 //o---------------------------------------------------------------------------o
-void loadPreDefSpawnRegion( SI32 r, std::string name )
+void loadPreDefSpawnRegion( UI16 r, std::string name )
 {
 	char sect[512];
 	sprintf( sect, "PREDEFINED_SPAWN %s", name.c_str() );
@@ -6658,7 +6415,7 @@ void dosocketmidi( cSocket *s )
 //o---------------------------------------------------------------------------o
 void respawnnow( void )
 {
-	for( UI32 region = 1; region < totalspawnregions; region++ )
+	for( UI16 region = 1; region < totalspawnregions; region++ )
 	{
 		if( spawnregion[region] != NULL )
 			spawnregion[region]->doRegionSpawn();
@@ -6692,13 +6449,9 @@ void respawnnow( void )
 			{
 				const char *nDesc = items[i].GetDesc();
 				if( nDesc[0] != 0 )	// not NULL terminated, so we can do something!
-				{
 					Items->AddRespawnItem( &items[i], nDesc, true, items[i].isSpawnerList() );
-				}
 				else if( items[i].GetMoreX() != 0 )
-				{
 					Items->AddRespawnItem( &items[i], items[i].GetMoreX(), false );
-				}
 				items[i].SetGateTime( 0 );
 			}
 		}
@@ -6748,7 +6501,7 @@ void loadskills( void )
 	ScriptSection *SkillList = NULL;
 	const char *tag = NULL;
 	const char *data = NULL;
-	for( int i = 0; i <= ALLSKILLS + 3; i++)
+	for( UI08 i = 0; i <= ALLSKILLS + 3; i++)
 	{
 		skill[i].strength = 0;
 		skill[i].dexterity = 0;
@@ -6805,12 +6558,12 @@ int getStringValue( const char *string )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void advanceObj( CChar *s, SI32 x, bool multiUse )
+//|	Function	-	void advanceObj( CChar *s, UI16 x, bool multiUse )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle advancement objects (stat / skill gates)
 //o---------------------------------------------------------------------------o
-void advanceObj( CChar *s, SI32 x, bool multiUse )
+void advanceObj( CChar *s, UI16 x, bool multiUse )
 {
 	char sect[512];
 	int val = 0, num;
@@ -6852,7 +6605,7 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 					else if( !strcmp( "ARCHERY", tag ) ) 
 						val = ARCHERY;
 					else if( !strcmp( "ADVOBJ", tag ) )
-						s->SetAdvObj( makeNum( data ) );
+						s->SetAdvObj( static_cast<UI16>(makeNum( data )) );
 					break;
 					
 				case 'b':
@@ -6885,7 +6638,7 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 						val = DETECTINGHIDDEN;
 					else if( !strcmp( "DYEHAIR", tag ) ) 
 					{
-						CItem *hairobject = FindItemOnLayer( s, 0x0B );
+						CItem *hairobject = s->GetItemAtLayer( 0x0B );
 						if( hairobject != NULL )
 						{
 							num = makeNum( data );
@@ -6895,7 +6648,7 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 					}
 					else if( !strcmp( "DYEBEARD", tag ) ) 
 					{
-						CItem *beardobject = FindItemOnLayer( s, 0x10 );
+						CItem *beardobject = s->GetItemAtLayer( 0x10 );
 						if( beardobject != NULL )
 						{
 							num = makeNum( data );
@@ -6954,11 +6707,11 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 							retitem->SetZ( 9 );
 							if( retitem->GetLayer() == 0x0B || retitem->GetLayer() == 0x10 )
 							{
-								if( !retitem->SetCont( s->GetSerial() ) )
+								if( !retitem->SetCont( s ) )
 									retitem = NULL;
 							}
 							else
-								retitem->SetCont( packnum->GetSerial() );
+								retitem->SetCont( packnum );
 							if( retitem != NULL )
 								RefreshItem( retitem );
 						}
@@ -6971,20 +6724,20 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 						s->SetKarma( (SI16)makeNum( data ) );
 					else if( !strcmp( "KILLHAIR", tag ) )
 					{
-						i = FindItemOnLayer( s, 0x0B );
+						i = s->GetItemAtLayer( 0x0B );
 						if( i != NULL )
 							Items->DeleItem( i );
 					}
 					else if( !strcmp( "KILLBEARD", tag ) )
 					{
-						i = FindItemOnLayer( s, 0x10 );
+						i = s->GetItemAtLayer( 0x10 );
 						if( i != NULL )
 							Items->DeleItem( i );
 
 					}
 					else if( !strcmp( "KILLPACK", tag ) )
 					{
-						i = FindItemOnLayer( s, 0x15 );
+						i = s->GetItemAtLayer( 0x15 );
 						if( i != NULL )
 							Items->DeleItem( i );
 
@@ -7099,7 +6852,7 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 				}
 			}
 			s->Teleport();	// don't need to teleport.  Why?? because our location never changes!
-//			s->Update( s );
+//			s->Update();
 			
 		}
 	}
@@ -7515,8 +7268,6 @@ void MonsterGate( CChar *s, SI32 x )
 	
 	if( s->IsNpc() ) 
 		return;
-	
-	cSocket *mSock = calcSocketObjFromChar( s );
 
 	sprintf( sect, "%i", x );
 	ScriptSection *Monster = FileLookup->FindEntry( sect, npc_def );
@@ -7538,12 +7289,12 @@ void MonsterGate( CChar *s, SI32 x )
 					mypack = getPack( s );
 				if( mypack == NULL )
 				{
-					n = Items->SpawnItem( mSock, s, 1, "#", false, 0x0E75, 0, false, false );
+					n = Items->SpawnItem( NULL, s, 1, "#", false, 0x0E75, 0, false, false );
 					s->SetPackItem( n );
 					if( n == NULL ) 
 						return;
 					n->SetLayer( 0x15 );
-					if( n->SetCont( s->GetSerial() ) )
+					if( n->SetCont( s ) )
 					{
 						n->SetType( 1 );
 						n->SetDye( true );
@@ -7554,7 +7305,7 @@ void MonsterGate( CChar *s, SI32 x )
 				z->SetX( (SI16)( ( RandomNum( 0, 79 ) ) + 50 ) );
 				z->SetY( (SI16)( ( RandomNum( 0, 79 ) ) + 50 ) );
 				z->SetZ( 9 );
-				z->SetCont( mypack->GetSerial() );
+				z->SetCont( mypack );
 				
 				RefreshItem( z );
 			}
@@ -7580,9 +7331,9 @@ void MonsterGate( CChar *s, SI32 x )
 		case DFNTAG_BLACKSMITHING:		s->SetBaseSkill( RandomNum( ndata, odata ), BLACKSMITHING );	break;
 		case DFNTAG_BOWCRAFT:			s->SetBaseSkill( RandomNum( ndata, odata ), BOWCRAFT );			break;
 		case DFNTAG_DAMAGE:
-		case DFNTAG_ATT:				s->SetLoDamage( ndata );	s->SetHiDamage( odata );			break;
+		case DFNTAG_ATT:				s->SetLoDamage( static_cast<SI16>(ndata) );	s->SetHiDamage( static_cast<SI16>(odata ));			break;
 		case DFNTAG_COLOUR:				if( retitem != NULL )
-											retitem->SetColour( ndata );
+											retitem->SetColour( static_cast<UI16>(ndata ));
 										break;
 		case DFNTAG_CAMPING:			s->SetBaseSkill( RandomNum( ndata, odata ), CAMPING );			break;
 		case DFNTAG_CARPENTRY:			s->SetBaseSkill( RandomNum( ndata, odata ), CARPENTRY );		break;
@@ -7595,27 +7346,27 @@ void MonsterGate( CChar *s, SI32 x )
 		case DFNTAG_DETECTINGHIDDEN:	s->SetBaseSkill( RandomNum( ndata, odata ), DETECTINGHIDDEN );	break;
 		case DFNTAG_ENTICEMENT:			s->SetBaseSkill( RandomNum( ndata, odata ), ENTICEMENT );		break;
 		case DFNTAG_EVALUATINGINTEL:	s->SetBaseSkill( RandomNum( ndata, odata ), EVALUATINGINTEL );	break;
-		case DFNTAG_FAME:				s->SetFame( ndata );											break;
+		case DFNTAG_FAME:				s->SetFame( static_cast<SI16>(ndata) );											break;
 		case DFNTAG_FISHING:			s->SetBaseSkill( RandomNum( ndata, odata ), FISHING );			break;
 		case DFNTAG_FORENSICS:			s->SetBaseSkill( RandomNum( ndata, odata ), FORENSICS );		break;
 		case DFNTAG_FENCING:			s->SetBaseSkill( RandomNum( ndata, odata ), FENCING );			break;
-		case DFNTAG_GOLD:				retitem = n = Items->SpawnItem( mSock, s, 1, "#", true, 0x0EED, 0, true, false );
+		case DFNTAG_GOLD:				retitem = n = Items->SpawnItem( NULL, s, 1, "#", true, 0x0EED, 0, true, false );
 										if( n == NULL ) 
 											break;
 										n->SetAmount( (UI32)(ndata + ( rand()%( odata - ndata ) )) );
 										break;
-		case DFNTAG_HIDAMAGE:			s->SetHiDamage( ndata );										break;
+		case DFNTAG_HIDAMAGE:			s->SetHiDamage(static_cast<SI16>( ndata ));										break;
 		case DFNTAG_HEALING:			s->SetBaseSkill( RandomNum( ndata, odata ), HEALING );			break;
 		case DFNTAG_HERDING:			s->SetBaseSkill( RandomNum( ndata, odata ), HERDING );			break;
 		case DFNTAG_HIDING:				s->SetBaseSkill( RandomNum( ndata, odata ), HIDING );			break;
-		case DFNTAG_ID:					s->SetID( ndata );
-										s->SetxID( ndata );
-										s->SetOrgID( odata );
+		case DFNTAG_ID:					s->SetID( static_cast<UI16>(ndata ));
+										s->SetxID( static_cast<UI16>(ndata ));
+										s->SetOrgID( static_cast<UI16>(odata) );
 										break;
 		case DFNTAG_ITEM:				retitem = Items->CreateScriptItem( NULL, cdata, false, s->WorldNumber() );
 										if( retitem != NULL )
 										{
-											if( !retitem->SetCont( s->GetSerial() ) )
+											if( !retitem->SetCont( s ) )
 												retitem = NULL;
 											else if( retitem->GetLayer() == 0 )
 												Console << "Warning: Bad NPC Script " << x << " with problem item " << cdata << " executed!" << myendl;
@@ -7626,11 +7377,11 @@ void MonsterGate( CChar *s, SI32 x )
 										break;
 		case DFNTAG_ITEMID:				s->SetBaseSkill( RandomNum( ndata, odata ), ITEMID );			break;
 		case DFNTAG_INSCRIPTION:		s->SetBaseSkill( RandomNum( ndata, odata ), INSCRIPTION );		break;
-		case DFNTAG_KARMA:				s->SetKarma( ndata );
+		case DFNTAG_KARMA:				s->SetKarma( static_cast<SI16>(ndata) );
 		case DFNTAG_LOOT:				strcpy( rndlootlist, cdata );
 										retitem = Npcs->addRandomLoot( mypack, rndlootlist );
 										break;
-		case DFNTAG_LODAMAGE:			s->SetLoDamage( ndata );										break;
+		case DFNTAG_LODAMAGE:			s->SetLoDamage( static_cast<SI16>(ndata) );										break;
 		case DFNTAG_LOCKPICKING:		s->SetBaseSkill( RandomNum( ndata, odata ), LOCKPICKING );		break;
 		case DFNTAG_LUMBERJACKING:		s->SetBaseSkill( RandomNum( ndata, odata ), LUMBERJACKING );	break;
 		case DFNTAG_MACEFIGHTING:		s->SetBaseSkill( RandomNum( ndata, odata ), MACEFIGHTING );		break;
@@ -7644,23 +7395,23 @@ void MonsterGate( CChar *s, SI32 x )
 		case DFNTAG_PACKITEM:			retitem = Items->CreateScriptItem( NULL, cdata, false, s->WorldNumber() );
 										if( retitem != NULL )
 										{
-											retitem->SetCont( mypack->GetSerial() );
+											retitem->SetCont( mypack );
 											retitem->SetX( (UI16)( 50 + RandomNum( 0, 79 ) ) );
 											retitem->SetY( (UI16)( 50 + RandomNum( 0, 79 ) ) );
 											retitem->SetZ( 9 );
 										}
 										break;
-		case DFNTAG_POISON:				s->SetPoison( ndata );											break;
+		case DFNTAG_POISON:				s->SetPoison( static_cast<SI08>(ndata) );											break;
 		case DFNTAG_PARRYING:			s->SetBaseSkill( RandomNum( ndata, odata ), PARRYING );			break;
 		case DFNTAG_PEACEMAKING:		s->SetBaseSkill( RandomNum( ndata, odata ), PEACEMAKING );		break;
 		case DFNTAG_PROVOCATION:		s->SetBaseSkill( RandomNum( ndata, odata ), PROVOCATION );		break;
 		case DFNTAG_POISONING:			s->SetBaseSkill( RandomNum( ndata, odata ), POISONING );		break;
 		case DFNTAG_REMOVETRAPS:		s->SetBaseSkill( RandomNum( ndata, odata ), REMOVETRAPS );		break;
-		case DFNTAG_SKIN:				s->SetSkin( ndata );	s->SetxSkin( ndata );					break;
+		case DFNTAG_SKIN:				s->SetSkin( static_cast<UI16>(ndata ));	s->SetxSkin( static_cast<UI16>(ndata) );					break;
 		case DFNTAG_STRENGTH:			s->SetStrength( RandomNum( ndata, odata ) );
 										s->SetHP( s->GetMaxHP() );
 										break;
-		case DFNTAG_SKILL:				s->SetBaseSkill( odata, ndata );								break;
+		case DFNTAG_SKILL:				s->SetBaseSkill( static_cast<SI16>(odata), static_cast<UI08>(ndata) );								break;
 /*			else if( !strncmp( tag, "SKILL", 5 ) )
 			{
 				skill = makeNum( &tag[5] );
@@ -7681,32 +7432,32 @@ void MonsterGate( CChar *s, SI32 x )
 		case DFNTAG_VETERINARY:			s->SetBaseSkill( RandomNum( ndata, odata ), VETERINARY );		break;
 		case DFNTAG_WRESTLING:			s->SetBaseSkill( RandomNum( ndata, odata ), WRESTLING );		break;
 		case DFNTAG_ID2:
-			s->SetID2(ndata);
+			s->SetID2(static_cast<UI16>(ndata));
 			break;
 		case DFNTAG_SKIN2:
-			s->SetSkin2(ndata);
+			s->SetSkin2(static_cast<UI16>(ndata));
 			break;
 		case DFNTAG_STAMINA:
-			s->SetStamina(ndata);
+			s->SetStamina(static_cast<UI16>(ndata));
 			break;
 		case DFNTAG_MANA:
-			s->SetMana(ndata);
+			s->SetMana(static_cast<SI16>(ndata));
 			break;
 		case DFNTAG_NOMOVE:
-			s->SetNoMove(ndata);
+			s->SetNoMove(static_cast<UI16>(ndata));
 			break;
 		case DFNTAG_POISONCHANCE:
-			s->SetPoisonChance(ndata);
+			s->SetPoisonChance(static_cast<UI16>(ndata));
 			break;
 		case DFNTAG_POISONSTRENGTH:
-			s->SetPoisonStrength(ndata);
+			s->SetPoisonStrength(static_cast<UI16>(ndata));
 			break;
 		default:						break;
 		}
 	}
  
 	//Now find real 'skill' based on 'baseskill' (stat modifiers)
-	for( int j = 0; j < TRUESKILLS; j++ )
+	for( UI08 j = 0; j < TRUESKILLS; j++ )
 		Skills->updateSkillLevel( s, j );
 	s->Teleport();
 	staticeffect( s, 0x373A, 0, 15 );
@@ -7714,18 +7465,18 @@ void MonsterGate( CChar *s, SI32 x )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void Karma( CChar *nCharID, CChar *nKilledID, int nKarma )
+//|	Function	-	void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle karma addition/subtraction when character kills
 //|					another Character / NPC
 //o---------------------------------------------------------------------------o
-void Karma( CChar *nCharID, CChar *nKilledID, int nKarma )
+void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
 {	// nEffect = 1 positive karma effect
-	int nCurKarma = 0, nChange = 0;
+	SI16 nChange = 0;
 	bool nEffect = false;
 	//
-	nCurKarma = nCharID->GetKarma();
+	SI16 nCurKarma = nCharID->GetKarma();
 	if(nCurKarma > 10000 )
 		nCharID->SetKarma( 10000 );
 	else if( nCurKarma < -10000 ) 
@@ -7772,17 +7523,17 @@ void Karma( CChar *nCharID, CChar *nKilledID, int nKarma )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void Fame( CChar *nCharID, int nFame )
+//|	Function	-	void Fame( CChar *nCharID, SI16 nFame )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle fame addition when character kills another
 //|					Character / NPC
 //o---------------------------------------------------------------------------o
-void Fame( CChar *nCharID, int nFame )
+void Fame( CChar *nCharID, SI16 nFame )
 {
-	int nCurFame, nChange = 0;
+	SI16 nChange = 0;
 	bool nEffect = false;
-	nCurFame = nCharID->GetFame();
+	SI16 nCurFame = nCharID->GetFame();
 	if( nCharID->IsDead() )
 	{
 		if( nCurFame <= 0 )
@@ -7901,7 +7652,7 @@ void criminal( CChar *c )
 						continue;
 					if( charCheck->GetNPCAiType() == 0x04 )
 					{
-						if( getCharDist( c, charCheck ) < 18 )
+						if( objInRange( c, charCheck, cwmWorldState->ServerData()->GetCombatMaxRange() ) )
 						{
 							npcAttackTarget( c, charCheck );
 							toCheck->PopChar();
@@ -7968,7 +7719,7 @@ void setcharflag( CChar *c )
 			}
 			else	// if it's not a human form, and animal's aren't guarded, then they're gray
 				c->SetFlagGray();
-			if( c->GetOwner() != INVALIDSERIAL && c->IsTamed() )
+			if( c->GetOwnerObj() != NULL && c->IsTamed() )
 			{
 				CChar *i = (CChar *)c->GetOwnerObj();
 				if( i != NULL )
@@ -8119,15 +7870,14 @@ void RefreshItem( CItem *i )
 	if( i == NULL ) 
 		return;
 
-	if( i->GetCont() == i->GetSerial() )
+	if( i->GetCont() == i )
 	{
 		Console << myendl << "ALERT! item " << i->GetName() << " [serial: " << i->GetSerial() << "] has dangerous container value, autocorrecting" << myendl;
-		i->SetCont( INVALIDSERIAL );
+		i->SetCont( NULL );
 	}
 
-	SERIAL iCont = i->GetCont();
-
-	if( iCont == INVALIDSERIAL )
+	cBaseObject *iCont = i->GetCont();
+	if( iCont == NULL )
 	{
 		Network->PushConn();
 		for( cSocket *aSock = Network->FirstSocket(); !Network->FinishedSockets(); aSock = Network->NextSocket() ) // send this item to all the sockets in range
@@ -8136,7 +7886,7 @@ void RefreshItem( CItem *i )
 			if( aChar == NULL )
 				continue;
 
-			if( itemInRange( aChar, i, aSock->Range() + Races->VisRange( aChar->GetRace() ) ) )
+			if( objInRange( aChar, i, aSock->Range() + Races->VisRange( aChar->GetRace() ) ) )
 			{
 				if( i->GetVisible() == 0 || ( ( i->GetVisible() == 1 || i->GetVisible() == 2 ) && aChar->IsGM() ) )// we're a GM, or not hidden
 					sendItem( aSock, i );
@@ -8145,12 +7895,12 @@ void RefreshItem( CItem *i )
 		Network->PopConn();
 		return;
 	}
-	else if( iCont < 0x40000000 )
+	else if( iCont->GetObjType() == OT_CHAR )
 	{
 		if( i->GetGlow() > 0 )
 			Items->GlowItem( i );
 
-		CChar *charCont = calcCharObjFromSer( iCont );
+		CChar *charCont = (CChar *)iCont;
 		if( charCont != NULL )
 		{
 			CPWornItem toWear = (*i);
@@ -8166,7 +7916,7 @@ void RefreshItem( CItem *i )
 	}
 	else
 	{
-		CItem *itemCont = calcItemObjFromSer( iCont );
+		CItem *itemCont = (CItem *)iCont;
 		if( itemCont != NULL )
 		{
 			Network->PushConn();
@@ -8187,7 +7937,7 @@ void RefreshItem( CItem *i )
 //o---------------------------------------------------------------------------o
 void loadregions( void )
 {
-	int i, l = 0;
+	int l = 0;
 	const char *tag = NULL;
 	const char *data = NULL;
 	bool performLoad = false;
@@ -8201,7 +7951,7 @@ void loadregions( void )
 		fclose( ourReg );
 		ourRegions = new Script( regionsFile, NUM_DEFS, false );
 	}
-	for( i = 0; i < 256; i++ )
+	for( UI16 i = 0; i < 256; i++ )
 	{
 		region[i] = new cTownRegion( (UI08)i );
 		region[i]->InitFromScript( l );
@@ -8249,11 +7999,8 @@ void doDeathStuff( CChar *i )
 	if( i == NULL || i->IsDead() || i->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
 		return;
 
-	int ele;
-	
 	cSocket *pSock = calcSocketObjFromChar( i );
-	int nType = 0;
-	char temp[1024];
+	UI08 nType = 0;
 
 	if( i->GetID() != i->GetOrgID() )
 	{
@@ -8274,8 +8021,6 @@ void doDeathStuff( CChar *i )
 		DismountCreature( i );
 	killTrades( i );
 
-	ele = 0;
-	
 	if( !i->IsNpc() ) 
 	{
 	//	i->SetID( 0x01, 1 ); // Character is a ghost
@@ -8296,25 +8041,18 @@ void doDeathStuff( CChar *i )
 
 	if( !i->IsNpc() )
 	{ 
-		strcpy( temp, Dictionary->GetEntry( 1610 ) );
-
-		//Zippy 9/17/01 Fix for killing offline players.
-		CItem *c = NULL;
-		if( !isOnline( i ) )
-			c = Items->SpawnItem( NULL, i,  1, temp, 0, 0x204E, 0, false, false );//we can spawn item with a NULL socket as long as we don't Send
-		else
-			c = Items->SpawnItem( pSock, 1, temp, 0, 0x204E, 0, false, false );
+		CItem *c = Items->SpawnItem( NULL, i, 1, Dictionary->GetEntry( 1610 ), 0, 0x204E, 0, false, false );
 
 		if( c == NULL ) 
 			return;
 		i->SetRobe( c->GetSerial() );
 		c->SetLayer( 0x16 );
-		if( c->SetCont( i->GetSerial() ) )
+		if( c->SetCont( i ) )
 			c->SetDef( 1 );
 	}
 	if( cwmWorldState->ServerData()->GetDeathAnimationStatus() )
 		deathAction( i, corpsenum );
-	if( i->GetAccount().wAccountIndex != 0xffff )
+	if( i->GetAccount().wAccountIndex != AB_INVALID_ID )
 	{
 		i->Teleport();
 		if( pSock != NULL ) 
@@ -8328,19 +8066,17 @@ void doDeathStuff( CChar *i )
 	if( toExecute != NULL )
 		toExecute->OnDeath( i );
 
-//	if( ele == 60000 || i->GetNPCAiType() == 80 )
-//		Items->DeleItem( corpsenum );
 	if( i->IsNpc() ) 
 		Npcs->DeleteChar( i );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem *GenerateCorpse( CChar *i, int nType, char *murderername )
+//|	Function	-	CItem *GenerateCorpse( CChar *i, UI08 nType, char *murderername )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse based on skin of the character killed
 //o---------------------------------------------------------------------------o
-CItem *GenerateCorpse( CChar *i, int nType, CChar *murderer )
+CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 {
 	char temp[512];
 	CItem *k, *c, *p = getPack( i );
@@ -8374,13 +8110,13 @@ CItem *GenerateCorpse( CChar *i, int nType, CChar *murderer )
 	c->SetMore( (UI08)nType, 1 );
 	c->SetDecayTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
 	
-	CMultiObj *iMulti = findMulti( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber() );
+	CMultiObj *iMulti = findMulti( c );
 	if( iMulti != NULL ) 
 		c->SetMulti( iMulti );
 
 	if( !i->IsNpc() )
 	{
-		c->SetOwner( i->GetSerial() );
+		c->SetOwner( (cBaseObject *)i );
 		c->SetMore( char( cwmWorldState->ServerData()->GetSystemTimerStatus( PLAYER_CORPSE )&0xff ), 4 ); // how many times longer for the player's corpse to decay
 	}
 	c->SetMoreZ( i->GetFlag() );
@@ -8406,7 +8142,7 @@ CItem *GenerateCorpse( CChar *i, int nType, CChar *murderer )
 				
 							if( !k->isNewbie() && k->GetType() != 9 )
 							{
-								k->SetCont( c->GetSerial() );
+								k->SetCont( c );
 								k->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
 								k->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
 								k->SetZ( 9 );
@@ -8418,9 +8154,9 @@ CItem *GenerateCorpse( CChar *i, int nType, CChar *murderer )
 				if( j != p && j->GetLayer() != 0x1D )
 				{
 					if( j->isNewbie() && p != NULL )
-						j->SetCont( p->GetSerial() );
+						j->SetCont( p );
 					else
-						j->SetCont( c->GetSerial() );
+						j->SetCont( c );
 				}
 
 			if( j->GetLayer() == 0x15 && !i->IsShop() && corpse )
@@ -8523,9 +8259,9 @@ void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
 //o---------------------------------------------------------------------------o
 void UseHairDye( cSocket *s, UI16 colour, CItem *x )
 {
-	CChar *dest = s->CurrcharObj();
-	CItem *beardobject = FindItemOnLayer( dest, 0x10 );
-	CItem *hairobject  = FindItemOnLayer( dest, 0x0B );
+	CChar *dest			= s->CurrcharObj();
+	CItem *beardobject	= dest->GetItemAtLayer( 0x10 );
+	CItem *hairobject	= dest->GetItemAtLayer( 0x0B );
 
 	if( hairobject != NULL )
 	{
@@ -8566,11 +8302,11 @@ void Bounce( cSocket *bouncer, CItem *bouncing )
 		if( bouncing->GetX() != x || bouncing->GetY() != y || bouncing->GetZ() != z )
 			bouncing->SetLocation( x, y, z );
 		break;
-	case PL_OWNPACK:	
+	case PL_OWNPACK:
 	case PL_OTHERPACK:
-	case PL_PAPERDOLL:	
-		if( bouncing->GetCont() != spot )
-			bouncing->SetCont( spot );	
+	case PL_PAPERDOLL:
+		if( bouncing->GetContSerial() != spot )
+			bouncing->SetContSerial( spot );	
 		break;
 	}
 	bouncer->Send( &bounce );
@@ -8583,6 +8319,7 @@ void Bounce( cSocket *bouncer, CItem *bouncing )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Watch for new connections
 //o---------------------------------------------------------------------------o
+#pragma note( "Param Warning: in NetworkPollConnectionThread(), params is unrefrenced" )
 void NetworkPollConnectionThread( void *params )
 {
 	messageLoop << "Thread: NetworkPollConnection has started";
@@ -8599,6 +8336,13 @@ void NetworkPollConnectionThread( void *params )
 	_endthread();
 #endif
 	messageLoop << "Thread: NetworkPollConnection has Closed";
+}
+
+CMultiObj *findMulti( cBaseObject *i )
+{
+	if( i == NULL )
+		return NULL;
+	return findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -8656,6 +8400,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if item is in a multi
 //o---------------------------------------------------------------------------o
+#pragma note( "Param Warning: in inMulti(), worldNumber, z is unrefrenced" )
 bool inMulti( SI16 x, SI16 y, SI08 z, CItem *m, UI08 worldNumber )
 {
 	if( m == NULL )

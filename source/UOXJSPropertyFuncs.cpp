@@ -171,7 +171,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		case CIP_SERIAL:		
 			if( gPriv->GetSerial() != INVALIDSERIAL )
 			{
-				*vp = INT_TO_JSVAL( gPriv->GetSerial() - 0x40000000 );
+				*vp = INT_TO_JSVAL( gPriv->GetSerial() - BASEITEMSERIAL );
 			}
 			else
 			{
@@ -189,7 +189,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		// We should Accquie an object here and return that, so you can do
 		// item.container.name
 		case CIP_CONTAINER:
-			TempSerial = gPriv->GetCont();
+			TempSerial = gPriv->GetContSerial();
 
 			if( TempSerial == INVALIDSERIAL )
 				// Return a JS_NULL
@@ -200,7 +200,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
 				cScript *myScript = Trigger->GetScript( myScpTrig );
 
-				if( TempSerial >= 0x40000000 )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				if( TempSerial >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 				{
 					JSObject *myItem = myScript->AcquireObject( IUE_ITEM );
 					JS_SetPrivate( cx, myItem, calcItemObjFromSer( TempSerial ) );
@@ -296,9 +296,10 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		case CCP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 		case CCP_OWNER:
 			// The Item-thingy for characters as well (damn what possibiliteis we've got :)
-			TempSerial = gPriv->GetOwner();
+			cBaseObject *TempObj;
+			TempObj = gPriv->GetOwnerObj();
 
-			if( TempSerial == INVALIDSERIAL )
+			if( TempObj == NULL )
 			{
 				// Return a JS_NULL
 				*vp = JSVAL_NULL;
@@ -310,7 +311,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *myScript = Trigger->GetScript( myScpTrig );
 
 				JSObject *myChar = myScript->AcquireObject( IUE_CHAR );
-				JS_SetPrivate( cx, myChar, calcCharObjFromSer( TempSerial ) );
+				JS_SetPrivate( cx, myChar, TempObj );
 				*vp = OBJECT_TO_JSVAL( myChar );
 			}
 
@@ -513,8 +514,6 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		return JS_FALSE;
 	
 	UI16 uivalue = (UI16)JSVAL_TO_INT( *vp );
-	int resp = JSVAL_IS_INT( id );
-
 	if( JSVAL_IS_INT( id ) ) 
 	{
 		switch( JSVAL_TO_INT( id ) )
@@ -556,7 +555,11 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				if( myChar == NULL )
 					break;
 
-				gPriv->SetOwner( myChar->GetSerial() );
+				gPriv->SetOwner( (cBaseObject *)myChar );
+			}
+			else
+			{
+				gPriv->SetOwner( NULL );
 			}
 			break;
 		case CCP_VISIBLE:	gPriv->SetVisible( (SI08)JSVAL_TO_INT( *vp ) );	gPriv->Update();	break;
@@ -661,7 +664,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			gPriv->SetFixedLight( (UI08)JSVAL_TO_INT( *vp ) );
 			if( calcSocketObjFromChar( gPriv ) != NULL )
 				if( (UI08)JSVAL_TO_INT( *vp ) == 255 )
-					doLight( calcSocketObjFromChar( gPriv ), cwmWorldState->ServerData()->GetWorldLightCurrentLevel() );
+					doLight( calcSocketObjFromChar( gPriv ), static_cast<char>(cwmWorldState->ServerData()->GetWorldLightCurrentLevel() ));
 				else
 					doLight( calcSocketObjFromChar( gPriv ), (UI08)JSVAL_TO_INT( *vp ) );
 			break;
@@ -924,7 +927,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				CChar *myChar = (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( *vp ) ); 
 				if( myChar == NULL ) 
 					break; 
-				gPriv->SetOwner( myChar->GetSerial() ); 
+				gPriv->SetOwner( (cBaseObject *)myChar ); 
 			}
 			else
 			{
@@ -1126,7 +1129,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *myScript = Trigger->GetScript( myScpTrig );
 
 				// Item
-				if( mySerial >= 0x40000000 )
+				if( mySerial >= BASEITEMSERIAL )
 				{
 					CItem *myItem = calcItemObjFromSer( mySerial );
 
@@ -1176,22 +1179,19 @@ JSBool CItemsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		return JS_FALSE;
 	
 	UI32 Index = JSVAL_TO_INT( id );
-
-	ITEM myItemIndex = myItem->GetItem( Index );
-	if( myItemIndex == INVALIDSERIAL )
+	CItem *mySubItem = myItem->GetItemObj( Index );
+	if( mySubItem == NULL )
 	{
 		*vp = JSVAL_NULL;
 		return JS_TRUE;
 	}
 	
-	CItem *mySubitem = &items[myItemIndex];
-
 	// Otherwise Acquire an object
 	UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
 	cScript *myScript = Trigger->GetScript( myScpTrig );
 
 	JSObject *myJSItem = myScript->AcquireObject( IUE_ITEM );
-	JS_SetPrivate( cx, myJSItem, mySubitem );
+	JS_SetPrivate( cx, myJSItem, mySubItem );
 	*vp = OBJECT_TO_JSVAL( myJSItem );
 	
 	return JS_TRUE;
@@ -1259,7 +1259,6 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	
 	//if( JSVAL_IS_INT( id ) ) 
 	{
-		int temp = JSVAL_TO_INT(id)  ;
 		switch( JSVAL_TO_INT( id ) )
 		{
 			case CGumpData_ID:

@@ -81,8 +81,8 @@
 
 #ifdef __LINUX__
 	#define OS_STR "Linux"
-	#define WORD UI16
-	#define DWORD UI32
+	#define WORD unsigned short int
+	#define DWORD unsigned int
 	#define BOOL bool
 	#define VOID void
 #else
@@ -103,10 +103,6 @@
 //o---------------------------------------------------------------------------o
 // Skip some errors
 //o---------------------------------------------------------------------------o
-#pragma warning( disable : 4097 )
-#pragma warning( disable : 4100 )	// unreferenced formal parameter
-#pragma warning( disable : 4201 )	// nameless struct/union
-#pragma warning( disable : 4503 )
 #pragma warning( disable : 4511 )	// copy constructor could not be generated
 #pragma warning( disable : 4512 )	// assignment operator could not be generated
 #pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
@@ -203,7 +199,7 @@ class UOXFile;
 #include "fileio.h"
 #include "scriptc.h"
 #include "classes.h"
-#include "im.h"
+//#include "im.h"
 #include "cConsole.h"
 #include "msgboard.h"
 #include "books.h"
@@ -218,7 +214,7 @@ class UOXFile;
 #include "cAccountClass.h"
 #include "funcdecl.h"
 #include "hash.h"
-#include "packets.h"
+//#include "packets.h"
 #include "cGuild.h"
 #include "cServerDefinitions.h"
 
@@ -259,14 +255,14 @@ extern char bpitem[20];
 extern char gump1[22];
 extern char gump2[4];
 extern char gump3[3];
-extern char updscroll[11];
+//extern char updscroll[11];
 extern char spc[2];
 extern UI32 polyduration;
 #ifdef __NT__
   extern WSADATA wsaData;
   extern WORD wVersionRequested;
 #endif
-extern UI32 totalspawnregions;
+extern UI16 totalspawnregions;
 const UI08 MAXVISRANGE = 20;
 
 //o---------------------------------------------------------------------------o
@@ -351,11 +347,11 @@ extern UI32 npcshape[5];				// Stores the coords of the bouding shape for the NP
 extern UI32 starttime, endtime, lclock;
 extern bool overflow;
 extern char idname[256];
-extern char pass1[256];
-extern char pass2[256];
+//extern char pass1[256];
+//extern char pass2[256];
 extern SI32 executebatch;				// Changed from int to SI32 (Mr. Fixit)
 extern bool showlayer;
-extern SI32 ph1, ph2, ph3, ph4;			// Not used for anything (Mr. Fixit)
+//extern SI32 ph1, ph2, ph3, ph4;			// Not used for anything (Mr. Fixit)
 extern UI32 shoprestocktime;			// Changed from int to UI32 (Mr. Fixit)
 extern SI32 shoprestockrate;			// Changed from int to SI32 (Mr. Fixit)
 extern UI32 respawntime;
