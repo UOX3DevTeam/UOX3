@@ -10,7 +10,7 @@ class CChar : public cBaseObject
 		SERIAL		petguarding; // Get what a pet is guarding
 		SERIAL		making; // skill number of skill using to make item, 0 if not making anything, used for house building, reduce at later date, for changeover
 		SI16		taming; //Skill level required for taming	// candidate for SI16
-		SI16		weight; //Total weight
+		SI32		weight; //Total weight
 		SI08		blocked;
 		SI08		hunger;  // Level of hungerness, 6 = full, 0 = "empty"
 		UI08		fixedlight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
@@ -104,10 +104,10 @@ class CChar : public cBaseObject
 		CHARACTER	targ; // Current combat target
 		CHARACTER	attacker; // Character who attacked this character
 		CHARACTER	ftarg; // NPC Follow Target
-		ITEM		smeltitem;
-		ITEM		tailitem;
-		ITEM		advobj; //Has used advance gate?
-		ITEM		envokeitem;
+		CItem *	smeltitem;
+		SERIAL  skillitem;
+		UI16		advobj; //Has used advance gate?
+		//ITEM		envokeitem;
 		CHARACTER	swingtarg; //Tagret they are going to hit after they swing
 		CHARACTER	trackingtarget; // Tracking target ID
 		CHARACTER	trackingtargets[MAXTRACKINGTARGETS];
@@ -244,7 +244,7 @@ class CChar : public cBaseObject
 		void		SetSavedAt( SI32 newValue );
 
 		SI16		GetNPCAiType( void ) const;
-		SI16		GetWeight( void ) const;
+		SI32		GetWeight( void ) const;
 		SERIAL		GetMaking( void ) const;
 		SI16		GetTaming( void ) const;
 		SI08		GetHidden( void ) const;
@@ -262,8 +262,9 @@ class CChar : public cBaseObject
 		void		SetAccount(ACCOUNTSBLOCK &actbAccount);
 		void		SetAccount(std::string sUsername);
 		ACCOUNTSBLOCK &GetAccount(void);
+		const ACCOUNTSBLOCK &GetConstAccount( void ) const;
 		//
-		void		SetWeight( SI16 newVal );		// Character c is a reference to our place in the chars[]
+		void		SetWeight( SI32 newVal );		// Character c is a reference to our place in the chars[]
 		void		SetFixedLight( UI08 newVal );
 		void		SetHidden( SI08 newValue );		// same as weight
 		void		SetHunger( SI08 newValue );
@@ -319,9 +320,9 @@ class CChar : public cBaseObject
 
 		void		SetSerial( SERIAL newSerial, CHARACTER c );
 		void		SetRobe( UI32 newValue );
-		void		SetOwner( UI32 newValue );
-		void		SetSpawn( UI08 newVal, UI08 part, CHARACTER c );
-		void		SetSpawn( UI32 newValue, CHARACTER c );
+		void		SetOwner( cBaseObject *newValue );
+		void		SetSpawn( SERIAL newValue, CHARACTER c );
+		//void		SetSpawn( UI32 newValue, CHARACTER c );
 		void		SetTownVote( UI08 newValue, UI08 part );
 		void		SetTownVote( UI32 newValue );
 		void		SetTrainer( UI32 newValue );
@@ -405,8 +406,8 @@ class CChar : public cBaseObject
 		UI08		GetOrgID( UI08 part ) const;	// 1 for orgid1, 2 for orgid2
 		UI08		GetHairStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
 		UI08		GetBeardStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetEnvokeID( UI08 part ) const;
-		UI16		GetEnvokeID( void ) const;
+		//UI08		GetEnvokeID( UI08 part ) const;
+		//UI16		GetEnvokeID( void ) const;
 		UI16		GetID( void ) const;	// returns id1<<8 + id2
 		UI16		GetxID( void ) const;	// returns xid1<<8 + xid2
 		UI16		GetOrgID( void ) const;	// returns orgid1<<8 + orgid2
@@ -421,8 +422,8 @@ class CChar : public cBaseObject
 		void		SetHairStyle( UI16 value );
 		void		SetBeardStyle( UI08 value, UI08 part );
 		void		SetBeardStyle( UI16 value );
-		void		SetEnvokeID( UI08 value, UI08 part );
-		void		SetEnvokeID( UI16 newValue );
+		//void		SetEnvokeID( UI08 value, UI08 part );
+		//void		SetEnvokeID( UI16 newValue );
 
 		UI08		GetSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
 		UI08		GetOrgSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
@@ -490,10 +491,11 @@ class CChar : public cBaseObject
 		CHARACTER	GetTarg( void ) const;
 		CHARACTER	GetAttacker( void ) const;
 		CHARACTER	GetFTarg( void ) const;
-		ITEM		GetSmeltItem( void ) const;
-		ITEM		GetTailItem( void ) const;
-		ITEM		GetAdvObj( void ) const;
-		ITEM		GetEnvokeItem( void ) const;
+		CItem * GetSmeltItem( void ) const;
+		SERIAL	GetSkillItemSerial( void ) const;
+		CItem * GetSkillItem( void ) const;
+		UI16		GetAdvObj( void ) const;
+		//ITEM		GetEnvokeItem( void ) const;
 		CHARACTER	GetSwingTarg( void ) const;
 		CHARACTER	GetTrackingTarget( void ) const;
 		CHARACTER	GetTrackingTargets( UI08 targetNum ) const;
@@ -503,10 +505,11 @@ class CChar : public cBaseObject
 		void		SetTarg( CHARACTER newTarg );
 		void		SetAttacker( CHARACTER newValue );
 		void		SetFTarg( CHARACTER newTarg );
-		void		SetTailItem( ITEM newValue );
-		void		SetSmeltItem( ITEM newValue );
-		void		SetAdvObj( ITEM newValue );
-		void		SetEnvokeItem( ITEM newValue );
+		void		SetSkillItem(CItem *newValue );
+		void		SetSkillItemSerial( SERIAL newValue );
+		void		SetSmeltItem( CItem *newValue );
+		void		SetAdvObj( UI16 newValue );
+		//void		SetEnvokeItem( ITEM newValue );
 		void		SetSwingTarg( CHARACTER newValue );
 		void		SetTrackingTarget( CHARACTER newValue );
 		void		SetRaceGate( RACEID newValue );
