@@ -30,50 +30,24 @@
 #include <vector>
 #include <map>
 
-#include "uox3.h"
-
 #ifdef __LINUX__
-
-#include <dirent.h>
-/*#include <glob.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <unistd.h>
-*/
-#define strnicmp(a,b,c) strnbasecmp(a,b,c)
-#define _stat stat
-#define _mkdir mkdir
-#define _rmdir rmdir
-
+	#include <dirent.h>
+	#define strnicmp(a,b,c) strnbasecmp(a,b,c)
+	#define _stat stat
+	#define _mkdir mkdir
+	#define _rmdir rmdir
 #else
-
-/*#include <winsock2.h>
-#include <windows.h>*/
-#include <direct.h>
-/*#include <io.h>
-#include <time.h>
-#include <sys/timeb.h>
-*/
-#define _mkdir(s1,s2) _mkdir(s1)
-
+	#include <direct.h>
+	#define _mkdir(s1,s2) _mkdir(s1)
 #endif
 
-//#ifndef __LINUX__
-//#include <ios>
-//#endif
-//#include <iomanip.h>
-//#include <strstream.h>
-//#endif
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <errno.h>
-//#include "cChar.h"
-//#include "cVersionClass.h"
+#include "uox3.h"
+
 //#define __UOX3_DTL__
-//#ifdef __UOX3_DTL__
-//#include "DTL.h"
-//#include "variant_cc.h"
-//#endif
+#ifdef __UOX3_DTL__
+	#include "DTL.h"
+	#include "variant_cc.h"
+#endif
 
 // Enums
 enum __ACCOUNTBBLOCK_FLAGS__
@@ -184,17 +158,17 @@ public:
 	std::string sPassword;
 	std::string sPath;
 	std::string sContact;
-	DWORD dwCommentID;
-	DWORD dwAccountID;
-	DWORD dwFlags;
-	DWORD dwTimeBan;
-	DWORD dwInGame;
-	DWORD dwLastIP;
-	DWORD dwCharacter1;
-	DWORD dwCharacter2;
-	DWORD dwCharacter3;
-	DWORD dwCharacter4;
-	DWORD dwCharacter5;
+	UI32 dwCommentID;
+	UI32 dwAccountID;
+	UI32 dwFlags;
+	UI32 dwTimeBan;
+	UI32 dwInGame;
+	UI32 dwLastIP;
+	UI32 dwCharacter1;
+	UI32 dwCharacter2;
+	UI32 dwCharacter3;
+	UI32 dwCharacter4;
+	UI32 dwCharacter5;
 	// Constructor
 	cDBAccountClass(std::string &sUUsername,std::string &sUPassword,std::string &sUPath,
 									std::string &sUContact,UI32 dwUCommentID, UI32 dwUAccountIndex,
@@ -278,7 +252,7 @@ public:
 	bool clear(void);
 	bool isUser(std::string sUsername);
 	bool AddCharacter(UI16 wAccountID, CChar *lpObject);
-	bool AddCharacter(UI16 wAccountID,DWORD dwCharacterID, CChar *lpObject);
+	bool AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject);
 	bool DelCharacter(UI16 wAccountID, int nSlot);
 	bool TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID);
 	bool GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock);
