@@ -56,7 +56,11 @@
 #include <fstream>
 #include <vector>
 #include <cstdio>
+#ifndef __LINUX__
 #include <ios>
+#else
+#include <iomanip.h>
+#endif
 #include <map>
 
 #include <sys/types.h>
