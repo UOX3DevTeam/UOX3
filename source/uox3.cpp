@@ -728,7 +728,7 @@ SI32 makeNum( const string *data )
 //o---------------------------------------------------------------------------o
 SI32 makeNum( const char *data )
 {
-	if( data == NULL )
+	if(!data/* == NULL*/)
 		return 0;
 
 	char o, h;
