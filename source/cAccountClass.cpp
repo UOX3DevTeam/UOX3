@@ -542,7 +542,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			sNewPath += "/";
 		}
 		// Create the accounts directory now that we have the username added. If it exists it doesn't matter.
-		int nDummy=_mkdir(sNewPath.c_str(), 0777);
+		int nDummy=_mkdir(sNewPath.c_str());//, 0777);
 		if(nDummy<0)
 		{
 			// if directory exists then we just skip this.

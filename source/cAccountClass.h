@@ -22,6 +22,7 @@
 	#define __unix__
 #endif
 
+#include "uox3.h"
 
 #ifdef __LINUX__
 
@@ -40,7 +41,7 @@
 
 /*#include <winsock2.h>
 #include <windows.h>*/
-#include <direct.h>
+//#include <direct.h>
 /*#include <io.h>
 #include <time.h>
 #include <sys/timeb.h>
@@ -74,10 +75,10 @@
 #include "cVersionClass.h"
 
 //#define __UOX3_DTL__
-#ifdef __UOX3_DTL__
-#include "DTL.h"
-#include "variant_cc.h"
-#endif
+//#ifdef __UOX3_DTL__
+//#include "DTL.h"
+//#include "variant_cc.h"
+//#endif
 
 // Enums
 enum __ACCOUNTBBLOCK_FLAGS__
