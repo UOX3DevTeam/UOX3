@@ -241,16 +241,8 @@ void cSkills::Tailoring( UOXSOCKET s )
 				itemmake[s].materialid2=items[i].id2; 
 				if (items[i].id1==0x10 && items[i].id2==0x78) 
 				{
-					if( items[i].color1 == 0x00 && items[i].color2 == 0xEF )
-					{
-						chars[currchar[s]].runenumb = -17;
-						 MakeMenu( s, 1600, TAILORING );
-					}
-					else
-					{
-						chars[currchar[s]].runenumb = -1;
-						 MakeMenu( s, 40, TAILORING );
-					}
+					chars[currchar[s]].runenumb = -1;
+					MakeMenu( s, 40, TAILORING );
 				}
 				else  MakeMenu(s,30,TAILORING);
 			}
