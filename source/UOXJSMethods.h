@@ -77,6 +77,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 // Socket Methods
 JSBool CSocket_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+//JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Guild Methods
 JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -197,6 +198,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "Disconnect",			CSocket_Disconnect,	0, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,	2, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget, 1, 0, 0 },
+  //{ "OpenURL",        CSocket_OpenURL,    1, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 },
 };
 

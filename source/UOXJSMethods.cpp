@@ -2234,3 +2234,23 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 	myItem->RemoveAsOwner( toFind );
 	return JS_TRUE;
 }
+
+/*JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 3 parameters
+    {
+        MethodError( "OpenURL: Invalid Number of Arguments %d, needs: 1" );
+        return JS_FALSE;
+    }
+    cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+    if(mySock==NULL)
+    {
+        MethodError( "OpenURL: Invalid socket!");
+        return JS_FALSE;
+    }
+    char *url=JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+    weblaunch(mySock,url);
+    return JS_TRUE;
+}
+*/

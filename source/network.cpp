@@ -88,7 +88,19 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	if( currChar != NULL )
 	{
 		if( !currChar->isFree() && isOnline( currChar ) )
+		{
+			// October 6, 2002 - Brakhtus Support for the onLogout event.
+			cScript *onLogoutScp = Trigger->GetScript(currChar->GetScriptTrigger());
+			if(onLogoutScp!=NULL)
+				onLogoutScp->OnLogout(connClients[s], currChar);
+			else
+			{
+				onLogoutScp = Trigger->GetScript(0);
+				if(onLogoutScp!=NULL)
+					onLogoutScp->OnLogout(connClients[s],currChar);
+			}
 			LogOut( s );
+		}
 	}
 	connClients[s]->AcctNo( -1 );
 	connClients[s]->IdleTimeout( -1 );

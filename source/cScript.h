@@ -34,6 +34,8 @@ enum ScriptEvent
 	seOnUsage,				//	**  the event that does NOT replace hardcoded use-stuff
 	seOutOfRange,			//	*	Missing character out of range
 	seOnLogin,				//	**
+	seOnLogout,
+	seOnClick,
 	seOnFall,
 	seOnSell,
 	seOnBuy,
@@ -180,6 +182,8 @@ public:
 	bool		OnUsage( CChar *user, CItem *iUsing );
 	bool		OutOfRange( CChar *person, cBaseObject *objVanish );
 	bool		OnLogin( cSocket *sockPlayer, CChar *pPlayer );
+	bool		OnLogout( cSocket *sockPlayer, CChar *pPlayer );
+	bool		OnClick( cSocket *sockPlayer, CItem *iClicked );
 	bool		OnFall( CChar *pFall, SI08 fallDistance );
 	bool		OnSell( void );
 	bool		OnBuy( void );

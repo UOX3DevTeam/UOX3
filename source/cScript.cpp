@@ -1310,6 +1310,88 @@ bool cScript::OnLogin( cSocket *sockPlayer, CChar *pPlayer )
 	return ( retVal == JS_TRUE );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	10/06/2002
+//|	Developer(s)	-	Brakhtus
+//|	Company/Team	-	
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o
+//|	Notes					-	
+//o--------------------------------------------------------------------------o	
+bool cScript::OnLogout( cSocket *sockPlayer, CChar *pPlayer ) 
+{ 
+	if( pPlayer == NULL ) 
+		return false; 
+	if( !EventExists( seOnLogout ) ) 
+		return false;
+
+	jsval Func = JSVAL_NULL; 
+	JS_GetProperty( targContext, targObject, "onLogout", &Func ); 
+
+	if( Func == JSVAL_VOID ) 
+	{ 
+		SetEventExists( seOnLogout, false ); 
+		return false; 
+	}
+
+	jsval params[2], rval;
+
+	JS_SetPrivate( targContext, sockObjects[0].toUse, sockPlayer ); 
+	JS_SetPrivate( targContext, charObjects[0].toUse, pPlayer );
+
+	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse ); 
+	params[1] = OBJECT_TO_JSVAL( charObjects[0].toUse ); 
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLogout", 2, params, &rval ); 
+	if( retVal == JS_FALSE ) 
+		SetEventExists( seOnLogout, false );
+
+	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL ); 
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL ); 
+	return ( retVal == JS_TRUE ); 
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	10/06/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o
+//|	Notes					-	
+//o--------------------------------------------------------------------------o	
+bool cScript::OnClick(cSocket *sockPlayer, CItem *iClicked)
+{
+	if(!EventExists(seOnClick))
+		return false;
+	jsval Func = JSVAL_NULL;
+	JS_GetProperty(targContext, targObject, "onClick", &Func);
+	if(Func==JSVAL_VOID)
+	{
+		SetEventExists(seOnClick,false);
+		return false;
+	}
+	jsval params[2], rval;
+	JS_SetPrivate(targContext, sockObjects[0].toUse, sockPlayer);
+	JS_SetPrivate(targContext, itemObjects[0].toUse, iClicked);
+	params[0]=OBJECT_TO_JSVAL(sockObjects[0].toUse);
+	params[1]=OBJECT_TO_JSVAL(itemObjects[0].toUse);
+	JSBool retVal = JS_CallFunctionName(targContext, targObject,"onClick",2,params,&rval);
+	if(retVal==JS_FALSE)
+		SetEventExists(seOnClick,false);
+	JS_SetPrivate(targContext,sockObjects[0].toUse,NULL);
+	JS_SetPrivate(targContext,itemObjects[0].toUse,NULL);
+	return (retVal == JS_TRUE);
+}
+
 bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 {
 	if( pFall == NULL )

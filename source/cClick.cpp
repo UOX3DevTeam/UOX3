@@ -1656,6 +1656,10 @@ void singleClick( cSocket *mSock )
 	CItem *i = calcItemObjFromSer( serial );
 	if( i == NULL )
 		return;
+	// October 6, 2002 - Brakhtus - Added support for the onClick event
+	cScript *onClickScp = Trigger->GetScript(i->GetScriptTrigger());
+	if(onClickScp!=NULL)
+		onClickScp->OnClick(mSock,i);
 
 	if( mChar->GetSingClickSer() )
 	{
