@@ -145,7 +145,7 @@ CDictionaryContainer::CDictionaryContainer()
 	char buildName[MAX_PATH];
 	for( int i = (int)DL_UNKNOWN; i < (int)DL_COUNT; i++ )
 	{
-		sprintf( buildName, "%sdictionary.%s", cwmWorldState->ServerData()->GetScriptsDirectory(), DistinctLanguageNames[i].c_str() );
+		sprintf( buildName, "%sdictionary.%s", cwmWorldState->ServerData()->GetDictionaryDirectory(), DistinctLanguageNames[i].c_str() );
 		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i].c_str() );
 	}
 }

@@ -39,7 +39,7 @@ const string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|C
 	"COMBATMAXRANGE|COMBATWRESTLESPEED|COMBATSPELLMAXRANGE|COMBATMAXMELEEDAMAGE|COMBATMAXSPELLDAMAGE|COMBATALLOWCRITICALS|COMBATMAXPOISONINGDISTANCE|COMBATDISPLAYHITMSG|COMBATMAXHUMANABSORBTION|COMBATMAXNONHUMANABSORBTION|COMBATMONSTERSVSANIMALS|"
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|ENGRAVEENABLED|BOOKSDIRECTORY|SERVERLIST|SCRIPTSECTIONHEADER|PORT|SAVEMODE|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY"
+	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY"
 );
 
 void cServerData::SetServerName( const char *setname )
@@ -381,6 +381,12 @@ void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
 #else
 	const char dirSep = '\\';
 #endif
+        if (!text)
+	{
+		Console.Error( 1, " %s directory is blank, set in uox.ini", dirName.c_str() );
+		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+		return;
+        }
 
 	// remove all trailing spaces...
 	int length = strlen(text);
@@ -393,12 +399,7 @@ void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
 	bool addSep = text[length - 1] != dirSep;
 
 	bool error = false;
-        if (!text)
-	{
-		Console.Error( 1, " %s directory is blank, set in uox.ini", dirName.c_str() );
-		return;
-        }
-	if( !resettingDefaults )
+ 	if( !resettingDefaults )
 	{
 #ifdef __LINUX__
 		DIR *dirPtr = opendir( text );
@@ -636,6 +637,22 @@ const char *cServerData::GetGumpsDirectory( void )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function/Class-	const char *cServerData::GetDictionaryDirectory( void )
+//|	Date					-	04/07/2002
+//|	Developer(s)	-	duckhead
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//|	Returns				-	[const char*] Pointing to the Log path data
+//o--------------------------------------------------------------------------o
+const char *cServerData::GetDictionaryDirectory( void )
+{
+	return dictionarydirectory.c_str();
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function/Class-	void cServerData::SetGumpsDirectory( char *text )
 //|	Date					-	03/15/2002
 //|	Developer(s)	-	duckhead
@@ -649,6 +666,22 @@ const char *cServerData::GetGumpsDirectory( void )
 void cServerData::SetGumpsDirectory( char *text )
 {
 	setDirectoryHelper( "Gumps directory", gumpsdirectory, text );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	void cServerData::SetDictionaryDirectory( char *text )
+//|	Date					-	04/07/2002
+//|	Developer(s)	-	duckhead
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Holds the location of the gumps
+//o--------------------------------------------------------------------------o
+//|	Returns				-	N/A
+//o--------------------------------------------------------------------------o
+void cServerData::SetDictionaryDirectory( char *text )
+{
+	setDirectoryHelper( "Dictionary directory", dictionarydirectory, text );
 }
 
 //o--------------------------------------------------------------------------o
@@ -1900,6 +1933,7 @@ bool cServerData::save( const char *filename )
 	ofsOutput << "HTMLDIRECTORY=" << GetHTMLDirectory() << endl;
 	ofsOutput << "LOGSDIRECTORY=" << GetLogsDirectory() << endl;
 	ofsOutput << "GUMPSDIRECTORY=" << GetGumpsDirectory() << endl;
+	ofsOutput << "DICTIONARYDIRECTORY=" << GetDictionaryDirectory() << endl;
 	
 	ofsOutput << endl << "[settings]" << endl;
 	ofsOutput << "SAVESPERLOOP=" << GetServerAntiLagSavesPerLoop() << endl;
@@ -2930,6 +2964,9 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 				case 0x0A1A:	 // GUMPSDIRECTORY[0162]
 					cServerData::SetGumpsDirectory( r );
 					break;
+			        case 0x0A29:	 // DICTIONARYDIRECTORY[0163]
+				        cServerData::SetDictionaryDirectory( r );
+	                                break;
 				default:
 					//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
 					break;

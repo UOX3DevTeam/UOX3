@@ -308,7 +308,7 @@ void savelog( const char *msg, const char *logfile )
 	if( cwmWorldState->ServerData()->GetServerConsoleLogStatus() )
 	{
 		char realLogSpot[MAX_PATH];
-		sprintf( realLogSpot, "%s/logs/%s", cwmWorldState->ServerData()->GetRootDirectory(), logfile );
+		sprintf( realLogSpot, "%s/%s", cwmWorldState->ServerData()->GetLogsDirectory(), logfile );
 		char time_str[256];
 		FILE *file = fopen( realLogSpot, "a" );
 		if( file != NULL )

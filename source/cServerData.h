@@ -124,6 +124,7 @@ protected:
 	string		htmldirectory;			// Self explanitory.
 	string		logsdirectory;
 	string		gumpsdirectory;
+	string		dictionarydirectory;
 	string		booksdirectory;
 
 	// Settings
@@ -399,6 +400,8 @@ public:
 	const char *GetLogsDirectory( void );
 	void		SetGumpsDirectory( char *text );
 	const char *GetGumpsDirectory( void );
+	void		SetDictionaryDirectory( char *text );
+	const char *GetDictionaryDirectory( void );
 
 	void		SetServerCrashProtection( UI32 setting );
 	UI32		GetServerCrashProtectionStatus( void );
