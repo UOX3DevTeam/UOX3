@@ -65,10 +65,10 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 	{
 		case 7:
 		case 2:	
-			j = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+			j = calcCharFromSer( serial );
 			break;
 		case 1:
-			j = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+			j = calcItemFromSer( serial );
 			break;
 		case 6:
 			is = calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
@@ -81,11 +81,11 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 			break;
 		case 5:	// House funcs, WILL EVENTUALLY DISAPPEAR
 			is = calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-			j = findbyserial(&itemsp[is%HASHMAX],is,0);
+			j = calcItemFromSer( is );
 			if(j>-1) 
 			{
 				is = calcserial( items[j].more1, items[j].more2, items[j].more3, items[j].more4 ); 
-				j = findbyserial(&itemsp[is%HASHMAX],is,0);
+				j = calcItemFromSer( is );
 			}
 			break;
 	}

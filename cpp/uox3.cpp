@@ -901,14 +901,14 @@ void gcollect( void ) // Remove items which were in deleted containers
 					idelete=1;
 					if (a<0x40) // container is a character...verify the character??
 					{
-						j=findbyserial(&charsp[serial%HASHMAX],serial,1);
+						j = calcCharFromSer( serial );
 						if (j!=-1)
 						{
 							if (!chars[j].free)
 								idelete=0;
 						}
 					} else {// find the container if there is one.
-						j=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+						j = calcItemFromSer( serial );
 						if (j!=-1)
 						{
 							if (!items[j].free)
@@ -1204,6 +1204,8 @@ int packitem(int p) // Find packitem
 
 void soundeffects( UOXSOCKET s, unsigned char a, unsigned char b, bool bAllHear )
 {
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
+
 	sfx[2] = a;
 	sfx[3] = b;
 	sfx[6] = chars[currchar[s]].x>>8;
@@ -1228,6 +1230,8 @@ void soundeffects( UOXSOCKET s, unsigned char a, unsigned char b, bool bAllHear 
 void soundeffect2(int p, unsigned char a, unsigned char b)
 {
 	int i;
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
+
 	
 	sfx[2]=a;
 	sfx[3]=b;
@@ -1244,6 +1248,7 @@ void soundeffect2(int p, unsigned char a, unsigned char b)
 
 void soundeffect5( UOXSOCKET s, unsigned char a, unsigned char b )
 {
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
 	sfx[2] = a;
 	sfx[3] = b;
 	sfx[6] = (unsigned char)(chars[currchar[s]].x>>8);
@@ -1256,6 +1261,7 @@ void soundeffect5( UOXSOCKET s, unsigned char a, unsigned char b )
 void soundeffect3(int p, unsigned char a, unsigned char b)
 {
 	int i;
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
 	
 	sfx[2]=a;
 	sfx[3]=b;
@@ -1272,6 +1278,8 @@ void soundeffect3(int p, unsigned char a, unsigned char b)
 
 void soundeffect4( int p, UOXSOCKET s, unsigned char a, unsigned char b )
 {
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
+
 	sfx[2] = a;
 	sfx[3] = b;
 	sfx[6] = (unsigned char)(items[p].x>>8);
@@ -1439,7 +1447,7 @@ void backpack(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3,
 	bpopen[4]=a4;
 	bpopen[5]=0x00;
 	bpopen[6]=0x47;
-	i=findbyserial(&itemsp[serhash], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i==-1)
 	{
 		printf("UOX3.CPP: backpack() couldn't find backpack: %d.\n",serial);
@@ -1786,7 +1794,7 @@ void sendbpitem(int s, int i) // Update single item in backpack
 		change=0;
 		if (x1>=0x40)
 		{
-			j=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+			j = calcItemFromSer( serial );
 			if (j!=-1)
 			{
 				x = j;
@@ -1800,7 +1808,7 @@ void sendbpitem(int s, int i) // Update single item in backpack
 		}
 		else
 		{
-			j=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+			j = calcCharFromSer( serial);
 			if (j!=-1)
 			{
 				change=1;
@@ -1850,7 +1858,7 @@ void senditem(UOXSOCKET s, ITEM i) // Send items (on ground)
 		{
 			serial=items[i].contserial;
 			if( serial == -1 ) return;
-			j=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+			j = calcCharFromSer( serial );
 			if (j!=-1)
 				if (chars[j].serial==serial) pack=0;
 		}
@@ -3328,7 +3336,7 @@ void get_item(int s) // Client grabs an item
 			b++;
 			if (items[x].cont1<0x40) // it's a character
 			{
-				npc=findbyserial(&charsp[items[x].contserial%HASHMAX], items[x].contserial, 1);
+				npc = calcCharFromSer( items[x].contserial );
 			} else  //its an item
 			{
 				if (items[x].contserial==-1)
@@ -3336,7 +3344,7 @@ void get_item(int s) // Client grabs an item
 					npc=-1;
 					break;
 				}
-				x=findbyserial(&itemsp[items[x].contserial%HASHMAX], items[x].contserial, 0);
+				x = calcItemFromSer( items[x].contserial );
 				// ANTICHRIST -- SECURE TRADE FIX
 				if (x!=-1) //LB overwriting x is essential here, odnt change it!!!
 				{
@@ -3345,7 +3353,7 @@ void get_item(int s) // Client grabs an item
 						// Trade window???
 						serial=calcserial(items[x].moreb1, items[x].moreb2, items[x].moreb3, items[x].moreb4);
 						if( serial == -1 ) return;
-						z=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+						z = calcItemFromSer( serial );
 						if (z!=-1)
 						{
 							if ((items[z].morez || items[x].morez))
@@ -3508,8 +3516,8 @@ void wear_item(int s) // Item is dropped on paperdoll
 	iserial = calcserial( a1, a2, a3, a4 );
 	if( iserial == -1 ) return;
 	//k=-1;
-	k = findbyserial( &charsp[cserial%HASHMAX], cserial, 1 );
-	i = findbyserial( &itemsp[iserial%HASHMAX], iserial, 0 );
+	k = calcCharFromSer( cserial );
+	i = calcItemFromSer( iserial );
 	
 	if (i!=-1 && (k==currchar[s] || chars[currchar[s]].priv&1))
 	{
@@ -3704,7 +3712,7 @@ void dump_item(int s) // Item is dropped on ground
 	nChar=currchar[s];  //chars[] array #
 	serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
 	serhash=serial%HASHMAX;
-	i=findbyserial(&itemsp[serhash], serial, 0);
+	i = calcItemFromSer( serial );
 	
 	if (i==-1) 
 	{ 
@@ -3999,11 +4007,11 @@ void pack_item(int s) // Item is put into container
 	
 	serial=calcserial(buffer[s][10],buffer[s][11],buffer[s][12],buffer[s][13]);
 	serhash=serial%HASHMAX;
-	nCont=findbyserial(&itemsp[serhash], serial, 0);
+	nCont = calcItemFromSer( serial );
 	
 	serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
 	serhash=serial%HASHMAX;
-	nItem=findbyserial(&itemsp[serhash], serial, 0);
+	nItem = calcItemFromSer( serial );
 	
 	if (nCont==-1)
 	{
@@ -4019,7 +4027,7 @@ void pack_item(int s) // Item is put into container
 		// Trade window???
 		serial=calcserial(items[nCont].moreb1, items[nCont].moreb2, items[nCont].moreb3, items[nCont].moreb4);
 		// z = other players trade window container
-		z=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		z = calcItemFromSer( serial );
 		if (z!=-1)
 		{
 			if ((items[z].morez || items[nCont].morez))
@@ -6654,7 +6662,7 @@ void DoorMacro( UOXSOCKET s)
 											moreSerial2 = calcserial( items[mapitem].more1,  items[mapitem].more2,  items[mapitem].more3,  items[mapitem].more4 );
 											if( moreSerial == moreSerial2 )	// matching key and door, already do in pack check above
 											{
-												npctalk( s, currchar[s],"You quickly unlock, use, and then relock the door.", 0);
+												sysmessage( s, "You quickly unlock, use, and then relock the door." );
 												dooruse( s, mapitem);
 												return;
 											}//if
@@ -7233,7 +7241,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				Network->Receive(s, 0x23, 1);
 				serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
 				if( serial == -1 ) return;
-				i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+				i = calcCharFromSer( serial );
 				if(i!=-1)
 					strncpy(chars[i].name, (char *)&buffer[s][5], 50);
 				
@@ -7244,7 +7252,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				size=(buffer[s][1]<<8)+buffer[s][2];
 				Network->Receive(s, size, 1);
 				serial=calcserial(buffer[s][3],buffer[s][4],buffer[s][5],buffer[s][6]);
-				i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+				i = calcItemFromSer( serial );
 				if (i!=-1)
 				{		
 					//printf("b7: %i b8: %i b9: %i b10: %i b11: %i b12: %i\n",buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10],buffer[s][11],buffer[s][12]);
@@ -7273,7 +7281,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 
 				Network->Receive(s, 99, 0);
 				serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
-				i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+				i = calcItemFromSer( serial );
 				if (i==-1) return;				
 				Books->a_t=1;			
 
@@ -7425,8 +7433,8 @@ void start_glow( void )	// better to make an extra function cause in loaditem it
 		{
 			if( items[i].contserial != -1 )
 			{
-				j = findbyserial( &itemsp[items[i].contserial%HASHMAX], items[i].contserial, 0 ); // find glowing item in backpack
-				l = findbyserial( &charsp[items[i].contserial%HASHMAX], items[i].contserial, 1 ); // find equipped glowing items
+				j = calcItemFromSer( items[i].contserial ); // find glowing item in backpack
+				l = calcCharFromSer( items[i].contserial ); // find equipped glowing items
 				//printf("j: %i l: %i\n", j, l );
 				if( l == -1 ) 
 					k = GetPackOwner( j );
@@ -8329,7 +8337,7 @@ void npcact(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		npcaction(i,addid1[s]);
@@ -12215,13 +12223,6 @@ void buyaction(int s)
 			buffer[s][8+(7*i)+3], buffer[s][8+(7*i)+4]);
 		amount[i]=(256*(buffer[s][8+(7*i)+5]))+buffer[s][8+(7*i)+6];
 		goldtotal=goldtotal+(amount[i]*(items[bitems[i]].value));
-/*		if( bitems[i] > -1 )
-		{
-			tmpvalue = items[bitems[i]].value;
-			tmpvalue = calcValue( bitems[i], tmpvalue );
-			if( server_data.trade_system ) tmpvalue = calcGoodValue( s, bitems[i], tmpvalue, 0 );
-			goldtotal += amount[i]*tmpvalue;
-		}*/
 	}
 	bool useBank;
 	useBank = (goldtotal >= server_data.buyThreshold );
@@ -12358,7 +12359,7 @@ void restockitem(int i, unsigned int currenttime)
 	{
 		serial=items[i].contserial;
 		if( serial == -1 ) return;
-		ci=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		ci = calcItemFromSer( serial );
 		if ( ci != -1 && items[ci].layer == 0x1A && items[i].restock>0 )
 		{
 			a=min(items[i].restock, (items[i].restock/2)+1);
@@ -14312,6 +14313,7 @@ void saveserverscript(char x)
 		fprintf( file, "FOOTSTEPS 1\n" );
 	else
 		fprintf( file, "FOOTSTEPS 0\n" );
+	fprintf( file, "AUTO_ACCT %i", server_data.auto_acct );
 	fprintf( file, "COMMANDPREFIX %c\n", server_data.commandPrefix ); 
 	fprintf( file, "STATADVANCE %i\n", server_data.stat_advance ); // Gunther stat advance tweak	
 	fprintf( file, "PORT %i\n", UOX_PORT );
@@ -15680,25 +15682,25 @@ void init_creatures(void) // assigns the basesound, soundflag, who_am_i flag of 
 	creatures[0xee].basesound = 204;                               // Rat
 	creatures[0xee].icon=8483;
 	
-	creatures[0x122].basesound = 196;                                // Boar
+	creatures[0x122].basesound = 196;                              // Boar
     creatures[0x122].icon = 8449;
 
-	creatures[0x123].basesound = 168;                                // Pack horse
+	creatures[0x123].basesound = 168;                              // Pack horse
 	creatures[0x123].icon = 8486;
 
-	creatures[0x124].basesound = 183;                                // Pack llama	
+	creatures[0x124].basesound = 183;                              // Pack llama	
 	creatures[0x124].soundflag = 2;
 	creatures[0x124].icon = 8487;
 	
-	creatures[0x190].icon = 8454;			// Male
+	creatures[0x190].icon = 8454;								   // Male
 
-	creatures[0x191].icon = 8455;			// Female
+	creatures[0x191].icon = 8455;			                       // Female
 
-	creatures[0x23d].basesound=263;                                 // Death vortex
-	creatures[0x23e].basesound=512;                                 // Blade spirit
+	creatures[0x23d].basesound=263;                                // Death vortex
+	creatures[0x23e].basesound=512;                                // Blade spirit
 	creatures[0x23e].soundflag=4;
 	
-	creatures[0x600].basesound=115;                                // cougar;
+	creatures[0x600].basesound=115;								   // cougar;
 	creatures[0x600].icon=8473;
 	
 	
@@ -15709,7 +15711,8 @@ void bgsound( CHARACTER s ) // Plays background sounds of the game
 // Slightly revised by Leafbeach in November-December 2000 (took out strange idle sounds for soundflag 2 and 3)
 {
 	int ds, dx, sound;
-	//	int distance=(VISRANGE+5);
+	unsigned char sfx[13]="\x54\x01\x12\x34\x00\x00\x06\x40\x05\x9A\x00\x00";
+
 	int distance;
 	int inrange[15];
 	int y=0;
@@ -15842,7 +15845,6 @@ void monstergate(int s, int x)
 {
 	int tmp, n, z, lovalue, hivalue, mypack, retitem, j;
 	int storeval, shoppack1, shoppack2, shoppack3;
-	//unsigned short int tempskill;
 	char sect[512];
 	long int pos;
 	char rndlootlist[20];
@@ -15905,7 +15907,6 @@ void monstergate(int s, int x)
 			items[z].x=(rand()%80)+50;
 			items[z].y=(rand()%80)+50;
 			items[z].z=9;
-//			if (items[z].contserial!=-1) removefromptr(&contsp[items[z].contserial%HASHMAX], z);
 			unsetserial( z, 1 );
 			setserial(z,mypack,1);
 			items[z].layer=0x00;
@@ -17564,7 +17565,7 @@ void deathstuff(CHARACTER i)
 	wtype = 0;
 	weather( playerSock, 0 );
 #ifdef DEBUG
-	printf("%s killed by %s.\n",chars[i].name,chars[chars[i].attacker].name);
+	ConOut("%s killed by %s.\n",chars[i].name,chars[chars[i].attacker].name);
 #endif
 
 	corpsenum = GenerateCorpse( i, nType, murderername );

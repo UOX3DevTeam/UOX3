@@ -280,11 +280,12 @@ signed long cNetworkStuff::Authenticate( const char *username, const char *pass 
 	int loginlength = strlen( username );	// pre calc login length
 	while( !loginfound && i < acctcount )
 	{
-		if( strlen( acctx[i].name ) == loginlength )
+		if( acctx[i].name[0] == username[0] && strlen( acctx[i].name ) == loginlength )
+			//strcmp is slow, let's avoid calling it when not necessary
 			loginfound = ( strcmp( acctx[i].name, username ) == 0 );
-		if( !loginfound )
 			i++;
 	}
+	i--;
 	if( !loginfound )
 		return LOGIN_NOT_FOUND;
 	if( !strcmp( acctx[i].pass, pass ) )
@@ -638,7 +639,7 @@ void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
 	{
 		if (chars[p].multis==-1)
 			multi=findmulti(chars[p].x,chars[p].y,chars[p].z);
-		else multi=findbyserial(&itemsp[chars[p].multis%HASHMAX],chars[p].multis,0);
+		else multi = calcItemFromSer( chars[p].multis );
 	}
 	
 	if (multi!=-1 && !valid)//It they are in a multi... and it's not already valid (if it is why bother checking?)

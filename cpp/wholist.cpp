@@ -181,7 +181,7 @@ void cWhoList::ButtonSelect( UOXSOCKET toSendTo, unsigned short int buttonPresse
 	SERIAL charSerial = whoMenuData[i];
 	int serhash = charSerial % HASHMAX;
 
-	targetChar = findbyserial( &charsp[serhash], charSerial, 1 ); // find selected char ...
+	targetChar = calcCharFromSer( charSerial ); // find selected char ...
 	if( targetChar == -1 )
 	{
 		sysmessage( toSendTo, "Selected character not found" );
@@ -312,7 +312,7 @@ void cWhoList::Command( UOXSOCKET toSendTo, unsigned char type, unsigned short i
 	serial = whoMenuData[buttonPressed];
 	serhash = serial%HASHMAX;
 
-	targetChar = findbyserial( &charsp[serhash], serial, 1 ); // find selected char ...
+	targetChar = calcCharFromSer( serial ); // find selected char ...
 
 	if( targetChar == -1 )
 	{

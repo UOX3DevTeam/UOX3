@@ -426,7 +426,7 @@ void cItem::DeleItem(int i)
 		}
 		if( items[i].glow > 0 )
 		{
-			int j = findbyserial( &itemsp[items[i].glow%HASHMAX], items[i].glow, 0 );
+			int j = calcItemFromSer( items[i].glow );
 			if( j != -1 )
 				DeleItem( j );  // LB glow stuff, deletes the glower of a glowing stuff automatically
 		}
@@ -1525,7 +1525,7 @@ void cItem::AddRespawnItem(int s, int x, int y)
 	{
 		int z = -1;
 		if( items[c].spawnserial != -1 && items[c].spawnserial != 0 )	// legacy support until next build
-			z = findbyserial( &itemsp[items[c].spawnserial%HASHMAX], items[c].spawnserial, 0 );
+			z = calcItemFromSer( items[c].spawnserial );
 		if( z != -1 )
 		{
 			k = PackType( items[z].id1, items[z].id2 );
@@ -1644,7 +1644,7 @@ void cItem::GlowItem( UOXSOCKET s, int i )
 	if (items[i].glow>0)
 	{
 		c=items[i].glow;
-		j=findbyserial(&itemsp[c%HASHMAX],c,0);
+		j = calcItemFromSer( c );
 
 		//ConOut("contser: %i layer: %i serial: %i\n",items[i].contserial,items[i].layer,items[i].serial);
 
@@ -1752,7 +1752,7 @@ void cItem::BounceInBackpack(CHARACTER p, ITEM i)
 	{
 		int serial=items[i].contserial;
 		int serhash=serial%HASHMAX;
-		int oldpack=findbyserial(&itemsp[serhash], serial, 0);//old container
+		int oldpack = calcItemFromSer( serial );//old container
 
 		int oldp=GetPackOwner(oldpack);//this should now be the old char that owned the item
 
@@ -1850,9 +1850,9 @@ void cItem::BounceItemOnGround(CHARACTER p, ITEM i)
 	{
 		int serial=items[i].contserial;
 		int serhash=serial%HASHMAX;
-		int oldpack=findbyserial(&itemsp[serhash], serial, 0);//old container
+		int oldpack = calcItemFromSer( serial );//old container
 	
-		int oldp=GetPackOwner(oldpack);//this should now be the old char that owned the item
+		int oldp = GetPackOwner(oldpack);//this should now be the old char that owned the item
 	
 		if (items[i].glow>0) // LB's glowing items stuff
 			removefromptr(&glowsp[chars[oldp].serial%HASHMAX],i);//remove glowing from old char
@@ -1957,9 +1957,9 @@ void RefreshItem( ITEM i ) //  Send this item to all online people in range
 	int itemcont = -1;
 	
 	if( (unsigned char)(cserial>>24) < 0x40 )
-		charcont = findbyserial( &charsp[cserial%HASHMAX], cserial, 1 );
+		charcont = calcCharFromSer( cserial );
 	else
-		itemcont = findbyserial( &itemsp[iserial%HASHMAX], iserial, 0 );
+		itemcont = calcItemFromSer( iserial );
 	//		EviLDeD -		February 29, 2000
 #ifdef DEBUG
 	ConOut("DEBUG:Item=%i(%s) charcont=%i itemcont=%i\n", i, items[i].name, charcont, itemcont );

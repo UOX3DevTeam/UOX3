@@ -29,6 +29,16 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+01.03.2001               Thiago A. Corrêa
+  uox3.cpp               Fix bug that would cause AUTO_ACCT option to be lost
+                         from server.scp when it was beeing saved.
+  (all files)            Changed every findbyserial() by the appropriate 
+                         calcItemFromSer/calcCharFromSer function.
+  targetting.cpp         Added sound effect for locking/unlocking doors.
+                         Changed the message "You quickly unlock, use, and then 
+                         relock the door." from npctalk() to sysmessage()
+
+-------------------------------------------------------------------------------
 >>> SYNCHRONOUS  0.70.03.22                          Corrêa 
 -------------------------------------------------------------------------------
 

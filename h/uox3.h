@@ -298,7 +298,6 @@ extern char sysname[31];
 extern char removeitem[6];
 extern char gmprefix[10];
 extern char gmmiddle[5];
-extern unsigned char sfx[13];
 extern char doact[15];
 extern char bpitem[20];
 extern char gump1[22];

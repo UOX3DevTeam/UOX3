@@ -544,7 +544,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						SERIAL more2 = calcserial( items[k].more1, items[k].more2, items[k].more3, items[k].more4 );
 						if( more1 == more2 )
 						{
-							npctalk( s, currchar[s], "You quickly unlock, use, and then relock the door.", 0 );
+							sysmessage( s, "You quickly unlock, use, and then relock the door." );
 							dooruse( s, x );
 							chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
 							return;
@@ -566,34 +566,22 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				foodsnd=rand()%3;
 				switch(foodsnd)
 				{
-				case 0: soundeffect2(currchar[s], 0x00, 0x3A);
-					break;
-				case 1: soundeffect2(currchar[s], 0x00, 0x3B);
-					break;
-				case 2: soundeffect2(currchar[s], 0x00, 0x3C);
-					break;
-				default: soundeffect2(currchar[s], 0x00, 0x3A);
-					break;
+				case 0:  soundeffects(s, 0x00, 0x3A, true);			break;
+				case 1:  soundeffects(s, 0x00, 0x3B, true);			break;
+				case 2:  soundeffects(s, 0x00, 0x3C, true);			break;
+				default: soundeffects(s, 0x00, 0x3A, true);			break;
 				}//switch(foodsnd)
 				
 				switch(chars[currchar[s]].hunger)
 				{
-				case 0:  sysmessage(s, "You eat the food, but are still extremely hungry.");
-					break;
-				case 1:  sysmessage(s, "You eat the food, but are still extremely hungry.");
-					break;
-				case 2:  sysmessage(s, "After eating the food, you feel much less hungry.");
-					break;
-				case 3:  sysmessage(s, "You eat the food, and begin to feel more satiated.");
-					break;
-				case 4:  sysmessage(s, "You feel quite full after consuming the food.");
-					break;
-				case 5:  sysmessage(s, "You are nearly stuffed, but manage to eat the food.");
-					break;
-				case 6:  sysmessage(s, "You are simply too full to eat any more!");
-					break;
-				default:  sysmessage(s, "You are simply too full to eat any more!");
-					break;
+				case 0:  sysmessage(s, "You eat the food, but are still extremely hungry.");		break;
+				case 1:  sysmessage(s, "You eat the food, but are still extremely hungry.");		break;
+				case 2:  sysmessage(s, "After eating the food, you feel much less hungry.");		break;
+				case 3:  sysmessage(s, "You eat the food, and begin to feel more satiated.");		break;
+				case 4:  sysmessage(s, "You feel quite full after consuming the food.");			break;
+				case 5:  sysmessage(s, "You are nearly stuffed, but manage to eat the food.");		break;
+				case 6:  sysmessage(s, "You are simply too full to eat any more!");					break;
+				default:  sysmessage(s, "You are simply too full to eat any more!");				break;
 				}//switch(chars[currchar[s]].hunger)
 				
 				if( ( items[x].poisoned ) && ( chars[currchar[s]].poisoned < items[x].poisoned ) )
@@ -1467,7 +1455,7 @@ void singleclick(int s)
 	a4 = buffer[s][4];
 	serial = calcserial( a1, a2, a3, a4 );
 	// Begin chars/npcs section
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	i = calcCharFromSer( serial );
 	if(i!=-1)		
 	{
 		showcname(s, i, 0);
@@ -1475,7 +1463,7 @@ void singleclick(int s)
 	}
 	//End chars/npcs section
 	//Begin items section
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i==-1)
 	{
 		ConOut("UOX3.CPP: singleclick couldn't find item serial: %d\n", serial);
@@ -1490,7 +1478,7 @@ void singleclick(int s)
 	{
 		if (items[i].contserial!=-1 && items[i].cont1>=0x40)
 		{
-			j=GetPackOwner(findbyserial(&itemsp[items[i].contserial%HASHMAX],items[i].contserial,0));
+			j = GetPackOwner( calcItemFromSer( items[i].contserial ) );
 			if (j!=-1)
 				if (chars[j].npcaitype==17)
 				{

@@ -583,7 +583,7 @@ void command_gochar( UOXSOCKET s )
 	if (tnum==5)
 	{
 		int serial = calcserial(hexnumber(1),hexnumber(2),hexnumber(3),hexnumber(4));
-		i = findbyserial(&charsp[serial%HASHMAX],serial,1);
+		i = calcCharFromSer( serial );
 		if (i != -1)
 		{
 			mapRegions->RemoveItem(currchar[s]+1000000);
@@ -1920,7 +1920,7 @@ void command_gotocur( UOXSOCKET s )
 	{  
 		{
 			int serial=calcserial(gmpages[chars[currchar[s]].callnum].ser1,gmpages[chars[currchar[s]].callnum].ser2,gmpages[chars[currchar[s]].callnum].ser3,gmpages[chars[currchar[s]].callnum].ser4);
-			i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+			i = calcCharFromSer( serial );
 			if(i!=-1)
 			{
 				mapRegions->RemoveItem(currchar[s]+1000000); //lb
@@ -1935,7 +1935,7 @@ void command_gotocur( UOXSOCKET s )
 			if(x==0)
 			{
 				int serial=calcserial(gmpages[chars[currchar[s]].callnum].ser1,gmpages[chars[currchar[s]].callnum].ser2,gmpages[chars[currchar[s]].callnum].ser3,gmpages[chars[currchar[s]].callnum].ser4);
-				i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+				i = calcCharFromSer( serial );
 				if(i!=-1)
 				{
 					mapRegions->RemoveItem(currchar[s]+1000000); //lb

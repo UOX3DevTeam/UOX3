@@ -81,13 +81,13 @@ void cMagic::SpellBook( UOXSOCKET s )
 	char sbookspell[20]="\x40\x01\x02\x03\x1F\x2E\x00\x00\x01\x00\x48\x00\x7D\x40\x01\x02\x03\x00\x00";
 	
 	serial=calcserial(buffer[s][1]&0x7F,buffer[s][2],buffer[s][3],buffer[s][4]);
-	item=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	item = calcItemFromSer( serial );
 	
 	x=packitem(currchar[s]);
 	if (item!=-1 && x!=-1) //lb
 		if (items[item].contserial!=items[x].serial && items[item].contserial!=chars[currchar[s]].serial)
 		{
-			if( items[findbyserial(&itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0 )].type != 9 )
+			if( items[calcItemFromSer( items[item].contserial )].type != 9 )
 			{
 				sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
 			}
@@ -554,7 +554,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 	if( buffer[s][7] == 0xFF && buffer[s][8] == 0xFF && buffer[s][9] == 0xFF && buffer[s][10] == 0xFF ) 
 		return;
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+	i = calcCharFromSer( serial );
 	if( i == -1 ) 
 		return;
 	npcattacktarget( i, c );
@@ -579,7 +579,6 @@ int cMagic::CheckBook(int circle, int spell, int i)
 	if (raflag) spellnum=0;
 	serial=items[i].serial;
 	serhash=serial%HASHMAX;
-	//j=findbyserial(&itemsp[serial%256], serial,0);
 	if( items[i].morex == 0 && items[i].morey == 0 && items[i].morez == 0 )
 	{
 		for (ci=0;ci<contsp[serhash].max;ci++)
@@ -615,7 +614,7 @@ void cMagic::SbOpenContainer( UOXSOCKET s )
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if ((items[i].type==9))
@@ -2250,7 +2249,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 		{
 			// mark, recall and gate go here
 			item = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);	// item we are targeting
-			i = findbyserial(&itemsp[item%HASHMAX], item, 0);  // was searching for char
+			i = calcItemFromSer( item );  // was searching for char
 			
 			unsigned char regByte = region[chars[currchar[s]].region].priv;
 			if( (!(regByte&0x02) && curSpell == 45) || (!(regByte&0x04) && curSpell == 52) || (!(regByte&0x08) && curSpell == 32) )
@@ -2809,7 +2808,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						break;
 					case 34:// Dispel Field
 						serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-						i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
+						i = calcItemFromSer( serial );
 						if( i != -1 )
 						{
 							if(( line_of_sight( calcSocketFromChar( s ), chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, items[i].x, items[i].y, items[i].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING )||
@@ -3190,7 +3189,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 			
 			// ITEM TARGET
 			item=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);	// item we are targeting
-			i=findbyserial(&itemsp[item%HASHMAX], item, 0);	// modified by Abaddon, 17th February, 2000, was doing a char lookup
+			i = calcItemFromSer( item );
 			if( i != -1 )
 			{
 				if( itemdist( currchar[s], i ) > combat.maxRangeSpell )
@@ -4118,7 +4117,7 @@ void cMagic::Heal( UOXSOCKET s)
 {
 	int defender, i, c = currchar[s];
 	defender = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[defender%HASHMAX], defender, 1 );
+	i = calcCharFromSer( defender );
 	
 	if (i!=-1)
 	{
@@ -4139,7 +4138,7 @@ void cMagic::Recall( UOXSOCKET s )
 {
 	// Targeted item
 	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
+	int i = calcItemFromSer( item );
 	
 	if( i == -1 ) return; // LB crashfix
 	if( items[i].morex <= 200 && items[i].morey <= 200 )
@@ -4167,7 +4166,7 @@ void cMagic::Mark( UOXSOCKET s )
 {
 	// Targeted item
 	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
+	int i = calcItemFromSer( item );
 	if( i == -1 ) return; // lb crashfix
 	
 	items[i].morex=chars[currchar[s]].x;
@@ -4190,7 +4189,7 @@ void cMagic::Gate( UOXSOCKET s)
 	
 	// Targeted item
 	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
+	int i = calcItemFromSer( item );
 	if( i == -1 ) return;
 	
 	if ( items[i].morex<=200 && items[i].morey<=200)

@@ -427,13 +427,8 @@ void cCommands::NextCall(int s, int type)
     {
       if(gmpages[i].handled==0)
       {
-        /*for (j=0;j<charcount;j++) //Lag Fix -- Zippy
-        {
-          if ((chars[j].ser1==gmpages[i].ser1)&&(chars[j].ser2==gmpages[i].ser2)&&
-						(chars[j].ser3==gmpages[i].ser3)&&(chars[j].ser4==gmpages[i].ser4))
-          {*/
-        	serial=calcserial(gmpages[i].ser1,gmpages[i].ser2,gmpages[i].ser3,gmpages[i].ser4);
-		j=findbyserial(&charsp[serial%HASHMAX],serial,1);
+       	serial=calcserial(gmpages[i].ser1,gmpages[i].ser2,gmpages[i].ser3,gmpages[i].ser4);
+		j = calcCharFromSer( serial );
 		if(j!=-1)
 		{
             sysmessage(s,"");
@@ -471,7 +466,7 @@ void cCommands::NextCall(int s, int type)
       if(counspages[i].handled==0)
       {
 		serial = calcserial(counspages[i].ser1,counspages[i].ser2,counspages[i].ser3,counspages[i].ser4);
-		j = findbyserial(&charsp[serial%HASHMAX],serial,1);
+		j = calcCharFromSer( serial );
 		if(j!=-1)
 		{
             sysmessage(s,"");
@@ -895,7 +890,7 @@ void cCommands::SetItemTrigger(int s)
 	 
 	
   serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+  i = calcItemFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Item triggered");
@@ -909,7 +904,7 @@ void cCommands::SetTriggerType(int s)
 	 
 	
   serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+  i = calcItemFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Trigger type set");
@@ -923,7 +918,7 @@ void cCommands::SetTriggerWord(int s)
 	 
 	
   serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+  i = calcCharFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Trigger word set");
@@ -965,16 +960,11 @@ void cCommands::SetNPCTrigger(int s)
 	 
 	
   serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+  i = calcCharFromSer( serial );
   if (i!=-1)
   {
-		//   if (chars[i].npc)
-		//   {
     sysmessage(s,"NPC triggered");
     chars[i].trigger=addx[s];
-		//   }else{
-		//    sysmessage(s,"You can not trigger Player Characters");
-		//   }
   }
 }
 
@@ -1134,10 +1124,9 @@ void cCommands::Wipe(int s)
 void cCommands::Possess(int s) 
 {
 	int i, serial, tmp;
-//	unsigned char a; //unused -- eagle
 
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	i = calcCharFromSer( serial );
 	if(i!=-1)
 	{
 			
@@ -1256,7 +1245,7 @@ void cCommands::RemoveShop(int s)
 	PLAYER i;
 
 	serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i==-1)
 	{
 		sysmessage( s, "Target character not found..." );

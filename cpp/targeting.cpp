@@ -102,26 +102,20 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 		return; // do nothing if user cancels, avoids CRASH! - Morrolan
 	}
 	
-	a1=buffer[s][2];
-	a2=buffer[s][3];
-	a3=buffer[s][4];
-	a4=buffer[s][5];
-	targetok[s]=0;
+	a1 = buffer[s][2];
+	a2 = buffer[s][3];
+	a3 = buffer[s][4];
+	a4 = buffer[s][5];
+	targetok[s] = 0;
 	if( chars[currchar[s]].dead && !( chars[currchar[s]].priv&1 ) && chars[currchar[s]].account != 0 )
 	{
-		if( chars[currchar[s]].priv&1 )
+		sysmessage( s, "You are dead and cannot do that!" );
+		if( chars[currchar[s]].spellCast != 0 )	// need to stop casting if we don't target right
 		{
-		} 
-		else
-		{
-			sysmessage( s, "You are dead and cannot do that!" );
-			if( chars[currchar[s]].spellCast != 0 )	// need to stop casting if we don't target right
-			{
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
-			}
-			return;
+			chars[currchar[s]].spellCast = 0;
+			chars[currchar[s]].casting = 0;
 		}
+		return;
 	}
  	if ((a1==0)&&(a2==1)&&(a3==0))
 	{
@@ -154,7 +148,7 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 		case 24:
 			{
 				int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-				i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+				i = calcItemFromSer( serial );
 				if(i!=-1)
 				{
 					triggerwitem(s,i,0);
@@ -164,7 +158,7 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 					//}  for
 				}
 				serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-				i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+				i = calcCharFromSer( serial );
 				if( i != -1 )
 				{
 					triggernpc( s, i );
@@ -434,14 +428,14 @@ void cTargets::triggertarget( int s )
 {
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] ); 
 	int i;
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+	i = calcCharFromSer( serial );
 	if( i != -1 ) // Char
 	{
 		// triggerwitem( i, -1, 1 ); // is this used also for npcs?!?!
 	}
 	else
 	{ // item
-		i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
+		i = calcItemFromSer( serial );
 		if( i != -1 )
 		{
 			triggerwitem( s, i, 1 );
@@ -524,7 +518,7 @@ void cTargets::RenameTarget(int s)
 	//   
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if(addx[s]==1) //rename2 //New -- Zippy
@@ -533,7 +527,7 @@ void cTargets::RenameTarget(int s)
 			strcpy(items[i].name,xtext[s]);
 	}
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		strcpy(chars[i].name,xtext[s]);
@@ -594,9 +588,8 @@ void cTargets::TeleTarget( UOXSOCKET s )
 void cTargets::GetAccount( int s )
 {
 	int i, serial;
-//	serial = calcserial( &buffer[s][7], &buffer[s][8], &buffer[s][9], &buffer[s][10] );
 	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+	i = calcCharFromSer( serial );
 
 	if( i != -1 )
 	{
@@ -614,13 +607,13 @@ void cTargets::RemoveTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		sysmessage(s, "Removing item.");
 		Items->DeleItem(i);
     } else {
-		i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+		i = calcCharFromSer( serial );
 		if(i!=-1)
 		{
 			if (chars[i].account>-1 && !chars[i].npc) // player check added by LB
@@ -642,7 +635,7 @@ void cTargets::DyeTarget(int s)
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	if ((addid1[s]==255)&&(addid2[s]==255))
 	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		i = calcItemFromSer( serial );
 		if (i!=-1)
 		{
 			dyevat[1]=items[i].ser1;
@@ -652,10 +645,9 @@ void cTargets::DyeTarget(int s)
 			dyevat[7]=items[i].id1;
 			dyevat[8]=items[i].id2;
 			Network->xSend(s, dyevat, 9, 0);
-//			for (k=0;k<now;k++) if (perm[k]) senditem(k, i);
 			RefreshItem( i ); // AntiChrist
 		}
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		if (i!=-1)
 		{
 			dyevat[1]=chars[i].ser1;
@@ -669,7 +661,7 @@ void cTargets::DyeTarget(int s)
 	}
 	else
 	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		i = calcItemFromSer( serial );
 		if (i!=-1)
 		{
 			
@@ -696,13 +688,12 @@ void cTargets::DyeTarget(int s)
 			}
 			
 			
-//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);	
 			RefreshItem( i ); // AntiChrist
 			
 		}
 		
 		
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		
 		if (i!=-1)
 		{
@@ -757,7 +748,7 @@ void cTargets::TypeTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].type=addid1[s];
@@ -767,20 +758,19 @@ void cTargets::TypeTarget(int s)
 
 void cTargets::IDtarget(int s)
 {
-	int i/*,j*/,serial;
+	int i, serial;
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].id1=addid1[s];
 		items[i].id2=addid2[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 		return;
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].id1=chars[i].xid1=chars[i].orgid1=addid1[s];
@@ -798,11 +788,11 @@ void cTargets::XTeleport(int s, int x)
 	{
 	case 0:
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		break;
 	case 5:
 		serial = calcserial( (unsigned char)hexnumber(1), (unsigned char)hexnumber(2), (unsigned char)hexnumber(3), (unsigned char)hexnumber(4) );
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		break;
 	case 2:
 		if (perm[makenumber(1)])
@@ -853,7 +843,7 @@ void cTargets::XgoTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i+1000000);
@@ -873,7 +863,7 @@ void cTargets::MoreXYZTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morex=addx[s];
@@ -888,7 +878,7 @@ void cTargets::MoreXTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morex=addx[s];
@@ -901,7 +891,7 @@ void cTargets::MoreYTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morey=addx[s];
@@ -914,7 +904,7 @@ void cTargets::MoreZTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morez=addx[s];
@@ -927,7 +917,7 @@ void cTargets::PrivTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		//Logging
@@ -945,14 +935,13 @@ void cTargets::MoreTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].more1=addid1[s];
 		items[i].more2=addid2[s];
 		items[i].more3=addid3[s];
 		items[i].more4=addid4[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
 }
@@ -962,7 +951,7 @@ void cTargets::KeyTarget(int s) // new keytarget by Morollan
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if ((items[i].more1==0)&&(items[i].more2==0)&&
@@ -1016,12 +1005,14 @@ void cTargets::KeyTarget(int s) // new keytarget by Morollan
 			{
 				items[i].type=13;
 				sysmessage(s, "You lock the door.");
+				soundeffects(s, 0x00, 0x49, true);
 				return;
 			}//else if
 			else if ((items[i].type==13)&&(iteminrange(s,i,2)))
 			{
 				items[i].type=12;
 				sysmessage(s, "You unlock the door.");
+				soundeffects(s, 0x00, 0x49, true);
 				return;
 			}//else if
 			else if ((items[i].id1==0x0b)&&(items[i].id2==0xd2))
@@ -1071,7 +1062,7 @@ void cTargets::IstatsTarget(int s)
 	else
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		i = calcItemFromSer( serial );
 		if (i!=-1)
 		{
 			// Modified by Magius(CHE)
@@ -1097,7 +1088,7 @@ void cTargets::CstatsTarget( UOXSOCKET s )
 {
 	int i,serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		sprintf(temp, "Ser [%x %x %x %x] ID [%x %x] Name [%s] Skin [%x %x] Account [%x] Priv [%x %x] Position [%i %i %i] CTimeout [%i] Fame [%i] Karma [%i] Deaths [%i] Kills [%i] NPCAI [%x] NPCWANDER [%d] WEIGHT [%.2f]",
@@ -1124,7 +1115,7 @@ void cTargets::WstatsTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		sprintf(temp, "Ser [%x %x %x %x] ID [%x %x] Name [%s]",
@@ -1262,7 +1253,7 @@ void cTargets::CnsTarget(int s)
 {
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	
 	if(i!=-1)
 	{
@@ -1303,7 +1294,7 @@ void cTargets::KillTarget(int s, int ly)
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	
-	k=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	k = calcCharFromSer( serial );
 	if (k!=-1)
 	{
 		serhash=serial%HASHMAX;
@@ -1327,7 +1318,7 @@ void cTargets::FontTarget(int s)
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].fonttype=addid1[s];
@@ -1337,52 +1328,43 @@ void cTargets::FontTarget(int s)
 
 void cTargets::GhostTarget(int s)
 {
-	//int x=0; //AntiChrist
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	
-	if(i!=-1)
+	if(i != -1)
 	{
 		if(chars[i].dead==0)
 		{
-			chars[i].attacker=currchar[s]; //AntiChrist -- for forensics ev
+			chars[i].attacker = currchar[s]; //AntiChrist -- for forensics ev
 			bolteffect(i);
 			soundeffect2(i, 0x00, 0x29);
-			//x++;
 			deathstuff(i);
-			//break;
-		} else sysmessage(s,"That player is already dead.");
-		//} for
+		} else 
+			sysmessage(s,"That creature is already dead.");
 	}
-	//if(x==0)
-	//	sysmessage(s,"That player is already dead.");
 }
 
 
 void cTargets::BoltTarget(int s)
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	
 	if(i!=-1)
 	{
 		bolteffect(i);
 		soundeffect2(i, 0x00, 0x29);
-		//break;
-		//} for
 	}
 }
 
 void cTargets::AmountTarget(int s)
 {
-//	int j;
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	int i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
-		items[i].amount=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
+		items[i].amount = addx[s];
 		RefreshItem( i ); // AntiChrist
 	}
 	
@@ -1395,24 +1377,20 @@ void cTargets::SetAmount2Target(int s)
 //	int j;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	int i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
 		items[i].amount2=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
-	//} for
 }
 
 void cTargets::CloseTarget(int s)
 {
 	int j;
 	
-	//char closestr[6]="\x26\x00\x00\x00\x00";
-	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	if(i!=-1)	
 	{
 		j=calcSocketFromChar(i);
@@ -1420,14 +1398,7 @@ void cTargets::CloseTarget(int s)
 		{
 			sysmessage(s, "Kicking player");
 			sysmessage(j, "You have been kicked!"); //New -- Zippy
-			Network->Disconnect(j);//Network->xSend(j, closestr, 5, 0);
-						  /*if (currchar[j]==i)
-						  {
-						  disconnect(j);//Network->xSend(j, closestr, 5, 0);
-						  break;
-		}*/
-			//} for
-			//break;
+			Network->Disconnect(j);
 		}
 	}
 }
@@ -1463,7 +1434,7 @@ void cTargets::MovableTarget (int s)
 //	int j;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	int i = calcItemFromSer( serial );
 	
 	if(i!=-1)
 	{
@@ -1509,7 +1480,7 @@ void cTargets::OwnerTarget(int s) // bugfixed by JM
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if( calcserial( addid1[s], addid2[s], addid3[s], addid4[s] ) == -1 )
@@ -1530,7 +1501,7 @@ void cTargets::OwnerTarget(int s) // bugfixed by JM
 	}
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if( calcserial( addid1[s], addid2[s], addid3[s], addid4[s] ) == -1 )
@@ -1556,7 +1527,7 @@ void cTargets::ColorsTarget (int s)
 
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if (((items[i].id1==0x0F)&&(items[i].id2==0xAB))||                        //dye vat
@@ -1584,7 +1555,7 @@ void cTargets::DvatTarget (int s)
 	unsigned char x1, x2, x3, x4;		// these were ints
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if (items[i].dye==1)
@@ -1602,7 +1573,7 @@ void cTargets::DvatTarget (int s)
 				change = 0;
 				if( x1 >= 0x40 )
 				{
-					j = findbyserial( &itemsp[serial%HASHMAX],serial, 0 );
+					j = calcItemFromSer( serial );
 					if( j != -1 )
 					{
 						x = j;
@@ -1616,7 +1587,7 @@ void cTargets::DvatTarget (int s)
 				}
 				else
 				{
-					j = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+					j = calcCharFromSer( serial );
 					if( j != -1 )
 					{
 						change = 1;
@@ -1631,7 +1602,6 @@ void cTargets::DvatTarget (int s)
 			{
 				items[i].color1=addid1[s];
 				items[i].color2=addid2[s];
-	//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 				RefreshItem( i ); // AntiChrist
 				soundeffects( s, 0x02, 0x3E, true );	// plays the dye sound, LB
 			}
@@ -1681,7 +1651,7 @@ void cTargets::FreezeTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].priv2=chars[i].priv2|2;
@@ -1694,10 +1664,9 @@ void cTargets::UnfreezeTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-//		chars[i].priv2=chars[i].priv2&(!2);
 		chars[i].priv2 = chars[i].priv2 & 0xFD; // unfreeze, AntiChrist used LB bugfix
 	}
 }
@@ -1709,7 +1678,7 @@ void cTargets::AllSetTarget(int s)
 	//unsigned short int tempskill;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	if(i!=-1)
 	{
 		k=calcSocketFromChar(i);
@@ -1832,12 +1801,12 @@ void cTargets::TweakTarget( UOXSOCKET s )//Lag fix -- Zippy
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i;
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)//Char
 	{
 		tweakmenu(s, i, 2);
 	} else {//item
-		i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+		i = calcItemFromSer( serial );
 		if(i!=-1)
 		{
 			tweakmenu(s, i, 1);
@@ -1849,7 +1818,7 @@ void cTargets::LoadCannon(int s)
 {
 	int i,serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if( i != -1 )
 	{
 		if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
@@ -1873,7 +1842,7 @@ void cTargets::LoadCannon(int s)
 void cTargets::SetInvulFlag(int s)
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	
 	if(i!=-1)
 	{
@@ -2029,7 +1998,7 @@ void cTargets::SquelchTarg(int s)//Squelch
 	int p, serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	p=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	p = calcCharFromSer( serial );
 	if (p!=-1)
 	{
 		if(chars[p].priv&1)             
@@ -2071,14 +2040,14 @@ void cTargets::TeleStuff(int s)
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 		if (buffer[s][7]==0xFF) return;
-		targ=findbyserial(&charsp[serial%HASHMAX],serial,1);
+		targ = calcCharFromSer( serial );
 		
 		if(targ!=-1)
 		{
 			targ+=1000000;
 			target(s,0,1,0,222,"Select location to put this character.");
 		} else {
-			targ=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+			targ = calcItemFromSer( serial );
 			if(targ!=-1)
 				target(s,0,1,0,222,"Select location to put this item.");
 		}
@@ -2162,7 +2131,7 @@ void cTargets::CorpseTarget(int s)
 	int n=0;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	int i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
 		if(iteminrange(s,i,1)) {
@@ -2597,7 +2566,7 @@ void cTargets::TitleTarget(int s)
 {
 	int i,serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		strcpy(chars[i].title,xtext[s]);
@@ -2704,7 +2673,7 @@ void cTargets::DupeTarget(int s)
 		
 		
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		i = calcItemFromSer( serial );
 		if (i!=-1)
 		{
 			for (dupeit=0;dupeit<dupetimes;dupeit++)
@@ -2723,9 +2692,8 @@ void cTargets::MoveToBagTarget(int s)
 	y=rand()%80;
 	
 	int p=packitem(currchar[s]);
-	//p=packitem(currchar[s]);
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 		if ((items[i].serial==serial))
 		{
@@ -2767,12 +2735,11 @@ void cTargets::ReleaseTarget(int s,int c)
 	if(c==-1)
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);	
+		i = calcCharFromSer( serial );	
 	}
 	else
 	{
-		i=findbyserial(&charsp[c%HASHMAX], c, 1);
-		//	i=c;
+		i = calcCharFromSer( c );
 	}
 	if (i!=-1)
 	{
@@ -2823,7 +2790,7 @@ void cTargets::StaminaTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffect2(i, 0x01, 0xF2);
@@ -2841,7 +2808,7 @@ void cTargets::ManaTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffect2(i, 0x01, 0xF2);
@@ -2859,7 +2826,7 @@ void cTargets::MakeShopTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		Commands->MakeShop(i);
@@ -2877,13 +2844,13 @@ void cTargets::JailTarget(int s, int c)
 	if (c==-1)
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);	  
+		i = calcCharFromSer( serial );	  
 			tmpnum=i;
 	}
 	else
 	{
-		i=findbyserial(&charsp[c%HASHMAX], c, 1);
-		tmpnum=i;
+		i = calcCharFromSer( c );
+		tmpnum = i;
 	}
 	
     if (tmpnum==-1) return; //lb
@@ -2971,7 +2938,7 @@ void cTargets::BuyShopTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 		if ((chars[i].serial==serial))
 		{
@@ -3032,7 +2999,7 @@ void cTargets::SetValueTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if ((i!=-1))
 	{
 		items[i].value=addx[s];
@@ -3047,7 +3014,7 @@ void cTargets::SetRestockTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if ((i!=-1))
 	{
 		items[i].restock=addx[s];
@@ -3063,7 +3030,7 @@ void cTargets::permHideTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if(chars[i].hidden==1)
@@ -3085,15 +3052,14 @@ void cTargets::unHideTarget(int s)
 
 void cTargets::SetWipeTarget(int s)
 {
-	int i/*, j*/,serial;
+	int i, serial;
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].wipe=addid1[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
 }
@@ -3103,7 +3069,7 @@ void cTargets::SetSpeechTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if (chars[i].npc==0)
@@ -3121,7 +3087,7 @@ void cTargets::SetSpAttackTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].spattack=tempint[s];
@@ -3133,7 +3099,7 @@ void cTargets::SetSpaDelayTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].spadelay=tempint[s];
@@ -3145,7 +3111,7 @@ void cTargets::SetPoisonTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].poison=tempint[s];
@@ -3157,7 +3123,7 @@ void cTargets::SetPoisonedTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].poisoned=tempint[s];
@@ -3173,7 +3139,7 @@ void cTargets::FullStatsTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffect2(i, 0x01, 0xF2);
@@ -3195,7 +3161,7 @@ void cTargets::SetAdvObjTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].advobj=tempint[s];
@@ -3227,12 +3193,10 @@ void cTargets::SetSplitTarget(int s)
 {
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].split=tempint[s];
-		//break;
-		//}
 	}
 }
 
@@ -3240,7 +3204,7 @@ void cTargets::SetSplitChanceTarget(int s)
 {
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].splitchnc=tempint[s];
@@ -3335,18 +3299,17 @@ void cTargets::SetDirTarget(int s)
 	
 	if (buffer[s][7]>=0x40)
 	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+		i = calcItemFromSer( serial );
 		if (i!=-1)
 		{
 			items[i].dir=addx[s];
-//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 			RefreshItem( i ); // AntiChrist
 			return;
 		}
 	}
 	else
 	{
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		if (i!=-1)
 		{
 			chars[i].dir=addx[s] & 0x0F;	// make sure high-bits are cleared
@@ -3423,21 +3386,19 @@ void cTargets::NpcResurrectTarget( CHARACTER i )
 
 void cTargets::NewXTarget(int s) // Notice a high similarity to th function above?  Wonder why.  - Gandalf
 {
-	//int i,j,serial;
-	int i,serial;
+	int i, serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
 		items[i].x=addx[s];
 		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i+1000000);
@@ -3451,21 +3412,20 @@ void cTargets::NewXTarget(int s) // Notice a high similarity to th function abov
 void cTargets::NewYTarget(int s)
 
 {
-	int i/*,j*/,serial;
+	int i, serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
 		items[i].y=addx[s];
 		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	
 	}
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
         mapRegions->RemoveItem(i+1000000);
@@ -3481,7 +3441,7 @@ void cTargets::IncXTarget(int s)
 {
 	int i/*,j*/,serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	
 	if(i!=-1)
 	{
@@ -3490,7 +3450,7 @@ void cTargets::IncXTarget(int s)
 		mapRegions->AddItem(i);
 		RefreshItem( i ); // AntiChrist
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i+1000000);
@@ -3504,18 +3464,17 @@ void cTargets::IncXTarget(int s)
 
 void cTargets::IncYTarget(int s)
 {
-	int i/*,j*/,serial;
+	int i, serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
 		items[i].y=items[i].y + addx[s];
 		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		RefreshItem( i );
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i+1000000);
@@ -3532,14 +3491,14 @@ void cTargets::HouseOwnerTarget(int s) // crackerjack 8/10/99 - change house own
 	int own, sign, house, o_serial, serial, os, i;
 	o_serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
 	if( o_serial == -1 ) return;
-	own=findbyserial(&charsp[o_serial%HASHMAX],o_serial,1);
+	own = calcCharFromSer( o_serial );
 	if(o_serial>-1) 
 	{
 		int key;
 		serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-		sign=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+		sign = calcItemFromSer( serial );
 		serial=calcserial(items[sign].more1, items[sign].more2, items[sign].more3, items[sign].more4);
-		house=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+		house = calcItemFromSer( serial );
 
 		if (sign ==-1 || house ==-1) return; //lb
 
@@ -3604,9 +3563,9 @@ void cTargets::HouseEjectTarget(int s) // crackerjack 8/11/99 - kick someone out
 {
 	int serial, c, h;
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	c = calcCharFromSer( serial );
 	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	h = calcItemFromSer( serial );
 	if((c!=-1)&&(h!=-1)) {
 		int sx, sy, ex, ey;
 		Map->MultiArea(h, &sx,&sy,&ex,&ey);
@@ -3629,9 +3588,9 @@ void cTargets::HouseBanTarget(int s) // crackerjack 8/12/99 - ban someobdy from 
 	// first, eject the player
 	Targ->HouseEjectTarget(s);
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	c = calcCharFromSer( serial );
+	serial = calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
+	h = calcItemFromSer( serial );
 	if((c!=-1)&&(h!=-1)) {
 		int r;
 		r=add_hlist(c, h, H_BAN);
@@ -3650,9 +3609,9 @@ void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to
 {
 	int serial, c, h;
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	c = calcCharFromSer( serial );
 	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	h = calcItemFromSer( serial );
 	if((c!=-1)&&(h!=-1)) {
 		unsigned int r;
 		r=add_hlist(c, h, H_FRIEND);
@@ -3683,9 +3642,9 @@ void cTargets::HouseUnlistTarget(int s) // crackerjack 8/12/99 - remove somebody
 {
 	int serial, c, h;
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	c = calcCharFromSer( serial );
 	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	h = calcItemFromSer( serial );
 	if((c!=-1)&&(h!=-1)) {
 		int r;
 		r=del_hlist(c, h);
@@ -3706,7 +3665,7 @@ void cTargets::SetMurderCount( int s )
 	x = addmitem[s];
 
 	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial( &charsp[serial % HASHMAX], serial, 1);
+	int i = calcCharFromSer( serial );
 	if( i != -1 )
 	{
 		chars[i].kills = x;
@@ -3720,7 +3679,7 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 {
 	int c, i, serial, k, l, j;
 	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
+	i = calcItemFromSer( serial );
 
 	// moved above following if to avoid crashing.
 	if (i==-1) 
@@ -3730,8 +3689,8 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 	}
 	if( items[i].contserial != -1 )
 	{
-		j = findbyserial( &itemsp[items[i].contserial%HASHMAX], items[i].contserial, 0 ); // in bp ?
-		l = findbyserial( &charsp[items[i].contserial%HASHMAX], items[i].contserial, 1 ); // equipped ?
+		j = calcItemFromSer( items[i].contserial ); // in bp ?
+		l = calcCharFromSer( items[i].contserial ); // equipped ?
 		if( l == -1 )
 			k = GetPackOwner( j );
 		else
@@ -3794,7 +3753,7 @@ void cTargets::UnglowTarget( UOXSOCKET s )
 {
 	int c,i,serial,j,k,l;
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	i = calcItemFromSer( serial );
 
 	if (i==-1) 
 	{ 
@@ -3804,8 +3763,8 @@ void cTargets::UnglowTarget( UOXSOCKET s )
 
 	if (items[i].contserial!=-1) 
 	{      
-	     j=findbyserial(&itemsp[items[i].contserial%HASHMAX],items[i].contserial,0); // in bp ?
-		 l=findbyserial(&charsp[items[i].contserial%HASHMAX],items[i].contserial,1); // equipped ?
+	     j = calcItemFromSer( items[i].contserial ); // in bp ?
+		 l = calcCharFromSer( items[i].contserial ); // equipped ?
 		 if (l==-1
 			 ) k=GetPackOwner(j); 
 		 else 
@@ -3820,7 +3779,7 @@ void cTargets::UnglowTarget( UOXSOCKET s )
 	}
 
 	c=items[i].glow;
-	j=findbyserial(&itemsp[c%HASHMAX],c,0);
+	j = calcItemFromSer( c );
 
 	if (items[i].glow==0 || j==-1 ) 
 	{
@@ -3850,7 +3809,7 @@ void cTargets::ShowSkillTarget( int s ) // LB's showskills
 	char sk[25];
 
 	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	p = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+	p = calcCharFromSer( serial );
 
 	if( p != -1 )
 	{
@@ -3964,12 +3923,12 @@ void cTargets::HouseLockdown( UOXSOCKET s ) // Abaddon
 {
 	int itemToLockSer, itemToLock, houseSer, house;
 	itemToLockSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToLock = findbyserial( &itemsp[itemToLockSer%HASHMAX], itemToLockSer, 0 );
+	itemToLock = calcItemFromSer( itemToLockSer );
 
 	if( itemToLock != -1 )
 	{
 		houseSer = calcserial( addid1[s], addid2[s], addid3[s], addid4[s] );	// let's find our house
-		house = findbyserial( &itemsp[houseSer%HASHMAX], houseSer, 0 );
+		house = calcItemFromSer( houseSer );
 		// time to lock it down!
 		int multi;
 		multi = findmulti( items[itemToLock].x, items[itemToLock].y, items[itemToLock].z );
@@ -4011,12 +3970,12 @@ void cTargets::HouseRelease( UOXSOCKET s ) // Abaddon
 {
 	int itemToLockSer, itemToLock, houseSer, house;
 	itemToLockSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToLock = findbyserial( &itemsp[itemToLockSer%HASHMAX], itemToLockSer, 0 );
+	itemToLock = calcItemFromSer( itemToLockSer );
 
 	if( itemToLock != -1 )
 	{
 		houseSer = calcserial( addid1[s], addid2[s], addid3[s], addid4[s] );	// let's find our house
-		house = findbyserial( &itemsp[houseSer%HASHMAX], houseSer, 0 );
+		house = calcItemFromSer( houseSer );
 		// time to lock it down!
 		int multi;
 		multi = findmulti( items[itemToLock].x, items[itemToLock].y, items[itemToLock].z );
@@ -4054,7 +4013,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 	int itemToCheckSer, itemToCheck;
 	char message[512];
 	itemToCheckSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToCheck = findbyserial( &itemsp[itemToCheckSer%HASHMAX], itemToCheckSer, 0 );
+	itemToCheck = calcItemFromSer( itemToCheckSer );
 
 	if( itemToCheck != -1 )
 	{

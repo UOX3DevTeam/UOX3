@@ -1551,7 +1551,7 @@ void cSkills::SmeltOre( UOXSOCKET s )
 	smeltedItem = chars[chr].smeltitem;	
 
 	anvilSerial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	anvil = findbyserial( &itemsp[anvilSerial%HASHMAX], anvilSerial, 0 );				// Let's find our anvil
+	anvil = calcItemFromSer( anvilSerial );				// Let's find our anvil
 	
 	struct mining_stuff
 	{
@@ -1895,7 +1895,7 @@ void cSkills::MakePizza(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if((items[i].id1==0x10 && items[i].id2==0x3D))
@@ -2288,7 +2288,7 @@ void cSkills::ProvocationTarget1( UOXSOCKET s )
 	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( findbyserial( &charsp[serial%HASHMAX], serial, 1 ) == -1 ) return;
+	if( calcCharFromSer( serial ) == -1 ) return;
 	int inst;
 	inst=Skills->GetInstrument(s);
 	if (inst==-1) 
@@ -2317,7 +2317,7 @@ void cSkills::EnticementTarget1( UOXSOCKET s )
 	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( findbyserial( &charsp[serial%HASHMAX], serial, 1 ) == -1 ) return;
+	if( calcCharFromSer( serial ) == -1 ) return;
 	int inst;
 	inst=Skills->GetInstrument(s);
 	if (inst==-1) 
@@ -2345,7 +2345,7 @@ void cSkills::EnticementTarget2( UOXSOCKET s )
 	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( findbyserial( &charsp[serial%HASHMAX], serial, 1 ) == -1 ) return;
+	if( calcCharFromSer( serial ) == -1 ) return;
 	int inst, target, res1, res2;
 	inst=Skills->GetInstrument(s);
 	if (inst==-1) 
@@ -2377,7 +2377,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( findbyserial( &charsp[serial%HASHMAX], serial, 1 ) == -1 ) return;
+	if( calcCharFromSer( serial ) == -1 ) return;
 	
 	int inst, target, target2, res1, res2;
 	unsigned int i;
@@ -2514,7 +2514,7 @@ void cSkills::AlchemyTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		type=(items[i].id1<<8)+items[i].id2;
@@ -2847,7 +2847,7 @@ void cSkills::BottleTarget(int s)
 	
 	mortar=calcItemFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 		if ((items[i].id1==0x0F)&&(items[i].id2==0x0E))
 		{
@@ -3389,7 +3389,7 @@ void cSkills::HealingSkillTarget(int s)
 {
 	int i, serial;
 	serial = calcserial( buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10] );
-	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		unsigned char targetSkill;
@@ -3494,7 +3494,7 @@ void cSkills::ArmsLoreTarget(int s)
 	char temp2[60];
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{                                                                                             
 		if ((items[i].def==0)||(items[i].pileable))
@@ -3603,7 +3603,7 @@ void cSkills::ItemIdTarget(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if (!Skills->CheckSkill(currchar[s], ITEMID, 0, 250))
@@ -3696,7 +3696,7 @@ void cSkills::Evaluate_int_Target(int s)
 	else 
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		i = calcCharFromSer( serial );
 		if (i!=-1)
 		{
 			if ((chars[i].in == 0)) 
@@ -3737,7 +3737,7 @@ void cSkills::AnatomyTarget(int s)
 	char buf2[125];
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i==-1)
 	{
 		sysmessage( s, "That is not a player!" );
@@ -4248,11 +4248,11 @@ void cSkills::RandomSteal(int s)
 	char temp2[512];
 	tile_st tile;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	npc=findbyserial(&charsp[serial%HASHMAX], serial,1);
-	if (npc==-1) return;
-	p=packitem(npc);
-	if (p==-1) 
+	serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	npc = calcCharFromSer( serial );
+	if (npc == -1) return;
+	p = packitem(npc);
+	if (p == -1) 
 	{
 		sysmessage(s,"bad luck, your victim doesnt have a backpack"); 
 		return; 
@@ -4283,7 +4283,7 @@ void cSkills::RandomSteal(int s)
 	}
 	//  Abaddon - February 21, 2000
   //  Fix for the Stealing from vendor list bug?
-	int itemCont = findbyserial( &itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0); 
+	int itemCont = calcItemFromSer( items[item].contserial ); 
 	if( itemCont != -1 && items[itemCont].layer >= 0x1a && items[itemCont].layer <= 0x1c ) // is it in the buy or sell layer of a vendor?
 	{
 		sysmessage( s, "You cannot steal that." );
@@ -4373,7 +4373,7 @@ void cSkills::StealingTarget(int s)
 		Skills->RandomSteal(s);
 		return;
 	}
-	item=findbyserial(&itemsp[serial%HASHMAX], serial,0);
+	item = calcItemFromSer( serial );
 	x=item;
 	if (item!=-1)
 	{
@@ -4383,15 +4383,15 @@ void cSkills::StealingTarget(int s)
 		{
 			do 
 			{
-				x=findbyserial(&itemsp[items[x].contserial%HASHMAX], items[x].contserial, 0); //calcItemFromSer(items[x].cont1,items[x].cont2,items[x].cont3,items[x].cont4);	
-				//printf("Repeat: %i\n",z);
+				x = calcItemFromSer( items[x].contserial ); //calcItemFromSer(items[x].cont1,items[x].cont2,items[x].cont3,items[x].cont4);	
+				//ConOut("Repeat: %i\n",z);
 				z++;
 				if (x!=-1) 
 					b=items[x].cont1; 
 				else break;
 			} while (b>=0x40 && z < 255 );
 			if( x != -1 )
-				npc=findbyserial(&charsp[items[x].contserial%HASHMAX], items[x].contserial, 1);
+				npc = calcCharFromSer( items[x].contserial );
 			else
 				npc=-1;
 			if( x > -1 )
@@ -4431,7 +4431,7 @@ void cSkills::StealingTarget(int s)
 	}
 	//  Abaddon - February 21, 2000
   //  Same stealing fix?
-	int itemCont = findbyserial( &itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0); 
+	int itemCont = calcItemFromSer( items[item].contserial ); 
 	if( itemCont != -1 && items[itemCont].layer >= 0x1a && items[itemCont].layer <= 0x1c ) // is it in the buy or sell layer of a vendor?
 	{
 		sysmessage( s, "You cannot steal that." );
@@ -4836,7 +4836,7 @@ void cSkills::AnimalLoreTarget(int s)
 	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	i = calcCharFromSer( serial );
 	if (i>-1)
 	{
 		if(chars[i].priv&0x81)
@@ -4872,7 +4872,7 @@ void cSkills::ForensicsTarget(int s) //AntiChrist
 	int curtim=uiCurrentTime;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	i = calcItemFromSer( serial );
 	if (i>-1)
 	{
 		if (!(items[i].corpse))
@@ -5196,7 +5196,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 		 return 0; // don't do this if the buffer got flushed - Morrolan prevents CRASH!
 	 }
 	 serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	 i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	 i = calcItemFromSer( serial );
 	 if (i>-1)
 	 {
 		 clickitem=i;
@@ -5562,7 +5562,7 @@ void cSkills::Tinkering(int s)
 	if (packnum==-1) {sysmessage(s,"Time to buy a backpack"); return; } //LB
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if(((items[i].id1==0x1B)&&((items[i].id2==0xEF)||(items[i].id2==0xF2)))||
@@ -5746,7 +5746,7 @@ void cSkills::TinkerAxel(int s)
 	unsigned long int p1id, p2id;	// ids of the 2 parts;
 	int tailme=0;
 	origPartSer = calcserial( addid1[s], addid2[s], addid3[s], addid4[s] );
-	origPart = findbyserial( &itemsp[origPartSer%HASHMAX], origPartSer, 0 );
+	origPart = calcItemFromSer( origPartSer );
 	if( origPart == -1 )
 	{
 		sysmessage( s, "Original part no longer exists" );
@@ -5754,7 +5754,7 @@ void cSkills::TinkerAxel(int s)
 	}
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if( i == origPart )
@@ -5835,7 +5835,7 @@ void cSkills::TinkerAwg(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if (((items[i].id1==0x10) && (items[i].id2==0x51 || items[i].id2==0x52)) &&
@@ -5885,7 +5885,7 @@ void cSkills::TinkerClock(int s)
 	
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if((items[i].id1==0x10)&&(items[i].id2==0x4D)||(items[i].id2==0x4E)||
