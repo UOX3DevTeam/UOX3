@@ -1,90 +1,74 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
+// 21/07/2003 Xuri; Updated/rewrote the script
 // use wheat : target flour mill : get flour
 
-function onUse( pUser, iUsed ) 
+function onUse ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;
 
 	// is it in users pack?
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != pUser )
+	if( iUsed.container != null )
 	{
-		srcSock.SysMessage( "This has to be in your backpack!" );
-		return;
+		var iPackOwner = GetPackOwner( iUsed, 0 );
+		if( iPackOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This has to be in your backpack!" );
+			return;
+		}
+		else
+		{
+			var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
+			if( countOfResource < 4 )
+			{
+				srcSock.SysMessage( "You do not have enough resources! You need 4 sheaves of wheat!" );
+				return;
+			}
+			srcSock.CustomTarget( 0, "Where do you wish to grind the wheat?" );
+		}
 	}
-
-	var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
-	if( countOfResource < 4 )
-	{
-		srcSock.SysMessage( "You do not have enough resources!" );
-		return;
-	}
-	// let the user target the mill
-	srcSock.CustomTarget( 0, "Where do you wish to grind the wheat?" );
+	else
+		pUser.SysMessage( "This has to be in your backpack!" );
 }
 
 function onCallback0( tSock, targSerial )
 {
-	var tItem = CalcTargetedItem( tSock );
-	var tChar = tSock.currentChar;
-
-	if( tItem == null )
-	{
-		tSock.SysMessage( "You didn't target anything." );
-		return;
+	var pUser = tSock.currentChar;
+	var StrangeByte   = tSock.GetWord( 1 );
+	var targX	= tSock.GetWord( 11 );
+	var targY	= tSock.GetWord( 13 );
+	var targZ	= tSock.GetByte( 16 );
+	var tileID	= tSock.GetWord( 17 );
+	if( tileID == 0 )
+	{ //Target is a Maptile
+		pUser.SysMessage("You cannot grind your wheat on that.");
 	}
-
-	var isInRange = tChar.InRange( tItem, 6 );
-
-	if( !isInRange ) 
-	{
-		tSock.SysMessage( "You are too far away to reach that!" );
-		return;
+	else if( StrangeByte == 0 && targSerial.isChar )
+	{ //Target is a Character
+		pUser.SysMessage("You cannot grind your wheat on that.");
 	}
-
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( tItem, 0 );
-	if( iPackOwner != null && iPackOwner != tChar )
-	{
-		tSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
-	}
-
-	if( iPackOwner == null )	// on the ground
-	{
-		// if in a house check if its the one the player is in
-		var persMulti = FindMulti( tChar );
-		var itemMulti = FindMulti( tItem );
-
-		if( persMulti != itemMulti )	// not in the same house
+	// Target is a Dynamic or Static Item
+	if( tileID == 0x188b || tileID == 0x188c || ( tileID >= 0x1920 && tileID <= 0x1923 ) || ( tileID >= 0x1925 && tileID <= 0x1927 ) || 
+	( tileID >= 0x192c && tileID <= 0x192f ) || ( tileID >= 0x1931 && tileID <= 0x1933 ))
+	{	// In case its a flour mill
+		// check if its in range
+		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 		{
-			tSock.SysMessage( "You cannot reach that from here!" );
+			pUser.SysMessage( "You are too far away from the target!" );
 			return;
 		}
-	}
-
-	var iID = tItem.id;
-	var iColour = tItem.colour;
-	if( iID != 0x1920 && iID != 0x1922 && iID != 0x192c && iID != 0x192E ) // is the item of the right type?
-	{
-		tSock.SysMessage( "That is not the right thing to use your resources on." );
+		// remove 4 sheaves of wheat
+		var iMakeResource = pUser.ResourceCount( 0x1EBD );// is there enough resources to use up to make it
+		if( iMakeResource < 4 )
+		{
+			pUser.SysMessage( "You do not have enough resources! You need 4 sheaves of wheat!" );
+			return;
+		}
+		pUser.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
+		pUser.SoundEffect( 0x021e, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1045", false, 1, true, true ); // makes a sack of flour
+		pUser.SysMessage( "You grind some wheat and put a sack of flour in your pack!" );
 		return;
 	}
-
-	var iMakeResource = tChar.ResourceCount( 0x1EBD );	// is there enough resources to use up to make it
-	if( iMakeResource < 4 )
-	{
-		tSock.Sysmessage( "There is not enough base resources in your pack!" );
-		return;
-	}
-
-	tItem.SoundEffect( 0x021D, true );
-
-	tChar.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
-
-	var itemMade = SpawnItem( tSock, tChar, 0x1045, false );	// makes an item and puts in tChar's pack
-
-	tSock.SysMessage( "You mill some wheat and put a sack of flour in your pack!" );
 }

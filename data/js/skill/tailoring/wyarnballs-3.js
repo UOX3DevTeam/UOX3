@@ -1,72 +1,62 @@
 // tailoring script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
+// 21/07/2003 Xuri; Updated/Rewrote the script
 // unspun wool : spinning wheel : three balls of yarn
 
 function onUse ( pUser, iUsed ) 
 {
 	// get users socket
-	var srcSock = CalcSockFromChar( pUser );
+	var srcSock = pUser.socket;
 
 	// is it in users pack?
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != pUser )
+	if( iUsed.container != null )
 	{
-		SysMessage( srcSock, "This has to be in your backpack!" );
-		return;
+		var iPackOwner = GetPackOwner( iUsed, 0 );
+		if( iPackOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This has to be in your backpack!" );
+			return;
+		}
+		else
+			// let the user target the heat source
+			srcSock.CustomTarget( 0, "What do you want to spin the wool on?" );
 	}
-
-	// let the user target the spinning wheel
-	CustomTarget( srcSock, 0, "Where do you want to spin the wool on?" );
+	else
+		pUser.SysMessage( "This has to be in your backpack!" );
 }
 
 function onCallback0( tSock, targSerial )
 {
-	var tItem = CalcTargetedItem( tSock );
-	var tChar = CalcCharFromSock( tSock );
-
-	if( tItem == -1 )
-	{
-		SysMessage( tSock, "You didn't target anything." );
-		return;
+	var pUser = tSock.currentChar;
+	var StrangeByte   = tSock.GetWord( 1 );
+	var targX	= tSock.GetWord( 11 );
+	var targY	= tSock.GetWord( 13 );
+	var targZ	= tSock.GetByte( 16 );
+	var tileID	= tSock.GetWord( 17 );
+	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
+	{ //Target is a Maptile/Character
+		pUser.SysMessage("You cannot spin your wool on that!");
 	}
-
-    // In case its a spinning wheel
-   	var iID = tItem.id;
-	if( iID == 0x1015 || iID == 0x1019 || iID == 0x101C || iID == 0x10A4 )
-	{
+	if( tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C || tileID == 0x10A4 )
+	{ // In case its a spinning wheel
 		// check if its in range
-		var isInRange = InRange( tChar, tItem, 0, 1, 4 );
-		if( !isInRange ) 
+		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 		{
-			SysMessage( tSock, "You are too far away to reach that!" );
+			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}
-		// check if its in someone elses house
-		var persMulti = FindMulti( tChar.x, tChar.y, tChar.z );
-		var itemMulti = FindMulti( tItem.x, tItem.y, tItem.z );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			SysMessage( tSock, "You cannot reach that from here!" );
-			return;
-		}
-		// remove one pile of wool
-		var iMakeResource = GetResourceCount( tChar, 0x0DF8, 0 );	// is there enough resources to use up to make it
+		}	
+		// remove one bale of wool
+		var iMakeResource =  pUser.ResourceCount( 0x0DF8 );
 		if( iMakeResource < 1 )
 		{
-			SysMessage( tSock, "You dont seem to have any wool!" );
+			pUser.SysMessage( "You dont seem to have any cotton!" );
 			return;
 		}
-		UseResource( tChar, 0x0DF8, 0, 1 ); // uses up a resource (character, item ID, item colour, amount)
-		DoSoundEffect( tItem, 1, 0x021A, true );
+		pUser.UseResource( 1, 0x0DF8 ); // uses up a resource 
+		pUser.SoundEffect( 0x021b, true );
 		// add spools of thread
-		var itemMade = SpawnItem( tSock, tChar, 0x0e1e, false );	// makes an item and puts in tChar's pack
-		var itemMade = SpawnItem( tSock, tChar, 0x0e1e, false );	// makes an item and puts in tChar's pack
-		var itemMade = SpawnItem( tSock, tChar, 0x0e1e, false );	// makes an item and puts in tChar's pack
-		SysMessage( tSock, "You spin some balls of yarn." );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0e1e", false, 3, true, true ); //makes some balls of yarn
+		pUser.SysMessage(  "You spin some balls of yarn." );
 		return;
 	}
-
-	SysMessage( tSock, "That is not a thing to use wool on." );
-
 }

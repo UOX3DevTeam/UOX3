@@ -1,75 +1,74 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
+// 21/07/2003 Xuri; Updated/rewrote the script
 // Raw fish steak  : Heat source : Cooked fish steak
 
 function onUse ( pUser, iUsed ) 
 {
 	// get users socket
-	var srcSock = CalcSockFromChar( pUser );
+	var srcSock = pUser.socket;
 
 	// is it in users pack?
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != pUser )
+	if( iUsed.container != null )
 	{
-		SysMessage( srcSock, "This has to be in your backpack!" );
-		return;
+		var iPackOwner = GetPackOwner( iUsed, 0 );
+		if( iPackOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This has to be in your backpack!" );
+			return;
+		}
+		else
+			// let the user target the heat source
+			srcSock.CustomTarget( 0, "What do you want to use the raw fish steak with?" );
 	}
-
-	// let the user target the heat source
-	CustomTarget( srcSock, 0, "What do you want to use the raw fish steak with?" );
+	else
+		pUser.SysMessage( "This has to be in your backpack!" );
 }
 
 function onCallback0( tSock, targSerial )
 {
-	var tItem = CalcTargetedItem( tSock );
-	var tChar = CalcCharFromSock( tSock );
-
-	if( tItem == -1 )
-	{
-		SysMessage( tSock, "You didn't target anything." );
-		return;
+	var pUser = tSock.currentChar;
+	var StrangeByte   = tSock.GetWord( 1 );
+	var targX	= tSock.GetWord( 11 );
+	var targY	= tSock.GetWord( 13 );
+	var targZ	= tSock.GetByte( 16 );
+	var tileID	= tSock.GetWord( 17 );
+	if( tileID == 0 )
+	{ //Target is a Maptile
+		pUser.SysMessage("You cannot cook your raw fish steak on that.");
 	}
-
-	// In case its an oven or a fireplace
-   	var iID = tItem.id;
-	if( iID == 0x0461 || iID == 0x0462 || iID == 0x046B || iID == 0x046F || iID == 0x0475 || iID == 0x047B || iID == 0x092B || iID == 0x092C || iID == 0x0930 || iID == 0x0931 || iID == 0x0937 || iID == 0x0945 || iID == 0x0953 || iID == 0x0961 || iID == 0x0DE3 || iID == 0x0FAC || iID == 0x0FB1 || iID == 0x0E31 || iID == 0x019BB )
-	{
+	else if( StrangeByte == 0 && targSerial.isChar )
+	{ //Target is a Character
+		pUser.SysMessage("You cannot cook your raw fish steak on that.");
+	}
+	// Target is a Dynamic or Static Item
+	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) || 
+	( tileID >= 0x0945 && tileID <= 0x0950 ) || ( tileID >= 0x0953 && tileID <= 0x095e ) || ( tileID >= 0x0961 && tileID <= 0x096c ) ||
+	( tileID >= 0x0de3 && tileID <= 0x0de8 ) || tileID == 0x0fac )
+	{	// In case its an oven, fireplace, campfire or fire pit
 		// check if its in range
-		var isInRange = InRange( tChar, tItem, 0, 1, 4 );
-		if( !isInRange ) 
+		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 		{
-			SysMessage( tSock, "You are too far away to reach that!" );
+			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}
-		// check if its in someone elses house
-		var persMulti = FindMulti( tChar.x, tChar.y, tChar.z );
-		var itemMulti = FindMulti( tItem.x, tItem.y, tItem.z );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			SysMessage( tSock, "You cannot reach that from here!" );
-			return;
-		}
-		// remove one fish steak
-		var iMakeResource = GetResourceCount( tChar, 0x097A, 0 );	// is there enough resources to use up to make it
+			}	
+		// remove one raw fish steak
+		var iMakeResource = pUser.ResourceCount( 0x097A );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
-			SysMessage( tSock, "You dont seem to have any fish steak!" );		
+			pUser.SysMessage( "You dont seem to have any fish steaks!" );
 			return;
 		}
-		UseResource( tChar, 0x097A, 0, 1); // uses up a resource (character, item ID, item colour, amount)
-		DoSoundEffect( tItem, 1, 0x0021, true);
-
+		pUser.UseResource( 1, 0x097A ); // uses up a resource (amount, item ID, item colour)
+		pUser.SoundEffect( 0x0021, true );
 		// check the skill
-		if( !CheckSkill( tChar, 13, 1, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
+			if( !pUser.CheckSkill( 13, 1, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
-			SysMessage( tSock, "You burnt the fish to crisp." );
+			pUser.SysMessage( "You burnt the fish to crisp." );
 			return;
 		}
-		// add one cooked fish steak if skill is ok
-		var itemMade = SpawnItem( tSock, tChar, 0x097B, false );	// makes an item and puts in tChar's pack
-		SysMessage( tSock, "You cook a fish steak." );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097B", false, 1, true, true ); // makes a fish steak
+		pUser.SysMessage( "You cook a fish steak." );
 		return;
 	}
-	SysMessage( tSock, "That is not a thing to use raw fish steaks on." );
 }

@@ -1,5 +1,6 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
+// 21/07/2003 Xuri; Updated/rewrote the script
 // use dough : target heat source : get bread
 
 function onUse ( pUser, iUsed ) 
@@ -8,79 +9,67 @@ function onUse ( pUser, iUsed )
 	var srcSock = pUser.socket;
 
 	// is it in users pack?
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != pUser )
+	if( iUsed.container != null )
 	{
-		srcSock.SysMessage( "This has to be in your backpack!" );
-		return;
+		var iPackOwner = GetPackOwner( iUsed, 0 );
+		if( iPackOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This has to be in your backpack!" );
+			return;
+		}
+		else
+			// let the user target the heat source
+			srcSock.CustomTarget( 0, "What do you want to use the dough with?" );
 	}
-
-	// let the user target the heat source
-	srcSock.CustomTarget( 0, "What do you want to use the dough with?" );
+	else
+		pUser.SysMessage( "This has to be in your backpack!" );
 }
 
 function onCallback0( tSock, targSerial )
 {
-	var tItem = CalcTargetedItem( tSock );
-	var tChar = tSock.currentChar;
-
-	if( tItem == null )
-	{
-		tSock.SysMessage( "You didn't target anything." );
-		return;
+	var pUser = tSock.currentChar;
+	var StrangeByte   = tSock.GetWord( 1 );
+	var targX	= tSock.GetWord( 11 );
+	var targY	= tSock.GetWord( 13 );
+	var targZ	= tSock.GetByte( 16 );
+	var tileID	= tSock.GetWord( 17 );
+	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
+	{ //Target is a Maptile/Character
+		pUser.SysMessage("You cannot cook your bread on that!");
 	}
-
-	// In case its an oven or a fireplace
-   	var iID = tItem.id;
-	if( iID == 0x0461 || iID == 0x0462 || iID == 0x046b || iID == 0x046f || iID == 0x0475 || iID == 0x047B || iID == 0x092B || iID == 0x092C || iID == 0x0930 || iID == 0x0931 || iID == 0x0937 || iID == 0x0945 || iID == 0x0953 || iID == 0x0961)
-	{
+	// Target is a Dynamic or Static Item
+	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) || 
+	( tileID >= 0x0945 && tileID <= 0x0950 ) || ( tileID >= 0x0953 && tileID <= 0x095e ) || ( tileID >= 0x0961 && tileID <= 0x096c ) ||
+	( tileID >= 0x0de3 && tileID <= 0x0de8 ) || tileID == 0x0fac )
+	{	// In case its an oven, fireplace, campfire or fire pit
 		// check if its in range
-		var isInRange = tChar.InRange( tItem, 4 );
-		if( !isInRange ) 
+		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 		{
-			tSock.SysMessage( "You are too far away to reach that!" );
+			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}
-
-		// check if its in someone elses house
-		var persMulti = FindMulti( tChar );
-		var itemMulti = FindMulti( tItem );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			tSockSysMessage( "You cannot reach that from here!" );
-			return;
-		}
-
+		}	
 		// remove one dough
-		var iMakeResource = tChar.ResourceCount( 0x103D );	// is there enough resources to use up to make it
+		var iMakeResource = pUser.ResourceCount( 0x103D );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
-			tSock.SysMessage( "You dont seem to have any dough!" );
+			pUser.SysMessage( "You dont seem to have any dough!" );
 			return;
 		}
-
-		tChar.UseResource( 1, 0x103D ); // uses up a resource (amount, item ID, item colour)
-		tItem.SoundEffect( 0x0054, true );
-
+		if( pUser.skills[13] < 200 ) 
+		{
+			pUser.SysMessage( "You are not skilled enough to do that." );
+			return;
+		}
+		pUser.UseResource( 1, 0x103D ); // uses up a resource (amount, item ID, item colour)
+		pUser.SoundEffect( 0x0055, true );
 		// check the skill
-		if( srcChar.skills[13] < 200 ) 
+			if( !pUser.CheckSkill( 13, 200, 500 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
-			SysMessage( tSock, "You are not skilled enough to do that." );
+			pUser.SysMessage( "You burnt the dough to crisp." );
 			return;
 		}
-
-		if( !tChar.CheckSkill( 13, 200, 500 ) )	// character to check, skill #, minimum skill, and maximum skill
-		{
-			tSock.SysMessage( "You burnt the dough to crisp." );
-			return;
-		}
-
-		// add one bread if skill is ok
-		var itemMade = SpawnItem( tSock, tChar, 0x103B, false );	// makes an item and puts in tChar's pack
-		tSock.SysMessage( "You bake a loaf of bread." );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103b", false, 1, true, true ); // makes a loaf of bread
+		pUser.SysMessage( "You bake a loaf of bread." );
 		return;
 	}
-
-	tSock.SysMessage( "That is not a thing to use dough on." );
 }

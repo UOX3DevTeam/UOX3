@@ -1,59 +1,70 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick dates
+// Date-Picking Script
+// 19/02/2003 Xuri; xuri@sensewave.com
+// When a (dynamic) date tree is double-clicked, it's setup with
+// 5 dates ripe for picking. After they've been picked, a timer starts,
+// and until it's up no more dates can be picked. Once the timer is over,
+// new dates are added. The apperance of the tree indicates whether or
+// not there are any dates left to pick.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless dates have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("Dates",1); 		// If set to 1, there are dates to be picked, if 0 there are no ripe dates
+		iUsed.SetTag("DateCounter", 5); 	// Add 5 dates to the tree initially
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Dates = iUsed.GetTag("Dates");
+	var DateCount = iUsed.GetTag("DateCounter");
+	if (Dates == 0)
+	{	
+		pUser.SysMessage( "You find no ripe dates to pick. Try again later." );
+	}
+	if( Dates == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x004F, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any dates." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You pick a bunch of dates from the date-palm." );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1727", false, 1, true, true );
+			DateCount--;
+			iUsed.SetTag( "DateCounter", DateCount );
+			if( DateCount == 1)
+				pUser.SysMessage( "There is "+DateCount+" ripe bunch of dates left on the tree." );
+			else
+				pUser.SysMessage( "There are "+DateCount+" ripe dates left on the tree." );
+		    	if( DateCount == 0 )
+			{
+				if( iUsed.id == 0x0d96 )
+					iUsed.id = 0x0d95;
+				else if( iUsed.id == 0x0d9a )
+					iUsed.id = 0x0d99; 
+				iUsed.SetTag( "Dates", 0 );
+				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time dates respawn
+			}
 		}
 	}
-    
-	// make a sound
-	iUsed.SoundEffect( 0x004f, true );
-	// temporary disable the item
-	DoTempEffect( 1, pUser, iUsed, 25, 10, 0, 0, iUsed );
-	// give some resources
-	var loot = RollDice( 1, 3, 0 ); 
-	if( loot == 1 || loot == 2 )
-	{
-		srcSock.SysMessage( "You don't manage to pick dates." );
-		return;
-	}
-	if( loot == 3 ) 
-	{
-		srcSock.SysMessage( "You pick a bunch of dates." );
-		var itemMade = SpawnItem( srcSock, pUser, "0x1727", false );	// makes an item and puts in Char's pack
-		// disable item needs to be put in here
-		return;
-	}
-
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 )
+	{
+		iUsed.SetTag("DateCounter", 5);
+		iUsed.SetTag("Dates", 1);
+		if( iUsed.id == 0x0d95 )
+			iUsed.id = 0x0d96;
+		else if( iUsed.id == 0x0d99 )
+			iUsed.id = 0x0d9a; 
+	}
+}

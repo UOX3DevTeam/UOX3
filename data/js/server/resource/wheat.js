@@ -1,47 +1,95 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick wheat and consume the plant
+// Wheat-Picking Script
+// 20/02/2003 Xuri; xuri@sensewave.com
+// When (dynamic)wheat is double-clicked, it's setup with
+// wheat ripe for picking. When it is harvested it turns into "harvested wheat",
+// and a "growth" process happens, where the wheat goes through various stages
+// like "sprouts", short wheat and finally becomes harvestable tall wheat again.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
-		return;
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
+		return false;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless wheats have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks what as initialized
+		iUsed.SetTag("Wheat",1); 		// If set to 1, there is wheat to be picked, if 0 there is no wheat left
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Wheat = iUsed.GetTag("Wheat");
+	if (Wheat == 0)
+	{	
+		pUser.SysMessage( "This wheat is not ready for harvesting yet." );
+		return false;
+	}
+	if( Wheat == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x0050, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any wheat." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You harvest some wheat." );
+			var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", true, 0x1ebd, 0x0, true, true );
+			var loot2 = RollDice( 1, 2, 0 );
+			if( loot2 == 1 )
+				iUsed.id = 0x0daf;
+			if( loot2 == 2 )
+				iUsed.id = 0x0dae;
+			iUsed.SetTag( "Wheat", 0 );
+			iUsed.StartTimer( 60000, 1, true); // Let's do some timers! Whee!
 		}
+		return false;
 	}
-	
-	// make a sound
-	iUsed.SoundEffect( 0x004f, true );
-
-	iUsed.Delete();
-	// give some resources
-	srcSock.SysMessage( "You harvest some wheat." );
-	var itemMade = SpawnItem( srcSock, pUser, "0x1EBD", false );	// makes an item and puts in Char's pack
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 ) // Starts faze 1 of wheat growth
+	{
+		var sprout = RollDice( 1, 2, 0 );
+		if( sprout == 1 )
+			iUsed.id = 0x1ebe;
+		if( sprout == 2 )
+			iUsed.id = 0x1ebf;
+//		iUsed.KillTimers();
+		iUsed.StartTimer( 60000, 2, true); 
+	}
+	if( timerID == 2 ) // Starts faze 2 of wheat growth
+	{
+		var sprout = RollDice( 1, 2, 0 );
+		if( sprout == 1 )
+			iUsed.id = 0xc55;
+		if( sprout == 2 )
+			iUsed.id = 0xc56;
+//		iUsed.KillTimers();			
+		iUsed.StartTimer( 60000, 3, true ); 
+	}
+	if( timerID == 3 ) // Starts faze 3 of wheat growth
+	{
+		var sprout = RollDice( 1, 2, 0 );
+		if( sprout == 1 )
+			iUsed.id = 0xc57;
+		if( sprout == 2 )
+			iUsed.id = 0xc59;
+	//	iUsed.KillTimers();			
+		iUsed.StartTimer( 60000, 4, true ); 
+	}
+	if( timerID == 4 ) // Wheat growth finished!
+	{
+		var sprout = RollDice( 1, 3, 0 );
+		if( sprout == 1 )
+			iUsed.id = 0xc58;
+		if( sprout == 2 )
+			iUsed.id = 0xc5a;
+		if( sprout == 3 )
+			iUsed.id = 0xc5b;
+	//	iUsed.KillTimers();
+		iUsed.SetTag("Wheat", 1);
+	}
+
+}

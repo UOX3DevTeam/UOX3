@@ -1,48 +1,47 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick cotton and consume the plant
+// Cotton-Picking Script
+// 19/02/2003 Xuri; xuri@sensewave.com
+// When a (dynamic) cotton plant is double-clicked, it may yield some cotton.
+// Then a timer will start, and no more cotton can be picked until it runs out.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless cotton have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("Cotton",1); 		// If set to 1, there is cotton to be picked
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Cotton = iUsed.GetTag("Cotton");
+	if (Cotton == 0)
+	{	
+		pUser.SysMessage( "You find no cotton to pick. Try again later." );
+	}
+	if( Cotton == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x004F, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any cotton." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You harvest some cotton." );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df9", false, 1, true, true );
+			iUsed.SetTag( "Cotton", 0 );
+			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more cotton respawns
 		}
 	}
-    
-	// make a sound
-	iUsed.SoundEffect( 0x004f, true );
-
-	iUsed.Delete();
-
-	// give some resources
-	srcSock.SysMessage( "You harvest some cotton." );
-	var itemMade = SpawnItem( srcSock, pUser, "0x0df9", false );	// makes an item and puts in Char's pack
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 )
+	{
+		iUsed.SetTag("Cotton", 1);
+	}
+}

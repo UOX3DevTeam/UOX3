@@ -1,58 +1,62 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick grapes
+// Grape-Picking Script
+// 19/02/2003 Xuri; xuri@sensewave.com
+// When (dynamic) grapevines are double-clicked, they're setup with
+// 5 grapes ripe for picking. After they've been picked, a timer starts,
+// and until it's up no more grapes can be picked. Once the timer is over,
+// new grapes are added. The apperance of the tree indicates whether or
+// not there are any grapes left to pick.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless grapes have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("Grapes",1); 		// If set to 1, there are grapes to be picked, if 0 there are no ripe grapes
+		iUsed.SetTag("GrapeCounter", 5); 	// Add 5 grapes to the tree initially
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Grapes = iUsed.GetTag("Grapes");
+	var GrapeCount = iUsed.GetTag("GrapeCounter");
+	if (Grapes == 0)
+	{	
+		pUser.SysMessage( "You find no ripe grapebunches to pick. Try again later." );
+	}
+	if( Grapes == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x004F, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any grapebunches." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You pick a grapebunch from the tree." );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d1", false, 1, true, true );
+			GrapeCount--;
+			iUsed.SetTag( "GrapeCounter", GrapeCount );
+			if( GrapeCount == 1)
+				pUser.SysMessage( "There is "+GrapeCount+" ripe grapebunch left on the tree." );
+			else
+				pUser.SysMessage( "There are "+GrapeCount+" ripe grapebunches left on the tree." );
+		    	if( GrapeCount == 0 )
+			{
+				iUsed.SetTag( "Grapes", 0 );
+				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time grapes respawn
+			}
 		}
-	}
-    
-	// make a sound
-	iUsed.SoundEffect( 0x004f, true );
-	// temporary disable the item
-	DoTempEffect( 1, pUser, iUsed, 25, 10, 0, 0, iUsed );
-	// give some resources
-	var loot = RollDice( 1, 3, 0 ); 
-	if( loot == 1 || loot == 2 ) 
-	{
-		srcSock.SysMessage( "You don't manage to pick grapes." );
-		return;
-	}
-	if( loot == 3 ) 
-	{
-		srcSock.SysMessage( "You pick a bunch of grapes." );
-		var itemMade = SpawnItem( srcSock, pUser, "0x09D1", false );	// makes an item and puts in Char's pack
-		// disable item needs to be put in here
-		return;
 	}
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 )
+	{
+		iUsed.SetTag("GrapeCounter", 5);
+		iUsed.SetTag("Grapes", 1);
+	}
+}

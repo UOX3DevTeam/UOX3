@@ -3,8 +3,6 @@
 
 function onUse( pUser, iUsed ) 
 { 
-    DoSoundEffect( iUsed, 1, 0x0146, true );
+    pUser.SoundEffect( 0x0147, true );
     iUsed.id = 0x0A05;
-    srcSock = CalcSockFromChar( pUser );
-    SysMessage( srcSock, "You extinguish the torch." );
 }

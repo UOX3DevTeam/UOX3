@@ -1,59 +1,70 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick apples
+// Apple-Picking Script
+// 19/02/2003 Xuri; xuri@sensewave.com
+// When a (dynamic) apple tree is double-clicked, it's setup with
+// 5 apples ripe for picking. After they've been picked, a timer starts,
+// and until it's up no more apples can be picked. Once the timer is over,
+// new apples are added. The apperance of the tree indicates whether or
+// not there are any apples left to pick.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless apples have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("Apples",1); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
+		iUsed.SetTag("AppleCounter", 5); 	// Add 5 apples to the tree initially
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Apples = iUsed.GetTag("Apples");
+	var AppleCount = iUsed.GetTag("AppleCounter");
+	if (Apples == 0)
+	{	
+		pUser.SysMessage( "You find no ripe apples to pick. Try again later." );
+	}
+	if( Apples == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x004F, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any apples." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You pick an apple from the tree." );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d0", false, 1, true, true );
+			AppleCount--;
+			iUsed.SetTag( "AppleCounter", AppleCount );
+			if( AppleCount == 1)
+				pUser.SysMessage( "There is "+AppleCount+" ripe apple left on the tree." );
+			else
+				pUser.SysMessage( "There are "+AppleCount+" ripe apples left on the tree." );
+		    	if( AppleCount == 0 )
+			{
+				if( iUsed.id == 0x0d96 )
+					iUsed.id = 0x0d95;
+				else if( iUsed.id == 0x0d9a )
+					iUsed.id = 0x0d99; 
+				iUsed.SetTag( "Apples", 0 );
+				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time apples respawn
+			}
 		}
 	}
-
-	// make a sound
-	iUsed.SoundEffect( 0x004F, true );
-	// temporary disable the item
-	DoTempEffect( 1, pUser, iUsed, 25, 10, 0, 0, iUsed );
-	// give some resources
-	var loot = RollDice( 1, 3, 0 ); 
-	if( loot == 1 || loot == 2 )
-	{
-		srcSock.SysMessage( "You don't manage to pick apples." );
-		return;
-	}
-	if( loot == 3 ) 
-	{
-		srcSock.SysMessage( "You pick an apple from the tree." );
-		var itemMade = SpawnItem( srcSock, pUser, "0x09d0", false );	// makes an item and puts in Char's pack
-		// disable item needs to be put in here
-		return;
-	}
-
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 )
+	{
+		iUsed.SetTag("AppleCounter", 5);
+		iUsed.SetTag("Apples", 1);
+		if( iUsed.id == 0x0d95 )
+			iUsed.id = 0x0d96;
+		else if( iUsed.id == 0x0d99 )
+			iUsed.id = 0x0d9a; 
+	}
+}

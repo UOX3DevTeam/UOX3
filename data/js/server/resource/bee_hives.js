@@ -1,71 +1,50 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// use beehive : wax and honey
+// Honey/Wax-Picking Script
+// Originally written by Cav
+// Rewritten by Xuri 19/02/2003 ;xuri@sensewave.com
+// When a (dynamic) bee-hive is double-clicked, there are a number of possible results.
+// The user may or may not manage to harvest wax or honey, and he/she may or may not
+// manage to avoid being stung by bees =)
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = CalcSockFromChar( pUser );
-
-	// is the item within range?
-	var isInRange = InRange( pUser, iUsed, 0, 1, 4 );
-	if( !isInRange ) 
-	{
-		SysMessage( srcSock, "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != -1 && iPackOwner != pUser )
+	var loot = RollDice( 1, 4, 0 );
+	if( loot == 1 ) 
 	{
-		SysMessage( srcSock, "You cannot use things in other people's packs!" );
+		pUser.socket.SysMessage( "You fail to grab anything in the beehive, but you avoid being stung." );
 		return;
 	}
-
-	if( iPackOwner == -1 )	// it's on the ground
+	if( loot == 2 ) 
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser.x, pUser.y, pUser.z );
-		var itemMulti = FindMulti( iUsed.x, iUsed.y, iUsed.z );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			SysMessage( srcSock, "You cannot reach that from here!" );
-			return;
-		}
+		pUser.socket.SysMessage( "You fail to grab anything in the beehive, and you get some nice new bee-sting-marks!" );
+		//DoDamage( pUser, 40, 1 );
+		pUser.DoAction( 0x0014 );
+		iUsed.SoundEffect( 0x0231, true );
+		return;
 	}
-    
-    // do some damage
-    DoDamage( pUser, 5, 0 );
-    pUser.DoAction( 0x0014 );
-    // make a sound
-    DoSoundEffect( iUsed, 1, 0x0231, true );
-    
-    // temporary disable the item
-    DoTempEffect( 1, pUser, iUsed, 25, 1000, 0, 0, iUsed );
-    
-    // give some resources
-	var loot = RollDice( 1, 3, 0 ); 
-    if( loot == 1 ) 
+	if( loot == 3 )
+ 	{
+		pUser.socket.SysMessage( "You manage to grab some wax and honey from the behive without getting stung." );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", false, 1, true, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", false, 1, true, true );
+		
+		return;
+	}
+	if( loot == 4 )
 	{
-        SysMessage( srcSock, "You don't manage to steal someting from the bees." );
-        return;
-    }
-    if( loot == 2 ) 
-	{
-        SysMessage( srcSock, "You manage to steal some wax from the bees." );
-        var itemMade = SpawnItem( srcSock, pUser, 0x1422, false );	// makes an item and puts in tChar's pack
-        return;
-    }
-    if( loot == 3 ) 
-	{
-        SysMessage( srcSock, "You steal wax and some honey from the bees." );
-        var itemMade = SpawnItem( srcSock, pUser, 0x1422, false );	// makes an item and puts in tChar's pack
-        var itemMade = SpawnItem( srcSock, pUser, 0x1422, false );	// makes an item and puts in tChar's pack
-        var itemMade = SpawnItem( srcSock, pUser, 0x09ec, false );	// makes an item and puts in tChar's pack
-        return;
-    }
+		pUser.socket.SysMessage( "You manage to grab some wax and honey from the beehive, but fail to avoid getting stung." );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", false, 1, true, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", false, 1, true, true );
+		//DoDamage( pUser, 40, 1 );
+		pUser.DoAction( 0x0014 );
+		iUsed.SoundEffect( 0x0231, true );
+		return;
+	}
 
 }
-

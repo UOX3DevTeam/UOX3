@@ -5,12 +5,12 @@
 
 function onSpeech( myString, myPlayer, myNPC )
 {
-	if(SubStringSearch( myString, "Hi" ) || SubStringSearch( myString, "Greetings" ) || SubStringSearch( myString, "Hello" ) || SubStringSearch( myString, "Hail" ))
+	if( SubStringSearch( myString, "Hi" ) || SubStringSearch( myString, "Greetings" ) || SubStringSearch( myString, "Hello" ) || SubStringSearch( myString, "Hail" ))
 	{
 		myNPC.TurnToward( myPlayer );
 		myNPC.TextMessage( "Hello!" );
 	}
-	else if(SubStringSearch( myString, "buy" ) || SubStringSearch( myString, "sell" ) || SubStringSearch( myString, "British" ) || SubStringSearch( myString, "King" ) || SubStringSearch( myString, "Ruler" ))
+	else if(SubStringSearch( myString, "British" ) || SubStringSearch( myString, "King" ) || SubStringSearch( myString, "Ruler" ))
 	{
 		myNPC.TurnToward( myPlayer );
 		myNPC.TextMessage( "Lord British is a leader who believes in order." );

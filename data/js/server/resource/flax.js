@@ -1,48 +1,47 @@
-// resources script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// pick flax and consume the plant
+// Flax-Picking Script
+// 19/02/2003 Xuri; xuri@sensewave.com
+// When a (dynamic) flax plant is double-clicked, it may yield some flax.
+// Then a timer will start, and no more flax can be picked until it runs out.
 
-function onUse( pUser, iUsed ) 
-{ 
-	// get users socket
-	var srcSock = pUser.socket;
-
-	// is the item within range?
-	var isInRange = pUser.InRange( iUsed, 4 );
-	if( !isInRange ) 
-	{
-		srcSock.SysMessage( "You are too far away to reach that." );
+function onUse( pUser, iUsed )
+{
+	var isInRange = pUser.InRange( iUsed, 3 );
+	if( !isInRange )
+ 	{
+		pUser.SysMessage( "You are too far away to reach that." );
 		return;
 	}
 
-	// find out if the item is in someone elses pack
-	var iPackOwner = GetPackOwner( iUsed, 0 );
-	if( iPackOwner != null && iPackOwner != pUser )
+	if( !iUsed.GetTag("initialized")) // Unless flax have been picked before, initialize settings
 	{
-		srcSock.SysMessage( "You cannot use things in other people's packs!" );
-		return;
+		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("Flax",1); 		// If set to 1, there is flax to be picked
 	}
-
-	if( iPackOwner == null )	// it's on the ground
+	var Flax = iUsed.GetTag("Flax");
+	if (Flax == 0)
+	{	
+		pUser.SysMessage( "You find no flax to pick. Try again later." );
+	}
+	if( Flax == 1 )
 	{
-		// Not the most elegant solution, but it'll work
-		var persMulti = FindMulti( pUser );
-		var itemMulti = FindMulti( iUsed );
-
-		if( persMulti != itemMulti )	// not in the same house
-		{
-			srcSock.SysMessage( "You cannot reach that from here!" );
-			return;
+		iUsed.SoundEffect( 0x004F, true );
+		var loot = RollDice( 1, 3, 0 );
+		if( loot == 2 )
+			pUser.SysMessage( "You fail to pick any flax." );
+		if( loot == 3 || loot == 1 )
+	 	{
+			pUser.SysMessage( "You harvest some flax." );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1a9c", false, 1, true, true );
+			iUsed.SetTag( "Flax", 0 );
+			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
 		}
 	}
-    
-	// make a sound
-	iUsed.SoundEffect( 0x004f, true );
-
-	iUsed.Delete();
-
-	// give some resources
-	srcSock.SysMessage( "You harvest some flax." );
-	var itemMade = SpawnItem( srcSock, pUser, "0x1a9c", false );  // makes an item and puts in Char's pack
 }
 
+function onTimer( iUsed, timerID )
+{
+	if( timerID == 1 )
+	{
+		iUsed.SetTag("Flax", 1);
+	}
+}
