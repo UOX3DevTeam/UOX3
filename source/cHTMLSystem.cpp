@@ -196,102 +196,109 @@ void cHTMLTemplate::Process( void )
 		Network->PushConn();
 		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{ 
-			if( tSock != NULL )
+			try
 			{
-				CChar *tChar = tSock->CurrcharObj();
-				if( tChar != NULL )
+				if( tSock != NULL )
 				{
-					string parsedInline = myInline;
-					parsedInline.replace( 0, 12, "" );
-					parsedInline.replace( parsedInline.length()-12, 12, "" );
-
-//					Tokens for the PlayerList
-//					%playername
-//					%playertitle
-//					%playerip
-//					%playeraccount
-//					%playerx
-//					%playery
-//					%playerz
-//					%playerrace
-//					%playerregion
-
-					// PlayerName
-					SI32 sPos;
-					for( sPos = parsedInline.find( "%playername" ); sPos >= 0; sPos = parsedInline.find( "%playername" ) )
+					CChar *tChar = tSock->CurrcharObj();
+					if( tChar != NULL )
 					{
-						(keeprun)?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
+						string parsedInline = myInline;
+						parsedInline.replace( 0, 12, "" );
+						parsedInline.replace( parsedInline.length()-12, 12, "" );
+
+	//					Tokens for the PlayerList
+	//					%playername
+	//					%playertitle
+	//					%playerip
+	//					%playeraccount
+	//					%playerx
+	//					%playery
+	//					%playerz
+	//					%playerrace
+	//					%playerregion
+
+						// PlayerName
+						SI32 sPos;
+						for( sPos = parsedInline.find( "%playername" ); sPos >= 0; sPos = parsedInline.find( "%playername" ) )
+						{
+							(keeprun)?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
+						}
+
+						// PlayerTitle
+						for( sPos = parsedInline.find( "%playertitle" ); sPos >= 0; sPos = parsedInline.find( "%playertitle" ) )
+						{
+							(keeprun)?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
+						}
+
+						// PlayerIP
+						for( sPos = parsedInline.find( "%playerip" ); sPos >= 0; sPos = parsedInline.find( "%playerip" ) )
+						{
+							cSocket *mySock = calcSocketObjFromChar( tChar );
+							char ClientIP[32];
+							sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
+							(keeprun)?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
+						}
+
+						// PlayerAccount
+						for( sPos = parsedInline.find( "%playeraccount" ); sPos >= 0; sPos = parsedInline.find( "%playeraccount" ) )
+						{
+							ACTREC *toScan = tChar->GetAccountObj();
+							if( toScan != NULL )
+								(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->Info.username ):parsedInline.replace( sPos, 14, "" );
+						}
+
+						// PlayerX
+						for( sPos = parsedInline.find( "%playerx" ); sPos >= 0; sPos = parsedInline.find( "%playerx" ) )
+						{
+							char myX[5];
+							sprintf( myX, "%i", tChar->GetX() );
+							(keeprun)?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
+						}
+
+						// PlayerY
+						for( sPos = parsedInline.find( "%playery" ); sPos >= 0; sPos = parsedInline.find( "%playery" ) )
+						{
+							char myY[5];
+							sprintf( myY, "%i", tChar->GetY() );
+							(keeprun)?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
+						}
+
+						// PlayerZ
+						for( sPos = parsedInline.find( "%playerz" ); sPos >= 0; sPos = parsedInline.find( "%playerz" ) )
+						{
+							char myZ[3];
+							sprintf( myZ, "%i", tChar->GetZ() );
+							(keeprun)?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
+						}
+
+						// PlayerRace -- needs testing
+						for( sPos = parsedInline.find( "%playerrace" ); sPos >= 0; sPos = parsedInline.find( "%playerrace" ) )
+						{
+							RACEID myRace = tChar->GetRace();
+							const char *rName = Races->Name( myRace );
+							UI32 raceLenName = strlen( rName );
+							char *myRaceName = new char[ raceLenName + 1 ];
+							strcpy( myRaceName, rName );
+
+							if( myRaceName != NULL ) 
+								(keeprun)?parsedInline.replace( sPos, 11, myRaceName ):parsedInline.replace( sPos, 11, "");
+							delete [] myRaceName;
+						}
+
+						// PlayerRegion
+						for( sPos = parsedInline.find( "%playerregion" ); sPos >= 0; sPos = parsedInline.find( "%playerregion" ) )
+						{
+							(keeprun)?parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() ):parsedInline.replace( sPos, 13, "");
+						}
+
+						PlayerList += parsedInline;
 					}
-
-					// PlayerTitle
-					for( sPos = parsedInline.find( "%playertitle" ); sPos >= 0; sPos = parsedInline.find( "%playertitle" ) )
-					{
-						(keeprun)?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
-					}
-
-					// PlayerIP
-					for( sPos = parsedInline.find( "%playerip" ); sPos >= 0; sPos = parsedInline.find( "%playerip" ) )
-					{
-						cSocket *mySock = calcSocketObjFromChar( tChar );
-						char ClientIP[32];
-						sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
-						(keeprun)?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
-					}
-
-					// PlayerAccount
-					for( sPos = parsedInline.find( "%playeraccount" ); sPos >= 0; sPos = parsedInline.find( "%playeraccount" ) )
-					{
-						ACTREC *toScan = tChar->GetAccountObj();
-						if( toScan != NULL )
-							(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->Info.username ):parsedInline.replace( sPos, 14, "" );
-					}
-
-					// PlayerX
-					for( sPos = parsedInline.find( "%playerx" ); sPos >= 0; sPos = parsedInline.find( "%playerx" ) )
-					{
-						char myX[5];
-						sprintf( myX, "%i", tChar->GetX() );
-						(keeprun)?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
-					}
-
-					// PlayerY
-					for( sPos = parsedInline.find( "%playery" ); sPos >= 0; sPos = parsedInline.find( "%playery" ) )
-					{
-						char myY[5];
-						sprintf( myY, "%i", tChar->GetY() );
-						(keeprun)?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
-					}
-
-					// PlayerZ
-					for( sPos = parsedInline.find( "%playerz" ); sPos >= 0; sPos = parsedInline.find( "%playerz" ) )
-					{
-						char myZ[3];
-						sprintf( myZ, "%i", tChar->GetZ() );
-						(keeprun)?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
-					}
-
-					// PlayerRace -- needs testing
-					for( sPos = parsedInline.find( "%playerrace" ); sPos >= 0; sPos = parsedInline.find( "%playerrace" ) )
-					{
-						RACEID myRace = tChar->GetRace();
-						const char *rName = Races->Name( myRace );
-						UI32 raceLenName = strlen( rName );
-						char *myRaceName = new char[ raceLenName + 1 ];
-						strcpy( myRaceName, rName );
-
-						if( myRaceName != NULL ) 
-							(keeprun)?parsedInline.replace( sPos, 11, myRaceName ):parsedInline.replace( sPos, 11, "");
-						delete [] myRaceName;
-					}
-
-					// PlayerRegion
-					for( sPos = parsedInline.find( "%playerregion" ); sPos >= 0; sPos = parsedInline.find( "%playerregion" ) )
-					{
-						(keeprun)?parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() ):parsedInline.replace( sPos, 13, "");
-					}
-
-					PlayerList += parsedInline;
 				}
+			}
+			catch(...)
+			{
+				Console << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
 			}
 		}
 		Network->PopConn();	
