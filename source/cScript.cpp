@@ -2362,7 +2362,7 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSoc
 	JS_SetPrivate( targContext, tmpObj, tmpChar );
 	params[0] = OBJECT_TO_JSVAL( srcObj );
 	params[1] = OBJECT_TO_JSVAL( tmpObj );
-	JSObject *sockObj = JSVAL_NULL;
+	JSObject *sockObj = NULL;
 	if( s != NULL )
 	{
 		sockObj = AcquireObject( IUE_SOCK );
@@ -2508,7 +2508,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 
 	jsval params[1], rval;
 
-	JSObject *myObj = JSVAL_NULL;
+	JSObject *myObj = NULL;
 	if( a->GetObjType() == OT_CHAR )
 	{
 		myObj = AcquireObject( IUE_CHAR );
