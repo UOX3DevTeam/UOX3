@@ -327,10 +327,14 @@ UI16 cAccountClass::CreateAccountSystem(void)
 									// Ok strip the flags and store it. We need to make it all the same case for comparisons
 									strlwr(r);
 									actb.wFlags = cAccountClass::atol(r);	//<-- Uses internal conversion code
+									if(actb.wAccountIndex==0)
+										actb.wFlags|=0x8000;
 								}
 								else
 								{
 									actb.wFlags= 0;
+									if(actb.wAccountIndex==0)
+										actb.wFlags|=0x8000;
 								}
 								l=r=NULL;
 								continue;
@@ -638,7 +642,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				// the file/path was not found so we should make an entry 
 				std::string sOutFile(sNewPath);
-				sOutFile += "/";
+				if(sOutFile[sOutFile.length()-1]!='\\'&&sOutFile[sOutFile.length()-1]!='/')
+					sOutFile += "/";
 				sOutFile += actbTemp.sUsername;
 				sOutFile += ".uad";
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
@@ -665,9 +670,11 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				std::fstream fsIn(actbTemp.sPath.c_str(),std::ios::in);
 				std::string sOutFile(sNewPath);
-				sOutFile += "/";
+				if(sOutFile[sOutFile.length()-1]!='\\'&&sOutFile[sOutFile.length()-1]!='/')
+					sOutFile += "/";
 				sOutFile += actbTemp.sUsername;
 				sOutFile += ".uad";
+				cAccountClass::PathFix(sOutFile);
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
 				if(!fsOut.is_open())
 				{
@@ -684,28 +691,35 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					char szLine[128];
 					fsIn.getline(szLine,127);
 					fsOut << szLine << std::endl;
+					if(!fsIn.is_open())
+						break;
 				}
 				fsOut.close();
 				fsIn.close();
 			}
 			// Now were done so we want to update the path in our records before we write them
 			actbTemp.sPath=sNewPath;
-			I->second = actbTemp;
+			m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
+			m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
 		}			
 	}
 	// Make a back up first, then Dump to new file,
+	std::string sBUAccess(sAccessAdm);
+	sBUAccess += ".bu";
+	rename(sAccessAdm.c_str(),sBUAccess.c_str());
+	//
+	int kk=0;
+	char szltoa2[15];
 	std::string sBUPath(sAccountsAdm);
 	sBUPath += ".bu";
+	int nResp= rename(sAccountsAdm.c_str(),sBUPath.c_str());
 	std::string sNewPath = sBUPath;
-	int nResponse= rename(sAccountsAdm.c_str(),sBUPath.c_str());
-	int jj=0;
-	while(nResponse==-1)
+	while(nResp==-1)
 	{
 		// Loop through 255 numbers, these will be added to the end of the bu in case a bu exists.
-		char szltoa[15];
-		sprintf(szltoa,"%d",jj++);
-		sNewPath += szltoa;
-		nResponse= rename(sAccountsAdm.c_str(),sNewPath.c_str());
+		sprintf(szltoa2,"%d",kk++);
+		sNewPath += szltoa2;
+		nResp= rename(sAccountsAdm.c_str(),sNewPath.c_str());
 		sNewPath = sBUPath;
 	};
 	std::fstream fsOut(sAccountsAdm.c_str(),std::ios::trunc|std::ios::out);
