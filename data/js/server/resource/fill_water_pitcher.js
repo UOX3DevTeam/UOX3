@@ -12,6 +12,7 @@ function onUse( pUser, iUsed )
 	//	return;
 	//}
 	pUser.socket.CustomTarget( 0, "Where do you want to fill the pitcher from?" );
+	return false;
 }
 
 function onCallback0( tSock, targSerial )

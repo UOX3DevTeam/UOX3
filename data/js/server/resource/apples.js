@@ -1,5 +1,5 @@
 // Apple-Picking Script
-// 19/02/2003 Xuri; xuri@sensewave.com
+// 24/01/2005 Xuri; xuri@sensewave.com
 // When a (dynamic) apple tree is double-clicked, it's setup with
 // 5 apples ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more apples can be picked. Once the timer is over,

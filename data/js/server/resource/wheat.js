@@ -1,5 +1,5 @@
 // Wheat-Picking Script
-// 20/02/2003 Xuri; xuri@sensewave.com
+// 24/01/2005 Xuri; xuri@sensewave.com
 // When (dynamic)wheat is double-clicked, it's setup with
 // wheat ripe for picking. When it is harvested it turns into "harvested wheat",
 // and a "growth" process happens, where the wheat goes through various stages
@@ -45,6 +45,7 @@ function onUse( pUser, iUsed )
 		}
 		return false;
 	}
+	return false;
 }
 
 function onTimer( iUsed, timerID )

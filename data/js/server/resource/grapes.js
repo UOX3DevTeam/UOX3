@@ -1,5 +1,5 @@
 // Grape-Picking Script
-// 19/02/2003 Xuri; xuri@sensewave.com
+// 24/01/2005 Xuri; xuri@sensewave.com
 // When (dynamic) grapevines are double-clicked, they're setup with
 // 5 grapes ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more grapes can be picked. Once the timer is over,
@@ -12,7 +12,7 @@ function onUse( pUser, iUsed )
 	if( !isInRange )
  	{
 		pUser.SysMessage( "You are too far away to reach that." );
-		return;
+		return false;
 	}
 
 	if( !iUsed.GetTag("initialized")) // Unless grapes have been picked before, initialize settings
@@ -50,6 +50,7 @@ function onUse( pUser, iUsed )
 			}
 		}
 	}
+	return false;
 }
 
 function onTimer( iUsed, timerID )

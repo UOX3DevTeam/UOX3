@@ -1,7 +1,28 @@
 //-------------------------------------------
 // CORE		0-99
+// ============================
+//   Global     0
+//   Misc       1-99
+//
 // SYSTEM	100-2999
+// ============================
+//   Skills     100-399
+//   Commands   400-499*
+//   Lighting   500-599
+//   Spells     600-999*
+//   Farming    2000-2999
+//   
+//   
 // NPC/AI	3000-5999
+// ============================
+//   Speech     3000-3099
+//   Pets/Stbl  3100-3199
+//
+//
+// * These ID's defined outside of the script_list block
+//
+// NOTE: Please ensure that all ID's are unique through this file
+//
 //-------------------------------------------
 // Server tacks it's base path in front of the filenames found here
 
@@ -143,6 +164,9 @@
 5007=item/cottonplant.js
 }
 
+//-------------------------------------------
+// System Commands - 400-499
+//-------------------------------------------
 [COMMAND_SCRIPTS]
 {
 401=commands/custom/repeatingcmds.js
@@ -202,6 +226,13 @@
 [MAGIC_SCRIPTS]
 {
 600=magic/clumsy.js
+}
+
+[SKILLUSE_SCRIPTS]
+{
+800=skill/hiding.js
+801=skill/stealth.js
+802=skill/evaluateintel.js
 }
 
 
