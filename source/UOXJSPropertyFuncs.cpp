@@ -164,7 +164,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			else
 			{
-					gPriv->SetOwner( NULL );
+					gPriv->SetOwner((cBaseObject *)NULL);
 			}
 			break;
 		case CIP_VISIBLE:		*vp = INT_TO_JSVAL( gPriv->GetVisible() );			break;

@@ -149,12 +149,12 @@ typedef struct __ACCOUNTSADM_BLOCK__
 	std::string sPassword;
 	std::string sPath;
 	std::string sContact;
-	WORD wAccountIndex;
-	WORD wFlags;
-	WORD wTimeBan;
-	DWORD dwInGame;
-	DWORD dwLastIP;
-	DWORD dwCharacters[5];
+	UI16 wAccountIndex;
+	UI16 wFlags;
+	UI16 wTimeBan;
+	UI32 dwInGame;
+	UI32 dwLastIP;
+	UI32 dwCharacters[5];
 	CChar	*lpCharacters[5];	
 } ACCOUNTSBLOCK,*LPACCOUNTSBLOCK;
 
