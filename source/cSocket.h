@@ -152,7 +152,7 @@ public:
 	UI08			ClientIP4( void ) const;
 	bool			NewClient( void ) const;
 	bool			TargetOK( void ) const;
-	SI32			AddID( void ) const;
+	UI32			AddID( void ) const;
 
 	char			PostAcked( int x, int y ) const;
 	int				PostCount( void ) const;
@@ -210,16 +210,16 @@ public:
 	void			Send( const void *point, int length );
 	int				Receive( int x );
 
-	SI32			GetDWord( int offset );
-	SI16			GetWord( int offset );
+	UI32			GetDWord( int offset );
+	UI16			GetWord( int offset );
 	UI08			GetByte( int offset );
 
-	void			SetDWord( int offset, SI32 newValue );
-	void			SetWord( int offset, SI32 newValue );
+	void			SetDWord( int offset, UI32 newValue );
+	void			SetWord( int offset, UI16 newValue );
 	void			SetByte( int offset, UI08 newValue );
 	void			ClientIP( long newValue );
 	void			TargetOK( bool newValue );
-	void			AddID( long newValue );
+	void			AddID( UI32 newValue );
 	void			ClickX( SI16 newValue );
 	void			ClickY( SI16 newValue );
 	void			PostAcked( int x, int y, char newValue );
