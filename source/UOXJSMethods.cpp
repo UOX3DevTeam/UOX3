@@ -2880,8 +2880,8 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         MethodError( "GetWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
+	int offset	= JSVAL_TO_INT( argv[0] );
+	*rval		= INT_TO_JSVAL( mySock->GetWord( offset ) );
     return JS_TRUE;
 }
 JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -2898,8 +2898,8 @@ JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         MethodError( "GetDWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( mySock->GetDWord( offset ) );
+	int offset	= JSVAL_TO_INT( argv[0] );
+	*rval		= INT_TO_JSVAL( mySock->GetDWord( offset ) );
     return JS_TRUE;
 }
 JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )

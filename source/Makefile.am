@@ -7,30 +7,34 @@ uox3_SOURCES = \
 	archive.cpp \
 	boats.cpp \
 	books.cpp \
-	calcfuncs.cpp \
-	cmdtable.cpp \
-	combat.cpp \
-	commands.cpp \
 	cAccountClass.cpp \
-	cBaseobject.cpp \
+	calcfuncs.cpp \
+	cBaseObject.cpp \
 	cChar.cpp \
 	cConsole.cpp \
 	cDice.cpp \
 	cGuild.cpp \
+	CGump.cpp \
 	cHTMLSystem.cpp \
 	cItem.cpp \
+	cmdtable.cpp \
 	cMultiObj.cpp \
+	combat.cpp \
+	commands.cpp \
+	CPacketReceive.cpp \
+	CPacketSend.cpp \
 	cPlayerAction.cpp \
 	cRaces.cpp \
+	CResponse.cpp \
 	cScript.cpp \
 	cServerData.cpp \
 	cServerDefinitions.cpp \
 	cSocket.cpp \
 	cSpawnRegion.cpp \
-	ustring.cpp \
 	cThreadQueue.cpp \
 	cVersionClass.cpp \
 	cWeather.cpp \
+	Dictionary.cpp \
 	dist.cpp \
 	door.cpp \
 	effect.cpp \
@@ -41,6 +45,7 @@ uox3_SOURCES = \
 	house.cpp \
 	items.cpp \
 	jail.cpp \
+	JSEncapsulate.cpp \
 	lineofsight.cpp \
 	magic.cpp \
 	mapstuff.cpp \
@@ -49,11 +54,13 @@ uox3_SOURCES = \
 	necro.cpp \
 	network.cpp \
 	npcs.cpp \
+	ObjectFactory.cpp \
 	pcmanage.cpp \
 	quantityfuncs.cpp \
 	queue.cpp \
 	regions.cpp \
 	scriptc.cpp \
+	SEFunctions.cpp \
 	skills.cpp \
 	sound.cpp \
 	speech.cpp \
@@ -65,20 +72,13 @@ uox3_SOURCES = \
 	trade.cpp \
 	trigger.cpp \
 	uox3.cpp \
+	UOXJSMethods.cpp \
+	UOXJSPropertyFuncs.cpp \
+	ustring.cpp \
 	vendor.cpp \
 	weight.cpp \
 	wholist.cpp \
 	worldmain.cpp \
 	xgm.cpp \
-	CGump.cpp \
-	CPacketReceive.cpp \
-	CPacketSend.cpp \
-	CResponse.cpp \
-	Dictionary.cpp \
-	JSEncapsulate.cpp \
-	ObjectFactory.cpp \
-	SEFunctions.cpp \
-	UOXJSMethods.cpp \
-	UOXJSPropertyFuncs.cpp
 
 uox3_LDADD = js32.a -lpthread

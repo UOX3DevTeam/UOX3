@@ -2361,6 +2361,30 @@
 		<Filter
 			Name="Header Files"
 			Filter="*.h*">
+			<File
+				RelativePath=".\CDataList.h">
+			</File>
+			<File
+				RelativePath="Config.h">
+			</File>
+			<File
+				RelativePath="ObjectFactory.h">
+			</File>
+			<File
+				RelativePath="Platform.h">
+			</File>
+			<File
+				RelativePath="Prerequisites.h">
+			</File>
+			<File
+				RelativePath="Singleton.h">
+			</File>
+			<File
+				RelativePath="UOXStdHeaders.h">
+			</File>
+			<File
+				RelativePath="ustring.h">
+			</File>
 			<Filter
 				Name="Base Objects No. 1"
 				Filter="">
@@ -2410,31 +2434,15 @@
 				<File
 					RelativePath="cServerData.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="Script"
-				Filter="">
 				<File
 					RelativePath="cServerDefinitions.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="Script"
-				Filter="">
 				<File
 					RelativePath="Dictionary.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="Script"
-				Filter="">
 				<File
 					RelativePath="scriptc.h">
 				</File>
-			</Filter>
-			<Filter
-				Name="Script"
-				Filter="">
 				<File
 					RelativePath="ssection.h">
 				</File>
@@ -2607,31 +2615,10 @@
 			</Filter>
 		</Filter>
 		<File
-			RelativePath="Config.h">
-		</File>
-		<File
-			RelativePath="ObjectFactory.h">
-		</File>
-		<File
-			RelativePath="Platform.h">
-		</File>
-		<File
-			RelativePath="Prerequisites.h">
-		</File>
-		<File
-			RelativePath="Singleton.h">
-		</File>
-		<File
 			RelativePath="uox3.ico">
 		</File>
 		<File
 			RelativePath="uox3.rc">
-		</File>
-		<File
-			RelativePath="UOXStdHeaders.h">
-		</File>
-		<File
-			RelativePath="ustring.h">
 		</File>
 	</Files>
 	<Globals>
