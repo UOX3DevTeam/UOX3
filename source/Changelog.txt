@@ -7,6 +7,10 @@
 	Fixed a crash on login casued by FindPlayersInVisrange().
 	Minor cleanups in CPacketSend.cpp
 
+12/27/2004 - evilded
+	Added code for until now unsupported doors, including new SE doors (experimental!).
+	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if they are not, and there are multiple servers listed that do not share the same listening port 2593.
+
 11/24/2004 - giwo
 	Removed unnecesarry Constructors/Destructors and did some minor updates.
 
