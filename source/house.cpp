@@ -115,7 +115,7 @@ void buildHouse( cSocket *s, UI32 i )
 		looptimes = 0;
 		x = s->GetWord( 11 );
 		y = s->GetWord( 13 );
-		z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
+		z = static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
 		if( !mChar->IsGM() )
 		{
 			if( x > 6200 || y > 4200 )
@@ -234,7 +234,7 @@ void buildHouse( cSocket *s, UI32 i )
 						}
 						else
 						{
-							hItem->SetMagic( 2 );//Non-Moveable by default
+							hItem->SetMovable( 2 );//Non-Moveable by default
 							hItem->SetPriv( 0 );//since even things in houses decay, no-decay by default
 							hItem->SetLocation( x, y, z );
 							hItem->SetOwner( (cBaseObject *)mChar );
@@ -255,7 +255,7 @@ void buildHouse( cSocket *s, UI32 i )
 						hItem->SetZ( 9 );
 					}
 					else if( !strcmp( tag, "MOVEABLE" ) )
-						hItem->SetMagic( 1 );
+						hItem->SetMovable( 1 );
 					else if( !strcmp( tag, "LOCK" ) && houseID >= 0x4000 )//lock it with the house key
 						hItem->SetMore( house->GetSerial() );
 					else if( !strcmp( tag, "X" ) )//offset + or - from the center of the house:

@@ -1699,12 +1699,12 @@ void CPStatWindow::Gold( UI32 gValue )
 	internalBuffer[60] = (UI08)(gValue>>8);
 	internalBuffer[61] = (UI08)(gValue%256);
 }
-void CPStatWindow::AC( SI16 nValue )
+void CPStatWindow::AC( UI16 nValue )
 {
 	internalBuffer[62] = (UI08)(nValue>>8);
 	internalBuffer[63] = (UI08)(nValue%256);
 }
-void CPStatWindow::Weight( SI16 nValue )
+void CPStatWindow::Weight( UI16 nValue )
 {
 	internalBuffer[64] = (UI08)(nValue>>8);
 	internalBuffer[65] = (UI08)(nValue%256);
@@ -3407,7 +3407,7 @@ bool CPITips::Handle( void )
 	if( Tips == NULL )
 		return true;
 
-	int i = tSock->GetWord( 1 ) + 1;
+	UI16 i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
 	if( i == 0 ) 
 		i = 1;
 

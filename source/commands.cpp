@@ -737,7 +737,7 @@ void cCommands::DyeTarget( cSocket *s )
 		if( !mChar->IsGM() ) 
 			return;
 
-		SI32 k = s->GetWord( 7 );
+		UI16 k = s->GetWord( 7 );
 		UI16 body = c->GetID();
 		SI32 b = k&0x4000; 
 
@@ -749,8 +749,8 @@ void cCommands::DyeTarget( cSocket *s )
 
 		if( k != 0x8000 )
 		{
-			c->SetSkin( static_cast<UI16>(k) );
-			c->SetxSkin( static_cast<UI16>(k) );
+			c->SetSkin( k );
+			c->SetxSkin( k );
 			c->Teleport();
 		} 
 	}

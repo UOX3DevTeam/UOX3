@@ -1120,7 +1120,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 					break;
 				case 0x3A:	// skills management packet
 					mSock->Receive( 6 );	// it's always 6 so Westy tells me... let's not be intelligent =)
-					int skillNum;
+					UI16 skillNum;
 					skillNum = mSock->GetWord( 3 );
 					ourChar->SetSkillLock( buffer[5], skillNum );
 					break;

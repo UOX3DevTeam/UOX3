@@ -514,7 +514,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 181: //Fireworks wands
 		srand( uiCurrentTime );
-		if( x->GetMoreX() <= 0 )
+		if( x->GetMoreX() == 0 )
 		{
 			sysmessage( mSock, 396 );
 			return true;
@@ -536,12 +536,6 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			case 4:	staticeffect( wx, wy, mChar->GetZ() + 10, 0x377A, 0x09, 0, 0 );		break;
 			}
 		}
-		return true;
-	
-	case 185: // Smoking
-		mChar->SetSmokeTimer( BuildTimeValue( static_cast<R32>(x->GetMoreX() )) );
-		sysmessage( mSock, 433 );
-		Items->DeleItem( x );
 		return true;
 	case 186: // Rename Deed
 		mChar->SetSpeechItem( x->GetSerial() );
@@ -614,8 +608,8 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 210:	// Model boat/Houses
 		if( iType != 103 && iType != 202 )
-		{  //experimental house code
-			if( x->GetMoreX() == -1 )
+		{
+			if( x->GetMoreX() == 0 )
 				break;
 			mChar->SetMaking( x->GetSerial() );
 			mChar->SetSpeechItem( x->GetSerial() );
@@ -958,7 +952,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x14F0:	// Houses
 		if( iType != 103 && iType != 202 )
 		{  //experimental house code
-			if( x->GetMoreX() == -1 )
+			if( x->GetMoreX() == 0 )
 				break;
 			mChar->SetMaking( x->GetSerial() );
 			mChar->SetSpeechItem( x->GetSerial() );

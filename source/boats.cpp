@@ -13,37 +13,37 @@
 SI16 iSmallShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
-	-2,	 0,	 2,	 0,	 0,	-4,	 1,	 4,//Dir
-	 0,	-2,	 0,	 2,	 4,	 0,	-4,	 0,
-	 2,	 0,	-2,	 0,	 0,	 4,	 0,	-4,
-	 0,	 2,	 0,	-2,	-4,	 0,	 4,	 0 
+	{{-2, 0},{ 2, 0},{ 0,-4},{1,4}},//Dir
+	{{0,-2},{0,2},{4,0},{-4,0}},
+	{{2,0},{-2,0},{ 0,4},{0,-4}},
+	{{0,2},{0,-2},{-4,0},{4,0}} 
 };
 //  P1    P2   Hold  Tiller
 SI16 iMediumShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
-	-2,  0,	 2,	 0,	 0,	-4,	 1,	 5,
-	 0,	-2,	 0,	 2,	 4,	 0,	-5,	 0,
-	 2,	 0,	-2,	 0,	 0,	 4,	 0,	-5,
-	 0,	 2,	 0,	-2,	-4,	 0,	 5,	 0 
+    {{-2,0},{2,0},{0,-4},{1,5}},
+    {{0,-2},{0,2},{4,0},{-5,0}},
+    {{2,0},{-2,0},{0,4},{0,-5}},
+    {{0,2},{0,-2},{-4,0},{5,0}} 
 };
 SI16 iLargeShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
-	-2,	-1,	 2,	-1,	 0,	-5,	 1,	 5,
-	 1,	-2,	 1,	 2,	 5,	 0,	-5,	 0,
-	 2,	 1,	-2,	 1,	 0,	 5,	 0,	-5,
-	-1,	 2,	-1,	-2,	-5,	 0,	 5,	 0 
+    {{-2,-1},{2,-1},{0,-5},{1,5}},
+    {{1,-2},{1,2},{5,0},{-5,0}},
+    {{2,1},{-2,1},{0,5},{0,5}},
+    {{-1,2},{-1,-2},{-5, 0},{5,0}} 
 };
 //Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
 UI08 cShipItems[4][6]=
 {
-	0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E,
-	0x8A, 0x89, 0x85, 0x84, 0x65, 0x53,
-	0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B,
-	0x85, 0x84, 0x8A, 0x89, 0x93, 0x50 
+  {0xB1,0xD5,0xB2,0xD4,0xAE,0x4E},
+  {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
+	{0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
+	{0x85, 0x84, 0x8A, 0x89, 0x93, 0x50} 
 };
 //============================================================================================
 
@@ -427,39 +427,35 @@ bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 	//large = 5, 15
 	switch( b->GetDir() )	
 	{
-	/* ----These should never happen.. there's no art for them.----
-	case 1: // U
-	case 5: // D
-		break;
-	case 3: // R
-	case 7: // L
-		break;
-	*/
-	case 0: // N
-	case 4: // S
-		x1 = cx - 2;
-		x2 = cx + 2;
-		switch( type )
-		{
-		case 1:	y1 = cy - 6; y2 = cy + 6; break;
-		case 2:	y1 = cy - 6; y2 = cy + 7; break;
-		case 3: y1 = cy - 8; y2 = cy + 8; break;
-		default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
-		}
-		break;
-	case 2: // E
-	case 6: // W
-		y1 = cy - 2;
-		y2 = cy + 2;
-		switch( type )
-		{
-		case 1:	x1 = cx - 6; x2 = cx + 6; break;
-		case 2:	x1 = cx - 7; x2 = cx + 7; break;
-		case 3: x1 = cx - 8; x2 = cx + 8; break;
-		default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
-		}
-		break;
-	default: return true;
+		case 1: // U
+		case 5: // D
+		case 0: // N
+		case 4: // S
+			x1 = cx - 2;
+			x2 = cx + 2;
+			switch( type )
+			{
+				case 1:	y1 = cy - 6; y2 = cy + 6; break;
+				case 2:	y1 = cy - 6; y2 = cy + 7; break;
+				case 3: y1 = cy - 8; y2 = cy + 8; break;
+				default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+			}
+			break;
+		case 3: // R
+		case 7: // L
+		case 2: // E
+		case 6: // W
+			y1 = cy - 2;
+			y2 = cy + 2;
+			switch( type )
+			{
+				case 1:	x1 = cx - 6; x2 = cx + 6; break;
+				case 2:	x1 = cx - 7; x2 = cx + 7; break;
+				case 3: x1 = cx - 8; x2 = cx + 8; break;
+				default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+			}
+			break;
+		default: return true;
 	}
 
 	UI08 worldNumber = b->WorldNumber();
@@ -522,17 +518,17 @@ void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
 	
 	switch( dir&0x0F )
 	{
-	case 0:	ty--;			break;
-	case 1:	tx++;	ty--;	break;
-	case 2:	tx++;			break;
-	case 3:	tx++;	ty++;	break;
-	case 4:	ty++;			break;
-	case 5:	tx--;	ty++;	break;
-	case 6:	tx--;			break;
-	case 7:	tx--;	ty--;	break;
-	default: Console.Error( 2, "Boat direction error: %i in boat %i", boat->GetDir()&0x0F, boat->GetSerial() ); break;
+		case 0:	ty--;			break;
+		case 1:	tx++;	ty--;	break;
+		case 2:	tx++;			break;
+		case 3:	tx++;	ty++;	break;
+		case 4:	ty++;			break;
+		case 5:	tx--;	ty++;	break;
+		case 6:	tx--;			break;
+		case 7:	tx--;	ty--;	break;
+		default: Console.Error( 2, "Boat direction error: %i in boat %i", dir&0x0F, boat->GetSerial() ); break;	
 	}
-	
+
 	SI16 x = boat->GetX(), y = boat->GetY();
 	prSend.Mode( 0 );
 	if( ( (x + tx) <= 200 || (x + tx) >= 6000 ) && ( (y + ty) <= 200 || (y + ty) >= 4900 ) )
@@ -1011,7 +1007,7 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 		model->SetWeight( 0 );
 		Weight->addItemWeight( mChar, model );
 		model->SetType(210);
-		model->SetMagic( 0 );
+		model->SetMovable( 0 );
 
 		for( CItem *a = hold->FirstItemObj(); !hold->FinishedItems(); a = hold->NextItemObj() )
 			Items->DeleItem( a );

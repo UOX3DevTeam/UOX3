@@ -391,8 +391,8 @@ public:
 	virtual void	Mana( SI16 nValue );
 	virtual void	MaxMana( SI16 nValue );
 	virtual void	Gold( UI32 gValue );
-	virtual void	AC( SI16 nValue );
-	virtual void	Weight( SI16 nValue );
+	virtual void	AC( UI16 nValue );
+	virtual void	Weight( UI16 nValue );
 	CPStatWindow &	operator=( CChar &toCopy );
 };
 

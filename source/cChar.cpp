@@ -44,7 +44,7 @@ SERIAL CChar::GetGuarding( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI08 GetWeight( void ) const
+//|   Function    -  SI32 GetWeight( void ) const
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -897,7 +897,7 @@ void CChar::IsIncognito( bool newValue )
 
 void CChar::SetSerial( SERIAL newSerial, CHARACTER c )
 {
-	ncharsp.Remove( newSerial, c );
+	ncharsp.Remove( newSerial );
 	cBaseObject::SetSerial( newSerial );
 	if( c != INVALIDSERIAL && newSerial != INVALIDSERIAL )
 		ncharsp.AddSerial( newSerial, c );
@@ -1127,14 +1127,6 @@ UI32 CChar::GetNextAct( void ) const
 {
 	return nextact;
 }
-UI32 CChar::GetSmokeTimer( void ) const
-{
-	return smoketimer;
-}
-UI32 CChar::GetSmokeDisplayTimer( void ) const
-{
-	return smokedisplaytimer;
-}
 UI32 CChar::GetAntiSpamTimer( void ) const
 {
 	return antispamtimer;
@@ -1243,14 +1235,6 @@ void CChar::SetLogout( SI32 newValue )
 void CChar::SetWeathDamage( TIMERVAL newValue, UI08 part )
 {
 	weathDamage[part] = newValue;
-}
-void CChar::SetSmokeTimer( UI32 newValue )
-{
-	smoketimer = newValue;
-}
-void CChar::SetSmokeDisplayTimer( UI32 newValue )
-{
-	smokedisplaytimer = newValue;
 }
 void CChar::SetAntiSpamTimer( UI32 newValue )
 {
@@ -2284,26 +2268,9 @@ void CChar::SetTownpriv( SI08 newValue )
 	townpriv = newValue;
 }
 
-SI16 CChar::GetMana2( void ) const
-{
-	return mn2;
-}
-SI16 CChar::GetStamina2( void ) const
-{
-	return stm2;
-}
-
-void CChar::SetStamina2( SI16 newVal )
-{
-	stm2 = newVal;
-}
 void CChar::SetMana( SI16 mn )
 {
 	mana = min( max( 0, mn ), GetMaxMana() );
-}
-void CChar::SetMana2( SI16 newVal )
-{
-	mn2 = newVal;
 }
 
 UI16 CChar::GetBaseSkill( UI08 skillToGet ) const
@@ -2347,10 +2314,6 @@ void CChar::SetSkillLock( UI08 newSkillValue, UI08 skillToSet )
 	lockState[skillToSet] = newSkillValue;
 }
 
-SI16 CChar::GetFame2( void ) const
-{
-	return fame2;
-}
 UI16 CChar::GetDeaths( void ) const
 {
 	return deaths;
@@ -2364,14 +2327,6 @@ SI08 CChar::GetFlag( void ) const
 	return flag;
 }
 
-void CChar::SetFame2( SI16 newVal )
-{
-	fame2 = newVal;
-}
-void CChar::SetKarma2( SI16 newVal )
-{
-	karma2 = newVal;
-}
 void CChar::SetDeaths( UI16 newVal )
 {
 	deaths = newVal;
@@ -2450,7 +2405,7 @@ void CChar::SetPoisoned( SI08 newValue )
 CChar::CChar( CHARACTER c, bool zeroSer ) : robe( INVALIDSERIAL ), townvote( INVALIDSERIAL ), bools( 0 ), antispamtimer( 0 ), 
 account( -1 ), dispz( 0 ), xskin( colour ), fonttype( 3 ), maxHP( 0 ), maxHP_oldstr( 0 ), maxHP_oldrace( 0 ), maxMana( 0 ), maxMana_oldint( 0 ), maxMana_oldrace( 0 ),
 maxStam( 0 ), maxStam_olddex( 0 ), maxStam_oldrace( 0 ),
-saycolor( 0x0058 ), emotecolor( 0x0023 ), mn2( 0 ), cell( -1 ), deaths( 0 ), packitem( NULL ), fixedlight( 255 ), weight( 0 ), 
+saycolor( 0x0058 ), emotecolor( 0x0023 ), cell( -1 ), deaths( 0 ), packitem( NULL ), fixedlight( 255 ), weight( 0 ), 
 targ( INVALIDSERIAL ), timeout( 0 ), attacker( INVALIDSERIAL ), npcmovetime( 0 ), npcWander( 0 ), oldnpcWander( 0 ), ftarg( INVALIDSERIAL ), fx1( -1 ),
 fx2( -1 ), fy1( -1 ), fy2( -1 ), fz1( -1 ), invistimeout( 0 ), hunger( 6 ), hungertime( 0 ), smeltitem( NULL ), skillitem( INVALIDSERIAL ),
 npcaitype( 0 ), callnum( -1 ), playercallnum( -1 ), pagegm( 0 ), region( 255 ), skilldelay( 0 ), objectdelay( 0 ), making( INVALIDSERIAL ),
@@ -2460,9 +2415,8 @@ poisontime( 0 ), poisontxt( 0 ), poisonwearofftime( 0 ), fleeat( 0 ), reattackat
 splitchnc( 0 ), trainer( 0 ), trainingplayerin( 0 ), guildfealty( INVALIDSERIAL ), guildnumber( -1 ), flag( 0x04 ), murderrate( 0 ),
 crimflag( -1 ), casting( 0 ), spelltime( 0 ), spellCast( -1 ), spellaction( 0 ), nextact( 0 ), poisonserial( INVALIDSERIAL ),
 squelched( 0 ), mutetime( 0 ), med( 0 ), stealth( -1 ), running( 0 ), logout( 0 ), swingtarg( INVALIDSERIAL ), holdg( 0 ), raceGate( 65535 ),
-fly_steps( 0 ), smoketimer( 0 ), smokedisplaytimer( 0 ), carve( -1 ), commandLevel( 0 ), postType( LOCALPOST ),
-questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount(), fame2( 0 ), karma2( 0 ), step( 0 ),
-stm2( 0 ), hairstyle( INVALIDID ), beardstyle( INVALIDID ), haircolor( INVALIDCOLOUR ), beardcolour( INVALIDCOLOUR ), orgSkin( colour ), petguarding( INVALIDSERIAL ),
+fly_steps( 0 ), carve( -1 ), commandLevel( 0 ), postType( LOCALPOST ), questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount(),
+step( 0 ), hairstyle( INVALIDID ), beardstyle( INVALIDID ), haircolor( INVALIDCOLOUR ), beardcolour( INVALIDCOLOUR ), orgSkin( colour ), petguarding( INVALIDSERIAL ),
 trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 ), speechItem( INVALIDSERIAL ), SavedAt( 0 ), addMenuLoc( INVALIDSERIAL ), remove( 0 )
 {
 	id = 0x0190;
@@ -2524,10 +2478,10 @@ CChar::~CChar()
 			if( tPets[j] != NULL )
 				tPets[j]->SetOwner( NULL );
 		}
-		for(CItem *item = FirstItem();!FinishedItems(); item=NextItem() )
+		for( CItem *item = FirstItem(); !FinishedItems(); item = NextItem() )
 		{
-				if( item != NULL )
-						item->SetCont(NULL);
+			if( item != NULL )
+				item->SetCont(NULL);
 		}
 		MapRegion->RemoveChar( this );	// Let's remove it from a mapregion (if any)
 		SetOwner( NULL );	// Let's remove it from our owner (if any)
@@ -2748,14 +2702,12 @@ CChar *CChar::Dupe( void )
 	target->SetDexterity( dexterity );
 	target->SetIntelligence( intelligence );
 	target->SetHP(  hitpoints );
-	target->SetStamina( stm2 );
-	target->SetMana( mn2 );
+	target->SetStamina( stamina );
+	target->SetMana( mana );
 
 	target->Strength2( st2 );
 	target->Dexterity2( dx2 );
 	target->Intelligence2( in2 );
-	target->SetMana2( mn2 );
-	target->SetStamina2( stm2 );
 
 	target->SetHiDamage( hidamage );
 	target->SetLoDamage( lodamage );
@@ -2864,8 +2816,6 @@ CChar *CChar::Dupe( void )
 	target->SetRace( GetRace() );
 	target->SetRaceGate( raceGate );
 	target->SetFlySteps( fly_steps );
-	target->SetSmokeTimer( smoketimer );
-	target->SetSmokeDisplayTimer( smokedisplaytimer );
 	target->SetCarve( carve );
 	target->SetCommandLevel( commandLevel );
 	target->SetPostType( postType );
@@ -3684,13 +3634,6 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 		buff.PutByte( CHARTAG_BOOLS );
 		buff.PutLong( bools );
 
-		if( DefChar->GetStamina2() != GetStamina2() || DefChar->GetMana2() != GetMana2() )
-		{
-			buff.PutByte( CHARTAG_STATS2 );
-			buff.PutShort( GetMana2() );
-			buff.PutShort( GetStamina2() );
-		}
-
 		buff.PutByte( CHARTAG_SKILLS );
 		buff.PutByte( TRUESKILLS );
 		for( bsc = 0; bsc < TRUESKILLS; bsc++ )
@@ -3713,13 +3656,6 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 				else
 					buff.PutByte( 0 );
 			}
-		}
-
-		if( DefChar->GetKarma2() != GetKarma2() || DefChar->GetFame2() != GetFame2() )
-		{
-			buff.PutByte( CHARTAG_NOTOR2 );
-			buff.PutShort( GetKarma2() );
-			buff.PutShort( GetFame2() );
 		}
 
 		if( DefChar->GetDeaths() != GetDeaths() )
@@ -3787,11 +3723,12 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 		dumping << "Say=" << GetSayColour() << std::endl;
 		dumping << "Emotion=" << GetEmoteColour() << std::endl;
 		dumping << "MayLevitate=" << (MayLevitate()?"1":"0") << std::endl;
-		dumping << "FX1=" << GetFx( 1 ) << std::endl;
-		dumping << "FX2=" << GetFx( 2 ) << std::endl;
-		dumping << "FY1=" << GetFy( 1 ) << std::endl;
-		dumping << "FY2=" << GetFy( 2 ) << std::endl;
-		dumping << "FZ1=" << (SI16)GetFz() << std::endl;
+		dumping << "WanderArea=" << GetFx( 1 ) << "," << GetFy( 1 ) << "," << GetFx( 2 ) << "," << GetFy( 2 ) << "," << (SI16)GetFz() << std::endl;
+//		dumping << "FX1=" << GetFx( 1 ) << std::endl;
+//		dumping << "FX2=" << GetFx( 2 ) << std::endl;
+//		dumping << "FY1=" << GetFy( 1 ) << std::endl;
+//		dumping << "FY2=" << GetFy( 2 ) << std::endl;
+//		dumping << "FZ1=" << (SI16)GetFz() << std::endl;
 		dumping << "DisplayZ=" << (SI16)GetDispZ() << std::endl;
 		dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 		dumping << "Dir2=" << (SI16)GetDir2() << std::endl;
@@ -3820,8 +3757,6 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 		dumping << "CommandLevel=" << (SI16)GetCommandLevel() << std::endl;	// command level
 		dumping << "PostType=" << (SI16)GetPostType() << std::endl;
 		dumping << "TownPrivileges=" << (SI16)GetTownPriv() << std::endl;
-		dumping << "XMana=" << GetMana2() << std::endl;
-		dumping << "XStamina=" << GetStamina2() << std::endl;
 
 		// Write out the BaseSkills and the SkillLocks here
 		// Format: BaseSkills=[0,34]-[1,255]-[END]
@@ -3858,8 +3793,6 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 			}
 			dumping << "[END]" << std::endl;
 		}
-		dumping << "XKarma=" << GetKarma2() << std::endl;
-		dumping << "XFame=" << GetFame2() << std::endl;
 		dumping << "GuildNumber=" << GetGuildNumber() << std::endl;  
 		dumping << "Deaths=" << GetDeaths() << std::endl;
 		dumping << "FontType=" << (SI16)GetFontType() << std::endl;
@@ -4458,11 +4391,6 @@ void CChar::StopSpell( void )
 	SetSpellCast( -1 );
 }
 
-SI16 CChar::GetKarma2( void ) const
-{
-	return karma2;
-}
-
 bool CChar::DumpFooter( std::ofstream &outStream, SI32 mode ) const
 {
 	switch( mode )
@@ -4929,7 +4857,29 @@ bool CChar::HandleLine( char *tag, char *data )
 		}
 		break;
 	case 'W':
-		if( !strcmp( tag, "Weight" ) )
+		if( !strcmp( tag, "WanderArea" ) )
+		{
+			char *fy1Off = strstr( data, "," );
+			char *fx2Off = strstr( fy1Off+1, "," );
+			char *fy2Off = strstr( fx2Off+1, "," );
+			char *fzOff = strstr( fy2Off+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, fy1Off - data );
+			tmp[fy1Off - data] = 0;
+			fx1 = (SI16)makeNum( tmp );
+			strncpy( tmp, fy1Off + 1, fx2Off - fy1Off - 1 );
+			tmp[fx2Off - fy1Off - 1] = 0;
+			fy1 = (SI16)makeNum( tmp );
+			strncpy( tmp, fx2Off + 1, fy2Off - fx2Off - 1 );
+			tmp[fy2Off - fx2Off - 1] = 0;
+			fx2 = (SI08)makeNum( tmp );
+			strncpy( tmp, fy2Off + 1, fzOff - fy2Off - 1 );
+			tmp[fzOff - fy2Off - 1] = 0;
+			fy2 = (SI08)makeNum( tmp );
+			fz1 = (UI08)makeNum( fzOff + 1 );
+			return true;
+		}
+		else if( !strcmp( tag, "Weight" ) )
 		{
 			weight = makeNum( data );
 			return true;
@@ -4951,26 +4901,14 @@ bool CChar::HandleLine( char *tag, char *data )
 			SetOldNpcWander( (SI08)makeNum( data ) );
 			return true;
 		}
-		else if( !strcmp( tag, "XMana" ) )
-		{
-			SetMana2( (SI16)makeNum( data ) );
+		else if( !strcmp( tag, "XMana" ) )	// Depreciated
 			return true;
-		}
-		else if( !strcmp( tag, "XStamina" ) )
-		{
-			SetStamina2( (SI16)makeNum( data ) );
+		else if( !strcmp( tag, "XStamina" ) )	// Depreciated
 			return true;
-		}
-		else if( !strcmp( tag, "XKarma" ) )
-		{
-			SetKarma2( (SI16)makeNum( data ) );
+		else if( !strcmp( tag, "XKarma" ) )	// Depreciated
 			return true;
-		}
-		else if( !strcmp( tag, "XFame" ) )
-		{
-			SetFame2( (SI16)makeNum( data ) );
+		else if( !strcmp( tag, "XFame" ) )	// Depreciated
 			return true;
-		}
 		break;
 	}
 	return false;
@@ -5167,8 +5105,6 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case CHARTAG_STATS2:
-		SetMana2( buff.GetShort() );
-		SetStamina2( buff.GetShort() );
 		break;
 
 	case CHARTAG_SKILLS:
@@ -5190,8 +5126,6 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case CHARTAG_NOTOR2:
-		SetKarma2( buff.GetShort() );
-		SetFame2( buff.GetShort() );
 		break;
 
 	case CHARTAG_DEATHS:

@@ -315,14 +315,13 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void HandleHairDyeButton( cSocket *s, long button, CItem *j )
+//|   Function    :  void HandleHairDyeButton( cSocket *s, CItem *j )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in hair dye gump
 //o---------------------------------------------------------------------------o
-#pragma note( "Param Warning: in HandleHairDyeButton, button is unrefrenced" )
-void HandleHairDyeButton( cSocket *s, long button, CItem *j )
+void HandleHairDyeButton( cSocket *s, CItem *j )
 {
 	if( j == NULL )
 		return;
@@ -382,14 +381,12 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 	if( j == NULL )
 		return;
 
-	char temp[1024];
-	SI16 i = s->GetWord( 21 );
 	if( button != 20 && button != 2 ) 
 		s->AddID( j->GetSerial() );
 	switch( button )
 	{
 	case 20: // Change house sign's appearance
-		if( i > 0 ) 
+		if( s->GetWord( 21 ) > 0 ) 
 		{
 			s->SetDWord( 7, s->AddID() );
 			s->AddID1( s->GetByte( 21 ) );
@@ -407,6 +404,7 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 	case 8:	target( s, 0, 1, 0, 231, 560 );	return; // Remove someone from house list
 	case 7:	target( s, 0, 1, 0, 230, 561 );	return; // Make someone a friend
 	default:
+		char temp[1024];
 		sprintf( temp, "HouseGump Called - Button=%i", button );
 		sysmessage( s, temp );
 		return;
@@ -556,7 +554,7 @@ void cGump::Button( CPIGumpMenuSelect *packet )
 	case 6:																		// Hair Dye Menu
 		is = s->AddID();
 		j = calcItemObjFromSer( is );
-		HandleHairDyeButton( s, button, j );
+		HandleHairDyeButton( s, j );
 		break;
 	case 7:																		// Accounts
 		CChar *c;
@@ -602,7 +600,7 @@ void HandleTweakItemText( cSocket *s, long index )
 		case 4:		j->SetColour( static_cast<UI16>(makeNum( text )) );			break;	// Colour
 		case 5:		j->SetLayer( static_cast<SI08>(makeNum( text ) ));				break;	// Layer
 		case 6:		j->SetType( static_cast<UI08>(makeNum( text )) );				break;	// Type
-		case 7:		j->SetMagic( static_cast<SI08>(makeNum( text ) ));				break;	// Moveable
+		case 7:		j->SetMovable( static_cast<SI08>(makeNum( text ) ));				break;	// Moveable
 		case 8:
 			MapRegion->RemoveItem( j );
 			j->SetX( static_cast<SI16>(makeNum( text )) );
@@ -1009,7 +1007,7 @@ void tweakItemMenu( cSocket *s, CItem *i )
 	tweakItem.AddData( "Colour", itemColour, 5 );
 	tweakItem.AddData( "Layer", i->GetLayer() );
 	tweakItem.AddData( "Type", i->GetType() );
-	tweakItem.AddData( "Moveable", i->GetMagic() );
+	tweakItem.AddData( "Moveable", i->GetMovable() );
 	tweakItem.AddData( "X coord", i->GetX() );
 	tweakItem.AddData( "Y coord", i->GetY() );
 	tweakItem.AddData( "Z coord", i->GetZ() );
@@ -1096,8 +1094,8 @@ void choice( cSocket *s )
 	char sect[512];
 	DEFINITIONCATEGORIES script;
 	
-	SI16 main = s->GetWord( 5 );
-	SI16 sub = s->GetWord( 7 );
+	UI16 main = s->GetWord( 5 );
+	UI16 sub = s->GetWord( 7 );
 	CChar *mChar = s->CurrcharObj();
 
 	if( main < ITEMMENUOFFSET ) // GM Menus
@@ -1124,7 +1122,7 @@ void choice( cSocket *s )
 				sysmessage( s, 575 );
 				return;
 			}
-			Skills->TrackingMenu( s, sub - 1 );
+			Skills->TrackingMenu( s, static_cast<int>(sub - 1) );
 		}
 		sprintf( sect, "TRACKINGMENU %i", main );
 		script = tracking_def;

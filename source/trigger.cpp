@@ -162,7 +162,7 @@ void Triggers::ParseEnvoke( void )
 		if( verify != NULL )
 			envokeList[itemID] = scriptID;
 		else
-			Console.Error(2,"(ENVOKE) itemID 0x%08X refers for scriptID 0x%08X which does not exist.",itemID,scriptID); //,myendl;
+			Console.Error( 2,"(ENVOKE) itemID 0x%x refers for scriptID 0x%x which does not exist.",itemID, scriptID ); //,myendl;
 	}
 	envokefile.close();
 }

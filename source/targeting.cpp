@@ -1077,7 +1077,7 @@ void cTargets::IstatsTarget( cSocket *s )
 		dynamicStat.AddData( "Cont Serial", contSerial, 3 );
 		dynamicStat.AddData( "Layer", i->GetLayer() );
 		dynamicStat.AddData( "Type", i->GetType() );
-		dynamicStat.AddData( "Moveable", i->GetMagic() );
+		dynamicStat.AddData( "Moveable", i->GetMovable() );
 		dynamicStat.AddData( "More", moreVal, 3 );
 		dynamicStat.AddData( "X coord", i->GetX() );
 		dynamicStat.AddData( "Y coord", i->GetY() );
@@ -1298,7 +1298,7 @@ void cTargets::MovableTarget( cSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		i->SetMagic( static_cast<SI08>(s->AddX()) );
+		i->SetMovable( static_cast<SI08>(s->AddX()) );
 		RefreshItem( i );
 	}
 }
@@ -1694,8 +1694,9 @@ void cTargets::InfoTarget( cSocket *s )
 //	SI08 z = s->GetByte( 0x10 );
 
 	UI08 worldNumber = 0;
-	if( s->CurrcharObj() != NULL )
-		worldNumber = s->CurrcharObj()->WorldNumber();
+	CChar *mChar = s->CurrcharObj();
+	if( mChar != NULL )
+		worldNumber = mChar->WorldNumber();
 	if( s->GetWord( 0x11 ) == 0 )
 	{  // manually calculating the ID's if it's a maptype
 		map1 = Map->SeekMap0( x, y, worldNumber );
@@ -1716,7 +1717,7 @@ void cTargets::InfoTarget( cSocket *s )
 	else
 	{
 		CTile tile;
-		SI16 tilenum = s->GetWord( 0x11 );
+		UI16 tilenum = s->GetWord( 0x11 );
 		Map->SeekTile( tilenum, &tile );
 
 		GumpDisplay statTile( s, 300, 300 );
@@ -2119,7 +2120,7 @@ void cTargets::ExpPotionTarget( cSocket *s ) //Throws the potion and places it (
 			{
 				i->SetCont( NULL );
 				i->SetLocation( x, y, z );
-				i->SetMagic( 2 ); //make item unmovable once thrown
+				i->SetMovable( 2 ); //make item unmovable once thrown
 				movingeffect( mChar, i, 0x0F0D, 0x11, 0x00, 0x00 );
 				RefreshItem( i );
 			}
@@ -2403,7 +2404,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 	MapRegion->RemoveItem( c );
 
 	c->SetLocation( s->AddMItem() );
-	c->SetMagic( 2 );
+	c->SetMovable( 2 );
 	c->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) )) );
 	RefreshItem( c );
 
@@ -3382,7 +3383,7 @@ void cTargets::GlowTarget( cSocket *s )
 
     c->SetDir( 29 );
 	c->SetVisible( 0 );
-	c->SetMagic( 2 );
+	c->SetMovable( 2 );
 	MapRegion->RemoveItem( c );
 	//c->SetLayer( items[i].GetLayer() );
 	if( getCont == NULL || getCont->GetObjType() == OT_ITEM ) // if not equipped -> coords of the light-object = coords of the 
@@ -4070,8 +4071,6 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 		targetChar->SetStamina(  100 );
 		targetChar->SetHP( 100 );
 		targetChar->SetMana( 100 );
-		targetChar->SetMana2( 100 );
-		targetChar->SetStamina2( 100 );
 	}
 	char *playerName = (char *)targetChar->GetName();
 

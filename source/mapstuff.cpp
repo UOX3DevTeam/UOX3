@@ -365,7 +365,7 @@ void cMapStuff::Load( void )
 // oh yah, well that's encouraging.. NOT! at least LB was kind enough to
 // move this out into a separate file. he gets kudos for that!
 //int cMapStuff::TileHeight(int tilenum)
-SI08 cMapStuff::TileHeight( int tilenum )
+SI08 cMapStuff::TileHeight( UI16 tilenum )
 {
 	CTile tile;
 	SeekTile(tilenum, &tile);
@@ -373,7 +373,7 @@ SI08 cMapStuff::TileHeight( int tilenum )
 	// For Stairs+Ladders
 	if( tile.Climbable() ) 
 		return (SI08)(tile.Height()/2);	// hey, lets just RETURN half!
-	return (tile.Height());
+	return tile.Height();
 }
 
 //o-------------------------------------------------------------o

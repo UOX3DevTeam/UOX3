@@ -1511,7 +1511,7 @@ void cMovement::NpcMovement( CChar *i )
                 break;
             case 1: // Follow the follow target
                 k = i->GetFTarg();
-                if( k == INVALIDSERIAL || k >= (int)cmem ) 
+                if( k == INVALIDSERIAL || k >= cmem ) 
 					return;
                 if( isOnline( &chars[k] ) || chars[k].IsNpc() )
                 {
@@ -1543,7 +1543,7 @@ void cMovement::NpcMovement( CChar *i )
                 break;
             case 5: //FLEE!!!!!!
                 k = i->GetTarg();
-                if( k == INVALIDSERIAL || k >= (int)cmem ) 
+                if( k == INVALIDSERIAL || k >= cmem ) 
 					return;
 				if( getDist( i, &chars[k] ) < P_PF_MFD )
 				{	// calculate a x,y to flee towards

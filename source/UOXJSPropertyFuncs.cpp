@@ -220,7 +220,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		case CIP_MOREX:			*vp = INT_TO_JSVAL( gPriv->GetMoreX() );			break;
 		case CIP_MOREY:			*vp = INT_TO_JSVAL( gPriv->GetMoreY() );			break;
 		case CIP_MOREZ:			*vp = INT_TO_JSVAL( gPriv->GetMoreZ() );			break;
-		case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMagic() );			break;
+		case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMovable() );			break;
 		case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
 		case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetDef() );				break;
 		case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
@@ -955,7 +955,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		case CIP_MOREX:		gPriv->SetMoreX( JSVAL_TO_INT( *vp ) );									break;
 		case CIP_MOREY:		gPriv->SetMoreY( JSVAL_TO_INT( *vp ) );									break;
 		case CIP_MOREZ:		gPriv->SetMoreZ( JSVAL_TO_INT( *vp ) );									break;
-		case CIP_MOVABLE:	gPriv->SetMagic( (SI08)JSVAL_TO_INT( *vp ) ); 							break;
+		case CIP_MOVABLE:	gPriv->SetMovable( (SI08)JSVAL_TO_INT( *vp ) ); 						break;
 		case CIP_ATT:		gPriv->SetLoDamage( (SI16)JSVAL_TO_INT( *vp ) ); 	
 							gPriv->SetHiDamage( (SI16)JSVAL_TO_INT( *vp ) ); 	
 							break;

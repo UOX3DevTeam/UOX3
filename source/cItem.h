@@ -15,7 +15,7 @@ private:
 	SERIAL			creator;	// Store the serial of the player made this item
 	char			desc[100];
 
-	SI08			layer; // Layer if equipped on paperdoll
+	UI08			layer; // Layer if equipped on paperdoll
 
 	UI08			type; // For things that do special things on doubleclicking
 	UI08			type2;
@@ -36,7 +36,7 @@ private:
 
 	UI08			spd; //The speed of the weapon
 
-	SI08			magic; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
+	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 
 	UI32			gatetime;
 	UI32			decaytime;
@@ -163,8 +163,8 @@ public:
 	virtual void	IncY( SI16 newValue );
 	virtual void	IncZ( SI16 newValue );
 
-	virtual SI08	GetLayer( void ) const;
-	virtual void	SetLayer( SI08 newValue );
+	virtual UI08	GetLayer( void ) const;
+	virtual void	SetLayer( UI08 newValue );
 
 	virtual UI08	GetType(  void ) const;
 	virtual UI08	GetType2( void ) const;
@@ -202,8 +202,8 @@ public:
 	virtual UI08	GetSpeed( void ) const;
 	virtual void	SetSpeed( UI08 newValue );
 
-	virtual SI08	GetMagic( void ) const;
-	virtual void	SetMagic( SI08 newValue );
+	virtual SI08	GetMovable( void ) const;
+	virtual void	SetMovable( SI08 newValue );
 	
 	virtual UI32	GetGateTime(   void ) const;
 	virtual UI32	GetDecayTime(  void ) const;

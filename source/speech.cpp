@@ -344,7 +344,7 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar->isUnicode() )
 	{
-		for( SI16 i = 13; i < mSock->GetWord( 1 ); i += 2 )
+		for( UI16 i = 13; i < mSock->GetWord( 1 ); i += 2 )
 			nonuni[(i-13)/2] = mSock->GetByte( i );
 	}
 		
@@ -823,7 +823,7 @@ void unicodetalking( cSocket *mSock ) // PC speech
 			for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
 				CChar *tChar = tSock->CurrcharObj();
-				if( charInRange( tChar, mChar ) )
+				if( mChar != tChar && charInRange( tChar, mChar ) )
 				{
 					tSock->Send( talk2, 18 );
 					tSock->Send( mChar->GetName(), 30 );

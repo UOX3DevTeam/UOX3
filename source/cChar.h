@@ -54,8 +54,6 @@ class CChar : public cBaseObject
 		UI32		poisonwearofftime; // makes poision wear off ...
 		SI32		spelltime; //Time when they are done casting....
 		UI32		nextact; //time to next spell action..
-		UI32		smoketimer;
-		UI32		smokedisplaytimer;
 		UI32		antispamtimer; // anti spam
 		UI32		skilldelay;
 		SI32		crimflag; //Time when No longer criminal -1=Not Criminal
@@ -131,16 +129,11 @@ class CChar : public cBaseObject
 		UI08		postType;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
 
-		SI16		stm2;	// Stamina2
-		SI16		mn2; // Reserved for calculation
-
 		UI16		baseskill[ALLSKILLS+1]; // Base skills without stat modifiers
 		UI16		skill[ALLSKILLS+1]; // List of skills (with stat modifiers)
 		UI16		atrophy[ALLSKILLS+1];
 		UI08		lockState[ALLSKILLS+1];	// state of the skill locks
 
-		SI16		karma2;			// should be a SI16!!!!
-		SI16		fame2;
 		SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
 		UI16		deaths;
 		SI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
@@ -361,8 +354,6 @@ class CChar : public cBaseObject
 		UI32		GetPoisonWearOffTime( void ) const;
 		SI32		GetSpellTime( void ) const;
 		UI32		GetNextAct( void ) const;
-		UI32		GetSmokeTimer( void ) const;
-		UI32		GetSmokeDisplayTimer( void ) const;
 		UI32		GetAntiSpamTimer( void ) const;
 		UI32		GetSkillDelay( void ) const;
 		SI32		GetCrimFlag( void ) const;
@@ -392,8 +383,6 @@ class CChar : public cBaseObject
 		void		SetMuteTime( SI32 newValue );
 		void		SetLogout( SI32 newValue );
 		void		SetWeathDamage( TIMERVAL newValue, UI08 part );
-		void		SetSmokeTimer( UI32 newValue );
-		void		SetSmokeDisplayTimer( UI32 newValue );
 		void		SetAntiSpamTimer( UI32 newValue );
 		void		SetSkillDelay( UI32 newValue );
 		void		SetObjectDelay( SI32 newValue );
@@ -589,12 +578,6 @@ class CChar : public cBaseObject
 		void		SetCommandLevel( UI08 newValue );
 		void		SetTownpriv( SI08 newValue );
 
-		SI16		GetMana2( void ) const;
-		SI16		GetStamina2( void ) const;
-
-		void		SetStamina2( SI16 newVal );
-		void		SetMana2( SI16 newVal );
-
 		UI16		GetBaseSkill( UI08 skillToGet ) const;
 		UI16		GetAtrophy( UI08 skillToGet ) const;
 		UI08		GetSkillLock( UI08 skillToGet ) const;
@@ -605,14 +588,10 @@ class CChar : public cBaseObject
 		void		SetAtrophy( UI16 newValue, UI08 skillToSet );
 		void		SetSkillLock( UI08 newSkillValue, UI08 skillToSet );
 
-		SI16		GetKarma2( void ) const;
-		SI16		GetFame2( void ) const;
 		UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
 		SI16		GetGuildNumber( void ) const;
 		SI08		GetFlag( void ) const;
 
-		void		SetFame2( SI16 newVal );
-		void		SetKarma2( SI16 newVal );
 		void		SetDeaths( UI16 newVal );
 		void		SetFlag( SI08 newValue );
 		void		SetFlagRed( void );

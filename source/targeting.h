@@ -222,7 +222,7 @@ private:
 
 	void KillTarget( cSocket *s, UI08 ly);
 	void newCarveTarget( cSocket *s, CItem *i );
-	//void triggertarget( int ts ); // By Magius(CHE)
+//	void triggertarget( int ts ); // By Magius(CHE)
 public:
 #ifndef __LINUX__
 	TargetFunc CstatsTarget;

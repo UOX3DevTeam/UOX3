@@ -26,7 +26,7 @@ CWorldMain::~CWorldMain()
 
 //o--------------------------------------------------------------------------o
 //|	Function/Class-	
-//|	Date					-	?/?/1997
+//|	Date			-	?/?/1997
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status				-	
@@ -69,23 +69,23 @@ void CWorldMain::savenewworld( bool x )
 		Network->ClearBuffers();
 
 		if( x )
-			Console << "| Starting manual world data save...." << myendl;
+			Console << "Starting manual world data save...." << myendl;
 		else 
-			Console << "| Starting automatic world data save...." << myendl;
+			Console << "Starting automatic world data save...." << myendl;
 		
 		if( ServerData()->GetServerBackupStatus() && strlen( ServerData()->GetBackupDirectory() ) > 1 )
 		{
 			save_counter++;
 			if(( save_counter % ServerData()->GetBackupRatio() ) == 0 )
 			{
-				Console << "| Archiving world files." << myendl;
+				Console << "Archiving world files." << myendl;
 				fileArchive();
 			}
 		}
 		Console << "Saving Misc. data... ";
 		//Accounts->SaveAccounts();
 		ServerData()->save();
-		Console.Log( "Server data save\n", "server.log" );
+		Console.Log( "Server data save", "server.log" );
 		RegionSave();
 		Console.PrintDone();
 		MapRegion->Save(); 
@@ -101,7 +101,7 @@ void CWorldMain::savenewworld( bool x )
 		//	all the time if using the web interface
 		if( ServerData()->GetExternalAccountStatus()  )
 		{
-			//Accounts->Import();
+			Accounts->Load();
 		}
 		Accounts->Save();
 		worldSaveProgress = 2;
@@ -148,7 +148,7 @@ void CWorldMain::RegionSave( void )
 	FILE *regions = fopen( regionsFile, "w" );
 	if( regions != NULL )
 	{
-		for( int regionCounter = 0; regionCounter < 256; regionCounter++ )
+		for( UI16 regionCounter = 0; regionCounter < 256; regionCounter++ )
 		{
 			if( region[regionCounter] != NULL )
 				region[regionCounter]->Save( regions );

@@ -211,7 +211,7 @@ void cItem::DeleItem( CItem *i )
 		}
 	}
 
-	nitemsp.Remove( i->GetSerial(), calcedItem );
+	nitemsp.Remove( i->GetSerial() );
 	items.Delete( calcedItem );
 }
 
@@ -305,7 +305,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		case DFNTAG_LIGHT:			applyTo->LightDamage( ndata != 0 );			break;
 		case DFNTAG_LIGHTNING:		applyTo->LightningDamage( ndata != 0 );		break;
 		case DFNTAG_MAXHP:			applyTo->SetMaxHP( (SI16)ndata );			break;
-		case DFNTAG_MOVABLE:		applyTo->SetMagic( (SI08)ndata );			break;
+		case DFNTAG_MOVABLE:		applyTo->SetMovable( (SI08)ndata );			break;
 		case DFNTAG_MORE:			applyTo->SetMore( ndata );					break;
 		case DFNTAG_MORE2:			applyTo->SetMoreB( ndata );					break;
 		case DFNTAG_MOREX:			applyTo->SetMoreX( ndata );					break;
@@ -628,7 +628,7 @@ CItem * cItem::SpawnItemToPack( cSocket *s, CChar *mChar, std::string name, bool
 	c->SetY( 50 + RandomNum( 0, 79 ) );
 	c->SetZ( 9 );
 	// We should use the value the DFNs give us
-	//c->SetMagic( 1 ); 
+	//c->SetMovable( 1 ); 
 
 	if( nDigging ) 
 	{
@@ -1032,7 +1032,7 @@ void cItem::menuAddItem( cSocket *s, std::string item )
 		return;
 	c->SetName2( c->GetName() );
 	c->SetCreator( INVALIDSERIAL );
-	c->SetMagic( 1 );
+	c->SetMovable( 1 );
 	statwindow( s, mChar );
 }
 

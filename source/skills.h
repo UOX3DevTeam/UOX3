@@ -170,8 +170,8 @@ public:
 
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
 	void SkillUse( cSocket *s, UI08 x );
-	void updateSkillLevel( CChar *c, int s);
-	void AdvanceStats( CChar *s, int sk, bool skillsuccess );
+	void updateSkillLevel( CChar *c, UI08 s);
+	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
 
 	int			GetNumberOfOres( void );
 	miningData *GetOre( int number );

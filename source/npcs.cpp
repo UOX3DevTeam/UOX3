@@ -87,7 +87,7 @@ void cCharStuff::DeleteChar( CChar *k )
 
 	k->RemoveFromSight();
 
-	ncharsp.Remove( k->GetSerial(), kChar );
+	ncharsp.Remove( k->GetSerial() );
 	chars.Delete( kChar );
 }
 

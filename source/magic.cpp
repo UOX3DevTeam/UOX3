@@ -156,7 +156,7 @@ bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 			i->SetMoreY( caster->GetSerial() );
 			i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber ) );
 			i->SetDir( 29 );
-			i->SetMagic( 2 );
+			i->SetMovable( 2 );
 			RefreshItem( i );
 		}
 	}
@@ -1203,7 +1203,7 @@ bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 			i->SetMoreY( caster->GetSerial() );
 			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber ) );
 			i->SetDir( 29 );
-			i->SetMagic( 2 );
+			i->SetMovable( 2 );
 			RefreshItem( i );
 		}
 	}
@@ -1225,7 +1225,7 @@ bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 					const SI16 newY = y + j * ( yOffset - counter3 );
 					i->SetLocation( newX, newY, Map->Height( newX, newY, z, worldNumber ) );
 					i->SetDir( 29 );
-					i->SetMagic( 2 );
+					i->SetMovable( 2 );
 					RefreshItem( i );
 				}
 			}
@@ -1271,7 +1271,7 @@ bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 					break;
 				}
 				i->SetDir( 29 );
-				i->SetMagic( 2 );
+				i->SetMovable( 2 );
 				RefreshItem( i );
 			}
 		}
@@ -1304,7 +1304,7 @@ bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 				i->SetMoreY( caster->GetSerial() );
 				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber ) );
 				i->SetDir( 29 );
-				i->SetMagic( 2 );
+				i->SetMovable( 2 );
 				RefreshItem( i );
 			}
 		}

@@ -310,9 +310,9 @@ void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 {
 	UI32 value;
 	int z;
-	char ciname[256];
-	char cinam2[256];
-	char itemname[256];
+	char ciname[MAX_NAME];
+	char cinam2[MAX_NAME];
+	char itemname[MAX_NAME];
 	
 	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{

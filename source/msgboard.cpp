@@ -794,8 +794,7 @@ bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
 	// 50 chars for prefix and 4 for the extension plus the ending NULL
 	char        fileName[256] = "";
 	FILE        *pFile = NULL;
-	
-	int         origMsgSize           = 0;
+
 	int         newMsgSize            = 0;
 	int         newMsgSN              = 0;
 	int         maxMsgSN              = 0;
@@ -892,7 +891,7 @@ bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
 	}
 	
 	// Calculate original size of the message that the client sent to us
-	origMsgSize = s->GetWord( 1 ); // ( (buffer[s][1]<<8) + buffer[s][2] );
+	UI16 origMsgSize = s->GetWord( 1 );
 	
 	// Get the messages header info (packet type, size, type, board S/N, parent msg S/N(replies only))
 	for( x = 0; x < 12; x++ )

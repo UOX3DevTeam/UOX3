@@ -183,7 +183,7 @@ void cBooks::OpenBook( cSocket *mSock, CItem *i, bool isWriteable )
 }
 
 // sends a page of new readonly book to the client
-void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, int p )
+void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, UI16 p )
 {
     UI08 bookpage[14] = "\x66\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x08";
 	int c;
@@ -202,7 +202,7 @@ void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, int p )
 	fclose( file );
 
 	int bytes = 13;
-	for( int a = 1; a <= 8; a++ )
+	for( UI08 a = 1; a <= 8; a++ )
 	{
 		ReadLine( i, p, a, line );
 		c = strlen( line ) + 1;        
@@ -230,7 +230,7 @@ void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, int p )
 }
 
 // old readbook function
-void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, int p )
+void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, UI16 p )
 {
 	if( mSock == NULL )
 		return;
@@ -291,7 +291,7 @@ void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, int p )
 }
 
 // writes changes to a writable book to the bok file.		
-void cBooks::ReadWritableBook( cSocket *s, CItem *i, int p, int l )
+void cBooks::ReadWritableBook( cSocket *s, CItem *i, UI16 p, int l )
 {
 	int ii = 0, lines_processed = 0, lin = 0;
 	char line[34], ch;
@@ -411,7 +411,7 @@ void cBooks::WriteTitle( CItem *id, cSocket *s )
 	fclose( file );
 }
 
-void cBooks::WriteLine( CItem *id, int page, int line, char linestr[34] )
+void cBooks::WriteLine( CItem *id, UI16 page, int line, char linestr[34] )
 {
 	char fileName[MAX_PATH];  // Standard 8.3 file name
 

@@ -183,7 +183,7 @@ public:
 		data.resize( hashSize ); 
 	}
 
-	~HashTable() {  }
+	virtual ~HashTable() {  }
 
 	virtual void GarbageCollect( void )
 	{
@@ -201,7 +201,7 @@ public:
 		data[toAdd%data.size()].AddSerial( toAdd, index );
 	}
 
-	virtual void Remove( LookupType toRemove, EntryType index )
+	virtual void Remove( LookupType toRemove )
 	{
 		data[toRemove%data.size()].RemoveBySer( toRemove );
 	}
@@ -238,7 +238,7 @@ public:
 		data.resize( hashSize ); 
 	}
 
-	~HashTableMulti() {  }
+	virtual ~HashTableMulti() {  }
 
 	virtual void GarbageCollect( void )
 	{

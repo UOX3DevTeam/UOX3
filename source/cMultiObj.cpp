@@ -278,7 +278,7 @@ void CMultiObj::RemoveLockDown( CItem *toRemove )
 			for( UI32 j = i; j < lockedList.size() - 1; j++ )
 				lockedList[j] = lockedList[j+1];
 			lockedList.resize( lockedList.size() - 1 );
-			toRemove->SetMagic( 0 );
+			toRemove->SetMovable( 0 );
 		}
 	}
 }

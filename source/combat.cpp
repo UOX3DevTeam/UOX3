@@ -982,7 +982,7 @@ SI16 cCombat::calcAtt( CChar *p )
 				weapon->IncHP( -1 );
 				if( weapon->GetHP() <= 0 )
 				{
-					char name[40];
+					char name[MAX_NAME];
 					getTileName( weapon, name );
 					sysmessage( mSock, 311, name );
 					Items->DeleItem( weapon );
@@ -1011,112 +1011,173 @@ SI16 cCombat::calcAtt( CChar *p )
 	return getDamage;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	UI16 cCombat::calcDef( CChar *p, SI08 x, bool doDamage )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Calculate the characters total defence power
-//o---------------------------------------------------------------------------o
-UI16 cCombat::calcDef( CChar *p, SI08 x, bool doDamage )
+/*
+	New Defense Calculations
+	Programmer: Zane (giwo)
+	Date: 3/03/2003
+
+	Purpose:
+		To emulate OSI's armor calculation methods for specific hit locations and total AR level
+
+	How we do this:
+		We need to first determine what we are calculating, total AR (hitLoc 0) or the armor level of a specific locations (hitLoc 1-6).
+		Next we need to loop through the items a player has equipped searching for items that match the following criteria:
+			Defence > 0
+			On a specific layer (depending on the hit location)
+			The item with the most AR covering that location
+		Lastly we have to return this information. If we are returning the AR of a specific hit location, then we return the actual Def value of the item
+			if we are returning the total AR of a character, we need to find the AR / the divisor used for that specific location.
+
+		Divisors based upon location / Armor (as best I can match it to OSI)
+			Torso (hitLoc 1):	AR / 2.8
+			Arms (hitLoc 2):	AR / 6.8
+			Head (hitLoc 3):	AR / 7.3
+			Legs (hitLoc 4):	AR / 4.5
+			Neck (hitLoc 5):	AR / 14.5
+			Hands (hitLoc 6):	AR / 14.5
+
+		Functions:
+			checkDef( CItem *checkItem, CItem& currItem, SI32 &currDef )
+			getArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
+			calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
+
+	All information on armor defence values, divisors, and combat calculations gleaned from uo.stratics.com
+	http://uo.stratics.com/content/arms-armor/armor.shtml
+	http://uo.stratics.com/content/arms-armor/combat.shtml
+	http://uo.stratics.com/content/arms-armor/clothes.shtml
+	http://uo.stratics.com/content/aos/combatchanges.shtml
+*/
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	UI16 cCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
+//|	Date			-	3/03/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Finds the defense value of a specific location or the entire character based on hitLoc
+//o--------------------------------------------------------------------------o
+UI16 cCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 {
-	if( p == NULL )
+	if( mChar == NULL )
 		return 0;
 
-	UI16 total = p->GetDef();
-	if( isHuman( p ) )
+	SI32 total = mChar->GetDef();
+	if( !mChar->IsNpc() || isHuman( mChar ) )	// Polymorphed Characters and GM's can still wear armor
 	{
-		CItem *j = NULL;
-		for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
+		CItem *defendItem = NULL;
+		if( hitLoc == 0 )
 		{
-			if( i == NULL )
-				continue;
-
-			if( i->GetLayer() > 1 && i->GetLayer() < 25 )
-			{
-				if( x == 0 ) 
-					total += i->GetDef();
-				else
-				{
-					switch( i->GetLayer() )
-					{
-					case 5:
-					case 13:
-					case 17:
-					case 20:
-					case 22:
-						if( x == 1 && i->GetDef() > total ) 
-						{
-							total = i->GetDef();
-							j = i;
-						}
-						break;
-					case 19:
-						if( x == 2 && i->GetDef() > total )
-						{
-							total = i->GetDef();
-							j = i;
-						}
-						break;
-					case 6:
-						if( x == 3 && i->GetDef() > total ) 
-						{
-							total = i->GetDef(); 
-							j = i;
-						}
-						break;
-					case 3:
-					case 4:
-					case 12:
-					case 23:
-					case 24:
-						if( x == 4 && i->GetDef() > total ) 
-						{
-							total = i->GetDef();
-							j = i;
-						}
-						break;
-					case 10:
-						if( x == 5 && i->GetDef() > total ) 
-						{
-							total = i->GetDef();
-							j = i;
-						}
-						break;
-					case 7:
-						if( x == 6 && i->GetDef() > total ) 
-						{
-							total=i->GetDef(); 
-							j = i;
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			}
+			for( UI08 getLoc = 1; getLoc < 7; getLoc++ )
+				total += getArmorDef( mChar, *(defendItem), getLoc, true );
+			total = (total / 100);
 		}
+		else
+			total = getArmorDef( mChar, *(defendItem), hitLoc );
 
-		if( j != NULL && doDamage && !p->IsNpc() && !RandomNum( 0, 5 ) )
+		if( doDamage && defendItem != NULL && !mChar->IsNpc() )
 		{
-			cSocket *mSock = calcSocketObjFromChar( p );
-			if( mSock != NULL )
+			SI08 armorDamage = 0;	// Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
+			armorDamage -= RandomNum( 0, 2 );
+			defendItem->IncHP( armorDamage );
+
+			if( defendItem->GetHP() <= 0 )
 			{
-				j->IncHP( -1 );
-				if( j->GetHP() <= 0 )
+				cSocket *mSock = calcSocketObjFromChar( mChar );
+				if( mSock != NULL )
 				{
-					char name[40];
-					getTileName( j, name );
+					char name[MAX_NAME];
+					getTileName( defendItem, name );
 					sysmessage( mSock, 311, name );
-					Items->DeleItem( j );
-					statwindow( mSock, p );
+					statwindow( mSock, mChar );
 				}
+				Items->DeleItem( defendItem );
 			}
 		}
 	}
 
 	if( total < 2 )
 		total = 2;
-	return total;
+	return (UI16)total;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI32 cCombat::getArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
+//|	Date			-	3/03/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Finds the item covering the location bodyLoc with the greatest AR and
+//|							returns it along with its def value
+//o--------------------------------------------------------------------------o
+SI32 cCombat::getArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
+{
+	SI32 armorDef = 0;
+	CItem *currItem = NULL;
+	switch( bodyLoc )
+	{
+	case 1:		// Torso
+		currItem = checkDef( mChar->GetItemAtLayer( 5 ), currItem, armorDef );	// Shirt
+		currItem = checkDef( mChar->GetItemAtLayer( 13 ), currItem, armorDef );	// Torso (Inner - Chest Armor)
+		currItem = checkDef( mChar->GetItemAtLayer( 17 ), currItem, armorDef );	// Torso (Middle - Tunic, etc)
+		currItem = checkDef( mChar->GetItemAtLayer( 20 ), currItem, armorDef );	// Back (Cloak)
+		currItem = checkDef( mChar->GetItemAtLayer( 22 ), currItem, armorDef );	// Torso (Outer - Robe)
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 2.8 ));
+		break;
+	case 2:		// Arms
+		currItem = checkDef( mChar->GetItemAtLayer( 19 ), currItem, armorDef );	// Arms
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 6.8 ));
+		break;
+	case 3:		// Head
+		currItem = checkDef( mChar->GetItemAtLayer( 6 ), currItem, armorDef );	// Head
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 7.3 ));
+		break;
+	case 4:		// Legs
+		currItem = checkDef( mChar->GetItemAtLayer( 3 ), currItem, armorDef );	// Shoes
+		currItem = checkDef( mChar->GetItemAtLayer( 4 ), currItem, armorDef );	// Pants
+		currItem = checkDef( mChar->GetItemAtLayer( 12 ), currItem, armorDef );	// Waist (Half Apron)
+		currItem = checkDef( mChar->GetItemAtLayer( 23 ), currItem, armorDef );	// Legs (Outer - Skirt, Kilt)
+		currItem = checkDef( mChar->GetItemAtLayer( 24 ), currItem, armorDef );	// Legs (Inner - Leg Armor)
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 4.5 ));
+		break;
+	case 5:		// Neck
+		currItem = checkDef( mChar->GetItemAtLayer( 10 ), currItem, armorDef );	// Neck
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
+		break;
+	case 6:		// Hands
+		currItem = checkDef( mChar->GetItemAtLayer( 7 ), currItem, armorDef );	// Gloves
+		if( findTotal )
+			armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
+		break;
+	default:
+		break;
+	}
+	if( !findTotal )
+		defItem = *(currItem);
+	return armorDef;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	CItem *cCombat::checkDef( CItem *checkItem, CItem& currItem, SI32 &currDef )
+//|	Date			-	3/03/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Checks the defense of checkItem vs the defense of currItem and returns
+//|							the item with the greater Def and its def value
+//o--------------------------------------------------------------------------o
+CItem *cCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef )
+{
+	if( checkItem != NULL && checkItem->GetDef() > currDef )
+	{
+		currDef = checkItem->GetDef();
+		return checkItem;
+	}
+	return currItem;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1813,92 +1874,95 @@ void PlayerAttack( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	npcAttackTarget( CChar *target, CChar *source )
+//|	Function	-	npcAttackTarget( CChar *cTarg, CChar *cNpc )
 //|	Programmer	-	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	NPC attacks target
 //o---------------------------------------------------------------------------o
-void npcAttackTarget( CChar *target, CChar *source )
+void npcAttackTarget( CChar *cTarg, CChar *cNpc )
 {
-	if( source == NULL || target == NULL || source == target )
+	if( cNpc == NULL || cTarg == NULL || cNpc == cTarg )
 		return;
-	if( source->IsDead() || target->IsDead() )
+	if( cNpc->IsDead() || cTarg->IsDead() )
 		return;
-	if( !LineOfSight( NULL, source, target->GetX(), target->GetY(), target->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+	if( !LineOfSight( NULL, cNpc, cTarg->GetX(), cTarg->GetY(), cTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 		return;
-	playMonsterSound( source, source->GetID(), SND_STARTATTACK );
 
-	source->SetTarg( calcCharFromSer( target->GetSerial() ) );
-	source->SetAttacker( calcCharFromSer( target->GetSerial() ) );
-	source->SetAttackFirst( true );
+	playMonsterSound( cNpc, cNpc->GetID(), SND_STARTATTACK );
 
-	// The way the code was working was that if the thing being attacked (B) had a target (C), then it would check the attacker (A)
-	// to see if the distance from B->A was less than B->C.  If B->A is less than B->C, it changed targets
-	// I yanked this code, as a test
-	// B only attacks A if it doesn't already have a target
+	CHARACTER target = calcCharFromSer( cTarg->GetSerial() );
+	CHARACTER npc = calcCharFromSer( cNpc->GetSerial() );
 	bool returningAttack = false;
-	if( target->GetTarg() == INVALIDSERIAL )
+
+	cNpc->SetTarg( target );
+	cNpc->SetAttacker( target );
+	cNpc->SetAttackFirst( ( cTarg->GetTarg() != npc ) );
+	if( cTarg->GetTarg() == INVALIDSERIAL )
 	{
-		if( target->GetNPCAiType() != 17 && !target->IsInvulnerable() )	// invulnerable and player vendors don't fight back!
+		if( cTarg->GetNPCAiType() != 17 && !cTarg->IsInvulnerable() )	// invulnerable and player vendors don't fight back!
 		{
-			target->SetTarg( calcCharFromSer( source->GetSerial() ) );
-			target->SetAttacker( calcCharFromSer( source->GetSerial() ) );
-			target->SetAttackFirst( false );
+			cTarg->SetTarg( npc );
+			cTarg->SetAttacker( npc );
+			cTarg->SetAttackFirst( false );
 			returningAttack = true;
 		}
 	}
+
 	// If Attacker is hidden, show them!
-	if( source->GetHidden() && !source->IsPermHidden() )
-		source->ExposeToView();
-	source->BreakConcentration( calcSocketObjFromChar( source ) );
+	if( cNpc->GetHidden() && !cNpc->IsPermHidden() )
+		cNpc->ExposeToView();
+	cNpc->BreakConcentration( calcSocketObjFromChar( cNpc ) );
 
 	// Only unhide the defender, if they're going to return the attack (otherwise they're doing nothing!)
 	if( returningAttack )
 	{
-		if( target->GetHidden() && !target->IsPermHidden() )
-			target->ExposeToView();
-		target->BreakConcentration( calcSocketObjFromChar( target ) );
+		if( cTarg->GetHidden() && !cTarg->IsPermHidden() )
+			cTarg->ExposeToView();
+		cTarg->BreakConcentration( calcSocketObjFromChar( cTarg ) );
 	}
 	// if the source is an npc, make sure they're in war mode and reset their movement time
-	if( source->IsNpc() )
+	if( cNpc->IsNpc() )
 	{
-		if( !source->IsAtWar() ) 
-			npcToggleCombat( source );
-		source->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
+		if( !cNpc->IsAtWar() ) 
+			npcToggleCombat( cNpc );
+		cNpc->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
 	}
 	// if the target is an npc, and not a guard, make sure they're in war mode and update their movement time
 	// ONLY IF THEY'VE CHANGED ATTACKER
-	if( returningAttack && target->IsNpc() && target->GetNPCAiType() != 4 )
+	if( returningAttack && cTarg->IsNpc() && cTarg->GetNPCAiType() != 4 )
 	{
-		if( !target->IsAtWar() )
-			npcToggleCombat( target );
-		target->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
+		if( !cTarg->IsAtWar() )
+			npcToggleCombat( cTarg );
+		cTarg->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
 	}
 
-	bool gCompare = GuildSys->ResultInCriminal( source, target );
-	SI08 rCompare = Races->Compare( source, target );
+	bool gCompare = GuildSys->ResultInCriminal( cNpc, cTarg );
+	SI08 rCompare = Races->Compare( cNpc, cTarg );
 	
 	// If the target is an innocent, not a racial or guild ally/enemy, then flag them as criminal
 	// and, of course, call the guards ;>
-	if( target->IsInnocent() && gCompare && rCompare == 0 )
+	if( cTarg->IsInnocent() && gCompare && rCompare == 0 )
 	{
-		bool regionGuarded = ( region[target->GetRegion()]->IsGuarded() );
+		bool regionGuarded = ( region[cTarg->GetRegion()]->IsGuarded() );
 		if( cwmWorldState->ServerData()->GetGuardsStatus() && regionGuarded )
 		{
-			if( target->IsNpc() && target->GetNPCAiType() != 4 && isHuman( target ) )
-				npcTalkAll( target, 1282, true );
-			criminal( source );
+			if( cTarg->IsNpc() && cTarg->GetNPCAiType() != 4 && isHuman( cTarg ) )
+				npcTalkAll( cTarg, 1282, true );
+			criminal( cNpc );
 #ifdef DEBUG
-			Console.Print( "DEBUG: [npcAttackTarget)] %s is being set to criminal", chars[source].name );
+			Console.Print( "DEBUG: [npcAttackTarget)] %s is being set to criminal", chars[cNpc].name );
 #endif
 		}
 	}
-	npcEmoteAll( source, 334, true, source->GetName(), target->GetName() );  // Source NPC should emote "Source is attacking Target" to all nearby - Zane
-	if( !target->IsNpc() )
+	if( cNpc->DidAttackFirst() )
 	{
-		cSocket *iSock = calcSocketObjFromChar( target );
-		if( iSock != NULL )
-			npcEmote( iSock, target, 1281, true, source->GetName() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
+		npcEmoteAll( cNpc, 334, true, cNpc->GetName(), cTarg->GetName() );  // NPC should emote "Source is attacking Target" to all nearby - Zane
+		if( !cTarg->IsNpc() )
+		{
+			cSocket *iSock = calcSocketObjFromChar( cTarg );
+			if( iSock != NULL )
+				npcEmote( iSock, cTarg, 1281, true, cNpc->GetName() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
+		}
 	}
 }
 

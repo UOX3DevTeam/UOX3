@@ -20,7 +20,7 @@ class cBooks
 		// that private methods read and write from the *.bok files
 		void WriteAuthor( CItem *id,cSocket *s );
 		void WriteTitle( CItem *id, cSocket *s );
-		void WriteLine( CItem *id, int page, int line, char linestr[34] );
+		void WriteLine( CItem *id, UI16 page, int line, char linestr[34] );
 		
 		void ReadAuthor( CItem *id, UI08 auth[31] );
 		void ReadTitle( CItem *id, UI08 title[61] );
@@ -34,11 +34,11 @@ class cBooks
 	
 	    cBooks();
 
-        void OpenPreDefBook( cSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
+    void OpenPreDefBook( cSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
 		void OpenBook( cSocket *s, CItem *i, bool isWriteable ); // opens new books
-		void ReadPreDefBook( cSocket *mSock, CItem *i, int p ); // reads books from misc.scp, readonly = old books
-		void ReadNonWritableBook( cSocket *s, CItem *i, int p );     // reads new books readonly ( from *.bok file )
-		void ReadWritableBook( cSocket *s, CItem *i, int p, int l ); // writes changes to a new book opened in writable mode 
+		void ReadPreDefBook( cSocket *mSock, CItem *i, UI16 p ); // reads books from misc.scp, readonly = old books
+		void ReadNonWritableBook( cSocket *s, CItem *i, UI16 p );     // reads new books readonly ( from *.bok file )
+		void ReadWritableBook( cSocket *s, CItem *i, UI16 p, int l ); // writes changes to a new book opened in writable mode 
 		void DeleteBook( CItem *id ); // deletes bok-file.
 
 		virtual ~cBooks();

@@ -326,7 +326,7 @@ void HandleMakeItemEffect( teffect_st *tMake )
 	}
 
 	// Make sure it's movable
-	targItem->SetMagic( 1 );
+	targItem->SetMovable( 1 );
 	soundeffect( sock, toMake->soundPlayed, true );
 
 	sysmessage( sock, 985 );

@@ -848,18 +848,15 @@ void command_wipe( cSocket *s )
 	} 
 	else if( tnum == 2 ) 
 	{
-		if( !strcmp( "ALL", (char*)&(s->TBuffer()[Commands->cmd_offset+5]) ) ) 
-		{
-			// Really should warn that this will wipe ALL objects...
+		if( !strcmp( "ALL", (char*)&(s->TBuffer()[Commands->cmd_offset+5]) ) )  // Really should warn that this will wipe ALL objects...
 			Commands->Wipe( s );
-		}
 	}
 	else if( tnum == 5 ) 
 	{ // Wipe according to world coordinates
 		s->ClickX( makenumber( 1 ) );
 		s->ClickY( makenumber( 2 ) );
-		s->SetWord( 11, makenumber( 3 ) );
-		s->SetWord( 13, makenumber( 4 ) );
+		s->SetWord( 11, (UI16)makenumber( 3 ) );
+		s->SetWord( 13, (UI16)makenumber( 4 ) );
 		Targ->Wiping( s );
 	}
 }
@@ -905,8 +902,8 @@ void command_iwipe( cSocket *s )
 	{ // Wipe according to world coordinates
 		s->ClickX( makenumber( 1 ) );
 		s->ClickY( makenumber( 2 ) );
-		s->SetWord( 11, makenumber( 3 ) );
-		s->SetWord( 13, makenumber( 4 ) );
+		s->SetWord( 11, (UI16)makenumber( 3 ) );
+		s->SetWord( 13, (UI16)makenumber( 4 ) );
 		Targ->Wiping( s );
 	}
 }

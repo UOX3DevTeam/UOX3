@@ -1173,7 +1173,7 @@ void sendItem( cSocket *s, CItem *i )
 		if( i->GetVisible() >= 2 )
 			itmput[18] |= 0x80;
 		
-		if( i->GetMagic() == 1 ) 
+		if( i->GetMovable() == 1 ) 
 			itmput[18]+=0x20;
 		else if( mChar->AllMove() ) 
 			itmput[18]+=0x20;
@@ -1534,7 +1534,7 @@ void statwindow( cSocket *s, CChar *i )
 	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwnerObj() == mChar ) );
 	toSend.Gold( calcGold( i ) );
 	toSend.AC( Combat->calcDef( i, 0, false ) );
-	toSend.Weight( (SI32)(i->GetWeight() / 100) );
+	toSend.Weight( (UI16)(i->GetWeight() / 100) );
 	s->Send( &toSend );
 }
 
@@ -1737,8 +1737,9 @@ void grabItem( cSocket *mSock )
 							sendTradeStatus( z, x );
 						}
 						// Default item pick up sound sent to other player involved in trade
-						#pragma note( "Param Warning: in grabItem(), zSock is unrefrenced" )
 						cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+						if( zSock != NULL )
+							soundeffect( zSock, 0x0057, false );
 					}
 				}
 			}
@@ -1798,8 +1799,8 @@ void grabItem( cSocket *mSock )
 
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile );
-	if( !mChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
-		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
+	if( !mChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		mSock->Send( &bounce );
 		if( i->GetID( 1 ) >= 0x40 )
@@ -1955,8 +1956,8 @@ void wearItem( cSocket *mSock )
 	}
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile);
-	if( !mChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
-		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
+	if( !mChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, i );
@@ -2199,8 +2200,8 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 */
 	CTile tile;
 	Map->SeekTile( i->GetID(), &tile);
-	if( !nChar->AllMove() && ( i->GetMagic() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-		( tile.Weight() == 255 && i->GetMagic() != 1 ) ) )
+	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( nChar, i );
@@ -2278,7 +2279,6 @@ void packItem( cSocket *mSock )
 
 	bool stackDeleted = false;
 
-	char temp[1024];
 	CPBounce bounce( 5 );
 
 	if( nCont->GetLayer() == 0 && nCont->GetID() == 0x1E5E && nCont->GetCont() == mChar )
@@ -2338,8 +2338,8 @@ void packItem( cSocket *mSock )
 */
 	CTile tile;
 	Map->SeekTile( nItem->GetID(), &tile);
-	if( !mChar->AllMove() && ( nItem->GetMagic() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-		( tile.Weight() == 255 && nItem->GetMagic() != 1 ) ) )
+	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
@@ -2379,10 +2379,11 @@ void packItem( cSocket *mSock )
 			sysmessage( mSock, 1203 );
 			return;
 		}
+		char name[MAX_NAME];
 		if( nItem->GetName()[0] == '#' )
-			getTileName( nItem, temp );
+			getTileName( nItem, name );
 		else
-			strcpy( temp, nItem->GetName() );
+			strcpy( name, nItem->GetName() );
 
 		if( nCont->GetMore( 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
 		{
@@ -2394,7 +2395,7 @@ void packItem( cSocket *mSock )
 			return;
 		}
 
-		if( !strcmp( temp, Dictionary->GetEntry( 1605 ) ) )
+		if( !strcmp( name, Dictionary->GetEntry( 1605 ) ) )
 		{
 			if( nCont->GetMoreX() == 0xFFFFFFFF && nCont->GetMoreY() == 0xFFFFFFFF && nCont->GetMoreZ() == 0xFFFFFFFF )
 			{
@@ -2886,7 +2887,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 void batchcheck( cSocket *s )
 {
 	char temp[1024];
-	sprintf( temp, "BATCH %i", executebatch );
+	sprintf( temp, "BATCH %si", executebatch );
 	ScriptSection *Batch = FileLookup->FindEntry( temp, menus_def );
 	if( Batch == NULL )
 		return;
@@ -3791,17 +3792,6 @@ void checkPC( CChar *i, bool doWeather )
 
 		doLight( mSock, toShow );
 		Weather->DoPlayerStuff( i );
-	}
-	
-	if( i->GetSmokeTimer() > uiCurrentTime )
-	{
-		if( i->GetSmokeDisplayTimer() <= uiCurrentTime )
-		{
-			i->SetSmokeDisplayTimer( BuildTimeValue( 5 ) );
-			staticeffect( i, 0x3735, 0, 30 );
-			soundeffect( i, 0x002B );
-			npcEmote( mSock, i, 1230 + RandomNum( 0, 6 ), true );
-		}
 	}
 	
 	if( isOn && i->GetSquelched() == 2 )
@@ -4922,7 +4912,7 @@ int main( int argc, char *argv[] )
 		Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 		uiCurrentTime = getclock();
 
-		Console << "Initialize Console Thread      ";
+		Console << myendl << "Initialize Console Thread      ";
 #ifdef __LINUX__
 		int conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
 #else
@@ -5562,7 +5552,7 @@ void updateskill( cSocket *mSock, UI08 skillnum )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void getCharDir( CChar *a, SI16 x, SI16 y )
+//|	Function	-	UI08 getCharDir( CChar *a, SI16 x, SI16 y )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get characters direction
@@ -5600,42 +5590,44 @@ UI08 getCharDir( CChar *a, SI16 x, SI16 y )
 //o---------------------------------------------------------------------------o
 UI08 getFieldDir( CChar *s, SI16 x, SI16 y )
 {
-	UI08 dir = getCharDir( s, x, y );
-	switch( dir )
+	UI08 fieldDir = 0;
+	switch( getCharDir( s, x, y ) )
 	{
-	case 0:
-	case 4:
-		return 0;
-	case 2:
-	case 6:
-		return 1;
-	case 1:
-	case 3:
-	case 5:
-	case 7:
-	case 0xFF:
+	case NORTH:
+	case SOUTH:
+		break;
+	case EAST:
+	case WEST:
+		fieldDir = 1;
+		break;
+	case NORTHEAST:
+	case SOUTHEAST:
+	case SOUTHWEST:
+	case NORTHWEST:
+	case UNKNOWNDIR:
 		switch( s->GetDir() )
 		{
-		case 0:
-		case 4:
-			return 0;
-		case 2:
-		case 6:
-			return 1;
-		case 1:
-		case 3:
-		case 5:
-		case 7:
-			return 1;
+		case NORTH:
+		case SOUTH:
+			break;
+		case NORTHEAST:
+		case EAST:
+		case SOUTHEAST:
+		case SOUTHWEST:
+		case WEST:
+		case NORTHWEST:
+			fieldDir = 1;
+			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, fielddir()" );
-			return 0;
+			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
+			break;
 		}
-		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, fielddir()" );
-			return 0;
+		break;
+	default:
+		Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
+		break;
 	}
-	return 1;
+	return fieldDir;
 }
 
 //o---------------------------------------------------------------------------o
@@ -8090,7 +8082,7 @@ CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 			return NULL;
 		c->SetCorpse( true );
 		c->SetCarve( i->GetCarve() );
-		c->SetMagic( 2 );//non-movable
+		c->SetMovable( 2 );//non-movable
 		c->SetAmount( i->GetxID() );
 		c->SetDir( i->GetDir() );
 	} 
@@ -8140,30 +8132,30 @@ CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 					if( k == NULL ) 
 						continue;
 				
-							if( !k->isNewbie() && k->GetType() != 9 )
-							{
-								k->SetCont( c );
-								k->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-								k->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
-								k->SetZ( 9 );
-								RefreshItem( k );
-							}
-						}
+					if( !k->isNewbie() && k->GetType() != 9 )
+					{
+						k->SetCont( c );
+						k->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
+						k->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
+						k->SetZ( 9 );
+						RefreshItem( k );
 					}
-
-				if( j != p && j->GetLayer() != 0x1D )
-				{
-					if( j->isNewbie() && p != NULL )
-						j->SetCont( p );
-					else
-						j->SetCont( c );
 				}
+			}
+
+			if( j != p && j->GetLayer() != 0x1D )
+			{
+				if( j->isNewbie() && p != NULL )
+					j->SetCont( p );
+				else
+					j->SetCont( c );
+			}
 
 			if( j->GetLayer() == 0x15 && !i->IsShop() && corpse )
-					j->SetLayer( 0x1A );
+				j->SetLayer( 0x1A );
 			j->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
 			j->SetY( (UI16)( 85 + ( RandomNum( 0, 74 ) ) ) );
-				j->SetZ( 9 );
+			j->SetZ( 9 );
 
 			CPRemoveItem toRemove( (*j) );
 			Network->PushConn();
@@ -8173,18 +8165,15 @@ CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 			if( j != p )
 				RefreshItem( j );
 		}
-		
-//		if( !corpse ) 
-//			j->SetLayer( 0 );
-		
-			if( j->GetLayer() == 0x0B || j->GetLayer() == 0x10 )
-			{
-				j->SetName( "Hair/Beard" );
-				j->SetX( 0x47 );
-				j->SetY( 0x93 );
-				j->SetZ( 0 );
-			}
-	}//for loop
+
+		if( j->GetLayer() == 0x0B || j->GetLayer() == 0x10 )
+		{
+			j->SetName( "Hair/Beard" );
+			j->SetX( 0x47 );
+			j->SetY( 0x93 );
+			j->SetZ( 0 );
+		}
+	}
 	return c;
 }
 
@@ -8399,8 +8388,8 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if item is in a multi
+//|						z is currently unrefrenced, but may be used in the future
 //o---------------------------------------------------------------------------o
-#pragma note( "Param Warning: in inMulti(), worldNumber, z is unrefrenced" )
 bool inMulti( SI16 x, SI16 y, SI08 z, CItem *m, UI08 worldNumber )
 {
 	if( m == NULL )

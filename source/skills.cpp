@@ -2105,20 +2105,21 @@ void cSkills::ItemIDTarget( cSocket *s )
 		return;
 	}
 
-	UnicodeTypes sLang = s->Language();
-	char temp[1024];
-
 	CChar *mChar = s->CurrcharObj();
 	if( CheckSkill( mChar, ITEMID, 250, 500 ) )
 	{
+		UnicodeTypes sLang = s->Language();
+
+		char name[MAX_NAME];
 		if( i->GetName2() && strcmp( i->GetName2(), "#" ) ) 
 			i->SetName( i->GetName2() );
 		if( i->GetName()[0] == '#') 
-			getTileName( i, temp );
+			getTileName( i, name );
 		else 
-			strcpy( temp, i->GetName() );
-		sysmessage( s, 1547, temp );
+			strcpy( name, i->GetName() );
+		sysmessage( s, 1547, name );
 		
+		char temp[1024];
 		if( i->GetCreator() != INVALIDSERIAL )
 		{
 			CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
@@ -2746,7 +2747,7 @@ void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			} 
 			else 
 			{
-				char tileName[128];
+				char tileName[MAX_NAME];
 				getTileName( item, tileName );
 				sprintf( temp, Dictionary->GetEntry( 884 ), mChar->GetName(), tileName );
 				sprintf( temp2, Dictionary->GetEntry( 885 ), mChar->GetName(), tileName, npc->GetName() );
@@ -2783,35 +2784,28 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 	if( i->IsLockedDown() )
 		return -1;
 
+	SI16 stealDiff = -1;
 	SI32 calcDiff, itemWeight;
 	switch( i->GetType() )
 	{
-	case 1: // Backpack
-		itemWeight = i->GetWeight();
-		calcDiff = (10 + c->GetSkill( STEALING ) / 4 );
-		if( calcDiff > itemWeight )
-			return (SI16)max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
-		break;
 	case 9:		// Spellbook
 	case 63:	// Item spawn container
 	case 64:	// Locked spawn container
 	case 65:	// Unlockable item spawn container
 	case 87:	// Trash container
 		break;
+	case 1:		// Backpack
 	default:
 		if( i->GetID() == 0x14F0 ) // Deeds
-			return -1;
-
-		if( i->GetWeight() <= 0 )
-			i->SetWeight( Weight->calcWeight( i ) );
+			break;
 
 		itemWeight = i->GetWeight();
-		calcDiff = (int)( 100 + c->GetSkill( STEALING ) * 2 );
-		if( calcDiff > itemWeight ) // make it 2 times the base stealing skill... GM thieves can steal up to 21 stones, newbie only 1 stone
-			return (SI16)max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+		calcDiff = (SI32)((c->GetSkill( STEALING ) * 2) + 100);  // GM thieves can steal up to 21 stones, newbie only 1 stone
+		if( calcDiff > itemWeight )
+			stealDiff = (SI16)max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 		break;
 	}
-	return -1;
+	return stealDiff;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3757,7 +3751,7 @@ bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
 //|   Purpose     :  Calculate the skill of this character based on the 
 //|					 characters baseskill and stats
 //o---------------------------------------------------------------------------o
-void cSkills::updateSkillLevel( CChar *c, int s )
+void cSkills::updateSkillLevel( CChar *c, UI08 s )
 {
 	UI16 sstr = skill[s].strength, astr = c->ActualStrength();
 	UI16 sdex = skill[s].dexterity, adex = c->ActualDexterity();
@@ -5086,13 +5080,13 @@ SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AdvanceStats( CChar *s, int sk, bool skillsuccess )
+//|   Function    :  void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Advance players stats
 //o---------------------------------------------------------------------------o
-void cSkills::AdvanceStats( CChar *s, int sk, bool skillsuccess ) 
+void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess ) 
 { 
     CRace *pRace = Races->Race( s->GetRace() ); 
 	

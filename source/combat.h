@@ -10,6 +10,8 @@ private:
 	void	doSoundEffect( CChar *p, CItem *weapon );
 	void	doMissedSoundEffect( CChar *p );
 	void	Kill( CChar *attack, CChar *defend );
+	SI32	getArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal = false );
+	CItem *	checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef );
 public:
 //	UI16	GetSwingRate( CChar *iNPC, CItem *weapon );
 	UI08	getBowType( CChar *i );
@@ -18,7 +20,7 @@ public:
 	CItem *	getWeapon( CChar *i );
 	CItem *	getShield( CChar *i );
 	SI16	calcAtt( CChar *p );
-	UI16	calcDef( CChar *p, SI08 x, bool doDamage);
+	UI16	calcDef( CChar *p, UI08 hitLoc, bool doDamage = false );
 	void	CombatOnHorse( CChar *i );
 	void	CombatOnFoot( CChar *i );
 	void	CombatHit( CChar *attack, CChar *defend, SI32 weaponType = -1 );

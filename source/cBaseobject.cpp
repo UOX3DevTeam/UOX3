@@ -908,23 +908,13 @@ bool cBaseObject::DumpBody( std::ofstream &outStream, int mode ) const
 	//no need to check default for these, this should be in for every thing.
 	dumping << "Name=" << name << std::endl;
 	dumping << "Serial=" << serial << std::endl;
-	dumping << "XYZ=" << x << "," << y << "," << (SI16)z << std::endl;
-	dumping << "WorldNumber=" << (SI16)worldNumber << std::endl;
+	dumping << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << std::endl;
 	dumping << "ObjectType=" << (int)objType << std::endl;
 	dumping << "ID=" << id << std::endl;
 	dumping << "Colour=" << colour << std::endl;
 	dumping << "Direction=" << (SI16)dir << std::endl;
 	dumping << "Title=" << title << std::endl;
-	dumping << "Kills=" << kills << std::endl;
-	dumping << "Fame=" << fame << std::endl;
-	dumping << "Karma=" << karma << std::endl;
-	dumping << "Mana=" << mana << std::endl;
-	dumping << "Stamina=" << stamina << std::endl;
-	dumping << "Dexterity=" << dexterity << std::endl;
-	dumping << "Intelligence=" << intelligence << std::endl;
-	dumping << "Strength=" << strength << std::endl;
-	dumping << "HitPoints=" << hitpoints << std::endl;
-	
+	dumping << "Reputation" << fame << "," << karma << "," << kills << std::endl;
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
 	temp_dx2 = dx2;
@@ -946,32 +936,28 @@ bool cBaseObject::DumpBody( std::ofstream &outStream, int mode ) const
 			temp_in2 -= myItem->Intelligence2();
 		}
 	}
-	
 	//=========== BUGFIX END (by Dark-Storm)
-	
-	dumping << "Strength2=" << temp_st2 << std::endl;
-	dumping << "Dexterity2=" << temp_dx2 << std::endl;
-	dumping << "Intelligence2=" << temp_in2 << std::endl;
-	//====================================================================================
-	// Ab, here is another problem, tell me if this is a suitble way of doing this for you
+	dumping << "Mana=" << mana << std::endl;
+	dumping << "Stamina=" << stamina << std::endl;
+	dumping << "Dexterity=" << dexterity << "," << temp_dx2 << std::endl;
+	dumping << "Intelligence=" << intelligence << "," << temp_in2 << std::endl;
+	dumping << "Strength=" << strength << "," << temp_st2 << std::endl;
+	dumping << "HitPoints=" << hitpoints << std::endl;
+
 	if( multis != NULL )
 		dumping << "MultiID=" << multis->GetSerial() << std::endl;
 	if( spawnserial != NULL )
 		dumping << "SpawnerID=" << spawnserial->GetSerial() << std::endl;
 	if( owner != NULL )
 		dumping << "OwnerID=" << owner->GetSerial() << std::endl;
-	//====================================================================================
+
 	dumping << "Race=" << race << std::endl;
 	dumping << "Visible=" << (SI16)visible << std::endl;
 	dumping << "Disabled=" << (disabled?"1":"0") << std::endl;
-	dumping << "HiDamage=" << hidamage << std::endl;
-	dumping << "LoDamage=" << lodamage << std::endl;
+	dumping << "Damage=" << hidamage << "," << lodamage << std::endl;
 	dumping << "Defense=" << def << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
-	dumping << "DWord0=" << genericDWords[0] << std::endl;
-	dumping << "DWord1=" << genericDWords[1] << std::endl;
-	dumping << "DWord2=" << genericDWords[2] << std::endl;
-	dumping << "DWord3=" << genericDWords[3] << std::endl;
+	dumping << "DWords=" << genericDWords[0] << "," << genericDWords[1] << "," << genericDWords[2] << "," << genericDWords[3] << std::endl;
 	// Ab, does this need to be written to the file? I am going to make it write it but comment or remove it if its not(remember to remove it from the Load routine as well)
 	dumping << "iCounter=" << iCounter << std::endl;
 	// Spin the character tags to save make sure to dump them too
@@ -2252,6 +2238,16 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 		}
 		break;
 	case 'D':
+		if( !strcmp( tag, "Damage" ) )
+		{
+			char *loDamageOff = strstr( data, "," );
+			char tmp[32];
+			strncpy( tmp, data, loDamageOff - data );
+			tmp[loDamageOff - data] = 0;
+			hidamage = (SI16)makeNum( tmp );
+			lodamage = (SI16)makeNum( loDamageOff + 1 );
+			return true;
+		}
 		if( !strcmp( tag, "Direction" ) )
 		{
 			dir = (UI08)makeNum( data );
@@ -2259,7 +2255,17 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Dexterity" ) )
 		{
-			dexterity = (SI16)makeNum( data );
+			char *dex2Off = strstr( data, "," );
+			if( dex2Off != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, dex2Off - data );
+				tmp[dex2Off - data] = 0;
+				dexterity = (SI16)makeNum( tmp );
+				dx2 = (SI16)makeNum( dex2Off + 1 );
+			}
+			else
+				dexterity = (SI16)makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "Dexterity2" ) )
@@ -2272,24 +2278,38 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 			def = (UI16)makeNum( data );
 			return true;
 		}
-		else if( !strcmp( tag, "DWord0" ) )
+		else if( !strcmp( tag, "DWords" ) )
 		{
-			genericDWords[0] = makeNum( data );
+			char *oneOff = strstr( data, "," );
+			char *twoOff = strstr( oneOff+1, "," );
+			char *threeOff = strstr( twoOff+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, oneOff - data );
+			tmp[oneOff - data] = 0;
+			genericDWords[0] = (SI16)makeNum( tmp );
+			strncpy( tmp, oneOff + 1, twoOff - oneOff - 1 );
+			tmp[twoOff - oneOff - 1] = 0;
+			genericDWords[1] = (SI16)makeNum( tmp );
+			strncpy( tmp, twoOff + 1, threeOff - twoOff - 1 );
+			tmp[threeOff - twoOff - 1] = 0;
+			genericDWords[2] = (SI08)makeNum( tmp );
+			genericDWords[3] = (UI08)makeNum( threeOff + 1 );
 			return true;
 		}
-		else if( !strcmp( tag, "DWord1" ) )
+		else if( !strcmp( tag, "DWord0" ) )	// Depreciated
 		{
-			genericDWords[1] = makeNum( data );
 			return true;
 		}
-		else if( !strcmp( tag, "DWord2" ) )
+		else if( !strcmp( tag, "DWord1" ) )	// Depreciated
 		{
-			genericDWords[2] = makeNum( data );
 			return true;
 		}
-		else if( !strcmp( tag, "DWord3" ) )
+		else if( !strcmp( tag, "DWord2" ) )	// Depreciated
 		{
-			genericDWords[3] = makeNum( data );
+			return true;
+		}
+		else if( !strcmp( tag, "DWord3" ) )	// Depreciated
+		{
 			return true;
 		}
 		else if( !strcmp( tag, "Disabled" ) )
@@ -2316,11 +2336,6 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 			hidamage = (SI16)makeNum( data );
 			return true;
 		}
-		else if( !strcmp( tag, "HiDamage" ) )
-		{
-			hidamage = (SI16)makeNum( data );
-			return true;
-		}
 		break;
 	case 'I':
 		if( !strcmp( tag, "ID" ) )
@@ -2330,7 +2345,17 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Intelligence" ) )
 		{
-			intelligence = (SI16)makeNum( data );
+			char *int2Off = strstr( data, "," );
+			if( int2Off != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, int2Off - data );
+				tmp[int2Off - data] = 0;
+				intelligence = (SI16)makeNum( tmp );
+				in2 = (SI16)makeNum( int2Off + 1 );
+			}
+			else
+				intelligence = (SI16)makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "Intelligence2" ) )
@@ -2358,7 +2383,25 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 		}
 		break;
 	case 'L':
-		if( !strcmp( tag, "LoDamage" ) )
+		if( !strcmp( tag, "Location" ) )
+		{
+			char *yOff = strstr( data, "," );
+			char *zOff = strstr( yOff+1, "," );
+			char *worldNumOff = strstr( zOff+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, yOff - data );
+			tmp[yOff - data] = 0;
+			x = (SI16)makeNum( tmp );
+			strncpy( tmp, yOff + 1, zOff - yOff - 1 );
+			tmp[zOff - yOff - 1] = 0;
+			y = (SI16)makeNum( tmp );
+			strncpy( tmp, zOff + 1, worldNumOff - zOff - 1 );
+			tmp[worldNumOff - zOff - 1] = 0;
+			z = (SI08)makeNum( tmp );
+			worldNumber = (UI08)makeNum( worldNumOff + 1 );
+			return true;
+		}
+		else if( !strcmp( tag, "LoDamage" ) )
 		{
 			lodamage = (SI16)makeNum( data );
 			return true;
@@ -2401,6 +2444,20 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 			race = static_cast<RACEID>(makeNum( data ));
 			return true;
 		}
+		else if( !strcmp( tag, "Reputation" ) )
+		{
+			char *karmaOff = strstr( data, "," );
+			char *killsOff = strstr( karmaOff+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, karmaOff - data );
+			tmp[karmaOff - data] = 0;
+			fame = (SI16)makeNum( tmp );
+			strncpy( tmp, karmaOff + 1, killsOff - karmaOff - 1 );
+			tmp[killsOff - karmaOff - 1] = 0;
+			karma = (SI16)makeNum( tmp );
+			kills = (SI08)makeNum( killsOff + 1 );
+			return true;
+		}
 		break;
 	case 'S':
 		if( !strcmp( tag, "Stamina" ) )
@@ -2420,7 +2477,17 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Strength" ) )
 		{
-			strength = (SI16)makeNum( data );
+			char *str2Off = strstr( data, "," );
+			if( str2Off != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, str2Off - data );
+				tmp[str2Off - data] = 0;
+				strength = (SI16)makeNum( tmp );
+				st2 = (SI16)makeNum( str2Off + 1 );
+			}
+			else
+				strength = (SI16)makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "Strength2" ) )
@@ -2433,7 +2500,6 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 			scriptTrig = (UI16)makeNum( data );
 			return true;
 		}
-		break;
 	case 'T':
 		if( !strcmp( tag, "Title" ) )
 		{

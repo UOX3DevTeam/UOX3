@@ -150,7 +150,7 @@ UI08 CItem::GetMoreB( UI08 part ) const
 //o--------------------------------------------------------------------------
 void CItem::SetSerial( SERIAL newValue, ITEM c )
 {
-	nitemsp.Remove( newValue, c );
+	nitemsp.Remove( newValue );
 	cBaseObject::SetSerial( newValue );
 	if( c != INVALIDSERIAL && newValue != INVALIDSERIAL )
 		nitemsp.AddSerial( newValue, c );
@@ -196,7 +196,7 @@ bool CItem::SetCont( cBaseObject *newCont )
 					if( layer >= MAXLAYERS )
 					{
 						contObj = NULL;
-						return true;
+						return false;
 					}
 					//return false;	// disable for now
 				}
@@ -206,7 +206,7 @@ bool CItem::SetCont( cBaseObject *newCont )
 			else
 			{
 				contObj = NULL;
-				return true;
+				return false;
 			}
 		}
 		else
@@ -244,7 +244,7 @@ bool CItem::SetCont( cBaseObject *newCont )
 			else
 			{
 				contObj = NULL;
-				return true;
+				return false;
 			}
 		}
 	}
@@ -665,11 +665,11 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 		ShouldSave( true );
 }
 
-SI08 CItem::GetLayer( void ) const
+UI08 CItem::GetLayer( void ) const
 {
 	return layer;
 }
-void CItem::SetLayer( SI08 newValue ) 
+void CItem::SetLayer( UI08 newValue ) 
 {
 	if( contObj != NULL && contObj->GetObjType() == OT_CHAR )	// if we're on a char
 	{
@@ -680,6 +680,8 @@ void CItem::SetLayer( SI08 newValue )
 //			{
 //				Console.Error( "Char %s(%i) was never wearing item on layer %i\n", charAffected->GetName(), contserial, GetLayer() );
 //			}
+			if( layer != 0 )
+				charAffected->TakeOffItem( layer );
 			layer = newValue;
 			charAffected->WearItem( this );
 			return;
@@ -796,13 +798,13 @@ void CItem::SetSpeed( UI08 newValue )
 	spd = newValue;
 }
 
-SI08 CItem::GetMagic( void ) const
+SI08 CItem::GetMovable( void ) const
 {
-	return magic;
+	return movable;
 }
-void CItem::SetMagic( SI08 newValue )
+void CItem::SetMovable( SI08 newValue )
 {
-	magic = newValue;
+	movable = newValue;
 }
 
 UI32 CItem::GetGateTime( void ) const
@@ -991,7 +993,7 @@ void CItem::IncID( SI16 incAmount )
 
 CItem::CItem( ITEM nItem, bool zeroSer ) : 
 	contObj( NULL ), remove( false ), carve( -1 ), 	glow_effect( 0 ), glow( -1 ), glowColour( 0 ), madewith( 0 ), 
-	rndvaluerate( 0 ), good( -1 ), rank( 0 ), armorClass( 0 ), 	poisoned( 0 ), restock( 0 ), value( 0 ), priv( 0 ), magic( 0 ), 
+	rndvaluerate( 0 ), good( -1 ), rank( 0 ), armorClass( 0 ), 	poisoned( 0 ), restock( 0 ), value( 0 ), priv( 0 ), movable( 0 ), 
 	gatetime( 0 ), decaytime( 0 ), murdertime( 0 ), spd( 0 ), 	maxhp( 0 ), doordir( 0 ), amount( 1 ), morex( 0 ),
 	morey( 0 ), enhanced( 0 ), weatherBools( 0 ), morez( 0 ), 	more( 0 ), moreb( 0 ), bools( 0 ), layer( 0 ), type( 0 ), 
 	type2( 0 ), offspell( 0 ), weight( 0 ), entryMadeFrom( -1 )
@@ -1137,7 +1139,7 @@ UI08 CItem::IsFieldSpell( void ) const
 }
 bool CItem::IsLockedDown( void ) const
 {
-	return( magic == 3 );
+	return( movable == 3 );
 }
 bool CItem::IsShieldType( void ) const
 {
@@ -1163,7 +1165,7 @@ bool CItem::CanBeLockedDown( void ) const
 
 void CItem::LockDown( void )
 {
-	magic = 3;
+	movable = 3;
 }
 
 bool CItem::Save( std::ofstream &outStream, SI32 mode )
@@ -1336,7 +1338,7 @@ CItem * CItem::Dupe( void )
 	target->SetLocation( this );
 	target->SetLoDamage( GetLoDamage() );
 	target->SetMadeWith( GetMadeWith() );
-	target->SetMagic( GetMagic() );
+	target->SetMovable( GetMovable() );
 	target->SetMana( GetMana() );
 	target->SetMaxHP( GetMaxHP() );
 	target->SetMore( GetMore() );
@@ -1568,11 +1570,11 @@ bool CItem::DumpBody( BinBuffer &buff ) const
 		buff.PutShort( GetMaxHP() );
 	}
 	
-	if( DefItem->GetSpeed() != GetSpeed() || DefItem->GetMagic() != GetMagic() || DefItem->GetPriv() != GetPriv() )
+	if( DefItem->GetSpeed() != GetSpeed() || DefItem->GetMovable() != GetMovable() || DefItem->GetPriv() != GetPriv() )
 	{
 		buff.PutByte( ITEMTAG_SPD_MG_PV );
 		buff.PutByte( GetSpeed() );
-		buff.PutByte( GetMagic() );
+		buff.PutByte( GetMovable() );
 		buff.PutByte( GetPriv() );
 	}
 	
@@ -1652,19 +1654,15 @@ bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	cBaseObject::DumpBody( outStream, mode );
 	dumping << "Layer=" << (SI16)GetLayer() << std::endl;
 	dumping << "Cont=" << GetContSerial() << std::endl;
-	dumping << "More=" << GetMore() << std::endl;
-	dumping << "More2=" << GetMoreB() << std::endl;
+	dumping << "More=" << GetMore() << "," << GetMoreB() << std::endl;
 	dumping << "Name2=" << GetName2() << std::endl;
 	dumping << "Murderer=" << GetMurderer() << std::endl;
 	dumping << "Creator=" << GetCreator() << std::endl;
 	dumping << "Desc=" << GetDesc() << std::endl;
-	dumping << "Type=" << (SI16)GetType() << std::endl;
-	dumping << "Type2=" << (SI16)GetType2() << std::endl;
+	dumping << "Type=" << (SI16)GetType() << "," << (SI16)GetType2() << std::endl;
 	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
 	dumping << "Weight=" << GetWeight() << std::endl;
-	dumping << "MoreX=" << GetMoreX() << std::endl;
-	dumping << "MoreY=" << GetMoreY() << std::endl;
-	dumping << "MoreZ=" << GetMoreZ() << std::endl;
+	dumping << "MoreXYZ=" << GetMoreX() << "," << GetMoreY() << "," << GetMoreZ() << std::endl;
 	dumping << "Amount=";
 	if( GetAmount() > MAX_STACK )
 		dumping << MAX_STACK << std::endl;
@@ -1673,7 +1671,7 @@ bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	dumping << "Doorflag=" << (SI16)GetDoorDir() << std::endl;
 	dumping << "MaxHP=" << GetMaxHP() << std::endl;
 	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
-	dumping << "Movable=" << (SI16)GetMagic() << std::endl;
+	dumping << "Movable=" << (SI16)GetMovable() << std::endl;
 	dumping << "Priv=" << (SI16)GetPriv() << std::endl;
 	dumping << "Value=" << GetValue() << std::endl;
 	dumping << "Restock=" << GetRestock() << std::endl;
@@ -1691,12 +1689,8 @@ bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	dumping << "GlowBC=" << GetGlowColour() << std::endl;
 	dumping << "GlowType=" << (SI16)GetGlowEffect() << std::endl;
 	dumping << "Carve=" << GetCarve() << std::endl;
-	dumping << "Light=" << (SI16)(LightDamage() ? 1 : 0) << std::endl;
-	dumping << "Rain=" << (SI16)(RainDamage() ? 1 : 0) << std::endl;
-	dumping << "Heat=" << (SI16)(HeatDamage() ? 1 : 0) << std::endl;
-	dumping << "Cold=" << (SI16)(ColdDamage() ? 1 : 0) << std::endl;
-	dumping << "Snow=" << (SI16)(SnowDamage() ? 1 : 0) << std::endl;
-	dumping << "Lightning=" << (SI16)(LightningDamage() ? 1 : 0) << std::endl;
+	dumping << "RaceDamage=" << (SI16)(LightDamage() ? 1 : 0) << "," << (SI16)(RainDamage() ? 1 : 0) << ","
+		<< (SI16)(HeatDamage() ? 1 : 0) << "," << (SI16)(ColdDamage() ? 1 : 0) << "," << (SI16)(SnowDamage() ? 1 : 0) << "," << (SI16)(LightningDamage() ? 1 : 0) << std::endl;
 	dumping << "EntryMadeFrom=" << entryMadeFrom << std::endl;
 	
 	//dumping << std::endl << std::endl;
@@ -1824,7 +1818,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'L':
 		if( !strcmp( tag, "Layer" ) )
 		{
-			SetLayer( (SI08)makeNum( data ) );
+			SetLayer( (UI08)makeNum( data ) );
 			return true;
 		}
 		else if( !strcmp( tag, "Light" ) )
@@ -1841,7 +1835,17 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'M':
 		if( !strcmp( tag, "More" ) )
 		{
-			SetMore( makeNum( data ) );
+			char *more2Off = strstr( data, "," );
+			if( more2Off != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, more2Off - data );
+				tmp[more2Off - data] = 0;
+				SetMore( makeNum( tmp ) );
+				SetMoreB( makeNum( more2Off + 1 ) );
+			}
+			else
+				SetMore( makeNum( data ) );
 			return true;
 		}
 		else if( !strcmp( tag, "More2" ) )
@@ -1852,6 +1856,20 @@ bool CItem::HandleLine( char *tag, char *data )
 		else if( !strcmp( tag, "Murderer" ) )
 		{
 			SetMurderer( makeNum( data ) );
+			return true;
+		}
+		else if( !strcmp( tag, "MoreXYZ" ) )
+		{
+			char *moreyOff = strstr( data, "," );
+			char *morezOff = strstr( moreyOff+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, moreyOff - data );
+			tmp[moreyOff - data] = 0;
+			SetMoreX( (SI16)makeNum( tmp ) );
+			strncpy( tmp, moreyOff + 1, morezOff - moreyOff - 1 );
+			tmp[morezOff - moreyOff - 1] = 0;
+			SetMoreY( (SI16)makeNum( tmp ) );
+			SetMoreZ( (SI08)makeNum( morezOff + 1 ) );
 			return true;
 		}
 		else if( !strcmp( tag, "MoreX" ) )
@@ -1871,7 +1889,7 @@ bool CItem::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Movable" ) )
 		{
-			SetMagic( (SI08)makeNum( data ) );
+			SetMovable( (SI08)makeNum( data ) );
 			return true;
 		}
 		else if( !strcmp( tag, "MaxHP" ) )
@@ -1917,6 +1935,37 @@ bool CItem::HandleLine( char *tag, char *data )
 			SetRestock( static_cast<UI16>(makeNum( data ) ));
 			return true;
 		}
+		else if( !strcmp( tag, "RaceDamage" ) )
+		{
+			char *rainOff = strstr( data, "," );
+			char *heatOff = strstr( rainOff+1, "," );
+			char *coldOff = strstr( heatOff+1, "," );
+			char *snowOff = strstr( coldOff+1, "," );
+			char *lightningOff = strstr( snowOff+1, "," );
+			char tmp[32];
+			strncpy( tmp, data, rainOff - data );
+			tmp[rainOff - data] = 0;
+			LightDamage( makeNum( tmp ) == 1 );
+
+			strncpy( tmp, rainOff + 1, heatOff - rainOff - 1 );
+			tmp[heatOff - rainOff - 1] = 0;
+			RainDamage( makeNum( tmp ) == 1 );
+
+			strncpy( tmp, heatOff + 1, coldOff - heatOff - 1 );
+			tmp[coldOff - heatOff - 1] = 0;
+			HeatDamage( makeNum( tmp ) == 1 );
+
+			strncpy( tmp, coldOff + 1, snowOff - coldOff - 1 );
+			tmp[snowOff - coldOff - 1] = 0;
+			ColdDamage( makeNum( tmp ) == 1 );
+
+			strncpy( tmp, snowOff + 1, lightningOff - snowOff - 1 );
+			tmp[lightningOff - snowOff - 1] = 0;
+			SnowDamage( makeNum( tmp ) == 1 );
+
+			LightningDamage( makeNum( lightningOff + 1 ) == 1 );
+			return true;	
+		}
 		else if( !strcmp( tag, "Rank" ) )
 		{
 			SetRank( (SI08)makeNum( data ) );
@@ -1948,7 +1997,17 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'T':
 		if( !strcmp( tag, "Type" ) )
 		{
-			SetType( (UI08)makeNum( data ) );
+			char *type2Off = strstr( data, "," );
+			if( type2Off != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, type2Off - data );
+				tmp[type2Off - data] = 0;
+				SetType( (UI08)makeNum( tmp ) );
+				SetType2( (UI08)makeNum( type2Off + 1 ) );
+			}
+			else
+				SetType( (UI08)makeNum( data ) );
 			return true;
 		}
 		else if( !strcmp( tag, "Type2" ) )
@@ -2046,7 +2105,7 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 
 	case ITEMTAG_SPD_MG_PV:
 		SetSpeed( buff.GetByte() );
-		SetMagic( buff.GetByte() );
+		SetMovable( buff.GetByte() );
 		SetPriv( buff.GetByte() );
 		break;
 
