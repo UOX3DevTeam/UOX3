@@ -1,0 +1,38 @@
+Ok.. here's a little something I recently figured out..  I'm sure
+others have figured this out too..  so..  This is half a tutorial, and
+half a new item:
+
+SECTION ITEM 80010
+{
+NAME a magical necklace
+NAME2 a Necklace of Lycanthropy
+TYPE 101
+MOREX 225
+ID 1088
+DECAY
+VALUE 45
+RESTOCK 10
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+Pretty simple..  here's how to make your own:
+
+TYPE 101 (this is the type for a morph object)
+MOREX # (this is the number that corresponds to the ID you want to change into)
+
+Now, here is a bit of advice.. the MOREX value is found only using InsideUO..
+It is not the ID of the monster/animal..  it is the number in front of the ID:
+
+Model No. 225 (0xE1)
+
+This is the model number for a wolf.  The number to use for the morph object
+would be 225..  not 0xE1.. 
+
+Understand?

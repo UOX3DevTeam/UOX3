@@ -1,0 +1,261 @@
+This file was scripted by Jasho and tweaked a little by me, Jerelith
+
+
+So far I have 
+mandrake plant --> uprooted mandrake plant --> mandrake reagent.
+garlc plants --> uprooted garlic bud --> garlic reagent.
+nightshade plant --> uprooted nightshade --> nightshade reagent.
+ginseng flower --> uprooted ginseng flower --> ginseng reagent.
+an oyster shell --> black pearls + used up oyster shell.
+
+
+Also - I'm a little perplexed as to how to remove a trigger from an item if it fails for either a skill check or a random number check. Any help here would be appreciated as well.
+
+
+********(stuff for growing reagents)**********
+*************( Add to Items.scp )*************
+
+
+
+// pre-reagent stuff
+SECTION ITEM 80201
+{
+ID 18DF
+NAME a plant
+NAME2 a mandrake plant
+WEIGHT 2
+MOVABLE 2
+GOOD 8
+TRIGGER 199
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 80202
+{
+ID 18DD
+NAME a mandrake plant
+WEIGHT 2
+GOOD 8
+TRIGGER 201
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 80203
+{
+ID 18E1
+NAME plants
+NAME2 garlic plants
+WEIGHT 2
+MOVABLE 2
+GOOD 8
+TRIGGER 202
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 80204
+{
+ID 18E3
+NAME a garlic bud
+WEIGHT 2
+GOOD 8
+TRIGGER 203
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 80205
+{
+ID 18E5
+NAME a plant
+NAME2 a nightshade plant
+WEIGHT 2
+MOVABLE 2
+GOOD 8
+TRIGGER 204
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 80206
+{
+ID 18E5
+NAME a nightshade plant
+WEIGHT 2
+GOOD 8
+TRIGGER 205
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 80207
+{
+ID 18E9
+NAME a flower
+NAME2 a ginseng flower
+WEIGHT 2
+MOVABLE 2
+GOOD 8
+TRIGGER 206
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 80208
+{
+ID 18EB
+NAME uprooted ginseng
+WEIGHT 2
+GOOD 8
+TRIGGER 207
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 80209
+{
+ID 0FC8
+NAME a seashell
+NAME2 an oyster
+WEIGHT 2
+GOOD 8
+TRIGGER 208
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+*************( Add to Triggers.scp )*************
+
+SECTION TRG 199
+{ mandrake plant to uprooted plant
+RANGE 2
+REMOVE
+MSG you pull up the plant
+IADD 80202 1
+}
+
+
+SECTION TRG 201
+{ uprooted mandrake plant to reagent
+REMOVE
+MSG you cut-off the root
+IADD 440 1
+}
+
+
+SECTION TRG 202
+{ garlic plant to uprooted plant
+RANGE 2
+REMOVE
+MSG you pull up the plant
+IADD 80204 1
+}
+
+
+SECTION TRG 203
+{ uprooted garlic bud to reagent
+REMOVE
+MSG you cut-off the root
+IADD 438 1
+}
+
+
+SECTION TRG 204
+{ nightshade plant to uprooted plant
+RANGE 2
+HEA -30
+REMOVE
+MSG you pull up the plant
+IADD 80206 1
+}
+
+
+SECTION TRG 205
+{ uprooted nightshade plant to reagent
+REMOVE
+MSG you cut-off the root
+IADD 442 1
+}
+
+
+SECTION TRG 206
+{ ginseng flower to uprooted flower
+RANGE 2
+REMOVE
+MSG you pull up the flower
+IADD 80208 1
+}
+
+
+SECTION TRG 207
+{ uprooted ginseng to reagent
+REMOVE
+MSG you discard all but the roots
+IADD 439 1
+}
+
+
+SECTION TRG 208
+{ getting pearls from a shell
+RANGE 2
+REMOVE
+FMSG You do not find anything useful
+RAND 100 25
+IADD 428 1
+MSG You get black pearls from the shell
+}
+
+
