@@ -229,6 +229,7 @@ void JailSystem::WriteData( void )
 			}
 		}
 	}
+	fclose(toWrite);
 }
 void JailSystem::PeriodicCheck( void )
 {
