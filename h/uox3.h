@@ -44,7 +44,7 @@
 
 // product info
 #define VER " 0.70.03"
-#define BUILD "21d"
+#define BUILD "22"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"

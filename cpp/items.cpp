@@ -946,12 +946,8 @@ void cItem::GetScriptItemSetting(int c)
 	strcpy( tscript1, script1 ); // AntiChrist
 	strcpy( tscript2, script2 );
     openscript("harditems.scp");
-	*(buff) = '\0'; // Fix by Magius(CHE)
+	buff[0] = '\0'; // Fix by Magius(CHE)
 	sprintf(buff,"x%x%x",items[c].id1,items[c].id2);
-/*	if (!i_scripts[hard_items]->isin(buff)) {
-		closescript();
-		return;
-	}*/
 	int anum=3;
 	do
 	{

@@ -1753,11 +1753,6 @@ void cSkills::Wheel(int s, int mat)//Spinning wheel
 				}
 				
 				items[chars[currchar[s]].tailitem].priv=items[chars[currchar[s]].tailitem].priv|0x01; // AntiChrist - moved here
-																									  /*				for (m=0;m<now;m++) if (perm[m]) 
-																									  {
-																									  items[chars[currchar[s]].tailitem].priv=items[chars[currchar[s]].tailitem].priv|0x01;
-																									  senditem(m,chars[currchar[s]].tailitem);
-			}*/
 				RefreshItem( chars[currchar[s]].tailitem ); // AntiChrist
 				tailme=1;
 			}
@@ -1922,10 +1917,6 @@ void cSkills::MakePizza(int s)
 				items[chars[currchar[s]].tailitem].priv=items[chars[currchar[s]].tailitem].priv|0x01;
 				items[chars[currchar[s]].tailitem].amount=items[chars[currchar[s]].tailitem].amount*2;
 				
-				/*				for (m=0;m<now;m++) if (perm[m]) 
-				{
-				senditem(m,chars[currchar[s]].tailitem);
-			}       */
 				RefreshItem( chars[currchar[s]].tailitem ); // AntiChrist
 				tailme=1;
 				
@@ -4801,19 +4792,23 @@ int cSkills::TrackingDirection(int s,int i)
 void cSkills::BeggingTarget(int s)
 {
 	int i,serial;
-	addid1[s]=buffer[s][7];
-	addid2[s]=buffer[s][8];
-	addid3[s]=buffer[s][9];
-	addid4[s]=buffer[s][10];
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	if(calcSocketFromChar(calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]))!=-1)
-	{
-		sysmessage(s,"Maybe you should just ask.");
-		return;
-	}
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	i = calcCharFromSer( serial );
+	UOXSOCKET tSock = calcSocketFromChar( i );
+
 	if (i>-1)
 	{
+
+		if( !chars[i].npc )
+		{
+			sysmessage( s,"Maybe you should just ask." );
+			return;
+		}
+		if( chars[i].npcaitype == 17 )
+		{
+			sysmessage( s, "This person is not susceptible to your pleading for gold." );
+			return;
+		}
 		if(chardist(i,currchar[s])>=begging_data.range)
 		{
 			sysmessage(s,"You are not close enough to beg.");

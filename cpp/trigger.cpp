@@ -102,10 +102,6 @@ void triggerwitem(int ts, int ti, int ttype)
 	}
 	else
 	{
-    /*if ((buffer[ts][7]!=0)&&(buffer[ts][8]!=0)&&(buffer[ts][9]!=0)&&(buffer[ts][10]!=0))
-    {
-	return;
-    }*/
 		openscript("wtrigrs.scp");
 		sprintf(buff,"x%x%x",buffer[ts][0x11],buffer[ts][0x12]);
 		if (!i_scripts[wtrigger_script]->isin(buff))

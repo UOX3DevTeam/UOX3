@@ -897,19 +897,17 @@ void command_add( UOXSOCKET s )
 	{
 		sysmessage( s, "Syntax Error. Usage: /add <id1> <id2>" );
 		return;
-	} else if( tnum == 3 )
+	} 
+	else if( tnum == 3 )
 	{
 		addid1[s]=hexnumber(1);
 		addid2[s]=hexnumber(2);
 		if (addid1[s]<0x40)
 		{
 			target(s, 0, 1, 0, 0, "Select location for item.");
-		}/* else { //This was causing server crashes (after added, if someone walked it would get
-			//in an endless loop through the mutli section of walking() )
-			 addid3[s]=0;
-			buildhouse(s,0);
-			}*/
-	} else if (tnum==1)
+		}
+	} 
+	else if (tnum==1)
 	{
 		itemmenu(s, 1);
 	}
@@ -1354,11 +1352,12 @@ void command_set( UOXSOCKET s )
 		strupr(script1);
 		addx[s]=-1;
 		
-		//				ConOut("callet %s\n",script1);
-		
 		for (i=0;i<SKILLS;i++)
 		{
-			if (!(strcmp(skillname[i], script1))) { /*ConOut("%s\n",skillname[i]);*/addx[s]=i;}
+			if (!(strcmp(skillname[i], script1))) 
+			{ 
+				addx[s]=i;
+			}
 		}
 		if (addx[s]!=-1)
 		{

@@ -31,32 +31,35 @@
 
 void cTargets::PlVBuy(int s)//PlayerVendors
 {
+	if( s == -1 )
+		return;
 	int v = addx[s];
-	if (v < 0 || v>cmem|| s==-1)
+
+	if ( v < 0 || v > cmem )
 		return;
 	if (chars[v].free)
 		return;
 	int serial, i, gleft = calcgold(currchar[s]), price;
 	int p = packitem(currchar[s]);
 	int np, npc;
-	if (p==-1)
+	if ( p == -1 )
 	{
 		sysmessage(s, "Time to buy a backpack");
 		return;
 	}
 
 	serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i==-1)
+	i = calcItemFromSer( serial );
+	if ( i == -1 )
 		return;
-	if (items[i].contserial==-1)
+	if ( items[i].contserial == -1 )
 		return;
 
 	price = items[i].value;
 
-	np = findbyserial(&itemsp[items[i].contserial%HASHMAX], items[i].contserial, 0);
+	np = calcItemFromSer( items[i].contserial );
 	npc = GetPackOwner(np);
-	if (npc != v || chars[v].npcaitype != 17)
+	if ( npc != v || chars[v].npcaitype != 17 )
 		return;
 
 	if (chars[currchar[s]].serial == chars[v].ownserial)
@@ -65,9 +68,6 @@ void cTargets::PlVBuy(int s)//PlayerVendors
 		return;
 	}
 
-	p = packitem(currchar[s]);
-	if (p < 0)
-		return;
 	if (gleft < items[i].value)
 	{
 		npctalk(s, v, "You cannot afford that.", 0);
@@ -75,11 +75,10 @@ void cTargets::PlVBuy(int s)//PlayerVendors
 	}
 	else
 	{
-	// This portion of code is grabbed from void buyaction(int s) in uox3.cpp
-	int tAmount = 0;
-	tAmount = delequan(currchar[s], 0x0E, 0xED, items[i].value);
-	// tAmount > 0 indicates there wasn't enough money...
-	// could be expanded to take money from bank too...
+		int tAmount = 0;
+		tAmount = delequan(currchar[s], 0x0E, 0xED, items[i].value);
+		// tAmount > 0 indicates there wasn't enough money...
+		// could be expanded to take money from bank too...
 	}
 	npctalk(s, v, "Thank you.", 0);
 	chars[v].holdg += items[i].value;
@@ -735,19 +734,16 @@ void cTargets::DyeTarget(int s)
 
 void cTargets::NewzTarget(int s)
 {
-	int i/*,j*/,serial;
-	
-	
+	int i, serial;
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].z=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].dispz=chars[i].z=addx[s];

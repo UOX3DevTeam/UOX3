@@ -318,10 +318,6 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			// BEGIN Check items by type 
 		}
 		//taken from 6904t2(5/10/99) - AntiChrist
-		/*else // Lb, bugkilling, moved from end to here
-		{
-		sysmessage( s, "You must wait to perform another action." );
-			}*/
 		UI16 wx, wy;
 		switch (itype)
 		{

@@ -23,10 +23,6 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-// In addition to that license, if you are running this program or modified  *
-// versions of it on a public system you HAVE TO make the complete source of *
-// the version used by you available or provide people with a location to    *
-// download it.                                                              *
 
 /* Admin code by Cironian */
 
@@ -357,8 +353,7 @@ void cAdmin::Account()//Revana*
 
 void cAdmin::LoadAccounts()//Revana*
 {
-	// FILE *infile;
-	int /*i, */guestnum=0;
+	int guestnum=0;
 	acctcount=0;
 	openscript("accounts.adm");
 	do

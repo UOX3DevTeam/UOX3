@@ -46,9 +46,6 @@ void cGuilds::StonePlacement(int s)
 	int stone,guildnumber;
 	char stonename[60];
 
-	//Commented out for now -- AntiChrist --
-	//if (!(guildCheckValidPlace(x,y))) sysmessage(s,"You cannot place guildstones at any other location than your house");
-	
 	if ((items[chars[currchar[s]].fx1].id1==0x14)&&(items[chars[currchar[s]].fx1].id2==0xF0))
 	{
 		if (chars[currchar[s]].guildnumber!=0)
@@ -64,7 +61,6 @@ void cGuilds::StonePlacement(int s)
 		}
 		chars[currchar[s]].guildnumber=guildnumber;
 		stone=Items->SpawnItem(s,1,"Guildstone for an unnamed guild",0,0x0E,0xD5,0,0,0,0);
-//		mapRegions->RemoveItem(stone);
 		safeCopy(chars[currchar[s]].guildtitle,"Guildmaster", MAX_GUILDTITLE);
 		if( stone == -1 )
 		{
@@ -87,7 +83,7 @@ void cGuilds::StonePlacement(int s)
 		items[stone].z=chars[currchar[s]].z;
 		items[stone].type=202;
 		items[stone].priv=0;
-		RefreshItem( stone ); // AntiChrist
+		RefreshItem( stone );
 		Items->DeleItem(chars[currchar[s]].fx1);
 		guilds[guildnumber].stone=items[stone].serial;
 		guilds[guildnumber].master=chars[currchar[s]].serial;
@@ -117,7 +113,7 @@ void cGuilds::StonePlacement(int s)
 			items[stone].z=chars[currchar[s]].z;
 			items[stone].type=202;
 			items[stone].priv=0;
-			RefreshItem( stone ); // AntiChrist
+			RefreshItem( stone );
 			Items->DeleItem(chars[currchar[s]].fx1);
 			chars[currchar[s]].fx1=0;
 			guilds[guildnumber].stone=items[stone].serial;
@@ -126,7 +122,7 @@ void cGuilds::StonePlacement(int s)
 			itemmessage(s,"You are not the guildmaster of this guild. Only the guildmaster may use this guildstone teleporter.",items[chars[currchar[s]].fx1].ser1,items[chars[currchar[s]].fx1].ser2,items[chars[currchar[s]].fx1].ser3,items[chars[currchar[s]].fx1].ser4);
 	}
 	if( stone > -1 ) 
-		mapRegions->AddItem( stone );		// why was this removed???
+		mapRegions->AddItem( stone );
 }
 
 
@@ -143,8 +139,7 @@ void cGuilds::Menu(int s, int page)
 	
 	stone = chars[currchar[s]].fx1;
 	int guildnumber = SearchByStone(s);
-	if ((guilds[guildnumber].stone != items[stone].serial)&&
-		(!(chars[currchar[s]].priv&1)))
+	if ( guilds[guildnumber].stone != items[stone].serial && !(chars[currchar[s]].priv&1) )
 	{
 		itemmessage(s, "You are not a member of this guild. Ask an existing guildmember to invite you into this guild.", items[stone].ser1, items[stone].ser2, items[stone].ser3, items[stone].ser4);
 		return;
@@ -195,8 +190,7 @@ void cGuilds::Menu(int s, int page)
 			sprintf(mygump[5], "Toggle showing the guild's abbreviation in your name to unguilded people. Currently %s.", toggle);
 			strcpy(mygump[6], "Resign from the guild.");
 			strcpy(mygump[7], "View list of candidates who have been sponsored to the guild.");
-			if ((chars[currchar[s]].serial == guilds[guildnumber].master)||
-				(chars[currchar[s]].priv&1))							// Guildmaster Access?
+			if ( chars[currchar[s]].serial == guilds[guildnumber].master || chars[currchar[s]].priv&1)
 			{															
 				gumpnum = 10;
 				gmprefix[7] = 8000 >> 8;
@@ -479,7 +473,6 @@ void cGuilds::Menu(int s, int page)
 		Network->xSend(s, &lentext, 1, 0);
 		Network->xSend(s, mygump[i], lentext, 0);
 	}
-	return;
 }
 
 
@@ -506,7 +499,6 @@ void cGuilds::Resign(int s)
 		EraseGuild(guildnumber);
 		sysmessage(s, "You have been the last member of that guild so the stone vanishes.");
 	}
-	return;
 }
 
 
@@ -517,8 +509,8 @@ void cGuilds::Resign(int s)
 // guilderaseguild() Wipes all information about a guild and removes the guildstone
 void cGuilds::EraseGuild(int guildnumber)
 {
-	int stone = findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX], guilds[guildnumber].stone, 0);
-	if (stone==-1)
+	int stone = calcItemFromSer( guilds[guildnumber].stone );
+	if ( stone == -1 )
 		return;
 	int member, recruit, war;
 	int counter;
@@ -602,7 +594,6 @@ void cGuilds::ToggleAbbreviation(int s)
 	if (guilds[guildnumber].type != 0)							// Check for Order/Chaos
 	{
 		sysmessage(s, "You are in an Order/Chaos guild, you cannot toggle your title.");
-		// They may not toggle it off!
 	}
 	else
 	{
@@ -618,7 +609,6 @@ void cGuilds::ToggleAbbreviation(int s)
 		}
 	}
 	Menu(s, 1);										// Send him back to the menu
-	return;
 }
 
 
@@ -636,7 +626,7 @@ void cGuilds::Recruit(int s)
 	if (buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF)
 		return; // check if user canceled operation - Morrolan
 	int serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if (chars[i].guildnumber != 0)
@@ -666,11 +656,8 @@ void cGuilds::Recruit(int s)
 			} else 
 				sysmessage(s, "This is not a player.");
 		}
-		// break;
-		//} for
 	}
 	Menu(s, 1);
-	return;
 }
 
 
@@ -688,7 +675,7 @@ void cGuilds::TargetWar(int s)
 	if (buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF)
 		return; // check if user canceled operation - Morrolan
 	int serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if (chars[i].guildnumber == 0)
@@ -697,7 +684,7 @@ void cGuilds::TargetWar(int s)
 			sysmessage(s, "War yourself? Nah.");
 		else 
 		{
-			if (!(chars[i].npc))
+			if ( !chars[i].npc )
 			{
 				slot = SearchSlot(guildnumber, 4);
 				for (dummy = 1; dummy < MAXGUILDWARS; dummy++)
@@ -723,11 +710,8 @@ void cGuilds::TargetWar(int s)
 			else 
 				sysmessage(s, "This is not a player.");
 		}
-		// break;
-		//} for
 	}
 	Menu(s, 2);
-	return;
 }
 
 
@@ -741,23 +725,22 @@ void cGuilds::TargetWar(int s)
 void cGuilds::StoneMove(int s)
 {
 	int guildnumber = SearchByStone(s);
-	int stone = findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX], guilds[guildnumber].stone, 0);
-	if (stone==-1)
+	int stone = calcItemFromSer( guilds[guildnumber].stone );
+	if ( stone== -1 )
 		return;
-	// Get stone
+
 	int newstone;											// For the new stone
 	char stonename[80];										// And for its name
 	
 	sprintf(stonename, "a guildstone teleporter for %s", guilds[guildnumber].name); // Give it a name
 	
 	newstone = Items->SpawnItem(s, 1, stonename, 0, 0x18, 0x69, 0, 0, 1, 1);	// Spawn the stone in the masters backpack
-	if (newstone == -1)
+	if ( newstone == -1 )
 		return;
 	items[newstone].type = 202;								// Set Guildstone to Type 'Guild Related'
 	guilds[guildnumber].stone = items[newstone].serial;		// Remember its serial number
 	Items->DeleItem(stone);										// Remove the guildstone
 	sysmessage(s, "Take care of that stone!");				// And tell him also
-	return;													// Bye bye
 }
 
 
@@ -793,15 +776,15 @@ int cGuilds::Compare(int player1, int player2)
 				for (counter = 1; counter < MAXGUILDWARS; counter++)
 				{
 					if (guilds[chars[player2].guildnumber].war[counter] == guildnumber)
-					{return 2;}
+					{
+						return 2;
+					}
 				}
 			}
 		}
 	}
 	return 0;
 }
-
-
 
 
 
@@ -831,8 +814,6 @@ void cGuilds::GumpInput(int s, int type, int index, char *text)
 void cGuilds::GumpChoice(int s,int main,int sub)
 {
 	int i,member, recruit, war, guild, counter, slot;
-	//int members[MAXGUILDMEMBERS];
-	//int recruits[MAXGUILDRECRUITS];
 	unsigned char ser1 = chars[currchar[s]].ser1;
 	unsigned char ser2 = chars[currchar[s]].ser2;
 	unsigned char ser3 = chars[currchar[s]].ser3;
@@ -845,16 +826,25 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 	{
 	case 8000:
 	case 8001:
-		if (sub==1) target(s,0,1,0,220,"Select person to invite into the guild.");
-		if (sub==2) Menu(s,7);
-		if (sub==3) Menu(s,5);
-		if (sub==4) Menu(s,13);
-		if (sub==5) ToggleAbbreviation(s);
-		if (sub==6) Resign(s);
-		if (sub==7) Menu(s,6);
-		if ((sub==8)&&(main==8000)) Menu(s,2);
-		if ((sub==8)&&(main==8001)||((sub==9)&&main==8000)) Menu(s,11);
-		if ((sub==9)&&(main==8001)||((sub==10)&&main==8000)) Menu(s,16);
+		switch( sub )
+		{
+		case 1: target(s,0,1,0,220,"Select person to invite into the guild.");	break;
+		case 2:	Menu(s,7);														break;
+		case 3: Menu(s,5);														break;
+		case 4: Menu(s,13);														break;
+		case 5: ToggleAbbreviation(s);											break;
+		case 6: Resign(s);														break;
+		case 7: Menu(s,6);														break;
+		case 8:
+		default:
+			if( sub == 8 && main == 8000 ) 
+				Menu( s, 2 );
+			else if( ( sub == 8 && main == 8001 ) || ( sub == 9 && main == 8000 ) ) 
+				Menu( s, 11 );
+			else if( ( sub == 9 && main == 8001 ) || ( sub == 10 && main == 8000 ) ) 
+				Menu( s, 16 );
+			break;
+		}
 		return;
 	case 8002:												// guildmaster menu
 		switch (sub)
@@ -946,7 +936,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 				counter++;
 				if (sub==counter)
 				{
-					i=findbyserial(&charsp[guilds[guildnumber].recruit[recruit]%HASHMAX],guilds[guildnumber].recruit[recruit],1);
+					i = calcCharFromSer( guilds[guildnumber].recruit[recruit] );
 					if (i!=-1) //lb
 					if (chars[i].guildnumber==0)
 					{
@@ -961,7 +951,8 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 							if (guilds[guildnumber].type!=0) chars[i].guildtoggle=1;
 							sysmessage(s,"This candidate is now a guildmember.");
 						}
-						else sysmessage(s,"This guild is full, maximum amount of members reached!");
+						else 
+							sysmessage(s,"This guild is full, maximum amount of members reached!");
 					}
 					else 
 					{
@@ -987,7 +978,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 				counter++;
 				if (sub==counter)
 				{
-					guilds[guildnumber].priv=findbyserial(&charsp[guilds[guildnumber].member[member]%HASHMAX],guilds[guildnumber].member[member],1);
+					guilds[guildnumber].priv = calcCharFromSer( guilds[guildnumber].member[member] );
 					entrygump(s,ser1,ser2,ser3,ser4,100,3,20,"Enter new guildtitle.");
 					return;
 				}
@@ -1075,7 +1066,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 void cGuilds::ChangeName(int s, char *text)
 {
 	int guildnumber=SearchByStone(s);
-	int stone = findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX],guilds[guildnumber].stone,0);
+	int stone = calcItemFromSer( guilds[guildnumber].stone );
 	if (stone == -1) 
 		return;
 	int exists = 0, guild;
@@ -1092,7 +1083,8 @@ void cGuilds::ChangeName(int s, char *text)
 		sprintf(txt,"Your guild got renamed to %s",guilds[guildnumber].name);
 		Broadcast(guildnumber,txt);
 	}
-	else sysmessage(s,"This name is allready taken by another guild.");
+	else 
+		sysmessage(s,"This name is allready taken by another guild.");
 }
 
 
@@ -1322,15 +1314,16 @@ void cGuilds::CalcMaster(int guildnumber)
 	}
 	for (member = 1; member < MAXGUILDMEMBERS; member++)
 	{
-		if (guildmember[member] > guildmember[currenthighest]) 
+		if ( guildmember[member] > guildmember[currenthighest] ) 
 		{
 			draw = 0;
 			currenthighest = member;
 		}
-		else if (guildmember[member] == guildmember[currenthighest]) 
-			draw=1;
+		else if ( guildmember[member] == guildmember[currenthighest] ) 
+			draw = 1;
 	}
-	if (draw==0) guilds[guildnumber].master=guilds[guildnumber].member[currenthighest];
+	if ( draw == 0 ) 
+		guilds[guildnumber].master=guilds[guildnumber].member[currenthighest];
 	return;
 }
 
@@ -1394,11 +1387,14 @@ void cGuilds::Title(int s,int player2)
 		if (!(strcmp(abbreviation,""))) strcpy(abbreviation,"none");
 		if (guilds[chars[player2].guildnumber].type!=0)
 		{
-			if (guilds[chars[player2].guildnumber].type == 1) strcpy(guildtype,"Order");
-			else if (guilds[chars[player2].guildnumber].type == 2) strcpy(guildtype,"Chaos");
+			if (guilds[chars[player2].guildnumber].type == 1) 
+				strcpy(guildtype,"Order");
+			else if (guilds[chars[player2].guildnumber].type == 2) 
+				strcpy(guildtype,"Chaos");
 			if (strcmp(chars[player2].guildtitle,"")) 
 				sprintf(title,"[%s, %s] [%s]",chars[player2].guildtitle, abbreviation,guildtype);
-			else sprintf(title,"[%s] [%s]", abbreviation, guildtype);
+			else 
+				sprintf(title,"[%s] [%s]", abbreviation, guildtype);
 		}
 		else
 		{
@@ -1436,26 +1432,48 @@ void cGuilds::Title(int s,int player2)
 // Called by: loadnewworld()
 void cGuilds::Read(int guildnumber)
 {
-	int war = 1, member = 1, recruit = 1;
+	int war=1, member=1, recruit=1;
 	do
 	{
 		readw2();
-		if (!(strcmp(script1,"NAME"))) strcpy(guilds[guildnumber].name,script2);
-		else if (!(strcmp(script1,"ABBREVIATION"))) strcpy(guilds[guildnumber].abbreviation,script2);
-		else if (!(strcmp(script1,"TYPE"))) guilds[guildnumber].type=str2num(script2);
-		else if (!(strcmp(script1,"CHARTER"))) strcpy(guilds[guildnumber].charter,script2);
-		else if (!(strcmp(script1,"WEBPAGE"))) strcpy(guilds[guildnumber].webpage,script2);
-		else if (!(strcmp(script1,"STONE"))) guilds[guildnumber].stone=str2num(script2);
-		else if (!(strcmp(script1,"MASTER"))) guilds[guildnumber].master=str2num(script2);
-		else if (!(strcmp(script1,"RECRUITS"))) guilds[guildnumber].recruits=str2num(script2);
-		else if (!(strcmp(script1,"RECRUIT"))) { guilds[guildnumber].recruit[recruit]=str2num(script2);recruit++;}
-		else if (!(strcmp(script1,"MEMBERS"))) guilds[guildnumber].members=str2num(script2);
-		else if (!(strcmp(script1,"MEMBER"))) { guilds[guildnumber].member[member]=str2num(script2);member++;}
-		else if (!(strcmp(script1,"WARS"))) guilds[guildnumber].wars=str2num(script2);
-		else if (!(strcmp(script1,"WAR"))) { guilds[guildnumber].war[war]=str2num(script2);war++;}
-		guilds[guildnumber].free=0;
+		if( !strcmp( script1, "NAME" ) ) 
+			strcpy( guilds[guildnumber].name, script2 );
+		else if( !strcmp( script1, "ABBREVIATION" ) ) 
+			strcpy( guilds[guildnumber].abbreviation, script2 );
+		else if( !strcmp( script1, "TYPE" ) ) 
+			guilds[guildnumber].type = str2num( script2 );
+		else if( !strcmp( script1, "CHARTER" ) ) 
+			strcpy( guilds[guildnumber].charter, script2 );
+		else if( !strcmp( script1, "WEBPAGE" ) ) 
+			strcpy( guilds[guildnumber].webpage, script2 );
+		else if( !strcmp( script1, "STONE" ) ) 
+			guilds[guildnumber].stone = str2num( script2 );
+		else if( !strcmp( script1, "MASTER" ) ) 
+			guilds[guildnumber].master = str2num( script2 );
+		else if( !strcmp( script1, "RECRUITS" ) ) 
+			guilds[guildnumber].recruits = str2num( script2 );
+		else if( !strcmp( script1, "RECRUIT" ) ) 
+		{ 
+			guilds[guildnumber].recruit[recruit] = str2num( script2 );
+			recruit++;
+		}
+		else if( !strcmp( script1, "MEMBERS" ) ) 
+			guilds[guildnumber].members = str2num( script2 );
+		else if( !strcmp( script1, "MEMBER" ) ) 
+		{ 
+			guilds[guildnumber].member[member] = str2num( script2 ); 
+			member++;
+		}
+		else if( !strcmp( script1, "WARS" ) ) 
+			guilds[guildnumber].wars = str2num( script2 );
+		else if( !strcmp( script1, "WAR" ) ) 
+		{ 
+			guilds[guildnumber].war[war] = str2num( script2 );
+			war++;
+		}
+		guilds[guildnumber].free = 0;
 	}
-	while (strcmp(script1,"}"));
+	while( strcmp( script1, "}" ) );
 }
 
 

@@ -155,8 +155,6 @@ int inmulti(int x, int y, signed char z, int m)//see if they are in the multi at
 	for (j=0;j<length;j++)
 	{
 	        mfile->get_st_multi(&multi);
-		/*ConOut("DEBUG: Multi { vis=%i - (%i,%i) } check(%i,%i,%i)   -   total(%i,%i)\n",
-		multi.visible,multi.x,multi.y,x,y,z,multi.x+items[m].x,items[m].y+multi.y);*/
 		if ((multi.visible)&&(items[m].x+multi.x == x) && (items[m].y+multi.y == y))
 		{
 			return 1;
@@ -947,14 +945,12 @@ void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
 	{
 		items[boat].type2=1;//Moving
 		itemtalk(s, tiller, "Aye, sir.");
-//		Move(s,dir,boat);
 	} else if(strstr(msg,"BACKWARD") || strstr(msg, "REVERSE"))
 	{
 		items[boat].type2=2;//Moving backward
 		if(dir>=4) dir-=4; 
 		else dir+=4;
 		itemtalk(s, tiller, "Aye, sir.");
-//		Move(s,dir,boat);		
 	}  else if(strstr(msg,"ONE") || strstr(msg,"DRIFT"))
 	{
 		if(strstr(msg,"LEFT"))

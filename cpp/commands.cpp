@@ -819,11 +819,10 @@ void cCommands::GMPage(int s, char *reason)
 
 void cCommands::DyeItem(int s) // Rehue an item
 {
-	int body,/*c1,c2,*/b/*,j*/,k;
+	int body, b, k;
 	unsigned char c1, c2;
-//	printf("DyeItem called\n");
 	int serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	int i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
 			c1=buffer[s][7];
@@ -852,7 +851,6 @@ void cCommands::DyeItem(int s) // Rehue an item
 			{
 				items[i].color1 = c1;
 				items[i].color2 = c2;
-//				ConOut("spectral\n");
 			}
 
 			RefreshItem( i ); // AntiChrist
@@ -861,8 +859,7 @@ void cCommands::DyeItem(int s) // Rehue an item
 			return;
 	}
 
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+	i = calcCharFromSer( serial );
 	if(i!=-1)
 	{
 		if( !(chars[currchar[s]].priv&1 ) ) return; // Only gms dye characters
@@ -936,10 +933,8 @@ void cCommands::SetTriggerWord(int s)
 
 void cCommands::AddHere(int s, char z)
 {
-	int /*j,*/c,pileable=0;
+	int c, pileable = 0;
 	tile_st tile;
-	//c=Items->MemItemFree();
-	//Items->InitItem(c);
 	
 	Map->SeekTile((addid1[s]<<8)+addid2[s], &tile);
 	if (tile.flag2&0x08) pileable=1;
@@ -1018,7 +1013,7 @@ void cCommands::MakePlace(int s, int i) // Decode a teleport location number int
 
 void cCommands::DupeItem(int s, int i, int amount)
 {
-	int p,/* j,*/ c;
+	int p, c;
 	p=packitem(currchar[s]);
 	if( p == -1 ) return;
 	if (items[i].corpse==0)

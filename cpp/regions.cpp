@@ -135,13 +135,9 @@ long cRegion::GetNextItem(unsigned int cell, unsigned int Last)
 // - Get an item in a cell return -1 if done
 long cRegion::GetItem(unsigned int cell, unsigned int item)
 {
-	if (cell>32999 || cell<0) return -1;
-	/*ConOut("Map region %i dump.\n", cell);
-	UI16 i;
-	for (i=0;i<MapCells[cell].max;i++)
-		ConOut("   %i: %i\n", i, MapCells[cell].pointer[i]);
-	ConOut("Done.\n");*/
-	if (item>MapCells[cell].max || item<0) return -1;
+	if (cell>32999 || cell<0 || item>MapCells[cell].max || item<0) 
+		return -1;
+
 	return MapCells[cell].pointer[item];
 }
 

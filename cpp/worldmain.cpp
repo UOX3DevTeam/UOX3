@@ -346,14 +346,15 @@ void CWorldMain::SaveChar( long i )
 	else
 		valid=1;
 	// removed y > 200 (wind errors) and 6044 changed to 6144 (Abaddon )
+	// 7000 is reserved for pets
 	if (valid && chars[i].free==0 && chars[i].x > 200 && chars[i].x < 6144 && chars[i].y < 4096 && (strcmp(chars[i].name, "John Doe" )))
 		valid=1;
-	else valid=0;
+	else valid = 0;
+	if( !valid && chars[i].x == 7000 && chars[i].y == 7000 )		// Required for saving of mounts
 	if( valid && chars[i].spawn1 < 0x40 && chars[i].spawn2 == 1 )	// don't need npc check, pcs won't ever have a spawn2 of 1
 		valid = 0;
 				
 	if (valid)
-		//		if( acctx[chars[i].account].saveChar != 1 && acctx[chars[i].account].wipe != 1 && chars[i].free==0 && chars[i].x > 200 && chars[i].y > 200 && chars[i].x < 6044 && chars[i].y < 4096  && (strcmp(chars[i].name, "John Doe" )))
 	{
 		fprintf(cWsc, "SECTION CHARACTER %i\n", i);
 		fprintf(cWsc, "{\n");
@@ -1132,17 +1133,6 @@ void CWorldMain::loadchar( CHARACTER x ) // Load a character from WSC
 	 k=(chars[x].id1<<8)+chars[x].id2;
 	 if (k>=0x000 && k<=0x3e1) 
 	 { 
-/*		 c1=(chars[x].skin1<<8)+chars[x].skin2; 
-		 b=c1&0x4000; 
-		 if ((b==16384 && (k >=0x0190 && k<=0x03e1)) || c1==0x8000)
-		 {
-			 if (c1!=0xf000)
-			 {
-				 chars[x].skin1=chars[x].xskin1=0xf0;
-				 chars[x].skin2=chars[x].xskin2=0;
-				 printf("char/player: %s : %i correted problematic skin hue\n",chars[x].name,chars[x].serial);
-			 }
-		 }*/
 	 } 
 	 else  // client crashing body --> delete if non player esle put onl”x a warning on server screen
 	 {	 // we dont want to delete that char, dont we ?
@@ -1161,8 +1151,9 @@ void CWorldMain::loadchar( CHARACTER x ) // Load a character from WSC
 	 a = mapRegions->AddItem( x + 1000000 );
 	 
 	 if ((chars[x].x < 150 && chars[x].y < 150 && chars[x].account ==-1) || ((chars[x].x>6144 || chars[x].y>4096 || chars[x].x<0 || chars[x].y<0) && chars[x].account==-1)) 
-	 { 
-		 Npcs->DeleteChar(x); //character in an invalid location
+	 {
+		 if( chars[x].x != 7000 && chars[x].y != 7000 )		
+			 Npcs->DeleteChar(x); //character in an invalid location
 	 }
 	 if ((chars[x].x < 100 && chars[x].y < 100 && chars[x].account !=-1) || ((chars[x].x>6144 || chars[x].y>4096 || chars[x].x<0 || chars[x].y<0) && chars[x].account!=-1))  
 	 { 
@@ -1443,7 +1434,12 @@ void CWorldMain::loaditem (ITEM x) // Load an item from WSC
  
 	StoreItemRandomValue( x, -1 ); // Magius(CHE) (2)
  
- 
+	if( items[x].layer == 0x19 )   // It's a mount
+	{
+		CHARACTER tMounted = calcCharFromSer( items[x].contserial );
+		if ( tMounted != -1 )
+			chars[tMounted].onhorse = true;
+	}
 	//add item weight if item doesn't have it yet
 	if (items[x].weight<=0) // LB, changed from 29 to 0
 	{

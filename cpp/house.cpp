@@ -543,30 +543,6 @@ int on_hlist(int h, unsigned char s1, unsigned char s2, unsigned char s3, unsign
 	return 0;
 
 }
-/*
-int on_hlist(int h, unsigned char s1, unsigned char s2, unsigned char s3, unsigned char s4, int *li)
-{
-	int cc;
-	int cl=-1;
-	int ci=-1;
-
-	cc=mapRegions->GetCell(items[h].x,items[h].y);
-	do {
-		cl=mapRegions->GetNextItem(cc, cl);
-		if(cl==-1) break;
-		ci=mapRegions->GetItem(cc, cl);
-		if(ci<1000000) {
-			if((items[ci].contserial==items[h].serial)&&
-				(items[ci].more1==s1)&&(items[ci].more2==s2)&&
-				(items[ci].more3==s3)&&(items[ci].more4==s4)) 
-			{
-				if(li!=NULL) *li=ci;
-				return items[ci].morex;
-			}
-		}
-	} while(ci!=-1);
-	return 0;
-}*/
 
 // Adds somebody to a house list.
 // add_hlist(int c (chars[] index), int h (items[] index for house), int t (list type))

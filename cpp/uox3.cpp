@@ -212,12 +212,11 @@ int cl_getch( void )
 		cluox_nopipe_fill = false;
 		return -1;
 	}
-	// here an actual charater is read in
-	return c;
-
 #else
 #  error Unknown operating system.
 #endif
+	// here an actual charater is read in
+	return c;
 }
 #endif
 
@@ -1131,8 +1130,8 @@ int makenum2(char *s) // Converts string to integer
 int cgold2(int item) // Calculate total gold
 {
 	int i, total=0, serial,ci;
-	
 	serial = items[item].serial;
+
 	for (ci = 0;ci < contsp[serial%HASHMAX].max; ci++)
 	{
 		i = contsp[serial%HASHMAX].pointer[ci];
@@ -1169,9 +1168,9 @@ int calcgold(int p) // Calculate total gold
 int packitem(int p) // Find packitem
 {
 	int serial, j, ci;
-	if( p == -1 ) return -1;
+	if( p == -1 ) 
+		return -1;
 	int i=chars[p].packitem;
-	//ConOut("%i %i %i %i %i %i %i\n",imem,cmem,i,items[i].contserial,chars[p].serial,items[i].layer,p);
 	
 	if (i>-1 && i<imem && p>-1 && p<cmem)
 	{
@@ -4803,7 +4802,7 @@ int validtelepos(int s)
 
 int unmounthorse( UOXSOCKET s ) // Get off a horse (Remove horse item and spawn new horse)
 {
-	int k,c,ci,serial,serhash;
+	int k, ci,serial,serhash;
 	
 	serial = chars[currchar[s]].serial;
 	serhash = serial%HASHMAX;
@@ -4813,74 +4812,20 @@ int unmounthorse( UOXSOCKET s ) // Get off a horse (Remove horse item and spawn 
 		if ((ci > -1) &&	//HoneyJar
 			(items[ci].contserial==serial) && (items[ci].layer==0x19)&&(items[ci].free==0))
 		{
-			c=Npcs->MemCharFree ();
-			
-			Npcs->InitChar(c);
-			chars[currchar[s]].onhorse=0;
-			strcpy(chars[c].name, items[ci].name);
-			chars[c].id1=0x00;
-			
-			// krazyglue 12 October, 1999 - if, if, if... is now if, else if, else if...
-			switch( items[ci].id2 )
+			CHARACTER tMount = calcCharFromSer( items[ci].morex );
+			if ( tMount != -1 )
 			{
-			case 0x9F:	chars[c].id2 = 0xC8;	break;
-			case 0xA0:	chars[c].id2 = 0xE2;	break;
-			case 0xA1:	chars[c].id2 = 0xE4;	break;
-			case 0xA2:	chars[c].id2 = 0xCC;	break;
-			case 0xA3:	chars[c].id2 = 0xD2;	break;
-			case 0xA4:	chars[c].id2 = 0xDA;	break;
-			case 0xA5:	chars[c].id2 = 0xDB;	break;
-			case 0xA6:	chars[c].id2 = 0xDC;	break;
+				chars[tMount].x = chars[currchar[s]].x;
+				chars[tMount].y = chars[currchar[s]].y;
+				chars[tMount].z = chars[currchar[s]].z;
+
+				chars[tMount].priv2 &= 0xFD; // unfreeze
+
+				if( items[ci].decaytime != 0 )
+					chars[tMount].summontimer = items[ci].decaytime;
+				mapRegions->AddItem( tMount + 1000000 );
+				updatechar( tMount );
 			}
-			
-			chars[c].orgid1=chars[c].xid1=chars[c].id1;
-			chars[c].orgid2=chars[c].xid2=chars[c].id2;
-			chars[c].skin1=items[ci].color1;
-			chars[c].skin2=items[ci].color2;
-			chars[c].xskin1=items[ci].color1;
-			chars[c].xskin2=items[ci].color2;
-			chars[c].priv=0x10;
-			
-			mapRegions->RemoveItem(c+1000000);
-			
-			chars[c].x=chars[currchar[s]].x;
-			chars[c].y=chars[currchar[s]].y;
-			
-			mapRegions->AddItem(c+1000000);
-			
-			
-			chars[c].dispz=chars[c].z=chars[currchar[s]].z;
-			chars[c].dir=chars[currchar[s]].dir;
-			chars[c].npc=1;
-			chars[c].own1=chars[currchar[s]].ser1;
-			chars[c].own2=chars[currchar[s]].ser2;
-			chars[c].own3=chars[currchar[s]].ser3;
-			chars[c].own4=chars[currchar[s]].ser4;
-			chars[c].ownserial=chars[currchar[s]].serial;
-			chars[c].tamed = true; // JM bugfix
-			setptr(&cownsp[chars[c].ownserial%HASHMAX], c);
-			chars[c].npcWander=items[ci].moreb1;
-			chars[c].ftarg=-1;
-			chars[c].fx1=items[ci].x;
-			chars[c].fx2=items[ci].att;
-			chars[c].fy1=items[ci].y;
-			chars[c].fy2=items[ci].def;
-			chars[c].fz1=items[ci].z;
-			
-			// AntiChrist bugfixes - 11/10/99
-			if( items[ci].moreb2 )
-				chars[c].st = items[ci].moreb2;
-			else
-				chars[c].st = 1;	// old horses will live
-			chars[c].dx = items[ci].moreb3;
-			chars[c].in = items[ci].moreb4;
-			chars[c].hp = items[ci].hp;
-			chars[c].fame = items[ci].lodamage;
-			chars[c].karma = items[ci].hidamage;
-			chars[c].poisoned = items[ci].poisoned;
-			if( items[ci].decaytime != 0 )
-				chars[c].summontimer = items[ci].decaytime;
-			updatechar(c);
 			Items->DeleItem(ci);
 			return 0;
 		}
@@ -5246,7 +5191,6 @@ void callguards( int p )
 						if( chardist( p, mapchar ) < 15 )
 						{
 							if( !chars[mapchar].dead && !(chars[mapchar].flag&0x04) )
-//							if( !chars[mapchar].dead && !(chars[mapchar].flag & 0x04) && !(chars[mapchar].flag & 0x02) || chars[mapchar].crimflag != -1 )
 								Combat->SpawnGuard( mapchar, mapchar, chars[mapchar].x, chars[mapchar].y, chars[mapchar].z );
 						}
 					}
@@ -5301,27 +5245,11 @@ void mounthorse( UOXSOCKET s, int x) // Remove horse char and give player a hors
 		
         mapRegions->RemoveItem(c);
 		
-		items[c].x=chars[x].fx1;
-		items[c].y=chars[x].fy1;
-		items[c].z=chars[x].fz1;
+		items[c].x = chars[x].fx1;
+		items[c].y = chars[x].fy1;
+		items[c].z = chars[x].fz1;
 		
-		
-        mapRegions->AddItem(c); // lord Binary
-		
-		items[c].moreb1=chars[x].npcWander;
-		items[c].att=chars[x].fx2;
-		items[c].def=chars[x].fy2;
-		
-		// AntiChrist bugfixes - 11/10/99
-		items[c].moreb2 = chars[x].st;
-		items[c].moreb3 = chars[x].dx;
-		items[c].moreb4 = chars[x].in;
-		items[c].hp = chars[x].hp;
-		items[c].lodamage = chars[x].fame;
-		items[c].hidamage = chars[x].karma;
-		items[c].poisoned = chars[x].poisoned;
-		if( chars[x].summontimer != 0 )
-			items[c].decaytime = chars[x].summontimer;
+        mapRegions->AddItem(c);
 		
 		wornitems(s, currchar[s]); // send update to current socket
 		for (j=0;j<now;j++) // and to all inrange sockets (without re-sending to current socket )
@@ -5329,11 +5257,19 @@ void mounthorse( UOXSOCKET s, int x) // Remove horse char and give player a hors
 			if( perm[j] && s != j && inrange1(s, j) ) 
 				wornitems( j, currchar[s] );
 		}
-		Npcs->DeleteChar(x);
+		mapRegions->RemoveItem( x + 1000000 );
+		chars[x].x = 7000;
+		chars[x].y = 7000;
+		chars[x].z = 0;
+		chars[x].priv2 |= 0x02;		// FREEZE IT
+		items[c].morex = chars[x].serial;
+		if( chars[x].summontimer != 0 )
+			items[c].decaytime = chars[x].summontimer;
+		updatechar( x );
 	}
 	else
 	{
-		sysmessage(s, "You dont own that creature.");
+		sysmessage(s, "You don't own that creature.");
 	}
 }
 
@@ -6110,21 +6046,11 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 		{
 			case 6: 
 				break; // Morrolan
-			case 5:
-				sysmessage(s, "You are still stuffed from your last meal");
-				break;
-			case 4:
-				sysmessage(s, "You are not very hungry but could eat more");
-				break;
-			case 3:
-				sysmessage(s, "You are feeling fairly hungry");
-				break;
-			case 2:
-				sysmessage(s, "You are extremely hungry");
-				break;
-			case 1:
-				sysmessage(s, "You are very weak from starvation");
-				break;
+			case 5:				sysmessage(s, "You are still stuffed from your last meal");		break;
+			case 4:				sysmessage(s, "You are not very hungry but could eat more");	break;
+			case 3:				sysmessage(s, "You are feeling fairly hungry");					break;
+			case 2:				sysmessage(s, "You are extremely hungry");						break;
+			case 1:				sysmessage(s, "You are very weak from starvation");				break;
 			case 0:
 				if (chars[i].priv&0x80 == 0) 
 					sysmessage(s, "You must eat very soon or you will die!");
@@ -6263,10 +6189,13 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 		if (horseItem == -1)
 			chars[i].onhorse = false;	// turn it off, we aren't on one because there's no item!
 		else
-			if (items[horseItem].decaytime != 0 &&(items[horseItem].decaytime <= uiCurrentTime || overflow))
+			if ( items[horseItem].decaytime != 0 &&(items[horseItem].decaytime <= uiCurrentTime || overflow))
 			{
 				chars[i].onhorse = false;
-				Items->DeleItem(horseItem);
+				CHARACTER tMount = calcCharFromSer( items[horseItem].morex );
+				if( tMount != -1 )
+					Npcs->DeleteChar( tMount );
+				Items->DeleItem( horseItem );
 			}
 	}
 }
@@ -7953,12 +7882,6 @@ int __cdecl main(int argc, char *argv[])
 		cwmWorldState->announce(server_data.announceworldsaves);
 		//   EviLDeD  -  End
 		//AntiChrist merging codes
-		
-		/*if(server_data.lordblagfix==6476)
-		printf("Lord Binary lag fix enabled.\n"); 
-		else printf("Lord Binary lag fix disabled.\n");
-		
-		printf("nice-value: %i\n",speed.nice);*/
 		
 		printf("Initialising sounds... ");
 		init_creatures(); //lb, initilises the creatures array (with soudfiles and other creatures infos)
