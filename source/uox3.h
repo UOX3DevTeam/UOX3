@@ -43,20 +43,20 @@
 //o---------------------------------------------------------------------------o
 // product info
 //o---------------------------------------------------------------------------o
-#define VER "0.97.01"
+//#define VER "0.97.01"
 // EviLDeD: 012402: Please while we are on a build run for this version make sure
 //									you increment this build number? Im am gonna up the build Num
 //									here cause Oi was told that MrFixit, and some others were in
 //									code and made some changes.
-#define BUILD "14"
-#define REALBUILD "0"
-#define SVER "2.0"
-#define CVER "2.0"
-#define IVER "2.0"
-#define PRODUCT "Ultima Offline eXperiment 3"
-#define NAME "The Official DevTeam"
-#define EMAIL "http://uox3.sourceforge.net/"
-#define PROGRAMMERS "UOX3 DevTeam"
+//#define BUILD "14"
+//#define REALBUILD "0"
+//#define SVER "2.0"
+//#define CVER "2.0"
+//#define IVER "2.0"
+//#define PRODUCT "Ultima Offline eXperiment 3"
+//#define NAME "The Official DevTeam"
+//#define EMAIL "http://uox3.sourceforge.net/"
+//#define PROGRAMMERS "UOX3 DevTeam"
 
 
 //o---------------------------------------------------------------------------o
@@ -136,7 +136,7 @@
 #include <sys/types.h>
 #include <assert.h>
 #include <sstream>
-
+#include "cVersionClass.h"
 
 //o---------------------------------------------------------------------------o
 // OS specific includes
@@ -234,7 +234,6 @@ char *strupr(char *);
 // DEBUG/NODEBUG <-- Debug: Shows client->server messages in the server window.
 // Turn it off when releasing.
 //o---------------------------------------------------------------------------o
-
 
 //o---------------------------------------------------------------------------o
 // Public variables, structures, classes and objects
