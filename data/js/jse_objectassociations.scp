@@ -20,7 +20,10 @@
 // Wheat (4 sheaves) : Flour mill : Flour
 0x1ebd 101
 // Flour : Water : Dough
+0x1039 102
+0x103a 102
 0x1045 102
+0x1046 102
 // Dough : Heat source : Bread
 0x103d 103
 // knives : fish : raw fish steak
@@ -34,7 +37,7 @@
 0x09f1 106
 // Raw bird : Heat source : Cooked bird
 0x09b9 107
-0x09ba 108
+0x09ba 107
 // Raw chicken leg : Heat source : Chicken Leg
 0x1607 109
 // Raw leg of lamb : Heat source : Leg of Lamb
@@ -81,10 +84,70 @@
 
 // use beehive : wax and honey
 0x091a 2011
-// empty pitcher : watersource : filled waterpitcher
-0x0ff7 2101
-0x0ff6 2101
-// empty pitcher : cow : filled milkpitcher -> milk is not used for anything atm
+// pitchers, bottles, jars, cups, mugs, glasses - fill and pour: 
+0x0995 2100
+0x0996 2100
+0x0997 2100
+0x0998 2100
+0x0999 2100
+0x099a 2100
+0x099b 2100
+0x099f 2100
+0x09b3 2100
+0x09bf 2100
+0x09c7 2100
+0x0ff6 2100
+0x0ff7 2100
+0x0ff8 2100
+0x0ff9 2100
+0x09a7 2100
+0x09ad 2100
+0x09ca 2100
+0x09cb 2100
+0x09ee 2100
+0x09ef 2100
+0x0ffb 2100
+0x0ffc 2100
+0x0ffd 2100
+0x0ffe 2100
+0x0fff 2100
+0x1000 2100
+0x1001 2100
+0x1002 2100
+0x1f7d 2100
+0x1f7e 2100
+0x1f7f 2100
+0x1f80 2100
+0x1f81 2100
+0x1f82 2100
+0x1f83 2100
+0x1f84 2100
+0x1f85 2100
+0x1f86 2100
+0x1f87 2100
+0x1f88 2100
+0x1f89 2100
+0x1f8a 2100
+0x1f8b 2100
+0x1f8c 2100
+0x1f8d 2100
+0x1f8e 2100
+0x1f8f 2100
+0x1f90 2100
+0x1f91 2100
+0x1f92 2100
+0x1f93 2100
+0x1f94 2100
+0x1f95 2100
+0x1f96 2100
+0x1f97 2100
+0x1f98 2100
+0x1f99 2100
+0x1f9a 2100
+0x1f9b 2100
+0x1f9c 2100
+0x1f9d 2100
+0x1f9e 2100
 
 // misc. resources end
 // -------------------
@@ -157,10 +220,10 @@
 0x142f 541
 0x142c 542
 // 1433 <> 1430, middle candle
-0x1433 543
-0x1430 544
+// 0x1433 543
+// 0x1430 544
 // 1437 <> 1434, slim candle
-0x1437 545
+// 0x1437 545
 0x1434 546
 // light sources end
 // -----------------
@@ -220,11 +283,10 @@
 0x1a9b 2010
 
 // harvesting and picking fruits end
-// ---------------------------------
+// ----------------------------------
 
 
-
-// ----------------------------
+// ----------------------------
 // tailoring and spinning start
 
 // scissors : unshorn sheep : shorn sheep & unspun wool
@@ -287,20 +349,20 @@
 // pets from pet static start
 
 // horse static, 211f, 2120, 2121, 2124
-0x211f 3001
-0x2120 3001
-0x2121 3001
-0x2124 3001
+0x211f 3100
+0x2120 3100
+0x2121 3100
+0x2124 3100
 // ostard static, 2135, 2136, 2137
-0x2135 3002
-0x2136 3002
-0x2137 3002
+0x2135 3101
+0x2136 3101
+0x2137 3101
 // llama static, 20f6
-0x20f6 3003
+0x20f6 3102
 // pack horse static, 2126
-0x2126 3004
+0x2126 3103
 // pack llama static, 2127
-0x2127 3005
+0x2127 3104
 
 // pets from pet static end
 // ------------------------
