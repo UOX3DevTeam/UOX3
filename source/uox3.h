@@ -76,10 +76,6 @@ extern JSClass uox_class;
 // Global Variables
 //o---------------------------------------------------------------------------o
 extern char skillname[SKILLS+1][20];
-extern "C" {
-		char *strlwr(char *);
-		char *strupr(char *);
-	}
 extern QUEUEMAP							refreshQueue;
 extern QUEUEMAP							deletionQueue;
 

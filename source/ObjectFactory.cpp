@@ -272,8 +272,7 @@ namespace UOX
 		switch( toRemove->GetObjType() )
 		{
 		default:
-		// definitely something undefined
-		//	throw new std::runtime_error( "Damn, bad bad work here!" );
+			throw new std::runtime_error( "Damn, bad bad work here!" );
 			break;
 		case OT_MULTI:
 		case OT_BOAT:

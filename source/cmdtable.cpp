@@ -596,7 +596,6 @@ void command_iwipe( cSocket *s )
 void command_add( cSocket *s )
 {
 	VALIDATESOCKET( s );
-
 	UString UTag = Commands->CommandString( 2, 2 ).upper();
 	if( Commands->NumArguments() == 1 )
 		BuildAddMenuGump( s, 1 );

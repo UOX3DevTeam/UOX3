@@ -1,6 +1,24 @@
+July 29 2004
+	Note: We need to change references to __unix__ to something more like UOX_PLATFORM != PLATFORM_WINDOWS or UOX_PLATFORM == PLATFORM_LINUX
+	Some of che's fixes were not fixes (ie commenting out the throws) or improperly done (platform specific decls don't go in uox3.h)
+
 7/28/2004 - giwo
 	Minor fixes, cleanups
 	Included che's linux fixes
+
+July 28 2004 - Maarc
+	Possible crash in _add avoided
+	GetAmount() returns a UI16 and we were comparing to 0xFFFF, no longer needed
+	Three possible crashes in ShowCName stepped around
+	Called GetWord rather than GetDWord for magic targeting
+	Possible crash in addRandomColor avoided (only if colorlist didn't exist)
+	Possible crash in LoadFromScript (townregions) avoided
+	Fixed an issue that VC7.1 finds.  We clear() a list, and then reference the first item, in processing the INI, which crashes
+	Modified some changes from che
+	Fixed some typo declarations
+	Moved stdexcept into UOXStdHeaders, so that exceptions can be used wherever needed
+	for loop problem declaration (using var outside loop)
+
 
 7/25/2004 - giwo
 	Removed several vtables from classes that were not subclassed

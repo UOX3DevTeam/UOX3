@@ -35,8 +35,7 @@ namespace UOX
 	int JSEncapsulate::toInt( void )
 	{
 		if( nativeType == JSOT_OBJECT )
-		//undefined?
-		//	throw new std::runtime_error( "Cannot convert JS Object to int" );
+			throw new std::runtime_error( "Cannot convert JS Object to int" );
 		if( !beenParsed[JSOT_INT] )	
 			Parse( JSOT_INT );
 		return intVal;
@@ -44,7 +43,7 @@ namespace UOX
 	bool JSEncapsulate::toBool( void )
 	{
 		if( nativeType == JSOT_OBJECT )
-		//	throw new std::runtime_error( "Cannot convert JS Object to int" );
+			throw new std::runtime_error( "Cannot convert JS Object to int" );
 		if( !beenParsed[JSOT_BOOL] )	
 			Parse( JSOT_BOOL );
 		return boolVal;
@@ -52,7 +51,7 @@ namespace UOX
 	float JSEncapsulate::toFloat( void )
 	{
 		if( nativeType == JSOT_OBJECT )
-		//	throw new std::runtime_error( "Cannot convert JS Object to int" );
+			throw new std::runtime_error( "Cannot convert JS Object to int" );
 		if( !beenParsed[JSOT_DOUBLE] )	
 			Parse( JSOT_DOUBLE );
 		return floatVal;
@@ -60,7 +59,7 @@ namespace UOX
 	std::string JSEncapsulate::toString( void )
 	{
 		if( nativeType == JSOT_OBJECT )
-		//	throw new std::runtime_error( "Cannot convert JS Object to int" );
+			throw new std::runtime_error( "Cannot convert JS Object to int" );
 		if( !beenParsed[JSOT_STRING] )	
 			Parse( JSOT_STRING );
 		return stringVal;
@@ -68,7 +67,7 @@ namespace UOX
 	void *JSEncapsulate::toObject( void )
 	{
 		if( nativeType != JSOT_OBJECT )
-		//	throw new std::runtime_error( "Cannot convert to JS Object" );
+			throw new std::runtime_error( "Cannot convert to JS Object" );
 		if( !beenParsed[JSOT_OBJECT] )	
 			Parse( JSOT_OBJECT );
 		return objectVal;
