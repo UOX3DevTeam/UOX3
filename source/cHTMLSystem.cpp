@@ -4,6 +4,9 @@
 // Slight modification on avotars fix (19/09/02)
 
 #include "cHTMLSystem.h"
+#include "cVersionClass.h"
+
+extern cVersionClass CVC;
 
 cHTMLTemplate::cHTMLTemplate()
 {
@@ -45,9 +48,9 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Version
-	string Version = VER;
+	string Version = CVC.GetVersion();
 	Version += "(";
-	Version += BUILD;
+	Version += CVC.GetBuild();
 	Version += ")";
 	#ifdef __NT__
 		Version += " [WIN32]";
