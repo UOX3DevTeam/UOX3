@@ -151,6 +151,7 @@ typedef struct __ACCOUNTSADM_BLOCK__
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
+/*
 #ifdef __UOX3_DTL__
 class cDBAccountClass
 {
@@ -207,6 +208,7 @@ public:
 };
 //
 #endif
+*/
 
 // Class typdefs to help simplify the use of map STL
 typedef std::map<std::string,ACCOUNTSBLOCK> MAPUSERNAME;
@@ -270,11 +272,11 @@ public:
 	MAPUSERNAME m_mapUsernameMap;
 	MAPUSERNAMEID m_mapUsernameIDMap;
 	MAPUSERNAMEID_ITERATOR I;
-
+/*
 #ifdef __UOX3_DTL__
 	std::vector<cDBAccountClass> m_vecDTLAccountVector;
 #endif
-
+*/
 private:
 	// Member Functions
 	void WriteAccountsHeader(std::fstream &fsOut);
