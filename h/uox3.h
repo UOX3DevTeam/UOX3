@@ -120,6 +120,7 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 	#include <netinet/in.h>
 	#include <sys/socket.h>
 	#include <sys/time.h>
+	#include <sys/timeb.h>
 	#include <netdb.h>
 	#include <sys/signal.h>
 	#include <sys/times.h>
@@ -860,19 +861,19 @@ void loadcustomtitle();
 // Profiling
 //void StartMilliTimer(unsigned long &Seconds, unsigned long &Milliseconds);
 //unsigned long CheckMilliTimer(unsigned long &Seconds, unsigned long &Milliseconds);
-#ifndef __linux__
+//#ifndef __linux__
 	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeb t; ftime( &t ); Seconds = t.time; Milliseconds = t.millitm; };
 	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeb t; ftime( &t ); return( 1000 * ( t.time - Seconds ) + ( t.millitm - Milliseconds ) ); };
-#else
-	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) 
-	{ 
-		struct timeval t; 
-		gettimeofday( &t, NULL ); 
-		Seconds = t.tv_sec; 
-		Milliseconds = t.tv_usec; 
-	};
-	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeval t; gettimeofday( &t, NULL ); return( 1000 * ( t.tv_sec - Seconds ) + ( t.tv_usec - Milliseconds ) ); };
-#endif
+//#else
+//	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) 
+//	{ 
+//		struct timeval t; 
+//		gettimeofday( &t, NULL ); 
+//		Seconds = t.tv_sec; 
+//		Milliseconds = t.tv_usec; 
+//	};
+//	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeval t; gettimeofday( &t, NULL ); return( 1000 * ( t.tv_sec - Seconds ) + ( t.tv_usec - Milliseconds ) ); };
+//#endif
 
 void updates( int s );
 void advancementobjects(int s, int x, int always);
