@@ -8552,15 +8552,15 @@ unsigned long int getclock( void )
 	// We have the time in number of seconds since 1970.  Now do the same
 	//return (tv-900000000) * MY_CLOCKS_PER_SEC ;
 	unsigned long milliseconds ;
+	clock_t inittime ;
 
 	#ifdef __linux__
 	tms buffer ;
-	clock_t inittime ;
-	inittime = times(&buffer) ;
+	//inittime = times(&buffer) ;
 	
-	milliseconds = inittime /1000;
+	milliseconds = clock() /1000;
 	#else
-	
+	milliseconds = clock() ;
 	#endif
 	
 	return milliseconds;
