@@ -492,7 +492,7 @@ void cHTMLTemplate::Process( void )
 	std::ofstream Output( OutputFile );
 	if( !Output.is_open() ) 
 	{
-		Console.Error( 1, "| Error: Couldn't open the template file %s for writing", OutputFile );
+		Console.Error( 1, " Couldn't open the template file %s for writing", OutputFile );
 		return;
 	}
 
@@ -624,7 +624,7 @@ cHTMLTemplates::~cHTMLTemplates()
 void cHTMLTemplates::Load( void )
 {
 
-	ScpList *toWalk = FileLookup->GetFiles( html_def );
+	VECSCRIPTLIST *toWalk = FileLookup->GetFiles( html_def );
 	if( toWalk == NULL )
 		return;
 
@@ -636,7 +636,7 @@ void cHTMLTemplates::Load( void )
 			if( toWalk == NULL )
 				continue;
 			
-			UI32 NumEntries = toCheck->NumEntries();
+			SI32 NumEntries = toCheck->NumEntries();
 			if( NumEntries == 0 )
 				continue; 
 
