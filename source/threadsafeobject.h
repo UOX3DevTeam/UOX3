@@ -4,7 +4,7 @@
 namespace UOX
 {
 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	#include <windows.h>
 #else
 	#define _GNU_SOURCE 1	// this is a hack
@@ -28,7 +28,7 @@ public:
 		MutexOff();
 	}
 protected:
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE d_mutex;
 #else
 	pthread_mutex_t d_mutex;

@@ -22,7 +22,7 @@
 
 #include "ObjectFactory.h"
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <sys/ioctl.h>
 #endif
 
@@ -214,7 +214,7 @@ void cNetworkStuff::sockInit( void )
 	cwmWorldState->SetKeepRun( true );
 	cwmWorldState->SetError( false );
 	
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	int on = 1;
 #endif
 	
@@ -222,7 +222,7 @@ void cNetworkStuff::sockInit( void )
 	if( a_socket < 0 )
 	{
 		Console.Error( 0, " Unable to create socket");
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		Console.Error( 0, " Code %i", WSAGetLastError() );
 #else
 		Console << myendl;
@@ -232,7 +232,7 @@ void cNetworkStuff::sockInit( void )
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 		return;
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	setsockopt( a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
 #endif
 	
@@ -285,7 +285,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	{
 		int len = sizeof( struct sockaddr_in );
 		int newClient;
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, &len );
 #else
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
@@ -293,7 +293,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 		cSocket *toMake = new cSocket( newClient );
 		if( newClient < 0 )
 		{
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 			int errorCode = WSAGetLastError();
 			if( errorCode == WSAEWOULDBLOCK )
 #else
@@ -385,7 +385,7 @@ cNetworkStuff::~cNetworkStuff()
 	}
 	closesocket( s );
 	ShutdownXGM();
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();
 #endif
 }
@@ -422,7 +422,7 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 				}
 				catch( socket_error& blah )
 				{
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 						Console << "Client disconnected" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
@@ -1091,7 +1091,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 				}
 				catch( socket_error& blah )
 				{
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 						messageLoop << "Client disconnected";
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
@@ -1110,7 +1110,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	}
 	else if( s == SOCKET_ERROR )
 	{
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		int errorCode = WSAGetLastError();
 		if( errorCode != 10022 )
 			Console << (SI32)errorCode << myendl;
@@ -1430,12 +1430,12 @@ void cNetworkStuff::StartupXGM( int nPortArg )
 	if( xgmSocket < 0 )
 	{
 		Console.Error( 0, "Unable to create XGM socket" );
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		Console.Error( 0, "Code %i", WSAGetLastError() );
 #endif
 		return;
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	int on;
 	setsockopt( xgmSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
 #endif
@@ -1499,7 +1499,7 @@ void cNetworkStuff::CheckXGM( void )
 				}
 				catch( socket_error& blah )
 				{
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 					Console << "Client disconnected" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
@@ -1621,7 +1621,7 @@ void cNetworkStuff::CheckXGMConn( void )
 	{
 		sockaddr_in client_addr;
 		int len = sizeof( struct sockaddr_in );
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, &len );
 #else
 		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );

@@ -5,7 +5,7 @@
 	typedef void *  va_list;
 #endif
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#define MAKEWORD(a, b)      ((UI16)(((UI08)(a)) | ((UI16)((UI08)(b))) << 8))
 	#define MAKELONG(a, b)      ((UI32)(((UI16)(a)) | ((UI32)((UI16)(b))) << 16))
 	#define LOWORD(l)           ((UI16)(l))

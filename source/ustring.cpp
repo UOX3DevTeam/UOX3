@@ -751,7 +751,7 @@ UString UString::sprintf(const char* format,...)
 
 	UOXVALIST marker;
 	va_start( marker, format ) ;
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	_vsnprintf( buffer, 2048, format, marker );
 #else
 	vsnprintf( buffer, 2048, format, marker );

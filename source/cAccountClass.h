@@ -21,7 +21,7 @@
 
 #include <iosfwd>
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 	#define strnicmp(a,b,c) strncasecmp(a,b,c)
 	#define _stat stat

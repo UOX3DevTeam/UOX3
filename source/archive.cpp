@@ -1,6 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
-#ifdef __unix__
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 #else
 	#include <direct.h>

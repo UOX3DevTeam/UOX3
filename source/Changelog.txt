@@ -1,3 +1,6 @@
+August 2 2004
+	Changed __unix__ references to UOX_PLATFORM != PLATFORM_WIN32
+
 July 31 2004
 	Increased JS context stack size from 0x2000 to 0x4000 (we may need the extra space)
 	Updated JSEncapsulate for delayed initialisation (useful for optional parameters to methods)

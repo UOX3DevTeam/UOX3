@@ -412,7 +412,7 @@ void CConsole::PrintSectionBegin( void )
 //o---------------------------------------------------------------------------o
 void CConsole::Start( char *temp )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &csbi );
 	width	= csbi.dwSize.X;
@@ -430,7 +430,7 @@ void CConsole::Start( char *temp )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;33m";
@@ -447,7 +447,7 @@ void CConsole::TurnYellow( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;31m";
@@ -464,7 +464,7 @@ void CConsole::TurnRed( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;32m";
@@ -481,7 +481,7 @@ void CConsole::TurnGreen( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;34m";
@@ -498,7 +498,7 @@ void CConsole::TurnBlue( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
 	std::cout << "\033[0;37m";
@@ -515,7 +515,7 @@ void CConsole::TurnNormal( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;37m";
@@ -570,7 +570,7 @@ void CConsole::PrintPassed( void )
 //o---------------------------------------------------------------------------o
 void CConsole::ClearScreen( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	UI32 y;
 	COORD xy;
 
@@ -699,7 +699,7 @@ void CConsole::PrintStartOfLine( void )
 	}
 }
 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 void CConsole::MoveTo( int x, int y )
 {
 	COORD Pos;

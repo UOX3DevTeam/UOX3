@@ -70,7 +70,7 @@
 namespace UOX
 {
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	typedef void *HANDLE;
 	pthread_t cons, netw;
 #else
@@ -144,7 +144,7 @@ HANDLE cluox_stdin_writeback = 0; // the write-end of the stdin-pipe
 // 
 int cl_getch( void )
 {
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	// first the linux style, don't change it's behavoir
 	UI08 c = 0;
 	fd_set KEYBOARD;
@@ -233,13 +233,13 @@ void DoMessageLoop( void )
 //					operators that may not have direct access to their servers. 
 //					
 //					Commands supported: 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 CRITICAL_SECTION sc;	//
 #endif
 bool conthreadcloseok = false;
 bool netpollthreadclose = false;
 bool xFTPdclose = false;
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void *NetworkPollConnectionThread( void *params );
 void *xFTPdConnectionThread( void *params );
 void *xFTPcConnectionThread( void *params );
@@ -248,7 +248,7 @@ void NetworkPollConnectionThread( void *params );
 void xFTPdConnectionThread( void *params );
 void xFTPcConnectionThread( void *params );
 #endif
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void *CheckConsoleKeyThread( void *params )
 #else
 void CheckConsoleKeyThread( void *params )
@@ -261,17 +261,17 @@ void CheckConsoleKeyThread( void *params )
 		checkkey();
 		UOXSleep( 500 );
 	}
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	_endthread();		// linux will kill the thread when it returns
 #endif
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	return NULL;
 #endif
 }
 //	EviLDeD	-	End
 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 ///////////////////
 
 //HANDLE hco;
@@ -280,7 +280,7 @@ void CheckConsoleKeyThread( void *params )
 ///////////////////
 #endif
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 
 void closesocket( UOXSOCKET s )
 {
@@ -518,7 +518,7 @@ void endmessage( int x )
 	sysBroadcast( temp );
 }
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void illinst( int x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
@@ -2445,7 +2445,7 @@ void Shutdown( SI32 retCode )
 	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	pthread_join( cons, NULL );
 #ifdef __LOGIN_THREAD__
 	pthread_join( netw, NULL );
@@ -2480,7 +2480,7 @@ void Shutdown( SI32 retCode )
 		Console.TurnRed();
 		Console << "Exiting UOX with errorlevel " << retCode << myendl;
 		Console.TurnNormal();
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		Console << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline(std::cin, throwAway);
@@ -2671,7 +2671,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 UI32 getclock( void )
 {
 	struct timeval tv;
-#if defined( __unix__ )
+#if UOX_PLATFORM != PLATFORM_WIN32
 	gettimeofday( &tv, NULL );
 #else
 	timeb local;
@@ -3322,7 +3322,7 @@ void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Watch for new connections
 //o---------------------------------------------------------------------------o
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void *NetworkPollConnectionThread( void *params )
 #else
 void NetworkPollConnectionThread( void *params )
@@ -3336,7 +3336,7 @@ void NetworkPollConnectionThread( void *params )
 		Network->CheckLoginMessage();
 		UOXSleep( 20 );
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	pthread_exit( NULL );
 #else
 	_endthread();
@@ -3350,7 +3350,7 @@ void NetworkPollConnectionThread( void *params )
 //o---------------------------------------------------------------------------o
 //|	Purpose			-	Watch for new connections
 //o---------------------------------------------------------------------------o
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void *xFTPdConnectionThread( void *params )
 #else
 void xFTPdConnectionThread( void *params )
@@ -3362,7 +3362,7 @@ void xFTPdConnectionThread( void *params )
 	{
 		UOXSleep( 50 );
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	pthread_exit( NULL );
 #else
 	_endthread();
@@ -3376,7 +3376,7 @@ void xFTPdConnectionThread( void *params )
 //o---------------------------------------------------------------------------o
 //|	Purpose			-	Watch for new connections
 //o---------------------------------------------------------------------------o
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 void *xFTPcConnectionThread( void *params )
 #else
 void xFTPcConnectionThread( void *params )
@@ -3388,7 +3388,7 @@ void xFTPcConnectionThread( void *params )
 	{
 		UOXSleep( 50 );
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	pthread_exit( NULL );
 #else
 	_endthread();
@@ -3413,7 +3413,7 @@ int main( int argc, char *argv[] )
 	UI32 loopSecs, loopMilli;
 
 	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD( 2, 0 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
@@ -3429,7 +3429,7 @@ int main( int argc, char *argv[] )
 	try 
 	{// Zippy - Error trapping....
 #endif
-#if defined( __unix__ )
+#if UOX_PLATFORM != PLATFORM_WIN32
 		gettimeofday( &current, NULL );
 #else
 		timeb local;
@@ -3439,7 +3439,7 @@ int main( int argc, char *argv[] )
 #endif
 		const UI32 currentTime = 0;
 		
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		sprintf( temp, "%s v%s.%s", cVersionClass::GetProductName().c_str(), cVersionClass::GetVersion().c_str(), cVersionClass::GetBuild().c_str() );
 		Console.Start( temp );
 #else
@@ -3567,34 +3567,34 @@ int main( int argc, char *argv[] )
 //		cwmWorldState->SetUICurrentTime( getclock() );
 
 		Console << myendl << "Creating and Initializing Console Thread      ";
-#if defined(__unix__)
+	#if UOX_PLATFORM != PLATFORM_WIN32
 		int conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
-#else
+	#else
 		int conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
-#endif
+	#endif
 #ifdef __LOGIN_THREAD__
 		Console << myendl << "Creating and Initializing xLOGINd Thread      ";
- #if defined(__unix__)
-		pthread_create(&netw,NULL, NetworkPollConnectionThread,  NULL );
- #else
+	#if UOX_PLATFORM != PLATFORM_WIN32
+		pthread_create( &netw, NULL, NetworkPollConnectionThread,  NULL );
+	#else
 		_beginthread( NetworkPollConnectionThread, 0, NULL );
- #endif 
+	#endif 
 #endif
 #ifdef __XFTPD_THREAD__
 		Console << myendl << "Creating and Initializing xFTPd (Daemon) Thread      ";
- #if defined(__unix__)
+	#if UOX_PLATFORM != PLATFORM_WIN32
 		pthread_create(&netw,NULL, xFTPdConnectionThread,  NULL );
- #else
+	#else
 		_beginthread( xFTPdConnectionThread, 0, NULL );
- #endif 
+	#endif 
 #endif
 #ifdef __XFTPC_THREAD__
 		Console << myendl << "Creating and Initializing xFTPc (Client) Thread      ";
- #if defined(__unix__)
+	#if UOX_PLATFORM != PLATFORM_WIN32
 		pthread_create(&netw,NULL, xFTPcConnectionThread,  NULL );
- #else
+	#else
 		_beginthread( xFTPcConnectionThread, 0, NULL );
- #endif 
+	#endif 
 #endif
 		Console.PrintDone();
 

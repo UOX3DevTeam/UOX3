@@ -1,6 +1,6 @@
 #include "uox3.h"
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 #else
 	#include <direct.h>
@@ -337,7 +337,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		bool error = false;
 		if( !resettingDefaults )
 		{
-	#if defined(__unix__)
+	#if UOX_PLATFORM != PLATFORM_WIN32
 			DIR *dirPtr = opendir( sText.c_str() );
 			if( !dirPtr )
 				error = true;

@@ -63,7 +63,7 @@ JSClass uox_class = {
         JS_EnumerateStub,JS_ResolveStub,JS_ConvertStub,JS_FinalizeStub 
     }; 
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 char *strlwr( char *str ) 
 {
 	for( UI32 i = 0; i < strlen( str ); ++i )

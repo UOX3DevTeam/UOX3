@@ -8,7 +8,7 @@
 #include "classes.h"
 #include "Dictionary.h"
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <sys/ioctl.h>
 #endif
 
@@ -783,7 +783,7 @@ void cSocket::Send( const void *point, int length ) // Buffering send function
 	outlength += length;
 }
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 int GrabLastError( void )
 {
 	return errno;
@@ -847,7 +847,7 @@ int cSocket::Receive( int x, bool doLog )
 		else if( count == SOCKET_ERROR )
 		{
 			int lastError = GrabLastError();
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 			if( lastError != EWOULDBLOCK )
 #else
 			if( lastError != WSAEWOULDBLOCK )

@@ -3,13 +3,13 @@
 #include "ssection.h"
 #include "scriptc.h"
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 #else
 	#include <direct.h>
 #endif
 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	#define getcwd _getcwd
 #endif
 
@@ -478,7 +478,7 @@ void cDirectoryListing::InternalRetrieve( void )
 {
 	char filePath[512];
 
-#if defined(__unix__) 
+#if UOX_PLATFORM != PLATFORM_WIN32
 	DIR *dir = opendir("."); 
 	struct dirent *dirp = NULL; 
 	struct stat dirstat; 

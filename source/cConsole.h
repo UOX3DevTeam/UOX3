@@ -12,9 +12,6 @@ namespace UOX
 {
 
 #define MAX_CONSOLE_BUFF 512
-#if !defined(__unix__)
-#define vsnprintf _vsnprintf
-#endif
 
 const UI08 CNORMAL	= 0;
 const UI08 CBLUE	= 1;
@@ -106,7 +103,7 @@ protected:
 	UI08	currentMode, currentLevel;
 	UI08	previousColour;
 	bool	logEcho;
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
 #endif
