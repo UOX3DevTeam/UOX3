@@ -215,6 +215,7 @@ namespace UOX
 		assert( toDestroy != NULL );
 		UnregisterObject( toDestroy );
 		delete toDestroy;
+		toDestroy = NULL;
 		return true;
 	}
 

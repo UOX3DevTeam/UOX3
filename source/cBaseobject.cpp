@@ -560,7 +560,6 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Name=" << name << std::endl;
 	dumping << "Serial=" << "0x" << std::hex << serial << std::endl;
 	dumping << "Location=" << std::dec << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << std::endl;
-	dumping << "ObjectType=" << (int)objType << std::endl;
 	dumping << "ID=" << "0x" << std::hex << id << std::endl;
 	dumping << "Colour=" << "0x" << colour << std::endl;
 	dumping << "Direction=" << "0x" << (SI16)dir << std::endl;
@@ -1570,6 +1569,7 @@ bool CBaseObject::Load( std::ifstream &inStream )
 		if( tag != "o---o" )
 		{
 			UTag = tag.upper();
+			HandleLine( UTag, data );
 			if( !HandleLine( UTag, data ) )
 				Console.Warning( 1, "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() );
 		}
@@ -1749,12 +1749,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			break;
 		case 'O':
-			if( UTag == "OBJECTTYPE" )
-			{
-				objType = (ObjectType)data.toUShort();
-				rvalue	= true;
-			}
-			else if( UTag == "OWNERID" )
+			if( UTag == "OWNERID" )
 			{
 				owner	= (CChar *)data.toULong();
 				rvalue	= true;

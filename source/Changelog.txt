@@ -1,3 +1,9 @@
+January 15 2005 - Maarc
+
+	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system 
+	Explicitly setting some pointers NULL after they have been destroyed
+	Removed call to StoreRandomItemValue() in CMultiObj::LoadRemnants() - not really necessary, and the function call needs to be after world load, not during (ie candidate for PostLoad, if any)
+
 1/12/2005 - giwo
 	Moved Alchemy functionality out to JS.
 	Moved the following use functionality out to JS.

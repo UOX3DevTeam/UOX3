@@ -346,6 +346,7 @@ void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 				else
 					wasPrioritized = 1;
 				delete prio;	// remove script
+				prio = NULL;
 			}
 			else
 				wasPrioritized = 2;

@@ -77,6 +77,7 @@ SI32 CDictionary::LoadDictionary( void )
 				}
 			}
 			delete dictData;
+			dictData = NULL;
 		}
 		IsValid = true;
 		Console << "Dictionary." << Language << " Loaded" << myendl;

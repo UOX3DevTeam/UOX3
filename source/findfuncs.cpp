@@ -222,8 +222,26 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 
 	if( length == -1 || length >= 17000000)
 	{
+		// the length associated with the multi means one thing
+		// the multi it's trying to reference is NOT in the multis.mul file
+		// so as a measure... if it's wet, we'll make it a boat
+		// if it's dry, we'll make it a house
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
+
+		map_st map1;
+		CLand land;
+		map1 = Map->SeekMap0( m->GetX(), m->GetY(), m->WorldNumber() );
+		Map->SeekLand( map1.id, &land );
+		if( land.LiquidWet() ) // is it water?
+		{
+			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
+			// So either: 1) Let the user fix it in the worldfile once its saved
+			// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
+			m->SetID( 0x4001 );
+		}
+		else
+			m->SetID( 0x4064 );
 	}
 	for( SI32 j = 0; j < length; ++j )
 	{

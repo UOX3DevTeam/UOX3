@@ -288,6 +288,7 @@ CTriggerScripts::~CTriggerScripts()
 		{
 			rScript->Cleanup();
 			delete rScript;
+			rScript = NULL;
 		}
 	}
 	scriptMapping.clear();
