@@ -214,6 +214,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM },
 	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM },
 	{ "isUsingPotion",	CCP_USINGPOTION,	JSPROP_ENUMANDPERM },
+	{ "stealth",		CCP_STEALTH,		JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };

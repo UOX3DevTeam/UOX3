@@ -609,85 +609,6 @@ void cSkills::handleCooking( CSocket *s )
 			s->sysmessage( 830 );
 	}
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Hide( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Support for user config of hiding 
-//|									while mounted
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses hiding skill
-//o---------------------------------------------------------------------------o
-void cSkills::Hide( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	
-	if( !cwmWorldState->ServerData()->CharHideWhileMounted() )
-	{
-		if( mChar->IsOnHorse() )
-		{
-			s->sysmessage( 831 );
-			return;
-		}
-	}
-	if( ValidateObject( mChar->GetAttacker() ) && charInRange( mChar, mChar->GetAttacker() ) )
-	{
-		s->sysmessage( 832 );
-		return;
-	}
-	if( mChar->GetVisible() != VT_VISIBLE )
-	{
-		s->sysmessage( 833 );
-		return;
-	}
-	if( !CheckSkill( mChar, HIDING, 0, 1000 ) ) 
-	{
-		s->sysmessage( 834 );
-		return;
-	}   
-	s->sysmessage( 835 );
-	mChar->SetVisible( VT_TEMPHIDDEN );
-	mChar->SetStealth( -1 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Stealth( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses Stealth skill
-//o---------------------------------------------------------------------------o
-void cSkills::Stealth( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( mChar->GetVisible() != VT_TEMPHIDDEN ) 
-	{
-		s->sysmessage( 836 );
-		return;
-	}
-	if( mChar->IsOnHorse() )
-	{
-		s->sysmessage( 837 );
-		return;
-	}
-	if( mChar->GetSkill( HIDING ) < 700 )
-	{
-		s->sysmessage( 838 );
-		mChar->ExposeToView();
-		return;
-	}   		
-	if( !CheckSkill( mChar, STEALTH, 0, 1000 ) ) 
-	{
-		mChar->ExposeToView();
-		return;
-	}   
-	s->sysmessage( 839, cwmWorldState->ServerData()->MaxStealthMovement() );
-	mChar->SetVisible( VT_TEMPHIDDEN );
-	mChar->SetStealth( 0 );
-}
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::TreeTarget( CSocket *s )
@@ -760,16 +681,15 @@ void cSkills::TreeTarget( CSocket *s )
 	
 	if( logPart->logAmt > 0 ) 
 		--logPart->logAmt;
-	
 
-		CItem *c = Items->CreateItem( s, mChar, 0x1BE0, 10, 0, OT_ITEM, true );
-		if( c == NULL )
-			return;
-		if( c->GetAmount() > 10 ) 
-			s->sysmessage( 1434 );
-		else 
-			s->sysmessage( 1435 );
-	}
+	CItem *c = Items->CreateItem( s, mChar, 0x1BE0, 10, 0, OT_ITEM, true );
+	if( c == NULL )
+		return;
+	if( c->GetAmount() > 10 ) 
+		s->sysmessage( 1434 );
+	else 
+		s->sysmessage( 1435 );
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::RegenerateLog( long grX, long grY )
@@ -1616,43 +1536,6 @@ void cSkills::ItemIDTarget( CSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::EvaluateIntTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses EvalInt on a PC/NPC, gives
-//|					 a text message based on their Intelligence
-//o---------------------------------------------------------------------------o
-void cSkills::EvaluateIntTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	char buf[75];
-	CChar *mChar = s->CurrcharObj();
-	if( CheckSkill( mChar, EVALUATINGINTEL, 0, 1000 ) ) 
-	{
-		if( i->GetIntelligence() == 0 )
-			s->sysmessage( 1557 );
-		else
-		{
-			// Intelligence - 1 / 10 (0-10 = 0, 11-20 = 1, ect)
-			int offset = ((i->GetIntelligence() - 1 ) / 10);
-
-			if( offset >= 0 && offset <= 8 )
-				strcpy( buf, Dictionary->GetEntry( 1558 + offset, s->Language() ).c_str() );
-			else
-				strcpy( buf, Dictionary->GetEntry( 1567, s->Language() ).c_str() );
-
-			s->sysmessage( 1568, buf );
-		}
-	}
-	else
-		s->sysmessage( 1504 );
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::AnatomyTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
@@ -1963,6 +1846,13 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		bool doSwitch = true;
 		if( skScript != NULL )
 			doSwitch = !skScript->OnSkill( mChar, x );
+		else if( cwmWorldState->skill[x].jsScript != 0xFFFF )
+		{
+			skScript = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
+			if( skScript != NULL )
+				doSwitch = !skScript->OnSkill( mChar, x );
+		}
+
 		if( doSwitch )
 		{
 			switch( x )
@@ -1970,10 +1860,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				case ARMSLORE:			s->target( 0, TARGET_ARMSLORE, 855 );		break;
 				case ANATOMY:			s->target( 0, TARGET_ANATOMY, 856 );		break;
 				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
-				case EVALUATINGINTEL:	s->target( 0, TARGET_EVALINT, 858 );		break;
 				case TAMING:			s->target( 0, TARGET_TAME, 859 );			break;
-				case HIDING:			Hide( s );									break;
-				case STEALTH:			Stealth( s );								break;
 				case DETECTINGHIDDEN:	s->target( 0, TARGET_DETECTHIDDEN, 860 );	break;
 				case PEACEMAKING:		PeaceMaking(s);								break;
 				case PROVOCATION:		s->target( 0, TARGET_PROVOCATION, 861 );	break;
@@ -3704,6 +3591,13 @@ void cSkills::Load( void )
 	Console << "Loading/initializing resources ";
 	LoadResourceData();
 	Console.PrintDone();
+
+	CJSMappingSection *skillSection = JSMapping->GetSection( SCPT_SKILLUSE );
+	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
+	{
+		if( ourScript != NULL )
+			ourScript->skillRegistration();
+	}
 
 	Console.PrintSectionBegin();
 }

@@ -114,6 +114,7 @@ static JSFunctionSpec my_functions[] =
 	{ "DisableSpell",				SE_DisableSpell,			1, 0, 0 },
 	{ "EnableSpell",				SE_EnableSpell,				1, 0, 0 },
 
+	{ "RegisterSkill",				SE_RegisterSkill,			2, 0, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0, 0 },
 
 	{ NULL,							NULL,						0, 0, 0 }, 
@@ -2487,6 +2488,13 @@ bool cScript::spellRegistration( void )
 {
 	jsval params[1], rval;
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "SpellRegistration", 0, params, &rval );
+	return ( retVal == JS_TRUE );
+}
+
+bool cScript::skillRegistration( void )
+{
+	jsval params[1], rval;
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "SkillRegistration", 0, params, &rval );
 	return ( retVal == JS_TRUE );
 }
 

@@ -1,8 +1,16 @@
-2/8/2005 - giwo
+2/10/2005 - giwo (0.98-2.7b)
+	Moved Hiding Skill out to JS.
+	Moved Stealth Skill out to JS.
+	Moved Evaluate Intelligence skill out to JS.
+	Added RegisterSkill() JS Function.
+	Added .steath prop to JS Characters.
+	Fixed an issue with .attacker prop causing it to return the Characters target.
+
+2/8/2005 - giwo (0.98-2.7a)
 	Added the ability to reload a single JS file to CJSMapping.
 	Added SE Function ReloadJSFile, along with a new command in js, RELOADJSFILE
 
-2/7/2005 - giwo
+2/7/2005 - giwo (0.98-2.7)
 	Replaced trigger.cpp/.h with CJSMapping.cpp/.h Fixing several issues with JS Scripts.
 	Added .desc prop to JS Items
 

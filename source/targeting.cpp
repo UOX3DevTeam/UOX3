@@ -1853,7 +1853,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ARMSLORE:		Skills->ArmsLoreTarget( tSock );		break;
 					case TARGET_ANATOMY:		Skills->AnatomyTarget( tSock );			break;
 					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
-					case TARGET_EVALINT:		Skills->EvaluateIntTarget( tSock );		break;
 					case TARGET_TAME:			Skills->TameTarget( tSock );			break;
 					case TARGET_FISH:			Skills->FishTarget( tSock );			break;
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;

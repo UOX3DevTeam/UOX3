@@ -276,8 +276,9 @@ public:
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 
 	bool		commandRegistration( void );
-
 	bool		spellRegistration( void );
+	bool		skillRegistration( void );
+
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );

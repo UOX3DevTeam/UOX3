@@ -578,7 +578,7 @@ namespace UOX
 				case CCP_ATTACKER:
 					{
 						// Hm Quite funny, same thing as .owner
-						CChar *tempChar	= gPriv->GetTarg();
+						CChar *tempChar	= gPriv->GetAttacker();
 						if( !ValidateObject( tempChar ) )
 						{	// Return a JS_NULL
 							*vp = JSVAL_NULL;
@@ -619,6 +619,7 @@ namespace UOX
 				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
 				case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
+				case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
 				default:
 					break;
 			}
@@ -822,6 +823,7 @@ namespace UOX
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
+				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 			}
 		}
 		return JS_TRUE;

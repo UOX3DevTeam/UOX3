@@ -173,7 +173,7 @@ CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 //o--------------------------------------------------------------------------o
 UI16 CJSMapping::GetScriptID( JSObject *toFind )
 {
-	UI16 retVal		= 0;
+	UI16 retVal		= 0xFFFF;
 	UI16 toCheck	= 0;
 
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )

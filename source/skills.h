@@ -56,8 +56,6 @@ private:
 	void	doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
-	TargetFunc Hide;
-	TargetFunc Stealth;
 	TargetFunc PeaceMaking;
 	TargetFunc RandomSteal;
 	TargetFunc Meditation;
@@ -89,7 +87,6 @@ public:
 	TargetFunc DetectHidden;
 	TargetFunc EnticementTarget1;
 	TargetFunc EnticementTarget2;
-	TargetFunc EvaluateIntTarget;
 	TargetFunc FishTarget;
 	TargetFunc ForensicsTarget;
 	TargetFunc GraveDig;

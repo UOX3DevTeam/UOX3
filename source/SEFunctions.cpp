@@ -439,6 +439,28 @@ JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
  	return JS_TRUE;
 }
 
+JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RegisterSkill: Invalid number of arguments (takes 2)" );
+ 		return JS_FALSE;
+	}
+	int skillNumber			= JSVAL_TO_INT( argv[0] );
+	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+	if( scriptID != 0xFFFF )
+	{
+#ifdef _DEBUG
+		Console.Print( "Registering skill number %i\n", skillNumber );
+#endif
+		if( skillNumber < 0 || skillNumber >= ALLSKILLS )
+			return JS_TRUE;
+		cwmWorldState->skill[skillNumber].jsScript = scriptID;
+	}
+ 	return JS_TRUE;
+}
+
 JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
