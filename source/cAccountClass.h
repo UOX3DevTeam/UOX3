@@ -68,14 +68,11 @@
 //#include <iomanip.h>
 //#include <strstream.h>
 //#endif
-
 //#include <sys/types.h>
 //#include <sys/stat.h>
 //#include <errno.h>
-
 //#include "cChar.h"
 //#include "cVersionClass.h"
-
 //#define __UOX3_DTL__
 //#ifdef __UOX3_DTL__
 //#include "DTL.h"
