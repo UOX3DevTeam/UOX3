@@ -225,6 +225,7 @@ void MsgBoardOpen( cSocket *s )
 			if( fseek( file, 4, SEEK_SET ) )
 			{
 				Console << "MsgBoardOpen() failed to seek to first message segment in bbi file" << myendl;
+				fclose(file);
 				return;
 			}
 			
