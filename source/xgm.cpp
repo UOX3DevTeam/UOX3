@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "debug.h"
 #include "xgm.h"
 
 void cPXGMLoginResponse::InternalReset( void )
@@ -35,15 +34,15 @@ cPIXGMLogin::cPIXGMLogin()
 	InternalReset();
 }
 
-cPIXGMLogin::cPIXGMLogin( cSocket *s )
+cPIXGMLogin::cPIXGMLogin( cSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
-	Receive( s );
+	Receive();
 }
 
-void cPIXGMLogin::Receive( cSocket *s )
+void cPIXGMLogin::Receive( void )
 {
-	s->Receive( 62 );
+	tSock->Receive( 62 );
 }
 
 void cPIXGMLogin::InternalReset( void )
@@ -172,15 +171,15 @@ cPIXGMServerStat::~cPIXGMServerStat()
 {
 }
 
-cPIXGMServerStat::cPIXGMServerStat( cSocket *s )
+cPIXGMServerStat::cPIXGMServerStat( cSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
-	Receive( s );
+	Receive();
 }
 
-void cPIXGMServerStat::Receive( cSocket *s )
+void cPIXGMServerStat::Receive( void )
 {
-	s->Receive( 2 );
+	tSock->Receive( 2 );
 }
 
 void cPIXGMServerStat::InternalReset( void )
@@ -374,14 +373,14 @@ cPIXGMClientVer::cPIXGMClientVer()
 {
 	InternalReset();
 }
-cPIXGMClientVer::cPIXGMClientVer( cSocket *s )
+cPIXGMClientVer::cPIXGMClientVer( cSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
-	Receive( s );
+	Receive();
 }
-void cPIXGMClientVer::Receive( cSocket *s )
+void cPIXGMClientVer::Receive( void )
 {
-	s->Receive( 5 );
+	tSock->Receive( 5 );
 }	
 bool cPIXGMClientVer::Handle( void )
 {
@@ -392,13 +391,13 @@ bool cPIXGMClientVer::Handle( void )
 cPIXGMServerVer::cPIXGMServerVer()
 {
 }
-cPIXGMServerVer::cPIXGMServerVer( cSocket *s )
+cPIXGMServerVer::cPIXGMServerVer( cSocket *s ) : cPInputBuffer( s )
 {
-	Receive( s );
+	Receive();
 }
-void cPIXGMServerVer::Receive( cSocket *s )
+void cPIXGMServerVer::Receive( void )
 {
-	s->Receive( 1 );
+	tSock->Receive( 1 );
 }	
 bool cPIXGMServerVer::Handle( void )
 {
@@ -432,13 +431,13 @@ void cPXGMServerVerResponse::Version( UI32 generic )
 cPIXGMWhoOnline::cPIXGMWhoOnline()
 {
 }
-cPIXGMWhoOnline::cPIXGMWhoOnline( cSocket *s )
+cPIXGMWhoOnline::cPIXGMWhoOnline( cSocket *s ) : cPInputBuffer( s )
 {
-	Receive( s );
+	Receive();
 }
-void cPIXGMWhoOnline::Receive( cSocket *s )
+void cPIXGMWhoOnline::Receive( void )
 {
-	s->Receive( 1 );
+	tSock->Receive( 1 );
 }	
 bool cPIXGMWhoOnline::Handle( void )
 {
@@ -446,7 +445,7 @@ bool cPIXGMWhoOnline::Handle( void )
 	toSend.StatusType( tSock->GetByte( 0 ) - 2 );
 	cSocket *toGet = NULL;
 	//
-	std::vector< CChar * > charListing;
+	CHARLIST charListing;
 	UI32 i = 0;
 	//
 	ACCOUNTSBLOCK actbBlock;
@@ -456,7 +455,7 @@ bool cPIXGMWhoOnline::Handle( void )
 	switch( tSock->GetByte( 0 ) - 2 )
 	{
 	case 0:	// online
-		toSend.NumEntries( now );
+		toSend.NumEntries( static_cast<UI16>(now) );
 		Network->PushConn();
 		for( toGet = Network->FirstSocket(); !Network->FinishedSockets(); toGet = Network->NextSocket() )
 		{
@@ -565,10 +564,10 @@ cPIXGMChangeLevel::cPIXGMChangeLevel()
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Constructor in which it does the receive it has to
 //o---------------------------------------------------------------------------o
-cPIXGMChangeLevel::cPIXGMChangeLevel( cSocket *s )
+cPIXGMChangeLevel::cPIXGMChangeLevel( cSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
-	Receive( s );
+	Receive();
 }
 
 //o---------------------------------------------------------------------------o
@@ -578,9 +577,9 @@ cPIXGMChangeLevel::cPIXGMChangeLevel( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Receives any data it needs to for processing
 //o---------------------------------------------------------------------------o
-void cPIXGMChangeLevel::Receive( cSocket *s )
+void cPIXGMChangeLevel::Receive( void )
 {
-	s->Receive( 2 );
+	tSock->Receive( 2 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -628,14 +627,14 @@ cPIXGMShowQueueRequest::cPIXGMShowQueueRequest()
 {
 	InternalReset();
 }
-cPIXGMShowQueueRequest::cPIXGMShowQueueRequest( cSocket *s )
+cPIXGMShowQueueRequest::cPIXGMShowQueueRequest( cSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
-	Receive( s );
+	Receive();
 }
-void cPIXGMShowQueueRequest::Receive( cSocket *s )
+void cPIXGMShowQueueRequest::Receive( void )
 {
-	s->Receive( 2 );
+	tSock->Receive( 2 );
 }
 UI08 cPIXGMShowQueueRequest::Queue( void ) const
 {
@@ -761,33 +760,33 @@ void cPXGMChangeLevelResponse::Clearance( UI08 clearance )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  cPInputBuffer *WhichXGMPacket( UI08 packetID )
+//|   Function    :  cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Returns an instance of a particular packet's handler, if
 //|					 a known handler exists.  Otherwise returns NULL
 //o---------------------------------------------------------------------------o
-cPInputBuffer *WhichXGMPacket( UI08 packetID )
+cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s )
 {
 	switch( packetID )
 	{
-	case 0x00:	return new cPIXGMLogin;					// Login / authentication request
-	case 0x02:	return new cPIXGMWhoOnline;				// Who's Online Request
-	case 0x03:	return new cPIXGMWhoOnline;				// Who's Offline Request
-	case 0x04:	return new cPIXGMWhoOnline;				// Who's Logging Out Request
-	case 0x08:	return new cPIXGMClientVer;				// XGM Client Protocol Version
-	case 0x09:	return new cPIXGMServerVer;				// XGM Server Protocol Version Request
-	case 0x0F:	return new cPIXGMServerStat;			// Get Server Stats
-	case 0x01:	return new cPIXGMChangeLevel;			// Access Level Change Request
-	case 0x05:	return new cPIXGMShowQueueRequest;		// Show Queue Request
-	case 0x06:											// Handle Queue Entry Request
-	case 0x07:											// Account Command Request
-	case 0x0A:											// Reload Script Request
-	case 0x0B:											// Installed Scripts Request
-	case 0x0C:											// Get Installed Script
-	case 0x0D:											// Get Script Section Names Request
-	case 0x0E:											// Get Script Section Request
+	case 0x00:	return new cPIXGMLogin( s );				// Login / authentication request
+	case 0x02:	return new cPIXGMWhoOnline( s );			// Who's Online Request
+	case 0x03:	return new cPIXGMWhoOnline( s );			// Who's Offline Request
+	case 0x04:	return new cPIXGMWhoOnline( s );			// Who's Logging Out Request
+	case 0x08:	return new cPIXGMClientVer( s );			// XGM Client Protocol Version
+	case 0x09:	return new cPIXGMServerVer( s );			// XGM Server Protocol Version Request
+	case 0x0F:	return new cPIXGMServerStat( s );			// Get Server Stats
+	case 0x01:	return new cPIXGMChangeLevel( s );			// Access Level Change Request
+	case 0x05:	return new cPIXGMShowQueueRequest( s );		// Show Queue Request
+	case 0x06:												// Handle Queue Entry Request
+	case 0x07:												// Account Command Request
+	case 0x0A:												// Reload Script Request
+	case 0x0B:												// Installed Scripts Request
+	case 0x0C:												// Get Installed Script
+	case 0x0D:												// Get Script Section Names Request
+	case 0x0E:												// Get Script Section Request
 	default:	return NULL;
 	}
 	return NULL;

@@ -45,13 +45,11 @@ void CWorldMain::savenewworld( bool x )
 
 	cSpawnRegion *spawnReg = NULL;
 
-	for( UI32 i = 1; i < totalspawnregions; i++ )
+	for( UI16 i = 1; i < totalspawnregions; i++ )
 	{
 		spawnReg = spawnregion[i];
 
-		if( spawnReg == NULL )
-			continue;
-		else
+		if( spawnReg != NULL )
 			spawnReg->checkSpawned();
 	}
 	
@@ -87,7 +85,7 @@ void CWorldMain::savenewworld( bool x )
 		Console << "Saving Misc. data... ";
 		//Accounts->SaveAccounts();
 		ServerData()->save();
-		savelog( "Server data save\n", "server.log" );
+		Console.Log( "Server data save\n", "server.log" );
 		RegionSave();
 		Console.PrintDone();
 		MapRegion->Save(); 
@@ -103,7 +101,7 @@ void CWorldMain::savenewworld( bool x )
 		//	all the time if using the web interface
 		if( ServerData()->GetExternalAccountStatus()  )
 		{
-			Accounts->Load();
+			//Accounts->Import();
 		}
 		Accounts->Save();
 		worldSaveProgress = 2;

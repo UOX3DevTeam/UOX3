@@ -40,6 +40,7 @@ void cWhoList::FlagUpdate( void )
 	needsUpdating = true;
 
 }
+#pragma note( "Param Warning: in cWhoList::SendSocket(), option is unrefrenced" )
 void cWhoList::SendSocket( cSocket *toSendTo, UI08 option )
 // PRE:		WhoList class is active
 // POST:	Sends the wholist to the socket, depending on option
@@ -77,7 +78,7 @@ void cWhoList::GMLeave( void )
 	if( gmCount != 0 )
 		gmCount--;
 }
-
+#pragma note( "Param Warning: in cWhoList::GrabSerial(), index is unrefrenced" )
 SERIAL cWhoList::GrabSerial( CHARACTER index )
 // PRE:		WhoList class is active
 // POST:	Returns serial as refered to by index
@@ -269,7 +270,8 @@ void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	}
 	
 	stringList one, two;
-	
+
+	UnicodeTypes sLang = toSendTo->Language();
 	UI16 lColour = cwmWorldState->ServerData()->GetLeftTextColour(), tColour = cwmWorldState->ServerData()->GetTitleColour();
 	UI16 butRight = cwmWorldState->ServerData()->GetButtonRight();
 	//--static pages
@@ -328,14 +330,14 @@ void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	two.push_back( temp );
 	sprintf( temp, "Name: %s", targetChar->GetName() );   
 	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1400 ) );
-	two.push_back( Dictionary->GetEntry( 1401 ) );
-	two.push_back( Dictionary->GetEntry( 1402 ) );
-	two.push_back( Dictionary->GetEntry( 1403 ) );
-	two.push_back( Dictionary->GetEntry( 1404 ) );
-	two.push_back( Dictionary->GetEntry( 1405 ) );
-	two.push_back( Dictionary->GetEntry( 1406 ) );
-	two.push_back( Dictionary->GetEntry( 1407 ) );
+	two.push_back( Dictionary->GetEntry( 1400, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1401, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1402, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1403, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1404, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1405, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1406, sLang ) );
+	two.push_back( Dictionary->GetEntry( 1407, sLang ) );
 	sprintf( temp, "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 ) );   
 	two.push_back( temp );
 

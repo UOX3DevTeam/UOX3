@@ -195,22 +195,6 @@ struct skill_st
 	std::vector< advance_st > advancement;
 };
 
-struct make_st
-{
-	int has;
-	int has2;
-	int needs;
-
-	SI16 minskill;
-	SI16 maxskill;
-	UI16 material1;
-	UI16 material2;
-	UI08 minrank;
-	UI08 maxrank;
-
-	int number; // Store Script Number used to Rank System by Magius(CHE)
-};
-
 struct title_st // For custom titles
 {
 	char fame[50];
@@ -227,25 +211,16 @@ struct MurderPair
 	MurderPair() : loBound( 0 ) { }
 	MurderPair( SI16 lB, const char *toDisp ) : loBound( lB ) { toDisplay = toDisp; }
 };
-
-struct statcap_st
-{
-	int statmax; //250 stat points (100 str, 100 int, 50 dex?)
-	int skillmax; //900 BASE skill points
-	long int skilldecay; //12000 seconds
-	int numsktrk; //track the last numsktrk (10) skills SUCCESSFULLY used
-}; // Morrolan - stat/skill cap
-
 struct reag_st
 {
-	SI08 ginseng;
-	SI08 moss;
-	SI08 drake;
-	SI08 pearl;
-	SI08 silk;
-	SI08 ash;
-	SI08 shade;
-	SI08 garlic;
+	UI08 ginseng;
+	UI08 moss;
+	UI08 drake;
+	UI08 pearl;
+	UI08 silk;
+	UI08 ash;
+	UI08 shade;
+	UI08 garlic;
 	reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 ) { }
 };
 
@@ -382,7 +357,6 @@ struct line2D
 
 inline vector2D line2D::CollideLines2D( line2D toCollide ) const
 {
-	bool parallel = false;
 	if( ( ( dir.x == 0 ) && ( toCollide.dir.x == 0 ) ) ||
 		( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
 		return vector2D( -1.0f, -1.0f ); // error, parallel or invalid lines
@@ -546,6 +520,7 @@ struct createEntry
 	UI08 maxRank;
 	std::string addItem;
 	SI16 delay;
+	UI16 spell;
 	std::vector< resAmountPair > resourceNeeded;
 	std::vector< resSkillReq > skillReqs;
 	std::string name;

@@ -95,7 +95,7 @@ protected:
 public:
 						cPIXGMLogin();
 						cPIXGMLogin( cSocket *s );
-	virtual void		Receive( cSocket *s );
+	virtual void		Receive( void );
 	virtual const char *Name( void );
 	virtual const char *Pass( void );
 	virtual UI08		Clearance( void );
@@ -110,7 +110,7 @@ public:
 							cPIXGMServerStat();
 	virtual ~				cPIXGMServerStat();
 							cPIXGMServerStat( cSocket *s );
-	virtual void			Receive( cSocket *s );
+	virtual void			Receive( void );
 	virtual bool			Handle( void );
 	virtual XGMServerStat	Stat( void );
 };
@@ -122,7 +122,7 @@ protected:
 public:
 							cPIXGMClientVer();
 							cPIXGMClientVer( cSocket *s );
-	virtual void			Receive( cSocket *s );
+	virtual void			Receive( void );
 	virtual bool			Handle( void );
 };
 
@@ -131,7 +131,7 @@ class cPIXGMServerVer : public cPInputBuffer
 public:
 							cPIXGMServerVer();
 							cPIXGMServerVer( cSocket *s );
-	virtual void			Receive( cSocket *s );
+	virtual void			Receive( void );
 	virtual bool			Handle( void );
 };
 
@@ -140,7 +140,7 @@ class cPIXGMWhoOnline : public cPInputBuffer
 public:
 							cPIXGMWhoOnline();
 							cPIXGMWhoOnline( cSocket *s );
-	virtual void			Receive( cSocket *s );
+	virtual void			Receive( void );
 	virtual bool			Handle( void );
 };
 
@@ -151,7 +151,7 @@ protected:
 public:
 						cPIXGMChangeLevel();
 						cPIXGMChangeLevel( cSocket *s );
-	virtual void		Receive( cSocket *s );
+	virtual void		Receive( void );
 	virtual UI08		Clearance( void );
 	virtual bool		Handle( void );
 };
@@ -163,7 +163,7 @@ protected:
 public:
 						cPIXGMShowQueueRequest();
 						cPIXGMShowQueueRequest( cSocket *s );
-	virtual void		Receive( cSocket *s );
+	virtual void		Receive( void );
 	virtual UI08		Queue( void ) const;
 	virtual bool		Handle( void );
 };

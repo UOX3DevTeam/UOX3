@@ -13,9 +13,8 @@
 void PlVGetgold( cSocket *mSock, CChar *v )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	char temp[1024];
 	UI32 pay = 0, give = v->GetHoldG(), t = 0;
-	if( mChar->GetSerial() == v->GetOwner() )
+	if( mChar == v->GetOwnerObj() )
 	{
 		if( v->GetHoldG() <= 0 )
 		{
@@ -47,10 +46,9 @@ void PlVGetgold( cSocket *mSock, CChar *v )
 				npcTalk( mSock, v, 1327, false );
 		}
 		if( give ) 
-			Items->SpawnItem( mSock, give, "#", 1, 0x0EED, 0, true, true);
+			Items->SpawnItem( mSock, mChar, give, "#", 1, 0x0EED, 0, true, true);
 		
-		sprintf( temp, Dictionary->GetEntry( 1328 ), v->GetHoldG(), pay, give );
-		npcTalk( mSock, v, temp, false );
+		npcTalk( mSock, v, 1328, false, v->GetHoldG(), pay, give );
 	} 
 	else 
 		npcTalk( mSock, v, 1329, false );
@@ -66,14 +64,13 @@ void PlVGetgold( cSocket *mSock, CChar *v )
 void buyItem( cSocket *mSock )
 {
 	int i, j;
-	int playergoldtotal, goldtotal = 0, itemtotal;
+	int itemtotal;
+	UI32 playergoldtotal, goldtotal = 0;
 	bool soldout = false, clear = false;
 	CChar *mChar = mSock->CurrcharObj();
 	CItem *p = getPack( mChar );
 	if( p == NULL ) 
 		return;
-
-	char temp[1024];
 
 	std::vector< int > bitems, amount, layer;
 
@@ -94,7 +91,7 @@ void buyItem( cSocket *mSock )
 		amount[i]	= mSock->GetWord( 13 + baseOffset );
 		goldtotal	+= ( amount[i] * ( items[bitems[i]].GetValue() ) );
 	}
-	bool useBank = (goldtotal >= cwmWorldState->ServerData()->GetBuyThreshold() );
+	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->GetBuyThreshold() ));
 	if( useBank )
 		playergoldtotal = getBankCount( mChar, 0x0EED );
 	else
@@ -114,17 +111,16 @@ void buyItem( cSocket *mSock )
 		else
 		{
 			if( mChar->IsGM() )
-				sprintf( temp, Dictionary->GetEntry( 1337 ), mChar->GetName() );
+				npcTalkAll( npc, 1337, false, mChar->GetName() );
 			else
 			{
 				if( goldtotal == 1 )
-					sprintf( temp, Dictionary->GetEntry( 1338 ), mChar->GetName(), goldtotal );
+					npcTalkAll( npc, 1338, false, mChar->GetName(), goldtotal );
 				else
-					sprintf( temp, Dictionary->GetEntry( 1339 ), mChar->GetName(), goldtotal );
+					npcTalkAll( npc, 1339, false, mChar->GetName(), goldtotal );
 
-				goldsfx( mSock, goldtotal );
+				goldSound( mSock, goldtotal );
 			}
-			npcTalkAll( npc, temp, false );
 			
 			clear = true;
 			if( !mChar->IsGM() ) 
@@ -207,7 +203,7 @@ void buyItem( cSocket *mSock )
 					case 0x1B: // Bought Container
 						if( items[biTemp].isPileable() )
 						{
-							items[biTemp].SetCont( p->GetSerial() );
+							items[biTemp].SetCont( p );
 							RefreshItem( &items[biTemp] );
 						}
 						else
@@ -224,7 +220,7 @@ void buyItem( cSocket *mSock )
 								}
 							}
 
-							items[biTemp].SetCont( p->GetSerial() );
+							items[biTemp].SetCont( p );
 							items[biTemp].SetAmount( 1 );
 							RefreshItem( &items[biTemp] );
 						}
@@ -248,11 +244,10 @@ void buyItem( cSocket *mSock )
 	
 	if( clear )
 	{
-		CPClearMsg clrSend;
+		CPBuyItem clrSend;
 		clrSend.Serial( mSock->GetDWord( 3 ) );
 		mSock->Send( &clrSend );
 	}
-	Weight->calcWeight( mChar );
 	statwindow( mSock, mChar );
 }
 
@@ -265,7 +260,7 @@ void buyItem( cSocket *mSock )
 //o---------------------------------------------------------------------------o
 void restock( bool stockAll )
 {
-	SERIAL serial;
+	cBaseObject *getCont;
 	CItem *ci;
 	int a;
 
@@ -273,10 +268,10 @@ void restock( bool stockAll )
 	{
 		if( items[i].GetRestock() && items[i].GetCont( 1 ) >= 0x40 )
 		{
-			serial = items[i].GetCont();
-			if( serial != INVALIDSERIAL )
+			getCont = items[i].GetCont();
+			if( getCont != NULL )
 			{
-				ci = calcItemObjFromSer( serial );
+				ci = (CItem *)getCont;
 				if( ci != NULL )
 				{
 					if( ( ci->GetLayer() == 0x1A ) )
@@ -313,7 +308,8 @@ void restock( bool stockAll )
 //o---------------------------------------------------------------------------o
 void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 {
-	int value,z;
+	UI32 value;
+	int z;
 	char ciname[256];
 	char cinam2[256];
 	char itemname[256];
@@ -343,9 +339,9 @@ void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 				m1[m1t+7] = i->GetColour( 2 );
 				m1[m1t+8] = (UI08)(i->GetAmount()>>8);
 				m1[m1t+9] = (UI08)(i->GetAmount()%256);
-				value = calcValue( i, q->GetValue() );
+				value = calcValue( i, (UI32)q->GetValue() );
 				if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-					value = calcGoodValue( npc, q, value, 1 );
+					value = calcGoodValue( npc, q, value, true );
 				m1[m1t+10] = (UI08)(value>>8);
 				m1[m1t+11] = (UI08)(value%256);
 				m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
@@ -371,13 +367,13 @@ void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 bool sendSellStuff( cSocket *s, CChar *i )
 {
 	char itemname[256];
-	int value;
+	UI32 value;
 	UI08 m1[2048];
 	char m2[2];
 	char ciname[256];
 	char cinam2[256];
 	
-	CItem *vendorPack = FindItemOnLayer( i, 0x1C );	// find the acceptable sell layer
+	CItem *vendorPack = i->GetItemAtLayer( 0x1C );	// find the acceptable sell layer
 	if( vendorPack == NULL ) 
 		return false;	// no layer
 	
@@ -429,9 +425,9 @@ bool sendSellStuff( cSocket *s, CChar *i )
 						m1[m1t+7] = j->GetColour( 2 );
 						m1[m1t+8] = (UI08)(j->GetAmount()>>8);
 						m1[m1t+9] = (UI08)(j->GetAmount()%256);
-						value = calcValue( j, q->GetValue() );
+						value = calcValue( j, (UI32)q->GetValue() );
 						if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-							value = calcGoodValue( i, j, value, 1 );
+							value = calcGoodValue( i, j, value, true );
 						m1[m1t+10] = (UI08)(value>>8);
 						m1[m1t+11] = (UI08)(value%256);
 						m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
@@ -469,21 +465,18 @@ bool sendSellStuff( cSocket *s, CChar *i )
 //o---------------------------------------------------------------------------o
 void sellItem( cSocket *mSock )
 {
-	int i, amt, value=0, totgold=0;
-	CItem *j, *k;
-	int maxsell;
-	char tmpmsg[256];
-	*tmpmsg = '\0';
-
-	CChar *mChar = mSock->CurrcharObj();
 	if( mSock->GetByte( 8 ) != 0 )
 	{
-		CChar *n = calcCharObjFromSer( mSock->GetDWord( 3 ) );
-		CItem *sellPack = FindItemOnLayer( n, 0x1A );
-		CItem *boughtPack = FindItemOnLayer( n, 0x1B );
-		CItem *buyPack = FindItemOnLayer( n, 0x1C );
-		// Pre Calculate Total Amount of selling items to STOPS if the items if greater than SELLMAXITEM - Magius(CHE)
-		maxsell = 0;
+		CChar *mChar = mSock->CurrcharObj();
+		CChar *n			= calcCharObjFromSer( mSock->GetDWord( 3 ) );
+		if( n == NULL || mChar == NULL )
+			return;
+		CItem *sellPack		= n->GetItemAtLayer( 0x1A );
+		CItem *boughtPack	= n->GetItemAtLayer( 0x1B );
+		CItem *buyPack		= n->GetItemAtLayer( 0x1C );
+		CItem *j, *k;
+		UI16 i, amt, maxsell = 0;
+		UI32 totgold = 0, value = 0;
 		for( i = 0; i < mSock->GetByte( 8 ); i++ )
 		{
 			j = calcItemObjFromSer( mSock->GetDWord( 9 + (6*i) ) );
@@ -493,8 +486,7 @@ void sellItem( cSocket *mSock )
 
 		if( maxsell > cwmWorldState->ServerData()->GetSellMaxItemsStatus() )
 		{
-			sprintf( tmpmsg, Dictionary->GetEntry( 1342 ), mChar->GetName(), cwmWorldState->ServerData()->GetSellMaxItemsStatus() );
-			npcTalkAll( n, tmpmsg, false );
+			npcTalkAll( n, 1342, false, mChar->GetName(), cwmWorldState->ServerData()->GetSellMaxItemsStatus() );
 			return;
 		}
 
@@ -523,14 +515,14 @@ void sellItem( cSocket *mSock )
 					if( k != NULL )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							value = calcValue( j, k->GetValue() );
+							value = calcValue( j, (UI32)k->GetValue() );
 					}
 				}
 				if( join != NULL )
 				{
 					join->SetAmount( join->GetAmount() + amt );
 					join->SetRestock( join->GetRestock() - amt );
-					totgold = totgold+(amt*value);
+					totgold += ( amt * value );
 					if( j->GetAmount() == amt )
 						Items->DeleItem( j );
 					else
@@ -542,7 +534,7 @@ void sellItem( cSocket *mSock )
 				else
 				{
 					totgold += ( amt * value );
-					j->SetCont( boughtPack->GetSerial() );
+					j->SetCont( boughtPack );
 					//remove from shopkeeps inventory lookup tauriel
 
 					CPRemoveItem toRemove = (*j);
@@ -557,10 +549,10 @@ void sellItem( cSocket *mSock )
 			} 
 		}
 		addgold( mSock, totgold );
-		goldsfx( mSock, totgold );
+		goldSound( mSock, totgold );
 	}
 	
-	CPClearMsg clrSend;
+	CPBuyItem clrSend;
 	clrSend.Serial( mSock->GetDWord( 3 ) );
 	mSock->Send( &clrSend );
 }
@@ -578,7 +570,7 @@ void restockNPC( CChar *i )
 		return;	// if we aren't a shopkeeper, why bother?
 	if( shoprestocktime <= uiCurrentTime || overflow )
 	{
-		CItem *ci = FindItemOnLayer( i, 0x1A );
+		CItem *ci = i->GetItemAtLayer( 0x1A );
 		if( ci != NULL )
 		{
 			for( CItem *c = ci->FirstItemObj(); !ci->FinishedItems(); c = ci->NextItemObj() )
@@ -587,9 +579,9 @@ void restockNPC( CChar *i )
 				{
 					if( c->GetRestock() )
 					{
-						int tmp = min( c->GetRestock(), ( c->GetRestock() / 2 ) + 1 );
-						c->SetAmount( c->GetAmount() + tmp );
-						c->SetRestock( c->GetRestock() - tmp );
+						UI16 stockAmt = min( c->GetRestock(), ( c->GetRestock() / 2 ) + 1 );
+						c->SetAmount( c->GetAmount() + stockAmt );
+						c->SetRestock( c->GetRestock() - stockAmt );
 					}
 					if( cwmWorldState->ServerData()->GetTradeSystemStatus() ) 
 						StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
