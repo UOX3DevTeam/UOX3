@@ -619,7 +619,7 @@ void cCombat::DoCombat( CChar *attack )
 					attack->SetStamina( attack->GetStamina() + cwmWorldState->ServerData()->GetCombatAttackStamina() );
 					if( attack->GetStamina() > attack->GetMaxStam() ) 
 						attack->SetStamina( attack->GetMaxStam() );
-					if( attack->GetStamina() < 0 ) 
+					if( attack->GetStamina()==0xffff) 
 						attack->SetStamina( 0 );
       				updateStats( attack, 2 );
 				}

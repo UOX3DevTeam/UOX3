@@ -3953,7 +3953,7 @@ bool CChar::Save( std::ofstream &outStream, SI32 mode ) const
 //o--------------------------------------------------------------------------o
 ACCOUNTSBLOCK &CChar::GetAccount(void) 
 {
-	if(ourAccount.wAccountIndex==-1||IsNpc()||ourAccount.wAccountIndex==AB_INVALID_ID)
+	if(IsNpc()||ourAccount.wAccountIndex==AB_INVALID_ID)
 	{
 		// Set this just in case that this is an NPC.
 		ourAccount.wAccountIndex=AB_INVALID_ID;
@@ -5324,7 +5324,7 @@ bool CChar::LoadRemnants( int arrayOffset )
 	UI16 k = GetID();
 	if( k > 0x3E1 )
 	{ 
-		if(GetAccount().wAccountIndex == -1||GetAccount().wAccountIndex==0xffff) 
+		if(GetAccount().wAccountIndex==0xffff) 
 		{ 
 			Console << "npc: " << GetSerial() << "[" << GetName() << "] with bugged body value detected, deleted for stability reasons" << myendl;
 			return false;

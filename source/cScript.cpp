@@ -1955,8 +1955,9 @@ void cScript::HandleGumpPress( cSocket *pressing, long button )
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
 	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties);
 	JS_SetPrivate(targContext, jsoObject, segdGumpData);
+	int i;
 	// Loop through Buttons
-	for(int i=0;i<nButtons;i++)
+	for(i=0;i<nButtons;i++)
 		segdGumpData->nButtons.push_back(pressing->GetDWord(19+(i*4)));
 	// Process text for the buttons?
 	nText = pressing->GetDWord(19+(4*nButtons));
@@ -2817,4 +2818,6 @@ bool cScript::OnCommand( cSocket *cS)
 	if( retVal == JS_FALSE ) 		
 		SetEventExists( seOnSpeech, false ); 	
 	return ( retVal == JS_TRUE ); 
-} 
+}
+
+
