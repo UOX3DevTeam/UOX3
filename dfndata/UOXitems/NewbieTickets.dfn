@@ -1,0 +1,54 @@
+Thank you goes out to Trent Jones for giving me a little drive to do this 
+script.  Thanks Trent.
+
+This should work:
+
+Add this to ITEMS.scp:
+
+SECTION ITEM 81000
+{
+NAME Newbie Ticket
+ID 14ef
+TRIGGER 400
+NODECAY
+WEIGHT 100
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 81001
+{
+NAME Newbie Ticket Items
+ITEMLIST 150 (or any other unused itemlist)
+}
+
+SECTION ITEMLIST 150
+{ Newbie Ticket Items
+# (these can be any item you want your player to be able to get
+#  from the ticket)
+#
+#
+}
+
+Now to set up the trigger.  Open TRIGGERS.scp and add this:
+
+SECTION TRG 400
+{
+IADD 81001
+REMOVE
+}
+
+
+Once you have added this to your scripts, you can add this line to
+the SECTION DEFAULT at the end of NEWBIE.scp:
+
+PACKITEM 81000
+
+And now all characters will start with a ticket that will give them
+a random item that you set up in your ITEMLIST..

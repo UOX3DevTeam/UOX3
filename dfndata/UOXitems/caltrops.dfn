@@ -1,0 +1,29 @@
+This file created by GM Onryou
+
+This is the single item a Caltrop.  If dropped on the ground, anyone
+who walks over it shold take 10-15 damage.  These are good for home
+security or if your bein chased through a tight corridor.  Just copy
+and paste it to the end of your ITEMS.scp file.
+
+SECTION ITEM 4015
+{
+NAME a Caltrop
+ID 0F0F
+COLOR 048e
+TYPE 85
+MOREX 5
+MOREY 5
+MOREZ 15
+PILE 1
+DECAY
+VALUE 5
+RESTOCK 10
+GOOD 16
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}

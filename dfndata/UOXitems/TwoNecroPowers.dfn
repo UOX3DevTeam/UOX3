@@ -1,0 +1,91 @@
+NECRO POWERS
+by TWiG
+
+quick notes... these should be given to an evil PC when they have earned it in some way. Players will not be able to move them out of their pack, so they are like a Power they learn, not just a scroll. The players will need to have verious body parts as components to use these powers. These also assume that the shard is using Forensic Evaluation as a Necro skill.
+
+SECTION ITEM 66650
+{
+NAME Necro Power of Summon Skeleton
+ID 0e34
+COLOR 0035
+TRIGGER 236
+MOVABLE 2
+PRIV 2
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 66651
+{
+NAME Necro Power of Summon Zombie
+ID 0e34
+COLOR 002b
+TRIGGER 237
+MOVABLE 2
+PRIV 2
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION TRG 236
+{Necro Scroll summon skeleton
+FMSG You are not knowledged enough in Forensic Evaluation.
+IFSKL 19 300
+FMSG You need a heart.
+NEED x1ced
+ACT 13
+SND 00 54
+USEUP x1ced
+CSKL 19
+KARMA -100
+MAN -15
+NADD 36 //make sure this is your NPC# for skeleton
+NEWOWNER
+MSG You summoned a Skeleton.
+SKL 19 1
+ACT 11
+FMSG  //makes no message if bonus is failed
+IFSKL 19 400
+CSKL 19
+MSG You summoned an extra Skeleton.
+NADD 36 //make sure this is your NPC# for skeleton
+NEWOWNER
+}
+
+SECTION TRG 237
+{Necro Scroll summon Zombie
+FMSG You are not knowledged enough in Forensic Evaluation.
+IFSKL 19 400
+FMSG You need a head.
+NEED x1da0
+ACT 13
+SND 00 54
+USEUP x1da0
+CSKL 19
+KARMA -150
+MAN -20
+NADD 13 //make sure this is your NPC# for zombie
+NEWOWNER
+SND 01 d8
+MSG You summoned a zombie.
+SKL 19 1
+ACT 11
+FMSG  //makes no message if bonus is failed
+IFSKL 19 500
+CSKL 19
+MSG You summoned an extra zombie.
+NADD 13 //make sure this is your NPC# for zombie
+NEWOWNER
+SND 01 d8
+}
