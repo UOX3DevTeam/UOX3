@@ -8542,15 +8542,28 @@ unsigned long int getclock( void )
 	//timeval tv;
 	//gettimeofday(&tv, NULL);
 	//#else
-	time_t tv ;
-	time(&tv) ;
+	//time_t tv ;
+	//time(&tv) ;
 	//#endif
 	// We want to keep the value within 32 bits; we could also substract
 	// startup time I suppose
 	//return ((tv.tv_sec - 900000000) * MY_CLOCKS_PER_SEC) +
 	//	tv.tv_usec / (1000000 / MY_CLOCKS_PER_SEC);
 	// We have the time in number of seconds since 1970.  Now do the same
-	return (tv-900000000) * MY_CLOCKS_PER_SEC ;
+	//return (tv-900000000) * MY_CLOCKS_PER_SEC ;
+	unsigned long milliseconds ;
+
+	#ifdef __linux__
+	tms buffer ;
+	clock_t inittime ;
+	inittime = times(&buffer) ;
+	
+	milliseconds = inittime /1000;
+	#else
+	
+	#endif
+	
+	return milliseconds;
 }
 
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)

@@ -136,6 +136,7 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 	#include <sys/time.h>
 	#include <netdb.h>
 	#include <sys/signal.h>
+	#include <sys/times.h>
 	#ifdef __linux__				// Tseramed's stuff
 		#include <unistd.h>
 		#include <arpa/inet.h>
