@@ -29,6 +29,21 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+06.02.2001               Thiago A. Corrêa
+  uox3.cpp               Added a few random messages when someone fails snooping
+  dbl_sinlge_click.cpp   a npc. Also, added an option to SERVER.SCP (SERVER SECTION)
+                         SNOOPISCRIME, that is exactly that. Players are flagged
+                         criminal if snoop fails. [DEFAULT is disable, 1 enable]
+                         Bug fix for players with macros equipping items when
+                         character is dead
+                         Bug fix that players can't open containers in their 
+                         backpacks.
+
+-------------------------------------------------------------------------------
+>>> SYNCHRONOUS  0.70.03.21c2                        Corrêa 
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 >>> SYNCHRONOUS  0.70.03.21c                         Corrêa 
 -------------------------------------------------------------------------------
 05.02.2001               Thiago A. Corrêa

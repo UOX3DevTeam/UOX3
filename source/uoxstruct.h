@@ -841,6 +841,7 @@ struct server_st
 	bool footSteps;
 	unsigned char commandPrefix;  
 	short buyThreshold;
+	bool snoopiscrime;
 };
 struct title_st // For custom titles
 {

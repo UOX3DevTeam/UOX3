@@ -384,20 +384,19 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		case 65:
 		case 87:  // <<- What is this people? Keep labeling things this is stupid.
 			int npc, contser;
-			contser=items[x].contserial; //calcserial(items[x].cont1,items[x].cont2,items[x].cont3,items[x].cont4);
+			contser = items[x].contserial;
 
 			int packOwner;
 			packOwner = GetPackOwner( x );
 			
-			npc=findbyserial(&charsp[items[x].contserial%HASHMAX], items[x].contserial, 1);
-			
-			if ((npcinrange(s,npc,2))||(chars[currchar[s]].priv&0x01)||(iteminrange(s,x,2)))
+			npc = calcCharFromSer( items[x].contserial );
+			if ( packOwner == currchar[s] || npcinrange(s,npc,2) || (chars[currchar[s]].priv&0x01) || iteminrange(s,x,2) )
 			{	
-				if (((npc==-1) || (chars[currchar[s]].serial == chars[npc].serial)) || ((chars[currchar[s]].priv&0x80) || (chars[currchar[s]].priv&0x01))) // Lord Vader fix
+				if ( npc == -1 || chars[currchar[s]].serial == chars[npc].serial || (chars[currchar[s]].priv&0x80) || (chars[currchar[s]].priv&0x01) ) // Lord Vader fix
 					backpack(s, a1, a2, a3, a4);
 				else
 				{
-					if( ( packOwner != currchar[s] ) && ( !( chars[currchar[s]].priv&0x01 ) ) )	// SNOOPING
+					if( packOwner != currchar[s] && !( chars[currchar[s]].priv&0x01 ) )	// SNOOPING
 					{
 						if ((chars[npc].priv&0x80) || (chars[npc].priv&0x01))//Counselor or GM
 						{
@@ -414,11 +413,47 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						else
 						{
 							sysmessage(s,"You failed to peek into that container.");
-							if (chars[npc].npc) npctalk(s,npc, "Art thou attempting to disturb my privacy?", 0);
-							sprintf(temp,"You notice %s trying to peek into your pack!",chars[currchar[s]].name);
-							z=calcSocketFromChar(npc);
-							if (z!=-1) sysmessage(z,temp); 
-							if (chars[currchar[s]].karma<=1000) chars[currchar[s]].karma-=10;
+							if (chars[npc].npc)
+							{
+
+								switch(rand()%3)
+								{
+								case 0:
+									strcpy(temp, "Art thou attempting to disturb my privacy?");
+									break;
+								case 1:
+									strcpy(temp, "Stop that!");
+									break;
+								case 2:
+									strcpy(temp, "Be aware I am going to call the guards!");
+									break;
+								}
+								npctalk(s, npc, temp, 0);
+								if (server_data.snoopiscrime)
+								{
+											if (rand()%2 && chars[currchar[s]].crimflag > 0) // 50% chance of calling guards, on second time
+												callguards( currchar[s] );
+								}
+
+
+							} else {
+								sprintf(temp,"You notice %s trying to peek into your pack!",chars[currchar[s]].name);
+								z = calcSocketFromChar(npc);
+								if (z!=-1) 
+									sysmessage(z,temp);
+							}
+							if (server_data.snoopiscrime)
+							{
+								chars[currchar[s]].crimflag = (int)((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
+								sysmessage( s, "You are now a criminal!" );
+								setcharflag( currchar[s] );
+							}
+							if (chars[currchar[s]].karma<=1000) 
+							{
+								chars[currchar[s]].karma-=10;
+								sysmessage(s, "You've lost a small bit of karma");
+							}
+
 						}
 					}
 				} 

@@ -36,21 +36,23 @@
 #define NOTE( x )  message( x )
 #define FILE_LINE  message( __FILE__LINE__ )
 
-#define TODO( x )  message( __FILE__LINE__"\n"           \
+#define TODO( x )  message( __FILE__LINE__"\n""+------------------------------------------------\n""|  TODO :   " #x "\n""+-------------------------------------------------\n" )
+#define FIXME( x )  message(  __FILE__LINE__"\n""+------------------------------------------------\n""|  FIXME :  " #x "\n""+-------------------------------------------------\n" )
+/*#define TODO( x )  message( __FILE__LINE__"\n"           \
         "+------------------------------------------------\n" \
         "|  TODO :   " #x "\n" \
         "+-------------------------------------------------\n" )
 #define FIXME( x )  message(  __FILE__LINE__"\n"           \
         "+------------------------------------------------\n" \
         "|  FIXME :  " #x "\n" \
-        "+-------------------------------------------------\n" )
+        "+-------------------------------------------------\n" )*/
 #define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" ) 
 #define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" ) 
 #define note( x )  message( __FILE__LINE__" NOTE :   " #x "\n" ) 
 
 // product info
 #define VER " 0.70.03"
-#define BUILD "21c"
+#define BUILD "21c2"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"
@@ -111,8 +113,8 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #include <vector>
 #include <map>
 #include <fstream>
-#ifndef __LINUX__ // knox, somewhere inside pesters my linux/gnu system... *shrugs*
-#include <strstream>
+#ifndef __LINUX__			// knox, somewhere inside pesters my linux/gnu system... *shrugs*
+	#include <strstream>
 #endif
 #include <iostream>
 
@@ -696,7 +698,7 @@ int compare_itemst (const item_st *a, const item_st *b);
 
 char iteminrange( UOXSOCKET s, int i, int distance);
 void updateskill(int s, int skillnum);
-char npcinrange (int s, int i, int distance);  //check for horse distance...
+char npcinrange ( UOXSOCKET s, int i, int distance);  //check for horse distance...
 void openbank(int s, int i);
 void openspecialbank( int s, int i ); // AntiChrist
 char inbankrange(int i);
