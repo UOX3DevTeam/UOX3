@@ -1,5 +1,5 @@
 // Coconut-Picking Script
-// 19/02/2003 Xuri; xuri@sensewave.com
+// 24/01/2005 Xuri; xuri@sensewave.com
 // When a (dynamic) coconut palm is double-clicked, it's setup with
 // 5 coconuts ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more coconuts can be picked. Once the timer is over,
@@ -11,7 +11,7 @@ function onUse( pUser, iUsed )
 	if( !isInRange )
  	{
 		pUser.SysMessage( "You are too far away to reach that." );
-		return;
+		return false;
 	}
 
 	if( !iUsed.GetTag("initialized")) // Unless apples have been picked before, initialize settings
@@ -49,6 +49,7 @@ function onUse( pUser, iUsed )
 			}
 		}
 	}
+	return false;
 }
 
 function onTimer( iUsed, timerID )

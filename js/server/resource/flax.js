@@ -1,5 +1,5 @@
 // Flax-Picking Script
-// 19/02/2003 Xuri; xuri@sensewave.com
+// 24/01/2005 Xuri; xuri@sensewave.com
 // When a (dynamic) flax plant is double-clicked, it may yield some flax.
 // Then a timer will start, and no more flax can be picked until it runs out.
 
@@ -9,7 +9,7 @@ function onUse( pUser, iUsed )
 	if( !isInRange )
  	{
 		pUser.SysMessage( "You are too far away to reach that." );
-		return;
+		return false;
 	}
 
 	if( !iUsed.GetTag("initialized")) // Unless flax have been picked before, initialize settings
@@ -36,6 +36,7 @@ function onUse( pUser, iUsed )
 			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
 		}
 	}
+	return false;
 }
 
 function onTimer( iUsed, timerID )
