@@ -54,7 +54,6 @@ static JSFunctionSpec my_functions[] =
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
 	{ "DoTempEffect",				SE_DoTempEffect,			7, 0, 0 },
-	{ "MakeMenu",					SE_MakeMenu,				2, 0, 0 },
 	{ "MakeItem",					SE_MakeItem,				3, 0, 0 },
 	{ "FindMulti",					SE_FindMulti,				4, 0, 0 },
 	{ "IsRegionGuarded",			SE_IsRegionGuarded,			1, 0, 0 },

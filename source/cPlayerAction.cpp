@@ -1680,9 +1680,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				}
 			}
 			return true;
-		case IT_TELEPORTITEM:	// Teleport rune
-			mSock->target( 0, TARGET_TELE, 401 );
-			return true;
 		case IT_KEY:	// Key
 			mSock->AddID( x->GetTempVar( CITV_MORE ) );
 			mSock->target( 0, TARGET_KEY, 402 );
@@ -1740,32 +1737,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			if( !keyInPack( mSock, mChar, mChar->GetPackItem(), x ) )
 				mSock->sysmessage( 406 );
-			return true;
-		case IT_FOOD: // Food
-			if( mChar->GetHunger() >= 6 )
-			{
-				mSock->sysmessage( 407 );
-				return true;
-			}
-			else
-			{
-				Effects->PlaySound( mChar, 0x003A + RandomNum( 0, 2 ) );
-				if( mChar->GetHunger() >= 0 && mChar->GetHunger() <= 6 )
-					mSock->sysmessage( 408 + mChar->GetHunger() );
-				else
-					mSock->sysmessage( 415 );
-
-				if( x->GetPoisoned() && mChar->GetPoisoned() < x->GetPoisoned() )
-				{
-					mSock->sysmessage( 416 + RandomNum( 0, 2 ) );
-					Effects->PlaySound( mChar, 0x0246 ); //poison sound - SpaceDog
-					mChar->SetPoisoned( x->GetPoisoned() );
-					mChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON ) )) );
-				}
-				//Remove a food item
-				x->IncAmount( -1 );
-				mChar->SetHunger( mChar->GetHunger() + 1 );
-			}
 			return true;
 		case IT_MAGICWAND: // Magic Wands
 			if( x->GetTempVar( CITV_MOREZ ) != 0 )
@@ -1944,12 +1915,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mChar->SetSpeechMode( 6 );
 			mSock->sysmessage( 434 );
 			return true;
-		case IT_LEATHERREPAIRTOOL:	// Leather repair tool
-			mSock->target( 0, TARGET_REPAIRLEATHER, 485 );	// What do we wish to repair?
-			return true;
-		case IT_BOWREPAIRTOOL:	// Bow repair tool
-			mSock->target( 0, TARGET_REPAIRBOW, 485 );	// What do we wish to repair?
-			return true;
 		case IT_TILLER:	// Tillerman
 			if( ValidateObject( GetBoat( mSock ) ) )
 			{
@@ -1990,9 +1955,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREZ ) );
 			else
 				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREX ) );
-			return true;
-		case IT_TINKERTOOL:	// tinker's tools
-			mSock->target( 0, TARGET_TINKERING, 484 );
 			return true;
 		case IT_METALREPAIRTOOL:
 			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
@@ -2069,9 +2031,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_SMITHYTOOL:
 			mSock->target( 0, TARGET_SMITH, 444 );
 			return true;
-		case IT_CARPENTRYTOOL:	// Carpentry
-			mSock->target( 0, TARGET_CARPENTRY, 445 );
-			return true;
 		case IT_MININGTOOL:	// Mining
 			mSock->target( 0, TARGET_MINE, 446 );
 			return true; 
@@ -2104,10 +2063,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_LOOM, 452 );
 			return true;
-		case IT_FLETCHINGTOOL:	// make shafts
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_FLETCHING, 454 );
-			return true;
 		case IT_CANNONBALL:	// cannon ball
 			mSock->target( 0, TARGET_LOADCANNON, 455 );
 			x->Delete();
@@ -2119,9 +2074,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_UNCOOKEDDOUGH:	// sausages to dough
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_COOKING, 457 );
-			return true;
-		case IT_SEWINGKIT:	// sewing kit for tailoring
-			mSock->target( 0, TARGET_TAILORING, 459 );
 			return true;
 		case IT_ORE:	// smelt ore
 			mSock->TempObj( x );

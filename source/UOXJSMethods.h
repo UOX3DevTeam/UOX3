@@ -75,9 +75,7 @@ JSMethodFunc CChar_CheckSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
 JSMethodFunc CChar_CastSpell;
-JSMethodFunc CChar_SysMessage;
 JSMethodFunc CChar_MagicEffect;
-JSMethodFunc CChar_MakeMenu;
 JSMethodFunc CChar_Wander;
 JSMethodFunc CChar_Follow;
 JSMethodFunc CChar_Dismount;
@@ -104,6 +102,7 @@ JSMethodFunc CChar_Release;
 JSMethodFunc CChar_SpellMoveEffect;
 JSMethodFunc CChar_SpellStaticEffect;
 JSMethodFunc CChar_BreakConcentration;
+JSMethodFunc CChar_FindItemType;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
@@ -144,7 +143,6 @@ JSMethodFunc CBase_DistanceTo;
 JSMethodFunc CBase_GetSerial;
 
 // Socket Methods
-JSMethodFunc CSocket_SysMessage;
 JSMethodFunc CSocket_Disconnect;
 JSMethodFunc CSocket_OpenURL;
 JSMethodFunc CSocket_GetByte;
@@ -174,6 +172,8 @@ JSMethodFunc CMisc_CustomTarget;
 JSMethodFunc CMisc_PopUpTarget;
 JSMethodFunc CMisc_GetTimer;
 JSMethodFunc CMisc_SetTimer;
+JSMethodFunc CMisc_MakeMenu;
+JSMethodFunc CMisc_SysMessage;
 
 // Race methods
 JSMethodFunc CRace_CanWearArmour;
@@ -279,10 +279,10 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Freeze",				CChar_Freeze,			0, 0, 0 },
 	{ "Unfreeze",			CChar_Unfreeze,			0, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },	
-	{ "SysMessage",			CChar_SysMessage,		1, 0, 0 },
+	{ "SysMessage",			CMisc_SysMessage,		1, 0, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,		1, 0, 0 },
-	{ "MakeMenu",			CChar_MakeMenu,			1, 0, 0 },
+	{ "MakeMenu",			CMisc_MakeMenu,			2, 0, 0 },
 	{ "Wander",				CChar_Wander,			3, 0, 0 },
 	{ "Follow",				CChar_Follow,			1, 0, 0 },
 	{ "Dismount",			CChar_Dismount,			0, 0, 0 },
@@ -314,6 +314,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "SpellMoveEffect",	CChar_SpellMoveEffect,	2, 0, 0 },
 	{ "SpellStaticEffect",	CChar_SpellStaticEffect,1, 0, 0 },
 	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
+	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
 
 	{ NULL,					NULL,					0, 0, 0 }
 };
@@ -367,7 +368,7 @@ static JSFunctionSpec CRegion_Methods[] =
 
 static JSFunctionSpec CSocket_Methods[] =  
 { 	
-	{ "SysMessage",			CSocket_SysMessage,	1, 0, 0 },
+	{ "SysMessage",			CMisc_SysMessage,	1, 0, 0 },
 	{ "Disconnect",			CSocket_Disconnect,	0, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,	2, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget, 1, 0, 0 },
@@ -390,6 +391,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
+	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 

@@ -87,14 +87,12 @@ public:
 	TargetFunc BeggingTarget;
 	TargetFunc BottleTarget;
 	TargetFunc BowCraft;
-	TargetFunc Carpentry;
 	TargetFunc CreateBandageTarget;
 	TargetFunc DetectHidden;
 	TargetFunc EnticementTarget1;
 	TargetFunc EnticementTarget2;
 	TargetFunc EvaluateIntTarget;
 	TargetFunc FishTarget;
-	TargetFunc Fletching;
 	TargetFunc ForensicsTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
@@ -107,19 +105,15 @@ public:
 	TargetFunc ProvocationTarget1;
 	TargetFunc ProvocationTarget2;
 	TargetFunc RepairMetal;
-	TargetFunc RepairLeather;
-	TargetFunc RepairBow;
 	TargetFunc SmeltOre;
 	TargetFunc Smith;
 	TargetFunc SpiritSpeak;
 	TargetFunc StealingTarget;
-	TargetFunc Tailoring;
 	TargetFunc TameTarget;
 	TargetFunc TDummy;
 	TargetFunc TinkerAwg;
 	TargetFunc TinkerAxel;
 	TargetFunc TinkerClock;
-	TargetFunc Tinkering;
 	TargetFunc TreeTarget;
 	TargetFunc Inscribe;
 

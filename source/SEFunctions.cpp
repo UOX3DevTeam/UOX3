@@ -313,25 +313,6 @@ JSBool SE_SendBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
-JSBool SE_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "MakeMenu: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock = (CSocket *)JS_GetPrivate( cx, mSock );
-	if( mySock == NULL )
-	{
-		DoSEErrorMessage( "MakeMenu: invalid socket" );
-		return JS_FALSE;
-	}
-	int menu = JSVAL_TO_INT( argv[1] );
-	Skills->NewMakeMenu( mySock, menu, 0 );
-	return JS_TRUE;
-}
-
 JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )

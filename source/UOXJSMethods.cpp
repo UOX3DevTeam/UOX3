@@ -1188,24 +1188,41 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
-JSBool CSocket_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
 		MethodError( "SysMessage: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	
-	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
-	char *trgMessage		= JS_GetStringBytes( targMessage );
-	CSocket *targSock		= (CSocket*)JS_GetPrivate( cx, obj );
 
-	if( targSock == NULL || trgMessage == NULL )
+	CSocket *mySock		= NULL;
+	JSClass *myClass	= JS_GetClass( obj );
+	if( !strcmp( myClass->name, "UOXChar" ) )
 	{
-		MethodError( "SysMessage: Invalid socket or speech (%s)", targMessage );
+		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
+		mySock			= calcSocketObjFromChar( myChar );
+	}
+	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	{
+		mySock			= (CSocket*)JS_GetPrivate( cx, obj );
+	}
+
+	if( mySock == NULL )
+	{
+		MethodError( "SysMessage: invalid socket" );
 		return JS_FALSE;
 	}
-	targSock->sysmessage( trgMessage );
+
+	JSString *targMessage = JS_ValueToString( cx, argv[0] );
+	char *trgMessage = JS_GetStringBytes( targMessage );
+
+	if( trgMessage == NULL )
+	{
+		MethodError( "SysMessage: Invalid speech (%s)", targMessage );
+		return JS_FALSE;
+	}
+	mySock->sysmessage( trgMessage );
 	return JS_TRUE;
 }
 
@@ -1397,6 +1414,37 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		Effects->PlayStaticAnimation( myObj, effectID, speed, loop );
 	}
 
+	return JS_TRUE;
+}
+
+JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "MakeMenu: Invalid number of arguments (takes 2, number of menu, skill used)" );
+		return JS_FALSE;
+	}
+
+	CSocket *mySock		= NULL;
+	JSClass *myClass	= JS_GetClass( obj );
+	if( !strcmp( myClass->name, "UOXChar" ) )
+	{
+		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
+		mySock			= calcSocketObjFromChar( myChar );
+	}
+	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	{
+		mySock			= (CSocket*)JS_GetPrivate( cx, obj );
+	}
+
+	if( mySock == NULL )
+	{
+		MethodError( "MakeMenu: invalid socket" );
+		return JS_FALSE;
+	}
+	int menu		= JSVAL_TO_INT( argv[0] );
+	UI08 skillNum	= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	Skills->NewMakeMenu( mySock, menu, skillNum );
 	return JS_TRUE;
 }
 
@@ -2233,6 +2281,39 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(FindItemType) Invalid Count of Arguments, takes 1" );
+		return JS_FALSE;
+	}
+
+	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( myChar ) )
+	{
+		MethodError( "(FindItemType) Invalid Charobject assigned" );
+		return JS_FALSE;
+	}
+
+	UI08 iType = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+
+	CItem *myItem = FindItemOfType( myChar, static_cast<ItemTypes>(iType) );
+	if( !ValidateObject( myItem ) )
+	{
+		*rval = JSVAL_NULL;
+		return JS_TRUE;
+	}
+
+	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
+	JS_SetPrivate( cx, myJSItem, myItem );
+
+	*rval = OBJECT_TO_JSVAL( myJSItem );
+
+	return JS_TRUE;
+}
+
 // Open the Plank
 void OpenPlank( CItem *p );
 JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -2378,28 +2459,6 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-JSBool CChar_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		MethodError( "SysMessage: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
-	}
-	
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
-	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
-	CSocket *targSock = calcSocketObjFromChar( myChar );
-
-	if( targSock == NULL || trgMessage == NULL )
-	{
-		MethodError( "SysMessage: Invalid socket or speech (%s)", targMessage );
-		return JS_FALSE;
-	}
-	targSock->sysmessage( trgMessage );
-	return JS_TRUE;
-}
-
 JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	SI08 spellnum = (SI08)JSVAL_TO_INT( argv[0] );
@@ -2414,26 +2473,6 @@ JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	Magic->doStaticEffect( myObj, spellnum );
 
-	return JS_TRUE;
-}
-
-JSBool CChar_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		MethodError( "MakeMenu: Invalid number of arguments (takes 1, number of menu)" );
-		return JS_FALSE;
-	}
-	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
-	CSocket *mySock = calcSocketObjFromChar( myChar );
-
-	if( mySock == NULL )
-	{
-		MethodError( "MakeMenu: invalid socket" );
-		return JS_FALSE;
-	}
-	int menu = JSVAL_TO_INT( argv[0] );
-	Skills->NewMakeMenu( mySock, menu, 0 );
 	return JS_TRUE;
 }
 

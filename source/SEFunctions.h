@@ -60,7 +60,6 @@ SEngineFunc SE_CreateBuffer;		//											*
 SEngineFunc SE_DestroyBuffer;		//											*
 SEngineFunc SE_SendBuffer;			//											*
 
-SEngineFunc SE_MakeMenu;			//											***
 SEngineFunc SE_MakeItem;			//											***
 
 SEngineFunc SE_CommandLevelReq;		//											*

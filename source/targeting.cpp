@@ -1859,8 +1859,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;
 					case TARGET_MINE:			Skills->Mine( tSock );					break;
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
-					case TARGET_REPAIRLEATHER:	Skills->RepairLeather( tSock );			break;
-					case TARGET_REPAIRBOW:		Skills->RepairBow( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
 					case TARGET_DETECTHIDDEN:	Skills->DetectHidden( tSock );			break;
@@ -1870,7 +1868,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_ALCHEMY:		Skills->AlchemyTarget( tSock );			break;
 					case TARGET_CREATEBANDAGE:	Skills->CreateBandageTarget( tSock );	break;
-					case TARGET_CARPENTRY:		Skills->Carpentry( tSock );				break;
 					case TARGET_BEGGING:		Skills->BeggingTarget( tSock );			break;
 					case TARGET_ANIMALLORE:		Skills->AnimalLoreTarget( tSock );		break;
 					case TARGET_FORENSICS:		Skills->ForensicsTarget( tSock );		break;
@@ -1883,10 +1880,7 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_LOCKPICK:		Skills->LockPick( tSock );				break;
 					case TARGET_WHEEL:			Skills->Wheel( tSock );					break;
 					case TARGET_LOOM:			Skills->Loom( tSock );					break;
-					case TARGET_TAILORING:		Skills->Tailoring( tSock );				break;
 					case TARGET_COOKING:		Skills->handleCooking( tSock );			break;
-					case TARGET_FLETCHING:		Skills->Fletching( tSock );				break;
-					case TARGET_TINKERING:		Skills->Tinkering( tSock );				break; 
 					case TARGET_TINKERAXEL:		Skills->TinkerAxel( tSock );			break;
 					case TARGET_TINKERAWG:		Skills->TinkerAwg( tSock );				break;
 					case TARGET_TINKERCLOCK:	Skills->TinkerClock( tSock );			break;
