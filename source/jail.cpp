@@ -9,6 +9,15 @@ namespace UOX
 
 JailSystem *JailSys;
 
+JailCell::~JailCell()
+{
+	for( size_t i = 0; i < playersInJail.size(); ++i )
+	{
+		delete playersInJail[i];
+	}
+	playersInJail.resize( 0 );
+}
+
 bool JailCell::IsEmpty( void ) const		
 { 
 	return playersInJail.empty(); 
@@ -180,7 +189,7 @@ void JailSystem::ReadData( void )
 				UString tag;
 				UString data;
 				UString UTag;
-				JailOccupant *toPush = new JailOccupant;
+				JailOccupant toPush;
 				UI08 cellNumber = 0;
 				for( tag = prisonerData->First(); !prisonerData->AtEnd(); tag = prisonerData->Next() )
 				{
@@ -196,26 +205,26 @@ void JailSystem::ReadData( void )
 							break;
 						case 'O':
 							if( UTag == "OLDX" )
-								toPush->x = data.toShort();
+								toPush.x = data.toShort();
 							else if( UTag == "OLDY" )
-								toPush->y = data.toShort();
+								toPush.y = data.toShort();
 							else if( UTag == "OLDZ" )
-								toPush->z = data.toByte();
+								toPush.z = data.toByte();
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
-								toPush->releaseTime = data.toLong();
+								toPush.releaseTime = data.toLong();
 							break;
 						case 'S':
 							if( UTag == "SERIAL" )
-								toPush->pSerial = data.toULong();
+								toPush.pSerial = data.toULong();
 							break;
 					}
 				}
 				if( cellNumber < jails.size() )
-					jails[cellNumber].AddOccupant( toPush );
+					jails[cellNumber].AddOccupant( &toPush );
 				else
-					jails[RandomNum( static_cast< size_t >(0), jails.size() - 1 )].AddOccupant( toPush );
+					jails[RandomNum( static_cast< size_t >(0), jails.size() - 1 )].AddOccupant( &toPush );
 			}
 		}
 		delete jailData;

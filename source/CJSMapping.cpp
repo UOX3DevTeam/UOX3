@@ -79,12 +79,23 @@ void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		delete mapSection[i];
-		mapSection[i] = NULL;
+		if( mapSection[1] != NULL )
+		{
+			delete mapSection[i];
+			mapSection[i] = NULL;
+		}
 	}
 
-	delete envokeByID;
-	delete envokeByType;
+	if( envokeByID != NULL )
+	{
+		delete envokeByID;
+		envokeByID = NULL;
+	}
+	if( envokeByType != NULL )
+	{
+		delete envokeByType;
+		envokeByType = NULL;
+	}
 }
 
 //o--------------------------------------------------------------------------o
@@ -318,7 +329,6 @@ CJSMappingSection::~CJSMappingSection()
 		cScript *toDelete = sIter->second;
 		if( toDelete != NULL )
 		{
-			toDelete->Cleanup();
 			delete toDelete;
 		}
 	}
@@ -583,6 +593,7 @@ bool CJSMappingSection::Finished( void )
 CEnvoke::CEnvoke( std::string eT )
 {
 	envokeType = eT;
+	envokeList.clear();
 }
 CEnvoke::~CEnvoke()
 {

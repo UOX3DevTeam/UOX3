@@ -306,7 +306,6 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			{
 				delete toMake;
 				return;
-
 			}
 			Console.Error( 0, "Error at client connection!" );
 			cwmWorldState->SetKeepRun( true );
@@ -386,6 +385,9 @@ cNetworkStuff::~cNetworkStuff()
 		s = UOX_MAX( s, connClients[i]->CliSocket() + 1 );
 		delete connClients[i];
 	}
+
+	loggedInClients.resize( 0 );
+	connClients.resize( 0 );
 	closesocket( s );
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();

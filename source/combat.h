@@ -28,7 +28,7 @@ class CHandleCombat
 {
 private:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
-	void	HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg );
+	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
 	R32		GetCombatTimeout( CChar *mChar );
 	void	Kill( CChar *mChar, CChar *ourTarg );
 

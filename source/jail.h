@@ -28,6 +28,7 @@ public:
 			JailCell() : x( 0 ), y( 0 ), z( 0 )
 			{
 			}
+			~JailCell();
 	bool	IsEmpty( void ) const;
 	size_t	JailedPlayers( void ) const;
 	SI16	X( void ) const;

@@ -718,9 +718,9 @@ void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 void LoadPlaces( void )
 {
 	cwmWorldState->goPlaces.clear();
-
-	GoPlaces_st *toAdd = NULL;
 	UString data, UTag, entryName;
+
+	GoPlaces_st *toAdd		= NULL;
 	ScriptSection *toScan	= NULL;
 	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( location_def );
 	if( tScn == NULL )
@@ -738,6 +738,8 @@ void LoadPlaces( void )
 			size_t entryNum		= entryName.section( " ", 1, 1 ).toULong();
 			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
 			{
+				if( cwmWorldState->goPlaces.find( entryNum ) != cwmWorldState->goPlaces.end() )
+					Console.Warning( 2, "Doubled up entry in Location.dfn (%u)", entryNum );
 				toAdd = &cwmWorldState->goPlaces[entryNum];
 				if( toAdd != NULL )
 				{

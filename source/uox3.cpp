@@ -2405,8 +2405,6 @@ void Shutdown( SI32 retCode )
 	delete CounselorQueue;
 	delete Dictionary;
 	delete Accounts;
-	if( JSMapping )
-		JSMapping->Cleanup();//must be called to delete some things the still reference JSMapping.
 	delete JSMapping;
 	delete MapRegion;
 	delete SpeechSys;

@@ -436,7 +436,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 		if( mSock != NULL )
 		{
 			if( Weight->isOverloaded( c ) )
-				c->IncStamina( -2 );
+				c->IncStamina( -5 );
 			if( c->GetStamina() <= 0 )
 			{
 				c->SetStamina( 0 );

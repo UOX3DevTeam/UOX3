@@ -1277,53 +1277,52 @@ void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 	}
 }
 
-void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
+void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 {
-	const UI16 ourDist			= getDist( mChar, ourTarg );
-	CItem *mWeapon		= getWeapon( mChar );
+	const UI16 ourDist			= getDist( &mChar, ourTarg );
+	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
 	UI08 bowType		= 0;
 
 	bool checkDist		= (ourDist <= 1);
 
-	UI16 targTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( mChar.GetScriptTrigger() );
 	if( toExecute != NULL )
-		toExecute->OnSwing( mWeapon, mChar, ourTarg );
+		toExecute->OnSwing( mWeapon, &mChar, ourTarg );
 
 	if( !checkDist && getFightSkill == ARCHERY )
-		checkDist = LineOfSight( mSock, mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
 
 	if( checkDist )
 	{
-		if( mChar->IsNpc() )
+		if( mChar.IsNpc() )
 		{
-			if( mChar->GetNpcWander() != 5 )
+			if( mChar.GetNpcWander() != 5 )
 			{
-				UI08 charDir = Movement->Direction( mChar, ourTarg->GetX(), ourTarg->GetY() );
-				if( mChar->GetDir() != charDir && charDir < 8 )
-					mChar->SetDir( charDir );
+				UI08 charDir = Movement->Direction( &mChar, ourTarg->GetX(), ourTarg->GetY() );
+				if( mChar.GetDir() != charDir && charDir < 8 )
+					mChar.SetDir( charDir );
 			}
 		}
 
-		PlaySwingAnimations( mChar );
+		PlaySwingAnimations( &mChar );
 		if( getFightSkill == ARCHERY )
 		{
 			bowType = getBowType( mWeapon );
-			if( mChar->IsNpc() || DeleteItemAmount( mChar, 1, ((bowType == BOWS) ? 0x0F3F : 0x1BFB) ) == 1 )
-				Effects->PlayMovingAnimation( mChar, ourTarg, ((bowType == BOWS) ? 0x0F42 : 0x1BFE), 0x08, 0x00, 0x00 );
+			if( mChar.IsNpc() || DeleteItemAmount( &mChar, 1, ((bowType == BOWS) ? 0x0F3F : 0x1BFB) ) == 1 )
+				Effects->PlayMovingAnimation( &mChar, ourTarg, ((bowType == BOWS) ? 0x0F42 : 0x1BFE), 0x08, 0x00, 0x00 );
 			else
 				return;
 		}
 
 		SI16 staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
-		if( staminaToLose && ( !mChar->IsGM() && !mChar->IsCounselor() ) )
-			mChar->IncStamina( staminaToLose );
+		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ) )
+			mChar.IncStamina( staminaToLose );
 
 		bool skillPassed = false;
-		if( Skills->CheckSkill( mChar, getFightSkill, 0, 1000 ) )
+		if( Skills->CheckSkill( &mChar, getFightSkill, 0, 1000 ) )
 		{
-			UI16 getAttackSkill = ( mChar->GetSkill( getFightSkill ) + mChar->GetSkill( TACTICS ) ) / 2;
+			UI16 getAttackSkill = ( mChar.GetSkill( getFightSkill ) + mChar.GetSkill( TACTICS ) ) / 2;
 			UI16 getDefSkill	= ourTarg->GetSkill( TACTICS );
 			skillPassed			= ( !RandomNum( 0, 5 ) || RandomNum( static_cast< UI16 >(getAttackSkill / 1.25 ), getAttackSkill ) >= RandomNum( static_cast< UI16 >( getDefSkill / 1.25), getDefSkill ) );
 		}
@@ -1332,13 +1331,13 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 			if( getFightSkill == ARCHERY && !RandomNum( 0, 2 ) )
 				Items->CreateItem( NULL, ourTarg, ((bowType == BOWS) ? 0x0F3F : 0x1BFB), 1, 0, OT_ITEM );
 
-			PlayMissedSoundEffect( mChar );
+			PlayMissedSoundEffect( &mChar );
 		}
 		else
 		{
 			CSocket *targSock = calcSocketObjFromChar( ourTarg );
 
-			Skills->CheckSkill( mChar, TACTICS, 0, 1000 );
+			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
 
 			switch( ourTarg->GetID() )
 			{
@@ -1347,11 +1346,11 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 			default:		Effects->playMonsterSound( ourTarg, ourTarg->GetID(), SND_DEFEND );		break;
 			}
 
-			if( mChar->GetPoisonStrength() && ourTarg->GetPoisoned() < mChar->GetPoisonStrength() )
+			if( mChar.GetPoisonStrength() && ourTarg->GetPoisoned() < mChar.GetPoisonStrength() )
 			{
 				if( ( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 ) )
 				{
-					ourTarg->SetPoisoned( mChar->GetPoisonStrength() );
+					ourTarg->SetPoisoned( mChar.GetPoisonStrength() );
 					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32> (40 / ourTarg->GetPoisoned() )) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
 					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * cwmWorldState->ServerData()->SystemTimer( POISON ) ) ); //wear off starts after poison takes effect - AntiChrist
 					if( targSock != NULL )
@@ -1359,7 +1358,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 				}
 			}
 
-			UI16 ourDamage = calcDamage( mChar, ourTarg, targSock, mWeapon, getFightSkill );
+			UI16 ourDamage = calcDamage( &mChar, ourTarg, targSock, mWeapon, getFightSkill );
 			if( ourDamage > 0 )
 			{
 				// Interrupt Spellcasting
@@ -1380,7 +1379,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 					ourTarg->IncHP( -( ourDamage - retDamage ) );
 					if( ourTarg->IsNpc() ) 
 						retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
-					mChar->IncHP( -retDamage );
+					mChar.IncHP( -retDamage );
 					Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
 				}
 				else 
@@ -1397,15 +1396,15 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 				if( ourTarg->IsNpc() )
 					HandleSplittingNPCs( ourTarg );
 			}
-			if( mChar->isHuman() )
-				PlayHitSoundEffect( mChar, mWeapon );
+			if( mChar.isHuman() )
+				PlayHitSoundEffect( &mChar, mWeapon );
 
 			if( toExecute != NULL )
-				toExecute->OnAttack( mChar, ourTarg );
+				toExecute->OnAttack( &mChar, ourTarg );
 			UI16 defScript	= ourTarg->GetScriptTrigger();
 			toExecute		= JSMapping->GetScript( defScript );
 			if( toExecute != NULL )
-				toExecute->OnDefense( mChar, ourTarg );
+				toExecute->OnDefense( &mChar, ourTarg );
 		}
 	}
 }
@@ -1721,7 +1720,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 4 ) )
 						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );
 					else
-						HandleCombat( mSock, &mChar, ourTarg );
+						HandleCombat( mSock, mChar, ourTarg );
 
 					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
 						StartAttack( ourTarg, &mChar );

@@ -1447,6 +1447,7 @@ void cMapStuff::CacheMultis( void )
 	Console.PrintDone();
 	Console << "Multi caching taking up " << indexMemoryUsed + multiMemoryUsed << " bytes, " << indexMemoryUsed << " in index, " << multiMemoryUsed << " in data..." << myendl;
 	delete multiIDX;
+	delete multis;
 }
 
 void cMapStuff::SeekMulti( UI32 multinum, SI32 *length )

@@ -1,3 +1,8 @@
+3/5/2005 - giwo (0.98-2.8c)
+	Fixed a couple memory leaks.
+	Fixed a couple areas where we were attempting to free memory that had already been freed.
+	Bumped the rate of stamina loss on an overweight player to 5 per-step (This should be configurable in the future).
+
 March 4 2005 - Maarc
 	Updated 'validcmd so that it dumps out information about JS based commands as well
 

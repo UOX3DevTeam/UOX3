@@ -173,6 +173,8 @@ private:
 	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
 	JSObject *	MakeNewObject( IUEEntries iType );
 
+	void		Cleanup( void );
+
 public:
 
 	void		ReleaseObject( JSObject *toRelease, IUEEntries iType );
@@ -188,7 +190,6 @@ public:
 
 				cScript( std::string targFile );
 				~cScript();
-	void		Cleanup( void );
 
 	JSObject *	Object( void ) const;	// returns object pointer
 

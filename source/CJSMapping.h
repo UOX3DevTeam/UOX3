@@ -51,6 +51,7 @@ namespace UOX
 		CEnvoke *						envokeByID;
 		CEnvoke *						envokeByType;
 
+		void				Cleanup( void );
 		void				ResetDefaults( void );
 		void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
@@ -58,7 +59,6 @@ namespace UOX
 							CJSMapping( void );
 							~CJSMapping();
 
-		void				Cleanup( void );
 		void				Reload( UI16 scriptID = 0xFFFF );
 		void				Reload( SCRIPTTYPE sectionID );
 
