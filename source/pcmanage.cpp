@@ -1,4 +1,7 @@
 #include "uox3.h"
+#include "cVersionClass.h"
+
+extern cVersionClass CVC;
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  bool validHair( UI16 id )
@@ -549,9 +552,9 @@ void startChar( cSocket *mSock, bool onCreate )
 	CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 	Weight->calcWeight( mChar );
 
-	sprintf( idname, "%s %s(Build:%s) [%s] Compiled by %s ", PRODUCT, VER, BUILD, OS_STR, NAME );
+	sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 	sysmessage( mSock, idname );
-	sprintf( idname, "Programmed by: %s", PROGRAMMERS );
+	sprintf( idname, "Programmed by: %s", CVC.GetProgrammers() );
 	sysmessage( mSock, idname );
 
 	CItem *nItem = FindItemOnLayer( mChar, 0x15 );

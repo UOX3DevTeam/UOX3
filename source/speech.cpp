@@ -2,6 +2,10 @@
 
 #include "uox3.h"
 #include "speech.h"
+#include "cVersionClass.h"
+
+extern cVersionClass CVC;
+
 #ifndef va_start
 	#include <cstdarg>
 	using namespace std;
@@ -656,7 +660,7 @@ void unicodetalking( cSocket *mSock ) // PC speech
 				GuildSys->Resign( mSock );
 			if( strstr( strupr( text ), "DEVTEAM033070" ) )
 			{
-				sprintf( text, "RBuild: %s PBuild: %s --> Version: %s", REALBUILD, BUILD, VER );
+				sprintf( text, "RBuild: %s PBuild: %s --> Version: %s", CVC.GetRealBuild(), CVC.GetBuild(), CVC.GetVersion() );
 				text[strlen( text ) + 1] = 0x00;
 			}
 			UpdateLanguage( mSock );
