@@ -39,9 +39,9 @@
 #else
 
 /*#include <winsock2.h>
-#include <windows.h>
+#include <windows.h>*/
 #include <direct.h>
-#include <io.h>
+/*#include <io.h>
 #include <time.h>
 #include <sys/timeb.h>
 */
@@ -55,9 +55,12 @@
 #include <fstream>
 #include <vector>
 #include <cstdio>
-#ifndef __LINUX__
-#include <ios>
-#endif
+#include <iosfwd>
+#include <algorithm>
+
+//#ifndef __LINUX__
+//#include <ios>
+//#endif
 //#include <iomanip.h>
 //#include <strstream.h>
 //#endif
