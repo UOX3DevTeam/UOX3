@@ -113,7 +113,7 @@ private:
 	void		GetLoginMsg( UOXSOCKET s );
 	UOXSOCKET	FindLoginPtr( cSocket *s );
 
-	void		StartupXGM( void );
+	void		StartupXGM( int nPortArg );
 	void		CheckXGM( void );
 	void		ShutdownXGM( void );
 	void		XGMDisconnect( UOXSOCKET s );
