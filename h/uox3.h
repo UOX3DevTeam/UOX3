@@ -228,6 +228,7 @@ char *strupr(char *);
 #define CLIENTVERSION_M 26
 #endif
 
+extern timeb initialservertime ;
 extern unsigned int showloggedoutpcs;
 //////////////////
 /*
@@ -535,7 +536,7 @@ extern vector< int > menuList;
 //
 // Function Declarations
 //
-
+void  initclock(void);
 void updatehtml();
 void offlinehtml();
 void start_glow( void );

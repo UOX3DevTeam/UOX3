@@ -32,6 +32,9 @@ creat_st creatures[2048];
 
 short UOX_PORT = 2593;
 
+timeb initialservertime ;
+
+
 unsigned int uiCurrentTime, ErrorCount;
 char Loaded;
 unsigned short int doorbase[DOORTYPES]={

@@ -7317,6 +7317,7 @@ void start_glow( void )	// better to make an extra function cause in loaditem it
 //int realmain(int argc, char *argv[])
 int __cdecl main(int argc, char *argv[])
 {
+	initclock();
 	int i;
 	
 	unsigned int uiNextCheckConn=0;
@@ -8534,15 +8535,32 @@ void respawn(unsigned int currenttime)
 	gRespawnItem= (i<itemcount) ? i : 0;  //set global last respawned item
 }
 
-
-
-unsigned long int getclock( void )
+void  initclock(void)
 {
-	timeb buffer  ;
-	unsigned long milliseconds ;
+	ftime(&initialservertime) ;
+}
+
+unsigned long int getclock(void)
+{
+	unsigned long milliseconds;
+	timeb buffer ;
 	ftime(&buffer) ;
-	milliseconds = (buffer.time * 1000) + (buffer.millitm) ;
+	if (buffer.millitm < initialservertime.millitm)
+	{
+		buffer.millitm = buffer.millitm + 1000 ;
+		buffer.time = buffer.time - 1 ;
+	}
+	milliseconds = ((buffer.time - initialservertime.time) * 1000) + (buffer.millitm -initialservertime.millitm ) ;
 	return milliseconds ;
+/*
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	// We want to keep the value within 32 bits; we could also substract
+	// startup time I suppose
+	return ((tv.tv_sec - 900000000) * MY_CLOCKS_PER_SEC) +
+		tv.tv_usec / (1000000 / MY_CLOCKS_PER_SEC);
+
+*/	
 }
 
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)
