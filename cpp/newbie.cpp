@@ -25,8 +25,8 @@
 //------------------------------------------------------------------------
 //Newbie Stuff Code -- By McCleod
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 #include <algorithm>
 
 #define DBGFILE "newbie.cpp"

@@ -28,8 +28,8 @@
 // -- pointer.cpp		Item specific routines (add, delete change) in preperation for
 //									going to a pointer based system (compiled under level 3 no errors!
 //
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 #define DBGFILE "pointer.cpp"
 

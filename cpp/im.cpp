@@ -33,8 +33,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 #define DBGFILE "im.cpp"
 

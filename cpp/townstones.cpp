@@ -24,8 +24,8 @@
 //   
 //------------------------------------------------------------------------
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 #define DBGFILE "uox3.cpp"
 
 

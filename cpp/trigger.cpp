@@ -48,7 +48,7 @@
 
 
 #include <errno.h>
-#include "..\h\uox3.h"
+#include <uox3.h>
 
 //This routine processes both Static and Dynamic items
 void triggerwitem(int ts, int ti, int ttype)

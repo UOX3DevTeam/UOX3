@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------
 // Global Variables
 
-#include "..\h\uox3.h"
+#include <uox3.h>
 
 creat_st creatures[2048];
 

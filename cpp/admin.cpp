@@ -30,8 +30,8 @@
 
 /* Admin code by Cironian */
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 #define DBGFILE "admin.cpp"
 

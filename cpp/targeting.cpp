@@ -23,9 +23,9 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
-#include "..\h\cmdtable.h" // who took this out and why?? cj 8/11/99
+#include <uox3.h>
+#include <debug.h>
+#include <cmdtable.h> // who took this out and why?? cj 8/11/99
 
 #define DBGFILE "targeting.cpp"
 

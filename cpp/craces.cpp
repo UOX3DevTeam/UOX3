@@ -24,7 +24,7 @@
 //   
 //------------------------------------------------------------------------
 
-#include "..\h\uox3.h"
+#include <uox3.h>
 
 /*char *cRaces::getName( PLAYER player1 )
 // PRE:	player1 is a valid player

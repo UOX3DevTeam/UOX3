@@ -24,9 +24,9 @@
 //   
 //------------------------------------------------------------------------
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
-#include "..\h\cmdtable.h"
+#include <uox3.h>
+#include <debug.h>
+#include <cmdtable.h>
 
 #define DBGFILE "dbl_single_click.cpp"
 

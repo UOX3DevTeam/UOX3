@@ -23,7 +23,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "..\h\uox3.h"
+#include <uox3.h>
 
 cTEffect::cTEffect()
 {

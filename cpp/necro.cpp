@@ -30,8 +30,8 @@ Created: Genesis 11-12-1998
 History: None
 */
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 #define DBGFILE "necro.cpp"
 void VialTargetItem( UOXSOCKET nSocket, ITEM nItemID );

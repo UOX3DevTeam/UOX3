@@ -45,8 +45,8 @@
 // information to help out the future bug fixers. I will try to explain EVERY bit of logic
 // behind what I've done to make things easier.
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 
 // These are defines that I'll use. I have a history of working with properties, so that's why

@@ -31,8 +31,8 @@
 // Last Edited	:	30. May 1999
 
 
-#include "..\h\uox3.h"
-#include "..\h\debug.h"
+#include <uox3.h>
+#include <debug.h>
 
 #define DBGFILE "guildstones.cpp"
 

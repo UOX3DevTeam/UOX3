@@ -37,10 +37,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "..\h\uox3.h"
+#include <uox3.h>
 //#include "List.h"
 //#include "scriptcache.h"
-#include "..\h\debug.h"
+#include <debug.h>
 #include <assert.h>
 
 #define DBGFILE "scriptc.cpp"

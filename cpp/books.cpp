@@ -26,8 +26,8 @@
 // Books class by Lord Binary 7'th December 1999
 // Implements writable books
 
-#include "..\h\uox3.h"
-#include "..\h\books.h"
+#include <uox3.h>
+#include <books.h>
 
 cBooks::cBooks()//Constructor
 {
