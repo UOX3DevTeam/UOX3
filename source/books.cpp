@@ -86,10 +86,8 @@ void cBooks::OpenBook( cSocket *mSock, CItem *i, bool isWriteable )
 	UI08 bookauthor[31] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
 	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), i->GetSerial() );
-    FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
-
+  FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 	bool bookexists = ( file != NULL );
-	
 	if( bookexists )
 	{
 		fclose( file );
@@ -194,7 +192,7 @@ void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, int p )
 	char line[33];
 	
 	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), i->GetSerial() );
-    FILE *file = fopen( fileName, "r+b"); // open existing file for read/write
+  FILE *file = fopen( fileName, "r+b"); // open existing file for read/write
 
     if( file == NULL ) 
 	{
@@ -366,9 +364,9 @@ void cBooks::WriteAuthor( CItem *id, cSocket *s )
 	if( fwrite( authorbuffer, sizeof( char ), 32, file ) != 32 ) 
 	{
 		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		fclose(file);
 		return;
 	}			
-
 	fclose( file );
 }
 
@@ -379,7 +377,6 @@ void cBooks::WriteTitle( CItem *id, cSocket *s )
 
 	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
 	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
-
   
 	if( file == NULL )	// If the BOK file does not exist -> that book must be new
 	{					// or the file got deleted -> lets try to create it	 
@@ -398,17 +395,19 @@ void cBooks::WriteTitle( CItem *id, cSocket *s )
 		Console.Error( 1, "Failed to seek to book file %s", fileName );
 
 	if( s == NULL )
+	{
+		fclose(file);
 		return;
-
+	}
 	char *titlebuffer = s->TitleBuffer();
 	titlebuffer[61] = '\n';
 
 	if( fwrite( titlebuffer, sizeof( char ), 62, file ) != 62 )
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return;
 	}			
-
 	fclose( file );
 }
 
@@ -441,6 +440,7 @@ void cBooks::WriteLine( CItem *id, int page, int line, char linestr[34], cSocket
 	if( fwrite( linestr, sizeof( char ), 34, file ) != 34 ) 
 	{
 		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		fclose(file);
 		return;
 	}			
 	fclose( file );
@@ -465,6 +465,7 @@ void cBooks::ReadAuthor( CItem *id, UI08 auth[31] )
 	if( fread( auth, sizeof( char ), 31, file ) != 31 )  // read it
 	{
 		Console.Error( 1, "Coudn't write to book file %s", fileName );
+		fclose(file);
 		return;
 	}
 
@@ -498,6 +499,7 @@ void cBooks::ReadTitle( CItem *id, UI08 title[61] )
 	if( fread( title, sizeof( char ), 61, file ) != 61 )  // read it
 	{
 		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		fclose(file);
 		return;
 	}
 
@@ -531,6 +533,7 @@ UI08 cBooks::getNumberOfPages( CItem *id )
 	if( fread( num, sizeof(char), 5, file ) != 5 )  // read it
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return 1;
 	}
 
@@ -567,6 +570,7 @@ void cBooks::ReadLine( CItem *id, int page, int linenumber, char line[33] )
 	if( fread( line, sizeof( char ), 33, file ) != 33 )  // read it
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return;
 	}
 
@@ -621,12 +625,14 @@ bool cBooks::CreateBook( char *fileName, CItem *id )
 	if( fwrite( title, sizeof( char ), 62, file ) != 62 ) 
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return false;
 	}
 
 	if( fwrite( author, sizeof(char), 32, file) != 32 ) 
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return false;
 	}
 
@@ -641,6 +647,7 @@ bool cBooks::CreateBook( char *fileName, CItem *id )
 	if( fwrite( num, sizeof( char ), 5, file ) != 5 )  // writens number
 	{
 		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		fclose(file);
 		return false;
 	}
 
@@ -650,6 +657,7 @@ bool cBooks::CreateBook( char *fileName, CItem *id )
 		if( fwrite( &ch, sizeof( char ), 1, file ) != 1 ) 
 		{
 			Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+			fclose(file);
 			return false;
 		}
 
@@ -659,6 +667,7 @@ bool cBooks::CreateBook( char *fileName, CItem *id )
 			if( fwrite( line, sizeof( char ), 34, file ) != 34 ) 
 			{
 				Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+				fclose(file);
 				return false;
 			}			
 		}
