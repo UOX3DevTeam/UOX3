@@ -121,7 +121,7 @@ bool im_close( item_menu *menu )
 	menu->gump_message[curr++] = menu->nitems;
 
 	int ctl;
-	for( int i = 0; i < menu->nitems; i++ )
+	for( int i = 0; i < menu->nitems; ++i )
 	{
 		// item id
 		menu->gump_message[curr++] = (UI08)(menu->items[i].id >> 8);
