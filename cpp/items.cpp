@@ -389,12 +389,14 @@ void cItem::InitItem(int nItem, char ser)
 // -- delete an item (Actually just mark it is free)
 void cItem::DeleItem(int i)
 {
+
+
 	unsigned int j;
 	int ci, ptr;
 
 	if( items[i].free == 0 )
 	{
-		if( items[i].contserial != 0xFFFFFFFF && items[i].contserial < 0x40000000 ) // it's a player!
+		if( items[i].contserial != -1 && items[i].contserial < 0x40000000 ) // it's a player!
 		{
 			CHARACTER player = calcCharFromSer( items[i].contserial );
 			if( player != -1 )

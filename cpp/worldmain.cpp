@@ -1485,6 +1485,39 @@ void CWorldMain::LoadWorld ( void )
 		if(( currentSpellType = new int[cmem] ) == NULL ) Shutdown( FATAL_UOX3_CURRENTSPELLTYPE );
 		if(( targetok = new char[cmem] ) == NULL ) Shutdown( FATAL_UOX3_TARGETOK );   // shouldn't it be sizeof( char )
 		ConOut("Done\n");
+
+		// check if the map-mode (ilshenar or britannia) and wordfiles match , LB
+		
+		bool ok;
+		bool ilsh = MapTileHeight<300;
+		bool s=false;
+
+		readw3();
+
+		if (!(strcmp(script1, "ILSHENAR"))) ok = ilsh; 	       // worldfiles with ilsh tag runnning on an ilsh shard -> ok					
+		else if (!(strcmp(script1, "BRITANNIA"))) ok = !ilsh;  // worldfiles with brit tag running on a brit shard -> ok		
+		else ok = !ilsh;                                       // old britannian worldfiles without map-type tag running on an ilsh shard -> not good
+	                                                           // old britannian worldfiles without map-type tag running on a brit sahrd -> ok
+		                                                        
+        if (!(strcmp(script1, "SECTION"))) s=true;             // old wordfiles that dont have the ilsh or brit tag might have a section tag next, prevents skipping of the first one in that case
+
+		if (ilsh && !ok) 
+		{ 		
+			ConOut("You are runnning an ILSHENAR map shard, you tryed to load BRITANNIA map shard wordfiles\n");
+			exit(-1);
+		}
+
+		if (!ilsh && !ok)
+		{		
+			ConOut("You are runnning a BRITANNIA map shard, you tryed to load ILSHENAR map shard wordfiles\n");
+			exit(-1);
+		}
+
+
+
+
+
+
 		
 		ConOut("  Loading characters ");
 		do

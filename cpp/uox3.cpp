@@ -4381,6 +4381,11 @@ void startchar(int s) // Send character startup stuff to player
 	char modeset[6]="\x72\x00\x00\x32\x00";
 	char techstuff[21]="\x69\x00\x05\x01\x00\x69\x00\x05\x02\x00\x69\x00\x05\x03\x00\x55\x5B\x0C\x13\x03";
 	char startup[38]="\x1B\x00\x05\xA8\x90\x00\x00\x00\x00\x01\x90\x06\x08\x06\x49\x00\x0A\x04\x00\x00\x00\x7F\x00\x00\x00\x00\x00\x07\x80\x09\x60\x00\x00\x00\x00\x00\x00";
+	unsigned char world[7]="\xBF\x00\x08\x00" ;
+
+	if (MapTileHeight < 300) world[5] = 0x02;
+	Network->xSend(s,world,6,0) ;
+
 	int i,serial,serhash,ci;
 	
 	for( i = 0; i < MAX_ACCT_LOCK; i++ )
@@ -7987,6 +7992,8 @@ int __cdecl main(int argc, char *argv[])
 		uiCurrentTime=getclock();
 
 		/* MAIN SYSTEM LOOP */
+
+		if (MapTileHeight>300) ConOut("BRITANNIA MAP SERVER\n"); else ConOut("ILSHENAR MAP SERVER \n");
 		while (keeprun)
 		{
 			checkkey();

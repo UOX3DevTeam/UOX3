@@ -29,6 +29,8 @@
 #define __Classes_h
 
 //Moved from uox3.h
+extern int MapTileWidth;
+extern int MapTileHeight;
 struct tile_st
 {
 	SI32 unknown1;  // longs must go at top to avoid bus errors - fur
@@ -270,9 +272,14 @@ public:
 	UI32 GetPos() const { return pos; }
 	UI32 GetLength() const { return length; }
 };
-
-const int MapTileWidth = 768;
-const int MapTileHeight = 512;
+// Thanks to LB
+//#if ILSHENAR == 1
+//const int MapTileWidth = 288 ;
+//const int MapTileHeight = 200 ;
+//#else
+//const int MapTileWidth = 768;
+//const int MapTileHeight = 512;
+//#endif
 
 class cMapStuff
 {

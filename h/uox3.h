@@ -270,6 +270,11 @@ extern wiped_st wiped[MAXACCT];
 extern splInfo_st *spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 
 // Global Variables
+
+extern int MapTileWidth ;
+extern int MapTileHeight ;
+
+
 extern long int whomenudata[(MAXCLIENT+50)*7]; // We store a serial in here, but as an int, it can't store enough!
 
 extern unsigned int uiCurrentTime, ErrorCount;
