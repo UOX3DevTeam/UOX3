@@ -1,0 +1,72 @@
+// Leather
+[0x09b0]
+{ S
+get=base_item
+name=belt pouch
+id=0x09b0
+weight=100
+value=7,3
+type=1
+restock=10
+decay=1
+}
+
+[0x09b2]
+{ S
+get=base_item
+name=backpack
+id=0x09b2
+weight=100
+value=18,9
+type=1
+restock=10
+decay=1
+}
+
+[0x0e75]
+{ E
+get=base_item
+name=backpack
+id=0x0e75
+weight=100
+value=18,9
+type=1
+restock=10
+decay=1
+}
+
+[0x0e76]
+{
+get=base_item
+name=bag
+id=0x0e76
+weight=100
+value=7,3
+type=1
+restock=10
+decay=1
+}
+
+[0x0e79]
+{ E
+get=base_item
+name=pouch
+id=0x0e79
+weight=100
+value=7,3
+type=1
+restock=10
+decay=1
+}
+
+[0x0e7a]
+{ E
+get=base_item
+name=picnic basket
+id=0x0e7a
+weight=100
+value=10,5
+type=1
+restock=10
+decay=1
+}

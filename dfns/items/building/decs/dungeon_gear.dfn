@@ -1,0 +1,566 @@
+[0x10b8]
+{ combines many ways
+get=base_item
+name=web
+id=0x10b8
+weight=100
+movable=2
+}
+
+[0x10b9]
+{ combines many ways
+get=base_item
+name=web
+id=0x10b9
+weight=100
+movable=2
+}
+
+[0x10ba]
+{ combines many ways
+get=base_item
+name=web
+id=0x10ba
+weight=100
+movable=2
+}
+
+[0x10bb]
+{ combines many ways
+get=base_item
+name=web
+id=0x10bb
+weight=100
+movable=2
+}
+
+[0x10bc]
+{ combines many ways
+get=base_item
+name=web
+id=0x10bc
+weight=100
+movable=2
+}
+
+[0x10bd]
+{ combines many ways
+get=base_item
+name=web
+id=0x10bd
+weight=100
+movable=2
+}
+
+[0x10be]
+{ combines many ways
+get=base_item
+name=web
+id=0x10be
+weight=100
+movable=2
+}
+
+[0x10bf]
+{ combines many ways
+get=base_item
+name=web
+id=0x10bf
+weight=100
+movable=2
+}
+
+[0x10c0]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c0
+weight=100
+movable=2
+}
+
+[0x10c1]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c1
+weight=100
+movable=2
+}
+
+[0x10c2]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c2
+weight=100
+movable=2
+}
+
+[0x10c3]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c3
+weight=100
+movable=2
+}
+
+[0x10c4]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c4
+weight=100
+movable=2
+}
+
+[0x10c5]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c5
+weight=100
+movable=2
+}
+
+[0x10c6]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c6
+weight=100
+movable=2
+}
+
+[0x10c7]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c7
+weight=100
+movable=2
+}
+
+[0x10c8]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c8
+weight=100
+movable=2
+}
+
+[0x10c9]
+{ combines many ways
+get=base_item
+name=web
+id=0x10c9
+weight=100
+movable=2
+}
+
+[0x10ca]
+{ combines many ways
+get=base_item
+name=web
+id=0x10ca
+weight=100
+movable=2
+}
+
+[0x10cb]
+{ combines many ways
+get=base_item
+name=web
+id=0x10cb
+weight=100
+movable=2
+}
+
+[0x10cc]
+{ combines many ways
+get=base_item
+name=web
+id=0x10cc
+weight=100
+movable=2
+}
+
+[0x10cd]
+{ combines many ways
+get=base_item
+name=web
+id=0x10cd
+weight=100
+movable=2
+}
+
+[0x10ce]
+{ combines many ways
+get=base_item
+name=web
+id=0x10ce
+weight=100
+movable=2
+}
+
+[0x10cf]
+{ combines many ways
+get=base_item
+name=web
+id=0x10cf
+weight=100
+movable=2
+}
+
+[0x10d0]
+{ combines many ways
+get=base_item
+name=web
+id=0x10d0
+weight=100
+movable=2
+}
+
+[0x10d1]
+{ combines many ways
+get=base_item
+name=web
+id=0x10d1
+weight=100
+movable=2
+}
+
+[0x10d2]
+{
+get=base_item
+name=small web
+id=0x10d2
+weight=100
+movable=2
+}
+
+[0x10d3]
+{
+get=base_item
+name=small web
+id=0x10d3
+weight=100
+movable=2
+}
+
+[0x10d4]
+{
+get=base_item
+name=small web
+id=0x10d4
+weight=100
+movable=2
+}
+
+[0x10d5]
+{
+get=base_item
+name=small web
+id=0x10d5
+weight=100
+movable=2
+}
+
+[0x10d6]
+{
+get=base_item
+name=small web
+id=0x10d6
+weight=100
+movable=2
+}
+
+[0x10d7]
+{
+get=base_item
+name=small web
+id=0x10d7
+weight=100
+movable=2
+}
+
+[0x10d8]
+{
+get=base_item
+name=egg case web
+id=0x10d8
+weight=100
+movable=2
+}
+
+[0x10d9]
+{
+get=base_item
+name=egg case
+id=0x10d9
+weight=100
+movable=2
+}
+
+[0x10da]
+{
+get=base_item
+name=cocoon
+id=0x10da
+weight=1500
+movable=2
+}
+
+[0x10db]
+{
+get=base_item
+name=cocoon
+id=0x10db
+weight=1500
+movable=2
+}
+
+[0x10dc]
+{
+get=base_item
+name=cocoon
+id=0x10dc
+weight=1500
+movable=2
+}
+
+[0x10dd]
+{ cocoon holder
+get=base_item
+name=web
+id=0x10dd
+weight=100
+movable=2
+}
+
+[0x10ee]
+{
+get=base_item
+name=garbage
+id=0x10ee
+weight=100
+movable=2
+}
+
+[0x10ef]
+{
+get=base_item
+name=garbage
+id=0x10ef
+weight=100
+movable=2
+}
+
+[0x10f0]
+{
+get=base_item
+name=garbage
+id=0x10f0
+weight=100
+movable=2
+}
+
+[0x10f1]
+{
+get=base_item
+name=garbage
+id=0x10f1
+weight=100
+movable=2
+}
+
+[0x10f2]
+{
+get=base_item
+name=pile of garbage
+id=0x10f2
+weight=100
+movable=2
+}
+
+[0x10f3]
+{
+get=base_item
+name=pile of garbage
+id=0x10f3
+weight=100
+movable=2
+}
+
+[0x1230]
+{ S
+get=base_item
+name=Guillotine
+id=0x1230
+weight=2000
+movable=2
+}
+
+[0x1245]
+{ S cutting
+get=base_item
+name=guillotine
+id=0x1245
+weight=2000
+movable=2
+}
+
+[0x1249]
+{ phase1
+get=base_item
+name=iron maiden
+id=0x1249
+weight=2000
+movable=2
+}
+
+[0x124a]
+{ phase2
+get=base_item
+name=iron maiden
+id=0x124a
+weight=2000
+movable=2
+}
+
+[0x124b]
+{ phase3
+get=base_item
+name=iron maiden
+id=0x124b
+weight=2000
+movable=2
+}
+
+[0x124c]
+{ phase4
+get=base_item
+name=iron maiden
+id=0x124c
+weight=2000
+movable=2
+}
+
+[0x124d]
+{ phase5
+get=base_item
+name=iron maiden
+id=0x124d
+weight=2000
+movable=2
+}
+
+[0x125e]
+{ E
+get=base_item
+name=Guillotine
+id=0x125e
+weight=2000
+movable=2
+}
+
+[0x125f]
+{ E cutting
+get=base_item
+name=guillotine
+id=0x125f
+weight=2000
+movable=2
+}
+
+[0x1262]
+{ E
+get=base_item
+name=shackles
+id=0x1262
+weight=100
+movable=2
+}
+
+[0x1263]
+{ S
+get=base_item
+name=shackles
+id=0x1263
+weight=100
+movable=2
+}
+
+[0x166d]
+{
+get=base_item
+name=shackle
+id=0x166d
+weight=100
+movable=2
+}
+
+[0x166e]
+{
+get=base_item
+name=whip
+id=0x166e
+weight=100
+movable=2
+}
+
+[0x166f]
+{ 9 tails
+get=base_item
+name=whip
+id=0x166f
+weight=100
+movable=2
+}
+
+[0x1640]
+{ E
+get=base_item
+name=shackles
+id=0x1640
+weight=100
+movable=2
+}
+
+[0x1a07]
+{ E
+get=base_item
+name=chains
+id=0x1a07
+weight=100
+movable=2
+}
+
+[0x1a08]
+{ S
+get=base_item
+name=chains
+id=0x1a08
+weight=100
+movable=2
+}
+
+[0x1ad4]
+{
+get=base_item
+name=nest with eggs
+id=0x1ad4
+weight=100
+movable=2
+}
+
+[0x1ad5]
+{
+get=base_item
+name=nest
+id=0x1ad5
+weight=100
+movable=2
+}

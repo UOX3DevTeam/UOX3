@@ -1,0 +1,1354 @@
+// decoration.dfn
+// All types of decoration and items that are not used yet or dont fit in anywhere else
+// v1.0; 26/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+[0x041f]
+{ E
+get=base_item
+name=gruesome standard
+id=0x041f
+weight=1000
+movable=2
+}
+
+[0x0420]
+{ E
+get=base_item
+name=gruesome standard
+id=0x0420
+weight=1000
+movable=2
+}
+
+[0x0428]
+{ S
+get=base_item
+name=gruesome standard
+id=0x0428
+weight=1000
+movable=2
+}
+
+[0x0429]
+{ S
+get=base_item
+name=gruesome standard
+id=0x0429
+weight=1000
+movable=2
+}
+
+
+[0x0b45]
+{
+get=base_item
+name=large vase
+id=0x0b45
+weight=300
+movable=2
+}
+
+[0x0b46]
+{
+get=base_item
+name=vase
+id=0x0b46
+weight=300
+movable=2
+}
+
+[0x0b47]
+{
+get=base_item
+name=large vase
+id=0x0b47
+weight=300
+movable=2
+}
+
+[0x0b48]
+{
+get=base_item
+name=vase
+id=0x0b48
+weight=300
+movable=2
+}
+
+[0x0c39]
+{ S
+get=base_item
+name=peg board
+id=0x0c39
+weight=100
+movable=2
+}
+
+[0x0c3a]
+{ E
+get=base_item
+name=peg board
+id=0x0c3a
+weight=100
+movable=2
+}
+
+[0x0dfe]
+{
+get=base_item
+name=cut hair
+id=0x0dfe
+weight=100
+movable=2
+}
+
+[0x0dff]
+{
+get=base_item
+name=wig
+id=0x0dff
+weight=100
+movable=2
+}
+
+[0x0e00]
+{
+get=base_item
+name=wig
+id=0x0e00
+weight=100
+movable=2
+}
+
+[0x0e01]
+{
+get=base_item
+name=wig
+id=0x0e01
+weight=100
+movable=2
+}
+
+[0x0e02]
+{
+get=base_item
+name=wig
+id=0x0e02
+weight=100
+movable=2
+}
+
+[0x0e03]
+{
+get=base_item
+name=wig
+id=0x0e03
+weight=100
+movable=2
+}
+
+[0x0e04]
+{
+get=base_item
+name=wig
+id=0x0e04
+weight=100
+movable=2
+}
+
+[0x0e05]
+{
+get=base_item
+name=wig
+id=0x0e05
+weight=100
+movable=2
+}
+
+[0x0e06]
+{
+get=base_item
+name=wig
+id=0x0e06
+weight=100
+movable=2
+}
+
+[0x0e07]
+{
+get=base_item
+name=wig stand
+id=0x0e07
+weight=100
+movable=2
+}
+
+[0x0e08]
+{
+get=base_item
+name=wig stand
+id=0x0e08
+weight=100
+movable=2
+}
+
+[0x0e09]
+{
+get=base_item
+name=wig stand
+id=0x0e09
+weight=100
+movable=2
+}
+
+[0x0e0a]
+{
+get=base_item
+name=wig
+id=0x0e0a
+weight=100
+movable=2
+}
+
+[0x0e0b]
+{
+get=base_item
+name=wig
+id=0x0e0b
+weight=100
+movable=2
+}
+
+[0x0e0c]
+{
+get=base_item
+name=wig
+id=0x0e0c
+weight=100
+movable=2
+}
+
+[0x0e0d]
+{
+get=base_item
+name=wig
+id=0x0e0d
+weight=100
+movable=2
+}
+
+[0x0e0e]
+{
+get=base_item
+name=wig
+id=0x0e0e
+weight=100
+movable=2
+}
+
+[0x0e23]
+{
+get=base_item
+name=bloody water
+id=0x0e23
+weight=10
+movable=2
+}
+
+[0x0e44]
+{
+get=base_item
+name=empty jars
+id=0x0e44
+weight=100
+movable=2
+}
+
+[0x0e45]
+{
+get=base_item
+name=empty jars
+id=0x0e45
+weight=100
+movable=2
+}
+
+[0x0e46]
+{
+get=base_item
+name=empty jars
+id=0x0e46
+weight=100
+movable=2
+}
+
+[0x0e47]
+{
+get=base_item
+name=empty jars
+id=0x0e47
+weight=100
+movable=2
+}
+
+[0x0e48]
+{
+get=base_item
+name=full jars
+id=0x0e48
+weight=100
+movable=2
+}
+
+[0x0e49]
+{
+get=base_item
+name=full jars
+id=0x0e49
+weight=100
+movable=2
+}
+
+[0x0e4a]
+{
+get=base_item
+name=full jars
+id=0x0e4a
+weight=100
+movable=2
+}
+
+[0x0e4b]
+{
+get=base_item
+name=full jars
+id=0x0e4b
+weight=100
+movable=2
+}
+
+[0x0e4c]
+{
+get=base_item
+name=jars
+id=0x0e4c
+weight=100
+movable=2
+}
+
+[0x0e4d]
+{
+get=base_item
+name=jars
+id=0x0e4d
+weight=100
+movable=2
+}
+
+[0x0e4e]
+{
+get=base_item
+name=jars
+id=0x0e4e
+weight=100
+movable=2
+}
+
+[0x0e4f]
+{
+get=base_item
+name=jars
+id=0x0e4f
+weight=100
+movable=2
+}
+
+[0x0e7b]
+{
+get=base_item
+name=water tub
+id=0x0e7b
+weight=100
+movable=2
+}
+
+[0x0ec6]
+{ E
+get=base_item
+name=dressform
+id=0x0ec6
+weight=500
+movable=2
+}
+
+[0x0ec7]
+{ S
+get=base_item
+name=dressform
+id=0x0ec7
+weight=500
+movable=2
+}
+
+[0x0f37]
+{ S on stand
+get=base_item
+name=saddle
+id=0x0f37
+weight=1000
+movable=2
+}
+
+[0x0f38]
+{ E on stand
+get=base_item
+name=saddle
+id=0x0f38
+weight=1000
+movable=2
+}
+
+[0x0f3b]
+{
+get=base_item
+name=horse dung
+id=0x0f3b
+weight=10
+movable=2
+}
+
+[0x0f3c]
+{
+get=base_item
+name=horse dung
+id=0x0f3c
+weight=10
+movable=2
+}
+
+[0x0fb6]
+{
+get=base_item
+name=horse shoes
+id=0x0fb6
+weight=100
+movable=2
+}
+
+[0x0fc1]
+{
+get=base_item
+name=paints and brush
+id=0x0fc1
+weight=100
+movable=2
+}
+
+[0x0fc4]
+{
+get=base_item
+name=conch shell
+id=0x0fc4
+weight=100
+movable=2
+}
+
+[0x0fc5]
+{
+get=base_item
+name=shells
+id=0x0fc5
+weight=100
+movable=2
+}
+
+[0x0fc6]
+{
+get=base_item
+name=shells
+id=0x0fc6
+weight=100
+movable=2
+}
+
+[0x0fc7]
+{
+get=base_item
+name=nautilus
+id=0x0fc7
+weight=100
+movable=2
+}
+
+[0x0fc8]
+{
+get=base_item
+name=shell
+id=0x0fc8
+weight=100
+movable=2
+}
+
+[0x0fc9]
+{
+get=base_item
+name=shells
+id=0x0fc9
+weight=100
+movable=2
+}
+
+[0x0fca]
+{
+get=base_item
+name=shells
+id=0x0fca
+weight=100
+movable=2
+}
+
+[0x0fcb]
+{
+get=base_item
+name=shell
+id=0x0fcb
+weight=100
+movable=2
+}
+
+[0x0fcc]
+{
+get=base_item
+name=shell
+id=0x0fcc
+weight=100
+movable=2
+}
+
+[0x104b]
+{ E
+get=base_item
+name=clock
+id=0x104b
+weight=200
+movable=1
+decay=1
+}
+
+[0x104c]
+{ S
+get=base_item
+name=clock
+id=0x104c
+weight=200
+movable=1
+decay=1
+}
+
+[0x11c6]
+{
+get=base_item
+name=flower pot
+id=0x11c6
+weight=100
+movable=2
+}
+
+[0x11c7]
+{
+get=base_item
+name=flower pot
+id=0x11c7
+weight=100
+movable=2
+}
+
+[0x10ac]
+{ E
+get=base_item
+name=hanging pole
+id=0x10ac
+weight=100
+movable=2
+}
+
+[0x10ad]
+{ E
+get=base_item
+name=hanging pole
+id=0x10ad
+weight=100
+movable=2
+}
+
+[0x10ae]
+{ E
+get=base_item
+name=hanging pole
+id=0x10ae
+weight=100
+movable=2
+}
+
+[0x10af]
+{ S
+get=base_item
+name=hanging pole
+id=0x10af
+weight=100
+movable=2
+}
+
+[0x10b0]
+{ S
+get=base_item
+name=hanging pole
+id=0x10b0
+weight=100
+movable=2
+}
+
+[0x10b1]
+{ S
+get=base_item
+name=hanging pole
+id=0x10b1
+weight=100
+movable=2
+}
+
+[0x1449]
+{
+get=base_item
+name=loose grain
+id=0x1449
+weight=100
+movable=2
+}
+
+
+[0x14e0]
+{
+get=base_item
+name=bucket
+id=0x14e0
+weight=100
+movable=2
+}
+
+[0x14e7]
+{ E
+get=base_item
+name=hitching post
+id=0x14e7
+weight=100
+movable=2
+}
+
+[0x14e8]
+{ S
+get=base_item
+name=hitching post
+id=0x14e8
+weight=100
+movable=2
+}
+
+[0x14f3]
+{ S
+get=base_item
+name=ship model
+id=0x14f3
+weight=100
+movable=2
+}
+
+[0x14f4]
+{ E
+get=base_item
+name=ship model
+id=0x14f4
+weight=100
+movable=2
+}
+
+[0x14f5]
+{ S
+get=base_item
+name=spyglass
+id=0x14f5
+weight=100
+movable=2
+}
+
+[0x14f6]
+{ E
+get=base_item
+name=spyglass
+id=0x14f6
+weight=100
+movable=2
+}
+
+[0x14f7]
+{ E
+get=base_item
+name=anchor
+id=0x14f7
+weight=1000
+movable=2
+}
+
+[0x14f8]
+{ E
+get=base_item
+name=rope
+id=0x14f8
+weight=100
+movable=2
+}
+
+[0x14f9]
+{ S
+get=base_item
+name=anchor
+id=0x14f9
+weight=1000
+movable=2
+}
+
+[0x14fa]
+{
+get=base_item
+name=rope
+id=0x14fa
+weight=100
+movable=2
+}
+
+[0x1500]
+{ E 1/2
+get=base_item
+name=plough
+id=0x1500
+weight=300
+movable=2
+}
+
+[0x1501]
+{ E 2/2
+get=base_item
+name=plough
+id=0x1501
+weight=300
+movable=2
+}
+
+[0x1502]
+{ S 1/2
+get=base_item
+name=plough
+id=0x1502
+weight=300
+movable=2
+}
+
+[0x1503]
+{ E 2/2
+get=base_item
+name=plough
+id=0x1503
+weight=300
+movable=2
+}
+
+[0x1504]
+{ S trace
+get=base_item
+name=harrow
+id=0x1504
+weight=100
+movable=2
+}
+
+[0x1505]
+{ S
+get=base_item
+name=harrow
+id=0x1505
+weight=100
+movable=2
+}
+
+[0x1506]
+{ E trace
+get=base_item
+name=harrow
+id=0x1506
+weight=100
+movable=2
+}
+
+[0x1507]
+{ E
+get=base_item
+name=harrow
+id=0x1507
+weight=100
+movable=2
+}
+
+[0x1514]
+{
+get=base_item
+name=Serpent Crest
+id=0x1514
+weight=100
+movable=2
+}
+
+
+[0x154d]
+{
+get=base_item
+name=water barrel
+id=0x154d
+weight=300
+movable=2
+}
+
+
+[0x1810]
+{
+get=base_item
+name=hourglass
+id=0x1810
+weight=100
+movable=2
+}
+
+[0x1811]
+{ running
+get=base_item
+name=hourglass
+id=0x1811
+weight=100
+movable=2
+}
+
+[0x1851]
+{ S
+get=base_item
+name=scales
+id=0x1851
+weight=100
+movable=2
+}
+
+[0x1852]
+{ E
+get=base_item
+name=scales
+id=0x1852
+weight=100
+movable=2
+}
+
+[0x187e]
+{
+get=base_item
+name=spilled flour
+id=0x187e
+weight=100
+movable=2
+}
+
+[0x187f]
+{
+get=base_item
+name=spilled flour
+id=0x187f
+weight=100
+movable=2
+}
+
+[0x1880]
+{
+get=base_item
+name=spilled flour
+id=0x1880
+weight=100
+movable=2
+}
+
+[0x1881]
+{
+get=base_item
+name=spilled flour
+id=0x1881
+weight=100
+movable=2
+}
+
+[0x1b1f]
+{
+get=base_item
+name=leaves
+id=0x1b1f
+weight=100
+movable=2
+}
+
+[0x1b20]
+{
+get=base_item
+name=leaves
+id=0x1b20
+weight=100
+movable=2
+}
+
+[0x1b21]
+{
+get=base_item
+name=leaves
+id=0x1b21
+weight=100
+movable=2
+}
+
+[0x1b22]
+{
+get=base_item
+name=leaves
+id=0x1b22
+weight=100
+movable=2
+}
+
+[0x1b23]
+{ 1/4
+get=base_item
+name=leaves
+id=0x1b23
+weight=100
+movable=2
+}
+
+[0x1b24]
+{ 2/4
+get=base_item
+name=leaves
+id=0x1b24
+weight=100
+movable=2
+}
+
+[0x1b25]
+{ 3/4
+get=base_item
+name=leaves
+id=0x1b25
+weight=100
+movable=2
+}
+
+[0x1b26]
+{ 4/4
+get=base_item
+name=leaves
+id=0x1b26
+weight=100
+movable=2
+}
+
+
+[0x1e26]
+{ N 1/2
+get=base_item
+name=oar
+id=0x1e26
+weight=100
+movable=2
+}
+
+[0x1e27]
+{ N 2/2
+get=base_item
+name=oar
+id=0x1e27
+weight=100
+movable=2
+}
+
+[0x1e28]
+{ E 1/2
+get=base_item
+name=oar
+id=0x1e28
+weight=100
+movable=2
+}
+
+[0x1e29]
+{ E 2/2
+get=base_item
+name=oar
+id=0x1e29
+weight=100
+movable=2
+}
+
+[0x1e2a]
+{ N
+get=base_item
+name=oars
+id=0x1e2a
+weight=100
+movable=2
+}
+
+[0x1e2b]
+{ E
+get=base_item
+name=oars
+id=0x1e2b
+weight=100
+movable=2
+}
+
+[0x1e34]
+{ S
+get=base_item
+name=scarecrow
+id=0x1e34
+weight=100
+movable=2
+}
+
+[0x1e35]
+{ E
+get=base_item
+name=scarecrow
+id=0x1e35
+weight=100
+movable=2
+}
+
+[0x1e5e]
+{ S
+get=base_item
+name=bulletin board
+id=0x1e5e
+weight=500
+movable=2
+}
+
+[0x1e5f]
+{ E
+get=base_item
+name=bulletin board
+id=0x1e5f
+weight=500
+movable=2
+}
+
+[0x1e9a]
+{
+get=base_item
+name=hook
+id=0x1e9a
+weight=100
+movable=2
+}
+
+[0x1e9b]
+{
+get=base_item
+name=hook
+id=0x1e9b
+weight=100
+movable=2
+}
+
+[0x1e9c]
+{
+get=base_item
+name=pullies
+id=0x1e9c
+weight=100
+movable=2
+}
+
+[0x1e9d]
+{
+get=base_item
+name=pullies
+id=0x1e9d
+weight=100
+movable=2
+}
+
+[0x1e9e]
+{
+get=base_item
+name=pulley
+id=0x1e9e
+weight=100
+movable=2
+}
+
+[0x1e9f]
+{
+get=base_item
+name=pulley
+id=0x1e9f
+weight=100
+movable=2
+}
+
+[0x1ea0]
+{
+get=base_item
+name=rope
+id=0x1ea0
+weight=100
+movable=2
+}
+
+[0x1ea1]
+{
+get=base_item
+name=rope
+id=0x1ea1
+weight=100
+movable=2
+}
+
+[0x1ea2]
+{
+get=base_item
+name=rope
+id=0x1ea2
+weight=100
+movable=2
+}
+
+[0x1ea3]
+{ S
+get=base_item
+name=net
+id=0x1ea3
+weight=100
+movable=2
+}
+
+[0x1ea4]
+{ E
+get=base_item
+name=net
+id=0x1ea4
+weight=100
+movable=2
+}
+
+[0x1ea5]
+{ S
+get=base_item
+name=net
+id=0x1ea5
+weight=100
+movable=2
+}
+
+[0x1ea6]
+{ E
+get=base_item
+name=net
+id=0x1ea6
+weight=100
+movable=2
+}
+
+[0x1376]
+{ E 1/2
+get=base_item
+name=horse barding
+id=0x1376
+weight=500
+movable=2
+}
+
+[0x1377]
+{ E 2/2
+get=base_item
+name=horse barding
+id=0x1377
+weight=100
+movable=2
+}
+
+[0x1378]
+{ S 1/2
+get=base_item
+name=horse barding
+id=0x1378
+weight=500
+movable=2
+}
+
+[0x1379]
+{ S 2/2
+get=base_item
+name=horse barding
+id=0x1379
+weight=500
+movable=2
+}
+
+[0x1374]
+{ S
+get=base_item
+name=bridle
+id=0x1374
+weight=100
+movable=2
+}
+
+[0x1375]
+{ E
+get=base_item
+name=bridle
+id=0x1375
+weight=100
+movable=2
+}
+
+[0x1a82]
+{ S 1/3
+get=base_item
+name=ore cart
+id=0x1a82
+weight=500
+movable=2
+}
+
+[0x1a83]
+{ S 2/3
+get=base_item
+name=ore cart
+id=0x1a83
+weight=500
+movable=2
+}
+
+[0x1a86]
+{ S 3/3
+get=base_item
+name=ore cart
+id=0x1a86
+weight=500
+movable=2
+}
+
+[0x1a87]
+{ E 1/3
+get=base_item
+name=ore cart
+id=0x1a87
+weight=500
+movable=2
+}
+
+[0x1a88]
+{ E 2/3
+get=base_item
+name=ore cart
+id=0x1a88
+weight=500
+movable=2
+}
+
+[0x1a8b]
+{ E 3/3
+get=base_item
+name=ore cart
+id=0x1a8b
+weight=500
+movable=2
+}
+
+[0x1036]
+{
+get=base_item
+name=hay
+id=0x1036
+weight=10
+movable=2
+}
+
+[0x1037]
+{
+get=base_item
+name=hay
+id=0x1037
+weight=10
+movable=2
+}
+
+[0x1038]
+{
+get=base_item
+name=wood curls
+id=0x1038
+weight=10
+movable=2
+}
+
+[0x0377]
+{
+get=base_item
+name=patch
+id=0x0377
+weight=100
+movable=2
+}
+
+[0x0379]
+{
+get=base_item
+name=dagges
+id=0x0379
+weight=100
+movable=2
+}
+
+[0x0f36]
+{
+get=base_item
+name=sheaf of hay
+id=0x0f36
+weight=100
+decay=1
+}
+
+[0x100c]
+{
+get=base_item
+name=hay sheave
+id=0x100c
+weight=100
+decay=1
+}
+
+[0x100d]
+{
+get=base_item
+name=hay sheave
+id=0x100d
+weight=100
+decay=1
+}

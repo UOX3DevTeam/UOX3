@@ -1,0 +1,735 @@
+// plain plaster arch corner southwest with board down sw side
+[0x0149]
+{
+get=base_item
+name=plaster wall
+id=0x0149
+}
+
+// very short plaster lath west
+[0x014A]
+{
+get=base_item
+name=plaster wall
+id=0x014A
+}
+
+// very short plaster lath south
+[0x014B]
+{
+get=base_item
+name=plaster wall
+id=0x014B
+}
+
+// fancy plaster corner southwest with board down sw edge
+[0x014C]
+{
+get=base_item
+name=plaster wall
+id=0x014C
+}
+
+// fancy plaster wall west with board south edge 
+[0x014D]
+{
+get=base_item
+name=plaster wall
+id=0x014D
+}
+
+// fancy plaster wall south with board down west edge
+[0x014E]
+{
+get=base_item
+name=plaster wall
+id=0x014E
+}
+
+// semi fancy plaster corner southwest with board sw corner
+[0x014F]
+{
+get=base_item
+name=plaster wall
+id=0x014F
+}
+
+// fancy plaster wall west with board south edge
+[0x0150]
+{
+get=base_item
+name=plaster wall
+id=0x0150
+}
+
+// fancy plaster wall south with board on west edge
+[0x0151]
+{
+get=base_item
+name=plaster wall
+id=0x0151
+}
+
+// semi fancy plaster wall west with board on south edge
+[0x0152]
+{
+get=base_item
+name=plaster wall
+id=0x0152
+}
+
+// semi fancy plaster wall south with board on west edge
+[0x0153]
+{
+get=base_item
+name=plaster wall
+id=0x0153
+}
+
+// semi fancy plaster wall with window board on south edge
+[0x0154]
+{
+get=base_item
+name=window
+id=0x0154
+}
+
+// semi fancy plaster wall south with window board on west edge
+[0x0155]
+{
+get=base_item
+name=window
+id=0x0155
+}
+
+// plain plaster wall with paned window west board south edge
+[0x0156]
+{
+get=base_item
+name=window
+id=0x0156
+}
+
+// plain plaster wall with paned window south board west edge
+[0x0157]
+{
+get=base_item
+name=window
+id=0x0157
+}
+
+// plaster corner southwest with diagonal board south to north
+[0x0127]
+{
+get=base_item
+name=plaster wall
+id=0x0127
+}
+
+// plaster wall west with diagonal board south to north and wood on south edge
+[0x0128]
+{
+get=base_item
+name=plaster wall
+id=0x0128
+}
+
+// plaster wall south with diagonal board south to north with wood on west edge
+[0x0129]
+{
+get=base_item
+name=plaster wall
+id=0x0129
+}
+
+// wooden post
+[0x012A]
+{
+get=base_item
+name=wooden post
+id=0x012A
+}
+
+// plaster wall west with diagonal board north to south and wood on south edge
+[0x012C]
+{
+get=base_item
+name=plaster wall
+id=0x012C
+}
+
+// plaster wall south with diagonal board north to south and wood on west edge
+[0x012D]
+{
+get=base_item
+name=plaster wall
+id=0x012D
+}
+
+// plaster wall west with diagonal board south to north
+[0x012E]
+{
+get=base_item
+name=plaster wall
+id=0x012E
+}
+
+// plaster wall south with diagonal board south to north
+[0x012F]
+{
+get=base_item
+name=plaster wall
+id=0x012F
+}
+
+// plaster wall west with diagonal board north to south
+[0x0130]
+{
+get=base_item
+name=plaster wall
+id=0x0130
+}
+
+// plaster wall south with diagonal board north to south
+[0x0131]
+{
+get=base_item
+name=plaster wall
+id=0x0131
+}
+
+// plain plaster corner southwest with board on southwest corner
+[0x0132]
+{
+get=base_item
+name=plaster wall
+id=0x0132
+}
+
+// plain plaster wall west with board on south edge
+[0x0133]
+{
+get=base_item
+name=plaster wall
+id=0x0133
+}
+
+// plain plaster wall south with board on west edge
+[0x0134]
+{
+get=base_item
+name=plaster wall
+id=0x0134
+}
+
+// plain plaster corner southwest
+[0x0135]
+{
+get=base_item
+name=plaster wall
+id=0x0135
+}
+
+// plain plaster wall west
+[0x0136]
+{
+get=base_item
+name=plaster wall
+id=0x0136
+}
+
+// plain plaster wall south
+[0x0137]
+{
+get=base_item
+name=plaster wall
+id=0x0137
+}
+
+// plain plaster wall west with board on north edge
+[0x0138]
+{
+get=base_item
+name=plaster wall
+id=0x0138
+}
+
+// plain plaster wall south with board on east edge
+[0x0139]
+{
+get=base_item
+name=plaster wall
+id=0x0139
+}
+
+// plain plaster wall west with window
+[0x13A]
+{
+get=base_item
+name=window
+id=0x013A
+}
+
+// plain plaster wall south with window
+[0x013B]
+{
+get=base_item
+name=window
+id=0x013B
+}
+
+// plain plaster archway corner southwest
+[0x013C]
+{
+get=base_item
+name=archway
+id=0x013C
+}
+
+// plain plaster archway south with center to north
+[0x013D]
+{
+get=base_item
+name=archway
+id=0x013D
+}
+
+// plain plaster archway west with center to south
+[0x013E]
+{
+get=base_item
+name=archway
+id=0x013E
+}
+
+// plain plaster archway west with center to north
+[0x013F]
+{
+get=base_item
+name=archway
+id=0x013F
+}
+
+// plain plaster archway south with center to south
+[0x0140]
+{
+get=base_item
+name=archway
+id=0x0140
+}
+
+// wooden beam southwest
+[0x0141]
+{
+get=base_item
+name=wooden beam
+id=0x0141
+}
+
+// wooden beam west
+[0x0142]
+{
+get=base_item
+name=wooden beam
+id=0x0142
+}
+
+// wooden beam south
+[0x0143]
+{
+get=base_item
+name=wooden beam
+id=0x0143
+}
+
+// wooden beam stub
+[0x0144]
+{
+get=base_item
+name=wooden beam
+id=0x0144
+}
+
+// plaster corner southwest with sandstone edging
+[0x01FF]
+{
+get=base_item
+name=plaster wall
+id=0x01FF
+}
+
+// plaster wall west with sandstone edging south
+[0x0200]
+{
+get=base_item
+name=plaster wall
+id=0x0200
+}
+
+// plaster wall south with sandstone edging west
+[0x0201]
+{
+get=base_item
+name=plaster wall
+id=0x0201
+}
+
+// sandstone post thin
+[0x0202]
+{
+get=base_item
+name=sandstone
+id=0x0202
+}
+
+// plaster wall west no edging
+[0x0203]
+{
+get=base_item
+name=plaster wall
+id=0x0203
+}
+
+// plaster wall south no edging
+[0x0204]
+{
+get=base_item
+name=plaster wall
+id=0x0204
+}
+
+// plaster wall west with sandstone edging north
+[0x0205]
+{
+get=base_item
+name=plaster wall
+id=0x0205
+}
+
+// plaster wall south with sandstone edging east
+[0x0206]
+{
+get=base_item
+name=plaster wall
+id=0x0206
+}
+
+// plaster wall no edging west square window
+[0x0207]
+{
+get=base_item
+name=window
+id=0x0207
+}
+
+// plaster wall south no edging square window
+[0x0208]
+{
+get=base_item
+name=window
+id=0x0208
+}
+
+// plaster wall west no edging arched window
+[0x0209]
+{
+get=base_item
+name=window
+id=0x0209
+}
+
+// plaster wall south no edging arched window
+[0x020A]
+{
+get=base_item
+name=window
+id=0x020A
+}
+
+// very short thin plaster lath west
+[0x020B]
+{
+get=base_item
+name=plaster wall
+id=0x020B
+}
+
+// very short thin plaster lath south
+[0x020C]
+{
+get=base_item
+name=plaster wall
+id=0x020C
+}
+
+// dirty plaster corner southwest diagonal board south to north
+[0x037F]
+{
+get=base_item
+name=plaster wall
+id=0x037F
+}
+
+// dirty plaster wall west diagonal board south to north
+[0x0380]
+{
+get=base_item
+name=plaster wall
+id=0x0380
+}
+
+// dirty plaster wall south diagonal board south to north
+[0x0381]
+{
+get=base_item
+name=plaster wall
+id=0x0381
+}
+
+// wooden post
+[0x0382]
+{
+get=base_item
+name=wooden post
+id=0x0382
+}
+
+// dirty plaster corner southwest diagonal board north to south
+[0x0383]
+{
+get=base_item
+name=plaster wall
+id=0x0383
+}
+
+// dirty plaster wall west diagonal board north to south
+[0x0384]
+{
+get=base_item
+name=plaster wall
+id=0x0384
+}
+
+// dirty plaster wall south diagonal board north to south
+[0x0385]
+{
+get=base_item
+name=plaster wall
+id=0x0385
+}
+
+// dirty plaster wall no vertical boards diagonal board south to north
+[0x0386]
+{
+get=base_item
+name=plaster wall
+id=0x0386
+}
+
+// dirty plaster wall south no vertical boards diagonal board south to norht
+[0x0387]
+{
+get=base_item
+name=plaster wall
+id=0x0387
+}
+
+// dirty plaster wall west no vertical boards diagonal board north to south
+[0x0388]
+{
+get=base_item
+name=plaster wall
+id=0x0388
+}
+
+// dirty plaster south no vertical boards diagonal board north to south
+[0x0389]
+{
+get=base_item
+name=plaster wall
+id=0x0389
+}
+
+// dirty plaster plain corner southwest vertical board southwest
+[0x038A]
+{
+get=base_item
+name=plaster wall
+id=0x038A
+}
+
+// dirty plaster wall west plain vertical board south
+[0x038B]
+{
+get=base_item
+name=plaster wall
+id=0x038B
+}
+
+// dirty plaster wall south vertical board west
+[0x038C]
+{
+get=base_item
+name=plaster wall
+id=0x038C
+}
+
+// dirty plaster corner southwest
+[0x038D]
+{
+get=base_item
+name=plaster wall
+id=0x038D
+}
+
+// dirty plaster wall west
+[0x038E]
+{
+get=base_item
+name=plaster wall
+id=0x038E
+}
+
+// dirty plaster wall south
+[0x038F]
+{
+get=base_item
+name=plaster wall
+id=0x038f
+}
+
+// dirty plaster wall west vertical board north
+[0x0390]
+{
+get=base_item
+name=plaster wall
+id=0x0390
+}
+
+// dirty plaster wall south vertical board north
+[0x0391]
+{
+get=base_item
+name=plaster wall
+id=0x0391
+}
+
+// dirty plaster corner south west
+[0x0392]
+{
+get=base_item
+name=plaster wall
+id=0x0392
+}
+
+// dirty plaster wall west
+[0x0393]
+{
+get=base_item
+name=plaster wall
+id=0x0393
+}
+
+// dirty plaster wall south
+[0x0394]
+{
+get=base_item
+name=plaster wall
+id=0x0394
+}
+
+// dirty plaster wall west
+[0x0395]
+{
+get=base_item
+name=plaster wall
+id=0x0395
+}
+
+// dirty plaster wall south
+[0x0396]
+{
+get=base_item
+name=plaster wall
+id=0x0396
+}
+
+// dirty plaster archway southwest
+[0x0397]
+{
+get=base_item
+name=archway
+id=0x0397
+}
+
+// dirty palster archway south keystone east
+[0x0398]
+{
+get=base_item
+name=archway
+id=0x0398
+}
+
+// dirty plaster archway west keystone south
+[0x0399]
+{
+get=base_item
+name=archway
+id=0x0399
+}
+
+// dirty plaster archway west keystone north
+[0x039A]
+{
+get=base_item
+name=archway
+id=0x039A
+}
+
+// dirty plaster archway south keystone west
+[0x039B]
+{
+get=base_item
+name=archway
+id=0x039B
+}
+
+// wooden beam southwest corner
+[0x039C]
+{
+get=base_item
+name=wooden beam
+id=0x039C
+}
+
+// wooden beam west
+[0x039D]
+{
+get=base_item
+name=wooden beast
+id=0x039D
+}
+
+// wooden beam south
+[0x039E]
+{
+get=base_item
+name=wooden beam
+id=0x039E
+}
+
+// wooden stub
+[0x039F]
+{
+get=base_item
+name=wooden beam
+id=0x039F
+}
+
+// dirty plaster southwest thin archway corner
+[0x03A0]
+{
+get=base_item
+name=archway
+id=0x03A0
+}

@@ -1,0 +1,45 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: moonglow.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 23rd 2002
+
+[LOCATION 80]
+{
+// Center
+X=4442
+Y=1122
+Z=5
+}
+
+[LOCATION 81]
+(
+// Docks
+X 4406
+Y 1045
+Z 254
+}
+
+[LOCATION 82]
+{
+// Telescope
+X=4707
+Y=1124
+Z=0
+}
+
+[LOCATION 83]
+{
+// Zoo
+X=4549
+Y=1378
+Z=8
+}
+
+[LOCATION 84]
+{
+// Cemetary
+X=4546
+Y=1338
+Z=8
+}

@@ -1,0 +1,71 @@
+//*****************************************************************
+//*                         UOX3 Scripts v0.98                    *
+//*                                                               *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 01/4/2003                                       *
+//* Script : fishing.dfn                                          *
+//*****************************************************************
+//*                        How to use this script:                *
+//*								  *
+//* ITEM sections 1-5 contain info about what you can catch in    *
+//* the sea with a fishing pole.                                  *
+//* The [ITEM 5]-section lists all the "fish" that you fish up.   *
+//* If you want you can change the item references in sections    *
+//* 1-4 to reflect the NAME tags.. so your users can fish up other*
+//* stuff than fish.(Default is ONLY fish.)                       *
+//*                                                               *
+//* Note that a player needs 92.0 fishing-skill to be able to     *
+//* catch any of the items in [ITEMLIST 1], and 97.0 to catch any *
+//* of the [ITEMLIST 2]-items. No skill (apart from basic check)  *
+//* is required to fish up items from sections 3 & 4.             *
+//* --------------------------------------------------------------*
+//*****************************************************************
+
+//Random Treasure
+[ITEMLIST fishtreasure]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+//Random weapons
+[itemlist fishweapons]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+//Random gems
+[itemlist fishgems]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+//Random bones and discards
+[itemlist fishbones]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+//Random Fish
+[itemlist randomfish]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+
+EOF

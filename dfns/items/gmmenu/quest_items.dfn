@@ -1,0 +1,164 @@
+// quest.dfn
+// v1.0; 05/06/01; initial release; Chris Bailey / [TBA]Cav; 13997@bbc.qld.edu.au
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+// This file contains:
+// Virtue Stones/Other Virtue Items
+// Nothing else at this time
+
+// Virtue Stones/Other Virtue Items:
+
+[0x1869]
+{ for use with quests or rare items
+get=base_item
+name=Stone of Honor
+id=0x1869
+weight=200
+value=10000
+movable=1
+}
+
+[0x186a]
+{ for use with quests or rare items
+get=base_item
+name=Stone of Compassion
+id=0x186a
+weight=200
+value=10000
+movable=1
+}
+
+[0x186b]
+{ for use with quests or rare items
+get=base_item
+name=Stone of Honesty
+id=0x186b
+weight=200
+value=10000
+movable=1
+}
+
+[0x186c]
+{ for use with quests or rare items
+get=base_item
+name=Stone of Valor
+id=0x186c
+weight=200
+value=10000
+movable=1
+}
+
+[0x186d]
+{
+get=base_item
+name=Stone of Humility
+id=0x186d
+weight=200
+value=10000
+movable=1
+}
+
+[0x186e]
+{
+get=base_item
+name=Stone of Sacrifice
+id=0x186e
+weight=200
+value=10000
+movable=1
+}
+
+[0x186f]
+{
+get=base_item
+name=Stone of Justice
+id=0x186f
+weight=200
+value=10000
+movable=1
+}
+
+[0x1870]
+{
+get=base_item
+name=Stone of Spirituality
+id=0x1870
+weight=200
+value=10000
+movable=1
+}
+
+[0x1f13]
+{
+get=base_item
+name=A Worldgem Bit
+id=0x1f13
+weight=200
+value=10000
+movable=1
+}
+
+[0x1ea7]
+{
+get=base_item
+name=A Worldgem Bit
+id=0x1ea7
+weight=200
+value=10000
+movable=1
+}
+
+[0x1c12]
+{
+get=base_item
+name=Bell of Courage
+id=0x1c12
+weight=200
+value=30000
+movable=1
+}
+
+[0x1c13]
+{
+get=base_item
+name=Book of Truth
+id=0x1c13
+weight=200
+value=30000
+movable=1
+}
+
+[0x1c14]
+{ version 1
+get=base_item
+name=Candle of Love
+id=0x1c14
+weight=200
+value=30000
+movable=1
+}
+
+[0x1c15]
+{ version 2
+get=base_item
+name=Candle of Love
+id=0x1c15
+weight=200
+value=30000
+movable=1
+}
+
+[0x1c16]
+{
+get=base_item
+name=Unlit Candle of Love
+id=0x1c16
+weight=200
+value=30000
+movable=1
+}
+
+
+EOF

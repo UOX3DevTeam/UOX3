@@ -1,0 +1,566 @@
+// wooden_tiles.dfn
+
+// light wood planks
+[0x04A1]
+{
+get=base_item
+name=wooden planks
+id=0x04A1
+}
+
+[0x04A2]
+{
+get=base_item
+name=wooden planks
+id=0x04A2
+}
+
+[0x04A3]
+{
+get=base_item
+name=wooden planks
+id=0x04A3
+}
+
+[0x04A4]
+{
+get=base_item
+name=wooden planks
+id=0x04A4
+}
+
+// dark wooden boards north south
+[0x04A5]
+{
+get=base_item
+name=wooden boards
+id=0x04A5
+}
+
+[0x04A6]
+{
+get=base_item
+name=wooden boards
+id=0x04A6
+}
+
+// dark wooden boards east west
+[0x04A7]
+{
+get=base_item
+name=wooden boards
+id=0x04A7
+}
+
+// dark wooden boards north south
+[0x04A8]
+{
+get=base_item
+name=wooden boards
+id=0x04A8
+}
+
+// dark wooden boards north south
+[0x04A9]
+{
+get=base_item
+name=wooden boards
+id=0x04A9
+}
+
+[0x04AA]
+{
+get=base_item
+name=wooden boards
+id=0x04AA
+}
+
+[0x04AB]
+{
+get=base_item
+name=wooden boards
+id=0x04AB
+}
+
+// dark wooden boards north border north south
+[0x04AD]
+{
+get=base_item
+name=wooden boards
+id=0x04AD
+}
+
+// dark wooden boards west border north south
+[0x04AE]
+{
+get=base_item
+name=wooden boards
+id=0x04AE
+}
+
+// dark wooden boards south border north south
+[0x04AF]
+{
+get=base_item
+name=wooden boards
+id=0x04AF
+}
+
+// dark wooden boards east border north south
+[0x04B0]
+{
+get=base_item
+name=wooden boards
+id=0x04B0
+}
+
+// dark wooden boards southwest border north south
+[0x04B1]
+{
+get=base_item
+name=wooden boards
+id=0x04B1
+}
+
+// dark wooden boards northwest border north south
+[0x04B2]
+{
+get=base_item
+name=wooden boards
+id=0x04B2
+}
+
+// dark wooden boards southeast border north south
+[0x04B3]
+{
+get=base_item
+name=wooden boards
+id=0x04B3
+}
+
+// dark wooden boards northeast border north south
+[0x04B4]
+{
+get=base_item
+name=wooden boards
+id=0x04B4
+}
+
+// dark wooden boards east west
+[0x04B5]
+{
+get=base_item
+name=wooden boards
+id=0x04B5
+}
+
+[0x04B6]
+{
+get=base_item
+name=wooden boards
+id=0x04B6
+}
+
+[0x04B7]
+{
+get=base_item
+name=wooden boards
+id=0x04B7
+}
+
+[0x04B8]
+{
+get=base_item
+name=wooden boards
+id=0x04B8
+}
+
+// dark wooden boards west border east west
+[0x04B9]
+{
+get=base_item
+name=wooden boards
+id=0x04B9
+}
+
+// dark wooden boards west border east west
+[0x04BA]
+{
+get=base_item
+name=wooden boards
+id=0x04BA
+}
+
+// dark wooden boards south border east west
+[0x04BB]
+{
+get=base_item
+name=wooden boards
+id=0x04BB
+}
+
+// dark wooden boards east border north south
+[0x04BC]
+{
+get=base_item
+name=wooden boards
+id=0x04BC
+}
+
+// dark wooden boards southwest border east west
+[0x04BD]
+{
+get=base_item
+name=wooden boards
+id=0x04BD
+}
+
+// dark wooden boards northwest east border west
+[0x04BE]
+{
+get=base_item
+name=wooden boards
+id=0x04BE
+}
+
+// dark wooden boards southeast border east west
+[0x04BF]
+{
+get=base_item
+name=wooden boards
+id=0x04BF
+}
+
+// dark wooden boards northeast border east west
+[0x04C0]
+{
+get=base_item
+name=wooden boards
+id=0x04C0
+}
+
+// rattan tile east west
+[0x04C1]
+{
+get=base_item
+name=wooden logs
+id=0x04C1
+}
+
+// wooden logs west edge
+[0x04C2]
+{
+get=base_item
+name=wooden logs
+id=0x04C2
+}
+
+// wooden logs east edge
+[0x04C3]
+{
+get=base_item
+name=wooden logs
+id=0x04C3
+}
+
+// wooden logs east west corded eastside
+[0x04C4]
+{
+get=base_item
+name=wooden logs
+id=0x04C4
+}
+
+// wooden logs east west corded eastside
+[0x04C5]
+{
+get=base_item
+name=wooden logs
+id=0x04C5
+}
+
+// light wooden planks north south
+[0x04C6]
+{
+get=base_item
+name=wooden planks
+id=0x04C6
+}
+
+[0x04C7]
+{
+get=base_item
+name=wooden planks
+id=0x04C7
+}
+
+[0x04C8]
+{
+get=base_item
+name=wooden planks
+id=0x04C8
+}
+
+[0x04C9]
+{
+get=base_item
+name=wooden planks
+id=0x04C9
+}
+
+[0x04CA]
+{
+get=base_item
+name=wooden planks
+id=0x04CA
+}
+
+[0x04CB]
+{
+get=base_item
+name=wooden planks
+id=0x04CB
+}
+
+[0x04CC]
+{
+get=base_item
+name=wooden planks
+id=0x04CC
+}
+
+[0x04CD]
+{
+get=base_item
+name=wooden planks
+id=0x04CD
+}
+
+// light wooden planks north south south border
+[0x04CE]
+{
+get=base_item
+name=wooden planks
+id=0x04CE
+}
+
+// light wooden planks north south north border
+[0x04CF]
+{
+get=base_item
+name=wooden planks
+id=0x04CF
+}
+
+// light wooden planks north south northwest corner
+[0x04D0]
+{
+get=base_item
+name=wooden planks
+id=0x04D0
+}
+
+// light wooden planks north south northeast corner
+[0x04D1]
+{
+get=base_item
+name=wooden planks
+id=0x04D1
+}
+
+// light wooden planks north south southwest corner
+[0x04D2]
+{
+get=base_item
+name=wooden planks
+id=0x04D2
+}
+
+// light wooden planks north south southeast corner
+[0x04D3]
+{
+get=base_item
+name=wooden planks
+id=0x04D3
+}
+
+// light wooden planks east west
+[0x04D4]
+{
+get=base_item
+name=wooden planks
+id=0x04D4
+}
+
+[0x04D5]
+{
+get=base_item
+name=wooden planks
+id=0x04D5
+}
+
+[0x04D6]
+{
+get=base_item
+name=wooden planks
+id=0x04D6
+}
+
+[0x04D7]
+{
+get=base_item
+name=wooden planks
+id=0x04D7
+}
+
+// light wooden planks east west westside border
+[0x04D8]
+{
+get=base_item
+name=wooden planks
+id=0x04D8
+}
+
+// light wooden planks east west eastside border
+[0x04D9]
+{
+get=base_item
+name=wooden planks
+id=0x04D9
+}
+
+// light wooden planks east west eastside border
+[0x04DA]
+{
+get=base_item
+name=wooden planks
+id=0x04DA
+}
+
+// light wooden planks east west westside border
+[0x04DB]
+{
+get=base_item
+name=wooden planks
+id=0x04DB
+}
+
+// light wooden planks east west
+[0x04DC]
+{
+get=base_item
+name=wooden planks
+id=0x04DC
+}
+
+[0x04DD]
+{
+get=base_item
+name=wooden planks
+id=0x04DD
+}
+
+// light wooden planks east west northwest border
+[0x04DE]
+{
+get=base_item
+name=wooden planks
+id=0x04DE
+}
+
+// light wooden planks east west northeast corner
+[0x04DF]
+{
+get=base_item
+name=wooden planks
+id=0x04DF
+}
+
+// light wooden planks east west southwest corner
+[0x04E0]
+{
+get=base_item
+name=wooden planks
+id=0x04E0
+}
+
+// light wooden planks east west southeast corner
+[0x04E1]
+{
+get=base_item
+name=wooden planks
+id=0x04E1
+}
+
+// wooden logs north south edge north
+[0x0504]
+{
+get=base_item
+name=wooden logs
+id=0x0504
+}
+
+// wooden logs north south corded south
+[0x0505]
+{
+get=base_item
+name=wooden logs
+id=0x0505
+}
+
+// wooden logs north south
+[0x0506]
+{
+get=base_item
+name=wooden logs
+id=0x0506
+}
+
+// wooden logs north south edge south
+[0x0507]
+{
+get=base_item
+name=wooden logs
+id=0x0507
+}
+
+// wooden logs north south corded north
+[0x0508]
+{
+get=base_item
+name=wooden logs
+id=0x0508
+}
+
+// wooden logs east west corded east west
+[0x0509]
+{
+get=base_item
+name=wooden logs
+id=0x0509
+}
+
+// wooden logs north south corded north south
+[0x050A]
+{
+get=base_item
+name=wooden logs
+id=0x050A
+}
+
+// grey wooden logs east west corded east west
+[0x050B]
+{
+get=base_item
+name=wooden logs
+id=0x050B
+}
+
+// grey wooden logs north south corded north south
+[0x050C]
+{
+get=base_item
+name=wooden logs
+id=0x050C
+}
+

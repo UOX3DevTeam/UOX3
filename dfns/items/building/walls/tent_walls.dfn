@@ -1,0 +1,478 @@
+// blue tent wall southwest corner
+[0x01F0]
+{
+get=base_item
+name=tent wall
+id=0x01F0
+}
+
+// blue tent wall west with pole
+[0x01F1]
+{
+get=base_item
+name=tent wall
+id=0x01F1
+}
+
+// blue tent wall south with pole
+[0x01F2]
+{
+get=base_item
+name=tent wall
+id=0x01F2
+}
+
+// tent pole
+[0x01F3]
+{
+get=base_item
+name=tent pole
+id=0x01F3
+}
+
+// blue fold tent wall west
+[0x01F4]
+{
+get=base_item
+name=tent wall
+id=0x01F4
+}
+
+// blue fold tent wall south
+[0x01F5]
+{
+get=base_item
+name=tent wall
+id=0x01F5
+}
+
+// blue raised tent wall west with pole south edge
+[0x01F6]
+{
+get=base_item
+name=tent wall
+id=0x01F6
+}
+
+// blue raised tent wall south with pole west edge
+[0x01F7]
+{
+get=base_item
+name=tent wall
+id=0x01F7
+}
+
+// blue tent wall south
+[0x01F8]
+{
+get=base_item
+name=tent wall
+id=0x01F8
+}
+
+// blue tent wall west
+[0x01F9]
+{
+get=base_item
+name=tent wall
+id=0x01F9
+}
+
+// green tent corner southwest
+[0x0230]
+{
+get=base_item
+name=tent wall
+id=0x0230
+}
+
+// green tent wall west with pole south
+[0x0231]
+{
+get=base_item
+name=tent wall
+id=0x0231
+}
+
+// green tent wall south with pole west
+[0x0232]
+{
+get=base_item
+name=tent wall
+id=0x0232
+}
+
+// tent pole
+[0x0233]
+{
+get=base_item
+name=tent pole
+id=0x0233
+}
+
+// green fold tent wall west pole
+[0x0234]
+{
+get=base_item
+name=tent wall
+id=0x0234
+}
+
+// green fold tent wall south pole
+[0x0235]
+{
+get=base_item
+name=tent wall
+id=0x0235
+}
+
+// green tent wall west with pole on south edge
+[0x0236]
+{
+get=base_item
+name=tent wall
+id=0x0236
+}
+
+// green tent wall south with pole west
+[0x0237]
+{
+get=base_item
+name=tent wall
+id=0x0237
+}
+
+// tent wall south
+[0x0238]
+{
+get=base_item
+name=tent wall
+id=0x0238
+}
+
+// tent wall west
+[0x0239]
+{
+get=base_item
+name=tent wall
+id=0x0239
+}
+
+// blue grey tent corner southwest
+[0x02DE]
+{
+get=base_item
+name=tent wall
+id=0x02DE
+}
+
+// blue grey tent wall west pole east
+[0x02DF]
+{
+get=base_item
+name=tent wall
+id=0x02DF
+}
+
+// blue grey tent wall south pole west
+[0x02E0]
+{
+get=base_item
+name=tent wall
+id=0x02E0
+}
+
+// tent pole
+[0x02E1]
+{
+get=base_item
+name=wooden pole
+id=0x02E1
+}
+
+// blue grey tent wall west fold pole east
+[0x02E2]
+{
+get=base_item
+name=tent wall
+id=0x02E2
+}
+
+// blue grey tent wall south fold pole west
+[0x02E3]
+{
+get=base_item
+name=tent wall
+id=0x02E3
+}
+
+// blue grey half tent wall west pole south
+[0x02E4]
+{
+get=base_item
+name=tent wall
+id=0x02E4
+}
+
+// blue grey half tent wall south pole west
+[0x02E5]
+{
+get=base_item
+name=tent wall
+id=0x02E5
+}
+
+// blue grey half tent wall south
+[0x02E6]
+{
+get=base_item
+name=tent wall
+id=0x02E6
+}
+
+// blue grey half tent wall west
+[0x02E7]
+{
+get=base_item
+name=tent wall
+id=0x02E7
+}
+
+// ragged blue grey tent corner southwest
+[0x02E8]
+{
+get=base_item
+name=tent wall
+id=0x02E8
+}
+
+// ragged blue grey tent wall west pole south
+[0x02E9]
+{
+get=base_item
+name=tent wall
+id=0x02E9
+}
+
+// ragged blue grey tent wall south pole west
+[0x02EA]
+{
+get=base_item
+name=tent wall
+id=0x02EA
+}
+
+// ragged blue grey folded tent wall west pole south
+[0x02EB]
+{
+get=base_item
+name=tent wall
+id=0x02EB
+}
+
+// ragged blue grey folded tent wall south pole west
+[0x02EC]
+{
+get=base_item
+name=tent wall
+id=0x02EC
+}
+
+// patches for tents
+[0x02EF]
+{
+get=base_item
+name=patch
+id=0x02EF
+}
+
+[0x02F0]
+{
+get=base_item
+name=patch
+id=0x02F0
+}
+
+[0x02F1]
+{
+get=base_item
+name=patch
+id=0x02F1
+}
+
+[0x02F2]
+{
+get=base_item
+name=patch
+id=0x02F2
+}
+
+[0x02F3]
+{
+get=base_item
+name=patch
+id=0x02F3
+}
+
+[0x02F4]
+{
+get=base_item
+name=patch
+id=0x02F4
+}
+
+// faded grey tent corner southwest
+[0x0368]
+{
+get=base_item
+name=tent wall
+id=0x0368
+}
+
+// faded grey tent wall west pole south
+[0x0369]
+{
+get=base_item
+name=tent wall
+id=0x0369
+}
+
+// faded grey tent wall south pole west
+[0x036A]
+{
+get=base_item
+name=tent wall
+id=0x036A
+}
+
+// tent pole
+[0x036B]
+{
+get=base_item
+name=tent pole
+id=0x036B
+}
+
+// faded grey fold tent wall west pole south
+[0x036C]
+{
+get=base_item
+name=tent wall
+id=0x036C
+}
+
+// faded grey fold tent wall south pole west
+[0x036D]
+{
+get=base_item
+name=tent wall
+id=0x036D
+}
+
+// half faded grey tent wall west pole south
+[0x0365E]
+{
+get=base_item
+name=tent wall
+id=0x036E
+}
+
+// half faded grey tent wall south pole west
+[0x036F]
+{
+get=base_item
+name=tent wall
+id=0x036F
+}
+
+// half faded grey tent wall south
+[0x0370]
+{
+get=base_item
+name=tent wall
+id=0x0370
+}
+
+// half faded grey tent wall west
+[0x0371]
+{
+get=base_item
+name=tent wall
+id=0x0371
+}
+
+// patch
+[0x0372]
+[
+get=base_item
+name=patch
+id=0x0372
+}
+
+[0x0373]
+{
+get=base_item
+name=patch
+id=0x0373
+}
+
+[0x0374]
+{
+get=base_item
+name=patch
+id=0x0374
+}
+
+[0x0375]
+{
+get=base_item
+name=patch
+id=0x0375
+}
+
+[0x0376]
+{
+get=base_item
+name=patch
+id=0x0376
+}
+
+// dagges for tent fringe south
+[0x0378]
+{
+get=base_item
+name=dagges
+id=0x0378
+}
+
+// dagges for tent fringe west
+[0x037A]
+{
+get=base_item
+name=dagges
+id=0x037A
+}
+
+// dagges for tent fringe south
+[0x037B]
+{
+get=base_item
+name=dagges
+id=0x037B
+}
+
+// dagges for tent fringe west
+[0x037C]
+{
+get=base_item
+name=dagges
+id=0x037C
+}
+
+// dagges for tent fringe south
+[0x037D]
+{
+get=base_item
+name=dagges
+id=0x037D
+}

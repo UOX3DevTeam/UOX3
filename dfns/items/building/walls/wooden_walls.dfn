@@ -1,0 +1,596 @@
+// dark wooden wall southwest corner with post southwest horizontal board at top
+[0x0006]
+{
+get=base_item
+name=wooden wall
+id=0x0006
+}
+
+// dark wooden wall west horizontal board at top
+[0x0007]
+{
+get=base_item
+name=wooden wall
+id=0x0007
+}
+
+// dark wooden wall south horizontal board at top
+[0x0008]
+{
+get=base_item
+name=wooden wall
+id=0x0008
+}
+
+// thick wooden post
+[0x0009]
+{
+get=base_item
+name=wooden post
+id=0x0009
+}
+
+// dark wooden wall west with post north horizontal board at top
+[0x000A]
+{
+get=base_item
+name=wooden wall
+id=0x000A
+}
+
+// dark wooden wall east with post north horizontal board at top
+[0x000B]
+{
+get=base_item
+name=wooden wall
+id=0x000B
+}
+
+// dark wooden wall west with post south horizontal board at top
+[0x000C]
+{
+get=base_item
+name=wooden wall
+id=0x000C
+}
+
+// dark wooden wall east with post south horizontal board at top
+[0x000D]
+{
+get=base_item
+name=wooden wall
+id=0x000D
+}
+
+// dark wooden wall west with window horizontal board at top
+[0x000E]
+{
+get=base_item
+name=window
+id=0x000E
+}
+
+// dark wooden wall south with window horizontal board at top
+[0x000F]
+{
+get=base_item
+name=window
+id=0x000F
+}
+
+// dark wooden wall corner southwest
+[0x0010]
+{
+get=base_item
+name=wooden wall
+id=0x0010
+}
+
+// dark wooden wall south
+[0x0011]
+{
+get=base_item
+name=wooden wall
+id=0x0011
+}
+
+// dark wooden wall west
+[0x0012]
+{
+get=base_item
+name=wooden wall
+id=0x0012
+}
+
+// thin wooden post
+[0x0013]
+{
+get=base_item
+name=wooden post
+id=0x0013
+}
+
+// short dark wooden wall corner southwest
+[0x0014]
+{
+get=base_item
+name=wooden wall
+id=0x0014
+}
+
+// short dark wooden wall south
+[0x0015]
+{
+get=base_item
+name=wooden wall
+id=0x0015
+}
+
+// short dark wooden wall west
+[0x0016]
+{
+get=base_item
+name=wooden wall
+id=0x0016
+}
+
+// short thin wooden post
+[0x0017]
+{
+get=base_item
+name=wooden post
+id=0x0017
+}
+
+// shorter dark wood wall west
+[0x0018]
+{
+get=base_item
+name=wooden wall
+id=0x0018
+}
+
+// shorter dark wooden wall
+[0x0019]
+{
+get=base_item
+name=wooden wall
+id=0x0019
+}
+
+// large log wall southwest corner with post
+[0x0090]
+{
+get=base_item
+name=log wall
+id=0x0090
+}
+
+// large log wall south facing
+[0x0091]
+{
+get=base_item
+name=log wall
+id=0x0091
+}
+
+// large log wall west facing
+[0x0092]
+{
+get=base_item
+name=log wall
+id=0x0092
+}
+
+// large log post
+[0x0093]
+{
+get=base_item
+name=log post
+id=0x0093
+}
+
+// large log wall south facing
+[0x0094]
+{
+get=base_item
+name=log wall
+id=0x0094
+}
+
+// large log wall west facing
+[0x0095]
+{
+get=base_item
+name=log wall
+id=0x0095
+}
+
+// large log wall south facing with post on west edge
+[0x0096]
+{
+get=base_item
+name=log wall
+id=0x0096
+}
+
+// large log wall west facing with post on south edge
+[0x0097]
+{
+get=base_item
+name=log wall
+id=0x0097
+}
+
+// large log wall with window west facing
+[0x0098]
+{
+get=base_item
+name=window
+id=0x0098
+}
+
+// large log wall with window south facing
+[0x0099]
+{
+get=base_item
+name=log wall
+id=0x0099
+}
+
+// large log corner southwest facing with post on south edge
+[0x009A]
+{
+get=base_item
+name=log wall
+id=0x009A
+}
+
+// short large log wall south facing
+[0x009B]
+{
+get=base_item
+name=log wall
+id=0x009B
+}
+
+// short large log wall west facing
+[0x009C]
+{
+get=base_item
+name=log wall
+id=0x009C
+}
+
+// short large log post
+[0x009D]
+{
+get=base_item
+name=log post
+id=0x009D
+}
+
+// short large log wall south facing
+[0x009E]
+{
+get=base_item
+name=log wall
+id=0x009E
+}
+
+// large log wall west facing
+[0x009F]
+{
+get=base_item
+name=log wall
+id=0x009F
+}
+
+// large log wall south facing with post on west edge
+[0x00A0]
+{
+get=base_item
+name=log wall
+id=0x00A0
+}
+
+// large log wall west facing with post on south edge
+[0x00A1]
+{
+get=base_item
+name=log wall
+id=0x00A1
+}
+
+// very short large log west facing
+[0x00A2]
+{
+get=base_item
+name=log wall
+id=0x00A2
+}
+
+// very short large log wall south facing
+[0x00A3]
+{
+get=base_item
+name=log wall
+id=0x00A3
+}
+
+// very short large log wall west facing
+[0x00A4]
+{
+get=base_item
+name=log wall
+id=0x00A4
+}
+
+// very short large log wall south facing
+[0x00A5]
+{
+get=base_item
+name=log wall
+id=0x00A5
+}
+
+// light brown wooden corner southwest
+[0x00A6]
+{
+get=base_item
+name=wooden wall
+id=0x00A6
+}
+
+// light brown wooden wall south facing
+[0x00A7]
+{
+get=base_item
+name=wooden wall
+id=0x00A7
+}
+
+// light brown wooden wall west facing
+[0x00A8]
+{
+get=base_item
+name=wooden wall
+id=0x00A8
+}
+
+// thin light brown wooden post
+[0x00A9]
+{
+get=base_item
+name=wooden post
+id=0x00A9
+}
+
+// light brown wooden wall south facing with wood frame on east edge
+[0x00AA]
+{
+get=base_item
+name=wooden wall
+id=0x00AA
+}
+
+// light brown wooden wall west facing with wooden frame on north edge
+[0x00AB]
+{
+get=base_item
+name=wooden wall
+id=0x00AB
+}
+
+// light brown wooden wall south facing with wood frame on west edge
+[0x00AC]
+{
+get=base_item
+name=wooden wall
+id=0x00AC
+}
+
+// light brown wooden wall west facing with wood frame on south edge
+[0x00AD]
+{
+get=base_item
+name=wooden wall
+id=0x00AD
+}
+
+// light brown wooden corner southwest with board accents top and bottom
+[0x00AE]
+{
+get=base_item
+name=wooden wall
+id=0x00AE
+}
+
+// light brown wooden wall west facing with board accents top and bottom
+[0x00AF]
+{
+get=base_item
+name=wooden wall
+id=0x00AF
+}
+
+// light brown wooden wall south facing with board accents top and bottom
+[0x00B0]
+{
+get=base_item
+name=wooden wall
+id=0x00B0
+}
+
+// light brown wooden post with board accents top and bottom
+[0x00B1]
+{
+get=base_item
+name=wooden wall
+id=0x00B1
+}
+
+// light brown wooden wall west facing with board accents top and bottom and wood frame on north edge
+[0x00B2]
+{
+get=base_item
+name=wooden wall
+id=0x00B2
+}
+
+// light brown wooden wall south facing with board accents top and bottom and wood frame on east edge
+[0x00B3]
+{
+get=base_item
+name=wooden wall
+id=0x00B3
+}
+
+// light brown wooden wall south facing with board accents top and bottom and wood frame on west edge
+[0x00B4]
+{
+get=base_item
+name=wooden wall
+id=0x00B4
+}
+
+// light brown wooden wall west facing with board accents top and bottom and wood frame on south edge
+[0x00B5]
+{
+get=base_item
+name=wooden wall
+id=0x00B5
+}
+
+// short light brown wooden wall southwest corner
+[0x00B6]
+{
+get=base_item
+name=wooden wall
+id=0x00B6
+}
+
+// short light brown wooden wall west facing
+[0x00B7]
+{
+get=base_item
+name=wooden wall
+id=0x00B7
+}
+
+// short light brown wooden wall south facing
+[0x00B8]
+{
+get=base_item
+name=wooden wall
+id=0x00B8
+}
+
+// light brown wooden wall with window south facing
+[0x00B9]
+{
+get=base_item
+name=wooden wall
+id=0x00B9
+}
+
+// light brown wooden wall with window west facing
+[0x00BA]
+{
+get=base_item
+name=window
+id=0x00BA
+}
+
+// light brown wooden wall south facing with window with board accents top and bottom
+[0x00BB]
+{
+get=base_item
+name=window
+id=0x00BB
+}
+
+// light brown wooden wall west facing with window with board accents top and bottom
+[0x00BC]
+{
+get=base_item
+name=window
+id=0x00BC
+}
+
+// very short light brown wooden corner southwest
+[0x00BD]
+{
+get=base_item
+name=wooden wall
+id=0x00BD
+}
+
+// very short light brown wooden wall south facing
+[0x00BE]
+{
+get=base_item
+name=wooden wall
+id=0x00BE
+}
+
+// very short light brown wooden wall
+[0x00BF]
+{
+get=base_item
+name=wooden wall
+id=0x00BF
+}
+
+// very short light brown wooden post
+[0x00C0]
+{
+get=base_item
+name=wooden post
+id=0x00C0
+}
+
+// extremely short light brown wooden wall west facing
+[0x00C1]
+{
+get=base_item
+name=wooden wall
+id=0x00C1
+}
+
+//  extremely short light brown wooden wall south facing
+[0x00C2]
+{
+get=base_item
+name=wooden wall
+id=0x00C2
+}
+
+[0x0145]
+{
+get=base_item
+name=log post
+id=0x0145
+}
+
+[0x0146]
+{
+get=base_item
+name=log post
+id=0x0146
+}
+
+[0x0147]
+{
+get=base_item
+name=log post
+id=0x0147
+}
+
+[0x0148]
+{
+get=base_item
+name=log post
+id=0x0148
+}
+

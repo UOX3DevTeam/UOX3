@@ -1,0 +1,125 @@
+[0x1e60]
+{ S bear
+get=base_item
+name=trophy
+id=0x1e60
+weight=100
+movable=2
+}
+
+[0x1e61]
+{ S hart
+get=base_item
+name=trophy
+id=0x1e61
+weight=100
+movable=2
+}
+
+[0x1e62]
+{ S fish
+get=base_item
+name=trophy
+id=0x1e62
+weight=100
+movable=2
+}
+
+[0x1e63]
+{ S gorilla
+get=base_item
+name=trophy
+id=0x1e63
+weight=100
+movable=2
+}
+
+[0x1e64]
+{ S orc
+get=base_item
+name=trophy
+id=0x1e64
+weight=100
+movable=2
+}
+
+[0x1e65]
+{ S polarbear
+get=base_item
+name=trophy
+id=0x1e65
+weight=100
+movable=2
+}
+
+[0x1e66]
+{ S troll
+get=base_item
+name=trophy
+id=0x1e66
+weight=100
+movable=2
+}
+
+[0x1e67]
+{ E bear
+get=base_item
+name=trophy
+id=0x1e67
+weight=100
+movable=2
+}
+
+[0x1e68]
+{ E hart
+get=base_item
+name=trophy
+id=0x1e68
+weight=100
+movable=2
+}
+
+[0x1e69]
+{ E fish
+get=base_item
+name=trophy
+id=0x1e69
+weight=100
+movable=2
+}
+
+[0x1e6a]
+{ E gorilla
+get=base_item
+name=trophy
+id=0x1e6a
+weight=100
+movable=2
+}
+
+[0x1e6b]
+{ E orc
+get=base_item
+name=trophy
+id=0x1e6b
+weight=100
+movable=2
+}
+
+[0x1e6c]
+{ E polarbear
+get=base_item
+name=trophy
+id=0x1e6c
+weight=100
+movable=2
+}
+
+[0x1e6d]
+{ E troll
+get=base_item
+name=trophy
+id=0x1e6d
+weight=100
+movable=2
+}

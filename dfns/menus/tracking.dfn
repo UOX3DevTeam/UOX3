@@ -1,0 +1,37 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://www.uox3dev.net	                  *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : tracking.dfn                                         *
+//*****************************************************************
+
+[TRACKINGMENU 4096]
+{
+What=do you wish to track?
+0x20D4=Animals
+CREATETRACKINGMENU=4097
+0x20E9=Creatures
+CREATETRACKINGMENU=4098
+0x2106=Players
+CREATETRACKINGMENU=4099
+}
+
+[TRACKINGMENU 4097]
+{
+Which=animal do you wish to track?
+}
+
+[TRACKINGMENU 4098]
+{
+Which=creature do you wish to track?
+}
+
+[TRACKINGMENU 4099]
+{
+Whom=do you wish to track?
+}
+
+EOF
+
+

@@ -1,0 +1,378 @@
+[0x126b]
+{ S 1/9
+get=base_item
+name=block
+id=0x126b
+weight=1000
+movable=2
+}
+
+[0x126c]
+{ S 2/9
+get=base_item
+name=block
+id=0x126c
+weight=1000
+movable=2
+}
+
+[0x126d]
+{ S 3/9
+get=base_item
+name=block
+id=0x126d
+weight=1000
+movable=2
+}
+
+[0x126e]
+{ S 4/9
+get=base_item
+name=block
+id=0x126e
+weight=1000
+movable=2
+}
+
+[0x126f]
+{ S 5/9
+get=base_item
+name=block
+id=0x126f
+weight=1000
+movable=2
+}
+
+[0x1270]
+{ S 6/9
+get=base_item
+name=block
+id=0x1270
+weight=1000
+movable=2
+}
+
+[0x1271]
+{ S 7/9
+get=base_item
+name=block
+id=0x1271
+weight=1000
+movable=2
+}
+
+[0x1272]
+{ S 8/9
+get=base_item
+name=block
+id=0x1272
+weight=1000
+movable=2
+}
+
+[0x1273]
+{ S 9/9
+get=base_item
+name=block
+id=0x1273
+weight=1000
+movable=2
+}
+
+[0x1274]
+{ E 1/9
+get=base_item
+name=block
+id=0x1274
+weight=1000
+movable=2
+}
+
+[0x1275]
+{ E 2/9
+get=base_item
+name=block
+id=0x1275
+weight=1000
+movable=2
+}
+
+[0x1276]
+{ E 3/9
+get=base_item
+name=block
+id=0x1276
+weight=1000
+movable=2
+}
+
+[0x1277]
+{ E 4/9
+get=base_item
+name=block
+id=0x1277
+weight=1000
+movable=2
+}
+
+[0x1278]
+{ E 5/9
+get=base_item
+name=block
+id=0x1278
+weight=1000
+movable=2
+}
+
+[0x1279]
+{ E 6/9
+get=base_item
+name=block
+id=0x1279
+weight=1000
+movable=2
+}
+
+[0x127a]
+{ E 7/9
+get=base_item
+name=block
+id=0x127a
+weight=1000
+movable=2
+}
+
+[0x127b]
+{ E 8/9
+get=base_item
+name=block
+id=0x127b
+weight=1000
+movable=2
+}
+
+[0x127c]
+{ E 9/9
+get=base_item
+name=block
+id=0x127c
+weight=1000
+movable=2
+}
+
+[0x127e]
+{ E 1/12
+get=base_item
+name=pillory
+id=0x127e
+weight=1000
+movable=2
+}
+
+[0x127f]
+{ E 2/12
+get=base_item
+name=pillory
+id=0x127f
+weight=1000
+movable=2
+}
+
+[0x1280]
+{ E 3/12
+get=base_item
+name=pillory
+id=0x1280
+weight=1000
+movable=2
+}
+
+[0x1281]
+{ E 4/12
+get=base_item
+name=pillory
+id=0x1281
+weight=1000
+movable=2
+}
+
+[0x1282]
+{ E 5/12
+get=base_item
+name=pillory
+id=0x1282
+weight=1000
+movable=2
+}
+
+[0x1283]
+{ E 6/12
+get=base_item
+name=pillory
+id=0x1283
+weight=1000
+movable=2
+}
+
+[0x1284]
+{ E 7/12
+get=base_item
+name=pillory
+id=0x1284
+weight=1000
+movable=2
+}
+
+[0x1285]
+{ E 8/12
+get=base_item
+name=pillory
+id=0x1285
+weight=1000
+movable=2
+}
+
+[0x1286]
+{ E 9/12
+get=base_item
+name=pillory
+id=0x1286
+weight=1000
+movable=2
+}
+
+[0x1287]
+{ E 10/12
+get=base_item
+name=pillory
+id=0x1287
+weight=1000
+movable=2
+}
+
+[0x1288]
+{ E 11/12
+get=base_item
+name=pillory
+id=0x1288
+weight=1000
+movable=2
+}
+
+[0x1289]
+{ E 12/12
+get=base_item
+name=pillory
+id=0x1289
+weight=1000
+movable=2
+}
+
+[0x128a]
+{ S 1/12
+get=base_item
+name=pillory
+id=0x128a
+weight=1000
+movable=2
+}
+
+[0x128b]
+{ S 2/12
+get=base_item
+name=pillory
+id=0x128b
+weight=1000
+movable=2
+}
+
+[0x128c]
+{ S 3/12
+get=base_item
+name=pillory
+id=0x128c
+weight=1000
+movable=2
+}
+
+[0x128d]
+{ S 4/12
+get=base_item
+name=pillory
+id=0x128d
+weight=1000
+movable=2
+}
+
+[0x128e]
+{ S 5/12
+get=base_item
+name=pillory
+id=0x128e
+weight=1000
+movable=2
+}
+
+[0x128f]
+{ S 6/12
+get=base_item
+name=pillory
+id=0x128f
+weight=1000
+movable=2
+}
+
+[0x1290]
+{ S 7/12
+get=base_item
+name=pillory
+id=0x1290
+weight=1000
+movable=2
+}
+
+[0x1291]
+{ S 8/12
+get=base_item
+name=pillory
+id=0x1291
+weight=1000
+movable=2
+}
+
+[0x1292]
+{ S 9/12
+get=base_item
+name=pillory
+id=0x1292
+weight=1000
+movable=2
+}
+
+[0x1293]
+{ S 10/12
+get=base_item
+name=pillory
+id=0x1293
+weight=1000
+movable=2
+}
+
+[0x1294]
+{ S 11/12
+get=base_item
+name=pillory
+id=0x1294
+weight=1000
+movable=2
+}
+
+[0x1295]
+{ S 12/12
+get=base_item
+name=pillory
+id=0x1295
+weight=1000
+movable=2
+}
+

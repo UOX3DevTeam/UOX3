@@ -1,0 +1,281 @@
+// Paintings and tapestries
+
+[0x0ec8]
+{ E
+get=base_item
+name=painting
+id=0x0ec8
+weight=100
+}
+
+[0x0ec9]
+{ E
+get=base_item
+name=painting
+id=0x0ec9
+weight=100
+}
+
+[0x0ee7]
+{ S
+get=base_item
+name=portrait
+id=0x0ee7
+weight=100
+}
+
+[0x0e9f]
+{ S
+get=base_item
+name=portrait
+id=0x0e9f
+weight=100
+}
+
+[0x0ea0]
+{ S
+get=base_item
+name=painting
+id=0x0ea0
+weight=100
+}
+
+[0x0ea1]
+{ E
+get=base_item
+name=painting
+id=0x0ea1
+weight=100
+}
+
+[0x0ea2]
+{ S
+get=base_item
+name=painting
+id=0x0ea2
+weight=100
+}
+
+[0x0ea3]
+{ S
+get=base_item
+name=painting
+id=0x0ea3
+weight=100
+}
+
+[0x0ea4]
+{ E
+get=base_item
+name=painting
+id=0x0ea4
+weight=100
+}
+
+[0x0ea5]
+{ E
+get=base_item
+name=portrait
+id=0x0ea5
+weight=100
+}
+
+[0x0ea6]
+{ S
+get=base_item
+name=portrait
+id=0x0ea6
+weight=100
+}
+
+[0x0ea7]
+{ S
+get=base_item
+name=portrait
+id=0x0ea7
+weight=100
+}
+
+[0x0ea8]
+{ E
+get=base_item
+name=portrait
+id=0x0ea8
+weight=100
+}
+
+[0x0eaa]
+{ S 1/2
+get=base_item
+name=tapestry
+id=0x0eaa
+weight=100
+}
+
+[0x0eab]
+{ S 2/2
+get=base_item
+name=tapestry
+id=0x0eab
+weight=100
+}
+
+[0x0eac]
+{ S long 1/2
+get=base_item
+name=tapestry
+id=0x0eac
+weight=100
+}
+
+[0x0ead]
+{ S long 2/2
+get=base_item
+name=tapestry
+id=0x0ead
+weight=100
+}
+
+[0x0eae]
+{ E 1/2
+get=base_item
+name=tapestry
+id=0x0eae
+weight=100
+}
+
+[0x0eaf]
+{ E 2/2
+get=base_item
+name=tapestry
+id=0x0eaf
+weight=100
+}
+
+[0x0fd5]
+{ S style1 1/2
+get=base_item
+name=tapestry
+id=0x0fd5
+weight=100
+}
+
+[0x0fd6]
+{ S style1 2/2
+get=base_item
+name=tapestry
+id=0x0fd6
+weight=100
+}
+
+[0x0fd7]
+{ E style1 1/2
+get=base_item
+name=tapestry
+id=0x0fd7
+weight=100
+}
+
+[0x0fd8]
+{ E style1 2/2
+get=base_item
+name=tapestry
+id=0x0fd8
+weight=100
+}
+
+[0x0fd9]
+{ S style2 1/2
+get=base_item
+name=tapestry
+id=0x0fd9
+weight=100
+}
+
+[0x0fda]
+{ S style2 2/2
+get=base_item
+name=tapestry
+id=0x0fda
+weight=100
+}
+
+[0x0fdb]
+{ E style2 1/2
+get=base_item
+name=tapestry
+id=0x0fdb
+weight=100
+}
+
+[0x0fdc]
+{ E style2 2/2
+get=base_item
+name=tapestry
+id=0x0fdc
+weight=100
+}
+
+[0x0fdd]
+{ S style3 1/2
+get=base_item
+name=tapestry
+id=0x0fdd
+weight=100
+}
+
+[0x0fde]
+{ S style3 2/2
+get=base_item
+name=tapestry
+id=0x0fde
+weight=100
+}
+
+[0x0fdf]
+{ E style3 1/2
+get=base_item
+name=tapestry
+id=0x0fdf
+weight=100
+}
+
+[0x0fe0]
+{ E style3 2/2
+get=base_item
+name=tapestry
+id=0x0fe0
+weight=100
+}
+
+[0x0fe1]
+{ S style4 1/2
+get=base_item
+name=tapestry
+id=0x0fe1
+weight=100
+}
+
+[0x0fe2]
+{ S style4 2/2
+get=base_item
+name=tapestry
+id=0x0fe2
+weight=100
+}
+
+[0x0fe3]
+{ E style4 1/2
+get=base_item
+name=tapestry
+id=0x0fe3
+weight=100
+}
+
+[0x0fe4]
+{ E style4 2/2
+get=base_item
+name=tapestry
+id=0x0fe4
+weight=100
+}

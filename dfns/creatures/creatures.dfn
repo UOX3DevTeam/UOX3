@@ -1,0 +1,686 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 11/7/2003	                	          *
+//* Script : creatures.dfn                                        *
+//*****************************************************************
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying, see uox.h)
+//             1: birds .. only one "bird-shape" and zillions of sounds ...
+//             2: only 3 sounds ->  (attack,defence,dying)    
+//             3: only 4 sounds ->   (attack-started,attack,defnce,dying)
+//             4: only 1 sound !!
+//
+// who_am_i bit # FLIES 	creature can fly (must have the animations, so better not change)
+//              # ANTIBLINK 	these creatures don't have animation #4, if not set creature will randomly disappear in battle
+//                              	if you find a creature that blinks while fighting, set that bit
+//              # ANIMAL	creature is an animal
+//              # WATERCREATURE water creatures (currently not used/set)
+// icon: used for tracking, to set the appropriate icon
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[CREATURE 0x1]
+{ Ogre
+BASESOUND=0x1ab
+ICON=0x20df
+SOUNDFLAG=0
+}
+
+[CREATURE 0x2]
+{ Ettin
+BASESOUND=0x16f
+ICON=0x20d8
+SOUNDFLAG=0
+}
+
+[CREATURE 0x3]
+{ Zombie
+BASESOUND=0x1d7
+ICON=0x20ec
+SOUNDFLAG=0
+}
+
+[CREATURE 0x4]
+{ Gargoyle
+BASESOUND=0x174
+ICON=0x20d9
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0x5]
+{ Eagle
+BASESOUND=0x8f
+ICON=0x20f2
+SOUNDFLAG=0
+FLIES
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0x6]
+{ Bird
+BASESOUND=0x7d
+ICON=0x20ee
+SOUNDFLAG=1
+FLIES
+ANIMAL
+}
+
+[CREATURE 0x7]
+{ Orc
+BASESOUND=0x1b0
+ICON=0x20e0
+SOUNDFLAG=0
+}
+
+[CREATURE 0x8]
+{ Corpser
+BASESOUND=0x1ba
+ICON=0x20d2
+SOUNDFLAG=3
+}
+
+[CREATURE 0x9]
+{ Daemon
+BASESOUND=0x165
+ICON=0x20d3
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0xa]
+{ Daemon 2
+BASESOUND=0x165
+ICON=0x20d3
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0xc]
+{ Green Dragon
+BASESOUND=0x16a
+ICON=0x20d6
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0xd]
+{ Air Elemental
+BASESOUND=0x107
+ICON=0x20ed
+SOUNDFLAG=0
+}
+
+[CREATURE 0xe]
+{ Earth Elemental
+BASESOUND=0x10c
+ICON=0x20d7
+SOUNDFLAG=0
+}
+
+[CREATURE 0xf]
+{ Fire Elemental
+BASESOUND=0x111
+ICON=0x20f3
+SOUNDFLAG=0
+}
+
+[CREATURE 0x10]
+{ Water Elemental
+BASESOUND=0x116
+ICON=0x210b
+SOUNDFLAG=0
+}
+
+[CREATURE 0x11]
+{ Orc 2
+BASESOUND=0x1b0
+ICON=0x20e0
+SOUNDFLAG=0
+}
+
+[CREATURE 0x12]
+{ Ettin 2
+BASESOUND=0x16f
+ICON=0x20d8
+SOUNDFLAG=0
+}
+
+[CREATURE 0x15]
+{ Giant Snake
+BASESOUND=0xdb
+ICON=0x20fe
+SOUNDFLAG=0
+}
+
+[CREATURE 0x16]
+{ Gazer
+BASESOUND=0x179
+ICON=0x20ea
+SOUNDFLAG=0
+}
+
+[CREATURE 0x18]
+{ Liche
+BASESOUND=0x19c
+ICON=0x20f8
+SOUNDFLAG=0
+}
+
+[CREATURE 0x1a]
+{ Ghost 1
+BASESOUND=0x17e
+ICON=0x2109
+SOUNDFLAG=0
+}
+
+[CREATURE 0x1c]
+{ Giant Spider
+BASESOUND=0x183
+ICON=0x20fd
+SOUNDFLAG=0
+}
+
+[CREATURE 0x1d]
+{ Gorilla
+BASESOUND=0x9e
+ICON=0x20f5
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0x1e]
+{ Harpy
+BASESOUND=0x192
+ICON=0x20dc
+SOUNDFLAG=0
+}
+
+[CREATURE 0x1f]
+{ Headless
+BASESOUND=0x197
+ICON=0x210a
+SOUNDFLAG=0
+}
+
+[CREATURE 0x21]
+{ Lizardman
+BASESOUND=0x1a1
+ICON=0x20de
+SOUNDFLAG=0
+}
+
+[CREATURE 0x23]
+{ Lizardman
+BASESOUND=0x1a1
+ICON=0x20de
+SOUNDFLAG=0
+}
+
+[CREATURE 0x24]
+{ Lizardman
+BASESOUND=0x1a1
+ICON=0x20de
+SOUNDFLAG=0
+}
+
+[CREATURE 0x25]
+{ Lizardman
+BASESOUND=0x1a1
+ICON=0x20de
+SOUNDFLAG=0
+}
+
+[CREATURE 0x26]
+{ Lizardman
+BASESOUND=0x1a1
+ICON=0x20de
+SOUNDFLAG=0
+}
+
+[CREATURE 0x27]
+{ Mongbat
+BASESOUND=0x1a6
+ICON=0x20f9
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0x29]
+{ Orc 3
+BASESOUND=0x1b0
+ICON=0x20e0
+SOUNDFLAG=0
+}
+
+[CREATURE 0x2a]
+{ Ratman
+BASESOUND=0x1b5
+ICON=0x20e3
+SOUNDFLAG=0
+}
+
+[CREATURE 0x2c]
+{ Ratman
+BASESOUND=0x1b5
+ICON=0x20e3
+SOUNDFLAG=0
+}
+
+[CREATURE 0x2d]
+{ Ratman
+BASESOUND=0x1b5
+ICON=0x20e3
+SOUNDFLAG=0
+}
+
+[CREATURE 0x2f]
+{ Reaper
+BASESOUND=0x1ba
+ICON=0x20fa
+SOUNDFLAG=0
+}
+
+[CREATURE 0x30]
+{ Giant Scorpion
+BASESOUND=0x18d
+ICON=0x20e4
+SOUNDFLAG=0
+}
+
+[CREATURE 0x32]
+{ Skeleton 2
+BASESOUND=0x1c3
+ICON=0x20e7
+SOUNDFLAG=0
+}
+
+[CREATURE 0x33]
+{ Slime
+BASESOUND=0x1c8
+ICON=0x20e8
+SOUNDFLAG=0
+}
+
+[CREATURE 0x34]
+{ Snake
+BASESOUND=0xdb
+ICON=0x20fc
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0x35]
+{ Troll
+BASESOUND=0x1cd
+ICON=0x20e9
+SOUNDFLAG=0
+}
+
+[CREATURE 0x36]
+{ Troll 2
+BASESOUND=0x1cd
+ICON=0x20e9
+SOUNDFLAG=0
+}
+
+[CREATURE 0x37]
+{ Troll 3
+BASESOUND=0x1cd
+ICON=0x20e9
+SOUNDFLAG=0
+}
+
+[CREATURE 0x38]
+{ Skeleton 3
+BASESOUND=0x1c3
+ICON=0x20e7
+SOUNDFLAG=0
+}
+
+[CREATURE 0x39]
+{ Skeleton 4
+BASESOUND=0x1c3
+ICON=0x20e7
+SOUNDFLAG=0
+}
+
+[CREATURE 0x3a]
+{ Wisp
+BASESOUND=0x1d2
+ICON=0x2100
+SOUNDFLAG=0
+}
+
+[CREATURE 0x3b]
+{ Red Dragon
+BASESOUND=0x16a
+ICON=0x20d6
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0x3c]
+{ Smaller Red Dragon
+BASESOUND=0x16a
+ICON=0x20d6
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0x3d]
+{ Smaller Green Dragon
+BASESOUND=0x16a
+ICON=0x20d6
+SOUNDFLAG=0
+FLIES
+}
+
+[CREATURE 0x96]
+{ Sea Serpent
+BASESOUND=0x1dd
+ICON=0x20fe
+SOUNDFLAG=3
+}
+
+[CREATURE 0x97]
+{ Dolphin
+BASESOUND=0x8a
+ICON=0x20f1
+SOUNDFLAG=0
+WATERCREATURE
+ANIMAL
+}
+
+[CREATURE 0xc8]
+{ White Horse
+BASESOUND=0xa8
+ICON=0x211f
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xc9]
+{ Cat
+BASESOUND=0x69
+ICON=0x211b
+SOUNDFLAG=0
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xca]
+{ Alligator
+BASESOUND=0x5a
+ICON=0x20da
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xcb]
+{ Small Pig
+BASESOUND=0xc4
+ICON=0x2101
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xcc]
+{ Brown Horse
+BASESOUND=0xa8
+ICON=0x2121
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xcd]
+{ Rabbit
+BASESOUND=0xc9
+ICON=0x2125
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0xcf]
+{ Wooly Sheep
+BASESOUND=0xd6
+ICON=0x20eb
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd0]
+{ Chicken
+BASESOUND=0x6e
+ICON=0x20d1
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd1]
+{ Goat
+BASESOUND=0x99
+ICON=0x20e6
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd3]
+{ Brown Bear
+BASESOUND=0x5f
+ICON=0x20cf
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd4]
+{ Grizzly Bear
+BASESOUND=0x5f
+ICON=0x20db
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd5]
+{ Polar Bear
+BASESOUND=0x5f
+ICON=0x20e1
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd6]
+{ Panther
+BASESOUND=0xba
+ICON=0x2119
+SOUNDFLAG=0
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xd7]
+{ Giant Rat
+BASESOUND=0x188
+ICON=0x20d0
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd8]
+{ Cow
+BASESOUND=0x78
+ICON=0x20f0
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xd9]
+{ Dog
+BASESOUND=0x85
+ICON=0x20d5
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xdc]
+{ Llama
+BASESOUND=0xb7
+ICON=0x20f6
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0xdd]
+{ Walrus
+BASESOUND=0xe0
+ICON=0x20ff
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xdf]
+{ Lamb / Shorn Sheep
+BASESOUND=0xd8
+ICON=0x20e6
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0xe1]
+{ Jackal
+BASESOUND=0xe5
+ICON=0x20ea
+SOUNDFLAG=2
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xe2]
+{ Horse
+BASESOUND=0xa8
+ICON=0x2124
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xe4]
+{ Horse
+BASESOUND=0xa8
+ICON=0x2120
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0xe7]
+{ Brown Cow
+BASESOUND=0x78
+ICON=0x20f0
+SOUNDFLAG=0
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xe8]
+{ Bull
+BASESOUND=0x64
+ICON=0x20ef
+SOUNDFLAG=0
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xe9]
+{ Black & White Cow
+BASESOUND=0x78
+ICON=0x2103
+SOUNDFLAG=0
+ANTIBLINK
+ANIMAL
+}
+
+[CREATURE 0xea]
+{ Deer
+BASESOUND=0x82
+ICON=0x20d4
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0xed]
+{ Small Deer
+BASESOUND=0x82
+ICON=0x20d4
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0xee]
+{ Rat
+BASESOUND=0xcc
+ICON=0x2123
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0x122]
+{ Large Pig
+BASESOUND=0xc4
+ICON=0x2101
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0x123]
+{ Pack Horse
+BASESOUND=0xa8
+ICON=0x2126
+SOUNDFLAG=0
+ANIMAL
+}
+
+[CREATURE 0x124]
+{ Pack Llama
+BASESOUND=0xb7
+ICON=0x2127
+SOUNDFLAG=2
+ANIMAL
+}
+
+[CREATURE 0x190]
+{ Human
+BASESOUND=0x14c
+ICON=0x2106
+SOUNDFLAG=0
+}
+
+[CREATURE 0x191]
+{ Human
+BASESOUND=0x155
+ICON=0x2107
+SOUNDFLAG=0
+}
+
+[CREATURE 0x23d]
+{ Energy Vortex
+BASESOUND=0x107
+ICON=0x0
+SOUNDFLAG=0
+}
+
+[CREATURE 0x23e]
+{ Blade Spirits
+BASESOUND=0x200
+ICON=0x0
+SOUNDFLAG=4
+}
+
+[CREATURE 0x600]
+{ Cougar
+BASESOUND=0x73
+ICON=0x2119
+SOUNDFLAG=0
+ANIMAL
+}
+

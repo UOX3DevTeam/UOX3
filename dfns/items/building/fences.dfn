@@ -1,0 +1,337 @@
+// light wooden fence south west corner
+[0x03B3]
+{
+get=base_item
+name=wooden fence
+id=0x03B3
+}
+// light wooden fence west
+[0x03B4]
+{
+get=base_item
+name=wooden fence
+id=0x03B4
+}
+// light wooden fence south
+[0x03B5]
+{
+get=base_item
+name=wooden fence
+id=0x03B5
+}
+// short wooden post
+[0x03B6]
+{
+get=base_item
+name=wooden post
+id=0x03B6
+}
+// light wooden fence southwest corner top & bottom boards
+[0x0835]
+{
+get=base_item
+name=wooden fence
+id=0x0835
+}
+// light wooden fence west top & bottom boards
+[0x0836]
+{
+get=base_item
+name=wooden fence
+id=0x0836
+}
+// light wooden fence south top & bottom boards
+[0x0837]
+{
+get=base_item
+name=wooden fence
+id=0x0837
+}
+// light wooden fence very thin post
+[0x0838]
+{
+get=base_item
+name=wooden post
+id=0x0838
+}
+
+// crosstie wooden fence southwest corner
+[0x085C]
+{
+get=base_item
+name=wooden fence
+id=0x085C
+}
+// crosstie wooden fence west post south
+[0x085D]
+{
+get=base_item
+name=wooden fence
+id=0x085D
+}
+// crosstie wooden fence south post west
+[0x085E]
+{
+get=base_item
+name=wooden fence
+id=0x085E
+}
+// crosstie wooden fence post
+[0x085F]
+{
+get=base_item
+name=wooden fence
+id=0x085F
+}
+// crosstie wooden fence west
+[0x0860]
+{
+get=base_item
+name=wooden fence
+id=0x0860
+}
+// crosstie wooden fence south
+[0x0861]
+{
+get=base_item
+name=wooden fence
+id=0x0861
+}
+// crosstie x brace wooden fence corner southwest
+[0x0862]
+{
+get=base_item
+name=wooden fence
+id=0x0862
+}
+// crosstie x brace wooden fence west post south
+[0x0863]
+{
+get=base_item
+name=wooden fence
+id=0x0863
+}
+// crosstie x brace wooden fence south post west
+[0x0864]
+{
+get=base_item
+name=wooden fence
+id=0x0864
+}
+// crosstie wooden fence post
+[0x0865]
+{
+get=base_item
+name=wooden fence
+id=0x0865
+}
+// wooden fence west posts south & north
+[0x0877]
+{
+get=base_item
+name=woodne fence
+id=0x0877
+}
+// wooden fence south posts west & east 
+[0x0878]
+{
+get=base_item
+name=wooden fence
+id=0x0878
+}
+// wooden fence x brace west posts south & north
+[0x088A]
+{
+get=base_item
+name=wooden fence
+id=0x088A
+}
+// wooden fence x brace south posts west & east
+[0x088B]
+{
+get=base_item
+name=wooden fence
+id=0x088B
+}
+// stone post south
+[0x07D6]
+{
+get=base_item
+name=stone post
+id=0x07D6
+}
+// light grey stone post with rail west rails open to south
+[0x07D7]
+{
+get=base_item
+name=railing
+id=0x07D7
+}
+// light grey stone post with rail south rails open to west
+[0x07D8]
+{
+get=base_item
+name=railing
+id=0x07D8
+}
+// buff grey stone post
+[0x08EB]
+{
+get=base_item
+name=stone rail
+id=0x08EB
+}
+// buff grey stone post
+[0x08EC]
+{
+get=base_item
+name=stone rail
+id=0x08EC
+}
+// buff grey stone post west with rails open to south
+[0x08ED]
+{
+get=base_item
+name=stone rail
+id=0x08ED
+}
+// buff grey stone post south with rails open to west
+[0x08EE]
+{
+get=base_item
+name=stone rail
+id=0x08EE
+}
+// blue grey stone post
+[0x08EF]
+{
+get=base_item
+name=stone rail
+id=0x08EF
+}
+// blue grey stone post
+[0x08F0]
+{
+get=base_item
+name=stone post
+id=0x08F0
+}
+// blue grey stone post west with rails open to south
+[0x08F1]
+{
+get=base_item
+name=stone rail
+id=0x08F1
+}
+// blue grey stone post south with rails open to west
+[0x08F2]
+{
+get=base_item
+name=stone rail
+id=0x08F2
+}
+// sandstone post
+[0x08F3]
+{
+get=base_item
+name=sandstone rail
+id=0x08F3
+}
+// sandstone post
+[0x08F4]
+{
+get=base_item
+name=sandstone rail
+id=0x08F4
+}
+// sandstone post south with rails open to south
+[0x08F5]
+{
+get=base_item
+name=sandstone rail
+id=0x08F5
+}
+// light grey stone post
+[0x08F7]
+{
+get=base_item
+name=stone rail
+id=0x08F7
+}
+// light grey stone post
+[0x08F8]
+{
+get=base_item
+name=stone rail
+id=0x08F8
+}
+// grey stone rail west with rails open to south
+[0x08F9]
+{
+get=base_item
+name=stone rail
+id=0x08F9
+}
+// grey stone rail south with rails open to west
+[0x08FA]
+{
+get=base_item
+name=stone rail
+id=0x08FA
+}
+// wooden railings for stone posts west
+[0x08FB]
+{
+get=base_item
+name=stone rail
+id=0x08FB
+}
+// wooden railings for stone posts south
+[0x08FC]
+{
+get=base_item
+name=stone rail
+id=0x08FC
+}
+// iron fence south
+[0x0821]
+{
+get=base_item
+name=iron fence
+id=0x0821
+}
+// iron fence southwest corner
+[0x0822]
+{
+get=base_item
+name=iron fence
+id=0x0822
+}
+// iron fence west
+[0x0823]
+{
+get=base_item
+name=iron fence
+id=0x0823
+}
+// iron fence south
+[0x0849]
+{
+get=base_item
+name=iron fence
+id=0x0849
+}
+// iron fence southwest corner
+[0x084A]
+{
+get=base_item
+name=iron fence
+id=0x084A
+}
+// iron fence west
+[0x084B]
+{
+get=base_item
+name=iron fence
+id=0x084B
+}

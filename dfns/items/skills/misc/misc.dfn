@@ -1,0 +1,225 @@
+//misc
+
+[0x0f65]
+{ S
+get=base_item
+name=easel
+id=0x0f65
+weight=2000
+movable=2
+}
+
+[0x0f66]
+{ S
+get=base_item
+name=easel with canvas
+id=0x0f66
+weight=2000
+movable=2
+}
+
+[0x0f67]
+{ E
+get=base_item
+name=easel
+id=0x0f67
+weight=2000
+movable=2
+}
+
+[0x0f68]
+{ E
+get=base_item
+name=easel with canvas
+id=0x0f68
+weight=2000
+movable=2
+}
+
+[0x0f69]
+{ N
+get=base_item
+name=easel
+id=0x0f69
+weight=2000
+movable=2
+
+
+[0x0f6a]
+{ N
+get=base_item
+name=easel with canvas
+id=0x0f6a
+weight=2000
+movable=2
+}
+
+[0x0f71]
+{ S
+get=base_item
+name=rack of canvases
+id=0x0f71
+weight=2000
+movable=2
+}
+
+[0x0f72]
+{ S
+get=base_item
+name=rack of canvases
+id=0x0f72
+weight=2000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x0f73]
+{ E
+get=base_item
+name=rack of canvases
+id=0x0f73
+weight=2000
+movable=2
+}
+
+[0x0f74]
+{ E
+get=base_item
+name=rack of canvases
+id=0x0f74
+weight=2000
+movable=2
+}
+
+[0x0f75]
+{ N
+get=base_item
+name=rack of canvases
+id=0x0f75
+weight=2000
+movable=2
+}
+
+[0x0f76]
+{ N
+get=base_item
+name=rack of canvases
+id=0x0f76
+weight=2000
+movable=2
+}
+
+[0x091a]
+{
+get=base_item
+name=beehive
+id=0x091a
+weight=100
+movable=2
+}
+
+[0x0dcc]
+{ S
+get=base_item
+name=fishing weight
+id=0x0dcc
+weight=200
+value=5
+movable=1
+}
+
+[0x0dcd]
+{ N
+get=base_item
+name=fishing weight
+id=0x0dcd
+weight=200
+value=5
+movable=1
+}
+
+[0x0dce]
+{ E
+get=base_item
+name=fishing weight
+id=0x0dce
+weight=200
+value=5
+movable=1
+}
+
+[0x0dcf]
+{ W
+get=base_item
+name=fishing weight
+id=0x0dcf
+weight=200
+value=5
+movable=1
+}
+
+[0x1428]
+{ S
+get=base_item
+name=dipping stick
+id=0x1428
+weight=100
+movable=1
+decay=1
+}
+
+[0x1429]
+{ E
+get=base_item
+name=dipping stick
+id=0x1429
+weight=100
+colorlist=
+movable=1
+decay=1
+}
+
+[0x142a]
+{
+get=base_item
+name=pot of wax
+id=0x142a
+weight=300
+movable=1
+decay=1
+}
+
+[0x142b]
+{ small
+get=base_item
+name=pot of wax
+id=0x142b
+weight=200
+movable=1
+decay=1
+}
+
+[0x1422]
+{ small
+get=base_item
+name=beeswax
+id=0x1422
+weight=10
+movable=1
+decay=1
+pileable=1
+}
+
+[0x1423]
+{ small
+get=base_item
+name=beeswax
+id=0x1423
+weight=10
+movable=1
+decay=1
+pileable=1
+}
+

@@ -1,0 +1,243 @@
+[0x0fa2]
+{
+get=base_item
+name=playing cards
+id=0x0fa2
+weight=100
+movable=2
+}
+
+[0x0fa3]
+{
+get=base_item
+name=playing cards
+id=0x0fa3
+weight=100
+movable=2
+}
+
+[0x0fa4]
+{ red
+get=base_item
+name=checkers
+id=0x0fa4
+weight=100
+movable=2
+}
+
+[0x0fa5]
+{ white
+get=base_item
+name=checkers
+id=0x0fa5
+weight=100
+movable=2
+}
+
+[0x0fa8]
+{ white
+get=base_item
+name=chess pieces
+id=0x0fa8
+weight=100
+movable=2
+}
+
+[0x0FAD]
+{
+get=base_item
+name=backgammon game
+id=0x0FAD
+weight=500
+value=2,1
+restock=100
+movable=1
+decay=1
+}
+
+[0x0FA6]
+{
+get=base_item
+name=a checker board
+id=0x0FA6
+weight=500
+value=2,1
+restock=100
+movable=1
+decay=1
+}
+
+[0x0FA7]
+{
+get=base_item
+name=dice and Cup
+id=0x0FA7
+weight=100
+value=2,1
+restock=100
+movable=1
+decay=1
+}
+
+[0x0e12]
+{ black
+get=base_item
+name=chessmen
+id=0x0e12
+weight=100
+movable=2
+}
+
+[0x0e13]
+{ black
+get=base_item
+name=chessmen
+id=0x0e13
+weight=100
+movable=2
+}
+
+[0x0e14]
+{ white
+get=base_item
+name=chessmen
+id=0x0e14
+weight=100
+movable=2
+}
+
+[0x0e15]
+{
+get=base_item
+name=cards
+id=0x0e15
+weight=10
+movable=2
+}
+
+[0x0e16]
+{
+get=base_item
+name=cards
+id=0x0e16
+weight=10
+movable=2
+}
+
+[0x0e17]
+{
+get=base_item
+name=cards
+id=0x0e17
+weight=10
+movable=2
+}
+
+[0x0e18]
+{
+get=base_item
+name=cards
+id=0x0e18
+weight=10
+movable=2
+}
+
+[0x0e19]
+{
+get=base_item
+name=cards
+id=0x0e19
+weight=10
+movable=2
+}
+
+[0x0e1a]
+{ red
+get=base_item
+name=checkers
+id=0x0e1a
+weight=10
+movable=2
+}
+
+[0x0e1b]
+{ white
+get=base_item
+name=checkers
+id=0x0e1b
+weight=10
+movable=2
+}
+
+[0x0e1c]
+{
+get=base_item
+name=backgammon board
+id=0x0e1c
+weight=100
+value=2,1
+movable=2
+}
+
+[0x12a6]
+{ E
+get=base_item
+name=tarot
+id=0x12a6
+weight=100
+movable=2
+}
+
+[0x12a7]
+{ E large
+get=base_item
+name=tarot
+id=0x12a7
+weight=100
+movable=2
+}
+
+[0x12a8]
+{ S large
+get=base_item
+name=tarot
+id=0x12a8
+weight=100
+movable=2
+}
+
+[0x12a9]
+{ S small
+get=base_item
+name=tarot
+id=0x12a9
+weight=100
+movable=2
+}
+
+[0x12aa]
+{ E small
+get=base_item
+name=tarot
+id=0x12aa
+weight=100
+movable=2
+}
+
+[0x12ab]
+{ S
+get=base_item
+name=deck of tarot
+id=0x12ab
+weight=100
+movable=2
+}
+
+[0x12ac]
+{ E
+get=base_item
+name=deck of tarot
+id=0x12ac
+weight=100
+movable=2
+}

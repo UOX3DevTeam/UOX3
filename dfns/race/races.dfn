@@ -1,0 +1,140 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98                       *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : races.dfn                                            *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* fill in comments instructions here                            *
+//*                                                               *
+//*                                                               *
+//*                                                               *
+//*****************************************************************
+
+[RACE 0]
+{
+NAME=Human
+STRCAP=100
+DEXCAP=100
+INTCAP=100
+PLAYERRACE=0
+}
+
+[RACE 1]
+{
+NAME=Orc
+PLAYERRACE=1
+}
+
+[RACE 2]
+{
+NAME=Ratman
+PLAYERRACE=1
+}
+
+[RACE 3]
+{
+NAME=Gargoyle
+PLAYERRACE=1
+}
+
+[RACE 4]
+{
+NAME=Bird
+PLAYERRACE=1
+}
+
+[RACE 5]
+{
+NAME=Reptile
+PLAYERRACE=1
+}
+
+[RACE 6]
+{
+NAME=Arachnid
+PLAYERRACE=1
+}
+
+[RACE 7]
+{
+NAME=Giant
+PLAYERRACE=1
+}
+
+[RACE 8]
+{
+NAME=Predator
+PLAYERRACE=1
+}
+
+[RACE 9]
+{
+NAME=Animal 
+PLAYERRACE=1
+}
+
+[RACE 10]
+{
+NAME=Daemon
+PLAYERRACE=1
+}
+
+[RACE 11]
+{
+NAME=Undead
+PLAYERRACE=1
+}
+
+[RACE 12]
+{
+NAME=Dragon
+PLAYERRACE=1
+}
+
+[RACE 13]
+{
+NAME=Frost
+PLAYERRACE=1
+}
+
+[RACE 14]
+{
+NAME=Fire
+PLAYERRACE=1
+}
+
+[RACE 15]
+{
+NAME=Water
+PLAYERRACE=1
+}
+
+[RACE 16]
+{
+NAME=Air
+PLAYERRACE=1
+}
+
+[RACE 17]
+{
+NAME=Earth
+PLAYERRACE=1
+}
+
+[RACE 18]
+{
+NAME=Monster
+PLAYERRACE=1
+}
+
+[RACE 19]
+{
+NAME=Other
+PLAYERRACE=1
+}
+
+EOF
+

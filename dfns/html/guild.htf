@@ -1,0 +1,25 @@
+<html><head><title>Ultima Offline eXperiment - ServerStatus</title></head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<div align="center"><br>
+  <br>
+  <table width="600" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td> 
+        <p><font size="4" face="Arial, Helvetica, sans-serif"><b><font color="#000099">U 
+          O X</font></b> - <font color="#666666">Guild Info</font><br>
+          </font><font size="1"><font face="Arial, Helvetica, sans-serif">Build: 
+          %version</font></font><i> </i><font size="1" face="Arial, Helvetica, sans-serif">| 
+          %time | This page will be updated every %updatetime sec.</font><i><br>
+          <br>
+          <b>Server:</b> %server1 %ip1:%port1 <br>
+          <br>
+          Guilds (%guildcount):<br>
+          %guildlist%<br>
+          %guildid. <a href="guilds/%guildid.html">%guildname</a><br>
+          %guildlist%</font></font></p>
+        </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: ocollo.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 100]
+{
+// Docks
+X=3650
+Y=2653
+Z=0
+}
+
+[LOCATION 101]
+{
+// North
+X=3650
+Y=2516
+Z=0
+}
+
+[LOCATION 102]
+{
+// Farmlands
+X=3722
+Y=2647
+Z=20
+}

@@ -1,0 +1,37 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: serpentshold.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 110]
+{
+// North
+X=3023
+Y=3417
+Z=15
+}
+
+[LOCATION 111]
+{
+// West Docks
+X=2945
+Y=3393
+Z=15
+}
+
+[LOCATION 112]
+{
+// South
+X=2906
+Y=3505
+Z=10
+}
+
+[LOCATION 113]
+{
+// South Guardpost
+X=3011
+Y=3526
+Z=15
+}

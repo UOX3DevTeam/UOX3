@@ -1,0 +1,23 @@
+[0x0a58]
+{
+get=base_item
+name=a bedroll
+id=0x0a58
+weight=500
+value=6,2
+restock=100
+movable=1
+decay=1
+}
+
+[0x14EB]
+{
+get=base_item
+name=world map
+id=0x14EB
+weight=200
+value=75,37
+type=10
+restock=20
+decay=1
+}

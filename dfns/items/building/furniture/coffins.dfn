@@ -1,0 +1,1457 @@
+// coffins.dfn
+// All types of things where dead people are in
+// v1.0; 18/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+
+[0x1c22]
+{ E closed 1/6
+get=base_item
+name=casket
+id=0x1c22
+movable=2
+}
+
+[0x1c23]
+{ E closed 2/6
+get=base_item
+name=casket
+id=0x1c23
+movable=2
+}
+
+[0x1c24]
+{ E closed 3/6
+get=base_item
+name=casket
+id=0x1c24
+movable=2
+}
+
+[0x1c25]
+{ E closed 4/6
+get=base_item
+name=casket
+id=0x1c25
+movable=2
+}
+
+[0x1c26]
+{ E closed 5/6
+get=base_item
+name=casket
+id=0x1c26
+movable=2
+}
+
+[0x1c27]
+{ E closed 6/6
+get=base_item
+name=casket
+id=0x1c27
+movable=2
+}
+
+[0x1c28]
+{ E open 1/7
+get=base_item
+name=casket
+id=0x1c28
+movable=2
+}
+
+[0x1c29]
+{ E open 2/7
+get=base_item
+name=casket
+id=0x1c29
+movable=2
+}
+
+[0x1c2a]
+{ E open 3/7
+get=base_item
+name=casket
+id=0x1c2a
+movable=2
+}
+
+[0x1c2b]
+{ E open 4/7
+get=base_item
+name=casket
+id=0x1c2b
+movable=2
+}
+
+[0x1c2c]
+{ E open 5/7
+get=base_item
+name=casket
+id=0x1c2c
+movable=2
+}
+
+[0x1c2d]
+{ E open 6/7
+get=base_item
+name=casket
+id=0x1c2d
+movable=2
+}
+
+[0x1c2e]
+{ E open 7/7
+get=base_item
+name=casket
+id=0x1c2e
+movable=2
+}
+
+[0x1c2f]
+{ S closed 1/6
+get=base_item
+name=casket
+id=0x1c2f
+movable=2
+}
+
+[0x1c30]
+{ S closed 2/6
+get=base_item
+name=casket
+id=0x1c30
+movable=2
+}
+
+[0x1c31]
+{ S closed 3/6
+get=base_item
+name=casket
+id=0x1c31
+movable=2
+}
+
+[0x1c32]
+{ S closed 4/6
+get=base_item
+name=casket
+id=0x1c32
+movable=2
+}
+
+[0x1c33]
+{ S closed 5/6
+get=base_item
+name=casket
+id=0x1c33
+movable=2
+}
+
+[0x1c34]
+{ S closed 6/6
+get=base_item
+name=casket
+id=0x1c34
+movable=2
+}
+
+[0x1c35]
+{ S open 1/7
+get=base_item
+name=casket
+id=0x1c35
+movable=2
+}
+
+[0x1c36]
+{ S open 2/7
+get=base_item
+name=casket
+id=0x1c36
+movable=2
+}
+
+[0x1c37]
+{ S open 3/7
+get=base_item
+name=casket
+id=0x1c37
+movable=2
+}
+
+[0x1c38]
+{ S open 4/7
+get=base_item
+name=casket
+id=0x1c38
+movable=2
+}
+
+[0x1c39]
+{ S open 5/7
+get=base_item
+name=casket
+id=0x1c39
+movable=2
+}
+
+[0x1c3a]
+{ S open 6/7
+get=base_item
+name=casket
+id=0x1c3a
+movable=2
+}
+
+[0x1c3b]
+{ S open 7/7
+get=base_item
+name=casket
+id=0x1c3b
+movable=2
+}
+
+[0x1c3c]
+{ S halfopen 1/4
+get=base_item
+name=coffin
+id=0x1c3c
+movable=2
+}
+
+[0x1c3d]
+{ S halfopen (ankh) 2/4
+get=base_item
+name=coffin
+id=0x1c3d
+movable=2
+}
+
+[0x1c3e]
+{ S halfopen 2/4
+get=base_item
+name=coffin
+id=0x1c3e
+movable=2
+}
+
+[0x1c3f]
+{ S halfopen 3/4
+get=base_item
+name=coffin
+id=0x1c3f
+movable=2
+}
+
+[0x1c40]
+{ S halfopen 4/4
+get=base_item
+name=coffin
+id=0x1c40
+movable=2
+}
+
+[0x1c41]
+{ S closed ankh 1/3
+get=base_item
+name=coffin
+id=0x1c41
+movable=2
+}
+
+[0x1c42]
+{ S closed ankh 2/3
+get=base_item
+name=coffin
+id=0x1c42
+movable=2
+}
+
+[0x1c43]
+{ S closed ankh 3/3
+get=base_item
+name=coffin
+id=0x1c43
+movable=2
+}
+
+[0x1c44]
+{ S closed 1/3
+get=base_item
+name=coffin
+id=0x1c44
+movable=2
+}
+
+[0x1c45]
+{ S closed 2/3
+get=base_item
+name=coffin
+id=0x1c45
+movable=2
+}
+
+[0x1c46]
+{ S closed 3/3
+get=base_item
+name=coffin
+id=0x1c46
+movable=2
+}
+
+[0x1c47]
+{ S open 1/3
+get=base_item
+name=coffin
+id=0x1c47
+movable=2
+}
+
+[0x1c48]
+{ S open 2/3
+get=base_item
+name=coffin
+id=0x1c48
+movable=2
+}
+
+[0x1c49]
+{ S open 3/3
+get=base_item
+name=coffin
+id=0x1c49
+movable=2
+}
+
+[0x1c4a]
+{ E halfopen 1/4
+get=base_item
+name=coffin
+id=0x1c4a
+movable=2
+}
+
+[0x1c4b]
+{ E halfopen (ankh) 2/4
+get=base_item
+name=coffin
+id=0x1c4b
+movable=2
+}
+
+[0x1c4c]
+{ E halfopen 2/4
+get=base_item
+name=coffin
+id=0x1c4c
+movable=2
+}
+
+[0x1c4d]
+{ E halfopen 3/4
+get=base_item
+name=coffin
+id=0x1c4d
+movable=2
+}
+
+[0x1c4e]
+{ E halfopen 4/4
+get=base_item
+name=coffin
+id=0x1c4e
+movable=2
+}
+
+[0x1c4f]
+{ E closed ankh 1/3
+get=base_item
+name=coffin
+id=0x1c4f
+movable=2
+}
+
+[0x1c50]
+{ E closed ankh 2/3
+get=base_item
+name=coffin
+id=0x1c50
+movable=2
+}
+
+[0x1c51]
+{ E closed ankh 3/3
+get=base_item
+name=coffin
+id=0x1c51
+movable=2
+}
+
+[0x1c52]
+{ E closed 1/3
+get=base_item
+name=coffin
+id=0x1c52
+movable=2
+}
+
+[0x1c53]
+{ E closed 2/3
+get=base_item
+name=coffin
+id=0x1c53
+movable=2
+}
+
+[0x1c54]
+{ E closed 3/3
+get=base_item
+name=coffin
+id=0x1c54
+movable=2
+}
+
+[0x1c55]
+{ E open 1/3
+get=base_item
+name=coffin
+id=0x1c55
+movable=2
+}
+
+[0x1c56]
+{ E open 2/3
+get=base_item
+name=coffin
+id=0x1c56
+movable=2
+}
+
+[0x1c57]
+{ E open 3/3
+get=base_item
+name=coffin
+id=0x1c57
+movable=2
+}
+
+[0x1c58]
+{ E 1/3
+get=base_item
+name=coffin lid
+id=0x1c58
+movable=2
+}
+
+[0x1c59]
+{ E (ankh) 2/3
+get=base_item
+name=coffin lid
+id=0x1c59
+movable=2
+}
+
+[0x1c5a]
+{ E 2/3
+get=base_item
+name=coffin lid
+id=0x1c5a
+movable=2
+}
+
+[0x1c5b]
+{ E 3/3
+get=base_item
+name=coffin lid
+id=0x1c5b
+movable=2
+}
+
+[0x1c5c]
+{ S 1/3
+get=base_item
+name=coffin lid
+id=0x1c5c
+movable=2
+}
+
+[0x1c5d]
+{ S (ankh) 2/3
+get=base_item
+name=coffin lid
+id=0x1c5d
+movable=2
+}
+
+[0x1c5e]
+{ S 2/3
+get=base_item
+name=coffin lid
+id=0x1c5e
+movable=2
+}
+
+[0x1c5f]
+{ S 3/3
+get=base_item
+name=coffin lid
+id=0x1c5f
+movable=2
+}
+
+[0x1d13]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d13
+movable=2
+}
+
+[0x1d14]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d14
+movable=2
+}
+
+[0x1d15]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d15
+movable=2
+}
+
+[0x1d16]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d16
+movable=2
+}
+
+[0x1d17]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d17
+movable=2
+}
+
+[0x1d18]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d18
+movable=2
+}
+
+[0x1d19]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d19
+movable=2
+}
+
+[0x1d1a]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1a
+movable=2
+}
+
+[0x1d1b]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1b
+movable=2
+}
+
+[0x1d1c]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1c
+movable=2
+}
+
+[0x1d1d]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1d
+movable=2
+}
+
+[0x1d1e]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1e
+movable=2
+}
+
+[0x1d1f]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d1f
+movable=2
+}
+
+[0x1d20]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d20
+movable=2
+}
+
+[0x1d21]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d21
+movable=2
+}
+
+[0x1d22]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d22
+movable=2
+}
+
+
+[0x1d23]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d23
+movable=2
+}
+
+[0x1d24]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d24
+movable=2
+}
+
+[0x1d25]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d25
+movable=2
+}
+
+[0x1d26]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d26
+movable=2
+}
+
+[0x1d27]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d27
+movable=2
+}
+
+[0x1d28]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d28
+movable=2
+}
+
+[0x1d29]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d29
+movable=2
+}
+
+[0x1d2a]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2a
+movable=2
+}
+
+[0x1d2b]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2b
+movable=2
+}
+
+[0x1d2c]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2c
+movable=2
+}
+
+[0x1d2d]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2d
+movable=2
+}
+
+[0x1d2e]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2e
+movable=2
+}
+
+[0x1d2f]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d2f
+movable=2
+}
+
+[0x1d4c]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4c
+movable=2
+}
+
+[0x1d4d]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4d
+movable=2
+}
+
+[0x1d4e]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4e
+movable=2
+}
+
+[0x1d4f]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4f
+movable=2
+}
+
+[0x1d50]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d50
+movable=2
+}
+
+[0x1d51]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d51
+movable=2
+}
+
+[0x1d52]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d52
+movable=2
+}
+
+[0x1d53]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d53
+movable=2
+}
+
+[0x1d54]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d54
+movable=2
+}
+
+[0x1d55]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d55
+movable=2
+}
+
+
+[0x1d56]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d56
+movable=2
+}
+
+[0x1d57]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d57
+movable=2
+}
+
+[0x1d58]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d58
+movable=2
+}
+
+[0x1d59]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d59
+movable=2
+}
+
+[0x1d5a]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5a
+movable=2
+}
+
+[0x1d5b]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5b
+movable=2
+}
+
+[0x1d5c]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5c
+movable=2
+}
+
+[0x1d5d]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5d
+movable=2
+}
+
+[0x1d5e]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5e
+movable=2
+}
+
+[0x1d5f]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d5f
+movable=2
+}
+
+[0x1d60]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d60
+movable=2
+}
+
+[0x1d61]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d61
+movable=2
+}
+
+[0x1d62]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d62
+movable=2
+}
+
+[0x1d63]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d63
+movable=2
+}
+
+[0x1d64]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d64
+movable=2
+}
+
+[0x1d65]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d65
+movable=2
+}
+
+[0x1d66]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d66
+movable=2
+}
+
+[0x1d67]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d67
+movable=2
+}
+
+[0x1d68]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d68
+movable=2
+}
+
+[0x1d69]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d69
+movable=2
+}
+
+[0x1d6a]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6a
+movable=2
+}
+
+[0x1d6b]
+{ E in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6b
+movable=2
+}
+
+[0x1d30]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d30
+movable=2
+}
+
+[0x1d31]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d31
+movable=2
+}
+
+[0x1d32]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d32
+movable=2
+}
+
+[0x1d33]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d33
+movable=2
+}
+
+[0x1d34]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d34
+movable=2
+}
+
+[0x1d35]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d35
+movable=2
+}
+
+[0x1d36]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d36
+movable=2
+}
+
+[0x1d37]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d37
+movable=2
+}
+
+[0x1d38]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d38
+movable=2
+}
+
+[0x1d39]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d39
+movable=2
+}
+
+[0x1d3a]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3a
+movable=2
+}
+
+[0x1d3b]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3b
+movable=2
+}
+
+[0x1d3c]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3c
+movable=2
+}
+
+[0x1d3d]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3d
+movable=2
+}
+
+[0x1d3e]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3e
+movable=2
+}
+
+[0x1d3f]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d3f
+movable=2
+}
+
+[0x1d40]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d40
+movable=2
+}
+
+[0x1d41]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d41
+movable=2
+}
+
+[0x1d42]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d42
+movable=2
+}
+
+[0x1d43]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d43
+movable=2
+}
+
+[0x1d44]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d44
+movable=2
+}
+
+[0x1d45]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d45
+movable=2
+}
+
+[0x1d46]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d46
+movable=2
+}
+
+[0x1d47]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d47
+movable=2
+}
+
+[0x1d48]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d48
+movable=2
+}
+
+[0x1d49]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d49
+movable=2
+}
+
+[0x1d4a]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4a
+movable=2
+}
+
+[0x1d4b]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d4b
+movable=2
+}
+
+[0x1d6c]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6c
+movable=2
+}
+
+[0x1d6d]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6d
+movable=2
+}
+
+[0x1d6e]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6e
+movable=2
+}
+
+[0x1d6f]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d6f
+movable=2
+}
+
+[0x1d70]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d70
+movable=2
+}
+
+[0x1d71]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d71
+movable=2
+}
+
+[0x1d72]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d72
+movable=2
+}
+
+[0x1d73]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d73
+movable=2
+}
+
+[0x1d74]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d74
+movable=2
+}
+
+[0x1d75]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d75
+movable=2
+}
+
+[0x1d76]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d76
+movable=2
+}
+
+[0x1d77]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d77
+movable=2
+}
+
+[0x1d78]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d78
+movable=2
+}
+
+[0x1d79]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d79
+movable=2
+}
+
+[0x1d7a]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7a
+movable=2
+}
+
+[0x1d7b]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7b
+movable=2
+}
+
+[0x1d7c]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7c
+movable=2
+}
+
+[0x1d7d]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7d
+movable=2
+}
+
+[0x1d7e]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7e
+movable=2
+}
+
+[0x1d7f]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d7f
+movable=2
+}
+
+[0x1d80]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d80
+movable=2
+}
+
+[0x1d81]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d81
+movable=2
+}
+
+[0x1d82]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d82
+movable=2
+}
+
+[0x1d83]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d83
+movable=2
+}
+
+[0x1d84]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d84
+movable=2
+}
+
+[0x1d85]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d85
+movable=2
+}
+
+[0x1d86]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d86
+movable=2
+}
+
+[0x1d87]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d87
+movable=2
+}
+
+[0x1d88]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d88
+movable=2
+}
+
+[0x1d89]
+{ S in coffin, combine many ways
+get=base_item
+name=body
+id=0x1d89
+movable=2
+}

@@ -1,0 +1,411 @@
+// Ringmail
+
+[0x13eb]
+{
+get=ring_gloves
+name=ringmail gloves
+id=0x13eb
+def=2
+}
+
+[0x13ec]
+{ right facing
+get=ring_tunic
+name=ringmail tunic
+id=0x13ec
+def=9
+}
+
+[0x13ed]
+{ left facing
+get=ring_tunic
+name=ringmail tunic
+id=0x13ed
+def=9
+}
+
+[0x13ee]
+{ right facing
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13ee
+def=4
+}
+
+[0x13ef]
+{ left facing
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13ef
+def=4
+}
+
+[0x13f0]
+{ right facing
+get=ring_leggings
+name=ringmail leggings
+id=0x13f0
+def=5
+}
+
+[0x13f1]
+{ left facing
+get=ring_leggings
+name=ringmail leggings
+id=0x13f1
+def=5
+}
+
+[0x13f2]
+{
+get=ring_gloves
+name=ringmail gloves
+id=0x13f2
+def=2
+}
+
+// Chainmail
+
+[0x13BB]
+{ Left facing chain coif
+get=chain_coif
+name=chainmail coif
+id=0x13bb
+def=4
+}
+
+[0x13be]
+{ left facing
+get=chain_leggings
+name=chainmail leggings
+id=0x13be
+def=6
+}
+
+[0x13bf]
+{ left facing
+get=chain_tunic
+name=chainmail tunic
+id=0x13bf
+def=10
+}
+
+[0x13c0]
+{ right facing chain coif
+get=chain_coif
+name=chainmail coif
+id=0x13c0
+def=4
+}
+
+[0x13c3]
+{ right facing
+get=chain_leggings
+name=chainmail leggings
+id=0x13c3
+def=6
+}
+
+[0x13c4]
+{ right facing
+get=chain_tunic
+name=chainmail tunic
+id=0x13c4
+def=10
+}
+
+// Female
+
+[0x1c04]
+{ left facing - Female
+get=fem_plate
+name=plate armor
+id=0x1c04
+def=13
+}
+
+[0x1c05]
+{ right facing - Female
+get=fem_plate
+name=plate armor
+id=0x1c05
+def=13
+}
+
+// Platemail
+
+[0x1410]
+{ left facing
+get=plate_arms
+name=platemail arms
+id=0x1410
+def=4
+}
+
+[0x1411]
+{ left facing
+get=plate_leggings
+name=platemail legs
+id=0x1411
+def=4
+}
+
+[0x1413]
+{
+get=plate_gorget
+name=platemail gorget
+id=0x1413
+def=2
+}
+
+[0x1414]
+{ left facing
+get=plate_gloves
+name=platemail gloves
+id=0x1414
+def=2
+}
+
+[0x1415]
+{ left facing
+get=plate_chest
+name=platemail
+id=0x1415
+def=14
+}
+
+[0x1417]
+{ right facing
+get=plate_arms
+name=platemail arms
+id=0x1417
+def=4
+}
+
+[0x141a]
+{ right facing
+get=plate_leggings
+name=platemail legs
+id=0x141a
+def=4
+}
+
+[0x1418]
+{ right facing
+get=plate_gloves
+name=platemail gloves
+id=0x1418
+def=2
+}
+
+[0x1416]
+{ right facing
+get=plate_chest
+name=platemail
+id=0x1416
+def=14
+}
+
+// Helmets
+
+[0x1408]
+{ right facing
+get=close_helmet
+name=close helmet
+id=0x1408
+def=4
+}
+
+[0x1409]
+{ left facing
+get=close_helm
+name=close helm
+id=0x1409
+def=4
+}
+
+[0x140a]
+{ right facing
+get=helmet
+name=helmet
+id=0x140a
+def=4
+}
+
+[0x140b]
+{ left facing
+get=helmet
+name=helmet
+id=0x140b
+def=4
+}
+
+[0x140c]
+{ right facing
+get=bascinet
+name=bascinet
+id=0x140c
+def=2
+}
+
+[0x140d]
+{ left facing
+get=bascinet
+name=bascinet
+id=0x140d
+def=2
+}
+
+[0x140e]
+{ right facing
+get=nose_helm
+name=nose helm
+id=0x140e
+def=4
+}
+
+[0x140f]
+{ left facing
+get=nose_helm
+name=nose helm
+id=0x140f
+def=4
+}
+
+[0x1412]
+{ left facing
+get=plate_helm
+name=plate helm
+id=0x1412
+def=5
+}
+
+[0x1419]
+{ right facing
+name=plate helm
+id=0x1419
+def=5
+}
+
+// Shields
+
+[0x1b72]
+{ Bronze Shield
+get=bronze_shield
+name=bronze shield
+id=0x1b72
+}
+
+[0x1b73]
+{ Buckler
+get=buckler
+name=Buckler
+id=0x1b73
+}
+
+[0x1b74]
+{ Metal Kite Shield
+get=metal_kite_shield
+name=kite shield
+id=0x1b74
+}
+
+[0x1b75]
+{ Metal Kite Shield
+get=metal_kite_shield
+name=kite shield
+id=0x1b75
+}
+
+[0x1b76]
+{ Heater Shield
+get=heater_shield
+name=heater shield
+id=0x1b76
+}
+
+[0x1b77]
+{ Heater Shield
+get=heater_shield
+name=heater shield
+id=0x1b77
+}
+
+[0x1b78]
+{ Wooden kite Shield
+get=base_item
+name=kite shield
+id=0x1b78
+weight=70
+value=110
+layer=2
+good=2
+def=5
+hp=50
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x1b79]
+{ Wooden kite Shield
+get=base_item
+name=kite shield
+id=0x1b79
+weight=70
+value=110
+layer=2
+good=2
+def=5
+hp=50
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x1b7A]
+{ Wooden Shield
+get=base_item
+name=wooden shield
+id=0x1b7a
+weight=50
+value=39
+layer=2
+good=2
+def=2
+hp=20
+str=20
+restock=10
+movable=1
+decay=1
+}
+
+[0x1b7b]
+{ Metal Shield
+get=metal_shield
+name=metal shield
+id=0x1b7b
+}
+
+[0x1bc3]
+{ Chaos Shield
+get=chaos_shield
+name=chaos shield
+id=0x1bc3
+}
+
+[0x1bc4]
+{ Order Shield
+get=order_shield
+name=order shield
+id=0x1bc4
+}
+
+[0x1bc5]
+{ Order Shield
+get=order_shield
+name=order shield
+id=0x1bc5
+}

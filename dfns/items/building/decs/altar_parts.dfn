@@ -1,0 +1,80 @@
+[0x120e]
+{ 1/9
+get=base_item
+name=altar
+id=0x120e
+weight=100
+movable=2
+}
+
+[0x120f]
+{ 2/9
+get=base_item
+name=altar
+id=0x120f
+weight=100
+movable=2
+}
+
+[0x1210]
+{ 3/9
+get=base_item
+name=altar
+id=0x1210
+weight=100
+movable=2
+}
+
+[0x1211]
+{ 4/9
+get=base_item
+name=altar
+id=0x1211
+weight=100
+movable=2
+}
+
+[0x1212]
+{ 5/9
+get=base_item
+name=altar
+id=0x1212
+weight=100
+movable=2
+}
+
+[0x1213]
+{ 6/9
+get=base_item
+name=altar
+id=0x1213
+weight=100
+movable=2
+}
+
+[0x1214]
+{ 7/9
+get=base_item
+name=altar
+id=0x1214
+weight=100
+movable=2
+}
+
+[0x1215]
+{ 8/9
+get=base_item
+name=altar
+id=0x1215
+weight=100
+movable=2
+}
+
+[0x1216]
+{ 9/9
+get=base_item
+name=altar
+id=0x1216
+weight=100
+movable=2
+}
