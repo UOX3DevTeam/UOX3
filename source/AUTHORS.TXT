@@ -27,10 +27,20 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
-  
 
 -------------------------------------------------------------------------------
-27.01.2001              Thiago A. Correa
+27.01.0001              Axel Kittenberger            Axel Kittenberger
+  
+  cmdtable.cpp          On the crusade of GCC warnings....
+  commands.cpp          Removed unnecessary allocs of temp buffers.
+  combat.cpp           
+  uoxstruct.h           Removed strange linux-windows difference
+                        (I assumed the windows one to be correct, as it is 
+                         tested a lot more)
+                        Removed some comments with absolute NULL information
+
+-------------------------------------------------------------------------------
+27.01.2001              Thiago A. Correa             Thiago, Axel
 
    uox3.rc              Comented out the .ico file to allow MSVC build.
    uox3.h               Removed non-sense #ifdefs

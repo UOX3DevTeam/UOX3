@@ -506,16 +506,19 @@ void command_where(int s)
 // Prints your current coordinates+region.
 // added region-name too, LB
 {
-	if (chars[currchar[s]].region>=0 && chars[currchar[s]].region<4000) 
-	{
-		if (strlen(region[chars[currchar[s]].region].name)>0)
-			sysmessage(s, "You are at: %s",region[chars[currchar[s]].region].name); 
-		else sysmessage(s,"You are at: nirvana");
-	}
-	else 
-	{ 
-		sysmessage(s, "You are at: %s","invalid region"); 
-	}
+//  knox - region is a UNSIGNED CHAR, does that if is ALWAYS true.
+//	if (chars[currchar[s]].region>=0 && chars[currchar[s]].region<4000) 
+//	{
+	if (strlen(region[chars[currchar[s]].region].name)>0) {
+	  sysmessage(s, "You are at: %s",region[chars[currchar[s]].region].name); 
+	} else {
+      sysmessage(s,"You are at: nirvana");
+    }
+//	}
+//	else 
+//	{ 
+//		sysmessage(s, "You are at: %s","invalid region"); 
+//	}
 	
 	sysmessage(s, "%i %i (%i/%i)",chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,chars[currchar[s]].dispz); 
 	return;
@@ -1155,7 +1158,7 @@ void command_shutdown(int s)
 	if (tnum==2)
 	{
 		//				endtime=getclock()+(CLOCKS_PER_SEC*makenumber(1));
-		endtime=uiCurrentTime+(CLOCKS_PER_SEC*makenumber(1));
+		endtime=(unsigned int) (uiCurrentTime+(CLOCKS_PER_SEC*makenumber(1)));
 		if (makenumber(1)==0)
 		{
 			endtime=0;
@@ -2137,7 +2140,6 @@ void command_regspawnall(int s)
 	int i, j, k, spawn=0;
 	//	unsigned int currenttime=getclock();
 	unsigned int currenttime=uiCurrentTime;
-	char *temps;
 	for (int n=1;n<totalspawnregions;n++)
 	{
 		spawn += (spawnregion[n].max-spawnregion[n].current);
@@ -2157,15 +2159,14 @@ void command_regspawnall(int s)
 		{
 			doregionspawn(i);
 		}
-		spawnregion[i].nexttime=currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime,spawnregion[i].maxtime));
+		spawnregion[i].nexttime=(int) (currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime,spawnregion[i].maxtime)));
 	}
   //  EviLDeD - February 24, 2000
-  //  Memory cleanup - If your going to allocate the ram, then delete it too
-	temps = new char[60]; //  Ajusted to save some space - EviLDeD
+  //  Memory cleanup - If your going to allocate the ram, then delete it too      
+  //      knox - Or simply let the compiler worry about that -> use the Stack :o) It's a LOT faster....
+	char temps[60];
 	sprintf(temps, "Done. %6d total NPCs/items spawned in %6d regions.",spawn,totalspawnregions);
 	sysmessage(s, temps);
-	delete [] temps;
-  //  EviLDeD - End
 }
 
 void command_wipenpcs(int s)

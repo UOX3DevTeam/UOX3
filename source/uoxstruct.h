@@ -208,11 +208,8 @@ struct char_st
  int callnum; //GM Paging
  int playercallnum; //GM Paging
  int pagegm; //GM Paging
-#ifndef __LINUX__
  unsigned char region;
-#else
- short region;
-#endif
+ // knox removed that linux difference here
  unsigned int skilldelay;
  unsigned int objectdelay;
  int combathitmessage;

@@ -608,12 +608,10 @@ void cCommands::KillSpawn(int s, int r)  //courtesy of Revana
 
 void cCommands::RegSpawnMax (int s, int r)
 {
-	int i, spawn;
-//	unsigned int currenttime=getclock();
+	int i;
 	unsigned int currenttime=uiCurrentTime;
-	char *temps;
 	
-	spawn = (spawnregion[r].max-spawnregion[r].current);
+	int spawn = (spawnregion[r].max-spawnregion[r].current);
 	if (spawn > 250)
 	{
 		sysmessage(s, "Attempt to spawn more than 250 items/NPCs denied.  Spawning 250 instead.");
@@ -622,35 +620,27 @@ void cCommands::RegSpawnMax (int s, int r)
   //  EviLDeD - February 24, 2000
   //  Memory Cleanup - You think that allocating memory then not freeing
   //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-	temps = new char[650];  //  Adujested to 650 cause spawnregion[].name is 512 bytes long - EviLDeD
+  
+  //  knox - and how about not allocating it in first place :o), * WE ALL LIVE IN A YELLOW STACK * umm submarine
+	char temps[650];  //  Adusted to 650 due to possible size of spawnregion[].name being 512 bytes
 	sprintf(temps, "Region %s [%d] is Spawning %d items/NPCs, this will cause some lag.", spawnregion[r].name, r, spawn);
 	sysbroadcast(temps);
-	delete [] temps;
-  //  EviLDeD - End
 
-  for(i=1;i<spawn;i++)
+    for(i=1;i<spawn;i++)
 	{
-		doregionspawn(r);
-
+	  doregionspawn(r);
 	}	
 	
-	spawnregion[r].nexttime=currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime));
-  //  EviLDeD - February 24, 2000
-  //  Memory Cleanup - You think that allocating memory then not freeing
-  //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-	temps = new char[650];  //  Adusted to 650 due to possible size of spawnregion[].name being 512 bytes
+	spawnregion[r].nexttime=(int) (currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime)));
 	sprintf(temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r);
 	sysmessage(s, temps);
-	delete [] temps;
-  //  EviLDeD - End
 }
 
 void cCommands::RegSpawnNum (int s, int r, int n)
 {
 	int i, spawn=0;
-//	unsigned int currenttime=getclock();
 	unsigned int currenttime=uiCurrentTime;
-	char *temps;
+	char temps[650];
 	if (n > 250)
 	{
 		sysmessage(s, "Attempt to spawn more than 250 items/NPCs denied.  Try /REGSPAWN r n<250 instead.");
@@ -661,47 +651,28 @@ void cCommands::RegSpawnNum (int s, int r, int n)
 		spawn = (spawnregion[r].max-spawnregion[r].current);
 		if (spawn < n) 
 		{
-      //  EviLDeD - February 24, 2000
-      //  Memory Cleanup - You think that allocating memory then not freeing
-      //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-			temps = new char[650];  //  Adjusted to 650 because spawnregion[].name is 512 bytes long
 			sprintf(temps, "%d too many for region %s [%d], spawning %d to reach MAX:%d instead.",n, spawnregion[r].name, r, spawn, spawnregion[r].max);
 			sysmessage(s, temps);
-			delete [] temps;
-      //  EviLDeD - End
 		}
 		else spawn = n;
-    //  EviLDeD - February 24, 2000
-    //  Memory Cleanup - You think that allocating memory then not freeing
-    //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-		temps = new char[650];  //  Adujsted to 650 due to size of spawnregion[].name being 512 bytes in size
 		sprintf(temps, "Region %s [%d] is Spawning: %d NPCs/items, this will cause some lag.", spawnregion[r].name, r, spawn);
 		sysbroadcast(temps);
-		delete [] temps;
-    //  EviLDeD - End
 		for(i=1;i<spawn;i++)
 		{
 			doregionspawn(r);
 		}//for	
 	
-		spawnregion[r].nexttime=currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime));
-    //  EviLDeD - February 24, 2000
-    //  Memory Cleanup - You think that allocating memory then not freeing
-    //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-		temps = new char[650];  //  Adujsted to 650 due to size of spawnregion[].name being 512 bytes
+		spawnregion[r].nexttime = (int) (currenttime+(CLOCKS_PER_SEC * 60 * RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime)));
 		sprintf(temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r);
 		sysmessage(s, temps);
-		delete [] temps;
-    //  EviLDeD - End
-	}//else	
+	}
 }//regspawnnum
 
 void cCommands::KillAll(int s, int percent, unsigned char* sysmsg)
 {
-	int i;
 	sysmessage(s,"Killing all characters, this may cause some lag...");
 	sysbroadcast( (char *)sysmsg);
-	for(i=0;i<charcount;i++)
+	for (int i=0; i < charcount; i++)
 	{
 		if(!(chars[i].priv&1))
 		{
