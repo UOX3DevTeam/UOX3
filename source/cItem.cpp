@@ -1788,7 +1788,7 @@ bool CItem::HandleLine( char *tag, char *data )
 			SetCont( makeNum( data ) );
 			return true;
 		}
-		else if( !strcmp( tag, "Creator" ) )
+		else if( !strcmp( tag, "Creator" ) || !strcmp(tag,"Creater") )
 		{
 			SetCreator( makeNum( data ) );
 			return true;
