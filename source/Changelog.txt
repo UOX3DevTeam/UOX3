@@ -1,3 +1,6 @@
+3/1/2005 - Xuri (giwo)
+	Fixed a bug in HandleGuardAI() causing guards to kill cute, innocent "grey" kittens (and other animals) after taking care of any real criminals present
+
 2/28/2005 - giwo (0.98-2.8b)
 	Removed some duplication in the callGuards() routine.
 	Fixed a possible issue that could cause Timer events to crash after reloading the JS engine.
