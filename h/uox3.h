@@ -169,7 +169,7 @@ using namespace std;
 #include "worldmain.h"
 #include "regions.h"
 #include "xgm.h"
-
+//#include "bounty.h"
 #include "craces.h"
 #include "cweather.h"
 
