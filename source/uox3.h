@@ -59,9 +59,6 @@
 #define NAME "The Official DevTeam"
 #define EMAIL "http://www.uox3.net/"
 #define PROGRAMMERS "UOX3 DevTeam[Abaddon/EviLDeD/Freelancers]"
-#ifdef __linux__
-#define __LINUX__
-#endif
 #ifdef _WIN32
 #define __NT__
 #define _MSVC
@@ -114,7 +111,9 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #include <vector>
 #include <map>
 #include <fstream>
+#ifndef __LINUX__ // knox, somewhere inside pesters my linux/gnu system... *shrugs*
 #include <strstream>
+#endif
 #include <iostream>
 
 #include <cstdio>
