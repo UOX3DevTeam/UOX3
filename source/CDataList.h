@@ -22,7 +22,12 @@
 //|							Added an accessor to return the size of the container, also can now
 //|							grab a specific object from the array (or the one our iterator is currently
 //|							at). Added a FindEntry() function to simplify some internal code.							
-//|									
+//|							
+//|							1.2		giwo		21st Nov, 2004
+//|							Found a pretty substantial flaw causing the first object in a list to be
+//|							overlooked when the entire list was being emptied (IE at house deletion).
+//|							Overhauled First/Next/Finished and Added Begin to allow iteration to work
+//|							backwards thus resolving the issue.
 //o--------------------------------------------------------------------------o
 
 namespace UOX
@@ -49,6 +54,11 @@ namespace UOX
 			}
 			return fIter;
 		}
+
+		bool Begin( void )
+		{
+			return ( objIterator == objData.begin() );
+		}
 	public:
 		CDataList()
 		{
@@ -72,20 +82,24 @@ namespace UOX
 		T First( void )
 		{
 			T rvalue	= NULL;
-			objIterator	= objData.begin();
-			if( !Finished() )
+			objIterator	= objData.end();
+			if( !Begin() )
+			{
+				--objIterator;
 				rvalue = (*objIterator);
+			}
 			return rvalue;
 		}
 		T Next( void )
 		{
 			T rvalue = NULL;
-			if( !Finished() )
+			if( !Begin() )
 			{
-				++objIterator;
-				if( !Finished() )
-					rvalue = (*objIterator);
+				--objIterator;
+				rvalue = (*objIterator);
 			}
+			else
+				objIterator = objData.end();
 			return rvalue;
 		}
 		bool Finished( void )
@@ -115,7 +129,7 @@ namespace UOX
 			if( rIter != objData.end() )
 			{
 				const bool updateCounter = (objIterator != objData.end());
-				if( rIter != objData.begin() && rIter <= objIterator )
+				if( rIter != objData.begin() && rIter < objIterator )
 					--objIterator;
 
 				const size_t iterPos		= (rIter - objData.begin());
