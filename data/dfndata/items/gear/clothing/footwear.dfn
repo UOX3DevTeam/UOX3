@@ -7,6 +7,7 @@
 
 [0x170b]
 {
+get=base_item
 name=boots
 id=0x170b
 weight=300
@@ -21,6 +22,7 @@ decay=1
 
 [0x170c]
 {
+get=base_item
 name=boots
 id=0x170c
 weight=300
@@ -35,6 +37,7 @@ decay=1
 
 [0x170d]
 {
+get=base_item
 name=sandals
 id=0x170d
 weight=100
@@ -47,6 +50,7 @@ decay=1
 
 [0x170e]
 {
+get=base_item
 name=sandals
 id=0x170e
 weight=100
@@ -59,6 +63,7 @@ decay=1
 
 [0x170f]
 {
+get=base_item
 name=shoes
 id=0x170f
 weight=200
@@ -71,6 +76,7 @@ decay=1
 
 [0x1710]
 {
+get=base_item
 name=shoes
 id=0x1710
 weight=200
@@ -83,6 +89,7 @@ decay=1
 
 [0x1711]
 {
+get=base_item
 name=thigh boots
 id=0x1711
 weight=400
@@ -97,6 +104,7 @@ decay=1
 
 [0x1712]
 {
+get=base_item
 name=thigh boots
 id=0x1712
 weight=400
