@@ -399,7 +399,7 @@ void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
 	bool addSep = text[length - 1] != dirSep;
 
 	bool error = false;
- 	if( !resettingDefaults )
+	if( !resettingDefaults )
 	{
 #ifdef __LINUX__
 		DIR *dirPtr = opendir( text );
