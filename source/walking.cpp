@@ -2059,3 +2059,18 @@ int cMovement::validNPCMove(short int x, short int y, signed char z, CHARACTER s
     return 0;
 }
 
+void cMovement::deny(int k, int s, int sequence)
+{
+	char walkdeny[9]="\x21\x00\x01\x02\x01\x02\x00\x01";
+	
+	walkdeny[1]=sequence;
+	walkdeny[2]=chars[s].x>>8;
+	walkdeny[3]=chars[s].x%256;
+	walkdeny[4]=chars[s].y>>8;
+	walkdeny[5]=chars[s].y%256;
+	walkdeny[6]=chars[s].dir;
+	walkdeny[7]=chars[s].dispz;
+	Network->xSend(k, walkdeny, 8, 0);
+	walksequence[k]=-1;
+}
+
