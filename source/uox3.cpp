@@ -9438,7 +9438,7 @@ char iteminrange( UOXSOCKET s, ITEM i, int distance )
 	return 1;
 }
 
-char npcinrange( int s, int i, int distance )
+char npcinrange( UOXSOCKET s, int i, int distance )
 {
 	if( s > now || i < 0 || i > cmem )
 		return 0;
