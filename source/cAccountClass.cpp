@@ -181,6 +181,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			m_mapUsernameMap[actb.sUsername]=actb;
 			m_mapUsernameIDMap[actb.wAccountIndex]=actb;
 			//std::cout << std::endl;
+/*
 			for(MAPUSERNAMEID_CITERATOR CI=m_mapUsernameIDMap.begin();CI!=m_mapUsernameIDMap.end();CI++)
 			{
 				ACCOUNTSBLOCK b;
@@ -193,6 +194,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					std::cout << b.dwCharacters[jj] << " ";
 				std::cout << std::endl;
 			}
+*/
 			// Ok we have finished with this access block clean up and continue processing
 			bBraces[0]=false;
 			bBraces[1]=false;
@@ -1682,6 +1684,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 		m_mapUsernameIDMap[actbID.wAccountIndex] = actbID;
 		m_mapUsernameMap[actbName.sUsername] = actbName;
 		//cAccountClass::Save();
+/*
 		for(MAPUSERNAMEID_ITERATOR P=m_mapUsernameIDMap.begin();P!=m_mapUsernameIDMap.end();P++)
 		{
 			ACCOUNTSBLOCK b=P->second;
@@ -1690,6 +1693,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 				std::cout << "[0x" << std::hex << b.dwCharacters[iii] << "] ";
 			std::cout << std::endl;
 		}
+*/
 		return true;
 	}
 	return false;
