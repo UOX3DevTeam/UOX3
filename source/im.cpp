@@ -577,7 +577,10 @@ void im_loadmenus( const char *file_name, im_menucallback callback )
 	{
 		result = read_menu( fmenu, callback );
 		if( !result )
+		{
+			fclose(fmenu);
 			return;
+		}
 		result = gettoken( fmenu );
 	}
 }
