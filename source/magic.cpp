@@ -119,7 +119,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	{
 		g1->SetType( IT_GATE );
 		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
-		g1->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( GATE ) )) );
+		g1->SetGateTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g1->SetDir( 1 );
 	}
 	else
@@ -130,7 +130,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	{
 		g2->SetType( IT_GATE );
 		g2->SetLocation( trgX, trgY, trgZ, trgWorld );
-		g2->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( GATE ) )) );
+		g2->SetGateTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g2->SetDir( 1 );
 
 		g2->SetTempVar( CITV_MOREX, g1->GetSerial() );
@@ -352,7 +352,7 @@ bool splPoison( CChar *caster, CChar *target, CChar *src )
 		return false;
 		
 	target->SetPoisoned( 2 );   
-	target->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON ) )) );
+	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
 
 	return true;
 }
@@ -743,7 +743,7 @@ bool splExplosion( CChar *caster, CChar *target, CChar *src )
 bool splInvisibility( CChar *caster, CChar *target, CChar *src )
 {
 	target->SetVisible( VT_INVISIBLE );
-	target->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( INVISIBILITY ) )) );
+	target->SetTimer( tCHAR_INVIS, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_INVISIBILITY ) );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -2030,7 +2030,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 		if( poison < 0 ) 
 			poison = 1;
 		p->SetPoisoned( poison );
-		p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON ) )) );
+		p->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
 	}
 }
 

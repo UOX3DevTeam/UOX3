@@ -1778,8 +1778,8 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 	npcIndex->SetQuestOrigRegion( npcIndex->GetRegionNum() );  // Store this in order to remeber where the original message was posted
 	
 	// Set the expirey time on the NPC if no body accepts the quest
-	if( cwmWorldState->ServerData()->EscortInitExpire() )
-		npcIndex->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->EscortInitExpire() )) );
+	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ) )
+		npcIndex->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTWAIT ) );
 	
 	// Make sure the questDest is valid otherwise don't post and delete the NPC
 	if( !npcIndex->GetQuestDestRegion() )
@@ -1846,7 +1846,7 @@ void MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock )
 	npcIndex->SetQuestDestRegion( 0 );   // Reset quest destination region
 	
 	// Set a timer to automatically delete the NPC
-	npcIndex->SetTimer( tNPC_SUMMONTIME, BuildTimeValue(static_cast<R32>( cwmWorldState->ServerData()->EscortDoneExpire() )) );
+	npcIndex->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
 	npcIndex->SetOwner( NULL );
 }
 

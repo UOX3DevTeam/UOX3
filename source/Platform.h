@@ -127,11 +127,6 @@ suit our own purposes
 	#define closesocket( s ) close( s )
 	#define ioctlsocket( s, b, c ) ioctl( s, b, c )
 
-	extern "C" {
-		char *strlwr(char *);
-		char *strupr(char *);
-	}
-
 	#include "uoxlinux.h"	// linux wrappers for windows-specific api calls
 
 #endif

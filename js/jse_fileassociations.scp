@@ -234,6 +234,8 @@
 806=skill/armslore.js
 807=skill/taming.js
 808=skill/forensics.js
+809=skill/begging.js
+810=skill/detecthidden.js
 }
 
 

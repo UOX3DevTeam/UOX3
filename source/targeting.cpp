@@ -680,7 +680,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 		return;
 	c->SetLocation( i );
 	c->SetMovable( 2 );
-	c->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ) )) );
+	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
 	char temp[1024];
 	// if it's a human corpse
@@ -783,7 +783,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 			{
 				c->SetCont( NULL );
 				c->SetLocation( i );
-				c->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ) )) );
+				c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 			}
 		}
 		i->Delete();
@@ -1808,9 +1808,9 @@ bool CPITargetCursor::Handle( void )
 			{
 				switch( targetID )
 				{
-					case TARGET_ADDSCRIPTNPC:		AddScriptNpc( tSock );					break;
-					case TARGET_BUILDHOUSE:			BuildHouseTarget( tSock );				break;
-					case TARGET_TELE:				TeleTarget( tSock );					break;	
+					case TARGET_ADDSCRIPTNPC:	AddScriptNpc( tSock );					break;
+					case TARGET_BUILDHOUSE:		BuildHouseTarget( tSock );				break;
+					case TARGET_TELE:			TeleTarget( tSock );					break;	
 					case TARGET_DYE:			DyeTarget( tSock );						break;
 					case TARGET_KEY:			KeyTarget( tSock );						break;
 					case TARGET_DYEALL:			ColorsTarget( tSock );					break;
@@ -1857,12 +1857,10 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
-					case TARGET_DETECTHIDDEN:	Skills->DetectHidden( tSock );			break;
 					case TARGET_PROVOCATION:	Skills->ProvocationTarget1( tSock );	break;
 					case TARGET_PROVOCATION2:	Skills->ProvocationTarget2( tSock );	break;
 					case TARGET_ENTICEMENT:		Skills->EnticementTarget1( tSock );		break;
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
-					case TARGET_BEGGING:		Skills->BeggingTarget( tSock );			break;
 					case TARGET_APPLYPOISON: 
 												tSock->TempObj( calcItemObjFromSer( tSock->GetDWord( 7 ) ) );
 												tSock->target( 0, TARGET_POISONITEM, 1613 );

@@ -480,7 +480,7 @@ void command_setshoprestockrate( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		cwmWorldState->ServerData()->SystemTimer( SHOP_SPAWN, static_cast<UI16>(Commands->Argument( 1 )) );
+		cwmWorldState->ServerData()->SystemTimer( tSERVER_SHOPSPAWN, static_cast<UI16>(Commands->Argument( 1 )) );
 		s->sysmessage( 56 );
 	}
 	else

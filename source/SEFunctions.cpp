@@ -1364,6 +1364,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcCharacterObj );
 	}
 	
+	UI16 retCounter				= 0;
 	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
@@ -1378,10 +1379,14 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 			if( !ValidateObject( tempChar ) )
 				continue;
 			if( objInRange( srcChar, tempChar, (UI16)distance ) )
-				myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
+			{
+				if( myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket ) )
+					++retCounter;
+			}
 		}
 		regChars->Pop();
 	}
+	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
 }
 //o--------------------------------------------------------------------------o

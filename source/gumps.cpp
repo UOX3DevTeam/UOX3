@@ -2240,7 +2240,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 					{
 						position += 20;
 						++lineForButton;
-						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->RightTextColour(), ++linenum );
+						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
 						one.push_back( temp3 );
 						strncpy( temp2, &temp[stringWidth + tempCounter * stringWidth * 2], stringWidth * 2 );
 						temp2[stringWidth * 2] = 0;
@@ -2279,7 +2279,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 					{
 						position += 20;
 						++lineForButton;
-						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->LeftTextColour(), ++linenum );
+						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
 						one.push_back( temp3 );
 						strncpy( temp2, &temp[(tempCounter + 1) * sWidth], sWidth );
 						temp2[sWidth] = 0;

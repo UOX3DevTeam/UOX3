@@ -885,12 +885,12 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->Dispellable( false );
 			break;
 		case 18:	// Polymorph
-			toAdd->ExpireTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->PolyDuration() ) );
+			toAdd->ExpireTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			toAdd->Dispellable( false );
 			
 			UI16 k;
 			// Grey flag when polymorphed
-			dest->SetTimer( tCHAR_CRIMFLAG, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->PolyDuration()) ) );
+			dest->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			if( dest->IsOnHorse() ) 
 				DismountCreature( dest );
 			k = ( more1<<8 ) + more2;
@@ -981,11 +981,11 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( 1 );
 			break;
 		case 26:
-			toAdd->ExpireTime( BuildTimeValue( cwmWorldState->ServerData()->PotionDelay() ) );
+			toAdd->ExpireTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POTION ) );
 			dest->SetUsingPotion( true );
 			break;
 		case 27:
-			toAdd->ExpireTime( BuildTimeValue( cwmWorldState->ServerData()->CombatExplodeDelay() ) );
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->CombatExplodeDelay()) ) );
 			toAdd->More1( more1 );
 			break;
 		case 40:

@@ -1232,11 +1232,11 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 
 	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > (SI16)cwmWorldState->ServerData()->HungerThreshold() || cwmWorldState->ServerData()->HungerRate() == 0 ) )
+		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 /*(SI16)cwmWorldState->ServerData()->HungerThreshold()*/ || cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 ) )
 		{
 			for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 			{
-				if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
+				if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( mChar.GetSkill( HEALING ) < 500 )
 						mChar.IncHP( 1 );
@@ -1254,7 +1254,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 					break;
 			}
 		}
-		mChar.SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) ), 0 );
+		mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );
 	}
 	if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
@@ -1262,7 +1262,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		{
 			for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
 			{
-				if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+				if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
 				{
 					mChar.IncStamina( 1 );
 					if( mChar.GetStamina() >= mChar.GetMaxStam() )
@@ -1275,7 +1275,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 					break;
 			}
 		}
-		mChar.SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) ), 1 );
+		mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 	}
 
 	// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
@@ -1285,7 +1285,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		{
 			for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
 			{
-				if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( MANA_REGEN ) * 1000) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
+				if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
 				{
 					Skills->CheckSkill( (&mChar), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
 					mChar.IncMana( 1 );	// Gain a mana point
@@ -1303,8 +1303,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 			}
 		}
 		R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
-		int NextManaRegen = static_cast<int>(cwmWorldState->ServerData()->SystemTimer( MANA_REGEN ) * ( 1 - MeditationBonus ) * 1000);
-		if( cwmWorldState->ServerData()->SystemTimer( ARMORAFFECTMANA_REGEN ) )	// If armor effects mana regeneration...
+		int NextManaRegen = static_cast<int>(cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000);
+		if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
 		{
 			R32 ArmorPenalty = Combat->calcDef( (&mChar), 0, false );	// Penalty taken due to high def
 			if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
@@ -1320,48 +1320,53 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 	// CUSTOM END
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		mChar.ExposeToView();
-	if( mChar.WillHunger() && cwmWorldState->ServerData()->HungerRate() > 1 && ( mChar.GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+
+	// Hunger Code
+	if( !mChar.IsNpc() && mSock != NULL )	// NPC's Shouldn't Hunger (Move this whole chunk to checkPC() eventually)
 	{
-		if( mChar.GetHunger() > 0 && ( !mChar.IsCounselor() && !mChar.IsGM() ) )
-			mChar.DecHunger(); //Morrolan GMs and Counselors don't get hungry
-		
-		UI16 HungerTrig = mChar.GetScriptTrigger();
-		cScript *toExecute = JSMapping->GetScript( HungerTrig );
-		bool doHunger = true;
-		if( toExecute != NULL )
-			doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
-		if( doHunger && mSock != NULL )
+		UI16 hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+		if( mChar.WillHunger() && hungerRate > 0 )
 		{
-			switch( mChar.GetHunger() )
+			if( mChar.GetCommandLevel() > PLAYER_CMDLEVEL && !mChar.IsDead() && !mChar.IsInvulnerable() )
 			{
-				case 6: break;
-				case 5:	mSock->sysmessage( 1222 );	break;
-				case 4:	mSock->sysmessage( 1223 );	break;
-				case 3:	mSock->sysmessage( 1224 );	break;
-				case 2:	mSock->sysmessage( 1225 );	break;
-				case 1:	mSock->sysmessage( 1226 );	break;
-				case 0:
-					if( !mChar.IsCounselor() && !mChar.IsGM() )
-						mSock->sysmessage( 1227 );
-					break;	
+				if( mChar.GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				{
+					if( mChar.GetHunger() > 0 )
+					{
+						mChar.DecHunger();
+						UI16 HungerTrig = mChar.GetScriptTrigger();
+						cScript *toExecute = JSMapping->GetScript( HungerTrig );
+						bool doHunger = true;
+						if( toExecute != NULL )
+							doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
+						if( doHunger )
+						{
+							switch( mChar.GetHunger() )
+							{
+								default:
+								case 6:								break;
+								case 5:	mSock->sysmessage( 1222 );	break;
+								case 4:	mSock->sysmessage( 1223 );	break;
+								case 3:	mSock->sysmessage( 1224 );	break;
+								case 2:	mSock->sysmessage( 1225 );	break;
+								case 1:	mSock->sysmessage( 1226 );	break;
+								case 0:	mSock->sysmessage( 1227 );	break;	
+							}
+						}
+					}
+					else if( mChar.GetHP() > 0 )
+					{
+						mSock->sysmessage( 1228 );
+						mChar.IncHP( (SI16)( -cwmWorldState->ServerData()->HungerDamage() ) );
+						if( mChar.GetHP() <= 0 )
+							mSock->sysmessage( 1229 );
+					}
+					mChar.SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+				}
 			}
 		}
-		mChar.SetTimer( tCHAR_HUNGER, BuildTimeValue( (R32)cwmWorldState->ServerData()->HungerRate() ) );
 	}
-	if( checkHunger )
-	{
-		if( mChar.WillHunger() && mChar.GetHP() > 0 && mChar.GetHunger() < 2 && ( !mChar.IsCounselor() && !mChar.IsGM() ) && !mChar.IsDead() )
-		{   
-			if( mSock != NULL )
-				mSock->sysmessage( 1228 );
-			mChar.IncHP( (SI16)( -cwmWorldState->ServerData()->HungerDamage() ) );
-			if( mChar.GetHP() <= 0 )
-			{ 
-				if( mSock != NULL )
-					mSock->sysmessage( 1229 );
-			}
-		}
-	}
+
 	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() )
 	{
 		if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
@@ -1502,7 +1507,7 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 		if( mChar.GetKills() )
 			mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
 		if( mChar.GetKills() )
-			mChar.SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepMurderDecay() ) ) );
+			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 		else
 			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
 		if( mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
@@ -1928,7 +1933,7 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		doWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
-		SetTimer( tWORLD_LIGHTTIME, BuildTimeValue( (R32)ServerData()->SystemTimer( WEATHER ) ) );	// for testing purposes
+		SetTimer( tWORLD_LIGHTTIME, ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );	// for testing purposes
 		doWeather = true;
 	}
 
@@ -1937,11 +1942,6 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		checkFieldEffects = true;
 		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
-	}
-	if( ServerData()->HungerDamage() > 0 && ( GetTimer( tWORLD_HUNGERDAMAGE ) <= GetUICurrentTime() || GetOverflow() ) )	// Damage them if they are very hungry
-	{
-		SetTimer( tWORLD_HUNGERDAMAGE, BuildTimeValue( (R32)ServerData()->HungerDamageRateTimer() ) );	// set new hungertime
-		checkHunger = true;
 	}
 	std::set< SubRegion * > regionList;	// we'll get around our npc problem this way, hopefully
 	Network->PushConn();
@@ -1984,7 +1984,7 @@ void CWorldMain::CheckAutoTimers( void )
 	if( nextCheckItems <= GetUICurrentTime() || GetOverflow() )
 	{
 		nextCheckItems = BuildTimeValue( static_cast<R32>(ServerData()->CheckItemsSpeed()) );
-		nextDecayItems = BuildTimeValue( static_cast<R32>(ServerData()->SystemTimer( DECAY )) );
+		nextDecayItems = ServerData()->BuildSystemTimeValue( tSERVER_DECAY );
 		checkItems = true;
 	}
 	if( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() || GetOverflow() )
@@ -1994,7 +1994,7 @@ void CWorldMain::CheckAutoTimers( void )
 	}
 	if( GetTimer( tWORLD_SHOPRESTOCK ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_SHOPRESTOCK, BuildTimeValue( (R32)( ServerData()->SystemTimer( SHOP_SPAWN ) ) ) );
+		SetTimer( tWORLD_SHOPRESTOCK, ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
 		doRestock = true;
 	}
 
@@ -2204,7 +2204,7 @@ void ParseArgs( int argc, char *argv[] )
 		{
 			cwmWorldState->ServerData()->dumpLookup( 0 );
 			cwmWorldState->ServerData()->save( "./uox.tst.ini" );
-			Shutdown(FATAL_UOX3_SUCCESS);
+			Shutdown( FATAL_UOX3_SUCCESS );
 		}
 		else if( !strcmp( argv[i], "-cluox100" ) )
 		{
@@ -2961,13 +2961,13 @@ void criminal( CChar *c )
 	if( !c->IsCriminal() )
 	{
 		CSocket *cSock = calcSocketObjFromChar( c );
-		c->SetTimer( tCHAR_CRIMFLAG, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepCrimTime()) ) );
+		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 		if( cSock != NULL )
 			cSock->sysmessage( 1379 );
 		setcharflag( c );
 	}
 	else	// let's update their flag, as another criminal act will reset the timer
-		c->SetTimer( tCHAR_CRIMFLAG, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepCrimTime()) ) );
+		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 	// Lets let Npc AI and other code sections take care of calling guards
 }
 

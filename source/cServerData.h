@@ -7,27 +7,31 @@ namespace UOX
 
 enum cSD_TID
 {
-	TIMER_ERROR = -1,
-	CORPSE_DECAY = 0,
-	LOOT_DECAY,
-	WEATHER,
-	SHOP_SPAWN,
-	DECAY,
-	INVISIBILITY,
-	OBJECT_USAGE,
-	GATE,
-	POISON,
-	LOGIN_TIMEOUT,
-	HITPOINT_REGEN,
-	STAMINA_REGEN,
-	MANA_REGEN,
-	ARMORAFFECTMANA_REGEN,
-	BASE_FISHING,
-	RANDOM_FISHING,
-	SPIRIT_SPEAK,
-	BEGGING_T,
-	PLAYER_CORPSE,
-	TIMER_COUNT
+	tSERVER_ERROR = -1,
+	tSERVER_CORPSEDECAY = 0,	// Amount of time for a corpse to decay.
+	tSERVER_WEATHER,			// Amount of time between changing light levels (day cycles).
+	tSERVER_SHOPSPAWN,			// Amount of time between shopkeeper restocks.
+	tSERVER_DECAY,				// Amount of time a decayable item will remain on the ground before dissapearing.
+	tSERVER_INVISIBILITY,		// Duration of the invisibility spell.
+	tSERVER_OBJECTUSAGE,		// Amount of time a player must wait between using objects.
+	tSERVER_GATE,				// Duration of a summoned moongate.
+	tSERVER_POISON,				// Duration of the poison effect on a character.
+	tSERVER_LOGINTIMEOUT,		// Amount of time for an idle connection to time out.
+	tSERVER_HITPOINTREGEN,		// Amount of time required to regenerate a single point of health.
+	tSERVER_STAMINAREGEN,		// Amount of time required to regenerate a single point of stamina.
+	tSERVER_MANAREGEN,			// Amount of time required to regenerate a single point of mana.
+	tSERVER_FISHINGBASE,		// Base time for fishing skill to complete.
+	tSERVER_FISHINGRANDOM,		// Max random time for fishing skill to complete.
+	tSERVER_SPIRITSPEAK,		// Duration of the spirit speak skill.
+	tSERVER_HUNGERRATE,			// Amount of time a player has before his hunger level decreases.
+	tSERVER_POLYMORPH,			// Duration of the polymorph spell.
+	tSERVER_ESCORTWAIT,			// Amount of time until an escort NPC will dissapear while waiting for a player to start his quest.
+	tSERVER_ESCORTACTIVE,		// Amount of time until an escort NPC will dissapear while a player is escorting him.
+	tSERVER_ESCORTDONE,			// Amount of time until an escort NPC will dissapear when his quest is finished.
+	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
+	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
+	tSERVER_POTION,				// Delay between using potions
+	tSERVER_COUNT
 };
 
 enum CSDDirectoryPaths
@@ -72,22 +76,22 @@ class CServerData
 private:
 
 	// ServerSystems
-	std::string sServerName;									// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
-	UI16		port;															//	Port number that the server listens on, for connections
+	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
+	UI16		port;							//	Port number that the server listens on, for connections
 	std::vector< physicalServer > serverList;	//	Series of server entries for shard list
-	UI08		consolelogenabled;								//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
-	UI08		crashprotectionenabled;						//	Level of crash protection - number of crash restart attempts before stopping - NEVER ACTIVELY USED
-	char		commandprefix;										//	Character that acts as the command prefix
-	bool		announcesaves;										//	Determines if world saves are announced
-	bool		joinpartmsgsenabled;							//	Determines if player join/part messages are enabled
-	bool		mulcachingenabled;								//	Determines if the MULs are cached in memory
-	bool		backupsenabled;										//	Determines if backups are enabled
-	SI16		backupRatio;											//	Number of saves before a backup occurs
-	UI32		serversavestimer;									//	Number of seconds between world saves
-	UI32		netRcvTimeout;										// 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly laggy nets this would drop alot of packets, and disconnect people.
-	UI32		netSndTimeout;										// 04/03/2004 - Not used at this time.
-	UI32		netRetryCount;										// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
-	bool		uogEnabled;												// 04/03/2004 - Added to support the UOG Info Request Service
+	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
+	UI08		crashprotectionenabled;			//	Level of crash protection - number of crash restart attempts before stopping - NEVER ACTIVELY USED
+	char		commandprefix;					//	Character that acts as the command prefix
+	bool		announcesaves;					//	Determines if world saves are announced
+	bool		joinpartmsgsenabled;			//	Determines if player join/part messages are enabled
+	bool		mulcachingenabled;				//	Determines if the MULs are cached in memory
+	bool		backupsenabled;					//	Determines if backups are enabled
+	SI16		backupRatio;					//	Number of saves before a backup occurs
+	UI32		serversavestimer;				//	Number of seconds between world saves
+	UI32		netRcvTimeout;					// 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly laggy nets this would drop alot of packets, and disconnect people.
+	UI32		netSndTimeout;					// 04/03/2004 - Not used at this time.
+	UI32		netRetryCount;					// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
+	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
 
 	// facet block
 	bool		useFacetSaves;
@@ -103,7 +107,7 @@ private:
 	bool		snoopiscrime;					//	True if snooping is a crime, otherwise false
 
 	// ServerTimers
-	UI16		serverTimers[TIMER_COUNT];
+	UI16		serverTimers[tSERVER_COUNT];
 	// Directories
 	std::string serverDirectories[CSDDP_COUNT];
 
@@ -126,8 +130,9 @@ private:
 	bool		npctraining;					//	True if NPCs can train PCs
 	bool		charhidewhilemounted;			//	Should be a BOOL - If true, then a character can hide/stealth while mounted
 	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
-	UI16		polyDuration;					//	Duration of the polymorph spell (in seconds)
-	UI32		clientSupport;				//	April 4, 2005 - EviLDeD - contains flags that represent the supported clients
+	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
+	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
+	UI08		playerCorpseDecayMultiplier;	//  Multiplier for player corpse decay.
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -138,14 +143,11 @@ private:
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
 
 	// MessageBoards
-	SI16		msgpostinglevel;				//	If not 0, then players can post
-	SI16		msgremovallevel;				//	If not 0, then players can remove posts
+	UI08		msgpostinglevel;				//	If not 0, then players can post
+	UI08		msgremovallevel;				//	If not 0, then players can remove posts
 
 	// Escorts
 	bool		escortsenabled;					//	True if escorts are enabled
-	UI16		escortinitexpire;				//	How long (in seconds) the escort is waiting for a PC before it expires
-	UI16		escortactiveexpire;				//	How long (in seconds) the escort is following a PC before it expires
-	UI16		escortdoneexpire;				//	How long (in seconds) the escort will stay around after it has been escorted
 
 	// WorldLight
 	LIGHTLEVEL	dungeonlightlevel;				//	Default light level for a dungeon, if not subject to a weather system
@@ -162,19 +164,13 @@ private:
 	UI08		seconds;						//	Number of seconds the world has been running (persistent)
 	bool		ampm;							//	Whether our current time is in the morning or afternoon
 
-	// Begging
-	SI16		beggingrange;					//	Change to RANGE type?  Distance at which an NPC/PC can beg
-
 	// Tracking
 	UI16		trackingbaserange;				//	Minimum range even a novice can track from
 	UI16		trackingbasetimer;				//	Tracking timer - maximum time for a GM to track at
 	UI08		trackingmaxtargets;				//	Maximum number of targets that can be tracked
 	UI16		trackingmsgredisplaytimer;		//	How often (in seconds) the tracking message is redisplayed
 
-
 	// Reputation
-	UI16		murderdecaytimer;				//	TIMERVAL?  How long it takes before a murder is decayed
-	UI16		criminaldecaytimer;				//	TIMERVAL?  How long it takes before becoming innocent again
 	UI16		maxmurdersallowed;				//	Maximum number of kills before turning red
 
 	// Resources
@@ -187,10 +183,7 @@ private:
 	UI16		logsrespawnarea;				//	Number of log areas (ie Y x Y where Y == value)
 
 	// Hunger & Food
-	UI16		hungerrate;						//	TIMERVAL? Number of seconds between hunger checks
-	UI16		hungerdamageratetimer;			//	TIMERVAL? Number of seconds between hunger damage checks
 	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
-	SI16		hungerthreshold;				//	The hunger level below which damage is sustained
 
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
@@ -203,7 +196,7 @@ private:
 	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
-	R32			combatExplodeDelay;				//	Time from casting to actual explosion
+	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
 	bool		shootonanimalback;				//	True if you can fire a bow from horseback
 
 	// Start & Location Settings
@@ -212,27 +205,25 @@ private:
 	UI16		startprivs;						//	Starting privileges of characters
 
 	// Anything under this comment is left here for symantics
-	UI08 skilllevel;							//	Some skill value associated with the rank system
-	SI16 buyThreshold;							//	Value above which money will be sourced from the bank rather than the player
+	UI08		skilllevel;						//	Some skill value associated with the rank system
+	SI16		buyThreshold;					//	Value above which money will be sourced from the bank rather than the player
 
 	// Gump stuff
-	UI16	titleColour;						//	Default text colour for titles in gumps
-	UI16	leftTextColour;						//	Default text colour for left text in gumps (2 column ones)
-	UI16	rightTextColour;					//	Default text colour for right text in gumps
-	UI16	buttonCancel;						//	Default Button ID for cancel button in gumps
-	UI16	buttonLeft;							//	Default Button ID for left button in gumps
-	UI16	buttonRight;						//	Default Button ID for right button in gumps
-	UI16	backgroundPic;						//	Default Gump ID for background gump
+	UI16		titleColour;					//	Default text colour for titles in gumps
+	UI16		leftTextColour;					//	Default text colour for left text in gumps (2 column ones)
+	UI16		rightTextColour;				//	Default text colour for right text in gumps
+	UI16		buttonCancel;					//	Default Button ID for cancel button in gumps
+	UI16		buttonLeft;						//	Default Button ID for left button in gumps
+	UI16		buttonRight;					//	Default Button ID for right button in gumps
+	UI16		backgroundPic;					//	Default Gump ID for background gump
 
 	// Townstone stuff
-	UI32 numSecsPollOpen;						//	Time (in seconds) for which a town voting poll is open
-	UI32 numSecsAsMayor;						//	Time (in seconds) that a PC would be a mayor
-	UI32 taxPeriod;								//	Time (in seconds) between periods of taxes for PCs 
-	UI32 guardPayment;							//	Time (in seconds) between payments for guards
+	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
+	UI32		numSecsAsMayor;					//	Time (in seconds) that a PC would be a mayor
+	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs 
+	UI32		guardPayment;					//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults( void );
-
-	SI16	potiondelay;						//	TIMERVAL?  Number of seconds delay on potion use
 
 public:
 	SI16		ServerMoon( SI16 slot ) const;
@@ -298,6 +289,7 @@ public:
 	SI16		MaxStaminaMovement( void ) const;
 	void		SystemTimer( cSD_TID timerid, UI16 value );
 	UI16		SystemTimer( cSD_TID timerid ) const;
+	R32			BuildSystemTimeValue( cSD_TID timerID ) const;
 
 	bool		ServerUOGEnabled(void) const { return uogEnabled; }
 	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }
@@ -382,11 +374,11 @@ public:
 	void		CheckSpawnRegionSpeed( R64 value );
 	R64			CheckSpawnRegionSpeed( void ) const;
 
-	void		MsgBoardPostingLevel( SI16 value );
-	SI16		MsgBoardPostingLevel( void ) const;
+	void		MsgBoardPostingLevel( UI08 value );
+	UI08		MsgBoardPostingLevel( void ) const;
 
-	void		MsgBoardPostRemovalLevel( SI16 value );
-	SI16		MsgBoardPostRemovalLevel( void ) const;
+	void		MsgBoardPostRemovalLevel( UI08 value );
+	UI08		MsgBoardPostRemovalLevel( void ) const;
 
 	void		MineCheck( UI08 value );
 	UI08		MineCheck( void ) const;
@@ -406,35 +398,14 @@ public:
 	void		EscortsEnabled( bool value );
 	bool		EscortsEnabled( void ) const;
 
-	void		EscortInitExpire( UI16 value );
-	UI16		EscortInitExpire( void ) const;
-
-	void		EscortActiveExpire( UI16 value );
-	UI16		EscortActiveExpire( void ) const;
-
-	void		EscortDoneExpire( UI16 value );
-	UI16		EscortDoneExpire( void ) const;
-
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;
 
 	void		CombatAnimalsAttackChance( SI16 value );
 	SI16		CombatAnimalsAttackChance( void ) const;
 
-	void		HungerRate( UI16 value );
-	UI16		HungerRate( void ) const;
-
-	void		HungerDamageRateTimer( UI16 value );
-	UI16		HungerDamageRateTimer( void ) const;
-
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
-
-	void		HungerThreshold( SI16 value );
-	SI16		HungerThreshold( void ) const;
-
-	void		PotionDelay( SI16 value );
-	SI16		PotionDelay( void ) const;
 
 	void		BuyThreshold( SI16 value );
 	SI16		BuyThreshold( void ) const;
@@ -448,8 +419,8 @@ public:
 	void		CombatMaxSpellRange( SI16 value );
 	SI16		CombatMaxSpellRange( void ) const;
 
-	void		CombatExplodeDelay( R32 value );
-	R32			CombatExplodeDelay( void ) const;
+	void		CombatExplodeDelay( UI16 value );
+	UI16		CombatExplodeDelay( void ) const;
 
 	void		CombatAnimalsGuarded( bool value );
 	bool		CombatAnimalsGuarded( void ) const;
@@ -499,14 +470,8 @@ public:
 	void		TownGuardPayment( UI32 value );
 	UI32		TownGuardPayment( void ) const;
 
-	void		RepMurderDecay( UI16 value );
-	UI16		RepMurderDecay( void ) const;
-
 	void		RepMaxKills( UI16 value );
 	UI16		RepMaxKills( void ) const;
-
-	void		RepCrimTime( UI16 value );
-	UI16		RepCrimTime( void ) const;
 
 	void		ResLogs( SI16 value );
 	SI16		ResLogs( void ) const;
@@ -541,9 +506,6 @@ public:
 	void		TrackingRedisplayTime( UI16 value );
 	UI16		TrackingRedisplayTime( void ) const;
 
-	void		BeggingRange( SI16 value );
-	SI16		BeggingRange( void ) const;
-
 	// Sept 22, 2002 - EviLDeD - Support for Xuri's HideWhileMounted fix.
 	void		CharHideWhileMounted( bool value );
 	bool		CharHideWhileMounted( void ) const;
@@ -551,8 +513,11 @@ public:
 	void		WeightPerStr( UI08 newVal );
 	UI08		WeightPerStr( void ) const;
 
-	void		PolyDuration( UI16 newVal );
-	UI16		PolyDuration( void ) const;
+	void		ArmorAffectManaRegen( bool newVal );
+	bool		ArmorAffectManaRegen( void ) const;
+
+	void		PlayerCorpseDecayMultiplier( UI08 newVal );
+	UI08		PlayerCorpseDecayMultiplier( void ) const;
 
 	void		dumpLookup( int lookupid );
 	void		dumpPaths( void );

@@ -1,3 +1,16 @@
+4/2/2005 - giwo (0.98-2.8e)
+	Moved Begging skill out to JS.
+	Moved Detecting Hidden skill out to JS.
+	Fixed an issue causing JS Character method SetSkillByName() to always return false.
+	Fixed an issue causing AreaCharacterFunction() to invalidate any characters and sockets in the function that called it.
+	Fixed a similar issue causing IterateOver() to invalidate any characters and items in the function that called it.
+	Fixed an issue that would set FD_SETSIZE to a much lower value than it should be on some *nix systems. (punt)
+	Replaced instances of strupr and strlwr with their UString counterparts. (punt)
+	Fixed an issue causing NPC's to hunger (and die quite quickly).
+	Removed many superfluous entries from uox.ini (BEGGINGTIMER, HUNGERDAMAGERATE, HUNGERTHRESHOLD, BEGGINGRANGE).
+	Modified the enum cSD_TID in CServerData.h to standardize naming habits.
+	Moved many timers from individual entries in CServerData into the serverTimers[] array.
+
 3/11/2005 - giwo (0.98-2.8d)
 	Included jr's fixes for cygwin compatability.
 	Began work on allowing UOX to compile under MinGW.

@@ -268,7 +268,7 @@ bool CPIGetItem::Handle( void )
 	}
 
 	if( i->isDecayable() )
-		i->SetDecayTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( DECAY ) ) );
+		i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
 	if( iCont != NULL )
 	{
@@ -588,7 +588,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		{
 			Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
 			targNPC->SetPoisoned( i->GetPoisoned() );
-			targNPC->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON )) ) );
+			targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
 		}
 		//Remove a food item
 		bool iDeleted = i->IncAmount( -1 );
@@ -742,7 +742,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 			Weight->subtractItemWeight( nChar, i );
 
 		if( i->isDecayable() )
-			i->SetDecayTime( BuildTimeValue( static_cast< R32 >(cwmWorldState->ServerData()->SystemTimer( DECAY ) ) ) );
+			i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
 		if( nChar->GetMultiObj() != NULL )
 		{
@@ -1873,7 +1873,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 					else
 						i->SetLocation( mChar );
 					i->SetDecayable( true );
-					i->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ) )) );
+					i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 					x->IncAmount( -1 );
 				}
 				else
@@ -2194,7 +2194,7 @@ bool CPIDblClick::Handle( void )
 		return true;
 	}
 
-	tSock->SetTimer( tPC_OBJDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( OBJECT_USAGE ) )) );
+	tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
 
 	ItemTypes iType	= findItemType( x );
 	UI16 itemID		= x->GetID();

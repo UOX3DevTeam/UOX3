@@ -39,7 +39,7 @@ fd_set all;
 fd_set errsock;
 
 void DoorMacro( CSocket *s );
-UnicodeTypes FindLanguage( char *lang );
+UnicodeTypes FindLanguage( const char *lang );
 void sysBroadcast( const std::string txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
@@ -200,7 +200,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = p->GetSerial();
-		p->SetTimer( tPC_LOGOUT, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( LOGIN_TIMEOUT ) )) );
+		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
 	}
 	actbAccount.wFlags &= 0xFFF7;
 	p->SetAccount( actbAccount );
@@ -279,7 +279,14 @@ void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 }
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-	#define FD_SETSIZE 256 
+	#ifdef FD_SETSIZE
+		#if FD_SETSIZE < 256
+			#undef FD_SETSIZE
+			#define FD_SETSIZE 256 
+		#endif
+	#else
+		#define FD_SETSIZE 256 
+	#endif
 #endif
 
 void cNetworkStuff::CheckConn( void ) // Check for connection requests
@@ -532,7 +539,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 			Console.Print( "Packet ID: 0x%x\n", packetID );
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
-				mSock->IdleTimeout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( LOGIN_TIMEOUT ) )) );
+				mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
 			cPInputBuffer *test	= WhichPacket( packetID, mSock );
 			bool doSwitch		= true;
 			if( test != NULL )

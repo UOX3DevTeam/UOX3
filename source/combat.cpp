@@ -1352,7 +1352,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				{
 					ourTarg->SetPoisoned( mChar.GetPoisonStrength() );
 					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32> (40 / ourTarg->GetPoisoned() )) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
-					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * cwmWorldState->ServerData()->SystemTimer( POISON ) ) ); //wear off starts after poison takes effect - AntiChrist
+					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON ) ) ); //wear off starts after poison takes effect - AntiChrist
 					if( targSock != NULL )
 						targSock->sysmessage( 282 );
 				}

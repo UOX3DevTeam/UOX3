@@ -8,43 +8,9 @@
 
 namespace UOX
 {
-
-#define REGENRATE1 8 // Seconds to heal ONE hp
-#define REGENRATE2 3 // Seconds to heal ONE stm
-#define REGENRATE3 5 // Seconds to heal ONE mn
-#define PLAYERCORPSEDECAYMULTIPLIER 3
-#define SPIRITSPEAKTIMER 30 // spiritspeak lasts at least 30 seconds, additional time is calculated by Skill & INT
-#define BEGGINGRANGE 3                  // begging range
-#define FISHINGTIMEBASE 10              // it takes at least FISHINGTIMEBASE sec to fish
-#define FISHINGTIMER 5
-#define DECAYTIMER 300  // 5 minute decay rate
-#define HUNGERRATE 6000 // 15 minutes
-#define HUNGERDAMAGERATE 10 //every 10 seconds
-#define HUNGERDAMAGE 2 //-2 hp
-#define POISONTIMER 180
-#define POTIONDELAY 10
-#define STATCAP 325
-#define SKILLCAP 7000
-#define INVISTIMER 60 // invisibility spell lasts 1 minute
-#define SKILLDELAY 5   // Skill usage delay     (5 seconds)
-#define OBJECTDELAY 1
-#define GATETIMER 30
-#define ATTACKSTAMINA -2 // AntiChrist - attacker loses stamina when hits
-#define ANIMALS_ATTACK_CHANCE 15 // By default 15% of chance to attack an animal
-#define MAX_ABSORBTION 20 // 20 Arm (single armour piece) -- Magius(CHE)
-#define MAX_NON_HUMAN_ABSORBTION 100 // 100 Arm (total armour) -- Magius(CHE)
-#define NPC_DAMAGE_RATE 2 // DAMAGE / NPC_DAMAGE_RATE for NPCs -- Magius(CHE)
-#define NPC_BASE_FLEEAT 20
-#define NPC_BASE_REATTACKAT 40
-#define SKILLLEVEL 5 // Range from 1 to 10 - This value if the difficult to create an item using a make command: 1 is easy, 5 is normal (default), 10 is difficult! - Magius(CHE)
-#define SELLMAXITEM 5 // Set maximum amount of items that one player can sell at a time ( 5 is standard OSI ) --- Magius(CHE)
-#define RANKSYSTEM 1 // Rank sstem to make various type of a single item based on the creator's skill! - Magius(CHE)
-#define NPCSPEED 1	// 2 steps every second, ab said to change this to 0.5 - fur - NPC's slowed down a bit - Zane
-#define TRACKINGRANGE 10        // tracking range is at least TRACKINGRANGE, additional distance is calculated by Skill,INT
-#define MAXTRACKINGTARGETS 20   // maximum number of trackable targets
-#define TRACKINGTIMER 30        // tracking last at least TRACKINGTIMER seconds, additional time is calculated by Skill,INT, & DEX
-#define TRACKINGDISPLAYTIME 30  // tracking will display above the character every TRACKINGDISPLAYTIME seconds
-#define MAX_TRACKINGTARGETS	128
+#define	MAX_TRACKINGTARGETS	128
+#define SKILLCAP			7000
+#define STATCAP				325
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -56,21 +22,210 @@ namespace UOX
 // (June 15, 2004 - EviLDeD) Added the new tags for the xFTPd, and xFTPc support.
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|" 
-	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|CORPSEDECAYTIMER|LOOTDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
-	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|ARMORAFFECTREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
-	"BEGGINGTIMER|DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
+	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
+	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
+	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
 	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWHIDDENNPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
 	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|SPEEDCHECKITEMS|SPEEDCHECKBOATS|SPEEDCHECKNPCAI|"
 	"SPEEDCHECKSPAWNREGIONS|MSGBOARDPOSTINGLEVEL|MSGBOARDREMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|LIGHTMOON1|LIGHTMOON2|"
-	"LIGHTDUNGEONLEVEL|LIGHTCURRENTLEVEL|LIGHTBRIGHTLEVEL|BEGGINGRANGE|TRACKINGBASERANGE|TRACKINGBASETIMER|TRACKINGMAXTARGETS|TRACKINGMSGREDISPLAYTIME|"
-	"REPSYSMURDERDECAYTIMER|REPSYSMAXKILLS|REPSYSCRIMINALTIMER|RESOURCEMINECHECK|RESOURCEOREPERAREA|RESOURCEORERESPAWNTIMER|RESOURCEORERESPAWNAREA|RESOURCELOGSPERAREA|RESPURCELOGSRESPAWNTIMER|RESOURCELOGSRESPAWNAREA|HUNGERRATE|HUNGERDAMAGERATETIMER|HUNGERDMGVAL|HUNGERTHRESHOLD|"
+	"LIGHTDUNGEONLEVEL|LIGHTCURRENTLEVEL|LIGHTBRIGHTLEVEL|TRACKINGBASERANGE|TRACKINGBASETIMER|TRACKINGMAXTARGETS|TRACKINGMSGREDISPLAYTIME|"
+	"REPSYSMURDERDECAYTIMER|REPSYSMAXKILLS|REPSYSCRIMINALTIMER|RESOURCEMINECHECK|RESOURCEOREPERAREA|RESOURCEORERESPAWNTIMER|RESOURCEORERESPAWNAREA|RESOURCELOGSPERAREA|RESPURCELOGSRESPAWNTIMER|RESOURCELOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
 	"COMBATMAXRANGE|COMBATSPELLMAXRANGE|COMBATDISPLAYHITMSG|COMBATMONSTERSVSANIMALS|"
-	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
+	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|USEFACETSAVES|MAP0|MAP1|MAP2|MAP3|USERMAP|CLIENTSUPPORT|"
-	"FTPDENABLED|FTPDUSERLIMIT|FTPDBIND|FTPDROOT|FTPDUSER|FTPCENABLED|FTPCHOST|FTPCPORT|FTPCUSER|FTPCULFLAGS"
+	"FTPDENABLED|FTPDUSER|FTPDUSERLIMIT|FTPDBIND|FTPDROOT|FTPCENABLED|FTPCHOST|FTPCPORT|FTPCUSER|FTPCULFLAGS"
 );
+
+void CServerData::ResetDefaults( void )
+{
+	resettingDefaults = true;
+	serverList.resize( 1 );		// Set the initial count to hold one server. 
+
+	ServerIP( "127.0.0.1" );
+	ServerPort( 2593 );
+	serverList[0].setPort( 2593 );
+	ServerName( "Default UOX3 Server" );
+
+	SystemTimer( tSERVER_POTION, 10 );
+	ServerMoon( 0, 0 );
+	ServerMoon( 1, 0 );
+	DungeonLightLevel( 3 );
+	WorldLightCurrentLevel( 0 );
+	WorldLightBrightLevel( 0 );
+	WorldLightDarkLevel( 5 );
+
+	ServerSecondsPerUOMinute( 5 );
+	ServerTimeDay( 0 );
+	ServerTimeHours( 0 );
+	ServerTimeMinutes( 0 );
+	ServerTimeSeconds( 0 );
+	ServerTimeAMPM( 0 );
+
+	ServerMulCaching( false );
+	ServerCrashProtection( 1 );
+	InternalAccountStatus( false );
+	CombatMaxRange( 10 );
+	CombatMaxSpellRange( 10 );
+	CombatExplodeDelay( 0 );
+	
+	// load defaults values
+	SystemTimer( tSERVER_SHOPSPAWN, 300 );
+	SystemTimer( tSERVER_POISON, 180 );
+	SystemTimer( tSERVER_DECAY, 300 );
+	ServerSkillCap( 7000 );
+	ServerStatCap( 325 );
+	PlayerCorpseDecayMultiplier( 3 );
+	CorpseLootDecay( true );
+	ServerSavesTimer( 300 );
+	
+	SystemTimer( tSERVER_INVISIBILITY, 60 );
+	SystemTimer( tSERVER_HUNGERRATE, 6000 );
+	HungerDamage( 2 );
+	
+	ServerSkillDelay( 5 );
+	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
+	SystemTimer( tSERVER_HITPOINTREGEN, 8 );
+	SystemTimer( tSERVER_STAMINAREGEN, 3 );
+	SystemTimer( tSERVER_MANAREGEN, 5 );
+	ArmorAffectManaRegen( true );
+	SystemTimer( tSERVER_GATE, 30 );
+	MineCheck( 2 );
+	DeathAnimationStatus( true );
+	ShowHiddenNpcStatus( true );
+	CombatDisplayHitMessage( true );
+	CombatAttackStamina( -2 );
+	NPCTrainingStatus( true );
+	CharHideWhileMounted( true );
+	WeightPerStr( 5 );
+	SystemTimer( tSERVER_POLYMORPH, 90 );
+
+	CombatMonstersVsAnimals( true );
+	CombatAnimalsAttackChance( 15 );
+	CombatAnimalsGuarded( false );
+	CombatNPCBaseFleeAt( 20 );
+	CombatNPCBaseReattackAt( 40 );
+	ShootOnAnimalBack( false );
+	SellByNameStatus( false );
+	SkillLevel( 5 );
+	SellMaxItemsStatus( 5 );
+	CombatNPCDamageRate( 2 );
+	RankSystemStatus( true );
+
+	char curWorkingDir[1024];
+	GetCurrentDirectory( 1024, curWorkingDir );
+	UString wDir( curWorkingDir );
+	wDir = wDir.fixDirectory();
+	UString tDir;
+	Directory( CSDDP_ROOT, wDir );
+	tDir = wDir + "muldata/";
+	Directory( CSDDP_DATA, tDir );
+	tDir = wDir + "dfndata/";
+	Directory( CSDDP_DEFS, tDir );
+	tDir = wDir + "accounts/";
+	Directory( CSDDP_ACCOUNTS, tDir );
+	Directory( CSDDP_ACCESS, tDir );
+	tDir = wDir + "js/";
+	Directory( CSDDP_SCRIPTS, tDir );
+	tDir = wDir + "archives/";
+	Directory( CSDDP_BACKUP, tDir );
+	tDir = wDir + "msgboards/";
+	Directory( CSDDP_MSGBOARD, tDir );
+	tDir = wDir + "shared/";
+	Directory( CSDDP_SHARED, tDir );
+	tDir = wDir + "html/";
+	Directory( CSDDP_HTML, tDir );
+	tDir = wDir + "books/";
+	Directory( CSDDP_BOOKS, tDir );
+	tDir = wDir + "dictionaries/";
+	Directory( CSDDP_DICTIONARIES, tDir );
+	tDir = wDir + "logs/";
+	Directory( CSDDP_LOGS, tDir );
+
+	BuyThreshold( 2000 );
+	GuardStatus( true );
+	ServerAnnounceSaves( true );
+	WorldAmbientSounds( 5 );
+	ServerJoinPartAnnouncements( true );
+	ServerConsoleLog( 1 );
+	RogueStatus( true );
+	SystemTimer( tSERVER_WEATHER, 60 );
+	SystemTimer( tSERVER_LOGINTIMEOUT, 300 );
+	BackupRatio( 5 );
+	MaxStealthMovement( 10 );
+	MaxStaminaMovement( 15 );
+	SnoopIsCrime( false );
+	
+	CheckBoatSpeed( 0.75 );
+	CheckNpcAISpeed( 0.5 );
+	CutScrollRequirementStatus( true );
+	PlayerPersecutionStatus( true );
+	HtmlStatsStatus( -1 );
+	
+	MsgBoardPostingLevel( 0 );
+	MsgBoardPostRemovalLevel( 0 );
+	// No replacement I can see
+	EscortsEnabled( true );
+	SystemTimer( tSERVER_ESCORTWAIT, 10 );
+	SystemTimer( tSERVER_ESCORTACTIVE, 20 );
+	SystemTimer( tSERVER_ESCORTDONE, 1800 );
+	AmbientFootsteps( false );
+	ServerCommandPrefix( '\'' );
+	
+	CheckSpawnRegionSpeed( 30 );
+	CheckItemsSpeed( 1.5 );
+	NPCSpeed( 1.0 );
+	AccountFlushTimer( 0.0 );
+	
+	ResLogs( 3 );
+	ResLogTime( 600 );
+	ResLogArea( 10 );
+	ResOre( 10 );
+	ResOreTime( 600 );
+	ResOreArea( 10 );
+	//REPSYS
+	SystemTimer( tSERVER_CRIMINAL, 120 );
+	RepMaxKills( 4 );
+	SystemTimer( tSERVER_MURDERDECAY, 60 );
+	//RepSys ---^
+	TrackingBaseRange( 10 );
+	TrackingMaxTargets( 20 );
+	TrackingBaseTimer( 30 );
+	TrackingRedisplayTime( 30 );
+
+	SystemTimer( tSERVER_FISHINGBASE, 10 );
+	SystemTimer( tSERVER_FISHINGRANDOM, 5 );
+	SystemTimer( tSERVER_SPIRITSPEAK, 30 );
+
+	// Abaddon, March 21, 2000
+
+	TitleColour( 0 );
+	LeftTextColour( 0 );
+	RightTextColour( 0 );
+	ButtonCancel( 4017 );
+	ButtonLeft( 4014 );
+	ButtonRight( 4005 );
+	BackgroundPic( 2600 );
+
+	TownNumSecsPollOpen( 3600 );	// one hour
+	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
+	TownTaxPeriod( 1800 );			// taxed every 30 minutes
+	TownGuardPayment( 3600 );		// guards paid every hour
+
+	ServerStartGold( 1000 );
+	ServerStartPrivs( 0 );
+	SystemTimer( tSERVER_CORPSEDECAY, 3 );
+	resettingDefaults = false;
+	PostLoadDefaults();	
+}
+CServerData::CServerData( void )
+{
+	ResetDefaults();
+}
+CServerData::~CServerData()
+{
+}
 
 void CServerData::ServerName( std::string setname )
 {
@@ -233,8 +388,6 @@ UI16 CServerData::ServerSkillCapStatus( void ) const
 void CServerData::ServerSkillDelay( UI08 skdelay )
 {
 	skilldelay = skdelay;
-	if( skdelay < 1 )		// Default is on second loop sleeping
-		skilldelay = SKILLDELAY;
 }
 
 UI08 CServerData::ServerSkillDelayStatus( void ) const
@@ -272,6 +425,11 @@ void CServerData::MaxStaminaMovement( SI16 value )
 SI16 CServerData::MaxStaminaMovement( void ) const
 {
 	return maxstaminamovement;
+}
+
+R32 CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
+{
+	return BuildTimeValue( static_cast<R32>(SystemTimer( timerID )) );
 }
 
 void CServerData::SystemTimer( cSD_TID timerid, UI16 value )
@@ -633,22 +791,22 @@ R64 CServerData::CheckSpawnRegionSpeed( void ) const
 	return checkspawnregions;
 }
 
-void CServerData::MsgBoardPostingLevel( SI16 value )
+void CServerData::MsgBoardPostingLevel( UI08 value )
 {
 	msgpostinglevel = value;
 }
 
-SI16 CServerData::MsgBoardPostingLevel( void ) const
+UI08 CServerData::MsgBoardPostingLevel( void ) const
 {
 	return msgpostinglevel;
 }
 
-void CServerData::MsgBoardPostRemovalLevel( SI16 value )
+void CServerData::MsgBoardPostRemovalLevel( UI08 value )
 {
 	msgremovallevel = value;
 }
 
-SI16 CServerData::MsgBoardPostRemovalLevel( void ) const
+UI08 CServerData::MsgBoardPostRemovalLevel( void ) const
 {
 	return msgremovallevel;
 }
@@ -711,33 +869,6 @@ bool CServerData::EscortsEnabled( void ) const
 	return escortsenabled;
 }
 
-void CServerData::EscortInitExpire( UI16 value )
-{
-	escortinitexpire = value;
-}
-UI16 CServerData::EscortInitExpire( void ) const
-{
-	return escortinitexpire;
-}
-
-void CServerData::EscortActiveExpire( UI16 value )
-{
-	escortactiveexpire = value;
-}
-UI16 CServerData::EscortActiveExpire( void ) const
-{
-	return escortactiveexpire;
-}
-
-void CServerData::EscortDoneExpire( UI16 value )
-{
-	escortdoneexpire = value;
-}
-UI16 CServerData::EscortDoneExpire( void ) const
-{
-	return escortdoneexpire;
-}
-
 void CServerData::CombatMonstersVsAnimals( bool value )
 {
 	combatmonstersvsanimals = value;
@@ -756,24 +887,6 @@ SI16 CServerData::CombatAnimalsAttackChance( void ) const
 	return combatanimalattackchance;
 }
 
-void CServerData::HungerRate( UI16 value )
-{
-	hungerrate = value;
-}
-UI16 CServerData::HungerRate( void ) const
-{
-	return hungerrate;
-}
-
-void CServerData::HungerDamageRateTimer( UI16 value )
-{
-	hungerdamageratetimer = value;
-}
-UI16 CServerData::HungerDamageRateTimer( void ) const
-{
-	return hungerdamageratetimer;
-}
-
 void CServerData::HungerDamage( SI16 value )
 {
 	hungerdamage = value;
@@ -781,24 +894,6 @@ void CServerData::HungerDamage( SI16 value )
 SI16 CServerData::HungerDamage( void ) const
 {
 	return hungerdamage;
-}
-
-void CServerData::HungerThreshold( SI16 value )
-{
-	hungerthreshold = value;
-}
-SI16 CServerData::HungerThreshold( void ) const
-{
-	return hungerthreshold;
-}
-
-void CServerData::PotionDelay( SI16 value )
-{
-	potiondelay = value;
-}
-SI16 CServerData::PotionDelay( void ) const
-{
-	return potiondelay;
 }
 
 void CServerData::BuyThreshold( SI16 value )
@@ -846,20 +941,37 @@ void CServerData::WeightPerStr( UI08 newVal )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	UI16 PolyDuration()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-
+//|	Function/Class	-	bool ArmorAffectManaRegen()
+//|	Date			-	3/20/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
-//|	Purpose			-	Duration (in seconds) of polymorph spell
+//|	Purpose			-	Toggles whether or not armor affects mana regeneration
 //o--------------------------------------------------------------------------o
-UI16 CServerData::PolyDuration( void ) const
+bool CServerData::ArmorAffectManaRegen( void ) const
 {
-	return polyDuration;
+	return armorAffectManaRegen;
 }
-void CServerData::PolyDuration( UI16 newVal )
+void CServerData::ArmorAffectManaRegen( bool newVal )
 {
-	polyDuration = newVal;
+	armorAffectManaRegen = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	UI08 PlayerCorpseDecayMultiplier()
+//|	Date			-	3/20/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Multiplier for player corpse decay
+//o--------------------------------------------------------------------------o
+UI08 CServerData::PlayerCorpseDecayMultiplier( void ) const
+{
+	return playerCorpseDecayMultiplier;
+}
+void CServerData::PlayerCorpseDecayMultiplier( UI08 newVal )
+{
+	playerCorpseDecayMultiplier = newVal;
 }
 
 void CServerData::BackupRatio( SI16 value )
@@ -869,202 +981,6 @@ void CServerData::BackupRatio( SI16 value )
 SI16 CServerData::BackupRatio( void ) const
 {
 	return backupRatio;
-}
-
-void CServerData::ResetDefaults( void )
-{
-	resettingDefaults = true;
-	serverList.resize( 1 );		// Set the initial count to hold one server. 
-
-	ServerIP( "127.0.0.1" );
-	ServerPort( 2593 );
-	serverList[0].setPort( 2593 );
-	ServerName( "Default UOX3 Server" );
-
-	PotionDelay( POTIONDELAY );
-	ServerMoon( 0, 0 );
-	ServerMoon( 1, 0 );
-	DungeonLightLevel( 3 );
-	WorldLightCurrentLevel( 0 );
-	WorldLightBrightLevel( 0 );
-	WorldLightDarkLevel( 5 );
-
-	ServerSecondsPerUOMinute( 5 );
-	ServerTimeDay( 0 );
-	ServerTimeHours( 0 );
-	ServerTimeMinutes( 0 );
-	ServerTimeSeconds( 0 );
-	ServerTimeAMPM( 0 );
-
-	ServerMulCaching( false );
-	ServerCrashProtection( 1 );
-	InternalAccountStatus( false );
-	CombatMaxRange( 10 );
-	CombatMaxSpellRange( 10 );
-	CombatExplodeDelay( 0 );
-	
-	// load defaults values
-	SystemTimer( SHOP_SPAWN, 300 );
-	SystemTimer( POISON, POISONTIMER );
-	PotionDelay( POTIONDELAY );
-	SystemTimer( DECAY, DECAYTIMER );
-	ServerSkillCap( SKILLCAP );
-	ServerStatCap( STATCAP );
-	SystemTimer( PLAYER_CORPSE, 3 );
-	CorpseLootDecay( true );
-	ServerSavesTimer( 300 );
-	
-	SystemTimer( INVISIBILITY, INVISTIMER );
-	HungerRate( HUNGERRATE );
-	HungerDamageRateTimer( HUNGERDAMAGERATE );
-	HungerDamage( HUNGERDAMAGE );
-	HungerThreshold( 3 );
-	
-	ServerSkillDelay( SKILLDELAY );
-	SystemTimer( OBJECT_USAGE, OBJECTDELAY );
-	SystemTimer( HITPOINT_REGEN, REGENRATE1 );
-	SystemTimer( STAMINA_REGEN, REGENRATE2 );
-	SystemTimer( MANA_REGEN, REGENRATE3 );
-	SystemTimer( ARMORAFFECTMANA_REGEN, 0 );
-	SystemTimer( GATE, GATETIMER );
-	MineCheck( 2 );
-	DeathAnimationStatus( true );
-	ShowHiddenNpcStatus( true );
-	CombatDisplayHitMessage( true );
-	CombatAttackStamina( ATTACKSTAMINA );
-	NPCTrainingStatus( true );
-	CharHideWhileMounted( true );
-	WeightPerStr( 5 );
-	PolyDuration( 90 );
-
-	CombatMonstersVsAnimals( true );
-	CombatAnimalsAttackChance( ANIMALS_ATTACK_CHANCE );
-	CombatAnimalsGuarded( false );
-	CombatNPCBaseFleeAt( NPC_BASE_FLEEAT );
-	CombatNPCBaseReattackAt( NPC_BASE_REATTACKAT );
-	ShootOnAnimalBack( false );
-	SellByNameStatus( false );
-	SkillLevel( SKILLLEVEL );
-	SellMaxItemsStatus( SELLMAXITEM );
-	CombatNPCDamageRate( NPC_DAMAGE_RATE );
-	RankSystemStatus( true );
-
-	char curWorkingDir[1024];
-	GetCurrentDirectory( 1024, curWorkingDir );
-	UString wDir( curWorkingDir );
-	wDir = wDir.fixDirectory();
-	UString tDir;
-	Directory( CSDDP_ROOT, wDir );
-	tDir = wDir + "muldata/";
-	Directory( CSDDP_DATA, tDir );
-	tDir = wDir + "dfndata/";
-	Directory( CSDDP_DEFS, tDir );
-	tDir = wDir + "accounts/";
-	Directory( CSDDP_ACCOUNTS, tDir );
-	Directory( CSDDP_ACCESS, tDir );
-	tDir = wDir + "js/";
-	Directory( CSDDP_SCRIPTS, tDir );
-	tDir = wDir + "archives/";
-	Directory( CSDDP_BACKUP, tDir );
-	tDir = wDir + "msgboards/";
-	Directory( CSDDP_MSGBOARD, tDir );
-	tDir = wDir + "shared/";
-	Directory( CSDDP_SHARED, tDir );
-	tDir = wDir + "html/";
-	Directory( CSDDP_HTML, tDir );
-	tDir = wDir + "books/";
-	Directory( CSDDP_BOOKS, tDir );
-	tDir = wDir + "dictionaries/";
-	Directory( CSDDP_DICTIONARIES, tDir );
-	tDir = wDir + "logs/";
-	Directory( CSDDP_LOGS, tDir );
-
-	BuyThreshold( 2000 );
-	GuardStatus( true );
-	ServerAnnounceSaves( true );
-	WorldAmbientSounds( 5 );
-	ServerJoinPartAnnouncements( true );
-	ServerConsoleLog( 1 );
-	RogueStatus( true );
-	SystemTimer( WEATHER, 60 );
-	SystemTimer( LOGIN_TIMEOUT, 300 );
-	BackupRatio( 5 );
-	MaxStealthMovement( 10 );
-	MaxStaminaMovement( 15 );
-	SnoopIsCrime( false );
-	
-	CheckBoatSpeed( 0.75 );
-	CheckNpcAISpeed( 0.5 );
-	CutScrollRequirementStatus( true );
-	PlayerPersecutionStatus( true );
-	HtmlStatsStatus( -1 );
-	
-	MsgBoardPostingLevel( 0 );
-	MsgBoardPostRemovalLevel( 0 );
-	// No replacement I can see
-	EscortsEnabled( true );
-	EscortInitExpire( 10 );
-	EscortActiveExpire( 20 );
-	EscortDoneExpire( 1800 );
-	AmbientFootsteps( false );
-	ServerCommandPrefix( '\'' );
-	
-	CheckSpawnRegionSpeed( 30 );
-	CheckItemsSpeed( 1.5 );
-	NPCSpeed( 1.0 );
-	AccountFlushTimer( 0.0 );
-	NPCSpeed( NPCSPEED );
-	
-	ResLogs( 3 );
-	ResLogTime( 600 );
-	ResLogArea( 10 );
-	ResOre( 10 );
-	ResOreTime( 600 );
-	ResOreArea( 10 );
-	//REPSYS
-	RepCrimTime( 120 );
-	RepMaxKills( 4 );
-	RepMurderDecay( 60 );
-	//RepSys ---^
-	TrackingBaseRange( TRACKINGRANGE );
-	TrackingMaxTargets( MAXTRACKINGTARGETS );
-	TrackingBaseTimer( TRACKINGTIMER );
-	TrackingRedisplayTime( TRACKINGDISPLAYTIME );
-	BeggingRange( BEGGINGRANGE );
-
-	SystemTimer( BASE_FISHING, FISHINGTIMEBASE );
-	SystemTimer( RANDOM_FISHING, FISHINGTIMER );
-	SystemTimer( SPIRIT_SPEAK, SPIRITSPEAKTIMER );
-
-	// Abaddon, March 21, 2000
-
-	TitleColour( 0 );
-	LeftTextColour( 0 );
-	RightTextColour( 0 );
-	ButtonCancel( 4017 );
-	ButtonLeft( 4014 );
-	ButtonRight( 4005 );
-	BackgroundPic( 2600 );
-
-	TownNumSecsPollOpen( 3600 );	// one hour
-	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
-	TownTaxPeriod( 1800 );			// taxed every 30 minutes
-	TownGuardPayment( 3600 );		// guards paid every hour
-
-	ServerStartGold( 1000 );
-	ServerStartPrivs( 0 );
-	SystemTimer( CORPSE_DECAY, PLAYERCORPSEDECAYMULTIPLIER );
-	SystemTimer( LOOT_DECAY, 0 );
-	SystemTimer( BEGGING_T, 3 );
-	resettingDefaults = false;
-	PostLoadDefaults();	
-}
-CServerData::CServerData( void )
-{
-	ResetDefaults();
-}
-CServerData::~CServerData()
-{
 }
 
 void CServerData::CombatMaxRange( SI16 value )
@@ -1085,11 +1001,11 @@ SI16 CServerData::CombatMaxSpellRange( void ) const
 	return combatmaxspellrange;
 }
 
-void CServerData::CombatExplodeDelay( R32 value )
+void CServerData::CombatExplodeDelay( UI16 value )
 {
 	combatExplodeDelay = value;
 }
-R32 CServerData::CombatExplodeDelay( void ) const
+UI16 CServerData::CombatExplodeDelay( void ) const
 {
 	return combatExplodeDelay;
 }
@@ -1229,15 +1145,6 @@ UI32 CServerData::TownGuardPayment( void ) const
 	return guardPayment;
 }
 
-void CServerData::RepMurderDecay( UI16 value )
-{
-	murderdecaytimer = value;
-}
-UI16 CServerData::RepMurderDecay( void ) const
-{
-	return murderdecaytimer;
-}
-
 void CServerData::RepMaxKills( UI16 value )
 {
 	maxmurdersallowed = value;
@@ -1245,15 +1152,6 @@ void CServerData::RepMaxKills( UI16 value )
 UI16 CServerData::RepMaxKills( void ) const
 {
 	return maxmurdersallowed;
-}
-
-void CServerData::RepCrimTime( UI16 value )
-{
-	criminaldecaytimer = value;
-}
-UI16 CServerData::RepCrimTime( void ) const
-{
-	return criminaldecaytimer;
 }
 
 void CServerData::ResLogs( SI16 value )
@@ -1455,27 +1353,25 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << std::endl;
 		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << std::endl;
 		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << std::endl;
+		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[timers]" << std::endl << "{" << std::endl;
-		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( CORPSE_DECAY ) << std::endl;
-		ofsOutput << "LOOTDECAYTIMER=" << SystemTimer( LOOT_DECAY ) << std::endl;
-		ofsOutput << "WEATHERTIMER=" << SystemTimer( WEATHER ) << std::endl;
-		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( SHOP_SPAWN ) << std::endl;
-		ofsOutput << "DECAYTIMER=" << SystemTimer( DECAY ) << std::endl;
-		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( INVISIBILITY ) << std::endl;
-		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( OBJECT_USAGE ) << std::endl;
-		ofsOutput << "GATETIMER=" << SystemTimer( GATE ) << std::endl;
-		ofsOutput << "POISONTIMER=" << SystemTimer( POISON ) << std::endl;
-		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( LOGIN_TIMEOUT ) << std::endl;
-		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( HITPOINT_REGEN ) << std::endl;
-		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( STAMINA_REGEN ) << std::endl;
-		ofsOutput << "MANAREGENTIMER=" << SystemTimer( MANA_REGEN ) << std::endl;
-		ofsOutput << "ARMORAFFECTREGENTIMER=" << SystemTimer( ARMORAFFECTMANA_REGEN ) << std::endl;
-		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( BASE_FISHING ) << std::endl;
-		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( RANDOM_FISHING ) << std::endl;
-		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( SPIRIT_SPEAK ) << std::endl;
-		ofsOutput << "BEGGINGTIMER=" << SystemTimer( BEGGING_T ) << std::endl;
+		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << std::endl;
+		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << std::endl;
+		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << std::endl;
+		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << std::endl;
+		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << std::endl;
+		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << std::endl;
+		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << std::endl;
+		ofsOutput << "POISONTIMER=" << SystemTimer( tSERVER_POISON ) << std::endl;
+		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << std::endl;
+		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << std::endl;
+		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << std::endl;
+		ofsOutput << "MANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << std::endl;
+		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << std::endl;
+		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << std::endl;
+		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[directories]" << std::endl << "{" << std::endl;
@@ -1514,7 +1410,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << std::endl;
 		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << std::endl;
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
-		ofsOutput << "POLYDURATION=" << PolyDuration() << std::endl;
+		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
 		ofsOutput << "}" << std::endl;
 
@@ -1526,15 +1422,15 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[message boards]" << std::endl << "{" << std::endl;
-		ofsOutput << "MSGBOARDPOSTINGLEVEL=" << MsgBoardPostingLevel() << std::endl;
-		ofsOutput << "MSGBOARDREMOVALLEVEL=" << MsgBoardPostRemovalLevel() << std::endl;
+		ofsOutput << "MSGBOARDPOSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << std::endl;
+		ofsOutput << "MSGBOARDREMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[escorts]" << std::endl << "{" << std::endl;
 		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << std::endl;
-		ofsOutput << "ESCORTINITEXPIRE=" << EscortInitExpire() << std::endl;
-		ofsOutput << "ESCORTACTIVEEXPIRE=" << EscortActiveExpire() << std::endl;
-		ofsOutput << "ESCORTDONEEXPIRE=" << EscortDoneExpire() << std::endl;
+		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << std::endl;
+		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << std::endl;
+		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[worldlight]" << std::endl << "{" << std::endl;
@@ -1551,10 +1447,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
-		ofsOutput << std::endl << "[begging]" << std::endl << "{" << std::endl;
-		ofsOutput << "BEGGINGRANGE=" << BeggingRange() << std::endl;
-		ofsOutput << "}" << std::endl;
-		
 		ofsOutput << std::endl << "[tracking]" << std::endl << "{" << std::endl;
 		ofsOutput << "TRACKINGBASERANGE=" << TrackingBaseRange() << std::endl;
 		ofsOutput << "TRACKINGBASETIMER=" << TrackingBaseTimer() << std::endl;
@@ -1563,9 +1455,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[reputation]" << std::endl << "{" << std::endl;
-		ofsOutput << "REPSYSMURDERDECAYTIMER=" << RepMurderDecay() << std::endl;
+		ofsOutput << "REPSYSMURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << std::endl;
 		ofsOutput << "REPSYSMAXKILLS=" << RepMaxKills() << std::endl;
-		ofsOutput << "REPSYSCRIMINALTIMER=" << RepCrimTime() << std::endl;
+		ofsOutput << "REPSYSCRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[resources]" << std::endl << "{" << std::endl;
@@ -1579,10 +1471,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[hunger]" << std::endl << "{" << std::endl;
-		ofsOutput << "HUNGERRATE=" << HungerRate() << std::endl;
-		ofsOutput << "HUNGERDAMAGERATETIMER=" << HungerDamageRateTimer() << std::endl;
+		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << std::endl;
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << std::endl;
-		ofsOutput << "HUNGERTHRESHOLD=" << HungerThreshold() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[combat]" << std::endl << "{" << std::endl;
@@ -1606,8 +1496,7 @@ bool CServerData::save( std::string filename )
 		
 		ofsOutput << std::endl << "[startup]" << std::endl << "{" << std::endl;
 		ofsOutput << "STARTGOLD=" << ServerStartGold() << std::endl;
-		ofsOutput << "STARTPRIVS1=" << ServerStartPrivs() << std::endl;
-		ofsOutput << "STARTPRIVS2=" << 0 << std::endl;
+		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[gumps]" << std::endl << "{" << std::endl;
@@ -1708,15 +1597,6 @@ UI16 CServerData::TrackingRedisplayTime( void ) const
 	return trackingmsgredisplaytimer;
 }
 
-void CServerData::BeggingRange( SI16 value )
-{
-	beggingrange = value;
-}
-SI16 CServerData::BeggingRange( void ) const
-{
-	return beggingrange;
-}
-
 //o-----------------------------------------------------------------------o
 //|	Function	-	void DumpLookup( int lookupid );
 //|	Date		-	January 31, 2001
@@ -1801,378 +1681,361 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 					switch( UOX3INI_LOOKUP.find( tag.c_str() ) )
 					{
 						case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
-						case 0x000C:	// SERVERNAME
+						case 0x000C:	 // SERVERNAME[0002]
 							//ServerName( value );
 							break;
-						case 0x0017:	// CONSOLELOG
+						case 0x0017:	 // CONSOLELOG[0003]
 							ServerConsoleLog( value.toUByte() );
 							break;
-						case 0x0022:	// CRASHPROTECTION
+						case 0x0022:	 // CRASHPROTECTION[0004]
 							ServerCrashProtection( value.toUByte() );
 							break;
-						case 0x0032:	// COMMANDPREFIX
+						case 0x0032:	 // COMMANDPREFIX[0005]
 							ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
 							break;
-						case 0x0040:	// ANNOUNCEWORLDSAVES
+						case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
 							ServerAnnounceSaves( (value.toUShort()==1?true:false) ); 
 							break;
-						case 0x0053:	// JOINPARTMSGS
+						case 0x0053:	 // JOINPARTMSGS[0007]
 							ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
 							break;
-						case 0x0060:	// MULCACHING
+						case 0x0060:	 // MULCACHING[0008]
 							ServerMulCaching( (value.toUShort()==1?true:false) );
 							break;
-						case 0x006B:	// BACKUPSENABLED
+						case 0x006B:	 // BACKUPSENABLED[0009]
 							ServerBackups( (value.toUShort()>0?true:false) );
 							break;
-						case 0x007A:	// SAVESTIMER
+						case 0x007A:	 // SAVESTIMER[0010]
 							ServerSavesTimer( value.toULong() );
 							break;
-						case 0x0085:	// SKILLCAP
+						case 0x0085:	 // SKILLCAP[0011]
 							ServerSkillCap( value.toUShort() );
 							break;
-						case 0x008E:	// SKILLDELAY
+						case 0x008E:	 // SKILLDELAY[0012]
 							ServerSkillDelay( value.toUByte() );
 							break;
-						case 0x0099:	// STATCAP
+						case 0x0099:	 // STATCAP[0013]
 							ServerStatCap( value.toUShort() );
 							break;
-						case 0x00A1:	// MAXSTEALTHMOVEMENTS
+						case 0x00A1:	 // MAXSTEALTHMOVEMENTS[0014]
 							MaxStealthMovement( value.toShort() );
 							break;
-						case 0x00B5:	// MAXSTAMINAMOVEMENTS
+						case 0x00B5:	 // MAXSTAMINAMOVEMENTS[0015]
 							MaxStaminaMovement( value.toShort() );
 							break;
-						case 0x00C9:	// CORPSEDECAYTIMER
-							SystemTimer( CORPSE_DECAY, value.toUShort() );
+						case 0x00C9:	 // ARMORAFFECTMANAREGEN[0016]
+							ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
 							break;
-						case 0x00DA:	// LOOTDECAYTIMER
-							SystemTimer( LOOT_DECAY, value.toUShort() );
+						case 0x00DE:	 // CORPSEDECAYTIMER[0017]
+							SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
 							break;
-						case 0x00E9:	// WEATHERTIMER
-							SystemTimer( WEATHER, value.toUShort() );
+						case 0x00EF:	 // WEATHERTIMER[0018]
+							SystemTimer( tSERVER_WEATHER, value.toUShort() );
 							break;
-						case 0x00F6:	// SHOWSPAWNTIMER
-							SystemTimer( SHOP_SPAWN, value.toUShort() );
+						case 0x00FC:	 // SHOPSPAWNTIMER[0019]
+							SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
 							break;
-						case 0x00CF:	// DECAYTIMER
-							SystemTimer( DECAY, value.toUShort() );
+						case 0x00E4:	 // DECAYTIMER[0020]
+							SystemTimer( tSERVER_DECAY, value.toUShort() );
 							break;
-						case 0x0110:	// INVISIBILITYTIMER
-							SystemTimer( INVISIBILITY, value.toUShort() );
+						case 0x0116:	 // INVISIBILITYTIMER[0021]
+							SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
 							break;
-						case 0x0122:	// OBJECTUSETIMER
-							SystemTimer( OBJECT_USAGE, value.toUShort() );
+						case 0x0128:	 // OBJECTUSETIMER[0022]
+							SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
 							break;
-						case 0x0131:	// GATETIMER
-							SystemTimer( GATE, value.toUShort() );
+						case 0x0137:	 // GATETIMER[0023]
+							SystemTimer( tSERVER_GATE, value.toUShort() );
 							break;
-						case 0x013B:	// POISONTIMER
-							SystemTimer( POISON, value.toUShort() );
+						case 0x0141:	 // POISONTIMER[0024]
+							SystemTimer( tSERVER_POISON, value.toUShort() );
 							break;
-						case 0x0147:	// LOGINTIMEOUT
-							SystemTimer( LOGIN_TIMEOUT, value.toUShort() );
+						case 0x014D:	 // LOGINTIMEOUT[0025]
+							SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
 							break;
-						case 0x0154:	// HITPOINTREGENTIMER
-							SystemTimer( HITPOINT_REGEN, value.toUShort() );
+						case 0x015A:	 // HITPOINTREGENTIMER[0026]
+							SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
 							break;
-						case 0x0167:	// STAMINAREGENTIMER
-							SystemTimer( STAMINA_REGEN, value.toUShort() );
+						case 0x016D:	 // STAMINAREGENTIMER[0027]
+							SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
 							break;
-						case 0x0179:	// MANAREGENTIMER
-							SystemTimer( MANA_REGEN, value.toUShort() );
+						case 0x017F:	 // MANAREGENTIMER[0028]
+							SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
 							break;
-						case 0x0188:	// ARMORAFFECTREGENTIMER
-							SystemTimer( ARMORAFFECTMANA_REGEN, value.toUShort() );
+						case 0x018E:	 // BASEFISHINGTIMER[0029]
+							SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
 							break;
-						case 0x019E:	// BASEFISHINGTIMER
-							SystemTimer( BASE_FISHING, value.toUShort() );
+						case 0x019F:	 // RANDOMFISHINGTIMER[0030]
+							SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
 							break;
-						case 0x01AF:	// RANDOMFISHINGTIMER
-							SystemTimer( RANDOM_FISHING, value.toUShort() );
+						case 0x01B2:	 // SPIRITSPEAKTIMER[0031]
+							SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
 							break;
-						case 0x01C2:	// SPIRITSPEAKTIMER
-							SystemTimer( SPIRIT_SPEAK, value.toUShort() );
-							break;
-						case 0x01D3:	// BEGGINGTIMER
-							SystemTimer( BEGGING_T, value.toUShort() );
-							break;
-						case 0x01E0:	// DIRECTORY
+						case 0x01C3:	 // DIRECTORY[0032]
 							Directory( CSDDP_ROOT, value );
 							break;
-						case 0x01EA:	// DATADIRECTORY
+						case 0x01CD:	 // DATADIRECTORY[0033]
 							Directory( CSDDP_DATA, value );
 							break;
-						case 0x01F8:	// DEFSDIRECTORY
+						case 0x01DB:	 // DEFSDIRECTORY[0034]
 							Directory( CSDDP_DEFS, value );
 							break;
-						case 0x0206:	// ACTSDIRECTORY
+						case 0x01E9:	 // ACTSDIRECTORY[0035]
 							Directory( CSDDP_ACCOUNTS, value );
 							break;
-						case 0x0214:	// SCRIPTSDIRECTORY
+						case 0x01F7:	 // SCRIPTSDIRECTORY[0036]
 							Directory( CSDDP_SCRIPTS, value );
 							break;
-						case 0x0225:	// BACKUPDIRECTORY
+						case 0x0208:	 // BACKUPDIRECTORY[0037]
 							Directory( CSDDP_BACKUP, value );
 							break;
-						case 0x0235:	// MSGBOARDDIRECTORY
+						case 0x0218:	 // MSGBOARDDIRECTORY[0038]
 							Directory( CSDDP_MSGBOARD, value );
 							break;
-						case 0x0247:	// SHAREDDIRECTORY
+						case 0x022A:	 // SHAREDDIRECTORY[0039]
 							Directory( CSDDP_SHARED, value );
 							break;
-						case 0x0257:	// LOOTDECAYSWITHCORPSE
+						case 0x023A:	 // LOOTDECAYSWITHCORPSE[0040]
 							CorpseLootDecay( value.toUShort() != 0 );
 							break;
-						case 0x026C:	// GUARDSACTIVE
+						case 0x024F:	 // GUARDSACTIVE[0041]
 							GuardStatus( value.toUShort() != 0 );
 							break;
-						case 0x0279:	// DEATHANIMATION
+						case 0x025C:	 // DEATHANIMATION[0042]
 							DeathAnimationStatus( value.toUShort() != 0 );
 							break;
-						case 0x0288:	// AMBIENTSOUNDS
+						case 0x026B:	 // AMBIENTSOUNDS[0043]
 							WorldAmbientSounds( value.toShort() );
 							break;
-						case 0x0296:	// AMBIENTFOOTSTEPS
+						case 0x0279:	 // AMBIENTFOOTSTEPS[0044]
 							AmbientFootsteps( value.toUShort() != 0 );
 							break;
-						case 0x02A7:	// INTERNALACCOUNTCREATION
+						case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
 							InternalAccountStatus( value.toUShort() != 0 );
 							break;
-						case 0x02BF:	// SHOWHIDDENNPCS
+						case 0x02A2:	 // SHOWHIDDENNPCS[0046]
 							ShowHiddenNpcStatus( value.toUShort() != 0 );
 							break;
-						case 0x02CE:	// ROGUESENABLED
+						case 0x02B1:	 // ROGUESENABLED[0047]
 							RogueStatus( value.toUShort() != 0 );
 							break;
-						case 0x02DC:	// PLAYERPERSECUTION
+						case 0x02BF:	 // PLAYERPERSECUTION[0048]
 							PlayerPersecutionStatus( value.toUShort() != 0 );
 							break;
-						case 0x02EE:	// ACCOUNTFLUSH
+						case 0x02D1:	 // ACCOUNTFLUSH[0049]
 							AccountFlushTimer( value.toDouble() );
 							break;
-						case 0x02FB:	// HTMLSTATUSENABLED
+						case 0x02DE:	 // HTMLSTATUSENABLED[0050]
 							HtmlStatsStatus( value.toShort() );
 							break;
-						case 0x030D:	// SELLBYNAME
+						case 0x02F0:	 // SELLBYNAME[0051]
 							SellByNameStatus( value.toUShort() == 1 );
 							break;
-						case 0x0318:	// SELLMAXITEMS
+						case 0x02FB:	 // SELLMAXITEMS[0052]
 							SellMaxItemsStatus( value.toShort() );
 							break;
-						case 0x0325:	// TRADESYSTEM
+						case 0x0308:	 // TRADESYSTEM[0053]
 							TradeSystemStatus( value.toUShort() != 0 );
 							break;
-						case 0x0331:	// RANKSYSTEM
+						case 0x0314:	 // RANKSYSTEM[0054]
 							RankSystemStatus( value.toUShort() != 0 );
 							break;
-						case 0x033C:	// CUTSCROLLREQUIREMENTS
+						case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
 							CutScrollRequirementStatus( value.toShort() );
 							break;
-						case 0x0352:	// SPEEDCHECKITEMS
+						case 0x0335:	 // SPEEDCHECKITEMS[0056]
 							CheckItemsSpeed( value.toDouble() );
 							break;
-						case 0x0362:	// SPEEDCHECKBOATS
+						case 0x0345:	 // SPEEDCHECKBOATS[0057]
 							CheckBoatSpeed( value.toDouble() );
 							break;
-						case 0x0372:	// SPEEDCHECKNPCAI
+						case 0x0355:	 // SPEEDCHECKNPCAI[0058]
 							CheckNpcAISpeed( value.toDouble() );
 							break;
-						case 0x0382:	// SPEEDCHECKSPAWNREGIONS
+						case 0x0365:	 // SPEEDCHECKSPAWNREGIONS[0059]
 							CheckSpawnRegionSpeed( value.toDouble() );
 							break;
-						case 0x0399:	// MSGBOARDPOSTINGLEVEL
-							MsgBoardPostingLevel( value.toShort() );
+						case 0x037C:	 // MSGBOARDPOSTINGLEVEL[0060]
+							MsgBoardPostingLevel( value.toUByte() );
 							break;
-						case 0x03AE:	// MSGBOARDREMOVALLEVEL
-							MsgBoardPostRemovalLevel( value.toShort() );
+						case 0x0391:	 // MSGBOARDREMOVALLEVEL[0061]
+							MsgBoardPostRemovalLevel( value.toUByte() );
 							break;
-						case 0x03C3:	// ESCOURTENABLED
+						case 0x03A6:	 // ESCORTENABLED[0062]
 							EscortsEnabled( value.toUShort() == 1 );
 							break;
-						case 0x03D1:	// ESCOURTINITEXPIRE
-							EscortInitExpire( value.toUShort() );
+						case 0x03B4:	 // ESCORTINITEXPIRE[0063]
+							SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
 							break;
-						case 0x03E2:	// ESCOURTACTIVEEXPIRE
-							EscortActiveExpire( value.toUShort() );
+						case 0x03C5:	 // ESCORTACTIVEEXPIRE[0064]
+							SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
 							break;
-						case 0x03F5:	// LIGHTMOON1
+						case 0x03D8:	 // LIGHTMOON1[0065]
 							ServerMoon( 0, value.toShort() );
 							break;
-						case 0x0400:	// LIGHTMOON2
+						case 0x03E3:	 // LIGHTMOON2[0066]
 							ServerMoon( 1, value.toShort() );
 							break;
-						case 0x040B:	// LIGHTDUNGEONLEVEL
+						case 0x03EE:	 // LIGHTDUNGEONLEVEL[0067]
 							DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
 							break;
-						case 0x041D:	// LIGHTCURRENTLEVEL
+						case 0x0400:	 // LIGHTCURRENTLEVEL[0068]
 							WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
 							break;
-						case 0x042F:	// LIGHTBRIGHTLEVEL
+						case 0x0412:	 // LIGHTBRIGHTLEVEL[0069]
 							WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
 							break;
-						case 0x0440:	// BEGGINGRANGE
-							BeggingRange( value.toShort() );
-							break;
-						case 0x044D:	 // TRACKINGBASERANGE[0091]
+						case 0x0423:	 // TRACKINGBASERANGE[0070]
 							TrackingBaseRange( value.toUShort() );
 							break;
-						case 0x045F:	 // TRACKINGBASETIMER[0092]
+						case 0x0435:	 // TRACKINGBASETIMER[0071]
 							TrackingBaseTimer( value.toUShort() );
 							break;
-						case 0x0471:	 // TRACKINGMAXTARGETS[0093]
+						case 0x0447:	 // TRACKINGMAXTARGETS[0072]
 							TrackingMaxTargets( value.toUByte() );
 							break;
-						case 0x0484:	 // TRACKINGMSGREDISPLAYTIME[0094]
+						case 0x045A:	 // TRACKINGMSGREDISPLAYTIME[0073]
 							TrackingRedisplayTime( value.toUShort() );
 							break;
-						case 0x049D:	 // REPSYSMURDERDECAYTIMER[0095]
-							RepMurderDecay( value.toUShort() );
+						case 0x0473:	 // REPSYSMURDERDECAYTIMER[0074]
+							SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
 							break;
-						case 0x04B4:	 // REPSYSMAXKILLS[0096]
+						case 0x048A:	 // REPSYSMAXKILLS[0075]
 							RepMaxKills( value.toUShort() );
 							break;
-						case 0x04C3:	 // REPSYSCRIMINALTIMER[0097]
-							RepCrimTime( value.toUShort() );
+						case 0x0499:	 // REPSYSCRIMINALTIMER[0076]
+							SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
 							break;
-						case 0x04D7:	 // RESOURCEMINECHECK[0098]
+						case 0x04AD:	 // RESOURCEMINECHECK[0077]
 							MineCheck( value.toUByte() );
 							break;
-						case 0x04E9:	 // RESOURCEOREPERAREA[0099]
+						case 0x04BF:	 // RESOURCEOREPERAREA[0078]
 							ResOre( value.toShort() );
 							break;
-						case 0x04FC:	 // RESOURCEORERESPAWNTIMER[0100]
+						case 0x04D2:	 // RESOURCEORERESPAWNTIMER[0079]
 							ResOreTime( value.toUShort() );
 							break;
-						case 0x0514:	 // RESOURCEORERESPAWNAREA[0101]
+						case 0x04EA:	 // RESOURCEORERESPAWNAREA[0080]
 							ResOreArea( value.toUShort() );
 							break;
-						case 0x052B:	 // RESOURCELOGSPERAREA[0102]
+						case 0x0501:	 // RESOURCELOGSPERAREA[0081]
 							ResLogs( value.toShort() );
 							break;
-						case 0x053F:	 // RESPURCELOGSRESPAWNTIMER[0103]
+						case 0x0515:	 // RESPURCELOGSRESPAWNTIMER[0082]
 							ResLogTime( value.toUShort() );
 							break;
-						case 0x0558:	 // RESOURCELOGSRESPAWNAREA[0104]
+						case 0x052E:	 // RESOURCELOGSRESPAWNAREA[0083]
 							ResLogArea( value.toUShort() );
 							break;
-						case 0x0570:	 // HUNGERRATE[0105]
-							HungerRate( value.toUShort() );
+						case 0x0546:	 // HUNGERRATE[0084]
+							SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
 							break;
-						case 0x057B:	 // HUNGERDAMAGERATETIMER[0106]
-							HungerDamageRateTimer( value.toUShort() );
-							break;
-						case 0x0591:	 // HUNGERDMGVAL[0107]
+						case 0x0551:	 // HUNGERDMGVAL[0085]
 							HungerDamage( value.toShort() );
 							break;
-						case 0x059E:	 // HUNGERTHRESHOLD[0108]
-							HungerThreshold( value.toShort() );
-							break;
-						case 0x05AE:	 // COMBATMAXRANGE[0109]
+						case 0x055E:	 // COMBATMAXRANGE[0086]
 							CombatMaxRange( value.toShort() );
 							break;
-						case 0x05BD:	 // COMBATSPELLMAXRANGE[0111]
+						case 0x056D:	 // COMBATSPELLMAXRANGE[0087]
 							CombatMaxSpellRange( value.toShort() );
 							break;
-						case 0x05D1:	 // COMBATDISPLAYHITMSG[0116]
+						case 0x0581:	 // COMBATDISPLAYHITMSG[0088]
 							CombatDisplayHitMessage( value.toUShort() == 1 );
 							break;
-						case 0x05E5:	 // COMBATMONSTERSVSANIMALS[0119]
+						case 0x0595:	 // COMBATMONSTERSVSANIMALS[0089]
 							CombatMonstersVsAnimals( value.toUShort() == 1 );
 							break;
-						case 0x05FD:	 // COMBATANIMALATTACKCHANCE[0120]
+						case 0x05AD:	 // COMBATANIMALATTACKCHANCE[0090]
 							CombatAnimalsAttackChance( value.toShort() );
 							break;
-						case 0x0616:	 // COMBATANIMALSGUARDED[0121]
+						case 0x05C6:	 // COMBATANIMALSGUARDED[0091]
 							CombatAnimalsGuarded( value.toUShort() == 1 );
 							break;
-						case 0x062B:	 // COMBATNPCDAMAGERATE[0122]
+						case 0x05DB:	 // COMBATNPCDAMAGERATE[0092]
 							CombatNPCDamageRate( value.toShort() );
 							break;
-						case 0x063F:	 // COMBATNPCBASEFLEEAT[0123]
+						case 0x05EF:	 // COMBATNPCBASEFLEEAT[0093]
 							CombatNPCBaseFleeAt( value.toShort() );
 							break;
-						case 0x0653:	 // COMBATNPCBASEREATTACKAT[0124]
+						case 0x0603:	 // COMBATNPCBASEREATTACKAT[0094]
 							CombatNPCBaseReattackAt( value.toShort() );
 							break;
-						case 0x066B:	 // COMBATATTACKSTAMINA[0125]
+						case 0x061B:	 // COMBATATTACKSTAMINA[0095]
 							CombatAttackStamina( value.toShort() );
 							break;
-						case 0x067F:	 // LOCATION[0126]
+						case 0x062F:	 // LOCATION[0096]
 							ServerLocation( value );
 							break;
-						case 0x0688:	 // STARTGOLD[0127]
+						case 0x0638:	 // STARTGOLD[0097]
 							ServerStartGold( value.toShort() );
 							break;
-						case 0x0692:	 // STARTPRIVS1[0128]
+						case 0x0642:	 // STARTPRIVS[0098]
 							ServerStartPrivs( value.toUShort() );
 							break;
-						case 0x069E:	 // STARTPRIVS2[0129]
+						case 0x064D:	 // ESCORTDONEEXPIRE[0099]
+							SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
 							break;
-						case 0x06AA:	 // ESCORTDONEEXPIRE[0130]
-							EscortDoneExpire( value.toUShort() );
-							break;
-						case 0x06BB:	 // LIGHTDARKLEVEL[0131]
+						case 0x065E:	 // LIGHTDARKLEVEL[0100]
 							WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
 							break;
-						case 0x06CA:	 // TITLECOLOUR[0132]
+						case 0x066D:	 // TITLECOLOUR[0101]
 							TitleColour( value.toUShort() );
 							break;
-						case 0x06D6:	 // LEFTTEXTCOLOUR[0133]
+						case 0x0679:	 // LEFTTEXTCOLOUR[0102]
 							LeftTextColour( value.toUShort() );
 							break;
-						case 0x06E5:	 // RIGHTTEXTCOLOUR[0134]
+						case 0x0688:	 // RIGHTTEXTCOLOUR[0103]
 							RightTextColour( value.toUShort() );
 							break;
-						case 0x06F5:	 // BUTTONCANCEL[0135]
+						case 0x0698:	 // BUTTONCANCEL[0104]
 							ButtonCancel( value.toUShort() );
 							break;
-						case 0x0702:	 // BUTTONLEFT[0136]
+						case 0x06A5:	 // BUTTONLEFT[0105]
 							ButtonLeft( value.toUShort() );
 							break;
-						case 0x070D:	 // BUTTONRIGHT[0137]
+						case 0x06B0:	 // BUTTONRIGHT[0106]
 							ButtonRight( value.toUShort() );
 							break;
-						case 0x0719:	 // BACKGROUNDPIC[0138]
+						case 0x06BC:	 // BACKGROUNDPIC[0107]
 							BackgroundPic( value.toUShort() );
 							break;
-						case 0x0727:	 // POLLTIME[0139]
+						case 0x06CA:	 // POLLTIME[0108]
 							TownNumSecsPollOpen( value.toULong() );
 							break;
-						case 0x0730:	 // MAYORTIME[0140]
+						case 0x06D3:	 // MAYORTIME[0109]
 							TownNumSecsAsMayor( value.toULong() );
 							break;
-						case 0x073A:	 // TAXPERIOD[0141]
+						case 0x06DD:	 // TAXPERIOD[0110]
 							TownTaxPeriod( value.toULong() );
 							break;
-						case 0x0744:	 // GUARDSPAID[0142]
+						case 0x06E7:	 // GUARDSPAID[0111]
 							TownGuardPayment( value.toULong() );
 							break;
-						case 0x074F:	 // DAY[0143]
+						case 0x06F2:	 // DAY[0112]
 							ServerTimeDay( value.toShort() );
 							break;
-						case 0x0753:	 // HOURS[0144]
+						case 0x06F6:	 // HOURS[0113]
 							ServerTimeHours( value.toUByte() );
 							break;
-						case 0x0759:	 // MINUTES[0145]
+						case 0x06FC:	 // MINUTES[0114]
 							ServerTimeMinutes( value.toUByte() );
 							break;
-						case 0x0761:	 // SECONDS[0146]
+						case 0x0704:	 // SECONDS[0115]
 							ServerTimeSeconds( value.toUByte() );
 							break;
-						case 0x0769:	 // AMPM[0147]
+						case 0x070C:	 // AMPM[0116]
 							ServerTimeAMPM( value.toUShort() != 0 );
 							break;
-						case 0x076E:	 // SKILLLEVEL[0148]
+						case 0x0711:	 // SKILLLEVEL[0117]
 							SkillLevel( value.toUByte() );
 							break;
-						case 0x0779:	 // SNOOPISCRIME[0149]
+						case 0x071C:	 // SNOOPISCRIME[0118]
 							SnoopIsCrime( value.toUShort() != 0 );
 							break;
-						case 0x0786:	 // BOOKSDIRECTORY[0151]
+						case 0x0729:	 // BOOKSDIRECTORY[0119]
 							Directory( CSDDP_BOOKS, value );
 							break;
-						case 0x0795:	 // SERVERLIST[0152]
+						case 0x0738:	 // SERVERLIST[0120]
 						{
 							physicalServer toAdd;
 							sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
@@ -2219,73 +2082,93 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 						case 0x07A0:	 // PORT[0154] // whatever that stands for..
 							ServerPort( value.toUShort() );
 							break;
-						case 0x07A5:	 // ACCESSDIRECTORY[0128]
+						case 0x0748:	 // ACCESSDIRECTORY[0122]
 							Directory( CSDDP_ACCESS, value );
 							break;
-						case 0x07B5:	 // LOGSDIRECTORY[0129]
+						case 0x0758:	 // LOGSDIRECTORY[0123]
 							Directory( CSDDP_LOGS, value );
 							break;
-						case 0x07C3:	 // ACCOUNTISOLATION[0130]
+						case 0x0766:	 // ACCOUNTISOLATION[0124]
 							break;
-						case 0x07D4:	 // HTMLDIRECTORY[0131]
+						case 0x0777:	 // HTMLDIRECTORY[0125]
 							Directory( CSDDP_HTML, value );
 							break;
-						case 0x07E2:	 // SHOOTONANIMALBACK[0132]
+						case 0x0785:	 // SHOOTONANIMALBACK[0126]
 							ShootOnAnimalBack( value.toUShort() == 1 );
 							break;
-						case 0x07F4:	 // NPCTRAININGENABLED[0133]
+						case 0x0797:	 // NPCTRAININGENABLED[0127]
 							NPCTrainingStatus( value.toUShort() == 1 );
 							break;
-						case 0x0807:	 // DICTIONARYDIRECTORY[0134]
+						case 0x07AA:	 // DICTIONARYDIRECTORY[0128]
 							Directory( CSDDP_DICTIONARIES, value );
 							break;
-						case 0x081B:	 // BACKUPSAVERATIO[0135]
+						case 0x07BE:	 // BACKUPSAVERATIO[0129]
 							BackupRatio( value.toShort() );
 							break;
-						case 0x082B:	 // HIDEWILEMOUNTED[0136]
+						case 0x07CE:	 // HIDEWILEMOUNTED[0130]
 							CharHideWhileMounted( value.toShort() == 1 );
 							break;
-						case 0x083B:	 // SECONDSPERUOMINUTE[0137]
+						case 0x07DE:	 // SECONDSPERUOMINUTE[0131]
 							ServerSecondsPerUOMinute( value.toUShort() );
 							break;
-						case 0x084E:	// WEIGHTPERSTR[0138]
+						case 0x07F1:	 // WEIGHTPERSTR[0132]
 							WeightPerStr( value.toUByte() );
 							break;
-						case 0x085B:	// POLYDURATION[0139]
-							PolyDuration( value.toUShort() );
+						case 0x07FE:	 // POLYDURATION[0133]
+							SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
 							break;
-						case 0x0868:	 // UOGENABLED[0140] 
+						case 0x080B:	 // UOGENABLED[0134]
 							ServerUOGEnabled( value.toShort()==1 );
 							break;
-						case 0x0873:	 // NETRCVTIMEOUT[0141]
+						case 0x0816:	 // NETRCVTIMEOUT[0135]
 							ServerNetRcvTimeout( value.toULong() );
 							break;
-						case 0x0881:	 // NETSNDTIMEOUT[0142]
+						case 0x0824:	 // NETSNDTIMEOUT[0136]
 							ServerNetSndTimeout( value.toULong() );
 							break;
-						case 0x088F:	 // NETRETRYCOUNT[0143]
+						case 0x0832:	 // NETRETRYCOUNT[0137]
 							ServerNetRetryCount( value.toULong() );
 							break;
-						case 0x089D:	 // USEFACETSAVES[0144]
+						case 0x0840:	 // USEFACETSAVES[0138]
 							ServerUseFacetSaves( value.toUShort() == 1);
 							break;
-						case 0x08AB:	 // MAP0[0145] Will set MAP0 specific flags, and data eventually 
+						case 0x084E:	 // MAP0[0139]
 							// Place holder
 							break;
-						case 0x08B0:	 // MAP1[0146]
+						case 0x0853:	 // MAP1[0140]
 							// Place holder
 							break;
-						case 0x08B5:	 // MAP2[0147]
+						case 0x0858:	 // MAP2[0141]
 							// Place holder
 							break;
-						case 0x08BA:	 // MAP3[0148]
+						case 0x085D:	 // MAP3[0142]
 							// Place holder
 							break;
-						case 0x08BF:	 // USERMAP[0149]
+						case 0x0862:	 // USERMAP[0143]
 							// Place holder
 							break;
-						case 0x08C7:	 // CLIENTSUPPORT[0150]
+						case 0x086A:	 // CLIENTSUPPORT[0144]
 							ServerClientSupport( value.toULong() );
+							break;
+						case 0x0878:	 // FTPDENABLED[0145]
+							break;
+						case 0x0884:	 // FTPDUSER[0146]
+							break;
+						case 0x088D:	 // FTPDUSERLIMIT[0147]
+							break;
+						case 0x089B:	 // FTPDBIND[0148]
+							break;
+						case 0x08A4:	 // FTPDROOT[0149]
+							break;
+						case 0x08AD:	 // FTPCENABLED[0150]
+							break;
+						case 0x08B9:	 // FTPCHOST[0151]
+							break;
+						case 0x08C2:	 // FTPCPORT[0152]
+							break;
+						case 0x08CB:	 // FTPCUSER[0153]
+							break;
+						case 0x08D4:	 // FTPCULFLAGS[0154]
 							break;
 						default:
 							//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;

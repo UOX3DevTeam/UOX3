@@ -362,7 +362,7 @@ bool keyInPack( CSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 				{
 					mChar->talk( mSock, 405, false );
 					useDoor( mSock, x );
-					mSock->SetTimer( tPC_OBJDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( OBJECT_USAGE )) ) );
+					mSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
 					return true;
 				} 
 				else if( nItem->GetType() == IT_CONTAINER )

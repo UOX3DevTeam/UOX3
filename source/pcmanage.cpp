@@ -739,10 +739,10 @@ CItem *CreateCorpseItem( CChar &mChar, bool createPack )
 	iCorpse->SetTempVar( CITV_MOREY, mChar.isHuman(), 2 );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
 	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
-	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ));
+	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ));
 	if( !mChar.IsNpc() )
 	{
-		UI08 decayMultiplier = static_cast<UI08>(cwmWorldState->ServerData()->SystemTimer( PLAYER_CORPSE )&0xff);
+		UI08 decayMultiplier = static_cast<UI08>(cwmWorldState->ServerData()->PlayerCorpseDecayMultiplier()&0xff);
 		iCorpse->SetOwner( &mChar );
 		iCorpse->SetDecayTime( BuildTimeValue( static_cast<R32>(decayTime*decayMultiplier) ) );
 	}

@@ -25,7 +25,7 @@ void InitializeLookup( void )
 		codeLookup[LanguageCodes[(UnicodeTypes)i]] = (UnicodeTypes)i;
 }
 
-UnicodeTypes FindLanguage( char *lang )
+UnicodeTypes FindLanguage( const char *lang )
 {
 	std::map< std::string, UnicodeTypes >::const_iterator p = codeLookup.find( lang );
 	if( p != codeLookup.end() )
@@ -44,16 +44,18 @@ void UpdateLanguage( CSocket *s )
 	langCode[2] = s->GetByte( 10 );
 	langCode[3] = 0;
 
-	strupr( langCode );	// Convert to uppercase
+	UString ulangCode = langCode ;
+	ulangCode = ulangCode.upper();
+	
 	UnicodeTypes cLang = s->Language();
-	if( LanguageCodes[cLang] != langCode )
+	if( LanguageCodes[cLang] != ulangCode.c_str() )
 	{
-		UnicodeTypes newLang = FindLanguage( langCode );
+		UnicodeTypes newLang = FindLanguage( ulangCode.c_str() );
 		if( newLang == TOTAL_LANGUAGES )
-			Console.Error( 0, "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", langCode );
+			Console.Error( 0, "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
 		else
 			s->Language( newLang );
-	}
+	} 
 }
 
 //o-------------------------------------------------------------------------

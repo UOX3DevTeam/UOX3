@@ -417,12 +417,9 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talking
 
 	jsval params[3], rval;
 	JSString *strSpeech = NULL;
-	
-	char *lwrSpeech = new char[strlen(speech)+1];
-	strcpy( lwrSpeech, speech );
-	strlwr( lwrSpeech );
+	UString lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
+	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech.lower().c_str() );
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, personTalking );
 	JS_SetPrivate( targContext, charObjects[1].toUse, talkingTo );
@@ -431,8 +428,6 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talking
 	params[1] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	params[2] = OBJECT_TO_JSVAL( charObjects[1].toUse );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpeech", 3, params, &rval );
-
-	delete[] lwrSpeech;
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
@@ -2222,11 +2217,9 @@ bool cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	jsval params[2], rval;
 	
 	JSString *strSpeech	= NULL;
-	char *lwrSpeech		= new char[strlen(mySpeech)+1];
-	strcpy( lwrSpeech, mySpeech );
-	strlwr( lwrSpeech );
+	UString lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
+	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech.lower().c_str() );
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, myChar );
 
@@ -2237,7 +2230,6 @@ bool cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTalk", 2, params, &rval );
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 
-	delete [] lwrSpeech;
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnTalk, false );
@@ -2364,15 +2356,18 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSoc
 		return false;
 
 	jsval params[3], rval;
-	JS_SetPrivate( targContext, charObjects[0].toUse, srcChar );
-	JS_SetPrivate( targContext, charObjects[1].toUse, tmpChar );
-	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
-	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
-
+	JSObject *srcObj = AcquireObject( IUE_CHAR );
+	JSObject *tmpObj = AcquireObject( IUE_CHAR );
+	JS_SetPrivate( targContext, srcObj, srcChar );
+	JS_SetPrivate( targContext, tmpObj, tmpChar );
+	params[0] = OBJECT_TO_JSVAL( srcObj );
+	params[1] = OBJECT_TO_JSVAL( tmpObj );
+	JSObject *sockObj = JSVAL_NULL;
 	if( s != NULL )
 	{
-		JS_SetPrivate( targContext, sockObjects[0].toUse, s );
-		params[2] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
+		sockObj = AcquireObject( IUE_SOCK );
+		JS_SetPrivate( targContext, sockObj, s );
+		params[2] = OBJECT_TO_JSVAL( sockObj );
 	}
 	else
 	{
@@ -2380,10 +2375,10 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSoc
 	}
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
-	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+	ReleaseObject( srcObj, IUE_CHAR );
+	ReleaseObject( tmpObj, IUE_CHAR );
 	if( s != NULL )
-		JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
+		ReleaseObject( sockObj, IUE_SOCK );
 	return ( retVal == JS_TRUE );
 }
 
@@ -2513,23 +2508,26 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 
 	jsval params[1], rval;
 
+	JSObject *myObj = JSVAL_NULL;
 	if( a->GetObjType() == OT_CHAR )
 	{
-		JS_SetPrivate( targContext, charObjects[0].toUse, a );
-		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+		myObj = AcquireObject( IUE_CHAR );
+		JS_SetPrivate( targContext, myObj, a );
+		params[0] = OBJECT_TO_JSVAL( myObj );
 	}
 	else
 	{
-		JS_SetPrivate( targContext, itemObjects[0].toUse, a );
-		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+		myObj = AcquireObject( IUE_ITEM );
+		JS_SetPrivate( targContext, myObj, a );
+		params[0] = OBJECT_TO_JSVAL( myObj );
 	}
 
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval ); 
 	
 	if( a->GetObjType() == OT_CHAR )
-		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+		ReleaseObject( myObj, IUE_CHAR );
 	else
-		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+		ReleaseObject( myObj, IUE_ITEM );
 	
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnIterate, false ); 	

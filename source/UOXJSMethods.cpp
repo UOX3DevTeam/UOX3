@@ -2673,7 +2673,7 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	if( argc != 0 )
 	{
 		MethodError( "(IsMulti) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2682,7 +2682,7 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	if( !ValidateObject( myItem ) )
 	{
 		MethodError( "(IsMulti) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	
@@ -2695,7 +2695,7 @@ JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( argc != 1 )
 	{
 		MethodError( "(IsInMulti) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2704,14 +2704,14 @@ JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(IsInMulti) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CBaseObject *toFind = (CBaseObject *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(IsInMulti) Invalid object in house" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2724,7 +2724,7 @@ JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 1 )
 	{
 		MethodError( "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2733,14 +2733,14 @@ JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(IsOnBanList) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CChar *toFind = (CChar *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(IsOnBanList) Invalid character" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	
@@ -2752,7 +2752,7 @@ JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( argc != 1 )
 	{
 		MethodError( "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2761,14 +2761,14 @@ JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(IsOnOwnerList) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CChar *toFind = (CChar *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(IsOnOwnerList) Invalid character" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	
@@ -2798,7 +2798,7 @@ JSBool CItem_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	
-	*rval = JS_TRUE;
+	*rval = JSVAL_TRUE;
 	myItem->AddToBanList( toFind );
 	return JS_TRUE;
 }
@@ -2808,7 +2808,7 @@ JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( argc != 1 )
 	{
 		MethodError( "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2817,18 +2817,18 @@ JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(AddToOwnerList) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CChar *toFind = (CChar *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(AddToOwnerList) Invalid character" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
-	*rval = JS_TRUE;
+	*rval = JSVAL_TRUE;
 	myItem->AddAsOwner( toFind );
 	return JS_TRUE;
 }
@@ -2837,7 +2837,7 @@ JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval 
 	if( argc != 1 )
 	{
 		MethodError( "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2846,18 +2846,18 @@ JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(RemoveFromBanList) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CChar *toFind = (CChar *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(RemoveFromBanList) Invalid character" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	
-	*rval = JS_TRUE;
+	*rval = JSVAL_TRUE;
 	myItem->RemoveFromBanList( toFind );
 	return JS_TRUE;
 }
@@ -2866,7 +2866,7 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 	if( argc != 1 )
 	{
 		MethodError( "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 
@@ -2875,18 +2875,18 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
 	{
 		MethodError( "(RemoveFromOwnerList) Invalid object assigned" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	CChar *toFind = (CChar *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( toFind ) )
 	{
 		MethodError( "(RemoveFromOwnerList) Invalid character" );
-		*rval = JS_FALSE;
+		*rval = JSVAL_FALSE;
 		return JS_TRUE;
 	}
 	
-	*rval = JS_TRUE;
+	*rval = JSVAL_TRUE;
 	myItem->RemoveAsOwner( toFind );
 	return JS_TRUE;
 }
@@ -3712,9 +3712,8 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
 
 	char *filename	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	char *mode		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	strlwr( mode );
-	if( mode[0] != 'r' && mode[0] != 'w' && mode[0] != 'a' )
+	UString mode	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	if( mode.lower().find_first_of("rwa",0,1) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -3724,9 +3723,8 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		MethodError( "Open: file names may not contain \"..\", \"\\\", or \"/\"." );
 		return JS_FALSE;
 	}
-	mode[1] = 0;
-
-	mFile->mWrap = fopen( filename, mode );
+	
+	mFile->mWrap = fopen( filename, mode.lower().substr(0,1).c_str() );
 
 	return JS_TRUE;
 }
@@ -4494,11 +4492,11 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
 			if( mSock != NULL ) 
 				mSock->updateskill( i );
-			*rval = JS_TRUE;
+			*rval = JSVAL_TRUE;
 			return JS_TRUE;
 		}
 	}
-	*rval = JS_FALSE;
+	*rval = JSVAL_FALSE;
 	return JS_TRUE;
 }
 

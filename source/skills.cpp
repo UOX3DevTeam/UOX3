@@ -720,75 +720,6 @@ void cSkills::RegenerateLog( long grX, long grY )
 	
 }
 
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::DetectHidden( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses the detect hidden skill, Greater
-//|					 your skill is the longer range you can detect from where
-//|					 where you target, hiders near the center of the target
-//|					 are easier to detect, while hiders further from the center
-//|					 are more difficult to detect
-//o---------------------------------------------------------------------------o
-void cSkills::DetectHidden( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	UI16 j, getSkill;
-	SI16 dx, dy;
-	R64 c,range;         //int is too restricting
-	
-	SI16 x = s->GetWord( 11 );
-	SI16 y = s->GetWord( 13 );
-//	SI08 z = s->GetByte( 16 );
-	CChar *mChar = s->CurrcharObj();
-
-	j = mChar->GetSkill( DETECTINGHIDDEN );
-	
-	range = (j*j/1.0E6) * ( MAX_VISRANGE + Races->VisRange( mChar->GetRace() ) );     // this seems like an ok formula
-	
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		SubRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
-			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) )
-				continue;
-			if( tempChar->GetVisible() == VT_TEMPHIDDEN ) // do not detect invis people only hidden ones
-			{
-				dx = abs( tempChar->GetX() - x );
-				dy = abs( tempChar->GetY() - y );
-				c = hypot( dx, dy );
-				getSkill = (UI16)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAX_VISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
-				//if( getSkill < 0 )  // Can't happen, getSkill is unsigned
-					//getSkill = 0;
-				if( getSkill > 1000 ) 
-					getSkill = 1000;
-				
-				if( ( CheckSkill( mChar, DETECTINGHIDDEN, getSkill, 1000 ) ) && ( c <= range ) )
-				{
-					tempChar->ExposeToView();
-					CSocket *kSock = calcSocketObjFromChar( tempChar );
-					if( kSock != NULL )
-						kSock->sysmessage( 1436 );
-				}
-				else 
-					s->sysmessage( 1437 );
-			}
-		}
-		regChars->Pop();
-	}
-}
-
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::PeaceMaking( CSocket *s )
 //|   Date        :  Unknown
@@ -1479,8 +1410,8 @@ void cSkills::FishTarget( CSocket *s )
 		mChar->SetStamina( mChar->GetStamina() - 2 );
 		Effects->PlayCharacterAnimation( mChar, 0x0b );
 		R32 baseTime;
-		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( BASE_FISHING ) / 25);
-		baseTime += RandomNum( 0, static_cast< int >(cwmWorldState->ServerData()->SystemTimer( RANDOM_FISHING ) / 15) );
+		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ) / 25);
+		baseTime += RandomNum( 0, static_cast< int >(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ) / 15) );
 		s->SetTimer( tPC_FISHING, BuildTimeValue( baseTime ) ); //2x faster at war and can run
 		Effects->PlaySound( s, 0x023F, true );
 	}
@@ -1591,7 +1522,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 			switch( x )
 			{
 				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
-				case DETECTINGHIDDEN:	s->target( 0, TARGET_DETECTHIDDEN, 860 );	break;
 				case PEACEMAKING:		PeaceMaking(s);								break;
 				case PROVOCATION:		s->target( 0, TARGET_PROVOCATION, 861 );	break;
 				case ENTICEMENT:		s->target( 0, TARGET_ENTICEMENT, 862 );		break;
@@ -1603,10 +1533,9 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 					break;
 				case INSCRIPTION:		s->target( 0, TARGET_INSCRIBE, 865 );		break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
-				case BEGGING:			s->target( 0, TARGET_BEGGING, 866 );		break;
 				case POISONING:			s->target( 0, TARGET_APPLYPOISON, 869 );	break;
 				case MEDITATION:
-					if( cwmWorldState->ServerData()->SystemTimer( ARMORAFFECTMANA_REGEN ) )
+					if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
 						Meditation( s );
 					else 
 						s->sysmessage( 870 );
@@ -2043,66 +1972,6 @@ UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
 		return EAST;
 	else 
 		return NORTH;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::BeggingTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets PC/NPC with the begging skill
-//o---------------------------------------------------------------------------o
-void cSkills::BeggingTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( targChar ) )
-		return;
-
-	if( !targChar->IsNpc() )
-	{
-		s->sysmessage( 899 );
-		return;
-	}
-	if( targChar->GetNPCAiType() == aiPLAYERVENDOR )
-	{
-		s->sysmessage( 900 );
-		return;
-	}
-	CChar *mChar = s->CurrcharObj();
-	if( !objInRange( targChar, mChar, cwmWorldState->ServerData()->BeggingRange() ) )
-	{
-		s->sysmessage( 901 );
-		return;
-	}
-	if( targChar->GetID() == 0x0190 || targChar->GetID() == 0x0191 )
-	{
-		UI32 bankGold		= GetBankCount( mChar, 0x0EED, 0 );
-		UI32 currentGold	= GetItemAmount( mChar, 0x0EED );
-		UI32 petGold		= 0;
-		CDataList< CChar * > *myPets = mChar->GetPetList();
-		for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
-		{
-			if( ValidateObject( pet ) )
-				petGold += GetItemAmount( pet, 0x0EED );
-		}
-		if( bankGold + currentGold + petGold > 3000 )
-		{
-			s->sysmessage( 1645 );
-			return;
-		}
-		mChar->talkAll( RandomNum( 1662, 1664 ), false ); // Updated to make use of dictionary
-		if( !CheckSkill( mChar, BEGGING, 0, 1000 ) )
-			s->sysmessage( 902 );
-		else
-		{
-			targChar->talkAll( 903, false ); 
-			Items->CreateItem( s, mChar, 0x0EED, ( 10 + RandomNum( 0, mChar->GetSkill( BEGGING ) + 1 ) / 25 ), 0, OT_ITEM, true );
-			s->sysmessage( 904 );
-		}
-	}
-	else
-		s->sysmessage( 905 );
 }
 
 //o---------------------------------------------------------------------------o

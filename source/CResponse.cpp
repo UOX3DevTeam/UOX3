@@ -168,7 +168,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					Npc->SetFTarg( mChar );			// Set the NPC to follow the PC
 					Npc->SetNpcWander( 1 );			// Set the NPC to wander freely
-					Npc->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->EscortActiveExpire() )) );			// Set the expire time if nobody excepts the quest
+					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 		
 					// Send out the rant about accepting the escort
 					Npc->talkAll( 1294, false, regions[Npc->GetQuestDestRegion()]->GetName().c_str() );

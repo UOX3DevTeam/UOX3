@@ -514,13 +514,13 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	if( dir&0x80 )
 	{
 		if( !c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) * 1000 ) / 2 ) );
+			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) / 2 ) );
 
 		// if we are using stealth
 		if( c->GetStealth() != -1 )	// Stealth - stop hiding if player runs
 			c->ExposeToView();
 		//Don't regenerate stamina while running
-		c->SetRegen( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) )), 1 );
+		c->SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 		c->SetRunning( c->GetRunning() + 1 );
 
 		if( !c->IsDead() && c->GetCommandLevel() < CNS_CMDLEVEL )
@@ -542,7 +542,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	{
 		c->SetRunning( 0 );
 		if( !c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) * 1000 ) / 4 ) );
+			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) / 4 ) );
 	}
 	return true;
 }
