@@ -1,0 +1,2821 @@
+#include "uox3.h"
+#include "weight.h"
+#include "combat.h"
+#include "cRaces.h"
+#include "skills.h"
+#include "targeting.h"
+#include "cMagic.h"
+#include "trigger.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "CPacketSend.h"
+#include "classes.h"
+#include "regions.h"
+#include "books.h"
+#include "magic.h"
+#include "townregion.h"
+#include "gump.h"
+#include "cGuild.h"
+#include "msgboard.h"
+#include "ssection.h"
+#include "cServerDefinitions.h"
+#include "cSkillClass.h"
+#include "Dictionary.h"
+
+namespace UOX
+{
+
+void		telltime( cSocket *s );
+void		sendTradeStatus( CItem *cont1, CItem *cont2 );
+CItem *		startTrade( cSocket *mSock, CChar *i );
+bool		checkItemRange( CChar *mChar, CItem *i );
+bool		isDoorBlocked( CItem *door );
+void		DoHouseTarget( cSocket *mSock, UI08 houseEntry );
+bool		keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x );
+void		SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate );
+void		BuildGumpFromScripts( cSocket *s, UI16 m );
+void		PlankStuff( cSocket *s, CItem *p );
+CBoatObj *	GetBoat( cSocket *s );
+void		ModelBoat( cSocket *s, CBoatObj *i );
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	Bounce( cSocket *bouncer, CItem *bouncing )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Bounce items back from where they came
+//o---------------------------------------------------------------------------o
+void Bounce( cSocket *bouncer, CItem *bouncing )
+{
+	if( bouncer == NULL || !ValidateObject( bouncing ) )
+		return;
+	CPBounce bounce( 5 );
+	PickupLocations from	= bouncer->PickupSpot();
+	SERIAL spot				= bouncer->PickupSerial();
+	switch( from )
+	{
+		default:
+		case PL_NOWHERE:	break;
+		case PL_GROUND:		
+		{
+			SI16 x = bouncer->PickupX();
+			SI16 y = bouncer->PickupY();
+			SI08 z = bouncer->PickupZ();
+			bouncing->SetLocation( x, y, z );
+		}
+			break;
+		case PL_OWNPACK:
+		case PL_OTHERPACK:
+		case PL_PAPERDOLL:
+			bouncing->SetContSerial( spot );	
+			break;
+	}
+	bouncing->Dirty( UT_UPDATE );
+	bouncer->Send( &bounce );
+	bouncer->PickupSpot( PL_NOWHERE );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  CItem *autoStack( cSocket *mSock, CItem *i, CItem *pack )
+//|   Date        :  8/14/01
+//|   Programmer  :  Zane
+//|	  Modified	  :	 Abaddon, 9th September, 2001, returns true if item deleted
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Searches pack for pileable items that match the item being
+//|					 dropped into said pack (only if it's pileable), if found
+//|					 ensures the amount won't go over 65535 (the limit how large
+//|					 an item can stack) then stacks it. If the item is not stackable
+//|					 or it cannot stack the item with a pile and have an amount that
+//|					 is <= 65355 then it creates a new pile.
+//|									
+//|	Modification	-	09/25/2002	-	Brakthus - Weight fixes
+//o---------------------------------------------------------------------------o
+CItem *doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
+{
+	UI32 newAmt = stack->GetAmount() + i->GetAmount();
+	if( newAmt > MAX_STACK )
+	{
+		i->SetAmount( ( newAmt - MAX_STACK ) );
+		stack->SetAmount( MAX_STACK );
+	}
+	else
+	{
+		stack->SetAmount( newAmt );
+		i->Delete();
+		if( mSock != NULL )
+		{
+			mSock->statwindow( mChar );
+			Effects->itemSound( mSock, stack, false );
+		}
+		return stack;
+	}
+	return i;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function	-	bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
+//|	Date		-	
+//|	Developers	-	UOX3 DevTeam
+//|	Organization-	UOX3 DevTeam
+//|	Status		-	Modified to v2
+//|					v2 - accepts a possible NULL socket to deal with the JSE
+//|					v3 - returns a CItem * (stack if stacked, item otherwise)
+//o--------------------------------------------------------------------------o
+//|	Description	-	Searches through the pack to see if an item can be stacked
+//|					stacking them automatically
+//|
+//o--------------------------------------------------------------------------o
+CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack )
+{
+	CChar *mChar = NULL;
+	if( mSock != NULL )
+		mChar = mSock->CurrcharObj();
+	if( !ValidateObject( iToStack ) || !ValidateObject( iPack ) )
+		return false;
+
+	iToStack->SetCont( iPack );
+	if( iToStack->isPileable() )
+	{
+		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+			Weight->subtractItemWeight( mChar, iToStack );
+		for( CItem *stack = iPack->FirstItem(); !iPack->FinishedItems(); stack = iPack->NextItem() )
+		{
+			if( !ValidateObject( stack ) )
+				continue;
+
+			if( stack->isPileable() && stack->GetSerial() != iToStack->GetSerial() &&
+				stack->GetID() == iToStack->GetID() && stack->GetColour() == iToStack->GetColour() &&
+				stack->GetAmount() < MAX_STACK )
+			{ // Autostack
+				if( doStacking( mSock, mChar, iToStack, stack ) == stack )	// compare to stack, if doStacking returned the stack, then the raw object was deleted
+					return stack;	// return the stack
+			}
+		}
+		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+			Weight->addItemWeight( mChar, iToStack );
+	}
+	iToStack->PlaceInPack();
+	if( mSock != NULL )
+	{
+		mSock->statwindow( mChar );
+		Effects->itemSound( mSock, iToStack, false );
+	}
+	return iToStack;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  Grab( cSocket *mSock )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when a player picks up an item
+//o---------------------------------------------------------------------------o
+bool CPIGetItem::Handle( void )
+{
+	CChar *ourChar	= tSock->CurrcharObj();
+	SERIAL serial	= tSock->GetDWord( 1 );
+	if( serial == INVALIDSERIAL )
+		return true;
+	ourChar->BreakConcentration( tSock );
+
+	CItem *i = calcItemObjFromSer( serial );
+	if( !ValidateObject( i ) )
+		return true;
+
+	CPBounce bounce( 0 );
+
+	ObjectType oType	= OT_CBO;
+	cBaseObject *iOwner	= NULL;
+	CItem *x			= i;
+	cBaseObject *iCont	= i->GetCont();
+	if( iCont != NULL )  //Find character owning item
+	{
+		iOwner = FindItemOwner( i, oType );
+		tSock->PickupSerial( i->GetContSerial() );
+		if( oType == OT_CHAR )
+		{
+			if( iCont->GetObjType() == OT_CHAR )
+				tSock->PickupSpot( PL_PAPERDOLL );
+			else
+			{
+				if( iOwner != ourChar )
+					tSock->PickupSpot( PL_OTHERPACK );
+				else
+					tSock->PickupSpot( PL_OWNPACK );
+			}
+			if( !ourChar->IsGM() && iOwner != ourChar && iOwner->GetOwnerObj() != ourChar )
+			{
+				tSock->Send( &bounce );
+				return true;
+			}
+		}
+		else if( oType == OT_ITEM )
+		{
+			CItem *x = static_cast<CItem *>(iOwner);
+			if( x->isCorpse() )
+			{
+				CChar *corpseTargChar = x->GetOwnerObj();
+				if( ValidateObject( corpseTargChar ) )
+				{
+					if( corpseTargChar->IsGuarded() ) // Is the corpse being guarded?
+						Combat->petGuardAttack( ourChar, corpseTargChar, corpseTargChar );
+					else if( x->isGuarded() )
+						Combat->petGuardAttack( ourChar, corpseTargChar, x );
+				}
+			}
+			else if( x->GetLayer() == IL_NONE && x->GetID() == 0x1E5E ) // Trade Window
+			{
+				serial = x->GetTempVar( CITV_MOREB );
+				if( serial == INVALIDSERIAL )
+					return true;
+				CItem *z = calcItemObjFromSer( serial );
+				if( ValidateObject( z ) )
+				{
+					if( z->GetTempVar( CITV_MOREZ ) || x->GetTempVar( CITV_MOREZ ) )
+					{
+						z->SetTempVar( CITV_MOREZ, 0 );
+						x->SetTempVar( CITV_MOREZ, 0 );
+						sendTradeStatus( z, x );
+					}
+					// Default item pick up sound sent to other player involved in trade
+					cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+					if( zSock != NULL )
+						Effects->PlaySound( zSock, 0x0057, false );
+				}
+			}
+		}
+	}
+	else
+	{
+		tSock->PickupSpot( PL_GROUND );
+		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
+	}
+
+	if( i->isCorpse() || !checkItemRange( ourChar, x ) )
+	{
+		tSock->Send( &bounce );
+		return true;
+	}
+
+	if( x->GetMultiObj() != NULL )
+	{
+		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && x->GetMultiObj() != ourChar->GetMultiObj() )
+		{
+			tSock->Send( &bounce );
+			return true;
+		}
+		i->SetMulti( INVALIDSERIAL );
+	}
+
+	if( i->isDecayable() )
+		i->SetDecayTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( DECAY ) ) );
+
+	if( iCont != NULL )
+	{
+		if( iCont->GetObjType() == OT_CHAR )
+		{
+			CChar *pChar = (CChar *)iCont;
+			if( pChar )
+				pChar->TakeOffItem( i->GetLayer() );
+		} 
+		else 
+		{
+			CItem *pItem = (CItem *)iCont;
+			if( pItem )
+				pItem->ReleaseItem( i );
+		}
+	}
+
+	if( i->isGuarded() )
+	{
+		if( oType == OT_CHAR && tSock->PickupSpot() == PL_OTHERPACK )
+			Combat->petGuardAttack( ourChar, static_cast<CChar *>(iOwner), i );
+
+		CChar *petGuard = Npcs->getGuardingPet( ourChar, i );
+		if( ValidateObject( petGuard ) )
+			petGuard->SetGuarding( NULL );
+		i->SetGuarded( false );
+	}
+
+	CTile tile;
+	Map->SeekTile( i->GetID(), &tile );
+	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	{
+		tSock->Send( &bounce );
+		return true;
+	}
+
+	Effects->PlaySound( tSock, 0x0057, true );
+	if( i->GetAmount() > 1 )
+	{
+		UI16 amount = tSock->GetWord( 5 );
+		if( amount > i->GetAmount() )
+			amount = i->GetAmount();
+		else if( amount < i->GetAmount() )
+		{
+			CItem *c = i->Dupe();
+			if( c != NULL )
+			{
+				c->IncAmount( -amount );
+				c->SetCont( i->GetCont() );
+			}
+			i->SetAmount( amount );
+		}
+		if( i->GetID() == 0x0EED )
+		{
+			if( tSock->PickupSpot() == PL_OWNPACK )
+				tSock->statwindow( ourChar );
+		}
+	}
+	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+	{
+		if( !Weight->checkCharWeight( NULL, ourChar, i ) )
+		{
+			tSock->sysmessage( 1743 );
+			tSock->Send( &bounce );
+			return true;
+		}
+	}
+
+	MapRegion->RemoveItem( i );
+	i->RemoveFromSight();
+	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+	{
+		Weight->addItemWeight( ourChar, i );
+		tSock->statwindow( ourChar );
+	}
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  Equip( cSocket *mSock )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when an item is dropped on a players paperdoll
+//o---------------------------------------------------------------------------o
+bool CPIEquipItem::Handle( void )
+{
+	CChar *ourChar	= tSock->CurrcharObj();
+	SERIAL cserial	= tSock->GetDWord( 6 );
+	SERIAL iserial	= tSock->GetDWord( 1 );
+	if( cserial == INVALIDSERIAL || iserial == INVALIDSERIAL )
+		return true;
+
+	ourChar->BreakConcentration( tSock );
+	CPBounce bounce( 5 );
+	CItem *i = calcItemObjFromSer( iserial );
+	CChar *k = calcCharObjFromSer( cserial );
+	if( !ValidateObject( i ) )
+		return true;
+
+	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+		Weight->subtractItemWeight( ourChar, i ); // SetCont() adds the weight for us (But we also had to add the weight in grabItem() since it sets cont as INVALIDSERIAL
+
+	if( !ourChar->IsGM() && k != ourChar )	// players cant equip items on other players or npc`s paperdolls.  // GM PRIVS
+	{
+		Bounce( tSock, i );
+		tSock->sysmessage( 1186 );
+		tSock->statwindow( ourChar );
+		return true;
+	}
+
+	if( ourChar->IsDead() )
+	{
+		tSock->sysmessage( 1185 );
+		return true;
+	}
+	if( !ValidateObject( k ) )
+		return true;
+
+	ARMORCLASS ac1 = Races->ArmorRestrict( k->GetRace() );
+	ARMORCLASS ac2 = i->GetArmourClass();
+
+	if( ac1 != 0 && ( (ac1&ac2) == 0 ) )	// bit comparison, if they have ANYTHING in common, they can wear it
+	{
+		tSock->sysmessage( 1187 );
+		Bounce( tSock, i );
+		tSock->statwindow( ourChar );
+		return true;
+	}
+	if( k == ourChar )
+	{
+		bool canWear = false;
+		if( i->GetStrength() > k->GetStrength() )
+			tSock->sysmessage( 1188 );
+		else if( i->GetDexterity() > k->GetDexterity() )
+			tSock->sysmessage( 1189 );
+		else if( i->GetIntelligence() > k->GetIntelligence() )
+			tSock->sysmessage( 1190 );
+		else
+			canWear = true;
+		if( !canWear )
+		{
+			Bounce( tSock, i );
+
+			if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+			{
+				tSock->statwindow( ourChar );
+				Effects->itemSound( tSock, i, true );
+			}
+			else
+				Effects->itemSound( tSock, i, false );
+			return true;
+		}
+	}
+	CTile tile;
+	Map->SeekTile( i->GetID(), &tile);
+	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	{
+		Bounce( tSock, i );
+		tSock->statwindow( ourChar );
+		return true;
+	}
+
+	if( i->GetLayer() == IL_NONE )
+		i->SetLayer( tSock->GetByte( 5 ) );
+
+	// 1/13/2003 - Xuri - Fix for equiping an item to more than one hand, or multiple equiping.
+	CItem *j = k->GetItemAtLayer( i->GetLayer() );
+	if( ValidateObject( j ) )
+	{
+		tSock->sysmessage( 1744 );
+		tSock->statwindow( ourChar );
+		Bounce( tSock, i );
+		return true;
+	}
+
+	if( !Weight->checkCharWeight( ourChar, k, i ) )
+	{
+		tSock->sysmessage( 1743 );
+		tSock->statwindow( ourChar );
+		Bounce( tSock, i );
+		return true;
+	}
+
+	i->SetCont( k );
+
+	//Console << "Item equipped on layer " << i->GetLayer() << myendl;
+
+	Effects->PlaySound( tSock, 0x0057, false );
+	tSock->statwindow( ourChar );
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function		:	DropOnChar( cSocket *mSock, CChar *targChar, CItem *i )
+//|   Date			:	Unknown
+//|   Programmer	:	UOX3 DevTeam
+//|	  Modified		:	Abaddon, September 14th, 2001, returns true if item deleted
+//|					:	Zane, September 21st, 2003, moved into seperate file and
+//|					:		few other minor tweaks
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when an item is dropped on a character
+//|									
+//|	Modification	-	09/25/2002	-	Xuri/Brakthus - Weight fixes
+//o---------------------------------------------------------------------------o
+bool DropOnPC( cSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
+{
+	bool stackDeleted = false;
+	if( targPlayer == mChar )
+	{
+		CItem *pack = mChar->GetPackItem();
+		if( !ValidateObject( pack ) ) // if player has no pack, put it at its feet
+		{
+			i->SetCont( NULL );
+			i->SetLocation( mChar );
+		} 
+		else
+			stackDeleted = ( autoStack( mSock, i, pack ) != i );
+	}
+	else // Trade stuff
+	{
+		if( isOnline( targPlayer ) )
+		{
+			CItem *j = startTrade( mSock, targPlayer );
+			if( j )
+			{
+				i->SetCont( j );
+				i->SetX( 30 );
+				i->SetY( 30 );
+				i->SetZ( 9 );
+			}
+		}
+		else if( mChar->GetCommandLevel() >= CNS_CMDLEVEL )
+		{
+			CItem *p = targPlayer->GetPackItem();
+			if( !ValidateObject( p ) )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
+				Bounce( mSock, i );
+				return stackDeleted;
+			}
+			stackDeleted = ( autoStack( calcSocketObjFromChar( targPlayer ), i, p ) != i );
+		}
+		else
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
+			Bounce( mSock, i );
+		}
+	}
+	return stackDeleted;
+}
+bool DropOnNPC( cSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
+{
+	bool stackDeleted	= false;
+	bool executeNpc		= true;
+	UI16 targTrig		= i->GetScriptTrigger();
+	cScript *toExecute	= Trigger->GetScript( targTrig );
+	UI08 rVal			= 0;
+	if( toExecute != NULL )
+	{
+		rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
+		switch( rVal )
+		{
+			case 0:	// no such event
+			default:
+				executeNpc = true;
+				break;
+			case 1:	// bounce, no code
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
+				Bounce( mSock, i );
+				return false;	// stack not deleted, as we're bouncing
+			case 2:	// don't bounce, use code
+				executeNpc = false;
+				break;
+			case 3:	// don't bounce, don't use code
+				executeNpc = true;
+				break;
+		}
+	}
+	if( executeNpc )
+	{
+		targTrig	= targNPC->GetScriptTrigger();
+		toExecute	= Trigger->GetScript( targTrig );
+		if( toExecute != NULL )
+		{
+			rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );
+			switch( rVal )
+			{
+				case 0:	// no such event
+				case 2:	// we don't want to bounce, use code
+				default:
+					break;
+				case 1:	// we want to bounce and return
+					// If we want to bounce, then it's safe to assume the item still exists!
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+						Weight->subtractItemWeight( mChar, i );
+					Bounce( mSock, i );
+					return false;	// bouncing, so item exists
+				case 3:	// we don't want to bounce, don't use code
+					return true;	// don't let the code assume the item exists, so we never reference it
+			}
+		}
+	}
+
+	if( i->GetType() == IT_FOOD && targNPC->GetHunger() < 6 && targNPC->IsTamed() && 
+		( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
+	{
+		Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
+		Effects->PlayCharacterAnimation( targNPC, 3 );
+
+		if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
+		{
+			Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
+			targNPC->SetPoisoned( i->GetPoisoned() );
+			targNPC->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON )) ) );
+		}
+		//Remove a food item
+		bool iDeleted = i->IncAmount( -1 );
+		targNPC->SetHunger( static_cast<SI08>(targNPC->GetHunger() + 1) );
+		if( iDeleted )
+			return true; //stackdeleted
+	}
+	if( !targNPC->isHuman() )
+	{
+		// Sept 25, 2002 - Xuri - Weight fixes
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
+
+		Bounce( mSock, i );
+	}
+	else if( static_cast<CChar *>(mSock->TempObj()) != targNPC )
+	{
+		// Sept 25, 2002 - Xuri - weight fix
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
+
+		targNPC->talk( mSock, 1197, false );
+		Bounce( mSock, i );
+	}
+	else // This NPC is training the player
+	{
+		if( i->GetID() == 0x0EED ) // They gave the NPC gold
+		{
+			UI08 trainedIn = targNPC->GetTrainingPlayerIn();
+			targNPC->talk( mSock, 1198, false );
+			UI16 oldskill = mChar->GetBaseSkill( trainedIn ); 
+			mChar->SetBaseSkill( (UI16)( mChar->GetBaseSkill( trainedIn ) + i->GetAmount() ), trainedIn );
+			if( mChar->GetBaseSkill( trainedIn ) > 250 )
+				mChar->SetBaseSkill( 250, trainedIn );
+			Skills->updateSkillLevel( mChar, trainedIn );
+			mSock->updateskill( trainedIn );
+			UI16 getAmount = i->GetAmount();
+			if( i->GetAmount() > 250 ) // Paid too much
+			{
+				i->IncAmount( -(250 - oldskill) );
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
+				Bounce( mSock, i );
+			}
+			else  // Gave exact change
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, i );
+				i->Delete();
+				stackDeleted = true;
+			}
+			mSock->TempObj( NULL );
+			targNPC->SetTrainingPlayerIn( 255 );
+			Effects->goldSound( mSock, getAmount, false );
+		}
+		else // Did not give gold
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
+			targNPC->talk( mSock, 1199, false );
+			Bounce( mSock, i );
+		}
+	}
+	return stackDeleted;
+}
+bool DropOnChar( cSocket *mSock, CChar *targChar, CItem *i )
+{
+	CChar *mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return false;
+
+	if( !Weight->checkCharWeight( mChar, targChar, i ) )
+	{
+		mSock->sysmessage( 1743 );
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, i );
+			mSock->statwindow( mChar );
+		}
+		Bounce( mSock, i );
+		return false;
+	}
+
+	if( !targChar->IsNpc() )
+		return DropOnPC( mSock, mChar, targChar, i );
+
+	return DropOnNPC( mSock, mChar, targChar, i );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  Drop( cSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Item is dropped on the ground or on a character
+//o---------------------------------------------------------------------------o
+void Drop( cSocket *mSock ) // Item is dropped on ground
+{
+	CChar *nChar	= mSock->CurrcharObj();
+	SERIAL serial	= mSock->GetDWord( 1 );
+	CItem *i		= calcItemObjFromSer( serial );
+	bool stackDeleted = false;
+	
+	CPBounce bounce( 5 );
+	if( !ValidateObject( i ) )
+	{
+		nChar->Teleport();
+		return;
+	}
+
+	UI16 targTrig			= i->GetScriptTrigger();
+	cScript *toExecute	= Trigger->GetScript( targTrig );
+	if( toExecute != NULL )
+		toExecute->OnDrop( i, nChar );
+
+	CTile tile;
+	Map->SeekTile( i->GetID(), &tile);
+	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
+		Bounce( mSock, i );
+		return;
+	}
+	
+	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
+	{
+		i->SetCont( NULL );
+		i->SetLocation( mSock->GetWord( 5 ), mSock->GetWord( 7 ), mSock->GetByte( 9 ), nChar->WorldNumber() );
+	}
+	else
+	{
+		CChar *t = calcCharObjFromSer( mSock->GetDWord( 10 ) );
+		if( ValidateObject( t ) )
+			stackDeleted = DropOnChar( mSock, t, i );
+		else
+		{
+			//Bounces items dropped in illegal locations in 3D UO client!!!
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( nChar, i );
+			mSock->statwindow( nChar );
+			Bounce( mSock, i );
+			return;
+		}
+	}
+
+	if( !stackDeleted )
+	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
+
+		if( i->isDecayable() )
+			i->SetDecayTime( BuildTimeValue( static_cast< R32 >(cwmWorldState->ServerData()->SystemTimer( DECAY ) ) ) );
+
+		if( nChar->GetMultiObj() != NULL )
+		{
+			CMultiObj *multi = findMulti( i );
+			if( ValidateObject( multi ) )
+				i->SetMulti( multi );
+		}
+		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+	}
+	mSock->statwindow( nChar );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  DropOnItem( cSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when an item is dropped in a container or on another item
+//o---------------------------------------------------------------------------o
+void DropOnItem( cSocket *mSock )
+{
+	CChar *mChar = mSock->CurrcharObj();
+	CItem *nCont = calcItemObjFromSer( mSock->GetDWord( 10 ) );
+	if( !ValidateObject( nCont ) || !ValidateObject( mChar ) )
+		return;
+
+	CItem *nItem = calcItemObjFromSer( mSock->GetDWord( 1 ) );
+	if( !ValidateObject( nItem ) )
+		return;
+
+	UI16 targTrig			= nItem->GetScriptTrigger();
+	cScript *toExecute	= Trigger->GetScript( targTrig );
+	if( toExecute != NULL )
+		toExecute->OnDrop( nItem, mChar );
+
+	bool stackDeleted = false;
+	if( nCont->GetLayer() == IL_NONE && nCont->GetID() == 0x1E5E && nCont->GetCont() == mChar )
+	{	// Trade window
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mSock->statwindow( mChar );
+		}
+		nItem->SetCont( mChar );
+		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREB ) );
+		if( ValidateObject( z ) )
+		{
+			if( z->GetTempVar( CITV_MOREZ ) || nCont->GetTempVar( CITV_MOREZ ) )
+			{
+				z->SetTempVar( CITV_MOREZ, 0 );
+				nCont->SetTempVar( CITV_MOREZ, 0 );
+				sendTradeStatus( z, nCont );
+			}
+			cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+			if( zSock != NULL )
+				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+		}
+		return;
+	}
+
+	CTile tile;
+	Map->SeekTile( nItem->GetID(), &tile );
+	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+		( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mSock->statwindow( mChar );
+		}
+		Bounce( mSock, nItem );
+		return;
+	}
+
+	if( nCont->GetType() == IT_TRASHCONT )	// Trash container
+	{
+		Effects->PlaySound( mSock, 0x0042, false );
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mSock->statwindow( mChar );
+		}
+		nItem->Delete();
+		mSock->sysmessage( 1201 );
+		return;
+	}
+	else if( nCont->GetType() == IT_SPELLBOOK )	// Spell Book
+	{
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mSock->statwindow( mChar );
+		}
+		if( nItem->GetID( 1 ) != 0x1F || nItem->GetID( 2 ) < 0x2D || nItem->GetID( 2 ) > 0x72 )
+		{
+			Bounce( mSock, nItem );
+			mSock->sysmessage( 1202 );
+			return;
+		}
+		CChar *c = FindItemOwner( nCont );
+		if( ValidateObject( c ) && c != mChar && !mChar->CanSnoop() )
+		{
+			Bounce( mSock, nItem );
+			mSock->sysmessage( 1203 );
+			return;
+		}
+		std::string name;
+		name.reserve( MAX_NAME );
+		if( nItem->GetName()[0] == '#' )
+			getTileName( nItem, name );
+		else
+			name = nItem->GetName();
+
+		if( nCont->GetTempVar( CITV_MORE, 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
+		{
+			mSock->sysmessage( 1204 );
+			Bounce( mSock, nItem );
+			return;
+		}
+
+		if( name == Dictionary->GetEntry( 1605 ) )
+		{
+			if( nCont->GetSpell( 0 ) == INVALIDSERIAL && nCont->GetSpell( 1 ) == INVALIDSERIAL && nCont->GetSpell( 2 ) == INVALIDSERIAL )
+			{
+				mSock->sysmessage( 1205 );
+				Bounce( mSock, nItem );
+				return;
+			}
+			nCont->SetSpell( 0, INVALIDSERIAL );
+			nCont->SetSpell( 1, INVALIDSERIAL );
+			nCont->SetSpell( 2, INVALIDSERIAL );
+		}
+		else
+		{
+			int targSpellNum = nItem->GetID() - 0x1F2D;
+			if( Magic->HasSpell( nCont, targSpellNum ) )
+			{
+				mSock->sysmessage( 1206 );
+				Bounce( mSock, nItem );
+				return;
+			}
+			else
+				Magic->AddSpell( nCont, targSpellNum );
+		}
+		Effects->PlaySound( mSock, 0x0042, false );
+		nItem->Delete();
+		return;
+	}
+	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
+	{	// Stacking
+		bool canHold = true;
+		if( nCont->GetContSerial() >= BASEITEMSERIAL )
+			canHold = Weight->checkPackWeight( mChar, static_cast<CItem *>(nCont->GetCont()), nItem );
+		else
+			canHold = Weight->checkCharWeight( mChar, static_cast<CChar *>(nCont->GetCont()), nItem );
+		if( !canHold )
+		{
+			if( nCont->GetContSerial() >= BASEITEMSERIAL )
+				mSock->sysmessage( 1385 );
+			else
+				mSock->sysmessage( 1743 );
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			{
+				Weight->subtractItemWeight( mChar, nItem );
+				mSock->statwindow( mChar );
+			}
+			Bounce( mSock, nItem );
+			return;
+		}
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
+		nItem->SetCont( nCont );
+		stackDeleted = ( doStacking( mSock, mChar, nItem, nCont ) != nItem );
+		if( !stackDeleted )	// if the item didn't stack or the stack was full
+		{
+			Bounce( mSock, nItem );
+		}
+		mSock->statwindow( mChar );
+	}
+	else if( nCont->GetType() == IT_CONTAINER )
+	{
+		CChar *j = FindItemOwner( nCont );
+		if( ValidateObject( j ) )
+		{
+			if( j->IsNpc() && j->GetNPCAiType() == aiPLAYERVENDOR && j->GetOwnerObj() == mChar )
+			{
+				mChar->SetSpeechMode( 3 );
+				mChar->SetSpeechItem( nItem );
+				mSock->sysmessage( 1207 );
+			}
+			else if( j != mChar && mChar->GetCommandLevel() < CNS_CMDLEVEL )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				{
+					Weight->subtractItemWeight( mChar, nItem );
+					mSock->statwindow( mChar );
+				}
+				mSock->sysmessage( 1630 );
+				Bounce( mSock, nItem );
+				return;
+			}
+		}
+		if( mSock->GetByte( 5 ) != 0xFF )	// In a specific spot in a container
+		{
+			if( nCont != nItem->GetCont() && !Weight->checkPackWeight( mChar, nCont, nItem ) )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				{
+					Weight->subtractItemWeight( mChar, nItem );
+					mSock->statwindow( mChar );
+				}
+				mSock->sysmessage( 1385 );
+				Bounce( mSock, nItem );
+				return;
+			}
+			nItem->SetCont( nCont );
+			nItem->SetX( mSock->GetWord( 5 ) );
+			nItem->SetY( mSock->GetWord( 7 ) );
+			nItem->SetZ( 9 );
+			mSock->statwindow( mChar );
+		}
+		else
+		{
+			if( nCont != nItem->GetCont() && !Weight->checkPackWeight( mChar, nCont, nItem ) )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				{
+					Weight->subtractItemWeight( mChar, nItem );
+					mSock->statwindow( mChar );
+				}
+				mSock->sysmessage( 1385 );
+				Bounce( mSock, nItem );
+				return;
+			}
+			nItem->SetCont( nCont );
+			stackDeleted = ( autoStack( mSock, nItem, nCont ) != nItem );
+			if( !stackDeleted )
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+			}
+			mSock->statwindow( mChar );
+		}
+	}
+	else
+	{
+		MapRegion->RemoveItem( nItem );
+
+		nItem->SetX( mSock->GetWord( 5 ) );
+		nItem->SetY( mSock->GetWord( 7 )  );
+		nItem->SetZ( mSock->GetByte( 9 ) );
+
+		if( nCont->GetType() == IT_SPAWNCONT || nCont->GetType() == IT_UNLOCKABLESPAWNCONT ) // - Unlocked item spawner or unlockable item spawner
+			nItem->SetCont( nCont );
+		else
+			nItem->SetCont( NULL );
+
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mSock->statwindow( mChar );
+		}
+	}
+	if( !stackDeleted )
+		Effects->itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+}
+
+bool CPIDropItem::Handle( void )
+{
+	CChar *ourChar	= tSock->CurrcharObj();
+	UI08 opt		= tSock->GetByte( 10 );
+	if( opt >= 0x40 && opt != 0xFF )
+		DropOnItem( tSock );
+	else 
+		Drop( tSock );
+	ourChar->BreakConcentration( tSock );
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Return characters highest skill
+//o---------------------------------------------------------------------------o
+UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
+{
+	UI08 retSkill = 0;
+	std::vector< cSkillClass > vecSkills;
+	for( UI08 sCtr = 0 ; sCtr < ALLSKILLS; ++sCtr )
+		vecSkills.push_back( cSkillClass( sCtr, mChar->GetBaseSkill( sCtr ) ) );
+
+	std::sort( vecSkills.rbegin(), vecSkills.rend() );
+	if( vecSkills[0].value > 0 )
+	{
+		retSkill	= vecSkills[0].skill;
+		skillLevel	= vecSkills[0].value;
+	}
+	return retSkill;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void getSkillProwessTitle( CChar *p, std::string& prowessTitle )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Fetches the characters "prowess" and "skill" title based upon titles.dfn
+//|                 entries and characters best skill
+//o---------------------------------------------------------------------------o
+void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
+{
+	if( cwmWorldState->prowessTitles.size() < 1 )
+		return;
+	SKILLVAL skillLevel = 0;
+	UI08 bestSkill = BestSkill( mChar, skillLevel );
+	if( skillLevel <= cwmWorldState->prowessTitles[0].minBaseSkill )
+		SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
+	else
+	{
+		for( size_t pEntry = 0; pEntry < cwmWorldState->prowessTitles.size() - 1; ++pEntry )
+		{
+			if( skillLevel >= cwmWorldState->prowessTitles[pEntry].minBaseSkill && skillLevel < cwmWorldState->prowessTitles[pEntry+1].minBaseSkill )
+				break;
+		}
+		SkillProwessTitle = cwmWorldState->prowessTitles[pEntry].toDisplay;
+	}
+	SkillProwessTitle += " " + cwmWorldState->title[static_cast<UI08>(bestSkill + 1)].skill;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	getFameTitle( CChar *p, std::string& Fametitle )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Returns players reputation title based on their Fame and Karma
+//o---------------------------------------------------------------------------o
+void getFameTitle( CChar *p, std::string& FameTitle )
+{
+	if( ValidateObject( p ) )
+	{
+		UString thetitle;
+		UI08 titlenum = 0xFF;
+
+		SI16 k = p->GetKarma();
+		SI16 f = p->GetFame();
+
+		if( k >= 10000 )
+		{
+			if( f >= 5000 )
+				titlenum = 0;
+			else if( f >= 2500 )
+				titlenum = 1;
+			else if( f >= 1250 )
+				titlenum = 2;
+			else
+				titlenum = 3;
+		}
+		else if( k >= 5000 )
+		{
+			if( f >= 5000 )
+				titlenum = 4;
+			else if( f >= 2500 )
+				titlenum = 5;
+			else if( f >= 1250 )
+				titlenum = 6;
+			else
+				titlenum = 7;
+		}
+		else if( k >= 2500 )
+		{
+			if( f >= 5000 )
+				titlenum = 8;
+			else if( f >= 2500 )
+				titlenum = 9;
+			else if( f >= 1250 )
+				titlenum = 10;
+			else
+				titlenum = 11;
+		}
+		else if( k >= 1250 )
+		{
+			if( f >= 5000 )
+				titlenum = 12;
+			else if( f >= 2500 )
+				titlenum = 13;
+			else if( f >= 1250 )
+				titlenum = 14;
+			else
+				titlenum = 15;
+		}
+		else if( k >= 625 )
+		{
+			if( f >= 5000 )
+				titlenum = 16;
+			else if( f >= 1000 )
+				titlenum = 17;
+			else if( f >= 500 )
+				titlenum = 18;
+			else
+				titlenum = 19;
+		}
+		else if( k > -625 )
+		{
+			if( f >= 5000 )
+				titlenum = 20;
+			else if( f >= 2500 )
+				titlenum = 21;
+			else if( f >= 1250 )
+				titlenum = 22;
+			else
+				titlenum = 23;
+		}
+		else if( k > -1250 )
+		{
+			if( f >= 10000 )
+				titlenum = 28;
+			else if( f >= 5000 )
+				titlenum = 27;
+			else if( f >= 2500 )
+				titlenum = 26;
+			else if( f >= 1250 )
+				titlenum = 25;
+			else
+				titlenum = 24;
+		}
+		else if( k > -2500 )
+		{
+			if( f >= 5000 )
+				titlenum = 32;
+			else if( f >= 2500 )
+				titlenum = 31;
+			else if( f >= 1250 )
+				titlenum = 30;
+			else
+				titlenum = 29;
+		}
+		else if( k > -5000 )
+		{
+			if( f >= 10000 )
+				titlenum = 37;
+			else if( f >= 5000 )
+				titlenum = 36;
+			else if( f >= 2500 )
+				titlenum = 35;
+			else if( f >= 1250 )
+				titlenum = 34;
+			else
+				titlenum = 33;
+		}
+		else if( k > -10000 )
+		{
+			if( f >= 5000 )
+				titlenum = 41;
+			else if( f >= 2500 )
+				titlenum = 40;
+			else if( f >= 1250 )
+				titlenum = 39;
+			else
+				titlenum = 38;
+		}
+		else if( k <= -10000 )
+		{
+			if( f >= 5000 )
+				titlenum = 45;
+			else if( f >= 2500 )
+				titlenum = 44;
+			else if( f >= 1250 )
+				titlenum = 43;
+			else
+				titlenum = 42;
+		}
+		if( !cwmWorldState->title[titlenum].fame.empty() )
+			thetitle = cwmWorldState->title[titlenum].fame + " ";
+
+		if( p->GetRace() != 0 && p->GetRace() != 65535 )
+			thetitle = thetitle + Races->Name( p->GetRace() ) + " ";
+
+		if( f >= 10000 ) // Morollans bugfix for repsys
+		{
+			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+			{
+				if( p->GetID( 2 ) == 0x91 )
+					FameTitle = UString::sprintf( Dictionary->GetEntry( 1177 ).c_str(), Races->Name( p->GetRace() ).c_str() );
+				else
+					FameTitle = UString::sprintf( Dictionary->GetEntry( 1178 ).c_str(), Races->Name( p->GetRace() ).c_str() );
+			}
+			else if( p->GetID( 2 ) == 0x91 )
+				FameTitle = UString::sprintf( Dictionary->GetEntry( 1179 ).c_str(), thetitle.c_str() );
+			else
+				FameTitle = UString::sprintf( Dictionary->GetEntry( 1180 ).c_str(), thetitle.c_str() );
+		}
+		else
+		{
+			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+				FameTitle = Dictionary->GetEntry( 1181 );
+			else if( !thetitle.stripWhiteSpace().empty() )
+				FameTitle = UString::sprintf( Dictionary->GetEntry( 1182 ).c_str(), thetitle.c_str() );
+		}
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  PaperDoll( cSocket *s, CChar *pdoll )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Open a characters paperdoll and show titles based on skill,
+//|					 reputation, murder counts, race, ect.
+//o---------------------------------------------------------------------------o
+void PaperDoll( cSocket *s, CChar *pdoll )
+{
+	UString tempstr;
+	CPPaperdoll pd		= (*pdoll);
+	UnicodeTypes sLang	= s->Language();
+
+	UString SkillProwessTitle;
+	UString FameTitle;
+	getSkillProwessTitle( pdoll, SkillProwessTitle );
+	getFameTitle( pdoll, FameTitle );
+
+	bool bContinue = false;
+	if( pdoll->IsGM() )
+		tempstr = pdoll->GetName() + " " + pdoll->GetTitle();
+	else if( pdoll->IsNpc() )
+		tempstr = FameTitle + " " + pdoll->GetName() + " " + pdoll->GetTitle();
+	else if( pdoll->IsDead() )
+		tempstr = pdoll->GetName();
+	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane
+	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+	{
+		if( cwmWorldState->murdererTags.size() < 1 )
+			tempstr = UString::sprintf( Dictionary->GetEntry( 374, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].loBound )	// not a real murderer
+			bContinue = true;
+		else
+		{
+			SI16 mKills = pdoll->GetKills();
+			size_t kCtr;
+			for( kCtr = 0; kCtr < cwmWorldState->murdererTags.size() - 1; ++kCtr )
+			{
+				if( mKills >= cwmWorldState->murdererTags[kCtr].loBound && mKills < cwmWorldState->murdererTags[kCtr+1].loBound )
+					break;
+			}
+			if( kCtr >= cwmWorldState->murdererTags.size() )
+				bContinue = true;
+			else
+				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetName() + ", " + pdoll->GetTitle() + SkillProwessTitle;
+		}
+	}
+	else if( pdoll->IsCriminal() )
+		tempstr = UString::sprintf( Dictionary->GetEntry( 373, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+	else
+		bContinue = true;
+	if( bContinue )
+	{
+		tempstr = FameTitle + pdoll->GetName();	//Repuation + Name
+		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
+		{
+			if( pdoll->GetTownPriv() == 2 )	// is Mayor
+				tempstr = UString::sprintf( Dictionary->GetEntry( 379, sLang ).c_str(), pdoll->GetName().c_str(), regions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
+			else	// is Resident
+				tempstr = pdoll->GetName() + " of " + regions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
+		}
+		else	// No Town Title
+		{
+			if( !pdoll->IsIncognito() && !( pdoll->GetTitle().empty() ) )	// Titled & Skill
+				tempstr += " " + pdoll->GetTitle() + ", " + SkillProwessTitle;
+			else	// Just skilled
+				tempstr += ", " + SkillProwessTitle;
+		}
+	}
+	pd.Text( tempstr );
+	s->Send( &pd );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	usePotion( CChar *p, CItem *i )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Character uses a potion
+//o---------------------------------------------------------------------------o
+void usePotion( cSocket *mSock, CChar *p, CItem *i )
+{
+	if( !ValidateObject( p ) || !ValidateObject( i ) )
+		return;
+
+	if( cwmWorldState->ServerData()->PotionDelay() != 0 )
+		Effects->tempeffect( p, p, 26, 0, 0, 0 );
+	switch( i->GetTempVar( CITV_MOREY ) )
+	{
+		case 1: // Agility Potion
+			Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
+			switch( i->GetTempVar( CITV_MOREZ ) )
+			{
+				case 1:
+					Effects->tempeffect( p, p, 6, (UI16)RandomNum( 6, 15 ), 0, 0 );
+					mSock->sysmessage( 1608 );
+					break;
+				case 2:
+					Effects->tempeffect( p, p, 6, (UI16)RandomNum( 11, 30 ), 0, 0 );
+					mSock->sysmessage( 1609 );
+					break;
+				default:
+					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+					return;
+			}
+			Effects->PlaySound( p, 0x01E7 );
+			break;
+		case 2: // Cure Potion
+			if( p->GetPoisoned() < 1 )
+				mSock->sysmessage( 1344 );
+			else
+			{
+				UI08 x;
+				switch( i->GetTempVar( CITV_MOREZ ) )
+				{
+					case 1:
+						x = (UI08)RandomNum( 1, 100 );
+						if( p->GetPoisoned() == 1 && x < 81 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 2 && x < 41 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 3 && x < 21 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 4 && x < 6 )
+							p->SetPoisoned( 0 );
+						break;
+					case 2:
+						x = (UI08)RandomNum( 1, 100 );
+						if( p->GetPoisoned() == 1 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 2 && x < 81 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 3 && x < 41 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 4 && x < 21 )
+							p->SetPoisoned( 0 );
+						break;
+					case 3:
+						x = (UI08)RandomNum( 1, 100 );
+						if( p->GetPoisoned() == 1 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 2 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 3 && x < 81 )
+							p->SetPoisoned( 0 );
+						else if( p->GetPoisoned() == 4 && x < 61 )
+							p->SetPoisoned( 0 );
+						break;
+					default:
+						Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+						return;
+				}
+				
+				if( p->GetPoisoned() )
+					mSock->sysmessage( 1345 ); 
+				else
+				{
+					Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
+					Effects->PlaySound( p, 0x01E0 ); 
+					mSock->sysmessage( 1346 );
+				} 
+			}
+			break;
+		case 3: // Explosion Potion
+			if( p->GetRegion()->IsGuarded() )
+			{
+				mSock->sysmessage( 1347 );
+				return;
+			}
+			mSock->TempObj( i );
+			mSock->sysmessage( 1348 );
+			Effects->tempeffect( p, p, 16, 0, 1, 3 );
+			Effects->tempeffect( p, p, 16, 0, 2, 2 );
+			Effects->tempeffect( p, p, 16, 0, 3, 1 );
+			Effects->tempeffect( p, i, 17, 0, 4, 0 );
+			mSock->target( 0, 207, "" );
+			return;
+		case 4: // Heal Potion
+			switch( i->GetTempVar( CITV_MOREZ ) )
+			{
+				case 1:
+					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 5 + RandomNum( 1, 5 ) + p->GetSkill( 17 ) / 100 ), static_cast<SI16>(p->GetMaxHP()) ) );
+					mSock->sysmessage( 1349 );
+					break;
+				case 2:
+					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 15 + RandomNum( 1, 10 ) + p->GetSkill( 17 ) / 50 ), static_cast<SI16>(p->GetMaxHP()) ) );
+					mSock->sysmessage( 1350 );
+					break;
+				case 3:
+					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 20 + RandomNum( 1, 20 ) + p->GetSkill( 17 ) / 40 ), static_cast<SI16>(p->GetMaxHP()) ) );
+					mSock->sysmessage( 1351 );
+					break;
+				default:
+					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+					return;
+			}
+			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
+			Effects->PlaySound( p, 0x01F2 ); //Healing Sound - SpaceDog
+			break;
+		case 5: // Night Sight Potion
+			//{
+			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06 );
+			Effects->tempeffect( p, p, 2, 0, 0, 0 );
+			Effects->PlaySound( p, 0x01E3 );
+			break;
+			//}
+		case 6: // Poison Potion
+			if( p->GetPoisoned() < (SI08)i->GetTempVar( CITV_MOREZ ) )
+				p->SetPoisoned( (SI08)i->GetTempVar( CITV_MOREZ ) );
+			if( i->GetTempVar( CITV_MOREZ ) > 4 )
+				i->SetTempVar( CITV_MOREZ, 4 );
+			p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( POISON ) ) );
+			Effects->PlaySound( p, 0x0246 );
+			mSock->sysmessage( 1352 );
+			break;
+		case 7: // Refresh Potion
+			switch( i->GetTempVar( CITV_MOREZ ) )
+			{
+				case 1:
+					p->SetStamina( UOX_MIN( (SI16)(p->GetStamina() + 20 + RandomNum( 1, 10 )), p->GetMaxStam() ) );
+					mSock->sysmessage( 1353 );
+					break;
+				case 2:
+					p->SetStamina( UOX_MIN( (SI16)(p->GetStamina() + 40 + RandomNum( 1, 30 )), p->GetMaxStam() ) );
+					mSock->sysmessage( 1354 );
+					break;
+				default:
+					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+					return;
+			}
+			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
+			Effects->PlaySound( p, 0x01F2 ); //Healing Sound
+			break;
+		case 8: // Strength Potion
+			Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
+			switch( i->GetTempVar( CITV_MOREZ ) )
+			{
+				case 1:
+					Effects->tempeffect( p, p, 8, (UI16)( 5 + RandomNum( 1, 10 ) ), 0, 0);
+					mSock->sysmessage( 1355 );
+					break;
+				case 2:
+					Effects->tempeffect( p, p, 8, (UI16)( 10 + RandomNum( 1, 20 ) ), 0, 0);
+					mSock->sysmessage( 1356 );
+					break;
+				default:
+					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+					return;
+			}
+			Effects->PlaySound( p, 0x01EE );     
+			break;
+		case 9: // Mana Potion
+			switch( i->GetTempVar( CITV_MOREZ ) )
+			{
+				case 1:
+					p->SetMana( UOX_MIN( (SI16)(p->GetMana() + 10 + i->GetTempVar( CITV_MOREX )/100), p->GetMaxMana() ) );
+					break;
+				case 2:
+					p->SetMana( UOX_MIN( (SI16)(p->GetMana() + 20 + i->GetTempVar( CITV_MOREX )/50), p->GetMaxMana() ) );
+					break;
+				default:
+					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+					return;
+			}
+			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
+			Effects->PlaySound( p, 0x01E7); //agility sound - SpaceDog
+			break;
+		default:
+			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
+			return;
+	}
+	Effects->PlaySound( p, 0x0030 );
+	if( p->GetID( 1 ) >= 1 && p->GetID( 2 )>90 && !p->IsOnHorse() )
+		Effects->PlayCharacterAnimation( p, 0x22);
+	i->IncAmount( -1 );
+	CItem *bPotion = Items->CreateItem( mSock, p, 0x0F0E, 1, 0, OT_ITEM, true );
+	if( bPotion != NULL )
+	{
+		if( bPotion->GetCont() == NULL )
+			bPotion->SetLocation( p );
+		bPotion->SetDecayable( true );
+	}
+}
+
+void MountCreature( cSocket *mSock, CChar *s, CChar *x );
+//o---------------------------------------------------------------------------o
+//|   Function    :  handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
+//|   Date        :  Unknown
+//|   Programmer  :  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles double-clicks on a character
+//o---------------------------------------------------------------------------o
+void handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
+{
+	CChar *mChar	= mSock->CurrcharObj();
+	CItem *pack		= NULL;
+	CChar *c		= calcCharObjFromSer( serial );
+	if( !ValidateObject( c ) )
+		return;
+
+	if( c->IsNpc() )
+	{
+		if( c->IsValidMount() )	// Is a mount
+		{
+			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->IsGM() )
+			{
+				if( objInRange( mChar, c, DIST_NEXTTILE ) )
+				{
+					if( mChar->GetID() != mChar->GetOrgID() )
+					{
+						mSock->sysmessage( 380 );
+						return;
+					}
+					if( mChar->IsDead() )
+						mSock->sysmessage( 381 );
+					else
+						MountCreature( mSock, mChar, c );
+				}
+				else
+					mSock->sysmessage( 382 );
+			}
+			else
+				mSock->sysmessage( 1214 );
+			return; 
+		}
+		else if( c->GetID( 1 ) != 0x01 || c->GetID( 2 ) < 0x90 || c->GetID( 2 ) > 0x93 ) // Is a monster
+		{
+			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
+			{
+				if( !objInRange( mChar, c, DIST_NEARBY ) )
+					mSock->sysmessage( 382 );
+				else
+				{
+					pack = c->GetPackItem();
+					if( c->GetOwnerObj() == mChar )
+					{
+						if( ValidateObject( pack ) )
+							mSock->openPack( pack );
+						else
+							Console << "Pack animal " << c->GetSerial() << " has no backpack!" << myendl;
+					}
+					else
+					{
+						Skills->Snooping( mSock, c, pack );
+						mSock->sysmessage( 383 );
+					}
+				}
+				return;
+			}
+//			else
+//				mSock->sysmessage( 384 );
+			return; 
+		}
+		else if( c->GetNPCAiType() == aiPLAYERVENDOR ) // PlayerVendors
+		{
+			c->talk( mSock, 385, false );
+			pack = c->GetPackItem();
+			if( ValidateObject( pack ) )
+				mSock->openPack( pack );
+			return;
+		}
+	}
+	else
+	{
+		if( mChar->GetSerial() == serial )	// Double-clicked yourself
+		{
+			if( mChar->IsOnHorse() && !keyboard )
+			{
+				DismountCreature( mChar );	// If on horse, dismount
+				return;
+			}
+		}
+	}
+	PaperDoll( mSock, c );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
+//|   Date        :  2/11/2003
+//|   Programmer  :  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Runs a switch to match an item type to a function
+//o---------------------------------------------------------------------------o
+bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
+{
+	CChar *iChar	= NULL;
+	CItem *i		= NULL;
+	UI16 itemID		= x->GetID();
+
+	// Begin Check items by type
+	switch( iType )
+	{
+		case IT_NOTYPE:
+		case IT_COUNT:
+			return false;
+		case IT_CONTAINER:	// Container, Backpack
+		case IT_SPAWNCONT: // Item spawn container
+			if( x->GetTempVar( CITV_MOREB, 1 ) )// Is trapped
+				Magic->MagicTrap( mChar, x );
+		case IT_UNLOCKABLESPAWNCONT:	// Unlockable item spawn container
+		case IT_TRASHCONT:	// Trash container
+			if( checkItemRange( mChar, x ) )
+				mSock->openPack( x );
+			else if( objInRange( mChar, iChar, DIST_NEARBY ) )	// Otherwise it's on an NPC, check if it's > 2 paces away
+				Skills->Snooping( mSock, iChar, x );
+			else
+				mSock->sysmessage( 400 );
+			return true;
+		case IT_CASTLEGATEOPENER:	// Order gate opener
+		case IT_CHAOSGATEOPENER:	// Chaos gate opener
+			i = calcItemObjFromSer( x->GetTempVar( CITV_MORE ) );
+			if( ValidateObject( i ) )
+			{
+				if( i->GetType() == IT_CASTLEGATE )
+				{
+					if( i->GetTempVar( CITV_MOREZ ) == 1 )
+					{
+						i->SetTempVar( CITV_MOREZ, 2 );
+						i->SetZ( i->GetZ() + 17 );
+					}
+					else if( i->GetTempVar( CITV_MOREZ ) == 2 )
+					{
+						i->SetTempVar( CITV_MOREZ, 1 );
+						i->SetZ( i->GetZ() - 17 );
+					}
+				}
+			}
+			return true;
+		case IT_TELEPORTITEM:	// Teleport rune
+			mSock->target( 0, TARGET_TELE, 401 );
+			return true;
+		case IT_KEY:	// Key
+			mSock->AddID( x->GetTempVar( CITV_MORE ) );
+			mSock->target( 0, TARGET_KEY, 402 );
+			return true;
+		case IT_LOCKEDCONTAINER:	// Locked container
+		case IT_LOCKEDSPAWNCONT: // locked spawn container
+			mSock->sysmessage( 1428 );
+			return true;
+		case IT_SPELLBOOK:	// Spellbook
+			i = mChar->GetPackItem();
+			if( ValidateObject( i ) )
+			{
+				if( ( x->GetCont() == i || x->GetCont() == mChar ) || x->GetLayer() == IL_RIGHTHAND )
+					Magic->SpellBook( mSock );
+				else
+					mSock->sysmessage( 403 );
+			}
+			return true;
+		case IT_MAP: // Map
+			{
+				CPMapMessage m1;
+				CPMapRelated m2;
+				m1.KeyUsed( x->GetSerial() );
+				m1.GumpArt( 0x139D );
+				m1.UpperLeft( 0, 0 );
+				m1.LowerRight( 0x13FF, 0x0FA0 );
+				m1.Dimensions( 0x0190, 0x0190 );
+				mSock->Send( &m1 );
+
+				m2.ID( x->GetSerial() );
+				m2.Command( 5 );
+				m2.Location( 0, 0 );
+				m2.PlotState( 0 );
+				mSock->Send( &m2 );
+				return true;
+			}
+		case IT_READABLEBOOK:	// Readable book
+			if( x->GetTempVar( CITV_MOREX ) != 666 && x->GetTempVar( CITV_MOREX ) != 999 )
+				Books->OpenPreDefBook( mSock, x );
+			else
+				Books->OpenBook( mSock, x, ( x->GetTempVar( CITV_MOREX ) == 666 ) ); 
+			return true;
+		case IT_DOOR: // Unlocked door
+			if( !isDoorBlocked( x ) )
+				useDoor( mSock, x );
+			else
+				mSock->sysmessage( 1661 );
+			return true;
+		case IT_LOCKEDDOOR: // Locked door
+			if( mChar->IsGM() )
+			{
+				mSock->sysmessage( 404 );
+				useDoor( mSock, x );
+				return true;
+			}
+			if( !keyInPack( mSock, mChar, mChar->GetPackItem(), x ) )
+				mSock->sysmessage( 406 );
+			return true;
+		case IT_FOOD: // Food
+			if( mChar->GetHunger() >= 6 )
+			{
+				mSock->sysmessage( 407 );
+				return true;
+			}
+			else
+			{
+				Effects->PlaySound( mChar, 0x003A + RandomNum( 0, 2 ) );
+				if( mChar->GetHunger() >= 0 && mChar->GetHunger() <= 6 )
+					mSock->sysmessage( 408 + mChar->GetHunger() );
+				else
+					mSock->sysmessage( 415 );
+
+				if( x->GetPoisoned() && mChar->GetPoisoned() < x->GetPoisoned() )
+				{
+					mSock->sysmessage( 416 + RandomNum( 0, 2 ) );
+					Effects->PlaySound( mChar, 0x0246 ); //poison sound - SpaceDog
+					mChar->SetPoisoned( x->GetPoisoned() );
+					mChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( POISON ) )) );
+				}
+				//Remove a food item
+				x->IncAmount( -1 );
+				mChar->SetHunger( mChar->GetHunger() + 1 );
+			}
+			return true;
+		case IT_MAGICWAND: // Magic Wands
+			if( x->GetTempVar( CITV_MOREZ ) != 0 )
+			{
+				mSock->CurrentSpellType( 2 );
+				if( Magic->SelectSpell( mSock, ( 8 * ( x->GetTempVar( CITV_MOREX ) - 1 ) ) + x->GetTempVar( CITV_MOREY ) ) )
+				{
+					x->SetTempVar( CITV_MOREZ, x->GetTempVar( CITV_MOREZ ) - 1 );
+					if( x->GetTempVar( CITV_MOREZ ) == 0 )
+					{
+						x->SetType( IT_NOTYPE );
+						x->SetTempVar( CITV_MOREX, 0 );
+						x->SetTempVar( CITV_MOREY, 0 );
+						x->SetOffSpell( 0 );
+					}
+				}
+			}
+			return true;
+		case IT_CRYSTALBALL: // Crystal Ball
+			mSock->objMessage( 419 + RandomNum( 0, 9 ), x );
+			Effects->PlaySound( mSock, 0x01EC, true );
+			return true;
+		case IT_POTION: // Potions
+			if( mChar->IsUsingPotion() )
+				mSock->sysmessage( 430 );
+			else
+				usePotion( mSock, mChar, x );
+			return true;
+		case IT_TOWNSTONE: // Townstone and Townstone Deed
+			if( itemID == 0x14F0 )		// Check for Deed
+			{
+				CItem *c = Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
+				x->Delete();
+			}
+			else	// Display Townstone gump
+			{
+				cTownRegion *useRegion = calcRegionFromXY( x->GetX(), x->GetY(), mChar->WorldNumber() );
+				if( useRegion != NULL )
+					useRegion->DisplayTownMenu( x, mSock );
+			}
+			return true;
+		case IT_RECALLRUNE: // Recall Rune
+			if( x->GetTempVar( CITV_MOREX ) == 0 && x->GetTempVar( CITV_MOREY ) == 0 && x->GetTempVar( CITV_MOREZ ) == 0 )	// changed, to fix, Lord Vader
+				mSock->sysmessage( 431 );
+			else
+			{
+				mSock->sysmessage( 432 );
+				mChar->SetSpeechItem( x );
+				mChar->SetSpeechMode( 7 );
+			}
+			return true;
+		case IT_GATE:		// Moongate
+		case IT_ENDGATE:	// Ending Moongate
+			if( objInRange( mChar, x, DIST_NEARBY ) )
+			{
+				CItem *otherGate = calcItemObjFromSer( x->GetTempVar( CITV_MOREX ) );
+				if( ValidateObject( otherGate ) )
+					mChar->SetLocation( otherGate );
+			}
+			return true;
+		case IT_OBJTELEPORTER:	// Object Teleporter
+			if( objInRange( mChar, x, DIST_NEARBY ) )
+				mChar->SetLocation( static_cast<SI16>(x->GetTempVar( CITV_MOREX )), static_cast<SI16>(x->GetTempVar( CITV_MOREY )), static_cast<SI08>(x->GetTempVar( CITV_MOREZ ) ));
+			return true;
+		case IT_MAPCHANGEOBJECT:
+			SocketMapChange( mSock, mChar, x );
+			return true;
+		case IT_MORPHOBJECT: // Morph Object
+			mChar->SetID( static_cast<UI16>(x->GetTempVar( CITV_MOREX )) );
+			x->SetType( IT_UNMORPHOBJECT );
+			return true;
+		case IT_UNMORPHOBJECT: // Unmorph Object
+			mChar->SetID( mChar->GetOrgID() );
+			x->SetType( IT_MORPHOBJECT );
+			return true;
+		case IT_DRINK:  // Drink
+			Effects->PlaySound( mChar, 0x30 + RandomNum( 0, 1 ) );
+			if( RandomNum( 0, 1 ) )
+				mChar->talk( mSock, 435, false );
+			else
+				mChar->emote( mSock, 436, false );
+
+			if( x->GetAmount() > 1 )
+				x->IncAmount( -1 );
+			else if( !(RandomNum( 0, 4 )) || x->GetAmount() == 1 )	// they emptied it.
+			{
+				x->SetType( IT_NOTYPE );
+				x->SetAmount( 0 );
+				mSock->sysmessage( 437 );
+				switch( itemID )
+				{
+					case 0x09F0:
+					case 0x09AD:
+					case 0x0FF8:
+					case 0x0FF9: 
+					case 0x1F95:
+					case 0x1F96:
+					case 0x1F97:
+					case 0x1F98:
+					case 0x1F99:
+					case 0x1F9A:
+					case 0x1F9B:
+					case 0x1F9C:
+					case 0x1F9D:
+					case 0x1F9E://Pitchers
+						x->SetID( 0x09A7 );
+						break;
+					case 0x09EE:
+					case 0x09EF:
+					case 0x1F7D:
+					case 0x1F7E:
+					case 0x1F7F:
+					case 0x1F80:
+					case 0x1F85:
+					case 0x1F86:
+					case 0x1F87:
+					case 0x1F88:
+					case 0x1F89:
+					case 0x1F8A:
+					case 0x1F8B:
+					case 0x1F8C:
+					case 0x1F8D:
+					case 0x1F8E:
+					case 0x1F8F:
+					case 0x1F90:
+					case 0x1F91:
+					case 0x1F92:
+					case 0x1F93:
+					case 0x1F94://glasses
+						x->SetID( 0x1F84 );
+						break;
+				}
+			}
+			return true;
+		case IT_PLANK:	// Planks
+			if( objInRange( mChar, x, DIST_INRANGE ) )
+			{
+				if( x->GetID( 2 ) == 0x84 || x->GetID( 2 ) == 0xD5 || x->GetID( 2 ) == 0xD4 || x->GetID( 2 ) == 0x89 )
+					PlankStuff( mSock, x );
+				else
+					mSock->sysmessage( 398 );//Locked
+			}
+			else
+				mSock->sysmessage( 399 );
+			return true;
+		case IT_FIREWORKSWAND: //Fireworks wands
+			srand( cwmWorldState->GetUICurrentTime() );
+			if( x->GetTempVar( CITV_MOREX ) == 0 )
+			{
+				mSock->sysmessage( 396 );
+				return true;
+			}
+			x->SetTempVar( CITV_MOREX, x->GetTempVar( CITV_MOREX ) - 1 );
+			mSock->sysmessage( 397, x->GetTempVar( CITV_MOREX ) );
+			UI08 j;
+			for( j = 0; j < static_cast< UI08 >( RandomNum( 0, 3 ) + 2 ); ++j )
+			{
+				SI16 wx = ( mChar->GetX() + RandomNum( 0, 10 ) - 5 );
+				SI16 wy = ( mChar->GetY() + RandomNum( 0, 10 ) - 5 );
+				Effects->PlayMovingAnimation( mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
+				UI16 animID;
+				switch( RandomNum( 0, 4 ) )
+				{
+					case 0:	animID = 0x373A;		break;
+					case 1:	animID = 0x374A;		break;
+					case 2:	animID = 0x375A;		break;
+					case 3:	animID = 0x376A;		break;
+					case 4:	animID = 0x377A;		break;
+				}
+				Effects->PlayStaticAnimation( wx, wy, mChar->GetZ() + 10, animID, 0x09, 0, 0 );
+			}
+			return true;
+		case IT_RENAMEDEED: // Rename Deed
+			mChar->SetSpeechItem( x );
+			mChar->SetSpeechMode( 6 );
+			mSock->sysmessage( 434 );
+			return true;
+		case IT_LEATHERREPAIRTOOL:	// Leather repair tool
+			mSock->target( 0, TARGET_REPAIRLEATHER, 485 );	// What do we wish to repair?
+			return true;
+		case IT_BOWREPAIRTOOL:	// Bow repair tool
+			mSock->target( 0, TARGET_REPAIRBOW, 485 );	// What do we wish to repair?
+			return true;
+		case IT_TILLER:	// Tillerman
+			if( !ValidateObject( GetBoat( mSock ) ) )
+			{
+				CBoatObj *boat = static_cast<CBoatObj *>(calcItemObjFromSer( x->GetTempVar( CITV_MORE ) ));
+				ModelBoat( mSock, boat );
+			}
+			return true;
+		case IT_GUILDSTONE:	// Guildstone Deed
+			if( itemID == 0x14F0 || itemID == 0x1869 )	// Check for Deed/Teleporter + Guild Type
+			{
+				mChar->SetSpeechItem( x );		// we're using this as a generic item
+				GuildSys->PlaceStone( mSock, x );
+				return true;
+			}
+			else if( itemID == 0x0ED5 )			// Check for Guildstone + Guild Type
+			{
+				mSock->TempInt( x->GetTempVar( CITV_MORE ) );	// track things properly
+				if( mChar->GetGuildNumber() == -1 || mChar->GetGuildNumber() == x->GetTempVar( CITV_MORE ) )
+					GuildSys->Menu( mSock, BasePage + 1, static_cast<GUILDID>(x->GetTempVar( CITV_MORE )) );	// more of the stone is the guild number
+				else
+					mSock->sysmessage( 438 );
+				return true;
+			}
+			else
+				Console << "Unhandled guild item type named: " << x->GetName() << " with ID of: " << itemID << myendl;
+			return true;
+		case IT_HOUSESIGN: // Open Housing Gump
+			bool canOpen;
+			canOpen = (  x->GetOwnerObj() == mChar || mChar->IsGM() );
+			if( !canOpen && x->GetTempVar( CITV_MOREZ ) == 0 )
+			{
+				mSock->sysmessage( 439 );
+				return true;
+			}
+			mSock->TempObj( x );
+			if( !canOpen )
+				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREZ ) );
+			else
+				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREX ) );
+			return true;
+		case IT_TINKERTOOL:	// tinker's tools
+			mSock->target( 0, TARGET_TINKERING, 484 );
+			return true;
+		case IT_METALREPAIRTOOL:
+			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
+			return true;
+		case IT_FORGE:	// Forges
+			mSock->target( 0, TARGET_SMELT, 440 );
+			return true;
+		case IT_DYE:	// Dye
+			mSock->DyeAll( 0 );
+			mSock->target( 0, TARGET_DYEALL, 441 );
+			return true;
+		case IT_DYEVAT:	// Dye vat
+			mSock->AddID1( x->GetColour( 1 ) );
+			mSock->AddID2( x->GetColour( 2 ) );
+			mSock->target( 0, TARGET_DVAT, 442 );
+			return true;
+		case IT_MODELMULTI:	// Model boat/Houses
+			if( iType != IT_TOWNSTONE && iType != IT_GUILDSTONE )
+			{
+				if( x->GetTempVar( CITV_MOREX ) == 0 )
+					break;
+				mChar->SetSpeechItem( x );
+				DoHouseTarget( mSock, static_cast<UI08>(x->GetTempVar( CITV_MOREX )) );
+			}
+			return true;
+		case IT_ARCHERYBUTTE:	// Archery buttle
+			Skills->AButte( mSock, x );
+			return true;
+		case IT_DRUM:	// Drum
+			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
+				Effects->PlaySound( mChar, 0x0038 );
+			else
+				Effects->PlaySound( mChar, 0x0039 );
+			return true;
+		case IT_TAMBOURINE:	// Tambourine
+			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
+				Effects->PlaySound( mChar, 0x0052 );
+			else
+				Effects->PlaySound( mChar, 0x0053 );
+			return true;
+		case IT_STANDINGHARP:
+			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
+				Effects->PlaySound( mChar, 0x0043 );
+			else
+				Effects->PlaySound( mChar, 0x0044 );
+			return true;
+		case IT_HARP:	// Harps
+			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
+				Effects->PlaySound( mChar, 0x0045 );
+			else
+				Effects->PlaySound( mChar, 0x0046 );
+			return true;
+		case IT_LUTE:	// Lute
+			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
+				Effects->PlaySound( mChar, 0x004C );
+			else
+				Effects->PlaySound( mChar, 0x004D );
+			return true;
+		case IT_AXE:	// Axes
+			mSock->target( 0, TARGET_AXE, 443 );
+			return true;
+		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
+			CChar *m;
+			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
+			m->SetNPCAiType( aiPLAYERVENDOR );
+			m->SetInvulnerable( true );
+			m->SetHidden( 0 );
+			m->SetDir( mChar->GetDir() );
+			m->SetNpcWander( 0 );
+			m->SetFlag( m->GetFlag()^7 );
+			m->SetOwner( mChar );
+			x->Delete();
+			m->talk( mSock, 388, false, m->GetName().c_str() );
+			return true;
+		case IT_SMITHYTOOL:
+			mSock->target( 0, TARGET_SMITH, 444 );
+			return true;
+		case IT_CARPENTRYTOOL:	// Carpentry
+			mSock->target( 0, TARGET_CARPENTRY, 445 );
+			return true;
+		case IT_MININGTOOL:	// Mining
+			mSock->target( 0, TARGET_MINE, 446 );
+			return true; 
+		case IT_EMPTYVIAL:	// empty vial
+			i = mChar->GetPackItem();
+			if( ValidateObject( i ) )
+			{
+				if( x->GetCont() == i )
+				{
+					mSock->TempObj( x );
+					mSock->target( 0, TARGET_VIAL, 447 );
+				}
+				else
+					mSock->sysmessage( 448 );
+			}
+			return true;
+		case IT_UNSPUNFABRIC:	// wool to yarn/cotton to thread
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_WHEEL, 449 );
+			return true;
+		case IT_UNCOOKEDFISH:	// cooking fish
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_COOKING, 450 );
+			return true;
+		case IT_UNCOOKEDMEAT:	//
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_COOKING, 451 );
+			return true;
+		case IT_SPUNFABRIC:	// yarn/thread to cloth
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_LOOM, 452 );
+			return true;
+		case IT_FLETCHINGTOOL:	// make shafts
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_FLETCHING, 454 );
+			return true;
+		case IT_CANNONBALL:	// cannon ball
+			mSock->target( 0, TARGET_LOADCANNON, 455 );
+			x->Delete();
+			return true;
+		case IT_WATERPITCHER:	// pitcher of water to flour
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_COOKING, 456 );
+			return true;
+		case IT_UNCOOKEDDOUGH:	// sausages to dough
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_COOKING, 457 );
+			return true;
+		case IT_SEWINGKIT:	// sewing kit for tailoring
+			mSock->target( 0, TARGET_TAILORING, 459 );
+			return true;
+		case IT_ORE:	// smelt ore
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_SMELTORE, 460 );
+			return true;
+		case IT_MESSAGEBOARD:	// Message board opening
+			if( objInRange( mChar, x, DIST_NEARBY ) )
+				MsgBoardEvent( mSock );
+			else
+				mSock->sysmessage( 461 );
+			return true;
+		case IT_SWORD:	// skinning
+			mSock->target( 0, TARGET_SWORD, 462 );
+			return true;
+		case IT_CAMPING:	// camping
+			if( objInRange( mChar, x, DIST_INRANGE ) )
+			{
+				if( Skills->CheckSkill( mChar, CAMPING, 0, 500 ) ) // Morrolan TODO: insert logout code for campfires here
+				{
+					i = Items->CreateItem( NULL, mChar, 0x0DE3, 1, 0, OT_ITEM );
+					if( i == NULL )
+						return true;
+					i->SetDir( 2 );
+					i->SetHP( 1 );		// only want 1 HP to decay straight away
+
+					if( x->GetCont() == NULL )
+						i->SetLocation( x );
+					else
+						i->SetLocation( mChar );
+					i->SetDecayable( true );
+					i->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ) )) );
+					x->IncAmount( -1 );
+				}
+				else
+					mSock->sysmessage( 463 );
+			}
+			else
+				mSock->sysmessage( 393 );
+			return true;
+		case IT_MAGICSTATUE:
+			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
+			{
+				if( itemID == 0x1508 )
+					x->SetID( 0x1509 );
+				else
+					x->SetID( 0x1508 );
+			}
+			else
+				mSock->sysmessage( 465 );
+			return true;
+		case IT_GUILLOTINE:
+		case IT_GUILLOTINEANIM:
+			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
+			{
+				if( itemID == 0x1245 )
+					x->SetID( 0x1230 );
+				else
+					x->SetID( 0x1245 );
+			}
+			else
+				mSock->sysmessage( 466 );
+			return true;
+		case IT_FLOURSACK:
+		case IT_OPENFLOURSACK:
+			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
+			{
+				if( itemID == 0x1039 )
+					x->SetID( 0x103A );
+				else
+					x->SetID( 0x1039 );
+			}
+			else
+				mSock->sysmessage( 466 );
+			return true;
+		case IT_FISHINGPOLE:	// fishing
+			if( mSock->GetTimer( tPC_FISHING ) )
+				mSock->sysmessage( 467 );
+			else
+				mSock->target( 0, TARGET_FISH, 468 );
+			return true;
+		case IT_CLOCK:	// clocks
+			telltime( mSock );
+			return true;
+		case IT_MORTAR:	// Mortar for Alchemy
+			if( !mChar->SkillUsed( ALCHEMY ) )
+				mSock->target( 0, TARGET_ALCHEMY, 470 );
+			else
+				mSock->sysmessage( 1631 );
+			return true;
+		case IT_SCISSORS:	// scissors
+			mSock->target( 0, TARGET_CREATEBANDAGE, 471 );
+			return true;
+		case IT_BANDAGE:	// healing
+			if( mSock->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() )
+			{
+				mSock->TempObj( x );
+				mSock->target( 0, TARGET_HEALING, 472 );
+				mSock->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+			}
+			else
+				mSock->sysmessage( 473 );
+			return true;
+		case IT_SEXTANT:	// sextants
+			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
+			return true;
+		case IT_HAIRDYE:	// Hair Dye
+			mSock->TempObj( x );
+			BuildGumpFromScripts( mSock, 6 );
+			return true;
+		case IT_LOCKPICK:	// lockpicks
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_LOCKPICK, 475 );
+			return true;
+		case IT_COTTONPLANT:	// cotton plants
+			if( !mChar->IsOnHorse() )
+				Effects->PlayCharacterAnimation( mChar, 0x0D );
+			else
+				Effects->PlayCharacterAnimation( mChar, 0x1D );
+			Effects->PlaySound( mSock, 0x013E, true );
+			i = Items->CreateItem( mSock, mChar, 0x0DF9, 1, 0, OT_ITEM, true );
+			if( i == NULL )
+				return true;
+			CItem *skillItem;
+			skillItem = static_cast<CItem *>(mSock->TempObj());
+			if( ValidateObject( skillItem ) )
+			{
+				skillItem->SetDecayable( true );
+				mSock->sysmessage( 476 );
+				mSock->TempObj( NULL );
+			}
+			return true; // cotton
+		case IT_TINKERAXLE:	// tinker axle
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_TINKERAXEL, 477 );
+			return true;
+		case IT_TINKERAWG:
+			mSock->TempObj( x );
+			mSock->target( 0, TARGET_TINKERAWG, 478 );
+			return true;
+		case IT_TINKERCLOCK:	// tinker clock
+			mSock->target( 0, TARGET_TINKERCLOCK, 479 );
+			x->Delete();
+			return true;
+		case IT_TINKERSEXTANT:	//tinker sextant
+			if( Skills->CheckSkill( mChar, TINKERING, 0, 1000 ) )
+			{
+				mSock->sysmessage( 480 );
+				i = Items->CreateItem( mSock, mChar, 0x1057, 1, 0, OT_ITEM, true );
+				if( i == NULL )
+					return true;
+				i->SetName( Dictionary->GetEntry( 1429 ) );
+				CItem *skillItem;
+				skillItem = static_cast<CItem *>(mSock->TempObj());
+				if( ValidateObject( skillItem ) )
+				{
+					skillItem->SetDecayable( true );
+					x->Delete();
+					mSock->TempObj( NULL );
+				}
+			}
+			else
+				mSock->sysmessage( 481 );
+			return true;
+		case IT_TRAININGDUMMY:	// training dummies
+		case IT_TRAININGDUMMYANIM:	// swinging training dummy
+			if( itemID == 0x1070 || itemID == 0x1074 )
+			{
+				if( objInRange( mChar, x, DIST_NEXTTILE ) )
+					Skills->TDummy( mSock );
+				else
+					mSock->sysmessage( 482 );
+			}
+			else
+				mSock->sysmessage( 483 );
+			return true;
+		default:
+			if( iType )
+				Console << "Unhandled item type for item: " << x->GetName() << "[" << x->GetSerial() << "] of type: " << static_cast<UI08>(iType) << myendl;
+			break;
+	}
+	return false;
+}
+
+std::map< std::string, ItemTypes > tagToItemType;
+
+void InitTagToItemType( void )
+{
+	tagToItemType["CONTAINER"]				= IT_CONTAINER;
+	tagToItemType["CASTLEGATEOPENER"]		= IT_CASTLEGATEOPENER;
+	tagToItemType["CASTLEGATE"]				= IT_CASTLEGATE;
+	tagToItemType["TELEPORTITEM"]			= IT_TELEPORTITEM;
+	tagToItemType["KEY"]					= IT_KEY;
+	tagToItemType["LOCKEDCONTAINER"]		= IT_LOCKEDCONTAINER;
+	tagToItemType["SPELLBOOK"]				= IT_SPELLBOOK;
+	tagToItemType["MAP"]					= IT_MAP;
+	tagToItemType["READABLEBOOK"]			= IT_READABLEBOOK;
+	tagToItemType["DOOR"]					= IT_DOOR;
+	tagToItemType["LOCKEDDOOR"]				= IT_LOCKEDDOOR;
+	tagToItemType["FOOD"]					= IT_FOOD;
+	tagToItemType["MAGICWAND"]				= IT_MAGICWAND;
+	tagToItemType["RESURRECTOBJECT"]		= IT_RESURRECTOBJECT;
+	tagToItemType["CRYSTALBALL"]			= IT_CRYSTALBALL;
+	tagToItemType["POTION"]					= IT_POTION;
+	tagToItemType["TOWNSTONE"]				= IT_TOWNSTONE;
+	tagToItemType["RECALLRUNE"]				= IT_RECALLRUNE;
+	tagToItemType["GATE"]					= IT_GATE;
+	tagToItemType["OBJTELEPORTER"]			= IT_OBJTELEPORTER;
+	tagToItemType["ITEMSPAWNER"]			= IT_ITEMSPAWNER;
+	tagToItemType["NPCSPAWNER"]				= IT_NPCSPAWNER;
+	tagToItemType["SPAWNCONT"]				= IT_SPAWNCONT;
+	tagToItemType["LOCKEDSPAWNCONT"]		= IT_LOCKEDSPAWNCONT;
+	tagToItemType["UNLOCKABLESPAWNCONT"]	= IT_UNLOCKABLESPAWNCONT;
+	tagToItemType["AREASPAWNER"]			= IT_AREASPAWNER;
+	tagToItemType["ADVANCEGATE"]			= IT_ADVANCEGATE;
+	tagToItemType["MULTIADVANCEGATE"]		= IT_MULTIADVANCEGATE;
+	tagToItemType["MONSTERGATE"]			= IT_MONSTERGATE;
+	tagToItemType["RACEGATE"]				= IT_RACEGATE;
+	tagToItemType["DAMAGEOBJECT"]			= IT_DAMAGEOBJECT;
+	tagToItemType["TRASHCONT"]				= IT_TRASHCONT;
+	tagToItemType["SOUNDOBJECT"]			= IT_SOUNDOBJECT;
+	tagToItemType["MAPCHANGEOBJECT"]		= IT_MAPCHANGEOBJECT;
+	tagToItemType["WORLDCHANGEGATE"]		= IT_WORLDCHANGEGATE;
+	tagToItemType["MORPHOBJECT"]			= IT_MORPHOBJECT;
+	tagToItemType["UNMORPHOBJECT"]			= IT_UNMORPHOBJECT;
+	tagToItemType["DRINK"]					= IT_DRINK;
+	tagToItemType["STANDINGHARP"]			= IT_STANDINGHARP;
+	tagToItemType["ZEROKILLSGATE"]			= IT_ZEROKILLSGATE;
+	tagToItemType["PLANK"]					= IT_PLANK;
+	tagToItemType["FIREWORKSWAND"]			= IT_FIREWORKSWAND;
+	tagToItemType["ESCORTNPCSPAWNER"]		= IT_ESCORTNPCSPAWNER;
+	tagToItemType["RENAMEDEED"]				= IT_RENAMEDEED;
+	tagToItemType["LEATHERREPAIRTOOL"]		= IT_LEATHERREPAIRTOOL;
+	tagToItemType["BOWREPAIRTOOL"]			= IT_BOWREPAIRTOOL;
+	tagToItemType["TILLER"]					= IT_TILLER;
+	tagToItemType["GUILDSTONE"]				= IT_GUILDSTONE;
+	tagToItemType["HOUSESIGN"]				= IT_HOUSESIGN;
+	tagToItemType["TINKERTOOL"]				= IT_TINKERTOOL;
+	tagToItemType["METALREPAIRTOOL"]		= IT_METALREPAIRTOOL;
+	tagToItemType["FORGE"]					= IT_FORGE;
+	tagToItemType["DYE"]					= IT_DYE;
+	tagToItemType["DYEVAT"]					= IT_DYEVAT;
+	tagToItemType["MODELMULTI"]				= IT_MODELMULTI;
+	tagToItemType["ARCHERYBUTTE"]			= IT_ARCHERYBUTTE;
+	tagToItemType["DRUM"]					= IT_DRUM;
+	tagToItemType["TAMBOURINE"]				= IT_TAMBOURINE;
+	tagToItemType["HARP"]					= IT_HARP;
+	tagToItemType["LUTE"]					= IT_LUTE;
+	tagToItemType["AXE"]					= IT_AXE;
+	tagToItemType["PLAYERVENDORDEED"]		= IT_PLAYERVENDORDEED;
+	tagToItemType["SMITHYTOOL"]				= IT_SMITHYTOOL;
+	tagToItemType["CARPENTRYTOOL"]			= IT_CARPENTRYTOOL;
+	tagToItemType["MININGTOOL"]				= IT_MININGTOOL;
+	tagToItemType["EMPTYVIAL"]				= IT_EMPTYVIAL;
+	tagToItemType["UNSPUNFABRIC"]			= IT_UNSPUNFABRIC;
+	tagToItemType["UNCOOKEDFISH"]			= IT_UNCOOKEDFISH;
+	tagToItemType["UNCOOKEDMEAT"]			= IT_UNCOOKEDMEAT;
+	tagToItemType["SPUNFABRIC"]				= IT_SPUNFABRIC;
+	tagToItemType["FLETCHINGTOOL"]			= IT_FLETCHINGTOOL;
+	tagToItemType["CANNONBALL"]				= IT_CANNONBALL;
+	tagToItemType["WATERPITCHER"]			= IT_WATERPITCHER;
+	tagToItemType["UNCOOKEDDOUGH"]			= IT_UNCOOKEDDOUGH;
+	tagToItemType["SEWINGKIT"]				= IT_SEWINGKIT;
+	tagToItemType["ORE"]					= IT_ORE;
+	tagToItemType["MESSAGEBOARD"]			= IT_MESSAGEBOARD;
+	tagToItemType["SWORD"]					= IT_SWORD;
+	tagToItemType["CAMPING"]				= IT_CAMPING;
+	tagToItemType["MAGICSTATUE"]			= IT_MAGICSTATUE;
+	tagToItemType["GUILLOTINE"]				= IT_GUILLOTINE;
+	tagToItemType["FLOURSACK"]				= IT_FLOURSACK;
+	tagToItemType["FISHINGPOLE"]			= IT_FISHINGPOLE;
+	tagToItemType["CLOCK"]					= IT_CLOCK;
+	tagToItemType["MORTAR"]					= IT_MORTAR;
+	tagToItemType["SCISSORS"]				= IT_SCISSORS;
+	tagToItemType["BANDAGE"]				= IT_BANDAGE;
+	tagToItemType["SEXTANT"]				= IT_SEXTANT;
+	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
+	tagToItemType["LOCKPICK"]				= IT_LOCKPICK;
+	tagToItemType["COTTONPLANT"]			= IT_COTTONPLANT;
+	tagToItemType["TINKERAXLE"]				= IT_TINKERAXLE;
+	tagToItemType["TINKERAWG"]				= IT_TINKERAWG;
+	tagToItemType["TINKERCLOCK"]			= IT_TINKERCLOCK;
+	tagToItemType["TINKERSEXTANT"]			= IT_TINKERSEXTANT;
+	tagToItemType["TRAININGDUMMY"]			= IT_TRAININGDUMMY;
+}
+
+ItemTypes FindItemTypeFromTag( UString strToFind  )
+{
+	if( tagToItemType.size() == 0 )	// if we haven't built our array yet
+		InitTagToItemType();
+	std::map< std::string, ItemTypes >::iterator toFind = tagToItemType.find( strToFind.upper() );
+	if( toFind != tagToItemType.end() )
+		return toFind->second;
+	return IT_COUNT;
+}
+
+std::map< UI16, ItemTypes > idToItemType;
+
+void InitIDToItemType( void )
+{
+	ScriptSection *Itemtypes = FileLookup->FindEntry( "ITEMTYPES", items_def );
+	if( Itemtypes == NULL )
+		return;
+
+	int sectionCount;
+	UString data;
+	ItemTypes iType = IT_COUNT;
+	for( UString tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
+	{
+		data	= Itemtypes->GrabData();
+		iType	= FindItemTypeFromTag( tag );
+		if( iType != IT_COUNT )
+		{
+			sectionCount = data.sectionCount( "," );
+			if( sectionCount != 0 )
+			{
+				for( int i = 0; i <= sectionCount; i++ )
+				{
+					idToItemType[data.section( ",", i, i ).toUShort( 0, 16 )] = iType;
+				}
+			}
+			else
+				idToItemType[data.toUShort( 0, 16 )] = iType;
+		}
+	}
+}
+
+ItemTypes FindItemTypeFromID( UI16 idToFind )
+{
+	if( idToItemType.size() == 0 )	// if we haven't built our array yet
+		InitIDToItemType();
+	std::map< UI16, ItemTypes >::iterator toFind = idToItemType.find( idToFind );
+	if( toFind != idToItemType.end() )
+		return toFind->second;
+	return IT_COUNT;
+}
+
+ItemTypes findItemType( CItem *i )
+{
+	ItemTypes iType = i->GetType();
+	switch( iType )
+	{
+		case IT_NOTYPE:
+		case IT_COUNT:
+			iType = FindItemTypeFromID( i->GetID() );	break;
+		default:										break;
+	}
+	return iType;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	:  DoubleClick( cSocket *mSock )
+//|	Date		:  Unknown
+//|	Programmer	:  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		:	Player double clicks on a character or item
+//|	Modification:	09/22/2002	-	Xuri - Removed piece of code which is not 
+//|									needed. Cooking of raw fish shouldn't produce cooked ribs,
+//|									people can cook the fish after filleting with a knife.
+//o---------------------------------------------------------------------------o
+bool CPIDblClick::Handle( void )
+{
+	CChar *ourChar	= tSock->CurrcharObj();
+	ourChar->BreakConcentration( tSock );
+	UI08 a1			= tSock->GetByte( 1 );
+
+	bool keyboard = ( (a1 & 0x80) == 0x80 );
+	if( keyboard )
+		objectID -= 0x80000000;
+
+	if( objectID < BASEITEMSERIAL )
+	{
+		handleCharDoubleClick( tSock, objectID, keyboard );
+		return true;
+	}
+
+	// Begin Items / Guildstones Section
+	CItem *x = calcItemObjFromSer( objectID );
+	if( !ValidateObject( x ) )
+		return true;
+
+	CChar *iChar = NULL;
+
+	// Check for Object Delay
+	if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && !ourChar->IsGM() )
+	{
+		tSock->sysmessage( 386 );
+		return true;
+	}
+
+	tSock->SetTimer( tPC_OBJDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( OBJECT_USAGE ) )) );
+
+	ItemTypes iType	= findItemType( x );
+	UI16 itemID		= x->GetID();
+	if( x->GetCont() != NULL )
+	{
+		if( x->GetContSerial() >= BASEITEMSERIAL )
+			iChar = FindItemOwner( x );
+		else	// Item is in a character
+			iChar = (CChar *)x->GetCont();
+		if( !ourChar->IsGM() && ValidateObject( iChar ) && iChar != ourChar && !( x->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
+		{
+			tSock->sysmessage( 387 );	// Can't use stuff that isn't in your pack.
+			return true;
+		}
+	}
+	// Check if item is in a house?
+	else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK )
+	{
+		if( !ourChar->IsGM() && x->GetMultiObj() != ourChar->GetMultiObj() )
+		{
+			tSock->sysmessage( 389 );
+			return true;
+		}
+	}
+
+	if( ourChar->IsDead() )
+	{
+		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
+		{
+			Targ->NpcResurrectTarget( ourChar );
+			tSock->sysmessage( 390 );
+			return true;
+		}
+		// If it's not a ressurect item, and you're dead, forget it
+		tSock->sysmessage( 392 );
+		return true;
+	}
+	// Begin checking objects that we force an object delay for (std objects)
+	else if( tSock != NULL )
+	{
+		UI16 itemTrig		= x->GetScriptTrigger();
+		cScript *toExecute	= Trigger->GetScript( itemTrig );
+		if( toExecute != NULL )
+		{
+			// on ground and not in range
+			if( x->GetCont() == NULL && !objInRange( ourChar, x, DIST_INRANGE ) )
+			{
+				tSock->sysmessage( 393 );
+				return true;
+			}
+			if( x->isDisabled() )
+			{
+				tSock->sysmessage( 394 );
+				return true;
+			}
+			if( toExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
+				return true;
+		}
+		//check this on trigger in the event that the .trigger property is not set on the item
+		//trigger code.  Check to see if item is envokable by id
+		else if( Trigger->CheckEnvoke( itemID ) )
+		{
+			UI16 envTrig = Trigger->GetScriptFromEnvoke( itemID );
+			cScript *envExecute = Trigger->GetScript( envTrig );
+			if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
+				return true;
+		}
+	}
+	// Range check for double clicking on items
+	if( iType != IT_CONTAINER && iType != IT_PLANK && iType != IT_HOUSESIGN && !checkItemRange( ourChar, x ) )
+	{
+		tSock->sysmessage( 389 );
+		return true;
+	}
+	if( x->isCorpse() && !ourChar->IsGM() && !ourChar->IsCounselor() )
+	{
+		bool willCrim	= false;
+		iChar			= x->GetOwnerObj();
+		if( ValidateObject( iChar ) )
+		{
+			// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
+			// and if the corpse is not from an enemy/allied guild									&& guildCheck
+			// and if the races are not allied/enemy												&& raceCheck )
+			willCrim = Combat->WillResultInCriminal( ourChar, iChar );
+		}
+		else
+			willCrim = ( (x->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );
+		if( willCrim )
+			criminal( ourChar );
+
+		if( ValidateObject( iChar ) )
+		{
+			if( iChar->IsGuarded() ) // Is the corpse being guarded?
+				Combat->petGuardAttack( ourChar, iChar, iChar );
+			else if( x->isGuarded() )
+				Combat->petGuardAttack( ourChar, iChar, x );
+		}
+	}
+	else if( x->isGuarded() )
+	{
+		CMultiObj *multi = findMulti( x );
+		if( ValidateObject( multi ) )
+		{
+			if( multi->GetOwnerObj() != ourChar )
+				Combat->petGuardAttack( ourChar, multi->GetOwnerObj(), x );
+		}
+		else
+		{
+			iChar = FindItemOwner( x );
+			if( ValidateObject( iChar ) && iChar->GetSerial() != ourChar->GetSerial() )
+				Combat->petGuardAttack( ourChar, iChar, x );
+		}
+	}
+	if( handleDoubleClickTypes( tSock, ourChar, x, iType ) )
+		return true;
+
+	switch( Combat->getWeaponType( x ) )	// Check weapon-types (For carving/chopping)
+	{
+		case DEF_SWORDS:
+		case SLASH_SWORDS:
+		case ONEHND_LG_SWORDS:
+		case ONEHND_AXES:
+			tSock->target( 0, TARGET_SWORD, 462 );
+			return true;
+		case DEF_FENCING:
+			if( itemID == 0x0F51 || itemID == 0x0F52 ) //dagger
+				tSock->target( 0, TARGET_SWORD, 462 );
+			return true;
+		case TWOHND_LG_SWORDS:
+		case BARDICHE:
+		case TWOHND_AXES:
+			tSock->target( 0, TARGET_SWORD, 443 );
+			return true;
+	}
+
+	//	Begin Scrolls check
+	if( x->GetID( 1 ) == 0x1F && ( x->GetID( 2 ) > 0x2C && x->GetID( 2 ) < 0x6D ) )
+	{
+		bool success = false;
+		tSock->CurrentSpellType( 1 );	// spell from scroll
+		if( x->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
+			success = Magic->SelectSpell( tSock, 7 );
+		if( x->GetID( 2 ) >= 0x2E && x->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
+			success = Magic->SelectSpell( tSock, x->GetID( 2 ) - 0x2D );
+		else if( x->GetID( 2 ) >= 0x35 && x->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
+			success = Magic->SelectSpell( tSock, x->GetID( 2 ) - 0x2D + 1 );
+
+		if( success )
+			x->IncAmount( -1 );
+		return true;
+	}
+	tSock->sysmessage( 486 );
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  char *AppendData( CItem *i, std::string currentName )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Add data onto the end of the string in singleclick() based
+//|					 on an items type
+//o---------------------------------------------------------------------------o
+const char *AppendData( CItem *i, std::string currentName )
+{
+	UString dataToAdd;
+	switch( i->GetType() )
+	{
+		case IT_CONTAINER:
+		case IT_SPAWNCONT:
+		case IT_UNLOCKABLESPAWNCONT:
+			dataToAdd = " (" + UString::number( i->NumItems() ) + " items, ";
+			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones)";
+			break;
+		case IT_LOCKEDCONTAINER:		// containers
+		case IT_LOCKEDSPAWNCONT:	// spawn containers
+			dataToAdd = " (" + UString::number( i->NumItems() ) + " items, ";
+			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones) [Locked]";
+			break;
+		case IT_LOCKEDDOOR:
+			dataToAdd = " [Locked]";
+			break;
+		case IT_RECALLRUNE:
+		case IT_GATE:
+		case IT_ENDGATE:
+		case IT_OBJTELEPORTER:
+			{
+			cTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );
+			dataToAdd = " (" + newRegion->GetName() + ")";
+			}
+	}
+	currentName += dataToAdd;
+	// Question: Do we put the creator thing here, saves some redundancy a bit later
+	return currentName.c_str();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  SingleClick( cSocket *mSock )
+//|   Date        :  Unknown
+//|   Programmer  :  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when an item or character is single-clicked (also
+//|					 used for AllNames macro)
+//o---------------------------------------------------------------------------o
+bool CPISingleClick::Handle( void )
+{
+	char temp2[200];
+	std::string realname;
+	char temp[512];
+	
+	if( objectID == INVALIDSERIAL ) // invalid
+		return true;	// don't bother if it's cancelled
+	CChar *mChar = tSock->CurrcharObj();
+
+	if( objectID < BASEITEMSERIAL )
+	{
+		// Begin chars/npcs section
+		CChar *c = calcCharObjFromSer( objectID );
+		if( ValidateObject( c ) )
+			tSock->ShowCharName( c, false );
+		//End chars/npcs section
+		return true;
+	}
+
+	//Begin items section
+	UI08 a1		= tSock->GetByte( 1 );
+	UI08 a2		= tSock->GetByte( 2 );
+	UI08 a3		= tSock->GetByte( 3 );
+	UI08 a4		= tSock->GetByte( 4 );
+	CItem *i	= calcItemObjFromSer( objectID );
+	if( !ValidateObject( i ) )		// invalid item
+		return true;
+	// October 6, 2002 - Brakhtus - Added support for the onClick event
+	cScript *onClickScp = Trigger->GetScript( i->GetScriptTrigger() );
+	if( onClickScp != NULL )
+		onClickScp->OnClick( tSock, i );
+
+	if( mChar->GetSingClickSer() )
+		tSock->objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );
+
+	UI16 getAmount = i->GetAmount();
+	if( i->GetCont() != NULL && i->GetContSerial() >= BASEITEMSERIAL )
+	{
+		CChar *w = FindItemOwner( (CItem *)i->GetCont() );
+		if( ValidateObject( w ) )
+		{
+			if( w->GetNPCAiType() == aiPLAYERVENDOR )
+			{
+				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
+				{
+					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
+					if( ValidateObject( mCreater ) )
+						sprintf( temp2, "%s %s by %s", i->GetDesc(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+					else
+						strcpy( temp2, i->GetDesc() );
+				}
+				else
+					strcpy( temp2, i->GetDesc() );
+				sprintf( temp, "%s at %igp", temp2, i->GetBuyValue() );
+				tSock->objMessage( AppendData( i, temp ), i );
+				return true;
+			}
+		}
+	}
+
+#if defined( _MSC_VER )
+#pragma todo( "We need to update this to use getTileName almost exclusively, for plurality" )
+#endif
+	if( i->GetName()[0] != '#' )
+	{
+		if( i->GetID() == 0x0ED5 )//guildstone
+			realname = UString::sprintf( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
+		if( !i->isPileable() || getAmount == 1 )
+		{
+			if( mChar->IsGM() && !i->isCorpse() && getAmount > 1 )
+				realname = UString::sprintf( "%s (%u)", i->GetName().c_str(), getAmount );
+			else
+				realname = i->GetName();
+		}
+		else
+			realname = UString::sprintf( "%u %ss", getAmount, i->GetName().c_str() );
+	}
+	else
+		getTileName( i, realname );
+
+	if( i->GetType() == IT_MAGICWAND )
+	{
+		int spellNum = ( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1;	// we pick it up from the array anyway
+		realname += " of ";
+		realname += Dictionary->GetEntry( magic_table[spellNum].spell_name, tSock->Language() );
+		realname += " with ";
+		realname += UString::number( i->GetTempVar( CITV_MOREZ ) );
+		realname += " charges";
+	}
+	else if( i->IsContType() )
+	{
+		realname += UString::sprintf( ", (%u items, %u stones)", i->NumItems(), (i->GetWeight()/100) );
+	}
+	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
+	{
+		CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
+		if( ValidateObject( mCreater ) )
+			sprintf( temp2, "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+		else
+			strcpy( temp2, realname.c_str() );
+	}
+	else
+		strcpy( temp2, realname.c_str() );
+	tSock->objMessage( temp2, i );
+	if( i->IsLockedDown() )
+		tSock->objMessage( "[Locked down]", i );//, 0x0481 );
+	if( i->isGuarded() )
+		tSock->objMessage( "[Guarded]", i );//, 0x0481 );
+	return true;
+}
+
+}

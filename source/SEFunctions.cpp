@@ -1,0 +1,1594 @@
+// Here are the functions that are exposed to the Script Engine
+#include "uox3.h"
+#include "cdice.h"
+#include "SEFunctions.h"
+#include "cGuild.h"
+#include "combat.h"
+#include "movement.h"
+#include "townregion.h"
+#include "cWeather.hpp"
+#include "cRaces.h"
+#include "skills.h"
+#include "targeting.h"
+#include "commands.h"
+#include "cMagic.h"
+#include "trigger.h"
+#include "cScript.h"
+#include "cEffects.h"
+#include "classes.h"
+#include "regions.h"
+#include "magic.h"
+#include "network.h"
+#include "ssection.h"
+#include "cThreadQueue.h"
+#include "cHTMLSystem.h"
+#include "cServerDefinitions.h"
+
+namespace UOX
+{
+
+void		LoadSpawnRegions( void );
+void		LoadRegions( void );
+void		UnloadRegions( void );
+void		UnloadSpawnRegions( void );
+
+#ifndef va_start
+	#include <cstdarg>
+	//using namespace std;
+#endif
+
+#define __EXTREMELY_VERBOSE__
+
+#ifdef __EXTREMELY_VERBOSE__
+void DoSEErrorMessage( char *txt, ... )
+{
+	va_list argptr;
+	char msg[512];
+#ifdef __NONANSI_VASTART__
+	va_start( argptr );
+#else
+	va_start( argptr, txt );
+#endif
+	vsprintf( msg, txt, argptr );
+	va_end( argptr );
+	Console.Error( 2, msg );
+}
+#else
+void DoSEErrorMessage( char *txt, ... )
+{
+	return;
+}
+#endif
+
+JSBool SE_ConsoleMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "ConsoleMessage: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+ 	// print the string to the console 
+	if( !( test.empty() || test.length() == 0 ) )
+ 		Console << test;
+ 	return JS_TRUE;
+}
+JSBool ScriptPrintNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "ScriptPrintNumber: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+ 	long test = JSVAL_TO_INT( argv[0] );
+ 	// print the string to the console
+ 	Console << (SI32)test;
+ 	return JS_TRUE;
+}
+
+// Effect related functions
+JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 7 )
+	{
+		DoSEErrorMessage( "DoTempEffect: Invalid number of arguments (takes 7 or 8)" );
+		return JS_FALSE;
+	}
+	long iType			= JSVAL_TO_INT( argv[0] );
+	long targNum		= JSVAL_TO_INT( argv[3] );
+	UI08 more1			= (UI08)JSVAL_TO_INT( argv[4] );
+	UI08 more2			= (UI08)JSVAL_TO_INT( argv[5] );
+	UI08 more3			= (UI08)JSVAL_TO_INT( argv[6] );
+
+	JSObject *myitemptr = NULL;
+	CItem *myItemPtr	= NULL;
+
+	if( argc == 8 )
+	{
+		myitemptr = JSVAL_TO_OBJECT( argv[7] );
+		myItemPtr = (CItem *)JS_GetPrivate( cx, myitemptr );
+	}
+
+	JSObject *mysrc		= JSVAL_TO_OBJECT( argv[1] );
+	CChar *mysrcChar	= (CChar*)JS_GetPrivate( cx, mysrc );
+
+	if( !ValidateObject( mysrcChar ) )
+	{
+		DoSEErrorMessage( "DoTempEffect: Invalid src" );
+		return JS_FALSE;
+	}
+	
+	if( iType == 0 )	// character
+	{
+		JSObject *mydestc = JSVAL_TO_OBJECT( argv[2] );
+		CChar *mydestChar = (CChar*)JS_GetPrivate( cx, mydestc );
+
+		if( !ValidateObject( mydestChar ) )
+		{
+			DoSEErrorMessage( "DoTempEffect: Invalid target " );
+			return JS_FALSE;
+		}
+		if( argc == 8 )
+			Effects->tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3, myItemPtr );
+		else
+			Effects->tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3 );
+	}
+	else
+	{
+		JSObject *mydesti = JSVAL_TO_OBJECT( argv[2] );
+		CItem *mydestItem = (CItem *)JS_GetPrivate( cx, mydesti );
+
+		if( !ValidateObject( mydestItem ) )
+		{
+			DoSEErrorMessage( "DoTempEffect: Invalid target " );
+			return JS_FALSE;
+		}
+		if( argc == 8 )
+			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
+		else
+			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
+	}
+	return JS_TRUE;
+}
+
+// Speech related functions
+void sysBroadcast( std::string txt );
+JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "BroadcastMessage: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	std::string trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( trgMessage.empty() || trgMessage.length() == 0 )
+	{
+		DoSEErrorMessage( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() );
+		return JS_FALSE;
+	}
+	sysBroadcast( trgMessage );
+	return JS_TRUE;
+}
+
+
+JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 4 )
+	{
+		DoSEErrorMessage( "CalcItemFromSer: Invalid number of arguments (takes 1 or 4)" );
+		return JS_FALSE;
+	}
+	SERIAL targSerial;
+	if( argc == 1 )
+		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
+	else
+		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
+
+	CItem *newItem		= calcItemObjFromSer( targSerial );
+	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+	JS_SetPrivate( cx, myObj, newItem );
+	*rval = OBJECT_TO_JSVAL( myObj );
+	return JS_TRUE;
+}
+
+JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 4 )
+	{
+		DoSEErrorMessage( "CalcCharFromSer: Invalid number of arguments (takes 1 or 4)" );
+		return JS_FALSE;
+	}
+	SERIAL targSerial = INVALIDSERIAL;
+	if( argc == 1 )
+		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
+	else
+		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
+
+	CChar *newChar		= calcCharObjFromSer( targSerial );
+	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+	JS_SetPrivate( cx, myObj, newChar );
+	*rval = OBJECT_TO_JSVAL( myObj );
+	return JS_TRUE;
+}
+
+JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 6 )
+	{
+		DoSEErrorMessage( "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10)" );
+		return JS_FALSE;
+	}
+	JSObject *srcObj	= JSVAL_TO_OBJECT( argv[0] );
+	cBaseObject *src	= (cBaseObject *)JS_GetPrivate( cx, srcObj );
+	if( !ValidateObject( src ) )
+	{
+		DoSEErrorMessage( "DoMovingEffect: Invalid source object" );
+		return JS_FALSE;
+	}
+	bool targLocation	= false;
+	UI08 offset			= 0;
+	UI16 targX			= 0;
+	UI16 targY			= 0;
+	SI08 targZ			= 0;
+	cBaseObject *trg	= NULL;
+	if( JSVAL_IS_INT( argv[1] ) )
+	{	// Location moving effect
+		targLocation	= true;
+		offset			= true;
+		targX			= (UI16)JSVAL_TO_INT( argv[1] );
+		targY			= (UI16)JSVAL_TO_INT( argv[2] );
+		targZ			= (SI08)JSVAL_TO_INT( argv[3] );
+	}
+	else
+	{
+		JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
+		trg					= (cBaseObject *)JS_GetPrivate( cx, trgObj );
+		if( !ValidateObject( trg ) )
+		{
+			DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
+			return JS_FALSE;
+		}
+	}
+	UI16 effect		= (UI16)JSVAL_TO_INT( argv[2+offset] );
+	UI08 speed		= (UI08)JSVAL_TO_INT( argv[3+offset] );
+	UI08 loop		= (UI08)JSVAL_TO_INT( argv[4+offset] );
+	bool explode	= ( JSVAL_TO_BOOLEAN( argv[5+offset] ) == JS_TRUE );
+	UI32 hue = 0, renderMode = 0;
+	if( argc - offset >= 7 ) // there's at least 7/9 parameters
+		hue = (UI32)JSVAL_TO_INT( argv[6+offset] );
+	if( argc - offset >= 8 ) // there's at least 8/10 parameters
+		renderMode = (UI32)JSVAL_TO_INT( argv[7+offset] );
+
+	if( targLocation )
+		Effects->PlayMovingAnimation( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+	else
+		Effects->PlayMovingAnimation( src, trg, effect, speed, loop, explode, hue, renderMode );
+	return JS_TRUE;
+}
+
+JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RandomNumber: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	long loNum = JSVAL_TO_INT( argv[0] );
+	long hiNum = JSVAL_TO_INT( argv[1] );
+	*rval = INT_TO_JSVAL( RandomNum( loNum, hiNum ) );
+	return JS_TRUE;
+}
+
+JSBool SE_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 && argc != 3 )
+	{
+		DoSEErrorMessage( "GetString: Invalid number of arguments (takes 2 or 3)" );
+		return JS_FALSE;
+	}
+	int length		= -1;
+	UOXSOCKET sock	= JSVAL_TO_INT( argv[0] );
+	int offset		= JSVAL_TO_INT( argv[1] );
+	if( argc == 3 )
+		length = JSVAL_TO_INT( argv[2] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "GetString: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	char toReturn[128];
+	cSocket *mSock = Network->GetSockPtr( sock );
+	if( length != -1 )
+	{
+		strncpy( toReturn, (char *)&(mSock->Buffer())[offset], length );
+		toReturn[length] = 0;
+	}
+	else
+		strcpy( toReturn, (char *)&(mSock->Buffer())[offset] );
+
+	JSString *strSpeech = NULL;
+	strSpeech = JS_NewStringCopyZ( cx, toReturn );
+	*rval = STRING_TO_JSVAL( strSpeech );
+
+	return JS_TRUE;
+}
+
+JSBool SE_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "GetDWord: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "GetDWord: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int offset = JSVAL_TO_INT( argv[1] );
+	cSocket *mSock = Network->GetSockPtr( sock );
+	*rval = INT_TO_JSVAL( mSock->GetDWord( offset ) );
+	return JS_TRUE;
+}
+
+JSBool SE_CreateBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_DestroyBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_SendBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "SetByte: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "SetByte: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int offset = JSVAL_TO_INT( argv[1] );
+	UI08 byteToSet = (UI08)JSVAL_TO_INT( argv[2] );
+	cSocket *mSock = Network->GetSockPtr( sock );
+	mSock->SetByte( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool SE_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "SetWord: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "SetWord: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int offset		= JSVAL_TO_INT( argv[1] );
+	short byteToSet = (short)JSVAL_TO_INT( argv[2] );
+	cSocket *mSock	= Network->GetSockPtr( sock );
+	mSock->SetWord( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool SE_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "SetDWord: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "SetDWord: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int offset		= JSVAL_TO_INT( argv[1] );
+	long byteToSet	= JSVAL_TO_INT( argv[2] );
+	cSocket *mSock	= Network->GetSockPtr( sock );
+	mSock->SetDWord( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool SE_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "SetString: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "SetString: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int offset = JSVAL_TO_INT( argv[1] );
+ 	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
+	if( trgMessage == NULL )
+	{
+		DoSEErrorMessage( "SetString: No string to set" );
+		return JS_FALSE;
+	}
+	cSocket *mSock = Network->GetSockPtr( sock );
+	strcpy( (char *)&(mSock->Buffer())[offset], trgMessage );
+	return JS_TRUE;
+}
+
+JSBool SE_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "ReadBytes: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
+	if( sock >= cwmWorldState->GetPlayersOnline() )
+	{
+		DoSEErrorMessage( "ReadBytes: invalid socket (%i)", sock );
+		return JS_FALSE;
+	}
+	int bCount		= JSVAL_TO_INT( argv[1] );
+	cSocket *nSock	= Network->GetSockPtr( sock );
+	if( nSock != NULL )
+		nSock->Receive( bCount );
+	return JS_TRUE;
+}
+
+JSBool SE_GlowItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "MakeMenu: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock = (cSocket *)JS_GetPrivate( cx, mSock );
+	if( mySock == NULL )
+	{
+		DoSEErrorMessage( "MakeMenu: invalid socket" );
+		return JS_FALSE;
+	}
+	int menu = JSVAL_TO_INT( argv[1] );
+	Skills->NewMakeMenu( mySock, menu, 0 );
+	return JS_TRUE;
+}
+
+JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "MakeItem: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
+	cSocket *sock	= (cSocket *)JS_GetPrivate( cx, mSock );
+	JSObject *mChar = JSVAL_TO_OBJECT( argv[1] );
+	CChar *player	= (CChar *)JS_GetPrivate( cx, mChar );
+	if( !ValidateObject( player ) )
+	{
+		DoSEErrorMessage( "MakeItem: Invalid character" );
+		return JS_FALSE;
+	}
+	UI16 itemMenu		= (UI16)JSVAL_TO_INT( argv[2] );
+	createEntry *toFind = Skills->FindItem( itemMenu );
+	if( toFind == NULL )
+	{
+		DoSEErrorMessage( "MakeItem: Invalid make item (%i)", itemMenu );
+		return JS_FALSE;
+	}
+	Skills->MakeItem( *toFind, player, sock, itemMenu );
+	return JS_TRUE;
+}
+
+JSBool SE_CommandLevelReq( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "CommandLevelReq: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( test.empty() || test.length() == 0 )
+	{
+		DoSEErrorMessage( "CommandLevelReq: Invalid command name" );
+		return JS_FALSE;
+	}
+	CommandMapEntry *details = Commands->CommandDetails( test );
+	if( details == NULL )
+		*rval = INT_TO_JSVAL( 255 );
+	else
+		*rval = INT_TO_JSVAL( details->cmdLevelReq );
+	return JS_TRUE;
+}
+
+JSBool SE_CommandExists( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "CommandExists: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( test.empty() || test.length() == 0 )
+	{
+		DoSEErrorMessage( "CommandExists: Invalid command name" );
+		return JS_FALSE;
+	}
+	*rval = BOOLEAN_TO_JSVAL( Commands->CommandExists( test ) );
+	return JS_TRUE;
+}
+
+JSBool SE_FirstCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	const std::string tVal = Commands->FirstCommand();
+	JSString *strSpeech = NULL;
+	if( tVal.empty() )
+		strSpeech = JS_NewStringCopyZ( cx, "" );
+	else
+		strSpeech = JS_NewStringCopyZ( cx, tVal.c_str() );
+
+	*rval = STRING_TO_JSVAL( strSpeech );
+	return JS_TRUE;
+}
+
+JSBool SE_NextCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	const std::string tVal = Commands->NextCommand();
+	JSString *strSpeech = NULL;
+	if( tVal.empty() )
+		strSpeech = JS_NewStringCopyZ( cx, "" );
+	else
+		strSpeech = JS_NewStringCopyZ( cx, tVal.c_str() );
+
+	*rval = STRING_TO_JSVAL( strSpeech );
+	return JS_TRUE;
+}
+
+JSBool SE_FinishedCommandList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = BOOLEAN_TO_JSVAL( Commands->FinishedCommandList() );
+	return JS_TRUE;
+}
+
+JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "RegisterCommand: Invalid number of arguments (takes 3)" );
+ 		return JS_FALSE;
+	}
+	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+ 	UI08 execLevel			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+	cScript *myScript		= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	Commands->Register( toRegister, myScript, execLevel, isEnabled );
+ 	return JS_TRUE;
+}
+
+JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RegisterSpell: Invalid number of arguments (takes 2)" );
+ 		return JS_FALSE;
+	}
+	int spellNumber			= JSVAL_TO_INT( argv[0] );
+	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+	cScript *myScript		= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	Magic->Register( myScript, spellNumber, isEnabled );
+ 	return JS_TRUE;
+}
+
+JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "DisableCommand: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	std::string toDisable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	Commands->SetCommandStatus( toDisable, false );
+ 	return JS_TRUE;
+}
+
+JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "DisableSpell: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	int spellNumber	= JSVAL_TO_INT( argv[0] );
+	Magic->SetSpellStatus( spellNumber, false );
+ 	return JS_TRUE;
+}
+
+JSBool SE_EnableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EnableCommand: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	Commands->SetCommandStatus( toEnable, true );
+ 	return JS_TRUE;
+}
+
+JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EnableSpell: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	int spellNumber	= JSVAL_TO_INT( argv[0] );
+	Magic->SetSpellStatus( spellNumber, true );
+ 	return JS_TRUE;
+}
+
+JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
+	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
+	if( ampm )
+		*rval = INT_TO_JSVAL( hour + 12 );
+	else
+		*rval = INT_TO_JSVAL( hour );
+	return JS_TRUE;
+}
+
+JSBool SE_GetMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
+	*rval = INT_TO_JSVAL( minute );
+	return JS_TRUE;
+}
+
+JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
+	*rval = INT_TO_JSVAL( day );
+	return JS_TRUE;
+}
+
+JSBool SE_GetSecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( cwmWorldState->GetUICurrentTime() );
+	return JS_TRUE;
+}
+
+JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 && argc != 6 )
+	{
+		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 4 or 6)" );
+		return JS_FALSE;
+	}
+	cSocket *s			= NULL;
+	CChar *cMade		= NULL;
+	UOXSOCKET Socket	= (UOXSOCKET)JSVAL_TO_INT( argv[0] );
+	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	UI16 x				= (UI16)JSVAL_TO_INT( argv[2] );
+	UI16 y				= (UI16)JSVAL_TO_INT( argv[3] );
+	SI08 z				= (SI08)JSVAL_TO_INT( argv[4] );
+	UI08 wrld			= (UI08)JSVAL_TO_INT( argv[5] );
+	s					= Network->GetSockPtr( Socket );
+	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, wrld );
+	if( cMade != NULL )
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myobj		= myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myobj, cMade );
+		*rval				= OBJECT_TO_JSVAL( myobj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 4 )
+	{
+		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 4)" );
+		return JS_FALSE;
+	}
+	
+	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mChar		= JSVAL_TO_OBJECT( argv[1] );
+	cSocket *mySock		= (cSocket *)JS_GetPrivate( cx, mSock );
+	CChar *myChar		= (CChar *)JS_GetPrivate( cx, mChar );
+
+	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
+	bool bpRandValue			= ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+	bool bAutoStack				= false;
+	bool bInPack				= true;
+	UI16 iAmount				= 1;
+	ObjectType itemType		= OT_ITEM;
+
+	if( argc > 4 )
+		iAmount		= static_cast< UI16 >(JSVAL_TO_INT( argv[4] ));
+	if( argc > 5 )
+		itemType		= static_cast<ObjectType>( JSVAL_TO_INT( argv[5] ));
+	if( argc > 6 )
+		bInPack		= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	if( argc > 7 )
+		bAutoStack	= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	
+	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
+	if( newItem != NULL )
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+		JS_SetPrivate( cx, myObj, newItem );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 9 )
+	{
+		DoSEErrorMessage( "CreateBlankItem: Invalid number of arguments (takes 9)" );
+		return JS_FALSE;
+	}
+	CItem *newItem			= NULL;
+	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
+	cSocket *mySock			= (cSocket *)JS_GetPrivate( cx, mSock );
+	CChar *myChar			= (CChar *)JS_GetPrivate( cx, mChar );
+	int amount				= (int)JSVAL_TO_INT( argv[2] );
+	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );
+	bool stackable			= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );	
+	bool isString			= false;
+	std::string szItemName;
+	UI16 itemID				= INVALIDID;
+	if( JSVAL_IS_STRING( argv[5] ) )
+	{
+		szItemName = JS_GetStringBytes( JS_ValueToString( cx, argv[5] ) );
+		isString = true;
+	}
+	else
+		itemID = (UI16)JSVAL_TO_INT( argv[5] );
+	UI16 colour				= (UI16)JSVAL_TO_INT( argv[6] );
+	ObjectType itemType	= static_cast<ObjectType>(JSVAL_TO_INT( argv[7] ));
+	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
+	bool bSend				= ( JSVAL_TO_BOOLEAN( argv[9] ) == JS_TRUE );
+
+	newItem = Items->CreateItem( mySock, myChar, itemID, amount, colour, itemType, inPack );
+	if( newItem != NULL )
+	{
+		newItem->SetName( itemName );
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+		JS_SetPrivate( cx, myObj, newItem );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+JSBool SE_SubStringSearch( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "SubStringSearch: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+ 	UString ssSearching = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+ 	UString ssSearch    = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	if( ssSearching.empty() || ssSearching.length() == 0 || ssSearch.empty() || ssSearch.length() == 0 )	// no valid search string, or string to search
+	{
+		DoSEErrorMessage( "SubStringSearch: Invalid search or sub string" );
+		return JS_FALSE;
+	}
+	bool result = ( ssSearching.upper().find( ssSearch.upper() ) != std::string::npos );
+	*rval = BOOLEAN_TO_JSVAL( result );
+	return JS_TRUE;
+}
+JSBool SE_GetMurderThreshold( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() );
+	return JS_TRUE;
+}
+JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 3 )
+	{
+		DoSEErrorMessage( "RollDice: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+	long numDice = JSVAL_TO_INT( argv[0] );
+	long numFace = JSVAL_TO_INT( argv[1] );
+	long numAdd  = JSVAL_TO_INT( argv[2] );
+
+	cDice toRoll( numDice, numFace, numAdd );
+
+	*rval = INT_TO_JSVAL( toRoll.roll() );
+	return JS_TRUE;
+}
+
+JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	RACEID r0 = (RACEID)JSVAL_TO_INT( argv[0] );
+	RACEID r1 = (RACEID)JSVAL_TO_INT( argv[1] );
+	*rval = INT_TO_JSVAL( Races->CompareByRace( r0, r1 ) );
+
+	return JS_TRUE;
+}
+
+JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 && argc != 1 )
+	{
+		DoSEErrorMessage( "FindMulti: Invalid number of parameters (1 or 4)" );
+		return JS_FALSE;
+	}
+	SI16 xLoc = 0, yLoc = 0;
+	SI08 zLoc = 0;
+	UI08 worldNumber = 0;
+	if( argc == 1 )
+	{
+		JSObject *myitemptr = JSVAL_TO_OBJECT( argv[0] );
+		cBaseObject *myItemPtr = (cBaseObject *)JS_GetPrivate( cx, myitemptr );
+		if( ValidateObject( myItemPtr ) )
+		{
+			xLoc		= myItemPtr->GetX();
+			yLoc		= myItemPtr->GetY();
+			zLoc		= myItemPtr->GetZ();
+			worldNumber = myItemPtr->WorldNumber();
+		}
+		else
+		{
+			DoSEErrorMessage( "FindMulti: Invalid object type" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
+		yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
+		zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
+		worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
+	}
+	CMultiObj *multi = findMulti( xLoc, yLoc, zLoc, worldNumber );
+	if( ValidateObject( multi ) )
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+		JS_SetPrivate( cx, myObj, multi );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+JSBool SE_IsRegionGuarded( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+		return JS_FALSE;
+	UI08 toCheck	= (UI08)JSVAL_TO_INT( argv[0] );
+	*rval			= BOOLEAN_TO_JSVAL( regions[toCheck]->IsGuarded() );
+	return JS_TRUE;
+}
+
+JSBool SE_CanMarkInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
+	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanMark() );
+	return JS_TRUE;
+}
+
+JSBool SE_CanRecallInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
+	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanRecall() );
+	return JS_TRUE;
+}
+
+JSBool SE_CanGateInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
+	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanGate() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetGuildType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild = GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+		*rval = INT_TO_JSVAL( GT_STANDARD );
+	else 
+		*rval = INT_TO_JSVAL( mGuild->Type() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetGuildName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild	= GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+	{
+		return JS_FALSE;
+	}
+
+	JSString *strSpeech = JS_NewStringCopyZ( cx, mGuild->Name().c_str() );
+
+	*rval = STRING_TO_JSVAL( strSpeech );
+	return JS_TRUE;
+}
+
+JSBool SE_SetGuildType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild	= GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+	{
+		return JS_FALSE;
+	}
+
+	SI08 newType = (SI08)JSVAL_TO_INT( argv[1] );
+	if( newType < GT_STANDARD || newType > GT_COUNT )
+		newType = GT_UNKNOWN;
+	mGuild->Type( (GuildType)newType );
+	return JS_TRUE;
+}
+
+JSBool SE_SetGuildName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID targGuild	= (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild		= GuildSys->Guild( targGuild );
+	if( mGuild == NULL )
+	{
+		return JS_FALSE;
+	}
+	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	if( test.empty() || test.length() == 0 )
+	{
+		return JS_FALSE;
+	}
+	mGuild->Name( test );
+	return JS_TRUE;
+}
+
+JSBool SE_SetGuildMaster( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild	= GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+	{
+		return JS_FALSE;
+	}
+
+	mGuild->Master( JSVAL_TO_INT( argv[1] ) );
+	return JS_TRUE;
+}
+
+JSBool SE_GetNumGuildMembers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	UI08 memberType = (UI08)JSVAL_TO_INT( argv[1] );
+	if( memberType != 0 && memberType != 1 )
+		memberType = 0;
+
+	CGuild *mGuild = GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+		*rval = INT_TO_JSVAL( 0 );
+	else if( memberType == 0 )
+		*rval = INT_TO_JSVAL( mGuild->NumMembers() );
+	else if( memberType == 1 )
+		*rval = INT_TO_JSVAL( mGuild->NumRecruits() );
+	else
+		*rval = INT_TO_JSVAL( mGuild->NumRecruits() + mGuild->NumMembers() );
+	return JS_TRUE;
+}
+
+JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck		= (GUILDID)JSVAL_TO_INT( argv[0] );
+	GUILDID toCheck2	= (GUILDID)JSVAL_TO_INT( argv[1] );
+	*rval = INT_TO_JSVAL( GuildSys->Compare( toCheck, toCheck2 ) );
+	return JS_TRUE;
+}
+
+JSBool SE_GetGuildStone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
+	CGuild *mGuild = GuildSys->Guild( toCheck );
+	if( mGuild == NULL )
+		*rval = INT_TO_JSVAL( INVALIDSERIAL );
+	else
+		*rval = INT_TO_JSVAL( mGuild->Stone() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetTownMayor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
+	*rval		= INT_TO_JSVAL( regions[town]->GetMayor() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
+	*rval		= INT_TO_JSVAL( regions[town]->GetRace() );
+	return JS_TRUE;
+}
+
+JSBool SE_SetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	UI08 town		= (UI08)JSVAL_TO_INT( argv[0] );
+	RACEID nRace	= (RACEID)JSVAL_TO_INT( argv[1] );
+	regions[town]->SetRace( nRace );
+	return JS_TRUE;
+}
+
+JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
+	UI08 sTown	= (UI08)JSVAL_TO_INT( argv[1] );
+	regions[town]->Possess( regions[sTown] );
+	return JS_TRUE;
+}
+
+JSBool SE_GetTownTax( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_GetTownTaxResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		return JS_FALSE;
+	}
+	UI08 town = (UI08)JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( regions[town]->GetResourceID() );
+	return JS_TRUE;
+}
+
+JSBool SE_SetTownTax( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_SetTownTaxResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_TRUE;
+}
+
+JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	RACEID race		= (RACEID)JSVAL_TO_INT( argv[0] );
+	weathID toCheck = (weathID)JSVAL_TO_INT( argv[1] );
+	CRace *tRace	= Races->Race( race );
+	if( tRace == NULL )
+	{
+		return JS_FALSE;
+	}
+	switch( toCheck )
+	{
+		case LIGHT:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByLight() );		break;
+		case RAIN:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByRain() );		break;
+		case COLD:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByCold() );		break;
+		case HEAT:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByHeat() );		break;
+		case LIGHTNING:	*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByLightning() );	break;
+		case SNOW:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedBySnow() );		break;
+		default:
+			return JS_FALSE;
+	};
+	return JS_TRUE;
+}
+
+JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+	RACEID race = (RACEID)JSVAL_TO_INT( argv[0] );
+	int skill = JSVAL_TO_INT( argv[1] );
+	*rval = INT_TO_JSVAL( Races->DamageFromSkill( skill, race ) );
+	return JS_TRUE;
+}
+
+JSBool SE_GetClosestTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	return JS_FALSE;
+}
+
+JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "UseDoor: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mDoor	= JSVAL_TO_OBJECT( argv[1] );
+
+	cSocket *mySock	= (cSocket *)JS_GetPrivate( cx, mSock );
+	CItem *myDoor	= (CItem *)JS_GetPrivate( cx, mDoor );
+
+	if( !ValidateObject( myDoor ) )
+	{
+		DoSEErrorMessage( "UseDoor: Invalid door" );
+		return JS_FALSE;
+	}
+	useDoor( mySock, myDoor );
+	return JS_TRUE;
+}
+
+JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	// Takes at least 2 parameters, which is the script number to trigger and the function name to call
+	// Any extra parameters are extra parameters to the JS event
+	if( argc < 2 )
+	{
+		return JS_FALSE;
+	}
+
+	UI16 scriptNumberToFire = (UI16)JSVAL_TO_INT( argv[0] );
+ 	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	cScript *toExecute		= Trigger->GetScript( scriptNumberToFire );
+
+	if( toExecute == NULL || eventToFire == NULL )
+		return JS_FALSE;
+
+	if( toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2 ) )
+		return JS_TRUE;
+	else
+		return JS_FALSE;
+}
+
+JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "GetPackOwner: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+
+	UI08 mType		= (UI08)JSVAL_TO_INT( argv[1] );
+	CChar *pOwner	= NULL;
+
+	if( mType == 0 )	// item
+	{
+		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
+		CItem *myItem	= (CItem *)JS_GetPrivate( cx, mItem );
+		pOwner			= FindItemOwner( myItem );
+	}
+	else				// serial
+	{
+		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		pOwner			= FindItemOwner( calcItemObjFromSer( mSerItem ) );
+	}
+	if( ValidateObject( pOwner ) )
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myObj, pOwner );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "CalcTargetedItem: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
+	cSocket *sChar = (cSocket *)JS_GetPrivate( cx, mysockptr );
+	if( sChar == NULL )
+	{
+		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
+		return JS_FALSE;
+	}
+	
+	CItem *calcedItem = calcItemObjFromSer( sChar->GetDWord( 7 ) );
+	if( !ValidateObject( calcedItem ) )
+	{
+		*rval = JSVAL_NULL;
+	}
+	else
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+		JS_SetPrivate( cx, myObj, calcedItem );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	return JS_TRUE;
+}
+
+JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "CalcTargetedChar: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
+	cSocket *sChar		= (cSocket *)JS_GetPrivate( cx, mysockptr );
+	if( sChar == NULL )
+	{
+		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
+		return JS_FALSE;
+	}
+	
+	CChar *calcedChar = calcCharObjFromSer( sChar->GetDWord( 7 ) );
+	if( !ValidateObject( calcedChar ) )
+	{
+		*rval = JSVAL_NULL;
+	}
+	else
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myObj, calcedChar );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	return JS_TRUE;
+}
+
+JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "GetTileIDAtMapCoord: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+
+	UI16 xLoc = (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 yLoc = (UI16)JSVAL_TO_INT( argv[1] );
+	UI08 wrldNumber = (UI08)JSVAL_TO_INT( argv[2] );
+
+	map_st mMap = Map->SeekMap0( xLoc, yLoc, wrldNumber );
+	*rval = INT_TO_JSVAL( mMap.id );
+	return JS_TRUE;
+}
+
+JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "StringToNum: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	UString str = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+
+	*rval = INT_TO_JSVAL( str.toLong() );
+	return JS_TRUE;
+}
+
+JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "NumToString: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	int num		= JSVAL_TO_INT( argv[0] );
+	UString str = UString::number( num );
+	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function	-	JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	November 9, 2001
+//|	Programmer	-	DarkStorm
+//|	Modified	-
+//o--------------------------------------------------------------------------
+//|	Purpose		-	Returns the total number of races found in the server
+//o--------------------------------------------------------------------------
+JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		DoSEErrorMessage( "GetRaceCount: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	*rval = INT_TO_JSVAL( Races->Count() );
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function	-	JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	January 27, 2003
+//|	Programmer	-	Maarc
+//|	Modified	-
+//o--------------------------------------------------------------------------
+//|	Purpose		-	Using a passed in function name, executes a JS function
+//|				-	on an area of characters
+//o--------------------------------------------------------------------------
+JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 && argc != 4 )
+	{
+		// function name, source character, range
+		DoSEErrorMessage( "AreaCharacterFunction: Invalid number of arguments (takes 3/4, function name, source character, range, optional socket)" );
+		return JS_FALSE;
+	}
+
+	// Do parameter validation here
+	JSObject *srcSocketObj		= NULL;
+	cSocket *srcSocket			= NULL;
+ 	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( trgFunc == NULL )
+	{
+		DoSEErrorMessage( "AreaCharacterFunction: Argument 0 not a valid string" );
+		return JS_FALSE;
+	}
+
+	JSObject *srcCharacterObj	= JSVAL_TO_OBJECT( argv[1] );
+	CChar *srcChar				= (CChar *)JS_GetPrivate( cx, srcCharacterObj );
+
+	if( !ValidateObject( srcChar ) )
+	{
+		DoSEErrorMessage( "AreaCharacterFunction: Argument 1 not a valid character" );
+		return JS_FALSE;
+	}
+	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
+	if( argc == 4 )
+	{
+		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
+		srcSocket		= (cSocket *)JS_GetPrivate( cx, srcCharacterObj );
+	}
+	
+	cScript *myScript			= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
+	REGIONLIST_ITERATOR rIter;
+	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		SubRegion *MapArea = (*rIter);
+		if( MapArea == NULL )	// no valid region
+			continue;
+		MapArea->PushChar();
+		for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+		{
+			if( !ValidateObject( tempChar ) )
+				continue;
+			if( objInRange( srcChar, tempChar, (UI16)distance ) )
+				myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
+		}
+		MapArea->PopChar();
+	}
+	return JS_TRUE;
+}
+//o--------------------------------------------------------------------------o
+//|	Function		-	JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	1/13/2003 11:09:39 PM
+//|	Developers		-	Brakhtus
+//|	Organization	-	Forum Submission
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Extend the UOX3 JSE implementation to support scriptable 
+//|						commands that players, and daminstration for a shard may
+//|						use to performs specialized tasks.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+ 	if( argc != 1 )
+ 	{
+		DoSEErrorMessage( "GetCommand: needs an argument" );
+		return JS_FALSE; 	
+	} 	
+	UI08 idx = static_cast<UI08>((JSVAL_TO_INT( argv[0] )));
+ 	if( idx >= Commands->NumArguments() ) 
+	{ 		
+		DoSEErrorMessage( "GetCommand: Index exeeds the command-array!" ); 		
+		return JS_FALSE; 	
+	} 	
+	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, Commands->CommandString( idx ).c_str() ) ); 
+	return JS_TRUE; 
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	1/13/2003 11:11:46 PM
+//|	Developers		-	Brakhtus
+//|	Organization	-	Forum Submission
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ) 
+{ 	
+	if( argc != 0 ) 	
+	{ 		
+		DoSEErrorMessage( "GetCommandSize: doesnt need any argument!" ); 		
+		return JS_FALSE; 	
+	} 	
+	*rval = INT_TO_JSVAL( Commands->NumArguments() ); 	
+	return JS_TRUE; 
+} 
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	29 Dec 2003
+//|	Developers		-	Maarc
+//|	Organization	-	Independent
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Reloads certain subsystems
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ) 
+{ 	
+	if( argc != 1 ) 	
+	{ 		
+		DoSEErrorMessage( "Reload: needs 1 argument!" ); 		
+		return JS_FALSE; 	
+	} 	
+
+	int toLoad = JSVAL_TO_INT( argv[0] );
+
+	switch( toLoad )
+	{
+	case 0:	// Reload regions
+			UnloadRegions();
+			LoadRegions();
+			break;
+	case 1:	// Reload spawn regions
+			UnloadSpawnRegions();
+			LoadSpawnRegions();
+			break;
+	case 2:	// Reload Spells
+			Magic->LoadScript();
+			break;
+	case 3: // Reload Commands
+			Commands->Load();
+			break;
+	case 4:	// Reload DFNs
+			FileLookup->Reload();
+			break;
+	case 5: // Reload JScripts
+			messageLoop << MSG_RELOADJS;
+			break;
+	case 6: // Reload HTMLTemplates
+			HTMLTemplates->Unload();
+			HTMLTemplates->Load();
+			break;
+	case 7:	// Reload INI
+			cwmWorldState->ServerData()->load();
+			break;
+	case 8: // Reload Everything
+			FileLookup->Reload();
+			UnloadRegions();
+			LoadRegions();
+			UnloadSpawnRegions();
+			LoadSpawnRegions();
+			Magic->LoadScript();
+			Commands->Load();
+			messageLoop << MSG_RELOADJS;
+			HTMLTemplates->Unload();
+			HTMLTemplates->Load();
+			cwmWorldState->ServerData()->load();
+			break;
+	default:
+		break;
+	}
+	return JS_TRUE; 
+} 
+
+}

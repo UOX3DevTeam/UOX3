@@ -1,0 +1,55 @@
+#ifndef __COMMANDS_H__
+#define __COMMANDS_H__
+
+#include "cmdtable.h"
+
+namespace UOX
+{
+
+class CPITalkRequest;
+
+class cCommands
+{
+private:
+	std::vector< commandLevel_st *> clearance;
+	COMMANDMAP_ITERATOR				cmdPointer;
+	TARGETMAP_ITERATOR				targPointer;
+	UString							commandString;
+
+	void			InitClearance( void );
+	void			CommandReset( void );
+public:
+	UI08			NumArguments( void );
+	SI32			Argument( UI08 argNum );
+	UString			CommandString( UI08 section, UI08 end = 0 );
+	void			CommandString( UString newValue );
+
+	commandLevel_st *GetClearance( UString clearName );			// return by command name
+	commandLevel_st *GetClearance( UI08 commandLevel );	// return by command level
+	UI16			GetColourByLevel( UI08 commandLevel );
+	void			Command( cSocket *s, CChar *c, UString text );
+	void			Load( void );
+	void			Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo );
+
+	CItem *			DupeItem( cSocket *s, CItem *i, UI32 amount );
+
+	bool			CommandExists( const std::string cmdName );
+	const std::string FirstCommand( void );
+	const std::string NextCommand( void );
+	bool			FinishedCommandList( void );
+
+	CommandMapEntry *CommandDetails( const std::string cmdName );
+
+	cCommands();
+	~cCommands();
+
+	void			Register( std::string cmdName, cScript *toRegister, UI08 cmdLevel, bool isEnabled );
+	void			SetCommandStatus( std::string cmdName, bool isEnabled );
+};
+
+extern cCommands	*Commands;
+
+}
+
+#endif
+
