@@ -234,11 +234,11 @@ public:
 
 // Class typdefs to help simplify the use of map STL
 typedef std::map<std::string,ACCOUNTSBLOCK> MAPUSERNAME;
-typedef std::map<WORD,ACCOUNTSBLOCK> MAPUSERNAMEID;
+typedef std::map<UI16,ACCOUNTSBLOCK> MAPUSERNAMEID;
 typedef std::map<std::string,ACCOUNTSBLOCK>::iterator MAPUSERNAME_ITERATOR;
 typedef std::map<std::string,ACCOUNTSBLOCK>::const_iterator MAPUSERNAME_CITERATOR;
-typedef std::map<WORD,ACCOUNTSBLOCK>::iterator MAPUSERNAMEID_ITERATOR;
-typedef std::map<WORD,ACCOUNTSBLOCK>::const_iterator MAPUSERNAMEID_CITERATOR;
+typedef std::map<UI16,ACCOUNTSBLOCK>::iterator MAPUSERNAMEID_ITERATOR;
+typedef std::map<UI16,ACCOUNTSBLOCK>::const_iterator MAPUSERNAMEID_CITERATOR;
 //o--------------------------------------------------------------------------o
 //|	Class/Struct	-	class cAccountClass
 //|	Date					-	12/6/2002 5:46:02 AM
@@ -266,9 +266,9 @@ public:
 	UI16 CreateAccountSystem(void);
 	UI16 AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", WORD wAttributes=0x0000);
 	BOOL DelAccount(std::string sUsername);
-	BOOL DelAccount(WORD wAccountID);
-	BOOL ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock);
-	BOOL ModAccount(WORD wAccountID,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock);
+	BOOL DelAccount(UI16 wAccountID);
+	BOOL ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
+	BOOL ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
 	BOOL SetPath(std::string sPath);
 	std::string GetPath(void);
 	UI16 Save(void);
@@ -276,12 +276,12 @@ public:
 	UI16 size(void);
 	BOOL clear(void);
 	BOOL isUser(std::string sUsername);
-	BOOL AddCharacter(WORD wAccountID, CChar *lpObject);
-	BOOL AddCharacter(WORD wAccountID,DWORD dwCharacterID, CChar *lpObject);
-	BOOL DelCharacter(WORD wAccountID, int nSlot);
-	BOOL TransCharacter(WORD wSAccountID,WORD wSSlot,WORD wDAccountID);
+	BOOL AddCharacter(UI16 wAccountID, CChar *lpObject);
+	BOOL AddCharacter(UI16 wAccountID,DWORD dwCharacterID, CChar *lpObject);
+	BOOL DelCharacter(UI16 wAccountID, int nSlot);
+	BOOL TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID);
 	BOOL GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock);
-	BOOL GetAccountByID(WORD wAccountID,ACCOUNTSBLOCK& actbBlock);
+	BOOL GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock);
 	long atol(const char * lpszValue);
 	long atol(std::string sValue);
 	MAPUSERNAMEID_ITERATOR& begin(void);
