@@ -497,8 +497,9 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return z;
-	MapArea->itemData.Push();
-	for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
+	CDataList< CItem * > *regItems = MapArea->GetItemList();
+	regItems->Push();
+	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 	{
 		if( !ValidateObject( tempItem ) )
 			continue;
@@ -514,7 +515,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 				z = ztemp;
 		}
 	}
-	MapArea->itemData.Pop();
+	regItems->Pop();
 	return z;
 }
 
@@ -548,23 +549,24 @@ int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return -1;
-	MapArea->itemData.Push();
-	for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
+	CDataList< CItem * > *regItems = MapArea->GetItemList();
+	regItems->Push();
+	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 	{
 		if( !ValidateObject( tempItem ) )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
 		{
-			MapArea->itemData.Pop();
+			regItems->Pop();
 			return MultiTile( tempItem, x, y, oldz );
 		}
 		else if( tempItem->GetX() == x && tempItem->GetY() == y )
 		{
-			MapArea->itemData.Pop();
+			regItems->Pop();
 			return tempItem->GetID();
 		}
 	}
-	MapArea->itemData.Pop();
+	regItems->Pop();
 	return -1;
 }
 

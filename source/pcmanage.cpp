@@ -121,15 +121,15 @@ bool CPIPlayCharacter::Handle( void )
 				{
 					// If we dont accept Krrios client we should
 					// disconnect it here now
-					if( false )
-					{
-						CPKAccept Disconnected( 0x00 );
-						tSock->Send( &Disconnected );
-						Network->Disconnect( tSock );
-						Console.Warning( 1, "Disconnected a Krrios client" );
-						disconnect = true;
-					} 
-					else if( kChar->IsGM() ) 
+//					if( false )
+//					{
+//						CPKAccept Disconnected( 0x00 );
+//						tSock->Send( &Disconnected );
+//						Network->Disconnect( tSock );
+//						Console.Warning( 1, "Disconnected a Krrios client" );
+//						disconnect = true;
+//					} 
+					if( kChar->IsGM() ) 
 					{					
 						CPKAccept AckGM( 0x02 );
 						tSock->Send( &AckGM );

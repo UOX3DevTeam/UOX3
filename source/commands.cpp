@@ -52,11 +52,12 @@ UI08 cCommands::NumArguments( void )
 //o---------------------------------------------------------------------------o
 SI32 cCommands::Argument( UI08 argNum )
 {
+	SI32 retVal = 0;
 	UString tempString = CommandString( argNum + 1, argNum + 1 );
-	if( tempString.empty() )
-		return 0;
-	else
-		return tempString.toLong();
+	if( !tempString.empty() )
+		retVal = tempString.toLong();
+
+	return retVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -181,7 +182,6 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 					s->sysmessage( "This command requires more arguments!" );
 				break;
 		}
-		return;
 	}
 	else
 	{
@@ -217,10 +217,8 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 					s->sysmessage( 346 );
 					break;
 			}
-			return;
 		}
 	}
-	s->sysmessage( "BUG: Should never reach end of command() function!" );
 }
 
 //o---------------------------------------------------------------------------o

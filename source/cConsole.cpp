@@ -15,10 +15,6 @@
 #include "uox3.h"
 #include "cConsole.h"
 
-#ifndef va_start
-	#include <cstdarg>
-#endif
-
 namespace UOX
 {
 

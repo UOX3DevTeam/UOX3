@@ -67,7 +67,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the fish to crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097B", false, 1, true, true ); // makes a fish steak
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097B", 1, "ITEM", true ); // makes a fish steak
 		pUser.SysMessage( "You cook a fish steak." );
 		return;
 	}

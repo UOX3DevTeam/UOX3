@@ -1269,6 +1269,21 @@ public:
 					CPToolTip( SERIAL objSer );
 };
 
+class CPSellList : public cPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+	virtual void	CopyData( CChar& mChar, CChar& vendor );
+public:
+	virtual			~CPSellList()
+	{
+	}
+					CPSellList();
+					CPSellList( CChar& mChar, CChar& vendor );
+	void			AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen );
+	void			AddItem( CChar *vendor, CItem *spItem, CItem *opItem, size_t &packetLen );
+};
+
 }
 
 #endif

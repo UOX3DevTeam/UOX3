@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "fileio.h"
 #include "cGuild.h"
 #include "cServerDefinitions.h"
@@ -532,7 +531,6 @@ void LoadRegions( void )
 	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
 	if( InstaLog == NULL ) 
 		return;
-	size_t offset = 0xFFFFFFFF;
 	LogoutLocationEntry toAdd;
 	UString data, UTag;
 	for( UString tag = InstaLog->First(); !InstaLog->AtEnd(); tag = InstaLog->Next() )
@@ -688,7 +686,6 @@ void LoadCreatures( void )
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 {
 	char temp[4096];
-	bool bValid = false;
 	tag = "o---o";
 	data = "o---o";
 	while( !inStream.eof() && !inStream.fail() )

@@ -35,11 +35,6 @@ void		LoadRegions( void );
 void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
 
-#ifndef va_start
-	#include <cstdarg>
-	//using namespace std;
-#endif
-
 #define __EXTREMELY_VERBOSE__
 
 #ifdef __EXTREMELY_VERBOSE__
@@ -591,14 +586,13 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 3)" );
 		return JS_FALSE;
 	}
-	
+
 	JSObject *mSock				= JSVAL_TO_OBJECT( argv[0] );
 	JSObject *mChar				= JSVAL_TO_OBJECT( argv[1] );
 	cSocket *mySock				= (cSocket *)JS_GetPrivate( cx, mSock );
 	CChar *myChar				= (CChar *)JS_GetPrivate( cx, mChar );
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	bool bAutoStack				= false;
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
@@ -607,8 +601,8 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		iAmount					= static_cast< UI16 >(JSVAL_TO_INT( argv[3] ));
 	if( argc > 4 )
 	{
-								std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) );
-								ObjectType itemType	= FindObjTypeFromString( objType );
+		std::string objType		= JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) );
+		itemType				= FindObjTypeFromString( objType );
 	}
 	if( argc > 5 )
 		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
@@ -1356,15 +1350,16 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->charData.Push();
-		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
 			if( objInRange( srcChar, tempChar, (UI16)distance ) )
 				myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
 		}
-		MapArea->charData.Pop();
+		regChars->Pop();
 	}
 	return JS_TRUE;
 }

@@ -308,8 +308,9 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->charData.Push();
-		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) || tempChar->isFree() )
 				continue;
@@ -319,7 +320,7 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 				inrange[y] = tempChar;
 			} 
 		}
-		MapArea->charData.Pop();
+		regChars->Pop();
 	}
 
 	UI16 basesound = 0;

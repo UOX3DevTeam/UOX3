@@ -178,10 +178,10 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal )
 	switch( part )
 	{
 		default:
-		case 1:		part1 = newVal;		break;
-		case 2:		part2 = newVal;		break;
-		case 3:		part3 = newVal;		break;
-		case 4:		part4 = newVal;		break;
+		case 1:		part1 = (newVal>>24);		break;
+		case 2:		part2 = (newVal>>16);		break;
+		case 3:		part3 = (newVal>>8);		break;
+		case 4:		part4 = (newVal%256);		break;
 	}
 	tempVars[whichVar] = (part1<<24) + (part2<<16) + (part3<<8) + part4;
 }
@@ -263,7 +263,7 @@ bool CItem::SetCont( cBaseObject *newCont )
 					}
 				}
 				else
-					itemHolder->Contains.Add( this );
+					itemHolder->GetContainsList()->Add( this );
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
 				return true;
@@ -872,7 +872,7 @@ void CItem::RemoveSelfFromCont( void )
 				if( targItem != NULL )
 				{
 					Weight->subtractItemWeight( targItem, this );
-					targItem->Contains.Remove( this );
+					targItem->GetContainsList()->Remove( this );
 					//if( !targItem->ReleaseItem( this ) )
 					//Console.Error( "Error removing %s(0x%X) from %s(0x%X)\n", GetName(), GetSerial(), targItem->GetName(), contserial );
 				}
@@ -1081,8 +1081,8 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 
 bool CItem::HandleLine( UString &UTag, UString &data )
 {
-	bool rvalue = false;
-	if( !( rvalue = cBaseObject::HandleLine( UTag, data ) ) )
+	bool rvalue = cBaseObject::HandleLine( UTag, data );
+	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
 		{
@@ -1778,7 +1778,6 @@ void CItem::RemoveFromSight( cSocket *mSock )
 			rItem = static_cast<CItem *>(iOwner);
 		if( rItem != NULL )
 		{
-			CChar *tChar = NULL;
 			if( mSock != NULL )
 				mSock->Send( &toRemove );
 			else
@@ -1956,6 +1955,11 @@ void CItem::Delete( void )
 	ShouldSave( false );
 }
 
+CDataList< CItem * > * CItem::GetContainsList( void )
+{
+	return &Contains;
+}
+
 //o--------------------------------------------------------------------------o
 //|	Class			-	CSpawnItem
 //|	Date			-	29th June, 2004
@@ -1989,7 +1993,7 @@ isSectionAList( false )
 //o---------------------------------------------------------------------------o
 UI08 CSpawnItem::GetInterval( UI08 part ) const
 {
-	UI32 rvalue = 0;
+	UI08 rvalue = 0;
 	if( part < 2 )
 		rvalue = Interval[part];
 	return rvalue;
@@ -2075,8 +2079,8 @@ bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 //o---------------------------------------------------------------------------o
 bool CSpawnItem::HandleLine( UString &UTag, UString &data )
 {
-	bool rvalue = false;
-	if( !( rvalue = CItem::HandleLine( UTag, data ) ) )
+	bool rvalue = CItem::HandleLine( UTag, data );
+	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
 		{

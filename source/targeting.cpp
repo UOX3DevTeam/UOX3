@@ -199,21 +199,6 @@ void HandleSetScpTrig( cSocket *s )
 	}
 }
 
-void DoAddTarget( cSocket *mSock, CItem *mItem )
-{
-	const SI16 tX = mSock->GetWord( 11 );
-	const SI16 tY = mSock->GetWord( 13 );
-	const SI08 tZ = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
-	
-	if( mItem->GetCont() == NULL )
-		mItem->SetLocation( tX, tY, tZ );
-	else
-	{
-		mItem->SetX( tX );
-		mItem->SetY( tY );
-		mItem->SetZ( tZ );
-	}
-}
 void BuildHouse( cSocket *s, UI08 houseEntry );
 void BuildHouseTarget( cSocket *s )
 {
@@ -224,62 +209,6 @@ void BuildHouseTarget( cSocket *s )
 	BuildHouse( s, s->AddID1() );//If its a valid house, send it to buildhouse!
 
 	s->AddID1( 0 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void AddTarget( cSocket *s)
-//|   Date        -  UnKnown
-//|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 29, 1998)
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Adds an item when using /add # # .
-//o---------------------------------------------------------------------------o
-void AddItem( cSocket *s, ObjectType itemType = OT_ITEM )
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	UI16 modelNum	= static_cast<UI16>(( ( s->AddID1() )<<8 ) + s->AddID2());
-	CItem *c		= Items->CreateItem( NULL, s->CurrcharObj(), modelNum, 1, 0, itemType );
-	if( c == NULL ) 
-		return;
-	
-	DoAddTarget( s, c );
-
-	s->AddID1( 0 );
-	s->AddID2( 0 );
-}
-
-void AddScriptItem( cSocket *s, ObjectType itemType = OT_ITEM ) //Tauriel 11-22-98 updated for new items
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL ) 
-		return;
-
-	CItem *c		= Items->CreateScriptItem( s, s->CurrcharObj(), s->XText(), 1, itemType );
-	if( c == NULL )
-		return;
-
-	DoAddTarget( s, c );
-}
-
-void AddNpc( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	CChar *npc = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-	if( npc == NULL )
-		return;
-
-	npc->SetName( "Dummy" );
-	npc->SetID( ( ( s->AddID1() <<8 ) + s->AddID2()) );
-	npc->SetOrgID( npc->GetID() );
-	npc->SetSkin( 0 );
-	npc->SetSkillTitles( true );
-	npc->SetLocation( s->GetWord( 11 ), s->GetWord( 13 ), s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
-	npc->SetNpc( true );
 }
 
 void AddScriptNpc( cSocket *s )
@@ -756,7 +685,7 @@ bool AreaCommandFunctor( cBaseObject *a, UI32 &b, void *extraData )
 		CItem *i = static_cast< CItem * >(a);
 		if( i->GetCont() != NULL )
 			return true;
-		if( i->GetX() >= ourData[0] && i->GetX() <= ourData[1] && i->GetY() >= ourData[2] && i->GetY() <= ourData[3] )
+		if( i->GetX() >= x1 && i->GetX() <= x2 && i->GetY() >= y1 && i->GetY() <= y2 )
 		{
 			switch( b )
 			{
@@ -928,7 +857,7 @@ void Wiping( cSocket *s )  // Clicking the corners of wiping calls this function
 		y2 = c;
 	}
 
-	bool iWipe = (s->AddID1() == 1), shouldWipe = iWipe;
+	bool iWipe = (s->AddID1() == 1);
 	UI32 toPass[5];
 	toPass[0]	= x1;
 	toPass[1]	= x2;
@@ -1049,7 +978,6 @@ void newCarveTarget( cSocket *s, CItem *i )
 			return;
 		UString tag;
 		UString data;
-		UI08 worldNumber = mChar->WorldNumber();
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
 			data = toFind->GrabData();
@@ -1065,7 +993,8 @@ void newCarveTarget( cSocket *s, CItem *i )
 
 	if( deletecorpse )
 	{
-		for( c = i->Contains.First(); !i->Contains.Finished(); c = i->Contains.Next() )
+		CDataList< CItem * > *iCont = i->GetContainsList();
+		for( c = iCont->First(); !iCont->Finished(); c = iCont->Next() )
 		{
 			if( ValidateObject( c ) )
 			{
@@ -1330,15 +1259,15 @@ bool BuyShop( cSocket *s, CChar *c )
 	c->Update( s );
 
 	CPItemsInContainer iic( s, buyPack,c );	s->Send( &iic );
+	CPDrawContainer toSend;
+	toSend.Model( 0x0030 );
+	toSend.Serial( c->GetSerial() );
+	s->Send( &toSend );
 	CPOpenBuyWindow obw( buyPack, c );		s->Send( &obw );
 
 	CPItemsInContainer iic2( s, boughtPack, c );	s->Send( &iic2 );
 	CPOpenBuyWindow obw2( boughtPack, c );		s->Send( &obw2 );
 
-	CPDrawContainer toSend;
-	toSend.Model( 0x0030 );
-	toSend.Serial( c->GetSerial() );
-	s->Send( &toSend );
 	s->statwindow( s->CurrcharObj() ); // Make sure the gold total has been sent.
 	return true;
 }
@@ -2096,26 +2025,6 @@ void VialTarget( cSocket *mSock )
 	}	
 }
 
-void MultiSetCharTarget( cSocket *s, TargetIDs targetID )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		switch( targetID )
-		{
-		case TARGET_XGO:
-									i->SetLocation( s->ClickX(), s->ClickY(), s->ClickZ(), s->AddID4() );
-									s->ClickX( -1 );
-									s->ClickY( -1 );
-									s->ClickZ( -1 );
-									s->AddID4( 0 );
-									break;
-		default:					Console.Error( 2, " MultiTarget() was passed a bad targetID (%u)", static_cast<UI08>(targetID) );	break;
-		}
-	}
-}
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	void MultiTarget( cSocket *s )
 //|	Date			-	Unknown
@@ -2168,12 +2077,7 @@ bool CPITargetCursor::Handle( void )
 			{
 				switch( targetID )
 				{
-					case TARGET_ADDITEM:			AddItem( tSock );						break;
-					case TARGET_ADDSCRIPTITEM:		AddScriptItem( tSock );					break;
-					case TARGET_ADDNPC:				AddNpc( tSock );						break;
 					case TARGET_ADDSCRIPTNPC:		AddScriptNpc( tSock );					break;
-					case TARGET_ADDSPAWNER:			AddItem( tSock, OT_SPAWNER );			break;
-					case TARGET_ADDSCRIPTSPAWNER:	AddScriptItem( tSock, OT_SPAWNER );		break;
 					case TARGET_BUILDHOUSE:			BuildHouseTarget( tSock );				break;
 					case TARGET_TELE:				TeleTarget( tSock );					break;	
 					case TARGET_DYE:			DyeTarget( tSock );						break;
@@ -2259,10 +2163,7 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_TINKERAWG:		Skills->TinkerAwg( tSock );				break;
 					case TARGET_TINKERCLOCK:	Skills->TinkerClock( tSock );			break;
 					case TARGET_STEALING:		Skills->StealingTarget( tSock );		break;
-					default:					
-						if( tSock->GetDWord( 7 ) < BASEITEMSERIAL )
-							MultiSetCharTarget( tSock, targetID );
-						break;
+					default:															break;
 				}
 			}
 		}

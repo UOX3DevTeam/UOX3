@@ -29,8 +29,6 @@
 */
 
 #include "uox3.h"
-#include <algorithm>
-
 #include "weight.h"
 #include "books.h"
 #include "cGuild.h"
@@ -64,8 +62,6 @@
 #include "jail.h"
 #include "Dictionary.h"
 #include "ObjectFactory.h"
-
-#include <set>
 
 namespace UOX
 {
@@ -354,8 +350,8 @@ void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
 	UI32 objectsDeleted				= 0;
-	QUEUEMAP_ITERATOR delqIter		= deletionQueue.begin();
-	QUEUEMAP_ITERATOR delqIterEnd	= deletionQueue.end();
+	QUEUEMAP_CITERATOR delqIter		= deletionQueue.begin();
+	QUEUEMAP_CITERATOR delqIterEnd	= deletionQueue.end();
 	while( delqIter != delqIterEnd )
 	{
 		cBaseObject *mObj = delqIter->first;
@@ -566,8 +562,9 @@ void callGuards( CChar *mChar )
 	SubRegion *toCheck = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	if( toCheck == NULL )
 		return;
-	toCheck->charData.Push();
-	for( CChar *tempChar = toCheck->charData.First(); !toCheck->charData.Finished(); tempChar = toCheck->charData.Next() )
+	CDataList< CChar * > *regChars = toCheck->GetCharList();
+	regChars->Push();
+	for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 	{
 		if( !ValidateObject( tempChar ) )
 			break;
@@ -581,7 +578,7 @@ void callGuards( CChar *mChar )
 			}
 		}
 	}
-	toCheck->charData.Pop();
+	regChars->Pop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1678,10 +1675,9 @@ void checkNPC( CChar *i, bool checkAI, bool doRestock )
 
 void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 {
-	// Exception Spinner. This is cheap, but should allow for some sureness that the loop is finished
-	UI16 nSpinner = 0;
-	toCheck->itemData.Push();
-	for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
+	CDataList< CItem * > *regItems = toCheck->GetItemList();
+	regItems->Push();
+	for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 	{
 		if( !ValidateObject( itemCheck ) || itemCheck->isFree() )
 			continue;
@@ -1762,7 +1758,7 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			}
 		}
 	}
-	toCheck->itemData.Pop();
+	regItems->Pop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -2010,8 +2006,9 @@ void CWorldMain::CheckAutoTimers( void )
 	while( tcCheck != regionList.end() )
 	{
 		SubRegion *toCheck = (*tcCheck);
-		toCheck->charData.Push();
-		for( CChar *charCheck = toCheck->charData.First(); !toCheck->charData.Finished(); charCheck = toCheck->charData.Next() )
+		CDataList< CChar * > *regChars = toCheck->GetCharList();
+		regChars->Push();
+		for( CChar *charCheck = regChars->First(); !regChars->Finished(); charCheck = regChars->Next() )
 		{
 			if( !ValidateObject( charCheck ) || charCheck->isFree() )
 				continue;
@@ -2044,7 +2041,7 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 			}
 		}
-		toCheck->charData.Pop();
+		regChars->Pop();
 
 		checkItem( toCheck, checkItems, nextDecayItems );
 		++tcCheck;
@@ -2272,7 +2269,6 @@ void InitMultis( void )
 {
 	Console << "Initializing multis            ";
 
-	CMultiObj *multi = NULL;
 	UI32 b		= 0;
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FindMultiFunctor );
 	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &FindMultiFunctor );
@@ -2918,7 +2914,8 @@ void checkRegion( cSocket *mSock, CChar *i )
 					CItem *packItem = i->GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
-						for( CItem *toScan = packItem->Contains.First(); !packItem->Contains.Finished(); toScan = packItem->Contains.Next() )
+						CDataList< CItem * > *piCont = packItem->GetContainsList();
+						for( CItem *toScan = piCont->First(); !piCont->Finished(); toScan = piCont->Next() )
 						{
 							if( ValidateObject( toScan ) )
 							{
@@ -3154,7 +3151,9 @@ void GenerateCorpse( CChar *mChar )
 			j->SetZ( 0 );
 			break;
 		case IL_PACKITEM:
-			for( k = j->Contains.First(); !j->Contains.Finished(); k = j->Contains.Next() )
+			CDataList< CItem * > *jCont;
+			jCont = j->GetContainsList();
+			for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
 			{
 				if( !ValidateObject( k ) )
 					continue;

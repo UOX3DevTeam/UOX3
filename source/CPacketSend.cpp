@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "CPacketSend.h"
 #include "speech.h"
 #include "combat.h"
@@ -3149,7 +3148,8 @@ void CPItemsInContainer::CopyData( cSocket *mSock, CItem& toCopy )
 	UI16 itemCount		= 0;
 	bool itemIsCorpse	= toCopy.isCorpse();
 
-	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
+	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) )
 		{
@@ -3229,7 +3229,7 @@ SI16 CPOpenBuyWindow::AddItem( CItem *toAdd, CChar *p, UI16 baseOffset )
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
 		value = calcGoodValue( p, toAdd, value, false );
 	std::string itemname;
-	itemname.reserve( 30 );
+	itemname.reserve( MAX_NAME );
 	size_t sLen = getTileName( toAdd, itemname ); // Item name length, don't strip the NULL (3D client doesn't like it)
 
 	internalBuffer.resize( baseOffset + 5 + sLen );
@@ -3253,7 +3253,8 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *p )
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
-	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
+	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) )
 		{
@@ -3827,7 +3828,8 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 {
 	PackLong( &internalBuffer[0], 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
-	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
+	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) )
 		{
@@ -4507,9 +4509,10 @@ void CPSendGumpMenu::AddCommand( const std::string actualCommand, ... )
 	va_list argptr;
 	char msg[512];
 #ifdef __NONANSI_VASTART__
-	va_start( argptr );
+	va_start( argptr, actualCommand.c_str() );
 #else
 	va_start( argptr, actualCommand );
+	
 #endif
 	vsprintf( msg, actualCommand.c_str(), argptr );
 	va_end( argptr );
@@ -4543,9 +4546,10 @@ void CPSendGumpMenu::AddText( const std::string actualText, ... )
 	va_list argptr;
 	char msg[512];
 #ifdef __NONANSI_VASTART__
-	va_start( argptr );
+	va_start( argptr, actualText.c_str() );
 #else
 	va_start( argptr, actualText );
+	
 #endif
 	vsprintf( msg, actualText.c_str(), argptr );
 	va_end( argptr );
@@ -4869,7 +4873,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
-		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.Contains.Num(), (cItem.GetWeight()/100) );
+		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
@@ -5009,6 +5013,108 @@ CPToolTip::CPToolTip( SERIAL objSer )
 {
 	InternalReset();
 	CopyData( objSer );
+}
+
+//0x9E Packet
+//
+//Last Modified on Sunday, 15-May-1998
+//
+//Sell List (Variable # of bytes) 
+//  BYTE cmd 
+//  BYTE[2] blockSize
+//  BYTE[4] shopkeeperID
+//  BYTE[2] numItems
+//For each item, a structure containing:
+//     BYTE[4] itemID
+//     BYTE[2] itemModel
+//     BYTE[2] itemHue/Color
+//     BYTE[2] itemAmount
+//     BYTE[2] value
+//     BYTE[2] nameLength
+//     BYTE[?] name
+
+
+void CPSellList::InternalReset( void )
+{
+	internalBuffer.resize( 9 );
+	internalBuffer[0] = 0x9E;
+}
+void CPSellList::CopyData( CChar& mChar, CChar& vendor )
+{
+	CItem *sellPack = vendor.GetItemAtLayer( IL_SELLCONTAINER );
+	CItem *ourPack	= mChar.GetPackItem();
+
+	UI16 numItems		= 0;
+	size_t packetLen	= 9;
+
+	if( ValidateObject( sellPack ) && ValidateObject( ourPack ) )
+	{
+		CDataList< CItem * > *spCont = sellPack->GetContainsList();
+		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
+		{
+			if( ValidateObject( spItem ) )
+				AddContainer( &vendor, spItem, ourPack, numItems, packetLen );
+		}
+	}
+
+	PackShort( &internalBuffer[0], 1, (UI16)packetLen );
+	PackLong( &internalBuffer[0], 3, vendor.GetSerial() );
+	PackShort( &internalBuffer[0], 7, numItems );
+}
+
+void CPSellList::AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen )
+{
+	CDataList< CItem * > *opCont = ourPack->GetContainsList();
+	for( CItem *opItem = opCont->First(); !opCont->Finished(); opItem = opCont->Next() )
+	{
+		if( ValidateObject( opItem ) )
+		{
+			if( opItem->GetType() == IT_CONTAINER )
+			{
+				AddContainer( vendor, spItem, opItem, numItems, packetLen );
+			}
+			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
+				( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
+			{
+				AddItem( vendor, spItem, opItem, packetLen );
+				++numItems;
+			}
+			if( numItems >= 60 )
+				return;
+		}
+	}
+}
+
+void CPSellList::AddItem( CChar *vendor, CItem *spItem, CItem *opItem, size_t &packetLen )
+{
+	std::string itemname;
+	size_t stringLen	= getTileName( opItem, itemname );
+	size_t newLen		= (packetLen + 14 + stringLen);
+	internalBuffer.resize( newLen );
+	PackLong( &internalBuffer[0], packetLen, opItem->GetSerial() );
+	PackShort( &internalBuffer[0], packetLen+4, opItem->GetID() );
+	PackShort( &internalBuffer[0], packetLen+6, opItem->GetColour() );
+	PackShort( &internalBuffer[0], packetLen+8, opItem->GetAmount() );
+	UI32 value = calcValue( opItem, spItem->GetSellValue() );
+	if( cwmWorldState->ServerData()->TradeSystemStatus() )
+		value = calcGoodValue( vendor, spItem, value, true );
+	PackShort( &internalBuffer[0], packetLen+10, value );
+	PackShort( &internalBuffer[0], packetLen+12, stringLen );
+	for( size_t i = 0; i < stringLen; ++i )
+	{
+		internalBuffer[packetLen+14+i] = itemname[i];
+	}
+	packetLen = newLen;
+}
+
+CPSellList::CPSellList()
+{
+	InternalReset();
+}
+CPSellList::CPSellList( CChar& mChar, CChar& vendor )
+{
+	InternalReset();
+	CopyData( mChar, vendor );
 }
 
 }

@@ -1,6 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
-
 #include "network.h"
 #include "books.h"
 #include "msgboard.h"
@@ -470,7 +468,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	CItem *i = NULL;
 	char temp[1024];
 	cSocket *mSock = connClients[s];
-	cSocket *tSock = NULL;
 
 	if( mSock == NULL )
 		return;

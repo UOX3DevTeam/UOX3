@@ -179,7 +179,7 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 	gumpDisplays.resize( 0 );
 
 	// Expose Classes to the JS Engine
-	// We may NOT define Constructors here6
+	// We may NOT define Constructors here
 	GumpProto			=	JS_InitClass( targContext, targObject, targObject, &UOXGump_class, Gump, 0, NULL, CGump_Methods, NULL, CGump_Methods );
 	GumpDataProto		=	JS_InitClass( targContext, targObject, targObject, &UOXGumpData_class, NULL, 0, NULL, CGumpData_Methods, NULL,CGumpData_Methods);
 	CharProto			=	JS_InitClass( targContext, targObject, targObject, &UOXChar_class, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
@@ -190,6 +190,7 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 	UOXCFileProto		=	JS_InitClass( targContext, targObject, targObject, &UOXFile_class, UOXCFile, 0, CFileProperties, CFile_Methods, CFileProperties, CFile_Methods );
 	CAccountProto		=	JS_InitClass( targContext, targObject, targObject, &UOXAccount_class, NULL, 0, CAccountProperties, CAccount_Methods, CAccountProperties, CAccount_Methods );
 	CConsoleProto		=	JS_InitClass( targContext, targObject, targObject, &UOXConsole_class, NULL, 0, CConsoleProperties, CConsole_Methods, CConsoleProperties, CConsole_Methods );
+	RegionProto			=	JS_InitClass( targContext, targObject, targObject, &UOXRegion_class, NULL, 0, CRegionProperties, NULL, CRegionProperties, NULL );
 	// Init the global Spells[] object
 	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 	JS_DefineObject( targContext, targObject, "Accounts", &UOXAccount_class, CAccountProto, 0 );

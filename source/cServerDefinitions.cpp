@@ -371,12 +371,12 @@ void cServerDefinitions::DisplayPriorityMap( void )
 
 SI16 cServerDefinitions::GetPriority( const char *file )
 {
+	SI16 retVal = defaultPriority;
 	UString lowername = UString( file ).lower();
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
-	if( p == priorityMap.end() )
-		return defaultPriority;
-	else
-		return p->second;
+	if( p != priorityMap.end() )
+		retVal = p->second;
+	return retVal;
 }
 
 bool cDirectoryListing::PushDir( DEFINITIONCATEGORIES toMove )
@@ -491,7 +491,7 @@ void cDirectoryListing::InternalRetrieve( void )
 			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) ) 
 			{ 
 				subdirectories.push_back( cDirectoryListing( currentDir + "/" + dirp->d_name, extension, doRecursion ) ); 
-				Console.Print( "%s/%s/n", currentDir, dirp->d_name ); 
+				Console.Print( "%s/%s/n", currentDir.c_str(), dirp->d_name ); 
 				continue; 
 			} 
 		} 

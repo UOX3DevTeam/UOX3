@@ -36,7 +36,7 @@ function onUse( pUser, iUsed )
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( "You pick a peach from the tree." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d2", false, 1, true, true );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d2", 1, "ITEM", true );
 			PeachCount--;
 			iUsed.SetTag( "PeachCounter", PeachCount );
 			if( PeachCount == 1)

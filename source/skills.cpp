@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "magic.h"
 #include "cdice.h"
 #include "skills.h"
@@ -495,7 +494,6 @@ void cSkills::GraveDig( cSocket *s )
 {
 	VALIDATESOCKET( s );
 	SI16	nFame;
-	char	iID = 0;
 	CItem *	nItemID = NULL;
 	
 	CChar *nCharID = s->CurrcharObj();
@@ -1076,8 +1074,9 @@ void cSkills::DetectHidden( cSocket *s )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->charData.Push();
-		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -1103,7 +1102,7 @@ void cSkills::DetectHidden( cSocket *s )
 					s->sysmessage( 1437 );
 			}
 		}
-		MapArea->charData.Pop();
+		regChars->Pop();
 	}
 }
 
@@ -1139,8 +1138,9 @@ void cSkills::PeaceMaking( cSocket *s )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
@@ -1156,7 +1156,7 @@ void cSkills::PeaceMaking( cSocket *s )
 					tempChar->SetAttackFirst( false );
 				}
 			}
-			MapArea->charData.Pop();
+			regChars->Pop();
 		}
 	}
 	else 
@@ -1230,7 +1230,8 @@ CItem * cSkills::GetInstrument( cSocket *s )
 	CItem *x		= mChar->GetPackItem();
 	if( !ValidateObject( x ) ) 
 		return NULL;
-	for( CItem *i = x->Contains.First(); !x->Contains.Finished(); i = x->Contains.Next() )
+	CDataList< CItem * > *xCont = x->GetContainsList();
+	for( CItem *i = xCont->First(); !xCont->Finished(); i = xCont->Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -2470,7 +2471,7 @@ void cSkills::RandomSteal( cSocket *s )
 	CItem *item = NULL;
 	for( UI08 i = 0; i < 50; ++i )
 	{
-		item = p->Contains.GetCurrent( RandomNum( static_cast< size_t >(0), p->Contains.Num() - 1 ) );
+		item = p->GetContainsList()->GetCurrent( RandomNum( static_cast< size_t >(0), p->GetContainsList()->Num() - 1 ) );
 		if( ValidateObject( item ) ) 
 			break;
 	} 
@@ -2746,8 +2747,9 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->charData.Push();
-		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -2760,7 +2762,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 				++MaxTrackingTargets;
 				if( MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets() ) 
 				{
-					MapArea->charData.Pop();
+					regChars->Pop();
 					return;
 				}
 				SI32 dirMessage = 898;
@@ -2780,7 +2782,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 				toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 			}
 		}
-		MapArea->charData.Pop();
+		regChars->Pop();
 	}
 	
 	if( MaxTrackingTargets == 0 )
@@ -4024,8 +4026,9 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->itemData.Push();
-		for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
+		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		regItems->Push();
+		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
 			if( !ValidateObject( tempItem ) )
 				continue;
@@ -4037,16 +4040,16 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
 					if( getAmt < oreType->minAmount )
 					{ 
 						s->sysmessage( 980, oreType->name.c_str() );
-						MapArea->itemData.Pop();
+						regItems->Pop();
 						return;
 					}
 					NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
-					MapArea->itemData.Pop();
+					regItems->Pop();
 					return;
 				}
 			}
 		}
-		MapArea->itemData.Pop();
+		regItems->Pop();
 	}
 	s->sysmessage( 981 );
 }

@@ -1,5 +1,3 @@
-#include <queue>
-
 #include "cThreadQueue.h"
 
 namespace UOX

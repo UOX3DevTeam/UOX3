@@ -235,8 +235,11 @@ CItem * cItem::CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 
 	GetScriptItemSettings( iCreated );
 
-	if( iAmount > 0 && iCreated->isPileable() )
+	if( iAmount > 1 )
+	{
+		iCreated->SetPileable( true );
 		iCreated->SetAmount( iAmount );
+	}
 
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
@@ -494,7 +497,8 @@ bool DecayItem( CItem *i, UI32 nextDecayItems )
 	{
 		if( !isCorpse || ( isCorpse && ( ValidateObject( i->GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() ) ) )
 		{
-			for( CItem *io = i->Contains.First(); !i->Contains.Finished(); io = i->Contains.Next() )
+			CDataList< CItem * > *iCont = i->GetContainsList();
+			for( CItem *io = iCont->First(); !iCont->Finished(); io = iCont->Next() )
 			{
 				if( ValidateObject( io ) )
 				{

@@ -390,8 +390,8 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 //o--------------------------------------------------------------------------o
 bool CMultiObj::HandleLine( UString &UTag, UString &data )
 {
-	bool rvalue = false;
-	if( !( rvalue = CItem::HandleLine( UTag, data ) ) )
+	bool rvalue = CItem::HandleLine( UTag, data );
+	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
 		{
@@ -605,8 +605,8 @@ bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 //o--------------------------------------------------------------------------o
 bool CBoatObj::HandleLine( UString &UTag, UString &data )
 {
-	bool rvalue = false;
-	if( !( rvalue = CMultiObj::HandleLine( UTag, data ) ) )
+	bool rvalue = CMultiObj::HandleLine( UTag, data );
+	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
 		{

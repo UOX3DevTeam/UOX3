@@ -185,7 +185,8 @@ bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 {
 	if( ValidateObject( pack ) )
 	{
-		for( CItem *nItem = pack->Contains.First(); !pack->Contains.Finished(); nItem = pack->Contains.Next() )
+		CDataList< CItem * > *pCont = pack->GetContainsList();
+		for( CItem *nItem = pCont->First(); !pCont->Finished(); nItem = pCont->Next() )
 		{
 			if( ValidateObject( nItem ) )
 			{
@@ -238,8 +239,9 @@ void DoorMacro( cSocket *s )
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		toCheck->itemData.Push();
-		for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
 			if( !ValidateObject( itemCheck ) )
 				continue;
@@ -251,27 +253,27 @@ void DoorMacro( cSocket *s )
 					if( mChar->IsGM() )
 					{
 						useDoor( s, itemCheck );
-						toCheck->itemData.Pop();
+						regItems->Pop();
 						return;
 					}
 					if( itemCheck->GetType() == IT_LOCKEDDOOR )
 					{
 						if( keyInPack( s, mChar, mChar->GetPackItem(), itemCheck ) )
 						{
-							toCheck->itemData.Pop();
+							regItems->Pop();
 							return;
 						}
 						s->sysmessage( 1247 );
-						toCheck->itemData.Pop();
+						regItems->Pop();
 						return;
 					}
 					useDoor( s, itemCheck );
-					toCheck->itemData.Pop();
+					regItems->Pop();
 					return;
 				}
 			}
 		}
-		toCheck->itemData.Pop();
+		regItems->Pop();
 	}
 }
 
@@ -403,16 +405,17 @@ bool isDoorBlocked( CItem *door )
 	SubRegion *Cell = MapRegion->GetCell( targX, targY, worldNumber );
 	if( Cell != NULL )
 	{
-		Cell->charData.Push();
-		for( CChar *mCheck = Cell->charData.First(); !Cell->charData.Finished(); mCheck = Cell->charData.Next() )
+		CDataList< CChar * > *regChars = Cell->GetCharList();
+		regChars->Push();
+		for( CChar *mCheck = regChars->First(); !regChars->Finished(); mCheck = regChars->Next() )
 		{
 			if( mCheck->GetX() == targX && mCheck->GetY() == targY && ( mCheck->IsNpc() || isOnline( mCheck ) ) )
 			{
-				Cell->charData.Pop();
+				regChars->Pop();
 				return true;
 			}
 		}
-		Cell->charData.Pop();
+		regChars->Pop();
 	}
 	return false;
 }

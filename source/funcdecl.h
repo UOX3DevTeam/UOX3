@@ -154,7 +154,6 @@ bool	LineOfSight( cSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int check
 void	Shutdown( SI32 retCode );
 void	useDoor( cSocket *s, CItem *item );
 void	doDeathStuff( CChar *i );
-bool	sendSellStuff( cSocket *s, CChar *i );
 void	NpcResurrectTarget( CChar *s );
 
 inline bool ValidateObject( cBaseObject *toValidate )
@@ -179,7 +178,7 @@ template< class T >
 inline T RandomNum( T nLowNum, T nHighNum )
 {
 	if( nHighNum - nLowNum + 1 )
-		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
+		return static_cast<T>((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
 	else
 		return nLowNum;
 }

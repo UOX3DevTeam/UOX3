@@ -4,11 +4,13 @@
 namespace UOX
 {
 
-	template < typename T > class CDataList
+	template <typename T> 
+        class CDataList : public std::deque<std::deque<T> >
 	{
 	protected:
-		typedef std::deque< T >				DATALIST;
-		typedef std::deque< T >::iterator	DATALIST_ITERATOR;
+		typedef std::deque<T>				DATALIST;
+		typedef typename std::deque<T>::iterator	
+DATALIST_ITERATOR;
 
 		DATALIST				objData;
 		std::vector< size_t >	objIteratorBackup;
@@ -78,7 +80,6 @@ namespace UOX
 			DATALIST_ITERATOR rIter;
 			for( rIter = objData.begin(); rIter != objData.end(); ++rIter )
 			{
-				T blah = (*rIter);
 				if( (*rIter) == toRemove )
 				{
 					const bool updateCounter = (objIterator != objData.end());

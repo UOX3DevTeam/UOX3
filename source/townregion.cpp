@@ -14,10 +14,6 @@
 #include "Dictionary.h"
 #include "classes.h"
 
-#ifndef va_start
-	#include <cstdarg>
-#endif
-
 namespace UOX
 {
 

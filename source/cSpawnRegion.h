@@ -37,10 +37,10 @@ protected:
 	SI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
 
-public:
 	CDataList< CChar * >	spawnedChars;
 	CDataList< CItem * >	spawnedItems;
 
+public:
 				cSpawnRegion( UI16 spawnregion );
 				~cSpawnRegion();
 
@@ -86,6 +86,8 @@ public:
 	void		deleteSpawnedChar( CChar *toDelete );
 	void		deleteSpawnedItem( CItem *toDelete );
 
+	CDataList< CItem * > *	GetSpawnedItemsList( void );
+	CDataList< CChar * > *	GetSpawnedCharsList( void );
 private:
 	CChar *		RegionSpawnChar( void );
 	CItem *		RegionSpawnItem( void );

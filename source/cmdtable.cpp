@@ -33,12 +33,10 @@
 namespace UOX
 {
 
-void BuildAddMenuGump( cSocket *s, UI16 m );	// Menus for item creation
 void CollectGarbage( void );
 void endmessage( int x );
 void HandleGumpCommand( cSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
-void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
 void sysBroadcast( std::string txt );
 void HandleHowTo( cSocket *sock, int cmdNumber );
 void telltime( cSocket *s );
@@ -117,7 +115,6 @@ void nextCall( cSocket *s, bool isGM )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 		closeCall( s, isGM );
-	HelpRequest *tempPage = NULL;
 	if( isGM )
 	{
 		if( !GMQueue->AnswerNextCall( s, mChar ) )
@@ -146,8 +143,8 @@ bool FixSpawnFunctor( cBaseObject *a, UI32 &b, void *extraData )
 				CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i->Dupe( OT_SPAWNER ));
 				if( ValidateObject( spawnItem ) )
 				{
-					spawnItem->SetInterval( 0, i->GetTempVar( CITV_MOREY ) );
-					spawnItem->SetInterval( 1, i->GetTempVar( CITV_MOREX ) );
+					spawnItem->SetInterval( 0, static_cast<UI08>(i->GetTempVar( CITV_MOREY )) );
+					spawnItem->SetInterval( 1, static_cast<UI08>(i->GetTempVar( CITV_MOREX )) );
 					spawnItem->SetSpawnSection( i->GetDesc() );
 					spawnItem->IsSectionAList( i->isSpawnerList() );
 				}
@@ -244,38 +241,6 @@ void command_setpost( cSocket *s )
 	MsgBoardSetPostType( s, type );
 }
 
-void command_where( cSocket *s )
-// Prints your current coordinates + region.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar			= s->CurrcharObj();
-	cTownRegion *plRegion	= mChar->GetRegion();
-	if( !plRegion->GetName().size() )
-		s->sysmessage( 274, plRegion->GetName().c_str() );
-	else
-		s->sysmessage( 275 );
-
-	s->sysmessage( "%i %i (%i/%i) %u", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->GetDispZ(), mChar->WorldNumber() ); 
-}
-
-void command_xgoplace( cSocket *s )
-// (d) Send another character to a location in your LOCATIONS.SCP file.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
-		if( cwmWorldState->goPlaces.size() > Commands->Argument( 1 ) )
-		{
-			GoPlaces_st toGoTo = cwmWorldState->goPlaces[Commands->Argument( 1 )];
-			s->ClickX( toGoTo.x );
-			s->ClickY( toGoTo.y );
-			s->ClickZ( toGoTo.z );
-			s->AddID4( toGoTo.worldNum );
-			s->target( 0, TARGET_XGO, 20 );
-		}
-	}
-}
-
 void command_showids( cSocket *s )
 // Display the serial number of every item on your screen.
 {
@@ -284,97 +249,16 @@ void command_showids( cSocket *s )
 	SubRegion *Cell = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	if( Cell == NULL )	// nothing to show
 		return;
-	Cell->charData.Push();
-	for( CChar *toShow = Cell->charData.First(); !Cell->charData.Finished(); toShow = Cell->charData.Next() )
+	CDataList< CChar * > *regChars = Cell->GetCharList();
+	regChars->Push();
+	for( CChar *toShow = regChars->First(); !regChars->Finished(); toShow = regChars->Next() )
 	{
 		if( !ValidateObject( toShow ) )
 			continue;
 		if( charInRange( mChar, toShow ) )
 			s->ShowCharName( toShow, true );
 	}
-	Cell->charData.Pop();
-}
-
-void command_go( cSocket *s )
-// (d d d) Go to the specified X/Y/Z coordinates
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->NumArguments() > 2 )
-	{
-		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
-		if( upperCommand == "PLACE" )
-		{
-			if( Commands->NumArguments() == 3 )
-			{
-				if( cwmWorldState->goPlaces.size() > Commands->Argument( 2 ) )
-				{
-					GoPlaces_st toGoTo = cwmWorldState->goPlaces[Commands->Argument( 2 )];
-					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum );
-				}
-			}
-		}
-		else if( upperCommand == "CHAR" )
-		{
-			if( Commands->NumArguments() == 6 )
-			{
-				SERIAL serial = calcserial( static_cast<UI08>(Commands->Argument( 2 )), static_cast<UI08>(Commands->Argument( 3 )), static_cast<UI08>(Commands->Argument( 4 )), static_cast<UI08>(Commands->Argument( 5 )) );
-				CChar *iTo = calcCharObjFromSer( serial );
-				if( ValidateObject( iTo ) )
-				{
-					if( iTo->GetCommandLevel() > mChar->GetCommandLevel() )
-					{
-						s->sysmessage( 19 );
-						return;
-					}
-					if( iTo->WorldNumber() != mChar->WorldNumber() )
-					{
-						mChar->SetLocation( iTo );
-						SendMapChange( iTo->WorldNumber(), s );
-					}
-					else
-						mChar->SetLocation( iTo );
-				}
-				else
-					s->sysmessage( 1110 );
-			}
-			else if( Commands->NumArguments() == 3 )
-			{
-				cSocket *tSock = Network->GetSockPtr( Commands->Argument( 2 ) );
-				if( tSock != NULL )
-				{
-					CChar *tChar = tSock->CurrcharObj();
-					if( ValidateObject( tChar ) )
-					{
-						if( tChar->GetCommandLevel() > mChar->GetCommandLevel() )
-						{
-							s->sysmessage( 19 );
-							return;
-						}
-						if( tChar->WorldNumber() != mChar->WorldNumber() )
-						{
-							mChar->SetLocation( tChar );
-							SendMapChange( tChar->WorldNumber(), s );
-						}
-						else
-							mChar->SetLocation( tChar );
-					}
-					else
-						s->sysmessage( 1110 );
-				}
-				else
-					s->sysmessage( 1745 );
-			}
-		}
-		else if( Commands->NumArguments() == 4 )
-		{
-			SI16 x = static_cast< SI16 >(Commands->Argument( 1 ));
-			SI16 y = static_cast< SI16 >(Commands->Argument( 2 ));
-			SI08 z = static_cast< SI08 >(Commands->Argument( 3 ));
-			if( x < 6144 && y < 4096 )
-				mChar->SetLocation( x, y, z );
-		}
-	}
+	regChars->Pop();
 }
 
 void command_tile( cSocket *s )
@@ -478,7 +362,6 @@ void command_wipe( cSocket *s )
 		}
 		if( saidAll || upperCommand == "NPCS" )
 		{
-			int deleted = 0;
 			Console.Print( Dictionary->GetEntry( 81 ).c_str(), mChar->GetName().c_str() );
 			isItem = false;
 			ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, &isItem, &WipeObjFunctor );
@@ -538,89 +421,6 @@ void command_iwipe( cSocket *s )
 	}
 }
 
-void command_add( cSocket *s )
-{
-	VALIDATESOCKET( s );
-
-	UString UTag = Commands->CommandString( 2, 2 ).upper();
-	if( Commands->NumArguments() == 1 )
-		BuildAddMenuGump( s, 1 );
-	else if( UTag == "NPC" )
-	{
-		if( Commands->NumArguments() == 4 )
-		{
-			s->AddID1( (UI08)Commands->Argument( 1 ) );
-			s->AddID2( (UI08)Commands->Argument( 2 ) );
-			s->target( 0, TARGET_ADDNPC, 1212, UString::number((s->AddID1()<<8) + s->AddID2()).c_str() );
-		}
-		else
-		{
-			s->XText( Commands->CommandString( 3 ).upper() );
-			s->target( 0, TARGET_ADDSCRIPTNPC, 1212, s->XText().c_str() );
-		}
-	}
-	else if( UTag == "ITEM" )
-	{
-		if( Commands->NumArguments() == 4 )
-		{
-			s->AddID1( (UI08)Commands->Argument( 2 ) );
-			s->AddID2( (UI08)Commands->Argument( 3 ) );
-			if( s->AddID1() < 0x40 )
-				s->target( 0, TARGET_ADDITEM, 37, UString::number((s->AddID1()<<8) + s->AddID2()).c_str() );
-		}
-		else
-		{
-			s->XText( Commands->CommandString( 3 ).upper() );
-			s->target( 0, TARGET_ADDSCRIPTITEM, 37, s->XText().c_str() );
-		}
-	}
-	else if( UTag == "SPAWNER" )
-	{
-		if( Commands->NumArguments() == 4 )
-		{
-			s->AddID1( (UI08)Commands->Argument( 2 ) );
-			s->AddID2( (UI08)Commands->Argument( 3 ) );
-			if( s->AddID1() < 0x40 )
-				s->target( 0, TARGET_ADDSPAWNER, 37, UString::number((s->AddID1()<<8) + s->AddID2()).c_str() );
-		}
-		else
-		{
-			s->XText( Commands->CommandString( 3 ).upper() );
-			s->target( 0, TARGET_ADDSCRIPTSPAWNER, 37, s->XText().c_str() );
-		}
-	}
-	else if( Commands->NumArguments() == 2 && Commands->Argument( 1 ) < 0x4000 )
-	{
-		s->AddID1( (UI08)(Commands->Argument( 1 )>>8) );
-		s->AddID2( (UI08)(Commands->Argument( 1 )%256) );
-		UString dictID = UString::number( Commands->Argument( 1 ) );
-		s->target( 0, TARGET_ADDITEM, 37, UString::number( Commands->Argument( 1 ) ).c_str() );
-	}
-}
-
-void command_addx( cSocket *s )
-// (h h) Adds a new item to your current location.
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-
-	UI16 addID = INVALIDID;
-	SI08 targZ = mChar->GetZ();
-	switch( Commands->NumArguments() )
-	{
-		case 2:	addID = static_cast<UI16>(Commands->Argument( 1 ));	break;
-		case 4:	targZ = static_cast<SI08>(Commands->Argument( 3 ));
-		case 3: addID = static_cast<UI16>( ( Commands->Argument( 1 ) << 8 ) + Commands->Argument( 2 ) );	break;
-	}
-	CTile tile;
-	Map->SeekTile( addID, &tile );
-	CItem *c = Items->CreateItem( NULL, mChar, addID, 1, 0, OT_ITEM );
-	if( c != NULL )
-		c->SetLocation( mChar->GetX(), mChar->GetY(), targZ );
-}
-
 void command_save( void )
 // Saves the current world data into ITEMS.WSC and CHARS.WSC.
 {
@@ -663,7 +463,7 @@ void command_settime( void )
 		{
 			cwmWorldState->ServerData()->ServerTimeAMPM( (newhours > 12) );
 			if( newhours > 12 )
-				cwmWorldState->ServerData()->ServerTimeHours( newhours - 12 );
+				cwmWorldState->ServerData()->ServerTimeHours( static_cast<UI08>(newhours - 12) );
 			else
 				cwmWorldState->ServerData()->ServerTimeHours( newhours );
 			cwmWorldState->ServerData()->ServerTimeMinutes( newminutes );
@@ -722,14 +522,6 @@ void command_gmmenu( cSocket *s )
 		CPIHelpRequest toHandle( s, static_cast<UI16>(Commands->Argument( 1 ) ) );
 		toHandle.Handle();
 	}
-}
-
-void command_itemmenu( cSocket *s )
-// (d) Opens the specified Item Menu from ITEMS.SCP.
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-		BuildAddMenuGump( s, static_cast<UI16>(Commands->Argument( 1 )) );
 }
 
 void command_command( cSocket *s )
@@ -953,7 +745,6 @@ void command_gq( cSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		CChar *mChar = s->CurrcharObj();
 		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
 		if( upperCommand == "NEXT" )
 			nextCall( s, true );
@@ -1035,7 +826,8 @@ void command_spawnkill( cSocket *s )
 		int killed	= 0;
 
 		s->sysmessage( 349 );
-		for( CChar *i = spawnReg->spawnedChars.First(); !spawnReg->spawnedChars.Finished(); i = spawnReg->spawnedChars.Next() )
+		CDataList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
+		for( CChar *i = spCharList->First(); !spCharList->Finished(); i = spCharList->Next() )
 		{
 			if( !ValidateObject( i ) )
 				continue;
@@ -1285,22 +1077,6 @@ void command_howto( cSocket *s )
 	}
 }
 
-// command_xgate - Gates from locations.scp - Retalin 9/17/2001
-void command_xgate( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-	if( Commands->NumArguments() == 2 )
-	{
-		if( cwmWorldState->goPlaces.size() > Commands->Argument( 1 ) )
-		{
-			GoPlaces_st toGoTo = cwmWorldState->goPlaces[Commands->Argument( 1 )];
-			SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), toGoTo.x, toGoTo.y, toGoTo.z );
-		}
-	}
-}
 
 void command_temp( cSocket *s )
 {
@@ -1362,15 +1138,12 @@ void cCommands::CommandReset( void )
 	// W
 	TargetMap["WSTATS"]			= TargetMapEntry( CNS_CMDLEVEL,		CMD_TARGET,		TARGET_WSTATS,			183);
 	// X
-	TargetMap["XGO"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETXYZ,	TARGET_XGO,				198);
 	// Y
 	// Z
 
 	// CommandMap[Command Name] = CommandMapEntry(Required Command Level, Command Type, Command Function);
 	//A
-	CommandMap["ADD"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_add);
 	CommandMap["ADDACCOUNT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
-	CommandMap["ADDX"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addx);
 	CommandMap["ANNOUNCE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
 	CommandMap["AREACOMMAND"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_areaCommand);
 	//B
@@ -1388,14 +1161,12 @@ void cCommands::CommandReset( void )
 	CommandMap["GUARDS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_guards);
 	CommandMap["GMS"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_gms);
 	CommandMap["GMMENU"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmmenu);
-	CommandMap["GO"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_go);
 	CommandMap["GCOLLECT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&CollectGarbage);
 	CommandMap["GQ"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gq);
 	//H
 	CommandMap["HOWTO"]				= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
 	//I
 	CommandMap["IWIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_iwipe);
-	CommandMap["ITEMMENU"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_itemmenu);
 	//J
 	//K
 	//L
@@ -1434,10 +1205,7 @@ void cCommands::CommandReset( void )
 	//W
 	CommandMap["WHO"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_who);
 	CommandMap["WIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_wipe);
-	CommandMap["WHERE"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_where);
 	//X
-	CommandMap["XGATE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_xgate );
-	CommandMap["XGOPLACE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_xgoplace);
 	//Y
 	//Z
 }

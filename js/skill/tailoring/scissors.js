@@ -13,6 +13,7 @@ function onUse( pUser, iUsed )
 	}
 
 	pUser.socket.CustomTarget( 0, "What should I use these scissors on?" );
+	return false;
 }
 
 function onCallback0( pSock, myTarget ) 
@@ -46,8 +47,8 @@ function onCallback0( pSock, myTarget )
 			myTarget.SoundEffect( 0x0248, true );
 			myTarget.id = 0x00DF; // remove sheep's wool
 			myTarget.EmoteMessage( "Baaaah!" );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df8", false, 1, true, true ); //give the player some wool
-			pUser.StartTimer( 5000, 1, true );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df8", 1, "ITEM", true ); //give the player some wool
+			myTarget.StartTimer( 30000, 1, true ); //respawn wool on sheep in 30 seconds
 			return;
 		}
 	}
@@ -82,14 +83,14 @@ function onCallback0( pSock, myTarget )
 		if( tileID >= 3989 && tileID <= 3996 ) // <-- Decimal item-ids
 		{ //Cut bolts of cloth into cut cloth
 			pUser.SysMessage( "You cut the material and place it into your backpack." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1766", false, myTarget.amount*50, true, true );  //give the player some cut cloth
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1766", myTarget.amount*50, "ITEM", true );  //give the player some cut cloth
 			myTarget.Delete();
 			return;				
 		}
 		if(( tileID >= 5981 && tileID <= 5992 ) || ( tileID >= 5397 && tileID <= 5400 ) || ( tileID >= 5422 && tileID <= 5444 ) || ( tileID >= 7933 && tileID <= 7940 )) // <-- Decimal item-ids
 		{ //Cut folded cloth/clothes into bandages
 			pUser.SysMessage( "You cut the material into bandage and place it in your backpack." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0e21", false, myTarget.amount, true, true );  //give the player some bandages
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0e21", myTarget.amount, "ITEM", true );  //give the player some bandages
 			myTarget.Delete();
 			return;
 		}

@@ -14,9 +14,13 @@ namespace UOX
 
 class SubRegion
 {
-public:
+protected:
 	CDataList< CItem * >		itemData;
 	CDataList< CChar * >		charData;
+
+public:
+			CDataList< CItem * > *	GetItemList( void );
+			CDataList< CChar * > *	GetCharList( void );
 
 			SubRegion()
 			{

@@ -157,6 +157,16 @@ void SubRegion::LoadFromDisk( std::ifstream& filename )
 	}
 }
 
+CDataList< CItem * > * SubRegion::GetItemList( void )
+{
+	return &itemData;
+}
+
+CDataList< CChar * > * SubRegion::GetCharList( void )
+{
+	return &charData;
+}
+
 //o--------------------------------------------------------------------------o
 //|	Function		-	cMapRegion constructor
 //|	Date			-	23 July, 2000
@@ -215,10 +225,10 @@ bool cMapRegion::AddItem( CItem *nItem )
 	SubRegion *cell = GetCell( nItem->GetX(), nItem->GetY(), nItem->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.itemData.Add( nItem );
+		overFlow.GetItemList()->Add( nItem );
 		return false;
 	}
-	return cell->itemData.Add( nItem );
+	return cell->GetItemList()->Add( nItem );
 }
 
 //o--------------------------------------------------------------------------o
@@ -237,10 +247,10 @@ bool cMapRegion::RemoveItem( CItem *nItem )
 	SubRegion *cell = GetCell( nItem->GetX(), nItem->GetY(), nItem->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.itemData.Remove( nItem );
+		overFlow.GetItemList()->Remove( nItem );
 		return false;
 	}
-	return cell->itemData.Remove( nItem );
+	return cell->GetItemList()->Remove( nItem );
 }
 
 //o--------------------------------------------------------------------------o
@@ -258,10 +268,10 @@ bool cMapRegion::AddChar( CChar *toAdd )
 	SubRegion *cell = GetCell( toAdd->GetX(), toAdd->GetY(), toAdd->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.charData.Add( toAdd );
+		overFlow.GetCharList()->Add( toAdd );
 		return false;
 	}
-	return cell->charData.Add( toAdd );
+	return cell->GetCharList()->Add( toAdd );
 }
 
 //o--------------------------------------------------------------------------o
@@ -280,10 +290,10 @@ bool cMapRegion::RemoveChar( CChar *toRemove )
 	SubRegion *cell = GetCell( toRemove->GetX(), toRemove->GetY(), toRemove->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.charData.Remove( toRemove );
+		overFlow.GetCharList()->Remove( toRemove );
 		return false;
 	}
-	return cell->charData.Remove( toRemove );
+	return cell->GetCharList()->Remove( toRemove );
 }
 
 //o--------------------------------------------------------------------------o

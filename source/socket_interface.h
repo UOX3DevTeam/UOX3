@@ -31,7 +31,7 @@
 	#include <stddef.h>
 		
 	#define SOCKET                int
-	#define INVALID_SOCKET        -1
+	#define INVALID_SOCKET        0xFFFFFFFF
 	#define SOCKET_ERROR          -1
 	#define SOCKADDR_IN           struct sockaddr_in
 	#if !defined(__unix__)

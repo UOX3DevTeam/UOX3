@@ -21,7 +21,6 @@
 //|							finished for all functions
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
-#include <algorithm>
 #include "power.h"
 #include "trigger.h"
 #include "cScript.h"

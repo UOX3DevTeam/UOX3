@@ -22,7 +22,7 @@ function onUse( pUser, iUsed )
 	if( !isInRange )
 	{
 		pUser.SysMessage( "You are too far away to reach that!" );
-		return;
+		return false;
 	}
 	pUser.SetTag( "itemserial1", iUsed.GetSerial(1) ); 
 	pUser.SetTag( "itemserial2", iUsed.GetSerial(2) ); 
@@ -92,17 +92,17 @@ function onUse( pUser, iUsed )
 	if( iUsed.GetTag( "EmptyGlass" ) == 1 )
 	{
 		pUser.SysMessage( "It's empty." );
-		return;
+		return false;
 	}
 	if( iUsed.GetTag( "ContentsType" ) > 1 || iUsed.GetTag( "EmptyGlass" ) == 0 )
 	{
 		pUser.CustomTarget( 1, "Where would you like to pour this?" );
-		return;
+		return false;
 	}
 	else if( iUsed.GetTag( "ContentsType" ) == 1 )
 	{
 		pUser.CustomTarget( 0, "Fill from what?" );
-		return;
+		return false;
 	}
 }
 

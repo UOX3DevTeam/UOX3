@@ -86,8 +86,9 @@ void HandleGuardAI( CChar *mChar )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) )
 				{
@@ -96,12 +97,12 @@ void HandleGuardAI( CChar *mChar )
 					{
 						Combat->AttackTarget( mChar, tempChar );
 						mChar->talkAll( 313, true );
-						MapArea->charData.Pop();
+						regChars->Pop();
 						return;
 					}
 				}
 			}
-			MapArea->charData.Pop();
+			regChars->Pop();
 		}
 	}
 }
@@ -186,8 +187,9 @@ void HandleEvilAI( CChar *mChar )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
@@ -203,11 +205,11 @@ void HandleEvilAI( CChar *mChar )
 					if( raceComp == 2 )	// Allies
 						continue;
 					Combat->AttackTarget( mChar, tempChar );
-					MapArea->charData.Pop();	// restore before returning
+					regChars->Pop();	// restore before returning
 					return;
 				}
 			}
-			MapArea->charData.Pop();
+			regChars->Pop();
 		}
 	}
 }
@@ -231,17 +233,18 @@ void HandleChaoticAI( CChar *mChar )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
 					Combat->AttackTarget( mChar, tempChar );
-					MapArea->charData.Pop();
+					regChars->Pop();
 					return;
 				}
 			}
-			MapArea->charData.Pop();
+			regChars->Pop();
 		}
 	}
 }

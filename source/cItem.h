@@ -16,6 +16,8 @@ namespace UOX
 class CItem : public cBaseObject
 {
 protected:
+	CDataList< CItem * >	Contains;
+
 	cBaseObject	*	contObj;
 
 	UI08			bools;
@@ -77,8 +79,7 @@ protected:
 
 public:
 
-
-	CDataList< CItem * >	Contains;
+	CDataList< CItem * > *	GetContainsList( void );
 
 	UI16			EntryMadeFrom( void ) const;
 	void			EntryMadeFrom( UI16 newValue );

@@ -824,7 +824,7 @@ GUILDID CGuildCollection::MaximumGuild( void )
 			maxVal = pFind->first;
 		++pFind;
 	}
-	return (GUILDID)maxVal + 1;
+	return static_cast<GUILDID>(maxVal + 1);
 }
 GUILDID CGuildCollection::NewGuild( void )
 {

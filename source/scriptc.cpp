@@ -6,7 +6,6 @@
 //	Calling Script::find() will then seek to that location directly rather
 //	than having to parse through all of the script
 //
-#include <sys/stat.h>
 #include "uox3.h"
 #include "ssection.h"
 #include "scriptc.h"

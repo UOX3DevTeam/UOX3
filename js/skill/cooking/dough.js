@@ -98,7 +98,7 @@ function onCallback0( tSock, targSerial )
 			targSerial.id = 0x0FF7;
 		if( targSerial.id == 0x0ff9 || targSerial.id == 0x1f9d )
 			targSerial.id = 0x0FF6;
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103d", false, 1, true, false ); // makes a dough
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103d", 1, "ITEM", false ); // makes a dough
 		pUser.SysMessage( "You make some dough." );
 		return;
 	}

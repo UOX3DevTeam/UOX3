@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "cGuild.h"
 #include "combat.h"
 #include "townregion.h"
@@ -1725,7 +1724,9 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 
 	if( toCheck != NULL )
 	{
-		for( getGuard = toCheck->charData.First(); !toCheck->charData.Finished(); getGuard = toCheck->charData.Next() )
+		CDataList< CChar * > *regChars = toCheck->GetCharList();
+		regChars->Push();
+		for( getGuard = regChars->First(); !regChars->Finished(); getGuard = regChars->Next() )
 		{
 			if( !ValidateObject( getGuard ) )
 				continue;
@@ -1739,8 +1740,12 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 					reUseGuard = true;
 			}
 			else if( getGuard->GetTarg() == targChar )
+			{
+				regChars->Pop();
 				return;
+			}
 		}
+		regChars->Pop();
 	}
 	// 1/13/2003 - Maarc - Fix for JSE NocSpawner
 	if( !reUseGuard )

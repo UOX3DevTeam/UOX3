@@ -105,7 +105,7 @@ CChar *FindItemOwner( CItem *p )
 
 	ObjectType oType = OT_CBO;
 	cBaseObject *iOwner = FindItemOwner( p, oType );
-	if( oType = OT_CHAR )
+	if( oType == OT_CHAR )
 		return static_cast<CChar *>(iOwner);
 	return NULL;
 }
@@ -119,7 +119,8 @@ CChar *FindItemOwner( CItem *p )
 //o---------------------------------------------------------------------------o
 CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 {
-	for( CItem *toCheck = toSearch->Contains.First(); !toSearch->Contains.Finished(); toCheck = toSearch->Contains.Next() )
+	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
 		{
@@ -169,7 +170,8 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o---------------------------------------------------------------------------o
 CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 {
-	for( CItem *toCheck = toSearch->Contains.First(); !toSearch->Contains.Finished(); toCheck = toSearch->Contains.Next() )
+	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
 		{
@@ -266,8 +268,9 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		toCheck->itemData.Push();
-		for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
 			if( !ValidateObject( itemCheck ) )
 				continue;
@@ -282,13 +285,13 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 					multi = static_cast<CMultiObj *>(itemCheck);
 					if( inMulti( x, y, z, multi ) )
 					{
-						toCheck->itemData.Pop();
+						regItems->Pop();
 						return multi;
 					}
 				}
 			}
 		}
-		toCheck->itemData.Pop();
+		regItems->Pop();
 	}
 	return multi;
 }

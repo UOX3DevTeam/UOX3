@@ -580,4 +580,14 @@ void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 		IncCurrentItemAmt( -1 );
 }
 
+CDataList< CItem * > * cSpawnRegion::GetSpawnedItemsList( void )
+{
+	return &spawnedItems;
+}
+
+CDataList< CChar * > * cSpawnRegion::GetSpawnedCharsList( void )
+{
+	return &spawnedChars;
+}
+
 }

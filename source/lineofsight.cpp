@@ -348,8 +348,9 @@ Look at uox3.h to see options. Works like npc magic.
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->itemData.Push();
-		for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
+		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		regItems->Push();
+		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
 			if( !ValidateObject( tempItem ) )
 				continue;
@@ -366,7 +367,7 @@ Look at uox3.h to see options. Works like npc magic.
 					}
 				}
 		}
-		MapArea->itemData.Pop();
+		regItems->Pop();
 	}
 		
 		

@@ -31,16 +31,16 @@ function onUse( pUser, iUsed )
 	if( loot == 3 )
  	{
 		pUser.socket.SysMessage( "You manage to grab some wax and honey from the behive without getting stung." );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", false, 1, true, true );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", false, 1, true, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", 1, "ITEM", true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", 1, "ITEM", true );
 		
 		return;
 	}
 	if( loot == 4 )
 	{
 		pUser.socket.SysMessage( "You manage to grab some wax and honey from the beehive, but fail to avoid getting stung." );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", false, 1, true, true );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", false, 1, true, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", 1, "ITEM", true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", 1, "ITEM", true );
 		//DoDamage( pUser, 40, 1 );
 		pUser.DoAction( 0x0014 );
 		iUsed.SoundEffect( 0x0231, true );

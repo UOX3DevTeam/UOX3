@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "skills.h"
 #include "cMagic.h"
 #include "trigger.h"
@@ -229,8 +228,9 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 		SubRegion *Cell = (*rIter);
 		bool chain = false;
 	
-		Cell->charData.Push();
-		for( CChar *tempChar = Cell->charData.First(); !Cell->charData.Finished(); tempChar = Cell->charData.Next() )
+		CDataList< CChar * > *regChars = Cell->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			dx = abs( tempChar->GetX() - nItem->GetX() );
 			dy = abs( tempChar->GetY() - nItem->GetY() );
@@ -249,9 +249,10 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 				}
 			}
 		}
-		Cell->charData.Pop();
-		Cell->itemData.Push();
-		for( CItem *tempItem = Cell->itemData.First(); !Cell->itemData.Finished(); tempItem = Cell->itemData.Next() )
+		regChars->Pop();
+		CDataList< CItem * > *regItems = Cell->GetItemList();
+		regItems->Push();
+		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
 			if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
 			{
@@ -270,7 +271,7 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 				}
 			}
 		}
-		Cell->itemData.Pop();
+		regItems->Pop();
 	}
 	nItem->Delete();
 }

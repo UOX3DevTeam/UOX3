@@ -33,7 +33,6 @@
 //|						Plans for CChar derived objects thought upon (notably CPC and CNPC)
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
-#include <algorithm>
 #include "power.h"
 #include "weight.h"
 #include "cGuild.h"
@@ -1986,8 +1985,9 @@ void CChar::Teleport( void )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( ValidateObject( tempChar ) )
 				{
@@ -1995,9 +1995,10 @@ void CChar::Teleport( void )
 						tempChar->SendToSocket( mSock );
 				}
 			}
-			MapArea->charData.Pop();
-			MapArea->itemData.Push();
-			for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
+			regChars->Pop();
+			CDataList< CItem * > *regItems = MapArea->GetItemList();
+			regItems->Push();
+			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
 				if( ValidateObject( tempItem ) )
 				{
@@ -2007,7 +2008,7 @@ void CChar::Teleport( void )
 						tempItem->SendToSocket( mSock );
 				}
 			}
-			MapArea->itemData.Pop();
+			regItems->Pop();
 		}
 	}
 
@@ -2252,6 +2253,7 @@ bool CChar::FinishedItems( void )
 //o---------------------------------------------------------------------------o
 bool CChar::IsValidMount( void ) const
 {
+	bool retVal = false;
 	switch( id )
 	{
 		// Basic Ridables
@@ -2294,12 +2296,13 @@ bool CChar::IsValidMount( void ) const
 		case 0x31A:		// Swamp Dragon
 		case 0x31F:		// Armored Swamp Dragon
 		case 0x3E6:		// Kirin
-			return true;
+			retVal = true;
+			break;
 		default:
-			return false;
+			break;
 	}
 
-	return false;
+	return retVal;
 }
 
 bool CChar::DumpHeader( std::ofstream &outStream ) const
@@ -2941,8 +2944,8 @@ void CChar::StopSpell( void )
 
 bool CChar::HandleLine( UString &UTag, UString& data )
 {
-	bool rvalue = false;
-	if( !( rvalue = cBaseObject::HandleLine( UTag, data ) ) )
+	bool rvalue = cBaseObject::HandleLine( UTag, data );
+	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
 		{

@@ -244,7 +244,7 @@ namespace UOX
 				case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
 				case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetDef() );				break;
 				case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
-				case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->Contains.Num() );		break;
+				case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );		break;
 				case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDecayable() );		break;
 				case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
 				case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
@@ -1347,7 +1347,7 @@ namespace UOX
 			return JS_FALSE;
 		
 		UI32 Index			= JSVAL_TO_INT( id );
-		CItem *mySubItem	= myItem->Contains.GetCurrent( Index );
+		CItem *mySubItem	= myItem->GetContainsList()->GetCurrent( Index );
 		if( !ValidateObject( mySubItem ) )
 		{
 			*vp = JSVAL_NULL;

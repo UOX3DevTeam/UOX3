@@ -16,6 +16,7 @@
 // -------------
 // cooking start
 // use : on : to get
+
 // Wheat (4 sheaves) : Flour mill : Flour
 0x1ebd=101
 // Flour : Water : Dough
@@ -23,7 +24,6 @@
 0x103a=102
 0x1045=102
 0x1046=102
-
 // Dough : Heat source : Bread
 0x103d=103
 // knives : fish : raw fish steak
@@ -44,6 +44,7 @@
 0x1609=110
 // Eggs : Heat source : Fried Eggs
 0x09b5=111
+
 // !! Following arent scripted yet because the resources have to be defined
 // !! They would be done by using existing resources and alter them with colors
 // !! Alternative uses for e.g. "dough" had to be scripted in the existing scripts for the resource
@@ -72,8 +73,11 @@
 // Unbaked quiche : Oven : Baked quiche
 // Unbaked cheese pizza : Heat source : Pizza
 // Unbaked sausage pizza : Heat source : Pizza
+
 // cooking end
 // -----------
+
+
 
 // ---------------------
 // misc. resources start
@@ -144,12 +148,17 @@
 0x1f9c=2100
 0x1f9d=2100
 0x1f9e=2100
+
 // misc. resources end
 // -------------------
 
+
+
 // -------------------
 // light sources start
+
 // Later some of these should be enhanced to eat resources
+
 // 09fb <> 09fd, E, wall sconce
 0x9fb=501
 0x9fd=502
@@ -213,15 +222,17 @@
 // 1433 <> 1430, middle candle
 // 0x1433=543
 // 0x1430=544
-
 // 1437 <> 1434, slim candle
 // 0x1437=545
 0x1434=546
 // light sources end
 // -----------------
 
+
+
 // -----------------------------------
 // harvesting and picking fruits start
+
 // use xd9axd96 to pick apples
 0x0d9a=2001
 0x0d96=2001
@@ -237,7 +248,6 @@
 0x0cab=2004
 // use xc95 to pick coconuts
 0x0c95=2005
-
 // use xc96 to pick dates
 0x0c96=2006
 // use xd1bxd1cxd1dxd1exd1fxd20xd21xd22xd23xd24 to pick grapes
@@ -270,11 +280,15 @@
 // pick flax
 0x1a99=2010
 0x1a9a=2010
-0x1a9b=2010
+0x1a9b=2010
+
 // harvesting and picking fruits end
-// ----------------------------------
+// ----------------------------------
+
+
 // ----------------------------
 // tailoring and spinning start
+
 // scissors : unshorn sheep : shorn sheep & unspun wool
 0x0f9e=131
 0x0f9f=131
@@ -291,12 +305,16 @@
 0x0e1f=135
 // five spools of thread : loom : bolt of cloth
 0x0fa0=136
-0x0fa1=136
+0x0fa1=136
+
 // tailoring and spinning end
 // --------------------------
 
+
+
 // -----------------------
 // turn furniture start
+
 // Straw Chair 0b5a
 // 0x0b5a 6001
 // 0x0b5b 6001
@@ -325,8 +343,11 @@
 // turn furniture end
 // ---------------------
 
+
+
 // --------------------------
 // pets from pet static start
+
 // horse static, 211f, 2120, 2121, 2124
 0x211f=3100
 0x2120=3100
@@ -341,7 +362,8 @@
 // pack horse static, 2126
 0x2126=3103
 // pack llama static, 2127
-0x2127=3104
+0x2127=3104
+
 // pets from pet static end
 // ------------------------
 }

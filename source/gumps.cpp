@@ -363,8 +363,9 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 							SubRegion *toCheck = (*rIter);
 							if( toCheck == NULL )	// no valid region
 								continue;
-							toCheck->itemData.Push();
-							for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
+							CDataList< CItem * > *regItems = toCheck->GetItemList();
+							regItems->Push();
+							for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 							{
 								if( !ValidateObject( itemCheck ) )
 									continue;
@@ -377,12 +378,12 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 										itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
 										s->sysmessage( 550 );
 										targetRegion->TellMembers( 551, mChar->GetName().c_str() );
-										toCheck->itemData.Pop();
+										regItems->Pop();
 										return;	// dump out
 									}
 								}
 							}
-							toCheck->itemData.Pop();
+							regItems->Pop();
 						}
 					}
 					else
@@ -1313,7 +1314,6 @@ void HandleGumpCommand( cSocket *s, UString cmd, UString data )
 //o---------------------------------------------------------------------------o
 void HandleAddMenuButton( cSocket *s, long button )
 {
-	CChar *mChar	= s->CurrcharObj();
 	SI32 addMenuLoc	= s->TempInt();
 	UString sect = "ITEMMENU " + UString::number( addMenuLoc );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );

@@ -5,14 +5,36 @@
 // and until it's up no more apples can be picked. Once the timer is over,
 // new apples are added. The apperance of the tree indicates whether or
 // not there are any apples left to pick.
+/*function onCreate( objMade, objType )
+{
+	if( objType == 0 )
+	{
+		if( objMade.id == 0x0d99 || objMade.id == 0x0d95 )
+		{
+			iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+			iUsed.SetTag("Apples",0); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
+			iUsed.SetTag("AppleCounter", 0); 	// No apples yet.
+	///		objMade.StartTimer( 30000, 1, true );
+		}
+		else
+		{
+			iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+			iUsed.SetTag("Apples",1); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
+			iUsed.SetTag("AppleCounter", 5); 	// Add 5 apples to the tree initially
+		}
+	}
+}*/
+
 
 function onUse( pUser, iUsed )
 {
+//	pUser.SysMessage( "You doubleclicked a tree with: "+iUsed.GetTag( "Apples" )+" apples left.");
+//	return false;
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
 		pUser.SysMessage( "You are too far away to reach that." );
-		return;
+		return false;
 	}
 
 	if( !iUsed.GetTag("initialized")) // Unless apples have been picked before, initialize settings
@@ -29,14 +51,14 @@ function onUse( pUser, iUsed )
 	}
 	if( Apples == 1 )
 	{
-		iUsed.SoundEffect( 0x004F, true );
+		iUsed.SoundEffect( 0x0050, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
 			pUser.SysMessage( "You fail to pick any apples." );
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( "You pick an apple from the tree." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d0", false, 1, true, true );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d0", 1, "ITEM", true );
 			AppleCount--;
 			iUsed.SetTag( "AppleCounter", AppleCount );
 			if( AppleCount == 1)
@@ -54,6 +76,7 @@ function onUse( pUser, iUsed )
 			}
 		}
 	}
+	return false;
 }
 
 function onTimer( iUsed, timerID )

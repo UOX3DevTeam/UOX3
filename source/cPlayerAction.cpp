@@ -137,7 +137,8 @@ CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack )
 	{
 		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
 			Weight->subtractItemWeight( mChar, iToStack );
-		for( CItem *stack = iPack->Contains.First(); !iPack->Contains.Finished(); stack = iPack->Contains.Next() )
+		CDataList< CItem * > *ipCont = iPack->GetContainsList();
+		for( CItem *stack = ipCont->First(); !ipCont->Finished(); stack = ipCont->Next() )
 		{
 			if( !ValidateObject( stack ) )
 				continue;
@@ -281,7 +282,7 @@ bool CPIGetItem::Handle( void )
 		{
 			CItem *pItem = (CItem *)iCont;
 			if( pItem )
-				pItem->Contains.Remove( i );
+				pItem->GetContainsList()->Remove( i );
 		}
 	}
 
@@ -946,15 +947,14 @@ void DropOnItem( cSocket *mSock )
 		}
 		if( mSock->GetByte( 5 ) != 0xFF )	// In a specific spot in a container
 		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
+
 			if( nCont != nItem->GetCont() && !Weight->checkPackWeight( mChar, nCont, nItem ) )
 			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				{
-					Weight->subtractItemWeight( mChar, nItem );
-					mSock->statwindow( mChar );
-				}
 				mSock->sysmessage( 1385 );
 				Bounce( mSock, nItem );
+				mSock->statwindow( mChar );
 				return;
 			}
 			nItem->SetCont( nCont );
@@ -1788,7 +1788,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_TOWNSTONE: // Townstone and Townstone Deed
 			if( itemID == 0x14F0 )		// Check for Deed
 			{
-				CItem *c = Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
+				Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
 				x->Delete();
 			}
 			else	// Display Townstone gump
@@ -1920,6 +1920,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				UI16 animID;
 				switch( RandomNum( 0, 4 ) )
 				{
+					default:
 					case 0:	animID = 0x373A;		break;
 					case 1:	animID = 0x374A;		break;
 					case 2:	animID = 0x375A;		break;
@@ -2673,12 +2674,12 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = " (" + UString::number( i->Contains.Num() ) + " items, ";
+			dataToAdd = " (" + UString::number( i->GetContainsList()->Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones)";
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = " (" + UString::number( i->Contains.Num() ) + " items, ";
+			dataToAdd = " (" + UString::number( i->GetContainsList()->Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones) [Locked]";
 			break;
 		case IT_LOCKEDDOOR:
@@ -2798,7 +2799,7 @@ bool CPISingleClick::Handle( void )
 	}
 	else if( i->IsContType() )
 	{
-		realname += UString::sprintf( ", (%u items, %u stones)", i->Contains.Num(), (i->GetWeight()/100) );
+		realname += UString::sprintf( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{

@@ -81,10 +81,8 @@ UI08 cShipItems[4][6]=
 //o---------------------------------------------------------------------------o
 CBoatObj * GetBoat( cSocket *s )
 {
-	CItem *boat = NULL;
 	CChar *mChar = s->CurrcharObj();
 
-	UI08 worldNumber = mChar->WorldNumber();
 	if( ValidateObject( mChar->GetMultiObj() ) )
 		return static_cast<CBoatObj *>(mChar->GetMultiObj());
 	return static_cast<CBoatObj *>(findMulti( mChar ));
@@ -587,7 +585,6 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 
 	SI16 id2	= b->GetID( 2 );
 	UI08 olddir = b->GetDir();
-	UI32 a		= 0;
 
 	CPPauseResume prSend( 1 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( b, DIST_BUILDRANGE );

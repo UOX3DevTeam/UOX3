@@ -44,14 +44,12 @@
 #include "Dictionary.h"
 #include "jail.h"
 #include "magic.h"
+#include "CPacketSend.h"
 
 namespace UOX
 {
 
-#ifndef va_start
-	#include <cstdarg>
-#endif
-
+void BuildAddMenuGump( cSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
 bool BuyShop( cSocket *s, CChar *c );
 
@@ -1296,7 +1294,19 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 					break;
 				}
 			}
-			else		// Needs yet to be implemented
+			else if( JSVAL_IS_INT( argv[0] ) )
+			{
+				size_t placeNum = JSVAL_TO_INT( argv[0] );
+				if( placeNum < cwmWorldState->goPlaces.size() )
+				{
+					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+					x		= toGoTo.x;
+					y		= toGoTo.y;
+					z		= toGoTo.z;
+					world	= toGoTo.worldNum;
+				}
+			}
+			else	// Needs to be implemented
 				MethodError( "Text-styled Parameters may be added later" );
 			break;
 
@@ -1354,13 +1364,9 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world );
 			SendMapChange( world, mySock );
-			myChar->Teleport();
 		} 
 		else 
-		{
 			myChar->SetLocation( x, y, z, world );
-			myChar->Teleport();
-		}
 	}	
 
 	return JS_TRUE;
@@ -1452,8 +1458,13 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			return JS_FALSE;
 		}
 
-		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
-		sendSellStuff( mySock, myNPC );
+		CChar *mChar = mySock->CurrcharObj();
+		if( ValidateObject( mChar ) )
+		{
+			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
+			CPSellList toSend( (*mChar), (*myNPC) );
+			mySock->Send( &toSend );
+		}
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) )
 	{
@@ -1465,7 +1476,9 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}		
 
 		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
-		sendSellStuff( calcSocketObjFromChar( myChar ), myNPC );
+		cSocket *mSock = calcSocketObjFromChar( myChar );
+		CPSellList toSend( (*myChar), (*myNPC) );
+		mSock->Send( &toSend );
 	}
 
 	return JS_TRUE;
@@ -3063,8 +3076,6 @@ JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
-
 	UI16 midi = (UI16)JSVAL_TO_INT( argv[0] );
 
 	cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
@@ -3794,7 +3805,8 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 
 	char *str = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
-	fprintf( mFile->mWrap, str );
+	if( str != NULL )
+		fprintf( mFile->mWrap, str );
 	
 	return JS_TRUE;
 }
@@ -3827,7 +3839,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( myObj->GetObjType() == OT_CHAR )
 		firstItem = ( static_cast< CChar * >(myObj) )->FirstItem();
 	else
-		firstItem = ( static_cast< CItem * >(myObj) )->Contains.First();
+		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->First();
 	if( ValidateObject( firstItem ) )
 	{
 		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
@@ -3868,7 +3880,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( myObj->GetObjType() == OT_CHAR )
 		firstItem = ( static_cast< CChar * >(myObj) )->NextItem();
 	else
-		firstItem = ( static_cast< CItem * >(myObj) )->Contains.Next();
+		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->Next();
 	if( ValidateObject( firstItem ) )
 	{
 		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
@@ -3908,7 +3920,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( myObj->GetObjType() == OT_CHAR )
 		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CChar * >(myObj) )->FinishedItems() );
 	else
-		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CItem * >(myObj) )->Contains.Finished() );
+		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CItem * >(myObj) )->GetContainsList()->Finished() );
 	return JS_TRUE;
 }
 
@@ -4268,16 +4280,36 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-	CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
-	if( !ValidateObject( mItem ) )
+	SI16 destX = -1, destY = -1;
+	SI08 destZ = -1;
+
+	if( JSVAL_IS_OBJECT( argv[0] ) )
 	{
-		MethodError( "Gate: Invalid item passed" );
-		return JS_FALSE;
+		JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+		CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
+		if( !ValidateObject( mItem ) )
+		{
+			MethodError( "Gate: Invalid item passed" );
+			return JS_FALSE;
+		}
+
+		destX = mItem->GetTempVar( CITV_MOREX );
+		destY = mItem->GetTempVar( CITV_MOREY );
+		destZ = mItem->GetTempVar( CITV_MOREZ );
+	}
+	else
+	{
+		size_t placeNum = JSVAL_TO_INT( argv[0] );
+		if( placeNum < cwmWorldState->goPlaces.size() )
+		{
+			GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+			destX = toGoTo.x;
+			destY = toGoTo.y;
+			destZ = toGoTo.z;
+		}
+
 	}
 
-	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
-	SI08 destZ = mItem->GetTempVar( CITV_MOREZ );
 	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), destX, destY, destZ );
 
 	return JS_TRUE;
@@ -4783,6 +4815,28 @@ JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval
 	}
 
 	mChar->BreakConcentration( mSock );
+
+	return JS_TRUE;
+}
+
+JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "SendAddMenu: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+	if( mSock == NULL )
+	{
+		MethodError( "SendAddMenu: Invalid socket" );
+		return JS_FALSE;
+	}
+
+	UI16 menuNum = (UI16)JSVAL_TO_INT( argv[0] );
+
+	BuildAddMenuGump( mSock, menuNum );
 
 	return JS_TRUE;
 }

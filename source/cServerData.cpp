@@ -80,11 +80,11 @@ void CServerData::ServerName( std::string setname )
 	if( setname.empty() )
 	{
 		serverList[0].setName( "Default UOX Server" );
-		sServerName = "www.uox3dev.net";
+//		sServerName = "www.uox3dev.net";
 	}
 	else
 	{
-		sServerName = setname;
+//		sServerName = setname;
 	}
 }
 
@@ -1804,7 +1804,7 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 					{
 						case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
 						case 0x000C:	// SERVERNAME
-							ServerName( value );
+							//ServerName( value );
 							break;
 						case 0x0017:	// CONSOLELOG
 							ServerConsoleLog( value.toUByte() );
@@ -2219,7 +2219,7 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							break;
 						}
 						case 0x07A0:	 // PORT[0154] // whatever that stands for..
-							ServerPort( value.toUShort() );
+							//ServerPort( value.toUShort() );
 							break;
 						case 0x07A5:	 // ACCESSDIRECTORY[0128]
 							Directory( CSDDP_ACCESS, value );

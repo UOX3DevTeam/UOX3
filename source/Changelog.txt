@@ -1,3 +1,26 @@
+8/6/2004 - giwo
+	Fixed an issue causing extra invalid servers to appear in the server list.
+	Added CPSellList to handle sending the vendor "sell" gump.
+	Fixed weight adding twice every time a player picked an item up.
+	Merged in some linux warning fixes.
+	Removed some superfluous includes.
+	Moved 'where' command out to JS.
+
+8/4/2004 - giwo
+	Fixed some Level 4 Warnings.
+	JS Changes:
+		CChar_Gate now supports passing a locations.dfn entry number (IE mChar.Gate( 1 ); ).
+		CBase_Teleport now supports passing a locations.dfn entry number (IE mchar.SetLocation( 1 ); ).
+		Added CSocket_SendAddMenu( menuNum ).
+	Command Updates:
+		Moved 'addx' out to JS.
+		Moved 'add' out to JS.
+		Moved 'xgo' out to JS.
+		Combined 'xgoplace' with 'xgo'.
+		Moved 'xgate' out to JS.
+		Moved 'go' out to JS.
+		Moved 'itemmenu' out to JS.
+
 8/3/2004 - giwo
 	JS Changes:
 		Modified SoundEffect() as it was playing a sound one less than specified.

@@ -159,6 +159,7 @@ JSMethodFunc CSocket_ReadBytes;
 JSMethodFunc CSocket_OpenGump;
 JSMethodFunc CSocket_WhoList;
 JSMethodFunc CSocket_Midi;
+JSMethodFunc CSocket_SendAddMenu;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
@@ -388,6 +389,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "Midi",				CSocket_Midi,		1, 0, 0 },
 	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
+	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 

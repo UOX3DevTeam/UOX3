@@ -67,7 +67,7 @@ function onCallback0( tSock, targSerial )
 			if( targSerial.amount < 1 )
 				targSerial.Delete();
 			pUser.SoundEffect( 0x018E, true );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097a", false, 4, true, true ); // makes 4 raw fish steaks
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097a", 4, "ITEM", true ); // makes 4 raw fish steaks
 			pUser.SysMessage( "You slice a fish to steaks." );
 			return;
 		}

@@ -89,7 +89,8 @@ bool clearTradesFunctor( cBaseObject *a, UI32 &b, void *extraData )
 			CItem *p = k->GetPackItem();
 			if( ValidateObject( p ) )	// can we move this check to outside the for loop?? I should think so!
 			{
-				for( CItem *j = i->Contains.First(); !i->Contains.Finished(); j = i->Contains.Next() )
+				CDataList< CItem * > *iCont = i->GetContainsList();
+				for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
 				{
 					if( ValidateObject( j ) )
 						j->SetCont( p );
@@ -146,7 +147,8 @@ void endTrade( SERIAL targSerial )
 		nSock->Send( &cpstTwo );
 	}
 	CItem *i = NULL, *j = NULL;
-	for( i = cont1->Contains.First(); !cont1->Contains.Finished(); i = cont1->Contains.Next() )
+	CDataList< CItem * > *c1Cont = cont1->GetContainsList();
+	for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -165,7 +167,8 @@ void endTrade( SERIAL targSerial )
 			}
 		}
 	}
-	for( i = cont2->Contains.First(); !cont2->Contains.Finished(); i = cont2->Contains.Next() )
+	CDataList< CItem * > *c2Cont = cont2->GetContainsList();
+	for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -205,12 +208,10 @@ void doTrade( CItem *cont1, CItem *cont2 )
 	CItem *bp2 = p2->GetPackItem();
 	if( !ValidateObject( bp2 ) ) 
 		return;
-
-	cSocket *mSock = calcSocketObjFromChar( p1 );
-	cSocket *nSock = calcSocketObjFromChar( p2 );
 	
 	CItem *i = NULL, *j = NULL;
-	for( i = cont1->Contains.First(); !cont1->Contains.Finished(); i = cont1->Contains.Next() )
+	CDataList< CItem * > *c1Cont = cont1->GetContainsList();
+	for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -230,7 +231,8 @@ void doTrade( CItem *cont1, CItem *cont2 )
 
 		}
 	}
-	for( i = cont2->Contains.First(); !cont2->Contains.Finished(); i = cont2->Contains.Next() )
+	CDataList< CItem * > *c2Cont = cont2->GetContainsList();
+	for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
 	{
 		if( ValidateObject( i ) )
 		{

@@ -203,7 +203,6 @@ void BuildHouse( cSocket *mSock, UI08 houseEntry )
 		Console.Error( 1, "Bad house script # %u!", houseEntry );
 		return;
 	}
-	UI08 worldNumber = mChar->WorldNumber();
 	SI16 x = mSock->GetWord( 11 );
 	SI16 y = mSock->GetWord( 13 );
 	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));

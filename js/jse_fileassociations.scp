@@ -148,6 +148,10 @@ FILE=commands/gumpmenu.js
 FILE=commands/secondsperuominute.js
 FILE=commands/consoletest.js
 FILE=commands/fix.js
+FILE=commands/xgate.js
+FILE=commands/go.js
+FILE=commands/where.js
+FILE=commands/targeting/add.js
 FILE=commands/targeting/effects.js
 FILE=commands/targeting/vendor.js
 FILE=commands/targeting/stats.js
@@ -167,7 +171,7 @@ FILE=commands/targeting/dupe.js
 FILE=commands/targeting/squelch.js
 FILE=commands/targeting/hide.js
 FILE=commands/targeting/jail.js
-FILE=commands/targeting/xteleport.js
+FILE=commands/targeting/x.js
 }
 
 [MAGIC_SCRIPTS]

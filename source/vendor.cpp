@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
 #include "commands.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -262,167 +261,6 @@ bool CPIBuyItem::Handle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Send available sell items to client for Sell list
-//o---------------------------------------------------------------------------o
-void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
-{
-	UI32 value;
-	int z;
-	char ciname[MAX_NAME];
-	char cinam2[MAX_NAME];
-	std::string itemname;
-	itemname.reserve( MAX_NAME );
-	
-	for( CItem *i = p->Contains.First(); !p->Contains.Finished(); i = p->Contains.Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			strcpy( ciname, i->GetName().c_str() );
-			strcpy( cinam2, q->GetName().c_str() );
-			strupr( ciname );
-			strupr( cinam2 );
-			
-			if( i->GetType() == IT_CONTAINER )
-				sendSellSubItem( npc, i, q, m1, m1t );
-			else if( i->GetID() == q->GetID() && i->GetType() == q->GetType() &&
-				m1[8] < 60 && ( !cwmWorldState->ServerData()->SellByNameStatus() ||
-				( cwmWorldState->ServerData()->SellByNameStatus() && !strcmp( ciname, cinam2 ) ) ) )
-			{
-				m1[m1t+0] = i->GetSerial( 1 );
-				m1[m1t+1] = i->GetSerial( 2 );
-				m1[m1t+2] = i->GetSerial( 3 );
-				m1[m1t+3] = i->GetSerial( 4 );
-				m1[m1t+4] = i->GetID( 1 );
-				m1[m1t+5] = i->GetID( 2 );
-				m1[m1t+6] = i->GetColour( 1 );
-				m1[m1t+7] = i->GetColour( 2 );
-				m1[m1t+8] = (UI08)(i->GetAmount()>>8);
-				m1[m1t+9] = (UI08)(i->GetAmount()%256);
-				value = calcValue( i, q->GetBuyValue() );
-				if( cwmWorldState->ServerData()->TradeSystemStatus() )
-					value = calcGoodValue( npc, q, value, true );
-				m1[m1t+10] = (UI08)(value>>8);
-				m1[m1t+11] = (UI08)(value%256);
-				m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
-				m1[m1t+13] = (UI08)(getTileName( i, itemname ));
-				m1t += 14;
-				for( z = 0; z < m1[m1t-1]; ++z )
-					m1[m1t+z] = itemname[z];
-
-				m1t += m1[m1t-1];
-				++m1[8];
-			}
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool sendSellStuff( cSocket *s, CChar *i )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Send Vendor Sell List to client
-//o---------------------------------------------------------------------------o
-bool sendSellStuff( cSocket *s, CChar *i )
-{
-	std::string itemname;
-	UI32 value;
-	UI08 m1[2048];
-	char ciname[256];
-	char cinam2[256];
-	
-	CItem *vendorPack = i->GetItemAtLayer( IL_SELLCONTAINER );	// find the acceptable sell layer
-	if( !ValidateObject( vendorPack ) ) 
-		return false;	// no layer
-	
-	CPPauseResume prPause( 1 );
-	CChar *mChar = s->CurrcharObj();
-	s->Send( &prPause );
-	
-	CItem *pack = mChar->GetPackItem();				// no pack for the player
-	if( !ValidateObject( pack ) ) 
-		return false;
-	
-	m1[0] = 0x9E; // Header
-	m1[1] = 0; // Size
-	m1[2] = 0; // Size
-	m1[3] = i->GetSerial( 1 );
-	m1[4] = i->GetSerial( 2 );
-	m1[5] = i->GetSerial( 3 );
-	m1[6] = i->GetSerial( 4 );
-	m1[7] = 0; // Num items
-	m1[8] = 0; // Num items
-	int m1t = 9;
-
-	for( CItem *q = vendorPack->Contains.First(); !vendorPack->Contains.Finished(); q = vendorPack->Contains.Next() )
-	{
-		if( ValidateObject( q ) )
-		{
-			for( CItem *j = pack->Contains.First(); !pack->Contains.Finished(); j = pack->Contains.Next() )
-			{
-				if( ValidateObject( j ) )
-				{
-					strcpy( ciname, j->GetName().c_str() );
-					strcpy( cinam2, q->GetName().c_str() );
-					strupr( ciname );
-					strupr( cinam2 );
-					if( j->GetType() == IT_CONTAINER )
-						sendSellSubItem( i, j, q, m1, m1t );
-					else if( ( j->GetID() == q->GetID() && j->GetType() == q->GetType() &&
-						m1[8] < 60 && !cwmWorldState->ServerData()->SellByNameStatus() ) || ( cwmWorldState->ServerData()->SellByNameStatus() && 
-						!strcmp( ciname, cinam2 ) ) )
-					{
-						m1[m1t+0] = j->GetSerial( 1 );
-						m1[m1t+1] = j->GetSerial( 2 );
-						m1[m1t+2] = j->GetSerial( 3 );
-						m1[m1t+3] = j->GetSerial( 4 );
-						m1[m1t+4] = j->GetID( 1 );
-						m1[m1t+5] = j->GetID( 2 );
-						m1[m1t+6] = j->GetColour( 1 );
-						m1[m1t+7] = j->GetColour( 2 );
-						m1[m1t+8] = (UI08)(j->GetAmount()>>8);
-						m1[m1t+9] = (UI08)(j->GetAmount()%256);
-						value = calcValue( j, q->GetBuyValue() );
-						if( cwmWorldState->ServerData()->TradeSystemStatus() )
-							value = calcGoodValue( i, j, value, true );
-						m1[m1t+10] = (UI08)(value>>8);
-						m1[m1t+11] = (UI08)(value%256);
-						m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
-						m1[m1t+13] = (UI08)(getTileName( j, itemname ));
-						m1t += 14;
-						for( int z = 0; z < m1[m1t-1]; ++z )
-							m1[m1t+z]=itemname[z];
-
-						m1t += m1[m1t-1];
-						++m1[8];
-					}
-				}
-			}
-		}
-	}
-	
-	m1[1] = (UI08)(m1t>>8);
-	m1[2] = (UI08)(m1t%256);
-	if( m1[8] != 0 )
-	{
-		s->Send( m1, m1t );
-#if defined( _MSC_VER )
-#pragma note( "Flush location" )
-#endif
-		s->FlushBuffer();
-	}
-	else
-		i->talkAll( 1341, false );
-	CPPauseResume prResume( 0 );
-	s->Send( &prResume );
-	return true;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  void sellItem( cSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
@@ -440,6 +278,8 @@ bool CPISellItem::Handle( void )
 		CItem *buyPack		= n->GetItemAtLayer( IL_BUYCONTAINER );
 		CItem *boughtPack	= n->GetItemAtLayer( IL_BOUGHTCONTAINER );
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
+		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) )
+			return true;
 		CItem *j, *k;
 		UI16 i, amt, maxsell = 0;
 		UI32 totgold = 0, value = 0;
@@ -468,7 +308,8 @@ bool CPISellItem::Handle( void )
 					return true;
 				}
 				CItem *join = NULL;
-				for( k = sellPack->Contains.First(); !sellPack->Contains.Finished(); k = sellPack->Contains.Next() )
+				CDataList< CItem * > *pCont = sellPack->GetContainsList();
+				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ) )
 					{
@@ -476,12 +317,13 @@ bool CPISellItem::Handle( void )
 							join = k;
 					}
 				}
-				for( k = buyPack->Contains.First(); !buyPack->Contains.Finished(); k = buyPack->Contains.Next() )
+				pCont = buyPack->GetContainsList();
+				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ) )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							value = calcValue( j, k->GetBuyValue() );
+							value = calcValue( j, k->GetSellValue() );
 					}
 				}
 				if( ValidateObject( join ) )
@@ -529,7 +371,8 @@ void restockNPC( CChar *i, bool stockAll )
 	CItem *ci = i->GetItemAtLayer( IL_BUYCONTAINER );
 	if( ValidateObject( ci ) )
 	{
-		for( CItem *c = ci->Contains.First(); !ci->Contains.Finished(); c = ci->Contains.Next() )
+		CDataList< CItem * > *ciCont = ci->GetContainsList();
+		for( CItem *c = ciCont->First(); !ciCont->Finished(); c = ciCont->Next() )
 		{
 			if( ValidateObject( c ) )
 			{

@@ -31,7 +31,7 @@ function onUse( pUser, iUsed )
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( "You harvest some cotton." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df9", false, 1, true, true );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df9", 1, "ITEM", true );
 			iUsed.SetTag( "Cotton", 0 );
 			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more cotton respawns
 		}

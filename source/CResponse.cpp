@@ -33,6 +33,7 @@
 #include "classes.h"
 #include "cEffects.h"
 #include "Dictionary.h"
+#include "CPacketSend.h"
 
 namespace UOX
 {
@@ -130,15 +131,16 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 		if( CellResponse == NULL )
 			continue;
 
-		CellResponse->charData.Push();
-		for( CChar *Npc = CellResponse->charData.First(); !CellResponse->charData.Finished(); Npc = CellResponse->charData.Next() )
+		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		regChars->Push();
+		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
 		{
 			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() )
 				continue;
 			if( objInRange( mChar, Npc, distance ) )
 				ourNpcs.push_back( Npc );
 		}
-		CellResponse->charData.Pop();
+		regChars->Pop();
 	}
 	return ourNpcs;
 }
@@ -545,7 +547,8 @@ CVendorSellResponse::CVendorSellResponse( bool vendVal, std::string text ) : CBa
 bool CVendorSellResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-	sendSellStuff( mSock, Npc );
+	CPSellList toSend( (*mChar), (*Npc) );
+	mSock->Send( &toSend );
 	return false;
 }
 

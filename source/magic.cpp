@@ -1,6 +1,4 @@
 #include "uox3.h"
-#include <algorithm>
-
 #include "magic.h" 
 #include "power.h"
 #include "weight.h"
@@ -837,8 +835,9 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->charData.Push();
-			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
@@ -851,7 +850,7 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 					}
 				}
 			}
-			MapArea->charData.Pop();
+			regChars->Pop();
 		}
 		Effects->PlaySound( sock, 0x01FD, true );
 	}
@@ -1000,8 +999,9 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->charData.Push();
-		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
+		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -1021,7 +1021,7 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 					sock->sysmessage( 688 );
 			}
 		}
-		MapArea->charData.Pop();
+		regChars->Pop();
 	}
 
 	if( HurtSelf )	
@@ -2057,8 +2057,9 @@ void cMagic::CheckFieldEffects( CChar *c )
 	SubRegion *toCheck = MapRegion->GetCell( c->GetX(), c->GetY(), c->WorldNumber() );
 	if( toCheck == NULL )	// no valid region
 		return;
-	toCheck->itemData.Push();
-	for( CItem *inItemList = toCheck->itemData.First(); !toCheck->itemData.Finished(); inItemList = toCheck->itemData.Next() )
+	CDataList< CItem * > *regItems = toCheck->GetItemList();
+	regItems->Push();
+	for( CItem *inItemList = regItems->First(); !regItems->Finished(); inItemList = regItems->Next() )
 	{
 		if( !ValidateObject( inItemList ) )
 			continue;
@@ -2068,7 +2069,7 @@ void cMagic::CheckFieldEffects( CChar *c )
 				break;
 		}
 	}
-	toCheck->itemData.Pop();
+	regItems->Pop();
 }
 
 bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
