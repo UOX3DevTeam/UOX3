@@ -375,7 +375,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].y = chars[currchar[s]].y;
 		chars[c].z = chars[currchar[s]].z;
 		mapRegions->AddItem( c + 1000000 );
-		chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( CLOCKS_PER_SEC * 2 ) ) );
+		chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( MY_CLOCKS_PER_SEC * 2 ) ) );
 		updatechar(c);
 		npcaction( c, 0x0C);
 		return;
@@ -545,7 +545,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 	mapRegions->AddItem( c + 1000000 );
 	
 	chars[c].spadelay=10;
-	chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( CLOCKS_PER_SEC * 2 ) ) );
+	chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( MY_CLOCKS_PER_SEC * 2 ) ) );
 	updatechar(c);
 	npcaction(c, 0x0C);
 	// AntiChrist (9/99) - added the chance to make the monster attack
@@ -878,7 +878,7 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 		if( poison < 0 ) 
 			poison = 1;
 		chars[p].poisoned = poison;
-		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
+		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.poisontimer ) );
 		if( !chars[p].npc ) 
 			impowncreate( calcSocketFromChar( p ), p, 1 );
 		
@@ -2164,7 +2164,7 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 				SpellFail( s );
 				chars[currchar[s]].spellCast = 0;
 				chars[currchar[s]].casting = 0;
-				chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * CLOCKS_PER_SEC ) + uiCurrentTime );
+				chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * MY_CLOCKS_PER_SEC ) + uiCurrentTime );
 				return false;
 			}
 		}
@@ -2175,7 +2175,7 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 	chars[currchar[s]].nextact = 75;		// why 75?
 	if( type==0 && (!(chars[currchar[s]].priv&1 ))) // if they are a gm they don't have a delay :-)
 	{
-		chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * CLOCKS_PER_SEC ) + uiCurrentTime );
+		chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * MY_CLOCKS_PER_SEC ) + uiCurrentTime );
 		chars[currchar[s]].priv2 |= 2; //freeze
 	}
 	else
@@ -2339,7 +2339,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 										items[c].x = gatex[gatecount][n];
 										items[c].y = gatey[gatecount][n];
 										items[c].z = gatez[gatecount][n];
-										items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
+										items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*MY_CLOCKS_PER_SEC));
 										items[c].gatenumber=gatecount;
 										items[c].dir=1;
 										
@@ -2490,7 +2490,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						if(CheckResist(currchar[s], i, 1)) return;
 						{
 							chars[i].poisoned=2;   
-							chars[i].poisonwearofftime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
+							chars[i].poisonwearofftime = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.poisontimer ) );
 							impowncreate( s, i, 1); //Lb, sends the green bar ! 
 						}
 						break; 
@@ -2565,7 +2565,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 					case 44: // Invisibility
 						chars[i].hidden=2;
 						updatechar(i);
-						chars[i].invistimeout = (unsigned int)( uiCurrentTime + ( server_data.invisibiliytimer * CLOCKS_PER_SEC ) );
+						chars[i].invistimeout = (unsigned int)( uiCurrentTime + ( server_data.invisibiliytimer * MY_CLOCKS_PER_SEC ) );
 						break; 
 					case 51: // Flamestrike
 						if (CheckResist(currchar[s], i, 7))
@@ -3163,7 +3163,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							{
 								items[i].priv=items[i].priv|0x05;
 								items[i].priv=items[i].priv|0x01;
-								items[i].decaytime = (unsigned int)( uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/15)*CLOCKS_PER_SEC) );
+								items[i].decaytime = (unsigned int)( uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/15)*MY_CLOCKS_PER_SEC) );
 								items[i].morex=chars[currchar[s]].skill[MAGERY]; // remember casters magery skill for damage, LB
 								mapRegions->RemoveItem( i );
 								items[i].x=fx[j];
@@ -4214,7 +4214,7 @@ void cMagic::Gate( UOXSOCKET s)
 				items[c].x=gatex[gatecount][n];
 				items[c].y=gatey[gatecount][n];
 				items[c].z=gatez[gatecount][n];
-				items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
+				items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*MY_CLOCKS_PER_SEC));
 				items[c].gatenumber=gatecount;
 				items[c].dir=1;
 				

@@ -1047,7 +1047,7 @@ void cTargets::IstatsTarget(int s)
 				items[i].st, items[i].hp, items[i].maxhp, items[i].lodamage, items[i].hidamage, items[i].def, items[i].rank,
 				items[i].morex, items[i].morey, items[i].morez,items[i].poisoned,
 				items[i].weight, items[i].owner1, items[i].owner2, items[i].owner3, items[i].owner4, // Ison 2-20-99
-				items[i].creator,items[i].madewith,int(double(int(items[i].decaytime-uiCurrentTime)/CLOCKS_PER_SEC)),(items[i].priv)&0x01,items[i].good,items[i].rndvaluerate,items[i].value); // Magius(CHE) (2)
+				items[i].creator,items[i].madewith,int(double(int(items[i].decaytime-uiCurrentTime)/MY_CLOCKS_PER_SEC)),(items[i].priv)&0x01,items[i].good,items[i].rndvaluerate,items[i].value); // Magius(CHE) (2)
 				sysmessage(s,temp); // Ison 2-20-99
 		}
 	}
@@ -1965,7 +1965,7 @@ void cTargets::SquelchTarg( UOXSOCKET s )//Squelch
 			sysmessage(calcSocketFromChar(p), "You have been squelched!");
 			if (addid1[s]!=255 || addid1[s]!=0)			// 255 used to be -1, not good for unsigned chars
 			{
-				chars[p].mutetime = (unsigned int)( uiCurrentTime + ( addid1[s] * CLOCKS_PER_SEC ) );
+				chars[p].mutetime = (unsigned int)( uiCurrentTime + ( addid1[s] * MY_CLOCKS_PER_SEC ) );
 				addid1[s]=255;
 				chars[p].squelched=2;
 			}
@@ -2249,7 +2249,7 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 	mapRegions->RemoveItem(c);
     mapRegions->AddItem(c); // lord Binary
 	
-	items[c].decaytime = (unsigned int)(uiCurrentTime+(server_data.decaytimer*CLOCKS_PER_SEC));
+	items[c].decaytime = (unsigned int)(uiCurrentTime+(server_data.decaytimer*MY_CLOCKS_PER_SEC));
 	RefreshItem( c ); // AntiChrist
 	
 	if( feat )
@@ -2336,7 +2336,7 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 	mapRegions->RemoveItem( c );
 	mapRegions->AddItem( c );
 
-	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * MY_CLOCKS_PER_SEC ) );
 	RefreshItem( c );
 
 	// if it's a human corpse
@@ -2497,7 +2497,7 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 					items[c].y = items[i].y;
 					items[c].z = items[i].z;
 					mapRegions->AddItem( c ); // add this item to a map cell
-					items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+					items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * MY_CLOCKS_PER_SEC ) );
 					RefreshItem( c ); // AntiChrist
 				} // if contserial == serial
 			} // if c != -1 
@@ -3037,7 +3037,7 @@ void cTargets::SetPoisonedTarget(int s)
 	if (i!=-1)
 	{
 		chars[i].poisoned=tempint[s];
-		chars[i].poisonwearofftime = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer));
+		chars[i].poisonwearofftime = (unsigned int)(uiCurrentTime+(MY_CLOCKS_PER_SEC*server_data.poisontimer));
 		impowncreate(calcSocketFromChar(i),i,1); //Lb, sends the green bar ! 
 	}
 }

@@ -621,7 +621,7 @@ void cCommands::RegSpawnMax (int s, int r)
 		doregionspawn(r);
 	}	
 	
-	spawnregion[r].nexttime = (int)( currenttime + ( CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
+	spawnregion[r].nexttime = (int)( currenttime + ( MY_CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
 	sprintf( temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r );
 	sysmessage( s, temps );
 }
@@ -654,7 +654,7 @@ void cCommands::RegSpawnNum (int s, int r, int n)
 			doregionspawn( r );
 		}
 	
-		spawnregion[r].nexttime = (int)( currenttime + ( CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
+		spawnregion[r].nexttime = (int)( currenttime + ( MY_CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
 		sprintf( temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r );
 		sysmessage( s, temps );
 	}

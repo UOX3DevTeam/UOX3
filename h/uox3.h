@@ -113,10 +113,6 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #include <ctime>
 #include <cmath>
 #include <sys/types.h>
-#ifdef __MINGW32__
-#  undef CLOCKS_PER_SEC
-#  define CLOCKS_PER_SEC 1000
-#endif
 
 #ifndef __linux__
 	#ifdef _BORLAND_
@@ -128,6 +124,7 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 	#include <process.h>
 	#include <cstddef>
 	#include <winbase.h>
+	#include <time.h>
 	#include <limits.h>
 	#include <conio.h>
 	#include <sys/timeb.h>
@@ -607,15 +604,8 @@ int SpawnRandomItem(UOXSOCKET nCharID,int nInPack, char* cScript, char* cList, c
 void vialtarget( UOXSOCKET nSocket);
 void MakeNecroReg( UOXSOCKET nSocket, ITEM nItem, unsigned char cItemID1, unsigned char cItemID2 );
 
-#ifdef __linux__
 unsigned long int getclock();
-#endif
-#ifndef __linux__
-#define getclock() clock()
-#else
-#undef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC 1000
-#endif
+#define MY_CLOCKS_PER_SEC 1000
 
 void cleanup(int s);
 void npcaction(int npc, int x);

@@ -582,7 +582,7 @@ void CWorldMain::SaveItem( long i )
 	{
 		if( items[i].decaytime == 0)
 		{
-			items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+uiCurrentTime;
+			items[i].decaytime=server_data.decaytimer*MY_CLOCKS_PER_SEC+uiCurrentTime;
 		}
 		else if (items[i].decaytime<uiCurrentTime)
 		{

@@ -36,7 +36,7 @@ void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
 	{
 		if( chars[npc].antispamtimer < uiCurrentTime )
 		{
-			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
+			chars[npc].antispamtimer = uiCurrentTime + MY_CLOCKS_PER_SEC*10;
 			machwas = 1;
 		} 
 		else
@@ -95,7 +95,7 @@ void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
 	{
 		if( chars[npc].antispamtimer < uiCurrentTime )
 		{
-			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
+			chars[npc].antispamtimer = uiCurrentTime + MY_CLOCKS_PER_SEC*10;
 			machwas = 1;
 		}
 		else

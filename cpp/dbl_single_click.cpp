@@ -189,7 +189,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		return;
 	}
 	else
-		chars[currchar[s]].objectdelay = (unsigned int)( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime );
+		chars[currchar[s]].objectdelay = (unsigned int)( server_data.objectdelay * MY_CLOCKS_PER_SEC + uiCurrentTime );
 	
 	x = calcItemFromSer( serial );
 	//PlayerVendors
@@ -274,7 +274,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		//			else if ((chars[currchar[s]].objectdelay<=uiCurrentTime)||(chars[currchar[s]].priv&1))
 		else if( s >= 0 )
 		{
-			//chars[currchar[s]].objectdelay=uiCurrentTime+(server_data.objectdelay*CLOCKS_PER_SEC);
+			//chars[currchar[s]].objectdelay=uiCurrentTime+(server_data.objectdelay*MY_CLOCKS_PER_SEC);
 			//start trigger stuff
 			if (items[x].trigger > 0)
 			{
@@ -529,7 +529,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		    return;//book
 		case 12: //door(unlocked)
 			dooruse( s, x );
-			chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
+			chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * MY_CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
 			return; //doors
 		case 13: //locked door
 			p = packitem( currchar[s] );
@@ -546,7 +546,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						{
 							sysmessage( s, "You quickly unlock, use, and then relock the door." );
 							dooruse( s, x );
-							chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
+							chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * MY_CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
 							return;
 						}//if
 					}
@@ -595,7 +595,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 
 					soundeffects( s, 0x02, 0x46, true ); 
 					chars[currchar[s]].poisoned = items[x].poisoned;
-					chars[currchar[s]].poisonwearofftime = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
+					chars[currchar[s]].poisonwearofftime = ( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.poisontimer ) );
 					impowncreate( s, currchar[s], 1 ); // sends the green bar
 				}
 				//Remove a food item
@@ -701,7 +701,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				}
 				return; // case Moongates
 			case 185: // let's smoke! :)
-				chars[currchar[s]].smoketimer = (items[x].morex * CLOCKS_PER_SEC + uiCurrentTime);
+				chars[currchar[s]].smoketimer = (items[x].morex * MY_CLOCKS_PER_SEC + uiCurrentTime);
 				sysmessage( s, "You feel much better after you smoke... *cough* *splutter*" );
 				Items->DeleItem( x );
 				return;
@@ -1149,7 +1149,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						mapRegions->RemoveItem( c );
 						mapRegions->AddItem( c );
 						items[c].priv |= 1;
-						items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+						items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * MY_CLOCKS_PER_SEC ) );
 						RefreshItem( c );
 						items[x].amount--;
 						if ( items[x].amount <= 0 )
@@ -1296,7 +1296,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				case 0x0E21: // healing
 					addmitem[s] = x;
 					target(s, 0, 1, 0, 130, "Who will you use the bandages on?");
-					chars[currchar[s]].skilldelay = (uiCurrentTime + ( server_data.skilldelay*CLOCKS_PER_SEC ));
+					chars[currchar[s]].skilldelay = (uiCurrentTime + ( server_data.skilldelay*MY_CLOCKS_PER_SEC ));
 					return;
 				case 0x1057:
 				case 0x1058: // sextants

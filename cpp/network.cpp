@@ -725,7 +725,7 @@ void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
 	else 
 	{
 		inworld[chars[p].account]=p;
-		chars[p].logout = (SI32)(uiCurrentTime+server_data.quittime*CLOCKS_PER_SEC);
+		chars[p].logout = (SI32)(uiCurrentTime+server_data.quittime*MY_CLOCKS_PER_SEC);
 	}
 	teleport(p);
 }

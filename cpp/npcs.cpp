@@ -2693,14 +2693,14 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 	{
 		chars[i].oldnpcWander = chars[i].npcWander;
 		chars[i].npcWander = 5;
-		chars[i].npcmovetime = (unsigned int)((uiCurrentTime + double(NPCSPEED*CLOCKS_PER_SEC)));
+		chars[i].npcmovetime = (unsigned int)((uiCurrentTime + double(NPCSPEED*MY_CLOCKS_PER_SEC)));
 	}
 	
 	if ((chars[i].npcWander == 5)&&
 		(chars[i].hp>chars[i].st*chars[i].reattackat/100))
 	{
 		chars[i].npcWander = chars[i].oldnpcWander;
-		chars[i].npcmovetime = (unsigned int)((uiCurrentTime + double(NPCSPEED*CLOCKS_PER_SEC)));
+		chars[i].npcmovetime = (unsigned int)((uiCurrentTime + double(NPCSPEED*MY_CLOCKS_PER_SEC)));
 		chars[i].oldnpcWander = 0; // so it won't save this at the wsc file
 	}
 	// end of flee code
@@ -2715,10 +2715,10 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 				switch (chars[i].poisoned)
 				{
 					case 1:
-						chars[i].poisontime = (unsigned int)(currenttime +(5 * CLOCKS_PER_SEC));
+						chars[i].poisontime = (unsigned int)(currenttime +(5 * MY_CLOCKS_PER_SEC));
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
+							chars[i].poisontxt = (unsigned int)(currenttime +(10 * MY_CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks a bit nauseous *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							chars[i].emotecolor2 = 0x26;
@@ -2728,10 +2728,10 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					case 2:
-						chars[i].poisontime = (unsigned int)(currenttime +(4 * CLOCKS_PER_SEC));
+						chars[i].poisontime = (unsigned int)(currenttime +(4 * MY_CLOCKS_PER_SEC));
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
+							chars[i].poisontxt = (unsigned int)(currenttime +(10 * MY_CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks disoriented and nauseous! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							chars[i].emotecolor2 = 0x26;
@@ -2742,10 +2742,10 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					case 3:
-						chars[i].poisontime = (unsigned int)(currenttime +(3 * CLOCKS_PER_SEC));
+						chars[i].poisontime = (unsigned int)(currenttime +(3 * MY_CLOCKS_PER_SEC));
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
+							chars[i].poisontxt = (unsigned int)(currenttime +(10 * MY_CLOCKS_PER_SEC));
 							sprintf(t, "* %s is in severe pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							chars[i].emotecolor2 = 0x26;
@@ -2756,10 +2756,10 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 						updatestats(i, 0);
 						break; // lb !!!
 					case 4:
-						chars[i].poisontime = (unsigned int)(currenttime +(3 * CLOCKS_PER_SEC));
+						chars[i].poisontime = (unsigned int)(currenttime +(3 * MY_CLOCKS_PER_SEC));
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
+							chars[i].poisontxt = (unsigned int)(currenttime +(10 * MY_CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks extremely weak and is wrecked in pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							chars[i].emotecolor2 = 0x26;

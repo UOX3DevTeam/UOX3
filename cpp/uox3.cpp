@@ -3236,7 +3236,7 @@ void get_item(int s) // Client grabs an item
 	{
 		if( items[x].multis != -1 )
 			unsetserial( x, 7 );
-		items[x].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+uiCurrentTime;
+		items[x].decaytime=server_data.decaytimer*MY_CLOCKS_PER_SEC+uiCurrentTime;
 		//End Boats Change
 		
 		// AntiChrist -- for poisoned items
@@ -4710,7 +4710,7 @@ void endmessage(int x) // If shutdown is initialized
 	int igetclock = uiCurrentTime;
 	if (endtime<igetclock) endtime=igetclock;
 	sprintf(temp, "Server going down in %i minutes.",
-		((endtime-igetclock)/CLOCKS_PER_SEC)/60);
+		((endtime-igetclock)/MY_CLOCKS_PER_SEC)/60);
 	sysbroadcast(temp);
 }
 
@@ -4802,7 +4802,7 @@ void scriptcommand (int s, char *script1, char *script2) // Execute command from
 	}
 	if (!(strcmp("INFORMATION", script1)))
 	{
-		total=(uiCurrentTime-starttime)/CLOCKS_PER_SEC;
+		total=(uiCurrentTime-starttime)/MY_CLOCKS_PER_SEC;
 		ho=total/3600;
 		total-=ho*3600;
 		mi=total/60;
@@ -5187,9 +5187,9 @@ void processkey( int c )
 			keeprun=0;
 			break;
 		case 'T':
-			endtime = uiCurrentTime + ( CLOCKS_PER_SEC * 600 );
+			endtime = uiCurrentTime + ( MY_CLOCKS_PER_SEC * 600 );
 			endmessage( 0 );
-			ConOut( "UOX3: Server going down in %i minutes.\n", ( ( endtime - uiCurrentTime ) / CLOCKS_PER_SEC ) / 60 );
+			ConOut( "UOX3: Server going down in %i minutes.\n", ( ( endtime - uiCurrentTime ) / MY_CLOCKS_PER_SEC ) / 60 );
 			break;
 		case '#':
 			if ( !cwmWorldState->Saving() )
@@ -5533,7 +5533,7 @@ void doLightEffect(int i, int currenttime)
 					{
 						sysmessage( calcSocketFromChar(i), "You are scalded by the fury of the light!" );
 						chars[i].hp -= Races->getLightDamage( chars[i].race );
-						chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
+						chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
 						staticeffect(i, 0x37, 0x09, 0x09, 0x19);
 						soundeffect2(i, 0x02, 0x08);     
 						didDamage = true;
@@ -5541,7 +5541,7 @@ void doLightEffect(int i, int currenttime)
 				}
 				else
 				{
-					chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
+					chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
 				}
 				
 			}
@@ -5553,7 +5553,7 @@ void doLightEffect(int i, int currenttime)
 					{
 						sysmessage( calcSocketFromChar(i), "You are burnt by the light's fury!" );
 						chars[i].hp -= Races->getLightDamage( chars[i].race ) / 2;
-						chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
+						chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
 						staticeffect(i, 0x37, 0x09, 0x09, 0x19);
 						soundeffect2(i, 0x02, 0x08);     
 						didDamage = true;
@@ -5579,7 +5579,7 @@ void doLightEffect(int i, int currenttime)
 						{
 							sysmessage( calcSocketFromChar(i), "You are scalded by the fury of the light!" );
 							chars[i].hp -= Races->getLightDamage( chars[i].race );
-							chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
+							chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
 							staticeffect(i, 0x37, 0x09, 0x09, 0x19);
 							soundeffect2(i, 0x02, 0x08);     
 							didDamage = true;
@@ -5587,7 +5587,7 @@ void doLightEffect(int i, int currenttime)
 					}
 					else
 					{
-						chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
+						chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race );
 					}
 					
 				}
@@ -5599,7 +5599,7 @@ void doLightEffect(int i, int currenttime)
 						{
 							sysmessage( calcSocketFromChar(i), "You are burnt by the light's fury!" );
 							chars[i].hp -= Races->getLightDamage( chars[i].race ) / 2;
-							chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
+							chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
 							staticeffect(i, 0x37, 0x09, 0x09, 0x19);
 							soundeffect2(i, 0x02, 0x08);     
 							didDamage = true;
@@ -5618,7 +5618,7 @@ void doLightEffect(int i, int currenttime)
 				if( hour >= 5 && hour <= 6 && ampm==1 && chars[i].weathDamage[LIGHT] <= currenttime )
 				{
 					sysmessage( calcSocketFromChar(i), "The sun will set soon!" );
-					chars[i].weathDamage[LIGHT] = currenttime + CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
+					chars[i].weathDamage[LIGHT] = currenttime + MY_CLOCKS_PER_SEC*Races->getLightSecs( chars[i].race )*2;
 				}
 			}
 		}
@@ -5658,7 +5658,7 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 		{
 			for(c=0;c<chars[i].st+1;c++)
 			{
-				if(chars[i].regen+(c*server_data.hitpointrate*CLOCKS_PER_SEC)<=currenttime && chars[i].hp<=chars[i].st)
+				if(chars[i].regen+(c*server_data.hitpointrate*MY_CLOCKS_PER_SEC)<=currenttime && chars[i].hp<=chars[i].st)
 				{
 					if (chars[i].skill[17]<500) chars[i].hp++;
 					else if (chars[i].skill[17]<800) chars[i].hp += 2;
@@ -5672,13 +5672,13 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 				}
 			}
 		}
-		chars[i].regen=currenttime+(server_data.hitpointrate*CLOCKS_PER_SEC);
+		chars[i].regen=currenttime+(server_data.hitpointrate*MY_CLOCKS_PER_SEC);
 	}
 	if ((chars[i].regen2<=currenttime)||(overflow))
 	{
 		for(c=0;c<chars[i].dx+1;c++)
 		{
-			if(chars[i].regen2+(c*server_data.staminarate*CLOCKS_PER_SEC)<=currenttime && chars[i].stm<=chars[i].dx)
+			if(chars[i].regen2+(c*server_data.staminarate*MY_CLOCKS_PER_SEC)<=currenttime && chars[i].stm<=chars[i].dx)
 			{
 				chars[i].stm++;
 				if (chars[i].stm>chars[i].dx) 
@@ -5689,13 +5689,13 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 				updatestats(i, 2);
 			}
 		}
-		chars[i].regen2=currenttime+(server_data.staminarate*CLOCKS_PER_SEC);
+		chars[i].regen2=currenttime+(server_data.staminarate*MY_CLOCKS_PER_SEC);
 	}
 	if ((chars[i].regen3<=currenttime)||(overflow))
 	{  
 		for(c=0;c<chars[i].in+1;c++)
 		{
-			if (chars[i].regen3+(c*server_data.manarate*CLOCKS_PER_SEC)<=currenttime && chars[i].mn<=chars[i].in)
+			if (chars[i].regen3+(c*server_data.manarate*MY_CLOCKS_PER_SEC)<=currenttime && chars[i].mn<=chars[i].in)
 			{
 				chars[i].mn++;
 				if (chars[i].mn>chars[i].in) 
@@ -5716,11 +5716,11 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 		{
 			if(chars[i].med)
 			{
-				chars[i].regen3=currenttime+((server_data.manarate*CLOCKS_PER_SEC)/2);
+				chars[i].regen3=currenttime+((server_data.manarate*MY_CLOCKS_PER_SEC)/2);
 			}
-			else chars[i].regen3=currenttime+((server_data.manarate+(Combat->CalcDef(i,0)-2))*CLOCKS_PER_SEC);    
+			else chars[i].regen3=currenttime+((server_data.manarate+(Combat->CalcDef(i,0)-2))*MY_CLOCKS_PER_SEC);    
 		}
-		else chars[i].regen3=currenttime+(server_data.manarate*CLOCKS_PER_SEC);  
+		else chars[i].regen3=currenttime+(server_data.manarate*MY_CLOCKS_PER_SEC);  
 	}
 	if( chars[i].hidden == 2 &&( chars[i].invistimeout <= currenttime || overflow ) && ( !(chars[i].priv2&8 )))
 	{
@@ -5768,7 +5768,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 	{
 		if (chars[i].smokedisplaytimer <= currenttime)
 		{
-			chars[i].smokedisplaytimer = currenttime + 5*CLOCKS_PER_SEC;
+			chars[i].smokedisplaytimer = currenttime + 5*MY_CLOCKS_PER_SEC;
 			staticeffect(i, 0x37, 0x35, 0, 30);
 			soundeffect2(i, 0x00, 0x2B);
 			switch( rand()%14 )
@@ -5816,7 +5816,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 			if ((chars[i].kills == repsys.maxkills) && (repsys.maxkills>0))
 				sysmessage(s, "You are no longer a murderer.");
 			// ConOut("%i Murderrate (Decay %i) (%i kills)",chars[i].murderrate,repsys.murderdecay,chars[i].kills);
-			chars[i].murderrate = (repsys.murderdecay*CLOCKS_PER_SEC) + currenttime;// Murder rate (in mins) to seconds. (checkauto is done about 25 times per second)
+			chars[i].murderrate = (repsys.murderdecay*MY_CLOCKS_PER_SEC) + currenttime;// Murder rate (in mins) to seconds. (checkauto is done about 25 times per second)
 		}
 		setcharflag(i);
 	}
@@ -5865,7 +5865,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 	{
 		if (chars[i].trackingdisplaytimer <= currenttime)
 		{
-			chars[i].trackingdisplaytimer = currenttime + tracking_data.redisplaytime*CLOCKS_PER_SEC;
+			chars[i].trackingdisplaytimer = currenttime + tracking_data.redisplaytime*MY_CLOCKS_PER_SEC;
 			Skills->Track(i);
 		}
 	}
@@ -5925,11 +5925,11 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 					sysmessage(s, "You must eat very soon or you will die!");
 				break;
 		}
-		chars[i].hungertime = currenttime + (server_data.hungerrate*CLOCKS_PER_SEC); // Bookmark
+		chars[i].hungertime = currenttime + (server_data.hungerrate*MY_CLOCKS_PER_SEC); // Bookmark
 	}
 	if (((hungerdamagetimer <= currenttime) || (overflow)) && (server_data.hungerdamage>0)) // Damage them if they are very hungry
 	{
-		hungerdamagetimer = currenttime + (server_data.hungerdamagerate*CLOCKS_PER_SEC); /** set new hungertime **/	     
+		hungerdamagetimer = currenttime + (server_data.hungerdamagerate*MY_CLOCKS_PER_SEC); /** set new hungertime **/	     
 		if (chars[i].hp>0 && chars[i].hunger < 2 &&(!(chars[i].priv&0x80)) &&(!(chars[i].dead)))
 		{     
 			sysmessage(s, "You are starving !");
@@ -5954,10 +5954,10 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 				switch (chars[i].poisoned)
 				{
 					case 1:
-						chars[i].poisontime = currenttime + (5*CLOCKS_PER_SEC);
+						chars[i].poisontime = currenttime + (5*MY_CLOCKS_PER_SEC);
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							chars[i].poisontxt = currenttime + (10*MY_CLOCKS_PER_SEC);
 							sprintf(t, "* %s looks a bit nauseous *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;// buffer[s][5];
@@ -5968,10 +5968,10 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					case 2:
-						chars[i].poisontime = currenttime + (4*CLOCKS_PER_SEC);
+						chars[i].poisontime = currenttime + (4*MY_CLOCKS_PER_SEC);
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							chars[i].poisontxt = currenttime + (10*MY_CLOCKS_PER_SEC);
 							sprintf(t, "* %s looks disoriented and nauseous! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;// buffer[s][5];
@@ -5983,10 +5983,10 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					case 3:
-						chars[i].poisontime = currenttime + (3*CLOCKS_PER_SEC);
+						chars[i].poisontime = currenttime + (3*MY_CLOCKS_PER_SEC);
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							chars[i].poisontxt = currenttime + (10*MY_CLOCKS_PER_SEC);
 							sprintf(t, "* %s is in severe pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							// buffer[s][4];
@@ -5999,10 +5999,10 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					case 4:
-						chars[i].poisontime = currenttime + (3*CLOCKS_PER_SEC);
+						chars[i].poisontime = currenttime + (3*MY_CLOCKS_PER_SEC);
 						if ((chars[i].poisontxt <= currenttime) || (overflow))
 						{
-							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
+							chars[i].poisontxt = currenttime + (10*MY_CLOCKS_PER_SEC);
 							sprintf(t, "* %s looks extremely weak and is wrecked in pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
 							// buffer[s][4];
@@ -6090,7 +6090,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 				acctx[a].banTime = -1;
 			}
 		}
-		uiAccountCheck = (unsigned int)(60*CLOCKS_PER_SEC + currenttime); // 1 min per check won't hurt
+		uiAccountCheck = (unsigned int)(60*MY_CLOCKS_PER_SEC + currenttime); // 1 min per check won't hurt
 	}
 	
 	if (speed.accountFlush != 0 && accountFlush <= currenttime || overflow)
@@ -6114,7 +6114,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 					acctinuse[accountCheck] = 0;
 			}
 		}
-		accountFlush = (unsigned int)(speed.accountFlush*60*CLOCKS_PER_SEC + currenttime);
+		accountFlush = (unsigned int)(speed.accountFlush*60*MY_CLOCKS_PER_SEC + currenttime);
 	}
 	
 	for (i = now - 1; i >= 0; i--)
@@ -6134,16 +6134,16 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 			if (spawnregion[i].nexttime <= currenttime)
 			{
 				doregionspawn(i);
-				spawnregion[i].nexttime = currenttime + (CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime, spawnregion[i].maxtime));
+				spawnregion[i].nexttime = currenttime + (MY_CLOCKS_PER_SEC*60*RandomNum(spawnregion[i].mintime, spawnregion[i].maxtime));
 			}
 		}
-		checkspawnregions = uiCurrentTime + speed.srtime*CLOCKS_PER_SEC;// Don't check them TOO often (Keep down the lag)
+		checkspawnregions = uiCurrentTime + speed.srtime*MY_CLOCKS_PER_SEC;// Don't check them TOO often (Keep down the lag)
 	}
 	
     if (server_data.html > 0 && (htmltime <= currenttime || overflow) )
 	{
 		updatehtml();
-		htmltime = currenttime + (server_data.html*CLOCKS_PER_SEC);
+		htmltime = currenttime + (server_data.html*MY_CLOCKS_PER_SEC);
 	}
 
 	
@@ -6202,7 +6202,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 					day++;
 			}
 		}
-		uotickcount = currenttime + secondsperuominute*CLOCKS_PER_SEC;
+		uotickcount = currenttime + secondsperuominute*MY_CLOCKS_PER_SEC;
 		if (minute%8 == 0)
 			moon1 = (moon1 + 1)%8;
 		if (minute%3 == 0)
@@ -6218,7 +6218,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 		{
 			Weather->newDay();
 		}
-		lighttime = currenttime + server_data.weathertime*CLOCKS_PER_SEC;	// for testing purposes
+		lighttime = currenttime + server_data.weathertime*MY_CLOCKS_PER_SEC;	// for testing purposes
 		doWeather = true;
 	}
 	else
@@ -6315,7 +6315,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 									
 									Boats->Move(i, dir, mapitem);
 								}
-								items[mapitem].gatetime = (unsigned int)(currenttime + (double)(server_data.boatspeed*CLOCKS_PER_SEC));
+								items[mapitem].gatetime = (unsigned int)(currenttime + (double)(server_data.boatspeed*MY_CLOCKS_PER_SEC));
 							}
 						}
 					} while (mapitem!=-1); 
@@ -6326,30 +6326,30 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 	
 	checktempeffects();
 	if (uiSetFlagTime <= currenttime)
-		uiSetFlagTime = (unsigned int)(30 * CLOCKS_PER_SEC + currenttime);
+		uiSetFlagTime = (unsigned int)(30 * MY_CLOCKS_PER_SEC + currenttime);
 
 	// Slow down lag "needed" for setting flags, they are set often enough ;-)
 	if (checknpcs <= currenttime)
-		checknpcs = (unsigned int)((double)(speed.npctime*CLOCKS_PER_SEC + currenttime)); // lb
+		checknpcs = (unsigned int)((double)(speed.npctime*MY_CLOCKS_PER_SEC + currenttime)); // lb
 
 	if (checkitemstime <= currenttime)
-		checkitemstime = (unsigned int)((double)(speed.itemtime*CLOCKS_PER_SEC + currenttime)); // lb
+		checkitemstime = (unsigned int)((double)(speed.itemtime*MY_CLOCKS_PER_SEC + currenttime)); // lb
 	// 2-24-00 homeys temp fix for vendor restocks, this solves the bad timer updates
 	
 	if ((shoprestocktime + 10000) <= currenttime)
-		shoprestocktime = currenttime + (shoprestockrate*60*CLOCKS_PER_SEC);
+		shoprestocktime = currenttime + (shoprestockrate*60*MY_CLOCKS_PER_SEC);
 	
 	if (nextnpcaitime <= currenttime)
-		nextnpcaitime = (unsigned int)((double) currenttime + (speed.npcaitime*CLOCKS_PER_SEC)); // lb
+		nextnpcaitime = (unsigned int)((double) currenttime + (speed.npcaitime*MY_CLOCKS_PER_SEC)); // lb
 	
 	if (nextfieldeffecttime <= currenttime)
-		nextfieldeffecttime = (unsigned int)((double)currenttime + (0.5*CLOCKS_PER_SEC));
+		nextfieldeffecttime = (unsigned int)((double)currenttime + (0.5*MY_CLOCKS_PER_SEC));
 	
 	if (server_data.UOXBot)
 		checkdumpdata(currenttime); // This dumps data for Ridcully's UOXBot
 	
 	if (nextdecaytime <= currenttime)
-		nextdecaytime = currenttime + (15*CLOCKS_PER_SEC); // lb ...	
+		nextdecaytime = currenttime + (15*MY_CLOCKS_PER_SEC); // lb ...	
 }
 
 //NEW LAGFIX ZIPPY CODE ENDS HERE -- AntiChrist merging codes --
@@ -6554,7 +6554,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 		count=recv(client[s], (char *)buffer[s], 4, 0);
 		if( ( buffer[s][0] == 0x21 ) && ( count < 4 ) ) // UOMon
 		{
-			total=(uiCurrentTime-starttime)/CLOCKS_PER_SEC;
+			total=(uiCurrentTime-starttime)/MY_CLOCKS_PER_SEC;
 			ho=total/3600;
 			total-=ho*3600;
 			mi=total/60;
@@ -6606,7 +6606,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				return;
 			}
 			if( buffer[s][0] !=0x73 && buffer[s][0] != 0xA4 && buffer[s][0] != 0x80 && buffer[s][0] != 0x91 )
-				idleTimeout[s] = server_data.quittime * CLOCKS_PER_SEC + uiCurrentTime;
+				idleTimeout[s] = server_data.quittime * MY_CLOCKS_PER_SEC + uiCurrentTime;
 			switch( buffer[s][0] )
 			{
 			case 0x01:// Main Menu on the character select screen
@@ -6984,7 +6984,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				Network->Receive(s, 5, 1);
 				chars[currchar[s]].war=buffer[s][1];
 				chars[currchar[s]].targ=-1;
-				chars[currchar[s]].timeout = (SI32)(uiCurrentTime + CLOCKS_PER_SEC);
+				chars[currchar[s]].timeout = (SI32)(uiCurrentTime + MY_CLOCKS_PER_SEC);
 				Network->xSend(s, buffer[s], 5, 0);
 				Movement->CombatWalk(currchar[s]);
 				dosocketmidi(s);
@@ -7910,7 +7910,7 @@ int __cdecl main(int argc, char *argv[])
 			if( uiNextCheckConn<=uiCurrentTime || overflow) // Cut lag on CheckConn by not doing it EVERY loop.
 			{
 				Network->CheckConn();
-				uiNextCheckConn = (unsigned int)( uiCurrentTime + ( double )( 3 * CLOCKS_PER_SEC ) );
+				uiNextCheckConn = (unsigned int)( uiCurrentTime + ( double )( 3 * MY_CLOCKS_PER_SEC ) );
 			}
 			Network->CheckMessage();
 			
@@ -8437,8 +8437,8 @@ void respawn(unsigned int currenttime)
 			{
 				if (items[i].gatetime==0)
 				{
-					items[i].gatetime=(rand()%((int)(1+((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-						(items[i].morey*CLOCKS_PER_SEC*60)+currenttime;
+					items[i].gatetime=(rand()%((int)(1+((items[i].morez-items[i].morey)*(MY_CLOCKS_PER_SEC*60))))) +
+						(items[i].morey*MY_CLOCKS_PER_SEC*60)+currenttime;
 				}
 				if ((items[i].gatetime<=currenttime ||(overflow)) && items[i].morex!=0)
 				{
@@ -8470,9 +8470,9 @@ void respawn(unsigned int currenttime)
 				if (items[i].gatetime==0)
 				{
 					items[i].gatetime=(rand()%((int)(1+
-						((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
+						((items[i].morez-items[i].morey)*(MY_CLOCKS_PER_SEC*60))))) +
 						
-						(items[i].morey*CLOCKS_PER_SEC*60)+currenttime;
+						(items[i].morey*MY_CLOCKS_PER_SEC*60)+currenttime;
 				}
 				if ((items[i].gatetime<=currenttime || (overflow)) && items[i].morex!=0)
 				{
@@ -8518,8 +8518,8 @@ void respawn(unsigned int currenttime)
 				{
 					if (items[i].gatetime==0)
 					{
-						items[i].gatetime=(rand()%((int)(1+((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-							(items[i].morey*CLOCKS_PER_SEC*60)+uiCurrentTime;
+						items[i].gatetime=(rand()%((int)(1+((items[i].morez-items[i].morey)*(MY_CLOCKS_PER_SEC*60))))) +
+							(items[i].morey*MY_CLOCKS_PER_SEC*60)+uiCurrentTime;
 					}
 					if ((items[i].gatetime<=currenttime ||(overflow)) && items[i].morex!=0)
 					{
@@ -8536,20 +8536,20 @@ void respawn(unsigned int currenttime)
 
 
 
-// clock() is supposed to return CPU time used - it doesn't on Windows, but
-// does on Linux. Thus it doesn't go up on Linux, and time seems to stand
-// still. This function emulates clock()
-#ifdef __linux__
 unsigned long int getclock( void )
 {
+	return clock() ;
 	struct timeval tv;
+	#ifdef __linux__
 	gettimeofday(&tv, NULL);
+	#else
+	time(&tv) ;
+	#endif
 	// We want to keep the value within 32 bits; we could also substract
 	// startup time I suppose
-	return ((tv.tv_sec - 900000000) * CLOCKS_PER_SEC) +
-		tv.tv_usec / (1000000 / CLOCKS_PER_SEC);
+	return ((tv.tv_sec - 900000000) * MY_CLOCKS_PER_SEC) +
+		tv.tv_usec / (1000000 / MY_CLOCKS_PER_SEC);
 }
-#endif
 
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)
 {
@@ -9413,7 +9413,7 @@ void checktempeffects( void )
 	  			s = calcCharFromSer( Effect->sour1, Effect->sour2, Effect->sour3, Effect->sour4);
 				if( chars[s].antispamtimer < uiCurrentTime )
 				{
-				  chars[s].antispamtimer = uiCurrentTime + (CLOCKS_PER_SEC*1);	// was >>1, now is *
+				  chars[s].antispamtimer = uiCurrentTime + (MY_CLOCKS_PER_SEC*1);	// was >>1, now is *
 				  sprintf(temp, "%i", Effect->more3);
 					sysmessage(calcSocketFromChar(s), temp); // crashfix, LB
 				} 
@@ -9605,7 +9605,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 	{
 	case 1:
 		chars[dest].priv2 |= 0x02;
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/100)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/100)*MY_CLOCKS_PER_SEC);
 		toAdd.num=1;
 		toAdd.more1=0;
 		toAdd.more2=0;
@@ -9615,7 +9615,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].fixedlight=worldbrightlevel;
 		dolight(calcSocketFromChar(dest), worldbrightlevel);
 		// Changed to allow Night Sight to last for 1 full day ( 24 hour period = 1440 minutes)
-		toAdd.expiretime=uiCurrentTime+(1440*(((secondsperuominute/60)+1)*CLOCKS_PER_SEC));
+		toAdd.expiretime=uiCurrentTime+(1440*(((secondsperuominute/60)+1)*MY_CLOCKS_PER_SEC));
 		toAdd.num=2;
 		toAdd.more1=0;
 		toAdd.more2=0;
@@ -9627,7 +9627,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].dx=chars[dest].dx-more1;
 		chars[dest].stm=min(chars[dest].stm, chars[dest].dx);
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=3;
 		toAdd.more1=more1;
 		toAdd.more2=0;
@@ -9639,7 +9639,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].in=chars[dest].in-more1;
 		chars[dest].mn=min(chars[dest].mn, chars[dest].in);
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=4;
 		toAdd.more1=more1;
 		toAdd.more2=0;
@@ -9651,7 +9651,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].st=chars[dest].st-more1;
 		chars[dest].hp=min(chars[dest].hp, chars[dest].st);
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=5;
 		toAdd.more1=more1;
 		toAdd.more2=0;
@@ -9662,7 +9662,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			more1=chars[dest].dx-255;
 		chars[dest].dx=chars[dest].dx+more1;
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=6;
 		toAdd.more1=more1;
 		toAdd.more2=0;
@@ -9673,7 +9673,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			more1=chars[dest].in-255;
 		chars[dest].in=chars[dest].in+more1;
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=7;
 		toAdd.more1=more1;
 		toAdd.more2=0;
@@ -9684,21 +9684,21 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			more1=chars[dest].st-255;
 		chars[dest].st=chars[dest].st+more1;
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=8;
 		toAdd.more1=more1;
 		toAdd.more2=0;
 		toAdd.dispellable=1;
 		break;
 	case 9:
-		toAdd.expiretime=uiCurrentTime+(more2*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+(more2*MY_CLOCKS_PER_SEC);
 		toAdd.num=9;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
 		toAdd.dispellable=0;
 		break;
 	case 10:
-		toAdd.expiretime=uiCurrentTime+(12*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+(12*MY_CLOCKS_PER_SEC);
 		toAdd.dispellable=0;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -9715,7 +9715,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].dx=chars[dest].dx+more2;
 		chars[dest].in=chars[dest].in+more3;
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=11;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -9733,7 +9733,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].dx=chars[dest].dx-more2;
 		chars[dest].in=chars[dest].in-more3;
 		statwindow(calcSocketFromChar(dest), dest);
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=12;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -9741,12 +9741,12 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.dispellable=1;
 		break;
 	case 15: // Reactive armor
-		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/10)*MY_CLOCKS_PER_SEC);
 		toAdd.num=15;
 		toAdd.dispellable=1;
 		break;
 	case 16: //Explosion potions  Tauriel
-		toAdd.expiretime=uiCurrentTime+(more2*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+(more2*MY_CLOCKS_PER_SEC);
 		toAdd.num=16;
 		toAdd.more1=more1; //item/potion
 		toAdd.more2=more2; //seconds
@@ -9754,13 +9754,13 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.dispellable=0;
 		break;
 	case 18:	// Polymorph - Antichrist 09/99
-		toAdd.expiretime=uiCurrentTime+(server_data.polyduration*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+(server_data.polyduration*MY_CLOCKS_PER_SEC);
 		toAdd.num=18;
 		toAdd.dispellable=0;
 		
 		int c1, b, k;
 		// Grey flag when polymorphed - AntiChrist (9/99)
-		chars[dest].crimflag=(server_data.polyduration*CLOCKS_PER_SEC)+uiCurrentTime;
+		chars[dest].crimflag=(server_data.polyduration*MY_CLOCKS_PER_SEC)+uiCurrentTime;
 		if( chars[dest].onhorse) 
 			k = unmounthorse(dest);
 		k = (more1<<8)+more2;
@@ -9783,13 +9783,13 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		}
 		break;
 	case 19: // incognito spell - AntiChrist (10/99)
-		toAdd.expiretime = uiCurrentTime + 90 * CLOCKS_PER_SEC; // 90 seconds
+		toAdd.expiretime = uiCurrentTime + 90 * MY_CLOCKS_PER_SEC; // 90 seconds
 		toAdd.num = 19;
 		toAdd.dispellable = 0;
 		break;
 		
 	case 21:		// protection
-		toAdd.expiretime = uiCurrentTime + 120 * CLOCKS_PER_SEC;
+		toAdd.expiretime = uiCurrentTime + 120 * MY_CLOCKS_PER_SEC;
 		toAdd.dispellable=1;
 		toAdd.more1=more1;
 		toAdd.num=21;
@@ -9833,24 +9833,24 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		if( num == 22 )
 		{
 			if( dest == source )
-				toAdd.expiretime = uiCurrentTime + ( 13 * CLOCKS_PER_SEC ) + ( ( 5 - RandomNum( 0, chars[source].skill[HEALING] / 200 ) ) * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + ( 13 * MY_CLOCKS_PER_SEC ) + ( ( 5 - RandomNum( 0, chars[source].skill[HEALING] / 200 ) ) * CLOCKS_PER_SEC );
 			else
-				toAdd.expiretime = uiCurrentTime + ( 4 * CLOCKS_PER_SEC ) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + ( 4 * MY_CLOCKS_PER_SEC ) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to heal %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
 		else if( num == 23 )
 		{
-			toAdd.expiretime = uiCurrentTime + ( 15 * CLOCKS_PER_SEC );
+			toAdd.expiretime = uiCurrentTime + ( 15 * MY_CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to resurrect %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
 		else if( num == 24 )
 		{
 			if( dest == source )
-				toAdd.expiretime = uiCurrentTime + RandomNum( 15 * CLOCKS_PER_SEC, 18 * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + RandomNum( 15 * MY_CLOCKS_PER_SEC, 18 * CLOCKS_PER_SEC );
 			else
-				toAdd.expiretime = uiCurrentTime + ( 6 * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + ( 6 * MY_CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to cure %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
@@ -9859,12 +9859,12 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.more1 = more1;			// the skill we end up using (HEALING for players, VETERINARY for monsters)
 		break;
 	case 25:
-		toAdd.expiretime = uiCurrentTime + CLOCKS_PER_SEC * server_data.potiondelay;
+		toAdd.expiretime = uiCurrentTime + MY_CLOCKS_PER_SEC * server_data.potiondelay;
 		toAdd.num = 25;
 		chars[dest].usepotion = 1;
 		break;
 	case 26:
-		toAdd.expiretime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * combat.explodeDelay);
+		toAdd.expiretime = (unsigned int)( uiCurrentTime + MY_CLOCKS_PER_SEC * combat.explodeDelay);
 		toAdd.num = 26;
 		toAdd.more1 = more1;
 		break;
@@ -9891,7 +9891,7 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 	switch (num)
 	{
 	case 10:
-		toAdd.expiretime = (unsigned int)(uiCurrentTime+(12*CLOCKS_PER_SEC));
+		toAdd.expiretime = (unsigned int)(uiCurrentTime+(12*MY_CLOCKS_PER_SEC));
 		toAdd.dispellable=0;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -9903,20 +9903,20 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 			items[dest].dooropen=0;
 			return 0;
 		}
-		toAdd.expiretime=uiCurrentTime + 10 * CLOCKS_PER_SEC;
+		toAdd.expiretime=uiCurrentTime + 10 * MY_CLOCKS_PER_SEC;
 		toAdd.num=13;
 		toAdd.dispellable=0;
 		items[dest].dooropen=1;
 		break;
 	case 14: //Tauriel training dummies swing for 5(?) seconds
-		toAdd.expiretime = uiCurrentTime + 5 * CLOCKS_PER_SEC;
+		toAdd.expiretime = uiCurrentTime + 5 * MY_CLOCKS_PER_SEC;
 		toAdd.num=14;
 		toAdd.dispellable=0;
 		toAdd.itemptr=dest; //used to try and cut search time down
 		toAdd.more2=0;
 		break;
 	case 17: //Explosion potion (explosion)  Tauriel (explode in 4 seconds)
-		toAdd.expiretime = uiCurrentTime + 4 * CLOCKS_PER_SEC;
+		toAdd.expiretime = uiCurrentTime + 4 * MY_CLOCKS_PER_SEC;
 		toAdd.num=17;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -10042,7 +10042,7 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 	{
 		if( !chars[source].war ) 
 			npcToggleCombat( source );
-		chars[source].npcmovetime = (unsigned int)(uiCurrentTime+(double)(NPCSPEED*CLOCKS_PER_SEC));
+		chars[source].npcmovetime = (unsigned int)(uiCurrentTime+(double)(NPCSPEED*MY_CLOCKS_PER_SEC));
 	}
 	// if the target is an npc, and not a guard, make sure they're in war mode and update their movement time
 	// ONLY IF THEY'VE CHANGED ATTACKER
@@ -10050,7 +10050,7 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 	{
 		if( !chars[target].war )
 			npcToggleCombat( target );
-		chars[target].npcmovetime = (unsigned int)(uiCurrentTime+(double)(NPCSPEED*CLOCKS_PER_SEC));
+		chars[target].npcmovetime = (unsigned int)(uiCurrentTime+(double)(NPCSPEED*MY_CLOCKS_PER_SEC));
 	}
 
 	sprintf( temp, "You see %s attacking %s!", chars[source].name, chars[target].name );
@@ -10144,16 +10144,16 @@ void npcsimpleattacktarget( CHARACTER defender, CHARACTER attacker )
 	{
 		if( !chars[attacker].war  ) 
 			npcToggleCombat( attacker );
-		chars[attacker].npcmovetime = (unsigned int)( uiCurrentTime + (double)( NPCSPEED * CLOCKS_PER_SEC ) );
+		chars[attacker].npcmovetime = (unsigned int)( uiCurrentTime + (double)( NPCSPEED * MY_CLOCKS_PER_SEC ) );
 	}
 	if( chars[defender].npc && chars[defender].npcaitype != 4 ) // changed from 0x40 to 4, LB
 	{
 		if( !chars[defender].war ) 
 			npcToggleCombat( defender );
-		chars[defender].npcmovetime = (unsigned int)( uiCurrentTime + (double)( NPCSPEED * CLOCKS_PER_SEC ) );
+		chars[defender].npcmovetime = (unsigned int)( uiCurrentTime + (double)( NPCSPEED * MY_CLOCKS_PER_SEC ) );
 	}
-//	chars[target2].timeout = uiCurrentTime + ( Combat->GetSwingRate( target2, -1 ) ) * CLOCKS_PER_SEC;
-//	chars[target].timeout = uiCurrentTime + ( Combat->GetSwingRate( target, -1 ) ) * CLOCKS_PER_SEC;
+//	chars[target2].timeout = uiCurrentTime + ( Combat->GetSwingRate( target2, -1 ) ) * MY_CLOCKS_PER_SEC;
+//	chars[target].timeout = uiCurrentTime + ( Combat->GetSwingRate( target, -1 ) ) * MY_CLOCKS_PER_SEC;
 }
 
 
@@ -11036,7 +11036,7 @@ int response(int s)
 										chars[k].npcWander = 1;
 										
 										// Set the expire time if nobody excepts the quest
-										chars[k].summontimer = uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortactiveexpire );
+										chars[k].summontimer = uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.escortactiveexpire );
 										
 										// Send out the rant about accepting the escort
 										sprintf(temp, "Lead on! Payment shall be made when we arrive at %s.", region[chars[k].questDestRegion].name);
@@ -11167,7 +11167,7 @@ int response(int s)
 			if (response1 || response2 || response3) //if the player wants to train
 			{
 				// Stop the NPC from moving for a minute while talking with the player
-				chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( 60 * CLOCKS_PER_SEC ) );
+				chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( 60 * MY_CLOCKS_PER_SEC ) );
 				unsigned int nChar=currchar[s];  //for the chars[] #
 				chars[nChar].trainer=-1; //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				for(i=0;i<ALLSKILLS;i++)
@@ -11818,7 +11818,7 @@ void responsevendor(int s) //Modified by AntiChrist
 				{
 					k=mapchar;
 					// Stop the NPC from moving for a minute while talking with the player
-					chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
+					chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * 60 ) );
 					strcpy(search3,chars[k].name);
 					strupr(search3);
 					response3=(strstr( comm, search3));
@@ -11910,7 +11910,7 @@ void responsevendor(int s) //Modified by AntiChrist
 							abs(chars[currchar[s]].z-chars[k].z)<=5)
 						{
 							// Stop the NPC from moving for a minute while talking with the player
-							chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
+							chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * 60 ) );
 							//if (sellstuff(s, k)) k=charcount; //Morrolan bugfix
 							sellstuff(s, k);
 							return; //Fix double sell.
@@ -12821,7 +12821,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 	case 6: // Poison Potion
 		if(chars[p].poisoned<items[i].morez) chars[p].poisoned=items[i].morez;
 		if(items[i].morez>4) items[i].morez=4;
-		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer)); // lb, poison wear off timer setting
+		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime+(MY_CLOCKS_PER_SEC*server_data.poisontimer)); // lb, poison wear off timer setting
 		impowncreate(calcSocketFromChar(p),p,1); //Lb, sends the green bar ! 
 		soundeffect2(p, 0x02, 0x46); //poison sound - SpaceDog
 		sysmessage(s, "You poisoned yourself! *sigh*"); //message -SpaceDog
@@ -13532,7 +13532,7 @@ void loadspawnregions()//Regionspawns
 					else if(!(strcmp("CALL", script1))) spawnregion[i].call = str2num( script2 );
 				}
 			}while(script1[0]!='}');
-			//spawnregion[i].nexttime=uiCurrentTime+(60*CLOCKS_PER_SEC*((rand()%(spawnregion[i].maxtime-spawnregion[i].mintime+1))+spawnregion[i].mintime));
+			//spawnregion[i].nexttime=uiCurrentTime+(60*MY_CLOCKS_PER_SEC*((rand()%(spawnregion[i].maxtime-spawnregion[i].mintime+1))+spawnregion[i].mintime));
 			i++;
 		}//if Section
 	}while(strcmp(script1, "EOF"));
@@ -13575,7 +13575,7 @@ void loadpredefspawnregion(int r, char *name)//Load predefined spawnregion //Reg
 		if(!(strcmp("MAX", script1))) spawnregion[r].max=str2num(script2);
 		if(!(strcmp("CALL", script1))) spawnregion[r].call = str2num( script2 );
 	} while(script1[0]!='}');
-	//spawnregion[r].nexttime=uiCurrentTime+(60*CLOCKS_PER_SEC*((rand()%(spawnregion[r].maxtime-spawnregion[r].mintime+1))+spawnregion[r].mintime));
+	//spawnregion[r].nexttime=uiCurrentTime+(60*MY_CLOCKS_PER_SEC*((rand()%(spawnregion[r].maxtime-spawnregion[r].mintime+1))+spawnregion[r].mintime));
 	closescript();
 	ConOut("UOX3: %s loaded into spawn region #%i.\n",sect,r);
 }
@@ -16948,7 +16948,7 @@ void criminal( CHARACTER c ) //Repsys
 {
 	if( !IsCriminal( c ) )	// if we're not a criminal already
 	{
-		chars[c].crimflag = (int)((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
+		chars[c].crimflag = (int)((repsys.crimtime*MY_CLOCKS_PER_SEC) + uiCurrentTime);
 		sysmessage( calcSocketFromChar( c ), "You are now a criminal!" );
 		setcharflag( c );
 		if( (region[chars[c].region].priv&1) && server_data.guardsactive )//guarded
@@ -16956,7 +16956,7 @@ void criminal( CHARACTER c ) //Repsys
 	}
 	else	// they're already a criminal, and have done something MORE criminal
 	{	// let's update their flag, as another criminal act will reset the timer
-		chars[c].crimflag = (int)((repsys.crimtime * CLOCKS_PER_SEC ) + uiCurrentTime);
+		chars[c].crimflag = (int)((repsys.crimtime * MY_CLOCKS_PER_SEC ) + uiCurrentTime);
 		// check to see if there is a guard nearby, otherwise spawn us a new one
 		if( !(region[chars[c].region].priv&1) || !server_data.guardsactive )
 			return;
@@ -17517,9 +17517,9 @@ void NeutralizeEnemies( CHARACTER i )
 		{
 			if (chars[t].npcaitype==4) //LB change from 0x40 to 4
 			{
-				chars[t].summontimer = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*20));    
+				chars[t].summontimer = (unsigned int)(uiCurrentTime+(MY_CLOCKS_PER_SEC*20));    
 				chars[t].npcWander=2;
-				chars[t].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+				chars[t].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*MY_CLOCKS_PER_SEC)));
 				npctalkall(t,"Thou have suffered thy punishment, scoundrel.", 0);
 			}
 			chars[t].targ=-1;
@@ -17617,7 +17617,7 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 	items[c].more1 = (unsigned char)nType;
 	items[c].dir = chars[i].dir;
 	items[c].corpse = 1;
-	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * MY_CLOCKS_PER_SEC ) );
 
 	if( chars[i].npc != 1 )
 	{

@@ -1157,7 +1157,7 @@ void cSkills::Mine(int s)
 			for( gridY = 1; gridY < 410; gridY++ )
 	 		{
 				oreamount[gridX][gridY] = resource.ore;
-				oretime[gridX][gridY] = (unsigned int)( uiCurrentTime + resource.oretime * CLOCKS_PER_SEC );
+				oretime[gridX][gridY] = (unsigned int)( uiCurrentTime + resource.oretime * MY_CLOCKS_PER_SEC );
 			}
 		}
 	}
@@ -1259,14 +1259,14 @@ void cSkills::Mine(int s)
 	{
 		for( int counter = 0; counter < resource.ore; counter++ )	// keep regenerating ore (could be a long time since we last did it)
 		{
-			if( oreamount[oreX][oreY] < resource.ore && ( ( oretime[oreX][oreY] + counter * resource.oretime * CLOCKS_PER_SEC ) < uiCurrentTime ) )
+			if( oreamount[oreX][oreY] < resource.ore && ( ( oretime[oreX][oreY] + counter * resource.oretime * MY_CLOCKS_PER_SEC ) < uiCurrentTime ) )
 			{
 				oreamount[oreX][oreY]++;
 			}
 			else
 				break;
 		}
-		oretime[oreX][oreY] = (unsigned int)(uiCurrentTime + resource.oretime * CLOCKS_PER_SEC);	// reset ore regen timer
+		oretime[oreX][oreY] = (unsigned int)(uiCurrentTime + resource.oretime * MY_CLOCKS_PER_SEC);	// reset ore regen timer
 	}
 	
 	if( oreamount[oreX][oreY] > resource.ore )	// if there's too much ore, then put a ceiling on it
@@ -2002,7 +2002,7 @@ void cSkills::TreeTarget(int s)
 			for(b=1;b<410;b++)
 			{
 				logamount[a][b]=resource.logs;
-				logtime[a][b] = (unsigned int)( curtime + resource.logtime * CLOCKS_PER_SEC );
+				logtime[a][b] = (unsigned int)( curtime + resource.logtime * MY_CLOCKS_PER_SEC );
 			}
 		}
 		ConOut(" Done.\n");
@@ -2041,11 +2041,11 @@ void cSkills::TreeTarget(int s)
 		// have been by, give 1 more ore for each period.
 		for(c=0;c<resource.logs;c++)
 		{
-			if((logtime[a][b]+(c*resource.logtime*CLOCKS_PER_SEC))<=curtime && logamount[a][b]<resource.logs)
+			if((logtime[a][b]+(c*resource.logtime*MY_CLOCKS_PER_SEC))<=curtime && logamount[a][b]<resource.logs)
 				logamount[a][b]++;
 			else break;
 		}
-		logtime[a][b] = (unsigned int)( curtime + resource.logtime * CLOCKS_PER_SEC );//10 more mins
+		logtime[a][b] = (unsigned int)( curtime + resource.logtime * MY_CLOCKS_PER_SEC );//10 more mins
 	}
 	
 	if(logamount[a][b]>resource.logs) logamount[a][b]=resource.logs;
@@ -2473,12 +2473,12 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 		if (chars[target].npc)
 		{
 			if (!(chars[target].war)) npcToggleCombat(target);
-			chars[target].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+			chars[target].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*MY_CLOCKS_PER_SEC)));
 		}
 		if (chars[trgChar].npc)
 		{
 			if (!(chars[trgChar].war)) npcToggleCombat( trgChar );
-			chars[trgChar].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+			chars[trgChar].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*MY_CLOCKS_PER_SEC)));
 		}
 		sprintf( temp, "* You see %s attacking %s *", chars[target].name, chars[trgChar].name );
 		for( i = 0; i < now; i++ )
@@ -3465,7 +3465,7 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	soundeffects(s, 0x02, 0x4A, true); // only get the sound if you are successful
 	sysmessage(s,"You establish a connection to the netherworld.");
 	
-	chars[currchar[s]].spiritspeaktimer = (unsigned int)(uiCurrentTime + CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in ) ); // spirit speak duration
+	chars[currchar[s]].spiritspeaktimer = (unsigned int)(uiCurrentTime + MY_CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in ) ); // spirit speak duration
 }
 
 void cSkills::ArmsLoreTarget( UOXSOCKET s )
@@ -3913,7 +3913,7 @@ void cSkills::FishTarget(int s)
 		float baseTime;
 		baseTime = fishing_data.basetime / 25;
 		baseTime += RandomNum( 0, fishing_data.randomtime / 15 );
-		chars[currchar[s]].fishingtimer = (unsigned int)(uiCurrentTime + (double)(baseTime * CLOCKS_PER_SEC ) );
+		chars[currchar[s]].fishingtimer = (unsigned int)(uiCurrentTime + (double)(baseTime * MY_CLOCKS_PER_SEC ) );
 		soundeffects(s, 0x02, 0x3F, true );
 	}
 	else
@@ -4124,57 +4124,57 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	{
    case ARMSLORE:
 	   target(s, 0, 1, 0, 29, "What item do you wish to get information about?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case ANATOMY:
 	   target(s, 0, 1, 0, 37, "Whom shall I examine?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case ITEMID:
 	   target(s, 0, 1, 0, 40, "What do you wish to appraise and identify?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case EVALUATINGINTEL:
 	   target(s, 0, 1, 0, 41, "What would you like to evaluate?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case TAMING:
 	   target(s, 0, 1, 0, 42, "Tame which animal?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case HIDING:
 	    Hide(s);
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case STEALTH:
 	    Stealth(s);
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case DETECTINGHIDDEN:
 	   target(s, 0, 1, 0, 77, "Where do you wish to search for hidden characters?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case PEACEMAKING:
 	    PeaceMaking(s);
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case PROVOCATION:
 	   target(s, 0, 1, 0, 79, "Whom do you wish to incite?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case ENTICEMENT:
 	   target(s, 0, 1, 0, 81, "Whom do you wish to entice?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case SPIRITSPEAK:
 	    SpiritSpeak(s);
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case STEALING:
 	   if (server_data.rogue)
 	   {
 		   target(s,0,1,0,205, "What do you wish to steal?");
-		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 		   return;
 	   } else {
 		   sysmessage(s, "Contact your shard operator if you want stealing available.");
@@ -4182,33 +4182,33 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   }
    case INSCRIPTION:
 	   target(s, 0, 1, 0, 160, "What do you wish to place a spell on?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case TRACKING:
 	    TrackingMenu(s,TRACKINGMENUOFFSET);
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case BEGGING:
 	   target(s, 0, 1, 0, 152, "Whom do you wish to annoy?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case ANIMALLORE:
 	   target(s, 0, 1, 0, 153, "What animal do you wish to get information about?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case FORENSICS:
 	   target(s, 0, 1, 0, 154, "What corpse do you want to examine?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case POISONING:
 	   target(s, 0, 1, 0, 155, "What poison do you want to apply?");
-	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   return;
    case MEDITATION:  //Morrolan - Meditation
 	   if(server_data.armoraffectmana)
 	   {
 		    Meditation(s);
-		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
+		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*MY_CLOCKS_PER_SEC);
 	   }
 	   else sysmessage(s, "Meditation is turned off.  Tell your GM to enable ARMOR_AFFECT_MANA_REGEN in server.scp to enable it.");
 	   return;
@@ -4484,8 +4484,8 @@ void cSkills::Tracking(int s,int selection)
 {
 	int i = currchar[s];
 	chars[i].trackingtarget = chars[i].trackingtargets[selection]; // sets trackingtarget that was selected in the gump
-	chars[i].trackingtimer = ((((tracking_data.basetimer*chars[i].skill[TRACKING])/1000)+1)*CLOCKS_PER_SEC)+uiCurrentTime; // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
-	chars[i].trackingdisplaytimer = (unsigned int)( tracking_data.redisplaytime * CLOCKS_PER_SEC + uiCurrentTime );
+	chars[i].trackingtimer = ((((tracking_data.basetimer*chars[i].skill[TRACKING])/1000)+1)*MY_CLOCKS_PER_SEC)+uiCurrentTime; // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
+	chars[i].trackingdisplaytimer = (unsigned int)( tracking_data.redisplaytime * MY_CLOCKS_PER_SEC + uiCurrentTime );
 	sprintf(temp,"You are now tracking %s.",chars[chars[i].trackingtarget].name);
 	sysmessage(s,temp);
 	 Track(i);
@@ -4862,14 +4862,14 @@ void cSkills::ForensicsTarget( UOXSOCKET s ) //AntiChrist
 		
 		if(chars[currchar[s]].priv&1)
 		{
-			sprintf(temp,"The %s is %i seconds old and the killer was  %s.", items[i].name, (curtim-items[i].murdertime)/CLOCKS_PER_SEC, items[i].murderer);
+			sprintf(temp,"The %s is %i seconds old and the killer was  %s.", items[i].name, (curtim-items[i].murdertime)/MY_CLOCKS_PER_SEC, items[i].murderer);
 			sysmessage(s, temp);
 		} else {
 			if (! CheckSkill(currchar[s], FORENSICS, 0, 500)) sysmessage(s,"You are not certain about the corpse."); else
 			{
-				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)<=60) strcpy(temp2,"few");
-				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)>60) strcpy(temp2,"many");
-				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)>180) strcpy(temp2,"many many");
+				if(((curtim-items[i].murdertime)/MY_CLOCKS_PER_SEC)<=60) strcpy(temp2,"few");
+				if(((curtim-items[i].murdertime)/MY_CLOCKS_PER_SEC)>60) strcpy(temp2,"many");
+				if(((curtim-items[i].murdertime)/MY_CLOCKS_PER_SEC)>180) strcpy(temp2,"many many");
 				sprintf(temp,"The %s is %s seconds old.",&items[i].name[2],temp2);
 				sysmessage(s,temp);
 				if (! CheckSkill(currchar[s], FORENSICS, 500, 1000) || *(items[i].murderer)=='\0') sysmessage(s,"You can't say who was the killer."); else
@@ -5967,7 +5967,7 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 			updatestats( target, 1 ); // update
 			sysmessage( s, "Your spiritual forces disturb the enemy!" );
 			sysmessage( calcSocketFromChar( target ), "A damned soul is disturbing your mind!" );
-			chars[currchar[s]].skilldelay = (unsigned int)(uiCurrentTime + ( server_data.skilldelay * CLOCKS_PER_SEC ));
+			chars[currchar[s]].skilldelay = (unsigned int)(uiCurrentTime + ( server_data.skilldelay * MY_CLOCKS_PER_SEC ));
 			sprintf( temp, "%s is persecuted by a ghost!!", chars[target].name );
 			for( int j = 0; j < now; j++ )
 			{

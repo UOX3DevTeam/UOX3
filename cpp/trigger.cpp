@@ -845,7 +845,7 @@ void triggerwitem(int ts, int ti, int ttype)
 			if (!(strcmp("DISABLE",script1)))  //Disable Item for n seconds
 			{
 				if (ti>-1) 
-					items[ti].disabled = (unsigned int)(uiCurrentTime+( CLOCKS_PER_SEC*str2num(script2) ));
+					items[ti].disabled = (unsigned int)(uiCurrentTime+( MY_CLOCKS_PER_SEC*str2num(script2) ));
 			}
 			if (!(strcmp("PUT",script1)))  //Send player to X Y Z when triggered
 			{
@@ -1525,7 +1525,7 @@ void triggernpc(int ts,int ti)
 			}
 			if (!(strcmp("DISABLE",script1)))  //Disable NPC for n seconds
 			{
-				chars[ti].disabled = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*str2num(script2)));
+				chars[ti].disabled = (unsigned int)(uiCurrentTime+(MY_CLOCKS_PER_SEC*str2num(script2)));
 			}
 			if (!(strcmp("PUT",script1)))  //Send player to X Y Z when triggered
 			{

@@ -1087,7 +1087,7 @@ void command_shutdown( UOXSOCKET s )
 {
 	if( tnum == 2 )
 	{
-		endtime = ( uiCurrentTime + ( CLOCKS_PER_SEC * makenumber( 1 ) ) );
+		endtime = ( uiCurrentTime + ( MY_CLOCKS_PER_SEC * makenumber( 1 ) ) );
 		if( makenumber( 1 ) == 0 )
 		{
 			endtime = 0;
@@ -2064,7 +2064,7 @@ void command_regspawnall( UOXSOCKET s )
 		{
 			doregionspawn(i);
 		}
-		spawnregion[i].nexttime = (int)(currenttime + ( CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[i].mintime, spawnregion[i].maxtime ) ) );
+		spawnregion[i].nexttime = (int)(currenttime + ( MY_CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[i].mintime, spawnregion[i].maxtime ) ) );
 	}
 	char temps[60];
 	sprintf(temps, "Done. %6d total NPCs/items spawned in %6d regions.",spawn,totalspawnregions);

@@ -126,7 +126,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				sysmessage( s, "You have given that player's account a time ban!" );
 				sysmessage( j, "You have been banned for 24 hours!" );
 				acctx[chars[j].account].ban = 1;
-				acctx[chars[j].account].banTime = (int)(uiCurrentTime + (60 * 60 * 24 * CLOCKS_PER_SEC ));
+				acctx[chars[j].account].banTime = (int)(uiCurrentTime + (60 * 60 * 24 * MY_CLOCKS_PER_SEC ));
 
 				if( online( j ) ) 
 					Network->Disconnect( j );

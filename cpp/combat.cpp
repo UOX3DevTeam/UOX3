@@ -28,7 +28,7 @@
 #include <debug.h>
 
 #define DBGFILE "combat.cpp"
-#define SWINGAT (unsigned int)1.75 * CLOCKS_PER_SEC
+#define SWINGAT (unsigned int)1.75 * MY_CLOCKS_PER_SEC
 
 const long	BODYPERCENT = 0;
 const long	ARMSPERCENT = 1;
@@ -193,9 +193,9 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 	{	// invalidate attacker here!!!
 		if( chars[attack].npcaitype == 4 )
 		{
-			chars[attack].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * 20 ) );
+			chars[attack].summontimer = ( uiCurrentTime + ( MY_CLOCKS_PER_SEC * 20 ) );
 			chars[attack].npcWander = 2;
-			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * CLOCKS_PER_SEC ) ) );
+			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * MY_CLOCKS_PER_SEC ) ) );
 			npctalkall( attack, "Thou have suffered thy punishment, scoundrel.", 0 );
 		}
 		chars[attack].targ = -1;
@@ -305,8 +305,8 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				if( fightskill == FENCING || RandomNum( 0, 2 ) == 0 ) //0 1 or 2 //fencing always poisons :)
 				{
 					chars[defend].poisoned = chars[attack].poison;
-					chars[defend].poisontime = (uiCurrentTime + ( CLOCKS_PER_SEC * ( 40 / chars[defend].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
-					chars[defend].poisonwearofftime = ( chars[defend].poisontime + ( CLOCKS_PER_SEC * server_data.poisontimer ) ); //wear off starts after poison takes effect - AntiChrist
+					chars[defend].poisontime = (uiCurrentTime + ( MY_CLOCKS_PER_SEC * ( 40 / chars[defend].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
+					chars[defend].poisonwearofftime = ( chars[defend].poisontime + ( MY_CLOCKS_PER_SEC * server_data.poisontimer ) ); //wear off starts after poison takes effect - AntiChrist
 					if( s2 != -1 ) 
 					{
 						impowncreate( s2, defend, 1 ); // sends the green bar ! 
@@ -326,8 +326,8 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				if( RandomNum( 0, 2 ) == 0 )
 				{
 					chars[attack].poisoned = chars[defend].poison;
-					chars[attack].poisontime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * ( 40 / chars[attack].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
-					chars[attack].poisonwearofftime = ( chars[attack].poisontime + ( CLOCKS_PER_SEC * server_data.poisontimer ) ); //wear off starts after poison takes effect - AntiChrist
+					chars[attack].poisontime = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * ( 40 / chars[attack].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
+					chars[attack].poisonwearofftime = ( chars[attack].poisontime + ( MY_CLOCKS_PER_SEC * server_data.poisontimer ) ); //wear off starts after poison takes effect - AntiChrist
 					if( s1 != -1 ) 
 					{
 						impowncreate( s1, attack, 1 ); // sends the green bar ! 
@@ -640,9 +640,9 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 			npcToggleCombat( defend );
 		if( chars[attack].npcaitype == 4 )
 		{
-			chars[attack].summontimer = (uiCurrentTime + ( CLOCKS_PER_SEC * 20 ) );
+			chars[attack].summontimer = (uiCurrentTime + ( MY_CLOCKS_PER_SEC * 20 ) );
 			chars[attack].npcWander = 2;
-			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * CLOCKS_PER_SEC ) ) );
+			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * MY_CLOCKS_PER_SEC ) ) );
 			npctalkall( attack, "Thou have suffered thy punishment, scoundrel.", 0 );
 		}
 		chars[attack].targ = -1;
@@ -711,7 +711,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 				if( chars[defend].targ == -1 )
 				{
 					npcsimpleattacktarget( attack, defend );
-					x = (int)( ( ( ( 100 - chars[attack].dx ) * CLOCKS_PER_SEC ) / 25 ) + ( 1 * CLOCKS_PER_SEC ) );
+					x = (int)( ( ( ( 100 - chars[attack].dx ) * MY_CLOCKS_PER_SEC ) / 25 ) + ( 1 * CLOCKS_PER_SEC ) );
 					chars[attack].timeout = uiCurrentTime + x;
 					return;
 				}
@@ -749,7 +749,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 								{ 
 									if( items[j].spd == 0 ) 
 										items[j].spd = 35;
-								    x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * items[j].spd ) * CLOCKS_PER_SEC ); //Calculate combat delay
+								    x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * items[j].spd ) * MY_CLOCKS_PER_SEC ); //Calculate combat delay
 								}
 								else 
 								{
@@ -762,7 +762,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 										j = 45;
 									if( chars[attack].skill[WRESTLING] > 800 ) 
 										j = 50;
-									x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * j ) * CLOCKS_PER_SEC );
+									x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * j ) * MY_CLOCKS_PER_SEC );
 								}
 								chars[attack].timeout = uiCurrentTime + x;
        							return;
@@ -844,7 +844,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 					{
 					    if( items[j].spd == 0 ) 
 							items[j].spd = 35;
-						x = (int)(15000 / ((chars[attack].dx+100) * items[j].spd)*CLOCKS_PER_SEC); //Calculate combat delay
+						x = (int)(15000 / ((chars[attack].dx+100) * items[j].spd)*MY_CLOCKS_PER_SEC); //Calculate combat delay
 					}
 					
 					if( j == -1 )
@@ -858,7 +858,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 							j = 45;
 						if( chars[attack].skill[WRESTLING] > 800 ) 
 							j = 50;
-						x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * j ) * CLOCKS_PER_SEC );
+						x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * j ) * MY_CLOCKS_PER_SEC );
 					}
 					chars[attack].timeout = uiCurrentTime + x;
 					if( fightskill != ARCHERY ) 
@@ -993,7 +993,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 							}
 						}			
 					}
-					chars[attack].spatimer = (unsigned int)( currenttime + ( chars[attack].spadelay * CLOCKS_PER_SEC ) );
+					chars[attack].spatimer = (unsigned int)( currenttime + ( chars[attack].spadelay * MY_CLOCKS_PER_SEC ) );
 				}
 			}
 		}
@@ -1390,8 +1390,8 @@ void cCombat::SpawnGuard( CHARACTER s, CHARACTER i, int x, int y, signed char z)
 			chars[c].targ = s;
 			chars[c].npcWander=2;  //set wander mode Tauriel
 			npcToggleCombat(c);
-			chars[c].npcmovetime = (unsigned int)( uiCurrentTime + ( NPCSPEED * CLOCKS_PER_SEC ) );
-			chars[c].summontimer = (int)( uiCurrentTime + CLOCKS_PER_SEC * 25 );
+			chars[c].npcmovetime = (unsigned int)( uiCurrentTime + ( NPCSPEED * MY_CLOCKS_PER_SEC ) );
+			chars[c].summontimer = (int)( uiCurrentTime + MY_CLOCKS_PER_SEC * 25 );
 
 			soundeffect2(c, 0x01, 0xFE);  //Tauriel 1-9-99 changed to stop crashing used to call soundeffect (expeted socket)
 			staticeffect(c, 0x37, 0x2A, 0x09, 0x06);

@@ -1957,7 +1957,7 @@ void MsgBoardQuestEscortCreate( int npcIndex )
 	
 	// Set the expirey time on the NPC if no body accepts the quest
 	if ( server_data.escortinitexpire )
-		chars[npcIndex].summontimer = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortinitexpire ) );
+		chars[npcIndex].summontimer = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.escortinitexpire ) );
 	
 	// Make sure the questDest is valid otherwise don't post and delete the NPC
 	if ( !chars[npcIndex].questDestRegion )
@@ -2030,7 +2030,7 @@ void MsgBoardQuestEscortArrive( int npcIndex, int pcIndex )
 	chars[i].questDestRegion = 0;   // Reset quest destination region
 	
 	// Set a timer to automatically delete the NPC
-	chars[i].summontimer = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortdoneexpire ) );
+	chars[i].summontimer = (unsigned int)( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.escortdoneexpire ) );
 	
 	//removefromptr(&cownsp[chars[k].ownserial%256], k);
 	chars[i].own1=255;
@@ -2449,12 +2449,12 @@ void MsgBoardMaintenance( void )
 											if ( chars[z].ftarg==-1 )
 											{
 												// Lets reset the summontimer to the escortinit
-												chars[z].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortinitexpire ) );
+												chars[z].summontimer = ( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.escortinitexpire ) );
 											}
 											else // It must have an escort in progress so set the escortactiveexpire timer
 											{
 												// Lets reset the summontimers to the escortactive value
-												chars[z].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortactiveexpire ) );
+												chars[z].summontimer = ( uiCurrentTime + ( MY_CLOCKS_PER_SEC * server_data.escortactiveexpire ) );
 											}
 											
 											// Found a matching NPC for this posted quest so flag the post for compression

@@ -241,7 +241,7 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 		// Thyme: Already reset in NPCMovement (which calls this function, and NPCWalk)
 		//if (chars[c].npc) 
 		//{
-		//	chars[c].npcmovetime=(unsigned int)(uiCurrentTime+(double)(NPCSPEED*CLOCKS_PER_SEC)); //reset move timer
+		//	chars[c].npcmovetime=(unsigned int)(uiCurrentTime+(double)(NPCSPEED*MY_CLOCKS_PER_SEC)); //reset move timer
 		//}
 
 		signed char myz = illegal_z;
@@ -671,7 +671,7 @@ bool cMovement::CheckForRunning(CHARACTER c, UOXSOCKET socket, int dir)
 			updatechar( c );
 		}
 		//Don't regenerate stamina while running
-		chars[c].regen2=uiCurrentTime+(server_data.staminarate*CLOCKS_PER_SEC);
+		chars[c].regen2=uiCurrentTime+(server_data.staminarate*MY_CLOCKS_PER_SEC);
 		chars[c].running++;
 		// if all these things
 		if( !chars[c].dead )
@@ -688,7 +688,7 @@ bool cMovement::CheckForRunning(CHARACTER c, UOXSOCKET socket, int dir)
 		}
 		if( chars[c].war && chars[c].targ != -1 )
 		{
-			chars[c].timeout = uiCurrentTime + CLOCKS_PER_SEC * 2;
+			chars[c].timeout = uiCurrentTime + MY_CLOCKS_PER_SEC * 2;
 		}
 
 	}
@@ -1729,16 +1729,16 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
         }
 		if( dnpctime != 0 )
 		{
-			chars[i].npcmovetime = (unsigned int)(currenttime + double( NPCSPEED * (float)dnpctime * (float)CLOCKS_PER_SEC ) );
+			chars[i].npcmovetime = (unsigned int)(currenttime + double( NPCSPEED * (float)dnpctime * (float)MY_CLOCKS_PER_SEC ) );
 		}
 		else
 		{
 			if( chars[i].tamed )
-				chars[i].npcmovetime = (unsigned int)(currenttime+double((NPCSPEED/4)*CLOCKS_PER_SEC)); //reset move timer
+				chars[i].npcmovetime = (unsigned int)(currenttime+double((NPCSPEED/4)*MY_CLOCKS_PER_SEC)); //reset move timer
 			else if( chars[i].shop && !chars[i].war )	// Stop the hyperactive Shopkeeper, unless they are out to pack a punch :) (Thunderstorm)
-				chars[i].npcmovetime = (unsigned int)(currenttime + double(NPCSPEED*CLOCKS_PER_SEC*4));	// reset move timer
+				chars[i].npcmovetime = (unsigned int)(currenttime + double(NPCSPEED*MY_CLOCKS_PER_SEC*4));	// reset move timer
 			else
-				chars[i].npcmovetime = (unsigned int)(currenttime+double(NPCSPEED*CLOCKS_PER_SEC)); //reset move timer
+				chars[i].npcmovetime = (unsigned int)(currenttime+double(NPCSPEED*MY_CLOCKS_PER_SEC)); //reset move timer
 		}
     }
 }
