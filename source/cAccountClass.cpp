@@ -1787,7 +1787,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 		if(actbID.dwCharacters[jj]!=0xffffffff&&actbID.dwCharacters[jj]!=(LONG)(-1))
 		{
 			// Ok build then write what we need to the file
-			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," actbID.lpCharacters[jj]->GetZ() << std::endl;
+			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (int)actbID.lpCharacters[jj]->GetZ() << std::endl;
 		}
 	}
 	fsOrphansADM.close();
@@ -1919,7 +1919,7 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 		cAccountClass::WriteOrphanHeader(fsOrphansADM);
 	}
 	// Ok build then write what we need to the file
-	fsOrphansADM << actbID.lpCharacters[nSlot]->GetName() << "," << actbID.lpCharacters[nSlot]->GetX() << "," << actbID.lpCharacters[nSlot]->GetY() << "," actbID.lpCharacters[nSlot]->GetZ() << std::endl;
+	fsOrphansADM << actbID.lpCharacters[nSlot]->GetName() << "," << actbID.lpCharacters[nSlot]->GetX() << "," << actbID.lpCharacters[nSlot]->GetY() << "," << (int)actbID.lpCharacters[nSlot]->GetZ() << std::endl;
 	fsOrphansADM.close();
 	// Ok there is something in this slot so we should remove it.
 	actbID.dwCharacters[nSlot]=actbName.dwCharacters[nSlot]=0xffffffff;

@@ -30,6 +30,7 @@
 #include <vector>
 #include <map>
 
+/**/
 #ifdef __LINUX__
 	#include <dirent.h>
 	#define strnicmp(a,b,c) strnbasecmp(a,b,c)
@@ -40,6 +41,7 @@
 	#include <direct.h>
 	#define _mkdir(s1,s2) _mkdir(s1)
 #endif
+/**/
 
 #include "uox3.h"
 
@@ -285,4 +287,4 @@ private:
 	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
 };
 
-#endif // __CACCOUNTCLASS_H__
+#endif /* __CACCOUNTCLASS_H__ */
