@@ -1,8 +1,8 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "reloadaccounts", 3, true,contextID );	// reload accounts
-	RegisterCommand( "reloaddefs", 3, true,contextID )	// reload all dfns
-	RegisterCommand( "reloadini", 3, true,contextID );	// reload uox.ini
+	RegisterCommand( "reloadaccounts", 3, true );	// reload accounts
+	RegisterCommand( "reloaddefs", 3, true )	// reload all dfns
+	RegisterCommand( "reloadini", 3, true );	// reload uox.ini
 }
 
 function command_RELOADACCOUNTS( socket, cmdString )

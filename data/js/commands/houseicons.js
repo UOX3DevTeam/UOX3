@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "houseicons", 2, true,contextID );
+	RegisterCommand( "houseicons", 2, true );
 }
 
 function command_HOUSEICONS( socket, cmdString )

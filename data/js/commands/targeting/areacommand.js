@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "areacommand", 1, true,contextID );
+	RegisterCommand( "areacommand", 2, true );
 }
 
 function command_AREACOMMAND( socket, cmdString )

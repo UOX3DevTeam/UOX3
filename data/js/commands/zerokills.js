@@ -1,6 +1,6 @@
-function CommandRegistration( contextID )
+function CommandRegistration()
 {
-	RegisterCommand( "zerokills", 2, true, contextID );
+	RegisterCommand( "zerokills", 2, true );
 }
 
 function command_ZEROKILLS( socket, cmdString )

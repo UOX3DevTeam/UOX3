@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "gumpmenu", 2, true,contextID );
-	RegisterCommand( "nacct", 2, true,contextID );
+	RegisterCommand( "gumpmenu", 2, true );
+	RegisterCommand( "nacct", 2, true );
 }
 
 function command_GUMPMENU( socket, cmdString )

@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "killall", 2, true,contextID );
+	RegisterCommand( "killall", 2, true );
 }
 
 function command_KILLALL( socket, cmdString )

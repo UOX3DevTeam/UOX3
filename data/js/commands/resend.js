@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "resend", 1, true, contextID );
+	RegisterCommand( "resend", 1, true );
 }
 
 function command_RESEND( socket, cmdString )

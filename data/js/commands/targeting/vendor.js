@@ -1,8 +1,8 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "buy", 1, true,contextID );
-	RegisterCommand( "sell", 1, true,contextID );
-	RegisterCommand( "removeshop", 2, true,contextID );
+	RegisterCommand( "buy", 1, true );
+	RegisterCommand( "sell", 1, true );
+	RegisterCommand( "removeshop", 2, true );
 }
 
 function command_BUY( socket, cmdString )

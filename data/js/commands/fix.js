@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "fix", 1, true,contextID );
+	RegisterCommand( "fix", 1, true );
 }
 
 function command_FIX( socket, cmdString )

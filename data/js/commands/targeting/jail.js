@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "jail", 1, true,contextID );
-	RegisterCommand( "release", 1, true,contextID );
+	RegisterCommand( "jail", 1, true );
+	RegisterCommand( "release", 1, true );
 }
 
 function command_JAIL( socket, cmdString )

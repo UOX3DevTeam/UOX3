@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "poly", 2, true,contextID );
+	RegisterCommand( "poly", 2, true );
 }
 
 function command_POLY( socket, cmdString )

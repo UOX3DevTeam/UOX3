@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "set", 2, true,contextID );
-	RegisterCommand( "setpoisoned", 2, true,contextID );
+	RegisterCommand( "set", 2, true );
+	RegisterCommand( "setpoisoned", 2, true );
 }
 
 function command_SET( socket, cmdString )

@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "allmove", 2, true,contextID );
+	RegisterCommand( "allmove", 2, true );
 }
 
 function command_ALLMOVE( socket, cmdString )

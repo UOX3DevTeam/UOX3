@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "wipe", 3, true,contextID );
-	RegisterCommand( "iwipe", 3, true,contextID );
+	RegisterCommand( "wipe", 3, true );
+	RegisterCommand( "iwipe", 3, true );
 }
 
 function command_WIPE( socket, cmdString )

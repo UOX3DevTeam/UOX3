@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "telestuff", 1, true,contextID );
-	RegisterCommand( "tele", 1, true,contextID );
+	RegisterCommand( "telestuff", 1, true );
+	RegisterCommand( "tele", 1, true );
 }
 
 function command_TELESTUFF( socket, cmdString )

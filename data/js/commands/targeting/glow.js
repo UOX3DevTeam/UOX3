@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "glow", 2, true,contextID );
-	RegisterCommand( "unglow", 2, true,contextID );
+	RegisterCommand( "glow", 2, true );
+	RegisterCommand( "unglow", 2, true );
 }
 
 function command_GLOW( socket, cmdString )

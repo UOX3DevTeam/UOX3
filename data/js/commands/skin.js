@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "skin", 2, true,contextID );
+	RegisterCommand( "skin", 2, true );
 }
 
 function command_SKIN( socket, cmdString )

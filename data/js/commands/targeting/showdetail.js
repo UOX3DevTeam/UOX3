@@ -1,11 +1,11 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "showdetail", 1, true,contextID );
+	RegisterCommand( "showdetail", 1, true );
 }
 
 function command_SHOWDETAIL( socket, cmdString )
 {
-	socket.CustomTarget( 0, "Select Item to get Type Info from:" );
+	socket.CustomTarget( 0, "Select Item to get Type Info" );
 }
 
 function onCallback0( socket, ourObj )

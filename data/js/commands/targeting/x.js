@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "xteleport", 1, true,contextID );
-	RegisterCommand( "xgo", 1, true,contextID );
+	RegisterCommand( "xteleport", 1, true );
+	RegisterCommand( "xgo", 1, true );
 }
 
 function command_XTELEPORT( socket, cmdString )

@@ -1,8 +1,8 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "add", 2, true,contextID );
-	RegisterCommand( "itemmenu", 2, true,contextID );
-	RegisterCommand( "addx", 2, true,contextID );
+	RegisterCommand( "add", 2, true );
+	RegisterCommand( "itemmenu", 2, true );
+	RegisterCommand( "addx", 2, true );
 }
 
 function command_ADD( socket, cmdString )

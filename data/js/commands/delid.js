@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "delid", 2, true,contextID );
+	RegisterCommand( "delid", 2, true );
 }
 
 function command_DELID( socket, cmdString )

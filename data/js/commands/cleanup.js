@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "cleanup", 2, true,contextID );
+	RegisterCommand( "cleanup", 2, true );
 }
 
 function command_CLEANUP( socket, cmdString )

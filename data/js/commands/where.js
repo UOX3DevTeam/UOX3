@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "where", 1, true, contextID );
+	RegisterCommand( "where", 1, true );
 }
 
 function command_WHERE( socket, cmdString )

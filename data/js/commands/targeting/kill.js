@@ -1,7 +1,7 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "kill", 2, true,contextID );
-	RegisterCommand( "resurrect", 2, true,contextID );
+	RegisterCommand( "kill", 2, true );
+	RegisterCommand( "resurrect", 2, true );
 }
 
 function command_KILL( socket, cmdString )

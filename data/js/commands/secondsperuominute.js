@@ -1,6 +1,6 @@
-function CommandRegistration(contextID)
+function CommandRegistration()
 {
-	RegisterCommand( "secondsperuominute", 2, true ,contextID);
+	RegisterCommand( "secondsperuominute", 2, true );
 }
 
 function command_SECONDSPERUOMINUTE( socket, cmdString )
