@@ -24,3 +24,4 @@ xcopy data\logs\*.* %1\logs /s /c /y
 xcopy data\msgboards\*.* %1\msgboards /s /c /y
 rem xcopy data\shared\*.* %1\shared /s /c /y
 xcopy data\*.ini %1 /c /y
+xcopy w32installer\uox.nsi %1
