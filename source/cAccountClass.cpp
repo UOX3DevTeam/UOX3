@@ -99,7 +99,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	std::string sAccessAdm = sActPath;
 	sAccessAdm += (sActPath[sActPath.length()-1]=='\\'||sActPath[sActPath.length()-1]=='/')?"access.adm":"/access.adm";
 	// Create stream and open the Access.adm file if it exists.
-	BOOL bIsNew=true;
+	bool bIsNew=true;
 	std::fstream fs1(sAccessAdm.c_str(),std::ios::in);
 	if(!fs1.is_open())
 	{
@@ -929,7 +929,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::isUser(string sUsername)
+//|	Function			-	bool cAccountClass::isUser(string sUsername)
 //|	Date					-	12/16/2002 12:09:13 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -941,7 +941,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::isUser(std::string sUsername)
+bool cAccountClass::isUser(std::string sUsername)
 {
 	MAPUSERNAME_ITERATOR I;
 	// Call into the map to see if this username exists. but first copy it into a local string and make it lowercase 
@@ -1361,7 +1361,7 @@ UI16 cAccountClass::Load(void)
 	return m_mapUsernameMap.size();
 }
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::TransCharacter(WORD wSAccountID,WORD wSSlot,WORD wDAccountID)
+//|	Function			-	bool cAccountClass::TransCharacter(WORD wSAccountID,WORD wSSlot,WORD wDAccountID)
 //|	Date					-	1/7/2003 5:39:12 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1372,7 +1372,7 @@ UI16 cAccountClass::Load(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID)
+bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID)
 {
 	MAPUSERNAMEID_ITERATOR I;
 	I = m_mapUsernameIDMap.find(wSAccountID);
@@ -1432,8 +1432,8 @@ BOOL cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::AddCharacter(WORD accountid, CChar *object)
-//|									BOOL cAccountClass::AddCharacter(WORD accountid, VOID *object)
+//|	Function			-	bool cAccountClass::AddCharacter(WORD accountid, CChar *object)
+//|									bool cAccountClass::AddCharacter(WORD accountid, VOID *object)
 //|	Date					-	12/18/2002 2:09:04 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1443,7 +1443,7 @@ BOOL cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
+bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 {
 	// Make sure that the lpObject pointer is valid
 	if(lpObject==NULL)
@@ -1471,7 +1471,7 @@ BOOL cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	ACCOUNTSBLOCK actbName;
 	actbName = J->second;
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
-	BOOL bExit=false;
+	bool bExit=false;
 	for(int i=0;i<5;i++)
 	{
 		if(actbID.dwCharacters[i]==-1&&actbID.dwCharacters[i]==0xffffffff&&actbName.dwCharacters[i]==-1&&actbName.dwCharacters[i]==0xffffffff)
@@ -1498,7 +1498,7 @@ BOOL cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	return false;
 }
 //
-BOOL cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject)
+bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject)
 {
 	// Make sure that the lpObject pointer is valid
 	if(lpObject==NULL)
@@ -1526,7 +1526,7 @@ BOOL cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	ACCOUNTSBLOCK actbName;
 	actbName = J->second;
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
-	BOOL bExit=false;
+	bool bExit=false;
 	for(int i=0;i<5;i++)
 	{
 		if(actbID.dwCharacters[i]==-1&&actbID.dwCharacters[i]==0xffffffff&&actbName.dwCharacters[i]==-1&&actbName.dwCharacters[i]==0xffffffff)
@@ -1553,8 +1553,8 @@ BOOL cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	return false;
 }
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
-//|									BOOL cAccountClass::ModAccount(WORD wAccountID,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
+//|	Function			-	bool cAccountClass::ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
+//|									bool cAccountClass::ModAccount(WORD wAccountID,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
 //|	Date					-	1/7/2003 7:15:58 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1589,7 +1589,7 @@ BOOL cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
+bool cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
 {
 	// Ok we need to get the name block to get the accounts id
 	MAPUSERNAME_ITERATOR J;
@@ -1602,7 +1602,7 @@ BOOL cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK 
 	return cAccountClass::ModAccount(actbName.wAccountIndex,dwFlags,actbBlock);
 }
 //
-BOOL cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
+bool cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
 {
 	// Ok we need to get the ID block again as it wasn't passed in
 	MAPUSERNAMEID_ITERATOR I;
@@ -1695,7 +1695,7 @@ BOOL cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbB
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::clear(void)
+//|	Function			-	bool cAccountClass::clear(void)
 //|	Date					-	12/18/2002 2:24:07 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1706,7 +1706,7 @@ BOOL cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbB
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::clear(void)
+bool cAccountClass::clear(void)
 {
 	// First we should check to make sure that we can even use the objects, or they are not already cleared
 	try
@@ -1728,8 +1728,8 @@ BOOL cAccountClass::clear(void)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::DelAccount(std::string sUsername)
-//|									BOOL cAccountClass::DelAccount(WORD wAccountID)
+//|	Function			-	bool cAccountClass::DelAccount(std::string sUsername)
+//|									bool cAccountClass::DelAccount(WORD wAccountID)
 //|	Date					-	12/18/2002 2:56:34 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1742,7 +1742,7 @@ BOOL cAccountClass::clear(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::DelAccount(std::string sUsername)
+bool cAccountClass::DelAccount(std::string sUsername)
 {
 	// Ok were just going to get the ID number for this account and make the ID function do all the work
 	MAPUSERNAME_ITERATOR I;
@@ -1755,7 +1755,7 @@ BOOL cAccountClass::DelAccount(std::string sUsername)
 	return cAccountClass::DelAccount(actbTemp.wAccountIndex);
 }
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::DelAccount(UI16 wAccountID)
+bool cAccountClass::DelAccount(UI16 wAccountID)
 {
 	// Ok we need to get the ID block again as it wasn't passed in
 	MAPUSERNAMEID_ITERATOR I;
@@ -1778,7 +1778,7 @@ BOOL cAccountClass::DelAccount(UI16 wAccountID)
 	else
 		sTempPath += "/orphans.adm";
 	// First lets see if the file exists.
-	BOOL bOrphanHeader=false;
+	bool bOrphanHeader=false;
 	std::fstream fsOrphansADMTest(sTempPath.c_str(),std::ios::in);
 	if(!fsOrphansADMTest.is_open())
 		bOrphanHeader=true;
@@ -1827,7 +1827,7 @@ BOOL cAccountClass::DelAccount(UI16 wAccountID)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::SetPath(std::string sPath)
+//|	Function			-	bool cAccountClass::SetPath(std::string sPath)
 //|	Date					-	12/19/2002 12:29:59 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1839,7 +1839,7 @@ BOOL cAccountClass::DelAccount(UI16 wAccountID)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::SetPath(std::string sPath)
+bool cAccountClass::SetPath(std::string sPath)
 {
 	try
 	{
@@ -1870,7 +1870,7 @@ std::string cAccountClass::GetPath(void)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::DelCharacter(WORD wAccountID, int nSlot)
+//|	Function			-	bool cAccountClass::DelCharacter(WORD wAccountID, int nSlot)
 //|	Date					-	12/19/2002 12:45:10 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1890,7 +1890,7 @@ std::string cAccountClass::GetPath(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
+bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 {
 	// Do the simple here, save us some work
 	if(nSlot<0||nSlot>4)
@@ -1919,7 +1919,7 @@ BOOL cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	else
 		sTempPath += "/orphans.adm";
 	// First lets see if the file exists.
-	BOOL bOrphanHeader=false;
+	bool bOrphanHeader=false;
 	std::fstream fsOrphansADMTest(sTempPath.c_str(),std::ios::in);
 	if(!fsOrphansADMTest.is_open())
 		bOrphanHeader=true;
@@ -1957,7 +1957,7 @@ BOOL cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
+//|	Function			-	bool cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
 //|	Date					-	12/19/2002 2:16:37 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1968,7 +1968,7 @@ BOOL cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
+bool cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAME_ITERATOR I;
@@ -2000,7 +2000,7 @@ BOOL cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBl
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	BOOL cAccountClass::GetAccountByName(WORD wAccountID,ACCOUNTSBLOCK& actbBlock)
+//|	Function			-	bool cAccountClass::GetAccountByName(WORD wAccountID,ACCOUNTSBLOCK& actbBlock)
 //|	Date					-	12/19/2002 2:17:31 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -2011,7 +2011,7 @@ BOOL cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBl
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock)
+bool cAccountClass::GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock)
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAMEID_ITERATOR I;
