@@ -31,76 +31,63 @@
 
 void cTargets::PlVBuy(int s)//PlayerVendors
 {
-	int v=addx[s];
-
-	if (v<0 || v>cmem|| s==-1) return;
-	if (chars[v].free) return;
-	int serial,i,gleft=calcgold(currchar[s]), price;
-	int a,b,p=packitem(currchar[s]);
+	int v = addx[s];
+	if (v < 0 || v>cmem|| s==-1)
+		return;
+	if (chars[v].free)
+		return;
+	int serial, i, gleft = calcgold(currchar[s]), price;
+	int p = packitem(currchar[s]);
 	int np, npc;
-	
-	if (p==-1) 
+	if (p==-1)
 	{
-		sysmessage(s,"Time to buy a backpack"); 
-		return; 
-	} //LB
+		sysmessage(s, "Time to buy a backpack");
+		return;
+	}
 
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if (i==-1) return;	
-	if (items[i].contserial==-1) return;
-	
-	price=items[i].value;
-	np=findbyserial(&itemsp[items[i].contserial%HASHMAX],items[i].contserial,0);
-	npc=GetPackOwner(np);
-	if(npc!=v || chars[v].npcaitype!=17) return;
-	
-	if (chars[currchar[s]].serial==chars[v].ownserial)
-	{
+	serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	i = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	if (i==-1)
+		return;
+	if (items[i].contserial==-1)
+		return;
+
+	price = items[i].value;
+
+	np = findbyserial(&itemsp[items[i].contserial%HASHMAX], items[i].contserial, 0);
+	npc = GetPackOwner(np);
+	if (npc != v || chars[v].npcaitype != 17)
+		return;
+
+	if (chars[currchar[s]].serial == chars[v].ownserial)
+	{	
 		npctalk(s, v, "I work for you, you need not buy things from me!", 0);
 		return;
 	}
 
-	p = packitem( currchar[s] );
-	if( p < 0 ) return;
-	
-	if (gleft<items[i].value) 
+	p = packitem(currchar[s]);
+	if (p < 0)
+		return;
+	if (gleft < items[i].value)
 	{
 		npctalk(s, v, "You cannot afford that.", 0);
 		return;
-	} else {
-		for (a=0;a<contsp[items[p].serial%HASHMAX].max;a++)
-		{
-			b=contsp[items[p].serial%HASHMAX].pointer[a];
-			if (b!=-1)
-			if (items[b].id1==0x0E && (items[b].id2==0xED || items[b].id2==0xEE || items[b].id2==0xEF))
-			{
-				if( items[b].contserial == items[p].serial )
-				{
-					if(items[b].amount<=price)
-					{
-						price-=items[b].amount;
-						Items->DeleItem(b);
-						RefreshItem( i );
-					} else {
-						items[b].amount-=price;
-						price=0;
-						RefreshItem( b ); // AntiChrist
-						break;
-					}//else
-				}
-			}//if b!=-1
-		}//for
-	}//else
-	
+	}
+	else
+	{
+	// This portion of code is grabbed from void buyaction(int s) in uox3.cpp
+	int tAmount = 0;
+	tAmount = delequan(currchar[s], 0x0E, 0xED, items[i].value);
+	// tAmount > 0 indicates there wasn't enough money...
+	// could be expanded to take money from bank too...
+	}
 	npctalk(s, v, "Thank you.", 0);
-	chars[v].holdg+=items[i].value;
-
-//	removefromptr( &contsp[items[i].serial%HASHMAX], i );
-	unsetserial( i, 1 );
-	setserial(i,p,1);
-//	senditem(s,i);
-	RefreshItem( i ); // AntiChrist
+	chars[v].holdg += items[i].value;
+	unsetserial(i, 1);
+	setserial(i, p, 1);
+	RefreshItem(i);
+	Weight->NewCalc(currchar[s]);
+	statwindow(s, currchar[s]);
 }
 
 void cTargets::MultiTarget(int s) // If player clicks on something with the targetting cursor

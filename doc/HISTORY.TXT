@@ -29,6 +29,16 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+24.02.2001               Thiago A. Corrêa
+  globals.cpp            moved polyduration to inside server_st, as it is a
+  uox3.cpp               server wide setting (makes sense, huh?)
+  magic.cpp              made some small clean-ups.
+  targeting.cpp          Added bug fix for player vendor's provided by Frank
+                         Lubbers, thanks Frank ;)
+                         Possible fix for logging out chars being visible
+                         indefinitly. (Need testing).
+
+-------------------------------------------------------------------------------
 17.02.2001               Axel Kittenberger
   debug.cpp             
   debug.h                ressurected mingw compability / 

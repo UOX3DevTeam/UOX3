@@ -232,36 +232,39 @@ void closesocket( UOXSOCKET s )
 int str2num(char *s) // Convert string to integer
 {
 	unsigned int i;
-	int n=0;
-	int neg=0;
-	unsigned int length=strlen(s);
-	for(i=0;i<length;i++)
+	int n = 0;
+	int neg = 0;
+	unsigned int length = strlen(s);
+	for (i = 0; i < length; i++)
 	{
-		if (s[i]=='-') neg=1;
-		n*=10; // Multiply by 10
+		if (s[i] == '-') 
+			neg = 1;
+		n *= 10; // Multiply by 10
 		if (isdigit(s[i]))
-			n=n+(s[i])-48; // Convert char to number from 0 to 9
+			n += s[i] - 48; // Convert char to number from 0 to 9
 	}
-	if (neg) n=-n;
+	if (neg) 
+		n = -n;
 	return n;
 }
 
 int hstr2num(char *s) // Convert hex string to integer
 {
 	unsigned int i;
-	int n=0;
+	int n = 0;
 	
-	for (i=0;i<strlen(s);i++)
+	for (i = 0; i < strlen(s); i++)
 	{
-		n*=16;
+		n *= 16;
 		if (isdigit(s[i]))
-			n=n+(s[i])-48; // Convert char to number from 0 to 9
+			n += s[i] - 48; // Convert char to number from 0 to 9
 		if ((s[i]>=65) && (s[i]<=70)) // Uppercase A-F
-			n=n+(s[i])-65+10;
+			n += s[i] - 65 + 10;
 		if ((s[i]>=97) && (s[i]<=102)) // Lowercase A-F
-			n=n+(s[i])-97+10;
+			n += s[i] - 97 + 10;
 	}
-	if (s[0]=='-') n=-n;
+	if (s[0]== '-') 
+		n = -n;
 	return n;
 }
 
@@ -417,9 +420,6 @@ FILE *openscript( char *name, FILE *toOpen ) // Open script file with file point
 		keeprun = 0;
 		return NULL;
 	}
-//	openings++;
-	//assert(openings == 1);
-	// printf("Openings: %i\n",openings);
 	return toOpen;
 }
 
@@ -431,7 +431,6 @@ void closescript( void )
 		scpfile = NULL;
 	}
 	openings--;
-	//assert(openings == 0);
 }
 
 void read1( void ) // Read script line without splitting parameters
@@ -2025,27 +2024,22 @@ int makenum2(char *s) // Converts string to integer
 
 int cgold2(int item) // Calculate total gold
 {
-	char i1, i2, i3, i4;
 	int i, total=0, serial,ci;
 	
-	i1=items[item].ser1;
-	i2=items[item].ser2;
-	i3=items[item].ser3;
-	i4=items[item].ser4;
-	serial=calcserial(i1,i2,i3,i4);
-	for (ci=0;ci<contsp[serial%HASHMAX].max;ci++)
+	serial = items[item].serial;
+	for (ci = 0;ci < contsp[serial%HASHMAX].max; ci++)
 	{
-		i=contsp[serial%HASHMAX].pointer[ci];
+		i = contsp[serial%HASHMAX].pointer[ci];
 		if (i!=-1)
-			if (items[i].contserial==serial)
+			if (items[i].contserial == serial)
 			{
-				if ((items[i].id1==0x0E)&&(items[i].id2==0xED))
+				if ((items[i].id1 == 0x0E) && (items[i].id2 == 0xED))
 				{
-					total+=items[i].amount;
+					total += items[i].amount;
 				}
-				if ((items[i].type==1)||(items[i].type==8))
+				if ((items[i].type == 1) || (items[i].type==8))
 				{
-					total+=cgold2(i);
+					total += cgold2(i);
 				}
 			}
 	}
@@ -2054,25 +2048,21 @@ int cgold2(int item) // Calculate total gold
 
 int calcgold(int p) // Calculate total gold
 {
-	//	char p1, p2, p3, p4;
 	int i,ci,serial;
 	
-	serial=calcserial( chars[p].ser1, chars[p].ser2, chars[p].ser3, chars[p].ser4 );
-	for (ci=0;ci<contsp[serial%HASHMAX].max;ci++)
+	serial = chars[p].serial;
+	for (ci = 0;ci < contsp[serial%HASHMAX].max; ci++)
 	{
 		i=contsp[serial%HASHMAX].pointer[ci];
-		if (i!=-1)
-			if ((items[i].contserial==serial) && (items[i].layer==0x15))
-			{
-				return (cgold2(i));
-			}
+		if (i != -1 && items[i].contserial == serial && items[i].layer == 0x15)
+			return (cgold2(i));
 	}
 	return 0;
 }
 
 int packitem(int p) // Find packitem
 {
-	int serial,j,ci;
+	int serial, j, ci;
 	if( p == -1 ) return -1;
 	int i=chars[p].packitem;
 	//printf("%i %i %i %i %i %i %i\n",imem,cmem,i,items[i].contserial,chars[p].serial,items[i].layer,p);
@@ -2086,7 +2076,7 @@ int packitem(int p) // Find packitem
 	}
 	
 	// - For some reason it's not defined, so go look for it.
-	serial=chars[p].serial;
+	serial = chars[p].serial;
 	j=serial%HASHMAX;
 	for (ci=0;ci<contsp[j].max;ci++)
 	{
@@ -7376,8 +7366,8 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 									checkNPC(mapchar, currenttime);
 								
 								else if (!chars[mapchar].npc && 
-									inworld[chars[mapchar].account] == mapchar && chars[mapchar].logout>0 &&
-									(chars[mapchar].logout <= currenttime ||(overflow)))
+									inworld[chars[mapchar].account] == mapchar && chars[mapchar].logout != -1 &&
+									(chars[mapchar].logout <= currenttime || overflow ))
 								{
 									inworld[chars[mapchar].account]=-1;
 									chars[mapchar].logout=-1;
@@ -10878,13 +10868,13 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.dispellable=0;
 		break;
 	case 18:	// Polymorph - Antichrist 09/99
-		toAdd.expiretime=uiCurrentTime+(polyduration*CLOCKS_PER_SEC);
+		toAdd.expiretime=uiCurrentTime+(server_data.polyduration*CLOCKS_PER_SEC);
 		toAdd.num=18;
 		toAdd.dispellable=0;
 		
 		int c1, b, k;
 		// Grey flag when polymorphed - AntiChrist (9/99)
-		chars[dest].crimflag=(polyduration*CLOCKS_PER_SEC)+uiCurrentTime;
+		chars[dest].crimflag=(server_data.polyduration*CLOCKS_PER_SEC)+uiCurrentTime;
 		if( chars[dest].onhorse) 
 			k = unmounthorse(dest);
 		k = (more1<<8)+more2;
@@ -11900,7 +11890,7 @@ void initque( void ) // Initilizes the gmpages[] and counspages[] arrays and als
 		gmpages[i].timeofcall[0]=0;
 		gmpages[i].handled=1;
 	}
-	for(i=1;i<MAXPAGES;i++)
+	for(i = 1; i < MAXPAGES; i++)
 	{
 		counspages[i].name[0] = 0;
 		counspages[i].reason[0] = 0;
@@ -15828,20 +15818,19 @@ void loadserverdefaults( void )
 	server_data.rank_system = RANKSYSTEM; // Rank-System by Magius (CHE)
 	server_data.buyThreshold = 2000;
 	server_data.guardsactive=1;
+	server_data.polyduration = 90;
 	//  EviLDeD  -  Set default  of worldsave saves to 0(false)
 	//  December 27, 1998
 	server_data.announceworldsaves=1;
-	//	February 10, 2000
 	server_data.wwwaccounts=0;
 	server_data.bg_sounds=5;	// Made this every 5 seconds (ARRRG Damn dog!)
-	//  EviLDeD  -  End
 	server_data.joinmsg=1;
 	server_data.partmsg=1;
 	server_data.log=1;
 	server_data.rogue=1;
 	weathertime=server_data.weathertime=60;		// Revana
 	server_data.quittime=300;//Instalog
-	*(server_data.archivepath)='\0'; // was strcpy(server_data.archivepath,"");
+	server_data.archivepath[0] = 0; // was strcpy(server_data.archivepath,"");
 	server_data.backup_save_ratio = 1; // LB
 	server_data.UOXBot=0;
 	//LordB Lag Fix
@@ -15853,7 +15842,7 @@ void loadserverdefaults( void )
 	server_data.persecute = 1; // AntiChrist
 	server_data.html=-1;//HTML
 	
-	*(server_data.msgboardpath)='\0';      // Dupois - Added Dec 20, 1999 for message boards (current dir)
+	server_data.msgboardpath[0] = 0;       // Dupois - Added Dec 20, 1999 for message boards (current dir)
 	server_data.msgpostaccess=0;           // Dupois - Added Dec 20, 1999 for message boards (GM only)
 	server_data.msgpostremove=0;           // Dupois - Added Dec 20, 1999 for message boards (GM only)
 	server_data.msgretention=30;           // Dupois - Added Dec 20, 1999 for message boards (30 Days)

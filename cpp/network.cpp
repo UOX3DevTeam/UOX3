@@ -182,8 +182,7 @@ void cNetworkStuff::xSend(int s, void *point, int length, int test) // Buffering
 	fflush(stdout);
 #endif
 	memcpy(&outbuffer[s][boutlength[s]], point, length);
-	boutlength[s]+=length;
-	// printf("%i\n", boutlength[s]);
+	boutlength[s] += length;
 }
 
 // set the laston character member value to the current date/time
@@ -236,6 +235,7 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 		acctinuse[acctno[s]]=0; //Bug clearing logged in accounts!
 	acctno[s]=-1;
 	idleTimeout[s] = -1;
+
 	for( j = s; j < now - 1; j++ )
 	{
 		client[j] = client[j+1];
@@ -246,7 +246,6 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 		clientip[j][2] = clientip[j+1][2];
 		clientip[j][3] = clientip[j+1][3];
 		acctno[j] = acctno[j+1];
-		//  war[j]=war[j+1];
 		perm[j] = perm[j+1];
 		addid1[j] = addid1[j+1];
 		addid2[j] = addid2[j+1];

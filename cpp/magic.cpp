@@ -4030,8 +4030,8 @@ void cMagic::PolymorphMenu(int s,int gmindex)
 		//printf("yaba: %s daba: %s\n",script1,script2);
 		if (script1[0]!='}')
 		{
-			polyduration=str2num(script1);
-			printf("polydur: %i\n",polyduration);
+			server_data.polyduration=str2num(script1);
+			printf("polydur: %i\n",server_data.polyduration);
 			read1();
 		}
 		

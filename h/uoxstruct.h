@@ -791,12 +791,8 @@ struct server_st
 	unsigned char hungerdamage;
 	unsigned int hungerdamagerate;
 	char armoraffectmana; // Should armor slow mana regen ?
-	//	EviLDeD	-	Added server save support for this
-	//	December 27, 1998
 	char announceworldsaves;
-	//	February 10, 2000
 	bool wwwaccounts;	//	Use the www account creation system. Causes autoload on worldsaves
-	//	EviLDeD	-	End
 	unsigned int log;
 	unsigned int rogue;
 
@@ -833,6 +829,7 @@ struct server_st
 	unsigned char commandPrefix;  
 	short buyThreshold;
 	bool snoopiscrime;
+	unsigned int polyduration;
 };
 struct title_st // For custom titles
 {
