@@ -143,12 +143,12 @@ CPCharLocBody::CPCharLocBody( CChar &toCopy )
 
 void CPCharLocBody::CopyData( CChar &toCopy )
 {
-	PlayerID( toCopy.GetSerial() );
-	BodyType( toCopy.GetID() );
-	X( toCopy.GetX() );
-	Y( toCopy.GetY() );
-	Z( toCopy.GetZ() );
-	Direction( toCopy.GetDir() );
+	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
+	PackShort( &internalBuffer[0], 9, toCopy.GetID() );
+	PackShort( &internalBuffer[0], 11, toCopy.GetX() );
+	PackShort( &internalBuffer[0], 13, toCopy.GetY() );
+	internalBuffer[16] = toCopy.GetZ();
+	internalBuffer[17] = toCopy.GetDir();
 }
 
 CPCharLocBody::~CPCharLocBody()
@@ -160,30 +160,7 @@ CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
 	CopyData( toCopy );
 	return (*this);
 }
-void CPCharLocBody::PlayerID( SERIAL toPut )
-{
-	PackLong( &internalBuffer[0], 1, toPut );
-}
-void CPCharLocBody::BodyType( UI16 toPut )
-{
-	PackShort( &internalBuffer[0], 9, toPut );
-}
-void CPCharLocBody::X( UI16 toPut )
-{
-	PackShort( &internalBuffer[0], 11, toPut );
-}
-void CPCharLocBody::Y( UI16 toPut )
-{
-	PackShort( &internalBuffer[0], 13, toPut );
-}
-void CPCharLocBody::Z( UI16 toPut )
-{
-	PackShort( &internalBuffer[0], 15, toPut );
-}
-void CPCharLocBody::Direction( UI08 toPut )
-{
-	internalBuffer[17] = toPut;
-}
+
 void CPCharLocBody::Flag( UI08 toPut )
 {
 	internalBuffer[28] = toPut;
@@ -442,52 +419,24 @@ CPExtMove &CPExtMove::operator=( CChar &toCopy )
 	return (*this);
 }
 
-void CPExtMove::Serial( SERIAL newSerial )
-{
-	PackLong( &internalBuffer[0], 1, newSerial );
-}
-void CPExtMove::ID( UI16 bodyID )
-{
-	PackShort( &internalBuffer[0], 5, bodyID );
-}
-void CPExtMove::X( SI16 newValue )
-{
-	PackShort( &internalBuffer[0], 7, newValue );
-}
-void CPExtMove::Y( SI16 newValue )
-{
-	PackShort( &internalBuffer[0], 9, newValue );
-}
-void CPExtMove::Z( SI08 newValue )
-{
-	internalBuffer[11] = newValue;
-}
-void CPExtMove::Direction( UI08 newValue )
-{
-	internalBuffer[12] = newValue;
-}
-void CPExtMove::Colour( UI16 colourID )
-{
-	PackShort( &internalBuffer[0], 13, colourID );
-}
 void CPExtMove::FlagColour( UI08 newValue )
 {
 	internalBuffer[16] = newValue;
 }
-void CPExtMove::Flag( UI08 newValue )
-{
-	internalBuffer[15] = newValue;
-}
 
 void CPExtMove::CopyData( CChar &toCopy )
 {
-	Serial( toCopy.GetSerial() );
-	ID( toCopy.GetID() );
-	X( toCopy.GetX() );
-	Y( toCopy.GetY() );
-	Z( toCopy.GetDispZ() );
-	Direction( toCopy.GetDir() );
-	Colour( toCopy.GetSkin() );
+	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
+	PackShort( &internalBuffer[0], 5, toCopy.GetID() );
+	PackShort( &internalBuffer[0], 7, toCopy.GetX() );
+	PackShort( &internalBuffer[0], 9, toCopy.GetY() );
+	internalBuffer[11] = toCopy.GetZ();
+
+	UI08 dir = toCopy.GetDir();
+	if( toCopy.IsNpc() && toCopy.CanRun() && toCopy.IsAtWar() )
+		dir |= 0x80;
+	internalBuffer[12] = dir;
+	PackShort( &internalBuffer[0], 13, toCopy.GetSkin() );
 
 	UI08 flag = 0;
 	if( toCopy.IsAtWar() ) 
@@ -506,7 +455,7 @@ void CPExtMove::CopyData( CChar &toCopy )
 	// turn it yellow on full health?
 	if( toCopy.GetHP() == toCopy.GetMaxHP() )
 		flag |= 0x08;
-	Flag( flag );
+	internalBuffer[15] = flag;
 }
 
 //0xAA Packet
@@ -951,19 +900,25 @@ void CPCharacterAnimation::InternalReset( void )
 
 void CPDrawGamePlayer::CopyData( CChar &toCopy )
 {
-	Serial( toCopy.GetSerial() );
-	Model( toCopy.GetID() );
-	Colour( toCopy.GetColour() );
-	X( toCopy.GetX() );
-	Y( toCopy.GetY() );
-	Z( toCopy.GetZ() );
-	Direction( toCopy.GetDir() );
+	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
+	PackShort( &internalBuffer[0], 5, toCopy.GetID() );
+	PackShort( &internalBuffer[0], 8, toCopy.GetColour() );
+	PackShort( &internalBuffer[0], 11, toCopy.GetX() );
+	PackShort( &internalBuffer[0], 13, toCopy.GetY() );
+	internalBuffer[17] = toCopy.GetDir();
+	internalBuffer[18] = toCopy.GetZ();
 	UI08 flag = 0;
+	if( toCopy.IsInvulnerable() )
+		flag |= 0x01;
+	if( toCopy.IsDead() )
+		flag |= 0x02;
 	if( toCopy.GetPoisoned() )
 		flag |= 0x04;
+	if( toCopy.IsAtWar() )
+		flag |= 0x40;
 	if( toCopy.GetVisible() != VT_VISIBLE )
 		flag |= 0x80;
-	Flag( flag );
+	internalBuffer[10] = flag;
 }
 void CPDrawGamePlayer::InternalReset( void )
 {
@@ -982,38 +937,7 @@ CPDrawGamePlayer::CPDrawGamePlayer( CChar &toCopy )
 	InternalReset();
 	CopyData( toCopy );
 }
-void CPDrawGamePlayer::Serial( SERIAL toSet )
-{
-	PackLong( &internalBuffer[0], 1, toSet );
-}
-void CPDrawGamePlayer::Model( SI16 toSet )
-{
-	PackShort( &internalBuffer[0], 5, toSet );
-}
-void CPDrawGamePlayer::Colour( SI16 toSet )
-{
-	PackShort( &internalBuffer[0], 8, toSet );
-}
-void CPDrawGamePlayer::Flag( UI08 toSet )
-{
-	internalBuffer[10] = toSet;
-}
-void CPDrawGamePlayer::X( SI16 toSet )
-{
-	PackShort( &internalBuffer[0], 11, toSet );
-}
-void CPDrawGamePlayer::Y( SI16 toSet )
-{
-	PackShort( &internalBuffer[0], 13, toSet );
-}
-void CPDrawGamePlayer::Direction( UI08 toSet )
-{
-	internalBuffer[17] = toSet;
-}
-void CPDrawGamePlayer::Z( SI08 toSet )
-{
-	internalBuffer[18] = toSet;
-}
+
 CPDrawGamePlayer &CPDrawGamePlayer::operator=( CChar &toCopy )
 {
 	CopyData( toCopy );
@@ -1518,8 +1442,7 @@ CPDrawContainer::CPDrawContainer( CItem &toCopy )
 }
 void CPDrawContainer::Model( UI16 newModel )
 {
-	internalBuffer[5] = (UI08)(newModel>>8);
-	internalBuffer[6] = (UI08)(newModel%256);
+	PackShort( &internalBuffer[0], 5, newModel );
 }
 CPDrawContainer &CPDrawContainer::operator=( CItem &toCopy )
 {
@@ -1532,10 +1455,7 @@ void CPDrawContainer::CopyData( CItem &toCopy )
 }
 void CPDrawContainer::Serial( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	PackLong( &internalBuffer[0], 1, toSet );
 }
 
 //	0x7C Packet
@@ -3061,6 +2981,20 @@ CPMapChange& CPMapChange::operator=( CBaseObject& moving )
 	return (*this);
 }
 
+//0x3C Packet
+//Items in Container (Variable # of bytes)
+//  BYTE cmd
+//  BYTE[2] blockSize
+//  BYTE[2] # of Item segments
+//  Item Segments:
+//    BYTE[4] itemID
+//    BYTE[2] model
+//    BYTE unknown1 (0x00)
+//    BYTE[2] # of items in stack
+//    BYTE[2] xLoc
+//    BYTE[2] yLoc
+//    BYTE[4] Container ItemID
+//    BYTE[2] color
 void CPItemsInContainer::InternalReset( void )
 {
 	internalBuffer.resize( 5 );
@@ -3073,47 +3007,34 @@ CPItemsInContainer::CPItemsInContainer()
 {
 	InternalReset();
 }
-CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, CChar *vendor )
-{
-	InternalReset();
-	if( ValidateObject( vendor ) )
-	{
-		isVendor		= true;
-		vendorSerial	= vendor->GetSerial() | BASEITEMSERIAL;
-	}
-	if( ValidateObject( container ) )
-		CopyData( mSock, (*container ) );
-}
-CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container )
-{
-	InternalReset();
-	if( ValidateObject( container ) )
-		CopyData( mSock, (*container) );
-}
 
-CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, bool corpseVal )
+CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType )
 {
-	InternalReset();
-	isCorpse = corpseVal;
 	if( ValidateObject( container ) )
+	{
+		InternalReset();
+		if( contType == 0x01 ) // Corpse
+			isCorpse = true;
+		else if( contType == 0x02 ) // Vendor
+		{
+			isVendor = true;
+			vendorSerial = container->GetSerial();
+		}
 		CopyData( mSock, (*container) );
+	}
 }
 
 UI16 CPItemsInContainer::NumberOfItems( void ) const
 {
-	return (UI16)( (internalBuffer[3]<<8) + internalBuffer[4] );
+	return static_cast<UI16>( (internalBuffer[3]<<8) + internalBuffer[4] );
 }
 
 void CPItemsInContainer::NumberOfItems( UI16 numItems )
 {
-	// set the number of items
-	internalBuffer[3]	= (UI08)(numItems>>8);
-	internalBuffer[4]	= (UI08)(numItems%256);
-	// knowing the number of items, set the packet size
 	UI16 packetSize		= (UI16)((numItems * 19) + 5);
 	internalBuffer.resize( packetSize );
-	internalBuffer[1]	= (UI08)(packetSize>>8);
-	internalBuffer[2]	= (UI08)(packetSize%256);
+	PackShort( &internalBuffer[0], 1, packetSize );
+	PackShort( &internalBuffer[0], 3, numItems );
 }
 void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum )
 {
@@ -3157,8 +3078,11 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 			{
 				internalBuffer.resize( internalBuffer.size() + 19 );
 				AddItem( ctr, itemCount );
-				CPQueryToolTip pSend( (*ctr) );
-				mSock->Send( &pSend );
+				if( !isVendor )
+				{
+					CPQueryToolTip pSend( (*ctr) );
+					mSock->Send( &pSend );
+				}
 				++itemCount;
 			}
 		}
@@ -3167,6 +3091,28 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	NumberOfItems( itemCount );
 }
 
+void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
+{
+	size_t numItems = UnpackUShort( &internalBuffer[0], 3 );
+	if( fullHeader )
+		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << internalBuffer.size() << std::endl;
+	outStream << "Block size     : " << UnpackUShort( &internalBuffer[0], 1 ) << std::endl;
+	outStream << "Number of Items: " << std::dec << numItems << std::endl;
+	int baseOffset = 5;
+	for( size_t x = 0; x < numItems; ++x )
+	{
+		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << UnpackULong( &internalBuffer[0], baseOffset ) << std::endl;
+		outStream << "      Model     : " << "0x" << UnpackUShort( &internalBuffer[0], baseOffset+=4 ) << std::endl;
+		outStream << "      Amount    : " << std::dec << UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << std::endl;
+		outStream << "      XYZ       : " << UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << "," <<
+			UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << "," << static_cast<UI16>(internalBuffer[baseOffset+=2] ) << std::endl;
+		outStream << "      Container : " << "0x" << std::hex << UnpackULong( &internalBuffer[0], ++baseOffset) << std::endl;
+		outStream << "      Color     : " << std::dec << UnpackUShort( &internalBuffer[0], baseOffset+=2) << std::endl;
+	}
+	outStream << "  Raw dump      :" << std::endl;
+
+	cPUOXBuffer::Log( outStream, false );
+}
 
 //0x74 Packet
 //Last Modified on Sunday, 03-May-1998 22:52:07 EDT 
@@ -3182,29 +3128,21 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 //NOTE: This packet is always preceded by a describe contents packet (0x3c) with the container id as the (vendorID | 0x40000000) and then an open container packet (0x24?) with the vendorID only and a model number of 0x0030 (probably the model # for the buy screen)
 void CPOpenBuyWindow::InternalReset( void )
 {
-	internalBuffer.resize( 16384 );	// start big, and work back down
+	internalBuffer.resize( 8 );	// start big, and work back down
 	internalBuffer[0] = 0x74;
-	internalBuffer[1] = 0;
-	internalBuffer[2] = 0;
-	internalBuffer[3] = 0;
-	internalBuffer[4] = 0;
-	internalBuffer[5] = 0;
-	internalBuffer[6] = 0;
-	internalBuffer[7] = 0;
 }
 CPOpenBuyWindow::CPOpenBuyWindow()
 {
 	InternalReset();
 }
-CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *p )
+CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID )
 {
-	InternalReset();
-	if( ValidateObject( p ) )
-		VendorID( p->GetSerial() | BASEITEMSERIAL );
-	else
-		VendorID( INVALIDSERIAL );
 	if( ValidateObject( container ) )
-		CopyData( (*container), p );
+	{
+		InternalReset();
+		PackLong( &internalBuffer[0], 3, container->GetSerial() );
+		CopyData( (*container), vendorID );
+	}
 }
 
 UI08 CPOpenBuyWindow::NumberOfItems( void ) const
@@ -3217,42 +3155,44 @@ void CPOpenBuyWindow::NumberOfItems( UI08 numItems )
 	// set the number of items
 	internalBuffer[7] = numItems;
 }
-void CPOpenBuyWindow::VendorID( SERIAL ser )
-{
-	PackLong( &internalBuffer[0], 3, ser );
-}
-UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling );
+
+UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling );
 UI32 calcValue( CItem *i, UI32 value );
-SI16 CPOpenBuyWindow::AddItem( CItem *toAdd, CChar *p, UI16 baseOffset )
+void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset )
 {
 	UI32 value = calcValue( toAdd, toAdd->GetBuyValue() );
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
-		value = calcGoodValue( p, toAdd, value, false );
+		value = calcGoodValue( tReg, toAdd, value, false );
+
 	std::string itemname;
 	itemname.reserve( MAX_NAME );
-	size_t sLen = getTileName( toAdd, itemname ); // Item name length, don't strip the NULL (3D client doesn't like it)
+	UI08 sLen = 0;
+	UString temp	= toAdd->GetName() ;
+	temp			= temp.simplifyWhiteSpace();
+	if( temp.substr( 0, 1 ) == "#" )
+	{
+		itemname = UString::number( 1020000 + toAdd->GetID() );
+		sLen = static_cast<UI08>(itemname.size() + 1);
+	}
+	else
+		sLen = static_cast<UI08>(getTileName( toAdd, itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
 
 	internalBuffer.resize( baseOffset + 5 + sLen );
-	PackLong( &internalBuffer[0], baseOffset + 0, value );
-	internalBuffer[baseOffset +  4] = static_cast< UI08 >(sLen);
+	PackLong( &internalBuffer[0], baseOffset, value );
+	internalBuffer[baseOffset += 4] = sLen;
 
 	for( UI08 k = 0; k < sLen; ++k )
-		internalBuffer[baseOffset + 5 + k] = itemname[k];
-	return (SI16)(5 + sLen);
-}
-void CPOpenBuyWindow::Container( CItem *toAdd, CChar *p )
-{
-	if( ValidateObject( p ) )
-		VendorID( p->GetSerial() );
-	else
-		VendorID( INVALIDSERIAL );
-	CopyData( (*toAdd), p );
+		internalBuffer[++baseOffset] = itemname[k];
+	++baseOffset;
 }
 
-void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *p )
+void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
+	CTownRegion *tReg = NULL;
+	if( cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject( vendorID ) )
+		tReg = calcRegionFromXY( vendorID->GetX(), vendorID->GetY(), vendorID->WorldNumber() );
 	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
@@ -3260,7 +3200,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *p )
 		{
 			if( !ctr->isFree() )
 			{
-				length += AddItem( ctr, p, length );
+				AddItem( ctr, tReg, length );
 				++itemCount;
 			}
 		}
@@ -3276,15 +3216,15 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << internalBuffer.size() << std::endl;
 	outStream << "Block size     : " << UnpackUShort( &internalBuffer[0], 1 ) << std::endl;
 	outStream << "Vendor ID      : " << std::hex << UnpackULong( &internalBuffer[0], 3 ) << std::endl;
-	outStream << "Number of Items: " << std::dec << internalBuffer[7] << std::endl;
+	outStream << "Number of Items: " << std::dec << static_cast<UI16>(internalBuffer[7]) << std::endl;
 	int baseOffset = 8;
 	for( UI32 x = 0; x < internalBuffer[7]; ++x )
 	{
 		outStream << "  ITEM " << x << "      Price: " << UnpackULong( &internalBuffer[0], baseOffset ) << std::endl;
 		baseOffset += 4;
-		outStream << "      Len  : " << internalBuffer[baseOffset] << std::endl;
+		outStream << "      Len  : " << static_cast<UI16>(internalBuffer[baseOffset]) << std::endl;
 		outStream << "      Name : ";
-		for( UI32 y = 0; y < internalBuffer[baseOffset]; ++y )
+		for( UI08 y = 0; y < internalBuffer[baseOffset]; ++y )
 			outStream << internalBuffer[baseOffset + 1 + y];
 		baseOffset += internalBuffer[baseOffset] + 1;
 		outStream << std::endl;
@@ -3766,15 +3706,9 @@ void CPDrawObject::CopyData( CChar& mChar )
 	PackShort( &internalBuffer[0], 11, mChar.GetY() );
 	PackShort( &internalBuffer[0], 15, mChar.GetSkin() );
 
-	SetZ( mChar.GetZ() );
+	internalBuffer[13] = mChar.GetZ();
 	internalBuffer[14] = mChar.GetDir();
 }
-
-void CPDrawObject::SetZ( UI08 value )
-{
-	internalBuffer[13] = value;
-}
-
 
 //0x89 Packet
 //Corpse Clothing (Variable # of bytes) 
@@ -3903,14 +3837,16 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 		PackShort( &internalBuffer[0],  byteNum+=2, mItem.GetAmount() );
 	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
 	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );	// Enable Dye and Move
-	internalBuffer[byteNum+=2] = mItem.GetZ();
 	if( mItem.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[byteNum-4]	+= 0x80;	// Enable direction
-		internalBuffer[++byteNum]	= mItem.GetDir();
+		internalBuffer[byteNum-2]	+= 0x80;	// Enable direction
+		internalBuffer[byteNum+=2]	= mItem.GetDir();
+		internalBuffer[++byteNum]	= mItem.GetZ();
 		++internalBuffer[2];
 	}
+	else
+		internalBuffer[byteNum+=2] = mItem.GetZ();
 
 	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
 		PackShort( &internalBuffer[0], ++byteNum, 0x00C6 );
@@ -5077,9 +5013,9 @@ void CPSellList::InternalReset( void )
 	internalBuffer.resize( 9 );
 	internalBuffer[0] = 0x9E;
 }
-void CPSellList::CopyData( CChar& mChar, CChar& vendor )
+void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 {
-	CItem *sellPack = vendor.GetItemAtLayer( IL_SELLCONTAINER );
+	CItem *sellPack = vendorID.GetItemAtLayer( IL_SELLCONTAINER );
 	CItem *ourPack	= mChar.GetPackItem();
 
 	UI16 numItems		= 0;
@@ -5087,20 +5023,23 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendor )
 
 	if( ValidateObject( sellPack ) && ValidateObject( ourPack ) )
 	{
+		CTownRegion *tReg = NULL;
+		if( cwmWorldState->ServerData()->TradeSystemStatus() )
+			tReg = calcRegionFromXY( vendorID.GetX(), vendorID.GetY(), vendorID.WorldNumber() );
 		CDataList< CItem * > *spCont = sellPack->GetContainsList();
 		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
 		{
 			if( ValidateObject( spItem ) )
-				AddContainer( &vendor, spItem, ourPack, numItems, packetLen );
+				AddContainer( tReg, spItem, ourPack, numItems, packetLen );
 		}
 	}
 
 	PackShort( &internalBuffer[0], 1, (UI16)packetLen );
-	PackLong( &internalBuffer[0], 3, vendor.GetSerial() );
+	PackLong( &internalBuffer[0], 3, vendorID.GetSerial() );
 	PackShort( &internalBuffer[0], 7, numItems );
 }
 
-void CPSellList::AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen )
+void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen )
 {
 	CDataList< CItem * > *opCont = ourPack->GetContainsList();
 	for( CItem *opItem = opCont->First(); !opCont->Finished(); opItem = opCont->Next() )
@@ -5108,13 +5047,11 @@ void CPSellList::AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI1
 		if( ValidateObject( opItem ) )
 		{
 			if( opItem->GetType() == IT_CONTAINER )
-			{
-				AddContainer( vendor, spItem, opItem, numItems, packetLen );
-			}
+				AddContainer( tReg, spItem, opItem, numItems, packetLen );
 			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
 				( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
 			{
-				AddItem( vendor, spItem, opItem, packetLen );
+				AddItem( tReg, spItem, opItem, packetLen );
 				++numItems;
 			}
 			if( numItems >= 60 )
@@ -5123,7 +5060,7 @@ void CPSellList::AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI1
 	}
 }
 
-void CPSellList::AddItem( CChar *vendor, CItem *spItem, CItem *opItem, size_t &packetLen )
+void CPSellList::AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_t &packetLen )
 {
 	std::string itemname;
 	size_t stringLen	= getTileName( opItem, itemname );
@@ -5135,7 +5072,7 @@ void CPSellList::AddItem( CChar *vendor, CItem *spItem, CItem *opItem, size_t &p
 	PackShort( &internalBuffer[0], packetLen+8, opItem->GetAmount() );
 	UI32 value = calcValue( opItem, spItem->GetSellValue() );
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
-		value = calcGoodValue( vendor, spItem, value, true );
+		value = calcGoodValue( tReg, spItem, value, true );
 	PackShort( &internalBuffer[0], packetLen+10, value );
 	PackShort( &internalBuffer[0], packetLen+12, stringLen );
 	for( size_t i = 0; i < stringLen; ++i )

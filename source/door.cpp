@@ -7,11 +7,13 @@
 namespace UOX
 {
 
-#define DOORTYPES 19
+#define DOORTYPES 29
 
 const UI16 doorbase[DOORTYPES] = {
-0x0675, 0x0685, 0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0839, 0x084C, 
-0x0866, 0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0824, 0x190E
+0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685, 
+0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839, 
+0x084C, 0x0866, 0x190E, 0x1FED, 0x241F, 0x2421, 0x2423, 0x26F4, 
+0x2990, 0x299E, 0x2A05, 0x2A0D, 0x2A15
 };
 
 //o--------------------------------------------------------------------------
@@ -48,133 +50,236 @@ void useDoor( CSocket *s, CItem *item )
 		db = doorbase[i];
 		
 		x = item->GetID(); 
-		if( x == (db + 0) )
+		
+		// With the new sliding doors, we have to filter out which doors are which
+		if( db >= doorbase[0] && db <= doorbase[19])
 		{
-			item->IncID( 1 );
-			if( db != 0x190E )
-				item->IncLocation( -1, 1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 1) )
-		{
-			item->IncID( -1 );
-			if( db != 0x190E )
+			// Ok these are the old doors so we use our general logic
+
+			if( x == (db + 0) )
+			{
+				item->IncID( 1 );
+				if( db != 0x190E )
+					item->IncLocation( -1, 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 1) )
+			{
+				item->IncID( -1 );
+				if( db != 0x190E )
+					item->IncLocation( 1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 2) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 3) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 4) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( -1, 0 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 5) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 1, 0 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 6) )
+			{
+				item->IncID( 1 );
 				item->IncLocation( 1, -1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 7) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, 1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 8) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 9) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 10) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 11) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, 1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 12) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 13) )
+			{
+				item->IncID( -1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if( x == (db + 14) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == (db + 15) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed = true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
-		else if( x == (db + 2) )
+		else if( db == doorbase[20] )
 		{
-			item->IncID( 1 );
-			item->IncLocation( 1, 1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			// normal door
+			if ( x == ( db + 0 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
-		else if( x == (db + 3) )
+		else if( db == doorbase[21] )
 		{
-			item->IncID( -1 );
-			item->IncLocation( -1, -1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
+			// this door isn't in the 1/2 format but is now in the 2/1 format.
+			if ( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
-		else if( x == (db + 4) )
+		else if( db == doorbase[22] )
 		{
-			item->IncID( 1 );
-			item->IncLocation( -1, 0 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			// this door isn't in the 1/2 format but is now in the 2/1 format.
+			if ( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
-		else if( x == (db + 5) )
+		else if( db == doorbase[23])
 		{
-			item->IncID( -1 );
-			item->IncLocation( 1, 0 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
+			// Last of the doors. But still not a sliding door.
+			if ( x == ( db + 0 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
-		else if( x == (db + 6) )
+		else if( db >= doorbase[24] && db <= doorbase[DOORTYPES] )
 		{
-			item->IncID( 1 );
-			item->IncLocation( 1, -1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 7) )
-		{
-			item->IncID( -1 );
-			item->IncLocation( -1, 1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
-		}
-		else if( x == (db + 8) )
-		{
-			item->IncID( 1 );
-			item->IncLocation( 1, 1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 9) )
-		{
-			item->IncID( -1 );
-			item->IncLocation( -1, -1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
-		}
-		else if( x == (db + 10) )
-		{
-			item->IncID( 1 );
-			item->IncLocation( 1, -1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 11) )
-		{
-			item->IncID( -1 );
-			item->IncLocation( -1, 1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
-		}
-		else if( x == (db + 12) )
-		{
-			item->IncID( 1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 13) )
-		{
-			item->IncID( -1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
-		}
-		else if( x == (db + 14) )
-		{
-			item->IncID( 1 );
-			item->IncLocation( 0, -1 );
-			changed = true;
-			Effects->doorSound( item, x, false );
-			Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
-		}
-		else if( x == (db + 15) )
-		{
-			item->IncID( -1 );
-			item->IncLocation( 0, 1 );
-			changed = true;
-			Effects->doorSound( item, x, true );
-			item->SetDoorOpen( false );
+			// the sliding doors
+			if ( x == ( db + 0 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
 		}
 	}
 	if( changed == false && s != NULL ) 

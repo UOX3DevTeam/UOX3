@@ -2219,7 +2219,7 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							break;
 						}
 						case 0x07A0:	 // PORT[0154] // whatever that stands for..
-							//ServerPort( value.toUShort() );
+							ServerPort( value.toUShort() );
 							break;
 						case 0x07A5:	 // ACCESSDIRECTORY[0128]
 							Directory( CSDDP_ACCESS, value );

@@ -449,8 +449,8 @@ void WstatsTarget( CSocket *s )
 	wStat.AddData( "X", i->GetX() );
 	wStat.AddData( "Y", i->GetY() );
 	char temp[15];
-	sprintf( temp, "%d/%d", i->GetZ(), i->GetDispZ() );
-	wStat.AddData( "Z/DispZ", temp );
+	sprintf( temp, "%d", i->GetZ() );
+	wStat.AddData( "Z", temp );
 	wStat.AddData( "Wander", i->GetNpcWander() );
 	wStat.AddData( "FX1", i->GetFx( 0 ) );
 	wStat.AddData( "FY1", i->GetFy( 0 ) );
@@ -1037,19 +1037,18 @@ bool BuyShop( CSocket *s, CChar *c )
 	if( !ValidateObject( buyPack ) || !ValidateObject( boughtPack ) )
 		return false;
 	
-	buyPack->Sort();
-	boughtPack->Sort();
-	c->Update( s );
+	//buyPack->Sort();
+	//boughtPack->Sort();
+	//c->Update( s );
 
-	CPItemsInContainer iic( s, buyPack,c );	s->Send( &iic );
+	CPItemsInContainer iic( s, buyPack, 0x02 );			s->Send( &iic );
+	CPOpenBuyWindow obw( buyPack, c );					s->Send( &obw );
+	CPItemsInContainer iic2( s, boughtPack, 0x02 );		s->Send( &iic2 );
+	CPOpenBuyWindow obw2( boughtPack, c );				s->Send( &obw2 );
 	CPDrawContainer toSend;
 	toSend.Model( 0x0030 );
 	toSend.Serial( c->GetSerial() );
 	s->Send( &toSend );
-	CPOpenBuyWindow obw( buyPack, c );		s->Send( &obw );
-
-	CPItemsInContainer iic2( s, boughtPack, c );	s->Send( &iic2 );
-	CPOpenBuyWindow obw2( boughtPack, c );		s->Send( &obw2 );
 
 	s->statwindow( s->CurrcharObj() ); // Make sure the gold total has been sent.
 	return true;

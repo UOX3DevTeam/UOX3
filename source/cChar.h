@@ -55,7 +55,6 @@ protected:
 	COLOUR		saycolor;
 	COLOUR		emotecolor;
 
-	SI08		dispz; 
 	SI08		stealth; // stealth ( steps already done, -1=not using )
 	SI08		cell; // Reserved for jailing players
 	UI08		running; // Stamina Loose while running
@@ -200,7 +199,6 @@ public:
 	void		SetEmoteColour( COLOUR newValue );
 	void		SetSayColour( COLOUR newValue );
 
-	SI08		GetDispZ( void ) const;
 	SI08		GetStealth( void ) const;
 	SI08		GetCell( void ) const;
 	UI08		GetRunning( void ) const;
@@ -208,7 +206,6 @@ public:
 	CTownRegion *GetRegion( void ) const;
 	UI08		GetRegionNum( void ) const;
 
-	void			SetDispZ( SI08 newZ );
 	void			SetCell( SI08 newVal );
 	void			SetStealth( SI08 newValue );
 	void			SetRunning( UI08 newValue );

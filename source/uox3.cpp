@@ -2827,8 +2827,7 @@ size_t getTileName( CItem *i, std::string& itemname )
 		else if( tile.DisplayAsA() )
 			temp = "a " + temp;
 	}
-	else
-		temp = UString::number( getAmount ) + " " + temp;
+
 	// Find out if the name has a % in it
 	if( temp.sectionCount("%") > 0 )
 	{

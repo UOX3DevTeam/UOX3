@@ -16,12 +16,6 @@ public:
 					CPCharLocBody();
 					CPCharLocBody( CChar &toCopy );
 	virtual			~CPCharLocBody();
-	virtual void	PlayerID( SERIAL toPut );
-	virtual void	BodyType( UI16 toPut );
-	virtual void	X( UI16 toPut );
-	virtual void	Y( UI16 toPut );
-	virtual void	Z( UI16 toPut );
-	virtual void	Direction( UI08 toPut );
 	virtual void	Flag( UI08 toPut );
 	virtual void	HighlightColour( UI08 color );
 	CPCharLocBody &	operator=( CChar &toCopy );
@@ -86,15 +80,7 @@ public:
 					{
 					}
 					CPExtMove( CChar &toCopy );
-	virtual void	Serial( SERIAL newSerial );
-	virtual void	ID( UI16 bodyID );
-	virtual void	X( SI16 newValue );
-	virtual void	Y( SI16 newValue );
-	virtual void	Z( SI08 newValue );
-	virtual void	Direction( UI08 newValue );
-	virtual void	Colour( UI16 colourID );
 	virtual void	FlagColour( UI08 newValue );
-	virtual void	Flag( UI08 newValue );
 	CPExtMove		&operator=( CChar &toCopy );
 };
 
@@ -248,14 +234,6 @@ public:
 		{
 		}
 					CPDrawGamePlayer( CChar &toCopy );
-	virtual void	Serial( SERIAL toSet );
-	virtual void	Model( SI16 toSet );
-	virtual void	Colour( SI16 toSet );
-	virtual void	Flag( UI08 toSet );
-	virtual void	X( SI16 toSet );
-	virtual void	Y( SI16 toSet );
-	virtual void	Direction( UI08 toSet );
-	virtual void	Z( SI08 toSet );
 	CPDrawGamePlayer &operator=( CChar &toCopy );
 };
 
@@ -873,13 +851,12 @@ public:
 	{
 	}
 					CPItemsInContainer();
-					CPItemsInContainer( CSocket *mSock, CItem *container );
-					CPItemsInContainer( CSocket *mSock, CItem *container, CChar *vendor );
-					CPItemsInContainer( CSocket *mSock, CItem *container, bool corpseVal );
+					CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType = 0x00 );
 	virtual void	NumberOfItems( UI16 numItems );
 	virtual UI16	NumberOfItems( void ) const;
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum );
-	virtual void	Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount );
+	void			Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
 class CPCorpseClothing : public cPUOXBuffer
@@ -902,18 +879,16 @@ class CPOpenBuyWindow : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( CItem& toCopy, CChar *p );
+	virtual void	CopyData( CItem& toCopy, CChar *vendorID );
 public:
 	virtual			~CPOpenBuyWindow()
 	{
 	}
 					CPOpenBuyWindow();
-					CPOpenBuyWindow( CItem *container, CChar *p );
+					CPOpenBuyWindow( CItem *container, CChar *vendorID );
 	virtual void	NumberOfItems( UI08 numItems );
 	virtual UI08	NumberOfItems( void ) const;
-	virtual SI16	AddItem( CItem *toAdd, CChar *p, UI16 baseOffset );
-	virtual void	Container( CItem *toAdd, CChar *p );
-	virtual void	VendorID( SERIAL ser );
+	virtual void	AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
@@ -981,7 +956,6 @@ public:
 					CPDrawObject( CChar &mChar );
 	virtual			~CPDrawObject();
 	void			Finalize( void );
-	void			SetZ( UI08 value );
 	void			AddItem( CItem *toAdd );
 	void			SetRepFlag( UI08 value );
 	void			SetCharFlag( UI08 value );
@@ -1282,8 +1256,8 @@ public:
 	}
 					CPSellList();
 					CPSellList( CChar& mChar, CChar& vendor );
-	void			AddContainer( CChar *vendor, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen );
-	void			AddItem( CChar *vendor, CItem *spItem, CItem *opItem, size_t &packetLen );
+	void			AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen );
+	void			AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_t &packetLen );
 };
 
 }

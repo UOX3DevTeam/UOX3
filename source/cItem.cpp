@@ -1713,7 +1713,7 @@ void CItem::SendToSocket( CSocket *mSock )
 		{
 			CPCorpseClothing cpcc( this );
 			mSock->Send( &cpcc );
-			CPItemsInContainer itemsIn( mSock, this, true );
+			CPItemsInContainer itemsIn( mSock, this, 0x01 );
 			mSock->Send( &itemsIn );
 		}
 		CPQueryToolTip pSend( (*this) );

@@ -1,3 +1,12 @@
+12/29/2004 - giwo
+	Removed CChar::dispz as it served no purpose.
+	Fixed an issue causing the Buy Window to not display prices and display items only after scrolling.
+	Fixed an issue causing the server to send extra unnecesarry QueryToolTip packets.
+	Fixed packet issues causing Dir and Z not to function properly on Items.
+	Fixed a packet issue causing combat targets not to remaing highlighted.
+	Fixed a crash on login casued by FindPlayersInVisrange().
+	Minor cleanups in CPacketSend.cpp
+
 11/24/2004 - giwo
 	Removed unnecesarry Constructors/Destructors and did some minor updates.
 

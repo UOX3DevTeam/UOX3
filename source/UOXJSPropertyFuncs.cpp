@@ -637,8 +637,7 @@ namespace UOX
 				case CCP_TITLE:	gPriv->SetTitle( encaps.toString() );										break;
 				case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
 				case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
-				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );
-								gPriv->SetDispZ( (SI08)encaps.toInt() );									break;
+				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
 				case CCP_ID:		
 					gPriv->SetID( (UI16)encaps.toInt() );
 					gPriv->SetOrgID( (UI16)encaps.toInt() );

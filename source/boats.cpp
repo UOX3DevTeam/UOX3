@@ -445,7 +445,6 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	}
 	//their x pos is set by BuildHouse(), so just fix their Z...
 	mChar->SetZ( z + 3 );
-	mChar->SetDispZ( z + 3 );
 	mChar->SetMulti( b );
 	return true;
 }

@@ -56,9 +56,11 @@ UI32 calcValue( CItem *i, UI32 value )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
 //o---------------------------------------------------------------------------o
-UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
+UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 {
-	CTownRegion *tReg	= calcRegionFromXY( npcnum2->GetX(), npcnum2->GetY(), npcnum2->WorldNumber() );
+	if( tReg == NULL )
+		return value;
+
 	SI16 good			= i->GetGood();
 	SI32 regvalue		= 0;
 
@@ -77,7 +79,7 @@ UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
 	else
 		value += x;
 
-	if( value <= 0 )
+	if( value < 1 )
 		value = 1;
 
 	return value;

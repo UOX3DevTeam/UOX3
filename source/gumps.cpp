@@ -1756,10 +1756,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 5:		j->SetRace( reply.toUShort() );			break;	// Race
 			case 6:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );	break;	// X
 			case 7:		j->SetLocation( j->GetX(), reply.toShort(), j->GetZ() );	break;	// Y
-			case 8:													// Z
-				j->SetZ( reply.toByte() );
-				j->SetDispZ( reply.toByte() );
-				break;
+			case 8:		j->SetZ( reply.toByte() );									break;	// Z
 			case 9:		j->SetDir( static_cast<UI08>((reply.toUByte())&0x0F) );		break;	// Direction
 			case 10:												// Strength
 				if( reply.toShort() > 0 ) 

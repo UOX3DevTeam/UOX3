@@ -134,7 +134,7 @@ CBaseObject *		DEFNPC_PETGUARDING 			= NULL;
 
 CChar::CChar() : CBaseObject(),
 robe( DEFCHAR_ROBE ), townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
-dispz( DEFCHAR_DISPZ ), fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
+fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), deaths( DEFCHAR_DEATHS ), packitem( DEFCHAR_PACKITEM ), fixedlight( DEFCHAR_FIXEDLIGHT ), 
@@ -1139,16 +1139,6 @@ void CChar::SetFz( SI08 newVal )
 	fz = newVal;
 }
 
-SI08 CChar::GetDispZ( void ) const
-{
-	return dispz;
-}
-void CChar::SetDispZ( SI08 newZ )
-{
-	dispz = newZ;
-	Dirty( UT_UPDATE );
-}
-
 SI08 CChar::GetStealth( void ) const
 {
 	return stealth;
@@ -1221,11 +1211,7 @@ UI08 CChar::GetRegionNum( void ) const
 void CChar::SetLocation( const CBaseObject *toSet )
 {
 	if( toSet != NULL )
-	{
 		SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber() );
-		if( toSet->GetObjType() == OT_CHAR )
-			dispz = ( (CChar *)toSet )->GetDispZ();
-	}
 }
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
@@ -1237,7 +1223,6 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	x		= newX;
 	y		= newY;
 	z		= newZ;
-	dispz	= newZ;
 	WorldNumber( world );
 	CMultiObj *newMulti = findMulti( newX, newY, newZ, world );
 	SetMulti( newMulti );
@@ -1732,7 +1717,6 @@ void CChar::CopyData( CChar *target )
 		target->SetOrgName( origName );
 		target->SetAccount( GetAccount() );
 		target->SetLocation( this );
-		target->SetDispZ( dispz );
 		target->SetDir( dir );
 		target->SetID( id );
 		target->SetOrgID( origID );
@@ -1892,7 +1876,6 @@ void CChar::SendToSocket( CSocket *s )
 
 		UI08 cFlag = 0;
 		CPDrawObject toSend = (*this);
-		toSend.SetZ( GetDispZ() );
 		if( ( !IsNpc() && !isOnline( this ) ) || ( GetVisible() != VT_VISIBLE )  || ( IsDead() && !IsAtWar() ) )
 			cFlag |= 0x80;
 		if( GetPoisoned() )
@@ -2310,7 +2293,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "Emotion=" << GetEmoteColour() << std::endl;
 	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
 	dumping << "WanderArea=" << GetFx( 0 ) << "," << GetFy( 0 ) << "," << GetFx( 1 ) << "," << GetFy( 1 ) << "," << (SI16)GetFz() << std::endl;
-	dumping << "DisplayZ=" << (SI16)GetDispZ() << std::endl;
 	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
 	dumping << "NpcWander=" << (SI16)GetNpcWander() << std::endl;
@@ -2945,10 +2927,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				break;
 			case 'D':
 				if( UTag == "DISPLAYZ" )
-				{
-					SetDispZ( data.toByte() );
 					rvalue = true;
-				}
 				else if( UTag == "DEATHS" )
 				{
 					SetDeaths( data.toUShort() );
@@ -3865,7 +3844,6 @@ void CChar::WalkZ( SI08 newZ )
 {
 	oldLocZ = z;
 	z		= newZ;
-	dispz	= newZ;
 }
 
 void CChar::WalkDir( SI08 newDir )

@@ -802,8 +802,6 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 	bool checkY			= (oldy != newy);
 
 	CPExtMove toSend	= (*c);
-	if( c->IsNpc() && c->CanRun() && c->IsAtWar() )
-		toSend.Direction( dir|0x80 );
 
 	Network->PushConn();
 	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
@@ -1146,8 +1144,6 @@ void cMovement::CombatWalk( CChar *i ) // Only for switching to combat mode
 	if( !ValidateObject( i ) )
 		return;
 	CPExtMove toSend = (*i);
-	if( i->IsNpc() && i->CanRun() && i->IsAtWar() )
-		toSend.Direction( i->GetDir()|0x80 );
 
 	if( !i->IsAtWar() )
 		i->SetTarg( NULL );
@@ -1777,7 +1773,7 @@ void cMovement::deny( CSocket *mSock, CChar *s, SI16 sequence )
 	denPack.X( s->GetX() );
 	denPack.Y( s->GetY() );
 	denPack.Direction( s->GetDir() );
-	denPack.Z( s->GetDispZ() );
+	denPack.Z( s->GetZ() );
 
 	if( mSock != NULL )
 	{

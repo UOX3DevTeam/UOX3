@@ -13,8 +13,11 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
-		if( objInOldRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
-			nearbyChars.push_back( mSock );
+		if( ValidateObject( mChar ) )
+		{
+			if( objInOldRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+				nearbyChars.push_back( mSock );
+		}
 	}
 	Network->PopConn();
 	return nearbyChars;
@@ -27,8 +30,11 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
-		if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
-			nearbyChars.push_back( mSock );
+		if( ValidateObject( mChar ) )
+		{
+			if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+				nearbyChars.push_back( mSock );
+		}
 	}
 	Network->PopConn();
 	return nearbyChars;

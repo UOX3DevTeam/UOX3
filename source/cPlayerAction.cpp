@@ -2786,7 +2786,11 @@ bool CPISingleClick::Handle( void )
 			realname = UString::sprintf( "%u %ss", getAmount, i->GetName().c_str() );
 	}
 	else
+	{
 		getTileName( i, realname );
+		if( i->GetAmount() > 1 )
+			realname = UString::number( getAmount ) + " " + realname;
+	}
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
