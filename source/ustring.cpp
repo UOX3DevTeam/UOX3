@@ -52,16 +52,16 @@ UString UString::stripWhiteSpace() const
 	// Eliminate any leading white space
 	UString data  = static_cast<UString>((*this));
 	size_t offset = (*this).find_first_not_of(MYWHITESPACE) ;
-	if ( offset != std::string::npos )
+	if( offset != std::string::npos )
 	{
 		data = (*this).substr(offset) ;
 	}
 	offset = data.find_last_not_of(MYWHITESPACE) ;
-	if ( offset!=std::string::npos )
+	if( offset!=std::string::npos )
 	{
 		data = data.substr(0,offset+1) ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++    
 UString UString::simplifyWhiteSpace() const
@@ -77,9 +77,9 @@ UString UString::simplifyWhiteSpace() const
 	{
 		value[0] = working[i] ;
 		std::string  test = value ;
-		if ( test.find_first_of(MYWHITESPACE) != std::string::npos )
+		if( test.find_first_of(MYWHITESPACE) != std::string::npos )
 		{
-			if ( !first )
+			if( !first )
 			{
 				data = (stdstring)(data) + test;
 				first = true ;
@@ -93,13 +93,13 @@ UString UString::simplifyWhiteSpace() const
 		}
 	}
 
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::section(const char* sep,int start,int stop)
 {
 	std::string temp = sep ;
-	return(section(temp,start,stop) );
+	return (section(temp,start,stop) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::section(std::string sep,int start,int stop)
@@ -113,14 +113,14 @@ UString UString::section(std::string sep,int start,int stop)
 	while ( startoffset != std::string::npos )
 	{
 		count++ ;
-		if ( count == start )
+		if( count == start )
 		{
 			match = true ;
 			// We dont return the seperator, so jump over it
 			size_t tempoffset = startoffset ;
 			while ( stopoffset != std::string::npos )
 			{
-				if ( count == stop )
+				if( count == stop )
 				{
 					break ;
 				}
@@ -136,7 +136,7 @@ UString UString::section(std::string sep,int start,int stop)
 		}
 		else
 		{
-			if ( stopoffset != std::string::npos )
+			if( stopoffset != std::string::npos )
 				startoffset = stopoffset+ sep.length();
 			else
 				startoffset	= static_cast<size_t>(std::string::npos) ;
@@ -144,15 +144,15 @@ UString UString::section(std::string sep,int start,int stop)
 
 		}
 	}
-	if ( match )
+	if( match )
 	{
 		size_t length = stopoffset - startoffset ;
-		if ( stopoffset == std::string::npos )
+		if( stopoffset == std::string::npos )
 			length = (*this).length() - startoffset ;
 
 		data = (*this).substr(startoffset,length) ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( float n )
@@ -161,7 +161,7 @@ UString  UString::setNum ( float n )
 	input << n ;
 	UString data ;
 	input >> data ;
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( double n )
@@ -170,7 +170,7 @@ UString  UString::setNum ( double n )
 	input << n ;
 	UString data ;
 	input >> data ;
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( short n, int base  )
@@ -190,7 +190,7 @@ UString  UString::setNum ( short n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( unsigned short n, int base  )
@@ -210,7 +210,7 @@ UString  UString::setNum ( unsigned short n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( int n, int base  )
@@ -230,7 +230,7 @@ UString  UString::setNum ( int n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( unsigned int n, int base  )
@@ -250,7 +250,7 @@ UString  UString::setNum ( unsigned int n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( long n, int base  )
@@ -270,7 +270,7 @@ UString  UString::setNum ( long n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString  UString::setNum ( unsigned long n, int base  )
@@ -290,7 +290,7 @@ UString  UString::setNum ( unsigned long n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -303,7 +303,7 @@ UString UString::number (float n)
 	std::stringstream input ;
 	input << n ;
 	input >> data ;
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number (double n)
@@ -312,7 +312,7 @@ UString UString::number (double n)
 	std::stringstream input ;
 	input << n ;
 	input >> data ;
-	return(data );
+	return ( data );
 }
 
 
@@ -338,7 +338,7 @@ UString UString::number ( long n, int base  )
 			break ;
 	}
 
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( unsigned long n, int base )
@@ -358,7 +358,7 @@ UString UString::number ( unsigned long n, int base )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( int n, int base  )
@@ -378,7 +378,7 @@ UString UString::number ( int n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 UString UString::number ( unsigned int n, int base  ) 
@@ -398,14 +398,14 @@ UString UString::number ( unsigned int n, int base  )
 			input >> std::oct>> data ;
 			break ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::lower() const
 {
 	UString sReturn = *this; 
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::tolower);
-	return(sReturn);
+	return ( sReturn );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::upper() const
@@ -413,7 +413,7 @@ UString UString::upper() const
 	UString sReturn = *this;
 
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::toupper);
-	return(sReturn);
+	return ( sReturn );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 float UString::toFloat(bool * ok) const
@@ -422,9 +422,9 @@ float UString::toFloat(bool * ok) const
 	std::stringstream input ;
 	input << *this ;
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 double UString::toDouble(bool * ok)  const  
@@ -433,9 +433,19 @@ double UString::toDouble(bool * ok)  const
 	std::stringstream input ;
 	input << *this ;
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
-	return(data );
+	return ( data );
+}
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+char UString::toByte( bool *ok, int base ) const
+{
+	return static_cast< char >( toShort( ok, base ) );
+}
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+unsigned char UString::toUByte( bool *ok, int base ) const
+{
+	return static_cast< unsigned char >( toUShort( ok, base ) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 short UString::toShort ( bool * ok , int base  ) const 
@@ -446,11 +456,11 @@ short UString::toShort ( bool * ok , int base  ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -468,10 +478,10 @@ short UString::toShort ( bool * ok , int base  ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
-	return(data );
+	return ( data );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -483,11 +493,11 @@ unsigned short UString::toUShort ( bool * ok , int base  ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -505,11 +515,11 @@ unsigned short UString::toUShort ( bool * ok , int base  ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
 
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 int UString::toInt ( bool * ok , int base  ) const
@@ -520,11 +530,11 @@ int UString::toInt ( bool * ok , int base  ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -542,10 +552,10 @@ int UString::toInt ( bool * ok , int base  ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
-	return(data );
+	return ( data );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -557,11 +567,11 @@ unsigned int UString::toUInt ( bool * ok , int base ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -579,11 +589,11 @@ unsigned int UString::toUInt ( bool * ok , int base ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
 
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 long UString::toLong ( bool * ok , int base  ) const
@@ -594,11 +604,11 @@ long UString::toLong ( bool * ok , int base  ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -616,10 +626,10 @@ long UString::toLong ( bool * ok , int base  ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
-	return(data );
+	return ( data );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -631,11 +641,11 @@ unsigned long UString::toULong ( bool * ok , int base  ) const
 	{
 		case -1:
 			size_t offset ;
-			if ( (offset = (*this).find("0X")) != std::string::npos )
+			if( (offset = (*this).find("0X")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
-			else if ( (offset = (*this).find("0x")) != std::string::npos )
+			else if( (offset = (*this).find("0x")) != std::string::npos )
 			{
 				input << std::hex <<(*this).substr(offset+2) ;
 			}
@@ -653,10 +663,10 @@ unsigned long UString::toULong ( bool * ok , int base  ) const
 			break ;
 	}
 	input >> data ;
-	if ( ok != NULL )
+	if( ok != NULL )
 		(*ok) = input.good() ;
 
-	return(data );
+	return ( data );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -665,12 +675,12 @@ UString UString::comment() const
 	UString data ;
 	std::string sep = COMMENTTAG ;
 	size_t offset = find(sep) ;
-	if ( offset != std::string::npos )
+	if( offset != std::string::npos )
 	{
 		offset = offset + sep.length() ;
 		data = (*this).substr(offset) ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::removeComment() const
@@ -678,11 +688,11 @@ UString UString::removeComment() const
 	UString data = *this;
 	std::string sep = COMMENTTAG ;
 	size_t offset = find(sep) ;
-	if ( offset != std::string::npos )
+	if( offset != std::string::npos )
 	{
 		data = (*this).substr(0,offset) ;
 	}
-	return(data );
+	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 std::string UString::replaceSlash(const std::string data)
@@ -695,7 +705,7 @@ std::string UString::replaceSlash(const std::string data)
 	{
 		input = input.replace(index,1,"/") ;
 	}
-	return(input );
+	return ( input );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -704,7 +714,7 @@ UString UString::fixDirectory()
 	UString temp = *this;
 	temp = temp.stripWhiteSpace() ;
 	temp = replaceSlash(temp) ;
-	if ( temp.find_last_of("/") != temp.size()-1 )
+	if( temp.find_last_of("/") != temp.size()-1 )
 	{
 		temp = temp+"/" ;
 	}
@@ -735,7 +745,7 @@ UString UString::sprintf(const char* format,...)
 	UString status = buffer ;
 
 
-	return(status );
+	return ( status );
 }
 
 
@@ -755,12 +765,24 @@ int UString::sectionCount(std::string sep)
 	}
 
 	count++ ;
-	return(count );
+	return ( count );
 }
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 int UString::sectionCount(const char* sep)
 {
-	return(sectionCount(std::string(sep)) );
+	return ( sectionCount(std::string(sep)) );
 }
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+bool UString::operator==( const char *input )
+{
+	bool rvalue = false;
+	std::string temp( input );
+	if( temp == *this )
+	{
+		rvalue = true;
+	}
+	return rvalue;
+}
+

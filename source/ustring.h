@@ -53,6 +53,9 @@ public:
 	//!  How many "sections" are in this string ?
 	int sectionCount(const char* sep) ;
 
+	unsigned char toUByte( bool *ok = 0, int base = -1 ) const;
+	char toByte( bool *ok = 0, int base = 10 ) const;
+
 	unsigned short toUShort ( bool * ok = 0, int base = -1 ) const;
 	short toShort ( bool * ok = 0, int base = 10 ) const ;
 
@@ -84,6 +87,7 @@ public:
 	UString fixDirectory()  ;
 
 	UString operator+(const char * ) ;
+	bool operator==( const char *input );
 
 	static UString number ( long n, int base = 10 ) ;
 	static UString number ( unsigned long n, int base = 10 ) ;
