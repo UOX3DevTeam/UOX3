@@ -84,7 +84,7 @@ void fileArchive( void )
 
 	char filename1[MAX_PATH], filename2[MAX_PATH];
 
-	sprintf( filename1, "%s%s", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
+	sprintf( filename1, "%s/%s", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
 	int makeResult = _mkdir( filename1 );
 	if( makeResult != 0 )
 	{
