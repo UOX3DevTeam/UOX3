@@ -1,0 +1,166 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.36                     *
+//*                                                               *
+//* Last Update : 4/1/2000                                        *
+//* Script : Advance.scp                                          *
+//*****************************************************************
+
+// Master Smith
+[ADVANCEMENT 1]
+{
+STR=95
+DEX=80
+INT=60
+BLACKSMITHING=940
+MINING=940
+TINKERING=940
+ITEM=15010
+ITEM=0x0fbc
+ITEM=0x1bf2
+ITEM=0x0e85
+ITEM=0x1ebc
+}
+
+// Master Swordsman
+[ADVANCEMENT 2]
+{
+STR=95
+DEX=80
+INT=60
+SWORDSMANSHIP=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+ITEM=0x1b76
+ITEM=0x13ba
+}
+
+// Master Armsman
+[ADVANCEMENT 3]
+{
+STR=95
+DEX=70
+INT=70
+MACEFIGHTING=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+ITEM=0x1b76
+ITEM=0x1406
+}
+
+// Master Fencer
+[ADVANCEMENT 4]
+{
+STR=90
+DEX=85
+INT=60
+FENCING=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+ITEM=0x1400
+ITEM=0x1b76
+}
+
+// Master Archer
+[ADVANCEMENT 5]
+{
+STR=85
+DEX=85
+INT=65
+ARCHERY=940
+ANATOMY=940
+TACTICS=940
+ITEM=0x13b2
+ITEM=0x0f3f
+}
+
+// Master Mage
+[ADVANCEMENT 6]
+{
+STR=65
+DEX=65
+INT=95
+MAGERY=940
+EVALUATINGINTEL=940
+MAGICRESISTANCE=800
+MEDITATION=800
+ITEM=0x1718
+ITEM=0x0efa
+ITEM=0x1f6d
+ITEM=0x0f7a
+ITEM=0x0f7b
+ITEM=0x0f84
+ITEM=0x0f85
+ITEM=0x0f86
+ITEM=0x0f88
+ITEM=0x0f8c
+ITEM=0x0f8d
+}
+
+// Thief
+[ADVANCEMENT 7]
+{
+STR=60
+DEX=95
+INT=80
+STEALING=940
+SNOOPING=940
+LOCKPICKING=800
+HIDING=940
+ITEM=0x14fb
+ITEM=0x14fb
+ITEM=0x14fb
+ITEM=0x14fb
+ITEM=0x1515
+}
+
+// Bard
+[ADVANCEMENT 8]
+{
+STR=60
+DEX=80
+INT=95
+MUSICIANSHIP=940
+PROVOCATION=940
+ENTICEMENT=800
+PEACEMAKING=800
+ITEM=0x0eb2
+}
+
+// Ranger
+[ADVANCEMENT 9]
+{
+STR=65
+DEX=80
+INT=80
+TAMING=940
+TRACKING=940
+HERDING=800
+ITEM=0x0e81
+ITEM=0x0de1
+ITEM=0x0de1
+ITEM=0x0de1
+ITEM=0x0a58
+}
+
+// Assassin
+[ADVANCEMENT 10]
+{
+STR=80
+DEX=65
+INT=80
+POISONING=940
+ALCHEMY=940
+TASTEID=940
+ITEM=0x0f51
+ITEM=0x0f0a
+ITEM=0x0f0a
+ITEM=0x0f0a
+ITEM=0x0f0a
+ITEM=0x0f0a
+}
+
+EOF
+

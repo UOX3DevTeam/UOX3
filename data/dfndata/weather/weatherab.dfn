@@ -1,0 +1,178 @@
+//*****************************************************************
+//*                         UOX3 Scripts                          *
+//*                                                               *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 2/1/2002 - SwamiHajjiJoe                        *
+//* Script : weatherab.dfn                                        *
+//*****************************************************************
+//*
+//*(As told to me by Abaddon)
+//*
+//* [WEATHERAB 0] 	//The weather definition ID. Referenced from regions.dfn as ABWEATH=...
+//*  COLDCHANCE # 	//This is the chance of there being a cold snap on the day.
+//*               	//If it passes, then there will be a modification of the MINTEMP
+//*               	//to be lower, based on the fact it's colder.
+//*  COLDINTENSITY # 	//Currently unused
+//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then there
+//*			//will be a modification of MAXTEMP to be higher, based on it being a heat wave.
+//*  HEATINTENSITY # 	//Currently unused
+//*  LIGHTMIN # 	//Minimum light level of the day (midnight).
+//*  LIGHTMAX # 	//Maximum light level of the day (noon).
+//*  MAXTEMP #		//Maximum temperature of the day. Can be affected by heat waves.
+//*			//Above 20 degrees, Krrios' client takes on an orange tinge.
+//*  MINTEMP #		//Minimum temperature of the day. Can be affected by cold snaps.
+//*			//Below 10 degrees, Krrios' client takes on a blue tinge.
+//*  MAXWIND #		//Currently unused.
+//*  MINWIND #		//Currently unused.
+//*  RAINCHANCE #	//Chance of there being rain on the day(only if snowchance fails to snow).
+//*  RAININTENSITY #	//Currently unused.
+//*  SNOWCHANCE #	//Chance of there being snow on the day.  Will override rainchance.
+//*  SNOWINTENSITY #	//Currently unused.
+//*  SNOWTHRESHOLD #    //The temperature at which snow will STOP. So if it's 15, then when
+//*			//the region hits 15 degrees or above, it won't snow (but it might rain)
+//*****************************************************************
+
+// no weather
+[WEATHERAB 0]
+{
+RAINCHANCE=0
+//RAINTENSITY=0
+SNOWCHANCE=0
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=0
+MAXTEMP=25
+MINTEMP=25
+COLDCHANCE=0
+//COLDINTENSITY=0
+HEATCHANCE=0
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+//desert
+[WEATHERAB 1]
+{
+RAINCHANCE=1
+//RAINTENSITY=0
+SNOWCHANCE=0
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=0
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=0
+//COLDINTENSITY=0
+HEATCHANCE=80
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+// Tropical
+[WEATHERAB 2]
+{
+RAINCHANCE=80
+//RAINTENSITY=0
+SNOWCHANCE=0
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=0
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=0
+//COLDINTENSITY=0
+HEATCHANCE=80
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+//planes
+[WEATHERAB 3]
+{
+RAINCHANCE=20
+//RAINTENSITY=0
+SNOWCHANCE=10
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=10
+MAXTEMP=30
+MINTEMP=5
+COLDCHANCE=10
+//COLDINTENSITY=0
+HEATCHANCE=10
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+// Northern Mountain
+[WEATHERAB 4]
+{
+RAINCHANCE=50
+//RAINTENSITY=0
+SNOWCHANCE=30
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=10
+MAXTEMP=25
+MINTEMP=0
+COLDCHANCE=20
+//COLDINTENSITY=0
+HEATCHANCE=10
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+// Southern Mountain
+[WEATHERAB 5]
+{
+RAINCHANCE=20
+//RAINTENSITY=0
+SNOWCHANCE=10
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=15
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=20
+//COLDINTENSITY=0
+HEATCHANCE=20
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+// British
+[WEATHERAB 5]
+{
+RAINCHANCE=80
+//RAINTENSITY=0
+SNOWCHANCE=5
+//SNOWINTENSITY=0
+SNOWTHRESHOLD=10
+MAXTEMP=25
+MINTEMP=5
+COLDCHANCE=10
+//COLDINTENSITY=0
+HEATCHANCE=10
+//HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=60
+//LIGHTMAX=100
+}
+
+
+EOF
+

@@ -1,28 +1,3 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  teffect.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #include "uox3.h"
 
 cTEffect::cTEffect()
@@ -36,8 +11,10 @@ cTEffect::cTEffect()
 
 cTEffect::~cTEffect()
 {
+
 	for( int i = 0; i < effectCount; i++ )
 		delete internalData[i];
+
 }
 
 teffect_st *cTEffect::First( void )		// returns the first entry
@@ -92,8 +69,8 @@ bool cTEffect::DelCurrent( void )	// deletes the current entry
 	if( currentEffect >= effectCount )
 		return false;
 	delete internalData[currentEffect];
-	internalData.erase(internalData.begin()+currentEffect, internalData.begin()+currentEffect+1);
-
+	for( int i = currentEffect; i < effectCount-1; i++ )
+		internalData[i] = internalData[i+1];
 	effectCount--;
 	delFlag = true;
 	return true;
@@ -110,4 +87,65 @@ teffect_st *cTEffect::GrabSpecific( UI16 index )
 		return NULL;
 	currentEffect = index;
 	return internalData[index];
+}
+
+//o-----------------------------------------------------------------------o
+//|	Function		-	Save(ofstream &effectDestination, SI32 mode)
+//|	Date			-	March 16, 2002
+//|	Programmer		-	sereg
+//o-----------------------------------------------------------------------o
+//|	Returns			-	true/false indicating the success of the write operation
+//o-----------------------------------------------------------------------o
+bool teffect_st::Save( ofstream &effectDestination, SI32 mode ) const
+{
+	
+	string destination; 
+	ostringstream dumping( destination ); 
+	BinBuffer buff;
+
+	switch( mode )
+	{
+	case 1:	
+		buff.SetType( 1 );
+
+		buff.PutLong( Source() );
+
+		buff.PutLong( Destination() );
+
+		buff.PutLong( ( ExpireTime() - uiCurrentTime ) );
+
+		buff.PutByte( Number() );
+		
+		buff.PutShort( More1() );
+
+		buff.PutShort( More2() );
+
+		buff.PutShort( More3() );
+
+		buff.PutByte( Dispellable() );
+
+		buff.PutLong( ItemPtr() );
+
+		buff.Write( effectDestination );
+		break;
+	case 0:
+	default:
+		effectDestination << "[EFFECT]" << endl;
+
+		dumping << "Source=" << Source() << endl;
+		dumping << "Dest=" << Destination() << endl;
+		dumping << "Expire=" << ( ExpireTime() - uiCurrentTime ) << endl;
+		dumping << "Number=" << Number() << endl;  
+		dumping << "More1=" << More1() << endl;
+		dumping << "More2=" << More2() << endl;
+		dumping << "More3=" << More3() << endl;
+		dumping << "Dispel=" << Dispellable() << endl;
+		dumping << "ItemPtr=" << ItemPtr() << endl;
+
+		effectDestination << dumping.str();
+
+		effectDestination << endl << "o---o" << endl << endl;
+		break;
+	}
+	return true;
 }

@@ -1,173 +1,256 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  scriptc.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
 //	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-/*
- Cache script section locations by <erwin@andreasen.com>
- Reads through the contents of the file and saves location of each
- SECTION XYZ entry
+//	Cache script section locations by <erwin@andreasen.com>
+//	Reads through the contents of the file and saves location of each
+//	SECTION XYZ entry
 
- Calling Script::find() will then seek to that location directly rather
- than having to parse through all of the script
- */
+//	Calling Script::find() will then seek to that location directly rather
+//	than having to parse through all of the script
+//	
 
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <string>
 #include <errno.h>
 #include "uox3.h"
-//#include "List.h"
-//#include "scriptcache.h"
 #include "debug.h"
 #include <assert.h>
+#include "ssection.h"
 
+using namespace std;
+
+#undef DBGFILE
 #define DBGFILE "scriptc.cpp"
 
-extern FILE* scpfile;
-
-// This may not be portable to non-POSIX systems?
-char get_modification_date(const char *filename, time_t* mod_time) {
-    struct stat stat_buf;
-    
-    if ((stat(filename, &stat_buf)))
-        return 0;
-
-    *mod_time = stat_buf.st_mtime;
-    return 1;
-}
-
-void Script::reload() {
-    FILE *fp;
-    char buf[1024], section_name[256];
-    int count = 0;
-    
-    // i'll just bypass the problems by deleting the old and reallocating a new one
-    // by flushing the old one - fur
-    assert(entries);
-    entries->flush();	// this removes data, but not structure...
-
-    
-    if (!(fp = fopen(filename, "r"))) {
-        fprintf(stderr, "Cannot open %s: %s", filename, strerror(errno));
-        exit(1);
-    }
-    printf ("Reloading %-15s: ", filename); fflush (stdout);
-
-    // Snarf the part of SECTION... until EOL
-    while(fgets(buf, sizeof(buf), fp))
-        if (sscanf(buf, "SECTION %256[^\n]", section_name) == 1) {
-            entries->insert(new ScriptEntry(section_name, ftell(fp)));	
-            count++;
-        }
-
-    printf ("%6d sections found.\n", count);
-    
-    fclose(fp);
-}
-
-// Parse this script, caching section positions
-Script::Script(const char *_filename) {
-    filename = strdup(_filename);
-//Try to fix Ming error    entries = NULL;
-    entries = new List<ScriptEntry,1>;
-    
-    if (!(get_modification_date(filename, &last_modification))) {
-        fprintf(stderr, "Cannot stat %s: %s", filename, strerror(errno));
-        exit(1);
-    }
-
-    reload();
-}
-
-// be sure to free the filename and the list of entries
-Script::~Script()
+//o--------------------------------------------------------------------------
+//|	Function		-	bool get_modification_date( const char *filename, time_t *mod_time )
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if the file's stats can be found (testing 
+//|						its existence)
+//o--------------------------------------------------------------------------
+bool get_modification_date( const char *filename, time_t* mod_time )
 {
-	free(filename);
-	delete entries;
+	struct stat stat_buf;
+
+	if( stat( filename, &stat_buf ) )
+		return false;
+
+	*mod_time = stat_buf.st_mtime;
+	return true;
 }
 
-// Look for that section in this previously parsed script file
-char Script::find(const char *section) {
-    time_t current;
-    ScriptEntry *sc;
+//o--------------------------------------------------------------------------
+//|	Function		-	reload( bool disp = false )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Reload's the scripts data.  If disp is true, then 
+//|						information is output to the console (# of sections)
+//|						Will not run if the script is in an erroneous state
+//o--------------------------------------------------------------------------
+void Script::reload( bool disp ) 
+{
+	if( errorState )
+		return;
+    char buf[1024], section_name[256];
+    SI32 count = 0;
     
-    if (!get_modification_date(filename, &current)) {
-        fprintf(stderr, "Cannot stat %s: %s", filename, strerror(errno));
-        exit(1);
-    }
-
-    if (current > last_modification) {
-        reload();
-        last_modification = current;
-    }
-
-#ifndef __LINUX__
-    for (sc = entries->rewind(); sc; sc = entries->next())
+	deleteMap();
+	FILE *fp = fopen( filename.c_str(), "r" );
+    if( fp == NULL ) 
 	{
-		if( strlen( sc->name ) == strlen( section ) )
+        fprintf(stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+        errorState = true;
+    }
+	if( disp )
+		Console.Print( "Reloading %-15s: ", filename.c_str() );
+	fflush( stdout );
+
+	lastModTime = 0;
+	// Snarf the part of SECTION... until EOL
+	while( fgets( buf, sizeof( buf ), fp ) )
+	{
+		if( sscanf( buf, "[%256[^\n]", section_name ) == 1 )
 		{
-			if(!strncmp( sc->name, section, strlen(section)))
-	            break;
+			// check to see if it's terminated
+			char *endBracket = strstr( section_name, "]" );
+			if( endBracket != NULL )
+			{
+				section_name[endBracket-section_name] = '\0';
+				strupr( section_name );
+				defEntries[section_name] = new ScriptSection( fp, dfnCat );
+				count++;
+			}
 		}
 	}
-#else
-	for( sc = entries->rewind(); sc; sc = entries->next() )
-	{
-		if( !strncmp( sc->name, section, strlen( section ) ) )
-			break;
-	}
-#endif
-    if (!sc)
-        return 0;
-
-    fseek(scpfile, sc->offset, SEEK_SET);
-    return 1;
+	if( disp )
+		Console << count << " sections found" << myendl;
+    fclose( fp );
 }
-// Look for that section in this previously parsed script file
-char Script::isin(const char *section) {
-    time_t current;
-    ScriptEntry *sc;
-    
-    if (!get_modification_date(filename, &current)) {
-        fprintf(stderr, "Cannot stat %s: %s", filename, strerror(errno));
-        exit(1);
+
+//o--------------------------------------------------------------------------
+//|	Function		-	Script( const string _filename, bool disp )
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Builds the script, reading in the information from
+//|						the script file.
+//o--------------------------------------------------------------------------
+Script::Script( const string _filename, DefinitionCategories d, bool disp ) : errorState( false ), dfnCat( d )
+{
+    filename = _filename;
+    if( !get_modification_date( filename.c_str(), &last_modification ) ) 
+	{
+        fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+        errorState = true;
     }
+    reload( disp );
+}
 
-    if (current > last_modification) {
-        reload();
-        last_modification = current;
-    }
+//o--------------------------------------------------------------------------
+//|	Function		-	~Script()
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Destroys any memory that has been allocated
+//o--------------------------------------------------------------------------
+Script::~Script()
+{
+	deleteMap();
+}
 
-    for (sc = entries->rewind(); sc; sc = entries->next())
-        if (strstr(sc->name,section))
-        {
-          fseek(scpfile, sc->offset, SEEK_SET);
-          return 1;
-        }
+//o--------------------------------------------------------------------------
+//|	Function		-	bool isin( const string section )
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if the section named section is in the script
+//o--------------------------------------------------------------------------
+bool Script::isin( const string section )
+{
+	SSMAP::iterator iSearch;
+	iSearch = defEntries.find( section );
+	if( iSearch != defEntries.end() )
+		return true;
+    return false;
+}
 
-    return 0;
+//o--------------------------------------------------------------------------
+//|	Function		-	ScriptSection *FindEntry( const string section )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns a ScriptSection * to the section named "section"
+//|						if it exists, otherwise returning NULL
+//o--------------------------------------------------------------------------
+ScriptSection *Script::FindEntry( const string section )
+{
+	SSMAP::iterator iSearch;
+	char section_name[256];
+	strcpy( section_name, section.c_str() );
+	strupr( section_name );
+	iSearch = defEntries.find( section_name );
+	if( iSearch != defEntries.end() )
+		return iSearch->second;
+    return NULL;
+}
 
+//o--------------------------------------------------------------------------
+//|	Function		-	ScriptSection *FindEntrySubStr( const string section )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Find the first ScriptSection * (if any) that has the
+//|						string section in the section name
+//o--------------------------------------------------------------------------
+ScriptSection *Script::FindEntrySubStr( const string section )
+{
+	SSMAP::iterator iSearch;
+	const char *tSearch = section.c_str();
+	for( iSearch = defEntries.begin(); iSearch != defEntries.end(); iSearch++ )
+	{
+		if( strstr( iSearch->first.c_str(), tSearch ) )	// FOUND IT!
+			return iSearch->second;
+	}
+    return NULL;
+}
+
+
+//o--------------------------------------------------------------------------
+//|	Function		-	ScriptSection *FirstEntry( void )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the first ScriptSection in the Script (if any)
+//o--------------------------------------------------------------------------
+ScriptSection *Script::FirstEntry( void )
+{
+	iSearch = defEntries.begin();
+	if( iSearch != defEntries.end() )
+		return iSearch->second;
+    return NULL;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	ScriptSection *NextEntry( void )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the next ScriptSection (if any) in the Script
+//o--------------------------------------------------------------------------
+ScriptSection *Script::NextEntry( void )
+{
+	if( iSearch != defEntries.end() )
+	{
+		iSearch++;
+		if( iSearch != defEntries.end() )
+			return iSearch->second;
+		else
+			return NULL;
+	}
+	else
+		return NULL;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	deleteMap( void )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Destroys any memory that has been allocated
+//o--------------------------------------------------------------------------
+void Script::deleteMap( void )
+{
+	SSMAP::iterator iTest;
+	for( iTest = defEntries.begin(); iTest != defEntries.end(); iTest++ )
+		delete iTest->second;
+	defEntries.erase( defEntries.begin(), defEntries.end() );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	const char *EntryName( void )
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the section name for the current entry (if any)
+//o--------------------------------------------------------------------------
+const char *Script::EntryName( void )
+{
+	if( iSearch != defEntries.end() )
+		return iSearch->first.c_str();
+	return NULL;
 }
 

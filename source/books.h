@@ -1,29 +1,3 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  books.h
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 // Book class by Lord Binary, 7'th december 1999
 
 // new books readonly -> morex  999
@@ -44,36 +18,28 @@ class cBooks
 	private:
 		
 		// that private methods read and write from the *.bok files
-		void write_author(int id,UOXSOCKET s);
-		void write_title(int id, UOXSOCKET s);
-		void write_line(int id, int page, int line, char linestr[34], UOXSOCKET s);
+		void WriteAuthor( CItem *id,cSocket *s );
+		void WriteTitle( CItem *id, cSocket *s );
+		void WriteLine( CItem *id, int page, int line, char linestr[34], cSocket *s );
 		
-		void read_author(int id,char auth[31]);
-		void read_title(int id,char title[61]);
-		int  read_number_of_pages(int id);
-		void read_line(int id, int page,int linenumber, char line[33]);
+		void ReadAuthor( CItem *id, UI08 auth[31] );
+		void ReadTitle( CItem *id, UI08 title[61] );
+		UI08 getNumberOfPages( CItem *id );
+		void ReadLine( CItem *id, int page,int linenumber, char line[33] );
 
-		char make_new_book_file(char *fileName, int id); // "formats and creates a new bok file"
+		bool CreateBook( char *fileName, CItem *id ); // "formats and creates a new bok file"
 					
 	public:
-		char a_t; // flag -> set if author and title changed		
-		char authorbuffer[MAXCLIENT][32]; 
-		char titlebuffer[MAXCLIENT][62];
-		char pagebuffer[MAXCLIENT][512]; //i think 256 is enough (8 lines *32 chars per line = 256, but i took 512 to be on the safe side and avoid crashes 
+		bool changeAT; // flag -> set if author and title changed		
 	
 	    cBooks();
 
-        void openbook_old(UOXSOCKET s, ITEM i); // opens old-readonly books, takes data from misc.scp
-		
-		void openbook_new(UOXSOCKET s, ITEM i,char writeable); // opens new books
-
-		void readbook_readonly_old(UOXSOCKET s, ITEM i, int p); // reads books from misc.scp, readonly = old books
-		                                                        
-		void readbook_readonly(UOXSOCKET s, ITEM i, int p);     // reads new books readonly ( from *.bok file )
-		                                                     		                                                      
-		void readbook_writeable(UOXSOCKET s, ITEM i, int p, int l); // writes changes to a new book opened in writable mode 
-
-		void delete_bokfile(int id); // deletes bok-file.
+        void OpenPreDefBook( cSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.scp
+		void OpenBook( cSocket *s, CItem *i, bool isWriteable ); // opens new books
+		void ReadPreDefBook( cSocket *mSock, CItem *i, int p ); // reads books from misc.scp, readonly = old books
+		void ReadNonWritableBook( cSocket *s, CItem *i, int p );     // reads new books readonly ( from *.bok file )
+		void ReadWritableBook( cSocket *s, CItem *i, int p, int l ); // writes changes to a new book opened in writable mode 
+		void DeleteBook( CItem *id ); // deletes bok-file.
 
 		virtual ~cBooks();
         	

@@ -1,0 +1,56 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : tracking.scp                                         *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* fill in comments instructions here                            *
+//*                                                               *
+//*                                                               *
+//*                                                               *
+//*****************************************************************
+
+[TRACKINGMENU 4096]
+{
+What=do you wish to track?
+0x20D4=Animals
+CREATETRACKINGMENU=4097
+0x20E9=Creatures
+CREATETRACKINGMENU=4098
+0x2106=Players
+CREATETRACKINGMENU=4099
+}
+
+[TRACKINGMENU 4097]
+{
+Which=animal do you wish to track?
+}
+
+[TRACKINGMENU 4098]
+{
+Which=creature do you wish to track?
+}
+
+[TRACKINGMENU 4099]
+{
+Whom=do you wish to track?
+}
+
+[TRACKINGMENU 4100]
+{
+Which=PK will you hunt today?
+}
+
+[TRACKINGMENU 4101]
+{
+Which=GM will you hunt today?
+}
+
+
+EOF
+
+

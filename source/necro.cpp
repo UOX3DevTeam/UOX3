@@ -1,334 +1,270 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  necro.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-/*
-Module : necro.cpp
-Purpose: store all necromancy related functions
-Created: Genesis 11-12-1998
-History: None
-*/
+//	Module :	necro.cpp
+//	Purpose:	store all necromancy related functions
+//	Created:	Genesis 11-12-1998
+//	History:	None
 
 #include "uox3.h"
 #include "debug.h"
+#include "ssection.h"
 
+#undef DBGFILE
 #define DBGFILE "necro.cpp"
-void VialTargetItem( UOXSOCKET nSocket, ITEM nItemID );
-void VialTargetChar( UOXSOCKET nSocket, CHARACTER trgChar );
 
-
-int SpawnRandomMonster(int nCharID, char* cScript, char* cList, char* cNpcID)
+void VialTargetChar( cSocket *nSocket, CChar *trgChar )
 {
-	/*This function gets the random monster number from the from
-	the script and list specified.
-	Npcs->AddRespawnNPC passing the new number*/
-
-	char sect[512];
-	int i=0,item[256]={0};
- 	openscript(cScript);
- 	sprintf(sect, "%s %s", cList, cNpcID);
-	if(!(strcmp("necro.scp",cScript)))
-	{
-		if(!i_scripts[necro_script]->find(sect))
-		{
-  			closescript();
-  			return -1;
- 		}
-	}
-	else
-	{
-		if(!i_scripts[npc_script]->find(sect))
- 		{
-  			closescript();
-			if (n_scripts[custom_npc_script][0]!=0)
-			{
-				openscript(n_scripts[custom_npc_script]);
-				if (!i_scripts[custom_npc_script]->find(sect))
-				{
-					closescript();
-					return -1;
-				}
-			} else return -1;
-		}
-	}
- 	do
- 	{
-  		read1();
-		if(script1[0]!='}')
-		{
-			item[i]=str2num(script1);
-			i++;
-		}
- 	}
- 	while(script1[0]!='}');
- 	closescript();
- 	if(i>0)
- 	{
-  		i=rand()%(i);
-		if(item[i]!=-1)
-		{
-			Npcs->AddRespawnNPC(nCharID,-1,item[i],0);
-			return item[i];
-		}
-	}
-	return -1;
-}
-
-int SpawnRandomItem(UOXSOCKET nCharID,int nInPack, char* cScript, char* cList, char* cItemID)
-{
- 	/*This function gets the random item number from the list and recalls
- 	  SpawnItemBackpack2 passing the new number*/
-	char sect[512];
-	int i=0,item[256]={0};
- 	openscript(cScript);
-	sprintf(sect, "%s %s", cList, cItemID);
-	if(!(strcmp("necro.scp",cScript)))
-	{
-		if(!i_scripts[necro_script]->find(sect))
-		{
-			closescript();
-			return -1;
-		}
-	}
-	else
-	{
-		if(!i_scripts[items_script]->find(sect))
-		{
-			closescript();
-			if (n_scripts[custom_item_script][0]!=0)
-			{
-				openscript(n_scripts[custom_item_script]);
-				if (!i_scripts[custom_item_script]->find(sect))
-				{
-					closescript();
-					return -1;
-				}
-			} else return -1;
-		}
-	}
- 	do
- 	{
-  		read1();
-  		if (script1[0]!='}')
-  		{
-			item[i]=str2num(script1);
-   			i++;
-		}
-	}
-	while(script1[0]!='}');
-	closescript();
- 	if(i>0)
- 	{
-  		i=rand()%(i);
-		if(item[i]!=-1)
-		if(nInPack)
-		{
-			Items->SpawnItemBackpack2(nCharID,currchar[nCharID],item[i],1);
-			return item[i];
-		}
-	}
-	return -1;
-}
-
-void MakeNecroReg( UOXSOCKET nSocket, ITEM nItem, unsigned char cItemID1, unsigned char cItemID2 )
-{
-	int iCharID, iItem = 0;
-	iCharID = currchar[nSocket];
-
-	if((cItemID1==0x1b)&&((cItemID2>=0x11)&&(cItemID2<=0x1c))) // Make bone powder.
-	{
-		sprintf( temp, "%s is grinding some bone into powder.", chars[iCharID].name );
-		npcemoteall( iCharID, temp, 1);
-		tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
-		tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
-		iItem = Items->SpawnItem( nSocket, 1, "bone powder", 1, 0x0F, 0x8F, 0, 0, 1, 1 );
-		if( iItem == -1 ) 
-			return;
-		items[iItem].morex = 666;
-		items[iItem].more1 = 1; // this will fill more with info to tell difference between ash and bone
-		Items->DeleItem( nItem );
-		
-	}
-	if( cItemID1 == 0x0E && cItemID2 == 0x24 ) // Make vial of blood.
-	{
-		if( items[nItem].more1 == 1 )
-		{
-			iItem = Items->SpawnItem( nSocket, iCharID, 1, "#", 1, 0x0F, 0x82, 0, 0, 1, 1 );
-			if( iItem == -1 ) 
-				return;
-			items[iItem].value = 15;
-			items[iItem].morex = 666;
-		}
-		else
-		{
-			iItem = Items->SpawnItem( nSocket,iCharID, 1, "#", 1, 0x0F, 0x7D, 0, 0, 1, 1 );
-			if( iItem == -1 ) 
-				return;
-			items[iItem].value = 10;
-			items[iItem].morex = 666;
-		}
-		if( items[nItem].amount > 1 )
-		{
-			items[nItem].amount--;
-			if( items[nItem].amount == 1 )
-				RefreshItem( nItem );
-		}
-		else
-			Items->DeleItem( nItem );
-	}
-}
-
-void vialtarget( UOXSOCKET nSocket )
-{
-	if( buffer[nSocket][7] == 0xFF && buffer[nSocket][8] == 0xFF && buffer[nSocket][9] == 0xFF && buffer[nSocket][10] == 0xFF ) 
-		return; // check if user canceled operation
-	if( buffer[nSocket][7] >= 0x40 )
-	{	// it's an item
-		ITEM myItem = calcItemFromSer( buffer[nSocket][7], buffer[nSocket][8], buffer[nSocket][9], buffer[nSocket][10] );
-		VialTargetItem( nSocket, myItem );
-	}
-	else
-	{	// it's a char
-		CHARACTER myChar = calcCharFromSer( buffer[nSocket][7], buffer[nSocket][8], buffer[nSocket][9], buffer[nSocket][10] );
-		VialTargetChar( nSocket, myChar );
-	}
-}
-
-void VialTargetChar( UOXSOCKET nSocket, CHARACTER trgChar ) // bug & crashfixed by LB 25 September 1999
-{
-	int nVialID = -1, nDagger = -1, nCharID = -1, nDist = 0;
-	CHARACTER mChar = currchar[nSocket];
-	if( mChar == -1 )
+	int nDist = 0;
+	CChar *mChar = nSocket->CurrcharObj();
+	if( mChar == NULL )
 		return;
-	nVialID = addx[nSocket];
-	if( nVialID == -1 )
+	ITEM nVialID = nSocket->AddX();
+	if( nVialID == INVALIDSERIAL )
 		return;
-	nCharID = trgChar;
-	nDagger = Combat->GetWeapon( mChar );
-	if( nDagger == -1 ) 
+	CChar *nCharID = trgChar;
+	CItem *nDagger = Combat->getWeapon( mChar );
+	if( nDagger == NULL ) 
 	{
-		sysmessage( nSocket, "You do not have a dagger in your hands" );
+		sysmessage( nSocket, 742 );
 		return;
 	}
-	if( !( items[nDagger].id1 == 0x0F && (items[nDagger].id2 == 0x51 || items[nDagger].id2 == 0x52) ) )
+	if( nDagger->GetID() != 0x0F51 && nDagger->GetID() != 0x0F52 )
 	{
-		sysmessage( nSocket, "That is not a dagger" );
+		sysmessage( nSocket, 743 );
 		return;
 	}
 
-	items[nVialID].more1=0;
+	items[nVialID].SetMore( 0, 1 );
 
+	char temp[1024];
 	if( nCharID == mChar )
 	{
-		if( chars[nCharID].hp <= 10 )
+		if( nCharID->GetHP() <= 10 )
 		{
-			sysmessage( nSocket, "You are too wounded to continue." );
+			sysmessage( nSocket, 744 );
 			return;
 		}
 		else
 		{
-			sysmessage( nSocket, "You prick your finger and fill the vial." );
-			chars[nCharID].hp -= ( rand()%6 + 2 );
-			MakeNecroReg( nSocket, nVialID, 0x0E, 0x24 );
+			sysmessage( nSocket, 745 );
+			nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
+			MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
 			return;
 		}
 	}
 	else
 	{
-		nDist = chardist( mChar, nCharID );
-		if( inrange1p( mChar, nCharID ) && nDist <= 2 )
+		nDist = getDist( mChar, nCharID );
+		if( charInRange( mChar, nCharID ) && nDist <= 2 )
 		{
-			sprintf( temp, "%s has pricked you with a dagger and sampled your blood.", chars[mChar].name);
-			if( chars[nCharID].npc )
+			sprintf( temp, Dictionary->GetEntry( 746 ), mChar->GetName() );
+			if( nCharID->IsNpc() )
 			{
-				Karma( mChar, nCharID, -chars[nCharID].karma );
-				if( chars[nCharID].id1 == 0x00 && ( chars[nCharID].id2 == 0x0C || ( chars[nCharID].id2 >= 0x3B && chars[nCharID].id2 <= 0x3D ) ) )
-					items[nVialID].more1 = 1;
-				chars[nCharID].hp -= ( rand()%6 + 2 );
-				MakeNecroReg( nSocket, nVialID, 0x0E, 0x24 );
+				Karma( mChar, nCharID, -nCharID->GetKarma() );
+				if( nCharID->GetID( 1 ) == 0x00 && ( nCharID->GetID( 2 ) == 0x0C ||
+					( nCharID->GetID( 2 ) >= 0x3B && nCharID->GetID( 2 ) <= 0x3D ) ) )
+					items[nVialID].SetMore( 1, 1 );
+				nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
+				MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
 				// Guard be summuned if in town and good npc
 				// if good flag criminal
 				// if evil npc attack necromancer but don't flag criminal
 			}
 			else
 			{
-				Karma( mChar, nCharID, -chars[nCharID].karma );
-				chars[nCharID].hp -= ( rand()%6 + 2 );
-				sysmessage( calcSocketFromChar( nCharID ), temp );
-				MakeNecroReg( nSocket, nVialID, 0x0E, 0x24 );
+				Karma( mChar, nCharID, -nCharID->GetKarma() );
+				nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
+				sysmessage( calcSocketObjFromChar( nCharID ), temp );
+				MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
 				// flag criminal						
 			}
 		}
 		else 
 		{
-			sysmessage( nSocket, "That individual is not anywhere near you." );
+			sysmessage( nSocket, 747 );
 			return;
 		}
 	}
 }
-void VialTargetItem( UOXSOCKET nSocket, ITEM nItemID ) // bug & crashfixed by LB 25 September 1999
+void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 {
-	int nVialID = -1, nDagger = -1;
-	CHARACTER mChar = currchar[nSocket];
-	if( mChar == -1 || nItemID == -1 )
+	CChar *mChar = nSocket->CurrcharObj();
+	if( mChar == NULL || nItemID == NULL )
 		return;
-	nVialID = addx[nSocket];
-	if( nVialID == -1 )
+	ITEM nVialID = nSocket->AddX();
+	if( nVialID == INVALIDSERIAL )
 		return;
 
-	nDagger = Combat->GetWeapon( mChar );
-
-	if( nDagger == -1 )
+	CItem *nDagger = Combat->getWeapon( mChar );
+	if( nDagger == NULL )
 	{
-		sysmessage( nSocket, "You do not have a dagger in your pack." );
+		sysmessage( nSocket, 748 );
 		return;
 	}
-	if( !( items[nDagger].id1 == 0x0F && (items[nDagger].id2 == 0x51 || items[nDagger].id2 == 0x52) ) )
+	if( !( nDagger->GetID( 1 ) == 0x0F && ( nDagger->GetID( 2 ) == 0x51 || nDagger->GetID( 2 ) == 0x52) ) )
 	{
-		sysmessage( nSocket, "That is not a dagger" );
+		sysmessage( nSocket, 743 );
 		return;
 	}
 
-	items[nVialID].more1 = 0;
-	if( !items[nItemID].corpse )
+	items[nVialID].SetMore( 0, 1 );
+	if( !nItemID->isCorpse() )
+		sysmessage( nSocket, 749 );
+	else
 	{
-		sysmessage( nSocket, "That is not a corpse!" );
+		items[nVialID].SetMore( nItemID->GetMore( 1 ), 1 );
+		Karma( mChar, NULL, -1000 );
+		if( nItemID->GetMore( 2 ) < 4 )
+		{
+			sysmessage( nSocket, 750 );
+			MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
+			nItemID->SetMore( nItemID->GetMore( 2 ) + 1, 2 );
+		}
+		else 
+			sysmessage( nSocket, 751 );
+	}
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CChar *SpawnRandomMonster( cSocket *nCharID, char *script, char *cList, char *cNpcID )
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-	Changed to FileLookup based and return CChar * 
+//|						instead of creature ID (Abaddon)
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Gets the random monster number from the script and list specified
+//|						Creates the creature and returns it
+//o--------------------------------------------------------------------------
+CChar *SpawnRandomMonster( cSocket *nCharID, char* cScript, char* cList, char* cNpcID )
+{
+	char sect[512];
+ 	sprintf( sect, "%s %s", cList, cNpcID );
+	ScriptSection *targData = NULL;
+	if( !strcmp( "necro.scp", cScript ) )
+	{
+		targData = FileLookup->FindEntry( sect, necro_def );
+		if( targData == NULL )
+			return NULL;
 	}
 	else
 	{
-		items[nVialID].more1 = items[nItemID].more1;
-		Karma( mChar, -1, -1000 );
-		if( items[nItemID].more2 < 4 )
+		targData = FileLookup->FindEntry( sect, npc_def );
+		if( targData == NULL )
+			return NULL;
+	}
+	int i = targData->NumEntries();
+	CChar *tChar = nCharID->CurrcharObj();
+	if( i > 0 )
+	{
+		i = rand()%(i);
+		const char *targID = targData->MoveTo( i );
+		if( targID != NULL )
 		{
-			sysmessage( nSocket, "You take a sample of blood from the corpse." );
-			MakeNecroReg( nSocket, nVialID, 0x0E, 0x24 );
-			items[nItemID].more2++;
+			return Npcs->AddNPC( nCharID, NULL, targID, tChar->WorldNumber() );
 		}
-		else 
-			sysmessage( nSocket, "You examine the corpse but, decide any further blood samples would be too contaminated." );
+	}
+	return NULL;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CItem *SpawnRandomItem( cSocket *nCharID, bool nInPack, char *script, char *cList, char *cItemID )
+//|	Date			-	Unknown
+//|	Programmer		-	Unknown
+//|	Modified		-	Changed to FileLookup based and return CItem * 
+//|						instead of creature ID (Abaddon)
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Gets the random item number from the script and list specified
+//|						Creates the item and returns it
+//o--------------------------------------------------------------------------
+CItem *SpawnRandomItem( cSocket *nCharID, bool nInPack, char* cScript, char* cList, char* cItemID )
+{
+	char sect[512];
+	sprintf( sect, "%s %s", cList, cItemID );
+	ScriptSection *randData = NULL;
+	if( !strcmp( "necro.scp", cScript ) )
+	{
+		randData = FileLookup->FindEntry( sect, necro_def );
+		if( randData == NULL )
+			return NULL;
+	}
+	else
+	{
+		randData = FileLookup->FindEntry( sect, items_def );
+		if( randData == NULL )
+			return NULL;
+	}
+	int numEntries = randData->NumEntries();
+	if( numEntries > 0 )
+	{
+		int i = rand()%(numEntries);
+		const char *targID = randData->MoveTo( i );
+		if( targID != NULL )
+		{
+			if( nInPack )
+			{
+				return Items->SpawnItemToPack( nCharID, nCharID->CurrcharObj(), targID, true );
+			}
+		}
+	}
+	return NULL;
+}
+
+void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
+{
+	CItem *iItem = NULL;
+	CChar *iCharID = nSocket->CurrcharObj();
+	char temp[1024];
+
+	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
+	{
+		sprintf( temp, Dictionary->GetEntry( 741 ), iCharID->GetName() );
+		npcEmoteAll( iCharID, temp, true );
+		tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
+		tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
+		tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
+		tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
+		iItem = Items->SpawnItem( nSocket, 1, "bone powder", true, 0x0F8F, 0, true, true );
+		if( iItem == NULL ) 
+			return;
+		iItem->SetMoreX( 666 );
+		iItem->SetMore( 1, 1 ); // this will fill more with info to tell difference between ash and bone
+		Items->DeleItem( nItem );
+		
+	}
+	if( itemID == 0x0E24 ) // Make vial of blood.
+	{
+		if( nItem->GetMore( 1 ) == 1 )
+		{
+			iItem = Items->SpawnItem( nSocket, 1, "#", true, 0x0F82, 0, true, true );
+			if( iItem == NULL ) 
+				return;
+			iItem->SetValue( 15 );
+			iItem->SetMoreX( 666 );
+		}
+		else
+		{
+			iItem = Items->SpawnItem( nSocket, 1, "#", true, 0x0F7D, 0, true, true );
+			if( iItem == NULL ) 
+				return;
+			iItem->SetValue( 10 );
+			iItem->SetMoreX( 666 );
+		}
+		decItemAmount( nItem );
 	}
 }
+
+void vialtarget( cSocket *nSocket )
+{
+	if( nSocket->GetDWord( 7 ) == INVALIDSERIAL )
+		return;
+	if( nSocket->GetByte( 7 ) >= 0x40 )
+	{	// it's an item
+		CItem *myItem = calcItemObjFromSer( nSocket->GetDWord( 7 ) );
+		VialTargetItem( nSocket, myItem );
+	}
+	else
+	{	// it's a char
+		CChar *myChar = calcCharObjFromSer( nSocket->GetDWord( 7 ) );
+		VialTargetChar( nSocket, myChar );
+	}
+}
+

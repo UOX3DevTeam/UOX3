@@ -1,0 +1,31 @@
+October 3rd, 2001
+
+Version 0.4.0 released
+
+Updated the map display issues
+Added appearance display of regions
+Resizes form better based on zoom selected
+
+November 10, 2000
+
+Version 0.2.1 released
+
+Map Display in the background (thanks to Krrios for the debugging/algorithm help)
+Shapes changed to rectangles, with borders.  Easier to see, more accurate.
+
+November 5, 2000
+
+Version 0.1.4 released
+
+Scaling factors for 1/12 and 1/16 added
+Tidied up a couple of swap bugs (thanks to Krrios)
+Closed the right file number (Krrios again).
+Added support for the mark, gate and recall properties
+Readjusted the property layout
+
+Known issues:
+
+Redrawing issues when going from a smaller scale factor (ie 1/16) to a larger one (1/8).  Property frame doesn't draw correctly.
+Work around: Tab through the frame to see everything
+
+Changing scaling factors forces a map display redraw (select it from the menu).

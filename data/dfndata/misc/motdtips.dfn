@@ -1,0 +1,37 @@
+//*****************************************************************
+//*                         UOX3 Scripts                          *
+//*                                                               *
+//* Last Update : Jan 29th 2002 - SwamiHajjiJoe                   *
+//* Script : motdtips.dfn                                         *
+//*****************************************************************
+
+[MOTD]
+{
+Welcome to the world of Britannia.  Running on UOX3, The Ultima Offline eXperiment
+}
+
+[TIPS]
+{
+TIP=1
+TIP=2
+TIP=3
+}
+
+[TIP 1]
+{
+Did you know that these tips are customizable by your host?
+}
+
+[TIP 2]
+{
+Did you know that we have a nice friendly human GM staff, who endeavour to do our best for you?
+}
+
+[TIP 3]
+{
+You can find out more about UOX3 at http://uox3.sourceforge.net/
+}
+
+EOF
+
+

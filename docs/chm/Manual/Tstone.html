@@ -1,0 +1,99 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Zane">
+   <meta name="GENERATOR" content="Mozilla/4.6 [en] (Win98; I) [Netscape]">
+   <title>Town Stones</title>
+</head>
+<body text="#33CCFF" bgcolor="#000000" link="#3366FF" vlink="#3366FF" alink="#3366FF">
+<p><strong>This documentation exists only for the current implementation of townstones.  Much of this information will be invalidated at a later date</strong>
+<p>Townstones will be released in 7 planned stages - Each known
+as a "phase".
+<p>The first phase is included in this release (68017 - Aug 26 1998).
+<p>FEATURES!:
+<br>--------------------------------------------------------------------------
+<br>&nbsp;&nbsp; * Townstones are based on regions
+<br>&nbsp;&nbsp; * Multiple Townstones may be placed in one region, but
+they all give
+<br>&nbsp;&nbsp;&nbsp;&nbsp; info about the same region.
+<br>&nbsp;&nbsp; * Townstones are of two types (automatically determined)
+based on the
+<br>&nbsp;&nbsp;&nbsp;&nbsp; information in regions.scp file.
+<br>&nbsp;&nbsp; * Players may become a resident of a town, wilderness,
+or none at all.
+<br>&nbsp;&nbsp; * Residents of a town may freely leave residency to none.
+<br>&nbsp;&nbsp; * If a player is a resident of another town then the one
+he/she wants
+<br>&nbsp;&nbsp;&nbsp;&nbsp; to join, then they will automatically leave
+the prior town upon
+<br>&nbsp;&nbsp;&nbsp;&nbsp; their joining the new town.
+<br>&nbsp;&nbsp; * Residents of a town (other then wilderness type) may
+vote for mayor.
+<br>&nbsp;&nbsp; * Residents of a town may vote however often they wish,
+but votes are
+<br>&nbsp;&nbsp;&nbsp;&nbsp; not tallied until the 'election day'.
+<br>&nbsp;&nbsp; * Residents of a town may opt to display the town they
+are from on their
+<br>&nbsp;&nbsp;&nbsp;&nbsp; paperdoll.&nbsp; If they choose to display
+their town title, their reputation
+<br>&nbsp;&nbsp;&nbsp;&nbsp; title will not be shown (may be changed at
+a future date).
+<br>&nbsp;&nbsp; * The elected Mayor is forced to display their town title
+on their
+<br>&nbsp;&nbsp;&nbsp;&nbsp; paperdoll.&nbsp; It is in the format of "Mayor
+&lt;playername> of &lt;townname>,
+<br>&nbsp;&nbsp;&nbsp;&nbsp; &lt;skilllevel> &lt;skill>"
+<br>&nbsp;&nbsp; * The elected Mayor has "Mayor" prefixed to their displayname
+from allnames.
+<br>&nbsp;&nbsp; * If a mayor leaves residency of the town for either none,
+or another, then
+<br>&nbsp;&nbsp;&nbsp;&nbsp; a new mayor is automatically detected based
+on number of votes at that
+<br>&nbsp;&nbsp;&nbsp;&nbsp; time.
+<br>&nbsp;&nbsp; * Townstones display the current mayor on them.
+<br>&nbsp;&nbsp; * Townstones display the total population for that town.
+<br>&nbsp;&nbsp; * Wilderness regions display 'unruled region' for mayor.
+<br>&nbsp;&nbsp; * Wilderness regions display 'unknown' for population.
+<br>&nbsp;&nbsp; * To cast a vote for Mayor, the person whom the player
+wants to vote for
+<br>&nbsp;&nbsp;&nbsp;&nbsp; must be online, and preferably onscreen. (Target
+based).
+<br>&nbsp;&nbsp; * If voting is 'mis-targeted' then the previous vote is
+unchanged.
+<br>&nbsp;&nbsp; * Residents may not vote for players who are not a resident
+of their same
+<br>&nbsp;&nbsp;&nbsp;&nbsp; town.
+<br>&nbsp;&nbsp; * The player whom a person is currently voting for is
+displayed on the
+<br>&nbsp;&nbsp;&nbsp;&nbsp; townstone.
+<p>FOR GMS!:
+<br>--------------------------------------------------------------------------
+<br>&nbsp;&nbsp; To add a townstone, follow this process:
+<br>&nbsp;&nbsp; * add a new item of type 0edd or 0ede (/add 0e dd)
+<br>&nbsp;&nbsp; * rename the item to 'Townstone for _____', as the default
+name is not
+<br>&nbsp;&nbsp;&nbsp;&nbsp; appropriate.
+<br>&nbsp;&nbsp; * set the morey value to 0 (/setmorey 0)
+<br>&nbsp;&nbsp; * set the morez value to the current weekday number
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Sunday:&nbsp;&nbsp;&nbsp; (/setmorez 0)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Monday:&nbsp;&nbsp;&nbsp; (/setmorez 1)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Tuesday:&nbsp;&nbsp; (/setmorez 2)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Wednesday: (/setmorez 3)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Thursday:&nbsp; (/setmorez 4)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Friday:&nbsp;&nbsp;&nbsp; (/setmorez 5)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Saturday:&nbsp; (/setmorez 6)
+<p>&nbsp;&nbsp; That's it! Your townstone is now setup!
+<p>&nbsp;&nbsp; Townstones are based on regions found in the regions.scp
+file.&nbsp; If the
+<br>&nbsp;&nbsp; NAME property of the region contains the word 'of' then
+the region will
+<br>&nbsp;&nbsp; be considered a town, with the name being the text following
+the word
+<br>&nbsp;&nbsp; 'of'.&nbsp; If it doesnt contain the word of, then it
+is assumed to be a
+<br>&nbsp;&nbsp; wilderness region.&nbsp; This means placing a townstone
+inside of Lord British's
+<br>&nbsp;&nbsp; Castle would be considered a wilderness stone.
+</body>
+</html>

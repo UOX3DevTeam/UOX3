@@ -1,34 +1,13 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  books.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 // Books class by Lord Binary 7'th December 1999
 // Implements writable books
 
+// V0.9 5'th dec, initial version
+// V1.0 7'th dec 1999, "wrapped" everything in a class, added customable number of max-pages
+// V1.1 12-dec-1999 -> nasty bug fixed (item# used as "key" instead of serial#) and a few very small bugfixes
+
 #include "uox3.h"
 #include "books.h"
+#include "ssection.h"
 
 cBooks::cBooks()//Constructor
 {
@@ -41,113 +20,117 @@ cBooks::~cBooks()//Destructor
 }
 
 // opens old (readonly) books == old, bugfixed readbook function
-void cBooks::openbook_old(UOXSOCKET s, ITEM i)
+void cBooks::OpenPreDefBook( cSocket *mSock, CItem *i )
 {
-	char bookopen[10]="\x93\x40\x01\x02\x03\x00\x00\x00\x02"; //LB 7'th dec 1999, making it client 1.26 complaint
-	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	
-	openscript("misc.scp");
-	sprintf(temp, "BOOK %i",
-		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
+	if( mSock == NULL )
 		return;
-	}
-	bookopen[1]=items[i].ser1;
-	bookopen[2]=items[i].ser2;
-	bookopen[3]=items[i].ser3;
-	bookopen[4]=items[i].ser4;
-	do
+
+	char temp[1024];
+	char bookopen[10] = "\x93\x40\x01\x02\x03\x00\x00\x00\x02";
+	char booktitle[61] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	char bookauthor[31] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	
+	sprintf( temp, "BOOK %i", i->GetMore() );
+	ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
+	if( book == NULL )
+		return;
+
+	const char *data = NULL;
+	bookopen[1] = i->GetSerial( 1 );
+	bookopen[2] = i->GetSerial( 2 );
+	bookopen[3] = i->GetSerial( 3 );
+	bookopen[4] = i->GetSerial( 4 );
+	bool part1 = false, part2 = false, part3 = false;
+	for( const char *tag = book->First(); !book->AtEnd(); tag = book->Next() )
 	{
-		read2();
+		data = book->GrabData();
+		if( !strcmp( tag, "PAGES" ) )
+		{
+			part1 = true;
+			bookopen[8] = (UI08)(makeNum( data ));
+		}
+		else if( !strcmp( tag, "TITLE" ) )
+		{
+			part2 = true;
+			strcpy( booktitle, data );
+		}
+		else if( !strcmp( tag, "AUTHOR" ) )
+		{
+			part3 = true;
+			strcpy( bookauthor, data );
+		}
+		if( part1 && part2 && part3 )
+			break;
 	}
-	while (strcmp(script1, "PAGES"));
-	bookopen[8]=str2num(script2); // LB, bugfixing old code
-	do
-	{
-		read2();
-	}
-	while (strcmp(script1, "TITLE"));
-	sprintf(booktitle, "%s", script2);
-	do
-	{
-		read2();
-	}
-	while (strcmp(script1, "AUTHOR"));
-	sprintf(bookauthor, "%s", script2);
-	Network->xSend(s, bookopen, 9, 0); // LB, bugfixing of old code
-	Network->xSend(s, booktitle, 60, 0);
-	Network->xSend(s, bookauthor, 30, 0);
-	closescript();
+
+	mSock->Send( bookopen, 9 );
+	mSock->Send( booktitle, 60 );
+	mSock->Send( bookauthor, 30 );
 }
 
 // opens new books
-// writeable 1 -> open new books in writable mode
-//           0 -> open new books in readonly mode
-void cBooks::openbook_new(UOXSOCKET s, ITEM i, char writeable)
+void cBooks::OpenBook( cSocket *mSock, CItem *i, bool isWriteable )
 {
-	char bookopen[10]=   "\x93\x40\x01\x02\x03\x01\x01\x00\x02"; //LB 7'th dec 1999, making it client 1.26 complaint
-	
+	char bookopen[10]=   "\x93\x40\x01\x02\x03\x01\x01\x00\x02";
 	char bookopen_ro[10]="\x93\x40\x01\x02\x03\x00\x01\x00\x02";
 
-	int a,b,c,pages,bytes;
+	int a, b, c, pages;
 	char line[33];
 	char buch[256][8][33];
-	char fileName[13],bookexists;
-
-	FILE *file;
+	char fileName[MAX_PATH];
 
 	// I dont know what that new client 1.26 byte does, but it needs to be set to 1 or 2 or writing doesnt work
     // wild guess: rune books ...
 
-	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	UI08 booktitle[61] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	UI08 bookauthor[31] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-	sprintf( fileName, "%02x%02x%02x%02x.bok", i>>24, i>>16, i>>8, i%256);
-    file = fopen( fileName, "r+b"); // open existing file for read/write
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), i->GetSerial() );
+    FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-    if (file==NULL) bookexists=0;  else bookexists=1;
+	bool bookexists = ( file != NULL );
 	
-	if (bookexists)
+	if( bookexists )
 	{
-	  fclose(file);
-	  read_author ( i, bookauthor ); // fetch author if existing
-	  read_title  ( i, booktitle  ); // fetch title if existing
+		fclose( file );
+		ReadAuthor( i, bookauthor ); // fetch author if existing
+		ReadTitle ( i, booktitle  ); // fetch title if existing
+		pages = getNumberOfPages( i ); 
 	}
-
-	if (bookexists) pages=read_number_of_pages(i); else 
+	else 
 	{ 
-		pages=items[i].morey;              // if new book get number of maxpages ...
-		if (pages<1 || pages>255) pages=16;
+		pages = i->GetMoreY();              // if new book get number of maxpages ...
+		if( pages < 1 || pages > 255 ) 
+			pages = 16;
 	}
-
-	int q = 0;
-	// clear all buffers from previous book openings
-	for( q = 0; q < 32; q++ ) authorbuffer[s][q]='~';
-	for( q = 0; q < 62; q++ )     titlebuffer[s][q]='~';
-	for( q = 0; q < 511; q++ )    pagebuffer[s][q]='~';
+	mSock->ClearAuthor();
+	mSock->ClearTitle();
+	mSock->ClearPage();
 	
-	bookopen[1] = bookopen_ro[1] = items[i].ser1;
-	bookopen[2] = bookopen_ro[2] = items[i].ser2;
-	bookopen[3] = bookopen_ro[3] = items[i].ser3;
-	bookopen[4] = bookopen_ro[4] = items[i].ser4;
+	bookopen[1] = bookopen_ro[1] = i->GetSerial( 1 );
+	bookopen[2] = bookopen_ro[2] = i->GetSerial( 2 );
+	bookopen[3] = bookopen_ro[3] = i->GetSerial( 3 );
+	bookopen[4] = bookopen_ro[4] = i->GetSerial( 4 );
 
-	bookopen[7] = bookopen_ro[7] = pages>>8; 
-	bookopen[8] = bookopen_ro[8] = pages%256;  
+	bookopen[7] = bookopen_ro[7] = (UI08)(pages>>8); 
+	bookopen[8] = bookopen_ro[8] = (UI08)(pages%256);
 
-	if (writeable) Network->xSend(s, bookopen, 9, 0); else 
-	{ 
-		Network->xSend(s, bookopen_ro, 9, 0);
+	if( mSock != NULL )
+	{
+		if( isWriteable ) 
+			mSock->Send( bookopen, 9 ); 
+		else 
+			mSock->Send( bookopen_ro, 9 );
+
+		mSock->Send( booktitle, 60 );
+		mSock->Send( bookauthor, 30 );
 	}
-
-	Network->xSend(s, booktitle, 60, 0);
-	Network->xSend(s, bookauthor, 30, 0);
 	
-	if (!bookexists) return; // dont send book contents if the file doesnt exist (yet)!
+	if( !bookexists ) 
+		return; // dont send book contents if the file doesnt exist (yet)!
 
-	if (!writeable) return; // if readonly book return !!
+	if( !isWriteable ) 
+		return; // if readonly book return !!
 
     //////////////////////////////////////////////////////////////
 	// Now we HAVE to send the ENTIRE Book                     / /
@@ -157,197 +140,192 @@ void cBooks::openbook_new(UOXSOCKET s, ITEM i, char writeable)
 	// lots of data has to be send.                              /
 	//////////////////////////////////////////////////////////////
 
-	char bookpage_pre[10]="\x66\x01\x02\x40\x01\x02\x03\x00\x01";
-	char bookpage[5]="\x00\x00\x00\x08";
+	UI08 bookpage_pre[10] = "\x66\x01\x02\x40\x01\x02\x03\x00\x01";
+	UI08 bookpage[5] = "\x00\x00\x00\x08";
 
     // we have to know the total size "in advance"
 	// thats why i save the book data in a temporaray array to 
 	// avoid reading it twice from (slow) hd
 
-	bytes=9;
-	for (a=1;a<=pages;a++)
+	int bytes = 9;
+	for( a = 1; a <= pages; a++ )
 	{
-	 bytes+=4; // 4 bytes for each page
-     for (b=1;b<=8;b++)
-	 {
-        read_line(i, a,b, line);
-		c=strlen(line)+1;
-        //printf("%s l: %i\n",line,c);
-		strcpy(buch[a-1][b-1],line);
-		bytes+=c; // plus the stringlength+null terminator per(!) row
-	 }
+		bytes += 4; // 4 bytes for each page
+		for( b = 1; b <= 8; b++ )
+		{
+			ReadLine( i, a, b, line );
+			c = strlen( line ) + 1;
+			strcpy( buch[a-1][b-1], line );
+			bytes += c; // plus the string length + null terminator per(!) row
+		}
 	}
 
-	bookpage_pre[1]=bytes>>8;
-	bookpage_pre[2]=bytes%256;
-	bookpage_pre[3]=items[i].ser1;
-	bookpage_pre[4]=items[i].ser2;
-	bookpage_pre[5]=items[i].ser3;
-	bookpage_pre[6]=items[i].ser4;
-	bookpage_pre[7]=pages>>8;
-	bookpage_pre[8]=pages%256;
+	bookpage_pre[1] = (UI08)(bytes>>8);
+	bookpage_pre[2] = (UI08)(bytes%256);
+	bookpage_pre[3] = i->GetSerial( 1 );
+	bookpage_pre[4] = i->GetSerial( 2 );
+	bookpage_pre[5] = i->GetSerial( 3 );
+	bookpage_pre[6] = i->GetSerial( 4 );
+	bookpage_pre[7] = (UI08)(pages>>8);
+	bookpage_pre[8] = (UI08)(pages%256);
 
-	Network->xSend(s, bookpage_pre, 9, 0);
-
-	for (a=1;a<=pages;a++)
+	if( mSock != NULL )
 	{
+		mSock->Send( bookpage_pre, 9 );
 
-	  bookpage[0]=a>>8;
-	  bookpage[1]=a%256;
-
-	  Network->xSend(s, bookpage, 4, 0);
-
-	  for (int j=0;j<8;j++)
-	  {
-		Network->xSend(s, buch[a-1][j], strlen(buch[a-1][j])+1, 0);
-	  }
+		for( a = 1; a <= pages; a++ )
+		{
+			bookpage[0] = (UI08)(a>>8);
+			bookpage[1] = (UI08)(a%256);
+			mSock->Send( bookpage, 4 );
+			for( UI08 j = 0; j < 8; j++ )
+				mSock->Send( buch[a-1][j], strlen( buch[a-1][j] ) + 1 );
+		}
 	}
 }
 
 // sends a page of new readonly book to the client
-void cBooks::readbook_readonly(UOXSOCKET s, ITEM i, int p) 
+void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, int p )
 {
-
-    char bookpage[14]="\x66\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x08";
-	int bytes=0,a,c;
+    UI08 bookpage[14] = "\x66\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x08";
+	int c;
 	char seite[8][33];
-	char fileName[13];
+	char fileName[MAX_PATH];
 	char line[33];
-	FILE *file;
+	
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), i->GetSerial() );
+    FILE *file = fopen( fileName, "r+b"); // open existing file for read/write
 
-	sprintf( fileName, "%02x%02x%02x%02x.bok", i>>24, i>>16, i>>8, i%256);
-    file = fopen( fileName, "r+b"); // open existing file for read/write
-
-    if (file==NULL) return;
-	fclose(file);
-
-	bytes=13;
-	for (a=1;a<=8;a++)
+    if( file == NULL ) 
 	{
-	   read_line(i, p,a,line);
-	   c=strlen(line)+1;        
-	   strcpy(seite[a-1],line);
-	   bytes+=c;
+		Console.Error( 1, "Failed to open %s", fileName );
+		return;
+	}
+	fclose( file );
+
+	int bytes = 13;
+	for( int a = 1; a <= 8; a++ )
+	{
+		ReadLine( i, p, a, line );
+		c = strlen( line ) + 1;        
+		strcpy( seite[a-1], line );
+		bytes += c;
 	}
     
-	bookpage[1]=bytes>>8;
-	bookpage[2]=bytes%256;
+	bookpage[1] = (UI08)(bytes>>8);
+	bookpage[2] = (UI08)(bytes%256);
 
-	bookpage[3]=items[i].ser1;
-	bookpage[4]=items[i].ser2;
-	bookpage[5]=items[i].ser3;
-	bookpage[6]=items[i].ser4;
+	bookpage[3] = i->GetSerial( 1 );
+	bookpage[4] = i->GetSerial( 2 );
+	bookpage[5] = i->GetSerial( 3 );
+	bookpage[6] = i->GetSerial( 4 );
 
-	bookpage[9]=p>>8;
-	bookpage[10]=p%256;
+	bookpage[9] = (UI08)(p>>8);
+	bookpage[10] = (UI08)(p%256);
 
-	Network->xSend(s, bookpage, 13, 0);
-
-	for (int j=0;j<8;j++)
+	if( s != NULL )
 	{
-		Network->xSend(s, seite[j], strlen(seite[j])+1, 0);
-	}
-	
+		s->Send( bookpage, 13 );
+		for( UI08 j = 0; j < 8; j++ )
+			s->Send( seite[j], strlen( seite[j] ) + 1 );
+	}	
 }
 
-
 // old readbook function
-void cBooks::readbook_readonly_old(UOXSOCKET s, ITEM i, int p)
+void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, int p )
 {
+	if( mSock == NULL )
+		return;
 
-	int x, y, pos, j;
-	char bookpage[14]="\x66\x01\x02\x40\x01\x02\x03\x00\x01\x00\x01\x00\x01";
-	
-	openscript("misc.scp");
-	sprintf(temp, "BOOK %i",
-		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
+	char temp[512];
+
+	sprintf( temp, "BOOK %i", i->GetMore() );
+	ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
+	if( book == NULL )
 		return;
-	}
-	x=p;
-	do
+
+	for( const char *tag = book->First(); !book->AtEnd(); tag = book->Next() )
 	{
-		do
+		if( !strcmp( tag, "PAGE" ) )
 		{
-			read2();
+			sprintf( temp, "PAGE %s", book->GrabData() );
+			ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
+			if( page == NULL )
+				return;
+
+			int x = -1;
+			int y = -2;
+			for( tag = page->First(); !page->AtEnd(); tag = page->Next() )
+			{
+				sprintf( temp, "%s %s", tag, page->GrabData() );
+				x++;
+				y += strlen( temp ) + 1;
+			}
+			y += 13;
+
+			UI08 bookpage[14] = "\x66\x01\x02\x40\x01\x02\x03\x00\x01\x00\x01\x00\x01";
+			bookpage[1] = (UI08)(y>>8);
+			bookpage[2] = (UI08)(y%256);
+			bookpage[3] = i->GetSerial( 1 );
+			bookpage[4] = i->GetSerial( 2 );
+			bookpage[5] = i->GetSerial( 3 );
+			bookpage[6] = i->GetSerial( 4 );
+			bookpage[9] = (UI08)(p>>8);
+			bookpage[10] = (UI08)(p%256);
+			bookpage[11] = (UI08)(x>>8);
+			bookpage[12] = (UI08)(x%256);
+
+			mSock->Send( bookpage, 13 );
+
+			tag = page->First();
+			for( int j = 0; j < x; j++ )
+			{
+				if( page->AtEnd() )
+					return;
+
+				sprintf( temp, "%s %s", tag, page->GrabData() );
+				mSock->Send( temp, strlen( temp ) + 1 );
+				tag = page->Next();
+			}
+			return;
 		}
-		while (strcmp(script1, "PAGE"));
-		x--;
 	}
-	while (x>0);
-	closescript();
-	openscript("misc.scp");
-	sprintf(temp, "PAGE %s", script2);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
-		return;
-	}
-	pos=ftell(scpfile);
-	x=-1;
-	y=-2;
-	do
-	{
-		read1();
-		x++;
-		y+=strlen(script1)+1;
-	}
-	while (strcmp(script1, "}"));
-	y+=13;
-	fseek(scpfile, pos, SEEK_SET);
-	bookpage[1]=y>>8;
-	bookpage[2]=y%256;
-	bookpage[3]=items[i].ser1;
-	bookpage[4]=items[i].ser2;
-	bookpage[5]=items[i].ser3;
-	bookpage[6]=items[i].ser4;
-	bookpage[9]=p>>8;
-	bookpage[10]=p%256;
-	bookpage[11]=x>>8;
-	bookpage[12]=x%256;
-	Network->xSend(s, bookpage, 13, 0);
-	for (j=0;j<x;j++)
-	{
-		read1();
-		Network->xSend(s, script1, strlen(script1)+1, 0);
-	}
-	closescript();
 }
 
 // writes changes to a writable book to the bok file.		
-void cBooks::readbook_writeable(UOXSOCKET s, ITEM i, int p, int l)
+void cBooks::ReadWritableBook( cSocket *s, CItem *i, int p, int l )
 {
- int ii=0,lines_processed=0,lin=0;
- char line[34],ch;
+	int ii = 0, lines_processed = 0, lin = 0;
+	char line[34], ch;
 
- if (a_t) write_title(i,s); // if title was changed by writer write the changes "down"
- if (a_t) write_author(i,s); // if author was changed by writer write the changes "down" to the bok-file
+	if( changeAT ) 
+	{
+		WriteTitle( i, s ); // if title was changed by writer write the changes "down"
+		WriteAuthor( i, s ); // if author was changed by writer write the changes "down" to the bok-file
+	}
  
- while (lines_processed<l)
- {
-   if (ii>511) lines_processed=l; // avoid crash if client sends out inconsitent data
-   ch=pagebuffer[s][ii];
-   if (lin<33) line[lin]=ch; else line[33]=ch;
-   ii++;
-   lin++;
-   if (ch==0) 
-   {
-	   lines_processed++;
-	   lin=0;
-
-	   //printf("page: %i\n",p);
-
-       write_line(i, p, lines_processed, line,s);       
-
-	   //printf("author: %s title: %s line: %i :%s\n",authorbuffer[s],titlebuffer[s],lines_processed,line);
-   }
-   
- }
- 
- a_t=0; // dont re-write author and title if not necassairy
-
+	if( s == NULL )
+		return;
+	char *pagebuffer = s->PageBuffer();
+	while( lines_processed < l )
+	{
+		if( ii > 511 ) 
+			lines_processed = l; // avoid crash if client sends out inconsitent data
+		ch = pagebuffer[ii];
+		if( lin < 33 ) 
+			line[lin] = ch; 
+		else 
+			line[33] = ch;
+		ii++;
+		lin++;
+		if( ch == 0 ) 
+		{
+			lines_processed++;
+			lin = 0;
+			WriteLine( i, p, lines_processed, line, s );
+		}
+	}
+ 	changeAT = false; // dont re-write author and title if not necassairy
 }
 
 // private methods here
@@ -356,378 +334,336 @@ void cBooks::readbook_writeable(UOXSOCKET s, ITEM i, int p, int l)
 // PRE: packets 0x93 needs to be send by client BEFORE its called. 
 // (and its data copied to the authorbuffer)
 
-void cBooks::write_author(int id,UOXSOCKET s)
+void cBooks::WriteAuthor( CItem *id, cSocket *s )
 {
-  FILE *file;
-  char fileName[13];  // Standard 8.3 file name
-  int newbook=0,Offset;
+	char fileName[MAX_PATH];  // Standard 8.3 file name
 
-  //printf("write-auth called\n");
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
+	if( file == NULL ) // If the .bok file does not exist create it
+	{	 
+		if( !CreateBook( fileName, id ) ) 
+			return;
 
-  
-  if (file == NULL) // If the BOK file does not exist -> that book must be new
-	                // or the file got deleted -> lets try to create it
-  {
-	  newbook=1;	 
-	  if (make_new_book_file(fileName,id)==-1) 
-	  {
-		  return;
-	  }
+		file = fopen( fileName, "r+b" ); // open existing file for read/write (now it should exist)
+		if( file == NULL )                 
+		{
+			Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+			return;
+		}
+	}
 
-      file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
-	  if (file==NULL)                 
-	  {
-		  printf("couldnt write to bok file\n");
-		  return;
-	  }
-  }
+	if( s == NULL )
+		return;
+	char *authorbuffer = s->AuthorBuffer();
  
-  Offset=62; // position filepointer to the author-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-     
-  authorbuffer[s][31]='\n';
+	if( fseek( file, 62, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s", fileName );
 
-  if ( fwrite(authorbuffer[s], sizeof(char), 32, file) != 32 ) 
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }			
+	authorbuffer[31] = '\n';
 
-  fclose(file);
+	if( fwrite( authorbuffer, sizeof( char ), 32, file ) != 32 ) 
+	{
+		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		return;
+	}			
 
+	fclose( file );
 }
 
 
-void cBooks::write_title(int id,UOXSOCKET s)
+void cBooks::WriteTitle( CItem *id, cSocket *s )
 {
-  FILE *file;
-  char fileName[13];  // Standard 8.3 file name
-  int newbook=0,Offset;
+	char fileName[MAX_PATH];  // Standard 8.3 file name
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
   
-  if (file == NULL) // If the BOK file does not exist -> that book must be new
-	                // or the file got deleted -> lets try to create it
-  {
-	  newbook=1;	 
-	  if (make_new_book_file(fileName,id)==-1) 
-	  {
-		  return;
-	  }
+	if( file == NULL )	// If the BOK file does not exist -> that book must be new
+	{					// or the file got deleted -> lets try to create it	 
+		if( !CreateBook( fileName, id ) ) 
+			return;
 
-      file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
-	  if (file==NULL)                 
-	  {
-		  printf("couldnt write to bok file\n");
-		  return;
-	  }
-  }
+		file = fopen( fileName, "r+b" ); // open existing file for read/write (now it should exist)
+		if( file == NULL )                 
+		{
+			Console.Error( 1, "Couldn't write to book file %s", fileName );
+			return;
+		}
+	}
  
-  Offset=0; // position filepointer to the title-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-     
-  titlebuffer[s][61]='\n';
+	if( fseek( file, 0, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s", fileName );
 
-  if ( fwrite(titlebuffer[s], sizeof(char), 62, file) != 62 ) 
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }			
+	if( s == NULL )
+		return;
 
-  fclose(file);
+	char *titlebuffer = s->TitleBuffer();
+	titlebuffer[61] = '\n';
 
+	if( fwrite( titlebuffer, sizeof( char ), 62, file ) != 62 )
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return;
+	}			
+
+	fclose( file );
 }
 
-void cBooks::write_line(int id, int page, int line, char linestr[34], UOXSOCKET s)
+void cBooks::WriteLine( CItem *id, int page, int line, char linestr[34], cSocket *s )
 {
+	char fileName[MAX_PATH];  // Standard 8.3 file name
 
-  //printf("id: %i page: %i line: %i linestr: %s sock: %i\n",id,page,line,linestr,s);
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  FILE *file;
-  char fileName[13];  // Standard 8.3 file name
-  int newbook=0,Offset;
+	if( file == NULL )	// If the BOK file does not exist -> that book must be new
+	{					// or the file got deleted -> lets try to create it
+		if( !CreateBook( fileName, id ) ) 
+			return;
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
-  
-  if (file == NULL) // If the BOK file does not exist -> that book must be new
-	                // or the file got deleted -> lets try to create it
-  {
-	  newbook=1;	 
-	  if (make_new_book_file(fileName,id)==-1) 
-	  {
-		  return;
-	  }
-
-      file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
-	  if (file==NULL)                 
-	  {
-		  printf("couldnt write to bok file\n");
-		  return;
-	  }
-  }
+		file = fopen( fileName, "r+b" ); // open existing file for read/write (now it should exist)
+		if( file == NULL )                 
+		{
+			Console.Error( 1, "Couldn't write to book file %s", fileName );
+			return;
+		}
+	}
  
-  Offset=273*page+34*line-207; // wohoooo, what a neat geeky formula :)
+	int Offset = 273 * page + 34 * line - 207;
+	if( fseek( file, Offset, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s", fileName );
+ 
+	linestr[33] = '\n';
 
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-     
-  linestr[33]='\n';
-
-  if ( fwrite(linestr, sizeof(char), 34, file) != 34 ) 
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }			
-
-  fclose(file);
-
+	if( fwrite( linestr, sizeof( char ), 34, file ) != 34 ) 
+	{
+		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		return;
+	}			
+	fclose( file );
 }
 
-void cBooks::read_author(int id,char auth[31])
+void cBooks::ReadAuthor( CItem *id, UI08 auth[31] )
 {
+	char fileName[MAX_PATH];  
 
-  FILE *file;
-  char fileName[13];  
-  int Offset;
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
-  
-  if (file == NULL) 
-  {
-	  printf("couldnt read bok file\n");
-	  return;
-  }
-	        
-  Offset=62; // position filepointer to the author-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-       
-  if ( fread(auth, sizeof(char), 31, file) != 31 )  // read it
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }
-	
-  // clear garbage after strign termination
-  int end=0; 
-  for (int a=0;a<31;a++)
-  {
-    if (auth==0) end=1;
-	if (end) auth[a]=0;
-  }
-  
-  fclose(file);
+	if( file == NULL ) 
+	{
+		Console.Error( 1, "Couldn't read book file %s", fileName );
+		return;
+	}
 
+	if( fseek( file, 62, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s", fileName );
+
+	if( fread( auth, sizeof( char ), 31, file ) != 31 )  // read it
+	{
+		Console.Error( 1, "Coudn't write to book file %s", fileName );
+		return;
+	}
+
+	// clear garbage after strign termination
+	bool end = ( auth == 0 ); 
+	for( UI08 a = 0; a < 31; a++ )
+	{
+		if( end ) 
+			auth[a] = 0;
+	}
+	fclose( file );
 }
 
 	
-void cBooks::read_title(int id,char title[61])
+void cBooks::ReadTitle( CItem *id, UI08 title[61] )
 {
+	char fileName[MAX_PATH];  
 
-  FILE *file;
-  char fileName[13];  
-  int Offset;
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
-  
-  if (file == NULL) 
-  {
-	  printf("couldnt read bok file\n");
-	  return;
-  }
-	        
-  Offset=0; // position filepointer to the title place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-       
-  if ( fread(title, sizeof(char), 61, file) != 61 )  // read it
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }
-	
-  // clear garbage after strign termination
-  int end=0; 
-  for (int a=0;a<61;a++)
-  {
-    if (title==0) end=1;
-	if (end) title[a]=0;
-  }
-  
-  fclose(file);
+	if( file == NULL )
+	{
+		Console.Error( 1, "Couldn't read book file %s", fileName );
+		return;
+	}
 
+	if( fseek( file, 0, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s", fileName );
+
+	if( fread( title, sizeof( char ), 61, file ) != 61 )  // read it
+	{
+		Console.Error( 1, "Couldn't write to book file %s", fileName );
+		return;
+	}
+
+	// clear garbage after strign termination
+	bool end = ( title == 0 ); 
+	for( UI08 a = 0; a < 61; a++ )
+	{
+		if( end ) 
+			title[a] = 0;
+	}
+	fclose( file );
 }
 
-int cBooks::read_number_of_pages(int id)
+UI08 cBooks::getNumberOfPages( CItem *id )
 {
-  FILE *file;
-  char fileName[13];  
-  int Offset;
-  char num[5];
+	char fileName[MAX_PATH];  
+	char num[5];
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
-  
-  if (file == NULL) 
-  {
-	  printf("couldnt read bok file\n");
-	  return 1;
-  }
-	        
-  Offset=94; // position filepointer to the number of pages place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-       
-  if ( fread(num, sizeof(char), 5, file) != 5 )  // read it
-  {
-	 printf("coudnt write to book file\n");
-	 return 1;
-  }
-	
-  // clear garbage after string termination
-  int end=0, a; 
-  for(a = 0; a < 5; a++ )
-  {
-    if (num==0) end=1;
-	if (end) num[a]=0;
-  }
-  
-  fclose(file);
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  a=str2num(num);
-  if (a<1 || a>255) return 255;
-  return a;
+	if( file == NULL ) 
+	{
+		Console.Error( 1, "Couldn't read book file %s for book %x", fileName, id->GetSerial() );
+		return 1;
+	}
 
+	if( fseek( file, 94, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s for book %x", fileName, id->GetSerial() );
+
+	if( fread( num, sizeof(char), 5, file ) != 5 )  // read it
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return 1;
+	}
+
+	// clear garbage after string termination
+	bool end = ( num == 0 ); 
+	for( UI08 a = 0; a < 5; a++ )
+	{
+		if( end ) 
+			num[a] = 0;
+	}
+	fclose( file );
+
+	return (UI08)makeNum( num );
 }
 	
-
 // page+linumber=1 indexed ! (as returned from client)
-void cBooks::read_line(int id, int page,int linenumber, char line[33])
+void cBooks::ReadLine( CItem *id, int page, int linenumber, char line[33] )
 {
-  FILE *file;
-  char fileName[13];  
-  int Offset;
+	char fileName[MAX_PATH];  
 
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  file = fopen( fileName, "r+b"); // open existing file for read/write
-  
-  if (file == NULL) 
-  {
-	  printf("couldnt read bok file\n");
-	  return;
-  }
-	        
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	FILE *file = fopen( fileName, "r+b" ); // open existing file for read/write
 
-  Offset=273*page+34*linenumber-207; // wohoooo, what a neat geeky formula :)
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
-       
-  if ( fread(line, sizeof(char), 33, file) != 33 )  // read it
-  {
-	 printf("coudnt write to book file\n");
-	 return;
-  }
-	
-  // clear garbage after strign termination
-  int end=0; 
-  for (int a=0;a<33;a++)
-  {
-    if (line==0) end=1;
-	if (end) line[a]=0;
-  }
-  
-  fclose(file);
+	if( file == NULL )
+	{
+		Console.Error( 1, "Couldn't read book file %s for book %x", fileName, id->GetSerial() );
+		return;
+	}
+
+	int Offset = 273 * page + 34 * linenumber - 207;
+	if( fseek( file, Offset, SEEK_SET ) ) 
+		Console.Error( 1, "Failed to seek to book file %s for book %x", fileName, id->GetSerial() );
+
+	if( fread( line, sizeof( char ), 33, file ) != 33 )  // read it
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return;
+	}
+
+	// clear garbage after strign termination
+	bool end = ( line == 0 ); 
+	for( UI08 a = 0; a < 33; a++ )
+	{
+		if( end )
+			line[a] = 0;
+	}
+
+	fclose( file );
 }
 
-void cBooks::delete_bokfile(int id)
+void cBooks::DeleteBook( CItem *id )
 {
-  char fileName[13];    
-  sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
-  remove(fileName);
-
+	char fileName[MAX_PATH];    
+	sprintf( fileName, "%s/%x.bok", cwmWorldState->ServerData()->GetBooksDirectory(), id->GetSerial() );
+	remove( fileName );
 }
 
 // "Formats" a newly created book-file
 // This NEEDS to be done with ANY new book file.
 // 
-char cBooks::make_new_book_file(char *fileName, int id)
+bool cBooks::CreateBook( char *fileName, CItem *id )
 {
-  FILE *file;
+	FILE *file = fopen( fileName, "w+b" ); // create new file
+	char ch;
+	char author[33];
+	char title[63];
+	char line[35];
+	char num[5];
 
-  file = fopen( fileName, "w+b"); // create new file
-  int i,maxpages;
-  char ch;
-  char author[33];
-  char title[63];
-  char line[35];
-  char num[5];
-
-  if (file == NULL) 
-  {
-	printf("cant create new book file\n");
-	return -1;
-  }
-
-  author[0]='.';author[1]=0;author[31]='\n';
-  title[0]='.';title[1]=0;title[61]='\n';
-  line[0]='.';line[1]=0;line[33]='\n';
-
-  for (i=2;i<=60;i++) title[i]=32;
-  for (i=2;i<=30;i++) author[i]=32;
-  for (i=2;i<=32;i++) line[i]=32;
- 
-  if ( fwrite(&title, sizeof(char), 62, file) != 62 ) 
-  {
-	printf("coudnt write to book file\n");
-	return -1;
-  }
-
-  if ( fwrite(&author, sizeof(char), 32, file) != 32 ) 
-  {
-	printf("coudnt write to book file\n");
-	return -1;
-  }
-  
-  
-  maxpages=items[id].morey; // morey=maxpages
-  if (maxpages<1 || maxpages>255) maxpages=16; // default = 16 pages
-
-  numtostr(maxpages,num); // danger,danger, didnt this cause probs under LINUX ???
-                          // sorry, i cant test ???
-
-  num[4]='\n';
-
-  if ( fwrite(num, sizeof(char), 5, file) != 5 )  // writens number
-  {
-	printf("coudnt write to book file\n");
-	return -1;
-  }
-
-  for (int j=0;j<maxpages;j++) // page loop
-  {
-	ch='\n'; // each page gets a cr
-    if ( fwrite(&ch, sizeof(char), 1, file) != 1 ) 
+	if( file == NULL )
 	{
-	  printf("coudnt write to book file\n");
-	  return -1;
+		Console.Error( 1, "Can't create new book file %s for book %x", fileName, id->GetSerial() );
+		return false;
 	}
-	
-    for (int l=0;l<8;l++) // each page has 8 lines
-	{	         
-		line[0]=0;
-        if ( fwrite(&line, sizeof(char), 34, file) != 34 ) 
+
+	author[0] = '.';	author[1] = 0;	author[31] = '\n';
+	title[0]  = '.';	title[1]  = 0;	title[61]  = '\n';
+	line[0]   = '.';	line[1]   = 0;	line[33]   = '\n';
+
+	UI08 i;
+	for( i = 2; i <= 60; i++ ) 
+		title[i] = 32;
+	for( i = 2; i <= 30; i++ ) 
+		author[i] = 32;
+	for( i = 2; i <= 32; i++ ) 
+		line[i] = 32;
+
+	if( fwrite( title, sizeof( char ), 62, file ) != 62 ) 
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return false;
+	}
+
+	if( fwrite( author, sizeof(char), 32, file) != 32 ) 
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return false;
+	}
+
+	UI32 maxpages = id->GetMoreY();
+	if( maxpages < 1 || maxpages > 255 ) 
+		maxpages = 16; // default = 16 pages
+
+	numtostr( maxpages, num ); // danger,danger, didnt this cause probs under LINUX ???
+
+	num[4] = '\n';
+
+	if( fwrite( num, sizeof( char ), 5, file ) != 5 )  // writens number
+	{
+		Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+		return false;
+	}
+
+	for( UI08 j = 0; j < maxpages; j++ ) // page loop
+	{
+		ch = '\n'; // each page gets a cr
+		if( fwrite( &ch, sizeof( char ), 1, file ) != 1 ) 
 		{
-	       printf("coudnt write to book file\n");
-	       return -1;
-		}			
+			Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+			return false;
+		}
+
+		for( UI08 l = 0; l < 8; l++ ) // each page has 8 lines
+		{	         
+			line[0] = 0;
+			if( fwrite( line, sizeof( char ), 34, file ) != 34 ) 
+			{
+				Console.Error( 1, "Couldn't write to book file %s for book %x", fileName, id->GetSerial() );
+				return false;
+			}			
+		}
 	}
-
-  }
-
-  fclose(file);
-  return 0;
+	fclose( file );
+	return true;
 }
- 
+

@@ -1,37 +1,13 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  fileio.h
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 #ifndef __FILEIO_H
 #define __FILEIO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 
 class UOXFile;
+class BinBuffer;
 
 #ifndef __UOX3_H
 #include "uox3.h"
@@ -41,49 +17,94 @@ class UOXFile;
 #include "classes.h"
 #endif
 
+using namespace std;
+
 class UOXFile
 {
-  private:
+private:
 
-  int fmode, ok, bSize, bIndex;
-  unsigned char *ioBuff;
-  FILE *theFile;
+	int			fmode, bSize, bIndex;
+	bool		ok;
+	UI08 *		ioBuff;
+	FILE *		theFile;
 
-  public:
+public:
 
-  UOXFile(char *, char *);
-  ~UOXFile();
+				UOXFile( const char *, char * );
+	virtual		~UOXFile();
 
-  inline int qRefill(void) { return (bIndex >= bSize); };
-  inline int ready(void) { return (ok); };
-  void rewind(void);
-  void seek(long, int);
-  inline int eof(void) { return (feof(theFile)); };
-  int getch(void);
-  void refill(void);
-  char *gets(char *, int);
-  int puts(char *);
-  void getUChar(unsigned char *, unsigned int);
-  void getUChar(unsigned char *c) { getUChar((unsigned char *) c, 1); }
+	inline int	qRefill( void ) { return( bIndex >= bSize ); };
+	inline int	ready( void ) { return( ok ); };
+	void		rewind( void );
+	void		seek( long, int );
+	inline int	eof( void ) { return ( feof( theFile ) ); };
+	int			getch( void );
+	void		refill( void );
 
-  void getChar(signed char *, unsigned int);
-  void getChar(signed char *c) { getChar(c, 1); }
+	char *		gets( char *, int );
+	int			puts( char * );
+	
+	void		getUChar( UI08 *, UI32 );
+	void		getUChar( UI08 *c ) { getUChar( (UI08 *) c, 1 ); }
 
-  void getUShort(unsigned short *, unsigned int = 1);
-  void getShort(signed short *, unsigned int = 1);
-  void getULong(UI32 *, unsigned int = 1);
-  void getLong(SI32 *, unsigned int = 1);
-  //long tell(void);
-  //int getChkSum(void);
-  //int getLength(void);
+	void		getChar( SI08 *, UI32 );
+	void		getChar( SI08 *c) { getChar( c, 1 ); }
 
-  void get_versionrecord(struct versionrecord *, unsigned int = 1);
-  void get_st_multi(struct st_multi *, unsigned int = 1);
-  void get_land_st(struct land_st *, unsigned int = 1);
-  void get_tile_st(struct tile_st *, unsigned int = 1);
-  void get_map_st(struct map_st *, unsigned int = 1);
-  void get_st_multiidx(struct st_multiidx *, unsigned int = 1);
-  void get_staticrecord(struct staticrecord *, unsigned int = 1);
+	void		getUShort( UI16 *, UI32 = 1 );
+	void		getShort( SI16 *, UI32 = 1 );
+	void		getULong( UI32 *, UI32 = 1 );
+	void		getLong( SI32 *, UI32 = 1 );
+
+	void		get_versionrecord( struct versionrecord *, UI32 = 1 );
+	void		get_st_multi( struct st_multi *, UI32 = 1 );
+	void		get_land_st( CLand *, UI32 = 1 );
+	void		get_tile_st( CTile *, UI32 = 1 );
+	void		get_map_st( struct map_st *, UI32 = 1 );
+	void		get_st_multiidx( struct st_multiidx *, UI32 = 1 );
+	void		get_staticrecord( struct staticrecord *, UI32 = 1 );
+
+	int			getLength( void );
+};
+
+class BinBuffer
+{
+public:
+	BinBuffer();
+	BinBuffer( ifstream & );
+	~BinBuffer();
+
+	void Read( ifstream & );
+	void Write( ofstream & );
+	void Reset( void );
+
+	UI32 Size( void );
+	UI08 GetType( void );
+	void SetType( UI08 );
+
+	UI08 GetByte( void );
+	void PutByte( UI08 );
+	SI16 GetShort( void );
+	void PutShort( SI16 );
+	SI32 GetLong( void );
+	void PutLong( SI32 );
+	R32 GetFloat( void );
+	void PutFloat( R32 );
+
+	void PutStr( const char * );
+	int GetStr( char *, int = 255 );
+
+	void Put( const void *, int );
+	void Get( void *, int );
+
+	bool End( void );
+
+	int Position( void );
+	int Length( void );
+
+protected:
+	vector<char> Buff;
+	int fp;
+	UI08 myType;
 };
 
 #endif

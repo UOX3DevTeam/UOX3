@@ -1,343 +1,736 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  xgm.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 #include "uox3.h"
 #include "debug.h"
+#include "xgm.h"
 
-void cRemote::Verify(UOXSOCKET s)
+void cPXGMLoginResponse::InternalReset( void )
 {
-	unsigned int len, i,a;
-	char temp[512], name[64],pass[64], valid=0;
-
-	recv(client[s],(char *)&buffer[s][5],2,0);
-	len=(buffer[s][5]>>8)+(buffer[s][6]%256);
-	recv(client[s],(char *)&buffer[s][7],len,0);
-	strupr((char *)buffer[s]);
-
-	a=0;
-	for (i=7;i<71;i++)
-	{
-		if (buffer[s][i]!=0xFF && buffer[s][i] != 0 )
-			name[a]=buffer[s][i];
-		else {
-			i++;
-			break;
-		}
-		a++;
-	}
-	name[a] = 0;
-	a=0;
-	for (i=i;i<i+64;i++)
-	{
-		if (buffer[s][i]!=0xFF && buffer[s][i]!=0 )
-			pass[a]=buffer[s][i];
-		else break;
-		a++;
-	}
-	pass[a] = 0;
-	strupr( name ); strupr( pass );
-
-	for (i=0;i<acctcount;i++)
-	{
-		strcpy(temp,acctx[i].name);
-		strupr(temp);
-		if (!(strcmp(temp,name)))
-		{
-			strcpy(temp,acctx[i].pass);
-			strupr(temp);
-			if (!(strcmp(temp,pass)) && (!acctx[i].ban))
-			{
-				valid=1;
-				break;
-			}
-		}
-	}
-
-	if (!acctx[i].xGM) valid=0;
-
-	if (valid==0) 
-	{
-		Send(s, "Account not valid!");
-		isClient=0;
-		Network->Disconnect(s);
-		return;
-	}
-
-	Send(s, "Login sucessful!");
-	Acct=i;
-	isClient=1;
+	internalBuffer.resize( 3 );
+	internalBuffer[0] = 0;
 }
 
-void cRemote::GMQue( UOXSOCKET s )
+cPXGMLoginResponse::cPXGMLoginResponse()
 {
-	char out[2048];
-	char type;//0 = All Default (as player) | 1 = All Gm | 2 = All Counselor | 3 = Next Gm | 4 = Next Counselor
+	InternalReset();
+}
 
-	int i, pos=3;
+cPXGMLoginResponse::cPXGMLoginResponse( UI08 error, UI08 clearance )
+{
+	InternalReset();
+	Error( error );
+	Clearance( clearance );
+}
 
-	recv(client[s],out,1,0);
+void cPXGMLoginResponse::Error( UI08 error )
+{
+	internalBuffer[1] = error;
+}
 
-	type = out[0];
-		
-	memset(out, 0, 2048);
-	out[0] = (unsigned char)(0xBB);
+void cPXGMLoginResponse::Clearance( UI08 clearance )
+{
+	internalBuffer[2] = clearance;
+}
 
-	if (type == 0)
+cPIXGMLogin::cPIXGMLogin()
+{
+	InternalReset();
+}
+
+cPIXGMLogin::cPIXGMLogin( cSocket *s )
+{
+	InternalReset();
+	Receive( s );
+}
+
+void cPIXGMLogin::Receive( cSocket *s )
+{
+	s->Receive( 62 );
+}
+
+void cPIXGMLogin::InternalReset( void )
+{
+}
+
+const char *cPIXGMLogin::Name( void )
+{
+	return (const char *)&(tSock->Buffer()[1]);
+}
+const char *cPIXGMLogin::Pass( void )
+{
+	return (const char *)&(tSock->Buffer()[31]);
+}
+
+UI08 cPIXGMLogin::Clearance( void )
+{
+	return tSock->Buffer()[61];
+}
+
+bool cPIXGMLogin::Handle( void )
+{
+	//Do real authentication here, not false acceptance" )
+	cPXGMLoginResponse toSend( 0, Clearance() );
+	tSock->Send( &toSend );
+	tSock->FirstPacket( false );
+	return true;
+}
+
+void cPXGMServerStatResponse::InternalReset( void )
+{
+	internalBuffer.resize( 2 );
+	internalBuffer[0] = 0x12;
+}
+cPXGMServerStatResponse::cPXGMServerStatResponse()
+{
+	InternalReset();
+}
+cPXGMServerStatResponse::cPXGMServerStatResponse( XGMServerStat error )
+{
+	InternalReset();
+	ServerStat( error );
+}
+
+cPXGMServerStatResponse::~cPXGMServerStatResponse()
+{
+}
+
+void cPXGMServerStatResponse::ServerStat( XGMServerStat error )
+{
+	internalBuffer[1] = (UI08)error;
+	switch( error )
 	{
-		if (chars[currchar[ClientSock]].priv&1)
-			type = 1;
-		else if (chars[currchar[ClientSock]].priv&0x80 || chars[currchar[ClientSock]].priv&80)
-			type = 2;
-		else 
-		{
-			Send(s, "Access to Que denied.");
-			return;
-		}
+	case XSS_ONLINECOUNT:
+	case XSS_CHARACTERCOUNT:
+	case XSS_ITEMCOUNT:
+	case XSS_ACCOUNTCOUNT:
+	case XSS_SIMULATIONCYCLES:
+	case XSS_RACECOUNT:
+	case XSS_REGIONCOUNT:
+	case XSS_WEATHERCOUNT:
+	case XSS_TIMESINCERESTART:
+	case XSS_TIMESINCEWORLDSAVE:
+	case XSS_GMPAGECOUNT:
+	case XSS_CNSPAGECOUNT:
+	case XSS_GHOSTCOUNT:
+	case XSS_MURDERERCOUNT:
+	case XSS_BLUECOUNT:
+	case XSS_HOUSECOUNT:
+	case XSS_TOTALGOLD:
+	case XSS_PEAKCONNECTION:
+	case XSS_GMSLOGGEDIN:
+	case XSS_CNSLOGGEDIN:
+		internalBuffer.resize( 6 );
+		break;
+	case XSS_LASTPLAYERLOGGEDIN:
+		internalBuffer.resize( 6 );
+		break;
+	case XSS_PINGRESPONSE:
+		internalBuffer.resize( 6 );
+		break;
 	}
-	
-
-	switch(type)
+}
+void cPXGMServerStatResponse::GenericData( UI32 generic )
+{
+	switch( (XGMServerStat)internalBuffer[1] )
 	{
-	case 1:
-		for(i=1;i<MAXPAGES;i++)
-		{
-			if (gmpages[i].handled==0)
-			{
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].name);
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].reason);
-				//pos+=1+sprintf(&out[pos],"%x%x%x%x", gmpages[i].ser1, gmpages[i].ser2, gmpages[i].ser3, gmpages[i].ser4);
-				
-				out[pos] = gmpages[i].ser1;
-				out[pos+1] = gmpages[i].ser2;
-				out[pos+2] = gmpages[i].ser3;
-				out[pos+3] = gmpages[i].ser4;
-				pos+=4;
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].timeofcall);
-			}
-		}
-		break;
-	
-	case 2:
-		for(i=1;i<MAXPAGES;i++)
-		{
-			if (counspages[i].handled==0)
-			{
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].name);
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].reason);
-				//pos+=1+sprintf(&out[pos],"%x%x%x%x", gmpages[i].ser1, gmpages[i].ser2, gmpages[i].ser3, gmpages[i].ser4);
-				
-				out[pos] = counspages[i].ser1;
-				out[pos+1] = counspages[i].ser2;
-				out[pos+2] = counspages[i].ser3;
-				out[pos+3] = counspages[i].ser4;
-				pos+=4;
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].timeofcall);
-			}
-		}
-		break;
-	case 3:
-		for(i=1;i<MAXPAGES;i++)
-		{
-			if (gmpages[i].handled==0)
-			{
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].name);
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].reason);
-				//pos+=1+sprintf(&out[pos],"%x%x%x%x", gmpages[i].ser1, gmpages[i].ser2, gmpages[i].ser3, gmpages[i].ser4);
-				
-				out[pos] = gmpages[i].ser1;
-				out[pos+1] = gmpages[i].ser2;
-				out[pos+2] = gmpages[i].ser3;
-				out[pos+3] = gmpages[i].ser4;
-				pos+=4;
-				pos+=1+sprintf(&out[pos],"%s", gmpages[i].timeofcall);
-				break;
-			}
-		}
-		break;
-	case 4:
-		for(i=1;i<MAXPAGES;i++)
-		{
-			if (counspages[i].handled==0)
-			{
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].name);
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].reason);
-				//pos+=1+sprintf(&out[pos],"%x%x%x%x", gmpages[i].ser1, gmpages[i].ser2, gmpages[i].ser3, gmpages[i].ser4);
-				
-				out[pos] = counspages[i].ser1;
-				out[pos+1] = counspages[i].ser2;
-				out[pos+2] = counspages[i].ser3;
-				out[pos+3] = counspages[i].ser4;
-				pos+=4;
-				pos+=1+sprintf(&out[pos],"%s", counspages[i].timeofcall);
-				break;
-			}
-		}
+	case XSS_ONLINECOUNT:
+	case XSS_CHARACTERCOUNT:
+	case XSS_ITEMCOUNT:
+	case XSS_ACCOUNTCOUNT:
+	case XSS_SIMULATIONCYCLES:
+	case XSS_RACECOUNT:
+	case XSS_REGIONCOUNT:
+	case XSS_WEATHERCOUNT:
+	case XSS_TIMESINCERESTART:
+	case XSS_TIMESINCEWORLDSAVE:
+	case XSS_GMPAGECOUNT:
+	case XSS_CNSPAGECOUNT:
+	case XSS_GHOSTCOUNT:
+	case XSS_MURDERERCOUNT:
+	case XSS_BLUECOUNT:
+	case XSS_HOUSECOUNT:
+	case XSS_TOTALGOLD:
+	case XSS_PEAKCONNECTION:
+	case XSS_GMSLOGGEDIN:
+	case XSS_CNSLOGGEDIN:
+	case XSS_LASTPLAYERLOGGEDIN:
+	case XSS_PINGRESPONSE:
+		internalBuffer[2] = (UI08)(generic>>24);
+		internalBuffer[3] = (UI08)(generic>>16);
+		internalBuffer[4] = (UI08)(generic>>8);
+		internalBuffer[5] = (UI08)(generic%256);
 		break;
 	default:
-		Send(s, "Que Type %i unknown!", type);
-		return;
-	}//switch
-
-	out[1] = pos >> 8;
-	out[2] = pos %256;
-	Send(s, out, pos);
-}
-
-void cRemote::CheckMsg(UOXSOCKET s)
-{
-	if (!isClient) return;
-	if( recv( client[s], (char *)&buffer[s][0] ,1, 0 ) > 0 )
-	{
-		recv(client[s], (char *)&buffer[s][1], 1, 0);
-		unsigned char len = 2, numPoint = 2;
-		printf("Received a message from xgm client %i! (Message %x)\n", s, buffer[s][1] );
-
-		// this could be sped up by passing the string length
-		while( buffer[s][len] != '\0' )
-		{
-			len++;
-		}
-		while( numPoint < len && buffer[s][numPoint] != '\n' && buffer[s][numPoint] != ' ' && buffer[s][numPoint] != '\0' )
-		{
-			numPoint++;
-		}
-		numPoint -= 2;
-		switch(buffer[s][1])
-		{
-		case 0x01:			// Save new world
-			cwmWorldState->savenewworld(1);
-			Send(s, "World data saved.");
-			printf("World data saved. ");
-			break;
-		case 0x02:			// Save accounts
-			cwmWorldState->saveAccount();
-			Send(s, "Accounts Updated.");
-			printf("Acounts Updated. ");
-			break;
-		case 0x03:			// Add item
-			addmitem[ClientSock] = grabNumber( 2, numPoint, ClientSock ); // Anthracks' fix
-			char temp[256];
-			sprintf(temp, "Select location for item. [Number: %i]", addmitem[ClientSock]);
-			target(ClientSock, 0, 1, 0, 26, temp);
-			break;
-		case 0x04:			// where am I?
-			Send( s, "X %d Y %d Z %d", chars[currchar[ClientSock]].x, chars[currchar[ClientSock]].y, chars[currchar[ClientSock]].z );
-			break;
-		case 0x05:			// kill
-			target( ClientSock, 0, 1, 0, 20, "Select character to kill." );
-			break;
-		case 0x06:
-			all_items( ClientSock ); 
-			teleport( currchar[ClientSock] );
-			break;
-		case 0x07:			// teleport
-			target( ClientSock, 0, 1, 0, 2, "Select teleport target." );
-			break;
-		case 0x08:			// Make GM
-			target( ClientSock, 0, 1, 0, 14, "Select character to make a GM." );
-			break;
-		case 0x09:			// Jail
-			target( ClientSock, 0, 1, 0, 126, "Select player to jail." );
-			break;
-		case 0x0A:			// xbank
-			target( ClientSock, 0, 1, 0, 107, "Select target to open bank of." );
-			break;
-		case 0x0B:
-			GMQue(s);
-			break;
-		default:
-			Send(s, "Sever did not recognize message %c", buffer[s][1]);
-			printf("XGM: Unknown message %c\n",buffer[s][1]);
-			return;
-		}
-	}
-	else
-	{
-		Network->Disconnect( s );
+		break;
 	}
 }
 
-void cRemote::Send(UOXSOCKET s, char *fmt, ...)
+cPIXGMServerStat::cPIXGMServerStat()
 {
-	int len;
-	char *out, built[512];
-
-	if (!isClient) return;
-	va_list argptr;
-
-	va_start(argptr, fmt);
-	vsprintf(built, fmt, argptr);
-	va_end(argptr);
-
-	out = new char[strlen(built)+4];
-
-	sprintf(out, "XGM%s", built );
-	len=strlen(out);
-	send(client[s],out,len,0);
-	delete out;
+	InternalReset();
 }
 
-/*void cRemote::Send( UOXSOCKET s, char *toSend )
+cPIXGMServerStat::~cPIXGMServerStat()
 {
-	int len;
-
-	if (!isClient) return;
-
-	sprintf(toSend, "XGM%s", toSend );
-	len=strlen(toSend);
-	send(client[s],toSend,len,0);
-}*/
-
-void cRemote::Send( UOXSOCKET s, char *toSend, unsigned int len )
-{
-	if (!isClient) return;
-	char *Out;
-	Out=new char[len+3];
-	Out[0]='X'; Out[1]='G'; Out[2]='M';
-
-	memcpy(&Out[3], toSend, len);
-	len+=3;
-	send(client[s],Out,len,0);
 }
 
-SI32 grabNumber( int startPos, int length, UOXSOCKET s, char base )
-// base defaults to 10, if you raise it, it is undefined (need to fix for hex)
-// when called from CheckMsg, startPos == 2, length == numPoint
-// Reads decimal numbers so convert from hex first!
+cPIXGMServerStat::cPIXGMServerStat( cSocket *s )
 {
-	int i = 0;
-	SI32 number = 0;
-/*	char strToCheck[256];
-	char *strPoint;
-	strcpy( strToCheck, buffer[s] );
-	strPoint = &strToCheck[startPos]; */
+	InternalReset();
+	Receive( s );
+}
 
-	for( i = 0; i < length; i++ )
+void cPIXGMServerStat::Receive( cSocket *s )
+{
+	s->Receive( 2 );
+}
+
+void cPIXGMServerStat::InternalReset( void )
+{
+}
+
+XGMServerStat cPIXGMServerStat::Stat( void )
+{
+	return (XGMServerStat)tSock->Buffer()[1];
+}
+inline UI32 GhostCount( void )
+{
+	UI32 sumDead = 0;
+	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
 	{
-		number = base * number + ( buffer[s][startPos+i] - '0' );
+		if( acct == NULL) 
+			break;
+		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
+		{
+			if( acct->characters[iCtr] != NULL )
+			{
+				if( acct->characters[iCtr]->IsDead() )
+					sumDead++;
+			}
+		}
 	}
-	return number;
+	return sumDead;
 }
+inline UI32 MurdererCount( void )
+{
+	UI32 sumMurderer = 0;
+	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+	{
+		if( acct == NULL )
+			continue;
+		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
+		{
+			if( acct->characters[iCtr] != NULL )
+			{
+				if( acct->characters[iCtr]->IsMurderer() )
+					sumMurderer++;
+			}
+		}
+	}
+	return sumMurderer;
+}
+inline UI32 BlueCount( void )
+{
+	UI32 sumBlue = 0;
+	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+	{
+		if( acct == NULL )
+			continue;
+		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
+		{
+			if( acct->characters[iCtr] != NULL )
+			{
+				if( acct->characters[iCtr]->IsInnocent() )
+					sumBlue++;
+			}
+		}
+	}
+	return sumBlue;
+}
+
+bool GMLoggedInStub( CChar *toCheck )
+{
+	return ( toCheck->IsGM() || toCheck->GetCommandLevel() >= GMCMDLEVEL );
+}
+
+bool CnsLoggedInStub( CChar *toCheck )
+{
+	return ( toCheck->IsCounselor() || ( toCheck->GetCommandLevel() >= CNSCMDLEVEL && toCheck->GetCommandLevel() < GMCMDLEVEL ) );
+}
+
+inline UI32 CharCountLoop( bool (*trgFunc)( CChar *toCheck ) )
+{
+	UI32 sumDead = 0;
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	{
+		if( tSock == NULL )
+			continue;
+		CChar *mChar = tSock->CurrcharObj();
+		if( mChar != NULL )
+		{
+			if( (*trgFunc)( mChar ) )
+				sumDead++;
+		}
+	}
+	Network->PopConn();
+	return sumDead;
+}
+
+bool cPIXGMServerStat::Handle( void )
+{
+	cPXGMServerStatResponse toSend;
+	toSend.ServerStat( Stat() );
+	
+	//HOUSECOUNT, TOTALGOLD, and LASTPLAYERLOGGEDIN need implementation" )
+	switch( Stat() )
+	{
+	case XSS_ONLINECOUNT:			toSend.GenericData( now );					break;
+	case XSS_CHARACTERCOUNT:		toSend.GenericData( chars.Count() );		break;
+	case XSS_ITEMCOUNT:				toSend.GenericData( items.Count() );		break;
+	case XSS_ACCOUNTCOUNT:			toSend.GenericData( Accounts->Count() );	break;
+	case XSS_SIMULATIONCYCLES:
+				if( !( loopTime < 0.00000000001f || loopTimeCount < 0.00000000001f ) )
+					toSend.GenericData( (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) );
+				else 
+					toSend.GenericData( 0xFFFFFFFF );
+				break;
+	case XSS_RACECOUNT:				toSend.GenericData( Races->Count() );		break;
+	case XSS_REGIONCOUNT:			toSend.GenericData( 256 );					break;
+	case XSS_WEATHERCOUNT:			toSend.GenericData( Weather->Count() );		break;
+	case XSS_TIMESINCERESTART:
+	case XSS_TIMESINCEWORLDSAVE:	toSend.GenericData( difftime( time( NULL ), oldtime ) );	break;
+	case XSS_GMPAGECOUNT:			toSend.GenericData( GMQueue->NumEntries() );				break;
+	case XSS_CNSPAGECOUNT:			toSend.GenericData( CounselorQueue->NumEntries() );			break;
+	case XSS_GHOSTCOUNT:			toSend.GenericData( GhostCount() );			break;
+	case XSS_MURDERERCOUNT:			toSend.GenericData( MurdererCount() );		break;
+	case XSS_BLUECOUNT:				toSend.GenericData( BlueCount() );			break;
+	case XSS_HOUSECOUNT:														break;		// unimplemented
+	case XSS_TOTALGOLD:															break;		// unimplemented
+	case XSS_PEAKCONNECTION:		toSend.GenericData( Network->PeakConnectionCount() );		break;
+	case XSS_GMSLOGGEDIN:			toSend.GenericData( CharCountLoop( GMLoggedInStub ) );		break;
+	case XSS_CNSLOGGEDIN:			toSend.GenericData( CharCountLoop( CnsLoggedInStub ) );		break;
+	case XSS_LASTPLAYERLOGGEDIN:												break;		// unimplemented
+	case XSS_PINGRESPONSE:			toSend.GenericData( time( NULL ) );			break;
+	}
+	tSock->Send( &toSend );
+	return true;
+}
+
+void cPIXGMClientVer::InternalReset( void )
+{
+	internalBuffer.resize( 5 );
+}
+cPIXGMClientVer::cPIXGMClientVer()
+{
+	InternalReset();
+}
+cPIXGMClientVer::cPIXGMClientVer( cSocket *s )
+{
+	InternalReset();
+	Receive( s );
+}
+void cPIXGMClientVer::Receive( cSocket *s )
+{
+	s->Receive( 5 );
+}	
+bool cPIXGMClientVer::Handle( void )
+{
+	tSock->ClientVersion( tSock->GetDWord( 1 ) );
+	return true;
+}
+
+cPIXGMServerVer::cPIXGMServerVer()
+{
+}
+cPIXGMServerVer::cPIXGMServerVer( cSocket *s )
+{
+	Receive( s );
+}
+void cPIXGMServerVer::Receive( cSocket *s )
+{
+	s->Receive( 1 );
+}	
+bool cPIXGMServerVer::Handle( void )
+{
+	cPXGMServerVerResponse toSend( XGMVersion );
+	tSock->Send( &toSend );
+	return true;
+}
+
+void cPXGMServerVerResponse::InternalReset( void )
+{
+	internalBuffer.resize( 5 );
+	internalBuffer[0] = 0x0A;
+}
+cPXGMServerVerResponse::cPXGMServerVerResponse()
+{
+	InternalReset();
+}
+cPXGMServerVerResponse::cPXGMServerVerResponse( UI32 version )
+{
+	InternalReset();
+	Version( version );
+}
+void cPXGMServerVerResponse::Version( UI32 generic )
+{
+	internalBuffer[1] = (UI08)(generic>>24);
+	internalBuffer[2] = (UI08)(generic>>16);
+	internalBuffer[3] = (UI08)(generic>>8);
+	internalBuffer[4] = (UI08)(generic%256);
+}
+
+cPIXGMWhoOnline::cPIXGMWhoOnline()
+{
+}
+cPIXGMWhoOnline::cPIXGMWhoOnline( cSocket *s )
+{
+	Receive( s );
+}
+void cPIXGMWhoOnline::Receive( cSocket *s )
+{
+	s->Receive( 1 );
+}	
+bool cPIXGMWhoOnline::Handle( void )
+{
+	cPXGMWhoResponse toSend;
+	toSend.StatusType( tSock->GetByte( 0 ) - 2 );
+	cSocket *toGet = NULL;
+
+	vector< CChar * > charListing;
+	ACTREC *acct = NULL;
+	UI32 i = 0;
+
+	cSocket *trgSock = NULL;
+	switch( tSock->GetByte( 0 ) - 2 )
+	{
+	case 0:	// online
+		toSend.NumEntries( now );
+		Network->PushConn();
+		for( toGet = Network->FirstSocket(); !Network->FinishedSockets(); toGet = Network->NextSocket() )
+		{
+			if( toGet == NULL )
+				toSend.AddPlayer( INVALIDSERIAL, "UNKNOWN" );
+			else
+			{
+				CChar *mChar = toGet->CurrcharObj();
+				if( mChar == NULL )
+					toSend.AddPlayer( INVALIDSERIAL, "UNKNOWN" );
+				else
+					toSend.AddPlayer( mChar->GetSerial(), mChar->GetName() );
+			}
+		}
+		Network->PopConn();
+		break;
+	case 1:	// offline
+		for( acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+		{
+			if( acct == NULL )
+				continue;
+			for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
+			{
+				if( acct->characters[iCtr] != NULL && acct->characters[iCtr]->GetSerial() != acct->inworld )	// no players logging out
+				{
+					bool loopCont = true;
+					Network->PushConn();
+					for( trgSock = Network->FirstSocket(); !Network->FinishedSockets(); trgSock = Network->NextSocket() )
+					{
+						if( trgSock == NULL )
+							continue;
+						if( trgSock->CurrcharObj() == acct->characters[iCtr] )
+						{
+							loopCont = false;
+							break;
+						}
+					}
+					Network->PopConn();
+					if( loopCont )
+						charListing.push_back( acct->characters[iCtr] );
+				}
+			}
+		}
+		toSend.NumEntries( charListing.size() );
+		for( i = 0; i < charListing.size(); i++ )
+			toSend.AddPlayer( charListing[i]->GetSerial(), charListing[i]->GetName() );
+		break;
+	case 2:	// logging
+		for( acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+		{
+			if( acct == NULL )
+				continue;
+			for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
+			{
+				if( acct->characters[iCtr] != NULL && acct->characters[iCtr]->GetSerial() == acct->inworld )	// no players logging out
+				{
+					bool loopCont2 = true;
+					Network->PushConn();
+					for( trgSock = Network->FirstSocket(); !Network->FinishedSockets(); trgSock = Network->NextSocket() )
+					{
+						if( trgSock == NULL )
+							continue;
+						if( trgSock->CurrcharObj() == acct->characters[iCtr] )
+						{
+							loopCont2 = false;
+							break;
+						}
+					}
+					Network->PopConn();
+					if( loopCont2 )
+						charListing.push_back( acct->characters[iCtr] );
+				}
+			}
+		}
+		toSend.NumEntries( charListing.size() );
+		for( i = 0; i < charListing.size(); i++ )
+			toSend.AddPlayer( charListing[i]->GetSerial(), charListing[i]->GetName() );
+		break;
+	}
+	tSock->Send( &toSend );
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  cPIXGMChangeLevel()
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Default constructor
+//o---------------------------------------------------------------------------o
+cPIXGMChangeLevel::cPIXGMChangeLevel()
+{
+	InternalReset();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  cPIXGMChangeLevel( cSocket *s )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Constructor in which it does the receive it has to
+//o---------------------------------------------------------------------------o
+cPIXGMChangeLevel::cPIXGMChangeLevel( cSocket *s )
+{
+	InternalReset();
+	Receive( s );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void Receive( cSocket *s )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Receives any data it needs to for processing
+//o---------------------------------------------------------------------------o
+void cPIXGMChangeLevel::Receive( cSocket *s )
+{
+	s->Receive( 2 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void InternalReset( void )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Does any internal setup it needs to
+//o---------------------------------------------------------------------------o
+void cPIXGMChangeLevel::InternalReset( void )
+{
+}
+
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  UI08 Clearance( void )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Returns the clearance level requested
+//o---------------------------------------------------------------------------o
+UI08 cPIXGMChangeLevel::Clearance( void )
+{
+	return tSock->Buffer()[1];
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  bool Handle( void )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Returns true if the packet is successfully handled
+//o---------------------------------------------------------------------------o
+bool cPIXGMChangeLevel::Handle( void )
+{
+	cPXGMChangeLevelResponse toSend( 0, Clearance() );
+	tSock->Send( &toSend );
+	return true;
+}
+
+void cPIXGMShowQueueRequest::InternalReset( void )
+{
+}
+cPIXGMShowQueueRequest::cPIXGMShowQueueRequest()
+{
+	InternalReset();
+}
+cPIXGMShowQueueRequest::cPIXGMShowQueueRequest( cSocket *s )
+{
+	InternalReset();
+	Receive( s );
+}
+void cPIXGMShowQueueRequest::Receive( cSocket *s )
+{
+	s->Receive( 2 );
+}
+UI08 cPIXGMShowQueueRequest::Queue( void ) const
+{
+	return tSock->GetByte( 1 );
+}
+
+bool cPIXGMShowQueueRequest::Handle( void )
+{
+	//Do queue request here" )
+	return false;
+}
+
+void cPXGMWhoResponse::InternalReset( void )
+{
+	internalBuffer.resize( 4 );
+	internalBuffer[0] = 0x02;
+	playerNum = 0;
+}
+
+cPXGMWhoResponse::cPXGMWhoResponse()
+{
+	InternalReset();
+}
+
+void cPXGMWhoResponse::NumEntries( UI16 numPlayers )
+{
+	internalBuffer.resize( 4 + numPlayers * 35 );
+	internalBuffer[1] = (UI08)(numPlayers>>8);
+	internalBuffer[2] = (UI08)(numPlayers%256);
+}
+
+cPXGMWhoResponse::cPXGMWhoResponse( UI16 numPlayers )
+{
+	InternalReset();
+	NumEntries( numPlayers );
+}
+void cPXGMWhoResponse::AddPlayer( SERIAL serToAdd, const char *toAdd )
+{
+	UI16 baseLocation = 4 + 35 * playerNum;	// find offset into array
+	internalBuffer[baseLocation + 0] = (UI08)(serToAdd>>24);
+	internalBuffer[baseLocation + 1] = (UI08)(serToAdd>>16);
+	internalBuffer[baseLocation + 2] = (UI08)(serToAdd>>8);
+	internalBuffer[baseLocation + 3] = (UI08)(serToAdd%256);
+	memcpy( &internalBuffer[baseLocation + 4], toAdd, strlen( toAdd ) );
+	playerNum++;
+}
+
+void cPXGMWhoResponse::StatusType( UI08 statusType )
+{
+	internalBuffer[3] = statusType;
+}
+
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void InternalReset( void )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Sets up packet sizes and command byte for packet
+//o---------------------------------------------------------------------------o
+void cPXGMChangeLevelResponse::InternalReset( void )
+{
+	internalBuffer.resize( 3 );
+	internalBuffer[0] = 1;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  cPXGMChangeLevelResponse()
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Default constructor
+//o---------------------------------------------------------------------------o
+cPXGMChangeLevelResponse::cPXGMChangeLevelResponse()
+{
+	InternalReset();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  cPXGMChangeLevelResponse( UI08 error, UI08 clearance )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Constructor which accepts an error code and clearance value
+//o---------------------------------------------------------------------------o
+cPXGMChangeLevelResponse::cPXGMChangeLevelResponse( UI08 error, UI08 clearance )
+{
+	InternalReset();
+	Error( error );
+	Clearance( clearance );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  Error( UI08 error )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Sets the error code for the packet, signifying any problems
+//|					 0 indicates all clear, 1 indicates failure
+//o---------------------------------------------------------------------------o
+void cPXGMChangeLevelResponse::Error( UI08 error )
+{
+	internalBuffer[1] = error;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  Clearance( UI08 clearance )
+//|   Date        :  21 August 2001
+//|   Programmer  :  JoeMC
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Sets the new accepted clearance (if any).  Ignored if error
+//|					 is set
+//|					 Valid values are:
+//|					 0	Player
+//|					 1	Counselor
+//|					 2	GM
+//|					 3	Admin
+//o---------------------------------------------------------------------------o
+void cPXGMChangeLevelResponse::Clearance( UI08 clearance )
+{
+	internalBuffer[2] = clearance;
+}
+
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  cPInputBuffer *WhichXGMPacket( UI08 packetID )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Returns an instance of a particular packet's handler, if
+//|					 a known handler exists.  Otherwise returns NULL
+//o---------------------------------------------------------------------------o
+cPInputBuffer *WhichXGMPacket( UI08 packetID )
+{
+	switch( packetID )
+	{
+	case 0x00:	return new cPIXGMLogin;					// Login / authentication request
+	case 0x02:	return new cPIXGMWhoOnline;				// Who's Online Request
+	case 0x03:	return new cPIXGMWhoOnline;				// Who's Offline Request
+	case 0x04:	return new cPIXGMWhoOnline;				// Who's Logging Out Request
+	case 0x08:	return new cPIXGMClientVer;				// XGM Client Protocol Version
+	case 0x09:	return new cPIXGMServerVer;				// XGM Server Protocol Version Request
+	case 0x0F:	return new cPIXGMServerStat;			// Get Server Stats
+	case 0x01:	return new cPIXGMChangeLevel;			// Access Level Change Request
+	case 0x05:	return new cPIXGMShowQueueRequest;		// Show Queue Request
+	case 0x06:											// Handle Queue Entry Request
+	case 0x07:											// Account Command Request
+	case 0x0A:											// Reload Script Request
+	case 0x0B:											// Installed Scripts Request
+	case 0x0C:											// Get Installed Script
+	case 0x0D:											// Get Script Section Names Request
+	case 0x0E:											// Get Script Section Request
+	default:	return NULL;
+	}
+	return NULL;
+}
+

@@ -1,206 +1,906 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  regions.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 #include "uox3.h"
 
-// -- Region class  Added by Tauriel 3/6/1999 To lookup items by region
-//									This should help for now. BTW- my first attempt at C++
-//									So forgive any newbie mistakes :)
-//									-- Side note, I wanted regions to be more generic, but
-//									now that I have to do this, time doesn't allow for it yet.
+SI16 upperArrayX[UOMT_COUNT];
+SI16 upperArrayY[UOMT_COUNT];
 
-cRegion::cRegion() //constructor
+void readline( ifstream &toRead, char *buffer, int bufferLen )
 {
-	int i=0;
-	GridSize=32;
-	ColSize=128;
-	
-	for (i=0;i<33000;i++)  // AntiChrist -- trying to use LordB values ( 33000 )
+	bool valid = false;
+	do 
 	{
-		int memerrflg =0;
-		//if ((MapCells[i].pointer = (int *) malloc(1 * sizeof(int)))== NULL)
-		//	memerrflg=1;
-		MapCells[i].pointer=new int[25];
-		if (MapCells[i].pointer==NULL) memerrflg=1;
+		toRead.getline( buffer, bufferLen );
+#ifdef __LINUX__
+		trimWindowsText( buffer );
+#endif
 
-		if (!memerrflg)
+		if( toRead.eof() || toRead.fail() )
 		{
-			MapCells[i].max=25;
-			//for (a=0;a<25;a++) MapCells[i].pointer[a]=-1; // this is way slow - fur
-			memset(MapCells[i].pointer, 0xFF, 25 * sizeof(int));
-		} else {
-			printf("Error allocating mapRegion memory!\n");
-			return;
+			strcpy( buffer, "---REGION---" );
+			valid = true;
+		}
+		else if( buffer[0] == '/' || buffer[0] == ' ' || buffer[0] == 10 || buffer[0] == 13 || buffer[0] == 0 )
+			valid = false;
+		else
+			valid = true;
+	} while( !valid );
+}
+
+void LoadChar( BinBuffer &buff )
+{
+	CHARACTER xOff;
+	CChar *x = Npcs->MemCharFree( xOff, true );
+	if( x == NULL ) 
+		return;
+	if( !x->Load( buff, xOff ) ) // if no load, DELETE
+		Npcs->DeleteChar( x );
+}
+void LoadItem( BinBuffer &buff )
+{
+	ITEM xOff;
+	CItem *x = Items->MemItemFree( xOff, false );
+	if( x == NULL ) 
+		return;
+	if( !x->Load( buff, xOff ) ) // if no load, DELETE
+		Items->DeleItem( x );
+}
+void LoadMulti( BinBuffer &buff )
+{
+	ITEM xOff;
+	CItem *x = Items->MemItemFree( xOff, false, 1 );
+	if( x == NULL ) 
+		return;
+	CMultiObj *ourHouse = static_cast<CMultiObj *>(x);
+	if( !ourHouse->Load( buff, xOff ) )	// if no load, DELETE
+		Items->DeleItem( x );
+}
+
+void LoadChar( ifstream& readDestination )
+{
+	CHARACTER xOff;
+	CChar *x = Npcs->MemCharFree( xOff, true );
+	if( x == NULL ) 
+		return;
+	if( !x->Load( readDestination, xOff ) ) // if no load, DELETE
+		Npcs->DeleteChar( x );
+}
+void LoadItem( ifstream& readDestination )
+{
+	ITEM xOff;
+	CItem *x = Items->MemItemFree( xOff, false );
+	if( x == NULL ) 
+		return;
+	if( !x->Load( readDestination, xOff ) ) // if no load, DELETE
+		Items->DeleItem( x );
+}
+void LoadMulti( ifstream& readDestination )
+{
+	ITEM xOff;
+	CItem *x = Items->MemItemFree( xOff, false, 1 );
+	if( x == NULL ) 
+		return;
+	CMultiObj *ourHouse = static_cast<CMultiObj *>(x);
+	if( !ourHouse->Load( readDestination, xOff ) )	// if no load, DELETE
+		Items->DeleItem( x );
+}
+
+typedef UI32 vIterator;
+//o--------------------------------------------------------------------------
+//|	Function		-	SubRegion constructor
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	This function is does basically what the name implies
+//o--------------------------------------------------------------------------
+SubRegion::SubRegion() : charCounter( INVALIDSERIAL ), itemCounter( INVALIDSERIAL ) //constructor
+{
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	SubRegion destructor
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Removes all map entries
+//o--------------------------------------------------------------------------
+SubRegion::~SubRegion()
+{
+	itemData.clear();
+	charData.clear();
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CItem *GetCurrentItem()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns a CItem * to the current referenced item
+//o--------------------------------------------------------------------------
+CItem *SubRegion::GetCurrentItem( void )
+{
+	return itemData[itemCounter];
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CChar *GetCurrentChar()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns a CChar * to the current referenced char
+//o--------------------------------------------------------------------------
+CChar *SubRegion::GetCurrentChar( void )
+{
+	return charData[charCounter];
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CItem *FirstItem()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Moves iterator to start and returns the first CItem *
+//o--------------------------------------------------------------------------
+CItem *SubRegion::FirstItem( void )
+{
+	itemCounter = 0;
+	if( itemCounter >= itemData.size() )
+		return NULL;
+	else
+		return itemData[itemCounter];
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CChar *FirstChar()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Moves iterator to start and returns the first CChar *
+//o--------------------------------------------------------------------------
+CChar *SubRegion::FirstChar( void )
+{
+	charCounter = 0;
+	if( charCounter >= charData.size() )
+		return NULL;
+	else
+		return charData[charCounter];
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CItem *GetNextItem()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Moves along the iterator, returning the next CItem *
+//o--------------------------------------------------------------------------
+CItem *SubRegion::GetNextItem( void )
+{
+	if( ++itemCounter >= itemData.size() )
+		return NULL;
+	else
+		return itemData[itemCounter];
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	CChar *GetNextChar()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Moves along the iterator, returning the next CChar *
+//o--------------------------------------------------------------------------
+CChar *SubRegion::GetNextChar( void )
+{
+	if( ++charCounter >= charData.size() )
+		return NULL;
+	else
+		return charData[charCounter];
+}
+
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool FinishedItems()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	returns true if we hit the end of the iterator
+//o--------------------------------------------------------------------------
+bool SubRegion::FinishedItems( void )
+{
+	return ( itemCounter >= itemData.size() );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool FinishedChars()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if we hit the end of the iterator
+//o--------------------------------------------------------------------------
+bool SubRegion::FinishedChars( void )
+{
+	return ( charCounter >= charData.size() );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool AddItem( CItem *toAdd )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Adds toAdd to the map if it doesn't already exist
+//o--------------------------------------------------------------------------
+bool SubRegion::AddItem( CItem *toAdd )
+{
+	for( vIterator p = 0; p < itemData.size(); p++ )
+	{
+		if( itemData[p] == toAdd )
+			return false;
+	}
+	itemData.push_back( toAdd );
+	return true;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool AddChar( CChar *toAdd )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Adds toAdd to the map if it doesn't already exist
+//o--------------------------------------------------------------------------
+bool SubRegion::AddChar( CChar *toAdd )
+{
+	for( vIterator p = 0; p < charData.size(); p++ )
+	{
+		if( charData[p] == toAdd )
+			return false;
+	}
+	charData.push_back( toAdd );
+	return true;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool RemoveItem( CItem *toRemove )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Removes toRemove from the map if it is in there
+//o--------------------------------------------------------------------------
+bool SubRegion::RemoveItem( CItem *toRemove )
+{
+	for( vIterator p = 0; p < itemData.size(); p++ )
+	{
+		if( itemData[p] == toRemove )
+		{
+			for( int r = p; r < itemData.size() - 1; r++ )
+				itemData[r] = itemData[r+1];
+			itemData.resize( itemData.size() - 1 );
+			for( int q = 0; q < itemIteratorBackup.size(); q++ )
+			{
+				if( itemIteratorBackup[q] >= p )
+					itemIteratorBackup[q]--;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool RemoveChar( CChar *toRemove )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Removes toRemove from the map if it is in there
+//o--------------------------------------------------------------------------
+bool SubRegion::RemoveChar( CChar *toRemove )
+{
+	for( vIterator p = 0; p < charData.size(); p++ )
+	{
+		if( charData[p] == toRemove )
+		{
+			for( int r = p; r < charData.size() - 1; r++ )
+				charData[r] = charData[r+1];
+			charData.resize( charData.size() - 1 );
+			for( int q = 0; q < charIteratorBackup.size(); q++ )
+			{
+				if( charIteratorBackup[q] >= p )
+					charIteratorBackup[q]--;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+void SubRegion::PopItem( void )
+{
+	itemCounter = itemIteratorBackup.back();
+	itemIteratorBackup.pop_back();
+}
+void SubRegion::PopChar( void )
+{
+	charCounter = charIteratorBackup.back();
+	charIteratorBackup.pop_back();
+}
+void SubRegion::PushItem( void )
+{
+	itemIteratorBackup.push_back( itemCounter );
+}
+void SubRegion::PushChar( void )
+{
+	charIteratorBackup.push_back( charCounter );
+}
+
+void SubRegion::SaveToDisk( ofstream& writeDestination, SI32 mode, ofstream &houseDestination )
+{
+	// reworked SaveChar from WorldMain to deal with pointer based stuff in region rather than index based stuff in array
+	// Also saves out all data regardless (in preparation for a simple binary save)
+
+	// Let's start by writing out our characters
+	for( CChar *charToWrite = FirstChar(); !FinishedChars(); charToWrite = GetNextChar() )
+	{
+
+		   //if( !charToWrite->IsNpc() && charToWrite->GetAccount() != -1 ) {
+           #pragma note( "PlayerHTML Dumping needs to be reimplemented" )
+			//DumpPlayerHTML( charToWrite );
+
+  	       if ( charToWrite->ShouldSave() ) {
+		      //Console << "Saving char " << charToWrite->GetName() << myendl;
+			  charToWrite->Save( writeDestination, mode );
+		   }
+
+		//}
+	}
+	
+	for( CItem *itemToWrite = FirstItem(); !FinishedItems(); itemToWrite = GetNextItem() )
+	{
+		if( itemToWrite->ShouldSave() )
+		{
+			if( itemToWrite->GetObjType() == OT_MULTI )
+			{
+				CMultiObj *iMulti = static_cast< CMultiObj * >(itemToWrite);
+				iMulti->Save( houseDestination, mode );
+			}
+			else
+				itemToWrite->Save( writeDestination, mode );
 		}
 	}
 }
 
-cRegion::~cRegion() //destructor
+//o--------------------------------------------------------------------------
+//|	Function		-	LoadFromDisk( char *filename, SI32 mode )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Loads in items/NPCs from disk in filename
+//|					-	If mode = 0 then as text, else as binary
+//o--------------------------------------------------------------------------
+void SubRegion::LoadFromDisk( ifstream& filename, SI32 mode )
 {
-  for (int i = 0; i < 33000; ++i)
-    delete [] MapCells[i].pointer;
+	if( mode == 1 )//binary
+	{
+		do 
+		{
+			BinBuffer buff( filename );
+			switch ( buff.GetType() )
+			{
+			case 1:		LoadChar( buff );	break;
+			case 2:		LoadItem( buff );	break;
+			case 3:		LoadMulti( buff );	break;
+			case 0xFF:	return;//end of region
+			default:
+				Console << "Error!: Found unknown binary section header " << (UI16)buff.GetType() << myendl;
+				break;
+			}
+		} while( !filename.eof() && !filename.fail() );
+	} 
+	else 
+	{//ascii
+		char line[1024];
+		do
+		{
+			readline( filename, line, 1024 );
+			if( line[0] == '[' )	// in a section
+			{
+				if( !strcmp( line, "[CHARACTER]" ) )
+					LoadChar( filename );
+				else if( !strcmp( line, "[ITEM]" ) )
+					LoadItem( filename );
+				else if( !strcmp( line, "[HOUSE]" ) )
+					LoadMulti( filename );
+			}
+			else if( !strcmp( line, "---REGION---" ) )	// end of region
+				return;
+		} while( strcmp( line, "EOF" ) && !filename.eof() );
+	}
 }
 
-// - Adds the item to a cell
-SI16 cRegion::AddItem(unsigned long nItem) //Char mapRegions		// was unsigned int
+//o--------------------------------------------------------------------------
+//|	Function		-	cMapRegion constructor
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	This function is does basically what the name implies
+//o--------------------------------------------------------------------------
+cMapRegion::cMapRegion()
 {
-	//unsigned int uiCell = GetCell(items[nItem].x,items[nItem].y); //Zippy
-	int z = 0;
-	unsigned int uiCell;
-	if(nItem<CharacterOffset) 
+	for( UI08 i = 0; i < (UI08)UOMT_COUNT; i++ )
 	{
-		if (nItem>=imem || nItem<0) return -1;
-		uiCell = GetCell(items[nItem].x,items[nItem].y);
-	} else {
-	   z=nItem-CharacterOffset;
-	   if (z>=cmem || z<0) return -1;
-	   uiCell = GetCell(chars[z].x,chars[z].y); //
+		upperArrayX[i] = MapWidths[i] / MapColSize;
+		upperArrayY[i] = MapHeights[i] / MapRowSize;
 	}
+}; //constructor
 
-    //	printf("item# %i added to mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
+//o--------------------------------------------------------------------------
+//|	Function		-	cMapRegion constructor
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	This function is does basically what the name implies
+//o--------------------------------------------------------------------------
+cMapRegion::~cMapRegion()
+{
 	
-    if (uiCell<=32999) 
-	{
-	  setptr(&MapCells[uiCell], nItem); //set item in pointer array
-	  return 0;
-	} else return -1;
+}; //destructor
+
+//o--------------------------------------------------------------------------
+//|	Function		-	SubRegion *GetCell( SI16 x, SI16 y )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the subregion that x,y is in
+//o--------------------------------------------------------------------------
+SubRegion *cMapRegion::GetCell( SI16 x, SI16 y, UI08 worldNumber )
+{
+	UI32 targX = GetGridX( x ), targY = GetGridY( y );
+	if( worldNumber >= NumberOfWorlds || targX < 0 || targY < 0 || targX >= upperArrayX[worldNumber] || targY >= upperArrayY[worldNumber] )
+		return &overFlow;
+	return &internalRegions[targX][targY][worldNumber];
 }
 
-// - Removes the item from a cell
-SI16 cRegion::RemoveItem(unsigned long nItem)//Char mapRegions	// was unsigned int
+//o--------------------------------------------------------------------------
+//|	Function		-	bool AddItem( CItem *nItem )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Adds nItem to the proper SubRegion
+//o--------------------------------------------------------------------------
+bool cMapRegion::AddItem( CItem *nItem )
 {
-	int z=0;
-	unsigned int uiCell;
-	if(nItem<CharacterOffset) 
-	{ 
-		if ((nItem>=imem) || (nItem<0)) return -1;
-		uiCell = GetCell(items[nItem].x,items[nItem].y);
-	} else {
-	   z=nItem-CharacterOffset;
-	   if ((z>=cmem) || (z<0))  return -1;
-	   uiCell = GetCell(chars[z].x,chars[z].y);		
-	}
-
-	if(uiCell<=32999)
+	if( nItem == NULL )
+		return false;
+	UI08 worldNumber = nItem->WorldNumber();
+	int x = GetGridX( nItem->GetX() );
+	int y = GetGridY( nItem->GetY() );
+	if( x < 0 || y < 0 || x >= upperArrayX[worldNumber] || y >= upperArrayY[worldNumber] )
 	{
-		// printf("item# %i removed from mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
-		removefromptr(&MapCells[uiCell], nItem);
-	} else return -1;
+		overFlow.AddItem( nItem );
+		return false;
+	}
+	return internalRegions[x][y][worldNumber].AddItem( nItem );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool RemoveItem( CItem *nItem )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Removes nItem from it's CURRENT SubRegion
+//|					-	Do this before adjusting the location
+//o--------------------------------------------------------------------------
+bool cMapRegion::RemoveItem( CItem *nItem )
+{
+	if( nItem == NULL )
+		return false;
+	int x = GetGridX( nItem->GetX() );
+	int y = GetGridY( nItem->GetY() );
+	UI08 worldNumber = nItem->WorldNumber();
+	if( x < 0 || y < 0 || x >= upperArrayX[worldNumber] || y >= upperArrayY[worldNumber] )
+	{
+		overFlow.RemoveItem( nItem );
+		return false;
+	}
+	return internalRegions[x][y][worldNumber].RemoveItem( nItem );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool AddChar( CChar *toAdd )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Adds toAdd to the proper SubRegion
+//o--------------------------------------------------------------------------
+bool cMapRegion::AddChar( CChar *toAdd )
+{
+	if( toAdd == NULL )
+		return false;
+	UI08 worldNumber = toAdd->WorldNumber();
+	int x = GetGridX( toAdd->GetX() );
+	int y = GetGridY( toAdd->GetY() );
+	if( x < 0 || y < 0 || x >= upperArrayX[worldNumber] || y >= upperArrayY[worldNumber] )
+	{
+		overFlow.AddChar( toAdd );
+		return false;
+	}
+	return internalRegions[x][y][worldNumber].AddChar( toAdd );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool RemoveChar( CChar *toRemove )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Removes toRemove from it's CURRENT SubRegion
+//|					-	Do this before adjusting the location
+//o--------------------------------------------------------------------------
+bool cMapRegion::RemoveChar( CChar *toRemove )
+{
+	if( toRemove == NULL )
+		return false;
+	UI08 worldNumber = toRemove->WorldNumber();
+	int x = GetGridX( toRemove->GetX() );
+	int y = GetGridY( toRemove->GetY() );
+	if( x < 0 || y < 0 || x >= upperArrayX[worldNumber] || y >= upperArrayY[worldNumber] )
+	{
+		overFlow.RemoveChar( toRemove );
+		return false;
+	}
+	return internalRegions[x][y][worldNumber].RemoveChar( toRemove );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	int GetGridX( SI16 x )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Find the Column of SubRegion we want based on location
+//o--------------------------------------------------------------------------
+int cMapRegion::GetGridX( SI16 x )
+{
+	return x / MapColSize;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	int GetGridY( SI16 y )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Finds the Row of SubRegion we want based on location
+//o--------------------------------------------------------------------------
+int cMapRegion::GetGridY( SI16 y )
+{
+	return y / MapRowSize;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	Save()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Saves out each SubRegion
+//o--------------------------------------------------------------------------
+void cMapRegion::Save( void )
+{
+	char filename[MAX_PATH];
+	const long AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
+	const long AreaY = UpperY / 8;
+	ofstream writeDestination, houseDestination;
+	const int onePercent = (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
+	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
+	const char binBlockDisc = (char)0xFF;
+	int count = 0;
+
+	const UI08 Version = 3;
+
+	int Mode = cwmWorldState->ServerData()->SaveMode();
+
+	int s_t = getclock();
+
+	Console << "Saving Character and Item Map Region data...   ";
+	Console.TurnYellow();
+	Console << "0%";
+
+	sprintf( filename, "%shouse.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
 	
-	return 0;
-}
-
-//- Returns the cell the character/item is in
-unsigned int cRegion::GetCell(unsigned int x, unsigned int y)
-{
-	int cell = myGridx(x) + myGridy(y) + (myGridx(x) * (ColSize-1));
-	return (unsigned int) ((cell<0) ? 0 : cell);  // - Return 0 if negative otherwise cell #
-}
-
-// - Get the next item pointer in a cell return -1 if done
-long cRegion::GetNextItem(unsigned int cell, unsigned int Last)
-{
-	if (Last==-1) Last=0;
-	else Last++;
-	if (cell>32998 || cell<0) return -1;
-	for (int i=Last;i<MapCells[cell].max;i++)
+	if( Mode == 1 ) 
 	{
-		if (MapCells[cell].pointer[i] != -1) return i;
+		houseDestination.open( filename, ios::binary|ios::out );
+
+		sprintf( filename, "%stables.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
+		writeDestination.open( filename, ios::out|ios::binary );
+		writeDestination.write( "B", 1 );
+		writeDestination.write( (const char *)&Version, 1 );
+		writeDestination.write( (const char *)CharSaveTable, 256 );
+		writeDestination.write( (const char *)ItemSaveTable, 256 );
+		writeDestination.close();
+	} 
+	else 
+		houseDestination.open( filename );
+
+	for( SI32 counter1 = 0; counter1 < AreaX; counter1++ )	// move left->right
+	{
+		long baseX = counter1 * 8;
+		for( SI32 counter2 = 0; counter2 < AreaY; counter2++ )	// move up->down
+		{
+			long baseY = counter2 * 8;								// calculate x grid offset
+
+			sprintf( filename, "%s%i.%i.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), counter1, counter2 );	// let's name our file
+			if( Mode == 1 )
+				writeDestination.open( filename, ios::out|ios::binary );
+			else
+				writeDestination.open( filename );
+
+			if( !writeDestination ) 
+			{
+				Console.Error( 1, "Failed to open %s for writing", filename );
+				continue;
+			}
+
+			for( UI08 xCnt = 0; xCnt < 8; xCnt++ )					// walk through each part of the 8x8 grid, left->right
+			{
+				for( UI08 yCnt = 0; yCnt < 8; yCnt++ )				// walk the row
+				{
+					for( UI08 wCnt = 0; wCnt < NumberOfWorlds; wCnt++ )
+					{
+						count++;
+						if( count%onePercent == 0 )
+						{
+							if( count/onePercent <= 10 )
+								Console << "\b\b" << (UI32)(count/onePercent) << "%";
+							else if( count/onePercent <= 100 )
+								Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
+						}
+						internalRegions[baseX + xCnt][baseY + yCnt][wCnt].SaveToDisk( writeDestination, Mode, houseDestination );
+
+						if( Mode == 1 )
+							writeDestination.write( &binBlockDisc, 1 );
+						else
+							writeDestination << blockDiscriminator;//.write( blockDiscriminator, strlen( blockDiscriminator ) );
+					}
+				}
+			}
+			writeDestination.close();
+		}
 	}
-	return -1; //didn't find another one
+	houseDestination.close();
+
+	sprintf( filename, "%soverflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
+	if( Mode == 1 )
+		writeDestination.open( filename, ios::out|ios::binary );
+	else
+		writeDestination.open( filename );
+
+	if( writeDestination.is_open() )
+	{
+		overFlow.SaveToDisk( writeDestination, Mode, writeDestination );
+		writeDestination.close();
+	}
+	else
+	{
+		Console.Error( 1, "Failed to open %s for writing", filename );
+		return;
+	}
+	
+	Console << "\b\b\b\b";
+	Console.PrintDone();
+
+	int e_t = getclock();
+	Console.Print( "%s world saved in %.02fsec\n", ( Mode == 1 ? "BINARY" : "ASCII" ), ((float)(e_t-s_t))/1000.0f );
 }
 
-// - Get an item in a cell return -1 if done
-long cRegion::GetItem(unsigned int cell, unsigned int item)
+//o--------------------------------------------------------------------------
+//|	Function		-	Load()
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Loads in each SubRegion
+//o--------------------------------------------------------------------------
+void cMapRegion::Load( void )
 {
-	if (cell>32999 || cell<0) return -1;
-	/*printf("Map region %i dump.\n", cell);
-	UI16 i;
-	for (i=0;i<MapCells[cell].max;i++)
-		printf("   %i: %i\n", i, MapCells[cell].pointer[i]);
-	printf("Done.\n");*/
-	if (item>MapCells[cell].max || item<0) return -1;
-	return MapCells[cell].pointer[item];
+	char filename[MAX_PATH];
+	const long AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
+	const long AreaY = UpperY / 8;
+	const int onePercent = (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
+	int count = 0;
+	ifstream readDestination;
+	UI08 Version = 0;
+	UI08 test;
+
+	Console.TurnYellow();
+	Console << "0%";
+	int mode = 0;//ascii
+
+	int s_t = getclock();
+
+	sprintf( filename, "%stables.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );	// let's name our file
+	readDestination.open( filename, ios::in|ios::binary );//open first file and check for binary
+	if( readDestination.is_open() )
+	{
+		readDestination.read( (char *)&test, 1 );//read the 'B' to make sure we are binary
+		if( test == 'B' )
+			mode = 1;
+		readDestination.read( (char*)&Version, 1 );//read out little version number
+		readDestination.close();
+		sprintf( filename, "%s0.0.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );	// let's name our file
+		
+		readDestination.open( filename, ios::in|ios::binary );
+		if( readDestination.is_open() )
+		{
+			readDestination.read( (char *)&test, 1 );
+			if( test > 3 && test != 255 )
+			{//only 0,1,2,3, and 255 are values that should ever appear as the first byte in this file. in binary mode
+				Console.Error( 1, "First byte of 0.0.wsc was %i [%c].  If this is an ASCII world, please remove tables.wsc.", test, test );
+				Console << "";
+				Console.TurnYellow();
+				Console << "WARNING: Continuing to load world as BINARY." << myendl;
+				Console.TurnNormal();
+			}
+			readDestination.close();
+		}
+	}
+
+	for( int counter1 = 0; counter1 < AreaX; counter1++ )	// move left->right
+	{
+		long baseX = counter1 * 8;
+		for( int counter2 = 0; counter2 < AreaY; counter2++ )	// move up->down
+		{
+			long baseY = counter2 * 8;								// calculate x grid offset
+			sprintf( filename, "%s%i.%i.wsc", cwmWorldState->ServerData()->GetSharedDirectory(),  counter1, counter2 );	// let's name our file
+			if( mode == 1 )
+				readDestination.open( filename, ios::in|ios::binary );
+			else
+				readDestination.open( filename );					// let's open it 
+
+			if( readDestination.eof() || readDestination.fail() )
+			{
+				readDestination.close();
+				readDestination.clear();
+				continue;
+			}
+			for( UI08 xCnt = 0; xCnt < 8; xCnt++ )					// walk through each part of the 8x8 grid, left->right
+			{
+				long writeLong = baseX + xCnt;						// we know which column we're on
+				for( UI08 yCnt = 0; yCnt < 8; yCnt++ )				// walk the row
+				{
+					for( UI08 wCnt = 0; wCnt < NumberOfWorlds; wCnt++ )
+					{
+						count++;
+						if( count%onePercent == 0 )
+						{
+							if( count/onePercent <= 10 )
+								Console << "\b\b" << (UI32)(count/onePercent) << "%";
+							else if( count/onePercent <= 100 )
+								Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
+						}
+						internalRegions[writeLong][baseY + yCnt][wCnt].LoadFromDisk( readDestination, mode );	// load it in as ASCII
+					}
+				}
+			}
+			readDestination.close();
+		}
+	}
+
+	Console.TurnNormal();
+	Console << "\b\b\b";
+	Console.PrintDone();
+
+	sprintf( filename, "%soverflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
+	ifstream flowDestination( filename );
+	overFlow.LoadFromDisk( flowDestination, mode );
+	flowDestination.close();
+
+	sprintf( filename, "%shouse.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
+	ifstream houseDestination( filename );
+	LoadHouseMulti( houseDestination, mode );
+	for( UI32 cCounter = 0; cCounter < charcount; cCounter++ )
+	{
+		if( !chars[cCounter].isFree() )
+			chars[cCounter].PostLoadProcessing( cCounter );
+	}
+	for( UI32 iCounter = 0; iCounter < itemcount; iCounter++ )
+	{
+		if( !items[iCounter].isFree() )
+			items[iCounter].PostLoadProcessing( iCounter );
+	}
+	houseDestination.close();
+
+	int e_t = getclock();
+	Console.Print( "%s world loaded in %.02fsec\n", ( mode == 1 ? "BINARY" : "ASCII" ), ((float)(e_t-s_t))/1000.0f );
+	//Console << (mode == 1 ? "BINARY" : "ASCII") << " World loaded in " << ((SI32)(e_t-s_t)) << "ms" << myendl;
 }
 
-// - Get starting grid for lookup 96x96 box
-// - (we check the 8 surrounding cells and the cell char/item is in)
-unsigned int cRegion::StartGrid(unsigned int x, unsigned int y)
+int cMapRegion::GetGridIndex( SI16 x, SI16 y )
 {
-	int gridx=myGridx(x)-1, gridy=myGridy(y)-1;
-	if (gridx<0) gridx=0;
-	if (gridy<0) gridy=0;
-	return (unsigned int) (gridx + gridy + (gridx * (ColSize-1)));
+	int trgX = GetGridX( x );
+	int trgY = GetGridY( y );
+	return( trgX + trgY * UpperX );	// x offset + y * num cols per row
 }
 
-
-RegionIterator::RegionIterator(int myX, int myY, RegionIteratorDomain dm) :
-	x(myX), y(myY), mapitemptr(-1), mapitem(-1), domain(dm)
+SubRegion *cMapRegion::GetGrid( int xOffset, int yOffset, UI08 worldNumber )
 {
-	getcell = mapRegions->GetCell(x,y);
+	if( xOffset < 0 || xOffset >= upperArrayX[worldNumber] || yOffset < 0 || yOffset >= upperArrayY[worldNumber] )
+		return &overFlow;
+	return &internalRegions[xOffset][yOffset][worldNumber];
 }
 
-int RegionIterator::First()
+void cMapRegion::LoadHouseMulti( ifstream &houseDestination, SI32 mode )
 {
-	mapitemptr = mapitem = -1;
-	return Next();
+	if( mode == 1 )//binary
+	{
+		do 
+		{
+			BinBuffer buff( houseDestination );
+			switch ( buff.GetType() )
+			{
+			case 1:		LoadChar( buff );	break;
+			case 2:		LoadItem( buff );	break;
+			case 3:		LoadMulti( buff );	break;
+			case 0xFF:	return;//end of region
+			default:
+				Console.Error( 1, "Found unknown binary section header %i", (UI16)buff.GetType() );
+				break;
+			}
+		} while( !houseDestination.eof() && !houseDestination.fail() );
+	} 
+	else 
+	{//ascii
+		char line[1024];
+		do 
+		{
+			readline( houseDestination, line, 1024 );
+			if( line[0] == '[' )	// in a section
+			{
+				if( !strcmp( line, "[CHARACTER]" ) )
+					LoadChar( houseDestination );
+				else if( !strcmp( line, "[ITEM]" ) )
+					LoadItem( houseDestination );
+				else if( !strcmp( line, "[HOUSE]" ) )
+					LoadMulti( houseDestination );
+			}
+			else if( !strcmp( line, "---REGION---" ) )	// end of region
+				return;
+		} while( strcmp( line, "EOF" ) && !houseDestination.eof() );
+	}
 }
 
-int RegionIterator::Next()
+bool cMapRegion::Add( cBaseObject *toAdd )
 {
-	mapitemptr = mapRegions->GetNextItem(getcell, mapitemptr);
-	if (mapitemptr==-1) 
-		return -1;
-
-	mapitem = mapRegions->GetItem(getcell, mapitemptr);
-	if (domain == ItemsOnly && !IsItem())
-		return Next();
-	if (domain == CharsOnly && !IsChar())
-		return Next();
-	return mapitem;
+	if( toAdd == NULL )
+		return false;
+	if( toAdd->GetObjType() == OT_CHAR )
+		return AddChar( static_cast< CChar *>(toAdd) );
+	else
+		return AddItem( (CItem *)(toAdd) );
 }
-
-bool RegionIterator::End()
+bool cMapRegion::Remove( cBaseObject *toRemove )
 {
-	return (mapitem == -1);// || mapitemptr == -1 );
+	if( toRemove == NULL )
+		return false;
+	if( toRemove->GetObjType() == OT_CHAR )
+		return RemoveChar( static_cast< CChar *>(toRemove) );
+	else
+		return RemoveItem( (CItem *)(toRemove) );
 }
-
-bool RegionIterator::IsItem() const
-{
-	return mapitem >= 0 && mapitem < CharacterOffset;
-}
-
-bool RegionIterator::IsChar() const
-{
-	return mapitem >= CharacterOffset;
-}
-
-bool RegionIterator::IsMulti() const
-{
-	return items[mapitem].id1 >= 0x40;
-}
-
-

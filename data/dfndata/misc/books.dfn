@@ -1,0 +1,6353 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.36                     *
+//*                        Utopia Modifications                   *
+//* Last Update : May 3rd 2000                                    *
+//* Script : misc.scp                                             *
+//*****************************************************************
+
+[BOOK 1]
+{
+PAGES=4
+TITLE=The first UOX book
+AUTHOR=Cironian & Lord Binary
+PAGE=1
+PAGE=2
+PAGE=3
+PAGE=4
+}
+
+[PAGE 1]
+{
+Greetings, Traveller!
+I welcome thee to the
+world of UOX and
+hope your will enjoy
+your stay here.
+This is the first
+page of this
+experimental book.
+}
+
+[PAGE 2]
+{
+Feel free to change
+the contents of this
+book or to add others
+
+To do so, simply edit
+the contents of the
+file misc.scp  .
+}
+
+[PAGE 3]
+{
+The item TYPE for
+books is 11 decimal
+and you will have to
+set the MORE of the
+book item to the
+section number of
+the book.
+}
+
+[PAGE 4]
+{
+This is page four.
+(End of this book)
+}
+
+// ============================ A Grammer of Orcish
+[BOOK 2]
+{
+PAGES=23
+TITLE=A Grammar of Orcish
+AUTHOR=Yorick of Yew
+PAGE=5
+PAGE=6
+PAGE=7
+PAGE=8
+PAGE=9
+PAGE=10
+PAGE=11
+PAGE=12
+PAGE=13
+PAGE=14
+PAGE=15
+PAGE=16
+PAGE=17
+PAGE=18
+PAGE=19
+PAGE=20
+PAGE=21
+PAGE=22
+PAGE=23
+PAGE=24
+PAGE=25
+PAGE=26
+PAGE=27
+}
+
+[PAGE 5]
+{
+  This volume, and
+others in the series,
+are sponsored by
+donations from Lord
+Blackthorn, ever a
+supporter of
+understanding the
+other sentient races
+}
+
+[PAGE 6]
+{
+of Britannia.
+-
+
+ The Orcish tongue
+may fall unpleasingly
+'pon the ear, yet it
+has within it a
+complex grammar oft
+}
+
+[PAGE 7]
+{
+misunderstood by
+those who merely
+hear the few broken
+words of English our
+orcish brothers
+manage without
+education.
+ These are the basic
+}
+
+[PAGE 8]
+{
+rules of orcish:
+ Orcish has five
+tenses: present, past
+,future inperfect,
+present interject-
+ional,and prehensile.
+ Examples: gugroflue,
+gugrofloog, gugrobo,
+}
+
+[PAGE 9]
+{
+gugroglu!, gugrogug.
+ All transitive verbs
+in the prehensile
+tense end in "ug."
+ Examples:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+}
+
+[PAGE 10]
+{
+ All present
+interjectional
+conjugations start
+with the letter G
+unless the contain
+the third declensive
+accent of the letter
+U. Examples:
+}
+
+[PAGE 11]
+{
+ghuthudunglug, but
+not azhbuugb.
+ The past tense can
+only refer to events
+since the last meal,
+but the prehensile
+tense can refer to
+any event within
+}
+
+[PAGE 12]
+{
+reach.
+ The present tense
+is conjugated like
+the future imperfect
+tense,  when the
+interrogative mode is
+used by pitching the
+sound a quarter-tone
+}
+
+[PAGE 13]
+{
+higher.
+Orcish hath no
+concept of person, as
+in first person,
+third person, I, we,
+etc. Orcish grammer
+relies upon the three
+cardinal rules of
+}
+
+[PAGE 14]
+{
+accretion, prefixing,
+and agglutination, in
+addition to pitch. In
+the former, phonemes
+combine into larger
+words wich may
+contain full phrasal
+significance.  In the
+}
+
+[PAGE 15]
+{
+second, prefixing
+specific phonetic
+sounds changes the
+subject of the
+sentence into object,
+interrogative,
+addressed individual
+or dinner.
+}
+
+[PAGE 16]
+{
+ Agglutination occurs
+whenever four of
+the same letter are
+present in a word, in
+wich case, any two
+of them may be
+removed or slurred.
+ Pitch changes the
+}
+
+[PAGE 17]
+{
+phoneme value of
+individual syllables,
+thus completely
+altering what a word
+may mean. The
+classic example is
+"Aktgluthugrot
+bigglogubuu
+}
+
+[PAGE 18]
+{
+dargilgaglug
+lublublub which can
+mean "You are such a
+pretty girl," "My
+mother ate your
+primroses," or
+"Jellyfish nose
+paints alms potato,"
+}
+
+[PAGE 19]
+{
+depending on pitch.
+ Orchish poetry often
+relies upon repeating
+the same phrase in
+multiple pitches,
+even changing pitch
+midword.  None of
+this great art is
+}
+
+[PAGE 20]
+{
+translatable.
+ The orcish language
+uses the following
+vowels: ab, ad, ag,
+akt, at, augh, auh,
+azh, e, i, o, oo, u,
+uu. The vowel sound a
+is not recognized as
+}
+
+[PAGE 21]
+{
+a vowel and does not
+exist in their
+alphabet. The orchish
+alphabet is best
+learned using the
+classic rhyme
+repeated at 23
+different pitches:
+}
+
+[PAGE 22]
+{
+Lugnog ghu blatsug
+garoglug, Gaghbuu
+dakdar ab highugbo,
+ Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+A translation of the
+}
+
+[PAGE 23]
+{
+first pitch:
+Eat food, the first
+letter is ab,
+Kill people, next
+Letter is ad,
+ I forgot the rest
+But augh is in there
+somewhere!
+}
+
+[PAGE 24]
+{
+ What follows is a
+complete phonetic
+library of the orcish
+language:
+ab, ad, ag, akt, alm,
+at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+}
+
+[PAGE 25]
+{
+bid, bilge, bo, bog,
+bog, brui, bu, buad,
+bug, buil, buim, bum,
+buo, buor, buu, ca,
+car, clog, cro, cuk,
+cur, da, dagh, dagh,
+dak, dar, deak, der,
+dil, dit, dor, dre,
+}
+
+[PAGE 26]
+{
+dri, dru, du, dud,
+duf, dug, dug, duh,
+dun, eag, eg, egg,
+eichel, ek, ep, ewk,
+faugh, fid, flu, fog,
+foo, foz, fruk, fu,
+fub, fud, fun, fup,
+fur, gaa, gag, gagh,
+}
+
+[PAGE 27]
+{
+gan, gar, gh, gha,
+ghat, ghed, ghig, gho,
+ghu, gig, gil, gka,
+glu, glug, gna, gno,
+gnu, gol, gom, goth,
+grunt, grut, gu, gub,
+gub, gug, gug, gugh,
+guk.
+}
+
+// ============================ The Bold Stranger
+[BOOK 3]
+{
+PAGES=14
+TITLE=The Bold Stranger
+AUTHOR=Old Fabio the Poor
+PAGE=28
+PAGE=29
+PAGE=30
+PAGE=31
+PAGE=32
+PAGE=33
+PAGE=34
+PAGE=35
+PAGE=36
+PAGE=37
+PAGE=38
+PAGE=39
+PAGE=40
+PAGE=41
+}
+
+[PAGE 28]
+{
+ In a time before
+time, the Gods that
+be assembled a group
+of artisans, crafts
+men and lore masters
+(for, yes, even in
+those days, art
+existed)to create the
+}
+
+[PAGE 29]
+{
+world of Sosaria. To
+this group, the gods
+gave a tiny world,
+Rytabul, in which to
+test their works, to
+see if they were of
+the quality desired
+for the true world in
+}
+
+[PAGE 30]
+{
+which they would be
+placed.  And though
+the gods were tight
+fisted with their
+gold, this small crew
+worked hard and long,
+and were happy in
+their tasks.
+}
+
+[PAGE 31]
+{
+ A small corner of
+Rytabul had been
+claimed by the
+artisan Selrahc the
+Slow. Though he was
+Not the fastest of
+The assembled
+workers, the gods
+}
+
+[PAGE 32]
+{
+smiled upon his work,
+even presenting him
+with a mystic
+talisman proclaiming
+his work the best
+among the newer
+artisans.And so
+Selrahc went about
+}
+
+[PAGE 33]
+{
+his business,
+creating hundreds
+of designs which
+would one day add
+color and variety
+to Sosaria. One day a
+stranger appeared to
+Selrahc.  His chest
+}
+
+[PAGE 34]
+{
+was bare and he wore
+trousers of the
+brightest green, and
+whereever he went,
+plants grew in his
+footsteps. This
+caused Selrahc no end
+of trouble, the
+}
+
+[PAGE 35]
+{
+stranger always
+looking over his
+shoulder, and the
+plants sprouting in
+places Selrahc
+required to ply his
+art. And so Selrahc
+approached the
+}
+
+[PAGE 36]
+{
+stranger and bade
+him speak.  But this
+man in green
+remained silent.
+Selrahc pleaded with
+the stranger to give
+his name, and would
+he please leave
+}
+
+[PAGE 37]
+{
+Selrahc to his work.
+But this mysterious
+stranger remained
+mute.
+ This angered
+Selrahc mightily. Who
+was this silent man,
+interfering with
+}
+
+[PAGE 38]
+{
+tasks the gods
+themselves had
+entrusted to Selrahc?
+In an attempt to
+embarrass this
+interloper, Selrahc
+stole his green
+trousers, leaving him
+}
+
+[PAGE 39]
+{
+naked and open to
+comments about his
+very manhood, and
+still the stranger
+would not speak,
+would not leave this
+tiny corner of
+Rytabul.
+}
+
+[PAGE 40]
+{
+Vexed to his very
+limits, Selrahc took
+his war axe and
+smote the silent one
+mightily, again and
+again, until the
+silent stranger ran
+away, having never
+}
+
+[PAGE 41]
+{
+said a word, and
+never showed himself
+in Rytabul again.
+ Thus endeth the
+tale of the bold
+stranger.
+}
+
+// ============================ Birds of Britannia
+[BOOK 4]
+{
+PAGES=26
+TITLE=Birds of Britannia
+AUTHOR=Thom the Heathen
+PAGE=42
+PAGE=43
+PAGE=44
+PAGE=45
+PAGE=46
+PAGE=47
+PAGE=48
+PAGE=49
+PAGE=50
+PAGE=51
+PAGE=52
+PAGE=53
+PAGE=54
+PAGE=55
+PAGE=56
+PAGE=57
+PAGE=58
+PAGE=59
+PAGE=60
+PAGE=61
+PAGE=62
+PAGE=63
+PAGE=64
+PAGE=65
+PAGE=68
+PAGE=67
+}
+
+[PAGE 42]
+{
+ The wren is a tiny
+insect-eating bird
+with a loud voice.
+The cheerful trills
+of Wrens are
+extraordinaily varied
+and melodious.
+ The swallow is
+}
+[PAGE 43]
+{
+easily recognized by
+its forked tail.
+Swallows catch
+insects in flight,
+and have squeaky,
+twittering songs.
+ The warbler is an
+exceptional singer,
+}
+[PAGE 44]
+{
+whose extensive songs
+combine the best
+qualities of Wrens
+and Swallows.
+ The thatch climbs
+down trees head
+first, searching for
+insects in the bark.
+}
+[PAGE 45]
+{
+It sings a
+repetitive series of
+notes with a nasal
+tone quality.
+ The agile chickadee
+has a buzzy "chick-a-
+dee-dee" call, from
+which its name is
+}
+[PAGE 46]
+{
+derived. Its song is
+a series of whistled
+notes.
+ The thrush is a
+brown bird with a
+spotted breast, which
+eats worms and
+snails, and has a
+}
+[PAGE 47]
+{
+beautiful singing
+voice. Thrushes use
+a stone as an anvil
+to smash the shells
+of snails.
+ The little
+nightingale is also
+known for its
+}
+[PAGE 48]
+{
+beautiful song, which
+it sings even at
+night.
+ The starling is a
+small dark bird with
+a yellow bill and a
+squeaky,high-pitched
+song. Starlings can
+}
+[PAGE 49]
+{
+mimic the sounds of
+other birds.
+ The skylark sings a
+series of high-
+pitched melodious
+trills in flight.
+  The finch is a
+small seed-eating
+}
+[PAGE 50]
+{
+bird with a conical
+beak and a musical,
+warbling song.
+ The crossbill is a
+kind of Finch with a
+strange crossed bill,
+which ituses to
+extract seeds from
+}
+[PAGE 51]
+{
+pine cones.
+ The canary is a kind
+of Finch that is
+often kept as a pet.
+Miners would often
+take canaries
+underground with
+them, to warn them of
+}
+[PAGE 52]
+{
+the presence of
+hazardous vapors in
+the air.
+ The sparrow weaves
+a nest of grass, and
+has an unmusical
+chirp for a voice.
+ The towhee is a kind
+}
+[PAGE 53]
+{
+of Sparrow that
+continually reminds
+listeners to drink
+their tea.
+ The shrike is a gray
+bird with a hooked
+bill. Shrikes have
+the habit of impaling
+}
+[PAGE 54]
+{
+their prey on thorns.
+ The woodpecker has
+a pointed beak that
+is suitable for
+pecking at wood to
+get at the insects
+inside.
+ The kingfisher dives
+}
+[PAGE 55]
+{
+for fish, which it
+catches with its
+long, pointed beak.
+ The tern migrates
+over great distances,
+from one end of
+Britannia to the
+other each year.
+}
+[PAGE 56]
+{
+Terns dive from the
+air to catch fish.
+ The plover is a bird
+that distracts
+predators by
+pretending to have a
+broken wing.
+ The lapwing is a
+}
+[PAGE 57]
+{
+kind of Plover that
+has a long black
+crest.
+ The hawk is a
+predator that feeds
+on small birds, mice,
+squirrels, and other
+small animals. Small
+}
+[PAGE 58]
+{
+hawks are known as
+Kites.
+ The dove is a seed-
+eating bird with a
+peaceful reputation.
+Doves have a low-
+pitched cooing song.
+ The cuckoo is a
+}
+[PAGE 59]
+{
+devious bird that
+lays eggs in the
+nests of Warblers and
+other small birds.
+Cuckoos have the
+uncanny ability to
+keep track of time,
+singing once at the
+}
+[PAGE 60]
+{
+beginning of each
+hour.
+ The roadrunner is an
+unusual bird with a
+long tail, wich runs
+swiftly along the
+ground hunting for
+lizards and snakes.
+}
+[PAGE 61]
+{
+ The swift is a very
+agile bird that
+spends nearly its
+entire life in the
+air. With their
+mouths wide open,
+Swifts capture
+insects in mid-
+}
+[PAGE 62]
+{
+flight.
+ The hummingbird is a
+cross between a Swift
+and a Fairy. These
+tiny, brightly
+colored birds hover
+magically near
+flowers, and live on
+}
+[PAGE 63]
+{
+the nectar they
+provide.
+ The owl is a
+reputedly wise bird
+that is active at
+night, unlike most
+birds. Owls have
+excellent night
+}
+[PAGE 64]
+{
+vision and low-
+pitched hooting
+calls. Their wings
+are silent in flight.
+ The goatsucker is a
+strange owl-like bird
+that is though to
+live on the milk of
+}
+[PAGE 65]
+{
+goats. These
+mysterious birds
+make jarring sounds
+at night, for which
+reason they are also
+called Nightjars.
+ The duck is a bird
+that swims more often
+}
+[PAGE 66]
+{
+than it flies, and
+has a nasal voice
+that is described as
+a "quack".
+ The swan is a kind
+of long-necked Duck
+that is all white.
+Swans are usually
+}
+[PAGE 67]
+{
+voiceless, but they
+are said to have an
+extraordinarily
+beautiful song.
+}
+
+// ============================ Regarding Llamas
+[BOOK 5]
+{
+PAGES=4
+TITLE=Regarding Llamas
+AUTHOR=Simon
+PAGE=68
+PAGE=69
+PAGE=70
+PAGE=71
+}
+
+[PAGE 68]
+{
+ Llamas are curious
+bests, shaggy and
+sought after for
+their wool, yet of a
+curiously arrogant
+disposition reflected
+in their eyes, they
+live in mountainous
+}
+[PAGE 69]
+{
+areas,though who may
+have first tamed them
+is lost in the mists
+of history.
+ 'Tis a well-known
+fact that llamas can
+indeed be tamed, and
+used as grazing
+}
+[PAGE 70]
+{
+animals, for their
+meat, and of course
+for their wool. Yet
+'tis lesser known
+that their ornery
+disposition and
+tendency to spit at
+those they dislike
+}
+[PAGE 71]
+{
+makes them appealing
+guard creatures as
+well, though they
+have little sound
+with which to sound
+an alarm.
+}
+
+// ============================ Talking to Wisps
+[BOOK 6]
+{
+PAGES=9
+TITLE=Talking to Wisps
+AUTHOR=Yorick of Moonglow
+PAGE=72
+PAGE=73
+PAGE=74
+PAGE=75
+PAGE=76
+PAGE=77
+PAGE=78
+PAGE=79
+PAGE=80
+}
+
+[PAGE 72]
+{
+ This volume was
+sponsored by
+donations from Lord
+Blackthorn, ever a
+supporter of
+understanding the
+other sentient races
+of Britannia.
+}
+[PAGE 73]
+{
+-
+
+Wisps are the most
+intelligent of the
+nonhuman races
+inhabiting Britannia.
+'Tis claimed by the
+great sages that
+}
+[PAGE 74]
+{
+someday we shall be
+able to converse with
+them openly in our
+native tongue--
+indeed, we must hope
+that wisps learn our
+language, for it is
+not possible for
+}
+[PAGE 75]
+{
+humans to pronounce
+wispish!
+ The wispish language
+seems to only contain
+one vowel, the letter
+Y. However, the
+letters W, C, M, and
+L seem to be treated
+}
+[PAGE 76]
+{
+grammatically as
+vowels, and in
+addition every letter
+is followed by what
+sound to the human
+ear like a glotal
+stop.  It is possible
+that the glottal stop
+}
+[PAGE 77]
+{
+is considered a vowel
+as well.
+ Wisps do make use of
+what sound to us like
+pitch and emphasis
+shifts similar to
+exclamations and
+questions.
+}
+[PAGE 78]
+{
+ The average word is
+wispish seems to
+consist of three
+phonemes and three
+glottal stops, plus
+possibly a pitch
+shift. It often
+sounds like a fire
+}
+[PAGE 79]
+{
+burning or crackling.
+Some have speculated
+that what we are
+analyzing is in fact
+nothing more than the
+very air crackling
+near the wisp's glow,
+and not language, but
+}
+[PAGE 80]
+{
+this is of course
+unlikely.
+}
+
+// ============================ Taming Dragons
+[BOOK 7]
+{
+PAGES=8
+TITLE=Taming Dragons
+AUTHOR=Wyrd Beastmaster
+PAGE=81
+PAGE=82
+PAGE=83
+PAGE=84
+PAGE=85
+PAGE=86
+PAGE=87
+PAGE=88
+}
+
+[PAGE 81]
+{
+ I have not much to
+tell about dragons.
+The sole time I
+approached one with
+an eye towards taming
+it, my initial
+attempts at calming
+it met with failure.
+}
+[PAGE 82]
+{
+It fixed a massive
+beady eye upon me,
+and began its
+slithering approach,
+intending no doubt to
+insert me into its
+maw and bear down
+with its teeth.
+}
+[PAGE 83]
+{
+ However, as I was
+engaged in what
+remains to this day
+the most terrifying
+combat of my life,
+the dragon suddenly
+whirled as if in a
+panic, ran a short
+}
+[PAGE 84]
+{
+distance, took off
+into the air, then
+transformed into a
+whirlwind. Lastly, it
+exploded, showering
+guts of black blood
+and heaving, stinking
+flesh upon miles of
+}
+[PAGE 85]
+{
+countryside. The
+fireball was massive
+enough to light a
+city, I should
+surmise.
+ I never did discover
+the exact cause of
+this strange behavior
+}
+[PAGE 86]
+{
+except to assume that
+it was not typical
+for this reptilian
+species. My best
+guesses revolve
+around a magical
+fracture in the
+nature of reality,
+}
+[PAGE 87]
+{
+which is far too
+esoteric a territory
+for one of my limited
+scholarship.
+ Hence my basic
+advice to those who
+seek to tame a dragon
+-be sure that thou
+}
+[PAGE 88]
+{
+hast mastered the
+twin skills of taming
+animals, and running
+away very very fast.
+}
+
+// ============================ A Politic Call to Anarchy
+[BOOK 8]
+{
+PAGES=15
+TITLE=A Politic Call to Anarchy
+AUTHOR=Lord Blackthorn
+PAGE=89
+PAGE=90
+PAGE=91
+PAGE=92
+PAGE=93
+PAGE=94
+PAGE=95
+PAGE=96
+PAGE=97
+PAGE=98
+PAGE=99
+PAGE=100
+PAGE=101
+PAGE=102
+PAGE=103
+}
+
+[PAGE 89]
+{
+ Let it never be said
+that I have aught as
+quarrel with my liege
+Lord British, for
+indeed we be of the
+best of friends,
+sharing amicable
+games of chess 'pon a
+}
+[PAGE 90]
+{
+winter's night, and
+talking at length
+into the wee hours of
+the issues that
+affect the realm of
+Britannia.
+ Yet true friendship
+doth not prevent true
+}
+[PAGE 91]
+{
+philosophical
+disagreement either.
+While I view with
+approval my lord's
+affection for his
+carefully crafted
+philosophy of the
+Eight Virtues,
+}
+[PAGE 92]
+{
+wherein moral
+behavior is
+encouraged in the
+populace, I view with
+less approval the
+expenditure of public
+funds upon the
+construction of
+}
+[PAGE 93]
+{
+"shrines" to said
+ideals.
+ The issue is not one
+of funds, however,
+but a disagreement
+most intellectual
+over the proper way
+of humankind in an
+}
+[PAGE 94]
+{
+ethical sense. Surely
+freedom of decision
+must be regarded as
+paramount in any
+such moral decision?
+Though none fail to
+censure the murderer,
+a subtler question
+}
+[PAGE 95]
+{
+arises when we ask if
+his behavior would be
+ethical if he were
+forced to do it.
+ I say to thee, the
+reader, quite flatly,
+that no ethical
+system shall have
+}
+[PAGE 96]
+{
+sway over me unless
+it convinceth me, for
+that freely made
+choice is to me the
+sign that the system
+hath validity.
+ Whereas the system
+of "Virtues" that my
+}
+[PAGE 97]
+{
+liege espouses is
+indeed a compilation
+of commonly approve
+virtues, I approve of
+it. Where it seeks to
+control the populace
+and restrict their
+diversity and their
+}
+[PAGE 98]
+{
+range of behaviors, I
+quarrel with it. And
+thus do I issue this
+politic call to
+anarchy, whilst
+humbly begging for
+forgiveness of Lord
+British for my
+}
+[PAGE 99]
+{
+impertinence:
+ Celebrate thy
+differences. Take thy
+actions according to
+thy own lights.
+Question from what
+source a law, a rule,
+a judge, and a virtue
+}
+[PAGE 100]
+{
+may arise. 'Twere
+possible (though I
+suggest it not
+seriously) that a
+demon planted the
+seed of these
+"Virtues" in my Lord
+British's mind;
+}
+[PAGE 101]
+{
+'twere possible that
+the Shrines were but
+a plan to destroy
+this world. Thou
+canst not know unless
+thou questioneth,
+doubteth, and in the
+end, unless thou
+}
+[PAGE 102]
+{
+relyest upon THYSELF
+and thy judgment.
+ I offer these words
+as mere philosophical
+musing for those who
+seek enlightenment,
+for 'tis the issue
+that hath occupied
+}
+[PAGE 103]
+{
+mine interest and
+that of Lord British
+for some time now.
+}
+
+// ============================ Ethical Hedonism: An Introduction
+[BOOK 9]
+{
+PAGES=24
+TITLE=Ethical Hedonism: An Introduction
+AUTHOR=Richard Garriott
+PAGE=104
+PAGE=105
+PAGE=106
+PAGE=107
+PAGE=108
+PAGE=109
+PAGE=110
+PAGE=111
+PAGE=112
+PAGE=113
+PAGE=114
+PAGE=115
+PAGE=116
+PAGE=117
+PAGE=118
+PAGE=119
+PAGE=120
+PAGE=121
+PAGE=122
+PAGE=123
+PAGE=124
+PAGE=125
+PAGE=126
+PAGE=127
+}
+
+[PAGE 104]
+{
+ Societies oft have
+common codes of
+conduct which it
+expects all it's
+people to abide by.
+Now, while 'tis true
+that this can offer
+some advantages, most
+}
+[PAGE 105]
+{
+of the codes I see
+today around
+Britannia have fatal
+flaws. Let us examine
+them.
+ First, there is
+Blackthorn's code of
+Chaos or basically
+}
+[PAGE 106]
+{
+Anarchy. Whereas
+this affords the
+individual maximum
+opportunity for
+individuality and eve
+pursuit of personal
+happiness, it does
+not offer even basic
+}
+[PAGE 106]
+{
+interpersonal conduct
+codes to prevent
+people from killing
+each other.
+ Without such basic
+tenets, all the
+people will need to
+spend a significant
+}
+[PAGE 107]
+{
+portion of their time
+and effort towards
+personal protection
+and thus less time
+towards other more
+beneficial pursuits.
+ Then there are the
+moral codes that are
+}
+[PAGE 108]
+{
+so popular today.
+These codes are built
+largely on historical
+tradition rather than
+current logic and
+thus are also
+antiquated. For
+example many moral
+}
+[PAGE 109]
+{
+codes we see today
+include statements
+about not eating
+certain foods that
+once were often
+poisonous, but today
+can be prepared
+safely.
+}
+[PAGE 110]
+{
+ Many forbid contact
+between young people
+of the opposite
+gender, which can in
+fact be hazardous;
+but the codes often
+have lost the context
+as to why this is
+}
+[PAGE 111]
+{
+done, instead merely
+calling it amoral. In
+this day and age to
+call that a necessary
+moral would need a
+new reasoning. I put
+forth that tradition
+is not enough.
+}
+[PAGE 112]
+{
+ Then there are Lord
+British's Virtues. It
+strikes me that while
+a system of virtues
+is wonderful as a
+touchstone to guide a
+society to good
+behavior, these are
+}
+[PAGE 113]
+{
+but shades of the
+underlying truth as
+to why one may wish
+to live a life
+according to certain
+rules of conduct.
+ On the other hand,
+clearly the Virtues
+}
+[PAGE 114]
+{
+that I have heard
+Lord British speak of
+are clearly positive
+codes of conduct, far
+better than the world
+of anarchy that Lord
+Blackthorn suggests.
+Yet, are not these
+}
+[PAGE 115]
+{
+Virtues still derived
+from a set of
+principles which
+though they sound
+good, are difficult
+to pin down as
+actual, undeniable,
+rational truths?
+}
+[PAGE 116]
+{
+ Worse yet though
+imagine a society
+who's code of conduct
+was based on pure
+survival of the
+strongest. While this
+society may function
+and even accomplish
+}
+[PAGE 117]
+{
+much, it can be
+fairly argued that
+personal happiness
+would suffer greatly
+except for those at
+the top. To rule that
+out, however, we must
+first believe that
+}
+[PAGE 118]
+{
+people have a right
+to pursue happiness.
+ I hope is a safe
+assumption that all
+beings wish to be
+happy, I will broadly
+describe this as
+Hedonism. Yet, if all
+}
+[PAGE 119]
+{
+people did is live a
+life of hedonism,
+their hedonism might
+be in conflict with
+those near them, so I
+will use the term
+Ethics to describe
+limits one might put
+}
+[PAGE 120]
+{
+on one's hedonistic
+tendencies to allow
+others to pursue
+their happiness as
+well.
+ Allow me to give
+this example: If one
+were to live alone on
+}
+[PAGE 121]
+{
+a desert isle, one
+could live a life of
+pure hedonism, for no
+action one might take
+could interfere with
+another's right to
+pursue their
+happiness. Poison the
+}
+[PAGE 122]
+{
+lake if you like,
+there is no one to
+blame but yourself!
+ Now suppose two of
+you live on that
+island. Thou dost not
+want thy neighbor to
+feel free to poison
+}
+[PAGE 123]
+{
+the lake. Would it
+not be better to
+consider it unethical
+to poison the lake
+without first
+thinking of those
+whose pursuit of
+happiness might be
+}
+[PAGE 124]
+{
+affected by this
+action?
+ I put forth that it
+is the fact that we
+as a people choose to
+live in groups known
+as a society that
+causes us to
+}
+[PAGE 125]
+{
+compromise our pure
+hedonism with logical
+ethics. Likewise we
+accept not being able
+to kill others
+without reason,
+because our own
+pursuit of happiness
+}
+[PAGE 126]
+{
+would be greatly
+interfered with if we
+feared others would
+do the same to us.
+From this basis of
+logic can be formed
+the Tenets of Ethical
+Hedonism.
+}
+[PAGE 127]
+{
+ For more on this
+subject, see The
+Tenants of Ethical
+Hedonism, by Richard
+Garriott and Herman
+Miller.
+}
+
+// ============================ On the Diversity of Our Land
+[BOOK 10]
+{
+PAGES=15
+TITLE=On the Diversity of Our Land
+AUTHOR=Lord Blackthorn
+PAGE=128
+PAGE=129
+PAGE=130
+PAGE=131
+PAGE=132
+PAGE=133
+PAGE=134
+PAGE=135
+PAGE=136
+PAGE=137
+PAGE=138
+PAGE=139
+PAGE=140
+PAGE=141
+PAGE=142
+}
+
+[PAGE 128]
+{
+ While I deplore the
+depredations of the
+misguided and
+belligerent races
+with which we share
+our fair Britannia,
+and alongside the
+populace do morn the
+}
+[PAGE 129]
+{
+needles deaths that
+their raids cause, I
+can not countenance
+the policy of
+wholesale slaughter
+of these races that
+seems to be the habit
+of our soldierly
+}
+[PAGE 130]
+{
+element.
+ Can we not regard
+the ratmen, lizard
+men, and orcs are
+fellow intelligent
+beings with whom we
+share a planet? Why
+must we slay them on
+}
+[PAGE 131]
+{
+sight, rather than
+attempt to engage
+them in dialogue?
+There is no policy of
+shooting at wisps
+when they grace us
+with their presence
+(not that an arrow
+}
+[PAGE 132]
+{
+could do much to
+pierce them!).
+ To view these
+creatures as vermin
+denies their obvious
+intelligence, and we
+cannot underestimate
+the repercussions
+}
+[PAGE 133]
+{
+that their slaughter
+may have. If we
+regard the slaying of
+fellow humans as a
+crime, so must we
+regard the killing of
+an orc.
+ At the same time,
+}
+[PAGE 134]
+{
+should a lizardman
+slay a human, should
+we not forgive their
+ignorance and
+foolishness? Let us
+not surrender the
+high moral ground by
+descending to
+}
+[PAGE 135]
+{
+bestiality.
+ Now, I say not that
+we should fail to
+defend ourselves in
+case of attack, for
+even amongst humans
+we see war, we see
+famine, and we see
+}
+[PAGE 136]
+{
+assault (though we
+owe a debt of
+gratitude to our Lord
+British for
+preserving us from
+the worst of these!).
+However, incursions
+such as the recent
+}
+[PAGE 137]
+{
+tragedy which cast us
+the life of Japheth,
+Guildmaster of
+Trinsic's Paladins,
+are folly.
+ I had met Japheth,
+and like all
+paladins, he burned
+}
+[PAGE 138]
+{
+with an inner fire.
+Yet though I had the
+utmost respect for
+him, none could deny
+the hatred that
+flashed in his eyes
+at the mere mention
+of orcs. And thus he
+}
+[PAGE 139]
+{
+carried his battle to
+the orc camps, and
+died there, unable to
+rise above his own
+childhood experiences
+depicted in his book,
+"The Burning of
+Trinsic". 'Tis a
+}
+[PAGE 140]
+{
+shame that even our
+mightiest men fall
+prey to this
+ignorance!
+ Are there not
+legends of orcs
+adopting human
+children to raise as
+}
+[PAGE 141]
+{
+their own? Tales of
+complex societies
+build underground by
+races we regard as
+bestial?
+ Let us not repeat
+the mistake of
+Japheth of the
+}
+[PAGE 142]
+{
+Paladins, and let us
+cease to persecute
+the nonhuman races,
+before we discover
+that we are harming
+ourselves in the
+process.
+}
+
+// ============================ Virtue
+[BOOK 11]
+{
+PAGES=20
+TITLE=Virtue
+AUTHOR=Lord British
+PAGE=143
+PAGE=144
+PAGE=145
+PAGE=146
+PAGE=147
+PAGE=148
+PAGE=149
+PAGE=150
+PAGE=151
+PAGE=152
+PAGE=153
+PAGE=154
+PAGE=155
+PAGE=156
+PAGE=157
+PAGE=158
+PAGE=159
+PAGE=160
+PAGE=161
+PAGE=162
+PAGE=163
+}
+
+[PAGE 143]
+{
+ Within this world
+live people with many
+different ideals, and
+this is good. Yet
+what is it within the
+people of our land
+that sorts out the
+good from the evil,
+}
+[PAGE 144]
+{
+the cherished form
+the disdained?
+Virtue, I say it is,
+and virtue is the
+logical outcome of a
+people who wish to
+live together in a
+bonded society.
+}
+[PAGE 145]
+{
+ For without Virtues
+as a code of conduct
+which people maintain
+in their relations
+with each other, the
+fabric of that
+society will become
+weakened. For a
+}
+[PAGE 146]
+{
+society to grow and
+prosper for all, each
+must grant the others
+a common base of
+consideration.
+ I call this the base
+the Virtues. For
+though one person
+}
+[PAGE 147]
+{
+might gain personal
+advantage by
+breaching such a
+code, the society as
+a whole would suffer.
+ There are three
+Principle Virtues
+that should guide
+}
+[PAGE 148]
+{
+people to
+enlightenment. These
+are: Truth, Love and
+Courage. From all the
+infinite reasons one
+may have to found an
+action, such as greed
+or charity, envy or
+}
+[PAGE 149]
+{
+pity, the three
+Principle Virtues
+stand out.
+ In fact all other
+virtues and vices can
+be shown to be built
+from these principle
+and their opposite
+}
+[PAGE 150]
+{
+corruption's of
+Falsehood, Hatred and
+Cowardice. These
+three Principles can
+be combined in eight
+ways, which I will
+call the eight
+virtues. The eight
+}
+[PAGE 151]
+{
+virtues which we
+should build our
+society upon follow.
+ Truth alone becomes
+Honesty, for without
+honesty between our
+people, how can we
+build the trust which
+}
+[PAGE 152]
+{
+is needed to maximize
+our successes.
+ Love alone becomes
+compassion, for at
+some time or another
+all of us will need
+the compassion of
+others, and most
+}
+[PAGE 153]
+{
+likely compassion
+will be shown to
+those who have shown
+it.
+ Courage alone
+becomes Valor,
+without valor our
+people will never
+}
+[PAGE 154]
+{
+reach into the
+unknown or to the
+risky and will never
+achieve.
+ Truth tempered by
+Love give us Justice,
+for only in a loving
+search for the truth
+}
+[PAGE 155]
+{
+can one dispense fair
+Justice, rather than
+create a cold and
+callous people.
+ Love and Courage
+give us Sacrifice,
+for a people who love
+each other will be
+}
+[PAGE 156]
+{
+willing to make
+personal sacrifices
+to help other in
+need, which one day,
+may be needed in
+return.
+ Courage and Truth
+give us Honor, great
+}
+[PAGE 157]
+{
+knights know this
+well, that chivalric
+honor can be found by
+adhering to this code
+of conduct.
+ Combining Truth,
+Love and Courage
+suggest the virtue of
+}
+[PAGE 158]
+{
+Spirituality the
+virtue that causes
+one to be
+introspective, to
+wonder about ones
+place in this world
+and whether one's
+deeds will be
+}
+[PAGE 159]
+{
+recorded as a gift to
+the world or a
+plague.
+ The final Virtue is
+more complicated. For
+the eighth
+combination is that
+devoid of Truth, Love
+}
+[PAGE 160]
+{
+or Courage witch can
+only exist in a state
+of great Pride, which
+of course is not a
+virtue at all.
+Perhaps this trick of
+fate is a test to see
+if one can realize
+}
+[PAGE 161]
+{
+that the true virtue
+is that of Humility.
+I feel that the
+people of Magincia
+fail to see this to
+such a degree that I
+would not be
+surprised if some ill
+}
+[PAGE 162]
+{
+fate awaited their
+future.
+ Thus from the
+infinite
+possibilities which
+spawned the Three
+Principles of Truth,
+Love and Courage,
+}
+[PAGE 163]
+{
+come the Eight
+Virtues of Honesty,
+Compassion, Valor,
+Justice, Sacrifice,
+Honor, Spirituality,
+and Humility.
+}
+// ============================ My Story
+[BOOK 12]
+{
+PAGES=50
+TITLE=My Story
+AUTHOR=Sherry the Mouse
+PAGE=164
+PAGE=165
+PAGE=166
+PAGE=167
+PAGE=168
+PAGE=169
+PAGE=170
+PAGE=171
+PAGE=172
+PAGE=173
+PAGE=174
+PAGE=175
+PAGE=176
+PAGE=177
+PAGE=178
+PAGE=179
+PAGE=180
+PAGE=181
+PAGE=182
+PAGE=183
+PAGE=184
+PAGE=185
+PAGE=186
+PAGE=187
+PAGE=188
+PAGE=189
+PAGE=190
+PAGE=191
+PAGE=192
+PAGE=193
+PAGE=194
+PAGE=195
+PAGE=196
+PAGE=197
+PAGE=198
+PAGE=199
+PAGE=200
+PAGE=201
+PAGE=202
+PAGE=203
+PAGE=204
+PAGE=205
+PAGE=206
+PAGE=207
+PAGE=208
+PAGE=209
+PAGE=210
+PAGE=211
+PAGE=212
+PAGE=213
+}
+
+[PAGE 164]
+{
+ 'Twas on a chilly
+night, when the moon
+shone pasty-faced
+above the horizon,
+balanced on the
+towers of Lord
+British's castle that
+the events I am about
+}
+[PAGE 165]
+{
+to relate took place,
+some years ago now. I
+witnessed them all
+from my tiny mouse
+hole.
+ My lords British and
+Blackthorn are
+accustomed to a game
+}
+[PAGE 166]
+{
+of chess 'pon an
+evening, over witch
+they argue the issues
+that affect the
+course of the realm.
+Lord Blackthorn was
+on his way to Lord
+British's chambers,
+}
+[PAGE 167]
+{
+and Lord British
+stood by a window
+casement, just having
+finished setting the
+pieces upon the
+board.
+ Suddenly the
+shutters blew open,
+}
+[PAGE 168]
+{
+and Lord British fell
+to the ground, one
+hand shielding his
+eyes. A chill wind
+entered the room, and
+it seemed a gash was
+torn in the very air.
+Through the gash I
+}
+[PAGE 169]
+{
+could see stars and
+swirling clouds of
+stellar dust, and a
+coldness sucked all
+the warmth from the
+air. A terrible wind
+tossed books and
+blankets across the
+}
+[PAGE 170]
+{
+room, and furniture
+toppled.
+ From within this
+gash issued a great
+voice, unlike any I
+have ever heard. And
+these are the words
+it spoke (for I
+}
+[PAGE 171]
+{
+memorized them most
+carefully):
+ "Greetings, Lord
+British. I am the
+Time Lord, a being
+from beyond your
+dimension, as thou
+art from a world
+}
+[PAGE 172]
+{
+other than Sosaria. I
+am here to bring thee
+warning. Dost thou
+recall how long ago a
+mysterious Stranger
+came to Sosaria and
+saved the world from
+the evil wizard
+}
+[PAGE 173]
+{
+Mondain? He
+shattered the Gem of
+Immortality, within
+which dwelled a
+perfect likeness of
+this world."
+ Lord British slowly
+stood and faced the
+}
+[PAGE 174]
+{
+hole in the air. "I
+remember," he said.
+"Oft have I wished
+that stranger would
+return."
+ "He hath returned,"
+spoke the voice. "But
+not to here. When the
+}
+[PAGE 175]
+{
+Gem was shattered, a
+thousand shards were
+scattered across the
+dimensions, and in
+each shard there is a
+perfect likeness of
+this world. And thou
+dost live upon one
+}
+[PAGE 176]
+{
+such shard, for thou
+art not of the true
+world-thou art merely
+a reflection."
+ Lord British looked
+shaken by this, and I
+did not know what to
+think! Was I merely a
+}
+[PAGE 177]
+{
+shadow of the real
+me, which lives still
+somewhere else across
+uncounted universes?
+ "My task is to heal
+this shattered world,
+Lord British," said
+the voice. "And I
+}
+[PAGE 178]
+{
+seek to enlist thee
+in my cause. Be
+warned that in this
+case, healing carries
+with it a terrible
+price."
+ Concern warred with
+curiosity on my
+}
+[PAGE 179]
+{
+liege's face, but
+ever one to shoulder
+a burden, he
+straitened and faced
+the gash in the air
+bravely. "Name thy
+price."
+ "A shard of a
+}
+[PAGE 180]
+{
+universe is a
+powerful thing, and a
+universe shattered is
+always in danger
+from the powers of
+darkness. Already
+three shards were
+turned to evil, and
+}
+[PAGE 181]
+{
+sent to plague the
+original universe in
+the form of Shadow
+lords. Many times
+have I brought the
+Stranger back to
+Britannia, to
+preserve it from its
+}
+[PAGE 182]
+{
+own folly or from
+outside dangers. Yet
+as long as the world
+remaineth in pieces,
+it remaineth
+vulnerable. We must
+bring the shards into
+harmony, so that the
+}
+[PAGE 183]
+{
+resonate in such a
+manner that matches
+the original
+universe. Then the
+two universes shall
+merge, and be again
+as one."
+ "But if we are only
+}
+[PAGE 184]
+{
+shadows..." Lord
+British said
+wonderingly.
+ The light from the
+stars within the hole
+seemed to dim.
+"Indeed, the
+reflections shall
+}
+[PAGE 185]
+{
+become one with the
+original. Thou
+wouldst cease to be
+as thou art, and
+become part of the
+larger you. Thou
+shalt not die;
+however, uncounted
+}
+[PAGE 186]
+{
+generations have
+passed and borne
+children since that
+day, and they have
+no counterparts. They
+would perish
+utterly."
+ Lord British sagged
+}
+[PAGE 187]
+{
+in shock, realizing
+the terrible price
+that would be paid to
+heal the universe.
+"All of my people,"
+he breathed.
+ "Tis for the greater
+good."
+}
+[PAGE 188]
+{
+ Lord British bowed
+his head.
+ 'Twas then I saw the
+movement by the door,
+half-hid by the
+heavy red curtains.
+Lord Blackthorn stood
+there, concealed from
+}
+[PAGE 189]
+{
+the rest of the room,
+his face white. How
+long had he been
+listening? I cannot
+say, yet I suspect
+that he had heard all
+that the mysterious
+voice had to say.
+}
+[PAGE 190]
+{
+ "How then, shall I
+aid thee?" Lord
+British said,
+weariness in his
+voice.
+ "Aid the nobility
+that resideth in the
+human heart. Protect
+}
+[PAGE 191]
+{
+the Virtues that so
+recently came to thee
+in thought late at
+night. They are the
+Virtues of life, as
+your counterpart
+understands them to
+be. For when thy
+}
+[PAGE 192]
+{
+populace doth live
+and breathe these
+Virtues, shall it
+match the true
+Britannia, and thy
+shard shall rejoin
+with it."
+ The gash in the air
+}
+[PAGE 193]
+{
+began to close, and
+with it warmth stole
+back into the room.
+ "I was going to
+discuss my idea with
+Blackthorn tonight,"
+Lord British
+breathed. "Have I not
+}
+[PAGE 194]
+{
+thoughts that are my
+own? Is my life but a
+reflection of another
+me?"
+ "Nay," said the
+voice, smaller
+through the
+diminished opening.
+}
+[PAGE 195]
+{
+"Say, rather, that
+you are parallel, for
+there is no guarantee
+that thou shalt
+accomplish what I
+have set thee to. I
+speak tonight to a
+thousand of thee, and
+}
+[PAGE 196]
+{
+ask the same of all.
+Perhaps not all shall
+seek to aid me." And
+with that, the gash
+closed. and the voice
+was gone, leaving a
+room that appeared
+tossed by a mighty
+}
+[PAGE 197]
+{
+storm.
+ "Destroy the world
+to save the
+universe," Lord
+British said
+bitterly. "I do not
+wonder that some may
+balk."
+}
+[PAGE 198]
+{
+ Lord Blackthorn
+collected himself,
+and strode into the
+room, a decent
+mimicry of surprise
+on his face. "My
+liege! What has
+happened here?" he
+}
+[PAGE 199]
+{
+exclaimed, feigning
+dismay well. But not
+well enough to fool
+his old friend, whose
+eyes narrowed at
+seeing him there.
+ "How much didst thou
+hear?" demanded Lord
+}
+[PAGE 200]
+{
+British.
+ "Why, nothing,"
+managed Blacktorn,
+his head ducked away
+from his friend, as
+he bent to retrieve
+the fallen chess
+pieces. "I merely
+}
+[PAGE 201]
+{
+came for our game of
+chess."
+ Together they
+righted the pedestal
+table, and set the
+pieces upon the black
+and white squares.
+"Such simplicity to
+}
+[PAGE 202]
+{
+the game,
+Blackthorn," mused
+Lord British, idly
+brushing one finger
+against the board.
+"Black and white,
+each to its own
+color, as if life
+}
+[PAGE 203]
+{
+were so simple. What
+think you?"
+ Blackthorn sat
+heavily on a hassock
+beside the chess
+table "I think that
+matters are never so
+simple, my liege. And
+}
+[PAGE 204]
+{
+I would regret it
+deeply if someone,
+such as a friend, saw
+it thus."
+ Lord British's eyes
+met his. "Yet
+sometimes one must
+sacrifice a pawn to
+}
+[PAGE 205]
+{
+save a king."
+ Lord Blackthorn met
+his gaze squarely.
+"Even pawns have
+lives and loves at
+home, my lord." Then
+he reached out for a
+pawn, and firmly
+}
+[PAGE 206]
+{
+moved it forward two
+squares. "Shall we
+play a game?" he
+asked.
+ The chess game that
+night was a draw, and
+they played grimly.
+ And the next day,
+}
+[PAGE 207]
+{
+Lord British gathered
+the nobles to
+proclaim the idea of
+a new system of
+Virtues, and declared
+that shrines should
+be built across the
+land.
+}
+[PAGE 208]
+{
+ Lord Blackthorn
+opposed it bitterly,
+and many thought him
+strange for doing so,
+for ever had he been
+a noble and upright
+man, and ever had he
+and Lord British been
+}
+[PAGE 209]
+{
+in accord. Declaring
+that he should start
+his own shrine, he
+departed the castle
+that day to live in a
+tower in a lake on
+the north side of the
+city.
+}
+[PAGE 210]
+{
+ They are still the
+best of friends, yet
+a sadness hangs
+between them, as if
+they were forced into
+making choices that
+appealed not to them.
+And at night, when I
+}
+[PAGE 211]
+{
+creep softly from one
+corner of my liege's
+bed chamber to
+another, I sometimes
+see him take a pawn
+from his night table,
+and hold it in his
+hand, and quietly
+}
+[PAGE 212]
+{
+weep.
+ But I am but a
+mouse, and none hear
+me. This tale goes
+unknown, save for my
+writing these
+enormous letters with
+mine ink-stained tiny
+}
+[PAGE 213]
+{
+paws for thee to
+read, for I fear
+indeed for our world
+and for our people in
+these perilous times.
+}
+
+// ============================ The Burning of Trinsic
+[BOOK 13]
+{
+PAGES=24
+TITLE=The Burning of Trinsic
+AUTHOR=Japheth of Trinsic
+PAGE=214
+PAGE=215
+PAGE=216
+PAGE=217
+PAGE=218
+PAGE=219
+PAGE=220
+PAGE=221
+PAGE=222
+PAGE=223
+PAGE=224
+PAGE=225
+PAGE=226
+PAGE=227
+PAGE=228
+PAGE=229
+PAGE=230
+PAGE=231
+PAGE=232
+PAGE=233
+PAGE=234
+PAGE=235
+PAGE=236
+PAGE=237
+}
+[PAGE 214]
+{
+ 'Twas a sight to
+see, the sunlight
+falling lightly on
+the sandstone walls
+of Trinsic 'pon a
+morning in spring.
+ Children ran along
+the parapets and walk
+}
+[PAGE 215]
+{
+ways, their laughter
+and running providing
+music to the
+daybreak, despite
+their oft-ragged
+clothing.
+ And I was one of
+those young ones,
+}
+[PAGE 216]
+{
+letting my joy rise
+up to the skies.
+ Little did we all
+know of the darker
+days that would lie
+ahead, for we were
+too young.
+ Had we but gained
+}
+[PAGE 217]
+{
+access to the quiet
+councils held in the
+Paladin tower as it
+faced the sea,
+councils lit by
+candlelight and
+worry, we would have
+learned more of the
+}
+[PAGE 218]
+{
+fears of imminent
+attack from the
+forest, where foul
+creatures born of
+dank caves and
+darkness were
+marauding ever more
+often into the lands
+}
+[PAGE 219]
+{
+around Trinsic's
+moat.
+ But we were
+children! The
+parapets and the moat
+were places to play,
+not stout defenses,
+and we gave no
+}
+[PAGE 220]
+{
+thought to the
+necessities that must
+have required their
+construction.
+ We used to reach the
+sheltered orchards on
+the lee side of the
+parapet walls, where
+}
+[PAGE 221]
+{
+the southern river
+cut through the city,
+by swimming across
+the water.
+ The rich folk who
+lived in the great
+manses there would
+shout from their
+}
+[PAGE 222]
+{
+windows and shake
+their fists, for we
+would run through
+their gardens and
+tear up the delicate
+foxgloves and orfeurs
+with our unshod dirty
+feet. Then we would
+}
+[PAGE 223]
+{
+dive into the water
+and splash merrily to
+the fruit trees.
+ The southern river
+lazily slid under the
+an ungated arch in
+the mighty wall, and
+we would lay on the
+}
+[PAGE 224]
+{
+grassy bank and
+watch it gurgle by
+the lily pads.
+ That spring that
+pleasant spot became
+the doorway through
+which our city of
+Trinsic let in the
+}
+[PAGE 225]
+{
+monstrous deformed
+humanoids that
+savaged us. I lay
+upon that grassy bank
+and watched them wade
+in, their coarse hair
+wet and matted, algae
+and muck fastening
+}
+[PAGE 226]
+{
+their wild brows.
+ They caught sight of
+a quicksilver girl
+with bright blond
+hair and lively eyes.
+Her name was Leyla,
+and that spring I had
+held fond dreams of
+}
+[PAGE 227]
+{
+holding her hand and
+sharing flavored ice
+while dangling our
+feet off the small
+bridge by Smugglers
+Gate.
+ And I said nothing
+when they caught her,
+}
+[PAGE 228]
+{
+and did not cry out
+when they dragged her
+off through that
+breach in our wall,
+and did not warn the
+city when I saw the
+helmeted orc captains
+call the charge upon
+}
+[PAGE 229]
+{
+the mansions.
+ Blame me not, for I
+was but a child, and
+one who hid in the
+branches of the peach
+trees, all a-tremble
+whilst I watched the
+smoke rise from Sean
+}
+[PAGE 230]
+{
+the tailor's, and
+fire lash out at the
+roof of witchy
+Eleanor's tavern.
+ To this day I have
+had no word of Leyla,
+and to this day the
+smell of burning wood
+}
+[PAGE 231]
+{
+can conjure terrible
+dreams. Yet with the
+eyes of adulthood,
+'tis possible to
+examine the flaws in
+the defense of
+Trinsic on that
+fateful day, and the
+}
+[PAGE 232]
+{
+reasons why our walls
+are now double-thick,
+and why our buildings
+are now built as
+fortresses within a
+somber fortified
+city.
+ While I can look our
+}
+[PAGE 233]
+{
+from the top of the
+new Paladin tower,
+and spy the mighty
+white sails across
+the barrier island,
+and can descry the
+small hollow south of
+the city where
+}
+[PAGE 234]
+{
+gypsies are wont to
+camp, I can also
+envision the city as
+it might be burning,
+and I bless the
+bargain we made:
+}
+[PAGE 235]
+{
+space for safety,
+grace for sturdiness,
+and wood for stone.
+Whilst I live, I
+shall not see Trinsic
+burn, and no more
+cries of little girls
+}
+[PAGE 236]
+{
+will haunt the sleep
+of our fair citizens.
+}
+[PAGE 237]
+{
+ -Japheth, Paladin
+Guild master of the
+City of Trinsic
+}
+
+// ============================ The Fight
+[BOOK 14]
+{
+PAGES=13
+TITLE=The Fight
+AUTHOR=M. de la Garza
+PAGE=238
+PAGE=239
+PAGE=240
+PAGE=241
+PAGE=242
+PAGE=243
+PAGE=244
+PAGE=245
+PAGE=246
+PAGE=247
+PAGE=248
+PAGE=249
+PAGE=250
+}
+[PAGE 238]
+{
+ A cold autumn's
+morning with misty
+fog secures a dozen
+brave knights,
+supplying hidden
+shelter from prying
+eyes deep in the
+foothills of the
+}
+[PAGE 239]
+{
+vibrant valley.
+Dragons soar like
+fierce warriors, and
+circling around and
+around, then roaring
+like thunder,
+rallying all that
+listen. The dragons
+}
+[PAGE 240]
+{
+land swiftly beside
+the proud warriors,
+bending necks and
+extending wings,
+lifting black claws
+and allowing valiant
+fighters to ride
+forth and win an
+}
+[PAGE 241]
+{
+arisen battle. The
+increasing winds
+silence the sounds of
+combat, and they
+fight, standing their
+ground like mothers
+protecting their
+children, bright
+}
+[PAGE 242]
+{
+armor flashing each
+one falls.
+ A cold autumn's
+evening with misty
+fog cradles a dozen
+battered corpses of
+knights, creasing
+them in currents of
+}
+[PAGE 243]
+{
+winds that run deep
+in the foothills of
+the desolate valley.
+Dragons glide like
+silent angels,
+circling around and
+around, then calling
+like banshees;
+}
+[PAGE 244]
+{
+keening cries of
+mourning. The dragons
+land heavily beside
+the peaceful bodies,
+bending necks and
+extending wings,
+lifting black claws
+and allowing valiant
+}
+[PAGE 245]
+{
+fighters to ride
+forth and win an
+arisen battle. The
+increasing winds
+silence the sounds
+of combat, and they
+fight, standing their
+ground like mothers
+}
+[PAGE 246]
+{
+protecting their
+children, bright
+armor flashing as
+each one falls.
+ A cold autumn's
+evening with misty
+fog cradles a dozen
+battered corpses of
+}
+[PAGE 247]
+{
+knights, creasing
+them in currents of
+winds that run deep
+in the foothills of
+the desolate valley.
+Dragons glide like
+silent angels,
+circling around and
+}
+[PAGE 248]
+{
+around, then calling
+like banshees;
+keening cries of
+mourning. The dragons
+land heavily beside
+the peaceful bodies,
+bending necks and
+extending wings,
+}
+[PAGE 249]
+{
+lifting black claws
+and pinching the
+sacred ground and
+new eternal home.The
+dying winds whistle
+among the dead in
+somber procession,
+and they lie,
+}
+[PAGE 250]
+{
+grasping weapons to
+protect themselves
+like knights still in
+battle, shattered
+armor shining like
+newly born stars.
+}
+
+// ============================ A Song of Samlethe
+[BOOK 15]
+{
+PAGES=5
+TITLE=A Song of Samlethe
+AUTHOR=Samlethe
+PAGE=251
+PAGE=252
+PAGE=253
+PAGE=254
+PAGE=255
+}
+[PAGE 251]
+{
+  The firstbear did
+     swim by day,
+ And it did sleep by
+        night.
+It kept itself within
+       its cave
+  and ate by starry
+        light.
+}
+[PAGE 252]
+{
+ The second bear it
+     did cavort
+ 'Neath cananoppies
+      of trees,
+   And danced its
+ strange bearish sort
+   Of joy for all
+       to see.
+}
+[PAGE 253]
+{
+The first bear, well,
+    'twas hunted,
+   And today adorns
+       a floor.
+ Its ruggish face has
+     been tented
+   By footfalls and
+       the door.
+}
+[PAGE 254]
+{
+  The second bear
+   did step once
+Into a mushroom ring,
+    And now does
+  dance the dunce
+     For wisps
+  and unseen things.
+}
+[PAGE 255]
+{
+  So do not dance,
+  and do not sleep,
+     Or else be
+     led astray!
+For bears all end up
+    six feet deep
+    At the end of
+   Samlethe's day.
+}
+
+// ============================ Classic Children's Tales, Volume 2
+[BOOK 16]
+{
+PAGES=10
+TITLE=Classic Children's Tales, Volume 2
+AUTHOR=Guilhem, Editor
+PAGE=256
+PAGE=257
+PAGE=258
+PAGE=259
+PAGE=260
+PAGE=261
+PAGE=262
+PAGE=263
+PAGE=264
+PAGE=265
+}
+[PAGE 256]
+{
+ Clarke's Printery is
+Honored to Present
+Tales from Ages Past!
+Guilhem the Scholar
+Shall End Each Volume
+with Staid
+Commentary.
+-
+}
+[PAGE 257]
+{
+The Rhym
+  Dance in the Star
+       Chamber
+And Dance in the Pit
+   And Eat of your
+       Entrees
+ In the Glass House
+       you sit
+}
+[PAGE 258]
+{
+Commentary
+ A common feeding
+rhyme for little
+babies, 'tis thought
+that this little
+ditty is part of the
+corpus of legendary
+tales regarding the
+}
+[PAGE 259]
+{
+world before Sosaria
+(see the wonderful
+fables of Fabio the
+Poor for
+fictionalized
+versions of these
+stories, also
+available from this
+}
+[PAGE 260]
+{
+same publisher).
+ According to these
+old tales, which
+survive mostly in the
+hills and remote
+villages where Lord
+British is as yet a
+distant and mythical
+}
+[PAGE 261]
+{
+ruler, the gods of
+old (a fanciful
+notion!) met to
+discuss the progress
+of creating the world
+in mystical rooms. A
+simple analysis
+reveals these rooms
+}
+[PAGE 262]
+{
+to be mere
+mythological
+generalizations.
+ "The Star Chamber"
+is clearly a
+reference to the sky.
+"The Pit" is
+certainly an
+}
+[PAGE 263]
+{
+Underworld analogous
+to the Snakehills of
+other tales, and "the
+Glass House" is no
+doubt the vantage
+point from which the
+gods observed their
+creation. All is
+}
+[PAGE 264]
+{
+simple when seen
+from this perspective,
+leaving only the
+mysterious reference
+to dinners. Oddly
+enough, the rhyme is
+universally used only
+for midnight
+}
+[PAGE 265]
+{
+feedings, never
+during the day.
+}
+
+// ============================ Classic Tales of Vesper, Volume 1
+[BOOK 17]
+{
+PAGES=20
+TITLE=Classic Tales of Vesper, Volume 1
+AUTHOR=Clarke's Printery
+PAGE=266
+PAGE=267
+PAGE=268
+PAGE=269
+PAGE=270
+PAGE=271
+PAGE=272
+PAGE=273
+PAGE=274
+PAGE=275
+PAGE=276
+PAGE=277
+PAGE=278
+PAGE=279
+PAGE=280
+PAGE=281
+PAGE=282
+PAGE=283
+PAGE=284
+PAGE=285
+}
+[PAGE 266]
+{
+ 'Tis an Honor to
+present to Thee these
+Tales collected from
+Ages Past. In this
+Inaugural Volume, we
+present this Verse
+oft Recited as a
+Lullaby for sleepy
+}
+[PAGE 267]
+{
+Children.
+-
+
+   Preface
+
+by Guilhem the
+   Scholar
+}
+[PAGE 268]
+{
+ The meaning of this
+verse has oft been
+discussed in halls of
+scholarly sorts, for
+its mysterious
+singsong melody is
+oddly disturbing to
+adult ears, though
+}
+[PAGE 269]
+{
+children seem to find
+it restful as they
+sleep. Perhaps it is
+but the remnant of a
+longer ballad once
+extant, for there are
+internal indications
+that it once told a
+}
+[PAGE 270]
+{
+longer story about
+ill-fated lovers, and
+a magical experiment
+gone awry. However,
+poetic license and
+the folk process has
+distorted the words
+until now the locale
+}
+[PAGE 271]
+{
+of the tale is no
+more than "in the
+wind," which wile it
+serves a pleasingly
+metaphorical purpose,
+fails to inform the
+listener as to any
+real locale!
+}
+[PAGE 272]
+{
+ Another possibility
+is that this is some
+form of creation myth
+explaining the
+genesis of the
+various humanoid
+creatures that roam
+the lands of
+}
+[PAGE 273]
+{
+Britannia. It does
+not take a stretch of
+the imagination to
+name the middle
+verse's "girl becomes
+tree" as a possible
+explanation for the
+reaper, for in the
+}
+[PAGE 274]
+{
+area surrounding
+Minoc, reapers are
+oft referred to among
+the lumber jacking
+community as "widow
+makers." That these
+creatures are of
+arcane origin is
+}
+[PAGE 275]
+{
+assumed, but the
+verse seems to imply
+a long ago creator,
+and uses the antique
+magickal terminology
+of "plaiting strands
+of ether" that is so
+often found in
+}
+[PAGE 276]
+{
+ancient texts. In
+addition, the
+reference to
+"snakehills" my
+profitably be
+regarded as a
+reference to an
+actual location, such
+}
+[PAGE 277]
+{
+as perhaps the local
+term for the
+Serpent's Spine.
+ A commoner
+interpretation is
+that like many
+nursery rhymes, it is
+a simple explanation
+}
+[PAGE 278]
+{
+for death, wherein
+the wind snatches up
+boys and girls and
+when they sleep in
+order to keep the
+balance of the world.
+Notable tales have
+been written for
+}
+[PAGE 279]
+{
+children of
+adventures in "the
+Snakehills," which
+are presumed to be an
+After world whence
+the spirit lives on.
+A grim lullaby, to be
+sure, but no worse
+}
+[PAGE 280]
+{
+than "lest I die
+before I wake"
+surely.
+ In either case, 'tis
+an old favorite,
+herein printed for
+the first time for
+thy enjoyment and
+}
+[PAGE 281]
+{
+perusal!
+
+ In the Wind where
+the balance is
+Whispered in Hallways
+ In the Wind where
+the Magic Flows All
+through the Night
+}
+[PAGE 282]
+{
+ There live Mages and
+Mages With Robes made
+of Whole Days
+ Reading Books full
+of Doings Printed on
+Light
+ In the Wind where
+the Lovers Are
+}
+[PAGE 283]
+{
+Crossed under Shadows
+ Where the Meet and
+are Parted By the
+Orders of Fate
+ The Girl becomes
+Tree, And thus
+becomes Widow
+ The Boy becomes
+}
+[PAGE 284]
+{
+Earth And Wanders
+Till Late
+ In the Wind are the
+Monsters First Born
+First Created
+ When Chanting and
+Ether Mix Meddling
+and Nigh
+}
+[PAGE 285]
+{
+ Fear going to Wind,
+Fear Finding its
+Plaitings,
+ Go Not to the
+Snakehills Lest You
+Care to Die
+}
+
+// ============================ A Tale of Three Tribes
+[BOOK 18]
+{
+PAGES=10
+TITLE=A Tale of Three Tribes
+AUTHOR=Janet, Scribe
+PAGE=286
+PAGE=287
+PAGE=288
+PAGE=289
+PAGE=290
+PAGE=291
+PAGE=292
+PAGE=293
+PAGE=294
+PAGE=295
+}
+[PAGE 286]
+{
+ The dungeon known as
+Despise is in fact
+not a dungeon as
+such, but rather a
+large natural cave.
+Inhospitable and
+unfriendly to
+visitors, it is
+}
+[PAGE 287]
+{
+filled with damp
+spots where the
+deadly Exploding Red
+Spotted Toadstool
+grows in abundance.
+ According to the
+oldest of historical
+texts, in days gone
+}
+[PAGE 288]
+{
+by the cave was once
+home of three
+separate tribes who
+had come to an
+accommodation with
+each other. Oddly
+enough, the three
+tribes were of
+}
+[PAGE 289]
+{
+dragons, lizard men,
+and rat men. While
+today few except
+extremists associated
+with Lord Blackthorn
+regard these latter
+two as being
+intelligent beings,
+}
+[PAGE 290]
+{
+apparently they have
+indeed fallen from a
+more evolved state
+over the years.
+ 'Tis said that these
+three races did dwell
+in relative harmony
+within the vast cave,
+}
+[PAGE 291]
+{
+building when they
+required it, and
+trading amongst
+themselves if needed.
+ But over time,
+something happened,
+and they were forced
+to withdraw their
+}
+[PAGE 292]
+{
+society, until today
+thou mayst find
+individuals of each
+species within the
+dungeon, but never
+again as a
+civilization.
+ 'Tis also said that
+}
+[PAGE 293]
+{
+someday the three
+tribes may return to
+Despise, to once
+again inhabit it
+together.
+ Until then, nothing
+remains as token of
+this save an oddly
+}
+[PAGE 294]
+{
+intelligent skeleton,
+magically enchanted,
+that doth speak when
+questions are asked,
+and from whom I
+obtained these tales
+one day, when I was
+pursued by evil
+}
+[PAGE 295]
+{
+monsters and fled
+into his skeletal
+arms.
+ Fortunately, I
+escaped and lived to
+write it all down!
+}
+
+// ============================ Deceit: A Dungeon of Horrors
+[BOOK 19]
+{
+PAGES=12
+TITLE=Deceit: A Dungeon of Horrors
+AUTHOR=Mercenary Justin
+PAGE=296
+PAGE=297
+PAGE=298
+PAGE=299
+PAGE=300
+PAGE=301
+PAGE=302
+PAGE=303
+PAGE=304
+PAGE=305
+PAGE=306
+PAGE=307
+}
+[PAGE 296]
+{
+ My employers have
+oft taken me into
+this den of hideous
+creatures, and I
+thought that it
+behooved me to write
+down what I know of
+it, now that I am
+}
+[PAGE 297]
+{
+retired from the life
+of an adventurer for
+hire.
+ Deceit was once a
+temple to forgotten
+powers of old. It was
+taken over by mages
+who eventually were
+}
+[PAGE 298]
+{
+driven out by the
+depredations of their
+own evil lackeys.
+However, many of the
+magical traps and
+devices that they
+placed for their
+defenses remain,
+}
+[PAGE 299]
+{
+particularly those
+the wizards used to
+protect their
+treasures.
+ The dungeon is
+mystically linked by
+crystal balls placed
+in different
+}
+[PAGE 300]
+{
+locations. These
+magical orbs do
+transmit speech, and
+even have memory of
+things that have been
+said near them. No
+doubt they once
+served as a warning
+}
+[PAGE 301]
+{
+system.
+ Be wary of a brazier
+that giveth warning
+when approached;thou
+canst use it to
+summon deadly
+creatures.
+ There be a
+}
+[PAGE 302]
+{
+tantalizing chest,
+undoubtedly full of
+treasure, that cannot
+be reached save past
+a complete set of
+pressure plates that
+trigger deadly
+spikes. As I have
+}
+[PAGE 303]
+{
+never had sufficient
+folk with me to
+unlock the puzzle, I
+never obtained the
+riches that awaited
+there.
+ Do not investigate
+iron maidens too
+}
+[PAGE 304]
+{
+closely, for they may
+suck you within them!
+ There is one place
+there a deadly trap
+can only be disarmed
+by making use of a
+statue that cleverly
+conceals a lever.
+}
+[PAGE 305]
+{
+ Oft one encounters
+the deadly exploding
+toadstool; the ones
+in Deceit are
+deadlier than most,
+as they explode
+continually.
+Likewise, the very
+}
+[PAGE 306]
+{
+pools of water and
+slime on the floor
+may poison thee.
+ The most magical
+device in the dungeon
+is a mystical bridge
+that can only be
+triggered by a level
+}
+[PAGE 307]
+{
+embedded in the
+floor. Be wary
+however, for the
+bridge thus created
+doth burst into flame
+when one passeth
+across it!
+}
+
+// ============================ The Life of a Travelling Minstrel
+[BOOK 20]
+{
+PAGES=18
+TITLE=The Life of a Travelling Minstrel
+AUTHOR=Sarah of Yew
+PAGE=308
+PAGE=309
+PAGE=310
+PAGE=311
+PAGE=312
+PAGE=313
+PAGE=314
+PAGE=315
+PAGE=316
+PAGE=317
+PAGE=318
+PAGE=319
+PAGE=320
+PAGE=321
+PAGE=322
+PAGE=323
+PAGE=324
+PAGE=325
+}
+[PAGE 308]
+{
+ While 'tis true that
+the musician who
+seeketh only to make
+sweet music for
+herself and for
+others needs little
+more than some
+talent, and stern
+}
+[PAGE 309]
+{
+practice at the
+chosen instrument,
+those of us who seek
+the open road shall
+find indeed that a
+greater skill is
+required. Herein
+discover those
+}
+[PAGE 310]
+{
+secrets which I have
+learned over the
+years as an itinerant
+performer...
+ Once I was in
+Jhelom, and
+accidentally angered
+a bravo of some local
+}
+[PAGE 311]
+{
+repute, whose blade
+flickered all too
+eagerly near my
+slender neck (for I
+was young then).
+After various threats
+to "ruin my pretty
+face" this bravo
+}
+[PAGE 312]
+{
+grabbed my arm in a
+most unseemly
+fashion and tossed
+me into a barbaric
+enclosure locally
+entitled a dueling
+pit. My plaintive
+cries for help went
+}
+[PAGE 313]
+{
+unheeded by the guards,
+for the inhabitants of
+Jhelom are eager
+indeed to measure
+fighting prowess at any
+time! What saved me was
+the ability to
+improvise a melody
+}
+[PAGE 314]
+{
+and tune that
+satirized the
+proceedings, and
+sufficiently angered
+an onlooker to prod
+him to coming to my
+defense. Once that
+fight was underway,
+}
+[PAGE 315]
+{
+I was able to make
+good my escape.
+Hence, I regard the
+ability to incite
+fights as
+indispensable to the
+prudent bard.
+ Upon another
+}
+[PAGE 316]
+{
+occasion, 'twas the
+obverse side of that
+coin which saved me,
+for I was being held
+prisoner by
+particularly nasty
+band of ruffians who
+had seized me
+}
+[PAGE 317]
+{
+unawares from the
+road to Vesper.
+ They had worked
+themselves into a
+frenzy and were ready
+to attack and I fear,
+tear me limb from
+limb, when I began to
+}
+[PAGE 318]
+{
+sing frantically,
+tapping my falled
+drum with my tied up
+feet. The melody
+developed into a
+soothing one, and the
+brigands slowly
+calmed down to the
+}
+[PAGE 319]
+{
+extent of
+apologizing, and they
+let me go!
+ A final example I
+would pray you grant
+your attention: once
+I was lost upon a
+large isle far to the
+}
+[PAGE 320]
+{
+east of the mainland,
+well beyond serpent's
+Hold, where lava made
+its sluggish way
+across the surface
+landscape. And this
+accursed land was
+filled with vile
+}
+[PAGE 321]
+{
+beasts and cunning
+dragons.
+ I was being pursued
+by one of the said
+fell dragons when I
+found myself trapped.
+I quickly skirted a
+bubbling pool of
+}
+[PAGE 322]
+{
+molten rock and
+attempted to hide.
+ The dragon scented
+me and was preparing
+to skirt the pool,
+when I began to play
+a lusty tune upon my
+lute that attracted
+}
+[PAGE 323]
+{
+its attention.
+Mesmerized and
+enticed by the
+melody, it stepped
+directly towards me,
+and into the lava-
+where its foot was so
+burned that it
+}
+[PAGE 324]
+{
+quickly hopped away,
+undignified and
+annoyed.
+ 'Tis my fond hope
+that other travelling
+minstrels shall learn
+from my experience
+and apply themselves
+}
+[PAGE 325]
+{
+to practicing these
+skills in order to
+preserve life and
+limb.
+}
+
+// ============================ The Wild Girl of the Forest
+[BOOK 21]
+{
+PAGES=16
+TITLE=The Wild Girl of the Forest
+AUTHOR=Horace the Trader
+PAGE=326
+PAGE=327
+PAGE=328
+PAGE=329
+PAGE=330
+PAGE=331
+PAGE=332
+PAGE=333
+PAGE=334
+PAGE=335
+PAGE=336
+PAGE=337
+PAGE=338
+PAGE=339
+PAGE=340
+PAGE=341
+}
+[PAGE 326]
+{
+ Her name was Leyla,
+she said, and her
+hair was braided wild
+with creepers and
+thorns. I marveled
+that they did not
+hurt her, but when I
+asked, she but
+}
+[PAGE 327]
+{
+shrugged and let her
+eyes roam once more
+across the woods.
+Though I had my hands
+securely fastened by
+her ropes, I itched
+to reach out and comb
+that unruly golden
+}
+[PAGE 328]
+{
+mane, dirtied and
+leaf-ridden.
+ Her provenance, she
+told me over nights
+illumined by
+campfires, was once
+the city of Trinsic.
+She claimed to have
+}
+[PAGE 329]
+{
+been kidnapped and
+raised by orcs, which
+I judged an unlikely
+tale, for all know
+orcs delight in
+eating the meat of
+honest folk. When I
+told her this, she
+}
+[PAGE 330]
+{
+laughed a fey laugh,
+and gaily admitted
+that honest she was
+not, for oft had she
+stolen folk away from
+caravans to loot
+their possessions
+from an unconscious
+}
+[PAGE 331]
+{
+body!
+ At this, I began to
+fear for my life, and
+her smile seemed full
+of teeth sharper than
+a human ought to
+have, for the tale of
+orcish raising had
+}
+[PAGE 332]
+{
+struck fear into the
+marrow of my bones.
+"Wilt thou eat me?" I
+asked, a-tremble,
+fearing the answer.
+ And she cocked her
+head at me, like a
+wild animal facing a
+}
+[PAGE 333]
+{
+word that it dost not
+understand, and the
+fixity in her eyes
+was a glimpse into
+the deeper reaches of
+the Abyss. But she
+finally grunted, and
+said, "Nay," in a
+}
+[PAGE 334]
+{
+voice that recalled
+to me a child. "Nay,"
+she said, "for thou
+dost remind me of a
+boy I knew once, when
+I was a girl who
+played in a city of
+great sandstone
+}
+[PAGE 335]
+{
+walls, before I was
+taken. He had sandy
+hair like thee, and I
+dreamt as a child of
+holding his hand and
+sharing flavored ice.
+His name was
+Japheth."
+}
+[PAGE 336]
+{
+The next morning she
+let me go, stripped
+of my pouch and
+clothes, and bade me
+run through the
+woods, and to fear
+recapture, for surely
+her heart would not
+}
+[PAGE 337]
+{
+soften again. 'Twas a
+fearful run, and I
+came to the road to
+Yew with welts and
+scratches run
+rampant across my
+skin but I did not
+see her again.
+}
+[PAGE 338]
+{
+ Oft have I wondered
+of the boy named
+Japheth, and whether
+he remembers a girl
+who lived in
+sandstone walls. The
+only Japheth I know
+is the Guild master
+}
+[PAGE 339]
+{
+of Paladins who died
+last year warring
+amidst the orcs, and
+though he had indeed
+sandy hair, I cannot
+picture him side by
+side with a feral
+girl whose tongue has
+}
+[PAGE 340]
+{
+tasted of human
+flesh.
+ Yet the paths of
+fate are strange
+indeed, and I suppose
+'tis possible that
+this paladin died
+defending his
+}
+[PAGE 341]
+{
+remembered lady's
+honor, unknowingly
+struck down by the
+orc that she called
+father.
+}
+
+// ============================ A Primer on Arms and Weapons
+[BOOK 22]
+{
+PAGES=16
+TITLE=A Primer on Arms and Weapons
+AUTHOR=Martin
+PAGE=342
+PAGE=343
+PAGE=344
+PAGE=345
+PAGE=346
+PAGE=347
+PAGE=348
+PAGE=349
+PAGE=350
+PAGE=351
+PAGE=352
+PAGE=353
+PAGE=354
+PAGE=355
+PAGE=356
+PAGE=357
+}
+[PAGE 342]
+{
+ These are the basic
+elements to consider
+in assessing a
+weapon, of which all
+warriors who regard
+themselves as more
+than mere mercenaries
+should be aware.
+}
+[PAGE 343]
+{
+ First and most
+obvious is the amount
+of damage that the
+weapon may do against
+unprotected flesh.
+While 'tis this which
+first attracts the
+attention of the
+}
+[PAGE 344]
+{
+novice, 'tis a deadly
+mistake to regard it
+as the sole value of
+a weapon. While it
+may prove devastating
+indeed as a means of
+causing damage, a
+weapon must also
+}
+[PAGE 345]
+{
+serve as stout shield
+when engaged in
+combat.
+ Hence the second
+issue to which to pay
+attention is the
+amount of protection
+that a weapon may
+}
+[PAGE 346]
+{
+offer. Pay close
+attention to the
+guard on it, if it be
+a blade, or the
+stoutness of its wood
+if it is a pole arm.
+ Oft related to this
+is the weight of the
+}
+[PAGE 347]
+{
+weapon, for a heavy
+weapon is more
+difficult to maneuver
+to block with, though
+it may do more damage
+to thy opponent.
+ If a weapon is too
+heavy for the wielder
+}
+[PAGE 348]
+{
+to move it freely,
+they should choose
+another and not
+attempt to prove
+their prowess by the
+size of their sword.
+ The reach of a
+weapon both increases
+}
+[PAGE 349]
+{
+its defensive
+ability, and renders
+it more useful in
+open spaces as it
+allows attack against
+the opponent without
+the need to close.
+But be aware of the
+}
+[PAGE 350]
+{
+limitations of thy
+weapon! For a weapon
+with great reach may
+be useless in close
+quarters, for lack of
+space to maneuver it.
+Should that dagger-
+wielding enemy close
+}
+[PAGE 351]
+{
+on thee and thy
+halberd, 'tis best to
+flee.
+ Lastly, a factor
+that must always be
+considered is the
+condition of the
+weapon. It might be a
+}
+[PAGE 352]
+{
+wondrous magical
+blade of surpassing
+sharpness and it may
+leap to block blows
+with a mind of its
+own. It also might be
+of such flimsy
+construction, or
+}
+[PAGE 353]
+{
+damaged to such an
+extent, that the
+first time it clangs
+against steel, 'twill
+shatter into useless
+shards.
+ Seek ye a good
+blacksmith should thy
+}
+[PAGE 354]
+{
+weapon become
+damaged, but be aware
+that their
+ministrations may
+simply make the
+matter worse.
+ While mages of some
+ability oft create
+}
+[PAGE 355]
+{
+magical weapons
+which enhance skill,
+are preternaturally
+sharp, or incinerate
+the enemy as they
+fall, to my mind the
+greatest gift that
+they can grant a
+}
+[PAGE 356]
+{
+stout sword is to
+make it resistant to
+damage, for thy own
+skill can make up the
+difference. Except
+for the fireball, but
+if the corpse is
+charred, then so will
+}
+[PAGE 357]
+{
+be the possessions,
+which maketh looting
+difficult!
+}
+
+// ============================ Beltran's Guide to Guilds
+[BOOK 23]
+{
+PAGES=14
+TITLE=Beltran's Guide to Guilds
+AUTHOR=Beltran
+PAGE=358
+PAGE=359
+PAGE=360
+PAGE=361
+PAGE=362
+PAGE=363
+PAGE=364
+PAGE=365
+PAGE=366
+PAGE=367
+PAGE=368
+PAGE=369
+PAGE=370
+PAGE=371
+}
+[PAGE 358]
+{
+ This reference work
+is intended merely to
+serve as a resource
+for those curious as
+to the full range of
+trades and societies
+extant in Britannia
+and nearby nations.
+}
+[PAGE 359]
+{
+For each trade or
+guild, their blazon
+is given.
+ Armorer's Guild.
+Gold bar above black
+bar.
+ Association of
+Warriors. Blue cross
+}
+[PAGE 360]
+{
+on a red field.
+ Barters' Guild.
+Green and white
+stripes, diagonal.
+ Blacksmith's Guild.
+Gold alongside black.
+ Federation of Rogues
+and Beggars. Red
+}
+[PAGE 361]
+{
+above black.
+ Fighters and
+Footmen. Blue
+horzontal bar on red
+field.
+ Guild of Archers. A
+gold swath parting
+red and blue.
+}
+[PAGE 362]
+{
+ Guild of Armaments.
+Swath of gold on
+black field, gold
+accents.
+ Guild of Assassins.
+Black and red
+quartered.
+ Guild of Barbers.
+}
+[PAGE 363]
+{
+Red and white
+stripes.
+ Guild of Cavalry and
+Horse. Vertical blue
+on a red field.
+ Guild of Fishermen.
+Blue and white,
+quartered.
+}
+[PAGE 364]
+{
+ Guild of Mages.
+Purple and blue, in a
+crossed pennant
+pattern.
+ Guild of
+Provisioners. White
+bar above green bar.
+ Guild of Sorcery. A
+}
+[PAGE 365]
+{
+field divided
+diagonally in blue
+and purple.
+ Healers Guild. Gold
+swath dividing green
+from purple, gold
+accents.
+ Lord British's
+}
+[PAGE 366]
+{
+Healers of Virtue.
+Golden ankh on dark
+green.
+ Masters of Illusion.
+Blue and purple
+checkers.
+ Merchants' Guild.
+Gold coins on green
+}
+[PAGE 367]
+{
+field.
+ Mining Cooperative.
+A gold cross,
+quartering blue and
+black.
+ Order of Engineers.
+Purple, gold, and
+blue vertical.
+}
+[PAGE 368]
+{
+ Sailors' Maritime
+Association. A white
+bar centered on a
+blue field.
+ Seamen's Chapter.
+Blue and white in a
+crossed pennant
+pattern.
+}
+[PAGE 369]
+{
+ Society of Cooks and
+Chefs. White and red
+diagonal fields
+checker on green
+field.
+ Society of
+Shipwrights. White
+diagonal aboe blue.
+}
+[PAGE 370]
+{
+ Society of Thieves.
+Black and red
+diagonal stripes.
+ Society of
+Weaponsmakers. Gold
+diagonal above black.
+ Tailor's Hall.
+Purple above gold
+}
+[PAGE 371]
+{
+above red.
+ The Bardic
+Collegium. Purple and
+red checkers on gold
+field.
+ Traders' Guild.
+White bar centered
+down green field.
+}
+
+// ============================ Britannian Flora
+[BOOK 24]
+{
+PAGES=19
+TITLE=Britannian Flora
+AUTHOR=Herbert the Lost
+PAGE=372
+PAGE=373
+PAGE=374
+PAGE=375
+PAGE=376
+PAGE=377
+PAGE=378
+PAGE=379
+PAGE=380
+PAGE=381
+PAGE=382
+PAGE=383
+PAGE=384
+PAGE=385
+PAGE=386
+PAGE=387
+PAGE=388
+PAGE=389
+PAGE=390
+}
+[PAGE 372]
+{
+ Oft 'pon rambling
+through the woods
+avoiding bears have I
+spotted some plant
+whose like I have
+never seen before,
+and concluded that I
+was a blithering
+}
+[PAGE 373]
+{
+idiot for failing to
+notice it in the
+past. Equally as oft
+have I concluded that
+I was a worse idiot
+for not running
+faster from the bear.
+ While not all my
+}
+[PAGE 374]
+{
+readers may share
+my proclivities for
+tree-climbing, it
+occurred to me that
+mayhap mine
+information might
+serve some humble
+purpose.
+}
+[PAGE 375]
+{
+ The two most unique
+flowering plants in
+the Britannian
+countryside are the
+orfleur and the
+whiteflower, also
+called white hornes.
+ The orfleur is
+}
+[PAGE 376]
+{
+notable for its
+massive orange-red
+blossoms, which dwarf
+marigolds like the
+sun dwarfs your
+common fireball
+spell. The odor of
+said blooms is best
+}
+[PAGE 377]
+{
+described as
+peppermint-apple,
+with a dash of
+garlic. 'Tis a
+popular potted plant
+despite, or perhaps
+because of, its
+exotic nature.
+}
+[PAGE 378]
+{
+ Whiteflowers exude a
+subtle fragrance not
+unlike that of
+freshly shaven wood
+mixed with cool lemon
+ice. Their tall
+stands always droop
+with the heavy weight
+}
+[PAGE 379]
+{
+of the massive
+blooms, oft as large
+as a child's head.
+ The flowers are so
+large that one may
+scoop out the pollen
+in handfuls, and
+during the spring
+}
+[PAGE 380]
+{
+season many a prank
+hath been played by
+idle boys 'pon their
+sisters by dumping
+said pollen into
+their clothing
+drawers, causing
+sneezes for days.
+}
+[PAGE 381]
+{
+ The most interesting
+native tree to
+Britannia is the
+spider tree. The
+reason for its naming
+is obscure, but may
+have to do with the
+twisted gray stalks
+}
+[PAGE 382]
+{
+from which the
+spherical canopy
+sprouts. 'Tis
+something of a
+misnomer to term
+these "trunks" as
+they are spindly and
+flexible. Spider
+}
+[PAGE 383]
+{
+trees provide a
+fresh, piney smell to
+a room and are
+therefore often
+potted.
+ In jungle climes,
+one finds the blade
+plant, whose sharp
+}
+[PAGE 384]
+{
+leaves oft collect
+water for the thirsty
+traveler, yet can
+draw blood easily.
+ The deadliest
+plant, if you can
+call a fungus such,
+is the Exploding Red
+}
+[PAGE 385]
+{
+Spotted Toadstool. No
+pattern can be
+discerned to its
+habitats save malice,
+for merely
+approaching results
+in the cap exploding
+with powder, noxious
+}
+[PAGE 386]
+{
+gas, and tiny painful
+pellets flying in all
+directions.
+Unfortunately, 'tis
+impossible to tell it
+apart from the
+Ordinary Red Spotted
+Toadstool save
+}
+[PAGE 387]
+{
+through
+experimentation.
+ Truly odd among the
+varied flora of
+Britannia, however,
+are those which bear
+names clearly alien
+to our tongue. Among
+}
+[PAGE 388]
+{
+these I name the
+Tuscany pine (for I
+have never seen a
+region of this world
+named Tuscany), the
+o'hil tree, whose
+very name sounds like
+some tropical isle,
+}
+[PAGE 389]
+{
+and the welsh poppy,
+which while different
+from the ordinary
+poppy in color and
+appearance, is
+prefaced with the odd
+word "welsh," which
+as far as I know
+}
+[PAGE 390]
+{
+means to forgo paying
+a debt.
+}
+
+// ============================ Dimensional Travel, a Monograph
+[BOOK 25]
+{
+PAGES=19
+TITLE=Dimensional Travel, a Monograph
+AUTHOR=Dryus Doost, Mage
+PAGE=391
+PAGE=392
+PAGE=393
+PAGE=394
+PAGE=395
+PAGE=396
+PAGE=397
+PAGE=398
+PAGE=399
+PAGE=400
+PAGE=401
+PAGE=402
+PAGE=403
+PAGE=404
+PAGE=405
+PAGE=406
+PAGE=407
+PAGE=408
+PAGE=409
+}
+[PAGE 391]
+{
+ 'Tis beyond the
+scope of this small
+monograph to discuss
+the details of moon
+gates, and the
+manners in which they
+distort the fabric of
+reality in such a
+}
+[PAGE 392]
+{
+manner as to permit
+the passage of living
+flesh from place to
+place, world to
+world, or indeed from
+dimension to
+dimension.
+ Instead, allow me to
+}
+[PAGE 393]
+{
+bring thy attention,
+Gentle Reader, to the
+curious
+characteristics that
+are shared by certain
+individuals within
+our realm.
+ Long has it been
+}
+[PAGE 394]
+{
+known that the blue
+moon gate permits
+travel from place to
+place, and none have
+trouble in taking
+this path. Yet 'tis
+also known, albeit
+only to a few, that
+}
+[PAGE 395]
+{
+certain individuals
+are unable to
+traverse the black
+moon gates that
+permit travel from
+one dimension to
+another.
+ The noted mage and
+}
+[PAGE 396]
+{
+peer of our realm,
+Lord Blackthorn, once
+told me in
+conversation that his
+arcane research had
+indicated that the
+issue was one of
+conversation of
+}
+[PAGE 397]
+{
+ether. To wit, given
+the postulate that
+matter within a given
+dimension may be but
+a cross-section of
+ethereal matter that
+exists in multiple
+dimensions, it
+}
+[PAGE 398]
+{
+becomes obvious that
+said ethereal
+structure cannot
+enter dimensions in
+which it is already
+present.
+ Imagine an
+individual (and the
+}
+[PAGE 399]
+{
+Lord Blackthorn
+hinted that he was
+one such) who exists
+already in some form
+in multiple
+dimensions; said
+individual would not
+be able to cross into
+}
+[PAGE 400]
+{
+another dimension
+because HE IS
+ALREADY THERE.
+ The implications of
+this are staggering,
+and merit further
+study. 'Tis well
+known by theorists in
+}
+[PAGE 401]
+{
+the field that
+divisions in ethereal
+structure of an
+individual are
+already implicit at
+the temporal level,
+as causality forces
+divisions upon the
+}
+[PAGE 402]
+{
+ether. This is the
+basic operating
+mechanism by which
+white moon gates
+function, permitting
+time travel.
+ As time travel is
+not barred by the
+}
+[PAGE 403]
+{
+presence of an
+earlier self (though
+encountering said
+earlier self can
+prove arcanely
+perilous), there must
+be some rigidity to
+the ethereal
+}
+[PAGE 404]
+{
+structure that bars
+multiple
+instantiations of
+structures from
+manifesting within
+the same context.
+ If one regards time
+and causal
+}
+[PAGE 405]
+{
+bifurcation as a web,
+perhaps the
+appropriate analogy
+for dimensional
+matrices is that of a
+crystalline structure
+with rigid linkages.
+The only way inwhich
+}
+[PAGE 406]
+{
+an individual such as
+Lord Blackthorn, who
+exists in multiple
+dimensional matrices,
+can cross worlds via
+a black moon gate,
+would be for the
+entire crystalline
+}
+[PAGE 407]
+{
+structure of the
+dimension to
+perfectly match the
+ethereal resonance of
+the destination
+dimension.
+ The problem of why
+certain individuals
+}
+[PAGE 408]
+{
+are already
+replicated in
+multiple crystalline
+matrices is one that
+I fail to provide any
+schema for in these
+poor theories. It is
+my fondest hope that
+}
+[PAGE 409]
+{
+someday someone
+shall conquer that
+thorny problem and
+enlighten the world.
+}
+
+// ============================ The Major Trade Associations
+[BOOK 26]
+{
+PAGES=19
+TITLE=The Major Trade Associations
+AUTHOR=Pieter of Vesper
+PAGE=410
+PAGE=411
+PAGE=412
+PAGE=413
+PAGE=414
+PAGE=415
+PAGE=416
+PAGE=417
+PAGE=418
+PAGE=419
+PAGE=420
+PAGE=421
+PAGE=422
+PAGE=423
+PAGE=424
+PAGE=425
+PAGE=426
+PAGE=427
+PAGE=428
+}
+[PAGE 410]
+{
+ There are ten major
+trade associations
+that operate
+legitimately in the
+lands of Britannia
+and among its trading
+partners. Many of
+these guilds are
+}
+[PAGE 411]
+{
+divided into local or
+specialty sub guilds,
+who use the same
+colors but vary the
+heraldic pattern.
+ There are many
+lesser trade
+associations that
+}
+[PAGE 412]
+{
+have closed
+membership, and one
+can join them only by
+invitation. Beltran's
+Guide to Guilds is
+the definitive text
+on the full range of
+guilds and other
+}
+[PAGE 413]
+{
+associations in
+Britannia, and I
+heartily recommend
+it.
+ In what follows I
+have attempted to
+bring together the
+known information
+}
+[PAGE 414]
+{
+regarding these
+guilds. I offer thee
+the name, typical
+membership, heraldic
+colors, known
+specialty
+organizations within
+the larger guild, and
+}
+[PAGE 415]
+{
+any known
+affiliations to other
+guilds, which often
+occur because of
+trade reasons.
+
+The Guild of Arcane
+Arts
+}
+[PAGE 416]
+{
+Members: alchemists
+and wizards
+Colors: blue and
+purple
+Sub guilds:
+Illusionist, Mages,
+Wizards
+Affiliations:
+}
+[PAGE 417]
+{
+Healer's Guild
+
+The Warrior's Guild
+Members: mercenaries,
+soldiery, guardsmen,
+weapons masters,
+paladins.
+Colors: Blue and red
+}
+[PAGE 418]
+{
+Sub guilds: Cavalry,
+Fighters, Warriors
+Affiliations: League
+of Rangers
+
+League of Rangers
+Members: rangers,
+bowyers, animal
+}
+[PAGE 419]
+{
+trainers
+Colors: Red, gold and
+blue
+
+Guild of Healers
+Members: healers
+Colors: Green, gold,
+and purple
+}
+[PAGE 420]
+{
+Affiliations: Guild
+of Arcane Arts
+
+Mining Cooperative
+Members: miners
+Colors: blue and
+black checkers, with
+a gold cross
+}
+[PAGE 421]
+{
+Affiliations: Order
+of Engineers
+
+Merchants'
+Association
+Members: innkeepers,
+tavern keepers,
+jewelers,
+}
+[PAGE 422]
+{
+provisioners
+Colors: gold coins on
+a green field for
+Merchants. White and
+green for the others.
+Sub guilds: Barters,
+Provisioners,
+Traders, Merchants.
+}
+[PAGE 423]
+{
+
+Order of Engineers
+Members: tinkers and
+engineers
+Colors: Blue, gold,
+and purple vertical
+bars
+Affiliations: Mining
+}
+[PAGE 424]
+{
+Cooperative
+
+Society of Clothiers
+Members: tailors and
+weavers
+Colors: Purple, gold,
+and red horizontal
+bars
+}
+[PAGE 425]
+{
+
+Maritime Guild
+Members: fishermen,
+sailors, map makers,
+ship writes
+Colors: blue and
+white
+Sub guilds:
+}
+[PAGE 426]
+{
+Fishermen, Sailors,
+Ship writes
+
+Bardic Collegium
+Members: bards,
+musicians,
+storytellers, and
+other performers
+}
+[PAGE 427]
+{
+Colors: Purple, red
+and gold checkerboard
+
+Society of Thieves
+Members: beggars,
+cutpurses, assassins,
+and brigands
+Colors: red and black
+}
+[PAGE 428]
+{
+Sub guilds: Rogues
+(beggars), Assassins,
+Thieves
+}
+
+// ============================ The Rankings of Trades
+[BOOK 27]
+{
+PAGES=9
+TITLE=The Rankings of Trades
+AUTHOR=Lord Higginbotham
+PAGE=429
+PAGE=430
+PAGE=431
+PAGE=432
+PAGE=433
+PAGE=434
+PAGE=435
+PAGE=436
+PAGE=437
+}
+[PAGE 429]
+{
+ Whilst 'tis true
+that within each
+trade, one finds
+differing titles and
+accolades granted to
+the members of a
+given guild,
+nonetheless for the
+}
+[PAGE 430]
+{
+betterment of trade
+and understanding, we
+must have a
+commonality of
+titling.
+ For those who may
+find themselves
+ignorant of the
+}
+[PAGE 431]
+{
+finder distinctions
+between a three-knot
+member of the
+Sailor's Maritime
+Association and a
+second thaumaturge,
+this book shall serve
+as a simple
+}
+[PAGE 432]
+{
+introduction to the
+common cant be used
+when members of
+differing guilds and
+trade organizations
+must trade with each
+other and must
+establish relative
+}
+[PAGE 433]
+{
+credentials.
+Neophyte
+ Has shown interest
+in learning the craft
+and some meager
+talent.
+Novice
+ Is practicing basic
+}
+[PAGE 434]
+{
+skills but has not
+been admitted to full
+standing.
+ Apprentice
+ A student of the
+discipline.
+ Journeyman
+ Warranted to
+}
+[PAGE 435]
+{
+practice the
+discipline under the
+eyes of a tutor.
+ Expert
+ A full member of the
+guild.
+ Adept
+ A member of the
+}
+[PAGE 436]
+{
+guild qualified to
+teach others.
+ Master
+ Acknowledged as
+qualified to lead a
+hall or business.
+ Grandmaster
+ Rarely a permanent
+}
+[PAGE 437]
+{
+title, granted in
+common parlance to
+those who have shown
+extreme mastery of
+their craft recently.
+}
+
+// ============================ Treatise on Alchemy
+[BOOK 28]
+{
+PAGES=12
+TITLE=Treatise on Alchemy
+AUTHOR=Felicia Hierophant
+PAGE=438
+PAGE=439
+PAGE=440
+PAGE=441
+PAGE=442
+PAGE=443
+PAGE=444
+PAGE=445
+PAGE=446
+PAGE=447
+PAGE=448
+PAGE=449
+}
+[PAGE 438]
+{
+ The alchemical arts
+are notable for their
+deceptive simplicity.
+'Tis true that to our
+best knowledge
+currently, there are
+but eight valid
+potions that can be
+}
+[PAGE 439]
+{
+made (though I
+emphasize that new
+discoveries may
+always await).
+However, the delicate
+balance of confecting
+the potions is
+difficult indeed, and
+}
+[PAGE 440]
+{
+requires great skill.
+ To give thee an
+example of the
+simpler potions that
+can be created by
+those well-versed in
+the subtleties of
+alchemy.
+}
+[PAGE 441]
+{
+ Black pearl, that
+rare substance that
+is oft found lying
+unannounced upon the
+surface of the
+ground,when properly
+crushed with mortar
+and pestle, can yield
+}
+[PAGE 442]
+{
+a fine powder. Said
+powder in the proper
+proportions when
+mixed via the
+alchemical arts can
+yield a wonderfully
+refreshing drink.
+ The revolting blood
+}
+[PAGE 443]
+{
+moss so gingerly
+scraped off window
+sills by fastidious
+housewives is but a
+tiny cousin to the
+wilder version, which
+when properly
+prepared yields a
+}
+[PAGE 444]
+{
+magical liquid that
+for a time can make
+the imbiber a more
+agile and dexterous
+individual.
+ However, beware of
+the deadly
+nightshade, for it
+}
+[PAGE 445]
+{
+yields a deceptively
+sweet-tasting poison
+that can prove highly
+fatal to the drinker,
+and in fact is also
+used by assassins to
+coat their blades.
+Fortunately, his
+}
+[PAGE 446]
+{
+latter are of
+poisoning is little
+known!
+ There is much to
+reward the student of
+alchemy, indeed. The
+rumors of longtime
+alchemists losing
+}
+[PAGE 447]
+{
+their hair and
+acquiring an
+unhealthy pallor, not
+to mention unsightly
+blotches upon their
+once-fair skin, are
+unhappily, true. Yet
+the joys of the mind
+}
+[PAGE 448]
+{
+make up for the
+complete loss of
+interest that others
+may have in thee as
+an object of
+courtship, and I have
+never regretted that
+choice. Honestly,
+}
+[PAGE 449]
+{
+truly, Not once.
+}
+
+// ============================ UOX3 Story Chapter One - Death
+[BOOK 29]
+{
+PAGES=12
+TITLE=UOX3 Story: Chapter One - Death
+AUTHOR=UOX3
+PAGE=450
+PAGE=451
+PAGE=452
+PAGE=453
+PAGE=454
+PAGE=455
+PAGE=456
+PAGE=457
+PAGE=458
+PAGE=459
+PAGE=460
+PAGE=461
+}
+[PAGE 450]
+{
+ You knew that the
+world was ending
+right now before your
+eyes, and there was
+nothing you could do
+about it anymore.
+Lord British was dead
+and the Guardians
+}
+[PAGE 451]
+{
+demon legions were
+swarming all through
+the once proud city
+of Britain. Bodies
+were lying all around
+the streets, thieves
+next to nobles and
+the former castle
+}
+[PAGE 452]
+{
+guards.
+ That body which you
+used to call your own
+is still bleeding at
+your slightly
+transparent feet but
+it is obviously too
+late for any kind of
+}
+[PAGE 453]
+{
+medical treatment.
+Your spells have
+allowed you to take
+two of those red
+abnormities with you,
+but when the
+Shadowlord Astaroth
+approached you, you
+}
+[PAGE 454]
+{
+knew that your last
+minute has come. You
+stood paralysed as
+his dark finger
+stretched out to your
+chest and when it
+touched you, you had
+left your body even
+}
+[PAGE 455]
+{
+before it hit the
+ground. You notice
+that some of those
+who are falling to
+the assault of the
+demons don't even
+leave a spirit behind
+anymore; it seems
+}
+[PAGE 456]
+{
+like after his death
+the magic that Lord
+British gave to his
+citizens to survive
+past their own death
+is beginning to fade.
+ Having wandered
+through the bloody
+}
+[PAGE 457]
+{
+streets for some time
+you see that there is
+still some light
+spilling through the
+windows of one of the
+nearby houses. You
+glance up to the sign
+above the door and
+}
+[PAGE 458]
+{
+note the symbol of
+the virtues, the
+ankh, painted onto
+it. Even though you
+ghostly state denies
+all colors of the
+world reach you,
+somehow you still
+}
+[PAGE 459]
+{
+recognize the golden
+color of the symbol.
+After thinking for
+only a moment you
+reach for the
+doorknob, only to see
+your hand go right
+through it. "Oh, I
+}
+[PAGE 460]
+{
+forgot...", you smile
+to yourself, these
+words being only a
+whisper in the storm
+of the fighting to
+those still standing
+locked in combat with
+the demonic hordes.
+}
+[PAGE 461]
+{
+ Despite your current
+disembodied state you
+take a deep breath
+and then step right
+through the closed
+door.
+}
+
+// ============================ UOX3 Chapter Two - End of the world
+[BOOK 30]
+{
+PAGES=26
+TITLE=UOX3: Chapter Two - End of the World
+AUTHOR=UOX3
+PAGE=462
+PAGE=463
+PAGE=464
+PAGE=465
+PAGE=466
+PAGE=467
+PAGE=468
+PAGE=469
+PAGE=470
+PAGE=471
+PAGE=472
+PAGE=473
+PAGE=474
+PAGE=475
+PAGE=476
+PAGE=477
+PAGE=478
+PAGE=479
+PAGE=480
+PAGE=481
+PAGE=482
+PAGE=483
+PAGE=484
+PAGE=485
+PAGE=486
+PAGE=487
+}
+[PAGE 462]
+{
+ Inside the building
+you can make out a
+few people in grey
+robes, sitting around
+a candle like it
+could protect them
+from the Guardians
+assault outside. One
+}
+[PAGE 463]
+{
+of the people seems
+to note your presense
+and turns around:
+ "Ah, another lost
+soul that has found
+the way here. With
+the forces of chaos
+drawing into this
+}
+[PAGE 464]
+{
+realm, my healing
+powers are fading
+from minute to
+minute, but I might
+try to give you a new
+body if you assist
+me".
+ The healer is
+}
+[PAGE 465]
+{
+beginning to make
+arcane gestures and
+you feel a wave of
+restoring energy rush
+through your astral
+body. With the rest
+of your powers you
+finally succeed to
+}
+[PAGE 466]
+{
+become physical
+again.
+ "This is it", the
+healer says, "my
+powers are now
+completely gone". You
+place your weak body
+among the others and
+}
+[PAGE 467]
+{
+listen to the screams
+outside, although
+those are becoming
+less and less by now.
+ You know that this
+new life will
+certainly only last
+for a couple of
+}
+[PAGE 468]
+{
+minutes, as the magic
+forces which bind
+this world together
+are beginning to
+fail, with obvious
+consequences:
+Lightnings are
+striking down from
+}
+[PAGE 469]
+{
+the sky by the dozen,
+giant earthquakes are
+threatening to tear
+the land apart and
+you can almost feel
+the pure evil power
+of the Guardian
+condensing in the
+}
+[PAGE 470]
+{
+air, converting this
+world to - what? You
+remember hearing one
+of the court mages
+whisper with his
+dying breath that the
+Guardian would use
+conquered worlds to
+}
+[PAGE 471]
+{
+create the
+Shadowlords. If that
+is true, then this
+world is really lost.
+ You glance out
+through the window
+and see one of the
+black moongates open
+}
+[PAGE 472]
+{
+with more demons
+stepping out of it. A
+thought crosses your
+mind: There can be no
+place worse than this
+one, so it might be
+worth the try. You
+tell the others that
+}
+[PAGE 473]
+{
+you intend to go
+through one of those
+gates to survive the
+end of this world and
+most of them agree to
+try it. You walk over
+to the door and
+silently unlock it
+}
+[PAGE 474]
+{
+and open it just so
+much that you can get
+a look at a part of
+the road outside.
+What you see is
+terrible. Sweet
+Dreams Inn is already
+completely burned
+}
+[PAGE 475]
+{
+down and the ground
+seems to be painted
+with blood.
+ "Now!", you scream
+as you see another of
+the black gates open
+just a few steps away
+from the door. You
+}
+[PAGE 476]
+{
+hit the door open and
+start to run, but
+just a second before
+you would have
+reached the gate a
+demon steps out of
+it, looking down at
+you in a quite angry
+}
+[PAGE 477]
+{
+way. You signal the
+other to run into the
+gate while you divert
+the creature, even
+though you have no
+idea on how to do
+that. As it rushes
+toward you, you
+}
+[PAGE 478]
+{
+notice one of Lord
+Britishs personal
+castle guards lying
+on the ground here.
+Still in his hand you
+see one of the famous
+order shields,
+magically treated by
+}
+[PAGE 479]
+{
+the King himself. You
+reach for it and with
+all your strength
+hold it in front of
+you as the demon
+brings his fist down
+on you.
+ The shield is
+}
+[PAGE 480]
+{
+shattered in two
+under the might of
+the blow, but by that
+the magic still
+inherent in it is
+released in a
+brilliant flash of
+light; not enough to
+}
+[PAGE 481]
+{
+kill the demon, but
+enough to render it
+helpless for a moment
+and you do not need
+any more time to run
+between its legs and
+towards the black
+gate. Knowing that
+}
+[PAGE 482]
+{
+this world could die
+any second now you
+jump through the
+gate...
+ You find yourself
+flying through some
+sort of dark tunnel;
+at the end of which
+}
+[PAGE 483]
+{
+you see another
+world. But you can't
+say that world
+appears much better
+to you than the one
+you just left,
+because it looks like
+the homeland of the
+}
+[PAGE 484]
+{
+demons. Thousands of
+them are waiting at
+the exit of the gate
+and it seems like
+they have already
+taken care of those
+that entered the gate
+before you. You look
+}
+[PAGE 485]
+{
+back over your
+shoulder at the place
+you came from and at
+the same moment that
+world ends. Suddendly
+the gate, having lost
+one of its exits
+vanishes, leaving you
+}
+[PAGE 486]
+{
+suspended in the
+Ethereal Void.
+ You see millions of
+stars all around you,
+except that those are
+no stars but worlds;
+just like the one you
+were born and lived
+}
+[PAGE 487]
+{
+in until this day,
+and another one of
+them is now serving
+the Guardian...
+}
+
+// ============================ UOX3 Chapter Three - The lost splinter
+[BOOK 31]
+{
+PAGES=15
+TITLE=UOX3: Chapter Three - The lost splinter
+AUTHOR=UOX3
+PAGE=488
+PAGE=489
+PAGE=490
+PAGE=491
+PAGE=492
+PAGE=493
+PAGE=494
+PAGE=495
+PAGE=496
+PAGE=497
+PAGE=498
+PAGE=499
+PAGE=500
+PAGE=501
+PAGE=502
+}
+[PAGE 488]
+{
+ You awaken. You are
+lying on a perfectly
+ordinary bed in an
+absolutely normal
+room of an inn. You
+rise to your feet and
+look out of the
+window to see the
+}
+[PAGE 489]
+{
+wonderful town of
+Britain, still quite
+unharmed as if that
+which you remember
+never happened. You
+get dressed and walk
+down the stairs of
+the inn. The first
+}
+[PAGE 490]
+{
+thing you notice is
+the lack of people
+that are usually
+shoving past each
+other here. On the
+street you see that
+this phenomenon is
+not limited to the
+}
+[PAGE 491]
+{
+inn, but seems to be
+present all around
+Britain.
+ You spin around as
+you notice a movement
+in the corner of your
+eye. Your eyes widen
+as you see Lord
+}
+[PAGE 492]
+{
+Blackthorne himself
+standing there as if
+the Guardians attack
+on Britannia never
+happened.
+ "I guess thou hast
+questions on your
+mind", your hear him,
+}
+[PAGE 493]
+{
+"like why thou art
+here when your
+memories tell thee
+that everything must
+be quite different.
+The reason for that
+is that thou art no
+longer in the world
+}
+[PAGE 494]
+{
+that thou knowest -
+nor one even like it.
+As thou possibly
+knowest, there are
+thousands of copies
+of the land called
+Britannia existing in
+the shards of
+}
+[PAGE 495]
+{
+Mondains foul gem of
+immortality. Now, for
+some reason when the
+worlds were split
+from each other, this
+special world was
+created without any
+inhabitants. Now, as
+}
+[PAGE 496]
+{
+the creature calling
+himself the Guardian
+conquered other
+worlds like yours,
+some people always
+entered one of the
+black moongates in
+the moment of
+}
+[PAGE 497]
+{
+destruction and thus
+ending up here. Thou
+mightest call this
+world the Lost
+Splinter. Well, I
+would really like to
+discuss this matter
+further with thee,
+}
+[PAGE 498]
+{
+but I am due for a
+game of chess with
+Lord British."
+ "He lives?", you
+exclaim. "Well, in
+fact the two of us
+ended up here when we
+were fleeing from the
+}
+[PAGE 499]
+{
+world that later
+became the Shadowlord
+Nosfentor." His face
+turns sad: "How
+fitting to run away
+from that world which
+became the embodiment
+of cowardice... But
+}
+[PAGE 500]
+{
+now I must hasten to
+the castle. Feel free
+to take a look around
+this world. There are
+not many people here,
+but at least the
+ecology yield more
+than enough food and
+}
+[PAGE 501]
+{
+resources for us
+few."
+ As you watch the
+Lord disappear down
+the street you start
+to think. At least
+you would be safe
+from the Guardian
+}
+[PAGE 502]
+{
+here - for now. You
+start to walk through
+an unusually empty
+Britain; there is so
+much to learn about
+this world, so you
+might as well start
+right now.
+}
+
+// ============================ My personal book
+[BOOK 32]
+{
+PAGES=10
+TITLE=My personal book
+AUTHOR=UOX3
+PAGE=503
+PAGE=504
+PAGE=505
+PAGE=506
+PAGE=507
+PAGE=508
+PAGE=509
+PAGE=510
+PAGE=511
+PAGE=512
+}
+[PAGE 503]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 504]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 505]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 506]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 507]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 508]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 509]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 510]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 511]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[PAGE 512]
+{
+Your text here.
+No more than 21
+characters per line
+8 lines max
+}
+[BOOK 33]
+{
+PAGES=5
+TITLE=Bulletin Board
+AUTHOR=Shard Operator
+PAGE=513
+PAGE=514
+PAGE=515
+PAGE=516
+PAGE=517
+}
+[PAGE 513]
+{
+To write a msg
+here,You need to go
+into the Misc.scp and
+go to Section Page 513
+and replace this msg :).
+}
+[PAGE 514]
+{
+More News....
+}
+[PAGE 515]
+{
+More News....
+}
+[PAGE 516]
+{
+More News....
+}
+[PAGE 517]
+{
+Well 5 Pages Should
+Be Enough :)
+}
+
+EOF
+
+

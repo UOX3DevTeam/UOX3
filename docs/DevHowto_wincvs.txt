@@ -1,0 +1,55 @@
+HowTo access CVS from Windooze
+------------------------------
+
+The l33t haxxorz from uox3.sourceforge.net found out:
+It's easy! Dont let anyone tell you it isn't...
+
+1.) 
+Download TortoiseCVS at http://www.wincvs.org/TortoiseCVS/
+
+2.)
+Set the environment variable HOME for ssh.exe.
+The program ssh.exe needs a valid directory in the environment variable HOME, it will create a subdir ".ssh" there to store some stuff.
+If you use win9x you add a line in the c:/autoexec.bat file "set home=c:\" or wherever you want the directory to point to.
+If you use w2k you log in with the user you use for work, right click "My Computer", choose "properties", choose the tab "Advanced", click on "Environment Variables" and enter the HOME variable there as a user variable.
+Plus, on w2k, make sure you have all permissions set.
+
+3.)
+Unpack and install TortoiseCVS. Reboot your machine.
+
+4.)
+Setup a directory to store the cvs repositorys (directorys) locally.
+Dont name directorys you want to use with CVS "CVS" or "cvs", that confuses the system...
+Lets pretend it's d:/repositorys/
+
+5.)
+Right click in file explorer on d:/repositorys/ and choose "CVS checkout.
+Protocol             : Internet (secure shell)
+Server               : cvs.uox3.sourceforge.net
+Repository directory : /cvsroot/uox3
+User name            : your username
+Module               : scripts | uox3_new
+
+6.)
+Tortoise now spawns a Command Prompt, find it in the Taskbar and open it.
+You have to type in your password (+ return) into this blindly.
+!!You will have to do this every time you rightclick->command a CVS function!!
+I know it's crap but its the best solution this far, I will post a new HowTo 
+once I find out how to set a client side certificate for accessing cvs.
+
+7.)
+Now you have the repository locally and can edit/add/commit/diff/etc.
+Please read general cvs-documentation now.
+* http://www.wincvs.org/TortoiseCVS/ has some.
+* http://web.mit.edu/afs/athena.mit.edu/project/gnu/doc/html/cvs_2.html is a cool read.
+* http://www.computas.com/pub/wincvs-howto/ is good to look things up once you have read cvs_2.html
+* If you want to read more, browse the links at the CVS sections at http://sourceforge.net/docman/?group_id=1
+
+8.)
+Quick tips:
+* TortoiseCVS doesnt check out empty directorys to your local harddrive.
+* Dont create and submit empty directorys for this reason,
+  always put a readme.txt or something like that into it.
+
+
+Yeshe@manofmystery.org, 06.06.2001, http://uox3.sourceforge.net

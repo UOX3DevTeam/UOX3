@@ -1,259 +1,25 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  items.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  Item specific routines (add, delete change) in preperation for
-//  going to a pointer based system
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Pedro Rabinovitch
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #include "uox3.h"
 #include "debug.h"
+#include "ssection.h"
 
-#ifdef UOXPERL
-#include "uoxperl/uoxperl.h"
-#endif
-
+#undef DBGFILE
 #define DBGFILE "items.cpp"
 
-//Instance of cItemHandle class to handle item memory//
+UI32 calcLastContainerFromSer( SERIAL ser, SI08 &exiMode );
 
 //o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::cItemHandle()
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
+//|	Function	-	CItem * cItem::MemItemFree( bool zeroSer, UI08 itemType )
+//|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
-cItemHandle::cItemHandle( void )
+//|	Purpose		-	Find a free item slot, checking freeitemmem[] first
+//o---------------------------------------------------------------------------o
+CItem *cItem::MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType )
 {
-	DefaultItem = new item_st;
-	memset(DefaultItem, 0, sizeof(item_st));
-	
-	//setup the item's important properties (ones that might be checked if its used, and need to be this way
-	DefaultItem->free = 1;
-	DefaultItem->ser1 = DefaultItem->ser2 = DefaultItem->ser3 = DefaultItem->ser4 = 0xFF;
-	DefaultItem->serial = 0;
-	DefaultItem->contserial = DefaultItem->ownserial = DefaultItem->spawnserial = -1;
+	char memerr = 0;
 
-	Acctual = Free = 0;
-}
+	offset = items.New( zeroSer, itemType );
 
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::~cItemHandle()
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-cItemHandle::~cItemHandle()
-{
-	unsigned long i;
-
-	for (i=0;i<Items.size();i++)//Memory Cleanup
-	{
-		if (Items[i] != NULL)
-			delete Items[i];
-	}
-
-	Items.clear();
-	Items.resize(0);
-	
-	FreeNums.clear();
-	FreeNums.resize(0);
-
-	delete DefaultItem;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::New()
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Free memory for an item, create the item in memory 
-//|					(returns item number)
-//o---------------------------------------------------------------------------o
-unsigned long cItemHandle::New( void )
-{
-	unsigned long i;
-	
-	if ( Free > 0 )
-	{
-		i = FreeNums[FreeNums.size()-1];//get the oldest entry
-		FreeNums.resize( FreeNums.size() - 1 ); //Delete it cause it ain't free no more.
-		Free = max( Free-1, (unsigned int)0 );
-
-		if (Items[i] != NULL)
-			delete Items[i];
-
-		Items[i] = new item_st;
-	} else {
-		i = Items.size();
-		//Items.resize( i+1 );
-		//Items[i] = new item_st;
-		Items.push_back( new item_st );
-	}
-
-	Acctual++;
-
-	return i;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::Delete( long int )
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Free item memory that's used by this item (delete it)
-//o---------------------------------------------------------------------------o
-void cItemHandle::Delete( long int Num )
-{
-	if ( Num > -1 && Num < Items.size() )
-	{
-		if ( Items[Num] != NULL  )
-		{
-			delete Items[Num];
-			Items[Num] = NULL;
-
-			FreeNums.insert(FreeNums.begin(), Num);
-			Free++;
-			Acctual = max(Acctual-1, (unsigned long)0);
-		} else if ( !isFree( Num ) )
-		{
-			FreeNums.insert(FreeNums.begin(), Num);
-			Free++;
-			Acctual = max(Acctual-1, (unsigned long)0);
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::Size()
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Get the size (in bytes) that items are taking up in memory
-//o---------------------------------------------------------------------------o
-unsigned long cItemHandle::Size( void )
-{
-	unsigned long sz;
-
-	sz = Items.size() * 4;
-	sz += FreeNums.size() * sizeof(unsigned long);
-	sz += sizeof(item_st) * Acctual;
-	sz += sizeof(cItemHandle);
-
-	return sz;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::Reserve( unsigned int )
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Reserve memory for Num number of items (unused)
-//o---------------------------------------------------------------------------o
-void cItemHandle::Reserve( unsigned int Num )
-{
-	unsigned int i, cs = FreeNums.size(), is = Items.size();
-	
-	Free+=Num;
-	FreeNums.resize( cs + Num );
-	Items.resize( is+Num );
-
-	for (i=cs;i<(cs+Num);i++)
-	{// is + (cs+(Num-1))-i) is acctual number ( 0 to Num )
-		FreeNums[i] = is + ((cs+(Num-1))-i);
-		Items[(is + (cs+(Num-1))-i)] = NULL;
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::isFree( unsigned long)
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Check to see if item Num is marked free (unused (slow))
-//o---------------------------------------------------------------------------o
-bool cItemHandle::isFree( unsigned long Num )
-{
-	unsigned int i;
-	for (i=0;i<FreeNums.size();i++)
-	{
-		if ( FreeNums[i] == Num )
-			return true;
-	}
-	return false;
-}
-const bool EVILDED=false;
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::operator[]( long int )
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Reference item Num -  Check to make sure Num is a valid 
-//|					item number and exists in memory
-//o---------------------------------------------------------------------------o
-item_st& cItemHandle::operator[] ( long int Num )
-{
-	if ( Num >= 0 && Num < Items.size())
-	{
-		if ( Items[Num] != NULL )//&& !isFree( Num ) ) //isFree isSlow
-			return *Items[Num];	
-	}
-  else
-  {
-    printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
-  }
-	//Make sure these props are always this way, they may have been chaged by other functions, so put them back
-	DefaultItem->free = 1;
-	DefaultItem->ser1 = DefaultItem->ser2 = DefaultItem->ser3 = DefaultItem->ser4 = 0xFF;
-	DefaultItem->serial = 0;
-	DefaultItem->x = DefaultItem->y = 0;
-	DefaultItem->contserial = DefaultItem->ownserial = DefaultItem->spawnserial = -1;
-	return *DefaultItem;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cItemHandle::Count()
-//|	Date		:	1/6/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Return the number of items in the world (Acctual)
-//o---------------------------------------------------------------------------o
-unsigned long cItemHandle::Count( void )
-{
-	return Acctual;
-}
-//End of cItemHandle class//
-
-
-// -- Find a free item slot, checking freeitemmem[] first
-int cItem::MemItemFree()
-{
-	static unsigned int OldRealloc=0;
-	signed int nItem=-1;
-	char memerr=0;
-
-	nItem = items.New();
-
-	int slots=4000;	// bugfix for crashes under w95/w98
+	int slots = 8192;
 					// careful with this number.....
 					// if it too low => slow and can cause crashes under
 					// w95/98.  This is because w95/98 can only handle 8196
@@ -261,26 +27,23 @@ int cItem::MemItemFree()
 					// free() calls DON'T help !!!, btw
 					// so we have to make that number real big
 					// under nt and unix this limit doesn't exist
-	if (itemcount>=imem) //theres no more free sluts.. er slots, so get more memory
+	if( itemcount >= imem ) //theres no more free sluts.. er slots, so get more memory
 	{
-		int *Copy_loscache;
-		int *Copy_itemids;
-
-		// initialize to NULL so if an error has occurred we can properly
-		// free them by checking for NULL
-		Copy_loscache = NULL;
-		Copy_itemids = NULL;
+		int *Copy_loscache = NULL;
+		int *Copy_itemids = NULL;
 
 		// create new objects to copy original data to
-		if(( Copy_loscache = new int[imem] ) == NULL ) memerr = 1;
-		else if(( Copy_itemids = new int[imem] ) == NULL ) memerr = 1;
+		if( ( Copy_loscache = new int[imem] ) == NULL )
+			memerr = 1;
+		else if( ( Copy_itemids = new int[imem] ) == NULL )
+			memerr = 1;
 
 		// make sure nothing bad happened
 		if( !memerr )
 		{
 			// make a copy - I prefer memcpy although a copy constructor wouldn't hurt =)
-			memcpy(Copy_loscache, loscache, sizeof( int ) * imem );
-			memcpy(Copy_itemids, itemids, sizeof( int ) * imem );
+			memcpy( Copy_loscache, loscache, sizeof( int ) * imem );
+			memcpy( Copy_itemids, itemids, sizeof( int ) * imem );
 
 			// delete the old objects
 			delete [] itemids;
@@ -292,8 +55,10 @@ int cItem::MemItemFree()
 			itemids = NULL;
 
 			// create new objects with more room for more items, etc.
-			if(( loscache = new int[imem + slots] ) == NULL ) memerr = 2;
-			else if(( itemids = new int[imem + slots] ) == NULL ) memerr = 2;
+			if( ( loscache = new int[imem + slots] ) == NULL )
+				memerr = 2;
+			else if( ( itemids = new int[imem + slots] ) == NULL )
+				memerr = 2;
 
 			if( !memerr )
 			{
@@ -306,1057 +71,699 @@ int cItem::MemItemFree()
 				delete [] Copy_loscache;
 			}
 		}
-		if (memerr)
+		if( memerr )
 		{
 			// cleanup if neccessary
 			if( memerr >= 1 )
 			{
-				if( Copy_itemids ) delete [] Copy_itemids;
-				if( Copy_loscache ) delete [] Copy_loscache;
+				if( Copy_itemids )
+					delete [] Copy_itemids;
+				if( Copy_loscache )
+					delete [] Copy_loscache;
 
 				// cleanup if neccessary
 				if( memerr == 2 )
 				{
-					if( itemids ) delete [] Copy_itemids;
-					if( loscache ) delete [] Copy_loscache;
+					if( itemids )
+						delete [] Copy_itemids;
+					if( loscache )
+						delete [] Copy_loscache;
 				}
 			}
-			printf("ERROR: Could not reallocate item memory after %i. No more items will be created.\nWARNING: UOX may become unstable.\n",imem);
-//			cwmWorldState->savenewworld(1);           // Commented out because it wipes your items =)
+			Console.Error( 3, "Could not reallocate item memory after %i. No more items will be created.", imem );
+			Console.Warning( 3, " UOX may become unstable." );
+		} 
+		else 
+			imem += slots;
+	}
+	if( offset == INVALIDSERIAL )
+		return NULL;
+	return &items[offset];
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::DeleItem( CItem *i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Remove an item from the array
+//o---------------------------------------------------------------------------o
+void cItem::DeleItem( CItem *i )
+{
+	if( i == NULL )
+		return;
+	if( i->isFree() )
+		return;
+	ITEM calcedItem = calcItemFromSer( i->GetSerial() );
+
+	// if we delete an item we should delete it from spawnregions
+	// this will fix several crashes
+	if( i->IsSpawned() )
+	{
+		cSpawnRegion *spawnReg = NULL;
+
+		for( UI32 k = 1; k < totalspawnregions; k++ )
+		{
+			spawnReg = spawnregion[k];
+
+			if( spawnReg == NULL )
+				continue;
+			else
+				spawnReg->deleteSpawnedItem( i );
+		}
+	}
+
+	cScript *tScript = NULL;
+	UI16 scpNum = i->GetScriptTrigger();
+	tScript = Trigger->GetScript( scpNum );
+	if( tScript != NULL )
+		tScript->OnDelete( i );
+
+	CPRemoveItem toRemove = (*i);
+
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+		tSock->Send( &toRemove );
+	Network->PopConn();
+	if( i->GetGlow() > 0 )
+	{
+		CItem *j = calcItemObjFromSer( i->GetGlow() );
+		if( j != NULL )
+			DeleItem( j );  // LB glow stuff, deletes the glower of a glowing stuff automatically
+	}
+
+	ITEM ci = INVALIDSERIAL;
+	if( i->GetType() == 61 )
+	{
+		HashBucketMulti< ITEM > *hashBucketI = nspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
+		for( int j = 0; j < hashBucketI->NumEntries(); j++ )
+		{
+			ci = hashBucketI->GetEntry( j );
+			if( ci != INVALIDSERIAL )
+			{
+				if( items[ci].isFree() )
+					continue;
+				if( i->GetSerial() == items[ci].GetSpawn() )
+				{
+					if( i != &items[ci] )
+						items[ci].SetSpawn( INVALIDSERIAL, ci );
+				}
+			}
+		}
+	}
+
+	if( i->GetType() == 62 || i->GetType() == 69 || i->GetType() == 125 )
+	{
+		HashBucketMulti< CHARACTER > *hashBucketC = ncspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
+		for( int l = 0; l < hashBucketC->NumEntries(); l++ )
+		{
+			ci = hashBucketC->GetEntry( l );
+			if( ci != INVALIDSERIAL )
+			{
+				if( chars[ci].isFree() )
+					continue;
+				if( chars[ci].GetSpawn() == i->GetSerial() )
+					chars[ci].SetSpawn( INVALIDSERIAL, ci );
+			}
+		}
+	}
+
+	if( i->GetSpawn() != 0 ) 
+		nspawnsp.Remove( i->GetSpawn(), calcedItem );
+
+	for( CItem *tItem = i->FirstItemObj(); !i->FinishedItems(); tItem = i->NextItemObj() )
+	{
+		if( tItem != NULL )
+			Items->DeleItem( tItem );
+	}
+
+	if( i->isGuarded() )
+	{
+		CChar *owner = NULL;
+		CMultiObj *multi = findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
+		if( multi != NULL )
+			owner = (CChar *)multi->GetOwnerObj();
+		if( owner == NULL )
+			owner = getPackOwner( i );
+		if( owner != NULL )
+		{
+			CChar *petGuard = Npcs->getGuardingPet( owner, i->GetSerial() );
+			if( petGuard != NULL )
+				petGuard->SetGuarding( INVALIDSERIAL );
+			i->SetGuarded( false );
+		}
+	}
+
+	nitemsp.Remove( i->GetSerial(), calcedItem );
+	items.Delete( calcedItem );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Load items from the script sections to the array
+//o---------------------------------------------------------------------------o
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+{
+	if( toApply == NULL || applyTo == NULL )
+		return false;
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	const char *cdata = NULL;
+	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+	for( tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
+	{
+		cdata = toApply->GrabData( ndata, odata );
+
+		switch( tag )
+		{
+		case DFNTAG_AMOUNT:			applyTo->SetAmount( (UI32)ndata );				break;
+		case DFNTAG_ATT:			applyTo->SetLoDamage( (SI16)ndata ); 
+									applyTo->SetHiDamage( (SI16)odata ); 
+									break;
+		case DFNTAG_AC:				applyTo->SetArmourClass( (UI08)ndata );		break;
+		case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );				break;
+		case DFNTAG_COLOUR:			applyTo->SetColour( (UI16)ndata );			break;
+		case DFNTAG_COLOURLIST:		applyTo->SetColour( addRandomColor( cdata ) );		break;
+		case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 );			break;
+		case DFNTAG_COLD:			applyTo->ColdDamage( ndata != 0 );			break;
+		case DFNTAG_DAMAGE:			applyTo->SetLoDamage( (SI16)ndata );
+									applyTo->SetHiDamage( (SI16)odata );
+									break;
+		case DFNTAG_DEF:			applyTo->SetDef( (UI16)RandomNum( ndata, odata ) );	break;
+		case DFNTAG_DEX:			applyTo->SetDexterity( (SI16)RandomNum( ndata, odata ) );	break;
+		case DFNTAG_DEXADD:			applyTo->Dexterity2( (SI16)ndata );					break;
+		case DFNTAG_DIR:			if( !strcmp( "NE", cdata ) )
+										applyTo->SetDir( 1 );
+									else if( !strcmp( "E", cdata ) )
+										applyTo->SetDir( 2 );
+									else if( !strcmp( "SE", cdata ) )
+										applyTo->SetDir( 3 );
+									else if( !strcmp( "S", cdata ) )
+										applyTo->SetDir( 4 );
+									else if( !strcmp( "SW", cdata ) )
+										applyTo->SetDir( 5 );
+									else if( !strcmp( "W", cdata ) )
+										applyTo->SetDir( 6 );
+									else if( !strcmp( "NW", cdata ) )
+										applyTo->SetDir( 7 );
+									else if( !strcmp( "N", cdata ) )
+										applyTo->SetDir( 0 );
+									break;
+		case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
+		case DFNTAG_DECAY:			
+									if( ndata == 1 )
+										applyTo->SetDecayable( true );
+									else
+										applyTo->SetDecayable( false );
+									break;
+		case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
+		case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
+		case DFNTAG_DOORFLAG:		applyTo->SetDoorDir( (UI08)ndata );			break;
+		case DFNTAG_ENHANCED:		applyTo->enhanced = ndata;					break;
+		case DFNTAG_FAME:			applyTo->SetFame( (SI16)ndata );			break;
+		case DFNTAG_GOOD:			applyTo->SetGood( ndata );					break;
+		case DFNTAG_GLOW:			applyTo->SetGlow( ndata );					break;
+		case DFNTAG_GLOWBC:			applyTo->SetGlowColour( (UI16)ndata );		break;
+		case DFNTAG_GLOWTYPE:		applyTo->SetGlowEffect( (UI08)ndata );		break;
+		case DFNTAG_GET:
+								{
+									char mTemp[128];
+									if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
+										sprintf( mTemp, "ITEM %s", cdata );
+									else
+										strcpy( mTemp, cdata );
+									ScriptSection *toFind = FileLookup->FindEntry( mTemp, items_def );
+									ApplyItemSection( applyTo, toFind );
+								}
+									break;
+		case DFNTAG_HP:				applyTo->SetHP( (SI16)ndata );				break;
+		case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( (SI16)ndata );		break;
+		case DFNTAG_HEAT:			applyTo->HeatDamage( ndata != 0 );			break;
+		case DFNTAG_ID:				applyTo->SetID( (UI16)ndata );				break;
+		case DFNTAG_INTELLIGENCE:	applyTo->SetIntelligence( (SI16)ndata );	break;
+		case DFNTAG_INTADD:			applyTo->Intelligence2( (SI16)ndata );		break;
+		case DFNTAG_LODAMAGE:		applyTo->SetLoDamage( (SI16)ndata );		break;
+		case DFNTAG_LAYER:			applyTo->SetLayer( (SI08)ndata );			break;
+		case DFNTAG_LIGHT:			applyTo->LightDamage( ndata != 0 );			break;
+		case DFNTAG_LIGHTNING:		applyTo->LightningDamage( ndata != 0 );		break;
+		case DFNTAG_MAXHP:			applyTo->SetMaxHP( (SI16)ndata );			break;
+		case DFNTAG_MOVABLE:		applyTo->SetMagic( (SI08)ndata );			break;
+		case DFNTAG_MORE:			applyTo->SetMore( ndata );					break;
+		case DFNTAG_MORE2:			applyTo->SetMoreB( ndata );					break;
+		case DFNTAG_MOREX:			applyTo->SetMoreX( ndata );					break;
+		case DFNTAG_MOREY:			applyTo->SetMoreY( ndata );					break;
+		case DFNTAG_MOREZ:			applyTo->SetMoreZ( ndata );					break;
+		case DFNTAG_NAME:			applyTo->SetName( cdata );					break;
+		case DFNTAG_NAME2:			applyTo->SetName2( cdata );					break;
+		case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );					break;
+		case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( (SI08)ndata );		break;
+		case DFNTAG_POISONED:		applyTo->SetPoisoned( (UI08)ndata );		break;
+		case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );			break;
+		case DFNTAG_PRIV:			applyTo->SetPriv( (UI08)ndata );			break;
+		case DFNTAG_RANK:
+									applyTo->SetRank( (SI08)ndata );
+									if( applyTo->GetRank() <= 0 ) 
+										applyTo->SetRank( 10 );
+									break;
+		case DFNTAG_RACE:			applyTo->SetRace( (UI16)ndata );			break;
+		case DFNTAG_RESTOCK:		applyTo->SetRestock( ndata );				break;
+		case DFNTAG_RAIN:			applyTo->RainDamage( ndata != 0 );			break;
+		case DFNTAG_SK_MADE:		applyTo->SetMadeWith( (SI08)ndata );		break;
+		case DFNTAG_SPD:			applyTo->SetSpeed( (UI08)ndata );			break;
+		case DFNTAG_STRENGTH:		applyTo->SetStrength( (SI16)ndata );		break;
+		case DFNTAG_STRADD:			applyTo->Strength2( (SI16)ndata );			break;
+		case DFNTAG_SNOW:			applyTo->SnowDamage( ndata != 0 );			break;
+		case DFNTAG_SCRIPT:			applyTo->SetScriptTrigger( (UI16)ndata );	break;
+		case DFNTAG_SPAWNOBJ:		applyTo->SetDesc( cdata );				break;
+		case DFNTAG_SPAWNOBJLIST:
+									applyTo->SetDesc( cdata );
+									applyTo->SetSpawnerList( true );
+									break;
+		case DFNTAG_TYPE:			applyTo->SetType( (UI08)ndata );			break;
+		case DFNTAG_TYPE2:			applyTo->SetType2( (UI08)ndata );			break;
+		case DFNTAG_VISIBLE:		applyTo->SetVisible( (SI08)ndata );			break;
+		case DFNTAG_VALUE:			applyTo->SetValue( ndata );					break;
+		case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
+		case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
+		case DFNTAG_NOTES:
+		case DFNTAG_CATEGORY:
+			break;
+		default:					Console.Warning( 2, "Unknown items dfn tag %i %s %i %i ", tag, cdata, ndata, odata );	break;
+		}
+	}
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateItem( cSocket *s, string name, UI08 worldNumber )
+//|	Programmer	-	Abaddon
+//| Date		-	28th September, 2001
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Does the minimum required to spawn an item from the scripts
+//|					assigning a world number and setting the serial
+//o---------------------------------------------------------------------------o
+CItem *cItem::CreateItem( cSocket *s, string name, UI08 worldNumber )
+{
+	CTile tile;
+	char itemSect[512];
+ 
+	if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
+		sprintf( itemSect, "ITEM %s", name.c_str() );
+	else
+		strcpy( itemSect, name.c_str() );
+	ScriptSection *itemCreate = FileLookup->FindEntry( itemSect, items_def );
+	if( itemCreate == NULL )
+		return NULL;
+
+	// Scan through for an itemlist, if we make an itemlist, then we'll call our random item func and return instantly
+	// This way, we skip over some code we double up like an itemcount and itemcount2 increase
+
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	for( tag = itemCreate->FirstTag(); !itemCreate->AtEndTags(); tag = itemCreate->NextTag() )
+	{
+		if( tag == DFNTAG_ITEMLIST )		// we really do have an itemlist here!
+		{
+			UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+			const char *cdata = itemCreate->GrabData( ndata, odata );
+			CItem *iListMade = CreateRandomItem( s, cdata, true, worldNumber );
+			if( iListMade != NULL )
+				iListMade->WorldNumber( worldNumber );
+			return iListMade;
+		}
+	}
+	ITEM iMadeOff;
+	CItem *iMade = MemItemFree( iMadeOff, true );
+	if( iMade == NULL )
+		return NULL;
+
+	iMade->SetID( 0x0915 );
+	iMade->SetWipeable( false );
+	iMade->SetAmount( 1 );		// obviously some things have no default val, and 0 is not a good number
+
+	if( !ApplyItemSection( iMade, itemCreate ) )
+		Console.Error( 2, "Trying to apply an item section failed" );
+
+	Map->SeekTile( iMade->GetID(), &tile );
+	if( tile.Stackable() )
+		iMade->SetPileable( true );
+	if( !iMade->GetMaxHP() && iMade->GetHP() ) 
+		iMade->SetMaxHP( iMade->GetHP() );
+
+	iMade->WorldNumber( worldNumber );
+	return iMade;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateScriptItem( cSocket *s, string name, bool nSpawned, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Create an item based on its script entries
+//o---------------------------------------------------------------------------o
+CItem * cItem::CreateScriptItem( cSocket *s, string name, bool nSpawned, UI08 worldNumber )
+{
+	CItem *iMade = CreateItem( s, name, worldNumber );
+	if( iMade == NULL )
+		return NULL;
+ 
+	if( s != NULL && !nSpawned )
+		iMade->SetLocation( s->GetWord( 11 ), s->GetWord( 13 ), s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
+
+	if( iMade->GetCont() == INVALIDSERIAL ) 
+		MapRegion->AddItem( iMade );
+	cScript *toGrab = Trigger->GetScript( iMade->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( iMade );
+	return iMade;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *cItem::CreateRandomItem( cSocket *s, char * sItemList, bool nSpawned )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Create a random item from the scripts
+//o---------------------------------------------------------------------------o
+CItem *cItem::CreateRandomItem( cSocket *s, const char *sItemList, bool nSpawned, UI08 worldNumber )
+{
+	char sect[512];
+	sprintf( sect, "ITEMLIST %s", sItemList );
+	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
+	if( ItemList == NULL )
+		return NULL;
+	int i = ItemList->NumEntries();
+	if( i == 0 )
+		return NULL;
+	const char *k = ItemList->MoveTo( RandomNum( 0, i - 1 ) );
+	if( k != NULL )
+	{
+		CItem *iMade = CreateScriptItem( s, k, nSpawned, worldNumber );
+		return iMade;
+	}
+	return NULL;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem * cItem::SpawnItem( cSocket *nSocket, int nAmount, char* cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an item
+//o---------------------------------------------------------------------------o
+CItem * cItem::SpawnItem( cSocket *nSocket, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
+{
+	if( nSocket == NULL ) 
+	{
+		Console.Error( 3, "FATAL: nSocket returned no valid value. Ignore, and continue.");
+		return NULL;
+	}
+	CChar *ch = nSocket->CurrcharObj();
+	return SpawnItem( nSocket, ch, nAmount, cName, nStackable, realItemId, realColour, nPack, nSend );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem * cItem::SpawnItem( cSocket *nSocket, CHARACTER ch, int nAmount, char* cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an item
+//o---------------------------------------------------------------------------o
+CItem * cItem::SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemID, UI16 realColour, bool nPack, bool nSend )
+{
+	if( nAmount == 0 )
+		return NULL;
+	UI08 worldNumber = ch->WorldNumber();
+	CItem *i = NULL;
+	bool inpack = false;
+	CItem *p = getPack( ch );
+	//Auto-Stack code!
+	if( nPack && nStackable && p != NULL )
+	{
+		for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
+		{
+			if( i != NULL && ( i->GetID() == realItemID ) && i->GetColour() == realColour )
+			{
+				if( i->GetAmount() + nAmount <= MAX_STACK )
+				{
+					i->SetAmount( i->GetAmount() + nAmount );
+					inpack = true;
+					RefreshItem( i );
+					break;
+				}
+			}
+		}
+	}
+
+	if( !nPack || ( nPack && !inpack ) )
+	{
+		ITEM iOff;
+		i = MemItemFree( iOff, true );
+		if( i == NULL ) 
+			return NULL;
+
+		i->WorldNumber( worldNumber );
+		if( cName != NULL) 
+			i->SetName( cName );
+		i->SetID( realItemID );
+		i->SetColour( realColour );
+		if( nPack )
+		{
+			if( p != NULL )
+			{
+				i->SetCont( p->GetSerial() );
+				i->SetX( ( 50 + RandomNum( 0, 79 ) ) );
+				i->SetY( ( 50 + RandomNum( 0, 79 ) ) );
+				i->SetZ( 9 );
+			}
+			else
+				i->SetLocation( ch );
+		}
+		i->SetAmount( nAmount );
+		i->SetPileable( nStackable );
+		i->SetDecayable( true );
+		GetScriptItemSetting( i );
+		ch->SetMaking( i->GetSerial() );
+		RefreshItem( i );
+	}
+	
+	if( nSend && nSocket != NULL ) 
+	{ 
+	   // added to fix weight bug - sereg 
+	   //as i supposed the weight of the total package had been added before
+	   UI16 sum_nAmount = i->GetAmount(); 
+	   i->SetAmount( nAmount ); 
+	   Weight->AddItemWeight( i, ch ); 
+	   statwindow( nSocket, ch ); 
+	   i->SetAmount( sum_nAmount ); 
+	} 
+
+	cScript *toGrab = Trigger->GetScript( i->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( i );
+	return i;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *cItem::SpawnMulti( cSocket *nSocket, CChar *ch, char* cName, UI16 realItemId )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn a Multi
+//o---------------------------------------------------------------------------o
+CMultiObj *cItem::SpawnMulti( cSocket *nSocket, CChar *ch, const char *cName, UI16 realItemID )
+{
+	ITEM cOff;
+	CItem *c = MemItemFree( cOff, true, 1 );
+	if( c == NULL ) 
+		return NULL;
+
+	CMultiObj *i = static_cast< CMultiObj * >(c);
+	i->WorldNumber( ch->WorldNumber() );
+	if( cName != NULL )
+		i->SetName( cName );
+	i->SetID( realItemID );
+	GetScriptItemSetting( i );
+	ch->SetMaking( c->GetSerial() );
+	RefreshItem( i );
+	return i;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::GetScriptItemSetting( CItem *c )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Get item settings from scripts
+//o---------------------------------------------------------------------------o
+void cItem::GetScriptItemSetting( CItem *c )
+{
+	if( c == NULL )
+		return;
+
+	char buff[512];
+	sprintf( buff, "x%x%x", c->GetID( 1 ), c->GetID( 2 ) );
+	Script *tScript = FileLookup->FindScript( buff, hard_items_def );
+	if( tScript == NULL )
+		return;
+	ScriptSection *toFind = tScript->FindEntrySubStr( buff );
+	if( toFind == NULL )
+		return;
+	ApplyItemSection( c, toFind );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, string name, bool nDigging )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an item inside a pack
+//o---------------------------------------------------------------------------o
+CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, string name, bool nDigging )
+{
+	CItem *p = getPack( ch );
+	if( p == NULL ) 
+		return NULL;
+
+	CItem *c = CreateScriptItem( s, name, false, p->WorldNumber() );
+
+	if( c == NULL )
+		return NULL;
+	c->SetCont( p->GetSerial() );
+	c->SetX( 50 + RandomNum( 0, 79 ) );
+	c->SetY( 50 + RandomNum( 0, 79 ) );
+	c->SetZ( 9 );
+	// We should use the value the DFNs give us
+	//c->SetMagic( 1 ); 
+
+	if( nDigging ) 
+	{
+		if( c->GetValue() != 0 ) 
+			c->SetValue( RandomNum( 1, c->GetValue() ) );
+		if( c->GetHP() != 0 ) 
+			c->SetHP( RandomNum( 1, c->GetHP() ) );
+	}
+	GetScriptItemSetting( c );
+	RefreshItem( c );
+	if( s != NULL )
+	{
+		CChar *mChar = s->CurrcharObj();
+		statwindow( s, mChar );
+		Weight->AddItemWeight( c, mChar );
+	}
+	return c;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, int nItem, bool nDigging )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an item inside a pack
+//o---------------------------------------------------------------------------o
+CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, int nItem, bool nDigging )
+{
+	char temp[128];
+	sprintf( temp, "%i", nItem );
+	return SpawnItemToPack( s, ch, temp, nDigging );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool cItem::DecayItem( CItem *i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Cause items to decay when left on the ground
+//o---------------------------------------------------------------------------o
+bool cItem::DecayItem( CItem *i ) 
+{
+	if( i == NULL || i->isFree() )
+		return false;
+	if( !i->WillDecay() )
+		return false;
+
+	if( i->GetDecayTime() > uiCurrentTime && !overflow )
+		return false;
+
+	bool retVal = false;
+	if( i->GetCont() == INVALIDSERIAL )	// Are we on the ground?
+	{  // decaytime = 5 minutes, * 60 secs per min, * clocks_per_sec
+		if( i->GetDecayTime() == 0 ) 
+		{
+			i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+			return false;
+		}
+		
+		// Multis
+		if( !i->IsFieldSpell() && !i->isCorpse() ) // Gives fieldspells a chance to decay in multis
+		{
+			if( i->GetMultiObj() == NULL )
+			{
+				CMultiObj *multi = findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
+				if( multi != NULL )
+				{
+					if( multi->GetMore( 4 ) == 0 )
+					{
+						i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+						i->SetMulti( multi );
+						return false;
+					}
+				}
+			} 
+			else	// in a house, therefore... no decay
+			{					
+				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+				return false;
+			}
+		}
+
+		if( i->isCorpse() && i->GetOwner() != INVALIDSERIAL )
+		{
+			int preservebody = 0;
+			for( CItem *j = i->FirstItemObj(); !i->FinishedItems(); j = i->NextItemObj() )
+			{
+				if( j != NULL )
+					preservebody++;
+			}
+			if( preservebody > 1 && i->GetMore( 4 ) )
+			{
+				i->SetMore( i->GetMore( 4 ) - 1, 4 );
+				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+				return false;
+			}
+		}
+		if( ( !i->isCorpse() && i->GetType() == 1 ) || ( i->isCorpse() && ( i->GetOwner() != INVALIDSERIAL || !cwmWorldState->ServerData()->GetCorpseLootDecay() ) ) )
+		{
+			for( CItem *io = i->FirstItemObj(); !i->FinishedItems(); io = i->NextItemObj() )
+			{
+                if( io != NULL )
+				{
+					io->SetCont( INVALIDSERIAL );
+					io->SetLocation( i );
+
+					io->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+					RefreshItem( io );
+				}
+			}
+			DeleItem( i );
+			retVal = true;
 		} 
 		else 
 		{
-			imem+=slots;
+			if( i->GetCont() == INVALIDSERIAL )
+			{
+				DeleItem( i );
+				retVal = true;
+			}
+			else
+				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
 		}
 	}
-
-	return nItem;
+	return retVal;
 }
 
-
-
-
-// -- Initialize an Item in the items[] array
-void cItem::InitItem(int nItem, char ser)
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::RespawnItem( ITEM i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Respawn an item
+//o---------------------------------------------------------------------------o
+void cItem::RespawnItem( CItem *i )
 {
-	if (nItem==-1) return;
-
-	// krazyglue - initialize everything to zero with one shot (saves a LOT of excess 'xx = 0' calls!)
-	// someone could also take out all those commented lines below, although I would suggest
-	// writing those nifty descriptions that someone so happily entered below! =)
-	memset( &items[nItem], 0, sizeof( struct item_st ) );
-
-	if (ser)
-	{
-		items[nItem].ser1=(unsigned char)(itemcount2>>24); // Item serial number
-		items[nItem].ser2=(unsigned char)(itemcount2>>16);
-		items[nItem].ser3=(unsigned char)(itemcount2>>8);
-		items[nItem].ser4=(unsigned char)(itemcount2%256);
-		items[nItem].serial=itemcount2;
-		setptr(&itemsp[itemcount2%HASHMAX], nItem);
-		itemcount2++;
-	} else {
-		items[nItem].ser1=255; // Item serial number
-		items[nItem].ser2=255;
-		items[nItem].ser3=255;
-		items[nItem].ser4=255;
-		items[nItem].serial=-1;
-	}
-	if (nItem==itemcount) itemcount++;
-
-	strcpy(items[nItem].name,"#");
-	strcpy( items[nItem].name2, "#" );	// abaddon
-	*(items[nItem].creator)='\0';
-	items[nItem].madewith = 0; // Added by Magius(CHE)
-	items[nItem].rank = 0; // Magius(CHE)
-	items[nItem].good = -1; // Magius(CHE)
-	items[nItem].rndvaluerate = 0; // Magius(CHE) (2)
-
-	items[nItem].multi1=255;//Multi serial1
-	items[nItem].multi2=255;//Multi serial2
-	items[nItem].multi3=255;//Multi serial3
-	items[nItem].multi4=255;//Multi serial4
-	items[nItem].multis=-1;//Multi serial
-	
-	items[nItem].id2=0x01;
-	items[nItem].x=100;
-	items[nItem].y=100;
-	items[nItem].cont1=255; // Container that this item is found in
-	items[nItem].cont2=255;
-	items[nItem].cont3=255;
-	items[nItem].cont4=255;
-	items[nItem].contserial=-1;
-	items[nItem].amount=1; // Amount of items in pile
-	items[nItem].carve = -1; // AntiChrist - for new carving system
-	items[nItem].gatenumber=-1;
-	items[nItem].owner1=255;
-	items[nItem].owner2=255;
-	items[nItem].owner3=255;
-	items[nItem].owner4=255;
-	items[nItem].ownserial=-1;
-	items[nItem].spawn1 = 0;
-	items[nItem].spawn2 = 0;
-	items[nItem].spawn3 = 0;
-	items[nItem].spawn4 = 0;
-	items[nItem].spawnserial = 0;
-	items[nItem].racialEffect = 65535;
-}
-// -- delete an item (Actually just mark it is free)
-void cItem::DeleItem(int i)
-{
-	unsigned int j;
-	int ci, ptr;
-
-	if( items[i].free == 0 )
-	{
-		if( items[i].contserial != 0xFFFFFFFF && items[i].contserial < 0x40000000 ) // it's a player!
-		{
-			CHARACTER player = calcCharFromSer( items[i].contserial );
-			if( player != -1 )
-			{
-				/************************************************************/
-				/* OakWood "plate destroyed but don't restore stats" bugfix */
-				chars[player].st -= items[i].st2;
-				chars[player].dx -= items[i].dx2;
-				chars[player].in -= items[i].in2;
-				if(items[i].poisoned) 
-				{
-					chars[player].poison -= items[i].poisoned;
-					if( chars[player].poison < 0 ) 
-						chars[player].poison = 0;
-				}			
-				/************************************************************/
-			}
-		}
-		removeitem[1]=items[i].ser1;
-		removeitem[2]=items[i].ser2;
-		removeitem[3]=items[i].ser3;
-		removeitem[4]=items[i].ser4;
-		for (j=0;j<now;j++)
-		{
-			if (perm[j]) Network->xSend(j, removeitem, 5, 0);
-		}
-		if( items[i].glow > 0 )
-		{
-			int j = findbyserial( &itemsp[items[i].glow%HASHMAX], items[i].glow, 0 );
-			if( j != -1 )
-				DeleItem( j );  // LB glow stuff, deletes the glower of a glowing stuff automatically
-		}
-		if (items[i].type==1 || items[i].type==63 || items[i].type==65 || items[i].type==87)
-		{
-			for (ptr=0;ptr<contsp[items[i].serial%HASHMAX].max;ptr++)
-			{
-				ci=contsp[items[i].serial%HASHMAX].pointer[ptr];
-				if (ci!=-1)
-//					DeleItem( ci );
-				{
-					//recursion_is_devine=1;
-					//DeleItem(ci);
-				}
-			}
-		}
-
-		// - remove from pointer arrays
-		removefromptr(&itemsp[items[i].serial%HASHMAX], i);
-		if( items[i].spawnserial != -1 && items[i].spawnserial != 0 ) 
-			removefromptr(&spawnsp[items[i].spawnserial%HASHMAX], i);
-		if( items[i].ownserial != -1 ) 
-			removefromptr(&ownsp[items[i].ownserial%HASHMAX], i);
-		if( items[i].contserial != -1 ) 
-			removefromptr(&contsp[items[i].contserial%HASHMAX], i);
-		// - remove from mapRegions if a world item
-		if( items[i].contserial == -1 )
-		{
-			if( da != 1 ) 
-				mapRegions->RemoveItem( i ); // da==1 not added !!
-		}
-		items[i].free=1;
-		items[i].x=20+(xcounter++);
-		items[i].y=50+(ycounter);
-		items[i].z=9;
-		items[i].cont1=255;
-		items[i].cont2=255;
-		items[i].cont3=255;
-		items[i].cont4=255;
-		items[i].contserial=-1;
-
-		if (xcounter==40)
-		{
-			ycounter++;
-			xcounter=0;
-		}
-		if (ycounter==80)
-		{
-			ycounter=0;
-			xcounter=0;
-		}
-		/*if (imemcheck<500)
-		{
-			imemcheck++;
-			freeitemmem[imemcheck]=i;
-		}
-		else imemover=1;*/
-	}
-	items.Delete( i );
-}
-
-// sockets
-int cItem::CreateScriptItem(int s, int itemnum, int nSpawned)
-{
-	char sect[512];
-	int tmp, theitem;
-	unsigned int c;
-	long int pos;
-	tile_st tile;
- 
-	openscript("items.scp");
-	sprintf(sect, "ITEM %i", itemnum);
-	if (!i_scripts[items_script]->find(sect))
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-			else strcpy(sect, n_scripts[custom_item_script]);
-		} else return -1;
-	} else strcpy(sect, "items.scp");
-
-	c=MemItemFree();
-	if( c == -1 )
-		return -1;
-
-	InitItem(c);
-	theitem=c;
-	items[c].id1=0x09;
-	items[c].id2=0x15;
-	items[c].wipe=0;
-	items[c].amount = 1;		// obviously some things have no default val, and 0 is not a good number
-	if ((s!=-1) && (!nSpawned))
-	{
-		if (triggerx)
-		{
-			items[c].x=triggerx;
-			items[c].y=triggery;
-			items[c].z=triggerz;
-		}
-		else
-		{
-			items[c].x=(buffer[s][11]<<8)+buffer[s][12];
-			items[c].y=(buffer[s][13]<<8)+buffer[s][14];
-			items[c].z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-		}
-	}
-
-
-	int anum;   
-	do
-	{
-		read2();
-		if (script1[0]!='}')
-		{
-			switch( script1[0] )
-			{
-			case 'a':
-			case 'A':
-				if (!(strcmp("AMOUNT",script1))) items[c].amount=str2num(script2);
-				else if (!(strcmp("ATT", script1 ))) items[c].att = str2num( script2 );
-				else if (!(strcmp("AC", script1))) items[c].armorClass = str2num( script2 );
-				break;
-			case 'c':
-			case 'C':
-				if (!(strcmp("CREATOR", script1))) strcpy( items[c].creator, script2 ); // by Magius(CHE)
-				else if (!(strcmp("COLOR",script1)))
-				{
-					tmp=hstr2num(script2);
-					items[c].color1=(unsigned char)(tmp>>8);
-					items[c].color2=(unsigned char)(tmp%256);
-				}
-				else if (!(strcmp(script1, "CORPSE"))) items[c].corpse=str2num(script2);
-				break;
-			case 'd':
-			case 'D':
-				if ((!(strcmp("DAMAGE",script1)))||(!(strcmp("ATT",script1)))) 
-					items[c].att = getstatskillvalue(script2);
-				else if (!(strcmp("DEF",script1))) items[c].def=str2num(script2);
-				else if (!(strcmp("DEX", script1))) items[c].dx=str2num(script2);
-				else if (!(strcmp("DEXADD", script1))) items[c].dx2=str2num(script2);
-				else if (!(strcmp("DIR",script1))) items[c].dir=str2num(script2);
-				else if (!(strcmp("DYE",script1))) items[c].dye=str2num(script2);
-				else if (!(strcmp("DECAY",script1))) items[c].priv=items[c].priv|0x01;
-				else if (!(strcmp("DISPELLABLE",script1))) items[c].priv=items[c].priv|0x04;
-				else if (!(strcmp("DISABLED",script1))) items[c].disabled=str2num(script2);
-				else if (!(strcmp("DX", script1))) items[c].dx=str2num(script2);
-				else if (!(strcmp("DX2", script1))) items[c].dx2=str2num(script2);
-				else if (!(strcmp(script1, "DYEABLE"))) items[c].dye=str2num(script2);
-				else if (!(strcmp(script1, "DOORFLAG"))) items[c].doordir=str2num(script2);
-				break;
-			case 'g':
-			case 'G':
-				if (!(strcmp("GOOD", script1 ))) items[c].good = str2num( script2 ); // Added by Magius(CHE)
-				else if( !(strcmp(script1, "GLOW"))) items[c].glow = str2num( script2 );
-				else if( !(strcmp(script1, "GLOWBC")))
-				{
-					unsigned int i = str2num( script2 );
-					items[c].glow_c1 = (unsigned char)(i>>8);
-					items[c].glow_c2 = (unsigned char)(i%256);
-				}
-				else if( !(strcmp(script1, "GLOWTYPE"))) items[c].glow_effect = str2num( script2 ); 
-				break;
-			case 'h':
-			case 'H':
-				if (!(strcmp("HP", script1))) items[c].hp=str2num(script2);
-				else if (!(strcmp("HIDAMAGE", script1))) items[c].hidamage=str2num(script2);
-				break;
-			case 'i':
-			case 'I':
-				if (!(strcmp("ITEMLIST", script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					DeleItem(c);
-					theitem = c = CreateScriptRandomItem(s, script2);
-					if( c == -1 )
-						return -1;
-					//addrandomitem(c,script2,s);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY");
-				}
-				else if (!(strcmp("ID",script1)))
-				{
-					tmp=hstr2num(script2);
-					items[c].id1=(unsigned char)(tmp>>8);
-					items[c].id2=(unsigned char)(tmp%256);
-				}
-				else if (!(strcmp("INT", script1))) items[c].in=str2num(script2);
-				else if (!(strcmp("INTADD", script1))) items[c].in2=str2num(script2);
-				else if (!(strcmp(script1, "IN"))) items[c].in=str2num(script2); 
-				else if (!(strcmp(script1, "IN2"))) items[c].in2=str2num(script2); 
-				else if (!(strcmp("ITEMHAND", script1 ))) items[c].itmhand = str2num( script2 );
-				break;
-			case 'l':
-			case 'L':
-				if (!(strcmp("LODAMAGE", script1))) items[c].lodamage=str2num(script2);
-				else if (!(strcmp("LAYER",script1))&&(s==-1)) items[c].layer=str2num(script2);
-				break;
-			case 'm':
-			case 'M':
-				if (!(strcmp("MAXHP", script1))) items[c].maxhp=str2num(script2);
-				else if (!(strcmp("MOVABLE",script1))) items[c].magic=str2num(script2);
-				else if (!(strcmp("MORE", script1)))
-				{
-					tmp=str2num(script2);
-					items[c].more1=(unsigned char)(tmp>>24);
-					items[c].more2=(unsigned char)(tmp>>16);
-					items[c].more3=(unsigned char)(tmp>>8);
-					items[c].more4=(unsigned char)(tmp%256);
-				}
-				else if (!(strcmp("MORE2", script1)))
-				{
-					tmp=str2num(script2);
-					items[c].moreb1=(unsigned char)(tmp>>24);
-					items[c].moreb2=(unsigned char)(tmp>>16);
-					items[c].moreb3=(unsigned char)(tmp>>8);
-					items[c].moreb4=(unsigned char)(tmp%256);
-				}
-				else if (!(strcmp("MOREX",script1))) items[c].morex=str2num(script2);
-				else if (!(strcmp("MOREY",script1))) items[c].morey=str2num(script2);
-				else if (!(strcmp("MOREZ",script1))) items[c].morez=str2num(script2);
-				break;
-			case 'n':
-			case 'N':
-				if (!(strcmp("NAME",script1))) strcpy(items[c].name, script2);
-				else if (!(strcmp("NAME2",script1))) strcpy(items[c].name2, script2);
-				else if (!(strcmp("NEWBIE",script1))) items[c].priv=items[c].priv|0x02;
-				break;
-			case 'o':
-			case 'O':
-				if (!(strcmp("OFFSPELL",script1))) items[c].offspell=str2num(script2);
-				break;
-			case 'p':
-			case 'P':
-				if (!(strcmp("POISONED",script1))) items[c].poisoned=str2num(script2);
-				else if (!(strcmp(script1, "PILEABLE"))) items[c].pileable=str2num(script2); 
-				else if (!(strcmp(script1, "PRIV"))) items[c].priv=str2num(script2); 
-#ifdef UOXPERL
-				else if (!(strcmp("PERLINIT",script1))) strcpy(items[c].perl_init, script2);
-#endif
-				break;
-			case 'r':
-			case 'R':
-				if (!(strcmp("RANK", script1)))
-				{
-					items[c].rank = str2num( script2 ); // By Magius(CHE)
-					if( items[c].rank <= 0 ) items[c].rank = 10;
-				}
-				else if (!(strcmp("RACE",script1))) items[c].racialEffect = str2num( script2 );
-				else if (!(strcmp("RESTOCK",script1))) items[c].restock=str2num(script2);
-				break;
-			case 's':
-			case 'S':
-				if( !(strcmp( "SK_MADE", script1 ))) items[c].madewith = str2num( script2 ); // by Magius(CHE)
-				else if (!(strcmp("SPD",script1))) items[c].spd=str2num(script2);
-				else if (!(strcmp("STR", script1))) items[c].st=str2num(script2);
-				else if (!(strcmp("STRADD", script1))) items[c].st2=str2num(script2);
-				else if (!(strcmp(script1, "ST"))) items[c].st=str2num(script2); 
-				else if (!(strcmp(script1, "ST2"))) items[c].st2=str2num(script2);
-				break;
-			case 't':
-			case 'T':
-				if (!(strcmp("TYPE",script1))) items[c].type=str2num(script2);
-				else if (!(strcmp("TRIGGER",script1))) items[c].trigger=str2num(script2);
-				else if (!(strcmp("TRIGTYPE",script1))) items[c].trigtype=str2num(script2);
-				else if (!(strcmp(script1, "TYPE2"))) items[c].type2=str2num(script2);
-				break;
-			case 'u':
-			case 'U':
-				if (!(strcmp("USES",script1))) items[c].tuses=str2num(script2);
-				break;
-			case 'v':
-			case 'V':
-				if (!(strcmp("VISIBLE",script1))) items[c].visible=str2num(script2);
-				else if (!(strcmp("VALUE",script1))) items[c].value=str2num(script2);
-				break;
-			case 'w':
-			case 'W':
-				if (!(strcmp("WEIGHT",script1)))
-				{
-					anum=3;
-					//anum=4;
-					anum=str2num(script2); // Ison 2-20-99
-					items[c].weight=anum;
-				}
-				else if (!(strcmp(script1, "WIPE"))) items[c].wipe=str2num(script2); 
-				break;
-			default:	break;
-			}
-		}
-	}
-	while (script1[0]!='}');
-
-	closescript();
-	if( c == -1 )
-		return -1;
-	Map->SeekTile( ( items[c].id1<<8 ) + items[c].id2, &tile );
-	if( tile.flag2&0x08 ) 
-		items[c].pileable = 1;
-	if( c == itemcount ) 
-		itemcount++;
-	itemcount2++;
-	if( !items[c].maxhp && items[c].hp ) 
-		items[c].maxhp = items[c].hp;
-
-	mapRegions->RemoveItem( c );
-	if( items[c].contserial==-1 ) 
-		mapRegions->AddItem( c );
-	return theitem;
-
-	
-}
-
-int cItem::CreateRandomItem(char * sItemList)//NEW FUNCTION -- 24/6/99 -- AntiChrist merging codes
-{
-	int i=0, Items[256];  //-- no more than 256 items in a single item list
-	char sect[512];
-	openscript("items.scp");
-	sprintf(sect, "ITEMLIST %s", sItemList);
-	if (!i_scripts[items_script]->find(sect)) // -- Valid itemlist?
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-		} else return -1;
-	}
-
-	do  // -- count items storing item #'s in Items[]
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			Items[i]=str2num(script1);
-			i++;
-		}
-	}
-	while (script1[0]!='}');
-	closescript();
-
-	if( i == 0 ) 
-		return Items[0];
-	else
-		return Items[rand()%i];
-}
-
-int cItem::CreateScriptRandomItem(int s, char * sItemList)
-{
-	int i=0, Items[512], k;  //-- no more than 512 items in a single item list (changed by Magius(CHE))
-	char sect[512];
-	openscript("items.scp");
-	sprintf(sect, "ITEMLIST %s", sItemList);
-	if (!i_scripts[items_script]->find(sect)) // -- Valid itemlist?
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-		} else return -1;
-	}
-
-	do  // -- count items storing item #'s in Items[]
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			Items[i]=str2num(script1);
-			i++;
-		}
-	}
-	while (script1[0]!='}');
-	closescript();
-
-	if( i != 0 ) i=rand()%(i);
-	k=Items[i];   // -- Get random Item #
-
-	if (k!=0)
-	{
-		i=CreateScriptItem(s, k, 1);  // -- Create Item
-	}
-	return i;
-}
-
-//added by genesis 11-4-98 modified by Myth 11/12/98 fix for dupe problem in pack.
-//int SpawnItemBackpack(int s, int nAmount, char* cName, int nStackable,
-//        char cItemId1, char cItemId2, char cColorId1, char cColorId2)
-
-// Spawn item- Will create an item based on item ID1 and ID2. If nPack is 1 it will
-//             put the item in nSocket's pack (auto-stacking). If nSend is 1 it will
-//             senditem() to all online characters. If you want to make specific changes
-//             to the item before sending the information pass nSend as 0.
-int cItem::SpawnItem(UOXSOCKET nSocket, int nAmount, char* cName, int nStackable,
-        unsigned char cItemId1, unsigned char cItemId2, unsigned char cColorId1, unsigned char cColorId2, int nPack, int nSend)
-{
-	/*
-	** OK, here's the scoop, in a few key places we were calling add item when there was
-	** flat out no way to get a socket, say if a region spawner made an item, there is no
-	** associated socket.  This was causing the socket to be -1, and it was indexing into
-	** curchar[-1] and blowing up.  So I made a new version that takes a socket and a
-	** a character (the following function) if you want to call that one with socket = -1
-	** thats fine, because you have to pass the character in as well.  If you call this
-	** function (which was the original) you are not allowed to pass in -1 for the socket
-	** because it will crash. I've put the assert() in its place, so at least when it does
-	** crash you'll know why. If this assert() ever happens to you, it means you need to
-	** fix the CALLER of this function to pass the character in and call the other function
-	** instead. Taking the assert() out won't help, its just liable to crash on currchar[-1]
-	** anyways.  - fur
-	*/
-	
-//	assert(nSocket >= 0);
-	if( nSocket < 0 )
-	{
-		printf( "ERROR: Crash being avoided, valid socket needs to be passed to SpawnItem" );
-		return -1;
-	}
-	CHARACTER ch = currchar[nSocket];
-	return SpawnItem(nSocket, ch, nAmount, cName, nStackable, cItemId1, cItemId2, cColorId1, cColorId2, nPack, nSend);
-}
-
-int cItem::SpawnItem(UOXSOCKET nSocket, CHARACTER ch, int nAmount, char* cName, int nStackable,
-					 unsigned char cItemId1, unsigned char cItemId2, unsigned char cColorId1, unsigned char cColorId2, int nPack, int nSend)
-{
-	if( nAmount == 0 )
-		return -1;
-	int inpack = 0, c = -1, i = -1;
-	// yikes! what if nSocket is -1???
-	int p=packitem(ch); //new added by Myth 11/12/98
-	
-	//Auto-Stack code!
-	if (nPack && nStackable==1 && p!=-1)
-	{
-		for (int ptr=0;ptr<contsp[items[p].serial%HASHMAX].max;ptr++)
-		{
-			if ( ptr > -1 )
-			{
-				i = contsp[items[p].serial%HASHMAX].pointer[ptr];
-				if ((i > -1) && (items[i].id1==cItemId1) && (items[i].id2==cItemId2) &&
-					(items[i].color1==cColorId1 && items[i].color2==cColorId2))//)
-				{
-					if (items[i].contserial==items[p].serial)
-					{
-						items[i].amount=items[i].amount+nAmount;
-						inpack = 1;
-						RefreshItem( i ); // AntiChrist
-						break;
-					}
-				}
-			}
-		}
-	}
-	
-	if(!nPack || (nPack && !inpack))
-	{
-		c=MemItemFree();
-		InitItem(c);
-		if (c==-1) return -1;
-		i=c;
-		if(cName!=NULL) strcpy(items[c].name,cName);
-		items[c].id1=cItemId1;
-		items[c].id2=cItemId2;
-		if (nPack && p!=-1) 
-		{
-			setserial(c, p, 1);
-		}
-		items[c].color1=cColorId1;
-		items[c].color2=cColorId2;
-		if (nPack)
-		{
-			items[c].x=(50+rand()%80);
-			items[c].y=(50+rand()%80);
-			items[c].z=9;
-			
-			if (p==-1)
-			{
-				mapRegions->RemoveItem(c);
-				items[c].x=chars[ch].x;  // LB place it at players feet if he hasnt got backpack
-				items[c].y=chars[ch].y; 
-				items[c].z=chars[ch].z;          
-				
-				mapRegions->AddItem(c);
-			}
-		}
-		items[c].amount=nAmount;
-		items[c].pileable=nStackable;
-		items[c].att=5;
-		items[c].priv |= 0x01;
-		// yikes, what if nSocket is -1?
-		GetScriptItemSetting( c ); // Added by Magius(CHE)
-		chars[ch].making=c;
-		//		if (nSend) for(m=0;m<now;m++) if(perm[m]) senditem(m,c); 
-		RefreshItem( c );
-		if(c==itemcount) itemcount++;
-		itemcount2++;
-	}
-	
-	if (nSend && nSocket != -1) statwindow(nSocket,ch);
-	return i;
-}
-
-void cItem::GetScriptItemSetting(int c)
-{// by Magius(CHE)
-	int tmp, sectfound = 0;
-	char buff[512];
-	char tscript1[512];
-	char tscript2[512];
-	if( c == -1 )
+	if( i == NULL || i->isFree() )
 		return;
 
-	strcpy( tscript1, script1 ); // AntiChrist
-	strcpy( tscript2, script2 );
-    openscript("harditems.scp");
-	*(buff) = '\0'; // Fix by Magius(CHE)
-	sprintf(buff,"x%x%x",items[c].id1,items[c].id2);
-/*	if (!i_scripts[hard_items]->isin(buff)) {
-		closescript();
-		return;
-	}*/
-	int anum=3;
-	do
-	{
-		read2();
-
-		if (script1[0]!='}')
-		{
-			if( !(strcmp("SECTION", script1 ) ) ) if( strstr( script2, buff)) sectfound = 1; // AntiChrist bugfix
-
-			if( sectfound ) // AntiChrist bugfix
-			{
-				switch( script1[0] )
-				{
-				case 'a':
-				case 'A':
-					if (!(strcmp("AMOUNT",script1))) items[c].amount=str2num(script2);
-					else if (!(strcmp("AC", script1))) items[c].armorClass = str2num( script2 );
-					break;
-				case 'c':
-				case 'C':
-					if (!(strcmp("CREATOR", script1))) strcpy(items[c].creator, script2); // by Magius(CHE)
-					else if (!(strcmp(script1, "CORPSE"))) items[c].corpse=str2num(script2);
-					else if (!(strcmp("COLOR",script1)))
-					{
-						tmp=hstr2num(script2);
-						items[c].color1=(unsigned char)(tmp>>8);
-						items[c].color2=(unsigned char)(tmp%256);
-					}
-					break;
-				case 'd':
-				case 'D':
-					if ((!(strcmp("DAMAGE",script1)))||(!(strcmp("ATT",script1)))) 
-						items[c].att = getstatskillvalue(script2);
-					else if (!(strcmp("DEF",script1))) items[c].def=str2num(script2);
-					else if (!(strcmp("DEX", script1))) items[c].dx=str2num(script2);
-					else if (!(strcmp("DEXADD", script1))) items[c].dx2=str2num(script2);
-					else if (!(strcmp("DX", script1))) items[c].dx=str2num(script2);
-					else if (!(strcmp("DX2", script1))) items[c].dx2=str2num(script2);
-					else if (!(strcmp("DYE",script1))) items[c].dye=str2num(script2);
-					else if (!(strcmp("DIR",script1))) items[c].dir=str2num(script2);
-					else if (!(strcmp("DECAY",script1))) items[c].priv=items[c].priv|0x01;
-					else if (!(strcmp("DISPELLABLE",script1))) items[c].priv=items[c].priv|0x04;
-					else if (!(strcmp("DISABLED",script1))) items[c].disabled=str2num(script2);
-					else if (!(strcmp(script1, "DYEABLE"))) items[c].dye=str2num(script2);
-					else if (!(strcmp(script1, "DOORFLAG"))) items[c].doordir=str2num(script2); 
-					break;
-				case 'g':
-				case 'G':
-					if (!(strcmp("GOOD",script1))) items[c].good=str2num(script2); // Added by Magius(CHE)
-					else if( !(strcmp(script1, "GLOW"))) items[c].glow = str2num( script2 ); 
-					else if( !(strcmp(script1, "GLOWBC")))
-					{
-						unsigned int i = str2num( script2 );
-						items[c].glow_c1 = (unsigned char)(i>>8);
-						items[c].glow_c2 = (unsigned char)(i%256);
-					}
-					else if( !(strcmp(script1, "GLOWTYPE"))) items[c].glow_effect = str2num( script2 ); 
-					break;
-				case 'h':
-				case 'H':
-					if (!(strcmp("HP", script1))) items[c].hp=str2num(script2);
-					else if (!(strcmp("HIDAMAGE", script1))) items[c].hidamage=str2num(script2);
-					break;
-				case 'i':
-				case 'I':
-					if (!(strcmp("INT", script1))) items[c].in=str2num(script2);
-					else if (!(strcmp(script1, "ID")))
-					{
-						unsigned int i=str2num(script2);
-						items[c].id1=(unsigned char)(i>>8);
-						items[c].id2=(unsigned char)(i%256);
-					}
-					else if (!(strcmp("INTADD", script1))) items[c].in2=str2num(script2);
-					else if (!(strcmp("IN", script1))) items[c].in=str2num(script2);
-					else if (!(strcmp("IN2", script1))) items[c].in2=str2num(script2);
-					else if (!(strcmp("ITEMHAND",script1))) items[c].itmhand=str2num(script2);
-					break;
-				case 'l':
-				case 'L':
-					if (!(strcmp("LODAMAGE", script1))) items[c].lodamage=str2num(script2);
-					else if (!(strcmp("LAYER",script1))) items[c].layer=str2num(script2);
-					break;
-				case 'm':
-				case 'M':
-					if (!(strcmp("MAXHP", script1))) items[c].maxhp=str2num(script2); // by Magius(CHE)
-					else if (!(strcmp("MOVABLE",script1))) items[c].magic=str2num(script2);
-					else if (!(strcmp("MORE", script1)))
-					{
-						tmp=str2num(script2);
-						items[c].more1 = (unsigned char)(tmp>>24);
-						items[c].more2 = (unsigned char)(tmp>>16);
-						items[c].more3 = (unsigned char)(tmp>>8);
-						items[c].more4 = (unsigned char)(tmp%256);
-					}
-					//MORE2 may not be useful ?
-					else if (!(strcmp("MORE2", script1)))
-					{
-						tmp=str2num(script2);
-						items[c].moreb1 = (unsigned char)(tmp>>24);
-						items[c].moreb2 = (unsigned char)(tmp>>16);
-						items[c].moreb3 = (unsigned char)(tmp>>8);
-						items[c].moreb4 = (unsigned char)(tmp%256);
-					}
-					else if (!(strcmp("MOREX",script1))) items[c].morex=str2num(script2);
-					else if (!(strcmp("MOREY",script1))) items[c].morey=str2num(script2);
-					else if (!(strcmp("MOREZ",script1))) items[c].morez=str2num(script2);
-					break;
-				case 'n':
-				case 'N':
-					if (!(strcmp("NAME",script1))) strcpy(items[c].name, script2);
-					else if (!(strcmp("NAME2",script1))) strcpy(items[c].name2, script2);
-					else if (!(strcmp("NEWBIE",script1))) items[c].priv=items[c].priv|0x02;
-					break;
-				case 'o':
-				case 'O':
-					if (!(strcmp("OFFSPELL",script1))) items[c].offspell=str2num(script2);
-					break;
-				case 'p':
-				case 'P':
-					if (!(strcmp("POISONED",script1))) items[c].poisoned=str2num(script2);
-#ifdef UOXPERL
-					else if (!(strcmp("PERLINIT",script1))) strcpy(items[c].perl_init, script2);
-#endif
-					else if (!(strcmp(script1, "PILEABLE"))) items[c].pileable=str2num(script2); 
-					else if (!(strcmp(script1, "PRIV"))) items[c].priv=str2num(script2); 
-					break;
-				case 'r':
-				case 'R':
-					if (!(strcmp(script1, "RANK"))) {
-						items[c].rank=str2num(script2); // By Magius(CHE)
-						if( items[c].rank == 0 ) 
-							items[c].rank = 10;
-					}
-					else if (!(strcmp("RESTOCK",script1))) items[c].restock=str2num(script2);
-					else if (!(strcmp("RACE",script1))) items[c].racialEffect=str2num(script2); // Added by Magius(CHE)
-					break;
-				case 's':
-				case 'S':
-					if (!(strcmp("SK_MADE", script1))) items[c].madewith=str2num(script2); // by Magius(CHE)
-					else if (!(strcmp("STR", script1))) items[c].st=str2num(script2);
-					else if (!(strcmp("STRADD", script1))) items[c].st2=str2num(script2);
-					else if (!(strcmp("SPD",script1))) items[c].spd=str2num(script2);
-					else if (!(strcmp("ST", script1))) items[c].st=str2num(script2);
-					else if (!(strcmp("ST2", script1))) items[c].st2=str2num(script2);
-					break;
-				case 't':
-				case 'T':
-					if (!(strcmp("TYPE",script1))) items[c].type=str2num(script2);
-					else if (!(strcmp("TYPE2",script1))) items[c].type2=str2num(script2);
-					else if (!(strcmp("TRIGGER",script1))) items[c].trigger=str2num(script2);
-					else if (!(strcmp("TRIGTYPE",script1))) items[c].trigtype=str2num(script2);
-					break;
-				case 'u':
-				case 'U':
-					if (!(strcmp("USES",script1))) items[c].tuses=str2num(script2);
-					break;
-				case 'v':
-				case 'V':
-					if (!(strcmp("VISIBLE",script1))) items[c].visible=str2num(script2);
-					else if (!(strcmp("VALUE",script1))) items[c].value=str2num(script2);
-					break;
-				case 'w':
-				case 'W':
-					if (!(strcmp("WEIGHT",script1)))
-					{
-						anum=4;
-						anum=str2num(script2); // Ison 2-20-99
-						items[c].weight=anum;
-					}
-				default:	break;
-				}
-			}
-		}
-		if( script1[0]=='}' && sectfound ) break;
-	}
-    while (strcmp( script1, "EOF" ));
-    closescript();
-	strcpy( script1, tscript1 ); // AntiChrist
-	strcpy( script2, tscript2 );
-}
-
-
-int cItem::SpawnItemBackpack2(UOXSOCKET s, CHARACTER ch, int nItem, int nDigging) // Added by Genesis 11-5-98
-{
-	char sect[512];
-	int c, nTheItem,p, pos;
-
-	openscript("items.scp");
-	sprintf(sect, "ITEM %i", nItem);
-	if(!i_scripts[items_script]->find(sect))
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-			else strcpy(sect, n_scripts[custom_item_script]);
-		} else return -1;
-	} else strcpy(sect, "items.scp");
-
-	p=packitem(ch);
-	pos=ftell(scpfile); /* lord binary */
-	closescript();             
-	if (p==-1) return -1;
-	nTheItem=c=CreateScriptItem(s, nItem, 1);
-	if( c == -1 )
-		return -1;
-	openscript(sect);
-	fseek(scpfile, pos, SEEK_SET);
-	setserial(c, p, 1); 
-	items[c].x=(50+rand()%80);
-	items[c].y=(50+rand()%80);
-	items[c].z=9;
-	items[c].magic=1;
-
-	if(nDigging) 
-	{
-		if (items[c].value!=0) items[c].value=1+(rand()%(items[c].value));
-		if (items[c].hp!=0) items[c].hp=1+(rand()%(items[c].hp));
-	}
-	pos=ftell( scpfile );
-	closescript(); // MUST close script before calling GetScriptItem() because it will open its own script - fur
-	GetScriptItemSetting( c ); // Added by Magius(CHE) (2)
-	openscript( sect );
-	fseek( scpfile, pos, SEEK_SET );
-//	for(unsigned int m=0;m<now;m++) if(perm[m]) senditem(m,c); 
-	RefreshItem( c );
-	statwindow(s,currchar[s]);
-	closescript();
-	return nTheItem;
-}
-
-char cItem::isFieldSpellItem(int i) //LB
-{
-  char a = 0;
-
-  if (items[i].id1==0x39 && (items[i].id2==0x96 || items[i].id2==0x8C)) a=1; // fire field
-  if (items[i].id1==0x39 && (items[i].id2==0x15 || items[i].id2==0x20)) a=2; // poison field
-  if (items[i].id1==0x39 && (items[i].id2==0x79 || items[i].id2==0x67)) a=3; // paralyse field
-  if (items[i].id1==0x39 && (items[i].id2==0x56 || items[i].id2==0x46)) a=4; // energy field;
-
-  return a;
-
-}
-
-//NEW DECAYITEM ZIPPY FUNCTION -- AntiChrist merging codes -- (24/6/99)
-void cItem::DecayItem(unsigned int currenttime, int i) 
-{
-	int j,/*k,*/serial,serhash,ci,multi, preservebody;
-	//if (nextdecaytime<=currenttime||(overflow))
-	if( items[i].decaytime <= currenttime || (overflow) )//fixed by JustMichael
-	{
-		if (items[i].priv&0x01 && items[i].contserial==-1 && items[i].free==0)
-		{  // decaytime = 5 minutes, * 60 secs per min, * clocks_per_sec
-			if (items[i].decaytime==0) 
-			{
-				items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
-			}
-			
-			if (items[i].decaytime<=currenttime)
-			{
-                //Multis --Boats ->
-
-				if (!isFieldSpellItem(i)) // Gives fieldspells a chance to decay in multis, LB
-				{
-				  if (items[i].multis<1 && !items[i].corpse)
-				  {
-					// JustMichael -- Added a check to see if item is in a house
-					multi=findmulti(items[i].x, items[i].y, items[i].z);
-					if (multi!=-1)
-					{
-						if( items[multi].more4==0) //JustMichael -- set more to 1 and stuff can decay in the building
-						{
-							items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
-							setserial(i,multi,7);
-							return;
-						}
-					}
-				} 
-				  else if (items[i].multis>0 && !items[i].corpse) 
-				{					
-					  items[i].decaytime=server_data.decaytimer*CLOCKS_PER_SEC+currenttime;
-					  return;
-				}
-				}
-				//End Boats/Mutlis
-				//JustMichael--Keep player's corpse as long as it has more than 1 item on it
-				//up to playercorpsedecaymultiplier times the decay rate
-				if (items[i].corpse == 1 && items[i].ownserial!=-1)
-				{
-					preservebody=0;
-					serial=items[i].serial;
-					serhash=serial%HASHMAX;
-					for( ci=0; ci < contsp[serhash].max; ci++ )
-					{
-						j=contsp[serhash].pointer[ci];
-						if( j != -1 )
-						{
-							preservebody++;
-						}
-//						if( preservebody) break; // lagfix - AntiChrist - not necessary to check ALL the items // Umm... this will break code further down... just look at the next if statement
-					}
-					if( preservebody > 1 && items[i].more4 )
-					{
-						items[i].more4--;
-						items[i].decaytime = server_data.decaytimer * CLOCKS_PER_SEC + currenttime;
-						return;
-					}
-				}
-				if( (items[i].type == 1 && items[i].corpse != 1 ) || (items[i].ownserial != -1 && items[i].corpse) || (!server_data.lootdecayswithcorpse && items[i].corpse ))
-				{
-					serial=items[i].serial;
-					serhash=serial%HASHMAX;
-					for (ci=0;ci<contsp[serhash].max;ci++)
-					{
-						j=contsp[serhash].pointer[ci];
-                        if (j!=-1) //lb
-						{
-						   if ((items[j].contserial==items[i].serial)/* &&
-						    	(items[j].layer!=0x0B)&&(items[j].layer!=0x10)*/)
-						   {
-							if( items[j].contserial != -1 ) removefromptr(&contsp[items[j].contserial%HASHMAX], j);
-							items[j].cont1=255;
-							items[j].cont2=255;
-							items[j].cont3=255;
-							items[j].cont4=255;
-							items[j].contserial=-1;
-							//mapRegions->RemoveItem(i);
-							mapRegions->RemoveItem(j); // bugfix - AntiChrist
-							items[j].x=items[i].x;
-							items[j].y=items[i].y;
-							items[j].z=items[i].z;
-							mapRegions->AddItem(j); //add this item to a map cell
-
-							items[j].decaytime = ( uiCurrentTime + (server_data.decaytimer*CLOCKS_PER_SEC ) ); // AntiChrist - make the item decay
-							RefreshItem( j ); // AntiChrist
-/*							for (k=0;k<now;k++) 
-							{
-								if (perm[k] && inrange2(k, j)) 
-								{
-									senditem(k,j);
-								}
-							}*/
-						}
-						/*else if ((items[j].contserial==items[i].serial) &&
-							((items[j].layer==0x0B)||(items[j].layer==0x10)))
-						{
-							DeleItem(j);
-						}*/
-						} // enof of if j!=-1
-					}
-					DeleItem(i);
-				} 
-				else 
-				{
-					if( items[i].contserial == -1 )
-					{
-						DeleItem(i);
-					}
-					else
-					{
-						items[i].decaytime = server_data.decaytimer*CLOCKS_PER_SEC + currenttime;
-					}
-				}
-			}
-		}
-	}
-}
-
-//END FUNCTION
-
-//NEW RESPAWNITEM FUNCTION STARTS HERE -- AntiChrist merging codes -- (24/6/99)
-
-void cItem::RespawnItem(unsigned int currenttime, int i)
-{
-	int  j, k,m,serial,serhash,ci, c;
-	if( i == -1 )
-		return;
-	if (items[i].free) return;
-	switch( items[i].type )
+	switch( i->GetType() )
 	{
 	case 61:
 	case 62:
@@ -1370,574 +777,386 @@ void cItem::RespawnItem(unsigned int currenttime, int i)
 		return;
 	}
 
-	for(c=0;c<items[i].amount;c++)
+	int j, m, k;
+	ITEM ci;
+
+	HashBucketMulti< ITEM > * hashBucketI = NULL;
+	HashBucketMulti< CHARACTER > * hashBucketC = NULL;
+	for( int c = 0; c < i->GetAmount(); c++ )
 	{
-		if(items[i].gatetime+(c*items[i].morez*CLOCKS_PER_SEC)<=currenttime)// && chars[i].hp<=chars[i].st)
+		if( i->GetGateTime() + ( c*i->GetMoreZ() * CLOCKS_PER_SEC) <= uiCurrentTime )
 		{
-			if ((items[i].disabled!=0)&&((items[i].disabled<=currenttime)||(overflow)))
+			m = 0;
+			switch( i->GetType() )
 			{
-				items[i].disabled=0;
-			}
-			m=0;
-			if (items[i].type==61)
-			{
-				k=0;
-				serial=items[i].serial;
-				serhash=serial%HASHMAX;
-				for (j=0;j<spawnsp[serhash].max;j++)
+			case 61:
+				k = 0;
+				hashBucketI = nspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
+				for( j = 0; j < hashBucketI->NumEntries(); j++ )
 				{
-					ci=spawnsp[serhash].pointer[j];
-					if( ci > -1 )
-						if( items[i].serial==items[ci].spawnserial && ( items[ci].free == 0 ) )
+					ci = hashBucketI->GetEntry( j );
+					if( ci != INVALIDSERIAL )
 					{
-						if (i!=ci && items[ci].x==items[i].x && items[ci].y==items[i].y && items[ci].z==items[i].z)
+						if( items[ci].isFree() )
+							continue;
+						if( i->GetSerial() == items[ci].GetSpawn() )
 						{
-							k=1;
-							break;
+							if( i != &items[ci] && items[ci].GetX() == i->GetX() && items[ci].GetY() == i->GetY() && items[ci].GetZ() == i->GetZ() )
+							{
+								k = 1;
+								break;
+							}
 						}
 					}
 				}
 
-				if (k==0)
+				if( k == 0 )
 				{
-					if (items[i].gatetime==0)
+					if( i->GetGateTime() == 0 )
 					{
-						items[i].gatetime = (unsigned int)( (rand()%((int)(1+((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-							(items[i].morey*CLOCKS_PER_SEC*60)+currenttime );
+						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
 					}
-					if ((items[i].gatetime<=currenttime ||(overflow)) && items[i].morex!=0)
+					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
-						//AddRespawnItem(i,items[i].morex, 0);
-						AddRespawnItem( i, items[i].morex, 0 );
-						items[i].gatetime=0;
+						const char *lDesc = i->GetDesc();
+						if( lDesc[0] != 0 )	// not NULL terminated, so we can do something!
+						{
+							AddRespawnItem( i, lDesc, false, i->isSpawnerList() );
+						}
+						else if( i->GetMoreX() != 0 )
+						{
+							AddRespawnItem( i, i->GetMoreX(), false );
+						}
+						else
+							break;
+						i->SetGateTime( 0 );
 					}
 				}
-			}
-			if (items[i].type==62 || items[i].type==69 || items[i].type == 125 )
-			{
-				k=0;
-				if (items[i].serial==1073763561)
+				break;
+			case 62:
+			case 69:
+			case 125:
+				k = 0;
+
+				hashBucketC = ncspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
+				for( j = 0; j < hashBucketC->NumEntries(); j++ )
 				{
-					k=0;
-				}
-				serial=items[i].serial;
-				serhash=serial%HASHMAX;
-				for (j=0;j<cspawnsp[serhash].max;j++)
-				{
-					ci=cspawnsp[serhash].pointer[j];
-					if( ci > -1 )
-						if( chars[ci].spawnserial == serial && chars[ci].free == 0 )
+					ci = hashBucketC->GetEntry( j );
+					if( ci != INVALIDSERIAL )
 					{
-						k++;
+						if( chars[ci].isFree() )
+							continue;
+						if( chars[ci].GetSpawn() == i->GetSerial() )
+							k++;
 					}
 				}
 
-				if (k<items[i].amount)
+				if( k < i->GetAmount() )
 				{
-					if (items[i].gatetime==0)
+					if( i->GetGateTime() == 0 )
 					{
-						items[i].gatetime=(rand()%((int)(1+
-							((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-							
-							(items[i].morey*CLOCKS_PER_SEC*60)+currenttime;
+						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
 					}
-					if ((items[i].gatetime<=currenttime || (overflow)) && items[i].morex!=0)
+					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
-						Npcs->AddRespawnNPC(i,-1,items[i].morex,1);
-//						Npcs->AddRespawnNPC( i, items[i].morex, 1 );
-						items[i].gatetime=0;
+						const char *mDesc = i->GetDesc();
+						if( mDesc[0] != 0 )	// not NULL terminated, so we can do something!
+						{
+							Npcs->SpawnNPC( i, mDesc, i->WorldNumber(), i->isSpawnerList() );
+							i->SetGateTime( 0 );
+						}
+						else if( i->GetMoreX() != 0 )
+						{
+							char temp[512];
+							sprintf( temp, "%i", i->GetMoreX() );
+							Npcs->SpawnNPC( i, temp, i->WorldNumber(), false );
+							i->SetGateTime( 0 );
+						}
 					}
 				}
-			}
-			if ((items[i].type==63)||(items[i].type==64)||(items[i].type==65))
-			{
-				serial=items[i].serial;
-				serhash=serial%HASHMAX;
-				for (j=0;j<contsp[serhash].max;j++)
+				break;
+			case 63:
+			case 64:
+			case 65:
+				CItem *getItem;
+				getItem = NULL;
+				for( getItem = i->FirstItemObj(); !i->FinishedItems(); getItem = i->NextItemObj() )
 				{
-					ci=contsp[serhash].pointer[j];
-					if( ci > -1 )
+					if( getItem != NULL )
 					{
-						if( items[ci].contserial == serial && items[ci].free == 0 )
+						if( !getItem->isFree() )
 							m++;
 					}
 				}
-				if( (unsigned)m < items[i].amount )
+				if( m < i->GetAmount() )
 				{
-					if (items[i].gatetime==0)
+					if( i->GetGateTime() == 0 )
 					{
-						items[i].gatetime = (unsigned int)((rand()%((int)(1+((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
-							(items[i].morey*CLOCKS_PER_SEC*60)+uiCurrentTime );
+						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
 					}
-					if ((items[i].gatetime<=currenttime ||(overflow)) && items[i].morex!=0)
+					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
-						if( items[i].type == 63 )
+						const char *nDesc = i->GetDesc();
+						if( i->GetType() == 63 )
+							i->SetType( 64 ); // Lock the container
+						if( nDesc[0] != 0 )	// not NULL terminated, so we can do something!
 						{
-							items[i].type = 64; // Lock the container
+							AddRespawnItem( i, nDesc, true, i->isSpawnerList() );
+							i->SetGateTime( 0 );
 						}
-						AddRespawnItem(i,items[i].morex, 1); // If the item contains an item list then it will randomly choose one from the list, JM
-						items[i].gatetime=0;
+						else if( i->GetMoreX() != 0 )
+						{
+							AddRespawnItem( i, i->GetMoreX(), true );
+							i->SetGateTime( 0 );
+						}
 					}
 				}
+				break;
 			}
-		}//If time
-	}//for 
+		}
+	}
 }
 
-// author: LB purpose: returns the type of pack
-// to handle its x,y coord system correctly.
-// interpretation of the result:
-// valid x,y ranges depending on type:
-// type -1 : no pack
-// type 1  : y-range 50  .. 100
-// type 2  : y-range 30  .. 80
-// type 3  : y-range 100 .. 150
-// type 4  : y-range 40  .. 140
-// x-range 18 .. 118 for 1,2,3
-//         40 .. 140 for 4
-// modified by abaddon in the case statements to be more readable and flexible
-
-unsigned char cItem::PackType( unsigned char id1, unsigned char id2 )
+//o---------------------------------------------------------------------------o
+//|	Function	-	UI08 cItem::PackType( UI08 id1, UI08 id2 )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Get the packtype based on the packs ID
+//o---------------------------------------------------------------------------o
+UI08 cItem::PackType( UI16 id )
 {
-	switch( id1 )
+	switch( id )
 	{
-	case 0x09:
-		switch( id2 )
-		{
-		case 0xA8: 
-		case 0xAA:
-		case 0xB0:	return 1;
-		case 0xA9:	return 2;
-		case 0xAB:	return 3;
-		case 0xB2:	return 4;
-		default:	return 0xFF;
-		}
-	case 0x0E:
-		switch( id2 )
-		{
-		case 0x3C:
-		case 0x3D:
-		case 0x3E:
-		case 0x3F:
-		case 0x7E:
-		case 0x78:	return 2;
-		case 0x76:
-		case 0x79:
-		case 0x7D:
-		case 0x80:
-		case 0x7A:	return 1;
-		case 0x40:
-		case 0x41:
-		case 0x42:
-		case 0x7C:
-		case 0x43:	return 3;
-		case 0x75:
-		case 0x7F:
-		case 0x83:
-		case 0x77:	return 4;
-		default:	return 0xFF;
-		}
-	default:	return 0xFF;
+	case 0x09A8: 
+	case 0x09AA:
+	case 0x09B0:	return 1;
+	case 0x09A9:	return 2;
+	case 0x09AB:	return 3;
+	case 0x09B2:	return 4;
+	case 0x0E3C:
+	case 0x0E3D:
+	case 0x0E3E:
+	case 0x0E3F:
+	case 0x0E7E:
+	case 0x0E78:	return 2;
+	case 0x0E76:
+	case 0x0E79:
+	case 0x0E7D:
+	case 0x0E80:
+	case 0x0E7A:	return 1;
+	case 0x0E40:
+	case 0x0E41:
+	case 0x0E42:
+	case 0x0E7C:
+	case 0x0E43:	return 3;
+	case 0x0E75:
+	case 0x0E7F:
+	case 0x0E83:
+	case 0x0E77:	return 4;
+	default:		return 0xFF;
 	}
 	return 0xFF;		// safety catch all (avoids compiler warnings)
 }
 
-// NEW RESPAWNITEM FUNCTION ENDS HERE -- AntiChrist merging codes --
-void cItem::AddRespawnItem(int s, int x, int y)
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::AddRespawnItem( CItem *s, UI32 x, bool inCont )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Item spawning stuff
+//o---------------------------------------------------------------------------o
+void cItem::AddRespawnItem( CItem *s, UI32 x, bool inCont )
 {
-	int c, /*j,*/ k;
-	c=CreateScriptItem( -1, x, 1 ); // lb, bugfix
+	if( s == NULL )
+		return;
+	char temp[128];
+	sprintf( temp, "%i", x );
+	AddRespawnItem( s, temp, inCont, false );
+}
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::AddRespawnItem( CItem *s, const char *x, bool inCont )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Item spawning stuff
+//o---------------------------------------------------------------------------o
+void cItem::AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomItem = false )
+{
+	if( s == NULL || x == NULL )
+		return;
+	CItem *c = NULL;
+	if( randomItem )
+		c = CreateRandomItem( NULL, x, true, s->WorldNumber() );
+	else
+		c = CreateScriptItem( NULL, x, true, s->WorldNumber() );
+	if( c == NULL )
+		return;
 
-	if( c == -1 ) return;
-  
-	if( y <= 0 )
-	{
-		items[c].x=items[s].x;
-		items[c].y=items[s].y;
-		items[c].z=items[s].z;
-	    mapRegions->RemoveItem(c);
-		mapRegions->AddItem(c); //add spawned item to map cell if not in a container
-	} else
-	{
-		setserial( c, s, 1 );
-	}
-	setserial(c,s,2);
+	if( inCont )
+		c->SetCont( s->GetSerial() );
+	else
+		c->SetLocation( s );
+	c->SetSpawn( s->GetSerial(), calcItemFromSer( c->GetSerial() ) );
 	
-	//** Lb bugfix for spawning in wrong pack positions **//
-	if( y > 0 )
+	if( inCont )
 	{
-		int z = -1;
-		if( items[c].spawnserial != -1 && items[c].spawnserial != 0 )	// legacy support until next build
-			z = findbyserial( &itemsp[items[c].spawnserial%HASHMAX], items[c].spawnserial, 0 );
-		if( z != -1 )
+		CItem *z = NULL;
+		if( c->GetSpawn() != 0 )
+			z = calcItemObjFromSer( c->GetSpawn() );
+		if( z != NULL )
 		{
-			k = PackType( items[z].id1, items[z].id2 );
-			if( k == -1 )
+			UI08 k = PackType( z->GetID() );
+			if( k == 0xFF )
 			{
-				printf( "Warning: A non-container item was set as container spawner \n" );
+				Console.Warning( 2, " A non-container item was set as container spawner" );
 				k = 1;
 			}
-			items[c].x = (rand()%100) + 18;
-			items[c].z = 9;
+			c->SetX( RandomNum( 0, 99 ) + 18 );
+			c->SetZ( 9 );
 			switch( k )
 			{
-			case 1:	items[c].y = ( rand()%50 ) + 50; break;
-			case 2:	items[c].y = ( rand()%50 ) + 30; break;
-			case 3:	items[c].y = ( rand()%40 ) + 100; break;
-			case 4:	items[c].y = ( rand()%80 ) + 60; // bugfix
-					items[c].x = ( rand()%80 ) + 60; break;
-			default:	items[c].y = ( rand()%50 ) + 30;
+			case 1:	c->SetY( ( RandomNum( 0, 49 ) ) + 50 );		break;
+			case 2:	c->SetY( ( RandomNum( 0, 49 ) ) + 30 );		break;
+			case 3:	c->SetY( ( RandomNum( 0, 39 ) ) + 100 );	break;
+			case 4:
+				c->SetY( ( RandomNum( 0, 79 ) ) + 60 );
+				c->SetX( ( RandomNum( 0, 79 ) ) + 60 );
+				break;
+			default:	c->SetY( ( RandomNum( 0, 49 ) ) + 30 );
 			}
 		}
 	}
-	//  if (x) for (j=0;j<now;j++) if (perm[j]) senditem(j,c);
-	RefreshItem( c ); // AntiChrist
+	RefreshItem( c );
 }
 
-void cItem::AddRandomItem(int s, char * itemlist, int spawnpoint) //Tauriel will be removed
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::GlowItem( CItem *i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Handle glowing items
+//o---------------------------------------------------------------------------o
+void cItem::GlowItem( CItem *i )
 {
-	//This function gets the random npc number from the list and recalls
-	//addrespawnnpc passing the new number
-	char sect[512];
-	int i=0,j=0,k=0;
-	openscript("items.scp");
-	sprintf(sect, "ITEMLIST %s", itemlist);
-	if (!i_scripts[items_script]->find(sect))
+	if( i->GetGlow() > 0 )
 	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
+		CItem *j = calcItemObjFromSer( i->GetGlow() );
+		if( j == NULL )
+			return;
+
+		//j->SetLayer( i->GetLayer() ); // copy layer information of the glowing item to the invisible light emitting object
+
+		SERIAL getCont = i->GetCont();
+		if( getCont == INVALIDSERIAL ) // On the ground
 		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return;
-			}	
-		} else return;
-	}
-	do
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			i++;
+			j->SetCont( INVALIDSERIAL );
+			j->SetDir( 29 );
+			j->SetLocation( i );
 		}
-	}
-	while (script1[0]!='}');
-	closescript();
-	if(i>0)
-	{
-		i=rand()%(i);
-		openscript("items.scp");
-		if(!i_scripts[items_script]->find(sect))
+		else if( getCont >= 0x40000000 ) // In a pack
 		{
-			closescript();
-			if (n_scripts[custom_item_script][0]!=0)
-			{
-				openscript(n_scripts[custom_item_script]);
-				if (!i_scripts[custom_item_script]->find(sect))
-				{
-					closescript();
-					return;
-				}
-			} else return;
+			MapRegion->RemoveItem( j );
+			j->SetCont( getCont );
+			j->SetDir( 99 );  // gives no light in backpacks
+			j->SetX( i->GetX() );
+			j->SetY( i->GetY() );
+			j->SetZ( i->GetZ() );
 		}
-		do
+		else // Equipped
 		{
-			read1();
-			if (script1[0]!='}')
+			CChar *s = calcCharObjFromSer( getCont );
+			if( s != NULL )
 			{
-				if(j==i)
-				{
-					k=str2num(script1);
-					j++;
-				}
-				else j++;
+				MapRegion->RemoveItem( j );
+				j->SetCont( getCont );
+				j->SetX( s->GetX() );
+				j->SetY( s->GetY() );
+				j->SetZ( s->GetZ()+4 );
+				if( isOnline( s ) )
+					j->SetDir( 29 );
+				else
+					j->SetDir( 99 );
 			}
 		}
-		while (script1[0]!='}');
-		closescript();
-	}
-	if(k!=0)
-	{
-		if (spawnpoint==-1)
-		{
-			addmitem[s]=k;
-			Targ->AddMenuTarget(s, 0, addmitem[s]);
-		}
-		else
-		{
-			AddRespawnItem(spawnpoint,k,1);
-		}
+		RefreshItem( j );
 	}
 }
 
-
-ARMORCLASS cItem::ArmorClass( ITEM i )
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cItem::CheckEquipment( CChar *p )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check equipment of character
+//o---------------------------------------------------------------------------o
+void cItem::CheckEquipment( CChar *p )
 {
-	return items[i].armorClass;
-}
+	if( p == NULL ) 
+		return;
 
-void cItem::GlowItem( int s, int i )
-{
+	char *itemname = NULL;
+	char temp[512];
 
-	int j,c;
+	cSocket *pSock = calcSocketObjFromChar( p );
+	if ( !pSock ) return;
 
-	//printf("glow check called, char#: %i\n",s);
-	if (items[i].glow>0)
+	const SI16 StrengthToCompare = p->GetStrength();
+	for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
 	{
-		c=items[i].glow;
-		j=findbyserial(&itemsp[c%HASHMAX],c,0);
-
-		//printf("contser: %i layer: %i serial: %i\n",items[i].contserial,items[i].layer,items[i].serial);
-
-		if (j==-1) return;
-
-		items[j].layer=items[i].layer; // copy layer information of the glowing item to the invisible light emitting object
-
-		if(items[j].layer==0 && items[i].contserial==-1) // unequipped -> light source coords = item coords
+		if( i == NULL )
+			continue;
+		if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
 		{
-			items[j].dir=29;
-			items[j].x=items[i].x;
-			items[j].y=items[i].y;
-			items[j].z=items[i].z;
-		} else if (items[j].layer==0 && items[i].contserial!=-1) // euqipped -> light source coords = players coords
-		{
-			//printf("gi in pack\n");
-			items[j].x=chars[s].x;
-			items[j].y=chars[s].y;
-			items[j].z=chars[s].z+4;
-			items[j].dir=99; // gives no light in backpacks
-			//if (rand()%4==2) items[j].dir=2; else items[j].dir=1;
-		} else
-		{
-			items[j].x=chars[s].x;
-			items[j].y=chars[s].y;
-			items[j].z=chars[s].z+4;
-			items[j].dir=29;
+			itemname = (char *)i->GetName();
+			if( itemname[0] == '#' ) 
+				getTileName( i, temp );
+			else 
+				strcpy( temp, itemname );
+			sysmessage( pSock, 1604, temp );
+			itemsfx( pSock, i->GetID() );
 
-		}
-		RefreshItem( j ); // AntiChrist
-	}
-}
-
-void cItem::CheckEquipment(CHARACTER p) // check equipment of character p
-{
-	int i=-1, j=-1, serial,serhash,ci;
-
-	if (p<0) return; // LB crashfix
-
-	serial=chars[p].serial;
-	serhash=serial%HASHMAX;
-
-	//printf("-- CHARSTR: %i CHARSTRNOW: %i\n",chars[p].st,chars[p].st);
-	for (ci=0;ci<contsp[serhash].max;ci++)
-	{
-		i=contsp[serhash].pointer[ci];
-		if (i>-1) //  crashfix
-		if (items[i].contserial==serial)
-		{
-//			printf("-- ITMNAME: %s ITMSTR: %i ITEMCOUNT: %i\n",items[i].name,items[i].st,itemcount);
-
-			if(items[i].st>chars[p].st)//if strength required > character's strength
-			{
-				if(items[i].name[0]=='#') getname(i,temp2);
-				else strcpy(temp2,items[i].name);
-
-				sprintf(temp, "You are not strong enough to keep %s equipped!", temp2);
-				sysmessage(calcSocketFromChar(p), temp);
-				itemsfx(calcSocketFromChar(p), items[i].id1, items[i].id2);
-  	            
-				//Subtract stats bonus and poison
-				chars[p].st-=items[i].st2;
-				chars[p].dx-=items[i].dx2;
-				chars[p].in-=items[i].in2;
-               	if(chars[p].poison && items[i].poisoned) chars[p].poison-=items[i].poisoned;
-				if(chars[p].poison<0) chars[p].poison=0;
-
-				// AntiChrist - this should be .contserial, not .serial       |THIS|
-				//if (items[i].contserial!=-1) removefromptr(&contsp[items[i].serial%HASHMAX], i);
-				if (items[i].contserial!=-1) removefromptr(&contsp[items[i].contserial%HASHMAX], i);
-				items[i].cont1=255;
-				items[i].cont2=255;
-				items[i].cont3=255;
-				items[i].cont4=255;
-				items[i].contserial=-1;
-				mapRegions->RemoveItem(i);
-				items[i].x=chars[p].x;
-				items[i].y=chars[p].y;
-				items[i].z=chars[p].z;
-				mapRegions->AddItem(i);
+			i->SetCont( INVALIDSERIAL );
+			i->SetLocation( p );
 							
-				//teleport(currchar[s]);
-				//impowncreate(s, currchar[s], 0);
-
-				for (j=0;j<now;j++)
-					if (inrange1p(p, currchar[j])&&perm[j])
-					{
-						wornitems(j, p);
-//						senditem(j, i);		// replaced with refreshitem
-					}
-				RefreshItem( i );			// changed to be put here (Abaddon)
-			}
-		}	
-	}		
-}
-
-//Put item in character's backpack - AntiChrist
-void cItem::BounceInBackpack(CHARACTER p, ITEM i)
-{
-	if(p<0 || i<0) return;//it's more safe :)
-
-	int newpack=packitem(p);//new character's backpack
-	int s1=calcSocketFromChar(p);//new character's socket
-	int newp=p;//new character
-	
-	if(items[i].contserial!=-1)
-	{
-		int serial=items[i].contserial;
-		int serhash=serial%HASHMAX;
-		int oldpack=findbyserial(&itemsp[serhash], serial, 0);//old container
-
-		int oldp=GetPackOwner(oldpack);//this should now be the old char that owned the item
-
-		if (items[i].glow>0) // LB's glowing items stuff
-			removefromptr(&glowsp[chars[oldp].serial%HASHMAX],i);//remove from old char
-
-		removefromptr(&contsp[serhash], i);//remove from old container (if one)
-	}
-
-	removeitem[1]=items[i].ser1;
-	removeitem[2]=items[i].ser2;
-	removeitem[3]=items[i].ser3;
-	removeitem[4]=items[i].ser4;
-				
-	//AUTOSTACK code
-	int ptr, stack,hash;
-	hash=items[newpack].serial%HASHMAX;
-	for(ptr=0;ptr<contsp[hash].max;ptr++)
-	{
-		stack=contsp[hash].pointer[ptr];
-		if (stack!=-1)
-		{
-		if (items[stack].contserial==items[newpack].serial) // this is important zippy, or it wont work !!! LB
-			// btw, this is the "true" bugfix for the gold-stacking bug, morolan :)
-		{										
-			
-			if (items[stack].pileable && items[i].pileable && items[stack].serial!=items[i].serial &&
-			(items[stack].id1==items[i].id1 && items[stack].id2==items[i].id2) && 
-			( items[stack].color1 == items[i].color1 && items[stack].color2 == items[i].color2 ) )
-			{//Time to stack.
-				//printf("stacking %s %x %x\n",items[stack].name,items[stack].id1,items[stack].id2);
-				if (items[stack].amount+items[i].amount>65535)
-				{
-					items[i].x=items[stack].x;
-					items[i].y=items[stack].y;
-					items[i].z=9;
-					items[i].amount=(items[stack].amount+items[i].amount)-65535;
-					items[stack].amount=65535;
-					setserial(i, newpack,1); // add to container hash
-					Network->xSend(s1, removeitem, 5, 0);
-					//senditem(s1, i);
-					RefreshItem(i);//AntiChrist
-				} else 
-				{
-					items[stack].amount=items[stack].amount+items[i].amount;
-					DeleItem(i);
-				}
-				Network->xSend(s1, removeitem, 5, 0);//Morrolan fix
-				//senditem(s1, stack);
-				RefreshItem(stack);//AntiChrist
-				itemsfx(s1, items[stack].id1, items[stack].id2);
-				Weight->NewCalc(p);
-				statwindow(s1,p);
-				//return;
-				break;//break FOR cycle
-			} // end if pillable
-		}// if stack !=-1
-		}
-		else // no autostacking
-		{ 
-			setserial(i, newpack,1);      // no autostacking -> add it to container hash ! 
-			items[i].x=20+(rand()%100);// and set new random pack coords
-			items[i].y=40+(rand()%80);
-			items[i].z=9;
-
-			//LB GLOWING STUFF
-			setptr(&glowsp[chars[newp].serial%HASHMAX],i);//add in new char
-			GlowItem(newp,i);
-
-			int k;
-			for (k=0;k<now;k++) 
+			Network->PushConn();
+			for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
-				if (perm[k])
-				{
-					Network->xSend(k, removeitem, 5, 0);
-				}
-			} // end for k
-
-			RefreshItem(i);//AntiChrist
-
-			break;//break FOR cycle
-		} // else
-	} // end for
-
-	Weight->NewCalc(p);
-	statwindow(s1,p);
+				if( charInRange( p, tSock->CurrcharObj() ) )
+					wornItems( tSock, p );
+			}
+			Network->PopConn();
+			RefreshItem( i );
+		}
+	}
 }
 
-//Put item at character's feet - AntiChrist
-void cItem::BounceItemOnGround(CHARACTER p, ITEM i)
+//o---------------------------------------------------------------------------o
+//|	Function	-	void StoreItemRandomValue( CItem *i, int tmpreg )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Remember an items value
+//o---------------------------------------------------------------------------o
+void StoreItemRandomValue( CItem *i, int tmpreg )
 {
-	if(p<0 || i<0) return;
-
-	if(items[i].contserial!=-1)
+	UI32 a = INVALIDSERIAL;
+	if( i->GetGood() < 0 ) 
+		return;
+	if( tmpreg < 0 )
 	{
-		int serial=items[i].contserial;
-		int serhash=serial%HASHMAX;
-		int oldpack=findbyserial(&itemsp[serhash], serial, 0);//old container
-	
-		int oldp=GetPackOwner(oldpack);//this should now be the old char that owned the item
-	
-		if (items[i].glow>0) // LB's glowing items stuff
-			removefromptr(&glowsp[chars[oldp].serial%HASHMAX],i);//remove glowing from old char
-
-		removefromptr(&contsp[serhash], i);//remove from old container
+		SI08 exiMode = 0;
+		a = calcLastContainerFromSer( i->GetCont(), exiMode );
+		if( a != INVALIDSERIAL )
+		{
+			if( exiMode == 2 )
+				tmpreg = calcRegionFromXY( chars[a].GetX(), chars[a].GetY(), chars[a].WorldNumber() );
+			else if( exiMode == 1 )
+				tmpreg = calcRegionFromXY( items[a].GetX(), items[a].GetY(), items[a].WorldNumber() );
+		}
 	}
-
-	//no container (ground)
-	items[i].cont1=255;
-	items[i].cont2=255;
-	items[i].cont3=255;
-	items[i].cont4=255;
-	items[i].contserial=-1;
-
-	mapRegions->RemoveItem(i);
-	items[i].x=chars[p].x;
-	items[i].y=chars[p].y;
-	items[i].z=chars[p].z;
-	mapRegions->AddItem(i);
-
-    GlowItem(p,i); //LB's glowing item stuff
-
-	//for (int k=0;k<now;k++) if (perm[k] && inrange2(k,i)) senditem(k,i);
-	RefreshItem(i);//AntiChrist
-
-	itemsfx(calcSocketFromChar(p),items[i].id1,items[i].id2);
-}
-
-bool cItem::isShieldType( ITEM i )
-{
-	unsigned short itemID = (items[i].id1<<8) + items[i].id2;
-	if( itemID >= 0x1B72 && itemID <= 0x1B7B ) return true;
-	if( itemID >= 0x1BC3 && itemID <= 0x1BC5 ) return true;
-	tile_st toCheck;
-	Map->SeekTile( itemID, &toCheck );
-	if( toCheck.layer == 2 )
-	{
-		if( (toCheck.flag3 & 0xC0 ) )	// if equipable, and on layer 2	// cna't use wearable/holdable, as not all lanterns have that
-			return true;
-	}
-	return false;
+	
+	if( tmpreg < 0 )
+		return;
+	
+	int min = region[tmpreg]->GetGoodRnd1( i->GetGood() );
+	int max = region[tmpreg]->GetGoodRnd2( i->GetGood() );
+	
+	if( max != 0 || min != 0 )
+		i->SetRndValueRate( (int) RandomNum( min, max ) );
 }

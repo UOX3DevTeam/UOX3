@@ -1,490 +1,526 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  targeting.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #include "uox3.h"
 #include "debug.h"
-#include "cmdtable.h" // who took this out and why?? cj 8/11/99
+#include "cmdtable.h"
+#include "cdice.h"
+#include "ssection.h"
+#include "mstring.h"
 
+#undef DBGFILE
 #define DBGFILE "targeting.cpp"
 
-void cTargets::PlVBuy(int s)//PlayerVendors
+void cTargets::PlVBuy( cSocket *s )//PlayerVendors
 {
-	int v=addx[s];
+	if( s == NULL )
+		return;
 
-	if (v<0 || v>cmem|| s==-1) return;
-	if (chars[v].free) return;
-	int serial,i,gleft=calcgold(currchar[s]), price;
-	int a,b,p=packitem(currchar[s]);
-	int np, npc;
-	
-	if (p==-1) 
+	CHARACTER v = s->AddX();
+	if( v == INVALIDSERIAL || v > cmem ) 
+		return;
+	if( chars[v].isFree() ) 
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+	SI32 gleft = calcGold( mChar );
+
+	CItem *p = getPack( mChar );
+	if( p == NULL ) 
 	{
-		sysmessage(s,"Time to buy a backpack"); 
+		sysmessage( s, 773 ); 
 		return; 
-	} //LB
+	}
 
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if (i==-1) return;	
-	if (items[i].contserial==-1) return;
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL ) 
+		return;	
+	if( i->GetCont() == INVALIDSERIAL ) 
+		return;
 	
-	price=items[i].value;
-	np=findbyserial(&itemsp[items[i].contserial%HASHMAX],items[i].contserial,0);
-	npc=GetPackOwner(np);
-	if(npc!=v || chars[v].npcaitype!=17) return;
+	CItem *np = calcItemObjFromSer( i->GetCont() );
+	CChar *npc = getPackOwner( np );
+	if( npc != &chars[v] || chars[v].GetNPCAiType() != 17 ) 
+		return;
 	
-	if (chars[currchar[s]].serial==chars[v].ownserial)
+	if( mChar->GetSerial() == chars[v].GetOwner() )
 	{
-		npctalk(s, v, "I work for you, you need not buy things from me!", 0);
+		npcTalk( s, &chars[v], 999, false );
 		return;
 	}
 
-	p = packitem( currchar[s] );
-	if( p < 0 ) return;
-	
-	if (gleft<items[i].value) 
+	if( gleft < i->GetValue() ) 
 	{
-		npctalk(s, v, "You cannot afford that.", 0);
+		npcTalk( s, &chars[v], 1000, false );
 		return;
-	} else {
-		for (a=0;a<contsp[items[p].serial%HASHMAX].max;a++)
-		{
-			b=contsp[items[p].serial%HASHMAX].pointer[a];
-			if (b!=-1)
-			if (items[b].id1==0x0E && (items[b].id2==0xED || items[b].id2==0xEE || items[b].id2==0xEF))
-			{
-				if( items[b].contserial == items[p].serial )
-				{
-					if(items[b].amount<=price)
-					{
-						price-=items[b].amount;
-						Items->DeleItem(b);
-						RefreshItem( i );
-					} else {
-						items[b].amount-=price;
-						price=0;
-						RefreshItem( b ); // AntiChrist
-						break;
-					}//else
-				}
-			}//if b!=-1
-		}//for
-	}//else
+	} 
+	else 
+	{
+		SI32 tAmount = deleQuan( mChar, 0x0EED, i->GetValue() );
+		// tAmount > 0 indicates there wasn't enough money...
+		// could be expanded to take money from bank too...
+	}
 	
-	npctalk(s, v, "Thank you.", 0);
-	chars[v].holdg+=items[i].value;
+	npcTalk( s, &chars[v], 1001, false );
+	chars[v].SetHoldG( chars[v].GetHoldG() + i->GetValue() );
 
-//	removefromptr( &contsp[items[i].serial%HASHMAX], i );
-	unsetserial( i, 1 );
-	setserial(i,p,1);
-//	senditem(s,i);
-	RefreshItem( i ); // AntiChrist
+	i->SetCont( p->GetCont() );	// move containers
+	RefreshItem( i );
+	Weight->AddItemWeight( i, mChar );
+	statwindow( s, mChar );
 }
 
-void cTargets::MultiTarget(int s) // If player clicks on something with the targetting cursor
+void cTargets::HandleGuildTarget( cSocket *s )
 {
-	int a1, a2, a3, a4, i;
-	if(buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) 
+	CChar *trgChar;
+	CChar *mChar = s->CurrcharObj();
+	CGuild *mGuild = NULL, *tGuild = NULL;
+	switch( s->GetByte( 5 ) )
 	{
-		if( chars[currchar[s]].spellCast != 0 )	// need to stop casting if we don't target right
+	case 0:	// recruit character
+		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+		if( trgChar != NULL )
 		{
-			chars[currchar[s]].spellCast = 0;
-			chars[currchar[s]].casting = 0;
+			if( trgChar->GetGuildNumber() == -1 )	// no existing guild
+			{
+				mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+				if( mGuild != NULL )
+					mGuild->NewRecruit( (*trgChar) );
+			}
+			else
+				sysmessage( s, 1002 );
 		}
+		break;
+	case 1:		// declare fealty
+		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+		if( trgChar != NULL )
+		{
+			if( trgChar->GetGuildNumber() == mChar->GetGuildNumber() )	// same guild
+				mChar->SetGuildFealty( trgChar->GetSerial() );
+			else
+				sysmessage( s, 1003 );
+		}
+		break;
+	case 2:	// declare war
+		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+		if( trgChar != NULL )
+		{
+			if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
+			{
+				if( trgChar->GetGuildNumber() == -1 )
+					sysmessage( s, 1004 );
+				else
+				{
+					mGuild = GuildSys->Guild(mChar->GetGuildNumber() );
+					if( mGuild != NULL )
+					{
+						mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
+						tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
+						if( tGuild != NULL )
+							tGuild->TellMembers( 1005, mGuild->Name() );
+					}
+				}
+			}
+			else
+				sysmessage( s, 1006 );
+		}
+		break;
+	case 3:	// declare ally
+		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+		if( trgChar != NULL )
+		{
+			if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
+			{
+				if( trgChar->GetGuildNumber() == -1 )
+					sysmessage( s, 1004 );
+				else
+				{
+					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+					if( mGuild != NULL )
+					{
+						mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
+						tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
+						if( tGuild != NULL )
+							tGuild->TellMembers( 1007, mGuild->Name() );
+					}
+				}
+			}
+			else
+				sysmessage( s, 1006 );
+		}
+		break;
+	}
+
+}
+
+void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with the targetting cursor
+{
+	CChar *mChar = s->CurrcharObj();
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+	{
+		if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
+			mChar->StopSpell();
 		return; // do nothing if user cancels, avoids CRASH! - Morrolan
 	}
 	
-	a1=buffer[s][2];
-	a2=buffer[s][3];
-	a3=buffer[s][4];
-	a4=buffer[s][5];
-	targetok[s]=0;
-	if( chars[currchar[s]].dead && !( chars[currchar[s]].priv&1 ) && chars[currchar[s]].account != 0 )
+	UI08 a1 = s->GetByte( 2 );
+	UI08 a2 = s->GetByte( 3 );
+	UI08 a3 = s->GetByte( 4 );
+	UI08 a4 = s->GetByte( 5 );
+	s->TargetOK( false );
+	if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount() != 0 )
 	{
-		if( chars[currchar[s]].priv&1 )
+		sysmessage( s, 1008 );
+		if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
+			mChar->StopSpell();
+		return;
+	}
+	if( a1 == 0 && a2 == 1 )
+	{
+		if( a3 == 2 )	// GUILDS!!!!!
 		{
-		} 
-		else
-		{
-			sysmessage( s, "You are dead and cannot do that!" );
-			if( chars[currchar[s]].spellCast != 0 )	// need to stop casting if we don't target right
-			{
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
-			}
+			HandleGuildTarget( s );
 			return;
 		}
-	}
- 	if ((a1==0)&&(a2==1)&&(a3==0))
-	{
-		switch(a4)
+		if( a3 == 1 ) // CustomTarget() !!!!
 		{
-		case 0: Targ->AddTarget( s ); break;
-		case 1: Targ->RenameTarget( s ); break;
-		case 2: Targ->TeleTarget( s ); break;
-		case 3: Targ->RemoveTarget( s ); break;
-		case 4: Targ->DyeTarget( s ); break;
-		case 5: Targ->NewzTarget( s ); break;
-		case 6: Targ->TypeTarget( s ); break;
-		case 7: Targ->IDtarget( s ); break;
-		case 8: Targ->XgoTarget( s ); break;
-		case 9: Targ->PrivTarget( s ); break;
-		case 10: Targ->MoreTarget( s ); break;
-		case 11: Targ->KeyTarget( s ); break;
-		case 12: Targ->IstatsTarget( s ); break;
-		case 13: Targ->CstatsTarget( s ); break;
-		case 14: Targ->GMTarget( s ); break;
-		case 15: Targ->CnsTarget( s ); break;
-		case 16: Targ->KillTarget( s, 0x0b ); break;
-		case 17: Targ->KillTarget( s, 0x10 ); break;
-		case 18: Targ->KillTarget( s, 0x15 ); break;
-		case 19: Targ->FontTarget( s ); break;
-		case 20: Targ->GhostTarget( s ); break;
-		case 21: Targ->ResurrectionTarget( s ); break; // needed for /resurrect command
-		case 22: Targ->BoltTarget( s ); break;
-		case 23: Targ->AmountTarget( s ); break;
-		case 24:
+			UI16 scriptNum = (UI16)s->AddX();
+			cScript *tScript = Trigger->GetScript( scriptNum );
+			if( tScript != NULL )
+				tScript->DoCallback( s, s->GetDWord( 7 ), a4 );
+			return;
+		}
+ 		if( a3 == 0 )
+		{
+			CItem *targetItem;
+			switch( a4 )
 			{
-				int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-				i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-				if(i!=-1)
+			case 0:		AddTarget( s );						break;
+			case 1:		RenameTarget( s );					break;
+			case 2:		TeleTarget( s );					break;	
+			case 3:		RemoveTarget( s );					break;
+			case 4:		DyeTarget( s );						break;
+			case 5:		NewzTarget( s );					break;
+			case 6:		TypeTarget( s );					break;
+			case 7:		IDtarget( s );						break;
+			case 8:		XgoTarget( s );						break;
+			case 9:		PrivTarget( s );					break;
+			case 10:	MoreTarget( s );					break;
+			case 11:	KeyTarget( s );						break;
+			case 12:	IstatsTarget( s );					break;
+			case 13:	CstatsTarget( s );					break;
+			case 14:	Skills->RepairLeather( s );			break;
+			case 15:	Skills->RepairBow( s );				break;
+			case 16:	KillTarget( s, 0x0B );				break;
+			case 17:	KillTarget( s, 0x10 );				break;
+			case 18:	KillTarget( s, 0x15 );				break;
+			case 19:	FontTarget( s );					break;
+			case 20:	GhostTarget( s );					break;
+			case 21:	ResurrectionTarget( s ); break; // needed for /resurrect command
+			case 22:	BoltTarget( s );					break;
+			case 23:	AmountTarget( s );					break;
+			case 24:	Skills->RepairMetal( s );			break;
+			case 25:	CloseTarget( s );					break;
+			case 26:	AddMenuTarget( s, true, s->XText() ); break;
+			case 27:	NpcMenuTarget( s );					break;
+			case 28:	MovableTarget( s );					break;
+			case 29:	Skills->ArmsLoreTarget( s );		break;
+			case 30:	OwnerTarget( s );					break;
+			case 31:	ColorsTarget( s );					break;
+			case 32:	DvatTarget( s );					break;
+			case 33:	AddNpcTarget( s );					break;
+			case 34:	FreezeTarget( s );					break;
+			case 35:	UnfreezeTarget( s );				break;
+			case 36:	AllSetTarget( s );					break;
+			case 37:	Skills->AnatomyTarget( s );			break;
+			case 38:	Magic->Recall( s );					break;					
+			case 39:	Magic->Mark( s );					break;					
+			case 40:	Skills->ItemIDTarget( s );			break;
+			case 41:	Skills->EvaluateIntTarget( s );		break;
+			case 42:	Skills->TameTarget( s );			break;
+			case 43:	Magic->Gate( s );					break;					
+			case 44:	Magic->Heal( s );					break; // we need this for /heal command
+			case 45:	Skills->FishTarget( s );			break;
+			case 46:	InfoTarget( s );					break;
+			case 47:	TitleTarget( s );					break;
+			case 48:	ShowDetail( s );					break;
+			case 49:	MakeTownAlly( s );					break;
+			case 50:	Skills->Smith( s );					break;
+			case 51:	Skills->Mine( s );					break;
+			case 52:	Skills->SmeltOre( s );				break;
+			case 53:	npcAct( s );						break;
+//			case 54:	GetAccount( s );					break;
+			case 55:	WstatsTarget( s );					break;
+			case 56:	NpcTarget( s );						break;
+			case 57:	NpcTarget2( s );					break;
+			case 58:	NpcResurrectTarget( mChar );		break;
+			case 59:	NpcCircleTarget( s );				break;
+			case 60:	NpcWanderTarget( s );				break;
+			case 61:	VisibleTarget( s );					break;
+			case 62:	TweakTarget( s );					break;
+			case 63:	MoreXTarget( s );					break;
+			case 64:	MoreYTarget( s );					break;
+			case 65:	MoreZTarget( s );					break;
+			case 66:	MoreXYZTarget( s );					break;
+			case 67:	NpcRectTarget( s );					break;
+			case 68: 
+				targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
+				if( targetItem != NULL )
 				{
-					triggerwitem(s,i,0);
-					chars[currchar[s]].envokeid1=0x00;
-					chars[currchar[s]].envokeid2=0x00;
-					return;
-					//}  for
+					sysmessage( s, 1010 );
+					targetItem->enhanced ^= 0x0001;	// Set DevineLock bit in items
 				}
-				serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-				i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-				if( i != -1 )
+				break;
+			case 69: 
+				targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
+				if( targetItem != NULL )
 				{
-					triggernpc( s, i );
-					chars[currchar[s]].envokeid1 = 0x00;
-					chars[currchar[s]].envokeid2 = 0x00;
-					return;
+					sysmessage( s, 1011 );
+					targetItem->enhanced &= 0xFFFE;	// ReSet DevineLock bit in items
 				}
-				triggerwitem(s,-1,0);
-				chars[currchar[s]].envokeid1=0x00;
-				chars[currchar[s]].envokeid2=0x00;
-				return;
-			}
-		case 25: CloseTarget(s); break;
-		case 26: AddMenuTarget(s, 1, addmitem[s]); break;
-		case 27: NpcMenuTarget(s); break;
-		case 28: MovableTarget(s); break;
-		case 29: Skills->ArmsLoreTarget(s); break;
-		case 30: OwnerTarget(s); break;
-		case 31: Targ->ColorsTarget(s); break;
-		case 32: Targ->DvatTarget(s); break;
-		case 33: AddNpcTarget(s); break;
-		case 34: FreezeTarget(s); break;
-		case 35: UnfreezeTarget(s); break;
-		case 36: AllSetTarget(s); break;
-		case 37: Skills->AnatomyTarget(s); break;
-		case 38: Magic->Recall(s); break;					
-		case 39: Magic->Mark(s); break;					
-		case 40: Skills->ItemIdTarget(s); break;
-		case 41: Skills->Evaluate_int_Target(s); break;
-		case 42: Skills->TameTarget(s); break;
-		case 43: Magic->Gate(s); break;					
-		case 44: Magic->Heal(s); break; // we need this for /heal command
-		case 45: Skills->FishTarget(s); break;
-		case 46: InfoTarget(s); break;
-		case 47: TitleTarget(s); break;
-		case 48: ShowDetail( s ); break;
-		case 49: Skills->Repair( s );	break;							// repairing
-		case 50: Skills->Smith( s );	break;
-		case 51: Skills->Mine( s );		break;
-		case 52: Skills->SmeltOre( s );	break;
-		case 53: npcact(s); break;
-		case 54: GetAccount( s ); break;
-		case 55: WstatsTarget(s); break;
-		case 56: NpcTarget(s); break;
-		case 57: NpcTarget2(s); break;
-		case 58: NpcResurrectTarget( currchar[s] ); break;
-		case 59: NpcCircleTarget(s); break;
-		case 60: NpcWanderTarget(s); break;
-		case 61: VisibleTarget(s); break;
-		case 62: TweakTarget(s); break;
-		case 63: MoreXTarget(s); break;
-		case 64: MoreYTarget(s); break;
-		case 65: MoreZTarget(s); break;
-		case 66: MoreXYZTarget(s); break;
-		case 67: NpcRectTarget( s ); break;
-// FREE		case 67: break;
-// FREE		case 68: break;
-// FREE		case 69: break;
-// FREE		case 70: break;
-// FREE		case 71: break;
-// FREE		case 72: break;
-// FREE		case 73: break;
-// FREE		case 74: break;
-// FREE		case 75: break;
-		case 76: AxeTarget(s); break;
-		case 77: Skills->DetectHidden(s); break;
-// FREE		case 78: break;
-		case 79: Skills->ProvocationTarget1(s); break;
-		case 80: Skills->ProvocationTarget2(s); break;
-		case 81: Skills->EnticementTarget1(s); break;
-		case 82: Skills->EnticementTarget2(s); break;
-// FREE		case 83: break;
-// FREE		case 84: break;
-// FREE		case 85: break;
-		case 86: Targ->SwordTarget(s); break;
-		case 87: /*if (chars[currchar[s]].priv&1)*/ Magic->SbOpenContainer(s); break;
-		case 88: /*if (chars[currchar[s]].priv&1)*/ Targ->SetDirTarget(s); break;
-		case 89: /*if (chars[currchar[s]].priv&1)*/ Targ->ObjPrivTarget(s); break;
-// FREE		case 90: break;
-// FREE		case 91: break;
-// FREE		case 92: break;
-// FREE		case 93: break;
-// FREE		case 94: break;
-// FREE		case 95: break;
-// FREE		case 96: break;
-// FREE		case 97: break;
-// FREE		case 98: break;
-// FREE		case 99: break;
-// FREE		case 100: break;		// we now have this as our new spell targeting location
-		case 100: Magic->NewCastSpell( s ); break;
-		case 101: CommandLevelTarget( s );	break;
-// FREE		case 102: break;
-// FREE		case 103: break;
-// FREE		case 104: break;
-// FREE		case 105: break;
-		case 106: NpcAITarget( s );				break;
-		case 107: xBankTarget( s );				break;
-		case 108: Skills->AlchemyTarget( s );	break;
-		case 109: Skills->BottleTarget( s );	break;
-		case 110: DupeTarget( s );				break;
-		case 111: MoveToBagTarget( s );			break;
-		case 112: SellStuffTarget( s );			break;
-		case 113: ManaTarget( s );				break;
-		case 114: StaminaTarget( s );			break;
-		case 115: GmOpenTarget( s );			break;
-		case 116: MakeShopTarget( s );			break;
-		case 117: FollowTarget( s );			break;
-		case 118: AttackTarget( s );			break;
-		case 119: TransferTarget( s );			break;
-		case 120: GuardTarget( s );				break;
-		case 121: BuyShopTarget( s );			break;
-		case 122: SetValueTarget( s );			break;
-		case 123: SetRestockTarget( s );		break;
-// FREE		case 124: break;
-// FREE		case 125: break;
-		case 126: /*if (chars[currchar[s]].priv&1 || chars[currchar[s]].priv&80)*/ Targ->JailTarget(s,-1); break;
-		case 127: /*if (chars[currchar[s]].priv&1 || chars[currchar[s]].priv&80)*/ Targ->ReleaseTarget(s,-1); break;
-		case 128: Skills->CreateBandageTarget(s); break;
-		case 129: /*if (chars[currchar[s]].priv&1)*/ Targ->SetAmount2Target(s); break;
-		case 130: Skills->HealingSkillTarget(s); break;
-		case 131: /*if (chars[currchar[s]].priv&1)*/ Targ->permHideTarget(s); break; /* not used */
-		case 132: /*if (chars[currchar[s]].priv&1)*/ Targ->unHideTarget(s); break; /* not used */
-		case 133: /*if (chars[currchar[s]].priv&1)*/ Targ->SetWipeTarget(s); break;
-		case 134: Skills->Carpentry(s); break;
-		case 135: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpeechTarget(s); break;
-		case 136: /*if (chars[currchar[s]].priv&1)*/ Targ->XTeleport(s,0); break;
-// FREE		case 137: break;	// AntiChrist (9/99)
-// FREE		case 138: break;
-// FREE		case 139: break;
-// FREE		case 140: break;
-// FREE		case 141: break;
-// FREE		case 142: break;
-// FREE		case 143: break;
-// FREE		case 144: break;
-// FREE		case 145: break;
-// FREE		case 146: break;
-// FREE		case 147: break;
-// FREE		case 148: break;
-// FREE		case 149: break;
-		case 150: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpAttackTarget(s); break;
-		case 151: /*if (chars[currchar[s]].priv&1)*/ Targ->FullStatsTarget(s); break;
-		case 152: Skills->BeggingTarget(s); break;
-		case 153: Skills->AnimalLoreTarget(s); break;
-		case 154: Skills->ForensicsTarget(s); break;
-		case 155: 
-			{
-				chars[currchar[s]].poisonserial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-				target(s, 0, 1, 0, 156, "What item do you want to poison?");
-				return;
-			}
-		case 156: Skills->PoisoningTarget(s); break;
-// FREE		case 157: break;
-// FREE		case 158: break;
-// FREE		case 159: break;
-		case 160: Skills->Inscribe(s,0); break;
-		case 161: Towns->VoteForMayorTarget(s); break;
-		case 162: Skills->LockPick(s); break;
-//FREE			   case 163: smeltgold(s); break;
-		case 164: Skills->Wheel(s, YARN); break;
-		case 165: Skills->Loom(s); break;
-		case 166: Skills->Wheel(s, THREAD); break;
-		case 167: Skills->Tailoring(s); break;
-		case 168: Skills->CookMeat(s); break;
-//FREE		case 169: Magic->CannonTarget(s); break;
-		case 170: Targ->LoadCannon(s); break;
-//FREE		case 171: Magic->BuildCannon(s); break;
-		case 172: Skills->Fletching(s); break;
-		case 173: Skills->MakeDough(s); break;
-		case 174: Skills->MakePizza(s); break;
-		case 175: /*if (chars[currchar[s]].priv&1)*/ Targ->SetPoisonTarget(s); break;
-		case 176: /*if (chars[currchar[s]].priv&1)*/ Targ->SetPoisonedTarget(s); break;
-		case 177: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpaDelayTarget(s); break;
-		case 178: /*if (chars[currchar[s]].priv&1)*/ Targ->SetAdvObjTarget(s); break;
-		case 179: /*if (chars[currchar[s]].priv&1)*/ Targ->SetInvulFlag(s); break; /* not used ...*/
-		case 180: Skills->Tinkering(s); break;
-		case 181: Skills->PoisoningTarget(s); break;  
-//FREE		case 182: Magic->CureTarget(s); break;
-		case 183: Skills->TinkerAxel(s); break;
-		case 184: Skills->TinkerAwg(s); break;
-		case 185: Skills->TinkerClock(s); break;
-		case 186: vialtarget( s ); break;
-//FREE		case 187: break;
-//FREE		case 188: Magic->ManaDrainTarget(s); break;
-//FREE		case 189: Magic->ManaVampireTarget(s); break;
-//FREE		case 190: Magic->MeteorSwarmPTarget(s); break;
-//FREE		case 191: Magic->ChainLightningTarget(s); break;
-//FREE		case 192: Magic->ArchCureTarget(s); break;
-//FREE		case 193: Magic->MassCurseTarget(s); break;
-//FREE		case 194: Magic->MassDispelTarget(s); break;
-//FREE		case 195: Magic->MagicLockTarget(s); break;
-//FREE		case 196: Magic->MagicTrapTarget(s); break;
-//FREE		case 197: Magic->MagicUntrapTarget(s); break;
-		case 198: Targ->Tiling(s); break;
-		case 199: Targ->Wiping(s); break;
-		case 200: /*if (chars[currchar[s]].priv&1)*/ Commands->SetItemTrigger(s); break;
-		case 201: /*if (chars[currchar[s]].priv&1)*/ Commands->SetNPCTrigger(s); break;
-		case 202: /*if (chars[currchar[s]].priv&1)*/ Commands->SetTriggerType(s); break;
-		case 203: /*if (chars[currchar[s]].priv&1)*/ Commands->SetTriggerWord(s); break;
-		case 204: triggertarget(s); break; // Fixed by Magius(CHE)
-		case 205: Skills->StealingTarget(s); break;
-		case 206: Targ->CanTrainTarget(s); break;
-		case 207: Targ->ExpPotionTarget(s); break;
-		case 209: Targ->SetSplitTarget(s); break;
-		case 210: Targ->SetSplitChanceTarget(s); break;
-		case 212: Commands->Possess(s); break;
-// FREE		case 213: break;
-// FREE		case 214: break;
-// FREE		case 215: break;
-// FREE		case 216: break;
-// FREE		case 217: break;
-// FREE		case 218: break;
-// FREE		case 219: break;
-		case 220: Guilds->Recruit(s); break;
-		case 221: Guilds->TargetWar(s); break;
-		case 222: Targ->TeleStuff(s); break;        
-		case 223: Targ->SquelchTarg(s); break;//Squelch
-		case 224: Targ->PlVBuy(s); break;//PlayerVendors
-		
-//		case 225: Targ->Priv3XTarget(s); break; // SETPRIV3 +/- target
-		case 227: Targ->HouseOwnerTarget(s); break; // cj aug11/99
-		case 228: Targ->HouseEjectTarget(s); break; // cj aug11/99
-		case 229: Targ->HouseBanTarget(s); break; // cj aug12/99
-		case 230: Targ->HouseFriendTarget(s); break; // cj aug 12/99
-		case 231: Targ->HouseUnlistTarget(s); break; // cj aug 12/99
-		case 232: Targ->HouseLockdown( s ); break; // Abaddon 17th December 1999
-		case 233: Targ->HouseRelease( s ); break; // Abaddon 17th December 1999
-// FREE		case 234: break;
-		
-		case 235: BanTarg(s); break;
-// FREE		case 236: break;
-// FREE		case 237: break;
-// FREE		case 238: break;
-// FREE		case 239: break;
-		case 240: SetMurderCount( s ); break; // Abaddon 13 Sept 1999
-// FREE		case 241: break;
-// FREE		case 242: break;
-// FREE		case 243: break;
-// FREE		case 244: break;
-// FREE		case 245: break;
-// FREE		case 246: break;
-		case 247: Targ->ShowSkillTarget( s ); break; // showskill target
-//		case 248: Targ->MenuPrivTarg( s ); break; //menupriv target
-		case 249: Targ->UnglowTarget( s ); break; // unglow
+				break;
+			case 70: MakeStatusTarget( s );				break;
+			case 71: 
+				targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
+				if( targetItem != NULL )
+				{
+					sysmessage( s, 1652 );
+					targetItem->SetScriptTrigger( (UI16)s->AddX() );
+				}
+				else
+				{
+					CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+					if( targChar != NULL )
+					{
+						targChar->SetScriptTrigger( (UI16)s->AddX() );
+						sysmessage( s, 1653 );
+					}
+				}
+				break;
+			case 72: DeleteCharTarget( s );				break;
+	// FREE		case 73: break;
+	// FREE		case 74: break;
+	// FREE		case 75: break;
+			case 76: AxeTarget( s );					break;
+			case 77: Skills->DetectHidden( s );			break;
+	// FREE		case 78: break;
+			case 79: Skills->ProvocationTarget1( s );	break;
+			case 80: Skills->ProvocationTarget2( s );	break;
+			case 81: Skills->EnticementTarget1( s );	break;
+			case 82: Skills->EnticementTarget2( s );	break;
+	// FREE		case 83: break;
+	// FREE		case 84: break;
+	// FREE		case 85: break;
+			case 86: SwordTarget( s );					break;
+			case 87:									break;
+			case 88: SetDirTarget( s );					break;
+			case 89: ObjPrivTarget( s );				break;
+			case 90: AreaCommand( s );					break;
+	// FREE		case 91: break;
+	// FREE		case 92: break;
+	// FREE		case 93: break;
+	// FREE		case 94: break;
+	// FREE		case 95: break;
+	// FREE		case 96: break;
+	// FREE		case 97: break;
+	// FREE		case 98: break;
+	// FREE		case 99: break;
+	// FREE		case 100: break;
+			case 100: Magic->CastSpell( s, mChar ); break;
+	// FREE		case 101: break;
+	// FREE		case 102: break;
+	// FREE		case 103: break;
+			case 104: 			
+				if( mChar->GetAccount() == 0 )
+					 CommandLevel( s ); 
+				else
+					sysmessage( s, 1009 );
+					break;
 
-		case 250: IncZTarget( s );	break; // INCZ
-		case 251: NewXTarget( s );	break; // NEWX
-		case 252: NewYTarget( s );	break; // NEWY
-		case 253: IncXTarget( s );	break; // INCX
-		case 254: IncYTarget( s );	break; // INCY
-		case 255: GlowTarget( s );	break; // glow
+			case 105: Commands->RemoveShop( s );		break;
+			case 106: NpcAITarget( s );					break;
+			case 107: xBankTarget( s );					break;
+			case 108: Skills->AlchemyTarget( s );		break;
+			case 109: Skills->BottleTarget( s );		break;
+			case 110: DupeTarget( s );					break;
+			case 111: MoveToBagTarget( s );				break;
+			case 112: SellStuffTarget( s );				break;
+			case 113: ManaTarget( s );					break;
+			case 114: StaminaTarget( s );				break;
+			case 115: GmOpenTarget( s );				break;
+			case 116: MakeShopTarget( s );				break;
+			case 117: FollowTarget( s );				break;
+			case 118: AttackTarget( s );				break;
+			case 119: TransferTarget( s );				break;
+			case 120: GuardTarget( s );					break;
+			case 121: BuyShopTarget( s );				break;
+			case 122: SetValueTarget( s );				break;
+			case 123: SetRestockTarget( s );			break;
+			case 124: FriendTarget( s );				break;
+	// FREE		case 125: break;
+			case 126: JailTarget( s, INVALIDSERIAL );	break;
+			case 127: ReleaseTarget( s, INVALIDSERIAL );	break;
+			case 128: Skills->CreateBandageTarget( s );	break;
+	// FREE	case 129:									break;
+			case 130: Skills->HealingSkillTarget( s );	break;
+			case 131: permHideTarget( s );				break;
+			case 132: unHideTarget( s );				break;
+			case 133: SetWipeTarget( s );				break;
+			case 134: Skills->Carpentry( s );			break;
+			case 135:									break;
+			case 136: XTeleport( s, 0 );				break;
+	// FREE		case 137: break;
+	// FREE		case 138: break;
+	// FREE		case 139: break;
+	// FREE		case 140: break;
+	// FREE		case 141: break;
+	// FREE		case 142: break;
+	// FREE		case 143: break;
+	// FREE		case 144: break;
+	// FREE		case 145: break;
+	// FREE		case 146: break;
+	// FREE		case 147: break;
+	// FREE		case 148: break;
+	// FREE		case 149: break;
+			case 150: SetSpAttackTarget( s );			break;
+			case 151: FullStatsTarget( s );				break;
+			case 152: Skills->BeggingTarget( s );		break;
+			case 153: Skills->AnimalLoreTarget( s );	break;
+			case 154: Skills->ForensicsTarget( s );		break;
+			case 155: 
+				{
+					mChar->SetPoisonSerial( s->GetDWord( 7 ) );
+					target( s, 0, 1, 0, 156, 1613 );
+					return;
+				}
+			case 156: Skills->PoisoningTarget( s );		break;
+	// FREE		case 157: break;
+	// FREE		case 158: break;
+	// FREE		case 159: break;
+			case 160: Skills->Inscribe( s, 0 );			break;
+			case 161: region[mChar->GetTown()]->VoteForMayor( s ); break; 
+			case 162: Skills->LockPick( s );			break;
+	// FREE		case 163: break;
+			case 164: Skills->Wheel( s );				break;
+			case 165: Skills->Loom( s );				break;
+	// FREE		case 166: break;
+			case 167: Skills->Tailoring( s );			break;
+			case 168: Skills->CookMeat( s );			break;
+	//FREE		case 169: break;
+			case 170: LoadCannon( s );					break;
+	//FREE		case 171: break;
+			case 172: Skills->Fletching( s );			break;
+			case 173: Skills->MakeDough( s );			break;
+			case 174: Skills->MakePizza( s );			break;
+			case 175: SetPoisonTarget( s );				break;
+			case 176: SetPoisonedTarget( s );			break;
+			case 177: SetSpaDelayTarget( s );			break;
+			case 178: SetAdvObjTarget( s );				break;
+			case 179: SetInvulFlag( s );				break;
+			case 180: Skills->Tinkering( s );			break;
+			case 181: Skills->PoisoningTarget( s );		break;  
+	//FREE		case 182: break;
+			case 183: Skills->TinkerAxel( s );			break;
+			case 184: Skills->TinkerAwg( s );			break;
+			case 185: Skills->TinkerClock( s );			break;
+			case 186: vialtarget( s );					break;
+	//FREE		case 187: break;
+	//FREE		case 188: break;
+	//FREE		case 189: break;
+	//FREE		case 190: break;
+	//FREE		case 191: break;
+	//FREE		case 192: break;
+	//FREE		case 193: break;
+	//FREE		case 194: break;
+	//FREE		case 195: break;
+	//FREE		case 196: break;
+	//FREE		case 197: break;
+			case 198: Tiling( s );						break;
+			case 199: Wiping( s );						break;
+			case 200:									break;
+			case 201:									break;
+			case 202:									break;
+			case 203:									break;
+	//		case 204: triggertarget(s);					break;
+			case 205: Skills->StealingTarget( s );		break;
+			case 206: CanTrainTarget( s );				break;
+			case 207: ExpPotionTarget( s );				break;
+			case 209: SetSplitTarget( s );				break;
+			case 210: SetSplitChanceTarget( s );		break;
+			case 212: Commands->Possess( s );			break;
+	// FREE		case 213: break;
+	// FREE		case 214: break;
+	// FREE		case 215: break;
+	// FREE		case 216: break;
+	// FREE		case 217: break;
+	// FREE		case 218: break;
+	// FREE		case 219: break;
+//			case 220: Guilds->Recruit( s );				break;
+//			case 221: Guilds->TargetWar( s );			break;
+			case 222: TeleStuff( s );					break;        
+			case 223: SquelchTarg( s );					break;//Squelch
+			case 224: PlVBuy( s );						break;//PlayerVendors
 			
-		default:
-			printf("ERROR: Fallout of switch statement (%i) without default. targeting.cpp, multitarget()\n", a4); //Morrolan 
+	//		case 225: Priv3XTarget(s); break; // SETPRIV3 +/- target
+			case 227: HouseOwnerTarget( s );			break;
+			case 228: HouseEjectTarget( s );			break;
+			case 229: HouseBanTarget( s );				break;
+			case 230: HouseFriendTarget( s );			break;
+			case 231: HouseUnlistTarget( s );			break;
+			case 232: HouseLockdown( s );				break; // Abaddon 17th December 1999
+			case 233: HouseRelease( s );				break; // Abaddon 17th December 1999
+	// FREE		case 234: break;
+			
+			case 235: BanTarg( s );						break;
+	// FREE		case 236: break;
+			case 237: SmeltTarget( s );					break;
+	// FREE		case 238: break;
+	// FREE		case 239: break;
+	// FREE		case 240: break;
+	// FREE		case 241: break;
+	// FREE		case 242: break;
+	// FREE		case 243: break;
+	// FREE		case 244: break;
+	// FREE		case 245: break;
+	// FREE		case 246: break;
+			case 247: ShowSkillTarget( s );				break;
+	//		case 248: break;
+			case 249: UnglowTarget( s );				break;
+
+			case 250: IncZTarget( s );					break;
+			case 251: NewXTarget( s );					break;
+			case 252: NewYTarget( s );					break;
+			case 253: IncXTarget( s );					break;
+			case 254: IncYTarget( s );					break;
+			case 255: GlowTarget( s );					break;
+				
+			default:
+				Console.Error( 2, " Fallout of switch statement (%i) without default. targeting.cpp, multitarget()", a4 );
+			}
 		}
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|    Function       - void triggertarget( int s )
-//|    Date           - 24 August 1999
-//|    Programmer     - Magius(CHE)
-//o---------------------------------------------------------------------------o
-//|    Purpose        - Select an item or an npc to set with new trigger.
-//o---------------------------------------------------------------------------o
-//s: socket!! -- AntiChrist
-void cTargets::triggertarget( int s )
-{
-	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] ); 
-	int i;
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-	if( i != -1 ) // Char
-	{
-		// triggerwitem( i, -1, 1 ); // is this used also for npcs?!?!
-	}
-	else
-	{ // item
-		i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
-		if( i != -1 )
-		{
-			triggerwitem( s, i, 1 );
-		}
-	}
-}
-
-void cTargets::BanTarg(int s)
+void cTargets::BanTarg( cSocket *s )
 // PARAM WARNING: s is an unreferenced parameter
 {
 
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void addtarget(int s)
+//|   Function    -  void AddTarget( cSocket *s)
 //|   Date        -  UnKnown
 //|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 29, 1998)
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Adds an item when using /add # # .
 //o---------------------------------------------------------------------------o
-void cTargets::AddTarget(int s)
+void cTargets::AddTarget( cSocket *s )
 {
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
-	int /*j,*/c,pileable=0;
-	tile_st tile;
+	if( s == NULL || s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+	bool pileable = false;
+	CTile tile;
 	
-	if (addid1[s]==0x40)
+	if( s->AddID1() == 0x40 )
 	{
-		switch (addid2[s])
+		switch( s->AddID2() )
 		{
 		case 100:
 		case 102:
@@ -501,1439 +537,1269 @@ void cTargets::AddTarget(int s)
 		case 124:
 		case 126:
 		case 140:
-			buildhouse(s,addid3[s]);//If its a valid house, send it to buildhouse!
+			buildHouse( s, s->AddID3() );//If its a valid house, send it to buildhouse!
 			return; // Morrolan, here we WANT fall-thru, don't mess with this switch
 		}
 	}
-	Map->SeekTile( (addid1[s]<<8)+addid2[s], &tile);
-	if (tile.flag2&0x08) pileable=1;
+	UI16 modelNum = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
+	Map->SeekTile( modelNum, &tile );
+	if( tile.Stackable() ) 
+		pileable = true;
 	
-	c=Items->SpawnItem(s, 1, "#", pileable, addid1[s], addid2[s], 0, 0, 0,0);
-	if( c == -1 ) return;
-	items[c].priv=0;	//Make them not decay
-	items[c].x=(buffer[s][11]<<8)+buffer[s][12];
-	items[c].y=(buffer[s][13]<<8)+buffer[s][14];
-	items[c].z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
+	CItem *c = Items->SpawnItem( s, 1, "#", pileable, modelNum, 0, false, false );
+	if( c == NULL ) 
+		return;
+	c->SetPriv( 0 );	//Make them not decay
+	const SI16 tX = s->GetWord( 11 );
+	const SI16 tY = s->GetWord( 13 );
+	const SI08 tZ = (SI08)(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
 	
-	// auto settype on doors - fur 11/5/1999
-/*        for (int i = 0; i < DOORTYPES; ++i)
-        {
-	  if (itemid >= doorbase[i] && itemid < doorbase[i] + 16)
-            {
-	      items[c].type = 12;
-	      break;
-	    }
-	}*/
-
-	if (items[c].contserial==-1) mapRegions->AddItem(c);  // Add item to mapRegions
-//	for (j=0;j<now;j++) if (perm[j]) senditem(j,c);
-	RefreshItem( c ); // AntiChrist
-	addid1[s]=0;
-	addid2[s]=0;
-}
-
-void cTargets::RenameTarget(int s)
-{
-	int i,serial;
-	//   
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	if( c->GetCont() == INVALIDSERIAL )
+		c->SetLocation( tX, tY, tZ );
+	else
 	{
-		if(addx[s]==1) //rename2 //New -- Zippy
-			strcpy(items[i].name2,xtext[s]);
-		else
-			strcpy(items[i].name,xtext[s]);
+		c->SetX( tX );
+		c->SetY( tY );
+		c->SetZ( tZ );
 	}
-	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		strcpy(chars[i].name,xtext[s]);
-	}
+	RefreshItem( c );
+	s->AddID1( 0 );
+	s->AddID2( 0 );
 }
 
-void cTargets::TeleTarget( UOXSOCKET s )
+void cTargets::RenameTarget( cSocket *s )
 {
-	int success;
-	CHARACTER mChar = currchar[s];
-	// Abaddon October 10th, 1999 used variables instead
-	int x, y, z;
-	int targX, targY;
-	signed char targZ;			// was an int, should be a signed char
-	x = chars[mChar].x;
-	y = chars[mChar].y;
-	z = chars[mChar].dispz;
-	targX = (buffer[s][11]<<8) + buffer[s][12];
-	targY = (buffer[s][13]<<8) + buffer[s][14];
-	targZ = buffer[s][16] + Map->TileHeight( (buffer[s][17]<<8) + buffer[s][18] );
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return; // moved above if test
-
-	if( ( chars[mChar].priv&0x01 ) || line_of_sight( s, x, y, z, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )	
+	if( s == NULL )
+		return;
+	SERIAL serial = s->GetDWord( 7 );
+	if( serial >= 0x40000000 )
 	{
-		
-		if (currentSpellType[s] !=2)  // not a wand cast
+		CItem *i = calcItemObjFromSer( serial );
+		if( i != NULL )
 		{
-			success = Magic->SubtractMana( mChar, 3 );  // subtract mana on scroll or spell
-			if (currentSpellType == 0)             // del regs on normal spell
-			{
-				reag_st toDel;
-				memset( &toDel, 0, sizeof( reag_st ) );
-				toDel.drake = 1;
-				toDel.moss = 1;
-				Magic->NewDelReagents( mChar, toDel );
-			}
-		}
-		
-//		soundeffect( s, 0x01, 0xFE );
-		
-		mapRegions->RemoveItem( mChar + 1000000 );
-		
-		chars[mChar].x=targX;
-		chars[mChar].y=targY;
-		chars[mChar].dispz = chars[mChar].z = targZ;
-		
-		mapRegions->AddItem( mChar + 1000000 );
-		
-		teleport( mChar );
-//#define __FLAMESTRIKE__
-#ifdef __FLAMESTRIKE__
-		staticeffect( mChar, 0x37, 0x09, 0x09, 0x19 );
-#else
-		staticeffect( mChar, 0x37, 0x2A, 0x09, 0x06 );
-#endif
-	} 
-}
-void cTargets::GetAccount( int s )
-{
-	int i, serial;
-//	serial = calcserial( &buffer[s][7], &buffer[s][8], &buffer[s][9], &buffer[s][10] );
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-
-	if( i != -1 )
-	{
-		if( !chars[i].npc )
-		{
-			Admin->GumpAMenu( s, i );
-		}
-		else sysmessage( s, "That is not a player!" );
-	}
-	else sysmessage( s, "That is not a player!" );
-}
-void cTargets::RemoveTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		sysmessage(s, "Removing item.");
-		Items->DeleItem(i);
-    } else {
-		i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-		if(i!=-1)
-		{
-			if (chars[i].account>-1 && !chars[i].npc) // player check added by LB
-			{ 
-				sysmessage(s,"You cant delete players");
-				return;
-			}
-			sysmessage(s, "Removing character.");
-			Npcs->DeleteChar(i);
-		}
-	}
-}
-
-void cTargets::DyeTarget(int s)
-{
-	int body,b,i,k,serial;
-	unsigned char c1, c2;	// these were ints
-		
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	if ((addid1[s]==255)&&(addid2[s]==255))
-	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (i!=-1)
-		{
-			dyevat[1]=items[i].ser1;
-			dyevat[2]=items[i].ser2;
-			dyevat[3]=items[i].ser3;
-			dyevat[4]=items[i].ser4;
-			dyevat[7]=items[i].id1;
-			dyevat[8]=items[i].id2;
-			Network->xSend(s, dyevat, 9, 0);
-//			for (k=0;k<now;k++) if (perm[k]) senditem(k, i);
-			RefreshItem( i ); // AntiChrist
-		}
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-		if (i!=-1)
-		{
-			dyevat[1]=chars[i].ser1;
-			dyevat[2]=chars[i].ser2;
-			dyevat[3]=chars[i].ser3;
-			dyevat[4]=chars[i].ser4;
-			dyevat[7]=0x21;
-			dyevat[8]=0x06;
-			Network->xSend(s, dyevat, 9, 0);
+			if( s->AddX() == 1 ) //rename2
+				i->SetName2( s->XText() );
+			else
+				i->SetName( s->XText() );
 		}
 	}
 	else
 	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (i!=-1)
+		CChar *c = calcCharObjFromSer( serial );
+		if( c != NULL )
 		{
-			
-			
-			c1=addid1[s];  // lord binary, dying crash bugfix
-			c2=addid2[s];
-			
-			
-			if (!dyeall[s])
-			{
-				if ((((c1<<8)+c2)<0x0002) ||
-					(((c1<<8)+c2)>0x03E9) )
-				{
-					c1=0x03;
-					c2=0xE9;
-				}
-			}
-			
-			b=((((c1<<8)+c2)&0x4000)>>14)+((((c1<<8)+c2)&0x8000)>>15);   
-			if (!b)
-			{
-				items[i].color1=c1;
-				items[i].color2=c2;
-			}
-			
-			
-//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);	
-			RefreshItem( i ); // AntiChrist
-			
-		}
-		
-		
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-		
-		if (i!=-1)
-		{
-			body=(chars[i].id1<<8)+chars[i].id2;
-			k=(addid1[s]<<8)+addid2[s];
-			if( ( (k>>8) < 0x80 ) && body >= 0x0190 && body <= 0x0193 ) k += 0x8000;
-			
-			
-			b=k&0x4000; 
-			if (b==16384 && (body >=0x0190 && body<=0x03e1)) k=0xf000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
-			
-			if (k!=0x8000) // 0x8000 also crashes client ...
-			{	
-				
-				
-				chars[i].skin1=(unsigned char)(k>>8);
-				chars[i].skin2=(unsigned char)(k%256);
-				chars[i].xskin1=(unsigned char)(k>>8);
-				chars[i].xskin2=(unsigned char)(k%256);
-				
-				updatechar(i);
-				
-			}
+			c->SetName( s->XText() );
+			statwindow( s, c );
 		}
 	}
-	
-	
 }
 
-void cTargets::NewzTarget(int s)
+void cTargets::TeleTarget( cSocket *s )
 {
-	int i/*,j*/,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].z=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-	}
-	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		chars[i].dispz=chars[i].z=addx[s];
-		teleport(i);
-	}
-}
+	if( s == NULL || s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
 
-void cTargets::TypeTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].type=addid1[s];
-	}
-}
+	SERIAL serial = s->GetDWord( 7 );
 
-
-void cTargets::IDtarget(int s)
-{
-	int i/*,j*/,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		items[i].id1=addid1[s];
-		items[i].id2=addid2[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		sysmessage( s, 717 );
 		return;
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+
+	SI16 targX, targY;
+	SI08 targZ;
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
 	{
-		chars[i].id1=chars[i].xid1=chars[i].orgid1=addid1[s];
-		chars[i].id2=chars[i].xid2=chars[i].orgid2=addid2[s];
-		updatechar(i);
+		targX = c->GetX();
+		targY = c->GetY();
+		targZ = c->GetZ();
+	}
+	else
+	{
+		targX = s->GetWord( 11 );
+		targY = s->GetWord( 13 );
+		targZ = (SI08)(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
+	}
+	CChar *mChar = s->CurrcharObj();
+
+	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )	
+	{
+		if( s->CurrentSpellType() != 2 )  // not a wand cast
+		{
+			Magic->SubtractMana( mChar, 3 );  // subtract mana on scroll or spell
+			if( s->CurrentSpellType() == 0 )             // del regs on normal spell
+			{
+				reag_st toDel;
+				toDel.drake = 1;
+				toDel.moss = 1;
+				Magic->DelReagents( mChar, toDel );
+			}
+		}
+		
+		soundeffect( s, 0x01FE, true );
+		
+		mChar->SetLocation( targX, targY, targZ );
+		mChar->Teleport();
+		staticeffect( mChar, 0x372A, 0x09, 0x06 );
+	} 
+}
+
+void cTargets::RemoveTarget( cSocket *s )
+{
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
+	{
+		sysmessage( s, 1013 );
+		Items->DeleItem( i );
+    } 
+	else 
+	{
+		CChar *c = calcCharObjFromSer( serial );
+		if( c == NULL )
+			return;
+		if( c->GetAccount() != -1 && !c->IsNpc() )
+		{ 
+			sysmessage( s, 1014 );
+			return;
+		}
+		sysmessage( s, 1015 );
+		Npcs->DeleteChar( c );
 	}
 }
 
-void cTargets::XTeleport(int s, int x)
+void cTargets::DyeTarget( cSocket *s )
 {
-	int i, serial;
+	int b;
+	UI16 colour, k;
+	CItem *i = NULL;
+	CChar *c = NULL;
+	SERIAL serial = s->GetDWord( 7 );
+	if( s->AddID1() == 0xFF && s->AddID2() == 0xFF )
+	{
+		CPDyeVat toSend;
+		if( serial >= 0x40000000 )
+		{
+			i = calcItemObjFromSer( serial );
+			if( i != NULL )
+			{
+				toSend = (*i);
+				s->Send( &toSend );
+			}
+		}
+		else
+		{
+			c = calcCharObjFromSer( serial );
+			if( c != NULL )
+			{
+				toSend = (*c);
+				toSend.Model( 0x2106 );
+				s->Send( &toSend );
+			}
+		}
+	}
+	else
+	{
+		if( serial >= 0x40000000 )
+		{
+			i = calcItemObjFromSer( serial );
+			if( i == NULL )
+				return;
+			colour = (UI16)(( (s->AddID1())<<8 ) + s->AddID2());
+			if( !s->DyeAll() )
+			{
+				if( colour < 0x0002 || colour > 0x03E9 )
+					colour = 0x03E9;
+			}
+			
+			b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
+			if( !b )
+			{
+				i->SetColour( colour );
+				RefreshItem( i );
+			}
+		}
+		else
+		{
+			c = calcCharObjFromSer( serial );
+			if( c == NULL )
+				return;
+			UI16 body = c->GetID();
+			k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
+			
+			b = k&0x4000; 
+			if( b == 16384 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
+				k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
+			
+			if( k != 0x8000 ) // 0x8000 also crashes client ...
+			{	
+				c->SetSkin( k );
+				c->SetxSkin( k );
+				c->Teleport();
+			}
+		}
+	}
+}
+
+void cTargets::NewzTarget( cSocket *s )
+{
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
+	{
+		i->SetZ( s->AddX() );
+		RefreshItem( i );
+		return;
+	}
+
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
+	{
+		c->SetDispZ( s->AddX() );
+		c->SetZ( s->AddX() );
+		c->Teleport();
+	}
+}
+
+void cTargets::TypeTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetType( s->AddID1() );
+}
+
+
+void cTargets::IDtarget( cSocket *s )
+{
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
+	{
+		i->SetID( (UI16)(( (s->AddID1())<<8) + s->AddID2()) );
+		RefreshItem( i );
+		return;
+	}
+
+	CChar *c = calcCharObjFromSer( serial );
+	if( c == NULL )
+		return;
+	c->SetID( ( (s->AddID1())<<8) + s->AddID2() );
+	c->SetxID( c->GetID() );
+	c->SetOrgID( c->GetID() );
+	c->Teleport();
+}
+
+void cTargets::XTeleport( cSocket *s, UI08 x )
+{
+	SERIAL serial = INVALIDSERIAL;
+	CChar *c = NULL;
 	// Abaddon 17th February 2000 Converted if to switch (easier to read)
 	// Also made it so that it calls teleport, not updatechar, else you don't get the items in range
+	CChar *mChar = s->CurrcharObj();
 	switch( x )
 	{
 	case 0:
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		serial = s->GetDWord( 7 );
+		c = calcCharObjFromSer( serial );
 		break;
 	case 5:
-		serial = calcserial( (unsigned char)hexnumber(1), (unsigned char)hexnumber(2), (unsigned char)hexnumber(3), (unsigned char)hexnumber(4) );
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
+		serial = calcserial( (UI08)makenumber( 1 ), (UI08)makenumber( 2 ), (UI08)makenumber( 3 ), (UI08)makenumber( 4 ) );
+		c = calcCharObjFromSer( serial );
 		break;
 	case 2:
-		if (perm[makenumber(1)])
-		{
-			i=currchar[makenumber(1)];
-		}
-		else return;
+		cSocket *mSock;
+		mSock = calcSocketObjFromSock( makenumber(1) );
+		if( mSock != NULL )
+			c = mSock->CurrcharObj();
+		else 
+			return;
 		break;
-	case 3:
-		i=chars[currchar[s]].making;
-		mapRegions->RemoveItem(currchar[i]+1000000); //lb
-		chars[currchar[i]].x=chars[currchar[s]].x;
-		chars[currchar[i]].y=chars[currchar[s]].y;
-		chars[currchar[i]].dispz=chars[currchar[i]].z=chars[currchar[s]].z;
-        mapRegions->AddItem(currchar[i]+1000000); //lb
-		teleport(currchar[i]);
-		return;
 	default:
-		sysmessage( s, "Unknown teleport option (%i)!", x );
+		sysmessage( s, 1654, x );
 		return;
 	}
 	
-	if (i!=-1)
+	if( c != NULL )
 	{
-		mapRegions->RemoveItem(i+1000000); //lb
-		chars[i].x=chars[currchar[s]].x;
-		chars[i].y=chars[currchar[s]].y;
-		chars[i].dispz=chars[i].z=chars[currchar[s]].z;
-        mapRegions->AddItem(i+1000000); //lb
-		teleport( i );
+		c->SetLocation( mChar );
+		c->Teleport();
 		return;
 	}
-	i = calcItemFromSer( serial );
-	if (i!=-1)
+
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		mapRegions->RemoveItem(i);
-		items[i].x=chars[currchar[s]].x;
-		items[i].y=chars[currchar[s]].y;
-		items[i].z=chars[currchar[s]].z;
-		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);   
-		RefreshItem( i ); // AntiChrist
+		i->SetLocation( mChar );
+		RefreshItem( i );
 	}
 }
 
-void cTargets::XgoTarget(int s)
+void cTargets::XgoTarget( cSocket *s )
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		mapRegions->RemoveItem(i+1000000);
-		chars[i].x=addx[s];
-		chars[i].y=addy[s];
-		chars[i].dispz=chars[i].z=addz[s];
-		mapRegions->AddItem(i+1000000);
-    //updatechar(i);
-		teleport( i );	// need to see items, Abaddon 17th February, 2000
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
 
+	i->SetLocation( s->AddX(), s->AddY(), s->AddZ() );
+	i->Teleport();
+}
+
+void cTargets::MoreXYZTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+
+	i->SetMoreX( s->AddX() );
+	i->SetMoreY( s->AddY() );
+	i->SetMoreZ( s->AddZ() );
+}
+
+void cTargets::MoreXTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetMoreX( s->AddX() );
+}
+
+void cTargets::MoreYTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetMoreY( s->AddX() );
+}
+
+void cTargets::MoreZTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetMoreZ( s->AddX() );
+}
+
+void cTargets::PrivTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+	char temp[1024], temp2[1024];
+	sprintf( temp, "%s/logs/%s.log", cwmWorldState->ServerData()->GetRootDirectory(), mChar->GetName() );
+	sprintf( temp2, "%s as given %s Priv [%x][%x]\n", mChar->GetName(), i->GetName(), s->AddID1(), s->AddID2() );
+	i->SetPriv( s->AddID1() );
+	i->SetPriv2( s->AddID2() );
+	savelog( temp2, temp );
+}
+
+void cTargets::MoreTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		i->SetMore( s->AddID() );
+		RefreshItem( i );
 	}
 }
 
-void cTargets::MoreXYZTarget(int s)
+void cTargets::KeyTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].morex=addx[s];
-		items[i].morey=addy[s];
-		items[i].morez=addz[s];
-	}
-}
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
 
-void cTargets::MoreXTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].morex=addx[s];
-	}
-}
-
-void cTargets::MoreYTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].morey=addx[s];
-	}
-}
-
-void cTargets::MoreZTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].morez=addx[s];
-	}
-}
-
-void cTargets::PrivTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		//Logging
-		sprintf(temp, "%s.log",chars[currchar[s]].name);
-		sprintf(temp2, "%s as given %s Priv [%x][%x]\n",chars[currchar[s]].name,chars[i].name,addid1[s],addid2[s]);
-		chars[i].priv=addid1[s];
-		chars[i].priv2=addid2[s];
-		savelog(temp2, temp);
-	}
-}
-
-void cTargets::MoreTarget(int s)
-{
-	int i/*,j*/,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].more1=addid1[s];
-		items[i].more2=addid2[s];
-		items[i].more3=addid3[s];
-		items[i].more4=addid4[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-	}
-}
-
-void cTargets::KeyTarget(int s) // new keytarget by Morollan
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		if ((items[i].more1==0)&&(items[i].more2==0)&&
-			(items[i].more3==0)&&(items[i].more4==0))
-		{       
-			if ((items[i].type==7)&&(iteminrange(s,i,2)))
-			{
-				if (!Skills->CheckSkill(currchar[s],TINKERING, 400, 1000)) 
-				{
-					sysmessage(s,"You fail and destroy the key blank.");
-					Items->DeleItem(i);
-					return;
-				}//if
-				else
-				{
-					items[i].more1=addid1[s];
-					items[i].more2=addid2[s];
-					items[i].more3=addid3[s];
-					items[i].more4=addid4[s];
-					sysmessage(s, "You copy the key."); //Morrolan can copy keys
-					return;
-				}//else
-			}//if
-			return;
-		}//if
-		else if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
-			(items[i].more3==addid3[s])&&(items[i].more4==addid4[s]))||
-			(addid1[s] == 0xFF ) )
+	CChar *mChar = s->CurrcharObj();
+	SERIAL moreSerial = s->AddID();
+	if( i->GetMore() == 0 )
+	{       
+		if( i->GetType() == 7 && itemInRange( mChar, i, 2 ) )
 		{
-			if (((items[i].type==1)||(items[i].type==63))&&(iteminrange(s,i,2)))
+			if( !Skills->CheckSkill( mChar, TINKERING, 400, 1000 ) ) 
 			{
-				if(items[i].type==1) items[i].type=8;
-				if(items[i].type==63) items[i].type=64;
-				sysmessage(s, "You lock the container.");
+				sysmessage( s, 1016 );
+				Items->DeleItem( i );
 				return;
-			}//if
-			else if ((items[i].type==7)&&(iteminrange(s,i,2)))
-			{
-				chars[currchar[s]].keynumb=i;
-				sysmessage(s,"Enter new name for key.");//morrolan rename keys
-				return;
-			}//else if
-			else if ((items[i].type==8)||(items[i].type==64)&&(iteminrange(s,i,2)))
-			{
-				if(items[i].type==8) items[i].type=1;
-				if(items[i].type==64) items[i].type=63;
-				sysmessage(s, "You unlock the container.");
-				return;
-			}//else if
-			else if ((items[i].type==12)&&(iteminrange(s,i,2)))
-			{
-				items[i].type=13;
-				sysmessage(s, "You lock the door.");
-				return;
-			}//else if
-			else if ((items[i].type==13)&&(iteminrange(s,i,2)))
-			{
-				items[i].type=12;
-				sysmessage(s, "You unlock the door.");
-				return;
-			}//else if
-			else if ((items[i].id1==0x0b)&&(items[i].id2==0xd2))
-			{
-				sysmessage(s, "What do you wish the sign to say?");
-				chars[currchar[s]].keynumb=i; //Morrolan sign kludge
-				return;
-			}//else if
-			
-			//Boats ->
-			else if( items[i].type==117 )
-			{
-				Boats->OpenPlank( i );
-				RefreshItem( i ); // AntiChrist
 			}
-			//End Boats --^
-			
-			
-		}//else if
-		
-		else
-		{
-			if (items[i].type==7) sysmessage (s, "That key is not blank!");
-			else if (items[i].more1=='\x00') sysmessage(s, "That does not have a lock.");
-			else sysmessage(s, "The key does not fit into that lock.");
+			i->SetMore( moreSerial );
+			sysmessage( s, 1017 );
 			return;
-		}//else
-		return;
-	}//if
-}//keytarget()
-
-
-void cTargets::IstatsTarget(int s)
-{
-	int i,serial;
-	tile_st tile;
-	
-	
-	if ((buffer[s][7]==0)&&(buffer[s][8]==0)&&(buffer[s][9]==0)&&(buffer[s][10]==0))
+		}
+	}
+	else if( i->GetMore() == moreSerial || s->AddID1() == 0xFF )
 	{
-		Map->SeekTile(((buffer[s][0x11]<<8)+buffer[s][0x12]), &tile);
-		sprintf(temp, "Item [Static] ID [%x %x]",buffer[s][0x11], buffer[s][0x12]);
-		sysmessage(s, temp);
-		sprintf(temp, "ID2 [%i],  Height [%i]",((buffer[s][0x11]<<8)+buffer[s][0x12]), tile.height);
-		sysmessage(s, temp);
+		if( ( i->GetType() == 1 || i->GetType() == 63 ) && itemInRange( mChar, i, 2 ) )
+		{
+			if( i->GetType() == 1 ) 
+				i->SetType( 8 );
+			else if( i->GetType() == 63 ) 
+				i->SetType( 64 );
+			sysmessage( s, 1018 );
+			return;
+		}
+		if( i->GetType() == 7 && itemInRange( mChar, i, 2 ) )
+		{
+			mChar->SetSpeechItem( i->GetSerial() );
+			mChar->SetSpeechMode( 5 );
+			sysmessage( s, 1019 );
+			return;
+		}
+		if( ( i->GetType() == 8 || i->GetType() == 64 ) && itemInRange( mChar, i, 2 ) )
+		{
+			if( i->GetType() == 8 ) 
+				i->SetType( 1 );
+			if( i->GetType() == 64 ) 
+				i->SetType( 63 );
+			sysmessage( s, 1020 );
+			return;
+		}
+		if( i->GetType() == 12 && itemInRange( mChar, i, 2 ) )
+		{
+			i->SetType( 13 );
+			sysmessage( s, 1021 );
+			soundeffect( s, 0x0049, true );
+			return;
+		}
+		if( i->GetType() == 13 && itemInRange( mChar, i, 2 ) )
+		{
+			i->SetType( 12 );
+			sysmessage( s, 1022 );
+			soundeffect( s, 0x0049, true );
+			return;
+		}
+		if( i->GetID() == 0x0BD2 )
+		{
+			sysmessage( s, 1023 );
+			mChar->SetSpeechMode( 8 );
+			mChar->SetSpeechItem( i->GetSerial() );
+			return;
+		}
+		if( i->GetType() == 117 )
+		{
+			Boats->OpenPlank( i );
+			RefreshItem( i );
+		}
 	}
 	else
 	{
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (i!=-1)
-		{
-			// Modified by Magius(CHE)
-			sprintf(temp, "Item [Dynamic] Ser [%x %x %x %x]      ID [%x %x] Name [%s] Name2 [%s] Color [%x %x] Cont [%x %x %x %x] Layer [%x] Type [%d] Magic [%x] More [%x %x %x %x] Position [%i %i %i] Amount [%i] Priv [%x]",
-				items[i].ser1,items[i].ser2,items[i].ser3,items[i].ser4,items[i].id1,items[i].id2,
-				items[i].name,items[i].name2, items[i].color1,items[i].color2,
-				items[i].cont1,items[i].cont2,items[i].cont3,items[i].cont4,
-				items[i].layer,items[i].type,items[i].magic,
-				items[i].more1,items[i].more2,items[i].more3,items[i].more4,
-				items[i].x,items[i].y,items[i].z,items[i].amount, items[i].priv );
-			sysmessage(s, temp);
-			sprintf(temp, "STR [%d] HP/MAX [%d/%d] Damage [%d-%d] Defence [%d] Rank [%d] MoreXYZ [%i %i %i] Poisoned [%i] Single Item weight [%d] Owner [%x %x %x %x ] Creator [%s] MadeValue [%i] Decaytime[%i] Decay [%i] GoodType[%i] RandomValueRate[%i] Value [%i]",
-				items[i].st, items[i].hp, items[i].maxhp, items[i].lodamage, items[i].hidamage, items[i].def, items[i].rank,
-				items[i].morex, items[i].morey, items[i].morez,items[i].poisoned,
-				items[i].weight, items[i].owner1, items[i].owner2, items[i].owner3, items[i].owner4, // Ison 2-20-99
-				items[i].creator,items[i].madewith,int(double(int(items[i].decaytime-uiCurrentTime)/CLOCKS_PER_SEC)),(items[i].priv)&0x01,items[i].good,items[i].rndvaluerate,items[i].value); // Magius(CHE) (2)
-				sysmessage(s,temp); // Ison 2-20-99
-		}
+		if( i->GetType() == 7 ) 
+			sysmessage( s, 1024 );
+		else if( i->GetMore( 1 ) == 0 ) 
+			sysmessage( s, 1025 );
+		else 
+			sysmessage( s, 1026 );
 	}
 }
 
-void cTargets::CstatsTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		sprintf(temp, "Ser [%x %x %x %x] ID [%x %x] Name [%s] Skin [%x %x] Account [%x] Priv [%x %x] Position [%i %i %i] CTimeout [%i] Fame [%i] Karma [%i] Deaths [%i] Kills [%i] NPCAI [%x] NPCWANDER [%d] WEIGHT [%.2f]",
-			chars[i].ser1,chars[i].ser2,chars[i].ser3,chars[i].ser4,chars[i].id1,chars[i].id2,
-			chars[i].name,chars[i].skin1,chars[i].skin2,
-			chars[i].account,chars[i].priv,chars[i].priv2,
-			chars[i].x,chars[i].y,chars[i].z, chars[i].timeout,
-			chars[i].fame,chars[i].karma,chars[i].deaths,chars[i].kills,
-			chars[i].npcaitype, chars[i].npcWander, chars[i].weight);
-		sysmessage(s, temp);
-		sprintf(temp, "Other Info: Poisoned [%i] Poison [%i] Hunger [%i] Attacker [%i] Target [%i] Carve [%i]", // Changed by Magius(CHE)
-			chars[i].poisoned,chars[i].poison, chars[i].hunger, chars[i].attacker,chars[i].targ, chars[i].carve ); // Changed by Magius(CHE)
-		sysmessage(s, temp);
-		sprintf( temp, "Race [%i], Race Gate [%i]", chars[i].race, chars[i].raceGate );
-		sysmessage( s, temp );
-		Gumps->Open(s, i, 0, 8);
-		statwindow(s, i);
-	}
-}
 
-void cTargets::WstatsTarget(int s)
+void cTargets::IstatsTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CTile tile;
+	if( s->GetDWord( 7 ) == 0 )
 	{
-		sprintf(temp, "Ser [%x %x %x %x] ID [%x %x] Name [%s]",
-			chars[i].ser1,chars[i].ser2,chars[i].ser3,chars[i].ser4,chars[i].id1,chars[i].id2,
-			chars[i].name);
-		sysmessage(s, temp);
-		sprintf(temp, "X: %d, Y: %d, Z: %d/%d", chars[i].x, chars[i].y, chars[i].z, chars[i].dispz);
-		sysmessage(s, temp);
-		sprintf(temp, "W: %d FX1: %d, FY1: %d, FZ1: %d FX2: %d, FY2: %d", chars[i].npcWander,
-			chars[i].fx1, chars[i].fy1, chars[i].fz1, chars[i].fx2, chars[i].fy2);
-		sysmessage(s, temp);
-	}
-}
-
-void cTargets::GMTarget(int s)
-{
-	int j;
-	int  n, z, mypack, retitem;
-	
-	
-	mypack=-1; 
-	retitem=-1;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if(i!=-1)
-	{
-		sprintf(temp, "%s.log",chars[currchar[s]].name);
-		sprintf(temp2, "%s as made %s a GM.\n",chars[currchar[s]].name,chars[i].name);
-		savelog(temp2, temp);
-		
-		//AntiChrist bugfix
-		unmounthorse( calcSocketFromChar( i ) );
-		chars[i].id1=0x03;
-		chars[i].id2=0xDB;
-		chars[i].skin1=0x80;
-		chars[i].skin2=0x21;
-		chars[i].xid1=0x03;
-		chars[i].xid2=0xDB;
-		chars[i].orgid1=0x03;
-		chars[i].orgid2=0xDB;
-		chars[i].xskin1=0x80;
-		chars[i].xskin2=0x21;
-		chars[i].priv=0xF7;			// may want to look at this, CGMT says it's really 7F, and the closest way to get F7
-									// required me to have counselor clearance set as well (which it wouldn't allow)
-		chars[i].priv2=0xD9;		// no longer viewing house icons by default (request from Xuri)
-		chars[i].commandLevel = 2;
-		
-	
-		for (j=0;j<TRUESKILLS;j++)
+		UI08 worldNumber = 0;
+		if( s->CurrcharObj() != NULL )
+			worldNumber = s->CurrcharObj()->WorldNumber();
+		UI16 targetID = s->GetWord( 0x11 );
+		SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
+		SI16 targetY = s->GetWord( 0x0D );
+		SI08 targetZ = s->GetByte( 0x10 );
+		if( targetID != 0 )	// we might have a static rock or mountain
 		{
-			chars[i].baseskill[j]=1000;
-			chars[i].skill[j]=1000;
-		}
-
-		// All Stats at TOP for GM... or not??? --- Magius(CHE) 
-		// Abaddon, you're making an assumption that 100 is a maximum... not valid!
-		chars[i].st = 100;
-		chars[i].st2 = 100;
-		chars[i].hp = 100;
-		chars[i].stm = 100;
-		chars[i].in = 100;
-		chars[i].in2 = 100;
-		chars[i].mn = 100;
-		chars[i].mn2 = 100;
-		chars[i].dx = 100;
-		chars[i].dx2 = 100;
-		// End magius addon
-		if (strncmp(chars[i].name, "GM", 2))
-		{
-			sprintf(temp, "GM %s", chars[i].name);
-			strcpy(chars[i].name, temp);
-		}
-		
-		for(int a=0;a<contsp[chars[i].serial%HASHMAX].max;a++)
-		{
-			z=contsp[chars[i].serial%HASHMAX].pointer[a];
-			
-			if (z!=-1)
+			MapStaticIterator msi( targetX, targetY, worldNumber );
+			staticrecord *stat = NULL;
+			while( ( ( stat = msi.Next() ) != NULL ) )
 			{
-			  if (items[z].contserial==chars[i].serial &&
-			  	items[z].layer!=0x15 && items[z].layer!=0x1D &&
-				items[z].layer!=0x10 && items[z].layer!=0x0B && (items[z].free==0))
-			{
-				if (mypack==-1)
+				msi.GetTile(&tile);
+				if( targetZ == stat->zoff )
 				{
-					mypack=packitem(i);
+					GumpDisplay staticStat( s, 300, 300 );
+					staticStat.SetTitle( "Item [Static]" );
+					staticStat.AddData( "ID", targetID, 5 );
+					staticStat.AddData( "Height", tile.Height() );
+					staticStat.AddData( "Name", tile.Name() );
+					staticStat.Send( 4, false, INVALIDSERIAL );
 				}
-				if (mypack==-1)
-				{
-					chars[i].packitem=n=Items->SpawnItem(calcSocketFromChar(i),i,1,"#",0,0x0E,0x75,0,0,0,0);
-					if( n == -1 ) return;
-					setserial(n,i,4);
-					items[n].layer=0x15;
-					items[n].type=1;
-					items[n].dye=1;
-					mypack=n;
-					retitem=n;
-				}
-				items[z].x=(rand()%80)+50;
-				items[z].y=(rand()%80)+50;
-				items[z].z=9;
-				if (items[z].contserial!=-1) removefromptr(&contsp[items[z].contserial%HASHMAX], z);
-				setserial(z,mypack,1);
-				items[z].layer=0x00;
-				
-				removeitem[1]=items[z].ser1;
-				removeitem[2]=items[z].ser2;
-				removeitem[3]=items[z].ser3;
-				removeitem[4]=items[z].ser4;
-				for(j=0;j<now;j++)
-				if (perm[j])
-				{
-					Network->xSend(j, removeitem, 5, 0);
-//					senditem(j, z);
-				}
-				RefreshItem( z ); // AntiChrist
 			}
-			else if (items[z].contserial==chars[i].serial &&
-				(items[z].layer==0x0B || items[z].layer==0x10))
-			{
-				Items->DeleItem(z);
-			}
-			
 		}
-		} // end of z!=-1
-		updatechar(i);
-	} //LB !!!
-}
-
-void cTargets::CnsTarget(int s)
-{
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	
-	if(i!=-1)
-	{
-		
-		
-		// logging   
-		sprintf(temp, "%s.log",chars[currchar[s]].name);
-		sprintf(temp2, "%s as made %s a Counselor.\n",chars[currchar[s]].name,chars[i].name);
-		savelog(temp2, temp); //AntiChrist
-		chars[i].id1=0x03;
-		chars[i].id2=0xDB;
-		chars[i].skin1=0x80;
-		chars[i].skin2=0x03;
-		chars[i].xid1=0x03;
-		chars[i].xid2=0xDB;
-		chars[i].orgid1=0x03;
-		chars[i].orgid2=0xDB;
-		chars[i].xskin1=0x80;
-		chars[i].xskin2=0x02;
-		chars[i].priv=0xB6;
-		chars[i].priv2=0x8D;
-		chars[i].commandLevel = 1;
-		if (strncmp(chars[i].name, "Counselor", 9))
-		{
-			sprintf(temp, "Counselor %s", chars[i].name);
-			strcpy(chars[i].name, temp);
-		}
-		updatechar(i);
-		//break;
-	}
-	//} for
-}
-
-void cTargets::KillTarget(int s, int ly)
-{
-	int i, k,serial,serhash,ci;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	
-	k=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (k!=-1)
-	{
-		serhash=serial%HASHMAX;
-		for (ci=0;ci<contsp[serhash].max;ci++)
-		{
-			i=contsp[serhash].pointer[ci];
-			if (i!=-1)
-				if ((items[i].contserial==serial) && 
-					(items[i].layer==ly))
-				{
-					Items->DeleItem(i);
-				}
+		else		// or it could be a map only
+		{  // manually calculating the ID's if a maptype
+			map_st map1;
+			CLand land;
+			map1 = Map->SeekMap0( targetX, targetY, worldNumber );
+			Map->SeekLand( map1.id, &land );
+			GumpDisplay mapStat( s, 300, 300 );
+			mapStat.SetTitle( "Item [Map]" );
+			mapStat.AddData( "ID", targetID, 5 );
+			mapStat.AddData( "Name", land.Name() );
+			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}
-}
-
-void cTargets::FontTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	else
 	{
-		chars[i].fonttype=addid1[s];
+		CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+		if( i == NULL )
+			return;
+		GumpDisplay dynamicStat( s, 300, 300 );
+		dynamicStat.SetTitle( "Item [Dynamic]" );
+
+		SERIAL itemSerial = i->GetSerial();
+		SERIAL contSerial = i->GetCont();
+		SERIAL moreVal = i->GetMore();
+		SERIAL ownerSerial = i->GetOwner();
+		UI16 itemID = i->GetID();
+		UI16 itemColour = i->GetColour();
+		int hpStuff = ((i->GetHP())<<8) + i->GetMaxHP();
+		int itemDamage = ((i->GetLoDamage())<<8) + i->GetHiDamage();
+		long int decayTime = int(R64(int(i->GetDecayTime()-uiCurrentTime)/CLOCKS_PER_SEC));
+
+		dynamicStat.AddData( "Serial", itemSerial, 3 );
+		dynamicStat.AddData( "ID", itemID, 5 );
+		dynamicStat.AddData( "Name", i->GetName() );
+		dynamicStat.AddData( "Name2", i->GetName2() );
+		dynamicStat.AddData( "Colour", itemColour, 5 );
+		dynamicStat.AddData( "Cont Serial", contSerial, 3 );
+		dynamicStat.AddData( "Layer", i->GetLayer() );
+		dynamicStat.AddData( "Type", i->GetType() );
+		dynamicStat.AddData( "Moveable", i->GetMagic() );
+		dynamicStat.AddData( "More", moreVal, 3 );
+		dynamicStat.AddData( "X coord", i->GetX() );
+		dynamicStat.AddData( "Y coord", i->GetY() );
+		dynamicStat.AddData( "Z coord", i->GetZ() );
+		dynamicStat.AddData( "Amount", i->GetAmount() );
+		dynamicStat.AddData( "Owner", ownerSerial, 3 );
+		dynamicStat.AddData( "Privs", i->GetPriv() );
+		dynamicStat.AddData( "Strength", i->GetStrength() );
+		dynamicStat.AddData( "HP/Max", hpStuff, 6 );
+		dynamicStat.AddData( "Damage", itemDamage, 6 );
+		dynamicStat.AddData( "Defense", i->GetDef() );
+		dynamicStat.AddData( "Rank", i->GetRank() );
+		dynamicStat.AddData( "More X", i->GetMoreX() );
+		dynamicStat.AddData( "More Y", i->GetMoreY() );
+		dynamicStat.AddData( "More Z", i->GetMoreZ() );
+		dynamicStat.AddData( "Poisoned", i->GetPoisoned() );
+		dynamicStat.AddData( "Weight", i->GetWeight() );
+		dynamicStat.AddData( "Creator", i->GetCreator() );
+		dynamicStat.AddData( "Madewith", i->GetMadeWith() );
+		dynamicStat.AddData( "DecayTime", decayTime );
+		dynamicStat.AddData( "Decay", i->isDecayable()?1:0 );
+		dynamicStat.AddData( "Good", i->GetGood() );
+		dynamicStat.AddData( "RandomValueRate", i->GetRndValueRate() );
+		dynamicStat.AddData( "Value", i->GetValue() );
+		dynamicStat.AddData( "Carve", i->GetCarve() );
+		dynamicStat.Send( 4, false, INVALIDSERIAL );
 	}
 }
 
-
-void cTargets::GhostTarget(int s)
+void cTargets::CstatsTarget( cSocket *s )
 {
-	//int x=0; //AntiChrist
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	GumpDisplay charStat( s, 300, 300 );
+	charStat.SetTitle( "Character" );
+	UI16 charID = i->GetID();
+	UI16 charSkin = i->GetSkin();
+	int charPrivs = (i->GetPriv()<<8) + i->GetPriv2();
+	SERIAL charSerial = i->GetSerial();
+
+	charStat.AddData( "Serial", charSerial, 3 );
+	charStat.AddData( "Body Type", charID, 5 );
+	charStat.AddData( "Name", i->GetName() );
+	charStat.AddData( "Skin", charSkin, 5 );
+	charStat.AddData( "Account", i->GetAccount() );
+	charStat.AddData( "Privs", charPrivs, 5 );
+	charStat.AddData( "Strength", i->GetStrength() );
+	charStat.AddData( "Dexterity", i->GetDexterity() );
+	charStat.AddData( "Intelligence", i->GetIntelligence() );
+	charStat.AddData( "Mana", i->GetMana() );
+	charStat.AddData( "Hitpoints", i->GetHP() );
+	charStat.AddData( "Stamina", i->GetStamina() );
+	charStat.AddData( "X coord", i->GetX() );
+	charStat.AddData( "Y coord", i->GetY() );
+	charStat.AddData( "Z coord", i->GetZ() );
+	charStat.AddData( "Timeout", i->GetTimeout() );
+	charStat.AddData( "Fame", i->GetFame() );
+	charStat.AddData( "Karma", i->GetKarma() );
+	charStat.AddData( "Deaths", i->GetDeaths() );
+	charStat.AddData( "Kills", i->GetKills() );
+	charStat.AddData( "AI Type", i->GetNPCAiType()  );
+	charStat.AddData( "NPC Wander", i->GetNpcWander() );
+	charStat.AddData( "Weight", i->GetWeight() );
+	charStat.AddData( "Poisoned", i->GetPoisoned() );
+	charStat.AddData( "Poison", i->GetPoison() );
+	charStat.AddData( "Hunger", i->GetHunger() );
+	charStat.AddData( "Attacker", i->GetAttacker() );
+	charStat.AddData( "Target", i->GetTarg() );
+	charStat.AddData( "Carve", i->GetCarve() );
+	charStat.AddData( "Race", i->GetRace() );
+	charStat.AddData( "RaceGate", i->GetRaceGate() );
+	charStat.AddData( "CommandLevel", i->GetCommandLevel() );
+	if( i->GetAccount() != -1 )
+		charStat.AddData( "Last On", i->GetLastOn() );
+	charStat.Send( 4, false, INVALIDSERIAL );
 	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	
-	if(i!=-1)
+	Gumps->Open( s, i, 8 );
+	statwindow( s, i );
+}
+
+void cTargets::WstatsTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	GumpDisplay wStat( s, 300, 300 );
+	wStat.SetTitle( "Walking Stats" );
+	SERIAL charSerial = i->GetSerial();
+	UI16 charID = i->GetID();
+	wStat.AddData( "Serial", charSerial, 3 );
+	wStat.AddData( "Body ID", charID, 5 );
+	wStat.AddData( "Name", i->GetName() );
+	wStat.AddData( "X", i->GetX() );
+	wStat.AddData( "Y", i->GetY() );
+	char temp[15];
+	sprintf( temp, "%d/%d", i->GetZ(), i->GetDispZ() );
+	wStat.AddData( "Z/DispZ", temp );
+	wStat.AddData( "Wander", i->GetNpcWander() );
+	wStat.AddData( "FX1", i->GetFx( 1 ) );
+	wStat.AddData( "FY1", i->GetFy( 1 ) );
+	wStat.AddData( "FZ1", i->GetFz() );
+	wStat.AddData( "FX2", i->GetFx( 2 ) );
+	wStat.AddData( "FY2", i->GetFy( 2 ) );
+	wStat.Send( 4, false, INVALIDSERIAL );
+}
+
+void cTargets::KillTarget( cSocket *s, UI08 layer )
+{
+	CChar *k = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( k != NULL )
 	{
-		if(chars[i].dead==0)
-		{
-			chars[i].attacker=currchar[s]; //AntiChrist -- for forensics ev
-			bolteffect(i);
-			soundeffect2(i, 0x00, 0x29);
-			//x++;
-			deathstuff(i);
-			//break;
-		} else sysmessage(s,"That player is already dead.");
-		//} for
+		CItem *i = FindItemOnLayer( k, layer );
+		if( i != NULL )
+			Items->DeleItem( i );
 	}
-	//if(x==0)
-	//	sysmessage(s,"That player is already dead.");
+}
+
+void cTargets::FontTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetFontType( s->AddID1() );
 }
 
 
-void cTargets::BoltTarget(int s)
+void cTargets::GhostTarget( cSocket *s )
 {
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	
-	if(i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	if( !i->IsDead() )
 	{
-		bolteffect(i);
-		soundeffect2(i, 0x00, 0x29);
-		//break;
-		//} for
-	}
-}
-
-void cTargets::AmountTarget(int s)
-{
-//	int j;
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if(i!=-1)
-	{
-		items[i].amount=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-	}
-	
-	
+		i->SetAttacker( s->Currchar() );
+		bolteffect( i );
+		soundeffect( i, 0x0029 );
+		doDeathStuff( i );
+	} 
+	else 
+		sysmessage( s, 1028 );
 }
 
 
-void cTargets::SetAmount2Target(int s)
+void cTargets::BoltTarget( cSocket *s )
 {
-//	int j;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if(i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		items[i].amount2=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		bolteffect( i );
+		soundeffect( i, 0x0029 );
 	}
-	//} for
 }
 
-void cTargets::CloseTarget(int s)
+void cTargets::AmountTarget( cSocket *s )
 {
-	int j;
-	
-	//char closestr[6]="\x26\x00\x00\x00\x00";
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if(i!=-1)	
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		j=calcSocketFromChar(i);
-		if(j>-1)
-		{
-			sysmessage(s, "Kicking player");
-			sysmessage(j, "You have been kicked!"); //New -- Zippy
-			Network->Disconnect(j);//Network->xSend(j, closestr, 5, 0);
-						  /*if (currchar[j]==i)
-						  {
-						  disconnect(j);//Network->xSend(j, closestr, 5, 0);
-						  break;
-		}*/
-			//} for
-			//break;
-		}
+		i->SetAmount( s->AddX() );
+		RefreshItem( i );
+	}
+}
+
+void cTargets::CloseTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )	
+		return;
+	cSocket *j = calcSocketObjFromChar( i );
+	if( j != NULL )
+	{
+		sysmessage( s, 1029 );
+		sysmessage( j, 1030 );
+		Network->Disconnect( calcSocketFromSockObj( j ) );
 	}
 }
 
 // sockets
-int cTargets::AddMenuTarget(int s, int x, int addmitem) //Tauriel 11-22-98 updated for new items
+CItem * cTargets::AddMenuTarget( cSocket *s, bool x, char *addmitem ) //Tauriel 11-22-98 updated for new items
 {
-	int c;//, j;
-	if( s >= 0 ) if ( buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF ) return -1;
-		c=Items->CreateScriptItem(s, addmitem, 0);
-		if (c==-1) return -1;
-		if (x)
-			RefreshItem( c ); // AntiChrist
-		return c;
+	if( s == NULL )
+		return NULL;
+
+	if( s->GetDWord( 11 ) == INVALIDSERIAL ) 
+		return NULL;
+
+	CChar *mChar = s->CurrcharObj();
+	CItem *c = Items->CreateScriptItem( s, addmitem, false, mChar->WorldNumber() );
+	if( c == NULL ) 
+		return NULL;
+
+	if( x )
+		RefreshItem( c );
+
+	return c;
 }
 
-int cTargets::NpcMenuTarget(int s)
+CChar *cTargets::NpcMenuTarget( cSocket *s )
 // Abaddon 17th February, 2000
 // Need to return the character we've made, else summon creature at least will fail
 // We make the char, but never pass it back up the chain
 {
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return -1;
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return NULL;
 	
-	int x;
-	x=addmitem[s];
-	
-	return Npcs->AddRespawnNPC(s,-1,x,0);
-//	Npcs->AddRespawnNPC(s,x,0);
+	char *x = s->XText();
+	CChar *mChar = s->CurrcharObj();
+	return Npcs->AddNPC( s, NULL, x, mChar->WorldNumber() );
 }
 
-void cTargets::MovableTarget (int s)
+void cTargets::MovableTarget( cSocket *s )
 {
-//	int j;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	
-	if(i!=-1)
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		items[i].magic=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-		
+		i->SetMagic( s->AddX() );
+		RefreshItem( i );
 	}
 }
 
-void cTargets::VisibleTarget( UOXSOCKET s )
+void cTargets::VisibleTarget( cSocket *s )
 {
-	int i;//,j;
-	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( buffer[s][7] >= 0x40 )//item
+	SERIAL serial = s->GetDWord( 7 );
+	if( s->GetByte( 7 ) >= 0x40 )
 	{
-		i = calcItemFromSer( serial );
-		if( i != -1 )
+		CItem *i = calcItemObjFromSer( serial );
+		if( i != NULL )
 		{
-			items[i].visible = addx[s];
-			RefreshItem( i ); // AntiChrist
+			i->SetVisible( s->AddX() );
+			RefreshItem( i );
 		}
 	} 
 	else 
-	{//char
-		i = calcCharFromSer( serial );
-		if( i != -1 )
+	{
+		CChar *c = calcCharObjFromSer( serial );
+		if( c != NULL )
 		{
-			chars[i].hidden = addx[s];
-			updatechar(i);
-#ifdef __FLAMESTRIKE__
-			if( addx[s] == 0 && (chars[i].priv&0x01) )
-			{
-				staticeffect( i, 0x37, 0x09, 0x09, 0x19 );
-				soundeffect2( i, 0x02, 0x08 );
-			}
-#endif
+			c->SetHidden( s->AddX() );
+			c->Update();
 		}
 	}
 }
 
-void cTargets::OwnerTarget(int s) // bugfixed by JM
+void cTargets::OwnerTarget( cSocket *s )
 {
-	int i,serial;
+	SERIAL serial = s->GetDWord( 7 );
+	CChar *i = calcCharObjFromSer( serial );
+	if( i != NULL )
+		i->SetOwner( s->AddID() );
 	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		if( calcserial( addid1[s], addid2[s], addid3[s], addid4[s] ) == -1 )
-		{
-			removefromptr( &cownsp[chars[i].ownserial%HASHMAX], i );
-			chars[i].tamed = false;
-		}
-		else
-		{
-			setptr( &cownsp[calcserial( addid1[s], addid2[s], addid3[s], addid4[s])%HASHMAX], i );
-			chars[i].tamed = true;
-		}
-		chars[i].own1=addid1[s];
-		chars[i].own2=addid2[s];
-		chars[i].own3=addid3[s];
-		chars[i].own4=addid4[s];
-		chars[i].ownserial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	}
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		if( calcserial( addid1[s], addid2[s], addid3[s], addid4[s] ) == -1 )
-		{
-			removefromptr( &cownsp[items[i].ownserial%HASHMAX], i );
-		}
-		items[i].owner1=addid1[s];
-		items[i].owner2=addid2[s];
-		items[i].owner3=addid3[s];
-		items[i].owner4=addid4[s];
-		items[i].ownserial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-		if( items[i].ownserial != -1 )
-		{
-			setptr(&cownsp[items[i].ownserial%HASHMAX], i);
-		}
-	}
+	CItem *c = calcItemObjFromSer( serial );
+	if( c != NULL )
+		c->SetOwner( s->AddID() );
 }
 
-void cTargets::ColorsTarget (int s)
+void cTargets::ColorsTarget( cSocket *s )
 {
-	int i,serial;
-	
-
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	if( i->GetID() == 0x0FAB || i->GetID() == 0x0EFF || i->GetID() == 0x0E27 )	// dye vat, hair dye
 	{
-		if (((items[i].id1==0x0F)&&(items[i].id2==0xAB))||                        //dye vat
-			((items[i].id1==0x0E)&&((items[i].id2==0xFF)||(items[i].id2==0x27)))) //hair dye
-		{
-			dyevat[1]=items[i].ser1;
-			dyevat[2]=items[i].ser2;
-			dyevat[3]=items[i].ser3;
-			dyevat[4]=items[i].ser4;
-			dyevat[7]=items[i].id1;
-			dyevat[8]=items[i].id2;
-			Network->xSend(s, dyevat, 9, 0);
-		}
-		else
-		{
-			sysmessage(s, "You can only use this item on a dye vat.");
-		}
+		CPDyeVat toSend = (*i);
+		s->Send( &toSend );
 	}
+	else
+		sysmessage( s, 1031 );
 }
 
-void cTargets::DvatTarget (int s)
+void cTargets::DvatTarget( cSocket *s )
 {
-	int i,serial;
-	int count, j, x, c, change;
-	unsigned char x1, x2, x3, x4;		// these were ints
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i == NULL )
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+	if( i->isDyeable() )
 	{
-		if (items[i].dye==1)
+		if( i->GetCont() != INVALIDSERIAL )
 		{
-			c = -1;
-			x = -1;
-			x1 = items[i].cont1;
-			x2 = items[i].cont2;
-			x3 = items[i].cont3;
-			x4 = items[i].cont4;
-			serial = items[i].contserial = calcserial( x1, x2, x3, x4 );
-			count = 0;
-			do
+			CChar *c = getPackOwner( i );
+			if( c != NULL && c != mChar )
 			{
-				change = 0;
-				if( x1 >= 0x40 )
-				{
-					j = findbyserial( &itemsp[serial%HASHMAX],serial, 0 );
-					if( j != -1 )
-					{
-						x = j;
-						change = 1;
-						x1 = items[j].cont1;
-						x2 = items[j].cont2;
-						x3 = items[j].cont3;
-						x4 = items[j].cont4;
-						serial = items[j].contserial = calcserial( x1, x2, x3, x4 );
-					}
-				}
-				else
-				{
-					j = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-					if( j != -1 )
-					{
-						change = 1;
-						c = j;
-						x1 = 255;
-					}
-				}
-				count++;
-			} while( ( x1 != 255 && change == 1 ) && count < 9999 );
-			if( count >= 9999 ) printf("inf-loop avoided\n" );
-			if( c == currchar[s] || items[i].contserial == -1 )
-			{
-				items[i].color1=addid1[s];
-				items[i].color2=addid2[s];
-	//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-				RefreshItem( i ); // AntiChrist
-				soundeffect( s, 0x02, 0x3E );	// plays the dye sound, LB
-			}
-			else
-			{
-				sysmessage( s, "This is not yours!" );
+				sysmessage( s, 1032 );
+				return;
 			}
 		}
-		else
-		{
-			sysmessage(s, "You can only dye clothes with this.");
-		}
+		i->SetColour( ( ( s->AddID1() )<<8) + s->AddID2() );
+		RefreshItem( i );
+		soundeffect( s, 0x023E, true );
 	}
+	else
+		sysmessage( s, 1033 );
 }
 
-void cTargets::AddNpcTarget(int s)
+void cTargets::AddNpcTarget( cSocket *s )
 {
-	int c;
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF &&
-		buffer[s][14]==0xFF) return;
-	c=Npcs->MemCharFree ();
-	
-	Npcs->InitChar(c);
-	strcpy(chars[c].name, "Dummy");
-	chars[c].id1=addid1[s];
-	chars[c].id2=addid2[s];
-	chars[c].xid1=addid1[s];
-	chars[c].xid2=addid2[s];
-	chars[c].orgid1=addid1[s];
-	chars[c].orgid2=addid2[s];
-	chars[c].skin1=0;
-	chars[c].skin2=0;
-	chars[c].xskin1=0;
-	chars[c].xskin2=0;
-	chars[c].priv=0x10;
-	chars[c].x=(buffer[s][11]<<8)+buffer[s][12];
-	chars[c].y=(buffer[s][13]<<8)+buffer[s][14];
-	chars[c].dispz=chars[c].z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-	mapRegions->AddItem(c+1000000); // add it to da regions ...
-	chars[c].npc=1;
-	updatechar(c);
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	CHARACTER npcOff;
+	CChar *npc = Npcs->MemCharFree( npcOff );
+	if( npc == NULL )
+		return;
+
+	npc->SetName( "Dummy" );
+	npc->SetID( ( ( s->AddID1() )<<8 ) + s->AddID2() );
+	npc->SetxID( npc->GetID() );
+	npc->SetOrgID( npc->GetID() );
+	npc->SetSkin( 0 );
+	npc->SetxSkin( 0 );
+	npc->SetSkillTitles( true );
+	npc->SetLocation( s->GetWord( 11 ), s->GetWord( 13 ), s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
+	npc->SetNpc( true );
+	npc->Update();
 }
 
-void cTargets::FreezeTarget(int s)
+void cTargets::FreezeTarget( cSocket *s )
 {
-	int i,serial;
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetFrozen( true );
+}
+
+void cTargets::UnfreezeTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetFrozen( false );
+}
+
+// DarkStorm: Updated AllSetTarget to process the string information sent by
+// the client.
+void cTargets::AllSetTarget( cSocket *s )
+{
+	mstring Command( s->XText() );
+	SERIAL Serial = s->GetDWord( 7 );
+
+	cBaseObject *myObject = NULL;
+
+	// We're dealing with both, items and characters
+	if( Serial >= 0x40000000 )
+		myObject = calcItemObjFromSer( Serial );
+	else
+		myObject = calcCharObjFromSer( Serial );
+
+	if( myObject == NULL )
+		return;
 	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	// Split Command into 2 parts, key and value
+	vector< mstring > Parts = Command.split( " ", 2 );
+
+	if( Parts.size() < 2 ) 
 	{
-		chars[i].priv2=chars[i].priv2|2;
-	}
-}
-
-void cTargets::UnfreezeTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-//		chars[i].priv2=chars[i].priv2&(!2);
-		chars[i].priv2 = chars[i].priv2 & 0xFD; // unfreeze, AntiChrist used LB bugfix
-	}
-}
-
-void cTargets::AllSetTarget(int s)
-{
-	int j, k;
-	
-	//unsigned short int tempskill;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if(i!=-1)
-	{
-		k=calcSocketFromChar(i);
-		if (addx[s]<TRUESKILLS)
-		{
-			chars[i].baseskill[addx[s]]=addy[s];
-			Skills->updateSkillLevel(i, addx[s]);
-			if (k!=-1) updateskill(k, addx[s]);
-		}
-		else if (addx[s]==ALLSKILLS)
-		{
-			for (j=0;j<TRUESKILLS;j++)
-			{
-				chars[i].baseskill[j]=addy[s];
-				Skills->updateSkillLevel(i, j);
-				if (k!=-1) updateskill(k,j);
-			}
-		}
-		else if (addx[s]==STRENGTH)
-		{
-			chars[i].st=addy[s];
-			for (j=0;j<TRUESKILLS;j++)
-			{
-				Skills->updateSkillLevel(i,j);
-				if (k!=-1) updateskill(k,j);
-			}
-			if (k!=-1) statwindow(k,i);
-		}
-		else if (addx[s]==DEXTERITY)
-		{
-			chars[i].dx=addy[s];
-			for (j=0;j<TRUESKILLS;j++)
-			{
-				Skills->updateSkillLevel(i,j);
-				if (k!=-1) updateskill(k,j);
-			}
-			if (k!=-1) statwindow(k,i);
-		}
-		else if (addx[s]==INTELLECT)
-		{
-			chars[i].in=addy[s];
-			for (j=0;j<TRUESKILLS;j++)
-			{
-				Skills->updateSkillLevel(i,j);
-				if (k!=-1) updateskill(k,j);
-			}
-			if (k!=-1) statwindow(k,i);
-		}
-		else if (addx[s]==FAME)
-		{
-			chars[i].fame=addy[s];
-		}
-		else if (addx[s]==KARMA)
-		{
-			chars[i].karma=addy[s];
-		}
-		//break;
-		//} for
-	}
-}
-
-void cTargets::InfoTarget(int s) // rewritten to work also with map-tiles, not only static ones by LB
-{
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
-
-	int tilenum;
-	short int x, y;	// these were full ints
-	signed char z;
-//	unsigned long int pos;
-	tile_st tile;
-	map_st map1;
-	land_st land;
-	
-	x=(buffer[s][0x0B]<<8)+buffer[s][0x0C];
-	y=(buffer[s][0x0D]<<8)+buffer[s][0x0E];
-	z=buffer[s][0x10];
-
-	if ((buffer[s][0x11]==0)&&(buffer[s][0x12]==0))	// damn osi not me why the tilenum is only send for static tiles, LB
-		{  // manually calculating the ID's if it's a maptype
-			map1 = Map->SeekMap0( x, y );						
-			Map->SeekLand(map1.id, &land);
-			printf("type: map-tile\n");
-	        printf("tilenum: %i\n",map1.id);
-	        printf("Flag1:%x\n", land.flag1);
-	        printf("Flag2:%x\n", land.flag2);
-	        printf("Flag3:%x\n", land.flag3);
-	        printf("Flag4:%x\n", land.flag4);
-	        printf("Unknown1:%lx\n", land.unknown1);
-	        printf("Unknown2:%x\n", land.unknown2);
-	        printf("Name:%s\n", land.name);
-
-		} else
-
-		{
-
-	      tilenum=((buffer[s][0x11])<<8)+buffer[s][0x12]; // lb, bugfix
-	      Map->SeekTile(tilenum, &tile);
-
-		  printf("type: static-tile\n");
-	      printf("tilenum: %i\n",tilenum);
-	      printf("Flag1:%x\n", tile.flag1);
-	      printf("Flag2:%x\n", tile.flag2);
-	      printf("Flag3:%x\n", tile.flag3);
-	      printf("Flag4:%x\n", tile.flag4);
-	      printf("Weight:%x\n", tile.weight);
-	      printf("Layer:%x\n", tile.layer);
-	      printf("Anim:%lx\n", tile.animation);
-	      printf("Unknown1:%lx\n", tile.unknown1);
-	      printf("Unknown2:%x\n", tile.unknown2);
-	      printf("Unknown3:%x\n", tile.unknown3);
-	      printf("Height:%x\n", tile.height);
-	      printf("Name:%s\n", tile.name);
-	     
-		}
-		sysmessage(s, "Item info has been dumped to the console.");
-		printf("\n");
-}
-
-void cTargets::TweakTarget(int s)//Lag fix -- Zippy
-{
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i;
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if (i!=-1)//Char
-	{
-		tweakmenu(s, i, 2);
-	} else {//item
-		i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-		if(i!=-1)
-		{
-			tweakmenu(s, i, 1);
-		}
-	}
-}
-
-void cTargets::LoadCannon(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
-			(items[i].more3==addid3[s])&&(items[i].more4==addid4[s]))||
-			(addid1[s]=='\xFF'))
-		{
-			if ((items[i].morez==0)&&(iteminrange(s,i,2)))
-			{
-				if(items[i].morez==0) items[i].morez=1;
-				sysmessage(s, "You load the cannon.");
-			}
-			else
-			{
-				if (items[i].more1=='\x00') sysmessage(s, "That doesn't work in cannon.");
-				else sysmessage(s, "That object doesn't fit into cannon.");
-			}
-		}
-	}
-}
-
-void cTargets::SetInvulFlag(int s)
-{
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	
-	if(i!=-1)
-	{
-		if (addx[s]==1)
-		{
-			chars[i].priv=chars[i].priv|4;
-		}
-		else
-		{
-			chars[i].priv=chars[i].priv&0xFB; // Morrolan
-		}
-		//} for
-	}
-}
-
-void cTargets::Tiling(int s)  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
-{
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
-	
-	if (clickx[s]==-1 && clicky[s]==-1) {
-		clickx[s]=(buffer[s][11]<<8)+buffer[s][12];
-		clicky[s]=(buffer[s][13]<<8)+buffer[s][14];
-		target( s, 0, 1, 0, 198, "Select second corner of bounding box." );
+		sysmessage( s, "Invalid command: '%s'", s->XText() );
 		return;
 	}
-	
-	int /*j,*/c,pileable=0;
-	tile_st tile;
-	int x1=clickx[s],x2=(buffer[s][11]<<8)+buffer[s][12];
-	int y1=clicky[s],y2=(buffer[s][13]<<8)+buffer[s][14];
-	
-	clickx[s]=-1;clicky[s]=-1;
-	
-	if (x1>x2) {c=x1;x1=x2;x2=c;}
-	if (y1>y2) {c=y1;y1=y2;y2=c;}
-	
-	if (addid1[s]==0x40)
+
+	mstring Key = Parts[ 0 ];
+	mstring Value = Parts[ 1 ];
+	Key = Key.upper();
+
+	// Log EVERYTHING
+	// Check whatever we targetted
+	if( myObject->GetObjType() == OT_CHAR )
+		Commands->Log( "/set", s->CurrcharObj(), (CChar*)myObject, s->XText() );
+	else 
 	{
-		switch (addid2[s])
+		// It gets a bit more complicated for items
+		char Message[1024];
+		sprintf( Message, "Setting '%s'on '%s'", s->XText(), myObject->GetName() );
+		Commands->Log( "/set", s->CurrcharObj(), NULL, Message );
+	}
+
+	// Do Character specific stuff here...
+	if( myObject->GetObjType() == OT_CHAR )
+	{	
+		CChar *myChar = static_cast< CChar* >( myObject );
+		cSocket *charSock = calcSocketObjFromChar( myChar );
+
+		// Allskills
+		if( Key.compare( "ALLSKILLS" ) )
+		{
+			for( UI08 i = 0; i < ALLSKILLS; i++ )
+			{
+				myChar->SetBaseSkill( Value.toSI16(), i );
+				Skills->updateSkillLevel( myChar, i );
+
+				if( charSock != NULL ) 
+					updateskill( charSock, i );
+			}
+
+			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );				
+			return;
+		}
+
+		// Look for matching skills
+		for( UI08 i = 0; i < ALLSKILLS; i++ )
+		{
+			if( Key.compare( skillname[ i ] ) )
+			{
+				myChar->SetBaseSkill( Value.toSI16(), i );
+				Skills->updateSkillLevel( myChar, i );
+
+				if( charSock != NULL ) 
+					updateskill( charSock, i );
+
+				sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );				
+				return;
+			}
+		}
+
+		// XSkin, OrgSkin
+		if( Key.compare( "XSKIN" ) )
+		{
+			myChar->SetxSkin( Value.toUI16() );
+			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );
+			return;
+		}
+		else if( Key.compare( "ORGSKIN" ) )
+		{
+			myChar->SetOrgSkin( Value.toUI16() );
+			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );
+			return;
+		}
+	}
+
+	// Settings for normal Base Objects
+	// Set the name
+	if( Key.compare( "NAME" ) )
+	{
+		myObject->SetName( Value.c_str() );
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// updateStats
+	// 0: Strength
+	// 1: Intelligence
+	// 2: Dexterity
+
+	// Set the Strength
+	else if( ( Key.compare( "STR" ) ) || ( Key.compare( "STENGTH" ) ) )
+	{
+		myObject->SetStrength( Value.toSI16() );
+	
+		if( myObject->GetObjType() == OT_CHAR )
+		{
+			updateStats( (CChar*)myObject, 0 );
+		}
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the Dexterity
+	else if( ( Key.compare( "DEX" ) ) || ( Key.compare( "DEXTERITY" ) ) )
+	{
+		myObject->SetDexterity( Value.toSI16() );
+
+		if( myObject->GetObjType() == OT_CHAR )
+		{
+			updateStats( (CChar*)myObject, 0 );
+		}
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the intelligence
+	else if( ( Key.compare( "INT" ) ) || ( Key.compare( "INTELLIGENCE" ) ) )
+	{
+		myObject->SetIntelligence( Value.toSI16() );
+
+		if( myObject->GetObjType() == OT_CHAR )
+		{
+			updateStats( (CChar*)myObject, 0 );
+		}
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the fame
+	else if( Key.compare( "FAME" ) )
+	{
+		myObject->SetFame( Value.toSI16() );
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the karma
+	else if( Key.compare( "KARMA" ) )
+	{
+		myObject->SetKarma( Value.toSI16() );
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the kills
+	else if( Key.compare( "KILLS" ) )
+	{
+		myObject->SetKills( Value.toSI16() );
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	// Set the Color/Hue/Colour
+	else if( ( Key.compare( "COLOR" ) ) || ( Key.compare( "COLOUR" ) ) || ( Key.compare( "HUE" ) ) )
+	{
+		myObject->SetColour( Value.toUI16() );
+
+		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
+		return;
+	}
+
+	/*CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	
+	if( i == NULL )
+		return;
+	
+	CChar *mChar = s->CurrcharObj();
+	Commands->Log( "/set", mChar, i, "PostUsage" );
+
+	cSocket *kSock = calcSocketObjFromChar( i );
+
+	if( s->AddX() < TRUESKILLS )
+	{
+		i->SetBaseSkill( s->AddY(), s->AddX() );
+		Skills->updateSkillLevel( i, s->AddX() );
+		if( kSock != NULL ) 
+			updateskill( kSock, s->AddX() );
+	}
+	else 
+	{
+		UI08 j;
+		switch( s->AddX() )
+		{
+		case ALLSKILLS:
+			for( j = 0; j < TRUESKILLS; j++ )
+			{
+				i->SetBaseSkill( s->AddY(), j );
+				Skills->updateSkillLevel( i, j );
+				if( kSock != NULL ) 
+					updateskill( kSock, j );
+			}
+			break;
+		case STRENGTH:
+			i->SetStrength( s->AddY() );
+			for( j = 0; j < TRUESKILLS; j++ )
+			{
+				Skills->updateSkillLevel( i, j );
+				if( kSock != NULL ) 
+					updateskill( kSock, j );
+			}
+			if( kSock != NULL ) 
+				statwindow( kSock, i );
+			break;
+		case DEXTERITY:
+			i->SetDexterity( s->AddY() );
+			for( j = 0; j < TRUESKILLS; j++ )
+			{
+				Skills->updateSkillLevel( i, j );
+				if( kSock != NULL ) 
+					updateskill( kSock, j );
+			}
+			if( kSock != NULL ) 
+				statwindow( kSock, i );
+			break;
+		case INTELLECT:
+			i->SetIntelligence( s->AddY() );
+			for( j = 0; j < TRUESKILLS; j++ )
+			{
+				Skills->updateSkillLevel( i, j );
+				if( kSock != NULL ) 
+					updateskill( kSock, j );
+			}
+			if( kSock != NULL ) 
+				statwindow( kSock, i );
+			break;
+		case FAME:
+			i->SetFame( s->AddY() );
+			break;
+		case KARMA:
+			i->SetKarma( s->AddY() );
+			break;
+		case SKILLS + 1:
+			i->SetKills( s->AddY() );
+			break;
+		}
+	}*/
+}
+
+void cTargets::InfoTarget( cSocket *s )
+{
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	map_st map1;
+	CLand land;
+	
+	SI16 x = s->GetWord( 0x0B );
+	SI16 y = s->GetWord( 0x0D );
+//	SI08 z = s->GetByte( 0x10 );
+
+	UI08 worldNumber = 0;
+	if( s->CurrcharObj() != NULL )
+		worldNumber = s->CurrcharObj()->WorldNumber();
+	if( s->GetWord( 0x11 ) == 0 )
+	{  // manually calculating the ID's if it's a maptype
+		map1 = Map->SeekMap0( x, y, worldNumber );
+		Map->SeekLand( map1.id, &land );
+		GumpDisplay mapStat( s, 300, 300 );
+		mapStat.SetTitle( "Map Tile" );
+
+		mapStat.AddData( "Tilenum", map1.id );
+		mapStat.AddData( "Flag1", land.Flag1(), 1 );
+		mapStat.AddData( "Flag2", land.Flag2(), 1 );
+		mapStat.AddData( "Flag3", land.Flag3(), 1 );
+		mapStat.AddData( "Flag4", land.Flag4(), 1 );
+		mapStat.AddData( "Unknown1", land.Unknown1(), 1 );
+		mapStat.AddData( "Unknown2", land.Unknown2(), 1 );
+		mapStat.AddData( "Name", land.Name() );
+		mapStat.Send( 4, false, INVALIDSERIAL );
+	} 
+	else
+	{
+		CTile tile;
+		SI32 tilenum = s->GetWord( 0x11 );
+		Map->SeekTile( tilenum, &tile );
+
+		GumpDisplay statTile( s, 300, 300 );
+		statTile.SetTitle( "Map Tile" );
+
+		statTile.AddData( "Tilenum", tilenum );
+		statTile.AddData( "Flag1", tile.Flag1(), 1 );
+		statTile.AddData( "Flag2", tile.Flag2(), 1 );
+		statTile.AddData( "Flag3", tile.Flag3(), 1 );
+		statTile.AddData( "Flag4", tile.Flag4(), 1 );
+		statTile.AddData( "Weight", tile.Weight() );
+		statTile.AddData( "Layer", tile.Layer(), 1 );
+		statTile.AddData( "Anim", tile.Animation(), 1 );
+		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+		statTile.AddData( "Height", tile.Height(), 1 );
+		statTile.AddData( "Name", tile.Name() );
+		statTile.Send( 4, false, INVALIDSERIAL );
+	}
+	sysmessage( s, 1034 );
+}
+
+void cTargets::TweakTarget( cSocket *s )
+{
+	SERIAL serial = s->GetDWord( 7 );
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
+		tweakCharMenu( s, c );
+	else 
+	{
+		CItem *i = calcItemObjFromSer( serial );
+		if( i != NULL )
+			tweakItemMenu( s, i );
+	}
+}
+
+void cTargets::LoadCannon( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	SERIAL moreSerial = s->AddID();
+	if( i->GetMore() == moreSerial || s->AddID1() == 0xFF )
+	{
+		if( i->GetMoreZ() == 0 && itemInRange( s->CurrcharObj(), i, 2 ) )
+		{
+			i->SetMoreZ( 1 );
+			sysmessage( s, 1035 );
+		}
+		else
+		{
+			if( i->GetMore( 1 ) == 0x00 ) 
+				sysmessage( s, 1036 );
+			else 
+				sysmessage( s, 1037 );
+		}
+	}
+}
+
+void cTargets::SetInvulFlag( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetInvulnerable( s->AddX() == 1 );
+}
+
+void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
+{
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	if( s->ClickX() == -1 && s->ClickY() == -1 )
+	{
+		s->ClickX( s->GetWord( 11 ) );
+		s->ClickY( s->GetWord( 13 ) );
+		target( s, 0, 1, 0, 198, 1038 );
+		return;
+	}
+
+	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
+	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
+	SI16 j;
+
+	s->ClickX( -1 );
+	s->ClickY( -1 );
+	
+	if( x1 > x2 ) 
+	{ 
+		j = x1;
+		x1 = x2;
+		x2 = j;
+	}
+	if( y1 > y2 ) 
+	{ 
+		j = y1; 
+		y1 = y2; 
+		y2 = j;
+	}
+	
+	if( s->AddID1() == 0x40 )
+	{
+		switch( s->AddID2() )
 		{
 		case 100:
 		case 102:
@@ -1950,1331 +1816,1084 @@ void cTargets::Tiling(int s)  // Clicking the corners of tiling calls this funct
 		case 124:
 		case 126:
 		case 140:
-			Targ->AddTarget(s);
+			AddTarget( s );
 			return;
 		}
 	}
-	
-	int x,y;
-	
-	Map->SeekTile((addid1[s]<<8)+addid2[s], &tile);
-	if (tile.flag2&0x08) pileable=1;
-	for (x=x1;x<=x2;x++)
-	  {
-		for (y=y1;y<=y2;y++) {
-			c=Items->SpawnItem(s, 1, "#", pileable, addid1[s], addid2[s], 0, 0, 0,0);
-			if( c == -1 ) return;
-			items[c].priv=0;	//Make them not decay
-			items[c].x=x;
-			items[c].y=y;
-			items[c].z=buffer[s][16]+(Map->TileHeight( (buffer[s][17]<<8) + buffer[s][18]));
-			RefreshItem( c ); // AntiChrist
-			mapRegions->AddItem(c); // lord Binary
+
+	bool pileable = false;
+	UI16 addid = (UI16)(( ( s->AddID1() ) << 8 ) + s->AddID2());
+	CTile tile;
+	Map->SeekTile( addid, &tile );
+	if( tile.Stackable() ) 
+		pileable = true;
+
+	CItem *c = NULL;
+	for( SI16 x = x1; x <= x2; x++ )
+	{
+		for( SI16 y = y1; y <= y2; y++ ) 
+		{
+			c = Items->SpawnItem( s, 1, "#", pileable, addid, 0, false, false );
+			if( c == NULL ) 
+				return;
+			c->SetPriv( 0 );	//Make them not decay
+			c->SetLocation( x, y, s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
+			RefreshItem( c );
 		}
-	  }
-		
-		addid1[s]=0;
-		addid2[s]=0;
+	}
+	s->AddID1( 0 );
+	s->AddID2( 0 );
 }
 
-void cTargets::Wiping(int s)  // Clicking the corners of wiping calls this function - Crwth 01/11/1999
+void cTargets::AreaCommand( cSocket *s )
 {
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
 	
-	if (clickx[s]==-1 && clicky[s]==-1) {
-		clickx[s]=(buffer[s][11]<<8)+buffer[s][12];
-		clicky[s]=(buffer[s][13]<<8)+buffer[s][14];
-		if (addid1[s]) target(s,0,1,0,199,"Select second corner of inverse wiping box.");
-		else target(s,0,1,0,199,"Select second corner of wiping box.");
+	if( s->ClickX() == -1 && s->ClickY() == -1 )
+	{
+		s->ClickX( s->GetWord( 11 ) );
+		s->ClickY( s->GetWord( 13 ) );
+		target( s, 0, 1, 0, 90, 1040 );
 		return;
 	}
 	
-	int x1=clickx[s],x2=(buffer[s][11]<<8)+buffer[s][12];
-	int y1=clicky[s],y2=(buffer[s][13]<<8)+buffer[s][14];
+	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
+	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
 	
-	clickx[s]=-1;clicky[s]=-1;
+	s->ClickX( -1 );
+	s->ClickY( -1 );
 	
-	int c;
+	SI16 c;
 	
-	if (x1>x2) {c=x1;x1=x2;x2=c;}
-	if (y1>y2) {c=y1;y1=y2;y2=c;}
-	
-	if (addid1[s]==1) {  // addid1[s]==1 means to inverse wipe
-		for (int i=0;i<itemcount;i++)
-			if (!(items[i].x>=x1 && items[i].x<=x2 && items[i].y>=y1 && items[i].y<=y2) && items[i].contserial==-1 && items[i].wipe==0)
-				Items->DeleItem(i);
+	if( x1 > x2 ) 
+	{ 
+		c = x1;
+		x1 = x2;
+		x2 = c;
 	}
-	else {
-		for (int i=0;i<itemcount;i++)
-			if (items[i].x>=x1 && items[i].x<=x2 && items[i].y>=y1 && items[i].y<=y2 && items[i].contserial==-1 && items[i].wipe==0)
-				Items->DeleItem(i);
+	if( y1 > y2 ) 
+	{ 
+		c = y1; 
+		y1 = y2; 
+		y2 = c;
 	}
-}
 
-void cTargets::ExpPotionTarget(int s) //Throws the potion and places it (unmovable) at that spot
-{
-	int i, x, y, z;
-	//int dx,dy;
-	x=(buffer[s][11]<<8)+buffer[s][12];
-	y=(buffer[s][13]<<8)+buffer[s][14];
-	z=buffer[s][16];
-	if (x!=65535)
+	enum AreaCommandTypes
 	{
-		// ANTICHRIST -- CHECKS LINE OF SIGHT!
-		if(line_of_sight(s,chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].dispz,x,y,z,WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED))
+		ACT_DYE = 0,
+		ACT_WIPE,
+		ACT_INCX,
+		ACT_INCY,
+		ACT_INCZ,
+		ACT_SETX,
+		ACT_SETY,
+		ACT_SETZ,
+		ACT_SETTYPE,
+		ACT_NEWBIE,
+		ACT_SETSCPTRIG,
+		INVALID_CMD,
+		ACT_CMDCOUNT
+	};
+
+	const string areaCommandStrings[ACT_CMDCOUNT] =
+	{
+		"dye",
+		"wipe",
+		"incx",
+		"incy",
+		"incz",
+		"setx",
+		"sety",
+		"setz",
+		"settype",
+		"newbie",
+		"setscptrig",
+		""
+	};
+
+	AreaCommandTypes cmdType = INVALID_CMD;
+
+	char *orgString = NULL, *foundSpace = NULL;
+	char temp[512];
+
+	orgString = s->XText();
+	if( orgString == NULL )
+		return;
+
+	UI16 j = 0;
+	UI16 sLen = strlen( orgString );
+	for( j = 0; j < sLen; j++ )
+	{
+		if( orgString[j] == ' ' )
 		{
-			i=calcItemFromSer(addid1[s],addid2[s],addid3[s],addid4[s]);
-			if( i > -1 ) // crashfix LB
+			foundSpace = &orgString[j];
+			break;
+		}
+	}
+
+	if( foundSpace == NULL )
+	{
+		strcpy( temp, orgString );
+	}
+	else
+	{
+
+		UI16 sLen2 = (UI16)(foundSpace - orgString);
+		strncpy( temp, orgString, sLen2 );
+		temp[sLen2] = 0;
+	}
+
+	for( AreaCommandTypes k = ACT_DYE; k < INVALID_CMD; k = (AreaCommandTypes)((int)k + 1) )
+	{
+		if( !strcmp( temp, areaCommandStrings[k].c_str() ) )
+		{
+			cmdType = k;
+			break;
+		}
+	}
+
+	if( cmdType == INVALID_CMD )
+	{
+		sysmessage( s, "Unknown command type" );
+		return;
+	}
+
+	for( ITEM i = 0; i < itemcount; i++ )
+	{
+		if( items[i].isFree() )
+			continue;
+		if( items[i].GetCont() != INVALIDSERIAL )
+			continue;
+		if( items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 )
+		{
+			switch( cmdType )
 			{
-				mapRegions->RemoveItem(i); //LB
-				items[i].x=x;
-				items[i].y=y;
-				items[i].z=z;
-				mapRegions->AddItem(i);
-				items[i].cont1=255;		// was -1, not good for UNSIGNED chars
-				items[i].cont2=255;		// was -1, not good for UNSIGNED chars
-				items[i].cont3=255;		// was -1, not good for UNSIGNED chars
-				items[i].cont4=255;		// was -1, not good for UNSIGNED chars
-				items[i].contserial=-1;
-				items[i].magic=2; //make item unmovable once thrown
-				movingeffect2(currchar[s], i, 0x0F, 0x0D, 0x11, 0x00, 0x00);
-//				for (unsigned int j=0;j<now;j++) if (perm[j]) senditem(j,i);
-				RefreshItem( i ); // AntiChrist
+			case ACT_DYE:	// dye
+				items[i].SetColour( (UI16)makeNum( foundSpace ) );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_WIPE:	// wipe
+				Items->DeleItem( &items[i] );
+				break;
+			case ACT_INCX: // incx
+				MapRegion->RemoveItem( &items[i] );
+				items[i].IncX( (SI16)makeNum( foundSpace ) );
+				MapRegion->AddItem( &items[i] );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_INCY:	// incy
+				MapRegion->RemoveItem( &items[i] );
+				items[i].IncY( (SI16)makeNum( foundSpace ) );
+				MapRegion->AddItem( &items[i] );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_INCZ:	// incz
+				items[i].IncZ( (SI08)makeNum( foundSpace ) );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_SETX: // setx
+				MapRegion->RemoveItem( &items[i] );
+				items[i].SetX( (SI16)makeNum( foundSpace ) );
+				MapRegion->AddItem( &items[i] );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_SETY:	// sety
+				MapRegion->RemoveItem( &items[i] );
+				items[i].SetY( (SI16)makeNum( foundSpace ) );
+				MapRegion->AddItem( &items[i] );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_SETZ:	// setz
+				items[i].SetZ( (SI08)makeNum( foundSpace ) );
+				RefreshItem( &items[i] );
+				break;
+			case ACT_SETTYPE: // settype
+				items[i].SetType( (UI08)makeNum( foundSpace ) );
+				break;
+			case ACT_NEWBIE:	// newbie
+				items[i].SetNewbie( makeNum( foundSpace ) != 0 );
+				break;
+			case ACT_SETSCPTRIG:	// set script #
+				items[i].SetScriptTrigger( makeNum( foundSpace ) );
+				break;
+			default:
+				break;
 			}
-		} else sysmessage( s,"You cannot throw the potion there!");
+			// process command here!
+		}
 	}
 }
 
-void cTargets::SquelchTarg(int s)//Squelch
+
+void cTargets::Wiping( cSocket *s )  // Clicking the corners of wiping calls this function - Crwth 01/11/1999
 {
-	int p, serial;
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	p=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if (p!=-1)
+	if( s->ClickX() == -1 && s->ClickY() == -1 )
 	{
-		if(chars[p].priv&1)             
+		s->ClickX( s->GetWord( 11 ) );
+		s->ClickY( s->GetWord( 13 ) );
+		if( s->AddID1() ) 
+			target( s, 0, 1, 0, 199, 1039 );
+		else 
+			target( s, 0, 1, 0, 199, 1040 );
+		return;
+	}
+	
+	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
+	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
+	
+	s->ClickX( -1 );
+	s->ClickY( -1 );
+	
+	SI16 c;
+	
+	if( x1 > x2 ) 
+	{ 
+		c = x1;
+		x1 = x2;
+		x2 = c;
+	}
+	if( y1 > y2 ) 
+	{ 
+		c = y1; 
+		y1 = y2; 
+		y2 = c;
+	}
+
+	ITEM i;
+	if( s->AddID1() == 1  )
+	{  // addid1[s]==1 means to inverse wipe
+		for( i = 0; i < itemcount; i++ )
 		{
-			sysmessage(s, "You cannot squelch GMs.");
+			if(!(items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 ) 
+				&& items[i].GetCont() == INVALIDSERIAL && !items[i].isWipeable() )
+				Items->DeleItem( &items[i] );
+		}
+	}
+	else 
+	{
+		for( i = 0; i < itemcount; i++ )
+		{
+			if( items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 
+				&& items[i].GetCont() == INVALIDSERIAL && !items[i].isWipeable() )
+				Items->DeleItem( &items[i] );
+		}
+	}
+}
+
+void cTargets::ExpPotionTarget( cSocket *s ) //Throws the potion and places it (unmovable) at that spot
+{
+	SI16 x = s->GetWord( 11 );
+	SI16 y = s->GetWord( 13 );
+	SI08 z = s->GetByte( 16 );
+	CChar *mChar = s->CurrcharObj();
+	if( x != -1 )
+	{
+		if( LineOfSight( s, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )
+		{
+			CItem *i = calcItemObjFromSer( s->AddID() );
+			if( i != NULL )
+			{
+				i->SetCont( INVALIDSERIAL );
+				i->SetLocation( x, y, z );
+				i->SetMagic( 2 ); //make item unmovable once thrown
+				movingeffect( mChar, i, 0x0F0D, 0x11, 0x00, 0x00 );
+				RefreshItem( i );
+			}
+		} 
+		else 
+			sysmessage( s, 1041 );
+	}
+}
+
+void cTargets::SquelchTarg( cSocket *s )
+{
+	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( p != NULL )
+	{
+		if( p->IsGM() )
+		{
+			sysmessage( s, 1042 );
 			return;
 		} 
-		if (chars[p].squelched)
+		if( p->GetSquelched() )
 		{
-			chars[p].squelched=0;
-			sysmessage(s, "Un-squelching...");
-			sysmessage(calcSocketFromChar(p), "You have been unsquelched!");
-			chars[p].mutetime=-1;
+			p->SetSquelched( 0 );
+			sysmessage( s, 1655 );
+			sysmessage( calcSocketObjFromChar( p ), 1043 );
+			p->SetMuteTime( -1 );
 		} 
 		else 
 		{
-			chars[p].mutetime=-1;
-			chars[p].squelched=1;
-			sysmessage(s, "Squelching...");
-			sysmessage(calcSocketFromChar(p), "You have been squelched!");
-			if (addid1[s]!=255 || addid1[s]!=0)			// 255 used to be -1, not good for unsigned chars
+			p->SetMuteTime( -1 );
+			p->SetSquelched( 1 );
+			sysmessage( s, 1044 );
+			sysmessage( calcSocketObjFromChar( p ), 761 );
+			if( s->AddID1() != 0xFF && s->AddID1() != 0 )			// 255 used to be -1, not good for UI08s
 			{
-				chars[p].mutetime=uiCurrentTime+(addid1[s]*CLOCKS_PER_SEC);
-				addid1[s]=255;
-				chars[p].squelched=2;
+				p->SetMuteTime( BuildTimeValue( s->AddID1() ) );
+				s->AddID1( 255 );
+				p->SetSquelched( 2 );
 			}
 		}
 	}
 }
 
 
-void cTargets::TeleStuff(int s)
+void cTargets::TeleStuff( cSocket *s )
 {
-    static int targ=-1;//What/who to tele
-    int x, y, z;
-    int serial, i;
-	//	 
-    if (targ==-1)
+    static UI32 targ = INVALIDSERIAL;//What/who to tele
+    if( targ == INVALIDSERIAL )
 	{
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		if (buffer[s][7]==0xFF) return;
-		targ=findbyserial(&charsp[serial%HASHMAX],serial,1);
+		SERIAL serial = s->GetDWord( 7 );
+		if( s->GetByte( 7 ) == 0xFF ) 
+			return;
+		targ = calcCharFromSer( serial );
 		
-		if(targ!=-1)
+		if( targ != INVALIDSERIAL )
 		{
-			targ+=1000000;
-			target(s,0,1,0,222,"Select location to put this character.");
-		} else {
-			targ=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-			if(targ!=-1)
-				target(s,0,1,0,222,"Select location to put this item.");
+			targ += 1000000;
+			target( s, 0, 1, 0, 222, 1045 );
+		} 
+		else 
+		{
+			targ = calcItemFromSer( serial );
+			if( targ != INVALIDSERIAL )
+				target( s, 0, 1, 0, 222, 1046 );
 		}
 		return;
-	} else {
-		if(buffer[s][11]==0xFF) return;
-		x=(buffer[s][11]<<8)+buffer[s][12];
-		y=(buffer[s][13]<<8)+buffer[s][14];
-		z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
+	} 
+	else 
+	{
+		if( s->GetByte( 11 ) == 0xFF )
+			return;
+		CHARACTER i;
+		SI16 x = s->GetWord( 11 );
+		SI16 y = s->GetWord( 13 );
+		SI08 z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
 		
-		if (targ>999999)//character
+		if( targ > 999999 )//character
 		{
-			sysmessage(s, "Moving character...");
-			i=targ-1000000;
-			mapRegions->RemoveItem(i+1000000);
-			chars[i].x=x;
-			chars[i].y=y;
-			chars[i].z=chars[i].dispz=z;
-			mapRegions->AddItem(i+1000000);
-			teleport(i);
-		} else {
-			i=targ;
-			mapRegions->RemoveItem(i);
-			items[i].x=x;
-			items[i].y=y;
-			items[i].z=z;
-			mapRegions->AddItem(i);
-			sysmessage(s, "Moving item...");
-//			for(int a=0;a<now;a++) if (iteminrange(a, i, 30)) senditem(a, i);
-			RefreshItem( i ); // AntiChrist
+			sysmessage( s, 1047 );
+			i = targ - 1000000;
+			chars[i].SetLocation( x, y, z );
+			chars[i].Teleport();
+		} 
+		else 
+		{
+			i = targ;
+			items[i].SetLocation( x, y, z );
+			sysmessage( s, 1048 );
+			RefreshItem( &items[i] );
 		}
-		targ=-1;
+		targ = INVALIDSERIAL;
+	}
+}
+
+void cTargets::SwordTarget( cSocket *s )
+{
+	if( s == NULL )
+		return;
+
+	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CChar *mChar = s->CurrcharObj();
+
+	if( mChar == NULL )
+		return;
+
+	if( p != NULL )
+	{
+		if( p->GetID() == 0xCF )
+		{
+			// Unshorn sheep
+			// -> Add Wool and change id of the Sheep
+			CItem *c = Items->SpawnItemToPack( s, mChar, "unspoonwool", false );
+
+			p->SetID( 0xDF );			
+			p->Teleport();
+
+			// Add an effect so the sheep can regain it's wool
+			cDice *myDice = new cDice( "2d3" );
+			UI32 Delay = myDice->roll();
+			delete myDice;			
+
+			tempeffect( p, p, 43, Delay*300, 0, 0, INVALIDSERIAL );
+		}
+		else
+		{
+			// Already sheered
+			//sysmessage( s, "" );
+		}
+
 		return;
 	}
-}
-
-void cTargets::SwordTarget(int s)
-{
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
-	int /*k,*/c;
 	
-	if (((buffer[s][0x11]==0x0C)&&
-		((buffer[s][0x12]==0xD0)||(buffer[s][0x12]==0xD3)||(buffer[s][0x12]==0xD6)||
-		(buffer[s][0x12]==0xD8)||(buffer[s][0x12]==0xDA)||(buffer[s][0x12]==0xDD)||
-		(buffer[s][0x12]==0xE0)||(buffer[s][0x12]==0xE3)||(buffer[s][0x12]==0xE6)||
-		((buffer[s][0x12]>=0xCA)&&(buffer[s][0x12]<=0xCD))))||
-		((buffer[s][0x11]==0x12)&&(buffer[s][0x12]>=0xB8)&&(buffer[s][0x12]<=0xBB)))
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	UI16 targetID = s->GetWord( 0x11 );
+
+	switch( targetID )
 	{
-		if (!chars[s].onhorse) action(s,0x0D);
-		else action(s,0x1d);
-		soundeffect(s,0x01,0x3E);
-		c=Items->SpawnItem(s,1,"#",1,0x0D,0xE1,0,0,0,0); //Kindling
-		if( c == -1 ) return;
+	case 0x0CD0:
+	case 0x0CD3:
+	case 0x0CD6:
+	case 0x0CD8:
+	case 0x0CDA:
+	case 0x0CDD:
+	case 0x0CE0:
+	case 0x0CE3:
+	case 0x0CE6:
+	case 0x0CCA:
+	case 0x0CCB:
+	case 0x0CCC:
+	case 0x0CCD:
+	case 0x0C12:
+	case 0x0CB8:
+	case 0x0CB9:
+	case 0x0CBA:
+	case 0x0CBB:
+	{
+		SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
+		SI16 targetY = s->GetWord( 0x0D );
+		SI08 targetZ = s->GetByte( 0x10 );
 
-		items[c].x=chars[currchar[s]].x;
-		items[c].y=chars[currchar[s]].y;
-		items[c].z=chars[currchar[s]].z;
+		SI08 distZ = abs( targetZ - mChar->GetZ() );
+		SI16 distY = abs( targetY - mChar->GetY() );
+		SI16 distX = abs( targetX - mChar->GetX() );
 
-        mapRegions->AddItem(c); // lord Binary
-		
-//		for (k=0;k<now;k++) if (perm[k]) senditem(k,c);
-		RefreshItem( c ); // AntiChrist
-		sysmessage(s, "You hack at the tree and produce some kindling.");
-	}
-	else
-		if((buffer[s][0x11]==0x1B) && ((buffer[s][0x12]==0xDD) || buffer[s][0x12]==0xE0))  // vagrant
+		if( distY > 5 || distX > 5 || distZ > 9 )
 		{
-			Skills->BowCraft(s);
+			sysmessage( s, 393 );
 			return;
 		}
-		else if ((buffer[s][0x11]==0x20) && (buffer[s][0x12]==0x06))
+		if( !mChar->IsOnHorse() )
+			action( s, 0x0D );
+		else 
+			action( s, 0x1D );
+		soundeffect( s, 0x013E, true );
+		CItem *c = Items->SpawnItem( s, 1, "#", true, 0x0DE1, 0, false, false ); //Kindling
+		if( c == NULL ) 
+			return;
+
+		c->SetLocation( mChar );
+		RefreshItem( c );
+		sysmessage( s, 1049 );
+		return;
+	}
+	case 0x1BDD:
+	case 0x1BE0:
+		Skills->BowCraft( s );
+		return;
+	case 0x2006:
+		CorpseTarget( s );
+		return;
+	}
+	sysmessage( s, 1050 );
+}
+
+void cTargets::CorpseTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	bool n = false;
+	if( itemInRange( s->CurrcharObj(), i, 1 ) ) 
+	{
+		s->AddMItem( calcItemFromSer( i->GetSerial() ) );
+		action( s, 0x20 );
+		n = true;
+		if( i->GetMore( 1 ) == 0 )
 		{
-			Targ->CorpseTarget(s);
-			return;
-		}
-		else sysmessage(s,"You can't think of a way to use your blade on that.");
+			i->SetMore( 1, 1 );
+			if( i->GetMoreY() || i->GetCarve() != -1 )
+				newCarveTarget( s, i );
+		} 
+		else 
+			sysmessage( s, 1051 );
+	}
+	if( !n ) 
+		sysmessage( s, 393 );
 }
 
-void cTargets::CorpseTarget(int s)
-{
-	int n=0;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if(i!=-1)
-	{
-		if(iteminrange(s,i,1)) {
-			npcshape[0]=i;
-			action(s,0x20);
-			n=1;
-			if(items[i].more1==0)
-			{
-				items[i].more1=1;
-				if( items[i].morey /*|| items[i].carve > -1 */ )
-				{ // if specified, use enhanced carving system!
-					Targ->newCarveTarget( s, i ); // AntiChrist
-				}
-				else
-				{
-					switch( items[i].amount ) {
-					case 0x01: CarveTarget(s, 0, 2, 0, 0, 0); break;  //Ogre
-					case 0x02: CarveTarget(s, 0, 5, 0, 0, 0); break;  //Ettin
-					case 0x03: break;                                 //Zombie
-					case 0x04: break;                                 //Gargoyle
-					case 0x05: CarveTarget(s, 36, 1, 0, 0, 0); break; //Eagle
-					case 0x06: CarveTarget(s, 25, 1, 0, 0, 0); break; //Bird
-					case 0x07: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Orc w/axe
-					case 0x08: break;                                 //Corpser
-					case 0x09: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Deamon
-					case 0x0A: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Deamon w/sword
-					case 0x0B: break;                                 //-NULL-
-					case 0x0C: CarveTarget(s, 0, 19, 20, 0, 0); break;//Dragon (green)
-					case 0x0D: break;                                 //Air Elemental
-					case 0x0E: break;                                 //Earth Elemental
-					case 0x0F: break;                                 //Fire Elemental
-					case 0x10: break;                                 //Water Elemental
-					case 0x11: CarveTarget(s, 0, 3, 0, 0, 0); break;  //Orc
-					case 0x12: CarveTarget(s, 0, 5, 0, 0, 0); break;  //Ettin w/club
-					case 0x13: break;                                 //-NULL-
-					case 0x14: break;                                 //-NULL-
-					case 0x15: CarveTarget(s, 0, 4, 20, 0, 0); break; //Giant Serpent
-					case 0x16: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Gazer
-					case 0x17: break;                                 //-NULL-
-					case 0x18: break;                                 //Liche
-					case 0x19: break;                                 //-NULL-
-					case 0x1A: break;                                 //Ghoul
-					case 0x1B: break;                                 //-NULL-
-					case 0x1C: break;                                 //Spider
-					case 0x1D: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Gorilla
-					case 0x1E: CarveTarget(s, 50, 1, 0, 0, 0); break; //Harpy
-					case 0x1F: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Headless
-					case 0x20: break;                                 //-NULL-
-					case 0x21: CarveTarget(s, 0, 1, 12, 0, 0); break; //Lizardman
-					case 0x22: break;                                 //-NULL-
-					case 0x23: CarveTarget(s, 0, 1, 12, 0, 0); break; //Lizardman w/spear
-					case 0x24: CarveTarget(s, 0, 1, 12, 0, 0); break; //Lizardman w/mace
-					case 0x25: break;                                 //-NULL-
-					case 0x26: break;                                 //-NULL-
-					case 0x27: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Mongbat
-					case 0x28: break;                                 //-NULL-
-					case 0x29: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Orc w/club
-					case 0x2A: break;                                 //Ratman
-					case 0x2B: break;                                 //-NULL-
-					case 0x2C: break;                                 //Ratman w/axe
-					case 0x2D: break;                                 //Ratman w/dagger
-					case 0x2E: break;                                 //-NULL-
-					case 0x2F: break;                                 //Reaper
-					case 0x30: break;                                 //Scorpion
-					case 0x31: break;                                 //-NULL-
-					case 0x32: break;                                 //Skeleton
-					case 0x33: break;                                 //Slime
-					case 0x34: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Snake
-					case 0x35: CarveTarget(s, 0, 2, 0, 0, 0); break;  //Troll w/axe
-					case 0x36: CarveTarget(s, 0, 2, 0, 0, 0); break;  //Troll
-					case 0x37: CarveTarget(s, 0, 2, 0, 0, 0); break;  //Troll w/club
-					case 0x38: break;                                 //Skeleton w/axe
-					case 0x39: break;                                 //Skeleton w/sword
-					case 0x3A: break;                                 //Wisp
-					case 0x3B: CarveTarget(s, 0, 19, 20, -17, 0); break;//Dragon (red)
-					case 0x3C: CarveTarget(s, 0, 10, 20, 0, 0); break;//Drake (green)
-					case 0x3D: CarveTarget(s, 0, 10, 20, 0, 0); break;//Drake (red)
-					case 0x46: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen Matriarche - t2a
-					case 0x47: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen drone - t2a
-					case 0x48: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen warrior, Terathen Avenger - t2a
-					case 0x4B: CarveTarget(s, 0, 15, 5, 0, 0); break;//Titan - t2a
-					case 0x4C: CarveTarget(s, 0, 5, 2, 0, 0); break;//Cyclopedian Warrior - t2a
-					case 0x50: CarveTarget(s, 0, 10, 2, 0, 0); break;//Giant Toad - t2a
-					case 0x51: CarveTarget(s, 0, 4, 1, 0, 0); break;//Bullfrog - t2a
-					case 0x55: CarveTarget(s, 0, 5, 7, 0, 0); break;//Ophidian apprentice, Ophidian Shaman - t2a
-					case 0x56: CarveTarget(s, 0, 5, 7, 0, 0); break;//Ophidian warrior, Ophidian Enforcer, Ophidian Avenger - t2a
-					case 0x57: CarveTarget(s, 0, 5, 7, 0, 0); break;//Ophidian Matriarche - t2a
-					case 0x5F: CarveTarget(s, 0, 19, 20, 0, 0); break;//Kraken - t2a
-						//case 0x3E-case 0x95: break;                     //-NULL-
-					case 0x96: CarveTarget(s, 0, 10, 0, 0, 0); break; //Sea Monster
-					case 0x97: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Dolphin
-						//case 0x98-case 0xC7: break;                     //-NULL-
-					case 0xC8: CarveTarget(s, 0, 3, 10, 0, 0); break; //Horse (tan)
-					case 0xC9: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Cat
-					case 0xCA: CarveTarget(s, 0, 1, 12, 0, 0); break; //Alligator
-					case 0xCB: CarveTarget(s, 0, 6, 0, 0, 0); break;  //Pig
-					case 0xCC: CarveTarget(s, 0, 3, 10, 0, 0); break; //Horse (dark)
-					case 0xCD: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Rabbit
-					case 0xCE: CarveTarget(s, 0, 1, 12,0 ,0); break;  //Lava Lizard - t2a
-					case 0xCF: CarveTarget(s, 0, 3, 0, 0, 1); break;  //Sheep
-					case 0xD0: CarveTarget(s, 25, 1, 0, 0, 0); break; //Chicken
-					case 0xD1: CarveTarget(s, 0, 2, 8, 0, 0); break;  //Goat
-					case 0xD2: CarveTarget(s, 0, 15, 0, 0, 0); break;  //Desert Ostarge - t2a
-					case 0xD3: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Bear
-					case 0xD4: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Grizzly Bear
-					case 0xD5: CarveTarget(s, 0, 2, 0, 3, 0); break;  //Polar Bear
-					case 0xD6: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Cougar
-					case 0xD7: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Giant Rat
-					case 0xD8: CarveTarget(s, 0, 8, 12, 0, 0); break; //Cow (black)
-					case 0xD9: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Dog
-					case 0xDA: CarveTarget(s, 0, 15, 0, 0, 0); break;  //Frenzied Ostard - t2a
-					case 0xDB: CarveTarget(s, 0, 15, 0, 0, 0); break;  //Forest Ostard - t2a
-					case 0xDC: CarveTarget(s, 0, 7, 0, 12, 0); break;  //Llama
-					case 0xDD: CarveTarget(s, 0, 1, 12, 0, 0); break; //Walrus
-					case 0xDE: break;                                 //-NULL-
-					case 0xDF: CarveTarget(s, 0, 3, 0, 0, 0); break;  //Sheep (BALD)
-					case 0xE1: CarveTarget(s, 0, 1, 0, 1, 0); break;  //Timber Wolf
-					case 0xE2: CarveTarget(s, 0, 3, 10, 0, 0); break; //Horse (Silver)
-					case 0xE3: break;                                 //-NULL-
-					case 0xE4: CarveTarget(s, 0, 3, 10, 0, 0); break; //Horse (tan)
-					case 0xE5: break;                                 //-NULL-
-					case 0xE6: break;                                 //-NULL-
-					case 0xE7: CarveTarget(s, 0, 3, 12, 0, 0); break; //Cow (brown)
-					case 0xE8: CarveTarget(s, 0, 10, 15, 0, 0); break;//Bull (brown)
-					case 0xE9: CarveTarget(s, 0, 10, 15, 0, 0); break;//Bull (d-brown)
-					case 0xEA: CarveTarget(s, 0, 6, 15, 0, 0); break; //Great Heart
-					case 0xEB: break;                                 //-NULL-
-					case 0xEC: break;                                 //-NULL-
-					case 0xED: CarveTarget(s, 0, 5, 8, 0, 0); break;  //Hind
-					case 0xEE: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Rat
-						//case 0xEF-case 0xFF: break;                     //-NULL-   
-					default:
-						printf("ERROR: Fallout of switch statement without default. uox3.cpp, corpsetarget()\n"); //Morrolan
-					}// switch
-				 }
-			} 
-			else 
-			{
-				sysmessage(s, "You carve the corpse but find nothing useful.");
-			}// if more1==0
-			//break;
-		}
-	}// if i!=-1
-  if (!n) sysmessage(s, "That is too far away.");
-}
-
-void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur, int wool )
-{
-	int c;
-	int feather=0;
-	int meat=0;
-	int leath=0;
-	int furs=0;
-	int wools=0;
-	
-	c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 );  //add the blood puddle
-	if( c == -1 ) return;
-	if( fur == -1 )
-	{
-		items[c].color1 = 0x00;
-		items[c].color2 = 0xEF;
-	}
-
-	items[c].x = items[npcshape[0]].x;
-	items[c].y = items[npcshape[0]].y;
-	items[c].z = items[npcshape[0]].z;
-
-	items[c].magic = 2; // AntiChrist - makes the item unmovable
-	mapRegions->RemoveItem(c);
-    mapRegions->AddItem(c); // lord Binary
-	
-	items[c].decaytime=(uiCurrentTime+(server_data.decaytimer*CLOCKS_PER_SEC));
-	RefreshItem( c ); // AntiChrist
-	
-	if( feat )
-	{
-		c = Items->SpawnItem( s, currchar[s], feat,"feathers", 1, 0x1B, 0xD1, 0, 0, 1, 1 );
-		if( c == -1 ) 
-			return;
-		items[c].layer=0x01;
-		items[c].att=5;
-		feather=1;
-		
-	}
-	if (ribs)
-	{
-		c=Items->SpawnItem( s, currchar[s], ribs, "raw ribs", 1, 0x09, 0xF1, 0, 0, 1, 1 );
-		if( c == -1 ) 
-			return;
-		items[c].layer=0x01;
-		items[c].att=5;
-		meat=1;
-	}
-	
-	if (hides)
-	{
-		c = Items->SpawnItem( s, currchar[s], hides, "hides", 1, 0x10, 0x78, 0, 0, 1, 1 );
-		if( c == -1 ) 
-			return;
-		items[c].layer=0x01;
-		items[c].att=5;
-		leath=1;
-	}
-	
-	if (fur)
-	{
-		c = Items->SpawnItem( s, currchar[s], fur, "fur", 1, 0x11, 0xFA, 0, 0, 1, 1 );
-		if( c == -1 ) 
-			return;
-		items[c].layer=0x01;
-		items[c].att=5;
-		furs=1;
-	}
-	
-	if (wool)
-	{
-		c = Items->SpawnItem( s, currchar[s], wool, "unspun wool", 1, 0x0D, 0xF8, 0, 0, 1, 1 );
-		if( c == -1 ) 
-			return;
-		items[c].layer=0x01;
-		items[c].att=5;
-		wools=1;
-	}
-	
-	if(feather) sysmessage(s,"You pluck the bird and get some feathers.");
-	if(meat) sysmessage(s,"You carve away some meat.");
-	if(leath) sysmessage(s,"You skin the corpse and get the hides.");
-	if(furs) sysmessage(s, "You skin the corpse and get some fur.");
-	if(wools) sysmessage(s, "You skin the corpse and get some unspun wool.");
-	Weight->NewCalc(currchar[s]);
-}
-
-//AntiChrist - new carving system - 3/11/99
 //Human-corpse carving code added
 //Scriptable carving product added
-void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
+void cTargets::newCarveTarget( cSocket *s, CItem *i )
 {
 	bool deletecorpse = false;
-	int c;
 
-	c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 ); // add the blood puddle
-	if( c == -1 ) return;
-	items[c].x = items[npcshape[0]].x;
-	items[c].y = items[npcshape[0]].y;
-	items[c].z = items[npcshape[0]].z;
+	CItem *c = Items->SpawnItem( s, 1, "#", false, 0x122A, 0, false, false ); // add the blood puddle
+	if( c == NULL ) 
+		return;
+	MapRegion->RemoveItem( c );
 
-	items[c].magic = 2; // AntiChrist - makes the item unmovable
+	ITEM mItem = s->AddMItem();
+	CChar *mChar = s->CurrcharObj();
 
-	mapRegions->RemoveItem( c );
-	mapRegions->AddItem( c ); // lord Binary
+	c->SetLocation( &items[mItem] );
+	c->SetMagic( 2 );
+	c->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+	RefreshItem( c );
 
-	items[c].decaytime = ( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
-	RefreshItem( c ); // AntiChrist
-
+	char temp[1024];
 	// if it's a human corpse
-	if( items[i].morey )
+	if( i->GetMoreY() )
 	{
 		// create the Head
-		sprintf( temp, "the head of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0xA0, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1057 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DA0, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		// create the Body
+		sprintf( temp, Dictionary->GetEntry( 1058 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1CED, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
-		sprintf( temp, "the body of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0x9F, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
-
-		sprintf( temp, "the heart of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1C, 0xED, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1059 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DAD, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		// create the Left Arm
-		sprintf( temp, "the left arm of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0xA1, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1060 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DA1, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		// create the Right Arm
-		sprintf( temp, "the right arm of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0xA2, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1061 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DA2, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		// create the Left Leg
-		sprintf( temp, "the left leg of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0xA3, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1062 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DA3, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		// create the Right Leg
-		sprintf( temp, "the right leg of %s", items[i].name2 );
-		c = Items->SpawnItem( s, 1, temp, 1, 0x1D, 0xA4, 0, 0, 0, 0 );
-		if( c == -1 ) return;
-		setserial( c, i, 1 );
-		items[c].layer = 0x01;
-		items[c].att = 5;
-		items[c].owner1 = items[i].owner1;
-		items[c].owner2 = items[i].owner2;
-		items[c].owner3 = items[i].owner3;
-		items[c].owner4 = items[i].owner4;
-		items[c].ownserial = items[i].ownserial;
+		sprintf( temp, Dictionary->GetEntry( 1063 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DA4, 0, false, false );
+		if( c == NULL ) 
+			return;
+		c->SetLayer( 0x01 );
+		c->SetCont( i->GetSerial() );
+		c->SetOwner( i->GetOwner() );
 
 		//human: always delete corpse!
 		deletecorpse = true;
-		criminal( currchar[s] );
+		criminal( mChar );
 	}
-/*	else
+	else
 	{
-		openscript("carve.scp");
-		sprintf( sect, "CARVE %i", items[i].carve );
-		if( !i_scripts[carve_script]->find( sect ) )
-		{
-			closescript();
+		char sect[512];
+		sprintf( sect, "CARVE %i", i->GetCarve() );
+		ScriptSection *toFind = FileLookup->FindEntry( sect, carve_def );
+		if( toFind == NULL )
 			return;
-		}
-		do
+		const char *tag = NULL;
+		const char *data = NULL;
+		UI08 worldNumber = mChar->WorldNumber();
+		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			read2();
-			if (script1[0]!='}')
-			{ 
-				if (!(strcmp("ADDITEM",script1)))
-				{
-					storeval=str2num(script2);
-					pos=ftell(scpfile);
-					closescript();
-					n=Items->CreateScriptItem(s,storeval,0);
-					items[n].layer=0;
-					setserial(n, i, 1);
-					items[n].x=20+(rand()%50);
-					items[n].y=85+(rand()%75);
-					items[n].z=9;
-					RefreshItem(n);//let's finally refresh the item
-					sprintf(script1, "DUMMY");
-					openscript("carve.scp");
-					fseek(scpfile, pos, SEEK_SET);
-				}
-			}  
-		}
-		while (script1[0]!='}');
-
-		closescript();
-	}*/
-
-	if( deletecorpse ) // if corpse has to be deleted
-	{
-		// let's empty it
-		int serial = items[i].serial;
-		int serhash = serial%HASHMAX;
-		for( int ci = 0; ci < contsp[serhash].max; ci++ )
-		{
-			c = contsp[serhash].pointer[ci];
-			if( c != -1 ) // lb
+			data = toFind->GrabData();
+			if( !strcmp( "ADDITEM", tag ) )
 			{
-				if( items[c].contserial == items[i].serial )
+				c = Items->CreateScriptItem( s, data, false, worldNumber );
+				if( c != NULL )
 				{
-					if( items[c].contserial != -1 ) removefromptr( &contsp[items[c].contserial%HASHMAX], c );
-					items[c].cont1 = 255;
-					items[c].cont2 = 255;
-					items[c].cont3 = 255;
-					items[c].cont4 = 255;
-					items[c].contserial = -1;
-					mapRegions->RemoveItem( c );
-					items[c].x = items[i].x;
-					items[c].y = items[i].y;
-					items[c].z = items[i].z;
-					mapRegions->AddItem( c ); // add this item to a map cell
-					items[c].decaytime = ( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
-					RefreshItem( c ); // AntiChrist
-				} // if contserial == serial
-			} // if c != -1 
-		} // for
+					c->SetCont( i->GetSerial() );
+					c->SetX( 20 + RandomNum( 0, 49 ) );
+					c->SetY( 85 + RandomNum( 0, 74 ) );
+					c->SetZ( 9 );
+					RefreshItem( c );
+				}
+			}
+		}
+	}
 
-		// and then delete the corpse
+	if( deletecorpse )
+	{
+		for( c = i->FirstItemObj(); !i->FinishedItems(); c = i->NextItemObj() )
+		{
+			if( c != NULL )
+			{
+				c->SetCont( INVALIDSERIAL );
+				c->SetLocation( i );
+				c->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+				RefreshItem( c );
+			}
+		}
 		Items->DeleItem( i );
 	}
 }
 
-void cTargets::TitleTarget(int s)
+void cTargets::TitleTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetTitle( s->XText() );
+}
+
+void cTargets::NpcTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		strcpy(chars[i].title,xtext[s]);
+		s->AddID( i->GetSerial() );
+		target( s, 0, 1, 0, 57, "Select NPC to follow this player." );
 	}
 }
 
-void cTargets::NpcTarget(int s)
+void cTargets::NpcTarget2( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		
-		addid1[s]=chars[i].ser1;
-		addid2[s]=chars[i].ser2;
-		addid3[s]=chars[i].ser3;
-		addid4[s]=chars[i].ser4;
-		target(s, 0, 1, 0, 57, "Select NPC to follow this player.");
-	}
-}
-
-void cTargets::NpcTarget2(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if (chars[i].npc==1)
+		if( i->IsNpc() )
 		{
-			chars[i].ftarg=calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-			chars[i].npcWander=1;
-		}
-}
-
-void cTargets::NpcRectTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if ((chars[i].npc==1))
-		{
-			chars[i].fx1=addx[s];
-			chars[i].fy1=addy[s];
-			chars[i].fz1=-1;
-			chars[i].fx2=addx2[s];
-			chars[i].fy2=addy2[s];
-			chars[i].npcWander=3;
-		}
-}
-
-void cTargets::NpcCircleTarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	
-	if (i!=-1)
-		if ((chars[i].npc==1))
-		{
-			chars[i].fx1=addx[s];
-			chars[i].fy1=addy[s];
-			chars[i].fz1=-1;
-			chars[i].fx2=addx2[s];
-			chars[i].npcWander=4;
-		}
-}
-
-void cTargets::NpcWanderTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if ((chars[i].npc==1)) 
-			chars[i].npcWander=npcshape[0];
-}
-
-void cTargets::NpcAITarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	
-	if (i!=-1)
-	{
-		chars[i].npcaitype=addx[s];
-	}
-}
-
-void cTargets::xBankTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		openbank(s, i);
-	}
-}
-void cTargets::xSpecialBankTarget( int s ) // AntiChrist
-{
-	int i, serial;
-
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[ serial%HASHMAX ], serial, 1 );
-	if( i != -1 )
-	{
-		openspecialbank( s, i );
-	}
-}
-
-void cTargets::DupeTarget(int s)
-{
-	int dupetimes,serial;
-	
-	if (addid1[s]>=1)
-	{
-		dupetimes=addid1[s];
-		int dupeit;
-		int i;
-		
-		
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (i!=-1)
-		{
-			for (dupeit=0;dupeit<dupetimes;dupeit++)
-			{
-  			//Commands->DupeItem(s, i, 1); // lb bugfix
-				// Abaddon 17th February, 2000
-				Commands->DupeItem( s, i, items[i].amount );	// we want to dupe the pile properly, shouldn't
-																// dupe a stack of gold and get ONE coin
-				// End Abaddon
-        //all_items(s); // lb bugfix
-			}
+			i->SetFTarg( calcCharFromSer( s->AddID() ) );
+			i->SetNpcWander( 1 );
 		}
 	}
 }
 
-void cTargets::MoveToBagTarget(int s)
+void cTargets::NpcRectTarget( cSocket *s )
 {
-	int i, j, x, y, serial;
-	x=rand()%80;
-	y=rand()%80;
-	
-	int p=packitem(currchar[s]);
-	//p=packitem(currchar[s]);
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-		if ((items[i].serial==serial))
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		if( i->IsNpc() )
 		{
-			items[i].x=x+50;
-			items[i].y=y+50;
-			items[i].z=9;
-			if( p > -1 ) 
-			{
-				unsetserial( i, 1 );
-				setserial( i, p, 1 );
-			}
-			items[i].layer=0x00;
-			items[i].decaytime=0;//reset decaytimer
-			removeitem[1]=items[i].ser1;
-			removeitem[2]=items[i].ser2;
-			removeitem[3]=items[i].ser3;
-			removeitem[4]=items[i].ser4;
-			for(j=0;j<now;j++) if (perm[j])
-			{
-				Network->xSend(j, removeitem, 5, 0);
-//				senditem(j, i);
-			}
-				RefreshItem( i ); // AntiChrist
+			i->SetFx( s->AddX(), 1 );
+			i->SetFy( s->AddY(), 1 );
+			i->SetFz( -1 );
+			i->SetFx( s->AddX2(), 2 );
+			i->SetFy( s->AddY2(), 2 );
+			i->SetNpcWander( 3 );
 		}
-}
-
-void cTargets::SellStuffTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		sellstuff(s, i);
 	}
 }
 
-void cTargets::ReleaseTarget(int s,int c)
+void cTargets::NpcCircleTarget( cSocket *s )
 {
-	int i,serial;
-	
-	if(c==-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);	
+		if( i->IsNpc() )
+		{
+			i->SetFx( s->AddX(), 1 );
+			i->SetFy( s->AddY(), 1 );
+			i->SetFz( -1 );
+			i->SetFx( s->AddX2(), 2 );
+			i->SetNpcWander( 4 );
+		}
 	}
+}
+
+void cTargets::NpcWanderTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		if( i->IsNpc() )
+			i->SetNpcWander( npcshape[0] );
+	}
+}
+
+void cTargets::NpcAITarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetNPCAiType( s->AddX() );
+}
+
+void cTargets::xBankTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		openBank( s, i );
+}
+void cTargets::xSpecialBankTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		openSpecialBank( s, i );
+}
+
+void cTargets::DupeTarget( cSocket *s )
+{
+	if( s->AddID1() >= 1 )
+	{
+		UI08 dupetimes = s->AddID1();
+		CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+		if( i != NULL )
+		{
+			for( UI08 dupeit = 0; dupeit < dupetimes; dupeit++ )
+				Commands->DupeItem( s, i, i->GetAmount() );
+		}
+	}
+}
+
+void cTargets::MoveToBagTarget( cSocket *s )
+{
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i == NULL )
+		return;
+	CChar *mChar = s->CurrcharObj();
+	CItem *p = getPack( mChar );
+	if( i->GetSerial() == serial )
+	{
+		if( i->GetCont() == INVALIDSERIAL )
+			MapRegion->RemoveItem( i );
+		i->SetX( RandomNum( 0, 79 ) + 50 );
+		i->SetY( RandomNum( 0, 79 ) + 50 );
+		i->SetZ( 9 );
+		if( p != NULL ) 
+			i->SetCont( p->GetSerial() );
+		i->SetDecayTime( 0 );//reset decaytimer
+		CPRemoveItem toRemove = (*i);
+
+		Network->PushConn();
+		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+			tSock->Send( &toRemove );
+		Network->PopConn();
+		RefreshItem( i );
+	}
+}
+
+void cTargets::SellStuffTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		sendSellStuff( s, i );
+}
+
+void cTargets::ReleaseTarget( cSocket *s, SERIAL c )
+{
+	CChar *i = NULL;
+	if( c == INVALIDSERIAL )
+		i = calcCharObjFromSer( s->GetDWord( 7 ) );	
 	else
+		i = calcCharObjFromSer( c );
+	if( i != NULL )
 	{
-		i=findbyserial(&charsp[c%HASHMAX], c, 1);
-		//	i=c;
-	}
-	if (i!=-1)
-	{
-		if(chars[i].cell==0)
-		{
-			sysmessage(s,"That player is not in jail!");
-		}
+		if( !i->IsJailed() )
+			sysmessage( s, 1064 );
 		else
 		{
-			jails[chars[i].cell].occupied=0;
-			mapRegions->RemoveItem(i+10000000);
-			chars[i].x=chars[i].oldx;
-			chars[i].y=chars[i].oldy;
-			chars[i].dispz=chars[i].z=chars[i].oldz;
-			mapRegions->AddItem(i+1000000);
-			
-			chars[i].cell=0;
-			teleport(i);
-			sprintf(temp,"Player %s released.",chars[i].name);
-			sysmessage(s,temp);
+			JailSys->ReleasePlayer( i );
+			sysmessage( s, 1065, i->GetName() );
 		}
 	}
 }
 
-void cTargets::GmOpenTarget(int s)
+void cTargets::GmOpenTarget( cSocket *s )
 {
-	int i,serial,serhash,ci;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	CChar *toCheck = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( toCheck == NULL )
 	{
-		i=contsp[serhash].pointer[ci];
-		if (i!=-1)
-			if ((items[i].contserial==serial) && (items[i].layer==addmitem[s]))
-			{
-				backpack(s,items[i].ser1,items[i].ser2,items[i].ser3,items[i].ser4);
-				return;
-			}
-	}
-	sysmessage(s,"No object was found at that layer on that character");
-}
-
-void cTargets::StaminaTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		soundeffect2(i, 0x01, 0xF2);
-		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
-		chars[i].stm=chars[i].dx;
-		updatestats(i, 2);
+		sysmessage( s, 1066 );
 		return;
 	}
-	sysmessage(s,"That is not a person.");
-}
 
-void cTargets::ManaTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CItem *i = FindItemOnLayer( toCheck, s->AddMItem() );
+	if( i != NULL )
 	{
-		soundeffect2(i, 0x01, 0xF2);
-		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
-		chars[i].mn=chars[i].in;
-		updatestats(i, 1);
+		openPack( s, i );
 		return;
 	}
-	sysmessage(s,"That is not a person.");
+	sysmessage( s, 1067 );
 }
 
-void cTargets::MakeShopTarget(int s)
+void cTargets::StaminaTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		Commands->MakeShop(i);
-		teleport(i);
-		sysmessage(s, "The buy containers have been added.");
+		soundeffect( i, 0x01F2 );
+		staticeffect( i, 0x376A, 0x09, 0x06 );
+		i->SetStamina( i->GetMaxStam() );
+		updateStats( i, 2 );
 		return;
 	}
-	sysmessage(s, "Target character not found...");
+	sysmessage( s, 1066 );
 }
 
-void cTargets::JailTarget(int s, int c)
+void cTargets::ManaTarget( cSocket *s )
 {
-	int i,tmpnum=0,serial;
-	
-	int x=0;
-	if (c==-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);	  
-			tmpnum=i;
+		soundeffect( i, 0x01F2 );
+		staticeffect( i, 0x376A, 0x09, 0x06 );
+		i->SetMana( i->GetMaxMana() );
+		updateStats( i, 1 );
+		return;
 	}
+	sysmessage( s, 1066 );
+}
+
+void cTargets::MakeShopTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		Commands->MakeShop( i );
+		sysmessage( s, 1068 );
+		return;
+	}
+	sysmessage( s, 1069 );
+}
+
+void cTargets::JailTarget( cSocket *s, SERIAL c )
+{
+	CChar *i = NULL;
+	if( c == INVALIDSERIAL )
+		i = calcCharObjFromSer( s->GetDWord( 7 ) );	  
 	else
-	{
-		i=findbyserial(&charsp[c%HASHMAX], c, 1);
-		tmpnum=i;
-	}
+		i = calcCharObjFromSer( c );
 	
-    if (tmpnum==-1) return; //lb
+    if( i == NULL ) 
+		return;
 
-	if(chars[tmpnum].cell>0)
+	if( i->IsJailed() )
 	{
-		sysmessage(s,"That player is already in jail!");
+		sysmessage( s, 1070 );
 		return;
 	}
-	
-    for (i=1;i<11;i++)
-    {
-		if(jails[i].occupied==0)
-		{
-			mapRegions->RemoveItem(tmpnum+1000000);
-			chars[tmpnum].oldx=chars[tmpnum].x;
-			chars[tmpnum].oldy=chars[tmpnum].y;
-			chars[tmpnum].oldz=chars[tmpnum].z;
-			chars[tmpnum].x=jails[i].x;
-			chars[tmpnum].y=jails[i].y;
-			chars[tmpnum].dispz=chars[tmpnum].z=jails[i].z;
-			mapRegions->AddItem(tmpnum+1000000);
-			
-			chars[tmpnum].cell=i;
-			teleport(tmpnum);
-			jails[i].occupied=1;
-			sprintf(temp,"Player %s has been jailed in jail %i.",chars[tmpnum].name,i);
-			sysmessage(s,temp);
-			x++;
-			break;
-		}
-	}
-    if(x==0) sysmessage(s,"All jails are currently full!");
-	
+    if( !JailSys->JailPlayer( i, 0xFFFFFFFF ) )
+		sysmessage( s, 1072 );
 }
 
-void cTargets::AttackTarget(UOXSOCKET s)
+void cTargets::AttackTarget( cSocket *s )
 {
-	int target, target2;
+	CChar *target = calcCharObjFromSer( s->AddID() );
+	CChar *target2 = calcCharObjFromSer( s->GetDWord( 7 ) );
 	
-	target = calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-	target2 = calcCharFromSer(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	
-	if (target2==-1 || target==-1) return;
+	if( target2 == NULL || target == NULL ) 
+		return;
 	if( target2 == target )
 	{
-		sysmessage( s, "Your pet cannot attack itself" );
+		sysmessage( s, 1073 );
 		return;
 	}
-	npcattacktarget(target2, target);
+	npcAttackTarget( target2, target );
+	if( target2->IsInnocent() && target2->GetSerial() != target->GetOwner() )
+	{
+		CChar *pOwner = (CChar *)target->GetOwnerObj();
+		if( pOwner != NULL )
+			criminal( pOwner );
+	}
 }
 
-void cTargets::FollowTarget(int s)
+void cTargets::FollowTarget( cSocket *s )
 {
-	int char1, char2;
+	CChar *char1 = calcCharObjFromSer( s->AddID() );
+	CHARACTER char2 = calcCharFromSer( s->GetDWord( 7 ) );
 	
-	char1=calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-	char2=calcCharFromSer(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	
-	chars[char1].ftarg=char2;
-	chars[char1].npcWander=1;
+	char1->SetFTarg( char2 );
+	char1->SetNpcWander( 1 );
 }
 
-void cTargets::TransferTarget(int s)
+void cTargets::TransferTarget( cSocket *s )
 {
-	int char1, char2;
 	char t[120];
 	
-	char1=calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-	char2=calcCharFromSer(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	CChar *char1 = calcCharObjFromSer( s->AddID() );
+	CChar *char2 = calcCharObjFromSer( s->GetDWord( 7 ) );
 	
-	sprintf(t,"* %s will now take %s as his master *",chars[char1].name,chars[char2].name);
-	npctalkall(char1,t, 0);
+	sprintf( t, Dictionary->GetEntry( 1074 ), char1->GetName(), char2->GetName() );
+	npcTalkAll( char1, t, false );
 	
-	if( chars[char1].ownserial != -1 ) removefromptr(&cownsp[chars[char1].ownserial%HASHMAX], char1);
-	setserial(char1,char2, 5);
-	chars[char1].npcWander=1;
+	char1->SetOwner( char2->GetSerial() );
+	char1->SetNpcWander( 1 );
 	
-	chars[char1].ftarg=-1;
-	chars[char1].npcWander=0;
+	char1->SetFTarg( INVALIDSERIAL );
+	char1->SetNpcWander( 0 );
 }
 
-void cTargets::BuyShopTarget(int s)
+void cTargets::BuyShopTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if ((chars[i].serial==serial))
-		{
-			Targ->BuyShop(s, i);
-			return;
-		}
-		sysmessage(s, "Target shopkeeper not found...");
-}
-
-int cTargets::BuyShop(int s, int c)
-{
-	int i, cont1, cont2,serial,serhash,ci;
-	char shopgumpopen[8]="\x24\x00\x00\x00\x01\x00\x30";
-	
-	cont1=-1;
-	cont2=-1;
-	serial=chars[c].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	SERIAL serial = s->GetDWord( 7 );
+	CChar *i = calcCharObjFromSer( serial );
+	if( i != NULL )
 	{
-		i=contsp[serhash].pointer[ci];
-		if (i!=-1)
-		{
-			if ((items[i].contserial==serial))
-			{
-				if (items[i].layer==0x1A)
-				{
-					cont1=i;
-				}
-				else if (items[i].layer==0x1B)
-				{
-					cont2=i;
-				}
-			}
-		}
-	}
-	
-	if (cont1==-1 || cont2==-1)
-	{
-		return 0;
-	}
-	
-	impowncreate( s, c, 0 ); // Send the NPC again to make sure info is current. (OSI does this we might not have to)
-	sendshopinfo( s, c, cont1 ); // Send normal shop itemsa
-	sendshopinfo( s, c, cont2 ); // Send items sold to shop by players
-	shopgumpopen[1] = chars[c].ser1;
-	shopgumpopen[2] = chars[c].ser2;
-	shopgumpopen[3] = chars[c].ser3;
-	shopgumpopen[4] = chars[c].ser4;
-	Network->xSend( s, shopgumpopen, 7, 0 );
-	statwindow( s, currchar[s] ); // Make sure the gold total has been sent.
-	return 1;
-}
-
-void cTargets::SetValueTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if ((i!=-1))
-	{
-		items[i].value=addx[s];
+		BuyShop( s, i );
 		return;
 	}
-	sysmessage(s, "Target item not found.");
+	sysmessage( s, 1075 );
 }
 
-void cTargets::SetRestockTarget(int s)
+bool cTargets::BuyShop( cSocket *s, CChar *c )
 {
-	int i,serial;
+	if( c == NULL )
+		return false;
+	CItem *buyPack		= FindItemOnLayer( c, 0x1A );
+	CItem *boughtPack	= FindItemOnLayer( c, 0x1B );
 	
+	if( buyPack == NULL || boughtPack == NULL )
+		return false;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if ((i!=-1))
+	buyPack->Sort();
+	boughtPack->Sort();
+	c->SendToSocket( s, false, c );
+
+	CPItemsInContainer iic( buyPack );		s->Send( &iic );
+	CPOpenBuyWindow obw( buyPack, c );		s->Send( &obw );
+
+	CPItemsInContainer iic2( boughtPack );	s->Send( &iic2 );
+	CPOpenBuyWindow obw2( boughtPack, c );	s->Send( &obw2 );
+
+	CPDrawContainer toSend;
+	toSend.Model( 0x0030 );
+	toSend.Serial( c->GetSerial() );
+	s->Send( &toSend );
+	statwindow( s, s->CurrcharObj() ); // Make sure the gold total has been sent.
+	return true;
+}
+
+void cTargets::SetValueTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		items[i].restock=addx[s];
+		i->SetValue( s->AddX() );
 		return;
 	}
-	sysmessage(s, "Target item not found.");
+	sysmessage( s, 1076 );
 }
 
-
-void cTargets::permHideTarget(int s)
+void cTargets::SetRestockTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		if(chars[i].hidden==1)
-		{
-			sysmessage(s,"You are already hiding");
-			return;
-		}
-		chars[i].priv2=chars[i].priv2|8;
-		chars[i].hidden=1;
-		updatechar(i); // crashfix LB
-	}
-}
-
-void cTargets::unHideTarget(int s)
-{
-	addx[s] = 0;
-	VisibleTarget(s);	// better code reuse!
-/*	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		if(chars[i].hidden==0)
-		{
-			sysmessage(s,"You are not hiding");
-			return;
-		}
-		chars[i].priv2=chars[i].priv2|8;
-		chars[i].hidden=0;
-//		updatechar(calcSocketFromChar(i));
-		updatechar( i );
-	}*/
-}
-
-void cTargets::SetWipeTarget(int s)
-{
-	int i/*, j*/,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		items[i].wipe=addid1[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-	}
-}
-void cTargets::SetSpeechTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		if (chars[i].npc==0)
-		{
-			sysmessage(s,"You can only change speech for npcs.");
-			return;
-		}
-		chars[i].speech=addx[s];
-	}
-}
-
-
-void cTargets::SetSpAttackTarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		chars[i].spattack=tempint[s];
-	}
-}
-
-void cTargets::SetSpaDelayTarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		chars[i].spadelay=tempint[s];
-	}
-}
-
-void cTargets::SetPoisonTarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		chars[i].poison=tempint[s];
-	}
-}
-
-void cTargets::SetPoisonedTarget(int s)
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		chars[i].poisoned=tempint[s];
-		chars[i].poisonwearofftime = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer));
-		impowncreate(calcSocketFromChar(i),i,1); //Lb, sends the green bar ! 
-		
-	}
-}
-
-void cTargets::FullStatsTarget(int s)
-{
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		soundeffect2(i, 0x01, 0xF2);
-		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
-		chars[i].mn=chars[i].in;
-		chars[i].hp=chars[i].st;
-		chars[i].stm=chars[i].dx;
-		updatestats(i, 0);
-		updatestats(i, 1);
-		updatestats(i, 2);
+		i->SetRestock( s->AddX() );
 		return;
 	}
-	sysmessage(s,"That is not a person.");
+	sysmessage( s, 1076 );
 }
 
 
-void cTargets::SetAdvObjTarget(int s)
+void cTargets::permHideTarget( cSocket *s )
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		chars[i].advobj=tempint[s];
+		if( i->GetHidden() == 1 )
+		{
+			sysmessage( s, 833 );
+			return;
+		}
+		i->SetPermHidden( true );
+		i->SetHidden( 1 );
+		i->Update();
 	}
+}
+
+void cTargets::unHideTarget( cSocket *s )
+{
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( c != NULL )
+	{
+		if( !c->IsGM() && !c->IsCounselor() )
+			c->SetPermHidden( false );
+	}
+	s->AddX( 0 );
+	VisibleTarget( s );	// better code reuse!
+}
+
+void cTargets::SetWipeTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		i->SetWipeable( s->AddID1() != 0 );
+		RefreshItem( i );
+	}
+}
+void cTargets::SetSpAttackTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetSpAttack( s->TempInt() );
+}
+
+void cTargets::SetSpaDelayTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetSpDelay( s->TempInt() );
+}
+
+void cTargets::SetPoisonTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetPoison( s->TempInt() );
+}
+
+void cTargets::SetPoisonedTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		i->SetPoisoned( s->TempInt() );
+		i->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+		i->SendToSocket( calcSocketObjFromChar( i ), true, i );
+	}
+}
+
+void cTargets::FullStatsTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		soundeffect( i, 0x01F2 );
+		staticeffect( i, 0x376A, 0x09, 0x06 );
+		i->SetMana( i->GetMaxMana() );
+		i->SetHP( i->GetMaxHP() );
+		i->SetStamina( i->GetMaxStam() );
+		updateStats( i, 0 );
+		updateStats( i, 1 );
+		updateStats( i, 2 );
+		return;
+	}
+	sysmessage( s, 1077 );
+}
+
+
+void cTargets::SetAdvObjTarget( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetAdvObj( s->TempInt() );
 }
 
 //---------------------------------------------------------------------------o
@@ -3284,883 +2903,759 @@ void cTargets::SetAdvObjTarget(int s)
 //o---------------------------------------------------------------------------o
 //| Purpose		:Used for training by NPC's
 //o---------------------------------------------------------------------------o
-void cTargets::CanTrainTarget(int s)
+void cTargets::CanTrainTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		if (chars[i].npc==0)
+		if( !i->IsNpc() )
 		{
-			sysmessage(s, "Only NPC's may train.");
+			sysmessage( s, 1078 );
 			return;
 		}
-		chars[i].cantrain=(chars[i].cantrain^1);  //turn on if off, off if on
+		i->SetCanTrain( !i->CanTrain() );
 	}
 }
 
-void cTargets::SetSplitTarget(int s)
+void cTargets::SetSplitTarget( cSocket *s )
 {
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if (i!=-1)
-	{
-		chars[i].split=tempint[s];
-		//break;
-		//}
-	}
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetSplit( s->TempInt() );
 }
 
-void cTargets::SetSplitChanceTarget(int s)
+void cTargets::SetSplitChanceTarget( cSocket *s )
 {
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if (i!=-1)
-	{
-		chars[i].splitchnc=tempint[s];
-		//break;
-		//}
-	}
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		i->SetSplitChance( s->TempInt() );
 }
 
-void cTargets::AxeTarget(int s)
+void cTargets::AxeTarget( cSocket *s )
 {
-	if (buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return;
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
 	
+	UI16 realID = s->GetWord( 0x11 );
     // [krazyglue] it may take more lines, but at least its readable and easier to debug =)
-	if (
-        (
-         (buffer[s][0x11]==0x0C)&&
-         (
-          (buffer[s][0x12]==0xD0)||
-          (buffer[s][0x12]==0xD3)||
-          (buffer[s][0x12]==0xD6)||
-          (buffer[s][0x12]==0xD8)||
-          (buffer[s][0x12]==0xDA)||
-          (buffer[s][0x12]==0xDD)||
-          (buffer[s][0x12]==0xE0)||
-          (buffer[s][0x12]==0xE3)||
-          (buffer[s][0x12]==0xE6)||
-          (
-           (buffer[s][0x12] >= 0xCA)&&
-           (buffer[s][0x12] <= 0xCD)
-          )
-         )
-        )
-        ||
-	    (
-         (buffer[s][0x11]==0x12)&&
-
-         (buffer[s][0x12]>=0xB8)&&
-         (buffer[s][0x12]<=0xBB)
-        )
-        ||
-        (
-         (buffer[s][0x11]==0x0D)&&
-		 (
-          (buffer[s][0x12]==0x42)||
-          (buffer[s][0x12]==0x43)||
-          (buffer[s][0x12]==0x58)||
-		  (buffer[s][0x12]==0x59)||
-          (buffer[s][0x12]==0x70)||
-          (buffer[s][0x12]==0x85)||
-		  (buffer[s][0x12]==0x94)||
-          (buffer[s][0x12]==0x95)||
-          (buffer[s][0x12]==0x98)||
-		  (buffer[s][0x12]==0xa4)||
-          (buffer[s][0x12]==0xa8)||
-          (buffer[s][0x12]==0x58)
-         )
-        )
-       )
+	if( realID == 0x0CD0 || realID == 0x0CD3 || realID == 0x0CD6 || realID == 0x0CD8 || realID == 0x0CDA || 
+		realID == 0x0CDD || realID == 0x0CE0 || realID == 0x0CE3 || realID == 0x0CE6 || realID == 0x0D58 || 
+		realID >= 0x0CCA && realID <= 0x0CCE || realID >= 0x12B8 && realID <= 0x12BB || realID == 0x0D42 ||
+		realID == 0x0D43 || realID == 0x0D58 || realID == 0x0D59 || realID == 0x0D70 || realID == 0x0D85 || 
+		realID == 0x0D94 || realID == 0x0D95 || realID == 0x0D98 || realID == 0x0DA4 || realID == 0x0DA8 )
 	{
-		Skills->TreeTarget(s);
+		Skills->TreeTarget( s );
 	}
-    else if ((buffer[s][0x11]==0x20) && (buffer[s][0x12]==0x06))
-	{
-		Targ->CorpseTarget(s);
-	}
-    else //     -- not sure if this is right... still researching this packet [krazyglue]
-    {
+	else if( realID == 0x2006 )
+		CorpseTarget( s );
+    else 
 		Skills->BowCraft( s );
-//        sysmessage(s,"You are too far away to perform that action.");
-    }
-/*	if (((buffer[s][0x11]==0x0C)&&
-		((buffer[s][0x12]==0xD0)||(buffer[s][0x12]==0xD3)||(buffer[s][0x12]==0xD6)||
-		(buffer[s][0x12]==0xD8)||(buffer[s][0x12]==0xDA)||(buffer[s][0x12]==0xDD)||
-		(buffer[s][0x12]==0xE0)||(buffer[s][0x12]==0xE3)||(buffer[s][0x12]==0xE6)||
-		((buffer[s][0x12]>=0xCA)&&(buffer[s][0x12]<=0xCD))))||
-		((buffer[s][0x11]==0x12)&&(buffer[s][0x12]>=0xB8)&&(buffer[s][0x12]<=0xBB))||
-		((buffer[s][0x11]==0x0D)&&
-		((buffer[s][0x12]==0x42)||(buffer[s][0x12]==0x43)||(buffer[s][0x12]==0x58)||
-		(buffer[s][0x12]==0x59)||(buffer[s][0x12]==0x70)||(buffer[s][0x12]==0x85)||
-		(buffer[s][0x12]==0x94)||(buffer[s][0x12]==0x95)||(buffer[s][0x12]==0x98)||
-		(buffer[s][0x12]==0xa4)||(buffer[s][0x12]==0xa8)||(buffer[s][0x12]==0x58))))
-	{
-		Skills->TreeTarget(s);
-	} else
-		if ((buffer[s][0x11]==0x20) && (buffer[s][0x12]==0x06))
-		{
-			Targ->CorpseTarget(s);
-		}*/
 }
 
-void cTargets::ObjPrivTarget(int s)
+void cTargets::ObjPrivTarget( cSocket *s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
 	{
-		if(addid1[s]==0) items[i].priv=items[i].priv&0xFE; // lb ...
-		if (addid1[s]==1) items[i].priv=items[i].priv|0x01;
-		if (addid1[s]==3) items[i].priv=addid2[s];
+		switch( s->AddID1() )
+		{
+		case 0:	i->SetDecayable( false );		break;
+		case 1:	i->SetDecayable( true );		break;
+		case 3:	i->SetPriv( s->AddID2() );	break;
+		}
 	}
 }
 
-void cTargets::SetDirTarget(int s)
+void cTargets::SetDirTarget( cSocket *s )
 {
-	int i/*,j*/,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	
-	if (buffer[s][7]>=0x40)
+	SERIAL serial = s->GetDWord( 7 );
+	if( s->GetByte( 7 ) >= 0x40 )
 	{
-		i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-		if (i!=-1)
+		CItem *i = calcItemObjFromSer( serial );
+		if( i != NULL )
 		{
-			items[i].dir=addx[s];
-//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-			RefreshItem( i ); // AntiChrist
+			i->SetDir( s->AddX() );
+			RefreshItem( i );
 			return;
 		}
 	}
 	else
 	{
-		i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-		if (i!=-1)
+		CChar *c = calcCharObjFromSer( serial );
+		if( c != NULL )
 		{
-			chars[i].dir=addx[s] & 0x0F;	// make sure high-bits are cleared
-			updatechar(i);
+			c->SetDir( (s->AddX()) & 0x0F );	// make sure high-bits are cleared
+			c->Update();
 			return;
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void npcresurrecttarget(CHARACTER i)
+//|   Function    -  void npcresurrecttarget( CChar *i )
 //|   Date        -  UnKnown
 //|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Resurrects a character
 //o---------------------------------------------------------------------------o
-void cTargets::NpcResurrectTarget( CHARACTER i )
+void cTargets::NpcResurrectTarget( CChar *i )
 {
-	int j,c, ptr;
-	if( chars[i].npc )
+	if( i == NULL )
+		return;
+
+	if( i->IsNpc() )
 	{
-		printf( "Resurrect attempted on character %i", i );
+		Console.Error( 2, Dictionary->GetEntry( 1079 ), i );
 		return;
 	}
-	if (chars[i].dead==1)
-	{//Shouldn' be a validNPCMove inside a door, might fix house break in. -- from zippy code
-		Fame(i,0);
-		soundeffect2(i, 0x02, 0x14);
-		chars[i].id1=chars[i].xid1=chars[i].orgid1;
-		chars[i].id2=chars[i].xid2=chars[i].orgid2;
-		chars[i].skin1=chars[i].xskin1;
-		chars[i].skin2=chars[i].xskin2;
-		chars[i].dead=0;
-		chars[i].hp=chars[i].st;// /10;
-		chars[i].stm=chars[i].dx;// /10;
-		chars[i].mn=chars[i].in/10;
-		chars[i].attacker=-1;
-		chars[i].attackfirst=0;
-		chars[i].war=0;
-		
-		
-		//for (j=0;j<itemcount;j++)
-		for (ptr=0;ptr<contsp[chars[i].serial%HASHMAX].max;ptr++)
+	cSocket *mSock = calcSocketObjFromChar( i );
+	if( i->IsDead() && mSock != NULL )
+	{
+		Fame( i, 0 );
+		soundeffect( i, 0x0214 );
+		i->SetID( i->GetOrgID() );
+		i->SetxID( i->GetOrgID() );
+		i->SetSkin( i->GetxSkin() );
+		i->SetDead( false );
+
+		i->SetHP( i->GetMaxHP() );
+		i->SetStamina( i->GetMaxStam() );
+		i->SetMana( i->GetMaxMana() / 10 );
+		i->SetAttacker( INVALIDSERIAL );
+		i->SetAttackFirst( false );
+		i->SetWar( false );
+		CItem *c = NULL;
+		for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
 		{
-			j=contsp[chars[i].serial%HASHMAX].pointer[ptr];
-			if (j >-1 && !items[j].free)
+			if( j != NULL && !j->isFree() )
 			{
-				if (items[j].contserial==chars[i].serial && items[j].layer==0x1A)
+				if( j->GetLayer() == 0x1A )
 				{
-					items[j].layer=0x15;
-					chars[i].packitem=j;  //Tauriel packitem speedup
+					j->SetLayer( 0x15 );	
+					i->SetPackItem( j );
 				}
-				if ((items[j].ser1==chars[i].robe1)&&(items[j].ser2==chars[i].robe2)&&
-					(items[j].ser3==chars[i].robe3)&&(items[j].ser4==chars[i].robe4))
+				if( j->GetSerial() == i->GetRobe() )
 				{
-					Items->DeleItem(j);
+					Items->DeleItem( j );
 					
-					c=Items->SpawnItem(calcSocketFromChar(i),i,1,"a resurrect robe",0,0x1F,0x03,0,0,0,0);
-					if( c != -1 )
+					c = Items->SpawnItem( mSock, i, 1, "a resurrect robe", false, 0x1F03, 0, false, false );
+					if( c != NULL )
 					{
-						setserial(c,i,4);
-						items[c].layer=0x16;
-						items[c].dye=1;
+						c->SetLayer( 0x16 );
+						if( c->SetCont( i->GetSerial() ) )
+							c->SetDye( true );
 					}
 				}
 			}
 		}
-		teleport(i);
+		i->Teleport();
+		UI16 targTrig = i->GetScriptTrigger();
+		cScript *toExecute = Trigger->GetScript( targTrig );
+		if( toExecute != NULL )
+			toExecute->OnResurrect( i );
 	}
 	else
-		sysmessage( calcSocketFromChar( i ), "That person isn't dead" );
-	return;
+		sysmessage( mSock, 1080 );
 }
 
 
-void cTargets::NewXTarget(int s) // Notice a high similarity to th function above?  Wonder why.  - Gandalf
+void cTargets::NewXTarget( cSocket *s )
 {
-	//int i,j,serial;
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		mapRegions->RemoveItem(i); //lb
-		items[i].x=addx[s];
-		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		MapRegion->RemoveItem( i );
+		i->SetX( s->AddX() );
+		MapRegion->AddItem( i );
+		RefreshItem( i );
 	}
 	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
 	{
-		mapRegions->RemoveItem(i+1000000);
-		chars[i].x=addx[s];
-		mapRegions->AddItem(i+1000000);
-		teleport(i);
+		c->SetLocation( s->AddX(), c->GetY(), c->GetZ() );
+		c->Teleport();
 	}
 	
 }
 
-void cTargets::NewYTarget(int s)
-
+void cTargets::NewYTarget( cSocket *s )
 {
-	int i/*,j*/,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		mapRegions->RemoveItem(i); //lb
-		items[i].y=addx[s];
-		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
-	
+		MapRegion->RemoveItem( i );
+		i->SetY( s->AddX() );
+		MapRegion->AddItem( i );
+		RefreshItem( i );
 	}
-	
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
 	{
-        mapRegions->RemoveItem(i+1000000);
-		chars[i].y=addx[s];
-        mapRegions->AddItem(i+1000000);
-		teleport(i);
+		c->SetLocation( c->GetX(), s->AddX(), c->GetZ() );
+		c->Teleport();
 	}
 	
 }
 
-void cTargets::IncXTarget(int s)
-
+void cTargets::IncXTarget( cSocket *s )
 {
-	int i/*,j*/,serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	
-	if(i!=-1)
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		mapRegions->RemoveItem(i); //lb
-		items[i].x=items[i].x + addx[s];
-		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		MapRegion->RemoveItem( i );
+		i->IncX( s->AddX() );
+		MapRegion->AddItem( i );
+		RefreshItem( i );
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
 	{
-		mapRegions->RemoveItem(i+1000000);
-		chars[i].x = chars[i].x + addx[s];
-		mapRegions->AddItem(i+1000000);
-		teleport(i);
+		c->SetLocation( c->GetX() + s->AddX(), c->GetY(), c->GetZ() );
+		c->Teleport();
 	}
-	
 }
 
-void cTargets::IncYTarget(int s)
+void cTargets::IncYTarget( cSocket *s )
 {
-	int i/*,j*/,serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if(i!=-1)
+	SERIAL serial = s->GetDWord( 7 );
+	CItem *i = calcItemObjFromSer( serial );
+	if( i != NULL )
 	{
-		mapRegions->RemoveItem(i); //lb
-		items[i].y=items[i].y + addx[s];
-		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-		RefreshItem( i ); // AntiChrist
+		MapRegion->RemoveItem( i );
+		i->IncY( s->AddX() );
+		MapRegion->AddItem( i );
+		RefreshItem( i );
 	}
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
+	CChar *c = calcCharObjFromSer( serial );
+	if( c != NULL )
 	{
-		mapRegions->RemoveItem(i+1000000);
-		chars[i].y = chars[i].y + addx[s];
-		mapRegions->AddItem(i+1000000);
-		teleport(i);
+		c->SetLocation( c->GetX(), c->GetY() + s->AddX(), c->GetZ() );
+		c->Teleport();
 	}
-	
 }
 
-void cTargets::HouseOwnerTarget(int s) // crackerjack 8/10/99 - change house owner
+void cTargets::HouseOwnerTarget( cSocket *s )
 {
-	int own, sign, house, o_serial, serial, os, i;
-	o_serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	if( o_serial == -1 ) return;
-	own=findbyserial(&charsp[o_serial%HASHMAX],o_serial,1);
-	if(o_serial>-1) 
+	cSocket *os = NULL;
+	SERIAL o_serial = s->GetDWord( 7 );
+	if( o_serial == INVALIDSERIAL ) 
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
+	CChar *own = calcCharObjFromSer( o_serial );
+
+	CItem *sign = calcItemObjFromSer( s->AddID() );
+	if( sign == NULL )
+		return;
+
+	CItem *house = calcItemObjFromSer( sign->GetMore() );
+	if( house == NULL )
+		return;
+
+	sign->SetOwner( o_serial );
+	house->SetOwner( o_serial );
+
+	killKeys( house->GetSerial() );
+
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets() && os == NULL; tSock = Network->NextSocket() )
 	{
-		int key;
-		serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-		sign=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-		serial=calcserial(items[sign].more1, items[sign].more2, items[sign].more3, items[sign].more4);
-		house=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+		CChar *tChar = tSock->CurrcharObj();
+		if( tChar == NULL )
+			continue;
+		if( tChar->GetSerial() == own->GetSerial() )
+			os = tSock;
+	}
+	Network->PopConn();
 
-		if (sign ==-1 || house ==-1) return; //lb
+	CItem *key = NULL;
+	if( os != NULL ) 
+	{
+		key = Items->SpawnItem( os, 1, "a house key", false, 0x100F, 0, true, true );//gold key for everything else
+		if( key == NULL ) 
+			return;
+	} 
+	else 
+	{
+		key = Items->SpawnItem( os, 1, "a house key", false, 0x100F, 0, false, false );//gold key for everything else
+		if( key == NULL ) 
+			return;
+		key->SetLocation( own );
+		RefreshItem( key );
+	}
 
-		items[sign].owner1=buffer[s][7];
-		items[sign].owner2=buffer[s][8];
-		items[sign].owner3=buffer[s][9];
-		items[sign].owner4=buffer[s][10];
-		items[sign].ownserial=o_serial;
-		setptr(&ownsp[items[sign].ownserial%HASHMAX], sign);
+	key->SetMore( house->GetSerial() );
+	key->SetType( 7 );
 
-		items[house].owner1=buffer[s][7];
-		items[house].owner2=buffer[s][8];
-		items[house].owner3=buffer[s][9];
-		items[house].owner4=buffer[s][10];
-		items[house].ownserial=o_serial;
-		setptr(&ownsp[items[sign].ownserial%HASHMAX], house);
+	sysmessage( s, 1081, own->GetName() );
+	cSocket *iSock = calcSocketObjFromChar( own );
+	sysmessage( iSock, 1082, mChar->GetName() );
+}
 
-		killkeys(items[house].ser1,items[house].ser2,
-			items[house].ser3, items[house].ser4);
-
-		os=-1;
-		for(i=0;i<now&&os==-1;i++)
+void cTargets::HouseEjectTarget( cSocket *s )
+{
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CItem *h = calcItemObjFromSer( s->AddID() );
+	if( c != NULL && h != NULL ) 
+	{
+		SI16 sx, sy, ex, ey;
+		Map->MultiArea( (CMultiObj *)h, sx, sy, ex, ey );
+		if( c->GetX() >= sx && c->GetY() >= sy && c->GetX() <= ex && c->GetY() <= ey )
 		{
-			if( chars[currchar[i]].serial == chars[own].serial )
-			{
-				os = i;
-			}
-		}
-
-		if(os!=-1) {
-			key=Items->SpawnItem(os, 1, "a house key", 0, 0x10, 0x0F, 0, 0,1,1);//gold key for everything else
-			if( key == -1 ) return;
-		} else {
-			key=Items->SpawnItem(os, 1, "a house key", 0, 0x10, 0x0F, 0,0,0,0);//gold key for everything else
-			if( key == -1 ) return;
-			items[key].x=chars[own].x;
-			items[key].y=chars[own].y;
-			items[key].z=chars[own].z;
-			mapRegions->AddItem(key); //LB
-//		 	sendinrange(key);
-			RefreshItem( key ); // AntiChrist
-		}
-
-		items[key].more1=items[house].ser1;
-		items[key].more2=items[house].ser2;
-		items[key].more3=items[house].ser3;
-		items[key].more4=items[house].ser4;
-		items[key].type=7;
-
-		sprintf(temp, "You have transferred your house to %s.", chars[own].name);
-		sysmessage(s, temp);
-		sprintf(temp, "%s has transferred a house to %s.", chars[currchar[s]].name, chars[own].name);
-
-		for(serial=0;serial<now;serial++)
-			if(serial!=s&&(((perm[serial])&&inrange1p(10, currchar[s]))||
-				(chars[currchar[serial]].serial == o_serial)))
-				sysmessage(serial, temp);
+			c->SetLocation( ex, ey, c->GetZ() );
+			c->Teleport();
+			sysmessage( s, 1083 );
+		} 
+		else 
+			sysmessage( s, 1084 );
 	}
 }
 
-void cTargets::HouseEjectTarget(int s) // crackerjack 8/11/99 - kick someone out of house
+void cTargets::HouseBanTarget( cSocket *s )
 {
-	int serial, c, h;
-	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if((c!=-1)&&(h!=-1)) {
-		int sx, sy, ex, ey;
-		Map->MultiArea(h, &sx,&sy,&ex,&ey);
-		if(chars[c].x>=sx&&chars[c].y>=sy&&chars[c].x<=ex&&chars[c].y<=ey) {
-			mapRegions->RemoveItem(c+1000000);
-			chars[c].x=ex;
-			chars[c].y=ey;
-			mapRegions->AddItem(c+1000000);
-			teleport(c);
-			sysmessage(s, "Player ejected.");
-		} else {
-			sysmessage(s, "That is not inside the house.");
-		}
-	}
-}
-
-void cTargets::HouseBanTarget(int s) // crackerjack 8/12/99 - ban someobdy from the house
-{
-	int serial, c, h;
 	// first, eject the player
-	Targ->HouseEjectTarget(s);
-	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if((c!=-1)&&(h!=-1)) {
-		int r;
-		r=add_hlist(c, h, H_BAN);
-		if(r==1) {
-			sprintf(temp, "%s has been banned from this house.", chars[c].name);
-			sysmessage(s, temp);
-		} else if(r==2) {
-			sysmessage(s, "That player is already on a house register.");
-		} else {
-			sysmessage(s, "That player is not on the property.");
-		}
-	}
-}
-
-void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to friends list
-{
-	int serial, c, h;
-	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if((c!=-1)&&(h!=-1)) {
-		int r;
-		r=add_hlist(c, h, H_FRIEND);
-		if(r==1) {
-			sprintf(temp, "%s has been made a friend of the house.", chars[c].name);
-			for( r = 0; r < now; r++ )
-			{
-				if( chars[currchar[r]].serial == chars[c].serial )
-				{
-					sysmessage(r, "You have been made a friend of the house.");
-				}
-			}
-			sysmessage(s, temp);
-		} else if(r==2) {
-			sysmessage(s, "That player is already on a house register.");
-		} else {
-			sysmessage(s, "That player is not on the property.");
-		}
-	}
-}
-
-void cTargets::HouseUnlistTarget(int s) // crackerjack 8/12/99 - remove somebody from a list
-{
-	int serial, c, h;
-	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	c=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	if((c!=-1)&&(h!=-1)) {
-		int r;
-		r=del_hlist(c, h);
-		if(r>0) {
-			sprintf(temp, "%s has been removed from the house registry.", chars[c].name);
-			sysmessage(s, temp);
-		} else {
-			sysmessage(s, "That player is not on the house registry.");
-		}
-	}
-}
-
-void cTargets::SetMurderCount( int s )
-{
-	if (buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF) return;
-	
-	int x;
-	x = addmitem[s];
-
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial( &charsp[serial % HASHMAX], serial, 1);
-	if( i != -1 )
+	HouseEjectTarget( s );
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CItem *h = calcItemObjFromSer( s->AddID() );
+	if( c != NULL && h != NULL ) 
 	{
-		chars[i].kills = x;
-		setcharflag( i );	// update flag now
-		return;
+		CMultiObj *house = static_cast<CMultiObj *>(h);
+		int r = AddToHouse( house, c, 1 );
+		if( r == 1 ) 
+			sysmessage( s, 1085, c->GetName() );
+		else if( r == 2 ) 
+			sysmessage( s, 1086 );
+		else 
+			sysmessage( s, 1087 );
 	}
-	sysmessage( s, "Cannot set murder count... invalid char!" );	
 }
 
-void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
+void cTargets::HouseFriendTarget( cSocket *s )
 {
-	int c, i, serial, k, l, j;
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
-
-	// moved above following if to avoid crashing.
-	if (i==-1) 
-	{ 
-		sysmessage(s,"No item found there, only items can be made to glow."); 
-		return; 
-	}
-	if( items[i].contserial != -1 )
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CItem *h = calcItemObjFromSer( s->AddID() );
+	if( c != NULL && h != NULL ) 
 	{
-		j = findbyserial( &itemsp[items[i].contserial%HASHMAX], items[i].contserial, 0 ); // in bp ?
-		l = findbyserial( &charsp[items[i].contserial%HASHMAX], items[i].contserial, 1 ); // equipped ?
-		if( l == -1 )
-			k = GetPackOwner( j );
-		else
-			k = l;
-		if( k != currchar[s] ) // Creation only allowed in the creators pack/char otherwise things could go wrong
+		CMultiObj *house = static_cast<CMultiObj *>(h);
+		int r = AddToHouse( house, c );
+		if( r == 1 ) 
 		{
-		  sysmessage( s, "You can't create glowing items in other people's packs or hands" );
-		   return;
+			sysmessage( calcSocketObjFromChar( c ), 1089 );
+			sysmessage( s, 1088, c->GetName() );
+		} 
+		else if( r == 2 ) 
+			sysmessage( s, 1090 );
+		else 
+			sysmessage( s, 1091 );
+	}
+}
+
+void cTargets::HouseUnlistTarget( cSocket *s )
+{
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CItem *h = calcItemObjFromSer( s->AddID() );
+	if( c != NULL && h != NULL ) 
+	{
+		CMultiObj *house = static_cast<CMultiObj *>(h);
+		int r = DeleteFromHouseList( house, c );
+		if( r > 0 ) 
+			sysmessage( s, 1092, c->GetName() );
+		else 
+			sysmessage( s, 1093 );
+	}
+}
+
+void cTargets::GlowTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL ) 
+	{ 
+		sysmessage( s, 1095 ); 
+		return; 
+	}
+	CChar *mChar = s->CurrcharObj(), *k = NULL;
+	if( mChar == NULL )
+		return;
+
+	if( i->GetGlow() > 0 ) 
+	{
+		sysmessage( s, 1097 );
+		return;
+	}
+
+	SERIAL getCont = i->GetCont();
+	if( getCont != INVALIDSERIAL )
+	{
+		if( getCont >= 0x4000000 )
+			k = getPackOwner( calcItemObjFromSer( getCont ) );
+		else
+			k = calcCharObjFromSer( getCont );
+
+		if( k != mChar )
+		{
+			sysmessage( s, 1096 );
+			return;
 		}
 	}
 
-	if (items[i].glow!=0) 
-	{
-		sysmessage(s, "That object already glows!\n");
+	i->SetGlowColour( i->GetColour() );
+
+	CItem *c = Items->SpawnItem( s, 1, "glower", false, 0x1647, 0, false, true ); // spawn light emitting object
+	if( c == NULL )
 		return;
-	}
 
-	c = 0x99;	
-	items[i].glow_c1 = items[i].color1; // backup old colors
-	items[i].glow_c2 = items[i].color2;
-
-	items[i].color1 = (unsigned char)(c<<8); // set new color to yellow
-	items[i].color2 = (unsigned char)(c%256);
-
-	c=Items->SpawnItem(s,1,"glower",0,0x16,0x47,0,0,0,1); // spawn light emitting object
-	if( c == -1 )
-		return;
-    items[c].dir=29; // set light radius maximal
-	items[c].visible=0; // only visible to gm's
-	                    // well, no way around that gms can see it, thats client side hardcoded :(
-	items[c].magic = 3;
-	mapRegions->RemoveItem(c); // remove if add in spawnitem
-	items[c].layer=items[i].layer;
-	if (items[c].layer==0) // if not equipped -> coords of the light-object = coords of the 
+    c->SetDir( 29 );
+	c->SetVisible( 0 );
+	c->SetMagic( 3 );
+	MapRegion->RemoveItem( c );
+	//c->SetLayer( items[i].GetLayer() );
+	if( getCont == INVALIDSERIAL || getCont >= 0x4000000 ) // if not equipped -> coords of the light-object = coords of the 
 	{
-	  items[c].x=items[i].x;
-	  items[c].y=items[i].y;
-	  items[c].z=items[i].z;
-	} else // if equipped -> place lightsource at player ( height= approx hand level )
+		c->SetX( i->GetX() );
+		c->SetY( i->GetY() );
+		c->SetZ( i->GetZ() );
+	} 
+	else // if equipped -> place lightsource at player ( height= approx hand level )
 	{ 
-		items[c].x=chars[currchar[s]].x;
-		items[c].y=chars[currchar[s]].y;
-		items[c].z=chars[currchar[s]].z+4;
+		c->SetX( mChar->GetX() );
+		c->SetY( mChar->GetY() );
+		c->SetZ( mChar->GetZ() + 4 );
 	}
 
-	//mapRegions->AddItem(c);
-    items[c].priv=0; // doesnt decay
+    c->SetPriv( 0 ); // doesnt decay
 
-	items[i].glow=items[c].serial; // set glow-identifier
+	i->SetGlow( c->GetSerial() ); // set glow-identifier
 
-	RefreshItem( i ); // AntiChrist
-	RefreshItem( c ); // AntiChrist
+	RefreshItem( i );
+	RefreshItem( c );
 
-	impowncreate(s,currchar[s],0); // if equipped send new color too
-	sysmessage( s, "Item is now glowing.");
-
+	mChar->SendToSocket( s, false, mChar );
+	sysmessage( s, 1098 );
 }
 
-void cTargets::UnglowTarget(int s) // LB 4/9/99, removes the glow-effect from items
+void cTargets::UnglowTarget( cSocket *s )
 {
-
-	int c,i,serial,j,k,l;
-
-	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-
-	if (i==-1) 
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
 	{ 
-		sysmessage(s,"No item found, only items can be made to unglow."); 
+		sysmessage( s, 1099 ); 
 		return; 
 	}
+	CChar *mChar = s->CurrcharObj(), *k = NULL;
+	if( mChar == NULL )
+		return;
 
-	if (items[i].contserial!=-1) 
+	SERIAL getCont = i->GetCont();
+	if( getCont != INVALIDSERIAL ) 
 	{      
-	     j=findbyserial(&itemsp[items[i].contserial%HASHMAX],items[i].contserial,0); // in bp ?
-		 l=findbyserial(&charsp[items[i].contserial%HASHMAX],items[i].contserial,1); // equipped ?
-		 if (l==-1
-			 ) k=GetPackOwner(j); 
-		 else 
-			 k=l;
-		 
-		 if (k!=currchar[s])  // creation only allowed in the creators pack/char otherwise things could go wrong
-		 {
-		   sysmessage(s,"You can't unglow items in other people's packs or hands");
-		   return;
-		 }
-		   
+		if( getCont >= 0x4000000 )
+			k = getPackOwner( calcItemObjFromSer( getCont ) );
+		else
+			k = calcCharObjFromSer( getCont );
+
+		if( k != mChar )
+		{
+			sysmessage( s, 1100 );
+			return;
+		}
 	}
 
-	c=items[i].glow;
-	j=findbyserial(&itemsp[c%HASHMAX],c,0);
-
-	if (items[i].glow==0 || j==-1 ) 
+	CItem *j = calcItemObjFromSer( i->GetGlow() );
+	if( i->GetGlow() == 0 || j == NULL ) 
 	{
-		sysmessage(s,"That object doesnt glow!\n");
+		sysmessage( s, 1101 );
 		return;
 	}
 
-	items[i].color1=items[i].glow_c1;
-    items[i].color2=items[i].glow_c2; // restore old color
+	i->SetColour( i->GetGlowColour() );
 
-	Items->DeleItem(j); // delete glowing object    
+	Items->DeleItem( j );   
+	i->SetGlow( 0 );
+	RefreshItem( i );
+	mChar->SendToSocket( s, false, mChar );
 
-	items[i].glow=0; // remove glow-identifier
-
-	RefreshItem( i ); // AntiChrist
-	impowncreate(s,currchar[s],0); // if equipped send new old color too
-
-	removefromptr(&glowsp[chars[currchar[s]].serial%HASHMAX],i);
-
-	sysmessage( s, "Item is no longer glowing.");
+	sysmessage( s, 1102 );
 }
 
-void cTargets::ShowSkillTarget( int s ) // LB's showskills
+void cTargets::ShowSkillTarget( cSocket *s )
 {
-	int p, serial, a, i, j, k, b = 0, c, z, zz, ges = 0;
+	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( p == NULL )
+	{
+		sysmessage( s, 1103 );
+		return;
+	}
+	char temp[1024];
+	int j, k, zz, ges = 0;
 	char skill_info[(ALLSKILLS+1)*40];
 	char sk[25];
 
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	p = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
+	int z = s->AddX();
+	if( z < 0 || z > 3 ) 
+		z = 0;
+	if( z == 2 || z == 3 ) 
+		sprintf( skill_info, "%s's skills:", p->GetName() ); 
+	else 
+		sprintf( skill_info, "%s's baseskills:", p->GetName() );
+	int b = strlen( p->GetName() ) + 11;
+	if( b > 23 ) 
+		b = 23;
 
-	if( p != -1 )
+	int c;
+	for( c = b; c <= 26; c++ )
 	{
-		z = addx[s];
-		if( z < 0 || z > 3 ) z = 0;
-		if( z == 2 || z == 3 ) sprintf( skill_info, "%s's skills:", chars[p].name); else sprintf( skill_info, "%s's baseskills:", chars[p].name );
-		b = strlen( chars[p].name ) + 11;
-		if( b > 23 ) b = 23;
-
-		for( c = b; c <= 26; c++ )
-		{
-			strcpy( temp, spc );
-			strcpy( &skill_info[strlen( skill_info )], temp );
-		}
-
-		numtostr( ges, sk );
-		sprintf( temp, "sum: %s", sk );
+		strcpy( temp, spc );
 		strcpy( &skill_info[strlen( skill_info )], temp );
-		for( a = 0; a < ALLSKILLS; a++ )
+	}
+
+	numtostr( ges, sk );
+	sprintf( temp, "sum: %s", sk );
+	strcpy( &skill_info[strlen( skill_info )], temp );
+	for( int a = 0; a < ALLSKILLS; a++ )
+	{
+		if( z == 0 || z == 1 ) 
+			k = p->GetBaseSkill( a ); 
+		else 
+			k = p->GetSkill( a );
+		if( z == 0 || z == 2 ) 
+			zz = 9; 
+		else 
+			zz = -1;
+
+		if( k > zz ) // show only if skills >= 1
 		{
-			if( z == 0 || z == 1 ) k = chars[p].baseskill[a]; else k = chars[p].skill[a];
-			if( z == 0 || z == 2 ) zz = 9; else zz = -1;
+			if( z == 2 || z == 3 ) 
+				j = p->GetSkill( a )/10; 
+			else 
+				j = p->GetBaseSkill( a )/10; // get skill value
+			numtostr( j, sk );  // skill-value string in sk
+			ges += j;
+			sprintf( temp, "%s%s%s", skillname[a], spc, sk );
+			strcpy( &skill_info[strlen( skill_info )], temp );
 
-			if( k > zz ) // show only if skills >= 1
+			b = strlen( skillname[a] ) + strlen( sk ) + 1; // it doesn't like \n's, so insert spaces till end of line
+			if( b > 23 )
+				b = 23;
+			for( c = b; c <= 26; c++ )
 			{
-				if( z == 2 || z == 3 ) j = chars[p].skill[a]/10; else j = chars[p].baseskill[a]/10; // get skill value
-				numtostr( j, sk );  // skill-value string in sk
-				ges += j;
-				sprintf( temp, "%s%s%s", skillname[a], spc, sk );
+				strcpy( temp, spc );
 				strcpy( &skill_info[strlen( skill_info )], temp );
-
-				b = strlen( skillname[a] ) + strlen( sk ) + 1; // it doesn't like \n's, so insert spaces till end of line
-				if( b > 23 ) b = 23;
-				for( c = b; c <= 26; c++ )
-				{
-					strcpy( temp, spc );
-					strcpy( &skill_info[strlen( skill_info )], temp );
-				}
 			}
 		}
+	}
 
-		numtostr( ges, sk );
-		sprintf( temp, "sum: %s  ", sk );
-		strcpy( &skill_info[ strlen( skill_info )], temp );
+	numtostr( ges, sk );
+	sprintf( temp, "sum: %s  ", sk );
+	strcpy( &skill_info[ strlen( skill_info )], temp );
 
-		i = strlen( skill_info ) + 10;
-		updscroll[1] = (unsigned char)(i>>8);
-		updscroll[2] = (unsigned char)(i%256);
-		updscroll[3] = 2;
-		updscroll[8] = (unsigned char)((i-10)>>8);
-		updscroll[9] = (unsigned char)((i-10)%256);
-		Network->xSend( s, updscroll, 10, 0 );
-		Network->xSend( s, skill_info, strlen( skill_info ), 0 );
-	} else sysmessage( s, "No valid target" );
+	int i = strlen( skill_info ) + 10;
+	updscroll[1] = (UI08)(i>>8);
+	updscroll[2] = (UI08)(i%256);
+	updscroll[3] = 2;
+	updscroll[8] = (UI08)((i-10)>>8);
+	updscroll[9] = (UI08)((i-10)%256);
+	s->Send( updscroll, 10 );
+	s->Send( skill_info, strlen( skill_info ) );
 }
 
+void cTargets::FriendTarget( cSocket *s )
+{
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
 
+	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( targChar == NULL )
+	{
+		sysmessage( s, 1103 );
+		return;
+	}
+	if( targChar->IsNpc() || !isOnline( targChar ) || targChar == mChar )
+	{
+		sysmessage( s, 1622 );
+		return;
+	}
 
-void cTargets::GuardTarget( UOXSOCKET s )
+	CChar *pet = calcCharObjFromSer( s->AddID() );
+	if( Npcs->checkPetFriend( targChar, pet ) )
+	{
+		sysmessage( s, 1621 );
+		return;
+	}
+
+	CHARLIST *petFriends = pet->GetFriendList();
+	if( petFriends != NULL )
+	{
+		if( petFriends->size() >= 20 )
+		{
+			sysmessage( s, 1623 );
+			return;
+		}
+	}
+
+	pet->AddFriend( targChar );
+	sysmessage( s, 1624, pet->GetName(), targChar->GetName() );
+
+	cSocket *targSock = calcSocketObjFromChar( targChar );
+	if( targSock != NULL )
+		sysmessage( targSock, 1625, mChar->GetName(), pet->GetName() );
+}
+
+void cTargets::GuardTarget( cSocket *s )
 //PRE:	Pet has been commanded to guard
 //POST: Pet guards person, if owner currently
 //DEV:	Abaddon
 //DATE: 3rd October
 {
-	SERIAL targToGuard, petGuarding;
-	targToGuard = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	petGuarding = calcCharFromSer( addid1[s], addid2[s], addid3[s], addid4[s] );
-	if( chars[targToGuard].serial != chars[petGuarding].ownserial )
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
+	CChar *petGuarding = calcCharObjFromSer( s->AddID() );
+	if( petGuarding == NULL )
+		return;
+
+	CChar *charToGuard = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( charToGuard != NULL )
 	{
-		sysmessage( s, "Currently can't guard anyone but yourself!" );
+		if( charToGuard->GetSerial() != petGuarding->GetOwner() && !Npcs->checkPetFriend( charToGuard, petGuarding ) )
+		{
+			sysmessage( s, 1628 );
+			return;
+		}
+		petGuarding->SetNPCAiType( 32 ); // 32 is guard mode
+		petGuarding->SetGuarding( charToGuard->GetSerial() );
+		mChar->SetGuarded( true );
 		return;
 	}
-	chars[petGuarding].npcaitype = 32;											// 32 is guard mode
-	chars[currchar[s]].guarded = true;
-}
-
-void cTargets::ResurrectionTarget( UOXSOCKET s )
-{
-	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = calcCharFromSer( serial );
-	if( i != -1 )
+	CItem *itemToGuard = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( itemToGuard != NULL && !itemToGuard->isPileable() )
 	{
-		if( chars[i].dead == 1 )
+		CItem *p = getPack( mChar );
+		if( p != NULL )
 		{
-			Targ->NpcResurrectTarget( i );
-			return;
+			if( itemToGuard->GetCont() == p->GetSerial() || itemToGuard->GetCont() == mChar->GetSerial() )
+			{
+				itemToGuard->SetGuarded( true );
+				petGuarding->SetGuarding( calcItemFromSer( itemToGuard->GetSerial() ) );
+			}
+		}
+		else
+		{
+			CMultiObj *multi = findMulti( itemToGuard->GetX(), itemToGuard->GetY(), itemToGuard->GetZ(), itemToGuard->WorldNumber() );
+			if( multi != NULL )
+			{
+				if( multi->GetOwner() == mChar->GetSerial() )
+				{
+					itemToGuard->SetGuarded( true );
+					petGuarding->SetGuarding( itemToGuard->GetSerial() );
+				}
+			}
+			else
+				sysmessage( s, 1628 );
 		}
 	}
 }
 
-bool ValidLockDown( int item )
-// PRE:		item is an index into item
-// POST:	returns true if lockable, or false if not
-// CODER:	Abaddon
-// DATE:	22nd January, 2000
+void cTargets::ResurrectionTarget( cSocket *s )
 {
-	if( items[item].type == 12 || items[item].type == 13 ) // can't lock down a door
-		return false;
-	if( Items->isFieldSpellItem( item ) ) // can't lock down a field spell
-		return false;
-	if( ( items[item].id1 == 0x0B && items[item].id2 == 0xD2 ) || items[item].type == 203 ) // housing sign
-		return false;
-	return true;
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		NpcResurrectTarget( i );	// npcresurrect checks to see it's valid
 }
 
-void cTargets::HouseLockdown( UOXSOCKET s ) // Abaddon
+void cTargets::HouseLockdown( cSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house
 // POST:	either locks down the item, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
 // DATE:	17th December, 1999
 {
-	int itemToLockSer, itemToLock, houseSer, house;
-	itemToLockSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToLock = findbyserial( &itemsp[itemToLockSer%HASHMAX], itemToLockSer, 0 );
-
-	if( itemToLock != -1 )
+	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( itemToLock != NULL )
 	{
-		houseSer = calcserial( addid1[s], addid2[s], addid3[s], addid4[s] );	// let's find our house
-		house = findbyserial( &itemsp[houseSer%HASHMAX], houseSer, 0 );
+		CItem *house = calcItemObjFromSer( s->AddID() );
 		// time to lock it down!
-		int multi;
-		multi = findmulti( items[itemToLock].x, items[itemToLock].y, items[itemToLock].z );
-		if( multi != -1 )
+		CMultiObj *multi = findMulti( itemToLock->GetX(), itemToLock->GetY(), itemToLock->GetZ(), itemToLock->WorldNumber() );
+		if( multi != NULL )
 		{
 			if( multi != house )
 			{
-				sysmessage( s, "You can't lock something down that's not in your house!" );
+				sysmessage( s, 1105 );
 				return;
 			}
-			if( !ValidLockDown( itemToLock ) )
+			if( !itemToLock->CanBeLockedDown() )
 			{
-				sysmessage( s, "You can't lock that down!" );
+				sysmessage( s, 1106 );
 				return;
 			}
-			items[itemToLock].magic = 3;	// LOCKED DOWN!
+			itemToLock->LockDown();
 			RefreshItem( itemToLock );
 			return;
 		}
-		else
-		{
-			// not in a multi!
-			sysmessage( s, "That item is not in your house!" );
-			return;
-		}
+		// not in a multi!
+		sysmessage( s, 1107 );
 	}
 	else
-	{
-		sysmessage( s, "Invalid item!" );
-		return;
-	}
+		sysmessage( s, 1108 );
 }
 
-void cTargets::HouseRelease( UOXSOCKET s ) // Abaddon
+void cTargets::HouseRelease( cSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
 // POST:	either releases the item from lockdown, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
 // DATE:	17th December, 1999
 {
-	int itemToLockSer, itemToLock, houseSer, house;
-	itemToLockSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToLock = findbyserial( &itemsp[itemToLockSer%HASHMAX], itemToLockSer, 0 );
+	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
 
-	if( itemToLock != -1 )
+	if( itemToLock != NULL )
 	{
-		houseSer = calcserial( addid1[s], addid2[s], addid3[s], addid4[s] );	// let's find our house
-		house = findbyserial( &itemsp[houseSer%HASHMAX], houseSer, 0 );
+		CItem *house = calcItemObjFromSer( s->AddID() );	// let's find our house
 		// time to lock it down!
-		int multi;
-		multi = findmulti( items[itemToLock].x, items[itemToLock].y, items[itemToLock].z );
-		if( multi != -1 )
+		CMultiObj *multi = findMulti( itemToLock->GetX(), itemToLock->GetY(), itemToLock->GetZ(), itemToLock->WorldNumber() );
+		if( multi != NULL )
 		{
 			if( multi != house )
 			{
-				sysmessage( s, "You can't release something that's not in your house!" );
+				sysmessage( s, 1109 );
 				return;
 			}
-			items[itemToLock].magic = 0;	// Default as stored by the client, perhaps we should keep a backup?
+			itemToLock->SetMagic( 0 );	// Default as stored by the client, perhaps we should keep a backup?
 			RefreshItem( itemToLock );
 			return;
 		}
-		else
-		{
-			// not in a multi!
-			sysmessage( s, "That item is not in your house!" );
-			return;
-		}
+		// not in a multi!
+		sysmessage( s, 1107 );
 	}
 	else
-	{
-		sysmessage( s, "Invalid item!" );
-		return;
-	}
+		sysmessage( s, 1108 );
 }
 
-void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
+void cTargets::ShowDetail( cSocket *s ) // Abaddon
 // PRE:		S is the socket of the person getting the item information
 // POST:	prints out detailed information about an item
 // CODER:	Abaddon
 // DATE:	11th January, 2000
 {
-	int itemToCheckSer, itemToCheck;
 	char message[512];
-	itemToCheckSer = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	itemToCheck = findbyserial( &itemsp[itemToCheckSer%HASHMAX], itemToCheckSer, 0 );
+	CItem *itemToCheck = calcItemObjFromSer( s->GetDWord( 7 ) );
 
-	if( itemToCheck != -1 )
+	if( itemToCheck != NULL )
 	{
-		switch( items[itemToCheck].type )
+		switch( itemToCheck->GetType() )
 		{
 		case 0:
 			strcpy( message, "Default type" );
 			break;
 		case 1:	// container/backpack
 			strcpy( message, "Container/backpack:" );
-			if( items[itemToCheck].moreb1 > 0 )
+			if( itemToCheck->GetMoreB( 1 ) > 0 )
 				strcat( message, "Magically trapped" );
 			break;
 		case 2:	// opener for castle gate 1
@@ -4183,7 +3678,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			break;
 		case 8:	// locked container
 			strcpy( message, "Locked container:" );
-			if( items[itemToCheck].moreb1 > 0 )
+			if( itemToCheck->GetMoreB( 1 ) > 0 )
 				strcat( message, "Magically trapped" );
 			break;
 		case 9:	// Spellbook (item 14FA)
@@ -4193,7 +3688,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			strcpy( message, "This opens a map based on the serial num of the item" );
 			break;
 		case 11:	// book
-			sprintf( message, "A book:Entry in misc.scp: %li", (items[itemToCheck].more1<<24)+(items[itemToCheck].more2<<16)+(items[itemToCheck].more3<<8)+items[itemToCheck].more4);
+			sprintf( message, "A book:Entry in misc.scp: %li", itemToCheck->GetMore() );
 			break;
 		case 12:	// doors
 			strcpy( message, "Unlocked door" );
@@ -4205,7 +3700,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			strcpy( message, "Food item, reduces hunger by one point" );
 			break;
 		case 15:	// magic wand
-			sprintf( message, "Magic wand\nCircle: %i:Spell within circle: %i:Charges left: %i", items[itemToCheck].morex, items[itemToCheck].morey, items[itemToCheck].morez );
+			sprintf( message, "Magic wand\nCircle: %i:Spell within circle: %i:Charges left: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
 			break;
 		case 16:	// resurrection object
 			strcpy( message, "Resurrection object" );
@@ -4218,10 +3713,10 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			break;
 		case 19:	// potion
 			strcpy( message, "Potion: " );
-			switch(items[itemToCheck].morey)
+			switch( itemToCheck->GetMoreY() )
 			{
 			case 1: // Agility Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Agility potion" );	break;
 				case 2:		strcat( message, "Greater Agility potion" );	break;
@@ -4229,7 +3724,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				}
 				break;
 			case 2: // Cure Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Lesser cure potion" ); break;
 				case 2:		strcat( message, "Cure potion" ); break;
@@ -4241,7 +3736,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				strcat( message, "Explosion potion" );
 				break;
 			case 4: // Heal Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Lesser Heal potion" );	break;
 				case 2:		strcat( message, "Heal potion" ); break;
@@ -4253,7 +3748,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				strcat( message, "Night sight potion" );
 				break;
 			case 6: // Poison Potion
-				switch( items[itemToCheck].morez )
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 0:		strcat( message, "Poison potion with no poison" ); break;
 				case 1:		strcat( message, "Lesser Poison potion" ); break;
@@ -4264,7 +3759,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				}
 				break;
 			case 7: // Refresh Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Lesser Refresh potion" ); break;
 				case 2:		strcat( message, "Refresh potion" );	break;
@@ -4272,7 +3767,7 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				}
 				break;
 			case 8: // Strength Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Lesser Strength potion" );	break;
 				case 2:		strcat( message, "Strength potion" ); break;
@@ -4280,15 +3775,12 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				}
 				break;
 			case 9: // Mana Potion
-				switch(items[itemToCheck].morez)
+				switch( itemToCheck->GetMoreZ() )
 				{
 				case 1:		strcat( message, "Lesser Mana potion" );	break;
 				case 2:		strcat( message, "Mana potion" ); break;
 				default:	strcat( message, "Unknown Mana potion" ); break;
 				}
-				break;
-			case 10: // LB's LSD potion, 5'th November 1999
-				strcat( message, "LSD potion" );
 				break;
 			default:
 				strcat( message, "Unknown potion" );
@@ -4296,96 +3788,103 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			}
 			break;
 		case 35:	// townstone deed/stone
-			if( items[itemToCheck].id1 == 0x14 && items[itemToCheck].id2 == 0xF0 )
+			if( itemToCheck->GetID() == 0x14F0 )
 				strcpy( message, "Townstone deed, will make townstone" );
 			else
 				strcpy( message, "Townstone, use to find out information on the town" );
 			break;
 		case 50:	// recall rune
-			if ( items[itemToCheck].morex == 0 && items[itemToCheck].morey == 0 && items[itemToCheck].morez == 0 )	// changed, to fix, Lord Vader
+			if( itemToCheck->GetMoreX() == 0 && itemToCheck->GetMoreY() == 0 && itemToCheck->GetMoreZ() == 0 )	// changed, to fix, Lord Vader
 				strcpy( message,"Unmarked recall rune");
 			else
 				strcpy( message, "This will rename a recall rune" );
 			break;
 		case 51:	// start gate
-			sprintf( message, "Start gate going to X %i Y %i Z %i", gatex[items[itemToCheck].gatenumber][1], gatey[items[itemToCheck].gatenumber][1], gatez[items[itemToCheck].gatenumber][1] );
+			CItem *otherGate1;
+			otherGate1 = calcItemObjFromSer( itemToCheck->GetMoreX() );
+			sprintf( message, "Start gate going to X %i Y %i Z %i", otherGate1->GetX(), otherGate1->GetY(), otherGate1->GetZ() );
 			break;
 		case 52:	// end gate
-			sprintf( message, "End gate going to X %i Y %i Z %i", gatex[items[itemToCheck].gatenumber][0], gatey[items[itemToCheck].gatenumber][0], gatez[items[itemToCheck].gatenumber][0] );
+			CItem *otherGate2;
+			otherGate2 = calcItemObjFromSer( itemToCheck->GetMoreX() );
+			sprintf( message, "End gate going to X %i Y %i Z %i", otherGate2->GetX(), otherGate2->GetY(), otherGate2->GetZ() );
 			break;
 		case 60:	// object teleporter
-			sprintf( message, "A teleporter going to X %i Y %i Z %i", items[itemToCheck].morex, items[itemToCheck].morey, items[itemToCheck].morez );
+			sprintf( message, "A teleporter going to X %i Y %i Z %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
 			break;
 		case 61:	// item spawner
-			sprintf( message, "Item spawner:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", items[itemToCheck].morex, items[itemToCheck].morez, items[itemToCheck].morey  );
+			sprintf( message, "Item spawner:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
 			break;
 		case 62:	// monster/npc spanwer
-			sprintf( message, "Monster/NPC spawner:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", items[itemToCheck].amount, items[itemToCheck].morex, items[itemToCheck].morez, items[itemToCheck].morey  );
+			sprintf( message, "Monster/NPC spawner:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetAmount(), itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
 			break;
 		case 63:	// spawn container
 			strcpy( message, "Item Spawn container:" );
-			if( items[itemToCheck].moreb1 > 0 )
+			if( itemToCheck->GetMoreB( 1 ) > 0 )
 				strcat( message, "Magically trapped:" );
-			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, items[itemToCheck].morez, items[itemToCheck].morey );
+			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
 			break;
 		case 64:	// locked spawn container
 			strcpy( message, "Locked item spawn container:" );
-			if( items[itemToCheck].moreb1 > 0 )
+			if( itemToCheck->GetMoreB( 1 ) > 0 )
 				strcat( message, "Magically trapped:" );
-			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, items[itemToCheck].morez, items[itemToCheck].morey );
+			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
 			break;
 		case 65:	// unlockable item spawner container
 			strcpy( message, "Unlockable item spawner container" );
 			break;
 		case 69:	// area spawner
-			sprintf( message, "Area spawner:X +/- value: %i:Y +/- value: %i:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", items[itemToCheck].more3, items[itemToCheck].more4, items[itemToCheck].amount, items[itemToCheck].morex, items[itemToCheck].morez, items[itemToCheck].morey );
+			sprintf( message, "Area spawner:X +/- value: %i:Y +/- value: %i:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetMore( 3 ), itemToCheck->GetMore( 4 ), itemToCheck->GetAmount(), itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
 			break;
 		case 80:	// single use advancement gate
-			sprintf( message, "Single use advancement gate: advance.scp entry %i", items[itemToCheck].morex );
+			sprintf( message, "Single use advancement gate: advance.scp entry %i", itemToCheck->GetMoreX() );
 			break;
 		case 81:	// multi-use advancement gate
-			sprintf( message, "Multi use advancement gate: advance.scp entry %i", items[itemToCheck].morex );
+			sprintf( message, "Multi use advancement gate: advance.scp entry %i", itemToCheck->GetMoreX() );
 			break;
 		case 82:	// monster gate
-			sprintf( message, "Monster gate: monster number %i", items[itemToCheck].morex );
+			sprintf( message, "Monster gate: monster number %i", itemToCheck->GetMoreX() );
 			break;
 		case 83:	// race gates
-			sprintf( message, "Race Gate:Turns into %s:", Races->getName( items[itemToCheck].morex ) );
-			if( items[itemToCheck].morey == 1 )
+			sprintf( message, "Race Gate:Turns into %s:", Races->Name( itemToCheck->GetMoreX() ) );
+			if( itemToCheck->GetMoreY() == 1 )
 				strcat( message, "Constantly reuseable:" );
 			else
 				strcat( message, "One time use only:" );
-			if( Races->isPlayerRace( items[itemToCheck].morex ) )
+			if( Races->IsPlayerRace( itemToCheck->GetMoreX() ) )
 				strcat( message, "Player Race:" );
 			else
 				strcat( message, "NPC Race only:" );
 			break;
 		case 85:	// damage object
-			sprintf( message, "Damage object:Minimum damage %i:Maximum Damage %i", items[itemToCheck].morex + items[itemToCheck].morey, items[itemToCheck].morex + items[itemToCheck].morez );
+			sprintf( message, "Damage object:Minimum damage %i:Maximum Damage %i", itemToCheck->GetMoreX() + itemToCheck->GetMoreY(), itemToCheck->GetMoreX() + itemToCheck->GetMoreZ() );
 			break;
 		case 86:	// sound object
-			sprintf( message, "Sound object:Percent chance of sound being played: %i:Sound effect to play: %i %i", items[itemToCheck].morez, items[itemToCheck].morex, items[itemToCheck].morey );
+			sprintf( message, "Sound object:Percent chance of sound being played: %i:Sound effect to play: %i %i", itemToCheck->GetMoreZ(), itemToCheck->GetMoreX(), itemToCheck->GetMoreY() );
 			break;
 		case 87:	// trash container
 			strcpy( message, "A trash container" );
 			break;
 		case 88:	// sound object
-			sprintf( message, "Sound object that plays whenever someone is near:Soundeffect: %i\nRadius: %i\nProbability: %i", items[itemToCheck].morex, items[itemToCheck].morey, items[itemToCheck].morez );
+			sprintf( message, "Sound object that plays whenever someone is near:Soundeffect: %i\nRadius: %i\nProbability: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
+			break;
+		case 89:	// map change
+			sprintf( message, "Map Change object that changes world:World: %i", itemToCheck->GetMore() );
 			break;
 		case 100:	// not documented
 			strcpy( message, "Looks like hide/unhide object:More detail to come later\n" );
 			break;
 		case 101:	// morph object morex = npc# in npc.scp
-			sprintf( message, "Morph object:Morphs char into body %i %i", items[itemToCheck].morex>>8, items[itemToCheck].morex%256 );
+			sprintf( message, "Morph object:Morphs char into body %x %x", itemToCheck->GetMoreX()>>8, itemToCheck->GetMoreX()%256 );
 			break;
 		case 102:	// unmorph
 			strcpy( message, "Unmorph object, unmorphs back to body before using it as type 101, switches to 101 again" );
 			break;
 		case 103:	// army enlistment object
-			sprintf( message, "Army enlistment object: Army #%i", items[itemToCheck].morex );
+			sprintf( message, "Army enlistment object: Army #%i", itemToCheck->GetMoreX() );
 			break;
 		case 104:	// teleport object (use triggers now)
-			sprintf( message, "Teleport object: X %i Y %i Z %i", items[itemToCheck].morex, items[itemToCheck].morey, items[itemToCheck].morez );
+			sprintf( message, "Teleport object: X %i Y %i Z %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
 			break;
 		case 105:	// drink object
 			strcpy( message, "You can drink this" );
@@ -4397,10 +3896,10 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 			strcpy( message, "Escort NPC spawner, behaves like type 62/69" );
 			break;
 		case 181:	// fireworks wand
-			sprintf( message, "A fireworks wand with %i charges left on it", items[itemToCheck].morex );
+			sprintf( message, "A fireworks wand with %i charges left on it", itemToCheck->GetMoreX() );
 			break;
 		case 185:	// smoking type
-			sprintf( message, "Smoking object: Duration %i secs", items[itemToCheck].morex );
+			sprintf( message, "Smoking object: Duration %i secs", itemToCheck->GetMoreX() );
 			break;
 		case 202:	// guildstone deed
 			strcpy( message, "Guildstone deed" );
@@ -4411,47 +3910,271 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 		case 217:	// player vendor deed
 			strcpy( message, "Player vendor deed");
 			break;
+		case 234:	// world change gate
+			sprintf( message, "World change gate: %i", itemToCheck->GetMoreX() );
+			break;
 		}
-
 		sysmessage( s, message );
-
 	}
 	else
-	{
-		sysmessage( s, "Invalid item selected!" );
-		return;
-	}
+		sysmessage( s, 1656 );
 }
 
-void cTargets::CommandLevelTarget( UOXSOCKET s ) 
+void cTargets::CommandLevel( cSocket *s )
 {
-	if( acctno[s] != 0 && chars[currchar[s]].commandLevel < 5 )
-	{
-		sysmessage( s, "Only account 0 or command level 5 can do that" );
-		return;
-	}
-	int i;
-	i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( i != -1 )
-	{
-		chars[i].commandLevel = addx[s];
-	}
+	CChar *targToEdit = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( targToEdit != NULL )
+		targToEdit->SetCommandLevel( s->AddX() );
 }
 
-void cTargets::IncZTarget( UOXSOCKET s )
+void cTargets::MakeTownAlly( cSocket *s )
 {
-	int i;
-	i = calcItemFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( i != -1 )
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
+	CChar *targetChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( targetChar == NULL )
 	{
-		items[i].z += addx[s];
-		RefreshItem( i );
+		sysmessage( s, 1110 );
+		return;
 	}
-	i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( i != -1 )
+	UI08 srcTown = mChar->GetTown();
+	UI08 trgTown = targetChar->GetTown();
+
+//	if( srcTown == trgTown )
+//		sysmessage( s, "That person already belongs to your town" );
+//	else
+//	{
+		if( !region[srcTown]->MakeAlliedTown( trgTown ) )	
+			sysmessage( s, 1111 );
+//	}
+}
+
+void cTargets::MakeStatusTarget( cSocket *sock )
+{
+	CChar *targetChar = calcCharObjFromSer( sock->GetDWord( 7 ) );
+	if( targetChar == NULL )
 	{
-		chars[i].z += addx[s];
-		teleport( i );
+		sysmessage( sock, 1110 );
+		return;
 	}
+	UI08 origCommand = targetChar->GetCommandLevel();
+
+	commandLevel_st *targLevel = Commands->GetClearance( sock->XText() );
+	commandLevel_st *origLevel = Commands->GetClearance( origCommand );
 	
+	if( targLevel == NULL )
+	{
+		sysmessage( sock, 1112 );
+		return;
+	}
+	CChar *mChar = sock->CurrcharObj();
+	char temp[1024], temp2[1024];
+
+	UI08 targetCommand = targLevel->commandLevel;
+	sprintf( temp, "account%i.log", mChar->GetAccount() );
+	sprintf( temp2, "%s has made %s a %s.\n", mChar->GetName(), targetChar->GetName(), targLevel->name );
+	savelog( temp2, temp );
+
+	DismountCreature( targetChar );
+
+	if( targLevel->targBody != 0 )
+	{
+		targetChar->SetID( targLevel->targBody );
+		targetChar->SetSkin( targLevel->bodyColour );
+		targetChar->SetxID( targLevel->targBody );
+		targetChar->SetOrgID( targLevel->targBody );
+		targetChar->SetxSkin( targLevel->bodyColour );
+	}
+
+	targetChar->SetPriv( (targLevel->defaultPriv)%256 );
+	targetChar->SetPriv2( (targLevel->defaultPriv)>>8 );
+	targetChar->SetCommandLevel( targetCommand );
+	
+	if( targLevel->allSkillVals != 0 )
+	{
+		for( int j = 0; j < TRUESKILLS; j++ )
+		{
+			targetChar->SetBaseSkill( targLevel->allSkillVals, j );
+			targetChar->SetSkill( targLevel->allSkillVals, j );
+		}
+		targetChar->SetStrength( 100 );
+		targetChar->SetDexterity( 100 );
+		targetChar->SetIntelligence( 100 );
+		targetChar->SetStamina(  100 );
+		targetChar->SetHP( 100 );
+		targetChar->SetMana( 100 );
+		targetChar->SetMana2( 100 );
+		targetChar->SetStamina2( 100 );
+	}
+	char *playerName = (char *)targetChar->GetName();
+
+	if( targetCommand != 0 && targetCommand != origCommand )
+	{
+		if( origLevel != NULL )
+		{	// Strip name off it
+			if( !strnicmp( origLevel->name, playerName, strlen( origLevel->name ) ) )
+				playerName += ( strlen( origLevel->name ) + 1 );
+		}
+		sprintf( temp, "%s %s", targLevel->name, playerName );
+		targetChar->SetName( temp );
+	}
+	else if( origCommand != 0 )
+	{
+		if( origLevel != NULL )
+		{	// Strip name off it
+			if( !strnicmp( origLevel->name, playerName, strlen( origLevel->name ) ) )
+				playerName += ( strlen( origLevel->name ) + 1 );
+		}
+		strcpy( temp, playerName );
+		targetChar->SetName( temp );
+	}
+	CItem *retitem = NULL;
+	CItem *mypack = getPack( targetChar );
+
+	if( targLevel->stripOff )
+	{
+		for( UI08 lyrCounter = 0; lyrCounter < MAXLAYERS; lyrCounter++ )
+		{
+			CItem *z = targetChar->GetItemAtLayer( lyrCounter );
+			if( z != NULL )
+			{
+				switch( lyrCounter )
+				{
+				case 0x0B:
+				case 0x10:
+					Items->DeleItem( z );
+					break;
+				case 0x15:
+				case 0x1D:
+					break;
+				default:
+					if( mypack == NULL )
+						mypack = getPack( targetChar );
+					if( mypack == NULL )
+					{
+						CItem *iMade = Items->SpawnItem( calcSocketObjFromChar( targetChar ), targetChar, 1, "#", false, 0x0E75, 0, false, false );
+						targetChar->SetPackItem( iMade );
+						if( iMade == NULL ) 
+							return;
+						iMade->SetLayer( 0x15 );
+						if( iMade->SetCont( targetChar->GetSerial() ) )
+						{
+							iMade->SetType( 1 );
+							iMade->SetDye( true );
+							mypack = iMade;
+							retitem = iMade;
+						}
+					}
+					z->SetX( ( RandomNum( 0, 79 ) + 50 ) );
+					z->SetY( ( RandomNum( 0, 79 ) + 50 ) );
+					z->SetZ( 9 );
+					z->SetCont( mypack->GetSerial() );
+
+					CPRemoveItem toRemove = (*z);
+					
+					Network->PushConn();
+					for( cSocket *cSock = Network->FirstSocket(); !Network->FinishedSockets(); cSock = Network->NextSocket() )
+						cSock->Send( &toRemove );
+					Network->PopConn();
+					RefreshItem( z );
+					break;
+				}
+			}
+		}
+	}
+	if( targLevel->targBody != 0 )
+		targetChar->Teleport();
+	else
+		targetChar->Update();
+}
+
+void cTargets::SmeltTarget( cSocket *s )
+{
+#pragma note( "Smelting needs to be heavily updated" )
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL || i->GetCont() == INVALIDSERIAL )
+		return;
+	if( i->GetCreator() == INVALIDSERIAL )
+	{
+		sysmessage( s, 1113 );
+		return;
+	}
+	SI32 iMadeFrom = i->EntryMadeFrom();
+
+	createEntry *ourCreateEntry = Skills->FindItem( iMadeFrom );
+	if( iMadeFrom == -1 || ourCreateEntry == NULL )
+	{
+		sysmessage( s, 1114 );
+		return;
+	}
+
+	CChar *mChar = s->CurrcharObj();
+
+	R32 avgMin = ourCreateEntry->AverageMinSkill();
+	if( mChar->GetSkill( MINING ) < avgMin )
+	{
+		sysmessage( s, 1115 );
+		return;
+	}
+	R32 avgMax = ourCreateEntry->AverageMaxSkill();
+
+	Skills->CheckSkill( mChar, MINING, avgMin, avgMax );
+
+	R32 sumAmountRestored = 0.0f;
+
+	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); skCtr++ )
+	{
+		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
+		UI16 itemID = ourCreateEntry->resourceNeeded[skCtr].itemID;
+		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
+		sumAmountRestored += amtToRestore;
+		Items->SpawnItem( s, mChar, amtToRestore, "#", true, itemID, itemColour, true, true );
+	}
+
+	sysmessage( s, 1116, sumAmountRestored );
+	Items->DeleItem( i );
+}
+
+void cTargets::IncZTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		i->IncZ( s->AddX() );
+		RefreshItem( i );
+		return;
+	}
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( c != NULL )
+	{
+		c->SetLocation( c->GetX(), c->GetY(), c->GetZ() + s->AddX() );
+		c->Teleport();
+	}
+}
+
+void cTargets::DeleteCharTarget( cSocket *s )
+{
+	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( s->CurrcharObj() == c )
+	{
+		sysmessage( s, "You cannot delete yourself" );
+		return;
+	}
+	if( c != NULL )
+	{
+		if( c->IsNpc() )
+		{
+			sysmessage( s, 1658 );
+			return;
+		}
+		if( isOnline( c ) )
+		{
+			cSocket *tSock = calcSocketObjFromChar( c );
+			sysmessage( tSock, 1659 );
+			Network->Disconnect( calcSocketFromSockObj( tSock ) );
+		}
+		Npcs->DeleteChar( c );
+	}
 }

@@ -1,0 +1,13 @@
+30th November 2001
+==================
+
+Version 1.0
+===========
+
+Features
+========
+Converts 0.70 series accounts into 0.95 series accounts
+
+Known issues
+============
+None

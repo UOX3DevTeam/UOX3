@@ -1,49 +1,500 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  gumps.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #include "uox3.h"
 #include "debug.h"
+#include "ssection.h"
 
-#define DBGFILE "gumpmenus.cpp"
+#undef DBGFILE
+#define DBGFILE "gumps.cpp"
 
-void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, unsigned char tser3, unsigned char tser4, char type)
+string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length );
+string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length );
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleAccountButton( cSocket *s, long button, CChar *j )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in Account gump
+//o---------------------------------------------------------------------------o
+void HandleAccountButton( cSocket *s, long button, CChar *j )
 {
-	int j=-1,serial,i;
-	
-    // if ((button)==0 || (button==1)) printf("gump-menu, type# %i closed\n",type); // lord bin
-	if(button>10000) {
-		i=button-10000;
-		Menu(s, i);
+	if( j == NULL )
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+	ACTREC *ourAccount = Accounts->GetAccountByID( j->GetAccount() );
+	if( ourAccount == NULL )
+		return;
+	cSocket *targSocket = calcSocketObjFromChar( j );
+	switch( button )
+	{
+	case 2:
+		if( mChar->IsGM() && !j->IsNpc() )
+		{
+			sysmessage( s, 487 );
+			sysmessage( targSocket, 488 );
+			ourAccount->lpaarHolding->bFlags|=0x01;	// Banned
+			if( isOnline( j ) ) 
+				Network->Disconnect( calcCharFromSer( j->GetSerial() ) );
+		}
+		else 
+			sysmessage( s, 489 );
+		break;
+	case 3:
+		if( mChar->IsGM() && !j->IsNpc() )
+		{
+			sysmessage( s, 490 );
+			sysmessage( targSocket, 491 );
+			ourAccount->lpaarHolding->bFlags|=0x01;
+			ourAccount->ban_duration = BuildTimeValue( 60 * 60 * 24 );
+
+			if( isOnline( j ) ) 
+				Network->Disconnect( calcCharFromSer( j->GetSerial() ) );
+		}
+		else 
+			sysmessage( s, 492 );
+		break;
+	case 4:		
+	case 5:		
+	case 6:		
+	case 7:
+		sysmessage( s, 489 + button );
+		break;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTweakItemButton( cSocket *s, long button, SERIAL ser, long type )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in tweak item gump
+//o---------------------------------------------------------------------------o
+void HandleTweakItemButton( cSocket *s, long button, SERIAL ser, long type )
+{
+	button -= 6;
+	if( button <= 0 )
+	{
+		sysmessage( s, 1700 );
 		return;
 	}
-	int curLock = 0, b = 0, a = 0;
-	bool done = false;
-	serial = calcserial( tser1, tser2, tser3, tser4 );
-	if (type > 11) 
+
+	switch( button )
+	{
+	case 15:	// Low Damage
+	case 16:	// High Damage
+	case 17:	// Defense
+	case 18:	// Speed
+	case 19:	// Rank
+		entrygump( s, ser, type, button, 4, 495 + button );	// allow 0x for hex value
+		break;
+	case 1:		// ID
+	case 4:		// Colour
+	case 5:		// Layer
+	case 6:		// Type
+	case 8:		// X
+	case 9:		// Y
+	case 10:	// Z
+	case 13:	// Hit Points
+	case 14:	// Max HitPoints
+	case 20:	// More
+	case 21:	// More X
+	case 22:	// More Y
+	case 23:	// More Z
+	case 24:	// More B
+	case 28:	// Good
+	case 29:	// Value
+	case 30:	// Carve
+		entrygump( s, ser, type, button, 6, 495 + button );	// allow 0x for hex value
+		break;
+	case 7:		// Moveable
+	case 25:	// Poisoned
+	case 27:	// Decay
+	case 31:	// Stackable
+	case 32:	// Dyable
+	case 33:	// Corpse
+	case 34:	// Visible
+		entrygump( s, ser, type, button, 1, 495 + button );
+		break;
+	case 11:	// Amount
+	case 12:	// Strength
+	case 26:	// Weight
+		entrygump( s, ser, type, button, 7, 495 + button );	// allow 0x for hex value
+		break;
+	case 2:		// Name
+	case 3:		// Name 2
+	case 35:	// Creator
+		entrygump( s, ser, type, button, 50, 495 + button );
+		break;
+	default:	Console << Dictionary->GetEntry( 525 ) << (SI32)button << myendl;	break;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in tweak char gump
+//o---------------------------------------------------------------------------o
+void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
+{
+	button -= 6;
+	if( button <= 0 )
+	{
+		sysmessage( s, 1700 );
+		return;
+	}
+
+	switch( button )
+	{
+	case 1:		// Name
+	case 2:		// Title
+		entrygump( s, ser, type, button, 50, 1700 + button );
+		break;
+	case 3:		// Body
+	case 4:		// Skin
+	case 5:		// Race
+	case 6:		// X
+	case 7:		// Y
+	case 8:		// Z
+	case 9:		// Direction
+	case 13:	// Hitpoints
+	case 14:	// Stamina
+	case 15:	// Mana
+	case 21:	// Kills
+	case 27:	// Carve
+		entrygump( s, ser, type, button, 6, 1700 + button );	// allow 0x for hex
+		break;
+	case 10:	// Strength
+	case 11:	// Dexterity
+	case 12:	// Intelligence
+	case 19:	// Fame
+	case 20:	// Karma
+	case 26:	// Weight
+		entrygump( s, ser, type, button, 7, 1700 + button );	// allow 0x for hex
+		break;
+
+	case 16:	// Low Damage
+	case 17:	// High Damage
+	case 18:	// Defense
+	case 22:	// AI Type
+	case 24:	// Hunger
+		entrygump( s, ser, type, button, 4, 1700 + button );	// allow 0x for hex
+		break;
+	case 23:	// NPC Wander
+	case 25:	// Poison
+	case 28:	// Visible
+		entrygump( s, ser, type, button, 1, 1700 + button );
+		break;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in townstone gump
+//o---------------------------------------------------------------------------o
+void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
+{
+	CChar *mChar = s->CurrcharObj();
+	SI16 targetRegion;
+	switch( button )
+	{
+		// buttons 2-20 are for generic town members
+		// buttons 21-40 are for mayoral functions
+		// buttons 41-60 are for potential candidates
+		// buttons 61-80 are for enemy towns
+	case 2:		// leave town
+		bool result;
+		// safe to assume we want to remove ourselves from our only town!
+		result = region[mChar->GetTown()]->RemoveTownMember( (*mChar) );
+		if( !result )
+			sysmessage( s, 540 );
+		break;
+	case 3:		// view taxes
+		targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+		if( targetRegion != -1 )
+			region[targetRegion]->ViewTaxes( s );
+		else
+			sysmessage( s, 541 );
+		break;
+	case 4:		// toggle town title
+		mChar->SetTownTitle( !mChar->GetTownTitle() );
+		region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s );
+		break;
+	case 5:		target( s, 0, 1, 0, 161, 542 );								break;		// vote for town mayor
+	case 6:		entrygump(  s, ser, type, button, 6, 543 );	break;		// gold donation
+	case 7:		region[mChar->GetTown()]->ViewBudget( s );			break;		// View Budget
+	case 8:		region[mChar->GetTown()]->SendAlliedTowns( s );		break;		// View allied towns
+	case 9:		region[mChar->GetTown()]->SendEnemyTowns( s );		break;
+	case 20:	// access mayoral functions, never hit here if we don't have mayoral access anyway!
+				// also, we'll only get access, if we're in our OWN region
+		region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s, 0x01 );	// mayor
+		break;
+	case 21:	sysmessage( s, 544 );				break;	// set taxes
+	case 22:	region[mChar->GetTown()]->DisplayTownMembers( s );	break;	// list town members
+	case 23:	region[mChar->GetTown()]->ForceEarlyElection();		break;	// force early election
+	case 24:	sysmessage( s, 545 );	break;	// purchase more guards
+	case 25:	sysmessage( s, 546 );	break;	// fire a guard
+	case 26:	target( s, 0, 1, 0, 49, 547 );								break;	// make a town an ally
+	case 40:	region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s );	break;	// we can't return from mayor menu if we weren't mayor!
+	case 41:	// join town!
+		if( !(region[calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() )]->AddAsTownMember( (*mChar) ) ) )
+			sysmessage( s, 548 );
+		break;
+	case 61:	// seize townstone!
+		if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
+		{
+			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+			if( targetRegion != -1 )
+			{
+				int chanceToSteal = RandomNum( 0, region[targetRegion]->GetHealth() / 2 );
+				int fudgedStealing = RandomNum( mChar->GetSkill( STEALING ), mChar->GetSkill( STEALING ) * 2 );
+				if( fudgedStealing >= chanceToSteal )
+				{
+					// redo stealing code here
+					sysmessage( s, 549, region[targetRegion]->GetName() );
+					region[targetRegion]->DoDamage( region[targetRegion]->GetHealth() / 2 );	// we reduce the region's health by half
+					int xOffset = MapRegion->GetGridX( mChar->GetX() );
+					int yOffset = MapRegion->GetGridY( mChar->GetY() );
+					UI08 worldNumber = mChar->WorldNumber();
+					for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
+					{
+						for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
+						{
+							SubRegion *toCheck = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
+							if( toCheck == NULL )	
+								continue;
+							toCheck->PushItem();
+							for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+							{
+								if( itemCheck == NULL )		
+									continue;
+								if( itemCheck->GetType() == 35 && itemCheck->GetID() != 0x14F0 )
+								{	// found our townstone
+									CItem *charPack = getPack( mChar );
+									if( charPack != NULL )
+									{
+										itemCheck->SetCont( charPack->GetSerial() );
+										itemCheck->SetMoreX( targetRegion );
+										sysmessage( s, 550 );
+										region[targetRegion]->TellMembers( 551, mChar->GetName() );
+										toCheck->PopItem();
+										return;	// dump out
+									}
+								}
+							}
+							toCheck->PopItem();
+						}
+					}
+				}
+				else
+					sysmessage( s, 552 );
+			}
+			else
+				sysmessage( s, 553 );
+		}
+		else
+			sysmessage( s, 554 );
+		break;
+	case 62:	// attack townstone
+		targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+		for( int counter = 0; counter < RandomNum( 5, 10 ); counter++ )
+		{
+			movingeffect( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
+			staticeffect( mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x373A + RandomNum( 0, 4 ) * 0x10, 0x09, 0, 0 );
+		}
+		region[targetRegion]->DoDamage( RandomNum( 0, region[targetRegion]->GetHealth() / 8) );	// we reduce the region's health by half
+		break;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleHairDyeButton( cSocket *s, long button, CItem *j )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in hair dye gump
+//o---------------------------------------------------------------------------o
+void HandleHairDyeButton( cSocket *s, long button, CItem *j )
+{
+	if( j == NULL )
+		return;
+
+	// we only HAVE one button, so we'll assume safely that the colour has changed if we hit here
+	UI16 dyeColour = s->GetWord( 21 );
+	UseHairDye( s, dyeColour, j );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleAccountModButton( cSocket *s, long button )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in account gump
+//o---------------------------------------------------------------------------o
+void HandleAccountModButton( cSocket *s, long button )
+{
+	string username, emailAddy, password;
+	// if 18 is 1 then 22 is set to 1, and flag is toggled 
+	// username starts at 32, unicode, comes after 8 2 bytes before
+	// toggle status at 22-25 ?
+	// first text field starts at byte 26
+	// 3 -23 field id?
+	// id1 id2 len1 len2 ??? seems to be
+	// 3 -24 0 8 0 before username
+	// 3 -23 0 8 0 then password
+	// 3 -22 0 24 0 then email
+	int offset, tmpOffset;
+	offset = s->GetWord( 29 );
+	tmpOffset = 31;
+	username = GetUniStrFromSock( s, tmpOffset, offset );
+	ACTREC *AccountFind;
+	AccountFind = Accounts->GetAccount( username.c_str() );
+	if( AccountFind != NULL )
+	{
+		sysmessage( s, 555 );
+		return;
+	}
+	tmpOffset += 2 * offset;
+	offset = s->GetWord( tmpOffset + 2 );
+	password = GetUniStrFromSock( s, tmpOffset + 4, offset );
+	tmpOffset += 4 + 2 * offset;
+	offset = s->GetWord( tmpOffset + 2 );
+	emailAddy = GetUniStrFromSock( s, tmpOffset + 4, offset );
+	Accounts->AddAccount( username, password, emailAddy );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleHouseButton( cSocket *s, long button, CItem *j )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in house gump
+//o---------------------------------------------------------------------------o
+void HandleHouseButton( cSocket *s, long button, CItem *j )
+{
+	if( j == NULL )
+		return;
+
+	char temp[1024];
+	SI32 i = s->GetWord( 21 );
+	if( button != 20 && button != 2 ) 
+		s->AddID( j->GetSerial() );
+	switch( button )
+	{
+	case 20: // Change house sign's appearance
+		if( i > 0 ) 
+		{
+			s->SetDWord( 7, s->AddID() );
+			s->AddID1( s->GetByte( 21 ) );
+			s->AddID2( s->GetByte( 22 ) );
+			Targ->IDtarget( s );
+			sysmessage( s, 556 );
+		}
+		return;
+	case 0:		return;
+	case 2:	target( s, 0, 1, 0, 227, 557 );	return;  // Bestow ownership upon someone else
+	case 3:	deedHouse( s, j );				return;  // Turn house into a deed
+	case 4:	target( s, 0, 1, 0, 228, 558 );	return;  // Kick someone out of house
+	case 5:	target( s, 0, 1, 0, 229, 559 );	return;  // Ban somebody
+	case 6:
+	case 8:	target( s, 0, 1, 0, 231, 560 );	return; // Remove someone from house list
+	case 7:	target( s, 0, 1, 0, 230, 561 );	return; // Make someone a friend
+	default:
+		sprintf( temp, "HouseGump Called - Button=%i", button );
+		sysmessage( s, temp );
+		return;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleAddMenuButton( cSocket *s, long button )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button pressed in add menu gump
+//o---------------------------------------------------------------------------o
+void HandleAddMenuButton( cSocket *s, long button )
+{
+	CChar *mChar = s->CurrcharObj();
+	SI32 addMenuLoc = mChar->GetAddPart();
+	char sect[512];
+	sprintf( sect, "ITEMMENU %i", addMenuLoc );
+	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
+	if( ItemMenu == NULL )
+		return;
+
+	const char *tag = ItemMenu->First();
+	const char *data = ItemMenu->GrabData();	// let's skip the title
+	UI08 counter = 7;
+
+	for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next(), counter++ )
+	{	// let's skip over the name, and get straight to where we should be headed
+		tag = ItemMenu->Next();
+		data = ItemMenu->GrabData();
+		if( counter == button )
+		{	// we've found it
+			scriptcommand( s, tag, data );
+			break;
+		}
+		
+	}
+}
+
+extern void HandleHowTo( cSocket *sock, int cmdNumber );
+ 
+void HandleHowToButton( cSocket *s, long button )
+{
+	HandleHowTo( s, button - 2 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3, UI08 tser4, SI32 type )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles button press in gumps
+//o---------------------------------------------------------------------------o
+void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3, UI08 tser4, SI32 type )
+{
+	CChar *mChar = s->CurrcharObj();
+
+	if( button > 10000 ) 
+	{
+		button -= 10000;
+		Menu( s, button );
+		return;
+	}
+	SERIAL serial = calcserial( tser1, tser2, tser3, tser4 );
+	if( type >= 8000 && type <= 8020 )
+	{
+		GuildSys->GumpChoice( s );
+		// guild collection call goes here
+		return;
+	}
+	else if( type == 20 )	// script gump
+	{
+		UI16 gumpTrig = (UI16)s->TempInt();
+		cScript *toExecute = Trigger->GetScript( gumpTrig );
+		if( toExecute != NULL )
+			toExecute->HandleGumpPress( s, button );
+	}
+	else if( type == 21 ) // Multi functional gump
+	{
+		MultiGumpCallback( s, serial, button );
+		return;
+	}
+	else if( type == 0x01CD )
+	{
+#pragma note( "Newly passed button press due to the pentagram in the 2D and 3D clients" )
+#pragma note( "The question is... what does it DO?" )
+	}
+	else if( type > 13 ) 
 		return; //increase this value with each new gump added.
-	if (button==1) 
+	if( button == 1 ) 
 	{
 		if( type == 4 )
 			WhoList->GMLeave();
@@ -51,1223 +502,655 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 			OffList->GMLeave();
 		return;
 	}
-	int is;
+
 	// gump types
-	// 1	Tweak Item (needs bugfixing/expanding)
-	// 2	Tweak Char (needs bugfixing/expanding)
+	// TBD  To Be Done
+	// TBR  To Be Replaced
+	// TBDU To Be Decided Upon
+	// 1	Tweak Item
+	// 2	Tweak Char
 	// 3	Townstones
 	// 4	WhoList
 	// 5	House functions (TBR)
+	// 6	Hair Dye Menu
 	// 7	Accounts (TBR)
+	// 8	Racial editor (TBDU)
+	// 9	Add menu
 	// 10	Safe sex window (TBD)
 	// 11	Who's Offline
-	switch( type )
-	{
-		case 7:
-		case 2:	
-			j = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-			break;
-		case 1:
-			j = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-			break;
-		case 6:
-			is = calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-			j = calcItemFromSer( is );
-			break;
-		case 3:	
-		case 4:
-		case 11:
-			j = 1; //cj
-			break;
-		case 5:	// House funcs, WILL EVENTUALLY DISAPPEAR
-			is = calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
-			j = findbyserial(&itemsp[is%HASHMAX],is,0);
-			if(j>-1) 
-			{
-				is = calcserial( items[j].more1, items[j].more2, items[j].more3, items[j].more4 ); 
-				j = findbyserial(&itemsp[is%HASHMAX],is,0);
-			}
-			break;
-	}
+	// 12	New Make Menu
+	// 13	HOWTO
+
 #ifdef DEBUG
-	printf("Type is... %i button is %i\n", type, button );
+	Console << "Type is " << type << " button is " <<  button << myendl;
 #endif
 
-	if( button == 1 )
+	SERIAL is;
+	CItem *j;
+	switch( type )
 	{
-		if( type == 4 )
-			WhoList->GMLeave();
-		else if( type == 11 )
-			OffList->GMLeave();
-		return;
-	}
-	if( j == -1 ) 
-		return;
-	if( type == 7 ) // Revana*
-	{
-		if( button == 2 )
+	case 1:	HandleTweakItemButton( s, button, serial, type );			break;	// Tweak Item
+	case 2:	HandleTweakCharButton( s, button, serial, type );			break;	// Tweak Char
+	case 3:	HandleTownstoneButton( s, button, serial, type );			break;	// Townstones
+	case 4:	WhoList->ButtonSelect( s, button, type );					break;	// Wholist
+	case 5:																		// House Functions
+		is = s->AddID();
+		j = calcItemObjFromSer( is );
+		if( j != NULL ) 
 		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				sysmessage( s, "You have banned that players account!" );
-				sysmessage( j, "You have been banned!" );
-				acctx[chars[j].account].ban = 1;
-				acctx[chars[j].account].banSerial = chars[currchar[s]].serial;
-				if( online( j ) ) Network->Disconnect( j );
-			}
-			else sysmessage( s, "That player cannot be banned!" );
+			is = j->GetMore(); 
+			j = calcItemObjFromSer( is );
 		}
-		if( button == 3 )
-		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				sysmessage( s, "You have given that player's account a time ban!" );
-				sysmessage( j, "You have been banned for 24 hours!" );
-				acctx[chars[j].account].ban = 1;
-				acctx[chars[j].account].banTime = (int)(uiCurrentTime + (60 * 60 * 24 * CLOCKS_PER_SEC ));
-
-				if( online( j ) ) Network->Disconnect( j );
-			}
-			else sysmessage( s, "That player cannot be banned!" );
-		}
-		if( button == 4 )
-		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				sysmessage( s, "Account is being wiped.." );
-				sysmessage( j, "Your account no longer exist." );
-				acctx[chars[j].account].wipe = 1;
-				acctx[chars[j].account].wipeSerial = chars[currchar[s]].serial;
-
-				if( online( j ) ) Network->Disconnect( j );
-			}
-			else sysmessage( s, "That player's account cannot be banned!" );
-		}
-		if( button == 5 )
-		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				sysmessage( s, "Locking account players for this shard.." );
-				sysmessage( j, "All your characters are being locked out.." );
-				for( b=0; b < charcount; b++ )
-				{
-					if( chars[b].account == acctno[j] && curLock < MAX_ACCT_LOCK)
-					{
-						acctx[chars[j].account].lock[curLock] = chars[b].serial;
-						curLock++;
-					}
-				}
-				printf("Locked %i characters from %i\n", curLock, acctno[b] );
-
-				if( online( j ) ) Network->Disconnect( j );
-			}
-			else sysmessage( s, "That is not a player!" );
-		}
-		if( button == 6 )
-		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				sysmessage( s, "You have locked that character out" );
-				sysmessage( j, "Your character has been locked out" );
-				for( a = 0; a < MAX_ACCT_LOCK; a++ )
-				{
-					if( acctx[chars[j].account].lock[a] == 0 && done == false )
-					{
-						acctx[chars[j].account].lock[a] = chars[j].serial;
-						done = true;
-					}
-				}
-				if( done == false )
-				{
-					sysmessage( s, "Error in locking! Too many locked!" );
-				}
-
-				if( online( j ) ) Network->Disconnect( j );
-			}
-		}
-		if( button == 7 )
-		{
-			if( chars[currchar[s]].priv&1 && !chars[j].npc )
-			{
-				acctx[chars[j].account].warning++;
-				sysmessage( s, "You have placed a warning" );
-				if( acctx[chars[j].account].warning >= 10 )
-				{
-					sysmessage( j, "You have been banned for too many warnings!" );
-					acctx[chars[j].account].ban = 1;
-					Network->Disconnect( j );
-				}
-			}
-		}
-	}
-
-	if (type==1) // Item
-	{
-		switch( button )
-		{
-		case 2:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new name for the item. (# = default name)" );	break;
-		case 3:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new ID number for the item in hex." );			break;
-		case 4:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new hue for the item in hex." );				break;
-		case 5:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new X coordinate for the item in decimal." );	break;
-		case 6:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new Y coordinate for the item in decimal." );	break;
-		case 7:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new Z coordinate for the item in decimal." );	break;
-		case 8:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new type for the item in decimal." );			break;
-		case 9:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new itemhand for the item in decimal." );		break;//Xuri
-		case 10:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new layer for the item in decimal." );			break;
-		case 11:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new amount for the item in decimal." );			break;
-		case 12:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 8, "Enter the new More for the item in hex." );				break;
-		case 13:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 8, "Enter the new MoreB for the item in hex." );				break;
-		case 14:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new stackable toggle for the item. (0/1)" );	break;
-		case 15:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new dyeable toggle for the item. (0/1)" );		break;
-		case 16:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new corpse toggle for the item. (0/1)" );		break;
-		case 17:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new LODAMAGE value for the item in decimal." );	break;//|
-		case 18:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new HIDAMAGE value for the item in decimal." );	break;//| both of these replace the old "attack value" (Xuri)
-		case 19:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new defence value for the item in decimal." );	break;
-		case 20:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new magic value for the item in decimal." );	break;
-		case 21:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new visible value for the item in decimal." );	break;
-		//start addons by Xuri
-		case 22:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new HP value for the item in decimal." );		break;
-		case 23:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Max HP value for the item in decimal." );	break;
-		case 24:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Speed value for the item in decimal." );	break;
-		case 25:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Rank value for the item in decimal." );		break;
-		case 26:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Value for the item in decimal." );			break;
-		case 27:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Good value for the item in decimal." );		break;
-		case 28:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Made Skill value for the item in decimal." );	break;
-		case 29:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter the new Creator name for the item." );				break;
-		//end addons by Xuri
-		default:	printf( "Unknown button pressed %i", button );																		break;
-		}
-	}
-	if( type == 2 ) // Char
-	{
-		switch( button )
-		{
-		case 2:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new name for the character." );						break;
-		case 3:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new title for the character." );						break;
-		case 4:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new X coordinate for the character in decimal." );	break;
-		case 5:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Y coordinate for the character in decimal." );	break;
-		case 6:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Z coordinate for the character in decimal." );	break;
-		case 7:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new direction for the character in decimal." );		break;
-		case 8:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new body type for the character in hex." );			break;
-		case 9:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new skin hue for the character in hex." );			break;
-		case 10: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new defensive value for the character in hex." );	break;	
-		case 11: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Race number for the character in hex." );		break;	
-		}
-	}
-	if (type==3) // Townstones
-	{
-		if (button==2) // Leave/Join
-		{
-			if (chars[currchar[s]].town)
-			{
-				//They are a resident of a region (not necessarily this one).
-				if (chars[currchar[s]].town==calcRegionFromXY(items[j].x, items[j].y)) {
-					//They are a resident of this region, set their .town property to 0.
-					if(chars[currchar[s]].townpriv==2) { //They were a mayor. Find new one.
-						chars[currchar[s]].townpriv=0;
-						Towns->CalcNewMayor(chars[currchar[s]].town);
-					}
-					chars[currchar[s]].town=0;
-					chars[currchar[s]].townpriv=0;
-				} else {
-					//They are not a resident of this region, set their .town property to
-					//the region associated with the townstone.
-					if(chars[currchar[s]].townpriv==2) { //They were a mayor. Find new one.
-						chars[currchar[s]].townpriv=0;
-						Towns->CalcNewMayor(chars[currchar[s]].town);
-					}
-					chars[currchar[s]].town=calcRegionFromXY(items[j].x, items[j].y);
-					chars[currchar[s]].townpriv=1;
-					Towns->Menu(s, j, 3);
-				}
-			} else {
-				//They are not a resident of any region, set their .town property to the
-				//region associated with this townstone.
-				chars[currchar[s]].town=calcRegionFromXY(items[j].x, items[j].y);
-				chars[currchar[s]].townpriv=1;
-				Towns->Menu(s, j, 3);
-			}
-			chars[currchar[s]].townvote1=0;
-			chars[currchar[s]].townvote2=0;
-			chars[currchar[s]].townvote3=0;
-			chars[currchar[s]].townvote4=0;
-			chars[currchar[s]].towntitle=0;
-		}
-		if (button==3) { // Toggle Title
-			if(chars[currchar[s]].towntitle) {
-				chars[currchar[s]].towntitle=0;
-			} else {
-				chars[currchar[s]].towntitle=1;
-			}
-			Towns->Menu(s, j, 3);
-		}
-		if (button==4) { // Vote for Mayor
-			target(s,0,1,0,161,"Select person to vote for.");
-		}
-	}
-	if (type==4)
-	{
-		WhoList->ButtonSelect( s, button, type );
-		return;
-	}
-	if( type == 11 )
-	{
-		OffList->ButtonSelect( s, button, type );
-		return;
-	}
-	if( type == 6 )
-	{
-		// we only HAVE one button, so we'll assume safely that the colour has changed if we hit here
-		short int dyeColour;
-		dyeColour = ( buffer[s][21]<<8 ) + buffer[s][22];	// radio selection
-		UseHairDye( s, dyeColour, j );
-		return;
-	}
-	if(type==5) { // House Signs - Crackerjack 8/8/99
-		i=(buffer[s][21]<<8)+buffer[s][22];
-		if(button!=20) {
-			addid1[s]=items[j].ser1;
-			addid2[s]=items[j].ser2;
-			addid3[s]=items[j].ser3;
-			addid4[s]=items[j].ser4;
-		}
-		switch(button)
-		{
-			case 20: // Change house sign's appearance
-				if(i>0) {
-					buffer[s][7]=addid1[s];
-					buffer[s][8]=addid2[s];
-					buffer[s][9]=addid3[s];
-					buffer[s][10]=addid4[s];
-					addid1[s]=buffer[s][21];
-					addid2[s]=buffer[s][22];
-					Targ->IDtarget(s);
-					sysmessage(s, "House sign changed.");
-				}
-				return;
-			case 0:
-				return;
-			case 2:  // Bestow ownership upon someone else
-				target(s, 0, 1, 0, 227, "Select person to transfer ownership to.");
-				return;
-			case 3:  // Turn house into a deed
-				deedhouse(s, j);
-				return;
-			case 4:  // Kick someone out of house
-				target(s, 0, 1, 0, 228, "Select person to eject from house.");
-				return;
-			case 5:  // Ban somebody
-				target(s, 0, 1, 0, 229, "Select person to ban from house.");
-				return;
-			case 6:
-			case 8: // Remove someone from house list
-				target(s, 0, 1, 0, 231, "Select person to remove from house registry.");
-				return;
-			case 7: // Make someone a friend
-				target(s, 0, 1, 0, 230, "Select person to make a friend of the house.");
-				return;
-			default:
-				sprintf(temp, "HouseGump Called - Button=%i", button);
-				sysmessage(s, temp);
-				return;
-
-		}
+		HandleHouseButton( s, button, j );
+		break;
+	case 6:																		// Hair Dye Menu
+		is = s->AddID();
+		j = calcItemObjFromSer( is );
+		HandleHairDyeButton( s, button, j );
+		break;
+	case 7:																		// Accounts
+		CChar *c;
+		c = calcCharObjFromSer( serial );
+		HandleAccountButton( s, button, c );
+		break;
+	case 8:	HandleAccountModButton( s, button );						break;	// Race Editor
+	case 9:	HandleAddMenuButton( s, button );							break;	// Add Menu
+	case 11: OffList->ButtonSelect( s, button, type );					break;	// Who's Offline
+	case 12: Skills->HandleMakeMenu( s, button, mChar->GetMaking() );	break;	// New Make Menu
+	case 13: HandleHowToButton( s, button );							break;	// Howto
 	}
 }
 
-void cGump::Input(int s)
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTweakItemText( cSocket *s, long index )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles new values for 'tweak items
+//o---------------------------------------------------------------------------o
+void HandleTweakItemText( cSocket *s, long index )
 {
-	char type, index, tser1, tser2, tser3, tser4;
-	char *text;
-	int c1,body,b,/*i,*/j,k,serial;
-	
-	type=buffer[s][7];
-	index=buffer[s][8];
-	tser1=buffer[s][3];
-	tser2=buffer[s][4];
-	tser3=buffer[s][5];
-	tser4=buffer[s][6];
-	text = (char *)&buffer[s][12];
-	serial=calcserial(tser1,tser2,tser3,tser4);
+	CChar *mChar = s->CurrcharObj();
+	char *text = (char *)&(s->Buffer()[12]);
+	SERIAL serial = s->GetDWord( 3 );
 
-	Guilds->GumpInput(s,type,index,text);
-
-	if (type==1 && (chars[currchar[s]].priv&1))
+	if( mChar->IsGM() )
 	{
-		j = calcItemFromSer( serial );
-		if( j == -1 ) 
+		CItem *j = calcItemObjFromSer( serial );
+		if( j == NULL ) 
 			return;
-		if( buffer[s][9] == 0 )
+		if( s->GetByte( 9 ) == 0 )
 		{
-			tweakmenu(s, j, type);
+			tweakItemMenu( s, j );
 			return;
 		}
 		switch( index )
 		{
-		case 2:		strcpy( items[j].name, text );	break;	 // Name
-		case 3:		k = hstr2num( text );	
-					items[j].id1 = (unsigned char)(k>>8);	
-					items[j].id2 = (unsigned char)(k%256); 
-					break;	 // ID
-		case 4:		k = hstr2num( text );	
-					items[j].color1 = (unsigned char)(k>>8);
-					items[j].color2 = (unsigned char)(k%256); 
-					break;	// Hue
-		case 5:		k = str2num( text );	items[j].x = k;	break;	// X
-		case 6:		k = str2num( text );	items[j].y = k;	break;	// Y
-		case 7:		k = str2num( text );	items[j].z = k;	break;	// Z
-		case 8:		k = str2num( text );	items[j].type = k;	break;	 // Type
-		case 9:		k = str2num( text );	items[j].itmhand = k;	break;	// Itemhand - added by Xuri
-		case 10:	k = str2num( text );	items[j].layer = k;	break;	// Layer
-		case 11:	k = str2num( text );	items[j].amount = k;	break;	// Amount
-		case 12:	k = hstr2num( text );	// More
-					items[j].more1 = (unsigned char)(k>>24);
-					items[j].more2 = (unsigned char)(k>>16);
-					items[j].more3 = (unsigned char)(k>>8);
-					items[j].more4 = (unsigned char)(k%256);
-					break;
-		case 13: 	k = hstr2num( text );	// MoreB
-					items[j].moreb1 = (unsigned char)(k>>24);
-					items[j].moreb2 = (unsigned char)(k>>16);
-					items[j].moreb3 = (unsigned char)(k>>8);
-					items[j].moreb4 = (unsigned char)(k%256);
-					break;
-		case 14: 	k = str2num( text );	items[j].pileable = k;	break;	// Pileable
-		case 15:	k = str2num( text );	items[j].dye = k;		break;	// Dye
-		case 16:	k = str2num( text );	items[j].corpse = k;	break;	// Corpse
-		case 17:	k = str2num( text );	items[j].lodamage = k;	break;	// LoDamage
-		case 18:	k = str2num( text );	items[j].hidamage = k;	break;	// HiDamage
-		case 19:	k = str2num( text );	items[j].def = k;		break;	// Def
-		case 20:	k = str2num( text );	items[j].magic = k;		break;	// Magic
-		case 21:	k = str2num( text );	items[j].visible = k;	break;	// Visible
-		case 22:	k = str2num( text );	items[j].hp = k;		break;	// Current Hitpoints
-		case 23:	k = str2num( text );	items[j].maxhp = k;		break;	// MAX Hitpoints
-		case 24:	k = str2num( text );	items[j].spd = k;		break;	// Speed (for Combat)
-		case 25:	k = str2num( text );	items[j].rank = k;		break;	// Rank
-		case 26:	k = str2num( text );	items[j].value = k;		break;	// Value
-		case 27:	k = str2num( text );	items[j].good = k;		break;	// Good(for Adv.Trade system)
-		case 28:	k = str2num( text );	items[j].madewith = k;	break;	// Made Skill
-		case 29:	strcpy( items[j].creator, text );				break;	// Creator
+		case 1:		j->SetID( makeNum( text ) );				break;	// ID
+		case 2:		j->SetName( text );							break;	// Name
+		case 3:		j->SetName2( text );						break;	// Name 2
+		case 4:		j->SetColour( makeNum( text ) );			break;	// Colour
+		case 5:		j->SetLayer( makeNum( text ) );				break;	// Layer
+		case 6:		j->SetType( makeNum( text ) );				break;	// Type
+		case 7:		j->SetMagic( makeNum( text ) );				break;	// Moveable
+		case 8:
+			MapRegion->RemoveItem( j );
+			j->SetX( makeNum( text ) );
+			MapRegion->AddItem( j );
+			break;	// X
+		case 9:		
+			MapRegion->RemoveItem( j );
+			j->SetY( makeNum( text ) );					
+			MapRegion->AddItem( j );
+			break;	// Y
+		case 10:	j->SetZ( makeNum( text ) );					break;	// Z
+		case 11:	j->SetAmount( (UI32)makeNum( text ) );			break;	// Amount
+		case 12:	j->SetStrength( makeNum( text ) );			break;	// Strength
+		case 13:	j->SetHP( makeNum( text ) ); 				break;	// Hit Points
+		case 14:	j->SetMaxHP( makeNum( text ) );				break;	// Max HP
+		case 15:	j->SetLoDamage( makeNum( text ) );			break;	// Low Damage
+		case 16:	j->SetHiDamage( makeNum( text ) );			break;	// High Damage
+		case 17:	j->SetDef( makeNum( text ) );				break;	// Defense
+		case 18:	j->SetSpeed( makeNum( text ) );				break;	// Speed
+		case 19:	j->SetRank( makeNum( text ) );				break;	// Rank
+		case 20:	j->SetMore( makeNum( text ) );				break;	// More
+		case 21:	j->SetMoreX( makeNum( text ) );				break;	// More X
+		case 22:	j->SetMoreY( makeNum( text ) );				break;	// More Y
+		case 23:	j->SetMoreZ( makeNum( text ) );				break;	// More Z
+		case 24: 	j->SetMoreB( makeNum( text ) );				break;	// More B
+		case 25:	j->SetPoisoned( makeNum( text ) );			break;	// Poisoned
+		case 26:	j->SetWeight( makeNum( text ) );			break;	// Weight
+		case 27:	j->SetDecayable( makeNum( text ) != 0 );	break;	// Decay
+		case 28:	j->SetGood( makeNum( text ) );				break;	// Good
+		case 29:	j->SetValue( makeNum( text ) );				break;	// Value
+		case 30:	j->SetCarve( makeNum( text ) );				break;	// Carve
+		case 31: 	j->SetPileable( makeNum( text ) != 0 );		break;	// Stackable
+		case 32:	j->SetDye( makeNum( text ) != 0 );			break;	// Dyable
+		case 33:	j->SetCorpse( makeNum( text ) != 0 );		break;	// Corpse
+		case 34:	j->SetVisible( makeNum( text ) );			break;	// Visible
+		case 35:	j->SetCreator( makeNum( text ) );			break;	// Creator
 		}
-		RefreshItem( j ); // AntiChrist
-		tweakmenu( s, j, type );
+		RefreshItem( j );
+		tweakItemMenu( s, j );
 	}
-	if( type == 2 && ( chars[currchar[s]].priv&1 ) )
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTweakCharText( cSocket *s, long index )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles new values for 'tweak chars
+//o---------------------------------------------------------------------------o
+void HandleTweakCharText( cSocket *s, long index )
+{
+	CChar *mChar = s->CurrcharObj();
+	char *text = (char *)&(s->Buffer()[12]);
+	SERIAL serial = s->GetDWord( 3 );
+	int k;
+	if( mChar->IsGM() )
 	{
-		j = calcCharFromSer( serial );
-		if( j == -1 ) 
+		CChar *j = calcCharObjFromSer( serial );
+		if( j == NULL ) 
 			return;
-		if( buffer[s][9] == 0 )
+
+		if( s->GetByte( 9 ) == 0 )
 		{
-			tweakmenu(s, j, type);
+			tweakCharMenu( s, j );
 			return;
 		}
 		switch( index )
 		{
-		case 2:		strcpy( chars[j].name, text );			break;	// Name
-		case 3:		strcpy( chars[j].title, text );			break;	// Title
-		case 4:		k = str2num( text );	chars[j].x = k;	break;	// X
-		case 5:		k = str2num( text );	chars[j].y = k;	break;	// Y
-		case 6:		k = str2num( text ); 	chars[j].z = k;	chars[j].dispz = k;	break;	// Z
-		case 7:		k = str2num( text );	chars[j].dir = k&0x0F;	// make sure the high-bits are clear // Dir
-		case 8: // Body
-			k = hstr2num( text );
+		case 1:		j->SetName( text );					break;	// Name
+		case 2:		j->SetTitle( text );				break;	// Title
+		case 3:													// Body
+			k = makeNum( text );
 			if( k >= 0x000 && k <= 0x3e1 ) // body-values >0x3e crash the client
 			{ 
-				chars[j].orgid1 = chars[j].xid1 = chars[j].id1 = (unsigned char)(k>>8); // allow only non crashing ones
-				chars[j].orgid2 = chars[j].xid2 = chars[j].id2 = (unsigned char)(k%256);
+				j->SetID( (UI16)k );
+				j->SetxID( (UI16)k );
+				j->SetOrgID( (UI16)k );
 			}
 			break;
-		case 9:		k = hstr2num( text );		// Skin
-					chars[j].xskin1 = chars[j].skin1 = (unsigned char)(k>>8);
-					chars[j].xskin2 = chars[j].skin2 = (unsigned char)(k%256);
-					break;
-		case 10:	k = str2num( text );	chars[j].def = k;	break;	// Defence
-		case 11:	k = str2num( text );	chars[j].race = k;	break;	// Race
+		case 4:													// Skin
+			k = makeNum( text );
+			j->SetColour( (UI16)k );
+			j->SetxSkin( (UI16)k );
+			j->SetOrgSkin( (UI16)k );
+			break;
+		case 5:		j->SetRace( makeNum( text ) );			break;	// Race
+		case 6:		
+			MapRegion->RemoveChar( j );
+			j->SetX( (SI16)makeNum( text ) );
+			MapRegion->AddChar( j );
+			break;	// X
+		case 7:		
+			MapRegion->RemoveChar( j );
+			j->SetY( (SI16)makeNum( text ) );			
+			MapRegion->AddChar( j );
+			break;	// Y
+		case 8:													// Z
+			j->SetZ( makeNum( text ) );
+			j->SetDispZ( makeNum( text ) );
+			break;
+		case 9:		j->SetDir( makeNum( text )&0x0F );		break;	// Direction
+		case 10:												// Strength
+			if( makeNum( text ) > 0 ) 
+				j->SetStrength( makeNum( text ) ); 
+			break;
+		case 11:												// Dexterity
+			if( makeNum( text ) > 0 ) 
+				j->SetDexterity( makeNum( text ) );
+			break;
+		case 12:												// Intelligence
+			if( makeNum( text ) > 0 ) 
+				j->SetIntelligence( makeNum( text ) ); 
+			break;
+		case 13:												// Hitpoints
+			if( makeNum( text ) > 0 )
+				j->SetHP( makeNum( text ) );
+			break;
+		case 14:												// Stamina
+			if( makeNum( text ) > 0 )
+				j->SetStamina( makeNum( text ) );
+			break;
+		case 15:												// Mana
+			if( makeNum( text ) > 0 )
+				j->SetMana( makeNum( text ) );
+			break;
+		case 16:	j->SetHiDamage( makeNum( text ) );		break;	// Low Damage
+		case 17:	j->SetLoDamage( makeNum( text ) );		break;	// High Damage
+		case 18:	j->SetDef( makeNum( text ) );			break;	// Defense
+		case 19:	j->SetFame( makeNum( text ) );			break;	// Fame
+		case 20:	j->SetKarma( makeNum( text ) );		break;	// Karma
+		case 21:	j->SetKills( makeNum( text ) );		break;	// Kills
+		case 22:												// AI Type
+			if( j->IsNpc() )
+				j->SetNPCAiType( makeNum( text ) );
+			break;
+		case 23:												// NPC Wander
+			if( j->IsNpc() )
+				j->SetNpcWander( makeNum( text ) );
+			break;
+		case 24:	j->SetHunger( makeNum( text ) );		break;	// Hunger
+		case 25:	j->SetPoison( makeNum( text ) );		break;	// Poison
+		case 26:	j->SetWeight( makeNum( text ) );		break;	// Weight
+		case 27:	j->SetCarve( makeNum( text ) );		break;	// Carve
+		case 28:	j->SetVisible( makeNum( text ) );		break;	// Visible
 		}
-		teleport( j );
-		tweakmenu( s, j, type );
+		j->Teleport();
+		tweakCharMenu( s, j );
 	}
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    :  void HandleTownstoneText( cSocket *s, long index )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles new values for townstones
+//o---------------------------------------------------------------------------o
+void HandleTownstoneText( cSocket *s, long index )
+{
+	CChar *mChar = s->CurrcharObj();
+	char *text = (char *)&(s->Buffer()[12]);
+	UI16 resourceID;
+	int amountToDonate;
+	switch( index )
+	{
+	case 6:	// it's our donate resource button
+		amountToDonate = makeNum( text );
+		if( amountToDonate == 0 )
+		{
+			sysmessage( s, 562 );
+			return;
+		}
+		resourceID = region[mChar->GetTown()]->GetResourceID();
+		int numResources;
+		numResources = getAmount( mChar, resourceID );
 
-void cGump::Menu(int s, int m)
+		if( amountToDonate > numResources )
+			sysmessage( s, 563, numResources );
+		else
+		{
+			deleQuan( mChar, resourceID, amountToDonate );
+			region[mChar->GetTown()]->DonateResource( s, amountToDonate );
+		}
+		break;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void cGump::Input( cSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles new values for gumps
+//o---------------------------------------------------------------------------o
+void cGump::Input( cSocket *s )
+{
+	char type = s->GetByte( 7 );
+	char index = s->GetByte( 8 );
+
+	switch( type )
+	{
+	case 1:		HandleTweakItemText( s, index );	break;
+	case 2:		HandleTweakCharText( s, index );	break;
+	case 3:		HandleTownstoneText( s, index );	break;
+	case 20:
+		{
+			UI16 gumpTrig = s->TempInt();
+			cScript *toExecute = Trigger->GetScript( gumpTrig );
+			if( toExecute != NULL )
+				toExecute->HandleGumpInput( s );
+			break;
+		}
+	case 100:	GuildSys->GumpInput( s );			break;
+	}
+
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void cGump::Menu( cSocket *s, int m )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Pull gump info from misc.scp
+//o---------------------------------------------------------------------------o
+void cGump::Menu( cSocket *s, int m )
 {
 	char sect[512];
-	short int length, length2, textlines=0;
-	int i;
+
+	stringList one, two;
 	
-	openscript("misc.scp");
-	sprintf(sect, "GUMPMENU %i", m);
-	if (!i_scripts[misc_script]->find(sect))
+	sprintf( sect, "GUMPMENU %i", m );
+	ScriptSection *gump = FileLookup->FindEntry( sect, misc_def );
+	if( gump == NULL )
+		return;
+	const char *tag = NULL;
+	char temp[512];
+	UI08 targType = 0x12;
+	for( tag = gump->First(); !gump->AtEnd(); tag = gump->Next() )
 	{
-		closescript();
+		sprintf( temp, "%s %s", tag, gump->GrabData() );
+		if( strncmp( temp, "type ", 5 ) )
+			one.push_back( temp );
+		else
+			targType = makeNum( &temp[5] );
+	}
+	sprintf( sect, "GUMPTEXT %i", m );
+	gump = FileLookup->FindEntry( sect, misc_def );
+	if( gump == NULL )
+		return;
+	for( tag = gump->First(); !gump->AtEnd(); tag = gump->Next() )
+	{
+		sprintf( temp, "%s %s", tag, gump->GrabData() );
+		two.push_back( temp );
+	}
+	SendVecsAsGump( s, one, two, targType, INVALIDSERIAL );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void tweakCharMenu( cSocket *s, CChar *c )
+//|   Date        :  Unknown
+//|   Programmer  :  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handle new tweak character menu
+//o---------------------------------------------------------------------------o
+void tweakCharMenu( cSocket *s, CChar *c )
+{
+	if( c == NULL )
+		return;
+
+	GumpDisplay tweakChar( s, 350, 345 );
+	tweakChar.SetTitle( "Tweak Character Menu" );
+
+	UI16 charID = c->GetID();
+	UI16 getSkin = c->GetSkin();
+
+	if( c->GetName() != NULL && c->GetName()[0] > 0 )
+		tweakChar.AddData( "Name", c->GetName() );
+	else
+		tweakChar.AddData( "Name", "None" );
+	if( c->GetTitle() != NULL && c->GetTitle()[0] > 0 )
+		tweakChar.AddData( "Title", c->GetTitle() );
+	else
+		tweakChar.AddData( "Title", "None" );
+	tweakChar.AddData( "Body", charID, 5 );
+	tweakChar.AddData( "Skin", getSkin, 5 );
+	tweakChar.AddData( "Race", c->GetRace() );
+	tweakChar.AddData( "X coord", c->GetX() );
+	tweakChar.AddData( "Y coord", c->GetY() );
+	tweakChar.AddData( "Z coord", c->GetZ() );
+	tweakChar.AddData( "Direction", c->GetDir() );
+	tweakChar.AddData( "Strength", c->GetStrength() );
+	tweakChar.AddData( "Dexterity", c->GetDexterity() );
+	tweakChar.AddData( "Intelligence", c->GetIntelligence() );
+	tweakChar.AddData( "Hitpoints", c->GetHP() );
+	tweakChar.AddData( "Stamina", c->GetStamina() );
+	tweakChar.AddData( "Mana", c->GetMana() );
+	tweakChar.AddData( "LowDamage", c->GetLoDamage() );
+	tweakChar.AddData( "HighDamage", c->GetHiDamage() );
+	tweakChar.AddData( "Defense", c->GetDef() );
+	tweakChar.AddData( "Fame", c->GetFame() );
+	tweakChar.AddData( "Karma", c->GetKarma() );
+	tweakChar.AddData( "Kills", c->GetKills() );
+	tweakChar.AddData( "AI Type", c->GetNPCAiType()  );
+	tweakChar.AddData( "NPC Wander", c->GetNpcWander() );
+	tweakChar.AddData( "Hunger", c->GetHunger() );
+	tweakChar.AddData( "Poison", c->GetPoison() );
+	tweakChar.AddData( "Weight", c->GetWeight() );
+	tweakChar.AddData( "Carve", c->GetCarve() );
+	tweakChar.AddData( "Visible", c->GetVisible() );
+	tweakChar.Send( 2, true, c->GetSerial() );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void tweakItemMenu( cSocket *s, CItem *c )
+//|   Date        :  Unknown
+//|   Programmer  :  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handle new tweak item menu
+//o---------------------------------------------------------------------------o
+void tweakItemMenu( cSocket *s, CItem *i )
+{
+	if( i == NULL )
+		return;
+	GumpDisplay tweakItem( s, 350, 345 );
+	tweakItem.SetTitle( "Tweak Item Menu" );
+
+	UI16 itemID = i->GetID();
+	UI16 itemColour = i->GetColour();
+
+	tweakItem.AddData( "ID", itemID, 5 );
+	if( i->GetName() != NULL && i->GetName()[0] > 0 )
+		tweakItem.AddData( "Name", i->GetName() );
+	else
+		tweakItem.AddData( "Name", "#" );
+	if( i->GetName2() != NULL && i->GetName2()[0] > 0 )
+		tweakItem.AddData( "Name2", i->GetName2() );
+	else
+		tweakItem.AddData( "Name2", "#" );
+	tweakItem.AddData( "Colour", itemColour, 5 );
+	tweakItem.AddData( "Layer", i->GetLayer() );
+	tweakItem.AddData( "Type", i->GetType() );
+	tweakItem.AddData( "Moveable", i->GetMagic() );
+	tweakItem.AddData( "X coord", i->GetX() );
+	tweakItem.AddData( "Y coord", i->GetY() );
+	tweakItem.AddData( "Z coord", i->GetZ() );
+	tweakItem.AddData( "Amount", i->GetAmount() );
+	tweakItem.AddData( "Strength", i->GetStrength() );
+	tweakItem.AddData( "HP", i->GetHP() );
+	tweakItem.AddData( "Max HP", i->GetMaxHP() );
+	tweakItem.AddData( "LowDamage", i->GetLoDamage() );
+	tweakItem.AddData( "HighDamage", i->GetHiDamage() );
+	tweakItem.AddData( "Defense", i->GetDef() );
+	tweakItem.AddData( "Speed", i->GetSpeed() );
+	tweakItem.AddData( "Rank", i->GetRank() );
+	tweakItem.AddData( "More", i->GetMore() );
+	tweakItem.AddData( "More X", i->GetMoreX() );
+	tweakItem.AddData( "More Y", i->GetMoreY() );
+	tweakItem.AddData( "More Z", i->GetMoreZ() );
+	tweakItem.AddData( "More B", i->GetMoreB() ); 
+	tweakItem.AddData( "Poisoned", i->GetPoisoned() );
+	tweakItem.AddData( "Weight", i->GetWeight() );
+	tweakItem.AddData( "Decay", i->isDecayable()?1:0 );
+	tweakItem.AddData( "Good", i->GetGood() );
+	tweakItem.AddData( "Value", i->GetValue() );
+	tweakItem.AddData( "Carve", i->GetCarve() );
+	tweakItem.AddData( "Stackable", i->isPileable()?1:0 );
+	tweakItem.AddData( "Dyeable", i->isDyeable()?1:0 );
+	tweakItem.AddData( "Corpse", i->isCorpse()?1:0 );
+	tweakItem.AddData( "Visible", i->GetVisible() );
+	tweakItem.AddData( "Creator", i->GetCreator() );
+	tweakItem.Send( 1, true, i->GetSerial() );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, char *text1 )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Open entry gump with specified text message and max value length
+//o---------------------------------------------------------------------------o
+void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, const char *txt )
+{
+	if( s == NULL )
+		return;
+	if( txt == NULL )
+	{
+		Console.Error( 2, "Invalid text in entrygump()" );
 		return;
 	}
-	length=21;
-	length2=1;
-	do
-	{
-		read1();
-		if ((script1[0]!='}')&&(strncmp(script1, "type ", 5)!=0))
-		{
-			length+=strlen(script1)+4;
-			length2+=strlen(script1)+4;
-		}
-	}
-	while (script1[0]!='}');
-	length+=3;
-	sprintf(sect, "GUMPTEXT %i", m);
-	if (!i_scripts[misc_script]->find(sect))
-	{
-		closescript();
-		return;
-	}
-	do
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			length+=(strlen(script1)*2)+2;
-			textlines++;
-		}
-	}
-	while (script1[0]!='}');
-	gump1[1]=length>>8;
-	gump1[2]=length%256;
-	gump1[3]=chars[currchar[s]].ser1;
-	gump1[4]=chars[currchar[s]].ser2;
-	gump1[5]=chars[currchar[s]].ser3;
-	gump1[6]=chars[currchar[s]].ser4;
-	gump1[7]=0;
-	gump1[8]=0;
-	gump1[9]=0;
-	gump1[10]=0x12; // Gump Number
-	gump1[19]=length2>>8;
-	gump1[20]=length2%256;
-	sprintf(sect, "GUMPMENU %i", m);
-	if (!i_scripts[misc_script]->find(sect))
-	{
-		closescript();
-		return;
-	}
-	// typecode setting - Crackerjack 8/8/99
-	read1();
-	if(!strncmp(script1, "type ", 5)) {
-		gump1[10]=atoi(&script1[5]);
-		script1[0]='}';
-	}
-	Network->xSend(s, gump1, 21, 0);
-	do
-	{
-		if(script1[0]!='}') {
-			sprintf(sect, "{ %s }", script1);
-//			printf("GUMP: %s\n", sect);
-			Network->xSend(s, sect, strlen(sect), 0);
-		}
-		read1();
-	}
-	while (script1[0]!='}');
-	gump2[1]=textlines>>8;
-	gump2[2]=textlines%256;
-	Network->xSend(s, gump2, 3, 0);
-	sprintf(sect, "GUMPTEXT %i", m);
-	if (!i_scripts[misc_script]->find(sect))
-	{
-		closescript();
-		return;
-	}
-	do
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			gump3[0]=strlen(script1)>>8;
-			gump3[1]=strlen(script1)%256;
-			Network->xSend(s, gump3, 2, 0);
-			gump3[0]=0;
-			for (i=0;i<strlen(script1);i++)
-			{
-				gump3[1]=script1[i];
-				Network->xSend(s, gump3, 2, 0);
-			}
-		}
-	}
-	while (script1[0]!='}');
-	closescript();
-//	sprintf(temp, "Type set to %i", gump1[10]);
-//	sysmessage(s, temp);
-//	printf("%s\n", temp);
+
+	char temp[32];
+	sprintf( temp, "(%i chars max)", maxlength );
+	CPGumpTextEntry toSend( txt, temp );
+	toSend.Serial( ser );
+	toSend.ParentID( type );
+	toSend.ButtonID( index );
+	toSend.Cancel( 1 );
+	toSend.Style( 1 );
+	toSend.Format( maxlength );
+	s->Send( &toSend );
 }
 
-void whomenu(int s, int type) //WhoList--By Homey-- Thx Zip and Taur helping me on this
-// added also logged out chars+bugfixing, LB
+//o---------------------------------------------------------------------------o
+//|   Function    :  void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Open entry gump with specified dictionary message and max value length
+//o---------------------------------------------------------------------------o
+void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
 {
-	char sect[512];
-	short int length, length2, textlines;
-	int i,k, j, x;
-	int line;
-	char menuarray[7*(MAXCLIENT+50)][50]; // there shouldn't be more than 5*MAXCLIENT players, 7 to be on the safe side
-	char menuarray1[7*(MAXCLIENT+50)][50];
-	
-	unsigned int maxArraySize=7*(MAXCLIENT+50);
-
-	unsigned int linecount=0;
-	unsigned int linecount1=0,pagenum=1,position=40,linenum=1,buttonnum=7;
-	
-	j = 0;
-	for( k = 0; k < now; k++ )
-		if( online( currchar[k] ) ) j++;
-
-	//--static pages
-	strcpy(menuarray[linecount++], "nomove");
-	strcpy(menuarray[linecount++], "noclose");
-	strcpy(menuarray[linecount++], "page 0");
-	strcpy(menuarray[linecount++], "resizepic 0 0 5120 320 340");    //The background
-	strcpy(menuarray[linecount++], "button 20 300 2130 2129 1 0 1"); //OKAY
-	strcpy(menuarray[linecount++], "text 20 10 300 0");           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	
-	
-	sprintf(menuarray[linecount++], "page %i",pagenum);
-	//--Start User List
-	k=0;
-	for( i = 0; i < charcount; i++ )
-	{
-		if( (chars[i].account != -1 && chars[i].free == 0 ) )
-		{
-			if( k > 0 && ( !(k%10)))
-			{
-				position=40;
-				pagenum++;
-				sprintf(menuarray[linecount++], "page %i",pagenum);
-			}
-			k++;
-			sprintf(menuarray[linecount++], "text 40 %i 300 %i",position,linenum); //usernames
-			sprintf(menuarray[linecount++], "button 20 %i 1209 1210 1 0 %i",position,buttonnum);
-			position+=20;
-			linenum++;
-			if ( linecount+3 >= maxArraySize ) break;
-			buttonnum++;
-		}
-	}
-	
-	pagenum=1; //lets make some damn buttons
-	for (i=0;i<k;i+=10)
-	{
-		if ( linecount+3 >= maxArraySize ) break;
-		sprintf(menuarray[linecount++], "page %i", pagenum);
-		if (i>=10)
-			sprintf(menuarray[linecount++], "button 150 300 2223 2223  0 %i",pagenum-1); //back button
-		if ((k>10) && ((i+10)<k))
-			sprintf(menuarray[linecount++], "button %i 300 2224 2224  0 %i", 150+(20*(pagenum>1)),pagenum+1); //forward button
-		pagenum++;
-	}		
-	
-			
-	length=21;
-	length2=1;
-	
-	for(line=0;line<min(linecount, maxArraySize);line++)
-	{
-		if (strlen(menuarray[line])==0)
-			break;
-		{
-			length+=strlen(menuarray[line])+4;
-			length2+=strlen(menuarray[line])+4;
-		}
-	}
-	
-	length+=3;
-	textlines=0;
-	line=0;
-	
-	sprintf(menuarray1[linecount1++], "Users currently online: %i",j);
-	
-	
-	//Start user list
-	x = 0;
-	for( i = 0; i < now; i++ )
-	{
-		if( online( currchar[i] ) )
-		{
-			sprintf( menuarray1[linecount1++], "Player %s [online]", chars[currchar[i]].name );
-				whomenudata[x++] = chars[currchar[i]].serial;
-		}
-	}
-	for( i = 0; i < charcount; i++ )
-	{
-		if ( linecount1 >= maxArraySize ) break;
-		if( chars[i].account != -1 && chars[i].free == 0 && !online( i ) )
-		{
-			sprintf( menuarray1[linecount1++], "Player: %s [offline]", chars[i].name );
-			whomenudata[x++] = chars[i].serial;
-		}
-	}
-	
-	for(line=0;line<max(linecount1, maxArraySize);line++)
-	{
-		
-		if (strlen(menuarray1[line])==0)
-			break;
-		{
-			length+=strlen(menuarray1[line])*2 +2;
-			textlines++;
-		}
-	}
-	
-	gump1[1]=length>>8;
-	gump1[2]=length%256;
-	gump1[7]=0;
-	gump1[8]=0;
-	gump1[9]=0;
-	gump1[10]=type; // Gump Number
-	gump1[19]=length2>>8;
-	gump1[20]=length2%256;
-	Network->xSend(s, gump1, 21, 0);
-	
-	for(line=0;line<linecount;line++)
-	{
-		sprintf(sect, "{ %s }", menuarray[line]);
-		Network->xSend(s, sect, strlen(sect), 0);
-	}
-	
-	gump2[1]=textlines>>8;
-	gump2[2]=textlines%256;
-	
-	Network->xSend(s, gump2, 3, 0);
-	
-	for(line=0;line<linecount1;line++)
-	{
-		if (strlen(menuarray1[line])==0)
-			break;
-		{
-			gump3[0]=strlen(menuarray1[line])>>8;
-			gump3[1]=strlen(menuarray1[line])%256;
-			Network->xSend(s, gump3, 2, 0);
-			gump3[0]=0;
-			for (i=0;i<strlen(menuarray1[line]);i++)
-			{
-				gump3[1]=menuarray1[line][i];
-				Network->xSend(s, gump3, 2, 0);
-			}
-		}
-	}
+	const char *txt = Dictionary->GetEntry( dictEntry, s->Language() );
+	entrygump( s, ser, type, index, maxlength, txt );
 }
 
-
-// Tweak should be completely rewritten.  Using tline and ttext is just plain silly
-void tline( int line, int j, char type )
+//o---------------------------------------------------------------------------o
+//|   Function    :  void choice( cSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Handles choice in gmmenu's, itemmenu's, and makemenus
+//o---------------------------------------------------------------------------o
+void choice( cSocket *s )
 {
-	line--; if( line == 0 ) strcpy( script1, "page 0" );
-	line--; if( line == 0 ) strcpy( script1, "resizepic 0 0 2520 400 350" );
-	line--; if( line == 0 ) strcpy( script1, "text 40 10 32 0" );
-	line--; if( line == 0 ) strcpy( script1, "button 35 280 2130 2129 1 0 1" );
-	if( type == 1 ) 
-	{ 
-		line--; 
-		if( line == 0 ) 
-			sprintf( script1, "tilepic 300 180 %i", (items[j].id1<<8)+items[j].id2); 
-	}
-	line--; if( line == 0 ) strcpy( script1, "page 1" );
-		line--; if( line == 0 ) strcpy( script1, "button 366 320 2224 2224 0 2");
-		line--; if( line == 0 ) strcpy( script1, "text 288 317 32 1");
-	line--; if( line == 0 ) strcpy( script1, "text 90 70 0 3");
-	line--; if( line == 0 ) strcpy( script1, "text 200 70 16 4");
-	line--; if( line == 0 ) strcpy( script1, "button 30 70 2116 2115 1 0 2");
-	line--; if( line == 0 ) strcpy( script1, "text 90 95 0 5");
-	line--; if( line == 0 ) strcpy( script1, "text 200 95 16 6");
-	line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 3");
-	line--; if( line == 0 ) strcpy( script1, "text 90 120 0 7");
-	line--; if( line == 0 ) strcpy( script1, "text 200 120 16 8");
-	line--; if( line == 0 ) strcpy( script1, "button 30 120 2116 2115 1 0 4");
-	line--; if( line == 0 ) strcpy( script1, "text 90 145 0 9");
-	line--; if( line == 0 ) strcpy( script1, "text 200 145 16 10");
-	line--; if( line == 0 ) strcpy( script1, "button 30 145 2116 2115 1 0 5");
-	line--; if( line == 0 ) strcpy( script1, "text 90 170 0 11");
-	line--; if( line == 0 ) strcpy( script1, "text 200 170 16 12");
-	line--; if( line == 0 ) strcpy( script1, "button 30 170 2116 2115 1 0 6");
-	line--; if( line == 0 ) strcpy( script1, "text 90 195 0 13");
-	line--; if( line == 0 ) strcpy( script1, "text 200 195 16 14");
-	line--; if( line == 0 ) strcpy( script1, "button 30 195 2116 2115 1 0 7");
-	line--; if( line == 0 ) strcpy( script1, "text 90 220 0 15");
-	line--; if( line == 0 ) strcpy( script1, "text 200 220 16 16");
-	line--; if( line == 0 ) strcpy( script1, "button 30 220 2116 2115 1 0 8");
-	if( type == 2 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 245 0 17");
-		line--; if( line == 0 ) strcpy( script1, "text 200 245 16 18");
-		line--; if( line == 0 ) strcpy( script1, "button 30 245 2116 2115 1 0 9");
-	}
-	if( type == 1 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 245 0 19");
-		line--; if( line == 0 ) strcpy( script1, "text 200 245 16 20");
-		line--; if( line == 0 ) strcpy( script1, "button 30 245 2116 2115 1 0 10");
-	}
-	line--; if( line == 0 ) strcpy( script1, "page 2");
-	line--; if( line == 0 ) strcpy( script1, "button 40 320 2223 2223 0 1");
-	line--; if( line == 0 ) strcpy( script1, "text 65 317 32 2");
-	line--; if( line == 0 ) strcpy( script1, "button 366 320 2224 2224 0 3");
-	line--; if( line == 0 ) strcpy( script1, "text 288 317 32 1");
-	if( type == 1 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 70 0 17");
-		line--; if( line == 0 ) strcpy( script1, "text 200 70 16 18");
-		line--; if( line == 0 ) strcpy( script1, "button 30 70 2116 2115 1 0 9");
-		line--; if( line == 0 ) strcpy( script1, "text 90 95 0 21");
-		line--; if( line == 0 ) strcpy( script1, "text 200 95 16 22");
-		line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 11");
-		line--; if( line == 0 ) strcpy( script1, "text 90 120 0 23");
-		line--; if( line == 0 ) strcpy( script1, "text 200 120 16 24");
-		line--; if( line == 0 ) strcpy( script1, "button 30 120 2116 2115 1 0 12");
-		line--; if( line == 0 ) strcpy( script1, "text 90 145 0 25");
-		line--; if( line == 0 ) strcpy( script1, "text 200 145 16 26");
-		line--; if( line == 0 ) strcpy( script1, "button 30 145 2116 2115 1 0 13");
-		line--; if( line == 0 ) strcpy( script1, "text 90 170 0 27");
-		line--; if( line == 0 ) strcpy( script1, "text 200 170 16 28");
-		line--; if( line == 0 ) strcpy( script1, "button 30 170 2116 2115 1 0 14");
-		line--; if( line == 0 ) strcpy( script1, "text 90 195 0 29");
-		line--; if( line == 0 ) strcpy( script1, "text 200 195 16 30");
-		line--; if( line == 0 ) strcpy( script1, "button 30 195 2116 2115 1 0 15");
-		line--; if( line == 0 ) strcpy( script1, "text 90 220 0 31");
-		line--; if( line == 0 ) strcpy( script1, "text 200 220 16 32");
-		line--; if( line == 0 ) strcpy( script1, "button 30 220 2116 2115 1 0 16");
-		line--; if( line == 0 ) strcpy( script1, "text 90 245 0 33");
-		line--; if( line == 0 ) strcpy( script1, "text 200 245 16 34");
-		line--; if( line == 0 ) strcpy( script1, "button 30 245 2116 2115 1 0 17");
-	}
-	if( type == 2 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 70 0 19");
-		line--; if( line == 0 ) strcpy( script1, "text 200 70 16 20");
-		line--; if( line == 0 ) strcpy( script1, "button 30 70 2116 2115 1 0 10");
-		line--; if( line == 0 ) strcpy( script1, "text 90 95 0 21");
-		line--; if( line == 0 ) strcpy( script1, "text 200 95 16 22");
-		line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 11");
-	}
-	line--; if( line == 0 ) strcpy( script1, "page 3");
-	line--; if( line == 0 ) strcpy( script1, "button 40 320 2223 2223 0 2");
-	line--; if( line == 0 ) strcpy( script1, "text 65 317 32 2");
-	line--;	if( line == 0 ) strcpy( script1, "button 366 320 2224 2224 0 4" );
-	line--; if( line == 0 ) strcpy( script1, "text 288 317 32 1" );
-	if( type == 1 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 70 0 35");
-		line--; if( line == 0 ) strcpy( script1, "text 200 70 16 36");
-		line--; if( line == 0 ) strcpy( script1, "button 30 70 2116 2115 1 0 18");
-		line--; if( line == 0 ) strcpy( script1, "text 90 95 0 37");
-		line--; if( line == 0 ) strcpy( script1, "text 200 95 16 38");
-		line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 19");
-		line--; if( line == 0 ) strcpy( script1, "text 90 120 0 39");
-		line--; if( line == 0 ) strcpy( script1, "text 200 120 16 40");
-		line--; if( line == 0 ) strcpy( script1, "button 30 120 2116 2115 1 0 20");
-		line--; if( line == 0 ) strcpy( script1, "text 90 145 0 41");
-		line--; if( line == 0 ) strcpy( script1, "text 200 145 16 42");
-		line--; if( line == 0 ) strcpy( script1, "button 30 145 2116 2115 1 0 21");
-		line--; if( line == 0 ) strcpy( script1, "text 90 170 0 43");
-		line--; if( line == 0 ) strcpy( script1, "text 200 170 16 44");
-		line--; if( line == 0 ) strcpy( script1, "button 30 170 2116 2115 1 0 22");
-		line--; if( line == 0 ) strcpy( script1, "text 90 195 0 45");
-		line--; if( line == 0 ) strcpy( script1, "text 200 195 16 46");
-		line--; if( line == 0 ) strcpy( script1, "button 30 195 2116 2115 1 0 23");
-		line--; if( line == 0 ) strcpy( script1, "text 90 220 0 47");
-		line--; if( line == 0 ) strcpy( script1, "text 200 220 16 48");
-		line--; if( line == 0 ) strcpy( script1, "button 30 220 2116 2115 1 0 24");
-		line--; if( line == 0 ) strcpy( script1, "text 90 245 0 49");
-		line--; if( line == 0 ) strcpy( script1, "text 200 245 16 50");
-		line--; if( line == 0 ) strcpy( script1, "button 30 245 2116 2115 1 0 25");
-	}
-	line--; if( line == 0 ) strcpy( script1, "page 4");
-	line--; if( line == 0 ) strcpy( script1, "button 40 320 2223 2223 0 3");
-	line--; if( line == 0 ) strcpy( script1, "text 65 317 32 2");
-	if (type==1)
-	{
-		line--; if( line == 0 ) strcpy( script1, "text 90 70 0 51");
-		line--; if( line == 0 ) strcpy( script1, "text 200 70 16 52");
-		line--; if( line == 0 ) strcpy( script1, "button 30 70 2116 2115 1 0 26");
-		line--; if( line == 0 ) strcpy( script1, "text 90 95 0 53");
-		line--; if( line == 0 ) strcpy( script1, "text 200 95 16 54");
-		line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 27");
-		line--; if( line == 0 ) strcpy( script1, "text 90 120 0 55");
-		line--; if( line == 0 ) strcpy( script1, "text 200 120 16 56");
-		line--; if( line == 0 ) strcpy( script1, "button 30 120 2116 2115 1 0 28");
-		line--; if( line == 0 ) strcpy( script1, "text 90 145 0 57");
-		line--; if( line == 0 ) strcpy( script1, "text 200 145 16 58");
-		line--; if( line == 0 ) strcpy( script1, "button 30 145 2116 2115 1 0 29");
-
-		//end addons by Xuri
-	}
-	line--; if (line==0) strcpy( script1,  "}");
-}
-
-void ttext(int line, int j, char type)
-{
-	if (type==1) { line--; if( line == 0 ) strcpy( script1, "Item Properties"); }
-	if (type==2) { line--; if( line == 0 ) strcpy( script1, "Character Properties"); }
-	line--; if( line == 0 ) strcpy( script1, "Next page");
-	line--; if( line == 0 ) strcpy( script1, "Previous page");
-	if (type==1)
-	{
-		line--; if( line == 0 ) strcpy( script1, "Name");
-		line--; if( line == 0 ) strcpy( script1, items[j].name );
-		line--; if( line == 0 ) strcpy( script1, "ID");
-		line--; if( line == 0 ) sprintf( script1,"0x%x (%i)", (items[j].id1<<8)+items[j].id2, (items[j].id1<<8)+items[j].id2);
-		line--; if( line == 0 ) strcpy( script1, "Hue");
-		line--; if( line == 0 ) sprintf( script1,"0x%x (%i)", (items[j].color1<<8)+items[j].color2, (items[j].color1<<8)+items[j].color2);
-		line--; if( line == 0 ) strcpy( script1, "X");
-		line--; if( line == 0 ) sprintf( script1,"%i (0x%x)", items[j].x, items[j].x);
-		line--; if( line == 0 ) strcpy( script1, "Y");
-		line--; if( line == 0 ) sprintf( script1,"%i (0x%x)", items[j].y, items[j].y);
-		line--; if( line == 0 ) strcpy( script1, "Z");
-		line--; if( line == 0 ) sprintf( script1,"%i (0x%x)", items[j].z, items[j].z);
-		line--; if( line == 0 ) strcpy( script1, "Type");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].type);
-		line--; if( line == 0 ) strcpy( script1,  "ItemHand" );
-		line--; if( line == 0 ) sprintf( script1, "%i", items[j].itmhand );
-		line--; if( line == 0 ) strcpy( script1, "Layer");
-		line--; if( line == 0 ) sprintf( script1,"%i (0x%x)", items[j].layer, items[j].layer);
-		line--; if( line == 0 ) strcpy( script1, "Amount");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].amount);
-		line--; if( line == 0 ) strcpy( script1, "More");
-		line--; if( line == 0 ) sprintf( script1,"0x%x", (items[j].more1<<24)+(items[j].more2<<16)+(items[j].more3<<8)+items[j].more4);
-		line--; if( line == 0 ) strcpy( script1, "MoreB");
-		line--; if( line == 0 ) sprintf( script1,"0x%x", (items[j].moreb1<<24)+(items[j].moreb2<<16)+(items[j].moreb3<<8)+items[j].moreb4);
-		line--; if( line == 0 ) strcpy( script1, "Stackable");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].pileable);
-		line--; if( line == 0 ) strcpy( script1, "Dyeable");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].dye );
-		line--; if( line == 0 ) strcpy( script1, "Corpse");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].corpse );
-		line--; if( line == 0 ) strcpy( script1, "LoDamage" );
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].lodamage );
-		line--; if( line == 0 ) strcpy( script1, "HiDamage" );
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].hidamage );
-		line--; if( line == 0 ) strcpy( script1, "Defense");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].def);
-		line--; if( line == 0 ) strcpy( script1, "Magic");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].magic);
-		line--; if( line == 0 ) strcpy( script1, "Visible");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].visible);
-		line--; if( line == 0 ) strcpy( script1, "HitPoints" );
-		line--; if( line == 0 ) sprintf( script1, "%i", items[j].hp );
-		line--; if( line == 0 ) strcpy( script1, "MaxHitPoints" );
-		line--; if( line == 0 ) sprintf( script1, "%i", items[j].maxhp );
-		line--; if( line == 0 ) strcpy( script1, "Speed" );
-		line--; if( line == 0 ) sprintf( script1, "%i", items[j].spd );
-		line--; if( line == 0 ) strcpy( script1, "Rank");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].rank);
-		line--; if( line == 0 ) strcpy( script1, "Value");
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].value);
-		line--; if( line == 0 ) strcpy( script1, "Good" );
-		line--; if( line == 0 ) sprintf( script1,"%i", items[j].good );
-		line--; if( line == 0 ) strcpy( script1, "Made Skill" );
-		line--; if( line == 0 ) sprintf( script1, "%i", items[j].madewith );
-		line--; if( line == 0 ) strcpy( script1, "Creator" );
-		line--; if( line == 0 ) strcpy( script1, items[j].creator );
-
-	}
-	if( type == 2 )
-	{
-		line--; if( line == 0 ) strcpy( script1, "Name" );
-		line--; if( line == 0 ) strcpy( script1,  chars[j].name );
-		line--; if( line == 0 ) strcpy( script1, "Title" );
-		line--; if( line == 0 ) strcpy( script1,  chars[j].title );
-		line--; if( line == 0 ) strcpy( script1, "X" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].x );
-		line--; if( line == 0 ) strcpy( script1, "Y" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].y );
-		line--; if( line == 0 ) strcpy( script1, "Z" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].z );
-		line--; if( line == 0 ) strcpy( script1, "Direction" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].dir );
-		line--; if( line == 0 ) strcpy( script1, "Body" );
-		line--; if( line == 0 ) sprintf( script1,"(0x%x) %i", (chars[j].id1<<8)+chars[j].id2, (chars[j].id1<<8)+chars[j].id2 );
-		line--; if( line == 0 ) strcpy( script1, "Skin" );
-		line--; if( line == 0 ) sprintf( script1, "(0x%x) %i", (chars[j].skin1<<8)+chars[j].skin2, (chars[j].skin1<<8)+chars[j].skin2 );
-		line--; if( line == 0 ) strcpy( script1, "Defence" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].def );
-		line--; if( line == 0 ) strcpy( script1, "Race" );
-		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].race );
-	}
-	line--; if( line == 0) strcpy( script1, "}");
-}
-
-void tweakmenu(int s, int j, int type)
-{
-	char sect[512];
-	short int length, length2, textlines;
-	int i;
-	int line;
-	
-	length=21;
-	length2=1;
-	line=0;
-	do
-	{
-		line++;
-		tline(line, j, type);
-		if (script1[0]!='}')
-		{
-			length+=strlen(script1)+4;
-			length2+=strlen(script1)+4;
-		}
-	}
-	while (script1[0]!='}');
-	length+=3;
-	textlines=0;
-	line=0;
-	do
-	{
-		line++;
-		ttext(line, j, type);
-		if (script1[0]!='}')
-		{
-			length+=(strlen(script1)*2)+2;
-			textlines++;
-		}
-	}
-	while (script1[0]!='}');
-	gump1[1]=length>>8;
-	gump1[2]=length%256;
-	if (type==1)
-	{
-		gump1[3]=items[j].ser1;
-		gump1[4]=items[j].ser2;
-		gump1[5]=items[j].ser3;
-		gump1[6]=items[j].ser4;
-	}
-	if (type==2)
-	{
-		gump1[3]=chars[j].ser1;
-		gump1[4]=chars[j].ser2;
-		gump1[5]=chars[j].ser3;
-		gump1[6]=chars[j].ser4;
-	}
-	gump1[7]=0;
-	gump1[8]=0;
-	gump1[9]=0;
-	gump1[10]=type; // Gump Number
-	gump1[19]=length2>>8;
-	gump1[20]=length2%256;
-	Network->xSend(s, gump1, 21, 0);
-	line=0;
-	do
-	{
-		line++;
-		tline(line, j, type);
-		if (script1[0]!='}')
-		{
-			sprintf(sect, "{ %s }", script1);
-			Network->xSend(s, sect, strlen(sect), 0);
-		}
-	}
-	while (script1[0]!='}');
-	gump2[1]=textlines>>8;
-	gump2[2]=textlines%256;
-	Network->xSend(s, gump2, 3, 0);
-	line=0;
-	do
-	{
-		line++;
-		ttext(line, j, type);
-		if (script1[0]!='}')
-		{
-			gump3[0]=strlen(script1)>>8;
-			gump3[1]=strlen(script1)%256;
-			Network->xSend(s, gump3, 2, 0);
-			gump3[0]=0;
-			for (i=0;i<strlen(script1);i++)
-			{
-				gump3[1]=script1[i];
-				Network->xSend(s, gump3, 2, 0);
-			}
-		}
-	}
-	while (script1[0]!='}');
-}
-
-void entrygump(int s, unsigned char tser1, unsigned char tser2, unsigned char tser3, unsigned char tser4, char type, char index, short int maxlength, char *text1)
-{
-	short int length;
-	char textentry1[12]="\xAB\x01\x02\x01\x02\x03\x04\x00\x01\x12\x34";
-	char textentry2[9]="\x01\x01\x00\x00\x12\x34\x12\x34";
-	
-	sprintf(temp, "(%i chars max)", maxlength);
-	length=11+strlen(text1)+1+8+strlen(temp)+1;
-	textentry1[1]=length>>8;
-	textentry1[2]=length%256;
-	textentry1[3]=tser1;
-	textentry1[4]=tser2;
-	textentry1[5]=tser3;
-	textentry1[6]=tser4;
-	textentry1[7]=type;
-	textentry1[8]=index;
-	textentry1[9]=(strlen(text1)+1)>>8;
-	textentry1[10]=(strlen(text1)+1)%256;
-	Network->xSend(s, textentry1, 11, 0);
-	Network->xSend(s, text1, strlen(text1)+1, 0);
-	textentry2[4]=maxlength>>8;
-	textentry2[5]=maxlength%256;
-	textentry2[6]=(strlen(temp)+1)>>8;
-	textentry2[7]=(strlen(temp)+1)%256;
-	Network->xSend(s, textentry2, 8, 0);
-	Network->xSend(s, temp, strlen(temp)+1, 0);
-}
-
-
-void choice(int s) // Choice from GMMenu, Itemmenu or Makemenu received
-{ // This routine is changed by Magius(CHE) to add Rank_system!
-	// What the hell is a rank system?
-	int main, sub;
+	int main, sub, model_num;
+	int making, found;
 	char sect[512];
 	int i;
-	char lscomm[512], lsnum[512]; // Magius(CHE) for Rank-System
-	Script *script;
+	char lscomm[512], lsnum[512];
+	DefinitionCategories script;
 	
-	main=(buffer[s][5]<<8)+buffer[s][6];
-	sub=(buffer[s][7]<<8)+buffer[s][8];
-	
-    //printf("main:%i sub:%i \n",main,sub);
-	// if ((main!=0) && (sub==0)) printf("add menu (gm menu) closed- including its submenus\n");
+	main = s->GetWord( 5 );
+	sub = s->GetWord( 7 );
+	model_num = s->GetWord( 9 );
+	CChar *mChar = s->CurrcharObj();
 
-	if ((main>=8000)&&(main<=8100)) Guilds->GumpChoice(s,main,sub);
-	
-	if( (main&0xFF00)==0xFF00)
+	if( (main&0xFF00) == 0xFF00 )
 	{
-		if (im_choice(s, main, sub)==0) return;
+		if( im_choice( s, main, sub ) ) 
+			return;
 	}
 
-	if (main>1246 && main<1255)
+	if( main > 1246 && main < 1255 )
 	{
-		Skills->DoPotion(s, main-1246, sub, calcItemFromSer(addid1[s], addid2[s], addid3[s], addid4[s]));
+		Skills->DoPotion( s, main - 1246, sub, calcItemObjFromSer( s->AddID() ) );
 		return;
 	}
-	else if (main<ITEMMENUOFFSET) // GM Menus
+	else if( main < ITEMMENUOFFSET ) // GM Menus
 	{
-		openscript("menus.scp");
 		sprintf(sect, "GMMENU %i", main);
-		script = i_scripts[menus_script];
+		script = menus_def;
 	}
-	/*else if ((main>=5256) && (main<8192)) // Tracking fix 12-30-98
+	else if( ( main >= ITEMMENUOFFSET && main < MAKEMENUOFFSET ) || ( main >= 5256 ) && ( main < 8192 ) )
 	{
-		openscript("items.scp");
-		sprintf(sect, "ITEMMENU %i", main-256);
-		script = i_scripts[items_script];
-	}*/
-	else if ((main>=ITEMMENUOFFSET && main<MAKEMENUOFFSET) || (main>=5256) && (main<8192))
-	{
-		openscript("items.scp");
-		//openscript("addmenus.scp");
-		//if ( main-ITEMMENUOFFSET < nameMenus.start )
-			sprintf(sect, "ITEMMENU %i", main-ITEMMENUOFFSET);
-		/*else
-			sprintf(sect, "ITEMMENU %s", nameMenus.menu[main-ITEMMENUOFFSET-nameMenus.start]);*/
-
-		script = i_scripts[items_script];//addmenu_script];
+		sprintf( sect, "ITEMMENU %i", main - ITEMMENUOFFSET );
+		script = items_def;
 	}
-	else if(main>=MAKEMENUOFFSET && main<TRACKINGMENUOFFSET)
+	else if( main >= MAKEMENUOFFSET && main < TRACKINGMENUOFFSET )
 	{
-		openscript("create.scp");
-		sprintf(sect, "MAKEMENU %i", main-MAKEMENUOFFSET);
-		script = i_scripts[create_script];
+		sprintf( sect, "MAKEMENU %i", main - MAKEMENUOFFSET );
+		script = create_def;
 	} // PolyMorph spell menu (scriptable) by AntiChrist (9/99)
-	else if ( main >= POLYMORPHMENUOFFSET && main < POLYMORPHMENUOFFSET+50 )
+	else if( main >= POLYMORPHMENUOFFSET && main < POLYMORPHMENUOFFSET + 50 )
 	{
+		if( mChar->IsOnHorse() )
+			DismountCreature( s->CurrcharObj() );		// can't be polymorphed on a horse
 		Magic->Polymorph( s, POLYMORPHMENUOFFSET, sub );
 		return;
 	}
 	else // Tracking
 	{
-		if((main-TRACKINGMENUOFFSET)>=TRACKINGMENUOFFSET+1&&(main-TRACKINGMENUOFFSET)<=TRACKINGMENUOFFSET+3)
+		if( main >= TRACKINGMENUOFFSET + 1 && main <= TRACKINGMENUOFFSET + 3 )
 		{
-			if(!sub) return;
-			if(!Skills->CheckSkill(currchar[s],TRACKING, 0, 1000))
+			if( !sub ) 
+				return;
+			if( !Skills->CheckSkill( mChar, TRACKING, 0, 1000 ) )
 			{
-				sysmessage(s,"You fail your attempt at tracking.");
+				sysmessage( s, 575 );
 				return;
 			}
-			Skills->TrackingMenu(s,sub-1);
+			Skills->TrackingMenu( s, sub - 1 );
 		}
-		openscript("tracking.scp");
-		sprintf(sect, "TRACKINGMENU %i", main-TRACKINGMENUOFFSET);
-		script = i_scripts[tracking_script];
+		sprintf( sect, "TRACKINGMENU %i", main );
+		script = tracking_def;
 	}
 	
-	if (!script->find(sect))
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				if (n_scripts[custom_npc_script][0]!=0)
-				{
-					openscript(n_scripts[custom_npc_script]);
-					if (!i_scripts[custom_npc_script]->find(sect))
-					{
-						closescript();
-						return;
-					}
-				}
-			}
-		} else return;
-	}
-	read1();
-	i=0;
-	read2(); // Moved by Magius(CHE) for Rank System
-	do
-	{
-		if (script1[0]!='}')
-		{
-			i++;
-			if (main>=MAKEMENUOFFSET && main<TRACKINGMENUOFFSET)
-			{ // Start Here Changes by Magius(CHE)
-				read2();
-				itemmake[s].needs=str2num(script2);
-				read2();
-				itemmake[s].minskill=str2num(script2);
-				itemmake[s].maxskill=itemmake[s].minskill*server_data.skilllevel;
-			}
-			read2();
-			strcpy( lscomm, script1 );
-			strcpy( lsnum, script2 );
-			itemmake[s].number = str2num( script2 );
-			read2(); // Rank System - Magius(CHE)
-			if( !(strcmp(script1, "RANK" ) ) )
-			{
-				gettokennum( script2, 0 );
-				itemmake[s].minrank = str2num( gettokenstr );
-				gettokennum( script2, 1 );
-				itemmake[s].maxrank = str2num( gettokenstr );
-				read2();
-			} 
-			else 
-			{ // Set maximum rank if the item is not ranked!
-				itemmake[s].minrank = 10;
-				itemmake[s].maxrank = 10;
-			}
-			if( server_data.rank_system == 0 )
-			{
-				itemmake[s].minrank = 10;
-				itemmake[s].maxrank = 10;
-			}
+	ScriptSection *sectionData = FileLookup->FindEntry( sect, script );
+	if( sectionData == NULL )
+		return;
 
-			//   printf("%s %i\n",script1,str2num(script2));
-			if (i==sub)
-			{
-				closescript();
-				scriptcommand( s, lscomm, lsnum );
-				if (itemmake[s].maxskill<200) itemmake[s].maxskill=200;
-			} // End Here Changes by Magius(CHE)
+	const char *data = NULL;
+	const char *tag = sectionData->First();
+	i = 0;
+	making = (main >= MAKEMENUOFFSET && main < TRACKINGMENUOFFSET );
+	found = 0;
+	tag = sectionData->Next();
+	data = sectionData->GrabData();
+	make_st mMake = s->ItemMake();
+	for( ; !sectionData->AtEnd() && !found; )
+	{
+		// When choosing to MAKE an item, the menu only has displayed
+		// those entries which can be made, so look for that item.
+		i++;
+		if( making )
+		{ // Start Here Changes by Magius(CHE)
+			if( makeNum( tag ) == model_num )
+				found = 1;
+			tag = sectionData->Next(); data = sectionData->GrabData();
+			mMake.needs = makeNum( data );
+			tag = sectionData->Next(); data = sectionData->GrabData();
+			mMake.minskill = makeNum( data );
+			mMake.maxskill = mMake.minskill * cwmWorldState->ServerData()->GetSkillLevel();
 		}
+		tag = sectionData->Next(); data = sectionData->GrabData();
+		strcpy( lscomm, tag );
+		strcpy( lsnum, data );
+		mMake.number = makeNum( data );
+		tag = sectionData->Next(); data = sectionData->GrabData();
+		if( tag != NULL && !strcmp( tag, "RANK" ) )
+		{
+			char mrank[256];
+			gettokennum( data, 0, mrank );
+			mMake.minrank = (UI08)makeNum( mrank );
+			gettokennum( data, 1, mrank );
+			mMake.maxrank = (UI08)makeNum( mrank );
+			tag = sectionData->Next(); data = sectionData->GrabData();
+		} 
+		else 
+		{ // Set maximum rank if the item is not ranked!
+			mMake.minrank = 10;
+			mMake.maxrank = 10;
+		}
+		if( !cwmWorldState->ServerData()->GetRankSystemStatus() )
+		{
+			mMake.minrank = 10;
+			mMake.maxrank = 10;
+		}
+
+		if( !making )
+			found = ( i == sub );
 	}
-	while ((script1[0]!='}')&&(i!=sub));
-	if (i!=sub) closescript();
+	s->ItemMake( mMake );
+	if( found )
+	{
+		scriptcommand( s, lscomm, lsnum );
+		if( mMake.maxskill < 200 )
+			mMake.maxskill = 200;
+	}
 }
 
-void gmmenu(int s, int m) // Open one of the gray GM Call menus
+//o---------------------------------------------------------------------------o
+//|   Function    :  void gmmenu( cSocket *s, int m )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Opens the GM Call menu
+//o---------------------------------------------------------------------------o
+void gmmenu( cSocket *s, int m )
 {
 	int total, i;
 	int lentext;
@@ -1275,60 +1158,64 @@ void gmmenu(int s, int m) // Open one of the gray GM Call menus
 	char gmtext[11][257];
 	int gmnumber=0;
 	int gmindex;
+
+	CChar *mChar = s->CurrcharObj();
 	
-	openscript("menus.scp");
-	sprintf(sect, "GMMENU %i", m);
-	if (!i_scripts[menus_script]->find(sect))
-	{
-		closescript();
+	sprintf( sect, "GMMENU %i", m );
+	ScriptSection *GMMenu = FileLookup->FindEntry( sect, menus_def );
+	if( GMMenu == NULL )
 		return;
-	}
-	gmindex=m;
-	read1();
-	lentext=sprintf(gmtext[0], "%s", script1);
-	do
+	gmindex = m;
+	char line[1024];
+	const char *tag = GMMenu->First();
+	const char *data = GMMenu->GrabData();
+	sprintf( line, "%s %s", tag, data );
+	lentext = sprintf(gmtext[0], "%s", line );
+	for( tag = GMMenu->Next(); !GMMenu->AtEnd(); tag = GMMenu->Next() )
 	{
-		read1();
-		if (script1[0]!='}')
-		{
-			gmnumber++;
-			strcpy(gmtext[gmnumber], script1);
-			read1();
-		}
+		gmnumber++;
+		data = GMMenu->GrabData();
+		sprintf( line, "%s %s", tag, data );
+		tag = GMMenu->Next();
+		strcpy( gmtext[gmnumber], line );
 	}
-	while (script1[0]!='}');
-	closescript();
 	total=9+1+lentext+1;
-	for (i=1;i<=gmnumber;i++)
+	for( i = 1; i <= gmnumber; i++ )
 	{
-		total+=4+1+strlen(gmtext[i]);
+		total += 4 + 1 + strlen( gmtext[i] );
 	}
-	gmprefix[1]=total>>8;
-	gmprefix[2]=total%256;
-	gmprefix[3]=chars[currchar[s]].ser1;
-	gmprefix[4]=chars[currchar[s]].ser2;
-	gmprefix[5]=chars[currchar[s]].ser3;
-	gmprefix[6]=chars[currchar[s]].ser4;
-	gmprefix[7]=gmindex>>8;
-	gmprefix[8]=gmindex%256;
-	Network->xSend(s, gmprefix, 9, 0);
-	Network->xSend(s, &lentext, 1, 0);
-	Network->xSend(s, gmtext[0], lentext, 0);
-	lentext=gmnumber;
-	Network->xSend(s, &lentext, 1, 0);
-	for (i=1;i<=gmnumber;i++)
+	gmprefix[1] = (UI08)(total>>8);
+	gmprefix[2] = (UI08)(total%256);
+	gmprefix[3] = mChar->GetSerial( 1 );
+	gmprefix[4] = mChar->GetSerial( 2 );
+	gmprefix[5] = mChar->GetSerial( 3 );
+	gmprefix[6] = mChar->GetSerial( 4 );
+	gmprefix[7] = (UI08)(gmindex>>8);
+	gmprefix[8] = (UI08)(gmindex%256);
+	s->Send( gmprefix, 9 );
+	s->Send( &lentext, 1 );
+	s->Send( gmtext[0], lentext );
+	lentext = gmnumber;
+	s->Send( &lentext, 1 );
+	for( i = 1; i <= gmnumber;i++ )
 	{
-		gmmiddle[0]=(i-1)>>8;
-		gmmiddle[1]=(i-1)%256;
-		Network->xSend(s, gmmiddle, 4, 0);
-		lentext=strlen(gmtext[i]);
-		Network->xSend(s, &lentext, 1, 0);
-		Network->xSend(s, gmtext[i], lentext, 0);
+		gmmiddle[0] = (UI08)((i-1)>>8);
+		gmmiddle[1] = (UI08)((i-1)%256);
+		s->Send( gmmiddle, 4 );
+		lentext = strlen( gmtext[i] );
+		s->Send( &lentext, 1 );
+		s->Send( gmtext[i], lentext );
 	}
 }
 
-
-void itemmenu(int s, int m) // Menus for item creation
+//o---------------------------------------------------------------------------o
+//|   Function    :  void itemmenu( cSocket *s, int m)
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Opens an itemmenu
+//o---------------------------------------------------------------------------o
+void itemmenu( cSocket *s, int m)
 {
 	int total, i;
 	int lentext;
@@ -1338,160 +1225,626 @@ void itemmenu(int s, int m) // Menus for item creation
 	int gmnumber=0;
 	int gmindex;
 	
-	//openscript("addmenus.scp");
-	openscript("items.scp");
-	sprintf(sect, "ITEMMENU %i", m);
-	if (!i_scripts[items_script]->find(sect))
-	{
-		closescript();
-		if (n_scripts[custom_item_script][0]!=0)
-		{
-			openscript(n_scripts[custom_item_script]);
-			if (!i_scripts[custom_item_script]->find(sect))
-			{
-				closescript();
-				return;
-			}
-		} else return;
-	}
-	gmindex=m;
-	// printf("gmindex: %i\n", gmindex );
+	gmindex = m;
 
-	if( !(chars[currchar[s]].priv&0x01) && m < 990 && m > 999 )
+	CChar *mChar = s->CurrcharObj();
+
+	if( !mChar->IsGM() && m < 990 && m > 999 )
 	{
-		sysmessage( s, "Access denied" );
+		sysmessage( s, 337 );
 		return;
 	}
 
+	sprintf( sect, "ITEMMENU %i", m );
+	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
+	if( ItemMenu == NULL )
+		return;
 	////////////////////////////////////////////////
-	read1();
-	strcpy( gmtext[0], script1 );
-	do
+
+	char tempLine[512], temp[1024];
+	const char *tag = ItemMenu->First();
+	const char *data = ItemMenu->GrabData();
+	sprintf( tempLine, "%s %s", tag, data );
+	strcpy( gmtext[0], tempLine );
+	for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next() )
 	{
-		read2();
-		if (script1[0]!='}')
-		{
-			gmnumber++;
-			gmid[gmnumber]=hstr2num(script1);
-			strcpy(gmtext[gmnumber], script2);
-			read1();
-		}
+		data = ItemMenu->GrabData();
+		gmnumber++;
+		gmid[gmnumber] = makeNum( tag );
+		strcpy( gmtext[gmnumber], data );
+		tag = ItemMenu->Next();
 	}
-	while (script1[0]!='}');
-	closescript();
-	sprintf(temp, "%i: %s", m, gmtext[0]);
-	lentext=sprintf(gmtext[0], "%s", temp);
-	total=9+1+lentext+1;
-	for (i=1;i<=gmnumber;i++)
+	sprintf( temp, "%i: %s", m, gmtext[0] );
+	lentext = sprintf( gmtext[0], "%s", temp );
+	total = 9 + 1 + lentext + 1;
+	for( i = 1; i <= gmnumber; i++ )
 	{
-		total+=4+1+strlen(gmtext[i]);
+		total += 4 + 1 + strlen( gmtext[i] );
 	}
-	gmprefix[1]=total>>8;
-	gmprefix[2]=total%256;
-	gmprefix[3]=chars[currchar[s]].ser1;
-	gmprefix[4]=chars[currchar[s]].ser2;
-	gmprefix[5]=chars[currchar[s]].ser3;
-	gmprefix[6]=chars[currchar[s]].ser4;
-	gmprefix[7]=(gmindex+ITEMMENUOFFSET)>>8;
-	gmprefix[8]=(gmindex+ITEMMENUOFFSET)%256;
-	Network->xSend(s, gmprefix, 9, 0);
-	Network->xSend(s, &lentext, 1, 0);
-	Network->xSend(s, gmtext[0], lentext, 0);
-	lentext=gmnumber;
-	Network->xSend(s, &lentext, 1, 0);
-	for (i=1;i<=gmnumber;i++)
+	gmprefix[1] = (UI08)(total>>8);
+	gmprefix[2] = (UI08)(total%256);
+	gmprefix[3] = mChar->GetSerial( 1 );
+	gmprefix[4] = mChar->GetSerial( 2 );
+	gmprefix[5] = mChar->GetSerial( 3 );
+	gmprefix[6] = mChar->GetSerial( 4 );
+	gmprefix[7] = (UI08)( ( gmindex + ITEMMENUOFFSET )>>8 );
+	gmprefix[8] = (UI08)( ( gmindex + ITEMMENUOFFSET )%256 );
+	s->Send( gmprefix, 9 );
+	s->Send( &lentext, 1 );
+	s->Send( gmtext[0], lentext );
+	lentext = gmnumber;
+	s->Send( &lentext, 1 );
+	for( i = 1; i <= gmnumber; i++ )
 	{
-		gmmiddle[0]=gmid[i]>>8;
-		gmmiddle[1]=gmid[i]%256;
-		Network->xSend(s, gmmiddle, 4, 0);
-		lentext=strlen(gmtext[i]);
-		Network->xSend(s, &lentext, 1, 0);
-		Network->xSend(s, gmtext[i], lentext, 0);
+		gmmiddle[0] = (UI08)(gmid[i]>>8);
+		gmmiddle[1] = (UI08)(gmid[i]%256);
+		s->Send( gmmiddle, 4 );
+		lentext = strlen( gmtext[i] );
+		s->Send( &lentext, 1 );
+		s->Send( gmtext[i], lentext );
 	}
 }
 
-void cGump::Open(int s, int i, int num1, int num2)
+//o---------------------------------------------------------------------------o
+//|   Function    :  void cGump::Open( cSocket *s, CChar *i, UI08 num1, UI08 num2)
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Opens shopping gump
+//o---------------------------------------------------------------------------o
+void cGump::Open( cSocket *s, CChar *i, UI16 gumpNum )
 {
-	char shopgumpopen[8]="\x24\x00\x00\x00\x01\x00\x30";
-	shopgumpopen[1]=chars[i].ser1;
-	shopgumpopen[2]=chars[i].ser2;
-	shopgumpopen[3]=chars[i].ser3;
-	shopgumpopen[4]=chars[i].ser4;
-	shopgumpopen[5]=num1;
-	shopgumpopen[6]=num2;
-	Network->xSend(s, shopgumpopen, 7, 0);
+	// evaluate calls to this func, see if num1 and num2 need be so large
+	char shopgumpopen[8] = "\x24\x00\x00\x00\x01\x00\x30";
+	shopgumpopen[1] = i->GetSerial( 1 );
+	shopgumpopen[2] = i->GetSerial( 2 );
+	shopgumpopen[3] = i->GetSerial( 3 );
+	shopgumpopen[4] = i->GetSerial( 4 );
+	shopgumpopen[5] = (UI08)(gumpNum>>8);
+	shopgumpopen[6] = (UI08)(gumpNum%256);
+	s->Send( shopgumpopen, 7 );
 }
 
-void SendVecsAsGump( UOXSOCKET sock, stringList& one, stringList& two, unsigned char type )
-// PRE:		Sock exists, one and two exists, type is valid num
-// POST:	Sends to socket sock the data in one and two.  One is control, two is data
-// CODER:	Abaddon
+//o---------------------------------------------------------------------------o
+//|   Function    :  void GumpDisplay::AddData( GumpInfo *toAdd )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Adds the data to the gump to send
+//o---------------------------------------------------------------------------o
+void GumpDisplay::AddData( GumpInfo *toAdd )
 {
-	unsigned int linecount = 0, linecount1 = 0;
-	unsigned char i = 0;
+	GumpInfo *gAdd = new GumpInfo;
+	gAdd->name = toAdd->name;
+	gAdd->value = toAdd->value;
+	gAdd->type = toAdd->type;
+	gAdd->stringValue = toAdd->stringValue;
+	gumpData.push_back( gAdd );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void GumpDisplay::AddData( const char *toAdd, long int value, UI08 type )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Adds the data to the gump to send
+//o---------------------------------------------------------------------------o
+void GumpDisplay::AddData( const char *toAdd, long int value, UI08 type )
+{
+	GumpInfo *gAdd = new GumpInfo;
+	gAdd->name = toAdd;
+	gAdd->stringValue = "";
+	gAdd->value = value;
+	gAdd->type = type;
+	gumpData.push_back( gAdd );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void GumpDisplay::AddData( const char *toAdd, const char *toSet, UI08 type )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Adds the data to the gump to send
+//o---------------------------------------------------------------------------o
+void GumpDisplay::AddData( const char *toAdd, const char *toSet, UI08 type )
+{
+	if( toSet == NULL )
+		return;
+
+	if( toSet[0] == 0 )
+		return;
+
+	GumpInfo *gAdd = new GumpInfo;
+	gAdd->name = toAdd;
+	gAdd->stringValue = toSet;
+	gAdd->type = type;
+	gumpData.push_back( gAdd );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  GumpDisplay::GumpDisplay( cSocket *target ) : toSendTo( target )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
+//o---------------------------------------------------------------------------o
+GumpDisplay::GumpDisplay( cSocket *target ) : toSendTo( target )
+{
+	gumpData.resize( 0 );
+	width = 340;
+	height = 320;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  GumpDisplay::GumpDisplay( cSocket *target, UI16 gumpWidth, UI16 gumpHeight ) : 
+//|						width( gumpWidth ), height( gumpHeight ), toSendTo( target )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
+//o---------------------------------------------------------------------------o
+GumpDisplay::GumpDisplay( cSocket *target, UI16 gumpWidth, UI16 gumpHeight ) : 
+	width( gumpWidth ), height( gumpHeight ), toSendTo( target )
+{
+	gumpData.resize( 0 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  GumpDisplay::~GumpDisplay()
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Clear any existing GumpDisplay data
+//o---------------------------------------------------------------------------o
+GumpDisplay::~GumpDisplay()
+{
+	for( UI32 i = 0; i < gumpData.size(); i++ )
+		delete gumpData[i];
+	Delete();
+	gumpData.resize( 0 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 void GumpDisplay::Delete( void )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Delete all GumpDisplay entries
+//o---------------------------------------------------------------------------o
+void GumpDisplay::Delete( void )
+{
+	one.resize( 0 );
+	two.resize( 0 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 void GumpDisplay::SetTitle( const char *newTitle )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Set a gumps title
+//o---------------------------------------------------------------------------o
+void GumpDisplay::SetTitle( const char *newTitle )
+{
+	title = newTitle;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 void SendVecsAsGump( cSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Sends to socket sock the data in one and two.  One is control, two is data
+//o---------------------------------------------------------------------------o
+void SendVecsAsGump( cSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
+{
+	UI08 i = 0;
 	char sect[512];
-	int length, length2;
 
-	length = 21;
-	length2 = 1;
+	UI32 length = 21;
+	UI32 length2 = 1;
 
-	linecount = one.size();
-	linecount1 = two.size();
-	int line, textlines;
+	UI32 linecount = one.size();
+	UI32 linecount1 = two.size();
+	UI32 line, textlines;
+
 	for( line = 0; line < linecount; line++ )
 	{
-		if( one[line]->length() == 0 )
+		if( one[line].length() == 0 )
 			break;
-		length += one[line]->length() + 4;
-		length2 += one[line]->length() + 4;
+		length += one[line].length() + 4;
+		length2 += one[line].length() + 4;
 	}
 	
 	length += 3;
 	textlines = 0;
 	line = 0;
 
-	for(line = 0; line < linecount1; line++ )
+	for( line = 0; line < linecount1; line++ )
 	{
-		if( two[line]->length() == 0 )
+		if( two[line].length() == 0 )
 			break;
-		length += two[line]->length() * 2 + 2;
+		length += two[line].length() * 2 + 2;
 		textlines++;
 	}
 	
-	gump1[1] = length>>8;
-	gump1[2] = length%256;
-	gump1[7] = 0;
-	gump1[8] = 0;
-	gump1[9] = 0;
-	gump1[10] = type; // Gump Number
-	gump1[19] = length2>>8;
-	gump1[20] = length2%256;
-	Network->xSend( sock, gump1, 21, 0);
+	gump1[1] = (UI08)(length>>8);
+	gump1[2] = (UI08)(length%256);
+	if( serial != INVALIDSERIAL )
+	{
+		gump1[3] = (UI08)(serial>>24);
+		gump1[4] = (UI08)(serial>>16);
+		gump1[5] = (UI08)(serial>>8);
+		gump1[6] = (UI08)(serial%256);
+	}
+	// gump1[3] -> gump1[6] are UID
+	gump1[7] = (UI08)(type>>24);
+	gump1[8] = (UI08)(type>>16);
+	gump1[9] = (UI08)(type>>8);
+	gump1[10] = (UI08)(type%256); // Gump Number
+	gump1[19] = (UI08)(length2>>8);
+	gump1[20] = (UI08)(length2%256);
+	sock->Send( gump1, 21 );
 	
 	for( line = 0; line < linecount; line++ )
 	{
-		sprintf(sect, "{ %s }", one[line]->c_str() );
-		Network->xSend( sock, sect, strlen( sect ), 0 );
+		sprintf( sect, "{ %s }", one[line].c_str() );
+		sock->Send( sect, strlen( sect ) );
 	}
 	
-	gump2[1] = textlines>>8;
-	gump2[2] = textlines%256;
+	gump2[1] = (UI08)(textlines>>8);
+	gump2[2] = (UI08)(textlines%256);
 	
-	Network->xSend( sock, gump2, 3, 0);
+	sock->Send( gump2, 3 );
 
 	for( line = 0; line < linecount1; line++ )
 	{
-		if( two[line]->length() == 0 )
+		if( two[line].length() == 0 )
 			break;
-		gump3[0] = ( two[line]->length() )>>8;
-		gump3[1] = ( two[line]->length() )%256;
-		Network->xSend( sock, gump3, 2, 0);
+		gump3[0] = (UI08)(( two[line].length() )>>8);
+		gump3[1] = (UI08)(( two[line].length() )%256);
+		sock->Send( gump3, 2 );
 		gump3[0]=0;
-		for ( i = 0; i < two[line]->length(); i++ )
+		for( i = 0; i < two[line].length(); i++ )
 		{
-			gump3[1] = (*two[line])[i];
-			Network->xSend( sock, gump3, 2, 0);
+			gump3[1] = (two[line])[i];
+			sock->Send( gump3, 2 );
 		}
 	}
 
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 void NewAddMenu( cSocket *s, int m )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Menu for item creation based on ITEMMENU entries in items.scp
+//o---------------------------------------------------------------------------o
+void NewAddMenu( cSocket *s, int m )
+{
+	stringList one, two;
+	char tempString[256];
+	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+	UI08 i = 0;
+
+	char sect[512];
+	CChar *mChar = s->CurrcharObj();
+
+	if( !mChar->IsGM() && m < 990 && m > 999 )
+	{
+		sysmessage( s, 337 );
+		return;
+	}
+	////////////////////////////////////////////////
+	mChar->SetAddPart( m );	// let's store what menu we're at
+
+	sprintf( sect, "ITEMMENU %i", m );
+	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
+	if( ItemMenu == NULL )
+		return;
+
+	// page header
+	one.push_back( "nomove" );
+	one.push_back( "noclose" );
+	one.push_back( "page 0" );
+	sprintf( tempString, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
+	one.push_back( tempString );
+	sprintf( tempString, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
+	one.push_back( tempString );
+	sprintf( tempString, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	one.push_back( tempString );
+	const char *tag = ItemMenu->First();
+	const char *data = ItemMenu->GrabData();
+	sprintf( tempString, "%s %s", tag, data );	// our title
+	two.push_back( tempString );
+
+	sprintf( tempString, "text 140 310 %i %i", cwmWorldState->ServerData()->GetTitleColour(), linenum++ );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	one.push_back( tempString );
+	sprintf( tempString, "Menu %i", m );
+	two.push_back( tempString );
+
+	one.push_back( "page 1" );
+
+	UI08 numCounter = 0;
+	for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next() )
+	{
+		data = ItemMenu->GrabData();
+
+		if( numCounter > 0 && (!(numCounter % 13 ) ) )
+		{
+			position = 40;
+			pagenum++;
+			sprintf( tempString, "page %i", pagenum );
+			one.push_back( tempString );
+		}
+
+		sprintf( tempString, "text 50 %i %i %i", position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum ); 
+		one.push_back( tempString );
+		sprintf( tempString, "button 20 %i %i %i 1 0 %i",position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, buttonnum);
+		one.push_back( tempString );
+		two.push_back( data );
+		if( tag[0] != '<' && tag[0] != ' ' )	// it actually has a picture, well bugger me! :>
+		{
+			if( numCounter % 2 == 0 )
+			{
+				sprintf( tempString, "tilepic 220 %i %i", position, makeNum( tag ) );
+				one.push_back( tempString );
+			}
+			else
+			{
+				sprintf( tempString, "tilepic 270 %i %i", position, makeNum( tag ) );
+				one.push_back( tempString );
+			}
+		}
+
+		position+=20;
+		linenum++;
+		buttonnum++;
+		numCounter++;
+
+		tag = ItemMenu->Next();
+	}
+	pagenum = 1;
+	for( i = 0; i < numCounter; i += 13 )
+	{
+		sprintf( tempString, "page %i", pagenum);
+		one.push_back( tempString );
+		if( i >= 10 )
+		{
+			sprintf( tempString, "button 50 300 %i %i  0 %i", cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum-1); //back button
+			one.push_back( tempString );
+		}
+		if( ( numCounter > 13 ) && ( ( i + 13 ) < numCounter ) )
+		{
+			sprintf( tempString, "button 260 300 %i %i  0 %i", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum + 1 );
+			one.push_back( tempString );
+		}
+		pagenum++;
+	}		
+
+	SendVecsAsGump( s, one, two, 9, INVALIDSERIAL );	// send code here
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Sends gump data to the socket
+//o---------------------------------------------------------------------------o
+void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
+{
+	char temp[512];
+	int i;
+	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+	UI08 numToPage = 10, stringWidth = 10;
+
+	if( one.size() > 0 && two.size() > 0 )
+	{
+		SendVecsAsGump( toSendTo, one, two, gumpNum, serial );
+		return;
+	}
+	UI08 ser1, ser2, ser3, ser4;
+	//--static pages
+	one.push_back( "noclose" );
+	one.push_back( "page 0"  );
+	sprintf( temp, "resizepic 0 0 %i %i %i", cwmWorldState->ServerData()->GetBackgroundPic(), width, height );
+	one.push_back( temp );
+	sprintf( temp, "button %i 15 %i %i 1 0 1", width - 40, cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1 );
+	one.push_back( temp );
+	sprintf( temp, "text 45 15 %i 0", cwmWorldState->ServerData()->GetTitleColour() );
+	one.push_back( temp );
+
+	sprintf( temp, "page %i", pagenum );
+	one.push_back( temp );
+
+	if( title.length() == 0 )
+		strcpy( temp, "General Gump" );
+	else
+		strcpy( temp, title.c_str() );
+	two.push_back( temp );
+
+	numToPage = (UI08)((( height - 30 ) / 20) - 2);
+	stringWidth = (UI08)( ( width / 2 ) / 10 );
+	UI32 lineForButton;
+	for( i = 0, lineForButton = 0; i < gumpData.size(); i++, lineForButton++ )
+	{
+		if( lineForButton > 0 && ( !( lineForButton % numToPage ) ) )
+		{
+			position = 40;
+			pagenum++;
+			sprintf( temp, "page %i", pagenum );
+			one.push_back( temp );
+		}
+		if( gumpData[i]->type != 7 )
+		{
+			sprintf( temp, "text 50 %i %i %i",position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum++ ); 
+			one.push_back( temp );
+			if( isMenu )
+			{
+				sprintf( temp, "button 20 %i %i %i 1 0 %i",position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, buttonnum);
+				one.push_back( temp );
+			}
+			sprintf( temp, "text %i %i %i %i", (width / 2) + 10, position, cwmWorldState->ServerData()->GetRightTextColour(), linenum++);
+			one.push_back( temp );
+			two.push_back( gumpData[i]->name );
+		}
+		else
+		{
+			sprintf( temp, "text 30 %i %i %i",position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum++ ); 
+			one.push_back( temp );
+		}
+
+		const char *sVal = gumpData[i]->stringValue.c_str();
+		long value = gumpData[i]->value;
+		switch( gumpData[i]->type )
+		{
+		case 0:		// all numbers of sorts
+			sprintf( temp, "%li", value );
+			break;
+		case 1:
+			sprintf( temp, "%lx", value );
+			break;
+		case 2:
+			ser1 = (UI08)(value>>24);
+			ser2 = (UI08)(value>>16);
+			ser3 = (UI08)(value>>8);
+			ser4 = (UI08)(value%256);
+			sprintf( temp, "%i %i %i %i", ser1, ser2, ser3, ser4 );
+			break;
+		case 3:
+			ser1 = (UI08)(value>>24);
+			ser2 = (UI08)(value>>16);
+			ser3 = (UI08)(value>>8);
+			ser4 = (UI08)(value%256);
+			sprintf( temp, "%x %x %x %x", ser1, ser2, ser3, ser4 );
+			break;
+		case 4:
+			if( sVal == NULL )
+				strcpy( temp, "NULL POINTER" );
+			else
+				strcpy( temp, sVal );
+			if( strlen( temp ) > stringWidth )	// too wide for one line, CRAP!
+			{
+				char temp2[512], temp3[512];
+				int tempWidth;
+				tempWidth = strlen( temp ) - stringWidth;
+				strncpy( temp2, temp, stringWidth );
+				temp2[stringWidth] = 0;
+				two.push_back( temp2 );
+				for( int tempCounter = 0; tempCounter < tempWidth / ( stringWidth * 2 ) + 1; tempCounter++ )
+				{
+					position += 20;
+					lineForButton++;
+					sprintf( temp3, "text %i %i %i %i", 30, position, cwmWorldState->ServerData()->GetRightTextColour(), linenum++ );
+					one.push_back( temp3 );
+					strncpy( temp2, &temp[stringWidth + tempCounter * stringWidth * 2], stringWidth * 2 );
+					temp2[stringWidth * 2] = 0;
+					two.push_back( temp2 );
+				}
+				// be stupid for the moment and do no text wrapping over pages
+			}
+			else
+				two.push_back( temp );
+			break;
+		case 5:
+			ser1 = (UI08)(value>>8);
+			ser2 = (UI08)(value%256);
+			sprintf( temp, "%x %x", ser1, ser2 );
+			break;
+		case 6:
+			ser1 = (UI08)(value>>8);
+			ser2 = (UI08)(value%256);
+			sprintf( temp, "%i %i", ser1, ser2 );
+			break;
+		case 7:
+			if( sVal == NULL )
+				strcpy( temp, "NULL POINTER" );
+			else
+				strcpy( temp, sVal );
+			int sWidth;
+			sWidth = stringWidth * 2;
+			if( strlen( temp ) > sWidth )	// too wide for one line, CRAP!
+			{
+				char temp2[512], temp3[512];
+				int tempWidth;
+				tempWidth = strlen( temp ) - sWidth;
+				strncpy( temp2, temp, sWidth );
+				temp2[sWidth] = 0;
+				two.push_back( temp2 );
+				for( int tempCounter = 0; tempCounter < tempWidth / sWidth + 1; tempCounter++ )
+				{
+					position += 20;
+					lineForButton++;
+					sprintf( temp3, "text %i %i %i %i", 30, position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum++ );
+					one.push_back( temp3 );
+					strncpy( temp2, &temp[(tempCounter + 1) * sWidth], sWidth );
+					temp2[sWidth] = 0;
+					two.push_back( temp2 );
+				}
+				// be stupid for the moment and do no text wrapping over pages
+			}
+			else
+				two.push_back( temp );
+			break;
+		default:
+			sprintf( temp, "%li", value );
+			break;
+		}
+		if( gumpData[i]->type != 4 && gumpData[i]->type != 7 )
+			two.push_back( temp );
+		position += 20;
+		buttonnum++;
+	}
+	
+	pagenum = 1; 
+	for( i = 0; i <= lineForButton; i += numToPage )
+	{
+		sprintf( temp, "page %i", pagenum );
+		one.push_back( temp );
+		if( i >= 10 )
+		{
+			sprintf( temp, "button 10 %i %i %i 0 %i", height - 40, cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum-1); //back button
+			one.push_back( temp );
+		}
+		if( lineForButton > numToPage && ( i + numToPage ) < lineForButton )
+		{
+			sprintf( temp, "button %i %i %i %i 0 %i", width - 40, height - 40, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum+1); //forward button
+			one.push_back( temp );
+		}
+		pagenum++;
+	}		
+	SendVecsAsGump( toSendTo, one, two, gumpNum, serial );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Get string data from the socket
+//o---------------------------------------------------------------------------o
+string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+{
+	char temp[512];
+	strncpy( temp, (const char *)&(sock->Buffer()[offset]), length );
+	temp[length] = 0;
+	return temp;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :	 string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Get string data from the socket
+//o---------------------------------------------------------------------------o
+string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+{
+	char temp[512];
+	for( int counter = 0; counter < length; counter++ )
+		temp[counter] = sock->GetByte( offset + counter * 2 + 1 );
+	temp[length] = 0;
+	return temp;
 }

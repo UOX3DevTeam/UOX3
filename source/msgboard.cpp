@@ -1,36 +1,5 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  msgboard.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-// UOX3 - Message Board
-// FILE - msgboard.cpp
-// DATE - March 16, 1999
-//   By - Dupois (dupois@home.com)
-//
-
 #include "uox3.h"
+#include "ssection.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // LOCAL - GLOBAL DATA
@@ -44,11 +13,11 @@ int  postAckCount[MAXCLIENT];
 
 // Char array for messages to client. Message body (when entering body of post)
 // can hold a maximum of 1975 chars (approx)
-unsigned char msg[MAXBUFFER];         
+UI08 msg[MAXBUFFER];         
 
 // Buffer to be used when posting messages
 //                                   |Pid|sz1|sz2|mTy|b1 |b2 |b3 |b4 |m1 |m2 |m3 |m4 |
-unsigned char msg2Post[MAXBUFFER] = "\x71\xFF\xFF\x05\x40\x00\x00\x19\x00\x00\x00\x00";
+UI08 msg2Post[MAXBUFFER] = "\x71\xFF\xFF\x05\x40\x00\x00\x19\x00\x00\x00\x00";
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,37 +30,31 @@ unsigned char msg2Post[MAXBUFFER] = "\x71\xFF\xFF\x05\x40\x00\x00\x19\x00\x00\x0
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardGetPostType( int s )
+void MsgBoardGetPostType( cSocket *s )
 {
-	int type = chars[currchar[s]].postType;
-	
-	switch ( type )
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
+	switch( mChar->GetPostType() )
 	{
-		// LOCAL post
 	case LOCALPOST:
 		// Feed back to operator that post type has been changed to LOCAL
-		sysmessage( s, "Currently posting LOCAL messages" );
+		sysmessage( s, 722 );
 		break;
-		
-		// REGIONAL post
 	case REGIONALPOST:
 		// Feed back to operator that post type has been changed to REGIONAL
-		sysmessage( s, "Currently posting REGIONAL messages" );
+		sysmessage( s, 723 );
 		break;
-		
-		// GLOBAL POST
 	case GLOBALPOST:
 		// Feed back to operator that post type has been changed to GLOBAL
-		sysmessage( s, "Currently posting GLOBAL messages" );
+		sysmessage( s, 724 );
 		break;
-		
-		// Invalid post type
 	default:
 		// Feed back to operator that post type has been changed to LOCAL
-		sysmessage( s, "Invalid post type" );
+		sysmessage( s, 725 );
 		break;
 	}
-	return;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,39 +76,34 @@ void MsgBoardGetPostType( int s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardSetPostType( int s, int Type )
+void MsgBoardSetPostType( cSocket *s, int Type )
 {
-	chars[currchar[s]].postType = Type;
+	CChar *mChar = s->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
+	mChar->SetPostType( Type );
 	
 	switch ( Type )
 	{
-		// LOCAL post
 	case LOCALPOST:
 		// Feed back to operator that post type has been changed to LOCAL
-		sysmessage( s, "Post type set to LOCAL" );
+		sysmessage( s, 726 );
 		break;
-		
-		// REGIONAL post
 	case REGIONALPOST:
 		// Feed back to operator that post type has been changed to REGIONAL
-		sysmessage( s, "Post type set to REGIONAL" );
+		sysmessage( s, 727 );
 		break;
-		
-		// GLOBAL POST
 	case GLOBALPOST:
 		// Feed back to operator that post type has been changed to GLOBAL
-		sysmessage( s, "Post type set to GLOBAL" );
+		sysmessage( s, 728 );
 		break;
-		
-		// Invalid post type
 	default:
 		// Feed back to operator that post type has been changed to LOCAL
-		sysmessage( s, "Invalid post type" );
+		sysmessage( s, 725 );
 		break;
 	}
-	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 // FUNCTION:    MsgBoardOpen( int s )
@@ -157,7 +115,7 @@ void MsgBoardSetPostType( int s, int Type )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardOpen(int s)
+void MsgBoardOpen( cSocket *s )
 {
 	// In Response to a doubleclick() message from a client
 	// [SEND:5] 06 40 07 ba 3d 
@@ -165,23 +123,22 @@ void MsgBoardOpen(int s)
 	char msgBoardHeader[] = "\x71\x00\x26\x00\xFF\xFF\xFF\xFF\x62\x75\x6c\x6c\x65\x74\x69\x6e\x20\x62\x6f\x61\x72\x64\x00\x00\x00\x00\x00\x00\x00\x00\x40\x20\x00\xff\x00\x00\x00\x00";
 	
 	// Extract the Bulletin Board serial number from client buffer and update msgBoardHeader
-	msgBoardHeader[4]     = buffer[s][1]; // From doubleclick() buffer[s]
-	msgBoardHeader[5]     = buffer[s][2];
-	msgBoardHeader[6]     = buffer[s][3];
-	msgBoardHeader[7]     = buffer[s][4];
+	msgBoardHeader[4]     = s->GetByte( 1 ); // From doubleclick() buffer[s]
+	msgBoardHeader[5]     = s->GetByte( 2 );
+	msgBoardHeader[6]     = s->GetByte( 3 );
+	msgBoardHeader[7]     = s->GetByte( 4 );
 	
 	// Can place up to 20 customizable chars in Message Board header to give Message Board a unique name
 	// Might be able to do more, but why, it usually overruns the area designated for the name anyway
-	int msgBoardSerial;
-	msgBoardSerial = calcItemFromSer(buffer[s][1], buffer[s][2], buffer[s][3], buffer[s][4]);
+	CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 1 ) );
 	
 	// If the name the item (Bulletin Board) has been defined, display it
 	// instead of the default "Bulletin Board" title.
-	if ( strcmp(items[msgBoardSerial].name, "#") )
-		strncpy( &msgBoardHeader[8], items[msgBoardSerial].name, 20);
+	if( strcmp(msgBoard->GetName(), "#" ) )
+		strncpy( &msgBoardHeader[8], msgBoard->GetName(), 20);
 	
 	// Send Message Board header to client
-	Network->xSend(s, msgBoardHeader, (sizeof(msgBoardHeader)-1), 0);
+	s->Send( msgBoardHeader, (sizeof(msgBoardHeader)-1) );
 	
 	
 	// Send draw item message to client with required info to draw the message board
@@ -211,30 +168,28 @@ void MsgBoardOpen(int s)
 	int offset = 5; // Offset to next msg[] value
 	int count  = 0; // Number of messages (times through while loop)
 	
-	int currentFile  = 1;  // Starting file to open and iterate through (1=GLOBAL.bbp, 2=REGIONAL.bbp, 3=LOCAL.bbp)
+	SI32 currentFile = 1;  // Starting file to open and iterate through (1=GLOBAL.bbp, 2=REGIONAL.bbp, 3=LOCAL.bbp)
 	
 	// Determine what type of message this is in order to determine which file to open
 	// GLOBAL   Posts start at 01 00 00 00 -> 01 FF FF FF
 	// REGIONAL Posts start at 02 00 00 00 -> 02 FF FF FF
 	// LOCAL    Posts start at 03 00 00 00 -> 03 FF FF FF
 	
-	
-	
 	// GLOBAL post file
 	sprintf( fileName1, "global.bbi" );
 	
 	// REGIONAL post file
 	//sprintf( fileName2, "region%s.bbi", region[calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y)].name );
-	sprintf( fileName2, "region%d.bbi", calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y) );
+	sprintf( fileName2, "region%d.bbi", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
 	
 	// LOCAL post file
-	sprintf( fileName3, "%02x%02x%02x%02x.bbi", buffer[s][1], buffer[s][2], buffer[s][3], buffer[s][4]);
+	sprintf( fileName3, "%02x%02x%02x%02x.bbi", s->GetByte( 1 ), s->GetByte( 2 ), s->GetByte( 3 ), s->GetByte( 4 ) );
 	
-	while ( currentFile <= 3 )
+	while( currentFile <= 3 )
 	{
 		// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-		if (server_data.msgboardpath)
-			strcpy( fileName, server_data.msgboardpath );
+		if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+			strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 		
 		// Open the next file to process
 		switch ( currentFile )
@@ -245,100 +200,96 @@ void MsgBoardOpen(int s)
 			strcat( fileName, fileName1 );
 			file = fopen( fileName, "rb" );
 			break;
-			
 		case 2:
 			// Set fileName to REGIONAL.bbi
 			//sysmessage( s, "Opening REGIONAL.bbi messages");
 			strcat( fileName, fileName2 );
 			file = fopen( fileName, "rb" );
 			break;
-			
 		case 3:
 			// Set fileName to LOCAL.bbi
 			//sysmessage( s, "Opening LOCAL.bbi messages");
 			strcat( fileName, fileName3 );
 			file = fopen( fileName, "rb" );
 			break;
-			
 		default:
-			printf("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
+			Console << "MsgBoardOpen() Unhandle case value: " << currentFile << myendl;
 			return;
 		}
 		
 		// If the file doesn't exist, increment the currenFile count and move onto the next file
-		if ( file != NULL )
+		if( file != NULL )
 		{
 			// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
 			
-			if ( fseek( file, 4, SEEK_SET ) )
+			if( fseek( file, 4, SEEK_SET ) )
 			{
-				printf("UOX3: MsgBoardOpen() failed to seek to first message segment in bbi file\n");
+				Console << "MsgBoardOpen() failed to seek to first message segment in bbi file" << myendl;
 				return;
 			}
 			
 			// Loop until we have reached the end of the file or the maximum number of posts allowed
 			// to be displayed
-			while ( (!feof(file)) && (count<=MAXPOSTS) )
+			while( (!feof(file)) && (count<=MAXPOSTS) )
 			{
 				// Fill up the msg with data from the bbi file
-				if ( fread( &msg[offset], sizeof(char), 19, file ) != 19 )
+				if( fread( &msg[offset], sizeof(char), 19, file ) != 19 )
 				{
-					if ( feof(file) ) break;
+					if( feof(file) )
+						break;
 				}
 				//  |Off| 1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18
 				//  |mg1|mg2|mg3|mg4|mo1|mo2|???|sg1|sg2|xx1|xx2|yy1|yy2|bn1|bn2|bn3|bn4|co1|co2|
 				// "\x40\x1c\x53\xeb\x0e\xb0\x00\x00\x00\x00\x3a\x00\x3a\x40\x00\x00\x19\x00\x00";
 				
 				// If the segment 6 is 0x00 then the message is marked for deletion so skip it 
-				if ( msg[offset+6] ) 
+				if( msg[offset+6] ) 
 				{
 					// Set the Board SN fields the proper value for the board clicked on
-					msg[offset+13] = buffer[s][1];
-					msg[offset+14] = buffer[s][2];
-					msg[offset+15] = buffer[s][3];
-					msg[offset+16] = buffer[s][4];
+					msg[offset+13] = s->GetByte( 1 );
+					msg[offset+14] = s->GetByte( 2 );
+					msg[offset+15] = s->GetByte( 3 );
+					msg[offset+16] = s->GetByte( 4 );
 					
 					// Store message ID into array for later acknowledgement
-					postAcked[s][count][0] = msg[offset+0];
-					postAcked[s][count][1] = msg[offset+1];
-					postAcked[s][count][2] = msg[offset+2];
-					postAcked[s][count][3] = msg[offset+3];
+					s->PostAcked( count, 0, msg[offset] );
+					s->PostAcked( count, 1, msg[offset+1] );
+					s->PostAcked( count, 2, msg[offset+2] );
+					s->PostAcked( count, 3, msg[offset+3] );
 					
 					// Increment the offset by 19 bytes for next message index
 					offset += 19;
-					
-					// Increment the message count
+
 					count++;
 				}
 			}
 		}
-		
-		// Close the current bbi file
-		if( file ) fclose( file );
-		
-		// Increment to the next file
+
+		if( file )
+			fclose( file );
+
 		currentFile++;
 	}
-	
-	// Close bbi file
-	if( file ) fclose( file );
+
+	if( file )
+		fclose( file );
 	
 	// Update size fields of message with new values
-	msg[1] = (unsigned char)(offset>>8);
-	msg[2] = (unsigned char)(offset%256);
-	msg[3] = (unsigned char)(count>>8);
-	msg[4] = (unsigned char)(count%256);
+	msg[1] = (UI08)(offset>>8);
+	msg[2] = (UI08)(offset%256);
+	msg[3] = (UI08)(count>>8);
+	msg[4] = (UI08)(count%256);
 	
 	// Set global variable that holds the count of the number of posts being sent 
 	// to this particular client
-	postCount[s] = count;
+	s->PostCount( count );
 	
 	// Set the postAckCount to zero in preparation of the client ACKing the message
 	// about to be sent
-	postAckCount[s] = 0;
+	s->PostAckCount( 0 );
 	
 	// Send Draw Item message to client
-	Network->xSend( s, msg, offset, 0 );
+	s->Send( msg, offset );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -352,7 +303,7 @@ void MsgBoardOpen(int s)
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardList( int s )
+void MsgBoardList( cSocket *s )
 {
 	// READ IN bbp FILE (for list on message board)
 	
@@ -371,14 +322,13 @@ void MsgBoardList( int s )
 	char         fileName3[55];  // for local file
 	FILE         *file = NULL;
 	
-	int          msgBytes     = 0;  // Number of bytes to send to client (message size)
-	int          msgOffset    = 0;  // Total number of bytes between messages from start of file
-	unsigned int segmentSize  = 0;  // Size of a segment (Author, Subject, Date)
-	int          foundMsg     = 0;  // Flag when message has been found
-	int          boardSN      = 0;  // Bulletin Boards serial number (to determine what regions messages to display
-	int          currentFile  = 1;  // Starting file to open and iterate through (1=GLOBAL.bbp, 2=REGIONAL.bbp, 3=LOCAL.bbp)
-	int          w            = 0;  // Counter
-	int          x            = 0;  // Counter
+	int			msgBytes     = 0;  // Number of bytes to send to client (message size)
+	int			msgOffset    = 0;  // Total number of bytes between messages from start of file
+	UI32		segmentSize  = 0;  // Size of a segment (Author, Subject, Date)
+	int			foundMsg     = 0;  // Flag when message has been found
+	SI32		currentFile  = 1;  // Starting file to open and iterate through (1=GLOBAL.bbp, 2=REGIONAL.bbp, 3=LOCAL.bbp)
+	int			w            = 0;  // Counter
+	SI32		x            = 0;  // Counter
 	
 	// Determine what type of message this is in order to determine which file to open
 	// GLOBAL   Posts start at 01 00 00 00 -> 01 FF FF FF
@@ -386,32 +336,26 @@ void MsgBoardList( int s )
 	// LOCAL    Posts start at 03 00 00 00 -> 03 FF FF FF
 	
 	// Determine the Bulletin Boards serial number
-	boardSN = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+	CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
 	
 	// GLOBAL post file
 	sprintf( fileName1, "global.bbp" );
-	
+
 	// REGIONAL post file
 	// sprintf( fileName2, "%s.bbp", region[calcRegionFromXY(items[boardSN].x, items[boardSN].y)].name );
-	sprintf( fileName2, "region%d.bbp", calcRegionFromXY(items[boardSN].x, items[boardSN].y) );
+	sprintf( fileName2, "region%d.bbp", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
 	
 	// LOCAL post file
-	sprintf( fileName3, "%02x%02x%02x%02x.bbp", buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+	sprintf( fileName3, "%02x%02x%02x%02x.bbp", s->GetByte( 4 ), s->GetByte( 5 ), s->GetByte( 6 ), s->GetByte( 7 ) );
 	
-	// Open the bbp file for read
-	//file = fopen( fileName3, "rb");
-	
-	//if ( file == NULL ) return;   // Put file not found error control here
-	//if ( feof(file) ) return;     // Put end of file error control here
-	
-	while ( currentFile <= 3 )
+	while( currentFile <= 3 )
 	{
 		// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-		if (server_data.msgboardpath)
-			strcpy( fileName, server_data.msgboardpath );
+		if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+			strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 		
 		// Open the next file to process
-		switch ( currentFile )
+		switch( currentFile )
 		{
 		case 1:
 			// Start with the GLOBAL.bbp file first
@@ -419,36 +363,33 @@ void MsgBoardList( int s )
 			strcat( fileName, fileName1 );
 			file = fopen( fileName, "rb");
 			break;
-			
 		case 2:
 			// Set fileName to REGIONAL.bbi
 			//sysmessage( s, "Opening REGIONAL.bbp messages");
 			strcat( fileName, fileName2 );
 			file = fopen( fileName, "rb" );
 			break;
-			
 		case 3:
 			// Set fileName to LOCAL.bbi
 			//sysmessage( s, "Opening LOCAL.bbp messages");
 			strcat( fileName, fileName3 );
 			file = fopen( fileName, "rb" );
 			break;
-			
 		default:
-			printf("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
+			Console << "MsgBoardOpen() Unhandle case value: " << currentFile << myendl;
 			return;
 		}
 		msgOffset = 0;
 		
 		// If the file doesn't exist, increment the currenFile count and move onto the next file
-		if ( file != NULL )
+		if( file != NULL )
 		{
-			while ( w<postCount[s] )
+			while( w < s->PostCount() )
 			{
 				foundMsg = 0;
 				
 				// Find Message ID that has been requested
-				while ( !foundMsg ) 
+				while( !foundMsg ) 
 				{
 					x = 0;
 					//                                0       1     2      3      4   5   6      7   8    9    10   11   12   13   14   15
@@ -457,13 +398,14 @@ void MsgBoardList( int s )
 					msgBytes = 16;
 					
 					// If we have reached the EOF then stop searching
-					if ( feof(file) ) break;
+					if( feof( file ) ) 
+						break;
 					
 					// Check buffered message SN with currently read message SN
-					if (( msg[8]  == postAcked[s][w][0] ) &&
-						( msg[9]  == postAcked[s][w][1] ) &&
-						( msg[10] == postAcked[s][w][2]) &&
-						( msg[11] == postAcked[s][w][3]))
+					if( ( msg[8]  == s->PostAcked( w, 0 ) ) &&
+						( msg[9]  == s->PostAcked( w, 1 ) ) &&
+						( msg[10] == s->PostAcked( w, 2 ) ) &&
+						( msg[11] == s->PostAcked( w, 3 ) ) )
 					{
 						// Don't forget to set the flag to stop searching for the message when we find it
 						foundMsg = 1;
@@ -472,10 +414,10 @@ void MsgBoardList( int s )
 						w++;
 						
 						// Set the board SN values to the board that was just double-clicked on
-						msg[4] = buffer[s][4];
-						msg[5] = buffer[s][5];
-						msg[6] = buffer[s][6];
-						msg[7] = buffer[s][7];
+						msg[4] = s->GetByte( 4 );
+						msg[5] = s->GetByte( 5 );
+						msg[6] = s->GetByte( 6 );
+						msg[7] = s->GetByte( 7 );
 						
 						// Read in  author, subject and date info to pass back to client (DO NOT SEND BODY of msg)
 						// Count the total number of bytes in posting (not including body as it isn't sent to client)
@@ -488,7 +430,7 @@ void MsgBoardList( int s )
 						//             0 = Author
 						//             1 = Subject
 						//             2 = Date
-						for ( x=0; x<=2; x++ )
+						for( x = 0; x <= 2; x++ )
 						{
 							// Get the size of this segment and store it in the message
 							msg[msgBytes] = fgetc( file );
@@ -498,10 +440,10 @@ void MsgBoardList( int s )
 							msgBytes++;
 							
 							// Read in the number of bytes give by the segment size
-							if ( segmentSize != fread( &msg[msgBytes], sizeof(char), segmentSize, file ) )
+							if( segmentSize != fread( &msg[msgBytes], sizeof( char ), segmentSize, file ) )
 							{
 								// If we are unable to read in the number of bytes specified by the segmentSize, ABORT!
-								printf("UOX3: MsgBoardList() couldn't read in entire segment(%i)\n", x);
+								Console << "MsgBoardList() couldn't read in entire segment(" << x << ")" << myendl;
 								fclose( file );
 								return;
 							}
@@ -513,18 +455,18 @@ void MsgBoardList( int s )
 						msgOffset += (msg[1]<<8) + msg[2];
 						
 						// Jump to next message
-						if ( fseek(file, msgOffset, SEEK_SET) )
-							printf("UOX3: MsgBoardEvent() case 4 : failed to seek start of next message\n");
+						if( fseek(file, msgOffset, SEEK_SET) )
+							Console << "MsgBoardEvent() case 4 : failed to seek start of next message" << myendl;
 						
 						// Calculate new message size
-						msg[1] = (unsigned char)(msgBytes>>8);
-						msg[2] = (unsigned char)(msgBytes%256);
+						msg[1] = (UI08)(msgBytes>>8);
+						msg[2] = (UI08)(msgBytes%256);
 						
 						// Set packet 0x71 message type to 0x01 (send post item to message board list)
 						msg[3] = 1;
 						
 						// Send message to client
-						Network->xSend( s, msg, msgBytes, 0 );
+						s->Send( msg, msgBytes );
 					}
 					else // If this isn't the message were looking for, jump ahead to next message
 					{
@@ -532,13 +474,13 @@ void MsgBoardList( int s )
 						msgOffset += (msg[1]<<8) + msg[2];
 						
 						// Jump to next message
-						if ( fseek(file, msgOffset, SEEK_SET) )
+						if( fseek(file, msgOffset, SEEK_SET) )
 						{
-							printf("UOX3: MsgBoardEvent() case 4 : failed to seek next message\n");
+							Console << "MsgBoardEvent() case 4 : failed to seek next message" << myendl;
 							break;
 						}
 					}
-				} // End of Inner while loop (redundant but safe -- for now)
+				}
 				
 				// If we broke out of the loop  because EOF was reached then break out again
 				if( feof( file ) )
@@ -546,20 +488,14 @@ void MsgBoardList( int s )
 					fclose(file);
 					break;
 				}
-      }// End of Outer while loop
-	  
-    }// End of if block
-	
-	// Close the current file and increment the currentFile counter
-	if ( file ) fclose( file );
-	
-	// Increment the current file counter
-	currentFile++;
-	
-  }// End of While loop
-  
-  // If we still have 'file' open, close 'file'
-  if ( file ) fclose( file );
+			}
+		}
+		if( file )
+			fclose( file );
+		currentFile++;
+	}
+	if( file )
+		fclose( file );
 }
 
 
@@ -578,7 +514,7 @@ void MsgBoardList( int s )
 // RETURNS:     int         0 = Failed to get maximum serial number 
 //                          1 = Found and updated maximum serial number
 //////////////////////////////////////////////////////////////////////////////
-int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
+int MsgBoardGetMaxMsgSN( int msgType, int autoPost = 0 )
 {
 	FILE        *pFile            = NULL;
 	
@@ -586,46 +522,37 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	char        fileName[256]     = "";
 	char        msgbbiSegment[20] = "\x00\x00\x00\x00\x0e\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 	char        maxMsgSN[5]       = "";
-	
-	int         msgBoardSerial    = 0;
+
 	int         maxSN             = 0;
 	
 	struct tm   timeOfPost;
 	time_t      now;
 	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( fileName, server_data.msgboardpath );
-	
+	if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+		strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
+
+	char		temp[1024];
 	switch ( msgType )
 	{
-		// LOCAL post
 	case LOCALPOST:
 		// Get Message Board serial number from message buffer
 		sprintf( temp, "%02x%02x%02x%02x.bbi", msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7]);
 		break;
-		
-		// REGIONAL post
 	case REGIONALPOST:
 		// set the Message Board fileName to the proper region number
-		if ( autoPost )
-		{
-			sprintf( temp, "region%d.bbi", chars[calcCharFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7])].region );
-		}
+		if( autoPost )
+			sprintf( temp, "region%d.bbi", chars[calcCharFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7])].GetRegion() );
 		else
 		{
-			msgBoardSerial = calcItemFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7]);
-			sprintf( temp, "region%d.bbi", calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y) );
+			CItem *msgBoard = calcItemObjFromSer( calcserial( msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7] ) );
+			sprintf( temp, "region%d.bbi", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
 		}
 		break;
-		
-		// GLOBAL POST
 	case GLOBALPOST:
 		sprintf( temp, "global.bbi" );
 		break;
-		
-		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+		Console << "MsgBoardGetMaxMsgSN() Invalid post type, aborting post" << myendl;
 		return 0;
 	}
 	
@@ -634,19 +561,17 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	
 	// Get the current maximum message s/n from the bbi file
 	pFile = fopen( fileName, "rb" );
-	if ( pFile == NULL )
+	if( pFile == NULL )
 	{
-		printf("UOX3: MsgBoardGetMaxMsgSN() bbi not found. Creating file %s\n", fileName );
-		
-		// Default to serial number 0
+		Console << "MsgBoardGetMaxMsgSN() bbi not found. Creating file " << fileName << myendl;
 		maxSN = 0;
 	}
 	else // bbi file exists so read in first 4 bytes to get current maximum serial number
 	{
 		// Get the first 4 bytes from each message index segment in the bbi file
-		if ( fread(maxMsgSN, sizeof(char), 4, pFile) != 4 )
+		if( fread(maxMsgSN, sizeof(char), 4, pFile) != 4 )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Could not get MaxSN from %s\n", fileName );
+			Console << "MsgBoardGetMaxMsgSN() Could not get MaxSN from " << fileName << myendl;
 			
 			fclose( pFile );
 			return 0;
@@ -654,22 +579,20 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		// Calculate the maxSN in decimal
 		maxSN = (maxMsgSN[0]<<24) + (maxMsgSN[1]<<16) + (maxMsgSN[2]<<8) + maxMsgSN[3];
-		
-		// Increment maxSN to new value
 		maxSN++;
 	}
-	
-	// Done retrieving maxMsgSN so close bbi file
-	if ( pFile ) fclose( pFile );
+
+	if( pFile )
+		fclose( pFile );
 	
 	// If the maxSN == 0 then the file does not exist yet so create the file
-	if ( maxSN == 0 )
+	if( maxSN == 0 )
 	{
 		pFile = fopen( fileName, "ab+" );
 		
-		if ( pFile == NULL )
+		if( pFile == NULL )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Error creating bbi file, aborting post\n");
+			Console << "MsgBoardGetMaxMsgSN() Error creating bbi file" << fileName << ", aborting post" << myendl;
 			return 0;
 		}
 		else
@@ -679,39 +602,34 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 			// LOCAL    Posts start at 03 00 00 00 -> 03 FF FF FF
 			switch ( msgType )
 			{
-				// LOCAL post
 			case LOCALPOST:
 				// Write out the serial number as 4 bytes
 				// Write 03 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
-				if ( fwrite("\x03\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
+				if( fwrite("\x03\x00\x00\x00", sizeof( char ), 4, pFile ) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					Console.Error( 1, "MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post" );
 					fclose( pFile );
 					return 0;
 				}
 				// Set maxSN to its startup default
 				maxSN = 0x3000000;
 				break;
-				
-				// REGIONAL post
 			case REGIONALPOST:
 				// Write 02 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
-				if ( fwrite("\x02\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
+				if( fwrite( "\x02\x00\x00\x00", sizeof(char), 4, pFile ) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					Console.Error( 1, "MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post" );
 					fclose( pFile );
 					return 0;
 				}
 				// Set maxSN to its startup default
 				maxSN = 0x2000000;
 				break;
-				
-				// GLOBAL POST (any other value)
 			case GLOBALPOST:
 				// Write 01 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
-				if ( fwrite("\x01\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
+				if( fwrite("\x01\x00\x00\x00", sizeof( char ), 4, pFile ) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					Console.Error( 1, "MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post" );
 					fclose( pFile );
 					return 0;
 				}
@@ -719,10 +637,8 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Set maxSN to its startup default
 				maxSN = 0x1000000;
 				break;
-				
-				// Invalid post type
 			default:
-				printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+				Console.Error( 1, "MsgBoardGetMaxMsgSN() Invalid post type, aborting post" );
 				fclose( pFile );
 				return 0;
 			}
@@ -733,40 +649,40 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		// File must have existed already if maxSN > 0 so open the file as read/write
 		pFile = fopen( fileName, "rb+" );
 		
-		if ( pFile == NULL )
+		if( pFile == NULL )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Failed to create bbi file, aborting post\n");
+			Console.Error( 1, "MsgBoardGetMaxMsgSN() Failed to create bbi file %s, aborting post", fileName );
 			return 0;
 		}
 		else
 		{
 			// Set file pointer to BOF
-			if ( fseek(pFile, 0, SEEK_SET) )
+			if( fseek( pFile, 0, SEEK_SET ) )
 			{
-				printf("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to BOF in bbi file\n");
+				Console.Error( 1, "MsgBoardGetMaxMsgSN() Failed to set pFile to BOF in bbi file" );
 				fclose( pFile );
 				return 0;
 			}
 			else
 			{
 				// Convert maxSN to an char array
-				maxMsgSN[0] = (unsigned char)(maxSN>>24);
-				maxMsgSN[1] = (unsigned char)(maxSN>>16);
-				maxMsgSN[2] = (unsigned char)(maxSN>>8);
-				maxMsgSN[3] = (unsigned char)(maxSN%256);
+				maxMsgSN[0] = (UI08)(maxSN>>24);
+				maxMsgSN[1] = (UI08)(maxSN>>16);
+				maxMsgSN[2] = (UI08)(maxSN>>8);
+				maxMsgSN[3] = (UI08)(maxSN%256);
 				
 				// Write out new maxSN for this post
-				if ( fwrite( maxMsgSN, sizeof(char), 4, pFile) != 4 )
+				if( fwrite( maxMsgSN, sizeof( char ), 4, pFile ) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					Console.Error( 1, "MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post" );
 					fclose( pFile );
 					return 0;
 				}
 				
 				// Now jump to EOF to write next msgbbiSegment info
-				if ( fseek(pFile, 0, SEEK_END) )
+				if( fseek( pFile, 0, SEEK_END ) )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to EOF in bbi file\n");
+					Console.Error( 1, "MsgBoardGetMaxMsgSN() Failed to set pFile to EOF in bbi file");
 					fclose( pFile );
 					return 0;
 				}
@@ -775,10 +691,10 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	}
 	
 	// Set bytes to proper values in bbi message array
-	msgbbiSegment[0]  = (unsigned char)(maxSN>>24);  // Message ID 1
-	msgbbiSegment[1]  = (unsigned char)(maxSN>>16);     // Message ID 2
-	msgbbiSegment[2]  = (unsigned char)(maxSN>>8);       // Message ID 3
-	msgbbiSegment[3]  = (unsigned char)(maxSN%256);       // Message ID 4
+	msgbbiSegment[0]  = (UI08)(maxSN>>24);  // Message ID 1
+	msgbbiSegment[1]  = (UI08)(maxSN>>16);     // Message ID 2
+	msgbbiSegment[2]  = (UI08)(maxSN>>8);       // Message ID 3
+	msgbbiSegment[3]  = (UI08)(maxSN%256);       // Message ID 4
 	msgbbiSegment[6]  = msg2Post[3];     // 05 = user posted message, 0xFF and lower  is a quest post (0xFF is escort quest)
 	
 	// Calculate current time and date ( for later bulletin board maintenance routine )
@@ -790,7 +706,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	
 	// If this is an autoPost then set the CHAR or ITEM serial number in order to mark it for deletion
 	// after the quest is done.
-	if ( autoPost )
+	if( autoPost )
 	{
 		msgbbiSegment[13]  = msg2Post[4];  // CHAR or ITEM SN1
 		msgbbiSegment[14]  = msg2Post[5];  // CHAR or ITEM SN2
@@ -803,65 +719,54 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	// LOCAL    Posts start at 03 00 00 00 -> 03 FF FF FF
 	switch ( msgType )
 	{
-		// LOCAL post
 	case LOCALPOST:
 		// Check to see if Maximum number of posts have been reached
-		//if ( ((maxSN-0x03000000) >= MAXPOSTS) || (maxSN >= 0xFFFFFFFF) )
-		if ( maxSN >= 0x03FFFFFF )
+		//if( ((maxSN-0x03000000) >= MAXPOSTS) || (maxSN >= 0xFFFFFFFF) )
+		if( maxSN >= 0x03FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			Console.Error( 3, "MsgBoardGetMaxMsgSN() Max posts reached in %s", fileName );
 			fclose( pFile );
 			return 0;
 		}
 		break;
-		
-		// REGIONAL post
 	case REGIONALPOST:
 		// Check to see if Maximum number of posts have been reached
-		//if ( ((maxSN-0x02000000) >= MAXPOSTS) || (maxSN >= 0x02FFFFFF) )
-		if ( maxSN >= 0x02FFFFFF )
+		//if( ((maxSN-0x02000000) >= MAXPOSTS) || (maxSN >= 0x02FFFFFF) )
+		if( maxSN >= 0x02FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			Console.Error( 3, "MsgBoardGetMaxMsgSN() Max posts reached in %s", fileName );
 			fclose( pFile );
 			return 0;
 		}
 		break;
-		
-		// GLOBAL POST (any other value)
 	case GLOBALPOST:
 		// Check to see if Maximum number of posts have been reached
-		//if ( ((maxSN-0x01000000) >= MAXPOSTS) || (maxSN >= 0x01FFFFFF) )
-		if ( maxSN >= 0x01FFFFFF )
+		//if( ((maxSN-0x01000000) >= MAXPOSTS) || (maxSN >= 0x01FFFFFF) )
+		if( maxSN >= 0x01FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			Console.Error( 3, "MsgBoardGetMaxMsgSN() Max posts reached in %s", fileName );
 			fclose( pFile );
 			return 0;
 		}
 		break;
-		
-		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+		Console.Error( 3, "MsgBoardGetMaxMsgSN() Invalid post type, aborting post" );
 		fclose( pFile );
 		return 0;
 	}
 	
 	// Write out bbi message array to file
-	if ( fwrite(msgbbiSegment, sizeof(char), (sizeof(msgbbiSegment)-1), pFile) != (sizeof(msgbbiSegment)-1) )
+	if( fwrite(msgbbiSegment, sizeof(char), (sizeof(msgbbiSegment)-1), pFile) != (sizeof(msgbbiSegment)-1) )
 	{
-		printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+		Console.Error( 1, "MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post" );
 		fclose( pFile );
 		return 0;
 	}
-	
-	// Close bbi file for the final time
+
 	fclose( pFile );
-	
-	// Return int value of new posts serial number
+
 	return maxSN;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 // FUNCTION:    MsgBoardPost( int s, int msgType, int autoPost )
@@ -881,7 +786,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 // RETURNS:     int         0 = Failed to post message
 //                          1 = Post successful
 //////////////////////////////////////////////////////////////////////////////
-int MsgBoardPost( int s, int msgType, int autoPost )
+bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
 {
 	// WRITE FILE OUT (POST MESSAGE)
 	
@@ -894,7 +799,6 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	int         newMsgSN              = 0;
 	int         maxMsgSN              = 0;
 	int         isReply               = 0;
-	int         msgBoardSerial        = 0;
 	int         x, y, z, pos, offset;
 	
 	char        msgHeader[17]         = "";
@@ -902,30 +806,32 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	char        msgBody[MAXBUFFER]    = "";
 	char        msgAuthor[52]         = "";   // Maximum name size from char_st (Size + Name)
 	char        msgDate[17]           = "";   // Maximum date size based on Size + "Day ### @ hh:mm" format
+	CChar *mChar = s->CurrcharObj();
 	
 	struct tm   timeOfPost;
 	time_t      now;
+	char		temp[1024];
 	
 	// If this is a users post (done from the client) then copy the client buffer[s] into our buffer
-	if ( !autoPost )
+	if( !autoPost )
 	{
-		memcpy( msg2Post, buffer[s], (buffer[s][1]*256 + buffer[s][2]) );
+		memcpy( msg2Post, s->Buffer(), s->GetWord( 1 ) );
 		
 		// Determine what type of post this is supposed to be and then set the proper file name
 		// Also, if this is a reply to a base post, then abort posting if the reply is to a
 		// GLOBAL or REGIONAL message.  No one can reply to GLOBAL or REGIONAL messages as they
 		// as for informational purposes only (discussions should be taken offline).  There is no
 		// reason to reply to a quest post execpt to fill up the message board.
-		isReply = (msg2Post[8]*16777216) + (msg2Post[9]*65536) + (msg2Post[10]*256) + msg2Post[11];
+		isReply = s->GetDWord( 8 ); // (msg2Post[8]*16777216) + (msg2Post[9]*65536) + (msg2Post[10]*256) + msg2Post[11];
 		
 		// If this is a reply to anything other than a LOCAL post, abort
-		if ( (isReply>0) && (isReply<0x03000000) )
+		if( (isReply>0) && (isReply<0x03000000) )
 		{
 #ifdef DEBUG
-			printf("UOX3: MsgBoardPost() Attempted reply to a global or regional post\n");
+			Console << "MsgBoardPost() Attempted reply to a global or regional post" << myendl;
 #endif
-			sysmessage( s, "You can not reply to global or regional posts" );
-			return 0;
+			sysmessage( s, 729 );
+			return false;
 		}
 	}
 	
@@ -934,50 +840,41 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	maxMsgSN = MsgBoardGetMaxMsgSN( msgType, autoPost );
 	
 	// If the value returned is zero, then abort the posting
-	if ( maxMsgSN == 0 )
+	if( maxMsgSN == 0 )
 	{
-		printf("UOX3: MsgBoardPost() Could not retrieve a valid message serial number\n");
-		sysmessage( s, "Post failed!" );
-		return 0;
+		Console.Error( 1, "MsgBoardPost() Could not retrieve a valid message serial number" );
+		sysmessage( s, 730 );
+		return false;
 	}
 	
 	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( fileName, server_data.msgboardpath );
+	if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+		strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 	
 	
-	switch ( msgType )
+	switch( msgType )
 	{
-		// LOCAL post
 	case LOCALPOST:
 		// Get Message Board serial number from message buffer
 		sprintf( temp, "%02x%02x%02x%02x.bbp", msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7]);
 		break;
-		
-		// REGIONAL post
 	case REGIONALPOST:
 		// set the Message Board fileName to the proper region number
-		if ( autoPost )
-		{
-			sprintf( temp, "region%d.bbp", chars[calcCharFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7])].region );
-		}
+		if( autoPost )
+			sprintf( temp, "region%d.bbp", chars[calcCharFromSer( s->GetDWord( 4 ) )].GetRegion() ); // msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7])].GetRegion() );
 		else
 		{
-			msgBoardSerial = calcItemFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7]);
-			sprintf( temp, "region%d.bbp", calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y) );
+			CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) ); // calcItemFromSer(msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7]);
+			sprintf( temp, "region%d.bbp", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
 		}
 		break;
-		
-		// GLOBAL POST
 	case GLOBALPOST:
 		sprintf( temp, "global.bbp" );
 		break;
-		
-		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardPost() Invalid post type, aborting post\n");
-		sysmessage( s, "Invalid post type!" );
-		return 0;
+		Console.Error( 1, "MsgBoardPost() Invalid post type, aborting post" );
+		sysmessage( s, 725 );
+		return false;
 	}
 	
 	// Append file name to end of path
@@ -987,32 +884,32 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	pFile=fopen( fileName, "ab+");
 	
 	// If we couldn't open the file, send an error message to client
-	if ( pFile == NULL )
+	if( pFile == NULL )
 	{
-		printf("UOX3: MsgBoardPost() Unable to open bbp file, aborting post\n");
-		return 0;
+		Console.Error( 1, "MsgBoardPost() Unable to open bbp file %s, aborting post", fileName );
+		return false;
 	}
 	
 	// Calculate original size of the message that the client sent to us
-	origMsgSize = ( (buffer[s][1]<<8) + buffer[s][2] );
+	origMsgSize = s->GetWord( 1 ); // ( (buffer[s][1]<<8) + buffer[s][2] );
 	
 	// Get the messages header info (packet type, size, type, board S/N, parent msg S/N(replies only))
-	for ( x=0; x<12; x++ )
+	for( x = 0; x < 12; x++ )
 		msgHeader[x] = msg2Post[x];
 	
 	
 	// Set new messages serial number to maxMsgSN from the bbi file
-	msgHeader[8]  = (unsigned char)(maxMsgSN>>24);
-	msgHeader[9]  = (unsigned char)(maxMsgSN>>16);
-	msgHeader[10] = (unsigned char)(maxMsgSN>>8);
-	msgHeader[11] = (unsigned char)(maxMsgSN%256);
+	msgHeader[8]  = (UI08)(maxMsgSN>>24);
+	msgHeader[9]  = (UI08)(maxMsgSN>>16);
+	msgHeader[10] = (UI08)(maxMsgSN>>8);
+	msgHeader[11] = (UI08)(maxMsgSN%256);
 	
 	// Get the new messages serial number (which is its post position on the board- anything other than 00 00 00 00 
 	// (base post) is a reply to a specific message ID )
-	newMsgSN = (buffer[s][8]<<24) + (buffer[s][9]<<16) + (buffer[s][10]<<8) + buffer[s][11];
+	newMsgSN = s->GetDWord( 8 ); // (buffer[s][8]<<24) + (buffer[s][9]<<16) + (buffer[s][10]<<8) + buffer[s][11];
 	
 	// If the newMsgSN is 0 then it is a base post, other wise it is a reply to a previous post
-	if ( newMsgSN )
+	if( newMsgSN )
 	{
 		// Create the proper parent message ID segment for the new post
 		msgHeader[12] = msg2Post[8];
@@ -1037,7 +934,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	// Get the messages subject info (size, subject)
 	y = msg2Post[pos];  // get the size of the subject
 	
-	for ( x=0; x<=y; x++ )    // Do while we get all bytes
+	for( x = 0; x <= y; x++ )    // Do while we get all bytes
 		msgSubject[x] = msg2Post[pos+x];  // get the subject message (size and data)
 	
 	pos += x;
@@ -1047,16 +944,16 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	offset = 0;
 	
 	// Check if body of post is empty (NULL)
-	if ( z )
+	if( z )
 	{
 		// Get the FIRST Body segment size + 2 for pre segment size bytes
 		y = msg2Post[pos+1] + 2;
 		
 		// Loop until number of remaining NULLS equal zero
-		while (z)  
+		while( z )  
 		{
 			// Store Body segment into msgBody ( continue until NULL reached )
-			for ( x=0; x<y; x++ )
+			for( x = 0; x < y; x++ )
 				msgBody[x+offset] = msg2Post[pos+x];
 			
 			offset += x;
@@ -1078,8 +975,8 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	
 	// Get the Authors info and create msgAuthor packet
 	// if this was a user posting, get the characters name, other wise leave it blank
-	if ( !autoPost )
-		strncpy( &msgAuthor[1], chars[currchar[s]].name, (sizeof(msgAuthor)-1) );
+	if( !autoPost )
+		strncpy( &msgAuthor[1], mChar->GetName(), (sizeof(msgAuthor)-1) );
 	msgAuthor[0] = strlen(&msgAuthor[1]) + 1;  // get the length of the name + 1 for null
 	
 	newMsgSize += (msgAuthor[0]+1);   // Update the new total length of the message
@@ -1090,11 +987,8 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	timeOfPost = *localtime( &now );
 	
 	// Create msgDate data packet
-	sprintf( &msgDate[1], "Day %i @ %i:%02i\0",
-		(timeOfPost.tm_yday+1),
-		timeOfPost.tm_hour,
-		timeOfPost.tm_min );
-	
+	sprintf( &msgDate[1], "Day %i @ %i:%02i\0",	(timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
+
 	// get the length of the date + 1 for null
 	msgDate[0] = strlen(&msgDate[1]) + 1;       
 	
@@ -1105,8 +999,8 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	// msgHeader + sizeof(msgAuthor) + msgAuthor
 	
 	// Write out the msgHeader
-	msgHeader[1] = (unsigned char)(newMsgSize>>8);
-	msgHeader[2] = (unsigned char)(newMsgSize%256);
+	msgHeader[1] = (UI08)(newMsgSize>>8);
+	msgHeader[2] = (UI08)(newMsgSize%256);
 	fwrite( msgHeader, sizeof(char), (sizeof(msgHeader)-1), pFile );
 	
 	// Write out the msgAuthor
@@ -1125,37 +1019,24 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	fclose( pFile );
 	
 	// if this was a user post, then immediately update the message board with the newly created message
-	if ( !autoPost )
+	if( !autoPost )
 	{
-		// Add item   |s1|s2|s3|s4|m1|m2|??|#i|#i|x1|x2|y1|y2|b1|b2|b3|b4|c1|c2 
-		//[RECV:20] 25 40 2b 38 1a 0e b0 00 00 00 00 00 00 00 40 07 ba 3d 00 00 
-		char addItem[21] = "\x25\x00\x00\x00\x00\x0e\xb0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-		
-		// Insert posts serial number into addItem[] packet
-		addItem[1]  = msgHeader[8];
-		addItem[2]  = msgHeader[9];
-		addItem[3]  = msgHeader[10];
-		addItem[4]  = msgHeader[11];
-		
-		// Insert posts bulleting board serial number into addItem[] packet
-		addItem[14] = msgHeader[4];
-		addItem[15] = msgHeader[5];
-		addItem[16] = msgHeader[6];
-		addItem[17] = msgHeader[7];
+		CPAddItemToCont toAdd;
+		toAdd.Serial( calcserial( msgHeader[8], msgHeader[9], msgHeader[10], msgHeader[11] ) );
+		toAdd.Container( calcserial( msgHeader[4], msgHeader[5], msgHeader[6], msgHeader[7] ) );
 		
 		// Setup buffer to expect to receive an ACK from the client for this posting
-		postCount[s]       = 1;
-		postAckCount[s]    = 0;
-		postAcked[s][0][0] = msgHeader[8];
-		postAcked[s][0][1] = msgHeader[9];
-		postAcked[s][0][2] = msgHeader[10];
-		postAcked[s][0][3] = msgHeader[11];
+		s->PostCount( 1 );
+		s->PostAckCount( 0 );
+		s->PostAcked( 0, 0, msgHeader[8] );
+		s->PostAcked( 0, 1, msgHeader[9] );
+		s->PostAcked( 0, 2, msgHeader[10] );
+		s->PostAcked( 0, 3, msgHeader[11] );
 		
 		// Send "Add Item to Container" message to client
-		Network->xSend( s, addItem, 20, 0);
+		s->Send( &toAdd );
 	}
-	// Return success
-	return 1;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1168,7 +1049,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardOpenPost( int s )
+void MsgBoardOpenPost( cSocket *s )
 {
 	// READ IN bbp FILE  (Client dbl-clicked on posted message on message board list)
 	// Get Message Board serial number from message buffer
@@ -1177,14 +1058,14 @@ void MsgBoardOpenPost( int s )
 	char fileName[256] = "";
 	FILE *file = NULL;
 	
-	int msgSN           = 0;
-	int msgBoardSerial  = 0;
-	int msgBytes        = 0;
-	int dateBytes       = 0;
-	int authorBytes     = 0;
-	int subjectBytes    = 0;
-	int foundMsg        = 0;
-	int x, y, z;
+	int		msgSN           = 0;
+	int		msgBytes        = 0;
+	int		dateBytes       = 0;
+	int		authorBytes     = 0;
+	int		subjectBytes    = 0;
+	int		foundMsg        = 0;
+	int		x, y, z;
+	char	temp[1024];
 	
 	
 	// Calculate the messages SN to determine which file to open
@@ -1193,14 +1074,14 @@ void MsgBoardOpenPost( int s )
 	// LOCAL    Posts start at 03 00 00 00 -> 03 FF FF FF
 	
 	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( fileName, server_data.msgboardpath );
+	if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+		strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 	
 	
-	msgSN = (buffer[s][8]*16777216) + (buffer[s][9]*65536) + (buffer[s][10]*256) + buffer[s][11];
+	msgSN = s->GetDWord( 8 );
 	
 	// Is msgSN within the GLOBAL post range
-	if ( (msgSN>=0x01000000) && (msgSN<=0x01FFFFFF) )
+	if( (msgSN>=0x01000000) && (msgSN<=0x01FFFFFF) )
 	{
 #ifdef DEBUG
 		sysmessage( s, "Opening GLOBAL.bbp posting");
@@ -1209,65 +1090,70 @@ void MsgBoardOpenPost( int s )
 		file = fopen( fileName, "rb" );
 	}
 	// Is msgSN within the REGIONAL post range
-	else if ( (msgSN>=0x02000000) && (msgSN<=0x02FFFFFF) )
+	else if( (msgSN>=0x02000000) && (msgSN<=0x02FFFFFF) )
 	{
 #ifdef DEBUG
 		sysmessage( s, "Opening REGIONAL.bbp posting");
 #endif
-		msgBoardSerial = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-		sprintf( temp, "region%d.bbp", calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y) );
+		CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
+		sprintf( temp, "region%d.bbp", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
 		strcat( fileName, temp );
 		file = fopen( fileName, "rb" );
 	}
 	// Is msgSN within the LOCAL post range
-	else if ( (msgSN>=0x03000000) && (msgSN<=0xFFFFFFFF) )
+	else if( (msgSN>=0x03000000) && (msgSN<=0xFFFFFFFF) )
 	{
 #ifdef DEBUG
 		sysmessage( s, "Opening LOCAL.bbp posting");
 #endif
-		sprintf( temp, "%02x%02x%02x%02x.bbp", buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+		sprintf( temp, "%02x%02x%02x%02x.bbp", s->GetByte( 4 ), s->GetByte( 5 ), s->GetByte( 6 ), s->GetByte( 7 ) );
 		strcat( fileName, temp );
 		file = fopen( fileName, "rb" );
 	}
 	// This msgSN does not fall within a valid range
 	else
 	{
-		printf("UOX3: MsgBoardOpenPost() Invalid message SN: %02x%02x%02x%02x", buffer[s][8], buffer[s][9], buffer[s][10], buffer[s][11] );
-		sysmessage( s, "Post not valid, please notify GM");
+		Console.Error( 1, "MsgBoardOpenPost() Invalid message SN: %02x%02x%02x%02x", s->GetByte( 8 ), s->GetByte( 9 ), s->GetByte( 10 ), s->GetByte( 11 ) );
+		sysmessage( s, 732 );
 		return;
 	}
 	
-	if (file == NULL) return;   // Put file not found error control here
-	if (feof(file)) return;     // Put end of file error control here
+	if( file == NULL )
+	{
+		Console.Error( 1, "Failed to open %s for reading", fileName );
+		return;   // Put file not found error control here
+	}
+	if( feof( file ) )
+		return;     // Put end of file error control here
 	
 	// Find Message ID that has been requested
-	while ( !foundMsg ) 
+	while( !foundMsg ) 
 	{
 		//                                0       1     2      3      4   5   6      7   8    9    10   11   12   13   14   15
 		// Read In the first 12 bytes |PacketID|Size1|Size2|MsgType|bSn1|bSn2|bSn3|bSn4|mSn1|mSn2|mSn3|mSn4|pmSN|pmSN|pmSN|pmSN|
-		for ( x=0; x<12; x++)
+		for( x = 0; x < 12; x++ )
 			msg[x] = fgetc( file );
 		
 		// If we have reached the EOF then stop searching
-		if ( feof(file) )
+		if( feof( file ) )
 		{
-			printf("UOX3: MsgBoardEvent() case 3: message not found \n");
+			Console.Error( 1, "MsgBoardEvent() case 3: message not found ");
 			break;
 		}
 		
 		// Find post that was ACK'd by client
-		if (( msg[8]  == buffer[s][8] ) &&
-			( msg[9]  == buffer[s][9] ) &&
-			( msg[10] == buffer[s][10]) &&
-			( msg[11] == buffer[s][11]))
+		if( ( msg[8]  == s->GetByte( 8 ) ) &&
+			( msg[9]  == s->GetByte( 9 ) ) &&
+			( msg[10] == s->GetByte( 10 ) ) &&
+			( msg[11] == s->GetByte( 11 ) ) )
 		{
 			// Don't forget to set the flag to stop searching for the message when we find it
 			foundMsg = 1;
 			
 			// Jump ahead 4 bytes in bbp file to skip 
 			// the parent message serial number section as it is not required
-			if ( fseek(file, 4, SEEK_CUR) )
-				printf("UOX3: MsgBoardEvent() case 3 : failed to seek Author segment\n");
+			if( fseek( file, 4, SEEK_CUR ) )
+				Console.Error( 1, "MsgBoardEvent() case 3 : failed to seek Author segment" );
 			
 			// Read in  author, subject and date info to pass back to client (DO NOT SEND BODY of msg)
 			// Count the total number of bytes in posting (not including body as it isn't sent to client)
@@ -1275,48 +1161,54 @@ void MsgBoardOpenPost( int s )
 			
 			// Get size of Author segment
 			msg[msgBytes] = fgetc( file );
-			if ( feof(file) ) return;
+			if( feof( file ) )
+				return;
 			msgBytes++;
 			
 			// Store size of Author segment
 			authorBytes = msg[msgBytes-1];
 			
 			// Fill in msg[] with Author data
-			for ( x=0; x<authorBytes; x++)
+			for( x = 0; x < authorBytes; x++ )
 			{
 				msg[msgBytes+x] = fgetc( file );
-				if ( feof(file) ) return;
+				if( feof( file ) )
+					return;
 			}
 			msgBytes += x;
 			// Get size of Subject segment
 			msg[msgBytes] = fgetc( file );
-			if ( feof(file) ) return;
+			if( feof( file ) )
+				return;
 			msgBytes++;
 			
 			// Store size of Subject segment
 			subjectBytes = msg[msgBytes-1];
 			
 			// Fill in msg[] with Subject data
-			for ( x=0; x<subjectBytes; x++)
+			for( x = 0; x < subjectBytes; x++ )
 			{
 				msg[msgBytes+x] = fgetc( file );
-				if ( feof(file) ) return;
+				if( feof( file ) )
+					return;
 			}
 			msgBytes += x;
 			
 			// Get size of Date segment
 			msg[msgBytes] = fgetc( file );
-			if ( feof(file) ) return;
+			if( feof( file ) )
+				return;
 			msgBytes++;
 			
 			// Store size of Date segment
 			dateBytes = msg[msgBytes-1];
 			
 			// Fill in msg[] with Date data
-			for ( x=0; x<dateBytes; x++)
+			for( x = 0; x < dateBytes; x++ )
 			{
 				msg[msgBytes+x] = fgetc( file );
-				if ( feof(file) ) return;
+				if( feof( file ) )
+					return;
 			}
 			msgBytes += x;
 			
@@ -1326,7 +1218,7 @@ void MsgBoardOpenPost( int s )
 			char weird[30]="\x01\x90\x83\xea\x06\x15\x2e\x07\x1d\x17\x0f\x07\x37\x1f\x7b\x05\xeb\x20\x3d\x04\x66\x20\x4d\x04\x66\x0e\x75\x00\x00";
 			
 			// Fill in weird portion between DATE and BODY
-			for ( x=0; x<29; x++ )
+			for( x = 0; x < 29; x++ )
 				msg[msgBytes+x] = weird[x];
 			
 			msgBytes += x;
@@ -1339,10 +1231,10 @@ void MsgBoardOpenPost( int s )
 			msg[msgBytes] = z;
 			msgBytes++;
 			
-			while (z)  // Loop until number of remaining NULLS equal zero
+			while( z )  // Loop until number of remaining NULLS equal zero
 			{
 				y = fgetc( file );     // Get the FIRST Body segment size
-				if ( feof(file) )
+				if( feof( file ) )
 				{
 					fclose( file );
 					break;
@@ -1352,7 +1244,7 @@ void MsgBoardOpenPost( int s )
 				msgBytes++;
 				
 				// Get Body segment into msg[] ( continue until 0x00 reached )
-				for ( x=0; x<y; x++ )
+				for( x = 0; x < y; x++ )
 				{
 					msg[msgBytes+x] = fgetc( file );
 				}
@@ -1363,27 +1255,23 @@ void MsgBoardOpenPost( int s )
 				z--;
 			}
 			
-			msg[1] = (unsigned char)(msgBytes>>8);
-			msg[2] = (unsigned char)(msgBytes%256);
+			msg[1] = (UI08)(msgBytes>>8);
+			msg[2] = (UI08)(msgBytes%256);
 			msg[3] = 2;              // Set packet 0x71 message type to 0x02 (send full message)
-   }
-   else // If this isn't the message were looking for, jump ahead to next message
-   {
-	   // Since we didn't find the message in this pass, get this messages size and jump ahead
-	   msgBytes += (msg[1]*256) + msg[2];
-	   
-	   // Jump to next message
-	   if ( fseek(file, msgBytes, SEEK_SET) )
-		   printf("UOX3: MsgBoardEvent() case 3 : failed to seek next message\n");
-   }
-   
-  }// End of while loop
-  
-  // Close bbp file and return
-  fclose(file);
-  
-  // Send message to client
-  Network->xSend(s, msg, msgBytes, 0);
+		}
+		else // If this isn't the message were looking for, jump ahead to next message
+		{
+			// Since we didn't find the message in this pass, get this messages size and jump ahead
+			msgBytes += (msg[1]*256) + msg[2];
+
+			// Jump to next message
+			if( fseek( file, msgBytes, SEEK_SET ) )
+				Console << "MsgBoardEvent() case 3 : failed to seek next message" << myendl;
+		}
+	}
+
+	fclose(file);
+	s->Send( msg, msgBytes );
 }
 
 
@@ -1397,7 +1285,7 @@ void MsgBoardOpenPost( int s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardRemovePost( int s )
+void MsgBoardRemovePost( cSocket *s )
 {
 	
 	// Sample REMOVE POST message from client
@@ -1409,86 +1297,75 @@ void MsgBoardRemovePost( int s )
 	// Find the post and mark it for deletion
 	// thereby removing it from the bulletin boards list
 	
-	// int s = calcSerFromChar( serial );
-	
 	FILE *file = NULL;
 	// 50 chars for prefix and 4 for the extension plus the ending NULL
 	char fileName[256] = "";
-	
-	int msgSN      = 0;
-	int msgBoardSN = 0;
+	char temp[1024];
 	
 	// Get the integer value of the message serial number
-	msgSN = (buffer[s][8]*16777216) + (buffer[s][9]*65536) + (buffer[s][10]*256) + buffer[s][11];
+//	SI32 msgSN = s->GetDWord( 8 );
 	
 	// Calculate the Bulletin Boards serial number
-	msgBoardSN = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+	CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
 	
 	// Switch depending on what type of message this is:
 	// GLOBAL = 0x01000000 -> 0x01FFFFFF
 	// REGION = 0x02000000 -> 0x02FFFFFF
 	// LOCAL  = 0x03000000 -> 0x03FFFFFF
-	switch ( buffer[s][8] )
+	switch( s->GetByte( 8 ) )
 	{
 	case 0x01:
-		{
-			// GLOBAL post file
-			sprintf( temp, "global.bbi" );
-			break;
-		}
-		
+		// GLOBAL post file
+		sprintf( temp, "global.bbi" );
+		break;
 	case 0x02:
-		{
-			// REGIONAL post file
-			sprintf( temp, "region%d.bbi", calcRegionFromXY(items[msgBoardSN].x, items[msgBoardSN].y) );
-			break;
-		}
-		
+		// REGIONAL post file
+		sprintf( temp, "region%d.bbi", calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() ) );
+		break;
 	default:
-		{
-			// LOCAL post file
-			sprintf( temp, "%02x%02x%02x%02x.bbi", buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-			break;
-		}
+		// LOCAL post file
+		sprintf( temp, "%02x%02x%02x%02x.bbi", s->GetByte( 4 ), s->GetByte( 5 ), s->GetByte( 6 ), s->GetByte( 7 ) );
+		break;
 	}
 	
 	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( fileName, server_data.msgboardpath );
+	if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+		strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 	
 	// Create the full path to the file we need to open
 	strcat( fileName, temp );
 	file = fopen( fileName, "rb+" );
 	
 	// If the file exists continue, othewise abort with an error
-	if ( file != NULL )
+	if( file != NULL )
 	{
 		// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
-		if ( fseek( file, 4, SEEK_SET ) )
+		if( fseek( file, 4, SEEK_SET ) )
 		{
-			printf("UOX3: MsgBoardRemovePost() failed to seek first message seg in bbi\n");
-			sysmessage( s, "Failed to find post to be removed." );
+			Console.Error( 1, "MsgBoardRemovePost() failed to seek first message seg in bbi");
+			sysmessage( s, 733 );
 			return;
 		}
 		
 		// Loop until we have reached the end of the file
-		while ( !feof(file)  )
+		while( !feof(file)  )
 		{
 			//  | 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18 
 			//  |mg1|mg2|mg3|mg4|mo1|mo2|DEL|sg1|sg2|xx1|xx2|yy1|yy2|NS1|NS2|NS3|NS4|co1|co2|
 			// "\x40\x1c\x53\xeb\x0e\xb0\x00\x00\x00\x00\x3a\x00\x3a\x40\x00\x00\x19\x00\x00";
 			
 			// Fill up the msg with data from the bbi file
-			if ( fread( msg, sizeof(char), 19, file ) != 19 )
+			if( fread( msg, sizeof(char), 19, file ) != 19 )
 			{
-				printf("UOX3: MsgBoardRemovePost() Could not find message to mark deleted\n");
-				if ( feof(file) ) break;
+				Console.Print( "MsgBoardRemovePost() Could not find message to mark deleted\n" );
+				if( feof( file ) ) 
+					break;
 			}
 			
-			if ( (msg[0] == buffer[s][8])  &&
-				(msg[1] == buffer[s][9])  &&
-				(msg[2] == buffer[s][10]) &&
-				(msg[3] == buffer[s][11])    )
+			if( ( msg[0] == s->GetByte( 8 ) )  &&
+				( msg[1] == s->GetByte( 9 ) )  &&
+				( msg[2] == s->GetByte( 10 ) ) &&
+				( msg[3] == s->GetByte( 11 ) )    )
 			{
 				// Jump back to the DEL segment in order to mark the post for deletion
 				fseek( file, -13, SEEK_CUR );
@@ -1497,7 +1374,7 @@ void MsgBoardRemovePost( int s )
 				fputc( 0, file );
 				
 				// Inform user that the post has been removed
-				sysmessage( s, "Post removed." );
+				sysmessage( s, 734 );
 				
 				// We found the message we wanted so break out and close the file
 				break;
@@ -1505,9 +1382,13 @@ void MsgBoardRemovePost( int s )
 			
 		}
 	}
-	
-	// Close bbi file
-	if ( file ) fclose( file );
+	else
+	{
+		Console.Error( 1, "Could not open file %s for reading", fileName );
+	}
+
+	if( file )
+		fclose( file );
 	
 	// Put code to actually remove the post from the bulletin board here.
 	// Posted messages use serial numbers from 0x01000000 to 0x03FFFFFF so they
@@ -1515,15 +1396,10 @@ void MsgBoardRemovePost( int s )
 	// If, however, this is a problem, then simply remove this portion of code and the
 	// messages will not be removed on the client but will still be marked for removal
 	// in the message board files.
-	char cRemoveObject[6]="\x1D\x00\x00\x00\x00";
-	cRemoveObject[1] = buffer[s][8];
-	cRemoveObject[2] = buffer[s][9];
-	cRemoveObject[3] = buffer[s][10];
-	cRemoveObject[4] = buffer[s][11];
-	Network->xSend( s, cRemoveObject, (sizeof(cRemoveObject)-1), 0 );
+	CPRemoveItem toRemove;
+	toRemove.Serial( s->GetDWord( 8 ) );
+	s->Send( &toRemove );
 	// Remove code above to prevent problems with client if necessary
-	
-	return;
 }
 
 
@@ -1536,87 +1412,73 @@ void MsgBoardRemovePost( int s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardEvent(int s)
+void MsgBoardEvent( cSocket *s )
 {
 	// Message \x71 has numerous uses for the Bulletin Board
 	// so we need to get the type of message from the client first.
-	int msgType        = buffer[s][3]; 
+	int msgType = s->GetByte( 3 ); 
 	
 	// If this was due to a double click event
-	if ( buffer[s][0]==0x06 )
+	if( s->GetByte( 0 ) == 0x06 )
 		msgType = 0;
 	
-	switch (msgType)
+	CChar *mChar = s->CurrcharObj();
+	switch( msgType )
 	{
 	case 0:  // Server->Client: Prepare to draw message board, send title + misc info to client
 		{        // show message board code goes here (called by doubleclick())
 			MsgBoardOpen( s );
 			break;
 		}
-		
 	case 1:  // Server->Client: Send list of message postings (subjects only)
 		{        // message sent out by CASE 4: below 
 			break;
 		}
-		
 	case 2:  // Server->Client: Sending body of message to client after subject dbl-clicked
 		{        // message sent out by CASE 3: below
 			break;
 		}
-		
 	case 3:  // Client->Server: Client has dbl-clicked on subject, requesting body of message
 		{        // Example  [SEND:12] 71 00 0c 03 40 07 ba 3d 40 1c 53 eb
 			MsgBoardOpenPost( s );
 			break;
 		}
-		
 	case 4:  // Client->Server: Client has ACK'ed servers download of posting serial numbers
 		{
 			// Check to see whether client has ACK'd all of our message ID's before proceeding
-			postAckCount[s]++;
+			s->PostAckCount( s->PostAckCount() + 1 );
 			//printf(" pstAckCont=%d        postCount=%d\n", postAckCount[s], postCount[s]);
-			if ( postAckCount[s] != postCount[s] )
+			if( s->PostAckCount() != s->PostCount() )
 				return;
 			
 			// Server needs to handle ACK from client that contains the posting serial numbers
 			MsgBoardList( s );
 			break;
 		}
-		
 	case 5:  // Client->Server: Client clicked on Post button (either from the main board or after pressing the Reply)
-		{        //                 Reply just switches to the Post item.
+		{    //                 Reply just switches to the Post item.
 			
 			// Check privledge level against server.scp msgpostaccess
-			if ( (chars[currchar[s]].priv&0x01) || (server_data.msgpostaccess) )
-				MsgBoardPost( s, chars[currchar[s]].postType, 0 );
+			if( mChar->IsGM() || cwmWorldState->ServerData()->GetMsgBoardPostingLevel() )
+				MsgBoardPost( s, mChar->GetPostType(), 0 );
 			else
-				sysmessage( s, "Thou art not allowed to post messages." );
+				sysmessage( s, 1640 );
 			
 			break;
 		}
-		
 	case 6:  // Remove post from Bulletin board
 		{
 			//             |p#|s1|s2|mt|b1|b2|b3|b4|m1|m2|m3|m4| 
 			// Client sends 71  0  c  6 40  0  0 18  1  0  0  4
-			if ( (chars[currchar[s]].priv&0x01) || (server_data.msgpostremove) )
+			if( mChar->IsGM() || cwmWorldState->ServerData()->GetMsgBoardPostRemovalLevel() )
 				MsgBoardRemovePost( s );
 			break;
 		}
-		
-		
 	default:
-		{
-			printf("UOX3: MsgBoardEvent() Unknown msgType:%x for message: %x\n", buffer[s][3], buffer[s][0]);
-			break;
-		}
+		Console.Error( 1, "MsgBoardEvent() Unknown msgType:%x for message: %x", s->GetByte( 3 ), s->GetByte( 0 ) );
+		break;
 	}
 }
-
-
-
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 // FUNCTION:    MsgBoardPostQuest( int serial, int questType )
@@ -1638,13 +1500,13 @@ void MsgBoardEvent(int s)
 // NOTES:       Currently only escort quests work so this function us still
 //              in its early stages in regards to the questType parameter.
 //////////////////////////////////////////////////////////////////////////////
-int MsgBoardPostQuest( int serial, int questType )
+bool MsgBoardPostQuest( SERIAL serial, int questType )
 {
-	char        subjectEscort[]     = "Escort: Needed for the day.";  // Default escort message 
-	char        subjectBounty[]     = "Bounty: Reward for capture.";  // Default bounty message 
-	char        subjectItem[]       = "Lost valuable item.";          // Default item message 
-	char        subject[50]         = "";                             // String that will hold the default subject
-	int         sectionEntrys[MAXENTRIES];                            // List of SECTION items to store for randomizing
+	const char	*subjectEscort		= Dictionary->GetEntry( 735 );  // Default escort message 
+	const char	*subjectBounty		= Dictionary->GetEntry( 736 );  // Default bounty message 
+	const char	*subjectItem		= Dictionary->GetEntry( 737 );          // Default item message 
+	char		subject[50]			= "";                             // String that will hold the default subject
+	int			sectionEntrys[MAXENTRIES];                            // List of SECTION items to store for randomizing
 	
 	int         listCount           = 0;  // Number of entries under the ESCORTS section, used to randomize selection
 	int         entryToUse          = 0;  // Entry of the list that will be used to create random message
@@ -1653,6 +1515,7 @@ int MsgBoardPostQuest( int serial, int questType )
 	int         lineLength          = 0;  // Length of the line just read in including terminating NULL
 	int         offset              = 0;  // Offset to next line in buffer
 	int         numLinesOffset      = 0;  // Offset to the number of lines in body field
+	char		temp[1024];
 	
 	// msg2Post[] Buffer initialization
 	msg2Post[0]   = 0x71;   // Packet ID
@@ -1666,97 +1529,74 @@ int MsgBoardPostQuest( int serial, int questType )
 	//    ITEM   = 0xFD
 	switch ( questType )
 	{
-	case ESCORTQUEST:
-		msg2Post[3]   = (unsigned char)(ESCORTQUEST);
-		break;
-		
-	case BOUNTYQUEST:
-		msg2Post[3]   = (unsigned char)(BOUNTYQUEST);
-		break;
-		
-	case ITEMQUEST:
-		msg2Post[3]   = (unsigned char)(ITEMQUEST);
-		break;
-		
+	case ESCORTQUEST:	msg2Post[3]   = (UI08)(ESCORTQUEST);	break;
+	case BOUNTYQUEST:	msg2Post[3]   = (UI08)(BOUNTYQUEST);	break;
+	case ITEMQUEST:		msg2Post[3]   = (UI08)(ITEMQUEST);		break;
 	default:
-		printf("UOX3: MsgBoardPostQuest() undefined questType, aborting quest!\n");
-		return 0;
+		Console.Error( 1, "MsgBoardPostQuest() undefined questType, aborting quest!" );
+		return false;
 	}
 	
 	// Since quest posts can only be regional or global, can use the BullBoard SN fields as CHAR or ITEM fields
-	msg2Post[4]   = (unsigned char)(serial>>24);   // Normally Bulletin Board SN1 but used for quests as CHAR or ITEM SN1
-	msg2Post[5]   = (unsigned char)(serial>>16);      // Normally Bulletin Board SN2 but used for quests as CHAR or ITEM SN2
-	msg2Post[6]   = (unsigned char)(serial>>8);        // Normally Bulletin Board SN3 but used for quests as CHAR or ITEM SN3
-	msg2Post[7]   = (unsigned char)(serial%256);        // Normally Bulletin Board SN4 but used for quests as CHAR or ITEM SN4
-	msg2Post[8]   = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
-	msg2Post[9]   = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
-	msg2Post[10]  = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
-	msg2Post[11]  = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
+	msg2Post[4]   = (UI08)(serial>>24);		// Normally Bulletin Board SN1 but used for quests as CHAR or ITEM SN1
+	msg2Post[5]   = (UI08)(serial>>16);		// Normally Bulletin Board SN2 but used for quests as CHAR or ITEM SN2
+	msg2Post[6]   = (UI08)(serial>>8);		// Normally Bulletin Board SN3 but used for quests as CHAR or ITEM SN3
+	msg2Post[7]   = (UI08)(serial%256);		// Normally Bulletin Board SN4 but used for quests as CHAR or ITEM SN4
+	msg2Post[8]   = 0x00;					// Reply to message serial number ( 00 00 00 00 for base post )
+	msg2Post[9]   = 0x00;					// Reply to message serial number ( 00 00 00 00 for base post )
+	msg2Post[10]  = 0x00;					// Reply to message serial number ( 00 00 00 00 for base post )
+	msg2Post[11]  = 0x00;					// Reply to message serial number ( 00 00 00 00 for base post )
 	
-	openscript("msgboard.scp");
+	ScriptSection *EscortData = NULL;
+	const char *tag = NULL;
+	const char *data = NULL;
 	
-	switch ( questType )
+	switch( questType )
 	{
 	case ESCORTQUEST:
 		{
-			// Find the list section in order to count the number of entries in the list
-			if (!(i_scripts[msgboard_script]->find("ESCORTS")))
+			ScriptSection *Escort = FileLookup->FindEntry( "ESCORTS", msgboard_def );
+			if( Escort == NULL )
+				return false;
+			for( tag = Escort->First(); !Escort->AtEnd(); tag = Escort->Next() )
 			{
-				closescript();
-				return 0;
-			}
-			
-			// Count the number of entries under the list section to determine what range to randomize within
-			do
-			{
-				read2();
-				if ( !(strcmp("ESCORT", script1)) )
+				data = Escort->GrabData();
+				if( !strcmp( "ESCORT", tag ) )
 				{
-					if ( listCount >= MAXENTRIES )
+					if( listCount >= MAXENTRIES )
 					{
-						printf("UOX3: MsgBoardPostQuest() Too many entries in ESCORTS list [MAXENTRIES=%d]\n", MAXENTRIES );
+						Console.Error( 1, "MsgBoardPostQuest() Too many entries in ESCORTS list [MAXENTRIES=%d]", MAXENTRIES );
 						break;
 					}
-					
-					sectionEntrys[listCount] = str2num(script2);
+					sectionEntrys[listCount] = makeNum( data );
 					listCount++;
 				}
-			} while ( script1[0]!='}' && script1[0]!=0 );
-			
-			closescript();
-			
+			}
 			// If no entries are found in the list, then there must be no entries at all.
-			if ( listCount == 0 )
+			if( listCount == 0 )
 			{
-				printf( "UOX3: MsgBoardPostQuest() No msgboard.scp entries found\n" );
-				return 0;
+				Console.Error( 1, "MsgBoardPostQuest() No msgboard dfn entries found" );
+				return false;
 			}
 			
 			// Choose a random number between 1 and listCount to use as a message
 			entryToUse = RandomNum( 1, listCount );
 #ifdef DEBUG
-			printf("UOX3: MsgBoardPostQuest() listCount=%d  entryToUse=%d\n", listCount, entryToUse );
+			Console.Error( 1, "MsgBoardPostQuest() listCount=%d  entryToUse=%d", listCount, entryToUse );
 #endif
-			// Open the script again and find the section choosen by the randomizer
-			openscript( "msgboard.scp" );
-			
 			sprintf( temp, "ESCORT %i", sectionEntrys[entryToUse-1] );
-			
-			if (!(i_scripts[msgboard_script]->find(temp)))
+			EscortData = FileLookup->FindEntry( temp, msgboard_def );
+			if( EscortData == NULL )
 			{
-				printf( "UOX3: MsgBoardPostQuest() Couldn't find entry %s\n", temp );
-				closescript();
-				return 0;
+				Console.Error( 1, "MsgBoardPostQuest() Couldn't find entry %s", temp );
+				return false;
 			}
 			break;
 		}
 		
 	default:
-		{
-			printf( "UOX3: MsgBoardPostQuest() Invalid questType %d\n", questType );
-			closescript();
-			return 0;
-		}
+		Console.Error( 1, "MsgBoardPostQuest() Invalid questType %d", questType );
+		return false;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////
@@ -1767,11 +1607,8 @@ int MsgBoardPostQuest( int serial, int questType )
 	char  flag;
 	char  tempString[64];
 	
-	
-	
-	
 	// Insert the default subject line depending on the type of quest selected
-	switch ( questType )
+	switch( questType )
 	{
 	case ESCORTQUEST:
 		// Copy the default subject to the generic subject string
@@ -1789,8 +1626,8 @@ int MsgBoardPostQuest( int serial, int questType )
 		break;
 		
 	default:
-		printf("UOX3: MsgBoardPostQuest() invalid quest type\n");
-		return 0;
+		Console.Error( 2, "MsgBoardPostQuest() invalid quest type" );
+		return false;
 	}
 	
 	// Set the SizeOfSubject field in the buffer and copy the subject string to the buffer
@@ -1803,21 +1640,19 @@ int MsgBoardPostQuest( int serial, int questType )
 	
 	// Set the subject
 	numLinesOffset = offset - 1;
-	
 	// Read in the random post message choosen above and fill in buffer body for posting
-	while ( 1 )
+	char fullLine[1024];
+	for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
 	{
-		readscript();  // Read in 1 line of the SCP file without the trailing CR ??
+		data = EscortData->Next();
+		sprintf( fullLine, "%s %s", tag, data );
 		
-		// If we reached the ending curly brace, exit the loop
-		if ( !strcmp(temp, "}") ) break;
-		
-		flagPos = strchr( temp, '%' );
+		flagPos = strchr( fullLine, '%' );
 		
 		// Loop until we don't find anymore replaceable parameters
-		while ( flagPos )
+		while( flagPos )
 		{
-			if ( flagPos )
+			if( flagPos )
 			{
 				// Move the the letter indicating what text to insert
 				flag = *(flagPos + 1);
@@ -1826,53 +1661,30 @@ int MsgBoardPostQuest( int serial, int questType )
 				strcpy( tempString, (flagPos+2) );
 				
 				// Replace the flag with the requested text
-				switch ( flag )
+				switch( flag )
 				{
-					// NPC Name
-				case 'n':
-					{
-						strcpy( flagPos, (chars[calcCharFromSer( serial )].name) );
-						strcat( temp, tempString );
-						break;
-					}
-					
-					// LOCATION in X, Y coords
-				case 'l':
-					{
-						sprintf( flagPos, "%d, %d", (chars[calcCharFromSer( serial )].x), (chars[calcCharFromSer( serial )].y) );
-						strcat( temp, tempString );
-						break;
-					}
-					
-					// NPC title
-				case 't':
-					{
-						strcpy( flagPos, (chars[calcCharFromSer( serial )].title) );
-						strcat( temp, tempString );
-						break;
-					}
-					
-					// Destination Region Name
-				case 'r':
-					{
-						strcpy( flagPos, region[chars[calcCharFromSer( serial )].questDestRegion].name ); 
-						strcat( temp, tempString );
-						break;
-					}
-					
-					// Region Name
-				case 'R':
-					{
-						strcpy( flagPos, region[chars[calcCharFromSer( serial )].region].name ); 
-						strcat( temp, tempString );
-						break;
-					}
-					
-					
+				case 'n':	// NPC Name
+					strcpy( flagPos, (chars[calcCharFromSer( serial )].GetName()) );
+					strcat( fullLine, tempString );
+					break;
+				case 'l':	// LOCATION in X, Y coords
+					sprintf( flagPos, "%d, %d", (chars[calcCharFromSer( serial )].GetX()), (chars[calcCharFromSer( serial )].GetY()) );
+					strcat( fullLine, tempString );
+					break;
+				case 't':	// NPC title
+					strcpy( flagPos, (chars[calcCharFromSer( serial )].GetTitle()) );
+					strcat( fullLine, tempString );
+					break;
+				case 'r':	// Destination Region Name
+					strcpy( flagPos, region[chars[calcCharFromSer( serial )].GetQuestDestRegion()]->GetName() ); 
+					strcat( fullLine, tempString );
+					break;
+				case 'R':	// Region Name
+					strcpy( flagPos, region[chars[calcCharFromSer( serial )].GetRegion()]->GetName() ); 
+					strcat( fullLine, tempString );
+					break;
 				default:
-					{
-						break;
-					}
+					break;
 				}
 				
 				// Look for another replaceable parameter
@@ -1893,20 +1705,16 @@ int MsgBoardPostQuest( int serial, int questType )
 		// Increment the total number of lines read in
 		linesInBody++;
 	}
-	
-	closescript();
-	
-	msg2Post[1] = offset/256;
-	msg2Post[2] = offset%256;
+	msg2Post[1] = (UI08)(offset>>8);
+	msg2Post[2] = (UI08)(offset%256);
 	msg2Post[numLinesOffset] = linesInBody;
 	
 	// If the message is posted to the message board successfully
 	// RETURN 1 otherwise RETURN 0 to indicate a failure of some sort
-	if ( MsgBoardPost( 0, REGIONALPOST, 1 ) )
-		return 1;  // Post succeeded
-	
-	// Post failed
-	return 0;
+	if( MsgBoardPost( 0, REGIONALPOST, 1 ) )
+		return true;  // Post succeeded
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1919,67 +1727,65 @@ int MsgBoardPostQuest( int serial, int questType )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardQuestEscortCreate( int npcIndex )
+void MsgBoardQuestEscortCreate( CChar *npcIndex )
 {
 	// Choose a random region as a destination for the escort quest (except for the same region as the NPC was spawned in)
 	do 
 	{
-		if ( escortRegions )
+		if( escortRegions )
 		{
 			// If the number of escort regions is 1, check to make sure that the only 
 			// valid escort region is not the NPC's current location - if it is Abort
-			if ( (escortRegions==1) && (validEscortRegion[0]==chars[npcIndex].region) )
+			if( escortRegions == 1 && validEscortRegion[0] == npcIndex->GetRegion() )
 			{
-				chars[npcIndex].questDestRegion = 0;
+				npcIndex->SetQuestDestRegion( 0 );
 				break;
 			}
 			
-			chars[npcIndex].questDestRegion = validEscortRegion[RandomNum(0, (escortRegions-1))];
+			npcIndex->SetQuestDestRegion( validEscortRegion[RandomNum(0, (escortRegions-1))] );
 		}
 		else
 		{
-			chars[npcIndex].questDestRegion = 0;  // If no escort regions have been defined in REGIONS.SCP then we can't do it!!
+			npcIndex->SetQuestDestRegion( 0 );  // If no escort regions have been defined in REGIONS.SCP then we can't do it!!
 			break;
 		}
-	} while ( chars[npcIndex].questDestRegion == chars[npcIndex].region );
+	} while( npcIndex->GetQuestDestRegion() == npcIndex->GetRegion() );
 	
 	// Set quest type to escort
-	chars[npcIndex].questType = ESCORTQUEST;
+	npcIndex->SetQuestType( ESCORTQUEST );
 	
 	// Make sure they don't move until an player accepts the quest
-	chars[npcIndex].npcWander       = 0;                // Don't want our escort quest object to wander off.
-	chars[npcIndex].npcaitype       = 0;                // Remove any AI from the escort (should be dumb, just follow please :)
-	chars[npcIndex].questOrigRegion = chars[npcIndex].region;  // Store this in order to remeber where the original message was posted
+	npcIndex->SetNpcWander( 0 );                // Don't want our escort quest object to wander off.
+	npcIndex->SetNPCAiType( 0 );                // Remove any AI from the escort (should be dumb, just follow please :)
+	npcIndex->SetQuestOrigRegion( npcIndex->GetRegion() );  // Store this in order to remeber where the original message was posted
 	
 	// Set the expirey time on the NPC if no body accepts the quest
-	if ( server_data.escortinitexpire )
-		chars[npcIndex].summontimer = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortinitexpire ) );
+	if( cwmWorldState->ServerData()->GetEscortInitExpire() )
+		npcIndex->SetSummonTimer( BuildTimeValue( cwmWorldState->ServerData()->GetEscortInitExpire() ) );
 	
 	// Make sure the questDest is valid otherwise don't post and delete the NPC
-	if ( !chars[npcIndex].questDestRegion )
+	if( !npcIndex->GetQuestDestRegion() )
 	{
-		printf("UOX3: MsgBoardQuestEscortCreate() No valid regions defined for escort quests\n");
+		Console.Error( 2, "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" );
 		Npcs->DeleteChar( npcIndex );
 		//deletechar( npcIndex );
 		return;
 	}
 	
 	// Post the message to the message board in the same REGION as the NPC
-	if ( !MsgBoardPostQuest(chars[npcIndex].serial, ESCORTQUEST) )
+	if( !MsgBoardPostQuest( npcIndex->GetSerial(), ESCORTQUEST) )
 	{
-		printf( "UOX3: MsgBoardQuestEscortCreate() Failed to add quest post for %s\n", chars[npcIndex].name );
-		printf( "UOX3: MsgBoardQuestEscortCreate() Deleting NPC %s\n", chars[npcIndex].name );
+		Console.Error( 3, "MsgBoardQuestEscortCreate() Failed to add quest post for %s", npcIndex->GetName() );
+		Console.Error( 3, "MsgBoardQuestEscortCreate() Deleting NPC %s", npcIndex->GetName() );
 		Npcs->DeleteChar( npcIndex );
 		//deletechar( npcIndex );
 		return;
 	}
-	
-	// Debugging messages
+
 #ifdef DEBUG
-	printf("UOX3: MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s\n", chars[npcIndex].name, region[chars[npcIndex].questDestRegion].name );
+	Console.Error( 2, "MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s\n", chars[npcIndex].GetName(), region[chars[npcIndex].GetQuestDestRegion()].name );
 #endif
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 // FUNCTION:    MsgBoardQuestEscortArrive( int npcIndex, int pcIndex )
@@ -1991,49 +1797,46 @@ void MsgBoardQuestEscortCreate( int npcIndex )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardQuestEscortArrive( int npcIndex, int pcIndex )
+void MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock )
 {
-	int i = npcIndex;
-	int k = pcIndex;
-	
+	char temp[1024];
+	CChar *mChar = mSock->CurrcharObj();
+	if( mChar == NULL )
+		return;
+
 	// Calculate payment for services rendered
 	int servicePay = ( RandomNum(0, 20) * RandomNum(1, 30) );  // Equals a range of 0 to 600 possible gold with a 5% chance of getting 0 gold
-	
+
 	// If they have no money, well, oops!
-	if ( servicePay == 0 )
+	if( servicePay == 0 )
 	{
-		sprintf( temp, "Thank you %s for thy service. We have made it safely to %s. Alas, I seem to be a little short on gold. I have nothing to pay you with.", chars[currchar[k]].name, region[chars[i].questDestRegion].name );
-		npctalk( k, i, temp, 0 );
+		sprintf( temp, Dictionary->GetEntry( 738 ), mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
+		npcTalk( mSock, npcIndex, temp, false );
 	}
 	else // Otherwise pay the poor sod for his time
 	{
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
-		if ( servicePay < 75 ) servicePay += RandomNum(75, 100);
-		addgold( k, servicePay );
-		goldsfx( k, servicePay );
-		sprintf( temp, "Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.", chars[currchar[k]].name, region[chars[i].questDestRegion].name );
-		npctalk( k, i, temp, 0 );
+		if( servicePay < 75 ) 
+			servicePay += RandomNum( 75, 100 );
+		addgold( mSock, servicePay );
+		goldsfx( mSock, servicePay );
+		sprintf( temp, Dictionary->GetEntry( 739 ), mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
+		npcTalk( mSock, npcIndex, temp, false );
 	}
 	
 	// Inform the PC of what he has just been given as payment
-	sprintf( temp, "You have just received %d gold coins from %s %s", servicePay, chars[i].name, chars[i].title );
-	sysmessage( k, temp );
+	
+	sysmessage( mSock, 740, servicePay, npcIndex->GetName(), npcIndex->GetTitle() );
 	
 	// Take the NPC out of quest mode
-	chars[i].npcWander = 2;         // Wander freely
-	chars[i].ftarg = -1;            // Reset follow target
-	chars[i].questType = 0;         // Reset quest type
-	chars[i].questDestRegion = 0;   // Reset quest destination region
+	npcIndex->SetNpcWander( 2 );         // Wander freely
+	npcIndex->SetFTarg( INVALIDSERIAL ); // Reset follow target
+	npcIndex->SetQuestType( 0 );         // Reset quest type
+	npcIndex->SetQuestDestRegion( 0 );   // Reset quest destination region
 	
 	// Set a timer to automatically delete the NPC
-	chars[i].summontimer = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortdoneexpire ) );
-	
-	//removefromptr(&cownsp[chars[k].ownserial%256], k);
-	chars[i].own1=255;
-	chars[i].own2=255;
-	chars[i].own3=255;
-	chars[i].own4=255;
-	chars[i].ownserial=-1;
+	npcIndex->SetSummonTimer( BuildTimeValue( cwmWorldState->ServerData()->GetEscortDoneExpire() ) );
+	npcIndex->SetOwner( INVALIDSERIAL );
 }
 
 
@@ -2047,12 +1850,10 @@ void MsgBoardQuestEscortArrive( int npcIndex, int pcIndex )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardQuestEscortDelete( int npcIndex )
+void MsgBoardQuestEscortDelete( CChar *npcIndex )
 {
-	
-	chars[npcIndex].dead=1;
-	Npcs->DeleteChar(npcIndex);
-	return;
+	npcIndex->SetDead( true );
+	Npcs->DeleteChar( npcIndex );
 }
 
 
@@ -2066,25 +1867,25 @@ void MsgBoardQuestEscortDelete( int npcIndex )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardQuestEscortRemovePost( int npcIndex )
+void MsgBoardQuestEscortRemovePost( CChar *npcIndex )
 {
-	
 	// Read bbi file to determine messages on boards list
 	// Find the post related to this NPC's quest and mark it for deletion
 	// thereby removing it from the bulletin boards list
 	
-	int s = calcSerFromChar( npcIndex );
+	SERIAL s = npcIndex->GetSerial();
+	char temp[1024];
 	
 	FILE *file = NULL;
 	// 50 chars for prefix and 4 for the extension plus the ending NULL
 	char fileName[256] = "";
 	
 	// REGIONAL post file
-	sprintf( temp, "region%d.bbi", chars[npcIndex].questOrigRegion );
+	sprintf( temp, "region%d.bbi", npcIndex->GetQuestOrigRegion() );
 	
 	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( fileName, server_data.msgboardpath );
+	if( cwmWorldState->ServerData()->GetMsgBoardDirectory() )
+		strcpy( fileName, cwmWorldState->ServerData()->GetMsgBoardDirectory() );
 	
 	// Set fileName to REGIONAL.bbi
 	//sysmessage( s, "Opening REGIONAL.bbi messages");
@@ -2092,33 +1893,34 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 	file = fopen( fileName, "rb+" );
 	
 	// If the file exists continue, othewise abort with an error
-	if ( file != NULL )
+	if( file != NULL )
 	{
 		// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
-		if ( fseek( file, 4, SEEK_SET ) )
+		if( fseek( file, 4, SEEK_SET ) )
 		{
-			printf("UOX3: MsgBoardQuestEscortRemovePost() failed to seek first message seg in bbi\n");
+			Console.Error( 1, "MsgBoardQuestEscortRemovePost() failed to seek first message seg in bbi" );
 			return;
 		}
 		
 		// Loop until we have reached the end of the file
-		while ( !feof(file)  )
+		while( !feof(file)  )
 		{
 			//  | 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18     NS = NPC Serial
 			//  |mg1|mg2|mg3|mg4|mo1|mo2|DEL|sg1|sg2|xx1|xx2|yy1|yy2|NP1|NS2|NS3|NS4|co1|co2|
 			// "\x40\x1c\x53\xeb\x0e\xb0\x00\x00\x00\x00\x3a\x00\x3a\x40\x00\x00\x19\x00\x00";
 			
 			// Fill up the msg with data from the bbi file
-			if ( fread( msg, sizeof(char), 19, file ) != 19 )
+			if( fread( msg, sizeof(char), 19, file ) != 19 )
 			{
-				printf("UOX3: MsgBoardQuestEscortRemovePost() Could not find message to mark deleted\n");
-				if ( feof(file) ) break;
+				Console.Error( 1, "MsgBoardQuestEscortRemovePost() Could not find message to mark deleted");
+				if( feof( file ) ) 
+					break;
 			}
 			
-			if ( (msg[13] == s/16777216) &&
-				(msg[14] == s/65536   ) &&
-				(msg[15] == s/256     ) &&
-				(msg[16] == s%256     ) )
+			if( ( msg[13] == (s>>24) ) &&
+				( msg[14] == (s>>16) ) &&
+				( msg[15] == (s>>8)  ) &&
+				( msg[16] == s%256   ) )
 			{
 				// Jump back to the DEL segment in order to mark the post for deletion
 				fseek( file, -13, SEEK_CUR );
@@ -2129,14 +1931,14 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 				// We found the message we wanted so break out and close the file
 				break;
 			}
-			
 		}
 	}
-	
-	// Close bbi file
-	if ( file ) fclose( file );
-	
-	return;
+	else
+	{
+		Console.Error( 1, "Failed to open file %s for reading", temp );
+	}
+	if( file )
+		fclose( file );
 }
 
 //////////////////////////////////////////////////////////////////////////////

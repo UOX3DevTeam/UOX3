@@ -1,0 +1,2029 @@
+// colored_armor.dfn
+// OSI style colored armor without bonus or malus
+// v1.0; 13/06/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.1; 21/11/01; GET replaced with GET=; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// v1.2; 29/01/02; Updated colour to be hex friendly; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+// Armor values are gotten directly from armor.dfn through GET
+
+// I : 0    : Iron
+// D : 060a : Dull Copper
+// S : 0770 : Shadow
+// C : 0641 : Copper
+// B : 06d6 : Bronze
+// G : 045e : Golden
+// A : 0400 : Agapite
+// V : 07d1 : Verite
+// X : 0515 : Valorite
+// R : 0750 : Rusty
+// Y : 0665 : Rose
+// M : 052d : Mythril
+
+
+// ------------------------------
+// Start of "Dull Copper" section
+
+[0x13bb-D]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x060a
+}
+
+[0x13be-D]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x060a
+}
+
+[0x13bf-D]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x060a
+}
+
+[0x13c0-D]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x060a
+}
+
+[0x13c3-D]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x060a
+}
+
+[0x13c4-D]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x060a
+}
+
+[0x1408-D]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x060a
+}
+
+[0x1409-D]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x060a
+}
+
+[0x140a-D]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x060a
+}
+
+[0x140b-D]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x060a
+}
+
+[0x140c-D]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x060a
+}
+
+[0x140d-D]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x060a
+}
+
+[0x140e-D]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x060a
+}
+
+[0x140f-D]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x060a
+}
+
+[0x1410-D]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x060a
+}
+
+[0x1411-D]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x060a
+}
+
+[0x1412-D]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x060a
+}
+
+[0x1413-D]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x060a
+}
+
+[0x1414-D]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x060a
+}
+
+[0x1415-D]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x060a
+}
+
+[0x1417-D]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x060a
+}
+
+[0x141a-D]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x060a
+}
+
+[0x1419-D]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x060a
+}
+
+[0x1418-D]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x060a
+}
+
+[0x1416-D]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x060a
+}
+
+// End of "Dull Copper" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Shadow" section
+
+[0x13bb-S]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0770
+}
+
+[0x13be-S]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0770
+}
+
+[0x13bf-S]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0770
+}
+
+[0x13c0-S]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0770
+}
+
+[0x13c3-S]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0770
+}
+
+[0x13c4-S]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0770
+}
+
+[0x1408-S]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0770
+}
+
+[0x1409-S]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0770
+}
+
+[0x140a-S]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0770
+}
+
+[0x140b-S]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0770
+}
+
+[0x140c-S]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0770
+}
+
+[0x140d-S]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0770
+}
+
+[0x140e-S]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0770
+}
+
+[0x140f-S]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0770
+}
+
+[0x1410-S]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0770
+}
+
+[0x1411-S]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0770
+}
+
+[0x1412-S]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0770
+}
+
+[0x1413-S]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0770
+}
+
+[0x1414-S]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0770
+}
+
+[0x1415-S]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0770
+}
+
+[0x1417-S]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0770
+}
+
+[0x141a-S]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0770
+}
+
+[0x1419-S]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0770
+}
+
+[0x1418-S]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0770
+}
+
+[0x1416-S]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0770
+}
+
+// End of "Shadow" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Copper" section
+
+[0x13bb-C]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0641
+}
+
+[0x13be-C]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0641
+}
+
+[0x13bf-C]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0641
+}
+
+[0x13c0-C]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0641
+}
+
+[0x13c3-C]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0641
+}
+
+[0x13c4-C]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0641
+}
+
+[0x1408-C]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0641
+}
+
+[0x1409-C]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0641
+}
+
+[0x140a-C]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0641
+}
+
+[0x140b-C]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0641
+}
+
+[0x140c-C]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0641
+}
+
+[0x140d-C]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0641
+}
+
+[0x140e-C]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0641
+}
+
+[0x140f-C]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0641
+}
+
+[0x1410-C]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0641
+}
+
+[0x1411-C]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0641
+}
+
+[0x1412-C]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0641
+}
+
+[0x1413-C]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0641
+}
+
+[0x1414-C]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0641
+}
+
+[0x1415-C]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0641
+}
+
+[0x1417-C]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0641
+}
+
+[0x141a-C]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0641
+}
+
+[0x1419-C]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0641
+}
+
+[0x1418-C]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0641
+}
+
+[0x1416-C]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0641
+}
+
+// End of "Copper" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Bronze" section
+
+[0x13bb-B]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x06d6
+}
+
+[0x13be-B]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x06d6
+}
+
+[0x13bf-B]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x06d6
+}
+
+[0x13c0-B]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x06d6
+}
+
+[0x13c3-B]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x06d6
+}
+
+[0x13c4-B]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x06d6
+}
+
+[0x1408-B]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x06d6
+}
+
+[0x1409-B]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x06d6
+}
+
+[0x140a-B]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x06d6
+}
+
+[0x140b-B]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x06d6
+}
+
+[0x140c-B]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x06d6
+}
+
+[0x140d-B]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x06d6
+}
+
+[0x140e-B]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x06d6
+}
+
+[0x140f-B]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x06d6
+}
+
+[0x1410-B]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x06d6
+}
+
+[0x1411-B]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x06d6
+}
+
+[0x1412-B]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x06d6
+}
+
+[0x1413-B]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x06d6
+}
+
+[0x1414-B]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x06d6
+}
+
+[0x1415-B]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x06d6
+}
+
+[0x1417-B]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x06d6
+}
+
+[0x141a-B]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x06d6
+}
+
+[0x1419-B]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x06d6
+}
+
+[0x1418-B]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x06d6
+}
+
+[0x1416-B]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x06d6
+}
+
+// End of "Bronze" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Golden" section
+
+[0x13bb-G]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x045e
+}
+
+[0x13be-G]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x045e
+}
+
+[0x13bf-G]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x045e
+}
+
+[0x13c0-G]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x045e
+}
+
+[0x13c3-G]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x045e
+}
+
+[0x13c4-G]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x045e
+}
+
+[0x1408-G]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x045e
+}
+
+[0x1409-G]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x045e
+}
+
+[0x140a-G]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x045e
+}
+
+[0x140b-G]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x045e
+}
+
+[0x140c-G]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x045e
+}
+
+[0x140d-G]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x045e
+}
+
+[0x140e-G]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x045e
+}
+
+[0x140f-G]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x045e
+}
+
+[0x1410-G]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x045e
+}
+
+[0x1411-G]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x045e
+}
+
+[0x1412-G]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x045e
+}
+
+[0x1413-G]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x045e
+}
+
+[0x1414-G]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x045e
+}
+
+[0x1415-G]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x045e
+}
+
+[0x1417-G]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x045e
+}
+
+[0x141a-G]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x045e
+}
+
+[0x1419-G]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x045e
+}
+
+[0x1418-G]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x045e
+}
+
+[0x1416-G]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x045e
+}
+
+// End of "Golden" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Agapite" section
+
+[0x13bb-A]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0400
+}
+
+[0x13be-A]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0400
+}
+
+[0x13bf-A]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0400
+}
+
+[0x13c0-A]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0400
+}
+
+[0x13c3-A]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0400
+}
+
+[0x13c4-A]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0400
+}
+
+[0x1408-A]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0400
+}
+
+[0x1409-A]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0400
+}
+
+[0x140a-A]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0400
+}
+
+[0x140b-A]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0400
+}
+
+[0x140c-A]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0400
+}
+
+[0x140d-A]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0400
+}
+
+[0x140e-A]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0400
+}
+
+[0x140f-A]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0400
+}
+
+[0x1410-A]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0400
+}
+
+[0x1411-A]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0400
+}
+
+[0x1412-A]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0400
+}
+
+[0x1413-A]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0400
+}
+
+[0x1414-A]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0400
+}
+
+[0x1415-A]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0400
+}
+
+[0x1417-A]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0400
+}
+
+[0x141a-A]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0400
+}
+
+[0x1419-A]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0400
+}
+
+[0x1418-A]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0400
+}
+
+[0x1416-A]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0400
+}
+
+// End of "Agapite" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Verite" section
+
+[0x13bb-V]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x07d1
+}
+
+[0x13be-V]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x07d1
+}
+
+[0x13bf-V]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x07d1
+}
+
+[0x13c0-V]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x07d1
+}
+
+[0x13c3-V]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x07d1
+}
+
+[0x13c4-V]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x07d1
+}
+
+[0x1408-V]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x07d1
+}
+
+[0x1409-V]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x07d1
+}
+
+[0x140a-V]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x07d1
+}
+
+[0x140b-V]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x07d1
+}
+
+[0x140c-V]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x07d1
+}
+
+[0x140d-V]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x07d1
+}
+
+[0x140e-V]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x07d1
+}
+
+[0x140f-V]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x07d1
+}
+
+[0x1410-V]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x07d1
+}
+
+[0x1411-V]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x07d1
+}
+
+[0x1412-V]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x07d1
+}
+
+[0x1413-V]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x07d1
+}
+
+[0x1414-V]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x07d1
+}
+
+[0x1415-V]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x07d1
+}
+
+[0x1417-V]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x07d1
+}
+
+[0x141a-V]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x07d1
+}
+
+[0x1419-V]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x07d1
+}
+
+[0x1418-V]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x07d1
+}
+
+[0x1416-V]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x07d1
+}
+
+// End of "Verite" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Valorite" section
+
+[0x13bb-X]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0515
+}
+
+[0x13be-X]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0515
+}
+
+[0x13bf-X]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0515
+}
+
+[0x13c0-X]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0515
+}
+
+[0x13c3-X]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0515
+}
+
+[0x13c4-X]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0515
+}
+
+[0x1408-X]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0515
+}
+
+[0x1409-X]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0515
+}
+
+[0x140a-X]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0515
+}
+
+[0x140b-X]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0515
+}
+
+[0x140c-X]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0515
+}
+
+[0x140d-X]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0515
+}
+
+[0x140e-X]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0515
+}
+
+[0x140f-X]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0515
+}
+
+[0x1410-X]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0515
+}
+
+[0x1411-X]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0515
+}
+
+[0x1412-X]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0515
+}
+
+[0x1413-X]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0515
+}
+
+[0x1414-X]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0515
+}
+
+[0x1415-X]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0515
+}
+
+[0x1417-X]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0515
+}
+
+[0x141a-X]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0515
+}
+
+[0x1419-X]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0515
+}
+
+[0x1418-X]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0515
+}
+
+[0x1416-X]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0515
+}
+
+// End of "Valorite" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Rusty" section
+
+[0x13bb-R]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0750
+}
+
+[0x13be-R]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0750
+}
+
+[0x13bf-R]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0750
+}
+
+[0x13c0-R]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0750
+}
+
+[0x13c3-R]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0750
+}
+
+[0x13c4-R]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0750
+}
+
+[0x1408-R]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0750
+}
+
+[0x1409-R]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0750
+}
+
+[0x140a-R]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0750
+}
+
+[0x140b-R]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0750
+}
+
+[0x140c-R]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0750
+}
+
+[0x140d-R]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0750
+}
+
+[0x140e-R]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0750
+}
+
+[0x140f-R]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0750
+}
+
+[0x1410-R]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0750
+}
+
+[0x1411-R]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0750
+}
+
+[0x1412-R]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0750
+}
+
+[0x1413-R]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0750
+}
+
+[0x1414-R]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0750
+}
+
+[0x1415-R]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0750
+}
+
+[0x1417-R]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0750
+}
+
+[0x141a-R]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0750
+}
+
+[0x1419-R]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0750
+}
+
+[0x1418-R]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0750
+}
+
+[0x1416-R]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0750
+}
+
+// End of "Rusty" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Rose" section
+
+[0x13bb-Y]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x0665
+}
+
+[0x13be-Y]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x0665
+}
+
+[0x13bf-Y]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x0665
+}
+
+[0x13c0-Y]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x0665
+}
+
+[0x13c3-Y]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x0665
+}
+
+[0x13c4-Y]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x0665
+}
+
+[0x1408-Y]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x0665
+}
+
+[0x1409-Y]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x0665
+}
+
+[0x140a-Y]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x0665
+}
+
+[0x140b-Y]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x0665
+}
+
+[0x140c-Y]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x0665
+}
+
+[0x140d-Y]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x0665
+}
+
+[0x140e-Y]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x0665
+}
+
+[0x140f-Y]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x0665
+}
+
+[0x1410-Y]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x0665
+}
+
+[0x1411-Y]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x0665
+}
+
+[0x1412-Y]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x0665
+}
+
+[0x1413-Y]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x0665
+}
+
+[0x1414-Y]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x0665
+}
+
+[0x1415-Y]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x0665
+}
+
+[0x1417-Y]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x0665
+}
+
+[0x141a-Y]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x0665
+}
+
+[0x1419-Y]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x0665
+}
+
+[0x1418-Y]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x0665
+}
+
+[0x1416-Y]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x0665
+}
+
+// End of "Rose" section
+// ------------------------------
+
+
+// ------------------------------
+// Start of "Mythril" section
+
+[0x13bb-M]
+{ left facing chain coif
+GET=0x13bb
+colorlist=
+color=0x052d
+}
+
+[0x13be-M]
+{ left facing chain leggings
+GET=0x13be
+colorlist=
+color=0x052d
+}
+
+[0x13bf-M]
+{ left facing chain tunic
+GET=0x13bf
+colorlist=
+color=0x052d
+}
+
+[0x13c0-M]
+{ right facing chain coif
+GET=0x13c0
+colorlist=
+color=0x052d
+}
+
+[0x13c3-M]
+{ right facing chain leggings
+GET=0x13c3
+colorlist=
+color=0x052d
+}
+
+[0x13c4-M]
+{ right facing chain tunic
+GET=0x13c4
+colorlist=
+color=0x052d
+}
+
+[0x1408-M]
+{ right facing close helm
+GET=0x1408
+colorlist=
+color=0x052d
+}
+
+[0x1409-M]
+{ left facing close helm
+GET=0x1409
+colorlist=
+color=0x052d
+}
+
+[0x140a-M]
+{ right facing helmet
+GET=0x140a
+colorlist=
+color=0x052d
+}
+
+[0x140b-M]
+{ left facing helmet
+GET=0x140b
+colorlist=
+color=0x052d
+}
+
+[0x140c-M]
+{ right facing bascinet
+GET=0x140c
+colorlist=
+color=0x052d
+}
+
+[0x140d-M]
+{ left facing bascinet
+GET=0x140d
+colorlist=
+color=0x052d
+}
+
+[0x140e-M]
+{ right facing nose helm
+GET=0x140e
+colorlist=
+color=0x052d
+}
+
+[0x140f-M]
+{ left facing nose helm
+GET=0x140f
+colorlist=
+color=0x052d
+}
+
+[0x1410-M]
+{ left facing platemail arms
+GET=0x1410
+colorlist=
+color=0x052d
+}
+
+[0x1411-M]
+{ left facing plate legs
+GET=0x1411
+colorlist=
+color=0x052d
+}
+
+[0x1412-M]
+{ left facing plate helm
+GET=0x1412
+colorlist=
+color=0x052d
+}
+
+[0x1413-M]
+{ plate gorget
+GET=0x1413
+colorlist=
+color=0x052d
+}
+
+[0x1414-M]
+{ left facing plate gloves
+GET=0x1414
+colorlist=
+color=0x052d
+}
+
+[0x1415-M]
+{ left facing plate chest
+GET=0x1415
+colorlist=
+color=0x052d
+}
+
+[0x1417-M]
+{ right facing plate arms
+GET=0x1417
+colorlist=
+color=0x052d
+}
+
+[0x141a-M]
+{ right facing plate legs
+GET=0x141a
+colorlist=
+color=0x052d
+}
+
+[0x1419-M]
+{ right facing plate helm
+GET=0x1419
+colorlist=
+color=0x052d
+}
+
+[0x1418-M]
+{ right facing plate gloves
+GET=0x1418
+colorlist=
+color=0x052d
+}
+
+[0x1416-M]
+{ right facing plate chest
+GET=0x1416
+colorlist=
+color=0x052d
+}
+
+// End of "Mythril" section
+// ------------------------------
+
+
+
+EOF
+// Email me with bugs\comments\complaints about this file (see top of file for address)

@@ -1,0 +1,1630 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>UOX Protocol Codes for getmsg() function</TITLE>
+</HEAD>
+<BODY>
+
+<H1>UOX Protocol</H1>
+<FONT SIZE=2>
+<P>Prepared by Damian</P>
+
+<P>These are the post compression, post encryption protocol codes used by UO client rev33.  This document is based off of analysis of UOX source code, published by Cironian, and various message board postings and other sources.</P>
+<P>&nbsp;</P>
+</FONT><B><I><FONT FACE="Arial"><P>UOX Implemented Codes</P>
+</I></FONT><P>Client-Server Commands</P>
+<FONT SIZE=2><P>Disconnect Request:</P><DIR>
+<DIR>
+
+</B><P>0x12 0x34 0x56 0x78</P></DIR>
+</DIR>
+
+<B><P>Login Functions</P><DIR>
+<DIR>
+
+</B><P>First Login</P>
+<P>\x80</P>
+<P>Server Select</P>
+<P>\xA0</P>
+<P>Character Select</P>
+<P>\x5D</P>
+<P>Second Login</P>
+<P>\x91</P></DIR>
+</DIR>
+
+<B><P>Character Maintenance</P><DIR>
+<DIR>
+
+</B><P>Character Delete</P>
+<P>\x83</P>
+<P>Character Create</P>
+<P>\x00</P></DIR>
+</DIR>
+
+<B><P>Play Functions</P><DIR>
+<DIR>
+
+</B><P>Walk</P>
+<P>\x02</P>
+<P>Keep alive</P>
+<P>\x73</P>
+<P>Resync Request</P>
+<P>\x22</P>
+<P>Talk</P>
+<P>\x03</P>
+<P>Dclick</P>
+<P>\x06</P>
+<P>Sclick</P>
+<P>\x09</P>
+<P>Target</P>
+<P>\x6C</P>
+<P>Equip Item</P>
+<P>\x13</P>
+<P>Get Item</P>
+<P>\x07</P>
+<P>Drop Item</P>
+<P>\x08</P>
+<P>&#9;Pack Item</P>
+<P>&#9;\x40</P>
+<B><P>&#9;Else drop</P>
+</B><P>Combat Mode</P>
+<P>\x72</P>
+<B><P>Extended Command</P>
+</B><P>x12</P>
+<P>&#9;Action</P>
+<P>&#9;\xC7  (Subsequent buffer bytes contain strings &quot;Bow&quot; and &quot;Salute&quot; for those two respective </P>
+<P>actions.</P>
+<P>&#9;Use Skill</P>
+<P>&#9;\x24</P>
+<P>&#9;GM Page</P>
+<P>&#9;\x9B</P>
+<P>&#9;Choice</P>
+<P>&#9;\x7D</P>
+<P>&#9;Color Select</P>
+<P>&#9;\x95</P>
+<P>&#9;Status Request</P>
+<P>&#9;\x34</P>
+<P>&#9;Rename Char</P>
+<P>&#9;\x75</P>
+<P>&#9;Read Book</P>
+<P>&#9;\x66</P>
+<P>&#9;Get Tip</P>
+<P>&#9;\xA7</P>
+<P>&#9;Spy</P>
+<P>&#9;\xA4</P>
+<P>&#9;Attack</P>
+<P>&#9;\x05</P></DIR>
+</DIR>
+
+<P>&#9;</P>
+
+<B><P>Server-Client Commands</P>
+</B><P>It has been reported that all server to client command sets include a 3-part message consisting of &quot;pause&quot;, &quot;game-command&quot;, and &quot;resume&quot; segments, instructing the client to wait until it has processed the command before sending any more commands to the server.  Each game command is then followed by either a variable or static number of game command modifiers that provide further information about the message.</P>
+
+<B><P>Control Commands</P>
+</B><P>Pause Command:</P>
+<P>/x33/x01</P>
+
+<P>Resume Command:</P>
+<P>/x33/x00</P>
+
+<B><P>Game-Commands</P>
+</B><P>Weather</P>
+<P>Code&#9;Modifier Bytes</P>
+<P>/x65&#9;3</P>
+<P>&#9;Modifier 1: Weather Type, Values:&#9;/x00&#9;Clear Skies</P><DIR>
+<DIR>
+<DIR>
+<DIR>
+<DIR>
+<DIR>
+<DIR>
+<DIR>
+
+<P>/x01&#9;Rain</P>
+<P>/x02&#9;Snow</P></DIR>
+</DIR>
+</DIR>
+</DIR>
+</DIR>
+</DIR>
+</DIR>
+</DIR>
+
+<P>&#9;Modifier 2: Direction?  Force?</P>
+
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</FONT><H1>Packet Specifications</H1>
+<H1 ALIGN="CENTER">0x00 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last modified on Wednesday, 06-May-1998 23:30:36 EDT </P>
+<P>Create Character (100 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] pattern1 (0xedededed) </LI>
+<LI>BYTE[4] pattern2 (0xffffffff) </LI>
+<LI>BYTE pattern3 (0x00) </LI>
+<LI>BYTE[30] char name </LI>
+<LI>BYTE[30] char password </LI>
+<LI>BYTE sex </LI>
+<LI>BYTE str </LI>
+<LI>BYTE dex </LI>
+<LI>BYTE int </LI>
+<LI>BYTE skill1 </LI>
+<LI>BYTE skill1value </LI>
+<LI>BYTE skill2 </LI>
+<LI>BYTE skill2value </LI>
+<LI>BYTE skill3 </LI>
+<LI>BYTE skill3value </LI>
+<LI>BYTE[2] skinColor </LI>
+<LI>BYTE[2] hairStyle </LI>
+<LI>BYTE[2] hairColor </LI>
+<LI>BYTE[2] facial hair </LI>
+<LI>BYTE[2] facial hair color </LI>
+<LI>BYTE unknown2</LI>
+<LI>BYTE location # from starting list</LI>
+<LI>BYTE unknown3</LI>
+<LI>BYTE unknown4</LI>
+<LI>BYTE unknown5</LI>
+<LI>BYTE slot</LI>
+<LI>BYTE[4] clientIP </LI>
+<LI>BYTE[2] shirt colour</LI>
+<LI>BYTE[2] pants colour</LI>
+
+</UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x02 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 19-Apr-1998 14:42:51 EDT </P>
+<P>Move Request (3 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE direction </LI>
+
+<UL>
+<LI>00 = north </LI>
+<LI>01 = northeast </LI>
+<LI>02 = east </LI>
+<LI>03 = southeast </LI>
+<LI>04 = south </LI>
+<LI>05 = southwest </LI>
+<LI>06 = west </LI>
+<LI>07 = northwest </LI></UL>
+
+<LI>BYTE sequence number </LI>
+<LI>BYTE[4] crypt code</LI>
+</UL>
+
+<P>NOTE: If (direction &amp; 0x80) --&gt; running </P>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x03 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 18-Apr-1998 17:49:23 EDT </P>
+<P>Talk Request (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE Type </LI>
+
+<UL>
+<LI>0x00 - Regular </LI>
+<LI>0x02 - Emote (adds *'s as part of text) </LI>
+<LI>0x08 - Whisper</LI>
+<LI>0x09 - Yell </LI></UL>
+
+<LI>BYTE[2] Color </LI>
+<LI>BYTE[2] Font </LI>
+
+<UL>
+<LI>0x00 - Bold Text </LI>
+<LI>0x01 - Text with shadow </LI>
+<LI>0x02 - Bold+Shadow </LI>
+<LI>0x03 - Normal </LI>
+<LI>0x04 - Gothic </LI>
+<LI>0x05 - Italic Script </LI>
+<LI>0x06 - Small Dark Letters </LI>
+<LI>0x07 - Colorful Font (Buggy?) </LI>
+<LI>0x08 - Rune font (Only use capital letters with this!) </LI>
+<LI>0x09 - Small Light Letters </LI></UL>
+
+<LI>BYTE[?] msg - Null Terminated (blockSize - 8) </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x05 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Thursday, 16-Apr-1998 19:51:56 EDT </P>
+<P>Attack Request (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] CharID to be attacked </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x06 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:05:50 EDT </P>
+<P>Double click (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item/char id </LI></UL>
+<DIR>
+<DIR>
+
+<P>0x80000000 is set if the player hits the Open Paperdoll macro key</P>
+<P>&nbsp;</P></DIR>
+</DIR>
+
+</FONT><H1 ALIGN="CENTER">0x07 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 14-Apr-1998 20:53:26 EDT </P>
+<P>Pick Up Item(s) (7 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item id </LI>
+<LI>BYTE[2] # of items in stack </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x08 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 14-Apr-1998 20:53:27 EDT </P>
+<P>Drop Item(s) (14 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item id </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE zLoc </LI>
+<LI>BYTE[4] Move Into (FF FF FF FF if normal world) </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x09 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:05:52 EDT </P>
+<P>Single click (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item/char id </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x11 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:36 EDT </P>
+<P>Stat window info (66 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] packet length (0x0042) </LI>
+<LI>BYTE[4] player id </LI>
+<LI>BYTE[30] playerName </LI>
+<LI>BYTE[2] currentHitpoints </LI>
+<LI>BYTE[2] maxHitpoints </LI>
+<LI>BYTE[2] flag </LI>
+
+<UL>
+<LI>0x0000 - consider stats invalid </LI>
+<LI>0x0001 - consider stats valid </LI></UL>
+
+<LI>BYTE sex </LI>
+
+<UL>
+<LI>0=male </LI>
+<LI>1=female </LI></UL>
+
+<LI>BYTE[2] str </LI>
+<LI>BYTE[2] dex </LI>
+<LI>BYTE[2] int </LI>
+<LI>BYTE[2] currentStamina </LI>
+<LI>BYTE[2] maxStamina </LI>
+<LI>BYTE[2] currentMana </LI>
+<LI>BYTE[2] maxMana </LI>
+<LI>BYTE[4] gold </LI>
+<LI>BYTE[2] armor class </LI>
+<LI>BYTE[2] weight </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x12 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 15:27:53 EDT </P>
+<P>Request Skill/Action/Magic Usage (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE type </LI>
+
+<UL>
+<LI>0x24 ($) - skill </LI>
+
+<UL>
+<LI>BYTE[blockSize-4] skill (null terminated strings) </LI>
+
+<UL>
+<LI>"1 0" - anatomy </LI>
+<LI>"2 0" - animal lore </LI>
+<LI>"3 0" - item identification </LI>
+<LI>"4 0" - arms lore </LI>
+<LI>"6 0" - begging </LI>
+<LI>"9 0" - peacemaking </LI>
+<LI>"12 0" - cartography </LI>
+<LI>"14 0" - detect hidden </LI>
+<LI>"15 0" - entice </LI>
+<LI>"16 0" - evaluate intelligence </LI>
+<LI>"19 0" - forensic evaluation </LI>
+<LI>"21 0" - hiding </LI>
+<LI>"22 0" - provocation </LI>
+<LI>"23 0" - inscription </LI>
+<LI>"30 0" - poisoning </LI>
+<LI>"32 0" - spirit speak </LI>
+<LI>"33 0" - stealing </LI>
+<LI>"35 0" - taming </LI>
+<LI>"36 0" - taste identification </LI>
+<LI>"38 0" - tracking </LI></UL>
+</UL>
+
+<LI>0x56 (V) - Macro'd Spell </LI>
+
+<UL>
+<LI>BYTE[blockSize-4] Spell (null terminated strings) </LI>
+
+<UL>
+<LI>"2" - Create Food </LI>
+<LI>"3" - Feeblemind </LI>
+<LI>"4" - Heal </LI>
+<LI>"5" - Magic Arrow </LI>
+<LI>"6" - Night Sight </LI>
+<LI>"7" - Reactive Armor </LI>
+<LI>"8" - Weaken </LI>
+<LI>"9" - Agility </LI>
+<LI>"10" - Cunning </LI>
+<LI>"11" - Cure </LI>
+<LI>"12" - Harm </LI>
+<LI>"13" - Magic Trap </LI>
+<LI>"14" - Magic Untrap </LI>
+<LI>"15" - Protection </LI>
+<LI>"16" - Strength </LI>
+<LI>"17" - Bless </LI>
+<LI>"18" - Fireball </LI>
+<LI>"19" - Magic Lock </LI>
+<LI>"20" - Poison </LI>
+<LI>"21" - Telekenisis </LI>
+<LI>"22" - Teleport </LI>
+<LI>"23" - Unlock </LI>
+<LI>"24" - Wall of Stone </LI>
+<LI>"25" - Arch Cure </LI>
+<LI>"26" - Arch Protection </LI>
+<LI>"27" - Curse </LI>
+<LI>"28" - Fire Field </LI>
+<LI>"29" - Greater Heal </LI>
+<LI>"30" - Lightning </LI>
+<LI>"31" - Mana Drain </LI>
+<LI>"32" - Recall </LI>
+<LI>"33" - Blade Spirit </LI>
+<LI>"34" - Dispel Field </LI>
+<LI>"35" - Incognito </LI>
+<LI>"36" - Reflection </LI>
+<LI>"37" - Mind Blast </LI>
+<LI>"38" - Paralyze </LI>
+<LI>"39" - Poison Field </LI>
+<LI>"40" - Summon Creature </LI>
+<LI>"41" - Dispel </LI>
+<LI>"42" - Energy Bolt </LI>
+<LI>"43" - Explosion </LI>
+<LI>"44" - Invisibility </LI>
+<LI>"45" - Mark </LI>
+<LI>"46" - Mass Curse </LI>
+<LI>"47" - Paralyze Field </LI>
+<LI>"48" - Reveal </LI>
+<LI>"49" - Chain Lightning </LI>
+<LI>"50" - Energy Field </LI>
+<LI>"51" - Flame Strike </LI>
+<LI>"52" - Gate </LI>
+<LI>"53" - Mana Vampire </LI>
+<LI>"54" - Mass Dispel </LI>
+<LI>"55" - Meteor Shower </LI>
+<LI>"56" - Polymorph </LI>
+<LI>"57" - Earthquake </LI>
+<LI>"58" - Energy Vortex </LI>
+<LI>"59" - Ressurection </LI>
+<LI>"60" - Summon Air Elemental </LI>
+<LI>"61" - Summon Daemon </LI>
+<LI>"62" - Summon Earth Elemental </LI>
+<LI>"63" - Summon Fire Elemental </LI>
+<LI>"64" - Summon Water Elemental </LI></UL>
+</UL>
+
+<LI>0x58 (X) - Open Door </LI>
+
+<UL>
+<LI>BYTE null termination (0x00) </LI></UL>
+
+<LI>0xc7 - action </LI>
+
+<UL>
+<LI>BYTE[blockSize-4] Action (null terminated strings) </LI>
+
+<UL>
+<LI>"bow" </LI>
+<LI>"salute" </LI></UL>
+</UL>
+</UL>
+</UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x13 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:44:02 EDT </P>
+<P>Remove Worn Item (10 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] itemid </LI>
+<LI>BYTE location </LI>
+
+<UL>
+<LI>0x01 = weilding hand </LI>
+<LI>0x02 = shield hand </LI>
+<LI>0x03 = feet </LI>
+<LI>0x04 = legs </LI>
+<LI>0x05 = chest1 (regular shirt) </LI>
+<LI>0x0B = head/hair </LI>
+<LI>0x15 = backpack id </LI>
+<LI>0x19 = horse </LI></UL>
+
+<LI>BYTE[4] playerID </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x1A Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:54 EDT </P>
+<P>Draw Object (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] itemID </LI>
+<LI>BYTE[2] model # </LI>
+<LI>if (itemID &amp; 0x80000000) </LI>
+
+<UL>
+<LI>BYTE[2] item count (or model # for corpses) </LI></UL>
+
+<LI>if (model &amp; 0x8000) </LI>
+
+<UL>
+<LI>BYTE Incr Counter (increment model by this #) </LI></UL>
+
+<LI>BYTE[2] xLoc (only use lowest significant 15 bits) </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>if (xLoc &amp; 0x8000) </LI>
+
+<UL>
+<LI>BYTE direction </LI></UL>
+
+<LI>BYTE zLoc </LI>
+<LI>if (yLoc &amp; 0x8000) </LI>
+
+<UL>
+<LI>BYTE[2] dye </LI></UL>
+
+<LI>if (yLoc &amp; 0x4000) </LI>
+
+<UL>
+<LI>BYTE flag(s) </LI>
+
+<UL>
+<LI>0x20 = Movable (used to make non-movable items movable) </LI>
+<LI>0x80 = Hidden </LI></UL>
+</UL>
+</UL>
+
+<P>All those conditional x, y things could be in different orders</P>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x1B Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 23:03:23 EDT </P>
+<P>Char Location and body type (37 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] player id </LI>
+<B><LI>BYTE[4] unknown1</B> </LI>
+<LI>BYTE[2] bodyType </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE[2] zLoc </LI>
+<LI>BYTE direction </LI>
+<B><LI>BYTE[2] unknown2 </LI>
+<LI>BYTE[4] unknown3 (usually has FF somewhere in it) </LI>
+<LI>BYTE[4] unknown4 </LI>
+</B><LI>BYTE mode (see packets 77 and 78) </LI>
+
+<UL>
+<LI>0x00 - Normal </LI>
+<LI>0x40 - Attack Mode </LI>
+<LI>0x80 - Hidden </LI></UL>
+
+<B><LI>BYTE unknown4 (*not* notoriety) </LI>
+<LI>BYTE[7] unknown5 </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x1C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 14-Apr-1998 20:53:31 EDT </P>
+<P>Send Speech (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] itemID (FF FF FF FF = system) </LI>
+<LI>BYTE[2] model (item hex # - FF FF = system) </LI>
+<LI>BYTE Type </LI>
+
+<UL>
+<LI>0x00 - Regular </LI>
+<LI>0x02 - Emote </LI>
+<LI>0x06 - System </LI>
+<LI>0x09 - Yell </LI></UL>
+
+<LI>BYTE[2] Text Color </LI>
+<LI>BYTE unknown (0x00?) </LI>
+<LI>BYTE Font </LI>
+
+<UL>
+<LI>0x00 - Bold Text </LI>
+<LI>0x01 - Text with shadow </LI>
+<LI>0x02 - Bold+Shadow </LI>
+<LI>0x03 - Normal </LI>
+<LI>0x04 - Gothic </LI>
+<LI>0x05 - Italic Script </LI>
+<LI>0x06 - Small Dark Letters </LI>
+<LI>0x07 - Colorful Font (Buggy?) </LI>
+<LI>0x08 - Rune font (Only use capital letters with this!) </LI>
+<LI>0x09 - Small Light Letters </LI></UL>
+
+<LI>BYTE[30] Name </LI>
+<LI>BYTE[?] Null-Terminated Message (? = blockSize - 44) </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x1D Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:02 EDT </P>
+<P>Delete object (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item/char id </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x20 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 23:03:29 EDT </P>
+<P>Draw creature (19 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] creature id </LI>
+<LI>BYTE[2] bodyType </LI>
+<B><LI>BYTE unknown1 </LI>
+</B><LI>BYTE[2] skin color / hue </LI>
+<LI>BYTE mode </LI>
+
+<UL>
+<LI>0x00 - Normal </LI>
+<LI>0x40 - Attack </LI>
+<LI>0x80 - Hidden </LI></UL>
+
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<B><LI>BYTE[2] unknown2 </LI>
+</B><LI>BYTE direction </LI>
+<LI>BYTE zLoc </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x21 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:37 EDT </P>
+<P>Character Move Reject (8 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE sequence # </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE direction </LI>
+<LI>BYTE zLoc </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x22 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:41 EDT </P>
+<P>Character Move ACK (3 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE index (matches move index sent) </LI>
+<LI>BYTE (0x00) </LI></UL>
+
+
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x23 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:54 EDT </P>
+<P>Dragging of Items (26 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] model # </LI>
+<B><LI>BYTE[3] unknown1 </LI>
+</B><LI>BYTE[2] stack count </LI>
+<LI>BYTE[4] Source ID </LI>
+<LI>BYTE[2] Source xLoc </LI>
+<LI>BYTE[2] Source yLoc </LI>
+<LI>BYTE Source zLoc </LI>
+<LI>BYTE[4] Target id </LI>
+<LI>BYTE[2] Target xLoc </LI>
+<LI>BYTE[2] Target yLoc </LI>
+<LI>BYTE Target zLoc </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x24 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 14-Apr-1998 20:53:33 EDT </P>
+<P>Draw Container (7 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item id </LI>
+<LI>BYTE[2] gump numbermodel </LI>
+
+<UL>
+<LI>0x003c = backpack </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x25 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 02-May-1998 16:05:35 EDT </P>
+<P>Add Item to Container (20 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item id to add </LI>
+<LI>BYTE[2] model </LI>
+<B><LI>BYTE unknown1 </LI>
+</B><LI>BYTE[2] # of items </LI>
+<LI>BYTE[2] xLoc in container </LI>
+<LI>BYTE[2] yLoc in container </LI>
+<LI>BYTE[4] itemID of container </LI>
+<LI>BYTE[2] color </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x26 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 23-May-1998 17:08:06 EDT </P>
+<P>Kick Player (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE[4] ID of GM who issued kick? </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x27 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:55 EDT </P>
+<P>Reject Request to Move Items (2 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE unknown1 (0x00) </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x28 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:16 EDT </P>
+<P>Clear Square (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x2C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:18 EDT </P>
+<P>Shift Body Type (2 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE amount to subtract from current body type </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x2E Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:44:03 EDT </P>
+<P>Worn Items (15 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] itemid (always starts 0x40 in my data) </LI>
+<LI>BYTE[2] model (item hex #) </LI>
+<LI>BYTE (0x00) </LI>
+<LI>BYTE location </LI>
+
+<UL>
+<LI>0x01 = weilding hand </LI>
+<LI>0x02 = shield hand </LI>
+<LI>0x03 = feet </LI>
+<LI>0x04 = legs </LI>
+<LI>0x05 = chest1 (regular shirt) </LI>
+<LI>0x0B = head/hair </LI>
+<LI>0x15 = backpack id </LI>
+<LI>0x19 = a horse </LI></UL>
+
+<LI>BYTE[4] playerID </LI>
+<LI>BYTE[2] color/hue </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x2F Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Thursday, 16-Apr-1998 19:51:59 EDT </P>
+<P>Fight Occuring (10 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE unknown1 </LI>
+</B><LI>BYTE[4] ID of attacker </LI>
+<LI>BYTE[4] ID of attacked </LI></UL>
+
+<P>This packet is sent when there is a fight going on somewhere on screen.</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x33 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:12 EDT </P>
+<P>Start = 0x33 0x01 </P>
+<P>End = 0x33 0x00 </P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x34 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last modified on Thursday, 16-Apr-1998 19:52:01 EDT </P>
+<P>Get Player Status (10 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] pattern (0xedededed) </LI>
+<LI>BYTE getType </LI>
+
+<UL>
+<LI>0x04 - Basic Stats (Packet 0x11 Response) </LI>
+<LI>0x05 = Request Skills (Packet 0x3A Response) </LI>
+<LI>?? - ?? </LI></UL>
+
+<LI>BYTE[4] playerID </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x3A Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last modified on Thursday, 16-Apr-1998 19:52:02 EDT </P>
+<P>Send Skills (Variable/190 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize (currently 0x00BE) </LI>
+<LI>BYTE unknown1 (0x00) </LI>
+<LI>Repeat next until done - 46 skills </LI>
+
+<UL>
+<LI>BYTE[2] id # of skill (0x01 - 0x2e) </LI>
+<LI>BYTE[2] skill Value * 10 </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x3B Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:41 EDT </P>
+<P>Buy Item(s) (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] vendorID </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - no items following </LI>
+<LI>0x02 - items following </LI></UL>
+
+<LI>For each item </LI>
+
+<UL>
+<LI>BYTE (0x1A) </LI>
+<LI>BYTE[4] itemID (from 3C packet) </LI>
+<LI>BYTE[2] # bought </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x3C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 02-May-1998 16:05:37 EDT </P>
+<P>Items in Container (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[2] # of Item segments </LI>
+<LI>Item Segments: </LI>
+
+<UL>
+<LI>BYTE[4] itemID </LI>
+<LI>BYTE[2] model </LI>
+<B><LI>BYTE unknown1 (0x00) </LI>
+</B><LI>BYTE[2] # of items in stack </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE[4] Container ItemID </LI>
+<LI>BYTE[2] color </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x4E Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:55 EDT </P>
+<P>Personal Light Level (6 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] creature id </LI>
+<LI>BYTE level </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x4F Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 19-Apr-1998 14:42:53 EDT </P>
+<P>Overall Light Level (2 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE level </LI>
+
+<UL>
+<LI>0x00 - day </LI>
+<LI>0x09 - night </LI>
+<LI>Max val = 0x0F </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x54 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:59 EDT </P>
+<P>Sound Effect (12 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE unknown1 (0x01) </LI>
+<LI>BYTE[2] unknown2 (sound model?) </LI>
+<LI>BYTE[2] unknown3 (speed/volume modifier?) </LI>
+</B><LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<B><LI>BYTE unknown4 (0x00) </LI>
+</B><LI>BYTE zLoc </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x5B Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 18-Apr-1998 17:49:28 EDT </P>
+<P>Time (4 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE hour </LI>
+<LI>BYTE minute </LI>
+<LI>BYTE second </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x5D Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:26 EDT </P>
+<P>Create Character (73 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] pattern1 (0xedededed) </LI>
+<LI>BYTE[30] char name </LI>
+<LI>BYTE[30] char password </LI>
+<LI>BYTE[4] slot choosen (0-based) </LI>
+<LI>BYTE[4] clientIP </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x65 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 22-Apr-1998 17:58:20 EDT </P>
+<P>Change Weather (4 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE type </LI>
+
+<UL>
+<LI>00 - dry </LI>
+<LI>01 - rain </LI>
+<LI>02 - snow </LI></UL>
+
+<LI>BYTE[2] amount </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x66 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:44:04 EDT </P>
+<P>Books - Page (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] bookID </LI>
+<LI>BYTE[2] # of pages in this packet (when requesting always requests 1) </LI>
+<LI>For each page: </LI>
+
+<UL>
+<LI>BYTE[2] page # </LI>
+<LI>BYTE[2] # of lines on page </LI>
+
+<UL>
+<LI>Server -&gt; (-1 = no lines) </LI>
+<LI>Client -&gt; (-1 = request page) </LI>
+<LI>Client -&gt; (&gt; 0 = write page) </LI></UL>
+
+<LI>Repeated for each line: </LI>
+
+<UL>
+<LI>BYTE[var] null terminated line </LI></UL>
+</UL>
+</UL>
+
+<P>NOTE: # of lines on page is always -1 for page requests</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x69 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Thursday, 23-Apr-1998 19:26:05 EDT </P>
+<P>Change Text/Emote Color (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<B><LI>BYTE[2] unknown1 </LI></UL>
+
+</B><P>The client sends two of these independant of the color choosen. It sends two of them in quick succession as part of the "same" packet. The unkonwn1 is 0x00 0x01 in the first and 0x00 0x02 in the second.</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x6C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Friday, 01-May-1998 17:57:31 EDT </P>
+<P>Clicking Commands (19 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE type </LI>
+
+<UL>
+<LI>0x00 = server set cursor to pointer </LI>
+<LI>0x01 = client return pointer position </LI></UL>
+
+<LI>BYTE[4] charID </LI>
+<LI>BYTE Cursor Type </LI>
+
+<UL>
+<LI>0x00 - Select Object </LI>
+<LI>0x01 - Choose x, y, z </LI></UL>
+
+<LI>The following are always sent but are only valid if sent by client </LI>
+
+<UL>
+<LI>BYTE[4] Clicked On ID </LI>
+<LI>BYTE[2] click xLoc </LI>
+<LI>BYTE[2] click yLoc </LI>
+<B><LI>BYTE unknown2 (0x00) </LI>
+</B><LI>BYTE click zLoc </LI>
+<LI>BYTE[2] clicked on model # </LI></UL>
+</UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x6D Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:33:59 EDT </P>
+<P>Play Music (3 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] musicID </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x6E Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:22 EDT </P>
+<P>Combat Related / Animation? (14 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] item/char ID </LI>
+<LI>BYTE[2] movement model </LI>
+
+<UL>
+<LI>0x00 = walk </LI>
+<LI>0x01 = walk faster </LI>
+<LI>0x02 = run </LI>
+<LI>0x03 = run (faster?) </LI>
+<LI>0x04 = nothing </LI>
+<LI>0x05 = shift shoulders </LI>
+<LI>0x06 = hands on hips </LI>
+<LI>0x07 = attack stance (short) </LI>
+<LI>0x08 = attack stance (longer) </LI>
+<LI>0x09 = swing (attack with knife) </LI>
+<LI>0x0a = stab (underhanded) </LI>
+<LI>0x0b = swing (attack overhand with sword) </LI>
+<LI>0x0c = swing (attack with sword over and side) </LI>
+<LI>0x0d = swing (attack with sword side) </LI>
+<LI>0x0e = stab with point of sword </LI>
+<LI>0x0f = ready stance </LI>
+<LI>0x10 = magic (butter churn!) </LI>
+<LI>0x11 = hands over head (balerina) </LI>
+<LI>0x12 = bow shot </LI>
+<LI>0x13 = crossbow </LI>
+<LI>0x14 = get hit </LI>
+<LI>0x15 = fall down and die (backwards) </LI>
+<LI>0x16 = fall down and die (forwards) </LI>
+<LI>0x17 = ride horse (long) </LI>
+<LI>0x18 = ride horse (medium) </LI>
+<LI>0x19 = ride horse (short) </LI>
+<LI>0x1a = swing sword from horse </LI>
+<LI>0x1b = normal bow shot on horse </LI>
+<LI>0x1c = crossbow shot </LI>
+<LI>0x1d = block #2 on horse with shield </LI>
+<LI>0x1e = block on ground with shield </LI>
+<LI>0x1f = swing, and get hit in middle </LI>
+<LI>0x20 = bow (deep) </LI>
+<LI>0x21 = salute </LI>
+<LI>0x22 = scratch head </LI>
+<LI>0x23 = 1 foot forward for 2 secs </LI>
+<LI>0x24 = same </LI></UL>
+
+<B><LI>BYTE unknown1 (0x00) </LI>
+</B><LI>BYTE direction </LI>
+<LI>BYTE[2] repeat (1 = once / 2 = twice / 0 = repeat forever) </LI>
+<B><LI>BYTE uknown2 (0x00) </LI>
+</B><LI>BYTE repeat Flag (0 - Don't repeat / 1 repeat) </LI>
+<LI>BYTE frame Delay (0x00 - fastest / 0xFF - Too slow to watch) </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x70 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:27 EDT </P>
+<P>Graphical Effect (28 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE direction type </LI>
+
+<UL>
+<LI>00 = go from source to dest </LI>
+<LI>01 = lightning strike at source </LI>
+<LI>02 = stay at current x,y,z </LI>
+<LI>03 = stay with current source character id </LI>
+<LI>?? = ? </LI></UL>
+
+<LI>BYTE[4] character id </LI>
+<B><LI>BYTE[4] unknown2 (0x00 00 00 00 - target of spell?) </LI>
+<LI>BYTE[2] unknown2 (0x37 35 here) </LI>
+</B><LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE zLoc </LI>
+<LI>BYTE[2] xLoc of target </LI>
+<LI>BYTE[2] yLoc of target </LI>
+<LI>BYTE zLoc of target </LI>
+<B><LI>BYTE[6] unknown3 (0x06 1e 00 00 01 00 in this one) </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x72 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:34:00 EDT </P>
+<P>Request Mode Change (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - Normal </LI>
+<LI>0x01 - Fighting </LI></UL>
+
+<B><LI>BYTE[3] unknown1 (always 00 32 00 in testing) </LI></UL>
+
+</B><P>Server replies with 0x77 packet</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x74 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 03-May-1998 22:52:07 EDT </P>
+<P>Open Buy Window (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] (vendorID | 0x40000000) </LI>
+<LI>BYTE # of items </LI>
+<LI># of items worth of item segments </LI>
+
+<UL>
+<LI>BYTE[4] price </LI>
+<LI>BYTE length of text description </LI>
+<LI>BYTE[text length] item description </LI></UL>
+</UL>
+
+<P>NOTE: This packet is always preceeded by a describe contents packet (0x3c) with the container id as the (vendorID | 0x40000000) and then an open container packet (0x24?) with the vendorID only and a model number of 0x0030 (probably the model # for the buy screen)</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x75 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 23-May-1998 17:08:06 EDT </P>
+<P>Rename NPC (35 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] npcID </LI>
+<LI>BYTE[30] new name </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x77 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 21:47:57 EDT </P>
+<P>Send Player (17 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] player id </LI>
+<LI>BYTE[2] model (item hex # - 0x0190 for human male) </LI>
+<LI>BYTE[2] xLoc </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>BYTE zLoc </LI>
+<LI>BYTE direction </LI>
+<LI>BYTE[2] hue/skin color </LI>
+<LI>BYTE mode (bit field) </LI>
+
+<UL>
+<LI>0x00 - normal </LI>
+<LI>0x40 - attack mode </LI>
+<LI>0x80 - hidden? </LI></UL>
+
+<LI>BYTE notoriety (signed 2's compliment) </LI></UL>
+
+<P>NOTE: If (direction &amp; 0x80) --&gt; running</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x78 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 13:34:01 EDT </P>
+<P>Draw object (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] itemID/playerID </LI>
+<LI>BYTE[2] model (item hex #) </LI>
+<LI>if (itemID &amp; 0x80000000) </LI>
+
+<UL>
+<LI>BYTE[2] skinColor </LI></UL>
+
+<LI>BYTE[2] xLoc (only 15 lsb) </LI>
+<LI>BYTE[2] yLoc </LI>
+<LI>if (xLoc &amp; 0x8000) </LI>
+
+<UL>
+<LI>BYTE direction </LI></UL>
+
+<LI>BYTE zLoc </LI>
+<LI>BYTE direction </LI>
+<LI>BYTE[2] dye/skin color </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - Normal </LI>
+<LI>0x40 - Attack Mode </LI>
+<LI>0x80 - Hidden? </LI></UL>
+
+<LI>BYTE notoriety (2's complement signed) </LI>
+<LI>if (BYTE[4] == 0x00 0x00 0x00 0x00) </LI>
+
+<UL>
+<LI>DONE </LI></UL>
+
+<LI>else </LI>
+
+<UL>
+<LI>BYTE[4] itemID </LI>
+<LI>BYTE[2] model (item hex # - only 15 lsb) </LI>
+<LI>BYTE position </LI>
+
+<UL>
+<LI>0x01 = weilding hand </LI>
+<LI>0x02 = shield arm </LI>
+<LI>0x03 = feet (shoes) </LI>
+<LI>0x04 = head (hair) </LI>
+<LI>0x15 = back (backpack) </LI>
+<LI>if (model &amp; 0x8000) </LI>
+
+<UL>
+<LI>BYTE[2] hue </LI></UL>
+</UL>
+</UL>
+</UL>
+
+<P>NOTE: If (direction &amp; 0x80) --&gt; running</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x7C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 03-May-1998 22:52:13 EDT </P>
+<P>Open Dialog Box (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[4] dialogID (echo'd back to the server in 7d) </LI>
+
+<UL>
+<LI>If dialogID == playerID then it's a grey menu choice box </LI></UL>
+
+<B><LI>BYTE[2] unknown1 (echo'd back to server in 7d) </LI>
+</B><LI>BYTE length of question </LI>
+<LI>BYTE[length of question] question text </LI>
+<LI>BYTE # of responses </LI>
+<LI>Then for each response: </LI>
+
+<UL>
+<LI>BYTE[2] model id # of shown item (if grey menu -- then always 0x00 as msb) </LI>
+<B><LI>BYTE[2] unknown2 (00 00 check or not?) </LI>
+</B><LI>BYTE response text length </LI>
+<LI>BYTE[response text length] response text </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x7D Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 03-May-1998 22:52:18 EDT </P>
+<P>Client Response To Dialog (13 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] dialogID (echo'd back from 7c packet) </LI>
+<B><LI>BYTE[2] unknown1 (echo'd back from 7c packet) </LI>
+</B><LI>BYTE[2] 1-based index of choice </LI>
+<LI>BYTE[2] model # of choice </LI>
+<B><LI>BYTE[2] unknown1 (00 00) </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x80 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:30 EDT </P>
+<P>Login Request (62 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[30] sid </LI>
+<LI>BYTE[30] password </LI>
+<LI>BYTE unknown1 (not 0x00 - so not NULL) </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x82 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:32 EDT </P>
+<P>Login Denied (2 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE why </LI>
+
+<UL>
+<LI>0x00 = unknown user </LI>
+<LI>0x01 = account already in use </LI>
+<LI>0x02 = account disabled </LI>
+<LI>0x03 = password bad </LI>
+<LI>0x04 and higher = communications failed </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x83 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:42 EDT </P>
+<P>Delete Character (39 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[30] password </LI>
+<LI>BYTE[4] charIndex </LI>
+<LI>BYTE[4] clientIP </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x86 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 18-Apr-1998 17:49:37 EDT </P>
+<P>Resend Characters After Delete (304 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE # of characters </LI>
+<LI>Following repeated 5 times </LI>
+
+<UL>
+<LI>BYTE[30] character name </LI>
+<LI>BYTE[30] character password </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x88 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 18-Apr-1998 17:49:39 EDT </P>
+<P>Open Paperdoll (66 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] charid </LI>
+<LI>BYTE[60] text </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - Regular </LI>
+<LI>0x40 - Attack Mode </LI></UL>
+</UL>
+<DIR>
+<DIR>
+<DIR>
+
+<P>(actually, anything other than 0x00 seems to mean attack mode)</P>
+
+<P>&nbsp;</P></DIR>
+</DIR>
+</DIR>
+
+</FONT><H1 ALIGN="CENTER">0x89 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Saturday, 23-May-1998 17:08:06 EDT </P>
+<P>Corpse Clothing (?? bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE[??] unknown1 </LI></UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x8C Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:42 EDT </P>
+<P>Connect to Game Server (11 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] gameServer IP </LI>
+<LI>BYTE[2] gameServer port </LI>
+<LI>BYTE[4] new key </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x91 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:45 EDT </P>
+<P>Game Server Login (65 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] key used </LI>
+<LI>BYTE[30] sid </LI>
+<LI>BYTE[30] password </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x93 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:43 EDT </P>
+<P>Books - Title Page (88 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] bookID </LI>
+<LI>BYTE[3] write flag </LI>
+
+<UL>
+<LI>0x00 - non-writable </LI>
+<LI>0x01 - writable </LI></UL>
+
+<LI>BYTE[2] # of pages </LI>
+<LI>BYTE[50] title </LI>
+<LI>BYTE[30] author </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x95 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Thursday, 30-Apr-1998 18:34:08 EDT </P>
+<P>Dye Window (9 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] itemID of dyes </LI>
+<B><LI>BYTE[2] unknown1 </LI>
+</B><LI>BYTE[2] color (default on server send is 0x0FAB) </LI></UL>
+
+<P>NOTE: This packet is sent by both the server and client</P>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x99 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Sunday, 17-May-1998 14:44:20 EDT </P>
+<P>Bring Up House/Boat Placement View (26 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<B><LI>BYTE unknown1 (0x01 here -- possibly house type?) </LI>
+</B><LI>BYTE[4] ID of deed </LI>
+<B><LI>BYTE[20] unknown2 </LI>
+
+<UL>
+<LI>00 00 00 00 00 00 00 00 00 00 00 00 00 6c 00 00 00 04 00 00 </LI></UL>
+</UL>
+
+</B>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0x9B Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:45 EDT </P>
+<P>Request Help (258 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[257] (0x00) </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA0 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:46 EDT </P>
+<P>Select Server (3 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] server # chosen </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA1 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:29 EDT </P>
+<P>Update Current Hitpoints (9 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] playerID </LI>
+<LI>BYTE[2] maxHP </LI>
+<LI>BYTE[2] currentHP </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA2 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:30 EDT </P>
+<P>Update Current Mana (9 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] playerID </LI>
+<LI>BYTE[2] maxMana </LI>
+<LI>BYTE[2] currentMana </LI></UL>
+
+
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA3 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Tuesday, 21-Apr-1998 20:45:32 EDT </P>
+<P>Update Current Stamina (9 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] playerID </LI>
+<LI>BYTE[2] maxStamina </LI>
+<LI>BYTE[2] currentStamina </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA5 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:48 EDT </P>
+<P>Open Web Browser (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE[blockSize-3] null terminated full web address </LI></UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA6 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:49 EDT </P>
+<P>Tips/Notice window (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - tips window </LI>
+<LI>0x01 - notice window </LI></UL>
+
+<B><LI>BYTE[2] unknown1 </LI>
+</B><LI>BYTE[2] tip # </LI>
+<LI>BYTE[2] msgSize </LI>
+<LI>BYTE[?] message (? = blockSize - 10) </LI></UL>
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA7 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Wednesday, 06-May-1998 23:30:53 EDT </P>
+<P>Request Tips/Notice (4 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] last tip # </LI>
+<LI>BYTE flag </LI>
+
+<UL>
+<LI>0x00 - tips window </LI>
+<LI>0x01 - notice window </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA8 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:06:50 EDT </P>
+<P>Game Server List (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE System Info Flag </LI>
+
+<UL>
+<LI>0xCC - Don't send </LI>
+<LI>0x64 - Send Video card </LI>
+<LI>?? - </LI></UL>
+
+<LI>BYTE[2] # of servers </LI>
+<LI>Then each server -- </LI>
+
+<UL>
+<LI>BYTE[2] serverIndex (0-based) </LI>
+<LI>BYTE[32] serverName </LI>
+<LI>BYTE percentFull </LI>
+<LI>BYTE timezone </LI>
+<LI>BYTE[4] pingIP </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xA9 Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Monday, 13-Apr-1998 17:07:00 EDT </P>
+<P>Characters / Starting Locations (Variable # of bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[2] blockSize </LI>
+<LI>BYTE # of characters </LI>
+<LI>Following repeated 5 times </LI>
+
+<UL>
+<LI>BYTE[30] character name </LI>
+<LI>BYTE[30] character password </LI></UL>
+
+<LI>BYTE number of starting locations </LI>
+<LI>Following for as many locations as you have </LI>
+
+<UL>
+<LI>BYTE locationIndex (0-based) </LI>
+<LI>BYTE[31] town (general name) </LI>
+<LI>BYTE[31] exact name </LI></UL>
+</UL>
+
+
+<P>&nbsp;</P>
+</FONT><H1 ALIGN="CENTER">0xAA Packet</H1>
+<FONT SIZE=2><P ALIGN="CENTER">Last Modified on Thursday, 16-Apr-1998 19:52:14 EDT </P>
+<P>OK / Not OK To Attack (5 bytes) </P>
+
+<UL>
+<LI>BYTE cmd </LI>
+<LI>BYTE[4] CharID being attacked </LI></UL>
+
+<P>ID is set to 00 00 00 00 when attack is refused.</P>
+</FONT></BODY>
+</HTML>

@@ -1,0 +1,122 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : msgboard.scp                                           *
+//*****************************************************************
+//   Purpose:
+//      To be used as a template for certain default quest
+//      messages like escort or item quests.
+//
+//   Features:
+//      The ability to use replaceable parameters such as:
+//              %n = NPC name
+//              %r = Destination Region Name
+//              %R = Current Region Name
+//              %l = Location of NPC in relation to board (ie "X, Y")
+//              %t = NPC title
+//
+//      More to be added as needed
+//
+//   Note:
+//      A typical line displayed in the post window consists of 20
+//      characters.  Some characters are larger and will therefore 
+//      make the total number of characters visible on a single line
+//      smaller.  A ruler has been provided to use in the creation of
+//      message templates.  I recommend not going beyond 20-25 chars
+//      per line and the replaceable parameters should typically be
+//      placed on a line by themselves unless you can guarantee that
+//      the replaced text will be less than 20 characters.  Also, if you
+//      want a blank line you must have at least a single space on that
+//      line or else the parser will skip it and squish the two paragraphs
+//      together.  See the examples below:
+// #######################################################################
+
+// RULER
+//       1         2         3
+//3456789012345678901234567890
+
+[ESCORTS]
+{
+ESCORT=1
+ESCORT=2
+ESCORT=3
+ESCORT=4
+}
+
+[ESCORT 1]
+{
+If you are good of heart
+and desire some honest
+work, then maybe you can
+escort me to 
+%r.
+ 
+Currently I am in
+%R 
+near this location:
+%l.
+ 
+Thank you,
+%n %t
+}
+
+[ESCORT 2]
+{
+Urgent, I require a
+companion to travel
+with me to
+%r.
+ 
+If you can help, I
+can be found in
+%R
+at this location:
+%l.
+ 
+Please hurry,
+%n %t
+}
+
+[ESCORT 3]
+{
+Travelling companion needed
+near %R
+ 
+Please contact
+%n %t
+for further details.
+ 
+I can be found near
+the following location:
+%l.
+ 
+Thank you.
+}
+
+[ESCORT 4]
+{
+Tis a grim day indeed. My
+closest friend hath just
+been killed. I need to 
+find out information about
+his death near 
+%r
+ 
+Please contact %n
+of %R
+as quickly as possible, as
+I have very little time to
+waste.
+ 
+I can be found near 
+%l.
+ 
+Thank thee.
+}
+
+
+EOF
+

@@ -1,0 +1,36 @@
+Type=Exe
+Form=frmConfig.frm
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\WINNT\System32\stdole2.tlb#OLE Automation
+IconForm="frmConfig"
+Startup="frmConfig"
+HelpFile=""
+Title="UOX3Config"
+ExeName32="config.exe"
+Command32=""
+Name="UOX3Config"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=0
+MinorVer=96
+RevisionVer=1
+AutoIncrementVer=1
+ServerSupportFiles=0
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1

@@ -1,0 +1,215 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>The UOX3HOC Log</title>
+
+<title>First official UOX3 House of Commons Chat&nbsp;
+</title>
+
+</head>
+
+<body bgcolor="#000000" text="#FFFFFF" link="#008080"
+vlink="#008080" alink="#008080">
+
+<center><h1>Second official UOX3 House of Commons Chat</h1>
+<h4>February 6th, 2000</h4>
+</center>
+
+<p>Legend
+</p>
+
+<p><font color="#FFC840">
+Developer answer
+<br>
+</font>
+Question
+<br>
+<font color="#800080">
+Misc</font>
+</p>
+
+<p><font color="#FFC840">«Revana»: Greetings and thank you for attending tonight's Open House.<br>
+«Revana»: Tonight's chat is "General Discussion"., please try to keep questions along these lines.<br>
+«Revana»: Uox3Hoc_bot will be the moderator for this chat..<br>
+«Revana»: To submit a question, do /msg uox3hoc_bot !question question here<br>
+«Revana»: Xuri will be on standby<br>
+«Revana»: just in case the bot fails<br>
+«Revana»: Ok<br>
+«Revana»: The Bot is now on<br>
+«Revana»: Please remember that there are 10 slots only for questions</font>
+</p>
+<p>
+* Uox3Hoc_Bot : Are there any plans to optimise the code of UOX? Possibly create a UOX4? Or plans to reduce memory consumption by removing unused read in data?<br>
+<font color="#FFC840">
+«Abaddon»: I'll field this one<br>
+«Abaddon»: Yes, there are always plans to optimise the code in UOX. It's a never ending battle for us, but I doubt there'll be anything along the lines of a UOX4<br>
+«Abaddon»: I myself have been looking at the way to reduce spell book memory consumption, and a few other things as well<br>
+«Abaddon»: EvilDeD and I are conducting an analysis on the code, noting weak areas, ways to
+optimise things, what can be removed<br>
+«Abaddon»: but yes, we're definitely hoping for a reduced memory footprint and general speedups<br>
+«Zippy-»: I also have been digging around in the code, there are a bunch of places we could trim memory down for characters and items....</font>
+</p>
+<p>
+* Uox3Hoc_Bot : About scripts, will we minimize them into smaller files, for easier debugging and modifying?<br>
+<font color="#FFC840">
+«Abaddon»: Well, certainly<br>
+«Abaddon»: in actual fact, Eagle plans to rewrite most of them from scratch. That way we don't have any bloated scripts<br>
+«Abaddon»: And we'll only have the essentials required<br>
+«Abaddon»: I don't know how far along Seph's docs are, but with newer slim lined
+scripts should also come some documents<br>
+«Zippy-»: There are a few that aren't really needed at all... We'll look at those with Eagle and see which we can take out.</font>
+</p>
+<p>
+«Abaddon»: Question: As it stands now, accounts cannot be deleted without skewing the accounts. Are there any plans to fix this, either by numbering the accounts or by some other means?<br>
+<font color="#800080">«JustMichael»: I would like to add the new version of LoginAce will delete them without skewing the accounts.<br>
+</font><font color="#FFC840">
+«Revana»: Ok, I'll field this one<br>
+«Revana»: Yes, I do have fixes for the accounts<br>
+«Revana»: Most of it works, and there are few bugs I have to crush unless you want to be able to login once =)</font>
+</p>
+<p>
+* Uox3hoc_bot : What are the future plans for UOX?<br>
+<font color="#FFC840">
+«Zippy-»: Well, that's a vague question... but right now we want to get very stable and reliable exe first,<br>
+«Zippy-»: Then we have lots of plans for fun new things.<br>
+«Zippy-»: EviL wants to get threading in, as well as a VERY advanced script system for quests, triggers and such.<br>
+«Zippy-»: But right now we want to have something we can be proud of before focus shifts back to features.<br>
+</font><font color="#800080">
+«Uox3hoc_bot»:  *** Please Remember, to submit a question, you have to type: /msg Uox3hoc_bot !question Your question. ***</font>
+</p>
+<p>
+* Uox3hoc_bot : What's currently the biggest bug.. in your opinion?<br>
+<font color="#FFC840">
+«Abaddon»: Well, I'd classify this as a bug. The big problems with memory allocation and usage<br>
+«Abaddon»: We're using up way too much memory, more than you'd reasonably expect<br>
+«Abaddon»: And I've noted the last 3 times I had to try and realloc memory it just crashed me<br>
+</font><font color="#800080">
+«Zippy-»: (About 700 bytes per item, and 1500 per character)<br>
+</font><font color="#FFC840">
+«Abaddon»: The spawn.scp bug that causes a crash is actually memory related I believe, as well<br>
+«Abaddon»: That's one of the reasons that a few of us are undertaking a major analysis of the memory situation</font>
+</p>
+<p>
+* Uox3hoc_bot : Why does uo freeze when I try to put my password and name in?<br>
+<font color="#FFC840">
+«Revana»: Well<br>
+«Revana»: one solution to that problem is<br>
+«Revana»: that you either have a bad client<br>
+«Revana»: or the uox version is wrong<br>
+«Xuri»: ...or the ip is wrong. or the port. or 1000 other small things *winks*</font>
+</p>
+<p>
+* Uox3hoc_bot : Is there going to be any ready to play full worlds for those who want to play offline?<br>
+<font color="#FFC840">
+«Zippy-»: Well, there already are several available... I don't think there are many COMPLETE worlds, since those who have them like them too much to give away.<br>
+«RevolutionShadow»: Plus they would be too big<br>
+«Zippy-»: There are a few people attempting to make large public worlds, and I'm sure you could find links to pages if ya look around a little<br>
+«Zippy-»: Revo, weren't you working on one?<br>
+«RevolutionShadow»: RevNet's world file yes<br>
+«RevolutionShadow»: Will go public when the server finally goes down</font>
+</p>
+<p>
+* Uox3hoc_bot : What is the current goal if any on when the exe will be stable to add more features? And can we get the addmenu into its own file? :)<br>
+<font color="#FFC840">
+«Zippy-»: I'm not sure if we have an exact time frame... I know we would like it as much as the users would.<br>
+«Zippy-»: And addmenu has already been coded to go into its own file, we'll talk to eagle and evil about when exactly that will be
+implimented.</font>
+</p>
+<p>
+* Uox3hoc_bot : When will the features freeze be over and we can get the rest of the spells working?<br>
+<font color="#FFC840">
+«Abaddon»: Well, the feature freeze will be over when it's over<br>
+«Abaddon»: We had hoped to have it over by now, but these things just can't be guarenteed<br>
+«Abaddon»: There's no point us making definite time frame promises, because we just don't know exactly what may crop up<br>
+«Abaddon»: Yes, we'd love it to be over and done with, to be able to add new features<br>
+«Abaddon»: All of us would. But what's the point of adding new features when people are having such probs?<br>
+«Abaddon»: As for the spells situation, if you consider it a bug, then message a coder with the exact details, and we can try and get it fixed<br>
+</font>
+«Uox3hoc_bot»:  *** Please Remember, to submit a question, you have to type: /msg Uox3hoc_bot !question Your question. *** *** There are 10 slots only so please have patience if it is full ***
+</p>
+<p>
+* Uox3hoc_bot : Why does UOX disconnect the UO Client when charting a boat course on a World Map?<br>
+<font color="#FFC840">
+«Abaddon»: Well, I believe that this was asked, and answered, in the previous chat<br>
+«Abaddon»: It's considered a lack of feature, not a bug<br>
+«Abaddon»: It's essentially at the moment a packet we pass over, but we actually ignore it for the moment<br>
+«Abaddon»: The only way to safely ignore it is to disconnect the client, otherwise you start running into probs with the other clients and mixed up messages</font>
+</p>
+<p>
+* Uox3hoc_bot : There appears to be a bug that causes a player not to be able to relogin into a shard (until it is restarted) if he tries to login when the server is initializing and then cancels before the server is done loading. Is this bug known? If so, any eta on it being fixed?<br>
+<font color="#FFC840">
+«Abaddon»: Well, yes and no, to a bug<br>
+«Abaddon»: It happens because we init the port at the start of the code, and it's really an impatient user problem<br>
+«Abaddon»: We could try moving the port initialisation further down, to try and mask these problems, but that may introduce others<br>
+«Abaddon»: Another option is to block any receipt of messages before it finishes loading<br>
+«Abaddon»: Another thing that needs looking at =)</font>
+</p>
+<p>
+* Uox3hoc_bot : I have several walking bug errors. For example, in Delucia normal players (non-GMs) fall through the floors. Is there any estimate to when walking issues will be resolved nearly 100%?<br>
+<font color="#FFC840">
+«Zippy-»: The problem with this is actually the tile bits are set wrong in the mul files....<br>
+</font><font color="#800080">
+«Abaddon»: I must run, but the others will answer all your questions, please continue...<br>
+</font><font color="#FFC840">
+«Zippy-»: Some solution is of course to make your own.... You could try patching these "holes" with dynamic tiles....<br>
+«Zippy-»: And of course walking is very complex....</font>
+</p>
+<p>
+* Uox3hoc_bot : So, any info on the possibility of a Macintosh client?<br>
+<font color="#FFC840">
+«Revana»: Well, i can't guarantee a Macintosh client<br>
+«Revana»: but, currently, there are two clients in design. One is done by TUS, it's kinda like the regular client, just designed for their Emu. And the other one is a 3d client, it's in its basic steps, but hopefully, it will work out..</font>
+</p>
+<p>
+* Uox3hoc_bot : With the implementation of the newbie.scp a while back why is the initial starting gold still included within the uox3.ini?<br>
+<font color="#FFC840">
+«Zippy-»: Pretty much, it was never moved... There a few things laying around we don't use anymore... perhaps it should be moved ;-)<br>
+«Cestle»: I would think that would be done with Eagle's re-write that was mentioned
+earlier</font>
+</p>
+<p>
+* Uox3hoc_bot : In the future will the books be dealt with differently? As it stands now books are created in the misc.scp. While this method makes sense, it does not allow players to create books on their adventures.<br>
+<font color="#FFC840">
+«Revana»: Yes, books will be dealt differently.<br>
+«Revana»: Currently, I have a source code for writeable books.<br>
+«Revana»: But since the feature freeze is in effect, I can't add it to the main source. So you'll have to wait and see.</font>
+</p>
+<p>
+* Uox3hoc_bot : About that 3D Client, do you know if it supports GeForce's T&amp;L Technology?<br>
+<font color="#FFC840">
+«Revana»: yep. it supports it.</font>
+</p>
+<p>
+* Uox3hoc_bot : This 3D client interests me greatly. Who is currently developing it and how far along is it?<br>
+<font color="#FFC840">
+«Revana»: Currently, it's a small organization.. the project is ran by
+EvilDeD.. and I'm currently designing the engine..<br>
+«Revana»: It's still in it's initial stages<br>
+</font>
+«RevolutionShadow»: Any URL?<br>
+<font color="#FFC840">
+«Revana»: but if you wish to help, email me at revana@home.net<br>
+«Revana»: no URL, sorry =)<br>
+</font><font color="#800080">
+«Uox3hoc_bot»:  *** Please Remember, to submit a question, you have to type: /msg Uox3hoc_bot !question Your question. *** *** There are 10 slots only so please have patience if it is full ***</font>
+</p>
+<p>
+* Uox3hoc_bot : Spawns at the moment tend to not care about where they spawn things. A region spawn will create a NPC within walls, under the floor tiles, in water, etc.. Is there any plans to fix this?<br>
+<font color="#FFC840">
+«Zippy-»: This has to do with the rewrite of a lot of UOX's map functions. They don't spawn on anything just a lot of stuff they shouldn't.<br>
+«Zippy-»: And this should be fixed soon, but I'm not a man of dates and times.... :o)</font>
+</p>
+<p>
+* Uox3hoc_bot : When a house (multi) is created, it seems that the other people around the multi are not updated with the information that the house has been placed. They can see the door and the sign but until they walk away from the update area and back into it, they cannot see the building itself.<br>
+<font color="#FFC840">
+«Zippy-»: Sounds pretty simple to fix... Famous last words: "I'll look into it" :o)</font>
+</p>
+<p><font color="#800080">
+«Revana»: Well folks, time to wrap up for the night. I would like to thank everyone for coming tonight<br>
+«Revana»: Please visit http://www.uoxdev.com/uox3hoc/ for the log which will be posted soon.<br>
+</font>
+</p>
+</body>

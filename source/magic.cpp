@@ -1,42 +1,1268 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  magic.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-/*  
-*   UOX3 Magic stuff
-*
-*	Completed the restructuring by AntiChrist (9/99)
-*   Functions' description added by AntiChrist (9/99)
-*/
-
 #include "uox3.h"
 #include "debug.h"
+#include "magic.h" 
+#include "power.h"
+#include "ssection.h"
 
+#undef DBGFILE
 #define DBGFILE "magic.cpp"
 
+MagicTable_s magic_table[] = {
+	{ 593, (MAGIC_DEFN)&splClumsy }, 
+	{ 594, (MAGIC_DEFN)&splCreateFood }, 
+	{ 595, (MAGIC_DEFN)&splFeeblemind },
+	{ 596, (MAGIC_DEFN)&splHeal },
+	{ 597, (MAGIC_DEFN)&splMagicArrow },
+	{ 598, (MAGIC_DEFN)&splNightSight },
+	{ 599, (MAGIC_DEFN)&splReactiveArmor },
+	{ 600, (MAGIC_DEFN)&splWeaken },
+	{ 601, (MAGIC_DEFN)&splAgility },
+	{ 602, (MAGIC_DEFN)&splCunning },
+	{ 603, (MAGIC_DEFN)&splCure },
+	{ 604, (MAGIC_DEFN)&splHarm },
+	{ 605, (MAGIC_DEFN)&splMagicTrap },
+	{ 606, (MAGIC_DEFN)&splMagicUntrap },
+	{ 607, (MAGIC_DEFN)&splProtection },
+	{ 608, (MAGIC_DEFN)&splStrength },
+	{ 609, (MAGIC_DEFN)&splBless },
+	{ 610, (MAGIC_DEFN)&splFireball },
+	{ 611, (MAGIC_DEFN)&splMagicLock },
+	{ 612, (MAGIC_DEFN)&splPoison },
+	{ 613, (MAGIC_DEFN)&splTelekinesis },
+	{ 614, (MAGIC_DEFN)&splTeleport },
+	{ 615, (MAGIC_DEFN)&splUnlock },
+	{ 616, (MAGIC_DEFN)&splWallOfStone },
+	{ 617, (MAGIC_DEFN)&splArchCure },
+	{ 618, (MAGIC_DEFN)&splArchProtection },
+	{ 619, (MAGIC_DEFN)&splCurse },
+	{ 620, (MAGIC_DEFN)&splFireField },
+	{ 621, (MAGIC_DEFN)&splGreaterHeal },
+	{ 622, (MAGIC_DEFN)&splLightning },
+	{ 623, (MAGIC_DEFN)&splManaDrain },
+	{ 624, (MAGIC_DEFN)&splRecall },
+	{ 625, (MAGIC_DEFN)&splBladeSpirits },
+	{ 626, (MAGIC_DEFN)&splDispelField },
+	{ 627, (MAGIC_DEFN)&splIncognito },
+	{ 628, (MAGIC_DEFN)&splMagicReflection },
+	{ 629, (MAGIC_DEFN)&splMindBlast },
+	{ 630, (MAGIC_DEFN)&splParalyze },
+	{ 631, (MAGIC_DEFN)&splPoisonField },
+	{ 632, (MAGIC_DEFN)&splSummonCreature },
+	{ 633, (MAGIC_DEFN)&splDispel },
+	{ 634, (MAGIC_DEFN)&splEnergyBolt },
+	{ 635, (MAGIC_DEFN)&splExplosion },
+	{ 636, (MAGIC_DEFN)&splInvisibility },
+	{ 637, (MAGIC_DEFN)&splMark },
+	{ 638, (MAGIC_DEFN)&splMassCurse },
+	{ 639, (MAGIC_DEFN)&splParalyzeField },
+	{ 640, (MAGIC_DEFN)&splReveal },
+	{ 641, (MAGIC_DEFN)&splChainLightning },
+	{ 642, (MAGIC_DEFN)&splEnergyField },
+	{ 643, (MAGIC_DEFN)&splFlameStrike },
+	{ 644, (MAGIC_DEFN)&splGateTravel },
+	{ 645, (MAGIC_DEFN)&splManaVampire },
+	{ 646, (MAGIC_DEFN)&splMassDispel },
+	{ 647, (MAGIC_DEFN)&splMeteorSwarm },
+	{ 648, (MAGIC_DEFN)&splPolymorph },
+	{ 649, (MAGIC_DEFN)&splEarthquake },
+	{ 650, (MAGIC_DEFN)&splEnergyVortex },
+	{ 651, (MAGIC_DEFN)&splResurrection },
+	{ 652, (MAGIC_DEFN)&splSummonAir },
+	{ 653, (MAGIC_DEFN)&splSummonDaemon },
+	{ 654, (MAGIC_DEFN)&splSummonEarth },
+	{ 655, (MAGIC_DEFN)&splSummonFire },
+	{ 656, (MAGIC_DEFN)&splSummonWater },
+	{ 657, (MAGIC_DEFN)&splRandom },
+	{ 658, (MAGIC_DEFN)&splNecro1 },
+	{ 659, (MAGIC_DEFN)&splNecro2 },
+	{ 660, (MAGIC_DEFN)&splNecro3 },
+	{ 661, (MAGIC_DEFN)&splNecro4 },
+	{ 662, (MAGIC_DEFN)&splNecro5 },
+	{ 0, NULL } 
+};
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ )
+//|	Programmer	-	Abaddon
+//| Date		-	17th September, 2001
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and another at trgX / trgY / trgZ
+//o---------------------------------------------------------------------------o
+void SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ )
+{
+	CItem *g1 = Items->SpawnItem( sock, caster, 1, "#", false, 0x0F6C, 0, false, false );
+	if( g1 != NULL )
+	{
+		g1->SetType( 51 );
+		g1->SetLocation( srcX, srcY, srcZ );
+		g1->SetGateTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) ) );
+		g1->SetDir( 1 );
+		RefreshItem( g1 );
+	}
+	else
+		return;
+
+	CItem *g2 = Items->SpawnItem( sock, caster, 1, "#", false, 0x0F6C, 0, false, false );
+	if( g2 != NULL )
+	{
+		g2->SetType( 52 );
+		g2->SetLocation( trgX, trgY, trgZ );
+		g2->SetGateTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) ) );
+		g2->SetDir( 1 );
+		RefreshItem( g2 );
+
+		g2->SetMoreX( g1->GetSerial() );
+		g1->SetMoreX( g2->GetSerial() );
+	}
+	else
+		return;
+}
+
+bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
+{
+	SI16 fx[5], fy[5];
+	if( fieldDir )
+	{
+		fx[0] = fx[1] = fx[2] = fx[3] = fx[4] = x;
+		fy[0] = y - 1;
+		fy[1] = y + 1;
+		fy[2] = y - 2;
+		fy[3] = y + 2;
+		fy[4] = y;
+	}  
+	else 
+	{	
+		fy[0] = fy[1] = fy[2] = fy[3] = fy[4] = y;
+		fx[0] = x - 1;	
+		fx[1] = x + 1;
+		fx[2] = x - 2;
+		fx[3] = x + 2;
+		fx[4] = x;
+	}
+	CItem *i = NULL;
+	UI08 worldNumber = caster->WorldNumber();
+	for( int j = 0; j < 5; j++ )		// how about we make this 5, huh?  missing part of the field
+	{
+		i = Items->SpawnItem( sock, 1, "#", false, id, 0, false, false );
+		if( i != NULL )
+		{
+			i->SetDispellable( true );
+			i->SetDecayable( true );
+			i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+			i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+			i->SetMoreY( caster->GetSerial() );
+			i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber ) );
+			i->SetDir( 29 );
+			i->SetMagic( 2 );
+			RefreshItem( i );
+		}
+	}
+	return true;
+}
+
+bool splClumsy( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
+	return true;
+}
+bool splCreateFood( cSocket *sock, CChar *caster )
+{
+	CItem *j = Items->SpawnItem( sock, 1, "#", true, 0x09D3, 0x0000, true, true );
+	if( j != NULL )
+	{
+		j->SetType( 14 );
+		RefreshItem( j );
+	}
+	return true;
+}
+bool splFeeblemind( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
+	return true;
+}
+bool splHeal( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	int bonus = (caster->GetSkill( MAGERY )/500) + ( caster->GetSkill( MAGERY )/100 );
+	if( bonus != 0 )
+		target->SetHP( ( target->GetHP() + RandomNum( 0, 5 ) + bonus ) );
+	else
+		target->SetHP( target->GetHP() + 4 );
+	updateStats( target, 0 );
+	Magic->SubtractHealth( caster, bonus, 4 );
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splMagicArrow( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	Magic->MagicDamage( target, (1+(rand()%1)+1)*(caster->GetSkill( MAGERY )/2000+1), caster );
+	return true;
+}
+bool splNightSight( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 2, 0, 0, 0);
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splReactiveArmor( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
+	target->SetReactiveArmour( true );
+	return true;
+}
+bool splWeaken( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
+	return true;
+}
+bool splAgility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splCunning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splCure( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	target->SetPoisoned( 0 );
+	target->SetPoisonWearOffTime( uiCurrentTime );
+	target->SendToSocket( sock, true, target );
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splHarm( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 2 ) )
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/500+1, caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/250+RandomNum( 1, 2 ), caster );
+	return true;
+}
+bool splMagicTrap( cSocket *sock, CChar *caster, CItem *target )
+{
+	if( target->IsContType() && target->GetID() != 0x0E75 )  
+	{
+		target->SetMoreB( 1, caster->GetSkill( MAGERY )/20, caster->GetSkill( MAGERY )/10, target->GetMoreB( 4 ) );
+		soundeffect( target, 0x01F0 );
+	} 
+	else 
+		sysmessage( sock, 663 );
+	return true;
+}
+bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
+{
+	if( target->IsContType() )
+	{
+		if( target->GetMoreB( 1 ) == 1 )
+		{
+			if( rand()%100 <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetMoreB( 3 ) )
+			{
+				target->SetMoreB( 0, 0, 0, target->GetMoreB( 4 ) );
+				soundeffect(target, 0x01F1 );
+				sysmessage( sock, 664 );
+			}
+			else 
+				sysmessage( sock, 665 );
+		}
+		else 
+			sysmessage( sock, 667 );
+	}
+	else 
+		sysmessage( sock, 668 );
+	return true;
+}
+bool splProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splStrength( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splBless( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	int j = caster->GetSkill( MAGERY )/100;
+	tempeffect( src, target, 11, j, j, j);
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splFireball( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 3 ) )
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 280 + 1, caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 140 + RandomNum( 1, 4 ), caster );
+	return true;
+}
+bool splMagicLock( cSocket *sock, CChar *caster, CItem *target )
+{
+	UI08 type = target->GetType();
+	if( ( type == 1 || type == 12 || type == 63 ) && ( target->GetID( 1 ) != 0x0E || target->GetID( 2 ) != 0x75 ) )
+	{
+		switch( target->GetType() )
+		{
+		case 1:  target->SetType( 8 ); break;
+		case 12: target->SetType( 13 ); break;
+		case 63: target->SetType( 64 ); break;
+		default:
+			Console.Error( 2, "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
+			break;
+		}
+		soundeffect( target, 0x0200 );
+	}
+	else 
+		sysmessage( sock, 669 ); 
+	return true;
+}
+bool splPoison( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 1 ) )
+		return false;
+		
+	target->SetPoisoned( 2 );   
+	target->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+	target->SendToSocket( sock, true, target );
+
+	return true;
+}
+bool splTelekinesis( cSocket *sock, CChar *caster, CItem *target )
+{
+	return true;
+}
+bool splTeleport( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber() );
+	if( m != NULL && m->GetOwner() != caster->GetSerial() && !caster->IsNpc() )
+	{
+		sysmessage( sock, 670 );
+		return false;
+	}
+	CTile tile;
+	if( !caster->IsNpc() )
+	{
+		Map->SeekTile( sock->GetWord( 0x11 ), &tile );
+		if( (!strcmp( tile.Name(), "water")) || tile.LiquidWet() )
+		{
+			sysmessage( sock, 671 );
+			return false;
+		}						
+		if( tile.WallRoofWeap() )	// slanted roof tile!!! naughty naughty
+		{
+			sysmessage( sock, 672 );
+			return false;
+		}
+	}
+	caster->SetLocation( x, y, z );
+	caster->Teleport();
+	Magic->doStaticEffect( caster, 22 );
+	return true;
+}
+bool splUnlock( cSocket *sock, CChar *caster, CItem *target )
+{
+	if( target->enhanced&0x01 )
+	{
+		sysmessage( sock, 673 );
+		return false;
+	}
+	if( target->GetType() == 8 )
+	{
+		target->SetType( 1 );
+		sysmessage( sock, 674 );
+	} 
+	else if( target->GetType() == 64 )
+	{
+		target->SetType( 63 );
+		sysmessage( sock, 675 );
+	} 
+	else if( target->GetType() == 1 || target->GetType() == 63 || target->GetType() == 65 || target->GetType() == 87 )
+		sysmessage( sock, 676 );
+	else if( target->GetType() == 12 )
+		sysmessage( sock, 677 );
+	else 
+		sysmessage( sock, 678 );
+	return true;
+}
+bool splWallOfStone( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+{
+	if( caster->GetSkill( MAGERY ) >= 800 )
+		return FloodSpell( sock, caster, 0x0080, x, y, z, 4 );
+	else if( caster->GetSkill( MAGERY ) >= 600 )
+		return DiamondSpell( sock, caster, 0x0080, x, y, z, 4 );
+	else
+		return FieldSpell( sock, caster, 0x0080, x, y, z, fieldDir );
+}
+
+void ArchCureStub( CChar *caster, CChar *target )
+{
+	if( target->GetPoisoned() )
+	{
+		staticeffect( target, 0x376A, 0x09, 0x06 );
+		soundeffect( target, 0x01E9 );
+		target->SetPoisoned( 0 );
+	}
+}
+bool splArchCure( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &ArchCureStub );
+	return true;
+}
+
+void ArchProtectionStub( CChar *caster, CChar *target )
+{
+	Magic->playSound( target, 26 );
+	Magic->doStaticEffect( target, 15 );	// protection
+	tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
+}
+
+bool splArchProtection( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &ArchProtectionStub );
+	return true;
+}
+bool splCurse( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( !Magic->CheckResist( caster, target, 1 ) )
+	{
+		int j = caster->GetSkill( MAGERY ) / 100;
+		tempeffect(caster, target, 12, j, j, j);
+	}
+	return true;
+}
+bool splFireField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+{
+	if( caster->GetSkill( MAGERY ) >= 600 )
+		return DiamondSpell( sock, caster, 0x3996, x, y, z, 4 );
+	else
+	{
+		if( fieldDir )
+			return FieldSpell( sock, caster, 0x3996, x, y, z, fieldDir );
+		else 
+			return FieldSpell( sock, caster, 0x398C, x, y, z, fieldDir );
+	}	
+}
+bool splGreaterHeal( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	int j = target->GetHP() + (caster->GetSkill( MAGERY )/30+RandomNum(1,12));
+	target->SetHP( min(target->GetMaxHP(), (SI16)j) );
+	updateStats( target, 0 );
+	Magic->SubtractHealth( caster, min( target->GetStrength(), (SI16)j ), 29 );
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splLightning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	bolteffect( target );
+	if( Magic->CheckResist( caster, target, 4 ) )
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1, 2 ), caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster );
+	return true;
+}
+bool splManaDrain( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( !Magic->CheckResist( caster, target, 4 ) )
+	{
+		target->SetMana( target->GetMana() - caster->GetSkill( MAGERY )/35 );
+		if( target->GetMana() < 0 ) 
+			target->SetMana( 0 );
+		updateStats( target, 1 );
+	}
+	return true;
+}
+bool splRecall( cSocket *sock, CChar *caster, CItem *i )
+{
+	if( i->GetMoreX() <= 200 && i->GetMoreY() <= 200 )
+	{
+		sysmessage( sock, 679 );
+		return false;
+	} 
+	else if( caster->GetCommandLevel() < CNSCMDLEVEL && !Weight->checkWeight( caster, true ) ) // no recall if too heavy, GM's excempt
+	{
+		sysmessage( sock, 680 );
+		sysmessage( sock, 681 );
+		statwindow( sock, caster );
+		return false;
+	}
+	else
+	{
+		caster->SetLocation( i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		caster->Teleport();
+		sysmessage( sock, 682 );
+		return true;
+	}
+	return false;
+}
+bool splBladeSpirits( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	Magic->SummonMonster( sock, caster, 0x023E, "a blade spirit", 0x00, x, y, z );
+	return true;
+}
+bool splDispelField( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+		{
+			if( i->isDecayable() || i->isDispellable() ) 
+			{
+				UI16 scpNum = i->GetScriptTrigger();
+				cScript *tScript = Trigger->GetScript( scpNum );
+				if( tScript != NULL )
+					tScript->OnDispel( i );
+				Items->DeleItem( i );
+			}
+			soundeffect( caster, 0x0201 );
+		}
+		else
+			sysmessage( sock, 683 );
+	}
+	return true;
+}
+bool splIncognito( cSocket *sock, CChar *caster )
+{
+	if( caster->IsIncognito() )
+	{
+		sysmessage( sock, 1636 );
+		return false;
+	}
+	// ------ SEX ------
+	caster->SetOrgID( caster->GetID() );
+	if( ( rand()%2 ) == 0 ) 
+		caster->SetID( 0x0190 ); 
+	else 
+		caster->SetID( 0x0191 );
+	
+	// ------ NAME -----
+	caster->SetOrgName( caster->GetName() );
+	
+	if( caster->GetID() == 0x0190 )
+		setRandomName( caster, "1" );//get a name from male list
+	else 
+		setRandomName( caster, "2" );//get a name from female list
+
+	int color = RandomNum( 0x044E, 0x047D );
+	CItem *j = FindItemOnLayer( caster, 0x0B );
+	if( j != NULL ) 
+	{
+		caster->SetHairColour( j->GetColour() );
+		caster->SetHairStyle( j->GetID() );
+		int rNum = RandomNum( 0, 9 );
+		switch( rNum )
+		{
+		case 0: 
+		case 1: 
+		case 2:
+			j->SetID( 0x3B + rNum, 2 );
+			break;
+		case 3:	
+		case 4:	
+		case 5:	
+		case 6:	
+		case 7:	
+		case 8:	
+		case 9:
+			j->SetID( 0x44 + ( rNum - 3 ), 2 );
+			break;
+		}
+		j->SetColour( color );
+	}			
+	if( caster->GetID() == 0x0190 )
+	{
+		j = FindItemOnLayer( caster, 0x10 );
+		if( j != NULL ) 
+		{
+			caster->SetBeardColour( j->GetColour() );
+			caster->SetBeardStyle( j->GetID() );
+			int rNum2 = RandomNum( 0, 6 );
+			switch( rNum2 )
+			{
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+				j->SetID( 0x3E + rNum2, 2 );
+				break;
+			case 4:	
+			case 5:	
+			case 6:
+				j->SetID( 0x4B + (rNum2 - 4), 2 );
+				break;
+			}
+			j->SetColour( color );
+		}
+	}
+	//only refresh once
+	wornItems( sock, caster );
+	caster->Teleport();
+	soundeffect( caster, 0x0203 );
+	tempeffect( caster, caster, 19, 0, 0, 0 );
+	caster->IsIncognito( true );
+	return true;
+}
+bool splMagicReflection( cSocket *sock, CChar *caster )
+{
+	caster->SetPermReflected( true );
+	return true;
+}
+bool splMindBlast( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( caster->GetIntelligence() > target->GetIntelligence() )
+	{
+		if( Magic->CheckResist( caster, target, 5 ) )
+			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/4, src );
+		else
+			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/2, src );
+	}
+	else
+	{
+		if( Magic->CheckResist( caster, src, 5 ) )
+			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/4, src );
+		else
+			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/2, src );
+	}
+	return true;
+}
+bool splParalyze( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( !Magic->CheckResist( caster, target, 7 ) )
+		tempeffect( caster, target, 1, 0, 0, 0 );
+	return true;
+}
+bool splPoisonField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+{
+	if( caster->GetSkill( MAGERY ) >= 800 )
+		return FloodSpell( sock, caster, 0x3920, x, y, z, 4 );
+	else if( caster->GetSkill( MAGERY ) >= 600 )
+		return DiamondSpell( sock, caster, 0x3920, x, y, z, 4 );
+	else
+	{
+		if( fieldDir )
+			return FieldSpell( sock, caster, 0x3920, x, y, z, fieldDir );
+		else 
+			return FieldSpell( sock, caster, 0x3915, x, y, z, fieldDir );
+	}
+}
+bool splSummonCreature( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0, "#", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splDispel( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( target->IsDispellable() )
+	{
+		staticeffect( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
+		if( target->IsNpc() ) 
+		{
+			cScript *tScript = NULL;
+			UI16 scpNum = target->GetScriptTrigger();
+			tScript = Trigger->GetScript( scpNum );
+			if( tScript != NULL )
+				tScript->OnDispel( target );
+			Npcs->DeleteChar( target );
+		}
+		else 
+			doDeathStuff(target);
+	}
+	return true;
+}
+bool splEnergyBolt( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 6 ) ) 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/120, caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/35+RandomNum(1,10), caster );
+	return true;
+}
+bool splExplosion( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 6 ) )
+		tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 120 + RandomNum( 1, 5 ) ), 0, 0 );
+	else 
+		tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 40 + RandomNum( 1, 10 ) ), 0, 0 );
+	return true;
+}
+bool splInvisibility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	target->SetHidden( 2 );
+	target->Update();
+	target->SetInvisTimeout( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( INVISIBILITY ) ) );
+	if( target->IsMurderer() )
+		criminal( caster );
+	return true;
+}
+bool splMark( cSocket *sock, CChar *caster, CItem *i )
+{
+	i->SetMoreX( caster->GetX() ); 
+	i->SetMoreY( caster->GetY() );
+	i->SetMoreZ( caster->GetZ() );
+
+	char tempitemname[512];
+
+	if( region[caster->GetRegion()]->GetName()[0] != 0 )
+		sprintf( tempitemname, Dictionary->GetEntry( 684 ), region[caster->GetRegion()]->GetName() );
+	else 
+		strcpy( tempitemname, Dictionary->GetEntry( 685 ) );
+	i->SetName( tempitemname );
+	sysmessage( sock, 686 ); 
+	return true;
+}
+
+void MassCurseStub( CChar *caster, CChar *target )
+{
+	if( target->IsNpc() && target->GetNPCAiType() == 17 )
+		return;	// Player Vendors can't be killed
+	if( target->IsGM() || target->IsInvulnerable() )
+		return;	// GMs/Invuls can't be killed
+	int j;
+	if( target->IsNpc() ) 
+		npcAttackTarget( target, caster );
+	staticeffect( target, 0x374A, 0, 15 );
+	soundeffect( target, 0x01FC );
+	if( Magic->CheckResist( caster, target, 6 ) )
+		j = caster->GetSkill( MAGERY )/200;
+	else 
+		j = caster->GetSkill( MAGERY )/75;
+	tempeffect( caster, target, 12, j, j, j );
+
+}
+
+bool splMassCurse( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &MassCurseStub );
+	return true;
+}
+bool splParalyzeField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+{
+	if( caster->GetSkill( MAGERY ) >= 600 )
+		return DiamondSpell( sock, caster, 0x3979, x, y, z, 4 );
+	else
+	{
+		if( fieldDir )
+			return FieldSpell( sock, caster, 0x3979, x, y, z, fieldDir );
+		else 
+			return FieldSpell( sock, caster, 0x3967, x, y, z, fieldDir );
+	}
+}
+bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	if( LineOfSight( sock, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+	{ 
+		int j = caster->GetSkill( MAGERY ); 
+		int range=(((j-261)*(15))/739)+5;
+		//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
+		//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
+		
+		int xOffset = MapRegion->GetGridX( caster->GetX() );
+		int yOffset = MapRegion->GetGridY( caster->GetY() );
+		UI08 worldNumber = caster->WorldNumber();
+		for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
+		{
+			for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
+			{
+				SubRegion *MapArea = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
+				if( MapArea == NULL )	// no valid region
+					continue;
+				MapArea->PushChar();
+				for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+				{
+					if( tempChar == NULL )
+						continue;
+					if( tempChar->GetHidden() != 0 )
+					{
+						point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
+						if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range 
+						{
+							if( tempChar->GetHidden() && !tempChar->IsPermHidden() )
+								tempChar->ExposeToView();
+						}
+					}
+				}
+				MapArea->PopChar();
+			}
+		}
+		soundeffect( sock, 0x01FD, true );
+	}
+	else
+		sysmessage( sock, 687 );
+	return true;
+}
+
+void ChainLightningStub( CChar *caster, CChar *target )
+{
+	if( target->IsNpc() && target->GetNPCAiType() == 17 )
+		return;	// Player Vendors can't be killed
+	if( target->IsGM() || target->IsInvulnerable() )
+		return;	// GMs/Invuls can't be killed
+	if( target->IsNpc() )
+		npcAttackTarget( caster, target );
+	soundeffect( caster, 0x0029 );
+	CChar *def = NULL;
+	CChar *att = NULL;
+	if( Magic->CheckMagicReflect( target ) )
+		def = caster;
+	else
+		def = target;
+
+	bolteffect( def );
+	if( Magic->CheckResist( caster, def, 7 ) )
+		Magic->MagicDamage( def, caster->GetSkill( MAGERY )/70, att );
+	else 
+		Magic->MagicDamage( def, caster->GetSkill( MAGERY )/50, att );
+}
+
+bool splChainLightning( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &ChainLightningStub );
+	return true;
+}
+bool splEnergyField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+{
+	if( caster->GetSkill( MAGERY ) >= 600 )
+		return DiamondSpell( sock, caster, 0x3956, x, y, z, 4 );
+	else
+	{
+		if( fieldDir )
+			return FieldSpell( sock, caster, 0x3956, x, y, z, fieldDir );
+		else 
+			return FieldSpell( sock, caster, 0x3946, x, y, z, fieldDir );
+	}
+}
+bool splFlameStrike( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( Magic->CheckResist( caster, target, 7 ) )
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40+RandomNum(1,25), caster );
+	return true;
+}
+bool splGateTravel( cSocket *sock, CChar *caster, CItem *i )
+{
+	if( i->GetMoreX() <= 200 && i->GetMoreY() <= 200 )
+	{
+		sysmessage( sock, 679 );
+		return false;
+	}
+	else
+	{
+		SpawnGate( sock, caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		return true;
+	}
+	return true;
+}
+bool splManaVampire( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( !Magic->CheckResist( caster, target, 7 ) )
+	{
+		if( target->GetMana() < 40 )
+		{
+			caster->SetMana( caster->GetMana() + target->GetMana() );
+			target->SetMana( 0 );
+		}
+		else
+		{
+			target->SetMana( target->GetMana() - 40 );
+			caster->SetMana( caster->GetMana() + 40 );
+		}
+		updateStats( target, 1 );
+		updateStats( caster, 1 );
+	}
+	return true;
+}
+
+void MassDispelStub( CChar *caster, CChar *target )
+{
+	if( target->IsDispellable() )
+	{
+		if( Magic->CheckResist( caster, target, 7 ) && rand()%2 == 0 )  // cant be 100% resisted , osi
+		{
+			if( target->IsNpc() ) 
+				npcAttackTarget( target, caster );
+		}
+		if( target->IsNpc() ) 
+		{
+			cScript *tScript = NULL;
+			UI16 scpNum = target->GetScriptTrigger();
+			tScript = Trigger->GetScript( scpNum );
+			if( tScript != NULL )
+				tScript->OnDispel( target );
+			doDeathStuff(target);
+		}
+		soundeffect(target, 0x0204);
+		staticeffect(target, 0x372A, 0x09, 0x06);
+	}
+}
+
+bool splMassDispel( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &MassDispelStub );
+	return true;
+}
+
+void MeteorSwarmStub( CChar *caster, CChar *target )
+{
+	if( target->IsNpc() && target->GetNPCAiType() == 17 )
+		return;	// Player Vendors can't be killed
+	if( target->IsGM() || target->IsInvulnerable() )
+		return;	// GMs/Invuls can't be killed
+	if( target->IsNpc() ) 
+		npcAttackTarget( caster, target );
+	soundeffect( target, 0x160 ); 
+	movingeffect( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+	if( Magic->CheckResist( caster, target, 7 ) )
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster );
+	else 
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40, caster );
+}
+
+bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) )
+{
+	SI16 x1, x2, y1, y2;
+	SI08 z1, z2;
+	x1 = x2 = y1 = y2 = z1 = z2 = 0;
+	bool HurtSelf = false;
+	
+	Magic->BoxSpell( sock, caster, x1, x2, y1, y2, z1, z2 );
+
+	int xOffset = MapRegion->GetGridX( caster->GetX() );
+	int yOffset = MapRegion->GetGridY( caster->GetY() );
+	UI08 worldNumber = caster->WorldNumber();
+	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
+	{
+		for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
+		{
+			SubRegion *MapArea = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
+			if( MapArea == NULL )	// no valid region
+				continue;
+			MapArea->PushChar();
+			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			{
+				if( tempChar == NULL )
+					continue;
+
+				if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
+					tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( tempChar ) || tempChar->IsNpc() ) )
+				{
+					if( tempChar == caster )
+					{//we can't cast on ourselves till this loop is over, because me might kill ourself, then try to LOS with someone after we are deleted.
+						HurtSelf = true;
+						continue;
+					}
+
+					if( LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING  ) || caster->IsGM() )
+						trgFunc( caster, tempChar );
+					else
+						sysmessage( sock, 688 );
+				}
+			}
+			MapArea->PopChar();
+		}
+	}
+
+	if( HurtSelf )	
+		trgFunc( caster, caster );
+
+	return true;
+}
+bool splMeteorSwarm( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	AreaAffectSpell( sock, caster, &MeteorSwarmStub );
+	return true;
+}
+bool splPolymorph( cSocket *sock, CChar *caster )
+{
+	if( caster->IsPolymorphed() )
+	{
+		sysmessage( sock, 1637 );
+		return false;
+	}
+	Magic->PolymorphMenu( sock, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
+	return true;
+}
+void EarthquakeStub( CChar *caster, CChar *target )
+{
+	int distx = abs(target->GetX() - caster->GetX() );
+	int disty = abs(target->GetY() - caster->GetY() );
+	int dmg = (caster->GetSkill( MAGERY )/40)+(rand()%20-10);
+	int dmgmod = min( distx, disty );
+	dmgmod = -(dmgmod - 7);
+	target->IncHP( - (dmg+dmgmod) );
+	target->SetStamina( target->GetStamina() - (rand()%10+5) );
+	
+	if( target->GetStamina() < 0 )
+		target->SetStamina( 0 );
+	if( target->GetHP() < 0 )
+		target->SetHP( 0 );
+	
+	char temp[1024];
+	if( !target->IsNpc() && isOnline( target ) )
+	{
+		if( RandomNum( 0, 1 ) ) 
+			npcAction( target, 0x15 );
+		else 
+			npcAction( target, 0x16 );
+		if( target->GetHP() <= 0 ) 
+		{
+			if( target->IsInnocent() && GuildSys->ResultInCriminal( caster, target ) && Races->Compare( caster, target ) == 0 )
+			{
+				caster->SetKills( caster->GetKills() + 1 );
+				sysmessage( calcSocketObjFromChar( caster ), 689, caster->GetName(), caster->GetKills() );
+				if( caster->GetKills() == cwmWorldState->ServerData()->GetRepMaxKills() + 1 )
+					sysmessage( calcSocketObjFromChar( caster ), 690 );
+			}
+			
+			sprintf( temp, Dictionary->GetEntry( 691 ) ,target->GetName(), caster->GetName() );
+			savelog( temp, "PvP.log" );
+			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
+			Fame( caster, target->GetFame() );
+			doDeathStuff( target );                              
+		}
+	} 
+	else 
+	{ 
+		if( target->GetHP() <= 0 ) 
+		{
+			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
+			Fame( caster, target->GetFame() );
+			doDeathStuff(target); 
+		}
+		else if( target->IsNpc() ) 
+		{ 
+				npcAction( target, 0x2 ); 
+				npcAttackTarget(caster,target); 
+		}
+	} 
+}
+bool splEarthquake( cSocket *sock, CChar *caster )
+{
+	criminal( caster );
+	if( sock != NULL )
+	{
+		sock->SetWord( 11, caster->GetX() );
+		sock->SetWord( 13, caster->GetY() );
+		sock->SetByte( 16, caster->GetZ() );
+	}
+	AreaAffectSpell( sock, caster, &EarthquakeStub );
+	return true;
+}
+bool splEnergyVortex( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+{
+	Magic->SummonMonster( sock, caster, 0x000D, "an energy vortex", 0x0075, x, y, z );
+	return true;
+}
+bool splResurrection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	if( target->IsDead() )
+	{
+		Targ->NpcResurrectTarget( target );
+		return true;
+	}
+	return false;
+}
+bool splSummonAir( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x000D, "Air", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splSummonDaemon( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x000A, "Bob", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splSummonEarth( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x000E, "Earth", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splSummonFire( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x000F, "Fire", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splSummonWater( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x0010, "Water", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	return true;
+}
+bool splRandom( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x03E2, "Dupre the Hero", 0, caster->GetX()+1, caster->GetY()+1, caster->GetZ() );
+	return true;
+}
+bool splNecro1( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	return true;
+}
+bool splNecro2( cSocket *sock, CChar *caster )
+{
+	Magic->SummonMonster( sock, caster, 0x000A, "Black Night", 5000, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
+	return true;
+}
+bool splNecro3( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	return true;
+}
+bool splNecro4( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+{
+	return true;
+}
+bool splNecro5( cSocket *sock, CChar *caster, CChar *target, CChar *src )  
+{
+	return true;
+}
+
+bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+{
+	int j;
+	SI16 fx[5], fy[5];
+	SI16 yOffset = length;
+	SI16 xOffset = length;
+
+	fx[0] = -xOffset; fy[0] = 0;
+	fx[1] = 0;		  fy[1] = yOffset;
+	fx[2] = 0;		  fy[2] = -yOffset;
+	fx[3] = xOffset;  fy[3] = 0;
+
+	CItem *i = NULL;
+	UI08 worldNumber = caster->WorldNumber();
+	for( j = 0; j < 4; j++ )	// Draw the corners of our diamond
+	{
+		i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+		if( i != NULL )
+		{
+			i->SetDispellable( true );
+			i->SetDecayable( true );
+			i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+			i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+			i->SetMoreY( caster->GetSerial() );
+			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber ) );
+			i->SetDir( 29 );
+			i->SetMagic( 2 );
+			RefreshItem( i );
+		}
+	}
+	for( j = -1; j < 2; j = j + 2 )
+	{
+		for( SI08 counter2 = -1; counter2 < 2; counter2 += 2 )
+		{
+			for( int counter3 = 1; counter3 < yOffset; counter3++ )
+			{
+				i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+				if( i != NULL )
+				{
+					i->SetDispellable( true );
+					i->SetDecayable( true );
+					i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+					i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+					i->SetMoreY( caster->GetSerial() );
+					const SI16 newX = x + counter2 * counter3;
+					const SI16 newY = y + j * ( yOffset - counter3 );
+					i->SetLocation( newX, newY, Map->Height( newX, newY, z, worldNumber ) );
+					i->SetDir( 29 );
+					i->SetMagic( 2 );
+					RefreshItem( i );
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+{
+	SI16 fx[5], fy[5];
+	SI16 yOffset = length;
+	SI16 xOffset = length;
+
+	fx[0] = -xOffset;	fy[0] = xOffset;
+	fx[1] = -yOffset;	fy[1] = yOffset;
+	fx[2] = -xOffset;	fy[2] = xOffset;
+	fx[3] = -yOffset;	fy[3] = yOffset;
+
+	CItem *i = NULL;
+	UI08 worldNumber = caster->WorldNumber();
+	for( UI08 j = 0; j < 4; j++ )	// Draw the corners of our diamond
+	{
+		for( int counter = fx[j]; counter < fy[j]; counter++ )
+		{
+			i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+			if( i != NULL )
+			{
+				i->SetDispellable( true );
+				i->SetDecayable( true );
+				i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+				i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+				i->SetMoreY( caster->GetSerial() );
+				switch( j )
+				{
+				case 0:
+				case 2:
+					i->SetLocation( x + counter, y + (j - 1) * yOffset, Map->Height( x + counter, y + (j-1) * yOffset, z, worldNumber ) );
+					break;
+				case 1:
+				case 3:
+					i->SetLocation( x + (j-2) * xOffset, y + counter, Map->Height( x + (j-2) * xOffset, y + counter, z, worldNumber ) );
+					break;
+				}
+				i->SetDir( 29 );
+				i->SetMagic( 2 );
+				RefreshItem( i );
+			}
+		}
+	}
+	return true;
+}
+
+bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+{
+	SI16 yOffset = length;
+	SI16 xOffset = length;
+
+	SI16 maxX = x + xOffset;
+	SI16 maxY = y + yOffset;
+	SI16 minX = x - xOffset;
+	SI16 minY = y - yOffset;
+
+	UI08 worldNumber = caster->WorldNumber();
+	for( int counter1 = minX; counter1 <= maxX; counter1++ )
+	{
+		for( int counter2 = minY; counter2 <= maxY; counter2++ )
+		{
+			CItem *i = Items->SpawnItem( sock, caster, 1, "#", 0, id, 0, false, false );
+			if( i != NULL )
+			{
+				i->SetDispellable( true );
+				i->SetDecayable( true );
+				i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+				i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+				i->SetMoreY( caster->GetSerial() );
+				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber ) );
+				i->SetDir( 29 );
+				i->SetMagic( 2 );
+				RefreshItem( i );
+			}
+		}
+	}
+	return true;
+}
 /////////////////////////////////////////////////////////////////
 /// INDEX:
 //              - misc magic functions
@@ -51,517 +1277,529 @@
 /////////////////////////////////////////////////////////////////
 
 //:Terrin: added constructor/destructor
-cMagic::cMagic()
+cMagic::cMagic() : spellCount( 1 )
 {
-	// it would be nice to go ahead and cache them now, but the
-	// script files won't have been loaded yet..
-	spells = NULL;
+	spells.resize( 0 );
 }
 
 cMagic::~cMagic()
 {
 	// delete any allocations
-	if (spells)
-		delete [] spells;
+	spells.resize( 0 );
 }
+
+bool cMagic::HasSpell( CItem *book, int spellNum )
+{
+	if( book == NULL )
+		return 0;
+	UI32 wordNum = spellNum / 32;
+	UI32 bitNum = (spellNum % 32);
+	UI32 sourceAmount;
+	switch( wordNum )
+	{
+	case 0:	sourceAmount = book->GetMoreX();	break;
+	case 1:	sourceAmount = book->GetMoreY();	break;
+	case 2:	sourceAmount = book->GetMoreZ();	break;
+	default: sourceAmount = 0;					break;
+	};
+	return ( ((sourceAmount>>bitNum)%2) == 1 );
+}
+
+void cMagic::AddSpell( CItem *book, int spellNum )
+{
+	cScript *tScript = NULL;
+	UI16 scpNum = book->GetScriptTrigger();
+	tScript = Trigger->GetScript( scpNum );
+	if( tScript != NULL )
+		tScript->OnSpellGain( book, spellNum );	
+
+	if( book == NULL )
+		return;
+	UI32 wordNum = spellNum / 32;
+	UI32 bitNum = (spellNum % 32);
+	UI32 flagToSet = power( 2, bitNum );
+	UI32 targAmount;
+	switch( wordNum )
+	{
+	case 0:
+		targAmount = ( book->GetMoreX() | flagToSet );
+		book->SetMoreX( targAmount );
+		return;
+	case 1:
+		targAmount = ( book->GetMoreY() | flagToSet );
+		book->SetMoreY( targAmount );
+		return;
+	case 2:
+		targAmount = ( book->GetMoreZ() | flagToSet );
+		book->SetMoreZ( targAmount );
+		return;
+	default:
+		return;
+	};
+}
+
+void cMagic::RemoveSpell( CItem *book, int spellNum )
+{
+	cScript *tScript = NULL;
+	UI16 scpNum = book->GetScriptTrigger();
+	tScript = Trigger->GetScript( scpNum );
+	if( tScript != NULL )
+	tScript->OnSpellLoss( book, spellNum );	
+
+	if( book == NULL )
+		return;
+	UI32 wordNum = spellNum / 32;
+	UI32 bitNum = (spellNum % 32);
+	UI32 flagToSet = power( 2, bitNum );
+	UI32 flagMask = 0xFFFFFFFF;
+	UI32 targAmount;
+	flagMask ^= flagToSet;
+	switch( wordNum )
+	{
+	case 0:
+		targAmount = ( book->GetMoreX() & flagMask );
+		book->SetMoreX( targAmount );
+		return;
+	case 1:
+		targAmount = ( book->GetMoreY() & flagMask );
+		book->SetMoreY( targAmount );
+		return;
+	case 2:
+		targAmount = ( book->GetMoreZ() & flagMask );
+		book->SetMoreZ( targAmount );
+		return;
+	default:
+		return;
+	};
+}
+
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellBook( UOXSOCKET s )
+//|     Class         :          ::SpellBook( cSocket *mSock )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
-//|     Purpose       :          Sends the spellbook item (with all the 
-//|                              memorized spells) to player when 
-//|                              doubleclicked.
+//|     Purpose       :          Opens the spellbook and displays all spells a
+//|								 character has in his book.
 //o---------------------------------------------------------------------------o
-
-void cMagic::SpellBook( UOXSOCKET s )
+void cMagic::SpellBook( cSocket *mSock )
 {
-	int i, j, scount, item, x,serial,serhash,ci;
-	int spellsList[70];
-	char sbookstart[8]="\x24\x40\x01\x02\x03\xFF\xFF";
-	char sbookinit[6]="\x3C\x00\x3E\x00\x03";
-	char sbookspell[20]="\x40\x01\x02\x03\x1F\x2E\x00\x00\x01\x00\x48\x00\x7D\x40\x01\x02\x03\x00\x00";
-	
-	serial=calcserial(buffer[s][1]&0x7F,buffer[s][2],buffer[s][3],buffer[s][4]);
-	item=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	
-	x=packitem(currchar[s]);
-	if (item!=-1 && x!=-1) //lb
-		if (items[item].contserial!=items[x].serial && items[item].contserial!=chars[currchar[s]].serial)
-		{
-			if( items[findbyserial(&itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0 )].type != 9 )
-			{
-				sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
-			}
-			return;
-		}
-		
-	if (item==-1)
+	int scount;
+	UI08 i;
+	UI08 spellsList[70];
+	char sbookstart[8] = "\x24\x40\x01\x02\x03\xFF\xFF";
+	char sbookinit[6] = "\x3C\x00\x3E\x00\x03";
+	char sbookspell[20] = "\x40\x01\x02\x03\x1F\x2E\x00\x00\x01\x00\x48\x00\x7D\x40\x01\x02\x03\x00\x00";
+
+	SERIAL serial = mSock->GetDWord( 1 );
+	serial &= 0x7FFFFFFF;
+	CChar *mChar = mSock->CurrcharObj();
+	CItem *item = calcItemObjFromSer( serial );
+
+	// Here's the kicker.  We NEVER needed to search through our pack for our spellbook!!! Why, you might ask???
+	// Because we are able to calculate the serial of the spellbook, because it's targetted for us!!!!
+	// Hence, we can remove all searches from here, and just use it directly
+	// The only time we need to search is when they use the macro, and that's easily done (item == -1)
+	// Abaddon
+
+	CItem *spellBook = item;
+	CItem *x = getPack( mChar );
+	if( spellBook == NULL )	// used a macro!!!
+		spellBook = FindItemOfType( mChar, 9 );
+	if( spellBook == NULL )	// we STILL have no spellbook!!!
 	{
-		item=-1;
-		if (x!=-1)
-		{
-			serial=items[x].serial;
-			serhash=serial%HASHMAX;
-			
-			// AntiChrist Fix -- itemcount loop removed by LB
-			
-			for (ci=0;ci<contsp[serhash].max;ci++)
-			{
-				i=contsp[serhash].pointer[ci];
-				if (i!=-1)
-					if (((items[i].type==9)&&(items[i].contserial==serial)))
-					{
-						item=i;
-						break;
-					}
-			} 
-		}
-	}
-		// LB remark: If you want more than one spellbook per player working predictable
-		// quite a lot of that function needs to be rewritten !
-		// reason: just have a look at the loop above ...
-		
-	if (item==-1)
-	{
-		serial=chars[currchar[s]].serial;
-		serhash=serial%HASHMAX;
-		for (ci=0;ci<contsp[serhash].max;ci++)
-		{
-			i=contsp[serhash].pointer[ci];
-			if (i!=-1)
-				if ((items[i].contserial==serial) && (items[i].free==0))
-				{
-					if ((items[i].layer==1) && items[i].type==9)
-					{
-						item=i;
-						break;
-					}
-				}
-		}	
-	}
-	
-	if (item==-1)
-	{
-		sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
+		sysmessage( mSock, 692 );
 		return;
 	}
+	if( spellBook->GetCont() != mChar->GetSerial() && spellBook->GetCont() != x->GetSerial() )
+	{
+		sysmessage( mSock, 403 );
+		return;
+	}
+	item = spellBook;		
+	sendItem( mSock, item );
 	
-	
-	if (items[item].layer!=1) senditem(s,item); // prevents crash if pack not open
-	
-	// Network->xSend(s, pause, 2, 0);
-	sbookstart[1]=items[item].ser1;
-	sbookstart[2]=items[item].ser2;
-	sbookstart[3]=items[item].ser3;
-	sbookstart[4]=items[item].ser4;
-	Network->xSend(s, sbookstart, 7, 0);
-	scount=0;
+	sbookstart[1] = item->GetSerial( 1 );
+	sbookstart[2] = item->GetSerial( 2 );
+	sbookstart[3] = item->GetSerial( 3 );
+	sbookstart[4] = item->GetSerial( 4 );
+	mSock->Send( sbookstart, 7 );
+	scount = 0;
+	memset( spellsList, 0, sizeof( UI08 ) * 70 );
 
-	for (i=0;i<70;i++)
+	CItem *ourBook = spellBook;
+	for( UI08 j = 0; j < 65; j++ )
 	{
-		spellsList[i]=0;
-	}
-	
-	if( items[item].morex == 0 && items[item].morey == 0 && items[item].morez == 0 )
-	{
-		serial=items[item].serial;
-		serhash=serial%HASHMAX;
-		for (ci=0;ci<contsp[serhash].max;ci++)
-		{
-			j=contsp[serhash].pointer[ci];
-			if (j!=-1)
-				if ((items[j].contserial==serial))
-				{
-					if (items[j].id1==0x1F && items[j].id2>=0x2D && items[j].id2<=0x72) 
-					{
-						spellsList[items[j].id2-0x2D]=1;
-					}
-				}
-		}
-	}
-	else
-	{
-		for( j = 0; j < 70; j++ )
-			spellsList[j] = HasSpell( item, j );
+		if( HasSpell( ourBook, j ) )
+			spellsList[j] = 1;
 	}
 
-	// Fix for Reactive Armor/Bird's Eye dumbness. :)
 	i = spellsList[0];
 	spellsList[0] = spellsList[1];
 	spellsList[1] = spellsList[2];
 	spellsList[2] = spellsList[3];
 	spellsList[3] = spellsList[4];
 	spellsList[4] = spellsList[5];
-	spellsList[5] = spellsList[6]; // Morac is right! :)
+	spellsList[5] = spellsList[6];
 	spellsList[6] = i;
-	// End fix.
 	
-	if (spellsList[64])
+	if( spellsList[64] )
 	{
-		for (i=0;i<70;i++)
-			spellsList[i]=1;
-		spellsList[64]=0;
+		for( i = 0; i < 65; i++ )
+			spellsList[i] = 1;
+		spellsList[64] = 0;
 	}
-	spellsList[64]=spellsList[65];
-	spellsList[65]=0;
+	spellsList[64] = spellsList[65];
+	spellsList[65] = 0;
 	
-	for (i=0;i<70;i++)
+	for( i = 0; i < 65; i++ )
 	{
-		if (spellsList[i]) scount++;
+		if( spellsList[i] )
+			scount++;
 	}
-	sbookinit[1]=((scount*19)+5)>>8;
-	sbookinit[2]=((scount*19)+5)%256;
-	sbookinit[3]=scount>>8;
-	sbookinit[4]=scount%256;
-	if (scount>0) Network->xSend(s, sbookinit, 5, 0);
-	for (i=0;i<70;i++) 
+	sbookinit[1] = (UI08)(((scount*19)+5)>>8);
+	sbookinit[2] = (UI08)(((scount*19)+5)%256);
+	sbookinit[3] = (UI08)(scount>>8);
+	sbookinit[4] = (UI08)(scount%256);
+	if( scount > 0 ) 
+		mSock->Send( sbookinit, 5 );
+	for( i = 0; i < 65; i++ )
 	{
-		if (spellsList[i])
+		if( spellsList[i] )
 		{
-			sbookspell[0]=0x41;
-			sbookspell[1]=0x00;
-			sbookspell[2]=0x00;
-			sbookspell[3]=i+1;
-			sbookspell[8]=i+1;
-			sbookspell[13]=items[item].ser1;
-			sbookspell[14]=items[item].ser2;
-			sbookspell[15]=items[item].ser3;
-			sbookspell[16]=items[item].ser4;
-			Network->xSend(s, sbookspell, 19, 0);
+			sbookspell[0] = 0x41;
+			sbookspell[1] = 0x00;
+			sbookspell[2] = 0x00;
+			sbookspell[3] = i+1;
+			sbookspell[8] = i+1;
+			sbookspell[13] = item->GetSerial( 1 );
+			sbookspell[14] = item->GetSerial( 2 );
+			sbookspell[15] = item->GetSerial( 3 );
+			sbookspell[16] = item->GetSerial( 4 );
+			mSock->Send( sbookspell, 19 );
 		} 
-		// Network->xSend(s, restart, 2, 0);
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::GateCollision( PLAYER s )
+//|     Class         :          GateCollision( PLAYER s )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //|                              Modified by AntiChrist - collision dir
 //o---------------------------------------------------------------------------o
-//|     Purpose       :          used when a PLAYER passes through a gate.  Takes the player
+//|     Purpose       :          Used when a PLAYER passes through a gate.  Takes the player
 //|                              to the other side of the gate-link.
 //o---------------------------------------------------------------------------o
 
-char cMagic::GateCollision( PLAYER s )
+bool cMagic::GateCollision( CChar *s )
 {
-	unsigned int n;
-	long index;
-	
-	// - Tauriel's region stuff 3/6/99
-	int getcell=mapRegions->GetCell(chars[s].x,chars[s].y);
-	
-	int mapitem=-1;
-	int mapitemptr=-1;
-	do //check all items in this cell
+	if( s == NULL )
+		return false;
+	UI08 worldNumber = s->WorldNumber();
+	SubRegion *toCheck = MapRegion->GetCell( s->GetX(), s->GetY(), worldNumber );
+	if( toCheck == NULL )
+		return false;
+	CItem *itemCheck = NULL;
+	toCheck->PushChar();
+	toCheck->PushItem();
+	for( itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
 	{
-		mapitemptr=mapRegions->GetNextItem(getcell, mapitemptr);
-		if (mapitemptr==-1) break;
-		mapitem=mapRegions->GetItem(getcell, mapitemptr);
-		if (mapitem!=-1 && mapitem<999999)
+		if( itemCheck == NULL )
+			continue;
+		if( itemCheck->GetType() == 51 || itemCheck->GetType() == 52 )
 		{
-			if( items[mapitem].type == 51 || items[mapitem].type == 52 )
+			if( s->GetX() == itemCheck->GetX() && s->GetY() == itemCheck->GetY() && s->GetZ() == itemCheck->GetZ() )
 			{
-				n = 52 - items[mapitem].type;
-				if( ( chars[s].x == items[mapitem].x ) &&
-					( chars[s].y == items[mapitem].y ) &&
-					( chars[s].z >= items[mapitem].z ) )
+				CItem *otherGate = calcItemObjFromSer( itemCheck->GetMoreX() );
+				if( otherGate == NULL )
 				{
-					mapRegions->RemoveItem( s + 1000000 );
-					// Dupois - Check for any NPC's that are following this player
-					//          There has to be a better way than this...
-					//          Think about it some more and change this.
-					// If this is a player character
-					if( !chars[s].npc )
-					{
-						int getcell2 = mapRegions->GetCell(chars[s].x,chars[s].y);
-	
-						int mapitem2=-1;
-						int mapitemptr2=-1;
-						do //check all items in this cell
-						{
-							mapitemptr2=mapRegions->GetNextItem(getcell2, mapitemptr2);
-							if (mapitemptr2==-1) break;
-							mapitem2=mapRegions->GetItem(getcell2, mapitemptr2);
-							if (mapitem2>999999)
-							{
-								index = mapitem2 - 1000000;
-								if ( (chars[index].npc==1) && (chars[index].ftarg==s) )
-								{
-									// If the NPC that is following this player character is within 5 paces 
-									if( chardist(s, index) <= 4 )
-									{
-										// Teleport the NPC along with the player
-										mapRegions->RemoveItem( index + 1000000 );
-										chars[index].x = gatex[items[mapitem].gatenumber][n];
-										chars[index].y = gatey[items[mapitem].gatenumber][n];
-										chars[index].dispz = chars[index].z = gatez[items[mapitem].gatenumber][n];
-										mapRegions->AddItem( index + 1000000 );
-										teleport( index );
-									}
-								}
-							}
-						} while ( mapitemptr2 != -1 );
-					}
-					// Set the characters destination
-					chars[s].x = gatex[items[mapitem].gatenumber][n];
-					chars[s].y = gatey[items[mapitem].gatenumber][n] + 1;
-					chars[s].dispz=chars[s].z=gatez[items[mapitem].gatenumber][n];
-					
-					// Teleport the current character
-					mapRegions->AddItem(s+1000000); //LB, add with new x,y
-					teleport(s);
-					soundeffect( calcSocketFromChar( s ), 0x01, 0xFE );
-					staticeffect( s, 0x37, 0x2A, 0x09, 0x06 );
+					toCheck->PopChar();
+					toCheck->PopItem();
+					return false;
 				}
+				SI08 dirOffset = 0;
+				if( s->GetDir() < SOUTH )
+					dirOffset = 1;
+				else
+					dirOffset = -1;
+				if( !s->IsNpc() )
+				{
+					for( CChar *charCheck = toCheck->FirstChar(); !toCheck->FinishedChars(); charCheck = toCheck->GetNextChar() )
+					{
+						if( charCheck == NULL )
+							continue;
+						if( charCheck->IsNpc() && charCheck->GetOwner() == s->GetSerial() )	// follow our owner
+						{
+							if( getDist( charCheck, s ) <= 4 )
+							{
+								charCheck->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
+								charCheck->Teleport();
+							}
+						}
+					}
+				}
+				s->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
+				s->Teleport();
+				soundeffect( calcSocketObjFromChar( s ), 0x01FE, true );
+				staticeffect( s, 0x372A, 0x09, 0x06 );
 			}
 		}
 	}
-	while (mapitemptr!=-1);
-	return(1);
+	toCheck->PopChar();
+	toCheck->PopItem();
+	return true;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::GateDestruction( unsigned int currenttime )
+//|     Class         :          SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monstername, UI16 color, SI16 x, SI16 y, SI08 z )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check all the gates in the world
-//|                              and destroy a gate if its gatetime elapsed.
-//o---------------------------------------------------------------------------o
-
-void cMagic::GateDestruction(unsigned int currenttime)
-{
-	unsigned int i,k;
-	
-	for (i=0;i<itemcount;i++)
-	{
-		if((items[i].type==51) || items[i].type==52) 
-		{
-			if(items[i].gatetime<=currenttime)
-			{
-				for (k=0;k<2;k++) Items->DeleItem(i); 
-			}
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, char * monstername, unsigned char color1, unsigned char color2, int x, int y, int z)
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
+//|		Revision	  :			 May 4th, 2000 - made function general words PC's and NPC's - Hanse
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Summon a monster (dispellable with DISPEL).
 //o---------------------------------------------------------------------------o
-void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, char * monstername, unsigned char color1, unsigned char color2, int x, int y, int z)
+void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monstername, UI16 colour, SI16 x, SI16 y, SI08 z )
 {
-	int i;
-	unsigned int c;
-	
-	c=Npcs->MemCharFree ();
-	i=(id1<<8)+id2;
-	Npcs->InitChar(c);
-	switch(i)
+	if( s != NULL )
+		caster = s->CurrcharObj();
+	else
+	{	// Since caster will determine who is casting the spell... get a socket for players to see animations and hear effects - Hanse
+		if( caster->IsNpc() && !chars[caster->GetTarg()].IsNpc() )
+			s = calcSocketObjFromChar( caster->GetTarg() );
+	}
+
+	CHARACTER newCharOff;
+	CChar *newChar = Npcs->MemCharFree( newCharOff );
+	if( newChar == NULL )
+		return;
+
+	switch( id )
 	{
 	case 0x0000:	// summon monster
-		// Revised Abaddon 17th February 2000
-		// Now successfully summons a monster, if you have an npc list 10000
-		Npcs->DeleteChar( c );
-		soundeffect( s, 0x02, 0x17 );
-		c=Npcs->AddRandomNPC( s, "10000", -1 );
-		if( c == -1 )
+		Npcs->DeleteChar( newChar );
+		soundeffect( s, 0x0217, true );
+		newChar = Npcs->CreateRandomNpc( s, "10000", caster->WorldNumber() );
+		if( newChar == NULL )
 		{
-			sysmessage( s, "Contact your shard op to setup the summon list!" );
+			sysmessage( s, 694 );
 			return;
 		}
-		setserial( c, currchar[s], 5 );
-		mapRegions->RemoveItem( c + 1000000 );
-		chars[c].x = chars[currchar[s]].x;
-		chars[c].y = chars[currchar[s]].y;
-		chars[c].z = chars[currchar[s]].z;
-		mapRegions->AddItem( c + 1000000 );
-		chars[c].summontimer=(uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
-		updatechar(c);
-		npcaction( c, 0x0C);
+		newChar->SetOwner( caster->GetSerial() );
+		newChar->SetSummonTimer( BuildTimeValue( caster->GetSkill( MAGERY ) / 5 ) );
+		newChar->SetLocation( caster );
+		newChar->Teleport();
+		npcAction( newChar, 0x0C );
+		newChar->SetFTarg( calcCharFromSer( caster->GetSerial() ) );
+		newChar->SetNpcWander( 1 );
+		sysmessage( s, 695 );
 		return;
 	case 0x000D: // Energy Vortex & Air elemental
-		if (color1==0x00 && color2==0x75)
+		if( colour == 0x0075 )
 		{
-			soundeffect(s, 0x02, 0x16); // EV
-			chars[c].def=22;
-			chars[c].lodamage=10;
-			chars[c].hidamage=30;
-			//			chars[c].spattack=8191; // 1-7 level spells
-			chars[c].baseskill[MAGERY]=950; // 95 magery
-			chars[c].baseskill[TACTICS]=2000; // 200 tactics
-			chars[c].skill[MAGICRESISTANCE]=850;
-			chars[c].st=chars[c].hp=400;
-			chars[c].dx=chars[c].stm=160;
-			chars[c].in=chars[c].mn=180;
-			chars[c].npcWander=2;
-			chars[c].npcaitype=0x50; // morollan
-			chars[c].poison = 3;
-			
+			soundeffect( s, 0x0216, true ); // EV
+			newChar->SetDef( 22 );
+			newChar->SetLoDamage( 10 );	// Damage may be high, but 10-30 did on average 4 to a troll...
+			newChar->SetHiDamage( 70 );
+			newChar->SetSpAttack( 7 );	// 1-7 level spells (do EV's cast for sure?)
+			newChar->SetBaseSkill( 950, MAGERY );
+			newChar->SetBaseSkill( 2000, WRESTLING );
+			newChar->SetBaseSkill( 2000, TACTICS );
+			newChar->SetSkill( 850, MAGICRESISTANCE );
+			newChar->SetStrength( 800 );
+			newChar->SetHP( 800 );
+			newChar->SetDexterity( 160 );
+			newChar->SetStamina( 160 );
+			newChar->SetIntelligence( 180 );
+			newChar->SetMana( 180 );
+			newChar->SetNpcWander( 2 );
+			newChar->SetNPCAiType( 0x50 );
+			newChar->SetPoison( 3 );	
 		}
 		else
 		{
-			soundeffect(s, 0x02, 0x17); // AE
-			chars[c].def=19;
-			chars[c].lodamage=5;
-			chars[c].hidamage=13;
-			chars[c].spattack=4095; // 1-6 level spells
-			chars[c].baseskill[MAGERY]=750; // 75 magery
-			chars[c].baseskill[TACTICS]=700; // 70 tactics               
-			chars[c].skill[MAGICRESISTANCE]=450;
-			chars[c].st=chars[c].hp=125;
-			chars[c].dx=chars[c].stm=100;
-			chars[c].in=chars[c].mn=80;
+			soundeffect( s, 0x0217, true ); // AE
+			newChar->SetDef( 19 );
+			newChar->SetLoDamage( 5 );
+			newChar->SetHiDamage( 13 );
+			newChar->SetSpAttack( 6 ); // 1-6 level spells
+			newChar->SetBaseSkill( 750, MAGERY );
+			newChar->SetBaseSkill( 950, WRESTLING );
+			newChar->SetBaseSkill( 700, TACTICS );
+			newChar->SetSkill( 450, MAGICRESISTANCE );
+			newChar->SetStrength( 125 );
+			newChar->SetHP( 125 );
+			newChar->SetDexterity( 100 );
+			newChar->SetStamina( 100 );
+			newChar->SetIntelligence( 80 );
+			newChar->SetMana( 80 );
 		}
 		break;
 	case 0x000A: // Daemon
-		soundeffect(s, 0x02, 0x16);
-		chars[c].def=20;
-		chars[c].lodamage=10;
-		chars[c].hidamage=45;
-		chars[c].spattack=8191; // 1-7 level spells
-		chars[c].baseskill[MAGERY]=900; // 90 magery
-		chars[c].baseskill[TACTICS]=700; // 70 tactics 
-		chars[c].skill[MAGICRESISTANCE]=650;
-		chars[c].st=chars[c].hp=400;
-		chars[c].dx=chars[c].stm=70;
-		chars[c].in=chars[c].mn=400;
+		soundeffect( s, 0x0216, true );
+		newChar->SetDef( 20 );
+		newChar->SetLoDamage( 10 );
+		newChar->SetHiDamage( 45 );
+		newChar->SetSpAttack( 7 ); // 1-7 level spells
+		newChar->SetBaseSkill( 900, MAGERY );
+		newChar->SetBaseSkill( 1500, TACTICS );
+		newChar->SetBaseSkill( 1500, WRESTLING );
+		newChar->SetSkill( 650, MAGICRESISTANCE );
+		newChar->SetStrength( 400 );
+		newChar->SetHP( 400 );
+		newChar->SetDexterity( 70 );
+		newChar->SetStamina( 70 );
+		newChar->SetIntelligence( 400 );
+		newChar->SetMana( 400 );
 		break;
 	case 0x000E: //Earth
-		soundeffect(s, 0x02, 0x17);
-		chars[c].def=15;
-		chars[c].lodamage=3;
-		chars[c].hidamage=18;
-		chars[c].baseskill[TACTICS]=850; // 85 tactics 
-		chars[c].skill[MAGICRESISTANCE]=350;
-		chars[c].st=chars[c].hp=125;
-		chars[c].dx=chars[c].stm=90;
-		chars[c].in=chars[c].mn=70;
+		soundeffect( s, 0x0217, true );
+		newChar->SetDef( 15 );
+		newChar->SetLoDamage( 3 );
+		newChar->SetHiDamage( 18 );
+		newChar->SetBaseSkill( 850, TACTICS );
+		newChar->SetBaseSkill( 850, WRESTLING );
+		newChar->SetSkill( 350, MAGICRESISTANCE );
+		newChar->SetStrength( 125 );
+		newChar->SetHP( 125 );
+		newChar->SetDexterity( 90 );
+		newChar->SetStamina( 90 );
+		newChar->SetIntelligence( 70 );
+		newChar->SetMana( 70 );
 		break;
 	case 0x000F: //Fire
 	case 0x0010: //Water
-		soundeffect(s, 0x02, 0x17);
-		chars[c].def=19;
-		chars[c].lodamage=4;
-		chars[c].hidamage=12;
-		chars[c].spattack=4095; // 1-6 level spells
-		chars[c].baseskill[MAGERY]=800; // 80 magery
-		chars[c].baseskill[TACTICS]=800; // 80 tactics 
-		chars[c].skill[MAGICRESISTANCE]=450;
-		chars[c].st=chars[c].hp=120;
-		chars[c].dx=chars[c].stm=95;
-		chars[c].in=chars[c].mn=70;
+		soundeffect( s, 0x0217, true );
+		newChar->SetDef( 19 );
+		newChar->SetLoDamage( 4 );
+		newChar->SetHiDamage( 12 );
+		newChar->SetSpAttack( 6 ); // 1-6 level spells
+		newChar->SetBaseSkill( 800, MAGERY );
+		newChar->SetBaseSkill( 800, TACTICS );
+		newChar->SetSkill( 450, MAGICRESISTANCE );
+		newChar->SetBaseSkill( 800, WRESTLING );
+		newChar->SetStrength( 120 );
+		newChar->SetHP( 120 );
+		newChar->SetDexterity( 95 );
+		newChar->SetStamina( 95 );
+		newChar->SetIntelligence( 70 );
+		newChar->SetMana( 70 );
 		break;
 	case 0x023E: //Blade Spirits
-		soundeffect(s, 0x02, 0x12); // I don't know if this is the right effect...
-		chars[c].def=24;
-		chars[c].lodamage=5;
-		chars[c].hidamage=10;
-		chars[c].baseskill[TACTICS]=950; // 95 tactics 
-		chars[c].skill[MAGICRESISTANCE]=650;
-		chars[c].st=chars[c].hp=200;
-		chars[c].dx=chars[c].stm=95;
-		chars[c].in=chars[c].mn=70;
-		chars[c].npcWander=2;
-		chars[c].npcaitype = 0x50;
-		chars[c].poison = 2;
+		soundeffect( s, 0x0212, true ); // I don't know if this is the right effect...
+		newChar->SetDef( 24 );
+		newChar->SetLoDamage( 5 );
+		newChar->SetHiDamage( 10 );
+		newChar->SetBaseSkill( 950, TACTICS );
+		newChar->SetBaseSkill( 950, WRESTLING );
+		newChar->SetSkill( 650, MAGICRESISTANCE );
+		newChar->SetStrength( 400 );
+		newChar->SetHP( 400 );
+		newChar->SetDexterity( 95 );
+		newChar->SetStamina( 95 );
+		newChar->SetIntelligence( 70 );
+		newChar->SetMana( 70 );
+		newChar->SetNpcWander( 2 );
+		newChar->SetNPCAiType( 0x50 );
+		newChar->SetPoison( 2 );
 		break;
 	case 0x03e2: // Dupre The Hero
-		soundeffect(s, 0x02, 0x46);
-		chars[c].def=50;
-		chars[c].lodamage=50;
-		chars[c].hidamage=100;
-		chars[c].spattack=8191; // 1-7 level spells
-		chars[c].baseskill[MAGERY]=900; // 90 magery
-		chars[c].baseskill[TACTICS]=1000; // 70 tactics 
-		chars[c].baseskill[SWORDSMANSHIP]=1000;
-		chars[c].baseskill[PARRYING]=1000;
-		chars[c].skill[MAGICRESISTANCE]=650;
-		chars[c].st=chars[c].hp=600;
-		chars[c].dx=chars[c].stm=70;
-		chars[c].in=chars[c].mn=100;
-		chars[c].fame=10000;
-		chars[c].karma=10000;
+		soundeffect( s, 0x0246, true );
+		newChar->SetDef( 50 );
+		newChar->SetLoDamage( 50 );
+		newChar->SetHiDamage( 100 );
+		newChar->SetSpAttack( 7 ); // 1-7 level spells
+		newChar->SetBaseSkill( 900, MAGERY );
+		newChar->SetBaseSkill( 1000, TACTICS );
+		newChar->SetBaseSkill( 1000, SWORDSMANSHIP );
+		newChar->SetBaseSkill( 1000, PARRYING );
+		newChar->SetSkill( 650, MAGICRESISTANCE );
+		newChar->SetStrength( 600 );
+		newChar->SetHP( 600 );
+		newChar->SetDexterity( 70 );
+		newChar->SetStamina( 70 );
+		newChar->SetIntelligence( 100 );
+		newChar->SetMana( 100 );
+		newChar->SetFame( 10000 );
+		newChar->SetKarma( 10000 );
 		break;
 	case 0x000B: // Black Night
-		soundeffect(s, 0x02, 0x16);
-		chars[c].def=50;
-		chars[c].lodamage=50;
-		chars[c].hidamage=100;
-		chars[c].spattack=8191; // 1-7 level spells
-		chars[c].baseskill[MAGERY]=1000; // 100 magery
-		chars[c].baseskill[TACTICS]=1000;// 100 tactics
-		chars[c].baseskill[SWORDSMANSHIP]=1000;
-		chars[c].baseskill[PARRYING]=1000;
-		chars[c].skill[MAGICRESISTANCE]=1000;
-		chars[c].st=chars[c].hp=600;
-		chars[c].dx=chars[c].stm=70;
-		chars[c].in=chars[c].mn=100;
+		soundeffect( s, 0x0216, true );
+		newChar->SetDef( 50 );
+		newChar->SetLoDamage( 50 );
+		newChar->SetHiDamage( 100 );
+		newChar->SetSpAttack( 7 ); // 1-7 level spells
+		newChar->SetBaseSkill( 1000, MAGERY );
+		newChar->SetBaseSkill( 1000, TACTICS );
+		newChar->SetBaseSkill( 1000, SWORDSMANSHIP );
+		newChar->SetBaseSkill( 1000, PARRYING );
+		newChar->SetSkill( 1000, MAGICRESISTANCE );
+		newChar->SetStrength( 600 );
+		newChar->SetHP( 600 );
+		newChar->SetDexterity( 70 );
+		newChar->SetStamina( 70 );
+		newChar->SetIntelligence( 100 );
+		newChar->SetMana( 100 );
 		break;
 	case 0x0190: // Death Knight
-		soundeffect(s, 0x02, 0x46);
-		chars[c].def=20;
-		chars[c].lodamage=10;
-		chars[c].hidamage=45;
-		chars[c].spattack=4095; // 1-7 level spells
-		chars[c].baseskill[MAGERY]=500; // 90 magery
-		chars[c].baseskill[TACTICS]=1000; // 70 tactics 
-		chars[c].baseskill[SWORDSMANSHIP]=1000;
-		chars[c].baseskill[PARRYING]=1000;
-		chars[c].skill[MAGICRESISTANCE]=650;
-		chars[c].st=chars[c].hp=600;
-		chars[c].dx=chars[c].stm=70;
-		chars[c].in=chars[c].mn=100;
-		chars[c].fame=-10000;
-		chars[c].karma=-10000;
+		soundeffect( s, 0x0246, true );
+		newChar->SetDef( 20 );
+		newChar->SetLoDamage( 10 );
+		newChar->SetHiDamage( 45 );
+		newChar->SetSpAttack( 7 ); // 1-7 level spells
+		newChar->SetBaseSkill( 500, MAGERY );
+		newChar->SetBaseSkill( 1000, TACTICS );
+		newChar->SetBaseSkill( 1000, SWORDSMANSHIP );
+		newChar->SetBaseSkill( 1000, PARRYING );
+		newChar->SetSkill( 650, MAGICRESISTANCE );
+		newChar->SetStrength( 600 );
+		newChar->SetHP( 600 );
+		newChar->SetDexterity( 70 );
+		newChar->SetStamina( 70 );
+		newChar->SetIntelligence( 100 );
+		newChar->SetMana( 100 );
+		newChar->SetFame( -10000 );
+		newChar->SetKarma( -10000 );
 		break;
 	default:
-		soundeffect(s, 0x02, 0x15);
+		soundeffect( s, 0x0215, true );
 	}
-	strcpy(chars[c].name, monstername);
-	chars[c].id1=chars[c].xid1=id1;
-	chars[c].xid2=chars[c].id2=id2;
-	chars[c].skin1=chars[c].xskin1=color1;
-	chars[c].skin2=chars[c].xskin2=color2;
-	chars[c].orgid1=id1;
-	chars[c].orgid2=id2;
-	chars[c].priv2=0x20;
-	chars[c].npc=1;
-	if (i!=0x023E && !(i==0x000d && color1==0 && color2==0x75))  // don't own BS or EV.
-		setserial(c, currchar[s], 5);
-	mapRegions->RemoveItem(c+1000000);
+	newChar->SetName( monstername );
+	newChar->SetID( id );
+	newChar->SetxID( id );
+	newChar->SetOrgID( id );
+	newChar->SetSkin( colour );
+	newChar->SetxSkin( newChar->GetSkin() );
+	newChar->SetDispellable( true );
+	newChar->SetNpc( true );
+
+	// pc's don't own BS/EV, NPCs do
+	if( caster->IsNpc() || ( id != 0x023E && !( id == 0x000D && colour == 0x0075 ) ) )
+		newChar->SetOwner( caster->GetSerial() );
 	
-	if (x==0)
-	{
-		chars[c].x=chars[currchar[s]].x-1;
-		chars[c].y=chars[currchar[s]].y;
-		chars[c].dispz=chars[c].z=chars[currchar[s]].z;
-	}
+	if( x == 0 )
+		newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
 	else
-	{
-		chars[c].x=x;
-		chars[c].y=y;
-		chars[c].dispz=chars[c].z=z;
-	}
+		newChar->SetLocation( x, y, z );
 	
-	mapRegions->AddItem(c+1000000); //lb
 	
-	chars[c].spadelay=10;
-	chars[c].summontimer=(uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
-	updatechar(c);
-	npcaction(c, 0x0C);
+	newChar->SetSpDelay( 10 );
+	newChar->SetSummonTimer( BuildTimeValue( caster->GetSkill( MAGERY ) / 5 ) );
+	newChar->Update();
+	npcAction( newChar, 0x0C );
 	// AntiChrist (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
-	if( buffer[s][7] == 0xFF && buffer[s][8] == 0xFF && buffer[s][9] == 0xFF && buffer[s][10] == 0xFF ) return;
-	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-	if( i == -1 ) return;
-	npcattacktarget( i, c );
+	CChar *i = NULL;
+	if( !caster->IsNpc() && s != NULL )
+	{
+		if( s->GetDWord( 7 ) != INVALIDSERIAL )
+		{
+			i = calcCharObjFromSer( s->GetDWord( 7 ) );
+			if( i == NULL ) 
+				return;
+		}
+	}
+	else
+		i = &chars[caster->GetTarg()];
+	npcAttackTarget( i, newChar );
 }
 
 //o---------------------------------------------------------------------------o
@@ -572,65 +1810,22 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 //|     Purpose       :          Check if the spell is memorized into the spellbook.
 //o---------------------------------------------------------------------------o
 
-int cMagic::CheckBook(int circle, int spell, int i)
+bool cMagic::CheckBook( int circle, int spell, CItem *i )
 {
-	int j, spellnum, raflag=0,serial,serhash,ci;
-	
-	spellnum=spell+(circle-1)*8;
+	bool raflag = false;
+	int spellnum = spell + ( circle - 1 ) * 8;
 	// Fix for OSI stupidity. :) 
-	if (spellnum==6) raflag=1;
-	if (spellnum>=0 && spellnum<6) spellnum++;
-	if (raflag) spellnum=0;
-	serial=items[i].serial;
-	serhash=serial%HASHMAX;
-	//j=findbyserial(&itemsp[serial%256], serial,0);
-	if( items[i].morex == 0 && items[i].morey == 0 && items[i].morez == 0 )
-	{
-		for (ci=0;ci<contsp[serhash].max;ci++)
-		{
-			j=contsp[serhash].pointer[ci];
-			if (j!=-1)
-				if((items[j].id1==0x1F && items[j].id2==(0x2D+spellnum) ||
-					items[j].id2==0x6D))
-				{
-					return 1;
-				}
-		}
-	}
-	else
-	{
-		return HasSpell( i, spellnum );
-	}
-
-	return 0;
+	if( spellnum == 6 ) 
+		raflag = true;
+	if( spellnum >= 0 && spellnum < 6 ) 
+		spellnum++;
+	if( raflag ) 
+		spellnum = 0;
+	return HasSpell( i, spellnum );
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SbOpenContainer( UOXSOCKET s )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Open player's spellbook as a container.
-//|                              (used for SBOPEN command)
-//o---------------------------------------------------------------------------o
-
-void cMagic::SbOpenContainer( UOXSOCKET s )
-{
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
-	{
-		if ((items[i].type==9))
-		{
-			backpack(s,buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		} else sysmessage(s,"That is not a spellbook.");
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckMana( CHARACTER s, int circle )
+//|     Class         :          ::CheckMana( CChar *s, int circle )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //                               Modified by AntiChrist to use spells[] array.
@@ -639,54 +1834,63 @@ void cMagic::SbOpenContainer( UOXSOCKET s )
 //|                              a spell of that circle.
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckMana( CHARACTER s, int num )
+bool cMagic::CheckMana( CChar *s, int num )
 {
-	int p;
-	if (chars[s].priv2&0x10)
-		return 1;
-	if( chars[s].mn >= spells[num].mana ) 
-		return 1;
-	p = calcSocketFromChar( s );
-	if( p != -1 ) 
-		sysmessage( p, "You have insufficient mana to cast that spell." );
-	return 0;
-}
-
-bool cMagic::CheckStamina( CHARACTER s, int num )
-{
-	int p;
-	if( chars[s].priv2&0x10 )
+	if( s == NULL )
 		return true;
-	if( chars[s].stm >= spells[num].stamina ) 
+	if( s->NoNeedMana() )
 		return true;
-	p = calcSocketFromChar( s );
-	if( p != -1 ) 
-		sysmessage( p, "You have insufficient stamina to cast that spell." );
+	if( s->GetMana() >= spells[num].Mana() ) 
+		return true;
+	else
+	{
+		cSocket *p = calcSocketObjFromChar( s );
+		if( p != NULL ) 
+			sysmessage( p, 696 );
+	}
 	return false;
 }
 
-bool cMagic::CheckHealth( CHARACTER s, int num )
+bool cMagic::CheckStamina( CChar *s, int num )
 {
-	int p;
-	if( chars[s].priv2&0x10 )
+	if( s == NULL )
 		return true;
-	if( spells[num].health == 0 )
+	if( s->NoNeedMana() )
 		return true;
-	if( spells[num].health > 0 )
+	if( s->GetStamina() >= spells[num].Stamina() ) 
+		return true;
+	else
 	{
-		if( chars[s].hp >= spells[num].health ) 
+		cSocket *p = calcSocketObjFromChar( s );
+		if( p != NULL ) 
+			sysmessage( p, 697 );
+	}
+	return false;
+}
+
+bool cMagic::CheckHealth( CChar *s, int num )
+{
+	if( s == NULL )
+		return true;
+	if( s->NoNeedMana() )
+		return true;
+	if( spells[num].Health() == 0 )
+		return true;
+	if( spells[num].Health() > 0 )
+	{
+		if( s->GetHP() >= spells[num].Health() ) 
 			return true;
 	}
 	else
-		return true;	// if it's negative, it depends on the TARGET's value
-	p = calcSocketFromChar( s );
-	if( p != -1 ) 
-		sysmessage( p, "You have insufficient health to cast that spell." );
+		return true;
+	cSocket *p = calcSocketObjFromChar( s );
+	if( p != NULL ) 
+		sysmessage( p, 698 );
 	return false;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SubtractMana( CHARACTER s, int mana )
+//|     Class         :          ::SubtractMana( CChar *s, int mana )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -694,61 +1898,49 @@ bool cMagic::CheckHealth( CHARACTER s, int num )
 //|                              mana reserve.
 //o---------------------------------------------------------------------------o
 
-char cMagic::SubtractMana( CHARACTER s, int mana)
+void cMagic::SubtractMana( CChar *s, int mana)
 {
-	int p;
-	char retval=1;
-	
-	if (chars[s].priv2&0x10)
-		return 1;
-	
-	chars[s].mn-=mana;
-	if(chars[s].mn<0) chars[s].mn=0;//Bug Fix -- Zippy
-	p=calcSocketFromChar(s);
-	if (p!=-1) updatestats(p, 1);
-	
-	return retval;
+	if( s->NoNeedMana() )
+		return;
+	s->SetMana( s->GetMana() - mana );
+	if( s->GetMana() < 0 ) 
+		s->SetMana( 0 );
+
+	updateStats( s, 1 );
 }
 
-char cMagic::SubtractStamina( CHARACTER s, int stamina )
+void cMagic::SubtractStamina( CChar *s, int stamina )
 {
-	int p;
-	if( chars[s].priv2&0x10 )
-		return 1;
-	
-	chars[s].stm -= stamina;
-	if( chars[s].stm < 0 ) 
-		chars[s].stm = 0;
-	p = calcSocketFromChar( s );
-	if( p != -1 ) 
-		updatestats( p, 2 );
-	return 1;
+	if( s->NoNeedMana() )
+		return;
+	s->SetStamina( s->GetStamina() - stamina );
+	if( s->GetStamina() < 0 ) 
+		s->SetStamina( 0 );
+
+	updateStats( s, 2 );
 }
 
-char cMagic::SubtractHealth( CHARACTER s, int health, int spellNum )
+void cMagic::SubtractHealth( CChar *s, int health, int spellNum )
 {
-	int p;
-	if( chars[s].priv2&0x10 || spells[spellNum].health == 0 )
-		return 1;
-	if( spells[spellNum].health < 0 )
+	if( s->NoNeedMana() || spells[spellNum].Health() == 0 )
+		return;
+	if( spells[spellNum].Health() < 0 )
 	{
-		if( abs( spells[spellNum].health * health ) > chars[s].hp )
-			chars[s].hp = 0;
+		if( abs( spells[spellNum].Health() * health ) > s->GetHP() )
+			s->SetHP( 0 );
 		else
-			chars[s].hp += (spells[spellNum].health * health);
+			s->IncHP( spells[spellNum].Health() * health );
 	}
 	else
-		chars[s].hp -= health;
-	if( chars[s].hp < 0 ) 
-		chars[s].hp = 0;
-	p = calcSocketFromChar( s );
-	if( p != -1 ) 
-		updatestats( p, 0 );
-	return 1;
+		s->IncHP( -health );
+	if( s->GetHP() < 0 ) 
+		s->SetHP( 0 );
+
+	updateStats( s, 0 );
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckMagicReflect( CHARACTER i )
+//|     Class         :          ::CheckMagicReflect( CChar *i )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -756,19 +1948,19 @@ char cMagic::SubtractHealth( CHARACTER s, int health, int spellNum )
 //|                              if yes, remove the protection and do visual effect.
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckMagicReflect( CHARACTER i ) 
+bool cMagic::CheckMagicReflect( CChar *i ) 
 {
-	if (chars[i].priv2&0x40)
+	if( i->IsPermReflected() )
 	{
-		chars[i].priv2=chars[i].priv2&0xBF;
-		staticeffect(i, 0x37, 0x3A, 0, 15);
-		return 1;
+		i->SetPermReflected( false );
+		staticeffect( i, 0x373A, 0, 15 );
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckResist( CHARACTER player, int circle )
+//|     Class         :          ::CheckResist( CChar *attacker, CChar *defender, int circle )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //|                              Modified by AntiChrist to add EV.INT. check
@@ -776,125 +1968,108 @@ char cMagic::CheckMagicReflect( CHARACTER i )
 //|     Purpose       :          Check character's magic resistance.
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckResist( CHARACTER attacker, CHARACTER defender, int circle)
+bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 {
-	char i=Skills->CheckSkill(defender, MAGICRESISTANCE, 80*circle, 800+(80*circle));;
-	int s;
-	if (i)
+	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
+	cSocket *s = NULL;
+	if( i )
 	{
-		if( attacker >= 0 ) // NOTE: only do the EV.INT. check if attacker >= 0
+		if( attacker != NULL )
 		{
-			// printf("DIFFERENCE: %d\n", (chars[defender].skill[MAGICRESISTANCE] - chars[attacker].skill[EVALUATINGINTEL] ) );
-			if((chars[defender].skill[MAGICRESISTANCE]-chars[attacker].skill[EVALUATINGINTEL] ) >= 0 )
+			if( ( defender->GetSkill( MAGICRESISTANCE ) - attacker->GetSkill( EVALUATINGINTEL ) ) >= 0 )
 			{
-				s = calcSocketFromChar( defender );
-				if (s!=-1)
-				{
-					sysmessage(s, "You feel yourself resisting magical energy!");
-				}
+				s = calcSocketObjFromChar( defender );
+				if( s != NULL )
+					sysmessage( s, 699 );
 			}
 			else
-			{
-				i = 0;
-			}
+				i = false;
 		}
 		else
 		{
-			s = calcSocketFromChar( defender );
-			if( s != -1 )
-			{
-				sysmessage( s, "You feel yourself resisting magical energy!" );
-			}
+			s = calcSocketObjFromChar( defender );
+			if( s != NULL )
+				sysmessage( s, 699 );
 		}
 	}
 	return i;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::MagicDamage( CHARACTER p )
+//|     Class         :          MagicDamage( CChar *p )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
-//|		Debugging	  :			 Oakwood
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Calculate and inflict magic damage.
 //o---------------------------------------------------------------------------o
 
-void cMagic::MagicDamage( CHARACTER p, int amount, CHARACTER attacker )
+void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 {
-	int s;
-	if( chars[p].dead || chars[p].hp <= 0 || (chars[p].priv&0x04) )
+	cSocket *s = NULL;
+	if ( !p || !attacker )
 		return;
-	char eval = Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 );
-	if( eval ) amount = max( 1, amount - ( amount * ( chars[p].skill[EVALUATINGINTEL]/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
-	if ((chars[p].priv2&0x02) && (chars[p].dx>0))
+
+	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
+		return;
+	if( Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 ) ) 
+		amount = max( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
+	if( p->IsFrozen() && p->GetDexterity() > 0 )
 	{
-		chars[p].priv2=chars[p].priv2&0xFD; // unfreeze
-		s=calcSocketFromChar(p);
-		if( s != -1 ) 
-			sysmessage( s, "You are no longer frozen." );
-	}
-	if( !(chars[p].priv&0x04) && (region[chars[p].region].priv&0x40) )
+		p->SetFrozen( false );
+		s = calcSocketObjFromChar( p );
+		if( s != NULL ) 
+			sysmessage( s, 700 );
+	}           
+	if( !p->IsInvulnerable() && !region[p->GetRegion()]->CanCastAggressive() )
 	{
-		if( chars[p].npc )
+		if( p->IsNpc() ) 
 			amount *= 2;      // double damage against non-players
-		chars[p].hp = max(0, chars[p].hp - amount);
-		updatestats( p, 0 );
-		if( chars[p].hp <= 0 )
+		p->SetHP( max( 0, p->GetHP() - amount) );
+		updateStats( p, 0 );
+		if( p->GetHP() <= 0 )
 		{
-			if( attacker != -1 && p != attacker )	// can't gain fame and karma for suicide :>
+			if( attacker != NULL && p != attacker )	// can't gain fame and karma for suicide :>
 			{
-				Kill( attacker, p );
+				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
+				Fame( attacker, p->GetFame() );
 			}
-			deathstuff( p );
-		}
-		else if( !chars[p].npc && chars[p].casting > 0 )
-		{
-			s = calcSocketFromChar( p );
-			if( currentSpellType[s] == 0 )
-			{
-				chars[p].spellCast = -1;
-				chars[p].casting = 0;
-				chars[p].priv2 &= 0xFD;
-				sysmessage( s, "Your concentration has been broken" );
-			}
+			doDeathStuff( p );
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::PoisonDamage( CHARACTER p )
+//|     Class         :          ::PoisonDamage( CChar *p )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Apply the poison to the character.
 //o---------------------------------------------------------------------------o
 
-void cMagic::PoisonDamage( CHARACTER p, int poison )
+void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 {
-	int s;
-	if( chars[p].priv2&0x02 )
+	if( p->IsFrozen() )
 	{
-		chars[p].priv2 &= 0xFD;
-		s = calcSocketFromChar( p );
-		if( s != -1 ) 
-			sysmessage( s, "You are no longer frozen." );
+		p->SetFrozen( false );
+		cSocket *s = calcSocketObjFromChar( p );
+		if( s != NULL ) 
+			sysmessage( s, 700 );
 	}           
-	if( ( !( chars[p].priv&0x04 ) ) && (!(region[chars[p].region].priv&0x40)))
+	if( !p->IsInvulnerable() && !region[p->GetRegion()]->CanCastAggressive() )
 	{
 		if( poison > 5 ) 
 			poison = 5;
 		if( poison < 0 ) 
 			poison = 1;
-		chars[p].poisoned = poison;
-		chars[p].poisonwearofftime = uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer );
-		if( !chars[p].npc ) 
-			impowncreate( calcSocketFromChar( p ), p, 1 );
-		
+		p->SetPoisoned( poison );
+		p->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+		if( !p->IsNpc() )
+			p->SendToSocket( calcSocketObjFromChar( p ), true, p );
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckFieldEffects2( unsigned int currenttime, CHARACTER c, char timecheck )
+//|     Class         :          CheckFieldEffects2( CChar *c, char timecheck )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -912,84 +2087,97 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 // LB October 99
 //o---------------------------------------------------------------------------o
 
-void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char timecheck )//c=character (Not socket) //Lag fix -- Zippy
+void cMagic::CheckFieldEffects2( CChar *c, char timecheck )
 {
-	// - Tauriel's region stuff 3/6/99
-	int StartGrid=mapRegions->StartGrid(chars[c].x,chars[c].y);
-	//int getcell=mapRegions->GetCell(chars[c].x,chars[c].y);
-	
-	int i, j;
-	if( timecheck )
+	if( timecheck && nextfieldeffecttime > uiCurrentTime )
+		return;
+
+	CChar *caster = NULL;
+
+	int xOffset = MapRegion->GetGridX( c->GetX() );
+	int yOffset = MapRegion->GetGridY( c->GetY() );
+	UI08 worldNumber = c->WorldNumber();
+	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 	{
-		if (nextfieldeffecttime<=currenttime)
-			j = 1;
-		else
-			j = 0;
-	}
-	else
-		j = 1;
-	if( j )
-	{
-		//printf("charname: %s\n",chars[c].name);
-		unsigned int increment=0;
-		for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
+		for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
 		{
-			for (i=0;i<3;i++)
+			SubRegion *toCheck = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
+			if( toCheck == NULL )
+				continue;
+			toCheck->PushItem();
+			for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
 			{
-				int mapitem=-1;
-				int mapitemptr=-1;
-				do //check all items in this cell
-				{   
-					mapitemptr=mapRegions->GetNextItem(checkgrid+i, mapitemptr);
-					if (mapitemptr==-1) break;
-					mapitem=mapRegions->GetItem(checkgrid+i, mapitemptr);
-					if (mapitem!=-1 && mapitem<1000000)
+				if( itemCheck == NULL )
+					continue;
+				if( itemCheck->GetX() == c->GetX() && itemCheck->GetY() == c->GetY() )
+				{
+					switch( itemCheck->GetID() )
 					{
-						//printf("itemname: %s\n",items[mapitem].name);// perfect for mapregion debugging, LB
-						if ((items[mapitem].x==chars[c].x)&&(items[mapitem].y==chars[c].y))  // lb
+					case 0x3996:
+					case 0x398C:	// firefield
+						if( c->IsInnocent() )
 						{
-							// printf("firefield1\n");
-							if (items[mapitem].id1==0x39 && (items[mapitem].id2==0x96 || items[mapitem].id2==0x8C))
-							{
-								// printf("firefield\n");
-								
-								if (!CheckResist(-1, c, 4))	MagicDamage(c, items[mapitem].morex/100);
-								else 
-									MagicDamage(c, items[mapitem].morex/200);
-								
-								soundeffect2(c, 2, 8);
-								return;
-							} else if (items[mapitem].id1==0x39 && (items[mapitem].id2==0x15 || items[mapitem].id2==0x20))
-							{//Poison Field
-								if (!CheckResist(-1, c, 5))
-								{
-									if ((items[mapitem].morex<997))
-										PoisonDamage(c,2);
-									
-									else PoisonDamage(c,3); // gm mages can cast greater poison field, LB
-								} else PoisonDamage(c,1); // cant be completly resited
-								
-								soundeffect2(c, 2, 8);
-								return;
-							} else if (items[mapitem].id1==0x39 && (items[mapitem].id2==0x79 || items[mapitem].id2==0x67))
-							{//Para Field
-								if (!CheckResist(-1, c, 6))
-									tempeffect(c, c, 1, 0, 0, 0);
-								
-								soundeffect2(c, 0x02, 0x04);     
-								return;
-							} 
-							break;
+							caster = calcCharObjFromSer( itemCheck->GetMoreY() );	// store caster in morey
+							if( c->IsInnocent() && caster != NULL && !caster->IsGM() && !caster->IsCounselor() )
+								criminal( caster );
 						}
+						if( RandomNum( 0, 2 ) == 1 )
+						{
+							if( !CheckResist( NULL, c, 4 ) )
+								MagicDamage( c, itemCheck->GetMoreX() / 100 );
+							else
+								MagicDamage( c, itemCheck->GetMoreX() / 200 );
+						}
+						soundeffect( c, 520 );
+						toCheck->PopItem();
+						return;
+					case 0x3915:
+					case 0x3920:	// poison
+						if( c->IsInnocent() )
+						{
+							caster = calcCharObjFromSer( itemCheck->GetMoreY() );	// store caster in morey
+							if( c->IsInnocent() && caster != NULL && !caster->IsGM() && !caster->IsCounselor() )
+								criminal( caster );
+						}
+						if( RandomNum( 0, 2 ) == 1 )
+						{
+							if( !CheckResist( NULL, c, 5 ) )
+							{
+								if( itemCheck->GetMoreX() < 997 )
+									PoisonDamage( c, 2 );
+								else 
+									PoisonDamage( c, 3 );
+							} 
+							else 
+								PoisonDamage( c, 1 );
+						}
+						soundeffect( c, 520 );
+						toCheck->PopItem();
+						return;
+					case 0x3979:
+					case 0x3967:	// para
+						if( c->IsInnocent() )
+						{
+							caster = calcCharObjFromSer( itemCheck->GetMoreY() );	// store caster in morey
+							if( c->IsInnocent() && caster != NULL && !caster->IsGM() && !caster->IsCounselor() )
+								criminal( caster );
+						}
+						if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, c, 6 ) )
+							tempeffect( c, c, 1, 0, 0, 0 );
+						soundeffect( c, 520 );     
+						toCheck->PopItem();
+						return;
 					}
-				} while (mapitem!=-1);
-			} //- end of itemcount for loop
+					break;
+				}
+			}
+			toCheck->PopItem();
 		}
 	}	
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2 )
+//|     Class         :          ::BoxSpell( cSocket * s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2 )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -997,26 +2185,38 @@ void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char time
 //|                              on character's magery skill.
 //o---------------------------------------------------------------------------o
 
-void cMagic::BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2)
+void cMagic::BoxSpell( cSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2)
 {
-	int x, y, z, lenght;
+	SI16 x, y;
+	SI08 z;
+	SI16 length;
 	
-	x=(buffer[s][11]<<8)+buffer[s][12];
-	y=(buffer[s][13]<<8)+buffer[s][14];
-	z=buffer[s][16];
+	if( s != NULL )
+	{
+		x = s->GetWord( 11 );
+		y = s->GetWord( 13 );
+		z = s->GetByte( 16 );
+		caster = s->CurrcharObj();
+	}
+	else
+	{
+		x = chars[caster->GetTarg()].GetX();
+		y = chars[caster->GetTarg()].GetY();
+		z = chars[caster->GetTarg()].GetZ();
+	}
+
+	length = caster->GetSkill( MAGERY )/130; // increasde max-range, LB
 	
-	lenght=chars[currchar[s]].skill[MAGERY]/130; // increasde max-range, LB
-	
-	x1=x-lenght;
-	x2=x+lenght;
-	y1=y-lenght;
-	y2=y+lenght;
-	z1=z;
-	z2=z+3;
+	x1 = x - length;
+	x2 = x + length;
+	y1 = y - length;
+	y2 = y + length;
+	z1 = z;
+	z2 = z+3;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::MagicTrap( PLAYER s, int i )
+//|     Class         :          ::MagicTrap( CChar *s, int i )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -1024,40 +2224,21 @@ void cMagic::BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1,
 //|                              when a player opens a trapped container.
 //o---------------------------------------------------------------------------o
 
-void cMagic::MagicTrap( PLAYER s, int i)
+void cMagic::MagicTrap( CChar *s, CItem *i )
 {
-    staticeffect(s, 0x36, 0xB0, 0x09, 0x09);
-    soundeffect2(s, 0x02, 0x07);   
-	if(CheckResist(-1, s, 4)) MagicDamage(s,items[i].moreb2/2);
-	else MagicDamage(s,items[i].moreb2/2);
-	items[i].moreb1=0;
-	items[i].moreb2=0;
-	items[i].moreb3=0;
+	if( s == NULL || i == NULL )
+		return;
+    staticeffect( s, 0x36B0, 0x09, 0x09 );
+    soundeffect( s, 0x0207 );
+	if( CheckResist( NULL, s, 4 ) ) 
+		MagicDamage( s, i->GetMoreB( 2 ) / 2 );
+	else 
+		MagicDamage( s, i->GetMoreB( 2 ) / 2 );
+	i->SetMoreB( 0, 0, 0, i->GetMoreB( 4 ) );
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::DeleReagents( CHARACTER s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Delete required reagents to cast a spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::DeleReagents( CHARACTER s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk)
-{
-	if (chars[s].priv2&0x80) return;
-	delequan(s, 0x0F, 0x7A, pearl);
-	delequan(s, 0x0F, 0x7B, moss);
-	delequan(s, 0x0F, 0x84, garlic);
-	delequan(s, 0x0F, 0x85, ginseng);
-	delequan(s, 0x0F, 0x86, drake);
-	delequan(s, 0x0F, 0x88, shade);
-	delequan(s, 0x0F, 0x8C, ash);
-	delequan(s, 0x0F, 0x8D, silk);
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckReagents( CHARACTER s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk )
+//|     Class         :          CheckReagents( CChar *s, reag_st *reagents )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //|                              Modified by AntiChrist to use reag-st
@@ -1065,42 +2246,33 @@ void cMagic::DeleReagents( CHARACTER s, int ash, int drake, int garlic, int gins
 //|     Purpose       :          Check for required reagents in player's backpack.
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
+bool cMagic::CheckReagents( CChar *s, const reag_st *reagents )
 {
-	//	int i;
 	reag_st failmsg;
-	if (chars[s].priv2&0x80) return 1;
-	memset( &failmsg, 0, sizeof( reag_st ) ); // set all members to 0
-											  /*int reg[8];
-											  for (i=0;i<8;i++)
-											  {
-											  reg[i]=0;
-}*/
-	if (reagents.ash!=0 && getamount(s, 0x0F, 0x8C)<reagents.ash) //{RegMsg(s); return 0;}
+	if( s->NoNeedReags() )
+		return true;
+
+	if( reagents->ash != 0 && getAmount( s, 0x0F8C ) < reagents->ash )
 		failmsg.ash = 1;
-	if (reagents.drake!=0 && getamount(s, 0x0F, 0x86)<reagents.drake) //{RegMsg(s); return 0;}
+	if( reagents->drake!=0 && getAmount( s, 0x0F86 ) < reagents->drake )
 		failmsg.drake = 1;
-	if (reagents.garlic!=0 && getamount(s, 0x0F, 0x84)<reagents.garlic) //{RegMsg(s); return 0;}
+	if( reagents->garlic != 0 && getAmount( s, 0x0F84 ) < reagents->garlic )
 		failmsg.garlic = 1;
-	if (reagents.ginseng!=0 && getamount(s, 0x0F, 0x85)<reagents.ginseng) //{RegMsg(s); return 0;}
+	if( reagents->ginseng != 0 && getAmount( s, 0x0F85 ) < reagents->ginseng )
 		failmsg.ginseng = 1;
-	if (reagents.moss!=0 && getamount(s, 0x0F, 0x7B)<reagents.moss) //{RegMsg(s); return 0;}
+	if( reagents->moss != 0 && getAmount( s, 0x0F7B ) < reagents->moss )
 		failmsg.moss = 1;
-	if (reagents.pearl!=0 && getamount(s, 0x0F, 0x7A)<reagents.pearl) //{RegMsg(s); return 0;}
+	if( reagents->pearl != 0 && getAmount( s, 0x0F7A ) < reagents->pearl )
 		failmsg.pearl = 1;
-	if (reagents.shade!=0 && getamount(s, 0x0F, 0x88)<reagents.shade) //{RegMsg(s); return 0;}
+	if( reagents->shade != 0 && getAmount( s, 0x0F88 ) < reagents->shade )
 		failmsg.shade = 1;
-	if (reagents.silk!=0 && getamount(s, 0x0F, 0x8D)<reagents.silk) //{RegMsg(s); return 0;}
+	if( reagents->silk != 0 && getAmount( s, 0x0F8D ) < reagents->silk )
 		failmsg.silk = 1;
-	
-	int fail = RegMsg( s, failmsg );
-	
-	return fail;
-	
+	return RegMsg( s, failmsg );
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::RegMsg( CHARACTER s )
+//|     Class         :          RegMsg( CChar *s, reag_st failmsg )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //|                              Reprogrammed by AntiChrist to display
@@ -1109,82 +2281,38 @@ char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
 //|     Purpose       :          Display an error message if character has not enough regs.
 //o---------------------------------------------------------------------------o
 
-int cMagic::RegMsg(CHARACTER s, reag_st failmsg )
+bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 {
-	int display = 0;
-	char message[100];
+	if( s == NULL )
+		return true;
+	bool display = false;
+	char message[100] = { 0, };
 	
-	strcpy( message, "You do not have enough reagents to cast that spell.[" );
-	if( failmsg.ash ) { display = 1; sprintf( message, "%sSa, ", message ); }
-	if( failmsg.drake ) { display = 1; sprintf( message, "%sMr, ", message ); }
-	if( failmsg.garlic ) { display = 1; sprintf( message, "%sGa, ", message ); }
-	if( failmsg.ginseng ) { display = 1; sprintf( message, "%sGi, ", message ); }
-	if( failmsg.moss ) { display = 1; sprintf( message, "%sBm, ", message ); }
-	if( failmsg.pearl ) { display = 1; sprintf( message, "%sBp, ", message ); }
-	if( failmsg.shade ) { display = 1; sprintf( message, "%sNs, ", message ); }
-	if( failmsg.silk ) { display = 1; sprintf( message, "%sSs, ", message ); }
+	strcpy( message, Dictionary->GetEntry( 702 ) );
+	if( failmsg.ash ) { display = true; sprintf( message, "%sSa, ", message ); }
+	if( failmsg.drake ) { display = true; sprintf( message, "%sMr, ", message ); }
+	if( failmsg.garlic ) { display = true; sprintf( message, "%sGa, ", message ); }
+	if( failmsg.ginseng ) { display = true; sprintf( message, "%sGi, ", message ); }
+	if( failmsg.moss ) { display = true; sprintf( message, "%sBm, ", message ); }
+	if( failmsg.pearl ) { display = true; sprintf( message, "%sBp, ", message ); }
+	if( failmsg.shade ) { display = true; sprintf( message, "%sNs, ", message ); }
+	if( failmsg.silk ) { display = true; sprintf( message, "%sSs, ", message ); }
 	
 	message[strlen( message ) - 1] = ']';
 	
 	if( display )
 	{
-		int i = calcSocketFromChar( s );
-		if( i != -1 )
+		cSocket *i = calcSocketObjFromChar( s );
+		if( i != NULL )
 			sysmessage( i, message );
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 	
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::DirectDamage( CHARACTER p, int amount )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Inflict the magic damage.
-//o---------------------------------------------------------------------------o
-
-void cMagic::DirectDamage( CHARACTER p, int amount)
-{
-	int s;
-	if( chars[p].dead || chars[p].hp <= 0 || (chars[p].priv&0x04) )	// don't kill something already dead
-		return;
-	if( region[chars[p].region].priv&0x40 )
-		return;
-	if (chars[p].priv2&0x02)
-	{
-		chars[p].priv2=chars[p].priv2&0xFD;
-		s=calcSocketFromChar(p);
-		if (s!=-1) sysmessage(s, "You are no longer frozen.");
-	}           
-	chars[p].hp = max(0, chars[p].hp-amount);
-	updatestats( p, 0 );
-	if( chars[p].hp <= 0 ) 
-		deathstuff( p );
-}
-
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::PFireballTarget( int i, int k, int j )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Calculate and inflict a magic damage.
-//o---------------------------------------------------------------------------o
-
-void cMagic::PFireballTarget(int i, int k, int j) //j = % dammage
-{
-	int dmg;
-	movingeffect(i, k, 0x36, 0xD5, 0x05, 0x00, 0x01);
-	soundeffect2(i, 0x1, 0x5E);
-	//dmg=(int)(((float)chars[i].hp/100) * j);
-	dmg=(int)(((float)chars[k].hp/100 ) * j );
-	DirectDamage(k, dmg);
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellFail( UOXSOCKET s )
+//|     Class         :          ::SpellFail( cSocket *s )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -1192,855 +2320,36 @@ void cMagic::PFireballTarget(int i, int k, int j) //j = % dammage
 //|                              fails to cast a spell.
 //o---------------------------------------------------------------------------o
 
-void cMagic::SpellFail( UOXSOCKET s)
+void cMagic::SpellFail( cSocket *s )
 {
 	// Use Reagents on failure ( if casting from a spellbook )
-	if( currentSpellType[s] == 0 ) NewDelReagents( currchar[s], spells[chars[currchar[s]].spellCast].reags );
-	staticeffect(currchar[s], 0x37, 0x35, 0, 30);
-	soundeffect2(currchar[s], 0x00, 0x5C);
-	npcemote(s, currchar[s], "The spell fizzles.", 0);
-}
-
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////// NPCs CASTING SPELLS RELATED FUNCTIONS ///////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCFireballTarget( CHARACTER nAttacker, CHARACTER nDefender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a fireball spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCFireballTarget( CHARACTER nAttacker, CHARACTER nDefender)
-{
-	int src, trg;
-	if( CheckMagicReflect( nDefender ) )
-	{
-		src = nDefender;
-		trg = nAttacker;
-	}
-	else 
-	{
-		trg = nDefender;
-		src = nAttacker;
-	}
-	
-	SubtractMana( nAttacker, 9 );
-	movingeffect( src, trg, 0x36, 0xD5, 0x07, 0x00, 0x01 );
-	soundeffect2( src, 0x1, 0x5E );
-	if( CheckResist( nAttacker, trg, 3 ) )
-		MagicDamage( trg, chars[nAttacker].skill[MAGERY] / 280 + 1, src );
-	else 
-		MagicDamage( trg, chars[nAttacker].skill[MAGERY] / 140 + RandomNum( 1, 4 ), src );
-	return;
+	CChar *mChar = s->CurrcharObj();
+	if( s->CurrentSpellType() == 0 )
+		DelReagents( mChar, spells[mChar->GetSpellCast()].Reagants() );
+	staticeffect( mChar, 0x3735, 0, 30 );
+	soundeffect( mChar, 0x005C );
+	npcEmote( s, mChar, 771, false );
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCLightningTarget( CHARACTER nAttacker, CHARACTER nDefender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a lightning spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCLightningTarget( CHARACTER nAttacker, CHARACTER nDefender )
-{
-	int src, trg;
-	if( CheckMagicReflect( nDefender ) )
-	{
-		src = nDefender;
-		trg = nAttacker;
-	}
-	else 
-	{
-		trg = nDefender;
-		src = nAttacker;
-	}
-	
-	SubtractMana(nAttacker, 11);
-	bolteffect(trg);
-	soundeffect2(trg, 0x00, 0x29);
-	
-	if( CheckResist( nAttacker, trg, 4 ) )
-		MagicDamage( trg, chars[nAttacker].skill[MAGERY] / 180 + RandomNum( 1, 2 ), src );
-	else 
-		MagicDamage( trg, chars[nAttacker].skill[MAGERY] / 90 + RandomNum( 1, 5 ), src );
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCCurseTarget( CHARACTER nAttacker, CHARACTER nDefender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a curse spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCCurseTarget( CHARACTER nAttacker, CHARACTER nDefender)
-{
-	int i, src, trg;
-	
-	if (CheckMagicReflect(nDefender))
-	{
-		src=nDefender;
-		trg=nAttacker;
-	}
-	else 
-	{
-		trg=nDefender;
-		src=nAttacker;
-	}
-	
-	SubtractMana(nAttacker, 11);
-	staticeffect(trg, 0x37, 0x4A, 0, 15); 
-	soundeffect2(trg, 0x01, 0xE1);     
-	
-	if(CheckResist(nAttacker, trg, 1)) return;
-	
-	i=chars[nAttacker].skill[MAGERY]/100;
-	tempeffect(src, trg, 12, i, i, i);
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCWeakenTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a weaken spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCWeakenTarget( CHARACTER s, CHARACTER t)
-{
-	if (CheckMagicReflect(t)) t=s;
-	
-	SubtractMana(s, 4);
-	staticeffect(t, 0x37, 0x4A, 0, 15); 
-	soundeffect2(t, 0x01, 0xE6);     
-	
-	if(CheckResist(s, t, 1)) return;
-	
-	tempeffect(s, t, 5, chars[s].skill[MAGERY]/100, 0, 0);
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCFeebleMindTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a feeblemind spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCFeebleMindTarget( CHARACTER s, CHARACTER t)
-{
-	if (CheckMagicReflect(t)) t=s;
-	
-	SubtractMana(s, 4);
-	staticeffect(t, 0x37, 0x4A, 0, 15); 
-	soundeffect2(t, 0x01, 0xE4);     
-	
-	if (CheckResist(s, t, 1)) return;
-	
-	tempeffect(s, t, 4, chars[s].skill[MAGERY]/100, 0, 0);
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCClumsyTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a clumsy spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCClumsyTarget( CHARACTER s, CHARACTER t)
-{
-	if (CheckMagicReflect(t)) t=s;
-	
-	SubtractMana(s, 4);
-	staticeffect(t, 0x37, 0x4A, 0, 15); 
-	soundeffect2(t, 0x01, 0xDF);
-	
-	if (CheckResist(s, t, 1)) return;
-	
-	tempeffect(s, t, 3, chars[s].skill[MAGERY]/100, 0, 0);
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCMindBlastTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a mindblast spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCMindBlastTarget( CHARACTER s, CHARACTER t )
-{
-	if( !CheckMagicReflect( t ) )
-	{
-		SubtractMana( s, 14 );
-		staticeffect( t, 0x37, 0x4A, 0, 15 );
-		soundeffect2( s, 0x02, 0x13 );
-		
-		if( CheckResist( s, t, 5 ) )
-		{
-			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 4 ), 2 ), s );
-		}
-		else
-		{
-			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 2 ), 5 ), s );
-		}
-		return;
-	} 
-	else 
-	{
-		staticeffect(s, 0x37, 0x4A, 0, 15);
-		soundeffect2(t, 0x02, 0x13);
-		
-		if (chars[s].in>chars[t].in)
-		{
-			if (CheckResist(s, t, 5))
-			{
-				MagicDamage(t, max(((chars[s].in-chars[t].in)/2), 5), s );
-			}
-			else
-			{
-				MagicDamage(t, max(((chars[s].in-chars[t].in)/2), 5), s );
-			}
-		}
-		else
-		{
-			if (CheckResist(t, s, 5))
-			{
-				MagicDamage(s, max(((chars[s].in-chars[t].in)/2), 5), t );
-			}
-			else
-			{
-				MagicDamage(s, max(((chars[s].in-chars[t].in)/2), 5), t );
-			}
-		}
-		return;
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCMagicArrowTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a magicarrow spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCMagicArrowTarget( CHARACTER s, CHARACTER t)
-{
-	int src, trg;
-	
-	//npcattacktarget(t, s);
-	if (CheckMagicReflect(t)) 
-	{
-		src=t;
-		trg=s;
-	}
-	else
-	{
-		src=s;
-		trg=t;
-	}
-	SubtractMana(src, 4);
-	movingeffect(src, trg, 0x36, 0xE4, 0x07, 0x00, 0x01); 
-	soundeffect2(src, 0x1, 0xE5);
-	
-	if (CheckResist(src, trg, 1))
-		MagicDamage(trg, (2+(rand()%3)+1)*(chars[src].skill[MAGERY]/1000+1), src );
-	else 
-		MagicDamage(trg, (2+(rand()%3)+2)*(chars[src].skill[MAGERY]/750+1), src );
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCHarmTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a harm spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCHarmTarget( CHARACTER s, CHARACTER t)
-{
-	int trg, src;
-	if( CheckMagicReflect( t ) ) 
-	{
-		trg = s;
-		src = t;
-	}
-	else
-	{
-		trg = t;
-		src = s;
-	}
-	SubtractMana( s, 6 );
-	staticeffect( trg, 0x37, 0x4A, 0x09, 0x06 );
-	soundeffect2( trg, 0x01, 0xF1 );
-	if( CheckResist( src, trg, 2 ) )
-		MagicDamage( trg, chars[s].skill[MAGERY]/500+1, src );
-	else 
-		MagicDamage( trg, chars[s].skill[MAGERY]/250+RandomNum(1,2), src );
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCDispel(CHARACTER s, CHARACTER i)
-//|     Date          :          2000.12.02
-//|     Programmer    :          kkung, From WolfPack
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a dispel to summon monster.
-//o---------------------------------------------------------------------------o
-// NPCDispel 함수 - 제작 kkung , 출처 : WolfPack 
-
-void cMagic::NPCDispel( CHARACTER s, CHARACTER i )
-{
-    int loskill = spells[41].loskill;
-    int hiskill = spells[41].hiskill;
-	if( !Skills->CheckSkill( s, MAGERY, loskill, hiskill ) )
-	{
-		UOXSOCKET ss = calcSocketFromChar( s );
-		if( ss > -1 )
-		{
-		   SpellFail( ss );
-		}
-		return;	
-	}
-	if( Magic->CheckMana( s, 41 ) )
-	{
-		if( chars[i].priv2&0x20 )
-		{
-			Magic->SubtractMana(s,20);
-			staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );
-			if( chars[i].npc ) 
-				Npcs->DeleteChar( i );
-			else 
-				deathstuff( i );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCParalyzeTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a paralyze spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCParalyzeTarget( CHARACTER s, CHARACTER t )
-{
-	int src, trg;
-	if(CheckMagicReflect(t)) 
-	{
-		trg = s;
-		src = t;
-	}
-	else
-	{
-		trg = t;
-		src = s;
-	}
-	
-	SubtractMana(s, 14);
-	soundeffect2( trg, 0x02, 0x04);     
-	
-	if (CheckResist(src, trg, 5)) return;
-	
-	tempeffect(src, trg, 1, 0, 0, 0);
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCEBoltTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast an energy bolt spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCEBoltTarget( CHARACTER s, CHARACTER t)
-{
-	int src, trg;
-	if (CheckMagicReflect(t))
-	{
-		src=t;
-		trg=s;
-	}
-	else 
-	{
-		src=s;
-		trg=t;
-	}
-	SubtractMana(src, 20);
-	movingeffect(src, t, 0x37, 0x9F, 0x07, 0x00, 0x01);
-	soundeffect2(src, 0x2, 0x0A);
-	
-	if (CheckResist(s, t, 6))
-		MagicDamage( t, chars[s].skill[MAGERY]/120, s );
-	else 
-		MagicDamage( t, chars[s].skill[MAGERY]/35+RandomNum(1,10), s );
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCExplosionTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast an explosion spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCExplosionTarget(CHARACTER s, CHARACTER t)
-{
-	unsigned int i;
-	int src, trg;
-	if( CheckMagicReflect( t ) )
-	{
-		src = t;
-		trg = s;
-	}
-	else
-	{
-		src = s;
-		trg = t;
-	}
-	
-	SubtractMana(s, 20);
-	staticeffect( trg, 0x36, 0xB0, 0x09, 0x09);
-	soundeffect2( trg, 0x02, 0x07);   
-	
-	//Char mapRegions
-	int StartGrid=mapRegions->StartGrid( chars[src].x, chars[src].y );
-	
-	unsigned int increment=0;
-	for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-	{
-		for (int a=0;a<3;a++)
-		{
-			int mapitemptr=-1;
-			int	mapitem=-1;
-			int mapchar=-1;
-			do //check all items in this cell
-			{
-				mapchar=-1;
-				mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-				if (mapitemptr==-1) break;
-				mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-				if(mapitem>999999) mapchar=mapitem-1000000;
-				if (mapitem!=-1 && mapitem>=1000000)
-				{
-					i=mapchar;
-					if( chars[i].x == chars[trg].x && chars[i].y == chars[trg].y && chars[i].z == chars[trg].z )
-					{
-						if( CheckResist(src, i, 6))
-							MagicDamage(i, chars[src].skill[MAGERY]/120+RandomNum(1,5), src );
-						else 
-							MagicDamage(i, chars[src].skill[MAGERY]/40+RandomNum(1,10), src );
-					}
-				}//if mapitem
-			}while(mapitem!=-1);
-		}
-	}
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckParry( CHARACTER player, int circle )
+//|     Class         :          ::CheckParry( CChar *player, int circle )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Check player's parrying skill (for cannonblast).
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckParry( CHARACTER player, int circle)
+bool cMagic::CheckParry( CChar *player, int circle )
 {
-	char i=Skills->CheckSkill(player, PARRYING, 80*circle, 800+(80*circle));;
-	int s;
-    if(i)
+    if( Skills->CheckSkill( player, PARRYING, 80*circle, 800+( 80 * circle ) ) )
 	{
-		s=calcSocketFromChar(player);
-		if (s!=-1)
-		{
-			sysmessage(s, "You have dogged the cannon blast, and have taken less damage.");
-		}
+		cSocket *s = calcSocketObjFromChar( player );
+		if( s != NULL )
+			sysmessage( s, 703 );
+		return true;
 	}
-	return i;
+	return false;
 }
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::NPCFlameStrikeTarget( CHARACTER s, CHARACTER t )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for NPC; cast a flame strike  spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::NPCFlameStrikeTarget(CHARACTER s, CHARACTER t)
-{
-	int src, trg;
-	if( CheckMagicReflect( t ) ) 
-	{
-		trg = s;
-		src = t;
-	}
-	else
-	{
-		trg = t;
-		src = s;
-	}
-	
-	SubtractMana( s, 40);
-	staticeffect( trg, 0x37, 0x09, 0x09, 0x19 );
-	soundeffect2( trg, 0x02, 0x08 );
-	
-	if( CheckResist( src, trg, 7 ) )
-		MagicDamage( trg, chars[s].skill[MAGERY]/80, src );
-	else 
-		MagicDamage( trg, chars[s].skill[MAGERY]/40+RandomNum(1,25), src );
-	return;
-}
-
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////// ITEMs MAGIC POWER RELATED FUNCTIONS /////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::MagicArrowSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a magic arrow spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::MagicArrowSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	int  src;
-	if( attaker <0 || defender < 0 ) return;
-	if (CheckMagicReflect(defender)) 
-	{
-		src=defender;
-		defender=attaker;
-	}
-	else
-	{
-		src=attaker;
-	}
-	movingeffect(src, defender, 0x36, 0xE4, 0x05, 0x00, 0x01); 
-	soundeffect2(src, 0x1, 0xE5);
-	if (CheckResist(src, defender, 1))
-	{
-		MagicDamage(defender, (1+(rand()%1)+1)*(chars[src].skill[MAGERY]/2000+1), src );
-	}
-	else 
-	{
-		MagicDamage(defender, (1+(rand()%1)+2)*(chars[src].skill[MAGERY]/1500+1), src );
-	}
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::ClumsySpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a clumsy spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::ClumsySpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender)) 
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x4A, 0, 15); 
-	soundeffect2(defender, 0x01, 0xDF);
-	if (CheckResist(attaker, defender, 1)) return;		
-	tempeffect(attaker, defender, 3, chars[attaker].skill[MAGERY]/100, 0, 0);
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::FeebleMindSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a feeble mind spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::FeebleMindSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender)) 
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x4A, 0, 15); 
-	soundeffect2(defender, 0x01, 0xE4);     
-	if (CheckResist(attaker, defender, 1)) return;
-	tempeffect(attaker, defender, 4, chars[attaker].skill[MAGERY]/100, 0, 0);
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::WeakenSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a weaken spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::WeakenSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender))
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x4A, 0, 15); 
-	soundeffect2(defender, 0x01, 0xE6);     
-	if(CheckResist(attaker, defender, 1)) return;
-	tempeffect(attaker, defender, 5, chars[attaker].skill[MAGERY]/100, 0, 0);
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::HarmSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a harm spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::HarmSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender)) 
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x4A, 0x09, 0x06);
-	soundeffect2(defender, 0x01, 0xF1);     
-	if (CheckResist(attaker, defender, 2))
-	{
-		MagicDamage(defender, chars[attaker].skill[MAGERY]/500+1, attaker );
-	}
-	else 
-	{
-		MagicDamage(defender, chars[attaker].skill[MAGERY]/250+RandomNum(1,2), attaker );
-	}
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::FireballSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a fireball spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::FireballSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender))
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	movingeffect(attaker, defender, 0x36, 0xD5, 0x07, 0x00, 0x01);
-	soundeffect2(attaker, 0x1, 0x5E);
-	if( CheckResist( attaker, defender, 3 ) ) 
-		MagicDamage( defender, chars[attaker].skill[MAGERY]/280+1, attaker );
-	else 
-		MagicDamage( defender, chars[attaker].skill[MAGERY]/140+RandomNum(1,4), attaker );
-	
-	return;
-}
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CurseSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a curse spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::CurseSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	int j;
-	if (CheckMagicReflect(defender))
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x4A, 0, 15); 
-	soundeffect2(defender, 0x01, 0xE1);     
-	if(CheckResist(attaker, defender, 1)) return;
-	j=chars[attaker].skill[MAGERY]/100;
-	tempeffect(attaker, defender, 12, j, j, j);
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::LightningSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a lightning spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::LightningSpellItem( CHARACTER attaker, CHARACTER defender )
-{
-	if (CheckMagicReflect(defender)) 
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	bolteffect(defender);
-	soundeffect2(defender, 0x00, 0x29);
-	if (CheckResist(attaker, defender, 4))
-	{
-		MagicDamage( defender, chars[attaker].skill[MAGERY]/180+RandomNum(1,2), attaker );
-	}
-	else 
-	{
-		MagicDamage(defender, chars[attaker].skill[MAGERY]/90+RandomNum(1,5), attaker );
-	}
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::MindBlastSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a mind blast spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::MindBlastSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if( CheckMagicReflect( defender ) )
-	{
-		int t = defender;
-		defender = attaker;
-		attaker = t;
-	}
-	
-	staticeffect( defender, 0x37, 0x4A, 0, 15 );
-	soundeffect2( defender, 0x02, 0x13 );
-	if( chars[attaker].in > chars[defender].in )
-	{
-		if( CheckResist( attaker, defender, 5 ) )
-			MagicDamage( defender, (chars[attaker].in-chars[defender].in)/4, attaker );
-		else
-			MagicDamage( defender, (chars[attaker].in-chars[defender].in)/2, attaker );
-	}
-	else
-	{
-		if( CheckResist( defender, attaker, 5 ) )
-			MagicDamage( attaker, (chars[defender].in-chars[attaker].in)/4, defender );
-		else
-			MagicDamage( attaker, (chars[defender].in-chars[attaker].in)/2, defender );
-	}
-	
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::ParalyzeSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a paralyze spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::ParalyzeSpellItem(CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender))
-	{
-		int t = defender;
-		defender=attaker;
-		attaker = t;
-	}
-	//staticeffect(currchar[s], 0x37, 0x35, 0, 30); //No effect for paralyze?
-	soundeffect2(defender, 0x02, 0x04);     
-	if (CheckResist(attaker, defender, 5)) return;
-	tempeffect(attaker, defender, 1, 0, 0, 0);
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::ExplosionSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast an explosion spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::ExplosionSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender))
-	{
-		int t = defender;
-		defender=attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x36, 0xB0, 0x09, 0x09);
-	soundeffect2(defender, 0x02, 0x07);   
-	MagicDamage( defender, chars[attaker].skill[MAGERY]/120 + RandomNum( 1, 5 ), attaker );
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::FlameStrikeSpellItem( CHARACTER attaker, CHARACTER defender )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used for ITEMS; cast a flame strike spell.
-//o---------------------------------------------------------------------------o
-
-void cMagic::FlameStrikeSpellItem( CHARACTER attaker, CHARACTER defender)
-{
-	if (CheckMagicReflect(defender)) 
-	{
-		int t = defender;
-		defender=attaker;
-		attaker = t;
-	}
-	staticeffect(defender, 0x37, 0x09, 0x09, 0x19);
-	soundeffect2(defender, 0x02, 0x08);     
-	MagicDamage( defender, chars[attaker].skill[MAGERY]/(40 + RandomNum( 1, 25 ) ), attaker );
-	return;
-}
-
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 /////// PCs CASTING SPELLS RELATED FUNCTIONS ////////////////////
@@ -2049,1278 +2358,528 @@ void cMagic::FlameStrikeSpellItem( CHARACTER attaker, CHARACTER defender)
 
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::newSelectSpell2Cast( UOXSOCKET s, int num )
+//|     Class         :          ::SelectSpell( cSocket *mSock, int num )
 //|     Date          :          28 August 1999 / 10 September 1999
 //|     Programmer    :          Abaddon / AntiChrist
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Execute the selected spell to cast.
 //o---------------------------------------------------------------------------o
 
-bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
+bool cMagic::SelectSpell( cSocket *mSock, int num )
 // PRE:		s is a valid socket, num is a valid spell number
 // POST:	Spell selected to cast
 // Comments: Written by Abaddon (28 August 1999)
 //:Terrin: Use spells (memory version of script info )
 //Abaddon: Made memory optionable
 //Abaddon: Perma cached
+//DarkStorm: Added JS handling
 {
-	int success = 1;
-	int loskill=0, hiskill=0;
-	
-	splInfo_st curSpellCasting;
-	
-	int i=0;	
-	
-	int type = currentSpellType[s];
-	chars[currchar[s]].spellCast = num;
-	curSpellCasting = spells[num];
+	int lowSkill = 0, highSkill = 0;
+	CChar *mChar = mSock->CurrcharObj();
+	int type = mSock->CurrentSpellType();
+	SpellInfo curSpellCasting = spells[num];
 
-	if( chars[currchar[s]].spelltime > uiCurrentTime )
+	if( mChar->GetSpellTime() != 0 )
 	{
-		switch( chars[currchar[s]].casting )
+		if( mChar->GetCasting() == 1 || mChar->GetCasting() == -1 )
 		{
-		case 1:
-		case -1:
-			sysmessage( s, "You are already casting a spell" );
+			sysmessage( mSock, 762 );
 			return false;
-		default:
-		case 0:
-			sysmessage( s, "Your last attempt failed and you must wait a little longer before casting" );
+		}
+		else if( mChar->GetSpellTime() > uiCurrentTime )
+		{
+			sysmessage( mSock, 1638 );
 			return false;
 		}
 	}
-	if ((chars[currchar[s]].cell !=0) && (!chars[currchar[s]].priv&0x01))
-	{
-		sysmessage(s,"You are in jail and cannot cast spells");
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
-		return false;
-	}
-	int curRegion = chars[currchar[s]].region;
 	
-	if( !(region[curRegion].priv&0x40) && aggressiveSpell( chars[currchar[s]].spellCast ) ) // ripper 9-11-99 not in town :)
+	mChar->SetSpellCast( num );
+	if( num > 63 && num <= spellCount && spellCount <= 70 )
+		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, NULL, "(Attempted)");
+	if( mChar->IsJailed() && !mChar->IsGM() )
 	{
-		sysmessage( s, "This is not allowed in town." );
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
+		sysmessage( mSock, 704 );
+		mChar->StopSpell();
 		return false;
 	}
 	
-	if( !curSpellCasting.enabled  )
-	{
-		sysmessage( s, "That spell is currently not enabled" );
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
-		return false;
-	}
 	// (Abaddon) Region checks
-	unsigned char regByte = region[chars[currchar[s]].region].priv;
-	if( (!(regByte&0x02) && num == 45) || (!(regByte&0x04) && num == 52) || (!(regByte&0x08) && num == 32) )
+	cTownRegion *ourReg = region[mChar->GetRegion()];
+	if( (num == 45 && !ourReg->CanMark()) || (num == 52 && !ourReg->CanGate()) || (num == 32 && !ourReg->CanRecall()) )
 	{
-		sysmessage( s, "This is not allowed here" );
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
+		sysmessage( mSock, 705 );
+		mChar->StopSpell();
+		return false;
+	}
+
+	if( !region[mChar->GetRegion()]->CanCastAggressive() && spells[mChar->GetSpellCast()].AggressiveSpell() ) // ripper 9-11-99 not in town :)
+	{
+		sysmessage( mSock, 706 );
+		mChar->StopSpell();
 		return false;
 	}
 	
-	//Cut the casting requirment on scrolls
-	if (type==1 && server_data.cutscrollreq ) // only if enabled
+	if( !curSpellCasting.Enabled() )
 	{
-		loskill = curSpellCasting.sclo;
-		hiskill = curSpellCasting.schi;
+		sysmessage( mSock, 707 );
+		mChar->StopSpell();
+		return false;
+	}
+	
+	//Cut the casting requirement on scrolls
+	if( type == 1 && cwmWorldState->ServerData()->GetCutScrollRequirementStatus() ) // only if enabled
+	{
+		lowSkill = curSpellCasting.ScrollLow();
+		highSkill = curSpellCasting.ScrollHigh();
 	}
 	else
 	{
-		loskill = curSpellCasting.loskill;
-		hiskill = curSpellCasting.hiskill;
+		lowSkill = curSpellCasting.LowSkill();
+		highSkill = curSpellCasting.HighSkill();
 	}
 	
 	
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if (!chars[currchar[s]].priv&0x01)
+	if( !mChar->IsGM() )
 	{
-		int serial, serhash, ci;
-		serial = chars[currchar[s]].serial;
-		serhash = serial%HASHMAX;
-		for( ci = 0; ci < contsp[serhash].max; ci++ )
+		for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
 		{
-			i = contsp[serhash].pointer[ci];
-			if( i != -1 )
-				if(( items[i].contserial == serial ))
+			if( i != NULL )
+			{
+				if( type != 2 && ( i->GetLayer() == 2 || ( i->GetLayer() == 1 && i->GetType() != 9 ) ) )
 				{
-					if( type != 2 && ( items[i].layer == 2 || ( items[i].layer == 1 && items[i].type != 9 )))
-					{
-						sysmessage( s, "You cannot cast with a weapon equipped." );
-						chars[currchar[s]].spellCast = 0;
-						chars[currchar[s]].casting = 0;
-						return false;
-					}
+					sysmessage( mSock, 708 );
+					mChar->StopSpell();
+					return false;
 				}
+			}
 		}
 	}
 	
-	if ((chars[currchar[s]].hidden)&&(!(chars[currchar[s]].priv2&8)))
+	if( mChar->GetHidden() && !mChar->IsPermHidden() )
+		mChar->ExposeToView();
+	mChar->BreakConcentration( mSock );
+
+//			What the JavaScript event has to handle:
+
+//			- Reag consumption
+//			- Health consumption
+//			- Mana consumption
+//			- Stamina consumption
+
+//			- Delay measurement
+
+	SI16 Delay = -2;
+
+	UI16 spellTrig = mChar->GetScriptTrigger();
+	cScript *toExecute = Trigger->GetScript( spellTrig );
+	if( toExecute != NULL )
 	{
-		chars[currchar[s]].hidden=0;
-		chars[currchar[s]].stealth=-1;
-		updatechar(currchar[s]);
+		// Events:
+		//  type 0: onSpellCast   (SpellBook)
+		//  type 1: onScrollCast  (Scroll)
+		//  type 2: onScrolllCast (Wand)
+
+		if( type == 0 )
+			Delay = toExecute->OnSpellCast( mChar, num );
+		else
+			Delay = toExecute->OnScrollCast( mChar, num );
 	}
-	breakConcentration( currchar[s], s );
+
+	// If Delay is -1 the spell should be canceled
+	if( Delay == -1 )
+	{
+		mChar->StopSpell();
+		return false;
+	}
 	
-	if (!(chars[currchar[s]].priv&0x01))
+	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
+	{
+		npcTalkAll( mChar, curSpellCasting.Mantra(), false );
+		SpellFail( mSock );
+		mChar->StopSpell();
+		return false;
+	}
+
+	if( ( Delay == -2 ) && !mChar->IsGM() )
 	{
 		//Check for enough reagents
-		if( type == 0 && (!CheckReagents( currchar[s], curSpellCasting.reags ) ) )
+		// type == 0 -> SpellBook
+		if( type == 0 && !CheckReagents( mChar, curSpellCasting.ReagantsPtr() ) )
 		{
-			chars[currchar[s]].spellCast = 0;
-			chars[currchar[s]].casting = 0;
+			mChar->StopSpell();
 			return false;
 		}
-		
+
+		// type == 2 - Wands
 		if( type != 2 )
 		{
-			if ((chars[currchar[s]].mn < curSpellCasting.mana) && !(chars[currchar[s]].priv2&0x10)) // was 0x01, thats allmove !!!
+			if( !CheckMana( mChar, num ) )
 			{
-				success=0;
-				sysmessage(s, "You have insufficient mana to cast that spell.");
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
+				sysmessage( mSock, 696 );
+				mChar->StopSpell();
 				return false;
 			}
-			if ((chars[currchar[s]].stm < curSpellCasting.stamina) && !(chars[currchar[s]].priv2&0x10)) // was 0x01, thats allmove !!!
+			if( !CheckStamina( mChar, num ) )
 			{
-				sysmessage(s, "You have insufficient stamina to cast that spell.");
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
+				sysmessage( mSock, 697 );
+				mChar->StopSpell();
 				return false;
 			}
-			if((chars[currchar[s]].hp < curSpellCasting.health) && !(chars[currchar[s]].priv2&0x10)) // was 0x01, thats allmove !!!
+			if( !CheckHealth( mChar, num ) )
 			{
-				sysmessage(s, "You have insufficient health to cast that spell.");
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
-				return false;
-			}
-			//Check success of casting Except for GM's
-			if( !Skills->CheckSkill( currchar[s], MAGERY, loskill, hiskill ) ) //Morrolan - this was again checking Allmove
-			{
-				npctalkall( currchar[s], curSpellCasting.mantra, 0 );
-				SpellFail( s );
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
-				chars[currchar[s]].spelltime = ((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
+				sysmessage( mSock, 698 );
+				mChar->StopSpell();
 				return false;
 			}
 		}
 	}	
 	   
-	chars[currchar[s]].casting = 1;
-	chars[currchar[s]].spellaction = curSpellCasting.action;
-	chars[currchar[s]].nextact = 75;		// why 75?
-	if( type==0 && (!(chars[currchar[s]].priv&1 ))) // if they are a gm they don't have a delay :-)
+	mChar->SetSpellAction( curSpellCasting.Action() );
+	mChar->SetNextAct( 75 );		// why 75?
+
+	// Delay measurement...
+	if( Delay >= 0 ) 
 	{
-		chars[currchar[s]].spelltime=((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
-		chars[currchar[s]].priv2 = chars[currchar[s]].priv2|2;//freeze
+		mChar->SetSpellTime( BuildTimeValue( Delay / 1000 ) );
+		mChar->SetFrozen( true );
+	}
+	else if( type == 0 && !mChar->IsGM() ) // if they are a gm they don't have a delay :-)
+	{
+		mChar->SetSpellTime( BuildTimeValue( curSpellCasting.Delay() / 10 ) );
+		mChar->SetFrozen( true );
 	}
 	else
+		mChar->SetSpellTime( 0 );
+	// Delay measurement end
+	
+	if( !mChar->IsOnHorse() )
+		impaction( mSock, curSpellCasting.Action() ); // do the action
+	
+	char temp[128];
+	if( spells[num].FieldSpell() )
 	{
-		chars[currchar[s]].spelltime = 0;
+		if( mChar->GetSkill( MAGERY ) > 600 )
+			sprintf( temp, "Vas %s", curSpellCasting.Mantra() );
+		else
+			strcpy( temp, curSpellCasting.Mantra() );
 	}
-	
-	if( !chars[currchar[s]].onhorse )
-		impaction( s, curSpellCasting.action ); // do the action
-	
-	npctalkall( currchar[s], curSpellCasting.mantra, 0 );
-	chars[currchar[s]].casting = 1;
+	else
+		strcpy( temp, curSpellCasting.Mantra() );
+
+	npcTalkAll( mChar, temp, false );
+	mChar->SetCasting( 1 );
 	return true;
 	
 }
 
-void cMagic::NewCastSpell( UOXSOCKET s )
+void cMagic::CastSpell( cSocket *s, CChar *caster )
 {
 	// for LocationTarget spell like ArchCure, ArchProtection etc...
-	int range, distx, disty, x1, y1, x2, y2, z1, z2;
-	unsigned int ii;
-	int StartGrid;
-	int getcell;
-	int dmg, dmgmod;
-	unsigned int increment;
-	unsigned int checkgrid;
-	int mapitemptr = -1;
-	int mapitem = -1;
-	int mapchar = -1;
-	int curSpell = chars[currchar[s]].spellCast;
-	if( chars[currchar[s]].casting == 0 && chars[currchar[s]].spellCast == -1 )
-		return;		// it was cancelled
-	chars[currchar[s]].casting = 0;
-	chars[currchar[s]].spellCast = -1;
-	int i, defender, serial;
-	int src=currchar[s];
-	int item;
-	int c, a;
-	double d;
-	bool recalled;
-	int n;
-	int j;
-	int x, y, z, dx, dy, dz;
-	int fx[5], fy[5];
-	unsigned char id1, id2;
-	
-	// AntiChrist-
-	// ONLY NOW we can delete reagents & mana!
-	// so if clients decided to abort.. no problems..... mana and
-	// reagents not consumed!
-	if( currentSpellType[s] != 2 )
+	SI08 curSpell; // = chars[currchar[s]].GetSpellCast();
+	SI16 x, y;
+	SI08 z;
+
+	if( s == NULL ) 
+		curSpell = caster->GetSpellCast();
+	else
 	{
-		SubtractMana( currchar[s], spells[curSpell].mana );
-		if( spells[curSpell].health > 0 ) 
-			SubtractHealth( currchar[s], spells[curSpell].health, curSpell );
-		SubtractStamina( currchar[s], spells[curSpell].stamina );
+		caster = s->CurrcharObj();
+		curSpell = caster->GetSpellCast();
 	}
-	if( currentSpellType[s] == 0 ) NewDelReagents( currchar[s], spells[curSpell].reags );
-	
-	if( aggressiveSpell( curSpell ) && !(region[chars[currchar[s]].region].priv&0x40) )
+
+	if( caster->GetCasting() == 0 && caster->GetSpellCast() == -1 )
+		return;	// interrupted
+
+	caster->StopSpell();
+
+	UI16 spellTrig = caster->GetScriptTrigger();
+	cScript *toExecute = Trigger->GetScript( spellTrig );
+	if( toExecute != NULL )
 	{
-		sysmessage( s, "You can't cast in town!" );
+		toExecute->OnSpellSuccess( caster, curSpell );
+	}
+
+	CChar *src = caster;
+
+	if( curSpell > 63 && curSpell <= spellCount && spellCount <= 70 )
+		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, NULL, "(Succeeded)");
+	if( caster->IsNpc() || s != NULL && s->CurrentSpellType() != 2 )	// delete mana if NPC, s is -1 otherwise!
+	{
+		SubtractMana( caster, spells[curSpell].Mana() );
+		if( spells[curSpell].Health() > 0 )
+			SubtractHealth( caster, spells[curSpell].Health(), curSpell );
+		SubtractStamina( caster, spells[curSpell].Stamina() );
+	}
+	if( s != NULL && s->CurrentSpellType() == 0 && !caster->IsNpc() ) 
+		DelReagents( caster, spells[curSpell].Reagants() );
+	
+	if( spells[curSpell].AggressiveSpell() && !region[caster->GetRegion()]->CanCastAggressive() )
+	{
+		sysmessage( s, 709 );
 		return;
 	}
-	
-	if( requireTarget( curSpell ) )					// target spells if true
+
+	UI16 tScript = 0xFFFF;
+	cScript *tScriptExec = NULL;
+	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
-		if( travelSpell( curSpell )	)				// travel spells.... mark, recall and gate
+		CItem *i;
+		if( spells[curSpell].TravelSpell() )				// travel spells.... mark, recall and gate
 		{
-			// mark, recall and gate go here
-			item = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);	// item we are targeting
-			i = findbyserial(&itemsp[item%HASHMAX], item, 0);  // was searching for char
-			
-			unsigned char regByte = region[chars[currchar[s]].region].priv;
-			if( (!(regByte&0x02) && curSpell == 45) || (!(regByte&0x04) && curSpell == 52) || (!(regByte&0x08) && curSpell == 32) )
+			// (Abaddon) Region checks
+			cTownRegion *ourReg = region[caster->GetRegion()];
+			if( (curSpell == 45 && !ourReg->CanMark()) || (curSpell == 52 && !ourReg->CanGate()) || (curSpell == 32 && !ourReg->CanRecall()) )
 			{
-				sysmessage( s, "This is not allowed here" );
-				chars[currchar[s]].spellCast = 0;
-				chars[currchar[s]].casting = 0;
+				sysmessage( s, 705 );
 				return;
 			}
-			if( i != -1 )
+			// mark, recall and gate go here
+			i = calcItemObjFromSer( s->GetDWord( 7 ) );
+			if( i != NULL )
 			{
-				if( items[i].contserial != -1 || line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, items[i].x, items[i].y, items[i].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING ) || chars[currchar[s]].priv&0x01 ) // bugfix LB
+				if( i->GetCont() != INVALIDSERIAL || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
-					if( ( items[i].type==50) )
+					if( i->GetType() == 50 )
 					{
 						playSound( src, curSpell );
 						doMoveEffect( curSpell, i, src );
 						doStaticEffect( src, curSpell );
 						switch( curSpell )
 						{
-							//////////// (32) RECALL ////////////////
-						case 32:
-							if ( items[i].morex <= 200 && items[i].morey <= 200 )
-							{
-								sysmessage(s,"That rune has not been marked yet!");
-								recalled = false;
-							} 
-							else if (!chars[currchar[s]].priv&1 && Weight->CheckWeight2(currchar[s])) //Morrolan no recall if too heavy, GM's excempt
-							{
-								sysmessage(s, "You are too heavy to do that!");
-								sysmessage(s, "You feel drained from the attempt.");
-								statwindow(s, currchar[s]);
-								recalled=false;
-							}
-							else
-							{
-								mapRegions->RemoveItem(currchar[s]+1000000); //LB
-								chars[currchar[s]].x=items[i].morex;
-								chars[currchar[s]].y=items[i].morey;
-								chars[currchar[s]].dispz=chars[currchar[s]].z=items[i].morez;
-								mapRegions->AddItem(currchar[s]+1000000); //LB
-								teleport(currchar[s]);
-								sysmessage(s,"You have recalled from the rune.");
-								recalled=true;
-							}
-							break;
-							//////////// (45) MARK //////////////////
-						case 45:
-							items[i].morex=chars[currchar[s]].x;
-							items[i].morey=chars[currchar[s]].y;
-							items[i].morez=chars[currchar[s]].z;
-							if (region[chars[currchar[s]].region].name[0]!=0)
-								sprintf(items[i].name, "a recall rune for %s",region[chars[currchar[s]].region].name);
-							else 
-								strcpy(items[i].name, " a recall rune for An Unknown Location");
 							
-							sysmessage(s,"Recall rune marked."); 
-							break;
-							//////////// (52) GATE //////////////////
-						case 52:
-							if ( items[i].morex<=200 && items[i].morey<=200 )
+						case 32: //////////// (32) RECALL ////////////////
+						case 45: //////////// (45) MARK //////////////////
+						case 52: //////////// (52) GATE //////////////////
+							tScript = i->GetScriptTrigger();
+							tScriptExec = Trigger->GetScript( tScript );
+							if( tScriptExec != NULL )
 							{
-								sysmessage( s, "That rune has not been marked yet!" );
-								recalled = false;
+								tScriptExec->OnSpellTarget( i, caster, curSpell );
 							}
-							else
-							{
-								gatex[gatecount][0] = chars[currchar[s]].x+1;  //create gate a player location
-								gatey[gatecount][0] = chars[currchar[s]].y+1;
-								gatez[gatecount][0] = chars[currchar[s]].z;
-								
-								gatex[gatecount][1] = items[i].morex; //create gate at marked location
-								gatey[gatecount][1] = items[i].morey;
-								gatez[gatecount][1] = items[i].morez;
-								recalled=true;
-								
-								for (n=0;n<2;n++)  
-								{
-									strcpy(temp,"a blue moongate");
-									c=Items->SpawnItem(s,1,"#",0,0x0f,0x6c,0,0,0,0);
-									if( c > -1 )
-									{
-										items[c].type=51+n;
-										items[c].x = gatex[gatecount][n];
-										items[c].y = gatey[gatecount][n];
-										items[c].z = gatez[gatecount][n];
-										items[c].gatetime=(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
-										items[c].gatenumber=gatecount;
-										items[c].dir=1;
-										
-										mapRegions->AddItem(c);  //add gate to list of items in the region
-										RefreshItem( c ); // AntiChrist
-									}
-									if (n==1)
-									{
-										gatecount++;
-										if (gatecount>MAXGATES) gatecount=0;
-									}
-								}
-							}
+							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
 							break;
 						default:
-							printf("MAGIC-ERROR: Unknown Travel spell %i, magic.cpp\n", curSpell );
+							Console.Error( 2, " Unknown Travel spell %i, magic.cpp", curSpell );
 							break;
 						}
 					}
 					else
-						sysmessage( s, "That item is not a recall rune." );
+						sysmessage( s, 710 );
 				}
 			}
 			else
-				sysmessage( s, "Not a valid target on item!" );
-			chars[currchar[s]].spellCast = 0;
-			chars[currchar[s]].casting = 0;
+				sysmessage( s, 710 );
 			return;
 		}
 		
-		if( reqCharTarget( curSpell ) )
+		if( spells[curSpell].RequireCharTarget() )
 		{
 			// TARGET CALC HERE
-			defender = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);	// character we are attacking is HERE
-			i = calcCharFromSer( defender );
-			
-			// IF TARGET VALID
-			if( i != -1 )																	// we have to have targetted a person to kill them :)
+			CChar *c;
+			if( !caster->IsNpc() )
+				c = calcCharObjFromSer( s->GetDWord( 7 ) );
+			else
+				c = &chars[caster->GetTarg()];
+
+			if( c != NULL ) // we have to have targetted a person to kill them :)
 			{
-				if( chardist( i, currchar[s] ) > combat.maxRangeSpell )
+				if( getDist( c, caster ) > cwmWorldState->ServerData()->GetCombatMaxSpellRange() )
 				{
-					sysmessage( s, "You can't cast on someone that far away!" );
+					sysmessage( s, 712 );
 					return;
 				}
-				if ((line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[i].x, chars[i].y,chars[i].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-					(chars[currchar[s]].priv&0x01)))
+				if( LineOfSight( s, caster, c->GetX(), c->GetY(), c->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
-					if( aggressiveSpell( curSpell ) )
+					if( spells[curSpell].AggressiveSpell() )
 					{
-						if( !(region[chars[currchar[s]].region].priv&0x40) ) // only magic damage stuff 
+						if( !region[caster->GetRegion()]->CanCastAggressive() )
 						{
-							sysmessage( s, "You can't cast in town!" );
+							sysmessage( s, 709 );
 							return;
 						}
-						if( chars[i].npcaitype == 17 || chars[i].priv&0x04 )
+						if( c->GetNPCAiType() == 17 )
 						{
-							sysmessage( s, "They are invulnerable!" );
+							sysmessage( s, 713 );
 							return;
 						}
-						npcattacktarget( i, currchar[s] );
-						if( chars[i].flag&0x04 && i != currchar[s] )
-							criminal( currchar[s] );
+						npcAttackTarget( c, caster );
 					}
-					if( spellReflectable( curSpell ) )
+					if( spells[curSpell].SpellReflectable() )
 					{
-						if (CheckMagicReflect(i))
+						if( CheckMagicReflect( c ) )
 						{
-							src=i;
-							i=currchar[s];
+							src = c;
+							c = caster;
 						}
-					}
-					else 
-					{
-						src=currchar[s];
 					}
 					if( curSpell != 43 )
 					{
-						playSound( src, curSpell );
-						doMoveEffect( curSpell, i, src );
-						doStaticEffect( i, curSpell );
+						if( caster->IsNpc() )
+						{
+							playSound( c, curSpell );
+							doMoveEffect( curSpell, c, src );
+							doStaticEffect( c, curSpell );
+						}
+						else
+						{
+							playSound( src, curSpell );
+							doMoveEffect( curSpell, c, src );
+							doStaticEffect( c, curSpell );
+						}
 					}
 					switch( curSpell )
 					{
 					case 1:  // Clumsy
-						tempeffect( src, i, 3, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 3:  // Feeblemind
-						tempeffect( src, i, 4, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 4:    // Heal 2-26-00 changed by Homey, used OSI values from UO book
-						int bonus;//also fixes problem with low mages getting 1 or nothing from heal spell
-						bonus = (chars[currchar[s]].skill[MAGERY]/500) + ( chars[currchar[s]].skill[MAGERY]/100 );
-						if( bonus != 0 )
-							chars[i].hp = ( chars[i].hp + rand()%6 + bonus );
-						else
-							chars[i].hp = chars[i].hp+4;
-						SubtractHealth( currchar[s], bonus, curSpell );
-						updatestats( i, 0 );  
-						break; 
 					case 5:  // Magic Arrow
-						MagicDamage(i, (1+(rand()%1)+1)*(chars[currchar[s]].skill[MAGERY]/2000+1), src );
-						break; 
 					case 6:  // Night Sight
-						tempeffect( src, i, 2, 0, 0, 0);
-						break; 
 					case 7:
-						tempeffect( src, i, 15, chars[currchar[s]].skill[MAGERY]/100, 0, 0 );
-						chars[i].ra=1;
-						break;
 					case 8:  // Weaken
-						tempeffect( src, i, 5, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 9:  // Agility
-						tempeffect( src, i, 6, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 10: // Cunning
-						tempeffect( src, i, 7, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 11: // Cure
-						chars[i].poisoned=0;
-						chars[i].poisonwearofftime=uiCurrentTime;
-						impowncreate(s,i,1); // updating to blue bar
-						break; 
 					case 12: // Harm
-						if (CheckResist(currchar[s], i, 2))
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/500+1, src );
-						else 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/250+RandomNum(1,2), src );
-						break; 
 					case 15: // Protection
-						// Boosts parrying
-						tempeffect( src, i, 21, chars[currchar[s]].skill[MAGERY]/10, 0, 0 );
-						break; 
 					case 16: // Strength
-						tempeffect( src, i, 8, chars[currchar[s]].skill[MAGERY]/100, 0, 0);
-						break; 
 					case 17: // Bless
-						j=chars[currchar[s]].skill[MAGERY]/100;
-						tempeffect( src, i, 11, j, j, j);
-						break; 
 					case 18: // Fireball
-						if (CheckResist(currchar[s], i, 3))
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/280+1, src );
-						else 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/140+RandomNum(1,4), src );
-						break; 
 					case 20: // Poison
-						if(CheckResist(currchar[s], i, 1)) return;
-						{
-							chars[i].poisoned=2;   
-							chars[i].poisonwearofftime=uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer); // LB
-							impowncreate( s, i, 1); //Lb, sends the green bar ! 
-						}
-						break; 
 					case 27: // Curse
-						if(!CheckResist(currchar[s], i, 1))
-						{
-							j=chars[currchar[s]].skill[MAGERY]/100;
-							tempeffect(currchar[s], i, 12, j, j, j);
-						}
-						break; 
 					case 29: // Greater Heal
-						j=chars[i].hp+(chars[currchar[s]].skill[MAGERY]/30+RandomNum(1,12));
-						chars[i].hp = min(chars[i].st, j);
-						updatestats(i, 0);        
-						SubtractHealth( currchar[s], min( chars[i].st, j ), curSpell );
-						break; 
 					case 30: // Lightning
-						bolteffect(i);
-						if (CheckResist(currchar[s], i, 4))
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/180+RandomNum(1,2), src );
-						else 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/90+RandomNum(1,5), src );
-						break; 
 					case 31: // Mana drain
-						if(!CheckResist(currchar[s], i, 4))
-						{
-							chars[i].mn-=chars[currchar[s]].skill[MAGERY]/35;
-							if (chars[i].mn<0) chars[i].mn=0;
-							updatestats(i, 1);
-						}
-						break; 
 					case 37: // Mind Blast
-						if (chars[currchar[s]].in>chars[i].in)
-						{
-							if (CheckResist(currchar[s], i, 5))
-								MagicDamage(i, (chars[src].in-chars[i].in)/4, src );
-							else
-								MagicDamage(i, (chars[src].in-chars[i].in)/2, src );
-						}
-						else
-						{
-							if (CheckResist(currchar[s], src, 5))
-								MagicDamage(src, (chars[i].in-chars[src].in)/4, i );
-							else
-								MagicDamage(src, (chars[i].in-chars[src].in)/2, i );
-						}
-						break; 
 					case 38: // Paralyze
-						if (!CheckResist(currchar[s], i, 7))
-							tempeffect(currchar[s], i, 1, 0, 0, 0);
-						break; 
 					case 41: // Dispel
-						if (chars[i].priv2&0x20)
-						{
-							staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );		// why the specifics here?
-							if (chars[i].npc) Npcs->DeleteChar(i);
-							else deathstuff(i);
-						}
-						break; 
 					case 42: // Energy Bolt
-						if (CheckResist(currchar[s], i, 6)) 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/120, src );
-						else 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/35+RandomNum(1,10), src );
-						break; 
 					case 43: // Explosion
-						if (CheckResist(currchar[s], i, 6))
-							tempeffect( src, i, 26, (chars[currchar[s]].skill[MAGERY]/120 + RandomNum( 1, 5)), 0, 0 );
-//							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/120+RandomNum(1,5), src);
-						else 
-							tempeffect( src, i, 26, (chars[currchar[s]].skill[MAGERY]/40 + RandomNum(1, 10)), 0, 0 );
-//							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/40+RandomNum(1,10), src);
-						break; 
 					case 44: // Invisibility
-						chars[i].hidden=2;
-						updatechar(i);
-						chars[i].invistimeout=uiCurrentTime+(server_data.invisibiliytimer*CLOCKS_PER_SEC);
-						break; 
 					case 51: // Flamestrike
-						if (CheckResist(currchar[s], i, 7))
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/80, src );
-						else 
-							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/40+RandomNum(1,25), src );
-						break; 
 					case 53: // Mana Vampire
-						if(!CheckResist(currchar[s], i, 7))
-						{
-							if (chars[i].mn<40)
-							{
-								chars[currchar[s]].mn += chars[i].mn;
-								chars[i].mn=0;
-							}
-							else
-							{
-								chars[i].mn-=40;
-								chars[currchar[s]].mn+=40;
-							}
-							updatestats(i, 1);
-							updatestats(currchar[s], 1);
-						}
-						break; 
 					case 59: // Resurrection
-						if (chars[i].dead==1)
+						tScript = c->GetScriptTrigger();
+						tScriptExec = Trigger->GetScript( tScript );
+						if( tScriptExec != NULL )
 						{
-							Targ->NpcResurrectTarget(i);
-							return;
+							tScriptExec->OnSpellTarget( c, caster, curSpell );
 						}
-						else ; //sysmessage(s,"That player isn't dead!");
-						break; 
+						(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src );
+						break;
 					case 66: // Cannon Firing
-						if (CheckParry(i, 6))
-							MagicDamage(i, chars[currchar[s]].skill[TACTICS]/50, src );
+						if( CheckParry( c, 6 ) )
+							MagicDamage( c, caster->GetSkill( TACTICS )/50, caster );
 						else
-							MagicDamage(i, chars[currchar[s]].skill[TACTICS]/25, src );
+							MagicDamage( c, caster->GetSkill( TACTICS )/25, caster );
 						break; 
 					default:
-						printf("MAGIC-ERROR: Unknown CharacterTarget spell %i, magic.cpp\n", curSpell );
+						Console.Error( 2, " Unknown CharacterTarget spell %i, magic.cpp", curSpell );
 						break;
 					}
 				}
 				else
-				{
-					sysmessage(s,"There seems to be something in the way.");
-				}
+					sysmessage( s, 714 );
 			}
 			else
-				sysmessage(s,"That is not a person.");
+				sysmessage( s, 715 );
 		}
-		else if( reqLocTarget( curSpell ) )
+		else if( spells[curSpell].RequireLocTarget() )
 		{
-			x=fx[0]=(buffer[s][11]<<8)+buffer[s][12];
-			y=fy[0]=(buffer[s][13]<<8)+buffer[s][14];
-			z=buffer[s][16] + Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-			if( calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] ) != 0 )
-			{	// we targetted something not a location!
-				sysmessage( s, "You must target a location, not an item or character" );
-				return;
-			}
-			// AntiChrist - location check (it shouldn't get here anyway)
-			if(!( buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF ))
+			if( !caster->IsNpc() )
 			{
-				
-				if ((line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, x, y, z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-					(chars[currchar[s]].priv&0x01)))
-				{
-					if( fieldSpell( curSpell ) )
-					{
-						j=fielddir(currchar[s], x, y, z);
-						if (j)
-						{
-							fx[0]=fx[1]=fx[2]=fx[3]=fx[4]=x;
-							fy[0]=y-1;
-							fy[1]=y+1;
-							fy[2]=y-2;
-							fy[3]=y+2;
-							fy[4]=y;
-						}  
-						else 
-						{	
-							fy[0]=fy[1]=fy[2]=fy[3]=fy[4]=y;
-							fx[0]=x-1;	
-							fx[1]=x+1;
-							fx[2]=x-2;
-							fx[3]=x+2;
-							fx[4]=x;
-						}	// end else
-					}	// end if
-					
-					playSound( src, curSpell );
-					doStaticEffect( src, curSpell );
-					switch( curSpell )
-					{
-					case 22:// Teleport
-						int m;
-						m = findmulti( x, y, z );
-						if( m != -1 )
-						{
-							sysmessage( s, "You can't teleport here!" );
-							return;
-						}
-						tile_st tile;
-						Map->SeekTile(((buffer[s][0x11]<<8)+buffer[s][0x12]), &tile);
-						if( (!strcmp((char *)tile.name, "water")) || (tile.flag1&0x80) )
-						{
-							sysmessage(s,"Give up wannabe Jesus !");
-							return;
-						}						
-						if( (tile.flag4&0x10) == 0x10 || (tile.flag1&0x40) == 0x40 ) // slanted roof tile!!! naughty naught
-						{
-							sysmessage( s, "You cannot teleport there" );
-							return;
-						}
-						mapRegions->RemoveItem(currchar[s]+1000000);
-						
-						chars[currchar[s]].x=x;
-						chars[currchar[s]].y=y;
-						chars[currchar[s]].dispz=chars[currchar[s]].z=z;
-						
-						mapRegions->AddItem(currchar[s]+1000000);
-						teleport( currchar[s] );
-						doStaticEffect( src, curSpell );
-						break;
-					case 24:// Wall of Stone
-						id1 = 0x00;
-						id2 = 0x80;
-						break;
-						
-					case 25://Arch Cure
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;
-						BoxSpell( s, x1, x2, y1, y2, z1, z2 );
-						StartGrid = mapRegions->StartGrid( chars[currchar[s]].x, chars[currchar[s]].y );
-						getcell = mapRegions->GetCell( chars[currchar[s]].x, chars[currchar[s]].y );
-						
-						increment = 0;
-						for( checkgrid = StartGrid + ( increment*mapRegions->GetColSize()); increment < 3; increment++, checkgrid = StartGrid + ( increment*mapRegions->GetColSize()) )
-						{
-							for( a = 0; a < 3; a++ )
-							{
-								mapitemptr = -1;
-								mapitem = -1;
-								mapchar = -1;
-								do
-								{
-									mapchar = -1;
-									mapitemptr = mapRegions->GetNextItem( checkgrid+a, mapitemptr );
-									if( mapitemptr == -1 ) break;
-									mapitem = mapRegions->GetItem( checkgrid + a, mapitemptr );
-									if( mapitem > 999999 ) mapchar = mapitem - 1000000;
-									if( mapitem != -1 && mapitem >= 1000000 )
-									{
-										ii = mapchar;
-										if (( online( ii ) || ( chars[ii].npc )) && ( chars[ii].x >= x1 && chars[ii].x <= x2 ) &&
-											( chars[ii].y >= y1 && chars[ii].y <= y2 ) &&
-											( chars[ii].z >= z1 && chars[ii].z <= z2 ) && !(chars[ii].priv&0x04 ) )
-										{
-											if(( line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[ii].x, chars[ii].y, chars[ii].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												( chars[currchar[s]].priv&0x01 )))
-											{
-												staticeffect( ii, 0x37, 0x6A, 0x09, 0x06 );
-												soundeffect2( ii, 0x01, 0xE9 );
-												chars[ii].poisoned = 0;
-											}
-											else
-											{
-												sysmessage( s, "There seems to be something in the way between you and %s.", chars[ii].name );
-											}
-										}
-									} // if mapitem
-								} while( mapitem != -1 );
-							} // for a < 3
-						} // for checkgrid
-						break;
-					case 26://Arch Protection
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;
-						BoxSpell( s, x1, x2, y1, y2, z1, z2 );
-						StartGrid = mapRegions->StartGrid( chars[currchar[s]].x, chars[currchar[s]].y );
-						getcell = mapRegions->GetCell( chars[currchar[s]].x, chars[currchar[s]].y );
-						
-						increment = 0;
-						for( checkgrid = StartGrid + ( increment*mapRegions->GetColSize()); increment < 3; increment++, checkgrid = StartGrid + ( increment*mapRegions->GetColSize()) )
-						{
-							for( a = 0; a < 3; a++ )
-							{
-								mapitemptr = -1;
-								mapitem = -1;
-								mapchar = -1;
-								do
-								{
-									mapchar = -1;
-									mapitemptr = mapRegions->GetNextItem( checkgrid+a, mapitemptr );
-									if( mapitemptr == -1 ) break;
-									mapitem = mapRegions->GetItem( checkgrid + a, mapitemptr );
-									if( mapitem > 999999 ) mapchar = mapitem - 1000000;
-									if( mapitem != -1 && mapitem >= 1000000 )
-									{
-										ii = mapchar;
-										if (( online( ii ) || ( chars[ii].npc )) && ( chars[ii].x >= x1 && chars[ii].x <= x2 ) &&
-											( chars[ii].y >= y1 && chars[ii].y <= y2 ) &&
-											( chars[ii].z >= z1 && chars[ii].z <= z2 ))
-										{
-											if(( line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[ii].x, chars[ii].y, chars[ii].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												( chars[currchar[s]].priv&0x01 )))
-											{
-												playSound( ii, curSpell );
-												doStaticEffect( ii, 15 );	// protection
-												tempeffect( src, ii, 21, chars[currchar[s]].skill[MAGERY]/10, 0, 0 );
-											}
-											else
-											{
-												sysmessage( s, "There seems to be something in the way between you and %s.", chars[ii].name );
-											}
-										}
-									} // if mapitem
-								} while( mapitem != -1 );
-							} // for a < 3
-						} // for checkgrid
-						break;
-					case 28:// Fire Field
-						if (j)
-						{
-							id1=0x39;
-							id2=0x96;
-						}		// end if
-						else 
-						{	
-							id1=0x39;
-							id2=0x8C;
-						}		// end else
-						break;
-					case 33:// Blade Spirits
-						SummonMonster( s, 0x02, 0x3E, "a blade spirit", 0x00, 0x00, x, y, z );
-						break;
-					case 34:// Dispel Field
-						serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-						i = findbyserial( &itemsp[serial%HASHMAX], serial, 0 );
-						if( i != -1 )
-						{
-							if(( line_of_sight( calcSocketFromChar( s ), chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, items[i].x, items[i].y, items[i].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING )||
-								(chars[currchar[s]].priv&0x01 )))
-							{
-								if( items[i].priv&5 || items[i].priv&4 ) Items->DeleItem( i );
-								soundeffect2( i, 0x02, 0x01 );
-							}
-							else
-							{
-								sysmessage( s, "There seems to be something in the way." );
-							}
-						}
-						break;
-					case 39:// Poison Field
-						if (j)
-						{
-							id1=0x39;
-							id2=0x20;
-						} 
-						else 
-						{
-							id1=0x39;
-							id2=0x15;
-						}
-						break;
-					case 46:// Mass curse
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;
-						BoxSpell( s, x1, x2, y1, y2, z1, z2 );
-						StartGrid = mapRegions->StartGrid( chars[currchar[s]].x, chars[currchar[s]].y );
-						getcell = mapRegions->GetCell( chars[currchar[s]].x, chars[currchar[s]].y );
-						
-						increment = 0;
-						for( checkgrid = StartGrid + ( increment*mapRegions->GetColSize()); increment < 3; increment++, checkgrid = StartGrid + ( increment*mapRegions->GetColSize()) )
-						{
-							for( a = 0; a < 3; a++ )
-							{
-								mapitemptr = -1;
-								mapitem = -1;
-								mapchar = -1;
-								do
-								{
-									mapchar = -1;
-									mapitemptr = mapRegions->GetNextItem( checkgrid+a, mapitemptr );
-									if( mapitemptr == -1 ) break;
-									mapitem = mapRegions->GetItem( checkgrid + a, mapitemptr );
-									if( mapitem > 999999 ) mapchar = mapitem - 1000000;
-									if( mapitem != -1 && mapitem >= 1000000 )
-									{
-										ii = mapchar;
-										if (( online( ii ) || ( chars[ii].npc )) && ( chars[ii].x >= x1 && chars[ii].x <= x2 ) &&
-											( chars[ii].y >= y1 && chars[ii].y <= y2 ) &&
-											( chars[ii].z >= z1 && chars[ii].z <= z2 ))
-										{
-											if(( line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[ii].x, chars[ii].y, chars[ii].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												( chars[currchar[s]].priv&0x01 )))
-											{
-												if( chars[ii].npc ) npcattacktarget( ii, currchar[s] );
-												staticeffect( ii, 0x37, 0x4A, 0, 15 );
-												soundeffect2( ii, 0x01, 0xFC );
-												if( CheckResist( currchar[s], ii, 6 )) j = chars[currchar[s]].skill[MAGERY]/200;
-												else j = chars[currchar[s]].skill[MAGERY]/75;
-												tempeffect( currchar[s], ii, 12, j, j, j );
-											}
-											else
-											{
-												sprintf( temp, "Try as you might, but you cannot see %s well enough to cover.", chars[ii].name );
-												sysmessage( s, temp );
-											}
-										}
-									} // if mapitem
-								} while( mapitem != -1 );
-							} // for
-						} // for checkgrid
-						break;
-					case 47:// Paralyze Field
-						if (j)
-						{
-							id1=0x39;
-							id2=0x79;
-						} 
-						else 
-						{
-							id1=0x39;
-							id2=0x67;
-						}
-						break;
-					case 48: 
-						if ((line_of_sight(calcSocketFromChar(s),chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z, x, y, z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-							(chars[currchar[s]].priv&0x01)))
-						{ 
-							j=chars[currchar[s]].skill[MAGERY]; 
-							range=(((j-261)*(15))/739)+5;
-							//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
-							//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
-							
-							//Char mapRegions
-							StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-							getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-							
-							increment=0;
-							for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-							{
-								for (a=0;a<3;a++)
-								{
-									mapitemptr=-1;
-									mapitem=-1;
-									mapchar=-1;
-									do //check all items in this cell
-									{
-										mapchar=-1;
-										mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-										if (mapitemptr==-1) break;
-										mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-										if(mapitem>999999) mapchar=mapitem-1000000;
-										if (mapitem!=-1 && mapitem>=1000000)
-										{
-											ii=mapchar;
-											if ((chars[ii].hidden==2) || (chars[ii].hidden==1)) //  does reveal hidden people as well now :)
-											{
-												dx=abs(chars[ii].x-x);
-												dy=abs(chars[ii].y-y);
-												dz=abs(chars[ii].z-z);  // new--difference in z coords
-#ifdef __NT__
-												d=sqrt(dx*dx+dy*dy);
-#else
-												d=hypot(dx, dy);
-#endif
-												if ((d<=range)&&(dz<=15)) //char to reveal is within radius or range and no more than 15 z coords away
-												{
-													if( chars[ii].hidden && !(chars[ii].priv2&8 ) )
-													{
-														chars[ii].hidden=0;
-														chars[ii].stealth=-1;
-														updatechar(ii);
-													}
-												}
-											}
-										}
-									} while (mapitem!=-1);
-								}//for a<3
-							}//for checkgrid
-							soundeffect(s,0x01,0xFD);
-						}
-						else
-						{
-							sysmessage(s, "You would like to see if anything was there, but there is too much stuff in the way.");
-						}
-						break;
-					case 49: ///////// Chain Lightning ///////////
-						///////// Forgotten, added by LB ////
-						
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;						
-						BoxSpell(s, x1, x2, y1, y2, z1, z2);
-						
-						//Char mapRegions
-						StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-						getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-						
-						increment=0;
-						for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-						{
-							for (a=0;a<3;a++)
-							{
-								mapitemptr=-1;
-								mapitem=-1;
-								mapchar=-1;
-								do //check all items in this cell
-								{
-									mapchar=-1;
-									mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-									if (mapitemptr==-1) break;
-									mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-									if(mapitem>999999) mapchar=mapitem-1000000;
-									if (mapitem!=-1 && mapitem>=1000000)
-									{
-										ii=mapchar;				
-										if ((online(ii)||(chars[ii].npc)) && (chars[ii].x>=x1&&chars[ii].x<=x2)&&
-											(chars[ii].y>=y1&&chars[ii].y<=y2)&&
-											(chars[ii].z>=z1&&chars[ii].z<=z2) && !(chars[ii].priv&0x04) )
-										{
-											if ((line_of_sight(s,chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,chars[ii].x,chars[ii].y,chars[ii].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												(chars[currchar[s]].priv&0x01)))
-											{
-												if (chars[ii].npc) npcattacktarget(currchar[s],ii);
-												bolteffect(ii);
-												soundeffect2(currchar[s], 0x00, 0x29); //Homey fix for chainlightning sound
-												int def, att;
-												if( CheckMagicReflect( ii ) )
-												{
-													def = currchar[s];
-													att = ii;
-												}
-												else
-												{
-													def = ii;
-													att = currchar[s];
-												}
-												if (CheckResist(att, def, 7))
-												{
-													MagicDamage(def, chars[att].skill[MAGERY]/70, att );
-												}
-												else 
-												{
-													MagicDamage(def, chars[att].skill[MAGERY]/50, att );
-												}
-											}
-											else
-											{
-												sysmessage(s, "You cannot see the target well.");
-											}
-										}
-									}//if Mapitem
-								} while (mapitem!=-1);
-							}//for a<3
-						}//for checkgrid
-						
-						
-						break;
-						
-					case 50:// Energy Field
-						if (j)
-						{
-							id1=0x39;
-							id2=0x56;
-						} 
-						else 
-						{
-							id1=0x39;
-							id2=0x46;
-						}
-						break;
-					case 54://Mass Dispel
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;
-						
-						BoxSpell(s, x1, x2, y1, y2, z1, z2);
-						
-						//Char mapRegions
-						StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-						getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-						
-						increment=0;
-						for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-						{
-							for (a=0;a<3;a++)
-							{
-								mapitemptr=-1;
-								mapitem=-1;
-								mapchar=-1;
-								do //check all items in this cell
-								{
-									mapchar=-1;
-									mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-									if (mapitemptr==-1) break;
-									mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-									if(mapitem>999999) mapchar=mapitem-1000000;
-									if (mapitem!=-1 && mapitem>=1000000)
-									{
-										ii=mapchar;				 
-										if ((online(ii)||(chars[ii].npc)) && (chars[ii].priv2&0x20)&&
-											(chars[ii].x>=x1&&chars[ii].x<=x2)&&
-											(chars[ii].y>=y1&&chars[ii].y<=y2)&&
-											(chars[ii].z>=z1&&chars[ii].z<=z2))
-										{
-											if ((line_of_sight(s,chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,chars[ii].x,chars[ii].y,chars[ii].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												(chars[currchar[s]].priv&0x01)))
-											{ 
-												if(CheckResist(currchar[s], ii, 7) && rand()%2==0 )  // cant be 100% resisted , LB, osi
-												{
-													if (chars[ii].npc) npcattacktarget(ii, currchar[s]);
-													return;
-												}
-												if (chars[ii].npc) 
-													deathstuff(ii); // LB !!!!
-												soundeffect2(ii, 0x02, 0x04);
-												staticeffect(ii, 0x37, 0x2A, 0x09, 0x06);
-											}
-										}
-									}//if mapitem
-								} while(mapitem!=-1);
-							}//for a<3
-						}//for checkgrid
-						break;
-					case 55://Meteor Swarm
-						x1 = x2 = y1 = y2 = z1 = z2 = 0;
-						
-						BoxSpell(s, x1, x2, y1, y2, z1, z2);
-						
-						//Char mapRegions
-						StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-						getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-						
-						increment=0;
-						for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-						{
-							for (a=0;a<3;a++)
-							{
-								mapitemptr=-1;
-								mapitem=-1;
-								mapchar=-1;
-								do //check all items in this cell
-								{
-									mapchar=-1;
-									mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-									if (mapitemptr==-1) break;
-									mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-									if(mapitem>999999) mapchar=mapitem-1000000;
-									if (mapitem!=-1 && mapitem>=1000000)
-									{
-										ii=mapchar;				
-										if ((online(ii)||(chars[ii].npc)) && (chars[ii].x>=x1&&chars[ii].x<=x2)&&
-											(chars[ii].y>=y1&&chars[ii].y<=y2)&&
-											(chars[ii].z>=z1&&chars[ii].z<=z2) && !(chars[ii].priv&0x04) )
-										{
-											if ((line_of_sight(s,chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,chars[ii].x,chars[ii].y,chars[ii].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-												(chars[currchar[s]].priv&0x01)))
-											{
-												if (chars[ii].npc) npcattacktarget(currchar[s],ii);
-												soundeffect2(ii, 0x1, 0x60); //sound fix for swarm--Homey
-												movingeffect(currchar[s], ii, 0x36, 0xD5, 0x07, 0x00, 0x01);
-												if (CheckResist(currchar[s], ii, 7))
-												{
-													MagicDamage(ii, chars[currchar[s]].skill[MAGERY]/80, currchar[s] );
-												}
-												else 
-												{
-													MagicDamage(ii, chars[currchar[s]].skill[MAGERY]/40, currchar[s] );
-												}
-											}
-											else
-											{
-												sysmessage(s, "You cannot see the target well.");
-											}
-										}
-									}//if Mapitem
-								} while (mapitem!=-1);
-							}//for a<3
-						}//for checkgrid
-						break;
-					case 58:// Energy Vortex
-						SummonMonster( s, 0x00, 0x0d, "an energy vortex", 0x00, 0x75, x, y, z );
-						break;
-					default:
-						printf("MAGIC-ERROR: Unknown LocationTarget spell %i\n", curSpell );
-						break;
-					}
-					
-					if( fieldSpell( curSpell ) )
-					{
-						for( j=0; j<5; j++ )		// how about we make this 5, huh?  missing part of the field
-						{
-							i=Items->SpawnItem(s,1,"#",0,id1,id2,0,0,0,0);
-							if( i > -1 )
-							{
-								items[i].priv=items[i].priv|0x05;
-								items[i].priv=items[i].priv|0x01;
-								items[i].decaytime = (unsigned int)( uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/15)*CLOCKS_PER_SEC) );
-								items[i].morex=chars[currchar[s]].skill[MAGERY]; // remember casters magery skill for damage, LB
-								mapRegions->RemoveItem( i );
-								items[i].x=fx[j];
-								items[i].y=fy[j];
-								items[i].z=Map->Height( fx[j], fy[j], z );
-								mapRegions->AddItem(i); // lord Binary
-								items[i].dir=29;
-								items[i].magic = 2;
-								RefreshItem( i ); // AntiChrist
-							}
-						}
-					}
-				} // if los
-			} else 
-			{
-				sysmessage( s, "That is not a valid location." );
-			}
-		}
-		else if( reqItemTarget( curSpell ) )
-		{
-			
-			// ITEM TARGET
-			item=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);	// item we are targeting
-			i=findbyserial(&itemsp[item%HASHMAX], item, 0);	// modified by Abaddon, 17th February, 2000, was doing a char lookup
-			if( i != -1 )
-			{
-				if( itemdist( currchar[s], i ) > combat.maxRangeSpell )
-				{
-					sysmessage( s, "You can't cast on an item that far away!" );
+				x = s->GetWord( 11 );
+				y = s->GetWord( 13 );
+				z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
+				if( s->GetDWord( 7 ) != 0 )
+				{	// we targetted something not a location!
+					sysmessage( s, 716 );
 					return;
 				}
-				if ((line_of_sight( s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, items[i].x, items[i].y, items[i].z, WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING)||
-					(chars[currchar[s]].priv&0x01)))
+			}
+			else
+			{
+				CHARACTER defender = caster->GetTarg();
+				x = chars[defender].GetX();
+				y = chars[defender].GetY();
+				z = chars[defender].GetZ();
+			}
+
+			if( !caster->IsNpc() && s != NULL && s->GetWord( 11 ) != INVALIDSERIAL )
+			{
+				
+				if( LineOfSight( s, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
-					
+					if( spells[curSpell].FieldSpell() )
+					{
+						UI08 j = getFieldDir( caster, x, y );
+						playSound( src, curSpell );
+						doStaticEffect( src, curSpell );
+						(*((MAGIC_FIELDFUNC)magic_table[curSpell-1].mag_extra))( s, caster, j, x, y, z );
+					}
+					else
+					{
+						playSound( src, curSpell );
+						doStaticEffect( src, curSpell );
+						switch( curSpell )
+						{
+						case 22:// Teleport
+						case 25://Arch Cure
+						case 26://Arch Protection
+						case 33:// Blade Spirits
+						case 34:// Dispel Field
+						case 46:// Mass curse
+						case 48: 
+						case 49: ///////// Chain Lightning ///////////
+						case 54://Mass Dispel
+						case 55://Meteor Swarm
+						case 58:// Energy Vortex
+							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z );
+							break;
+						default:
+							Console.Error( 2, " Unknown LocationTarget spell %i", curSpell );
+							break;
+						}
+					}					
+				}
+			} 
+			else 
+				sysmessage( s, 717 );
+		}
+		else if( spells[curSpell].RequireItemTarget() )
+		{
+			// CItem *target
+			i = calcItemObjFromSer( s->GetDWord( 7 ) );
+			if( i != NULL )
+			{
+				if( ( i->GetCont() != INVALIDSERIAL && getPackOwner( i ) != caster ) || ( getDist( caster, i ) > cwmWorldState->ServerData()->GetCombatMaxSpellRange() ) )
+				{
+					sysmessage( s, 718 );
+					return;
+				}
+				if( LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+				{	
 					switch( curSpell )
 					{
-						
-					case 13://Magic Trap
-						if((items[i].type==1 || items[i].type==63 ||
-							items[i].type==8 || items[i].type==64)
-							&&( items[i].id1!=0x0E || items[i].id2!=0x75))  
-						{
-							items[i].moreb1=1;
-							items[i].moreb2=chars[currchar[s]].skill[MAGERY]/20;
-							items[i].moreb3=chars[currchar[s]].skill[MAGERY]/10;
-							soundeffect3(i, 0x01, 0xF0);
-						} else sysmessage(currchar[s],"You cannot trap this!!!");
+					case 13:	// Magic Trap
+					case 14:	// Magic Untrap
+					case 19:	// Magic Lock
+					case 23:	// Magic Unlock
+						(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
 						break;
-					case 14://Magic Untrap
-						if((items[i].type==1 || items[i].type==63 ||
-							items[i].type==8 || items[i].type==64))
-						{
-							if(items[i].moreb1==1)
-							{
-								if(rand()%100<=50+(chars[currchar[s]].skill[MAGERY]/10)-items[i].moreb3)
-								{
-									items[i].moreb1=0;
-									items[i].moreb2=0;
-									items[i].moreb3=0;
-									soundeffect3(i, 0x01, 0xF1);
-									sysmessage(s,"You successful untrap this item!");
-								}
-								else sysmessage(s,"You miss to untrap this item!");
-							}
-							else sysmessage(s,"This items doesn't seem to be trapped!");
-						}
-						else sysmessage(s,"This items cannot be trapped!");
-						break;
-					case 19:
-						if((items[i].type==1 || items[i].type==12 || items[i].type==63)
-							&&( items[i].id1!=0x0E || items[i].id2!=0x75))  
-						{
-							switch(items[i].type)
-							{
-							case 1:  items[i].type=8; break;
-							case 12: items[i].type=13; break;
-							case 63: items[i].type=64; break;
-							default:
-								printf("ERROR: Fallout of switch statement without default. magic.cpp, magiclocktarget()/n"); //Morrolan
-								break;
-							}
-							soundeffect3(i, 0x02, 0x00);
-						}
-						else sysmessage(currchar[s],"You cannot lock this!!!"); 
-						break;
-					case 23:
-						if( items[i].type==8)
-						{
-							items[i].type=1;
-							sysmessage( s, "You unlock the item." );
-						} else if ( items[i].type==64 )
-						{
-							items[i].type=63;
-							sysmessage( s, "You unlock the item." );
-						} else if ( items[i].type==1 || items[i].type==63 || items[i].type == 65 || items[i].type == 87 )
-							sysmessage( s, "That is not locked." );
-						else if( items[i].type == 12 )
-							sysmessage( s, "That may only be locked with the key.");
-						else sysmessage( s, "That does not have a lock.");
-						
-						break;
-						//						case 41:
-						//							if (items[i].priv&0x04) Items->DeleItem(i);	break;
 					default:
-						printf("MAGIC-ERROR: Unknown ItemTarget spell %i, magic.cpp\n", curSpell );
+						Console.Error( 2, " Unknown ItemTarget spell %i, magic.cpp", curSpell );
 						break;
 					}
 				}
 				else
-					sysmessage( s, "There is something in the way!" );
+					sysmessage( s, 714 );
 			}
 			else
-				sysmessage( s, "That is not a valid item" );
+				sysmessage( s, 711 );
 		}
 		else
-			sysmessage( s, "Can't cope with this spell, requires a target but it doesn't specify what type" );
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
+			sysmessage( s, 720 );
 		return;
 	}
 	else
@@ -3330,248 +2889,25 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 		doStaticEffect( src, curSpell );
 		switch( curSpell )
 		{
-		case 2: // Create Food
-			j=Items->SpawnItem( s, 1, "#", 1, 0x09, 0xD3, 0x00, 0x00, 1, 1 );
-			if( j > -1 )
-			{
-				items[j].type=14;
-				RefreshItem( j );
-			}
-			
-			break; // LB crashfix
-		case 40: // Summon Monster	// summon monster is 40, not 33
-			SummonMonster( s, 0, 0, "#", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-			break;
+		case 2:		// Create Food
+		case 40:	// Summon Monster	// summon monster is 40, not 33
 		case 35:
-			printf("INCOGNITO SPELL START!!\n");
-			int serhash,ci;
-			i=currchar[s];
-			
-			// ------ SEX ------
-			chars[i].orgid2=chars[i].id2;
-			if((rand()%2)==0) chars[i].id2=0x90; else chars[i].id2=0x91;
-			
-			// ------ NAME -----
-			strcpy(chars[i].orgname,chars[i].name);
-			
-			//wait a moment: if player already has a beard
-			//he can't be morphed into a women!
-			
-			if(chars[i].id2==0x90) setrandomname(i,"1");//get a name from male list
-			else setrandomname(i,"2");//get a name from female list
-			
-			serial=chars[i].serial;
-			serhash=serial%HASHMAX;
-			for (ci=0;ci<contsp[serhash].max;ci++)
-			{
-				j=contsp[serhash].pointer[ci];
-				if( j != -1 ) 
-				{
-					//
-					//damn..this formula seems to include also some bad color...
-					//AntiChrist
-					//
-					int color = 0x044E + (rand()%( 0x04AD - 0x044E ) );
-					
-					// ------ HAIR -----
-					if(items[j].layer==0x0B) { //change hair style/color
-						printf("HAIR FOUND!!\n");
-						//stores old hair values
-						chars[i].haircolor1=items[j].color1;
-						chars[i].haircolor2=items[j].color2;
-						chars[i].hairstyle1=items[j].id1;
-						chars[i].hairstyle2=items[j].id2;
-						//changes them with random ones
-						switch(rand()%10)
-						{
-						case 0: items[j].id2='\x3B'; break;
-						case 1: items[j].id2='\x3C'; break;
-						case 2:	items[j].id2='\x3D'; break;
-						case 3:	items[j].id2='\x44'; break;
-						case 4:	items[j].id2='\x45'; break;
-						case 5:	items[j].id2='\x46'; break;
-						case 6:	items[j].id2='\x47'; break;
-						case 7:	items[j].id2='\x48'; break;
-						case 8:	items[j].id2='\x49'; break;
-						case 9:	items[j].id2='\x4A'; break;
-						default: items[j].id2='\x4A'; break;
-						}
-						
-						items[j].color1 = (unsigned char)(color>>8);
-						items[j].color2 = (unsigned char)(color%256);
-						
-						if ((((items[j].color1<<8)+items[j].color2)<0x044E) ||
-							(((items[j].color1<<8)+items[j].color2)>0x04AD) )
-						{
-							items[j].color1=0x04;
-							items[j].color2=0x4E;
-						}
-						//wornitems(s, currchar[s]);
-						//teleport(currchar[s]);
-						//impowncreate(s, currchar[s], 0);
-					}
-					
-					// -------- BEARD --------
-					// only if a men :D
-					if(chars[i].id2==0x90)
-						if(items[j].layer==0x10) { //change beard style/color
-							printf("BEARD FOUND!!\n");
-							//stores old beard values
-							chars[i].beardcolor1=items[j].color1;
-							chars[i].beardcolor2=items[j].color2;
-							chars[i].beardstyle1=items[j].id1;
-							chars[i].beardstyle2=items[j].id2;
-							//changes them with random ones
-							switch(rand()%7)
-							{
-							case 0: items[j].id2='\x3E'; break;
-							case 1: items[j].id2='\x3F'; break;
-							case 2:	items[j].id2='\x40'; break;
-							case 3:	items[j].id2='\x41'; break;
-							case 4:	items[j].id2='\x4B'; break;
-							case 5:	items[j].id2='\x4C'; break;
-							case 6:	items[j].id2='\x4D'; break;
-							default: items[j].id2='\x4D'; break;
-							}
-							
-							items[j].color1=color>>8;
-							items[j].color2=color%256;
-							
-							if ((((items[j].color1<<8)+items[j].color2)<0x044E) ||
-								(((items[j].color1<<8)+items[j].color2)>0x04AD) )
-							{
-								items[j].color1=0x04;
-								items[j].color2=0x4E;
-							}
-							//wornitems(s, currchar[s]);
-							//teleport(currchar[s]);
-							//impowncreate(s, currchar[s], 0);
-						}
-				}
-			}
-			//only refresh once
-			wornitems(s, currchar[s]);
-			teleport(currchar[s]);
-			impowncreate(s, currchar[s], 0);
-			
-			soundeffect2(currchar[s], 0x02, 0x03);
-			tempeffect(currchar[s],currchar[s],19,0,0,0);
-			
+		case 36:	// Magic Reflection
+		case 56:
+		case 57:	// Earthquake
+		case 60:	// Summon Air Elemental
+		case 61:	// Summon Daemon
+		case 62:	// Summon Earth Elemental
+		case 63:	// Summon Fire Elemental
+		case 64:	// Summon Water Elemental
+		case 65:	// Summon Hero
+		case 67:
+			(*((MAGIC_NOFUNC)magic_table[curSpell-1].mag_extra))( s, caster );
 			break;
-			
-			case 36:// Magic Reflection
-				chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x40;
-				break;
-			case 56:
-				PolymorphMenu( s, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
-				break;
-			case 57://Earthquake
-				dmg=(chars[currchar[s]].skill[MAGERY]/40)+(rand()%20-10);
-				dmgmod;
-				//		EviLDeD -		March 1, 2000
-				//		Some extra console spam
-				printf("DEBUG: [NewCastSpell()] %s is being set to criminal\n", chars[currchar[s]].name );
-				//		EviLDeD -		End
-
-				criminal(currchar[s]);
-				
-				//Char mapRegions
-				StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-				getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-				
-				increment=0;
-				for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-				{
-					for (a=0;a<3;a++)
-					{
-						mapitemptr=-1;
-						mapitem=-1;
-						mapchar=-1;
-						do //check all items in this cell
-						{
-							mapchar=-1;
-							mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-							if (mapitemptr==-1) break;
-							mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-							if(mapitem>999999) mapchar=mapitem-1000000;
-							if (mapitem!=-1 && mapitem>=1000000)
-							{
-								ii=mapchar;
-								distx=abs(chars[ii].x-chars[currchar[s]].x);
-								disty=abs(chars[ii].y-chars[currchar[s]].y);
-								if( distx <= 15 && disty <= 15 && !(chars[ii].priv&0x04) && ( chars[ii].npc || online(ii) ) )
-								{
-									// dmgmod=unmounthorse(i);
-									
-									dmgmod = min(distx,disty);
-									dmgmod = -(dmgmod - 7);
-									chars[ii].hp -=  dmg+dmgmod;
-									chars[ii].stm -= rand()%10+5;
-									
-									if(chars[ii].stm<0)  chars[ii].stm=0;
-									if(chars[ii].hp<0) chars[ii].hp=0;						 							
-									
-									if (!chars[ii].npc && online(ii))
-									{
-										if(rand()%2) npcaction(ii, 0x15); else npcaction(ii, 0x16);
-										if(chars[ii].hp==0) 
-										{
-											
-											deathstuff(ii);                              
-											if(chars[ii].flag&0x04 && Guilds->Compare( currchar[s], ii )==0 && Races->Compare( currchar[s], ii ) == 0)
-											{
-												chars[currchar[s]].kills++;
-												sprintf(temp, "You have killed %i innocent people.", chars[currchar[s]].kills);
-												sysmessage(s,temp);
-												if (chars[currchar[s]].kills==repsys.maxkills+1)
-													sysmessage(s,"You are now a murderer!");
-											}
-											
-											sprintf(temp,"%s was killed by %s! [Earthquake]\n",chars[ii].name,chars[currchar[s]].name);
-											savelog(temp,"PvP.log");
-										}
-									} else { 
-										if (chars[ii].hp<=0) deathstuff(ii); 
-										else { 
-											if (chars[ii].npc) { 
-												npcaction(ii, 0x2); 
-												npcattacktarget(currchar[s],ii); 
-											}
-										}
-									} 
-								} //if Distance
-							}//if mapitem
-						} while(mapitem!=-1);
-					}
-				}
-				break;
-			case 60:// Summon Air Elemental
-				SummonMonster( s, 0x00, 0x0d, "Air", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 61:// Summon Daemon
-				SummonMonster( s, 0x00, 0x0A, "Bob", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 62:// Summon Earth Elemental
-				SummonMonster( s, 0x00, 0x0E, "Earth", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 63:// Summon Fire Elemental
-				SummonMonster( s, 0x00, 0x0F, "Fire", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 64:// Summon Water Elemental
-				SummonMonster( s, 0x00, 0x10, "Water", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 65:// Summon Hero
-				SummonMonster( s, 0x03, 0xE2, "Dupre the Hero", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			case 67:
-				SummonMonster( s, 0x00, 0x0A, "Black Night", (unsigned char)(5000>>8), (unsigned char)(5000%256), chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
-				break;
-			default:	
-				printf("MAGIC-ERROR: Unknown NonTarget spell %i, magic.cpp\n", curSpell );
-				break;
+		default:	
+			Console.Error( 2, " Unknown NonTarget spell %i, magic.cpp", curSpell );
+			break;
 		}
-		chars[currchar[s]].spellCast = 0;
-		chars[currchar[s]].casting = 0;
 		return;
 	}
 	
@@ -3582,446 +2918,217 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 //         cast to avoid crippling the server when a mage enters combat
 void cMagic::LoadScript( void )
 {
-	if( spells )
-	{
-		delete[] spells;
-	}	
-	printf("\nLoading spells"); fflush(stdout);
-	
-	   
+	spells.resize( 0 );
+	  
     // for some strange reason, spells go from index 1 to SPELL_MAX and 
     // apparently index 0 is left unused - fur 
-	spells = new splInfo_st[SPELL_MAX + 1];
-	memset( spells, 0, sizeof( splInfo_st ) * ( SPELL_MAX + 1 ) );
+	spells.resize( SPELL_MAX + 1 );
 	
-	int i=0;
-	unsigned int spellCount = 1;
-	int enabled;
+	int i = 0;
 	bool done = false;
-	int tempValReflect = 0;
 	int moveFX[5];
 	int sFX[2];
 	int stFX[4];
-	unsigned char quickCounter = 0;
-	openscript("spells.scp");
 	char sect[512];
-	while ( !done )
+	const char *tag = NULL;
+	const char *data = NULL;
+	spellCount = 1;
+	while( !done )
 	{
-		sprintf(sect, "SPELL %d", spellCount);
-		if (!i_scripts[spells_script]->find(sect))
-		{
+		sprintf( sect, "SPELL %d", spellCount );
+		ScriptSection *tSect = FileLookup->FindEntry( sect, spells_def );
+		if( tSect == NULL )
 			done = true;
-		}
 		else
 			spellCount++;
 	}
 	
 	--spellCount; // spell count will be one too high after that loop - fur 
     
-	if (spellCount > SPELL_MAX) 
+	if( spellCount > SPELL_MAX )
 	{ 
-		printf("ERROR: Too many spells (%d) in spells.scp, ones after %d will be ignored.\n", spellCount, SPELL_MAX); 
+		Console.Error( 3, " Too many spells (%d) in spells.dfn, ones after %d will be ignored.", spellCount, SPELL_MAX ); 
 		spellCount = SPELL_MAX; 
-	} 
+	}
+	ScriptSection *SpellLoad = NULL;
 	
-	for( i=1; i <= spellCount; i++ )
+	for( i = 1; i <= spellCount; i++ )
 	{
 		sprintf(sect, "SPELL %d", i);
-		printf("."); fflush(stdout);
-		i_scripts[spells_script]->find(sect);
-		spells[i].enabled = false;
-		spells[i].soundEffect[0] = spells[i].soundEffect[1] = -1;
-		spells[i].staticEffect[0] = spells[i].staticEffect[1] = spells[i].staticEffect[2] = spells[i].staticEffect[3] = -1;
-		spells[i].moveEffect[0] = spells[i].moveEffect[1] = spells[i].moveEffect[2] = spells[i].moveEffect[3] = spells[i].moveEffect[4] = -1;
-		spells[i].health = spells[i].stamina = spells[i].mana = 0;
+		SpellLoad = FileLookup->FindEntry( sect, spells_def );
+		spells[i].Enabled( false );
 		moveFX[0] = moveFX[1] = moveFX[2] = moveFX[3] = moveFX[4] = -1;
 		sFX[0] = sFX[1] = -1;
 		stFX[0] = stFX[1] = stFX[2] = stFX[3] = -1;
-		do 
+		reag_st *mRegs = spells[i].ReagantsPtr();
+		for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 		{
-			read2();
-			if( !(strcmp("ENABLE",  script1 ) ) )   // presence of enable is enough to enable it
-			{ 
-				enabled = atoi( script2 ); 
-				if( enabled != 0 ) 
-					spells[i].enabled = true;
-				else 
-					spells[i].enabled = false;
-			}
-			else if( !strcmp("CIRCLE",  script1 ) ) spells[i].circle        = atoi( script2 );
-			else if( !strcmp("MANA",    script1 ) ) spells[i].mana          = atoi( script2 );
-			else if( !strcmp("STAMINA", script1 ) ) spells[i].stamina		= atoi( script2 );
-			else if( !strcmp("HEALTH",  script1 ) ) spells[i].health		= atoi( script2 );
-			else if( !strcmp("LOSKILL", script1 ) ) spells[i].loskill       = atoi( script2 );
-			else if( !strcmp("HISKILL", script1 ) ) spells[i].hiskill       = atoi( script2 );
-			else if( !strcmp("SCLO",    script1 ) ) spells[i].sclo          = atoi( script2 );
-			else if( !strcmp("SCHI",    script1 ) ) spells[i].schi          = atoi( script2 );
-			else if( !strcmp("MANTRA",  script1 ) ) strcpy( spells[i].mantra, script2 );
-			else if( !strcmp("ACTION",  script1 ) ) spells[i].action        = atoi( script2 );
-			else if( !strcmp("DELAY",   script1 ) ) spells[i].delay         = atoi( script2 );
-			else if( !strcmp("ASH",     script1 ) ) spells[i].reags.ash     = atoi( script2 );
-			else if( !strcmp("DRAKE",   script1 ) ) spells[i].reags.drake   = atoi( script2 );
-			else if( !strcmp("GARLIC",  script1 ) ) spells[i].reags.garlic  = atoi( script2 );
-			else if( !strcmp("GINSING", script1 ) ) spells[i].reags.ginseng = atoi( script2 );
-			else if( !strcmp("MOSS",    script1 ) ) spells[i].reags.moss    = atoi( script2 );
-			else if( !strcmp("PEARL",   script1 ) ) spells[i].reags.pearl   = atoi( script2 );
-			else if( !strcmp("SHADE",   script1 ) ) spells[i].reags.shade   = atoi( script2 );
-			else if( !strcmp("SILK",    script1 ) ) spells[i].reags.silk    = atoi( script2 );
-			else if( !strcmp("TARG",    script1 ) ) strcpy( spells[i].strToSay, script2 );
-			else if( !strcmp("REFLECT", script1 ) ) 
+			data = SpellLoad->GrabData();
+			switch( tag[0] )
 			{
-				tempValReflect = atoi( script2 );
-				spells[i].reflect = ( tempValReflect == 1 );	// if val is 1, then reflect, if 2, then no reflect
-			}
-			else if( !strcmp("RESISTABLE", script1 ) ) 
-			{
-				tempValReflect = atoi( script2 );
-				spells[i].resistable = ( tempValReflect != 0 );
-			}
-			else if( !strcmp("AGGRESSIVE", script1 ) ) 
-			{
-				tempValReflect = atoi( script2 );
-				spells[i].aggressive = ( tempValReflect != 0 );
-			}
-			else if( !strcmp("SOUNDFX", script1 ) ) 
-			{
-				sscanf( script2, "%x%x", &sFX[0], &sFX[1] );
-				for( quickCounter = 0; quickCounter < 2; quickCounter++ )
+			case 'a':
+			case 'A':
+				if( !strcmp("ACTION", tag ) ) 
+					spells[i].Action( (SI32)makeNum( data ) );
+				else if( !strcmp("ASH", tag ) ) 
+					mRegs->ash = makeNum( data );
+				break;
+
+			case 'c':
+			case 'C':
+				if( !strcmp("CIRCLE",  tag ) ) 
+					spells[i].Circle( (UI08)makeNum( data ) );
+				break;
+			
+			case 'd':
+			case 'D':
+				if( !strcmp("DELAY", tag ) ) 
+					spells[i].Delay( (SI32)makeNum( data ) );
+				else if( !strcmp("DRAKE", tag ) ) 
+					mRegs->drake   = makeNum( data );
+				break;
+
+			case 'e':
+			case 'E':
+				if( !(strcmp("ENABLE",  tag ) ) )   // presence of enable is enough to enable it
+					spells[i].Enabled( makeNum( data ) != 0 );
+				break;
+
+			case 'f':
+			case 'F':
+				if( !strcmp( "FLAGS", tag ) )
 				{
-					spells[i].soundEffect[quickCounter] = (sFX[quickCounter]);
+					UI32 fl1, fl2;
+					sscanf( data, "%x%x", &fl1, &fl2 );
+					spells[i].Flags( (UI08)fl1, (UI08)fl2 );
 				}
-			}
-			else if( !strcmp("STATFX", script1 ) ) 
-			{
-				sscanf( script2, "%x%x%x%x", &stFX[0], &stFX[1], &stFX[2], &stFX[3] );
-				for( quickCounter = 0; quickCounter < 4; quickCounter++ )
+				break;
+
+			case 'g':
+			case 'G':
+				if( !strcmp("GARLIC", tag ) ) 
+					mRegs->garlic  = makeNum( data );
+				else if( !strcmp("GINSENG", tag ) ) 
+					mRegs->ginseng = makeNum( data );
+				break;
+
+			case 'h':
+			case 'H':
+				if( !strcmp("HISKILL", tag ) ) 
+					spells[i].HighSkill( makeNum( data ) );
+				else if( !strcmp( "HEALTH", tag ) )
+					spells[i].Health( makeNum( data ) );
+				break;
+
+			case 'l':
+			case 'L':
+				if( !strcmp("LOSKILL", tag ) ) 
+					spells[i].LowSkill( makeNum( data ) );
+				break;
+
+			case 'm':
+			case 'M':
+				if( !strcmp("MANA", tag ) ) 
+					spells[i].Mana( makeNum( data ) );
+				else if( !strcmp("MANTRA", tag ) ) 
+					spells[i].Mantra( data );
+				else if( !strcmp("MOSS", tag ) ) 
+					mRegs->moss = makeNum( data );
+				else if( !strcmp("MOVEFX", tag ) ) 
 				{
-					spells[i].staticEffect[quickCounter] = (stFX[quickCounter]);
+					sscanf( data, "%x%x%x%x%x", &moveFX[0], &moveFX[1], &moveFX[2], &moveFX[3], &moveFX[4] );
+					CMagicMove *mv = spells[i].MoveEffectPtr();
+					mv->Effect( moveFX[0], moveFX[1] );
+					mv->Speed( moveFX[2] );
+					mv->Loop( moveFX[3] );
+					mv->Explode( moveFX[4] );
 				}
-			}
-			else if( !strcmp("MOVEFX", script1 ) ) 
-			{
-				sscanf( script2, "%x%x%x%x%x", &moveFX[0], &moveFX[1], &moveFX[2], &moveFX[3], &moveFX[4] );
-				for( quickCounter = 0; quickCounter < 5; quickCounter++ )
+				break;
+
+			case 'p':
+			case 'P':
+				if( !strcmp("PEARL", tag ) ) 
+					mRegs->pearl = makeNum( data );
+				break;
+
+			case 's':
+			case 'S':
+				if( !strcmp("SHADE", tag ) ) 
+					mRegs->shade = makeNum( data );
+				else if( !strcmp("SILK", tag ) ) 
+					mRegs->silk = makeNum( data );
+				else if( !strcmp("SOUNDFX", tag ) ) 
 				{
-					spells[i].moveEffect[quickCounter] = (moveFX[quickCounter]);
+					sscanf( data, "%x%x", &sFX[0], &sFX[1] );
+					CMagicSound *snd = spells[i].SoundEffectPtr();
+					snd->Effect( sFX[0], sFX[1] );
 				}
+				else if( !strcmp("STATFX", tag ) ) 
+				{
+					sscanf( data, "%x%x%x%x", &stFX[0], &stFX[1], &stFX[2], &stFX[3] );
+					CMagicStat *stat = spells[i].StaticEffectPtr();
+					stat->Effect( stFX[0], stFX[1] );
+					stat->Speed( stFX[2] );
+					stat->Loop( stFX[3] );
+				}
+				else if( !strcmp("SCLO", tag ) ) 
+					spells[i].ScrollLow( makeNum( data ) );
+				else if( !strcmp("SCHI", tag ) ) 
+					spells[i].ScrollHigh( makeNum( data ) );
+				else if( !strcmp( "STAMINA", tag ) )
+					spells[i].Stamina( makeNum( data ) );
+				break;
+
+			case 't':
+			case 'T':
+				if( !strcmp("TARG", tag ) ) 
+					spells[i].StringToSay( data );
+				break;
 			}
-				
-		} while(script1[0]!='}' && strcmp( script1, "EOF" ) );
-	}
-	closescript();
-	printf("\n");
-}
-
-
-bool cMagic::requireTarget( unsigned char num )
-{
-	
-	switch( num )
-	{
-	case 1: // Clumsy
-		//	case 2: // Create Food		 
-	case 3: // Feeblemind
-	case 4: // Heal
-	case 5: // Magic Arrow
-	case 6: // Night Sight
-	case 7:	// Reactive Armour...
-	case 8: // Weaken
-	case 9: // Agility
-	case 10:// Cunning
-	case 11:// Cure
-	case 12:// Harm
-	case 13://Magic Trap
-	case 14://Magic Untrap
-	case 15: //Protection
-	case 16: // Strength
-	case 17:// Bless
-	case 18:// Fireball
-	case 19://Magic Lock
-	case 20:// Poison
-	case 22:// Teleport
-	case 23:// Unlock
-	case 24:// Wall of Stone
-	case 25://Arch Cure
-	case 26:// Arch protection
-	case 27:// Curse
-	case 28:// Fire Field
-	case 29:// Greater Heal
-	case 30:// Lightning
-	case 31://Mana drain
-	case 32:// Recall
-	case 33:// Blade Spirits
-	case 34:// Dispel Field
-	case 37:// Mind Blast
-	case 38:// Paralyze
-	case 39:// Poison Field
-	case 41:// Dispel
-	case 42:// Energy Bolt
-	case 43://Explosion
-	case 44:// Invisibility
-	case 45:// Mark
-	case 46:// Mass curse
-	case 47:// Paralyze Field
-	case 48:// Reveal
-	case 49:// Chain Lightning
-	case 50:// Energy Field
-	case 51:// Flamestrike
-	case 52:// Gate Travel
-	case 53://Mana Vampire
-	case 54://Mass Dispel
-	case 55://Meteor Swarm
-	case 58:// Energy Vortex
-	case 59:// Resurrection
-	case 66://Cannon Firing
-		return true;
-		
-		
-	case 36:// Magic Reflection
-	case 56: // Polymorph
-	case 57://Earthquake
-	case 60:// Summon Air Elemental
-	case 61:// Summon Daemon
-	case 62:// Summon Earth Elemental
-	case 63:// Summon Fire Elemental
-	case 64:// Summon Water Elemental
-	case 65:// Summon Hero
-	case 67:// Summon Black Night
-	default: 
-		return false;
-	}
-	return false;
-}
-
-void cMagic::NewDelReagents( CHARACTER s, reag_st reags )
-{
-	if (chars[s].priv2&0x80) return;
-	delequan(s, 0x0F, 0x7A, reags.pearl);
-	delequan(s, 0x0F, 0x7B, reags.moss);
-	delequan(s, 0x0F, 0x84, reags.garlic);
-	delequan(s, 0x0F, 0x85, reags.ginseng);
-	delequan(s, 0x0F, 0x86, reags.drake);
-	delequan(s, 0x0F, 0x88, reags.shade);
-	delequan(s, 0x0F, 0x8C, reags.ash);
-	delequan(s, 0x0F, 0x8D, reags.silk);
-}
-
-bool cMagic::spellReflectable( int num )
-{
-	// AntiChrist - customizable in spells.scp
-	if( spells[num].reflect )
-		return true;
-	else 
-		return false;
-}
-
-
-bool cMagic::travelSpell( int num )
-{
-	switch( num )
-	{
-	case 52:
-	case 32:
-	case 45:
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
-
-bool cMagic::reqCharTarget( int num )
-{
-	switch( num )
-	{
-	case 1:  // Clumsy
-	case 3:  // Feeblemind
-	case 4:  // Heal
-	case 5:  // Magic Arrow
-	case 6:  // Night Sight
-	case 7:	 // Reactive armour
-	case 8:  // Weaken
-	case 9:  // Agility
-	case 10: // Cunning
-	case 11: // Cure
-	case 12: // Harm
-	case 15: // Protection
-	case 16: // Strength
-	case 17: // Bless
-	case 18: // Fireball
-	case 20: // Poison
-	case 27: // Curse
-	case 29: // Greater Heal
-	case 30: // Lightning
-	case 31: // Mana drain
-	case 37: // Mind Blast
-	case 38: // Paralyze
-	case 41: // Dispel
-	case 42: // Energy Bolt
-	case 43: // Explosion
-	case 44: // Invisibility
-	case 51: // Flamestrike
-	case 53: // Mana Vampire
-	case 56:	// Polymorph
-	case 59: // Resurrection
-	case 66: // Cannon Firing
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
-
-bool cMagic::reqLocTarget( int num )
-{
-	switch( num )
-	{
-	case 22:// Teleport
-	case 24:// Wall of Stone
-	case 25://Arch Cure
-	case 26:// Arch protection
-	case 28:// Fire Field
-	case 33:// Blade Spirits
-	case 34:// Dispel Field
-	case 39:// Poison Field
-	case 46:// Mass curse
-	case 47:// Paralyze Field
-	case 48:// Reveal
-	case 49: // Chainlightning
-	case 50:// Energy Field
-	case 54://Mass Dispel
-	case 55://Meteor Swarm
-	case 58:// Energy Vortex
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
-
-bool cMagic::reqItemTarget( int num )
-{
-	switch( num )
-	{
-	case 13://Magic Trap
-	case 14://Magic Untrap
-	case 19://Magic Lock
-	case 23:// Unlock
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
-
-move_st cMagic::getMoveEffects( int num )
-{
-	move_st temp;
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	temp.effect[2] = -1;
-	temp.effect[3] = -1;
-	temp.effect[4] = -1;
-	
-	for( int quickQ = 0; quickQ < 5; quickQ++ )
-		temp.effect[quickQ] = spells[num].moveEffect[quickQ];
-	return temp;
-}
-
-stat_st cMagic::getStatEffects( int num )
-{
-	stat_st temp;
-	
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	temp.effect[2] = -1;
-	temp.effect[3] = -1;
-	
-	for( int quickQ = 0; quickQ < 4; quickQ++ )
-		temp.effect[quickQ] = spells[num].staticEffect[quickQ];
-	return temp;
-}
-
-sound_st cMagic::getSoundEffects( int num )
-{
-	sound_st temp;
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	
-	for( int quickQ = 0; quickQ < 2; quickQ++ )
-		temp.effect[quickQ] = spells[num].soundEffect[quickQ];
-	return temp;
-}
-
-void cMagic::playSound( int source, int num )
-{
-	
-	sound_st temp;
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	
-	temp = getSoundEffects( num );
-	if( temp.effect[0] != -1 && temp.effect[1] != -1 )
-		soundeffect2( source, temp.effect[0], temp.effect[1] );
-	
-}
-
-void cMagic::doStaticEffect( int source, int num )
-{
-	stat_st temp;
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	temp.effect[2] = -1;
-	temp.effect[3] = -1;
-	
-	temp = getStatEffects( num );
-	
-	if( temp.effect[0] != -1 && temp.effect[1] != -1 && temp.effect[2] != -1 && temp.effect[3] != -1 )
-	{
-		staticeffect( source, temp.effect[0], temp.effect[1], temp.effect[2], temp.effect[3] );
+		}
 	}
 }
 
-void cMagic::doMoveEffect( int num, int target, int source )
+
+void cMagic::DelReagents( CChar *s, reag_st reags )
 {
-	move_st temp;
-	temp.effect[0] = -1;
-	temp.effect[1] = -1;
-	temp.effect[2] = -1;
-	temp.effect[3] = -1;
-	temp.effect[4] = -1;
-	
-	temp = getMoveEffects( num );
-	
-	if( temp.effect[0] != -1 && temp.effect[1] != -1 && temp.effect[2] != -1 && temp.effect[3] != -1 && temp.effect[4] != -1 )
-		movingeffect(source, target, temp.effect[0], temp.effect[1], temp.effect[2], temp.effect[3], temp.effect[4] );
+	if( s->NoNeedReags() ) 
+		return;
+	deleQuan( s, 0x0F7A, reags.pearl );
+	deleQuan( s, 0x0F7B, reags.moss );
+	deleQuan( s, 0x0F84, reags.garlic );
+	deleQuan( s, 0x0F85, reags.ginseng );
+	deleQuan( s, 0x0F86, reags.drake );
+	deleQuan( s, 0x0F88, reags.shade );
+	deleQuan( s, 0x0F8C, reags.ash );
+	deleQuan( s, 0x0F8D, reags.silk );
 }
 
-bool cMagic::aggressiveSpell( int num )
+void cMagic::playSound( CChar *source, int num )
 {
+	CMagicSound temp = spells[num].SoundEffect();
 	
-	return spells[num].aggressive;
+	if( temp.Effect() != INVALIDID )
+		soundeffect( source, temp.Effect() );
 }
 
-bool cMagic::fieldSpell( int num )
+void cMagic::doStaticEffect( CChar *source, int num )
 {
-	switch( num )
-	{
-	case 24:// Wall of Stone
-	case 28:// Fire Field
-	case 39:// Poison Field
-	case 47:// Paralyze Field
-	case 50:// Energy Field
-		return true;
-	default:
-		return false;
-	}
+	CMagicStat temp = spells[num].StaticEffect();
+	if( temp.Effect() != INVALIDID )
+		staticeffect( source, temp.Effect(), temp.Speed(), temp.Loop() );
 }
 
-// added by AntiChrist (9/99)
-void cMagic::PolymorphMenu(int s,int gmindex)
+void cMagic::doMoveEffect( int num, cBaseObject *target, CChar *source )
 {
-	//printf("polymorphmenu\n");
+	CMagicMove temp = spells[num].MoveEffect();
+	
+	if( temp.Effect() != INVALIDID )
+		movingeffect( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ) );
+}
+
+void cMagic::PolymorphMenu( cSocket *s, int gmindex )
+{
 	int total, i;
 	char lentext;
 	char sect[512];
@@ -4029,280 +3136,203 @@ void cMagic::PolymorphMenu(int s,int gmindex)
 	int gmid[30];
 	int gmnumber=0,dummy=0;
 	
-	openscript("polymorph.scp");
-	sprintf(sect, "POLYMORPHMENU %i",gmindex);
-	if (!i_scripts[polymorph_script]->find(sect))
-	{
-		closescript();
+	sprintf( sect, "POLYMORPHMENU %i", gmindex );
+	ScriptSection *polyStuff = FileLookup->FindEntry( sect, polymorph_def );
+	if( polyStuff == NULL )
 		return;
-	}
-	read1();
-	lentext=sprintf(gmtext[0], "%s", script1);
-	do
+	const char *tag = NULL;
+	const char *data = NULL;
+	char fullLine[128];
+	tag = polyStuff->First(); data = polyStuff->GrabData();
+	sprintf( fullLine, "%s %s", tag, data );
+	lentext = sprintf(gmtext[0], "%s", fullLine );
+	for( tag = polyStuff->Next(); !polyStuff->AtEnd(); tag = polyStuff->Next() )
 	{
-		read2();
-		if (script1[0]!='}' && strcmp("POLYMORPHID",script1))
+		data = polyStuff->GrabData();
+		if( strcmp( "POLYMORPHID", tag ) )
 		{
 			gmnumber++;
-			gmid[gmnumber]=hstr2num(script1);
-			strcpy(gmtext[gmnumber], script2);
-			read1();
+			gmid[gmnumber] = makeNum( tag );
+			strcpy( gmtext[gmnumber], data );
+			tag = polyStuff->Next();
+			data = polyStuff->GrabData();
 		}
 		
 	}
-	while (script1[0]!='}');
-	
 	// reading polymorph duration time ...
-	sprintf(sect, "POLYMORPHDURATION %i",dummy);
-	if (!i_scripts[polymorph_script]->find(sect))
-	{
-		closescript();
+	sprintf( sect, "POLYMORPHDURATION %i", dummy );
+	polyStuff = FileLookup->FindEntry( sect, polymorph_def );
+	if( polyStuff == NULL )
 		return;
-	}
-	
-	do
+	CChar *mChar = s->CurrcharObj();
+	for( tag = polyStuff->First(); !polyStuff->AtEnd(); data = polyStuff->Next() )
 	{
-		read2();
-		//printf("yaba: %s daba: %s\n",script1,script2);
-		if (script1[0]!='}')
-		{
-			polyduration=str2num(script1);
-			printf("polydur: %i\n",polyduration);
-			read1();
-		}
-		
+		data = polyStuff->GrabData();
+		polyduration = makeNum( tag );
+		tag = polyStuff->Next(); data = polyStuff->GrabData();
 	}
-	
-	while (script1[0]!='}');
-	closescript();
 	
 	total=9+1+lentext+1;
-	for (i=1;i<=gmnumber;i++) total+=4+1+strlen(gmtext[i]);
-	gmprefix[1]=total>>8;
-	gmprefix[2]=total%256;
-	gmprefix[3]=chars[currchar[s]].ser1;
-	gmprefix[4]=chars[currchar[s]].ser2;
-	gmprefix[5]=chars[currchar[s]].ser3;
-	gmprefix[6]=chars[currchar[s]].ser4;
-	gmprefix[7]=gmindex>>8;
-	gmprefix[8]=gmindex%256;
-	Network->xSend(s, gmprefix, 9, 0);
-	Network->xSend(s, &lentext, 1, 0);
-	Network->xSend(s, gmtext[0], lentext, 0);
-	lentext=gmnumber;
-	Network->xSend(s, &lentext, 1, 0);
-	for (i=1;i<=gmnumber;i++)
+	for( i = 1; i <= gmnumber; i++ ) 
+		total += 4 + 1 + strlen( gmtext[i] );
+	gmprefix[1] = (UI08)(total>>8);
+	gmprefix[2] = (UI08)(total%256);
+	gmprefix[3] = mChar->GetSerial( 1 );
+	gmprefix[4] = mChar->GetSerial( 2 );
+	gmprefix[5] = mChar->GetSerial( 3 );
+	gmprefix[6] = mChar->GetSerial( 4 );
+	gmprefix[7] = (UI08)(gmindex>>8);
+	gmprefix[8] = (UI08)(gmindex%256);
+	s->Send( gmprefix, 9 );
+	s->Send( &lentext, 1 );
+	s->Send( gmtext[0], lentext );
+	lentext = gmnumber;
+	s->Send( &lentext, 1 );
+	for( i = 1; i <= gmnumber; i++ )
 	{
 		gmmiddle[0]=gmid[i]>>8;
 		gmmiddle[1]=gmid[i]%256;
-		Network->xSend(s, gmmiddle, 4, 0);
-		lentext=strlen(gmtext[i]);
-		Network->xSend(s, &lentext, 1, 0);
-		Network->xSend(s, gmtext[i], lentext, 0);
+		s->Send( gmmiddle, 4 );
+		lentext = strlen( gmtext[i] );
+		s->Send( &lentext, 1 );
+		s->Send( gmtext[i], lentext );
 	}
 }
 
-// added by AntiChrist (9/99)
-void cMagic::Polymorph(int s, int gmindex, int creaturenumber)
+void cMagic::Polymorph( cSocket *s, int gmindex, int creaturenumber)
 {
-	//printf("polymorph\n");
-	//printf("creaturenumber %i\n",creaturenumber);
-	int i,k;
-	int id1,id2;
+	int i = 0, k = 0;
+	UI08 id1, id2;
 	
 	char sect[512];
-	openscript("polymorph.scp");
-	sprintf(sect, "POLYMORPHMENU %i",gmindex);
-	if (!i_scripts[polymorph_script]->find(sect))
-	{
-		closescript();
+	const char *tag = NULL;
+	const char *data = NULL;
+	ScriptSection *polyStuff = FileLookup->FindEntry( sect, polymorph_def );
+	if( polyStuff == NULL )
 		return;
-	}
-	read1();
-	
-	i=0,k=0;
-	
-	do
+	tag = polyStuff->First();
+	for( tag = polyStuff->Next(); !polyStuff->AtEnd() && i < creaturenumber; tag = polyStuff->Next() )
 	{
-		//read1();
-		read2();
-		printf("%s %s\n",script1,script2);
-		if (script1[0]!='}' && strcmp("POLYMORPHID",script1))
-		{
+		if( strcmp( "POLYMORPHID", tag ) )
 			i++;
-		}
 	}
-	while (script1[0]!='}' && i<creaturenumber);
+	tag = polyStuff->Next();
+	data = polyStuff->GrabData();
+	k = makeNum( data );
 	
-	read2();
-	//printf("%s %s\n",script1,script2);
-	k=hstr2num(script2);
+	id1 = (UI08)(k>>8);
+	id2 = (UI08)(k%256);
+	CChar *mChar = s->CurrcharObj();
+	soundeffect( mChar, 0x020F );
+	tempeffect( mChar, mChar, 18, id1, id2, 0 );
 	
-	closescript();
-	
-	//printf("K: %x\n",k);
-	
-	id1=k>>8;
-	id2=k%256;
-	
-	soundeffect2(currchar[s], 0x02, 0x0F);
-	tempeffect(currchar[s],currchar[s],18,id1,id2,0);
-	
-	teleport(currchar[s]);
+	mChar->Teleport();
+	mChar->IsPolymorphed( true );
 }
 
-// only used for the /heal command
-// LB
-void cMagic::Heal( UOXSOCKET s)
+void cMagic::Heal( cSocket *s )
 {
-	int defender, i, c = currchar[s];
-	defender = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	i = findbyserial( &charsp[defender%HASHMAX], defender, 1 );
+	CChar *mChar = s->CurrcharObj();
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	
-	if (i!=-1)
+	if( i != NULL )
 	{
-		playSound( c, 4 );
+		playSound( mChar, 4 );
 		doStaticEffect( i, 4 );
-		chars[i].hp=chars[i].st;
-		updatestats(i, 0);  
+		i->SetHP( i->GetMaxHP() );
+		updateStats( i, 0 );
 	}
 	else
-	{
-		sysmessage(s,"No valid heal target");
-	}
+		sysmessage( s, 721 );
 }
 
 // only used for the /recall command
-// AntiChrist
-void cMagic::Recall( UOXSOCKET s )
+void cMagic::Recall( cSocket *s )
 {
 	// Targeted item
-	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
-	
-	if( i == -1 ) return; // LB crashfix
-	if( items[i].morex <= 200 && items[i].morey <= 200 )
-	{
-		sysmessage( s, "That rune has not been marked yet!" );
-	}
+	CChar *mChar = s->CurrcharObj();
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL ) 
+		return;
+	if( i->GetMoreX() <= 200 && i->GetMoreY() <= 200 )
+		sysmessage( s, 431 );
 	else
 	{
-		mapRegions->RemoveItem(currchar[s]+1000000); //LB
-		
-		chars[currchar[s]].x=items[i].morex;
-		chars[currchar[s]].y=items[i].morey;
-		chars[currchar[s]].dispz=chars[currchar[s]].z=items[i].morez;
-		
-		mapRegions->AddItem(currchar[s]+1000000); //LB
-		
-		teleport(currchar[s]);
-		sysmessage(s,"You have recalled from the rune.");
+		mChar->SetLocation( i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		mChar->Teleport();
+		sysmessage( s, 682 );
 	}
 }
 
 // only used for the /mark command
-// AntiChrist
-void cMagic::Mark( UOXSOCKET s )
+void cMagic::Mark( cSocket *s )
 {
 	// Targeted item
-	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
-	if( i == -1 ) return; // lb crashfix
+	CChar *mChar = s->CurrcharObj();
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
 	
-	items[i].morex=chars[currchar[s]].x;
-	items[i].morey=chars[currchar[s]].y;
-	items[i].morez=chars[currchar[s]].z;
-	
-	if (region[chars[currchar[s]].region].name[0]!=0)
-		sprintf(items[i].name, "a recall rune for %s",region[chars[currchar[s]].region].name);
+	i->SetMoreX( mChar->GetX() );
+	i->SetMoreY( mChar->GetY() );
+	i->SetMoreZ( mChar->GetZ() );
+
+	char tempname[512];
+
+	if( region[mChar->GetRegion()]->GetName()[0] != 0 )
+		sprintf( tempname, Dictionary->GetEntry( 684 ),region[mChar->GetRegion()]->GetName() );
 	else 
-		strcpy(items[i].name, " a recall rune for An Unknown Location");
-	
-	sysmessage(s,"Recall rune marked."); 
+		strcpy( tempname, Dictionary->GetEntry( 685 ) );
+	i->SetName( tempname );
+	sysmessage( s, 686 );
 }
 
 // only used for the /gate command
-// AntiChrist
-void cMagic::Gate( UOXSOCKET s)
+void cMagic::Gate( cSocket *s )
 {
-	int c, n;
+	CChar *mChar = s->CurrcharObj();
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
 	
-	// Targeted item
-	int item = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &itemsp[item%HASHMAX], item, 0 );
-	if( i == -1 ) return;
-	
-	if ( items[i].morex<=200 && items[i].morey<=200)
-	{
-		sysmessage( s, "That rune has not been marked yet!" );
-	}
+	if( i->GetMoreX() <= 200 && i->GetMoreY() <= 200 )
+		sysmessage( s, 679 );
 	else
-	{
-		gatex[gatecount][0]=chars[currchar[s]].x;  //create gate a player location
-		gatey[gatecount][0]=chars[currchar[s]].y;
-		gatez[gatecount][0]=chars[currchar[s]].z;
-		
-		gatex[gatecount][1]=items[i].morex; //create gate at marked location
-		gatey[gatecount][1]=items[i].morey;
-		gatez[gatecount][1]=items[i].morez;
-		
-		for (n=0;n<2;n++)  
-		{
-			//strcpy(temp,"a blue moongate");
-			c=Items->SpawnItem(s,1,"#",0,0x0f,0x6c,0,0,0,0);
-			if( c > -1 )
-			{
-				items[c].type=51+n;
-				items[c].x=gatex[gatecount][n];
-				items[c].y=gatey[gatecount][n];
-				items[c].z=gatez[gatecount][n];
-				items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
-				items[c].gatenumber=gatecount;
-				items[c].dir=1;
-				
-				mapRegions->AddItem(c);  //add gate to list of items in the region
-				//for (j=0;j<now;j++) if (perm[j]) senditem(j,c);
-				RefreshItem( c ); // AntiChrist
-			}
-			if (n==1)
-			{
-				gatecount++;
-				if (gatecount>MAXGATES) gatecount=0;
-			}
-			addid1[s]=0;
-			addid2[s]=0;
-		}
-	}
+		SpawnGate( s, mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
 }
 
-unsigned char cMagic::HasSpell( int book, int spellNum )
+void cMagic::Log( const char *spell, CChar *player1, CChar *player2, const char *extraInfo )
+// PRE:		Commands is initialized, toLog is not NULL
+// POST:	Writes out toLog to a file
 {
-	if( book == -1 )
-		return 0;
-	int wordNum = spellNum / 32;
-	int bitNum = (spellNum % 32);
-	int sourceAmount;
-	switch( wordNum )
-	{
-	case 0:	sourceAmount = items[book].morex;	break;
-	case 1:	sourceAmount = items[book].morey;	break;
-	case 2:	sourceAmount = items[book].morez;	break;
-	default: sourceAmount = 0;					break;
-	};
-	return((sourceAmount>>bitNum)%2);
-}
-void cMagic::AddSpell( int book, int spellNum )
-{
-	if( book == -1 )
+	if( spell == NULL || player1 == NULL )
 		return;
-	int wordNum = spellNum / 32;
-	int bitNum = (spellNum % 32);
-	int flagToSet = (1<<bitNum);
-	switch( wordNum )
+	char logName[MAX_PATH];
+	sprintf( logName, "%s/logs/spell.log", cwmWorldState->ServerData()->GetRootDirectory() );
+	FILE *spellLog = fopen( logName, "a+" );
+	if( spellLog == NULL )
 	{
-	case 0:		items[book].morex |= flagToSet;		return;
-	case 1:		items[book].morey |= flagToSet;		return;
-	case 2:		items[book].morez |= flagToSet;		return;
-	default:										return;
-	};
+		Console.Error( 1, "Unable to open spell log file %s for appending!", logName );
+		return;
+	}
+	char dateTime[1024];
+	time_t ltime;
+	time( &ltime );
+	char *t = ctime( &ltime );
+	// just to be paranoid and avoid crashing
+	if( NULL == t )
+		t = "";
+	else
+	{
+		// some ctime()s like to stick \r\n on the end, we don't want that
+		for( int end = strlen(t) - 1; end >= 0 && isspace(t[end]); --end )
+			t[end] = '\0';
+	}
+	safeCopy( dateTime, t, 1024 );
+
+	if( player2 != NULL )
+		fprintf( spellLog, "[%s] %s (serial: %i ) cast spell <%s> on player %s (serial: %i ) Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), spell, player2->GetName(), player2->GetSerial(), extraInfo );
+	else
+		fprintf( spellLog, "[%s] %s (serial: %i ) cast spell <%s> Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), spell, extraInfo );
+	fclose( spellLog );
 }

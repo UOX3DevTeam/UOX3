@@ -1,0 +1,1072 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.36                     *
+//*                                                               *
+//* Last Update : 4/1/2000                                       *
+//* Script : house.scp                                            *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* use the SECTION HOUSE # in your deed (14 f0)'s morey          *
+//*                                                               *
+//* Example:                                                      *
+//* /setmorey # on a house deed (14 f0) to make it a              *
+//* to make it a particular house                                 *
+//*                                                               *
+//*****************************************************************
+
+// Small Brick
+[HOUSE 1]
+{
+ID=0x4068
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6002
+}
+
+//Small Plaster
+[HOUSE 2]
+{
+ID=0x4064
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6000
+}
+
+// Small Field Stone
+[HOUSE 3]
+{
+ID=0x4066
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6001
+}
+
+//Small Wood
+[HOUSE 4]
+{
+ID=0x406A
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6003
+}
+
+//Small Wood & Plaster
+[HOUSE 5]
+{
+ID=0x406C
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6004
+}
+
+//Small Hut
+[HOUSE 6]
+{
+ID=0x406E
+SPACEX=7
+SPACEY=7
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=1
+HOUSE_ITEM=2
+HOUSE_DEED=6005
+}
+
+//Blue Tent
+[HOUSE 7]
+{
+ID=0x4070
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=3
+HOUSE_DEED=6006
+}
+
+//Green Tent
+[HOUSE 8]
+{
+ID=0x4072
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=3
+HOUSE_DEED=6007
+}
+
+//Guild Hall
+[HOUSE 9]
+{
+ID=0x4074
+SPACEX=8
+SPACEY=8
+CHARX=0
+CHARY=0
+CHARZ=7
+HOUSE_ITEM=4
+HOUSE_ITEM=5
+HOUSE_ITEM=6
+HOUSE_ITEM=7
+HOUSE_ITEM=8
+HOUSE_DEED=6008
+}
+
+// 2 Story ( Wood & Plaster )
+[HOUSE 10]
+{
+ID=0x4076
+SPACEX=8
+SPACEY=8
+CHARX=-1
+CHARY=1
+CHARZ=7
+HOUSE_ITEM=9
+HOUSE_ITEM=10
+HOUSE_ITEM=11
+HOUSE_ITEM=12
+HOUSE_ITEM=13
+HOUSE_DEED=6009
+}
+
+[HOUSE 11]
+{ 2 Story (Plaster)
+ID=0x4078
+SPACEX=8
+SPACEY=8
+CHARX=-1
+CHARY=1
+CHARZ=7
+HOUSE_ITEM=9
+HOUSE_ITEM=14
+HOUSE_ITEM=11
+HOUSE_ITEM=12
+HOUSE_ITEM=13
+HOUSE_DEED=6010
+}
+
+[HOUSE 12]
+{ Tower (3 story Stone)
+ID=0x407A
+SPACEX=10
+SPACEY=10
+CHARX=0
+CHARY=0
+CHARZ=7
+HOUSE_ITEM=15
+HOUSE_ITEM=16
+HOUSE_ITEM=17
+HOUSE_ITEM=18
+HOUSE_ITEM=19
+HOUSE_ITEM=20
+HOUSE_DEED=6011
+}
+
+[HOUSE 13]
+{ Keep (mini castle)
+ID=0x407C
+SPACEX=10
+SPACEY=10
+CHARX=0
+CHARY=0
+CHARZ=7
+HOUSE_ITEM=21
+HOUSE_ITEM=22
+HOUSE_ITEM=23
+HOUSE_DEED=6012
+}
+
+[HOUSE 14]
+{ Castle
+ID=0x407E
+SPACEX=11
+SPACEY=11
+CHARX=1
+CHARY=6
+CHARZ=6
+HOUSE_ITEM=24
+HOUSE_ITEM=25
+HOUSE_ITEM=26
+HOUSE_ITEM=27
+HOUSE_ITEM=28
+HOUSE_ITEM=29
+HOUSE_ITEM=30
+HOUSE_DEED=6013
+}
+
+[HOUSE 15]
+{ Shop (Generic)
+ID=0x408C
+SPACEX=9
+SPACEY=9
+CHARX=-2
+CHARY=2
+CHARZ=7
+HOUSE_ITEM=31
+HOUSE_ITEM=32
+HOUSE_ITEM=33
+HOUSE_ITEM=34
+HOUSE_ITEM=35
+HOUSE_ITEM=36
+HOUSE_ITEM=37
+}
+
+[HOUSE 16]
+{ Shop (Smith's)
+ID=0x408C
+SPACEX=9
+SPACEY=9
+CHARX=-2
+CHARY=2
+CHARZ=7
+HOUSE_ITEM=31
+HOUSE_ITEM=32
+HOUSE_ITEM=33
+HOUSE_ITEM=34
+HOUSE_ITEM=35
+HOUSE_ITEM=36
+HOUSE_ITEM=37
+HOUSE_ITEM=38
+HOUSE_ITEM=39
+HOUSE_ITEM=40
+HOUSE_ITEM=41
+HOUSE_DEED=6014
+}
+
+[HOUSE 17]
+{ Farm House
+ID=0x4BB8
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=42
+}
+
+[HOUSE 18]
+{ Pentagram
+ID=0x0FEA
+TYPE=1
+//SPACEX 2
+//SPACEY 2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=43
+HOUSE_ITEM=44
+HOUSE_ITEM=45
+HOUSE_ITEM=46
+HOUSE_ITEM=47
+HOUSE_ITEM=48
+HOUSE_ITEM=49
+HOUSE_ITEM=50
+HOUSE_ITEM=51
+}
+
+[HOUSE 19]
+{ LOOM-TEST
+ID=0x0
+//SPACEX 2
+//SPACEY 2
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=52
+HOUSE_ITEM=53
+}
+
+[HOUSE 20]
+{ Small Boat
+ID=0x4000
+BOAT
+CHARX=1
+}
+
+[HOUSE 21]
+{ Small Dragon Boat
+ID=0x4004
+BOAT
+CHARX=1
+}
+
+[HOUSE 22]
+{ Medium Boat
+ID=0x4008
+BOAT
+CHARX=1
+}
+
+[HOUSE 23]
+{ Medium Dragon Boat
+ID=0x400C
+BOAT
+CHARX=1
+}
+
+[HOUSE 24]
+{ Large Boat
+ID=0x4010
+BOAT
+CHARX=1
+}
+
+[HOUSE 25]
+{ Large Dragon Boat
+ID=0x4012
+BOAT
+CHARX=1
+}
+
+// Small Tower
+[HOUSE 26]
+{
+ID=0x4098
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=8
+HOUSE_ITEM=100
+HOUSE_ITEM=101
+HOUSE_DEED=6037
+}
+
+// Small Marble Shop
+[HOUSE 27]
+{
+ID=0x40A2
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=24
+HOUSE_ITEM=102
+HOUSE_ITEM=103
+HOUSE_DEED=6038
+}
+
+// Small Stone Shop
+[HOUSE 28]
+{
+ID=0x40A0
+SPACEX=5
+SPACEY=5
+CHARX=0
+CHARY=0
+CHARZ=27
+HOUSE_ITEM=104
+HOUSE_ITEM=105
+HOUSE_DEED=6039
+}
+
+// 2 Story Villa
+[HOUSE 29]
+{
+ID=0x409e
+SPACEX=9
+SPACEY=9
+CHARX=-2
+CHARY=2
+CHARZ=7
+HOUSE_ITEM=106
+HOUSE_ITEM=107
+HOUSE_ITEM=108
+HOUSE_ITEM=109
+HOUSE_ITEM=110
+HOUSE_DEED=6040
+}
+
+// Sandstone Patio House
+[HOUSE 30]
+{
+ID=0x409c
+SPACEX=8
+SPACEY=8
+CHARX=-2
+CHARY=2
+CHARZ=7
+HOUSE_ITEM=111
+HOUSE_ITEM=112
+HOUSE_DEED=6041
+}
+
+
+//  2 Story Log Cabin
+[HOUSE 31]
+{
+ID=0x409a
+SPACEX=8
+SPACEY=8
+CHARX=0
+CHARY=0
+CHARZ=7
+HOUSE_ITEM=113
+HOUSE_ITEM=114
+HOUSE_ITEM=115
+HOUSE_DEED=6042
+}
+
+// Large Marble Patio House
+[HOUSE 32]
+{
+ID=0x4096
+SPACEX=10
+SPACEY=10
+CHARX=-3
+CHARY=0
+CHARZ=7
+HOUSE_ITEM=116
+HOUSE_ITEM=117
+HOUSE_ITEM=118
+HOUSE_DEED=6043
+}
+
+[HOUSE ITEM 1]
+{ Wooden Door (Small house)
+ITEM=0x06A5
+LOCK
+X=0
+Y=3
+Z=8
+}
+
+[HOUSE ITEM 2]
+{ Sign (Small house)
+ITEM=housesign
+LOCK
+X=2
+Y=4
+Z=5
+}
+
+[HOUSE ITEM 3]
+{ Chest (tent)
+ITEM=0x0E43
+LOCK
+NODECAY
+X=0
+Y=-2
+Z=0
+}
+
+[HOUSE ITEM 4]
+{ GHall Inner Door (left)
+ITEM=0x06A5
+LOCK
+X=3
+Y=-1
+Z=8
+}
+
+[HOUSE ITEM 5]
+{ GHall Inner Door (right)
+ITEM=0x06A5
+LOCK
+X=-3
+Y=-1
+Z=8
+}
+
+[HOUSE ITEM 6]
+{ GHall Outer Door (left)
+ITEM=0x06A5
+LOCK
+X=-1
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 7]
+{ GHall Outer Door (right)
+ITEM=0x06A7
+LOCK
+X=0
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 8]
+{ GHall Sign
+ITEM=housesign
+LOCK
+X=3
+Y=7
+Z=5
+}
+
+[HOUSE ITEM 9]
+{ 2 Story Inner Door (lower level)
+ITEM=0x06A5
+LOCK
+X=-3
+Y=0
+Z=7
+}
+
+[HOUSE ITEM 10]
+{ 2 Story Inner Door (Upper level (Wood & plaster)
+ITEM=0x06A5
+LOCK
+X=-2
+Y=0
+Z=27
+}
+
+[HOUSE ITEM 11]
+{ 2 Story Outter door (left)
+ITEM=0x06A5
+LOCK
+X=-3
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 12]
+{ 2 Story Outter door (right)
+ITEM=0x06A7
+LOCK
+X=-2
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 13]
+{ 2 Story Sign
+ITEM=housesign
+LOCK
+X=1
+Y=7
+Z=5
+}
+
+[HOUSE ITEM 14]
+{ 2 Story Inner Door (Upper level (plaster)
+ITEM=0x06A5
+LOCK
+X=-3
+Y=0
+Z=27
+}
+
+[HOUSE ITEM 15]
+{ Tower Outer door (left)
+ITEM=0x0675
+LOCK
+X=0
+Y=6
+Z=7
+}
+
+[HOUSE ITEM 16]
+{ Tower Outer door (right)
+ITEM=0x0677
+LOCK
+X=1
+Y=6
+Z=7
+}
+
+[HOUSE ITEM 17]
+{ Tower Door (lev 1)
+ITEM=0x0675
+LOCK
+X=3
+Y=-2
+Z=6
+}
+
+[HOUSE ITEM 18]
+{ Tower Sign
+ITEM=housesign
+LOCK
+X=4
+Y=7
+Z=5
+}
+
+[HOUSE ITEM 19]
+{ Tower Door (lev 2)
+ITEM=0x067D
+LOCK
+X=1
+Y=4
+Z=26
+}
+
+[HOUSE ITEM 20]
+{ Tower Door (lev 3)
+ITEM=0x067D
+LOCK
+X=1
+Y=4
+Z=46
+}
+
+[HOUSE ITEM 21]
+{ keep door (left)
+ITEM=0x0675
+LOCK
+X=0
+Y=10
+Z=7
+}
+
+[HOUSE ITEM 22]
+{ keep door (right)
+ITEM=0x0677
+LOCK
+X=1
+Y=10
+Z=7
+}
+
+[HOUSE ITEM 23]
+{ keep sign
+ITEM=housesign
+LOCK
+X=4
+Y=11
+Z=5
+}
+
+[HOUSE ITEM 24]
+{ castle door (middle (right))
+ITEM=0x0677
+LOCK
+X=1
+Y=5
+Z=6
+}
+
+[HOUSE ITEM 25]
+{ castle door (middle (left))
+ITEM=0x0675
+LOCK
+X=0
+Y=5
+Z=6
+}
+
+[HOUSE ITEM 26]
+{ castle door (outer inner (left))
+ITEM=0x0675
+LOCK
+X=0
+Y=11
+Z=6
+}
+
+[HOUSE ITEM 27]
+{ castle door (outer inner (right))
+ITEM=0x0677
+LOCK
+X=1
+Y=11
+Z=6
+}
+
+[HOUSE ITEM 28]
+{ castle door (outer (left))
+ITEM=0x0675
+LOCK
+X=0
+Y=15
+Z=7
+}
+
+[HOUSE ITEM 29]
+{ castle door (outer (right))
+ITEM=0x0677
+LOCK
+X=1
+Y=15
+Z=7
+}
+
+[HOUSE ITEM 30]
+{ castle sign
+ITEM=housesign
+LOCK
+X=4
+Y=16
+Z=5
+}
+
+[HOUSE ITEM 31]
+{ Shop Inner door (left)
+ITEM=0x06AD
+LOCK
+X=1
+Y=4
+Z=8
+}
+
+[HOUSE ITEM 33]
+{ Shop Inner door (middle)
+ITEM=0x06A5
+LOCK
+X=4
+Y=-1
+Z=8
+}
+
+[HOUSE ITEM 34]
+{ Shop outer (right)
+ITEM=0x06A7
+LOCK
+X=-3
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 35]
+{ Shop outer (left)
+ITEM=0x06A5
+LOCK
+X=-4
+Y=6
+Z=8
+}
+
+[HOUSE ITEM 36]
+{ Shop sign
+ITEM=housesign
+LOCK
+X=0
+Y=7
+Z=5
+}
+
+[HOUSE ITEM 37]
+{ Shop Inner door (right)
+ITEM=0x06AF
+LOCK
+X=1
+Y=-4
+Z=8
+}
+
+[HOUSE ITEM 38]
+{ Shop forge part 1
+ITEM=0x197A
+X=3
+Y=2
+Z=8
+}
+
+[HOUSE ITEM 39]
+{ Shop forge part 2
+ITEM=0x197E
+X=4
+Y=2
+Z=8
+}
+
+[HOUSE ITEM 40]
+{ Shop forge part 3
+ITEM=0x1982
+X=5
+Y=2
+Z=8
+}
+
+[HOUSE ITEM 41]
+{ Shop anvil
+ITEM=0x0FAF
+X=5
+Y=4
+Z=8
+}
+
+[HOUSE ITEM 42]
+{ Farm house Door
+ITEM=0x06DD
+X=4
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 43]
+{ PENTA-MIDDLE
+ITEM=0x0FEA
+X=0
+Y=0
+Z=0
+}
+[HOUSE ITEM 44]
+{ PENTA-T-LEFT
+ITEM=0x0FE7
+X=-1
+Y=-1
+Z=0
+}
+[HOUSE ITEM 45]
+{ PENTA-TOP
+ITEM=0x0FE8
+X=0
+Y=-1
+Z=0
+}
+[HOUSE ITEM 46]
+{ PENTA-B-LEFT
+ITEM=0x0FE9
+X=-1
+Y=1
+Z=0
+}
+[HOUSE ITEM 47]
+{ PENTA-LEFT
+ITEM=0x0FE6
+X=-1
+Y=0
+Z=0
+}
+[HOUSE ITEM 48]
+{ TOP-RIGHT
+ITEM=0x0FEB
+X=1
+Y=-1
+Z=0
+}
+[HOUSE ITEM 49]
+{ BOTTOM
+ITEM=0x0FEC
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 50]
+{ BOTTOM-RIGHT
+ITEM=0x0FED
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 51]
+{ RIGHT
+ITEM=0x0FEE
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 52]
+{ LOOM-PT1
+ITEM=0x1061
+X=0
+Y=0
+Z=8
+}
+
+[HOUSE ITEM 53]
+{ LOOM-PT2
+ITEM=0x1062
+X=1
+Y=0
+Z=8
+}
+
+[HOUSE ITEM 100]
+{ Door (small tower)
+ITEM=0x0675
+LOCK
+X=3
+Y=3
+Z=6
+}
+
+[HOUSE ITEM 101]
+{ Sign (Small tower)
+ITEM=housesign
+LOCK
+X=1
+Y=4
+Z=5
+}
+
+[HOUSE ITEM 102]
+{ Door (marble 2-story)
+ITEM=0x0675
+LOCK
+X=-2
+Y=0
+Z=24
+}
+
+[HOUSE ITEM 103]
+{ Sign (marble 2-story)
+ITEM=housesign
+LOCK
+X=3
+Y=4
+Z=5
+}
+
+
+[HOUSE ITEM 104]
+{ Door (stone 2-story)
+ITEM=0x0675
+LOCK
+X=-2
+Y=0
+Z=27
+}
+
+[HOUSE ITEM 105]
+{ Sign (marble 2-story)
+ITEM=housesign
+LOCK
+X=3
+Y=4
+Z=6
+}
+
+[HOUSE ITEM 106]
+{ Sign (2-story taver)
+ITEM=housesign
+LOCK
+X=1
+Y=6
+Z=3
+}
+
+[HOUSE ITEM 107]
+{ Door (front left)
+ITEM=0x06E5
+LOCK
+X=3
+Y=1
+Z=5
+}
+
+[HOUSE ITEM 108]
+{ Door (front right)
+ITEM=0x06E7
+LOCK
+X=4
+Y=1
+Z=5
+}
+
+[HOUSE ITEM 109]
+{ Door (inside bedroom)
+ITEM=0x06E7
+LOCK
+X=-2
+Y=-1
+Z=25
+}
+
+[HOUSE ITEM 110]
+{ Door (balcony)
+ITEM=0x06ED
+LOCK
+X=1
+Y=0
+Z=25
+}
+
+[HOUSE ITEM 111]
+{ Sign (adobe)
+ITEM=housesign
+LOCK
+X=3
+Y=5
+Z=12
+}
+
+[HOUSE ITEM 112]
+{ Door (adobe)
+ITEM=0x06A7
+LOCK
+X=-1
+Y=3
+Z=6
+}
+
+[HOUSE ITEM 113]
+{ Sign (2-story log)
+ITEM=housesign
+LOCK
+X=4
+Y=5
+Z=14
+}
+
+[HOUSE ITEM 114]
+{ Door (2-story log, front)
+ITEM=0x06A5
+LOCK
+X=1
+Y=4
+Z=8
+}
+
+[HOUSE ITEM 115]
+{ Door (2-story log, balcony)
+ITEM=0x06A5
+LOCK
+X=1
+Y=0
+Z=30
+}
+
+[HOUSE ITEM 116]
+{ Sign (3-story marble)
+ITEM=housesign
+LOCK
+X=0
+Y=7
+Z=0
+}
+
+[HOUSE ITEM 117]
+{ Door (3-story marble, left)
+ITEM=0x0675
+LOCK
+X=-4
+Y=3
+Z=4
+}
+
+[HOUSE ITEM 118]
+{ Door (3-story marble, right)
+ITEM=0x0677
+LOCK
+X=-3
+Y=3
+Z=4
+}
+

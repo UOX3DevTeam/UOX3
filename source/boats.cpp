@@ -1,33 +1,3 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  boats.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-//Boats->cpp by Zippy Started on 7/12/99
-// Mapregion stuff + boat-blocking corrected/touched up by LB 7/24/99
-// great work Zippy :)
-
 #include "uox3.h"
 #include "boats.h"
 
@@ -40,143 +10,42 @@
 //[4]=direction of ship
 //[4]=Which Item (PT Plank, SB Plank, Hatch, TMan)
 //[2]=Coord (x,y) offsets
-signed short int iSmallShipOffsets[4][4][2]=
-// X  Y  X  Y  X  Y  X  Y
-{ -2, 0, 2, 0, 0,-4, 1, 4,//Dir
-0,-2, 0, 2, 4, 0,-4, 0,
-2, 0,-2, 0, 0, 4, 0,-4,
-0, 2, 0,-2,-4, 0, 4, 0 };
+SI16 iSmallShipOffsets[4][4][2] =
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{ 
+	-2,	 0,	 2,	 0,	 0,	-4,	 1,	 4,//Dir
+	 0,	-2,	 0,	 2,	 4,	 0,	-4,	 0,
+	 2,	 0,	-2,	 0,	 0,	 4,	 0,	-4,
+	 0,	 2,	 0,	-2,	-4,	 0,	 4,	 0 
+};
 //  P1    P2   Hold  Tiller
-signed short int iMediumShipOffsets[4][4][2]=
-// X  Y  X  Y  X  Y  X  Y
-{ -2, 0, 2, 0, 0,-4, 1, 5,
-0,-2, 0, 2, 4, 0,-5, 0,
-2, 0,-2, 0, 0, 4, 0,-5,
-0, 2, 0,-2,-4, 0, 5, 0 };
-signed short int iLargeShipOffsets[4][4][2]=
-// X  Y  X  Y  X  Y  X  Y
-{ -2,-1, 2,-1, 0,-5, 1, 5,
-1,-2, 1, 2, 5, 0,-5, 0,
-2, 1,-2, 1, 0, 5, 0,-5,
--1, 2,-1,-2,-5, 0, 5, 0 };
+SI16 iMediumShipOffsets[4][4][2] =
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{ 
+	-2,  0,	 2,	 0,	 0,	-4,	 1,	 5,
+	 0,	-2,	 0,	 2,	 4,	 0,	-5,	 0,
+	 2,	 0,	-2,	 0,	 0,	 4,	 0,	-5,
+	 0,	 2,	 0,	-2,	-4,	 0,	 5,	 0 
+};
+SI16 iLargeShipOffsets[4][4][2] =
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{ 
+	-2,	-1,	 2,	-1,	 0,	-5,	 1,	 5,
+	 1,	-2,	 1,	 2,	 5,	 0,	-5,	 0,
+	 2,	 1,	-2,	 1,	 0,	 5,	 0,	-5,
+	-1,	 2,	-1,	-2,	-5,	 0,	 5,	 0 
+};
 //Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
-unsigned char cShipItems[4][6]=
-{0xB1,0xD5,0xB2,0xD4,0xAE,0x4E,
-0x8A,0x89,0x85,0x84,0x65,0x53,
-0xB2,0xD4,0xB1,0xD5,0xB9,0x4B,
-0x85,0x84,0x8A,0x89,0x93,0x50 };
+UI08 cShipItems[4][6]=
+{
+	0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E,
+	0x8A, 0x89, 0x85, 0x84, 0x65, 0x53,
+	0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B,
+	0x85, 0x84, 0x8A, 0x89, 0x93, 0x50 
+};
 //============================================================================================
-
-
-void sendinrange(int i)//Send this item to all online people in range
-{//(Decided this was better than writting 1000 for loops to send an item.
-	for(unsigned int a=0;a<now;a++)
-	{
-		if(perm[a] && iteminrange(a,i,Races->getVisRange( chars[currchar[a]].race ) ) )
-			senditem(a,i);
-	}
-}
-
-int dist(int a, int b, int type)//Distance from A to B (type = 1 (a is a char) type=0 (a is an item))
-{
-	int xa,ya,xb,yb,dx,dy,ret;
-	if(type)
-	{
-		xa=chars[a].x;
-		ya=chars[a].y;
-	} else {
-		xa=items[a].x;
-		ya=items[a].y;
-	}
-	xb=items[b].x;
-	yb=items[b].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-#ifdef __NT__
-	ret=(int)(sqrt(dx*dx+dy*dy));
-#else
-	ret=(int)(hypot(dx, dy));
-#endif
-	return ret;
-}
-
-int findmulti(int x, int y, signed char z)//Sortta like getboat() only more general... use this for other multi stuff!
-{
-	int lastdist=30;
-	int multi=-1;
-	int ret,dx,dy;
-	
-	int	StartGrid=mapRegions->StartGrid(x,y);
-	//int	getcell=mapRegions->GetCell(x,y);
-	
-	unsigned int increment=0;
-	for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-	{
-		for (int a=0;a<3;a++)
-		{
-			int mapitemptr=-1;
-			int	mapitem=-1;
-			int mapchar=-1;
-			do //check all items in this cell
-			{
-				mapchar=-1;
-				mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-				if (mapitemptr==-1) break;
-				mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-				if(mapitem>999999) mapchar=mapitem-1000000;
-				if (mapitem>-1 && mapitem<999999)
-				{
-					if (items[mapitem].id1>=0x40)
-					{
-						dx=abs(x-items[mapitem].x);
-						dy=abs(y-items[mapitem].y);
-#ifdef __NT__
-						ret=(int)(sqrt(dx*dx+dy*dy));
-#else
-						ret=(int)(hypot(dx, dy));
-#endif
-						if (ret<=lastdist)
-						{
-							lastdist=ret;
-							if (inmulti(x,y,z,mapitem))
-								multi=mapitem;
-						}
-					}
-				}
-			} while (mapitem>-1);
-		}//For a
-	}//For checkgrid
-	return multi;
-}
-
-int inmulti(int x, int y, signed char z, int m)//see if they are in the multi at these chords (Z is NOT checked right now)
-// PARAM WARNING: z is unreferenced
-{
-	int j;
-	SI32 length;			// signed long int on Intel
-	st_multi multi;
-	UOXFile *mfile;
-	Map->SeekMulti(((items[m].id1<<8)+items[m].id2)-0x4000, &mfile, &length);
-	length=length/sizeof(st_multi);
-	if (length == -1 || length>=17000000)//Too big...
-	{
-		printf("inmulti() - Bad length in multi file. Avoiding stall. (Item Name: %s %i) (Length: %d)\n", items[m].name, items[m].serial, length );
-		length = 0;
-	}
-	for (j=0;j<length;j++)
-	{
-	        mfile->get_st_multi(&multi);
-		/*printf("DEBUG: Multi { vis=%i - (%i,%i) } check(%i,%i,%i)   -   total(%i,%i)\n",
-		multi.visible,multi.x,multi.y,x,y,z,multi.x+items[m].x,items[m].y+multi.y);*/
-		if ((multi.visible)&&(items[m].x+multi.x == x) && (items[m].y+multi.y == y))
-		{
-			return 1;
-		}
-	}
-	return 0;
-}
 
 cBoat::cBoat()//Consturctor
 {
@@ -186,368 +55,378 @@ cBoat::~cBoat()//Destructor
 {
 }
 
-void cBoat::PlankStuff(int s, int p)//double click Will send them here
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::PlankStuff( cSocket *s, CItem *p )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	If not on a boat, will send character to the plank, other
+//|					wise will call OpenPlank to open/close the plank
+//o---------------------------------------------------------------------------o
+void cBoat::PlankStuff( cSocket *s, CItem *p )
 {
-	int boat=GetBoat(s),a,b,serhash=chars[currchar[s]].serial%HASHMAX;
-	int boat2, mser;
+	CChar *mChar = s->CurrcharObj();
 
-	if(boat==-1)//They aren't on a boat, so put then on the plank.
+	CItem *boat = GetBoat( s );
+	if( boat == NULL )
 	{
-		mapRegions->RemoveItem(currchar[s]+1000000);
-		chars[currchar[s]].x=items[p].x;
-		chars[currchar[s]].y=items[p].y;
-		chars[currchar[s]].z=chars[currchar[s]].dispz=items[p].z+5;
-		mapRegions->AddItem(currchar[s]+1000000);
-
-		mser = calcserial(items[p].more1, items[p].more2, items[p].more3, items[p].more4 );
-		
-		boat2 = calcItemFromSer( mser );
-
-		if ( boat2 != -1 )
+		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 5 );
+		SERIAL mser = p->GetMore();
+		CItem *boat2 = calcItemObjFromSer( mser );
+		if( boat2 != NULL )
 		{
-			for(a=0;a<ownsp[serhash].max;a++)//Put all their Pets/Hirlings on the boat too
+			CHARLIST *myPets = mChar->GetPetList();
+			if( myPets != NULL )
 			{
-				b=ownsp[serhash].pointer[a];
-				if (b<cmem && b>-1)
+				for( UI32 a = 0; a < myPets->size(); a++ )	// All pet/hirelings
 				{
-					if (chars[b].npc && chars[b].ownserial==chars[currchar[s]].serial && inrange1p(currchar[s], b)<=15)
+					CChar *pet = (*myPets)[a];
+					if( pet != NULL )
 					{
-						mapRegions->RemoveItem(b+1000000);
-						chars[b].x=items[boat2].x+1;
-						chars[b].y=items[boat2].y+1;
-						chars[b].z=chars[b].dispz=items[boat2].z+4;
-						mapRegions->AddItem(b+1000000);
-						setserial(b,boat2,8);
-						
-						teleport(b);
+						if( !pet->IsMounted() && pet->IsNpc() && getDist( mChar, pet ) <= 15 )
+						{
+							pet->SetLocation( boat2->GetX() + 1, boat2->GetY() + 1, boat2->GetZ() + 4 );
+							pet->SetMulti( boat2 );
+							pet->Teleport();
+						}
 					}
 				}
 			}
 		}
 		
-		if (boat2!=-1)
+		if( boat2 != NULL )
 		{
-			sysmessage( s, "You board the boat." );
-			setserial(currchar[s],boat2,8);
-		} else 
-			sysmessage(s, "There was no boat found there.");
-	} else {
-		LeaveBoat(s,p);//They are on a boat, get off
-	}
-	teleport(currchar[s]);//Show them they moved.
+			sysmessage( s, 1 );
+			mChar->SetMulti( boat2 );
+		} 
+		else 
+			sysmessage( s, 2 );
+	} 
+	else 
+		LeaveBoat( s, p );
+	mChar->Teleport();
 }
 
-
-void cBoat::LeaveBoat(int s, int p)//Get off a boat (dbl clicked an open plank while on the boat.
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::LeaveBoat( cSocket *s, CItem *p )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Leave a boat
+//o---------------------------------------------------------------------------o
+void cBoat::LeaveBoat( cSocket *s, CItem *p )
 {
-	//long int pos, pos2, length;
-	int x,x2=items[p].x;
-	int y,y2=items[p].y;
-	signed char z=items[p].z,mz,sz,typ;
-	int boat=GetBoat(s);
-	int a,b,serhash=chars[currchar[s]].serial%HASHMAX;
-	// char o;
-	
-	if (boat==-1) return;
-	
-	for(x=x2-2;x<x2+3;x++)
+	CItem *boat = GetBoat( s );
+	if( boat == NULL ) 
+		return;
+
+	SI16 x2 = p->GetX();
+	SI16 y2 = p->GetY();
+	SI08 z = p->GetZ(), typ;
+	CChar *mChar = s->CurrcharObj();
+	UI08 worldNumber = mChar->WorldNumber();
+	for( SI16 x = x2 - 2; x < x2 + 3; x++ )
 	{
-		for(y=y2-2;y<y2+3;y++)
+		for( SI16 y = y2 - 2; y < y2 + 3; y++ )
 		{
-			sz=(signed char) Map->StaticTop(x,y,z); // MapElevation() doesnt work cauz we are in a multi !!
+			SI08 sz = (SI08)Map->StaticTop( x, y, z, worldNumber );
+			SI08 mz = (SI08) Map->MapElevation( x, y, worldNumber );
+			if( sz == illegal_z) 
+				typ = 0;
+			else
+				typ = 1;
 			
-			mz=(signed char) Map->MapElevation(x,y);
-			if (sz==illegal_z) typ=0;
-			else typ=1;
-			//o=Map->o_Type(x,y,z);
-			
-			if((typ==0 && mz!=5) || (typ==1 && sz!=-5))// everthing the blocks a boat is ok to leave the boat ... LB
+			if( ( typ == 0 && mz != 5) || ( typ == 1 && sz != -5 ) )// everthing the blocks a boat is ok to leave the boat ... LB
 			{
-				for(a=0;a<ownsp[serhash].max;a++)//Put all their Pets/Hirlings on the boat too
+				CHARLIST *myPets = mChar->GetPetList();
+				if( myPets != NULL )
 				{
-					b=ownsp[serhash].pointer[a];
-					if (b>-1 && b<cmem)
+					for( UI32 a = 0; a < myPets->size(); a++ )
 					{
-						if (chars[b].npc && chars[b].ownserial==chars[currchar[s]].serial && inrange1p(currchar[s], b)<=15)
+						CChar *pet = (*myPets)[a];
+						if( pet != NULL )
 						{
-							mapRegions->RemoveItem(b+1000000);
-							chars[b].x=x;
-							chars[b].y=y;
-							if( typ ) 
-								chars[b].z = chars[b].dispz = sz; 
-							else 
-								chars[b].z = chars[b].dispz = mz;
-							mapRegions->AddItem( b + 1000000 );
-							
-							if( chars[b].multis != -1 )
+							if( !pet->IsMounted() && pet->IsNpc() && getDist( mChar, pet ) <= 15 )
 							{
-								unsetserial( b, 8 );
+								if( typ )
+									pet->SetLocation( x, y, sz );
+								else 
+									pet->SetLocation( x, y, mz );
+								
+								if( pet->GetMulti() != INVALIDSERIAL )
+									pet->SetMulti( INVALIDSERIAL );
+								pet->Teleport();
 							}
-							
-							teleport(b);
 						}
 					}
 				}
+				mChar->SetMulti( INVALIDSERIAL );
 				
-                mapRegions->RemoveItem(currchar[s]+1000000);
-				chars[currchar[s]].x=x;
-				chars[currchar[s]].y=y;
-				unsetserial( currchar[s], 8 );
-				
-				if (typ) 
-					chars[currchar[s]].z=chars[currchar[s]].dispz=sz; 
+				if( typ ) 
+					mChar->SetLocation( x, y, sz );
 				else  
-					chars[currchar[s]].z=chars[currchar[s]].dispz=mz;
+					mChar->SetLocation( x, y, mz );
 				
-				mapRegions->AddItem(currchar[s]+1000000);
-				
-				sysmessage(s,"You left the boat.");			
+				sysmessage( s, 3 );
 				return;
 			}
-		}//for y
-	}//for x
-	sysmessage(s,"You cannot get off here!");
+		}
+	}
+	sysmessage( s, 4 );
 }
 
-void cBoat::OpenPlank(int p)//Open, or close the plank (called from keytarget() )
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::OpenPlank( CItem *p )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Open / Close a plank
+//o---------------------------------------------------------------------------o
+void cBoat::OpenPlank( CItem *p )
 {
-	switch(items[p].id2)
+	switch( p->GetID( 2 ) )
 	{
 		//Open plank->
-	case 0xE9: items[p].id2=0x84; break;
-	case 0xB1: items[p].id2=0xD5; break;
-	case 0xB2: items[p].id2=0xD4; break;
-	case 0x8A: items[p].id2=0x89; break;
-	case 0x85: items[p].id2=0x84; break;
+	case 0xE9: p->SetID( 0x84, 2 ); break;
+	case 0xB1: p->SetID( 0xD5, 2 ); break;
+	case 0xB2: p->SetID( 0xD4, 2 ); break;
+	case 0x8A: p->SetID( 0x89, 2 ); break;
+	case 0x85: p->SetID( 0x84, 2 ); break;
 		//Close Plank->
-	case 0x84: items[p].id2=0xE9; break;
-	case 0xD5: items[p].id2=0xB1; break;
-	case 0xD4: items[p].id2=0xB2; break;
-	case 0x89: items[p].id2=0x8A; break;
-	default: printf("WARNING: Invalid plank ID called! Plank %i '%s' [%x %x]\n",p,items[p].name,items[p].id1,items[p].id2); break;
+	case 0x84: p->SetID( 0xE9, 2 ); break;
+	case 0xD5: p->SetID( 0xB1, 2 ); break;
+	case 0xD4: p->SetID( 0xB2, 2 ); break;
+	case 0x89: p->SetID( 0x8A, 2 ); break;
+	default: 	Console.Warning( 2, "Invalid plank ID called! Plank %i '%s' [%i]", p->GetSerial(), p->GetName(), p->GetID() );
+			break;
 	}
 }
 
-bool cBoat::Build(int s, int b, char id2)//Build a boat! (Do stuff NESSICARY for boats, called from buildhouse() )
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Create a boat
+//o---------------------------------------------------------------------------o
+bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 {
-	int tiller,p1,p2,hold;
-	int nid2=id2;
-
-	if( b == -1 ) 
+	if( b == NULL ) 
 	{
-		sysmessage(s, "There was an error creating that boat.");
+		sysmessage( s, 5 );
 		return false;
 	}
-	
-	if(id2!=0x00 && id2!=0x04 && id2!=0x08 && id2!=0x0C && id2!=0x10 && id2 != 0x14)//Valid boat ids (must start pointing north!)
-	{
-		sysmessage(s, "The deed is broken, please contact a Game Master.");
-		return false;
-	}
-	//Start checking for a valid possition:
-
-	if( Block( b, 0, 0, 0 ) )
-	{
-		sysmessage( s, "You cannot place your boat there." );
-		return false;
-	}
-	
-	// Okay we found a good  place....
-
-	items[b].more1=id2;//Set min ID
-	items[b].more2=nid2+3;//set MAX id
-	items[b].type=117;//Boat type
-	items[b].z=-5;//Z in water
-	
-	strcpy(items[b].name,"a mast");//Name is something other than "%s's house"
-	tiller=Items->SpawnItem(s,1,"a tiller man",0,0x3E,0x4E,0,0,0,0);
-	if( tiller == -1 ) return false;
-	items[tiller].z=-5;
-	items[tiller].priv=0;
-	p2=Items->SpawnItem(s,1,"#",0,0x3E,0xB2,0,0,0,0);//Plank2 is on the RIGHT side of the boat
-	if( p2 == -1 ) return false;
-	items[p2].type=117;
-	items[p2].type2=3;
-	items[p2].more1=items[b].ser1;//Lock this item!
-	items[p2].more2=items[b].ser2;
-	items[p2].more3=items[b].ser3;
-	items[p2].more4=items[b].ser4;
-	items[p2].z=-5;
-	items[p2].priv=0;//Nodecay
-	p1=Items->SpawnItem(s,1,"#",0,0x3E,0xB1,0,0,0,0);//Plank1 is on the LEFT side of the boat
-	if( p1 == -1 ) return false;
-	items[p1].type=117;//Boat type
-	items[p1].type2=3;//Plank sub type
-	items[p1].more1=items[b].ser1;
-	items[p1].more2=items[b].ser2;//Lock this
-	items[p1].more3=items[b].ser3;
-	items[p1].more4=items[b].ser4;
-	items[p1].z=-5;
-	items[p1].priv=0;
-	hold=Items->SpawnItem(s,1,"#",0,0x3E,0xAE,0,0,0,0);
-	if( hold == -1 ) return false;
-	items[hold].more1=items[b].ser1;//Lock this too :-)
-	items[hold].more2=items[b].ser2;
-	items[hold].more3=items[b].ser3;
-	items[hold].more4=items[b].ser4;
-	items[hold].type=1;//Conatiner
-	items[hold].z=-5;
-	items[hold].priv=0;
-	
-	items[b].moreb1=items[tiller].ser1;//Tiller ser stored in boat's Moreb
-	items[b].moreb2=items[tiller].ser2;
-	items[b].moreb3=items[tiller].ser3;
-	items[b].moreb4=items[tiller].ser4;
-	items[b].morex=items[p1].serial;//Store the other stuff anywhere it will fit :-)
-	items[b].morey=items[p2].serial;
-	items[b].morez=items[hold].serial;
-	
-	switch(id2)//Give everything the right Z for it size boat
+	switch( id2 )
 	{
 	case 0x00:
 	case 0x04:
-		items[tiller].x=items[b].x+1;
-		items[tiller].y=items[b].y+4;
-		items[p2].x=items[b].x+2;
-		items[p2].y=items[b].y;
-		items[p1].x=items[b].x-2;
-		items[p1].y=items[b].y;
-		items[hold].x=items[b].x;
-		items[hold].y=items[b].y-4;
+	case 0x08:
+	case 0x0C:
+	case 0x10:
+	case 0x14:
+		break;
+	default:
+		sysmessage( s, 6 );
+		return false;
+	}
+
+	if( BlockBoat( b, 0, 0, 0 ) )
+	{
+		sysmessage( s, 7 );
+		return false;
+	}
+
+	b->SetMore( id2, id2+3, b->GetMore( 3 ), b->GetMore( 4 ) );
+	b->SetType( 117 );// Boat type
+	b->SetZ( -5 );// Z in water
+	b->SetName( Dictionary->GetEntry( 1408 ) );//Name is something other than "%s's house"
+	SERIAL serial = b->GetSerial();
+	CItem *tiller = Items->SpawnItem(s, 1, Dictionary->GetEntry( 1409 ), false, 0x3E4E, 0, false, false );
+	if( tiller == NULL ) 
+		return false;
+	tiller->SetPriv( 0 );
+	tiller->SetType( 200 );
+	tiller->SetMore( serial );
+	tiller->SetMoreX( boattype );
+
+	CItem *p2 = Items->SpawnItem( s, 1, "#", false, 0x3EB2, 0, false, false );//Plank2 is on the RIGHT side of the boat
+	if( p2 == NULL ) 
+		return false;
+	p2->SetType( 117 );
+	p2->SetType2( 3 );
+	p2->SetMore( serial );
+	p2->SetPriv( 0 );//Nodecay
+
+	CItem *p1 = Items->SpawnItem( s, 1, "#", false, 0x3EB1, 0, false, false );//Plank1 is on the LEFT side of the boat
+	if( p1 == NULL ) 
+		return false;
+	p1->SetType( 117 );//Boat type
+	p1->SetType2( 3 );//Plank sub type
+	p1->SetMore( serial );
+	p1->SetPriv( 0 );
+
+	CItem *hold = Items->SpawnItem( s, 1, "#", false, 0x3EAE, 0, false, false );
+	if( hold == NULL ) 
+		return false;
+	hold->SetMore( b->GetSerial() );
+	hold->SetType( 1 );//Conatiner
+	hold->SetPriv( 0 );
+	
+	b->SetMoreB( tiller->GetSerial() );
+	b->SetMoreX( p1->GetSerial() );// Store the other stuff anywhere it will fit :-)
+	b->SetMoreY( p2->GetSerial() );
+	b->SetMoreZ( hold->GetSerial() );
+
+	SI16 x = b->GetX(), y = b->GetY();
+	SI08 z = b->GetZ();
+	switch( id2 ) //Give everything the right Z for it size boat
+	{
+	case 0x00:
+	case 0x04:
+		tiller->SetLocation( x + 1, y + 4, -5 );
+		p1->SetLocation( x - 2, y, -5 );
+		p2->SetLocation( x + 2, y, -5 );
+		hold->SetLocation( x, y - 4, -5 );
 		break;
 	case 0x08:
 	case 0x0C:
-		items[tiller].x=items[b].x+1;
-		items[tiller].y=items[b].y+5;
-		items[p2].x=items[b].x+2;
-		items[p2].y=items[b].y;
-		items[p1].x=items[b].x-2;
-		items[p1].y=items[b].y;
-		items[hold].x=items[b].x;
-		items[hold].y=items[b].y-4;
+		tiller->SetLocation( x + 1, y + 5, -5 );
+		p1->SetLocation( x - 2, y, -5 );
+		p2->SetLocation( x + 2, y, -5 );
+		hold->SetLocation( x, y - 4, -5 );
 		break;
 	case 0x10:
 	case 0x14:
-		items[tiller].x=items[b].x+1;
-		items[tiller].y=items[b].y+5;
-		items[p2].x=items[b].x+2;
-		items[p2].y=items[b].y-1;
-		items[p1].x=items[b].x-2;
-		items[p1].y=items[b].y-1;
-		items[hold].x=items[b].x;
-		items[hold].y=items[b].y-5;
+		tiller->SetLocation( x + 1, y + 5, -5 );
+		p1->SetLocation( x - 2, y - 1, -5 );
+		p2->SetLocation( x + 2, y - 1, -5 );
+		hold->SetLocation( x, y - 5, -5 );
 		break;
 	}
-	mapRegions->AddItem(tiller);//Make sure everything is in da regions!
-	mapRegions->AddItem(p1);
-	mapRegions->AddItem(p2);
-	mapRegions->AddItem(hold);
-	mapRegions->AddItem(b);
-	
 	//their x pos is set by BuildHouse(), so just fix their Z...
-	chars[currchar[s]].z=chars[currchar[s]].dispz=items[b].z+3;//Char Z, try and keep it right.
-    setserial(currchar[s],b,8);
+	CChar *mChar = s->CurrcharObj();
+	mChar->SetZ( z + 3 );
+	mChar->SetDispZ( z + 3 );
+    mChar->SetMulti( b );
 	return true;
 }
 
-int cBoat::GetBoat(int s)//get the closest boat to the player and check to make sure they are on it
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem * cBoat::GetBoat( cSocket *s )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Get the boat a character is on
+//o---------------------------------------------------------------------------o
+CItem * cBoat::GetBoat( cSocket *s )
 {
-	//int x=chars[currchar[s]].x,y=chars[currchar[s]].y,z=chars[currchar[s]].z;
-	int mindist=30, boat=-1;
-	//int xa, ya, xb, yb, dx, dy;
-	
-    if (chars[currchar[s]].multis > -1 ) 
-		return calcItemFromSer( chars[currchar[s]].multis );
-	//else if (chars[currchar[s]].multis==-1) return -1;
+	UI16 mindist = 30;
+	CItem *boat = NULL;
+	CChar *mChar = s->CurrcharObj();
+
+	UI08 worldNumber = mChar->WorldNumber();
+    if( mChar->GetMulti() != INVALIDSERIAL )
+		return calcItemObjFromSer( mChar->GetMulti() );
 	else 
 	{
-		int	StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-		//int	getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-		
-		unsigned int increment=0;
-		for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
+		int xOffset = MapRegion->GetGridX( mChar->GetX() );
+		int yOffset = MapRegion->GetGridY( mChar->GetY() );
+		for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 		{
-			for (int a=0;a<3;a++)
+			for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
 			{
-				int mapitemptr=-1;
-				int	mapitem=-1;
-				int mapchar=-1;
-				do //check all items in this cell
+				SubRegion *toCheck = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
+				if( toCheck == NULL )
+					continue;
+				toCheck->PushItem();
+				for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
 				{
-					mapchar=-1;
-					mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-					if (mapitemptr==-1) break;
-					mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-					if(mapitem>999999) mapchar=mapitem-1000000;
-					if (mapitem>-1 && mapitem<999999 && iteminrange(s,mapitem,20))
+					if( itemCheck == NULL )
+						continue;
+					if( itemCheck->GetID( 1 ) >= 0x40 )
 					{
-						if (items[mapitem].id1>=0x40)
+						UI16 distance = getDist( mChar, itemCheck );
+						if( distance <= mindist )
 						{
-							if (dist(currchar[s],mapitem,1)<=mindist)//they are closer to this than 30, or the last Multi they were near.
-							{
-								mindist=dist(currchar[s],mapitem,1);//Store closest multi
-								//printf("%s\n",items[mapitem].name);
-								if (items[mapitem].type==117)//Boat type
-									boat=mapitem;
-							}
+							if( itemCheck->GetType() == 117 )
+								boat = itemCheck;
 						}
 					}
-				} while (mapitem!=-1);
+				}
+				toCheck->PopItem();
 			}
 		}
-		if (boat!=-1)//if we found a boat, make sure they are in it
+		if( boat != NULL )
 		{
-			if(!inmulti(chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,boat)) 
-				boat=-1;
+			if( !inMulti( mChar->GetX(), mChar->GetY(), mChar->GetZ(), boat, worldNumber ) )
+				boat = NULL;
 		}
-					
 		return boat;
 	}
 }
 
-// This  Boat-blocking method is now WATER PROOF :o)
-// Please don't TOUCH !!!
-// Rewritten by Zippy February 7, 2000
-
-bool cBoat::Block( int b, short xmove, short ymove, int dir )
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check if a boat can move to a certain loc
+//o---------------------------------------------------------------------------o
+bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	MapStaticIterator *msi;
-	staticrecord *stat;
+	staticrecord *stat = NULL;
 	map_st map;
-	land_st land;
-	tile_st tile;
-	short cx = items[b].x, cy=items[b].y;
-	short x1 = -1, y1 = -1,x2 = -1,y2 = -1,x,y;
-	char type = 0;
-	signed char sz, zt;
+	CLand land;
+	CTile tile;
+	SI16 cx = b->GetX(), cy = b->GetY();
+	SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	UI08 type = 0;
 
-	cx+=xmove;
-	cy+=ymove;
+	cx += xmove;
+	cy += ymove;
 
-	switch( items[b].id2 )
+	switch( b->GetID( 2 ) )
 	{
-	case 0:	case 1: case 2: case 3://small
-		type = 1; break;
-	case 4: case 5: case 6: case 7://small dragon
-		type = 1; break;
+	case 0:
+	case 1:
+	case 2:
+	case 3://small
+		type = 1;
+		break;
+	case 4:
+	case 5:
+	case 6:
+	case 7://small dragon
+		type = 1;
+		break;
 
-	case 8: case 9: case 10: case 11://medium
-		type = 2; break;
-	case 12: case 13: case 14: case 15://medium dragon
-		type = 2; break;
-
-	case 16: case 17: case 18: case 19://large
-		type = 3; break;
-	case 20: case 21: case 22: case 23://large dragon
-		type = 3; break;
-
-	default: return true;
+	case 8:
+	case 9:
+	case 10:
+	case 11://medium
+		type = 2;
+		break;
+	case 12:
+	case 13:
+	case 14:
+	case 15://medium dragon
+		type = 2;
+		break;
+	case 16:
+	case 17:
+	case 18:
+	case 19://large
+		type = 3;
+		break;
+	case 20:
+	case 21:
+	case 22:
+	case 23://large dragon
+		type = 3;
+		break;
+	default:
+		return true;
 	}
 
 	//small = 5,11 
 	//medium = 5, 13
 	//large = 5, 15
-	switch( items[b].dir )	
+	switch( b->GetDir() )	
 	{
 	/* ----These should never happen.. there's no art for them.----
 	case 1: // U
@@ -566,6 +445,7 @@ bool cBoat::Block( int b, short xmove, short ymove, int dir )
 		case 1:	y1 = cy - 6; y2 = cy + 6; break;
 		case 2:	y1 = cy - 6; y2 = cy + 7; break;
 		case 3: y1 = cy - 8; y2 = cy + 8; break;
+		default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 		}
 		break;
 	case 2: // E
@@ -577,506 +457,571 @@ bool cBoat::Block( int b, short xmove, short ymove, int dir )
 		case 1:	x1 = cx - 6; x2 = cx + 6; break;
 		case 2:	x1 = cx - 7; x2 = cx + 7; break;
 		case 3: x1 = cx - 8; x2 = cx + 8; break;
+		default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 		}
 		break;
 	default: return true;
 	}
 
-	for(x=x1;x<x2;x++)
+	UI08 worldNumber = b->WorldNumber();
+	for( SI16 x = x1; x < x2; x++ )
 	{
-		for(y=y1;y<y2;y++)
+		for( SI16 y = y1; y < y2; y++ )
 		{
-			sz=Map->StaticTop(x,y, items[b].z);
+			SI08 sz = Map->StaticTop( x, y, b->GetZ(), worldNumber );
 
-			if (sz==illegal_z) //map tile
+			if( sz == illegal_z ) //map tile
 			{
-				map=Map->SeekMap0( x, y );
-				Map->SeekLand(map.id, &land);
-				if ( map.z>=-5 && !(land.flag1&0x80) && strcmp((char*)land.name,"water") )//only tiles on/above the water
+				map = Map->SeekMap0( x, y, worldNumber );
+				Map->SeekLand( map.id, &land );
+				if( map.z >= -5 && !land.LiquidWet() && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 					return true;
 			} 
 			else 
 			{ //static tile
-				msi = new MapStaticIterator(x,y);
-				while (stat = msi->Next())
+				msi = new MapStaticIterator( x, y, worldNumber );
+				while( stat = msi->Next() )
 				{
-					msi->GetTile(&tile);
-					zt=stat->zoff+tile.height;
-					if ( !(tile.flag1&0x80) && zt>-5 && zt<=15 && strcmp((char*)tile.name,"water") ) 
+					msi->GetTile( &tile );
+					SI08 zt = stat->zoff + tile.Height();
+					if( !tile.LiquidWet() && zt > -5 && zt <= 15 && strcmp( (char*)tile.Name(), "water" ) ) 
 					{
 						delete msi;
 						return true;
 					}
 				}
 				delete msi;
-			}//if sz==
-		}//for y
-	}//for x
+			}
+		}
+	}
 	return false;
 }
 
-void cBoat::Move(int s, int dir, int boat)
-{//Move the boat and all it's items 1 square
-	int tx=0,ty=0, c=0;
-	int a,tiller=-1, p1=-1, p2=-1, hold=-1,serial;
-	//get the #s of special items
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Move the boat and everything on it 1 tile
+//o---------------------------------------------------------------------------o
+void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
+{
+	SI16 tx = 0, ty = 0;
+
+	CItem *tiller = calcItemObjFromSer( boat->GetMoreB() );
+	CItem *p1 = calcItemObjFromSer( boat->GetMoreX() );
+	CItem *p2 = calcItemObjFromSer( boat->GetMoreY() );
+	CItem *hold = calcItemObjFromSer( boat->GetMoreZ() );
 	
-	serial = calcserial(items[boat].moreb1,items[boat].moreb2,items[boat].moreb3,items[boat].moreb4);
-	tiller = calcItemFromSer( serial );
-	p1 = calcItemFromSer( items[boat].morex );
-	p2 = calcItemFromSer( items[boat].morey );
-	hold = calcItemFromSer( items[boat].morez );
+	if( boat == NULL )
+		return;
 	
-	if (boat==-1) return;
+	if( s == NULL || tiller == NULL || p1 == NULL || p2 == NULL || hold == NULL )
+		return;
+
+	CPPauseResume prSend( 1 );
+	s->Send( &prSend );
 	
-	if (( s<0) || s>MAXCLIENT || tiller<0 || tiller>=imem || p1<0 || p1>=imem || p2<0 || p2>imem || hold<0 || hold >=imem) return;
-	
-	Network->xSend(s,pausex,2,0);
-	
-	switch(dir&0x0F)//Which DIR is it going in?
+	switch( dir&0x0F )
 	{
-	case '\x00' : 		ty--;		break;
-	case '\x01' : 		tx++; 		ty--;		break;
-	case '\x02' :		tx++;		break;
-	case '\x03' :		tx++;		ty++;		break;
-	case '\x04' : 		ty++;		break;
-	case '\x05' :		tx--;		ty++;		break;
-	case '\x06' : 		tx--;		break;
-	case '\x07' : 		tx--; 		ty--;		break;
-	default:
-		printf("ERROR: Boat direction error: %i int boat %i\n",items[boat].dir&0x0F,items[boat].serial);
-		break;
+	case 0:	ty--;			break;
+	case 1:	tx++;	ty--;	break;
+	case 2:	tx++;			break;
+	case 3:	tx++;	ty++;	break;
+	case 4:	ty++;			break;
+	case 5:	tx--;	ty++;	break;
+	case 6:	tx--;			break;
+	case 7:	tx--;	ty--;	break;
+	default: Console.Error( 2, "Boat direction error: %i in boat %i", boat->GetDir()&0x0F, boat->GetSerial() ); break;
 	}
 	
-	if( ( items[boat].x+tx<=200 || items[boat].x+tx>=6000 ) && ( items[boat].y+ty<=200 || items[boat].y+ty>=4900) )
+	SI16 x = boat->GetX(), y = boat->GetY();
+	prSend.Mode( 0 );
+	if( ( (x + tx) <= 200 || (x + tx) >= 6000 ) && ( (y + ty) <= 200 || (y + ty) >= 4900 ) )
 	{
-		items[boat].type2=0;
-		itemtalk(s,tiller,"Arr, Sir, we've hit rough waters!");
-		Network->xSend(s,restart,2,0);
+		boat->SetType2( 0 );
+		itemTalk( s, tiller, 8 );
+		s->Send( &prSend );
 		return;
 	}
 	//if(!validNPCMove(items[boat].x+tx,items[boat].y+ty,items[boat].z,currchar[s]))
-	if(Block(boat,tx,ty,dir))
+	if( BlockBoat( boat, tx, ty, dir ) )
 	{
-		// printf("boat: %i dir: %i b-x: %i b-y: %i b-z: %i tx: %i ty: %i\n",boat,dir,items[boat].x,items[boat].y,items[boat].z,tx,ty);
-		items[boat].type2=0;
-		itemtalk(s, tiller, "Arr, somethings in the way!");
-		Network->xSend(s,restart,2,0);
+		boat->SetType2( 0 );
+		itemTalk( s, tiller, 9 );
+		s->Send( &prSend );
 		return;
 	}
 	
 	//Move all the special items
-	mapRegions->RemoveItem(boat);
-	items[boat].x+=tx;
-	items[boat].y+=ty;
-	mapRegions->AddItem(boat);
-	sendinrange(boat);
+	MapRegion->RemoveItem( boat );
+	boat->IncX( tx );
+	boat->IncY( ty );
+	MapRegion->AddItem( boat );
+	RefreshItem( boat );
 	
-    mapRegions->RemoveItem(tiller);
-	items[tiller].x+=tx;
-	items[tiller].y+=ty;
-    mapRegions->AddItem(tiller);
-	sendinrange(tiller);
+	MapRegion->RemoveItem( tiller );
+	tiller->IncX( tx );
+	tiller->IncY( ty );
+	MapRegion->AddItem( tiller );
+	RefreshItem( tiller );
 	
-    mapRegions->RemoveItem(p1);
-	items[p1].x+=tx;
-	items[p1].y+=ty;
-    mapRegions->AddItem(p1);
-	sendinrange(p1);
+	MapRegion->RemoveItem( p1 );
+	p1->IncX( tx );
+	p1->IncY( ty );
+	MapRegion->AddItem( p1 );
+	RefreshItem( p1 );
 	
-    mapRegions->RemoveItem(p2);
-	items[p2].x+=tx;
-	items[p2].y+=ty;
-    mapRegions->AddItem(p2);
-	sendinrange(p2);
+	MapRegion->RemoveItem( p2 );
+	p2->IncX( tx );
+	p2->IncY( ty );
+	MapRegion->AddItem( p2 );
+	RefreshItem( p2 );
 	
-    mapRegions->RemoveItem(hold);
-	items[hold].x+=tx;
-	items[hold].y+=ty;
-    mapRegions->AddItem(hold);
-	sendinrange(hold);
+	MapRegion->RemoveItem( hold );
+	hold->IncX( tx );
+	hold->IncY( ty );
+	MapRegion->AddItem( hold );
+	RefreshItem( hold );
 	
-    serial=items[boat].serial;
-	
-	for (a=0;a<imultisp[serial%HASHMAX].max;a++)
+	CMultiObj *realBoat = static_cast< CMultiObj *>(boat);
+	for( CItem *bItem = realBoat->FirstItemMulti(); !realBoat->FinishedItemMulti(); bItem = realBoat->NextItemMulti() )
 	{
-		c=imultisp[serial%HASHMAX].pointer[a];
-		if(c!=-1)
-		{
-			mapRegions->RemoveItem(c);
-			items[c].x+=tx;
-			items[c].y+=ty;
-			sendinrange(c);
-			mapRegions->AddItem(c);
-		}
+		if( bItem == NULL )
+			continue;
+		MapRegion->RemoveItem( bItem );
+		bItem->IncX( tx );
+		bItem->IncY( ty );
+		MapRegion->AddItem( bItem );
+		RefreshItem( bItem );
 	}
 	
-	for (a=0;a<cmultisp[serial%HASHMAX].max;a++)
+	for( CChar *bChar = realBoat->FirstCharMulti(); !realBoat->FinishedCharMulti(); bChar = realBoat->NextCharMulti() )
 	{
-		c=cmultisp[serial%HASHMAX].pointer[a];
-		if (c!=-1)
-		{
-			mapRegions->RemoveItem(c+1000000);
-			chars[c].x+=tx;
-			chars[c].y+=ty;
-			teleport(c);
-			mapRegions->AddItem(c+1000000);
-		}
+		if( bChar == NULL )
+			continue;
+		bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
+		bChar->Teleport();
 	}
-	Network->xSend(s,restart,2,0);
+	s->Send( &prSend );
 }
 
-void cBoat::TurnStuff(int b, int i, int dir, int type)//Turn an item that was on the boat when the boat was turned.
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::TurnStuff( CItem *b, CItem *i, bool rightTurn )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Turn an item on a boat
+//o---------------------------------------------------------------------------o
+void cBoat::TurnStuff( CItem *b, CItem *i, bool rightTurn )
 {
-	int dx, dy;
-	
-    if (i<0 || i>=imem || b<0 || b>=imem) return;
-	
-    //printf("ts2\n");
-	
-	if(type)//item
-	{
-		dx=items[i].x-items[b].x;//get their distance x
-		dy=items[i].y-items[b].y;//and distance Y
-		
-        mapRegions->RemoveItem(i);
-		
-		items[i].x=items[b].x;
-		items[i].y=items[b].y;
-		
-		if(dir)//turning right
-		{
-			items[i].x+=dy*-1;
-			items[i].y+=dx;
-		} else {//turning left
-			items[i].x+=dy;
-			items[i].y+=dx*-1;
-		}
-		
-		
-		mapRegions->AddItem(i);
-		
-		sendinrange(i);
-		
-	} else {//Character
-		dx=chars[i].x-items[b].x;
-		dy=chars[i].y-items[b].y;
-		//printf("name: %s\n",chars[i].name);
-		
-		mapRegions->RemoveItem(i+1000000);
-        
-		chars[i].x=items[b].x;
-		chars[i].y=items[b].y;
-		
-		if(dir)
-		{
-			chars[i].x+=dy*-1;
-			chars[i].y+=dx;
-		} else {
-			chars[i].x+=dy;
-			chars[i].y+=dx*-1;
-		}
-		//Set then in their new cell
-		
-		mapRegions->AddItem(i+1000000);
-		
-		teleport(i);
-	}
-}
-
-void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/items on the boat to turnboatstuff()
-{
-	int id2=items[b].id2, olddir = items[b].dir;
-	//static unsigned short int cChecked[MAXCHARS], iChecked[imem]; //lb !!!
-	//int it=0, ct=0;//, a;
-	unsigned short int Send[MAXCLIENT];
-	int serial;
-	int tiller, p1, p2, hold;
-	int a,c,dir, d=0;
-	
-	if (b<0 || b>=imem) return; 
-	
-	for (a=0;a<now;a++)
-	{
-		if (iteminrange(a,b,BUILDRANGE) && perm[a])
-		{
-			Send[d]=a;
-			Network->xSend(a,pausex,2,0);
-			d++;
-		}
-	}
-	
-	//Of course we need the boat items!
-	serial = calcserial(items[b].moreb1,items[b].moreb2,items[b].moreb3,items[b].moreb4);
-	tiller = calcItemFromSer( serial );
-	p1 = calcItemFromSer( items[b].morex );
-	p2 = calcItemFromSer( items[b].morey );
-	hold = calcItemFromSer( items[b].morez );
-	
-    if (tiller<0 || tiller>=imem || p1<0 || p1>=imem || p2<0 || p2>imem || hold<0 || hold >=imem)
+    if( b == NULL ) 
 		return;
 	
-	if(turn)//Right
+	SI16 dx = i->GetX() - b->GetX();//get their distance x
+	SI16 dy = i->GetY() - b->GetY();//and distance Y
+	
+	MapRegion->RemoveItem( i );
+	if( rightTurn )
 	{
-		items[b].dir+=2;
+		i->SetX( b->GetX() - dy );
+		i->SetY( b->GetY() + dx );
+	} 
+	else 
+	{
+		i->SetX( b->GetX() + dy );
+		i->SetY( b->GetY() - dx );
+	}
+	MapRegion->AddItem( i );
+	RefreshItem( i );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::TurnStuff( CItem *b, CChar *i, bool rightTurn )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Turn a character on a boat
+//o---------------------------------------------------------------------------o
+void cBoat::TurnStuff( CItem *b, CChar *i, bool rightTurn )
+{
+    if( b == NULL ) 
+		return;
+	
+	SI16 dx = i->GetX() - b->GetX();
+	SI16 dy = i->GetY() - b->GetY();
+
+	MapRegion->RemoveChar( i );
+	if( rightTurn )
+		i->SetLocation( b->GetX() - dy, b->GetY() + dx, i->GetZ() );
+	else 
+		i->SetLocation( b->GetX() + dy, b->GetY() - dx, i->GetZ() );
+	i->Teleport();
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::TurnBoat( CItem *b, bool rightTurn )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Turn the boat and use TurnStuff() to turn all items/chars on it
+//o---------------------------------------------------------------------------o
+void cBoat::TurnBoat( CItem *b, bool rightTurn )
+{
+	if( b == NULL ) 
+		return; 
+
+	vector< cSocket * > Send;
+	SI16 id2 = b->GetID( 2 );
+	UI08 olddir = b->GetDir();
+	UI32 a = 0;
+	
+	CPPauseResume prSend( 1 );
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	{
+		if( itemInRange( tSock->CurrcharObj(), b, BUILDRANGE ) )
+		{
+			Send.push_back( tSock );
+			tSock->Send( &prSend );
+		}
+	}
+	Network->PopConn();
+
+	CItem *tiller = calcItemObjFromSer( b->GetMoreB() );
+	CItem *p1 = calcItemObjFromSer( b->GetMoreX() );
+	CItem *p2 = calcItemObjFromSer( b->GetMoreY() );
+	CItem *hold = calcItemObjFromSer( b->GetMoreZ() );
+
+    if( tiller == NULL || p1 == NULL || p2 == NULL || hold == NULL ) 
+		return;
+	
+	if( rightTurn )
+	{
+		b->SetDir( b->GetDir() + 2 );
 		id2++;
-	} else {//Left
-		items[b].dir-=2;
+	} 
+	else 
+	{
+		b->SetDir( b->GetDir() - 2 );
 		id2--;
 	}
-	if(items[b].dir>7) items[b].dir-=4;//Make sure we dont have any DIR errors
-	if(items[b].dir<0) items[b].dir+=4;
+	if( b->GetDir() > 250 ) 
+		b->SetDir( b->GetDir() + 4 );
+	if( b->GetDir() > 7 ) 
+		b->SetDir( b->GetDir() - 4 );//Make sure we dont have any DIR errors
 	
-	if(id2<items[b].more1) id2+=4;//make sure we don't have any id errors either
-	if(id2>items[b].more2) id2-=4;//Now you know what the min/max id is for :-)
+	if( id2 < b->GetMore( 1 ) ) 
+		id2 += 4;//make sure we don't have any id errors either
+	if( id2 > b->GetMore( 2 ) ) 
+		id2 -= 4;//Now you know what the min/max id is for :-)
 	
-	if( Block( b, 0, 0, items[b].dir ) )
+	prSend.Mode( 0 );
+	if( BlockBoat( b, 0, 0, b->GetDir() ) )
 	{
-		items[b].dir = olddir;
-		for( a = 0; a < d; a++ )
+		b->SetDir( olddir );
+		for( a = 0; a < Send.size(); a++ )
 		{
-			Network->xSend( Send[a], restart, 2, 0 );
-			itemtalk( Send[a], tiller, "Arr, something's in the way!" );
+			Send[a]->Send( &prSend );
+			itemTalk( Send[a], tiller, 1410, 0, 0x0481 );
 		}
 		return;
 	}
-	items[b].id2=id2;//set the id
+
+	b->SetID( id2, 2 );//set the id
 	
-	if(items[b].id2==items[b].more1) items[b].dir=0;//extra DIR error checking
-	if(items[b].id2==items[b].more2) items[b].dir=6;
+	if( b->GetID( 2 ) == b->GetMore( 1 ) ) 
+		b->SetDir( 0 );//extra DIR error checking
+	if( b->GetID( 2 ) == b->GetMore( 2 ) ) 
+		b->SetDir( 6 );
 	
-    serial=items[b].serial; // lb !!!
 	
+	CMultiObj *realBoat = static_cast< CMultiObj * >(b);
 	
-    for (a=0;a<imultisp[serial%HASHMAX].max;a++)
+    for( CItem *bItem = realBoat->FirstItemMulti(); !realBoat->FinishedItemMulti(); bItem = realBoat->NextItemMulti() )
 	{
-		c=imultisp[serial%HASHMAX].pointer[a];
-		if (c!=-1)
-			TurnStuff(b,c,turn,1);
+		if( bItem == NULL )
+			continue;
+		TurnStuff( b, bItem, rightTurn );
 	}
-	
-	for (a=0;a<cmultisp[serial%HASHMAX].max;a++)
+	for( CChar *bChar = realBoat->FirstCharMulti(); !realBoat->FinishedCharMulti(); bChar = realBoat->NextCharMulti() )
 	{
-		c=cmultisp[serial%HASHMAX].pointer[a];
-		if (c!=-1)
-			TurnStuff(b,c,turn,0);
+		if( bChar == NULL )
+			continue;
+		TurnStuff( b, bChar, rightTurn );
 	}
+
+	UI08 dir = (b->GetDir()&0x0F)/2;
+	SI16 x = b->GetX(), y = b->GetY();
+
+	MapRegion->RemoveItem( p1 );
+	p1->SetX( x );
+	p1->SetY( y );
+	p1->SetID( cShipItems[dir][PORT_P_C], 2 );//change the ID
 	
-	//Set the DIR for use in the Offsets/IDs array
-	dir=(items[b].dir&0x0F)/2;
+	MapRegion->RemoveItem( p2 );
+	p2->SetX( x );
+	p2->SetY( y );
+	p2->SetID( cShipItems[dir][STAR_P_C], 2 );
 	
-	//set it's Z to 0,0 inside the boat
+	MapRegion->RemoveItem( tiller );
+	tiller->SetX( x );
+	tiller->SetY( y );
+	tiller->SetID( cShipItems[dir][TILLERID], 2 );
 	
-    mapRegions->RemoveItem(p1);
-	items[p1].x=items[b].x;
-	items[p1].y=items[b].y;
-	items[p1].id2=cShipItems[dir][PORT_P_C];//change the ID
+	MapRegion->RemoveItem( hold );
+	hold->SetX( x );
+	hold->SetY( y );
+	hold->SetID( cShipItems[dir][HOLDID], 2 );
 	
-    mapRegions->RemoveItem(p2);
-	items[p2].x=items[b].x;
-	items[p2].y=items[b].y;
-	items[p2].id2=cShipItems[dir][STAR_P_C];
-	
-    mapRegions->RemoveItem(tiller);
-	items[tiller].x=items[b].x;
-	items[tiller].y=items[b].y;
-	items[tiller].id2=cShipItems[dir][TILLERID];
-	
-    mapRegions->RemoveItem(hold);
-	items[hold].x=items[b].x;
-	items[hold].y=items[b].y;
-	items[hold].id2=cShipItems[dir][HOLDID];
-	
-	switch(items[b].more1)//Now set what size boat it is and move the specail items
+	switch( b->GetMore( 1 ) )//Now set what size boat it is and move the specail items
 	{
 	case 0x00:
 	case 0x04:
-		items[p1].x+=iSmallShipOffsets[dir][PORT_PLANK][XP];
-		items[p1].y+=iSmallShipOffsets[dir][PORT_PLANK][YP];
-		items[p2].x+=iSmallShipOffsets[dir][STARB_PLANK][XP];
-		items[p2].y+=iSmallShipOffsets[dir][STARB_PLANK][YP];
-		items[tiller].x+=iSmallShipOffsets[dir][TILLER][XP];
-		items[tiller].y+=iSmallShipOffsets[dir][TILLER][YP];
-		items[hold].x+=iSmallShipOffsets[dir][HOLD][XP];
-		items[hold].y+=iSmallShipOffsets[dir][HOLD][YP];
+		p1->IncX( iSmallShipOffsets[dir][PORT_PLANK][XP] );
+		p1->IncY( iSmallShipOffsets[dir][PORT_PLANK][YP] );
+		p2->IncX( iSmallShipOffsets[dir][STARB_PLANK][XP] );
+		p2->IncY( iSmallShipOffsets[dir][STARB_PLANK][YP] );
+		tiller->IncX( iSmallShipOffsets[dir][TILLER][XP] );
+		tiller->IncY( iSmallShipOffsets[dir][TILLER][YP] );
+		hold->IncX( iSmallShipOffsets[dir][HOLD][XP] );
+		hold->IncY( iSmallShipOffsets[dir][HOLD][YP] );
 		break;
 	case 0x08:
 	case 0x0C:
-		items[p1].x+=iMediumShipOffsets[dir][PORT_PLANK][XP];
-		items[p1].y+=iMediumShipOffsets[dir][PORT_PLANK][YP];
-		items[p2].x+=iMediumShipOffsets[dir][STARB_PLANK][XP];
-		items[p2].y+=iMediumShipOffsets[dir][STARB_PLANK][YP];
-		items[tiller].x+=iMediumShipOffsets[dir][TILLER][XP];
-		items[tiller].y+=iMediumShipOffsets[dir][TILLER][YP];
-		items[hold].x+=iMediumShipOffsets[dir][HOLD][XP];
-		items[hold].y+=iMediumShipOffsets[dir][HOLD][YP];
-		
+		p1->IncX( iMediumShipOffsets[dir][PORT_PLANK][XP] );
+		p1->IncY( iMediumShipOffsets[dir][PORT_PLANK][YP] );
+		p2->IncX( iMediumShipOffsets[dir][STARB_PLANK][XP] );
+		p2->IncY( iMediumShipOffsets[dir][STARB_PLANK][YP] );
+		tiller->IncX( iMediumShipOffsets[dir][TILLER][XP] );
+		tiller->IncY( iMediumShipOffsets[dir][TILLER][YP] );
+		hold->IncX( iMediumShipOffsets[dir][HOLD][XP] );
+		hold->IncY( iMediumShipOffsets[dir][HOLD][YP] );
 		break;
 	case 0x10:
 	case 0x14:
-		items[p1].x+=iLargeShipOffsets[dir][PORT_PLANK][XP];
-		items[p1].y+=iLargeShipOffsets[dir][PORT_PLANK][YP];
-		items[p2].x+=iLargeShipOffsets[dir][STARB_PLANK][XP];
-		items[p2].y+=iLargeShipOffsets[dir][STARB_PLANK][YP];
-		items[tiller].x+=iLargeShipOffsets[dir][TILLER][XP];
-		items[tiller].y+=iLargeShipOffsets[dir][TILLER][YP];
-		items[hold].x+=iLargeShipOffsets[dir][HOLD][XP];
-		items[hold].y+=iLargeShipOffsets[dir][HOLD][YP];
-		
+		p1->IncX( iLargeShipOffsets[dir][PORT_PLANK][XP] );
+		p1->IncY( iLargeShipOffsets[dir][PORT_PLANK][YP] );
+		p2->IncX( iLargeShipOffsets[dir][STARB_PLANK][XP] );
+		p2->IncY( iLargeShipOffsets[dir][STARB_PLANK][YP] );
+		tiller->IncX( iLargeShipOffsets[dir][TILLER][XP] );
+		tiller->IncY( iLargeShipOffsets[dir][TILLER][YP] );
+		hold->IncX( iLargeShipOffsets[dir][HOLD][XP] );
+		hold->IncY( iLargeShipOffsets[dir][HOLD][YP] );
 		break;
-	default: printf("DEBUG: Turnboatstuff() more1 error! more1 = %c not found!\n",items[b].more1);
+	default: Console.Error( 2, "TurnBoat() more1 error! more1 = %c not found!", b->GetMore( 1 ) );
 	}
-	mapRegions->AddItem( p1 );
-	mapRegions->AddItem( p2 );
-	mapRegions->AddItem( tiller );
-	mapRegions->AddItem( hold );
-	sendinrange(p1);
-	sendinrange(p2);
-	sendinrange(hold);
-	sendinrange(tiller);
+
+	MapRegion->AddItem( p1 );
+	MapRegion->AddItem( p2 );
+	MapRegion->AddItem( tiller );
+	MapRegion->AddItem( hold );
+
+	RefreshItem( p1 );
+	RefreshItem( p2 );
+	RefreshItem( hold );
+	RefreshItem( tiller );
 	
-	for (a=0;a<d;a++)
-		Network->xSend(Send[a],restart,2,0);
+	for( a = 0; a < Send.size(); a++ )
+		Send[a]->Send( &prSend );
 }
 
-void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::Speech( cSocket *mSock, char *talk )
+//|	Programmer	-	Zippy
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check for boat commands
+//o---------------------------------------------------------------------------o
+void cBoat::Speech( cSocket *mSock, char *talk )
 {
-	int boat=GetBoat(s);
-	if(boat==-1) return;//if they aren't on a boat, then we don't care what they said
-	int dir=items[boat].dir&0x0F;
-	int serial, tiller;
-	char /*msg2[512],*/msg[512];
+	if( mSock == NULL ) 
+		return;
+
+	CItem *boat = GetBoat( mSock );
+	if( boat == NULL )
+		return;
+
+	UI08 dir = boat->GetDir()&0x0F;
+	char msg2[512], msg[512];
+	SI16 tx = 0, ty = 0;
 	
-	strcpy( msg, (char *)talk );
-	if (s<0 || s>=MAXCLIENT) return;
+	strcpy( msg2, talk );
+
+	CItem *tiller = calcItemObjFromSer( boat->GetMoreB() );
 	
-	//get the tiller man's item #
-	serial=calcserial(items[boat].moreb1,items[boat].moreb2,items[boat].moreb3,items[boat].moreb4);
-	tiller = calcItemFromSer( serial );
-	
-	//if(dist(currchar[s],tiller,1)>4) return;
-	
-	strcpy( msg, strupr( msg ) );
-	/*forward, backward, right, left, anchor down, raise anchor, one left, one right, one */
-	if(strstr(msg,"FORWARD") || strstr(msg,"UNFURL SAIL"))
+	strcpy( msg, strupr( msg2 ) );
+	UnicodeTypes mLang = mSock->Language();
+	const char *txtEntries[16];
+	for( UI08 txtEntryCtr = 0; txtEntryCtr < 16; txtEntryCtr++ )
+		txtEntries[txtEntryCtr] = Dictionary->GetEntry( 1411 + txtEntryCtr, mLang );
+	//forward, backward, right, left, anchor down, raise anchor, one left, one right, one 
+	if( strstr( msg, txtEntries[0] ) || strstr( msg, txtEntries[1] ) )
 	{
-		items[boat].type2=1;//Moving
-		itemtalk(s, tiller, "Aye, sir.");
-//		Move(s,dir,boat);
-	} else if(strstr(msg,"BACKWARD") || strstr(msg, "REVERSE"))
-	{
-		items[boat].type2=2;//Moving backward
-		if(dir>=4) dir-=4; 
-		else dir+=4;
-		itemtalk(s, tiller, "Aye, sir.");
-//		Move(s,dir,boat);		
-	}  else if(strstr(msg,"ONE") || strstr(msg,"DRIFT"))
-	{
-		if(strstr(msg,"LEFT"))
-		{
-			dir-=2;
-			if(dir<0) dir+=8;
-			itemtalk(s, tiller, "Aye, sir.");
-			items[boat].type2 = 0;
-			Move(s,dir,boat);
-		} else if(strstr(msg,"RIGHT"))
-		{
-			dir+=2;
-			if(dir>=8) dir-=8; 			
-			itemtalk(s, tiller, "Aye, sir.");
-			items[boat].type2 = 0;
-			Move(s,dir,boat);
-		}
+		boat->SetType2( 1 ); // Moving
+		itemTalk( mSock, tiller, 10 );
 	} 
-	else if(strstr(msg,"STOP") || strstr(msg,"FURL SAIL")) 
-	{ 
-		items[boat].type2=0;
-		itemtalk(s, tiller, "Aye, sir."); 
-	}//Moving is type2 1 and 2, so stop is 0 :-)
-	else if((strstr(msg,"TURN") && (strstr(msg,"AROUND") || strstr(msg,"LEFT") || strstr(msg,"RIGHT")))
-		|| strstr(msg,"PORT") || strstr(msg,"STARBOARD") || strstr(msg,"COME ABOUT"))
+	else if( strstr( msg, txtEntries[2] ) || strstr( msg, txtEntries[3] ) )
 	{
-		if(strstr(msg,"RIGHT") || strstr(msg,"STARBOARD")) 
+		boat->SetType2( 2 ); // Moving backward
+		if( dir >= 4 )
+			dir -= 4; 
+		else
+			dir += 4;
+		itemTalk( mSock, tiller, 10 );
+	} 
+	else if( strstr( msg, txtEntries[4] ) || strstr( msg, txtEntries[5] ) ) 
+	{ 
+		boat->SetType2( 0 );
+		itemTalk( mSock, tiller, 10 ); 
+	}// Moving is type2 1 and 2, so stop is 0 :-)
+	else if( ( strstr( msg, txtEntries[6] ) && ( strstr( msg, txtEntries[7] ) || strstr( msg, txtEntries[8] ) || strstr( msg, txtEntries[9] ) ) )
+		|| strstr( msg, txtEntries[10] ) || strstr( msg, txtEntries[11] ) || strstr( msg, txtEntries[12] ) )
+	{
+		if( strstr( msg, txtEntries[9] ) || strstr( msg, txtEntries[11] ) ) 
 		{
-			dir-=2; if(dir<0) dir+=8;
-			int tx=0,ty=0;
+			if( dir >= 2 )
+				dir -= 2;
+			else
+				dir += 6;
 			
-			switch(dir&0x0F) // little reminder for myself: move this swtich to a function to have less code ... LB
+			switch( dir&0x0F ) // little reminder for myself: move this swtich to a function to have less code ... LB
 			{
-	           case '\x00' :	ty--;			break;
-			   case '\x01' :	tx++;	ty--;	break;
-			   case '\x02' :	tx++;			break;
-			   case '\x03' :	tx++;	ty++;	break;
-			   case '\x04' :	ty++;			break;
-			   case '\x05' :	tx--;	ty++;	break;
-			   case '\x06' :	tx--;			break;
-			   case '\x07' :	tx--;	ty--;	break;
+	           case 0x00:	ty--;			break;
+			   case 0x01:	tx++;	ty--;	break;
+			   case 0x02:	tx++;			break;
+			   case 0x03:	tx++;	ty++;	break;
+			   case 0x04:	ty++;			break;
+			   case 0x05:	tx--;	ty++;	break;
+			   case 0x06:	tx--;			break;
+			   case 0x07:	tx--;	ty--;	break;
 			}
 			
-			if (!Block(boat,tx,ty,dir))
+			if( !BlockBoat( boat, tx, ty, dir ) )
 			{
-				itemtalk(s, tiller, "Aye, sir.");
-				Turn(boat,1);
-			} else { 
-				items[boat].type2=0;
-				itemtalk(s,tiller,"Arr,somethings in the way"); 
+				itemTalk( mSock, tiller, 10 );
+				TurnBoat( boat, true );
+			} 
+			else 
+			{ 
+				boat->SetType2( 0 );
+				itemTalk( mSock,tiller, 9 ); 
 			}   
 		}
-		else if(strstr(msg, "LEFT") || strstr(msg,"PORT")) 
+		else if( strstr( msg, txtEntries[8] ) || strstr( msg, txtEntries[10] ) ) 
 		{
-			dir+=2; if(dir>7) dir-=8;
-			int tx=0,ty=0;
-			
-			switch(dir&0x0F)
+			dir += 2;
+			if( dir > 7 )
+				dir -= 8;
+			switch( dir&0x0F )
 			{
-	           case '\x00' :	ty--;			break;
-			   case '\x01' :	tx++;	ty--;	break;
-			   case '\x02' :	tx++;			break;
-			   case '\x03' :	tx++;	ty++;	break;
-			   case '\x04' :	ty++;			break;
-			   case '\x05' :	tx--;	ty++;	break;
-			   case '\x06' :	tx--;			break;
-			   case '\x07' :	tx--;	ty--;	break;
+	           case 0x00:	ty--;			break;
+			   case 0x01:	tx++;	ty--;	break;
+			   case 0x02:	tx++;			break;
+			   case 0x03:	tx++;	ty++;	break;
+			   case 0x04:	ty++;			break;
+			   case 0x05:	tx--;	ty++;	break;
+			   case 0x06:	tx--;			break;
+			   case 0x07:	tx--;	ty--;	break;
 			}
-			
-			if( !Block( boat,tx,ty,dir ) )
+
+			if( !BlockBoat( boat, tx, ty, dir ) )
 			{
-				itemtalk(s, tiller, "Aye, sir.");
-				Turn(boat,0);			
-			} else 
+				itemTalk( mSock, tiller, 10 );
+				TurnBoat( boat, false );			
+			}
+			else 
 			{ 
-				itemtalk(s,tiller,"Arr,somethings in the way"); 
-				items[boat].type2=0;
+				itemTalk( mSock,tiller, 9 ); 
+				boat->SetType2( 0 );
 			}
 		}
-		else if(strstr(msg,"COME ABOUT") || strstr(msg,"AROUND"))
+		else if( strstr( msg, txtEntries[12] ) || strstr( msg, txtEntries[7] ) )
 		{
-			itemtalk(s, tiller, "Aye, sir.");
-			Turn(boat,1);
-			Turn(boat,1);
+			itemTalk( mSock, tiller, 10 );
+			TurnBoat( boat, true );
+			TurnBoat( boat, true );
 		}
 	}
-	else if(strstr(msg,"SET NAME"))
+	else if( strstr( msg, txtEntries[8] ) )
 	{
-		//:Terrin: not only fix sprintf problem but cannot assume that the
-		//         "SET NAME" was the first thing on the line
-		// do some checking on what they typed
-		char *cmd = strstr( msg, "SET NAME "); // note: also checking for space
+		if( dir >= 2 )
+			dir -= 2;
+		else
+			dir += 6;
+		itemTalk( mSock, tiller, 10 );
+		MoveBoat( mSock, dir, boat );
+	} 
+	else if( strstr( msg, txtEntries[9] ) )
+	{
+		dir += 2;
+		if( dir >= 8 )
+			dir -= 8;
+		itemTalk( mSock, tiller, 10 );
+		MoveBoat( mSock, dir, boat );
+	}
+	else if( strstr( msg, txtEntries[13] ) )
+	{
+		char *cmd = strstr( msg, txtEntries[14] ); // note: also checking for space
 		if( !cmd )
 		{
-			itemtalk( s, tiller, "What be that, sir?" );
+			itemTalk( mSock, tiller, 11 );
 			return;
 		}
 		cmd += 9;
-		while (*cmd && *cmd == ' ') ++cmd; // remove any extra spaces
-		if( !*cmd )
+		while( *cmd && *cmd == ' ') 
+			++cmd; // remove any extra spaces
+		if( !(*cmd) )
 		{
-			itemtalk( s, tiller, "Can ya say that again with an actual name, sir?" );
+			itemTalk( mSock, tiller, 12 );
 			return;
 		}
-		// okay, proceed
-		strcpy( items[tiller].name, "a ship named " );
-		// translate position back to original message to preserve case
-		strcat( items[tiller].name, (char *)&talk[msg - cmd] );
+
+		char tempname[512];
+		sprintf( tempname, txtEntries[15], &talk[msg - cmd] );
+		tiller->SetName( tempname );
 	}
 }
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cBoat::ModelBoat( cSocket *s, CItem *i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Turn a boat into a boat model that can be re-placed
+//o---------------------------------------------------------------------------o
+void cBoat::ModelBoat( cSocket *s, CItem *i )
+{
+	CItem *tiller	= calcItemObjFromSer( i->GetMoreB() );
+	CItem *p1		= calcItemObjFromSer( i->GetMoreX() );
+	CItem *p2		= calcItemObjFromSer( i->GetMoreY() );
+	CItem *hold		= calcItemObjFromSer( i->GetMoreZ() );
+
+	CChar *mChar = s->CurrcharObj();
+
+	SERIAL serial = p1->GetMore();
+	if( i->GetOwner() == mChar->GetSerial() )
+	{
+#pragma note( "DEPENDENT ON NUMERIC ITEM SECTION" )
+		CItem *model = Items->SpawnItemToPack( s, mChar, 10191, 0 );
+		if( model == NULL )
+		{
+			Console.Error( 3, " Turning boat into model failed on model creation, attempted by character serial %i\n", mChar->GetSerial() );
+			return;
+		}
+
+		model->SetMoreX( tiller->GetMoreX() );
+		model->SetWeight( 0 );
+		model->SetMagic( 0 );
+
+		for( CItem *a = hold->FirstItemObj(); !hold->FinishedItems(); a = hold->NextItemObj() )
+			Items->DeleItem( a );
+
+		Items->DeleItem( tiller );
+		Items->DeleItem( p1 );
+		Items->DeleItem( p2 );
+		Items->DeleItem( hold );
+		Items->DeleItem( i );
+		for( ITEM aa = 0; aa < itemcount; aa++ )
+		{
+			if( items[aa].GetMore() == serial )
+				Items->DeleItem( &items[aa] );
+		}
+	}
+	mChar->Teleport();
+}
+

@@ -1,0 +1,53 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="faq.css">
+</head>
+
+<body background="bg.gif">
+
+<h1>How do I get UOX to work with Internet Connection Sharing?</h1>
+<p>Internet Connection Sharing (ICS) is essentially a NAT/Proxy server designed
+by Microsoft for &quot;ease of use&quot; for non-technical users. However
+&quot;ease of use&quot; in this case means &quot;lack of control&quot;. ICS does
+not have any type of configuration settings that you can modify. By default, ICS
+blocks all inbound requests that are not initiated by your computer. What's this
+mean? It means people cannot log into your UOX server. To get around this, you
+have to manually open port 2593, the port UOX uses. The following text is a
+configuration file for use with ICS.</p>
+<p>--------</p>
+<pre>[version]
+signature=&quot;$CHICAGO$&quot;
+
+[DefaultInstall]
+AddReg=PortMapInstall
+
+[DefaultUnInstall]
+DelReg=PortMapUninstall
+
+[PortMapInstall]
+HKLM,%ICSMAPS%\Active,UOX Server,,&quot;0.0.0.0&quot;
+HKLM,%ICSMAPS%\Installed\UOX Server
+HKLM,%ICSMAPS%\Installed\UOX Server,Name,,&quot;UOX Server&quot;
+HKLM,%ICSMAPS%\Installed\UOX Server,Options,1,00,00,00,00
+
+HKLM,%ICSMAPS%\Installed\UOX Server\0000
+HKLM,%ICSMAPS%\Installed\UOX Server\0000,Type,,&quot;TCP&quot;
+HKLM,%ICSMAPS%\Installed\UOX Server\0000,Port,,&quot;2593&quot;
+HKLM,%ICSMAPS%\Installed\UOX Server\0000,Translation,,&quot;NORMAL&quot;
+
+[PortMapUninstall]
+HKLM,%ICSMAPS%\Active,UOX Server
+HKLM,%ICSMAPS%\Installed\UOX Server
+
+[Strings]
+ICSMAPS=&quot;System\CurrentControlSet\Services\ICSharing\Mappings&quot;</pre>
+<p>----------</p>
+<p>Copy everything between the &quot;---&quot; into a new text file and name it
+&quot;uox4ics.inf&quot; Then right-click on the new file and select
+&quot;install&quot;. Once you reboot, people should be able to log into your
+shard.
+
+</body>
+
+</html>

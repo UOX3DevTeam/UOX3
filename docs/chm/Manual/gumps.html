@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Gump information</title>
+</head>
+<body>
+<br>Here are the commands for use in the GUMPMENU section of the UOX3.BSC;
+be careful though, as the server does NOT parse those, but does directly
+send them to the client, so it might cause you to crash: (Comments on the
+items I marked as "unknown" would be greatly appreciated)
+<ul>
+<li><b>noclose</b>
+<br>Sets the gump so you can only close it by clicking one
+of the buttons on it.
+<li><b>nomove</b>
+<br>Disallows moving the gump around.
+<li><b>page x</b>
+<br>The objects following this command will be put on a certain page of the menu. A special case is page 0; those items are visible independant of the current page.
+<li><b>text x y hue line</b>
+<br>Puts a line of text at the given coordinates. The line has to be present in the corresponding GUMPTEXT entry. (For GUMPMENU 1, put all text in GUMPTEXT 1 and so on)
+<li><b>resizepic x y gumpstart xsize ysize</b>
+<br>This is for the "background" of menus. Gumpstart should point to the beginning of a certain set of 9 gumps displaying the edges and fill of the background. (For example: 5100 is the standard grey background, 5120 is a bit darker, 5170 is a scroll)
+<li><b>button x y gump pressedgump close action exitcode</b>
+<br>This is a button that you can click. If close is >0, the button is closing the menu if clicked. If action is 1, it flips one page backward; if it is
+2 it is going forward. Exitcode has no meaning for THIS version of UOX.
+<li><b>radio x y gump selectedgump default resultcode</b>
+<br>This is a radiobutton. If default is 1 then this is the default selection for the menu.
+<li><b>checkbox x y gump selectedgump default resultcode</b>
+<br>Same as radio, but many of those can be switched on at a time.
+<li><b>gumppic x y gump</b>
+<br> This is placing a decorative gump with no
+functionality.
+<li><b>tilepic x y tile</b>
+<br>Same as gumppic, but this one is placing an item tile.
+<li><b>nodispose</b>
+<br>UNKNOWN (Didnt see any change)
+<li><b>textentry</b>
+<br>UNKNOWN (This crashed my client; can anyone get it
+to work?)
+<li><b>group</b>
+<br>UNKNOWN (Never noticed anything with this command)
+</ul>
+</body>
+</html>

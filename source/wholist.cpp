@@ -1,29 +1,3 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  wholist.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 #include "uox3.h"
 
 void cWhoList::ResetUpdateFlag( void )
@@ -33,7 +7,6 @@ void cWhoList::ResetUpdateFlag( void )
 // DATE:	12th February, 2000
 {
 	needsUpdating = false;
-	
 }
 
 cWhoList::cWhoList( bool trulyOnline )
@@ -67,7 +40,7 @@ void cWhoList::FlagUpdate( void )
 	needsUpdating = true;
 
 }
-void cWhoList::SendSocket( UOXSOCKET toSendTo, unsigned char option )
+void cWhoList::SendSocket( cSocket *toSendTo, UI08 option )
 // PRE:		WhoList class is active
 // POST:	Sends the wholist to the socket, depending on option
 //			0 = On/off line players
@@ -81,9 +54,9 @@ void cWhoList::SendSocket( UOXSOCKET toSendTo, unsigned char option )
 		Update();
 
 	if( online )
-		SendVecsAsGump( toSendTo, one, two, 4 );
+		SendVecsAsGump( toSendTo, one, two, 4, INVALIDSERIAL );
 	else
-		SendVecsAsGump( toSendTo, one, two, 11 );
+		SendVecsAsGump( toSendTo, one, two, 11, INVALIDSERIAL );
 }
 
 void cWhoList::GMEnter( void )
@@ -105,7 +78,7 @@ void cWhoList::GMLeave( void )
 		gmCount--;
 }
 
-long int cWhoList::GrabSerial( int index )
+SERIAL cWhoList::GrabSerial( CHARACTER index )
 // PRE:		WhoList class is active
 // POST:	Returns serial as refered to by index
 // CODER:	Abaddon
@@ -114,7 +87,7 @@ long int cWhoList::GrabSerial( int index )
 //	if( index >= onlineEntries.size() )
 //		return offlineEntries[index - onlineEntries.size()]->player;
 //	return onlineEntries[index]->player;
-	return -1;
+	return INVALIDSERIAL;
 }
 
 void cWhoList::Delete( void )
@@ -123,21 +96,8 @@ void cWhoList::Delete( void )
 // CODER:	Abaddon
 // DATE:	12th February, 2000
 {
-	int i = 0;
-	int minSize;
-	minSize = min( one.size(), two.size() );
-	for( i = 0; i < minSize; i++ )
-	{
-		delete one[i];
-		delete two[i];
-	}
-	for( i = minSize; i < one.size(); i++ )
-		delete one[i];
-	for( i = minSize; i < two.size(); i++ )
-		delete two[i];
 	one.resize( 0 );
 	two.resize( 0 );
-
 	whoMenuData.resize( 0 );
 
 }
@@ -153,247 +113,233 @@ void cWhoList::AddSerial( SERIAL toAdd )
 	whoMenuData[size] = toAdd;
 }
 
-void cWhoList::ButtonSelect( UOXSOCKET toSendTo, unsigned short int buttonPressed, unsigned char type )
+void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 // PRE:		WhoList class is active
 // POST:	Does action based upon button selected
 // CODER:	Abaddon
 // DATE:	23rd February, 2000
 {
-	CHARACTER targetChar, sourceChar;
-	sourceChar = currchar[toSendTo];
+	CChar *sourceChar = toSendTo->CurrcharObj();
 
 	if( buttonPressed < 200 )
 	{		
 		buttonPressed -= 7;
-		chars[sourceChar].making = buttonPressed;
+		sourceChar->SetMaking( buttonPressed );
 		Command( toSendTo, type, buttonPressed );
 		return;
 	}
 
 	GMLeave();
-	short int i = chars[sourceChar].making;
-
-	if( i < 0 )
+	SERIAL ser = sourceChar->GetMaking();
+	if( ser == INVALIDSERIAL )
 	{
-		sysmessage( toSendTo, "Selected character not found" );
+		sysmessage( toSendTo, 1387 );
 		return;
 	}
 
-	SERIAL charSerial = whoMenuData[i];
-	int serhash = charSerial % HASHMAX;
+	SERIAL charSerial = whoMenuData[ser];
 
-	targetChar = findbyserial( &charsp[serhash], charSerial, 1 ); // find selected char ...
-	if( targetChar == -1 )
+	CChar *targetChar = calcCharObjFromSer( charSerial ); // find selected char ...
+	if( targetChar == NULL )
 	{
-		sysmessage( toSendTo, "Selected character not found" );
+		sysmessage( toSendTo, 1387 );
 		return;
 	}
+	cSocket *trgSock = NULL;
 	switch( buttonPressed )
 	{
 	case 200://gochar
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "You cannot go to such powerful beings" );
+			sysmessage( toSendTo, 1388 );
 			return;
 		}
-		mapRegions->RemoveItem( sourceChar + 1000000 );
-		chars[sourceChar].x = chars[targetChar].x;
-		chars[sourceChar].y = chars[targetChar].y;
-		chars[sourceChar].z = chars[targetChar].z;
-		chars[sourceChar].dispz = chars[targetChar].dispz;
-		teleport( sourceChar );
-		mapRegions->AddItem( sourceChar + 1000000 );
+		if( sourceChar->WorldNumber() != targetChar->WorldNumber() )
+		{
+			sourceChar->SetLocation( targetChar );
+			SendMapChange( targetChar->WorldNumber(), toSendTo );
+		}
+		else
+			sourceChar->SetLocation( targetChar );
+		sourceChar->Teleport();
 		break;
 	case 201://xtele
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "Such powerful beings don't come on your whim!" );
+			sysmessage( toSendTo, 1389 );
 			return;
 		}
-		mapRegions->RemoveItem( targetChar + 1000000 );
-		chars[targetChar].x = chars[sourceChar].x;
-		chars[targetChar].y = chars[sourceChar].y;
-		chars[targetChar].z = chars[sourceChar].z;
-		chars[targetChar].dispz = chars[sourceChar].dispz;
-		teleport( targetChar );
-		mapRegions->AddItem( targetChar + 1000000 );
+		if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
+		{
+			targetChar->SetLocation( sourceChar );
+			trgSock = calcSocketObjFromChar( targetChar );
+			SendMapChange( sourceChar->WorldNumber(), trgSock );
+		}
+		else
+			targetChar->SetLocation( sourceChar );
+		targetChar->Teleport();
 		break;
 	case 202://jail char
 		if( sourceChar == targetChar )
 		{
-			sysmessage( toSendTo, "You cannot jail yourself!" );
+			sysmessage( toSendTo, 1390 );
 			break;
 		}
 		else
 		{
-			if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				sysmessage( toSendTo, "You cannot jail someone superior to you" );
+				sysmessage( toSendTo, 1391 );
 				return;
 			}
-			Targ->JailTarget( toSendTo, chars[targetChar].serial );
+			Targ->JailTarget( toSendTo, targetChar->GetSerial() );
 			break;
 		}						 
 	case 203://release
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "You release someone more powerful than you" );
+			sysmessage( toSendTo, 1392 );
 			return;
 		}
-		Targ->ReleaseTarget( toSendTo, chars[targetChar].serial );
+		Targ->ReleaseTarget( toSendTo, targetChar->GetSerial() );
 		break;
 	case 204:
-		if(targetChar == sourceChar)
+		if( targetChar == sourceChar )
 		{
-			sysmessage( toSendTo, "You cannot kick yourself" );
-			break; // lb
+			sysmessage( toSendTo, 1393 );
+			break;
 		}
 		else
 		{
-			if( !::online( targetChar ) )	// local var overloads it
+			if( !::isOnline( targetChar ) )	// local var overloads it
 			{
-				sysmessage( toSendTo, "You can't kick an offline player" );		// you realize the break isn't necessary?
+				sysmessage( toSendTo, 1394 );		// you realize the break isn't necessary?
 				break;
 			}
-			if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				sysmessage( toSendTo, "You cannot kick someone more powerful than you" );
+				sysmessage( toSendTo, 1395 );
 				return;
 			}
-			sysmessage( toSendTo, "Kicking player" );
+			sysmessage( toSendTo, 1396 );
 			Network->Disconnect( calcSocketFromChar( targetChar ) );
 			break;
 		}
 	case 205:	// not active currently, a remote where
 		// make it prettier later!
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "You cannot spy on your betters" );
+			sysmessage( toSendTo, 1397 );
 			return;
 		}
-		sysmessage( toSendTo, "X: %i Y: %i Z: %i", chars[targetChar].x, chars[targetChar].y, chars[targetChar].z );
+		sysmessage( toSendTo, "X: %i Y: %i Z: %i World: %i", targetChar->GetX(), targetChar->GetY(), targetChar->GetZ(), targetChar->WorldNumber() );
 		break;
 	case 206:	// remote cstats
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "You have not the right to see the intimate details of your betters" );
+			sysmessage( toSendTo, 1398 );
 			return;
 		}
-		buffer[toSendTo][7]  = chars[targetChar].ser1;
-		buffer[toSendTo][8]  = chars[targetChar].ser2;
-		buffer[toSendTo][9]  = chars[targetChar].ser3;
-		buffer[toSendTo][10] = chars[targetChar].ser4;
+		toSendTo->SetDWord( 7, targetChar->GetSerial() );
 		Targ->CstatsTarget( toSendTo );
 		break;
 	case 207:	// remote tweak
-		if( chars[targetChar].commandLevel > chars[sourceChar].commandLevel )
+		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 		{
-			sysmessage( toSendTo, "You certainly cannot adjust those that are your betters!" );
+			sysmessage( toSendTo, 1399 );
 			return;
 		}
-		buffer[toSendTo][7]  = chars[targetChar].ser1;
-		buffer[toSendTo][8]  = chars[targetChar].ser2;
-		buffer[toSendTo][9]  = chars[targetChar].ser3;
-		buffer[toSendTo][10] = chars[targetChar].ser4;
+		toSendTo->SetDWord( 7, targetChar->GetSerial() );
 		Targ->TweakTarget( toSendTo );
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. wholist.cpp, ButtonSelect()\n"); //Morrolan
+		Console.Error( 2, " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
 	}
 }
 
-void cWhoList::Command( UOXSOCKET toSendTo, unsigned char type, unsigned short int buttonPressed )
+void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
 {
-	int k;
-	CHARACTER targetChar;
-	SERIAL serial;
-	int serhash;
-	
-	k = buttonPressed;
-	serial = whoMenuData[buttonPressed];
-	serhash = serial%HASHMAX;
+	SERIAL serial = whoMenuData[buttonPressed];
+	CChar *targetChar = calcCharObjFromSer( serial ); // find selected char ...
 
-	targetChar = findbyserial( &charsp[serhash], serial, 1 ); // find selected char ...
-
-	if( targetChar == -1 )
+	if( targetChar == NULL )
 	{
-		sysmessage( toSendTo, "Selected character not found" );
+		sysmessage( toSendTo, 1387 );
 		return;
 	}
 	
 	stringList one, two;
+	
+	UI16 lColour = cwmWorldState->ServerData()->GetLeftTextColour(), tColour = cwmWorldState->ServerData()->GetTitleColour();
+	UI16 butRight = cwmWorldState->ServerData()->GetButtonRight();
 	//--static pages
-	one.push_back( new string( "nomove" ) );
-	one.push_back( new string( "noclose" ) );
-	one.push_back( new string( "page 0" ) );
+	one.push_back( "nomove" );
+	one.push_back( "noclose" );
+	one.push_back( "page 0" );
 	char temp[512];
-	sprintf( temp,"resizepic 0 0 %i 260 340", 2600 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 30 300 %i %i 1 0 1", 4017, 4017 + 1); //OKAY
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 30 40 %i 0", 0 );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 30 60 %i 1", 0 );
-	one.push_back( new string( temp ) );
+	sprintf( temp,"resizepic 0 0 %i 260 340", cwmWorldState->ServerData()->GetBackgroundPic() );
+	one.push_back( temp );
+	sprintf( temp, "button 30 300 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
+	one.push_back( temp );
+	sprintf( temp, "text 30 40 %i 0", tColour );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	one.push_back( temp );
+	sprintf( temp, "text 30 60 %i 1", tColour );
+	one.push_back( temp );
 
-	one.push_back( new string( "page 1" ) );
+	one.push_back( "page 1" );
 
-	sprintf( temp, "text 50 90 %i 2", 0 );	//goto text
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 110 %i 3", 0 );	//gettext
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 130 %i 4", 0 );	//Jail text
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 150 %i 5", 0 );	//Release text
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 170 %i 6", 0 );	//Kick user text
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 190 %i 7", 0 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 210 %i 8", 0 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 230 %i 9", 0 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 50 270 %i 10", 0 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 90 %i %i 1 0 200", 4005, 4005 + 1 ); //goto button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 110 %i %i 1 0 201", 4005, 4005 + 1 ); //get button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 130 %i %i 1 0 202", 4005, 4005 + 1 ); //Jail button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 150 %i %i 1 0 203", 4005, 4005 + 1 ); //Release button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 170 %i %i 1 0 204", 4005, 4005 + 1 ); //kick button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 190 %i %i 1 0 205", 4005, 4005 + 1 ); //Where button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 210 %i %i 1 0 206", 4005, 4005 + 1 ); //Cstats button
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 20 230 %i %i 1 0 207", 4005, 4005 + 1 ); //Tweak button
-	one.push_back( new string( temp ) );
+	sprintf( temp, "text 50 90 %i 2", lColour );	//goto text
+	one.push_back( temp );
+	sprintf( temp, "text 50 110 %i 3", lColour );	//gettext
+	one.push_back( temp );
+	sprintf( temp, "text 50 130 %i 4", lColour );	//Jail text
+	one.push_back( temp );
+	sprintf( temp, "text 50 150 %i 5", lColour );	//Release text
+	one.push_back( temp );
+	sprintf( temp, "text 50 170 %i 6", lColour );	//Kick user text
+	one.push_back( temp );
+	sprintf( temp, "text 50 190 %i 7", lColour );
+	one.push_back( temp );
+	sprintf( temp, "text 50 210 %i 8", lColour );
+	one.push_back( temp );
+	sprintf( temp, "text 50 230 %i 9", lColour );
+	one.push_back( temp );
+	sprintf( temp, "text 50 270 %i 10", lColour );
+	one.push_back( temp );
+	sprintf( temp, "button 20 90 %i %i 1 0 200", butRight, butRight + 1 ); //goto button
+	one.push_back( temp );
+	sprintf( temp, "button 20 110 %i %i 1 0 201", butRight, butRight + 1 ); //get button
+	one.push_back( temp );
+	sprintf( temp, "button 20 130 %i %i 1 0 202", butRight, butRight + 1 ); //Jail button
+	one.push_back( temp );
+	sprintf( temp, "button 20 150 %i %i 1 0 203", butRight, butRight + 1 ); //Release button
+	one.push_back( temp );
+	sprintf( temp, "button 20 170 %i %i 1 0 204", butRight, butRight + 1 ); //kick button
+	one.push_back( temp );
+	sprintf( temp, "button 20 190 %i %i 1 0 205", butRight, butRight + 1 ); //Where button
+	one.push_back( temp );
+	sprintf( temp, "button 20 210 %i %i 1 0 206", butRight, butRight + 1 ); //Cstats button
+	one.push_back( temp );
+	sprintf( temp, "button 20 230 %i %i 1 0 207", butRight, butRight + 1 ); //Tweak button
+	one.push_back( temp );
 
 
-	sprintf( temp, "User %i selected (account %i)",buttonPressed, chars[targetChar].account );
-	two.push_back( new string( temp ) );
-	sprintf( temp, "Name: %s",chars[targetChar].name);   
-	two.push_back( new string( temp ) );
-	two.push_back( new string( "Goto Character") );
-	two.push_back( new string( "Get Character") );
-	two.push_back( new string( "Jail Character") );
-	two.push_back( new string( "Release Character") );
-	two.push_back( new string( "Kick Character") );
-	two.push_back( new string( "Location Info" ) );
-	two.push_back( new string( "Stats" ) );
-	two.push_back( new string( "Tweak" ) );
-	sprintf( temp, "Serial#[%x %x %x %x]", chars[targetChar].ser1, chars[targetChar].ser2, chars[targetChar].ser3, chars[targetChar].ser4 );   
-	two.push_back( new string( temp ) );
+	sprintf( temp, "User %i selected (account %i)",buttonPressed, targetChar->GetAccount() );
+	two.push_back( temp );
+	sprintf( temp, "Name: %s", targetChar->GetName() );   
+	two.push_back( temp );
+	two.push_back( Dictionary->GetEntry( 1400 ) );
+	two.push_back( Dictionary->GetEntry( 1401 ) );
+	two.push_back( Dictionary->GetEntry( 1402 ) );
+	two.push_back( Dictionary->GetEntry( 1403 ) );
+	two.push_back( Dictionary->GetEntry( 1404 ) );
+	two.push_back( Dictionary->GetEntry( 1405 ) );
+	two.push_back( Dictionary->GetEntry( 1406 ) );
+	two.push_back( Dictionary->GetEntry( 1407 ) );
+	sprintf( temp, "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 ) );   
+	two.push_back( temp );
 
-	SendVecsAsGump( toSendTo, one, two, type );
-	for( int i = 0; i < one.size(); i++ )
-		delete one[i];
-	for( int j = 0; j < two.size(); j++ )
-		delete two[j];
+	SendVecsAsGump( toSendTo, one, two, type, INVALIDSERIAL );
 }
 
 void cWhoList::ZeroWho( void )
@@ -421,126 +367,133 @@ void cWhoList::Update( void )
 	char temp[512];
 	int i,k;
 	int numPerPage = 13;
-	unsigned int pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 	
 	k = now;
 	int realCount = 1;
 	//--static pages
-	one.push_back( new string( "noclose" ) );
-	one.push_back( new string( "page 0"  ) );
-	sprintf( temp, "resizepic 0 0 %i 550 340", 2600 );	// modified by Xuri
-	one.push_back( new string( temp ) );
-	sprintf( temp, "button 250 15 %i %i 1 0 1", 4017, 4017 + 1 );
-	one.push_back( new string( temp ) );
-	sprintf( temp, "text 45 15 %i 0", 0 );
-	one.push_back( new string( temp ) );
+	one.push_back( "noclose" );
+	one.push_back( "page 0"  );
+	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
+	one.push_back( temp );
+	sprintf( temp, "button 250 15 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1 );
+	one.push_back( temp );
+	sprintf( temp, "text 45 15 %i 0", cwmWorldState->ServerData()->GetTitleColour() );
+	one.push_back( temp );
 
 	sprintf( temp, "page %i", pagenum );
-	one.push_back( new string( temp ) );
+	one.push_back( temp );
 
 	sprintf( temp, "Wholist" );
-	two.push_back( new string( temp ) );
+	two.push_back( temp );
 
 	//--Start User List
 	if( online )
 	{
 		for( i = 0; i < k; i++ )
 		{
-			if( perm[i] )
+			cSocket *tSock = calcSocketObjFromSock( i );
+			CChar *tChar = tSock->CurrcharObj();
+			if( tChar == NULL )
+				continue;
+			if( realCount > 0 && !(realCount%numPerPage) )
 			{
-				if( realCount > 0 && !(realCount%numPerPage) )
-				{
-					position = 40;
-					pagenum++;
-					sprintf(temp, "page %i", pagenum );
-					one.push_back( new string( temp ) );
-				}
-				sprintf( temp, "text 50 %i %i %i", position, 0, linenum ); 
-				one.push_back( new string( temp ) );
-				sprintf( temp, "button 20 %i %i %i %i 0 %i", position, 4005, 4005 + 1, pagenum, buttonnum );
-				one.push_back( new string( temp ) );
-
-				sprintf( temp, " %s",chars[currchar[i]].name );
-				two.push_back( new string( temp ) );
-				AddSerial( chars[currchar[i]].serial );
-
-				position += 20;
-				linenum++;
-				buttonnum++;
-				realCount++;
+				position = 40;
+				pagenum++;
+				sprintf(temp, "page %i", pagenum );
+				one.push_back( temp );
 			}
+			sprintf( temp, "text 50 %i %i %i", position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum ); 
+			one.push_back( temp );
+			sprintf( temp, "button 20 %i %i %i %i 0 %i", position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum, buttonnum );
+			one.push_back( temp );
+			sprintf( temp, " %s", tChar->GetName() );
+			two.push_back( temp );
+			AddSerial( tChar->GetSerial() );
+
+			position += 20;
+			linenum++;
+			buttonnum++;
+			realCount++;
 		}
 		
 		sprintf( temp, "Wholist [%i online]", realCount - 1 );
-		*(two[0]) = temp;
+		two[0] = temp;
 
 		pagenum = 1; 
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 			sprintf( temp, "page %i", pagenum );
-			one.push_back( new string( temp ) );
+			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %i %i 0 %i", 4014, 4014 + 1, pagenum - 1 ); //back button
-				one.push_back( new string( temp ) );
+				sprintf( temp, "button 50 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum - 1 ); //back button
+				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %i %i 0 %i", 4005, 4005 + 1, pagenum + 1 );
-				one.push_back( new string( temp ) );
+				sprintf( temp, "button 260 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum + 1 );
+				one.push_back( temp );
 			}
 			pagenum++;
 		}
 	}
 	else
 	{
-		k = charcount;
-		for( i = 0; i < k; i++ )
+		ACTREC *ourSearch = NULL;
+		CChar *ourChar = NULL;
+		for( ourSearch = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourSearch = Accounts->NextAccount() )
 		{
-			if( !chars[i].npc && !::online( i ) && chars[i].account != -1 )
+			for( i = 0; i < 5; i++ )
 			{
-				if( realCount > 0 && !(realCount%numPerPage) )
+				ourChar = ourSearch->characters[i];
+				if( ourChar != NULL )
 				{
-					position = 40;
-					pagenum++;
-					sprintf(temp, "page %i", pagenum );
-					one.push_back( new string( temp ) );
+					if( !::isOnline( ourChar ) )
+					{
+						if( realCount > 0 && !(realCount%numPerPage) )
+						{
+							position = 40;
+							pagenum++;
+							sprintf(temp, "page %i", pagenum );
+							one.push_back( temp );
+						}
+						sprintf( temp, "text 50 %i %i %i", position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum ); 
+						one.push_back( temp );
+						sprintf( temp, "button 20 %i %i %i %i 0 %i", position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum, buttonnum );
+						one.push_back( temp );
+
+						sprintf( temp, " %s (%s)", ourChar->GetName(), ourChar->GetLastOn() );
+						two.push_back( temp );
+						AddSerial( ourChar->GetSerial() );
+
+						position += 20;
+						linenum++;
+						buttonnum++;
+						realCount++;
+					}
 				}
-				sprintf( temp, "text 50 %i %i %i", position, 0, linenum ); 
-				one.push_back( new string( temp ) );
-				sprintf( temp, "button 20 %i %i %i %i 0 %i", position, 4005, 4005 + 1, pagenum, buttonnum );
-				one.push_back( new string( temp ) );
-
-				sprintf( temp, " %s (%s)", chars[i].name, chars[i].laston );
-				two.push_back( new string( temp ) );
-				AddSerial( chars[i].serial );
-
-				position += 20;
-				linenum++;
-				buttonnum++;
-				realCount++;
 			}
 		}
-		
 		sprintf( temp, "Wholist [%i offline]", realCount-1 );
-		*(two[0]) = temp;
+		two[0] = temp;
 
 		pagenum = 1; 
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 			sprintf( temp, "page %i", pagenum );
-			one.push_back( new string( temp ) );
+			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %i %i 0 %i", 4014, 4014 + 1, pagenum - 1 ); //back button
-				one.push_back( new string( temp ) );
+				sprintf( temp, "button 50 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum - 1 ); //back button
+				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %i %i 0 %i", 4005, 4005 + 1, pagenum + 1 );
-				one.push_back( new string( temp ) );
+				sprintf( temp, "button 260 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum + 1 );
+				one.push_back( temp );
 			}
 			pagenum++;
 		}

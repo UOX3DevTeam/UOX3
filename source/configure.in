@@ -1,0 +1,16 @@
+AC_INIT(uox3.cpp)
+
+AM_INIT_AUTOMAKE(uox3,0.95)
+
+AC_PROG_CXX
+
+AC_C_CONST
+
+CXXFLAGS="-I./mozilla/js/src"
+
+dnl To enable debugger support, remove the "dnl" from the line 3 lines down
+dnl and recompile the entire application
+
+dnl CXXFLAGS="$CXXFLAGS -g"
+
+AC_OUTPUT(Makefile)

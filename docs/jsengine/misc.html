@@ -1,0 +1,258 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="MiscFuncs">Miscellaneous Functions</a></h3>
+<table border="1" width="100%" cellspacing="0">
+  <tr>
+    <th colspan=3 bgcolor="maroon"><a name="SE_GetTag">GetTag</a> 
+  
+  <tr>
+    <td valign="top" width="25%"><b>Prototype</b>
+    <td>
+      <pre>variant GetTag( Object, ObjectType, &quot;TagName&quot; );
+</pre>
+    
+  <tr>
+    <td valign="top" width="25%"><b>Purpose</b>
+    <td>Returns the tag with the name TagName stored on Object.<br>
+      <b><br>
+      Note:</b><br>
+      The Tags you store on Objects <i>are</i> persistent, that means they're 
+      stored in the worldsave.<br>
+      The Tags could contain anything, but you should be careful with storing 
+      Character and Item objects in there, better store the Serial returned by 
+      GetSerial(...).<br>
+    
+  
+  <tr>
+    <td valign="top" width="25%"><b>Example of Usage</b>
+    <td>
+      <pre>var TagValue = GetTag( srcChar, 0, &quot;LastObject&quot; );
+</pre>
+    
+</table>
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+  <tr> 
+    <th colspan=3 bgcolor="maroon"><a name="SE_GetNumTags">GetNumTags</a> 
+  
+  <tr> 
+    <td valign="top" width="25%"><b>Prototype</b> 
+    <td> 
+      <pre>variant GetNumTags( Object, ObjectType);
+</pre>
+    
+  <tr> 
+    <td valign="top" width="25%"><b>Purpose</b> 
+    <td>Returns the number of Tags assigned to Object.<br>
+      <b><br>
+      Note:</b><br>
+      The Tags you store on Objects <i>are</i> persistent, that means they're 
+      stored in the worldsave.<br>
+      The Tags could contain anything, but you should be careful with storing 
+      Character and Item objects in there, better store the Serial returned by 
+      GetSerial(...).<br>
+  <tr> 
+    <td valign="top" width="25%"><b>Example of Usage</b> 
+    <td> 
+      <pre>var NumberofTags  = GetNumTags(srcChar, 0);</pre>
+    
+</table>
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+  <tr> 
+    <th colspan=3 bgcolor="maroon"><a name="SE_SetTag">SetTag</a> 
+  
+  <tr> 
+    <td valign="top" width="25%"><b>Prototype</b> 
+    <td> 
+      <pre>variant SetTag( Object, ObjectType, &quot;TagName&quot;, &quot;&quot; );
+</pre>
+    
+  <tr> 
+    <td valign="top" width="25%"><b>Purpose</b> 
+    <td>Sets a new Value for the Tag called &quot;TagName&quot; on Object. To 
+      retrieve this Value use GetTag.<br>
+      <b><br>
+      Note:</b><br>
+      The Tags you store on Objects <i>are</i> persistent, that means they're 
+      stored in the worldsave.<br>
+      The Tags could contain anything, but you should be careful with storing 
+      Character and Item objects in there, better store the Serial returned by 
+      GetSerial(...).<br>
+  <tr> 
+    <td valign="top" width="25%"><b>Example of Usage</b> 
+    <td> 
+      <pre>var TagValue = &quot;ItWork!&quot;;<br>SetTag( srcChar, 0, &quot;LastObject&quot;, TagValue );
+</pre>
+    
+</table>
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RollDice">RollDice</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int RollDice( numDie, faces, addition );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Rolls a faces sided die numDie times and adds addition. The example is for a DnD style dice like: 2d3+1
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mDie = RollDice( 2, 3, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StartTimer">StartTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>StartTimer( tChar, numSecs, numHundredthsOfSec, timerID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Starts a timer that will elapse after numSecs and numHundredthsOfSec seconds pass, for a character tChar.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>StartTimer( srcChar, 1, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="ScriptPrintNumber">ScriptPrintNumber</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ScriptPrintNumber( number );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Prints out a number to the console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>ScriptPrintNumber( 5 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetShowLayer">SetShowLayer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetShowLayer( number );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets showlayer true (if number == 1) or false 
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetShowLayer( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetShowLayer">GetShowLayer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetShowLayer();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns value of showlayer
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iLayer = GetShowLayer();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcSockFromChar">CalcSockFromChar</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>UOXSOCKET CalcSockFromChar( int trgChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the socket associated with a particular character, or -1 if not online
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>srcSock = CalcSockFromChar( srcChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RandomNumber">RandomNumber</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int RandomNumber( loNum, hiNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns a random number between loNum and hiNum
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iNum = RandomNumber( 0, 10 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcCharFromSer">CalcCharFromSer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int CalcCharFromSer( cSerial );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the index of the item with serial cSerial.  Returns -1 if it doesn't exist
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var trgChar = CalcCharFromSer( cSerial );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcItemFromSer">CalcItemFromSer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int CalcItemFromSer( iSerial );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the index of the item with serial iSerial.  Returns -1 if it doesn't exist
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var trgItem = CalcItemFromSer( iSerial );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DistanceTo">DistanceTo</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int DistanceTo( srcObj, trgObj, srcType, trgType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>srcType and trgType are like objType for other funcs.0 indicates a char, 1 indicates an item.<br>Returns the distance measured from srcObj to trgObj
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iDist = DistanceTo( srcChar, trgItem, 0, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_InRange">InRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int InRange( srcObj, trgObj, srcType, trgType, distance );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>srcType and trgType are like objType for other funcs.  0 indicates a char, 1 indicates an item.<br>Returns true if the distance from srcObj to trgObj is less than distance
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var isInRange = InRange( srcChar, trgItem, 0, 1, 18 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_PopUpTarget">PopUpTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function PopUpTarget( tSock, tNum, toSay );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Provides a call to an inbuilt popup target.  tNum must be between 0 and 255 inclusive.  Says toSay, and shows a cursor.  Note that this allows access potentially to GM functions.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>PopUpTarget( srcSock, 2, "Where do you wish to teleport to?" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CustomTarget">CustomTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function CustomTarget( tSock, tNum, toSay );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Very similar to PopUpTarget.  It's a callback situation instead.  tNum must be between 0 and 255.  Says toSay, and shows a cursor.  Reenters the script associated with the socket's player (ie player who gets the cursor).  Enters function name based on the value of tNum.  if tNum is 0, then the function would be onCallback0.  Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>CustomTarget( srcSock, 0, "My, what a custom target we weave" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcCharFromSock">CalcCharFromSock</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int CalcCharFromSock( sockNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Calculates the character associated with a socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var plChar = CalcCharFromSock( sockNum );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RegisterKey">RegisterKey</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_UnregisterKey">UnregisterKey</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetLightLevel">GetLightLevel</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetLightLevel( player );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the light level that player sees
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var ilevel = GetLightLevel( pTalkingTo );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetMurderThreshold">GetMurderThreshold</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetMurderThreshold();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the number of kills needed to go red.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetMurderThreshold() > GetMurderCount( pTalking ) )
+<br>{
+<br>	TextMessage( pTalkingTo, "Surely sir, you must be a murderer.  I bid you adieu" );
+<br>	EmoteMessage( pTalkingTo, "*scampers off*" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_TurnToward">TurnToward</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnToward( srcChar, xToTurnTo, yToTurnTo );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The character srcChar turns to the xToTurnTo/yToTurnTo location
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>TurnToward( pTalking, GetX( pTalkingTo, 0 ), GetY( pTalkingTo, 0 ) );
+<br>This turns the character towards who they are talking to
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DirectionTo">DirectionTo</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char DirectionTo( srcChar, xToTurnTo, yToTurnTo );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the direction that srcChar would face if he was turning to xToTurnTo/yToTurnTo<br>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mDir = DirectionTo( pTalking, GetX( pTalkingTo, 0 ), GetY( pTalkingTo, 0 ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetTileIDAtMapCoord">GetTileIDAtMapCoord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char DirectionTo( xLoc, yLoc, worldNumber );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns ID of the tile at xLoc and yLoc in world worldNumber
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+      <pre>var MapTile = GetTileIDAtMapCoord( 0, 0, 0 ); // gets tile at 0,0 in Britannia
+
+</pre>
+    </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

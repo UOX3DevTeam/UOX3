@@ -1,0 +1,49 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="EffectFuncs">Effect Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoStaticEffect">DoStaticEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoStaticEffect( int targThing, short Effect, UCHAR speed, UCHAR loop, UCHAR targType );<br>DoStaticEffect( int targThing, short Effect, UCHAR speed, UCHAR loop, UCHAR targType, UCHAR explode );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Does a static effect for a char (first prototype) or for an item (second prototype)<br>When targType == 0 it's a char, when == 1 it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>DoStaticEffect( srcChar, 0x376A, 9, 6, 0 );<br>DoStaticEffect( srcItem, 0x36B0, 0, 9, 1, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoMovingEffect">DoMovingEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoMovingEffect( srcObj, srcObjType, trgObj, trgObjType, effect, speed, loop, explode );<br>DoMovingEffect( srcObj, srcObjType, targX, targY, targZ, effect, speed, loop, explode );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>srcObjType == 0: srcObj is a character<br>srcObjType == 1: srcObj is an item<br>trgObjType == 0: trgObj is a character<br>trgObjType == 1: trgObj is an item<br>Does a moving effect (eg fireball) from srcObj to trgObj, or srcOb to targ location<br>effect is the ID of the moving effect<br>explode == 0 no explosion<br>explode == 1 explodes
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>DoMovingEffect( attacker, 0, defender, 0, 0x36D5, 0x07, 0x00, 0x01 );<br>DoMovingEffect( srcChar, 0, 1000, 1000, 0, 0x36E4, 17, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoTempEffect">DoTempEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoTempEffect( iType, src, trg, targNum, more1, more2, more3, [itemPtr] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Does a temporary effect (things like protection, night sight, and what not) frm src to trg.  If iType = 0, then it's a character, otherwise it's an item.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>DoTempEffect( 0, pTalking, pTalkingTo, 3, GetSkill( pTalking, 0 ) / 100, 0, 0 );<br>Does a clumsy on who the person is talking to, intensity based upon skill 0 of talking player (Alchemy)
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoSoundEffect">DoSoundEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoSoundEffect( iObject, iType, soundID, bAllHear );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Plays a sound, from iObject, which is different based on iType.  If iType == 0, iObject is a character.  If iType == 1, iObject is an item.  If iType == 2, iObject is a socket.  SoundID is the full ID of the sound to play.  If bAllHear is TRUE, then everyone nearby hears it.  If it's false, then only the thing as represented by iObject hears it.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>DoSoundEffect( pTalking, 0, 568, FALSE );<br>Plays a miss target sound based on person talking
+</pre></table>
+
+<p>&nbsp;</p><center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

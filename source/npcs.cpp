@@ -1,1680 +1,370 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  npcs.cpp
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  This File is part of UOX3
-//  Ultima Offline eXperiment III
-//  UO Server Emulation Program
-//  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
-//
-//  This program is free software; you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; either version 2 of the License, or
-//  (at your option) any later version.
-//  
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//	
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 #include "uox3.h"
 #include "debug.h"
+#include "ssection.h"
 
+#undef DBGFILE
 #define DBGFILE "npcs.cpp"
 
-//Instance of cItemHandle class to handle item memory//
-
 //o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::cCharacterHandle()
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
+//|	Function	-	void DeleteChar( CChar *k )
+//|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
-cCharacterHandle::cCharacterHandle( void )
+//|	Purpose		-	Delete character
+//o---------------------------------------------------------------------------o
+void cCharStuff::DeleteChar( CChar *k )
 {
-	DefaultChar = new char_st;
-	memset(DefaultChar, 0, sizeof(char_st));
-	
-	//setup the item's important properties (ones that might be checked if its used, and need to be this way
-	DefaultChar->free = 1;
-	DefaultChar->ser1 = DefaultChar->ser2 = DefaultChar->ser3 = DefaultChar->ser4 = 0xFF;
-	DefaultChar->serial = 0;
+	if( k == NULL )
+		return;
+	CHARACTER kChar = calcCharFromSer( k->GetSerial() );
+	MapRegion->RemoveChar( k );
 
-	Acctual = Free = 0;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::~cCharacterHandle()
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-cCharacterHandle::~cCharacterHandle()
-{
-	unsigned long i;
-
-	for (i=0;i<Chars.size();i++)//Memory Cleanup
+	// If we delete a NPC we should delete his tempeffects as well
+	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
 	{
-		if (Chars[i] != NULL)
-			delete Chars[i];
+		if( Effect->Destination() == k->GetSerial() )
+			Effect->Destination( INVALIDSERIAL );
+		
+		if( Effect->Source() == k->GetSerial() ) 
+			Effect->Source( INVALIDSERIAL );
 	}
 
-	Chars.clear();
-	Chars.resize(0);
-	
-	FreeNums.clear();
-	FreeNums.resize(0);
-
-	delete DefaultChar;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::New()
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Free memory for a character, create the character in memory 
-//|					(returns item number)
-//o---------------------------------------------------------------------------o
-unsigned long cCharacterHandle::New( void )
-{
-	unsigned long i;
-	
-	if ( Free > 0 )
+	// if we delete a NPC we should delete him from spawnregions
+	// this will fix several crashes
+	if( k->IsNpc() && k->IsSpawned() )
 	{
-		i = FreeNums[FreeNums.size()-1];//get the oldest entry
-		FreeNums.resize( FreeNums.size() - 1 ); //Delete it cause it ain't free no more.
-		Free = max( Free-1, (unsigned int)0 );
+		cSpawnRegion *spawnReg = NULL;
 
-		if (Chars[i] != NULL)
-			delete Chars[i];
-
-		Chars[i] = new char_st;
-	} else {
-		i = Chars.size();
-		Chars.push_back( new char_st );
-	}
-
-	Acctual++;
-
-	return i;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::Delete( long int )
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Free character memory (delete the char)
-//o---------------------------------------------------------------------------o
-void cCharacterHandle::Delete( long int Num )
-{
-	if ( Num > -1 && Num < Chars.size() )
-	{
-		if ( Chars[Num] != NULL  )
+		for( UI32 i = 1; i < totalspawnregions; i++ )
 		{
-			delete Chars[Num];
-			Chars[Num] = NULL;
+			spawnReg = spawnregion[i];
 
-			FreeNums.insert(FreeNums.begin(), Num);
-			Free++;
-			Acctual = max(Acctual-1, (unsigned long)0);
-		} else if ( !isFree( Num ) )
-		{
-			FreeNums.insert(FreeNums.begin(), Num);
-			Free++;
-			Acctual = max(Acctual-1, (unsigned long)0);
+			if( spawnReg == NULL )
+				continue;
+			else
+				spawnReg->deleteSpawnedChar( k );
 		}
 	}
-}
 
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::Size()
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Get the size (in bytes) that characters are taking up
-//o---------------------------------------------------------------------------o
-unsigned long cCharacterHandle::Size( void )
-{
-	unsigned long sz;
-
-	sz = Chars.size() * 4;
-	sz += FreeNums.size() * sizeof(unsigned long);
-	sz += sizeof(char_st) * Acctual;
-	sz += sizeof(cCharacterHandle);
-
-	return sz;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::Reserve( unsigned int )
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Reserve memory for Num number of characters (unused)
-//o---------------------------------------------------------------------------o
-void cCharacterHandle::Reserve( unsigned int Num )
-{
-	unsigned int i, cs = FreeNums.size(), is = Chars.size();
-	
-	Free+=Num;
-	FreeNums.resize( cs + Num );
-	Chars.resize( is+Num );
-
-	for (i=cs;i<(cs+Num);i++)
-	{// is + (cs+(Num-1))-i) is acctual number ( 0 to Num )
-		FreeNums[i] = is + ((cs+(Num-1))-i);
-		Chars[(is + (cs+(Num-1))-i)] = NULL;
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::isFree( unsigned long)
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Check to see if item Num is marked free (unused (slow))
-//o---------------------------------------------------------------------------o
-bool cCharacterHandle::isFree( unsigned long Num )
-{
-	unsigned int i;
-	for (i=0;i<FreeNums.size();i++)
+	for( CItem *tItem = k->FirstItem(); !k->FinishedItems(); tItem = k->NextItem() )
 	{
-		if ( FreeNums[i] == Num )
-			return true;
-	}
-	return false;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::operator[]( long int )
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Reference character Num -  Check to make sure Num is a 
-//|					valid character number and exists in memory
-//o---------------------------------------------------------------------------o
-char_st& cCharacterHandle::operator[] ( long int Num )
-{
-	if ( Num >= 0 && Num < Chars.size())
-	{
-		if ( Chars[Num] != NULL )//&& !isFree( Num ) ) //isFree isSLOW
-			return *Chars[Num];
-	} 
-  else
-  {
-		printf("WARNING: Chars[%i] referenced is invalid. Crash averted!\n", Num);
-  }  
-  //Make sure these props are always this way, they may have been chaged by other functions, so put them back
-	DefaultChar->free = 1;
-	DefaultChar->ser1 = DefaultChar->ser2 = DefaultChar->ser3 = DefaultChar->ser4 = 0xFF;
-	DefaultChar->serial = 0;
-	DefaultChar->x = DefaultChar->y = 0;
-	return *DefaultChar;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Class		:	cCharacterHandle::Count()
-//|	Date		:	1/7/00
-//|	Programmer	:	Zippy
-//o---------------------------------------------------------------------------o
-//| Purpose		:	Return the number of characters in the world (Acctual)
-//o---------------------------------------------------------------------------o
-unsigned long cCharacterHandle::Count( void )
-{
-	return Acctual;
-}
-//End of cCharacterHandle class//
-
-
-
-void cCharStuff::InitChar(int nChar, char ser)
-{
-	static unsigned int LastInitTE=0;
-	int i;
-
-	if (ser)
-	{
-		chars[nChar].ser1 = (unsigned char)(charcount2>>24); // Character serial number
-		chars[nChar].ser2 = (unsigned char)(charcount2>>16);
-		chars[nChar].ser3 = (unsigned char)(charcount2>>8);
-		chars[nChar].ser4 = (unsigned char)(charcount2%256);
-		chars[nChar].serial=charcount2;
-		setptr(&charsp[charcount2%HASHMAX], nChar);
-		charcount2++;
-	} else {
-		chars[nChar].ser1=0;
-		chars[nChar].ser2=0;
-		chars[nChar].ser3=0;
-		chars[nChar].ser4=0;
-		chars[nChar].serial=-1;
-	}
-	if (nChar==charcount) charcount++;
-
-    chars[nChar].multi1=255;//Multi serial1
-	chars[nChar].multi2=255;//Multi serial2
-	chars[nChar].multi3=255;//Multi serial3
-	chars[nChar].multi4=255;//Multi serial4
-	chars[nChar].multis=-1;//Multi serial
-	chars[nChar].free=0;
-	strcpy(chars[nChar].name,"Mr. noname");
-	chars[nChar].title[0]=0x00;
-	chars[nChar].orgname[0]=0x00;
-	chars[nChar].antispamtimer = 0; // LB - anti spam
-	chars[nChar].unicode=0; // This is set to 1 if the player uses unicode speech, 0 if not
-	chars[nChar].account=-1;
-	chars[nChar].x=100;
-	chars[nChar].y=100;
-	chars[nChar].z=chars[nChar].dispz=0;
-	
-	chars[nChar].oldx=0; // fix for jail bug
-	chars[nChar].oldy=0; // fix for jail bug
-	chars[nChar].oldz=0; // LB, experimental, change back to unsignbed if this give sproblems
-	
-	chars[nChar].dir=0; //&0F=Direction
-	chars[nChar].id1=chars[nChar].xid1=chars[nChar].orgid1=0x01; // Character body type
-	chars[nChar].id2=chars[nChar].xid2=chars[nChar].orgid2=0x90; // Character body type
-	chars[nChar].skin1=chars[nChar].xskin1=0x00; // Skin color
-	chars[nChar].skin2=chars[nChar].xskin2=0x00; // Skin color
-	chars[nChar].keynumb=-1;  // for renaming keys 
-	chars[nChar].priv=0;	// 1:GM clearance, 2:Broadcast, 4:Invulnerable, 8: single click serial numbers
-	// 10: Don't show skill titles, 20: GM Pagable, 40: Can snoop others packs, 80: Counselor clearance
-	chars[nChar].priv2=0;	// 1:Allmove, 2: Frozen, 4: View houses as icons, 8: permanently hidden
-	// 10: no need mana, 20: dispellable, 40: permanent magic reflect, 80: no need reagents
-	chars[nChar].fonttype=3; // Speech font to use
-	chars[nChar].saycolor1=0x17; // Color for say messages
-	chars[nChar].saycolor2=0x00; // Color for say messages
-	chars[nChar].emotecolor1=0x00; // Color for emote messages
-	chars[nChar].emotecolor2=0x23; // Color for emote messages
-	chars[nChar].st=50; // Strength
-	chars[nChar].st2=0; // Reserved for calculation
-	chars[nChar].dx=50; // Dexterity
-	chars[nChar].dx2=0; // Reserved for calculation
-	chars[nChar].in=50; // Intelligence
-	chars[nChar].in2=0; // Reserved for calculation
-	chars[nChar].hp=50; // Hitpoints
-	chars[nChar].stm=50; // Stamina
-	chars[nChar].mn=50; // Mana
-	chars[nChar].mn2=0; // Reserved for calculation
-	chars[nChar].hidamage=0; //NPC Damage
-	chars[nChar].lodamage=0; //NPC Damage
-	for (i=0;i<TRUESKILLS;i++)
-	{
-		chars[nChar].baseskill[i]=10;
-		chars[nChar].skill[i]=0;
-	}
-
-	for (i=0;i<ALLSKILLS;i++)
-		chars[nChar].atrophy[i] = i;
-
-	chars[nChar].npc=0;
-	chars[nChar].shop=0; //1=npc shopkeeper
-	chars[nChar].cell=0; // Reserved for jailing players 
-	                     // bugfix, LB 0= player not in jail !, not -1
-
-	chars[nChar].own1=255; // If Char is an NPC, this sets its owner
-	chars[nChar].own2=255; // If Char is an NPC, this sets its owner
-	chars[nChar].own3=255; // If Char is an NPC, this sets its owner
-	chars[nChar].own4=255; // If Char is an NPC, this sets its owner
-	chars[nChar].ownserial=-1; // If Char is an NPC, this sets its owner
-	chars[nChar].robe1=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe2=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe3=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe4=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].karma=0;
-	chars[nChar].fame=0;
-	chars[nChar].kills=0; //PvP Kills
-	chars[nChar].deaths=0;
-	chars[nChar].dead=0; // Is character dead
-	chars[nChar].packitem=-1; // Only used during character creation
-	chars[nChar].fixedlight=255; // Fixed lighting level (For chars in dungeons, where they dont see the night)
-	// was -1 thanks to LB, nice idea, but this is UNSIGNED, therefore 255
-	chars[nChar].speech=0; // For NPCs: Number of the assigned speech block
-	chars[nChar].weight=0; //Total weight
-	chars[nChar].att=0; // Intrinsic attack (For monsters that cant carry weapons)
-	chars[nChar].def=0; // Intrinsic defense
-	chars[nChar].war=0; // War Mode
-	chars[nChar].runs = false;  
-	chars[nChar].targ=-1; // Current combat target
-	chars[nChar].timeout=0; // Combat timeout (For hitting)
-	chars[nChar].regen=0;
-	chars[nChar].regen2=0;
-	chars[nChar].regen3=0;//Regeneration times for mana, stamin, and str
-	chars[nChar].runenumb=-1; // Used for naming runes
-	chars[nChar].attacker=-1; // Character who attacked this character
-	chars[nChar].npcmovetime=0; // Next time npc will walk
-	chars[nChar].npcWander=0; // NPC Wander Mode
-	chars[nChar].oldnpcWander=0; // Used for fleeing npcs
-	chars[nChar].ftarg=-1; // NPC Follow Target
-	chars[nChar].fx1=-1; //NPC Wander Point 1 x
-	chars[nChar].fx2=-1; //NPC Wander Point 2 x
-	chars[nChar].fy1=-1; //NPC Wander Point 1 y
-	chars[nChar].fy2=-1; //NPC Wander Point 2 y
-	chars[nChar].fz1=-1; //NPC Wander Point 1 z
-	chars[nChar].spawn1 = 0;
-	chars[nChar].spawn2 = 0;
-	chars[nChar].spawn3 = 0;
-	chars[nChar].spawn4 = 0;
-	chars[nChar].spawnserial = 0;	// spawn1 < 0x40, indicates region spawn but spawn2 == 0, so not a region spawn at all
-	chars[nChar].hidden=0; // 0 = not hidden, 1 = hidden, 2 = invisible spell
-	chars[nChar].invistimeout=0;
-	chars[nChar].attackfirst=0; // 0 = defending, 1 = attacked first
-	chars[nChar].onhorse=0; // On a horse?
-	chars[nChar].hunger=6;  // Level of hungerness, 6 = full, 0 = "empty"
-	chars[nChar].hungertime=0; // Timer used for hunger, one point is dropped every 20 min
-	chars[nChar].smeltitem=-1;
-	chars[nChar].tailitem=-1;
-	chars[nChar].npcaitype=0; // NPC ai
-	chars[nChar].callnum=-1; //GM Paging
-	chars[nChar].playercallnum=-1; //GM Paging
-	chars[nChar].pagegm=0; //GM Paging
-	chars[nChar].region=(unsigned char)(255);
-	chars[nChar].skilldelay=0;
-	chars[nChar].objectdelay=0;
-	chars[nChar].combathitmessage=0;
-	chars[nChar].making=-1; // skill number of skill using to make item, 0 if not making anything.
-	chars[nChar].blocked=0;
-	chars[nChar].dir2=0;
-	chars[nChar].spiritspeaktimer=0; // Timer used for duration of spirit speak
-	chars[nChar].spattack=0;
-	chars[nChar].spadelay=0;
-	chars[nChar].spatimer=0;
-	chars[nChar].taming=0; //Skill level required for taming
-	chars[nChar].summontimer=0; //Timer for summoned creatures.
-	chars[nChar].trackingtimer=0; // Timer used for the duration of tracking
-	chars[nChar].trackingtarget=0; // Tracking target ID
-	for (i=0;i<MAXTRACKINGTARGETS;i++)
-		chars[nChar].trackingtargets[i]=0;
-	chars[nChar].fishingtimer=0; // Timer used to delay the catching of fish
-	chars[nChar].town=(unsigned char)(255);       //Matches Region number in regions.scp
-	chars[nChar].townvote1=255; //Serial Number of who they want to be mayor.
-	chars[nChar].townvote2=255; //Serial Number of who they want to be mayor.
-	chars[nChar].townvote3=255; //Serial Number of who they want to be mayor.
-	chars[nChar].townvote4=255; //Serial Number of who they want to be mayor.
-	chars[nChar].towntitle=0;  //0=off (default), 1=on. (i.e. - The Honorable Joe of Moonglow, Expert Swordsman)
-	chars[nChar].townpriv=0;  //0=non resident (Other privledges added as more functionality added)
-	chars[nChar].advobj=0; //Has used advance gate?
-	
-	chars[nChar].poison=0; // used for poison skill 
-	chars[nChar].poisoned=0; // type of poison
-	chars[nChar].poisontime=0; // poison damage timer
-	chars[nChar].poisontxt=0; // poision text timer
-	chars[nChar].poisonwearofftime=0; // LB, makes poision wear off ...
-	
-	chars[nChar].fleeat=0;
-	chars[nChar].reattackat=0;
-	chars[nChar].trigger=0; //Trigger number that character activates
-	chars[nChar].trigword[0]='\x00'; //Word that character triggers on.
-	chars[nChar].disabled=0; //Character is disabled, cant trigger.
-	chars[nChar].envokeid1=0x00; //ID1 of item user envoked
-	chars[nChar].envokeid2=0x00; //ID2 of item user envoked
-	chars[nChar].envokeitem=-1;
-	chars[nChar].split=0;
-	chars[nChar].splitchnc=0;
-	chars[nChar].targtrig=0; //Stores the number of the trigger the character for targeting
-	chars[nChar].ra=0;  // Reactive Armor spell
-	chars[nChar].trainer=0; // Serial of the NPC training the char, -1 if none.
-	chars[nChar].trainingplayerin=0; // Index in skillname of the skill the NPC is training the player in
-	chars[nChar].cantrain=1;
-	chars[nChar].laston[0] = '\x00'; //Last time a character was on
-	// Begin of Guild Related Character information (DasRaetsel)
-	chars[nChar].guildtoggle=0;		// Toggle for Guildtitle								(DasRaetsel)
-	chars[nChar].guildtitle[0]='\x00';	// Title Guildmaster granted player						(DasRaetsel)
-	chars[nChar].guildfealty=-1;		// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
-	chars[nChar].guildnumber=0;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-	chars[nChar].flag=0x02; //1=red 2=grey 4=Blue 8=green 10=Orange
-	//chars[nChar].tempflagtime=0;
-	// End of Guild Related Character information
-	chars[nChar].murderrate=0; //#of ticks until one murder decays //REPSYS 
-	chars[nChar].crimflag=-1; //Time when No longer criminal -1=Not Criminal
-	chars[nChar].casting=0; // 0/1 is the cast casting a spell?
-	chars[nChar].spelltime=0; //Time when they are done casting....
-	chars[nChar].spellCast=-1; //current spell they are casting....
-	chars[nChar].spellaction=0; //Action of the current spell....
-	chars[nChar].nextact=0; //time to next spell action....
-	chars[nChar].poisonserial=-1; //AntiChrist -- poisoning skill
-	
-	chars[nChar].squelched=0; // zippy  - squelching
-	chars[nChar].mutetime=0; //Time till they are UN-Squelched.
-	chars[nChar].med=0; // 0=not meditating, 1=meditating //Morrolan - Meditation 
-	for (i=0;i<3;i++)
-		chars[nChar].statuse[i]=0; //Morrolan - stat/skill cap STR/INT/DEX in that order
-	for (i=0;i<TRUESKILLS;i++)
-		chars[nChar].skilluse[i][1]=0;
-	chars[nChar].stealth=-1; //AntiChrist - stealth ( steps already done, -1=not using )
-	chars[nChar].running=0; //AntiChrist - Stamina Loose while running
-	chars[nChar].logout=0;//Time till logout for this char -1 means in the world or already logged out //Instalog
-	chars[nChar].swingtarg=-1; //Target they are going to hit after they swing
-	chars[nChar].holdg=0; // Gold a player vendor is holding for Owner
-	chars[nChar].race = 0;
-	chars[nChar].raceGate = 65535;
-	chars[nChar].shopSpawn = -1;
-
-	chars[nChar].tamed = false; // True if NPC is tamed
-	chars[nChar].pathnum = PATHNUM;
-	chars[nChar].fly_steps = 0; // LB -> used for flying creatures
-	chars[nChar].guarded = false;	// True if CHAR is guarded by some NPC
-	chars[nChar].smoketimer = 0;
-	chars[nChar].smokedisplaytimer = 0;
-	chars[nChar].carve = -1; // AntiChrist - for new carving system
-	chars[nChar].commandLevel = 0; // Player level commands only
-	chars[nChar].postType = LOCALPOST;
-	chars[nChar].questType = 0;
-	chars[nChar].questDestRegion = 0;
-	chars[nChar].questOrigRegion = 0;
- 
-    //initialize weatherdamage
-    for (i = 0; i < WEATHNUM; ++i)   
-		chars[nChar].weathDamage[i] = 0; 
-
-	// This last bit is not needed at all, due to the teffect changes
-	// Abaddon 17th February, 2000
-}
-void cCharStuff::DeleteChar (int k) // Delete character
-{
-	int j;//,serial; //Zippy lag
-	//int ptr,ci;
-	
-	removeitem[1]=chars[k].ser1;
-	removeitem[2]=chars[k].ser2;
-	removeitem[3]=chars[k].ser3;
-	removeitem[4]=chars[k].ser4;
-//	if(chars[k].spawn1<=0x40 && chars[k].spawnserial!=-1)//Not spawned by item (Region spawn) //New -- Zippy spawn regions
-	if( chars[k].spawn1 < 0x40 && chars[k].spawn2 == 1 )
-		spawnregion[chars[k].spawn3].current--;
-	
-	j=removefromptr(&charsp[chars[k].serial%HASHMAX], k);
-	
-//	if (chars[k].spawnserial!=-1) j=removefromptr(&cspawnsp[chars[k].spawnserial%HASHMAX], k);
-	if( chars[k].spawnserial != 0 && chars[k].spawnserial != -1 )	// legacy support until next build
-		j = removefromptr( &cspawnsp[chars[k].spawnserial%HASHMAX], k );
-	if (chars[k].ownserial!=-1) j=removefromptr(&cownsp[chars[k].ownserial%HASHMAX], k);
-	
-	for (j=0;j<now;j++)
-	{
-		Network->xSend(j, removeitem, 5, 0);
-		//if (currchar[j]>k) currchar[j]--;
+		if( tItem != NULL )
+			Items->DeleItem( tItem );
 	}
 	
-	if (k>-1) mapRegions->RemoveItem(k+1000000); // taking it out of mapregions BEFORE x,y changed, LB
-	
-	chars[k].free=1;
-	chars[k].x=20+(xcounter++);
-	chars[k].y=50+(ycounter);
-	chars[k].z=9;
-	chars[k].summontimer=0;
-	if (xcounter==40)
+	if( !k->IsNpc() )
 	{
-		ycounter++;
-		xcounter=0;
-	}
-	if (ycounter==80)
-	{
-		ycounter=0;
-		xcounter=0;
-	}
-	chars.Delete( k );
-}
-
-int cCharStuff::MemCharFree()
-{
-	char memerr=0;
-
-	signed long nChar = chars.New();
-	
-	int slots=3000;
-	if (charcount>=cmem) //Lets ASSUME theres no more memory left instead of acctually checking all the items to find a free one.
-	{
-		int *Copy_clickx;
-		int *Copy_clicky;
-		int *Copy_currentSpellType;
-		char *Copy_targetok;
-
-		// initialize to NULL so if an error has occurred we can properly
-		// free them by checking for NULL
-		Copy_clickx = NULL;
-		Copy_clicky = NULL;
-		Copy_currentSpellType = NULL;
-		Copy_targetok = NULL;
-
-		// create new objects to copy original data to
-		if(( Copy_clickx = new int[cmem] ) == NULL ) memerr=1;
-		else if(( Copy_clicky = new int[cmem] ) == NULL ) memerr=1;
-		else if(( Copy_currentSpellType = new int[cmem] ) == NULL ) memerr=1;
-		else if(( Copy_targetok = new char[cmem] ) == NULL ) memerr=1;
-
-		// make sure nothing bad happened
-		if (!memerr)
+		ACTREC *mAcct = k->GetAccountObj();
+		if( mAcct != NULL )
 		{
-			// make a copy - I prefer memcpy although a copy constructor wouldn't hurt =)
-			memcpy(Copy_clickx, clickx, sizeof(int) * cmem);
-			memcpy(Copy_clicky, clicky, sizeof(int) * cmem);
-			memcpy(Copy_currentSpellType, currentSpellType, sizeof(int) * cmem);
-			memcpy(Copy_targetok, targetok, sizeof(char) * cmem);
-
-			// delete the old objects
-			delete [] clickx;
-			delete [] clicky;
-			delete [] currentSpellType;
-			delete [] targetok;
-
-			// initialize to NULL so if an error has occurred we can properly
-			// free them by checking for NULL
-			clickx = NULL;
-			clicky = NULL;
-			currentSpellType = NULL;
-			targetok = NULL;
-
-			// create new objects with more room for more items, etc.
-			if(( clickx = new int[cmem + slots] ) == NULL ) memerr=2;
-			else if(( clicky = new int[cmem + slots] ) == NULL ) memerr=2;
-			else if(( currentSpellType = new int[cmem + slots] ) == NULL ) memerr=2;
-			else if(( targetok = new char[cmem + slots] ) == NULL ) memerr=2;
-
-			if (!memerr)
+			for( UI08 actr = 0; actr < 5; actr++ )
 			{
-				// restore copy to new objects
-				memcpy(clickx, Copy_clickx, sizeof(int) * cmem);
-				memcpy(clicky, Copy_clicky, sizeof(int) * cmem);
-				memcpy(currentSpellType, Copy_currentSpellType, sizeof(int) * cmem);
-				memcpy(targetok, Copy_targetok, sizeof(char) * cmem);
-
-				// delete copies
-				delete [] Copy_clickx;
-				delete [] Copy_clicky;
-				delete [] Copy_currentSpellType;
-				delete [] Copy_targetok;
-			}
-		}
-
-		if (memerr)
-		{
-			// cleanup if neccessary
-			if( memerr >= 1 )
-			{
-				if (Copy_clickx) delete [] Copy_clickx;
-				if (Copy_clicky) delete [] Copy_clicky;
-				if (Copy_currentSpellType) delete [] Copy_currentSpellType;
-				if (Copy_targetok) delete [] Copy_targetok;
-
-				// cleanup if neccessary
-				if (memerr == 2)
+				if( mAcct->characters[actr] != NULL && mAcct->characters[actr]->GetSerial() == k->GetSerial() )
 				{
-					if (clickx) delete [] clickx;
-					if (clicky) delete [] clicky;
-					if (currentSpellType) delete [] currentSpellType;
-					if (targetok) delete [] targetok;
+					Accounts->RemoveCharacterFromAccount( mAcct, actr );
+					break;
 				}
 			}
-
-			printf("ERROR: Could not reallocate character memory after %i. No more characters will be created.\nWARNING: UOX may become unstable.\n", cmem);
-		} else {
-			// make sure everything has been cleared out
-			memset(clickx + cmem, 0x00, sizeof(int) * slots);
-			memset(clicky + cmem, 0x00, sizeof(int) * slots);
-			memset(currentSpellType + cmem, 0x00, sizeof(int) * slots);
-			memset(targetok + cmem, 0x00, sizeof(char) * slots);
-			cmem+=slots;
 		}
 	}
-	
-	return nChar;
+
+	UI16 scpNum = k->GetScriptTrigger();
+	cScript *tScript = Trigger->GetScript( scpNum );
+	if( tScript != NULL )
+		tScript->OnDelete( k );
+
+	if( k->GetSpawn() != 0 ) 
+		ncspawnsp.Remove( k->GetSpawn(), kChar );
+
+	if( k->IsGuarded() )
+	{
+		CChar *petGuard = Npcs->getGuardingPet( k, k->GetSerial() );
+		if( petGuard != NULL )
+			petGuard->SetGuarding( INVALIDSERIAL );
+		k->SetGuarded( false );
+	}
+	stopPetGuarding( k );
+
+	k->RemoveFromSight();
+
+	ncharsp.Remove( k->GetSerial(), kChar );
+	chars.Delete( kChar );
 }
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	CChar *MemCharFree( CHARACTER& offset, bool zeroSer )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Find a place in memory to hold a new NPC
+//o---------------------------------------------------------------------------o
+CChar * cCharStuff::MemCharFree( CHARACTER& offset, bool zeroSer )
+{
+	offset = chars.New( zeroSer );
+	if( charcount >= cmem ) //Lets ASSUME theres no more memory left instead of acctually checking all the items to find a free one.
+		cmem++;
+	if( offset == INVALIDSERIAL )
+		return NULL;
+	return &chars[offset];
+}
 
-int cCharStuff::AddRandomLoot(int s, char * lootlist)
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *addRandomLoot( CItem *s, char *lootlist )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Add loot to monsters packs
+//o---------------------------------------------------------------------------o
+CItem *cCharStuff::addRandomLoot( CItem *s, const char *lootlist )
 {
 	char sect[512];
-	int i,j,retitem, storeval;
-	retitem=-1;
-	storeval=-1;
-	long int pos;
-	i=0; j=0;
-	openscript("npc.scp");
-	sprintf(sect, "LOOTLIST %s", lootlist);
-	if (!i_scripts[npc_script]->find(sect))
+	CItem *retitem = NULL;
+	sprintf( sect, "LOOTLIST %s", lootlist );
+	ScriptSection *LootList = FileLookup->FindEntry( sect, npc_def );
+	if( LootList == NULL )
+		return NULL;
+	int i = LootList->NumEntries();
+	if( i > 0 )
 	{
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
+		i = RandomNum( 0, i - 1 );
+		const char *tag = LootList->MoveTo( i );
+		if( tag == NULL )
+			return NULL;
+		retitem = Items->CreateScriptItem( NULL, tag, false, s->WorldNumber() );
+		if( retitem != NULL )
 		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-		} else return -1;
-	}
-	do
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			i++; // Count number of entries on list.
+			retitem->SetX( 50 + RandomNum( 0, 79 ) );
+			retitem->SetY( 50 + RandomNum( 0, 79 ) );
+			retitem->SetZ( 9 );
+			retitem->SetCont( s->GetSerial() );
 		}
-	} while (script1[0]!='}');
-	
-	closescript();
-	if(i>0)
-	{
-		i=rand()%(i);
-		openscript("npc.scp");
-		if(!i_scripts[npc_script]->find(sect))
-		{
-			closescript();
-			if (n_scripts[custom_npc_script][0]!=0)
-			{
-				openscript(n_scripts[custom_npc_script]);
-				if (!i_scripts[custom_npc_script]->find(sect))
-				{
-					closescript();
-					return -1;
-				}
-				else strcpy(sect, n_scripts[custom_npc_script]);
-			} else return -1;
-		} else strcpy(sect, "npc.scp");
-		do
-		{
-			read1();
-			if (script1[0]!='}')
-			{
-				if(j==i)
-				{
-					//script1 = ITEM#
-					storeval=str2num(script1);
-					pos=ftell(scpfile);
-					closescript();
-					retitem=Targ->AddMenuTarget(-1, 0, storeval);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					if(retitem!=-1)
-					{
-						items[retitem].x=50+(rand()%80);
-						items[retitem].y=50+(rand()%80);
-						items[retitem].z=9;
-						setserial(retitem,s,1);
-					}
-					j++;    
-				}
-				else j++;
-			}
-		}	while (script1[0]!='}');
-		closescript();
 	}
 	return retitem;
 }
 
-/*** s: socket ***/
-int cCharStuff::AddRandomNPC(int s, char * npclist, int spawnpoint)
+//o---------------------------------------------------------------------------o
+//|	Function	-	CHARACTER CreateRandomNpc( cSocket *s, char * npclist, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Adds a random NPC
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::CreateRandomNpc( cSocket *s, const char * npcList, UI08 worldNumber )
 {
-	//This function gets the random npc number from the list and recalls
-	//addrespawnnpc passing the new number
 	char sect[512];
-	unsigned int uiTempList[100];
-	int i=0, k = 0;
-	openscript("npc.scp");
-	sprintf(sect, "NPCLIST %s", npclist);
+	sprintf( sect, "NPCLIST %s", npcList );
+	ScriptSection *NpcList = FileLookup->FindEntry( sect, npc_def );
+	if( NpcList == NULL )
+		return NULL;
+	int i = NpcList->NumEntries();
+	if( i == 0 )
+		return NULL;
+	const char *k = NpcList->MoveTo( RandomNum( 0, i - 1 ) );
 
-	if (!i_scripts[npc_script]->find(sect))
-	{
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
-		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-		} else return -1;
-	}
-	do
-	{
-		read1();
-		if (script1[0]!='}')
-		{
-			uiTempList[i]=str2num(script1);
-			i++;
-		}
-	}
-	while (script1[0]!='}');
-	closescript();
-	if(i>0)
-	{
-		i=rand()%(i);
-		k=uiTempList[i];
-	}
-	if(k!=0)
-	{
-		if (spawnpoint==-1)
-		{
-			addmitem[s]=k;
-			return Npcs->AddNPCxyz( s, k, 0, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z );
-		}
-		else
-		{
-			return k; //addrespawnnpc(spawnpoint,k,1);
-		}
-	}
-	return -1;
+	if( k != NULL )
+		return CreateScriptNpc( s, k, worldNumber );
+	return NULL;
 }
 
-
-/*
-** spawn an NPC,
-** s: this is the index into items[] of the spawner
-** region: this is the region that spawned the item if its a region spawner
-** NOTE: You can only specify s or region, but not both. One must always be -1
-**
-** npcNum is the number of the NPC SECTION in ncp.scp to load up
-** type appears to not be a type at all but type=0 means throw up a target cursor
-** to let someone choose where to place it first, type=1 means just create it
-*/
-int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
-//void cCharStuff::AddRespawnNPC( int s, int npcNum, int type )
+//o---------------------------------------------------------------------------o
+//|	Function	-	CChar *SpawnNPC( CItem *i, int npcNum, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an NPC
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::SpawnNPC( CItem *i, string npcNum, UI08 worldNumber, bool randomNPC = false )
 {
-//	assert((s != -1 && region == -1) || (s == -1 && region != -1));
-
-	int tmp, z,c,n, lovalue, hivalue, mypack, retitem;
-	int storeval, shoppack1, shoppack2, shoppack3;
-	int xos = 0, yos = 0;
-	char sect[512];
-	long int pos;
-	char rndlootlist[20];
-	int haircolor; //(we need this to remember the haircolor)
-	haircolor=-1;
-	
-	mypack=-1;
-	retitem=-1;
-	storeval=-1;
-	shoppack1=-1;
-	shoppack2=-1;
-	shoppack3=-1;
-
-	// Dupois - Added Dec 20, 1999
 	// If the spawner type is 125 and escort quests are not active then abort
-	if( s != -1 )
-		if( ( items[s].type == 125 ) && ( server_data.escortactive == 0 ) ) return -1;
-	//
-	// First things first...lets find out what NPC# we should spawn
-	//
-	openscript("npc.scp");
-	sprintf(sect, "NPC %i", npcNum);
-	if (!i_scripts[npc_script]->find(sect)) {
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
-		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-			{
-				closescript();	// we open, but never close it (Abaddon)
-				return -1;
-			}
-		} else return -1;
-	}
-
-	// need to properly track whether we closed the script or not - fur
-	bool didClose = false;
-	do
+	if( i != NULL )
 	{
-		read2();
-		if (script1[0]!='}')
-		{
-			if (!(strcmp("NPCLIST", script1)))
-			{
-				pos=ftell(scpfile);
-				closescript();
-				didClose = true;
-				if (type==1)
-				{
-					npcNum=AddRandomNPC(s,script2,1);
-					if (npcNum==-1) 
-					{
-						closescript();
-						return -1;
-					}
-				}
-				else
-				{
-					npcNum=AddRandomNPC(s,script2,-1);
-					if (npcNum==-1) 
-					{
-						closescript();
-						return -1;
-					}
-				}
-				openscript( "npc.scp" );
-				didClose = false;			// if we don't flag this false, it won't close, eventually causing a crash! (Abaddon 17th February, 2000)
-				fseek( scpfile, pos, SEEK_SET );
-				break;  //got the NPC number to add stop reading
-			}
-		}
-	} while (script1[0]!='}');
-	if (!didClose)
-		closescript();
-	
-	//
-	// Now lets spawn him/her
-	//
-	c=MemCharFree ();
-	if( c == -1 )
-		return -1;
-	InitChar(c);
-	
-	chars[c].priv=0x10;
-	chars[c].npc=1;
-	chars[c].att=1;
-	chars[c].def=1;
-	if( region != -1 )
-	{
-		chars[c].spawn1 = 0;
-		chars[c].spawn2 = 1;		// 1 means region spawned -- Dodger_
-		chars[c].spawn3 = region;
-		chars[c].spawn4 = 0;
-		chars[c].spawnserial = (1<<16) + (region<<8);
+		if( i->GetType() == 125 && !cwmWorldState->ServerData()->GetEscortsEnabled() )
+			return NULL;
 	}
+	CChar *c = NULL;
+	if( randomNPC )
+		c = CreateRandomNpc( NULL, npcNum.c_str(), worldNumber );
 	else
+		c = CreateScriptNpc( NULL, npcNum, worldNumber );
+	if( c == NULL )
+		return NULL;
+	CHARACTER mChar = calcCharFromSer( c->GetSerial() );
+	c->SetSpawn( 0, mChar );
+	// see if we are item spawning or region spawning
+	if( i != NULL )
 	{
-		chars[c].spawn1 = 0;
-		chars[c].spawn2 = 0;
-		chars[c].spawn3 = 0;
-		chars[c].spawn4 = 0;		// clear out values
-		chars[c].spawnserial = 0;
-	}
-	int skl, sklvalue;
-	
-	openscript("npc.scp");
-	sprintf(sect, "NPC %i", npcNum);
-	if (!i_scripts[npc_script]->find(sect)) {
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
+		int awayX = 0, awayY = 0;
+		if( i->GetType() == 69 && i->GetCont() == INVALIDSERIAL )   
+			awayX = awayY = 10;
+		else if( i->GetType() == 125 && i->GetCont() == INVALIDSERIAL )
 		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-			{
-				closescript();
-				return -1;
-			}
-			else strcpy(sect, n_scripts[custom_npc_script]);
-		} else return -1;
-	} else strcpy(sect, "npc.scp");
-	do {
-		read2();
-		if (script1[0]!='}') 
-		{
-			switch( script1[0] )
-			{
-			case 'a':
-			case 'A':
-				if ((!(strcmp("ALCHEMY",script1)))||(!(strcmp("SKILL0",script1)))) chars[c].baseskill[ALCHEMY] = getstatskillvalue(script2);
-				else if ((!(strcmp("ANATOMY",script1)))||(!(strcmp("SKILL1",script1)))) chars[c].baseskill[ANATOMY] = getstatskillvalue(script2);
-				else if ((!(strcmp("ANIMALLORE",script1)))||(!(strcmp("SKILL2",script1)))) chars[c].baseskill[ANIMALLORE] = getstatskillvalue(script2);
-				else if ((!(strcmp("ARMSLORE",script1)))||(!(strcmp("SKILL4",script1)))) chars[c].baseskill[ARMSLORE] = getstatskillvalue(script2);
-				else if ((!(strcmp("ARCHERY",script1)))||(!(strcmp("SKILL31",script1)))) chars[c].baseskill[ARCHERY] = getstatskillvalue(script2);
-				else if (!(strcmp("ATT",script1)))
-				{
-					gettokennum(script2, 0);
-					lovalue=str2num(gettokenstr);
-					gettokennum(script2, 1);
-					hivalue=str2num(gettokenstr);
-					chars[c].lodamage = lovalue;
-					chars[c].hidamage = lovalue;
-					if(hivalue) 
-					{
-						chars[c].hidamage = hivalue;
-					}
-				}
-				break;
-
-			case 'b':
-			case 'B':
-				if (!(strcmp("BACKPACK", script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;
-							else
-								mypack = -1;
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;
-					}
-					if (mypack==-1)
-					{
-						pos=ftell(scpfile);
-						closescript();
-						chars[c].packitem=n=Items->SpawnItem(-1,c,1,"Backpack",0,0x0E,0x75,0,0,0,0);
-						if( n != -1 )
-						{
-							items[n].x=0;
-							items[n].y=0;
-							items[n].z=0;
-							setserial(n,c,4);
-							items[n].layer=0x15;
-							items[n].type=1;
-							items[n].dye=1;
-							mypack=n;
-							retitem=n;
-						}
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					}
-				}
-				else if ((!(strcmp("BEGGING",script1)))||(!(strcmp("SKILL6",script1)))) chars[c].baseskill[BEGGING] = getstatskillvalue(script2);
-				else if ((!(strcmp("BLACKSMITHING",script1)))||(!(strcmp("SKILL7",script1)))) chars[c].baseskill[BLACKSMITHING] = getstatskillvalue(script2);
-				else if ((!(strcmp("BOWCRAFT",script1)))||(!(strcmp("SKILL8",script1)))) chars[c].baseskill[BOWCRAFT] = getstatskillvalue(script2);
-				break;
-
-			case 'c':
-			case 'C':
-				if (!(strcmp("COLOR",script1))) 
-				{
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((hstr2num(script2))>>8);
-					  items[retitem].color2 = (unsigned char)((hstr2num(script2))%256);
-					}
-				}
-				else if ((!(strcmp("CAMPING",script1)))||(!(strcmp("SKILL10",script1)))) chars[c].baseskill[CAMPING] = getstatskillvalue(script2);
-				else if ((!(strcmp("CARPENTRY",script1)))||(!(strcmp("SKILL11",script1)))) chars[c].baseskill[CARPENTRY] = getstatskillvalue(script2);
-				else if ((!(strcmp("CARTOGRAPHY",script1)))||(!(strcmp("SKILL12",script1)))) chars[c].baseskill[CARTOGRAPHY] = getstatskillvalue(script2);
-				else if ((!(strcmp("COOKING",script1)))||(!(strcmp("SKILL13",script1)))) chars[c].baseskill[COOKING] = getstatskillvalue(script2);
-				else if (!(strcmp("COLORMATCHHAIR",script1)))
-				{
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((haircolor)>>8);
-					  items[retitem].color2 = (unsigned char)((haircolor)%256);
-					}
-				}
-				else if (!(strcmp("COLORLIST",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					storeval=addrandomcolor(c,script2);
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((storeval)>>8);
-					  items[retitem].color2 = (unsigned char)((storeval)%256);
-					}
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				break;
-
-			case 'd':
-			case 'D':
-				if (!(strcmp("DIRECTION",script1))) 
-				{
-					if (!(strcmp("NE",script2))) chars[c].dir=1;
-					else if (!(strcmp("E",script2))) chars[c].dir=2;
-					else if (!(strcmp("SE",script2))) chars[c].dir=3;
-					else if (!(strcmp("S",script2))) chars[c].dir=4;
-					else if (!(strcmp("SW",script2))) chars[c].dir=5;
-					else if (!(strcmp("W",script2))) chars[c].dir=6;
-					else if (!(strcmp("NW",script2))) chars[c].dir=7;
-					else if (!(strcmp("N",script2))) chars[c].dir=0;
-				}
-				else if ((!(strcmp("DEX",script1)))||(!(strcmp("DEXTERITY",script1)))) {
-					chars[c].dx  = getstatskillvalue(script2);
-					chars[c].dx2 = chars[c].dx;
-					chars[c].stm = chars[c].dx;
-				}
-				else if ((!(strcmp("DETECTINGHIDDEN",script1)))||(!(strcmp("SKILL14",script1)))) chars[c].baseskill[DETECTINGHIDDEN] = getstatskillvalue(script2);
-				else if (!(strcmp("DAMAGE",script1)))
-				{
-					gettokennum(script2, 0);
-					lovalue=str2num(gettokenstr);
-					gettokennum(script2, 1);
-					hivalue=str2num(gettokenstr);
-					chars[c].lodamage = lovalue;
-					chars[c].hidamage = lovalue;
-					if(hivalue) {
-						chars[c].hidamage = hivalue;
-					}
-				}
-				else if (!(strcmp("DEF",script1))) chars[c].def = getstatskillvalue(script2);
-				break;
-
-			case 'e':
-			case 'E':
-				if (!(strcmp("EMOTECOLOR",script1))) {
-					chars[c].emotecolor1 = (unsigned char)((hstr2num(script2))>>8);
-					chars[c].emotecolor2 = (unsigned char)((hstr2num(script2))%256);
-				}
-				else if ((!(strcmp("ENTICEMENT",script1)))||(!(strcmp("SKILL15",script1)))) chars[c].baseskill[ENTICEMENT] = getstatskillvalue(script2);
-				else if ((!(strcmp("EVALUATINGINTEL",script1)))||(!(strcmp("SKILL16",script1)))) chars[c].baseskill[EVALUATINGINTEL] = getstatskillvalue(script2);
-
-				break;
-
-			case 'f':
-			case 'F':
-				if (!(strcmp("FAME",script1))) chars[c].fame=str2num(script2);
-				else if (!(strcmp("FX1",script1))) chars[c].fx1=str2num(script2);  // new NPCWANDER implementation
-				else if (!(strcmp("FX2",script1))) chars[c].fx2=str2num(script2);
-				else if (!(strcmp("FY1",script1))) chars[c].fy1=str2num(script2);
-				else if (!(strcmp("FY2",script1))) chars[c].fy2=str2num(script2);
-				else if (!(strcmp("FZ1",script1))) chars[c].fz1=str2num(script2);
-				else if (!(strcmp("FLEEAT",script1))) chars[c].fleeat=str2num(script2);
-				else if ((!(strcmp("FISHING",script1)))||(!(strcmp("SKILL18",script1)))) chars[c].baseskill[FISHING] = getstatskillvalue(script2);
-				else if ((!(strcmp("FORENSICS",script1)))||(!(strcmp("SKILL19",script1)))) chars[c].baseskill[FORENSICS] = getstatskillvalue(script2);
-				else if ((!(strcmp("FENCING",script1)))||(!(strcmp("SKILL42",script1)))) chars[c].baseskill[FENCING] = getstatskillvalue(script2);
-
-				break;
-
-			case 'g':
-			case 'G':
-				if (!(strcmp("GOLD", script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1)
-					{ 
-						pos=ftell(scpfile); /* lord binary ! */
-						closescript();
-						n = Items->SpawnItem(-1,c,1,"#",1,0x0E,0xED,0,0,1,0);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if( n != -1 )
-						{
-							items[n].priv=items[n].priv|0x01;
-							gettokennum(script2, 0);
-							lovalue=str2num(gettokenstr);
-							gettokennum(script2, 1);
-							hivalue=str2num(gettokenstr);
-							if (hivalue==0) {
-								items[n].amount=lovalue/2 + (rand()%(lovalue/2));
-							} else {
-								items[n].amount=lovalue + (rand()%(hivalue-lovalue));
-							}
-							setserial(n,mypack,1);
-						}
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
-					}
-				}
-
-				break;
-
-			case 'h':
-			case 'H':
-				if ((!(strcmp("HEALING",script1)))||(!(strcmp("SKILL17",script1)))) chars[c].baseskill[HEALING] = getstatskillvalue(script2);
-				else if ((!(strcmp("HERDING",script1)))||(!(strcmp("SKILL20",script1)))) chars[c].baseskill[HERDING] = getstatskillvalue(script2);
-				else if ((!(strcmp("HIDING",script1)))||(!(strcmp("SKILL21",script1)))) chars[c].baseskill[HIDING] = getstatskillvalue(script2);
-				else if (!(strcmp("HAIRCOLOR",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					haircolor=addrandomhaircolor(charcount,script2);
-					if (retitem >-1)
-					{
-					  items[retitem].color1=(haircolor)>>8;
-					  items[retitem].color2=(haircolor)%256;
-					}
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("HIDAMAGE",script1))) chars[c].hidamage=str2num(script2);
-
-				break;
-
-			case 'i':
-			case 'I':
-				if (!(strcmp("ID",script1))) 
-				{
-					tmp=hstr2num(script2);
-					chars[c].id1=tmp>>8;
-					chars[c].id2=tmp%256;
-					chars[c].xid1=chars[c].id1;
-					chars[c].xid2=chars[c].id2;
-					chars[c].orgid1=chars[c].id1;
-					chars[c].orgid2=chars[c].id2;
-				}
-				else if (!(strcmp("ITEM",script1))) 
-				{
-					storeval=str2num(script2);
-					pos=ftell(scpfile);
-					closescript();
-					retitem=Targ->AddMenuTarget(-1, 0, storeval);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					if (retitem!=-1)
-					{
-						setserial(retitem,c,4);
-						if (items[retitem].layer==0) {
-							printf("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
-						}
-					}
-					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-				}
-				else if ((!(strcmp("INT",script1)))||(!(strcmp("INTELLIGENCE",script1)))) 
-				{
-					chars[c].in  = getstatskillvalue(script2);
-					chars[c].in2 = chars[c].in;
-					chars[c].mn  = chars[c].in;
-				}
-				else if ((!(strcmp("ITEMID",script1)))||(!(strcmp("SKILL3",script1)))) chars[c].baseskill[ITEMID] = getstatskillvalue(script2);
-				else if ((!(strcmp("INSCRIPTION",script1)))||(!(strcmp("SKILL23",script1)))) chars[c].baseskill[INSCRIPTION] = getstatskillvalue(script2);
-				break;
-
-			case 'k':
-			case 'K':
-				if (!(strcmp("KARMA",script1))) chars[c].karma=str2num(script2);
-				break;
-
-			case 'l':
-			case 'L':
-				if (!(strcmp("LOOT",script1))) 
-				{
-					if (mypack==-1) {
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1) 
-					{
-						strcpy(rndlootlist, script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=AddRandomLoot(mypack, rndlootlist);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
-					}
-				}
-				else if ((!(strcmp("LOCKPICKING",script1)))||(!(strcmp("SKILL24",script1)))) chars[c].baseskill[LOCKPICKING] = getstatskillvalue(script2);
-				else if ((!(strcmp("LUMBERJACKING",script1)))||(!(strcmp("SKILL44",script1)))) chars[c].baseskill[LUMBERJACKING] = getstatskillvalue(script2);
-				else if (!(strcmp("LODAMAGE",script1))) chars[c].lodamage=str2num(script2);
-
-				break;
-
-			case 'm':
-			case 'M':
-				if ((!(strcmp("MAGERY",script1)))||(!(strcmp("SKILL25",script1)))) chars[c].baseskill[MAGERY] = getstatskillvalue(script2);
-				else if ((!(strcmp("MAGICRESISTANCE",script1)))||(!(strcmp("RESIST",script1)))||(!(strcmp("SKILL26",script1)))) chars[c].baseskill[MAGICRESISTANCE] = getstatskillvalue(script2);
-				else if ((!(strcmp("MUSICIANSHIP",script1)))||(!(strcmp("SKILL29",script1)))) chars[c].baseskill[MUSICIANSHIP] = getstatskillvalue(script2);
-				else if ((!(strcmp("MACEFIGHTING",script1)))||(!(strcmp("SKILL41",script1)))) chars[c].baseskill[MACEFIGHTING] = getstatskillvalue(script2);
-				else if ((!(strcmp("MINING",script1)))||(!(strcmp("SKILL45",script1)))) chars[c].baseskill[MINING] = getstatskillvalue(script2);
-				else if ((!(strcmp("MEDITATION",script1)))||(!(strcmp("SKILL46",script1)))) chars[c].baseskill[MEDITATION] = getstatskillvalue(script2);
-
-				break;
-
-			case 'n':
-			case 'N':
-				if (!(strcmp("NAME",script1))) strcpy(chars[c].name, script2);
-				else if (!(strcmp("NAMELIST", script1))) 
-				{
-					pos=ftell(scpfile);
-					closescript();
-					setrandomname(c,script2);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("NPCWANDER",script1))) chars[c].npcWander=str2num(script2);
-				else if (!(strcmp("NPCAI",script1))) chars[c].npcaitype=hstr2num(script2);
-				else if (!(strcmp(script1, "NOTRAIN"))) chars[c].cantrain=0;
-
-				break;
-
-			case 'p':
-			case 'P':
-				if (!(strcmp("PACKITEM",script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,mypack,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("PRIV1",script1))) chars[c].priv=str2num(script2);
-				else if (!(strcmp("PRIV2",script1))) chars[c].priv2=str2num(script2);
-				else if (!(strcmp("POISON",script1))) chars[c].poison=str2num(script2);
-				else if ((!(strcmp("PARRYING",script1)))||(!(strcmp("SKILL5",script1)))) chars[c].baseskill[PARRYING] = getstatskillvalue(script2);
-				else if ((!(strcmp("PEACEMAKING",script1)))||(!(strcmp("SKILL9",script1)))) chars[c].baseskill[PEACEMAKING] = getstatskillvalue(script2);
-				else if ((!(strcmp("PROVOCATION",script1)))||(!(strcmp("SKILL22",script1)))) chars[c].baseskill[PROVOCATION] = getstatskillvalue(script2);
-				else if ((!(strcmp("POISONING",script1)))||(!(strcmp("SKILL30",script1)))) chars[c].baseskill[POISONING] = getstatskillvalue(script2);
-
-				break;
-
-			case 'r':
-			case 'R':
-				if (!(strcmp("RSHOPITEM",script1))) 
-				{
-					if (shoppack1==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack1 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack1 > -1 && items[shoppack1].contserial == chars[c].serial && items[shoppack1].layer == 0x1A )
-								break;//We found it
-							else
-								shoppack1 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack1 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack1!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack1,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-							if( items[retitem].name2[0] && ( strcmp( items[retitem].name2, "#" )))
-								strcpy( items[retitem].name, items[retitem].name2 ); // Item identified! -- by Magius(CHE)
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("REATTACKAT",script1))) chars[c].reattackat=str2num(script2);
-				else if ((!(strcmp("REMOVETRAPS",script1)))||(!(strcmp("SKILL48",script1)))) chars[c].baseskill[REMOVETRAPS] = getstatskillvalue(script2);
-				else if( !( strcmp( "RACE", script1 ) ) ) chars[c].race = str2num( script2 );
-				else if (!(strcmp(script1, "RUNS"))) chars[c].runs = true;
-
-				break;
-			case 's':
-			case 'S':
-				if (!(strcmp("SKIN",script1))) 
-				{
-					tmp=hstr2num(script2);
-					chars[c].skin1 = (unsigned char)(tmp>>8);
-					chars[c].skin2 = (unsigned char)(tmp%256);
-					chars[c].xskin1 = chars[c].skin1;
-					chars[c].xskin2 = chars[c].skin2;
-				}
-				else if (!(strcmp("SHOPKEEPER", script1))) 
-				{
-					pos=ftell(scpfile);
-					closescript();
-					Commands->MakeShop(c);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-				}
-				else if (!(strcmp("SELLITEM",script1))) 
-				{
-					if (shoppack3==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack3 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack3 > -1 && items[shoppack3].contserial == chars[c].serial && items[shoppack3].layer == 0x1C )
-								break;//We found it
-							else
-								shoppack3 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack3 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack3!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack3,1);
-							items[retitem].value=items[retitem].value/2;
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-							if( items[retitem].name2[0] && ( strcmp( items[retitem].name2, "#" ) ) )
-								strcpy( items[retitem].name, items[retitem].name2 );
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("SHOPITEM",script1))) 
-				{
-					if (shoppack2==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack2 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack2 > -1 && items[shoppack2].contserial == chars[c].serial && items[shoppack2].layer == 0x1B )
-								break;//We found it
-							else
-								shoppack2 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack2 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack2!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack2,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-							if( items[retitem].name2[0] && ( strcmp( items[retitem].name2, "#" ) ) )
-								strcpy( items[retitem].name, items[retitem].name2 );
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("SAYCOLOR",script1))) 
-				{
-					chars[c].saycolor1 = (unsigned char)((hstr2num(script2))>>8);
-					chars[c].saycolor2 = (unsigned char)((hstr2num(script2))%256);
-				}
-				else if (!(strcmp("SPEECH",script1))) chars[c].speech=str2num(script2);
-				else if (!(strcmp("SPATTACK",script1))) chars[c].spattack=str2num(script2);
-				else if (!(strcmp("SPADELAY",script1))) chars[c].spadelay=str2num(script2);
-				else if (!(strcmp(script1, "SPLIT"))) chars[c].split=str2num(script2);
-				else if (!(strcmp(script1, "SPLITCHANCE"))) chars[c].splitchnc=str2num(script2);
-				else if ((!(strcmp("SNOOPING",script1)))||(!(strcmp("SKILL28",script1)))) chars[c].baseskill[SNOOPING] = getstatskillvalue(script2);
-				else if ((!(strcmp("SPIRITSPEAK",script1)))||(!(strcmp("SKILL32",script1)))) chars[c].baseskill[SPIRITSPEAK] = getstatskillvalue(script2);
-				else if ((!(strcmp("STEALING",script1)))||(!(strcmp("SKILL33",script1)))) chars[c].baseskill[STEALING] = getstatskillvalue(script2);
-				else if ((!(strcmp("STR",script1)))||(!(strcmp("STRENGTH",script1)))) 
-				{
-					chars[c].st  = getstatskillvalue(script2);
-					chars[c].st2 = chars[c].st;
-					chars[c].hp  = chars[c].st;
-				}
-				else if ((!(strcmp("SWORDSMANSHIP",script1)))||(!(strcmp("SKILL40",script1)))) chars[c].baseskill[SWORDSMANSHIP] = getstatskillvalue(script2);
-				else if ((!(strcmp("STEALTH",script1)))||(!(strcmp("SKILL47",script1)))) chars[c].baseskill[STEALTH] = getstatskillvalue(script2);
-				else if (!(strcmp("SKINLIST",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					storeval=addrandomcolor(c,script2);
-					chars[c].skin1 = (unsigned char)((storeval)>>8);
-					chars[c].skin2 = (unsigned char)((storeval)%256);
-					chars[c].xskin1 = chars[c].skin1;
-					chars[c].xskin2 = chars[c].skin2;
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("SKILL", script1))) 
-				{
-					gettokennum(script2, 0);
-					z=str2num(gettokenstr);
-					gettokennum(script2, 1);
-					chars[c].baseskill[z]=str2num(gettokenstr);
-				}
-				else if(!(strncmp(script1, "SKILL", 5)))
-				{
-					skl = str2num( &script1[5] );
-					sklvalue = str2num( script2 );
-					chars[c].baseskill[skl] = sklvalue;
-				}
-
-				break;
-			case 't':
-			case 'T':
-				if (!(strcmp("TITLE",script1))) strcpy(chars[c].title, script2);
-				else if ((!(strcmp("TOTAME", script1)))||(!(strcmp("TAMING", script1)))) chars[c].taming=str2num(script2);
-				else if ((!(strcmp("TACTICS",script1)))||(!(strcmp("SKILL27",script1)))) chars[c].baseskill[TACTICS] = getstatskillvalue(script2);
-				else if ((!(strcmp("TAILORING",script1)))||(!(strcmp("SKILL34",script1)))) chars[c].baseskill[TAILORING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TAMING",script1)))||(!(strcmp("SKILL35",script1)))) chars[c].baseskill[TAMING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TASTEID",script1)))||(!(strcmp("SKILL36",script1)))) chars[c].baseskill[TASTEID] = getstatskillvalue(script2);
-				else if ((!(strcmp("TINKERING",script1)))||(!(strcmp("SKILL37",script1)))) chars[c].baseskill[TINKERING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TRACKING",script1)))||(!(strcmp("SKILL38",script1)))) chars[c].baseskill[TRACKING] = getstatskillvalue(script2);
-				break;
-
-			case 'v':
-			case 'V':
-				if (!(strcmp("VALUE",script1))) if (retitem!=-1) items[retitem].value=(str2num(script2));
-				else if ((!(strcmp("VETERINARY",script1)))||(!(strcmp("SKILL39",script1)))) chars[c].baseskill[VETERINARY] = getstatskillvalue(script2);
-				break;
-
-			case 'w':
-			case 'W':
-				if ((!(strcmp("WRESTLING",script1)))||(!(strcmp("SKILL43",script1)))) chars[c].baseskill[WRESTLING] = getstatskillvalue(script2);
-				break;
-			default:
-				printf( "Unknown tag in AddRespawnNPC\n" );
-				break;
-			}
+			awayX = i->GetMore( 3 );
+			awayY = i->GetMore( 4 );
 		}
+		FindSpotForNPC( c, i->GetX(), i->GetY(), awayX, awayY, i->GetZ() );
+		c->SetSpawn( i->GetSerial(), mChar );
 	}
-	while (script1[0]!='}');
-	closescript();
-   
-   // Now that we have created the NPC, lets place him
-   if (type==1) 
-   {
-	   if (triggerx)
-	   {
-		   chars[c].x=triggerx;
-		   chars[c].y=triggery;
-		   chars[c].dispz=chars[c].z=triggerz;
-		   triggerx=c;
-	   } else 
-	   {
-			// see if we are item spawning or region spawning
-			if( s != -1 )
-			{
-				int awayX = 0;
-				int awayY = 0;
-				if ((items[s].type==69)&&(items[s].contserial==-1))   
-                {   
-					awayX = items[s].more3;
-					awayY = items[s].more4;
-                }
-				else if( ( items[s].type == 125 ) && ( items[s].contserial == -1 ) ) // Dupois used for item spawning Escort NPC's
-				{
-					awayX = items[s].more3;
-					awayY = items[s].more4;
-				}
-
-				FindSpotForNPC( c, items[s].x, items[s].y, awayX, awayY, items[s].z );
-			}
-			else
-			{
-				int xAway = (spawnregion[region].x2 - spawnregion[region].x1) / 2;
-				int yAway = (spawnregion[region].y2 - spawnregion[region].y1) / 2;
-				int originX = spawnregion[region].x1 + xAway;
-				int originY = spawnregion[region].y1 + yAway;
-				if (xAway <= 0)
-				{
-					printf("Error with spawn region %d, x1 >= x2\n", region - 1);
-					xAway = 10;
-				}
-				else if (yAway <= 0)
-				{
-					printf("Error with spawn region %d, y1 >= y2\n", region - 1);
-					yAway = 10;
-				}
-				FindSpotForNPC( c, originX, originY, xAway, yAway, illegal_z );
-			}
+	PostSpawnUpdate( c );
+	if( i != NULL )
+	{
+		if( i->GetType() == 125 )
+			MsgBoardQuestEscortCreate( c );
+	}
+	return c;
+}
+//o---------------------------------------------------------------------------o
+//|	Function	-	CChar *SpawnNPC( cSpawnRegion *spawnReg, int npcNum, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an NPC
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::SpawnNPC( cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber )
+{
+	CChar *c = CreateScriptNpc( NULL, npcNum, worldNumber );
+	if( c == NULL )
+		return NULL;
+	if( spawnReg != NULL )
+		c->SetSpawn( calcserial( 0, 1, spawnReg->GetRegionNum(), 0 ), calcCharFromSer( c->GetSerial() ) );
+	else
+		c->SetSpawn( 0, calcCharFromSer( c->GetSerial() ) );
+	// see if we are item spawning or region spawning
+	if( spawnReg != NULL )
+	{
+		SI16 xAway		= ( spawnReg->GetX2() - spawnReg->GetX1() ) / 2;
+		SI16 yAway		= ( spawnReg->GetY2() - spawnReg->GetY1() ) / 2;
+		SI16 originX	= spawnReg->GetX1() + xAway;
+		SI16 originY	= spawnReg->GetY1() + yAway;
+		if( xAway <= 0 )
+		{
+			Console.Error( 2, " Spawn region %d: x1 >= x2", spawnReg->GetRegionNum() - 1 );
+			xAway = 10;
 		}
-   }
-   else 
-   {
-	   if( s!=-1 )
-	   {
-		   if (chars[c].fx1==-1)
-		   {
-			   chars[c].fx1=(buffer[s][11]<<8)+buffer[s][12]+xos;
-			   chars[c].fy1=(buffer[s][13]<<8)+buffer[s][14]+yos;
-			   if (chars[c].fz1!=-1) chars[c].fz1=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-		   }
-		   chars[c].x=(buffer[s][11]<<8)+buffer[s][12]+xos;
-		   chars[c].y=(buffer[s][13]<<8)+buffer[s][14]+yos;
-		   chars[c].dispz=chars[c].z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-	   }
-   }
-
-   // now that its been placed, lets setup a proper wander area
-
-   if (-1 != s)
-     setserial(c,s,6);
-   
-   chars[c].region=calcRegionFromXY(chars[c].x, chars[c].y);
-   
-   //Now find real 'skill' based on 'baseskill' (stat modifiers)
-   for(z=0;z<TRUESKILLS;z++)
-   {
-	   Skills->updateSkillLevel(c,z);
-   }
-   
-   if (donpcupdate==0) 
-   {
-	   updatechar(c);
-   }
-   //Char mapRegions
-   mapRegions->RemoveItem(c+1000000);
-   mapRegions->AddItem(c+1000000);
-   setcharflag( c );
-   // Dupois - Added Dec 20, 1999
-   // After the NPC has been fully initialized, then post the message  (if its a quest spawner) type == 125
-   if( s != -1 )
-	   if( items[s].type == 125 )
-		   MsgBoardQuestEscortCreate( c );
-	// End - Dupois
-   return c;
+		else if( yAway <= 0 )
+		{
+			Console.Error( 2, " Spawn region %d: y1 >= y2", spawnReg->GetRegionNum() - 1 );
+			yAway = 10;
+		}
+		FindSpotForNPC( c, originX, originY, xAway, yAway, illegal_z );
+	}
+	PostSpawnUpdate( c );
+	return c;
 }
 
-// try to come up with a sensible radius given the values from npc.scp
-// this is used for both rectangular and circular areas really
-int GimmeRadius(int c)
+void cCharStuff::PostSpawnUpdate( CChar *c )
+{
+	c->SetRegion( calcRegionFromXY( c->GetX(), c->GetY(), c->WorldNumber() ) );
+
+	for( int z = 0; z < TRUESKILLS; z++ )
+		Skills->updateSkillLevel( c, z );
+   
+	c->Update();
+	MapRegion->AddChar( c );
+	setcharflag( c );
+	cScript *toGrab = Trigger->GetScript( c->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( c );
+}
+//o---------------------------------------------------------------------------o
+//|	Function	-	CChar *AddNPC( cSocket *s, cSpawnRegion *spawnReg, int npcNum, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Spawn an NPC and place him in the region or on the item that
+//|					spawned him.
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::AddNPC( cSocket *s, cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber )
+{
+	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
+	if( c == NULL )
+		return NULL;
+	if( spawnReg != NULL )
+		c->SetSpawn( calcserial( 0, 1, spawnReg->GetRegionNum(), 0 ), calcCharFromSer( c->GetSerial() ) );
+	else
+		c->SetSpawn( 0, calcCharFromSer( c->GetSerial() ) );
+	if( s != NULL )
+	{
+		const SI16 coreX = s->GetWord( 11 );
+		const SI16 coreY = s->GetWord( 13 );
+		const SI08 coreZ = s->Buffer()[16] + Map->TileHeight( s->GetWord( 17 ) );
+		if( c->GetFx( 1 ) == -1 )
+		{
+			c->SetFx( coreX, 1 );
+			c->SetFy( coreY, 1 );
+			if( c->GetFz() != -1 ) 
+				c->SetFz( coreZ );
+		}
+		c->SetLocation( coreX, coreY, coreZ );
+	}
+	PostSpawnUpdate( c );
+	return c;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI16 getRadius( CChar *c )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Generate a sensible radius given the values from npc.scp
+//o---------------------------------------------------------------------------o
+SI16 getRadius( CChar *c )
 {
 	// see if they supplied a 'radius'
-	if (chars[c].fx2 > 0)
+	if( c->GetFx( 2 ) > 0)
 	{
 		// if they were supplying a bounding area, use the radius from that
-		if (chars[c].fx1 > 0)
-			chars[c].fx2 = abs(chars[c].fx1 - chars[c].fx2);
+		if( c->GetFx( 1 ) > 0)
+			c->SetFx( abs(c->GetFx( 1 ) - c->GetFx( 2 )), 2 );
 	}
 	// ensure its not something bogus
-	if (chars[c].fx2 <= 0 || chars[c].fx2 > 100)
-		chars[c].fx2 = 10;
-	return chars[c].fx2;
+	if( c->GetFx( 2 ) <= 0 || c->GetFx( 2 ) > 100)
+		c->SetFx( 10, 2 );
+	return c->GetFx( 2 );
 }
 
-// setup the wander area if the npcwander is rect or circle
-// try to use the fx1, fy1, fx2, fxy2, fz1 variables defined in npc.scp if possible
-void InitializeWanderArea(int c, int originX, int originY, int xAway, int yAway)
-// PARAM WARNING: originX and originY are not used!
+//o---------------------------------------------------------------------------o
+//|	Function	-	void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Setup the wander area if the npcwander is rect or circle
+//o---------------------------------------------------------------------------o
+void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 {
 	// compute the rectangular bounding area
-	if (3 == chars[c].npcWander)
+	if( 3 == c->GetNpcWander() )
 	{
 		// if they provided a legal rectangle and
 		// ensure the bounding rect contains the current location
 		// if it doesn't the monster will never move!
-		if (chars[c].fx1 >= 0 && chars[c].fy1 >= 0 && chars[c].fy2 >= 0 && chars[c].fx2 >= 0 &&
-			checkBoundingBox(chars[c].x, chars[c].y, chars[c].fx1, chars[c].fy1, chars[c].fz1, chars[c].fx2, chars[c].fy2))
+		if( c->GetFx( 1 ) >= 0 && c->GetFy( 1 ) >= 0 && c->GetFy( 2 ) >= 0 && c->GetFx( 2 ) >= 0 &&
+			checkBoundingBox( c->GetX(), c->GetY(), c->GetFx( 1 ), c->GetFy( 1 ), c->GetFz(), c->GetFx( 2 ), c->GetFy( 2 ), c->WorldNumber() ) )
 		{
 			// don't do anything to use what they specified in npc.scp		  
 		}
 		else
 		{
 			// if they provided a 'radius' in the npc.scp use that
-			if (chars[c].fx2 > 0)
-				xAway = yAway = GimmeRadius(c);
+			if( c->GetFx( 2 ) > 0)
+				xAway = yAway = getRadius( c );
 			// setup info for rectangular areas
-			chars[c].fx1 = chars[c].x - xAway;
-			chars[c].fy1 = chars[c].y - yAway;
-			chars[c].fx2 = chars[c].x + xAway;
-			chars[c].fy2 = chars[c].y + yAway;
+			c->SetFx( c->GetX() - xAway, 1 );
+			c->SetFy( c->GetY() - yAway, 1 );
+			c->SetFx( c->GetX() + xAway, 2 );
+			c->SetFy( c->GetX() + yAway, 2 );
 		}
 	}
-	else if (4 == chars[c].npcWander)
+	else if( 4 == c->GetNpcWander() )
 	{
 		// if they provided a legal circle and
 		// ensure the bounding circle contains the current location
 		// if it doesn't the monster will never move!
-		if (chars[c].fx1 >= 0 && chars[c].fy1 >= 0 && chars[c].fx2 >= 0 &&
-			checkBoundingCircle(chars[c].x, chars[c].y, chars[c].fx1, chars[c].fy1, chars[c].fz1, chars[c].fx2))
+		if( c->GetFx( 1 ) >= 0 && c->GetFy( 1 ) >= 0 && c->GetFx( 2 ) >= 0 &&
+			checkBoundingCircle( c->GetX(), c->GetY(), c->GetFx( 1 ), c->GetFy( 1 ), c->GetFz(), c->GetFx( 2 ), c->WorldNumber() ) )
 		{
 			// don't do anything to use what they specified in npc.scp		  
 		}
 		else
 		{
 			// if they provided a 'radius' in the npc.scp use that
-			if (chars[c].fx2 > 0)
-				xAway = yAway = GimmeRadius(c);
+			if( c->GetFx( 2 ) > 0)
+				xAway = yAway = getRadius( c );
 			// setup info for circular areas
-			chars[c].fx1 = chars[c].x;
-			chars[c].fy1 = chars[c].y;
-			chars[c].fx2 = xAway;
-			chars[c].fy2 = -1;
+			c->SetFx( c->GetX(), 1 );
+			c->SetFy( c->GetY(), 1 );
+			c->SetFx( xAway, 2 );
+			c->SetFy( -1, 2 );
 		}
 	}
 	// setting fz1 actually makes it check against the height and slows the system down a lot
@@ -1682,11 +372,17 @@ void InitializeWanderArea(int c, int originX, int originY, int xAway, int yAway)
 	//chars[c].fz1 = chars[c].z;
 	
 #ifdef DEBUG_SPAWN
-	printf("Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", chars[c].fx1, chars[c].fx2, chars[c].fy1, chars[c].fy2);		   
+	printf("Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", c->GetFx( 1 ), c->GetFx( 2 ), c->GetFy( 1 ), c->GetFy( 2 ) );
 #endif
 }
 
-void cCharStuff::FindSpotForNPC(int c, int originX, int originY, int xAway, int yAway, int elev)
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cCharStuff::FindSpotForNPC( CHARACTER c, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Find a valid spot to drop an NPC near the spawners location
+//o---------------------------------------------------------------------------o
+void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z )
 {
   /*Zippy's Code chages for area spawns --> (Type 69) xos and yos (X OffSet, Y OffSet) 
     are used to find a random number that is then added to the spawner's x and y (Using 
@@ -1697,1011 +393,723 @@ void cCharStuff::FindSpotForNPC(int c, int originX, int originY, int xAway, int 
     the NPC will be placed directly on the spawner and the server op will be warned. */
 
 #ifdef DEBUG_SPAWN
-	printf("Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway);
+	Console.Print( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway );
 #endif
 	
+	if( c == NULL )
+		return;
 	int k = xAway * yAway / 2;
-	int xos = 0, yos = 0;
+	SI16 xos = 0, yos = 0;
 	bool foundSpot = false;
 	if( k > 50 ) 
 		k = 50;
 	
+	UI08 worldNumber = c->WorldNumber();
 	while( !foundSpot )
     {
 		if( --k < 0 ) //this CAN be a bit laggy. adjust as nessicary
 		{
 			if( xAway > 0 && yAway > 0 )
-				printf("UOX3: Problem area spawner found, NPC placed at default location.\n");
-			xos=originX;
-			yos=originY;
+				Console << "Problem area spawner found, NPC placed at default location" << myendl;
+			xos = originX;
+			yos = originY;
 			foundSpot = true;
 			break;
 		}
 		
-		xos = originX + RandomNum(-xAway, xAway);
-		yos = originY + RandomNum(-yAway, yAway);
+		xos = originX + RandomNum( -xAway, xAway );
+		yos = originY + RandomNum( -yAway, yAway );
 		
-		if ((xos >= 1) && (yos >= 1))
-			foundSpot = Map->CanMonsterMoveHere(xos, yos, elev);					 
-		
+		if( xos >= 1 && yos >= 1 )
+			foundSpot = Map->CanMonsterMoveHere( xos, yos, z, worldNumber );
     }
-	
-	chars[c].x = xos;
-	chars[c].y = yos;
-	if (illegal_z == elev)
-		elev = Map->Height(xos, yos, 0);
-	chars[c].dispz = chars[c].z = elev;
-	
-	InitializeWanderArea(c, originX, originY, xAway, yAway);
+
+	// should we not add and remove from mapregions here????
+	SI08 targZ = 0;
+	if( illegal_z == z )
+		targZ = Map->Height( xos, yos, 0, worldNumber );
+	else
+		targZ = z;
+
+	c->SetLocation( xos, yos, targZ );
+	InitializeWanderArea( c, xAway, yAway );
 }
 
 
-
-// type 0 -> s = spawner item #
-// type 1 -> s = socket
-// whohooo, nice programming style
-// LB 
-
-int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed char z1) //Morrolan - replacement for old AddNPCxyz(), fixes a LOT of problems.
+//o---------------------------------------------------------------------------o
+//|	Function	-	CHARACTER cCharStuff::AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Add NPC at a given location
+//o---------------------------------------------------------------------------o
+CChar * cCharStuff::AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
 {
-	int tmp, z,c,n, lovalue, hivalue, mypack, retitem;
-	char sect[512];
-	long int pos;
-	int k=0, xos=0, yos=0, lb;
-	int storeval, shoppack1, shoppack2, shoppack3;
-	char rndlootlist[20];
-	int haircolor; //(we need this to remember the haircolor)
-	haircolor=-1;
-	
-	mypack=-1;
-	retitem=-1;
-	storeval=-1;
-	shoppack1=-1;
-	shoppack2=-1;
-	shoppack3=-1;
-	
-	//
-	// First things first...lets find out what NPC# we should spawn
-	//
+	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
+	if( c == NULL )
+		return NULL;
+	c->SetLocation( x1, y1, z1 );
 
-	openscript("npc.scp");
-	sprintf(sect, "NPC %i", npcNum);
-	if (!i_scripts[npc_script]->find(sect)) {
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
-		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-				return -1;
-		} else return -1;
-	}
-	
-	do
+	if( s != NULL )
 	{
-		read2();
-		if (script1[0]!='}')
+		if( c->GetFx( 1 ) == -1 )
 		{
-			if (!(strcmp("NPCLIST", script1)))
+			c->SetFx( s->GetWord( 11 ), 1 );
+			c->SetFy( s->GetWord( 13 ), 1 );
+			if( c->GetFz() != -1 ) 
+				c->SetFz( s->Buffer()[16] + Map->TileHeight( s->GetWord( 17 ) ) );
+		}
+	}
+   
+	c->SetRegion( calcRegionFromXY(c->GetX(), c->GetY(), worldNumber ) );
+
+	for( int z = 0; z < TRUESKILLS; z++ )
+		Skills->updateSkillLevel( c, z );
+   
+	c->Update();
+	setcharflag( c );
+	cScript *toGrab = Trigger->GetScript( c->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( c );
+	return c;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cCharStuff::Split( CChar *k )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Cause NPC to split during combat
+//o---------------------------------------------------------------------------o
+void cCharStuff::Split( CChar *k )
+{
+	CChar *c = k->Dupe();
+	if( c == NULL )
+		return;
+
+	SERIAL serial = c->GetSerial();
+	c->SetSerial( serial, calcCharFromSer( c->GetSerial() ) );
+	c->SetFTarg( INVALIDSERIAL );
+	c->SetLocation( k->GetX() + 1, k->GetY(), k->GetZ() );
+	c->SetKills( 0 );
+	c->SetHP( k->GetMaxHP() );
+	c->SetStamina( k->GetMaxStam() );
+	c->SetMana( k->GetMaxMana() );
+	if( RandomNum( 0, 34 ) == 5 ) 
+		c->SetSplit( 1 );
+	else 
+		c->SetSplit( 0 );
+	c->Update();
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cCharStuff::LoadShopList( char *list, CChar *c )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Loads the shopping list pointed to by data in items.scp
+//o---------------------------------------------------------------------------o
+void cCharStuff::LoadShopList( const char *list, CChar *c )
+{
+	CItem *buyLayer = FindItemOnLayer( c, 0x1A );
+	CItem *boughtLayer = FindItemOnLayer( c, 0x1B );
+	CItem *sellLayer = FindItemOnLayer( c, 0x1C );
+
+	char sect[512];
+	sprintf( sect, "SHOPLIST %s", list );
+	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
+	if( ShoppingList == NULL )
+		return;
+
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	const char *cdata = NULL;
+	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+	CItem *retitem = NULL;
+
+	for( tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
+	{
+		cdata = ShoppingList->GrabData( ndata, odata );
+		switch( tag )
+		{
+		case DFNTAG_RSHOPITEM:
+				if( buyLayer != NULL ) 
+				{
+					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
+					if( retitem != NULL )
+					{
+						retitem->SetCont( buyLayer->GetSerial() );
+						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetZ( 9 );
+						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+							retitem->SetName( retitem->GetName2() ); // Item identified! -- by Magius(CHE)
+					}
+				} 
+				else 
+					Console << "Warning: Bad Shopping List " << list << " with no Vendor Buy Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
+				break;
+		case DFNTAG_SELLITEM:
+				if( sellLayer != NULL ) 
+				{
+					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
+					if( retitem != NULL )
+					{
+						retitem->SetCont( sellLayer->GetSerial() );
+						retitem->SetValue( retitem->GetValue() / 2 );
+						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetZ( 9 );
+						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+							retitem->SetName( retitem->GetName2() );
+					}
+				} 
+				else 
+					Console << "Warning: Bad Shopping List " << list << " with no Vendor Sell Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
+				break;
+		case DFNTAG_SHOPITEM:
+				if( boughtLayer != NULL ) 
+				{
+					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
+					if( retitem != NULL )
+					{
+						retitem->SetCont( boughtLayer->GetSerial() );
+						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
+						retitem->SetZ( 9 );
+						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+							retitem->SetName( retitem->GetName2() );
+					}
+				} 
+				else 
+					Console << "Warning: Bad Shopping List " << list << " with no Vendor Bought Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
+				break;
+		case DFNTAG_VALUE:
+				if( retitem != NULL ) 
+					retitem->SetValue( ndata );
+				break;
+		}
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Apply Npc.scp sections to an NPC
+//o---------------------------------------------------------------------------o
+bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
+{
+	if( NpcCreation == NULL || applyTo == NULL )
+		return false;
+
+	UI16 haircolor	= 0xFFFF;
+	UI16 storeval	= 0xFFFF;
+	char rndlootlist[20];
+
+	CItem *buyPack = NULL, *boughtPack = NULL, *sellPack = NULL;
+	CItem *retitem = NULL, *mypack = NULL, *n = NULL;
+
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	const char *cdata = NULL;
+	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+	for( tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
+	{
+		cdata = NpcCreation->GrabData( ndata, odata );
+		switch( tag )
+		{
+		case DFNTAG_ALCHEMY:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ALCHEMY );		break;
+		case DFNTAG_ANATOMY:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ANATOMY );		break;
+		case DFNTAG_ANIMALLORE:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ANIMALLORE );	break;
+		case DFNTAG_ARMSLORE:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ARMSLORE );		break;
+		case DFNTAG_ARCHERY:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ARCHERY );		break;
+		case DFNTAG_DAMAGE:
+		case DFNTAG_ATT:				applyTo->SetLoDamage( (SI16)ndata );applyTo->SetHiDamage( (SI16)odata );	break;
+		case DFNTAG_BACKPACK:			if( mypack == NULL )
+											mypack = getPack( applyTo );
+										if( mypack == NULL )
+										{
+											n = Items->SpawnItem( NULL, applyTo, 1, "Backpack", false, 0x0E75, 0, false, false );
+											if( n != NULL )
+											{
+												applyTo->SetPackItem( n );
+												n->SetX( 0 );
+												n->SetY( 0 );
+												n->SetZ( 0 );
+												n->SetLayer( 0x15 );
+												if( !n->SetCont( applyTo->GetSerial() ) )
+													retitem = NULL;
+												else
+												{
+													n->SetType( 1 );
+													n->SetDye( true );
+													mypack = n;
+													retitem = n;
+												}
+											}
+										}
+										break;
+		case DFNTAG_BEGGING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), BEGGING );			break;
+		case DFNTAG_BLACKSMITHING:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), BLACKSMITHING );	break;
+		case DFNTAG_BOWCRAFT:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), BOWCRAFT );			break;
+		case DFNTAG_COLOUR:				if( retitem != NULL )
+											retitem->SetColour( (UI16)ndata );
+										break;
+		case DFNTAG_CAMPING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), CAMPING );			break;
+		case DFNTAG_CARPENTRY:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), CARPENTRY );		break;
+		case DFNTAG_CARTOGRAPHY:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), CARTOGRAPHY );		break;
+		case DFNTAG_COOKING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), COOKING );			break;
+		case DFNTAG_COLOURMATCHHAIR:	if( retitem != NULL )
+											retitem->SetColour( (UI16)haircolor );						
+										break;
+		case DFNTAG_COLOURLIST:			storeval = addRandomColor( cdata );
+										if( retitem != NULL )
+											retitem->SetColour( storeval );
+										break;
+		case DFNTAG_CARVE:				applyTo->SetCarve( ndata );											break;
+		case DFNTAG_DIR:				if( !strcmp( "NE", cdata ) )
+											applyTo->SetDir( 1 );
+										else if( !strcmp( "E", cdata ) )
+											applyTo->SetDir( 2 );
+										else if( !strcmp( "SE", cdata ) )
+											applyTo->SetDir( 3 );
+										else if( !strcmp( "S", cdata ) )
+											applyTo->SetDir( 4 );
+										else if( !strcmp( "SW", cdata ) )
+											applyTo->SetDir( 5 );
+										else if( !strcmp( "W", cdata ) )
+											applyTo->SetDir( 6 );
+										else if( !strcmp( "NW", cdata ) )
+											applyTo->SetDir( 7 );
+										else if( !strcmp( "N", cdata ) )
+											applyTo->SetDir( 0 );
+										break;
+		case DFNTAG_DEX:				applyTo->SetDexterity( (SI16)RandomNum( ndata, odata ) );
+										applyTo->SetStamina( applyTo->GetMaxStam() );
+										break;
+		case DFNTAG_DETECTINGHIDDEN:	applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), DETECTINGHIDDEN );	break;
+		case DFNTAG_DEF:				applyTo->SetDef( (UI16)RandomNum( ndata, odata ) );							break;
+		case DFNTAG_EMOTECOLOUR:		applyTo->SetEmoteColour( (UI16)ndata );										break;
+		case DFNTAG_ENTICEMENT:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ENTICEMENT );		break;
+		case DFNTAG_EVALUATINGINTEL:	applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), EVALUATINGINTEL );	break;
+		case DFNTAG_FAME:				applyTo->SetFame( (SI16)ndata );											break;
+		case DFNTAG_FX1:				applyTo->SetFx( (SI16)ndata, 1 );											break;
+		case DFNTAG_FX2:				applyTo->SetFx( (SI16)ndata, 2 );											break;
+		case DFNTAG_FY1:				applyTo->SetFy( (SI16)ndata, 1 );											break;
+		case DFNTAG_FY2:				applyTo->SetFy( (SI16)ndata, 2 );											break;
+		case DFNTAG_FZ1:				applyTo->SetFz( (SI08)ndata );												break;
+		case DFNTAG_FLEEAT:				applyTo->SetFleeAt( (SI16)ndata );											break;
+		case DFNTAG_FISHING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), FISHING );			break;
+		case DFNTAG_FORENSICS:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), FORENSICS );		break;
+		case DFNTAG_FENCING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), FENCING );			break;
+		case DFNTAG_GOLD:				if( mypack == NULL ) 
+											mypack = getPack( applyTo );
+										if( mypack != NULL )
+										{
+											n = Items->SpawnItem( NULL, applyTo, 1, "#", true, 0x0EED, 0, true, false );
+											if( n != NULL )
+											{
+												n->SetDecayable( true );
+												n->SetAmount( (UI16)( RandomNum( (int)(ndata) , (int)(odata) ) ) ); 
+												n->SetCont( mypack->GetSerial() );
+											}
+										}
+										else
+											Console << "Warning: Bad NPC Script with problem no backpack for gold" << myendl;
+										break;
+		case DFNTAG_GET:
+									{
+										char mTemp[128];
+										if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
+											sprintf( mTemp, "NPC %s", cdata );
+										else
+											strcpy( mTemp, cdata );
+										ScriptSection *toFind = FileLookup->FindEntry( mTemp, npc_def );
+										ApplyNpcSection( applyTo, toFind );
+									}
+										break;
+		case DFNTAG_HEALING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), HEALING );		break;
+		case DFNTAG_HERDING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), HERDING );		break;
+		case DFNTAG_HIDING:				applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), HIDING );		break;
+		case DFNTAG_HAIRCOLOUR:			haircolor = addRandomColor( cdata );
+										if( retitem != NULL )
+											retitem->SetColour( haircolor );
+										break;
+		case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( (SI16)ndata );									break;
+		case DFNTAG_ID:					applyTo->SetID( (UI16)ndata );
+										applyTo->SetxID( (UI16)ndata );
+										applyTo->SetOrgID( (UI16)ndata );
+										break;
+		case DFNTAG_ITEM:
+										retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
+										if( retitem != NULL )
+										{
+											if( !retitem->SetCont( applyTo->GetSerial() ) )
+												retitem = NULL;
+											else if( retitem->GetLayer() == 0 ) 
+												Console << "Warning: Bad NPC Script with problem item " << cdata << " executed!" << myendl;
+										}
+										break;
+		case DFNTAG_INTELLIGENCE:		applyTo->SetIntelligence( (SI16)RandomNum( ndata, odata ) );
+										applyTo->SetMana( applyTo->GetMaxMana() );
+										break;
+		case DFNTAG_ITEMID:				applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), ITEMID );		break;
+		case DFNTAG_INSCRIPTION:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), INSCRIPTION );	break;
+		case DFNTAG_KARMA:				applyTo->SetKarma( (SI16)ndata );										break;
+		case DFNTAG_LOOT:				if( mypack == NULL ) 
+											mypack = getPack( applyTo );
+										if( mypack != NULL ) 
+										{
+											strcpy( rndlootlist, cdata );
+											retitem = addRandomLoot( mypack, rndlootlist );
+										}
+										else
+											Console << "Warning: Bad NPC Script with problem no backpack for loot" << myendl;
+										break;
+		case DFNTAG_LOCKPICKING:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), LOCKPICKING );		break;
+		case DFNTAG_LUMBERJACKING:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), LUMBERJACKING );	break;
+		case DFNTAG_LODAMAGE:			applyTo->SetLoDamage( (SI16)ndata );										break;
+		case DFNTAG_MAGERY:				applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MAGERY );			break;
+		case DFNTAG_MAGICRESISTANCE:	applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MAGICRESISTANCE );	break;
+		case DFNTAG_MUSICIANSHIP:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MUSICIANSHIP );		break;
+		case DFNTAG_MACEFIGHTING:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MACEFIGHTING );		break;
+		case DFNTAG_MINING:				applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MINING );			break;
+		case DFNTAG_MEDITATION:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), MEDITATION );		break;
+		case DFNTAG_NAME:				applyTo->SetName( cdata );													break;
+		case DFNTAG_NAMELIST:			setRandomName( applyTo, cdata );											break;
+		case DFNTAG_NPCWANDER:			applyTo->SetNpcWander( (SI08)ndata );										break;
+		case DFNTAG_NPCAI:				applyTo->SetNPCAiType( (SI16)ndata );										break;
+		case DFNTAG_NOTRAIN:			applyTo->SetCanTrain( false );										break;
+		case DFNTAG_PACKITEM:			if( mypack == NULL ) 
+											mypack = getPack( applyTo );
+										if( mypack != NULL ) 
+										{
+											retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
+											if( retitem != NULL )
+											{
+												retitem->SetCont( mypack->GetSerial() );
+												retitem->SetX( 50 + RandomNum( 0, 79 ) );
+												retitem->SetY( 50 + RandomNum( 0, 79 ) );
+												retitem->SetZ( 9 );
+											}
+										}
+										else
+											Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
+										break;
+		case DFNTAG_PRIV1:				applyTo->SetPriv( (UI08)ndata );											break;
+		case DFNTAG_PRIV2:				applyTo->SetPriv2( (UI08)ndata );											break;
+		case DFNTAG_POISON:				applyTo->SetPoison( (SI08)ndata );											break;
+		case DFNTAG_PARRYING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), PARRYING );			break;
+		case DFNTAG_PEACEMAKING:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), PEACEMAKING );		break;
+		case DFNTAG_PROVOCATION:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), PROVOCATION );		break;
+		case DFNTAG_POISONING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), POISONING );		break;
+		case DFNTAG_RSHOPITEM:			if( buyPack == NULL )
+											buyPack = FindItemOnLayer( applyTo, 0x1A );
+										if( buyPack != NULL ) 
+										{
+											retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
+											if( retitem != NULL )
+											{
+												retitem->SetCont( buyPack->GetSerial() );
+												retitem->SetX( 50 + RandomNum( 0, 79 ) );
+												retitem->SetY( 50 + RandomNum( 0, 79 ) );
+												retitem->SetZ( 9 );
+												if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" )))
+													retitem->SetName( retitem->GetName2() ); // Item identified! -- by Magius(CHE)
+											}
+										}
+										else
+											Console << "Warning: Bad NPC Script with no Vendor Buy Pack for item" << myendl;
+										break;
+		case DFNTAG_REATTACKAT:			applyTo->SetReattackAt( (SI16)ndata );										break;
+		case DFNTAG_REMOVETRAPS:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), REMOVETRAPS );		break;
+		case DFNTAG_RACE:				applyTo->SetRace( (UI16)ndata );											break;
+		case DFNTAG_RUNS:				applyTo->SetRun( true );											break;
+		case DFNTAG_SKIN:				applyTo->SetSkin( (UI16)ndata );
+										applyTo->SetxSkin( (UI16)ndata );
+										break;
+		case DFNTAG_SHOPKEEPER:			Commands->MakeShop( applyTo );										break;
+		case DFNTAG_SHOPLIST:			LoadShopList( cdata, applyTo );										break;
+		case DFNTAG_SELLITEM:			if( sellPack == NULL ) 
+											sellPack = FindItemOnLayer( applyTo, 0x1C );
+										if( sellPack != NULL ) 
+										{
+											retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
+											if( retitem != NULL )
+											{
+												retitem->SetCont( sellPack->GetSerial() );
+												retitem->SetValue( retitem->GetValue() / 2 );
+												retitem->SetX( 50 + RandomNum( 0, 79 ) );
+												retitem->SetY( 50 + RandomNum( 0, 79 ) );
+												retitem->SetZ( 9 );
+												if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+													retitem->SetName( retitem->GetName2() );
+											}
+										}
+										else
+											Console << "Warning: Bad NPC Script with no Vendor SellPack for item" << myendl;
+										break;
+		case DFNTAG_SHOPITEM:			if( boughtPack == NULL ) 
+											boughtPack = FindItemOnLayer( applyTo, 0x1B );
+										if( boughtPack != NULL ) 
+										{
+											retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
+											if( retitem != NULL )
+											{
+												retitem->SetCont( boughtPack->GetSerial() );
+												retitem->SetX( 50 + RandomNum( 0, 79 ) );
+												retitem->SetY( 50 + RandomNum( 0, 79 ) );
+												retitem->SetZ( 9 );
+												if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+													retitem->SetName( retitem->GetName2() );
+											}
+										}
+										else
+											Console << "Warning: Bad NPC Script with no Vendor Bought Pack for item" << myendl;
+										break;
+		case DFNTAG_SAYCOLOUR:			applyTo->SetSayColour( (UI16)ndata );										break;
+		case DFNTAG_SPATTACK:			applyTo->SetSpAttack( (SI16)ndata );										break;
+		case DFNTAG_SPADELAY:			applyTo->SetSpDelay( (SI08)ndata );											break;
+		case DFNTAG_SPLIT:				applyTo->SetSplit( (UI08)ndata );											break;
+		case DFNTAG_SPLITCHANCE:		applyTo->SetSplitChance( (UI08)ndata );										break;
+		case DFNTAG_SNOOPING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), SNOOPING );			break;
+		case DFNTAG_SPIRITSPEAK:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), SPIRITSPEAK );		break;
+		case DFNTAG_STEALING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), STEALING );			break;
+		case DFNTAG_STRENGTH:			applyTo->SetStrength( (SI16)RandomNum( ndata, odata ) );
+										applyTo->SetHP( applyTo->GetMaxHP() );
+										break;
+		case DFNTAG_SWORDSMANSHIP:		applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), SWORDSMANSHIP );	break;
+		case DFNTAG_STEALTH:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), STEALTH );			break;
+		case DFNTAG_SKINLIST:			storeval = addRandomColor( cdata );
+										applyTo->SetSkin( storeval );
+										applyTo->SetxSkin( storeval );
+										break;
+		case DFNTAG_SKILL:				applyTo->SetBaseSkill( (UI16)odata, (UI08)ndata );							break;
+/*			else if( !strncmp( tag, "SKILL", 5 ) )
 			{
-				pos=ftell(scpfile);
-				closescript();
-				if (type==1)
-				{
-					npcNum=AddRandomNPC(s,script2,1);
-					if (npcNum==-1) return -1;
-				}
-				else
-				{
-					npcNum=AddRandomNPC(s,script2,-1);
-					if (npcNum==-1) return -1;
-				}
-				break;  //got the NPC number to add stop reading
+				skill = makeNum( &tag[5] );
+				applyTo->SetBaseSkill( makeNum( data ), skill );
+			}
+*/
+		case DFNTAG_SCRIPT:				applyTo->SetScriptTrigger( (UI16)ndata );								break;
+		case DFNTAG_TITLE:				applyTo->SetTitle( cdata );												break;
+		case DFNTAG_TOTAME:				applyTo->SetTaming( (SI16)ndata );										break;
+		case DFNTAG_TACTICS:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TACTICS );		break;
+		case DFNTAG_TAILORING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TAILORING );	break;
+		case DFNTAG_TAMING:				applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TAMING );		break;
+		case DFNTAG_TASTEID:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TASTEID );		break;
+		case DFNTAG_TINKERING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TINKERING );	break;
+		case DFNTAG_TRACKING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TRACKING );		break;
+		case DFNTAG_VALUE:				if( retitem != NULL )
+											retitem->SetValue( ndata );
+										break;
+		case DFNTAG_VETERINARY:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), VETERINARY );	break;
+		case DFNTAG_WRESTLING:			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), WRESTLING );	break;
+		case DFNTAG_NOTES:
+		case DFNTAG_CATEGORY:
+			break;
+		default:
+			Console << "Unknown tag in ApplyNpcSection(): " << (SI32)tag << myendl;// << " data: " << cdata << " " << ndata << " " << odata << myendl;
+			break;
+		}
+	}
+	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CHARACTER CreateScriptNpc( cSocket *s, int targNPC, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Create an NPC and assign their variables based on npc.scp entrys
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::CreateScriptNpc( cSocket *s, int targNPC, UI08 worldNumber )
+{
+	char sect[512];
+	sprintf( sect, "%i", targNPC );
+	return CreateScriptNpc( s, sect, worldNumber );
+}
+//o---------------------------------------------------------------------------o
+//|	Function	-	CHARACTER CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Create an NPC and assign their variables based on npc.scp entrys
+//o---------------------------------------------------------------------------o
+CChar *cCharStuff::CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber )
+{
+	char npcSect[512];
+	if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
+		sprintf( npcSect, "NPC %s", targNPC.c_str() );
+	else
+		strcpy( npcSect, targNPC.c_str() );
+	ScriptSection *NpcCreation = FileLookup->FindEntry( npcSect, npc_def );
+	if( NpcCreation == NULL )
+		return NULL;
+
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	for( tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
+	{
+		if( tag == DFNTAG_NPCLIST )
+		{
+			UI32 tValue, uValue;
+			return CreateRandomNpc( s, NpcCreation->GrabData( tValue, uValue ), worldNumber );
+		}
+	}
+
+	CHARACTER npcNumOff;
+	CChar *npcNum = MemCharFree( npcNumOff );
+	if( npcNum == NULL )
+		return NULL;
+
+	npcNum->SetSkillTitles( true );
+	npcNum->SetNpc( true );
+	npcNum->SetLoDamage( 1 );
+	npcNum->SetHiDamage( 1 );
+	npcNum->SetDef( 1 );
+	npcNum->SetSpawn( INVALIDSERIAL, npcNumOff );
+	npcNum->WorldNumber( worldNumber );
+
+	if( !ApplyNpcSection( npcNum, NpcCreation ) )
+		cout << "Failed to apply NPC script settings for npc " << npcNum->GetSerial() << endl;
+	
+	return npcNum;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void npcAction( CChar *npc, int x )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	NPC does a certain action
+//o---------------------------------------------------------------------------o
+void npcAction( CChar *npc, int x )
+{
+	CPCharacterAnimation toSend = (*npc);
+	toSend.Action( x );
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	{
+		if( charInRange( tSock->CurrcharObj(), npc ) )
+			tSock->Send( &toSend );
+	}
+	Network->PopConn();
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void npcAct( cSocket *s )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	NPC Action
+//o---------------------------------------------------------------------------o
+void npcAct( cSocket *s )
+{
+	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+		npcAction( i, s->AddID1() );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void npcToggleCombat( CChar *s )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	NPC Toggles combat mode
+//o---------------------------------------------------------------------------o
+void npcToggleCombat( CChar *s )
+{
+	s->SetWar( !s->IsAtWar() );
+	Movement->CombatWalk( s );
+}
+
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CChar * cCharStuff::getGuardingPet( CChar *mChar, SERIAL guarded )
+//|	Programmer	-	Zane
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Get the pet guarding an item / character
+//o---------------------------------------------------------------------------o
+CChar * cCharStuff::getGuardingPet( CChar *mChar, SERIAL guarded )
+{
+	if( mChar == NULL || guarded == INVALIDSERIAL )
+		return NULL;
+
+	CHARLIST *myPets = mChar->GetPetList();
+	if( myPets != NULL )
+	{
+		for( UI32 j = 0; j < myPets->size(); j++ )
+		{
+			CChar *pet = (*myPets)[j];
+			if( pet != NULL )
+			{
+				if( !pet->IsMounted() && pet->GetNPCAiType() == 32 && pet->GetGuarding() == guarded && pet->GetOwner() != mChar->GetSerial() )
+					return pet;
 			}
 		}
-	} while (script1[0]!='}');
-	closescript();
-	
-	c=MemCharFree ();
-	if( c == -1 )
-		return -1;
-	
-	InitChar(c);
-	if (type==1)
-	{
-		chars[c].x=items[s].x;
-		chars[c].y=items[s].y;
-		chars[c].dispz=chars[c].z=items[s].z;
-		setserial(c,s,6);
 	}
+	return NULL;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
+//|	Programmer	-	Zane
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Search a pets friends list to check if a character is a friend
+//o---------------------------------------------------------------------------o
+bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
+{
+	CHARLIST *petFriends = pet->GetFriendList();
+	if( petFriends != NULL )
+	{
+		for( UI32 j = 0; j < petFriends->size(); j++ )
+		{
+			CChar *getFriend = (*petFriends)[j];
+			if( getFriend != NULL && getFriend == mChar )
+				return true;
+		}
+	}
+	return false;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void cCharStuff::stopPetGuarding( CChar *pet )
+//|	Programmer	-	Zane
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Find the item/char pet is guarding and set it to not guarded
+//o---------------------------------------------------------------------------o
+void cCharStuff::stopPetGuarding( CChar *pet )
+{
+	SERIAL petGuarding = pet->GetGuarding();
+	if( petGuarding == INVALIDSERIAL )
+		return;
+
+	CItem *itemGuard = calcItemObjFromSer( petGuarding );
+	if( itemGuard != NULL )
+		itemGuard->SetGuarded( false );
 	else
 	{
-		chars[c].x=x1;
-		chars[c].y=y1;
-		chars[c].dispz=chars[c].z=z1;
-		//setserial(c,s,6); // lb 
-		                    // lb a few day later: damn it this was BEbugging, shame on me ...
+		CChar *charGuard = calcCharObjFromSer( petGuarding );
+		if( charGuard != NULL )
+			charGuard->SetGuarded( false );
 	}
-	
-	chars[c].priv=0x10;
-	chars[c].npc=1;
-	chars[c].att=1;
-	chars[c].def=1;
-	chars[c].spawnserial = 0;
-//	chars[c].spawnserial=-1; //Zippy
-	
-	
-	// Now let's spawn it.
-	int skl, sklvalue;
-	
-	openscript("npc.scp");
-	sprintf(sect, "NPC %i", npcNum);
-	if (!i_scripts[npc_script]->find(sect)) {
-		closescript();
-		if (n_scripts[custom_npc_script][0]!=0)
-		{
-			openscript(n_scripts[custom_npc_script]);
-			if (!i_scripts[custom_npc_script]->find(sect))
-				return -1;
-			else strcpy(sect, n_scripts[custom_npc_script]);
-		} else return -1;
-	} else strcpy(sect, "npc.scp");
-	do {
-		read2();
-		if (script1[0]!='}') 
-		{
-			switch( script1[0] )
-			{
-			case 'a':
-			case 'A':
-				if ((!(strcmp("ALCHEMY",script1)))||(!(strcmp("SKILL0",script1)))) chars[c].baseskill[ALCHEMY] = getstatskillvalue(script2);
-				else if ((!(strcmp("ANATOMY",script1)))||(!(strcmp("SKILL1",script1)))) chars[c].baseskill[ANATOMY] = getstatskillvalue(script2);
-				else if ((!(strcmp("ANIMALLORE",script1)))||(!(strcmp("SKILL2",script1)))) chars[c].baseskill[ANIMALLORE] = getstatskillvalue(script2);
-				else if ((!(strcmp("ARMSLORE",script1)))||(!(strcmp("SKILL4",script1)))) chars[c].baseskill[ARMSLORE] = getstatskillvalue(script2);
-				else if ((!(strcmp("ARCHERY",script1)))||(!(strcmp("SKILL31",script1)))) chars[c].baseskill[ARCHERY] = getstatskillvalue(script2);
-
-				break;
-
-			case 'b':
-			case 'B':
-				if (!(strcmp("BACKPACK", script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && !items[mypack].free && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack==-1)
-					{
-						pos=ftell(scpfile);
-						closescript();
-						chars[c].packitem=n=Items->SpawnItem(calcSocketFromChar(c),c,1,"Backpack",0,0x0E,0x75,0,0,0,0);
-						if( n != -1 )
-						{
-							items[n].x=0;
-							items[n].y=0;
-							items[n].z=0;
-							setserial(n,c,4);
-							items[n].layer=0x15;
-							items[n].type=1;
-							items[n].dye=1;
-							mypack=n;
-							retitem=n;
-						}
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					}
-				}
-				else if ((!(strcmp("BEGGING",script1)))||(!(strcmp("SKILL6",script1)))) chars[c].baseskill[BEGGING] = getstatskillvalue(script2);
-				else if ((!(strcmp("BLACKSMITHING",script1)))||(!(strcmp("SKILL7",script1)))) chars[c].baseskill[BLACKSMITHING] = getstatskillvalue(script2);
-				else if ((!(strcmp("BOWCRAFT",script1)))||(!(strcmp("SKILL8",script1)))) chars[c].baseskill[BOWCRAFT] = getstatskillvalue(script2);
-
-				break;
-
-			case 'c':
-			case 'C':
-				if (!(strcmp("COLOR",script1))) {
-					if (retitem!=-1)
-					{
-					  items[retitem].color1 = (unsigned char)((hstr2num(script2))>>8);
-					  items[retitem].color2 = (unsigned char)((hstr2num(script2))%256);
-					}
-				}
-				else if ((!(strcmp("CAMPING",script1)))||(!(strcmp("SKILL10",script1)))) chars[c].baseskill[CAMPING] = getstatskillvalue(script2);
-				else if ((!(strcmp("CARPENTRY",script1)))||(!(strcmp("SKILL11",script1)))) chars[c].baseskill[CARPENTRY] = getstatskillvalue(script2);
-				else if ((!(strcmp("CARTOGRAPHY",script1)))||(!(strcmp("SKILL12",script1)))) chars[c].baseskill[CARTOGRAPHY] = getstatskillvalue(script2);
-				else if ((!(strcmp("COOKING",script1)))||(!(strcmp("SKILL13",script1)))) chars[c].baseskill[COOKING] = getstatskillvalue(script2);
-				else if (!(strcmp("COLORMATCHHAIR",script1)))
-				{
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((haircolor)>>8);
-					  items[retitem].color2 = (unsigned char)((haircolor)%256);
-					}
-				}
-				else if (!(strcmp("COLORLIST",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					storeval=addrandomcolor(c,script2);
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((storeval)>>8);
-					  items[retitem].color2 = (unsigned char)((storeval)%256);
-					}
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-
-				break;
-
-			case 'd':
-			case 'D':
-				if (!(strcmp("DIRECTION",script1))) {
-					if (!(strcmp("NE",script2))) chars[c].dir=1;
-					if (!(strcmp("E",script2))) chars[c].dir=2;
-					if (!(strcmp("SE",script2))) chars[c].dir=3;
-					if (!(strcmp("S",script2))) chars[c].dir=4;
-					if (!(strcmp("SW",script2))) chars[c].dir=5;
-					if (!(strcmp("W",script2))) chars[c].dir=6;
-					if (!(strcmp("NW",script2))) chars[c].dir=7;
-					if (!(strcmp("N",script2))) chars[c].dir=0;
-				}
-				else if ((!(strcmp("DEX",script1)))||(!(strcmp("DEXTERITY",script1)))) 
-				{
-					chars[c].dx  = getstatskillvalue(script2);
-					chars[c].dx2 = chars[c].dx;
-					chars[c].stm = chars[c].dx;
-				}
-				else if ((!(strcmp("DETECTINGHIDDEN",script1)))||(!(strcmp("SKILL14",script1)))) chars[c].baseskill[DETECTINGHIDDEN] = getstatskillvalue(script2);
-				else if ((!(strcmp("DAMAGE",script1)))||(!(strcmp("ATT",script1)))) 
-				{
-					gettokennum(script2, 0);
-					lovalue=str2num(gettokenstr);
-					gettokennum(script2, 1);
-					hivalue=str2num(gettokenstr);
-					chars[c].lodamage = lovalue;
-					chars[c].hidamage = lovalue;
-					if(hivalue) {
-						chars[c].hidamage = hivalue;
-					}
-				}
-				else if (!(strcmp("DEF",script1))) chars[c].def = getstatskillvalue(script2);
-
-				break;
-
-			case 'e':
-			case 'E':
-				if (!(strcmp("EMOTECOLOR",script1))) {
-					chars[c].emotecolor1 = (unsigned char)((hstr2num(script2))>>8);
-					chars[c].emotecolor2 = (unsigned char)((hstr2num(script2))%256);
-				}
-				else if ((!(strcmp("ENTICEMENT",script1)))||(!(strcmp("SKILL15",script1)))) chars[c].baseskill[ENTICEMENT] = getstatskillvalue(script2);
-				else if ((!(strcmp("EVALUATINGINTEL",script1)))||(!(strcmp("SKILL16",script1)))) chars[c].baseskill[EVALUATINGINTEL] = getstatskillvalue(script2);
-
-				break;
-
-			case 'f':
-			case 'F':
-				if (!(strcmp("FAME",script1))) chars[c].fame=str2num(script2);
-				else if (!(strcmp("FX1",script1))) chars[c].fx1=chars[c].x+str2num(script2);  // new NPCWANDER implementation
-				else if (!(strcmp("FX2",script1))) chars[c].fx2=chars[c].x+str2num(script2);
-				else if (!(strcmp("FY1",script1))) chars[c].fy1=chars[c].y+str2num(script2);
-				else if (!(strcmp("FY2",script1))) chars[c].fy2=chars[c].y+str2num(script2);
-				else if (!(strcmp("FZ1",script1))) chars[c].fz1=chars[c].z+str2num(script2);
-				else if (!(strcmp("FLEEAT",script1))) chars[c].fleeat=str2num(script2);
-				else if ((!(strcmp("FISHING",script1)))||(!(strcmp("SKILL18",script1)))) chars[c].baseskill[FISHING] = getstatskillvalue(script2);
-				else if ((!(strcmp("FORENSICS",script1)))||(!(strcmp("SKILL19",script1)))) chars[c].baseskill[FORENSICS] = getstatskillvalue(script2);
-				else if ((!(strcmp("FENCING",script1)))||(!(strcmp("SKILL42",script1)))) chars[c].baseskill[FENCING] = getstatskillvalue(script2);
-
-				break;
-
-			case 'g':
-			case 'G':
-				if (!(strcmp("GOLD", script1))) 
-				{
-					if (mypack==-1) {
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && !items[mypack].free && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1)
-					{ 
-						pos=ftell(scpfile);
-						closescript();
-						n=Items->SpawnItem(calcSocketFromChar(c),c,1,"#",1,0x0E,0xED,0,0,1,0);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if( n != -1 )
-						{
-							items[n].priv=items[n].priv|0x01;
-							gettokennum(script2, 0);
-							lovalue=str2num(gettokenstr);
-							gettokennum(script2, 1);
-							hivalue=str2num(gettokenstr);
-							if (hivalue==0) {
-								items[n].amount=lovalue/2 + (rand()%(lovalue/2));
-							} else {
-								items[n].amount=lovalue + (rand()%(hivalue-lovalue));
-							}
-							setserial(n,mypack,1);
-						}
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
-					}
-				}
-
-				break;
-
-			case 'h':
-			case 'H':
-				if ((!(strcmp("HEALING",script1)))||(!(strcmp("SKILL17",script1)))) chars[c].baseskill[HEALING] = getstatskillvalue(script2);
-				else if ((!(strcmp("HERDING",script1)))||(!(strcmp("SKILL20",script1)))) chars[c].baseskill[HERDING] = getstatskillvalue(script2);
-				else if ((!(strcmp("HIDING",script1)))||(!(strcmp("SKILL21",script1)))) chars[c].baseskill[HIDING] = getstatskillvalue(script2);
-				else if (!(strcmp("HAIRCOLOR",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					haircolor=addrandomhaircolor(charcount,script2);
-					if (retitem>-1)
-					{
-					  items[retitem].color1 = (unsigned char)((haircolor)>>8);
-					  items[retitem].color2 = (unsigned char)((haircolor)%256);
-					}
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("HIDAMAGE",script1))) chars[c].hidamage=str2num(script2);
-
-				break;
-
-			case 'i':
-			case 'I':
-				if (!(strcmp("ID",script1))) 
-				{
-					tmp=hstr2num(script2);
-					chars[c].id1 = (unsigned char)(tmp>>8);
-					chars[c].id2 = (unsigned char)(tmp%256);
-					chars[c].xid1=chars[c].id1;
-					chars[c].xid2=chars[c].id2;
-					chars[c].orgid1=chars[c].id1;
-					chars[c].orgid2=chars[c].id2;
-				}
-				else if (!(strcmp("ITEM",script1))) 
-				{
-					storeval=str2num(script2);
-					pos=ftell(scpfile);
-					closescript();
-					retitem=Targ->AddMenuTarget(-1, 0, storeval);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					if (retitem!=-1)
-					{
-						setserial(retitem,c,4);
-						if (items[retitem].layer==0) {
-							printf("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
-						}
-					}
-					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-				}
-				else if ((!(strcmp("INT",script1)))||(!(strcmp("INTELLIGENCE",script1)))) 
-				{
-					chars[c].in  = getstatskillvalue(script2);
-					chars[c].in2 = chars[c].in;
-					chars[c].mn  = chars[c].in;
-				}
-				else if ((!(strcmp("ITEMID",script1)))||(!(strcmp("SKILL3",script1)))) chars[c].baseskill[ITEMID] = getstatskillvalue(script2);
-				else if ((!(strcmp("INSCRIPTION",script1)))||(!(strcmp("SKILL23",script1)))) chars[c].baseskill[INSCRIPTION] = getstatskillvalue(script2);
-
-				break;
-
-			case 'k':
-			case 'K':
-				if (!(strcmp("KARMA",script1))) chars[c].karma=str2num(script2);
-
-				break;
-
-			case 'l':
-			case 'L':
-				if (!(strcmp("LOOT",script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && !items[mypack].free && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1) 
-					{
-						strcpy(rndlootlist, script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=AddRandomLoot(mypack, rndlootlist);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
-					}
-				}
-				else if ((!(strcmp("LOCKPICKING",script1)))||(!(strcmp("SKILL24",script1)))) chars[c].baseskill[LOCKPICKING] = getstatskillvalue(script2);
-				else if ((!(strcmp("LUMBERJACKING",script1)))||(!(strcmp("SKILL44",script1)))) chars[c].baseskill[LUMBERJACKING] = getstatskillvalue(script2);
-				else if (!(strcmp("LODAMAGE",script1))) chars[c].lodamage=str2num(script2);
-
-				break;
-
-			case 'm':
-			case 'M':
-				if ((!(strcmp("MAGERY",script1)))||(!(strcmp("SKILL25",script1)))) chars[c].baseskill[MAGERY] = getstatskillvalue(script2);
-				else if ((!(strcmp("MAGICRESISTANCE",script1)))||(!(strcmp("RESIST",script1)))||(!(strcmp("SKILL26",script1)))) chars[c].baseskill[MAGICRESISTANCE] = getstatskillvalue(script2);
-				else if ((!(strcmp("MUSICIANSHIP",script1)))||(!(strcmp("SKILL29",script1)))) chars[c].baseskill[MUSICIANSHIP] = getstatskillvalue(script2);
-				else if ((!(strcmp("MACEFIGHTING",script1)))||(!(strcmp("SKILL41",script1)))) chars[c].baseskill[MACEFIGHTING] = getstatskillvalue(script2);
-				else if ((!(strcmp("MINING",script1)))||(!(strcmp("SKILL45",script1)))) chars[c].baseskill[MINING] = getstatskillvalue(script2);
-				else if ((!(strcmp("MEDITATION",script1)))||(!(strcmp("SKILL46",script1)))) chars[c].baseskill[MEDITATION] = getstatskillvalue(script2);
-
-				break;
-
-			case 'n':
-			case 'N':
-				if (!(strcmp("NAME",script1))) strcpy(chars[c].name, script2);
-				else if (!(strcmp("NAMELIST", script1))) 
-				{
-					pos=ftell(scpfile);
-					closescript();
-					setrandomname(c,script2);
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("NPCWANDER",script1))) chars[c].npcWander=str2num(script2);
-				else if (!(strcmp("NPCAI",script1))) chars[c].npcaitype=hstr2num(script2);
-				else if (!(strcmp(script1, "NOTRAIN"))) chars[c].cantrain=0;
-
-				break;
-
-			case 'p':
-			case 'P':
-				if (!(strcmp("PACKITEM",script1))) 
-				{
-					if (mypack==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							mypack = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( mypack > -1 && !items[mypack].free && items[mypack].contserial == chars[c].serial && items[mypack].layer == 0x15 )
-								break;//We found it
-							else
-								mypack = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							mypack = -1;//try to keep the pack set to -1
-					}
-					if (mypack!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,mypack,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("PRIV1",script1))) chars[c].priv=str2num(script2);
-				else if (!(strcmp("PRIV2",script1))) chars[c].priv2=str2num(script2);
-				else if (!(strcmp("POISON",script1))) chars[c].poison=str2num(script2);
-				else if ((!(strcmp("PARRYING",script1)))||(!(strcmp("SKILL5",script1)))) chars[c].baseskill[PARRYING] = getstatskillvalue(script2);
-				else if ((!(strcmp("PEACEMAKING",script1)))||(!(strcmp("SKILL9",script1)))) chars[c].baseskill[PEACEMAKING] = getstatskillvalue(script2);
-				else if ((!(strcmp("PROVOCATION",script1)))||(!(strcmp("SKILL22",script1)))) chars[c].baseskill[PROVOCATION] = getstatskillvalue(script2);
-				else if ((!(strcmp("POISONING",script1)))||(!(strcmp("SKILL30",script1)))) chars[c].baseskill[POISONING] = getstatskillvalue(script2);
-
-				break;
-
-			case 'r':
-			case 'R':
-				if (!(strcmp("RSHOPITEM",script1))) 
-				{
-					if (shoppack1==-1) 
-					{
-						//Alert!
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack1 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack1 > -1 && !items[shoppack1].free && items[shoppack1].contserial == chars[c].serial && items[shoppack1].layer == 0x1A )
-								break;//We found it
-							else
-								shoppack1 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack1 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack1!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack1,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else 
-					{
-						printf("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("REATTACKAT",script1))) chars[c].reattackat=str2num(script2);
-				else if (!(strcmp("RACE",script1))) chars[c].race=str2num(script2);
-				else if (!(strcmp(script1, "RUNS"))) chars[c].runs = true;
-
-				break;
-
-			case 's':
-			case 'S':
-				if (!(strcmp("SKIN",script1))) 
-				{
-					tmp=hstr2num(script2);
-					chars[c].skin1 = (unsigned char)(tmp>>8);
-					chars[c].skin2 = (unsigned char)(tmp%256);
-					chars[c].xskin1 = chars[c].skin1;
-					chars[c].xskin2 = chars[c].skin2;
-				}
-				else if (!(strcmp("SHOPKEEPER", script1))) Commands->MakeShop(c);
-				else if (!(strcmp("SELLITEM",script1))) 
-				{
-					if (shoppack3==-1) 
-					{
-						//Alert!
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack3 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack3 > -1 && !items[shoppack3].free && items[shoppack3].contserial == chars[c].serial && items[shoppack3].layer == 0x1C )
-								break;//We found it
-							else
-								shoppack3 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack3 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack3!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack3,1);
-							items[retitem].value=items[retitem].value/2;
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("SHOPITEM",script1))) 
-				{
-					if (shoppack2==-1) 
-					{
-						for (z=0;z<contsp[chars[c].serial%HASHMAX].max;z++)
-						{
-							shoppack2 = contsp[chars[c].serial%HASHMAX].pointer[z];
-							if ( shoppack2 > -1 && !items[shoppack2].free && items[shoppack2].contserial == chars[c].serial && items[shoppack2].layer == 0x1B )
-								break;//We found it
-							else
-								shoppack2 = -1;//we didn't, try to keep the pack set to -1
-						}
-						if ( z == contsp[chars[c].serial%HASHMAX].max )
-							shoppack2 = -1;//try to keep the pack set to -1
-					}
-					if (shoppack2!=-1) 
-					{
-						storeval=str2num(script2);
-						pos=ftell(scpfile);
-						closescript();
-						retitem=Targ->AddMenuTarget(-1, 0, storeval);
-						openscript(sect);
-						fseek(scpfile, pos, SEEK_SET);
-						if (retitem!=-1)
-						{
-							setserial(retitem,shoppack2,1);
-							items[retitem].x=50+(rand()%80);
-							items[retitem].y=50+(rand()%80);
-							items[retitem].z=9;
-						}
-						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
-					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
-					}
-				}
-				else if (!(strcmp("SAYCOLOR",script1))) {
-					chars[c].saycolor1=(hstr2num(script2))/256;
-					chars[c].saycolor2=(hstr2num(script2))%256;
-				}
-				else if (!(strcmp("SPEECH",script1))) chars[c].speech=str2num(script2);
-				else if (!(strcmp("SPATTACK",script1))) chars[c].spattack=str2num(script2);
-				else if (!(strcmp("SPADELAY",script1))) chars[c].spadelay=str2num(script2);
-				else if (!(strcmp(script1, "SPLIT"))) chars[c].split=str2num(script2);
-				else if (!(strcmp(script1, "SPLITCHANCE"))) chars[c].splitchnc=str2num(script2);
-				else if ((!(strcmp("STR",script1)))||(!(strcmp("STRENGTH",script1)))) {
-					chars[c].st  = getstatskillvalue(script2);
-					chars[c].st2 = chars[c].st;
-					chars[c].hp  = chars[c].st;
-				}
-				else if ((!(strcmp("SNOOPING",script1)))||(!(strcmp("SKILL28",script1)))) chars[c].baseskill[SNOOPING] = getstatskillvalue(script2);
-				else if ((!(strcmp("SPIRITSPEAK",script1)))||(!(strcmp("SKILL32",script1)))) chars[c].baseskill[SPIRITSPEAK] = getstatskillvalue(script2);
-				else if ((!(strcmp("STEALING",script1)))||(!(strcmp("SKILL33",script1)))) chars[c].baseskill[STEALING] = getstatskillvalue(script2);
-				else if ((!(strcmp("SWORDSMANSHIP",script1)))||(!(strcmp("SKILL40",script1)))) chars[c].baseskill[SWORDSMANSHIP] = getstatskillvalue(script2);
-				else if (!(strcmp("SKINLIST",script1)))
-				{
-					pos=ftell(scpfile);
-					closescript();
-					storeval=addrandomcolor(c,script2);
-					chars[c].skin1=(storeval)/256;
-					chars[c].skin2=(storeval)%256;
-					chars[c].xskin1=chars[c].skin1;
-					chars[c].xskin2=chars[c].skin2;
-					openscript(sect);
-					fseek(scpfile, pos, SEEK_SET);
-					strcpy(script1, "DUMMY"); // To prevent accidental exit of loop.
-				}
-				else if (!(strcmp("SKILL", script1))) 
-				{
-					gettokennum(script2, 0);
-					z=str2num(gettokenstr);
-					gettokennum(script2, 1);
-					chars[c].baseskill[z]=str2num(gettokenstr);
-				}
-				else if(!(strncmp(script1, "SKILL", 5)))
-				{
-					skl = str2num( &script1[5] );
-					sklvalue = str2num( script2 );
-					chars[c].baseskill[skl] = sklvalue;
-				}
-
-				break;
-
-			case 't':
-			case 'T':
-				if (!(strcmp("TITLE",script1))) strcpy(chars[c].title, script2);
-				else if ((!(strcmp("TACTICS",script1)))||(!(strcmp("SKILL27",script1)))) chars[c].baseskill[TACTICS] = getstatskillvalue(script2);
-				else if ((!(strcmp("TAILORING",script1)))||(!(strcmp("SKILL34",script1)))) chars[c].baseskill[TAILORING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TAMING",script1)))||(!(strcmp("SKILL35",script1)))) chars[c].baseskill[TAMING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TASTEID",script1)))||(!(strcmp("SKILL36",script1)))) chars[c].baseskill[TASTEID] = getstatskillvalue(script2);
-				else if ((!(strcmp("TINKERING",script1)))||(!(strcmp("SKILL37",script1)))) chars[c].baseskill[TINKERING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TRACKING",script1)))||(!(strcmp("SKILL38",script1)))) chars[c].baseskill[TRACKING] = getstatskillvalue(script2);
-				else if ((!(strcmp("TOTAME", script1)))||(!(strcmp("TAMING", script1)))) chars[c].taming=str2num(script2);
-
-				break;
-			case 'v':
-			case 'V':
-				if (!(strcmp("VALUE",script1))) if (retitem!=-1) items[retitem].value=(str2num(script2));
-				else if ((!(strcmp("VETERINARY",script1)))||(!(strcmp("SKILL39",script1)))) chars[c].baseskill[VETERINARY] = getstatskillvalue(script2);
-				break;
-			case 'w':
-			case 'W':
-				if ((!(strcmp("WRESTLING",script1)))||(!(strcmp("SKILL43",script1)))) chars[c].baseskill[WRESTLING] = getstatskillvalue(script2);
-				break;
-			}
-		}
-   }
-   while (script1[0]!='}');
-   closescript();
-   
-   // Now that we have created the NPC, lets place him
-   if (type==1) 
-   {
-	   if (triggerx)
-	   {
-		   chars[c].x=triggerx;
-		   chars[c].y=triggery;
-		   chars[c].dispz=chars[c].z=triggerz;
-		   triggerx=c;
-	   } else 
-	   {
-	   /*Zippy's Code chages for area spawns --> (Type 69) xos and yos (X OffSet, Y OffSet) 
-	   are used to find a random number that is then added to the spawner's x and y (Using 
-	   the spawner's z) and then place the NPC anywhere in a square around the spawner. 
-	   This square is random anywhere from -10 to +10 from the spawner's location (for x and 
-	   y) If the place chosen is not a valid position (the NPC can't walk there) then a new 
-	   place will be chosen, if a valid place cannot be found in a certain # of tries (50), 
-		   the NPC will be placed directly on the spawner and the server op will be warned. */
-		   
-		   if ((items[s].type==69)&&(items[s].contserial==-1))
-		   {
-			   if (items[s].more3==0) items[s].more3=10;
-			   if (items[s].more4==0) items[s].more4=10;
-			   
-//			   long int pos/*, pos2, length*/;
-//			   int x1, x2;
-//			   int y1, y2;
-			   //signed char z, ztemp, found;
-			   
-			   do
-			   {
-				   if (k>=50) //this CAN be a bit laggy. adjust as nessicary
-				   {
-					   printf("UOX3: Problem area spawner found at [%i,%i,%i]. NPC placed at default location.\n",items[s].x,items[s].y,items[s].z);
-					   xos=0;
-					   yos=0;
-					   break;
-				   }
-				   xos=RandomNum(-items[s].more3,items[s].more3);
-				   yos=RandomNum(-items[s].more4,items[s].more4);
-				   k++;
-				   
-				   if ((items[s].x+xos<1) || (items[s].y+yos<1)) lb=0; 
-				   else lb=Movement->validNPCMove(items[s].x+xos,items[s].y+yos,items[s].z,c);
-//				   else lb = Movement->CanCharWalk( c, items[s].x + xos, items[s].y + yos, myz );
-				   
-				   //Bug fix Monsters spawning on water:
-
-				   MapStaticIterator msi(items[s].x + xos, items[s].y + yos);
-
-				   staticrecord *stat;
-				   while (stat = msi.Next())
-				   {
-					   tile_st tile;
-					   msi.GetTile(&tile);
-					   if(!(strcmp((char *) tile.name, "water")))//Water
-					   {//Don't spawn on water tiles... Just add other stuff here you don't want spawned on.
-						   lb=0;
-					   }
-				   }
-			   } while (!lb);
-		   } // end Zippy's changes (exept for all the +xos and +yos around here....)
-		   if (chars[c].fx1==-1)
-		   {
-			   chars[c].fx1=items[s].x+xos;
-			   chars[c].fy1=items[s].y+yos;
-			   if (chars[c].fz1!=-1) chars[c].fz1=items[s].z;
-		   }
-		   chars[c].x=items[s].x+xos;
-		   chars[c].y=items[s].y+yos;
-		   chars[c].dispz=chars[c].z=items[s].z;
-		   setserial(c,s,6);
-	   } // end of if !triggerx && type==1
-   } // if type == 1 
-   else 
-   { // if type == 0
-	   if( s!=-1)
-	   {
-		   if (chars[c].fx1==-1)
-		   {
-			   chars[c].fx1=(buffer[s][11]<<8)+buffer[s][12]+xos;
-			   chars[c].fy1=(buffer[s][13]<<8)+buffer[s][14]+yos;
-			   if (chars[c].fz1!=-1) chars[c].fz1=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-		   }
-//		   chars[c].x=(buffer[s][11]<<8)+buffer[s][12]+xos;
-//		   chars[c].y=(buffer[s][13]<<8)+buffer[s][14]+yos;
-//		   chars[c].dispz=chars[c].z=buffer[s][16]+Map->TileHeight(buffer[s][17]<<8+buffer[s][18]);
-	   }
-   }
-   
-   chars[c].region=calcRegionFromXY(chars[c].x, chars[c].y);
-   
-   //Now find real 'skill' based on 'baseskill' (stat modifiers)
-   for(z=0;z<TRUESKILLS;z++)
-   {
-	   Skills->updateSkillLevel(c,z);
-   }
-   
-   if (donpcupdate==0) 
-   {
-	   updatechar(c);
-   }
-   //Char mapRegions
-   mapRegions->RemoveItem(c+1000000);
-   mapRegions->AddItem(c+1000000);
-   setcharflag( c );
-   return c;
+	pet->SetGuarding( INVALIDSERIAL );
 }
 
-int cCharStuff::Split(int k) // For NPCs That Split during combat
+//o---------------------------------------------------------------------------o
+//|	Function	-	int addRandomColor( CChar *s, char *colorlist )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Randomly colors character
+//o---------------------------------------------------------------------------o
+UI16 addRandomColor( const char *colorlist )
 {
-	int c,serial,z;
-	
-	c=MemCharFree ();
-	
-	InitChar(c);
-	serial=chars[c].serial;
-	memcpy(&chars[c],&chars[k],sizeof(char_st));
-	chars[c].ser1 = (unsigned char)(serial>>24);
-	chars[c].ser2 = (unsigned char)(serial>>16);
-	chars[c].ser3 = (unsigned char)(serial>>8);
-	chars[c].ser4 = (unsigned char)(serial%256);
-	chars[c].serial=serial;
-	chars[c].ftarg=-1;
-	mapRegions->RemoveItem(c+1000000);
-	chars[c].x=chars[k].x+1;
-	chars[c].y=chars[k].y;
-	mapRegions->AddItem(c+1000000);
-	chars[c].kills=0;
-	chars[c].hp=chars[k].st;
-	chars[c].stm=chars[k].dx;
-	chars[c].mn=chars[k].in;
-	z=rand()%35;
-	if (z==5) chars[c].split=1; else chars[c].split=0;	
-	updatechar(c);
-	return -1;
-}
-
-int cCharStuff::FindItem( CHARACTER toFind, unsigned char type )
-// PRE:		CharStuff exists, toFind exists
-// POST:	If item exists anywhere in their pack with type type or its on their body, return it
-//			else return -1
-{
-	int serial = chars[toFind].serial;
-	int serhash = serial%HASHMAX;
-	int counter = 0;
-	int packSearchResult = -1;
-
-	ITEM toCheck;
-	for( counter = 0; counter < contsp[serhash].max; counter++ )
+	char sect[512];
+	int i = 0;
+	sprintf( sect, "RANDOMCOLOR %s", colorlist );
+	ScriptSection *RandomColours = FileLookup->FindEntry( sect, colors_def );
+	if( RandomColours == NULL ) 
 	{
-		toCheck = contsp[serhash].pointer[counter];
-		if( toCheck != -1 && items[toCheck].contserial == serial )
-		{
-			if( items[toCheck].type == type )	// it's in our hand
-			{
-				return toCheck;					// we've found the first occurance on the person!
-			}
-			else if( items[toCheck].layer == 0x15 )	// could use packitem, but we're already in the same type of loop, so we'll check it ourselves
-			{
-				packSearchResult = SearchSubPackForItem( toCheck, type );
-				if( packSearchResult != -1 )
-				{
-					return packSearchResult;
-				}
-			}
-		}
+		Console.Warning( 2, "Error Colorlist %s Not Found", colorlist );
+		return 0;
 	}
-	// if we haven't hit it by now, we won't hit it at all
-	return -1;
-}
-
-int cCharStuff::SearchSubPackForItem( ITEM toSearch, unsigned char type )
-// PRE:		CharStuff exists, toFind exists
-// POST:	If item with type type exists anywhere in the specified pack or on their body, return it
-//			else return -1
-{
-	int serial = items[toSearch].serial;
-	int serhash = serial%HASHMAX;
-	int counter = 0;
-	int packSearchResult = -1;
-
-	ITEM toCheck;
-	for( counter = 0; counter < contsp[serhash].max; counter++ )
+	i = RandomColours->NumEntries();
+	if( i > 0 )
 	{
-		toCheck = contsp[serhash].pointer[counter];
-		if( toCheck != -1 && items[toCheck].contserial == serial )
-		{
-			if( items[toCheck].type == type )	// it's in our hand
-			{
-				return toCheck;					// we've found the first occurance on the person!
-			}
-			else if( items[toCheck].type == 1 || items[toCheck].type == 8 )	// search any subpacks, specifically pack and locked containers
-			{ 
-				packSearchResult = SearchSubPackForItem( toCheck, type );
-				if( packSearchResult != -1 )
-				{
-					return packSearchResult;
-				}
-			}
-		}
+		i = rand()%i;
+		const char *tag = RandomColours->MoveTo( i );
+		return (UI16)makeNum( tag );
 	}
-	// if we haven't hit it by now, we won't hit it at all
-	return -1;
-}
-
-int cCharStuff::FindItem( CHARACTER toFind, unsigned char id1, unsigned char id2 )
-// PRE:		CharStuff exists, toFind exists
-// POST:	If item exists anywhere in their pack with id id1 id2 or its on their body, return it
-//			else return -1
-{
-	int serial = chars[toFind].serial;
-	int serhash = serial%HASHMAX;
-	int counter = 0;
-	int packSearchResult = -1;
-
-	ITEM toCheck;
-	for( counter = 0; counter < contsp[serhash].max; counter++ )
-	{
-		toCheck = contsp[serhash].pointer[counter];
-		if( toCheck != -1 && items[toCheck].contserial == serial )
-		{
-			if( items[toCheck].id1 == id1 && items[toCheck].id2 == id2 )	// it's in our hand
-			{
-				return toCheck;					// we've found the first occurance on the person!
-			}
-			else if( items[toCheck].layer == 0x15 )	// could use packitem, but we're already in the same type of loop, so we'll check it ourselves
-			{
-				packSearchResult = SearchSubPackForItem( toCheck, id1, id2 );
-				if( packSearchResult != -1 )
-				{
-					return packSearchResult;
-				}
-			}
-		}
-	}
-	// if we haven't hit it by now, we won't hit it at all
-	return -1;
-}
-
-int cCharStuff::SearchSubPackForItem( ITEM toSearch, unsigned char id1, unsigned char id2 )
-// PRE:		CharStuff exists, toFind exists
-// POST:	If item with id id1 id2 exists anywhere in the specified pack or on their body, return it
-//			else return -1
-{
-	int serial = items[toSearch].serial;
-	int serhash = serial%HASHMAX;
-	int counter = 0;
-	int packSearchResult = -1;
-
-	ITEM toCheck;
-	for( counter = 0; counter < contsp[serhash].max; counter++ )
-	{
-		toCheck = contsp[serhash].pointer[counter];
-		if( toCheck != -1 && items[toCheck].contserial == serial )
-		{
-			if( items[toCheck].id1 == id1 && items[toCheck].id2 == id2 )	// it's in our hand
-			{
-				return toCheck;					// we've found the first occurance on the person!
-			}
-			else if( items[toCheck].type == 1 || items[toCheck].type == 8 )	// search any subpacks, specifically pack and locked containers
-			{ 
-				packSearchResult = SearchSubPackForItem( toCheck, id1, id2 );
-				if( packSearchResult != -1 )
-				{
-					return packSearchResult;
-				}
-			}
-		}
-	}
-	// if we haven't hit it by now, we won't hit it at all
-	return -1;
+	return 0;
 }
