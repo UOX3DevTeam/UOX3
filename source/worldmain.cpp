@@ -69,7 +69,7 @@ void CWorldMain::savenewworld( bool x )
 				fileArchive();
 		}
 		Console << "Saving Misc. data... ";
-		Accounts->SaveAccounts();
+		//Accounts->SaveAccounts();
 		ServerData()->save();
 		savelog( "Server data save\n", "server.log" );
 		RegionSave();
@@ -89,6 +89,7 @@ void CWorldMain::savenewworld( bool x )
 		{
 			Accounts->LoadAccounts();
 		}
+		Accounts->SaveAccounts();
 		worldSaveProgress = 2;
 		Console << "World save complete." << myendl;
 		Console.PrintSectionBegin();
