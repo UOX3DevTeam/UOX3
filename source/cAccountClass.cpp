@@ -2316,7 +2316,6 @@ UI16 cAccountClass::Save(bool bForceLoad)
 			return 0xFFFF;
 		}
 		// Ok write this block to the file
-		//fsAccountsADM << "SECTION ACCOUNT " << std::dec << actbID.wAccountIndex << std::endl;
 		fsAccountsADM << "SECTION ACCOUNT " << std::dec << actbID.wAccountIndex << std::endl;
 		fsAccountsADM << "{" << std::endl;
 		fsAccountsADM << "NAME " << actbID.sUsername << std::endl;
@@ -2330,26 +2329,77 @@ UI16 cAccountClass::Save(bool bForceLoad)
 			fsAccountsADM << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << (actbID.dwCharacters[i]!=INVALIDSERIAL&&actbID.dwCharacters[i]!=0?actbID.dwCharacters[i]:0xffffffff) << " [" << (actbID.lpCharacters[i]!=NULL?actbID.lpCharacters[i]->GetName():"UNKNOWN") << "]" << std::endl;
 		}
 		fsAccountsADM << "}" << std::endl << std::endl;;
-		// update the Users UAD file. (this will be used later)
-		std::string sOutFile(actbID.sPath);
-		sOutFile += actbID.sUsername;
-		sOutFile += ".uad";
-		// ok write the file
-		std::fstream fsOut(sOutFile.c_str(),std::ios::out|std::ios::trunc);
-		if(!fsOut.is_open())
+		// Make sure that if there is no path that we make one
+		if(!actbID.sPath.length())
 		{
-			// we cannot open the out file. Normally this would be an error, but support isn't implemented as of yet
-			return 0xFFFF;
+			std::string sTempPath(m_sAccountsDirectory);
+			if(sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/')
+			{
+				char szTempBuff[33];
+				strncpy(szTempBuff,actbID.sUsername.c_str(),sizeof(char)*30);
+				strlwr(szTempBuff);
+				sTempPath += szTempBuff;
+				sTempPath += "/";
+				cAccountClass::PathFix(sTempPath);
+				actbTemp.sPath=sTempPath;
+			}
+			else
+			{		
+				char szTempBuff[33];
+				strncpy(szTempBuff,actbID.sUsername.c_str(),sizeof(char)*30);
+				strlwr(szTempBuff);
+				sTempPath += "/";
+				sTempPath += szTempBuff;
+				sTempPath += "/";
+				cAccountClass::PathFix(sTempPath);
+				actbTemp.sPath=sTempPath;
+			}
+		}
+		// Ok now that we got here we need to make the directory, and create the username.uad file
+		int nDummy=_mkdir(actbTemp.sPath.c_str(), 0777);
+		if(nDummy<0)
+		{
+			// if directory exists then we just skip this.
+#ifdef WIN32
+			if(GetLastError()!=183)
+			{
+				return 0L;
+			}
+#else
+			return 0L;
+#endif
+		}
+		// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
+		std::string sUsernameUADPath(actbTemp.sPath);
+		if(sUsernameUADPath[sUsernameUADPath.length()-1]=='\\'||sUsernameUADPath[sUsernameUADPath.length()-1]=='/')
+		{
+			sUsernameUADPath += actbID.sUsername;
+			sUsernameUADPath += ".uad";
+		}
+		else
+		{
+			sUsernameUADPath += "/";
+			sUsernameUADPath += actbID.sUsername;
+			sUsernameUADPath += ".uad";
+		}
+		// Fix the paths to make sure that all the characters are unified
+		cAccountClass::PathFix(sUsernameUADPath);
+		// Open the file in APPEND to end mode.
+		std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
+		if(!fsAccountsUAD.is_open())
+		{
+			// Ok we were unable to open the file so this user will not be added.
+			return 0x0000;
 		}
 		// Ok we have to write the new username.uad file in the directory
-		cAccountClass::WriteUADHeader(fsOut,actbID);
+		cAccountClass::WriteUADHeader(fsAccountsUAD,actbID);
 		// Ok write out the characters and the charcter names if we know them
-		for(int ii=0;ii<5;ii++)
+		for(int i=0;i<5;i++)
 		{
-			fsOut << "CHARACTER-" << std::dec << ii+1 << " 0x" << std::hex << (actbID.dwCharacters[ii]!=INVALIDSERIAL&&actbID.dwCharacters[i]!=0?actbID.dwCharacters[ii]:INVALIDSERIAL) << " [" << (actbID.lpCharacters[ii]!=NULL?actbID.lpCharacters[ii]->GetName():"UNKNOWN") << "]" << std::endl;
+			fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbID.dwCharacters[i] != INVALIDSERIAL ? actbID.dwCharacters[i]:INVALIDSERIAL) << " [" << (char*)(actbID.lpCharacters[i] != NULL ? actbID.lpCharacters[i]->GetName() : "INVALID" ) << "]\n"; 
 		}
 		// Close the files since we dont need them anymore
-		fsOut.close();
+		fsAccountsUAD.close();
 	}
 	// Ok were done looping so we can close the file and return the count of accounts
 	fsAccountsADM.close();
