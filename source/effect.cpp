@@ -1,7 +1,6 @@
 #include "uox3.h"
 #include <algorithm>
 #include "skills.h"
-#include "targeting.h"
 #include "cMagic.h"
 #include "trigger.h"
 #include "mapstuff.h"
@@ -544,7 +543,7 @@ void cEffects::checktempeffects( void )
 						}
 						else if( Effect->Number() == 23 )
 						{
-							Targ->NpcResurrectTarget( targ );
+							NpcResurrectTarget( targ );
 							srcSock->sysmessage( 1272 );
 						}
 						else

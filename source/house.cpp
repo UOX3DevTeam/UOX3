@@ -7,7 +7,6 @@
 #include "CPacketSend.h"
 #include "classes.h"
 #include "regions.h"
-#include "targeting.h"
 #include "Dictionary.h"
 
 #undef DBGFILE

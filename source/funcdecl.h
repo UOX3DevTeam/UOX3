@@ -156,6 +156,7 @@ void	Shutdown( SI32 retCode );
 void	useDoor( cSocket *s, CItem *item );
 void	doDeathStuff( CChar *i );
 bool	sendSellStuff( cSocket *s, CChar *i );
+void	NpcResurrectTarget( CChar *s );
 
 inline bool ValidateObject( cBaseObject *toValidate )
 {

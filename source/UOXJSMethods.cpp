@@ -27,7 +27,6 @@
 #include "cMagic.h"
 #include "cGuild.h"
 #include "skills.h"
-#include "targeting.h"
 #include "speech.h"
 #include "gump.h"
 #include "trigger.h"
@@ -43,16 +42,17 @@
 #include "wholist.h"
 #include "townregion.h"
 #include "Dictionary.h"
+#include "jail.h"
 
 namespace UOX
 {
 
-extern cCommands *Commands;
 #ifndef va_start
 	#include <cstdarg>
 #endif
 
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
+bool BuyShop( cSocket *s, CChar *c );
 
 void MethodError( char *txt, ... )
 {
@@ -110,6 +110,8 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	delete toDelete->one;
 	delete toDelete->two;
 	delete toDelete;
+
+	JS_SetPrivate( cx, obj, NULL );
 
 	return JS_TRUE;
 }
@@ -404,6 +406,31 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	char temp[256];
 	sprintf( temp, "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, x1, x2, x3 );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		MethodError( "AddPageButton: Invalid number of arguments (takes 6)" );
+		return JS_FALSE;
+	}
+	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
+	SI16 pageNum = (SI16)JSVAL_TO_INT( argv[3] );
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddPageButton: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "button %i %i %i %i 0 %i", tL, tR, gImage, gImage + 1, pageNum );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -978,54 +1005,6 @@ JSBool JS_CharbySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-JSBool JS_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc > 1 )
-	{
-		MethodError( "Unknown Count of Arguments: %d", argc );
-		return JS_FALSE;
-	}
-	else if( argc == 1 )
-	{
-		LIGHTLEVEL brightLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
-		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
-	}
-	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightBrightLevel() );
-	return JS_TRUE;
-}
-
-JSBool JS_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc > 1 )
-	{
-		MethodError( "Unknown Count of Arguments: %d", argc );
-		return JS_FALSE;
-	}
-	else if( argc == 1 )
-	{
-		LIGHTLEVEL darkLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
-		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
-	}
-	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightDarkLevel() );
-	return JS_TRUE;
-}
-
-JSBool JS_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc > 1 )
-	{
-		MethodError( "Unknown Count of Arguments: %d", argc );
-		return JS_FALSE;
-	}
-	else if( argc == 1 )
-	{
-		LIGHTLEVEL dungeonLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
-		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
-	}
-	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() );
-	return JS_TRUE;
-}
-
 // Spawns an Item
 JSBool JS_AddItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -1181,21 +1160,26 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 
 	myObj->Delete();
+
+	JS_SetPrivate( cx, obj, NULL );
+
 	return JS_TRUE;
 }
 
-JSBool CChar_WanderBox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 4 )
+	if( argc != 3 && argc != 4 )
 	{
-		MethodError( "WanderBox: Invalid number of arguments (takes 4, rectangle coordinates)" );
+		MethodError( "Wander: Invalid number of arguments (takes 3-4, coordinates)" );
 		return JS_FALSE;
 	}
 
-	UI16 x1 = (UI16)JSVAL_TO_INT( argv[0] );
-	UI16 y1 = (UI16)JSVAL_TO_INT( argv[1] );
-	UI16 x2 = (UI16)JSVAL_TO_INT( argv[2] );
-	UI16 y2 = (UI16)JSVAL_TO_INT( argv[3] );
+	SI16 x1 = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 y1 = (SI16)JSVAL_TO_INT( argv[1] );
+	SI16 x2 = (SI16)JSVAL_TO_INT( argv[2] );
+	SI16 y2 = 0;
+	if( argc > 3 )
+		y2 = (SI16)JSVAL_TO_INT( argv[3] );
 
 	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
 
@@ -1208,8 +1192,13 @@ JSBool CChar_WanderBox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	myChar->SetFy( y1, 0 );
 	myChar->SetFz( -1 );
 	myChar->SetFx( x2, 1 );
-	myChar->SetFy( y2, 1 );
-	myChar->SetNpcWander( 3 );
+	if( argc > 3 )
+	{
+		myChar->SetFy( y2, 1 );
+		myChar->SetNpcWander( 3 );
+	}
+	else
+		myChar->SetNpcWander( 4 );
 
 	return JS_TRUE;
 }
@@ -1614,7 +1603,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 			mySock->target( 0, TARGET_PLVBUY, " ");
 		} 
 		else
-			Targ->BuyShop( mySock, myNPC );
+			BuyShop( mySock, myNPC );
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) )
 	{
@@ -1634,7 +1623,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 			mySock->target( 0, TARGET_PLVBUY, " ");
 		} 
 		else
-			Targ->BuyShop( mySock, myNPC );
+			BuyShop( mySock, myNPC );
 	}
 
 	return JS_TRUE;
@@ -2643,9 +2632,9 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	}
 
 	CChar *myChar = (CChar *)JS_GetPrivate( cx, obj );
-	SI08 newVal = (SI08)JSVAL_TO_INT( argv[0] );
+	UI08 newVal = (UI08)JSVAL_TO_INT( argv[0] );
 
-	myChar->SetHidden( newVal );
+	myChar->SetVisible( (VisibleTypes)newVal );
 	if( argc == 2 )
 	{
 		UI32 TimeOut = (UI32)JSVAL_TO_INT( argv[1] );
@@ -2982,10 +2971,171 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
     return JS_TRUE;
 }
+JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "GetDWord: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( mySock->GetDWord( offset ) );
+    return JS_TRUE;
+}
+JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 2 )
+	{
+		MethodError( "GetString: Invalid number of arguments (takes 1 or 2)" );
+		return JS_FALSE;
+	}
+
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "GetString: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	int length		= -1;
+	int offset		= JSVAL_TO_INT( argv[0] );
+	if( argc == 2 )
+		length = JSVAL_TO_INT( argv[1] );
+
+	char toReturn[128];
+	if( length != -1 )
+	{
+		strncpy( toReturn, (char *)&(mSock->Buffer())[offset], length );
+		toReturn[length] = 0;
+	}
+	else
+		strcpy( toReturn, (char *)&(mSock->Buffer())[offset] );
+
+	JSString *strSpeech = NULL;
+	strSpeech = JS_NewStringCopyZ( cx, toReturn );
+	*rval = STRING_TO_JSVAL( strSpeech );
+
+	return JS_TRUE;
+}
+JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SetByte: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "SetByte: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	UI08 byteToSet = (UI08)JSVAL_TO_INT( argv[1] );
+
+	mSock->SetByte( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SetWord: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "SetWord: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	int offset		= JSVAL_TO_INT( argv[0] );
+	UI16 byteToSet	= (UI16)JSVAL_TO_INT( argv[1] );
+
+	mSock->SetWord( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SetDWord: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "SetDWord: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	int offset		= JSVAL_TO_INT( argv[0] );
+	long byteToSet	= JSVAL_TO_INT( argv[1] );
+
+	mSock->SetDWord( offset, byteToSet );
+	return JS_TRUE;
+}
+
+JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SetString: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "SetString: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	int offset = JSVAL_TO_INT( argv[0] );
+ 	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	if( trgMessage == NULL )
+	{
+		MethodError( "SetString: No string to set" );
+		return JS_FALSE;
+	}
+
+	strcpy( (char *)&(mSock->Buffer())[offset], trgMessage );
+	return JS_TRUE;
+}
+JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "ReadBytes: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+    cSocket *mSock = (cSocket*)JS_GetPrivate( cx, obj );
+    if( mSock == NULL )
+    {
+        MethodError( "ReadBytes: Invalid socket!");
+        return JS_FALSE;
+    }
+
+	int bCount		= JSVAL_TO_INT( argv[0] );
+	mSock->Receive( bCount );
+	return JS_TRUE;
+}
 JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
     cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
-
     if( mySock == NULL )
     {
         MethodError( "WhoList: Invalid socket!");
@@ -3129,7 +3279,7 @@ JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		MethodError( "You have to pass a valid menu number" );
 	}
 
-	int menuNumber = JSVAL_TO_INT( argv[0] );
+	UI16 menuNumber = (UI16)JSVAL_TO_INT( argv[0] );
 	cSocket *mySock = (cSocket *)JS_GetPrivate( cx, obj );
 
 	if( mySock == NULL )
@@ -3548,6 +3698,7 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
 	delete mFile;
+	JS_SetPrivate( cx, obj, NULL );
 	return JS_TRUE;
 }
 
@@ -3762,7 +3913,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 {
 	if( argc != 0 )
 	{
-		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0", argc );
+		MethodError( "FirstItem: Invalid count of arguments :%d, needs :0", argc );
 		return JS_FALSE;
 	}
 	cBaseObject *myObj = static_cast<cBaseObject*>( JS_GetPrivate( cx, obj ) );
@@ -3803,7 +3954,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 {
 	if( argc != 0 )
 	{
-		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0", argc );
+		MethodError( "NextItem: Invalid count of arguments :%d, needs :0", argc );
 		return JS_FALSE;
 	}
 	cBaseObject *myObj = static_cast<cBaseObject*>( JS_GetPrivate( cx, obj ) );
@@ -3844,7 +3995,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 {
 	if( argc != 0 )
 	{
-		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0", argc );
+		MethodError( "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
 		return JS_FALSE;
 	}
 	cBaseObject *myObj = static_cast<cBaseObject*>( JS_GetPrivate( cx, obj ) );
@@ -4017,7 +4168,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
-JSBool CChar_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -4025,18 +4176,35 @@ JSBool CChar_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &(argv[0]) );
-	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
-	if( !ValidateObject( cMove ) )
+
+	JSClass *myClass = JS_GetClass( obj );
+	if( !strcmp( myClass->name, "UOXChar" ) )
 	{
-		MethodError( "GetTimer: Invalid source character" );
-		return JS_FALSE;
+		CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+		if( !ValidateObject( cMove ) )
+		{
+			MethodError( "GetTimer: Invalid source character" );
+			return JS_FALSE;
+		}
+
+		*rval = INT_TO_JSVAL( cMove->GetTimer( (cC_TID)encaps.toInt() ) );
+	}
+	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	{
+		cSocket *mSock = static_cast<cSocket *>( JS_GetPrivate( cx, obj ) );
+		if( mSock == NULL )
+		{
+			MethodError( "GetTimer: Invalid source socket" );
+			return JS_FALSE;
+		}
+
+		*rval = INT_TO_JSVAL( mSock->GetTimer( (cS_TID)encaps.toInt() ) );
 	}
 
-	*rval = INT_TO_JSVAL( cMove->GetTimer( (cC_TID)encaps.toInt() ) );
 	return JS_TRUE;
 }
 
-JSBool CChar_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -4046,14 +4214,30 @@ JSBool CChar_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	JSEncapsulate encaps( cx, &(argv[0]) );
 	JSEncapsulate encaps2( cx, &(argv[1]) );
 
-	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
-	if( !ValidateObject( cMove ) )
+	JSClass *myClass = JS_GetClass( obj );
+	if( !strcmp( myClass->name, "UOXChar" ) )
 	{
-		MethodError( "SetTimer: Invalid source character" );
-		return JS_FALSE;
+		CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+		if( !ValidateObject( cMove ) )
+		{
+			MethodError( "SetTimer: Invalid source character" );
+			return JS_FALSE;
+		}
+
+		cMove->SetTimer( (cC_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
+	}
+	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	{
+		cSocket *mSock = static_cast<cSocket *>( JS_GetPrivate( cx, obj ) );
+		if( mSock == NULL )
+		{
+			MethodError( "SetTimer: Invalid source socket" );
+			return JS_FALSE;
+		}
+
+		mSock->SetTimer( (cS_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
 	}
 
-	cMove->SetTimer( (cC_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
 	return JS_TRUE;
 }
 
@@ -4115,7 +4299,6 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( glowItem == NULL )
 		return JS_FALSE;
 	glowItem->SetName( "glower" );;
-	glowItem->SetVisible( 0 );
 	glowItem->SetMovable( 2 );
 
 	mItem->SetGlow( glowItem->GetSerial() );
@@ -4263,6 +4446,121 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		strcpy( tempname, Dictionary->GetEntry( 685 ).c_str() );
 	mItem->SetName( tempname );
 
+	return JS_TRUE;
+}
+
+JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SetSkillByName: Invalid number of arguments (takes 2, string, value)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar			= (CChar *)JS_GetPrivate( cx, obj );
+	std::string skillName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	UI16 value				= JSVAL_TO_INT( argv[1] );
+	cSocket *mSock			= NULL;
+	if( !mChar->IsNpc() )
+		mSock = calcSocketObjFromChar( mChar );
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
+	{
+		if( skillName == skillname[ i ] )
+		{
+			mChar->SetBaseSkill( value, i );
+			Skills->updateSkillLevel( mChar, i );
+
+			if( mSock != NULL ) 
+				mSock->updateskill( i );
+			break;
+		}
+	}
+	return JS_TRUE;
+}
+
+JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Kill: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	CChar *mChar = (CChar *)JS_GetPrivate( cx, obj );
+	doDeathStuff( mChar );
+	return JS_TRUE;
+}
+
+JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Resurrect: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	CChar *mChar = (CChar *)JS_GetPrivate( cx, obj );
+	NpcResurrectTarget( mChar );
+	return JS_TRUE;
+}
+
+JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Dupe: Invalid number of arguments (takes 1, string, value)" );
+		return JS_FALSE;
+	}
+
+	CItem *mItem			= (CItem *)JS_GetPrivate( cx, obj );
+	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mSock			= (cSocket *)JS_GetPrivate( cx, jsObj );
+	if( !ValidateObject( mItem ) || mSock == NULL )
+	{
+		MethodError( "Dupe: Bad parameters passed" );
+		return JS_FALSE;
+	}
+	Items->DupeItem( mSock, mItem, mItem->GetAmount() );
+	return JS_TRUE;
+}
+
+JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Jail: Invalid number of arguments (takes 0 or 1, seconds to Jail)" );
+		return JS_FALSE;
+	}
+
+	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myChar ) )
+	{
+		MethodError( "Jail: Invalid character" );
+		return JS_FALSE;
+	}
+
+	SI32 numSecsToJail = 100000;
+	if( argc == 1 )
+		numSecsToJail = (SI32)JSVAL_TO_INT( argv[0] );
+
+	JailSys->JailPlayer( myChar, numSecsToJail );
+	return JS_TRUE;
+}
+
+JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Release: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myChar ) )
+	{
+		MethodError( "Jail: Invalid character" );
+		return JS_FALSE;
+	}
+
+	JailSys->ReleasePlayer( myChar );
 	return JS_TRUE;
 }
 

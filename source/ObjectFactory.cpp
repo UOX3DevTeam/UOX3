@@ -124,10 +124,8 @@ namespace UOX
 		}
 		// assign serial here
 		if( created != NULL )
-		{
-			created->SetSerial( NextFreeSerial( createType ) );
-			RegisterObject( created );
-		}
+			created->SetSerial( NextFreeSerial( createType ) );	// SetSerial() will register our object - giwo
+
 		return created;
 	}
 
@@ -332,8 +330,8 @@ namespace UOX
 		case OT_MULTI:
 		case OT_BOAT:		
 			{
-				mBegin = multis.begin();
-				mEnd = multis.end();
+				mBegin	= multis.begin();
+				mEnd	= multis.end();
 			}
 			break;
 		case OT_ITEM:

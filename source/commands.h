@@ -6,7 +6,17 @@
 namespace UOX
 {
 
-class CPITalkRequest;
+struct commandLevel_st
+{
+	std::string name;	// name of level
+	UI08 commandLevel;	// upper limit of level
+	UI16 defaultPriv;	// default privs associated with it
+	UI16 nickColour;	// colour of a person's name
+	UI16 allSkillVals;	// if 0, skills left same, if not, all skills set to this value
+	UI16 targBody;		// target body value
+	UI16 bodyColour;	// target body colour
+	bool stripOff;		// strips off hair, beard and clothes
+};
 
 class cCommands
 {
@@ -30,8 +40,6 @@ public:
 	void			Command( cSocket *s, CChar *c, UString text );
 	void			Load( void );
 	void			Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo );
-
-	CItem *			DupeItem( cSocket *s, CItem *i, UI32 amount );
 
 	bool			CommandExists( const std::string cmdName );
 	const std::string FirstCommand( void );

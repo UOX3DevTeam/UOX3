@@ -21,12 +21,7 @@ enum commandTypes
 	CMD_TARGET = 0,			// Call target struct specified in cmd_extra
 	CMD_FUNC,			// Call function specified in cmd_extra must be of type GMFUNC
 	CMD_SOCKFUNC,		// Call function specified in cmd_extra with a socket
-	CMD_TARGETX,		// target with addx[] argument
 	CMD_TARGETXYZ,		// target with addx & y & z [] arguments
-	CMD_TARGETID1,		// target with 1 addid #
-	CMD_TARGETID2,		// target with 2 addid #s
-	CMD_TARGETID3,		// target with 3 addid #s
-	CMD_TARGETID4,		// target with 4 addid #s
 	CMD_TARGETINT,		// target with tempint
 	CMD_TARGETTXT,		// target with XText
 };

@@ -7,7 +7,7 @@ function CommandRegistration()
 
 function command_BUY( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 233 );
+	var targMsg = GetDictionaryEntry( 233, socket.Language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -19,7 +19,7 @@ function onCallback0( socket, ourObj )
 
 function command_SELL( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 236 );
+	var targMsg = GetDictionaryEntry( 236, socket.Language );
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -31,7 +31,7 @@ function onCallback1( socket, ourObj )
 
 function command_REMOVESHOP( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 262 );
+	var targMsg = GetDictionaryEntry( 262, socket.Language );
 	socket.CustomTarget( 2, targMsg );
 }
 

@@ -17,7 +17,6 @@
 #include "CPacketSend.h"
 #include "classes.h"
 #include "regions.h"
-#include "targeting.h"
 #include "Dictionary.h"
 #include "movement.h"
 
@@ -876,7 +875,7 @@ void cSkills::Hide( cSocket *s )
 		s->sysmessage( 832 );
 		return;
 	}
-	if( mChar->GetHidden() == 1 )
+	if( mChar->GetVisible() != VT_VISIBLE )
 	{
 		s->sysmessage( 833 );
 		return;
@@ -887,7 +886,7 @@ void cSkills::Hide( cSocket *s )
 		return;
 	}   
 	s->sysmessage( 835 );
-	mChar->SetHidden( 1 );
+	mChar->SetVisible( VT_TEMPHIDDEN );
 	mChar->SetStealth( -1 );
 }
 
@@ -902,7 +901,7 @@ void cSkills::Stealth( cSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
-	if( mChar->GetHidden() == 0 ) 
+	if( mChar->GetVisible() != VT_TEMPHIDDEN ) 
 	{
 		s->sysmessage( 836 );
 		return;
@@ -924,7 +923,7 @@ void cSkills::Stealth( cSocket *s )
 		return;
 	}   
 	s->sysmessage( 839, cwmWorldState->ServerData()->MaxStealthMovement() );
-	mChar->SetHidden( 1 );
+	mChar->SetVisible( VT_TEMPHIDDEN );
 	mChar->SetStealth( 0 );
 }
 
@@ -1082,7 +1081,7 @@ void cSkills::DetectHidden( cSocket *s )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
-			if( tempChar->GetHidden() == 1 ) // do not detect invis people only hidden ones
+			if( tempChar->GetVisible() == VT_TEMPHIDDEN ) // do not detect invis people only hidden ones
 			{
 				dx = abs( tempChar->GetX() - x );
 				dy = abs( tempChar->GetY() - y );
@@ -1421,11 +1420,11 @@ void cSkills::ProvocationTarget2( cSocket *s )
 
 		target->SetTarg( trgChar );
 		trgChar->SetTarg( target );
-		if( target->GetHidden() && !( target->IsPermHidden() ) )
+		if( target->GetVisible() == VT_TEMPHIDDEN || target->GetVisible() == VT_INVISIBLE )
 			target->ExposeToView();
 		if( target->IsMeditating() )
 			target->SetMeditating( false );
-		if( trgChar->GetHidden() && !trgChar->IsPermHidden() )
+		if( trgChar->GetVisible() == VT_TEMPHIDDEN || trgChar->GetVisible() == VT_INVISIBLE )
 			trgChar->ExposeToView();
 		if( trgChar->IsMeditating() )
 			trgChar->SetMeditating( false );
@@ -2387,7 +2386,7 @@ void cSkills::SkillUse( cSocket *s, UI08 x )
 		s->sysmessage( 392 );
 		return;
 	}
-	if( x != STEALTH && mChar->GetHidden() && !mChar->IsPermHidden() )
+	if( ( x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN ) || mChar->GetVisible() == VT_INVISIBLE )
 		mChar->ExposeToView();
 	mChar->BreakConcentration( s );
 	if( mChar->GetTimer( tCHAR_SPELLTIME ) != 0 || mChar->IsCasting() )

@@ -6,7 +6,6 @@
 #include "msgboard.h"
 #include "movement.h"
 #include "wholist.h"
-#include "targeting.h"
 #include "skills.h"
 #include "commands.h"
 #include "cMagic.h"

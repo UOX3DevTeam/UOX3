@@ -445,7 +445,7 @@ void cEffects::playTileSound( cSocket *mSock )
 
 	CChar *mChar = mSock->CurrcharObj();
 	
-	if( mChar->GetHidden() || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
+	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
 		return;
 	
 	if( mChar->IsOnHorse() )

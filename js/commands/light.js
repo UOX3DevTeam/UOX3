@@ -7,24 +7,33 @@ function CommandRegistration()
 
 function command_BRIGHTLIGHT( socket, cmdString )
 {
-	var newVal 	= StringToNum( cmdString );
-	var txtMessage 	= GetDictionaryEntry( 50 );
-	WorldBrightLevel( newVal );
-	socket.SysMessage( txtMessage );
+	if( cmdString )
+	{
+		var newVal 	= StringToNum( cmdString );
+		var txtMessage 	= GetDictionaryEntry( 50, socket.Language );
+		WorldBrightLevel( newVal );
+		socket.SysMessage( txtMessage );
+	}
 }
 
 function command_DARKLIGHT( socket, cmdString )
 {
-	var newVal 	= StringToNum( cmdString );
-	var txtMessage 	= GetDictionaryEntry( 51 );
-	WorldDarkLevel( newVal );
-	socket.SysMessage( txtMessage );
+	if( cmdString )
+	{
+		var newVal 	= StringToNum( cmdString );
+		var txtMessage 	= GetDictionaryEntry( 51, socket.Language );
+		WorldDarkLevel( newVal );
+		socket.SysMessage( txtMessage );
+	}
 }
 
 function command_DUNGEONLIGHT( socket, cmdString )
 {
-	var newVal 	= StringToNum( cmdString );
-	var txtMessage 	= GetDictionaryEntry( 52 );
-	WorldDungeonLevel( newVal );
-	socket.SysMessage( txtMessage );
+	if( cmdString )
+	{
+		var newVal 	= StringToNum( cmdString );
+		var txtMessage 	= GetDictionaryEntry( 52, socket.Language );
+		WorldDungeonLevel( newVal );
+		socket.SysMessage( txtMessage );
+	}
 }

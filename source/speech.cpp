@@ -3,7 +3,6 @@
 #include "cVersionClass.h"
 #include "cGuild.h"
 #include "cRaces.h"
-#include "targeting.h"
 #include "commands.h"
 #include "skills.h"
 #include "trigger.h"
@@ -219,7 +218,7 @@ bool CPITalkRequest::Handle( void )
 		Commands->Command( tSock, mChar, &asciiText[1] );
 	else
 	{
-		if( mChar->GetHidden() && !mChar->IsPermHidden() )
+		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 			mChar->ExposeToView();
 		
 		if( Type() == 0x09 && mChar->CanBroadcast() )

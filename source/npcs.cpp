@@ -4,7 +4,6 @@
 #include "cServerDefinitions.h"
 #include "cSpawnRegion.h"
 #include "skills.h"
-#include "targeting.h"
 #include "ssection.h"
 #include "trigger.h"
 #include "cScript.h"

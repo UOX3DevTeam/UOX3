@@ -4,7 +4,7 @@
 namespace UOX
 {
 
-struct creat_st
+class CCreatures
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying, see uox.h)
@@ -26,22 +26,22 @@ private:
 	UI08 who_am_i; 
 	UI16 icon;
 public:
-			creat_st() : basesound( 0 ), soundflag( 0 ), who_am_i( 0 ), icon( 0 )
+			CCreatures() : basesound( 0 ), soundflag( 0 ), who_am_i( 0 ), icon( 0 )
 			{
 			}
-	UI16	BaseSound( void )
+	UI16	BaseSound( void ) const
 	{
 		return basesound;
 	}
-	UI16	Icon( void )
+	UI16	Icon( void ) const
 	{
 		return icon;
 	}
-	UI08	SoundFlag( void )
+	UI08	SoundFlag( void ) const
 	{
 		return soundflag;
 	}
-	UI08	WhoAmI( void )
+	UI08	WhoAmI( void ) const
 	{
 		return who_am_i;
 	}
@@ -63,19 +63,19 @@ public:
 		who_am_i = value;
 	}
 
-	bool	IsAnimal( void )
+	bool	IsAnimal( void ) const
 	{
 		return ( ( who_am_i & 4 ) == 4 );
 	}
-	bool	AntiBlink( void )
+	bool	AntiBlink( void ) const
 	{
 		return ( ( who_am_i & 2 ) == 2 );
 	}
-	bool	CanFly( void )
+	bool	CanFly( void ) const
 	{
 		return ( ( who_am_i & 1 ) == 1 );
 	}
-	bool	IsWater( void )
+	bool	IsWater( void ) const
 	{
 		return ( ( who_am_i & 8 ) == 8 );
 	}
@@ -107,18 +107,6 @@ public:
 		else
 			who_am_i &= 0xF7;
 	}
-};
-
-struct commandLevel_st
-{
-	std::string name;		// name of level
-	UI08 commandLevel;	// upper limit of level
-	UI16 defaultPriv;	// default privs associated with it
-	UI16 nickColour;	// colour of a person's name
-	UI16 allSkillVals;	// if 0, skills left same, if not, all skills set to this value
-	UI16 targBody;		// target body value
-	UI16 bodyColour;	// target body colour
-	bool stripOff;		// strips off hair, beard and clothes
 };
 
 struct vector2D
@@ -362,14 +350,27 @@ struct UOXFileWrapper
 	FILE *mWrap;
 };
 
-// Teleport Locations
-struct TeleLocationEntry
+struct GoPlaces_st
 {
+	SI16 x;
+	SI16 y;
+	SI08 z;
+	UI08 worldNum;
+	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 )
+	{
+	}
+};
+
+// Teleport Locations
+class CTeleLocationEntry
+{
+private:
 	point3	src;
 	UI08	srcWorld;
 	point3	trg;
 	UI08	trgWorld;
-	TeleLocationEntry() 
+public:
+	CTeleLocationEntry()
 	{
 		src.Assign( 0, 0, ILLEGAL_Z );
 		trg.Assign( 0, 0, ILLEGAL_Z );
@@ -388,6 +389,10 @@ struct TeleLocationEntry
 	{
 		return srcWorld;
 	}
+	void SourceWorld( UI08 newVal )
+	{
+		srcWorld = newVal;
+	}
 	point3 TargetLocation( void ) const
 	{
 		return trg;
@@ -399,6 +404,10 @@ struct TeleLocationEntry
 	UI08 TargetWorld( void ) const
 	{
 		return trgWorld;
+	}
+	void TargetWorld( UI08 newVal )
+	{
+		trgWorld = newVal;
 	}
 };
 

@@ -74,10 +74,10 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 
 void CServerData::ServerName( std::string setname )
 {
-	//serverList[0].setName( setname );
+	serverList[0].setName( setname );
 	if( setname.empty() )
 	{
-		//serverList[0].setName( "Default UOX Server" );
+		serverList[0].setName( "Default UOX Server" );
 		sServerName = "www.uox3dev.net";
 	}
 	else

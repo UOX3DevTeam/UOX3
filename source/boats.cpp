@@ -3,7 +3,6 @@
 #include "CPacketSend.h"
 #include "classes.h"
 #include "regions.h"
-#include "targeting.h"
 #include "CResponse.h"
 #include "Dictionary.h"
 

@@ -5,17 +5,20 @@ function CommandRegistration()
 
 function command_POLY( socket, cmdString )
 {
-	var pUser 	= socket.currentChar;
-	var newBody 	= StringToNum( cmdString );
-	var skinVal 	= pUser.colour;
-
-	if( newBody <= 0x7CF )
+	if( cmdString )
 	{
-		pUser.id = newBody;
-		if( ( skinVal&0x4000 == 0x4000 ) && ( newBody >= 0x0190 && newBody <= 0x03E1 ) )
+		var pUser 	= socket.currentChar;
+		var newBody 	= StringToNum( cmdString );
+		var skinVal 	= pUser.colour;
+	
+		if( newBody <= 0x7CF )
 		{
-			if( skinVal != 0x8000 )
-				pUser.colour = 0xF000;
+			pUser.id = newBody;
+			if( ( skinVal&0x4000 == 0x4000 ) && ( newBody >= 0x0190 && newBody <= 0x03E1 ) )
+			{
+				if( skinVal != 0x8000 )
+					pUser.colour = 0xF000;
+			}
 		}
 	}
 }

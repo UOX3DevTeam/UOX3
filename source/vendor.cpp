@@ -1,6 +1,5 @@
 #include "uox3.h"
 #include <algorithm>
-#include "targeting.h"
 #include "commands.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -171,7 +170,7 @@ bool CPIBuyItem::Handle( void )
 				{
 					if( biTemp->isPileable() )
 					{
-						iMade = Commands->DupeItem( tSock, biTemp, amount[i] );
+						iMade = Items->DupeItem( tSock, biTemp, amount[i] );
 						if( iMade != NULL )
 						{
 							iMade->SetCont( p );
@@ -182,7 +181,7 @@ bool CPIBuyItem::Handle( void )
 					{
 						for( j = 0; j < amount[i]; ++j )
 						{
-							iMade = Commands->DupeItem( tSock, biTemp, 1 );
+							iMade = Items->DupeItem( tSock, biTemp, 1 );
 							if( iMade != NULL )
 							{
 								iMade->SetCont( p );
@@ -200,7 +199,7 @@ bool CPIBuyItem::Handle( void )
 						case 0x1A: // Buy Container
 							if( biTemp->isPileable() )
 							{
-								iMade = Commands->DupeItem( tSock, biTemp, amount[i] );
+								iMade = Items->DupeItem( tSock, biTemp, amount[i] );
 								if( iMade != NULL )
 								{
 									iMade->SetCont( p );
@@ -211,7 +210,7 @@ bool CPIBuyItem::Handle( void )
 							{
 								for( j = 0; j < amount[i]; ++j )
 								{
-									iMade = Commands->DupeItem( tSock, biTemp, 1 );
+									iMade = Items->DupeItem( tSock, biTemp, 1 );
 									if( iMade != NULL )
 									{
 										iMade->SetCont( p );
@@ -230,7 +229,7 @@ bool CPIBuyItem::Handle( void )
 							{
 								for( j = 0; j < amount[i]-1; ++j )
 								{
-									iMade = Commands->DupeItem( tSock, biTemp, 1 );
+									iMade = Items->DupeItem( tSock, biTemp, 1 );
 									if( iMade != NULL )
 									{
 										iMade->SetCont( p );
@@ -501,7 +500,7 @@ bool CPISellItem::Handle( void )
 					j->SetCont( boughtPack );
 
 					if( j->GetAmount() != amt ) 
-						Commands->DupeItem( tSock, j, j->GetAmount() - amt );
+						Items->DupeItem( tSock, j, j->GetAmount() - amt );
 				}
 			} 
 		}

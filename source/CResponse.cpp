@@ -26,7 +26,6 @@
 //|								currently), to remove the need to search through the text string
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
-#include "targeting.h"
 #include "CResponse.h"
 #include "regions.h"
 #include "msgboard.h"
@@ -37,6 +36,8 @@
 
 namespace UOX
 {
+
+bool BuyShop( cSocket *s, CChar *c );
 
 inline bool findString( std::string toCheck, std::string toFind )
 {
@@ -533,7 +534,7 @@ bool CVendorBuyResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 		mSock->target( 0, TARGET_PLVBUY, " " );
 		return false;
 	} 
-	else if( Targ->BuyShop( mSock, Npc ) ) 
+	else if( BuyShop( mSock, Npc ) ) 
 		return false;
 	return true;
 }

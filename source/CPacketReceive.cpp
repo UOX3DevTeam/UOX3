@@ -2,7 +2,6 @@
 #include "CPacketSend.h"
 #include "movement.h"
 #include "cServerDefinitions.h"
-#include "targeting.h"
 #include "ssection.h"
 #include "cThreadQueue.h"
 #include "combat.h"
@@ -1031,14 +1030,7 @@ void CPITargetCursor::Receive( void )
 {
 	tSock->Receive( 19, false );
 }
-bool CPITargetCursor::Handle( void )
-{
-	CChar *ourChar = tSock->CurrcharObj();
-	if( tSock->TargetOK() )
-		Targ->MultiTarget( tSock );
-	ourChar->BreakConcentration( tSock );
-	return true;
-}
+// bool CPITargetCursor::Handle() in targeting.cpp
 
 //0x13 Packet
 //Last Modified on Thursday, 19-Nov-1998 

@@ -97,7 +97,6 @@ public:
 
 	bool			SetCont(   cBaseObject *newCont );
 	bool			SetContSerial( SERIAL newSerial );
-	virtual void	SetSerial( SERIAL newValue );
 
 	bool			isDoorOpen( void ) const;
 	bool			isPileable( void ) const;

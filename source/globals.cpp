@@ -42,8 +42,7 @@ char skillname[SKILLS+1][20]={
 // Classes Definitions
 //o---------------------------------------------------------------------------o
 QUEUEMAP						refreshQueue;
-std::map< CItem *, UI32 >		deletionIQueue;
-std::map< CChar *, UI32 >		deletionCQueue;
+QUEUEMAP						deletionQueue;
 std::vector< cTownRegion * >	regions;
 std::vector< cSpawnRegion *>	spawnregions;		// Regionspawns
 

@@ -103,7 +103,7 @@ class cNetworkStuff
 {
 public:
 				cNetworkStuff();
-	virtual		~cNetworkStuff();
+				~cNetworkStuff();
 	void		Disconnect( UOXSOCKET s );
 	void		Disconnect( cSocket *s );
 	void		ClearBuffers( void );

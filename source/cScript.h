@@ -71,7 +71,8 @@ enum ScriptEvent
 	seOnSkillCheck,
 	seOnDropItemOnNpc,
 	seOnStart,
-	seOnStop
+	seOnStop,
+	seOnIterate,
 };
 
 struct SEGump
@@ -181,7 +182,7 @@ public:
 	size_t		NewGumpList( void );
 	SEGump *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, UOXSOCKET toSendTo );
+	void		SendGumpList( SI32 index, cSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
@@ -197,6 +198,7 @@ public:
 	bool		OnStart( void );
 	bool		OnStop( void );
 	//
+	bool		OnIterate( cBaseObject *a, UI32 &b );
 	bool		OnCreate( cBaseObject *thingCreated );
 	bool		OnCommand( cSocket *mSock ); 
 	bool		OnDelete( cBaseObject *thingDestroyed );

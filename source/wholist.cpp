@@ -1,15 +1,17 @@
 #include "uox3.h"
 #include "wholist.h"
-#include "targeting.h"
 #include "network.h"
 #include "CPacketSend.h"
 #include "Dictionary.h"
+#include "jail.h"
 
 namespace UOX
 {
 
 cWhoList *WhoList;
 cWhoList *OffList;
+
+void	TweakTarget( cSocket *s );
 
 void cWhoList::ResetUpdateFlag( void )
 // PRE:		WhoList class is active
@@ -183,7 +185,11 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 					toSendTo->sysmessage( 1391 );
 					return;
 				}
-				Targ->JailTarget( toSendTo, targetChar->GetSerial() );
+				if( targetChar->IsJailed() )
+					toSendTo->sysmessage( 1070 );
+
+				else if( !JailSys->JailPlayer( targetChar, 0xFFFFFFFF ) )
+					toSendTo->sysmessage( 1072 );
 				break;
 			}						 
 		case 203://release
@@ -192,7 +198,13 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				toSendTo->sysmessage( 1392 );
 				return;
 			}
-			Targ->ReleaseTarget( toSendTo, targetChar->GetSerial() );
+			if( !targetChar->IsJailed() )
+				toSendTo->sysmessage( 1064 );
+			else
+			{
+				JailSys->ReleasePlayer( targetChar );
+				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() );
+			}
 			break;
 		case 204:
 			if( targetChar == sourceChar )
@@ -232,7 +244,8 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-			Targ->CstatsTarget( toSendTo );
+#pragma note( "Need to link this to the JS CStats Gump" )
+			//CstatsTarget( toSendTo );
 			break;
 		case 207:	// remote tweak
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
@@ -241,7 +254,7 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-			Targ->TweakTarget( toSendTo );
+			TweakTarget( toSendTo );
 			break;
 		default:
 			Console.Error( 2, " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );

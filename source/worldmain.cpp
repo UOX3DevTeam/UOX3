@@ -74,12 +74,13 @@ xgm( DEFWORLD_XGMENABLED ), reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
 {
 	for( int mTID = (int)tWORLD_NEXTFIELDEFFECT; mTID < (int)tWORLD_COUNT; ++mTID )
 		worldTimers[mTID] = 0;
-	memset( creatures, 0, sizeof( creat_st ) * 2048 );	// init all creatures to 0
+	creatures.clear();
 	prowessTitles.resize( 0 );
 	murdererTags.resize( 0 );
 	teleLocs.resize( 0 );
 	escortRegions.resize( 0 );
 	logoutLocs.resize( 0 );
+	goPlaces.clear();
 	uoxtimeout.tv_sec	= 0;
 	uoxtimeout.tv_usec	= 0;
 	sData				= new CServerData();
@@ -93,6 +94,8 @@ CWorldMain::~CWorldMain()
 	teleLocs.clear();
 	logoutLocs.clear();
 	escortRegions.clear();
+	creatures.clear();
+	goPlaces.clear();
 	delete sData;
 	delete sProfile;
 }

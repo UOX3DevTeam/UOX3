@@ -18,7 +18,6 @@
 #include "classes.h"
 #include "regions.h"
 #include "combat.h"
-#include "targeting.h"
 #include "Dictionary.h"
 #include "movement.h"
 
@@ -742,7 +741,7 @@ bool splExplosion( CChar *caster, CChar *target, CChar *src )
 }
 bool splInvisibility( CChar *caster, CChar *target, CChar *src )
 {
-	target->SetHidden( 2 );
+	target->SetVisible( VT_INVISIBLE );
 	target->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( INVISIBILITY ) )) );
 	if( target->IsMurderer() )
 		criminal( caster );
@@ -843,13 +842,12 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
-				if( tempChar->GetHidden() != 0 )
+				if( tempChar->GetVisible() == VT_INVISIBLE )
 				{
 					point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
 					if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range 
 					{
-						if( tempChar->GetHidden() && !tempChar->IsPermHidden() )
-							tempChar->ExposeToView();
+						tempChar->ExposeToView();
 					}
 				}
 			}
@@ -1124,7 +1122,7 @@ bool splResurrection( CChar *caster, CChar *target, CChar *src )
 {
 	if( target->IsDead() )
 	{
-		Targ->NpcResurrectTarget( target );
+		NpcResurrectTarget( target );
 		return true;
 	}
 	return false;
@@ -2466,7 +2464,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 		}
 	}
 	
-	if( mChar->GetHidden() && !mChar->IsPermHidden() )
+	if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 		mChar->ExposeToView();
 	mChar->BreakConcentration( mSock );
 

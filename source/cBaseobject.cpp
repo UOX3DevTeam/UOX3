@@ -26,6 +26,7 @@
 #include "trigger.h"
 #include "cScript.h"
 #include "network.h"
+#include "ObjectFactory.h"
 
 namespace UOX
 {
@@ -63,7 +64,7 @@ const SI16			DEFBASE_STR			= 0;
 const SI16			DEFBASE_DEX			= 0;
 const SI16			DEFBASE_INT			= 0;
 const SI16			DEFBASE_HP			= 1;
-const SI08			DEFBASE_VISIBLE		= 0;
+const VisibleTypes	DEFBASE_VISIBLE		= VT_VISIBLE;
 const UI16			DEFBASE_DEF			= 0;
 const SI16			DEFBASE_HIDAMAGE	= 0;
 const SI16			DEFBASE_LODAMAGE	= 0;
@@ -532,7 +533,11 @@ void cBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 //o--------------------------------------------------------------------------
 void cBaseObject::SetSerial( SERIAL newSerial )
 {
+	if( GetSerial() != INVALIDSERIAL )
+		ObjectFactory::getSingleton().UnregisterObject( this );
 	serial = newSerial;
+	if( newSerial != INVALIDSERIAL )
+		ObjectFactory::getSingleton().RegisterObject( this, newSerial );
 }
 
 
@@ -850,18 +855,19 @@ UI08 cBaseObject::GetDir( void ) const
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SetVisible( char newValue )
+//|	Function		-	SetVisible( VisibleTypes newValue )
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the visibility property of the object
 //|						Generally it is
-//|						0	Visible
-//|						1	Owner||GM / Magically invisible
-//|						2	GM only/hidden
+//|							0 = Visible
+//|							1 = Temporary Hidden (Skill, Item visible to owner)
+//|							2 = Invisible (Magic Invis)
+//|							3 = Permanent Hidden (GM Hide)
 //o--------------------------------------------------------------------------
-void cBaseObject::SetVisible( SI08 newValue )
+void cBaseObject::SetVisible( VisibleTypes newValue )
 {
 	visible = newValue;
 	Dirty( UT_UPDATE );
@@ -875,7 +881,7 @@ void cBaseObject::SetVisible( SI08 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the visibility property of the object
 //o--------------------------------------------------------------------------
-SI08 cBaseObject::GetVisible( void ) const
+VisibleTypes cBaseObject::GetVisible( void ) const
 {
 	return visible;
 }
@@ -1841,7 +1847,7 @@ bool cBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'V':
 			if( UTag == "VISIBLE" )
 			{
-				visible	= data.toByte();
+				visible	= (VisibleTypes)data.toByte();
 				rvalue	= true;
 			}
 			break;

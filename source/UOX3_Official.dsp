@@ -599,10 +599,6 @@ SOURCE=.\skills.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\targeting.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\teffect.h
 # End Source File
 # Begin Source File

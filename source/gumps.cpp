@@ -14,7 +14,6 @@
 #include "CPacketSend.h"
 #include "regions.h"
 #include "classes.h"
-#include "targeting.h"
 #include "commands.h"
 #include "Dictionary.h"
 #include "PageVector.h"
@@ -1135,41 +1134,6 @@ void GMPage( cSocket *s, const std::string reason )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::MakePlace( cSocket *s, SI32 i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Change teleport location to x,y,z
-//o---------------------------------------------------------------------------o
-void MakePlace( cSocket *s, SI32 i )
-{
-	SI16 x = 0, y = 0;
-	SI08 z					= 0;
-	UI08 worldNum			= s->CurrcharObj()->WorldNumber();
-	UString sect			= "LOCATION " + UString::number(  i );
-	ScriptSection *Location = FileLookup->FindEntry( sect, location_def );
-	if( Location == NULL )
-		return;
-	UString data, UTag;
-	for( UString tag = Location->First(); !Location->AtEnd(); tag = Location->Next() )
-	{
-		data = Location->GrabData();
-		UTag = tag.upper();
-		if( UTag == "X" )
-			x = data.toShort();
-		else if( UTag == "Y" )
-			y = data.toShort();
-		else if( UTag == "Z" )
-			z = data.toByte();
-		else if( UTag == "WORLD" )
-			worldNum = data.toUByte();
-	}
-	s->AddX( 0, x );
-	s->AddY( 0, y );
-	s->AddZ( z );
-	s->AddID4( worldNum );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void HandleGumpCommand( cSocket *s, UString cmd, UString data )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -1241,9 +1205,12 @@ void HandleGumpCommand( cSocket *s, UString cmd, UString data )
 			{
 				if( data.empty() )
 					return;
-				MakePlace( s, data.toLong() );
-				if( s->AddX( 0 ) != 0 )
-					mChar->SetLocation( s->AddX( 0 ), s->AddY( 0 ), s->AddZ(), s->AddID4() );
+				SI32 placeNum = data.toLong();
+				if( cwmWorldState->goPlaces.size() > placeNum )
+				{
+					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum );
+				}
 			}
 			else if( cmd == "GUIINFORMATION" )
 			{
@@ -1396,13 +1363,8 @@ void HandleHowTo( cSocket *sock, int cmdNumber )
 		{
 			case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );					break;
 			case CMD_SOCKFUNC:		CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
-			case CMD_TARGETX:
-			case CMD_TARGETID1:
 			case CMD_TARGETINT:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );					break;
-			case CMD_TARGETID2:		CommandInfo.AddData( "Syntax", "arg1 arg2 (hex or decimal)" );				break;
-			case CMD_TARGETXYZ:
-			case CMD_TARGETID3:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
-			case CMD_TARGETID4:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 arg4 (hex or decimal)" );	break;
+			case CMD_TARGETXYZ:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
 			case CMD_TARGETTXT:		CommandInfo.AddData( "Syntax", "String" );
 		}
 
@@ -1449,12 +1411,14 @@ bool CPIGumpMenuSelect::Handle( void )
 	textOffset	= 19 + 4 * switchCount;
 	textCount	= tSock->GetDWord( textOffset );
 
+#if defined( _DEBUG )
 	Console << "CPIGumpMenuSelect::Handle(void)" << myendl;
 	Console << "        GumpID : " << gumpID << myendl;
 	Console << "      ButtonID : " << buttonID << myendl;
 	Console << "   SwitchCount : " << switchCount << myendl;
 	Console << "    TextOffset : " << textOffset << myendl;
 	Console << "     TextCount : " << textCount << myendl;
+#endif
 
 	BuildTextLocations();
 
@@ -1685,7 +1649,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 32: 	j->SetPileable( reply.toUByte() != 0 );		break;	// Stackable
 			case 33:	j->SetDye( reply.toUByte() != 0 );			break;	// Dyable
 			case 34:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
-			case 35:	j->SetVisible( reply.toByte() );			break;	// Visible
+			case 35:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 			case 36:	j->SetCreator( reply.toULong() );			break;	// Creator
 			case 37:
 						if( j->GetObjType() == OT_SPAWNER )
@@ -1835,11 +1799,11 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				if( j->IsNpc() )
 					j->SetNpcWander( reply.toByte() );
 				break;
-			case 24:	j->SetHunger( reply.toByte() );			break;	// Hunger
-			case 25:	j->SetPoisonStrength( reply.toUByte() );	break;	// Poison
-			case 26:	j->SetWeight( reply.toShort() );			break;	// Weight
-			case 27:	j->SetCarve( reply.toShort() );			break;	// Carve
-			case 28:	j->SetVisible( reply.toByte() );			break;	// Visible
+			case 24:	j->SetHunger( reply.toByte() );					break;	// Hunger
+			case 25:	j->SetPoisonStrength( reply.toUByte() );		break;	// Poison
+			case 26:	j->SetWeight( reply.toShort() );				break;	// Weight
+			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
+			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 		}
 		tweakCharMenu( tSock, j );
 	}

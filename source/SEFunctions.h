@@ -48,7 +48,7 @@ SEngineFunc SE_BroadcastMessage;	//											***
 SEngineFunc SE_ConsoleMessage;		//											***
 
 // Random functions(5)
-SEngineFunc ScriptPrintNumber;		//											***
+SEngineFunc SE_ScriptPrintNumber;	//											***
 SEngineFunc SE_RandomNumber;		// Calculates a random number				***
 SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
@@ -56,16 +56,9 @@ SEngineFunc SE_CalcItemFromSer;		//											***
 // Other functions
 SEngineFunc	SE_GetCommand; 
 SEngineFunc	SE_GetCommandSize; 
-SEngineFunc SE_GetString;			//											***
-SEngineFunc SE_GetDWord;			//											***
 SEngineFunc SE_CreateBuffer;		//											*
 SEngineFunc SE_DestroyBuffer;		//											*
 SEngineFunc SE_SendBuffer;			//											*
-SEngineFunc SE_SetByte;				//											***
-SEngineFunc SE_SetWord;				//											***
-SEngineFunc SE_SetDWord;			//											***
-SEngineFunc SE_SetString;			//											***
-SEngineFunc SE_ReadBytes;			//											***
 
 SEngineFunc SE_MakeMenu;			//											***
 SEngineFunc SE_MakeItem;			//											***
@@ -87,7 +80,7 @@ SEngineFunc SE_DisableSpell;		//											***
 SEngineFunc SE_GetHour;					//										***
 SEngineFunc SE_GetMinute;				//										***
 SEngineFunc SE_GetDay;					//										***
-SEngineFunc SE_GetSecondsPerUOMinute;	//										***
+SEngineFunc SE_SecondsPerUOMinute;		//										***
 
 SEngineFunc SE_GetCurrentClock;			//										***
 SEngineFunc SE_SubStringSearch;			//										***
@@ -136,6 +129,7 @@ SEngineFunc SE_GetTileIDAtMapCoord;		//										***
 
 SEngineFunc SE_StringToNum;
 SEngineFunc SE_NumToString;
+SEngineFunc SE_NumToHexString;
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
@@ -144,6 +138,12 @@ SEngineFunc SE_Reload;
 SEngineFunc SE_GetDictionaryEntry;
 SEngineFunc SE_RaceGate;
 SEngineFunc SE_Yell;
+SEngineFunc SE_SendStaticStats;
+SEngineFunc SE_GetTileHeight;
+SEngineFunc SE_IterateOver;
+SEngineFunc SE_WorldBrightLevel;
+SEngineFunc SE_WorldDarkLevel;
+SEngineFunc SE_WorldDungeonLevel;
 
 #endif
 

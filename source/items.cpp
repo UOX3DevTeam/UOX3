@@ -22,14 +22,6 @@ cItem *Items = NULL;
 
 ItemTypes FindItemTypeFromTag( UString strToFind );
 
-cItem::cItem() // Constructor
-{
-}
-
-cItem::~cItem()	// Destructor
-{
-}
-
 bool ApplySpawnItemSection( CSpawnItem *applyTo, DFNTAGS tag, UI32 ndata, UI32 odata, UString cdata )
 {
 	if( !ValidateObject( applyTo ) )
@@ -181,7 +173,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										if( iType < IT_COUNT )
 											applyTo->SetType( iType );
 										break;
-			case DFNTAG_VISIBLE:		applyTo->SetVisible( static_cast<SI08>(ndata) );		break;
+			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
 										if( !cdata.empty() )
 										{
@@ -230,7 +222,7 @@ CItem * cItem::CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 		return NULL;
 	}
 
-	CItem *iCreated = CreateBaseItem( mChar->WorldNumber() );
+	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType );
 	if( iCreated == NULL )
 		return NULL;
 
@@ -825,6 +817,38 @@ void cItem::StoreItemRandomValue( CItem *i, cTownRegion *tReg )
 	
 	if( max != 0 || min != 0 )
 		i->SetRndValueRate( RandomNum( min, max ) );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Dupe selected item
+//o---------------------------------------------------------------------------o
+CItem *cItem::DupeItem( cSocket *s, CItem *i, UI32 amount )
+{
+	CChar *mChar		= s->CurrcharObj();
+	cBaseObject *iCont	= i->GetCont();
+	CItem *charPack		= mChar->GetPackItem();
+
+	if( !ValidateObject( mChar ) || i->isCorpse() || ( !ValidateObject( iCont ) && !ValidateObject( charPack ) ) )
+		return NULL;
+	
+	CItem *c = i->Dupe();
+	if( c == NULL )
+		return NULL;
+
+	c->IncLocation( 2, 2 );
+	if( ( !ValidateObject( iCont ) || iCont->GetObjType() != OT_ITEM ) && ValidateObject( charPack ) )
+		c->SetCont( charPack );
+
+	if( amount > MAX_STACK )
+	{
+		amount -= MAX_STACK;
+		DupeItem( s, i, MAX_STACK );
+	}
+	c->SetAmount( amount );
+	return c;
 }
 
 }

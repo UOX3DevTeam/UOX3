@@ -164,6 +164,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "socket",			CCP_SOCKET,			JSPROP_ENUMANDPERM },
 	{ "isChar",			CCP_ISCHAR,			JSPROP_ENUMPERMRO  },
 	{ "isItem",			CCP_ISITEM,			JSPROP_ENUMPERMRO  },
+	{ "isSpawner",		CCP_ISSPAWNER,		JSPROP_ENUMPERMRO  },
 	{ "raceID",			CCP_RACEID,			JSPROP_ENUMANDPERM },
 	{ "maxhp",			CCP_MAXHP,			JSPROP_ENUMANDPERM },
 	{ "maxstamina",		CCP_MAXSTAMINA,		JSPROP_ENUMANDPERM },
@@ -200,6 +201,15 @@ static JSPropertySpec CCharacterProps[] =
 	{ "cell",			CCP_CELL,			JSPROP_ENUMANDPERM },
 	{ "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM },
 	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM },
+	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM },
+	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM },
+	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM },
+	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM },
+	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM },
+	{ "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM },
+	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM },
+	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
+	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO  },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
@@ -239,12 +249,26 @@ static JSPropertySpec CItemProps[] =
 	{ "name2",			CIP_NAME2,			JSPROP_ENUMANDPERM },
 	{ "isChar",			CIP_ISCHAR,			JSPROP_ENUMPERMRO  },
 	{ "isItem",			CIP_ISITEM,			JSPROP_ENUMPERMRO  },
+	{ "isSpawner",		CIP_ISSPAWNER,		JSPROP_ENUMPERMRO  },
 	{ "raceID",			CIP_RACEID,			JSPROP_ENUMANDPERM },
 	{ "race",			CIP_RACE,			JSPROP_ENUMANDPERM },
 	{ "maxhp",			CIP_MAXHP,			JSPROP_ENUMANDPERM },
 	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM },
 	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM },
 	{ "dir",			CIP_DIR,			JSPROP_ENUMANDPERM },
+	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM },
+	{ "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM },
+	{ "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM },
+	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM },
+	{ "devinelock",		CIP_DEVINELOCK,		JSPROP_ENUMANDPERM },
+	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM },
+	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
+	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
+	// The Following vars are specific to CSpawnItem objects
+	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM },
+	{ "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM },
+	{ "mininterval",	CIP_MININTERVAL,	JSPROP_ENUMANDPERM },
+	{ "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM },
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
@@ -257,9 +281,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "tempInt",			CSOCKP_TEMPINT,				JSPROP_ENUMANDPERM },
 	{ "buffer",				CSOCKP_BUFFER,				JSPROP_ENUMPERMIDX },
 	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMPERMIDX },
-	{ "addX",				CSOCKP_ADDX,				JSPROP_ENUMPERMIDX },
-	{ "addY",				CSOCKP_ADDY,				JSPROP_ENUMPERMIDX },
-	{ "addZ",				CSOCKP_ADDZ,				JSPROP_ENUMANDPERM },
+	{ "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM },
 	{ "addID",				CSOCKP_ADDID,				JSPROP_ENUMPERMIDX },
 	{ "newClient",			CSOCKP_NEWCLIENT,			JSPROP_ENUMANDPERM },
 	{ "firstPacket",		CSOCKP_FIRSTPACKET,			JSPROP_ENUMANDPERM },
@@ -340,6 +362,7 @@ static JSPropertySpec CSkillsProps[] =
 	{ "meditation",			MEDITATION,			JSPROP_ENUMANDPERM },
 	{ "stealth",			STEALTH,			JSPROP_ENUMANDPERM },
 	{ "removetraps",		REMOVETRAPS,		JSPROP_ENUMANDPERM },
+	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,			(UI08)0}
 };
 

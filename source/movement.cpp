@@ -207,7 +207,7 @@ void HandleTeleporters( CChar *s )
 	if( !ValidateObject( s ) )
 		return;
 	UI08 charWorld						= s->WorldNumber();
-	const TeleLocationEntry *getTeleLoc = NULL;
+	const CTeleLocationEntry *getTeleLoc = NULL;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
 	{
@@ -215,7 +215,7 @@ void HandleTeleporters( CChar *s )
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc == NULL )
 			continue;
-		if( getTeleLoc->srcWorld == 0xFF || getTeleLoc->srcWorld == charWorld )
+		if( getTeleLoc->SourceWorld() == 0xFF || getTeleLoc->SourceWorld() == charWorld )
 		{
 			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 				isOnTeleporter = ( getTeleLoc->SourceLocation().Mag3D() == s->GetLocation().Mag3D() );
@@ -564,7 +564,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 //o--------------------------------------------------------------------------o	
 bool cMovement::CheckForStealth( CChar *c )
 {
-	if( c->GetHidden() && !c->IsPermHidden() )
+	if( c->GetVisible() == VT_TEMPHIDDEN || c->GetVisible() == VT_INVISIBLE )
 	{
 		// Sept 22, 2002 - Xuri
 		if( c->IsOnHorse() )
@@ -780,7 +780,7 @@ void cMovement::SendWalkToPlayer( CChar *c, cSocket *mSock, SI16 sequence )
 		CPWalkOK toSend;
 
 		toSend.SequenceNumber( mSock->GetByte( 2 ) );
-		if( c->GetHidden() )
+		if( c->GetVisible() != VT_VISIBLE )
 			toSend.OtherByte( 0 );
 		else
 			toSend.OtherByte( 0x41 );
@@ -879,7 +879,7 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 				cScript *tExec	= Trigger->GetScript( tTrig );
 				if( tExec != NULL )
 					tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
-				if( !ourChar->GetHidden() && !ourChar->IsPermHidden() )
+				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
 				{
 					mSock->sysmessage( 1383, ourChar->GetName().c_str() );
 					c->SetStamina( UOX_MAX( c->GetStamina() - 4, 0 ) );
@@ -912,7 +912,7 @@ bool UpdateItemsOnPlane( cSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 	}
 	else if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 	{
-		if( tItem->GetVisible() < 2 || isGM )
+		if( tItem->GetVisible() != VT_PERMHIDDEN || isGM )
 		{
 			if( mSock != NULL )
 				tItem->SendToSocket( mSock );

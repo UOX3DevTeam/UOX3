@@ -622,8 +622,8 @@ void startChar( cSocket *mSock, bool onCreate )
 
 			mSock->SetTimer( tPC_SPIRITSPEAK, 0 );
 			mChar->SetStealth( -1 );
-			if( !mChar->IsPermHidden() )
-				mChar->SetHidden( 0 );
+			if( mChar->GetVisible() != VT_PERMHIDDEN )
+				mChar->SetVisible( VT_VISIBLE );
 			mChar->SetWar( false );
 
 			SendMapChange( mChar->WorldNumber(), mSock, true );

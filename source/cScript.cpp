@@ -36,29 +36,23 @@ static JSFunctionSpec my_functions[] =
 	{ "GetCommandSize",				SE_GetCommandSize,			0, 0, 0 }, 	
 	{ "StringToNum",				SE_StringToNum,				1, 0, 0 },
 	{ "NumToString",				SE_NumToString,				1, 0, 0 },
+	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },
 	{ "DoMovingEffect", 			SE_DoMovingEffect,			6, 0, 0 },
 	{ "BroadcastMessage",			SE_BroadcastMessage,		1, 0, 0 },
 	{ "ConsoleMessage",				SE_ConsoleMessage,			1, 0, 0 }, 
-	{ "ScriptPrintNumber",			ScriptPrintNumber,			1, 0, 0 },
+	{ "ScriptPrintNumber",			SE_ScriptPrintNumber,		1, 0, 0 },
 	{ "RandomNumber",				SE_RandomNumber,			2, 0, 0 },
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
-	{ "GetSecondsPerUOMinute",		SE_GetSecondsPerUOMinute,	0, 0, 0 },
+	{ "GetSecondsPerUOMinute",		SE_SecondsPerUOMinute,		0, 0, 0 },
 	{ "GetCurrentClock",			SE_GetCurrentClock,			0, 0, 0 },
 	{ "SubStringSearch",			SE_SubStringSearch,			2, 0, 0 },
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
-	{ "GetString",					SE_GetString,				2, 0, 0 },
-	{ "GetDWord",					SE_GetDWord,				2, 0, 0 },
-	{ "SetByte",					SE_SetByte,					3, 0, 0 },
-	{ "SetWord",					SE_SetWord,					3, 0, 0 },
-	{ "SetDWord",					SE_SetDWord,				3, 0, 0 },
-	{ "SetString",					SE_SetString,				3, 0, 0 },
-	{ "ReadBytes",					SE_ReadBytes,				2, 0, 0 },
 	{ "DoTempEffect",				SE_DoTempEffect,			7, 0, 0 },
 	{ "MakeMenu",					SE_MakeMenu,				2, 0, 0 },
 	{ "MakeItem",					SE_MakeItem,				3, 0, 0 },
@@ -108,12 +102,15 @@ static JSFunctionSpec my_functions[] =
 	{ "ItembySerial",				JS_ItembySerial,			1, 0, 0 },
 	{ "CharbySerial",				JS_CharbySerial,			1, 0, 0 },
 
-	{ "WorldBrightLevel",			JS_WorldBrightLevel,		0, 0, 0 },
-	{ "WorldDarkLevel",				JS_WorldDarkLevel,			0, 0, 0 },
-	{ "WorldDungeonLevel",			JS_WorldDungeonLevel,		0, 0, 0 },
+	{ "WorldBrightLevel",			SE_WorldBrightLevel,		0, 0, 0 },
+	{ "WorldDarkLevel",				SE_WorldDarkLevel,			0, 0, 0 },
+	{ "WorldDungeonLevel",			SE_WorldDungeonLevel,		0, 0, 0 },
 	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
 	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },
 	{ "Reload",						SE_Reload,					1, 0, 0 },
+	{ "SendStaticStats",			SE_SendStaticStats,			1, 0, 0 },
+	{ "GetTileHeight",				SE_GetTileHeight,			1, 0, 0 },
+	{ "IterateOver",				SE_IterateOver,				1, 0, 0 },
  	
 	{ "RegisterCommand",			SE_RegisterCommand,			3, 0, 0 },
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },
@@ -338,16 +335,16 @@ bool cScript::OnCreate( cBaseObject *thingCreated )
 	
 	jsval rval, params[2];
 	UI08 paramType = 0;
-	if( thingCreated->GetObjType() != OT_CHAR )
-	{
-		JS_SetPrivate( targContext, itemObjects[0].toUse, thingCreated );
-		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
-	}
-	else
+	if( thingCreated->GetObjType() == OT_CHAR )
 	{
 		JS_SetPrivate( targContext, charObjects[0].toUse, thingCreated );
 		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 		paramType = 1;
+	}
+	else
+	{
+		JS_SetPrivate( targContext, itemObjects[0].toUse, thingCreated );
+		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
 	}
 	params[1] = INT_TO_JSVAL( paramType );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCreate", 2, params, &rval );
@@ -1649,15 +1646,13 @@ void cScript::RemoveGumpList( SI32 index )
 
 	gumpDisplays.erase( gumpDisplays.begin() + index );
 }
-void cScript::SendGumpList( SI32 index, UOXSOCKET toSendTo )
+void cScript::SendGumpList( SI32 index, cSocket *toSendTo )
 {
 	if( index < 0 || (UI32) index >= gumpDisplays.size() )
 		return;
-	cSocket *mSock = Network->GetSockPtr( toSendTo );
-	if( mSock == NULL )
-		return;
-	mSock->TempInt( (SI32)Trigger->GetAssociatedScript( targObject ) );
-	SendVecsAsGump( mSock, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), 20, INVALIDSERIAL );
+
+	toSendTo->TempInt( (SI32)Trigger->GetAssociatedScript( targObject ) );
+	SendVecsAsGump( toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), 20, INVALIDSERIAL );
 }
 
 //o--------------------------------------------------------------------------o
@@ -2551,6 +2546,41 @@ bool cScript::MagicSpellCast( cSocket *mSock, CChar *tChar, bool directCast, int
 	}
 	
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
+}
+
+bool cScript::OnIterate( cBaseObject *a, UI32 &b ) 
+{ 	
+	if( !ValidateObject( a ) ) 		
+		return true;
+	if( !ExistAndVerify( seOnIterate, "onIterate" ) )
+		return false;
+
+	jsval params[1], rval;
+
+	if( a->GetObjType() == OT_CHAR )
+	{
+		JS_SetPrivate( targContext, charObjects[0].toUse, a );
+		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	}
+	else
+	{
+		JS_SetPrivate( targContext, itemObjects[0].toUse, a );
+		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+	}
+
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval ); 
+	
+	if( a->GetObjType() == OT_CHAR )
+		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnIterate, false ); 	
+	else if( JSVAL_TO_BOOLEAN( rval ) )
+		++b;
+
+	return ( retVal == JS_TRUE ); 
 }
 
 }

@@ -339,97 +339,81 @@ UString UString::number (double n)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( long n, int base  ) 
 {
-
-	UString data ;
-
-	std::stringstream input ;
-	input << n ;
-
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input.fill( '0' );
-			input.width( 4 );
-			input.setf( std::ios::uppercase );
-			input >> std::hex >> std::right >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
-
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( unsigned long n, int base )
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input.fill( '0' );
-			input.width( 4 );
-			input.setf( std::ios::uppercase );
-			input >> std::hex >> std::right >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( int n, int base  )
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input.fill( '0' );
-			input.width( 4 );
-			input.setf( std::ios::uppercase );
-			input >> std::hex >> std::right >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 UString UString::number ( unsigned int n, int base  ) 
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input.fill( '0' );
-			input.width( 4 );
-			input.setf( std::ios::uppercase );
-			input >> std::hex >> std::right >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -8,7 +8,7 @@ function command_WHOLIST( socket, cmdString )
 	var sendOnList = true;
 	if( cmdString )
 	{
-		if( SubStringSearch( cmdString, "OFF" ) )
+		if( cmdString == "OFF" )
 			sendOnList = false;
 	}
 	

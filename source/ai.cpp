@@ -17,7 +17,6 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cRaces.h"
-#include "targeting.h"
 #include "cEffects.h"
 #include "regions.h"
 #include "combat.h"
@@ -40,7 +39,7 @@ bool isValidAttackTarget( CChar *mChar, CChar *cTarget )
 {
 	if( ValidateObject( cTarget ) && mChar != cTarget )
 	{
-		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetHidden() )
+		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE  )
 			return false;
 		if( objInRange( mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ) )
 		{
@@ -128,7 +127,7 @@ void HandleHealerAI( CChar *mChar )
 			if( realChar->IsDead() && realChar->IsInnocent() && !realChar->IsCriminal() && !realChar->IsMurderer() )
 			{
 				Effects->PlayCharacterAnimation( mChar, 0x10 );
-				Targ->NpcResurrectTarget( realChar );
+				NpcResurrectTarget( realChar );
 				Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
 				mChar->talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
 			}
@@ -159,7 +158,7 @@ void HandleEvilHealerAI( CChar *mChar )
 		if( realChar->IsDead() && realChar->IsMurderer() )
 		{
 			Effects->PlayCharacterAnimation( mChar, 0x10 );
-			Targ->NpcResurrectTarget( realChar );
+			NpcResurrectTarget( realChar );
 			Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 			mChar->talkAll( ( 323 + RandomNum( 0, 4 ) ), false ); 
 		}

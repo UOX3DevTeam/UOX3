@@ -72,7 +72,7 @@ protected:
 	SI16			st2;
 	SI16			dx2;
 	SI16			in2;
-	SI08			visible;
+	VisibleTypes	visible;
 	SI16			hidamage;
 	SI16			lodamage;
 	UI16			def;
@@ -154,7 +154,7 @@ public:
 
 	void					SetMulti(  SERIAL newSerial, bool fireTrigger = true );
 	void					SetMulti(  CMultiObj *newMulti, bool fireTrigger = true );
-	virtual void			SetSerial( SERIAL newSerial );
+	void					SetSerial( SERIAL newSerial );
 	void					SetSpawn(  SERIAL newSpawn );
 	virtual void			SetOwner(  CChar *newOwner );
 
@@ -190,8 +190,8 @@ public:
 	void					SetDir( UI08 newDir );
 	UI08					GetDir( void ) const;
 
-	void					SetVisible( SI08 newValue );
-	SI08					GetVisible( void ) const;
+	void					SetVisible( VisibleTypes newValue );
+	VisibleTypes			GetVisible( void ) const;
 
 	ObjectType				GetObjType( void ) const;
 	virtual bool			CanBeObjType( ObjectType toCompare ) const;

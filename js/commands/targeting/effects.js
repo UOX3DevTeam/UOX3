@@ -6,9 +6,12 @@ function CommandRegistration()
 
 function command_ACTION( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 213 );
-	socket.tempint = StringToNum( cmdString );
-	socket.CustomTarget( 0, targMsg );
+	if( cmdString )
+	{
+		var targMsg = GetDictionaryEntry( 213, socket.Language );
+		socket.tempint = StringToNum( cmdString );
+		socket.CustomTarget( 0, targMsg );
+	}
 }
 
 function onCallback0( socket, ourObj )
@@ -20,7 +23,7 @@ function onCallback0( socket, ourObj )
 
 function command_BOLT( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 195 );
+	var targMsg = GetDictionaryEntry( 195, socket.Language );
 	socket.CustomTarget( 1, targMsg );
 }
 

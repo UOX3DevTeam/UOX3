@@ -180,7 +180,7 @@ namespace UOX
 							gPriv->SetOwner( NULL );
 					}
 					break;
-				case CIP_VISIBLE:		*vp = INT_TO_JSVAL( gPriv->GetVisible() );			break;
+				case CIP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
 				case CIP_SERIAL:		
 					if( gPriv->GetSerial() != INVALIDSERIAL )
 					{
@@ -246,6 +246,7 @@ namespace UOX
 					break;
 				case CIP_ISCHAR:	*vp = JSVAL_FALSE;								break;
 				case CIP_ISITEM:	*vp = JSVAL_TRUE;								break;
+				case CIP_ISSPAWNER:	*vp = BOOLEAN_TO_JSVAL(gPriv->GetObjType() == OT_SPAWNER);	break;
 				case CIP_RACE:
 					TempRace = Races->Race( gPriv->GetRace() );
 
@@ -267,6 +268,34 @@ namespace UOX
 				case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 				case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
 				case CIP_DIR:			*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
+				case CIP_WIPABLE:		*vp = INT_TO_JSVAL( gPriv->isWipeable() );		break;
+				case CIP_BUYVALUE:		*vp = INT_TO_JSVAL( gPriv->GetBuyValue() );		break;
+				case CIP_SELLVALUE:		*vp = INT_TO_JSVAL( gPriv->GetSellValue() );	break;
+				case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
+				case CIP_DEVINELOCK:	*vp = INT_TO_JSVAL( gPriv->isDevineLocked() );	break;
+				case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
+				case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
+				case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
+				// The following entries are specifically for CSpawnItem objects
+				case CIP_SPAWNSECTION:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+					{
+						tString = JS_NewStringCopyZ( cx, ((CSpawnItem *)gPriv)->GetSpawnSection().c_str() );
+						*vp = STRING_TO_JSVAL( tString );
+					}
+					break;
+				case CIP_SECTIONALIST:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->IsSectionAList() );
+					break;
+				case CIP_MININTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 0 ) );
+					break;
+				case CIP_MAXINTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 1 ) );
+					break;
 				default:
 					break;
 			}
@@ -324,7 +353,7 @@ namespace UOX
 					}
 
 					break;
-				case CCP_VISIBLE:		*vp = INT_TO_JSVAL( gPriv->GetVisible() );			break;
+				case CCP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
 				case CCP_SERIAL:		*vp = INT_TO_JSVAL( gPriv->GetSerial() );			break;
 				case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 				case CCP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
@@ -489,6 +518,7 @@ namespace UOX
 					break;
 				case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;
 				case CCP_ISITEM:		*vp = JSVAL_FALSE;									break;
+				case CCP_ISSPAWNER:		*vp = JSVAL_FALSE;									break;
 				case CCP_RACEID:		*vp = INT_TO_JSVAL( gPriv->GetRace() );				break;
 				case CCP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );			break;
 				case CCP_MAXSTAMINA:	*vp = INT_TO_JSVAL( gPriv->GetMaxStam() );			break;
@@ -550,6 +580,15 @@ namespace UOX
 				case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
 				case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;
 				case CCP_HOUSEICONS:	*vp = BOOLEAN_TO_JSVAL( gPriv->ViewHouseAsIcon() );			break;
+				case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
+				case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
+				case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNPCAiType() );				break;
+				case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
+				case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
+				case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
+				case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
+				case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
+				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 				default:
 					break;
 			}
@@ -593,7 +632,7 @@ namespace UOX
 					else
 						gPriv->SetOwner( NULL );
 					break;
-				case CCP_VISIBLE:	gPriv->SetVisible( (SI08)encaps.toInt() );									break;
+				case CCP_VISIBLE:	gPriv->SetVisible( (VisibleTypes)encaps.toInt() );									break;
 				case CCP_SERIAL:	
 					
 					break;
@@ -652,7 +691,10 @@ namespace UOX
 						setcharflag( gPriv );
 					}
 					break;
-				case CCP_MURDERCOUNT:	gPriv->SetKills( (SI16)encaps.toInt() );					break;
+				case CCP_MURDERCOUNT:
+					gPriv->SetKills( (SI16)encaps.toInt() );
+					setcharflag( gPriv );
+					break;
 				case CCP_GENDER:
 					switch( (SI16)encaps.toInt() )
 					{
@@ -739,6 +781,14 @@ namespace UOX
 				case CCP_CELL:			gPriv->SetCell( (SI08)encaps.toInt() );				break;
 				case CCP_ALLMOVE:		gPriv->SetAllMove( encaps.toBool() );				break;
 				case CCP_HOUSEICONS:	gPriv->SetViewHouseAsIcon( encaps.toBool() );		break;
+				case CCP_SPATTACK:		gPriv->SetSpAttack( (SI16)encaps.toInt() );			break;
+				case CCP_SPDELAY:		gPriv->SetSpDelay( (SI08)encaps.toInt() );			break;
+				case CCP_AITYPE:		gPriv->SetNPCAiType( (SI16)encaps.toInt() );		break;
+				case CCP_SPLIT:			gPriv->SetSplit( (UI08)encaps.toInt() );			break;
+				case CCP_SPLITCHANCE:	gPriv->SetSplitChance( (UI08)encaps.toInt() );		break;
+				case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
+				case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
+				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 			}
 		}
 		return JS_TRUE;
@@ -989,7 +1039,7 @@ namespace UOX
 					else
 						gPriv->SetOwner( NULL );
 					break;
-				case CIP_VISIBLE:	gPriv->SetVisible( (SI08)encaps.toInt() );	break;
+				case CIP_VISIBLE:	gPriv->SetVisible( (VisibleTypes)encaps.toInt() );	break;
 				case CIP_SERIAL:	
 					
 					break;
@@ -1036,6 +1086,31 @@ namespace UOX
 				case CIP_MAXHP:		gPriv->SetMaxHP( (SI16)encaps.toInt() );						break;
 				case CIP_RANK:		gPriv->SetRank( (SI08)encaps.toInt() );							break;
 				case CIP_DIR:		gPriv->SetDir( (SI16)encaps.toInt() );							break;
+				case CIP_WIPABLE:	gPriv->SetWipeable( encaps.toBool() );							break;
+				case CIP_BUYVALUE:	gPriv->SetBuyValue( (UI32)encaps.toInt() );						break;
+				case CIP_SELLVALUE:	gPriv->SetSellValue( (UI32)encaps.toInt() );					break;
+				case CIP_RESTOCK:	gPriv->SetRestock( (UI16)encaps.toInt() );						break;
+				case CIP_DEVINELOCK:gPriv->SetDevineLock( encaps.toBool() );						break;
+				case CIP_WEIGHT:	gPriv->SetWeight( (SI32)encaps.toInt() );						break;
+				case CIP_STRENGTH:	gPriv->SetStrength( (SI16)encaps.toInt() );						break;
+				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
+				// The following entries are specifically for CSpawnItem objects
+				case CIP_SPAWNSECTION:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetSpawnSection( encaps.toString() );
+					break;
+				case CIP_SECTIONALIST:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->IsSectionAList( encaps.toBool() );
+					break;
+				case CIP_MININTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetInterval( 0, (UI08)encaps.toInt() );
+					break;
+				case CIP_MAXINTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetInterval( 1, (UI08)encaps.toInt() );
+					break;
 				default:
 					break;
 			}
@@ -1072,11 +1147,9 @@ namespace UOX
 												else
 													gPriv->TempObj( (cBaseObject *)encaps.toObject() );		break;
 				case CSOCKP_BUFFER:
-				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );
-				case CSOCKP_ADDX:
-				case CSOCKP_ADDY:
 					break;
-				case CSOCKP_ADDZ:				gPriv->AddZ( (SI08)encaps.toInt() );					break;
+				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
+				case CSOCKP_CLICKZ:				gPriv->ClickZ( (SI08)encaps.toInt() );					break;
 				case CSOCKP_ADDID:
 					break;
 				case CSOCKP_NEWCLIENT:			gPriv->NewClient( encaps.toBool() );					break;
@@ -1162,12 +1235,10 @@ namespace UOX
 					}
 					break;
 				case CSOCKP_BUFFER:
-				case CSOCKP_XTEXT:				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
-												*vp = STRING_TO_JSVAL( tString );
-				case CSOCKP_ADDX:
-				case CSOCKP_ADDY:
 					break;
-				case CSOCKP_ADDZ:				*vp = INT_TO_JSVAL( gPriv->AddZ() );					break;
+				case CSOCKP_XTEXT:				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
+												*vp = STRING_TO_JSVAL( tString );						break;
+				case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
 				case CSOCKP_ADDID:
 					break;
 				case CSOCKP_NEWCLIENT:			*vp = BOOLEAN_TO_JSVAL( gPriv->NewClient() );			break;
@@ -1300,24 +1371,76 @@ namespace UOX
 		UI08 SkillID		= (UI08)JSVAL_TO_INT( id );
 		JSClass *myClass	= JS_GetClass( obj );	
 		SI16 NewSkillValue	= (SI16)encaps.toInt();
+		UI08 i				= 0;
 
 		if( !strcmp( myClass->name, "UOXSkills" ) )
-			myChar->SetSkill( NewSkillValue, SkillID );
+		{
+			if( SkillID == ALLSKILLS )
+			{
+				for( i = 0; i < ALLSKILLS; ++i )
+				{
+					myChar->SetSkill( NewSkillValue, i );
+				}
+			}
+			else
+				myChar->SetSkill( NewSkillValue, SkillID );
+		}
 		else if( !strcmp( myClass->name, "UOXBaseSkills" ) )
 		{
-			myChar->SetBaseSkill( NewSkillValue, SkillID );
-			Skills->updateSkillLevel( myChar, SkillID );
+			if( SkillID == ALLSKILLS )
+			{
+				for( i = 0; i < ALLSKILLS; ++i )
+				{
+					myChar->SetBaseSkill( NewSkillValue, i );
+					Skills->updateSkillLevel( myChar, i );
+				}
+			}
+			else
+			{
+				myChar->SetBaseSkill( NewSkillValue, SkillID );
+				Skills->updateSkillLevel( myChar, SkillID );
+			}
 		}
 		else if( !strcmp( myClass->name, "UOXSkillsUsed" ) )
-			myChar->SkillUsed( encaps.toBool(), SkillID );
+		{
+			if( SkillID == ALLSKILLS )
+			{
+				for( i = 0; i < ALLSKILLS; ++i )
+				{
+					myChar->SkillUsed( encaps.toBool(), i );
+				}
+			}
+			else
+				myChar->SkillUsed( encaps.toBool(), SkillID );
+		}
 		else if( !strcmp( myClass->name, "UOXSkillsLock" ) )
-			myChar->SetSkillLock( (UI08)NewSkillValue, SkillID );
+		{
+			if( SkillID == ALLSKILLS )
+			{
+				for( i = 0; i < ALLSKILLS; ++i )
+				{
+					myChar->SetSkillLock( (UI08)NewSkillValue, i );
+				}
+			}
+			else
+				myChar->SetSkillLock( (UI08)NewSkillValue, SkillID );
+		}
 
 		if( !myChar->IsNpc() )
 		{
 			cSocket *toFind = calcSocketObjFromChar( myChar );
 			if( toFind != NULL )
-				toFind->updateskill( SkillID );
+			{
+				if( SkillID == ALLSKILLS )
+				{
+					for( i = 0; i < ALLSKILLS; ++i )
+					{
+						toFind->updateskill( i );
+					}
+				}
+				else
+					toFind->updateskill( SkillID );
+			}
 		}
 		return JS_TRUE;
 	}

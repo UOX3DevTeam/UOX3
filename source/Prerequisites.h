@@ -144,7 +144,6 @@ namespace UOX {
 	class cSpawnRegion;
 	class CSpeechEntry;
 	class CSpeechQueue;
-	class cTargets;
 	class CTEffect;
 	class CTEffectContainer;
 	class CThreadQueue;

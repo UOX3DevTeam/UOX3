@@ -5,9 +5,12 @@ function CommandRegistration()
 
 function command_SETPOISONED( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 240 );
-	socket.tempint = StringToNum( cmdString );
-	socket.CustomTarget( 0, targMsg );
+	if( cmdString )
+	{
+		var targMsg = GetDictionaryEntry( 240, socket.Language );
+		socket.tempint = StringToNum( cmdString );
+		socket.CustomTarget( 0, targMsg );
+	}
 }
 
 function onCallback0( socket, ourObj )

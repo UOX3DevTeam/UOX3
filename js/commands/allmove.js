@@ -6,7 +6,7 @@ function CommandRegistration()
 function command_ALLMOVE( socket, cmdString )
 {
 	var pUser = socket.currentChar;
-	var value = SubStringSearch( cmdString, "ON" );
+	var value = (cmdString == "ON");
 	var sysMessage;
 
 	pUser.allmove = value;

@@ -179,22 +179,23 @@ public:
 	void		CheckAutoTimers( void );
 
 	// Structs
-	creat_st							creatures[2048];
+	std::map< UI16, CCreatures >		creatures;
 	timeval								uoxtimeout;
 	skill_st							skill[SKILLS+1];				// Skill data
 	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
 	std::vector< ProwessTitle >			prowessTitles;
 	std::vector< MurderPair >			murdererTags;
-	std::vector< TeleLocationEntry >	teleLocs;
+	std::vector< CTeleLocationEntry >	teleLocs;
 	std::vector< LogoutLocationEntry >	logoutLocs;
 	std::vector< UI08 >					escortRegions;
+	std::map< UI16, GoPlaces_st >		goPlaces;
 
 	void		CheckTimers( void );
 	void		doWorldLight( void );
 	void		SaveNewWorld( bool x );
 
 					CWorldMain();
-	virtual			~CWorldMain();
+					~CWorldMain();
 	CServerData *	ServerData( void );
 	CServerProfile * ServerProfile( void );
 private:

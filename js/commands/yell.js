@@ -8,20 +8,24 @@ function CommandRegistration()
 
 function command_CNSYELL( socket, cmdString )
 {
-	Yell( socket, cmdString, 1 );
+	if( cmdString )
+		Yell( socket, cmdString, 1 );
 }
 
 function command_GMYELL( socket, cmdString )
 {
-	Yell( socket, cmdString, 2 );
+	if( cmdString )
+		Yell( socket, cmdString, 2 );
 }
 
 function command_ADMINYELL( socket, cmdString )
 {
-	Yell( socket, cmdString, 3 );
+	if( cmdString )
+		Yell( socket, cmdString, 3 );
 }
 
 function command_YELLALL( socket, cmdString )
 {
-	Yell( socket, cmdString, 0 );
+	if( cmdString )
+		Yell( socket, cmdString, 0 );
 }

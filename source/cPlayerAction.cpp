@@ -3,7 +3,6 @@
 #include "combat.h"
 #include "cRaces.h"
 #include "skills.h"
-#include "targeting.h"
 #include "cMagic.h"
 #include "trigger.h"
 #include "mapstuff.h"
@@ -2049,7 +2048,6 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
 			m->SetNPCAiType( aiPLAYERVENDOR );
 			m->SetInvulnerable( true );
-			m->SetHidden( 0 );
 			m->SetDir( mChar->GetDir() );
 			m->SetNpcWander( 0 );
 			m->SetFlag( m->GetFlag()^7 );
@@ -2398,7 +2396,7 @@ void InitTagToItemType( void )
 	tagToItemType["TRAININGDUMMY"]			= IT_TRAININGDUMMY;
 }
 
-ItemTypes FindItemTypeFromTag( UString strToFind  )
+ItemTypes FindItemTypeFromTag( UString strToFind )
 {
 	if( tagToItemType.size() == 0 )	// if we haven't built our array yet
 		InitTagToItemType();
@@ -2532,7 +2530,7 @@ bool CPIDblClick::Handle( void )
 	{
 		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
 		{
-			Targ->NpcResurrectTarget( ourChar );
+			NpcResurrectTarget( ourChar );
 			tSock->sysmessage( 390 );
 			return true;
 		}

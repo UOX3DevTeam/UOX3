@@ -587,7 +587,7 @@ void LoadTeleportLocations( void )
 			{
 				for( tag = teleportSect->First(); !teleportSect->AtEnd(); tag = teleportSect->Next() )
 				{
-					TeleLocationEntry toAdd;
+					CTeleLocationEntry toAdd;
 					if( tag.upper() == "ENTRY" )
 					{
 						tempX = 0, tempY = 0;
@@ -610,9 +610,9 @@ void LoadTeleportLocations( void )
 							toAdd.TargetLocation( tempX, tempY, tempZ );
 							if( sectCount >= 6 )
 							{
-								toAdd.srcWorld = data.section( ",", 6, 6 ).toUByte();
+								toAdd.SourceWorld( data.section( ",", 6, 6 ).toUByte() );
 								if( sectCount >= 7 )
-									toAdd.trgWorld = data.section( ",", 7, 7 ).toUByte();
+									toAdd.TargetWorld( data.section( ",", 7, 7 ).toUByte() );
 							}
 							cwmWorldState->teleLocs.push_back( toAdd );
 						}
@@ -709,6 +709,55 @@ void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 			}
 			else
 				break;
+		}
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	LoadTeleportLocations()
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Load teleport locations
+//o---------------------------------------------------------------------------o
+void LoadPlaces( void )
+{
+	cwmWorldState->goPlaces.clear();
+
+	UString data, UTag, entryName;
+	ScriptSection *toScan	= NULL;
+	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( location_def );
+	VECSCRIPTLIST_ITERATOR lIter;
+	if( tScn == NULL )
+		return;
+	for( lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	{
+		Script *locScp = (*lIter);
+		if( locScp == NULL )
+			continue;
+		for( toScan = locScp->FirstEntry(); toScan != NULL; toScan = locScp->NextEntry() )
+		{
+			if( toScan == NULL )
+				continue;
+			entryName			= locScp->EntryName();
+			size_t	entryNum	= entryName.section( " ", 1, 1 ).toULong();
+			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
+			{
+				GoPlaces_st toAdd;
+				for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+				{
+					data = toScan->GrabData();
+					UTag = tag.upper();
+					if( UTag == "X" )
+						toAdd.x = data.toShort();
+					else if( UTag == "Y" )
+						toAdd.y = data.toShort();
+					else if( UTag == "Z" )
+						toAdd.z = data.toByte();
+					else if( UTag == "WORLD" )
+						toAdd.worldNum = data.toUByte();
+				}
+				cwmWorldState->goPlaces[entryNum] = toAdd;
+			}
 		}
 	}
 }

@@ -42,7 +42,6 @@
 #include "cRaces.h"
 #include "cServerDefinitions.h"
 #include "skills.h"
-#include "targeting.h"
 #include "commands.h"
 #include "cSpawnRegion.h"
 #include "wholist.h"
@@ -105,6 +104,7 @@ void		LoadSpawnRegions( void );
 void		LoadRegions( void );
 void		LoadTeleportLocations( void );
 void		LoadCreatures( void );
+void		LoadPlaces( void );
 
 //o---------------------------------------------------------------------------o
 // Misc Pre-Declarations
@@ -353,40 +353,24 @@ void updateStats( CChar *mChar, UI08 x )
 void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
-	UI32 itemsDeleted				= 0;
-	UI32 charsDeleted				= 0;
-	std::map< CItem *, UI32 >::const_iterator deliqIter		= deletionIQueue.begin();
-	std::map< CItem *, UI32 >::const_iterator deliqIterEnd	= deletionIQueue.end();
-	while( deliqIter != deliqIterEnd )
+	UI32 objectsDeleted				= 0;
+	QUEUEMAP_ITERATOR delqIter		= deletionQueue.begin();
+	QUEUEMAP_ITERATOR delqIterEnd	= deletionQueue.end();
+	while( delqIter != delqIterEnd )
 	{
-		CItem *mItem = deliqIter->first;
-		++deliqIter;
-		if( mItem == NULL || mItem->isFree() || !mItem->isDeleted() )
+		cBaseObject *mObj = delqIter->first;
+		++delqIter;
+		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
 		{
-			Console.Warning( 2, "Invalid item found in Deletion Queue" );
+			Console.Warning( 2, "Invalid object found in Deletion Queue" );
 			continue;
 		}
-		ObjectFactory::getSingleton().DestroyObject( mItem );
-		++itemsDeleted;
+		ObjectFactory::getSingleton().DestroyObject( mObj );
+		++objectsDeleted;
 	}
-	deletionIQueue.clear();
+	deletionQueue.clear();
 
-	std::map< CChar *, UI32 >::const_iterator delcqIter		= deletionCQueue.begin();
-	std::map< CChar *, UI32 >::const_iterator delcqIterEnd	= deletionCQueue.end();
-	while( delcqIter != delcqIterEnd )
-	{
-		CChar *mChar = delcqIter->first;
-		++delcqIter;
-		if( mChar == NULL || mChar->isFree() || !mChar->isDeleted() )
-		{
-			Console.Warning( 2, "Invalid character found in Deletion Queue" );
-			continue;
-		}
-		ObjectFactory::getSingleton().DestroyObject( mChar );
-		++charsDeleted;
-	}
-	deletionCQueue.clear();
-	Console << " Removed " << itemsDeleted << " items, and " << charsDeleted << " characters" << myendl;
+	Console << " Removed " << objectsDeleted << " objects" << myendl;
 }
 
 //o---------------------------------------------------------------------------o
@@ -512,7 +496,7 @@ void DismountCreature( CChar *s )
 		if( ci->GetDecayTime() != 0 )
 			tMount->SetTimer( tNPC_SUMMONTIME, ci->GetDecayTime() );
 		tMount->SetDir( s->GetDir() );
-		tMount->SetVisible( 0 );
+		tMount->SetVisible( VT_VISIBLE );
 	}
 	ci->Delete();
 }
@@ -1337,7 +1321,7 @@ bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool ch
 			mChar->SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
 	}
 	// CUSTOM END
-	if( mChar->GetHidden() == 2 && ( mChar->GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && !mChar->IsPermHidden() )
+	if( mChar->GetVisible() == VT_INVISIBLE && ( mChar->GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		mChar->ExposeToView();
 	if( mChar->WillHunger() && cwmWorldState->ServerData()->HungerRate() > 1 && ( mChar->GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
@@ -2160,7 +2144,7 @@ void InitClasses( void )
 	Commands		= NULL;	Combat		= NULL;
 	Items			= NULL;	Map			= NULL;
 	Npcs			= NULL;	Skills		= NULL;	
-	Weight			= NULL;	Targ		= NULL;
+	Weight			= NULL;	JailSys		= NULL;
 	Network			= NULL;	Magic		= NULL;		
 	Races			= NULL;	Weather		= NULL;
 	Movement		= NULL;	TEffects	= NULL;	
@@ -2170,7 +2154,7 @@ void InitClasses( void )
 	MapRegion		= NULL;	SpeechSys	= NULL;
 	CounselorQueue	= NULL;	GuildSys	= NULL;
 	HTMLTemplates	= NULL;	Effects		= NULL;
-	FileLookup		= NULL;	JailSys		= NULL;
+	FileLookup		= NULL;
 	objFactory		= NULL;
 
 	objFactory = new ObjectFactory;
@@ -2184,7 +2168,6 @@ void InitClasses( void )
 	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
 	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
 	if(( Weight			= new cWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
-	if(( Targ			= new cTargets )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TARG );
 	if(( Network		= new cNetworkStuff )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 	if(( Magic			= new cMagic )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
 	if(( Races			= new cRaces )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
@@ -2430,7 +2413,6 @@ void Shutdown( SI32 retCode )
 	delete Npcs;
 	delete Skills;
 	delete Weight;
-	delete Targ;
 	delete Magic;
 	delete Races;
 	delete Weather;
@@ -3497,6 +3479,10 @@ int main( int argc, char *argv[] )
 
 		Console << "Loading teleport               ";
 		LoadTeleportLocations();
+		Console.PrintDone();
+
+		Console << "Loading GoPlaces               ";
+		LoadPlaces();
 		Console.PrintDone();
 		
 		srand( current.tv_sec ); // initial randomization call

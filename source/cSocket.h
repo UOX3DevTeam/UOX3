@@ -55,9 +55,7 @@ protected:
 
 	//	Temporary variables (For targeting commands, etc)
 	cBaseObject *	tmpObj;
-	SI32			addx[2];
-	SI16			addy[2];
-	SI08			addz;
+	SI08			clickz;
 	UI08			addid[4];
 	SI32			tempint;
 	UI08			dyeall;
@@ -178,9 +176,7 @@ public:
 	UI08			AddID3( void ) const;
 	UI08			AddID4( void ) const;
 	UI08			DyeAll( void ) const;
-	SI16			AddX( UI08 part ) const;
-	SI16			AddY( UI08 part ) const;
-	SI08			AddZ( void ) const;
+	SI08			ClickZ( void ) const;
 
 	char			PostAcked( int x, int y ) const;
 	int				PostCount( void ) const;
@@ -228,9 +224,7 @@ public:
 	void			AddID3( UI08 newValue );
 	void			AddID4( UI08 newValue );
 	void			DyeAll( UI08 newValue );
-	void			AddX( UI08 part, SI16 newValue );
-	void			AddY( UI08 part, SI16 newValue );
-	void			AddZ( SI08 newValue );
+	void			ClickZ( SI08 newValue );
 
 	bool			FlushBuffer( bool doLog = true );
 	bool			FlushLargeBuffer( bool doLog = true );

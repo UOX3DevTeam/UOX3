@@ -23,170 +23,183 @@
 namespace UOX
 {
 
+	typedef JSBool (JSMethodFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+
 // Object Constructors
-JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool GumpData( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,jsval *rval );
-JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,jsval *rval );
+JSMethodFunc Gump;
+JSMethodFunc GumpData;
+JSMethodFunc UOXCFile;
 
 // Gump Methods
-JSBool CGump_Free(					JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddBackground(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddButton(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddCheckbox(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddCheckerTrans(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddCroppedText(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddGroup(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddGump(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddHTMLGump(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddPage(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddPicture(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddRadio(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddText(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddTextEntry(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddTiledGump(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddXMFHTMLGump(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_AddXMFHTMLGumpColor(	JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_NoClose(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_NoDispose(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_NoMove(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_NoResize(				JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGump_Send(					JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CGump_Free;
+JSMethodFunc CGump_AddBackground;
+JSMethodFunc CGump_AddButton;
+JSMethodFunc CGump_AddPageButton;
+JSMethodFunc CGump_AddCheckbox;
+JSMethodFunc CGump_AddCheckerTrans;
+JSMethodFunc CGump_AddCroppedText;
+JSMethodFunc CGump_AddGroup;
+JSMethodFunc CGump_AddGump;
+JSMethodFunc CGump_AddHTMLGump;
+JSMethodFunc CGump_AddPage;
+JSMethodFunc CGump_AddPicture;
+JSMethodFunc CGump_AddRadio;
+JSMethodFunc CGump_AddText;
+JSMethodFunc CGump_AddTextEntry;
+JSMethodFunc CGump_AddTiledGump;
+JSMethodFunc CGump_AddXMFHTMLGump;
+JSMethodFunc CGump_AddXMFHTMLGumpColor;
+JSMethodFunc CGump_NoClose;
+JSMethodFunc CGump_NoDispose;
+JSMethodFunc CGump_NoMove;
+JSMethodFunc CGump_NoResize;
+JSMethodFunc CGump_Send;
 
 // GumpData Methods
-JSBool CGumpData_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGumpData_getID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CGumpData_getButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CGumpData_Free;
+JSMethodFunc CGumpData_getID;
+JSMethodFunc CGumpData_getEdit;
+JSMethodFunc CGumpData_getButton;
 
 // Character Methods
-JSBool CChar_Action( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Freeze( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Unfreeze( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_WanderBox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_ExecuteCommand( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_WalkTo( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_RunTo( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_GetTimer( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_SetTimer( JSContext *cs, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CChar_Action;
+JSMethodFunc CChar_EmoteMessage;
+JSMethodFunc CChar_Freeze;
+JSMethodFunc CChar_Unfreeze;
+JSMethodFunc CChar_OpenBank;
+JSMethodFunc CChar_DirectionTo;
+JSMethodFunc CChar_TurnToward;
+JSMethodFunc CChar_UseResource;
+JSMethodFunc CChar_ResourceCount;
+JSMethodFunc CChar_CheckSkill;
+JSMethodFunc CChar_FindItemLayer;
+JSMethodFunc CChar_SpeechInput;
+JSMethodFunc CChar_CastSpell;
+JSMethodFunc CChar_SysMessage;
+JSMethodFunc CChar_MagicEffect;
+JSMethodFunc CChar_GetSerial;
+JSMethodFunc CChar_MakeMenu;
+JSMethodFunc CChar_Wander;
+JSMethodFunc CChar_Follow;
+JSMethodFunc CChar_Dismount;
+JSMethodFunc CChar_SetPoisoned;
+JSMethodFunc CChar_ExplodeItem;
+JSMethodFunc CChar_SetInvisible;
+JSMethodFunc CChar_YellMessage;
+JSMethodFunc CChar_WhisperMessage;
+JSMethodFunc CChar_AddSpell;
+JSMethodFunc CChar_SpellFail;
+JSMethodFunc CChar_ExecuteCommand;
+JSMethodFunc CChar_WalkTo;
+JSMethodFunc CChar_RunTo;
+JSMethodFunc CChar_OpenLayer;
+JSMethodFunc CChar_BoltEffect;
+JSMethodFunc CChar_Gate;
+JSMethodFunc CChar_Recall;
+JSMethodFunc CChar_Mark;
+JSMethodFunc CChar_SetSkillByName;
+JSMethodFunc CChar_Kill;
+JSMethodFunc CChar_Resurrect;
+JSMethodFunc CChar_Jail;
+JSMethodFunc CChar_Release;
 
 // Item Methods
-JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_SetCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_SetPoison( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CItem_OpenPlank;
+JSMethodFunc CItem_IsMulti;
+JSMethodFunc CItem_IsInMulti;
+JSMethodFunc CItem_IsOnBanList;
+JSMethodFunc CItem_IsOnOwnerList;
+JSMethodFunc CItem_AddToBanList;
+JSMethodFunc CItem_AddToOwnerList;
+JSMethodFunc CItem_RemoveFromBanList;
+JSMethodFunc CItem_RemoveFromOwnerList;
+JSMethodFunc CItem_GetSerial;
+JSMethodFunc CItem_SetCont;
+JSMethodFunc CItem_SetPoison;
+JSMethodFunc CItem_Refresh;
+JSMethodFunc CItem_ApplyRank;
+JSMethodFunc CItem_Glow;
+JSMethodFunc CItem_UnGlow;
+JSMethodFunc CItem_PlaceInPack;
+JSMethodFunc CItem_Dupe;
 
 
 // BaseObject Methods
-JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CBase_TextMessage;
+JSMethodFunc CBase_Delete;
+JSMethodFunc CBase_Teleport;
+JSMethodFunc CBase_StaticEffect;
+JSMethodFunc CBase_GetTag;
+JSMethodFunc CBase_SetTag;
+JSMethodFunc CBase_GetNumTags;
+JSMethodFunc CBase_InRange;
+JSMethodFunc CBase_StartTimer;
+JSMethodFunc CBase_KillTimers;
+JSMethodFunc CBase_ApplySection;
+JSMethodFunc CBase_FirstItem;
+JSMethodFunc CBase_NextItem;
+JSMethodFunc CBase_FinishedItems;
+JSMethodFunc CBase_DistanceTo;
 
 // Socket Methods
-JSBool CSocket_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CSocket_SysMessage;
+JSMethodFunc CSocket_Disconnect;
+JSMethodFunc CSocket_OpenURL;
+JSMethodFunc CSocket_GetByte;
+JSMethodFunc CSocket_GetWord;
+JSMethodFunc CSocket_GetDWord;
+JSMethodFunc CSocket_GetString;
+JSMethodFunc CSocket_SetByte;
+JSMethodFunc CSocket_SetWord;
+JSMethodFunc CSocket_SetDWord;
+JSMethodFunc CSocket_SetString;
+JSMethodFunc CSocket_ReadBytes;
+JSMethodFunc CSocket_OpenGump;
+JSMethodFunc CSocket_WhoList;
+JSMethodFunc CSocket_Midi;
 
 // Guild Methods
-JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CGuild_AcceptRecruit;
 
 // Misc
-JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CMisc_SoundEffect;
+JSMethodFunc CMisc_SellTo;
+JSMethodFunc CMisc_BuyFrom;
+JSMethodFunc CMisc_HasSpell;
+JSMethodFunc CMisc_RemoveSpell;
+JSMethodFunc CMisc_CustomTarget;
+JSMethodFunc CMisc_PopUpTarget;
+JSMethodFunc CMisc_GetTimer;
+JSMethodFunc CMisc_SetTimer;
 
 // Functions
-JSBool JS_CharbySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_ItembySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_AddNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_AddItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool JS_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc JS_CharbySerial;
+JSMethodFunc JS_ItembySerial;
+JSMethodFunc JS_AddNPC;
+JSMethodFunc JS_AddItem;
 
 // Race methods
-JSBool CRace_CanWearArmour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CRace_IsValidHairColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CRace_IsValidSkinColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CRace_IsValidBeardColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CRace_CanWearArmour;
+JSMethodFunc CRace_IsValidHairColour;
+JSMethodFunc CRace_IsValidSkinColour;
+JSMethodFunc CRace_IsValidBeardColour;
 
 // File methods
 
-JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CFile_Close( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSMethodFunc CFile_Open;
+JSMethodFunc CFile_Close;
+JSMethodFunc CFile_Free;
+JSMethodFunc CFile_Write;
+JSMethodFunc CFile_ReadUntil;
+JSMethodFunc CFile_Read;
 
 // Account methods
-//JSBool CAccount_GetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-//JSBool CAccount_SetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-//JSBool CAccount_ModAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-//JSBool CAccount_SaveAccounts( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+//JSMethodFunc CAccount_GetAccount;
+//JSMethodFunc CAccount_SetAccount;
+JSMethodFunc CAccount_AddAccount;
+JSMethodFunc CAccount_DelAccount;
+//JSMethodFunc CAccount_ModAccount;
+//JSMethodFunc CAccount_SaveAccounts;
 
 
 static JSFunctionSpec CGump_Methods[] =  
@@ -194,6 +207,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "Free",					CGump_Free,					0, 0, 0 },
 	{ "AddBackground",			CGump_AddBackground,		5, 0, 0 },
 	{ "AddButton",				CGump_AddButton,			6, 0, 0 },
+	{ "AddPageButton",			CGump_AddPageButton,		4, 0, 0 },
 	{ "AddCheckbox",			CGump_AddCheckbox,			5, 0, 0 },
 	{ "AddCheckerTrans",		CGump_AddCheckerTrans,		4, 0, 0 },
 	{ "AddCroppedText",			CGump_AddCroppedText,		6, 0, 0 },
@@ -254,7 +268,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
 	{ "GetSerial",			CChar_GetSerial,		1, 0, 0 },
 	{ "MakeMenu",			CChar_MakeMenu,			1, 0, 0 },
-	{ "WanderBox",			CChar_WanderBox,		4, 0, 0 },
+	{ "Wander",				CChar_Wander,			3, 0, 0 },
 	{ "Follow",				CChar_Follow,			1, 0, 0 },
 	{ "Dismount",			CChar_Dismount,			0, 0, 0 },
 	{ "SetPoisoned",		CChar_SetPoisoned,		2, 0, 0 },
@@ -275,9 +289,13 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Gate",				CChar_Gate,				1, 0, 0 },
 	{ "Recall",				CChar_Recall,			1, 0, 0 },
 	{ "Mark",				CChar_Mark,				1, 0, 0 },
-
-	{ "GetTimer",			CChar_GetTimer,			1, 0, 0 },
-	{ "SetTimer",			CChar_SetTimer,			2, 0, 0 },
+	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
+	{ "Kill",				CChar_Kill,				0, 0, 0 },
+	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
+	{ "Jail",				CChar_Jail,				0, 0, 0 },
+	{ "Release",			CChar_Release,			0, 0, 0 },
+	{ "GetTimer",			CMisc_GetTimer,			1, 0, 0 },
+	{ "SetTimer",			CMisc_SetTimer,			2, 0, 0 },
 
 	{ NULL,					NULL,					0, 0, 0 }
 };
@@ -320,6 +338,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Glow",				CItem_Glow,					1, 0, 0 },
 	{ "UnGlow",				CItem_UnGlow,				1, 0, 0 },
 	{ "PlaceInPack",		CItem_PlaceInPack,			1, 0, 0 },
+	{ "Dupe",				CItem_Dupe,					1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 
@@ -337,12 +356,21 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "PopUpTarget",		CMisc_PopUpTarget,	1, 0, 0 },
 	{ "GetByte",			CSocket_GetByte,	1, 0, 0 },
 	{ "GetWord",			CSocket_GetWord,	1, 0, 0 },
+	{ "GetDWord",			CSocket_GetDWord,	1, 0, 0 },
+	{ "GetString",			CSocket_GetString,	1, 0, 0 },
+	{ "SetByte",			CSocket_SetByte,	2, 0, 0 },
+	{ "SetWord",			CSocket_SetWord,	2, 0, 0 },
+	{ "SetDWord",			CSocket_SetDWord,	2, 0, 0 },
+	{ "SetString",			CSocket_SetString,	2, 0, 0 },
+	{ "ReadBytes",			CSocket_ReadBytes,	1, 0, 0 },
 	{ "OpenGump",			CSocket_OpenGump,	1, 0, 0 },
 	{ "OpenURL",			CSocket_OpenURL,    1, 0, 0 },
 	{ "BuyFrom",			CMisc_BuyFrom,		1, 0, 0 },
 	{ "SellTo",				CMisc_SellTo,		1, 0, 0 },
 	{ "WhoList",			CSocket_WhoList,	0, 0, 0 },
 	{ "Midi",				CSocket_Midi,		1, 0, 0 },
+	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
+	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 

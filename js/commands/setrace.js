@@ -5,7 +5,10 @@ function CommandRegistration()
 
 function command_SETRACE( socket, cmdString )
 {
-	var pUser = socket.currentChar;
-	var race = StringToNum( cmdString );
-	RaceGate( socket, pUser, race );
+	if( cmdString )
+	{
+		var pUser = socket.currentChar;
+		var race = StringToNum( cmdString );
+		RaceGate( socket, pUser, race );
+	}
 }

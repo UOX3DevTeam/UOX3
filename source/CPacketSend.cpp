@@ -495,7 +495,7 @@ void CPExtMove::CopyData( CChar &toCopy )
 		flag |= 0x40;
 	else if( toCopy.IsDead() )
 		flag |= 0x80;
-	if( toCopy.GetHidden() ) 
+	if( toCopy.GetVisible() != VT_VISIBLE ) 
 		flag |= 0x80;
 	if( toCopy.GetPoisoned() ) 
 		flag |= 0x04;
@@ -962,7 +962,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	UI08 flag = 0;
 	if( toCopy.GetPoisoned() )
 		flag |= 0x04;
-	if( toCopy.GetHidden() )
+	if( toCopy.GetVisible() != VT_VISIBLE )
 		flag |= 0x80;
 	Flag( flag );
 }
@@ -3893,7 +3893,7 @@ void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 	else
 		PackShort( &internalBuffer[0], 16, mItem.GetColour() );
 	internalBuffer[18] = 0;
-	if( mItem.GetVisible() > 0 )
+	if( mItem.GetVisible() != VT_VISIBLE )
 		internalBuffer[18] |= 0x80;
 
 	if( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ) ) 

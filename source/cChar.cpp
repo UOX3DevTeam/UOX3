@@ -47,7 +47,7 @@
 #include "classes.h"
 #include "regions.h"
 #include "speech.h"
-	#include "ObjectFactory.h"
+#include "ObjectFactory.h"
 #include "teffect.h"
 #include "cSpawnRegion.h"
 #include "Dictionary.h"
@@ -231,25 +231,6 @@ SI16 CChar::GetTaming( void ) const
 void CChar::SetTaming( SI16 newValue )
 {
 	taming = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI08 Hidden()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Visibility flag for the character
-//|						0 - Visible
-//|						1 - Hidden
-//|						2 - Magically Invisible
-//o---------------------------------------------------------------------------o
-SI08 CChar::GetHidden( void ) const
-{
-	return GetVisible();
-}
-void CChar::SetHidden( SI08 newValue )
-{
-	SetVisible( newValue );
 }
 
 //o---------------------------------------------------------------------------o
@@ -963,15 +944,6 @@ void CChar::AddSelfToOwner( void )
 	}
 }
 
-void CChar::SetSerial( SERIAL newSerial )
-{
-	if( GetSerial() != INVALIDSERIAL )
-		ObjectFactory::getSingleton().UnregisterObject( this );
-	cBaseObject::SetSerial( newSerial );
-	if( newSerial != INVALIDSERIAL )
-		ObjectFactory::getSingleton().RegisterObject( this );
-}
-
 UI32 CChar::GetTownVote( void ) const
 {
 	return townvote;
@@ -1641,10 +1613,7 @@ bool CChar::ViewHouseAsIcon( void ) const
 {
 	return ( (priv&0x0400) == 0x0400 );
 }
-bool CChar::IsPermHidden( void ) const
-{
-	return ( (priv&0x0800) == 0x0800 );
-}
+// 0x0800 is free
 bool CChar::NoNeedMana( void ) const
 {
 	return ( (priv&0x1000) == 0x1000 );
@@ -1740,13 +1709,7 @@ void CChar::SetViewHouseAsIcon( bool newValue )
 	else
 		priv &= ~0x0400;
 }
-void CChar::SetPermHidden( bool newValue )
-{
-	if( newValue )
-		priv |= 0x0800;
-	else
-		priv &= ~0x0800;
-}
+// 0x0800 is free
 void CChar::SetNoNeedMana( bool newValue )
 {
 	if( newValue )
@@ -1957,51 +1920,48 @@ void CChar::SendToSocket( cSocket *s )
 			CPDrawGamePlayer gpToSend = (*this);
 			s->Send( &gpToSend );
 		}
-		// If we're inferior to the socket's character, and we're not hidden
-		if( GetCommandLevel() <= mCharObj->GetCommandLevel() && !GetHidden() )
+		else if( GetVisible() == VT_PERMHIDDEN && GetCommandLevel() > mCharObj->GetCommandLevel() )
+			return;
+
+		UI08 cFlag = 0;
+		CPDrawObject toSend = (*this);
+		toSend.SetZ( GetDispZ() );
+		if( ( !IsNpc() && !isOnline( this ) ) || ( GetVisible() != VT_VISIBLE )  || ( IsDead() && !IsAtWar() ) )
+			cFlag |= 0x80;
+		if( GetPoisoned() )
+			cFlag |= 0x04;
+		toSend.SetCharFlag( cFlag );
+		GUILDRELATION guild = GuildSys->Compare( mCharObj, this );
+		SI08 raceCmp		= Races->Compare( mCharObj, this );
+		if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+			toSend.SetRepFlag( 6 );
+		else if( guild == GR_ALLY || guild == GR_SAME || raceCmp > 0 ) // Same guild (Green), racial ally, allied guild
+			toSend.SetRepFlag( 2 );
+		else if( guild == GR_WAR || raceCmp < 0 ) // Enemy guild.. set to orange
+			toSend.SetRepFlag( 5 );
+		else
 		{
-			// if we're an NPC or online, or offline and the other char is a gm/counselor
-			bool bIsOnline = isOnline( this );
-
-			UI08 cFlag = 0;
-			CPDrawObject toSend = (*this);
-			toSend.SetZ( GetDispZ() );
-			if( (!bIsOnline && !IsNpc()) || GetHidden() || (IsDead() && !IsAtWar()) )
-				cFlag |= 0x80;
-			if( GetPoisoned() )
-				cFlag |= 0x04;
-			toSend.SetCharFlag( cFlag );
-			GUILDRELATION guild = GuildSys->Compare( mCharObj, this );
-			SI08 raceCmp		= Races->Compare( mCharObj, this );
-			if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+			if( IsMurderer() )		// Murderer
 				toSend.SetRepFlag( 6 );
-			else if( guild == GR_ALLY || guild == GR_SAME || raceCmp > 0 ) // Same guild (Green), racial ally, allied guild
-				toSend.SetRepFlag( 2 );
-			else if( guild == GR_WAR || raceCmp < 0 ) // Enemy guild.. set to orange
-				toSend.SetRepFlag( 5 );
-			else
-			{
-				if( IsMurderer() )		// Murderer
-					toSend.SetRepFlag( 6 );
-				else if( IsCriminal() )	// Criminal
-					toSend.SetRepFlag( 3 );
-				else					// Other
-					toSend.SetRepFlag( 1 );
-			}
-
-			for( UI08 counter = 0; counter < MAXLAYERS; ++counter )
-			{
-				if( ValidateObject( itemLayers[counter] ) )
-				{
-					toSend.AddItem( itemLayers[counter] );
-					CPQueryToolTip pSend( (*itemLayers[counter]) );
-					s->Send( &pSend );
-				}
-			}
-
-			toSend.Finalize();
-			s->Send( &toSend );
+			else if( IsCriminal() )	// Criminal
+				toSend.SetRepFlag( 3 );
+			else					// Other
+				toSend.SetRepFlag( 1 );
 		}
+
+		for( UI08 counter = 0; counter < MAXLAYERS; ++counter )
+		{
+			if( ValidateObject( itemLayers[counter] ) )
+			{
+				toSend.AddItem( itemLayers[counter] );
+				CPQueryToolTip pSend( (*itemLayers[counter]) );
+				s->Send( &pSend );
+			}
+		}
+
+		toSend.Finalize();
+		s->Send( &toSend );
+
 		CPQueryToolTip pSend( (*this) );
 		s->Send( &pSend );
 	}
@@ -2056,7 +2016,7 @@ void CChar::Teleport( void )
 
 void CChar::ExposeToView( void )
 {
-	SetVisible( 0 );
+	SetVisible( VT_VISIBLE );
 	SetStealth( -1 );
 
 	// hide it from ourselves, we want to show ourselves to everyone in range
@@ -4203,7 +4163,7 @@ bool CChar::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CChar::Delete( void )
 {
-	++(deletionCQueue[this]);
+	++(deletionQueue[this]);
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );

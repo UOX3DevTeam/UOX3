@@ -11,7 +11,6 @@
 #include "classes.h"
 #include "regions.h"
 #include "magic.h"
-#include "targeting.h"
 #include "Dictionary.h"
 #include "movement.h"
 #include "cScript.h"
@@ -61,7 +60,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		returningAttack = true;
 	}
 
-	if( cAttack->GetHidden() && !cAttack->IsPermHidden() )
+	if( cAttack->GetVisible() == VT_TEMPHIDDEN || cAttack->GetVisible() == VT_INVISIBLE )
 		cAttack->ExposeToView();
 
 	if( !cAttack->IsNpc() )
@@ -79,7 +78,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	// Only unhide the defender, if they're going to return the attack (otherwise they're doing nothing!)
 	if( returningAttack )
 	{
-		if( cTarget->GetHidden() && !cTarget->IsPermHidden() )
+		if( cTarget->GetVisible() == VT_TEMPHIDDEN || cAttack->GetVisible() == VT_INVISIBLE )
 			cTarget->ExposeToView();
 
 		if( !cTarget->IsNpc() )
@@ -136,7 +135,7 @@ void CHandleCombat::PlayerAttack( cSocket *s )
 						if( objInRange( i, ourChar, DIST_NEARBY ) )
 						{	//let's resurrect him!
 							Effects->PlayCharacterAnimation( i, 0x10 );
-							Targ->NpcResurrectTarget( ourChar );
+							NpcResurrectTarget( ourChar );
 							Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
 							i->talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
 						} 
@@ -152,7 +151,7 @@ void CHandleCombat::PlayerAttack( cSocket *s )
 						if( objInRange( i, ourChar, DIST_NEARBY ) )	// let's resurrect him
 						{
 							Effects->PlayCharacterAnimation( i, 0x10 );
-							Targ->NpcResurrectTarget( ourChar );
+							NpcResurrectTarget( ourChar );
 							Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 							i->talkAll( ( 323 + RandomNum( 0, 4 ) ), false );
 						} 
@@ -186,7 +185,7 @@ void CHandleCombat::PlayerAttack( cSocket *s )
 	else if( ourChar->GetTarg() != i )
 	{
 		ourChar->SetTarg( i );
-		if( ourChar->GetHidden() && !ourChar->IsPermHidden() )
+		if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
 			ourChar->ExposeToView();
 		if( i->IsDead() || i->GetHP() <= 0 )
 		{

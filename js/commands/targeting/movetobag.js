@@ -5,7 +5,7 @@ function CommandRegistration()
 
 function command_MOVETOBAG( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 197 );
+	var targMsg = GetDictionaryEntry( 197, socket.Language );
 	socket.CustomTarget( 0, targMsg );
 }
 

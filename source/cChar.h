@@ -124,13 +124,11 @@ public:
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
 
-	SI08		GetHidden( void ) const;
 	SI08		GetHunger( void ) const;
 	UI08		GetFixedLight( void ) const;
 	UI08		GetTown( void ) const;
 
 	void		SetFixedLight( UI08 newVal );
-	void		SetHidden( SI08 newValue );
 	void		SetHunger( SI08 newValue );
 	void		SetTown( UI08 newValue );
 
@@ -177,8 +175,6 @@ public:
 	void		SetMeditating( bool newValue );
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );
-
-	virtual void		SetSerial( SERIAL newSerial );
 
 	void		SetTownVote( UI32 newValue );
 	void		SetGuildFealty( UI32 newValue );
@@ -256,7 +252,6 @@ public:
 	bool		AllMove( void ) const;
 	bool		IsFrozen( void ) const;
 	bool		ViewHouseAsIcon( void ) const;
-	bool		IsPermHidden( void ) const;
 	bool		NoNeedMana( void ) const;
 	bool		IsDispellable( void ) const;
 	bool		IsPermReflected( void ) const;
@@ -273,7 +268,6 @@ public:
 	void		SetAllMove( bool newValue );
 	void		SetFrozen( bool newValue );
 	void		SetViewHouseAsIcon( bool newValue );
-	void		SetPermHidden( bool newValue );
 	void		SetNoNeedMana( bool newValue );
 	void		SetDispellable( bool newValue );
 	void		SetPermReflected( bool newValue );

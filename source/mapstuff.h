@@ -38,7 +38,7 @@ private:
 
 public:
 	MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact = true );
-	virtual ~MapStaticIterator()
+	~MapStaticIterator()
 	{
 	};
 
@@ -62,7 +62,7 @@ struct StaCache_st
 	StaCache_st() : Cache( NULL ), CacheLen( 0 )
 	{
 	}
-	virtual ~StaCache_st() 
+	~StaCache_st() 
 	{ 
 		if( Cache != NULL ) 
 			delete [] Cache; 
@@ -79,8 +79,8 @@ protected:
 public:
 	StaWorldCache( SI16 maxX, SI16 maxY );
 	StaWorldCache( void );
-	virtual void	Resize( SI16 maxX, SI16 maxY );
-	virtual			~StaWorldCache();
+	void			Resize( SI16 maxX, SI16 maxY );
+					~StaWorldCache();
 	StaCacheLine *	GrabCacheLine( SI16 maxX );
 };
 
@@ -168,7 +168,7 @@ private:
 
 public:
 			cMapStuff();
-	virtual ~cMapStuff();
+			~cMapStuff();
 
 	void	Load( void );
 

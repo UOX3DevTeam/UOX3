@@ -463,7 +463,7 @@ Look at uox3.h to see options. Works like npc magic.
 				Map->SeekTile( dyncount->GetID(), &tile);
 				if( ( dyncount->GetX() == collisions[i].x ) && (dyncount->GetY() == collisions[i].y ) &&
 					( collisions[i].z >= dyncount->GetZ() ) && ( collisions[i].z <= ( dyncount->GetZ() + tile.Height() ) ) &&
-					( dyncount->GetVisible() == 0 ) )
+					( dyncount->GetVisible() == VT_VISIBLE ) )
 				{	
 					itemids.push_back( dyncount->GetID() );
 				}

@@ -190,23 +190,6 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SetSerial( UI32 newValue )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the item's serial
-//o--------------------------------------------------------------------------
-void CItem::SetSerial( SERIAL newValue )
-{
-	if( GetSerial() != INVALIDSERIAL )
-		ObjectFactory::getSingleton().UnregisterObject( this );
-	cBaseObject::SetSerial( newValue );
-	if( newValue != INVALIDSERIAL )
-		ObjectFactory::getSingleton().RegisterObject( this );
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	bool CItem::SetCont( cBaseObject *newCont )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
@@ -238,6 +221,10 @@ bool CItem::SetCont( cBaseObject *newCont )
 		RemoveSelfFromCont();
 	}
 	contObj = newCont;
+
+	if( GetGlow() != INVALIDSERIAL )
+		Items->GlowItem( this );
+
 	if( ValidateObject( newCont ) )
 	{
 		if( newCont->GetObjType() == OT_CHAR )
@@ -1754,8 +1741,6 @@ void CItem::Update( cSocket *mSock )
 	}
 
 	cBaseObject *iCont = GetCont();
-	if( GetGlow() != INVALIDSERIAL )
-		Items->GlowItem( this );
 	if( iCont == NULL )
 	{
 		SOCKLIST nearbyChars;
@@ -1819,7 +1804,7 @@ void CItem::SendToSocket( cSocket *mSock )
 	{
 		if( !mChar->IsGM() )
 		{
-			if( GetVisible() > 1 || ( GetVisible() > 0 && mChar != GetOwnerObj() ) )	// Not a GM, and not the Owner
+			if( GetVisible() == VT_PERMHIDDEN || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ) )	// Not a GM, and not the Owner
 				return;
 		}
 		CPObjectInfo toSend( (*this), (*mChar) );
@@ -2057,7 +2042,7 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CItem::Delete( void )
 {
-	++(deletionIQueue[this]);
+	++(deletionQueue[this]);
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );

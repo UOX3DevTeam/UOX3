@@ -4,7 +4,6 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "classes.h"
-#include "targeting.h"
 #include "CPacketSend.h"
 #include "Dictionary.h"
 #ifndef va_start

@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "targeting.h"
 #include "commands.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
@@ -129,8 +128,7 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 #ifdef _DEBUG
 				Console.Print( "Executing JS command %s\n", command.c_str() );
 #endif
-				toExecute->executeCommand( s, "command_" + command, text.section( " ", 1 ) );
-//				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
+				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
 			Log( command, mChar, NULL, "Cleared" );
 			return;
@@ -153,67 +151,16 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 			case CMD_TARGET:
 				s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
 				break;
-			case CMD_TARGETX:
-				if( NumArguments() == 2 )
-				{
-					s->AddX( 0, static_cast<SI16>(Argument( 1 )) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
-				}
-				else
-					s->sysmessage( 338 );
-				break;
 			case CMD_TARGETXYZ:
 				if( NumArguments() == 4 )
 				{
-					s->AddX( 0, static_cast<SI16>(Argument( 1 )) );
-					s->AddY( 0, static_cast<SI16>(Argument( 2 )) );
-					s->AddZ( static_cast<SI08>(Argument( 3 )) );
+					s->ClickX( static_cast<SI16>(Argument( 1 )) );
+					s->ClickY( static_cast<SI16>(Argument( 2 )) );
+					s->ClickZ( static_cast<SI08>(Argument( 3 )) );
 					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 340 );
-				break;
-			case CMD_TARGETID1:
-				if( NumArguments() == 2 )
-				{
-					s->AddID1( static_cast<UI08>(Argument( 1 )) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
-				}
-				else
-					s->sysmessage( 338 );
-				break;
-			case CMD_TARGETID2:
-				if( NumArguments() == 3 )
-				{
-					s->AddID1( (UI08)Argument( 1 ) );
-					s->AddID2( (UI08)Argument( 2 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
-				}
-				else
-					s->sysmessage( 339 );
-				break;
-			case CMD_TARGETID3:
-				if( NumArguments() == 4 )
-				{
-					s->AddID1( (UI08)Argument( 1 ) );
-					s->AddID2( (UI08)Argument( 2 ) );
-					s->AddID3( (UI08)Argument( 3 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
-				}
-				else
-					s->sysmessage( 340 );
-				break;
-			case CMD_TARGETID4:
-				if( NumArguments() == 5 )
-				{
-					s->AddID1( (UI08)Argument( 1 ) );
-					s->AddID2( (UI08)Argument( 2 ) );
-					s->AddID3( (UI08)Argument( 3 ) );
-					s->AddID4( (UI08)Argument( 4 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
-				}
-				else
-					s->sysmessage( 344 );
 				break;
 			case CMD_TARGETINT:
 				if( NumArguments() == 2 )
@@ -274,38 +221,6 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 		}
 	}
 	s->sysmessage( "BUG: Should never reach end of command() function!" );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Dupe selected item
-//o---------------------------------------------------------------------------o
-CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
-{
-	CChar *mChar		= s->CurrcharObj();
-	cBaseObject *iCont	= i->GetCont();
-	CItem *charPack		= mChar->GetPackItem();
-
-	if( !ValidateObject( mChar ) || i->isCorpse() || ( !ValidateObject( iCont ) && !ValidateObject( charPack ) ) )
-		return NULL;
-	
-	CItem *c = i->Dupe();
-	if( c == NULL )
-		return NULL;
-
-	c->IncLocation( 2, 2 );
-	if( ( !ValidateObject( iCont ) || iCont->GetObjType() != OT_ITEM ) && ValidateObject( charPack ) )
-		c->SetCont( charPack );
-
-	if( amount > MAX_STACK )
-	{
-		amount -= MAX_STACK;
-		DupeItem( s, i, MAX_STACK );
-	}
-	c->SetAmount( amount );
-	return c;
 }
 
 //o---------------------------------------------------------------------------o

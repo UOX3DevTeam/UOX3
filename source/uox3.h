@@ -77,8 +77,7 @@ extern JSClass uox_class;
 //o---------------------------------------------------------------------------o
 extern char skillname[SKILLS+1][20];
 extern QUEUEMAP							refreshQueue;
-extern std::map< CItem *, UI32 >		deletionIQueue;
-extern std::map< CChar *, UI32 >		deletionCQueue;
+extern QUEUEMAP							deletionQueue;
 
 inline UI32 BuildTimeValue( R32 timeFromNow ) 
 { 

@@ -3,7 +3,6 @@
 #include "speech.h"
 #include "cRaces.h"
 #include "cGuild.h"
-#include "targeting.h"
 #include "commands.h"
 #include "combat.h"
 #include "classes.h"
@@ -218,62 +217,20 @@ void cSocket::TempInt( SI32 newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI08 AddZ()
+//|   Function    -  SI08 ClickZ()
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Return's the socket's addz
 //o---------------------------------------------------------------------------o
-SI08 cSocket::AddZ( void ) const
+SI08 cSocket::ClickZ( void ) const
 {
-	return addz;
+	return clickz;
 }
 
-void cSocket::AddZ( SI08 newValue )
+void cSocket::ClickZ( SI08 newValue )
 {
-	addz = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI16 AddX( UI08 part )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the addx associated with the socket
-//o---------------------------------------------------------------------------o
-SI16 cSocket::AddX( UI08 part ) const
-{
-	SI16 rvalue = 0;
-	if( part < 2 )
-		rvalue = (SI16)addx[part];
-	return rvalue;
-}
-
-void cSocket::AddX( UI08 part, SI16 newValue )
-{
-	if( part < 2 )
-		addx[part] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI16 AddY( UI08 part )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the addy associated with the socket
-//o---------------------------------------------------------------------------o
-SI16 cSocket::AddY( UI08 part ) const
-{
-	SI16 rvalue = 0;
-	if( part < 2 )
-		rvalue = addy[part];
-	return rvalue;
-}
-
-void cSocket::AddY( UI08 part, SI16 newValue )
-{
-	if( part < 2 )
-		addy[part] = newValue;
+	clickz = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -545,7 +502,9 @@ const SI32				DEFSOCK_IDLETIMEOUT				= -1;
 const UI16				DEFSOCK_ACCOUNTID				= AB_INVALID_ID;
 const SI32				DEFSOCK_TEMPINT					= 0;
 const UI08				DEFSOCK_DYEALL					= 0;
-const SI08				DEFSOCK_ADDZ					= 0;
+const SI08				DEFSOCK_CLICKZ					= -1;
+const SI16				DEFSOCK_CLICKX					= -1;
+const SI16				DEFSOCK_CLICKY					= -1;
 const bool				DEFSOCK_NEWCLIENT				= true;
 const bool				DEFSOCK_FIRSTPACKET				= true;
 const UI08				DEFSOCK_RANGE					= 15;
@@ -572,9 +531,9 @@ cBaseObject *			DEFSOCK_TMPOBJ					= NULL;
 const UI16				DEFSOCK_TRIGGERWORD				= 0xFFFF;
 
 cSocket::cSocket( int sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), wAccountID( DEFSOCK_ACCOUNTID ),
-tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), addz( DEFSOCK_ADDZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
-range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ), 
-currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), 
+tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
+range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
+currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postCount( DEFSOCK_POSTCOUNT ), postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
 bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ ), triggerWord( DEFSOCK_TRIGGERWORD )
@@ -595,8 +554,6 @@ void cSocket::InternalReset( void )
 	ClearAuthor();
 	ClearTitle();
 	ClearPage();
-	addx[0] = addx[1] = 0;
-	addy[0] = addy[1] = 0;
 	addid[0] = addid[1] = addid[2] = addid[3] = 0;
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking

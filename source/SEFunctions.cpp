@@ -9,7 +9,6 @@
 #include "cWeather.hpp"
 #include "cRaces.h"
 #include "skills.h"
-#include "targeting.h"
 #include "commands.h"
 #include "cMagic.h"
 #include "trigger.h"
@@ -18,13 +17,14 @@
 #include "classes.h"
 #include "regions.h"
 #include "magic.h"
-#include "network.h"
 #include "ssection.h"
 #include "cThreadQueue.h"
 #include "cHTMLSystem.h"
 #include "cServerDefinitions.h"
 #include "Dictionary.h"
 #include "speech.h"
+#include "gump.h"
+#include "ObjectFactory.h"
 
 namespace UOX
 {
@@ -62,6 +62,28 @@ void DoSEErrorMessage( char *txt, ... )
 }
 #endif
 
+std::map< std::string, ObjectType > stringToObjType;
+
+void InitStringToObjType( void )
+{
+	stringToObjType["BASEOBJ"]		= OT_CBO;
+	stringToObjType["CHARACTER"]	= OT_CHAR;
+	stringToObjType["ITEM"]			= OT_ITEM;
+	stringToObjType["SPAWNER"]		= OT_SPAWNER;
+	stringToObjType["MULTI"]		= OT_MULTI;
+	stringToObjType["BOAT"]			= OT_BOAT;
+}
+
+ObjectType FindObjTypeFromString( UString strToFind )
+{
+	if( stringToObjType.size() == 0 )	// if we haven't built our array yet
+		InitStringToObjType();
+	std::map< std::string, ObjectType >::iterator toFind = stringToObjType.find( strToFind.upper() );
+	if( toFind != stringToObjType.end() )
+		return toFind->second;
+	return OT_CBO;
+}
+
 JSBool SE_ConsoleMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -75,7 +97,7 @@ JSBool SE_ConsoleMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  		Console << test;
  	return JS_TRUE;
 }
-JSBool ScriptPrintNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ScriptPrintNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -283,59 +305,6 @@ JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-JSBool SE_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 && argc != 3 )
-	{
-		DoSEErrorMessage( "GetString: Invalid number of arguments (takes 2 or 3)" );
-		return JS_FALSE;
-	}
-	int length		= -1;
-	UOXSOCKET sock	= JSVAL_TO_INT( argv[0] );
-	int offset		= JSVAL_TO_INT( argv[1] );
-	if( argc == 3 )
-		length = JSVAL_TO_INT( argv[2] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "GetString: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	char toReturn[128];
-	cSocket *mSock = Network->GetSockPtr( sock );
-	if( length != -1 )
-	{
-		strncpy( toReturn, (char *)&(mSock->Buffer())[offset], length );
-		toReturn[length] = 0;
-	}
-	else
-		strcpy( toReturn, (char *)&(mSock->Buffer())[offset] );
-
-	JSString *strSpeech = NULL;
-	strSpeech = JS_NewStringCopyZ( cx, toReturn );
-	*rval = STRING_TO_JSVAL( strSpeech );
-
-	return JS_TRUE;
-}
-
-JSBool SE_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "GetDWord: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "GetDWord: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset = JSVAL_TO_INT( argv[1] );
-	cSocket *mSock = Network->GetSockPtr( sock );
-	*rval = INT_TO_JSVAL( mSock->GetDWord( offset ) );
-	return JS_TRUE;
-}
-
 JSBool SE_CreateBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	return JS_TRUE;
@@ -348,111 +317,6 @@ JSBool SE_DestroyBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 JSBool SE_SendBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	return JS_TRUE;
-}
-
-JSBool SE_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "SetByte: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "SetByte: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset = JSVAL_TO_INT( argv[1] );
-	UI08 byteToSet = (UI08)JSVAL_TO_INT( argv[2] );
-	cSocket *mSock = Network->GetSockPtr( sock );
-	mSock->SetByte( offset, byteToSet );
-	return JS_TRUE;
-}
-
-JSBool SE_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "SetWord: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "SetWord: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset		= JSVAL_TO_INT( argv[1] );
-	short byteToSet = (short)JSVAL_TO_INT( argv[2] );
-	cSocket *mSock	= Network->GetSockPtr( sock );
-	mSock->SetWord( offset, byteToSet );
-	return JS_TRUE;
-}
-
-JSBool SE_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "SetDWord: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "SetDWord: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset		= JSVAL_TO_INT( argv[1] );
-	long byteToSet	= JSVAL_TO_INT( argv[2] );
-	cSocket *mSock	= Network->GetSockPtr( sock );
-	mSock->SetDWord( offset, byteToSet );
-	return JS_TRUE;
-}
-
-JSBool SE_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "SetString: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "SetString: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset = JSVAL_TO_INT( argv[1] );
- 	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	if( trgMessage == NULL )
-	{
-		DoSEErrorMessage( "SetString: No string to set" );
-		return JS_FALSE;
-	}
-	cSocket *mSock = Network->GetSockPtr( sock );
-	strcpy( (char *)&(mSock->Buffer())[offset], trgMessage );
-	return JS_TRUE;
-}
-
-JSBool SE_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "ReadBytes: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock >= cwmWorldState->GetPlayersOnline() )
-	{
-		DoSEErrorMessage( "ReadBytes: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int bCount		= JSVAL_TO_INT( argv[1] );
-	cSocket *nSock	= Network->GetSockPtr( sock );
-	if( nSock != NULL )
-		nSock->Receive( bCount );
 	return JS_TRUE;
 }
 
@@ -674,8 +538,18 @@ JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	return JS_TRUE;
 }
 
-JSBool SE_GetSecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
+	if( argc > 1 )
+	{
+		DoSEErrorMessage( "SecondsPerUOMinute: Invalid number of arguments (takes 0 or 1)" );
+ 		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		UI16 secondsPerUOMinute = (UI16)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->ServerSecondsPerUOMinute( secondsPerUOMinute );
+	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() );
 	return JS_TRUE;
 }
@@ -734,7 +608,10 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc > 3 )
 		iAmount					= static_cast< UI16 >(JSVAL_TO_INT( argv[3] ));
 	if( argc > 4 )
-		itemType				= static_cast<ObjectType>(JSVAL_TO_INT( argv[4] ));
+	{
+								std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) );
+								ObjectType itemType	= FindObjTypeFromString( objType );
+	}
 	if( argc > 5 )
 		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	
@@ -775,7 +652,8 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	else
 		itemID				= (UI16)JSVAL_TO_INT( argv[4] );
 	UI16 colour				= (UI16)JSVAL_TO_INT( argv[5] );
-	ObjectType itemType		= static_cast<ObjectType>(JSVAL_TO_INT( argv[6] ));
+	std::string objType		= JS_GetStringBytes( JS_ValueToString( cx, argv[6] ) );
+	ObjectType itemType		= FindObjTypeFromString( objType );
 	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
 
 	newItem = Items->CreateItem( mySock, myChar, itemID, amount, colour, itemType, inPack );
@@ -1396,6 +1274,20 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "NumToHexString: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	int num		= JSVAL_TO_INT( argv[0] );
+	UString str = UString::number( num, 16 );
+	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
+	return JS_TRUE;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function	-	JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	November 9, 2001
@@ -1680,6 +1572,153 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 		break;
 	}
 	return JS_TRUE; 
-} 
+}
+
+JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{ 	
+	if( argc != 1 ) 	
+	{ 		
+		DoSEErrorMessage( "SendStaticStats: needs 1 argument!" ); 		
+		return JS_FALSE; 	
+	} 
+
+	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
+	cSocket *mySock			= (cSocket *)JS_GetPrivate( cx, mSock );
+	if( mySock == NULL )
+	{
+		DoSEErrorMessage( "SendStaticStats: passed an invalid socket!" );
+		return JS_FALSE;
+	}
+	CChar *myChar			= mySock->CurrcharObj();
+	if( !ValidateObject( myChar ) )
+		return JS_TRUE;
+
+	CTile tile;
+	if( mySock->GetDWord( 7 ) == 0 )
+	{
+		UI08 worldNumber	= myChar->WorldNumber();
+		UI16 targetID		= mySock->GetWord( 0x11 );
+		SI16 targetX		= mySock->GetWord( 0x0B );		// store our target x y and z locations
+		SI16 targetY		= mySock->GetWord( 0x0D );
+		SI08 targetZ		= mySock->GetByte( 0x10 );
+		if( targetID != 0 )	// we might have a static rock or mountain
+		{
+			MapStaticIterator msi( targetX, targetY, worldNumber );
+			staticrecord *stat = NULL;
+			while( ( ( stat = msi.Next() ) != NULL ) )
+			{
+				msi.GetTile(&tile);
+				if( targetZ == stat->zoff )
+				{
+					GumpDisplay staticStat( mySock, 300, 300 );
+					staticStat.SetTitle( "Item [Static]" );
+					staticStat.AddData( "ID", targetID, 5 );
+					staticStat.AddData( "Height", tile.Height() );
+					staticStat.AddData( "Name", tile.Name() );
+					staticStat.Send( 4, false, INVALIDSERIAL );
+				}
+			}
+		}
+		else		// or it could be a map only
+		{
+			// manually calculating the ID's if a maptype
+			map_st map1;
+			CLand land;
+			map1 = Map->SeekMap0( targetX, targetY, worldNumber );
+			Map->SeekLand( map1.id, &land );
+			GumpDisplay mapStat( mySock, 300, 300 );
+			mapStat.SetTitle( "Item [Map]" );
+			mapStat.AddData( "ID", targetID, 5 );
+			mapStat.AddData( "Name", land.Name() );
+			mapStat.Send( 4, false, INVALIDSERIAL );
+		}
+	}
+	return JS_TRUE;
+}
+
+JSBool SE_GetTileHeight( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 ) 	
+	{ 		
+		DoSEErrorMessage( "GetTileHeight: needs 1 argument!" ); 		
+		return JS_FALSE; 	
+	}
+
+	UI16 tileNum = (UI16)JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( Map->TileHeight( tileNum ) );
+	return JS_TRUE;
+}
+
+bool SE_IterateFunctor( cBaseObject *a, UI32 &b, void *extraData )
+{
+	cScript *myScript = (cScript *)extraData;
+	return myScript->OnIterate( a, b );
+}
+
+JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 ) 	
+	{ 		
+		DoSEErrorMessage( "IterateOver: needs 1 argument!" ); 		
+		return JS_FALSE; 	
+	}
+
+	UI32 b				= 0;
+	std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	ObjectType toCheck	= FindObjTypeFromString( objType );
+	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	if( myScript != NULL )
+		ObjectFactory::getSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
+	*rval = INT_TO_JSVAL( b );
+	return JS_TRUE;
+}
+
+JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL brightLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightBrightLevel() );
+	return JS_TRUE;
+}
+
+JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL darkLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightDarkLevel() );
+	return JS_TRUE;
+}
+
+JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		LIGHTLEVEL dungeonLevel = (LIGHTLEVEL)JSVAL_TO_INT( argv[0] );
+		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() );
+	return JS_TRUE;
+}
 
 }
