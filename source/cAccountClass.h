@@ -43,10 +43,12 @@
 
 #include "uox3.h"
 
-//#ifdef __UOX3_DTL__
-//	#include "DTL.h"
-//	#include "variant_cc.h"
-//#endif
+/*
+#ifdef __UOX3_DTL__
+	#include "DTL.h"
+	#include "variant_cc.h"
+#endif
+*/
 
 /* Enums */
 enum __ACCOUNTBBLOCK_FLAGS__
