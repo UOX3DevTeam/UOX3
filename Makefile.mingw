@@ -109,48 +109,48 @@ SOURCES =	cpp/admin.cpp \
 		cpp/wholist.cpp \
 		cpp/worldmain.cpp \
 		cpp/xgm.cpp
-OBJECTS =	cpp/admin.o \
-		cpp/archive.o \
-		cpp/boats.o \
-		cpp/books.o \
-		cpp/cmdtable.o \
-		cpp/combat.o \
-		cpp/commands.o \
-		cpp/craces.o \
-		cpp/cweather.o \
-		cpp/dbl_single_click.o \
-		cpp/debug.o \
-		cpp/fileio.o \
-		cpp/globals.o \
-		cpp/guildstones.o \
-		cpp/gumps.o \
-		cpp/house.o \
-		cpp/html.o \
-		cpp/im.o \
-		cpp/items.o \
-		cpp/magic.o \
-		cpp/mapstuff.o \
-		cpp/msgboard.o \
-		cpp/necro.o \
-		cpp/network.o \
-		cpp/newbie.o \
-		cpp/npcs.o \
-		cpp/p_ai.o \
-		cpp/pointer.o \
-		cpp/regions.o \
-		cpp/scriptc.o \
-		cpp/skills.o \
-		cpp/speech.o \
-		cpp/targeting.o \
-		cpp/teffect.o \
-		cpp/townstones.o \
-		cpp/trigger.o \
-		cpp/uox3.o \
-		cpp/walking.o \
-		cpp/weight.o \
-		cpp/wholist.o \
-		cpp/worldmain.o \
-		cpp/xgm.o
+OBJECTS =	obj/admin.o \
+		obj/archive.o \
+		obj/boats.o \
+		obj/books.o \
+		obj/cmdtable.o \
+		obj/combat.o \
+		obj/commands.o \
+		obj/craces.o \
+		obj/cweather.o \
+		obj/dbl_single_click.o \
+		obj/debug.o \
+		obj/fileio.o \
+		obj/globals.o \
+		obj/guildstones.o \
+		obj/gumps.o \
+		obj/house.o \
+		obj/html.o \
+		obj/im.o \
+		obj/items.o \
+		obj/magic.o \
+		obj/mapstuff.o \
+		obj/msgboard.o \
+		obj/necro.o \
+		obj/network.o \
+		obj/newbie.o \
+		obj/npcs.o \
+		obj/p_ai.o \
+		obj/pointer.o \
+		obj/regions.o \
+		obj/scriptc.o \
+		obj/skills.o \
+		obj/speech.o \
+		obj/targeting.o \
+		obj/teffect.o \
+		obj/townstones.o \
+		obj/trigger.o \
+		obj/uox3.o \
+		obj/walking.o \
+		obj/weight.o \
+		obj/wholist.o \
+		obj/worldmain.o \
+		obj/xgm.o
 INTERFACES =	
 UICDECLS =	
 UICIMPLS =	
@@ -210,87 +210,87 @@ clean:
 
 ####### Compile
 
-cpp/admin.o: cpp/admin.cpp
+obj/admin.o: cpp/admin.cpp
 
-cpp/archive.o: cpp/archive.cpp
+obj/archive.o: cpp/archive.cpp
 
-cpp/boats.o: cpp/boats.cpp
+obj/boats.o: cpp/boats.cpp
 
-cpp/books.o: cpp/books.cpp
+obj/books.o: cpp/books.cpp
 
-cpp/cmdtable.o: cpp/cmdtable.cpp
+obj/cmdtable.o: cpp/cmdtable.cpp
 
-cpp/combat.o: cpp/combat.cpp
+obj/combat.o: cpp/combat.cpp
 
-cpp/commands.o: cpp/commands.cpp
+obj/commands.o: cpp/commands.cpp
 
-cpp/craces.o: cpp/craces.cpp
+obj/craces.o: cpp/craces.cpp
 
-cpp/cweather.o: cpp/cweather.cpp
+obj/cweather.o: cpp/cweather.cpp
 
-cpp/dbl_single_click.o: cpp/dbl_single_click.cpp
+obj/dbl_single_click.o: cpp/dbl_single_click.cpp
 
-cpp/debug.o: cpp/debug.cpp
+obj/debug.o: cpp/debug.cpp
 
-cpp/fileio.o: cpp/fileio.cpp
+obj/fileio.o: cpp/fileio.cpp
 
-cpp/globals.o: cpp/globals.cpp
+obj/globals.o: cpp/globals.cpp
 
-cpp/guildstones.o: cpp/guildstones.cpp
+obj/guildstones.o: cpp/guildstones.cpp
 
-cpp/gumps.o: cpp/gumps.cpp
+obj/gumps.o: cpp/gumps.cpp
 
-cpp/house.o: cpp/house.cpp
+obj/house.o: cpp/house.cpp
 
-cpp/html.o: cpp/html.cpp
+obj/html.o: cpp/html.cpp
 
-cpp/im.o: cpp/im.cpp
+obj/im.o: cpp/im.cpp
 
-cpp/items.o: cpp/items.cpp
+obj/items.o: cpp/items.cpp
 
-cpp/magic.o: cpp/magic.cpp
+obj/magic.o: cpp/magic.cpp
 
-cpp/mapstuff.o: cpp/mapstuff.cpp
+obj/mapstuff.o: cpp/mapstuff.cpp
 
-cpp/msgboard.o: cpp/msgboard.cpp
+obj/msgboard.o: cpp/msgboard.cpp
 
-cpp/necro.o: cpp/necro.cpp
+obj/necro.o: cpp/necro.cpp
 
-cpp/network.o: cpp/network.cpp
+obj/network.o: cpp/network.cpp
 
-cpp/newbie.o: cpp/newbie.cpp
+obj/newbie.o: cpp/newbie.cpp
 
-cpp/npcs.o: cpp/npcs.cpp
+obj/npcs.o: cpp/npcs.cpp
 
-cpp/p_ai.o: cpp/p_ai.cpp
+obj/p_ai.o: cpp/p_ai.cpp
 
-cpp/pointer.o: cpp/pointer.cpp
+obj/pointer.o: cpp/pointer.cpp
 
-cpp/regions.o: cpp/regions.cpp
+obj/regions.o: cpp/regions.cpp
 
-cpp/scriptc.o: cpp/scriptc.cpp
+obj/scriptc.o: cpp/scriptc.cpp
 
-cpp/skills.o: cpp/skills.cpp
+obj/skills.o: cpp/skills.cpp
 
-cpp/speech.o: cpp/speech.cpp
+obj/speech.o: cpp/speech.cpp
 
-cpp/targeting.o: cpp/targeting.cpp
+obj/targeting.o: cpp/targeting.cpp
 
-cpp/teffect.o: cpp/teffect.cpp
+obj/teffect.o: cpp/teffect.cpp
 
-cpp/townstones.o: cpp/townstones.cpp
+obj/townstones.o: cpp/townstones.cpp
 
-cpp/trigger.o: cpp/trigger.cpp
+obj/trigger.o: cpp/trigger.cpp
 
-cpp/uox3.o: cpp/uox3.cpp
+obj/uox3.o: cpp/uox3.cpp
 
-cpp/walking.o: cpp/walking.cpp
+obj/walking.o: cpp/walking.cpp
 
-cpp/weight.o: cpp/weight.cpp
+obj/weight.o: cpp/weight.cpp
 
-cpp/wholist.o: cpp/wholist.cpp
+obj/wholist.o: cpp/wholist.cpp
 
-cpp/worldmain.o: cpp/worldmain.cpp
+obj/worldmain.o: cpp/worldmain.cpp
 
-cpp/xgm.o: cpp/xgm.cpp
+obj/xgm.o: cpp/xgm.cpp
 
