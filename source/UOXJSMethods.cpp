@@ -4076,7 +4076,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 
 	cMove->FlushPath();
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "WalkTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps );
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
@@ -4149,7 +4149,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 
 	cMove->FlushPath();
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps );
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );

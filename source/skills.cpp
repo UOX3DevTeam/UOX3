@@ -321,7 +321,7 @@ void cSkills::Mine( CSocket *s )
 	else if( orePart->oreAmt > 0 )
 		--orePart->oreAmt;
 	
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() << "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
 		
@@ -4227,8 +4227,8 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 	std::map< UI16, createEntry >::iterator imIter;
 	std::map< UI16, createMenuEntry >::iterator smIter;
 	int actualItems = 0, iCounter = 0;
-	for( ourMenu.iIter = ourMenu.itemEntries.begin(); ourMenu.iIter != ourMenu.itemEntries.end(); ++ourMenu.iIter )
 //	for( iCounter = 0; iCounter < ourMenu.itemEntries.size(); ++iCounter )
+	for( ourMenu.iIter = ourMenu.itemEntries.begin(); ourMenu.iIter != ourMenu.itemEntries.end(); ++ourMenu.iIter )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
 		{
@@ -4268,12 +4268,13 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 			{
 				toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 10 + ++iCounter );
 				toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID );
-				toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
+				toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, ++textCounter );
 				toSend.AddText( iItem.name );
 				yLoc += 40;
 				++actualItems;
 			}
 		}
+		++iCounter;
 	}
 
 	for( ourMenu.mIter = ourMenu.menuEntries.begin(); ourMenu.mIter != ourMenu.menuEntries.end(); ++ourMenu.mIter )

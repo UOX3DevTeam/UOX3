@@ -299,10 +299,9 @@ struct resAmountPair
 	UI16 itemID;
 	UI08 amountNeeded;
 	UI16 colour;
-	resAmountPair()
+	resAmountPair() : itemID( 0 ), amountNeeded( 0 ), colour( 0 )
 	{
-		itemID = 0; amountNeeded = 1; colour = 0;
-	};
+	}
 };
 
 struct resSkillReq
@@ -310,6 +309,9 @@ struct resSkillReq
 	UI08 skillNumber;
 	UI16 minSkill;
 	UI16 maxSkill;
+	resSkillReq() : skillNumber( 0 ), minSkill( 0 ), maxSkill( 0 )
+	{
+	}
 };
 
 struct createEntry
@@ -325,8 +327,10 @@ struct createEntry
 	std::vector< resAmountPair > resourceNeeded;
 	std::vector< resSkillReq > skillReqs;
 	std::string name;
-	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), name( "" )
+	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), name( "" ), spell( 0 )
 	{
+		resourceNeeded.resize( 0 );
+		skillReqs.resize( 0 );
 	}
 	R32 AverageMinSkill( void ) 
 	{ 

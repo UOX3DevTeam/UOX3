@@ -54,7 +54,7 @@ PageVector::~PageVector()
 SERIAL PageVector::Add( HelpRequest *toAdd )
 {
 	HelpRequest *adding = new HelpRequest;
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 	if( adding == NULL )
 		return INVALIDSERIAL;
 #endif

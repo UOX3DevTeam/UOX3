@@ -6,7 +6,7 @@
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
 // be no need for the user to repeatedly enter the same command.
 
-var ReqNum = "You need to enter a numerical value with this command!";
+ReqNum = "You need to enter a numerical value with this command!";
 
 function CommandRegistration()
 {
@@ -23,7 +23,7 @@ function CommandRegistration()
 //Repeated Command: INCX <value>
 function command_RINCX( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;

@@ -126,7 +126,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 //	if( cwmWorldState->GetLoaded() != true ) 
 //		return;
 
-	Console.Error( 2, "JS script failure: Message (%s), detailed data is", message );
+	Console.Error( 2, "JS script failure: Message (%s)", message );
 	if( report == NULL )
 	{
 		Console.Error( 2, "No detailed data" );
@@ -216,34 +216,41 @@ void cScript::Cleanup( void )
 
 	// This was the body of RemoveFromRoot, but we're doing Cleanup separately
 
+	// Using JS_RemoveRoot() and JS_AddRoot() seems to be causing a crash on JS Garbage collection.
 	for( i = 0; i < raceObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, raceObjects[i].toUse );
+		//JS_RemoveRoot( targContext, raceObjects[i].toUse );
 	}
 
 	for( i = 0; i < charObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, charObjects[i].toUse );
+		//JS_RemoveRoot( targContext, charObjects[i].toUse );
 	}
 
 	for( i = 0; i < itemObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, itemObjects[i].toUse );
+		//JS_RemoveRoot( targContext, itemObjects[i].toUse );
 	}
 
 	for( i = 0; i < sockObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, sockObjects[i].toUse );
+		//JS_RemoveRoot( targContext, sockObjects[i].toUse );
 	}
 
 	for( i = 0; i < guildObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, guildObjects[i].toUse );
+		//JS_RemoveRoot( targContext, guildObjects[i].toUse );
 	}
 
 	for( i = 0; i < regionObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, regionObjects[i].toUse );
+		//JS_RemoveRoot( targContext, regionObjects[i].toUse );
 	}
 
 	raceObjects.resize( 0 );
@@ -255,7 +262,7 @@ void cScript::Cleanup( void )
 }
 cScript::~cScript()
 {
-	RemoveFromRoot();
+	Cleanup();
 	JS_GC( targContext );
 
 	if( targScript != NULL )
@@ -1087,8 +1094,8 @@ bool cScript::OutOfRange( CChar *person, CBaseObject *objVanish )
 	}
 	else
 	{
-		JS_SetPrivate( targContext, itemObjects[1].toUse, objVanish );
-		params[1] = OBJECT_TO_JSVAL( itemObjects[1].toUse );
+		JS_SetPrivate( targContext, itemObjects[0].toUse, objVanish );
+		params[1] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
 		params[2] = INT_TO_JSVAL( 1 );
 	}
 	JS_SetPrivate( targContext, charObjects[0].toUse, person );
@@ -1097,6 +1104,7 @@ bool cScript::OutOfRange( CChar *person, CBaseObject *objVanish )
 	if( retVal == JS_FALSE )
 		SetEventExists( seOutOfRange, false );
 
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 	if( objVanish->GetObjType() == OT_CHAR )
 		JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
 	else
@@ -1310,7 +1318,10 @@ bool cScript::OnTimer( CBaseObject *tObject, UI08 timerID )
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTimer", 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnTimer, false );
-	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	if( tObject->GetObjType() == OT_CHAR )
+		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
 	return ( retVal == JS_TRUE );
 }
 
@@ -2014,7 +2025,7 @@ JSObject *cScript::MakeNewObject( IUEEntries iType )
 
 	// DAMN! Using the deprecated function it works!
 	JS_LockGCThing( targContext, toMake );
-	//JS_AddNamedRoot( targContext, toMake, "asd" );
+	//JS_AddRoot( targContext, toMake );
 	return toMake;
 }
 
@@ -2108,54 +2119,6 @@ bool cScript::CallParticularEvent( char *eventToCall, jsval *params, SI32 numPar
 	jsval rval;
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
 	return ( retVal == JS_TRUE );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	JSObject *AcquireObject( IUEEntries iType )
-//|	Programmer	-	Abaddon
-//|	Date		-	24th December, 2001
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Removes all objects that have been added to the root
-//o---------------------------------------------------------------------------o
-void cScript::RemoveFromRoot( void )
-{
-	size_t i = 0;
-	for( i = 0; i < raceObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, raceObjects[i].toUse );
-	}
-
-	for( i = 0; i < charObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, charObjects[i].toUse );
-	}
-
-	for( i = 0; i < itemObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, itemObjects[i].toUse );
-	}
-
-	for( i = 0; i < sockObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, sockObjects[i].toUse );
-	}
-
-	for( i = 0; i < guildObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, guildObjects[i].toUse );
-	}
-
-	for( i = 0; i < regionObjects.size(); ++i )
-	{
-		JS_UnlockGCThing( targContext, regionObjects[i].toUse );
-	}
-
-	raceObjects.resize( 0 );
-	charObjects.resize( 0 );
-	itemObjects.resize( 0 );
-	sockObjects.resize( 0 );
-	guildObjects.resize( 0 );
-	regionObjects.resize( 0 );
 }
 
 //	

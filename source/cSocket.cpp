@@ -32,7 +32,7 @@ std::vector< UI08 >	largePackBuffer;
 //			Also has logging support, and non-blocking IO support
 //			Makes use of a socket_error exception class
 
-#if _DEBUG
+#if defined( UOX_DEBUG_MODE )
 const bool LOGDEFAULT = true;
 #else
 const bool LOGDEFAULT = false;
@@ -734,7 +734,7 @@ void CSocket::Send( const void *point, int length ) // Buffering send function
 		// sometimes we send enormous packets... oh what fun
 	if( length > MAXBUFFER )
 	{
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 		Console.Print( "Large packet found [%i]\n", outbuffer[0] );
 #endif
 		largeBuffer.resize( length );

@@ -1496,7 +1496,7 @@ void CPOpenGump::Question( std::string toAdd )
 	internalBuffer.resize( 10 + toAdd.length() + 2 );	// 10 for start of string, length of string + NULL, plus spot for # responses
 	for( UI32 i = 0; i < toAdd.length(); ++i )
 		internalBuffer[10 + i] = toAdd[i];
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
 		Console.Error( 1, "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() );
 #endif
@@ -1507,7 +1507,7 @@ void CPOpenGump::Question( std::string toAdd )
 void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseText )
 {
 	++internalBuffer[responseBaseOffset]; // increment number of responses
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
 		Console.Error( 1, "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() );
 #endif

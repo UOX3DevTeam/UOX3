@@ -253,7 +253,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD && cTarget->isHuman() )
 				cTarget->talkAll( 1282, true );
 			criminal( cAttack );
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 			Console.Print( "DEBUG: [AttackTarget] %s is being set to criminal", cAttack->GetName() );
 #endif
 		}

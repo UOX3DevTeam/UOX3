@@ -101,18 +101,18 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 		return;
 	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
 
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "Command search for %s -", command.c_str() );
 #endif
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
 	{
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 		Console.Print( " FOUND - ", command.c_str() );
 #endif
 		if( toFind->second.isEnabled )
 		{
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 			Console.Print( "Enabled\n", command.c_str() );
 #endif
 			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
@@ -126,7 +126,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
 			if( toExecute != NULL )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 				Console.Print( "Executing JS command %s\n", command.c_str() );
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );

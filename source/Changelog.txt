@@ -1,3 +1,12 @@
+2/18/2004 - giwo (0.98-2.7d)
+	Changed all the miscellaneous #ifdef DEBUG statements to #if defined( UOX_DEBUG_MODE ) for uniformity.
+	Fixed a few minor issues in cScript.cpp.
+	Removed cScript::RemoveFromRoot().
+	Fixed some areas where structures were not initializing variables with default values.
+	Fixed an issue with a couple of the JS Scripts:
+		commands/misc/repeatingcmds.js and server/resource/pitchers.js using "var" keyword
+		for initializing a global variables, was causing a crash with the newer js32.dll's.
+
 2/15/2005 - giwo (0.98-2.7c)
 	Made some structures private members of their only calling class.
 	Removed unused InUseEntry2()

@@ -172,7 +172,6 @@ private:
 	UI32		FindFreePosition( IUEEntries iType ) const;
 	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
 	JSObject *	MakeNewObject( IUEEntries iType );
-	void		RemoveFromRoot( void );
 
 public:
 

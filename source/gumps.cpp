@@ -538,8 +538,10 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		s->sysmessage( 337 );
 		return;
 	}
-	
+
+#if defined( UOX_DEBUG_MODE )
 	Console << "Menu: " << m << myendl;
+#endif
 
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
@@ -1424,7 +1426,7 @@ bool CPIGumpMenuSelect::Handle( void )
 	textOffset	= 19 + 4 * switchCount;
 	textCount	= tSock->GetDWord( textOffset );
 
-#if defined( _DEBUG )
+#if defined( UOX_DEBUG_MODE )
 	Console << "CPIGumpMenuSelect::Handle(void)" << myendl;
 	Console << "        GumpID : " << gumpID << myendl;
 	Console << "      ButtonID : " << buttonID << myendl;
@@ -1498,8 +1500,8 @@ bool CPIGumpMenuSelect::Handle( void )
 	// 12	New Make Menu
 	// 13	HOWTO
 
-#ifdef DEBUG
-	Console << "Type is " << gumpID << " button is " <<  button << myendl;
+#if defined( UOX_DEBUG_MODE )
+	Console << "Type is " << gumpID << " button is " <<  buttonID << myendl;
 #endif
 
 	CItem *j;

@@ -1092,7 +1092,7 @@ void cCommands::CommandReset( void )
 
 void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 {
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "   UnRegistering command %s\n", cmdName.c_str());
 #endif
 	UString upper		= cmdName;
@@ -1100,7 +1100,7 @@ void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 		JSCommandMap.erase( p );
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	else
 		Console.Print( "         Command \"%s\" was not found.\n", cmdName.c_str());
 #endif
@@ -1108,7 +1108,7 @@ void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 
 void cCommands::Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
 {
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "         Registering \"%s\" @ command level %i\n", cmdName.c_str(), cmdLevel );
 #endif
 	UString upper		= cmdName;

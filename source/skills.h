@@ -12,6 +12,10 @@ struct miningData
 	bool foreign;		// if not iron, then it can print out that it's a stranger ore when failing
 	int makemenu;		// the makemenu required for making with
 	UI08 minAmount;		// min number of ingots to load anything
+
+	miningData() : colour( 0 ), minSkill( 0 ), name( "" ), foreign( false ), makemenu( 0 ), minAmount( 0 )
+	{
+	}
 };
 
 class cSkills
@@ -24,6 +28,15 @@ private:
 
 		std::vector< UI16 >::iterator iIter;
 		std::vector< UI16 >::iterator mIter;
+
+		createMenu()
+		{
+			itemEntries.resize( 0 );
+			menuEntries.resize( 0 );
+
+			iIter = itemEntries.end();
+			mIter = menuEntries.end();
+		}
 	};
 	struct createMenuEntry
 	{
@@ -42,6 +55,10 @@ private:
 		UI32	oreTime;
 		SI16	logAmt;
 		UI32	logTime;
+
+		resourceEntry() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+		{
+		}
 	};
 
 	std::vector< miningData >			ores;

@@ -451,7 +451,7 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	if( scriptID != 0xFFFF )
 	{
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 		Console.Print( "Registering skill number %i\n", skillNumber );
 #endif
 		if( skillNumber < 0 || skillNumber >= ALLSKILLS )

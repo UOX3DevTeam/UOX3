@@ -91,8 +91,6 @@ suit our own purposes
 // Win32 compilers use _DEBUG for specifying debug builds.
 #   ifdef _DEBUG
 #       define UOX_DEBUG_MODE 1
-#   else
-#       define UOX_DEBUG_MODE 0
 #   endif
 
 	#define XP_WIN			// JS API Requires we define OS we compile with
@@ -117,8 +115,6 @@ suit our own purposes
 // specifying a debug build.
 #   ifdef DEBUG
 #       define UOX_DEBUG_MODE 1
-#   else
-#       define UOX_DEBUG_MODE 0
 #   endif
 
 	#define XP_UNIX			// JS API Requires we define OS we compile with

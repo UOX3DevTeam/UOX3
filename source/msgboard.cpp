@@ -833,7 +833,7 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 		// If this is a reply to anything other than a LOCAL post, abort
 		if( (isReply>0) && (isReply<0x03000000) )
 		{
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 			Console << "MsgBoardPost() Attempted reply to a global or regional post" << myendl;
 #endif
 			s->sysmessage( 729 );
@@ -1091,7 +1091,7 @@ void MsgBoardOpenPost( CSocket *s )
 	// Is msgSN within the GLOBAL post range
 	if( (msgSN>=0x01000000) && (msgSN<=0x01FFFFFF) )
 	{
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 		s->sysmessage( "Opening GLOBAL.bbp posting" );
 #endif
 		fileName += "global.bbp";
@@ -1100,7 +1100,7 @@ void MsgBoardOpenPost( CSocket *s )
 	// Is msgSN within the REGIONAL post range
 	else if( (msgSN>=0x02000000) && (msgSN<=0x02FFFFFF) )
 	{
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 		s->sysmessage( "Opening REGIONAL.bbp posting" );
 #endif
 		CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
@@ -1112,7 +1112,7 @@ void MsgBoardOpenPost( CSocket *s )
 	// Is msgSN within the LOCAL post range
 	else if( (msgSN>=0x03000000) && (msgSN<=0xFFFFFFFF) )
 	{
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 		s->sysmessage( "Opening LOCAL.bbp posting" );
 #endif
 		sprintf( temp, "%02x%02x%02x%02x.bbp", s->GetByte( 4 ), s->GetByte( 5 ), s->GetByte( 6 ), s->GetByte( 7 ) );
@@ -1599,7 +1599,7 @@ bool MsgBoardPostQuest( SERIAL serial, int questType )
 				
 				// Choose a random number between 1 and listCount to use as a message
 				entryToUse = RandomNum( 1, listCount );
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 				Console.Error( 1, "MsgBoardPostQuest() listCount=%d  entryToUse=%d", listCount, entryToUse );
 #endif
 				sect		= "ESCORT " + UString::number( sectionEntrys[entryToUse-1] );
@@ -1798,8 +1798,8 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 		return;
 	}
 
-#ifdef DEBUG
-	Console.Error( 2, "MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s", npcIndex->GetName(), regions[npcIndex->GetQuestDestRegion()].name );
+#if defined( UOX_DEBUG_MODE )
+	Console.Error( 2, "MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s", npcIndex->GetName(), regions[npcIndex->GetQuestDestRegion()]->GetName().c_str() );
 #endif
 }
 

@@ -3147,7 +3147,7 @@ void cMagic::LoadScript( void )
 		}
 	}
 
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "Registering spells\n" );
 #endif
 
@@ -3249,7 +3249,7 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, std::string
 
 void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 {
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 	Console.Print( "Registering spell number %i\n", spellNumber );
 #endif
 	if( spellNumber < 0 || spellNumber >= spells.size() )

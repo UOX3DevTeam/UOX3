@@ -2079,7 +2079,7 @@ bool CChar::WearItem( CItem *toWear )
 		{
 			if( ValidateObject( itemLayers[tLayer] ) )
 			{
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 				Console.Warning( 2, "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
 #endif
 				rvalue = false;

@@ -107,7 +107,7 @@ void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 	case TW_BOATRIGHT:
 	case TW_SETNAME:			tResp = new CBoatResponse( text );										break;
 	default:
-#ifdef _DEBUG
+#if defined( UOX_DEBUG_MODE )
 		Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n",mSock->TriggerWord() );
 #endif
 		break;
