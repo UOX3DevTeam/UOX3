@@ -209,8 +209,8 @@ Look at uox3.h to see options. Works like npc magic.
 		sgn_z = 0;
 
 	line3D lineofsight = line3D( vector3D( kox1, koy1, koz1 ), vector3D( (koxn-kox1), (koym-koy1), (koz2-koz1) ) );
-	long lnBlah = abs( koxn - kox1 ) * abs( koxn - kox1 ) + abs( koym - koy1 ) * abs( koym - koy1 );
-	SI32 distance = (SI32)sqrt(lnBlah);
+	double rBlah = abs( koxn - kox1 ) * abs( koxn - kox1 ) + abs( koym - koy1 ) * abs( koym - koy1 );
+	SI32 distance = (SI32)sqrt(rBlah);
 
 	if( distance > 18 )
 		return blocked;
