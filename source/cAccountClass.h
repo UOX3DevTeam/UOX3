@@ -236,7 +236,7 @@ public:
 		cols["fCharacter5"] == rowbuf.dwCharacter5;
 		cols["fContact"] == rowbuf.sContact;
 	}
-};*/
+};
 //
 #endif
 
