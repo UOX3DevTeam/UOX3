@@ -1,0 +1,255 @@
+// AXES
+
+// Note: Pickaxes are located in DFNDATA\ITEMS\SKILLS\TOOLS\MINING.DFN
+
+[0x13fa]
+{ facing West
+get=base_item
+name=large battle axe
+id=0x13fa
+weight=600
+value=43,21
+layer=2
+lodamage=16
+hidamage=17
+hp=110
+spd=29
+str=80
+restock=10
+movable=1
+decay=1
+}
+
+[0x13fb]
+{ facing North
+get=base_item
+name=large battle axe
+id=0x13fb
+weight=600
+value=43,21
+layer=2
+lodamage=16
+hidamage=17
+hp=110
+spd=29
+str=80
+restock=10
+movable=1
+decay=1
+}
+
+[0x1442]
+{ facing West
+get=base_item
+name=two handed axe
+id=0x1442
+weight=800
+value=42,21
+layer=2
+lodamage=16
+hidamage=17
+hp=70
+spd=31
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x1443]
+{ facing North
+get=base_item
+name=two handed axe
+id=0x1443
+weight=800
+value=42,21
+layer=2
+lodamage=16
+hidamage=17
+hp=70
+spd=31
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f43]
+{ facing North
+get=base_item
+name=hatchet
+id=0x0f43
+weight=400
+value=32,16
+layer=2
+lodamage=13
+hidamage=15
+hp=80
+spd=41
+str=20
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f44]
+{ facing West
+get=base_item
+name=hatchet
+id=0x0f44
+weight=400
+value=32,16
+layer=2
+lodamage=13
+hidamage=15
+hp=80
+spd=41
+str=20
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f45]
+{ facing North
+get=base_item
+name=executioner's axe
+id=0x0f45
+weight=800
+value=38,33
+layer=2
+lodamage=15
+hidamage=17
+hp=90
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f46]
+{ facing West
+get=base_item
+name=executioner's axe
+id=0x0f46
+weight=800
+value=38,33
+layer=2
+lodamage=15
+hidamage=17
+hp=90
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f47]
+{ facing North
+get=base_item
+name=battle axe
+id=0x0f47
+weight=400
+value=38,36
+layer=2
+lodamage=15
+hidamage=17
+hp=80
+spd=31
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f48]
+{ facing West
+get=base_item
+name=battle axe
+id=0x0f48
+weight=400
+value=38,36
+layer=2
+lodamage=15
+hidamage=17
+hp=80
+spd=31
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f49]
+{ facing North
+get=base_item
+name=axe
+id=0x0f49
+weight=400
+value=48,24
+layer=2
+lodamage=14
+hidamage=16
+hp=100
+spd=37
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f4a]
+{ facing West
+get=base_item
+name=axe
+id=0x0f4a
+weight=400
+value=48,24
+layer=2
+lodamage=14
+hidamage=16
+hp=100
+spd=37
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f4b]
+{ facing North
+get=base_item
+name=double axe
+id=0x0f4b
+weight=800
+value=32,16
+layer=2
+lodamage=15
+hidamage=17
+hp=110
+spd=33
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f4c]
+{ facing West
+get=base_item
+name=double axe
+id=0x0f4c
+weight=800
+value=32,16
+layer=2
+lodamage=15
+hidamage=17
+hp=110
+spd=33
+str=45
+restock=10
+movable=1
+decay=1
+}

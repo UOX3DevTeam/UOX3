@@ -1,0 +1,326 @@
+// MACES
+
+[0x13e3]
+{ facing West
+get=base_item
+name=smith's hammer
+id=0x13e3
+weight=800
+value=36,18
+layer=1
+lodamage=13
+hidamage=15
+hp=60
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x13e4]
+{ facing North
+get=base_item
+name=smith's hammer
+id=0x13e4
+weight=800
+value=36,18
+layer=1
+lodamage=13
+hidamage=15
+hp=60
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x13b3]
+{ facing West
+get=base_item
+name=club
+id=0x13b3
+weight=900
+value=27,13
+layer=1
+lodamage=11
+hidamage=13
+hp=40
+spd=44
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x13b4]
+{ facing North
+get=base_item
+name=club
+id=0x13b4
+weight=900
+value=27,13
+layer=1
+lodamage=11
+hidamage=13
+hp=40
+spd=44
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x0fb4]
+{ facing West
+get=base_item
+name=sledge hammer
+id=0x0fb4
+weight=900
+value=32,16
+layer=1
+lodamage=13
+hidamage=15
+hp=60
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x0fb5]
+{ facing North
+get=base_item
+name=sledge hammer
+id=0x0fb5
+weight=900
+value=32,16
+layer=1
+lodamage=13
+hidamage=15
+hp=60
+spd=33
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x13af]
+{ facing West
+get=base_item
+name=war axe
+id=0x13af
+weight=800
+value=38,19
+layer=1
+lodamage=14
+hidamage=15
+hp=80
+spd=33
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x13b0]
+{ facing North
+get=base_item
+name=war axe
+id=0x13b0
+weight=800
+value=38,19
+layer=1
+lodamage=14
+hidamage=15
+hp=80
+spd=33
+str=35
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f5c]
+{ facing North
+get=base_item
+name=mace
+id=0x0f5c
+weight=1400
+value=38,30
+layer=1
+lodamage=12
+hidamage=14
+hp=80
+spd=40
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x0f5d]
+{ facing West
+get=base_item
+name=mace
+id=0x0f5d
+weight=1400
+value=38,30
+layer=1
+lodamage=12
+hidamage=14
+hp=80
+spd=40
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x1406]
+{ facing West
+get=base_item
+name=war mace
+id=0x1406
+weight=1700
+value=37,18
+layer=1
+lodamage=16
+hidamage=17
+hp=110
+spd=26
+str=80
+restock=10
+movable=1
+decay=1
+}
+
+[0x1407]
+{ facing North
+get=base_item
+name=war mace
+id=0x1407
+weight=1700
+value=37,18
+layer=1
+lodamage=16
+hidamage=17
+hp=110
+spd=26
+str=80
+restock=10
+movable=1
+decay=1
+}
+
+[0x1438]
+{ facing West
+get=base_item
+name=war hammer
+id=0x1438
+weight=1000
+value=27,13
+layer=2
+lodamage=17
+hidamage=18
+hp=110
+spd=28
+str=95
+restock=10
+movable=1
+decay=1
+}
+
+[0x1439]
+{ facing North
+get=base_item
+name=war hammer
+id=0x1439
+weight=1000
+value=27,13
+layer=2
+lodamage=17
+hidamage=18
+hp=110
+spd=28
+str=95
+restock=10
+movable=1
+decay=1
+}
+
+[0x143a]
+{ facing West
+get=base_item
+name=maul
+id=0x143a
+weight=1400
+value=31,15
+layer=1
+lodamage=14
+hidamage=16
+hp=70
+spd=32
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x143b]
+{ facing North
+get=base_item
+name=maul
+id=0x143b
+weight=1400
+value=31,15
+layer=1
+lodamage=14
+hidamage=16
+hp=70
+spd=32
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x143c]
+{ facing West
+get=base_item
+name=hammer pick
+id=0x143c
+weight=900
+value=31,15
+layer=1
+lodamage=15
+hidamage=17
+hp=70
+spd=28
+str=45
+restock=10
+movable=1
+decay=1
+}
+
+[0x143d]
+{ facing North
+get=base_item
+name=hammer pick
+id=0x143d
+weight=900
+value=31,15
+layer=1
+lodamage=15
+hidamage=17
+hp=70
+spd=28
+str=45
+restock=10
+movable=1
+decay=1
+}
+

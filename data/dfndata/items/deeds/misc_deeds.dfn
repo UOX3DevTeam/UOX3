@@ -1,0 +1,13 @@
+[townstonedeed]
+{
+NAME=Townstone deed
+ID=0x14F0
+TYPE=35
+}
+
+[guildstonedeed]
+{
+NAME=Guildstone deed
+ID=0x14F0
+TYPE=202
+}

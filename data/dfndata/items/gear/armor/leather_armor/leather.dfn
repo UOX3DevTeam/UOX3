@@ -1,0 +1,149 @@
+// Leather Armor
+
+[0x13c5]
+{ left facing
+get=leather_sleeves
+name=leather sleeves
+id=0x13c5
+def=2
+}
+
+[0x13c6]
+{ left facing
+get=leather_gloves
+name=leather gloves
+id=0x13c6
+def=1
+}
+
+[0x13c7]
+{ left facing
+get=leather_gorget
+name=leather gorget
+id=0x13c7
+def=1
+}
+
+[0x13cb]
+{ facing left
+get=leather_leggings
+name=leather leggings
+id=0x13cb
+def=3
+}
+
+[0x13cc]
+{ left facing
+get=leather_tunic
+name=leather tunic
+id=0x13cc
+def=4
+}
+
+[0x13cd]
+{ right facing
+get=leather_sleeves
+name=leather sleeves
+id=0x13cd
+def=2
+}
+
+[0x13ce]
+{ right facing
+get=leather_gloves
+name=leather gloves
+id=0x13ce
+def=1
+}
+
+[0x13d2]
+{ facing right
+get=leather_leggings
+name=leather leggings
+id=0x13d2
+def=3
+}
+
+[0x1dba]
+{ 
+get=leather_cap
+name=leather cap
+id=0x1dba
+weight=200
+def=1
+}
+
+[0x13d3]
+{ right facing
+get=leather_tunic
+name=leather tunic
+id=0x13d3
+def=4
+}
+
+// Female
+
+[0x1c00]
+{ left facing - Female
+get=leather_shorts
+name=leather shorts
+id=0x1c00
+def=2
+}
+
+[0x1c01]
+{ right facing - Female
+get=leather_shorts
+name=leather shorts
+id=0x1c01
+def=2
+}
+
+[0x1c06]
+{ left facing - Female
+get=leather_armor
+name=leather armor
+id=0x1c06
+def=6
+}
+
+[0x1c07]
+{ right facing - Female
+get=leather_armor
+name=leather armor
+id=0x1c07
+def=6
+}
+
+[0x1c08]
+{ left facing - Female
+get=leather_skirt
+name=leather skirt
+id=0x1c08
+def=2
+}
+
+[0x1c09]
+{ right facing - Female
+get=leather_skirt
+name=leather skirt
+id=0x1c09
+def=2
+}
+
+[0x1c0a]
+{ left facing - Female
+get=leather_bustier
+name=leather bustier
+id=0x1c0a
+def=6
+}
+
+[0x1c0b]
+{ left facing - Female
+get=leather_bustier
+name=leather bustier
+id=0x1c0b
+def=6
+}
+

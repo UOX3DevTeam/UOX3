@@ -1,0 +1,43 @@
+[0x0efa]
+{
+get=base_item
+name=a spellbook
+id=0x0efa
+weight=100
+value=22,11
+type=9
+restock=15
+decay=1
+}
+
+[0x1f14]
+{
+get=base_item
+name=a recall rune
+id=0x1f14
+weight=100
+value=18,9
+type=50
+restock=15
+decay=1
+}
+
+[0x0e2d]
+{
+get=base_item
+name=crystal ball
+id=0x0e2d
+weight=100
+value=2,1
+movable=2
+}
+
+[0x0e2e]
+{ sparkling
+get=base_item
+name=crystal ball
+id=0x0e2e
+weight=100
+value=2,1
+movable=2
+}

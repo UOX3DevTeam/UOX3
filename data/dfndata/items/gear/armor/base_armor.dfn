@@ -1,0 +1,721 @@
+// Ringmail
+
+[ring_gloves]
+{
+get=base_item
+name=ringmail gloves
+id=0x13eb
+value=122,61
+weight=200
+layer=0x07
+def=2
+hp=51
+str=20
+dexadd=-1
+restock=15
+decay=1
+}
+
+[ring_tunic]
+{
+get=base_item
+name=ringmail tunic
+id=0x13ec
+value=218,109
+weight=1500
+layer=0x0d
+def=9
+hp=51
+str=20
+dexadd=-2
+restock=15
+decay=1
+}
+
+[ring_sleeves]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13ee
+value=127,63
+weight=100
+layer=0x13
+def=4
+hp=51
+str=20
+dexadd=-1
+restock=15
+decay=1
+}
+
+[ring_leggings]
+{
+get=base_item
+name=ringmail leggings
+id=0x13f0
+value=147,73
+weight=1500
+layer=0x04
+def=5
+hp=51
+str=20
+dexadd=-1
+restock=15
+decay=1
+}
+
+// Chainmail
+
+[chain_coif]
+{ Left facing chain coif
+get=base_item
+name=chainmail coif
+id=0x13bb
+value=130,65
+weight=700
+layer=0x06
+def=4
+hp=44
+str=20
+restock=10
+decay=1
+}
+
+[chain_leggings]
+{ left facing
+get=base_item
+name=chainmail leggings
+id=0x13be
+value=166,83
+weight=700
+layer=0x04
+def=6
+hp=60
+str=20
+dexadd=-3
+restock=10
+decay=1
+}
+
+[chain_tunic]
+{ left facing
+get=base_item
+name=chainmail tunic
+id=0x13bf
+value=207,103
+weight=700
+layer=0x0d
+def=10
+hp=70
+str=20
+dexadd=-5
+restock=10
+decay=1
+}
+
+// Female
+
+[fem_plate]
+{
+get=base_item
+name=plate armor
+id=0x1c04
+value=245,122
+weight=400
+layer=0x0d
+def=13
+hp=60
+str=45
+dexadd=-5
+restock=15
+decay=1
+}
+
+// Platemail
+
+[plate_arms]
+{
+get=base_item
+name=platemail arms
+id=0x1410
+value=181,90
+weight=500
+layer=0x13
+def=4
+hp=100
+str=60
+dexadd=-2
+restock=15
+decay=1
+}
+
+[plate_leggings]
+{
+get=base_item
+name=platemail legs
+id=0x1411
+value=218,109
+weight=700
+layer=0x04
+def=4
+hp=100
+str=60
+dexadd=-6
+restock=15
+decay=1
+}
+
+[plate_gorget]
+{
+get=base_item
+name=platemail gorget
+id=0x1413
+value=124,70
+weight=200
+layer=0x0a
+def=2
+hp=100
+str=60
+dexadd=-1
+restock=15
+decay=1
+}
+
+[plate_gloves]
+{
+get=base_item
+name=platemail gloves
+id=0x1414
+value=145,72
+weight=200
+layer=0x07
+def=2
+hp=100
+str=60
+dexadd=-2
+restock=15
+decay=1
+}
+
+[plate_chest]
+{
+get=base_item
+name=platemail
+id=0x1415
+value=273,136
+weight=1000
+layer=0x0d
+def=14
+hp=100
+str=60
+dexadd=-8
+restock=15
+decay=1
+}
+
+[leather_sleeves]
+{ left facing
+get=base_item
+name=leather sleeves
+id=0x13c5
+weight=200
+value=80,40
+layer=0x13
+def=2
+hp=37
+str=10
+restock=15
+decay=1
+}
+
+[leather_gloves]
+{ left facing
+get=base_item
+name=leather gloves
+id=0x13c6
+weight=100
+value=60,30
+layer=0x07
+def=1
+hp=20
+str=10
+decay=1
+}
+
+[leather_gorget]
+{ left facing
+get=base_item
+name=leather gorget
+id=0x13c7
+weight=100
+value=74,37
+layer=0x0a
+def=1
+hp=40
+str=10
+restock=15
+decay=1
+}
+
+[leather_leggings]
+{ facing left
+get=base_item
+name=leather leggings
+id=0x13cb
+weight=400
+value=80,40
+layer=0x04
+def=3
+hp=30
+str=10
+restock=15
+decay=1
+}
+
+[leather_tunic]
+{ left facing
+get=base_item
+name=leather tunic
+id=0x13cc
+weight=600
+value=101,52
+layer=0x0d
+def=4
+hp=40
+str=15
+decay=1
+}
+
+// Female
+
+[leather_shorts]
+{ left facing - Female
+get=base_item
+name=leather shorts
+id=0x1c00
+weight=300
+value=86,43
+layer=0x04
+def=2
+hp=30
+str=10
+restock=15
+decay=1
+}
+
+[leather_armor]
+{ left facing - Female
+get=base_item
+name=leather armor
+id=0x1c06
+weight=200
+value=116,58
+layer=0x0d
+def=6
+hp=30
+str=15
+restock=15
+decay=1
+}
+
+[leather_skirt]
+{ left facing - Female
+get=base_item
+name=leather skirt
+id=0x1c08
+weight=200
+value=87,43
+layer=0x04
+def=2
+hp=30
+str=15
+restock=15
+decay=1
+}
+
+[leather_bustier]
+{ left facing - Female
+get=base_item
+name=leather bustier
+id=0x1c0a
+weight=300
+value=97,48
+layer=0x0d
+def=6
+hp=10
+str=15
+restock=15
+decay=1
+}
+
+//Studded Leather Armor
+
+[studded_sleeves]
+{ Left Facing
+get=base_item
+name=studded sleeves
+id=0x13d5
+weight=20
+value=87,43
+layer=0x13
+good=3
+def=2
+hp=44
+str=25
+restock=15
+decay=1
+}
+
+[studded_gloves]
+{ Left Facing
+get=base_item
+name=studded gloves
+id=0x13d5
+weight=15
+value=73,36
+layer=0x07
+good=3
+def=1
+hp=44
+str=25
+restock=15
+decay=1
+}
+
+[studded_gorget]
+{ Left Facing
+get=base_item
+name=studded gorget
+id=0x13d6
+weight=10
+value=73,36
+layer=0x0a
+good=3
+def=2
+hp=44
+str=25
+restock=15
+decay=1
+}
+
+[studded_leggings]
+{ left facing
+get=base_item
+name=studded leggings
+id=0x13da
+weight=30
+value=103,51
+layer=0x04
+good=3
+def=3
+hp=44
+str=25
+restock=15
+decay=1
+}
+
+[studded_tunic]
+{ left facing
+get=base_item
+name=studded tunic
+id=0x13db
+weight=50
+value=128,74
+layer=0x0d
+good=3
+def=8
+hp=44
+str=30
+restock=15
+decay=1
+}
+
+[studded_armor]
+{ left facing - Female
+get=base_item
+name=studded armor
+id=0x1c02
+weight=20
+value=142,71
+layer=0x05
+good=3
+def=7
+hp=40
+str=30
+restock=15
+decay=1
+}
+
+[studded_bustier]
+{ left facing - Female
+get=base_item
+name=studded bustier
+id=0x1c0c
+weight=25
+value=120,60
+layer=0x05
+good=3
+def=7
+hp=25
+str=25
+restock=15
+decay=1
+}
+
+// Bone Armor
+
+[bone_arms]
+{ left facing
+get=base_item
+name=bone arms
+id=0x144e
+weight=200
+value=100,50
+layer=0x13
+def=4
+hp=30
+str=55
+decay=1
+}
+
+[bone_armor]
+{ left facing
+get=base_item
+name=bone armor
+id=0x144f
+weight=500
+value=100,50
+layer=0x0d
+def=13
+hp=30
+str=60
+decay=1
+}
+
+[bone_gloves]
+{ left facing
+get=base_item
+name=bone gloves
+id=0x1450
+weight=200
+value=100,50
+layer=0x07
+def=2
+hp=30
+str=55
+decay=1
+}
+
+[bone_helmet]
+{ left facing
+get=base_item
+name=bone helmet
+id=0x1451
+weight=300
+value=100,50
+layer=0x06
+def=4
+hp=30
+str=20
+decay=1
+}
+
+[bone_leggings]
+{ left facing
+get=base_item
+name=bone leggings
+id=0x1452
+weight=300
+value=100,50
+layer=0x04
+def=4
+hp=30
+str=55
+decay=1
+}
+
+// Helmets
+
+[close_helmet]
+{
+get=base_item
+name=close helmet
+id=0x1408
+value=145,72
+weight=500
+layer=0x06
+def=4
+hp=58
+str=40
+restock=15
+decay=1
+}
+
+[helmet]
+{
+get=base_item
+name=helmet
+id=0x140a
+value=116,58
+weight=500
+layer=0x06
+def=4
+hp=58
+str=40
+restock=15
+decay=1
+}
+
+[bascinet]
+{
+get=base_item
+name=bascinet
+id=0x140c
+value=127,46
+weight=500
+layer=0x06
+def=2
+hp=115
+str=10
+restock=15
+decay=1
+}
+
+[nose_helm]
+{
+get=base_item
+name=nose helm
+id=0x140e
+value=145,72
+weight=500
+layer=0x06
+def=4
+hp=58
+str=40
+restock=15
+decay=1
+}
+
+[plate_helm]
+{
+get=base_item
+name=plate helm
+id=0x1412
+value=170,85
+weight=500
+layer=0x06
+def=5
+hp=58
+str=60
+dexadd=-1
+restock=15
+decay=1
+}
+
+// Shields
+
+[bronze_shield]
+{
+get=base_item
+name=bronze shield
+id=0x1b72
+value=91,45
+weight=600
+layer=0x02
+def=8
+hp=30
+str=30
+restock=10
+decay=1
+}
+
+[buckler]
+{
+get=base_item
+name=buckler
+id=0x1b73
+value=66,33
+weight=500
+layer=0x02
+def=1
+hp=50
+str=10
+restock=10
+decay=1
+}
+
+[metal_kite_shield]
+{
+get=base_item
+name=metal kite shield
+id=0x1b74
+value=135,67
+weight=700
+layer=0x02
+def=6
+hp=60
+str=40
+restock=10
+dyeable=1
+decay=1
+}
+
+[heater_shield]
+{
+get=base_item
+name=heater shield
+id=0x1b76
+value=175,87
+weight=800
+layer=0x02
+def=7
+hp=65
+str=60
+restock=10
+decay=1
+}
+
+[metal_shield]
+{
+get=base_item
+name=metal shield
+id=0x1b7b
+value=98,49
+weight=600
+layer=0x02
+def=4
+hp=65
+str=30
+restock=10
+decay=1
+}
+
+[order_shield]
+{ Order Shield
+get=base_item
+name=order shield
+id=0x1bc4
+value=200,100
+weight=80
+layer=0x02
+def=12
+hp=125
+str=95
+decay=1
+}
+
+[chaos_shield]
+{ Chaos Shield
+get=base_item
+name=chaos shield
+id=0x1bc3
+value=200,100
+weight=80
+layer=0x02
+def=12
+hp=125
+str=95
+decay=1
+}
+
+EOF

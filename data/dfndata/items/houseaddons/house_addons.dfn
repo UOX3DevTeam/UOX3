@@ -1,0 +1,413 @@
+// skillitems.dfn
+// v1.0; 12/01/02; creation of file, mainly as a result of the messy add menu problems; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// v1.1; 03/02/02; added tinkering tools, bug fixes; Chris Bailey/[TBA]Cav; tbacavalier@bigpond.com
+// (add new version comments here, use format of above line please!)
+// For use with the UOX3 emulator or any with permission from the author
+//***************************************************************************
+
+// This file contains:
+// Any skill related items that happened to be forgotten
+
+// Cooking
+
+[0x1883]
+{ E
+get=base_item
+name=millstone
+id=0x1883
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1884]
+{ E
+get=base_item
+name=millstone
+id=0x1884
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1885]
+{ S
+get=base_item
+name=millstone
+id=0x1885
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1886]
+{ E
+get=base_item
+name=millstone
+id=0x1886
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1887]
+{ S
+get=base_item
+name=millstone
+id=0x1887
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1888]
+{ E
+get=base_item
+name=millstone
+id=0x1888
+weight=5000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1889]
+{ S
+get=base_item
+name=millstones
+id=0x1889
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x188a]
+{ E
+get=base_item
+name=millstones
+id=0x188a
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1920]
+{ E empty 1/2
+get=base_item
+name=flour mill
+id=0x1920
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1922]
+{ E empty 2/2
+get=base_item
+name=flour mill
+id=0x1922
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1921]
+{ E full 1/2
+get=base_item
+name=flour mill
+id=0x1921
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1925]
+{ E half full 1/2
+get=base_item
+name=flour mill
+id=0x1925
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1923]
+{ E full 2/2
+get=base_item
+name=flour mill
+id=0x1923
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1926]
+{ E full turning 2/2
+get=base_item
+name=flour mill
+id=0x1926
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1924]
+{ E
+get=base_item
+name=crank
+id=0x1924
+weight=1000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1928]
+{ E turning
+get=base_item
+name=crank
+id=0x1928
+weight=1000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x192c]
+{ S empty 1/2
+get=base_item
+name=flour mill
+id=0x192c
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x192e]
+{ S empty 2/2
+get=base_item
+name=flour mill
+id=0x192e
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x192d]
+{ S full 1/2
+get=base_item
+name=flour mill
+id=0x192d
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1931]
+{ S half full 1/2
+get=base_item
+name=flour mill
+id=0x1931
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x192f]
+{ S full 2/2
+get=base_item
+name=flour mill
+id=0x192f
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1932]
+{ S full turning 2/2
+get=base_item
+name=flour mill
+id=0x1932
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1930]
+{ S
+get=base_item
+name=crank
+id=0x1930
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1934]
+{ S turning
+get=base_item
+name=crank
+id=0x1934
+weight=10000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+// Dummy's / Training
+
+[0x1070]
+{ S
+get=base_item
+name=training dummy
+id=0x1070
+weight=6000
+value=
+movable=1
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1071]
+{ S swinging
+get=base_item
+name=training dummy
+id=0x1071
+weight=6000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1074]
+{ E
+get=base_item
+name=training dummy
+id=0x1074
+weight=6000
+value=
+movable=1
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1075]
+{ E swinging
+get=base_item
+name=training dummy
+id=0x1075
+weight=6000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x100a]
+{ E
+get=base_item
+name=archery butte
+id=0x100a
+weight=8000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x100b]
+{ S
+get=base_item
+name=archery butte
+id=0x100b
+weight=8000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+// misc.
+
+[0x0b41]
+{ E 1/2
+get=base_item
+name=water trough
+id=0x0b41
+weight=1000
+movable=2
+}
+
+[0x0b42]
+{ E 2/2
+get=base_item
+name=water trough
+id=0x0b42
+weight=1000
+movable=2
+}
+
+[0x0b43]
+{ S 1/2
+get=base_item
+name=water trough
+id=0x0b43
+weight=1000
+movable=2
+}
+
+[0x0b44]
+{ S 2/2
+get=base_item
+name=water trough
+id=0x0b44
+weight=1000
+movable=2
+}

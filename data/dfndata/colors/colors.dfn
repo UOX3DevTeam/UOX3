@@ -1,19 +1,10 @@
 //*****************************************************************
-//*                         UOX3 Scripts v.35                     *
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
 //*                                                               *
-//*                   http://www.uoxdev.com/scripts/              *
-//*                                                               *
-//* Last Update : 1/16/2000                                       *
-//* Script : colors.scp                                           *
+//* Last Update : 01/4/2003	                	          *
+//* Script : colors.dfn                                           *
 //*****************************************************************
-//*                        How to use this script                 *
-//*                                                               *
-//* fill in comments instructions here                            *
-//*                                                               *
-//*                                                               *
-//*                                                               *
-//*****************************************************************
-
 
 // red_colors
 [RANDOMCOLOR 1]
@@ -1424,25 +1415,48 @@
 0x0046
 0x0047
 }
-// ICE blue
-[RANDOMCOLOR 26]
+
+
+//Newbie Gear Colors:
+
+// Random Alchemist Robes.
+[RANDOMCOLOR 1]
 {
-0x0480
+0x0641
+0x0642
+0x0643
+0x0644
+0x0645
+0x0646
+0x0647
+0x0648
+0x0649
 }
 
-// vampire hair colours
-[RANDOMCOLOR 27]
+// Random Anatomy Robes.
+[RANDOMCOLOR 2]
 {
-0x0001
-0x0455
-0x0453
-0x0454
+0x0724
+0x0725
+0x0726
+0x0727
+0x0728
+0x0729
+0x072a
+0x072b
+0x072c
 }
 
-// vampire skin colours
-[RANDOMCOLOR 28]
+// Random Tamers/Animal Lore Robes.
+[RANDOMCOLOR 3]
 {
-0x0481
-0x08fd
+0x0594
+0x0595
+0x0596
+0x0597
+0x0598
+0x0599
+0x059a
+0x059b
+0x059c
 }
-

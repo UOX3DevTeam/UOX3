@@ -1,30 +1,65 @@
 //*****************************************************************
-//*                         UOX3 Scripts                          *
+//*                         UOX3 Scripts v0.98                    *
 //*                                                               *
-//*                   http://uox3.sourceforge.net                 *
+//*                   http://www.uox3dev.net	                  *
 //*                                                               *
-//* Last Update : 1/29/2002 - SwamiHajjiJoe                       *
-//* Script : commands.scp                                         *
+//* Last Update : 14/4/2003                                        *
+//* Script : commands.dfn                                         *
 //*****************************************************************
 //*                        How to use this script                 *
 //*                                                               *
 //* In here will be the overrides for the default command table   *
 //* Currently, an entry will look like this:                      *
 //*                                                               *
-//* (Command_Name) (PrivlageLevel)                                *
+//* (Command_Name) (Privilege-Level)                              *
 //*                                                               *
-//* (PrivlageLevel) is 0 for player, 1 for counselor, 2 for GM    *
-//*                                                               *
+//* (Privilege-Level) is 0 for player, 1 for counselor, 2 for GM  *
+//* Custom levels are also possible, if you want various degrees  *
+//* of access for different GMs                                   *
 //* Example :                                                     *
 //* RESEND 1  // the RESEND command can                           *
 //*           // be used by counselors and above                  *
 //*                                                               *
 //*****************************************************************
 
+[COMMANDLEVELS]
+{
+ADMIN=5
+GM=2
+CNS=1
+PLAYER=0
+}
+
+[GM]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex)
+DEFAULTPRIV=0xff	// default privs assigned (hex)
+BODYID=0x03DB		// default body ID assigned
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x0000	// colour of body person turns
+}
+
+[CNS]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex)
+DEFAULTPRIV=0x80	// default privs assigned (hex)
+BODYID=0x03DB		// default body ID assigned
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x8002	// colour of body person turns
+}
+
+[PLAYER]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex)
+DEFAULTPRIV=0x0000	// default privs assigned (hex)
+BODYID=0x0190		// default body ID assigned
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x0000	// colour of body person turns
+}
+
 [COMMAND_OVERRIDE]
 {
 //Players
-USE=			0
 WHO=			0
 //Counselors
 BUY=                    1
@@ -42,6 +77,7 @@ GOPLACE=		1
 GOTOCUR=		1
 HEAL=			1
 HIDE=                   1
+HOWTO=			1
 JAIL=			1
 MARK=			1
 NEXT=			1
@@ -82,7 +118,6 @@ CACHESTATS=		2
 CLEANUP=		2
 COMMAND=		2
 CSTATS=			2
-CTRIG=			2
 DARKLIGHT=		2
 DECAY=			2
 DISCONNECT=		2
@@ -106,7 +141,6 @@ INCY=			2
 INVUL=			2
 ISTATS=			2
 ITEMMENU=		2
-ITRIG=			2
 IWIPE=			2
 KICK=			2
 KILL=			2
@@ -155,7 +189,6 @@ SETADVOBJ=		2
 SETAMOUNT=		2
 SETDIR=			2
 SETFONT=		2
-SETHEXMOREXYZ=		2
 SETID=			2
 SETMORE=		2
 SETMOREX=		2
@@ -173,7 +206,6 @@ SETRESTOCK=		2
 SETSHOPRESTOCKRATE=	2
 SETSPADELAY=		2
 SETSPATTACK=		2
-SETSPEECH=		2
 SETTIME=		2
 SETTYPE=		2
 SETVALUE=		2
@@ -191,12 +223,10 @@ SQUELCH=		2
 STAMINA=		2
 TELL=			2
 TILE=			2
-TILEDATA=		2
 TILEW=			2
 TIME=			2
 TITLE=			2
 TRAINER=		2
-TTRIG=			2
 TWEAK=			2
 UNFREEZE=		2
 UNGLOW=			2
@@ -204,10 +234,8 @@ WF=			2
 WIPE=			2
 WIPENPCS=		2
 XBANK=			2
-XSBANK=  		2
 ZEROKILLS=		2
 }
-
 
 EOF
 
