@@ -28,11 +28,23 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 
+-------------------------------------------------------------------------------
+>>> SYNCHRONOUS  0.70.03.21c                         Corrêa 
+-------------------------------------------------------------------------------
+05.02.2001               Thiago A. Corrêa
+  uox3.cpp               When a summoned creature dies, the corpse is dispeled.
+                         GMs can cast Teleport and target anywhere they please.
+                         Fixed talking bug introduced a few commits ago.
+                         Added Punt (Charles Kerr) fix to client 2.0.7.
+                         I forgot to include the mount stuff in last patch,
+                         included here.
+  walking.cpp            Just changed -128 by the apropriate constant illegal_z
+
+-------------------------------------------------------------------------------
 04.02.2001               Charles kerr               Axel
 
 uox3.cpp                 Corrected unicode talking, to be compatible with
                          latest client change.
-
 -------------------------------------------------------------------------------
 03.02.2001               Thiago A. Corrêa
 

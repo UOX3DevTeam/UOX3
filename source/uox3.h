@@ -25,9 +25,32 @@
 //------------------------------------------------------------------------
 #ifndef __UOX3_H
 #define __UOX3_H
+
+//---------------------------------------------------------------------------------------------
+// FIXMEs / TODOs / NOTE macros
+//---------------------------------------------------------------------------------------------
+#define _QUOTE(x) # x
+#define QUOTE(x) _QUOTE(x)
+#define __FILE__LINE__ __FILE__ "(" QUOTE(__LINE__) ") : "
+
+#define NOTE( x )  message( x )
+#define FILE_LINE  message( __FILE__LINE__ )
+
+#define TODO( x )  message( __FILE__LINE__"\n"           \
+        "+------------------------------------------------\n" \
+        "|  TODO :   " #x "\n" \
+        "+-------------------------------------------------\n" )
+#define FIXME( x )  message(  __FILE__LINE__"\n"           \
+        "+------------------------------------------------\n" \
+        "|  FIXME :  " #x "\n" \
+        "+-------------------------------------------------\n" )
+#define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" ) 
+#define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" ) 
+#define note( x )  message( __FILE__LINE__" NOTE :   " #x "\n" ) 
+
 // product info
 #define VER " 0.70.03"
-#define BUILD "21a"
+#define BUILD "21c"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"
@@ -77,10 +100,12 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
   int max;
   int *pointer;
 };
+#if defined( __LINUX__ ) || defined( __MINGW32__ )
+	#define __cdecl
+#endif
 #ifdef __LINUX__
 	#define XP_UNIX
 	typedef unsigned char BYTE;
-	#define __cdecl
 #else
 	#define XP_PC
 #endif
@@ -615,7 +640,7 @@ int calcLastContainerFromSer( int ser ); // Magius(che) (2)
 int checkBoundingBox(int xPos, int yPos, int fx1, int fy1, int fz1, int fx2, int fy2);
 int checkBoundingCircle(int xPos, int yPos, int fx1, int fy1, int fz1, int radius);
 void updatechar(int c);
-int unmounthorse(int s);
+int unmounthorse(UOXSOCKET s);
 void swordtarget(int s);
 void telltime( UOXSOCKET s );
 void visibletarget(int s);
@@ -696,7 +721,7 @@ void staminatarget(int s);
 void makeshoptarget(int s);
 void buyshoptarget(int s);
 void choice(int s);
-void mounthorse(int s, int x);
+void mounthorse(UOXSOCKET s, int x);
 void openbook(int s, int i);
 char *title1(CHARACTER p);
 char *title2(CHARACTER p);

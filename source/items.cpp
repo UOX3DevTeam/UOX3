@@ -30,9 +30,6 @@
 #include "uox3.h"
 #include "debug.h"
 
-#ifdef UOXPERL
-#include "uoxperl/uoxperl.h"
-#endif
 
 #define DBGFILE "items.cpp"
 
@@ -677,9 +674,6 @@ int cItem::CreateScriptItem(int s, int itemnum, int nSpawned)
 				if (!(strcmp("POISONED",script1))) items[c].poisoned=str2num(script2);
 				else if (!(strcmp(script1, "PILEABLE"))) items[c].pileable=str2num(script2); 
 				else if (!(strcmp(script1, "PRIV"))) items[c].priv=str2num(script2); 
-#ifdef UOXPERL
-				else if (!(strcmp("PERLINIT",script1))) strcpy(items[c].perl_init, script2);
-#endif
 				break;
 			case 'r':
 			case 'R':
@@ -1087,9 +1081,6 @@ void cItem::GetScriptItemSetting(int c)
 				case 'p':
 				case 'P':
 					if (!(strcmp("POISONED",script1))) items[c].poisoned=str2num(script2);
-#ifdef UOXPERL
-					else if (!(strcmp("PERLINIT",script1))) strcpy(items[c].perl_init, script2);
-#endif
 					else if (!(strcmp(script1, "PILEABLE"))) items[c].pileable=str2num(script2); 
 					else if (!(strcmp(script1, "PRIV"))) items[c].priv=str2num(script2); 
 					break;

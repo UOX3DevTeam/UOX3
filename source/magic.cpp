@@ -2710,12 +2710,12 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						}
 						tile_st tile;
 						Map->SeekTile(((buffer[s][0x11]<<8)+buffer[s][0x12]), &tile);
-						if( (!strcmp((char *)tile.name, "water")) || (tile.flag1&0x80) )
+						if( !chars[currchar[s]].priv&0x01 && (!strcmp((char *)tile.name, "water")) || (tile.flag1&0x80) )
 						{
 							sysmessage(s,"Give up wannabe Jesus !");
 							return;
 						}						
-						if( (tile.flag4&0x10) == 0x10 || (tile.flag1&0x40) == 0x40 ) // slanted roof tile!!! naughty naught
+						if( !chars[currchar[s]].priv&0x01 && (tile.flag4&0x10) == 0x10 || (tile.flag1&0x40) == 0x40 ) // slanted roof tile!!! naughty naught
 						{
 							sysmessage( s, "You cannot teleport there" );
 							return;

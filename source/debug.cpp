@@ -25,11 +25,12 @@
 //------------------------------------------------------------------------
 //Adapted by TANiS - Thanks to Armageddon for the original code.
 
-#include "debug.h"
-
-#ifdef __LINUX__
+#if defined( __LINUX__ ) || defined( __MINGW32__ )
 	#define __cdecl
 #endif
+
+#include "debug.h"
+
 /********************************************************
  *                                                      *
  *  Function to be called when a string is ready to be  *

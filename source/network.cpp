@@ -213,10 +213,16 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 	int j;
 	
 	setLastOn( s );
-	if( xgm && xGM[s]->isClient )
+	if( xgm  )
 	{
-		printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
-		xGM[s]->isClient = 0;
+		if ( xGM[s]->isClient )
+		{
+		
+			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
+			xGM[s]->isClient = 0;
+		} else
+			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
+
 	} else
 		printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
 
@@ -322,6 +328,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 				acctcount++;
 			} else {
 				xSend(s, acctused, 2, 0);
+				Disconnect( s );    //Should kick them once it fails
 				return;
 			}
 			t=0;

@@ -34,9 +34,6 @@
 typedef void *HANDLE;
 #endif
 
-#ifdef UOXPERL
-#include "uoxperl/uoxperl.h"
-#endif
 
 #include "uox3.h"
 #include "cmdtable.h"
@@ -478,80 +475,74 @@ void read2( FILE *toRead ) // Read line from script
 	return;
 }
 
-int inrange1 (UOXSOCKET a, UOXSOCKET b) // Are players from sockets a and b in visual range (Obsolete)
+
+int inrange1( UOXSOCKET a, UOXSOCKET b ) // Are players from sockets a and b in visual range (Obsolete)
 {
-	int dx, dy;
-	if (a == b) return 1;        //If a == b they are not in range? Changed to c = 1
-
-	dx = abs(chars[currchar[a]].x - chars[currchar[b]].x);
-	dy = abs(chars[currchar[a]].y - chars[currchar[b]].y);
-	if ( dx > Races->getVisRange( chars[currchar[a]].race ) ||
-	     dy > Races->getVisRange( chars[currchar[a]].race ) ) return 0;
-	else 
+	if( a == b )
 		return 1;
-}
-int inrange1p (CHARACTER a, CHARACTER b) // Are characters a and b in visual range
-{
-
-	int dx, dy;
-	
-	if ( a < 0 || a > cmem || b < 0 || b > cmem) return 0; //LB
-
-	if ( a == b ) return 1; // AntiChrist
-
-	dx = abs(chars[a].x - chars[b].x);
-	dy = abs(chars[a].y - chars[b].y);
-	if ( dx > Races->getVisRange( chars[a].race ) ||
-	     dy > Races->getVisRange( chars[a].race ) ) return 0;
-	else 
-		return 1;
+	short range = Races->getVisRange( chars[currchar[a]].race );
+	short dx = abs( chars[currchar[a]].x - chars[currchar[b]].x );
+	if( dx > range )
+		return 0;
+	short dy = abs( chars[currchar[a]].y - chars[currchar[b]].y );
+	if( dy > range )
+		return 0;
+	return 1;
 }
 
-
-unsigned int chardist (CHARACTER a, CHARACTER b) // Distance between characters a and b
+int inrange1p( CHARACTER a, CHARACTER b ) // Are characters a and b in visual range
 {
-	if (a == -1 || b == -1) 
+	if( a < 0 || a > cmem || b < 0 || b > cmem )
+		return 0;
+	if( a == b )
+		return 1;
+	short range = Races->getVisRange( chars[a].race );
+	short dx = abs( chars[a].x - chars[b].x );
+	if( dx > range )
+		return 0;
+	short dy = abs( chars[a].y - chars[b].y );
+	if( dy > range )
+		return 0;
+	return 1;
+}
+
+unsigned int chardist( CHARACTER a, CHARACTER b ) // Distance between characters a and b
+{
+	if( a == -1 || b == -1 ) 
 		return 30;
-
-	int c = 1;
-	int dx, dy;
-
-	dx = abs(chars[a].x - chars[b].x);
-	dy = abs(chars[a].y - chars[b].y);
-	c = (int) (hypot(dx, dy));   //hypot is present in win32 as well as in Unix.
-	return c;
+	short dx = abs( chars[a].x - chars[b].x );
+	short dy = abs( chars[a].y - chars[b].y );
+	return (unsigned int)(hypot( dx, dy ));
 }
 
 // calculates distance between item i and player a
 unsigned int itemdist( CHARACTER a, int i )
 {
-	if( a == -1 || i == -1 )
+	if( a == -1 || i == -1 ) 
 		return 30;
-
-	int c = 1;
-	int dx, dy;
-
-	dx = abs( chars[a].x - items[i].x );
-	dy = abs( chars[a].y - items[i].y );
-	c = (int) (hypot( dx, dy ));   //hypot is present in win32 as well as in Unix
-	return c;
+	short dx = abs( chars[a].x - items[i].x );
+	short dy = abs( chars[a].y - items[i].y );
+	return (unsigned int)(hypot( dx, dy ));
 }
+
 
 int inrange2 (UOXSOCKET s, ITEM i) // Is item i in visual range for player on socket s
 {
-	int c=1;
-	int dx, dy;
-	int vr = Races->getVisRange( chars[currchar[s]].race );
-	
-    if ((items[i].id1==0x40)&&(items[i].id2>=0x7C)&&(items[i].id2<=0x7F)) vr = BUILDRANGE;
-  
-	dx = abs(chars[currchar[s]].x - items[i].x);
-	dy = abs(chars[currchar[s]].y - items[i].y);
-	if (dx > vr || dy > vr)
+	if( s > now || i < 0 || i > imem )
 		return 0;
-	else
-		return 1;
+	short vr = Races->getVisRange( chars[currchar[s]].race );
+	if( items[i].id1 >= 0x40 )	// High ID is 0x40 or above, which is reserved for multis
+		vr = BUILDRANGE;
+
+	short dx = abs( chars[currchar[s]].x - items[i].x );
+	if( dx > vr )
+		return 0;
+	short dy = abs( chars[currchar[s]].y - items[i].y );
+	if( dy > vr )
+		return 0;
+	return 1;
 }
+
 
 
 // safely copy a string that might be longer than the destination, truncating if needed,
@@ -677,17 +668,28 @@ char *title1(CHARACTER p) // Paperdoll title for character p (1)
 	int titlenum = 0;
     int x = chars[p].baseskill[bestskill(p)];
 
-	//Not sure if it worst changing to else..if structure.
-	if (x>=300) titlenum=1;
-	if (x>=410) titlenum=2;
-	if (x>=510) titlenum=3;
-	if (x>=610) titlenum=4;
-	if (x>=720) titlenum=5;
-	if (x>=770) titlenum=6;
-	if (x>=820) titlenum=7;
-	if (x>=920) titlenum=8;
-	if (x>=960) titlenum=9;
-	if (x>=1000) titlenum=10;
+	if( x >= 1000 )
+		titlenum = 10;
+	else if( x >= 960 )
+		titlenum = 9;
+	else if( x >= 920 ) 
+		titlenum = 8;
+	else if( x >= 820 ) 
+		titlenum = 7;
+	else if( x >= 770 ) 
+		titlenum = 6;
+	else if( x >= 720 ) 
+		titlenum = 5;
+	else if( x >= 610 ) 
+		titlenum = 4;
+	else if( x >= 510 ) 
+		titlenum = 3;
+	else if( x >= 410 ) 
+		titlenum = 2;
+	else if( x >= 300 ) 
+		titlenum = 1;
+	else
+		titlenum = 0;
 	
 	strcpy(prowesstitle, title[titlenum].prowess);
 	return prowesstitle;
@@ -695,128 +697,177 @@ char *title1(CHARACTER p) // Paperdoll title for character p (1)
 
 char *title2(CHARACTER p) // Paperdoll title for character p (2)
 {
-	int titlenum=0;
-	int x=bestskill(p);
-	titlenum=x+1;
+	int titlenum = 0;
+	int x = bestskill( p );
+	titlenum = x+1;
 	strcpy(skilltitle, title[titlenum].skill);
 	return skilltitle;
 }
 
-char *title3(CHARACTER p) // Paperdoll title for character p (3)
+char *title3( CHARACTER p ) // Paperdoll title for character p (3)
 {
 	char thetitle[50];
 	int titlenum=0;
 	int k;
 	unsigned int f;
 	
-    k=chars[p].karma;
-	f=chars[p].fame;
-	thetitle[0] = 0; //Initialize with empty string.
+	k = chars[p].karma;
+	f = chars[p].fame;
+	thetitle[0] = 0;
 	
-	if (k>=10000)
+	if( k >= 10000 )
 	{
-		titlenum=3;
-		if (f>=1250) titlenum=2;
-		if (f>=2500) titlenum=1;
-		if (f>=5000) titlenum=0;
+		if( f >= 5000 )
+			titlenum = 0;
+		else if( f >= 2500 )
+			titlenum = 1;
+		else if( f >= 1250 )
+			titlenum = 2;
+		else
+			titlenum = 3;
 	}
-	else if ((5000<=k)&&(k<9999))
+	else if( k >= 5000 && k < 9999 )
 	{
-		titlenum=7;
-		if (f>=1250) titlenum=6;
-		if (f>=2500) titlenum=5;
-		if (f>=5000) titlenum=4;
+		if( f >= 5000 ) 
+			titlenum = 4;
+		else if( f >= 2500 ) 
+			titlenum = 5;
+		else if( f >= 1250 ) 
+			titlenum = 6;
+		else
+			titlenum = 7;
 	}
-	else if ((2500<=k)&&(k<5000))
+	else if( k >= 2500 && k < 5000 )
 	{
-		titlenum=11;
-		if (f>=1250) titlenum=10;
-		if (f>=2500) titlenum=9;
-		if (f>=5000) titlenum=8;
+		if( f >= 5000 ) 
+			titlenum = 8;
+		else if( f >= 2500 ) 
+			titlenum = 9;
+		else if( f >= 1250 ) 
+			titlenum = 10;
+		else
+			titlenum = 11;
 	}
-	else if ((1250<=k)&&(k<2500))
+	else if( k >= 1250 && k < 2500 )
 	{
-		titlenum=15;
-		if (f>=1250) titlenum=14;
-		if (f>=2500) titlenum=13;
-		if (f>=5000) titlenum=12;
+		if( f >= 5000 ) 
+			titlenum = 12;
+		else if( f >= 2500 ) 
+			titlenum = 13;
+		else if( f >= 1250 ) 
+			titlenum = 14;
+		else
+			titlenum = 15;
 	}
-	else if ((625<=k)&&(k<1250))
+	else if( k >= 625 && k < 1250 )
 	{
-		titlenum=19;
-		if (f>=500) titlenum=18;
-		if (f>=1000) titlenum=17;
-		if (f>=5000) titlenum=16;
+		if( f >= 5000 ) 
+			titlenum = 16;
+		else if( f >= 1000 ) 
+			titlenum = 17;
+		else if( f >= 500 )
+			titlenum = 18;
+		else
+			titlenum = 19;
 	}
-	else if ((-625<k)&&(k<625))
+	else if( k > -625 && k < 625 )
 	{
-		titlenum=23;
-		if (f>=1250) titlenum=22;
-		if (f>=2500) titlenum=21;
-		if (f>=5000) titlenum=20;
+		if( f >= 5000 ) 
+			titlenum = 20;
+		else if( f >= 2500 ) 
+			titlenum = 21;
+		else if( f >= 1250 ) 
+			titlenum = 22;
+		else
+			titlenum = 23;
 	}
-	else if ((-1250<k)&&(k<=-625))
+	else if( k > -1250 && k <= -625 )
 	{
-		titlenum=24;
-		if (f>=1250) titlenum=25;
-		if (f>=2500) titlenum=26;
-		if (f>=5000) titlenum=27;
-		if (f>=10000) titlenum=28;
+		if( f >= 10000 ) 
+			titlenum = 28;
+		else if( f >= 5000 ) 
+			titlenum = 27;
+		else if( f >= 2500 ) 
+			titlenum = 26;
+		else if( f >= 1250 ) 
+			titlenum = 25;
+		else
+			titlenum = 24;
 	}
-	else if ((-2500<k)&&(k<=-1250))
+	else if( k > -2500 && k <= -1250 )
 	{
-		titlenum=29;
-		if (f>=1250) titlenum=30;
-		if (f>=2500) titlenum=31;
-		if (f>=5000) titlenum=32;
+		if( f >= 5000 ) 
+			titlenum = 32;
+		else if( f >= 2500 ) 
+			titlenum = 31;
+		else if( f >= 1250 ) 
+			titlenum = 30;
+		else
+			titlenum = 29;
 	}
-	else if ((-5000<k)&&(k<=-2500))
+	else if( k > -5000 && k <= -2500 )
 	{
-		titlenum=33;
-		if (f>=1250) titlenum=34;
-		if (f>=2500) titlenum=35;
-		if (f>=5000) titlenum=36;
-		if (f>=10000) titlenum=37;
+		if( f >= 10000 ) 
+			titlenum = 37;
+		else if( f >= 5000 ) 
+			titlenum = 36;
+		else if( f >= 2500 ) 
+			titlenum = 35;
+		else if( f >= 1250 ) 
+			titlenum = 34;
+		else
+			titlenum = 33;
 	}
-	else if ((-10000<k)&&(k<=-5000))
+	else if( k >-10000 && k <= -5000 )
 	{
-		titlenum=38;
-		if (f>=1250) titlenum=39;
-		if (f>=2500) titlenum=40;
-		if (f>=5000) titlenum=41;
+		if( f >= 5000 ) 
+			titlenum = 41;
+		else if( f >= 2500 ) 
+			titlenum = 40;
+		else if( f >= 1250 ) 
+			titlenum = 39;
+		else
+			titlenum = 38;
 	}
-	else if (k<=-10000)
+	else if( k <= -10000 )
 	{
-		titlenum=42;
-		if (f>=1250) titlenum=43;
-		if (f>=2500) titlenum=44;
-		if (f>=5000) titlenum=45;
+		if( f >= 5000 ) 
+			titlenum = 45;
+		else if( f >= 2500 ) 
+			titlenum = 44;
+		else if( f >= 1250 ) 
+			titlenum = 43;
+		else
+			titlenum = 42;
 	}
-	//	sprintf(thetitle,"%s %s ",title[titlenum].fame, Races->getName( chars[p].race ) );
 	if( chars[p].race != 0 && chars[p].race != 65535 )
 		sprintf( thetitle, "%s %s ", title[titlenum].fame, Races->getName( chars[p].race ) );
 	else
 		sprintf( thetitle, "%s ", title[titlenum].fame );
-	//	if (titlenum==24) *thetitle='\0'; // was sprintf(thetitle,"");
-	
-	if (f>=10000) // Morollans bugfix for repsys
+	if( f >= 10000 ) // Morollans bugfix for repsys
 	{
-		if (chars[p].kills > repsys.maxkills)
+		if( chars[p].kills > repsys.maxkills )
         {
-			if (chars[p].id2==0x91) sprintf(fametitle,"The Murderous %s Lady ", Races->getName( chars[p].race ) );//Morrolan rep
-			else sprintf(fametitle,"The Murderer %s Lord ", Races->getName( chars[p].race ));
+			if( chars[p].id2 == 0x91 ) 
+				sprintf( fametitle, "The Murderous %s Lady ", Races->getName( chars[p].race ) );
+			else 
+				sprintf( fametitle, "The Murderer %s Lord ", Races->getName( chars[p].race ) );
         }
-		else if (chars[p].id2==0x91) sprintf(fametitle,"The %sLady ",thetitle);
-		else sprintf(fametitle,"The %sLord ",thetitle);
+		else if( chars[p].id2 == 0x91 ) 
+			sprintf( fametitle, "The %sLady ", thetitle );
+		else 
+			sprintf( fametitle, "The %sLord ", thetitle );
 	}
 	else
 	{
-		if (chars[p].kills > repsys.maxkills)
+		if( chars[p].kills > repsys.maxkills )
         {
-			strcpy(fametitle,"The Murderer "); //Morrolan rep
+			strcpy( fametitle, "The Murderer " ); //Morrolan rep
         }
-		else if (!(strcmp(thetitle," ")==0)) sprintf(fametitle,"The %s",thetitle);
-		else fametitle[0] = 0;
+		else if( !strcmp( thetitle, " " ) ) 
+			sprintf( fametitle, "The %s", thetitle );
+		else 
+			fametitle[0] = 0;
 	}
 	
 	//
@@ -825,6 +876,7 @@ char *title3(CHARACTER p) // Paperdoll title for character p (3)
 	
 	return fametitle;
 }
+
 void gcollect( void ) // Remove items which were in deleted containers 
 // remarks : Okay LB... I'll just keep re-writing it until someone shuts up.
 {
@@ -1547,9 +1599,6 @@ void loaditem (int x) // Load an item from WSC
 			
 		case 'p':
 		case 'P':
-#ifdef UOXPERL
-			if (!(strcmp(script1, "PERLINIT"))) strcpy(items[x].perl_init, script2);
-#endif
 			if (!(strcmp(script1, "PILEABLE")))  items[x].pileable=str2num(script2); 
 			else if (!(strcmp(script1, "POISONED")))  items[x].poisoned=str2num(script2); 
 			else if (!(strcmp(script1, "PRIV")))  items[x].priv=str2num(script2);
@@ -2187,7 +2236,7 @@ void action( UOXSOCKET s, int x) // Character does a certain action
 	doact[6] = x%256;
 	Network->xSend( s, doact, 14, 0 );
 	for( i = 0; i < now; i++ ) 
-		if( ( perm[i] ) && ( inrange1( s, i ) ) ) 
+		if( perm[i] && inrange1( s, i ) ) 
 			Network->xSend( i, doact, 14, 0 );
 }
 
@@ -3286,11 +3335,12 @@ void teleport(int s) // Teleports character to its current set coordinates
 	
 	for (i=0;i<now;i++) // Send the update to all players.
 	{
-		// Dupois - had to remove the && (k!=i)), doesn update the client
-		// Added Oct 08, 1998
-		if (perm[i]) Network->xSend(i, removeitem, 5, 0);
-		if ((perm[i])&&(inrange1p(s, currchar[i])))// && (k!=i)) // If inrange, and a player
-			impowncreate(i, s, 1);
+		if (perm[i])
+		{
+			Network->xSend(i, removeitem, 5, 0);
+			if ( inrange1p(s, currchar[i]) )
+				impowncreate(i, s, 1);
+		}
 	}
 	if (k!=-1)
 	{
@@ -4781,10 +4831,7 @@ void dump_item(int s) // Item is dropped on ground
 					}
 					else // end of training stuff
 					{
-						//printf("st-\n");
 						j=tradestart(s, t); //trade-stuff
-						//printf("st-2\n");
-//						if (items[i].contserial!=-1) removefromptr(&contsp[items[i].serial%HASHMAX], i);
 						unsetserial( i, 1 );
 						setserial(i, j, 1);
 						items[i].x=30;
@@ -4799,7 +4846,6 @@ void dump_item(int s) // Item is dropped on ground
 							if (perm[k])
 							{
 								Network->xSend(k, removeitem, 5, 0);
-								//								sendbpitem(k, i);
 							}
 							RefreshItem( i ); // AntiChrist
 						}
@@ -4929,7 +4975,8 @@ void pack_item(int s) // Item is put into container
 	int j, k, z, serial, serhash;
 	tile_st tile;
 	char bufftemp[50];
-	strcpy(bufftemp, (char *)buffer[s]);
+	strncpy(bufftemp, (char *)buffer[s], 49);
+	bufftemp[50] = 0;
 	
 	serial=calcserial(buffer[s][10],buffer[s][11],buffer[s][12],buffer[s][13]);
 	serhash=serial%HASHMAX;
@@ -4941,7 +4988,6 @@ void pack_item(int s) // Item is put into container
 	
 	if (nCont==-1)
 	{
-		//		for (j=0;j<now;j++) if (perm[j]) senditem(j, nCont);
 		RefreshItem( nCont ); // AntiChrist
 		return;
 	} 
@@ -5424,10 +5470,9 @@ int validbeard(int a, int b) // Is selected beard type valid
 void charcreate(int s) // All the character creation stuff
 {
 	int i,n;
-	int randbuf;
-	//unsigned short int tempskill;
 	int totalstats,totalskills;
 	unsigned int c;
+
 	c = Npcs->MemCharFree ();
 	
 	Npcs->InitChar( c );
@@ -5435,6 +5480,7 @@ void charcreate(int s) // All the character creation stuff
 	
 	for (i=0;i<=strlen((char *)&buffer[s][10]);i++) 
 		chars[c].name[i]=buffer[s][10+i];
+
 	chars[c].account = acctno[s];
 	if( buffer[s][0x46] != 0x00 )
 	{
@@ -5550,9 +5596,11 @@ void charcreate(int s) // All the character creation stuff
 	}
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0);
 	if( n == -1 ) return;
-	randbuf=rand()%2;
-	if (randbuf==0)
+
+
+	switch(rand()%2)
 	{
+	case 0:
 		if( ( chars[c].id2== 0x90 ) && ( chars[c].xid2 == 0x90 ) )
 		{
 			items[n].id1=0x15;
@@ -5565,9 +5613,9 @@ void charcreate(int s) // All the character creation stuff
 			items[n].id2=0x16;
 			items[n].layer=23; // skirt
 		}
-	}
-	if (randbuf==1)
-	{
+
+		break;
+	case 1:
 		if( ( chars[c].id2 == 0x90 ) && ( chars[c].xid2 == 0x90 ) )
 		{
 			items[n].id1=0x15;
@@ -5580,41 +5628,10 @@ void charcreate(int s) // All the character creation stuff
 			items[n].id2=0x37;
 			items[n].layer=23;
 		}
+		break;
 	}
+
 	// pant/skirt color -> old client code, random colour
-#if CLIENTVERSION_M==25
-	randbuf=rand()%6;
-	if (randbuf==0)
-	{
-		items[n].color1=0x02;
-		items[n].color2=0x84;
-	}
-	if (randbuf==1)
-	{
-		items[n].color1=0x02;
-		items[n].color2=0x1F;
-	}
-	if (randbuf==2)
-	{
-		items[n].color1=0x03;
-		items[n].color2=0xC3;
-	}
-	if (randbuf==3)
-	{
-		items[n].color1=0x03;
-		items[n].color2=0xD9;
-	}
-	if (randbuf==4)
-	{
-		items[n].color1=0x02;
-		items[n].color2=0xE8;
-	}
-	if (randbuf==5)
-	{
-		items[n].color1=0x02;
-		items[n].color2=0xD1;
-	}
-#endif
 #if CLIENTVERSION_M==26
 	items[n].color1 = buffer[s][102];
 	items[n].color2 = buffer[s][103];
@@ -5625,46 +5642,19 @@ void charcreate(int s) // All the character creation stuff
 	
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0); // spawn pants
 	if( n == -1 ) return;
-	
-	randbuf=rand()%2;
-	if (randbuf==0)
+
+	switch(rand()%2)
 	{
+	case 0:
 		items[n].id1=0x1E;
 		items[n].id2=0xFD;
-	}
-	if (randbuf==1)
-	{
+		break;
+	case 1:
 		items[n].id1=0x15;
 		items[n].id2=0x17;
+		break;
 	}
-#if CLIENTVERSION_M==25
-	randbuf=rand()%5;
-	if (randbuf==0)
-	{
-		items[n].color1=0x01;
-		items[n].color2=0x34;
-	}
-	if (randbuf==1)
-	{
-		items[n].color1=0x00;
-		items[n].color2=0x28;
-	}
-	if (randbuf==2)
-	{
-		items[n].color1=0x00;
-		items[n].color2=0x35;
-	}
-	if (randbuf==3)
-	{
-		items[n].color1=0x01;
-		items[n].color2=0xCA;
-	}
-	if (randbuf==4)
-	{
-		items[n].color1=0x02;
-		items[n].color2=0x1A;
-	}
-#endif
+
 #if CLIENTVERSION_M==26
 	items[n].color1 = buffer[s][100];
 	items[n].color2 = buffer[s][101];
@@ -5690,42 +5680,39 @@ void charcreate(int s) // All the character creation stuff
 #ifdef SPECIAL
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0);
 	if( n == -1 ) return;
-	randbuf=rand()%7;
-	if (randbuf==0)
+
+	switch(rand()%7)
 	{
+	case 0:
 		items[n].id1=0x15;
 		items[n].id2=0x4b;
-	}
-	if (randbuf==1)
-	{
+		break;
+	case 1:
 		items[n].id1=0x15;
 		items[n].id2=0x45;
-	}
-	if (randbuf==2)
-	{
+		break;
+	case 2:
 		items[n].id1=0x15;
 		items[n].id2=0x47;
-	}
-	if (randbuf==3)
-	{
+		break;
+	case 3:
 		items[n].id1=0x15;
 		items[n].id2=0x49;
-	}
-	if (randbuf==4)
-	{
+		break;
+	case 4:
 		items[n].id1=0x17;
 		items[n].id2=0x1c;
-	}
-	if (randbuf==5)
-	{
+		break;
+	case 5:
 		items[n].id1=0x1f;
 		items[n].id2=0x0b;
-	}
-	if (randbuf==6)
-	{
+		break;
+	case 6:
 		items[n].id1=0x14;
 		items[n].id2=0x51;
+		break;
 	}
+
 	setserial(n, c, 4);
 	items[n].layer=0x06;
 #endif
@@ -5733,7 +5720,6 @@ void charcreate(int s) // All the character creation stuff
 	// Give the character some gold
 	n = Items->SpawnItem(s, c, goldamount,"#",1,0x0E,0xED,0,0,1,0);
 	if( n == -1 ) return;
-//	setserial(n, packitem(c), 1);	// already done by spawn item!
 	items[n].layer=0x01;
 	items[n].att=5;
 	
@@ -5842,7 +5828,7 @@ int validtelepos(int s)
 	return z;
 }
 
-int unmounthorse(int s) // Get off a horse (Remove horse item and spawn new horse)
+int unmounthorse(UOXSOCKET s) // Get off a horse (Remove horse item and spawn new horse)
 {
 	int k,c,ci,serial,serhash;
 	
@@ -5862,14 +5848,34 @@ int unmounthorse(int s) // Get off a horse (Remove horse item and spawn new hors
 			chars[c].id1=0x00;
 			
 			// krazyglue 12 October, 1999 - if, if, if... is now if, else if, else if...
-			if (items[ci].id2==0x9F) chars[c].id2=0xC8;
-			else if (items[ci].id2==0xA0) chars[c].id2=0xE2;
-			else if (items[ci].id2==0xA1) chars[c].id2=0xE4;
-			else if (items[ci].id2==0xA2) chars[c].id2=0xCC;
-			else if (items[ci].id2==0xA3) chars[c].id2=0xD2;//desert
-			else if (items[ci].id2==0xA4) chars[c].id2=0xDA;//Harp
-			else if (items[ci].id2==0xA5) chars[c].id2=0xDB;//Another
-			else if (items[ci].id2==0xA6) chars[c].id2=0xDC;//llama
+
+			switch(items[ci].id2)
+			{
+			case 0x9F:
+				chars[c].id2=0xC8;
+				break;
+			case 0xA0:
+				chars[c].id2=0xE2;
+				break;
+			case 0xA1:
+				chars[c].id2=0xE4;
+				break;
+			case 0xA2:
+				chars[c].id2=0xCC;
+				break;
+			case 0xA3:
+				chars[c].id2=0xD2; //desert
+				break;
+			case 0xA4:
+				chars[c].id2=0xDA; //Harp
+				break;
+			case 0xA5:
+				chars[c].id2=0xDB;//Another
+				break;
+			case 0xA6:
+				chars[c].id2=0xDC;//llama
+				break;
+			}
 			
 			chars[c].orgid1=chars[c].xid1=chars[c].id1;
 			chars[c].orgid2=chars[c].xid2=chars[c].id2;
@@ -6295,370 +6301,21 @@ void callguards( int p )
 	}
 }
 
-/*
-Unicode speech format
-byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
-
-  Message Sent By Client:
-  0xAD - Unicode Speech Request
-  BYTE cmd (0xAD)
-  short msgsize 1,2
-  byte type (0=say, 2=emote, 8=whisper, 9=yell) 3
-  short color 4,5
-  short font 6,7
-  BYTE[4] lang (null terminated, "enu " for US english.) 8,9,10,11
-  wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
-  
-  Message Sent By Server:
-  0xAE - Unicode Speech Message
-  BYTE cmd (0xAE) 0
-  short msgsize 1,2
-  BYTE[4] ser (ser of speaker, all 0xFF if none) 3,4,5,6
-  BYTE[2] model (id of speaker, all 0xFF if none)7,8
-  BYTE type 9
-  short color 10,11
-  short font 12, 13
-  BYTE[4] language (same as before) 14,15,16,17
-  BYTE[30] speaker's name (normal chars, not wchars) 18-48
-  WCHAR[?] text (null terminated, ?=(msgsize-48)/2
-*/
-
-void unicodetalking(int s) // PC speech
-{
-	int mapitemptr,mapitem,mapchar,a,checkgrid,increment,StartGrid,getcell,ab;
-	int tl, i, j,resp, found, x1, x2, y1, y2, match, m2, sml;
-	
-	char sect[512];
-	char nonuni[512];
-	unsigned char talk2[19];
-	
-	tl=48+(buffer[s][1]<<8)+buffer[s][2];
-
-	// Check for command word versions of this packet
-	int myoffset = 13 ;
-	int myincrement = 2 ;
-	int myj = 12 ;
-
-	switch (buffer[s][3])
-	{
-	case 0xC0:
-		myincrement = 1 ;
-		buffer[s][3] = 0 ;  //set to normal to send it back
-
-		int punt ;
-		punt = static_cast<int> ((buffer[s][13] << 8)) + static_cast<int> (buffer[s][14]) ;
-		cout << "keyword was " << hex << punt << endl ;
-		switch (buffer[s][13] & 0xf0)
-		{
-		case 0x10:
-			
-			// Copy the buffer up, and convert it to unicode
-			myoffset = 15 ;
-			break ;
-		case 0x20:
-			myoffset = 17 ;
-			break ;
-		case 0x30 :
-			myoffset = 18 ;
-			break ;
-		case 0x40:
-			myoffset = 20 ;
-			break ;
-		}
-		//
-		//	Now adjust the buffer
-		int iWord ;
-		int iTempBuf ;
-		iWord = static_cast<int> ((buffer[s][1] << 8)) + static_cast<int> (buffer[s][2]) ;
-		myj = 12 ;
-		cout << "Max length characters will be " << dec << (iWord - myoffset) << endl ;
-
-		for (i=myoffset; i < iWord ; i++)
-		{
-			buffer[s][myj] = 0 ;
-			myj++ ;
-			buffer[s][myj] = buffer[s][i] ;
-			iTempBuf = static_cast<int> (buffer[s][i]) ;
-			cout << "Copying value of " << hex << iTempBuf << endl ;
-			myj++ ;
-		}
-
-		iWord = ((iWord - myoffset ) * 2) + 12 ;
-		cout << "Setting buffer size to " << dec << iWord << endl ;
-		buffer[s][1] = static_cast<unsigned char> (((iWord &0xFF00) >>8)) ;
-		buffer[s][2] = static_cast<unsigned char> (iWord & 0x00FF) ;
-		break ;
-	default:
-
-		break ;
-	}
-	
-	for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+ 2)
-	{
-			nonuni[(i-13)/2]=buffer[s][i];
-	}
-
-	tl=48+(buffer[s][1]<<8)+buffer[s][2];	
-	
-//	if ((buffer[s][13]=='/') || ((buffer[s][13]=='.') && (buffer[s][14]!='.'))) Commands->Command (s);
-//	if( nonuni[0] == '/' || ( nonuni[1] == '.' && nonuni[2] != '.' ) ) Commands->Command( s );
-	if( nonuni[0] == server_data.commandPrefix || ( nonuni[1] == '.' && nonuni[2] != '.' ) ) Commands->Command( s );
-	else
-	{	// we don't want them becoming visible if it was a command!
-		//AntiChrist
-		if((chars[currchar[s]].hidden)&&(!(chars[currchar[s]].priv2&8)))
-		{
-			chars[currchar[s]].hidden=0;
-			chars[currchar[s]].stealth=-1;
-			updatechar(currchar[s]);
-		}
-		resp=response(s);
-		
-		if( ( buffer[s][3] == 0x09 ) && ( chars[currchar[s]].priv&2 ) )
-		{
-			broadcast(s);
-		}
-		else
-		{
-			char text[512];
-			strcpy( text, nonuni );
-			if (!strcmp(strupr(text),"I RESIGN FROM MY GUILD")) Guilds->Resign(s);
-			talk2[0]=0xAE;
-			talk2[1]=tl>>8;
-			talk2[2]=tl&0xFF;
-			talk2[3]=chars[currchar[s]].ser1;
-			talk2[4]=chars[currchar[s]].ser2;
-			talk2[5]=chars[currchar[s]].ser3;
-			talk2[6]=chars[currchar[s]].ser4;
-			talk2[7]=chars[currchar[s]].id1;
-			talk2[8]=chars[currchar[s]].id2;
-			talk2[9]=buffer[s][3]; // Type
-			talk2[10]=buffer[s][4];
-			talk2[11]=buffer[s][5];
-			talk2[12]=buffer[s][6];
-			talk2[13]=chars[currchar[s]].fonttype;
-			talk2[14]=buffer[s][8];
-			talk2[15]=buffer[s][9];
-			talk2[16]=buffer[s][10];         
-			Network->xSend(s, talk2, 18, 0);
-			Network->xSend(s, chars[currchar[s]].name, 30, 0);   
-			for(i=-1;i<(tl-48)-2;i+=2)	// why aren't we making use of the text variable?
-			{
-				Network->xSend(s, &buffer[s][i+13], 2, 0);   
-			}      
-			if (talk2[9]==0)
-			{
-				chars[currchar[s]].saycolor1=buffer[s][4];
-				chars[currchar[s]].saycolor2=buffer[s][5];
-			}
-			if (talk2[9]==2)
-			{
-				chars[currchar[s]].emotecolor1=buffer[s][4];
-				chars[currchar[s]].emotecolor2=buffer[s][5];
-				return;
-			}
-			if (server_data.log==2) //Logging -- Zippy
-			{
-				char temp2[512];
-				sprintf(temp2, "%s.log",chars[currchar[s]].name);
-				sprintf(temp,"%s [%x %x %x %x] [%i]: %s\n",chars[currchar[s]].name,chars[currchar[s]].ser1,chars[currchar[s]].ser2,chars[currchar[s]].ser3,chars[currchar[s]].ser4,chars[currchar[s]].account, &buffer[s][8]);
-				savelog(temp,temp2);
-			}
-			
-			char search1[10];
-			strcpy( search1, "GUARDS" );
-			char *response1;
-			char str[256];
-			strcpy( str, nonuni );
-			strupr( str );
-			response1 = ( strstr( str, search1 ) );
-			if( response1 )
-				callguards( currchar[s] );
-			
-            Boats->Speech(s, (unsigned char *)nonuni);//Boats
-			house_speech(s, (unsigned char *)nonuni); //houses crackerjack 8/12/99			
-			for (i=0;i<now;i++)
-			{
-				//if ((inrange1(i, s)&&perm[i]))
-				// AntiChrist - don't check line of sight for talking!!!
-				// we can talk normally through walls, can we?  That's new to me (Abaddon)
-				if (inrange1(i, s)&&perm[i])//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
-				{
-					Network->xSend(i, talk2, 18, 0);
-					Network->xSend(i, chars[currchar[s]].name, 30, 0);          
-					//					if((chars[currchar[i]].priv&0x01)||(chars[currchar[i]].priv&0x80));// GM/Counselors can see ghosts talking always  Seers?
-					//					else if(chars[currchar[i]].spiritspeaktimer==0) // If the spiritspeaktimer is set, you can talk to the dead
-					// modified by AntiChrist
-					if(!( chars[currchar[i]].priv&1 ) && !( chars[currchar[i]].priv&0x80 ) && chars[currchar[i]].spiritspeaktimer == 0 )// GM/Counselors can see ghosts talking always Seers?
-					{
-						if(chars[currchar[s]].dead==1&&chars[currchar[i]].dead==0)  // Ghost can talk normally to other ghosts
-						{
-							// -2: dont override /0 /0 terminator !
-							for(j=13;j<((buffer[s][1]<<8)+buffer[s][2])-2;j=j+2) // bugfix (ghost-speak crash) by lord binary
-							{
-								if(buffer[s][j]==32) {;}
-								else if(buffer[s][j]%2)     
-									buffer[s][j]='O';
-								else
-									buffer[s][j]='o';
-							}					 
-						}
-					}
-					else if( chars[currchar[i]].race != chars[currchar[s]].race && chars[currchar[i]].priv&0x01 != 0x01 )
-					{
-						if( Skills->CheckSkill( currchar[i], SPIRITSPEAK, Races->getLanguageMin( chars[currchar[s]].race ), 1000 ) != 1 )
-						{
-							for(j=13;j<((buffer[s][1]<<8)+buffer[s][2])-2;j=j+2) // bugfix (ghost-speak crash) by lord binary
-							{
-								if(buffer[s][j]==32) {;}
-								else if(buffer[s][j]%2)     
-									buffer[s][j]='O';
-								else
-									buffer[s][j]='o';
-							}					 
-						}
-					}
-					for(j=-1;j<(tl-48)-2;j+=2)
-					{
-						Network->xSend(i, &buffer[s][j+13], 2, 0);   
-					}      
-				}
-			}
-			if(chars[currchar[s]].dead==1)  // this makes it so npcs do not respond to dead people
-				return;
-			
-			i=0;
-			found=0;
-			x1=chars[currchar[s]].x;
-			y1=chars[currchar[s]].y;
-			StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-			getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-						
-			increment=0;
-			ab=0;
-			for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-			{	
-				for (a=0;a<3;a++)
-				{					
-					mapitemptr=-1;
-					mapitem=-1;
-					mapchar=-1;
-					do //check all items in this cell
-					{
-						mapchar=-1;
-						mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-						if (mapitemptr==-1) break;
-						mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-						if(mapitem>999999) mapchar=mapitem-1000000;
-						if (mapitem!=-1 && mapitem>=1000000)
-						{
-						    i=mapchar;			
-							if ((i!=currchar[s]) && (chars[i].npc))
-							{
-					          x2=chars[i].x;
-					          y2=chars[i].y;
-							  if ( (abs(x1-x2)<=2) && (abs(y1-y2)<=2) ) 
-							  {
-								  found=i+1;
-								  ab=1;
-								  break;
-							  }
-							}
-						}
-					} while (mapitemptr != -1 && !found);
-					if (found) break;
-				}
-				if (found) break;
-			}
-
-			if ((found!=0)&&(chars[found-1].speech))
-			{
-				responsevendor(s);
-				found--;
-				for (i=0;i<strlen(&nonuni[0]);i++) nonuni[i]=toupper(nonuni[i]);
-//				talkingto[found]=currchar[s];
-				openscript("speech.scp");
-				sprintf(sect, "SPEECH %i", chars[found].speech);
-				if (!i_scripts[speech_script]->find(sect))
-				{
-					closescript();
-					return;
-				}
-				match=0;
-				strcpy(sect, "NO DEFAULT TEXT DEFINED");
-				do
-				{
-					read2();
-					if (script1[0]!='}')
-					{
-						if (!(strcmp("DEFAULT",script1)))
-						{
-							strcpy(sect, script2);
-						}
-						if (!(strcmp("ON",script1)))
-						{
-							j=0;
-							do
-							{
-								m2=1;
-								sml=strlen(script2);
-								if (strlen(&nonuni[j])<sml)
-								{
-									//         sml=strlen(&buffer[s][8+j]);
-									m2=0;
-								}
-								else
-									for (i=0;i<sml;i++)
-									{
-										if (nonuni[i+j]!=toupper(script2[i]))
-										{
-											m2=0;
-										}
-									}
-									j++;
-							}
-							while ((j<strlen(&nonuni[0]))&&(m2==0));
-							if (m2==1) match=1;
-						}
-						if (!(strcmp("SAY",script1)))
-						{
-							if (match==1)
-							{
-								npctalk(s, found, script2, 0);
-								match=2;
-							}
-						}
-#ifdef UOXPERL
-						if(!strcmp("PERL", script1)) // Run a Perl Command (crackerjack 8/1/99)
-						{
-							if(match==1)
-							{ 
-								_uoxperl_func(script2, chars[found].serial, chars[s].serial, &nonuni[0]);
-								match=2;
-							}
-						}
-#endif
-					}
-				}
-				while (script1[0]!='}');
-				if (match==0)
-				{
-					npctalk(s, found, sect, 0);
-				}
-				closescript();
-			}
-  }
- }
-}
-
-
-
-void mounthorse(int s, int x) // Remove horse char and give player a horse item
+void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse item
 {
 	int j,c;
 	static int count = 1;
 	
-	if(npcinrange(s,x,2)==0) return;
+	if(npcinrange(s,x,2) == 0) return;
+
+	if (chars[currchar[s]].priv&0x01)
+	{
+			setserial( x, currchar[s], 5 );
+			chars[x].npcWander=0;
+			chars[x].npcaitype=0;
+			chars[x].tamed = true;
+	}
+	
 	if (chars[x].ownserial==chars[currchar[s]].serial)
 		//    (chars[x].own1==chars[currchar[s]].ser1)&&
 		//    (chars[x].own2==chars[currchar[s]].ser2)&&
@@ -6678,15 +6335,36 @@ void mounthorse(int s, int x) // Remove horse char and give player a horse item
 		
 		items[c].id1=0x3E;
 		// krazyglue 12 October, 1999 - if, if, if... is now if, else if, else if
-		if (chars[x].id2==0xC8) items[c].id2=0x9F;
-		else if (chars[x].id2==0xE2) items[c].id2=0xA0;
-		else if (chars[x].id2==0xE4) items[c].id2=0xA1;
-		else if (chars[x].id2==0xCC) items[c].id2=0xA2;
-		else if (chars[x].id2==0xD2) items[c].id2=0xA3;//desert
-		else if (chars[x].id2==0xDA) items[c].id2=0xA4;//Harp
-		else if (chars[x].id2==0xDB) items[c].id2=0xA5;//Another
-		else if (chars[x].id2==0xDC) items[c].id2=0xA6;//llama
-		
+
+		switch(chars[x].id2)
+		{
+		case 0xC8:
+			items[c].id2=0x9F;
+			break;
+		case 0xE2:
+			items[c].id2=0xA0;
+			break;
+		case 0xE4:
+			items[c].id2=0xA1;
+			break;
+		case 0xCC:
+			items[c].id2=0xA2;
+			break;
+		case 0xD2:
+			items[c].id2=0xA3; //desert
+			break;
+		case 0xDA:
+			items[c].id2=0xA4; //Harp
+			break;
+		case 0xDB:
+			items[c].id2=0xA5;//Another
+			break;
+		case 0xDC:
+			items[c].id2=0xA6;//llama
+			break;
+		}
+
+
 		setserial(c,currchar[s], 4);
 		items[c].layer=0x19;
 		
@@ -6717,7 +6395,7 @@ void mounthorse(int s, int x) // Remove horse char and give player a horse item
 		wornitems(s, currchar[s]); // send update to current socket
 		for (j=0;j<now;j++) // and to all inrange sockets (without re-sending to current socket )
 		{
-			if ( perm[j] && inrange1(s, j) && ( s!=j ) ) 
+			if ( perm[j] && ( s!=j ) && inrange1(s, j) ) 
 				wornitems(j, currchar[s]);
 		}
 		Npcs->DeleteChar(x);
@@ -8122,7 +7800,11 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 {
 	int count, ho, mi, se, total, i, j, k, book,serial,serhash,ci;
 	char nonuni[512];
-	
+
+	int myoffset = 13 ;
+	int myincrement = 2 ;
+	int myj = 12 ;
+
 	if (newclient[s])
 	{
 		count=recv(client[s], (char *)buffer[s], 4, 0);
@@ -8206,9 +7888,6 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				chardel(s);
 				break;
 			case 0x00:// Character Create
-#if CLIENTVERSION_M==25
-				Network->Receive(s, 100, 1);
-#endif
 #if CLIENTVERSION_M==26
 				Network->Receive( s, 104, 1 );
 #endif
@@ -8340,13 +8019,81 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				{//Squelch
 					if (chars[currchar[s]].squelched)
 						sysmessage(s, "You have been squelched, Page a GM.");
-					else talking(s);
+					else 
+						talking(s);
 				}
 				break;
 			case 0xAD: // Unicode Speech
 				Network->Receive(s, 3, 0);
 				Network->Receive(s, ((buffer[s][1]<<8)+buffer[s][2]), 1);
 				chars[currchar[s]].unicode=1;
+
+				
+				// Check for command word versions of this packet
+				myoffset = 13 ;
+				myincrement = 2 ;
+				myj = 12 ;
+
+				switch (buffer[s][3])
+				{
+					case 0xC0:
+					case 0xC9:
+					case 0xC1:
+					case 0xC2:
+					case 0xC6:
+					case 0xC8:
+				
+						myincrement = 1 ;
+						buffer[s][3] = buffer[s][3] & 0x0F ;  //set to normal to send it back
+
+						switch (buffer[s][13] & 0xf0)
+						{
+							case 0x10:
+			
+							// Copy the buffer up, and convert it to unicode
+								myoffset = 15 ;
+								break ;
+							case 0x20:
+								myoffset = 17 ;
+								break ;
+							case 0x30 :
+								myoffset = 18 ;
+								break ;
+							case 0x40:
+								myoffset = 20 ;
+								break ;
+						}
+						//
+						//	Now adjust the buffer
+						int iWord ;
+						iWord = static_cast<int> ((buffer[s][1] << 8)) + static_cast<int> (buffer[s][2]) ;
+						myj = 12 ;
+						char mytempbuf[512] ;
+						int mysize ;
+						mysize = iWord - myoffset ;
+						for (i=0; i < mysize ; i++)
+						{
+							mytempbuf[i] = buffer[s][i+myoffset] ;
+						}
+						for (i=0; i < mysize; i++)
+						{
+							// we would overwrite our buffer, so we need to catch it before we do that.
+							buffer[s][myj] = 0 ;
+							myj++ ;
+							buffer[s][myj] = mytempbuf[i] ;
+							myj++ ;
+						}
+
+						iWord = ((iWord - myoffset ) * 2) + 12 ;
+						buffer[s][1] = static_cast<unsigned char> (((iWord &0xFF00) >>8)) ;
+						buffer[s][2] = static_cast<unsigned char> (iWord & 0x00FF) ;
+						break ;
+					default:
+
+						break ;
+				}
+
+				
 				breakConcentration( currchar[s], s );
 				for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+2)
 				{
@@ -9195,14 +8942,6 @@ int __cdecl main(int argc, char *argv[])
 		Weather->newDay();
 		Commands->Load();
 		loadnewworld();
-#ifdef UOXPERL
-		// Call initializers on all items with perl startup
-		for(i=0;i<itemcount;i++) if(*(items[i].perl_init)!='\0')
-		{
-			printf("PERLINIT_STARTUP %x(%i) %s", items[i].serial, i, items[i].perl_init);
-			_uoxperl_func(items[i].perl_init, items[i].serial, items[i].serial, PERLINIT_STARTUP);
-		}
-#endif
 		
 		// sectioning(); // For sectioning Items and chars arrays
 		printf("Clearing all trades...");
@@ -9258,12 +8997,6 @@ int __cdecl main(int argc, char *argv[])
 		printf("Loading IM Menus...");
 		im_loadmenus( "inscribe.gmp", TellScroll ); //loading gump for inscribe()
 		printf(" Done.\n");
-		
-#ifdef UOXPERL
-		printf("Initializing UOX perl...");
-		_uoxperl_init(); // crackerjack 8/1/99 - perl extension initilization
-		printf(" Done.\n");
-#endif
 		
 		starttime=uiCurrentTime;
 		gcollect();
@@ -9473,10 +9206,7 @@ int __cdecl main(int argc, char *argv[])
 			
 			checkauto();
 			
-#ifdef UOXPERL
-			_uoxperl_checktrig();
-#endif
-			
+		
 			tempTime = CheckMilliTimer(tempSecs, tempMilli);
 			autoTime  += tempTime;
 			autoTimeCount++;
@@ -9490,15 +9220,6 @@ int __cdecl main(int argc, char *argv[])
 	}
 	
 	sysbroadcast("The server is shutting down.");
-#ifdef UOXPERL
-	for(i=0;i<itemcount;i++)
-	{
-		if(*(items[i].perl_init)!='\0') {
-			printf("PERLINIT_SHUTDOWN %x(%i) %s", items[i].serial, i, items[i].perl_init);
-			_uoxperl_func(items[i].perl_init, items[i].serial, items[i].serial, PERLINIT_SHUTDOWN);
-		}
-	}
-#endif
 	if (server_data.html>0) 
 	{
 		printf("Writing offline HTML page...");
@@ -9704,34 +9425,32 @@ void Shutdown( int retCode )
 
 char iteminrange( UOXSOCKET s, ITEM i, int distance )
 {
-
-	int dx, dy;
-
-	if( chars[currchar[s]].priv&1 ) 
-		return 1;
-
-	dx = abs( chars[currchar[s]].x - items[i].x );
-	dy = abs( chars[currchar[s]].y - items[i].y );
-	if ( dx > distance || dy > distance )
+	if( s > now || i < 0 || i > imem )
 		return 0;
-	else
+	if( chars[currchar[s]].priv&0x01 )	// GM
 		return 1;
+	short dx = abs( chars[currchar[s]].x - items[i].x );
+	if( dx > distance )
+		return 0;
+	short dy = abs( chars[currchar[s]].y - items[i].y );
+	if( dy > distance )
+		return 0;
+	return 1;
 }
 
-char npcinrange (int s, int i, int distance)
+char npcinrange( int s, int i, int distance )
 {
-	int c=1;
-	int dx, dy;
-
-	if ((chars[currchar[s]].priv&1) || (i==-1)) return 1;
-
-	dx = abs(chars[currchar[s]].x - chars[i].x);
-	dy = abs(chars[currchar[s]].y - chars[i].y);
-
-	if (dx > distance || dy > distance) 
+	if( s > now || i < 0 || i > cmem )
 		return 0;
-	else
-		return c;
+	if( chars[currchar[s]].priv&0x01 )
+		return 1;
+	short dx = abs( chars[currchar[s]].x - chars[i].x );
+	if( dx > distance )
+		return 0;
+	short dy = abs( chars[currchar[s]].y - chars[i].y );
+	if( dy > distance )
+		return 0;
+	return 1;
 }
 
 int ishuman( int p )
@@ -10554,39 +10273,17 @@ void telltime( UOXSOCKET s )
 	}
 	
 	switch (lhour) {
-	case 1:
-		sprintf(tstring2,"%s one o'clock",tstring);
-		break;
-	case 2:
-		sprintf(tstring2,"%s two o'clock",tstring);
-		break;
-	case 3:
-		sprintf(tstring2,"%s three o'clock",tstring);
-		break;
-	case 4:
-		sprintf(tstring2,"%s four o'clock",tstring);
-		break;
-	case 5:
-		sprintf(tstring2,"%s five o'clock",tstring);
-		break;
-	case 6:
-		sprintf(tstring2,"%s six o'clock",tstring);
-		break;
-	case 7:
-		sprintf(tstring2,"%s seven o'clock",tstring);
-		break;
-	case 8:
-		sprintf(tstring2,"%s eight o'clock",tstring);
-		break;
-	case 9:
-		sprintf(tstring2,"%s nine o'clock",tstring);
-		break;
-	case 10:
-		sprintf(tstring2,"%s ten o'clock",tstring);
-		break;
-	case 11:
-		sprintf(tstring2,"%s eleven o'clock",tstring);
-		break;
+	case 1:		sprintf(tstring2,"%s one o'clock",tstring);		break;
+	case 2:		sprintf(tstring2,"%s two o'clock",tstring);		break;
+	case 3:		sprintf(tstring2,"%s three o'clock",tstring);	break;
+	case 4:		sprintf(tstring2,"%s four o'clock",tstring);	break;
+	case 5:		sprintf(tstring2,"%s five o'clock",tstring);	break;
+	case 6:		sprintf(tstring2,"%s six o'clock",tstring);		break;
+	case 7:		sprintf(tstring2,"%s seven o'clock",tstring);	break;
+	case 8:		sprintf(tstring2,"%s eight o'clock",tstring);	break;
+	case 9:		sprintf(tstring2,"%s nine o'clock",tstring);	break;
+	case 10:	sprintf(tstring2,"%s ten o'clock",tstring);		break;
+	case 11:	sprintf(tstring2,"%s eleven o'clock",tstring);	break;
 	case 12:
 		if (ampm)
 			sprintf(tstring2,"%s midnight.",tstring);
@@ -10595,7 +10292,7 @@ void telltime( UOXSOCKET s )
 		break;
 	}
 
-	if (lhour==12) strcpy(tstring, tstring2);
+	if (lhour == 12) strcpy(tstring, tstring2);
 	else if (ampm)
 	{
 		if ((lhour>=1)&&(lhour<6)) sprintf(tstring,"%s in the afternoon.",tstring2);
@@ -19024,8 +18721,9 @@ void deathstuff(int i)
 		items[c].layer = 0x16;
 		items[c].def = 1;
 	}
-	if (server_data.showdeathanim) 
+	if (server_data.showdeathanim && !chars[i].summontimer) 
 		deathaction( i, corpsenum );
+
 	if( chars[i].account != -1 )
 	{
 		teleport(i);
@@ -19043,13 +18741,23 @@ void deathstuff(int i)
 		items[corpsenum].id2=0xB2;
 		items[corpsenum].corpse=0;
 	}
+
+	if (chars[i].summontimer)
+	{
+		staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );
+		soundeffect2( i, 0x01, 0xFE );
+		Items->DeleItem( corpsenum );
+		return;
+	}
+
+	
 	RefreshItem( corpsenum ); // AntiChrist
 	if( chars[i].npc ) 
 		Npcs->DeleteChar(i);
 	if( ele == 65535 )
 		Items->DeleItem( corpsenum );
-}
 
+}
 
 
 void NeutralizeEnemies( CHARACTER i )

@@ -769,10 +769,6 @@ void CWorldMain::SaveItem( long i )
 			fprintf( iWsc, "GLOWBC %i\n", (items[i].glow_c1<<8) + items[i].glow_c2 );
 		if( items[i].glow_effect )
 			fprintf( iWsc, "GLOWTYPE %i\n", items[i].glow_effect );
-#ifdef UOXPERL
-		if (items[i].perl_init[0]!=0)
-			fprintf(iWsc, "PERLINIT %s\n", items[i].perl_init);
-#endif
 		if( items[i].racialEffect != 65535 )
 			fprintf(iWsc, "RACE %i\n", items[i].racialEffect);
 		if( strlen( items[i].desc ) > 0 )

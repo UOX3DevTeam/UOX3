@@ -456,22 +456,6 @@ struct item_st
  char glow_c1; // for backup of old color
  char glow_c2;
  char glow_effect;
-#ifdef UOXPERL
- char perl_init[64]; // Crackerjack -- perl initializer
-   // perl initializers are passed a number in their "speech" string
-   // remember, these may be numbers, but they're being passed in
-   // a string value...
-   // 1 = Item was just created
-#define PERLINIT_NEW "1"
-   // 2 = Server has just started up & needs to initialize
-#define PERLINIT_STARTUP "2"
-   // 3 = Item was just destroyed
-#define PERLINIT_REMOVE "3"
-   // 4 = Server is about to shut down
-#define PERLINIT_SHUTDOWN "4"
-   // 5 = Server is about to save the database
-#define PERLINIT_SAVE "5"
-#endif
 
  char desc[100];
  int carve; // AntiChrist - for new carve system

@@ -143,248 +143,33 @@ void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in ran
 }
 
 
-void talking( UOXSOCKET s ) // PC speech
-{
-	int mapitemptr,mapitem,mapchar,a,checkgrid,increment,StartGrid,getcell,ab;
-	int tl, i, j, resp=0, found, x1, x2, y1, y2, match, m2, sml, grrr;
-	char sect[512];
-	
-	
-//	if ((buffer[s][8]=='/') || ((buffer[s][8]=='.') && (buffer[s][9]!='.'))) Commands->Command(s);
-	if( ( buffer[s][8] == server_data.commandPrefix ) || ( ( buffer[s][8] == '.' ) && ( buffer[s][9] != '.' ) ) )
-		Commands->Command( s );
-	else
-	{	// we don't want them becoming visible if they're using a command!
-		//AntiChrist
-		if((chars[currchar[s]].hidden)&&(!(chars[currchar[s]].priv2&8)))
-		{
-			chars[currchar[s]].hidden=0;
-			chars[currchar[s]].stealth=-1;
-			updatechar(currchar[s]);
-		}
-		resp=response(s);
-		if (resp!=0) return;  //Vendor responded already
-		if( ( buffer[s][3] == 0x09 ) && ( chars[currchar[s]].priv&2 ) )
-		{
-			broadcast(s);
-		}
-		else
-		{
-			char text[512];
-			strcpy(text,(char *)&buffer[s][8]);
-			if (!strcmp(strupr(text),"I RESIGN FROM MY GUILD")) Guilds->Resign(s);
-			tl=44+strlen((char *)&buffer[s][8])+1;
-			talk[1]=tl>>8;
-			talk[2]=tl%256;
-			talk[3]=chars[currchar[s]].ser1;
-			talk[4]=chars[currchar[s]].ser2;
-			talk[5]=chars[currchar[s]].ser3;
-			talk[6]=chars[currchar[s]].ser4;
-			talk[7]=chars[currchar[s]].id1;
-			talk[8]=chars[currchar[s]].id2;
-			talk[9]=buffer[s][3]; // Type
-			talk[10]=buffer[s][4];
-			talk[11]=buffer[s][5];
-			talk[12]=buffer[s][6];
-			//   talk[13]=buffer[s][7]; // Font
-			talk[13]=chars[currchar[s]].fonttype;
-			Network->xSend(s, talk, 14, 0);
-			Network->xSend(s, chars[currchar[s]].name, 30, 0);
-			Network->xSend(s, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);
-			
-			if (talk[9]==0)
-			{
-				chars[currchar[s]].saycolor1=buffer[s][4];
-				chars[currchar[s]].saycolor2=buffer[s][5];
-			}
-			if (talk[9]==2)
-			{
-				chars[currchar[s]].emotecolor1=buffer[s][4];
-				chars[currchar[s]].emotecolor2=buffer[s][5];
-				return;
-			}
-			if (server_data.log==2) //Logging -- Zippy
-			{
-				char temp2[512];
-				sprintf(temp2, "%s.log",chars[currchar[s]].name);
-				sprintf(temp,"%s [%x %x %x %x] [%i]: %s\n",chars[currchar[s]].name,chars[currchar[s]].ser1,chars[currchar[s]].ser2,chars[currchar[s]].ser3,chars[currchar[s]].ser4,chars[currchar[s]].account,&buffer[s][8]);
-				savelog(temp,temp2);
-			}
-			
-			char search1[10];
-			strcpy( search1, "GUARDS" );
-			char *response1;
-			char str[256];
-			strcpy( str, (char *)&buffer[s][8] );
-			strupr( str );
-			response1 = ( strstr( str, search1 ) );
-			if( response1 )
-				callguards( currchar[s] );
-            Boats->Speech(s,&buffer[s][8]);//Boats 
-			
-			// AntiChrist bugfix (6/10/99)
-			house_speech( s, &buffer[s][8] ); // houses crackerjack 8/12/99
-			
-			for (i=0;i<now;i++)
-			{
-				//if ((inrange1(i, s)&&perm[i]))
-				if ( perm[i] && inrange1(i, s) )// && //LOS check commented out for now -- AntiChrist
-					//line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING))
-				{
-					Network->xSend(i, talk, 14, 0);
-					Network->xSend(i, chars[currchar[s]].name, 30, 0);
-					//					if((chars[currchar[i]].priv&0x01)||(chars[currchar[i]].priv&0x80));// GM/Counselors can see ghosts talking always  Seers?
-					//					else if(chars[currchar[i]].spiritspeaktimer==0) // If the spiritspeaktimer is set, you can talk to the dead
-					// modified by AntiChrist
-					if( !(chars[currchar[i]].priv&1 ) && !(chars[currchar[i]].priv&0x80 ) && chars[currchar[i]].spiritspeaktimer == 0 ) // GM/Counselors can see ghosts talking always  Seers?
-					{
-						if(chars[currchar[s]].dead==1&&chars[currchar[i]].dead==0) 
-						{
-							grrr=strlen((char *)&buffer[s][8])+8; // bugfix by lord binary (ghost speak crash)
-							for(j=8;j<grrr;j++) // convert the string to ghost talk
-							{
-								if(buffer[s][j]==32)
-									buffer[s][j]=32;
-								else if(buffer[s][j]%2)
-									buffer[s][j]='O';
-								else
-									buffer[s][j]='o';
-							}
-						}
-					}
-					else if( chars[currchar[i]].race != chars[currchar[s]].race && chars[currchar[i]].priv&0x01 != 0x01 )
-					{
-						if( !Skills->CheckSkill( currchar[i], SPIRITSPEAK, Races->getLanguageMin( chars[currchar[s]].race ), 1000 ) )
-						{
-							for(j=13;j<((buffer[s][1]<<8)+buffer[s][2])-2;j=j+2) // bugfix (ghost-speak crash) by lord binary
-							{
-								if(buffer[s][j]==32) {;}
-								else if(buffer[s][j]%2)     
-									buffer[s][j]='O';
-								else
-									buffer[s][j]='o';
-							}					 
-						}
-					}
-					Network->xSend(i, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);
-				}
-			}
-			if(chars[currchar[s]].dead==1)  // this makes it so npcs do not respond to dead people
-				return;
-			
-			i=0;
-			found=0;
-			x1=chars[currchar[s]].x;
-			y1=chars[currchar[s]].y;
-			StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-			getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
-						
-			increment=0;
-			ab=0;
-			for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-			{	
-				for (a=0;a<3;a++)
-				{					
-					mapitemptr=-1;
-					mapitem=-1;
-					mapchar=-1;
-					do //check all items in this cell
-					{
-						mapchar=-1;
-						mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-						if (mapitemptr==-1) break;
-						mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-						if(mapitem>999999) mapchar=mapitem-1000000;
-						if (mapitem!=-1 && mapitem>=1000000)
-						{
-						    i=mapchar;			
-							if ((i!=currchar[s]) && (chars[i].npc))
-							{
-					          x2=chars[i].x;
-					          y2=chars[i].y;
-							  if ( (abs(x1-x2)<=2) && (abs(y1-y2)<=2) ) 
-							  {
-								  found=i+1;
-								  ab=1;
-								  break;
-							  }
-							}
-						}
-					} while (mapitemptr != -1 && !found);
-					if (found) break;
-				}
-				if (found) break;
-			}
-			if (found && chars[found-1].speech )
-			{
-				responsevendor(s);
-				found--;
-				for (i=0;i<strlen((char *)&buffer[s][8]);i++) buffer[s][i+8]=toupper(buffer[s][i+8]);
-//				talkingto[found]=currchar[s];
-				openscript("speech.scp");
-				sprintf(sect, "SPEECH %i", chars[found].speech);
-				if (!i_scripts[speech_script]->find(sect))
-				{
-					closescript();
-					return;
-				}
-				match=0;
-				strcpy(sect, "NO DEFAULT TEXT DEFINED");
-				do
-				{
-					read2();
-					if (script1[0]!='}')
-					{
-						if (!(strcmp("DEFAULT",script1)))
-						{
-							strcpy(sect, script2);
-						}
-						if (!(strcmp("ON",script1)))
-						{
-							j=0;
-							do
-							{
-								m2=1;
-								sml=strlen(script2);
-								if (strlen((char *)&buffer[s][8+j])<sml)
-								{
-									//         sml=strlen(&buffer[s][8+j]);
-									m2=0;
-								}
-								else
-									for (i=0;i<sml;i++)
-									{
-										if (buffer[s][i+8+j]!=toupper(script2[i]))
-										{
-											m2=0;
-										}
-									}
-									j++;
-							}
-							while ((j<strlen((char *)&buffer[s][8]))&&(m2==0));
-							if (m2==1) match=1;
-						}
-						if (!(strcmp("SAY",script1)))
-						{
-							if (match==1)
-							{
-								npctalk(s, found, script2, 0);
-								match=2;
-							}
-						}
-					}
-				}
-				while (script1[0]!='}');
-				if (match==0)
-				{
-					npctalk(s, found, sect, 0);
-				}
-				closescript();
-			}
-  }
- }
-}
+/*
+Unicode speech format
+byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
 
+  Message Sent By Client:
+  0xAD - Unicode Speech Request
+  BYTE cmd (0xAD)
+  short msgsize 1,2
+  byte type (0=say, 2=emote, 8=whisper, 9=yell) 3
+  short color 4,5
+  short font 6,7
+  BYTE[4] lang (null terminated, "enu " for US english.) 8,9,10,11
+  wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
+  
+	Message Sent By Server:
+	0xAE - Unicode Speech Message
+	BYTE cmd (0xAE) 0
+	short msgsize 1,2
+	BYTE[4] ser (ser of speaker, all 0xFF if none) 3,4,5,6
+	BYTE[2] model (id of speaker, all 0xFF if none)7,8
+	BYTE type 9
+	short color 10,11
+	short font 12, 13
+	BYTE[4] language (same as before) 14,15,16,17
+	BYTE[30] speaker's name (normal chars, not wchars) 18-48
+	WCHAR[?] text (null terminated, ?=(msgsize-48)/2
+*/
 
 void unicodetalking( UOXSOCKET s) // PC speech
 {
@@ -401,8 +186,6 @@ void unicodetalking( UOXSOCKET s) // PC speech
 		nonuni[(i-13)/2]=buffer[s][i];
 	} 
 	
-//	if ((buffer[s][13]=='/') || ((buffer[s][13]=='.') && (buffer[s][14]!='.'))) Commands->Command (s);
-//	if( nonuni[0] == '/' || ( nonuni[1] == '.' && nonuni[2] != '.' ) ) Commands->Command( s );
 	if( nonuni[0] == server_data.commandPrefix || ( nonuni[1] == '.' && nonuni[2] != '.' ) ) Commands->Command( s );
 	else
 	{	// we don't want them becoming visible if it was a command!
@@ -480,10 +263,7 @@ void unicodetalking( UOXSOCKET s) // PC speech
 			house_speech(s, (unsigned char *)nonuni); //houses crackerjack 8/12/99			
 			for (i=0;i<now;i++)
 			{
-				//if ((inrange1(i, s)&&perm[i]))
-				// AntiChrist - don't check line of sight for talking!!!
-				// we can talk normally through walls, can we?  That's new to me (Abaddon)
-				if ( perm[i] && inrange1(i, s) )//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
+				if ( perm[i] && i!= s && inrange1(i, s) )
 				{
 					Network->xSend(i, talk2, 18, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);          
@@ -629,16 +409,244 @@ void unicodetalking( UOXSOCKET s) // PC speech
 								match=2;
 							}
 						}
-#ifdef UOXPERL
-						if(!strcmp("PERL", script1)) // Run a Perl Command (crackerjack 8/1/99)
+					}
+				}
+				while (script1[0]!='}');
+				if (match==0)
+				{
+					npctalk(s, found, sect, 0);
+				}
+				closescript();
+			}
+  }
+ }
+}
+
+void talking( UOXSOCKET s ) // PC speech
+{
+	int mapitemptr,mapitem,mapchar,a,checkgrid,increment,StartGrid,getcell,ab;
+	int tl, i, j, resp=0, found, x1, x2, y1, y2, match, m2, sml, grrr;
+	char sect[512];
+	
+	
+	if( ( buffer[s][8] == server_data.commandPrefix ) || ( ( buffer[s][8] == '.' ) && ( buffer[s][9] != '.' ) ) )
+		Commands->Command( s );
+	else
+	{	// we don't want them becoming visible if they're using a command!
+		//AntiChrist
+		if((chars[currchar[s]].hidden)&&(!(chars[currchar[s]].priv2&8)))
+		{
+			chars[currchar[s]].hidden=0;
+			chars[currchar[s]].stealth=-1;
+			updatechar(currchar[s]);
+		}
+		resp=response(s);
+		if (resp!=0) return;  //Vendor responded already
+		if( ( buffer[s][3] == 0x09 ) && ( chars[currchar[s]].priv&2 ) )
+		{
+			broadcast(s);
+		}
+		else
+		{
+			char text[512];
+			strcpy(text,(char *)&buffer[s][8]);
+			if (!strcmp(strupr(text),"I RESIGN FROM MY GUILD")) Guilds->Resign(s);
+			tl=44+strlen((char *)&buffer[s][8])+1;
+			talk[1]=tl>>8;
+			talk[2]=tl%256;
+			talk[3]=chars[currchar[s]].ser1;
+			talk[4]=chars[currchar[s]].ser2;
+			talk[5]=chars[currchar[s]].ser3;
+			talk[6]=chars[currchar[s]].ser4;
+			talk[7]=chars[currchar[s]].id1;
+			talk[8]=chars[currchar[s]].id2;
+			talk[9]=buffer[s][3]; // Type
+			talk[10]=buffer[s][4];
+			talk[11]=buffer[s][5];
+			talk[12]=buffer[s][6];
+			//   talk[13]=buffer[s][7]; // Font
+			talk[13]=chars[currchar[s]].fonttype;
+			Network->xSend(s, talk, 14, 0);
+			Network->xSend(s, chars[currchar[s]].name, 30, 0);
+			Network->xSend(s, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);
+			
+			if (talk[9]==0)
+			{
+				chars[currchar[s]].saycolor1=buffer[s][4];
+				chars[currchar[s]].saycolor2=buffer[s][5];
+			}
+			if (talk[9]==2)
+			{
+				chars[currchar[s]].emotecolor1=buffer[s][4];
+				chars[currchar[s]].emotecolor2=buffer[s][5];
+				return;
+			}
+			if (server_data.log==2) //Logging -- Zippy
+			{
+				char temp2[512];
+				sprintf(temp2, "%s.log",chars[currchar[s]].name);
+				sprintf(temp,"%s [%x %x %x %x] [%i]: %s\n",chars[currchar[s]].name,chars[currchar[s]].ser1,chars[currchar[s]].ser2,chars[currchar[s]].ser3,chars[currchar[s]].ser4,chars[currchar[s]].account,&buffer[s][8]);
+				savelog(temp,temp2);
+			}
+			
+			char search1[10];
+			strcpy( search1, "GUARDS" );
+			char *response1;
+			char str[256];
+			strcpy( str, (char *)&buffer[s][8] );
+			strupr( str );
+			response1 = ( strstr( str, search1 ) );
+			if( response1 )
+				callguards( currchar[s] );
+            Boats->Speech(s,&buffer[s][8]);//Boats 
+			
+			// AntiChrist bugfix (6/10/99)
+			house_speech( s, &buffer[s][8] ); // houses crackerjack 8/12/99
+			
+			for (i=0;i<now;i++)
+			{
+				if ( i != s && perm[i] && inrange1(i, s) )
+				{
+					Network->xSend(i, talk, 14, 0);
+					Network->xSend(i, chars[currchar[s]].name, 30, 0);
+					//					if((chars[currchar[i]].priv&0x01)||(chars[currchar[i]].priv&0x80));// GM/Counselors can see ghosts talking always  Seers?
+					//					else if(chars[currchar[i]].spiritspeaktimer==0) // If the spiritspeaktimer is set, you can talk to the dead
+					// modified by AntiChrist
+					if( !(chars[currchar[i]].priv&1 ) && !(chars[currchar[i]].priv&0x80 ) && chars[currchar[i]].spiritspeaktimer == 0 ) // GM/Counselors can see ghosts talking always  Seers?
+					{
+						if(chars[currchar[s]].dead==1&&chars[currchar[i]].dead==0) 
 						{
-							if(match==1)
-							{ 
-								_uoxperl_func(script2, chars[found].serial, chars[s].serial, &nonuni[0]);
+							grrr=strlen((char *)&buffer[s][8])+8; // bugfix by lord binary (ghost speak crash)
+							for(j=8;j<grrr;j++) // convert the string to ghost talk
+							{
+								if(buffer[s][j]==32)
+									buffer[s][j]=32;
+								else if(buffer[s][j]%2)
+									buffer[s][j]='O';
+								else
+									buffer[s][j]='o';
+							}
+						}
+					}
+					else if( chars[currchar[i]].race != chars[currchar[s]].race && chars[currchar[i]].priv&0x01 != 0x01 )
+					{
+						if( !Skills->CheckSkill( currchar[i], SPIRITSPEAK, Races->getLanguageMin( chars[currchar[s]].race ), 1000 ) )
+						{
+							for(j=13;j<((buffer[s][1]<<8)+buffer[s][2])-2;j=j+2) // bugfix (ghost-speak crash) by lord binary
+							{
+								if(buffer[s][j]==32) {;}
+								else if(buffer[s][j]%2)     
+									buffer[s][j]='O';
+								else
+									buffer[s][j]='o';
+							}					 
+						}
+					}
+					Network->xSend(i, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);
+				}
+			}
+			if(chars[currchar[s]].dead==1)  // this makes it so npcs do not respond to dead people
+				return;
+			
+			i=0;
+			found=0;
+			x1=chars[currchar[s]].x;
+			y1=chars[currchar[s]].y;
+			StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
+			getcell=mapRegions->GetCell(chars[currchar[s]].x,chars[currchar[s]].y);
+						
+			increment=0;
+			ab=0;
+			for (checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
+			{	
+				for (a=0;a<3;a++)
+				{					
+					mapitemptr=-1;
+					mapitem=-1;
+					mapchar=-1;
+					do //check all items in this cell
+					{
+						mapchar=-1;
+						mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
+						if (mapitemptr==-1) break;
+						mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
+						if(mapitem>999999) mapchar=mapitem-1000000;
+						if (mapitem!=-1 && mapitem>=1000000)
+						{
+						    i=mapchar;			
+							if ((i!=currchar[s]) && (chars[i].npc))
+							{
+					          x2=chars[i].x;
+					          y2=chars[i].y;
+							  if ( (abs(x1-x2)<=2) && (abs(y1-y2)<=2) ) 
+							  {
+								  found=i+1;
+								  ab=1;
+								  break;
+							  }
+							}
+						}
+					} while (mapitemptr != -1 && !found);
+					if (found) break;
+				}
+				if (found) break;
+			}
+			if (found && chars[found-1].speech )
+			{
+				responsevendor(s);
+				found--;
+				for (i=0;i<strlen((char *)&buffer[s][8]);i++) buffer[s][i+8]=toupper(buffer[s][i+8]);
+//				talkingto[found]=currchar[s];
+				openscript("speech.scp");
+				sprintf(sect, "SPEECH %i", chars[found].speech);
+				if (!i_scripts[speech_script]->find(sect))
+				{
+					closescript();
+					return;
+				}
+				match=0;
+				strcpy(sect, "NO DEFAULT TEXT DEFINED");
+				do
+				{
+					read2();
+					if (script1[0]!='}')
+					{
+						if (!(strcmp("DEFAULT",script1)))
+						{
+							strcpy(sect, script2);
+						}
+						if (!(strcmp("ON",script1)))
+						{
+							j=0;
+							do
+							{
+								m2=1;
+								sml=strlen(script2);
+								if (strlen((char *)&buffer[s][8+j])<sml)
+								{
+									m2=0;
+								}
+								else
+									for (i=0;i<sml;i++)
+									{
+										if (buffer[s][i+8+j]!=toupper(script2[i]))
+										{
+											m2=0;
+										}
+									}
+									j++;
+							}
+							while ((j<strlen((char *)&buffer[s][8]))&&(m2==0));
+							if (m2==1) match=1;
+						}
+						if (!(strcmp("SAY",script1)))
+						{
+							if (match==1)
+							{
+								npctalk(s, found, script2, 0);
 								match=2;
 							}
 						}
-#endif
 					}
 				}
 				while (script1[0]!='}');

@@ -3796,62 +3796,59 @@ void cSkills::AnatomyTarget(int s)
 
 void cSkills::TameTarget(int s)
 {
-	int i,tamed=0,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if(buffer[s][7]==0xFF) return;
-	if (i!=-1)
-		if ((chars[i].npc==1 && (chardist(currchar[s], i ) <= 4 ) ) )
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( buffer[s][7] == 0xFF ) 
+		return;
+	if( i != -1 )
+	{
+		if( chars[i].npc == 1 && chardist( currchar[s], i ) <= 4 )
 		{
-			if (chars[i].taming>1000||chars[i].taming==0)//Morrolan default is now no tame
+			if( chars[i].taming > 1000 || chars[i].taming == 0 ) // If tame required is greater than 100.0 or is == 0.0, can't tame
 			{
 				sysmessage(s, "You can't tame that creature.");
 				return;
 			}
-			// Below... can't tame if you already have!
-			if( chars[i].tamed && chars[i].own1 == chars[currchar[s]].ser1 && chars[i].own2 == chars[currchar[s]].ser2 && chars[i].own3 == chars[currchar[s]].ser3 && chars[i].own4 == chars[currchar[s]].ser4 && chars[i].ownserial == chars[currchar[s]].serial )
+			if( chars[i].tamed && chars[i].ownserial == chars[currchar[s]].serial )	// You are the owner and it is already tamed
 			{
 				sysmessage( s, "You already control that creature!" );
 				return;
 			}
-			if( chars[i].tamed )
+			if( chars[i].tamed )	// It's already tamed
 			{
-				sysmessage( s, "That creature is already controlled by another!" );
-				return;
-			}
-			sprintf(temp, "*%s starts to tame %s*",chars[currchar[s]].name,chars[i].name);
-			for(int a=0;a<3;a++)
-			{
-				switch(rand()%4)
+				if( chars[i].guildfealty != -1 && chars[i].guildfealty == chars[currchar[s]].serial ) // Previously owned it
 				{
-				case 0: npctalkall(currchar[s], "I've always wanted a pet like you.", 0); break;
-				case 1: npctalkall(currchar[s], "Will you be my friend?", 0); break;
-				case 2: sprintf(temp, "Here %s.",chars[i].name); npctalkall(currchar[s], temp, 0); break;
-				case 3: sprintf(temp, "Good %s.",chars[i].name); npctalkall(currchar[s], temp, 0); break;
-				default: 
-					printf("ERROR: Fallout of switch statement without default. skills.cpp, tametarget()/n"); //Morrolan
+					sysmessage( s, "That creature is already controlled by another!" );
+					return;
 				}
 			}
-			if ((!Skills->CheckSkill(currchar[s],TAMING, 0, 1000))||
-				(chars[currchar[s]].skill[TAMING]<chars[i].taming)) 
+			sprintf( temp, "*%s starts to tame %s*", chars[currchar[s]].name, chars[i].name );
+			for(int a=0;a<3;a++)
 			{
-				sysmessage(s,"You were unable to tame it.");
+				switch( RandomNum( 0, 3 ) )
+				{
+				case 0: npctalkall( currchar[s], "I've always wanted a pet like you.", 0 ); break;
+				case 1: npctalkall( currchar[s], "Will you be my friend?", 0 ); break;
+				case 2: sprintf( temp, "Here %s.", chars[i].name ); npctalkall( currchar[s], temp, 0 ); break;
+				case 3: sprintf( temp, "Good %s.", chars[i].name ); npctalkall( currchar[s], temp, 0 ); break;
+				}
+			}
+			if( !Skills->CheckSkill( currchar[s], TAMING, chars[i].taming, chars[i].taming * 2 ) )	// Requires chars[i].taming as min skill, but won't gain skill if you have more than 2 * chars[i].taming
+			{
+				sysmessage( s, "You were unable to tame it." );
 				return;
 			}   
-			//sprintf(temp,"You tame %s.",chars[i].name);
-			//sysmessage(s,temp);
-			npctalk(s, currchar[s], "It seems to accept you as it's master!", 0);
-			tamed=1;
+			npctalk( s, currchar[s], "It seems to accept you as it's master!", 0 );
+			chars[i].guildfealty = chars[i].ownserial;	// Save previous owner.  NPCs aren't in guilds, so it's a safe bet
 			setserial( i, currchar[s], 5 );
-			chars[i].npcWander=0;
-			chars[i].npcaitype=0;
+			chars[i].npcWander = 0;
+			chars[i].npcaitype = 0;
 			chars[i].tamed = true;
+			return;
 		}
-		if( chars[i].npc == 1 && chardist( currchar[s], i ) > 4 )
+		if( chars[i].npc && chardist( currchar[s], i ) > 4 )
 			sysmessage( s, "Creature is too far away!" );
-		if (tamed==0) sysmessage(s,"You can't tame that!");
+		sysmessage( s, "You can't tame that!" );
+	}
 }
 
 void cSkills::FishTarget(int s)

@@ -942,7 +942,7 @@ void cMovement::HandleRegionStuffAfterMove(CHARACTER c, short int oldx, short in
 #if DEBUG_WALKING
 	else
 	{
-		printf("Guess what? I didn't change regions.\n");
+//		printf("Guess what? I didn't change regions.\n");
 	}
 #endif
 
@@ -1848,7 +1848,6 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 		                                 // since the [i] is calclated several times below
 			                             // if it doesn't help, it doesn't hurt either.
 		signed int nItemTop = thisblock->basez + ((xyblock[i].type == 0) ? xyblock[i].height : calcTileHeight(xyblock[i].height)); // Calculate the items total height
-
 		// check if the creature is floating on a static (keeping Z or falling)
 		if( ( nItemTop >= newz ) && ( nItemTop <= oldz ) )
 		{
@@ -1965,14 +1964,14 @@ bool cMovement::calc_move(CHARACTER c, short int x, short int y, signed char &z,
 	if ( ( dir & 0x07 ) % 2 )
 	{ // check three ways.
 		unsigned int ndir = turn_counter_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == -128 )
+		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == illegal_z )
 			return false;
 		ndir = turn_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == -128 )
+		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == illegal_z )
 			return false;
 	}
 	z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
-	return z > -128;
+	return z > illegal_z;
 }
 
 bool cMovement::MoveHeightAdjustment( int MoveType, unitile_st *thisblock, int &ontype, signed int &nItemTop, signed int &nNewZ )

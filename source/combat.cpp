@@ -42,7 +42,8 @@ int cCombat::GetSwingRate( int iNPC, int weapon )
 
 	Skills->GetCombatSkill( iNPC );
 
-	if( weapon==-1) weapon = GetWeapon( iNPC );
+	if( weapon == -1 ) 
+		weapon = GetWeapon( iNPC );
 
 	int stamina = chars[iNPC].stm;
 #ifdef __COMBATDEBUG__
@@ -63,29 +64,36 @@ int cCombat::GetSwingRate( int iNPC, int weapon )
 #ifdef __COMBATDEBUG__
 	printf("sRate is %i\n", sRate );
 #endif
-	if( sRate <= 0 ) sRate = 1;
+	if( sRate <= 0 ) 
+		sRate = 1;
 
 	return sRate;
 }
 
 
-int cCombat::GetBowType(int i)
+int cCombat::GetBowType( int i )
 {
-	int j,serial,serhash,ci;
-	serial=chars[i].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	int j, serial, serhash, ci;
+	serial = chars[i].serial;
+	serhash = serial%HASHMAX;
+	for( ci = 0; ci < contsp[serhash].max; ci++ )
 	{
-		j=contsp[serhash].pointer[ci];
-		if (j!=-1)
-		if ((items[j].contserial==serial) && ((items[j].layer==1) || (items[j].layer==2)))
+		j = contsp[serhash].pointer[ci];
+		if( j != -1 )
 		{
-			if ((items[j].id1==0x13)&&(items[j].id2==0xB1)) return(1); // Bows
-			if ((items[j].id1==0x13)&&(items[j].id2==0xB2)) return(1);
-			if ((items[j].id1==0x0F)&&(items[j].id2==0x4F)) return(2); // Crossbows
-			if ((items[j].id1==0x0F)&&(items[j].id2==0x50)) return(2);
-			if ((items[j].id1==0x13)&&(items[j].id2==0xFC)) return(3); // Heavy Crossbows
-			if ((items[j].id1==0x13)&&(items[j].id2==0xFD)) return(3);
+			if( items[j].contserial == serial && ( items[j].layer == 1 || items[j].layer == 2 ) )
+			{
+				unsigned short itemID = (items[j].id1<<8) + items[j].id2;
+				switch( itemID )
+				{
+				case 0x13B1:
+				case 0x13B2:	return 1;	// bows
+				case 0x0F4F:
+				case 0x0F50:	return 2;	// crossbow
+				case 0x13FC:
+				case 0x13FD:	return 3;	// heavy xbow
+				}
+			}
 		}
 	}
 	return 0;
@@ -94,12 +102,16 @@ int cCombat::GetBowType(int i)
 int cCombat::GetArrowType( int j )
 {
 	if( j == -1 ) return 0;
-	if(( items[j].id1 == 0x13 ) && ( items[j].id2 == 0xB1 )) return( ARROW ); // Bows
-	if(( items[j].id1 == 0x13 ) && ( items[j].id2 == 0xB2 )) return( ARROW );
-	if(( items[j].id1 == 0x0F ) && ( items[j].id2 == 0x4F )) return( BOLT ); // Crossbows
-	if(( items[j].id1 == 0x0F ) && ( items[j].id2 == 0x50 )) return( BOLT );
-	if(( items[j].id1 == 0x13 ) && ( items[j].id2 == 0xFC )) return( BOLT ); // Heavy Crossbows
-	if(( items[j].id1 == 0x13 ) && ( items[j].id2 == 0xFD )) return( BOLT );
+	unsigned short itemID = (items[j].id1<<8) + items[j].id2;
+	switch( itemID )
+	{
+	case 0x13B1:	// Arrow, bows
+	case 0x13B2:	return ARROW;
+	case 0x0F4F:
+	case 0x0F50:	// crossbows
+	case 0x13FC:
+	case 0x13FD:	return BOLT;	// heavy xbow
+	}
 	return 0;
 }
 
@@ -107,47 +119,52 @@ int cCombat::GetArrowType( int j )
 //NEW FUNCTION -- AntiChrist merging codes -- (24/6/99)
 void cCombat::ItemCastSpell(int s, int c, int i)//S=Socket c=Char # Target i=Item // Itemid
 {
-	if(i==-1) return;
-	unsigned short int spellnum=((items[i].morex*8)-8)+items[i].morey;
-	unsigned short int tempmana=chars[currchar[s]].mn;//Save their mana so we can give it back.
-	unsigned short int tempmage=chars[currchar[s]].skill[MAGERY];//Easier than writing new functions for all these spells
+	if( i == -1 || s > now ) 
+		return;
+	CHARACTER ourChar = currchar[s];
+	if( ourChar == -1 )
+		return;
+	unsigned short int spellnum = ((items[i].morex * 8 ) - 8 ) + items[i].morey;
+	unsigned short int tempmana = chars[ourChar].mn;//Save their mana so we can give it back.
+	unsigned short int tempmage = chars[ourChar].skill[MAGERY];//Easier than writing new functions for all these spells
 	
-
-	if(items[i].type!=15) return;
+	if( items[i].type != 15 ) 
+		return;
 	
-	if(items[i].morez<=0) return;
+	if( items[i].morez <= 0 ) 
+		return;
 	
-	chars[currchar[s]].skill[MAGERY]=rand()%400+600;//For damage
-	
-	switch(spellnum)
+	chars[ourChar].skill[MAGERY] = RandomNum( 0, 400 ) + 600; //For damage
+	switch( spellnum )
 	{
-	case 1: Magic->NPCClumsyTarget(currchar[s],c); break; //LB
-	case 3: Magic->NPCFeebleMindTarget(currchar[s],c); break; //LB
-	case 5:	Magic->NPCMagicArrowTarget(currchar[s],c);	break; // lB
-	case 8: Magic->NPCWeakenTarget(currchar[s],c); break; //LB
-	case 18: Magic->NPCFireballTarget(currchar[s],c); break; //LB
-	case 22: Magic->NPCHarmTarget(currchar[s],c); break; //LB
-	case 27: Magic->NPCCurseTarget(currchar[s],c); break; //LB
-	case 30: Magic->NPCLightningTarget(currchar[s],c); break; //lb
-	case 37: Magic->NPCMindBlastTarget(currchar[s],c); break;
-	case 38: Magic->NPCParalyzeTarget(currchar[s],c);	break; //lb
-	case 42: Magic->NPCEBoltTarget(currchar[s],c); break;
-	case 43: Magic->NPCExplosionTarget(currchar[s],c); break;
-	case 51: Magic->NPCFlameStrikeTarget(currchar[s],c); break;
+	case 1:		Magic->NPCClumsyTarget( ourChar, c ); break;
+	case 3:		Magic->NPCFeebleMindTarget( ourChar, c ); break;
+	case 5:		Magic->NPCMagicArrowTarget( ourChar, c );	break;
+	case 8:		Magic->NPCWeakenTarget( ourChar, c ); break;
+	case 18:	Magic->NPCFireballTarget( ourChar, c ); break;
+	case 22:	Magic->NPCHarmTarget( ourChar, c ); break;
+	case 27:	Magic->NPCCurseTarget( ourChar, c ); break;
+	case 30:	Magic->NPCLightningTarget( ourChar, c ); break;
+	case 37:	Magic->NPCMindBlastTarget( ourChar, c ); break;
+	case 38:	Magic->NPCParalyzeTarget( ourChar, c );	break;
+	case 42:	Magic->NPCEBoltTarget( ourChar, c ); break;
+	case 43:	Magic->NPCExplosionTarget( ourChar, c ); break;
+	case 51:	Magic->NPCFlameStrikeTarget( ourChar, c ); break;
 	default:
-		staticeffect(currchar[s], 0x37, 0x35, 0, 30);
-		soundeffect2(currchar[s], 0x00, 0x5C);
+		staticeffect( ourChar, 0x37, 0x35, 0, 30 );
+		soundeffect2( ourChar, 0x00, 0x5C );
 		break;
 	}
-	if( chars[currchar[s]].mn!=tempmana )
-		chars[currchar[s]].mn+=tempmana;
-	chars[currchar[s]].skill[MAGERY]=tempmage;
-	if(chars[currchar[s]].in<chars[currchar[s]].mn) chars[currchar[s]].mn=chars[currchar[s]].in;//Shouldn't happen, but just in case;
-	updatestats(s, 1);
+	if( chars[ourChar].mn != tempmana )
+		chars[ourChar].mn += tempmana;
+	chars[ourChar].skill[MAGERY] = tempmage;
+	if( chars[ourChar].in < chars[ourChar].mn) 
+		chars[ourChar].mn = chars[ourChar].in; //Shouldn't happen, but just in case;
+	updatestats( s, 1 );
 	
 	items[i].morez--;
-	if(items[i].morez==0)//JUST lost it's charge....
-		sysmessage(s, "This item is out of charges.");
+	if( items[i].morez == 0 )//JUST lost it's charge....
+		sysmessage( s, "This item is out of charges." );
 }
 //NEW FUNCTION END -- AntiChrist merging codes --
 
@@ -159,16 +176,18 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 	unsigned int distance = 0;	
 	chars[attack].swingtarg=-1;
 
-	if (defend==-1) return;
-	if (defend==attack) return;
-	if( chars[defend].dead || chars[defend].hp <= 0 || chars[defend].priv&0x04 )
+	if( defend == -1 ) 
+		return;
+	if( defend == attack ) 
+		return;
+	if( chars[defend].dead || chars[defend].hp <= 0 || (chars[defend].priv&0x04) )
 	{	// invalidate attacker here!!!
-		if( chars[attack].npcaitype==4 ) //LB change from 0x40 to 4
+		if( chars[attack].npcaitype == 4 )
 		{
-			chars[attack].summontimer = (uiCurrentTime+(CLOCKS_PER_SEC*20));
-			chars[attack].npcWander=2;
-			chars[attack].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			npctalkall(attack,"Thou have suffered thy punishment, scoundrel.", 0);
+			chars[attack].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * 20 ) );
+			chars[attack].npcWander = 2;
+			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * CLOCKS_PER_SEC ) ) );
+			npctalkall( attack, "Thou have suffered thy punishment, scoundrel.", 0 );
 		}
 		chars[attack].targ = -1;
 		if( chars[attack].attacker > -1 && chars[attack].attacker < cmem )
@@ -176,8 +195,8 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 			chars[chars[attack].attacker].attackfirst=0;
 			chars[chars[attack].attacker].attacker=-1;
 		}
-		chars[attack].attacker=-1;
-		chars[attack].attackfirst=0;
+		chars[attack].attacker = -1;
+		chars[attack].attackfirst = 0;
 		if( chars[attack].npc && !chars[attack].dead && chars[attack].npcaitype != 17 && chars[attack].war ) 
 			npcToggleCombat( attack ); // ripper
 		return;
@@ -185,7 +204,7 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 
 	// Now we check for LOS, get the weapon and skill and check to see if they are in range.
 	char hit;
-	signed short s1 = calcSocketFromChar( attack ), s2 = calcSocketFromChar( defend );
+	int s1 = calcSocketFromChar( attack ), s2 = calcSocketFromChar( defend );
 	
  	unsigned short fightskill = Skills->GetCombatSkill( attack ), bowtype = GetBowType( attack ), splitnum, splitcount, hitin;
  	//Homey 2/19/2000 lets check distance first, and if NPC
@@ -204,73 +223,77 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 		}
 	}
 	//	Homey	-	End
-	unsigned short los = line_of_sight(s1,chars[attack].x,chars[attack].y,chars[attack].z,chars[defend].x,chars[defend].y,chars[defend].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING);
+	unsigned short los = line_of_sight( s1, chars[attack].x,chars[attack].y, chars[attack].z,chars[defend].x, chars[defend].y, chars[defend].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
 	unsigned int c, BaseDamage;
 
 	Skills->GetCombatSkill( attack ); // This will get skill and weapon
 
 	int damage; // removed from unsigne by Magius(CHE)
 	signed int x;
-	// Magius(CHE) - For armour absorbtion system
-	char t[512],debabs[512]; 
+
+	char t[128], debabs[128]; 
 	int maxabs, maxnohabs, tmpj;
 
-	int weapon=GetWeapon(attack);//AntiChrist - get the weapon item only once
+	int weapon = GetWeapon( attack );
 
-	*debabs='\0'; 
-	*t='\0';
-	// End here - Magius(CHE) - For armour absorbtion system
+	debabs[0] = 0; 
+	t[0] = 0;
 
 	hit = Skills->CheckSkill( attack, fightskill, 0, 1000 );  // increase fighting skill for attacker and defender
 
-	if (!hit)
+	if( !hit )
 	{
-		if ((fightskill==ARCHERY)&&(los))
+		if( fightskill == ARCHERY && los )
 		{
-			//if (!chars[attack].npc) soundeffect2(attack, 0x2, 0x38);
-			if (!chars[attack].npc) doMissedSoundEffect(attack);
+			if( !chars[attack].npc ) 
+				doMissedSoundEffect( attack );
 
-			if (rand()%3-1)//-1 0 or 1
+			if( RandomNum( -1, 1 ) )//-1 0 or 1
 			{
-				c = Items->SpawnItem(s1, attack, 1,"#",1,0x0E,0x75,0,0,0,0);
+				c = Items->SpawnItem( s1, attack, 1, "#", 1, 0x0E, 0x75, 0, 0, 0, 0 );
 				if( c != -1 )
 				{
-					if (bowtype==1)
+					if( bowtype == 1 )
 					{
-						items[c].id1=0x0F; 
-						items[c].id2=0x3F;
-					} else {
-						items[c].id1=0x1B;
-						items[c].id2=0xFB;
+						items[c].id1 = 0x0F; 
+						items[c].id2 = 0x3F;
+					} 
+					else 
+					{
+						items[c].id1 = 0x1B;
+						items[c].id2 = 0xFB;
 					}
 					
-					mapRegions->RemoveItem(c);
+					mapRegions->RemoveItem( c );
 
-					items[c].x=chars[defend].x;
-					items[c].y=chars[defend].y;
-					items[c].z=chars[defend].z;
-					items[c].priv=1;
-
+					items[c].x = chars[defend].x;
+					items[c].y = chars[defend].y;
+					items[c].z = chars[defend].z;
+					items[c].priv = 1;
 				
-					mapRegions->AddItem(c);
+					mapRegions->AddItem( c );
 					
-					//sendinrange(c);
-					RefreshItem(c);//AntiChrist
+					RefreshItem(c);
 				}
 			}
-		//} else if (!chars[attack].npc) soundeffect2(attack, 0x2, 0x38);
-		} else if (!chars[attack].npc) doMissedSoundEffect(attack);
-	} else {
-		if (!(chars[defend].priv&4))
+		} 
+		else if ( !chars[attack].npc ) 
+			doMissedSoundEffect( attack );
+	} 
+	else 
+	{
+		if( !( chars[defend].priv&4 ) )
 		{
-			Skills->CheckSkill(attack, TACTICS, 0, 1000);
-			if (chars[defend].xid2==0x91) soundeffect2(defend,0x01,0x4b);
-			if (chars[defend].xid2==0x90) soundeffect2(defend,0x01,0x56);
-			playmonstersound(defend, chars[defend].id1, chars[defend].id2, SND_DEFEND);
+			Skills->CheckSkill( attack, TACTICS, 0, 1000 );
+			if( chars[defend].xid2 == 0x91 ) 
+				soundeffect2( defend, 0x01, 0x4b );
+			if( chars[defend].xid2 == 0x90 ) 
+				soundeffect2( defend, 0x01, 0x56 );
+			playmonstersound( defend, chars[defend].id1, chars[defend].id2, SND_DEFEND );
 			//AntiChrist -- for poisoned weapons
-			if ((chars[attack].poison)&&(chars[defend].poisoned<chars[attack].poison) && ( distance<=1 ))
+			if( chars[attack].poison && chars[defend].poisoned < chars[attack].poison && distance <= 1 )
 			{
-				if (rand()%3==0 || fightskill==FENCING)//0 1 or 2 //fencing always poisons :) - AntiChrist
+				if( fightskill == FENCING || RandomNum( 0, 2 ) == 0 ) //0 1 or 2 //fencing always poisons :)
 				{
 					chars[defend].poisoned = chars[attack].poison;
 					chars[defend].poisontime = (uiCurrentTime + ( CLOCKS_PER_SEC * ( 40 / chars[defend].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
@@ -282,15 +305,16 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 					}
 				}
 			}			
-			//Algaran 11-24-98 chars[k].priv2=chars[k].priv2&0xFD;
-			if ((chars[defend].dx>0)) chars[defend].priv2=chars[defend].priv2&0xFD;
+			if( chars[defend].dx > 0 ) 
+				chars[defend].priv2 &= 0xFD;
 
-			if (fightskill!=WRESTLING)
-				if (los) ItemSpell(attack, defend);
+			if( fightskill != WRESTLING )
+				if( los ) 
+					ItemSpell( attack, defend );
 			
-			if ((chars[defend].poison)&&(chars[attack].poisoned<chars[defend].poison) && ( distance <= 1 ))
+			if( chars[defend].poison && chars[attack].poisoned < chars[defend].poison && distance <= 1 )
 			{
-				if (rand()%3==0)
+				if( RandomNum( 0, 2 ) == 0 )
 				{
 					chars[attack].poisoned = chars[defend].poison;
 					chars[attack].poisontime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * ( 40 / chars[attack].poisoned ) ) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
@@ -302,42 +326,46 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 					}
 				}
 			}
-			if (fightskill!=WRESTLING || chars[attack].npc==1) BaseDamage=CalcAtt(attack); // Calc base damage
+			if( fightskill != WRESTLING || chars[attack].npc ) 
+				BaseDamage = CalcAtt( attack ); // Calc base damage
 			else
 			{
-				if ((chars[attack].skill[WRESTLING]/100) > 0) BaseDamage=rand()%(chars[attack].skill[WRESTLING]/100);
-				else BaseDamage=rand()%2;
+				if( ( chars[attack].skill[WRESTLING] / 100 ) > 0 ) 
+					BaseDamage = RandomNum( 0, chars[attack].skill[WRESTLING] / 100 );
+				else 
+					BaseDamage = RandomNum( 0, 1 );
 			}
 			// Race Dmg Modification: Bonus percentage.
 			int RaceDamage = Races->getFightPercent( fightskill, chars[attack].race );
 			if( RaceDamage == 0 )
 				RaceDamage = 100;
-			BaseDamage+= BaseDamage/RaceDamage;
+			BaseDamage += BaseDamage / RaceDamage;
 
 			// Check to see if weapons affect defender's race.
 			if( fightskill!= WRESTLING )
 			{
-				if( items[weapon].racialEffect == chars[defend].race ) BaseDamage *= 2;
+				if( items[weapon].racialEffect == chars[defend].race ) 
+					BaseDamage *= 2;
 			}
-			damage=(int)(BaseDamage*((chars[attack].skill[TACTICS]+500.0)/1000.0)); // Add Tactical bonus
-			damage=damage+(int)((BaseDamage*(chars[attack].st/500.0))); // Add Strength bonus
+			damage = (int)( BaseDamage * ( ( chars[attack].skill[TACTICS]+500.0)/1000.0)); // Add Tactical bonus
+			damage += (int)( ( BaseDamage * ( chars[attack].st / 500.0 ) ) ); // Add Strength bonus
 
 			/////////////////////////////////
 			//Adds a BONUS DAMAGE for ANATOMY
 			//Anatomy=100 -> Bonus +20% Damage - AntiChrist (11/10/99)
 			//printf("NORMAL DAMAGE: %d\n",damage);
-			float multiplier=(((chars[attack].skill[ANATOMY]*20)/1000.0)/100)+1;
+			float multiplier = ( ( ( chars[attack].skill[ANATOMY] * 20 ) / 1000.0 ) / 100 ) + 1;
 			//printf("MULTIPLIER: %f\n",multiplier);
-			damage=(int)  (damage * multiplier);
+			damage = (int)( damage * multiplier );
 			//printf("DAMAGE WITH ANAT: %d\n",damage);
 		
 			//////////////////////////////////
 			//Adds a BONUS DEFENCE for TACTICS
 			//Tactics=100 -> Bonus -20% Damage - AntiChrist (11/10/99)
 			//printf("NORMAL DAMAGE: %d\n",damage);
-			multiplier=1-(((chars[defend].skill[TACTICS]*20)/1000.0)/100);
+			multiplier = 1 - ( ( ( chars[defend].skill[TACTICS] * 20 ) / 1000.0 ) / 100 );
 			//printf("MULTIPLIER: %f\n",multiplier);
-			damage=(int)  (damage * multiplier);
+			damage=(int)( damage * multiplier );
 			//printf("DAMAGE WITH TAC: %d\n",damage);
 	
 			//
@@ -350,130 +378,141 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 			// pleaz leave it enabled and tell me what happens! thnx
 			////////////////
 
-			x=Skills->GetShield(defend);
-			if(x>-1)
+			x = Skills->GetShield( defend );
+			if( x != -1 )
 			{
-				if (Skills->CheckSkill(defend, PARRYING, 0, 1000))// chance to block with shield
+				if( Skills->CheckSkill( defend, PARRYING, 0, 1000 ) )// chance to block with shield
 				{
-					//Algaran 11-24-98 damage-=rand()%(items[j].def/2)+items[j].def/2;  // damage absorbed by shield
-					damage-=rand()%(items[x].def);  // damage absorbed by shield
-					if(rand()%2) items[x].hp--; //Take off a hit point
-					if(items[x].hp<=0)
+					damage -= RandomNum( 0, items[x].def );  // damage absorbed by shield
+					if( RandomNum( 0, 1 ) == 0 ) 
+						items[x].hp--; //Take off a hit point
+					if( items[x].hp <= 0 )
 					{
-						sysmessage(s2,"Your shield has been destroyed");
-						Items->DeleItem(x);
+						sysmessage( s2, "Your shield has been destroyed" );
+						Items->DeleItem( x );
 					}
 				}
 			}
-			x=rand()%100;// determine area of body hit
-			if (server_data.combathitmessage!=1)
+			x = RandomNum( 0, 100 );	// area of body hit
+
+			const long BODYPERCENT = 44;
+			const long ARMSPERCENT = 58;
+			const long HEADPERCENT = 72;
+			const long LEGSPERCENT = 86;
+			const long NECKPERCENT = 93;
+			
+			if( server_data.combathitmessage != 1 )
 			{
-				if (x<=44) x=1; // body
-				else if (x<=58) x=2; // arms
-				else if (x<=72) x=3; // head
-				else if (x<=86) x=4; // legs
-				else if (x<=93) x=5; // neck
-				else x=6; // hands
+				if( x <= BODYPERCENT ) 
+					x = 1; // body
+				else if( x <= ARMSPERCENT ) 
+					x = 2; // arms
+				else if( x <= HEADPERCENT ) 
+					x = 3; // head
+				else if( x <= LEGSPERCENT ) 
+					x = 4; // legs
+				else if( x <= NECKPERCENT ) 
+					x = 5; // neck
+				else 
+					x = 6; // hands
 			}
-			if (server_data.combathitmessage==1)
+			else
 			{
-				// Removed by Magius(CHE) Was: ((!chars[defend].npc)&& (s2 != -1))
-					hitin = rand()%2;
-					if (x<=44)
+				hitin = RandomNum( 0, 2 );
+				if( x <= 44 )
+				{
+					x=1;       // body
+					switch (hitin)
 					{
-						x=1;       // body
-						switch (hitin)
-						{
-						case 1:
-							//later take into account dir facing attacker during battle
-							if (damage < 10) strcpy(temp,"hits you in your Chest!");
-							if (damage >=10) strcpy(temp,"lands a terrible blow to your Chest!");
-							break;
-						case 2:
-							if (damage < 10) strcpy(temp,"lands a blow to your Stomach!");
-							if (damage >=10) strcpy(temp,"knocks the wind out of you!");
-							break;
-						default:
-							if (damage < 10) strcpy(temp,"hits you in your Ribs!");
-							if (damage >=10) strcpy(temp,"broken your Rib?!");
-							break;
-						}
+					case 1:
+						//later take into account dir facing attacker during battle
+						if (damage < 10) strcpy(temp,"hits you in your Chest!");
+						if (damage >=10) strcpy(temp,"lands a terrible blow to your Chest!");
+						break;
+					case 2:
+						if (damage < 10) strcpy(temp,"lands a blow to your Stomach!");
+						if (damage >=10) strcpy(temp,"knocks the wind out of you!");
+						break;
+					default:
+						if (damage < 10) strcpy(temp,"hits you in your Ribs!");
+						if (damage >=10) strcpy(temp,"broken your Rib?!");
+						break;
 					}
-					else if (x<=58)
+				}
+				else if (x<=58)
+				{
+					x=2;  // arms
+					switch (hitin)
 					{
-						x=2;  // arms
-						switch (hitin)
-						{
-						case 1:
-							if (damage > 1) strcpy(temp,"hits you in Left Arm!");
-							break;
-						case 2:
-							if (damage > 1) strcpy(temp,"hits you in Right Arm!");
-							break;
-						default:
-							if (damage > 1) strcpy(temp,"hits you in Right Arm!");
-							break;
-						}
+					case 1:
+						if (damage > 1) strcpy(temp,"hits you in Left Arm!");
+						break;
+					case 2:
+						if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+						break;
+					default:
+						if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+						break;
 					}
-					else if (x<=72)
+				}
+				else if (x<=72)
+				{
+					x=3;  // head
+					switch (hitin)
 					{
-						x=3;  // head
-						switch (hitin)
-						{
-						case 1:
-							if (damage < 10) strcpy(temp,"hits you you straight in the Face!");
-							if (damage >=10) strcpy(temp,"lands a stunning blow to your Head!");
-							break;
-						case 2:
-							if (damage < 10) strcpy(temp,"hits you to your Head!"); //kolours - (09/19/98)
-							if (damage >=10) strcpy(temp,"smashed a blow across your Face!");
-							break;
-						default:
-							if (damage < 10) strcpy(temp,"hits you you square in the Jaw!");
-							if (damage >=10) strcpy(temp,"lands a terrible hit to your Temple!");
-							break;
-						}
+					case 1:
+						if (damage < 10) strcpy(temp,"hits you you straight in the Face!");
+						if (damage >=10) strcpy(temp,"lands a stunning blow to your Head!");
+						break;
+					case 2:
+						if (damage < 10) strcpy(temp,"hits you to your Head!"); //kolours - (09/19/98)
+						if (damage >=10) strcpy(temp,"smashed a blow across your Face!");
+						break;
+					default:
+						if (damage < 10) strcpy(temp,"hits you you square in the Jaw!");
+						if (damage >=10) strcpy(temp,"lands a terrible hit to your Temple!");
+						break;
 					}
-					else if (x<=86) 
+				}
+				else if (x<=86) 
+				{
+					x=4;  // legs
+					switch (hitin)
 					{
-						x=4;  // legs
-						switch (hitin)
-						{
-						case 1:
-							strcpy(temp,"hits you in Left Thigh!");
-							break;
-						case 2:
-							strcpy(temp,"hits you in Right Thigh!");
-							break;
-						default:
-							strcpy(temp,"hits you in Groin!");
-							break;
-						}
+					case 1:
+						strcpy(temp,"hits you in Left Thigh!");
+						break;
+					case 2:
+						strcpy(temp,"hits you in Right Thigh!");
+						break;
+					default:
+						strcpy(temp,"hits you in Groin!");
+						break;
 					}
-					else if (x<=93)
+				}
+				else if (x<=93)
+				{
+					x=5;  // neck
+					strcpy(temp,"hits you to your Throat!");
+				}
+				else
+				{
+					x=6;  // hands
+					switch (hitin)
 					{
-						x=5;  // neck
-						strcpy(temp,"hits you to your Throat!");
+					case 1:
+						if (damage > 1) strcpy(temp,"hits you in Left Hand!");
+						break;
+					case 2:
+						if (damage > 1) strcpy(temp,"hits you in Right Hand!");
+						break;
+					default:
+						if (damage > 1) strcpy(temp,"hits you in Right Hand!");
+						break;
 					}
-					else
-					{
-						x=6;  // hands
-						switch (hitin)
-						{
-						case 1:
-							if (damage > 1) strcpy(temp,"hits you in Left Hand!");
-							break;
-						case 2:
-							if (damage > 1) strcpy(temp,"hits you in Right Hand!");
-							break;
-						default:
-							if (damage > 1) strcpy(temp,"hits you in Right Hand!");
-							break;
-						}
-					}
-					sprintf(temp2,"%s %s",chars[attack].name, temp);//AntiChrist
-					if (!chars[defend].npc) sysmessage(s2, temp2); //kolours -- hit display
-				//} Removed by Magius(CHE)
+				}
+				sprintf(temp2,"%s %s",chars[attack].name, temp);//AntiChrist
+				if (!chars[defend].npc) sysmessage(s2, temp2); //kolours -- hit display
 			}
 			//printf("\n%s Hitten in %i\n",chars[defend].name,x);
 			x=CalcDef(defend,x);
