@@ -1046,7 +1046,9 @@ EOF
 fi
 
 
-CXXFLAGS="-I./mozilla/js/src -g"
+CXXFLAGS="-I./mozilla/js/src"
+
+
 
 trap '' 1 2 15
 cat > confcache <<\EOF

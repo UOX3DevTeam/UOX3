@@ -2,11 +2,13 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <stack>
 
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
 
 typedef vector< Script * > ScpList;
+typedef	stack< string > dirList;
 
 class cServerDefinitions
 {
@@ -15,6 +17,7 @@ private:
 	vector< ScpList >	ScriptListings;
 	vector< string >	filenameListings;
 	map< string, SI16 >	priorityMap;
+	dirList                 dirs;
 	SI16				defaultPriority;
 
 	void				ReloadScriptObjects( void );

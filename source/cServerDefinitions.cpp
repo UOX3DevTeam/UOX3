@@ -3,6 +3,7 @@
 
 #ifdef __LINUX__
 	#include <dirent.h>
+#   include <unistd.h>
 #else
 	#include <direct.h>
 #endif
@@ -350,6 +351,18 @@ bool cServerDefinitions::PushDir( DefinitionCategories toMove )
 {
 	char filePath[MAX_PATH];
 	sprintf( filePath, "%s%s", cwmWorldState->ServerData()->GetDefsDirectory(), dirnames[toMove].c_str() );
+#ifdef _WIN32
+# define getcwd _getcwd
+#endif
+
+	char cwd[MAX_PATH + 1];
+	if (!getcwd(cwd, MAX_PATH + 1))
+	  {
+	    Console.Error(1, "Failed to allocate enough room for cwd");
+	    Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
+	  }
+	dirs.push(cwd);
+	
 	if ( _chdir( filePath ) == 0 )
 	  {
 	    return 1;
@@ -364,5 +377,14 @@ bool cServerDefinitions::PushDir( DefinitionCategories toMove )
 
 void cServerDefinitions::PopDir( void )
 {
-	_chdir( cwmWorldState->ServerData()->GetRootDirectory() );
+  if (dirs.empty())
+  {
+          Console.Error(1, "cServerDefinition::PopDir called, but dirs is empty");
+          Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
+  }
+  else
+  {
+    _chdir(dirs.top().c_str());
+	  dirs.pop();
+  }
 }
