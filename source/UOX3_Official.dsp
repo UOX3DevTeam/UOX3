@@ -317,10 +317,6 @@ SOURCE=.\wholist.cpp
 
 SOURCE=.\worldmain.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\xgm.cpp
-# End Source File
 # End Group
 # Begin Group "Other"
 
@@ -617,10 +613,6 @@ SOURCE=.\wholist.h
 
 SOURCE=.\worldmain.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\xgm.h
-# End Source File
 # End Group
 # Begin Group "Other No. 1"
 
@@ -742,7 +734,6 @@ SOURCE=.\CPacketSend.h
 SOURCE=.\network.h
 # End Source File
 # End Group
-# End Group
 # Begin Source File
 
 SOURCE=.\CDataList.h
@@ -769,19 +760,20 @@ SOURCE=.\Singleton.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\uox3.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\uox3.rc
-# End Source File
-# Begin Source File
-
 SOURCE=.\UOXStdHeaders.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\ustring.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\uox3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\uox3.rc
 # End Source File
 # End Target
 # End Project
