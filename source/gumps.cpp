@@ -139,7 +139,8 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				acctx[chars[j].account].wipe = 1;
 				acctx[chars[j].account].wipeSerial = chars[currchar[s]].serial;
 
-				if( online( j ) ) Network->Disconnect( j );
+				if( online( j ) ) 
+					Network->Disconnect( j );
 			}
 			else sysmessage( s, "That player's account cannot be banned!" );
 		}

@@ -474,7 +474,7 @@ public:
 	int Inscribe( UOXSOCKET s, long snum);
 	int EngraveAction(int s, int i, int cir, int spl);
 	void updateSkillLevel(int c, int s);
-	void LockPick(int s);
+	void LockPick(UOXSOCKET s);
 	void TDummy(int s);
 	void NewDummy(unsigned int currenttime);
 	void Tinkering(int s);

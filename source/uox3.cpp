@@ -18697,6 +18697,7 @@ void deathstuff(int i)
 		staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );
 		soundeffect2( i, 0x01, 0xFE );
 		Items->DeleItem( corpsenum );
+		teleport( i );
 		return;
 	}
 

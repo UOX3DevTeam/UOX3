@@ -209,16 +209,16 @@ const bool EVILDED=false;
 //o---------------------------------------------------------------------------o
 item_st& cItemHandle::operator[] ( long int Num )
 {
-	if ( Num >= 0 && Num < Items.size())
+	if (Num >= 0 && Num < Items.size())
 	{
-		if ( Items[Num] != NULL )//&& !isFree( Num ) ) //isFree isSlow
+		if (Items[Num] != NULL)//&& !isFree( Num ) ) //isFree isSlow
 			return *Items[Num];	
 	}
-  else
-  {
-    printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
-  }
-	//Make sure these props are always this way, they may have been chaged by other functions, so put them back
+    else
+	{
+		printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
+	}
+	// Make sure these props are always this way, they may have been chaged by other functions, so put them back
 	DefaultItem->free = 1;
 	DefaultItem->ser1 = DefaultItem->ser2 = DefaultItem->ser3 = DefaultItem->ser4 = 0xFF;
 	DefaultItem->serial = 0;

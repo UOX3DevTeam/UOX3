@@ -291,16 +291,16 @@ void cAdmin::Account()//Revana*
 	{
 		read2();
 
-		if (!(strcmp(script1, "LASTIP"))) strcpy(acctx[acctcount].tempIP, script2);
+		if (!(strcmp(script1, "LASTIP"))) strncpy(acctx[acctcount].tempIP, script2, 15);
 		
 		else if (!(strcmp(script1, "NAME")))
 		{
-			strcpy(acctx[acctcount].name, strupr( script2 ) );
+			strncpy(acctx[acctcount].name, strupr( script2 ), 20 );
 		}
 
 		else if (!(strcmp(script1, "PASS")))
 		{
-			strcpy(acctx[acctcount].pass, strupr( script2 ) );
+			strncpy(acctx[acctcount].pass, strupr( script2 ), 20 );
 		}
 
 		else if (!(strcmp(script1, "BAN"))) acctx[acctcount].ban = 1;

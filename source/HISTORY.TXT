@@ -28,6 +28,14 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 -------------------------------------------------------------------------------
+11.02.2001               Thiago A. Corrêa
+  skills.cpp             Code clean-ups
+  uox3.cpp               Pack animals won't speek while been snooped.
+  uoxstruct.h            Reduced st_acct::tempIP to 16 (IPv4 address can't be
+                         longer that 15 chars)
+  dbl_sinlge_click.cpp   Bug fix for containers inside containers bug.
+
+-------------------------------------------------------------------------------
 09.02.2001               Thiago A. Corrêa
   skills.cpp             Moved Snooping code from doubleclick() to a new 
   dbl_sinlge_click.cpp   cSkill::Snooping() function.

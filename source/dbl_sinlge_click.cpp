@@ -388,7 +388,19 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 
 			int packOwner;
 			packOwner = GetPackOwner( x );
-		
+			
+			if (items[x].contserial != -1)   // It's inside another container, we need root container to calculate distance
+			{
+				int maxloops = 50; // Prevent endless loops
+				while (items[x].contserial != -1 && maxloops > 0)
+				{
+					x = findbyserial( &itemsp[items[x].contserial%HASHMAX], items[x].contserial, 0);
+					maxloops--;
+				}
+				if (x == -1) // Oh-oh, something did wrong, let's get back where we started to avoid crash
+					x = findbyserial( &itemsp[serial%HASHMAX], serial, 0);
+			}
+
 			npc = calcCharFromSer( items[x].contserial );
 			if ( packOwner == currchar[s] || npcinrange(s,npc,2) || (chars[currchar[s]].priv&0x01) || iteminrange(s,x,2) )
 			{	
@@ -424,7 +436,6 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					items[j].morez=1;
 					items[j].z = items[j].z-17;
-					//								for (k=0;k<now;k++) if (perm[k]) senditem(k,j);
 					RefreshItem( j ); // AntiChrist
 					w=0;
 				}
@@ -652,8 +663,8 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			a2 = items[x].ser2;
 			a3 = items[x].ser3;
 			a4 = items[x].ser4;
-			j = rand()%10;
-			switch(j)
+			
+			switch(RandomNum(0, 9))
 			{
 			case 0:  itemmessage(s,"Seek out the mystic llama herder.", a1, a2, a3, a4);
 				break;
@@ -673,8 +684,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				break;
 			case 8:  itemmessage(s,"You are a person of culture.", a1, a2, a3, a4);
 				break;
-			case 9:  itemmessage(s,"Give me a break! How much good fortune do you expect!", a1, a2, a3, a4);
-				break;
+			case 9:
 			default: itemmessage(s,"Give me a break! How much good fortune do you expect!", a1, a2, a3, a4);
 				break;
 			}//switch

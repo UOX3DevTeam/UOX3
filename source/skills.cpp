@@ -3832,7 +3832,6 @@ void cSkills::TameTarget(int s)
 					return;
 				}
 			}
-			sprintf( temp, "*%s starts to tame %s*", chars[currchar[s]].name, chars[i].name );
 			for(int a=0;a<3;a++)
 			{
 				switch( RandomNum( 0, 3 ) )
@@ -4447,7 +4446,6 @@ void cSkills::StealingTarget(int s)
 		if (skill)
 		{
 			pack=packitem(currchar[s]);
-//			removefromptr(&contsp[items[item].contserial%HASHMAX], item); //remove from old container pointer
 			unsetserial( item, 1 );
 			setserial( item, pack, 1 );
 			sysmessage( s, "You successfully steal that item." );
@@ -5388,7 +5386,7 @@ void cSkills::updateSkillLevel(int c, int s)
 #endif
 }
 
-void cSkills::LockPick(int s)
+void cSkills::LockPick(UOXSOCKET s)
 {
 	int i, success,serial;
 	
@@ -5468,8 +5466,7 @@ void cSkills::LockPick(int s)
 
 void cSkills::TDummy(int s)
 {
-	//	unsigned int i;
-	int j,serial,hit;
+	int j,serial;
 	int type=Combat->GetBowType(currchar[s]);
 	
 	if (type > 0)
@@ -5484,15 +5481,11 @@ void cSkills::TDummy(int s)
 	else
 		Combat->CombatOnFoot(currchar[s]);
 	
-	hit=rand()%3;
-	switch(hit)
+	switch(RandomNum(0, 2))
 	{
 	case 0: soundeffect(s, 0x01, 0x3B);		break;
 	case 1: soundeffect(s, 0x01, 0x3C);		break;        
 	case 2: soundeffect(s, 0x01, 0x3D);		break;
-	default:
-		printf("ERROR: Fallout of switch statement without default. skills.cpp, tdummy()/n"); //Morrolan
-		return;
 	}            
 	serial = calcserial((buffer[s][1]&0x7F),buffer[s][2],buffer[s][3],buffer[s][4]);
 	j=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
@@ -5501,7 +5494,6 @@ void cSkills::TDummy(int s)
 		if (items[j].id2==0x70) items[j].id2=0x71;
 		if (items[j].id2==0x74) items[j].id2=0x75;
 		tempeffect2(0, j, 14, 0, 0, 0);
-		//		for (i=0;i<now;i++) if (perm[i]) senditem(i,j);
 		RefreshItem( j ); // AntiChrist
 	}
 	if(chars[currchar[s]].skill[skillused] < 300)
@@ -5524,14 +5516,12 @@ void cSkills::NewDummy(unsigned int currenttime)
 		{
 			items[i].id2=0x70;
 			items[i].gatetime=0;
-			//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);    
 			RefreshItem( i ); // AntiChrist
 		} else {
 			if(((items[i].id1==0x10) && (items[i].id2==0x75)) && (items[i].gatetime<=currenttime)) 
 			{
 				items[i].id2=0x74;
 				items[i].gatetime=0;
-				//				for (j=0;j<now;j++) if (perm[j]) senditem(j,i); 
 				RefreshItem( i ); // AntiChrist
 			} 
 		}
@@ -6034,7 +6024,7 @@ void cSkills::Snooping( UOXSOCKET s, CHARACTER target, long serial)
 	else 
 	{
 		sysmessage(s, "You failed to peek into that container.");
-		if (chars[target].npc)
+		if (chars[target].npc && ishuman(target))
 		{
 			switch (RandomNum(0, 2))
 			{
