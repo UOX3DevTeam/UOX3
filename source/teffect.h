@@ -33,10 +33,10 @@ public:
 	void	More2( UI16 value )			{	more2 = value;				}
 	void	More3( UI16 value )			{	more3 = value;				}
 	void	Dispellable( bool value )	{	dispellable = value;		}
-	void	ObjPtr( cBaseObj *value )		{	objptr = value;			}
+	void	ObjPtr( cBaseObject *value )		{	objptr = value;			}
 
 	bool	Save( std::ofstream &effectDestination, SI32 mode ) const; // saves the current effect
-	teffect_st() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( -1 ), more1( 0 ), more2( 0 ), more3( 0 ), disspellable( false ), objport( NULL )
+	teffect_st() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( -1 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( NULL )
 	{
 	}
 };
