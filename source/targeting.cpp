@@ -2210,7 +2210,7 @@ void cTargets::SwordTarget( cSocket *s )
 		{
 			// Unshorn sheep
 			// -> Add Wool and change id of the Sheep
-			CItem *c = Items->SpawnItemToPack( s, mChar, "unspoonwool", false );
+			CItem *c = Items->SpawnItemToPack( s, mChar, "0x0DF8", false );
 
 			p->SetID( 0xDF );			
 			p->Teleport();
