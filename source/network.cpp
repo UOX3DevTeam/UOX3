@@ -102,22 +102,27 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 			LogOut( s );
 		}
 	}
-	connClients[s]->AcctNo( -1 );
-	connClients[s]->IdleTimeout( -1 );
-
-	connClients[s]->FlushBuffer();
-	connClients[s]->CloseSocket();
-
-	connClients.erase( connClients.begin() + s );
-	for( int q = 0; q < connIteratorBackup.size(); q++ )
+	try
 	{
-		if( connIteratorBackup[q] >= s )
-			connIteratorBackup[q]--;
+		connClients[s]->AcctNo( -1 );
+		connClients[s]->IdleTimeout( -1 );
+		connClients[s]->FlushBuffer();
+		connClients[s]->CloseSocket();
+		delete connClients[s];
+		connClients.erase( connClients.begin() + s );
+		for( int q = 0; q < connIteratorBackup.size(); q++ )
+		{
+			if( connIteratorBackup[q] >= s )
+				connIteratorBackup[q]--;
+		}
+	}
+	catch(...)
+	{
+		Console << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
 	}
 	now--;
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
-	delete connClients[s];
 }
 
 
@@ -580,7 +585,7 @@ cNetworkStuff::cNetworkStuff() : xgmRunning( false ), peakConnectionCount( 0 ) /
 {
 	sockInit();
 	LoadFirewallEntries();
-	StartupXGM();
+	StartupXGM(32621);
 }
 
 cSocket& cNetworkStuff::GetSocket( UOXSOCKET s )
@@ -1800,7 +1805,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 	}
 }
 
-void cNetworkStuff::StartupXGM( void )
+void cNetworkStuff::StartupXGM( int nPortArg )
 {
 	xgmSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if( xgmSocket < 0 )
@@ -1821,7 +1826,7 @@ void cNetworkStuff::StartupXGM( void )
 	memset( (char *) &connection, 0, len_connection_addr );
 	connection.sin_family = AF_INET;
 	connection.sin_addr.s_addr = htonl( INADDR_ANY );
-	connection.sin_port = htons( 6666 );
+	connection.sin_port = htons( nPortArg );
 	int bcode = bind( xgmSocket, (struct sockaddr *)&connection, len_connection_addr );
 	
 	if( bcode < 0 )
