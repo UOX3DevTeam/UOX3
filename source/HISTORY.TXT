@@ -28,6 +28,11 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 
+04.02.2001               Charles kerr               Axel
+
+uox3.cpp                 Corrected unicode talking, to be compatible with
+                         latest client change.
+
 -------------------------------------------------------------------------------
 03.02.2001               Thiago A. Corrêa
 

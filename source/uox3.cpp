@@ -6327,16 +6327,78 @@ void unicodetalking(int s) // PC speech
 {
 	int mapitemptr,mapitem,mapchar,a,checkgrid,increment,StartGrid,getcell,ab;
 	int tl, i, j,resp, found, x1, x2, y1, y2, match, m2, sml;
+	
 	char sect[512];
 	char nonuni[512];
 	unsigned char talk2[19];
 	
 	tl=48+(buffer[s][1]<<8)+buffer[s][2];
-	
-	for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+2)
+
+	// Check for command word versions of this packet
+	int myoffset = 13 ;
+	int myincrement = 2 ;
+	int myj = 12 ;
+
+	switch (buffer[s][3])
 	{
-		nonuni[(i-13)/2]=buffer[s][i];
-	} 
+	case 0xC0:
+		myincrement = 1 ;
+		buffer[s][3] = 0 ;  //set to normal to send it back
+
+		int punt ;
+		punt = static_cast<int> ((buffer[s][13] << 8)) + static_cast<int> (buffer[s][14]) ;
+		cout << "keyword was " << hex << punt << endl ;
+		switch (buffer[s][13] & 0xf0)
+		{
+		case 0x10:
+			
+			// Copy the buffer up, and convert it to unicode
+			myoffset = 15 ;
+			break ;
+		case 0x20:
+			myoffset = 17 ;
+			break ;
+		case 0x30 :
+			myoffset = 18 ;
+			break ;
+		case 0x40:
+			myoffset = 20 ;
+			break ;
+		}
+		//
+		//	Now adjust the buffer
+		int iWord ;
+		int iTempBuf ;
+		iWord = static_cast<int> ((buffer[s][1] << 8)) + static_cast<int> (buffer[s][2]) ;
+		myj = 12 ;
+		cout << "Max length characters will be " << dec << (iWord - myoffset) << endl ;
+
+		for (i=myoffset; i < iWord ; i++)
+		{
+			buffer[s][myj] = 0 ;
+			myj++ ;
+			buffer[s][myj] = buffer[s][i] ;
+			iTempBuf = static_cast<int> (buffer[s][i]) ;
+			cout << "Copying value of " << hex << iTempBuf << endl ;
+			myj++ ;
+		}
+
+		iWord = ((iWord - myoffset ) * 2) + 12 ;
+		cout << "Setting buffer size to " << dec << iWord << endl ;
+		buffer[s][1] = static_cast<unsigned char> (((iWord &0xFF00) >>8)) ;
+		buffer[s][2] = static_cast<unsigned char> (iWord & 0x00FF) ;
+		break ;
+	default:
+
+		break ;
+	}
+	
+	for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+ 2)
+	{
+			nonuni[(i-13)/2]=buffer[s][i];
+	}
+
+	tl=48+(buffer[s][1]<<8)+buffer[s][2];	
 	
 //	if ((buffer[s][13]=='/') || ((buffer[s][13]=='.') && (buffer[s][14]!='.'))) Commands->Command (s);
 //	if( nonuni[0] == '/' || ( nonuni[1] == '.' && nonuni[2] != '.' ) ) Commands->Command( s );
@@ -6420,7 +6482,7 @@ void unicodetalking(int s) // PC speech
 				//if ((inrange1(i, s)&&perm[i]))
 				// AntiChrist - don't check line of sight for talking!!!
 				// we can talk normally through walls, can we?  That's new to me (Abaddon)
-				if (perm[i] && inrange1(i, s))//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
+				if (inrange1(i, s)&&perm[i])//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
 				{
 					Network->xSend(i, talk2, 18, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);          
