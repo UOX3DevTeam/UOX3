@@ -3482,13 +3482,6 @@ void cSkills::StealingTarget( cSocket *s )
 	if( item == NULL )
 		return;
 
-	x = item;
-	if( item->GetLayer() != 0 || item->isNewbie() || item->GetCont() == INVALIDSERIAL )
-	{
-		sysmessage( s, 874 );
-		return;
-	}
-
 	for( UI08 z = 0; z < 255; z++ )
 	{
 		x = calcItemObjFromSer( x->GetCont() );
@@ -3504,6 +3497,13 @@ void cSkills::StealingTarget( cSocket *s )
 	CChar *npc = calcCharObjFromSer( x->GetCont() );
 	if( npc == NULL )
 		return;
+
+	x = item;
+	if( item->GetCont() == npc->GetSerial() || item->GetCont() == INVALIDSERIAL || item->isNewbie() )
+	{
+		sysmessage( s, 874 );
+		return;
+	}
 
 	if( npc == mChar )
 	{
