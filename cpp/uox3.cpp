@@ -448,7 +448,7 @@ void read2( void ) // Read line from script
 	i=0;
 	script1[0]=0;
 	script2[0]=0;
-	while(temp[i]!=0 && !isspace(temp[i]) && temp[i]!='=')
+	while(temp[i]!=0 && !isspace( temp[i])  && temp[i]!='=')
 	{
 		i++;
 	}
@@ -990,22 +990,22 @@ void readw2 ( void )
 
 void readw3 ( void )
 {
-	int i=0,j;
-	
-	readwscline();
-	script1[0]=0;
-	script2[0]=0;
-	script3[0]=0;
-	while(temp[i]!=0 && temp[i]!=' ' && temp[i]!='=') i++;
-	strncpy(script1, temp, i);
-	script1[i]=0;             // terminate with null
-	if (script1[0]=='}' || temp[i]==0) return;
-	i++;
-	j=i;
-	while(temp[i]!=0 && temp[i]!=' ' && temp[i]!='=') i++;
-	strncpy(script2, temp+j, i-j);
-	script2[i-j]=0;
-	strcpy(script3, temp+i+1);
+        int i=0,j;
+ 
+        readwscline();
+        script1[0]=0;
+        script2[0]=0;
+        script3[0]=0;
+        while(temp[i]!=0 && temp[i]!=' ' && temp[i]!='=' && i<1024 ) i++;
+        strncpy((char*)script1, (char*)temp, i);
+        script1[i]=0;
+        if (script1[0]=='}' || temp[i]==0) return;
+        i++;
+        j=i;
+        while(temp[i]!=0 && temp[i]!=' ' && temp[i]!='=' && i <1024 ) i++;
+        strncpy((char*)script2, (char*)(temp+j), i-j);
+        script2[i-j]=0;
+        strcpy((char*)script3, (char*)(temp+i+1));
 }
 
 // lb, check for bugged items and autocorrect
@@ -7328,6 +7328,11 @@ int __cdecl main(int argc, char *argv[])
 	UI32 tempTime;
 	
 	Loaded=ErrorCount=0;
+
+	scpfile = NULL ;
+	infile = NULL ;
+	wscfile = NULL ;
+	lstfile = NULL ;
 	
 #ifdef _CRASH_PROTECT_
 	try {//Crappy error trapping....	// now it will never crash on the correct line
@@ -8081,24 +8086,23 @@ void Shutdown( int retCode )
 	delete WhoList;
 	delete OffList;
 	delete Books;
-	
 	// don't leave file pointers open, could lead to file corruption
-	if( infile )
+	if( infile != NULL )
 	{
 		fclose(infile);
 		infile = NULL;
 	}
-	if( scpfile )
+	if( scpfile != NULL )
 	{
 		fclose(scpfile);
 		scpfile = NULL;
 	}
-	if( lstfile )
+	if( lstfile != NULL)
 	{
 		fclose(lstfile);
-		scpfile = NULL;
+		lstfile = NULL;
 	}
-	if( wscfile )
+	if( wscfile !=NULL)
 	{
 		fclose(wscfile);
 		wscfile = NULL;
@@ -8106,7 +8110,6 @@ void Shutdown( int retCode )
 	
 	
 	int i;
-	
 	for ( i = 0; i < HASHMAX; i++)
 	{
 		delete [] itemsp[i].pointer;
@@ -8120,7 +8123,6 @@ void Shutdown( int retCode )
 		delete [] cmultisp[i].pointer;
 		delete [] glowsp[i].pointer;
 	}
-	
 	if( clickx )           delete [] clickx;
 	if( clicky )           delete [] clicky;
 	if( currentSpellType ) delete [] currentSpellType;

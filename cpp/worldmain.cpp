@@ -112,6 +112,7 @@ void CWorldMain::saveAccount()//Revana*
 		}
 		fprintf(scpfile,"\n\nEOF\n\n");
 		fclose(scpfile);
+		scpfile = NULL ;
 	}
 	else
 	{
@@ -152,6 +153,7 @@ void CWorldMain::saveAccount()//Revana*
 		
 		fprintf(scpfile,"\n\nEOF\n\n");
 		fclose(scpfile);
+		scpfile = NULL ;
 	}
 	else
 	{
@@ -1523,10 +1525,9 @@ void CWorldMain::LoadWorld ( void )
 
 
 		
-		ConOut("  Loading characters ");
 		do
 		{
-			readw3();
+			if (!s) readw3(); else s=false;
 			if (!(strcmp(script1, "SECTION")))
 			{
 				if (!(strcmp(script2, "CHARACTER")))
