@@ -18,8 +18,6 @@
 	#define HIWORD(l)           ((UI16)(((UI32)(l) >> 16) & 0xFFFF))
 	#define LOBYTE(w)           ((UI08)(w))
 	#define HIBYTE(w)           ((UI08)(((UI16)(w) >> 8) & 0xFF))
-	#define WORD								unsigned short int;
-	#define DWORD								unsigned long int;
 #endif
 
 #define MaxZstep 9
@@ -33,6 +31,7 @@
 #define MAX_GUILDTITLE		21
 #define MAX_STACK			0xFFFF
 #define MAX_ARCHID			14
+#define MAX_REGIONNAME	128
 
 typedef double				R64;
 typedef float				R32;
@@ -68,63 +67,21 @@ typedef UI16		SKILLVAL;
 typedef SI08		RANGE;
 typedef UI08		weathID;
 
-typedef std::vector< std::string >	stringList;
+const UI08 WEIGHT_PER_STR = 4;
+const SI32 MAX_WEIGHT = (SI32)(0xFFFF*100);
 
 const UI32 INVALIDSERIAL	= 0xFFFFFFFF;
 const UI16 INVALIDID		= 0xFFFF;
 const UI16 INVALIDCOLOUR	= 0xFFFF;
 class CChar;
 class CItem;
+
+typedef std::vector< std::string >	STRINGLIST;
+typedef std::vector< SERIAL > SERLIST;
+typedef std::vector< CChar* > CHARLIST;
+typedef std::vector< CItem* > ITEMLIST;
 typedef SI16 GuildID;
 
-//	EviLDeD	-	March 4, 2000
-typedef std::vector< CChar * > VCCHAR;
-//	Thyme - 	December 24, 2001
-typedef std::vector< CItem * > VCITEM;
-//	EviLDeD	-	February 7, 2002 : This will eventually be used. so dont remove please.
-/* Depreciated 
-typedef struct __ACCESSITEMDATA__
-{
-	CChar *object;
-	UI32 FilePosition;
-} AIDATA, *LPAIDATA;
-//
-//o--------------------------------------------------------------------------o
-//|	TYPEDEF				-	typedef struct __ACCESEDATABLOCK__
-//|	Date					-	02/06/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 Development Team
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Define the Server Access.adm data structure. This data
-//|									will be used to facilitate external account creation tools
-//|									and speed the account look up process. Escentially this
-//|									structure contains the actid/username/password/email/path 
-//|									to account data.
-//o--------------------------------------------------------------------------o
-typedef struct __ACCESSDATABLOCK__
-{
-	SI32		id;
-	UI16		bFlags;		// Bit 0) Account Banned 1) XGM Account 2) Public List 3) Account InUse4) 5) 6) 7) 8) 9) 10) 11) 12) 13) 14) 15) Compressed
-	char username[MAX_NAME];		//	username for this account
-	char password[MAX_PASSWORD];	//	password for this account
-	char comment[MAX_COMMENT];	//	comment field for this account
-	char path[MAX_PATH];			//	Path to the file that contains this accounts chars/items	
-} AAREC, *LPAAREC;
-//
-typedef struct __ACCOUNTDATABLOCK__
-{
-	//__ACCOUNTDATABLOCK__() { memset( this, 0x00, sizeof( __ACCOUNTDATABLOCK__ ) ); }
-	LPAAREC lpaarHolding;
-	UI32		ipaddress[2];			//	last ip used[0], [1] is a scratch pad address
-	UI32		ban_date;				//	date that this ban is made
-	UI32		ban_duration;			//	duration in minutes of the ban of this accounr(-1) perm no date
-	CChar		*characters[5];	// un till chars and such are stored in the new accounts system directory structure were not gonna need to have the CChar object just its serialid
-	int			status;					//	(0)normal . NOTE: Technically unused
-	UI08		charactercount;			// Will contain the number of characters currently assigned to this account
-	SERIAL		inworld;			// inworld.  INVALDSERIAL indicates no, else it's the serial of the char still in the world
-} ACTREC, *LPACTREC;
-*/
 //
 struct FirewallEntry
 {
@@ -157,11 +114,7 @@ const UI08 SKIN = 3;
 const UI08 MALE = 1;
 const UI08 FEMALE = 2;
 
-#define END					-1			// void bldstr(...);
-
-
 #define SPELL_MAX 68 //:Terrin: use define for now; can make autocount later
-const R32 GOLD_WEIGHT = 0.005f; //what a goldpiece weighs this is in hundreths of a stone!
 
 #define MAXIMUM 128 // Maximum open connections to server
 #define MAXCLIENT MAXIMUM+1
@@ -171,9 +124,9 @@ const SI08 BUILDRANGE = 31; // Visibility for castles and keeps
 
 #define XYMAX 256 // Maximum items UOX can handle on one X/Y square
 const UI08 MAXLAYERS = 40; // Maximum number of Layers in paperdolls (still not sure how many)
-#define ITEMMENUOFFSET 256
 #define CMAX 40 // Maximum parameters in one line (Only for memory reasons)
 
+/*
 const SI32 VERFILE_MAP = 0x00;
 const SI32 VERFILE_STAIDX = 0x01;
 const SI32 VERFILE_STATICS = 0x02;
@@ -195,6 +148,8 @@ const SI32 VERFILE_TILEDATA = 0x1E;
 const SI32 VERFILE_ANIMDATA = 0x1F;
 
 const SI32 TILEDATA_TILES = 0x68800;
+*/
+
 #define SHOWLOGGEDOUTPCS 1 // Melen 9/7/99
 
 #define NODEBUG
@@ -223,17 +178,16 @@ typedef __TIMERID__ TID;
 #define SELLBYNAME 1 // Values = 0(Disabled) or 1(Enabled) - The NPC Vendors buy from you if your item has the same name of his item!
 #define SKILLLEVEL 5 // Range from 1 to 10 - This value if the difficult to create an item using a make command: 1 is easy, 5 is normal (default), 10 is difficult!
 #define SELLMAXITEM 5 // Set maximum amount of items that one player can sell at a time ( 5 is standard OSI )
-#define RANKSYSTEM 1 // Rank system to make various type of a single item based on the creator's skill!
 
 #define MAP0CACHE 300
 
-#define MAKEMENUOFFSET 2048
+#define ITEMMENUOFFSET 256
 #define TRACKINGMENUOFFSET 4096 // menu offset
+#define POLYMORPHMENUOFFSET 8192
 #define TRACKINGRANGE 10        // tracking range is at least TRACKINGRANGE, additional distance is calculated by Skill,INT
 #define MAXTRACKINGTARGETS 20   // maximum number of trackable targets
 #define TRACKINGTIMER 30        // tracking last at least TRACKINGTIMER seconds, additional time is calculated by Skill,INT, & DEX
 #define TRACKINGDISPLAYTIME 30  // tracking will display above the character every TRACKINGDISPLAYTIME seconds
-#define POLYMORPHMENUOFFSET 8192 // polymorph spell menu offset
 
 const UI08 NORTH		= 0;
 const UI08 NORTHEAST	= 1;
@@ -275,10 +229,12 @@ const UI08 RUNNORTHWEST	= NORTHWEST|0x80;
 // Item types when collided with
 
 const SI16 NumberOfWorlds				= UOMT_COUNT;
-const SI16 MapWidths[UOMT_COUNT]		= { 6144, 0, 2304, 0 };
-const SI16 MapHeights[UOMT_COUNT]		= { 4096, 0, 1600, 0 };
-const SI16 MapTileWidths[UOMT_COUNT]	= { 768,  0, 288,  0 };
-const SI16 MapTileHeights[UOMT_COUNT]	= { 512,  0, 200,  0 };
-const SI32 MapFileLengths[UOMT_COUNT]	= { 77070336, 0, 11289600, 0 };
+const SI16 MapWidths[UOMT_COUNT]		= { 6144, 0, 2304, 2560 };
+const SI16 MapHeights[UOMT_COUNT]		= { 4096, 0, 1600, 2048 };
+const SI16 MapTileWidths[UOMT_COUNT]	= { 768,  0, 288,  320 };
+const SI16 MapTileHeights[UOMT_COUNT]	= { 512,  0, 200,  256 };
+const SI32 MapFileLengths[UOMT_COUNT]	= { 77070336, 0, 11289600, 16056320 };
+
+const SERIAL BASEITEMSERIAL = 0x40000000;
 
 #endif
