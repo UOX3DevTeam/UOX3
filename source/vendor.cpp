@@ -93,9 +93,9 @@ void buyItem( cSocket *mSock )
 	}
 	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->GetBuyThreshold() ));
 	if( useBank )
-		playergoldtotal = getBankCount( mChar, 0x0EED );
+		playergoldtotal = GetBankCount( mChar, 0x0EED );
 	else
-		playergoldtotal = getAmount( mChar, 0x0EED );
+		playergoldtotal = GetAmount( mChar, 0x0EED );
 	if( playergoldtotal >= goldtotal || mChar->IsGM() )
 	{
 		for( i = 0; i < itemtotal; i++ )
@@ -126,9 +126,9 @@ void buyItem( cSocket *mSock )
 			if( !mChar->IsGM() ) 
 			{
 				if( useBank )
-					deleBankItem( mChar, 0x0EED, 0, goldtotal );
+					DeleteBankItem( mChar, 0x0EED, 0, goldtotal );
 				else
-					deleQuan( mChar, 0x0EED, goldtotal );
+					DeleteQuantity( mChar, 0x0EED, goldtotal );
 			}
 			int biTemp;
 			CItem *iMade = NULL;

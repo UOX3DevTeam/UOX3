@@ -799,12 +799,10 @@ void command_zerokills( cSocket *s )
 // Sets all PK counters to 0.
 {
 	sysmessage( s, 22 );
-	for( CChar *i = GPCL.begin(); i != NULL; i = GPCL.next() )
+	for( UI32 a=0; a < charcount; a++ )
 	{
-		if( i == NULL )
-			continue;
-		i->SetKills( 0 );
-		setcharflag( i );
+		chars[a].SetKills( 0 );
+		setcharflag( &chars[a] );
 	}
 	sysmessage( s, 23 );
 }
@@ -2235,7 +2233,7 @@ void command_howto( cSocket *sock )
 		UI08 pagenum = 1;
 		UI16 position = 40;
 		UI16 linenum = 1;
-		stringList one, two;	
+		STRINGLIST one, two;	
 		char tempString[128];
 		
 		one.push_back( "noclose" );

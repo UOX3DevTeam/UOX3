@@ -777,13 +777,13 @@ void HandleTownstoneText( cSocket *s, long index )
 		}
 		resourceID = region[mChar->GetTown()]->GetResourceID();
 		int numResources;
-		numResources = getAmount( mChar, resourceID );
+		numResources = GetAmount( mChar, resourceID );
 
 		if( amountToDonate > numResources )
 			sysmessage( s, 563, numResources );
 		else
 		{
-			deleQuan( mChar, resourceID, amountToDonate );
+			DeleteQuantity( mChar, resourceID, amountToDonate );
 			region[mChar->GetTown()]->DonateResource( s, amountToDonate );
 		}
 		break;
@@ -833,7 +833,6 @@ enum TXTREPLACEMENT
 	TXT_COUNT
 };
 
-extern cGlobalPCList GPCL;
 extern cVersionClass CVC;
 
 const std::string replacements[TXT_COUNT] =
@@ -860,15 +859,15 @@ std::string ReplaceObj( TXTREPLACEMENT toReplace )
 	case TXT_ACCOUNTCOUNT:
 		sprintf( temp, "%i", Accounts->size() );
 		return temp;
-	case TXT_NUMBERPCS:
-		sprintf( temp, "%i", GPCL.count() );
-		return temp;
+	//case TXT_NUMBERPCS:
+		//sprintf( temp, "%i", GPCL.count() );
+		//return temp;
 	case TXT_NUMCHARACTERS:
 		sprintf( temp, "%i", charcount );
 		return temp;
-	case TXT_NUMBERNPCS:
-		sprintf( temp, "%i", charcount - GPCL.count() );
-		return temp;
+	//case TXT_NUMBERNPCS:
+		//sprintf( temp, "%i", charcount - GPCL.count() );
+		//return temp;
 	case TXT_NUMBERITEMS:
 		sprintf( temp, "%i", itemcount );
 		return temp;
@@ -897,7 +896,7 @@ void cGump::Menu( cSocket *s, int m )
 {
 	char sect[512];
 
-	stringList one, two;
+	STRINGLIST one, two;
 	
 	sprintf( sect, "GUMPMENU %i", m );
 	ScriptSection *gump = FileLookup->FindEntry( sect, misc_def );
@@ -1095,7 +1094,7 @@ void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, S
 void choice( cSocket *s )
 {
 	char sect[512];
-	DefinitionCategories script;
+	DEFINITIONCATEGORIES script;
 	
 	SI16 main = s->GetWord( 5 );
 	SI16 sub = s->GetWord( 7 );
@@ -1447,7 +1446,7 @@ void GumpDisplay::SetTitle( const char *newTitle )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Sends to socket sock the data in one and two.  One is control, two is data
 //o---------------------------------------------------------------------------o
-void SendVecsAsGump( cSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
+void SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial )
 {
 	UI08 i = 0;
 	char sect[512];
@@ -1534,7 +1533,7 @@ void SendVecsAsGump( cSocket *sock, stringList& one, stringList& two, long type,
 //o---------------------------------------------------------------------------o
 void NewAddMenu( cSocket *s, int m )
 {
-	stringList one, two;
+	STRINGLIST one, two;
 	char tempString[256];
 	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 	UI08 i = 0;

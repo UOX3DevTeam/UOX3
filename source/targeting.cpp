@@ -52,7 +52,7 @@ void cTargets::PlVBuy( cSocket *s )//PlayerVendors
 	} 
 	else 
 	{
-		UI32 tAmount = deleQuan( mChar, 0x0EED, (UI32)i->GetValue() );
+		UI32 tAmount = DeleteQuantity( mChar, 0x0EED, (UI32)i->GetValue() );
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
@@ -2318,7 +2318,7 @@ void cTargets::SwordTarget( cSocket *s )
 			} 
 			else 
 			{ 
-				UI32 getAmt = getAmount( mChar, i->GetID() ); 
+				UI32 getAmt = GetAmount( mChar, i->GetID() ); 
 				if( getAmt < 1 ) 
 				{ 
 					sysmessage( s, 776 ); 
@@ -2330,7 +2330,7 @@ void cTargets::SwordTarget( cSocket *s )
 				{ 
 					return; 
 				} 
-				decItemAmount( i ); 
+				DecreaseItemAmount( i ); 
 				return; 
 			} 
 		}

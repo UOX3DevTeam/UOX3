@@ -7,7 +7,7 @@
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
 
-typedef std::vector< Script * > ScpList;
+typedef std::vector< Script * > VECSCRIPTLIST;
 typedef	std::stack< std::string > dirList;
 
 class cDirectoryListing
@@ -54,7 +54,7 @@ class cServerDefinitions
 {
 protected:
 private:
-	std::vector< ScpList >			ScriptListings;
+	std::vector< VECSCRIPTLIST >			ScriptListings;
 	std::map< std::string, SI16 >	priorityMap;
 	SI16							defaultPriority;
 
@@ -74,7 +74,7 @@ public:
 	Script			*	FindScript( const char *toFind, DEFINITIONCATEGORIES typeToFind );
 	SI32				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
 	SI32				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
-	ScpList			*	GetFiles( DEFINITIONCATEGORIES typeToFind );
+	VECSCRIPTLIST			*	GetFiles( DEFINITIONCATEGORIES typeToFind );
 };
 
 #endif

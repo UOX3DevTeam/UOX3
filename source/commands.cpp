@@ -901,7 +901,7 @@ void cCommands::Load( void )
 	const char *tag = NULL;
 	const char *data = NULL;
 
-	stringList	badCommands;
+	STRINGLIST	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data = commands->GrabData();

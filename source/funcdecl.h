@@ -30,7 +30,7 @@ void	responsevendor( cSocket *mSock );
 void	sysmessage( cSocket *s, const char *txt, ... );
 void	sysmessage( cSocket *s, SI32 dictEntry, ... );
 void	objMessage( cSocket *s, const char *txt, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
-void	objMessage( cSocket *s, SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
+void	objMessage( cSocket *s, SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2, ... );
 void	itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0 );
 void	npcTalkAll( CChar *npc, const char *txt, bool antispam );
 void	npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam, ... );

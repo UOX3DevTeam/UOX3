@@ -350,7 +350,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 				mChar->SendToSocket( mSock, true, mChar );
 			}
 			//Remove a food item
-			x = decItemAmount( x );
+			x = DecreaseItemAmount( x );
 			mChar->SetHunger( mChar->GetHunger() + 1 );
 		}
 		return true;
@@ -449,7 +449,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			npcEmote( mSock, mChar, 436, false );
 
 		if( x->GetAmount() > 1 )
-			decItemAmount( x );
+			DecreaseItemAmount( x );
 		else if( !(RandomNum( 0, 4 )) || x->GetAmount() == 1 )	// they emptied it.
 		{
 			x->SetType( 0 );
@@ -756,7 +756,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 					i->SetLocation( mChar );
 				i->SetDecayable( true );
 				i->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) )) );
-				decItemAmount( x );
+				DecreaseItemAmount( x );
 				RefreshItem( i );
 			}
 			else
@@ -1133,7 +1133,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 					i->SetLocation( mChar );
 				i->SetDecayable( true );
 				i->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) )) );
-				decItemAmount( x );
+				DecreaseItemAmount( x );
 				RefreshItem( i );
 			}
 			else
@@ -1572,7 +1572,7 @@ void doubleClick( cSocket *mSock )
 			success = Magic->SelectSpell( mSock, x->GetID( 2 ) - 0x2D + 1 ); 
 		
 		if( success )
-			decItemAmount( x );
+			DecreaseItemAmount( x );
 		return;
 	}
 	sysmessage( mSock, 486 );

@@ -2299,21 +2299,21 @@ bool cMagic::CheckReagents( CChar *s, const reag_st *reagents )
 	if( s->NoNeedReags() )
 		return true;
 
-	if( reagents->ash != 0 && getAmount( s, 0x0F8C ) < reagents->ash )
+	if( reagents->ash != 0 && GetAmount( s, 0x0F8C ) < reagents->ash )
 		failmsg.ash = 1;
-	if( reagents->drake!=0 && getAmount( s, 0x0F86 ) < reagents->drake )
+	if( reagents->drake!=0 && GetAmount( s, 0x0F86 ) < reagents->drake )
 		failmsg.drake = 1;
-	if( reagents->garlic != 0 && getAmount( s, 0x0F84 ) < reagents->garlic )
+	if( reagents->garlic != 0 && GetAmount( s, 0x0F84 ) < reagents->garlic )
 		failmsg.garlic = 1;
-	if( reagents->ginseng != 0 && getAmount( s, 0x0F85 ) < reagents->ginseng )
+	if( reagents->ginseng != 0 && GetAmount( s, 0x0F85 ) < reagents->ginseng )
 		failmsg.ginseng = 1;
-	if( reagents->moss != 0 && getAmount( s, 0x0F7B ) < reagents->moss )
+	if( reagents->moss != 0 && GetAmount( s, 0x0F7B ) < reagents->moss )
 		failmsg.moss = 1;
-	if( reagents->pearl != 0 && getAmount( s, 0x0F7A ) < reagents->pearl )
+	if( reagents->pearl != 0 && GetAmount( s, 0x0F7A ) < reagents->pearl )
 		failmsg.pearl = 1;
-	if( reagents->shade != 0 && getAmount( s, 0x0F88 ) < reagents->shade )
+	if( reagents->shade != 0 && GetAmount( s, 0x0F88 ) < reagents->shade )
 		failmsg.shade = 1;
-	if( reagents->silk != 0 && getAmount( s, 0x0F8D ) < reagents->silk )
+	if( reagents->silk != 0 && GetAmount( s, 0x0F8D ) < reagents->silk )
 		failmsg.silk = 1;
 	return RegMsg( s, failmsg );
 }
@@ -3135,14 +3135,14 @@ void cMagic::DelReagents( CChar *s, reag_st reags )
 {
 	if( s->NoNeedReags() ) 
 		return;
-	deleQuan( s, 0x0F7A, reags.pearl );
-	deleQuan( s, 0x0F7B, reags.moss );
-	deleQuan( s, 0x0F84, reags.garlic );
-	deleQuan( s, 0x0F85, reags.ginseng );
-	deleQuan( s, 0x0F86, reags.drake );
-	deleQuan( s, 0x0F88, reags.shade );
-	deleQuan( s, 0x0F8C, reags.ash );
-	deleQuan( s, 0x0F8D, reags.silk );
+	DeleteQuantity( s, 0x0F7A, reags.pearl );
+	DeleteQuantity( s, 0x0F7B, reags.moss );
+	DeleteQuantity( s, 0x0F84, reags.garlic );
+	DeleteQuantity( s, 0x0F85, reags.ginseng );
+	DeleteQuantity( s, 0x0F86, reags.drake );
+	DeleteQuantity( s, 0x0F88, reags.shade );
+	DeleteQuantity( s, 0x0F8C, reags.ash );
+	DeleteQuantity( s, 0x0F8D, reags.silk );
 }
 
 void cMagic::playSound( CChar *source, int num )

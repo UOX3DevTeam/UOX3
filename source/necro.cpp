@@ -233,7 +233,7 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 			iItem->SetValue( 10 );
 			iItem->SetMoreX( 666 );
 		}
-		decItemAmount( nItem );
+		DecreaseItemAmount( nItem );
 	}
 }
 

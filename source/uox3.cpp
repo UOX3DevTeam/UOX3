@@ -2050,7 +2050,7 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				targChar->SendToSocket( mSock, true, mChar );
 			}
 			//Remove a food item
-			i = decItemAmount( i );
+			i = DecreaseItemAmount( i );
 			targChar->SetHunger( targChar->GetHunger() + 1 );
 			if( i == NULL )
 				return true; //stackdeleted
@@ -6190,7 +6190,7 @@ void usePotion( CChar *p, CItem *i )
 	soundeffect( p, 0x0030 );
 	if( p->GetID( 1 ) >= 1 && p->GetID( 2 )>90 && !p->IsOnHorse() ) 
 		npcAction( p, 0x22);
-	decItemAmount( i );
+	DecreaseItemAmount( i );
 	CItem *bPotion = Items->SpawnItem( NULL, p, 1, "#", true, 0x0F0E, 0, true, false );
 	if( bPotion != NULL )
 	{
@@ -6217,7 +6217,7 @@ void loadSpawnRegions( void )
 	totalspawnregions = 0;
 	
 	ScriptSection *toScan = NULL;
-	ScpList *tScn = FileLookup->GetFiles( spawn_def );
+	VECSCRIPTLIST *tScn = FileLookup->GetFiles( spawn_def );
 	if( tScn == NULL )
 		return;
 	for( UI32 iCtr = 0; iCtr < tScn->size(); iCtr++ )

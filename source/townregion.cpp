@@ -1056,22 +1056,22 @@ bool cTownRegion::PeriodicCheck( void )
 			if( townMem != NULL )
 			{
 				UI16 resourceID = GetResourceID();
-				UI32 numResources = getAmount( townMem, resourceID );
+				UI32 numResources = GetAmount( townMem, resourceID );
 
 				if( taxedAmount > numResources )
 				{
-					UI32 bankAmount = getBankCount( townMem, resourceID, 0 );
+					UI32 bankAmount = GetBankCount( townMem, resourceID, 0 );
 					if( taxedAmount > ( numResources + bankAmount ) )
 						JailSys->JailPlayer( townMem, 900 );
 					else
 					{
-						deleQuan( townMem, resourceID, numResources );
-						deleBankItem( townMem, resourceID, 0, bankAmount - numResources );
+						DeleteQuantity( townMem, resourceID, numResources );
+						DeleteBankItem( townMem, resourceID, 0, bankAmount - numResources );
 					}
 				}
 				else
 				{
-					deleQuan( townMem, resourceID, taxedAmount );
+					DeleteQuantity( townMem, resourceID, taxedAmount );
 					resourceCollected += taxedAmount;
 				}
 			}

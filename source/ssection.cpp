@@ -433,7 +433,7 @@ npcList( false ), itemList( false )
 //|	Purpose			-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o--------------------------------------------------------------------------
-ScriptSection::ScriptSection( FILE *targFile, DefinitionCategories d ) : fileOpened( true ), arrayFilled( false ), 
+ScriptSection::ScriptSection( FILE *targFile, DEFINITIONCATEGORIES d ) : fileOpened( true ), arrayFilled( false ), 
 dataFile( targFile ), currentPos( -1 ), fileType( -1 ), dfnCat( d ), currentPos2( -1 ), npcListData( NULL ), itemListData( NULL ),
 npcList( false ), itemList( false )
 {

@@ -269,7 +269,7 @@ void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
 		return;
 	}
 	
-	stringList one, two;
+	STRINGLIST one, two;
 
 	UnicodeTypes sLang = toSendTo->Language();
 	UI16 lColour = cwmWorldState->ServerData()->GetLeftTextColour(), tColour = cwmWorldState->ServerData()->GetTitleColour();

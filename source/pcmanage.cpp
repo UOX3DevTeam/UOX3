@@ -311,12 +311,12 @@ void newbieItems( CChar *c )
 {
 	std::vector< cSkillClass > vecSkills;
 	char whichsect[15];
-	for( UI08 sCtr = 0, sCtr < TRUESKILLS; sCtr++ )
+	for( UI08 sCtr = 0; sCtr < TRUESKILLS; sCtr++ )
 		vecSkills.push_back( cSkillClass( sCtr, c->GetBaseSkill( sCtr ) ) );
 
 	std::sort( vecSkills.rbegin(), vecSkills.rend() );
 
-	cSocket *s = calcSocketobjFromChar( c );
+	cSocket *s = calcSocketObjFromChar( c );
 	for( UI08 i = 0; i < 3 ; i++ )
 	{
 		if( vecSkills[i].value > 0 )

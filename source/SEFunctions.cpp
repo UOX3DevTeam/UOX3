@@ -1744,10 +1744,10 @@ JSBool SE_UseReagant( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 	if( realID != 0 )
 	{
-		UI32 foundAmount = getAmount( &chars[player], realID );
+		UI32 foundAmount = GetAmount( &chars[player], realID );
 		if( foundAmount >= amount )
 		{
-			deleQuan( &chars[player], realID, amount );
+			DeleteQuantity( &chars[player], realID, amount );
 			*rval = JS_TRUE;
 		}
 		else

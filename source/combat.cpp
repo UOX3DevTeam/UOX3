@@ -604,9 +604,9 @@ void cCombat::DoCombat( CChar *attack )
 				}
 				UI32 getArrowAmt;
 				if( bowType == BOWS ) 
-					getArrowAmt = getAmount( attack, 0x0F3F );
+					getArrowAmt = GetAmount( attack, 0x0F3F );
 				else 
-					getArrowAmt = getAmount( attack, 0x1BFB );
+					getArrowAmt = GetAmount( attack, 0x1BFB );
 
 				if( getArrowAmt > 0 || attack->IsNpc() ) 
 					doHit = true;
@@ -671,12 +671,12 @@ void cCombat::DoCombat( CChar *attack )
 				{
 					if( bowType == BOWS )
 					{
-						deleQuan( attack, 0x0F3F, 1 );
+						DeleteQuantity( attack, 0x0F3F, 1 );
 						movingeffect( attack, defend, 0x0F42, 0x08, 0x00, 0x00 );
 					}
 					else
 					{
-						deleQuan( attack, 0x1BFB, 1 );
+						DeleteQuantity( attack, 0x1BFB, 1 );
 						movingeffect( attack, defend, 0x1BFE, 0x08, 0x00, 0x00 );
 					}
 					CombatHit( attack, defend );

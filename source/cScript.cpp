@@ -1499,8 +1499,8 @@ SI32 cScript::NewGumpList( void )
 	SI32 retVal = gumpDisplays.size();
 	
 	SEGump *toAdd = new SEGump;
-	toAdd->one = new stringList;
-	toAdd->two = new stringList;
+	toAdd->one = new STRINGLIST;
+	toAdd->two = new STRINGLIST;
 
 	gumpDisplays.push_back( toAdd );
 	return retVal;

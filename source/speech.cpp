@@ -1482,7 +1482,7 @@ bool response( cSocket *mSock )
 				}
 					if( response2 )	
 					{
-						UI32 goldCount = getBankCount( mChar, 0x0EED );
+						UI32 goldCount = GetBankCount( mChar, 0x0EED );
 						npcTalk( mSock, Npc, 1298, true, mChar->GetName(), goldCount );
 					}
 				}

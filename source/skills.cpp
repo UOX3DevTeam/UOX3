@@ -49,7 +49,7 @@ void cSkills::Tailoring( cSocket *s )
 			sysmessage( s, 775 );
 		else
 		{
-			UI32 getAmt = getAmount( mChar, i->GetID() );
+			UI32 getAmt = GetAmount( mChar, i->GetID() );
 			if( getAmt < 1 )
 			{ 
 				sysmessage( s, 776 );
@@ -146,7 +146,7 @@ void cSkills::BowCraft( cSocket *s )
 			sysmessage( s, 780 );
 			return;
 		}           
-		UI32 getAmt = getAmount( mChar, i->GetID() );
+		UI32 getAmt = GetAmount(mChar, i->GetID() );
 		if( getAmt < 2 )
 		{
 			sysmessage( s, 776 );
@@ -203,7 +203,7 @@ void cSkills::Carpentry( cSocket *s )
 			sysmessage( s, 781 );
 			return;
 		}         
-		UI32 getAmt = getAmount( mChar, i->GetID() );
+		UI32 getAmt = GetAmount(mChar, i->GetID() );
 		if( getAmt < 9 )
 		{	 
 			sysmessage( s, 782 );
@@ -834,7 +834,7 @@ void cSkills::handleCooking( cSocket *s )
 						UI16 amntDiff = RandomNum( 1, skillItem->GetAmount() );
 						sprintf( burntName, Dictionary->GetEntry( 1430 ), amntDiff );
 						sysmessage( s, 1431 );
-						skillItem = decItemAmount( skillItem, amntDiff );
+						skillItem = DecreaseItemAmount( skillItem, amntDiff );
 						Items->SpawnItem( s, mChar, amntDiff, burntName, false, 0x1EB0, 0, true, true );
 						return;
 					}
@@ -1527,7 +1527,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
 			if( charInRange( tSock->CurrcharObj(), target ) )
-				objMessage( tSock, 343, target, 0.0f, 0x03B2, target->GetName(), trgChar->GetName() );
+				objMessage( tSock, 343, target, 0.0f, 0x03B2); //, target->GetName(), trgChar->GetName() );
 		}
 		Network->PopConn();
 	}
@@ -1809,7 +1809,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 	{
 		c = Items->SpawnItem( s, myChar, 50, Dictionary->GetEntry( 1490 ), true, 0x175F, 0, true, true );
 		if( c != NULL ) 
-			decItemAmount( i );
+			DecreaseItemAmount( i );
 		return;
 	}
 	
@@ -1828,7 +1828,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 		c = Items->SpawnItem( s, myChar, Amount, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
 
 		if( c != NULL ) 
-			decItemAmount( i );
+			DecreaseItemAmount( i );
 
 		return;
 	}
@@ -1841,7 +1841,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 		c = Items->SpawnItem( s, myChar, 2, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
 		if( c == NULL ) 
 			return;
-		decItemAmount( i );
+		DecreaseItemAmount( i );
 
 		return;
 	}
@@ -1884,7 +1884,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 				if( !CheckSkill( mChar, HEALING, 800, 1000 ) || !CheckSkill( mChar, ANATOMY, 800, 1000 ) )	// failed either healing or anat check
 				{
 					sysmessage( s, 1492 );
-					decItemAmount( mItem );
+					DecreaseItemAmount( mItem );
 					return;
 				}
 				tempeffect( mChar, i, 23, HEALING, 0, 0, mItem );	// sets up timer for resurrect
@@ -1903,7 +1903,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 				if( !CheckSkill( mChar, HEALING, 600, 1000 ) || !CheckSkill( mChar, ANATOMY, 600, 1000 ) )
 				{
 					sysmessage( s, 1494 );
-					decItemAmount( mItem );
+					DecreaseItemAmount( mItem );
 					return;
 				}
 				tempeffect( mChar, i, 24, HEALING, 0, 0, mItem );
@@ -3133,8 +3133,8 @@ void cSkills::BeggingTarget( cSocket *s )
 	}
 	if( targChar->GetID() == 0x0190 || targChar->GetID() == 0x0191 )
 	{
-		UI32 bankGold = getBankCount( mChar, 0x0EED, 0 );
-		UI32 currentGold = getItemAmt( mChar, 0x0EED, 0 );
+		UI32 bankGold = GetBankCount( mChar, 0x0EED, 0 );
+		UI32 currentGold = GetItemAmount( mChar, 0x0EED, 0 );
 		UI32 petGold = 0;
 		CHARLIST *myPets = mChar->GetPetList();
 		// Find all the gold that will be on any pets we own
@@ -3144,7 +3144,7 @@ void cSkills::BeggingTarget( cSocket *s )
 			{
 				CChar *pet = (*myPets)[a];
 				if( pet != NULL )
-					petGold += getItemAmt( pet, 0x0EED, 0 );
+					petGold += GetItemAmount( pet, 0x0EED, 0 );
 			}
 		}
 		if( bankGold + currentGold + petGold > 3000 )
@@ -3341,7 +3341,7 @@ void cSkills::PoisoningTarget( cSocket *s )
 		sysmessage( s, 1649 );
 	}
 
-	decItemAmount( poison );
+	DecreaseItemAmount( poison );
 	CItem *bPotion = Items->SpawnItem( NULL, mChar, 1, "#", true, 0x0F0E, 0, true, false );
 	if( bPotion != NULL )
 	{
@@ -3394,7 +3394,7 @@ void cSkills::Inscribe( cSocket *s )
 			sysmessage( s, 778 );
 			return;
 		}
-		UI32 getAmt = getAmount( mChar, i->GetID() );
+		UI32 getAmt = GetAmount( mChar, i->GetID() );
 		if( getAmt < 1 )
 		{
 			sysmessage( s, 776 );
@@ -3514,7 +3514,7 @@ void cSkills::Inscribe( cSocket *s, long snum )
 				else 
 					sysmessage( s, 929 );
 			}
-			decItemAmount( i );
+			DecreaseItemAmount( i );
 		}
 		return;
 	}
@@ -3805,7 +3805,7 @@ void cSkills::LockPick( cSocket *s )
 			if( RandomNum( 0, 1 ) == 0 )		// chance it could break the pick
 			{
 				sysmessage( s, 933 );
-				decItemAmount( s->AddMItem() );
+				DecreaseItemAmount( s->AddMItem() );
 			}
 			else
 				sysmessage( s, 934 );
@@ -3953,7 +3953,7 @@ void cSkills::Tinkering( cSocket *s )
 			sysmessage( s, 775 );
 		else
 		{
-			UI32 getAmt = getAmount( mChar, realID );
+			UI32 getAmt = GetAmount(mChar, realID );
 			if( getAmt < 2 )
 			{ 
 				sysmessage( s, 940 );
@@ -4054,9 +4054,9 @@ void cSkills::AButte( cSocket *s, CItem *x )
 		}
 		UI32 getArrows = 0;
 		if( bowType == BOWS ) 
-			getArrows = getAmount( mChar, 0x0F3F );
+			getArrows = GetAmount(mChar, 0x0F3F );
 		else 
-			getArrows = getAmount( mChar, 0x1BFB );
+			getArrows = GetAmount(mChar, 0x1BFB );
 		if( getArrows == 0 ) 
 		{
 			sysmessage( s, 949 );
@@ -4064,13 +4064,13 @@ void cSkills::AButte( cSocket *s, CItem *x )
 		}
 		if( bowType == BOWS )
 		{
-			deleQuan( mChar, 0x0F3F, 1 );
+			DeleteQuantity( mChar, 0x0F3F, 1 );
 			x->SetMore( x->GetMore( 1 ) + 1, 1 );
 			//add moving effect here to item, not character
 		}
 		else
 		{
-			deleQuan( mChar, 0x1BFB, 1 );
+			DeleteQuantity( mChar, 0x1BFB, 1 );
 			x->SetMore( x->GetMore( 2 ) + 1, 2 );
 			//add moving effect here to item, not character
 		} 
@@ -4177,8 +4177,8 @@ void cSkills::TinkerAxel( cSocket *s )
 			else
 			{
 				sysmessage( s, 960 );
-				decItemAmount( skillItem );
-				decItemAmount( i );
+				DecreaseItemAmount( skillItem );
+				DecreaseItemAmount( i );
 				CItem *c = Items->SpawnItem( NULL, mChar, 1, Dictionary->GetEntry( 961 ), true, 0x1051, 0, true, true );
 				if( c == NULL ) 
 					return;
@@ -4242,7 +4242,7 @@ void cSkills::TinkerAwg( cSocket *s )
 	else if( !CheckSkill( mChar, TINKERING, 0, 1000 ) )
 	{
 		sysmessage( s, 964 );
-		deleQuan( mChar, realID, 1 );
+		DeleteQuantity( mChar, realID, 1 );
 		return;
 	}
 	else
@@ -4257,8 +4257,8 @@ void cSkills::TinkerAwg( cSocket *s )
 			return;
 		sysmessage( s, 960 );
 	}
-	deleQuan( mChar, matID, 1 );
-	deleQuan( mChar, realID, 1 );
+	DeleteQuantity( mChar, matID, 1 );
+	DeleteQuantity( mChar, realID, 1 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -4294,7 +4294,7 @@ void cSkills::TinkerClock( cSocket *s )
 					if( c == NULL ) 
 						return;
 				}
-				decItemAmount( i );
+				DecreaseItemAmount( i );
 				return;
 			}
 		} 
@@ -4490,7 +4490,7 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, SI16 oreType )
 				{
 					if( objInRange( mChar, tempItem, 3 ) )
 					{
-						UI32 getAmt = getItemAmt( mChar, item.GetID(), item.GetColour() );     
+						UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );     
 						if( getAmt < ores[oreType].minAmount )
 						{ 
 							sysmessage( s, 980, ores[oreType].name.c_str() );
@@ -4543,7 +4543,7 @@ bool cSkills::LoadMiningData( void )
 
 	if( oreList == NULL )
 		return false;
-	stringList oreNameList;
+	STRINGLIST oreNameList;
 	const char *tag = NULL;
 	const char *data = NULL;
 	for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
@@ -4867,7 +4867,7 @@ void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
-	ScpList *toScan = FileLookup->GetFiles( create_def );
+	VECSCRIPTLIST *toScan = FileLookup->GetFiles( create_def );
 	if( toScan == NULL )
 		return;
 	ScriptSection *createScpMenu = NULL;	// each entry in the create.scp file
@@ -5307,8 +5307,8 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 	UI16 btnRight	= cwmWorldState->ServerData()->GetButtonRight();
 
 	SEGump *toAdd	= new SEGump;
-	toAdd->one		= new stringList;
-	toAdd->two		= new stringList;
+	toAdd->one		= new STRINGLIST;
+	toAdd->two		= new STRINGLIST;
 	toAdd->TextID	= 0;
 	char tempString[128];
 
@@ -5540,7 +5540,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 			toDelete = RandomNum( 0, toMake.resourceNeeded[resCounter].amountNeeded / 2 );
 			targColour = toMake.resourceNeeded[resCounter].colour;
 			targID = toMake.resourceNeeded[resCounter].itemID;
-			deleItemAmt( player, targID, targColour, toDelete );
+			DeleteItemAmount( player, targID, targColour, toDelete );
 		}
 		soundeffect( sock, toMake.soundPlayed, true );
 		sysmessage( sock, 984 );
@@ -5561,7 +5561,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 			toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
 			targColour = toMake.resourceNeeded[resCounter].colour;
 			targID = toMake.resourceNeeded[resCounter].itemID;
-			if( getItemAmt( player, targID, targColour ) < toDelete )
+			if( GetItemAmount( player, targID, targColour ) < toDelete )
 				canDelete = false;
 		}
 		if( !canDelete )
@@ -5575,7 +5575,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 			toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
 			targColour = toMake.resourceNeeded[resCounter].colour;
 			targID = toMake.resourceNeeded[resCounter].itemID;
-			deleItemAmt( player, targID, targColour, toDelete );
+			DeleteItemAmount( player, targID, targColour, toDelete );
 		}
 		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.skillReqs.size(); resCounter++ )
 			player->SkillUsed( true, toMake.skillReqs[resCounter].skillNumber );

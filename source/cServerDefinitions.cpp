@@ -145,7 +145,7 @@ cServerDefinitions::~cServerDefinitions()
 	{
 		for( UI32 j = 0; j < ScriptListings[i].size(); j++ )
 		{
-			ScpList *toDel = &(ScriptListings[i]);
+			VECSCRIPTLIST *toDel = &(ScriptListings[i]);
 			if( toDel == NULL )
 				continue;
 			delete (*toDel)[j];
@@ -154,11 +154,11 @@ cServerDefinitions::~cServerDefinitions()
 	}
 }
 
-ScriptSection *cServerDefinitions::FindEntry( const char *toFind, DefinitionCategories typeToFind )
+ScriptSection *cServerDefinitions::FindEntry( const char *toFind, DEFINITIONCATEGORIES typeToFind )
 {
 	if( toFind == NULL || typeToFind == NUM_DEFS )
 		return NULL;
-	ScpList *toDel = &(ScriptListings[typeToFind]);
+	VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
 	if( toDel == NULL )
 		return NULL;
 	for( UI32 i = 0; i < toDel->size(); i++ )
@@ -176,11 +176,11 @@ ScriptSection *cServerDefinitions::FindEntry( const char *toFind, DefinitionCate
 	return NULL;
 }
 
-Script *cServerDefinitions::FindScript( const char *toFind, DefinitionCategories typeToFind )
+Script *cServerDefinitions::FindScript( const char *toFind, DEFINITIONCATEGORIES typeToFind )
 {
 	if( toFind == NULL || typeToFind == NUM_DEFS )
 		return NULL;
-	ScpList *toDel = &(ScriptListings[typeToFind]);
+	VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
 	if( toDel == NULL )
 		return NULL;
 	for( UI32 i = 0; i < toDel->size(); i++ )
@@ -235,12 +235,12 @@ void cServerDefinitions::ReloadScriptObjects( void )
 		CleanPriorityMap();
 		defaultPriority = 0;
 		UI08 wasPriod = 2;
-		BuildPriorityMap( (DefinitionCategories)sCtr, wasPriod );
-		cDirectoryListing fileList( (DefinitionCategories)sCtr, defExt );
+		BuildPriorityMap( (DEFINITIONCATEGORIES)sCtr, wasPriod );
+		cDirectoryListing fileList( (DEFINITIONCATEGORIES)sCtr, defExt );
 		fileList.Flatten( true );
 		std::vector< PrioScan * >	mSort;
-		stringList *shortListing	= fileList.FlattenedShortList();
-		stringList *longListing		= fileList.FlattenedList();
+		STRINGLIST *shortListing	= fileList.FlattenedShortList();
+		STRINGLIST *longListing		= fileList.FlattenedList();
 		for( UI32 i = 0; i < shortListing->size(); i++ )
 		{
 			const char *fullname	= (*longListing)[i].c_str();
@@ -256,13 +256,13 @@ void cServerDefinitions::ReloadScriptObjects( void )
 			for( UI32 iFile = 0; iFile < mSort.size(); iFile++ )
 			{
 				Console.Print( "\b\b\b\b\b\b" );
-				ScriptListings[sCtr].push_back( new Script( mSort[iFile]->filename, (DefinitionCategories)sCtr, false ) );
+				ScriptListings[sCtr].push_back( new Script( mSort[iFile]->filename, (DEFINITIONCATEGORIES)sCtr, false ) );
 				iTotal += (ScriptListings[sCtr])[iFile]->NumEntries();
 				Console.Print( "%6i", iTotal );
 				delete mSort[iFile];
 				mSort[iFile] = NULL;
 			}
-			Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( (DefinitionCategories)sCtr ) );
+			Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( (DEFINITIONCATEGORIES)sCtr ) );
 			Console.Print( " entries" );
 			switch( wasPriod )
 			{
@@ -276,10 +276,10 @@ void cServerDefinitions::ReloadScriptObjects( void )
 	CleanPriorityMap();
 }
 
-SI32 cServerDefinitions::CountOfEntries( DefinitionCategories typeToFind )
+SI32 cServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 {
 	SI32 sumEntries = 0;
-	ScpList *toScan = &(ScriptListings[typeToFind]);
+	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
 	if( toScan == NULL )
 		return 0;
 	for( UI32 counter = 0; counter < toScan->size(); counter++ )
@@ -287,12 +287,12 @@ SI32 cServerDefinitions::CountOfEntries( DefinitionCategories typeToFind )
 	return sumEntries;
 }
 
-SI32 cServerDefinitions::CountOfFiles( DefinitionCategories typeToFind )
+SI32 cServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 {
 	return ScriptListings[typeToFind].size();
 }
 
-ScpList *cServerDefinitions::GetFiles( DefinitionCategories typeToFind )
+VECSCRIPTLIST *cServerDefinitions::GetFiles( DEFINITIONCATEGORIES typeToFind )
 {
 	return &(ScriptListings[typeToFind]);
 }
@@ -301,10 +301,10 @@ void cServerDefinitions::CleanPriorityMap( void )
 {
 	priorityMap.erase( priorityMap.begin(), priorityMap.end() );
 }
-void cServerDefinitions::BuildPriorityMap( DefinitionCategories category, UI08& wasPrioritized )
+void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
 {
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
-	stringList *longList = priorityFile.List();
+	STRINGLIST *longList = priorityFile.List();
 	if( longList->size() > 0 )
 	{
 		std::string filename = (*longList)[0].c_str();
@@ -375,7 +375,7 @@ SI16 cServerDefinitions::GetPriority( const char *file )
 		return p->second;
 }
 
-bool cDirectoryListing::PushDir( DefinitionCategories toMove )
+bool cDirectoryListing::PushDir( DEFINITIONCATEGORIES toMove )
 {
 	char filePath[MAX_PATH];
 	sprintf( filePath, "%s%s", cwmWorldState->ServerData()->GetDefsDirectory(), dirnames[toMove].c_str() );
@@ -421,7 +421,7 @@ cDirectoryListing::cDirectoryListing( std::string dir, std::string extent, bool 
 	Extension( extent );
 	Retrieve( dir );
 }
-cDirectoryListing::cDirectoryListing( DefinitionCategories dir, std::string extent, bool recurse ) : doRecursion( recurse )
+cDirectoryListing::cDirectoryListing( DEFINITIONCATEGORIES dir, std::string extent, bool recurse ) : doRecursion( recurse )
 {
 	Extension( extent );
 	Retrieve( dir );
@@ -442,7 +442,7 @@ void cDirectoryListing::Retrieve( std::string dir )
 	if( dirSet )
 		PopDir();
 }
-void cDirectoryListing::Retrieve( DefinitionCategories dir )
+void cDirectoryListing::Retrieve( DEFINITIONCATEGORIES dir )
 {
 	bool dirSet = PushDir( dir );
 	InternalRetrieve();
@@ -450,22 +450,22 @@ void cDirectoryListing::Retrieve( DefinitionCategories dir )
 		PopDir();
 }
 
-stringList *cDirectoryListing::List( void )
+STRINGLIST *cDirectoryListing::List( void )
 {
 	return &filenameList;
 }
 
-stringList *cDirectoryListing::ShortList( void )
+STRINGLIST *cDirectoryListing::ShortList( void )
 {
 	return &shortList;
 }
 
-stringList *cDirectoryListing::FlattenedList( void )
+STRINGLIST *cDirectoryListing::FlattenedList( void )
 {
 	return &flattenedFull;
 }
 
-stringList *cDirectoryListing::FlattenedShortList( void )
+STRINGLIST *cDirectoryListing::FlattenedShortList( void )
 {
 	return &flattenedShort;
 }
@@ -587,8 +587,8 @@ void cDirectoryListing::Flatten( bool isParent )
 	for( unsigned int i = 0; i < subdirectories.size(); i++ )
 	{
 		subdirectories[i].Flatten( false );
-		stringList *shortFlat	= subdirectories[i].FlattenedShortList();
-		stringList *longFlat	= subdirectories[i].FlattenedList();
+		STRINGLIST *shortFlat	= subdirectories[i].FlattenedShortList();
+		STRINGLIST *longFlat	= subdirectories[i].FlattenedList();
 		for( unsigned int k = 0; k < longFlat->size(); k++ )
 		{
 			flattenedFull.push_back( (*longFlat)[k] );

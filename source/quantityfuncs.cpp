@@ -330,10 +330,10 @@ UI32 DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
 		{
 			if( i->GetType() == 1 )	// Is item an pack or contaier ?
 			{
-				Weight->SubtractItemWeight(i,s);
+				Weight->subtractItemWeight(s, i);
 				deld = DeleteSubItemAmount( i, realID, realColour, amount );
 				if(i)
-					Weight->AddItemWeight(i,s);
+					Weight->addItemWeight(s,i);
 				total -= deld;
 				amtDeleted += deld;
 			}
@@ -343,15 +343,15 @@ UI32 DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
 				{
 					total -= i->GetAmount();
 					amtDeleted += i->GetAmount();
-					Weight->SubtractItemWeight(i,s);
+					Weight->subtractItemWeight(s,i);
 					Items->DeleItem( i );
 				}
 				else
 				{
-					Weight->SubtractItemWeight(i,s);
+					Weight->subtractItemWeight(s,i);
 					DecreaseItemAmount( i, total );
 					if(i)
-						Weight->AddItemWeight(i,s);
+						Weight->addItemWeight(s,i);
 					total = 0;
 					amtDeleted = amount;
 				}

@@ -568,7 +568,7 @@ void checktempeffects( void )
 				src->SkillUsed( false, static_cast<UI08>(Effect->More1()) );
 
 			}
-			decItemAmount( i );
+			DecreaseItemAmount( i );
 			break;
 		case 25:
 			if( Effect->More2() == 0 )
