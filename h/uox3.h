@@ -51,23 +51,9 @@
 #define PRODUCT "Ultima Offline eXperiment 3"
 #define TIMEZONE "GMT+10"
 #define NAME "Freelancers Group SnapShot"
-#define EMAIL "http://www.uox3.net/"
-#define PROGRAMMERS "UOX3 DevTeam[Abaddon/EvilDeD/Freelancers]"
-//#ifdef _WIN32
-//#define __NT__
-//#define _MSVC
-//#endif
-//#ifdef __NT__
-//#ifndef _WIN32
-//#define _WIN32
-//#endif
-//#endif
-// remove PACKED for unix/linux because it going to cause bus errors - fur
-//#if defined _WIN32 && (!defined(__MINGW32__))
+#define EMAIL "http://uox3.sourceforge.net/"
+#define PROGRAMMERS "UOX3 Freelancers"
 #define PACK_NEEDED
-//#else
-//#define PACK_NEEDED
-//#endif
 
 
 #ifndef __linux__
