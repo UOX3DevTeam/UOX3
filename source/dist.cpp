@@ -94,9 +94,9 @@ bool itemInRange( CChar *mChar, CItem *i )
 	else
 		vr = MAX_VISRANGE + Races->VisRange( mChar->GetRace() );
 	point3 difference = mChar->GetLocation() - i->GetLocation();
-	if( abs( difference.x ) > vr )
+	if( abs( (UI16)difference.x ) > vr )
 		return false;
-	if( abs( difference.y ) > vr )
+	if( abs( (UI16)difference.y ) > vr )
 		return false;
 	return true;
 }

@@ -7926,11 +7926,13 @@ void SendMapChange( UI08 worldNumber, cSocket *sock, bool initialLogin )
 		case CV_KRRIOS:
 			break;
 		default:
-			mapChange.SetMap( 0 );
+			//mapChange.SetMap( 0 );
 			break;
 		}
 	}
 	sock->Send( &mapChange );
+	CChar *mChar = sock->CurrcharObj();
+	mChar->Teleport();
 }
 
 void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
@@ -7952,10 +7954,10 @@ void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
 		toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), tWorldNum );
 		break;
 	default:
-		if( tWorldNum <= 1 )
+		//if( tWorldNum <= 1 )
 			toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), tWorldNum );
-		else
-			toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), 0 );
+		//else
+		//	toMove->SetLocation( (SI16)gate->GetMoreX(), (SI16)gate->GetMoreY(), (SI08)gate->GetMoreZ(), 0 );
 		break;
 	}
 	toMove->RemoveFromSight();

@@ -4275,3 +4275,5 @@ void CPIGumpMenuSelect::BuildTextLocations( void )
 		i += ( 2 * textLen + 2 );	// we need to add the + 2 for the text len field
 	}
 }
+
+

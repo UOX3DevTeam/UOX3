@@ -4166,7 +4166,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 			{
 				if( tempChar == NULL )
 					continue;
-				if( objInRange( srcChar, tempChar, distance ) )
+				if( objInRange( srcChar, tempChar, (UI16)distance ) )
 					myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
 			}
 			MapArea->PopChar();
