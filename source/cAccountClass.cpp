@@ -30,18 +30,22 @@ extern cVersionClass CVC;
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-//#ifdef __UOX3_DTL__
-//cAccountClass::cAccountClass():m_sAccountsDirectory("dsn:uox3db")
-//#else
+/*
+#ifdef __UOX3_DTL__
+cAccountClass::cAccountClass():m_sAccountsDirectory("dsn:uox3db")
+#else
+*/
 cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
-//#endif
+/*#endif*/
 {
 	m_wHighestAccount=0x0000;
 	I = m_mapUsernameIDMap.end();
-//#ifdef __UOX3_DTL__
+/*
+#ifdef __UOX3_DTL__
 	// We need to open this DB Connection
-	//dtl::DBConnection::GetDefaultConnection().Connect(m_sAccountsDirectory/*"uid=example;pwd=example;dsn=exampleA;"*/);
-//#endif
+	dtl::DBConnection::GetDefaultConnection().Connect(m_sAccountsDirectory); //"uid=example;pwd=example;dsn=exampleA;");
+#endif
+*/
 }
 //
 cAccountClass::cAccountClass(std::string sAccountsPath)
