@@ -17,11 +17,15 @@ function onCallback0( pSock, ourObj )
 	var pUser = pSock.currentChar;
 	if( ourObj && ourObj.isChar && pUser )
 	{
-		var ourInt = ourObj.intelligence;
-		if( !pUser.CheckSkill( 16, 0, 1000 ) )
+		if( ourObj.dead )
+			pSock.SysMessage( GetDictionaryEntry( 1571, pSock.Language ) );
+		else if( !ourObj.InRange( pUser, 7 ) )
+			pSock.SysMessage( "That is too far away." );
+		else if( !pUser.CheckSkill( 16, 0, 1000 ) )
 			pSock.SysMessage( GetDictionaryEntry( 1504, pSock.Language ) );
 		else
 		{
+			var ourInt = ourObj.intelligence;
 			var intString;
 			if( ourInt < 100 )
 				intString = GetDictionaryEntry( (parseInt( ourInt/10 )+1558), pSock.Language );
