@@ -833,6 +833,11 @@ void command_validcmd( CSocket *s )
 		if( targCounter->second.cmdLevelReq <= targetCommand )
 			targetCmds.AddData( targCounter->first, targCounter->second.cmdLevelReq );
 	}
+	for( JSCOMMANDMAP_ITERATOR jsCounter = JSCommandMap.begin(); jsCounter != JSCommandMap.end(); ++jsCounter )
+	{
+		if( jsCounter->second.cmdLevelReq <= targetCommand )
+			targetCmds.AddData( jsCounter->first, jsCounter->second.cmdLevelReq );
+	}
 
 	targetCmds.Send( 4, false, INVALIDSERIAL );
 }

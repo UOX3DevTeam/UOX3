@@ -1,3 +1,6 @@
+March 4 2005 - Maarc
+	Updated 'validcmd so that it dumps out information about JS based commands as well
+
 3/1/2005 - Xuri (giwo)
 	Fixed a bug in HandleGuardAI() causing guards to kill cute, innocent "grey" kittens (and other animals) after taking care of any real criminals present
 
