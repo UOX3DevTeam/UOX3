@@ -12,7 +12,7 @@ bool fileCopy( const char *sourceFile, const char *targetFile )
 {
 	if( sourceFile == NULL || targetFile == NULL )
 		return false;
-	FILE *source = fopen( sourceFile, "rb" );
+	FILE *source = fopen( sourceFile, "rb" );	
 	if( source == NULL )
 		return false;
 	FILE *target = fopen( targetFile, "wb" );
@@ -21,7 +21,6 @@ bool fileCopy( const char *sourceFile, const char *targetFile )
 		fclose( source );
 		return false;
 	}
-
 	UI08 buffer[BUFFERSIZE];
 	while( !feof( source ) )
 	{
@@ -34,7 +33,6 @@ bool fileCopy( const char *sourceFile, const char *targetFile )
 			return false;
 		}
 	}
-
 	fclose( source );
 	fclose( target );
 	return true;
@@ -86,8 +84,7 @@ void fileArchive( void )
 
 	char filename1[MAX_PATH], filename2[MAX_PATH];
 
-	sprintf( filename1, "%s%s", 
-		 cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
+	sprintf( filename1, "%s%s", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
 	int makeResult = _mkdir( filename1 );
 	if( makeResult != 0 )
 	{
