@@ -1490,8 +1490,8 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 	
 	UI08 worldNumber = nItem->WorldNumber();
 
-	for( dx = -1; dx <= 1; dx++ )
-		for( dy = -1; dy <= 1; dy++ )
+	for( dx = 0xffffffff; dx <= 1; dx++ )
+		for( dy = 0xffffffff; dy <= 1; dy++ )
 		{
 			SubRegion *Cell = MapRegion->GetGrid( xOffset+dx, yOffset+dy, worldNumber );
 			bool chain = false;
@@ -8314,7 +8314,7 @@ void doDeathStuff( CChar *i )
 	}
 	if( cwmWorldState->ServerData()->GetDeathAnimationStatus() )
 		deathAction( i, corpsenum );
-	if( i->GetAccount().wAccountIndex != -1 )
+	if( i->GetAccount().wAccountIndex != 0xffff )
 	{
 		i->Teleport();
 		if( pSock != NULL ) 

@@ -661,7 +661,7 @@ void cTargets::RemoveTarget( cSocket *s )
 		CChar *c = calcCharObjFromSer( serial );
 		if( c == NULL )
 			return;
-		if( c->GetAccount().wAccountIndex != -1 && !c->IsNpc() )
+		if( c->GetAccount().wAccountIndex != 0xffff && !c->IsNpc() )
 		{ 
 			sysmessage( s, 1014 );
 			return;
@@ -1140,7 +1140,7 @@ void cTargets::CstatsTarget( cSocket *s )
 	charStat.AddData( "RaceGate", i->GetRaceGate() );
 	charStat.AddData( "CommandLevel", i->GetCommandLevel() );
 	// 
-	if( actbTemp.wAccountIndex != -1 )
+	if( actbTemp.wAccountIndex != 0xffff )
 		charStat.AddData( "Last On", i->GetLastOn() );
 	//
 	charStat.Send( 4, false, INVALIDSERIAL );

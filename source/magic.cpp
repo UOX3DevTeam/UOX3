@@ -1029,7 +1029,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 	target->IncHP( - (dmg+dmgmod) );
 	target->SetStamina( target->GetStamina() - (rand()%10+5) );
 	
-	if( target->GetStamina() < 0 )
+	if( target->GetStamina() == 0xffff )
 		target->SetStamina( 0 );
 	if( target->GetHP() < 0 )
 		target->SetHP( 0 );
@@ -1936,7 +1936,7 @@ void cMagic::SubtractStamina( CChar *s, int stamina )
 	if( s->NoNeedMana() )
 		return;
 	s->SetStamina( s->GetStamina() - stamina );
-	if( s->GetStamina() < 0 ) 
+	if( s->GetStamina() ==0xffff ) 
 		s->SetStamina( 0 );
 
 	updateStats( s, 2 );

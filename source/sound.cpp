@@ -223,7 +223,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
 			switch( sfx )
 			{
 			case 1:
-			case 3:	offset = -1;	break;	// idle, defend
+			case 3:	offset = 0xffff;	break;	// idle, defend
 			case 2:	offset = 1;		break; // correct offset
 			case 4:	offset = 2;		break;
 			}
@@ -231,7 +231,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
         case 3: // only start-attack, attack, defense & dying
 			switch( sfx )
 			{
-			case 1:	offset = -1;	break;
+			case 1:	offset = 0xffff;	break;
 			case 2:
 			case 3:
 			case 4:	offset = sfx - 1;	break;
@@ -239,7 +239,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
             break;
 		case 4: // only a single sound
 			if( sfx != 0 ) 
-				offset = -1; 
+				offset = 0xffff; 
 			else 
 				offset = 0;
 			break;
@@ -247,7 +247,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
 		
 		basesound += offset;
 		
-		if( offset != -1 ) 
+		if( offset != 0xffff ) 
 			soundeffect( monster, basesound );
 	}
 }
@@ -533,3 +533,5 @@ void Reticulate( void )
 
 #endif
 */
+
+

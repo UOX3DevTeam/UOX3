@@ -4403,3 +4403,4 @@ JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	*rval = INT_TO_JSVAL( tnum ); 	
 	return JS_TRUE; 
 } 
+

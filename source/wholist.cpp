@@ -324,7 +324,7 @@ void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	one.push_back( temp );
 
 
-	sprintf( temp, "User %i selected (account %i)",buttonPressed, targetChar->GetAccount() );
+	sprintf( temp, "User %i selected (account %i)",buttonPressed, targetChar->GetAccount().wAccountIndex);
 	two.push_back( temp );
 	sprintf( temp, "Name: %s", targetChar->GetName() );   
 	two.push_back( temp );

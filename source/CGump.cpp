@@ -195,5 +195,4 @@ void MultiGumpCallback( cSocket *mySocket, SERIAL GumpSerial, UI32 Button )
 	};
 }
 
-// EOF
- 
+

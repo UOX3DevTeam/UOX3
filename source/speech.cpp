@@ -694,7 +694,7 @@ void unicodetalking( cSocket *mSock ) // PC speech
 			{
 				char temp2[512];
 				sprintf( temp2, "%s/logs/%s.log", cwmWorldState->ServerData()->GetRootDirectory(), mChar->GetName() );
-				sprintf( temp, "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount(), &(mSock->Buffer()[8]) );
+				sprintf( temp, "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, &(mSock->Buffer()[8]) );
 				savelog(temp,temp2);
 			}
 			
@@ -864,7 +864,7 @@ void talking( cSocket *mSock ) // PC speech
 			{
 				char temp2[512];
 				sprintf( temp2, "%s/logs/%s.log", cwmWorldState->ServerData()->GetRootDirectory(), mChar->GetName() );
-				sprintf( temp,"%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount(), &(mSock->Buffer()[8]) );
+				sprintf( temp,"%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, &(mSock->Buffer()[8]) );
 				savelog( temp, temp2 );
 			}
 			

@@ -3532,7 +3532,7 @@ SI16 cServerData::GetServerStartGold( void ) const
 
 void cServerData::SetServerStartPrivs( SI16 slot, UI08 value )
 {
-	if( slot < 0 || slot > 1 && value < 0 )
+	if( slot < 0 || slot > 1 && value ==0xffff )
 		return;
 	startprivs[slot] = value;
 }
