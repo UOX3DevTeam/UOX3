@@ -1,0 +1,344 @@
+<html>
+<head>
+</head>
+<body>
+<h1>v38 Script Release 10/24/2000</h1>
+<p>What's new since v37c+:
+
+<ul>
+<li>CHANGES:
+	<ul><li>ALL FILES
+		<ul><li>Updated the version number heh :)</ul>
+	<li>ITEMS.SCP
+		<ul><li>The AR values of the "Gem Armors" has been halved (I think) - by Thaliq
+		<li>ITEM 50017 (3-story marble house deed) moved to ITEM 20004.
+		<li>Colored ringmail armor + shields & helms have been added.(ITEM 50000-50091) - by GM Azrael
+		<li>Player Vendor Deed added (Item 50005), also added to MISC section of Deeds addmenu.
+		<li>A number of items have been removed from the scripts, most of those are
+		 items such as "Viking of Flamestrike/Mace of Resurrection" etcetra, as I don't think
+		 they are really used by that many people. And those who do use them can readd the items
+		 themselves.
+		 <p>List of items removed:<br>
+		  10158 -> 10185<br>
+		  20004 -> 20014<br>
+		  705</p>
+		</ul>
+	<li>NPC.SCP
+		<ul><li>Murderous Archers don't cast magic spells any longer</ul>
+	<li>CREATE.SCP
+		<ul><li>Colored ringmail armor + shields & helms have been added. - by GM Azrael</ul>
+	<li>MISC.SCP
+		<ul><li>Added the HAIR DYE GUMP</ul>
+	</ul>	  		 
+<li>FIXES:
+	<ul><li>ITEMS.SCP
+		<ul><li>All chainmail, ringmail, studded leather and leather leggings have been set to LAYER 4 instead of
+		 24, as this was the wrong LAYER for these items.
+		<li>All shields have been set to ITEMHAND 3 (used by shields only) so two handed weapons can no longer
+		 be equiped along with them (bow & shield for instance).
+		 Likewise, all two-handed weapons have been set to ITEMHAND 2 and all one handed weapons to ITEMHAND 1. 
+		<li>Weapons & shields should now have the correct LAYER values.
+		<li>Handheld lantern/torch should now have the correct layer allowing you to hold it along with a weapon.</ul>
+	<li>WTRIGRS.SCP
+		<ul><li>The cooking eggs in a frypan trigger was not correct. Someone had added more hex ids to the
+		 REQ trigger without putting a small 'x' between them.</ul>
+        <li>CREATE.SCP
+                <ul><li>Moved the "title line" for Spears & Forks menu to the top of
+                 MAKEMENU 797. (It wasn't. And should be.)</ul>
+	</ul>
+</ul>
+
+<h1>v37c+ Script Release 10/11/2000</h1>
+<p>What's new since v37c:
+<ul>
+<li>FIXES:
+	<ul><li>ITEMS.SCP
+		<ul><li>Readded AMOUNT to high-numbered reagents, took it away from the low-numbered ones like
+		 I was supposed to ;P</ul>
+	</ul>
+</ul>
+
+<h1>v37c Script Release, 10/9/2000</h1>
+<p>What's new since v37b:
+
+<ul><li>CHANGES:
+	<ul><li>ITEMS.SCP
+		<ul><li>Added the items required to do gem-based smithing (items 60000-> 60083)
+		<li>The Addmenu now adds the "high-numbered" reagents (same as advance.scp uses) instead of
+		 "low-numbered" reagents(which vendors sell) so you can add more than one reagent at a time,
+		 since the amount tag was removed from the low numbered ones.</ul>
+	<li>CREATE.SCP
+		<ul><li>Added the makemenu's required to do gem-based smithing (MENU 2000-> 2027)</ul>
+	<li>NEWBIE.SCP
+		<ul><li>Itemnumbers for reagents changed from "low-numbered" ones to "high-numbered" ones.</ul>
+	</ul>
+<li>FIXES:
+        <ul><li>NPC.SCP
+                <ul><li>Fixed some mis-spelled words (COLOLLIST, COLOLIST, COLORLIT)
+		<li>Keys and empty vials removed from the lootlists....very annoying ;)</ul>
+	<li>ITEMS.SCP
+		<ul>
+		<li>AMOUNT tags removed from a lot of items that don't need 'em, amongst other things reagents
+		 that vendors sell. (the number of reagents they sell is based of RESTOCK, not amount)
+		<li>RESTOCK tags removed from some items that didn't need them.
+		<li>RACE XX removed from all silver weapons, they now only have one RACE entry.
+		</ul>
+	</ul>
+</ul>
+
+<h1>v37b Script Release, 9/11/2000</h1>
+<p>What's new since v37:
+
+<ul><li>CHANGES:
+	<ul><li>ITEMS.SCP
+		<ul><li>Added a deed for a house that has been in the client for a long time but
+		 hasn't been used by UOX3 for an almost equally long time, a small Farm House of logs.
+		 (look in NEW HOUSES in the deed menu)</ul>
+	</ul>
+<li>FIXES:
+        <ul><li>Removed two unused script files:
+                <ul><li>FISH.SCP
+                <li>GRAVE.SCP</ul>
+
+        <li>CREATE.SCP:
+            <ul><li>Removed one of two RANK 1 10 lines under Platemail Leggins.
+		<li>Maybe fixed creation of Silver WarMace, it had a blank space after itemnumber.</ul>
+	<li>NPC.SCP:
+		<ul><li>Removed some SECTION NPCs that were duped (appeared in more than one place)
+		<li>Added the Summon Creature list again..don't know why it was not there already.
+		 (NPCLIST 10000) Will allow players to summon creatures with Summon Creatures spell..
+		<li>All NPCs now have DAMAGE values instead of ATT values (did the same, but confusing when some 
+		 use one and some the other)</ul>
+	<li>ITEMS.SCP:
+		<ul><li>Silver Nose Helm was missing, added it, item 12999.</ul>
+	<li>HOUSE.SCP:
+		<ul><li>Pentagram Deed fixed. Won't crash client any longer.</ul>
+	</ul>
+</ul>
+
+<h1>v37 Script Release, 1/8/2000</h1>
+<p>(This also includes all fixes put into v36a)
+<p>What's new since v36:
+<ul>
+<li>CHANGES:
+	<ul><li>ACCOUNTS.ADM:
+		<ul><li>Added some comments explaining what each line does.</ul>
+	<li>ENVOKE.SCP:
+		<ul><li>Added: x1847 Flask of necromancy to use with the necromancy alchemy.
+		<li>Added: IDs for flour mill, can turn sheaves of wheat into sacks of flour.</ul>
+	<li>ITEMS.SCP:
+		<ul><li>Added various fish items related to the updated "filleting fish" trigger.
+		<li>Changed a lot of item names to lowercase instead of caps for first letters.
+		<li>Changed it so NPCs won't get the jester suit as a random clothing any longer.
+		 Bankers dressed in pink jester suits looks awful.
+		<li>New Race Gate added, Undead. (Item 11011).
+		<li>Added new silver weapons(double damage against undeads - RACE 11) & armor (-by Jerelith)</ul>
+	<li>NPC.SCP:
+		<ul><li>Made many monsters, as well as guards, run when in combat. To remove, or 
+	         add new ones just remove(or add) the line for that npc which says RUNS.
+		 NPC's that were changed include:
+			<ul><li>Guards, Horses, Giant Spider, Giant Scorpion, Great Hart, Rabbit, 
+			 all Dogs, Cats, Pack Horse, Pack Llama, Ostards, Nightmare, Hellcat, 
+			 Phoenix, Hind, Hellhound, all Wolves, all Panthers. </ul>
+		<li>Removed the Orcish Lord/Orcish Captains ability to cast magic. (uncomment if
+		 you still want them to have it), also made them a bit stronger due to this
+		 loss of ability ;P
+		<li>Three dogs removed(NPC 538, 539 & 540), only one remain (npc 47) which have random colors.
+		<li>Sea Serpent NPC added in place of one of the dogs(538). 
+		 Has magic capabilities of a daemon, and strenght of ...well..something strong :>. 
+		 Can't swim yet though.
+		<li>Arch-mages have turned "good" (not red any more), and Murderous Arch-Mages have lost their
+		 full plate sets and gained more Int instead.
+		<li>All undead NPCs were put into a Undead race, so new silver weapons will do double the damage
+		 against them. Players can also be part of this race, but keep in mind the silver weapons
+		 will do double damage against them as well.
+		<li>Healers don't sell Quarter staffs any longer (only gnarled staffs).</ul>
+	<li>RACES.SCP:
+		<ul><li>Undead NPC race added, add RACE 11 to whichever npc you want to be affected by the double damage
+		 silver weapons.</ul>
+	<li>SPEECH.SCP:
+		<ul><li>Took out all non-relevant suff, such as NPCs answering to swearing, or
+		 a baker responding to words related to smithing.
+		 As it was earlier, an NPC would respond to you NOT MATTER what you said.
+		 Now they will only respond if what you say have any relevance to them.</ul>
+	<li>TRIGGERS.SCP:
+		<ul><li>Added two new triggers, light and douse fireplace.</ul>
+	<li>WTRIGRS.SCP:
+		<ul><li>Gave all the Necromantic Alchemy triggers this: REQ x1847, which means a player
+		 will need to use that item(18 47, a flask) on the various necromantic reagents for
+		 the effects. Note: Effects are PERMANENT. To disable this, remove 1847 from envoke.scp.
+		<li>Changed "Filleting fish"-scripts to use scripted items instead of hex, eliminates
+		 weight problems with fish heads/raw fish.
+		<li>Removed the fishing triggers as fishing have been fixed in the source.
+		<li>Removed gravedigging trigger, as gravedigging is hardcoded.
+		</ul>
+	</ul>
+<li>FIXES:
+	<ul><li>CREATE.SCP:
+		<ul><li>Swapped the old create.scp with one Frazurbluu had applied fixes to. 
+		 Should work better now. If not, blame Fraz *grins*</ul>
+	<li>ENVOKE.SCP:
+		<ul><li>The stoves had some missing "x"s that made all the stoves not work.</ul>
+	<li>ITEMS.SCP:
+		<ul><li>Doubled up backpack issues. 
+	  	<li>Magic halberds/bardiches-menus would go to flagstones menu, should work now.
+		<li>Merchants and People NPC menus now open correctly.
+		<li>LAYER 1 added to Spellbook, Lantern, Torch and Candle, and magic wands.
+		<li>Changed these items to LAYER 2 as they are two handed:
+	      	 Short-spear, hatchet. 
+		<li>Dye Tub had some messed up entries, fixed them.
+		<li>Reorganized potions-menu, added various degrees of potions, added mana potion.
+		<li>Lots of small fixes
+		<li>Fish don't weigh a ton any longer, bought or fished.
+		<li>Carpentry bought from carpenter NPCs should no longer weigh a ton.
+		<li>Hides renamed to hide because it would cause double s at end when stacked.
+		<li>Fixed some signs menus that wouldn't go back to previous when you chose previous in menu. 
+		<li>"a wuarter staff" renamed to "a quarter staff".</ul>
+	<li>MISC.SCP:
+		<ul><li>Deleted the extra "}" before PAGE 255.</ul>
+	<li>NCP.SCP:
+		<ul><li>Changed a lot of human NPC's DEF from 18 to 5 as they would turn out invulnerable to normal weapons.
+		 (NOTE: They still have the AR their armor gives them. AR = DEF + worn armor)
+		<li>Fixed Random Ratman Spawners(NPC 507). Was set to the same as random lizards.
+		<li>Renamed NPC 46 to "a great hart". 
+		<li>Dragon NPC now only has ONE SPATTACK tag.
+		<li>Random names added to Basic Female NPC.
+		<li>NPC Mage Vendors now sell Reagents(restock 50 of each by default).
+		<li>All NPCs that had DEX 0 0 now have values assigned instead of 0 0. </ul>
+	<li>SKILLS.SCP:
+	  	<ul><li>Under SECTION SKILL 17, the tag for DEX was written as DXE.</ul>
+	<li>TITLES.SCP:
+		<ul><li>Fixed: Imfamous title changed to Infamous title.</ul>
+	<li>WTRIGRS.SCP:
+		<ul><li>Fixed a SECION to SECTION.
+		<li>Fixed it so when cooking fish steaks, the cooked fish steaks are named "fish steak" instead of
+ 		 "raw fish steak".</ul>
+	</ul>
+</ul>
+
+<h1>v36 Script release, 4/12/2000</h1>
+<p>What's new since v35+:
+<ul><li>Changes:
+		<ul><li> Rewrote the /Add menu
+		<li> Removed Magical Smithys Hammers
+		<li> Added a rename, and guild deed
+		<li> New Houses and House Deeds implemented
+		<li> Removed "Newbie Bags" from newbie.scp
+		<li> Cleaned up many of the comments, ect in NPC.scp and Items.scp
+		<li> Added "a wraith" to NPC's and /add menu (thanks Jerelith)
+		<li> Removed numerous NPC's:
+			<ul><li>All NPC's on this List have been removed
+			200-202, 211-214, 231-249, 252-255, 258-265
+			266-277, 300, 419, 600-601, 610, 612-613
+			615, 618, 622-624, 636, 669, 685-687
+			693-696, 701-710, 1014-1019, 1034-1035
+			1106-1107, 1200, 2001-2002
+			</ul>
+		</ul>
+	<li>Fixes:
+		<ul><li> Fixed Magical Weapons/Items/Armor, you now need to ID them to see what they are
+		<li> Fixed the 10 10 Gold Coinss bug for all stackables
+		<li> Fixed items with incorrect layers
+		<li> Fixed misc NPC's (colors, incorrect stats, ect)
+		<li> Fixed monster loot, more like OSI's
+		<li> Fixed non-stackables spawning as multiple stacked items
+		<li> Fixed restock values for shopkeeper items
+		<li> Fixed values on some items
+		<li> Fixed some Adv gates, and made them fit with the new skills systems
+		<li> Fixed Shopkeepers, they now only sell what they should be
+		<li> Fixed a few possible crash bugs, and anomalies in the scripts (thanks Shrike)
+		</ul>
+	</ul>
+</ul>
+<h1>New script fixes, 3/5/2000</h1>
+<h3>Zane, toinzane@yahoo.com</h3>
+<h3>Version 35+</h3>
+
+<ul>
+<li>Armor values, hps, and str req's have been re-written to match with OSI values
+<li>Weapon values, damage, and str Req's have been re-written to match OSI values
+<li>Magical Weapons now match with OSI standards
+<li>Carpentry items are now movable and have a realistic weight
+<li>Potions will now function properly based on both the type, and intensity of the potion (poison potions will no longer heal you, ect)
+<li>Many NPC monsters have been removed
+<ul>
+<li>NPC 626, Mud Elemental
+<li>NPC 628, Metal Elemental
+<li>NPC 629, Wood Elemental
+<li>NPC 643, Flesh Elemental
+<li>NPC 650, Diamond Elemental
+<li>NPC 651, Ruby Elemental
+<li>NPC 652, Emerald Elemental
+<li>NPC 653, Amber Elemental
+<li>NPC 654, Sapphire Elemental
+<li>NPC 655, Tourmaline Elemental
+<li>NPC 656, Gold Elemental
+<li>NPC 657, Silver Elemental
+</ul>
+</ul>
+
+<p>Ok Eagle here is all I have done :) below this general description 
+you will find the file specific information :)
+
+<ul><li>I checked and or fixed everything existing so it now works. (except furniture destroying....gotta do that yet)
+<li>I tweaked fish skinning to work better
+<li>frying aggs and fish now works better than ever...
+<li>you must use heat on food then it checks for needs :)
+<li>All cooking will follow this format (or should)
+<li>Use flame on food to cook :)
+</ul>
+<p>This will allow triggers to be made for using pots, spits, etc
+and will keep the process uniform..so you basically know how to cook without having to have a cooking manual :O hehe
+Also whoever added the deeding cannons to wtrg.scp...it can be done in a better fashion,(similiar to the way cooking is done) to allow
+for not only redeeding, but cleaning, and firing as well...the way its currently done, will not allow for the cleaning or firing.
+I would be glad to work with whoever did it to help out :)
+
+<ul><li>wtrgs.scp 
+<ul><li>A total rewrite...
+<li>I fixed everything except the destroying furniture part :)
+<li>Harvesting from fruit trees is now possible.
+<li>Spinning flax, skinning fish, filling empty bookshelves etc.
+<li>I added a new triggers (ie: frying fish).
+</ul>
+<p>Just replace the old wtrg.scp. Its totally redone :)
+<li>Item.scp
+<ul><li>for fishing I added a new Itemlist....Itemlist 57.
+<li>It allows you to catch all four variety of fish :)
+<li>I also had to add a few items to do it. 
+<li>They are the different types of fish.
+<ul>
+<li>ITEM 40000
+<li>ITEM 40001
+<li>ITEM 40002
+<li>ITEM 40003
+</ul>
+</ul>
+<p>
+In order to fry eggs I had to edit item #5043 (raw eggs)
+I made it so it triggers...you can eat them raw or cook them 
+in a frypan :O
+
+<li>trigger.scp
+
+<p>Had to add three triggers for cooking eggs.
+<ul>
+<li>TRG 123 - breaking and eating raw eggs
+<li>TRG 124 - breaking & cooking the eggs in frypan
+<li>TRG 125 - removing the eggshells
+</ul>
+<li>create.scp
+
+<p>I had to change Retalins Baking menu to get it to work.
+<br>SECTION MAKEMENU 100
+<br>just paste in the new one :)
+<p>
+
+<li>envoke.scp
+<ul><li>Its a total rewrite (albeit a small one) 
+<li>I fixed alot of the envokes.
+<li>The formats were wrong on some of them & I also added some new ones.
+<p>Just replace the old envoke.scp
+</ul>
+</ul>
+</body>
+</html>

@@ -1,0 +1,55 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : colors.scp                                           *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Usage:                                                        *
+//* <PolimorphIcon> <Name>                                        *
+//* POLIMORPHID <ID>                                              *
+//*                                                               *
+//* For the icon, check with InsideUO the Artwork/Static Tiles    *
+//* section. For the ID of the creature to polymorph into, check  *
+//* with InsideUO the Animation section ( Model No. )             *
+//*                                                               *
+//* Maximum number of polymorphable creatures: 50                 *
+//*                                                               *
+//*****************************************************************
+
+
+
+[POLYMORPHDURATION 0]
+{
+90
+}
+
+
+[POLYMORPHMENU 8196]
+{
+Choose=a creature
+0x20cf=Black Bear
+POLYMORPHID=0x00d3
+0x20db=Grizzly Bear
+POLYMORPHID=0x00d4
+0x20e1=Polar Bear
+POLYMORPHID=0x00d5
+0x20d1=Chicken
+POLYMORPHID=0x00d0
+0x20d3=Daemon
+POLYMORPHID=0x0009
+0x20d5=Dog
+POLYMORPHID=0x00d9
+0x20d8=Ettin
+POLYMORPHID=0x0002
+0x20d9=Gargoyle
+POLYMORPHID=0x0004
+}
+
+
+EOF
+
+

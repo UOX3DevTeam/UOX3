@@ -1,0 +1,125 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+
+<h3><a name="GumpFuncs">Gump Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_CreateGump">Gump_CreateGump</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>gumpHandle Gump_CreateGump();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Creates a blank gump with no information, allocating memory
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iGump = Gump_CreateGump();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddButton">Gump_AddButton</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddButton( gumpHandle, topHeight, topLeft, buttonImage, unk1, unk2, unk3 );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump gumpHandle
+<tr><td valign="top" width="25%"><b>Other info</b>
+    <td>I believe that having an unk1 of 1 indicates the gump will close. unk2 
+      should be the button's unique ID, and I *think* that unk3 is the page it 
+      is on.<br>
+      <br>
+      When the button is pressed, onGumpPress event is called, iButton is 0 if 
+      the gump has been closed without pressing a button.<br>
+      <br>
+      function onGumpPress( Sock, iButton ) { }
+  <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+      <pre>Gump_AddButton( iGump, 13, 290, 5050, 1, 1, 1 );
+</pre>
+    </table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddText">Gump_AddText</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddText( gumpHandle, topHeight, topLeft, textColour, textID, text );
+</pre><tr>
+    <td valign="top" width="25%" height="34"><b>Purpose</b>
+    <td height="34">Adds the text text to the gump represented by gumpHandle at 
+      topHeight/topLeft in textColour. textID must count from 0 consecutively 
+      (ie can't skip numbers). 
+  <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddText( iGump, 30, 30, 0, 0, "Test stuff" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddRadio">Gump_AddRadio</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddRadio( gumpHandle, topHeight, topLeft, radioImage, unk1, unk2 );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a radio button to the gump.
+<tr><td valign="top" width="25%"><b>Other info</b><td>I believe that unk2 is the radio's ID (does not have to be unique).  unk1 is unknown, but I would guess that if it was non 0, it would exit.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddRadio( iGump, 13, 40, 2151, 0, 2966 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddPage">Gump_AddPage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddPage( gumpHandle, pageNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a new page
+<tr><td valign="top" width="25%"><b>Other info</b><td>Anything on page 0 is shown on ALL pages
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddPage( iGump, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddPicture">Gump_AddPicture</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddPicture( gumpHandle, topHeight, topLeft, tilePic );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the image tilePic to the gump at topHeight/topLeft.  tilePic is an ITEM ID.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddPicture( iGump, 5, 111, 0x0EED );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddGump">Gump_AddGump</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddGump( gumpHandle, topHeight, topLeft, gumpImage );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a gump on the current gump (ie any image in the gumps part of InsideUO).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddGump( iGump, 5, 260, 1141 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddBackground">Gump_AddBackground</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddBackground( gumpHandle, topHeight, topLeft, bottomHeight, bottomLeft, backImage );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a background (should come REALLY early in gump) of height (bottomHeight - topHeight) and width (bottomLeft - topLeft) as image backImage (gump image like via AddGump).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddBackground( iGump, 0, 0, 320, 340, 2600 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_SendToSocket">Gump_SendToSocket</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_SendToSocket( gumpHandle, targSocket );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends the gump to targSocket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_SendToSocket( iGump, pSock );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddTextEntry">Gump_AddTextEntry</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddTextEntry( gumpHandle, topHeight, topLeft, unk1, unk2, unk3, unk4, textID, defaultText );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>It adds a text entry with default text to the gump
+<tr><td valign="top" width="25%"><b>Other info</b><td>I believe that unk1 is the text colour, unk2 is the maximum length of the field.  unk3 seems to be 1, unk4 seems to be a counter from 1000 onwards.  textID is much like adding text, and it must be consecutive (same as text, in fact they're together, so adding 2 text and a textentry would mean the 2 text are 0 and 1, while the text entry is 2).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddTextEntry( iGump, 20, 62, 200, 30, 1, 1000, 1, "Default text" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddCheckbox">Gump_AddCheckbox</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_AddCheckbox( handle, topHeight, topLeft, checkImage, unk1, unk2 );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a checkbox to the gump
+<tr><td valign="top" width="25%"><b>Other info</b><td>I believe that unk2 is the checkbox's ID
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_AddCheckbox( iGump, 10, 10, 2706, 0, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_Delete">Gump_Delete</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Gump_Delete( GumpHandle toDelete );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Deletes all the memory allocated to the gump
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Gump_Delete( iGump );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

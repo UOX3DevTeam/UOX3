@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 2</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionII.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BGCOLOR="#808080" CELLSPACING="0"> 
+
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21"><A NAME="books"><FONT FACE="Tahoma"
+    COLOR="#FFFFFF"><SMALL>2.15 - BOOKS</SMALL></FONT></A></TD></TR> <TR> <TD WIDTH="100%" HEIGHT="19"><SMALL><FONT FACE="Tahoma">&nbsp;&nbsp;&nbsp; 
+Books use a certain file (the so called bok-file) to store its texts.<br>
+Each(!) new book has a corresponding bok-file !<br>
+They are stored in the UOX root directory.<br>
+There are two kinds of books.<br>
+Writeable books and read-only books.<br><br>
+
+1) How to use books<br>
+ 1.1) Creation<br>
+ 1.1.1)  Writeable book: <br>
+   Add a book('ADD f f1), set its type to 11, set its morex value to 666('SETMOREX 666).<br>
+   You can set the maximum number of pages via 'SET MOREY #.<br>
+   If the morey is omitted its set to the default value of 16 pages, but it's recommended to set it explicitly anyway. <br>
+    The absolute maximum (client side limitation) is 255 pages.<br>
+    On the first OPENING of a writeable book  the corresponding bok file is created, and AFTER the CREATION of the bok<br> 
+    file it is absolutely NOT POSSIBLE TO ALTER the MAXIMUM number of PAGES.<br>
+    (changing the morey value after its creation does NOT change the maximum number of
+pages)<br>
+    If the book gets too small there's (currently) painfully, no other way than deleting the book and
+creating a new one with a higher maximum number of pages.<br>
+    Dropping that nasty limitation would imply : much slower execution time and a lot of
+    development time. In other words: It's not likely that this limitation will ever fall.
+    The current implementation does not allow copying of books.<br>
+    
+    Example of how to make a writable book with 32 pages:<br>
+    'ADD f f1<br>
+    'SETTYPE 11<br>
+   'SETMOREX 666    <br>                         
+   'SETMOREY 32<p>
+
+  1.1.2) Read-only books<br>
+    The same procedure as for writeable books, just the morex value has to be 999.<br>
+    Remark: Of course it is NOT useful to CREATE a read-only-book.<br>
+    You'll get an empty book you cant change. Hmmm.<br>
+    So usually it will be useful to create it as writeable book, "fill it with text" and "lock"
+    it (make it read-only) via change of morex value from 666 to 999.<br><br>
+
+3) Important remarks:<br>
+    NEVER EVER edit a bok file "manually". (for example via text editor)<br>
+    Though it's paretically "human" readable" - It looks as though it would be so easy, but 
+    it will very likely lead to file corruption. <br>
+    File corruption can (paretically) destroy the book contents and in worst case it can lead
+    to client crashes.<br>
+    Performance ' lag  issues:<br>
+    You might ask - why not always  setting the maximum number of pages to the absolute max of 
+    255 ?<br>
+    Well, there's a bad client side limitation/issue I cant do anything about with writeable books
+    ( not read-only and old (read-only) book).<br>
+    The ENTIRE text has to be send on EACH opening of a writeable book.<br>
+     Even if its empty - the send-page number-overhead is negligible<br>.
+     For a 255 pages book its about 2k (again per opening). A full 255 pages book is about 65k.<br>
+     I have tested such a beast (255 pages FULL with text)  and it lead to 3 seconds of lag
+     per opening.<br>
+     Once more: Read-only new books DON'T have that bad property. If you make a full 255 page
+new book and after filling it turn it to a read-only new book ( type 999) it's lag contribution
+     is near zero.<br>
+     So be careful with big writeable books.<br>
+</FONT></SMALL></TD></TR>
+
+</TABLE><P ALIGN="center"></P> 
+
+</BODY>
+</HTML>

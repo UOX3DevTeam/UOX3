@@ -1,0 +1,100 @@
+// silver and gold... silver and gold ...
+
+
+
+// old style gold number
+[0x0EED]
+{
+name=gold coin
+id=0x0EED
+pilable=1
+amount=1
+decay=0
+}
+
+[onegoldcoin]
+{
+name=gold coin
+id=0x0EED
+pilable=1
+amount=1
+decay=0
+}
+
+[fewgoldcoin]
+{
+name=gold coin
+id=0x0EED
+pilable=1
+amount=4
+decay=0
+}
+
+[pilegoldcoin]
+{
+name=gold coin
+id=0x0EED
+pilable=1
+amount=20
+decay=0
+}
+
+[onesilvercoin]
+{
+name=silver coin
+id=0x0EED
+pilable=1
+COLOR=0x02B8
+amount=1
+decay=0
+}
+
+[fewsilvercoin]
+{
+name=silver coin
+id=0x0EED
+COLOR=0x02B8
+pilable=1
+amount=4
+decay=0
+}
+
+[pilesilvercoin]
+{
+name=silver coin
+id=0x0EED
+COLOR=0x02B8
+pilable=1
+amount=20
+decay=0
+}
+
+[onecoppercoin]
+{
+name=copper coin
+id=0x0EED
+pilable=1
+COLOR=0x002F
+amount=1
+decay=0
+}
+
+[fewcoppercoin]
+{
+name=copper coin
+id=0x0EED
+pilable=1
+COLOR=0x002F
+amount=4
+decay=0
+}
+
+[pilecoppercoin]
+{
+name=copper coin
+id=0x0EED
+pilable=1
+COLOR=0x002F
+amount=20
+decay=0
+}

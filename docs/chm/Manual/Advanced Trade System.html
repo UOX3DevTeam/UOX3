@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+<body>
+<center><pre>
+###########################################
+#     Trade System (15 September 1999)    #
+###########################################
+# Created by Magiu§(çhe)                  #
+#                   cheghe@geocities.com  #
+###########################################
+</pre>
+</center>
+<p>Script Interested: Regions.scp
+
+<h2>Usage</h2>
+<p>For every region you can add:                                 
+<ul>
+    <li>GOOD <num> (Num is setted into items.scp in every items.)    
+    <li>BUYABLE <num> (Num range from -oo to +oo and is the % to     
+      add or remove from item value. (1000=100.0% , 342=34.2%)   
+      For example: if you have IRON ORE setted as GOOD 1 (sets   
+       into items.scp) with VALUE=5 GP, and set here in region 3 
+       (britain):<br>
+       GOOD 1<br>
+       BUYABLE -153<br>
+       when you go into Britain and say VENDOR BUY you see the   
+       IRON ORE as value 4...why???                              
+       Simple: <br>BUYABLE=-153<br>
+               -153 / 1000 =-0.153 (as -15.3% of original prize)<br>
+               -0.153 x 5 (IRON ORE VALUE) = -0.765<br>
+               5 (IRON ORE VALUE) - 0.756 = 4(.235)<br>
+   <li>SELLABLE <num> (Num range from -oo to +oo and is the % to add or remove from item value. (1000=100.0% , 342=34.2%) This is the same as BUYABLE but take effect when you say VENDOR SELL.
+   <li>RANDOMVALUE <num1> <num2> (Num range from -oo to +oo          
+      every item will be setted on VALUERATE (Random from num1   
+      to num2) and every VendorRestock each Item Value will be   
+      modified based on valuerate). For Example:                 
+      If you set IRON ORE as GOOD 1 with VALUE=10 and            
+      RANDOMVALUE -100 100, its value changes every restock-time 
+      ranging from 9 (-10.0%) to 11 (10.0%).                     
+      This changes will be added afetr calculating SELLABLE and  
+      BUYABLE andtake affect when you say VENDOR BUY or          
+      VENDOR SELL.
+</ul>
+</body>
+</html>

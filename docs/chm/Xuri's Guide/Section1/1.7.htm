@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 1</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionI.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BORDERCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21">
+
+<A NAME="uoxserversetup"><FONT
+    FACE="Tahoma" COLOR="#FFFFFF"><SMALL>1.7 - <STRONG>UOX SERVER SETUP</STRONG></SMALL></FONT></A></TD></TR> 
+<TR> <TD WIDTH="100%" HEIGHT="19" BGCOLOR="#808080"><SMALL><FONT FACE="Tahoma">&nbsp;&nbsp;&nbsp; 
+First of all, you have to have a client version of UO of 2.0.0 or better. To get it, just run UO.exe 
+and<BR> &nbsp;&nbsp;&nbsp; the client will automaticly update itself at OSI's 
+patching servers. You do NOT need<BR> &nbsp;&nbsp;&nbsp; an account with OSI to 
+do this.<BR> <BR> &nbsp;&nbsp;&nbsp; 
+Then what you need to do, is to download the latest version of UOX3. Make sure<BR> &nbsp;&nbsp;&nbsp; that the version 
+you download is a full version. If the latest version of UOX3 
+is an<BR> &nbsp;&nbsp;&nbsp; update, you must download the latest full version, 
+and then update that one.<BR> &nbsp;&nbsp;&nbsp; <BR>
+&nbsp;&nbsp;&nbsp; 	
+&nbsp;&nbsp;&nbsp;Now, when you unzip your UOX3.zip file(name of .zip may vary)you will get a directory<br>
+&nbsp;&nbsp;&nbsp;called UOX. Inside that directory there will be two more directories. <br>
+&nbsp;&nbsp;&nbsp;Here is a summary of what is in each Directory in the zip.<br><br>
+	
+&nbsp;&nbsp;&nbsp;&nbsp;<b><i>UOX</i></b>:<br>
+&nbsp;&nbsp;&nbsp;	 | The UOX directory contains all the files needed to run your UOX3 server <br>
+&nbsp;&nbsp;&nbsp;	 | successfully. <br>
+&nbsp;&nbsp;&nbsp; 	 |<br>
+&nbsp;&nbsp;&nbsp;	 |--------------<b><i>DOCS</i></b>:<br>
+&nbsp;&nbsp;&nbsp;	 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   The DOCS directory contains all the latest docs and update messages, so be <br>
+&nbsp;&nbsp;&nbsp;	 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   sure to read all the files in this directory so you don't miss out on any <br>
+&nbsp;&nbsp;&nbsp;	 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   new features.<br>
+&nbsp;&nbsp;&nbsp;	 |<br>
+&nbsp;&nbsp;&nbsp;	 |--------------<b><i>IGNITION</i></b>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Holds the program you need to use to start up your UO client if you want to be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    able to log into UOX3. <br><br>
+ 
+<BR> &nbsp;&nbsp;&nbsp; Alright, you're still with me? Good. Now, open the UOX3.INI 
+file with either <BR> &nbsp;&nbsp;&nbsp; dos-prompt's EDIT command(EDIT UOX3.INI), 
+or with windows notepad or wordpad.<BR> &nbsp;&nbsp;&nbsp; -Replace the 1st line 
+with what you want your UOX server to be called.<BR> &nbsp;&nbsp;&nbsp; Don't 
+make this name too long.<BR> &nbsp;&nbsp;&nbsp; -The 2nd line is the IP adress 
+your UOX server will be using. If you want to play on<BR> &nbsp;&nbsp;&nbsp; the 
+server locally (i.e. one player offline) use 127.0.0.1 as your IP adress.<BR> 
+&nbsp;&nbsp;&nbsp; If you want to let other people play on yer server through 
+LAN or the internet, <BR> &nbsp;&nbsp;&nbsp; replace the ini adress with the one 
+you use on the LAN or on the internet. <BR> <BR> &nbsp;&nbsp;&nbsp; -Ok under 
+the IP adress and the ### line, you see some names and numbers.<BR> &nbsp;&nbsp;&nbsp; 
+These are the starting locations which players can choose from when entering your 
+<BR> &nbsp;&nbsp;&nbsp; UOX world. Don't worry about this yet. But remember to 
+change these starting <BR> &nbsp;&nbsp;&nbsp; locations if you want the players 
+to start in a particular place...The first <BR> &nbsp;&nbsp;&nbsp; number is the 
+x-coordinate, the next is the y-coordinate and the third is the<BR> &nbsp;&nbsp;&nbsp; 
+z-coordinate.<BR> <BR>
+&nbsp;&nbsp;&nbsp;NOTE: There MUST be 9 starting locations in UOX3.INI or your users may end up in the middle<br>
+&nbsp;&nbsp;&nbsp;of the sea when making a new character. It doesn't matter if all the starting locations go to<br>
+&nbsp;&nbsp;&nbsp;the same location(if you want the players to start in the same location no matter which town they<br>
+&nbsp;&nbsp;&nbsp;choose), as long as there are 9.<BR> <BR>&nbsp;&nbsp;&nbsp; -Ok now scroll down to the bottom of 
+the file. Here you should see 7 paths to <BR> &nbsp;&nbsp;&nbsp; the UO Client 
+files (f.ex. c:\uo\map0.mul),<BR> &nbsp;&nbsp;&nbsp; if these aren't correct, 
+replace them with the correct paths for the UO files. <BR> &nbsp;&nbsp;&nbsp; 
+These files lie in the directory of your UO client, if you chose FULL INSTALL 
+<BR> &nbsp;&nbsp;&nbsp; when installing UO. If not, these files are on your UO 
+cd.<BR> &nbsp;&nbsp;&nbsp; <BR> &nbsp;&nbsp;&nbsp; -The first number below the 
+file paths is the time in seconds between <BR> &nbsp;&nbsp;&nbsp; each auto save. 
+<BR> &nbsp;&nbsp;&nbsp; -The number under the line with &quot;heartbeat&quot; 
+in it, is the amount of gold the <BR> &nbsp;&nbsp;&nbsp; players start with on 
+your UOX server. Feel free to change this number to what <BR> &nbsp;&nbsp;&nbsp; 
+you find fitting.<BR> <BR> &nbsp;&nbsp;&nbsp; -Close the UOX3.INI file and open 
+ACCOUNTS.ADM instead.<BR>
+&nbsp;&nbsp;&nbsp; You'll see something similar to this 
+on the first couple of lines:<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SECTION ACCOUNT <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+NAME Username<BR> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PASS Password<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOCK 0 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOCK 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOCK 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOCK 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOCK 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LASTIP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PUBLIC OFF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CONTACT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR> &nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;Now, change &quot;Username&quot; to what you want your loginname to the server 
+to be. And change<BR> &nbsp;&nbsp;&nbsp; &quot;Password&quot; to what you want 
+your password to be. Remember that the password is CASE<BR> &nbsp;&nbsp;&nbsp; 
+Sensitive, I.e. &quot;PAsSWoRd&quot; is different from &quot;password&quot;.<BR> 
+&nbsp;&nbsp;&nbsp; To add more users to your server, just change the &quot;Username&quot; 
+and &quot;Password&quot; of the <BR> &nbsp;&nbsp;&nbsp; SECTION ACCOUNTs below the first one, or paste new ones.<br> -&gt;. 
+DO NOT put another user on ACCOUNT 1, as this is the MAIN GM account.<BR> <BR> 
+&nbsp;&nbsp;&nbsp; -OK. Now the setup of the UOX server is complete. But to play 
+on it locally, you <BR> &nbsp;&nbsp;&nbsp; first have to go to your UO client directory.<br>
+&nbsp;&nbsp;&nbsp; Now create two folders. One named "<b>Backup</b>" and one named "<b>UOX3CFG</b>". <br>
+&nbsp;&nbsp;&nbsp; Copy <i><i>LOGIN.CFG</i></i> into first "<b>Backup</b>" then "<b>UOX3CFG</b>" so that you now have<br>
+&nbsp;&nbsp;&nbsp; three files named <i>LOGIN.CFG</i> but in different folders.<br><br>
+&nbsp;&nbsp;&nbsp; Open the <i><i>LOGIN.CFG</i></i> file in the "UOX3" folder and make it look exactly like this:<br>
+<b>&nbsp;&nbsp;&nbsp; LoginServer=127.0.0.1,2593<br>
+&nbsp;&nbsp;&nbsp; LoginServer=127.0.0.1,2593<br>
+&nbsp;&nbsp;&nbsp; LoginServer=127.0.0.1,2593<br>
+&nbsp;&nbsp;&nbsp; LoginServer=127.0.0.1,2593<br><br></b>
+&nbsp;&nbsp;&nbsp; Save and close the file.<br><br>
+
+
+&nbsp;&nbsp;&nbsp; Now, to play on your uox server, first start up the uox 
+server by running UOX3.EXE<BR> &nbsp;&nbsp;&nbsp; from your UOX directory in MS-DOS 
+command line(Press START-menu and RUN and type COMMAND), <br>
+&nbsp;&nbsp;&nbsp;or by double clicking on the UOX.EXE or UOX3.EXE file in your UOX3 folder.<BR> 
+&nbsp;&nbsp;&nbsp; If you get the error &quot;no .WSC found&quot; don't worry, the server will automaticly 
+make a new clean<BR> &nbsp;&nbsp;&nbsp; worldfile. Ok the server is up and running, 
+but you're not on it yet.<BR><br>
+&nbsp;&nbsp;&nbsp; Go to your UO client directory, then copy the <i><b>LOGIN.CFG</b></i> from the "<b>UOX3CFG</b>"<br>
+&nbsp;&nbsp;&nbsp; directory to the main UO client directory, overwriting the <i>LOGIN.CFG</i> already there.<br> 
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;Now start up <b>Ignition</b> (sub-folder in UOX folder, goto <i>http://www.uoxdev.com</i> and download<br>
+&nbsp;&nbsp;&nbsp;it if you don't have it),<br>
+&nbsp;&nbsp;&nbsp; and it will start your UO client for you, <br>&nbsp;&nbsp;&nbsp;
+and it will apply some magic to you computer's memory(RAM) so the UO client encryption<br>&nbsp;&nbsp;&nbsp;
+won't stop you from logging on to your UOX shard.<br>&nbsp;&nbsp;&nbsp;
+-->NOTE: YOU CANNOT LOG IN TO YOUR UOX SHARD WITHOUT USING <b>IGNITION</b> TO START THE <i>UO CLIENT</i>!!!<br><br>&nbsp;&nbsp;&nbsp;
+When your UO client has loaded, enter the login name and login password you entered in <BR> 
+&nbsp;&nbsp;&nbsp; ACCOUNTS.ADM, and you're up and running!<br><br>
+
+-->NOTE 2: If you want to play on the official shards again after you've been on your own<br>
+&nbsp;&nbsp;&nbsp;shard, you must copy the <i>LOGIN.CFG</i> that's in the "<b>BACKUP</b>" directory into the main<br>
+&nbsp;&nbsp;&nbsp;UO client directory overwriting the <i>LOGIN.CFG</i> that's already there. Do NOT start up the<br>
+&nbsp;&nbsp;&nbsp;client using Ignition in this case.<br><br>
+</FONT></SMALL></TD></TR> 
+</TABLE><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21">
+
+</BODY>
+</HTML>

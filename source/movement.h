@@ -1,0 +1,80 @@
+#ifndef __MOVEMENT_H__
+#define __MOVEMENT_H__
+
+#define P_C_IS_GM_BODY		0x01	// Bits for different movement types
+#define P_C_IS_PLAYER		0x02
+#define P_C_IS_BIRD			0x20
+#define P_C_IS_NPC			0x40
+#define P_C_IS_FISH			0x80
+
+// Maximum Search Depth: Iterations to calculate
+#define P_PF_MSD		5
+// Maximum Return Value: Number of steps to return (Replaces PATHNUM)
+// NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
+#define P_PF_MRV		2
+// Maximum Influence Range: Tiles to left/right of path to account for
+#define P_PF_MIR		5
+// Maximum Blocked Range: MIR to use if character is stuck
+#define P_PF_MBR		10
+// Minimum Flee Distance: MFD
+#define P_PF_MFD		15
+
+class cMovement
+{
+	// Variable/Type definitions
+private:
+	SI08 z, dispz;
+	// Function declarations
+public:
+	void	Walking( CChar *s, UI08 dir, int seq );
+	void	CombatWalk( CChar *i );
+	int		calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
+	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
+	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
+	void	NpcMovement( CChar *i );
+	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
+private:
+
+	bool	MoveHeightAdjustment( int MoveType, CTileUni *thisblock, int &ontype, SI32 &nItemTop, SI32 &nNewZ );
+	bool	isValidDirection( UI08 dir );
+	bool	isFrozen( CChar *c, cSocket *mSock, int sequence );
+	bool	isOverloaded( CChar *c, cSocket *mSock, int sequence );
+
+	bool	CanGMWalk( CTileUni &xyb );
+	bool	CanPlayerWalk( CTileUni &xyb );
+	bool	CanNPCWalk( CTileUni &xyb );
+	bool	CanFishWalk( CTileUni &xyb );
+	bool	CanBirdWalk( CTileUni &xyb );
+
+	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
+	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber );
+	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber );
+
+	SI16	Distance( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
+	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
+
+	SI16	CheckMovementType( CChar *c );
+	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
+	void	NpcWalk( CChar *i, UI08 j, int type );
+	SI16	GetXfromDir( UI08 dir, SI16 x );
+	SI16	GetYfromDir( UI08 dir, SI16 y );
+
+	bool	VerifySequence( CChar *c, cSocket *mSock, int sequence);
+	bool	CheckForRunning( CChar *c, UI08 dir );
+	bool	CheckForStealth( CChar *c );
+	bool	CheckForHouseBan( CChar *c, cSocket *mSock );
+	void	MoveCharForDirection( CChar *c, UI08 dir );
+	void	HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy );
+	void	SendWalkToPlayer( CChar *c, cSocket *mSock, SI16 sequence );
+	void	SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy );
+	void	OutputShoveMessage( CChar *c, cSocket *mSock, SI16 oldx, SI16 oldy );
+	void	HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, SI16 oldx, SI16 oldy );
+	void	HandleTeleporters( CChar *c, SI16 oldx, SI16 oldy );
+	void	HandleWeatherChanges( CChar *c, cSocket *mSock );
+	bool	IsGMBody( CChar *c );
+
+	void	deny( cSocket *mSock, CChar *s, int sequence );
+};
+
+#endif
+

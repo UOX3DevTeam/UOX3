@@ -1,0 +1,324 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<base target="main">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="Gold" link="lightblue" aLink="red" vLink="red">
+<a href="index.html" target="_top"><b><font color="#CCCCCC">Go to main list</font></b></a> 
+<p><a href="gumps.html#GumpFuncs">Gump Related Functions</a>
+<ul>
+	<li><a href="gumps.html#SE_Gump_CreateGump">Gump_CreateGump</a>
+	<li><a href="gumps.html#SE_Gump_AddButton">Gump_AddButton</a>
+	<li><a href="gumps.html#SE_Gump_AddText">Gump_AddText</a>
+	<li><a href="gumps.html#SE_Gump_AddRadio">Gump_AddRadio</a>
+	<li><a href="gumps.html#SE_Gump_AddPage">Gump_AddPage</a>
+	<li><a href="gumps.html#SE_Gump_AddPicture">Gump_AddPicture</a>
+	<li><a href="gumps.html#SE_Gump_AddGump">Gump_AddGump</a>
+	<li><a href="gumps.html#SE_Gump_AddBackground">Gump_AddBackground</a>
+	<li><a href="gumps.html#SE_Gump_SendToSocket">Gump_SendToSocket</a>
+	<li><a href="gumps.html#SE_Gump_AddTextEntry">Gump_AddTextEntry</a>
+	<li><a href="gumps.html#SE_Gump_AddCheckbox">Gump_AddCheckbox</a>
+	<li><a href="gumps.html#SE_Gump_Delete">Gump_Delete</a>
+</ul>
+<p><a href="common.html#CharItemFuncs">Character and Item common functions</a>
+<ul>
+	<li><a href="common.html#SE_GetName">GetName</a>
+	<li><a href="common.html#SE_SetName">SetName</a>
+	<li><a href="common.html#SE_GetTitle">GetTitle</a>
+	<li><a href="common.html#SE_SetTitle">SetTitle</a>
+	<li><a href="common.html#SE_GetX">GetX</a>
+	<li><a href="common.html#SE_GetY">GetY</a>
+	<li><a href="common.html#SE_GetZ">GetZ</a>
+	<li><a href="common.html#SE_SetLocation">SetLocation</a>
+	<li><a href="common.html#SE_GetID">GetID</a>
+	<li><a href="common.html#SE_GetColour">GetColour</a>
+	<li><a href="common.html#SE_GetOwner">GetOwner</a>
+	<li><a href="common.html#SE_SetX">SetX</a>
+	<li><a href="common.html#SE_SetY">SetY</a>
+	<li><a href="common.html#SE_SetZ">SetZ</a>
+	<li><a href="common.html#SE_SetID">SetID</a>
+	<li><a href="common.html#SE_SetColour">SetColour</a>
+	<li><a href="common.html#SE_SetOwner">SetOwner</a>
+	<li><a href="common.html#SE_DoDamage">DoDamage</a>
+	<li><a href="common.html#SE_GetVisible">GetVisible</a>
+	<li><a href="common.html#SE_SetVisible">SetVisible</a>
+	<li><a href="common.html#SE_Delete">Delete</a>
+	<li><a href="common.html#SE_NewScriptTrigger">NewScriptTrigger</a>
+	<li><a href="common.html#SE_GetSerial">GetSerial</a>
+	<li><a href="common.html#SE_SetSerial">SetSerial</a>
+	<li><a href="common.html#SE_GetHealth">GetHealth</a>
+	<li><a href="common.html#SE_SetHealth">SetHealth</a>
+	<li><a href="common.html#SE_GetPrivateBit">GetPrivateBit</a>
+	<li><a href="common.html#SE_SetPrivateBit">SetPrivateBit</a>
+	<li><a href="common.html#SE_GetPrivateWord">GetPrivateWord</a>
+	<li><a href="common.html#SE_SetPrivateWord">SetPrivateWord</a>
+	<li><a href="common.html#SE_GetPrivateBitRange">GetPrivateBitRange</a>
+	<li><a href="common.html#SE_SetPrivateBitRange">SetPrivateBitRange</a>
+	<li><a href="common.html#SE_GetWorldNumber">GetWorldNumber</a>
+</ul>
+<p><a href="character.html#CharFuncs">Character Related Functions</a>
+<ul>
+	<li><a href="character.html#SE_GetTarget">GetTarget</a>
+	<li><a href="character.html#SE_GetDexterity">GetDexterity</a>
+	<li><a href="character.html#SE_GetIntelligence">GetIntelligence</a>
+	<li><a href="character.html#SE_GetStrength">GetStrength</a>
+	<li><a href="character.html#SE_GetSkill">GetSkill</a>
+	<li><a href="character.html#SE_GetMana">GetMana</a>
+	<li><a href="character.html#SE_GetStamina">GetStamina</a>
+	<li><a href="character.html#SE_RunTo">RunTo</a>
+	<li><a href="character.html#SE_WalkTo">WalkTo</a>
+	<li><a href="character.html#SE_SetTarget">SetTarget</a>
+	<li><a href="character.html#SE_SetDexterity">SetDexterity</a>
+	<li><a href="character.html#SE_SetIntelligence">SetIntelligence</a>
+	<li><a href="character.html#SE_SetStrength">SetStrength</a>
+	<li><a href="character.html#SE_SetSkill">SetSkill</a>
+	<li><a href="character.html#SE_SetMana">SetMana</a>
+	<li><a href="character.html#SE_SetStamina">SetStamina</a>
+	<li><a href="character.html#SE_SpawnNPC">SpawnNPC</a>
+	<li><a href="character.html#SE_GetCharPack">GetCharPack</a>
+	<li><a href="character.html#SE_GetFame">GetFame</a>
+	<li><a href="character.html#SE_GetKarma">GetKarma</a>
+	<li><a href="character.html#SE_SetFame">SetFame</a>
+	<li><a href="character.html#SE_SetKarma">SetKarma</a>
+	<li><a href="character.html#SE_CalcDefense">CalcDefense</a>
+	<li><a href="character.html#SE_CalcAttack">CalcAttack</a>
+	<li><a href="character.html#SE_GetHunger">GetHunger</a>
+	<li><a href="character.html#SE_SetHunger">SetHunger</a>
+	<li><a href="character.html#SE_DoAction">DoAction</a>
+	<li><a href="character.html#SE_OpenBank">OpenBank</a>
+	<li><a href="character.html#SE_Freeze">Freeze</a>
+	<li><a href="character.html#SE_Unfreeze">Unfreeze</a>
+	<li><a href="character.html#SE_GetCommandLevel">GetCommandLevel</a>
+	<li><a href="character.html#SE_SetCommandLevel">SetCommandLevel</a>
+	<li><a href="character.html#SE_GetRace">GetRace</a>
+	<li><a href="character.html#SE_SetRace">SetRace</a>
+	<li><a href="character.html#SE_IsCriminal">IsCriminal</a>
+	<li><a href="character.html#SE_IsMurderer">IsMurderer</a>
+	<li><a href="character.html#SE_IsInnocent">IsInnocent</a>
+	<li><a href="character.html#SE_MakeCriminal">MakeCriminal</a>
+	<li><a href="character.html#SE_MakeInnocent">MakeInnocent</a>
+	<li><a href="character.html#SE_GetMurderCount">GetMurderCount</a>
+	<li><a href="character.html#SE_GetGender">GetGender</a>
+	<li><a href="character.html#SE_SetGender">SetGender</a>
+	<li><a href="character.html#SE_IsDead">IsDead</a>
+	<li><a href="character.html#SE_IsNPC">IsNPC</a>
+	<li><a href="character.html#SE_IsOnline">IsOnline</a>
+	<li><a href="character.html#SE_GetDir">GetDir</a>
+	<li><a href="character.html#SE_SetDir">SetDir</a>
+	<li><a href="character.html#SE_GetRegion">GetRegion</a>
+	<li><a href="character.html#SE_SetRegion">SetRegion</a>
+	<li><a href="character.html#SE_GetTown">GetTown</a>
+	<li><a href="character.html#SE_SetTown">SetTown</a>
+	<li><a href="character.html#SE_UseDoor">UseDoor</a>
+	<li><a href="character.html#SE_GetGuild">GetGuild</a>
+	<li><a href="character.html#SE_VendorBuy">VendorBuy</a>
+	<li><a href="character.html#SE_VendorSell">VendorSell</a>
+</ul>
+<p><a href="effect.html#EffectFuncs">Effect Related Functions</a>
+<ul>
+	<li><a href="effect.html#SE_DoStaticEffect">DoStaticEffect</a>
+	<li><a href="effect.html#SE_DoMovingEffect">DoMovingEffect</a>
+	<li><a href="effect.html#SE_DoTempEffect">DoTempEffect</a>
+	<li><a href="effect.html#SE_DoSoundEffect">DoSoundEffect</a>
+</ul>
+<p><a href="magic.html#MagicFuncs">Magic Related Functions</a>
+<ul>
+	<li><a href="magic.html#SE_CastSpell">CastSpell</a>
+	<li><a href="magic.html#SE_UseReagant">UseReagant</a>
+	<li><a href="magic.html#SE_UseReagants">UseReagants</a>
+	<li><a href="magic.html#SE_HasSpell">HasSpell</a>
+	<li><a href="magic.html#SE_AddSpell">AddSpell</a>
+	<li><a href="magic.html#SE_RemoveSpell">RemoveSpell</a>
+	<li><a href="magic.html#SE_SpellFail">SpellFail</a>
+</ul>
+<p><a href="item.html#ItemFuncs">Item Related Functions</a>
+<ul>
+	<li><a href="item.html#SE_GetAmount">GetAmount</a>
+	<li><a href="item.html#SE_GetContainer">GetContainer</a>
+	<li><a href="item.html#SE_SetAmount">SetAmount</a>
+	<li><a href="item.html#SE_SetContainer">SetContainer</a>
+	<li><a href="item.html#SE_SpawnItem">SpawnItem</a>
+	<li><a href="item.html#SE_GetType">GetType</a>
+	<li><a href="item.html#SE_SetType">SetType</a>
+	<li><a href="item.html#SE_GetMore">GetMore</a>
+	<li><a href="item.html#SE_GetMoreX">GetMoreX</a>
+	<li><a href="item.html#SE_GetMoreY">GetMoreY</a>
+	<li><a href="item.html#SE_GetMoreZ">GetMoreZ</a>
+	<li><a href="item.html#SE_SetMore">SetMore</a>
+	<li><a href="item.html#SE_SetMoreX">SetMoreX</a>
+	<li><a href="item.html#SE_SetMoreY">SetMoreY</a>
+	<li><a href="item.html#SE_SetMoreZ">SetMoreZ</a>
+	<li><a href="item.html#SE_GetMovable">GetMovable</a>
+	<li><a href="item.html#SE_SetMovable">SetMovable</a>
+	<li><a href="item.html#SE_GetAtt">GetAtt</a>
+	<li><a href="item.html#SE_SetAtt">SetAtt</a>
+	<li><a href="item.html#SE_GetDef">GetDef</a>
+	<li><a href="item.html#SE_SetDef">SetDef</a>
+	<li><a href="item.html#SE_GlowItem">GlowItem</a>
+	<li><a href="item.html#SE_ResourceCount">GetResourceCount</a>
+	<li><a href="item.html#SE_UseResource">UseResource</a>
+	<li><a href="item.html#SE_FindItemOnLayer">FindItemOnLayer</a>
+	<li><a href="item.html#SE_GetLayer">GetLayer</a>
+	<li><a href="item.html#SE_SetLayer">SetLayer</a>
+	<li><a href="item.html#SE_FirstItemInCont">FirstItemInCont</a>
+	<li><a href="item.html#SE_NextItemInCont">NextItemInCont</a>
+	<li><a href="item.html#SE_FinishedItemInCont">FinishedItemInCont</a>
+</ul>
+<p><a href="speech.html#SpeechFuncs">Speech Related Functions</a>
+<ul>
+	<li><a href="speech.html#SE_SysMessage">SysMessage</a>
+	<li><a href="speech.html#SE_TextMessage">TextMessage</a>
+	<li><a href="speech.html#SE_EmoteMessage">EmoteMessage</a>
+	<li><a href="speech.html#SE_BroadcastMessage">BroadcastMessage</a>
+	<li><a href="speech.html#SE_ConsoleMessage">ConsoleMessage</a>
+	<li><a href="speech.html#SE_YellMessage">YellMessage</a>
+	<li><a href="speech.html#SE_WhisperMessage">WhisperMessage</a>
+	<li><a href="speech.html#SE_SubStringSearch">SubStringSearch</a>
+</ul>
+<p><a href="attack.html#AttackFuncs">Attack Related Functions</a>
+<ul>
+	<li><a href="attack.html#SE_AttackTarget">AttackTarget</a>
+	<li><a href="attack.html#SE_Attack">Attack</a>
+	<li><a href="attack.html#SE_FindNearestTarget">FindNearestTarget</a>
+	<li><a href="attack.html#SE_FindStrongestTarget">FindStrongestTarget</a>
+	<li><a href="attack.html#SE_FindWeakestTarget">FindWeakestTarget</a>
+	<li><a href="attack.html#SE_FindFirstTarget">FindFirstTarget</a>
+	<li><a href="attack.html#SE_FindLastTarget">FindLastTarget</a>
+	<li><a href="attack.html#SE_FindSmartestTarget">FindSmartestTarget</a>
+	<li><a href="attack.html#SE_FindDumbestTarget">FindDumbestTarget</a>
+	<li><a href="attack.html#SE_FindQuickestTarget">FindQuickestTarget</a>
+	<li><a href="attack.html#SE_FindSlowestTarget">FindSlowestTarget</a>
+</ul>
+<p><a href="misc.html#MiscFuncs">Miscellaneous Functions</a>
+<ul>
+	<li><a href="misc.html#SE_RollDice">RollDice</a>
+	<li><a href="misc.html#SE_StartTimer">StartTimer</a>
+	<li><a href="misc.html#ScriptPrintNumber">ScriptPrintNumber</a>
+	<li><a href="misc.html#SetShowLayer">SetShowLayer</a>
+	<li><a href="misc.html#GetShowLayer">GetShowLayer</a>
+	<li><a href="misc.html#SE_CalcSockFromChar">CalcSockFromChar</a>
+	<li><a href="misc.html#SE_RandomNumber">RandomNumber</a>
+	<li><a href="misc.html#SE_CalcCharFromSer">CalcCharFromSer</a>
+	<li><a href="misc.html#SE_CalcItemFromSer">CalcItemFromSer</a>
+	<li><a href="misc.html#SE_DistanceTo">DistanceTo</a>
+	<li><a href="misc.html#SE_InRange">InRange</a>
+	<li><a href="misc.html#SE_PopUpTarget">PopUpTarget</a>
+	<li><a href="misc.html#SE_CustomTarget">CustomTarget</a>
+	<li><a href="misc.html#SE_CalcCharFromSock">calcCharFromSock</a>
+	<li>RegisterKey
+	<li>UnregisterKey
+	<li><a href="misc.html#SE_GetLightLevel">GetLightLevel</a>
+	<li><a href="misc.html#SE_GetMurderThreshold">GetMurderThreshold</a>
+	<li><a href="misc.html#SE_TurnToward">TurnToward</a>
+	<li><a href="misc.html#SE_DirectionTo">DirectionTo</a>
+	<li><a href="misc.html#SE_GetTileIDAtMapCoord">GetTileIDAtMapCoord</a>
+</ul>
+<p>Socket Functions
+<ul>
+	<li><a href="socket.html#SE_GetString">GetString</a>
+	<li><a href="socket.html#SE_GetByte">GetByte</a>
+	<li><a href="socket.html#SE_GetWord">GetWord</a>
+	<li><a href="socket.html#SE_GetDWord">GetDWord</a>
+	<li><a href="socket.html#SE_CreateBuffer">CreateBuffer</a>
+	<li><a href="socket.html#SE_DestroyBuffer">DestroyBuffer</a>
+	<li><a href="socket.html#SE_SendBuffer">SendBuffer</a>
+	<li><a href="socket.html#SE_SetByte">SetByte</a>
+	<li><a href="socket.html#SE_SetWord">SetWord</a>
+	<li><a href="socket.html#SE_SetDWord">SetDWord</a>
+	<li><a href="socket.html#SE_SetString">SetString</a>
+	<li><a href="socket.html#SE_ReadBytes">ReadBytes</a>
+	<li>RegisterPacketHandler
+	<li>UnregisterPacketHandler
+</ul>
+<p>Command Functions
+<ul>
+	<li><a href="command.html#SE_ExecuteCommand">ExecuteCommand</a>
+	<li><a href="command.html#SE_CommandLevelReq">CommandLevelReq</a>
+	<li><a href="command.html#SE_CommandExists">CommandExists</a>
+	<li><a href="command.html#SE_FirstCommand">FirstCommand</a>
+	<li><a href="command.html#SE_NextCommand">NextCommand</a>
+	<li><a href="command.html#SE_FinishedCommandList">FinishedCommandList</a>
+	<li><a href="command.html#SE_RegisterCommand">RegisterCommand</a>
+	<li><a href="command.html#SE_UnregisterCommand">UnregisterCommand</a>
+</ul>
+<p>Skill functions
+<ul>
+	<li><a href="skill.html#SE_MakeMenu">MakeMenu</a>
+	<li><a href="skill.html#SE_MakeItem">MakeItem</a>
+	<li><a href="skill.html#SE_CalcRank">CalcRank</a>
+	<li><a href="skill.html#SE_ApplyRank">ApplyRank</a>
+</ul>
+<p>Time Functions
+<ul>
+	<li><a href="time.html#SE_GetHour">GetHour</a>
+	<li><a href="time.html#SE_GetMinute">GetMinute</a>
+	<li><a href="time.html#SE_GetDay">GetDay</a>
+	<li><a href="time.html#SE_GetSecondsPerUOMinute">GetSecondsPerUOMinute</a>
+	<li><a href="time.html#SE_GetCurrentClock">GetCurrentClock</a>
+</ul>
+<p>Multi Functions
+<ul>
+	<li><a href="multi.html#SE_FindMulti">FindMulti</a>
+	<li><a href="multi.html#SE_IsInMulti">IsInMulti</a>
+	<li><a href="multi.html#SE_IsOnBanList">IsOnBanList</a>
+	<li><a href="multi.html#SE_IsOnOwnerList">IsOnOwnerList</a>
+	<li><a href="multi.html#SE_AddToBanList">AddToBanList</a>
+	<li><a href="multi.html#SE_AddToOwnerList">AddToOwnerList</a>
+	<li><a href="multi.html#SE_RemoveFromBanList">RemoveFromBanList</a>
+	<li><a href="multi.html#SE_RemoveFromOwnerList">RemoveFromOwnerList</a>
+	<li><a href="multi.html#SE_IsMulti">IsMulti</a>
+</ul>
+<p>Racial Functions
+<ul>
+	<li><a href="races.html#SE_GetRaceName">GetRaceName</a>
+	<li><a href="races.html#SE_IsRaceWeakToWeather">IsRaceWeakToWeather</a>
+	<li><a href="races.html#SE_RaceRequiresBeard">RaceRequiresBeard</a>
+	<li><a href="races.html#SE_RaceRequriesNoBeard">RaceRequiresNoBeard</a>
+	<li><a href="races.html#SE_IsPlayerRace">IsPlayerRace</a>
+	<li><a href="races.html#SE_GetRacialGenderRestrict">GetRacialGenderRestrict</a>
+	<li><a href="races.html#SE_GetRacialArmourClass">GetRacialArmourClass</a>
+	<li><a href="races.html#SE_CanRaceWearArmour">CanRaceWearArmour</a>
+	<li><a href="races.html#SE_GetRaceLanguageSkill">GetRaceLanguageSkill</a>
+	<li><a href="races.html#SE_GetRaceSkillAdjustment">GetRaceSkillAdjustment</a>
+	<li><a href="races.html#SE_GetRacePoisonResistance">GetRacePoisonResistance</a>
+	<li><a href="races.html#SE_GetRaceMagicResistance">GetRaceMagicResistance</a>
+	<li><a href="races.html#SE_GetRaceVisibleDistance">GetRaceVisibleDistance</a>
+	<li><a href="races.html#SE_GetRaceNightVision">GetRaceNightVision</a>
+	<li><a href="races.html#SE_IsValidRaceHairColour">IsValidRaceHairColour</a>
+	<li><a href="races.html#SE_IsValidRaceSkinColour">IsValidRaceSkinColour</a>
+	<li><a href="races.html#SE_IsValidRaceBeardColour">IsValidRaceBeardColour</a>
+	<li><a href="races.html#SE_RaceCompare">RaceCompare</a>
+	<li><a href="races.html#SE_RaceCompareByRace">RaceCompareByRace</a>
+</ul>
+<p>Guild Functions
+<ul>
+	<li><a href="guilds.html#SE_GetGuildType">GetGuildType</a>
+	<li><a href="guilds.html#SE_GetGuildName">GetGuildName</a>
+	<li><a href="guilds.html#SE_GetGuildMaster">GetGuildMaster</a>
+	<li><a href="guilds.html#SE_SetGuildType">SetGuildType</a>
+	<li><a href="guilds.html#SE_SetGuildName">SetGuildName</a>
+	<li><a href="guilds.html#SE_SetGuildMaster">SetGuildMaster</a>
+	<li><a href="guilds.html#SE_GetNumGuildMembers">GetNumGuildMembers</a>
+	<li><a href="guilds.html#SE_AddToGuild">AddToGuild</a>
+	<li><a href="guilds.html#SE_RemoveFromGuild">RemoveFromGuild</a>
+	<li><a href="guilds.html#SE_CompareGuild">CompareGuild</a>
+	<li><a href="guilds.html#SE_CompareGuildByGuild">CompareGuildByGuild</a>
+	<li><a href="guilds.html#SE_GetGuildStone">GetGuildStone</a>
+</ul>
+<p>Town Functions
+<ul>
+	<li><a href="towns.html#SE_IsMemberOfTown">IsMemberOfTown</a>
+	<li><a href="towns.html#SE_GetTownMayor">GetTownMayor</a>
+	<li><a href="towns.html#SE_GetTownRace">GetTownRace</a>
+	<li><a href="towns.html#SE_SetTownRace">SetTownRace</a>
+	<li><a href="towns.html#SE_PossessTown">PossessTown</a>
+	<li><a href="towns.html#SE_GetTownTax">GetTownTax</a>
+	<li><a href="towns.html#SE_GetTownTaxResource">GetTownTaxResource</a>
+	<li><a href="towns.html#SE_SetTownTax">SetTownTax</a>
+	<li><a href="towns.html#SE_SetTownTaxResource">SetTownTaxResource</a>
+</ul>
+</body>

@@ -1,0 +1,11 @@
+[ONLINE_PAGE]
+{ 
+UPDATE=10
+INPUT=dfndata/html/online.html
+OUTPUT=html/serverstatus.html
+} 
+
+EOF
+
+
+

@@ -1,0 +1,123 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : inscribe.gmp                                         *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Sample GMP File                                               *
+//* Everything is case sensitive.                                 *
+//* Line-breaks, tabs and spaces are ignored.                     *
+//* Errors and invalid characters are NOT ignored.                *
+//*                                                               *
+//* Example :                                                     *
+//*                                                               *
+//* menu_name = { menu_title;                                     *
+//*               icon_id_1, title_1, reference_1; ...            *
+//*               icon_id_n, title_n, reference_n; }              *
+//*                                                               *
+//*   icon_id is the number of the icon to use (in hex)           *
+//*   title is shown as the option name;                          *
+//*   reference can be either:                                    *
+//*   the name of another menu; or a number.                      *
+//*                                                               *
+//*   If reference is a number, it is considered a valid option.  *
+//*   If reference is a name, the appropriate menu is called.     *
+//*                                                               *
+//*****************************************************************
+
+InscribeMenu = { "Choose a Circle";
+  0x20c0, "First Circle", FirstCircle;
+  0x20c1, "Second Circle", SecondCircle;
+  0x20c2, "Third Circle", ThirdCircle;
+  0x20c3, "Fourth Circle", FourthCircle;
+  0x20c4, "Fifth Circle", FifthCircle;
+  0x20c5, "Sixth Circle", SixthCircle;
+  0x20c6, "Seventh Circle", SeventhCircle;
+  0x20c7, "Eighth Circle", EighthCircle;
+}
+
+FirstCircle = { "Choose the Spell";
+  0x2080, "Clumsy",810;
+  0x2081, "Create Food",811;
+  0x2082, "Feeblemind",812;
+  0x2083, "Heal",813;
+  0x2084, "Magic Arrow",814;
+  0x2085, "Night Sight", 815;
+  0x2086, "Reactive Armor",816;
+  0x2087, "Weaken", 817;
+}
+
+SecondCircle = { "Choose the Spell";
+  0x2088, "Agility", 820;
+  0x2089, "Cunning", 821;
+  0x208a, "Cure", 822;
+  0x208b, "Harm", 823;
+  0x208c, "Magic Trap", 824;
+  0x208d, "Magic Untrap", 825;
+  0x208e, "Protection", 826;
+  0x208f, "Strength", 827;
+}
+ThirdCircle = { "Choose the Spell";
+  0x2090, "Bless", 830;
+  0x2091, "Fireball", 831;
+  0x2092, "Magic Lock", 832;
+  0x2093, "Poison", 833;
+  0x2094, "Telekinesis", 834;
+  0x2095, "Teleport", 835;
+  0x2096, "Unlock", 836;
+  0x2097, "Wall of Stone", 837;
+}
+FourthCircle = { "Choose the Spell";
+  0x2098, "Arch Cure", 840;
+  0x2099, "Arch Protection", 841;
+  0x209a, "Curse", 842;
+  0x209b, "Fire Field", 843;
+  0x209c, "Greater Heal", 844;
+  0x209d, "Lightning", 845;
+  0x209e, "Mana Drain", 846;
+  0x209f, "Recall", 847;
+}
+FifthCircle = { "Choose the Spell";
+  0x20a0, "Blade Spirits", 850;
+  0x20a1, "Dispel Field", 851;
+  0x20a2, "Incognito", 852;
+  0x20a3, "Magic Reflection", 853;
+  0x20a4, "Mind Blast", 854;
+  0x20a5, "Paralyze", 855;
+  0x20a6, "Poison Field", 856;
+  0x20a7, "Summon Creature", 857;
+}
+SixthCircle = { "Choose the Spell";
+  0x20a8, "Dispel", 860;
+  0x20a9, "Energy Bolt", 861;
+  0x20aa, "Explosion", 862;
+  0x20ab, "Invisibility", 863;
+  0x20ac, "Mark", 864;
+  0x20ad, "Mass Curse", 865;
+  0x20ae, "Paralyze Field", 866;
+  0x20af, "Reveal", 867;
+}
+SeventhCircle = { "Choose the Spell";
+  0x20b0, "Chain Lightning", 870;
+  0x20b1, "Energy Field", 871;
+  0x20b2, "Flame Strike", 872;
+  0x20b3, "Gate Travel", 873;
+  0x20b4, "Mana Vampire", 874;
+  0x20b5, "Mass Dispel", 875;
+  0x20b6, "Meteor Swarm", 876;
+  0x20b7, "Polymorph", 877;
+}
+EighthCircle = { "Choose the Spell";
+  0x20b8, "Earthquake", 880;
+  0x20b9, "Energy Vortex", 881;
+  0x20ba, "Resurrection", 882;
+  0x20bb, "Summon Air Elemental", 883;
+  0x20bc, "Summon Daemon", 884;
+  0x20bd, "Summon Earth Elemental", 885;
+  0x20be, "Summon Fire Elemental", 886;
+  0x20bf, "Summon Water Elemental", 887;
+}

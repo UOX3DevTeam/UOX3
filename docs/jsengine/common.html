@@ -1,0 +1,267 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="CharItemFuncs">Character and Item common functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetName">GetName</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetName( srcChar, srcType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the name of the object srcChar.<br>srcType == 0 indicates a character<br>srcType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iName = GetName( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetName">SetName</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetName( srcChar, newName, srcType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the name of the object to newName.<br>srcType == 0 indicates a character<br>srcType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetName( srcChar, "Abaddon", 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetTitle">GetTitle</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetTitle( srcChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the title of srcChar
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sTitle = GetTitle( srcChar );
+</pre></table>
+
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetTitle">SetTitle</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetTitle( srcChar, newTitle );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets srcChar's title to newTitle
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetTitle( srcChar, "Destroyer of Worlds" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetX">GetX</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetX( int trgChar, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the x location of trgChar<br>Type == 0: Character<br>Type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>trgX = GetX( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetY">GetY</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetY( int trgChar, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the y location of trgChar<br>Type == 0: Character<br>Type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>trgY = GetY( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetZ">GetZ</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetZ( int trgChar, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the z location of trgChar<br>Type == 0: Character<br>Type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>stm = GetZ( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetLocation">SetLocation</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetLocation( int trgChar, short targX, short targY, SCHAR targZ, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Moves the character trgChar to (targX, targY, targZ );<br>Type == 0: Character<br>Type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetLocation( srcChar, 1000, 1000, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetID">GetID</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetID( int trgItem, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the ID of the item<br>type == 0: Char<br>type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iID = GetID( srcItem, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetColour">GetColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetColour( int trgItem, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the colour of trgItem<br>type == 0: Char<br>type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iColour = GetColour( srcItem, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetOwner">GetOwner</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetOwner( int trgItem, int type );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the char (as index) that owns the item.  -1 if no owner<br>type == 0: Char<br>type == 1: Item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>own = GetOwner( srcItem, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetX">SetX</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetX( trgObj, newXLoc, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's X location to newXLoc<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetX( srcChar, 1000, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetY">SetY</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetY( trgObj, newYLoc, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's Y location to newYLoc<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetY( srcChar, 1000, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetZ">SetZ</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetZ( trgObj, newZLoc, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's Z location to newZLoc<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetZ( srcChar, -8, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetID">SetID</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetID( trgObj, newID, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's ID to newID<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetID( srcChar, 0x0190, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetColour">SetColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetColour( trgObj, newColour, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's colour to newColour<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetColour( srcChar, 0x0001, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetOwner">SetOwner</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetOwner( trgObj, newOwner, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Set's trgObj's owner value to newOwner<br>objType == 0: trgObj is a character<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var nOwner = GetOwner( srcObj, 0 );<br>SetOwner( trgObj, nOwner, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoDamage">DoDamage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoDamage( trgObj, amtToDamage, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Does amtToDamage amount of damage to trgObj<br>objType == 0: trgObj is a char<br>objType == 1 : trgObj is an item<br>Doing a negative amount can heal
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>DoDamage( trgObj, 5, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetVisible">GetVisible</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetVisible( trgObj, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns visibility of an object, varies depending on objType<br>objType == 0: trgObj is a char, 0 indicates visible, 1 indicates hidden, 2 indicates stealth<br>objType == 1: trgObj is an item, 0 indicates visible, 1 indicates owner/GM, 2 indicates GM only
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iVis = GetVisible( srcItem, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetVisible">SetVisible</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetVisible( trgObj, trgVis, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Set's trgObj's visibility to trgVis<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetVisible( srcChar, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Delete">Delete</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Delete( trgObj, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Delete's trgObj<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Delete( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_NewScriptTrigger">NewScriptTrigger</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>NewScriptTrigger( trgObj, newTrigger, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgObj's trigger to newTrigger<br>objType == 0: trgObj is a character<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>NewScriptTrigger( trgChar, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetSerial">GetSerial</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetSerial( trgObj, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns serial of an object<br>objType == 0 indicates a character<br>objType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iSerial = GetSerial( srcItem, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetSerial">SetSerial</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetSerial( trgObj, newSerial, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Set's trgObj's serial to newSerial<br>objType == 0: trgObj is a char<br>objType == 1: trgObj is an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetSerial( srcChar, 1, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetHealth">GetHealth</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>short GetHealth( trgChar, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the health of trgChar<br>objType == 0 indicates a character<br>objType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>hp = GetHealth( srcChar, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetHealth">SetHealth</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetHealth( trgObj, newHealth, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the health of trgObj to newHealth<br>objType == 0 indicates a character<br>objType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetHealth( srcChar, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetPrivateBit">GetPrivateBit</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>GetPrivateBit( tObj, objType, mWord, mBit );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the mBit'th bit of the mWord'th word of tObj.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetPrivateBit( iUsed, 1, 0, 0 ) ) // if first bit is set
+<br>{
+<br>	TextMessage( pUser, "Hello world" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetPrivateBit">SetPrivateBit</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetPrivateBit( tObj, objType, mWord, mBit, bOn );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the mBit'th bit of the mWord'th word of tObj to 1 if bOn is true, otherwise 0.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetPrivateBit( iUsed, 1, 0, 0, true );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetPrivateWord">GetPrivateWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>GetPrivateBit( tObj, objType, mWord );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the mWord'th word of tObj.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetPrivateWord( iUsed, 1, 0 ) == 0 )
+<br>{
+<br>	TextMessage( pUser, "Hello world" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetPrivateWord">SetPrivateWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetPrivateBit( tObj, objType, mWord, mVal );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the mWord'th word of tObj to mVal.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetPrivateWord( iUsed, 1, 0, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetPrivateBitRange">GetPrivateBitRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>GetPrivateBitRange( tObj, objType, mWord, mLow, mHigh );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the values of the bits mLow through mHigh of the mWord'th word of tObj.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetPrivateBitRange( iUsed, 1, 0, 0, 7 ) == 0 )
+<br>{
+<br>	TextMessage( pUser, "Hello world" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetPrivateBitRange">SetPrivateBitRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetPrivateBit( tObj, objType, mWord, mLow, mHigh, mVal );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the bits mLow through mHigh of the mWord'th word of tObj to mVal.  If objType is 0, then tObj is a character, otherwise it's an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetPrivateBitRange( iUsed, 1, 0, 0, 7, 128 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetWorldNumber">GetWorldNumber</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>GetWorldNumber( tObj, objType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the world number that tObj is in.  If objType is 0, then tObj is a char, otherwise it's an item.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetWorldNumber( pTalking, 0 ) == 2 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Hello Ilshenar!" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><center>
+  <p><font face="Tahoma,Arial,MS Sans Serif" size="1">©</font><font face="Tahoma,Arial,MS Sans Serif" size="1">Copyright 
+    2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew 
+    Randall)</font> </p>
+  </center>
+
+</body>

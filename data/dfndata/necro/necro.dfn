@@ -1,0 +1,174 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : necro.scp                                            *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* fill in comments instructions here                            *
+//*                                                               *
+//*                                                               *
+//*                                                               *
+//*****************************************************************
+
+
+// This Section is for Grave Digging
+// ITEMLIST for gravedigging
+[ITEM 999]
+{
+NAME=RANDOM GEMS LIST
+ITEMLIST=999
+}
+
+[ITEMLIST 999]
+{
+3194
+3195
+3196
+3234
+3197
+3198
+3199
+3200
+3201
+3202
+3203
+3204
+3205
+3206
+3207
+3208
+3209
+3210
+3211
+3212
+3213
+3214
+3215
+3216
+3217
+3218
+3219
+3220
+3221
+3222
+3223
+3224
+3225
+3226
+}
+
+[ITEM 1000]
+{
+NAME=RANDOM WEAPON LIST
+ITEMLIST=1000
+}
+// The listed items are in the Items.scp
+[ITEMLIST 1000]
+{
+108
+109
+110
+111
+112
+113
+83
+84
+86
+496
+88
+494
+92
+93
+95
+96
+97
+99
+100
+}
+[ITEM 1001]
+{
+NAME=RANDOM ARMOR LIST
+ITEMLIST=1001
+}
+[ITEMLIST 1001]
+{
+191
+192
+24
+193
+27
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+70
+71
+72
+73
+76
+}
+
+// This be the monster section
+
+[UNDEAD 1000]
+{
+NAME=RANDOM LOW LEV UNDEAD
+UNDEADLIST=1000
+}
+[UNDEADLIST 1000]
+{
+36
+76
+13
+25
+77
+658
+}
+
+[UNDEAD 1001]
+{
+NAME=RANDOM MID LEV UNDEAD
+UNDEADLIST=1001
+}
+[UNDEADLIST 1001]
+{
+24
+87
+646
+676
+}
+
+[UNDEAD 1002]
+{
+NAME=RANDOM HI LEV UNDEAD
+UNDEADLIST=1002
+}
+[UNDEADLIST 1002]
+{
+24
+68
+646
+}
+
+
+
+EOF
+

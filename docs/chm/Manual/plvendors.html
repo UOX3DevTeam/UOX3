@@ -1,0 +1,48 @@
+<html>
+<head>
+	<style type=text/css>
+		FONT		{ FONT-FAMILY: Verdana,Helvetica,Arial; }
+		table.z		{ FONT-FAMILY: Veranda,Helvetica,Arial; font-size: 10pt; }
+		A		{ color: #cccccc; text-decoration: none; }
+		A:active	{ color: #cfcfff; }
+		A:hover		{ color: #3333ff; }
+	</style>
+	<title>UOX3 Scripting Guide</title>
+</head>
+<body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
+<center>
+<font size=3><b>UOX3 Scripting Info</b></font><br>
+<p>
+<table bgcolor=#333333 width=95%>
+    <tr>
+	<td><table class=z border=0 cellpadding=0 cellspacing=0>
+	    <tr>
+		<td>
+		    <a name="vendors"></a>
+		    Player Vendors
+		    <p>
+		    HARDCODED Player vendor NPC # is 2117, this
+		    means whatever NPC is # 2117 will be added as a player vendor..
+		    you could make an Orc or a daemon vendor, it'll work :-).
+		    <p>
+		    Say Vendor buy to the vendor and you will get a targeting cursor target what's you wanna
+		    buy, and if you have enough money, it's yours. If you own the vendor, you can drag things
+		    on and off the vendor, when you drop something in his pack (not ON him) You will be asked
+		    to set the price, set it to 0 and the default from scripts will be used, you will then be
+		    asked to set a description. To get the gold from you vendor, just say "vendor gold" and he
+		    will tell you how much you have earned that day, how much he is keep as his pay (10%) and
+		    how much is left for you. If he has made less than 10 gold, he keeps ALL of it. If he has
+		    made more than 65535 gold, things get tricky. It *should* work out so if you make lets say,
+		    80,000 gold, you should say vendor gold twice, the first time he will give you 65535, the
+		    next time, he will give you whats remaining, but he will take his 10% out both times, so be
+		    careful or he'll rip you off :-)
+		    <p>
+		    A player vendor deed can be ANY time with type 217.
+		</td>
+	    </tr>
+	</table></td>
+     </tr>
+</table>
+</center>
+</body>
+</html>

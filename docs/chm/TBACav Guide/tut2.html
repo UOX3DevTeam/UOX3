@@ -1,0 +1,185 @@
+<html>
+<head>
+<title>Tutorial 2: Adding stuff so your players can access it</title>
+</head>
+<body>
+<center><h1>Tutorial 2</h1><h2>Adding stuff so your players can access it</h2><h4>Written by: [TBA]Cavalier</h4></center>
+<p>Last updated: 9th may, 2000
+<hr>
+<p>So you've made some new items, balanced them, and now you want to add
+them to the shops and maybe let your players make them. I'll show you
+how to let your players create items in a minute or two, but to start
+off I'll give you all a couple of ways to add your items to the shops:
+
+<p>There's 2 ways I know of adding items to shops. For this tutorial I have
+my server running with some of my items (available in the scripts
+section). I have also logged in as a gm and am using shard ace. I will
+also add the in-game commands for the sake of completeness. I'm using
+wordpad to edit any scripts.
+<p>The first and easiest way to add stuff to your shops is to add or edit
+an existing npc to sell your stuff. If you wish to add your items to
+an existing npc, all you have to do is find their entry in the npc.scp
+and find all the lines saying RSHOPITEM blah and SELLITEM blah. Say
+I want the bowyer to sell my shortbow, I find his entry in the npc.scp
+and add the lines RSHOPITEM 30015 and SELLITEM 30015. Here's what the
+npc section would look like after I added those lines in:
+<pre>
+// Shopkeeper, Invul Male
+SECTION NPC 1076
+{
+NAMELIST 1
+TITLE the bowyer
+ID 0190
+PRIV1 4
+ITEM 15065
+HAIRCOLOR 15
+ITEM 15066
+COLORMATCHHAIR
+SKINLIST 16
+DIRECTION N
+NPCWANDER 3
+BACKPACK
+ITEM 118
+ITEM 15070
+COLORLIST 11
+ITEM 15071
+COLORLIST 11
+ITEM 15072
+COLORLIST 11
+ITEM 15073
+ITEM 15074
+COLORLIT 11
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 5
+TOTAME 1100
+STR 50 75
+DEX 0 0
+INT 50 75
+KARMA 0
+FAME 0
+ARCHERY 400 600
+BOWCRAFT/FLETCHING 400 600
+LUMBERJACKING 400 600
+TACTICS 400 600
+DAMAGE 7 35
+DEF 5
+SPEECH 14
+SHOPKEEPER
+RSHOPITEM 116
+RSHOPITEM 117
+RSHOPITEM 118
+RSHOPITEM 3070
+RSHOPITEM 3071
+RSHOPITEM 7014
+RSHOPITEM 7015
+RSHOPITEM 30015 // the shortbow
+SELLITEM 116
+SELLITEM 117
+SELLITEM 118
+SELLITEM 3070
+SELLITEM 3071
+SELLITEM 7014
+SELLITEM 7015
+SELLITEM 30015 // the shortbow
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+</pre>
+<p>That's the first way of adding items to your dealers. The other way is
+in-game. First place the dealer and then open his sell pack using
+shardace or 'gmopen 1a. Then create the item you want him to sell and
+place it in his pack. The vendor will then sell that item. To allow
+the vendor to also buy those items open his buy pack using shardace or
+use 'gmopen 1c. Create and place the item in this container.
+
+<p>Players can now buy and sell your custom items, but what if they want
+to make them? For this the create.scp is used. Everything that you can
+make as a player in the game is listed in this file. The sections are
+split up into the various crafts, although submenus for different
+things can go anywhere. Let's take a quick look around the create.scp.
+Open it up with whatever you use (im using worpad). One of the first
+things I can see is this:
+<pre>
+SECTION MAKEMENU 1
+{
+Blacksmithing
+1416 Armor
+RESOURCE 10
+SKILL 178
+MAKEMENU 3
+1BC3 Shields
+RESOURCE 8
+SKILL 10
+MAKEMENU 2
+143E Weapons
+RESOURCE 3
+SKILL 113
+MAKEMENU 4
+09ed Misc.
+RESOURCE 6
+SKILL 250
+MAKEMENU 105
+}
+</pre>
+<p>Now what the hell does all that mean I here you ask? Well, its an entry
+for the blacksmithy skill. This is the one that will come up when you
+use tongs or a hammer on your ingots. The { and } brackets open and
+close the entry, and here's what the rest means:
+<table>
+<tr><td>Blacksmithing<td>// This is the name of the menu.
+<tr><td>1416 Armor<td>// This is the name of an icon. The icon uses an id which is the hex code in-front of the name.
+<tr><td>RESOURCE 10<td>// This is how much of the resource the skill needs for this icon to show up in the menu.
+<tr><td>SKILL 178<td>// This is the skill lvl that you need for this icon to show up. Tn this case it is 17.8 smithy skill.
+<tr><td>MAKEMENU 3<td>// This is what happens when you select this icon. In this case it opens makemenu number 3. It could also add an item, in which case it would say something like ADDITEM 2938
+</table>
+<p>For the example I'll use my shortbow again, and I will add it to the
+bowcraft section. Here is my current bowcraft entry in the create.scp:
+<pre>
+SECTION MAKEMENU 65
+{
+Bowcraft
+1BD6 Shafts
+RESOURCE 2
+SKILL 100
+MAKEMENU 66
+13B2 Bow - 2 logs
+RESOURCE 2
+SKILL 300
+ADDITEM 116
+RANK 1 10
+0F4F Crossbow - 2 logs
+RESOURCE 2
+SKILL 300
+ADDITEM 117
+RANK 1 10
+13FD Heavy Crossbow - 3 logs
+RESOURCE 3
+SKILL 400
+ADDITEM 118
+RANK 1 10
+}
+</pre>
+What <p>I want to do is add a section for the shortbow. To do this I just
+add the following stuff (please note I have my item rank system on) in
+front of the bow entry:
+<pre>
+13B2 Shortbow - 2 logs
+RESOURCE 2
+SKILL 250
+ADDITEM 30015
+RANK 1 10
+</pre>
+<p>Now if you did that right, when you carve up some logs it should
+display the shortbow if you have enough logs and skill. Just as a bit
+of a courtesy I always include the resource it takes to make a item.
+To add in your own items, replace the id (13B2) with your own, rename
+the shortbow to your item name, and set the resource, skill, and
+additem lines to the appropriate settings for your item.
+</body>
+</html>

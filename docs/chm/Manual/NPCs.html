@@ -1,0 +1,152 @@
+<pre>
+NPCRECT changes by Crwth
+
+In the NPC script files, the meaning of the values of FX1, FX2, FY1, FY2 and FZ1
+have changed.
+
+Because a Scriptwriter doesn't know where the NPC will be placed, a valid set of
+'true' coordinates cannot be given for a bounding rectangle or circle.  Because of
+this, the values of the "F" coordinate values will not be interpreted as RELATIVE
+coordinates - coordinates based on where the NPC was created.
+
+For example:
+
+   72 73 74 75 76 77 78 79 80 81
+   __ __ __ __ __ __ __ __ __ __
+78|__|__|__|__|__|__|__|__|__|__|
+79|__|__|__|__|__|__|__|__|__|__|
+80|__|__|__|__|__|__|__|__|__|__|
+81|__|__|__|__|__|__|__|__|__|__|
+82|__|__|__|__|__|__|__|__|__|__|
+83|__|__|__|__|__|__|__|__|__|__|
+84|__|__|__|__|__|__|__|__|__|__|
+85|__|__|__|__|__|__|__|__|__|__|
+86|__|__|__|__|__|__|__|__|__|__|
+87|__|__|__|__|__|__|__|__|__|__|
+
+This is a small shop (use your imagination...)
+
+  If an NPC is added at X=77, Y=82, Z=0,
+
+   72 73 74 75 76 77 78 79 80 81
+   __ __ __ __ __ __ __ __ __ __
+78|__|__|__|__|__|__|__|__|__|__|
+79|__|__|__|__|__|__|__|__|__|__|
+80|__|__|__|__|__|__|__|__|__|__|
+81|__|__|__|__|__|__|__|__|__|__|
+82|__|__|__|__|__|XX|__|__|__|__|
+83|__|__|__|__|__|__|__|__|__|__|
+84|__|__|__|__|__|__|__|__|__|__|
+85|__|__|__|__|__|__|__|__|__|__|
+86|__|__|__|__|__|__|__|__|__|__|
+87|__|__|__|__|__|__|__|__|__|__|
+
+we want him to be able to walk anywhere in the store.  Optimally,
+we would like to say that FX1=72, FY1=78, FX2=81, FY2=87, FZ1=-1.
+For someone just adding in a vendor, though, we'd like them to be
+able to just click in the center of the shop, and it'll go.
+
+With the new system, if we set FX1=-4, this means that the NPC can
+go as far as 4 squares left (negative on the x-axis) from the starting
+point.  Also, FY1=-4 gives us 4 squares up.  With FX2=4 and FY2=4,
+our NPC will be able to walk in this area:
+
+   72 73 74 75 76 77 78 79 80 81
+   __ __ __ __ __ __ __ __ __ __
+78|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+79|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+80|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+81|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+82|__|oo|oo|oo|oo|XX|oo|oo|oo|oo|
+83|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+84|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+85|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+86|__|oo|oo|oo|oo|oo|oo|oo|oo|oo|
+87|__|__|__|__|__|__|__|__|__|__|
+
+This doesn't quite reach all of the shop, though.
+Sure, changing the FX1 and FY1 to -5 would work, but
+we don't have the luxury of knowing this when writing
+the npc.scp file.
+
+Setting them to (-5,-5) (5,5) would give us this:
+
+   72 73 74 75 76 77 78 79 80 81
+   oo oo oo oo oo oo oo oo oo oo oo
+78|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+79|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+80|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+81|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+82|oo|oo|oo|oo|oo|XX|oo|oo|oo|oo|oo
+83|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+84|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+85|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+86|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+87|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo|oo
+
+This means that the NPC is ALLOWED outside the shop, but
+there's no way for the NPC to get there.  Even (-6,-6)
+(6,6) would be okay;  they could wander around the outside
+of the building.
+
+I don't really know what the size of shops usually are, and of
+course they can change.  Without changing the NPCs wander numbers by
+hand, there's really no perfect way (unless we had the NPC
+understand that it was INDOORS, which isn't going to happen soon).
+
+If the range is too small, then the vendor just won't walk to the
+edges of the shop:  it's quite possible no one would ever notice that.
+Making the range a little too big shouldn't be bad, either;  the vendor
+will always "be around".
+
+So, for vendors, something like
+
+FX1=-6
+FY1=-6
+FX2=6
+FY2=6
+FZ1=-1
+
+and for monsters, perhaps
+
+FX1=-12
+FY1=-12
+FX2=12
+FY2=12
+FZ1=-1
+
+But it's up to you!  Some monsters might roam farther, some not at all...
+of course, what this means is a pile of modifications to npc.scp.  But you
+had nothing else to do, did you?
+
+As a final note:  if you think it would be better for the user to start the
+npc off in the top-right corner of an area, then:
+
+   72 73 74 75 76 77 78 79 80 81
+   __ __ __ __ __ __ __ __ __ __
+78|XX|__|__|__|__|__|__|__|__|__|
+79|__|__|__|__|__|__|__|__|__|__|
+80|__|__|__|__|__|__|__|__|__|__|
+81|__|__|__|__|__|__|__|__|__|__|
+82|__|__|__|__|__|__|__|__|__|__|
+83|__|__|__|__|__|__|__|__|__|__|
+84|__|__|__|__|__|__|__|__|__|__|
+85|__|__|__|__|__|__|__|__|__|__|
+86|__|__|__|__|__|__|__|__|__|__|
+87|__|__|__|__|__|__|__|__|__|__|
+
+Here is the starting point, and the values to use would be
+
+FX1=0
+FY1=0
+FX2=9
+FY2=0
+FZ1=-1
+
+Of course, if the user puts the vendor in the middle, she'll be able to
+wander out of the shop, and never in the topleft half!  It's really up to
+the script team on where the coordinates go;  I think the 'centering' idea
+is probably better, though.
+
+
+</pre>

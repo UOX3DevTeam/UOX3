@@ -1,0 +1,76 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+<h3><a name="SpeechFuncs">Speech Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SysMessage">SysMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SysMessage( UOXSOCKET toSendTo, string toSend );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends a string as a sysmessage to toSendTo
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SysMessage( 0, "Isn't the world great?" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_TextMessage">TextMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>TextMessage( int srcChar, string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to say message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>TextMessage( srcChar, "Shiver me timbers!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_EmoteMessage">EmoteMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>EmoteMessage( int srcChar, string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to emote message.  Note that you need to manually put in the start and end *
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>EmoteMessage( srcChar, "Shiver me timbers!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_BroadcastMessage">BroadcastMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>BroadcastMessage( string toSend );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends toSend to every client in the world
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>BroadcastMessage( "You're all going to die a hideous and painful death" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ConsoleMessage">ConsoleMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ConsoleMessage( string toSend );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Prints out a string to the server console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>ConsoleMessage( "Isn't the world great?" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_YellMessage">YellMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>YellMessage( int srcChar, string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to yell message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>YellMessage( srcChar, "Shiver me timbers!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_WhisperMessage">WhisperMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>WhisperMessage( int srcChar, string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to whisper message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>WhisperMessage( srcChar, "Shiver me timbers!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SubStringSearch">SubStringSearch</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SubStringSearch( strToSearch, searchString );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the string searchString is to be found inside strToSearch.  Case insensitive search.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var bFound = SubStringSearch( strSaid, "HELP" );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

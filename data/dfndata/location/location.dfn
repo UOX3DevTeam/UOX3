@@ -1,0 +1,1197 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : location.scp                                         *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* These are locations that can be jumped to using               *
+//* the /goplace # command                                        *
+//*                                                               *
+//* Example:                                                      *
+//* '/goplace 15' will take you  LB Throne                        *
+//*                                                               *
+//*****************************************************************
+
+[LOCATION 1]
+{
+// Jail Cell 1
+X=5276
+Y=1164
+Z=0
+}
+
+[LOCATION 2]
+{
+// Jail Cell 2
+X=5286
+Y=1164
+Z=0
+}
+
+[LOCATION 3]
+{
+// Jail Cell 3
+X=5296
+Y=1164
+Z=0
+}
+
+[LOCATION 4]
+{
+// Jail Cell 4
+X=5306
+Y=1164
+Z=0
+}
+
+[LOCATION 5]
+{
+// Jail Cell 5
+X=5276
+Y=1174
+Z=0
+}
+
+[LOCATION 6]
+{
+// Jail Cell 6
+X=5286
+Y=1174
+Z=0
+}
+
+[LOCATION 7]
+{
+// Jail Cell 7
+X=5296
+Y=1174
+Z=0
+}
+
+[LOCATION 8]
+{
+// Jail Cell 8
+X=5306
+Y=1174
+Z=0
+}
+
+[LOCATION 9]
+{
+// Jail Cell 9
+X=5283
+Y=1184
+Z=0
+}
+
+[LOCATION 10]
+{
+// Jail Cell 10
+X=5304
+Y=1184
+Z=0
+}
+
+[LOCATION 11]
+{
+// Help Desk of Hell
+X=5691
+Y=1501
+Z=0
+}
+
+[LOCATION 12]
+{
+// Help Room Backdoor
+X=5681
+Y=1497
+Z=0
+}
+
+[LOCATION 13]
+{
+// Green Acres
+X=5445
+Y=1153
+Z=0
+}
+
+[LOCATION 14]
+{
+// Error Spawn Location
+X=0
+Y=0
+Z=0
+}
+
+[LOCATION 15]
+{
+// Lord British's Throne
+X=1323
+Y=1624
+Z=55
+}
+
+[LOCATION 16]
+{
+// Blackthorne's Castle
+X=1533
+Y=1415
+Z=56
+}
+
+// Reserved for Game Tools
+// SECTION LOCATION 17
+// {
+// }
+
+// Reserved for Game Tools
+// SECTION LOCATION 18
+// {
+// }
+
+[LOCATION 20]
+{
+// Center
+X=1475
+Y=1645
+Z=20
+}
+
+[LOCATION 21]
+{
+// Lord British Castle Entrance
+X=1401
+Y=1625
+Z=28
+}
+
+[LOCATION 22]
+{
+// Blackthorn Castle Entrance
+X=1523
+Y=1456
+Z=15
+}
+
+[LOCATION 23]
+{
+// Suburbs
+X=1662
+Y=1572
+Z=5
+}
+
+[LOCATION 24]
+{
+// Park
+X=1614
+Y=1641
+Z=35
+}
+
+[LOCATION 25]
+{
+// Farmlands
+X=1228
+Y=1705
+Z=0
+}
+
+[LOCATION 26]
+{
+// Graveyard
+X=1384
+Y=1497
+Z=10
+}
+
+[LOCATION 30]
+{
+// Docks
+X=2736
+Y=2166
+Z=0
+}
+
+[LOCATION 31]
+{
+// Bathhouse
+X=2667
+Y=2084
+Z=5
+}
+
+[LOCATION 32]
+{
+// Pirates Plunder Tavern
+X=2691
+Y=2233
+Z=2
+}
+
+[LOCATION 33]
+{
+// Hidden Caves
+X=2667
+Y=2069
+Z=236
+}
+
+[LOCATION 40]
+{
+// Gates
+X=2285
+Y=1209
+Z=0
+}
+
+[LOCATION 41]
+{
+// Guard Post
+X=2218
+Y=1116
+Z=19
+}
+
+[LOCATION 42]
+{
+// Orc Fort
+X=2171
+Y=1332
+Z=0
+}
+
+[LOCATION 43]
+{
+// Cemetary
+X=2443
+Y=1123
+Z=5
+}
+
+[LOCATION 50]
+{
+// Main Island
+X=1414
+Y=3816
+Z=0
+}
+
+[LOCATION 51]
+{
+// Fighting Pit
+X=1398
+Y=3742
+Z=235
+}
+
+[LOCATION 52]
+{
+// East Docks
+X=1492
+Y=3696
+Z=0
+}
+
+
+[LOCATION 53]
+{
+// Cemetary
+X=1296
+Y=3719
+Z=0
+}
+
+[LOCATION 54]
+{
+// Medium Island
+X=1124
+Y=3623
+Z=5
+}
+
+[LOCATION 55]
+{
+// Small Island
+X=1466
+Y=4015
+Z=5
+}
+
+[LOCATION 60]
+{
+// Docks
+X=3675
+Y=2259
+Z=20
+}
+
+[LOCATION 61]
+{
+// Parliament
+X=3792
+Y=2248
+Z=20
+}
+
+[LOCATION 62]
+{
+// Park
+X=3719
+Y=2063
+Z=25
+}
+
+[LOCATION 70]
+{
+// North
+X=2475
+Y=417
+Z=15
+}
+
+[LOCATION 71]
+{
+// South
+X=2526
+Y=583
+Z=0
+}
+
+[LOCATION 72]
+{
+// Gypsy Camp
+X=2540
+Y=651
+Z=0
+}
+
+[LOCATION 73]
+{
+// Bridge
+X=2539
+Y=501
+Z=30
+}
+
+[LOCATION 74]
+{
+// Mining Camp
+X=2583
+Y=528
+Z=15
+}
+
+[LOCATION 80]
+{
+// Center
+X=4442
+Y=1122
+Z=5
+}
+
+[LOCATION 81]
+(
+// Docks
+X 4406
+Y 1045
+Z 254
+}
+
+[LOCATION 82]
+{
+// Telescope
+X=4707
+Y=1124
+Z=0
+}
+
+[LOCATION 83]
+{
+// Zoo
+X=4549
+Y=1378
+Z=8
+}
+
+[LOCATION 84]
+{
+// Cemetary
+X=4546
+Y=1338
+Z=8
+}
+
+[LOCATION 90]
+{
+// Docks
+X=3803
+Y=1279
+Z=5
+}
+
+[LOCATION 91]
+{
+// Palace
+X=3698
+Y=1279
+Z=20
+}
+
+[LOCATION 92]
+{
+// North
+X=3668
+Y=1116
+Z=0
+}
+
+[LOCATION 93]
+{
+// East
+X=3755
+Y=1227
+Z=0
+}
+
+[LOCATION 94]
+{
+// West
+X=3572
+Y=1211
+Z=0
+}
+
+[LOCATION 95]
+{
+// Chess board
+X=3728
+Y=1360
+Z=5
+}
+
+[LOCATION 96]
+{
+// Cemetary
+X=3536
+Y=1156
+Z=20
+}
+
+[LOCATION 100]
+{
+// Docks
+X=3650
+Y=2653
+Z=0
+}
+
+[LOCATION 101]
+{
+// North
+X=3650
+Y=2516
+Z=0
+}
+
+[LOCATION 102]
+{
+// Farmlands
+X=3722
+Y=2647
+Z=20
+}
+
+
+[LOCATION 110]
+{
+// North
+X=3023
+Y=3417
+Z=15
+}
+
+[LOCATION 111]
+{
+// West Docks
+X=2945
+Y=3393
+Z=15
+}
+
+[LOCATION 112]
+{
+// South
+X=2906
+Y=3505
+Z=10
+}
+
+[LOCATION 113]
+{
+// South Guardpost
+X=3011
+Y=3526
+Z=15
+}
+
+[LOCATION 120]
+{
+// West Docks
+X=639
+Y=2236
+Z=0
+}
+
+[LOCATION 121]
+{
+// West
+X=601
+Y=2171
+Z=0
+}
+
+[LOCATION 122]
+{
+// East Docks
+X=716
+Y=2233
+Z=253
+}
+
+[LOCATION 123]
+{
+// South
+X=899
+Y=2381
+Z=0
+}
+
+[LOCATION 124]
+{
+// North
+X=746
+Y=2165
+Z=0
+}
+
+[LOCATION 125]
+{
+// East
+X=811
+Y=2243
+Z=0
+}
+
+[LOCATION 130]
+{
+// Center
+X=1927
+Y=2779
+Z=0
+}
+
+[LOCATION 131]
+{
+// West Gate
+X=1832
+Y=2779
+Z=0
+}
+
+[LOCATION 132]
+{
+// South Gate
+X=2000
+Y=2930
+Z=0
+}
+
+[LOCATION 133]
+{
+// North
+X=1894
+Y=2666
+Z=0
+}
+
+[LOCATION 134]
+{
+// South
+X=1891
+Y=2850
+Z=20
+}
+
+
+[LOCATION 135]
+{
+// East Docks
+X=2071
+Y=2855
+Z=253
+}
+
+[LOCATION 136]
+{
+// Island Park
+X=2108
+Y=2793
+Z=2
+}
+
+[LOCATION 140]
+{
+// Center
+X=2882
+Y=788
+Z=0
+}
+
+[LOCATION 141]
+{
+// Docks
+X=3013
+Y=828
+Z=253
+}
+
+[LOCATION 142]
+{
+// North
+X=2907
+Y=603
+Z=0
+}
+
+[LOCATION 143]
+{
+// East
+X=276
+Y=981
+Z=0
+}
+
+[LOCATION 144]
+{
+// Grave Yard
+X=2786
+Y=867
+Z=0
+}
+
+[LOCATION 150]
+{
+// Outside Entrance
+X=1362
+Y=896
+Z=0
+}
+
+[LOCATION 151]
+{
+// Caves
+X=5166
+Y=244
+Z=15
+}
+
+[LOCATION 152]
+{
+// South
+X=5223
+Y=189
+Z=5
+}
+
+[LOCATION 153]
+{
+// East
+X=5336
+Y=88
+Z=25
+}
+
+[LOCATION 154]
+{
+// West
+X=5180
+Y=90
+Z=26
+}
+
+[LOCATION 155]
+{
+// Park
+X=5211
+Y=22
+Z=15
+}
+
+[LOCATION 160]
+{
+// Center
+X=535
+Y=992
+Z=0
+}
+
+[LOCATION 161]
+{
+// Empath Abbey
+X=635
+Y=860
+Z=0
+}
+
+[LOCATION 162]
+{
+// Courts & Prisons
+X=354
+Y=836
+Z=20
+}
+
+[LOCATION 163]
+{
+// Hidden Cave
+X=313
+Y=787
+Z=230
+}
+
+[LOCATION 164]
+{
+// Cemetary
+X=724
+Y=1138
+Z=0
+}
+
+[LOCATION 165]
+{
+// Orc Fort
+X=633
+Y=1499
+Z=0
+}
+
+
+// *******
+// Shrines
+// *******
+
+[LOCATION 170]
+{
+// Chaos
+X=1456
+Y=854
+Z=0
+}
+
+[LOCATION 171]
+{
+// Compassion
+X=1856
+Y=872
+Z=255
+}
+
+[LOCATION 172]
+{
+// Honesty
+X=4217
+Y=564
+Z=35
+}
+
+[LOCATION 173]
+{
+// Honor
+X=1730
+Y=3528
+Z=0
+}
+
+[LOCATION 174]
+{
+// Humility
+X=4276
+Y=3699
+Z=0
+}
+
+[LOCATION 175]
+{
+// Justice
+X=1301
+Y=639
+Z=15
+}
+
+[LOCATION 176]
+{
+// Sacrifice
+X=3355
+Y=299
+Z=9
+}
+
+[LOCATION 177]
+{
+// Spirituality
+X=1589
+Y=2485
+Z=5
+}
+
+[LOCATION 178]
+{
+// Valor
+X=2496
+Y=3932
+Z=0
+}
+
+
+// ********
+// Dungeons
+// ********
+
+
+[LOCATION 200]
+{
+// Outside Entrance
+X=2499
+Y=919
+Z=0
+}
+
+[LOCATION 201]
+{
+// Level 1
+X=5456
+Y=1863
+Z=0
+}
+
+[LOCATION 202]
+{
+// Level 2
+X=5614
+Y=1997
+Z=0
+}
+
+[LOCATION 203]
+{
+// Level 3
+X=5579
+Y=1924
+Z=0
+}
+
+[LOCATION 204]
+{
+// Lake Room
+X=5467
+Y=1805
+Z=5
+}
+
+[LOCATION 205]
+{
+// Torture Rooms
+X=5552
+Y=1807
+Z=0
+}
+
+[LOCATION 210]
+{
+// Outside Entrance
+X=4111
+Y=432
+Z=5
+}
+
+[LOCATION 211]
+{
+// Level 1
+X=5188
+Y=638
+Z=0
+}
+
+[LOCATION 212]
+{
+// Level 2
+X=5305
+Y=533
+Z=2
+}
+
+[LOCATION 213]
+{
+// Level 3
+X=5137
+Y=650
+Z=5
+}
+
+[LOCATION 214]
+{
+// Level 4
+X=5306
+Y=652
+Z=2
+}
+
+[LOCATION 220]
+{
+// Outside Entrance
+X=1298
+Y=1080
+Z=0
+}
+
+[LOCATION 221]
+{
+// Entryway
+X=5587
+Y=631
+Z=30
+}
+
+[LOCATION 222]
+{
+// Level 1 *UP*
+X=5501
+Y=570
+Z=59
+}
+
+[LOCATION 223]
+{
+// Level 2 *DOWN*
+X=5519
+Y=673
+Z=20
+}
+
+[LOCATION 224]
+{
+// Level 3
+X=5407
+Y=859
+Z=45
+}
+
+[LOCATION 230]
+{
+// Outside Entrance
+X=1176
+Y=2637
+Z=0
+}
+
+[LOCATION 231]
+{
+// Level 1
+X=5243
+Y=1006
+Z=0
+}
+
+[LOCATION 232]
+{
+// Level 2
+X=5143
+Y=801
+Z=5
+}
+
+[LOCATION 233]
+{
+// Level 3
+X=5137
+Y=986
+Z=5
+}
+
+[LOCATION 240]
+{
+// Outside Entrance
+X=4721
+Y=3822
+Z=0
+}
+
+[LOCATION 241]
+{
+// Level 1
+X=5905
+Y=20
+Z=46
+}
+
+[LOCATION 242]
+{
+// Level 2
+X=5976
+Y=169
+Z=0
+}
+
+[LOCATION 243]
+{
+// Level 3
+X=6083
+Y=145
+Z=236
+}
+
+[LOCATION 244]
+{
+// Level 4
+X=6059
+Y=89
+Z=24
+}
+
+[LOCATION 250]
+{
+// Outside Entrance
+X=514
+Y=1561
+Z=0
+}
+
+[LOCATION 251]
+{
+// Level 1
+X=5395
+Y=126
+Z=0
+}
+
+[LOCATION 252]
+{
+// Level 2
+X=5515
+Y=11
+Z=5
+}
+
+[LOCATION 253]
+{
+// Level 3
+X=5514
+Y=148
+Z=25
+}
+
+[LOCATION 254]
+{
+// Level 4
+X=5875
+Y=20
+Z=251
+}
+
+[LOCATION 260]
+{
+// Outside Entrance
+X=2043
+Y=238
+Z=10
+}
+
+[LOCATION 261]
+{
+// Level 1
+X=5825
+Y=630
+Z=0
+}
+
+[LOCATION 262]
+{
+// Level 2
+X=5690
+Y=569
+Z=25
+}
+
+[LOCATION 263]
+{
+// Level 3
+X=5703
+Y=639
+Z=0
+}
+
+[LOCATION 300]
+{
+// Hythloth Firepit
+X=4596
+Y=3630
+Z=30
+}
+
+[LOCATION 301]
+{
+// Yew/Britain Brigand Camp
+X=885
+Y=1682
+Z=0
+}
+
+[LOCATION 302]
+{
+// Yew Fort of the Damned
+X=972
+Y=768
+Z=0
+}
+
+//*****************************************************************
+//*                                                               *
+//*                        Lost Lands                             *
+//*                                                               *
+//*****************************************************************
+
+[LOCATION 303]
+{ Britain Sewers
+X=6032
+Y=1499
+Z=27
+}
+[LOCATION 304]
+{ Papua - mage shop
+X=5736
+Y=3196
+Z=11
+}
+[LOCATION 305]
+{ Delucia center
+X=5219
+Y=4028
+Z=37
+}
+[LOCATION 306]
+{ Ice Dungeon
+X=1998
+Y=81
+Z=5
+}
+
+
+EOF
+
+

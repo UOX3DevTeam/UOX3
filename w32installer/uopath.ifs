@@ -1,0 +1,18 @@
+program Setup;
+
+function GetUOPath(Default: String): String;
+var
+	UOPath: String;
+begin 
+  if not RegValueExists( HKEY_LOCAL_MACHINE, 'SOFTWARE\Origin Worlds Online\Ultima Online\1.0', 'ExePath' ) then begin
+  	Result := Default;
+  	exit;
+  end;
+  
+  RegQueryStringValue( HKEY_LOCAL_MACHINE, 'SOFTWARE\Origin Worlds Online\Ultima Online\1.0', 'ExePath', UOPath);
+  
+  Result := ExtractFilePath( UOPath );
+end;
+
+begin
+end.

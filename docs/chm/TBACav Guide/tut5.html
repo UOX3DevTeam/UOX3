@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Tutorial 5: A guide to newbie.scp</title>
+</head>
+<body>
+<center><h1>Tutorial 5</h1><h2>A guide to newbie.scp</h2><h4>Written by: [TBA]Cavalier</h4></center>
+<p>Last updated: 10th July, 2000
+<hr>
+<p>Here's a quick guide to the current version of the newbie.scp, but it might get changed in the future. Newbie.scp handles the items dished out to new chars (newbies if you so wish) when they are created. There is an entry for almost every skill, and one for the items that every starting character gets regardless. Let's take a look at one of the skill sections, I'm using carpentry:
+<table>
+<tr><td>SECTION BESTSKILL 11<td>// this is the section number, it corresponds with the skill in skills.scp
+<tr><td>{<td>// CARPENTRY		this is the open section line and a comment stating the skill
+<tr><td>PACKITEM 7020<td>
+<tr><td>PACKITEM 3402<td>// these 3 lines that say PACKITEM XXXX are the items handed out
+<tr><td>PACKITEM 3409<td>
+<tr><td>}<td>// this closes the section
+</table>
+<p>So that's a one skill entry. Say I wanted to give my players a dovetail saw instead of the nails. The number used in this instance is the the item number from items.scp (packitem just tells it to put in the pack rather than at the player's feet or some other weird place). Nails are item number 3409 in my items.scp so I change this line to PACKITEM 3401. If I wanted to just remove the nails, I would just remove the line. Just do this for whichever skill you want, and the items given to new characters who pick that skill will be modified accordingly. But what happens if you want to modify the equipment given to newbies? That's a good question, for which there's a simple answer. Still in newbie.scp find the section near or at the bottom that looks a little like this (im using the entry from the aio scripts):
+<pre>
+SECTION DEFAULT
+{ // THIS GOES TO ALL NEWBIES DESPITE SKILL
+PACKITEM 69
+PACKITEM 490
+PACKITEM 5037
+PACKITEM 5037
+PACKITEM 5037
+PACKITEM 5037
+PACKITEM 5037
+PACKITEM 7040
+PACKITEM 7041
+}
+</pre>
+<p>It's in the same format as the skills entries, just it uses the name default. It is of course possible to modify the names the sections use through hard coding, but there really isnt a need to do that unless you have something drasticly different planned. Thats about all there is to the newbie.scp, so have fun and dont abuse it too much ;)
+</body>
+</html>

@@ -1,0 +1,161 @@
+SECTION SCRIPT_LIST
+{
+
+// -------------
+// Cooking start
+
+1001 js/envoke/cooking/cooking_001.js
+1002 js/envoke/cooking/cooking_002.js
+1003 js/envoke/cooking/cooking_003.js
+1004 js/envoke/cooking/cooking_004.js
+1005 js/envoke/cooking/cooking_005.js
+1006 js/envoke/cooking/cooking_006.js
+1007 js/envoke/cooking/cooking_007.js
+1008 js/envoke/cooking/cooking_008.js
+1009 js/envoke/cooking/cooking_009.js
+1010 js/envoke/cooking/cooking_010.js
+1011 js/envoke/cooking/cooking_011.js
+
+// Cooking end
+// -----------
+
+
+
+// ---------------------
+// misc. resources start
+
+2001 js/envoke/misc/resources_001.js
+2002 js/envoke/misc/resources_002.js
+2003 js/envoke/misc/resources_003.js
+
+// misc. resources end
+// -------------------
+
+
+
+// ------------------
+// Lightsources start
+
+3001 js/envoke/light/lightsource_001_a.js
+3002 js/envoke/light/lightsource_001_b.js
+3003 js/envoke/light/lightsource_002_a.js
+3004 js/envoke/light/lightsource_002_b.js
+3005 js/envoke/light/lightsource_003_a.js
+3006 js/envoke/light/lightsource_003_b.js
+3007 js/envoke/light/lightsource_004_a.js
+3008 js/envoke/light/lightsource_004_b.js
+3009 js/envoke/light/lightsource_005_a.js
+3010 js/envoke/light/lightsource_005_b.js
+3011 js/envoke/light/lightsource_006_a.js
+3012 js/envoke/light/lightsource_006_b.js
+3013 js/envoke/light/lightsource_007_a.js
+3014 js/envoke/light/lightsource_007_b.js
+3015 js/envoke/light/lightsource_008_a.js
+3016 js/envoke/light/lightsource_008_b.js
+3017 js/envoke/light/lightsource_009_a.js
+3018 js/envoke/light/lightsource_009_b.js
+3019 js/envoke/light/lightsource_010_a.js
+3020 js/envoke/light/lightsource_010_b.js
+3021 js/envoke/light/lightsource_011_a.js
+3022 js/envoke/light/lightsource_011_b.js
+3023 js/envoke/light/lightsource_012_a.js
+3024 js/envoke/light/lightsource_012_b.js
+3025 js/envoke/light/lightsource_013_a.js
+3026 js/envoke/light/lightsource_013_b.js
+3027 js/envoke/light/lightsource_014_a.js
+3028 js/envoke/light/lightsource_014_b.js
+3029 js/envoke/light/lightsource_015_a.js
+3030 js/envoke/light/lightsource_015_b.js
+3033 js/envoke/light/lightsource_017_a.js
+3034 js/envoke/light/lightsource_017_b.js
+3035 js/envoke/light/lightsource_018_a.js
+3036 js/envoke/light/lightsource_018_b.js
+3037 js/envoke/light/lightsource_019_a.js
+3038 js/envoke/light/lightsource_019_b.js
+3039 js/envoke/light/lightsource_020_a.js
+3040 js/envoke/light/lightsource_020_b.js
+3041 js/envoke/light/lightsource_021_a.js
+3042 js/envoke/light/lightsource_021_b.js
+3043 js/envoke/light/lightsource_022_a.js
+3044 js/envoke/light/lightsource_022_b.js
+3045 js/envoke/light/lightsource_023_a.js
+3046 js/envoke/light/lightsource_023_b.js
+
+// Lightsources end
+// ----------------
+
+
+
+// -----------------------------------
+// harvesting and picking fruits start
+
+4001 js/envoke/farming/harvest_001.js
+4002 js/envoke/farming/harvest_002.js
+4003 js/envoke/farming/harvest_003.js
+4004 js/envoke/farming/harvest_004.js
+4005 js/envoke/farming/harvest_005.js
+4006 js/envoke/farming/harvest_006.js
+4007 js/envoke/farming/harvest_007.js
+4008 js/envoke/farming/harvest_008.js
+4009 js/envoke/farming/harvest_009.js
+4010 js/envoke/farming/harvest_010.js
+
+// harvesting and picking fruits end
+// ---------------------------------
+
+
+
+// ----------------------------
+// tailoring and spinning start
+
+5001 js/envoke/tailoring/tailoring_001.js
+5002 js/envoke/tailoring/tailoring_002.js
+5003 js/envoke/tailoring/tailoring_003.js
+5004 js/envoke/tailoring/tailoring_004.js
+5005 js/envoke/tailoring/tailoring_005.js
+5006 js/envoke/tailoring/tailoring_006.js
+
+// tailoring and spinning end
+// --------------------------
+
+
+
+// --------------------
+// turn furniture start
+
+6001 js/envoke/furniture/turn_001.js
+
+// turn furniture end
+// ------------------
+
+
+
+// --------------------------
+// pets from pet static start
+
+7001 js/envoke/pets/pet_001.js
+7002 js/envoke/pets/pet_002.js
+7003 js/envoke/pets/pet_003.js
+7004 js/envoke/pets/pet_004.js
+7005 js/envoke/pets/pet_005.js
+
+// pets from pet static end
+// ------------------------
+
+
+
+// -----------
+// deeds start
+
+// 8005 deeds_005.js
+
+// deeds end
+// ---------
+
+
+
+}
+
+EOF
+
+

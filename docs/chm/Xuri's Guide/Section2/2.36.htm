@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 2</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionII.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR><TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21">
+<A NAME="horsebacknpc"><FONT FACE="Tahoma"COLOR="#FFFFFF"><SMALL>
+2.36 - NPCs ON HORSEBACK</SMALL></FONT></A></TD></TR> 
+</TABLE><TABLE BORDER="0" WIDTH="100%" HEIGHT="1" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" HEIGHT="19"><P>
+There are two ways of making NPCs appear on horseback.<br>
+One, the easiest, is to simply do <b>'SETOWNER ## ## ## ##</b> on the horse where <i>## ## ## ##</i><br>
+is the serial number (do <b>'CSTATS</b> on NPC) of the NPC.<br>
+Then just <b>'POSSESS</b> the NPC and mount the horse before using the command again to repossess<br>
+your GM-body.<br>
+The other, more "advanced" method of doing it - through the scripts - allows you to<br>
+make them appear on the horses all by themselves the instant they are added to the world.<br> 
+And here is an example how you do that:<br><br>
+First you need to make a "horse" item in <b>ITEMS.SCP</b>, as characters need to carry those items<br>
+in layer 0x19 of their character (<i>LAYER 25</i> in items.scp):<br><br>
+<b>
+SECTION ITEM 60000<br>
+{<br>
+NAME a horse<br>
+ID 3E9F<br>
+LAYER 25<br>
+NEWBIE<br>
+}</b><br><br>
+Note that <i>ITEM 60000</i> might be in use in your <b>ITEMS.SCP</b> file, check that out before you add it.<br>
+Now, open <b>NPC.SCP</b> and add <i>ITEM 60000</i> just below the <i>BACKPACK</i> entry of the NPC you wish to be on<br>
+horseback.<br>
+Now he will appear on horseback when he is spawned/added ingame, and the NEWBIE tag ensures that your players wont get hold of the "horseitem" which actually appears as part of a boat.<br>
+Here's a list of the various IDs you can use(change the one in the example or make a new item if<br>
+you wish to use a different horse or a llama/ostard):<br>
+<ul><b>
+<li>3E9F <i></b>// horse </i><b><br>
+<li>3EA0 <i></b>// horse </i><b><br>
+<li>3EA1 <i></b>// horse </i><b><br>
+<li>3EA2 <i></b>// horse </i><b><br>
+<li>3EA3 <i></b>// desert ostard</i><b><br>
+<li>3EA4 <i></b>// ostard</i><b><br>
+<li>3EA5 <i></b>// ostard</i><b><br>
+<li>3EA6 <i></b>// llama</i><br>
+</ul>
+</P></TD></TR> </TABLE><P ALIGN="center"></P> 
+
+</BODY>
+</HTML>

@@ -1,0 +1,46 @@
+//*****************************************************************
+//*                         UOX3 Scripts v.35                     *
+//*                                                               *
+//*                   http://www.uoxdev.com/scripts/              *
+//*                                                               *
+//* Last Update : 1/16/2000                                       *
+//* Script : harditems.scp                                        *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Insert here the ID of the items to automatically set when     *
+//* they will created via HARD-CODE. You can use all VARIABLES    *
+//* used into items.scp So for example you can enter:             *
+//*                                                               *
+//*    NAME iron ore                                              *
+//*    WEIGHT 3000                                                *
+//*    etc .......                                                *
+//*                                                               *
+//* NOTE : these settings only work if you add the item via       *
+//*        /add <hex1> <hex2> NOT /aditem <item_number>           *
+//*                                                               *
+//*****************************************************************
+
+//Logs
+[x1be0]
+{
+GOOD=1
+DECAY
+}
+
+//Doors
+[x675x677x67dx67fx685x687x68dx68fx695x697x69dx69fx6a5x67ax6adx6afx6b5x6b7x6BDx6BFx6C5x6C7x6CDx6CFx6D5x6D7x6DDx6DFx6E5x6E7x6EDx6EF]
+{
+NAME=a door
+TYPE=12
+}
+
+//Fence Gates
+[x839x83Bx841x843x84Cx84Ex854x856x866x868x86Ex870]
+{
+NAME=a gate
+TYPE=12
+}
+
+EOF
+
