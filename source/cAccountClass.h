@@ -57,7 +57,7 @@
 #include <ios>
 #else
 #include <iomanip.h>
-#include <strstream.h>
+//#include <strstream.h>
 #endif
 #include <map>
 
@@ -264,7 +264,7 @@ public:
 	//cAccountClass& operator>>(ACCOUNTSBLOCK& actbRef);
 	// Member Functions
 	UI16 CreateAccountSystem(void);
-	UI16 AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", WORD wAttributes=0x0000);
+	UI16 AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000);
 	BOOL DelAccount(std::string sUsername);
 	BOOL DelAccount(UI16 wAccountID);
 	BOOL ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
