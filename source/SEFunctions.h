@@ -22,7 +22,7 @@ typedef JSBool (SEngineFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 
 // Gump Related Functions (10)
 
-#ifndef __LINUX__
+//#ifndef __LINUX__
 SEngineFunc SE_Gump_CreateGump;		// Gump creation							***
 SEngineFunc SE_Gump_AddButton;		// Add button to Gump						***
 SEngineFunc SE_Gump_AddText;		// Add text to gump							***
@@ -266,8 +266,8 @@ SEngineFunc SE_NumToString;
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
 
-#else
-
+//#else
+/*
 JSBool SE_Gump_CreateGump(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// Gump creation							***
 JSBool SE_Gump_AddButton(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// Add button to Gump						***
 JSBool SE_Gump_AddText(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// Add text to gump							***
@@ -511,7 +511,8 @@ JSBool SE_NumToString(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 JSBool SE_GetRaceCount(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool SE_AreaCharacterFunction(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
-#endif
+*/
+//#endif
 
 #endif
 

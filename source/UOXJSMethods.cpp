@@ -31,11 +31,7 @@ void MethodError( char *txt, ... )
 {
 	va_list argptr;
 	char msg[512];
-#ifdef __NONANSI_VASTART__
-	va_start( argptr );
-#else
 	va_start( argptr, txt );
-#endif
 	vsprintf( msg, txt, argptr );
 	va_end( argptr );
 	Console.Error( 2, msg );
@@ -2892,7 +2888,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
+	//JSClass *myClass = JS_GetClass( obj );
 	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
 
 	JSString *targMessage = JSVAL_TO_STRING( argv[0] );
@@ -2937,7 +2933,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
+	//JSClass *myClass = JS_GetClass( obj );
 	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
 
 	JSString *targMessage = JSVAL_TO_STRING( argv[0] );

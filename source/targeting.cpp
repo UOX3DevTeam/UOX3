@@ -4060,7 +4060,7 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 	
 	if( targLevel->allSkillVals != 0 )
 	{
-		for( int j = 0; j < TRUESKILLS; j++ )
+		for( UI08 j = 0; j < TRUESKILLS; j++ )
 		{
 			targetChar->SetBaseSkill( targLevel->allSkillVals, j );
 			targetChar->SetSkill( targLevel->allSkillVals, j );
@@ -4184,7 +4184,7 @@ void cTargets::SmeltTarget( cSocket *s )
 	}
 	R32 avgMax = ourCreateEntry->AverageMaxSkill();
 
-	Skills->CheckSkill( mChar, MINING, (int)avgMin, (int)avgMax );
+	Skills->CheckSkill( mChar, MINING, (SI16)avgMin, (SI16)avgMax );
 
 	R32 sumAmountRestored = 0.0f;
 

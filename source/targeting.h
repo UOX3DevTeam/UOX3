@@ -4,7 +4,7 @@
 class cTargets
 {
 private:
-#ifndef __LINUX__
+#if !defined(__unix__)
 	TargetFunc AddNpcTarget;
 	TargetFunc AddTarget;
 	TargetFunc AllSetTarget;
@@ -224,7 +224,7 @@ private:
 	void newCarveTarget( cSocket *s, CItem *i );
 //	void triggertarget( int ts ); // By Magius(CHE)
 public:
-#ifndef __LINUX__
+#if !defined(__unix__)
 	TargetFunc CstatsTarget;
 	TargetFunc TweakTarget;
 	TargetFunc GetAccount;

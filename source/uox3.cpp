@@ -32,7 +32,7 @@
 #include "cmdtable.h"
 #include "ssection.h"
 
-#ifdef __LINUX__
+#if defined(__unix__)
 #include <errno.h>
 #include <signal.h>
 #endif
@@ -52,7 +52,7 @@ void LoadCreatures( void );
 void DumpCreatures( void );
 void LoadINIFile( void );
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	typedef void *HANDLE;
 	pthread_t cons, netw;
 #endif
@@ -83,7 +83,7 @@ HANDLE cluox_stdin_writeback = 0; // the write-end of the stdin-pipe
 // 
 int cl_getch( void )
 {
-#ifdef __LINUX__
+#if defined(__unix__)
 	// first the linux style, don't change it's behavoir
 	UI08 c = 0;
 	fd_set KEYBOARD;
@@ -101,7 +101,7 @@ int cl_getch( void )
 		if( c == 0x0A )
 			return -1;
 	}
-#elif defined(__NT__)
+#else
 	// now the windows one
 	if( !cluox_io ) 
 	{
@@ -128,8 +128,6 @@ int cl_getch( void )
 		cluox_nopipe_fill = false;
 		return -1;
 	}
-#else
-#  error Unknown operating system.
 #endif
 	// here an actual charater is read in
 	return c;
@@ -171,14 +169,14 @@ void DoMessageLoop( void )
 
 //	EviLDeD	-	June 21, 1999
 //	Ok here is thread number one its a simple thread for the checkkey() function
-#ifndef __LINUX__
+#if !defined(__unix__)
 CRITICAL_SECTION sc;	//
 #endif
 bool conthreadcloseok = false;
 bool netpollthreadclose = false;
 void NetworkPollConnectionThread( void *params );
 
-#ifdef __LINUX__
+#if defined(__unix__)
 void *CheckConsoleKeyThread( void *params )
 #else
 void CheckConsoleKeyThread( void *params )
@@ -191,17 +189,17 @@ void CheckConsoleKeyThread( void *params )
 		checkkey();
 		UOXSleep( 500 );
 	}
-#ifndef __LINUX__
+#if !defined(__unix__)
 	_endthread();		// linux will kill the thread when it returns
 #endif
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
-#ifdef __LINUX__
+#if defined(__unix__)
 	return NULL;
 #endif
 }
 //	EviLDeD	-	End
 
-#ifdef __NT__
+#if !defined(__unix__)
 ///////////////////
 
 //HANDLE hco;
@@ -210,7 +208,7 @@ void CheckConsoleKeyThread( void *params )
 ///////////////////
 #endif
 
-#ifndef __NT__
+#if defined(__unix__)
 
 void closesocket( UOXSOCKET s )
 {
@@ -228,7 +226,7 @@ void closesocket( UOXSOCKET s )
 //o---------------------------------------------------------------------------o
 void numtostr( int i, char *string )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	itoa( i, string, 10 );
 #else
 	sprintf(string, "%d", i );
@@ -4183,17 +4181,9 @@ void checkauto( void )
 		if( !autosaved )
 		{
 			autosaved = true;
-#if defined(__LINUX__) || defined(__MINGW32__)
 			time((time_t *)&oldtime);
-#else
-			time(&oldtime);
-#endif
 		}
-#if defined(__LINUX__) || defined(__MINGW32__)
 		time((time_t *)&newtime);
-#else
-		time(&newtime);
-#endif
 
 		if( difftime( newtime, oldtime ) >= saveinterval || cwmWorldState->Saving() )
 		{
@@ -4772,7 +4762,7 @@ int main( int argc, char *argv[] )
 	ErrorCount=0;
 
 	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
-#ifdef __NT__
+#if !defined(__unix__)
 	wVersionRequested = MAKEWORD( 2, 0 );
 	err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
@@ -4788,7 +4778,7 @@ int main( int argc, char *argv[] )
 #endif
 		uiCurrentTime = getclock();
 		
-#ifdef __NT__
+#if !defined(__unix__)
 		sprintf( temp, "%s v%s(%s)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
 		Console.Start( temp );
 #else
@@ -4913,13 +4903,13 @@ int main( int argc, char *argv[] )
 		uiCurrentTime = getclock();
 
 		Console << myendl << "Initialize Console Thread      ";
-#ifdef __LINUX__
+#if defined(__unix__)
 		int conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
 #else
 		int conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
 #endif
 #ifdef __LOGIN_THREAD__
- #ifdef __LINUX__
+#if defined(__unix__)
 		pthread_create(&netw,NULL, NetworkPollConnectionThread,  NULL );
  #else
 		_beginthread( NetworkPollConnectionThread, 0, NULL );
@@ -5196,7 +5186,7 @@ void Shutdown( SI32 retCode )
 	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
-#ifdef __LINUX__
+#if defined(__unix__)
 	pthread_join( cons, NULL );
 #ifdef __LOGIN_THREAD__
 	pthread_join( newt, NULL );
@@ -5230,7 +5220,7 @@ void Shutdown( SI32 retCode )
 		Console.TurnRed();
 		Console << "Exiting UOX with errorlevel " << retCode << myendl;
 		Console.TurnNormal();
-#ifndef __LINUX__
+#if !defined(__unix__)
 		Console << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline(std::cin, throwAway);
@@ -5375,7 +5365,7 @@ bool checkBoundingCircle( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, in
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
 //o---------------------------------------------------------------------------o
-#ifndef __NT__
+#if defined(__unix__)
 UI32 getclock( void )
 {
 	struct timeval tv;
@@ -8319,7 +8309,7 @@ void NetworkPollConnectionThread( void *params )
 		Network->CheckLoginMessage();
 		UOXSleep( 20 );
 	}
-#ifdef __LINUX__
+#if defined(__unix__)
 	pthread_exit( NULL );
 #else
 	_endthread();

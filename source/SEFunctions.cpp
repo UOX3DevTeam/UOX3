@@ -962,7 +962,6 @@ JSBool SE_FindSmartestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	else
 		*rval = INT_TO_JSVAL( calcCharFromSer( nearest->GetSerial() ) );
 	return JS_TRUE;
-	return JS_TRUE;
 }
 JSBool SE_FindDumbestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -1018,7 +1017,6 @@ JSBool SE_FindDumbestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		*rval = INT_TO_JSVAL( INVALIDSERIAL );
 	else
 		*rval = INT_TO_JSVAL( calcCharFromSer( nearest->GetSerial() ) );
-	return JS_TRUE;
 	return JS_TRUE;
 }
 JSBool SE_FindQuickestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -1076,7 +1074,6 @@ JSBool SE_FindQuickestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	else
 		*rval = INT_TO_JSVAL( calcCharFromSer( nearest->GetSerial() ) );
 	return JS_TRUE;
-	return JS_TRUE;
 }
 JSBool SE_FindSlowestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -1132,7 +1129,6 @@ JSBool SE_FindSlowestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		*rval = INT_TO_JSVAL( INVALIDSERIAL );
 	else
 		*rval = INT_TO_JSVAL( calcCharFromSer( nearest->GetSerial() ) );
-	return JS_TRUE;
 	return JS_TRUE;
 }
 

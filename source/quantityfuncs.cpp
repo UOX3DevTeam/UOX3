@@ -343,7 +343,6 @@ UI32 DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
 				{
 					total -= i->GetAmount();
 					amtDeleted += i->GetAmount();
-					Weight->subtractItemWeight(s,i);
 					Items->DeleItem( i );
 				}
 				else
@@ -409,27 +408,17 @@ UI32 DeleteSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 amount )
 	return totaldel;
 }
 
-ITEM DecreaseItemAmount( ITEM toDelete, UI16 amt )
-{
-	if( items[toDelete].GetAmount() > 1 )
-	{
-		items[toDelete].SetAmount( items[toDelete].GetAmount() - amt );
-		if( items[toDelete].GetAmount() < 1 )
-		{
-			Items->DeleItem( &items[toDelete] );
-			return INVALIDSERIAL;
-		}
-		else if( items[toDelete].GetAmount() == 1 )
-				RefreshItem( &items[toDelete] );
-	}
-	else
-	{
-		Items->DeleItem( &items[toDelete] );
-		return INVALIDSERIAL;
-	}
-	return toDelete;
-}
-
+//o--------------------------------------------------------------------------o
+//|	Function			-	CItem *DecreaseItemAmount( CItem *toDelete, UI16 amt )
+//|	Date					-	
+//|	Developers		-	Abaddon
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Decreases the amount of an item by amt
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 CItem *DecreaseItemAmount( CItem *toDelete, UI16 amt )
 {
 	if( toDelete == NULL )

@@ -1307,24 +1307,6 @@ UI08 CChar::GetBeardStyle( UI08 part ) const
 	}
 	return (UI08)(beardstyle%256);
 }
-/*
-UI08 CChar::GetEnvokeID( UI08 part ) const
-{
-	switch( part )
-	{
-	case 1:		return (UI08)(envokeid>>8);
-	case 2:
-	default:	return (UI08)(envokeid%256);
-	}
-	return (UI08)(envokeid%256);
-}
-
-
-UI16 CChar::GetEnvokeID( void ) const
-{
-	return envokeid;
-}
-*/
 
 UI16 CChar::GetID( void ) const
 {
@@ -1644,24 +1626,6 @@ void CChar::SetBeardStyle( UI16 value )
 {
 	beardstyle = value;
 }
-
-/*
-void CChar::SetEnvokeID( UI08 value, UI08 part )
-{
-	UI08 part1 = (UI08)(envokeid>>8);
-	UI08 part2 = (UI08)(envokeid%256);
-	switch( part )
-	{
-	case 1:		part1 = value;		break;
-	case 2:		part2 = value;		break;
-	}
-	envokeid = (UI16)((part1<<8) + part2);
-}
-void CChar::SetEnvokeID( UI16 newValue )
-{
-	envokeid = newValue;
-}
-*/
 
 UI08 CChar::GetSkin( UI08 part ) const
 {
@@ -2058,12 +2022,7 @@ UI16 CChar::GetAdvObj( void ) const
 {
 	return advobj;
 }
-/*
-ITEM CChar::GetEnvokeItem( void ) const
-{
-	return envokeitem;
-}
-*/
+
 CHARACTER CChar::GetSwingTarg( void ) const
 {
 	return swingtarg;
@@ -2116,12 +2075,7 @@ void CChar::SetAdvObj( UI16 newValue )
 {
 	advobj = newValue;
 }
-/*
-void CChar::SetEnvokeItem( ITEM newValue )
-{
-	envokeitem = newValue;
-}
-*/
+
 void CChar::SetSwingTarg( CHARACTER newValue )
 {
 	swingtarg = newValue;
@@ -2785,8 +2739,6 @@ CChar *CChar::Dupe( void )
 	target->SetFleeAt( fleeat );
 	target->SetReattackAt( reattackat );
 	target->SetDisabled( disabled );
-	//target->SetEnvokeID( envokeid );
-	//target->SetEnvokeItem( envokeitem );
 	target->SetSplit( split );
 	target->SetSplitChance( splitchnc );
 	target->SetTrainer( trainer );
@@ -4712,11 +4664,7 @@ bool CChar::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "PackItem" ) )
 		{
-			SERIAL packSer = makeNum( data );
-			if( packSer != INVALIDSERIAL )
-				SetPackItem( calcItemObjFromSer( packSer ) );
-			else
-				SetPackItem( NULL );
+			packitem = (CItem *)makeNum( data );
 			return true;
 		}
 		break;
@@ -4881,7 +4829,7 @@ bool CChar::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Weight" ) )
 		{
-			weight = makeNum( data );
+			SetWeight( makeNum( data ) );
 			return true;
 		}
 		break;
@@ -4959,7 +4907,7 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case CHARTAG_WEIGHT:
-			weight= buff.GetShort();
+			weight= buff.GetLong();
 		break;
 
 	case CHARTAG_HUNGER:
@@ -5341,8 +5289,11 @@ void CChar::FlushPath( void )
 void CChar::PostLoadProcessing( UI32 index )
 {
 	cBaseObject::PostLoadProcessing( index );
-	if( packitem != NULL )
-		SetPackItem( packitem );		// we stored the serial in packitem
+	SERIAL tempSerial = (SERIAL)packitem;
+	if(tempSerial != INVALIDSERIAL )
+		SetPackItem( calcItemObjFromSer( tempSerial );
+	else
+		SetPackItem( NULL );
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT)
 			SetWeight( Weight->calcCharWeight( this ) );
 	//

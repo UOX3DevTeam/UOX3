@@ -1,3 +1,11 @@
+#if defined(_MSC_VER)
+#if _MSC_VER < 1300
+
+#pragma warning( disable : 4786 )
+#pragma warning( disable : 4514 )
+#endif
+#endif
+
 #include "cdice.h"
 
 inline int RandomNum( int nLowNum, int nHighNum )
@@ -6,7 +14,7 @@ inline int RandomNum( int nLowNum, int nHighNum )
 		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
 	else
 		return nLowNum;
-};
+}
 
 cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {

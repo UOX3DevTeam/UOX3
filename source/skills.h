@@ -25,7 +25,7 @@ private:
 	void	doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
-#ifndef __LINUX__
+#if !defined(__unix__)
 	TargetFunc Hide;
 	TargetFunc Stealth;
 	TargetFunc PeaceMaking;
@@ -57,7 +57,7 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-#ifndef __LINUX__
+#if !defined(__unix__)
 	TargetFunc AlchemyTarget;
 	TargetFunc AnatomyTarget;
 	TargetFunc AnimalLoreTarget;

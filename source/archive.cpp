@@ -1,6 +1,6 @@
 #include "uox3.h"
 #include "cAccountClass.h"
-#ifdef __LINUX__
+#ifdef __unix__
 	#include <dirent.h>
 #else
 	#include <direct.h>

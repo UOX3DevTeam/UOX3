@@ -701,7 +701,7 @@ void HandleTweakCharText( cSocket *s, long index )
 			j->SetZ( static_cast<SI08>(makeNum( text) ) );
 			j->SetDispZ( static_cast<SI08>(makeNum( text )) );
 			break;
-		case 9:		j->SetDir( static_cast<UI08>(makeNum( text ))&0x0F );		break;	// Direction
+		case 9:		j->SetDir( static_cast<UI08>(makeNum( text )&0x0F) );		break;	// Direction
 		case 10:												// Strength
 			if( makeNum( text ) > 0 ) 
 				j->SetStrength( static_cast<SI16>(makeNum( text) ) ); 
@@ -854,31 +854,33 @@ std::string ReplaceObj( TXTREPLACEMENT toReplace )
 
 	switch( toReplace )
 	{
-	case TXT_ACCOUNTCOUNT:
-		sprintf( temp, "%i", Accounts->size() );
-		return temp;
-	//case TXT_NUMBERPCS:
-		//sprintf( temp, "%i", GPCL.count() );
-		//return temp;
-	case TXT_NUMCHARACTERS:
-		sprintf( temp, "%i", charcount );
-		return temp;
-	//case TXT_NUMBERNPCS:
-		//sprintf( temp, "%i", charcount - GPCL.count() );
-		//return temp;
-	case TXT_NUMBERITEMS:
-		sprintf( temp, "%i", itemcount );
-		return temp;
-	case TXT_SERVERTIME:
-		sprintf( temp, " %i:%i %s", hour, minute, ((ampm!=0)?"pm":"am") );
-		return temp;
-	case TXT_SERVERVERSION:
-		sprintf( temp, " %s v%i(%i)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
-		return temp;
-	case TXT_PLAYERSONLINE:
-		sprintf( temp, "%i", now );
-		return temp;
-		break;
+		case TXT_ACCOUNTCOUNT:
+			sprintf( temp, "%i", Accounts->size() );
+			return temp;
+		//case TXT_NUMBERPCS:
+			//sprintf( temp, "%i", GPCL.count() );
+			//return temp;
+		case TXT_NUMCHARACTERS:
+			sprintf( temp, "%i", charcount );
+			return temp;
+		//case TXT_NUMBERNPCS:
+			//sprintf( temp, "%i", charcount - GPCL.count() );
+			//return temp;
+		case TXT_NUMBERITEMS:
+			sprintf( temp, "%i", itemcount );
+			return temp;
+		case TXT_SERVERTIME:
+			sprintf( temp, " %i:%i %s", hour, minute, ((ampm!=0)?"pm":"am") );
+			return temp;
+		case TXT_SERVERVERSION:
+			sprintf( temp, " %s v%i(%i)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
+			return temp;
+		case TXT_PLAYERSONLINE:
+			sprintf( temp, "%i", now );
+			return temp;
+		default:
+			sprintf(temp," ");
+			break;
 	}
 	return "";
 }

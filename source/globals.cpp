@@ -45,7 +45,7 @@ char gump2[4]="\x00\x00\x00";
 char gump3[3]="\x00\x00";
 char spc[2]="\x20";
 char xgm;
-#ifdef __NT__
+#if !defined(__unix__)
 WSADATA wsaData;
 WORD wVersionRequested;
 #endif
@@ -61,7 +61,7 @@ std::vector< TeleLocationEntry > teleLocs;
 
 
 // MSVC fails to compile UOX if this is unsigned, change it then
-#ifdef _MSVC
+#if !defined(__UNIX__)
 long int oldtime, newtime;
 #else
 UI32 oldtime, newtime;						//for autosaving
@@ -148,7 +148,7 @@ UI08 escortRegions = 0;							// Changed from int to UI08 (Mr. Fixit)
 UI08 validEscortRegion[256];					// Changed from int to UI08 (Mr. Fixit)
 
 UI32 hungerdamagetimer = 0;						// For hunger damage
-#ifndef __NT__
+#if defined(__unix__)
 char *strlwr( char *str ) 
 {
 	for( UI32 i = 0; i < strlen( str ); i++ )

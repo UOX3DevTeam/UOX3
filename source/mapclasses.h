@@ -10,6 +10,7 @@ protected:
 	UI08 flag4;
 public:
 	BaseTile() : flag1( 0 ), flag2( 0 ), flag3( 0 ), flag4( 0 ) { }
+	virtual ~BaseTile() {}
 	UI08 Flag1( void )			{	return flag1;		}
 	UI08 Flag2( void )			{	return flag2;		}
 	UI08 Flag3( void )			{	return flag3;		}

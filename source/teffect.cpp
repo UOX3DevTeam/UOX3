@@ -7,7 +7,7 @@ cTEffect::cTEffect()
 	effectCount = 0;
 	currentEffect = 0;
 	delFlag = false;
-};
+}
 
 cTEffect::~cTEffect()
 {

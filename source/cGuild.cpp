@@ -754,11 +754,7 @@ void CGuild::TellMembers( char *txt, ... )
 	char msg[512];
 	char tmpMsg[512];
 	strcpy( msg, "GUILD: " );
-#ifdef __NONANSI_VASTART__
-	va_start( argptr );
-#else
 	va_start( argptr, txt );
-#endif
 	vsprintf( tmpMsg, txt, argptr );
 	va_end( argptr );
 	strcat( msg, tmpMsg );
@@ -790,11 +786,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 
 			strcpy( msg, "TOWN: " );
 			va_list argptr;
-#ifdef __NONANSI_VASTART__
-			va_start( argptr );
-#else
 			va_start( argptr, dictEntry );
-#endif
 			vsprintf( tmpMsg, txt, argptr );
 			va_end( argptr );
 			strcat( msg, tmpMsg );
@@ -963,9 +955,18 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		mChar->SetGuildFealty( mChar->GetSerial() );	
 	switch( gList[trgGuild]->Type() )
 	{
-	case 0:		strcpy( guildt, " Standard" );	break;
-	case 1:		strcpy( guildt, "n Order" );	break;
-	case 2:		strcpy( guildt, " Chaos" );		break;
+		case 0:		
+			strcpy( guildt, " Standard" );	
+			break;
+		case 1:		
+			strcpy( guildt, "n Order" );	
+			break;
+		case 2:		
+			strcpy( guildt, " Chaos" );		
+			break;
+		default:
+			strcpy(guildt, "INVALID");
+			break;
 	}
 	strcpy( toggle, "Off" );
 	if( mChar->GetGuildToggle() ) 
@@ -1064,7 +1065,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 			two.push_back( chars[calcCharFromSer( tChar )].GetName() );
 			tCtr++;
 		}
-		numButtons = tCtr;	break;
+		numButtons = tCtr;	
 		break;
 	case BasePage+8:								// Member dismiss
 		two.push_back( Dictionary->GetEntry( 145, sLang ) );
@@ -1149,7 +1150,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		break;
 	case BasePage+17:								// Display member information
 		tChar = calcCharFromSer( plID );
-		if( tChar != -1 )
+		if( tChar != INVALIDSERIAL )
 		{
 			char temp[128];
 			sprintf( temp, "%s (", chars[tChar].GetName() );

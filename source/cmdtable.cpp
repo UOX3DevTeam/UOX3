@@ -131,7 +131,7 @@ TARGET_S target_xgo =					{ 0, 1, 0, 8, 198 };
 //Y
 //Z
 
-map< string, cmdtable_mapentry > cmd_table;
+std::map< std::string, cmdtable_mapentry > cmd_table;
 
 void CommandReset( void )
 {
@@ -382,10 +382,6 @@ void CommandReset( void )
 		iCounter++;
 	};
 }
-
-
-static char *ch="abcdefg";
-
 
 //o--------------------------------------------------------------------------o
 //|	Function/Class-	void command_addaccount( cSocket *s)
@@ -2164,7 +2160,7 @@ void command_validcmd( cSocket *s )
 	GumpDisplay targetCmds( s, 300, 300 );
 	targetCmds.SetTitle( "Valid Commands" );
 
-	map< string, cmdtable_mapentry >::iterator myCounter;
+	std::map< std::string, cmdtable_mapentry >::iterator myCounter;
 
 	myCounter = cmd_table.begin();
 	while( myCounter != cmd_table.end() )
@@ -2357,7 +2353,7 @@ void HandleHowTo( cSocket *sock, int cmdNumber )
 
 		char filename[256];
 		sprintf( filename, "help/commands/%s.txt", toFind->first.c_str() );
-		ifstream toOpen( filename );
+		std::ifstream toOpen( filename );
 		if( !toOpen.is_open() )
 			CommandInfo.AddData( "", "No extra information is available about this command", 7 );
 		else

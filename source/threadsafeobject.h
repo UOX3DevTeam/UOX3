@@ -1,7 +1,7 @@
 #ifndef __THREAD_SAFE_OBJ__
 #define __THREAD_SAFE_OBJ__
 
-#ifdef _WIN32
+#if !defined(__unix__)
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 #else
@@ -20,7 +20,7 @@ public:
 	void On( void ) { MutexOn(); }
 	void Off( void ) { MutexOff(); }
 protected:
-#ifdef _WIN32
+#if !defined(__unix__)
 	HANDLE d_mutex;
 #else
 	pthread_mutex_t d_mutex;

@@ -21,8 +21,7 @@
 #endif
 
 
-//#if defined __WIN32__
-#if defined WIN32
+#if !defined(__unix__)
 
 #ifdef USE_WINSOCK1
 #  include <winsock.h>
@@ -46,13 +45,9 @@
 #  define INVALID_SOCKET        -1
 #  define SOCKET_ERROR          -1
 #  define SOCKADDR_IN           struct sockaddr_in
-#if !defined( _HPUX_) 
-# if !defined (LINUX)
-#  if !defined (SUN)
+#if !defined(__unix__)
 #   define INADDR_NONE           -1
 #   define HTHREAD               thread_t
-#  endif
-# endif
 #else
 #  define HTHREAD               pthread_t
 #endif

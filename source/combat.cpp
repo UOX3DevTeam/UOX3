@@ -969,22 +969,25 @@ SI16 cCombat::calcAtt( CChar *p )
 	CItem *weapon = getWeapon( p );
 	if( weapon != NULL )
 	{
-		if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) 
-			getDamage += weapon->GetLoDamage();
-		else if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
-			getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
-
-		if( !p->IsNpc() && !RandomNum( 0, 5 ) )
+		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0)
 		{
-			cSocket *mSock = calcSocketObjFromChar( p );
-			if( mSock != NULL )
+			if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) 
+				getDamage += weapon->GetLoDamage();
+			else
+				getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
+
+			if( !p->IsNpc() && !RandomNum( 0, 5 ) )
 			{
 				weapon->IncHP( -1 );
 				if( weapon->GetHP() <= 0 )
 				{
-					char name[MAX_NAME];
-					getTileName( weapon, name );
-					sysmessage( mSock, 311, name );
+					cSocket *mSock = calcSocketObjFromChar( p );
+					if( mSock != NULL )
+					{
+						char name[MAX_NAME];
+						getTileName( weapon, name );
+						sysmessage( mSock, 311, name );
+					}
 					Items->DeleItem( weapon );
 					return -1;
 				}

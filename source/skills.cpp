@@ -291,7 +291,7 @@ void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
 		if( c->GetValue() > 0 )
 			c->SetValue( (SI32)( ( rank * c->GetValue() ) / 10 ) );
 		
-		if( rank >= 0 && rank <= 10 )
+		if( rank <= 10 )
 			sysmessage( s, 783 + rank );
 	}
 	else 
@@ -1143,8 +1143,8 @@ void cSkills::DetectHidden( cSocket *s )
 					dy = abs( tempChar->GetY() - y );
 					c = hypot( dx, dy );
 					getSkill = (UI16)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAXVISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
-					if( getSkill < 0 ) 
-						getSkill = 0;
+					//if( getSkill < 0 ) 
+						//getSkill = 0;
 					if( getSkill > 1000 ) 
 						getSkill = 1000;
 					
@@ -2899,7 +2899,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, int m )
 				id = tempChar->GetID();
 				cSocket *tSock = calcSocketObjFromChar( tempChar );
 				bool cmdLevelCheck = isOnline( tempChar ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
-				if( objInRange( tempChar, c, static_cast<int>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
+				if( objInRange( tempChar, c, static_cast<UI16>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
 					c->SetTrackingTargets( calcCharFromSer( tempChar->GetSerial() ), static_cast<UI08>(MaxTrackingTargets) );
 					MaxTrackingTargets++;
@@ -5385,8 +5385,7 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 				UI08 skillNum = iItem.skillReqs[sCounter].skillNumber;
 				int ourSkill = ourChar->GetSkill( skillNum );
 				int minSkill = iItem.skillReqs[sCounter].minSkill;
-				#pragma note( "Param Warning: in cSkills::NewMakeMenu(), maxSkill is unrefrenced" )
-				int maxSkill = iItem.skillReqs[sCounter].maxSkill;
+				//int maxSkill = iItem.skillReqs[sCounter].maxSkill;
 				//canMake = ( ourSkill >= minSkill && ourSkill <= maxSkill * 1.5 );
 				canMake = ( ourSkill >= minSkill );
 				// it was not thought that way, its not logical, maxSkill should say, that you can get maxRank with maxSkill and higher

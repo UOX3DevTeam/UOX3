@@ -1228,11 +1228,7 @@ void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 
 			strcpy( msg, "TOWN: " );
 			va_list argptr;
-#ifdef __NONANSI_VASTART__
-			va_start( argptr );
-#else
 			va_start( argptr, dictEntry );
-#endif
 			vsprintf( tmpMsg, txt, argptr );
 			va_end( argptr );
 			strcat( msg, tmpMsg );

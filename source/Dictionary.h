@@ -8,9 +8,11 @@
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
 
+#if defined(_MSC_VER)
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#endif
 
 typedef std::map<long, std::string> ourDict;
 

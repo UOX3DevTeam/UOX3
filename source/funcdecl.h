@@ -318,7 +318,7 @@ inline int RandomNum( int nLowNum, int nHighNum )
 		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
 	else
 		return nLowNum;
-};
+}
 void	fileArchive( void );
 void	ArchiveID(char archiveid[MAX_ARCHID]);
 void	enlist( cSocket *mSock, SI32 listnum ); // For enlisting in army
@@ -330,7 +330,7 @@ void	setcharflag( CChar *c );
 void	UseHairDye( cSocket *s, UI16 colour, CItem *x );	// s for socket, colour to dye, x is the item
 void	SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
 
-#ifdef __LINUX__
+#if defined(__unix__)
 void	*CheckConsoleKeyThread( void *params );
 #else
 void	CheckConsoleKeyThread( void *params );

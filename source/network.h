@@ -53,6 +53,7 @@ public:
 	virtual bool			Handle( void );
 	virtual void			SetSocket( cSocket *toSet );
 	cSocket *				GetSocket( void ) const;
+	virtual ~cPInputBuffer(){}
 };
 
 class cNetworkStuff

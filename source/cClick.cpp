@@ -576,7 +576,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 203: // Open Housing Gump
 		bool canOpen;
-		canOpen = ( x->GetMoreY() != -1 || x->GetOwnerObj() == mChar || mChar->IsGM() );
+		canOpen = (  x->GetOwnerObj() == mChar || mChar->IsGM() );
 		if( !canOpen && x->GetMoreZ() == 0 )
 		{
 			sysmessage( mSock, 439 );

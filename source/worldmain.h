@@ -5,9 +5,11 @@
 #if !defined(AFX_WORLDMAIN_H__FA78B1D3_99E2_11D2_8143_00104B73C455__INCLUDED_)
 #define AFX_WORLDMAIN_H__FA78B1D3_99E2_11D2_8143_00104B73C455__INCLUDED_
 
+#if defined(_MSC_VER)
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#endif
 
 #include "cServerData.h"
 

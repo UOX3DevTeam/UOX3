@@ -59,6 +59,7 @@ class CPWalkDeny : public cPBuffer
 {
 public:
 					CPWalkDeny();
+					virtual ~CPWalkDeny(){}
 	virtual void	SequenceNumber( char newValue );
 	virtual void	X( SI16 newValue );
 	virtual void	Y( SI16 newValue );
@@ -70,6 +71,7 @@ class CPWalkOK : public cPBuffer
 {
 public:
 					CPWalkOK();
+					virtual ~CPWalkOK(){}
 	virtual void	SequenceNumber( char newValue );
 	virtual void	OtherByte( char newValue );
 };
@@ -80,6 +82,7 @@ protected:
 	void			CopyData( CChar &toCopy );
 public:
 					CPExtMove();
+					virtual	~CPExtMove(){}
 					CPExtMove( CChar &toCopy );
 	virtual void	Serial( SERIAL newSerial );
 	virtual void	ID( UI16 bodyID );
@@ -99,6 +102,7 @@ protected:
 	void			CopyData( CChar &toCopy );
 public:
 					CPAttackOK();
+		virtual			~CPAttackOK(){}
 					CPAttackOK( CChar &toCopy );
 	virtual void	Serial( SERIAL newSerial );
 	CPAttackOK		&operator=( CChar &toCopy );
@@ -110,6 +114,7 @@ protected:
 	void			CopyData( cBaseObject &toCopy );
 public:
 					CPRemoveItem();
+		virtual ~CPRemoveItem(){}
 					CPRemoveItem( cBaseObject &toCopy );
 	virtual void	Serial( SERIAL newSerial );
 	CPRemoveItem	&operator=( cBaseObject &toCopy );
@@ -119,6 +124,7 @@ class CPWorldChange : public cPBuffer
 {
 public:
 					CPWorldChange();
+		virtual		~CPWorldChange(){}
 					CPWorldChange( WorldType newSeason, UI08 newCursor );
 	virtual void	Season( WorldType newSeason );
 	virtual void	Cursor( UI08 newCursor );
@@ -128,6 +134,7 @@ class CPLightLevel : public cPBuffer
 {
 public:
 					CPLightLevel();
+	virtual			~CPLightLevel(){}
 					CPLightLevel( UI08 level );
 	virtual void	Level( UI08 level );
 };
@@ -139,6 +146,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPUpdIndSkill();
+	virtual			~CPUpdIndSkill(){}
 					CPUpdIndSkill( CChar& i, UI08 sNum );
 	virtual void	Character( CChar& i, UI08 sNum );
 	virtual void	SkillNum( UI08 sNum );
@@ -154,6 +162,7 @@ protected:
 	virtual void	CopyData( cBaseObject &i );
 public:
 					CPBuyItem();
+	virtual			~CPBuyItem(){}
 					CPBuyItem( cBaseObject &i );
 	CPBuyItem		&operator=( cBaseObject &toCopy );
 	void			Serial( SERIAL toSet );
@@ -165,6 +174,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPRelay();
+	virtual			~CPRelay(){}
 					CPRelay( long newIP );
 					CPRelay( long newIP, SI16 newPort );
 	virtual void	ServerIP( long newIP );
@@ -178,6 +188,7 @@ protected:
 	virtual void	CopyData( CItem &toCopy );
 public:
 					CPWornItem();
+	virtual			~CPWornItem(){}
 					CPWornItem( CItem &toCopy );
 	virtual void	ItemSerial( SERIAL itemSer );
 	virtual void	Model( SI16 newModel );
@@ -194,6 +205,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPCharacterAnimation();
+	virtual			~CPCharacterAnimation(){}
 					CPCharacterAnimation( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Action( SI16 model );
@@ -212,6 +224,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPDrawGamePlayer();
+		virtual		~CPDrawGamePlayer(){}
 					CPDrawGamePlayer( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Model( SI16 toSet );
@@ -231,6 +244,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPPersonalLightLevel();
+		virtual		~CPPersonalLightLevel(){}
 					CPPersonalLightLevel( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Level( UI08 lightLevel );
@@ -244,6 +258,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPPlaySoundEffect();
+		virtual		~CPPlaySoundEffect(){}
 					CPPlaySoundEffect( cBaseObject &toCopy );
 	virtual void	Mode( UI08 mode );
 	virtual void	Model( SI16 newModel );
@@ -260,6 +275,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPPaperdoll();
+	virtual			~CPPaperdoll(){}
 					CPPaperdoll( CChar &toCopy );
 	virtual void	Serial( SERIAL tSerial );
 	virtual void	FlagByte( UI08 fVal );
@@ -273,6 +289,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPWeather();
+	virtual			~CPWeather(){}
 					CPWeather( UI08 nType );
 					CPWeather( UI08 nType, UI08 nParts );
 					CPWeather( UI08 nType, UI08 nParts, UI08 nTemp );
@@ -286,6 +303,7 @@ class CPGraphicalEffect : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPGraphicalEffect(){}				
 					CPGraphicalEffect( UI08 effectType );
 					CPGraphicalEffect( UI08 effectType, cBaseObject &src, cBaseObject &trg );
 					CPGraphicalEffect( UI08 effectType, cBaseObject &src );
@@ -316,6 +334,7 @@ class CPUpdateStat : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual ~CPUpdateStat(){}
 					CPUpdateStat( CChar &toUpdate, UI08 statNum );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	MaxVal( SI16 maxVal );
@@ -329,6 +348,7 @@ protected:
 public:
 					CPDeathAction( CChar &dying, CItem &corpse );
 					CPDeathAction();
+	virtual			~CPDeathAction(){}
 	virtual void	Player( SERIAL toSet );
 	virtual void	Corpse( SERIAL toSet );
 	virtual void	FallDirection( UI08 toFall );
@@ -343,6 +363,7 @@ protected:
 public:
 					CPPlayMusic( SI16 musicID );
 					CPPlayMusic();
+	virtual			~CPPlayMusic(){}
 	virtual void	MusicID( SI16 musicID );
 };
 
@@ -353,6 +374,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPDrawContainer();
+	virtual			~CPDrawContainer(){}
 					CPDrawContainer( CItem &toCopy );
 	virtual void	Model( SI16 newModel );
 	virtual void	Serial( SERIAL toSet );
@@ -363,6 +385,7 @@ class CPTargetCursor : public cPBuffer
 {
 public:
 					CPTargetCursor();
+	virtual			~CPTargetCursor(){}
 	virtual void	Type( UI08 nType );
 	virtual void	ID( SERIAL toSet );
 	virtual void	CursorType( UI08 nType );	// There is more to this packet, but it's only valid when sent by the CLIENT
@@ -375,6 +398,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPStatWindow();
+	virtual			~CPStatWindow(){}
 					CPStatWindow( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Name( const char *nName );
@@ -413,6 +437,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPIdleWarning();
+	virtual			~CPIdleWarning(){}
 					CPIdleWarning( UI08 errorNum );
 	virtual void	Error( UI08 errorNum );
 };
@@ -423,6 +448,7 @@ protected:
 	virtual void	InternalReset( void );
 public:
 					CPTime();
+	virtual			~CPTime(){}
 					CPTime( UI08 hour, UI08 minute, UI08 second );
 	virtual void	Hour( UI08 hour );
 	virtual void	Minute( UI08 minute );
@@ -438,6 +464,7 @@ public:
 class CPTextEmoteColour : public cPBuffer
 {
 public:
+	virtual			~CPTextEmoteColour(){}
 					CPTextEmoteColour();
 	virtual void	BlockSize( SI16 newValue );
 	virtual void	Unknown( SI16 newValue );
@@ -448,6 +475,7 @@ class CPWarMode : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPWarMode(){}
 					CPWarMode();
 					CPWarMode( UI08 nFlag );
 	virtual void	Flag( UI08 nFlag );
@@ -458,6 +486,7 @@ class CPPauseResume : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPPauseResume(){}
 					CPPauseResume();
 					CPPauseResume( UI08 mode );
 	virtual void	Mode( UI08 mode );
@@ -469,6 +498,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	SetSize( SI16 newSize );
 public:
+	virtual			~CPWebLaunch(){}
 					CPWebLaunch();
 					CPWebLaunch( const char *txt );
 	virtual void	Text( const char *txt );
@@ -479,6 +509,7 @@ class CPTrackingArrow : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPTrackingArrow(){}
 					CPTrackingArrow();
 					CPTrackingArrow( SI16 x, SI16 y );
 					CPTrackingArrow( cBaseObject &toCopy );
@@ -492,6 +523,7 @@ class CPBounce : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPBounce(){}
 					CPBounce();
 					CPBounce( UI08 mode );
 	virtual void	Mode( UI08 mode );
@@ -503,6 +535,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( cBaseObject &target );
 public:
+	virtual			~CPDyeVat(){}
 					CPDyeVat();
 					CPDyeVat( cBaseObject &target );
 	virtual void	Serial( SERIAL toSet );
@@ -516,6 +549,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CItem &target );
 public:
+	virtual			~CPMultiPlacementView(){}
 					CPMultiPlacementView();
 					CPMultiPlacementView( CItem &target );
 					CPMultiPlacementView( SERIAL toSet );
@@ -537,6 +571,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CItem &toCopy );
 public:
+	virtual			~CPAddItemToCont(){}
 					CPAddItemToCont();
 					CPAddItemToCont( CItem &toAdd );
 	virtual void	Serial( SERIAL toSet );
@@ -555,6 +590,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CChar &toCopy );
 public:
+	virtual			~CPKickPlayer(){}
 					CPKickPlayer();
 					CPKickPlayer( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
@@ -566,6 +602,7 @@ class CPResurrectMenu : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPResurrectMenu(){}
 					CPResurrectMenu();
 					CPResurrectMenu( UI08 action );
 	virtual void	Action( UI08 action );
@@ -576,6 +613,7 @@ class CPFightOccurring : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPFightOccurring(){}
 					CPFightOccurring();
 					CPFightOccurring( CChar &attacker, CChar &defender );
 	virtual void	Attacker( SERIAL toSet );
@@ -592,6 +630,7 @@ protected:
 	virtual void	BlockSize( SI16 newValue );
 	virtual void	WriteShort( SI16 offset, SI16 value );
 public:
+	virtual			~CPSkillsValues(){}
 					CPSkillsValues();
 					CPSkillsValues( CChar &toCopy );
 	virtual void	NumSkills( UI08 numSkills );
@@ -602,6 +641,7 @@ public:
 class CPMapMessage : public cPBuffer
 {
 public:
+	virtual			~CPMapMessage(){}
 					CPMapMessage();
 	virtual void	UpperLeft( SI16 x, SI16 y );
 	virtual void	LowerRight( SI16 x, SI16 y );
@@ -613,6 +653,7 @@ public:
 class CPMapRelated : public cPBuffer
 {
 public:
+	virtual			~CPMapRelated(){}
 					CPMapRelated();
 	virtual void	PlotState( UI08 pState );
 	virtual void	Location( SI16 x, SI16 y );
@@ -623,6 +664,7 @@ public:
 class CPBookTitlePage : public cPBuffer
 {
 public:
+	virtual			~CPBookTitlePage(){}
 					CPBookTitlePage();
 	virtual void	Serial( SERIAL toSet );
 	virtual void	WriteFlag( UI08 flag );
@@ -635,6 +677,7 @@ public:
 class CPUltimaMessenger : public cPBuffer
 {
 public:
+	virtual			~CPUltimaMessenger(){}
 					CPUltimaMessenger();
 	virtual void	ID1( SERIAL toSet );
 	virtual void	ID2( SERIAL toSet );
@@ -651,6 +694,7 @@ protected:
 	virtual SI16	Text2Len( void );
 	virtual void	Text2Len( SI16 newVal );
 public:
+	virtual			~CPGumpTextEntry(){}
 					CPGumpTextEntry();
 					CPGumpTextEntry( const char *text );
 					CPGumpTextEntry( const char *text1, const char *text2 );
@@ -683,6 +727,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CItem& toCopy );
 public:
+	virtual			~CPItemsInContainer(){}
 					CPItemsInContainer();
 					CPItemsInContainer( CItem *container );
 	virtual void	NumberOfItems( UI16 numItems );
@@ -697,6 +742,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CItem& toCopy, CChar *p );
 public:
+	virtual			~CPOpenBuyWindow(){}
 					CPOpenBuyWindow();
 					CPOpenBuyWindow( CItem *container, CChar *p );
 	virtual void	NumberOfItems( UI08 numItems );
@@ -712,6 +758,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData(ACCOUNTSBLOCK& toCopy );
 public:
+	virtual			~CPCharAndStartLoc(){}
 					CPCharAndStartLoc();
 					CPCharAndStartLoc(ACCOUNTSBLOCK& account, UI08 numCharacters, UI08 numLocations );
 	virtual void	NumberOfLocations( UI08 numLocations );
@@ -744,6 +791,7 @@ class CPGraphicalEffect2 : public CPGraphicalEffect
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPGraphicalEffect2(){}
 					CPGraphicalEffect2( UI08 effectType );
 					CPGraphicalEffect2( UI08 effectType, cBaseObject &src, cBaseObject &trg );
 					CPGraphicalEffect2( UI08 effectType, cBaseObject &src );
@@ -756,6 +804,7 @@ class CPIFirstLogin : public cPInputBuffer
 protected:
 	virtual void		InternalReset( void );
 public:
+	virtual				~CPIFirstLogin(){}
 						CPIFirstLogin();
 						CPIFirstLogin( cSocket *s );
 	virtual void		Receive( void );
@@ -770,6 +819,7 @@ class CPIServerSelect : public cPInputBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPIServerSelect(){}
 					CPIServerSelect();
 					CPIServerSelect( cSocket *s );
 	virtual void	Receive( void );
@@ -782,6 +832,7 @@ class CPISecondLogin : public cPInputBuffer
 protected:
 	virtual void		InternalReset( void );
 public:
+	virtual				~CPISecondLogin(){}
 						CPISecondLogin();
 						CPISecondLogin( cSocket *s );
 	virtual void		Receive( void );
@@ -797,6 +848,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( cSocket *s );
 public:
+	virtual			~CPGodModeToggle(){}
 					CPGodModeToggle();
 					CPGodModeToggle( cSocket *s );
 	CPGodModeToggle& operator=( cSocket *s );
@@ -808,17 +860,25 @@ class CPLoginDeny : public cPBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPLoginDeny(){}
 					CPLoginDeny();
 					CPLoginDeny( LoginDenyReason reason );
 	virtual void	DenyReason( LoginDenyReason reason );
 };
 
+class CPClientVersion : public cPBuffer
+{
+protected:
+public:
+					CPClientVersion();
+};
 class CPIClientVersion : public cPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
 	SI16 len;
 public:
+	virtual			~CPIClientVersion(){}
 					CPIClientVersion();
 					CPIClientVersion( cSocket *s );
 	virtual void	Receive( void );
@@ -830,6 +890,7 @@ class CPIUpdateRangeChange : public cPInputBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPIUpdateRangeChange(){}
 					CPIUpdateRangeChange();
 					CPIUpdateRangeChange( cSocket *s );
 	virtual void	Receive( void );
@@ -848,6 +909,7 @@ class CPITips : public cPInputBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPITips(){}
 					CPITips();
 					CPITips( cSocket *s );
 	virtual void	Receive( void );
@@ -859,6 +921,7 @@ class CPIRename : public cPInputBuffer
 protected:
 	virtual void	InternalReset( void );
 public:
+	virtual			~CPIRename(){}
 					CPIRename();
 					CPIRename( cSocket *s );
 	virtual void	Receive( void );
@@ -868,6 +931,7 @@ public:
 class CPIKeepAlive : public cPInputBuffer
 {
 public:
+	virtual			~CPIKeepAlive(){}
 					CPIKeepAlive();
 					CPIKeepAlive( cSocket *s );
 	virtual void	Receive( void );
@@ -877,6 +941,7 @@ public:
 class CPIStatusRequest : public cPInputBuffer
 {
 public:
+	virtual			~CPIStatusRequest(){}
 					CPIStatusRequest();
 					CPIStatusRequest( cSocket *s );
 	virtual void	Receive( void );
@@ -886,6 +951,7 @@ public:
 class CPISpy : public cPInputBuffer
 {
 public:
+	virtual			~CPISpy() {}
 					CPISpy();
 					CPISpy( cSocket *s );
 	virtual void	Receive( void );
@@ -895,6 +961,7 @@ public:
 class CPIGodModeToggle : public cPInputBuffer
 {
 public:
+	virtual			~CPIGodModeToggle(){}
 					CPIGodModeToggle();
 					CPIGodModeToggle( cSocket *s );
 	virtual void	Receive( void );
@@ -904,6 +971,7 @@ public:
 class CPIDblClick : public cPInputBuffer
 {
 public:
+	virtual			~CPIDblClick(){}
 					CPIDblClick();
 					CPIDblClick( cSocket *s );
 	virtual void	Receive( void );
@@ -913,6 +981,7 @@ public:
 class CPISingleClick : public cPInputBuffer
 {
 public:
+	virtual			~CPISingleClick(){}
 					CPISingleClick();
 					CPISingleClick( cSocket *s );
 	virtual void	Receive( void );
@@ -922,6 +991,7 @@ public:
 class CPIMoveRequest : public cPInputBuffer
 {
 public:
+	virtual			~CPIMoveRequest(){}
 					CPIMoveRequest();
 					CPIMoveRequest( cSocket *s );
 	virtual void	Receive( void );
@@ -931,6 +1001,7 @@ public:
 class CPIResyncReq : public cPInputBuffer
 {
 public:
+	virtual			~CPIResyncReq(){}
 					CPIResyncReq();
 					CPIResyncReq( cSocket *s );
 	virtual void	Receive( void );
@@ -940,6 +1011,7 @@ public:
 class CPIResMenuChoice : public cPInputBuffer
 {
 public:
+	virtual			~CPIResMenuChoice(){}
 					CPIResMenuChoice();
 					CPIResMenuChoice( cSocket *s );
 	virtual void	Receive( void );
@@ -949,6 +1021,7 @@ public:
 class CPIAttack : public cPInputBuffer
 {
 public:
+	virtual			~CPIAttack(){}
 					CPIAttack();
 					CPIAttack( cSocket *s );
 	virtual void	Receive( void );
@@ -958,6 +1031,7 @@ public:
 class CPITargetCursor : public cPInputBuffer
 {
 public:
+	virtual			~CPITargetCursor(){}
 					CPITargetCursor();
 					CPITargetCursor( cSocket *s );
 	virtual void	Receive( void );
@@ -967,6 +1041,7 @@ public:
 class CPIEquipItem : public cPInputBuffer
 {
 public:
+	virtual			~CPIEquipItem(){}
 					CPIEquipItem();
 					CPIEquipItem( cSocket *s );
 	virtual void	Receive( void );
@@ -976,6 +1051,7 @@ public:
 class CPIGetItem : public cPInputBuffer
 {
 public:
+	virtual			~CPIGetItem(){}
 					CPIGetItem();
 					CPIGetItem( cSocket *s );
 	virtual void	Receive( void );
@@ -985,6 +1061,7 @@ public:
 class CPIDropItem : public cPInputBuffer
 {
 public:
+	virtual			~CPIDropItem(){}
 					CPIDropItem();
 					CPIDropItem( cSocket *s );
 	virtual void	Receive( void );
@@ -996,6 +1073,7 @@ class CPIGumpMenuSelect : public cPInputBuffer
 public:
 					CPIGumpMenuSelect();
 					CPIGumpMenuSelect( cSocket *s );
+virtual ~CPIGumpMenuSelect() {}
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 

@@ -828,7 +828,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 			DismountCreature( tSock->CurrcharObj() );
 		k = ( more1<<8 ) + more2;
 		
-		if( k >= 0x0000 && k <= 0x03e1 ) // lord binary, body-values >0x3e1 crash the client
+		if( k <= 0x03e1 ) // lord binary, body-values >0x3e1 crash the client
 		{ 
 			dest->SetID( k );
 			dest->SetxID( k );
@@ -1106,10 +1106,7 @@ void SaveEffects( void )
 	char filename[MAX_PATH];
 	std::ofstream writeDestination, effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
-	const char binBlockDisc = (char)0xFF;
-
-#pragma note( "Param Warning: in SaveEffects(), Version is unrefrenced" )
-	const UI08 Version = 1;
+	const char binBlockDisc = static_cast<char>(0xFF);
 
 	int Mode = cwmWorldState->ServerData()->SaveMode();
 
@@ -1240,7 +1237,7 @@ void LoadEffects( void )
 			do 
 			{
 				readDestination.getline( line, 1024 );
-#ifdef __LINUX__
+#if defined(__unix__)
 				trimWindowsText( line );
 #endif
 

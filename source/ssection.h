@@ -253,7 +253,6 @@ public:
 	bool					CloseFile( void );
 	void					Remove( UI16 position );
 	void					Append( const char *tag, const char *data );
-	//
 	bool					ItemListExist(void) const;
 	bool					NpcListExist(void) const;
 	const char *	ItemListData(void) const;

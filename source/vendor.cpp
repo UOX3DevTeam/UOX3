@@ -294,7 +294,7 @@ void restock( bool stockAll )
 				}
 			}
 			if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-				StoreItemRandomValue( &items[i], -1 );
+				StoreItemRandomValue( &items[i], 0xFF );
 		}
 	}
 }

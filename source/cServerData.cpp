@@ -1,6 +1,6 @@
 #include "cServerData.h"
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#include <sys/types.h>
   #include <netdb.h>
   #include <sys/socket.h>
@@ -394,7 +394,7 @@ void cServerData::setDirectoryHelper( std::string dirName, std::string &dir, cha
 
 	// Make sure we're terminated with a directory separator
 	// Just incase it's not set in the .ini
-#ifdef __LINUX__
+#if defined(__unix__)
 	bool addSep = text[length - 1] != dirSep;
 #else
 	bool addSep = (text[length - 1] != dirSep) && (text[length - 1] != '\\');
@@ -403,7 +403,7 @@ void cServerData::setDirectoryHelper( std::string dirName, std::string &dir, cha
 	bool error = false;
 	if( !resettingDefaults )
 	{
-#ifdef __LINUX__
+#if defined(__unix__)
 		DIR *dirPtr = opendir( text );
 		if( !dirPtr )
 			error = true;
@@ -1388,7 +1388,7 @@ void cServerData::ResetDefaults( void )
 	SetCombatNPCDamageRate( NPC_DAMAGE_RATE );
 	SetRankSystemStatus( true );
 
-#ifndef __LINUX
+#if defined(__unix__)
 	char curWorkingDir[1024], tempStuff[1024];
 	GetCurrentDirectory( 1024, curWorkingDir );
 	SetRootDirectory( curWorkingDir );
@@ -3714,7 +3714,7 @@ void cServerData::SetServerLocation( const char *toSet )
 }
 LPSTARTLOCATION cServerData::GetServerLocation( UI32 locNum )
 {
-	if( locNum < 0 || locNum >= startlocations.size() )
+	if( locNum >= startlocations.size() )
 		return NULL;
 	else
 		return &startlocations[locNum];

@@ -13,9 +13,11 @@
 #ifndef __CACCOUNTCLASS_H__
 #define __CACCOUNTCLASS_H__
 
+#if defined(_MSC_VER)
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#endif
 
 #include <iostream>
 #include <sstream>
@@ -29,7 +31,7 @@
 
 #include "uox3.h"
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#include <dirent.h>
 	#define strnicmp(a,b,c) strncasecmp(a,b,c)
 	#define _stat stat

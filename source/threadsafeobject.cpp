@@ -1,11 +1,11 @@
 #include "threadsafeobject.h"
-#ifndef _WIN32
+#if defined(__unix__)
 #include <pthread.h>
 #endif
 
 ThreadSafeObject::ThreadSafeObject()
 {
-#ifdef _WIN32
+#if !defined(__unix__)
 	d_mutex = CreateMutex( NULL, false, NULL );
 #else
 	//d_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -21,7 +21,7 @@ ThreadSafeObject::ThreadSafeObject()
 }
 ThreadSafeObject::~ThreadSafeObject()
 {
-#ifdef _WIN32
+#if !defined(__unix__)
 	if( d_mutex != NULL )
 	{
 		CloseHandle( d_mutex );
@@ -35,7 +35,7 @@ ThreadSafeObject::~ThreadSafeObject()
 
 void ThreadSafeObject::MutexOn( void )
 {
-#ifdef _WIN32
+#if !defined(__unix__)
 	WaitForSingleObject( d_mutex, INFINITE );
 #else
 	pthread_mutex_lock( &d_mutex );
@@ -43,7 +43,7 @@ void ThreadSafeObject::MutexOn( void )
 }
 void ThreadSafeObject::MutexOff( void )
 {
-#ifdef _WIN32
+#if !defined(__unix__)
 	ReleaseMutex( d_mutex );
 #else
 	pthread_mutex_unlock( &d_mutex );

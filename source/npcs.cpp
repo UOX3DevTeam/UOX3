@@ -538,7 +538,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 		cdata = ShoppingList->GrabData( ndata, odata );
 		switch( tag )
 		{
-		case DFNTAG_RSHOPITEM:
+			case DFNTAG_RSHOPITEM:
 				if( buyLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
@@ -555,7 +555,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Buy Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-		case DFNTAG_SELLITEM:
+			case DFNTAG_SELLITEM:
 				if( sellLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
@@ -573,7 +573,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Sell Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-		case DFNTAG_SHOPITEM:
+			case DFNTAG_SHOPITEM:
 				if( boughtLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
@@ -590,9 +590,11 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Bought Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-		case DFNTAG_VALUE:
+			case DFNTAG_VALUE:
 				if( retitem != NULL )
 					retitem->SetValue( ndata );
+				break;
+			default:
 				break;
 		}
 	}

@@ -2290,7 +2290,7 @@ void CPSkillsValues::InternalReset( void )
 void CPSkillsValues::CopyData( CChar &toCopy )
 {
 	NumSkills( TRUESKILLS );
-	for( int i = 0; i < TRUESKILLS; i++ )
+	for( SI08 i = 0; i < TRUESKILLS; i++ )
 		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ) );
 }
 void CPSkillsValues::BlockSize( SI16 newValue )

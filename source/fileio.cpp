@@ -336,7 +336,7 @@ void ReadWorldTagData( std::ifstream &inStream, char *tag, char *data )
 			return;
 		}
 		inStream.getline( temp, 4096 );
-#ifdef __LINUX__
+#if defined(__unix__)
 		trimWindowsText( temp );
 #endif
 		if( temp[0] == 'o' && !strcmp( temp, "o---o" ) )

@@ -182,54 +182,6 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 		return NULL;
 }
 
-/* 
-//o---------------------------------------------------------------------------o
-//|	Function	-	UI32 calcLastContainerFromSer( SERIAL ser, SI08& exiMode )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Calculate the last container of an item
-//o---------------------------------------------------------------------------o
-UI32 calcLastContainerFromSer( SERIAL ser, SI08& exiMode )
-{
-	exiMode = 0;
-	UI08 exi = 0;
-	SERIAL newser = ser;
-	UI32 a = INVALIDSERIAL;
-	do
-	{
-		a = calcCharFromSer( newser );
-		if( a != INVALIDSERIAL )
-		{
-			newser = chars[a].GetSerial();
-			exi = 2;
-		}
-		else
-		{
-			a = calcItemFromSer( newser );
-			if( a != INVALIDSERIAL )
-			{
-				newser = items[a].GetCont();
-				if( newser == items[a].GetSerial() )
-					Console << "Loop error in calcLastContainerFromSer()" << myendl << "   Item [" << a << "] [ID: " << items[a].GetID() << "] " << items[a].GetName() << " has contained in itself" << myendl << "   Check CONT variables into WSC!" << myendl;
-			}
-			else
-				exi = 1;
-		}
-	} while( exi == 0 );
-	
-	if( exi == 2 )
-	{
-		exiMode = 2;
-		return a; // npc
-	}
-	else
-	{
-		exiMode = 1;
-		return a; // item
-	}
-}
-*/
-
 //o--------------------------------------------------------------------------
 //|	Function		-	cSocket *calcSocketObjFromSock( UOXSOCKET s )
 //|	Date			-	05 July, 2001
@@ -276,7 +228,7 @@ UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 				return location[i].region;
 		}
 	}
-	return 0xff;
+	return 0xFF;
 }
 
 //o---------------------------------------------------------------------------o
@@ -317,7 +269,7 @@ UI32 calcValue( CItem *i, UI32 value)
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI32 calcGoodValue( UI32 npcnum2, ITEM i, UI32 value, UI32 goodtype )
+//|	Function	-	UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
@@ -350,7 +302,7 @@ UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling)
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 calcGoldInPack( CItem *item )
+//|	Function	-	UI32 calcGoldInPack( CItem *item )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total gold in a pack

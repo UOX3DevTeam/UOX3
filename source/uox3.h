@@ -63,10 +63,7 @@
 //o---------------------------------------------------------------------------o
 // Set what OS UOX is compiled under
 //o---------------------------------------------------------------------------o
-#ifdef __linux__
-	#define __LINUX__
-#endif
-
+/*
 #ifdef _WIN32
 	#define __NT__
 	#ifndef __MINGW32__
@@ -78,13 +75,14 @@
 		#define _WIN32
 	#endif
 #endif
+*/
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#define OS_STR "Linux"
-	#define WORD unsigned short int
-	#define DWORD unsigned int
-	#define BOOL bool
-	#define VOID void
+	typedef WORD unsigned short int
+	typedef DWORD unsigned int
+	typedef BOOL bool
+	typedef VOID void
 #else
 	#define OS_STR "Win32"
 #endif
@@ -93,12 +91,7 @@
 //o---------------------------------------------------------------------------o
 // remove PACKED for unix/linux because it going to cause bus errors - fur
 //o---------------------------------------------------------------------------o
-#if defined _WIN32 && (!defined(__MINGW32__))
-	#define PACK_NEEDED
-#else
-	#define PACK_NEEDED
-#endif
-
+#define PACK_NEEDED
 
 //o---------------------------------------------------------------------------o
 // Skip some errors
@@ -112,7 +105,7 @@
 //o---------------------------------------------------------------------------o
 // More linux stuff
 //o---------------------------------------------------------------------------o
-#ifdef __LINUX__
+#if defined(__unix__)
 	#define XP_UNIX
 	#define closesocket( s )	close( s )
 	#define ioctlsocket( s,b,c )	ioctl( s,b,c )
@@ -144,7 +137,7 @@
 // OS specific includes
 //o---------------------------------------------------------------------------o
 #include "socket_interface.h"
-#ifdef __NT__
+#if !defined(__unix__)
 	#define WIN32_LEAN_AND_MEAN
 	//#include <windows.h>
 	//#include <winsock2.h>
@@ -164,7 +157,7 @@
 	#include <netdb.h>
 	#include <sys/signal.h>
 	#include <sstream>
-	#ifdef __LINUX__				// Tseramed's stuff
+	#if defined(__unix__)
 		#include <unistd.h>
 		#include <arpa/inet.h>
 	#endif
@@ -222,13 +215,13 @@ class UOXFile;
 //o---------------------------------------------------------------------------o
 // LINUX Definitions
 //o---------------------------------------------------------------------------o
-#ifndef __NT__
+#if defined(__unix__)
 inline int min( int a, int b ) { if( a < b ) return a; return b; }
 inline int max( int a, int b ) { if( a > b ) return a; return b; }
 extern "C" {
 char *strlwr(char *);
 char *strupr(char *);
-};
+}
 #endif
 
 
@@ -255,10 +248,9 @@ extern char bpitem[20];
 extern char gump1[22];
 extern char gump2[4];
 extern char gump3[3];
-//extern char updscroll[11];
 extern char spc[2];
 extern UI32 polyduration;
-#ifdef __NT__
+#if !defined(__unix__)
   extern WSADATA wsaData;
   extern WORD wVersionRequested;
 #endif
@@ -347,14 +339,11 @@ extern UI32 npcshape[5];				// Stores the coords of the bouding shape for the NP
 extern UI32 starttime, endtime, lclock;
 extern bool overflow;
 extern char idname[256];
-//extern char pass1[256];
-//extern char pass2[256];
 extern SI32 executebatch;				// Changed from int to SI32 (Mr. Fixit)
 extern bool showlayer;
 //extern SI32 ph1, ph2, ph3, ph4;			// Not used for anything (Mr. Fixit)
 extern UI32 shoprestocktime;			// Changed from int to UI32 (Mr. Fixit)
 extern SI32 shoprestockrate;			// Changed from int to SI32 (Mr. Fixit)
-extern UI32 respawntime;
 extern title_st title[ALLSKILLS+1];
 extern UI32 hungerdamagetimer; // Used for hunger damage
 extern char xgm;
@@ -376,7 +365,7 @@ extern UI32 loopTimeCount;				// Changed from int to UI32 (Mr. Fixit)
 //o---------------------------------------------------------------------------o
 // Time inline functions
 //o---------------------------------------------------------------------------o
-#ifdef __LINUX__
+#if defined(__unix__)
 	UI32 getclock( void );
 	#undef CLOCKS_PER_SEC
 	#define CLOCKS_PER_SEC 100
@@ -386,8 +375,8 @@ extern UI32 loopTimeCount;				// Changed from int to UI32 (Mr. Fixit)
 		gettimeofday( &t, NULL );
 		Seconds = t.tv_sec;
 		Milliseconds = t.tv_usec;
-	};
-	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeval t; gettimeofday( &t, NULL ); return( 1000 * ( t.tv_sec - Seconds ) + ( t.tv_usec - Milliseconds ) ); };
+	}
+	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeval t; gettimeofday( &t, NULL ); return( 1000 * ( t.tv_sec - Seconds ) + ( t.tv_usec - Milliseconds ) ); }
 	inline void UOXSleep( int toSleep ) { usleep( toSleep * 1000 ); }
 #else
 	#define getclock() clock()

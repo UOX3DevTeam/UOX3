@@ -12,7 +12,7 @@
 class CEndL;
 
 #define MAX_CONSOLE_BUFF 512
-#ifndef __LINUX__
+#if !defined(__unix__)
 #define vsnprintf _vsnprintf
 #endif
 
@@ -102,7 +102,7 @@ protected:
 	UI08	currentMode, currentLevel;
 	UI08	previousColour;
 	bool	logEcho;
-#ifndef __LINUX__
+#if !defined(__unix__)
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
 #endif

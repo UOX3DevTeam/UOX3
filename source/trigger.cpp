@@ -276,9 +276,7 @@ void Triggers::ReloadJS( void )
 {
 	std::map< UI16, cScript *>::iterator p;
 	for( p = scriptTriggers.begin(); p != scriptTriggers.end(); p++ )
-	{
 		delete p->second;
-	}
 	scriptTriggers.erase( scriptTriggers.begin(), scriptTriggers.end() );	// erase it all
 	ParseScript();
 }

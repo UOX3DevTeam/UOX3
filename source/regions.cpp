@@ -9,7 +9,7 @@ void readline( std::ifstream &toRead, char *buffer, int bufferLen )
 	do 
 	{
 		toRead.getline( buffer, bufferLen );
-#ifdef __LINUX__
+#if defined(__unix__)
 		trimWindowsText( buffer );
 #endif
 

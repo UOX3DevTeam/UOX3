@@ -424,25 +424,25 @@ struct point3
 inline point3 operator+( point3 const &a, point3 const &b )
 {
 	return (point3( a.x + b.x, a.y + b.y, a.z + b.z ));
-};
+}
 
 inline point3 operator-( point3 const &a, point3 const &b )
 {
 	return (point3( a.x - b.x, a.y - b.y, a.z - b.z ));
-};
+}
 inline point3 operator*( point3 const &a, R32 const &b )
 {
 	return point3( a.x*b, a.y*b, a.z*b );
-};
+}
 inline point3 operator*( R32 const &a, point3 const &b )
 {
 	return point3( a * b.x, a * b.y, a * b.z );
-};
+}
 inline point3 operator/( point3 const &a, R32 const &b )
 {
 	R32 inv = 1.f / b;
 	return point3( a.x * inv, a.y * inv, a.z * inv );
-};
+}
 inline void point3::Assign( UI16 X, UI16 Y, SI08 Z )
 {
 	x = X;

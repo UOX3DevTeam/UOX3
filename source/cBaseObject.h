@@ -124,32 +124,24 @@ public:
 	virtual void			SetID(     UI08 newValue, UI08 part );
 	virtual void			SetColour( UI08 newValue, UI08 part );
 
+	virtual SERIAL			GetMulti(  void ) const;
 	virtual SERIAL			GetSerial( void ) const;
 	virtual SERIAL			GetSpawn( void ) const;
+	virtual SERIAL			GetOwner( void ) const;
 	virtual cBaseObject *	GetMultiObj( void ) const;
 	virtual cBaseObject *	GetSpawnObj( void ) const;
 	virtual cBaseObject *	GetOwnerObj( void ) const;
 
-	virtual SERIAL			GetOwner( void ) const;
-	//virtual UI08			GetOwner(  UI08 part ) const;
-	virtual void			SetOwner(  SERIAL newSerial );
-
 	virtual UI08			GetSerial( UI08 part ) const;
-
-	virtual SERIAL			GetMulti(  void ) const;
-	//virtual UI08			GetMulti(  UI08 part ) const;
-	
 	virtual UI08			GetSpawn(  UI08 part ) const;
 
-	virtual void			SetSerial( SERIAL newSerial );
-	
-	virtual void			SetSpawn(  SERIAL newSerial );
-	//virtual void			SetSpawn(  UI08 newSerial, UI08 newPart );
-	virtual void			SetSpawn(  cBaseObject *newSpawn );
-
 	virtual void			SetMulti(  SERIAL newSerial, bool fireTrigger = true );
-	//virtual void			SetMulti(  UI08 newSerial, UI08 newPart, bool fireTrigger = true );
+	virtual void			SetSerial( SERIAL newSerial );
+	virtual void			SetSpawn(  SERIAL newSerial );
+	virtual void			SetOwner(  SERIAL newSerial );
+
 	virtual void			SetMulti(  cBaseObject *newMulti, bool fireTrigger = true );
+	virtual void			SetSpawn(  cBaseObject *newSpawn );
 
 	virtual void			SetOwner(  cBaseObject *newOwner );
 

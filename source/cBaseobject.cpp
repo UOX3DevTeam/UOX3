@@ -512,58 +512,6 @@ void cBaseObject::SetSpawn( SERIAL newSerial )
 		spawnserial = (cBaseObject *)calcCharObjFromSer( newSerial );
 }
 
-/*
-//o--------------------------------------------------------------------------
-//|	Function		-	SetMulti( UI08 newSerial, UI08 newPart )
-//|	Date			-	26 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets part of the serial of the multi we're in
-//o--------------------------------------------------------------------------
-void cBaseObject::SetMulti( UI08 newSerial, UI08 newPart, bool fireTrigger )
-{
-	UI08 parts[4];
-	if( multis != NULL )
-	{
-		for( UI08 j = 0; j < 4; j++ )
-			parts[j] = multis->GetSerial( j );
-	}
-	RemoveFromMulti( fireTrigger );
-	parts[newPart-1] = newSerial;
-	if( parts[0] >= 0x40 )
-		multis = (cBaseObject *)calcItemObjFromSer( calcserial( parts[0], parts[1], parts[2], parts[3] ) );
-	else
-		return;
-	AddToMulti( fireTrigger );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetSpawn( UI08 newSerial, UI08 newPart )
-//|	Date			-	26 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets part of the spawner serial
-//o--------------------------------------------------------------------------
-void cBaseObject::SetSpawn(  UI08 newSerial, UI08 newPart )
-{
-	UI08 parts[4];
-	if( spawnserial == NULL )
-		memset( parts, 0, sizeof( parts[0] ) * 4 );
-	else
-	{
-		for( UI08 j = 0; j < 4l; j++ )
-			parts[j] = spawnserial->GetSerial( j );
-	}
-	parts[newPart-1] = newSerial;
-	if( parts[0] >= 0x40 )
-		spawnserial = (cBaseObject *)calcItemObjFromSer( calcserial( parts[0], parts[1], parts[2], parts[3] ) );
-	else
-		spawnserial = (cBaseObject *)calcCharObjFromSer( calcserial( parts[0], parts[1], parts[2], parts[3] ) );
-}
-*/
-
 //o--------------------------------------------------------------------------
 //|	Function		-	void IsSpawned( bool setting )
 //|	Date			-	15 March, 2002
@@ -1450,23 +1398,6 @@ UI08 cBaseObject::GetSerial( UI08 part ) const
 	return 0;
 }
 
-/*
-//o--------------------------------------------------------------------------
-//|	Function		-	UI08 GetMulti( UI08 part )
-//|	Date			-	28 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns part of the multi's serial
-//o--------------------------------------------------------------------------
-UI08 cBaseObject::GetMulti( UI08 part ) const
-{
-	if( multis == NULL )
-		return 0xFF;
-	return multis->GetSerial( part );
-}
-*/
-
 //o--------------------------------------------------------------------------
 //|	Function		-	UCHAR GetSpawn( UCHAR part )
 //|	Date			-	28 July, 2000
@@ -1481,23 +1412,6 @@ UI08 cBaseObject::GetSpawn( UI08 part ) const
 		return 0x0;
 	return spawnserial->GetSerial( part );
 }
-
-/*
-//o--------------------------------------------------------------------------
-//|	Function		-	UI08 GetOwner( UI08 part )
-//|	Date			-	28 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns part of the item's owner's serial
-//o--------------------------------------------------------------------------
-UI08 cBaseObject::GetOwner( UI08 part ) const
-{
-	if( owner == NULL )
-		return 0;
-	return owner->GetSerial( part );
-}
-*/ 
 
 //o--------------------------------------------------------------------------
 //|	Function		-	SetOwner( SERIAL newSerial )
@@ -2500,6 +2414,7 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 			scriptTrig = (UI16)makeNum( data );
 			return true;
 		}
+		break;
 	case 'T':
 		if( !strcmp( tag, "Title" ) )
 		{

@@ -1,14 +1,14 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#include <dirent.h>
 #   include <unistd.h>
 #else
 	#include <direct.h>
 #endif
 
-#ifdef _WIN32
+#if !defined(__unix__)
 	#define getcwd _getcwd
 #endif
 
@@ -473,7 +473,7 @@ STRINGLIST *cDirectoryListing::FlattenedShortList( void )
 void cDirectoryListing::InternalRetrieve( void )
 {
 	char filePath[512];
-#ifdef __LINUX__
+#if defined(__unix__)
 	DIR *dir = opendir(".");
 	struct dirent *dirp = NULL;
 

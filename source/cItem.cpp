@@ -1720,7 +1720,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'A':
 		if( !strcmp( tag, "Amount" ) )
 		{
-			amount = (UI32)makeNum( data );
+			amount = (UI16)makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "AC" ) )
@@ -1733,7 +1733,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'C':
 		if( !strcmp( tag, "Cont" ) )
 		{
-			SetContSerial( makeNum( data ) );
+			contObj = (cBaseObject *)makeNum( data);
 			return true;
 		}
 		else if( !strcmp( tag, "Creator" ) || !strcmp(tag,"Creater") )
@@ -2092,7 +2092,7 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case ITEMTAG_AMOUNT:
-		amount = buff.GetLong();
+		amount = buff.GetShort();
 		break;
 
 	case ITEMTAG_BOOLS:
@@ -2232,12 +2232,9 @@ bool CItem::LoadRemnants( int arrayOffset )
 	if( itemcount2 <= serial ) 
 		itemcount2 = serial + 1;
 	SetSerial( serial, arrayOffset );
-	StoreItemRandomValue( &items[arrayOffset], 0xFF );
-	
 	
 	// Tauriel adding region pointers
-	
-	if( GetCont() == NULL )
+	if( (SERIAL)contObj == INVALIDSERIAL )
 	{ 
 		MapRegion->AddItem( this );
 		if( GetX() < 0 || GetY() < 0 || GetX() > 6144 || GetY() > 4096 )
@@ -2269,7 +2266,18 @@ void CItem::PostLoadProcessing( UI32 index )
 	// Add item weight if item doesn't have it yet
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
+	SERIAL tempSerial = (SERIAL)contObj;
+	contObj = NULL;
+	if( tempSerial != INVALIDSERIAL )
+	{
+		if( tempSerial >= BASEITEMSERIAL )
+			contObj = calcItemObjFromSer( tempSerial );
+		else
+			contObj = calcCharObjFromSer( tempSerial );
+	}
+	SetCont( contObj );
 	SetAmount( amount );
+	StoreItemRandomValue( this, 0xFF );
 }
 
 bool CItem::isDecayable( void ) const

@@ -425,7 +425,7 @@ bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 	//small = 5,11 
 	//medium = 5, 13
 	//large = 5, 15
-	switch( b->GetDir() )	
+	switch( dir )	
 	{
 		case 1: // U
 		case 5: // D

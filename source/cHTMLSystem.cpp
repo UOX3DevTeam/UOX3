@@ -63,11 +63,9 @@ void cHTMLTemplate::Process( void )
 	Version += "(";
 	Version += CVC.GetBuild();
 	Version += ")";
-	#ifdef __NT__
-		Version += " [WIN32]";
-	#else
-		Version += " [LINUX]";
-	#endif
+	Version += " [";
+	Version += OS_STR;
+	Version += "]";
 
 	for( Pos = ParsedContent.find( "%version" ); Pos >= 0; Pos = ParsedContent.find( "%version" ) )
 	{

@@ -11,7 +11,7 @@
 	typedef void *  va_list;
 #endif
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#define MAKEWORD(a, b)      ((UI16)(((UI08)(a)) | ((UI16)((UI08)(b))) << 8))
 	#define MAKELONG(a, b)      ((UI32)(((UI16)(a)) | ((UI32)((UI16)(b))) << 16))
 	#define LOWORD(l)           ((UI16)(l))
@@ -42,7 +42,7 @@ typedef signed short int	SI16;
 typedef unsigned char		UI08;
 typedef signed char			SI08;
 
-#ifdef __LINUX__
+#if defined(__unix__)
 	#define MAX_PATH		268
 	#define INVALID_SOCKET  (~0)
 	#define SOCKET_ERROR	(-1)

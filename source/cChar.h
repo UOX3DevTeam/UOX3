@@ -105,7 +105,6 @@ class CChar : public cBaseObject
 		CItem *	smeltitem;
 		SERIAL  skillitem;
 		UI16		advobj; //Has used advance gate?
-		//ITEM		envokeitem;
 		CHARACTER	swingtarg; //Tagret they are going to hit after they swing
 		CHARACTER	trackingtarget; // Tracking target ID
 		CHARACTER	trackingtargets[MAXTRACKINGTARGETS];
@@ -315,7 +314,6 @@ class CChar : public cBaseObject
 		void		SetRobe( UI32 newValue );
 		void		SetOwner( cBaseObject *newValue );
 		void		SetSpawn( SERIAL newValue, CHARACTER c );
-		//void		SetSpawn( UI32 newValue, CHARACTER c );
 		void		SetTownVote( UI08 newValue, UI08 part );
 		void		SetTownVote( UI32 newValue );
 		void		SetTrainer( UI32 newValue );
@@ -395,8 +393,6 @@ class CChar : public cBaseObject
 		UI08		GetOrgID( UI08 part ) const;	// 1 for orgid1, 2 for orgid2
 		UI08		GetHairStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
 		UI08		GetBeardStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		//UI08		GetEnvokeID( UI08 part ) const;
-		//UI16		GetEnvokeID( void ) const;
 		UI16		GetID( void ) const;	// returns id1<<8 + id2
 		UI16		GetxID( void ) const;	// returns xid1<<8 + xid2
 		UI16		GetOrgID( void ) const;	// returns orgid1<<8 + orgid2
@@ -411,8 +407,6 @@ class CChar : public cBaseObject
 		void		SetHairStyle( UI16 value );
 		void		SetBeardStyle( UI08 value, UI08 part );
 		void		SetBeardStyle( UI16 value );
-		//void		SetEnvokeID( UI08 value, UI08 part );
-		//void		SetEnvokeID( UI16 newValue );
 
 		UI08		GetSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
 		UI08		GetOrgSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
@@ -484,7 +478,6 @@ class CChar : public cBaseObject
 		SERIAL	GetSkillItemSerial( void ) const;
 		CItem * GetSkillItem( void ) const;
 		UI16		GetAdvObj( void ) const;
-		//ITEM		GetEnvokeItem( void ) const;
 		CHARACTER	GetSwingTarg( void ) const;
 		CHARACTER	GetTrackingTarget( void ) const;
 		CHARACTER	GetTrackingTargets( UI08 targetNum ) const;
@@ -498,7 +491,6 @@ class CChar : public cBaseObject
 		void		SetSkillItemSerial( SERIAL newValue );
 		void		SetSmeltItem( CItem *newValue );
 		void		SetAdvObj( UI16 newValue );
-		//void		SetEnvokeItem( ITEM newValue );
 		void		SetSwingTarg( CHARACTER newValue );
 		void		SetTrackingTarget( CHARACTER newValue );
 		void		SetRaceGate( RACEID newValue );
