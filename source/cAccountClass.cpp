@@ -1308,7 +1308,7 @@ UI16 cAccountClass::Load(void)
 			}
 			else
 			{
-				actb.dwCharacters[0] = -1;
+				actb.dwCharacters[0] = 0xffffffff;
 				actb.lpCharacters[0] = NULL;
 				actb.wAccountIndex=AB_INVALID_ID;
 			}
@@ -1329,7 +1329,7 @@ UI16 cAccountClass::Load(void)
 			}
 			else
 			{
-				actb.dwCharacters[1] = -1;
+				actb.dwCharacters[1] = 0xffffffff;
 				actb.lpCharacters[1] = NULL;
 				actb.wAccountIndex=AB_INVALID_ID;
 			}
@@ -1350,7 +1350,7 @@ UI16 cAccountClass::Load(void)
 			}
 			else
 			{
-				actb.dwCharacters[2] = -1;
+				actb.dwCharacters[2] = 0xffffffff;
 				actb.lpCharacters[2] = NULL;
 				actb.wAccountIndex=AB_INVALID_ID;
 			}
@@ -1371,7 +1371,7 @@ UI16 cAccountClass::Load(void)
 			}
 			else
 			{
-				actb.dwCharacters[3] = -1;
+				actb.dwCharacters[3] = 0xffffffff;
 				actb.lpCharacters[3] = NULL;
 				actb.wAccountIndex=AB_INVALID_ID;
 			}
@@ -1392,7 +1392,7 @@ UI16 cAccountClass::Load(void)
 			}
 			else
 			{
-				actb.dwCharacters[4] = -1;
+				actb.dwCharacters[4] = 0xffffffff;
 				actb.lpCharacters[4] = NULL;
 				actb.wAccountIndex=AB_INVALID_ID;
 			}
@@ -1842,7 +1842,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	for(int jj=0;jj<5;jj++)
 	{
 		// If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
-		if(actbID.dwCharacters[jj]!=0xffffffff&&actbID.dwCharacters[jj]!=(LONG)(-1))
+		if(actbID.dwCharacters[jj]!=0xffffffff&&actbID.dwCharacters[jj]!=(long)(-1))
 		{
 			// Ok build then write what we need to the file
 			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (int)actbID.lpCharacters[jj]->GetZ() << std::endl;
