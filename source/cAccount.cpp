@@ -285,8 +285,8 @@ long cAccounts::LoadAccessList( void )
 		{
 			braces[0] = braces[1] = false;
 			aarPointer->id = aclidx;
-			string keystring( aarPointer->Info.username );
-			AAREC *alreadyExists = GetAccessBlock( aarPointer->Info.username );
+			string keystring( aarPointer->username );
+			AAREC *alreadyExists = GetAccessBlock( aarPointer->username );
 			if( alreadyExists != NULL )
 			{
 				delete alreadyExists;
@@ -315,10 +315,10 @@ long cAccounts::LoadAccessList( void )
 		else if( braces[0] && braces[1] )
 		{
 			if( !stricmp( token[0], "NAME" ) )
-				strcpy( aarPointer->Info.username, token[1] );
+				strcpy( aarPointer->username, token[1] );
 
 			else if( !stricmp( token[0], "PASS" ) )
-				strcpy( aarPointer->Info.password, token[1] );
+				strcpy( aarPointer->password, token[1] );
 
 			else if( !stricmp( token[0], "FLAGS" ) )
 				aarPointer->bFlags = (UI16)atol( token[1] );
@@ -346,7 +346,7 @@ long cAccounts::LoadAccessList( void )
 			}
 			else if( !stricmp( token[0], "COMMENT" ) )
 			{
-				strcpy( aarPointer->Info.comment, token[1] );
+				strcpy( aarPointer->comment, token[1] );
 			}
 			else if( !stricmp( token[0], "ID" ) )
 			{
@@ -355,7 +355,7 @@ long cAccounts::LoadAccessList( void )
 			}
 			else if( !stricmp( token[0], "PATH" ) )
 			{
-				strcpy( aarPointer->Info.path, token[1] );
+				strcpy( aarPointer->path, token[1] );
 			}
 			ifsFile.getline( szLine, 127 );
 		}
@@ -538,8 +538,8 @@ long cAccounts::LoadAccounts( void )
 			{
 				braces[0] = braces[1] = false;
 				actPointer->lpaarHolding->id= actidx;
-				string keystring( actPointer->lpaarHolding->Info.username );
-				ACTREC *alreadyExists = GetAccount( actPointer->lpaarHolding->Info.username );
+				string keystring( actPointer->lpaarHolding->username );
+				ACTREC *alreadyExists = GetAccount( actPointer->lpaarHolding->username );
 				if( alreadyExists != NULL )
 				{
 					// Ok this record is already in memory no need to re read it.
@@ -614,9 +614,9 @@ long cAccounts::LoadAccounts( void )
 				else if( !stricmp( token[0], "CONTACT" ) || !stricmp( token[0], "EMAIL" ))
 				{
 					if(strlen(token[1])<=0)
-						strcpy( actPointer->lpaarHolding->Info.comment, "NA" );
+						strcpy( actPointer->lpaarHolding->comment, "NA" );
 					else
-						strcpy( actPointer->lpaarHolding->Info.comment, token[1] );
+						strcpy( actPointer->lpaarHolding->comment, token[1] );
 				}
 				else if( !stricmp( token[0], "BANDURATION" ) )
 				{	// This is the new conversion from TIMEBAN
@@ -644,9 +644,9 @@ long cAccounts::LoadAccounts( void )
 					}
 				}
 				else if( !stricmp( token[0], "NAME" ) )
-					strcpy( actPointer->lpaarHolding->Info.username, strlwr(token[1]) );
+					strcpy( actPointer->lpaarHolding->username, strlwr(token[1]) );
 				else if( !stricmp( token[0], "PASS" ) )
-					strcpy( actPointer->lpaarHolding->Info.password, token[1] );
+					strcpy( actPointer->lpaarHolding->password, token[1] );
 				else if( !stricmp( token[0], "BAN" ) )
 				{
 					if( makeNum( token[1] ) > 0)
@@ -663,7 +663,7 @@ long cAccounts::LoadAccounts( void )
 				}
 				else if( !stricmp( token[0], "PATH" ) )
 				{
-					strcpy( actPointer->lpaarHolding->Info.path, token[1] );
+					strcpy( actPointer->lpaarHolding->path, token[1] );
 				}
 				else if( !stricmp( token[0], "XGMCLIENT" ) )
 				{
@@ -690,11 +690,11 @@ long cAccounts::LoadAccounts( void )
 			char tbuffer[MAX_PATH];
 			memset(tbuffer,0x00,sizeof(tbuffer));
 			// Expects that the path value contains path and filename to actinfo.uad ins the users directory
-			UI32 slen = strlen( temp->Info.path );
-			if( temp->Info.path[slen-1] == '\\' || temp->Info.path[ slen -1] == '/' )
-				sprintf(tbuffer,"%s%s.uad",temp->Info.path,temp->Info.username);
+			UI32 slen = strlen( temp->path );
+			if( temp->Info.path[slen-1] == '\\' || temp->path[ slen -1] == '/' )
+				sprintf(tbuffer,"%s%s.uad",temp->Info.path,temp->username);
 			else
-				sprintf(tbuffer,"%s/%s.uad",temp->Info.path,temp->Info.username);
+				sprintf(tbuffer,"%s/%s.uad",temp->Info.path,temp->username);
 			// We have the path to the file now open and parse it into memory
 			ifstream ins;
 			ins.open(tbuffer);
@@ -756,7 +756,7 @@ long cAccounts::LoadAccounts( void )
 					tl=strtok(l,"-");
 					tr=strtok(NULL," ");
 					trr=strtok(r," ");
-					ACTREC *alreadyExists = GetAccount( temp->Info.username );
+					ACTREC *alreadyExists = GetAccount( temp->username );
 					if( alreadyExists != NULL )
 					{
 						acr->charactercount = alreadyExists->charactercount;
@@ -781,9 +781,9 @@ long cAccounts::LoadAccounts( void )
 			// Make sure to copy the access record pointer into the account record
 			acr->lpaarHolding=temp;
 			// insert the account record into the account map.
-			actMap[temp->Info.username] = acr;
+			actMap[temp->username] = acr;
 			// Make sure to place a copy into the Access lookup map
-			aarMap[temp->Info.username] = temp;
+			aarMap[temp->username] = temp;
 			// We need to add this to out lookup by number map.
 			actByNum[temp->id] = acr;
 			// were done with this file close it.
@@ -1032,19 +1032,19 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	{
 		CurrentAccount = iter->second;
 
-		strlwr( CurrentAccount->lpaarHolding->Info.username );
+		strlwr( CurrentAccount->lpaarHolding->username );
 		// EviLDeD: gonna make username case insensitive so this was just natural to do.
 
 		outStream << "SECTION ACCESS " << CurrentAccount->lpaarHolding->id << "\n";
 		outStream << "{\n";
-		outStream << "NAME " << CurrentAccount->lpaarHolding->Info.username << "\n";
-		outStream << "PASS " << CurrentAccount->lpaarHolding->Info.password << "\n";
+		outStream << "NAME " << CurrentAccount->lpaarHolding->username << "\n";
+		outStream << "PASS " << CurrentAccount->lpaarHolding->password << "\n";
 		if(cwmWorldState->ServerData()->GetExternalAccountStatus())
 		{
 			outStream2 << "SECTION ACCOUNT " << CurrentAccount->lpaarHolding->id << "\n";
 			outStream2 << "{\n";
-			outStream2 << "NAME " << CurrentAccount->lpaarHolding->Info.username << "\n";
-			outStream2 << "PASS " << CurrentAccount->lpaarHolding->Info.password << "\n";
+			outStream2 << "NAME " << CurrentAccount->lpaarHolding->username << "\n";
+			outStream2 << "PASS " << CurrentAccount->lpaarHolding->password << "\n";
 			outStream2 << "TIMEBAN 0\n";
 			outStream2 << "LASTIP 0.0.0.0\n";
 			outStream2 << "PUBLIC OFF\n";
@@ -1058,7 +1058,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
 		{
 			case 0:	
-				sAccountsPath += CurrentAccount->lpaarHolding->Info.username;
+				sAccountsPath += CurrentAccount->lpaarHolding->username;
 				break;
 
 			case 1:	
@@ -1066,7 +1066,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 				char TwoChars[4];
 				memset( TwoChars, 0x00,( sizeof(char)*4 ) );
-				memcpy( TwoChars, CurrentAccount->lpaarHolding->Info.username,( sizeof(char)*3 ) );
+				memcpy( TwoChars, CurrentAccount->lpaarHolding->username,( sizeof(char)*3 ) );
 
 				// Fix for linux, directory names are case sensitive
 
@@ -1104,7 +1104,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		}
 
 		outStream << "PATH " << sAccountsPath << "\n";
-		strcpy( CurrentAccount->lpaarHolding->Info.path, sAccountsPath.c_str() );	
+		strcpy( CurrentAccount->lpaarHolding->path, sAccountsPath.c_str() );	
 
 		// HEX-ify the flags and save them
 		sprintf( TempString, "0x%04X", CurrentAccount->lpaarHolding->bFlags );
@@ -1112,7 +1112,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 		char *l, *email;
 
-		l = strtok(CurrentAccount->lpaarHolding->Info.comment,": ");
+		l = strtok(CurrentAccount->lpaarHolding->comment,": ");
 		email = strtok( NULL, " " );
 
 		if ( email ) 
@@ -1133,7 +1133,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 		// Build the correct Filename here
 		//AccountPath = AccountsPath+AccountPath;
-		string sWorking = sAccountsPath + CurrentAccount->lpaarHolding->Info.username;
+		string sWorking = sAccountsPath + CurrentAccount->lpaarHolding->username;
 		sWorking += ".uad";
 		sAccountsPath = sBasePath;	// Reset the accounts path for the next run.
 
@@ -1165,7 +1165,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		}
 			
 		// EviLDeD: 022102: Ok by request I moved this into username.uad, and placed just EMAIL into the access.adm.
-		AccountStream << "COMMENT " << CurrentAccount->lpaarHolding->Info.comment << "\n";
+		AccountStream << "COMMENT " << CurrentAccount->lpaarHolding->comment << "\n";
 		AccountStream.close();
 	}
 	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
@@ -1278,9 +1278,9 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	toAdd->inworld = INVALIDSERIAL;
 	toAdd->lpaarHolding->id = aarMap.size();//highestAccountNumber++;
 
-	strcpy( toAdd->lpaarHolding->Info.username, username.c_str() );
-	strcpy( toAdd->lpaarHolding->Info.password, password.c_str() );
-	strcpy( toAdd->lpaarHolding->Info.comment, contact.c_str() );
+	strcpy( toAdd->lpaarHolding->username, username.c_str() );
+	strcpy( toAdd->lpaarHolding->password, password.c_str() );
+	strcpy( toAdd->lpaarHolding->comment, contact.c_str() );
 	toAdd->lpaarHolding->bFlags=nPrivs;
 
 	// ok well we need to append data to the end of the access.adm migth as well do it now
@@ -1297,12 +1297,12 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 		// file was not found so account cannot be created.
 		return;
 	}
-	strlwr( toAdd->lpaarHolding->Info.username );
+	strlwr( toAdd->lpaarHolding->username );
 	toAdd->lpaarHolding->id = aarMap.size();
 	ofsOut << "SECTION ACCESS " << toAdd->lpaarHolding->id << "\n";
 	ofsOut << "{\n";
-	ofsOut << "NAME " << toAdd->lpaarHolding->Info.username << "\n";
-	ofsOut << "PASS " << toAdd->lpaarHolding->Info.password << "\n";
+	ofsOut << "NAME " << toAdd->lpaarHolding->username << "\n";
+	ofsOut << "PASS " << toAdd->lpaarHolding->password << "\n";
 
 	// We need to create the path for the accounts and store it to or this will memory error
 	string sAccountPath = cwmWorldState->ServerData()->GetAccountsDirectory();
@@ -1310,7 +1310,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
 	{
 		case 0:	
-			sAccountPath += toAdd->lpaarHolding->Info.username;
+			sAccountPath += toAdd->lpaarHolding->username;
 			break;
 
 		case 1:	
@@ -1318,7 +1318,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 
 			char TwoChars[4];
 			memset( TwoChars, 0x00,( sizeof(char)*4 ) );
-			memcpy( TwoChars, toAdd->lpaarHolding->Info.username,( sizeof(char)*3 ) );
+			memcpy( TwoChars, toAdd->lpaarHolding->username,( sizeof(char)*3 ) );
 
 			// Fix for linux, directory names are case sensitive
 			// dE, De, DE etc.
@@ -1345,7 +1345,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	}
 
 	ofsOut << "PATH " << sAccountPath << "\n";
-	strcpy( toAdd->lpaarHolding->Info.path, sAccountPath.c_str() );	
+	strcpy( toAdd->lpaarHolding->path, sAccountPath.c_str() );	
 
 	// HEX-ify the flags and save them
 	char TempString[128];
@@ -1353,7 +1353,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	ofsOut << "FLAGS " << TempString << "\n";
 
 	char *l, *email;
-	l = strtok(toAdd->lpaarHolding->Info.comment,": ");
+	l = strtok(toAdd->lpaarHolding->comment,": ");
 	email = strtok( NULL, " " );
 
 	if ( email ) 
@@ -1386,7 +1386,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	AccountStream << "\n";
 		
 	// EviLDeD: 022102: Ok by request I moved this into username.uad, and placed just EMAIL into the access.adm.
-	AccountStream << "COMMENT " << toAdd->lpaarHolding->Info.comment << "\n";
+	AccountStream << "COMMENT " << toAdd->lpaarHolding->comment << "\n";
 	AccountStream.close();
 
 	ofsOut.flush();
