@@ -415,14 +415,15 @@ void command_addaccount( cSocket *s)
 		szUsername=strtok(NULL," ");
 		szPassword=strtok(NULL," ");
 		szPrivs=strtok(NULL,"\0");
-		nFlags=atoi(szPrivs);		
 		if(szPassword==NULL||szUsername==NULL)
 			return;
+		if(szPrivs!=NULL)
+			nFlags=atoi(szPrivs);
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
 		actrecTemp=Accounts->GetAccount(szUsername);
 		if(!actrecTemp)
 		{
-			Accounts->AddAccount(szUsername,szPassword,"",nFlags);
+			Accounts->AddAccount(szUsername,szPassword,"NA",nFlags);
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
 			sprintf(szBuffer,"Account Added: %s:%s:%i",szUsername,szPassword,nFlags);
 			sysmessage(s,szBuffer);

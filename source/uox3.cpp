@@ -2272,8 +2272,8 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				else
 					sendItem( mSock, i );
 			}
+			//RefreshItem(i); 
 		}
-		RefreshItem(i); 
 	}
 	else // Trade stuff
 	{

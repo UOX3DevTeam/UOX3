@@ -990,6 +990,8 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	{
 		Console.Error( 1, "| ERROR: Failed to open the shared access  file %s for writing", sAccessPath.c_str() );
 		Console.Error( 1, "| ERROR: Character information will not be saved" );
+		outStream2.close();
+		outStream.close();
 		return -1;
 	}
 
@@ -1003,15 +1005,15 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	outStream << "//         NAME username\n";
 	outStream << "//         PASS password\n";
 	outStream << "//         PATH c:/uox3/Accounts/path2userdata/\n";
-	outStream << "//         FLAGS 0x0008\n";
+	outStream << "//         FLAGS 0x0000\n";
 	outStream << "//         EMAIL NONE\n";
 	outStream << "//      }\n";
 	outStream << "//\n";
 	outStream << "//   FLAGS: \n";
-	outStream << "//      Bit:  0) Banned  1) XGMClient    2) Public   3)\n";
-	outStream << "//            4)         5)              6)          7)\n";
-	outStream << "//            8)         9)             10)         11)\n";
-	outStream << "//           12)        13)             14)         15) GM Account\n";
+	outStream << "//      Bit:  1) Banned  2) XGMClient    4) Public      8) Currently Logged In\n";
+	outStream << "//           16)        32)             64)           128)\n";
+	outStream << "//          256)       512)           1024)          2048)\n";
+	outStream << "//         4096)      8192)          16384)         32768) GM Account\n";
 	outStream << "//------------------------------------------------------------------------------\n";
 	// Sept 26, 2002 - EviLDeD - Since were using the old format as a loading medium we need to make sure that 
 	// the accounts character ids get written or they are lost.
@@ -1037,7 +1039,6 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		outStream << "{\n";
 		outStream << "NAME " << CurrentAccount->lpaarHolding->Info.username << "\n";
 		outStream << "PASS " << CurrentAccount->lpaarHolding->Info.password << "\n";
-		
 		if(cwmWorldState->ServerData()->GetExternalAccountStatus())
 		{
 			outStream2 << "SECTION ACCOUNT " << CurrentAccount->lpaarHolding->id << "\n";
@@ -1275,7 +1276,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	// Assign the AAREC storage to the accounts record.
 	toAdd->lpaarHolding=toAddAA;
 	toAdd->inworld = INVALIDSERIAL;
-	toAdd->lpaarHolding->id = highestAccountNumber++;
+	toAdd->lpaarHolding->id = aarMap.size();//highestAccountNumber++;
 
 	strcpy( toAdd->lpaarHolding->Info.username, username.c_str() );
 	strcpy( toAdd->lpaarHolding->Info.password, password.c_str() );
@@ -1380,7 +1381,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	AccountStream << "LASTIP " << (int)(toAdd->ipaddress[1]>>24) << "." << (int)(toAdd->ipaddress[1]>>16) << "." << (int)(toAdd->ipaddress[1]>>8) << "." << (int)(toAdd->ipaddress[1]%256) << "\n";
 		
 	for( UI08 i = 0; i < 5; i++ )
-		AccountStream << "CHARACTER-" << (i+1) << " -1 [INVALID]" << "]\n"; 
+		AccountStream << "CHARACTER-" << (i+1) << " -1 [INVALID]" << "\n"; 
 		
 	AccountStream << "\n";
 		
