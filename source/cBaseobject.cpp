@@ -81,11 +81,16 @@ void cBaseObject::SetTag( char* tagname, jsval tagval )
 	{
 		if( !strcmp( tagname, tag->name ) ) 
 		{
-			if( tagval == (jsval)0 ) 
+			if( JSVAL_IS_NULL(tagval) ) 
 			{
 				//Delete the tag if they set it to "".
-				tag->prevTag->nextTag = tag->nextTag;
-				tag->nextTag->prevTag = tag->prevTag;
+				if( tag->prevTag != NULL )
+					tag->prevTag->nextTag = tag->nextTag;
+				else
+					firstTag = tag->nextTag;
+
+				if( tag->nextTag != NULL )
+					tag->nextTag->prevTag = tag->prevTag;
 				//delete tag->val;
 				delete tag->name;
 				delete tag;
@@ -826,24 +831,33 @@ bool cBaseObject::DumpBody( BinBuffer &buff ) const
 	
 	for( tag = firstTag; tag != NULL; tag = tag->nextTag ) 
 	{
-		if( JSVAL_IS_STRING( tag->val ) ) 
+		if( !( JSVAL_IS_NULL( tag->val ) ) )
 		{
-			if( tag->val != (jsval)NULL )
-			{
-				buff.PutByte( BASETAG_JS_STR_TAG );
-				buff.PutStr( tag->name );
-				char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tag->val ) );
-				buff.PutStr( s_tagval );
+			try
+			{	
+				if( JSVAL_IS_STRING( tag->val ) ) 
+				{	
+					if( tag->val != JSVAL_NULL )
+					{
+						buff.PutByte( BASETAG_JS_STR_TAG );
+						buff.PutStr( tag->name );
+						char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tag->val ) );
+						buff.PutStr( s_tagval );
+					}
+				}
+				else 
+				{
+					buff.PutByte( BASETAG_JS_INT_TAG );
+					buff.PutStr( tag->name );
+					buff.PutLong( ((UI32)tag->val) );
+				}
 			}
-		} 
-		else 
-		{
-			buff.PutByte( BASETAG_JS_INT_TAG );
-			buff.PutStr( tag->name );
-			buff.PutLong( ((UI32)tag->val) );
+			catch (...)
+			{
+				Console << "| Char/Item consistency not guaranteed, JS-tag value invalid! Crash averted. " << myendl;
+			}
 		}
 	}
-
 	return true;
 }
 
@@ -1796,7 +1810,7 @@ point3 cBaseObject::GetLocation( void ) const
 //o--------------------------------------------------------------------------
 void cBaseObject::SetLocation( point3 &toSet )
 {
-	SetLocation( toSet.x, toSet.y, toSet.z );
+	SetLocation( (short)toSet.x, (short)toSet.y, (short)toSet.z );
 }
 
 

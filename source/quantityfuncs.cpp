@@ -323,8 +323,10 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 	{
 		if( i != NULL )
 		{
-			if( i->GetType() == 1 )
+			if( i->GetType() == 1 )	// Is item an pack or contaier ?
 			{
+				// We do not use items that are in sub packs.
+				return 0;
 				SI32 deld = deleSubItemAmt( i, realID, realColour, amount );
 				total -= deld;
 				amtDeleted += deld;

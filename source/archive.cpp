@@ -130,12 +130,7 @@ void fileArchive( void )
 	backupFile("overflow.wsc", backupDir);
 	backupFile("jails.wsc", backupDir);
 	backupFile("guilds.wsc", backupDir);
-
-	sprintf( filename1, "%sregions.wsc", 
-		 cwmWorldState->ServerData()->GetRootDirectory() );
-	sprintf( filename2, "%s%s/regions.wsc", 
-		 cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
-	fileCopy( filename1, filename2 );
+	backupFile("regions.wsc", backupDir);
 
 	Console << "Finished backup" << myendl;
 	return;

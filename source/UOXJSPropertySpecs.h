@@ -41,7 +41,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "reflectable",	CSP_REFLECTABLE,	JSPROP_ENUMANDPERM },
 	{ "agressiveSpell",	CSP_AGRESSIVESPELL,	JSPROP_ENUMANDPERM },
 	{ "resistable",		CSP_RESISTABLE,		JSPROP_ENUMANDPERM },
-	{ NULL,			-1,			0		   }
+	{ NULL,			-1,			(UI08)0	   }
 };
 
 static JSPropertySpec CRaceProperties[] = 
@@ -60,8 +60,9 @@ static JSPropertySpec CRaceProperties[] =
 	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM },
 	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM },
 	{ "nightVision",	CRP_NIGHTVISION,	JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,			0}
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
+
 
 static JSPropertySpec CRegionProperties[] = 
 {
@@ -83,7 +84,7 @@ static JSPropertySpec CRegionProperties[] =
 	{ "orePrefs",		CREGP_OREPREFERENCES,		JSPROP_ENUMPERMIDX },
 	{ "population",		CREGP_POPULATION,		JSPROP_ENUMPERMRO  },
 	{ "members",		CREGP_MEMBERS,			JSPROP_ENUMPERMIDX },
-	{ NULL,			NULL,				0 }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 static JSPropertySpec CGuildProperties[] = 
@@ -99,7 +100,7 @@ static JSPropertySpec CGuildProperties[] =
 	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM },
 	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM },
 	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,			0 }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 static JSPropertySpec CCharacterProps[] = 
@@ -165,7 +166,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "poison",		CCP_POISON,		JSPROP_ENUMANDPERM },
 	{ "lightlevel",		CCP_LIGHTLEVEL,		JSPROP_ENUMANDPERM },
 	{ "armour",		CCP_ARMOUR,		JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,				0  }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 static JSPropertySpec CItemProps[] = 
@@ -208,7 +209,7 @@ static JSPropertySpec CItemProps[] =
 	{ "maxhp",		CIP_MAXHP,		JSPROP_ENUMANDPERM },
 	{ "rank",		CIP_RANK,		JSPROP_ENUMANDPERM },
 	{ "poison",		CIP_POISON,		JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,			0 }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 static JSPropertySpec CSocketProps[] = 
@@ -249,7 +250,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "clientLetterVer",	CSOCKP_CLIENTLETTERVER,		JSPROP_ENUMANDPERM },
 	{ "clientType",		CSOCKP_CLIENTTYPE,		JSPROP_ENUMANDPERM },
 	{ "target",		CSOCKP_TARGET,			JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,				0 }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 static JSPropertySpec CSkillsProps[] = 
@@ -303,7 +304,7 @@ static JSPropertySpec CSkillsProps[] =
 	{ "meditation",		MEDITATION,		JSPROP_ENUMANDPERM },
 	{ "stealth",		STEALTH,		JSPROP_ENUMANDPERM },
 	{ "removetraps",	REMOVETRAPS,		JSPROP_ENUMANDPERM },
-	{ NULL,			NULL,			0 }
+	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
 #endif

@@ -2319,8 +2319,26 @@ void cTargets::CorpseTarget( cSocket *s )
 		sysmessage( s, 393 );
 }
 
-//Human-corpse carving code added
-//Scriptable carving product added
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	Unknown
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Target carving system.
+//|									
+//|	Modification	-	unknown   	-	Human-corpse carving code added
+//|									
+//|	Modification	-	unknown   	-	Scriptable carving product added
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Fixed erroneous names for body parts 
+//|									& made all body parts that are carved from human corpse	
+//|									lie in same direction.
+//o--------------------------------------------------------------------------o
+//|	Returns				-	N/A 
+//o--------------------------------------------------------------------------o	
 void cTargets::newCarveTarget( cSocket *s, CItem *i )
 {
 	bool deletecorpse = false;
@@ -2340,11 +2358,12 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 
 	char temp[1024];
 	// if it's a human corpse
+	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
 	if( i->GetMoreY() )
 	{
 		// create the Head
-		sprintf( temp, Dictionary->GetEntry( 1057 ), i->GetName2() );
-		c = Items->SpawnItem( s, 1, temp, true, 0x1DA0, 0, false, false );
+		sprintf( temp, Dictionary->GetEntry( 1058 ), i->GetName2() );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DAE, 0, false, false );
 		if( c == NULL ) 
 			return;
 		c->SetLayer( 0x01 );
@@ -2352,7 +2371,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 		c->SetOwner( i->GetOwner() );
 
 		// create the Body
-		sprintf( temp, Dictionary->GetEntry( 1058 ), i->GetName2() );
+		sprintf( temp, Dictionary->GetEntry( 1059 ), i->GetName2() );
 		c = Items->SpawnItem( s, 1, temp, true, 0x1CED, 0, false, false );
 		if( c == NULL ) 
 			return;
@@ -2360,7 +2379,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 		c->SetCont( i->GetSerial() );
 		c->SetOwner( i->GetOwner() );
 
-		sprintf( temp, Dictionary->GetEntry( 1059 ), i->GetName2() );
+		sprintf( temp, Dictionary->GetEntry( 1057 ), i->GetName2() );
 		c = Items->SpawnItem( s, 1, temp, true, 0x1DAD, 0, false, false );
 		if( c == NULL ) 
 			return;
@@ -2370,7 +2389,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 
 		// create the Left Arm
 		sprintf( temp, Dictionary->GetEntry( 1060 ), i->GetName2() );
-		c = Items->SpawnItem( s, 1, temp, true, 0x1DA1, 0, false, false );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1D80, 0, false, false );
 		if( c == NULL ) 
 			return;
 		c->SetLayer( 0x01 );
@@ -2379,7 +2398,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 
 		// create the Right Arm
 		sprintf( temp, Dictionary->GetEntry( 1061 ), i->GetName2() );
-		c = Items->SpawnItem( s, 1, temp, true, 0x1DA2, 0, false, false );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DAF, 0, false, false );
 		if( c == NULL ) 
 			return;
 		c->SetLayer( 0x01 );
@@ -2388,7 +2407,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 
 		// create the Left Leg
 		sprintf( temp, Dictionary->GetEntry( 1062 ), i->GetName2() );
-		c = Items->SpawnItem( s, 1, temp, true, 0x1DA3, 0, false, false );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1DB2, 0, false, false );
 		if( c == NULL ) 
 			return;
 		c->SetLayer( 0x01 );
@@ -2397,7 +2416,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 
 		// create the Right Leg
 		sprintf( temp, Dictionary->GetEntry( 1063 ), i->GetName2() );
-		c = Items->SpawnItem( s, 1, temp, true, 0x1DA4, 0, false, false );
+		c = Items->SpawnItem( s, 1, temp, true, 0x1D81, 0, false, false );
 		if( c == NULL ) 
 			return;
 		c->SetLayer( 0x01 );
@@ -2407,7 +2426,7 @@ void cTargets::newCarveTarget( cSocket *s, CItem *i )
 		//human: always delete corpse!
 		deletecorpse = true;
 		criminal( mChar );
-	}
+	} 
 	else
 	{
 		char sect[512];
@@ -2995,6 +3014,9 @@ void cTargets::SetDirTarget( cSocket *s )
 //|   Function    -  void npcresurrecttarget( CChar *i )
 //|   Date        -  UnKnown
 //|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Made players not appear with full 
+//|									health/stamina after being resurrected by NPC Healer
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Resurrects a character
 //o---------------------------------------------------------------------------o
@@ -3017,9 +3039,10 @@ void cTargets::NpcResurrectTarget( CChar *i )
 		i->SetxID( i->GetOrgID() );
 		i->SetSkin( i->GetxSkin() );
 		i->SetDead( false );
-
-		i->SetHP( i->GetMaxHP() );
-		i->SetStamina( i->GetMaxStam() );
+		// Sept 22, 2002 - Xuri
+		i->SetHP( i->GetMaxHP() / 10 );
+		i->SetStamina( i->GetMaxStam() / 10 );
+		//
 		i->SetMana( i->GetMaxMana() / 10 );
 		i->SetAttacker( INVALIDSERIAL );
 		i->SetAttackFirst( false );
@@ -4120,7 +4143,7 @@ void cTargets::SmeltTarget( cSocket *s )
 	}
 	R32 avgMax = ourCreateEntry->AverageMaxSkill();
 
-	Skills->CheckSkill( mChar, MINING, avgMin, avgMax );
+	Skills->CheckSkill( mChar, MINING, (int)avgMin, (int)avgMax );
 
 	R32 sumAmountRestored = 0.0f;
 

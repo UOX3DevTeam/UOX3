@@ -334,7 +334,7 @@ void loadnewworld( void )
 	itemcount = 0;
 	charcount2 = 1;
 	itemcount2 = 0x40000000;
-	Reticulate();
+	//Reticulate();
 	MapRegion->Load();
 
 	Console << "Loading Guilds                 ";

@@ -89,7 +89,7 @@ void	playMidi( cSocket *s, UI16 number );
 void	dosocketmidi( cSocket *s );
 void	scpSoundEffect( cSocket *mSock, UI16 soundID, bool bAllHear );
 void	scpSoundEffect( cBaseObject *baseObj, UI16 soundID, bool bAllHear );
-void	Reticulate( void );
+//void	Reticulate( void );
 
 // Calculation functions (socket, char, item and so forth)
 UOXSOCKET	calcSocketFromChar( CHARACTER i );

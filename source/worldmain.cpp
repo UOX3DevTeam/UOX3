@@ -115,7 +115,9 @@ bool CWorldMain::Saving( void )
 
 void CWorldMain::RegionSave( void )
 {
-	FILE *regions = fopen( "regions.wsc", "w" );
+	char regionsFile[MAX_PATH];
+	sprintf(regionsFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "regions.wsc");
+	FILE *regions = fopen( regionsFile, "r" );
 	if( regions != NULL )
 	{
 		for( int regionCounter = 0; regionCounter < 256; regionCounter++ )
@@ -124,10 +126,6 @@ void CWorldMain::RegionSave( void )
 				region[regionCounter]->Save( regions );
 		}
 		fclose( regions );
-	}
-	else
-	{
-		Console.Error( 1, "Failed to open %s for writing", "regions.wsc" );
 	}
 }
 

@@ -221,6 +221,34 @@ void cSpawnRegion::SetNextTime( SI32 newVal )
 	nexttime = newVal;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	void cSpawnRegion::SetZ( SI08 newVal )
+//|	Date					-	04/22/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+void cSpawnRegion::SetZ( SI08 newVal )
+{
+	z = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	SI08 cSpawnRegion::GetZ( void )
+//|	Date					-	04/22/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+SI08 cSpawnRegion::GetZ( void ) const
+{
+	return z;
+}
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	SI32 GetY1( void )
 //|	Programmer	-	Zane

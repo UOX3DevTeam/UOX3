@@ -43,12 +43,12 @@
 //o---------------------------------------------------------------------------o
 // product info
 //o---------------------------------------------------------------------------o
-#define VER "0.97.00"
+#define VER "0.97.01"
 // EviLDeD: 012402: Please while we are on a build run for this version make sure
 //									you increment this build number? Im am gonna up the build Num
 //									here cause Oi was told that MrFixit, and some others were in
 //									code and made some changes.
-#define BUILD "20"
+#define BUILD "5"
 #define REALBUILD "0"
 #define SVER "2.0"
 #define CVER "2.0"

@@ -37,6 +37,8 @@ protected:
 	SI16		y1;					// Top left y
 	SI16		y2;					// Bottom right y
 	
+	SI08		z;					// Z position of spawned items
+
 	SI16		call;				// # of times that an NPC or ITEM is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
 
@@ -64,6 +66,7 @@ public:
 	SI16		GetY1( void ) const;
 	SI16		GetX2( void ) const;
 	SI16		GetY2( void ) const;
+	SI08		GetZ( void ) const;
 
 	void		SetName( const char *newName );
 	void		SetRegionNum( SI32 newVal );
@@ -76,6 +79,7 @@ public:
 	void		SetY1( SI16 newVal );
 	void		SetX2( SI16 newVal );
 	void		SetY2( SI16 newVal );
+	void		SetZ( SI08 newVal );
 
 	void		checkSpawned();
 	void		deleteSpawnedChar( CChar *toDelete );

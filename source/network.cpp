@@ -190,8 +190,8 @@ void cNetworkStuff::Login2( cSocket *s, ACTREC *ourAccount )
 		physicalServer *sData = cwmWorldState->ServerData()->GetServerEntry( i );
 		newlist2[0] = (UI08)((i+1)>>8);
 		newlist2[1] = (UI08)((i+1)%256);
-		strcpy( &newlist2[2], sData->name.c_str() );
-		UI32 ip = htonl( inet_addr( sData->ip.c_str() ) );
+		strcpy( &newlist2[2], sData->getName().c_str() );
+		UI32 ip = htonl( inet_addr( sData->getIP().c_str() ) );
 		newlist2[36] = (UI08)( ip>>24 );
 		newlist2[37] = (UI08)( ip>>16 );
 		newlist2[38] = (UI08)( ip>>8 );
@@ -306,18 +306,20 @@ void cNetworkStuff::sockInit( void )
 	faul = false;
 	
 #ifdef __NT__
-	wVersionRequested = MAKEWORD( 2, 0 );
-	err = WSAStartup( wVersionRequested, &wsaData );
-	if( err )
-	{
-		Console.Error( 0, " Winsock 2.0 not found..." );
-		keeprun = false;
-		error = true;
-		kr = false;
-		faul = true;
-		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
-		return;
-	}
+	// EviLDeD: 042102: Moved this into its own, at the start of ther server run.
+	//---------------
+	//wVersionRequested = MAKEWORD( 2, 0 );
+	//err = WSAStartup( wVersionRequested, &wsaData );
+	//if( err )
+	//{
+	//	Console.Error( 0, " Winsock 2.0 not found..." );
+	//	keeprun = false;
+	//	error = true;
+	//	kr = false;
+	//	faul = true;
+	//	Shutdown( FATAL_UOX3_ALLOC_NETWORK );
+	//	return;
+	//}
 #else
 	int on = 1;
 #endif

@@ -591,6 +591,41 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date					-	04/20/2002
+//|	Developer(s)	-	Rukus
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Kill all related timers that have been association with
+//|									an item or character.
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o	
+JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 0 )
+	{
+		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	cBaseObject *myObj = static_cast<cBaseObject*>(JS_GetPrivate(cx, obj));
+	if(myObj==NULL)
+	{
+		MethodError("KillTimers: Invalid object assigned.");
+		return JS_FALSE;
+	}
+	SERIAL mySer = myObj->GetSerial();
+	for(teffect_st *Effect=Effects->First(); !Effects->AtEnd(); Effect = Effects->Next())
+	{
+		if(mySer==Effect->Destination())
+			Effects->DelCurrent();
+	}
+	return JS_TRUE;
+}
+
+
 JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
@@ -1199,11 +1234,14 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	
 	char *TagName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	
+	if( argc == 2 && JSVAL_IS_STRING( argv[1] ) && !strcmp( "", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) ) )
+		argv[1] = JSVAL_NULL;
 
 	if( argc == 2 )
 		myObj->SetTag( TagName, argv[1] );
 	else
-		myObj->SetTag( TagName, STRING_TO_JSVAL( "" ) );
+		myObj->SetTag( TagName, JSVAL_NULL );
 
 	return JS_TRUE;
 }

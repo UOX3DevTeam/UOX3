@@ -3112,7 +3112,7 @@ bool CChar::IsValidMount( void ) const
                    case 0xBB: //ridgeback ridgeback 
                    case 0xC8: //equines horse dappled brown 
                    case 0x334: //equines horse dappled brown 
-                   case 0x123: //equines horse dappled brown pack 
+                   //case 0x123: //equines horse dappled brown pack 
                    case 0xE2: //equines horse dappled grey 
                    case 0x34: //eequines horse dappled grey 
                    case 0xCC: //equines_horse dark brown 
@@ -5287,3 +5287,21 @@ UI16 CChar::GetSpeechCallback( void ) const
 {
 	return speechCallback;
 }
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void CChar::IsInBank( CItem* i )
+//|   Date        -  May 3rd, 2002
+//|   Programmer  -  sereg
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Determines if the item is in the player's bank box (recursively)
+//o---------------------------------------------------------------------------o
+bool CChar::IsInBank( CItem* i )
+{
+	if( i->GetMoreX() == 1 )
+		return true;
+	else if( i->GetCont() != INVALIDSERIAL && i->GetCont() >= 0x40000000 )
+		return this->IsInBank( calcItemObjFromSer( i->GetCont() ) );
+	else
+		return false;
+}
+

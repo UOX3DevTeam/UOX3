@@ -674,10 +674,32 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	return true;
 }
 
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	bool cMovement::CheckForStealth( CChar *c )
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	Unknown
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Check to see if character is in stealth mode. 
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Unhide characters who are mounted
+//|									while trying to stealth.
+//o--------------------------------------------------------------------------o
+//|	Returns				- Always returns true it seems
+//o--------------------------------------------------------------------------o	
 bool cMovement::CheckForStealth( CChar *c )
 {
 	if( c->GetHidden() && !c->IsPermHidden() )
 	{
+		// Sept 22, 2002 - Xuri
+		if(c->IsOnHorse())
+		{
+			if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
+				c->ExposeToView();
+		}
+		//
 		if( c->GetStealth() != -1 )
 		{
 			c->SetStealth( c->GetStealth() + 1 );
@@ -1126,9 +1148,10 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
+						soundeffect( c, 520 );
 						if( !Magic->CheckResist( NULL, c, 4 ) )
 							Magic->MagicDamage( c, tItem->GetMoreX() / 300 );
-						soundeffect( c, 520 );
+
 						break;
 					case 0x3915:
 					case 0x3920:	// Poison field
@@ -1138,9 +1161,10 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
+						soundeffect( c, 520 );
 						if( !Magic->CheckResist( NULL, c, 5 ) )
 							Magic->PoisonDamage( c, 1 );
-						soundeffect( c, 520 );
+
 						break;
 					case 0x3979:	// Paralyze Field
 					case 0x3967:
@@ -1150,9 +1174,10 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
+						soundeffect( c, 0x0204 );
 						if( !Magic->CheckResist( NULL, c, 6 ) )
 							tempeffect( c, c, 1, 0, 0, 0 );
-						soundeffect( c, 0x0204 );
+
 						break;
 					default:
 						if( id < 0x4000 )
@@ -1433,6 +1458,21 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 	}
 }
 
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	void cMovement::NpcMovement( CChar *i )
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	Unknown
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Calculate, and handle NPC AI movement
+//|									
+//|	Modification	-	09/22/2002	-	Fixed fleeing NPCs by reversing values for 
+//|									xfactor & yfactor lines
+//o--------------------------------------------------------------------------o
+//|	Returns				- NA
+//o--------------------------------------------------------------------------o	
 void cMovement::NpcMovement( CChar *i )
 {
     register int k;
@@ -1486,7 +1526,7 @@ void cMovement::NpcMovement( CChar *i )
                 if( isOnline( &chars[k] ) || chars[k].IsNpc() )
                 {
 					UI08 charDir = getCharDir( i, chars[k].GetX(), chars[k].GetY() );
-					if( getCharDist( i, &chars[k] ) > 1 && ( charDir >= 0 && charDir < 8 ) )
+					if( getCharDist( i, &chars[k] ) > 1 && charDir < 8 )
                     {
                         PathFind( i, chars[k].GetX(), chars[k].GetY() );
 						j = i->PopDirection();
@@ -1533,23 +1573,23 @@ void cMovement::NpcMovement( CChar *i )
 
 					SI16 xfactor = 0;
 					SI16 yfactor = 0;
-
+					// Sept 22, 2002 - Xuri
 					if( myx != i->GetX() )
 					{
 						if( myx < i->GetX() )
-							xfactor = -1;
-						else
 							xfactor = 1;
+						else
+							xfactor = -1;
 					}
 
 					if( myy != i->GetY() )
 					{
 						if( myy < i->GetY() )
-							yfactor = -1;
-						else
 							yfactor = 1;
+						else
+							yfactor = -1;
 					}
-
+					//
 					myx += (SI16)( xfactor * mydist );
 					myy += (SI16)( yfactor * mydist );
 

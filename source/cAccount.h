@@ -47,6 +47,7 @@ public:
 	cAccounts( const char *accountsfile );
 	~cAccounts();
 
+	virtual BOOL 	CheckAccountsStamp( void );
 	virtual long	LoadAccessList( void );
 	virtual long	LoadAccounts( void );
 	virtual long	SaveAccounts( void );

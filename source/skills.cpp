@@ -63,7 +63,7 @@ void cSkills::Tailoring( cSocket *s )
 			if( realID == 0x1078 )
 			{
 				if( i->GetColour() == 0x00EF )
-					mChar->SetTailItem( -17 );	// this is better
+					mChar->SetTailItem( (unsigned long)-17 );	// this is better
 				else
 					mChar->SetTailItem( INVALIDSERIAL );
 			}
@@ -1247,6 +1247,9 @@ void cSkills::MakePizza( cSocket *s )
 //|   Function    :  void cSkills::Hide( cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Support for user config of hiding 
+//|									while mounted
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses hiding skill
 //o---------------------------------------------------------------------------o
@@ -1331,6 +1334,9 @@ void cSkills::Stealth( cSocket *s )
 //|   Function    :  void cSkills::TreeTarget( cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Changed default minimum range for 
+//|									chopping trees from unrealistic 5 to logical 2 :)
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses an item and targets a tree
 //o---------------------------------------------------------------------------o
@@ -1360,7 +1366,7 @@ void cSkills::TreeTarget( cSocket *s )
 		mChar->SetDir( dir );
 		mChar->Teleport();
 	}
-	if( cx > 5 || cy > 5 )
+	if( cx > 2 || cy > 2 )
 	{
 		sysmessage( s, 393 );
 		return;
@@ -2995,6 +3001,11 @@ void cSkills::AnatomyTarget( cSocket *s )
 //|   Function    :  void cSkills::TameTarget( cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Changed sysmessage at end of taming 
+//|									function to say "You are too far away" instead of 
+//|									"You can't tame that!" Easier for the users to understand 
+//|									what's wrong when they can't tame due to being too far away...
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player attempts to tame an NPC
 //o---------------------------------------------------------------------------o
@@ -3061,7 +3072,11 @@ void cSkills::TameTarget( cSocket *s )
 			npcToggleCombat( i );
 	}
 	else
-		sysmessage( s, 1603 );
+	{
+		// Sept 22, 2002 - Xuri
+		sysmessage( s, 400 );
+		//
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -5458,7 +5473,11 @@ void cSkills::Load( void )
 //o---------------------------------------------------------------------------o
 void cSkills::SaveResources( void )
 {
-	FILE *toWrite = fopen( "resource.bin", "wb" );
+	char resourceFile[MAX_PATH];
+
+	sprintf(resourceFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "resource.bin");
+
+	FILE *toWrite = fopen( resourceFile, "wb" );
 	if( toWrite != NULL )
 	{
 		for( UI16 gridX = 0; gridX < 610; gridX++ )
@@ -5488,8 +5507,12 @@ void cSkills::LoadResourceData( void )
 	UI32 resLog = cwmWorldState->ServerData()->GetResLogs();
 	UI32 oreTime = BuildTimeValue( cwmWorldState->ServerData()->GetResOreTime() );
 	UI32 logTime = BuildTimeValue( cwmWorldState->ServerData()->GetResLogTime() );
+	char resourceFile[MAX_PATH];
 
-	FILE *binData = fopen( "resource.bin", "rb" );
+	sprintf(resourceFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "resource.bin");
+
+	FILE *binData = fopen( resourceFile, "rb" );
+
 	bool fileExists = ( binData != NULL );
 
 	resourceEntry toRead;

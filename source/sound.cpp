@@ -409,7 +409,7 @@ void bgsound( CChar *s )
 	}
 }
 
-#ifdef _MSVC
+/*#ifdef _MSVC
 #include <mmsystem.h>
 #pragma comment(lib,"WinMM.lib")
 #pragma pack(1)
@@ -532,3 +532,4 @@ void Reticulate( void )
 }
 
 #endif
+*/

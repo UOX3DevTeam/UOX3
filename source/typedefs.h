@@ -279,8 +279,8 @@ const UI08 RUNNORTHWEST	= NORTHWEST|0x80;
 
 #define HASHMAX 1031 // hashmax must be a prime for maximum performce.
 
-#define DEFAULTCHARTER "UOX3 Guildstone"
-#define DEFAULTWEBPAGE "http://www.uox3.net/"
+#define DEFAULTCHARTER "UOX3 DevTeam Guildstone"
+#define DEFAULTWEBPAGE "http://www.uox3dev.net/"
 
 // Item types when collided with
 

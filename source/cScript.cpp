@@ -268,7 +268,7 @@ cScript::cScript( string targFile ) : isFiring( false )
 	SocketProto =	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
 
 	// Init the global Spells[] object
-	JS_DefineObject(targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, NULL );
+	JS_DefineObject(targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 
 	// let's acquire items 0 and 1, and chars 0 and 1, by default, so that
 	// we can reuse these for parameter stuff
@@ -1110,6 +1110,53 @@ bool cScript::OnUse( CChar *user, CItem *iUsing )
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
 	return ( retVal == JS_TRUE );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
+//|	Date					-	04/18/2002
+//|	Developer(s)	-	MACTEP
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Event to signal when an item is dropped on an NPC
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o	
+bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
+{
+	if( srcChar == NULL || dstChar == NULL || item == NULL)
+		return false;
+	if( !EventExists( seOnDropItemOnNpc ) )
+		return false;
+		
+	jsval Func = JSVAL_NULL;
+	JS_GetProperty( targContext, targObject, "onDropItemOnNpc", &Func );
+	
+	if( Func == JSVAL_VOID )
+	{
+		SetEventExists( seOnUse, false );
+		return false;
+	}
+
+	jsval rval, params[2];
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, srcChar );
+	JS_SetPrivate( targContext, charObjects[1].toUse, dstChar );
+	JS_SetPrivate( targContext, itemObjects[0].toUse, item );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+	params[2] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnNpc", 3, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnUse, false );
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+	JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE ) && (JSVAL_TO_BOOLEAN(rval) == JS_TRUE);
+	
 }
 
 bool cScript::OnEntrance( CMultiObj *left, cBaseObject *leaving )

@@ -60,7 +60,8 @@ enum ScriptEvent
 	seOnSpeechInput,
 	seOnSpellGain,
 	seOnSpellLoss,
-	seOnSkillCheck
+	seOnSkillCheck,
+	seOnDropItemOnNpc
 };
 
 struct SEGump
@@ -208,6 +209,8 @@ public:
 	bool		OnSpellGain( CItem *book, const UI08 spellNum );
 	bool		OnSpellLoss( CItem *book, const UI08 spellNum );
 	bool		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill );
+	// MACTEP: 041802: Support for new event
+	bool		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i);
 
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 

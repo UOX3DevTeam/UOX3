@@ -221,7 +221,7 @@ long cAccounts::LoadAccessList( void )
 
 	ifstream ifsFile;
 	char szLine[128];
-	char buffer[512];
+	char buffer[MAX_PATH];
 	const char *path = cwmWorldState->ServerData()->GetAccessDirectory();
 	UI32 slen = strlen( path );
 	if( path[slen-1] == '\\' || path[slen-1] == '/' )
@@ -356,19 +356,74 @@ long cAccounts::LoadAccessList( void )
 			}
 			ifsFile.getline( szLine, 127 );
 		}
-		else
-			ifsFile.getline( szLine, 127 );
+		//else
+		//	ifsFile.getline( szLine, 127 );
 	}
 
-
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// Until the problems with the new format is sorted out, this 
-	// will keep it from bugging out again
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//return -1;
-
-
 	return aarMap.size();
+}
+
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	BOOL cAccounts::CheckAccountsStamp( void )
+//|	Date					-	09/20/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Do a quick open, read, and close of the accounts.adm
+//|									file. If this file does not exist then ignore. If the
+//|									file exists it will check the first line, and compare it
+//|									to the datestamp that is associated with the file. If
+//|									different then we reload the acccounts.adm file for new
+//|									accounts.
+//o--------------------------------------------------------------------------o
+//|	Returns				- [TRUE] if accounts.adm need to be read [FALSE] otherwise
+//o--------------------------------------------------------------------------o	
+BOOL cAccounts::CheckAccountsStamp( void )
+{
+	char szLine[128];
+	FILE *fpFile=NULL;
+#ifdef __LINUX__
+	return FALSE;
+#else
+	// open the accounts.adm and grab the first line
+	if((fpFile=fopen(PathToFile.c_str(),"r"))==NULL)
+	{
+		ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
+		ErrDesc = "Unable to open the specified file";
+		return FALSE;
+	}
+	// Need an open file handle to use this funtion	
+	FILETIME ftFileTime;
+	FILETIME ftStampTime;
+	if(!GetFileTime(fpFile,NULL,NULL,&ftFileTime))
+	{
+		// Ok there are an error getting the last written date. Assume default operation.
+		fclose(fpFile);
+		return FALSE;
+	}
+	// Get the first line and close
+	fgets( szLine, 127, fpFile );
+	fclose(fpFile);
+	// Process the timestamp line and then compare
+	char *c,*l,*r;
+	c=l=r=NULL;
+	c=strtok(szLine,"-");
+	if(strcmp("DS",strupr(c))!=0)
+	{
+		// ok this is not a datestamp
+		return FALSE;
+	}
+	l=strtok(NULL,"-");
+	r=strtok(NULL,"\n");
+	ftStampTime.dwHighDateTime=atoi(l);
+	ftStampTime.dwLowDateTime =atoi(r);
+	if(CompareFileTime(&ftFileTime,&ftStampTime)!=0)
+		return TRUE;
+	else
+		return FALSE;
+#endif
 }
 
 //o--------------------------------------------------------------------------o
@@ -381,6 +436,11 @@ long cAccounts::LoadAccessList( void )
 //|	Modification	-	02/11/2002	-	EviLDeD: Since saves have changed to output
 //|									new format, we need only look for an old version and 
 //|									convert it to the new version. Or load the new version.
+//|									
+//|	Modification	-	09/20/2002	-	Check accounts.adm for datestamp. If date-
+//|									stamp is greater than laststamp, then the accounts.adm
+//|									file will be read in and parsed. This should help make it
+//|									significantly easier to create new accounts.
 //o--------------------------------------------------------------------------o
 //|	Description		-	This function handles the meat of accounts processing.
 //|	(obsolete)			[mode] : (0) Text, (1) Binary, (2) Detect
@@ -400,7 +460,7 @@ long cAccounts::LoadAccounts( void )
 	// Ok the first thing in that we have to do is check for the new system first.
 	// So we will look for the access.adm file. If it exists we know that its new format
 	// otherwise its the old format so we will have to adapt.
-	if(LoadAccessList()<0)
+	if(LoadAccessList()<0 && CheckAccountsStamp()==FALSE)
 	{	
 		// There was no access.adm file so we should read in old format
 
@@ -435,7 +495,7 @@ long cAccounts::LoadAccounts( void )
 				catch(...)
 				{
 					// Need to call from globalheap
-					Console << "\n****\nThe memory allocation was bad.\n";
+					Console << "|\n| ERROR: The memory allocation was bad.\n";
 					return -1;
 				}
 
@@ -484,8 +544,8 @@ long cAccounts::LoadAccounts( void )
 					for(int uu=0;uu<5;uu++)
 					{
 						actPointer->characters[uu] = alreadyExists->characters[uu];
-						if(actPointer->lpaarHolding->id==0)
-							actPointer->characters[uu]->SetCommandLevel( GMCMDLEVEL );
+						//if(actPointer->lpaarHolding->id==0)
+						//	actPointer->characters[uu]->SetCommandLevel( GMCMDLEVEL );
 					}
 					//actPointer->characters[1] = alreadyExists->characters[1];
 					//actPointer->characters[2] = alreadyExists->characters[2];
@@ -550,7 +610,10 @@ long cAccounts::LoadAccounts( void )
 				}
 				else if( !stricmp( token[0], "CONTACT" ) || !stricmp( token[0], "EMAIL" ))
 				{
-					strcpy( actPointer->lpaarHolding->Info.comment, token[1] );
+					if(strlen(token[1])<=0)
+						strcpy( actPointer->lpaarHolding->Info.comment, "NA" );
+					else
+						strcpy( actPointer->lpaarHolding->Info.comment, token[1] );
 				}
 				else if( !stricmp( token[0], "BANDURATION" ) )
 				{	// This is the new conversion from TIMEBAN
@@ -878,28 +941,46 @@ long cAccounts::SaveAccounts( void )
 long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 {	
 	ofstream outStream;
-	char TempString[512];
+	char TempString[MAX_PATH];
 	ACTREC *CurrentAccount = NULL;
 	ACTIREC_ITERATOR iter;
 
 	// Please let us use lowercase names here or we'll run into the 
 	// linux trap (case sensitive names)
-	// string AccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
+	string sRealAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
+	string sRealAccountsPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+	string sAccessPath = AccessPath;
+	string sAccountsPath= AccountsPath;
+	string sBasePath;
+	if( AccessPath.size() <= 0 )
+	{
+		// were gonna use the default path then. kinda of error checking.
+		sAccessPath = sRealAccessPath;
+	}
+	if( AccountsPath.size() <= 0 )
+	{
+		// were gonna use the default path to accounts then
+		sAccountsPath = sRealAccountsPath;
+	}
+	// Create our directory paths to use for this call.
+	if( sAccessPath[ sAccessPath.size() - 1 ] != '/' && sAccessPath[ sAccessPath.size() - 1 ] != '\\' )
+		sAccessPath += '/'; 
 
-	//if( '\\' == tpath[strlen(tpath)-1] || '/' == tpath[strlen(tpath)-1])
-	if( ( AccessPath[ AccessPath.size() - 1 ] != '/' ) && ( AccessPath[ AccessPath.size() - 1 ] != '\\' ) )
-		AccessPath += '/'; // I think it's sufficient to add a / here
+	sAccessPath += "access.adm"; 
 
-	// note: what i meant was just that the "A" should be "a" - darkstorm
-	AccessPath += "access.adm"; // Lowercase please (:
+
+
+	if( sAccountsPath[ sAccountsPath.size() - 1 ] != '/' && sAccountsPath[ sAccountsPath.size() - 1 ] != '\\' )
+		sAccountsPath += '/'; // I think it's sufficient to add a / here
+	sBasePath = sAccountsPath;	
 	
-	outStream.open( AccessPath.c_str(), ios::out );
+	outStream.open( sAccessPath.c_str(), ios::out );
 
 	// Error handling
 	if( !outStream.is_open() )
 	{
-		Console.Error( 1, "Failed to open the shared access  file %s for writing", AccessPath.c_str() );
-		Console.Error( 1, "Character information will not be saved" );
+		Console.Error( 1, "| ERROR: Failed to open the shared access  file %s for writing", sAccessPath.c_str() );
+		Console.Error( 1, "| ERROR: Character information will not be saved" );
 		return -1;
 	}
 
@@ -924,22 +1005,12 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	outStream << "//           12)        13)             14)         15) GM Account\n";
 	outStream << "//------------------------------------------------------------------------------\n";
 	
-	// We need that Path more often
-	string RealAccountsPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+	// Walk all existing accounts and save the information about them to access.adm  and to the account-files
 
-	if( ( AccountsPath[ AccountsPath.size() - 1 ] != '/' ) && ( AccountsPath[ AccountsPath.size() - 1 ] != '\\' ) )
-		AccountsPath += '/'; // I think it's sufficient to add a / here
-	
-	// Walk all existing accounts
-	// and save the information about them
-	// to access.adm 
-	// and to the account-files
 	for( iter = actByNum.begin(); iter != actByNum.end(); iter++ )
 	{
 		CurrentAccount = iter->second;
 
-		// We need to have the Lowercase username
-		// EviLDeD: We dont have to assign it to a new char* we just need to make it lower.
 		strlwr( CurrentAccount->lpaarHolding->Info.username );
 		// EviLDeD: gonna make username case insensitive so this was just natural to do.
 
@@ -952,43 +1023,36 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		// 0: Each Account has an own directory
 		// 1: Each Account is stored in a Directory 'AB' where ab are the first 2 chars of the account-name
 		// 2: Each Account-file is stored directly in the Account-directory
-		string AccountPath = RealAccountsPath;
-		if( ( AccountPath[ AccountPath.size() - 1 ] != '/' ) && ( AccountPath[ AccountPath.size() - 1 ] != '\\' ) )
-			AccountPath += '/'; // I think it's sufficient to add a / here
 
-		//{
 		switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
 		{
 			case 0:	
-				AccountPath += CurrentAccount->lpaarHolding->Info.username;
+				sAccountsPath += CurrentAccount->lpaarHolding->Info.username;
 				break;
 
 			case 1:	
-				// Get the first two characters of the username
+				// Get the first three characters of the username
 
 				char TwoChars[4];
 				memset( TwoChars, 0x00,( sizeof(char)*4 ) );
 				memcpy( TwoChars, CurrentAccount->lpaarHolding->Info.username,( sizeof(char)*3 ) );
 
 				// Fix for linux, directory names are case sensitive
-				// dE, De, DE etc.
+
 				strlwr( TwoChars );
 
 				// Build the path for the Directory we'll save our information in
-				AccountPath += TwoChars;
-				AccountPath += "/";
-				// We also need to put it back in the access.adm file. No wonder people are having trouble
+				sAccountsPath += TwoChars;
+				sAccountsPath += "/";
+
 				break;
 		} // switch( )
 
-		//AccountsPath += AccountPath;
-		if( !makeDirectory( AccountPath.c_str() ) )
+		if( !makeDirectory( sAccountsPath.c_str() ) )
+
 		{
-			// Now when this function return it will have the proper loaded bool. ie 
-			// if the directory failes but exists it still tells us that we created 
-			// it. Have to keep track of the logic. We can have it return false if 
-			// the directory exists, only if there was a problem creating it and
-			// it was never created.
+			Console.Error( 1, "| ERROR: Failed to create directory", sAccountsPath.c_str() );
+			Console.Error( 1, "| ERROR: Accounts Path Information will not be saved" );
 			outStream << "PATH ERROR\n";
 			outStream << "FLAGS 0x0001\n";
 			outStream << "}\n";
@@ -996,16 +1060,12 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 			return -1;
 		}
 
-		outStream << "PATH " << AccountsPath << "\n";
-		strcpy( CurrentAccount->lpaarHolding->Info.path, AccountsPath.c_str() );	// copy to accounts structure just in case this is the conversion run
+		outStream << "PATH " << sAccountsPath << "\n";
+		strcpy( CurrentAccount->lpaarHolding->Info.path, sAccountsPath.c_str() );	
 
 		// HEX-ify the flags and save them
 		sprintf( TempString, "0x%04X", CurrentAccount->lpaarHolding->bFlags );
 		outStream << "FLAGS " << TempString << "\n";
-
-		// We should eventually add a new field called "EMAIL"
-		// EviLDeD: 022102: OK then lets have on. Convert if there is the appropriate field in comments(WWWAccounts storage field)
-		//									We need to move comment to the username.uad file though.
 
 		char *l, *email;
 
@@ -1019,22 +1079,20 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 		outStream << "}\n\n";
 
-		//outStream.flush();
-		//outStream.close();
-		
 		// Build the correct Filename here
-		// AccountPath + Username + .uad
 		//AccountPath = AccountsPath+AccountPath;
-		AccountsPath = AccountPath + CurrentAccount->lpaarHolding->Info.username + ".uad";
-		//AccountsPath += CurrentAccount->lpaarHolding->Info.username;
-		//AccountsPath += ".uad";
+		string sWorking = sAccountsPath + CurrentAccount->lpaarHolding->Info.username;
+		sWorking += ".uad";
+		sAccountsPath = sBasePath;	// Reset the accounts path for the next run.
 
 		// Then open the file and write out all information
-		ofstream AccountStream( AccountsPath.c_str(), ios::out );
+		ofstream AccountStream( sWorking.c_str(), ios::out );
 
-		AccountStream << "//AI2.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+		AccountStream << "//AI2.1" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
-		AccountStream << "//" << AccountsPath << "\n//   UOX3 uses this file to store any extra administration info\n";
+		AccountStream << "// UAD Path: " << sAccountsPath << "\n";
+		AccountStream << "//------------------------------------------------------------------------------\n";
+		AccountStream << "// UOX3 uses this file to store any extra administration info\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
 		AccountStream << "ID " << CurrentAccount->lpaarHolding->id << "\n";
 		AccountStream << "BANTIME " << CurrentAccount->ban_duration << "\n";
@@ -1051,8 +1109,8 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	}
 	outStream.flush();
 	outStream.close();
-	// See if this clears all this up..
-	AccountsPath="";
+
+
 	// We return the size of the map. Actual number of accounts in the map
 	return (long)actMap.size();
 }
@@ -1131,6 +1189,9 @@ bool cAccounts::AddCharacterToAccount( SI32 accountid, CChar *object)
 //|									
 //|	Modification	-	02/21/2002	-	Actualy implemented the new isolation system
 //|									instead if just commenting about it ;-P
+//|									
+//|	Modification	-	04/22/2002	-	Ok sO I missed some things! Append to access.adm
+//|									and create the actual account dir, AND create the username.uad file
 //o--------------------------------------------------------------------------o
 //|	Returns				- N/A
 //o--------------------------------------------------------------------------o	
@@ -1150,39 +1211,119 @@ void cAccounts::AddAccount( string username, string password, string contact )
 	strcpy( toAdd->lpaarHolding->Info.password, password.c_str() );
 	strcpy( toAdd->lpaarHolding->Info.comment, contact.c_str() );
 
-	actMap[username] = toAdd;
-	aarMap[username] = toAddAA;
-	actByNum[toAdd->lpaarHolding->id] = toAdd;
+	// ok well we need to append data to the end of the access.adm migth as well do it now
+	string sAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
+	if( sAccessPath[sAccessPath.size()-1] != '/' && sAccessPath[sAccessPath.size()-1] != '\\' )
+		sAccessPath += "/access.adm";
+	else
+		sAccessPath += "access.adm";
+	ofstream ofsOut;
+	ofsOut.open( sAccessPath.c_str(), ios::out|ios::app );
+
+	if(!ofsOut.is_open())
+	{
+		// file was not found so account cannot be created.
+		return;
+	}
+	strlwr( toAdd->lpaarHolding->Info.username );
+	toAdd->lpaarHolding->id = aarMap.size();
+	ofsOut << "SECTION ACCESS " << toAdd->lpaarHolding->id << "\n";
+	ofsOut << "{\n";
+	ofsOut << "NAME " << toAdd->lpaarHolding->Info.username << "\n";
+	ofsOut << "PASS " << toAdd->lpaarHolding->Info.password << "\n";
 
 	// We need to create the path for the accounts and store it to or this will memory error
-	string AccountPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+	string sAccountPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+
 	switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
 	{
 		case 0:	
-			AccountPath += toAdd->lpaarHolding->Info.username;
+			sAccountPath += toAdd->lpaarHolding->Info.username;
 			break;
 
 		case 1:	
 			// Get the first two characters of the username
 
-			char TwoChars[3];
-			memset( TwoChars, 0x00,( sizeof(char)*3 ) );
-			memcpy( TwoChars, toAdd->lpaarHolding->Info.username,( sizeof(char)*2 ) );
+			char TwoChars[4];
+			memset( TwoChars, 0x00,( sizeof(char)*4 ) );
+			memcpy( TwoChars, toAdd->lpaarHolding->Info.username,( sizeof(char)*3 ) );
 
 			// Fix for linux, directory names are case sensitive
 			// dE, De, DE etc.
 			strlwr( TwoChars );
 
 			// Build the path for the Directory we'll save our information in
-			AccountPath += TwoChars;
-			AccountPath += "/";
+			sAccountPath += TwoChars;
+			sAccountPath += "/";
 			
 			break;
 	} // switch( )
 
-	strcpy( toAdd->lpaarHolding->Info.path, AccountPath.c_str() );
+	strcpy( toAdd->lpaarHolding->Info.path, sAccountPath.c_str() );
 
-	makeDirectory( AccountPath.c_str() );
+	if( !makeDirectory( sAccountPath.c_str() ) ) 
+	{
+			Console.Error( 1, "| ERROR: Failed to create directory", sAccountPath.c_str() );
+			Console.Error( 1, "| ERROR: Accounts Path Information will not be saved" );
+			ofsOut << "PATH ERROR\n";
+			ofsOut << "FLAGS 0x0001\n";
+			ofsOut << "}\n";
+			ofsOut.close();
+			return;
+	}
+
+	ofsOut << "PATH " << sAccountPath << "\n";
+	strcpy( toAdd->lpaarHolding->Info.path, sAccountPath.c_str() );	
+
+	// HEX-ify the flags and save them
+	char TempString[128];
+	sprintf( TempString, "0x%04X", toAdd->lpaarHolding->bFlags );
+	ofsOut << "FLAGS " << TempString << "\n";
+
+	char *l, *email;
+	l = strtok(toAdd->lpaarHolding->Info.comment,": ");
+	email = strtok( NULL, " " );
+
+	if ( email ) 
+		ofsOut << "EMAIL " << email << "\n";
+	else
+		ofsOut << "EMAIL NONE\n";
+
+	ofsOut << "}\n\n";
+
+	// Build the correct Filename here
+	//AccountPath = AccountsPath+AccountPath;
+	string sWorking = sAccountPath + toAdd->lpaarHolding->Info.username;
+	sWorking += ".uad";
+
+	ofstream AccountStream( sWorking.c_str(), ios::out );
+
+	AccountStream << "//AI2.1" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+	AccountStream << "//------------------------------------------------------------------------------\n";
+	AccountStream << "// UAD Path: " << sAccountPath << "\n";
+	AccountStream << "//------------------------------------------------------------------------------\n";
+	AccountStream << "// UOX3 uses this file to store any extra administration info\n";
+	AccountStream << "//------------------------------------------------------------------------------\n";
+	AccountStream << "ID " << toAdd->lpaarHolding->id << "\n";
+	AccountStream << "BANTIME " << toAdd->ban_duration << "\n";
+	AccountStream << "LASTIP " << (int)(toAdd->ipaddress[1]>>24) << "." << (int)(toAdd->ipaddress[1]>>16) << "." << (int)(toAdd->ipaddress[1]>>8) << "." << (int)(toAdd->ipaddress[1]%256) << "\n";
+		
+	for( UI08 i = 0; i < 5; i++ )
+		AccountStream << "CHARACTER-" << (i+1) << " -1 [INVALID]" << "]\n"; 
+		
+	AccountStream << "\n";
+		
+	// EviLDeD: 022102: Ok by request I moved this into username.uad, and placed just EMAIL into the access.adm.
+	AccountStream << "COMMENT " << toAdd->lpaarHolding->Info.comment << "\n";
+	AccountStream.close();
+
+	ofsOut.flush();
+	ofsOut.close();
+
+	// Add this account to the map.
+	actMap[username] = toAdd;
+	aarMap[username] = toAddAA;
+	actByNum[toAdd->lpaarHolding->id] = toAdd;
 }
 
 //o--------------------------------------------------------------------------o

@@ -709,8 +709,30 @@ bool splInvisibility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	bool splMark( cSocket *sock, CChar *caster, CItem *i )
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	Unknown
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Mark rune spell?
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Fixed marking of locked down runes.. 
+//|									(shouldn't be possible)
+//o--------------------------------------------------------------------------o
+//|	Returns				-	[TRUE] If Successfull, [FALSE] otherwise
+//o--------------------------------------------------------------------------o	
 bool splMark( cSocket *sock, CChar *caster, CItem *i )
 {
+	// Sept 22, 2002 - Xuri
+	if ( i->GetMagic() == 3)
+	{
+		sysmessage( sock, 774 );
+		return false;
+	}
+	//	
 	i->SetMoreX( caster->GetX() ); 
 	i->SetMoreY( caster->GetY() );
 	i->SetMoreZ( caster->GetZ() );

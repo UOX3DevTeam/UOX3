@@ -2664,7 +2664,11 @@ void packItem( cSocket *mSock )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Mount a ridable creature
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Unhide players when mounting horses etc.
 //o---------------------------------------------------------------------------o
+//|	Returns				- N/A
+//o--------------------------------------------------------------------------o	
 void MountCreature( CChar *s, CChar *x )
 {
 	cSocket *sockPtr = calcSocketObjFromChar( s );
@@ -2678,6 +2682,13 @@ void MountCreature( CChar *s, CChar *x )
 			sysmessage( sockPtr, 1213 );
 			return;
 		}
+		// Sept 22, 2002 - Xuri
+		if(s->IsOnHorse() )
+		{
+			if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
+				s->ExposeToView();
+		}
+		//
 		strcpy( temp, x->GetName() );
 		s->SetOnHorse( true );
 		CItem *c = Items->SpawnItem( sockPtr, 1, temp, false, 0x0915, x->GetSkin(), false, false );
@@ -3181,7 +3192,7 @@ void processkey( int c )
 	{
 		if( secure )
 		{
-			messageLoop << "Secure mode prevents keyboard commands! Press 'S' to disable";
+			messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
 			return;
 		}
 		
@@ -3460,7 +3471,7 @@ void processkey( int c )
 			messageLoop << "|     C - Configuration       H - Heart Beat";
 			messageLoop << "|     Y - Console Broadcast   Q - Quit/Exit           ";
 			messageLoop << "|  Load Commands:";
-			messageLoop << "|     1 - Accounts            2 - Ini";
+			messageLoop << "|     1 - Ini                 2 - Accounts";
 			messageLoop << "|     3 - Regions             4 - Spawn Regions";
 			messageLoop << "|     5 - Spells              6 - Commands";
 			messageLoop << "|     7 - Dfn's               8 - JavaScript";
@@ -4859,6 +4870,17 @@ int main( int argc, char *argv[] )
 	Loaded=0;
 	ErrorCount=0;
 
+	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
+#ifdef __NT__
+	wVersionRequested = MAKEWORD( 2, 0 );
+	err = WSAStartup( wVersionRequested, &wsaData );
+	if( err )
+	{
+		Console.Error( 0, "Winsock 2.0 not found on your system..." );
+		return 1;
+	}
+#endif
+
 	char temp[1024];
 #ifdef _CRASH_PROTECT_
 	try {//Crappy error trapping....
@@ -5109,6 +5131,7 @@ int main( int argc, char *argv[] )
 		}
 		
 		cwmWorldState->ServerData()->save();
+
 		savelog("Server Shutdown!\n=======================================================================\n\n\n","server.log");
 
 		conthreadcloseok = true;	//	This will signal the console thread to close
@@ -5215,7 +5238,13 @@ void Shutdown( SI32 retCode )
 	Console << "Beginning UOX final shut down sequence..." << myendl;
 
 	if (HTMLTemplates)
-	        HTMLTemplates->Poll( ETT_OFFLINE );
+	{
+		Console << "HTMLTemplates object detected. Writing Offline HTML Now..." << myendl;
+	  HTMLTemplates->Poll( TRUE /*ETT_OFFLINE */);
+	}
+	else
+		Console << "HTMLTemplates object not found." << myendl;
+
 
 	if( cwmWorldState->ServerData()->GetServerCrashProtectionStatus() >= 1 && retCode && Loaded && cwmWorldState && !cwmWorldState->Saving() )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.

@@ -50,13 +50,24 @@ using namespace std;
 #define TRACKINGDISPLAYTIME 30  // tracking will display above the character every TRACKINGDISPLAYTIME seconds
 
 
-typedef struct __PHYSICAL_SERVER__
+class physicalServer
 {
+public:
+  void setName(const string newName);
+  void setDomain(const string newDomain);
+  void setIP(const string newIP);
+  void setPort(SI16 newPort);
+  string getName(void);
+  string getDomain(void);
+  string getIP(void);
+  SI16 getPort(void);
+
+private:
 	string name;
 	string domain;
 	string ip;
 	SI16 port;
-} physicalServer;
+};
 
 class cServerData 
 {
@@ -153,6 +164,7 @@ protected:
 	string		wildernessbanktrigger;	// AntiChrist - special bank trigger EviLDeD Dec 30, 2000 changed this to a string
 	bool		heartbeat;
 	bool		npctraining;
+	SI16		charhidewhilemounted;			// EviLDeD - Support for Xuri's Hide while Mounted fix
 
 	// SpeedUp
 	R64			checkitems;
@@ -708,6 +720,11 @@ public:
 
 	void		SetSpiritSpeakTimer( UI32 value );
 	UI32		GetSpiritSpeakTimer( void );
+
+	// Sept 22, 2002 - EviLDeD - Support for Xuri's HideWhileMounted fix.
+	void SetCharHideWhileMounted( SI16 value );
+	SI16 GetCharHideWhileMounted( void );
+
 //protected:
 	void DumpLookup(int lookupid);
 	//	EviLDeD: 022602: Added this so I could check the paths, make sure they are correct

@@ -2,9 +2,13 @@
 
 #ifdef __LINUX__
 	#include <sys/types.h>
+  #include <netdb.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
 	#include <dirent.h>
 #else
-	#include <direct.h>
+        #include <direct.h>
 #endif
 
 using namespace std;
@@ -26,6 +30,7 @@ const string SERVERCFG_LOOKUP("|CRASH_PROTECTION|CRASH_PROTECTION|SKILLCAP|STATC
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
+// (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 const string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESPERLOOP|SAVESTIMER|MAINTHREADSLEEP|" 
 	"SKILLCAP|SKILLDELAY|STATCAP|STATDELAY|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|CORPSEDECAYTIMER|LOOTDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
@@ -39,55 +44,52 @@ const string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|C
 	"COMBATMAXRANGE|COMBATWRESTLESPEED|COMBATSPELLMAXRANGE|COMBATMAXMELEEDAMAGE|COMBATMAXSPELLDAMAGE|COMBATALLOWCRITICALS|COMBATMAXPOISONINGDISTANCE|COMBATDISPLAYHITMSG|COMBATMAXHUMANABSORBTION|COMBATMAXNONHUMANABSORBTION|COMBATMONSTERSVSANIMALS|"
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|ENGRAVEENABLED|BOOKSDIRECTORY|SERVERLIST|SCRIPTSECTIONHEADER|PORT|SAVEMODE|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD"
+	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD|HIDEWILEMOUNTED"
 );
 
 void cServerData::SetServerName( const char *setname )
 {
 	if( !setname )
 	{
-		serverList[0].name = "Default UOX Server";
+		serverList[0].setName("Default UOX Server");
 		return;
 	}
-	serverList[0].name.erase();
-	serverList[0].name = setname;
+	serverList[0].setName(setname);
 }
 
 const char *cServerData::GetServerName( void )
 {
-	return serverList[0].name.c_str();
+	return serverList[0].getName().c_str();
 }
 
 void cServerData::SetServerDomain( const char *setdomain )
 {
 	if( !setdomain )
 	{
-		serverList[0].domain = "";
+		serverList[0].setDomain("");
 		return;
 	}
-	serverList[0].domain.erase();
-	serverList[0].domain = setdomain;
+	serverList[0].setDomain(setdomain);
 }
 
 const char *cServerData::GetServerDomain( void )
 {
-	return serverList[0].domain.c_str();
+	return serverList[0].getDomain().c_str();
 }
 
 void cServerData::SetServerIP( const char *setip )
 {
 	if(!setip)
 	{
-		serverList[0].ip="127.0.0.1";
+		serverList[0].setIP("127.0.0.1");
 		return;
 	}
-	serverList[0].ip.erase();
-	serverList[0].ip=setip;
+	serverList[0].setIP(setip);
 }
 
 const char *cServerData::GetServerIP( void )
 {
-	return serverList[0].ip.c_str();
+	return serverList[0].getIP().c_str();
 }
 
 void cServerData::SetServerPort( SI16 setport )
@@ -1287,6 +1289,46 @@ SI16 cServerData::GetBuyThreshold( void )
 	return buyThreshold;
 }
 
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	void cServerData::SetCharHideWhileMounted( SI16 value )
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Set the value of the config related to hiding while 
+//|									mounted.
+//o--------------------------------------------------------------------------o
+//|	Returns				-	NA
+//o--------------------------------------------------------------------------o	
+void cServerData::SetCharHideWhileMounted( SI16 value )
+{
+	if(value<0 || value>1)
+		charhidewhilemounted=0;
+	else
+		charhidewhilemounted=value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	SI16 cServerData::GetCharHideWhileMounted( void )
+//|	Date					-	09/22/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Get the value of the config related to hiding while 
+//|									mounted.
+//o--------------------------------------------------------------------------o
+//|	Returns				-	[SI16] containing the value of the member.
+//o--------------------------------------------------------------------------o	
+SI16 cServerData::GetCharHideWhileMounted( void )
+{
+	if(charhidewhilemounted<0 || charhidewhilemounted>1)
+		return 0;
+	return charhidewhilemounted;
+}
+
 void cServerData::SetBackupRatio( SI16 value )
 {
 	backupRatio = value;
@@ -1884,7 +1926,14 @@ bool cServerData::save( const char *filename )
 	ofsOutput << endl << "[play server list]" << endl;
 
 	for( UI32 cnt = 0; cnt < serverList.size(); cnt++ )
-		ofsOutput << "SERVERLIST=" << serverList[cnt].name << "," << serverList[cnt].ip << "," << serverList[cnt].port << endl;
+	{
+		ofsOutput << "SERVERLIST=" << serverList[cnt].getName() << ",";
+		if( strlen( serverList[cnt].getDomain().c_str() ) > 0 )
+			ofsOutput << serverList[cnt].getDomain() << ",";
+		else
+			ofsOutput << serverList[cnt].getIP() << ",";
+		ofsOutput << serverList[cnt].getPort() << endl;
+	}
 
 	ofsOutput << endl << "[network server list]" << endl;
 
@@ -1964,7 +2013,8 @@ bool cServerData::save( const char *filename )
 	ofsOutput << "HEARTBEAT=" << (GetSystemHeartBeatStatus()?1:0) << endl;
 	ofsOutput << "SCRIPTSECTIONHEADER=" << (ServerScriptSectionHeader()?1:0) << endl;
 	ofsOutput << "NPCTRAININGENABLED=" << (GetNPCTrainingStatus()?1:0) << endl;
-	
+	ofsOutput << "HIDEWILEMOUNTED=" << (GetCharHideWhileMounted()?1:0) << endl;
+
 	ofsOutput << endl << "[speedup]" << endl;
 	ofsOutput << "SPEEDCHECKITEMS=" << GetCheckItemsSpeed() << endl;
 	ofsOutput << "SPEEDCHECKNPCS=" << GetCheckNpcSpeed() << endl;
@@ -2103,7 +2153,7 @@ cServerData * cServerData::load( void )
 //|	Date				-	January 13, 2001
 //|	Modified		-
 //o------------------------------------------------------------------------
-//|	Purpose			-	Load up the specifiedu file and parse it into the internals
+//|	Purpose			-	Load up the specified file and parse it into the internals
 //|								providing that it is in the correct format.
 //|	Returns			- pointer to the valid inmemory serverdata storage(this) or
 //|								NULL is there is an error, or invalid file type
@@ -2305,6 +2355,7 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 	SI16 zi = 0,yi = 0;
 	serverList.clear();
 	startlocations.clear();
+	struct hostent *lpHostEntry=NULL;
 	while( !inFile.eof() )
 	{
 		strcpy( LineBuffer, szLine );
@@ -2326,7 +2377,7 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 			{	//	Ok this is still server data for the server list parse it
 				zi = serverList.size() + 1;
 				serverList.resize( zi );
-				serverList[zi-1].name = szLine;
+				serverList[zi-1].setName(szLine);
 				inFile.getline( szLine, 128 );
 				if( inFile.eof() )
 				{
@@ -2334,7 +2385,7 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 					Console << "FAILED!" << myendl << "Error: Error parsing server data." << myendl;
 					return NULL;
 				}
-				serverList[zi-1].ip = szLine;
+				serverList[zi-1].setIP(szLine);
 				if( ver == MAKEWORD( 1, 1 ) )
 				{
 					inFile.getline( szLine, 128 );
@@ -2344,11 +2395,11 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 						Console << "FAILED!" << myendl << "Error: Error parsing server data." << myendl;
 						return NULL;
 					}
-					serverList[zi-1].port = (SI16)makeNum( szLine ); 
+					serverList[zi-1].setPort((SI16)makeNum( szLine )); 
 				}
 				else
-					serverList[zi-1].port = GetServerPort();	// old 1.0 doesn't support port numbers, here ya go Abaddon :)
-				serverList[zi-1].domain = "";		// Ditto here too, there is no domain and its really arbitrary at this stage. Will be used later.
+					serverList[zi-1].setPort(GetServerPort());	// old 1.0 doesn't support port numbers, here ya go Abaddon :)
+				serverList[zi-1].setDomain("");		// Ditto here too, there is no domain and its really arbitrary at this stage. Will be used later.
 				zi = 0;
 				inFile.getline( szLine, 128 ); // Save some cycles having to parse down the rest.
 				continue;
@@ -2921,14 +2972,45 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 					p = strtok( szLine, "=\n\r" );
 					
 					p = strtok( NULL, ",\n\r" );
-					serverList[zi-1].name = p;
+					serverList[zi-1].setName(p);
 					
 					p = strtok( NULL, ",\n\r" );
-					serverList[zi-1].ip = p;
-					
+					if(p!=NULL)
+					{
+						// Ok look up the data here see if its a number
+						bool bDomain=true;
+						if( ( lpHostEntry = gethostbyname( p ) ) == NULL )
+						{
+							// this was not a domain name so check for IP address
+							if( ( lpHostEntry = gethostbyaddr( p, strlen(p),AF_INET) ) == NULL )
+							{
+								// We get here it wasn't a valid IP either.
+								Console.Warning(1, "Failed to translate %s", p);
+								Console.Warning(1, "This shard will not show up on the shard listing");
+								serverList.resize( zi - 1 );
+								break;
+							}
+							bDomain=false;
+						}
+						// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
+						if(bDomain)
+						{
+							// Store the domain name for later then seeing as its a valid one
+							serverList[zi-1].setDomain( p );
+						}
+						else
+						{
+							// this was a valid ip address so we will use an ip instead so clear the domain string.
+							serverList[zi-1].setDomain( "" );
+						}
+					}
+					// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
+					struct in_addr *pinaddr;
+					pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+			    serverList[zi-1].setIP( inet_ntoa(*pinaddr) );
 					p = strtok( NULL, ",\n\r" );
-					serverList[zi-1].port = (SI16)makeNum( p );	// old 1.0 doesn't support port numbers, here ya go Abaddon :)
-					serverList[zi-1].domain = "";		// Ditto here too, there is no domain and its really arbitrary at this stage. Will be used later.
+				  serverList[zi-1].setPort((SI16)makeNum( p ));
+
 					zi = 0;
 					break;
 
@@ -2965,12 +3047,15 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 				case 0x0A1A:	 // GUMPSDIRECTORY[0162]
 					cServerData::SetGumpsDirectory( r );
 					break;
-			        case 0x0A29:	 // DICTIONARYDIRECTORY[0163]
-				        cServerData::SetDictionaryDirectory( r );
-	                                break;
-			        case 0x0A3D:	 // BACKUPSAVERATIO[0164]
-				        cServerData::SetBackupRatio( makeNum (r ) );
-			                break;
+        case 0x0A29:	 // DICTIONARYDIRECTORY[0163]
+	        cServerData::SetDictionaryDirectory( r );
+          break;
+        case 0x0A3D:	 // BACKUPSAVERATIO[0164]
+	        cServerData::SetBackupRatio( makeNum (r ) );
+	        break;
+				case 0x0A57:	 // HIDEWILEMOUNTED[0166]
+					cServerData::SetCharHideWhileMounted( makeNum(r));
+					break;
 				default:
 					//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
 					break;
@@ -3854,3 +3939,78 @@ UI08 cServerData::SaveMode( UI08 NewMode )
 
 	return SaveMode();
 }
+
+/*static string translateHostName(const string name)
+{
+// we do a dns lookup on this
+   string ipAddress;
+   UI32 uiValue;
+
+		return name;
+#if defined(WIN32)
+   uiValue = inet_addr(name.c_str()) ;
+#  define gethostbyname2(host,family) gethostbyname(host)
+#else
+   uiValue = INADDR_NONE;
+#endif
+
+   ipAddress = ""; 
+   if (uiValue == INADDR_NONE)
+   {
+     hostent* ptrHost = NULL;
+     
+     ptrHost = gethostbyname2(name.c_str(),AF_INET);
+     if(ptrHost != NULL)
+     {
+       in_addr Address;
+       memcpy(&Address,*ptrHost->h_addr_list,4);
+       
+       // Format in Dotted Decimal.
+       ipAddress = inet_ntoa(Address);
+     }
+     else
+     {
+       // It ain't a name, might be a number
+       hostent* ptrHost = NULL;
+       
+       ptrHost = gethostbyaddr(name.c_str(), name.length(), AF_INET);
+       if (ptrHost != NULL)
+	 ipAddress = name;
+     }
+   }
+   return ipAddress ;
+}*/
+
+void physicalServer::setName(const string newName)
+{
+  name = newName;
+}
+void physicalServer::setDomain(const string newDomain)
+{
+  domain = newDomain;
+}
+void physicalServer::setIP(const string newIP)
+{
+  ip = newIP;
+}
+void physicalServer::setPort(SI16 newPort)
+{
+  port = newPort;
+}
+string physicalServer::getName(void)
+{
+  return name;
+}
+string physicalServer::getDomain(void)
+{
+  return domain;
+}
+string physicalServer::getIP(void)
+{
+  return ip; 
+}
+SI16 physicalServer::getPort(void)
+{
+  return port;
+}
+

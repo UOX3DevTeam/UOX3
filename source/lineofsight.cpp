@@ -239,13 +239,13 @@ Look at uox3.h to see options. Works like npc magic.
 	else if( sgn_x == 0 ) // if we are on the same x-level, just push every x/y coordinate in y-direction from src to trg into the array
 		for( i = 0; i < (sgn_y * m); i++ )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), koz1 + floor(lineofsight.dzInDirectionY() * (R32)i) );
+			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) );
 			collisioncount++;
 		}
 	else if ( sgn_y == 0 ) // if we are on the same y-level, just push every x/y coordinate in x-direction from src to trg into the array
 		for( i = 0; i < (sgn_x * n); i++ )
 		{
-			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, koz1 + floor(lineofsight.dzInDirectionX() * (R32)i) );
+			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) );
 			collisioncount++;
 		}
 	else
@@ -261,14 +261,14 @@ Look at uox3.h to see options. Works like npc magic.
 				// we just have to take that coordinate...
 				if( floor( temp.y ) == temp.y ) 
 				{
-					collisions[collisioncount] = ( vector3D( floor( temp.x ), floor( temp.y ), koz1 + floor(lineofsight.dzInDirectionX() * (R32)i) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
 					collisioncount += 1;
 				}
 				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
 				else
 				{ 
-					collisions[collisioncount] = ( vector3D( floor( temp.x ), floor( temp.y ), koz1 + floor(lineofsight.dzInDirectionX() * (R32)i) ) ); 
-					collisions[collisioncount+1] = ( vector3D( ceil( temp.x ), ceil( temp.y ), koz1 + floor(lineofsight.dzInDirectionX() * (R32)i) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
+					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
 					collisioncount += 2;
 				}
 			}
@@ -283,13 +283,13 @@ Look at uox3.h to see options. Works like npc magic.
 			{
 				if( floor( temp.x ) == temp.x )
 				{
-					collisions[collisioncount] = ( vector3D( floor( temp.x ), floor( temp.y ), koz1 + floor(lineofsight.dzInDirectionY() * (R32)i) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
 					collisioncount += 1;
 				}
 				else
 				{
-					collisions[collisioncount] = ( vector3D( floor( temp.x ), floor( temp.y ), koz1 + floor(lineofsight.dzInDirectionY() * (R32)i) ) ); 
-					collisions[collisioncount+1] = ( vector3D( ceil( temp.x ), ceil( temp.y ), koz1 + floor(lineofsight.dzInDirectionY() * (R32)i) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
+					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
 					collisioncount += 2;
 				}
 			}

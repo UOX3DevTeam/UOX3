@@ -235,7 +235,8 @@ enum PickupLocations
 	PL_GROUND,
 	PL_OWNPACK,
 	PL_OTHERPACK,
-	PL_PAPERDOLL
+	PL_PAPERDOLL,
+	PL_BANK
 };
 
 enum WeatherType

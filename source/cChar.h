@@ -701,7 +701,8 @@ class CChar : public cBaseObject
 		virtual SI16	GetMaxMana( void );
 		virtual SI16	GetMaxStam( void );
 		void			SetMana( SI16 mn );
-
+		
+		bool			IsInBank( CItem* i );
 
 };
 

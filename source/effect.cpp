@@ -868,9 +868,9 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 		if( num == 22 )
 		{
 			if( dest == source )
-				toAdd.ExpireTime( BuildTimeValue( 18.0f - (R32)RandomNum( 0, source->GetSkill( HEALING ) / 200.0f ) ) );
+				toAdd.ExpireTime( BuildTimeValue( 18.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 200.0f) ) ) );
 			else
-				toAdd.ExpireTime( BuildTimeValue( 7.0f - (R32)RandomNum( 0, source->GetSkill( HEALING ) / 333.0f ) ) );
+				toAdd.ExpireTime( BuildTimeValue( 7.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 333.0f) ) ) );
 			sprintf( temp, Dictionary->GetEntry( 1278 ), source->GetName(), dest->GetName() );
 			npcEmoteAll( source, temp, false );
 		}

@@ -2102,15 +2102,21 @@ CPIServerSelect &CPIServerSelect::operator=( cSocket &s )
 }
 SI16 CPIServerSelect::ServerNum( void )
 {
-	return (SI16)( (internalBuffer[1]<<8) + internalBuffer[2] );
+	// EviLDeD - Sept 19, 2002
+	// Someone said that there was an issue with False logins that request server 0. Default to server 1.
+	SI16 temp = ( (internalBuffer[1]<<8) + internalBuffer[2] );
+	if(temp==0)
+		return 1;
+	else
+		return temp;
 }
 
 bool CPIServerSelect::Handle( void )
 {
 	UI16 selectedServer = ServerNum() - 1;
 	physicalServer *tServer = cwmWorldState->ServerData()->GetServerEntry( selectedServer );
-	UI32 ip = htonl( inet_addr( tServer->ip.c_str() ) );
-	CPRelay toSend( ip, tServer->port );
+	UI32 ip = htonl( inet_addr( tServer->getIP().c_str() ) );
+	CPRelay toSend( ip, tServer->getPort() );
 	tSock->Send( &toSend );
 	return true;
 }

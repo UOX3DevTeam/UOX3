@@ -390,16 +390,19 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a valid spot to drop an NPC near the spawners location
+//|									
+//|	Modification	-	04/20/2002	-	Zippy -  (Type 69) xos and yos (X OffSet, Y OffSet)
+//|									are used to find a random number that is then added to the spawner's 
+//|									x and y (Using the spawner's z) and then place the NPC anywhere in 
+//|									a square around the spawner. This square is random anywhere from -10 
+//|									to +10 from the spawner's location (for x and y) If the place chosen 
+//|									is not a valid position (the NPC can't walk there) then a new place 
+//|									will be chosen, if a valid place cannot be found in a certain # of 
+//|									tries (50),the NPC will be placed directly on the spawner and the 
+//|									server op will be warned. 
 //o---------------------------------------------------------------------------o
 void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z )
 {
-  /*Zippy's Code chages for area spawns --> (Type 69) xos and yos (X OffSet, Y OffSet)
-    are used to find a random number that is then added to the spawner's x and y (Using
-    the spawner's z) and then place the NPC anywhere in a square around the spawner.
-    This square is random anywhere from -10 to +10 from the spawner's location (for x and
-    y) If the place chosen is not a valid position (the NPC can't walk there) then a new
-    place will be chosen, if a valid place cannot be found in a certain # of tries (50),
-    the NPC will be placed directly on the spawner and the server op will be warned. */
 
 #ifdef DEBUG_SPAWN
 	Console.Print( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway );

@@ -182,6 +182,10 @@ bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 //|   Function    :  void doubleClick( cSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
+//|									
+//|	Modification	-	09/22/2002	-	Xuri - Removed piece of code which is not 
+//|									needed. Cooking of raw fish shouldn't produce cooked ribs,
+//|									people can cook the fish after filleting with a knife.
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Player doubleclicks on a character or item
 //o---------------------------------------------------------------------------o
@@ -1224,13 +1228,15 @@ void doubleClick( cSocket *mSock )
 			mChar->SetTailItem( calcItemFromSer( x->GetSerial() ) );
 			target( mSock, 0, 1, 0, 164, 449 );
 			return;
-		case 0x09CC: // raw fish       -- krazyglue: added support for cooking raw fish
-		case 0x09CD: // raw fish          should they have to fillet them first then
-		case 0x09CE: // raw fish          cook the fillet pieces?  or is this good enough?
-		case 0x09CF: // raw fish
-			mChar->SetTailItem( calcItemFromSer( x->GetSerial() ) );
-			target( mSock, 0, 1, 0, 168, 450 );
-			return;
+		// Sept 22, 2002 - Xuri 
+		//case 0x09CC: // raw fish       -- krazyglue: added support for cooking raw fish
+		//case 0x09CD: // raw fish          should they have to fillet them first then
+		//case 0x09CE: // raw fish          cook the fillet pieces?  or is this good enough?
+		//case 0x09CF: // raw fish
+		//	mChar->SetTailItem( calcItemFromSer( x->GetSerial() ) );
+		//	target( mSock, 0, 1, 0, 168, 450 );
+		//	return;
+		//
 		case 0x09F1: // 
 			mChar->SetTailItem( calcItemFromSer( x->GetSerial() ) );
 			target( mSock, 0, 1, 0, 168, 451 );

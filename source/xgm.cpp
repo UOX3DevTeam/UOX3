@@ -289,7 +289,7 @@ bool cPIXGMServerStat::Handle( void )
 	case XSS_ACCOUNTCOUNT:			toSend.GenericData( Accounts->Count() );	break;
 	case XSS_SIMULATIONCYCLES:
 				if( !( loopTime < 0.00000000001f || loopTimeCount < 0.00000000001f ) )
-					toSend.GenericData( (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) );
+					toSend.GenericData( (unsigned long)(1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) );
 				else 
 					toSend.GenericData( 0xFFFFFFFF );
 				break;
@@ -297,7 +297,7 @@ bool cPIXGMServerStat::Handle( void )
 	case XSS_REGIONCOUNT:			toSend.GenericData( 256 );					break;
 	case XSS_WEATHERCOUNT:			toSend.GenericData( Weather->Count() );		break;
 	case XSS_TIMESINCERESTART:
-	case XSS_TIMESINCEWORLDSAVE:	toSend.GenericData( difftime( time( NULL ), oldtime ) );	break;
+	case XSS_TIMESINCEWORLDSAVE:	toSend.GenericData( (unsigned long)(difftime( time( NULL ), oldtime )) );	break;
 	case XSS_GMPAGECOUNT:			toSend.GenericData( GMQueue->NumEntries() );				break;
 	case XSS_CNSPAGECOUNT:			toSend.GenericData( CounselorQueue->NumEntries() );			break;
 	case XSS_GHOSTCOUNT:			toSend.GenericData( GhostCount() );			break;

@@ -1,12 +1,9 @@
-// cHTMLSystem.cpp: Implementierung der Klasse cHTMLSystem.
-//
-//////////////////////////////////////////////////////////////////////
+// HTML Template
+
+// Code added to update when shutting down  -avtotar (16/09/02) 
+// Slight modification on avotars fix (19/09/02)
 
 #include "cHTMLSystem.h"
-
-//////////////////////////////////////////////////////////////////////
-// Konstruktion/Destruktion
-//////////////////////////////////////////////////////////////////////
 
 cHTMLTemplate::cHTMLTemplate()
 {
@@ -26,7 +23,6 @@ cHTMLTemplate::~cHTMLTemplate()
 //o---------------------------------------------------------------------------o
 void cHTMLTemplate::Process( void )
 {
-		
 	// Only read the Status Page if it's not already loaded
 	if( !Loaded )
 		LoadTemplate();
@@ -50,6 +46,9 @@ void cHTMLTemplate::Process( void )
 
 	// Version
 	string Version = VER;
+	Version += "(";
+	Version += BUILD;
+	Version += ")";
 	#ifdef __NT__
 		Version += " [WIN32]";
 	#else
@@ -60,7 +59,6 @@ void cHTMLTemplate::Process( void )
 	{
 		ParsedContent.replace( Pos, 8, Version );
 	}
-
 	// Character Count
 	char CharacterCount[32];
 	sprintf( CharacterCount, "%d", chars.Count() );
@@ -103,7 +101,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( GMCount, "%d", gm );
 	for( Pos = ParsedContent.find( "%online_gms" ); Pos >= 0; Pos = ParsedContent.find( "%online_gms" ) )
 	{
-		ParsedContent.replace( Pos, 11, GMCount );
+		(keeprun)?ParsedContent.replace( Pos, 11, GMCount ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	// Counselor
@@ -111,7 +109,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( CounsiCount, "%d", cns );
 	for( Pos = ParsedContent.find( "%online_couns" ); Pos >= 0; Pos = ParsedContent.find( "%online_couns" ) )
 	{
-		ParsedContent.replace( Pos, 13, CounsiCount );
+		(keeprun)?ParsedContent.replace( Pos, 13, CounsiCount ):ParsedContent.replace( Pos, 13, "0");
 	}
 
 	// Player
@@ -119,7 +117,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( PlayerCount, "%d", ccount );
 	for( Pos = ParsedContent.find( "%online_player" ); Pos >= 0; Pos = ParsedContent.find( "%online_player" ) )
 	{
-		ParsedContent.replace( Pos, 14, PlayerCount );
+		(keeprun)?ParsedContent.replace( Pos, 14, PlayerCount ):ParsedContent.replace( Pos, 14, "0" );
 	}
 
 	// Total
@@ -127,7 +125,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( AllCount, "%d", (ccount + gm + cns) );
 	for( Pos = ParsedContent.find( "%online_all" ); Pos >= 0; Pos = ParsedContent.find( "%online_all" ) )
 	{
-		ParsedContent.replace( Pos, 11, AllCount );
+		(keeprun)?ParsedContent.replace( Pos, 11, AllCount ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	//RealTime( time_str )
@@ -135,7 +133,7 @@ void cHTMLTemplate::Process( void )
 	RealTime( time_str );
 	for( Pos = ParsedContent.find( "%time" ); Pos >= 0; Pos = ParsedContent.find( "%time" ) )
 	{
-		ParsedContent.replace( Pos, 5, time_str );
+		(keeprun)?ParsedContent.replace( Pos, 5, time_str ):ParsedContent.replace( Pos, 5, "Down" );
 	}
 
 	// IP(s) + PORT(s)
@@ -152,7 +150,7 @@ void cHTMLTemplate::Process( void )
 			{
 				for( Pos = ParsedContent.find( ipToken ); Pos >= 0; Pos = ParsedContent.find( ipToken ) )
 				{
-					ParsedContent.replace( Pos, strlen(ipToken), mServ->ip.c_str() );
+					(keeprun)?ParsedContent.replace( Pos, strlen(ipToken), mServ->getIP().c_str()):ParsedContent.replace( Pos, strlen(ipToken), "Down" );
 				}
 			}
 			
@@ -164,8 +162,8 @@ void cHTMLTemplate::Process( void )
 				for( Pos = ParsedContent.find( portToken ); Pos >= 0; Pos = ParsedContent.find( portToken ) )
 				{
 					char myPort[5];
-					sprintf( myPort, "%i", mServ->port );
-					ParsedContent.replace( Pos, strlen( portToken ), myPort );
+					sprintf( myPort, "%i", mServ->getPort() );
+					(keeprun)?ParsedContent.replace( Pos, strlen( portToken ), myPort ):ParsedContent.replace( Pos, strlen( portToken ), "NA" );
 				}
 			}
 			char serverToken[10]; // i think we'll never get higher than 2 digits, anyway...
@@ -175,7 +173,7 @@ void cHTMLTemplate::Process( void )
 			{
 				for( Pos = ParsedContent.find( serverToken ); Pos >= 0; Pos = ParsedContent.find( serverToken ) )
 				{
-					ParsedContent.replace( Pos, strlen( serverToken ), mServ->name.c_str() );
+					(keeprun)?ParsedContent.replace( Pos, strlen( serverToken ), mServ->getName().c_str() ):ParsedContent.replace( Pos, strlen( serverToken ), "Down" );
 				}
 			}
 		}
@@ -214,13 +212,13 @@ void cHTMLTemplate::Process( void )
 					SI32 sPos;
 					for( sPos = parsedInline.find( "%playername" ); sPos >= 0; sPos = parsedInline.find( "%playername" ) )
 					{
-						parsedInline.replace( sPos, 11, tChar->GetName() );
+						(keeprun)?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
 					}
 
 					// PlayerTitle
 					for( sPos = parsedInline.find( "%playertitle" ); sPos >= 0; sPos = parsedInline.find( "%playertitle" ) )
 					{
-						parsedInline.replace( sPos, 12, tChar->GetTitle() );
+						(keeprun)?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
 					}
 
 					// PlayerIP
@@ -229,7 +227,7 @@ void cHTMLTemplate::Process( void )
 						cSocket *mySock = calcSocketObjFromChar( tChar );
 						char ClientIP[32];
 						sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
-						parsedInline.replace( sPos, 9, ClientIP );
+						(keeprun)?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
 					}
 
 					// PlayerAccount
@@ -237,7 +235,7 @@ void cHTMLTemplate::Process( void )
 					{
 						ACTREC *toScan = tChar->GetAccountObj();
 						if( toScan != NULL )
-							parsedInline.replace( sPos, 14, toScan->lpaarHolding->Info.username );
+							(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->Info.username ):parsedInline.replace( sPos, 14, "" );
 					}
 
 					// PlayerX
@@ -245,7 +243,7 @@ void cHTMLTemplate::Process( void )
 					{
 						char myX[5];
 						sprintf( myX, "%i", tChar->GetX() );
-						parsedInline.replace( sPos, 8, myX );
+						(keeprun)?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 					}
 
 					// PlayerY
@@ -253,7 +251,7 @@ void cHTMLTemplate::Process( void )
 					{
 						char myY[5];
 						sprintf( myY, "%i", tChar->GetY() );
-						parsedInline.replace( sPos, 8, myY );
+						(keeprun)?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
 					}
 
 					// PlayerZ
@@ -261,7 +259,7 @@ void cHTMLTemplate::Process( void )
 					{
 						char myZ[3];
 						sprintf( myZ, "%i", tChar->GetZ() );
-						parsedInline.replace( sPos, 8, myZ );
+						(keeprun)?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 					}
 
 					// PlayerRace -- needs testing
@@ -274,14 +272,14 @@ void cHTMLTemplate::Process( void )
 						strcpy( myRaceName, rName );
 
 						if( myRaceName != NULL ) 
-							parsedInline.replace( sPos, 11, myRaceName );
+							(keeprun)?parsedInline.replace( sPos, 11, myRaceName ):parsedInline.replace( sPos, 11, "");
 						delete [] myRaceName;
 					}
 
 					// PlayerRegion
 					for( sPos = parsedInline.find( "%playerregion" ); sPos >= 0; sPos = parsedInline.find( "%playerregion" ) )
 					{
-						parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() );
+						(keeprun)?parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() ):parsedInline.replace( sPos, 13, "");
 					}
 
 					PlayerList += parsedInline;
@@ -290,7 +288,7 @@ void cHTMLTemplate::Process( void )
 		}
 		Network->PopConn();	
 
-		ParsedContent.replace( Pos, myInline.length(), PlayerList );
+		(keeprun)?ParsedContent.replace( Pos, myInline.length(), PlayerList ):ParsedContent.replace( Pos, myInline.length(), "");
 	}
 
 	// GuildCount
@@ -298,7 +296,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( GuildCount, "%d", GuildSys->NumGuilds() );
 	for( Pos = ParsedContent.find( "%guildcount" ); Pos >= 0; Pos = ParsedContent.find( "%guildcount" ) )
 	{
-		ParsedContent.replace( Pos, 11, PlayerCount );
+		(keeprun)?ParsedContent.replace( Pos, 11, PlayerCount ):ParsedContent.replace( Pos, 11, "" );
 	}
 
 	// GUILDLIST
@@ -315,7 +313,7 @@ void cHTMLTemplate::Process( void )
 			parsedInline.replace( 0, 11, "" );
 			parsedInline.replace( parsedInline.length()-11, 11, "" );
 
-			parsedInline += "Yeah it worked";
+			//parsedInline += "Yeah it worked";
 
 //			Tokens for the GuildList
 //			%guildid
@@ -329,19 +327,19 @@ void cHTMLTemplate::Process( void )
 			sprintf( GuildID, "%d", i );
 			for( sPos = parsedInline.find( "%guildid" ); sPos >= 0; sPos = parsedInline.find( "%guildid" ) )
 			{
-				parsedInline.replace( sPos, 8, GuildID );
+				(keeprun)?parsedInline.replace( sPos, 8, GuildID ):parsedInline.replace( sPos, 8, "" );
 			}
 
 			// GuildName
 			for( sPos = parsedInline.find( "%guildname" ); sPos >= 0; sPos = parsedInline.find( "%guildname" ) )
 			{
-				parsedInline.replace( sPos, 10, myGuild->Name() );
+				(keeprun)?parsedInline.replace( sPos, 10, myGuild->Name() ):parsedInline.replace( sPos, 10, "" );
 			}
 
 			GuildList += parsedInline;
 		}
 
-		ParsedContent.replace( Pos, myInline.length(), GuildList );
+		(keeprun)?ParsedContent.replace( Pos, myInline.length(), GuildList ):ParsedContent.replace( Pos, myInline.length(), "" );
 	}
 
 	//NPCCount
@@ -363,7 +361,7 @@ void cHTMLTemplate::Process( void )
 
 	for( Pos = ParsedContent.find( "%npcs" ); Pos >= 0; Pos = ParsedContent.find( "%npcs" ) )
 	{
-		ParsedContent.replace( Pos, 5, npcs );
+		(keeprun)?ParsedContent.replace( Pos, 5, npcs ):ParsedContent.replace( Pos, 5, "0" );
 	}
 
 	// Performance Dump
@@ -372,17 +370,25 @@ void cHTMLTemplate::Process( void )
 	{
 		string performance;
 		ostringstream myStream( performance );
-
-		myStream << "Network code: " << (R32)((R32)networkTime/(R32)networkTimeCount) << "msec [" << networkTimeCount << " samples] <BR>";
-		myStream << "Timer code: " << (R32)((R32)timerTime/(R32)timerTimeCount) << "msec [" << timerTimeCount << " samples] <BR>";
-		myStream << "Auto code: " << (R32)((R32)autoTime/(R32)autoTimeCount) << "msec [" << autoTimeCount << " samples] <BR>";
-		myStream << "Loop Time: " << (R32)((R32)loopTime/(R32)loopTimeCount) << "msec [" << loopTimeCount << " samples] <BR>";
-		if( !( loopTime < eps ||  loopTimeCount < eps ) )
-			myStream << "Simulation Cycles: " << (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) << " per sec <BR>";
-		else 
-			myStream << "Simulation Cycles: Greater than 10000 <BR> ";
-		
-
+		if(keeprun)
+		{
+			myStream << "Network code: " << (R32)((R32)networkTime/(R32)networkTimeCount) << "msec [" << networkTimeCount << " samples] <BR>";
+			myStream << "Timer code: " << (R32)((R32)timerTime/(R32)timerTimeCount) << "msec [" << timerTimeCount << " samples] <BR>";
+			myStream << "Auto code: " << (R32)((R32)autoTime/(R32)autoTimeCount) << "msec [" << autoTimeCount << " samples] <BR>";
+			myStream << "Loop Time: " << (R32)((R32)loopTime/(R32)loopTimeCount) << "msec [" << loopTimeCount << " samples] <BR>";
+			if( !( loopTime < eps ||  loopTimeCount < eps ) )
+				myStream << "Simulation Cycles: " << (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) << " per sec <BR>";
+			else 
+				myStream << "Simulation Cycles: Greater than 10000 <BR> ";
+		}
+		else
+		{
+			myStream << "Network code: 0" << "<BR>";
+			myStream << "Timer code: 0" << "<BR>";
+			myStream << "Auto code: 0" << "<BR>";
+			myStream << "Loop Time: 0" << "<BR>";
+			myStream << "Simulation Cycles: 0<BR>";
+		}
 		ParsedContent.replace(Pos, 12, myStream.str());
 	}
 
@@ -425,12 +431,17 @@ void cHTMLTemplate::Process( void )
 		string simcycles;
 		ostringstream myStream( simcycles );
 
-		if( !( loopTime < eps ||  loopTimeCount < eps ) )
-			myStream << "Simulation Cycles: " << (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) << " per sec <BR>";
-		else 
-			myStream << "Simulation Cycles: Greater than 10000 <BR> ";
-		
-
+		if(keeprun)
+		{
+			if( !( loopTime < eps ||  loopTimeCount < eps ) )
+				myStream << "Simulation Cycles: " << (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) << " per sec <BR>";
+			else 
+				myStream << "Simulation Cycles: Greater than 10000 <BR> ";
+		}
+		else
+		{
+			myStream << "Simulation Cycles: 0<BR> ";
+		}
 		ParsedContent.replace(Pos, 10, myStream.str());
 	}
 
@@ -440,7 +451,7 @@ void cHTMLTemplate::Process( void )
 		char strUpdateTimer[32]; // Could be a big value...
 		sprintf( strUpdateTimer, "%i", UpdateTimer );
 
-		ParsedContent.replace( Pos, 11, strUpdateTimer );
+		(keeprun)?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	//***************************************/
@@ -451,7 +462,7 @@ void cHTMLTemplate::Process( void )
 	ofstream Output( OutputFile );
 	if( !Output.is_open() ) 
 	{
-		Console.Error( 1, "Couldn't open the template file %s for writing", OutputFile );
+		Console.Error( 1, "| Error: Couldn't open the template file %s for writing", OutputFile );
 		return;
 	}
 

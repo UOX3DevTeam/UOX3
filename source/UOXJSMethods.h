@@ -72,6 +72,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Socket Methods
 JSBool CSocket_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -157,6 +158,7 @@ static JSFunctionSpec CChar_Methods[] =
 
 static JSFunctionSpec CItem_Methods[] =  
 { 	
+	{ "KillTimers",		CBase_KillTimers, 0, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
 	{ "Teleport",			CBase_Teleport,				3, 0, 0 },
