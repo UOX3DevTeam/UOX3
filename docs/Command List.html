@@ -1,4 +1,3 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
 <html>
 <head>
 	<title>UOX3 Commands List</title>
@@ -6,7 +5,7 @@
 <body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
 <center>
 <font size=3><b>The UOX3 Command List</b></font><br>
-as of, Friday, December 26, 2003
+as of Tuesday, July 27, 2004
 
 <p>
 <table bgcolor=#333333 width=55% cellspacing=0 cellpadding=0>
@@ -35,7 +34,7 @@ as of, Friday, December 26, 2003
     </tr>
     <tr>
 	<td>&nbsp;&nbsp;<b>nothing</b>:</td>
-	<td>Command that accepts parameters also functions without them</td>
+	<td>Command that accepts params but can function without them</td>
     </tr>
 </table>
 <p>
@@ -79,6 +78,14 @@ as of, Friday, December 26, 2003
     <tr>
 	<td valign="top">ADDX</td>
 	<td>(h / h h) Adds a new item to your current location</td>
+    </tr>
+    <tr>
+	<td colspan=1 bgcolor=#000000></td>
+	<td colspan=1 bgcolor=#000000></td>
+    </tr>
+    <tr>
+	<td valign="top">ADMINYELL</td>
+	<td>(text) Admin Yell, Broadcasts message to all online with command level of 3 and above.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -169,7 +176,7 @@ as of, Friday, December 26, 2003
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>C</b></font></td>
     </tr>
     <tr>
-	<td valign="top">CY</td>
+	<td valign="top">CNSYELL</td>
 	<td>(text) Counsellor Yell - Announce a message to all counselors and above</td>
     </tr>
     <tr>
@@ -306,10 +313,6 @@ as of, Friday, December 26, 2003
 	<td>(d) Attempts to fix incorrect Z coordinates</td>
     </tr>
     <tr>
-      <td valign="top">FOLLOW</td>
-      <td>(Target Command) Selects character for an NPC in wandermode 1 will follow.</td>
-    </tr>
-    <tr>
 	<td colspan=1 bgcolor=#000000></td>
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
@@ -328,7 +331,7 @@ as of, Friday, December 26, 2003
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-	<td valign="top">GY</td>
+	<td valign="top">GMYELL</td>
 	<td>GM Yell, Sends the message to all online GM's or above</td>
     </tr>
     <tr>
@@ -377,14 +380,6 @@ as of, Friday, December 26, 2003
 		If neither of the above are specified will take you to the x y z locations specified.
 		</ul>
 	</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
-    </tr>
-    <tr>
-	<td valign="top">GMOPEN</td>
-	<td>(h / nothing) Opens specified layer on character, or the backpack if none specified</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -561,13 +556,13 @@ as of, Friday, December 26, 2003
     <tr>
 	<td valign="top">KILL</td>
 	<td>
-		(Target Command)(s / nothing) Kills character or removes specified item from character
+		(Target Command)(s (h)) Kills character or removes specified item from character
 		<ul>
-		<b>BEARD</b>: Removes character's beard.<br>
 		<b>CHAR</b>: Kills the targeted character.<br>
-		<b>HAIR</b>: Removes character's hair.<br>
+		<b>HAIR</b>: Removes character hair.<br>
+		<b>BEARD</b>: Removes characters beard.<br>
 		<b>PACK</b>: Removes character backpack.<br>
-		(d / h): Removes specified layer 
+		<b>LAYER</b>: Removes specified layer.
 		</ul>
 	</td>
     </tr>
@@ -699,12 +694,16 @@ as of, Friday, December 26, 2003
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-      <td valign="top">NPCCIRCLE</td>
-      <td>(d d d) Sets bounding circle for NPC (x y radius) in NPCWANDER-mode 4. </td>
+	<td valign="top">NPCRECT</td>
+	<td>(Target Command)(d d d d) Sets bounding box for targeted NPC.</td>
     </tr>
     <tr>
-	<td valign="top">NPCRECT</td>
-	<td>(d d d d) Sets bounding box for NPC in NPCWANDER-mode 3.</td>
+	<td colspan=1 bgcolor=#000000></td>
+	<td colspan=1 bgcolor=#000000></td>
+    </tr>
+    <tr>
+	<td valign="top">NPCCIRCLE</td>
+	<td>(Target Command)(d d d ) Sets bounding circle for targeted NPC.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -718,7 +717,7 @@ as of, Friday, December 26, 2003
     </tr>
     <tr>
 	<td valign="top">OPENBANK</td>
-	<td>(Target Command) Opens the bank box of the targeted character </td>
+	<td>(Target Command) Opens players bank box.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -726,11 +725,7 @@ as of, Friday, December 26, 2003
     </tr>
     <tr>
 	<td valign="top">OPENLAYER</td>
-	<td>(Target Command) (h / d) Opens specified layer on targeted character. If no layer is specified, opens backpack. </td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
+	<td>(h / nothing) Opens specified layer on character, or the backpack if none specified</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -741,14 +736,6 @@ as of, Friday, December 26, 2003
     </tr>
     <tr>
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>P</b></font></td>
-    </tr>
-    <tr>
-	<td valign="top">POSSESS</td>
-	<td>(Target Command) Allows a player to possess an NPC's body (Not Currently Functional)</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
 	<td valign="top">PDUMP</td>
@@ -829,7 +816,7 @@ as of, Friday, December 26, 2003
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-	<td valign="top">READINI</td>
+	<td valign="top">READLOADINI</td>
 	<td>Reloads the uox.ini.</td>
     </tr>
     <tr>
@@ -903,14 +890,6 @@ as of, Friday, December 26, 2003
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>S</b></font></td>
     </tr>
     <tr>
-	<td valign="top">SGY</td>
-	<td>(text) Super GM Yell, Broadcasts message to all online with command level of 3 and above.</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
-    </tr>
-    <tr>
 	<td valign="top">SETPOST</td>
 	<td>
 	(s) Sets bulletin board posting type.
@@ -977,55 +956,47 @@ as of, Friday, December 26, 2003
 	<b>Y</b> (d): Sets the Y coordinate of the object.<br>
 	<b>Z</b> (d): Sets the Z coordinate of the object.<br>
 	<b>ID</b> (h): Sets the ID of the object.<br>
-	<b>VISIBLE</b> (d): Toggles the objects visibility (0: Visible, 1: Hidden, 2: Magically Invisible, 3: Permanently Hidden)<br>
+	<b>VISIBLE</b> (d): Toggles the objects visibility (0: Visible, 1: Hidden, 2: Magically Invisible)<br>
 	</ul>
 	Characters:
 	<ul>
-	  <p><b>ALLSKILLS</b> (d): Sets all of the characters skills.<br>
-	      <b>ORGSKIN</b> (h): Sets the original skin of the character.<br>
-	      <b>FONT</b> (d): Sets the font type of the character.<br>
-	      <b>SPATTACK</b> (d): Sets the SPAttack value of the character.<br>
-	      <b>SPDELAY</b> (d): Sets the SPDelay in minutes for the character.<br>
-	      <b>POISON</b> (d): Sets the poison strength of the character.<br>
-	      <b>TITLE</b> (s): Sets the title of the character.<br>
-	      <b>NPCWANDER</b> (d): Sets the NPCWander type of the character.
-		  <blockquote>
-			<strong><em>0:</em></strong><em> NPC doesn't move anywhere<br>
-			<strong>1:</strong> NPC follows a target set with the FOLLOW command<br>
-			<strong>2:</strong> NPC wanders freely<br>
-			<strong>3:</strong> NPC wanders in a circular area specified with the NPCCIRCLE command.<br>
-			<strong>4</strong>: NPC wanders in a rectangular area specified with the NPCRECT command.			</em></blockquote>
-	      <b>DIR</b> (d): Sets the direction of the character.<br>
-	      <b>NPCAI</b> (d): Sets the NPCAI type of the character.<br>
-	      <b>ADVOBJ</b> (d): Set the advancement type the character has used.<br>
-	      <b>VULNERABLE</b> (d): Toggle characters invulnerability (0:  invulnerable, 1: vulnerable)<br>
-	      <b>SPLIT</b> (d): For splitting NPCs, amount of creatures to split into.<br>
-	      <b>SPLITCHANCE</b> (d): For splitting NPCs, chance of splitting on hit.<br>
-	      <b>COMMANDLEVEL</b> (d): Set the command level of the character.<br>
-	      <b>CANTRAIN</b> (d): Toggle characters ability to train (0: can't train, 1: can train).<br>
-	      <b>FROZEN</b> (d): Toggle character's ability to move (0: not frozen, 1: frozen).<br>
-	      (s d) If a valid skill name is used, sets the specified skill. </p>
-	  </ul>
+	<b>ALLSKILLS</b> (d): Sets all of the characters skills.<br>
+	<b>ORGSKIN</b> (h): Sets the original skin of the character.<br>
+	<b>FONT</b> (d): Sets the font type of the character.<br>
+	<b>SPATTACK</b> (d): Sets the SPAttack value of the character.<br>
+	<b>SPDELAY</b> (d): Sets the SPDelay in minutes for the character.<br>
+	<b>POISON</b> (d): Sets the poison strength of the character.<br>
+	<b>TITLE</b> (s): Sets the title of the character.<br>
+	<b>NPCWANDER</b> (d): Sets the NPCWander type of the character.<br>
+	<b>DIR</b> (d): Sets the direction of the character.<br>
+	<b>NPCAI</b> (d): Sets the NPCAI type of the character.<br>
+	<b>ADVOBJ</b> (d): Set the advancement type the character has used.<br>
+	<b>INVULNERABLE</b> (d): Toggle characters invulnerability (0: not invul, 1: invul)<br>
+	<b>SPLIT</b> (d): For splitting NPCs, amount of creatures to split into.<br>
+	<b>SPLITCHANCE</b> (d): For splitting NPCs, chance of splitting on hit.<br>
+	<b>COMMANDLEVEL</b> (d): Set the command level of the character.<br>
+	<b>CANTRAIN</b> (d): Toggle characters ability to train (0: can't train, 1: can train).<br>
+	<b>FROZEN</b> (d): Toggle characters ability to move (0: not frozen, 1: frozen).<br>
+	(s d) If a valid skill name is used, sets the specified skill.
+	</ul>
 	Items:
 	<ul>
-	  <p><b>AMOUNT</b> (d): Sets the amount of an item.<br>
-	      <b>MOVABLE</b> (d): Toggles items ability to be moved (0: not movable, 1: movable).<br>
-	      <b>WIPABLE</b> (d): Toggles items wipeable status (0: not wipable, 1: wipable)<br>
-	      <b>BUYVALUE</b> (d): Sets items buy value.<br>
-	      <b>SELLVALUE</b> (d): Sets items sell value.<br>
-	      <b>RESTOCK</b> (d): Sets amount to restock on a shopkeeper.<br>
-	      <b>MORE</b> (h): Sets items "more" value.<br>
-	      <b>MOREX</b> (h): Sets items "morex" value.<br>
-	      <b>MOREY</b> (h): Sets items "morey" value.<br>
-	      <b>MOREZ</b> (h): Sets items "morez" value.<br>
-	      <b>MOREXYZ</b> (h h h): Sets items "morex", "morey", and "morez" values.<br>
-	      <b>DEVINELOCK</b> (d): Toggles items devine lock status (0: not locked, 1: locked).<br>
-	      <b>DIR</b> (d): Sets the direction value of the item. Used by lightsources to determine lightradius.	<br>
-	      <b>NAME2</b> (s): Sets items name2 value (For use with itemid).<br>
-	      <b>TYPE</b> (d): Sets items type.<br>
-	      <b>DECAYABLE</b> (d): Toggles items decay status (0: not decayable, 1: decayable).
-	        </p>
-	  </ul>
+	<b>AMOUNT</b> (d): Sets the amount of an item.<br>
+	<b>MOVABLE</b> (d): Toggles items ability to be moved (0: not movable, 1: movable).<br>
+	<b>WIPABLE</b> (d): Toggles items wipeable status (0: not wipable, 1: wipable)<br>
+	<b>BUYVALUE</b> (d): Sets items buy value.<br>
+	<b>SELLVALUE</b> (d): Sets items sell value.<br>
+	<b>RESTOCK</b> (d): Sets amount to restock on a shopkeeper.<br>
+	<b>MORE</b> (h): Sets items "more" value.<br>
+	<b>MOREX</b> (h): Sets items "morex" value.<br>
+	<b>MOREY</b> (h): Sets items "morey" value.<br>
+	<b>MOREZ</b> (h): Sets items "morez" value.<br>
+	<b>MOREXYZ</b> (h h h): Sets items "morex", "morey", and "morez" values.<br>
+	<b>DEVINELOCK</b> (d): Toggles items devine lock status (0: not locked, 1: locked).<br>
+	<b>NAME2</b> (s): Sets items name2 value (For use with itemid).<br>
+	<b>TYPE</b> (d): Sets items type.<br>
+	<b>DECAYABLE</b> (d): Toggles items decay status (0: not decayable, 1: decayable).
+	</ul>
 	Spawners:
 	<ul>
 	<b>SPAWNSECTION</b> (s true/false): Sets the script section for spawner to pull from.<br>
@@ -1278,14 +1249,6 @@ as of, Friday, December 26, 2003
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>W</b></font></td>
     </tr>
     <tr>
-	<td valign="top">WF</td>
-	<td>(Target Command) Makes an item worldforge comatable.</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
-    </tr>
-    <tr>
 	<td valign="top">WHO</td>
 	<td>Displays a list of all online players and what slot they are connected on.</td>
     </tr>
@@ -1340,7 +1303,7 @@ as of, Friday, December 26, 2003
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>X</b></font></td>
     </tr>
     <tr>
-	<td valign="top">XTELEPORT</td>
+	<td valign="top">XTELE</td>
 	<td>
 	(d / h h h h / nothing) Teleports a player to you.
 	<ul>
@@ -1371,14 +1334,6 @@ as of, Friday, December 26, 2003
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-	<td valign="top">XBANK</td>
-	<td>(Target Command) Opens players bank box.</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
-    </tr>
-    <tr>
 	<td valign="top">XGO</td>
 	<td>(Target Command)(d d d) Sends targeted player to specified coordinates.</td>
     </tr>
@@ -1403,5 +1358,5 @@ as of, Friday, December 26, 2003
     <tr>
 	<td colspan=3 bgcolor=#000000>&nbsp;</td>
 </table>
-
-</center></html>
+</head>
+</html>
