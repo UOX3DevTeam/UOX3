@@ -7666,14 +7666,13 @@ void Karma( CChar *nCharID, CChar *nKilledID, int nKarma )
 {	// nEffect = 1 positive karma effect
 	int nCurKarma = 0, nChange = 0;
 	bool nEffect = false;
+	//
 	nCurKarma = nCharID->GetKarma();
-	if( ( nCurKarma > 10000 ) || ( nCurKarma < -10000 ) )
-	{
-		if( nCurKarma > 10000 )
-			nCharID->SetKarma( 10000 );
-		else
-			nCharID->SetKarma( -10000 );
-	}
+	if(nCurKarma > 10000 )
+		nCharID->SetKarma( 10000 );
+	else if( nCurKarma < -10000 ) 
+		nCharID->SetKarma( -10000 );
+	//
 	if( nCurKarma < nKarma && nKarma > 0 )
 	{
 		nChange = ( ( nKarma - nCurKarma ) / 75 );
