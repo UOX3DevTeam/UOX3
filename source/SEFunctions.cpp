@@ -2410,6 +2410,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 4 or 6)" );
 		return JS_FALSE;
 	}
+	CChar *cMade = NULL;
 	if( argc == 4 )
 	{
 		UOXSOCKET bpSocket = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
@@ -2420,19 +2421,30 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		char *npcNum = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );;
 		cSocket *s = calcSocketObjFromSock( bpSocket );
 		UI08 worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
-		*rval = INT_TO_JSVAL( Npcs->AddNPC( s, spawnReg, npcNum, worldNumber ) );
+		cMade = Npcs->AddNPC(s,spawnReg,npcNum,worldNumber);
+		//*rval = INT_TO_JSVAL( Npcs->AddNPC( s, spawnReg, npcNum, worldNumber ) );
 	}
 	else
 	{
 		UOXSOCKET Socket = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
-		int nnpcNum = (int)JSVAL_TO_INT( argv[1] );
+		char *nnpcNum=JS_GetStringBytes(JS_ValueToString(cx,argv[1]));
+		//int nnpcNum = (int)JSVAL_TO_INT( argv[1] );
 		UI16 x = (UI16)JSVAL_TO_INT( argv[2] );
 		UI16 y = (UI16)JSVAL_TO_INT( argv[3] );
 		SI08 z = (SI08)JSVAL_TO_INT( argv[4] );
 		UI08 wrld = (UI08)JSVAL_TO_INT( argv[5] );
 		cSocket *s = calcSocketObjFromSock( Socket );
 #pragma note( "DEPENDENT ON NUMERIC NPC SECTION" )
-		*rval = INT_TO_JSVAL( Npcs->AddNPCxyz( s, nnpcNum, x, y, z, wrld ) );
+		cMade = Npcs->AddNPCxyz(s,nnpcNum,x,y,z,wrld);
+		//*rval = INT_TO_JSVAL( Npcs->AddNPCxyz( s, nnpcNum, x, y, z, wrld ) );
+	}
+	if(cMade!=NULL)
+	{
+		UI16 myScpTrig = Trigger->FindObject(JS_GetGlobalObject(cx));
+		cScript *myScript = Trigger->GetScript(myScpTrig);
+		JSObject *myobj = myScript->AcquireObject(IUE_CHAR);
+		JS_SetPrivate(cx,myobj,cMade);
+		*rval = OBJECT_TO_JSVAL(myobj);
 	}
 	return JS_TRUE;
 }
@@ -4339,3 +4351,55 @@ JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	*rval = INT_TO_JSVAL( Races->Count() );
 	return JS_TRUE;
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date					-	1/13/2003 11:09:39 PM
+//|	Developers		-	Brakhtus
+//|	Organization	-	Forum Submission
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Extend the UOX# JSE implementation to support scriptable 
+//|									commands that players, and daminstration for a shard may
+//|									use to performs specialized tasks.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+ 	if( argc != 1 )
+ 	{
+		DoSEErrorMessage( "GetCommand: needs an argument" );
+		return JS_FALSE; 	
+	} 	
+	short idx = (JSVAL_TO_INT( argv[0] ));
+ 	if (idx>=tnum) 
+	{ 		
+		DoSEErrorMessage( "GetCommand: Index exeeds the commando-array!" ); 		
+		return JS_FALSE; 	
+	} 	
+	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, comm[idx] ) ); 
+	return JS_TRUE; 
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date					-	1/13/2003 11:11:46 PM
+//|	Developers		-	Brakhtus
+//|	Organization	-	Forum Submission
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ) 
+{ 	
+	if( argc != 0 ) 	
+	{ 		
+		DoSEErrorMessage( "GetCommandSize: doesnt need any argument!" ); 		
+		return JS_FALSE; 	
+	} 	
+	*rval = INT_TO_JSVAL( tnum ); 	
+	return JS_TRUE; 
+} 
