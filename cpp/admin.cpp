@@ -512,8 +512,8 @@ void cAdmin::ReadIni()
 
 	int i;
 	unsigned long ip;		
-	SOCKADDR_IN m_sin;
-	HOSTENT *hpe;
+	sockaddr_in m_sin;
+	hostent *hpe;
 	char *name;
 	char result[64];
 	char okt_1[10];
@@ -548,20 +548,17 @@ void cAdmin::ReadIni()
 			}
 			else
 			{
-				memcpy((char FAR *)&(m_sin.sin_addr), hpe->h_addr, hpe->h_length);
-				
-				b1 = m_sin.sin_addr.S_un.S_un_b.s_b1;
-				b2 = m_sin.sin_addr.S_un.S_un_b.s_b2;
-				b3 = m_sin.sin_addr.S_un.S_un_b.s_b3;
-				b4 = m_sin.sin_addr.S_un.S_un_b.s_b4;
-				// ip=m_sin.sin_addr.S_un.S_addr;
+				memcpy((char*)&(m_sin.sin_addr), hpe->h_addr, hpe->h_length);
+
+				b1 = m_sin.sin_addr.s_addr & 0xFF ;
+                b2 = (m_sin.sin_addr.s_addr >> 8 ) & 0xFF ;
+                b3 = (m_sin.sin_addr.s_addr >> 16) & 0xFF ;
+                b4 = (m_sin.sin_addr.s_addr >> 24) & 0xFF ; 
 				
 				numtostr(b1 , okt_1);
 				numtostr(b2 , okt_2);
 				numtostr(b3 , okt_3);
 				numtostr(b4 , okt_4);
-				
-				// printf("server ip: %s.%s.%s.%s\n",okt_1,okt_2,okt_3,okt_4);
 				
 				strcpy(result, okt_1);
 				strcat(result, ".");
