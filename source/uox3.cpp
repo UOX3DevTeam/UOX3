@@ -651,9 +651,9 @@ void loadcustomtitle() // for custom titles
 		if (script1[0]!='}')
 		{
 			strcpy(title[titlecount].fame, script1);
-			if (titlecount==23)
+			if (titlecount == 23)
 			{
-				*(title[titlecount].fame)='\0'; // was sprintf(title[titlecount].fame,"");
+				title[titlecount].fame[0] = 0; // was sprintf(title[titlecount].fame,"");
 				strcpy(title[++titlecount].fame, script1);
 			}
 			titlecount++;
@@ -697,9 +697,7 @@ char *title1(CHARACTER p) // Paperdoll title for character p (1)
 
 char *title2(CHARACTER p) // Paperdoll title for character p (2)
 {
-	int titlenum = 0;
-	int x = bestskill( p );
-	titlenum = x+1;
+	int titlenum = bestskill( p ) + 1;
 	strcpy(skilltitle, title[titlenum].skill);
 	return skilltitle;
 }
@@ -864,7 +862,7 @@ char *title3( CHARACTER p ) // Paperdoll title for character p (3)
         {
 			strcpy( fametitle, "The Murderer " ); //Morrolan rep
         }
-		else if( !strcmp( thetitle, " " ) ) 
+		else if( strcmp( thetitle, " " ) )               
 			sprintf( fametitle, "The %s", thetitle );
 		else 
 			fametitle[0] = 0;
@@ -1221,7 +1219,7 @@ void loadchar(int x) // Load a character from WSC
 			else if (!(strcmp(script1, "ROBE")))
 			{
 				i=str2num(script2);
-				chars[x].robe1 = (unsigned char)i>>24;
+				chars[x].robe1 = (unsigned char)(i>>24);
 				chars[x].robe2 = (unsigned char)(i>>16);
 				chars[x].robe3 = (unsigned char)(i>>8);
 				chars[x].robe4 = (unsigned char)(i%256);
@@ -1438,9 +1436,10 @@ void loaditem (int x) // Load an item from WSC
 	unsigned long int i;
 	int loops=0;
 	
-	x=Items->MemItemFree();
-	if (x==-1) return;
-	Items->InitItem(x,0);
+	x = Items->MemItemFree();
+	if (x == -1) 
+		return;
+	Items->InitItem( x, 0 );
 	items[x].ser1=0x40;
 	items[x].id1=0x0F;
 	items[x].id2=0xA6;
@@ -2497,8 +2496,8 @@ void backpack(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3,
 		case 0x9A:   // bookcase
 		case 0x9B:   // bookcase
 		case 0x9C:   // bookcase
-		case 0x9D:	// bookcase (empty)
-		case 0x9E:	// bookcase (empty)
+		case 0x9D:   // bookcase (empty)
+		case 0x9E:	 // bookcase (empty)
 			bpopen[6]=0x4D;
 			break;
 			
@@ -2597,7 +2596,6 @@ void backpack2(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3
 				count++;
 			}
 	}
-	// printf("Count=%i\n", count);
 	count2=(count*5)+7 + 1 ; // 5 bytes per object, 7 for this header and 1 for
 	// terminator
 	display1[1]=count2>>8;
@@ -2753,7 +2751,7 @@ void sendbpitem(int s, int i) // Update single item in backpack
 			}
 		}
 		count++;
-	} while ((x1!=255 && change==1)&&count<999);
+	} while ( ( x1 != 255 && change == 1 ) && count < 999 );
 	
 	if (!change)
 	{
@@ -3049,14 +3047,9 @@ void do_lsd(UOXSOCKET s)
 			else soundeffect5(s,0,246+snd);
 			}
 		}
-		
-		
-		//printf("icnt: %i\n",icnt);
 	} 
 	
 }
-
-
 
 void all_items(int s) // Send ALL items to player
 {
@@ -3065,13 +3058,6 @@ void all_items(int s) // Send ALL items to player
 		if (items[i].free==0) 
 			if( ( !items[i].visible ) || ( ( items[i].visible ) && ( chars[currchar[s]].priv&0x01 ) ) )// we're a GM, or not hidden
 				senditem(s, i);
-}
-
-void all_items_all() // Send ALL items to ALL player (Target: Reduce use of this lag-causing function)
-{
-	int s;
-	for (s=0;s<now;s++) all_items(s);
-	printf("ALERT: all_items_all() called. This function could cause a loooooot of lag!" );
 }
 
 void chardel (int s) // Deletion of character
@@ -3640,11 +3626,9 @@ void usehairdye(int s, int x)
 	{
 		items[beardobject].color1=items[x].color1;
 		items[beardobject].color2=items[x].color2;
-		//for (j=0;j<now;j++) if (perm[j]) senditem(j,beardobject);
 		RefreshItem(beardobject);//AntiChrist
 	}
 	
-	//printf("beard: %i , hair: %i\n",hairobject,beardobject);
 
 	//Now delete the hair dye bottle!
 	Items->DeleItem(x);
@@ -3674,12 +3658,12 @@ void explodeitem(int s, unsigned int nItem)
 	len=items[nItem].morex/250; //4 square max damage at 100 alchemy
 	switch (items[nItem].morez)
 	{
-	case 1:dmg=RandomNum(5,10) ;break;
-	case 2:dmg=RandomNum(10,20) ;break;
-	case 3:dmg=RandomNum(20,40) ;break;
+	case 1:	dmg = RandomNum( 5, 10 );	break;
+	case 2:	dmg = RandomNum( 10, 20 );	break;
+	case 3:	dmg = RandomNum( 20, 40 );	break;
 	default:
 		printf("ERROR: Fallout of switch statement without default. uox3.cpp, explodeitem()\n"); //Morrolan
-		dmg=RandomNum(5,10);
+		dmg = RandomNum(5,10);
 	}
 	
 	if (dmg<5) dmg=RandomNum(5,10);  // 5 points minimum damage
@@ -3749,7 +3733,7 @@ void explodeitem(int s, unsigned int nItem)
 
 // s: player socket, I: send bolt if it rains or not ?
 
-void skillwindow(int s) // Opens the skills list
+void skillwindow(UOXSOCKET s) // Opens the skills list
 {
 	int i,k;
 	//unsigned short int tempskill;
@@ -4087,8 +4071,8 @@ void doorsfx(int item, int x, int y)
 
 void dooruse(int s, int item)
 {
-	int i, db, x;//, z;
-	char changed=0;
+	int i, db, x;
+	char changed = 0;
 	
 	//if (items[item].type!=12) return; // Fix locked doors moving
 	if ((iteminrange(s,item,2)==0)&& s>-1) 
@@ -4098,7 +4082,7 @@ void dooruse(int s, int item)
 	}
 	for (i=0;i<DOORTYPES;i++)
 	{
-		db=doorbase[i];
+		db = doorbase[i];
 		
 		x=((items[item].id1<<8)+items[item].id2);
 		if (x==(db+0))
@@ -4286,11 +4270,10 @@ void dooruse(int s, int item)
 
 void get_item(int s) // Client grabs an item
 {
-	int i, x,  npc=-1/*, j*/, c, amount, packnum, update=0,serial;
+	int i, x,  npc = -1, c, amount, packnum, update=0,serial;
 	tile_st tile;
 	int z;//antichrist for trade fix
 	
-	//printf("get-item called\n");
 	
 	serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
 	if( serial == -1 ) return;
@@ -4477,11 +4460,9 @@ void get_item(int s) // Client grabs an item
 
 void wear_item(int s) // Item is dropped on paperdoll
 {
-	//int a1, a2, a3, a4,cserial,iserial;
 	unsigned char a1, a2, a3, a4;
 	int cserial, iserial;
 	int i, j, k, pack;
-	//int multi ;
 	tile_st tile;
 	int serial, serhash, ci, i2, letsbounce = 0; // AntiChrist (5) - new ITEMHAND system
 
@@ -4501,6 +4482,13 @@ void wear_item(int s) // Item is dropped on paperdoll
 	{
 		if( k == -1 ) 
 			return;
+
+		if (chars[currchar[s]].dead)
+		{
+			sysmessage (s, "You cant do much in your current state.");
+			return;
+		}
+
 		if( Races->getArmorRestrict( chars[currchar[s]].race ) < Items->ArmorClass( i ) && Races->getArmorRestrict( chars[currchar[s]].race ) != 0 )
 		{
 			sysmessage(s, "You are unable to equip that due to your race." );

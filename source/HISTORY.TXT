@@ -27,6 +27,11 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
+-------------------------------------------------------------------------------
+06.02.2001               Thiago A. Corrêa
+  uox3.cpp               Bug fix for Title not showing in paperdoll
+                         Few clean-ups and beautifications.
+
 
 -------------------------------------------------------------------------------
 06.02.2001               Thiago A. Corrêa
