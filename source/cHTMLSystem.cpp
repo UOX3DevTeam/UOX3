@@ -248,7 +248,7 @@ void cHTMLTemplate::Process( void )
 						{
 							ACTREC *toScan = tChar->GetAccountObj();
 							if( toScan != NULL )
-								(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->Info.username ):parsedInline.replace( sPos, 14, "" );
+								(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->username ):parsedInline.replace( sPos, 14, "" );
 						}
 
 						// PlayerX

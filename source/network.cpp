@@ -160,7 +160,7 @@ void cNetworkStuff::Login1( cSocket *s ) // Initial login (Login on "loginserver
 		pSplit( (char *)&s->Buffer()[31] );
 		if( ourAccount->lpaarHolding->bFlags&0x01 )
 			t = LDR_ACCOUNTDISABLED;
-		else if( strcmp( ourAccount->lpaarHolding->Info.password, pass1 ) )
+		else if( strcmp( ourAccount->lpaarHolding->password, pass1 ) )
 			t = LDR_BADPASSWORD;
 		if( t != LDR_NODENY )
 		{
