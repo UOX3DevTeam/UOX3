@@ -512,13 +512,16 @@ SECTION DICTIONARY CLIENTMSG
 521=Enter the new Weight value for the item in decimal.
 522=Enter the new Decay toggle for the item. (0/1)
 523=Enter the new Good value for the item in decimal.
-524=Enter the new Value for the item in decimal.
-525=Enter the new Carve value for the item in decimal.
-526=Enter the new Stackable toggle for the item. (0/1)
-527=Enter the new Dyeable toggle for the item. (0/1)
-528=Enter the new Corpse toggle for the item. (0/1)
-529=Enter the new Creator name for the item.
-530=Unknown button pressed.
+524=Enter the new Buy Value for the item in decimal.
+525=Enter the new Sell Value for the item in decimal.
+526=Enter the new Carve value for the item in decimal.
+527=Enter the new Stackable toggle for the item. (0/1)
+528=Enter the new Dyeable toggle for the item. (0/1)
+529=Enter the new Corpse toggle for the item. (0/1)
+530=Enter the new Visible toggle for the item. (0/1)
+531=Enter the new Creator serial for the item.
+532=Enter the new spawnobj/spawnobjlist for the item.
+533=Unknown button pressed.
 540=There was an error removing you from your town, contact a GM promptly!
 541=Can't view taxes for a town you are not in.
 542=Select person to vote for.
@@ -808,11 +811,11 @@ SECTION DICTIONARY CLIENTMSG
 823=You can't tailor here.
 824=You failed to make cloth.
 825=You have made your cloth.
-826=You failed to mix, and spilt your water.
+826=You failed to make that.
 827=You have mixed very well to make your dough.
-828=You failed to mix.
-829=You have made your uncooked pizza, ready to place in oven.
-830=You can't mix here.
+828=You have made your uncooked pizza, ready to place in oven.
+829=You can't make that!
+830=You cannot provoke such a person!
 831=You cannot hide while mounted!
 832=You cannot hide while fighting.
 833=You are already hidden.
@@ -1261,7 +1264,7 @@ SECTION DICTIONARY CLIENTMSG
 1278=*%s begins to heal %s*
 1279=*%s begins to resurrect %s*
 1280=*%s begins to cure %s*
-1281=You see %s attacking %s!
+1281=%s is attacking you!
 1282=Help! Guards! I've been attacked!
 1283=%s's bank box.
 1284=%s's items bank box.
@@ -1689,6 +1692,12 @@ SECTION DICTIONARY CLIENTMSG
 1726=Enter a new Weight value for the character in decimal.
 1727=Enter a new Carve value for the character in decimal.
 1728=Enter a new Visible value for the character in decimal.
+1729=Attack [%i %i], Defense [%i] Taming [%i] Hit Points [%i]
+1730=You cannot provoke such a person!
+1731=Defense [%i] LoDamage [%i] HiDamage [%i], Poison [%i], Rank [%i]
+1732=This Item 
+1733=Select item to set spwanobj on.
+1734=Select item to set spwanobjlist on.
 }
 
 EOF
