@@ -57,6 +57,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "KARMA":
 		ourObj.karma = StringToNum( splitString[1] );
+		okMsg( socket );
 		break;
 	case "KILLS":
 		ourObj.murdercount = StringToNum( splitString[1] );
@@ -276,6 +277,7 @@ function HandleSetChar( socket, ourChar, uKey, value )
 		break;
 	case "Z":
 		ourChar.z = StringToNum( value );
+		okMsg( socket );
 		break;
 	case "CANTRAIN":
 		if( ourChar.npc )
@@ -293,7 +295,9 @@ function HandleSetChar( socket, ourChar, uKey, value )
 		okMsg( socket );
 		break;
 	default:
-		if( !ourChar.SetSkillByName( uKey, StringToNum( value ) ) )
+		if( ourChar.SetSkillByName( uKey, StringToNum( value ) ) )
+			okMsg( socket );
+		else
 			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}

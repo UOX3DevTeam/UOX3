@@ -60,7 +60,6 @@
 133=skill/tailoring/flaxtothread.js
 134=skill/tailoring/wyarnballs-3.js
 135=skill/tailoring/wclothbolt.js
-136=skill/tailoring/wsclothbolt.js
 //-------------------------------------------
 // Lightsources startSYSTEM[500-699]
 501=server/light/candle01_on.js
@@ -235,6 +234,8 @@
 806=skill/armslore.js
 807=skill/taming.js
 808=skill/forensics.js
+809=skill/begging.js
+810=skill/detecthidden.js
 }
 
 
