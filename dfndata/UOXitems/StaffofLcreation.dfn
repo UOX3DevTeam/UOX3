@@ -1,0 +1,68 @@
+This item is more of an artifact.  It has no charges,
+but it does have a major drawback.  It sucks the STR
+out of the user at a rate of 3 points per use.  This
+lose is permanent until you train it back up.
+
+This item creates useful items:  food, minor weapons, 
+arrows, and a shield.  To change the items created,
+simply change the numbers in the SECTION ITEMLIST.
+
+Open your items.scp file and add these entries:
+
+
+SECTION ITEM 90016
+{
+NAME a magical staff
+NAME2 a Staff of Lesser Creation
+ID 0E8A
+TRIGGER 187
+LAYER 2
+LODAMAGE 8
+HIDAMAGE 28
+HP 500
+DEF 4
+DECAY
+VALUE 7000
+STR 30
+SPD 48
+WEIGHT 400
+GOOD 27
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+
+//staff of lesser creation list
+SECTION ITEM 97025
+{
+ITEMLIST 130
+}
+
+
+SECTION ITEMLIST 130
+{
+5048
+92
+5503
+5502
+26
+109
+96
+}
+
+
+And now, for the trigger itself.  Open up your 
+TRIGGERS.scp file and add this:
+
+SECTION TRG 187
+{staff of lesser creation
+SND 02 17
+IADD 97025
+STR -3
+}

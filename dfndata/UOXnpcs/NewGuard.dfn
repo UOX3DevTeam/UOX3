@@ -1,0 +1,198 @@
+Tired of the same old guards?  Here is some script that will 
+make the guard attire totally random.  Kinda goofy..  This is 
+the product of boredom..  Just insert the following into your
+item.scp file
+
+
+Place these under your ITEM section:
+
+
+// Guards Weapons
+SECTION ITEM 97004
+{
+ITEMLIST 100
+}
+
+// Guards Shields
+SECTION ITEM 97005
+{
+ITEMLIST 101
+}
+
+// Guards Helms
+SECTION ITEM 97006
+{
+ITEMLIST 102
+}
+
+// Guards Chest
+SECTION ITEM 97007
+{
+ITEMLIST 103
+}
+
+// Guards Arms
+SECTION ITEM 97008
+{
+ITEMLIST 104
+}
+
+// Guards Hands
+SECTION ITEM 97009
+{
+ITEMLIST 105
+}
+
+// Guards Legs
+SECTION ITEM 97010
+{
+ITEMLIST 106
+}
+
+// Guards Neck
+SECTION ITEM 97011
+{
+ITEMLIST 107
+}
+
+
+
+Then place these under you ITEMLIST section:
+
+// Guards Weapons
+SECTION ITEMLIST 100
+{
+112
+95
+113
+93
+109
+96
+97
+108
+110
+99
+100
+}
+
+// Guards Shields
+SECTION ITEMLIST 101
+{
+191
+192
+25
+27
+26
+}
+
+// Guards Helms
+SECTION ITEMLIST 102
+{
+72
+71
+326
+73
+47
+70
+57
+}
+
+// Guards Chest
+SECTION ITEMLIST 103
+{
+55
+69
+44
+58
+66
+}
+
+// Guards Arms
+SECTION ITEMLIST 104
+{
+67
+49
+59
+64
+}
+
+// Guards Hands
+SECTION ITEMLIST 105
+{
+2532
+46
+61
+63
+}
+
+// Guards Legs
+SECTION ITEMLIST 106
+{
+56
+68
+48
+65
+60
+}
+
+// Guards Neck
+SECTION ITEMLIST 107
+{
+2533
+45
+62
+}
+
+
+Now all you have to do is set up your guards, or any NPC for 
+matter, with the ITEM # for each item above.. and don't forget
+their feet.. I didn't make that list..
+
+Here is an example of what it looks like:
+
+SECTION NPC 90000
+{
+NAMELIST 1
+TITLE the guard
+ID 0x0190
+ITEM 15065
+HAIRCOLOR 15
+ITEM 15066
+COLORMATCHHAIR
+SKINLIST 16
+DIRECTION S
+SPEECH 24
+TAMING  1100
+STR 400 600
+DEX 100 150
+INT 350 400
+KARMA 10000
+FAME 10000
+PARRYING 990 1000
+MAGICRESISTANCE 990 1000
+TACTICS 990 1000
+WRESTLING 990 1000
+DAMAGE 10 40
+DEF 15
+BACKPACK
+ITEM 97004
+ITEM 97005
+ITEM 97006
+ITEM 97007
+ITEM 97008
+ITEM 97009
+ITEM 97010
+ITEM 97011
+ITEM 455
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 15
+NPCAI 4
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}

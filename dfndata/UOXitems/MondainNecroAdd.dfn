@@ -1,0 +1,194 @@
+Ok first like to say i looked at the necro scritp that jerelith did, to actually make these little add on,
+his scripts, this would prolly not be here.
+
+
+First, open your create.scp and add these lines to the bottom of section makemenu(necroscript) 1100
+
+
+20d3 Poltergeist Lord
+RESOURCE 1
+SKILL 945
+ADDITEM 550090
+20d9 Poltergeist
+RESOURCE 1
+SKILL 700
+ADDITEM 550100
+
+
+
+now, open your trigger.scp file. and this at the bottom.
+
+
+
+SECTION TRG 12001
+{ Summon Poltergeist Scroll
+EMT Kal Vas Corp Xen
+SKL 19 1
+IFSKL 19 700
+CSKILL 19
+MAN -32
+HEA -8
+ACT 11
+SND 02 17
+FMSG You Fail to bring life back to the dead.
+NEED xf7f // Brimstone
+USEUP xf7f
+KARMA -30
+NADD 51004
+NEWOWNER
+REMOVE
+}
+
+
+SECTION TRG 12002
+{ Summon Poltergeist Lord Scroll
+EMT Kal Vas Corp Xen
+SKL 19 1
+IFSKL 19 945
+CSKILL 19
+MAN -52
+HEA -8
+ACT 11
+SND 02 17
+FMSG You Fail to bring life back to the dead.
+NEED xf7f // Brimstone
+USEUP xf7f
+KARMA -50
+NADD 51003
+NEWOWNER
+REMOVE
+}
+
+
+
+now, open your items.scp menu and add this
+
+
+
+
+
+SECTION ITEM 550090
+{
+NAME a Poltergeist Scroll
+ID xe36
+COLOR 066d
+TRIGGER 12001
+DECAY
+VALUE 100
+RESTOCK 10
+GOOD 25
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+SECTION ITEM 550100
+{
+NAME a Poltergeist Lord Scroll
+ID xe36
+COLOR 066d
+TRIGGER 12002
+DECAY
+VALUE 150
+RESTOCK 10
+GOOD 25
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+now add this to your npc.scp file.
+
+
+
+
+
+
+
+
+SECTION NPC 51003
+{
+NAME a poltergeist lord
+ID 0009
+SKIN 5000
+DIRECTION N
+BACKPACK
+PACKITEM 5004
+PACKITEM 3300
+SPATTACK 8191
+SPADELAY 10
+MAGERY 900 1000
+TOTAME 1100
+STR 700 850
+DEX 0 0
+INT 550 800
+KARMA -10000
+FAME 10000
+PARRYING 650 1000
+MAGICRESISTANCE 900 990
+TACTICS 950 1000
+WRESTLING 900 1000
+DAMAGE 35 40
+DEF 25
+NPCWANDER 4
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+SECTION NPC 51004
+{
+NAME a poltergeist
+ID 0004
+SKIN 5000
+MAGERY 700 850
+SPATTACK 8191
+SPADELAY 10
+DIRECTION N
+NPCWANDER 4
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+TOTAME 1100
+STR 166 255
+DEX 0 0
+INT 91 115
+KARMA -4000
+FAME 4000
+PARRYING 350 450
+MAGICRESISTANCE 800 850
+TACTICS 700 850
+WRESTLING 700 850
+DAMAGE 4 25
+DEF 25
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+ok , u shoudl be all set.
+
+

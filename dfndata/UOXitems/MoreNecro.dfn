@@ -1,0 +1,177 @@
+The mortar and pestle is used to make the Necro Alchemy work as
+it is in the triggers.. It is not my personal script.. you can 
+thank Btroyl for it..  
+
+*********************************************************
+
+Add this line to your envoke.scp to make the necro mortar 
+and pestle to work:
+
+x1ae0 necromantic mortar and pestle
+
+Now add this to your items.scp
+
+SECTION ITEM 55009
+{
+NAME a strange looking skull
+NAME2 a necromantic mortar and pestle
+ID 1ae0
+VALUE 30
+DECAY
+RESTOCK 10
+GOOD 30
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+One more thing, you MUST add this line to ALL the Necro Alchemy
+entries in your WTRIGS.scp file.  Just add it in under the NEED
+line:
+
+REQ x1ae0
+
+This will make the trigger only usable bye the skull listed above.
+********************************************************
+
+This particular script calls forth a skeleton to do your
+bidding.  I have provided the NPC in case you aren't using 
+the Necro scripts provided on this site.
+
+Add this to items.scp
+
+
+SECTION ITEM 85010
+{ 
+NAME a strange looking bone
+NAME2 bone of animation
+ID 1b11
+DECAY
+VALUE 100
+TRIGGER 2008
+RESTOCK 0
+WEIGHT 20
+GOOD 9
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+Now add this to Triggers.scp:
+
+SECTION TRG 2008
+{ bone of animation
+EMT Arise my servant
+ACT 11
+SND 02 17
+KARMA -10
+NADD 10801
+NEWOWNER
+REMOVE
+}
+
+Now, if you don't have a skeleton as NPC 10801, add this
+to your NPC.scp:
+
+SECTION NPC 10801
+{
+NAME a skeleton
+ID 0032
+SKIN 0000
+RACE XX
+DIRECTION N
+BACKPACK
+STR 56 80
+DEX 56 75
+INT 21 40
+RUN
+KARMA 0
+FAME 0
+MAGICRESISTANCE 450 600
+TACTICS 450 600
+WRESTLING 450 550
+// Damage per Weapon
+DAMAGE 3 15
+DEF 8
+NPCWANDER 4
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+TOTAME 110
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+*********************************************************
+
+This script will provide a sort of cursed item for your
+players to find.  It summons a random undead that attacks
+the summoner.  Fun fun fun..
+
+Add this to your items.scp:
+
+SECTION ITEM 85011
+{
+NAME a strange looking bottle
+NAME2 Bottle of Undead
+ID 0EFC
+TRIGGER 2009
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+Now, add this to your triggers.scp:
+
+SECTION TRG 2009
+{ bottle of undead
+SND 02 17
+NADD 5004
+DISABLE 600
+}
+
+And Finally, add this to your npc.scp:
+
+//Bottle of Undead list
+SECTION NPC 5004
+{
+NPCLIST 5004
+}
+
+SECTION NPCLIST 5004
+{
+77
+87
+10005
+25
+2009
+}
+
+
+DISABLE # means it will disable the trigger for that many 
+seconds.  Feel free to add/subtract any numbers from
+the NPCLIST 5004.  
+
+And as usual, make sure that none the SECTION #s are being 
+used.. 
+
+Enjoy

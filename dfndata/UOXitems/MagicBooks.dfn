@@ -1,0 +1,591 @@
+Created by: Skywise
+EMail: TheSkywise@AOL.com		ICQ: 14622022
+UOX Shardname: Gateworld		May 6, 2000
+
+			MAGIC BOOKS PART I
+
+Here are some magical books to add flavor to your shard.  Some benefit
+the player, others can kill.  Cursed books will look like other magical 
+books until they are identified.
+
+Book Rules:
+
+1) Books can be used only one time (they disappear after succesful
+   use)
+2) Feel free to edit or modify as you see fit.
+
+Some of these books I would recommend using as a quest item (just
+place the book yourself and NODELAY it)
+
+Feel free to EMail or ICQ me if you have any questions regarding
+these scripts.
+
+TABLE OF MAGICAL BOOKS:
+
+MAGICAL BOOK				PLAYER CHANGE & REQUIREMENTS
+Libram of Gainful Conjuration		+5 Magery;		
+
+Libram of Ineffable Damnation 		+15 Magery; -500 Karma
+
+Libram of the Silver Serpent 		Requires Karma > 100;
+					+ 15 Magery; +2 Int;
+					+100 Karma; +100 Fame
+
+Manual of Pilfering			+10 Stealing; +10 Snooping
+					+10 Lockpicking
+
+Vacuous Grimoire			-75 to Health; -100 Fame;
+					-5 Int
+
+Book of Exalted Deeds			Requires Karma > 75;
+					+100 Fame
+
+Blessed Book of the Avatar		Requires Karma > 150;
+					+ 5 Int; +15 Magic Resistence
+
+Book of Vile Darkness			Requires Karma < -50 (evil);
+					+5 Int; +20 Alchemy;
+					-300 Karma
+
+Tactics for Dummies			Requires Tactics < 12;
+					+10 to Tactics
+
+Book of Intelligence			+7 Int
+
+Cursed Book of Mind Destroying		-7 Int
+
+Tome of Mystical Equations		Requires Alchemy > 35;
+					+15 to Alchemy
+
+Tome of Magic				+1 Int; +10 Magery
+
+Redlimb's Guide to Taming		+12 Taming
+
+Cursed Manual of Fumble Fingers		-8 Dex
+
+Tome of Tinkering			+15 to Tinkering
+
+Skywise's Guide to Inscription		Requires Inscription > 20
+					+15 to Inscription
+***********************************************************************
+To use these books in your shard, you need to copy the items into
+your ITEMS.scp and copy the triggers into your TRIGGER.SCP
+
+The Triggers are listed AFTER the items on this page...
+
+Cut and paste the following items into your ITEMS.SCP file:
+
+//Begining of Books
+SECTION ITEM 86059
+{
+NAME A magical book
+NAME2 Libram of Gainful Conjuration
+ID xe3b
+COLOR 0019
+DECAY
+TRIGGER 2099
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86060
+{
+NAME A magical book
+NAME2 Libram of Ineffable Damnation
+ID xe3b
+COLOR 0322
+DECAY
+TRIGGER 2100
+VALUE 600
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86061
+{
+NAME A magical book
+NAME2 Libram of the Silver Serpent
+ID xe3b
+COLOR 03e9
+DECAY
+TRIGGER 2101
+VALUE 10000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86062
+{
+NAME A magical book
+NAME2 Manual of Pilfering
+ID xe3b
+COLOR 0205
+DECAY
+TRIGGER 2102
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86063
+{
+NAME A magical book
+NAME2 Vacuous Grimoire
+ID xe3b
+COLOR 030e
+DECAY
+TRIGGER 2103
+VALUE 800
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86064
+{
+NAME A magical book
+NAME2 Book of Exalted Deeds
+ID xe3b
+COLOR 0168
+DECAY
+TRIGGER 2104
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86065
+{
+NAME A magical book
+NAME2 Blessed Book of the Avatar
+ID xe3b
+COLOR 00ab
+DECAY
+TRIGGER 2105
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86066
+{
+NAME A magical book
+NAME2 Book of Vile Darkness
+ID xe3b
+COLOR 02e2
+DECAY
+TRIGGER 2106
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86067
+{
+NAME A magical book
+NAME2 Tactics for Dummies
+ID xe3b
+COLOR 0036
+DECAY
+TRIGGER 2107
+VALUE 1200
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86068
+{
+NAME A magical book
+NAME2 Book of Intelligence
+ID xe3b
+COLOR 00cd
+DECAY
+TRIGGER 2108
+VALUE 1500
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86069
+{
+NAME Book of Intelligence
+NAME2 Cursed Book of Mind Destroying
+ID xe3b
+COLOR 00cd
+DECAY
+TRIGGER 2109
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86070
+{
+NAME A magical book
+NAME2 Tome of Mystical Equations
+ID xe3b
+COLOR 0297
+DECAY
+TRIGGER 2110
+VALUE 2000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86071
+{
+NAME A magical book
+NAME2 Tome of Magic
+ID xe3b
+COLOR 02e2
+DECAY
+TRIGGER 2111
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86072
+{
+NAME A magical book
+NAME2 Redlimb's Guide to Animal Taming
+ID xe3b
+COLOR 01c9
+DECAY
+TRIGGER 2112
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86073
+{
+NAME Manual of Pilfering
+NAME2 Cursed Manual of Fumble Fingers
+ID xe3b
+COLOR 0205
+DECAY
+TRIGGER 2113
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86074
+{
+NAME A magical book
+NAME2 Tome of Tinkering
+ID xe3b
+COLOR 0058
+DECAY
+TRIGGER 2114
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86075
+{
+NAME A magical book
+NAME2 Skywise's Guide to Inscription
+ID xe3b
+COLOR 0006
+DECAY
+TRIGGER 2115
+VALUE 1000
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+//**********************************END OF BOOKS**********************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+
+
+Next, the following should be added to your TRIGGER.SCP file:
+
+
+SECTION TRG 2099
+{
+SND 00 55
+EMT * Reading the Libram of Gainful Conjuration *
+MSG You increase your knowledge of Magery!
+SKL 25 50
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2100
+{
+SND 00 55
+EMT * Reading the Libram of Ineffable Damnation *
+MSG You increase your knowledge of the magic arts!
+SKL 25 150
+KARMA -500
+SND 01 9c
+REMOVE
+}
+
+SECTION TRG 2101
+{
+SND 00 55
+FMSG You do not have enough Karma to read this...
+IFKARMA > 100
+EMT * Reading the Libram of the Silver Serpent *
+SKL 25 150
+INT 2
+KARMA 100
+FAME 100
+MSG You have learned much from this tome...
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2102
+{
+SND 00 55
+EMT * Reading the Manual of Pilfering *
+SKL 28 100
+SKL 24 100
+SKL 33 100
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2103
+{
+SND 00 55
+EMT * Reading the Vacuous Grimoire *
+MSG Your body wracks with pain...
+SND 01 9c
+ACT 15
+SND 01 f6
+REMOVE
+FAME -100
+INT -5
+HEA -75
+}
+
+SECTION TRG 2104
+{
+SND 00 55
+FMSG You do not have enough karma to use this...
+IFKARMA > 75 
+EMT * Reading the Book of Exalted Deeds *
+FAME 100
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2105
+{
+SND 00 55
+FMSG You do not have enough karma to use this...
+IFKARMA > 150
+EMT * Reading the Blessed Book of the Avatar *
+INT 5
+SKL 26 150
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2106
+{
+SND 00 55
+FMSG You are not evil enough to read this (yet)...
+KARMA -1
+IFKARMA < -50 
+EMT * Reading the Book of Vile Darkness *
+KARMA -299
+INT 5
+SKL 0 200
+SND 01 9c
+REMOVE
+}
+
+
+SECTION TRG 2107
+{
+SND 00 55
+EMT * Reading Tactics for Dummies *
+FMSG You already know everything in this book...
+IFSKL 27 -12
+MSG You learn alot about tactics...
+SKL 27 100
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2108
+{
+SND 00 55
+EMT * Reading the Book of Intelligence *
+MSG You feel more intelligent...
+INT 7
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2109
+{
+SND 00 55
+EMT * Reading Cursed Book of Mind Destroying *
+MSG Your mind is being destroyed...
+INT -7
+SND 01 9c
+REMOVE
+}
+
+SECTION TRG 2110
+{
+SND 00 55
+EMT * Reading Tome of Mystical Equations *
+FMSG This book is beyond your understanding...
+IFSKL 0 35
+MSG You learn alot about alchemy...
+SKL 0 150
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2111
+{
+SND 00 55
+EMT * Reading Tome of Magic *
+MSG You learn alot about magic...
+SKL 25 10
+INT 1
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2112
+{
+SND 00 55
+EMT * Reading Redlimb's Guide to Animal Taming *
+MSG You learn alot about taming...
+SKL 35 10
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2113
+{
+SND 00 55
+EMT * Reading Cursed Manual of Fumble Fingers *
+MSG You feel your coordination dwindle...
+DEX -8
+SND 01 9c
+REMOVE
+}
+
+SECTION TRG 2114
+{
+SND 00 55
+EMT * Reading Tome of Tinkering *
+MSG You learn alot about tinkering...
+SKL 37 15
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2115
+{
+SND 00 55
+EMT * Reading Skywise's Guide to Inscription *
+FMSG The writings of Skywise are beyond your understanding...
+IFSKL 23 20
+MSG You learn alot about inscription...
+SKL 23 15
+SND 02 15
+REMOVE
+}
+
+//***** BE SURE TO HAVE EOF AT THE END OF FILE!!! *******

@@ -1,0 +1,70 @@
+First, add this to your ITEMS.scp:
+
+SECTION ITEM 90014
+{
+NAME a strange looking bottle
+NAME2 an Efreeti Bottle
+ID 0EFC
+TRIGGER 182
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+Next, add this to your TRIGGERS.scp:
+
+SECTION TRG 182
+{ efreeti bottle
+SND 02 17
+NADD 10027
+NEWOWNER
+DISABLE 7200
+}
+
+
+And finally, to add the efreeti,  NPC.scp:
+
+SECTION NPC 10027
+{
+NAME efreeti
+ID 000D
+SKIN 052f
+DIRECTION N
+BACKPACK
+MAGERY 600 750
+SPATTACK 4095
+SPADELAY 10
+STR 325 355
+DEX 265 285
+INT 170 195
+KARMA 0
+FAME 0
+TACTICS 600 800
+WRESTLING 600 800
+DAMAGE 8 16
+DEF 25
+NPCWANDER 4
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+NPCAI 1
+TOTAME 110
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+The DELAY on the trigger is so high because you can
+only use the bottle once per UO day..  and one UO day
+is equal to about 2 real hours..  feel free to change
+it if you want..
