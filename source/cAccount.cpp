@@ -941,6 +941,7 @@ long cAccounts::SaveAccounts( void )
 long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 {	
 	ofstream outStream;
+	ofstream outStream2;
 	char TempString[MAX_PATH];
 	ACTREC *CurrentAccount = NULL;
 	ACTIREC_ITERATOR iter;
@@ -951,6 +952,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	string sRealAccountsPath = cwmWorldState->ServerData()->GetAccountsDirectory();
 	string sAccessPath = AccessPath;
 	string sAccountsPath= AccountsPath;
+	string sAccountsPath2= AccountsPath;
 	string sBasePath;
 	if( AccessPath.size() <= 0 )
 	{
@@ -968,13 +970,17 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 	sAccessPath += "access.adm"; 
 
-
-
 	if( sAccountsPath[ sAccountsPath.size() - 1 ] != '/' && sAccountsPath[ sAccountsPath.size() - 1 ] != '\\' )
 		sAccountsPath += '/'; // I think it's sufficient to add a / here
 	sBasePath = sAccountsPath;	
 	
 	outStream.open( sAccessPath.c_str(), ios::out );
+	
+	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+	{
+		sAccountsPath2 += "accounts.adm";
+		outStream2.open( sAccountsPath2.c_str(), ios::out);
+	}
 
 	// Error handling
 	if( !outStream.is_open() )
@@ -1004,6 +1010,16 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	outStream << "//            8)         9)             10)         11)\n";
 	outStream << "//           12)        13)             14)         15) GM Account\n";
 	outStream << "//------------------------------------------------------------------------------\n";
+	// Sept 26, 2002 - EviLDeD - Since were using the old format as a loading medium we need to make sure that 
+	// the accounts character ids get written or they are lost.
+	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+	{
+		outStream2 << "//AV1.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+		outStream2 << "//------------------------------------------------------------------------------\n";
+		outStream2 << "//accounds.adm[TEXT] : UOX3 uses this file to import new accounts when \n";
+		outStream2 << "//   EXTERNALACCOUNTS is set to 1 in the uox.ini file.\n";
+		outStream2 << "//------------------------------------------------------------------------------\n";
+	}
 	
 	// Walk all existing accounts and save the information about them to access.adm  and to the account-files
 
@@ -1018,6 +1034,17 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		outStream << "{\n";
 		outStream << "NAME " << CurrentAccount->lpaarHolding->Info.username << "\n";
 		outStream << "PASS " << CurrentAccount->lpaarHolding->Info.password << "\n";
+		
+		if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+		{
+			outStream2 << "SECTION ACCOUNT " << CurrentAccount->lpaarHolding->id << "\n";
+			outStream2 << "{\n";
+			outStream2 << "NAME " << CurrentAccount->lpaarHolding->Info.username << "\n";
+			outStream2 << "PASS " << CurrentAccount->lpaarHolding->Info.password << "\n";
+			outStream2 << "TIMEBAN 0\n";
+			outStream2 << "LASTIP 0.0.0.0\n";
+			outStream2 << "PUBLIC OFF\n";
+		}
 		
 		// Determine where we're going to store the account-information
 		// 0: Each Account has an own directory
@@ -1056,6 +1083,18 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 			outStream << "PATH ERROR\n";
 			outStream << "FLAGS 0x0001\n";
 			outStream << "}\n";
+			if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+			{
+				outStream2 << "CONTACT \n";
+				outStream2 << "XGMCLIENT OFF\n";
+				outStream2 << "CHARACTER-1 -1\n";
+				outStream2 << "CHARACTER-2 -1\n";
+				outStream2 << "CHARACTER-3 -1\n";
+				outStream2 << "CHARACTER-4 -1\n";
+				outStream2 << "CHARACTER-5 -1\n";
+				outStream2 << "}\n";
+				outStream2.close();
+			}
 			outStream.close();
 			return -1;
 		}
@@ -1078,6 +1117,15 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 			outStream << "EMAIL NONE\n";
 
 		outStream << "}\n\n";
+		
+		if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+		{
+			if ( email ) 
+				outStream2 << "CONTACT " << email << "\n";
+			else
+				outStream2 << "CONTACT \n";
+			outStream2 << "XGMCLIENT " << ((CurrentAccount->lpaarHolding->bFlags&0x02)?"ON":"OFF") << "\n";
+		}
 
 		// Build the correct Filename here
 		//AccountPath = AccountsPath+AccountPath;
@@ -1099,17 +1147,31 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		AccountStream << "LASTIP " << (int)(CurrentAccount->ipaddress[1]>>24) << "." << (int)(CurrentAccount->ipaddress[1]>>16) << "." << (int)(CurrentAccount->ipaddress[1]>>8) << "." << (int)(CurrentAccount->ipaddress[1]%256) << "\n";
 		
 		for( UI08 i = 0; i < 5; i++ )
+		{
 			AccountStream << "CHARACTER-" << (i+1) << " " << (long)( CurrentAccount->characters[i] != NULL ? CurrentAccount->characters[i]->GetSerial() : (INVALIDSERIAL) ) << " [" << (char*)( CurrentAccount->characters[ i ] != NULL ? CurrentAccount->characters[ i ]->GetName() : "INVALID" ) << "]\n"; 
-		
+			if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+			{
+				outStream2 << "CHARACTER-" << (i+1) << " " << (long)( CurrentAccount->characters[i] != NULL ? CurrentAccount->characters[i]->GetSerial() : (INVALIDSERIAL) ) << "\n"; 
+			}
+		}
 		AccountStream << "\n";
-		
+		if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+		{
+			outStream2 << "}\n"; 
+		}
+			
 		// EviLDeD: 022102: Ok by request I moved this into username.uad, and placed just EMAIL into the access.adm.
 		AccountStream << "COMMENT " << CurrentAccount->lpaarHolding->Info.comment << "\n";
 		AccountStream.close();
 	}
+	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
+	{
+		outStream2 << "EOF\n"; 
+		outStream2.flush();
+		outStream2.close();
+	}
 	outStream.flush();
 	outStream.close();
-
 
 	// We return the size of the map. Actual number of accounts in the map
 	return (long)actMap.size();
