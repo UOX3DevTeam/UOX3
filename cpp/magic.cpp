@@ -72,164 +72,151 @@ cMagic::~cMagic()
 //|                              doubleclicked.
 //o---------------------------------------------------------------------------o
 
-void cMagic::SpellBook( UOXSOCKET s )
+void cMagic::SpellBook(UOXSOCKET s)
 {
-	int i, j, scount, item, x,serial,serhash,ci;
+	int i, j, scount, item, x, serial, serhash, ci;
 	int spellsList[70];
-	char sbookstart[8]="\x24\x40\x01\x02\x03\xFF\xFF";
-	char sbookinit[6]="\x3C\x00\x3E\x00\x03";
-	char sbookspell[20]="\x40\x01\x02\x03\x1F\x2E\x00\x00\x01\x00\x48\x00\x7D\x40\x01\x02\x03\x00\x00";
+	char sbookstart[8] = "\x24\x40\x01\x02\x03\xFF\xFF";
+	char sbookinit[6] = "\x3C\x00\x3E\x00\x03";
+	char sbookspell[20] = "\x40\x01\x02\x03\x1F\x2E\x00\x00\x01\x00\x48\x00\x7D\x40\x01\x02\x03\x00\x00";
 	
-	serial=calcserial(buffer[s][1]&0x7F,buffer[s][2],buffer[s][3],buffer[s][4]);
-	item=findbyserial(&itemsp[serial%HASHMAX],serial,0);
+	serial = calcserial(buffer[s][1]&0x7F, buffer[s][2], buffer[s][3], buffer[s][4]);
+	item = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
 	
-	x=packitem(currchar[s]);
-	if (item!=-1 && x!=-1) //lb
-		if (items[item].contserial!=items[x].serial && items[item].contserial!=chars[currchar[s]].serial)
+	x = packitem(currchar[s]);
+	if (item!=-1 && x!=-1) // lb
+		if (items[item].contserial != items[x].serial && items[item].contserial != chars[currchar[s]].serial)
 		{
-			if( items[findbyserial(&itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0 )].type != 9 )
+			if (items[findbyserial(&itemsp[items[item].contserial%HASHMAX], items[item].contserial, 0)].type != 9)
 			{
 				sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
 			}
 			return;
 		}
 		
-	if (item==-1)
-	{
-		item=-1;
-		if (x!=-1)
+		if (item==-1 && x!=-1)
 		{
-			serial=items[x].serial;
-			serhash=serial%HASHMAX;
+			serial = items[x].serial;
+			serhash = serial%HASHMAX;
 			
 			// AntiChrist Fix -- itemcount loop removed by LB
 			
-			for (ci=0;ci<contsp[serhash].max;ci++)
+			for (ci = 0; ci < contsp[serhash].max; ci++)
 			{
-				i=contsp[serhash].pointer[ci];
-				if (i!=-1)
-					if (((items[i].type==9)&&(items[i].contserial==serial)))
-					{
-						item=i;
-						break;
-					}
+				i = contsp[serhash].pointer[ci];
+				if (i!=-1 &&  items[i].type == 9 && items[i].contserial == serial)
+				{
+					item = i;
+					break;
+				}
 			} 
 		}
-	}
 		// LB remark: If you want more than one spellbook per player working predictable
 		// quite a lot of that function needs to be rewritten !
 		// reason: just have a look at the loop above ...
 		
-	if (item==-1)
-	{
-		serial=chars[currchar[s]].serial;
-		serhash=serial%HASHMAX;
-		for (ci=0;ci<contsp[serhash].max;ci++)
+		if (item==-1)
 		{
-			i=contsp[serhash].pointer[ci];
-			if (i!=-1)
-				if ((items[i].contserial==serial) && (items[i].free==0))
-				{
-					if ((items[i].layer==1) && items[i].type==9)
+			serial = chars[currchar[s]].serial;
+			serhash = serial%HASHMAX;
+			for (ci = 0; ci < contsp[serhash].max; ci++)
+			{
+				i = contsp[serhash].pointer[ci];
+				if (i!=-1 && items[i].contserial == serial && items[i].free == 0)
+					if ((items[i].layer == 1) && items[i].type == 9)
 					{
-						item=i;
+						item = i;
 						break;
 					}
-				}
-		}	
-	}
-	
-	if (item==-1)
-	{
-		sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
-		return;
-	}
-	
-	
-	if (items[item].layer!=1) senditem(s,item); // prevents crash if pack not open
-	
-	// Network->xSend(s, pause, 2, 0);
-	sbookstart[1]=items[item].ser1;
-	sbookstart[2]=items[item].ser2;
-	sbookstart[3]=items[item].ser3;
-	sbookstart[4]=items[item].ser4;
-	Network->xSend(s, sbookstart, 7, 0);
-	scount=0;
-
-	for (i=0;i<70;i++)
-	{
-		spellsList[i]=0;
-	}
-	
-	if( items[item].morex == 0 && items[item].morey == 0 && items[item].morez == 0 )
-	{
-		serial=items[item].serial;
-		serhash=serial%HASHMAX;
-		for (ci=0;ci<contsp[serhash].max;ci++)
-		{
-			j=contsp[serhash].pointer[ci];
-			if (j!=-1)
-				if ((items[j].contserial==serial))
-				{
-					if (items[j].id1==0x1F && items[j].id2>=0x2D && items[j].id2<=0x72) 
-					{
-						spellsList[items[j].id2-0x2D]=1;
-					}
-				}
+			}	
 		}
-	}
-	else
-	{
-		for( j = 0; j < 70; j++ )
-			spellsList[j] = HasSpell( item, j );
-	}
-
-	// Fix for Reactive Armor/Bird's Eye dumbness. :)
-	i = spellsList[0];
-	spellsList[0] = spellsList[1];
-	spellsList[1] = spellsList[2];
-	spellsList[2] = spellsList[3];
-	spellsList[3] = spellsList[4];
-	spellsList[4] = spellsList[5];
-	spellsList[5] = spellsList[6]; // Morac is right! :)
-	spellsList[6] = i;
-	// End fix.
-	
-	if (spellsList[64])
-	{
-		for (i=0;i<70;i++)
-			spellsList[i]=1;
-		spellsList[64]=0;
-	}
-	spellsList[64]=spellsList[65];
-	spellsList[65]=0;
-	
-	for (i=0;i<70;i++)
-	{
-		if (spellsList[i]) scount++;
-	}
-	sbookinit[1] = ((scount*19)+5)>>8;
-	sbookinit[2] = ((scount*19)+5)%256;
-	sbookinit[3] = scount>>8;
-	sbookinit[4] = scount%256;
-	if (scount>0) Network->xSend(s, sbookinit, 5, 0);
-	for (i=0;i<70;i++) 
-	{
-		if (spellsList[i])
+		
+		if (item==-1)
 		{
-			sbookspell[0] = 0x41;
-			sbookspell[1] = 0x00;
-			sbookspell[2] = 0x00;
-			sbookspell[3] = i + 1;
-			sbookspell[8] = i + 1;
-			sbookspell[13]=items[item].ser1;
-			sbookspell[14]=items[item].ser2;
-			sbookspell[15]=items[item].ser3;
-			sbookspell[16]=items[item].ser4;
-			Network->xSend(s, sbookspell, 19, 0);
-		} 
-		// Network->xSend(s, restart, 2, 0);
-	}
+			sysmessage(s, "In order to open spellbook, it must be equipped in your hand or in the first layer of your backpack.");
+			return;
+		}
+		
+		
+		if (items[item].layer != 1)
+			senditem(s, item); // prevents crash if pack not open
+		
+		// Network->xSend(s, pause, 2, 0);
+		sbookstart[1] = items[item].ser1;
+		sbookstart[2] = items[item].ser2;
+		sbookstart[3] = items[item].ser3;
+		sbookstart[4] = items[item].ser4;
+		Network->xSend(s, sbookstart, 7, 0);
+		scount = 0;
+		
+		memset(&spellsList, 0, 70*sizeof(int));
+		
+		if (items[item].morex == 0 && items[item].morey == 0 && items[item].morez == 0)
+		{
+			serial = items[item].serial;
+			serhash = serial%HASHMAX;
+			for (ci = 0; ci < contsp[serhash].max; ci++)
+			{
+				j = contsp[serhash].pointer[ci];
+				if (j!=-1 && items[j].contserial == serial)
+					if (items[j].id1 == 0x1F && items[j].id2 >= 0x2D && items[j].id2 <= 0x72) 
+					{
+						spellsList[items[j].id2 - 0x2D] = 1;
+					}
+			}
+		}
+		else
+		{
+			for (j = 0; j < 69; j++)
+				spellsList[j] = HasSpell(item, j);
+		}
+		
+		// Fix for Reactive Armor/Bird's Eye dumbness. :)
+		i = spellsList[0];
+		spellsList[0] = spellsList[1];
+		spellsList[1] = spellsList[2];
+		spellsList[2] = spellsList[3];
+		spellsList[3] = spellsList[4];
+		spellsList[4] = spellsList[5];
+		spellsList[5] = spellsList[6]; // Morac is right! :)
+		spellsList[6] = i;
+		// End fix.
+		
+		if (spellsList[64])
+		{
+			memset(&spellsList, 1, 70*sizeof(int));
+			spellsList[64] = 0;
+		}
+		spellsList[64] = spellsList[65];
+		spellsList[65] = 0;
+		
+		for (i = 0; i < 69; i++)
+		{
+			if (spellsList[i]) 
+				scount++;
+		}
+		sbookinit[1] = ((scount*19) + 5) >> 8;
+		sbookinit[2] = ((scount*19) + 5)%256;
+		sbookinit[3] = scount >> 8;
+		sbookinit[4] = scount%256;
+		if (scount>0)
+			Network->xSend(s, sbookinit, 5, 0);
+		for (i = 0; i < 69; i++) 
+		{
+			if (spellsList[i])
+			{
+				sbookspell[0] = 0x41;
+				sbookspell[1] = 0x00;
+				sbookspell[2] = 0x00;
+				sbookspell[3] = i + 1;
+				sbookspell[8] = i + 1;
+				sbookspell[13] = items[item].ser1;
+				sbookspell[14] = items[item].ser2;
+				sbookspell[15] = items[item].ser3;
+				sbookspell[16] = items[item].ser4;
+				Network->xSend(s, sbookspell, 19, 0);
+			} 
+		}
 }
 
 //o---------------------------------------------------------------------------o
@@ -331,16 +318,14 @@ char cMagic::GateCollision( PLAYER s )
 
 void cMagic::GateDestruction(unsigned int currenttime)
 {
-	unsigned int i,k;
+	unsigned int i, k;
 	
-	for (i=0;i<itemcount;i++)
+	for (i = 0; i < itemcount; i++)
 	{
-		if((items[i].type==51) || items[i].type==52) 
+		if ((items[i].type == 51 || items[i].type == 52) && items[i].gatetime <= currenttime) 
 		{
-			if(items[i].gatetime<=currenttime)
-			{
-				for (k=0;k<2;k++) Items->DeleItem(i); 
-			}
+			for (k = 0; k < 2; k++)
+				Items->DeleItem(i); 
 		}
 	}
 }
@@ -390,7 +375,6 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 			chars[c].def=22;
 			chars[c].lodamage=10;
 			chars[c].hidamage=30;
-			//			chars[c].spattack=8191; // 1-7 level spells
 			chars[c].baseskill[MAGERY]=950; // 95 magery
 			chars[c].baseskill[TACTICS]=2000; // 200 tactics
 			chars[c].skill[MAGICRESISTANCE]=850;
@@ -760,7 +744,7 @@ char cMagic::CheckMagicReflect( CHARACTER i )
 {
 	if (chars[i].priv2&0x40)
 	{
-		chars[i].priv2=chars[i].priv2&0xBF;
+		chars[i].priv2 &= 0xBF;
 		staticeffect(i, 0x37, 0x3A, 0, 15);
 		return 1;
 	}
@@ -1073,7 +1057,7 @@ char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
 int cMagic::RegMsg(CHARACTER s, reag_st failmsg )
 {
 	int display = 0;
-	char message[100];
+	char message[100] = {0,};
 	
 	strcpy( message, "You do not have enough reagents to cast that spell.[" );
 	if( failmsg.ash ) { display = 1; sprintf( message, "%sSa, ", message ); }
@@ -1157,7 +1141,8 @@ void cMagic::PFireballTarget(int i, int k, int j) //j = % dammage
 void cMagic::SpellFail( UOXSOCKET s )
 {
 	// Use Reagents on failure ( if casting from a spellbook )
-	if( currentSpellType[s] == 0 ) NewDelReagents( currchar[s], spells[chars[currchar[s]].spellCast].reags );
+	if( currentSpellType[s] == 0 ) 
+		NewDelReagents( currchar[s], spells[chars[currchar[s]].spellCast].reags );
 	staticeffect(currchar[s], 0x37, 0x35, 0, 30);
 	soundeffect2(currchar[s], 0x00, 0x5C);
 	npcemote(s, currchar[s], "The spell fizzles.", 0);

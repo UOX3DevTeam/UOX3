@@ -478,12 +478,6 @@ void cItem::DeleItem(int i)
 			ycounter=0;
 			xcounter=0;
 		}
-		/*if (imemcheck<500)
-		{
-			imemcheck++;
-			freeitemmem[imemcheck]=i;
-		}
-		else imemover=1;*/
 	}
 	items.Delete( i );
 }

@@ -29,6 +29,15 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+25.02.2001               Thiago A. Corrêa
+  magic.cpp              More code clean-ups.
+                         Changed a for by memset to initialize a vector.
+                         Fixed some parts where it was writting into unallocated
+                         memory.
+  globals.cpp            Removed unused global variables.
+  uox3.cpp              
+
+-------------------------------------------------------------------------------
 24.02.2001               Thiago A. Corrêa
   globals.cpp            moved polyduration to inside server_st, as it is a
   uox3.cpp               server wide setting (makes sense, huh?)

@@ -146,7 +146,6 @@ unsigned int len_connection_addr;
 struct sockaddr_in connection;
 struct sockaddr_in client_addr;
 struct hostent *he;
-char hname[40];
 int err, error;
 int keeprun;
 int a_socket;
@@ -180,10 +179,8 @@ char serv[MAXSERV][2][30]; // Servers list
 char start[MAXSTART][5][30]; // Startpoints list
 int acctno[MAXCLIENT];
 unsigned int currchar[MAXCLIENT];
-int freecharmem[301];
 int cmemcheck;
 char cmemover;
-int freeitemmem[501];
 int imemcheck;
 char imemover;
 char xcounter;

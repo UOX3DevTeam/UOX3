@@ -889,6 +889,9 @@ void gcollect( void ) // Remove items which were in deleted containers
 		removed=0;
 		for (i=0;i<itemcount;i++)
 		{
+			if (items[i].free || items[i].contserial == -1) //Small optimization from Wolfpack
+				continue;
+
 			if (items[i].free==0)
 			{
 				idelete=0;
@@ -896,7 +899,7 @@ void gcollect( void ) // Remove items which were in deleted containers
 				b=items[i].cont2;
 				c=items[i].cont3;
 				d=items[i].cont4;
-				serial = calcserial( a, b, c, d );
+				serial = items[i].serial;
 				if (!((a==255)&&(b==255)&&(c==255)&&(d==255)))
 				{
 					idelete=1;
@@ -8707,14 +8710,11 @@ int __cdecl main(int argc, char *argv[])
 		// chars skills got loaded before the skills script was loaded
 		// thus baseskills were initially equal to skills with stat modifiers on startup till skills were used
 		
-		for (i=0;i<301;i++) freecharmem[i]=-1;
-		for (i=0;i<501;i++) freeitemmem[i]=-1;
 		for (i=0;i<MAXACCT;i++)
 		{
 			acctinuse[i]=0;
 			inworld[i]=-1;//Instalog
 		}
-//		for (i=0;i<cmem;i++) talkingto[i]=0;
 		for (i=0;i<STABLOCKCACHESIZE;i++) stablockcachex[i]=-1;
 		for (i=0;i<MAXLAYERS;i++) layers[i]=0;
 		for (i=0;i<MAXCLIENT;i++) noweather[i]=1; // players dont see any rain or snow till they move

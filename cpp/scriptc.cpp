@@ -38,8 +38,6 @@
 #include <string.h>
 #include <errno.h>
 #include <uox3.h>
-//#include "List.h"
-//#include "scriptcache.h"
 #include <debug.h>
 #include <assert.h>
 
