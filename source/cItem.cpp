@@ -29,9 +29,16 @@
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the container's serial
 //o--------------------------------------------------------------------------
-UI32 CItem::GetCont( void ) const
+cBaseObject * CItem::GetCont( void ) const
 {
-	return contserial;
+	return contObj;
+}
+
+SERIAL CItem::GetContSerial( void ) const
+{
+	if( contObj != NULL )
+		return contObj->GetSerial();
+	return INVALIDSERIAL;
 }
 
 //o--------------------------------------------------------------------------
@@ -72,6 +79,10 @@ UI32 CItem::GetMoreB( void ) const
 //o--------------------------------------------------------------------------
 UI08 CItem::GetCont( UI08 part ) const
 {
+	SERIAL contserial = INVALIDSERIAL;
+	if( contObj != NULL )
+		contserial = contObj->GetSerial();
+
 	switch( part )
 	{
 	default:
@@ -145,13 +156,8 @@ void CItem::SetSerial( SERIAL newValue, ITEM c )
 		nitemsp.AddSerial( newValue, c );
 }
 
-bool CItem::SetCont( CItem *cont )
-{
-	return SetCont( cont->GetSerial() );
-}
-
 //o--------------------------------------------------------------------------
-//|	Function		-	bool SetCont( UI32 newValue )
+//|	Function		-	bool CItem::SetCont( cBaseObject *newCont )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
@@ -160,42 +166,52 @@ bool CItem::SetCont( CItem *cont )
 //|						Takes it out of the old container, and puts in the new
 //|						Copes with being on paperdolls, ground and in containers
 //|						Also copes with removing and adding to a map region
-//|						Returns -1 if item needs deleting, 0 if fine
+//|						Returns false if item needs deleting, true if fine
 //o--------------------------------------------------------------------------
-bool CItem::SetCont( SERIAL newValue )
-// returns -1 if needs deleting, 0 if fine
+bool CItem::SetContSerial( SERIAL newSerial )
+{
+	if( newSerial != INVALIDSERIAL )
+	{
+		if( newSerial >= BASEITEMSERIAL )
+			return SetCont( calcItemObjFromSer( newSerial ) );
+		else
+			return SetCont( calcCharObjFromSer( newSerial ) );
+	}
+	return SetCont( NULL );
+}
+
+bool CItem::SetCont( cBaseObject *newCont )
 {
 	RemoveSelfFromCont();
-	contserial = newValue;
-	if( newValue != INVALIDSERIAL ) 
+	contObj = newCont;
+	if( newCont != NULL ) 
 	{
-		if( (newValue>>24) < 0x40 ) 
+		if( newCont->GetObjType() == OT_CHAR ) 
 		{
-			CChar *charWearing = calcCharObjFromSer( newValue );
+			CChar *charWearing = (CChar *)newCont;
 			if( charWearing != NULL )
 			{
 				if( !charWearing->WearItem( this ) )
 				{
 					if( layer >= MAXLAYERS )
 					{
-						contserial = INVALIDSERIAL;
-						//MapRegion->AddItem( this );
+						contObj = NULL;
 						return true;
 					}
 					//return false;	// disable for now
 				}
+				Weight->addItemWeight( charWearing, this );
 				return true;
 			}
 			else
 			{
-				contserial = INVALIDSERIAL;
-				//MapRegion->AddItem( this );
+				contObj = NULL;
 				return true;
 			}
 		}
 		else
 		{
-			CItem *itemHolder = calcItemObjFromSer( newValue );
+			CItem *itemHolder = (CItem *)newCont;
 			if( itemHolder != NULL )
 			{
 				// ok heres what hair/beards should be handled like (sereg)
@@ -204,13 +220,11 @@ bool CItem::SetCont( SERIAL newValue )
 					if( getPackOwner( itemHolder ) != NULL )
 					{
 						CChar *j = getPackOwner( itemHolder );
-						CItem *oldItem = FindItemOnLayer( j, GetLayer() );
+						CItem *oldItem = j->GetItemAtLayer( GetLayer() );
 						if( oldItem != NULL )
-						{
 							Items->DeleItem( oldItem );
-						}
 		
-						this->SetCont( j->GetSerial() );
+						SetCont( j );
 						
 						CPRemoveItem toRemove = (*this);
 
@@ -224,12 +238,12 @@ bool CItem::SetCont( SERIAL newValue )
 				}
 				else
 					itemHolder->HoldItem( this );
+				Weight->addItemWeight( itemHolder, this );
 				return true;
 			}
 			else
 			{
-				contserial = INVALIDSERIAL;
-				//MapRegion->AddItem( this );
+				contObj = NULL;
 				return true;
 			}
 		}
@@ -266,22 +280,6 @@ void CItem::SetMoreB( UI32 newValue )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	void SetOwner( SERIAL newValue )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the owner to newValue, ensuring it's removed from
-//|						the old owner
-//o--------------------------------------------------------------------------
-void CItem::SetOwner( SERIAL newValue )
-{
-	RemoveSelfFromOwner();
-	cBaseObject::SetOwner( newValue );
-	AddSelfToOwner();
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	void SetOwner( cBaseObject *newValue )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
@@ -298,7 +296,7 @@ void CItem::SetOwner( cBaseObject *newValue )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	void ( UI32 newValue, ITEM index )
+//|	Function		-	SetSpawn( SERIAL newValue, ITEM index )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
@@ -307,12 +305,12 @@ void CItem::SetOwner( cBaseObject *newValue )
 //|						removed from the old hash entry (if any)
 //|						Also ensures it is added to the hash table afterwards
 //o--------------------------------------------------------------------------
-void CItem::SetSpawn( UI32 newValue, ITEM index )
+void CItem::SetSpawn( SERIAL newValue, ITEM index )
 {
-	if( GetSpawn() != 0 )
+	if( GetSpawn() != INVALIDSERIAL )
 		nspawnsp.Remove( GetSpawn(), index );
 	cBaseObject::SetSpawn( newValue );
-	if( GetSpawn() != 0 )
+	if( GetSpawn() != INVALIDSERIAL )
 		nspawnsp.AddSerial( GetSpawn(), index );
 }
 
@@ -365,24 +363,6 @@ void CItem::SetMoreB( UI08 newValue, UI08 part )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	void SetSpawn( UI08 newValue, UI08 part, ITEM index )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the spawner's part byte to newValue.
-//|						It also ensures hash table integrity
-//o--------------------------------------------------------------------------
-void CItem::SetSpawn(  UI08 newValue, UI08 part, ITEM index )
-{
-	if( GetSpawn() != 0 )
-		nspawnsp.Remove( GetSpawn(), index );
-	cBaseObject::SetSpawn( newValue, part );
-	if( GetSpawn() != 0 )
-		nspawnsp.AddSerial( GetSpawn(), index );
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	void SetMore( UI08 part1, UI08 part2, UI08 part3, UI08 part4 )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
@@ -406,19 +386,6 @@ void CItem::SetMore( UI08 part1, UI08 part2, UI08 part3, UI08 part4 )
 void CItem::SetMoreB( UI08 part1, UI08 part2, UI08 part3, UI08 part4 )
 {
 	moreb = (part1<<24) + (part2<<16) + (part3<<8) + part4;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	void SetSpawn( UI08 part1, UI08 part2, UI08 part3, UI08 part4 )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the spawn value, ensuring table integrity
-//o--------------------------------------------------------------------------
-void CItem::SetSpawn( UI08 part1, UI08 part2, UI08 part3, UI08 part4, ITEM index )
-{
-	CItem::SetSpawn( (part1<<24) + (part2<<16) + (part3<<8) + part4, index );
 }
 
 //o--------------------------------------------------------------------------
@@ -645,56 +612,56 @@ void CItem::IncZ( SI16 newValue )
 }
 void CItem::SetLocation( const cBaseObject *toSet )
 {
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 		MapRegion->RemoveItem( this );
 	x = toSet->GetX();
 	y = toSet->GetY();
 	z = toSet->GetZ();
 	worldNumber = toSet->WorldNumber();
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 	{
 		MapRegion->AddItem( this );
-		CMultiObj *mMulti = findMulti( x, y, z, worldNumber );
+		CMultiObj *mMulti = findMulti( this );
 		SetMulti( mMulti );
 	}
 // Thyme - Necessary for Region Spawning with Items to work properly
-	if( GetCont() != INVALIDSERIAL )
+	if( GetCont() != NULL )
 		ShouldSave( true );
 }
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 {
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 		MapRegion->RemoveItem( this );
 	x = newX;
 	y = newY;
 	z = newZ;
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 	{
 		MapRegion->AddItem( this );
-		CMultiObj *mMulti = findMulti( x, y, z, worldNumber );
+		CMultiObj *mMulti = findMulti( this );
 		SetMulti( mMulti );
 	}
 // Thyme - Necessary for Region Spawning with Items to work properly
-	if( GetCont() != INVALIDSERIAL )
+	if( GetCont() != NULL )
 		ShouldSave( true );
 }
 
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 		MapRegion->RemoveItem( this );
 	x = newX;
 	y = newY;
 	z = newZ;
 	worldNumber = world;
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 	{
 		MapRegion->AddItem( this );
-		CMultiObj *mMulti = findMulti( x, y, z, worldNumber );
+		CMultiObj *mMulti = findMulti( this );
 		SetMulti( mMulti );
 	}
 // Thyme - Necessary for Region Spawning with Items to work properly
-	if( GetCont() != INVALIDSERIAL )
+	if( GetCont() != NULL )
 		ShouldSave( true );
 }
 
@@ -704,9 +671,9 @@ SI08 CItem::GetLayer( void ) const
 }
 void CItem::SetLayer( SI08 newValue ) 
 {
-	if( contserial != INVALIDSERIAL && (contserial>>24) < 0x40 )	// if we're on a char
+	if( contObj != NULL && contObj->GetObjType() == OT_CHAR )	// if we're on a char
 	{
-		CChar *charAffected = calcCharObjFromSer( contserial );
+		CChar *charAffected = (CChar *)contObj;
 		if( charAffected != NULL )
 		{
 //			if( !charAffected->TakeOffItem( GetLayer() ) )
@@ -789,10 +756,17 @@ UI16 CItem::GetAmount( void ) const
 }
 void CItem::SetAmount( UI32 newValue )
 {
+	cBaseObject *getCont = GetCont();
+	if( getCont != NULL )
+		Weight->subtractItemWeight( getCont, this );
+
 	if( newValue > MAX_STACK )
 		amount = MAX_STACK;
 	else
-		amount = newValue;
+		amount = static_cast<UI16>(newValue);
+
+	if( getCont != NULL )
+		Weight->addItemWeight( getCont, this );
 }
 UI08 CItem::GetDoorDir( void ) const
 {
@@ -875,11 +849,11 @@ void	CItem::SetValue( SI32 newValue )
 	value = newValue;
 }
 
-SI32 CItem::GetRestock( void ) const
+UI16 CItem::GetRestock( void ) const
 {
 	return restock;
 }
-void CItem::SetRestock( SI32 newValue )
+void CItem::SetRestock( UI16 newValue )
 {
 	restock = newValue;
 }
@@ -1016,7 +990,7 @@ void CItem::IncID( SI16 incAmount )
 }
 
 CItem::CItem( ITEM nItem, bool zeroSer ) : 
-	contserial( INVALIDSERIAL ), remove( false ), carve( -1 ), 	glow_effect( 0 ), glow( -1 ), glowColour( 0 ), madewith( 0 ), 
+	contObj( NULL ), remove( false ), carve( -1 ), 	glow_effect( 0 ), glow( -1 ), glowColour( 0 ), madewith( 0 ), 
 	rndvaluerate( 0 ), good( -1 ), rank( 0 ), armorClass( 0 ), 	poisoned( 0 ), restock( 0 ), value( 0 ), priv( 0 ), magic( 0 ), 
 	gatetime( 0 ), decaytime( 0 ), murdertime( 0 ), spd( 0 ), 	maxhp( 0 ), doordir( 0 ), amount( 1 ), morex( 0 ),
 	morey( 0 ), enhanced( 0 ), weatherBools( 0 ), morez( 0 ), 	more( 0 ), moreb( 0 ), bools( 0 ), layer( 0 ), type( 0 ), 
@@ -1047,6 +1021,11 @@ CItem::~CItem()
 
 	if( !isFree() )	// We're not the default item in the handler
 	{
+		for( CItem *i = FirstItemObj(); !FinishedItems(); i = NextItemObj() )
+		{
+			if( i != NULL )
+				i->SetCont( NULL );
+		}
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
 //		MapRegion->RemoveItem( this );
@@ -1069,35 +1048,16 @@ bool CItem::HoldItem( CItem *toHold )
 	Contains[index] = toHold;
 	return true;
 }
-bool CItem::ReleaseItem( ITEM index )
-{
-	for( UI32 counter = 0; counter < Contains.size(); counter++ )
-	{
-		if( Contains[counter]->GetSerial() == items[index].GetSerial() )
-		{
-			// remove from vector
-			for( int counter2 = counter; counter2 < (Contains.size()-1); counter2++ )
-			{
-				Contains[counter2] = Contains[counter2+1];
-			}
-			Contains.resize( Contains.size() - 1 );
-			if( iCounter >= 0 && counter <= iCounter )	// if what we're deleting is in our list, and before the current item
-				iCounter--;
-			return true;
-		}
-	}
-	return false;
-}
 bool CItem::ReleaseItem( CItem *index )
 {
 	for( UI32 counter = 0; counter < Contains.size(); counter++ )
 	{
 		if( Contains[counter] == index )
 		{
-			for( int counter2 = counter; counter2 < (Contains.size()-1); counter2++ )
+			for( int counter2 = counter; counter2 < static_cast<int>((Contains.size()-1)); counter2++ )
 				Contains[counter2] = Contains[counter2+1];
 			Contains.resize( Contains.size() - 1 );
-			if( iCounter >= 0 && counter <= iCounter )	// if what we're deleting is in our list, and before the current item
+			if( iCounter >= 0 && static_cast<SI32>(counter) <= iCounter )	// if what we're deleting is in our list, and before the current item
 				iCounter--;
 			return true;
 		}
@@ -1108,7 +1068,7 @@ bool CItem::ReleaseItem( CItem *index )
 ITEM CItem::FirstItem( void ) const
 {
 	iCounter = 0;
-	if( iCounter >= Contains.size() )
+	if( static_cast<unsigned int>(iCounter) >= Contains.size() )
 		return INVALIDSERIAL;
 	return calcItemFromSer( Contains[iCounter]->GetSerial() );
 }
@@ -1116,7 +1076,7 @@ ITEM CItem::FirstItem( void ) const
 CItem *CItem::FirstItemObj( void ) const
 {
 	iCounter = 0;
-	if( iCounter >= Contains.size() )
+	if( static_cast<unsigned int>(iCounter) >= Contains.size() )
 		return NULL;
 	return Contains[iCounter];
 }
@@ -1124,7 +1084,7 @@ CItem *CItem::FirstItemObj( void ) const
 ITEM CItem::NextItem( void ) const
 {
 	iCounter++;
-	if( iCounter >= Contains.size() )
+	if( static_cast<unsigned int>(iCounter) >= Contains.size() )
 		return INVALIDSERIAL;
 	return calcItemFromSer( Contains[iCounter]->GetSerial() );
 }
@@ -1132,26 +1092,19 @@ ITEM CItem::NextItem( void ) const
 CItem *CItem::NextItemObj( void ) const
 {
 	iCounter++;
-	if( iCounter >= Contains.size() )
+	if( static_cast<unsigned int>(iCounter) >= Contains.size() )
 		return NULL;
 	return Contains[iCounter];
 }
 
 bool CItem::FinishedItems( void ) const
 {
-	return( iCounter >= Contains.size() );
+	return( static_cast<unsigned int>(iCounter) >= Contains.size() );
 }
 
 UI32 CItem::NumItems( void ) const
 {
 	return Contains.size();
-}
-
-ITEM CItem::GetItem( ITEM index ) const
-{
-	if( index >= Contains.size() )
-		return INVALIDSERIAL;
-	return calcItemFromSer( Contains[index]->GetSerial() );
 }
 
 CItem *CItem::GetItemObj( ITEM index ) const
@@ -1220,10 +1173,10 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 	CMultiObj *multi = NULL;
 	cSocket *k = NULL;
 
-	if( WillDecay() && GetCont() == INVALIDSERIAL )
+	if( WillDecay() && GetCont() == NULL )
 	{
 		if( GetDecayTime() == 0 )
-			SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+			SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY )) ) );
 		else if( GetDecayTime() < uiCurrentTime )
 		{
 			if( isCorpse() )
@@ -1234,7 +1187,7 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 					{
 						if( j->GetLayer() != 0x0B && j->GetLayer() != 0x10 )
 						{
-							j->SetCont( INVALIDSERIAL );
+							j->SetCont( NULL );
 							j->SetLocation( this );
 							Network->PushConn();
 							for( k = Network->FirstSocket(); !Network->FinishedSockets(); k = Network->NextSocket() )
@@ -1244,16 +1197,16 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 							}
 							Network->PopConn();
 						}
-						if( j->GetLayer() == 0x0B || j->GetLayer() == 0x10 )
+						else
 							Items->DeleItem( j );
 					}
 				}
 			}
 			else
 			{
-				if( GetMulti() == INVALIDSERIAL )
+				if( GetMultiObj() == NULL )
 				{
-					multi = findMulti( GetX(), GetY(), GetZ(), worldNumber );
+					multi = findMulti( this );
 					if( multi == NULL )
 					{
 						Items->DeleItem( this );
@@ -1264,7 +1217,7 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 		}
 	}
 
-	if( GetCont() != INVALIDSERIAL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
+	if( GetCont() != NULL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
 	{
 		DumpHeader( outStream, mode );
 		if( mode == 1 )
@@ -1276,9 +1229,7 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 			buff.Write( outStream );
 		} 
 		else 
-		{
 			DumpBody( outStream, mode );
-		}
 
 		DumpFooter( outStream, mode );
 
@@ -1314,13 +1265,14 @@ void CItem::AddSelfToOwner( void )
 
 void CItem::RemoveSelfFromCont( void )
 {
-	if( contserial != INVALIDSERIAL )
+	if( contObj != NULL )
 	{
-		if( (contserial>>24) < 0x40 )	// it's a char!
+		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			CChar *targChar = calcCharObjFromSer( contserial );
+			CChar *targChar = (CChar *)contObj;
 			if( targChar != NULL )
 			{
+				Weight->subtractItemWeight( targChar, this );
 				targChar->TakeOffItem( GetLayer() );
 //				if( !targChar->TakeOffItem( GetLayer() ) )
 //					Console << "Char " << targChar->GetName() << "(" << contserial << ") was never wearing item on layer " << (SI16)GetLayer() << myendl;
@@ -1328,9 +1280,10 @@ void CItem::RemoveSelfFromCont( void )
 		} 
 		else 
 		{
-			CItem *targItem = calcItemObjFromSer( contserial );
+			CItem *targItem = (CItem *)contObj;;
 			if( targItem != NULL )
 			{
+				Weight->subtractItemWeight( targItem, this );
 				targItem->ReleaseItem( this );
 //				if( !targItem->ReleaseItem( this ) )
 //					Console.Error( "Error removing %s(%i) from %s(%i)\n", GetName(), GetSerial(), targItem->GetName(), contserial );
@@ -1341,8 +1294,9 @@ void CItem::RemoveSelfFromCont( void )
 		MapRegion->RemoveItem( this );
 }
 
-CItem * CItem::Dupe( ITEM& targetOff )
+CItem * CItem::Dupe( void )
 {
+	ITEM targetOff;
 	CItem *target = Items->MemItemFree( targetOff, true );
 	if( target == NULL )
 		return NULL;
@@ -1389,13 +1343,13 @@ CItem * CItem::Dupe( ITEM& targetOff )
 	target->SetMoreX( GetMoreX() );
 	target->SetMoreY( GetMoreY() );
 	target->SetMoreZ( GetMoreZ() );
-	target->SetMulti( GetMulti() );
+	target->SetMulti( GetMultiObj() );
 	target->SetMurderer( GetMurderer() );
 	target->SetMurderTime( GetMurderTime() );
 	target->SetName( GetName() );
 	target->SetName2( GetName2() );
 	target->SetOffSpell( GetOffSpell() );
-	target->SetOwner( GetOwner() );
+	target->SetOwner( GetOwnerObj() );
 	target->SetPileable( isPileable() );
 	target->SetPoisoned( GetPoisoned() );
 	target->SetRace( GetRace() );
@@ -1532,7 +1486,7 @@ bool CItem::DumpBody( BinBuffer &buff ) const
 	{
 		buff.PutByte( ITEMTAG_LAYERCONT );
 		buff.PutByte( GetLayer() );
-		buff.PutLong( GetCont() );
+		buff.PutLong( GetContSerial() );
 	}
 	
 	if( DefItem->GetMore() != GetMore() || DefItem->GetMoreB() != GetMoreB() )
@@ -1697,7 +1651,7 @@ bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	
 	cBaseObject::DumpBody( outStream, mode );
 	dumping << "Layer=" << (SI16)GetLayer() << std::endl;
-	dumping << "Cont=" << GetCont() << std::endl;
+	dumping << "Cont=" << GetContSerial() << std::endl;
 	dumping << "More=" << GetMore() << std::endl;
 	dumping << "More2=" << GetMoreB() << std::endl;
 	dumping << "Name2=" << GetName2() << std::endl;
@@ -1772,7 +1726,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'A':
 		if( !strcmp( tag, "Amount" ) )
 		{
-			SetAmount( (UI32)makeNum( data ) );
+			amount = (UI32)makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "AC" ) )
@@ -1785,7 +1739,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'C':
 		if( !strcmp( tag, "Cont" ) )
 		{
-			SetCont( makeNum( data ) );
+			SetContSerial( makeNum( data ) );
 			return true;
 		}
 		else if( !strcmp( tag, "Creator" ) || !strcmp(tag,"Creater") )
@@ -1948,7 +1902,7 @@ bool CItem::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Poisoned" ) )
 		{
-			SetPoisoned( makeNum( data ) );
+			SetPoisoned( static_cast<UI08>(makeNum( data ) ));
 			return true;
 		}
 		else if( !strcmp( tag, "Pileable" ) )
@@ -1960,7 +1914,7 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'R':
 		if( !strcmp( tag, "Restock" ) )
 		{
-			SetRestock( makeNum( data ) );
+			SetRestock( static_cast<UI16>(makeNum( data ) ));
 			return true;
 		}
 		else if( !strcmp( tag, "Rank" ) )
@@ -2035,7 +1989,7 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 	{
 	case ITEMTAG_LAYERCONT:
 		SetLayer( buff.GetByte() );
-		SetCont( buff.GetLong() );
+		SetContSerial( buff.GetLong() );
 		break;
 
 	case ITEMTAG_MORE:
@@ -2079,7 +2033,7 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case ITEMTAG_AMOUNT:
-		SetAmount( buff.GetLong() );
+		amount = buff.GetLong();
 		break;
 
 	case ITEMTAG_BOOLS:
@@ -2098,7 +2052,7 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 
 	case ITEMTAG_VALUE:
 		SetValue( buff.GetLong() );
-		SetRestock( buff.GetLong() );
+		SetRestock( static_cast<UI16>(buff.GetLong()) );
 		break;
 
 	case ITEMTAG_POISONED:
@@ -2219,12 +2173,12 @@ bool CItem::LoadRemnants( int arrayOffset )
 	if( itemcount2 <= serial ) 
 		itemcount2 = serial + 1;
 	SetSerial( serial, arrayOffset );
-	StoreItemRandomValue( &items[arrayOffset], -1 );
+	StoreItemRandomValue( &items[arrayOffset], 0xFF );
 	
 	
 	// Tauriel adding region pointers
 	
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 	{ 
 		MapRegion->AddItem( this );
 		if( GetX() < 0 || GetY() < 0 || GetX() > 6144 || GetY() > 4096 )
@@ -2254,8 +2208,9 @@ void CItem::PostLoadProcessing( UI32 index )
 {
 	cBaseObject::PostLoadProcessing( index );
 	// Add item weight if item doesn't have it yet
-	if( GetWeight() <= 0 )
-		SetWeight( Weight->calcItemWeight( this ) );
+	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
+		SetWeight( Weight->calcWeight( this ) );
+	SetAmount( amount );
 }
 
 bool CItem::isDecayable( void ) const

@@ -4,7 +4,7 @@
 class CItem : public cBaseObject
 {
 private:
-	UI32			contserial;
+	cBaseObject	*	contObj;
 	UI32			more;
 	UI32			moreb;
 
@@ -44,7 +44,7 @@ private:
 
 	UI08			priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
 	SI32			value; // Price shopkeeper sells item at.
-	SI32			restock; // Number up to which shopkeeper should restock this item
+	UI16			restock; // Number up to which shopkeeper should restock this item
 	SI08			poisoned; //AntiChrist -- for poisoning skill
 	ARMORCLASS		armorClass;
 	SI08			rank;	// Magius(CHE) --- for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
@@ -92,7 +92,7 @@ public:
 	virtual void	LightningDamage( bool value );
 	virtual void	SnowDamage( bool value );
 
-	virtual CItem *	Dupe( ITEM& targetOff );
+	virtual CItem *	Dupe( void );
 
 	virtual ITEM	FirstItem( void ) const;
 	virtual ITEM	NextItem( void ) const;
@@ -100,7 +100,8 @@ public:
 	virtual CItem *	FirstItemObj( void ) const;
 	virtual CItem *	NextItemObj( void ) const;
 
-	virtual UI32	GetCont(   void ) const;
+	virtual cBaseObject *	GetCont(   void ) const;
+	virtual SERIAL			GetContSerial( void ) const;
 	virtual UI32	GetMore(   void ) const;
 	virtual UI32	GetMoreB(  void ) const;
 	virtual UI08	GetCont(   UI08 part ) const; 
@@ -108,19 +109,16 @@ public:
 	virtual UI08	GetMoreB(  UI08 part ) const;
 
 	virtual void	SetSerial( SERIAL newValue, ITEM n );
-	virtual bool	SetCont(   SERIAL newValue );
-	virtual bool	SetCont(   CItem * );
+	virtual bool	SetCont(   cBaseObject *newCont );
+	virtual bool	SetContSerial( SERIAL newSerial );
 	virtual void	SetMore(   UI32 newValue );
 	virtual void	SetMoreB(  UI32 newValue );
-	virtual void	SetOwner(  SERIAL newValue );
 	virtual void	SetOwner(  cBaseObject *newValue );
 	virtual void	SetSpawn(  SERIAL newValue, ITEM index );
 	virtual void	SetMore(   UI08 newValue, UI08 part );
 	virtual void	SetMoreB(  UI08 newValue, UI08 part );
-	virtual void	SetSpawn(  UI08 newValue, UI08 part, ITEM index );
 	virtual void	SetMore(   UI08 part1, UI08 part2, UI08 part3, UI08 part4 );
 	virtual void	SetMoreB(  UI08 part1, UI08 part2, UI08 part3, UI08 part4 );
-	virtual void	SetSpawn(  UI08 part1, UI08 part2, UI08 part3, UI08 part4, ITEM index );
 	virtual void	SetGuarded( bool newValue );
 
 	virtual bool	isFree( void ) const;
@@ -221,8 +219,8 @@ public:
 	virtual SI32	GetValue( void ) const;
 	virtual void	SetValue( SI32 newValue );
 
-	virtual SI32	GetRestock( void ) const;
-	virtual void	SetRestock( SI32 newValue );
+	virtual UI16	GetRestock( void ) const;
+	virtual void	SetRestock( UI16 newValue );
 
 	virtual UI08	GetPoisoned( void ) const;
 	virtual void	SetPoisoned( UI08 newValue );
@@ -275,10 +273,8 @@ public:
 	virtual			~CItem();
 
 	virtual bool	HoldItem( CItem *toHold );
-	virtual bool	ReleaseItem( ITEM index );
 	virtual bool	ReleaseItem( CItem *index );
 	virtual UI32	NumItems( void ) const;
-	virtual ITEM	GetItem( ITEM index ) const;
 	virtual CItem * GetItemObj( ITEM index ) const;
 
 	UI32			enhanced;
