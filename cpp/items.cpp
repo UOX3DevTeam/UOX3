@@ -27,8 +27,8 @@
 // -- Items.cpp  Item specific routines (add, delete change) in preperation for
 //               going to a pointer based system
 //
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 #define DBGFILE "items.cpp"
 

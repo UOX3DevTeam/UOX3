@@ -25,8 +25,8 @@
 //------------------------------------------------------------------------
 /* House code for deed creation by Tal Strake, revised by Cironian */
 
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 #define DBGFILE "house.cpp"
 

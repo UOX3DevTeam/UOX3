@@ -35,9 +35,9 @@
 *
 */
 
-#include "uox3.h"
-#include "cmdtable.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\cmdtable.h"
+#include "..\h\debug.h"
 
 extern int tempint[MAXCLIENT];
 

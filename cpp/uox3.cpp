@@ -35,9 +35,9 @@ typedef void *HANDLE;
 #endif
 
 
-#include "uox3.h"
-#include "cmdtable.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\cmdtable.h"
+#include "..\h\debug.h"
 
 #define __CLUOX__
 

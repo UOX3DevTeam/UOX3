@@ -45,8 +45,8 @@
 // information to help out the future bug fixers. I will try to explain EVERY bit of logic
 // behind what I've done to make things easier.
 
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 
 // These are defines that I'll use. I have a history of working with properties, so that's why
@@ -113,8 +113,8 @@ inline signed int LOWER( signed int a, signed int b )
 }
 inline unsigned int turn_clock_wise( unsigned int dir )
 {
-	unsigned char t = (dir & 0x07 ) + 1;
-	return ( dir &0x80) | ( ( dir > 7 ) ? 0 : t );
+	unsigned int t = (dir - 1) & 7;
+	return (dir & 0x80) ? ( t | 0x80) : t;
 }
 
 inline unsigned int turn_counter_clock_wise( unsigned int dir )
@@ -2042,11 +2042,15 @@ int cMovement::validNPCMove(short int x, short int y, signed char z, CHARACTER s
                 {
                     if( chars[s].npc && (strlen(chars[s].title) > 0 || chars[s].npcaitype != 0 ) )
                     {             
+
 // !!! knox I'm really not sure if this is correct:               
                         dooruse( s, mapitem );
 // it used to be:       dooruse( -1, mapitem );
+
 // witch is definitly false! UOXSOCKET is now >unsigned<
+
 // sounds strange to me since negative "sockets" was once always indication for npcs... *shrugs*
+
                     }                                   
                     chars[s].blocked = 0;
                     return 0;

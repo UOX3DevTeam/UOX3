@@ -24,8 +24,8 @@
 //   
 //------------------------------------------------------------------------
 
-#include "uox3.h"
-#include "boats.h"
+#include "..\h\uox3.h"
+#include "..\h\boats.h"
 
 #define XP 0
 #define YP 1

@@ -24,8 +24,8 @@
 //   
 //------------------------------------------------------------------------
 
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 #define DBGFILE "combat.cpp"
 #define SWINGAT (unsigned int)1.75 * CLOCKS_PER_SEC

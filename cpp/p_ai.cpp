@@ -23,8 +23,8 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 #define DBGFILE "p_ai.cpp"
 

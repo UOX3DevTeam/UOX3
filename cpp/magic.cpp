@@ -30,8 +30,8 @@
 *   Functions' description added by AntiChrist (9/99)
 */
 
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 
 #define DBGFILE "magic.cpp"
 

@@ -23,7 +23,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "uox3.h"
+#include "..\h\uox3.h"
 
 // -- Region class  Added by Tauriel 3/6/1999 To lookup items by region
 //									This should help for now. BTW- my first attempt at C++

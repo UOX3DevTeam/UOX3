@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------
 //Adapted by TANiS - Thanks to Armageddon for the original code.
 
-#include "debug.h"
+#include "..\h\debug.h"
 
 /********************************************************
  *                                                      *

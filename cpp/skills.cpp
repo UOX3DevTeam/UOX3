@@ -35,8 +35,8 @@
 ** Also strcpy is a much more efficient routine than sprintf as
 ** it does not have to parse every byte of the field being copied.
 */
-#include "uox3.h"
-#include "debug.h"
+#include "..\h\uox3.h"
+#include "..\h\debug.h"
 //int goldsmithing;
 //1=iron, 2=gold, 3=agapite, 4=adamantium, 5=mythril, 6=bronze, 7=verite, 8=merkite, 9=copper, 10=silver
 int ingottype=0;//will hold number of ingot type to be deleted

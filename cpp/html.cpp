@@ -23,7 +23,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "uox3.h"
+#include "..\h\uox3.h"
 
 //:Terrin: I was out to fix sprintf(s, "%s%c", s, c ) but here they were
 //         mostly cases of someone not knowing out to do a backslash

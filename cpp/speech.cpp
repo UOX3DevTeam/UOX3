@@ -23,7 +23,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include "uox3.h"
+#include "..\h\uox3.h"
 
 void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
 {
