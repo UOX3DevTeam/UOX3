@@ -60,6 +60,7 @@
 #include <ios>
 #else
 #include <iomanip.h>
+#include <strstream.h>
 #endif
 #include <map>
 
