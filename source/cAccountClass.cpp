@@ -2345,7 +2345,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 				sTempPath += szTempBuff;
 				sTempPath += "/";
 				cAccountClass::PathFix(sTempPath);
-				actbTemp.sPath=sTempPath;
+				actbID.sPath=sTempPath;
 			}
 			else
 			{		
@@ -2356,12 +2356,12 @@ UI16 cAccountClass::Save(bool bForceLoad)
 				sTempPath += szTempBuff;
 				sTempPath += "/";
 				cAccountClass::PathFix(sTempPath);
-				actbTemp.sPath=sTempPath;
+				actbID.sPath=sTempPath;
 			}
 		}
 		// Close the test path
 		// Ok now that we got here we need to make the directory, and create the username.uad file
-		int nDummy=_mkdir(actbTemp.sPath.c_str(), 0777);
+		int nDummy=_mkdir(actbID.sPath.c_str(), 0777);
 		if(nDummy<0)
 		{
 			// if directory exists then we just skip this.
@@ -2375,7 +2375,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 #endif
 		}
 		// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
-		std::string sUsernameUADPath(actbTemp.sPath);
+		std::string sUsernameUADPath(actbID.sPath);
 		if(sUsernameUADPath[sUsernameUADPath.length()-1]=='\\'||sUsernameUADPath[sUsernameUADPath.length()-1]=='/')
 		{
 			sUsernameUADPath += actbID.sUsername;
@@ -2399,9 +2399,9 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		// Ok we have to write the new username.uad file in the directory
 		cAccountClass::WriteUADHeader(fsAccountsUAD,actbID);
 		// Ok write out the characters and the charcter names if we know them
-		for(int i=0;i<5;i++)
+		for(int ii=0;ii<5;ii++)
 		{
-			fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbID.dwCharacters[i] != INVALIDSERIAL ? actbID.dwCharacters[i]:INVALIDSERIAL) << " [" << (char*)(actbID.lpCharacters[i] != NULL ? actbID.lpCharacters[i]->GetName() : "INVALID" ) << "]\n"; 
+			fsAccountsUAD << "CHARACTER-" << (ii+1) << " 0x" << std::hex << (actbID.dwCharacters[ii] != INVALIDSERIAL ? actbID.dwCharacters[ii]:INVALIDSERIAL) << " [" << (char*)(actbID.lpCharacters[ii] != NULL ? actbID.lpCharacters[ii]->GetName() : "INVALID" ) << "]\n"; 
 		}
 		// Close the files since we dont need them anymore
 		fsAccountsUAD.close();
