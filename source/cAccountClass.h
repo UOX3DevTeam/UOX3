@@ -263,17 +263,17 @@ public:
 	//cAccountClass& operator+=(int);
 	//cAccountClass& operator>>(ACCOUNTSBLOCK& actbRef);
 	// Member Functions
-	WORD CreateAccountSystem(void);
-	WORD AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", WORD wAttributes=0x0000);
+	UI16 CreateAccountSystem(void);
+	UI16 AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", WORD wAttributes=0x0000);
 	BOOL DelAccount(std::string sUsername);
 	BOOL DelAccount(WORD wAccountID);
 	BOOL ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock);
 	BOOL ModAccount(WORD wAccountID,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock);
 	BOOL SetPath(std::string sPath);
 	std::string GetPath(void);
-	WORD Save(void);
-	WORD Load(void);
-	WORD size(void);
+	UI16 Save(void);
+	UI16 Load(void);
+	UI16 size(void);
 	BOOL clear(void);
 	BOOL isUser(std::string sUsername);
 	BOOL AddCharacter(WORD wAccountID, CChar *lpObject);
@@ -288,7 +288,7 @@ public:
 	MAPUSERNAMEID_ITERATOR& end(void);
 	MAPUSERNAMEID_ITERATOR& last(void);
 	// Member variables
-	WORD m_wHighestAccount;
+	UI16 m_wHighestAccount;
 	std::string m_sAccountsDirectory;
 	std::string& PathFix(std::string& sPath);
 	MAPUSERNAME m_mapUsernameMap;
