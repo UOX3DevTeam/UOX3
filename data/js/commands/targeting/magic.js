@@ -1,8 +1,8 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "gate", 1, true );
-	RegisterCommand( "recall", 1, true );
-	RegisterCommand( "mark", 1, true );
+	RegisterCommand( "gate", 1, true,contextID );
+	RegisterCommand( "recall", 1, true,contextID );
+	RegisterCommand( "mark", 1, true,contextID );
 }
 
 function command_GATE( socket, cmdString )

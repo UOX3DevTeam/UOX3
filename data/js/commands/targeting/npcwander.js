@@ -1,8 +1,8 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "follow", 1, true );
-	RegisterCommand( "npcrect", 2, true );
-	RegisterCommand( "npccircle", 2, true );
+	RegisterCommand( "follow", 1, true,contextID );
+	RegisterCommand( "npcrect", 2, true,contextID );
+	RegisterCommand( "npccircle", 2, true,contextID );
 }
 
 function command_FOLLOW( socket, cmdString )

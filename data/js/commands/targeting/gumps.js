@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "istats", 1, true );
-	RegisterCommand( "cstats", 1, true );
+	RegisterCommand( "istats", 1, true,contextID );
+	RegisterCommand( "cstats", 1, true,contextID );
 }
 
 function command_ISTATS( socket, cmdString )

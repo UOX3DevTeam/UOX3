@@ -1,9 +1,9 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "cnsyell", 1, true );
-	RegisterCommand( "gmyell", 2, true );
-	RegisterCommand( "adminyell", 3, true );
-	RegisterCommand( "yellall", 2, true );
+	RegisterCommand( "cnsyell", 1, true, contextID );
+	RegisterCommand( "gmyell", 2, true, contextID );
+	RegisterCommand( "adminyell", 3, true, contextID );
+	RegisterCommand( "yellall", 2, true, contextID );
 }
 
 function command_CNSYELL( socket, cmdString )

@@ -1,9 +1,9 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "fullstats", 2, true );
-	RegisterCommand( "heal", 1, true );
-	RegisterCommand( "stamina", 1, true );
-	RegisterCommand( "mana", 1, true );
+	RegisterCommand( "fullstats", 2, true ,contextID);
+	RegisterCommand( "heal", 1, true,contextID );
+	RegisterCommand( "stamina", 1, true,contextID );
+	RegisterCommand( "mana", 1, true,contextID );
 }
 
 function command_FULLSTATS( socket, cmdString )

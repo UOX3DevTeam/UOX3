@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "consoletest", 2, true );
+	RegisterCommand( "consoletest", 2, true,contextID );
 }
 
 function command_CONSOLETEST( socket, cmdString )

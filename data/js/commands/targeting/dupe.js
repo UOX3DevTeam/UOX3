@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "dupe", 2, true );
+	RegisterCommand( "dupe", 2, true,contextID );
 }
 
 function command_DUPE( socket, cmdString )

@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "sfx", 2, true );
-	RegisterCommand( "midi", 2, true );
+	RegisterCommand( "sfx", 2, true,contextID );
+	RegisterCommand( "midi", 2, true,contextID );
 }
 
 function command_SFX( socket, cmdString )

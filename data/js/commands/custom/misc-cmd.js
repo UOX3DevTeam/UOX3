@@ -8,17 +8,17 @@
 // 10. July - added SETTAG and GETTAG commands
 // 11. July - Allowed setting tags with value "null" to delete tags.
 
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "rename", 2, true ); //Lets GMs rename items/characters.
-	RegisterCommand( "refresh", 0, true ); //Lets players refresh their screen to resend items/chars that have vanished from view.
-	RegisterCommand( "freeze", 2, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
-	RegisterCommand( "unfreeze", 2, true );
-	RegisterCommand( "browse", 0, true ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
-	RegisterCommand( "invul", 2, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
-	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
-	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
-	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "rename", 2, true,contextID ); //Lets GMs rename items/characters.
+	RegisterCommand( "refresh", 0, true,contextID ); //Lets players refresh their screen to resend items/chars that have vanished from view.
+	RegisterCommand( "freeze", 2, true,contextID ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
+	RegisterCommand( "unfreeze", 2, true,contextID );
+	RegisterCommand( "browse", 0, true,contextID ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
+	RegisterCommand( "invul", 2, true,contextID ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
+	RegisterCommand( "addpack", 2, true,contextID ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
+	RegisterCommand( "settag", 2, true,contextID ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettag", 2, true,contextID ); //Used to retrieve the value of a specified tag from a targeted object
 }
 
 function command_RENAME( pSock, execString )

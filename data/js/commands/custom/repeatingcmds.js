@@ -8,16 +8,16 @@
 
 var ReqNum = "You need to enter a numerical value with this command!";
 
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "rincx", 2, true ); // USE 'RINCX <value> - increases X value of multiple targets by <value>
-	RegisterCommand( "rincy", 2, true ); // USE 'RINCY <value> - increases Y value of multiple targets by <value>
-	RegisterCommand( "rincz", 2, true ); // Use 'RINCZ <value> - increases Z value of multiple targets by <value>
-	RegisterCommand( "rtype", 2, true ); // Use 'RTYPE <type> - sets multiple targeted objects to TYPE <type>
-	RegisterCommand( "rdye", 2, true ); // Use 'RDYE <hex-id> - dyes multiple targeted objects with colour <hex-id>
-	RegisterCommand( "radd", 2, true ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
-	RegisterCommand( "rremove", 2, true ); // Use 'RREMOVE - Removes multiple targeted items.
-	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
+	RegisterCommand( "rincx", 2, true,contextID ); // USE 'RINCX <value> - increases X value of multiple targets by <value>
+	RegisterCommand( "rincy", 2, true,contextID ); // USE 'RINCY <value> - increases Y value of multiple targets by <value>
+	RegisterCommand( "rincz", 2, true,contextID ); // Use 'RINCZ <value> - increases Z value of multiple targets by <value>
+	RegisterCommand( "rtype", 2, true,contextID ); // Use 'RTYPE <type> - sets multiple targeted objects to TYPE <type>
+	RegisterCommand( "rdye", 2, true,contextID ); // Use 'RDYE <hex-id> - dyes multiple targeted objects with colour <hex-id>
+	RegisterCommand( "radd", 2, true,contextID ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
+	RegisterCommand( "rremove", 2, true,contextID ); // Use 'RREMOVE - Removes multiple targeted items.
+	RegisterCommand( "radditem", 2, true,contextID ); // Use 'RADDITEM <item-id from dfns>
 }
 
 //Repeated Command: INCX <value>

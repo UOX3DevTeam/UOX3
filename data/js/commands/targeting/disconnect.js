@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "kick", 2, true );
-	RegisterCommand( "disconnect", 2, true );
+	RegisterCommand( "kick", 2, true,contextID );
+	RegisterCommand( "disconnect", 2, true,contextID );
 }
 
 function command_KICK( socket, cmdString )

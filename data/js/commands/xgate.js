@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "xgate", 1, true );
+	RegisterCommand( "xgate", 1, true, contextID );
 }
 
 function command_XGATE( socket, cmdString )

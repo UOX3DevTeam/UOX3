@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "go", 1, true );
+	RegisterCommand( "go", 1, true ,contextID);
 }
 
 function command_GO( socket, cmdString )

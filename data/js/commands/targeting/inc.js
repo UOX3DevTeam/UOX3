@@ -1,8 +1,8 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "incx", 2, true );
-	RegisterCommand( "incy", 2, true );
-	RegisterCommand( "incz", 2, true );
+	RegisterCommand( "incx", 2, true,contextID );
+	RegisterCommand( "incy", 2, true,contextID );
+	RegisterCommand( "incz", 2, true,contextID );
 }
 
 function command_INCX( socket, cmdString )

@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "action", 2, true );
-	RegisterCommand( "bolt", 2, true );
+	RegisterCommand( "action", 2, true,contextID );
+	RegisterCommand( "bolt", 2, true,contextID );
 }
 
 function command_ACTION( socket, cmdString )

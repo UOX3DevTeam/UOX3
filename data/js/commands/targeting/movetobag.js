@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "movetobag", 2, true );
+	RegisterCommand( "movetobag", 2, true,contextID );
 }
 
 function command_MOVETOBAG( socket, cmdString )

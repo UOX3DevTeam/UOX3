@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "openbank", 2, true );
-	RegisterCommand( "openlayer", 2, true );
+	RegisterCommand( "openbank", 2, true,contextID );
+	RegisterCommand( "openlayer", 2, true,contextID );
 }
 
 function command_OPENBANK( socket, cmdString )

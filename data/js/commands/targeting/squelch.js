@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "mute", 2, true );
-	RegisterCommand( "squelch", 2, true );
+	RegisterCommand( "mute", 2, true,contextID );
+	RegisterCommand( "squelch", 2, true,contextID );
 }
 
 function command_MUTE( socket, cmdString )

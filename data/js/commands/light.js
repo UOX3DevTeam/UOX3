@@ -1,8 +1,8 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "brightlight", 2, true );
-	RegisterCommand( "darklight", 2, true );
-	RegisterCommand( "dungeonlight", 2, true );
+	RegisterCommand( "brightlight", 2, true,contextID );
+	RegisterCommand( "darklight", 2, true,contextID );
+	RegisterCommand( "dungeonlight", 2, true,contextID );
 }
 
 function command_BRIGHTLIGHT( socket, cmdString )

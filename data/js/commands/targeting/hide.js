@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "hide", 2, true );
-	RegisterCommand( "unhide", 2, true );
+	RegisterCommand( "hide", 2, true,contextID );
+	RegisterCommand( "unhide", 2, true,contextID );
 }
 
 function command_HIDE( socket, cmdString )

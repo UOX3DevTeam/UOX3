@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "set", 2, true );
-	RegisterCommand( "setpoisoned", 2, true );
+	RegisterCommand( "set", 2, true,contextID );
+	RegisterCommand( "setpoisoned", 2, true,contextID );
 }
 
 function command_SET( socket, cmdString )
@@ -91,6 +91,8 @@ function onCallback0( socket, ourObj )
 
 function HandleSetItem( socket, ourItem, uKey, value )
 {
+	var splitString = socket.xText.split( " ", 2 );
+	uKey = splitString[0].toUpperCase();
 	switch( uKey )
 	{
 	case "ID":

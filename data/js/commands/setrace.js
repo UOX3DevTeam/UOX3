@@ -1,6 +1,6 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "setrace", 2, true );
+	RegisterCommand( "setrace", 2, true,contextID );
 }
 
 function command_SETRACE( socket, cmdString )

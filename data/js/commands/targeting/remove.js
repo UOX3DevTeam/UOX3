@@ -1,7 +1,7 @@
-function CommandRegistration()
+function CommandRegistration(contextID)
 {
-	RegisterCommand( "remove", 2, true );
-	RegisterCommand( "deletechar", 3, true );
+	RegisterCommand( "remove", 2, true,contextID );
+	RegisterCommand( "deletechar", 3, true,contextID );
 }
 
 function command_REMOVE( socket, cmdString )
