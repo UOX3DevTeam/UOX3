@@ -68,7 +68,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the dough to crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103b", false, 1, true, true ); // makes a loaf of bread
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103b", 1, "ITEM", true ); // makes a loaf of bread
 		pUser.SysMessage( "You bake a loaf of bread." );
 		return;
 	}

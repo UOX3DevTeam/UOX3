@@ -67,7 +67,7 @@ function onCallback0( tSock, targSerial )
 		}
 		pUser.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
 		pUser.SoundEffect( 0x021e, true );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1045", false, 1, true, true ); // makes a sack of flour
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1045", 1, "ITEM", true ); // makes a sack of flour
 		pUser.SysMessage( "You grind some wheat and put a sack of flour in your pack!" );
 		return;
 	}

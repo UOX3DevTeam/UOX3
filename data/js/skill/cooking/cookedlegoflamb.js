@@ -67,7 +67,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the leg of lamb to crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x160a", false, 1, true, true ); // makes a cooked lamb leg
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x160a", 1, "ITEM", true ); // makes a cooked lamb leg
 		pUser.SysMessage( "You cook a leg of lamb." );
 		return;
 	}

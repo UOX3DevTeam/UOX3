@@ -43,7 +43,7 @@ function onCallback0( tSock, targSerial )
 		}
 	        tItem.DoSoundEffect( 0x004E, true );
 		tChar.UseResource( 0x0ff6, 0, 1 );
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0ff9", false, 1, true, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0ff9", 1, "ITEM", true );
 		tSock.SysMessage( "You fill the pitcher with water." );
 		return;
 	}

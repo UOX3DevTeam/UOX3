@@ -67,12 +67,12 @@ function onCallback0( tSock, targSerial )
 		pUser.UseResource( 1, 0x09b9 ); // uses up a resource (amount, item ID, item colour)
 		pUser.SoundEffect( 0x0022, true );
 		// check the skill
-			if( !pUser.CheckSkill( 13, 200, 600 ) )	// character to check, skill #, minimum skill, and maximum skill
+		if( !pUser.CheckSkill( 13, 200, 600 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
 			pUser.SysMessage( "You burnt the raw bird to crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09b8", false, 1, true, true ); // makes a cooked bird
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09b8", 1, "ITEM", true ); // makes a cooked bird
 		pUser.SysMessage( "You cook a bird. Smells good!" );
 		return;
 	}

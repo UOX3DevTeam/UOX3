@@ -72,7 +72,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the chicken leg to crisp" );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1608", false, 1, true, true ); // makes a cooked chicken leg
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1608", 1, "ITEM", true ); // makes a cooked chicken leg
 		pUser.SysMessage( "You cook a chicken leg. Smells good!" );
 		return;
 	}

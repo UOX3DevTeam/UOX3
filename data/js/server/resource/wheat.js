@@ -34,7 +34,7 @@ function onUse( pUser, iUsed )
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( "You harvest some wheat." );
-			var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", true, 0x1ebd, 0x0, true, true );
+			var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x1ebd, 0x0, "ITEM", true );
 			var loot2 = RollDice( 1, 2, 0 );
 			if( loot2 == 1 )
 				iUsed.id = 0x0daf;

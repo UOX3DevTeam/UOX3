@@ -36,7 +36,7 @@ function onUse( pUser, iUsed )
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( "You pick a bunch of dates from the date-palm." );
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1727", false, 1, true, true );
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1727", 1, "ITEM", true );
 			DateCount--;
 			iUsed.SetTag( "DateCounter", DateCount );
 			if( DateCount == 1)

@@ -72,7 +72,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the eggs crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09b6", false, 1, true, true ); // makes fried eggs
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09b6", 1, "ITEM", true ); // makes fried eggs
 		pUser.SysMessage( "You fry the eggs." );
 		return;
 	}

@@ -72,7 +72,7 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You burnt the rib to crisp." );
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09F2", false, 1, true, true ); // makes a cooked rib
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09F2", 1, "ITEM", true ); // makes a cooked rib
 		pUser.SysMessage( "You cook a rib." );
 		return;
 	}

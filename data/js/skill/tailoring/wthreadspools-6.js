@@ -55,7 +55,7 @@ function onCallback0( tSock, targSerial )
 		pUser.UseResource( 1, 0x0df9 ); // uses up a resource 
 		pUser.SoundEffect( 0x021b, true );
 		// add spools of thread
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fa0", false, 6, true, true ); //makes some spools of thread		
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fa0", 6, "ITEM", true ); //makes some spools of thread		
 		pUser.SysMessage(  "You spin some spools of thread." );
 		return;
 	}

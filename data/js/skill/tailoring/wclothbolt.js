@@ -67,7 +67,7 @@ function onCallback0( tSock, targSerial )
         	pUser.UseResource( 5, 0x0e1d );
 	pUser.SoundEffect( 0x0190, true );        
         // add bolt of cloth
-	var itemMade = CreateDFNItem( pUser.socket, pUser, "0x175f", false, 30, true, true ); // makes folded cloth
+	var itemMade = CreateDFNItem( pUser.socket, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
         pUser.SysMessage( "You weave some folded cloth." );
         return;
 }
