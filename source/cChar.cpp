@@ -3394,22 +3394,22 @@ bool CChar::IsValidMount( void ) const
 	return false;
 }
 
-bool CChar::DumpHeader( ofstream &outStream, SI32 mode ) const
+bool CChar::DumpHeader( std::ofstream &outStream, SI32 mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << "[CHARACTER]" << endl;
+		outStream << "[CHARACTER]" << std::endl;
 		break;
 	}
 	return true;
 }
-bool CChar::DumpBody( ofstream &outStream, SI32 mode ) const
+bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 {
-	string destination; 
-	ostringstream dumping( destination ); 
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
 	BinBuffer buff;
 	CItem *packItem = NULL;
 	int tempCounter, bsc;
@@ -3752,79 +3752,79 @@ bool CChar::DumpBody( ofstream &outStream, SI32 mode ) const
 	case 0:
 	default:
 		cBaseObject::DumpBody( outStream, mode );	// Make the default save of BaseObject members now
-		dumping << "Account=" << GetAccount() << endl;
-		dumping << "LastOn=" << GetLastOn() << endl;
-		dumping << "OrgName=" << GetOrgName() << endl;
-		dumping << "GuildTitle=" << GetGuildTitle() << endl;  
-		dumping << "NpcAIType=" << GetNPCAiType() << endl;
-		dumping << "Making=" << GetMaking() << endl;
-		dumping << "Taming=" << GetTaming() << endl;
-		dumping << "Weight=" << GetWeight() << endl;
-		dumping << "Hunger=" << (SI16)GetHunger() << endl;
-		dumping << "FixedLight=" << (SI16)GetFixedLight() << endl;
-		dumping << "Town=" << (SI16)GetTown() << endl;
-		dumping << "Carve=" << GetCarve() << endl;
-		dumping << "HoldG=" << GetHoldG() << endl;
-		dumping << "Split=" << (SI16)GetSplit() << endl;
-		dumping << "SplitChance=" << (SI16)GetSplitChance() << endl;
-		dumping << "RobeSerial=" << GetRobe() << endl;
-		dumping << "TownVote=" << GetTownVote() << endl;
-		dumping << "GuildFealty=" << GetGuildFealty() << endl;  
-		dumping << "PoisonSerial=" << GetPoisonSerial() << endl;
-		dumping << "SummonTimer=" << GetSummonTimer() << endl;
-		dumping << "XBodyID=" << GetxID() << endl;
-		dumping << "OriginalBodyID=" << GetOrgID() << endl;
-		dumping << "HairStyle=" << GetHairStyle() << endl;
-		dumping << "BeardStyle=" << GetBeardStyle() << endl;
-		dumping << "XSkinID=" << GetxSkin() << endl;
-		dumping << "OriginalSkinID=" << GetOrgSkin() << endl;
-		dumping << "HairColour=" << GetHairColour() << endl;
-		dumping << "BeardColour=" << GetBeardColour() << endl;
-		dumping << "Say=" << GetSayColour() << endl;
-		dumping << "Emotion=" << GetEmoteColour() << endl;
-		dumping << "MayLevitate=" << (MayLevitate()?"1":"0") << endl;
-		dumping << "FX1=" << GetFx( 1 ) << endl;
-		dumping << "FX2=" << GetFx( 2 ) << endl;
-		dumping << "FY1=" << GetFy( 1 ) << endl;
-		dumping << "FY2=" << GetFy( 2 ) << endl;
-		dumping << "FZ1=" << (SI16)GetFz() << endl;
-		dumping << "DisplayZ=" << (SI16)GetDispZ() << endl;
-		dumping << "Stealth=" << (SI16)GetStealth() << endl;
-		dumping << "Dir2=" << (SI16)GetDir2() << endl;
-		dumping << "Reserved=" << (SI16)GetCell() << endl;
-		dumping << "NpcWander=" << (SI16)GetNpcWander() << endl;
-		dumping << "XNpcWander=" << (SI16)GetOldNpcWander() << endl;
-		dumping << "FlySteps=" << (SI16)GetFlySteps() << endl;
-		dumping << "Running=" << (SI16)GetRunning() << endl;
-		dumping << "Step=" << (SI16)GetStep() << endl;
-		dumping << "Region=" << (SI16)GetRegion() << endl;
+		dumping << "Account=" << GetAccount() << std::endl;
+		dumping << "LastOn=" << GetLastOn() << std::endl;
+		dumping << "OrgName=" << GetOrgName() << std::endl;
+		dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
+		dumping << "NpcAIType=" << GetNPCAiType() << std::endl;
+		dumping << "Making=" << GetMaking() << std::endl;
+		dumping << "Taming=" << GetTaming() << std::endl;
+		dumping << "Weight=" << GetWeight() << std::endl;
+		dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
+		dumping << "FixedLight=" << (SI16)GetFixedLight() << std::endl;
+		dumping << "Town=" << (SI16)GetTown() << std::endl;
+		dumping << "Carve=" << GetCarve() << std::endl;
+		dumping << "HoldG=" << GetHoldG() << std::endl;
+		dumping << "Split=" << (SI16)GetSplit() << std::endl;
+		dumping << "SplitChance=" << (SI16)GetSplitChance() << std::endl;
+		dumping << "RobeSerial=" << GetRobe() << std::endl;
+		dumping << "TownVote=" << GetTownVote() << std::endl;
+		dumping << "GuildFealty=" << GetGuildFealty() << std::endl;  
+		dumping << "PoisonSerial=" << GetPoisonSerial() << std::endl;
+		dumping << "SummonTimer=" << GetSummonTimer() << std::endl;
+		dumping << "XBodyID=" << GetxID() << std::endl;
+		dumping << "OriginalBodyID=" << GetOrgID() << std::endl;
+		dumping << "HairStyle=" << GetHairStyle() << std::endl;
+		dumping << "BeardStyle=" << GetBeardStyle() << std::endl;
+		dumping << "XSkinID=" << GetxSkin() << std::endl;
+		dumping << "OriginalSkinID=" << GetOrgSkin() << std::endl;
+		dumping << "HairColour=" << GetHairColour() << std::endl;
+		dumping << "BeardColour=" << GetBeardColour() << std::endl;
+		dumping << "Say=" << GetSayColour() << std::endl;
+		dumping << "Emotion=" << GetEmoteColour() << std::endl;
+		dumping << "MayLevitate=" << (MayLevitate()?"1":"0") << std::endl;
+		dumping << "FX1=" << GetFx( 1 ) << std::endl;
+		dumping << "FX2=" << GetFx( 2 ) << std::endl;
+		dumping << "FY1=" << GetFy( 1 ) << std::endl;
+		dumping << "FY2=" << GetFy( 2 ) << std::endl;
+		dumping << "FZ1=" << (SI16)GetFz() << std::endl;
+		dumping << "DisplayZ=" << (SI16)GetDispZ() << std::endl;
+		dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
+		dumping << "Dir2=" << (SI16)GetDir2() << std::endl;
+		dumping << "Reserved=" << (SI16)GetCell() << std::endl;
+		dumping << "NpcWander=" << (SI16)GetNpcWander() << std::endl;
+		dumping << "XNpcWander=" << (SI16)GetOldNpcWander() << std::endl;
+		dumping << "FlySteps=" << (SI16)GetFlySteps() << std::endl;
+		dumping << "Running=" << (SI16)GetRunning() << std::endl;
+		dumping << "Step=" << (SI16)GetStep() << std::endl;
+		dumping << "Region=" << (SI16)GetRegion() << std::endl;
 		CItem *packItem = GetPackItem();
 		if( packItem != NULL )
-			dumping << "PackItem=" << packItem->GetSerial() << endl;	// store something meaningful
+			dumping << "PackItem=" << packItem->GetSerial() << std::endl;	// store something meaningful
 		else
-			dumping << "PackItem=" << INVALIDSERIAL << endl;
-		dumping << "AdvanceObject=" << GetAdvObj() << endl;
-		dumping << "AdvRaceObject=" << GetRaceGate() << endl;
-		dumping << "SPAttack=" << GetSpAttack() << endl;
-		dumping << "SpecialAttackDelay=" << (SI16)GetSpDelay() << endl;
-		dumping << "QuestType=" << (SI16)GetQuestType() << endl;	
-		dumping << "QuestDestinationRegion=" << (SI16)GetQuestDestRegion() << endl;	
-		dumping << "QuestOriginalRegion=" << (SI16)GetQuestOrigRegion() << endl;	
-		dumping << "FleeAt=" << GetFleeAt() << endl;
-		dumping << "ReAttackAt=" << GetReattackAt() << endl;
-		dumping << "Privileges=" << (SI16)GetPriv() << endl;
-		dumping << "CommandLevel=" << (SI16)GetCommandLevel() << endl;	// command level
-		dumping << "PostType=" << (SI16)GetPostType() << endl;
-		dumping << "TownPrivileges=" << (SI16)GetTownPriv() << endl;
-		dumping << "XMana=" << GetMana2() << endl;
-		dumping << "XStamina=" << GetStamina2() << endl;
+			dumping << "PackItem=" << INVALIDSERIAL << std::endl;
+		dumping << "AdvanceObject=" << GetAdvObj() << std::endl;
+		dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
+		dumping << "SPAttack=" << GetSpAttack() << std::endl;
+		dumping << "SpecialAttackDelay=" << (SI16)GetSpDelay() << std::endl;
+		dumping << "QuestType=" << (SI16)GetQuestType() << std::endl;	
+		dumping << "QuestDestinationRegion=" << (SI16)GetQuestDestRegion() << std::endl;	
+		dumping << "QuestOriginalRegion=" << (SI16)GetQuestOrigRegion() << std::endl;	
+		dumping << "FleeAt=" << GetFleeAt() << std::endl;
+		dumping << "ReAttackAt=" << GetReattackAt() << std::endl;
+		dumping << "Privileges=" << (SI16)GetPriv() << std::endl;
+		dumping << "CommandLevel=" << (SI16)GetCommandLevel() << std::endl;	// command level
+		dumping << "PostType=" << (SI16)GetPostType() << std::endl;
+		dumping << "TownPrivileges=" << (SI16)GetTownPriv() << std::endl;
+		dumping << "XMana=" << GetMana2() << std::endl;
+		dumping << "XStamina=" << GetStamina2() << std::endl;
 
 		// Write out the BaseSkills and the SkillLocks here
 		// Format: BaseSkills=[0,34]-[1,255]-[END]
 		dumping << "BaseSkills=";
 		for( bsc = 0; bsc < TRUESKILLS; bsc++ )
 			dumping << "[" << (SI32)bsc << "," << GetBaseSkill( bsc ) << "]-";
-		dumping << "[END]" << endl;
+		dumping << "[END]" << std::endl;
 
 		if( !IsNpc() )
 		{
@@ -3841,7 +3841,7 @@ bool CChar::DumpBody( ofstream &outStream, SI32 mode ) const
 				else 
 					dumping << ",0" << GetAtrophy( atc );
 			}
-			dumping << "[END]" << endl;
+			dumping << "[END]" << std::endl;
 
 			// Format: SkillLocks=[0,34]-[1,255]-[END]
 			dumping << "SkillLocks=";
@@ -3852,26 +3852,26 @@ bool CChar::DumpBody( ofstream &outStream, SI32 mode ) const
 				else
 					dumping << "[" << (SI16)slc << ",0]-";
 			}
-			dumping << "[END]" << endl;
+			dumping << "[END]" << std::endl;
 		}
-		dumping << "XKarma=" << GetKarma2() << endl;
-		dumping << "XFame=" << GetFame2() << endl;
-		dumping << "GuildNumber=" << GetGuildNumber() << endl;  
-		dumping << "Deaths=" << GetDeaths() << endl;
-		dumping << "FontType=" << (SI16)GetFontType() << endl;
-		dumping << "Squelched=" << (SI16)GetSquelched() << endl;
-		dumping << "Poison=" << (SI16)GetPoison() << endl;
-		dumping << "Poisoned=" << (SI16)GetPoisoned() << endl;
-		dumping << "TownTitle=" << (GetTownTitle()?1:0) << endl;
+		dumping << "XKarma=" << GetKarma2() << std::endl;
+		dumping << "XFame=" << GetFame2() << std::endl;
+		dumping << "GuildNumber=" << GetGuildNumber() << std::endl;  
+		dumping << "Deaths=" << GetDeaths() << std::endl;
+		dumping << "FontType=" << (SI16)GetFontType() << std::endl;
+		dumping << "Squelched=" << (SI16)GetSquelched() << std::endl;
+		dumping << "Poison=" << (SI16)GetPoison() << std::endl;
+		dumping << "Poisoned=" << (SI16)GetPoisoned() << std::endl;
+		dumping << "TownTitle=" << (GetTownTitle()?1:0) << std::endl;
 		//-------------------------------------------------------------------------------------------
-		dumping << "CanRun=" << (SI32)((CanRun() && IsNpc())?1:0) << endl;
-		dumping << "AllMove=" << (SI16)GetPriv2() << endl;
-		dumping << "IsNpc=" << (SI32)(IsNpc()?1:0) << endl;
-		dumping << "IsShop=" << (SI32)(IsShop()?1:0) << endl;
-		dumping << "Dead=" << (SI32)(IsDead()?1:0) << endl;
-		dumping << "CanTrain=" << (SI32)(CanTrain()?1:0) << endl;
-		dumping << "IsWarring=" << (SI32)(IsAtWar()?1:0) << endl;
-		dumping << "GuildToggle=" << (SI32)(GetGuildToggle()?1:0) << endl;  
+		dumping << "CanRun=" << (SI32)((CanRun() && IsNpc())?1:0) << std::endl;
+		dumping << "AllMove=" << (SI16)GetPriv2() << std::endl;
+		dumping << "IsNpc=" << (SI32)(IsNpc()?1:0) << std::endl;
+		dumping << "IsShop=" << (SI32)(IsShop()?1:0) << std::endl;
+		dumping << "Dead=" << (SI32)(IsDead()?1:0) << std::endl;
+		dumping << "CanTrain=" << (SI32)(CanTrain()?1:0) << std::endl;
+		dumping << "IsWarring=" << (SI32)(IsAtWar()?1:0) << std::endl;
+		dumping << "GuildToggle=" << (SI32)(GetGuildToggle()?1:0) << std::endl;  
 
 		outStream << dumping.str();
 
@@ -3894,7 +3894,7 @@ bool CChar::DumpBody( ofstream &outStream, SI32 mode ) const
 //o-----------------------------------------------------------------------o
 //|	Returns			-	true/false indicating the success of the write operation
 //o-----------------------------------------------------------------------o
-bool CChar::Save( ofstream &outStream, SI32 mode ) const
+bool CChar::Save( std::ofstream &outStream, SI32 mode ) const
 {
 	if( isFree() )
 		return false;
@@ -4453,14 +4453,14 @@ SI16 CChar::GetKarma2( void ) const
 	return karma2;
 }
 
-bool CChar::DumpFooter( ofstream &outStream, SI32 mode ) const
+bool CChar::DumpFooter( std::ofstream &outStream, SI32 mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << endl << "o---o" << endl << endl;
+		outStream << std::endl << "o---o" << std::endl << std::endl;
 	}
 	return true;
 }
@@ -4480,8 +4480,8 @@ bool CChar::HandleLine( char *tag, char *data )
 		else if( !strcmp( tag, "Atrophy" ) )
 		{
 			UI16 atrophyNum = 0;
-			string s(data);
-			istringstream ss(s);
+			std::string s(data);
+			std::istringstream ss(s);
 			char comma;
 			for( UI08 aCtr = 0; aCtr < TRUESKILLS; aCtr++ )
 			{
@@ -4525,8 +4525,8 @@ bool CChar::HandleLine( char *tag, char *data )
 			UI08 skillCtr = 0;
 			// Format: BaseSkills=[0,34]-[1,255]-[END]
 
-			string s( data );
-			istringstream ss( s );
+			std::string s( data );
+			std::istringstream ss( s );
 			char rbracket, lbracket, dash, comma;
 			int num, val;
 			for( skillCtr = 0; skillCtr < TRUESKILLS; skillCtr++ )
@@ -4877,8 +4877,8 @@ bool CChar::HandleLine( char *tag, char *data )
 			UI08 lockVal = 0;
 			UI08 lockCtr = 0;
 			// Format: Baselocks=[0,34]-[1,255]-[END]
-			string s( data );
-			istringstream ss( s );
+			std::string s( data );
+			std::istringstream ss( s );
 			char rbracket, lbracket, dash, comma;
 			int num, val;
 			for( lockCtr = 0; lockCtr < TRUESKILLS; lockCtr++ )
@@ -5239,7 +5239,7 @@ bool CChar::Load( BinBuffer &buff, CHARACTER arrayOffset )
 	return LoadRemnants( arrayOffset );
 }
 
-bool CChar::Load( ifstream &inStream, CHARACTER arrayOffset )
+bool CChar::Load( std::ifstream &inStream, CHARACTER arrayOffset )
 {
 	char tag[128], data[512];
 	bool bFinished;

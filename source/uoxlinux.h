@@ -5,7 +5,7 @@
 #include <unistd.h> // for chdir and getcwd
 #include <sys/stat.h> // for mkdir
 #include <errno.h> // for errno
-using namespace std;
+//using namespace std;
 
 //	  This header is kind of a patch for all the windows-specific things in
 //	 uox3. --Sean

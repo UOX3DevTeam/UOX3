@@ -19,7 +19,7 @@ private:
 	SI16 x;
 	SI16 y;
 	SI08 z;
-	vector< JailOccupant * > playersInJail;
+	std::vector< JailOccupant * > playersInJail;
 public:
 			JailCell() : x( 0 ), y( 0 ), z( 0 ) { }
 	bool	IsEmpty( void ) const;
@@ -40,7 +40,7 @@ public:
 class JailSystem
 {
 private:
-	vector< JailCell > jails;
+	std::vector< JailCell > jails;
 public:
 			JailSystem();
 	void	ReadSetup( void );

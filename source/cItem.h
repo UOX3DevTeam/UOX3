@@ -292,12 +292,12 @@ public:
 	virtual bool	IsBowType( void ) const;
 	virtual bool	CanBeLockedDown( void ) const;
 	virtual void	LockDown( void );
-	virtual bool	Save( ofstream &outStream, SI32 mode );
-	virtual bool	DumpHeader( ofstream &outStream, SI32 mode ) const;
-	virtual bool	DumpBody( ofstream &outStream, SI32 mode ) const;
+	virtual bool	Save( std::ofstream &outStream, SI32 mode );
+	virtual bool	DumpHeader( std::ofstream &outStream, SI32 mode ) const;
+	virtual bool	DumpBody( std::ofstream &outStream, SI32 mode ) const;
 	virtual bool	DumpBody( BinBuffer &buff ) const;
-	virtual bool	DumpFooter( ofstream &outStream, SI32 mode ) const;
-	virtual bool	Load( ifstream &inStream, ITEM arrayOffset );
+	virtual bool	DumpFooter( std::ofstream &outStream, SI32 mode ) const;
+	virtual bool	Load( std::ifstream &inStream, ITEM arrayOffset );
 	virtual bool	Load( BinBuffer &buff, ITEM arrayOffset );
 	virtual bool	HandleLine( char *tag, char *data );
 	virtual bool	HandleBinTag( UI08 tag, BinBuffer &buff );

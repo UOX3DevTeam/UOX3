@@ -17,7 +17,7 @@ class BinBuffer;
 #include "classes.h"
 #endif
 
-using namespace std;
+//using namespace std;
 
 class UOXFile
 {
@@ -70,11 +70,11 @@ class BinBuffer
 {
 public:
 	BinBuffer();
-	BinBuffer( ifstream & );
+	BinBuffer( std::ifstream & );
 	~BinBuffer();
 
-	void Read( ifstream & );
-	void Write( ofstream & );
+	void Read( std::ifstream & );
+	void Write( std::ofstream & );
 	void Reset( void );
 
 	UI32 Size( void );
@@ -102,7 +102,7 @@ public:
 	int Length( void );
 
 protected:
-	vector<char> Buff;
+	std::vector<char> Buff;
 	int fp;
 	UI08 myType;
 };

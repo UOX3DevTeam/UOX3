@@ -134,11 +134,11 @@ void	srequest( cSocket *s );
 void	tips( cSocket *s, UI08 i ); // Tip of the day window
 
 // File IO
-void	loadPreDefSpawnRegion( SI32 r, string name );
+void	loadPreDefSpawnRegion( SI32 r, std::string name );
 void	loadcustomtitle( void );
 void	saveserverscript( char x );
 void	loadskills( void );
-r2Data	readline( ifstream &toRead );
+r2Data	readline( std::ifstream &toRead );
 void	savelog( const char *msg, const char *logfile );
 void	loadnewworld( void );
 void	loadSpawnRegions( void );
@@ -171,7 +171,7 @@ char *	title2( CChar *p );
 char *	title3( CChar *p );
 void	numtostr( int i, char *string );
 SI32	makeNum( const char *s );
-SI32	makeNum( const string *s );
+SI32	makeNum( const std::string *s );
 char *	RealTime( char *time_str );
 int		getStringValue( const char *string );
 
@@ -284,7 +284,7 @@ void	tweakItemMenu( cSocket *s, CItem *j );
 void	tweakCharMenu( cSocket *s, CChar *c );
 void	choice( cSocket *s );
 
-void	ReadWorldTagData( ifstream &inStream, char *tag, char *data );
+void	ReadWorldTagData( std::ifstream &inStream, char *tag, char *data );
 
 // Weather Stuff
 bool	doHeatEffect( CChar *i );

@@ -31,7 +31,7 @@ void cHTMLTemplate::Process( void )
 		LoadTemplate();
 
 	// Parse the Content...
-	string ParsedContent = Content;
+	std::string ParsedContent = Content;
 
 	//***************************************/
 	// Replacing Placeholders
@@ -48,7 +48,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Version
-	string Version = CVC.GetVersion();
+	std::string Version = CVC.GetVersion();
 	Version += "(";
 	Version += CVC.GetBuild();
 	Version += ")";
@@ -193,8 +193,8 @@ void cHTMLTemplate::Process( void )
 	for( Pos = ParsedContent.find( "%playerlist%" ); Pos >= 0; Pos = ParsedContent.find( "%playerlist%" ) )
 	{
 		UI32 SecondPos = ParsedContent.find( "%playerlist%", Pos+1 );
-		string myInline = ParsedContent.substr( Pos, SecondPos - Pos + 12 );
-		string PlayerList;
+		std::string myInline = ParsedContent.substr( Pos, SecondPos - Pos + 12 );
+		std::string PlayerList;
 
 		Network->PushConn();
 		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
@@ -206,7 +206,7 @@ void cHTMLTemplate::Process( void )
 					CChar *tChar = tSock->CurrcharObj();
 					if( tChar != NULL )
 					{
-						string parsedInline = myInline;
+						std::string parsedInline = myInline;
 						parsedInline.replace( 0, 12, "" );
 						parsedInline.replace( parsedInline.length()-12, 12, "" );
 
@@ -321,13 +321,13 @@ void cHTMLTemplate::Process( void )
 	for( Pos = ParsedContent.find( "%guildlist%" ); Pos >= 0; Pos = ParsedContent.find( "%guildlist%" ) )
 	{
 		UI32 SecondPos = ParsedContent.find( "%guildlist%", Pos+1 );
-		string myInline = ParsedContent.substr( Pos, SecondPos - Pos + 11 );
-		string GuildList;
+		std::string myInline = ParsedContent.substr( Pos, SecondPos - Pos + 11 );
+		std::string GuildList;
 
 	
 		for( SI16 i = 0; i < (SI16)GuildSys->NumGuilds(); i++ ) 
 		{
-			string parsedInline = myInline;
+			std::string parsedInline = myInline;
 			parsedInline.replace( 0, 11, "" );
 			parsedInline.replace( parsedInline.length()-11, 11, "" );
 
@@ -386,8 +386,8 @@ void cHTMLTemplate::Process( void )
 	R64 eps = 0.00000000001;
 	for( Pos = ParsedContent.find( "%performance" ); Pos >= 0; Pos = ParsedContent.find( "%performance" ) )
 	{
-		string performance;
-		ostringstream myStream( performance );
+		std::string performance;
+		std::ostringstream myStream( performance );
 		if(keeprun)
 		{
 			myStream << "Network code: " << (R32)((R32)networkTime/(R32)networkTimeCount) << "msec [" << networkTimeCount << " samples] <BR>";
@@ -413,10 +413,10 @@ void cHTMLTemplate::Process( void )
 	// Uptime
 	for( Pos = ParsedContent.find( "%uptime" ); Pos >= 0; Pos = ParsedContent.find( "%uptime" ) )
 	{
-		string uptime;
+		std::string uptime;
 		
 		char sh[3], sm[3], ss[3];
-		ostringstream myStream( uptime );
+		std::ostringstream myStream( uptime );
 
 		UI32 total, hr, min, sec;
 
@@ -446,8 +446,8 @@ void cHTMLTemplate::Process( void )
 	// Simulation Cycles (whatever that may be...)
 	for( Pos = ParsedContent.find( "%simcycles" ); Pos >= 0; Pos = ParsedContent.find( "%simcycles" ) )
 	{
-		string simcycles;
-		ostringstream myStream( simcycles );
+		std::string simcycles;
+		std::ostringstream myStream( simcycles );
 
 		if(keeprun)
 		{
@@ -477,7 +477,7 @@ void cHTMLTemplate::Process( void )
 	//***************************************/	
 
 	// Print the Content out to the new file...
-	ofstream Output( OutputFile );
+	std::ofstream Output( OutputFile );
 	if( !Output.is_open() ) 
 	{
 		Console.Error( 1, "| Error: Couldn't open the template file %s for writing", OutputFile );
@@ -514,7 +514,7 @@ void cHTMLTemplate::LoadTemplate( void )
 {
 		Content = "";
 
-		ifstream InputFile1( InputFile );
+		std::ifstream InputFile1( InputFile );
 
 		if( !InputFile1.is_open() )
 		{
@@ -524,8 +524,8 @@ void cHTMLTemplate::LoadTemplate( void )
 		
 		while( !InputFile1.eof() )
 		{
-			string Line;
-			getline( InputFile1, Line );
+			std::string Line;
+			std::getline( InputFile1, Line );
 			Content += Line;
 		}
 
@@ -736,7 +736,7 @@ void cHTMLTemplates::TemplateInfoGump( cSocket *mySocket )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the Template
 //o---------------------------------------------------------------------------o
-string cHTMLTemplate::GetName( void )
+std::string cHTMLTemplate::GetName( void )
 {
 	return Name; 
 }
@@ -747,7 +747,7 @@ string cHTMLTemplate::GetName( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Output Filename
 //o---------------------------------------------------------------------------o
-string cHTMLTemplate::GetOutput( void )
+std::string cHTMLTemplate::GetOutput( void )
 {
 	return OutputFile; 
 }
@@ -758,7 +758,7 @@ string cHTMLTemplate::GetOutput( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Input Filename
 //o---------------------------------------------------------------------------o
-string cHTMLTemplate::GetInput( void )
+std::string cHTMLTemplate::GetInput( void )
 {
 	return InputFile;
 }

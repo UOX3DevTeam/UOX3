@@ -2407,8 +2407,8 @@ bool CPIClientVersion::Handle( void )
 	verString[len] = 0;
 	UI08 major, minor, sub, letter;
 
-	string s( verString );
-	istringstream ss( s );
+	std::string s( verString );
+	std::istringstream ss( s );
 	char period;
 	ss >> major >> period;
 	ss >> minor >> period;

@@ -82,7 +82,7 @@ void fileArchive( void )
 			timebuffer[a]='-';
 	}
 
-	char filename1[MAX_PATH], filename2[MAX_PATH];
+	char filename1[MAX_PATH]; //, filename2[MAX_PATH];
 
 	sprintf( filename1, "%s/%s", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
 	int makeResult = _mkdir( filename1 );
@@ -96,7 +96,7 @@ void fileArchive( void )
 	makeResult = _mkdir( filename1 );
 	if( makeResult != 0 )
 		Console << "Cannot create accounts backup directory, please check available disk space" << myendl;
-	else if ( Accounts->SaveAccounts( (string)filename1, (string)filename1 ) == -1 )
+	else if ( Accounts->SaveAccounts( (std::string)filename1, (std::string)filename1 ) == -1 )
 		Console << "Cannot save accounts for backup" << myendl;
 
 	char backupDir[MAX_PATH];

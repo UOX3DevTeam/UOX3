@@ -3,7 +3,7 @@
 SI16 upperArrayX[UOMT_COUNT];
 SI16 upperArrayY[UOMT_COUNT];
 
-void readline( ifstream &toRead, char *buffer, int bufferLen )
+void readline( std::ifstream &toRead, char *buffer, int bufferLen )
 {
 	bool valid = false;
 	do 
@@ -54,7 +54,7 @@ void LoadMulti( BinBuffer &buff )
 		Items->DeleItem( x );
 }
 
-void LoadChar( ifstream& readDestination )
+void LoadChar( std::ifstream& readDestination )
 {
 	CHARACTER xOff;
 	CChar *x = Npcs->MemCharFree( xOff, true );
@@ -63,7 +63,7 @@ void LoadChar( ifstream& readDestination )
 	if( !x->Load( readDestination, xOff ) ) // if no load, DELETE
 		Npcs->DeleteChar( x );
 }
-void LoadItem( ifstream& readDestination )
+void LoadItem( std::ifstream& readDestination )
 {
 	ITEM xOff;
 	CItem *x = Items->MemItemFree( xOff, false );
@@ -72,7 +72,7 @@ void LoadItem( ifstream& readDestination )
 	if( !x->Load( readDestination, xOff ) ) // if no load, DELETE
 		Items->DeleItem( x );
 }
-void LoadMulti( ifstream& readDestination )
+void LoadMulti( std::ifstream& readDestination )
 {
 	ITEM xOff;
 	CItem *x = Items->MemItemFree( xOff, false, 1 );
@@ -342,7 +342,7 @@ void SubRegion::PushChar( void )
 	charIteratorBackup.push_back( charCounter );
 }
 
-void SubRegion::SaveToDisk( ofstream& writeDestination, SI32 mode, ofstream &houseDestination )
+void SubRegion::SaveToDisk( std::ofstream& writeDestination, SI32 mode, std::ofstream &houseDestination )
 {
 	// reworked SaveChar from WorldMain to deal with pointer based stuff in region rather than index based stuff in array
 	// Also saves out all data regardless (in preparation for a simple binary save)
@@ -387,7 +387,7 @@ void SubRegion::SaveToDisk( ofstream& writeDestination, SI32 mode, ofstream &hou
 //|	Purpose			-	Loads in items/NPCs from disk in filename
 //|					-	If mode = 0 then as text, else as binary
 //o--------------------------------------------------------------------------
-void SubRegion::LoadFromDisk( ifstream& filename, SI32 mode )
+void SubRegion::LoadFromDisk( std::ifstream& filename, SI32 mode )
 {
 	if( mode == 1 )//binary
 	{
@@ -606,7 +606,7 @@ void cMapRegion::Save( void )
 	char filename[MAX_PATH];
 	const long AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
 	const long AreaY = UpperY / 8;
-	ofstream writeDestination, houseDestination;
+	std::ofstream writeDestination, houseDestination;
 	const int onePercent = (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	const char binBlockDisc = (char)0xFF;
@@ -626,10 +626,10 @@ void cMapRegion::Save( void )
 	
 	if( Mode == 1 ) 
 	{
-		houseDestination.open( filename, ios::binary|ios::out );
+		houseDestination.open( filename, std::ios::binary|std::ios::out );
 
 		sprintf( filename, "%stables.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-		writeDestination.open( filename, ios::out|ios::binary );
+		writeDestination.open( filename, std::ios::out|std::ios::binary );
 		writeDestination.write( "B", 1 );
 		writeDestination.write( (const char *)&Version, 1 );
 		writeDestination.write( (const char *)CharSaveTable, 256 );
@@ -648,7 +648,7 @@ void cMapRegion::Save( void )
 
 			sprintf( filename, "%s%i.%i.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), counter1, counter2 );	// let's name our file
 			if( Mode == 1 )
-				writeDestination.open( filename, ios::out|ios::binary );
+				writeDestination.open( filename, std::ios::out|std::ios::binary );
 			else
 				writeDestination.open( filename );
 
@@ -688,7 +688,7 @@ void cMapRegion::Save( void )
 
 	sprintf( filename, "%soverflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
 	if( Mode == 1 )
-		writeDestination.open( filename, ios::out|ios::binary );
+		writeDestination.open( filename, std::ios::out|std::ios::binary );
 	else
 		writeDestination.open( filename );
 
@@ -725,7 +725,7 @@ void cMapRegion::Load( void )
 	const long AreaY = UpperY / 8;
 	const int onePercent = (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
 	int count = 0;
-	ifstream readDestination;
+	std::ifstream readDestination;
 	UI08 Version = 0;
 	UI08 test;
 
@@ -736,7 +736,7 @@ void cMapRegion::Load( void )
 	int s_t = getclock();
 
 	sprintf( filename, "%stables.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );	// let's name our file
-	readDestination.open( filename, ios::in|ios::binary );//open first file and check for binary
+	readDestination.open( filename, std::ios::in|std::ios::binary );//open first file and check for binary
 	if( readDestination.is_open() )
 	{
 		readDestination.read( (char *)&test, 1 );//read the 'B' to make sure we are binary
@@ -746,7 +746,7 @@ void cMapRegion::Load( void )
 		readDestination.close();
 		sprintf( filename, "%s0.0.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );	// let's name our file
 		
-		readDestination.open( filename, ios::in|ios::binary );
+		readDestination.open( filename, std::ios::in|std::ios::binary );
 		if( readDestination.is_open() )
 		{
 			readDestination.read( (char *)&test, 1 );
@@ -770,7 +770,7 @@ void cMapRegion::Load( void )
 			long baseY = counter2 * 8;								// calculate x grid offset
 			sprintf( filename, "%s%i.%i.wsc", cwmWorldState->ServerData()->GetSharedDirectory(),  counter1, counter2 );	// let's name our file
 			if( mode == 1 )
-				readDestination.open( filename, ios::in|ios::binary );
+				readDestination.open( filename, std::ios::in|std::ios::binary );
 			else
 				readDestination.open( filename );					// let's open it 
 
@@ -808,12 +808,12 @@ void cMapRegion::Load( void )
 	Console.PrintDone();
 
 	sprintf( filename, "%soverflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	ifstream flowDestination( filename );
+	std::ifstream flowDestination( filename );
 	overFlow.LoadFromDisk( flowDestination, mode );
 	flowDestination.close();
 
 	sprintf( filename, "%shouse.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	ifstream houseDestination( filename );
+	std::ifstream houseDestination( filename );
 	LoadHouseMulti( houseDestination, mode );
 	for( UI32 cCounter = 0; cCounter < charcount; cCounter++ )
 	{
@@ -846,7 +846,7 @@ SubRegion *cMapRegion::GetGrid( int xOffset, int yOffset, UI08 worldNumber )
 	return &internalRegions[xOffset][yOffset][worldNumber];
 }
 
-void cMapRegion::LoadHouseMulti( ifstream &houseDestination, SI32 mode )
+void cMapRegion::LoadHouseMulti( std::ifstream &houseDestination, SI32 mode )
 {
 	if( mode == 1 )//binary
 	{

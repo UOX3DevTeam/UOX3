@@ -1,6 +1,6 @@
 #include <string>
 #include <vector>
-using namespace std;
+//using namespace std;
 
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
@@ -67,7 +67,7 @@ typedef UI16		SKILLVAL;
 typedef SI08		RANGE;
 typedef UI08		weathID;
 
-typedef vector< string >	stringList;
+typedef std::vector< std::string >	stringList;
 
 const UI32 INVALIDSERIAL	= 0xFFFFFFFF;
 const UI16 INVALIDID		= 0xFFFF;
@@ -77,9 +77,9 @@ class CItem;
 typedef SI16 GuildID;
 
 //	EviLDeD	-	March 4, 2000
-typedef vector< CChar * > VCCHAR;
+typedef std::vector< CChar * > VCCHAR;
 //	Thyme - 	December 24, 2001
-typedef vector< CItem * > VCITEM;
+typedef std::vector< CItem * > VCITEM;
 //	EviLDeD	-	February 7, 2002 : This will eventually be used. so dont remove please.
 typedef struct __ACCESSITEMDATA__
 {

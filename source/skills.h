@@ -13,10 +13,10 @@ struct resourceEntry
 class cSkills
 {
 private:
-	vector< miningData >			ores;
-	map< UI16, createMenu >			actualMenus;
-	map< UI16, createMenuEntry >	skillMenus;
-	map< UI16, createEntry >		itemsForMenus;
+	std::vector< miningData >			ores;
+	std::map< UI16, createMenu >			actualMenus;
+	std::map< UI16, createMenuEntry >	skillMenus;
+	std::map< UI16, createEntry >		itemsForMenus;
 	resourceEntry					resources[610][410];
 private:
 
@@ -165,7 +165,7 @@ public:
 
 	void Track( CChar *i );
 	void DoPotion( cSocket *s, int type, int sub, CItem *mortar);
-	void MakeMenuTarget( cSocket *s, string x, int skill );
+	void MakeMenuTarget( cSocket *s, std::string x, int skill );
 	void NewMakeMenu( cSocket *s, int menu, UI08 skill );
 	void Wheel( cSocket *s );
 	void PotionToBottle( CChar *s, CItem *mortar );
@@ -180,8 +180,8 @@ public:
 
 	int			GetNumberOfOres( void );
 	miningData *GetOre( int number );
-	miningData *GetOre( string name );
-	int			GetOreIndex( string name );
+	miningData *GetOre( std::string name );
+	int			GetOreIndex( std::string name );
 	void		MakeOre( int Region, CChar *actor, cSocket *s );
 	SI16 FindOreType( UI16 colour );
 	void Snooping( cSocket *s, CChar *target, SERIAL serial );

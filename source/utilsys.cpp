@@ -40,9 +40,9 @@ UI32 getNormalizedTime()
 }
 
 //Begin getRealTimeString()
-string getRealTimeString()
+std::string getRealTimeString()
 {
-	string sTime ;
+	std::string sTime ;
 #if defined(OBSOLETETIME)
 	timeb stTimeB;
 	::ftime(&stTimeB);
@@ -85,7 +85,7 @@ UI32 getPlatformDay()
 
 //========================================================================
 //Begin makeDirectory
-bool makeDirectory(string sDirectory)
+bool makeDirectory(std::string sDirectory)
 {
 	bool bStatus = false ;
 	SI32 siCode ;
@@ -115,7 +115,7 @@ bool makeDirectory(string sDirectory)
 //End of makeDirectory
 //=========================================================================
 //Begin isDirectory
-bool isDirectory(string sDirectory)
+bool isDirectory(std::string sDirectory)
 {
 	bool bStatus = false ;
 	SI32 siCode ;
@@ -135,11 +135,11 @@ bool isDirectory(string sDirectory)
 //End of isDirectory
 //=========================================================================
 //Begin listDirectory
-vector<string> listDirectory(string sDirectory)
+std::vector<std::string> listDirectory(std::string sDirectory)
 {
-	vector<string> vecDirList ;
+	std::vector<std::string> vecDirList ;
 	SI32 siStatus ;
-	string sName ;
+	std::string sName ;
 	
 #if defined(_POSIX)
 	glob_t stDir ;
@@ -159,7 +159,7 @@ vector<string> listDirectory(string sDirectory)
 	// structure to find data
 	_finddata_t stFind ;
 	SI32 siHandle ;
-	string sBase ;
+	std::string sBase ;
 	// We need under windows to get the base direcotry, to add back
 	sBase = sDirectory.substr(0,sDirectory.find_last_of("\\/") + 1) ;
 #if defined(__borland__)
@@ -181,7 +181,6 @@ vector<string> listDirectory(string sDirectory)
 	{
 		// Data found
 		sName = sBase + stFind.name ;
-		
 		vecDirList.push_back(sName) ;
 		siStatus = _findnext(siHandle,&stFind) ;
 	}
@@ -196,13 +195,13 @@ vector<string> listDirectory(string sDirectory)
 //End of listDirectory
 //===========================================================================
 //Begin deleteDirectory
-bool deleteDirectory(string sDirectory)
+bool deleteDirectory(std::string sDirectory)
 {
 	bool bValue = false ;
 	SI32 siCode ;
 	// Delete any files we have in that directory
-	string sFiles = sDirectory + "*" ;
-	vector<string> vecFiles ;
+	std::string sFiles = sDirectory + "*" ;
+	std::vector<std::string> vecFiles ;
 	vecFiles = listDirectory(sFiles) ;
 	for (UI32 siIndex = 0 ; siIndex < vecFiles.size() ; siIndex++)
 	{
@@ -218,7 +217,7 @@ bool deleteDirectory(string sDirectory)
 //End of deleteDirectory
 //===========================================================================
 //Begin deleteFile
-bool deleteFile(string sFile)
+bool deleteFile(std::string sFile)
 {
 	bool bValue = false ;
 

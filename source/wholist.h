@@ -8,7 +8,7 @@ private:
 	int  gmCount;						// number of GMs already in it
 	bool	  online;
 
-	vector< SERIAL > whoMenuData;
+	std::vector< SERIAL > whoMenuData;
 	stringList one, two;				// replacement for entries1, entries2
 
 	void Update( void );				// force the list to update

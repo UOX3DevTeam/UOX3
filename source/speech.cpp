@@ -8,10 +8,10 @@ extern cVersionClass CVC;
 
 #ifndef va_start
 	#include <cstdarg>
-	using namespace std;
+//	using namespace std;
 #endif
 
-map< string, UnicodeTypes > codeLookup;
+std::map< std::string, UnicodeTypes > codeLookup;
 
 void InitializeLookup( void )
 {
@@ -21,7 +21,7 @@ void InitializeLookup( void )
 
 UnicodeTypes FindLanguage( char *lang )
 {
-	map< string, UnicodeTypes >::iterator p = codeLookup.find( lang );
+	std::map< std::string, UnicodeTypes >::iterator p = codeLookup.find( lang );
 	if( p != codeLookup.end() )
 		return p->second;
 	else
@@ -1056,7 +1056,7 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 {
 	bool retVal = false;
 	int i;
-	vector<int> rem;
+	std::vector<int> rem;
 
 	//go through as an array
 	for( i = 0; i < speechList.size(); i++ )

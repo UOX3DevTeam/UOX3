@@ -6,7 +6,7 @@
 class cCommands
 {
 private:
-	vector< commandLevel_st *> clearance;
+	std::vector< commandLevel_st *> clearance;
 	void InitClearance( void );
 	CmdTableIterator	cmdPointer;
 

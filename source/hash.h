@@ -4,7 +4,7 @@
 template< class EntryType, class LookupType = SERIAL >
 class HashBucketUnique
 {
-	typedef map< LookupType, EntryType >	LEMap;
+	typedef std::map< LookupType, EntryType >	LEMap;
 	typedef LEMap::iterator					iterator;
 
 protected:
@@ -89,7 +89,7 @@ template< class EntryType, class LookupType = SERIAL >
 class HashBucketMulti
 {
 protected:
-	vector< EntryType >	listData;
+	std::vector< EntryType >	listData;
 	bool	hashSafety;
 
 public:
@@ -170,7 +170,7 @@ class HashTable
 	typedef HashBucketUnique< EntryType, LookupType > bucket;
 
 protected:
-	vector< bucket > data;
+	std::vector< bucket > data;
 
 public:
 	HashTable( void ) 
@@ -225,7 +225,7 @@ class HashTableMulti
 	typedef HashBucketMulti< EntryType, LookupType > bucket;
 
 protected:
-	vector< bucket > data;
+	std::vector< bucket > data;
 
 public:
 	HashTableMulti( void ) 

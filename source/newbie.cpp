@@ -26,12 +26,12 @@ void addNewbieItem( cSocket *socket, CChar *c, char* str)
 
 void newbieItems( CChar *c )
 {
-	vector< cSkillClass > nSkills;
+	std::vector< cSkillClass > nSkills;
 	char whichsect[15];
 	for( UI08 sCtr = 0; sCtr < TRUESKILLS; sCtr++ )
 		nSkills.push_back( cSkillClass( sCtr, c->GetBaseSkill( sCtr ) ) );
 
-	sort( nSkills.rbegin(), nSkills.rend() );
+	std::sort( nSkills.rbegin(), nSkills.rend() );
 
 	cSocket *s = calcSocketObjFromChar( c );
 	for( int i = 0; i < 3; i++ )

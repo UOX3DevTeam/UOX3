@@ -667,7 +667,7 @@ void cBoat::TurnBoat( CItem *b, bool rightTurn )
 	if( b == NULL ) 
 		return; 
 
-	vector< cSocket * > Send;
+	std::vector< cSocket * > Send;
 	SI16 id2 = b->GetID( 2 );
 	UI08 olddir = b->GetDir();
 	UI32 a = 0;

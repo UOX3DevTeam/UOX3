@@ -184,7 +184,7 @@
 //o---------------------------------------------------------------------------o
 // Using std
 //o---------------------------------------------------------------------------o
-using namespace std;
+//using namespace std;
 
 
 //o---------------------------------------------------------------------------o
@@ -241,7 +241,7 @@ char *strupr(char *);
 extern UI08 GMCMDLEVEL;
 extern UI08 CNSCMDLEVEL;
 extern creat_st creatures[2048]; // stores the base-sound+sound flags of monsters, animals
-extern vector< SpellInfo > spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
+extern std::vector< SpellInfo > spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 extern UI32 uiCurrentTime, ErrorCount;
 extern char Loaded;
 extern UI16 doorbase[DOORTYPES];
@@ -275,7 +275,7 @@ extern UI32 uotickcount;			// Changed from int to UI16 (Mr. Fixit)
 //o---------------------------------------------------------------------------o
 extern UI32 nextfieldeffecttime;
 extern UI32 nextnpcaitime;
-extern vector< TeleLocationEntry > teleLocs;
+extern std::vector< TeleLocationEntry > teleLocs;
 
 
 //o---------------------------------------------------------------------------o
@@ -335,7 +335,7 @@ extern cSpawnRegion *spawnregion[4098];	// Zippy
 extern skill_st skill[SKILLS+1];
 extern UI16 locationcount;				// Changed from int to UI08 (Mr. Fixit)
 extern UI32 logoutcount;				// Instalog
-extern vector< JailCell > jails;
+extern std::vector< JailCell > jails;
 extern UI32 charcount, itemcount;
 extern SERIAL charcount2, itemcount2;
 extern UI32 imem, cmem;
@@ -455,6 +455,6 @@ extern JSObject *jsGlobal;
 extern JSClass global_class;
 extern JSClass uox_class;
 extern CEndL myendl;
-extern vector< MurderPair > murdererTags;
+extern std::vector< MurderPair > murdererTags;
 
 #endif // __UOX3_H

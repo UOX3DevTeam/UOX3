@@ -578,14 +578,14 @@ bool cBaseObject::IsSpawned( void )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Dumps out header information for world saving
 //o--------------------------------------------------------------------------
-bool cBaseObject::DumpHeader( ofstream &outStream, int mode ) const
+bool cBaseObject::DumpHeader( std::ofstream &outStream, int mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << "[BASEOBJECT]" << endl;
+		outStream << "[BASEOBJECT]" << std::endl;
 		break;
 	}
 	return true;
@@ -870,33 +870,33 @@ bool cBaseObject::DumpBody( BinBuffer &buff ) const
 //|	Purpose			-	Dumps out body information of the object
 //|						This is tag/data pairing information
 //o--------------------------------------------------------------------------
-bool cBaseObject::DumpBody( ofstream &outStream, int mode ) const
+bool cBaseObject::DumpBody( std::ofstream &outStream, int mode ) const
 {
-	string destination;
-	ostringstream dumping( destination );
+	std::string destination;
+	std::ostringstream dumping( destination );
 	TAG *tag = NULL;
 	SI16 temp_st2, temp_dx2, temp_in2;
 	
 	
 	//no need to check default for these, this should be in for every thing.
-	dumping << "Name=" << name << endl;
-	dumping << "Serial=" << serial << endl;
-	dumping << "XYZ=" << x << "," << y << "," << (SI16)z << endl;
-	dumping << "WorldNumber=" << (SI16)worldNumber << endl;
-	dumping << "ObjectType=" << (int)objType << endl;
-	dumping << "ID=" << id << endl;
-	dumping << "Colour=" << colour << endl;
-	dumping << "Direction=" << (SI16)dir << endl;
-	dumping << "Title=" << title << endl;
-	dumping << "Kills=" << kills << endl;
-	dumping << "Fame=" << fame << endl;
-	dumping << "Karma=" << karma << endl;
-	dumping << "Mana=" << mana << endl;
-	dumping << "Stamina=" << stamina << endl;
-	dumping << "Dexterity=" << dexterity << endl;
-	dumping << "Intelligence=" << intelligence << endl;
-	dumping << "Strength=" << strength << endl;
-	dumping << "HitPoints=" << hitpoints << endl;
+	dumping << "Name=" << name << std::endl;
+	dumping << "Serial=" << serial << std::endl;
+	dumping << "XYZ=" << x << "," << y << "," << (SI16)z << std::endl;
+	dumping << "WorldNumber=" << (SI16)worldNumber << std::endl;
+	dumping << "ObjectType=" << (int)objType << std::endl;
+	dumping << "ID=" << id << std::endl;
+	dumping << "Colour=" << colour << std::endl;
+	dumping << "Direction=" << (SI16)dir << std::endl;
+	dumping << "Title=" << title << std::endl;
+	dumping << "Kills=" << kills << std::endl;
+	dumping << "Fame=" << fame << std::endl;
+	dumping << "Karma=" << karma << std::endl;
+	dumping << "Mana=" << mana << std::endl;
+	dumping << "Stamina=" << stamina << std::endl;
+	dumping << "Dexterity=" << dexterity << std::endl;
+	dumping << "Intelligence=" << intelligence << std::endl;
+	dumping << "Strength=" << strength << std::endl;
+	dumping << "HitPoints=" << hitpoints << std::endl;
 	
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
@@ -922,42 +922,42 @@ bool cBaseObject::DumpBody( ofstream &outStream, int mode ) const
 	
 	//=========== BUGFIX END (by Dark-Storm)
 	
-	dumping << "Strength2=" << temp_st2 << endl;
-	dumping << "Dexterity2=" << temp_dx2 << endl;
-	dumping << "Intelligence2=" << temp_in2 << endl;
+	dumping << "Strength2=" << temp_st2 << std::endl;
+	dumping << "Dexterity2=" << temp_dx2 << std::endl;
+	dumping << "Intelligence2=" << temp_in2 << std::endl;
 	//====================================================================================
 	// Ab, here is another problem, tell me if this is a suitble way of doing this for you
 	if( multis != NULL )
-		dumping << "MultiID=" << multis->GetSerial() << endl;
+		dumping << "MultiID=" << multis->GetSerial() << std::endl;
 	if( spawnserial != NULL )
-		dumping << "SpawnerID=" << spawnserial->GetSerial() << endl;
+		dumping << "SpawnerID=" << spawnserial->GetSerial() << std::endl;
 	if( owner != NULL )
-		dumping << "OwnerID=" << owner->GetSerial() << endl;
+		dumping << "OwnerID=" << owner->GetSerial() << std::endl;
 	//====================================================================================
-	dumping << "Race=" << race << endl;
-	dumping << "Visible=" << (SI16)visible << endl;
-	dumping << "Disabled=" << (disabled?"1":"0") << endl;
-	dumping << "HiDamage=" << hidamage << endl;
-	dumping << "LoDamage=" << lodamage << endl;
-	dumping << "Defense=" << def << endl;
-	dumping << "ScpTrig=" << scriptTrig << endl;
-	dumping << "DWord0=" << genericDWords[0] << endl;
-	dumping << "DWord1=" << genericDWords[1] << endl;
-	dumping << "DWord2=" << genericDWords[2] << endl;
-	dumping << "DWord3=" << genericDWords[3] << endl;
+	dumping << "Race=" << race << std::endl;
+	dumping << "Visible=" << (SI16)visible << std::endl;
+	dumping << "Disabled=" << (disabled?"1":"0") << std::endl;
+	dumping << "HiDamage=" << hidamage << std::endl;
+	dumping << "LoDamage=" << lodamage << std::endl;
+	dumping << "Defense=" << def << std::endl;
+	dumping << "ScpTrig=" << scriptTrig << std::endl;
+	dumping << "DWord0=" << genericDWords[0] << std::endl;
+	dumping << "DWord1=" << genericDWords[1] << std::endl;
+	dumping << "DWord2=" << genericDWords[2] << std::endl;
+	dumping << "DWord3=" << genericDWords[3] << std::endl;
 	// Ab, does this need to be written to the file? I am going to make it write it but comment or remove it if its not(remember to remove it from the Load routine as well)
-	dumping << "iCounter=" << iCounter << endl;
+	dumping << "iCounter=" << iCounter << std::endl;
 	for( tag = firstTag; tag != NULL; tag = tag->nextTag ) 
 	{
-		dumping << "TAGNAME=" << tag->name << endl;
+		dumping << "TAGNAME=" << tag->name << std::endl;
 		if( JSVAL_IS_STRING( tag->val ) ) 
 		{
 			char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tag->val ) );
-			dumping << "TAGVALS=" << (s_tagval) << endl;
+			dumping << "TAGVALS=" << (s_tagval) << std::endl;
 		} 
 		else 
 		{
-			dumping << "TAGVAL=" << ((SI32)tag->val) << endl;
+			dumping << "TAGVAL=" << ((SI32)tag->val) << std::endl;
 		}
 	}
 	//====================================================================================
@@ -977,7 +977,7 @@ bool cBaseObject::DumpBody( ofstream &outStream, int mode ) const
 //|						0	Text
 //|						1	Binary
 //o--------------------------------------------------------------------------
-bool cBaseObject::Save( ofstream &outStream, int mode ) const
+bool cBaseObject::Save( std::ofstream &outStream, int mode ) const
 {
 	DumpHeader( outStream, mode );
 	if( mode == 1 )
@@ -1994,14 +1994,14 @@ void cBaseObject::DecIntelligence( void )
 //|						Mode 0 - Text
 //|						Mode 1 - Binary
 //o--------------------------------------------------------------------------
-bool cBaseObject::DumpFooter( ofstream &outStream, int mode ) const
+bool cBaseObject::DumpFooter( std::ofstream &outStream, int mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << endl << "o---o" << endl << endl;
+		outStream << std::endl << "o---o" << std::endl << std::endl;
 	}
 	return true;
 }
@@ -2014,7 +2014,7 @@ bool cBaseObject::DumpFooter( ofstream &outStream, int mode ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Loads object from disk based on mode
 //o--------------------------------------------------------------------------
-bool cBaseObject::Load( ifstream &inStream, int arrayOffset )
+bool cBaseObject::Load( std::ifstream &inStream, int arrayOffset )
 {
 	char tag[128], data[512];
 	bool bFinished;

@@ -96,11 +96,11 @@ teffect_st *cTEffect::GrabSpecific( UI16 index )
 //o-----------------------------------------------------------------------o
 //|	Returns			-	true/false indicating the success of the write operation
 //o-----------------------------------------------------------------------o
-bool teffect_st::Save( ofstream &effectDestination, SI32 mode ) const
+bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 {
 	
-	string destination; 
-	ostringstream dumping( destination ); 
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
 	BinBuffer buff;
 
 	switch( mode )
@@ -130,21 +130,21 @@ bool teffect_st::Save( ofstream &effectDestination, SI32 mode ) const
 		break;
 	case 0:
 	default:
-		effectDestination << "[EFFECT]" << endl;
+		effectDestination << "[EFFECT]" << std::endl;
 
-		dumping << "Source=" << Source() << endl;
-		dumping << "Dest=" << Destination() << endl;
-		dumping << "Expire=" << ( ExpireTime() - uiCurrentTime ) << endl;
-		dumping << "Number=" << Number() << endl;  
-		dumping << "More1=" << More1() << endl;
-		dumping << "More2=" << More2() << endl;
-		dumping << "More3=" << More3() << endl;
-		dumping << "Dispel=" << Dispellable() << endl;
-		dumping << "ItemPtr=" << ItemPtr() << endl;
+		dumping << "Source=" << Source() << std::endl;
+		dumping << "Dest=" << Destination() << std::endl;
+		dumping << "Expire=" << ( ExpireTime() - uiCurrentTime ) << std::endl;
+		dumping << "Number=" << Number() << std::endl;  
+		dumping << "More1=" << More1() << std::endl;
+		dumping << "More2=" << More2() << std::endl;
+		dumping << "More3=" << More3() << std::endl;
+		dumping << "Dispel=" << Dispellable() << std::endl;
+		dumping << "ItemPtr=" << ItemPtr() << std::endl;
 
 		effectDestination << dumping.str();
 
-		effectDestination << endl << "o---o" << endl << endl;
+		effectDestination << std::endl << "o---o" << std::endl << std::endl;
 		break;
 	}
 	return true;

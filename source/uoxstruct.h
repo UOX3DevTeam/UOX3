@@ -16,8 +16,8 @@ const UI32 StaticRecordSize = 7L;
 
 struct r2Data
 {
-	string tag;
-	string data;
+	std::string tag;
+	std::string data;
 	r2Data( char *t, char *d ) : tag( t ), data( d ) { }
 	r2Data() : tag( "" ), data( "" ) { }
 };
@@ -192,7 +192,7 @@ struct skill_st
 	UI16 dexterity;
 	UI16 intelligence;
 	char madeword[50];
-	vector< advance_st > advancement;
+	std::vector< advance_st > advancement;
 };
 
 struct make_st
@@ -223,7 +223,7 @@ struct title_st // For custom titles
 struct MurderPair
 {
 	SI16 loBound;
-	string toDisplay;
+	std::string toDisplay;
 	MurderPair() : loBound( 0 ) { }
 	MurderPair( SI16 lB, const char *toDisp ) : loBound( lB ) { toDisplay = toDisp; }
 };
@@ -338,7 +338,7 @@ struct miningData
 {
 	UI16 colour;		// colour of the ore, for colour of ingot
 	UI16 minSkill;		// minimum skill needed to make the ingot
-	string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
+	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
 	bool foreign;		// if not iron, then it can print out that it's a stranger ore when failing
 	int makemenu;		// the makemenu required for making with
 	UI08 minAmount;		// min number of ingots to load anything
@@ -525,14 +525,14 @@ struct resSkillReq
 
 struct createMenu
 {
-	vector< UI16 > itemEntries;
-	vector< UI16 > menuEntries;
+	std::vector< UI16 > itemEntries;
+	std::vector< UI16 > menuEntries;
 };
 struct createMenuEntry
 {
 	UI16 targID;
 	UI16 colour;
-	string name;
+	std::string name;
 	UI16 subMenu;
 	createMenuEntry() : targID( 0 ), colour( 0 ), name( "" ), subMenu( 0 ) { }
 };
@@ -544,11 +544,11 @@ struct createEntry
 	UI16 soundPlayed;
 	UI08 minRank;
 	UI08 maxRank;
-	string addItem;
+	std::string addItem;
 	SI16 delay;
-	vector< resAmountPair > resourceNeeded;
-	vector< resSkillReq > skillReqs;
-	string name;
+	std::vector< resAmountPair > resourceNeeded;
+	std::vector< resSkillReq > skillReqs;
+	std::string name;
 	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), name( "" ) { }
 	R32 AverageMinSkill( void ) 
 	{ 

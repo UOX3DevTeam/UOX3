@@ -15,21 +15,21 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-using namespace std;
+//using namespace std;
 
 // EvilDeD: 021802: Iterator typedefs, I did this change only for readability
-typedef map< string, ACTREC *>::const_iterator CONST_ACTREC_ITERATOR;
-typedef map< string, ACTREC *>::iterator ACTREC_ITERATOR;
-typedef map< int, ACTREC *>::iterator ACTIREC_ITERATOR;
-typedef map< int, ACTREC *>::const_iterator CONST_ACTIREC_ITERATOR;
-typedef map< string, AAREC *>::iterator AAREC_ITERATOR;
-typedef map< string, AAREC *>::const_iterator CONST_AAREC_ITERATOR;
+typedef std::map< std::string, ACTREC *>::const_iterator CONST_ACTREC_ITERATOR;
+typedef std::map< std::string, ACTREC *>::iterator ACTREC_ITERATOR;
+typedef std::map< int, ACTREC *>::iterator ACTIREC_ITERATOR;
+typedef std::map< int, ACTREC *>::const_iterator CONST_ACTIREC_ITERATOR;
+typedef std::map< std::string, AAREC *>::iterator AAREC_ITERATOR;
+typedef std::map< std::string, AAREC *>::const_iterator CONST_AAREC_ITERATOR;
 // 
-typedef map< string, ACTREC *> ACTRECMAP;
-typedef map< int, ACTREC *> ACTIRECMAP;
-typedef map< string, AAREC *> AARECMAP;
-typedef vector< ACTREC* > ACTRECVEC;
-typedef vector< CChar * > CCHARVEC;
+typedef std::map< std::string, ACTREC *> ACTRECMAP;
+typedef std::map< int, ACTREC *> ACTIRECMAP;
+typedef std::map< std::string, AAREC *> AARECMAP;
+typedef std::vector< ACTREC* > ACTRECVEC;
+typedef std::vector< CChar * > CCHARVEC;
 //
 enum ActFlags 
 
@@ -51,7 +51,7 @@ public:
 	virtual long	LoadAccessList(void);
 	virtual long	LoadAccounts(void);
 	virtual long	SaveAccounts(void);
-	virtual long	SaveAccounts( string AccessPath, string AccountsPath );
+	virtual long	SaveAccounts( std::string AccessPath, std::string AccountsPath );
 	virtual bool	UnloadAccounts( void );
 
 	bool AddCharacterToAccount( SI32 accountid, CChar *object );
@@ -59,10 +59,10 @@ public:
 	bool RemoveCharacterFromAccount( ACTREC *toRemove, UI08 slot );
 	bool ConvertAccounts( const char *filename );
 
-	void AddAccount( string username, string password, string contact );
-	void AddAccount( string username, string password, string contact, UI16 privs );
+	void AddAccount( std::string username, std::string password, std::string contact );
+	void AddAccount( std::string username, std::string password, std::string contact, UI16 privs );
 	
-	void DeleteAccount( string username );
+	void DeleteAccount( std::string username );
 	const char *CheckAccountsVersion( const char *filename );
 	long GetAccountCount( void );
 
@@ -93,7 +93,7 @@ private:
 	CCHARVEC		ccharDeletionVector;
 	//
 
-	string			PathToFile;
+	std::string			PathToFile;
 	SI32			highestAccountNumber;
 	void			PostLoadProcessing( void );
 protected:
@@ -101,7 +101,7 @@ protected:
 	bool			isBinary;
 	bool			isValid;
 	char *			szAccountsVersion;
-	string			ErrDesc;
+	std::string			ErrDesc;
 	UI32			ErrNum;
 };
 

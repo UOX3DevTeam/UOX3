@@ -385,7 +385,7 @@ void cSkills::Zero_Itemmake( cSocket *s )
 //|   Purpose     :  create a specified menuitem target.(Can someone elaborate 
 //|                  here please (EviLDeD)
 //o---------------------------------------------------------------------------o
-void cSkills::MakeMenuTarget( cSocket *s, string x, int skill )
+void cSkills::MakeMenuTarget( cSocket *s, std::string x, int skill )
 {
 	if( s == NULL )
 	{
@@ -5358,7 +5358,7 @@ bool cSkills::LoadMiningData( void )
 
 	if( oreList == NULL )
 		return false;
-	vector< string > oreNameList;
+	std::vector< std::string > oreNameList;
 	const char *tag = NULL;
 	const char *data = NULL;
 	for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
@@ -5577,7 +5577,7 @@ miningData *cSkills::GetOre( int number )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Returns a handle to the data about the ore based on it's name
 //o---------------------------------------------------------------------------o
-miningData *cSkills::GetOre( string name )
+miningData *cSkills::GetOre( std::string name )
 {
 	for( int i = 0; i < ores.size(); i++ )
 	{
@@ -5594,7 +5594,7 @@ miningData *cSkills::GetOre( string name )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Returns the index of the ore of name name
 //o---------------------------------------------------------------------------o
-int cSkills::GetOreIndex( string name )
+int cSkills::GetOreIndex( std::string name )
 {
 	for( int i = 0; i < ores.size(); i++ )
 	{
@@ -6113,7 +6113,7 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 	}
 	CChar *ourChar = s->CurrcharObj();;
 	ourChar->SetMaking( menu );
-	map< UI16, createMenu >::iterator p = actualMenus.find( menu );
+	std::map< UI16, createMenu >::iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
 		return;
 
@@ -6130,8 +6130,8 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 	sprintf( tempString, "button 40 300 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1 );
 	one.push_back( tempString );
 	UI16 xLoc = 60, yLoc = 40;
-	map< UI16, createEntry >::iterator iIter;
-	map< UI16, createMenuEntry >::iterator iMenuIter;
+	std::map< UI16, createEntry >::iterator iIter;
+	std::map< UI16, createMenuEntry >::iterator iMenuIter;
 	int actualItems = 0;
 	int textCounter = 1;
 	for( iCounter = 0; iCounter < ourMenu.itemEntries.size(); iCounter++ )
@@ -6212,20 +6212,20 @@ void cSkills::HandleMakeMenu( cSocket *s, int button, int menu )
 	}
 	CChar *ourChar = s->CurrcharObj();
 	ourChar->SetMaking( 0 );
-	map< UI16, createMenu >::iterator p = actualMenus.find( menu );
+	std::map< UI16, createMenu >::iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
 		return;
 	createMenu ourMenu = p->second;
 	if( button >= 100 )	// menu pressed
 	{
-		map< UI16, createMenuEntry >::iterator q = skillMenus.find( ourMenu.menuEntries[button-100] );
+		std::map< UI16, createMenuEntry >::iterator q = skillMenus.find( ourMenu.menuEntries[button-100] );
 		if( q == skillMenus.end() )
 			return;
 		NewMakeMenu( s, q->second.subMenu, 0 );
 	}
 	else				// item to make
 	{
-		map< UI16, createEntry >::iterator r = itemsForMenus.find( ourMenu.itemEntries[button-10] );
+		std::map< UI16, createEntry >::iterator r = itemsForMenus.find( ourMenu.itemEntries[button-10] );
 		if( r == itemsForMenus.end() )
 			return;
 		MakeItem( r->second, ourChar, s, ourMenu.itemEntries[button - 10] );
@@ -6241,7 +6241,7 @@ void cSkills::HandleMakeMenu( cSocket *s, int button, int menu )
 //o---------------------------------------------------------------------------o
 createEntry *cSkills::FindItem( UI16 itemNum )
 {
-	map< UI16, createEntry >::iterator r = itemsForMenus.find( itemNum );
+	std::map< UI16, createEntry >::iterator r = itemsForMenus.find( itemNum );
 	if( r == itemsForMenus.end() )
 		return NULL;
 	return &(r->second);

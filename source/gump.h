@@ -3,10 +3,10 @@
 
 struct GumpInfo
 {
-	string name;
+	std::string name;
 	long int value;
 	UI08 type;
-	string stringValue;
+	std::string stringValue;
 	// acceptable type values
 	// 0 -> straight plain long int
 	// 1 -> hex long int
@@ -33,14 +33,14 @@ public:
 	CGump( bool myNoMove, bool myNoClose );
 	virtual ~CGump( );
 
-	void Add( string Tag, string Text );
+	void Add( std::string Tag, std::string Text );
 	void Send( cSocket *target );
 	
 	// Common add functions
 	void AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height );
 	void AddGump( UI16 x, UI16 y, UI16 GumpID );
 	void AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueID  );
-	void AddText( UI16 x, UI16 y, UI16 hue, string Text );
+	void AddText( UI16 x, UI16 y, UI16 hue, std::string Text );
 	UI32 StartPage( void );
 
 	void SetNoMove( bool myNoMove );
@@ -53,11 +53,11 @@ public:
 class GumpDisplay
 {
 private:
-	vector< GumpInfo * > gumpData;
+	std::vector< GumpInfo * > gumpData;
 	UI16 width, height;	// gump width / height
 	cSocket *toSendTo;
 	stringList one, two;
-	string title;
+	std::string title;
 public:
 	void AddData( GumpInfo *toAdd );
 	void AddData( const char *toAdd, long int value, UI08 type = 0 );

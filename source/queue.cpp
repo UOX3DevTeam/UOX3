@@ -53,7 +53,7 @@ SERIAL PageVector::Add( HelpRequest *toAdd )
 	memcpy( adding, toAdd, sizeof( HelpRequest ) );
 	Queue.push_back( adding );
 	adding->RequestID( ++maxID );
-	sort( Queue.begin(), Queue.end() );
+	std::sort( Queue.begin(), Queue.end() );
 	return adding->RequestID();
 }
 

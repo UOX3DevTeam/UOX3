@@ -35,7 +35,7 @@ public:
 	void	Dispellable( bool value )	{	dispellable = value;		}
 	void	ItemPtr( ITEM value )		{	itemptr = value;			}
 
-	bool	Save( ofstream &effectDestination, SI32 mode ) const; // saves the current effect
+	bool	Save( std::ofstream &effectDestination, SI32 mode ) const; // saves the current effect
 };
 
 // This class is designed as a replacement for the teffect array (which is nasty, and too big)
@@ -43,7 +43,7 @@ public:
 class cTEffect
 {
 private:
-	vector< teffect_st * > internalData;
+	std::vector< teffect_st * > internalData;
 	UI16 effectCount;
 	UI16 currentEffect;
 	bool delFlag;

@@ -2,7 +2,7 @@
 #define __CSKILLCLASS_H__
 
 #include <algorithm>
-using namespace std;
+//using namespace std;
 
 class cSkillClass
 {

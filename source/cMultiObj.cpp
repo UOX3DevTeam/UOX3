@@ -38,7 +38,7 @@ void CMultiObj::AddToBanList( CChar *toBan )
 //o--------------------------------------------------------------------------
 void CMultiObj::RemoveFromBanList( CChar *toRemove )
 {
-	map< SERIAL, CChar *>::iterator p = banList.find( toRemove->GetSerial() );
+	std::map< SERIAL, CChar *>::iterator p = banList.find( toRemove->GetSerial() );
 	if( p != banList.end() )
 		banList.erase( p );
 }
@@ -68,7 +68,7 @@ void CMultiObj::AddAsOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------
 void CMultiObj::RemoveAsOwner( CChar *toRemove )
 {
-	map< SERIAL, CChar *>::iterator p = owners.find( toRemove->GetSerial() );
+	std::map< SERIAL, CChar *>::iterator p = owners.find( toRemove->GetSerial() );
 	if( p != owners.end() )
 		owners.erase( p );
 }
@@ -293,11 +293,11 @@ void CMultiObj::RemoveLockDown( CItem *toRemove )
 //|						outStream is the file to write to
 //|						mode is the mode to write in (1 for binary, 0 for text)
 //o--------------------------------------------------------------------------
-bool CMultiObj::Save( ofstream &outStream, int mode )
+bool CMultiObj::Save( std::ofstream &outStream, int mode )
 {
 	if( isFree() )
 		return false;
-	typedef map< SERIAL, CChar *>::iterator iCounter;
+	typedef std::map< SERIAL, CChar *>::iterator iCounter;
 	if( GetCont() != INVALIDSERIAL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
 	{
 		DumpHeader( outStream, mode );
@@ -354,7 +354,7 @@ bool CMultiObj::Load( BinBuffer &buff, int arrayOffset )
 //|	Purpose			-	Loads an item from disk, using instream as the source
 //|						and mode as the way to load (0 for bin, 1 for text)
 //o--------------------------------------------------------------------------
-bool CMultiObj::Load( ifstream &inStream, int arrayOffset )
+bool CMultiObj::Load( std::ifstream &inStream, int arrayOffset )
 {
 	char tag[128], data[512];
 	bool bFinished;
@@ -517,14 +517,14 @@ bool CMultiObj::FinishedItemMulti( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Dumps out the header for the CMultiObj
 //o--------------------------------------------------------------------------
-bool CMultiObj::DumpHeader( ofstream &outStream, int mode ) const
+bool CMultiObj::DumpHeader( std::ofstream &outStream, int mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << "[HOUSE]" << endl;
+		outStream << "[HOUSE]" << std::endl;
 		break;
 	}
 	return true;
@@ -539,10 +539,10 @@ bool CMultiObj::DumpHeader( ofstream &outStream, int mode ) const
 //|	Purpose			-	Writes out all CMultiObj specific information to a world
 //|						file.  Also prints out the Item and BaseObject portions
 //o--------------------------------------------------------------------------
-bool CMultiObj::DumpBody( ofstream &outStream, int mode ) const
+bool CMultiObj::DumpBody( std::ofstream &outStream, int mode ) const
 {
-	string destination; 
-	ostringstream dumping( destination ); 
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
 	BinBuffer buff;
 	baseCharMapConstIterator ban, owner;
 	UI32 iCtr;
@@ -586,18 +586,18 @@ bool CMultiObj::DumpBody( ofstream &outStream, int mode ) const
 		CItem::DumpBody( outStream, mode );
 
 		for( ban = banList.begin(); ban != banList.end(); ban++ )
-			dumping << "Banned=" << (ban->second)->GetSerial() << endl;
+			dumping << "Banned=" << (ban->second)->GetSerial() << std::endl;
 
 		for( owner = owners.begin(); owner != owners.end(); owner++ )
-			dumping << "CoOwner=" << (owner->second)->GetSerial() << endl;
+			dumping << "CoOwner=" << (owner->second)->GetSerial() << std::endl;
 
 		for( iCtr = 0; iCtr < lockedList.size(); iCtr++ )
 		{
 			if( lockedList[iCtr] != NULL )
-				dumping << "LockedItem=" << lockedList[iCtr]->GetSerial() << endl;
+				dumping << "LockedItem=" << lockedList[iCtr]->GetSerial() << std::endl;
 		}
 
-		dumping << "MaxLockedDown=" << maxLockedDown << endl;
+		dumping << "MaxLockedDown=" << maxLockedDown << std::endl;
 		outStream << dumping.str();
 		break;
 	}
@@ -612,14 +612,14 @@ bool CMultiObj::DumpBody( ofstream &outStream, int mode ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Writes out a footer
 //o--------------------------------------------------------------------------
-bool CMultiObj::DumpFooter( ofstream &outStream, int mode ) const
+bool CMultiObj::DumpFooter( std::ofstream &outStream, int mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << endl << endl << "o---o" << endl;
+		outStream << std::endl << std::endl << "o---o" << std::endl;
 		break;
 	}
 	return true;
@@ -755,7 +755,7 @@ void CMultiObj::SetOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------
 void CMultiObj::Cleanup( void )
 {
-	vector< cBaseObject * > toRemove;
+	std::vector< cBaseObject * > toRemove;
 	baseMapIterator iCleanup = itemInMulti.begin();
 	while( iCleanup != itemInMulti.end() )
 	{

@@ -1,11 +1,11 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
-typedef map< SERIAL, cBaseObject *> baseMap;
+typedef std::map< SERIAL, cBaseObject *> baseMap;
 typedef baseMap::iterator			baseMapIterator;
 typedef baseMap::const_iterator		baseMapConstIterator;
 
-typedef map< SERIAL, CChar *>		baseCharMap;
+typedef std::map< SERIAL, CChar *>		baseCharMap;
 typedef baseCharMap::iterator		baseCharMapIterator;
 typedef baseCharMap::const_iterator	baseCharMapConstIterator;
 
@@ -16,7 +16,7 @@ protected:
 	baseMap				charInMulti;
 	baseCharMap			owners;
 	baseCharMap			banList;
-	vector< CItem * >	lockedList;
+	std::vector< CItem * >	lockedList;
 	UI16				maxLockedDown;
 
 	baseMapIterator		itemMultiIterator;
@@ -58,11 +58,11 @@ public:
 	virtual void		LockDownItem( CItem *toLock );
 	virtual void		RemoveLockDown( CItem *toRemove );
 
-	virtual bool		Save( ofstream &outStream, int mode );
-	virtual bool		DumpHeader( ofstream &outStream, int mode ) const;
-	virtual bool		DumpBody( ofstream &outStream, int mode ) const;
-	virtual bool		DumpFooter( ofstream &outStream, int mode ) const;
-	virtual bool		Load( ifstream &inStream, int arrayOffset );
+	virtual bool		Save( std::ofstream &outStream, int mode );
+	virtual bool		DumpHeader( std::ofstream &outStream, int mode ) const;
+	virtual bool		DumpBody( std::ofstream &outStream, int mode ) const;
+	virtual bool		DumpFooter( std::ofstream &outStream, int mode ) const;
+	virtual bool		Load( std::ifstream &inStream, int arrayOffset );
 	virtual bool		Load( BinBuffer &buff, int arrayOffset );
 	virtual bool		HandleLine( char *tag, char *data );
 	virtual bool		HandleBinTag( UI08 tag, BinBuffer &buff );

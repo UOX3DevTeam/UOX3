@@ -2,16 +2,16 @@
 #define __CNETWORK_H__
 
 #include <stdexcept>
-using namespace std;
+//using namespace std;
 
 //#define __LOGIN_THREAD__
 
-class socket_error : public runtime_error
+class socket_error : public std::runtime_error
 {
 protected:
 	long		errorNum;
 public:
-				socket_error( const string& what_arg );
+				socket_error( const std::string& what_arg );
 				socket_error( const long errorNumber );
 				socket_error( void );
 	long		ErrorNumber( void ) const;
@@ -21,7 +21,7 @@ public:
 class cPBuffer
 {
 protected:
-	vector< UI08 > internalBuffer;
+	std::vector< UI08 > internalBuffer;
 public:
 							cPBuffer();
 							cPBuffer( char *initBuffer, int len );
@@ -37,7 +37,7 @@ public:
 class cPInputBuffer
 {
 protected:
-	vector< UI08 > internalBuffer;
+	std::vector< UI08 > internalBuffer;
 	cSocket *tSock;
 public:
 							cPInputBuffer();
@@ -54,7 +54,7 @@ public:
 	virtual void			SetSocket( cSocket *toSet );
 };
 
-typedef vector< cSocket * >	SOCKLIST;
+typedef std::vector< cSocket * >	SOCKLIST;
 
 class cNetworkStuff
 {
@@ -123,7 +123,7 @@ private:
 	void		CheckXGMConn( void );
 	bool		IsFirewallBlocked( UI08 part[4] );
 
-	vector< FirewallEntry >	slEntries;
+	std::vector< FirewallEntry >	slEntries;
 	int						a_socket, xgmSocket;
 	SOCKLIST				connClients, loggedInClients, xgmClients;
 
@@ -133,7 +133,7 @@ private:
 	ThreadSafeObject		InternalControl;
 	SI32					peakConnectionCount;
 
-	vector< SI32 >			connIteratorBackup, loggIteratorBackup, xgmIteratorBackup;
+	std::vector< SI32 >			connIteratorBackup, loggIteratorBackup, xgmIteratorBackup;
 	SI32					currConnIter, currLoggIter, currXGMIter;
 };
 

@@ -1,3 +1,5 @@
+#pragma warning( disable : 4786 )
+
 #include "uox3.h"
 #include "debug.h"
 #include "ssection.h"
@@ -170,7 +172,7 @@ CChar *cCharStuff::CreateRandomNpc( cSocket *s, const char * npcList, UI08 world
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an NPC
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::SpawnNPC( CItem *i, string npcNum, UI08 worldNumber, bool randomNPC = false )
+CChar *cCharStuff::SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, bool randomNPC = false )
 {
 	// If the spawner type is 125 and escort quests are not active then abort
 	if( i != NULL )
@@ -216,7 +218,7 @@ CChar *cCharStuff::SpawnNPC( CItem *i, string npcNum, UI08 worldNumber, bool ran
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an NPC
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::SpawnNPC( cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber )
+CChar *cCharStuff::SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber )
 {
 	CChar *c = CreateScriptNpc( NULL, npcNum, worldNumber );
 	if( c == NULL )
@@ -275,7 +277,7 @@ void cCharStuff::PostSpawnUpdate( CChar *c )
 //|	Purpose		-	Spawn an NPC and place him in the region or on the item that
 //|					spawned him.
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::AddNPC( cSocket *s, cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber )
+CChar *cCharStuff::AddNPC( cSocket *s, cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber )
 {
 	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
 	if( c == NULL )
@@ -1161,7 +1163,7 @@ CChar *cCharStuff::CreateScriptNpc( cSocket *s, int targNPC, UI08 worldNumber )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Create an NPC and assign their variables based on npc.scp entrys
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber )
+CChar *cCharStuff::CreateScriptNpc( cSocket *s, std::string targNPC, UI08 worldNumber )
 {
 	char npcSect[512];
 	if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
@@ -1196,7 +1198,7 @@ CChar *cCharStuff::CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber
 	npcNum->WorldNumber( worldNumber );
 
 	if( !ApplyNpcSection( npcNum, NpcCreation ) )
-		cout << "Failed to apply NPC script settings for npc " << npcNum->GetSerial() << endl;
+		std::cout << "Failed to apply NPC script settings for npc " << npcNum->GetSerial() << std::endl;
 	
 	return npcNum;
 }

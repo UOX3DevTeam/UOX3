@@ -186,7 +186,7 @@ struct strToDFNLookup
 	DFNTAGS		dfnToAdd;
 };
 
-map< string, DFNTAGS > strToDFNTag;
+std::map< std::string, DFNTAGS > strToDFNTag;
 
 void InitStrToDFN( void )
 {
@@ -402,7 +402,7 @@ DFNTAGS FindDFNTagFromStr( const char *strToFind )
 	char tempString[512];
 	strcpy( tempString, strToFind );
 	strupr( tempString );
-	map< string, DFNTAGS >::iterator toFind = strToDFNTag.find( tempString );
+	std::map< std::string, DFNTAGS >::iterator toFind = strToDFNTag.find( tempString );
 	if( toFind != strToDFNTag.end() )
 		return toFind->second;
 	return DFNTAG_COUNTOFTAGS;

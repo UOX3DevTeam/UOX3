@@ -395,7 +395,7 @@ bool cPIXGMWhoOnline::Handle( void )
 	toSend.StatusType( tSock->GetByte( 0 ) - 2 );
 	cSocket *toGet = NULL;
 
-	vector< CChar * > charListing;
+	std::vector< CChar * > charListing;
 	ACTREC *acct = NULL;
 	UI32 i = 0;
 

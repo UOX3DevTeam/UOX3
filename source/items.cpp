@@ -362,7 +362,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|	Purpose		-	Does the minimum required to spawn an item from the scripts
 //|					assigning a world number and setting the serial
 //o---------------------------------------------------------------------------o
-CItem *cItem::CreateItem( cSocket *s, string name, UI08 worldNumber )
+CItem *cItem::CreateItem( cSocket *s, std::string name, UI08 worldNumber )
 {
 	CTile tile;
 	char itemSect[512];
@@ -422,7 +422,7 @@ CItem *cItem::CreateItem( cSocket *s, string name, UI08 worldNumber )
 //|	Modification	-	04/22/2002	-	Added a check here to make sure that there 
 //|									are no trailign spaces.
 //o---------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( cSocket *s, string name, bool nSpawned, UI08 worldNumber )
+CItem * cItem::CreateScriptItem( cSocket *s, std::string name, bool nSpawned, UI08 worldNumber )
 {
 	if( name[ name.size()-1]==' ' )
 		name[ name.size()-1] = 0x00;
@@ -616,7 +616,7 @@ void cItem::GetScriptItemSetting( CItem *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an item inside a pack
 //o---------------------------------------------------------------------------o
-CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, string name, bool nDigging )
+CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, std::string name, bool nDigging )
 {
 	CItem *p = getPack( ch );
 	if( p == NULL ) 

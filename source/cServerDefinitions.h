@@ -7,16 +7,16 @@
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
 
-typedef vector< Script * > ScpList;
-typedef	stack< string > dirList;
+typedef std::vector< Script * > ScpList;
+typedef	std::stack< std::string > dirList;
 
 class cServerDefinitions
 {
 protected:
 private:
-	vector< ScpList >	ScriptListings;
-	vector< string >	filenameListings;
-	map< string, SI16 >	priorityMap;
+	std::vector< ScpList >	ScriptListings;
+	std::vector< std::string >	filenameListings;
+	std::map< std::string, SI16 >	priorityMap;
 	dirList                 dirs;
 	SI16				defaultPriority;
 

@@ -1,3 +1,4 @@
+#pragma warning( disable : 4786 )
 
 #include "fileio.h"
 
@@ -286,7 +287,7 @@ void UOXFile::get_staticrecord( struct staticrecord *buff, UI32 number )
 	}
 }
 
-r2Data readline( ifstream& toRead ) // Read line from script
+r2Data readline( std::ifstream& toRead ) // Read line from script
 {
 	char lineBuf[512], ret1[512], ret2[512];
 	toRead.getline( lineBuf, 512 );
@@ -342,7 +343,7 @@ void loadnewworld( void )
 	Console.PrintDone();
 }
 
-void ReadWorldTagData( ifstream &inStream, char *tag, char *data )
+void ReadWorldTagData( std::ifstream &inStream, char *tag, char *data )
 {
 	char temp[4096];
 	tag[0] = 0;
@@ -379,8 +380,8 @@ void ReadWorldTagData( ifstream &inStream, char *tag, char *data )
 
 bool FileExists( const char *filepath )
 {
-	ifstream ifsFile;
-	ifsFile.open( filepath, ios::in );
+	std::ifstream ifsFile;
+	ifsFile.open( filepath, std::ios::in );
 	if( ifsFile.is_open() )
 	{
 		ifsFile.close();
@@ -394,7 +395,7 @@ BinBuffer::BinBuffer()
 	Reset();
 }
 
-BinBuffer::BinBuffer( ifstream &in )
+BinBuffer::BinBuffer( std::ifstream &in )
 {
 	Read( in );//resets inside Read()
 }
@@ -403,7 +404,7 @@ BinBuffer::~BinBuffer()
 {
 }
 
-void BinBuffer::Read( ifstream &inFile )
+void BinBuffer::Read( std::ifstream &inFile )
 {
 	UI16 Size;
 	char TempBuff[2];
@@ -422,7 +423,7 @@ void BinBuffer::Read( ifstream &inFile )
 	inFile.read( &Buff[0], Size );
 }
 
-void BinBuffer::Write( ofstream &outFile )
+void BinBuffer::Write( std::ofstream &outFile )
 {
 	char TempBuff[2];
 	UI16 Size = (UI16)Buff.size();

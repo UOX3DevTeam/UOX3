@@ -5,7 +5,7 @@
 
 #ifndef va_start
 	#include <cstdarg>
-	using namespace std;
+	//using namespace std;
 #endif
 
 #define __EXTREMELY_VERBOSE__

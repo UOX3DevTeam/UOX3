@@ -3,7 +3,7 @@
 #include "ssection.h"
 #ifndef va_start
 	#include <cstdarg>
-	using namespace std;
+	//using namespace std;
 #endif
 
 CGuild::CGuild() : name( "" ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL ), gType( GT_STANDARD )
@@ -608,35 +608,35 @@ GUILDREL *CGuild::GuildRelationList( void )	// NOTE: This is aimed ONLY at menu 
 	return &relationList;
 }
 
-void CGuild::Save( ofstream &toSave, GuildID gNum )
+void CGuild::Save( std::ofstream &toSave, GuildID gNum )
 {
-	toSave << "[GUILD " << gNum << ']' << endl << "{" << endl;
-	toSave << "NAME=" << name.c_str() << endl;
-	toSave << "ABBREVIATION=" << abbreviation << endl;
-	toSave << "TYPE=" << GTypeNames[gType].c_str() << endl;
-	toSave << "CHARTER=" << charter.c_str() << endl;
-	toSave << "WEBPAGE=" << webpage.c_str() << endl;
-	toSave << "STONE=" << stone << endl;
-	toSave << "MASTER=" << master << endl;
+	toSave << "[GUILD " << gNum << ']' << std::endl << "{" << std::endl;
+	toSave << "NAME=" << name.c_str() << std::endl;
+	toSave << "ABBREVIATION=" << abbreviation << std::endl;
+	toSave << "TYPE=" << GTypeNames[gType].c_str() << std::endl;
+	toSave << "CHARTER=" << charter.c_str() << std::endl;
+	toSave << "WEBPAGE=" << webpage.c_str() << std::endl;
+	toSave << "STONE=" << stone << std::endl;
+	toSave << "MASTER=" << master << std::endl;
 	SERLIST::iterator counter = recruits.begin();
 	while( counter != recruits.end() )
 	{
-		toSave << "RECRUIT=" << (*counter) << endl;
+		toSave << "RECRUIT=" << (*counter) << std::endl;
 		counter++;
 	}
 	counter = members.begin();
 	while( counter != members.end() )
 	{
-		toSave << "MEMBER=" << (*counter) << endl;
+		toSave << "MEMBER=" << (*counter) << std::endl;
 		counter++;
 	}
 	GUILDREL::iterator relly = relationList.begin();
 	while( relly != relationList.end() )
 	{
-		toSave << GRelationNames[relly->second].c_str() << " " << relly->first <<endl;
+		toSave << GRelationNames[relly->second].c_str() << " " << relly->first <<std::endl;
 		relly++;
 	}
-	toSave << "}" << endl << endl;
+	toSave << "}" << std::endl << std::endl;
 }
 void CGuild::Load( ScriptSection *toRead )
 {
@@ -723,8 +723,8 @@ void CGuild::CalcMaster( void )
 		Master( INVALIDSERIAL );
 		return;
 	}
-	vector< int > votes;
-	vector< CChar * > mVoting;
+	std::vector< int > votes;
+	std::vector< CChar * > mVoting;
 	votes.resize( members.size() );
 	mVoting.resize( members.size() );
 	for( UI32 ct = 0; ct < votes.size(); ct++ )		// Find pointer list so that we don't keep recalculating it
@@ -863,7 +863,7 @@ void CGuildCollection::Save( void )
 
 	Console << "Saving guild data.... ";
 	sprintf( filename, "%sguilds.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	ofstream toSave( filename );
+	std::ofstream toSave( filename );
 	GUILDLIST::iterator pMove = gList.begin();
 	Console.TurnYellow();
 	while( pMove != gList.end() )
@@ -971,7 +971,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 	if( mChar->GetGuildToggle() ) 
 		strcpy( toggle, "On" );
 
-	string gName = gList[trgGuild]->Name();
+	std::string gName = gList[trgGuild]->Name();
 	UI16 tCtr = 0;
 	SERIAL tChar = 0;
 	GUILDREL::iterator toCheck;

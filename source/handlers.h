@@ -6,10 +6,10 @@ class cCharacterHandle
 protected:
 	CChar *	DefaultChar;//The item send if an out of bounds is referenced.
 
-	vector< CChar * > Chars;			// Vector of pointers to items, NULL if no item at that pos
+	std::vector< CChar * > Chars;			// Vector of pointers to items, NULL if no item at that pos
 	UI32	Actual;					// Number of items in existance
 
-	vector< UI32 > FreeNums;		// Vector of free item numbers
+	std::vector< UI32 > FreeNums;		// Vector of free item numbers
 	UI32	Free;					// Number of free spaces in Acctual (Recyle item numbers)
 	bool	isFree( UI32 Num );		// Check to see if this item is marked free
 
@@ -33,10 +33,10 @@ class cItemHandle
 protected:
 	CItem *	DefaultItem;				// The item send if an out of bounds is referenced.
 
-	vector< CItem * > Items;			// Vector of pointers to items, NULL if no item at that pos
+	std::vector< CItem * > Items;			// Vector of pointers to items, NULL if no item at that pos
 	UI32	Actual;						// Number of items in existance
 
-	vector< UI32 > FreeNums;			// Vector of free item numbers
+	std::vector< UI32 > FreeNums;			// Vector of free item numbers
 	UI32	Free;						// Number of free spaces in Acctual (Recyle item numbers)
 	bool	isFree( UI32 Num );			// Check to see if this item is marked free
 

@@ -1093,7 +1093,7 @@ void reverse_effect( int i )
 void SaveEffects( void )
 {
 	char filename[MAX_PATH];
-	ofstream writeDestination, effectDestination;
+	std::ofstream writeDestination, effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
 	const char binBlockDisc = (char)0xFF;
 
@@ -1110,7 +1110,7 @@ void SaveEffects( void )
 	
 	if( Mode == 1 ) 
 	{
-		effectDestination.open( filename, ios::binary|ios::out );
+		effectDestination.open( filename, std::ios::binary|std::ios::out );
 		if( !effectDestination )
 		{
 			Console.Error( 1, "Failed to open %s for writing", filename );
@@ -1157,13 +1157,13 @@ void SaveEffects( void )
 void LoadEffects( void )
 {
 	char filename[MAX_PATH];
-	ifstream readDestination;
+	std::ifstream readDestination;
 	UI08 test;
 
 	int mode = 0;//ascii
 
 	sprintf( filename, "%seffects.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );	// let's name our file
-	readDestination.open( filename, ios::in|ios::binary );//open first file and check for binary
+	readDestination.open( filename, std::ios::in|std::ios::binary );//open first file and check for binary
 	if( readDestination.is_open() )
 	{
 		readDestination.read( (char *)&test, 1 );//read the 'B' to make sure we are binary
@@ -1176,7 +1176,7 @@ void LoadEffects( void )
 
 	if( mode == 1 )//binary
 	{
-		readDestination.open( filename, ios::in|ios::binary );
+		readDestination.open( filename, std::ios::in|std::ios::binary );
 		if( !readDestination.is_open() )
 			return;
 		readDestination.seekg(1);
@@ -1207,7 +1207,7 @@ void LoadEffects( void )
 	} 
 	else 
 	{//ascii
-		readDestination.open( filename, ios::in|ios::binary );
+		readDestination.open( filename, std::ios::in|std::ios::binary );
 		if( !readDestination.is_open() )
 			return;
 		char line[1024];

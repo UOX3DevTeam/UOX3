@@ -11,10 +11,10 @@ struct periodicTrigger
 class Triggers
 {
 private:
-	map< UI16, UI16 >			envokeList;		// item ID -> script ID mapping
-	map< UI16, cScript * >		scriptTriggers;
-	vector< periodicTrigger >	periodicTriggers;
-	map< JSObject *, UI16 >		scriptToTriggerMapping;
+	std::map< UI16, UI16 >			envokeList;		// item ID -> script ID mapping
+	std::map< UI16, cScript * >		scriptTriggers;
+	std::vector< periodicTrigger >	periodicTriggers;
+	std::map< JSObject *, UI16 >		scriptToTriggerMapping;
 
 	virtual void				ParseEnvoke( void );
 	virtual void				ParseScript( void );

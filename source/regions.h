@@ -15,10 +15,10 @@ typedef UI32 vIterator;
 class SubRegion
 {
 protected:
-	vector< CChar *> charData;
-	vector< CItem *> itemData;
-	vector< vIterator > charIteratorBackup;
-	vector< vIterator > itemIteratorBackup;
+	std::vector< CChar *> charData;
+	std::vector< CItem *> itemData;
+	std::vector< vIterator > charIteratorBackup;
+	std::vector< vIterator > itemIteratorBackup;
 
 	vIterator charCounter;
 	vIterator itemCounter;
@@ -44,8 +44,8 @@ public:
 	virtual bool	RemoveItem( CItem *toRemove );
 	virtual bool	RemoveChar( CChar *toRemove );
 
-	virtual void	SaveToDisk( ofstream& writeDestination, SI32 mode, ofstream &houseDestination );
-	virtual void	LoadFromDisk( ifstream& readDestination, SI32 mode );
+	virtual void	SaveToDisk( std::ofstream& writeDestination, SI32 mode, std::ofstream &houseDestination );
+	virtual void	LoadFromDisk( std::ifstream& readDestination, SI32 mode );
 
 	virtual void	PopItem( void );
 	virtual void	PopChar( void );
@@ -65,7 +65,7 @@ class cMapRegion
 private:
 	SubRegion		internalRegions[UpperX][UpperY][NumberOfWorlds];
 	SubRegion		overFlow;
-	virtual void	LoadHouseMulti( ifstream &houseDestination, SI32 mode );
+	virtual void	LoadHouseMulti( std::ifstream &houseDestination, SI32 mode );
 
 public:
 						cMapRegion(); //constructor

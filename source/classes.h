@@ -3,7 +3,7 @@
 
 #define MAXPOSTS 128
 #include <queue>
-using namespace std;
+//using namespace std;
 #include "threadsafeobject.h"
 class CChar;
 class CItem;
@@ -13,8 +13,8 @@ class CMultiObj;
 #include "cBaseObject.h"
 
 
-typedef vector< CChar * > CHARLIST;
-typedef vector< CItem * > ITEMLIST;
+typedef std::vector< CChar * > CHARLIST;
+typedef std::vector< CItem * > ITEMLIST;
 
 #include "cChar.h"
 #include "cItem.h"
@@ -36,12 +36,12 @@ public:
 	void		GlowItem( CItem *i );
 	CItem *		MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType = 0 );
 	void		DeleItem( CItem *i );
-	CItem *		CreateScriptItem( cSocket *s, string name, bool nSpawned, UI08 worldNumber );
+	CItem *		CreateScriptItem( cSocket *s, std::string name, bool nSpawned, UI08 worldNumber );
 	CItem *		CreateRandomItem( cSocket *s, const char *sItemList, bool nSpawned, UI08 worldNumber );
 	CItem *		SpawnItem( cSocket *nSocket, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend );
 	CItem *		SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemID, UI16 realColour, bool nPack, bool nSend );
 	CItem *		SpawnItemToPack( cSocket *s, CChar *ch, int nItem, bool nDigging );
-	CItem *		SpawnItemToPack( cSocket *s, CChar *ch, string name, bool nDigging );
+	CItem *		SpawnItemToPack( cSocket *s, CChar *ch, std::string name, bool nDigging );
 	CMultiObj *	SpawnMulti( cSocket *nSocket, CChar *ch, const char *cName, UI16 realItemID );
 	void		GetScriptItemSetting( CItem *c );
 	bool		DecayItem( CItem *i );
@@ -53,7 +53,7 @@ public:
 	void		CheckEquipment( CChar *p );
 
 private:
-	CItem *		CreateItem( cSocket *s, string name, UI08 worldNumber );
+	CItem *		CreateItem( cSocket *s, std::string name, UI08 worldNumber );
 };
 
 // use this value whereever you need to return an illegal z value
@@ -63,7 +63,7 @@ class cCharStuff
 {
 private:
 	void		FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z );
-	CChar *		CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber );
+	CChar *		CreateScriptNpc( cSocket *s, std::string targNPC, UI08 worldNumber );
 	CChar *		CreateScriptNpc( cSocket *s, int    targNPC, UI08 worldNumber );
 	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation );
 	void		PostSpawnUpdate( CChar *x );
@@ -73,9 +73,9 @@ public:
 	CChar *		MemCharFree( CHARACTER& offset, bool zeroSer = false );
 	CItem *		addRandomLoot( CItem *s, const char * lootlist );
 	CChar *		CreateRandomNpc( cSocket *s, const char *npclist, UI08 worldNumber );
-	CChar *		SpawnNPC( cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber );
-	CChar *		SpawnNPC( CItem *i, string npcNum, UI08 worldNumber, bool randomNPC );
-	CChar *		AddNPC( cSocket *s, cSpawnRegion *spawnReg, string npcNum, UI08 worldNumber );
+	CChar *		SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
+	CChar *		SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, bool randomNPC );
+	CChar *		AddNPC( cSocket *s, cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
 	CChar *		AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber );
 	void		Split( CChar *k );
 	void		CheckAI( CChar *i );

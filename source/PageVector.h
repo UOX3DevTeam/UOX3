@@ -43,7 +43,7 @@ public:
 class PageVector
 {
 private:
-	vector< HelpRequest * >	Queue;
+	std::vector< HelpRequest * >	Queue;
 	SI32					currentPos; 
 	char					title[25];	// GM/Counselor Queue
 

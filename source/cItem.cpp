@@ -1213,7 +1213,7 @@ void CItem::LockDown( void )
 	magic = 3;
 }
 
-bool CItem::Save( ofstream &outStream, SI32 mode )
+bool CItem::Save( std::ofstream &outStream, SI32 mode )
 {
 	if( isFree() )
 		return false;
@@ -1509,14 +1509,14 @@ void CItem::SnowDamage( bool value )
 		weatherBools &= ~0x20;
 }
 
-bool CItem::DumpHeader( ofstream &outStream, SI32 mode ) const
+bool CItem::DumpHeader( std::ofstream &outStream, SI32 mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << "[ITEM]" << endl;
+		outStream << "[ITEM]" << std::endl;
 		break;
 	}
 	return true;
@@ -1690,75 +1690,75 @@ bool CItem::DumpBody( BinBuffer &buff ) const
 	return true;
 }
 
-bool CItem::DumpBody( ofstream &outStream, SI32 mode ) const
+bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 {
-	string destination; 
-	ostringstream dumping( destination ); 
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
 	
 	cBaseObject::DumpBody( outStream, mode );
-	dumping << "Layer=" << (SI16)GetLayer() << endl;
-	dumping << "Cont=" << GetCont() << endl;
-	dumping << "More=" << GetMore() << endl;
-	dumping << "More2=" << GetMoreB() << endl;
-	dumping << "Name2=" << GetName2() << endl;
-	dumping << "Murderer=" << GetMurderer() << endl;
-	dumping << "Creator=" << GetCreator() << endl;
-	dumping << "Desc=" << GetDesc() << endl;
-	dumping << "Type=" << (SI16)GetType() << endl;
-	dumping << "Type2=" << (SI16)GetType2() << endl;
-	dumping << "Offspell=" << (SI16)GetOffSpell() << endl;
-	dumping << "Weight=" << GetWeight() << endl;
-	dumping << "MoreX=" << GetMoreX() << endl;
-	dumping << "MoreY=" << GetMoreY() << endl;
-	dumping << "MoreZ=" << GetMoreZ() << endl;
+	dumping << "Layer=" << (SI16)GetLayer() << std::endl;
+	dumping << "Cont=" << GetCont() << std::endl;
+	dumping << "More=" << GetMore() << std::endl;
+	dumping << "More2=" << GetMoreB() << std::endl;
+	dumping << "Name2=" << GetName2() << std::endl;
+	dumping << "Murderer=" << GetMurderer() << std::endl;
+	dumping << "Creator=" << GetCreator() << std::endl;
+	dumping << "Desc=" << GetDesc() << std::endl;
+	dumping << "Type=" << (SI16)GetType() << std::endl;
+	dumping << "Type2=" << (SI16)GetType2() << std::endl;
+	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
+	dumping << "Weight=" << GetWeight() << std::endl;
+	dumping << "MoreX=" << GetMoreX() << std::endl;
+	dumping << "MoreY=" << GetMoreY() << std::endl;
+	dumping << "MoreZ=" << GetMoreZ() << std::endl;
 	dumping << "Amount=";
 	if( GetAmount() > MAX_STACK )
-		dumping << MAX_STACK << endl;
+		dumping << MAX_STACK << std::endl;
 	else
-		dumping << GetAmount() << endl;
-	dumping << "Doorflag=" << (SI16)GetDoorDir() << endl;
-	dumping << "MaxHP=" << GetMaxHP() << endl;
-	dumping << "Speed=" << (SI16)GetSpeed() << endl;
-	dumping << "Movable=" << (SI16)GetMagic() << endl;
-	dumping << "Priv=" << (SI16)GetPriv() << endl;
-	dumping << "Value=" << GetValue() << endl;
-	dumping << "Restock=" << GetRestock() << endl;
-	dumping << "Poisoned=" << (SI16)GetPoisoned() << endl;
-	dumping << "AC=" << (SI16)GetArmourClass() << endl;
-	dumping << "Rank=" << (SI16)GetRank() << endl;
-	dumping << "Sk_Made=" << (SI16)GetMadeWith() << endl;
-	dumping << "Enhanced=" << enhanced << endl;
-	dumping << "Pileable=" << (SI16)(isPileable()?1:0) << endl;
-	dumping << "Dyeable=" << (SI16)(isDyeable()?1:0) << endl;
-	dumping << "Corpse=" << (SI16)(isCorpse()?1:0) << endl;
-	dumping << "Wipe=" << (SI16)(isWipeable()?1:0) << endl;
-	dumping << "Good=" << GetGood() << endl;
-	dumping << "Glow=" << GetGlow() << endl;
-	dumping << "GlowBC=" << GetGlowColour() << endl;
-	dumping << "GlowType=" << (SI16)GetGlowEffect() << endl;
-	dumping << "Carve=" << GetCarve() << endl;
-	dumping << "Light=" << (SI16)(LightDamage() ? 1 : 0) << endl;
-	dumping << "Rain=" << (SI16)(RainDamage() ? 1 : 0) << endl;
-	dumping << "Heat=" << (SI16)(HeatDamage() ? 1 : 0) << endl;
-	dumping << "Cold=" << (SI16)(ColdDamage() ? 1 : 0) << endl;
-	dumping << "Snow=" << (SI16)(SnowDamage() ? 1 : 0) << endl;
-	dumping << "Lightning=" << (SI16)(LightningDamage() ? 1 : 0) << endl;
-	dumping << "EntryMadeFrom=" << entryMadeFrom << endl;
+		dumping << GetAmount() << std::endl;
+	dumping << "Doorflag=" << (SI16)GetDoorDir() << std::endl;
+	dumping << "MaxHP=" << GetMaxHP() << std::endl;
+	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
+	dumping << "Movable=" << (SI16)GetMagic() << std::endl;
+	dumping << "Priv=" << (SI16)GetPriv() << std::endl;
+	dumping << "Value=" << GetValue() << std::endl;
+	dumping << "Restock=" << GetRestock() << std::endl;
+	dumping << "Poisoned=" << (SI16)GetPoisoned() << std::endl;
+	dumping << "AC=" << (SI16)GetArmourClass() << std::endl;
+	dumping << "Rank=" << (SI16)GetRank() << std::endl;
+	dumping << "Sk_Made=" << (SI16)GetMadeWith() << std::endl;
+	dumping << "Enhanced=" << enhanced << std::endl;
+	dumping << "Pileable=" << (SI16)(isPileable()?1:0) << std::endl;
+	dumping << "Dyeable=" << (SI16)(isDyeable()?1:0) << std::endl;
+	dumping << "Corpse=" << (SI16)(isCorpse()?1:0) << std::endl;
+	dumping << "Wipe=" << (SI16)(isWipeable()?1:0) << std::endl;
+	dumping << "Good=" << GetGood() << std::endl;
+	dumping << "Glow=" << GetGlow() << std::endl;
+	dumping << "GlowBC=" << GetGlowColour() << std::endl;
+	dumping << "GlowType=" << (SI16)GetGlowEffect() << std::endl;
+	dumping << "Carve=" << GetCarve() << std::endl;
+	dumping << "Light=" << (SI16)(LightDamage() ? 1 : 0) << std::endl;
+	dumping << "Rain=" << (SI16)(RainDamage() ? 1 : 0) << std::endl;
+	dumping << "Heat=" << (SI16)(HeatDamage() ? 1 : 0) << std::endl;
+	dumping << "Cold=" << (SI16)(ColdDamage() ? 1 : 0) << std::endl;
+	dumping << "Snow=" << (SI16)(SnowDamage() ? 1 : 0) << std::endl;
+	dumping << "Lightning=" << (SI16)(LightningDamage() ? 1 : 0) << std::endl;
+	dumping << "EntryMadeFrom=" << entryMadeFrom << std::endl;
 	
-	//dumping << endl << endl;
+	//dumping << std::endl << std::endl;
 	outStream << dumping.str();
 	
 	return true;
 }
 
-bool CItem::DumpFooter( ofstream &outStream, SI32 mode ) const
+bool CItem::DumpFooter( std::ofstream &outStream, SI32 mode ) const
 {
 	switch( mode )
 	{
 	case 1:	break;
 	case 0:
 	default:
-		outStream << endl << "o---o" << endl << endl;
+		outStream << std::endl << "o---o" << std::endl << std::endl;
 	}
 	return true;
 }
@@ -2185,7 +2185,7 @@ bool CItem::Load( BinBuffer &buff, ITEM arrayOffset )
 	return LoadRemnants( arrayOffset );
 }
 
-bool CItem::Load( ifstream &inStream, ITEM arrayOffset )
+bool CItem::Load( std::ifstream &inStream, ITEM arrayOffset )
 {
 	char tag[128], data[512];
 	bool bFinished;

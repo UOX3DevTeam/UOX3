@@ -11,11 +11,11 @@
         #include <direct.h>
 #endif
 
-using namespace std;
+//using namespace std;
 
 // Legacy lookup for the server.scp file	(January 30, 2001 - EviLDeD)
 // NOTE:	Very important the first lookups required duplication or the search fails on them
-const string SERVERCFG_LOOKUP("|CRASH_PROTECTION|CRASH_PROTECTION|SKILLCAP|STATCAP|USESPECIALBANK|SPECIALBANKTRIGGER|"
+const std::string SERVERCFG_LOOKUP("|CRASH_PROTECTION|CRASH_PROTECTION|SKILLCAP|STATCAP|USESPECIALBANK|SPECIALBANKTRIGGER|"
 	"DECAYTIMER|PLAYERCORPSEDECAYMULTIPLIER|LOOTDECAYSWITHCORPSE|INVISTIMER|SKILLDELAY|SKILLLEVEL|OBJECTDELAY|GATETIMER|SHOWDEATHANIM|GUARDSACTIVE|BG_SOUNDS|ANNOUNCE_WORLDSAVES|WWWACCOUNTS|ARCHIVEPATH|SAVE_PER_LOOP|"
 	"BACKUP_SAVE_RATIO|UOXBOT|POISONTIMER|JOINMSG|PARTMSG|LOG|ROGUE|WEATHERTIME|SHOPTIME|SHOWLOGGEDOUTPCS|CHAR_TIME_OUT|MAXSTEALTHSTEPS|RUNNINGSTAMINASTEPS|BOAT_SPEED|HTML|CUT_SCROLL_REQUIREMENTS|PERSECUTION|"
 	"AUTO_CREATE_ACCTS|MSGBOARDPATH|MSGPOSTACCESS|MSGPOSTREMOVE|MSGRETENTION|ESCORTACTIVE|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|ESCORTDONEEXPIRE|FOOTSTEPS|COMMANDPREFIX|PORT|NICE|LORDB_LAG_FIX|CHECK_ITEMS|"
@@ -32,7 +32,7 @@ const string SERVERCFG_LOOKUP("|CRASH_PROTECTION|CRASH_PROTECTION|SKILLCAP|STATC
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
 // (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
 // NOTE:	Very important the first lookups required duplication or the search fails on them
-const string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESPERLOOP|SAVESTIMER|MAINTHREADSLEEP|" 
+const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESPERLOOP|SAVESTIMER|MAINTHREADSLEEP|" 
 	"SKILLCAP|SKILLDELAY|STATCAP|STATDELAY|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|CORPSEDECAYTIMER|LOOTDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
 	"OBJECTUSETIMER||GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|ARMORAFFECTREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
 	"BEGGINGTIMER|DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
@@ -375,7 +375,7 @@ SI32 cServerData::GetSystemTimerStatus( TID timerid )
 	return TIMER_ERROR;
 }
 
-void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
+void cServerData::setDirectoryHelper( std::string dirName, std::string &dir, char *text )
 {
         // First, let's normalize the path name and fix common errors
         const char dirSep = '/';
@@ -1874,7 +1874,7 @@ R64 cServerData::GetAccountFlushTimer( void )
 //o--------------------------------------------------------------------------o
 bool cServerData::save( void )
 {
-	string s = GetRootDirectory();
+	std::string s = GetRootDirectory();
 	s += "/uox.ini";
 	return save( s.c_str() );
 }
@@ -1901,29 +1901,29 @@ bool cServerData::save( void )
 //o--------------------------------------------------------------------------o
 bool cServerData::save( const char *filename )
 {
-	ofstream ofsOutput;
-	ofsOutput.open( filename, ios::out );
+	std::ofstream ofsOutput;
+	ofsOutput.open( filename, std::ios::out );
 	if( !ofsOutput.is_open() )
 	{
 		Console.Error( 1, "Unable to open file %s for writing", filename );
 		return false;
 	}
-	ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 0 ) << endl << "//================================" << endl << endl;
-	ofsOutput << "[system]" << endl;
-	ofsOutput << "PORT=" << GetServerPort() << endl;
-	ofsOutput << "SAVEMODE=" << ( SaveMode() == 1 ? "BINARY" : "ASCII" ) << endl;
-	ofsOutput << "CONSOLELOG=" << GetServerConsoleLogStatus() << endl;
-	ofsOutput << "CRASHPROTECTION=" << GetServerCrashProtectionStatus() << endl;
-	ofsOutput << "COMMANDPREFIX=" << GetServerCommandPrefix() << endl;
-	ofsOutput << "ANNOUNCEWORLDSAVES=" << (GetServerAnnounceSavesStatus()?1:0) << endl;
-	ofsOutput << "JOINPARTMSGS=" << (GetServerJoinPartAnnouncementsStatus()?1:0) << endl;
-	ofsOutput << "MULCACHING=" << (GetServerMulCachingStatus()?1:0) << endl;
-	ofsOutput << "BACKUPSENABLED=" << GetServerBackupStatus() << endl;
-	ofsOutput << "BACKUPSAVERATIO=" << GetBackupRatio() << endl;
-	ofsOutput << "SAVESTIMER=" << GetServerSavesTimerStatus() << endl;
-	ofsOutput << "MAINTHREADSLEEP=" << GetNiceness()  << endl;
-	ofsOutput << "ACCOUNTISOLATION=" << "1" /*GetAccountsIsolationLevel()*/ << endl;
-	ofsOutput << endl << "[play server list]" << endl;
+	ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 0 ) << std::endl << "//================================" << std::endl << std::endl;
+	ofsOutput << "[system]" << std::endl;
+	ofsOutput << "PORT=" << GetServerPort() << std::endl;
+	ofsOutput << "SAVEMODE=" << ( SaveMode() == 1 ? "BINARY" : "ASCII" ) << std::endl;
+	ofsOutput << "CONSOLELOG=" << GetServerConsoleLogStatus() << std::endl;
+	ofsOutput << "CRASHPROTECTION=" << GetServerCrashProtectionStatus() << std::endl;
+	ofsOutput << "COMMANDPREFIX=" << GetServerCommandPrefix() << std::endl;
+	ofsOutput << "ANNOUNCEWORLDSAVES=" << (GetServerAnnounceSavesStatus()?1:0) << std::endl;
+	ofsOutput << "JOINPARTMSGS=" << (GetServerJoinPartAnnouncementsStatus()?1:0) << std::endl;
+	ofsOutput << "MULCACHING=" << (GetServerMulCachingStatus()?1:0) << std::endl;
+	ofsOutput << "BACKUPSENABLED=" << GetServerBackupStatus() << std::endl;
+	ofsOutput << "BACKUPSAVERATIO=" << GetBackupRatio() << std::endl;
+	ofsOutput << "SAVESTIMER=" << GetServerSavesTimerStatus() << std::endl;
+	ofsOutput << "MAINTHREADSLEEP=" << GetNiceness()  << std::endl;
+	ofsOutput << "ACCOUNTISOLATION=" << "1" /*GetAccountsIsolationLevel()*/ << std::endl;
+	ofsOutput << std::endl << "[play server list]" << std::endl;
 
 	for( UI32 cnt = 0; cnt < serverList.size(); cnt++ )
 	{
@@ -1932,199 +1932,199 @@ bool cServerData::save( const char *filename )
 			ofsOutput << serverList[cnt].getDomain() << ",";
 		else
 			ofsOutput << serverList[cnt].getIP() << ",";
-		ofsOutput << serverList[cnt].getPort() << endl;
+		ofsOutput << serverList[cnt].getPort() << std::endl;
 	}
 
-	ofsOutput << endl << "[network server list]" << endl;
+	ofsOutput << std::endl << "[network server list]" << std::endl;
 
-	ofsOutput << endl << "[skill & stats]" << endl;
-	ofsOutput << "SKILLLEVEL=" << GetSkillLevel() << endl;
-	ofsOutput << "SKILLCAP=" << GetServerSkillCapStatus() << endl;
-	ofsOutput << "SKILLDELAY=" << GetServerSkillDelayStatus() << endl;
-	ofsOutput << "STATCAP=" << GetServerStatCapStatus() << endl;
-	ofsOutput << "STATDELAY=" << GetServerStatDelayStatus() << endl;
-	ofsOutput << "MAXSTEALTHMOVEMENTS=" << GetMaxStealthMovement() << endl;
-	ofsOutput << "MAXSTAMINAMOVEMENTS=" << GetMaxStaminaMovement() << endl;
-	ofsOutput << "SNOOPISCRIME=" << (GetSnoopIsCrime()?1:0) << endl;
+	ofsOutput << std::endl << "[skill & stats]" << std::endl;
+	ofsOutput << "SKILLLEVEL=" << GetSkillLevel() << std::endl;
+	ofsOutput << "SKILLCAP=" << GetServerSkillCapStatus() << std::endl;
+	ofsOutput << "SKILLDELAY=" << GetServerSkillDelayStatus() << std::endl;
+	ofsOutput << "STATCAP=" << GetServerStatCapStatus() << std::endl;
+	ofsOutput << "STATDELAY=" << GetServerStatDelayStatus() << std::endl;
+	ofsOutput << "MAXSTEALTHMOVEMENTS=" << GetMaxStealthMovement() << std::endl;
+	ofsOutput << "MAXSTAMINAMOVEMENTS=" << GetMaxStaminaMovement() << std::endl;
+	ofsOutput << "SNOOPISCRIME=" << (GetSnoopIsCrime()?1:0) << std::endl;
 	
-	ofsOutput << endl << "[timers]" << endl;
-	ofsOutput << "CORPSEDECAYTIMER=" << GetSystemTimerStatus( CORPSE_DECAY ) << endl;
-	ofsOutput << "LOOTDECAYTIMER=" << GetSystemTimerStatus( LOOT_DECAY ) << endl;
-	ofsOutput << "WEATHERTIMER=" << GetSystemTimerStatus( WEATHER ) << endl;
-	ofsOutput << "SHOPSPAWNTIMER=" << GetSystemTimerStatus( SHOP_SPAWN ) << endl;
-	ofsOutput << "DECAYTIMER=" << GetSystemTimerStatus( DECAY ) << endl;
-	ofsOutput << "INVISIBILITYTIMER=" << GetSystemTimerStatus( INVISIBILITY ) << endl;
-	ofsOutput << "OBJECTUSETIMER=" << GetSystemTimerStatus( OBJECT_USAGE ) << endl;
-	ofsOutput << "GATETIMER=" << GetSystemTimerStatus( GATE ) << endl;
-	ofsOutput << "POISONTIMER=" << GetSystemTimerStatus( POISON ) << endl;
-	ofsOutput << "LOGINTIMEOUT=" << GetSystemTimerStatus( LOGIN_TIMEOUT ) << endl;
-	ofsOutput << "HITPOINTREGENTIMER=" << GetSystemTimerStatus( HITPOINT_REGEN ) << endl;
-	ofsOutput << "STAMINAREGENTIMER=" << GetSystemTimerStatus( STAMINA_REGEN ) << endl;
-	ofsOutput << "MANAREGENTIMER=" << GetSystemTimerStatus( MANA_REGEN ) << endl;
-	ofsOutput << "ARMORAFFECTREGENTIMER=" << GetSystemTimerStatus( ARMORAFFECTMANA_REGEN ) << endl;
-	ofsOutput << "BASEFISHINGTIMER=" << GetSystemTimerStatus( BASE_FISHING ) << endl;
-	ofsOutput << "RANDOMFISHINGTIMER=" << GetSystemTimerStatus( RANDOM_FISHING ) << endl;
-	ofsOutput << "SPIRITSPEAKTIMER=" << GetSystemTimerStatus( SPIRIT_SPEAK ) << endl;
-	ofsOutput << "BEGGINGTIMER=" << GetSystemTimerStatus( BEGGING_T ) << endl;
+	ofsOutput << std::endl << "[timers]" << std::endl;
+	ofsOutput << "CORPSEDECAYTIMER=" << GetSystemTimerStatus( CORPSE_DECAY ) << std::endl;
+	ofsOutput << "LOOTDECAYTIMER=" << GetSystemTimerStatus( LOOT_DECAY ) << std::endl;
+	ofsOutput << "WEATHERTIMER=" << GetSystemTimerStatus( WEATHER ) << std::endl;
+	ofsOutput << "SHOPSPAWNTIMER=" << GetSystemTimerStatus( SHOP_SPAWN ) << std::endl;
+	ofsOutput << "DECAYTIMER=" << GetSystemTimerStatus( DECAY ) << std::endl;
+	ofsOutput << "INVISIBILITYTIMER=" << GetSystemTimerStatus( INVISIBILITY ) << std::endl;
+	ofsOutput << "OBJECTUSETIMER=" << GetSystemTimerStatus( OBJECT_USAGE ) << std::endl;
+	ofsOutput << "GATETIMER=" << GetSystemTimerStatus( GATE ) << std::endl;
+	ofsOutput << "POISONTIMER=" << GetSystemTimerStatus( POISON ) << std::endl;
+	ofsOutput << "LOGINTIMEOUT=" << GetSystemTimerStatus( LOGIN_TIMEOUT ) << std::endl;
+	ofsOutput << "HITPOINTREGENTIMER=" << GetSystemTimerStatus( HITPOINT_REGEN ) << std::endl;
+	ofsOutput << "STAMINAREGENTIMER=" << GetSystemTimerStatus( STAMINA_REGEN ) << std::endl;
+	ofsOutput << "MANAREGENTIMER=" << GetSystemTimerStatus( MANA_REGEN ) << std::endl;
+	ofsOutput << "ARMORAFFECTREGENTIMER=" << GetSystemTimerStatus( ARMORAFFECTMANA_REGEN ) << std::endl;
+	ofsOutput << "BASEFISHINGTIMER=" << GetSystemTimerStatus( BASE_FISHING ) << std::endl;
+	ofsOutput << "RANDOMFISHINGTIMER=" << GetSystemTimerStatus( RANDOM_FISHING ) << std::endl;
+	ofsOutput << "SPIRITSPEAKTIMER=" << GetSystemTimerStatus( SPIRIT_SPEAK ) << std::endl;
+	ofsOutput << "BEGGINGTIMER=" << GetSystemTimerStatus( BEGGING_T ) << std::endl;
 
 	
-	ofsOutput << endl << "[directories]" << endl;
-	ofsOutput << "DIRECTORY=" << GetRootDirectory() << endl;
-	ofsOutput << "DATADIRECTORY=" << GetDataDirectory() << endl;
-	ofsOutput << "DEFSDIRECTORY=" << GetDefsDirectory() << endl;
-	ofsOutput << "BOOKSDIRECTORY=" << GetBooksDirectory() << endl;
-	ofsOutput << "ACTSDIRECTORY=" << GetAccountsDirectory() << endl;
-	ofsOutput << "SCRIPTSDIRECTORY=" << GetScriptsDirectory() << endl;
-	ofsOutput << "BACKUPDIRECTORY=" << GetBackupDirectory() << endl;
-	ofsOutput << "MSGBOARDDIRECTORY=" << GetMsgBoardDirectory() << endl;
-	ofsOutput << "SHAREDDIRECTORY=" << GetSharedDirectory() << endl;
+	ofsOutput << std::endl << "[directories]" << std::endl;
+	ofsOutput << "DIRECTORY=" << GetRootDirectory() << std::endl;
+	ofsOutput << "DATADIRECTORY=" << GetDataDirectory() << std::endl;
+	ofsOutput << "DEFSDIRECTORY=" << GetDefsDirectory() << std::endl;
+	ofsOutput << "BOOKSDIRECTORY=" << GetBooksDirectory() << std::endl;
+	ofsOutput << "ACTSDIRECTORY=" << GetAccountsDirectory() << std::endl;
+	ofsOutput << "SCRIPTSDIRECTORY=" << GetScriptsDirectory() << std::endl;
+	ofsOutput << "BACKUPDIRECTORY=" << GetBackupDirectory() << std::endl;
+	ofsOutput << "MSGBOARDDIRECTORY=" << GetMsgBoardDirectory() << std::endl;
+	ofsOutput << "SHAREDDIRECTORY=" << GetSharedDirectory() << std::endl;
 	// EviLDeD: 022702: The might be some of the reason that paths are fucked.
-	ofsOutput << "ACCESSDIRECTORY=" << GetAccessDirectory() << endl;
-	ofsOutput << "HTMLDIRECTORY=" << GetHTMLDirectory() << endl;
-	ofsOutput << "LOGSDIRECTORY=" << GetLogsDirectory() << endl;
-	ofsOutput << "GUMPSDIRECTORY=" << GetGumpsDirectory() << endl;
-	ofsOutput << "DICTIONARYDIRECTORY=" << GetDictionaryDirectory() << endl;
+	ofsOutput << "ACCESSDIRECTORY=" << GetAccessDirectory() << std::endl;
+	ofsOutput << "HTMLDIRECTORY=" << GetHTMLDirectory() << std::endl;
+	ofsOutput << "LOGSDIRECTORY=" << GetLogsDirectory() << std::endl;
+	ofsOutput << "GUMPSDIRECTORY=" << GetGumpsDirectory() << std::endl;
+	ofsOutput << "DICTIONARYDIRECTORY=" << GetDictionaryDirectory() << std::endl;
 	
-	ofsOutput << endl << "[settings]" << endl;
-	ofsOutput << "SAVESPERLOOP=" << GetServerAntiLagSavesPerLoop() << endl;
-	ofsOutput << "LOOTDECAYSWITHCORPSE=" << (GetCorpseLootDecay()?1:0) << endl;
-	ofsOutput << "GUARDSACTIVE=" << (GetGuardsStatus()?1:0) << endl;
-	ofsOutput << "DEATHANIMATION=" << (GetDeathAnimationStatus()?1:0) << endl;
-	ofsOutput << "AMBIENTSOUNDS=" << GetWorldAmbientSounds() << endl;
-	ofsOutput << "AMBIENTFOOTSTEPS=" << (GetAmbientFootsteps()?1:0) << endl;
-	ofsOutput << "EXTERNALACCOUNTCREATION=" << (GetExternalAccountStatus()?1:0) << endl;
-	ofsOutput << "INTERNALACCOUNTCREATION=" << (GetInternalAccountStatus()?1:0) << endl;
-	ofsOutput << "SHOWHIDDENNPCS=" << (GetShowHiddenNpcStatus()?1:0) << endl;
-	ofsOutput << "ROGUESENABLED=" << (GetRogueStatus()?1:0) << endl;
-	ofsOutput << "ENGRAVEENABLED=" << (GetEngraveStatus()?1:0) << endl;
-	ofsOutput << "UOXBOTENABLED=" << (GetUoxBotStatus()?1:0) << endl;
-	ofsOutput << "PLAYERPERSECUTION=" << (GetPlayerPersecutionStatus()?1:0) << endl;
-	ofsOutput << "LAGFIX=" << (GetLagFixStatus()?1:0) << endl;
-	ofsOutput << "ACCOUNTFLUSH=" << GetAccountFlushTimer() << endl;
-	ofsOutput << "HTMLSTATUSENABLED=" << GetHtmlStatsStatus() << endl;
-	ofsOutput << "SELLBYNAME=" << (GetSellByNameStatus()?1:0) << endl;
-	ofsOutput << "SELLMAXITEMS=" << GetSellMaxItemsStatus() << endl;
-	ofsOutput << "TRADESYSTEM=" << (GetTradeSystemStatus()?1:0) << endl;
-	ofsOutput << "RANKSYSTEM=" << (GetRankSystemStatus()?1:0) << endl;
-	ofsOutput << "NPCTILECHECK=" << GetNpcTileCheckStatus() << endl;
-	ofsOutput << "CUTSCROLLREQUIREMENTS=" << (GetCutScrollRequirementStatus()?1:0) << endl;
-	ofsOutput << "WILDERNESSBANKENABLED=" << (GetWildernessBankStatus()?1:0) << endl;
-	ofsOutput << "WILDERNESSBANKKEYWORD=" << GetWildernessBankTriggerString() << endl;
-	ofsOutput << "HEARTBEAT=" << (GetSystemHeartBeatStatus()?1:0) << endl;
-	ofsOutput << "SCRIPTSECTIONHEADER=" << (ServerScriptSectionHeader()?1:0) << endl;
-	ofsOutput << "NPCTRAININGENABLED=" << (GetNPCTrainingStatus()?1:0) << endl;
-	ofsOutput << "HIDEWILEMOUNTED=" << (GetCharHideWhileMounted()?1:0) << endl;
+	ofsOutput << std::endl << "[settings]" << std::endl;
+	ofsOutput << "SAVESPERLOOP=" << GetServerAntiLagSavesPerLoop() << std::endl;
+	ofsOutput << "LOOTDECAYSWITHCORPSE=" << (GetCorpseLootDecay()?1:0) << std::endl;
+	ofsOutput << "GUARDSACTIVE=" << (GetGuardsStatus()?1:0) << std::endl;
+	ofsOutput << "DEATHANIMATION=" << (GetDeathAnimationStatus()?1:0) << std::endl;
+	ofsOutput << "AMBIENTSOUNDS=" << GetWorldAmbientSounds() << std::endl;
+	ofsOutput << "AMBIENTFOOTSTEPS=" << (GetAmbientFootsteps()?1:0) << std::endl;
+	ofsOutput << "EXTERNALACCOUNTCREATION=" << (GetExternalAccountStatus()?1:0) << std::endl;
+	ofsOutput << "INTERNALACCOUNTCREATION=" << (GetInternalAccountStatus()?1:0) << std::endl;
+	ofsOutput << "SHOWHIDDENNPCS=" << (GetShowHiddenNpcStatus()?1:0) << std::endl;
+	ofsOutput << "ROGUESENABLED=" << (GetRogueStatus()?1:0) << std::endl;
+	ofsOutput << "ENGRAVEENABLED=" << (GetEngraveStatus()?1:0) << std::endl;
+	ofsOutput << "UOXBOTENABLED=" << (GetUoxBotStatus()?1:0) << std::endl;
+	ofsOutput << "PLAYERPERSECUTION=" << (GetPlayerPersecutionStatus()?1:0) << std::endl;
+	ofsOutput << "LAGFIX=" << (GetLagFixStatus()?1:0) << std::endl;
+	ofsOutput << "ACCOUNTFLUSH=" << GetAccountFlushTimer() << std::endl;
+	ofsOutput << "HTMLSTATUSENABLED=" << GetHtmlStatsStatus() << std::endl;
+	ofsOutput << "SELLBYNAME=" << (GetSellByNameStatus()?1:0) << std::endl;
+	ofsOutput << "SELLMAXITEMS=" << GetSellMaxItemsStatus() << std::endl;
+	ofsOutput << "TRADESYSTEM=" << (GetTradeSystemStatus()?1:0) << std::endl;
+	ofsOutput << "RANKSYSTEM=" << (GetRankSystemStatus()?1:0) << std::endl;
+	ofsOutput << "NPCTILECHECK=" << GetNpcTileCheckStatus() << std::endl;
+	ofsOutput << "CUTSCROLLREQUIREMENTS=" << (GetCutScrollRequirementStatus()?1:0) << std::endl;
+	ofsOutput << "WILDERNESSBANKENABLED=" << (GetWildernessBankStatus()?1:0) << std::endl;
+	ofsOutput << "WILDERNESSBANKKEYWORD=" << GetWildernessBankTriggerString() << std::endl;
+	ofsOutput << "HEARTBEAT=" << (GetSystemHeartBeatStatus()?1:0) << std::endl;
+	ofsOutput << "SCRIPTSECTIONHEADER=" << (ServerScriptSectionHeader()?1:0) << std::endl;
+	ofsOutput << "NPCTRAININGENABLED=" << (GetNPCTrainingStatus()?1:0) << std::endl;
+	ofsOutput << "HIDEWILEMOUNTED=" << (GetCharHideWhileMounted()?1:0) << std::endl;
 
-	ofsOutput << endl << "[speedup]" << endl;
-	ofsOutput << "SPEEDCHECKITEMS=" << GetCheckItemsSpeed() << endl;
-	ofsOutput << "SPEEDCHECKNPCS=" << GetCheckNpcSpeed() << endl;
-	ofsOutput << "SPEEDCHECKBOATS=" << GetCheckBoatSpeed() << endl;
-	ofsOutput << "SPEEDCHECKNPCAI=" << GetCheckNpcAISpeed() << endl;
-	ofsOutput << "SPEEDCHECKSPAWNREGIONS=" << GetCheckSpawnRegionSpeed() << endl;
-	ofsOutput << "SPEEDCHECKMEMORY=" << GetCheckMemorySpeed() << endl;
+	ofsOutput << std::endl << "[speedup]" << std::endl;
+	ofsOutput << "SPEEDCHECKITEMS=" << GetCheckItemsSpeed() << std::endl;
+	ofsOutput << "SPEEDCHECKNPCS=" << GetCheckNpcSpeed() << std::endl;
+	ofsOutput << "SPEEDCHECKBOATS=" << GetCheckBoatSpeed() << std::endl;
+	ofsOutput << "SPEEDCHECKNPCAI=" << GetCheckNpcAISpeed() << std::endl;
+	ofsOutput << "SPEEDCHECKSPAWNREGIONS=" << GetCheckSpawnRegionSpeed() << std::endl;
+	ofsOutput << "SPEEDCHECKMEMORY=" << GetCheckMemorySpeed() << std::endl;
 	
-	ofsOutput << endl << "[message boards]" << endl;
-	ofsOutput << "MSGBOARDPOSTINGLEVEL=" << GetMsgBoardPostingLevel() << endl;
-	ofsOutput << "MSGBOARDREMOVALLEVEL=" << GetMsgBoardPostRemovalLevel() << endl;
-	ofsOutput << "MSGBOARDKEEPMESSAGES=" << GetMsgBoardKeepMsgsStatus() << endl;
-	//ofsOutput << "MSGBOARDADMINLEVEL=" << GetMsgBoardAdminLevel() << endl;
-	//ofsOutput << "MSGBOARDMAXMESSAGESALLOWED=" << GetMsgBoardMaxMsgsAllowed() << endl;
-	//ofsOutput << "MSGBOARDMAXMSGSRESPONSE=" << GetMsgBoardMaxMsgResponse() << endl;
+	ofsOutput << std::endl << "[message boards]" << std::endl;
+	ofsOutput << "MSGBOARDPOSTINGLEVEL=" << GetMsgBoardPostingLevel() << std::endl;
+	ofsOutput << "MSGBOARDREMOVALLEVEL=" << GetMsgBoardPostRemovalLevel() << std::endl;
+	ofsOutput << "MSGBOARDKEEPMESSAGES=" << GetMsgBoardKeepMsgsStatus() << std::endl;
+	//ofsOutput << "MSGBOARDADMINLEVEL=" << GetMsgBoardAdminLevel() << std::endl;
+	//ofsOutput << "MSGBOARDMAXMESSAGESALLOWED=" << GetMsgBoardMaxMsgsAllowed() << std::endl;
+	//ofsOutput << "MSGBOARDMAXMSGSRESPONSE=" << GetMsgBoardMaxMsgResponse() << std::endl;
 
-	ofsOutput << endl << "[escorts]" << endl;
-	ofsOutput << "ESCORTENABLED=" << GetEscortsEnabled() << endl;
-	ofsOutput << "ESCORTINITEXPIRE=" << GetEscortInitExpire() << endl;
-	ofsOutput << "ESCORTACTIVEEXPIRE=" << GetEscortActiveExpire() << endl;
-	ofsOutput << "ESCORTDONEEXPIRE=" << GetEscortDoneExpire() << endl;
+	ofsOutput << std::endl << "[escorts]" << std::endl;
+	ofsOutput << "ESCORTENABLED=" << GetEscortsEnabled() << std::endl;
+	ofsOutput << "ESCORTINITEXPIRE=" << GetEscortInitExpire() << std::endl;
+	ofsOutput << "ESCORTACTIVEEXPIRE=" << GetEscortActiveExpire() << std::endl;
+	ofsOutput << "ESCORTDONEEXPIRE=" << GetEscortDoneExpire() << std::endl;
 	
-	ofsOutput << endl << "[worldlight]" << endl;
-	ofsOutput << "LIGHTMOON1=" << GetServerMoon( 0 ) << endl;
-	ofsOutput << "LIGHTMOON1UPDATE=" << GetServerMoonUpdate( 0 ) << endl;
-	ofsOutput << "LIGHTMOON2=" << GetServerMoon( 1 ) << endl;
-	ofsOutput << "LIGHTMOON2UPDATE=" << GetServerMoonUpdate( 1 ) << endl;
-	ofsOutput << "LIGHTDUNGEONLEVEL=" << GetDungeonLightLevel() << endl;
-	ofsOutput << "LIGHTFIXEDLEVEL=" << GetWorldFixedLightLevel() << endl;
-	ofsOutput << "LIGHTCURRENTLEVEL=" << GetWorldLightCurrentLevel() << endl;
-	ofsOutput << "LIGHTBRIGHTLEVEL=" << GetWorldLightBrightLevel() << endl;
-	ofsOutput << "LIGHTDARKLEVEL=" << GetWorldLightDarkLevel() << endl;
-	ofsOutput << "DAY=" << GetServerTimeDay() << endl;
-	ofsOutput << "HOUR=" << GetServerTimeHours() << endl;
-	ofsOutput << "MINUTE=" << GetServerTimeMinutes() << endl;
-	ofsOutput << "AMPM=" << ( GetServerTimeAMPM() ? 1 : 0 ) << endl;
+	ofsOutput << std::endl << "[worldlight]" << std::endl;
+	ofsOutput << "LIGHTMOON1=" << GetServerMoon( 0 ) << std::endl;
+	ofsOutput << "LIGHTMOON1UPDATE=" << GetServerMoonUpdate( 0 ) << std::endl;
+	ofsOutput << "LIGHTMOON2=" << GetServerMoon( 1 ) << std::endl;
+	ofsOutput << "LIGHTMOON2UPDATE=" << GetServerMoonUpdate( 1 ) << std::endl;
+	ofsOutput << "LIGHTDUNGEONLEVEL=" << GetDungeonLightLevel() << std::endl;
+	ofsOutput << "LIGHTFIXEDLEVEL=" << GetWorldFixedLightLevel() << std::endl;
+	ofsOutput << "LIGHTCURRENTLEVEL=" << GetWorldLightCurrentLevel() << std::endl;
+	ofsOutput << "LIGHTBRIGHTLEVEL=" << GetWorldLightBrightLevel() << std::endl;
+	ofsOutput << "LIGHTDARKLEVEL=" << GetWorldLightDarkLevel() << std::endl;
+	ofsOutput << "DAY=" << GetServerTimeDay() << std::endl;
+	ofsOutput << "HOUR=" << GetServerTimeHours() << std::endl;
+	ofsOutput << "MINUTE=" << GetServerTimeMinutes() << std::endl;
+	ofsOutput << "AMPM=" << ( GetServerTimeAMPM() ? 1 : 0 ) << std::endl;
 	
-	ofsOutput << endl << "[begging]" << endl;
-	ofsOutput << "BEGGINGRANGE=" << GetBeggingRange() << endl;
+	ofsOutput << std::endl << "[begging]" << std::endl;
+	ofsOutput << "BEGGINGRANGE=" << GetBeggingRange() << std::endl;
 	
-	ofsOutput << endl << "[tracking]" << endl;
-	ofsOutput << "TRACKINGBASERANGE=" << GetTrackingBaseRange() << endl;
-	ofsOutput << "TRACKINGBASETIMER=" << GetTrackingBaseTimer() << endl;
-	ofsOutput << "TRACKINGMAXTARGETS=" << GetTrackingMaxTargets() << endl;
-	ofsOutput << "TRACKINGMSGREDISPLAYTIME=" << GetTrackingRedisplayTime() << endl;
+	ofsOutput << std::endl << "[tracking]" << std::endl;
+	ofsOutput << "TRACKINGBASERANGE=" << GetTrackingBaseRange() << std::endl;
+	ofsOutput << "TRACKINGBASETIMER=" << GetTrackingBaseTimer() << std::endl;
+	ofsOutput << "TRACKINGMAXTARGETS=" << GetTrackingMaxTargets() << std::endl;
+	ofsOutput << "TRACKINGMSGREDISPLAYTIME=" << GetTrackingRedisplayTime() << std::endl;
 	
-	ofsOutput << endl << "[reputation]" << endl;
-	ofsOutput << "REPSYSMURDERDECAYTIMER=" << GetRepMurderDecay() << endl;
-	ofsOutput << "REPSYSMAXKILLS=" << GetRepMaxKills() << endl;
-	ofsOutput << "REPSYSCRIMINALTIMER=" << GetRepCrimTime() << endl;
+	ofsOutput << std::endl << "[reputation]" << std::endl;
+	ofsOutput << "REPSYSMURDERDECAYTIMER=" << GetRepMurderDecay() << std::endl;
+	ofsOutput << "REPSYSMAXKILLS=" << GetRepMaxKills() << std::endl;
+	ofsOutput << "REPSYSCRIMINALTIMER=" << GetRepCrimTime() << std::endl;
 	
-	ofsOutput << endl << "[resources]" << endl;
-	ofsOutput << "RESOURCEMINECHECK=" << GetMineCheck() << endl;
-	ofsOutput << "RESOURCEOREPERAREA=" << GetResOre() << endl;
-	ofsOutput << "RESOURCEORERESPAWNTIMER=" << GetResOreTime() << endl;
-	ofsOutput << "RESOURCEORERESPAWNAREA=" << GetResOreArea() << endl;
-	ofsOutput << "RESOURCELOGSPERAREA=" << GetResLogs() << endl;
-	ofsOutput << "RESOURCELOGSRESPAWNTIMER=" << GetResLogTime() << endl;
-	ofsOutput << "RESPAWNLOGSRESPAWNAREA=" << GetResLogArea() << endl;
+	ofsOutput << std::endl << "[resources]" << std::endl;
+	ofsOutput << "RESOURCEMINECHECK=" << GetMineCheck() << std::endl;
+	ofsOutput << "RESOURCEOREPERAREA=" << GetResOre() << std::endl;
+	ofsOutput << "RESOURCEORERESPAWNTIMER=" << GetResOreTime() << std::endl;
+	ofsOutput << "RESOURCEORERESPAWNAREA=" << GetResOreArea() << std::endl;
+	ofsOutput << "RESOURCELOGSPERAREA=" << GetResLogs() << std::endl;
+	ofsOutput << "RESOURCELOGSRESPAWNTIMER=" << GetResLogTime() << std::endl;
+	ofsOutput << "RESPAWNLOGSRESPAWNAREA=" << GetResLogArea() << std::endl;
 	
-	ofsOutput << endl << "[hunger]" << endl;
-	ofsOutput << "HUNGERRATE=" << GetHungerRate() << endl;
-	ofsOutput << "HUNGERDAMAGERATETIMER=" << GetHungerDamageRateTimer() << endl;
-	ofsOutput << "HUNGERDMGVAL=" << GetHungerDamage() << endl;
-	ofsOutput << "HUNGERTHRESHOLD=" << GetHungerThreshold() << endl;
+	ofsOutput << std::endl << "[hunger]" << std::endl;
+	ofsOutput << "HUNGERRATE=" << GetHungerRate() << std::endl;
+	ofsOutput << "HUNGERDAMAGERATETIMER=" << GetHungerDamageRateTimer() << std::endl;
+	ofsOutput << "HUNGERDMGVAL=" << GetHungerDamage() << std::endl;
+	ofsOutput << "HUNGERTHRESHOLD=" << GetHungerThreshold() << std::endl;
 
 	
-	ofsOutput << endl << "[combat]" << endl;
-	ofsOutput << "COMBATMAXRANGE=" << GetCombatMaxRange() << endl;
-	ofsOutput << "COMBATWRESTLESPEED=" << GetCombatWrestlingSpeed() << endl;
-	ofsOutput << "COMBATSPELLMAXRANGE=" << GetCombatMaxSpellRange() << endl;
-	ofsOutput << "COMBATMAXMELEEDAMAGE=" << GetCombatMaxMeleeDamage() << endl;
-	ofsOutput << "COMBATMAXSPELLDAMAGE=" << GetCombatMaxSpellDamage() << endl;
-	ofsOutput << "COMBATALLOWCRITICALS=" << GetCombatCriticalsEnabled() << endl;
-	ofsOutput << "COMBATMAXPOISONINGDISTANCE=" << GetCombatMaxPoisoningDistance() << endl;
-	ofsOutput << "COMBATDISPLAYHITMSG=" << (GetCombatDisplayHitMessage()?1:0) << endl;
-	ofsOutput << "COMBATMAXHUMANABSORBTION=" << GetCombatMaxHumanAbsorbtion() << endl;
-	ofsOutput << "COMBATMAXNONHUMANABSORBTION=" << GetCombatMaxNonHumanAbsorbtion() << endl;
-	ofsOutput << "COMBATMONSTERSVSANIMALS=" << (GetCombatMonstersVsAnimals()?1:0) << endl;
-	ofsOutput << "COMBATANIMALATTACKCHANCE=" << GetCombatAnimalsAttackChance() << endl;
-	ofsOutput << "COMBATANIMALSGUARDED=" << (GetCombatAnimalsGuarded()?1:0) << endl;
-	ofsOutput << "COMBATNPCDAMAGERATE=" << GetCombatNPCDamageRate() << endl;
-	ofsOutput << "COMBATNPCBASEFLEEAT=" << GetCombatNPCBaseFleeAt() << endl;
-	ofsOutput << "COMBATNPCBASEREATTACKAT=" << GetCombatNPCBaseReattackAt() << endl;
-	ofsOutput << "COMBATATTACKSTAMINA=" << GetCombatAttackStamina() << endl;
-	ofsOutput << "SHOOTONANIMALBACK=" << (GetShootOnAnimalBack()?1:0) << endl;
+	ofsOutput << std::endl << "[combat]" << std::endl;
+	ofsOutput << "COMBATMAXRANGE=" << GetCombatMaxRange() << std::endl;
+	ofsOutput << "COMBATWRESTLESPEED=" << GetCombatWrestlingSpeed() << std::endl;
+	ofsOutput << "COMBATSPELLMAXRANGE=" << GetCombatMaxSpellRange() << std::endl;
+	ofsOutput << "COMBATMAXMELEEDAMAGE=" << GetCombatMaxMeleeDamage() << std::endl;
+	ofsOutput << "COMBATMAXSPELLDAMAGE=" << GetCombatMaxSpellDamage() << std::endl;
+	ofsOutput << "COMBATALLOWCRITICALS=" << GetCombatCriticalsEnabled() << std::endl;
+	ofsOutput << "COMBATMAXPOISONINGDISTANCE=" << GetCombatMaxPoisoningDistance() << std::endl;
+	ofsOutput << "COMBATDISPLAYHITMSG=" << (GetCombatDisplayHitMessage()?1:0) << std::endl;
+	ofsOutput << "COMBATMAXHUMANABSORBTION=" << GetCombatMaxHumanAbsorbtion() << std::endl;
+	ofsOutput << "COMBATMAXNONHUMANABSORBTION=" << GetCombatMaxNonHumanAbsorbtion() << std::endl;
+	ofsOutput << "COMBATMONSTERSVSANIMALS=" << (GetCombatMonstersVsAnimals()?1:0) << std::endl;
+	ofsOutput << "COMBATANIMALATTACKCHANCE=" << GetCombatAnimalsAttackChance() << std::endl;
+	ofsOutput << "COMBATANIMALSGUARDED=" << (GetCombatAnimalsGuarded()?1:0) << std::endl;
+	ofsOutput << "COMBATNPCDAMAGERATE=" << GetCombatNPCDamageRate() << std::endl;
+	ofsOutput << "COMBATNPCBASEFLEEAT=" << GetCombatNPCBaseFleeAt() << std::endl;
+	ofsOutput << "COMBATNPCBASEREATTACKAT=" << GetCombatNPCBaseReattackAt() << std::endl;
+	ofsOutput << "COMBATATTACKSTAMINA=" << GetCombatAttackStamina() << std::endl;
+	ofsOutput << "SHOOTONANIMALBACK=" << (GetShootOnAnimalBack()?1:0) << std::endl;
 	
-	ofsOutput << endl << "[start locations]" << endl;
+	ofsOutput << std::endl << "[start locations]" << std::endl;
 	for( UI32 lCtr = 0; lCtr < startlocations.size(); lCtr++ )
-		ofsOutput << "LOCATION=" << startlocations[lCtr].town << "," << startlocations[lCtr].description << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << endl;
+		ofsOutput << "LOCATION=" << startlocations[lCtr].town << "," << startlocations[lCtr].description << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << std::endl;
 	
-	ofsOutput << endl << "[startup]" << endl;
-	ofsOutput << "STARTGOLD=" << GetServerStartGold() << endl;
-	ofsOutput << "STARTPRIVS1=" << (UI16)GetServerStartPrivs( 0 ) << endl;
-	ofsOutput << "STARTPRIVS2=" << (UI16)GetServerStartPrivs( 1 ) << endl;
+	ofsOutput << std::endl << "[startup]" << std::endl;
+	ofsOutput << "STARTGOLD=" << GetServerStartGold() << std::endl;
+	ofsOutput << "STARTPRIVS1=" << (UI16)GetServerStartPrivs( 0 ) << std::endl;
+	ofsOutput << "STARTPRIVS2=" << (UI16)GetServerStartPrivs( 1 ) << std::endl;
 	
-	ofsOutput << endl << "[gumps]" << endl;
-	ofsOutput << "TITLECOLOUR=" << GetTitleColour() << endl;
-	ofsOutput << "LEFTTEXTCOLOUR=" << GetLeftTextColour() << endl;
-	ofsOutput << "RIGHTTEXTCOLOUR=" << GetRightTextColour() << endl;
-	ofsOutput << "BUTTONCANCEL=" << GetButtonCancel() << endl;
-	ofsOutput << "BUTTONLEFT=" << GetButtonLeft() << endl;
-	ofsOutput << "BUTTONRIGHT=" << GetButtonRight() << endl;
-	ofsOutput << "BACKGROUNDPIC=" << GetBackgroundPic() << endl;
+	ofsOutput << std::endl << "[gumps]" << std::endl;
+	ofsOutput << "TITLECOLOUR=" << GetTitleColour() << std::endl;
+	ofsOutput << "LEFTTEXTCOLOUR=" << GetLeftTextColour() << std::endl;
+	ofsOutput << "RIGHTTEXTCOLOUR=" << GetRightTextColour() << std::endl;
+	ofsOutput << "BUTTONCANCEL=" << GetButtonCancel() << std::endl;
+	ofsOutput << "BUTTONLEFT=" << GetButtonLeft() << std::endl;
+	ofsOutput << "BUTTONRIGHT=" << GetButtonRight() << std::endl;
+	ofsOutput << "BACKGROUNDPIC=" << GetBackgroundPic() << std::endl;
 	
-	ofsOutput << endl << "[towns]" << endl;
-	ofsOutput << "POLLTIME=" << GetTownNumSecsPollOpen() << endl;
-	ofsOutput << "MAYORTIME=" << GetTownNumSecsAsMayor() << endl;
-	ofsOutput << "TAXPERIOD=" << GetTownTaxPeriod() << endl;
-	ofsOutput << "GUARDSPAID=" << GetTownGuardPayment() << endl;
+	ofsOutput << std::endl << "[towns]" << std::endl;
+	ofsOutput << "POLLTIME=" << GetTownNumSecsPollOpen() << std::endl;
+	ofsOutput << "MAYORTIME=" << GetTownNumSecsAsMayor() << std::endl;
+	ofsOutput << "TAXPERIOD=" << GetTownTaxPeriod() << std::endl;
+	ofsOutput << "GUARDSPAID=" << GetTownGuardPayment() << std::endl;
 	
 	ofsOutput.close();
 	return true;
@@ -2142,7 +2142,7 @@ bool cServerData::save( const char *filename )
 //o------------------------------------------------------------------------
 cServerData * cServerData::load( void )
 {
-	string s = GetRootDirectory();
+	std::string s = GetRootDirectory();
 	s += "/uox.ini";
 	return load( s.c_str() );
 }
@@ -2263,7 +2263,7 @@ UI32 cServerData::GetSpiritSpeakTimer( void )
 //o-----------------------------------------------------------------------o
 void cServerData::DumpLookup(int lookupid)
 {
-	ofstream ofsOutput;
+	std::ofstream ofsOutput;
 	cServerData sd;
 	char *source1 = NULL, *token = NULL;
 	char buffer[81];
@@ -2272,7 +2272,7 @@ void cServerData::DumpLookup(int lookupid)
 	switch( lookupid )
 	{
 		case 1:
-			ofsOutput.open( "uox.ini.lookup.txt", ios::out );
+			ofsOutput.open( "uox.ini.lookup.txt", std::ios::out );
 			if( !ofsOutput.is_open() )
 			{
 				Console << "-o [DLOOKUP]: Unable to open file \"uox3.ini.lookup.txt\" for writing.." << myendl;
@@ -2292,7 +2292,7 @@ void cServerData::DumpLookup(int lookupid)
 			break;
 		case 0:
 		default:
-			ofsOutput.open( "server.scp.lookup.txt", ios::out );
+			ofsOutput.open( "server.scp.lookup.txt", std::ios::out );
 			if( !ofsOutput.is_open() )
 			{
 				Console << "|-o [DLOOKUP]: Unable to open file \"server.scp.lookup.txt\" for writing.." << myendl;
@@ -2334,13 +2334,13 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 {
 	if( !filename )
 		return NULL;
-	string sFilename = filename;
-	ifstream inFile;
+	std::string sFilename = filename;
+	std::ifstream inFile;
 
 	Console << "Processing INI Settings (V" << (SI16)LOBYTE( ver ) << "." << (SI16)HIBYTE( ver ) << ") ";
 
 	// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-	inFile.open( sFilename.c_str(), ios::in );	
+	inFile.open( sFilename.c_str(), std::ios::in );	
 	if( !inFile.is_open() )
 	{
 		Console << "FAILED!" << myendl << "Error: Unable to open file." << sFilename << myendl;
@@ -3073,13 +3073,13 @@ cServerData * cServerData::ParseUox3ServerScp(const char *filename)
 {
 	if( !filename )
 		return NULL;
-	string sFilename = filename;
-	ifstream inFile;
+	std::string sFilename = filename;
+	std::ifstream inFile;
 
 	Console << "Processing server file \"" << filename << "\"..." << "Detected V1...";
 
 	// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-	inFile.open( sFilename.c_str(), ios::in );	
+	inFile.open( sFilename.c_str(), std::ios::in );	
 	if( !inFile.is_open() )
 	{
 		Console << "FAILED!" << myendl << "Error: Unable to open source file." << filename << myendl;
@@ -3870,8 +3870,8 @@ bool cServerData::IncDay( void )
 long cServerData::VersionCheck( const char *filename )
 {
 	long version = MAKEWORD( 0, 0 );
-	string sFilename = filename;
-	ifstream inFile( sFilename.c_str(), ios::in );
+	std::string sFilename = filename;
+	std::ifstream inFile( sFilename.c_str(), std::ios::in );
 	if( !inFile.is_open() )
 		return version;
 	char szLine[129];
@@ -3981,15 +3981,15 @@ UI08 cServerData::SaveMode( UI08 NewMode )
    return ipAddress ;
 }*/
 
-void physicalServer::setName(const string newName)
+void physicalServer::setName(const std::string newName)
 {
   name = newName;
 }
-void physicalServer::setDomain(const string newDomain)
+void physicalServer::setDomain(const std::string newDomain)
 {
   domain = newDomain;
 }
-void physicalServer::setIP(const string newIP)
+void physicalServer::setIP(const std::string newIP)
 {
   ip = newIP;
 }
@@ -3997,15 +3997,15 @@ void physicalServer::setPort(SI16 newPort)
 {
   port = newPort;
 }
-string physicalServer::getName(void)
+std::string physicalServer::getName(void)
 {
   return name;
 }
-string physicalServer::getDomain(void)
+std::string physicalServer::getDomain(void)
 {
   return domain;
 }
-string physicalServer::getIP(void)
+std::string physicalServer::getIP(void)
 {
   return ip; 
 }

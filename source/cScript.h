@@ -118,14 +118,14 @@ private:
 	bool		EventExists( ScriptEvent eventNum ) const;
 	void		SetEventExists( ScriptEvent eventNum, bool status );
 
-	vector< InUseEntry >	raceObjects;
-	vector< InUseEntry >	charObjects;
-	vector< InUseEntry >	itemObjects;
-	vector< InUseEntry >	sockObjects;
-	vector< InUseEntry >	guildObjects;
-	vector< InUseEntry >	regionObjects;
+	std::vector< InUseEntry >	raceObjects;
+	std::vector< InUseEntry >	charObjects;
+	std::vector< InUseEntry >	itemObjects;
+	std::vector< InUseEntry >	sockObjects;
+	std::vector< InUseEntry >	guildObjects;
+	std::vector< InUseEntry >	regionObjects;
 
-	vector< SEGump * >		gumpDisplays;
+	std::vector< SEGump * >		gumpDisplays;
 
 	UI32		FindFreePosition( IUEEntries iType ) const;
 	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
@@ -145,7 +145,7 @@ public:
 	void		HandleGumpPress( cSocket *pressing, long button );
 	void		HandleGumpInput( cSocket *pressing );
 
-				cScript( string targFile );
+	cScript( std::string targFile );
 	virtual		~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer

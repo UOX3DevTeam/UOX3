@@ -75,7 +75,7 @@ void buyItem( cSocket *mSock )
 
 	char temp[1024];
 
-	vector< int > bitems, amount, layer;
+	std::vector< int > bitems, amount, layer;
 
 	CChar *npc = calcCharObjFromSer( mSock->GetDWord( 3 ) );
 	

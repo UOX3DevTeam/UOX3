@@ -49,7 +49,7 @@ struct cmdtable_mapentry
 	cmdtable_mapentry() : cmdLevelReq( 0 ), cmdType( CMD_FUNC ), cmd_extra( NULL ) { }
 	cmdtable_mapentry( UI32 cLR, UI32 cT, void (*ce)() ) : cmdLevelReq( cLR ), cmdType( cT ), cmd_extra( ce ) { }
 };
-typedef map< string, cmdtable_mapentry >	CmdTableDataType;
+typedef std::map< std::string, cmdtable_mapentry >	CmdTableDataType;
 typedef CmdTableDataType::iterator			CmdTableIterator;
 extern	CmdTableDataType					cmd_table;
 

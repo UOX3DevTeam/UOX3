@@ -198,7 +198,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	}
 	if( s->GetRaceGate() == 65535 || always )
 	{
-		map< UI08, string > lossMap;
+		std::map< UI08, std::string > lossMap;
 
 		lossMap[STRENGTH] = "strength";
 		lossMap[DEXTERITY] = "speed";

@@ -8,7 +8,7 @@
 	#include <direct.h>
 #endif
 
-const string dirnames[NUM_DEFS] = 
+const std::string dirnames[NUM_DEFS] = 
 {
 	"items",
 	"npc",
@@ -137,17 +137,17 @@ Script *cServerDefinitions::FindScript( const char *toFind, DefinitionCategories
 	return NULL;
 }
 
-const string defExt = "*.dfn";
+const std::string defExt = "*.dfn";
 
 struct PrioScan
 {
-	string	filename;
+	std::string	filename;
 	SI16	priority;
 	PrioScan() : filename( "" ), priority( 0 ) { }
 	PrioScan( const char *toUse, SI16 mPrio ) : filename( toUse ), priority( mPrio ) { }
 };
 
-void SortPrioVec( vector< PrioScan * > *toSort )
+void SortPrioVec( std::vector< PrioScan * > *toSort )
 {
 	if( toSort == NULL )
 		return;
@@ -177,7 +177,7 @@ void cServerDefinitions::ReloadScriptObjects( void )
 		UI08 wasPriod = 2;
 		BuildPriorityMap( (DefinitionCategories)sCtr, wasPriod );
 		BuildFileList( (DefinitionCategories)sCtr );
-		vector< PrioScan * >	mSort;
+		std::vector< PrioScan * >	mSort;
 		for( UI32 i = 0; i < filenameListings.size(); i++ )
 		{
 			const char *fname = filenameListings[i].c_str();
@@ -346,7 +346,7 @@ void cServerDefinitions::CleanFileList( void )
 void cServerDefinitions::DisplayPriorityMap( void )
 {
 	Console << "Dumping map... " << myendl;
-	map< string, SI16 >::iterator p = priorityMap.begin();
+	std::map< std::string, SI16 >::iterator p = priorityMap.begin();
 	while( p != priorityMap.end() )
 	{
 		Console << p->first.c_str() << " : " << p->second << myendl;
@@ -360,7 +360,7 @@ SI16 cServerDefinitions::GetPriority( const char *file )
 	char lowername[MAX_PATH];
 	strcpy( lowername, file );
 	strlwr( lowername );
-	map< string, SI16 >::const_iterator p = priorityMap.find( lowername );
+	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
 	if( p == priorityMap.end() )
 		return defaultPriority;
 	else
@@ -377,22 +377,22 @@ bool cServerDefinitions::PushDir( DefinitionCategories toMove )
 
 	char cwd[MAX_PATH + 1];
 	if (!getcwd(cwd, MAX_PATH + 1))
-	  {
-	    Console.Error(1, "Failed to allocate enough room for cwd");
-	    Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
-	  }
+	{
+		Console.Error(1, "Failed to allocate enough room for cwd");
+	  Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
+	}
 	dirs.push(cwd);
 	
 	if ( _chdir( filePath ) == 0 )
-	  {
-	    return 1;
-	  }
+	{
+		return 1;
+	}
 	else
-	  {
-	    Console.Error( 1, "DFN directory %s does not exist", filePath );
-	    Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
-	  }
-
+	{
+	  Console.Error( 1, "DFN directory %s does not exist", filePath );
+	  Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+  }
+	return 0;
 }
 
 void cServerDefinitions::PopDir( void )

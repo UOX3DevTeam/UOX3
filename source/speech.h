@@ -3,9 +3,9 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+//using namespace std;
 
-const string DistinctLanguageNames[DL_COUNT] =
+const std::string DistinctLanguageNames[DL_COUNT] =
 {
 	"UNK",
 	"ZRO",
@@ -16,7 +16,7 @@ const string DistinctLanguageNames[DL_COUNT] =
 	"JAP"
 };
 
-const string LanguageCodes[TOTAL_LANGUAGES] =
+const std::string LanguageCodes[TOTAL_LANGUAGES] =
 {
 	"ZRO",	// default server language
 	"ARA",	// Arabic Saudi Arabia
@@ -354,7 +354,7 @@ public:
 	}
 };
 
-typedef vector< CSpeechEntry >	SPEECHLIST;
+typedef std::vector< CSpeechEntry >	SPEECHLIST;
 typedef SPEECHLIST::iterator	SPEECHITERATOR;
 
 class CSpeechQueue

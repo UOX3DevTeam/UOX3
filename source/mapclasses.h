@@ -78,9 +78,9 @@ protected:
 	SI08 name[23];	// manually padded to long to avoid bus errors - fur
 
 public:
-		 CTile() : unknown1( 0 ), unknown2( 0 ), unknown3( 0 ), weight( 0 ), height( 0 ), layer( 0 ), animation( 0 ) { name[0] = 0; }
-		 CTile( UOXFile *toRead ) { Read( toRead ); }
-		 CTile( ifstream &toRead );
+	CTile() : unknown1( 0 ), unknown2( 0 ), unknown3( 0 ), weight( 0 ), height( 0 ), layer( 0 ), animation( 0 ) { name[0] = 0; }
+	CTile( UOXFile *toRead ) { Read( toRead ); }
+	CTile( std::ifstream &toRead );
 	void Read( UOXFile *toRead );
 	SI32 Unknown1( void )	{	return unknown1;	}
 	SI32 Animation( void )	{	return animation;	}
@@ -109,9 +109,9 @@ protected:
 	SI08 unknown2;
 	SI08 name[20];
 public:
-			CLand() : unknown1( 0 ), unknown2( 0 ) { name[0] = 0; }
-			CLand( ifstream &toRead );
-			CLand( UOXFile *toRead ) { Read( toRead ); }
+	CLand() : unknown1( 0 ), unknown2( 0 ) { name[0] = 0; }
+	CLand( std::ifstream &toRead );
+	CLand( UOXFile *toRead ) { Read( toRead ); }
 	void	Read( UOXFile *toRead );
 
 	char	Unknown1( void )	{	return unknown1;		}

@@ -530,8 +530,8 @@ bool cSpawnRegion::FindSpotForItem( SI16 &x, SI16 &y, SI08 &z )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::checkSpawned()
 {
-	vector< CChar *>::iterator i;
-	vector< CItem *>::iterator j;
+	std::vector< CChar *>::iterator i;
+	std::vector< CItem *>::iterator j;
 
 	for( i = scharlist.begin(); i != scharlist.end(); i++ )
 	{
@@ -565,7 +565,7 @@ void cSpawnRegion::checkSpawned()
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 {
-	vector< CChar *>::iterator i;
+	std::vector< CChar *>::iterator i;
 
 	for( i = scharlist.begin(); i != scharlist.end(); i++ )
 	{
@@ -586,7 +586,7 @@ void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 {
-	vector< CItem *>::iterator i;
+	std::vector< CItem *>::iterator i;
 
 	for( i = sitemlist.begin(); i != sitemlist.end(); i++ )
 	{

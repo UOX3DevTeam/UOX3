@@ -12,7 +12,7 @@ cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {
 }
 
-cDice::cDice( string dieString )
+cDice::cDice( std::string dieString )
 {
 	convStringToDice( dieString );
 }
@@ -51,7 +51,7 @@ int cDice::roll( void )
 	return sum;
 }
 
-bool cDice::convStringToDice( string dieString )
+bool cDice::convStringToDice( std::string dieString )
 {
 	int dLoc = -1, pLoc = -1;
 	dice = 1;

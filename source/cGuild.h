@@ -6,23 +6,23 @@
 #include <vector>
 #include <map>
 
-using namespace std;
+//using namespace std;
 
-const string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknown" };
-const string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
+const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknown" };
+const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
 const SI16 BasePage = 8000;
 
-typedef map< GuildID, GuildRelation >	GUILDREL;
-typedef vector< SERIAL > SERLIST;
+typedef std::map< GuildID, GuildRelation >	GUILDREL;
+typedef std::vector< SERIAL > SERLIST;
 
 class CGuild
 {
 protected:
-	string		name;
+	std::string		name;
 	char		abbreviation[4];
 	GuildType	gType;
-	string		charter;
-	string		webpage;
+	std::string		charter;
+	std::string		webpage;
 	SERIAL		stone;
 	SERIAL		master;
 	SERLIST		recruits;
@@ -91,7 +91,7 @@ public:
 	bool		IsAlly( GuildID otherGuild ) const;
 
 	void		SetGuildRelation( GuildID otherGuild, GuildRelation toSet );
-	void		Save( ofstream &toSave, GuildID gNum );
+	void		Save( std::ofstream &toSave, GuildID gNum );
 	void		Load( ScriptSection *toRead );
 
 	GUILDREL *	GuildRelationList( void );	// NOTE: This is aimed ONLY at menu stuff
@@ -109,7 +109,7 @@ public:
 	bool		IsMember( CChar &toCheck ) const;
 };
 
-typedef map< GuildID, CGuild * > GUILDLIST;
+typedef std::map< GuildID, CGuild * > GUILDLIST;
 class CGuildCollection
 {
 protected:

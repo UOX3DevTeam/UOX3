@@ -20,7 +20,7 @@ CGump::~CGump()
 }
 
 // Procedure for "raw" adding new tags/texts
-void CGump::Add( string Tag, string Text )
+void CGump::Add( std::string Tag, std::string Text )
 {
 	if( Tag.size() > 0 )
 		TagList.push_back( Tag );
@@ -155,7 +155,7 @@ void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behavi
 }
 
 // Add an "auto-Text"
-void CGump::AddText( UI16 x, UI16 y, UI16 hue, string Text )
+void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 {
 	char temp[128];
 	UI32 TextID = TextList.size();

@@ -95,7 +95,7 @@ public:
 class cWeatherAb
 {
 	protected:
-		vector< CWeather > weather;
+		std::vector< CWeather > weather;
 		char	Intensity( weathID toCheck, UI08 weathType );
 		void	Intensity( weathID toCheck, UI08 weathType, char value );
 		char	Chance( weathID toCheck, UI08 weathType );

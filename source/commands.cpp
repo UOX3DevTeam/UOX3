@@ -892,7 +892,7 @@ void cCommands::Load( void )
 	const char *tag = NULL;
 	const char *data = NULL;
 
-	vector< string > badCommands;
+	std::vector< std::string > badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data = commands->GrabData();

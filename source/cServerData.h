@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
+//using namespace std;
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
@@ -53,19 +53,19 @@ using namespace std;
 class physicalServer
 {
 public:
-  void setName(const string newName);
-  void setDomain(const string newDomain);
-  void setIP(const string newIP);
+  void setName(const std::string newName);
+  void setDomain(const std::string newDomain);
+  void setIP(const std::string newIP);
   void setPort(SI16 newPort);
-  string getName(void);
-  string getDomain(void);
-  string getIP(void);
+  std::string getName(void);
+  std::string getDomain(void);
+  std::string getIP(void);
   SI16 getPort(void);
 
 private:
-	string name;
-	string domain;
-	string ip;
+	std::string name;
+	std::string domain;
+	std::string ip;
 	SI16 port;
 };
 
@@ -77,7 +77,7 @@ protected:
 	// ServerSystems
 	UI08		saveMode;
 	bool		isvalid;
-	vector< physicalServer > serverList;
+	std::vector< physicalServer > serverList;
 	UI32		consolelogenabled;
 	UI32		crashprotectionenabled;
 	char		commandprefix;					//	March 20, 2000 - EviLDeD
@@ -123,20 +123,20 @@ protected:
 	UI32		beggingtimer;
 
 	// Directories
-	string		rootdirectory;			// Don't want arrays of strings
-	string		datadirectory;			// This is the mulfiledirectory
-	string		defsdirectory;
-	string		accessdirectory;
-	string		accountsdirectory;
-	string		scriptsdirectory;
-	string		backupdirectory;
-	string		msgboarddirectory;
-	string		shareddirectory;		// This is where all files that will be shared with clients andother servers willbe kept
-	string		htmldirectory;			// Self explanitory.
-	string		logsdirectory;
-	string		gumpsdirectory;
-	string		dictionarydirectory;
-	string		booksdirectory;
+	std::string		rootdirectory;			// Don't want arrays of strings
+	std::string		datadirectory;			// This is the mulfiledirectory
+	std::string		defsdirectory;
+	std::string		accessdirectory;
+	std::string		accountsdirectory;
+	std::string		scriptsdirectory;
+	std::string		backupdirectory;
+	std::string		msgboarddirectory;
+	std::string		shareddirectory;		// This is where all files that will be shared with clients andother servers willbe kept
+	std::string		htmldirectory;			// Self explanitory.
+	std::string		logsdirectory;
+	std::string		gumpsdirectory;
+	std::string		dictionarydirectory;
+	std::string		booksdirectory;
 
 	// Settings
 	bool		lootdecayswithcorpse;
@@ -161,7 +161,7 @@ protected:
 	SI16		npctilecheck;
 	SI16		cutscrollrequirement;			// AntiChrist - cut skill requirements for scrolls
 	bool		wildernessbankenabled;		// AntiChrist - special bank
-	string		wildernessbanktrigger;	// AntiChrist - special bank trigger EviLDeD Dec 30, 2000 changed this to a string
+	std::string		wildernessbanktrigger;	// AntiChrist - special bank trigger EviLDeD Dec 30, 2000 changed this to a string
 	bool		heartbeat;
 	bool		npctraining;
 	SI16		charhidewhilemounted;			// EviLDeD - Support for Xuri's Hide while Mounted fix
@@ -259,7 +259,7 @@ protected:
 	bool		shootonanimalback;		// sereg - lets make that optional
 
 	// Start & Location Settings
-	vector< STARTLOCATION >	startlocations;
+	std::vector< STARTLOCATION >	startlocations;
 	SI16		startgold;
 	SI16		startprivs[2];
 	SI16		skillmodifiers[64];
@@ -763,8 +763,8 @@ public:
 	void			ServerScriptSectionHeader( bool value );
 
 private: 
-     void                    setDirectoryHelper( string dirName, string &dir, char *text ); 
-     bool                    resettingDefaults; 
+  void setDirectoryHelper( std::string dirName, std::string &dir, char *text ); 
+  bool resettingDefaults; 
 
 };
 

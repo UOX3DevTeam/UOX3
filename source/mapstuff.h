@@ -46,16 +46,16 @@ struct StaCache_st
 	}
 };
 
-typedef vector< StaCache_st > StaCacheLine;
+typedef std::vector< StaCache_st > StaCacheLine;
 
 class StaWorldCache
 {
 protected:
-	vector< StaCacheLine >	CacheList;
+	std::vector< StaCacheLine >	CacheList;
 
 public:
-					StaWorldCache( SI16 maxX, SI16 maxY );
-					StaWorldCache( void );
+	StaWorldCache( SI16 maxX, SI16 maxY );
+	StaWorldCache( void );
 	virtual void	Resize( SI16 maxX, SI16 maxY );
 	virtual			~StaWorldCache();
 	StaCacheLine *	GrabCacheLine( SI16 maxX );
@@ -91,7 +91,7 @@ private:
 		map_st Cache;
 	};
 	MapCache Map0Cache[NumberOfWorlds][MAP0CACHE];
-	vector< MultiCache *> multiCache;	// here's our cache, this allows us to resize it!
+	std::vector< MultiCache *> multiCache;	// here's our cache, this allows us to resize it!
 
 	// version caching items
 	versionrecord *versionCache;
@@ -105,7 +105,7 @@ private:
 	void	CalculateMultiSizes( void );
 	void	SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
 
-	string	BuildFilePath( const char *fName );
+	std::string	BuildFilePath( const char *fName );
 public:
 	char mapname[80], sidxname[80], statname[80], vername[80], tilename[80], multiname[80], midxname[80];
 	UI32 StaMem, TileMem, versionMemory;

@@ -5,18 +5,14 @@
 #include <vector>
 #include <map>
 
-#if !defined(AFX_DICTIONARY_H__61EDE933_2045_11D4_9032_00104B73C455__INCLUDED_)
-#define AFX_DICTIONARY_H__61EDE933_2045_11D4_9032_00104B73C455__INCLUDED_
-
-using namespace std;
+#ifndef __DICTIONARY_H__
+#define __DICTIONARY_H__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-using namespace std;
-
-typedef map<long, string> ourDict;
+typedef std::map<long, std::string> ourDict;
 
 const SI32 dictCANTOPEN = -1;
 const SI32 dictDUPESECTION = -2;
@@ -41,7 +37,7 @@ private:
 	bool IsValid;
 	char PathToDictionary[512];
 	char Language[8];
-	map< long, string > Text2;
+	std::map< long, std::string > Text2;
 };
 
 class CDictionaryContainer

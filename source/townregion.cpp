@@ -1,7 +1,7 @@
 #include "uox3.h"
 #ifndef va_start
 	#include <cstdarg>
-	using namespace std;
+//	using namespace std;
 #endif
 #include "ssection.h"
 
@@ -177,7 +177,7 @@ void cTownRegion::CalcNewMayor( void )
 	if( townMember.size() == 0 )
 		return;
 	// if there are no members, there are no new mayors
-	vector< int > votes;
+	std::vector< int > votes;
 	votes.resize( townMember.size() );
 	for( UI32 counter = 0; counter < votes.size(); counter++ )
 	{

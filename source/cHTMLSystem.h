@@ -26,9 +26,9 @@ protected:
 	char	InputFile[MAX_PATH];
 	bool	Loaded;
 	UI08	Type;
-	string	Content;
+	std::string	Content;
 	char	OutputFile[MAX_PATH];
-	string	Name;
+	std::string	Name;
 	UI32	ScheduledUpdate;
 
 public:
@@ -41,9 +41,9 @@ public:
 	void Load( ScriptSection *found );
 
 	// Some Getters
-	string	GetName( void );
-	string	GetOutput( void );
-	string	GetInput( void );
+	std::string	GetName( void );
+	std::string	GetOutput( void );
+	std::string	GetInput( void );
 	UI08	GetTemplateType( void );	
 	UI32	GetScheduledUpdate( void );
 	UI32	GetUpdateTimer( void );
@@ -52,7 +52,7 @@ public:
 class cHTMLTemplates
 {
 protected:
-	vector < cHTMLTemplate* > Templates;
+	std::vector < cHTMLTemplate* > Templates;
 
 public:
 	cHTMLTemplates();

@@ -2,13 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include "Dictionary.h"
 #include "uox3.h"
-//#include "Errors.h"	// do not have this file
 #include <vector>
 #include <fstream>
-
-using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -44,11 +40,11 @@ const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
 
 SI32 CDictionary::LoadDictionary( void )
 {
-	ifstream ifsFile;
+	std::ifstream ifsFile;
 	char szTxtBfr[DICT_MAX_TEXTBUFFERSIZE];
 	long count = 0;
 
-	ifsFile.open( PathToDictionary, ios::in );
+	ifsFile.open( PathToDictionary, std::ios::in );
 	if( !ifsFile.is_open() )
 	{
 		Console.Warning( 2, "Failed to open dictionary.%s", Language );
@@ -112,7 +108,7 @@ SI32 CDictionary::LoadDictionary( void )
 void CDictionary::ShowList( void )
 {
 	Console << "[Testing]" << myendl;
-	map< long, string >::iterator toFind = Text2.begin();
+	std::map< long, std::string >::iterator toFind = Text2.begin();
 	while( toFind != Text2.end() )
 	{
 		Console << (SI32)(toFind->first) << ") " << toFind->second.c_str() << myendl;
@@ -132,7 +128,7 @@ SI32 CDictionary::NumberOfEntries( void )
 
 const char *CDictionary::GetEntry( SI32 Num )
 {
-	map< long, string >::iterator toFind = Text2.find( Num );
+	std::map< long, std::string >::iterator toFind = Text2.find( Num );
 	if( toFind != Text2.end() )
 		return toFind->second.c_str();
 	else

@@ -225,7 +225,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 	Console.Error( 2, "Erroneous Line: %s\nToken Ptr: %s", report->linebuf, report->tokenptr );
 }
 
-cScript::cScript( string targFile ) : isFiring( false )
+cScript::cScript( std::string targFile ) : isFiring( false )
 {
 	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
 	targContext = JS_NewContext( jsRuntime, 0x2000 );

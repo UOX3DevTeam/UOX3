@@ -20,7 +20,7 @@
 #include <vector>
 #include <cstdio>
 #include "typedefs.h"
-using namespace std;
+//using namespace std;
 
 enum DFNTAGS
 {
@@ -218,8 +218,8 @@ private:
 		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( NULL ), ndata( INVALIDSERIAL ), odata( INVALIDSERIAL ) {}
 	};
 
-	vector< sectData * >	data;
-	vector< sectDataV2 * >	dataV2;
+	std::vector< sectData * >	data;
+	std::vector< sectDataV2 * >	dataV2;
 	bool					fileOpened;
 	bool					arrayFilled;
 	SI08					fileType;

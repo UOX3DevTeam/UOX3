@@ -58,7 +58,7 @@ UI16 secondsperuominute = 5;					// Number of seconds for a UOX minute. Changed 
 UI32 uotickcount = 1;							// Changed from int to UI16 (Mr. Fixit)
 UI32 nextfieldeffecttime = 0;
 UI32 nextnpcaitime = 0;
-vector< TeleLocationEntry > teleLocs;
+std::vector< TeleLocationEntry > teleLocs;
 
 
 // MSVC fails to compile UOX if this is unsigned, change it then
@@ -85,9 +85,9 @@ char fametitle[128];
 char skilltitle[50];
 char prowesstitle[50];
 
-vector< MurderPair > murdererTags;
+std::vector< MurderPair > murdererTags;
 
-vector< SpellInfo > spells;					//:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
+std::vector< SpellInfo > spells;					//:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 
 HashTable< ITEM >			nitemsp;
 HashTableMulti< ITEM >		nspawnsp;
@@ -114,7 +114,7 @@ cSpawnRegion *spawnregion[4098];				//Regionspawns
 
 skill_st skill[SKILLS+1];
 title_st title[ALLSKILLS+1];				// For custom titles reads titles.scp
-vector< JailCell > jails;
+std::vector< JailCell > jails;
 
 UI32 charcount, itemcount;
 SERIAL charcount2, itemcount2;

@@ -123,14 +123,14 @@ public:
 	virtual void			SetSpawn(  cBaseObject *newSpawn );
 	virtual void			SetOwner(  cBaseObject *newOwner );
 
-	virtual bool			Save( ofstream &outStream, int mode ) const;
-	virtual bool			DumpHeader( ofstream &outStream, int mode ) const;
+	virtual bool			Save( std::ofstream &outStream, int mode ) const;
+	virtual bool			DumpHeader( std::ofstream &outStream, int mode ) const;
 
 	virtual	bool			DumpBody( BinBuffer &buff ) const;
-	virtual bool			DumpBody( ofstream &outStream, int mode ) const;
+	virtual bool			DumpBody( std::ofstream &outStream, int mode ) const;
 	
-	virtual bool			DumpFooter( ofstream &outStream, int mode ) const;
-	virtual bool			Load( ifstream &inStream, int arrayOffset );
+	virtual bool			DumpFooter( std::ofstream &outStream, int mode ) const;
+	virtual bool			Load( std::ifstream &inStream, int arrayOffset );
 	virtual bool			HandleLine( char *tag, char *data );
 	virtual bool			Load( BinBuffer &buff, int arrayOffset );
 	virtual bool			HandleBinTag( UI08 tag, BinBuffer &buff );

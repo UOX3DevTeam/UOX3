@@ -2,7 +2,7 @@
 #define __CDICE__
 
 #include <string>
-using namespace std;
+//using namespace std;
 
 class cDice
 {
@@ -11,10 +11,10 @@ private:
 	int		sides;
 	int		addition;
 
-	bool	convStringToDice( string dieString );
+	bool	convStringToDice( std::string dieString );
 public:
 			cDice();
-			cDice( string dieString );
+			cDice( std::string dieString );
 			cDice( int d, int s, int a );
 	virtual	~cDice();
 

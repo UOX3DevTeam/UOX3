@@ -14,7 +14,7 @@ struct orePref
 	UI08 percentChance;
 };
 
-const string WorldTypeNames[WRLD_COUNT] = { "Spring", "Summer", "Autumn", "Winter", "Desolation", "Unknown" };
+const std::string WorldTypeNames[WRLD_COUNT] = { "Spring", "Summer", "Autumn", "Winter", "Desolation", "Unknown" };
 
 class cTownRegion
 {
@@ -27,10 +27,10 @@ private:
 								// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 								// 0x80 Dungeon region
 	char				guardowner[50];
-	vector< int >		guards;
-	vector< orePref >	orePreferences;
-	vector< townPers >	townMember;
-	vector< UI08 >		alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
+	std::vector< int >		guards;
+	std::vector< orePref >	orePreferences;
+	std::vector< townPers >	townMember;
+	std::vector< UI08 >		alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
 	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always
 	RACEID				race;					// town's race property, guards will be racially based
 	weathID				weather;				// weather system the region belongs to

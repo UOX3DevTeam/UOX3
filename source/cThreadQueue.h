@@ -4,7 +4,7 @@
 #include "threadsafeobject.h"
 #include <queue>
 
-using namespace std;
+//using namespace std;
 
 enum MessageType
 {
@@ -29,7 +29,7 @@ struct MessagePassed
 class CThreadQueue : public ThreadSafeObject
 {
 protected:
-	queue< MessagePassed >	internalQueue;
+	std::queue< MessagePassed >	internalQueue;
 public:
 					CThreadQueue();
 	void			NewMessage( MessageType toAdd, char *data = NULL );

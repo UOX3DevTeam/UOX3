@@ -22,7 +22,7 @@ public:
 	CConsole();
 	virtual ~CConsole();
 
-	virtual void	Flush( void ) { cout.flush(); }
+	virtual void	Flush( void ) { std::cout.flush(); }
 
 	CConsole& operator<<( const SI08 *outPut );
 	CConsole& operator<<( const char *outPut );
@@ -34,11 +34,11 @@ public:
 	CConsole& operator<<( const cBaseObject *outPut );
 	CConsole& operator<<( const SI16 &outPut );
 	CConsole& operator<<( const UI16 &outPut );
-	CConsole& operator<<( const string &outPut );
-	CConsole& operator<<( const ostream& outPut );
+	CConsole& operator<<( const std::string &outPut );
+	CConsole& operator<<( const std::ostream& outPut );
 
 	CConsole& operator<<( cBaseObject *outPut );
-	CConsole& operator<<( ostream& outPut );
+	CConsole& operator<<( std::ostream& outPut );
 	CConsole& operator<<( CEndL& myObj );
 
 	CConsole& operator<<( const R32 &outPut );

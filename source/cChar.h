@@ -97,7 +97,7 @@ class CChar : public cBaseObject
 		SI08		fly_steps; // number of step the creatures flies if it can fly
 		UI08		running; // Stamina Loose while running
 		UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
-		queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
+		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
 		UI08		region;
 		
 		CItem *		packitem; // Only used during character creation
@@ -671,11 +671,11 @@ class CChar : public cBaseObject
 
 		bool		IsValidMount( void ) const;
 
-		virtual bool	Save( ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpHeader( ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpBody( ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpFooter( ofstream &outStream, SI32 mode ) const;
-		virtual bool	Load( ifstream &inStream, CHARACTER arrayOffset );
+		virtual bool	Save( std::ofstream &outStream, SI32 mode ) const;
+		virtual bool	DumpHeader( std::ofstream &outStream, SI32 mode ) const;
+		virtual bool	DumpBody( std::ofstream &outStream, SI32 mode ) const;
+		virtual bool	DumpFooter( std::ofstream &outStream, SI32 mode ) const;
+		virtual bool	Load( std::ifstream &inStream, CHARACTER arrayOffset );
 		virtual bool	Load( BinBuffer &buff, CHARACTER arrayOffset );
 		virtual bool	HandleLine( char *tag, char *data );
 		virtual bool	HandleBinTag( UI08 tag, BinBuffer &buff );

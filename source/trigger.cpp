@@ -109,7 +109,7 @@ Triggers::~Triggers()
 
 void Triggers::Cleanup()
 {//this MUST be done BEFORE deleteing Triggers, because ~cScript uses Triggers->Whatever()
-	for( map< UI16, cScript *>::iterator p = scriptTriggers.begin(); p != scriptTriggers.end(); p++ )
+	for( std::map< UI16, cScript *>::iterator p = scriptTriggers.begin(); p != scriptTriggers.end(); p++ )
 	{
 		cScript *pScript = p->second;
 		delete pScript;
@@ -118,7 +118,7 @@ void Triggers::Cleanup()
 
 bool Triggers::CheckEnvoke( UI16 itemID ) const
 {
-	map< UI16, UI16 >::const_iterator p = envokeList.find( itemID );
+	std::map< UI16, UI16 >::const_iterator p = envokeList.find( itemID );
 	if( p != envokeList.end() )
 		return true;
 	return false;
@@ -126,7 +126,7 @@ bool Triggers::CheckEnvoke( UI16 itemID ) const
 
 UI16 Triggers::GetScriptFromEnvoke( UI16 itemID ) const
 {
-	map< UI16, UI16 >::const_iterator p = envokeList.find( itemID );
+	std::map< UI16, UI16 >::const_iterator p = envokeList.find( itemID );
 	if( p != envokeList.end() )
 		return p->second;
 	return 0xFFFF;
@@ -134,7 +134,7 @@ UI16 Triggers::GetScriptFromEnvoke( UI16 itemID ) const
 
 void Triggers::ParseEnvoke( void )
 {
-	ifstream envokefile;
+	std::ifstream envokefile;
 	char buf[MAX_PATH];
 
 	sprintf( buf, "%sjse_objectassociations.scp", cwmWorldState->ServerData()->GetScriptsDirectory() );
@@ -153,8 +153,8 @@ void Triggers::ParseEnvoke( void )
 		envokefile.getline( buf, 1024 );
 		if( buf[0] == 0 || buf[0] == '/' || buf[0] == 10 || buf[0] == 13 )
 			continue;
-		string s( buf );
-		istringstream ss( s );
+		std::string s( buf );
+		std::istringstream ss( s );
 		ss >> itemIDString >> scriptIDString;
 		UI16 itemID = (UI16)(makeNum( itemIDString ));
 		UI16 scriptID = (UI16)(makeNum( scriptIDString ));
@@ -211,7 +211,7 @@ void Triggers::ParseScript( void )
 		Console.Error( 1, "Failed to open %s", scpFileName );
 		return;
 	}
-	map< UI16, cScript *>::iterator p;
+	std::map< UI16, cScript *>::iterator p;
 	char script1[MAX_PATH], script2[MAX_PATH], temp[MAX_PATH], fullpath[MAX_PATH];
 	while( !feof( data ) )
 	{
@@ -257,7 +257,7 @@ void Triggers::ParseScript( void )
 
 cScript *Triggers::GetScript( UI16 triggerNumber )
 {
-	map< UI16, cScript *>::iterator p = scriptTriggers.find( triggerNumber );
+	std::map< UI16, cScript *>::iterator p = scriptTriggers.find( triggerNumber );
 	if( p != scriptTriggers.end() )	//	Script was found
 		return p->second;
 	else	//	Account was not found
@@ -267,7 +267,7 @@ cScript *Triggers::GetScript( UI16 triggerNumber )
 
 void Triggers::ReloadJS( void )
 {
-	map< UI16, cScript *>::iterator p;
+	std::map< UI16, cScript *>::iterator p;
 	for( p = scriptTriggers.begin(); p != scriptTriggers.end(); p++ )
 		delete p->second;
 	scriptTriggers.erase( scriptTriggers.begin(), scriptTriggers.end() );	// erase it all
@@ -296,14 +296,14 @@ void Triggers::RegisterObject( JSObject *toReg, UI16 tNum )
 }
 void Triggers::UnregisterObject( JSObject *toUnreg )
 {
-	map< JSObject *, UI16 >::iterator toFind = scriptToTriggerMapping.find( toUnreg );
+	std::map< JSObject *, UI16 >::iterator toFind = scriptToTriggerMapping.find( toUnreg );
 	if( toFind != scriptToTriggerMapping.end() )
 		scriptToTriggerMapping.erase( toFind );
 }
 
 UI16 Triggers::FindObject( JSObject *toFind )
 {
-	map< JSObject *, UI16 >::iterator tFnd = scriptToTriggerMapping.find( toFind );
+	std::map< JSObject *, UI16 >::iterator tFnd = scriptToTriggerMapping.find( toFind );
 	if( tFnd != scriptToTriggerMapping.end() )
 		return tFnd->second;
 	return 0xFFFF;

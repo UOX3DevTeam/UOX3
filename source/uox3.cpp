@@ -44,7 +44,7 @@
 
 #include "cVersionClass.h"
 
-using namespace std;
+//using namespace std;
 
 extern cVersionClass CVC;
 
@@ -716,7 +716,7 @@ int makenumber( int countx )
 	return makeNum( comm[countx] );
 }
 
-SI32 makeNum( const string *data )
+SI32 makeNum( const std::string *data )
 {
 	return makeNum( data->c_str() );
 }
@@ -738,24 +738,24 @@ SI32 makeNum( const char *data )
 
 	UI32 ret = 0;
 
-	string s( data );
-	istringstream ss( s );
+	std::string s( data );
+	std::istringstream ss( s );
 	ss >> o;
 	if( o == '0' )			// oct and hex both start with 0
 	{
 		ss >> h;
 		if( h == 'x' || h == 'X' )
-			ss >> hex >> ret >> dec;	// it's hex
+			ss >> std::hex >> ret >> std::dec;	// it's hex
 		else
 		{
 			ss.unget();
-			ss >> oct >> ret >> dec;	// it's octal
+			ss >> std::oct >> ret >> std::dec;	// it's octal
 		}
 	}
 	else
 	{
 		ss.unget();
-		ss >> dec >> ret;		// it's decimal
+		ss >> std::dec >> ret;		// it's decimal
 	}
 	return ret;
 }
@@ -3151,7 +3151,7 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o---------------------------------------------------------------------------o
 void DisplaySettings( void )
 {
-	map< bool, string > activeMap;
+	std::map< bool, std::string > activeMap;
 	activeMap[true] = "Activated!";
 	activeMap[false] = "Disabled!";
 
@@ -3248,7 +3248,7 @@ void processkey( int c )
 		case 'Y':
 #pragma note("Console Broadcast needs to not require cout anymore.  Is there a better way?")
 			//messageLoop << "Console> ";
-			cout << "System: ";
+			std::cout << "System: ";
 			while( !kill )
 			{
 				keyresp = cl_getch();
@@ -3261,7 +3261,7 @@ void processkey( int c )
 					memset( outputline, 0x00, sizeof( outputline ) );
 					indexcount = 0;
 					kill = true;
-					cout << endl;
+					std::cout << std::endl;
 					messageLoop << "| CMD: System broadcast canceled.";
 					break;
 				case 0x08:
@@ -3269,7 +3269,7 @@ void processkey( int c )
 					if( indexcount < 0 )	
 						indexcount = 0;
 					else
-						cout << "\b \b";
+						std::cout << "\b \b";
 					break;
 				case 0x0A:
 				case 0x0D:
@@ -3277,7 +3277,7 @@ void processkey( int c )
 					messageLoop.NewMessage( MSG_CONSOLEBCAST, outputline );
 					indexcount = 0;
 					kill = true;
-					cout << endl;
+					std::cout << std::endl;
 					sprintf( temp, "| CMD: System broadcast sent message \"%s\"", outputline );
 					memset( outputline, 0x00, sizeof( outputline ) );
 					messageLoop << temp;
@@ -3286,7 +3286,7 @@ void processkey( int c )
 					if( indexcount < sizeof( outputline ) )
 					{
 						outputline[indexcount++] = (UI08)(keyresp);
-						cout << (char)keyresp;
+						std::cout << (char)keyresp;
 					}
 					break;
 				}
@@ -4390,7 +4390,7 @@ void checkauto( void )
 	else
 		doWeather = false;
 
-	set< SubRegion * > regionList;	// we'll get around our npc problem this way, hopefully
+	std::set< SubRegion * > regionList;	// we'll get around our npc problem this way, hopefully
 	Network->PushConn();
 	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
@@ -4420,7 +4420,7 @@ void checkauto( void )
 		}
 	}
 	Network->PopConn();
-	set< SubRegion * >::iterator tcCheck = regionList.begin();
+	std::set< SubRegion * >::iterator tcCheck = regionList.begin();
 	while( tcCheck != regionList.end() )
 	{
 		SubRegion *toCheck = (*tcCheck);
@@ -4493,7 +4493,7 @@ void LoadJSEngine( void )
 {
 	const SI32 DefEngineSize = 0x1000000;
 
-	ifstream engineData( "engine.dat" );
+	std::ifstream engineData( "engine.dat" );
 	SI32 engineSize = DefEngineSize;
 	if( engineData.is_open() )
 	{
@@ -4639,7 +4639,7 @@ void ParseArgs( int argc, char *argv[] )
 		{
 			//	EviLDeD:	030902:	Added this so people could add an account at the command line when they started the server
 			Console << "|  Importing Accounts command line \n"; 
-			string username,password,email;
+			std::string username,password,email;
 			char *left=strtok(argv[1],":");
 			username=strtok(NULL,",");
 			password=strtok(NULL,",");
@@ -4662,11 +4662,11 @@ void ParseArgs( int argc, char *argv[] )
 		else if( !strncmp( argv[i], "+import:", sizeof(char)*8 ) )
 		{
 			//	EviLDeD:	030902:	Added this so people could add accounts froma file that contains username/password/email format per line
-			string  filename,username,password,email;
+			std::string  filename,username,password,email;
 			char *left;
 			left			= strtok(argv[1],":");
 			filename	= strtok(NULL,",");
-			ifstream inFile;
+			std::ifstream inFile;
 			inFile.open( filename.c_str() );
 			char szBuffer[127];
 			if(inFile.is_open())
@@ -5394,8 +5394,8 @@ void Shutdown( SI32 retCode )
 		Console.TurnNormal();
 #ifndef __LINUX__
 		Console << "Press Return to exit " << myendl;
-		string throwAway;
-		getline(cin, throwAway);
+		std::string throwAway;
+		std::getline(std::cin, throwAway);
 #endif
 	}
 	else
@@ -6431,7 +6431,7 @@ void loadSpawnRegions( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Load scripted spawn regions
 //o---------------------------------------------------------------------------o
-void loadPreDefSpawnRegion( SI32 r, string name )
+void loadPreDefSpawnRegion( SI32 r, std::string name )
 {
 	char sect[512];
 	sprintf( sect, "PREDEFINED_SPAWN %s", name.c_str() );
@@ -7057,24 +7057,24 @@ void advanceObj( CChar *s, SI32 x, bool multiUse )
 //o---------------------------------------------------------------------------o
 void DumpCreatures( void )
 {
-	ofstream toWrite( "npc.dat" );
+	std::ofstream toWrite( "npc.dat" );
 	if( !toWrite.is_open() )
 		return;
 	for( int i = 0; i < 2048; i++ )
 	{
-		toWrite << "[CREATURE " << i << "]" << endl << "{" << endl;
-		toWrite << "BASESOUND=" << creatures[i].BaseSound() << endl;
-		toWrite << "ICON=" << (int)creatures[i].Icon() << endl;
-		toWrite << "SOUNDFLAG=" << (SI32)creatures[i].SoundFlag() << endl;
+		toWrite << "[CREATURE " << i << "]" << std::endl << "{" << std::endl;
+		toWrite << "BASESOUND=" << creatures[i].BaseSound() << std::endl;
+		toWrite << "ICON=" << (int)creatures[i].Icon() << std::endl;
+		toWrite << "SOUNDFLAG=" << (SI32)creatures[i].SoundFlag() << std::endl;
 		if( creatures[i].CanFly() )
-			toWrite << "FLIES" << endl;
+			toWrite << "FLIES" << std::endl;
 		if( creatures[i].AntiBlink() )
-			toWrite << "ANTIBLINK" << endl;
+			toWrite << "ANTIBLINK" << std::endl;
 		if( creatures[i].IsAnimal() )
-			toWrite << "ANIMAL" << endl;
+			toWrite << "ANIMAL" << std::endl;
 		if( creatures[i].IsWater() )
-			toWrite << "WATERCREATURE" << endl;
-		toWrite << "}" << endl << endl;
+			toWrite << "WATERCREATURE" << std::endl;
+		toWrite << "}" << std::endl << std::endl;
 	}
 	toWrite.close();
 }

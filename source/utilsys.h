@@ -79,19 +79,19 @@
 #define mode_t int
 #endif
 #endif
-using namespace std;
+//using namespace std;
 
 //=========================================================================
 //Prototypes
 UI32 getNormalizedTime();
 UI32 getPlatformTime();
 UI32 getPlatformDay();
-string getRealTimeString() ;
-bool makeDirectory(string sDirectory) ;
-bool isDirectory(string sDirectory) ;
-vector<string> listDirectory(string sDirectory) ;
-bool deleteDirectory(string sDirectory) ;
-bool deleteFile(string sFile) ;
+std::string getRealTimeString() ;
+bool makeDirectory(std::string sDirectory) ;
+bool isDirectory(std::string sDirectory) ;
+std::vector<std::string> listDirectory(std::string sDirectory) ;
+bool deleteDirectory(std::string sDirectory) ;
+bool deleteFile(std::string sFile) ;
 //========================================================================
 //========================================================================
 //=======================  End of utilsys.h  ===============================

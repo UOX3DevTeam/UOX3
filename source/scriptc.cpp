@@ -6,6 +6,7 @@
 //	Calling Script::find() will then seek to that location directly rather
 //	than having to parse through all of the script
 //	
+#pragma warning( disable : 4786 )
 
 #include <sys/stat.h>
 #include <cstdlib>
@@ -17,7 +18,7 @@
 #include <assert.h>
 #include "ssection.h"
 
-using namespace std;
+//using namespace std;
 
 #undef DBGFILE
 #define DBGFILE "scriptc.cpp"
@@ -102,15 +103,15 @@ void Script::reload( bool disp )
 //|	Purpose			-	Builds the script, reading in the information from
 //|						the script file.
 //o--------------------------------------------------------------------------
-Script::Script( const string _filename, DefinitionCategories d, bool disp ) : errorState( false ), dfnCat( d )
+Script::Script( const std::string _filename, DefinitionCategories d, bool disp ) : errorState( false ), dfnCat( d )
 {
-    filename = _filename;
-    if( !get_modification_date( filename.c_str(), &last_modification ) ) 
+	filename = _filename;
+  if( !get_modification_date( filename.c_str(), &last_modification ) ) 
 	{
-        fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
-        errorState = true;
-    }
-    reload( disp );
+		fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+    errorState = true;
+  }
+  reload( disp );
 }
 
 //o--------------------------------------------------------------------------
@@ -134,7 +135,7 @@ Script::~Script()
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if the section named section is in the script
 //o--------------------------------------------------------------------------
-bool Script::isin( const string section )
+bool Script::isin( const std::string section )
 {
 	SSMAP::iterator iSearch;
 	iSearch = defEntries.find( section );
@@ -152,7 +153,7 @@ bool Script::isin( const string section )
 //|	Purpose			-	Returns a ScriptSection * to the section named "section"
 //|						if it exists, otherwise returning NULL
 //o--------------------------------------------------------------------------
-ScriptSection *Script::FindEntry( const string section )
+ScriptSection *Script::FindEntry( const std::string section )
 {
 	SSMAP::iterator iSearch;
 	char section_name[256];
@@ -173,7 +174,7 @@ ScriptSection *Script::FindEntry( const string section )
 //|	Purpose			-	Find the first ScriptSection * (if any) that has the
 //|						string section in the section name
 //o--------------------------------------------------------------------------
-ScriptSection *Script::FindEntrySubStr( const string section )
+ScriptSection *Script::FindEntrySubStr( const std::string section )
 {
 	SSMAP::iterator iSearch;
 	const char *tSearch = section.c_str();

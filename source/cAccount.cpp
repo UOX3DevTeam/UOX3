@@ -13,7 +13,7 @@
 #include <fstream>
 #include "cVersionClass.h"
 
-using namespace std;
+//using namespace std;
 
 extern cVersionClass CVC;
 
@@ -100,8 +100,8 @@ cAccounts::~cAccounts()
 //o--------------------------------------------------------------------------
 bool cAccounts::ConvertAccounts( const char *filename )
 {
-	ifstream ifsSource;
-	ifstream ifsDestination;
+	std::ifstream ifsSource;
+	std::ifstream ifsDestination;
 	char szInBuffer[128], szOutBuffer[1024];
 	const char *path = cwmWorldState->ServerData()->GetAccountsDirectory();
 	char buffer[512];
@@ -111,14 +111,14 @@ bool cAccounts::ConvertAccounts( const char *filename )
 	else
 		sprintf( buffer, "%s/accounts.adm", path );
 	memset( szOutBuffer, 0x00, 1024 );
-	ifsSource.open( buffer, ios::in );
+	ifsSource.open( buffer, std::ios::in );
 	if( !ifsSource.is_open() )
 	{
 		ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
 		ErrDesc = "Unable to open the specified file for input";
 		return false;
 	}
-	ifsDestination.open( filename, ios::out );
+	ifsDestination.open( filename, std::ios::out );
 	if( !ifsDestination.is_open() )
 	{
 		ErrNum = 0x00000200;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
@@ -158,14 +158,14 @@ bool cAccounts::ConvertAccounts( const char *filename )
 //o--------------------------------------------------------------------------
 const char *cAccounts::CheckAccountsVersion( const char *filename )
 {
-	ifstream isFile;
+	std::ifstream isFile;
 	char szLine[128];
 
 	memset( szLine, 0x00, 128 );
 	if( filename == NULL )
-		isFile.open( "./accounts.adm", ios::in );
+		isFile.open( "./accounts.adm", std::ios::in );
 	else
-		isFile.open(filename,ios::in);
+		isFile.open(filename,std::ios::in);
 	if(!isFile.is_open())
 	{
 		ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
@@ -222,7 +222,7 @@ UI32 cAccounts::ReadToken( FILE *openfile )
 long cAccounts::LoadAccessList( void )
 {
 
-	ifstream ifsFile;
+	std::ifstream ifsFile;
 	char szLine[128];
 	char buffer[MAX_PATH];
 	const char *path = cwmWorldState->ServerData()->GetAccessDirectory();
@@ -231,7 +231,7 @@ long cAccounts::LoadAccessList( void )
 		sprintf( buffer, "%saccess.adm", path );
 	else
 		sprintf( buffer, "%s/access.adm", path );
-	ifsFile.open( buffer , ios::in );
+	ifsFile.open( buffer , std::ios::in );
 	if( !ifsFile.is_open() )
 	{
 		ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
@@ -285,7 +285,7 @@ long cAccounts::LoadAccessList( void )
 		{
 			braces[0] = braces[1] = false;
 			aarPointer->id = aclidx;
-			string keystring( aarPointer->username );
+			std::string keystring( aarPointer->username );
 			AAREC *alreadyExists = GetAccessBlock( aarPointer->username );
 			if( alreadyExists != NULL )
 			{
@@ -453,7 +453,7 @@ bool cAccounts::CheckAccountsStamp( void )
 long cAccounts::LoadAccounts( void )
 {	
 	char szLine[128];
-	ifstream ifsFile;
+	std::ifstream ifsFile;
 	// temp storage from old file as the new struct is different now.
 	int actidx;
 	ACTREC *actPointer = NULL;
@@ -473,7 +473,7 @@ long cAccounts::LoadAccounts( void )
 			ErrDesc = "Path to accounts file is invalid, or empty";
 			return -1;
 		}
-		ifsFile.open( PathToFile.c_str(), ios::in );
+		ifsFile.open( PathToFile.c_str(), std::ios::in );
 		if( !ifsFile.is_open() )
 		{
 			ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
@@ -538,7 +538,7 @@ long cAccounts::LoadAccounts( void )
 			{
 				braces[0] = braces[1] = false;
 				actPointer->lpaarHolding->id= actidx;
-				string keystring( actPointer->lpaarHolding->username );
+				std::string keystring( actPointer->lpaarHolding->username );
 				ACTREC *alreadyExists = GetAccount( actPointer->lpaarHolding->username );
 				if( alreadyExists != NULL )
 				{
@@ -696,7 +696,7 @@ long cAccounts::LoadAccounts( void )
 			else
 				sprintf(tbuffer,"%s/%s.uad",temp->path,temp->username);
 			// We have the path to the file now open and parse it into memory
-			ifstream ins;
+			std::ifstream ins;
 			ins.open(tbuffer);
 			if( !ins.is_open() )
 			{
@@ -855,8 +855,8 @@ long cAccounts::GetAccountCount( void )
 //o--------------------------------------------------------------------------o	
 AAREC  *cAccounts::GetAccessBlock( const char *username)
 {
-	string s1( username );
-	map< string, AAREC *>::iterator p = aarMap.find( s1 );
+	std::string s1( username );
+	std::map< std::string, AAREC *>::iterator p = aarMap.find( s1 );
 	if( p != aarMap.end() )
 	{	//	Account was found
 		return p->second;
@@ -880,7 +880,7 @@ AAREC  *cAccounts::GetAccessBlock( const char *username)
 //o--------------------------------------------------------------------------o	
 ACTREC *cAccounts::GetAccount( const char *username )
 {
-	string s1( strlwr((char*)username) );
+	std::string s1( strlwr((char*)username) );
 	ACTREC_ITERATOR p = actMap.find( s1 );
 	if( p != actMap.end() )
 	{	//	Account was found
@@ -941,22 +941,22 @@ long cAccounts::SaveAccounts( void )
 	return SaveAccounts( cwmWorldState->ServerData()->GetAccessDirectory(), cwmWorldState->ServerData()->GetAccountsDirectory() );
 }
 
-long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
+long cAccounts::SaveAccounts( std::string AccessPath, std::string AccountsPath )
 {	
-	ofstream outStream;
-	ofstream outStream2;
+	std::ofstream outStream;
+	std::ofstream outStream2;
 	char TempString[MAX_PATH];
 	ACTREC *CurrentAccount = NULL;
 	ACTIREC_ITERATOR iter;
 
 	// Please let us use lowercase names here or we'll run into the 
 	// linux trap (case sensitive names)
-	string sRealAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
-	string sRealAccountsPath = cwmWorldState->ServerData()->GetAccountsDirectory();
-	string sAccessPath = AccessPath;
-	string sAccountsPath= AccountsPath;
-	string sAccountsPath2= AccountsPath;
-	string sBasePath;
+	std::string sRealAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
+	std::string sRealAccountsPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+	std::string sAccessPath = AccessPath;
+	std::string sAccountsPath= AccountsPath;
+	std::string sAccountsPath2= AccountsPath;
+	std::string sBasePath;
 	if( AccessPath.size() <= 0 )
 	{
 		// were gonna use the default path then. kinda of error checking.
@@ -977,12 +977,12 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		sAccountsPath += '/'; // I think it's sufficient to add a / here
 	sBasePath = sAccountsPath;	
 	
-	outStream.open( sAccessPath.c_str(), ios::out );
+	outStream.open( sAccessPath.c_str(), std::ios::out );
 	
 	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
 	{
 		sAccountsPath2 += "accounts.adm";
-		outStream2.open( sAccountsPath2.c_str(), ios::out);
+		outStream2.open( sAccountsPath2.c_str(), std::ios::out);
 	}
 
 	// Error handling
@@ -1133,12 +1133,12 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 
 		// Build the correct Filename here
 		//AccountPath = AccountsPath+AccountPath;
-		string sWorking = sAccountsPath + CurrentAccount->lpaarHolding->username;
+		std::string sWorking = sAccountsPath + CurrentAccount->lpaarHolding->username;
 		sWorking += ".uad";
 		sAccountsPath = sBasePath;	// Reset the accounts path for the next run.
 
 		// Then open the file and write out all information
-		ofstream AccountStream( sWorking.c_str(), ios::out );
+		std::ofstream AccountStream( sWorking.c_str(), std::ios::out );
 
 		AccountStream << "//AI2.1" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
@@ -1261,12 +1261,12 @@ bool cAccounts::AddCharacterToAccount( SI32 accountid, CChar *object)
 //o--------------------------------------------------------------------------o
 //|	Returns				- N/A
 //o--------------------------------------------------------------------------o	
-void cAccounts::AddAccount( string username, string password, string contact )
+void cAccounts::AddAccount( std::string username, std::string password, std::string contact )
 {
 	AddAccount(username,password,contact,0x0000);
 }
 //o--------------------------------------------------------------------------o	
-void cAccounts::AddAccount( string username, string password, string contact, UI16 nPrivs )
+void cAccounts::AddAccount( std::string username, std::string password, std::string contact, UI16 nPrivs )
 {
 	ACTREC *toAdd = new ACTREC;
 	AAREC *toAddAA = new AAREC;
@@ -1284,13 +1284,13 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	toAdd->lpaarHolding->bFlags=nPrivs;
 
 	// ok well we need to append data to the end of the access.adm migth as well do it now
-	string sAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
+	std::string sAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
 	if( sAccessPath[sAccessPath.size()-1] != '/' && sAccessPath[sAccessPath.size()-1] != '\\' )
 		sAccessPath += "/access.adm";
 	else
 		sAccessPath += "access.adm";
-	ofstream ofsOut;
-	ofsOut.open( sAccessPath.c_str(), ios::out|ios::app );
+	std::ofstream ofsOut;
+	ofsOut.open( sAccessPath.c_str(), std::ios::out|std::ios::app );
 
 	if(!ofsOut.is_open())
 	{
@@ -1305,7 +1305,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 	ofsOut << "PASS " << toAdd->lpaarHolding->password << "\n";
 
 	// We need to create the path for the accounts and store it to or this will memory error
-	string sAccountPath = cwmWorldState->ServerData()->GetAccountsDirectory();
+	std::string sAccountPath = cwmWorldState->ServerData()->GetAccountsDirectory();
 
 	switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
 	{
@@ -1365,10 +1365,10 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 
 	// Build the correct Filename here
 	//AccountPath = AccountsPath+AccountPath;
-	string sWorking = sAccountPath + toAdd->lpaarHolding->username;
+	std::string sWorking = sAccountPath + toAdd->lpaarHolding->username;
 	sWorking += ".uad";
 
-	ofstream AccountStream( sWorking.c_str(), ios::out );
+	std::ofstream AccountStream( sWorking.c_str(), std::ios::out );
 
 	AccountStream << "//AI2.1" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 	AccountStream << "//------------------------------------------------------------------------------\n";
@@ -1419,7 +1419,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 //o--------------------------------------------------------------------------o
 //|	Returns				-
 //o--------------------------------------------------------------------------o
-void cAccounts::DeleteAccount( string username )
+void cAccounts::DeleteAccount( std::string username )
 {
 	ACTREC_ITERATOR p;
 	ACTIREC_ITERATOR i;

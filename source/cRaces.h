@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-using namespace std;
+//using namespace std;
 
 struct ColourPair
 {
@@ -13,9 +13,9 @@ struct ColourPair
 	ColourPair() : cMin( 0 ), cMax( 0 ) { }
 };
 
-typedef vector< ColourPair >	COLOURLIST;
+typedef std::vector< ColourPair >	COLOURLIST;
 typedef UI16					BITLIST;
-typedef vector< SI08 >			RACEIDLIST;
+typedef std::vector< SI08 >			RACEIDLIST;
 
 class CRace 
 {
@@ -26,7 +26,7 @@ private:
 protected:
 
 	SKILLVAL		iSkills[SKILLS];
-	string			raceName;
+	std::string			raceName;
 
 	COLOURLIST		beardColours;
 	COLOURLIST		hairColours;
@@ -132,14 +132,14 @@ public:
 	CRace&			operator =( CRace& trgRace );
 };
 
-typedef vector< CRace * >			RACELIST;
+typedef std::vector< CRace * >			RACELIST;
 
 struct combatModifiers
 {
 	UI08 value;
 };
 
-typedef vector< combatModifiers >	MODIFIERLIST;
+typedef std::vector< combatModifiers >	MODIFIERLIST;
 class cRaces 
 {
 	private:

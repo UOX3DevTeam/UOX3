@@ -73,7 +73,7 @@ CConsole& CConsole::operator<<( const char *outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -99,7 +99,7 @@ CConsole& CConsole::operator<<( const SI32 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -112,7 +112,7 @@ CConsole& CConsole::operator<<( const UI32 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -125,7 +125,7 @@ CConsole& CConsole::operator<<( const SI16 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -138,7 +138,7 @@ CConsole& CConsole::operator<<( const UI16 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -151,7 +151,7 @@ CConsole& CConsole::operator<<( const SI08 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -164,7 +164,7 @@ CConsole& CConsole::operator<<( const UI08 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -181,7 +181,7 @@ CConsole& CConsole::operator<<( const cBaseObject *outPut )
 	}
 	return (*this);
 }
-CConsole& CConsole::operator<<( const string &outPut )
+CConsole& CConsole::operator<<( const std::string &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
@@ -190,11 +190,11 @@ CConsole& CConsole::operator<<( const string &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut.c_str();
+		std::cout << outPut.c_str();
 	}
 	return (*this);
 }
-CConsole& CConsole::operator<<( const ostream& outPut )
+CConsole& CConsole::operator<<( const std::ostream& outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
@@ -203,7 +203,7 @@ CConsole& CConsole::operator<<( const ostream& outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -220,7 +220,7 @@ CConsole& CConsole::operator<<( cBaseObject *outPut )
 	}
 	return (*this);
 }
-CConsole& CConsole::operator<<( ostream& outPut )
+CConsole& CConsole::operator<<( std::ostream& outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
@@ -229,7 +229,7 @@ CConsole& CConsole::operator<<( ostream& outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -239,7 +239,7 @@ CConsole& CConsole::operator<<( CEndL& myObj )
 	{
 		if( curLeft == 0 )
 			PrintStartOfLine();
-		cout << endl;
+		std::cout << std::endl;
 		curLeft = 0;
 		curTop++;
 	}
@@ -254,7 +254,7 @@ CConsole& CConsole::operator<<( const R32 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -267,7 +267,7 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << outPut;
+		std::cout << outPut;
 	}
 	return (*this);
 }
@@ -295,7 +295,7 @@ void CConsole::Print( const char *toPrint, ... )
 			PrintStartOfLine();
 			curLeft = 1;
 		}
-		cout << msg;
+		std::cout << msg;
 		UI32 i = strlen( msg );
 		if( msg[i-1] == '\n' )
 			curLeft = 0;
@@ -322,7 +322,7 @@ void CConsole::Log( const char *toLog, const char *filename, ... )
 	vsnprintf( msg, MAX_CONSOLE_BUFF, toLog, argptr );
 	va_end( argptr );
 
-	ofstream toWrite;
+	std::ofstream toWrite;
 	char realFileName[MAX_PATH];	// EviLDeD: 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
 	strcpy( realFileName, cwmWorldState->ServerData()->GetLogsDirectory() );
 	if( cwmWorldState != NULL )
@@ -338,9 +338,9 @@ void CConsole::Log( const char *toLog, const char *filename, ... )
 		}
 	else
 		strcpy( realFileName, filename );
-	toWrite.open( realFileName, ios::out | ios::app );
+	toWrite.open( realFileName, std::ios::out | std::ios::app );
 	if( toWrite.is_open() )
-		toWrite << msg << endl;
+		toWrite << msg << std::endl;
 	toWrite.close();
 }
 
@@ -448,11 +448,11 @@ void CConsole::PrintSectionBegin( void )
 {
 	TurnBrightWhite();
 	for( int i = 0; i < left; i++ )
-		cout << " ";
-	cout << "o";
+		std::cout << " ";
+	std::cout << "o";
 	for( int j = left + 1; j < width - 1; j++ )
-		cout << "-";
-	cout << "o";
+		std::cout << "-";
+	std::cout << "o";
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
@@ -752,7 +752,7 @@ UI08 CConsole::CurrentLevel( void ) const
 void CConsole::PrintStartOfLine( void )
 {
 	TurnBrightWhite();
-	cout << "| ";
+	std::cout << "| ";
 	switch( previousColour )
 	{
 	case CBLUE:		TurnBlue();		break;

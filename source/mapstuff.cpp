@@ -209,7 +209,7 @@ void cMapStuff::Load( void )
 	Console.PrintSectionBegin();
 	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in the uox3.ini)" << myendl;
 
-	string temp = "";
+	std::string temp = "";
 	char lookupName[MAX_PATH];
 	UI32 i;
 	for( i = 0; i < NumberOfWorlds; i++ )
@@ -1338,7 +1338,7 @@ void cMapStuff::CacheMultis( void )
 	// we must be in caching mode, only turn it off for now because we are
 	// trying to fill the cache.
 
-	string temp = BuildFilePath( "multi.idx" );
+	std::string temp = BuildFilePath( "multi.idx" );
 	FILE *multiIDXRec = fopen( temp.c_str(), "rb" );
 	if( multiIDXRec == NULL )
 	{
@@ -1433,7 +1433,7 @@ st_multi *cMapStuff::SeekIntoMulti( int multinum, int number )
 }
 
 
-string cMapStuff::BuildFilePath( const char *fName ) 
+std::string cMapStuff::BuildFilePath( const char *fName ) 
 {
 	char temp[MAX_PATH];
 	sprintf( temp, "%s/%s", cwmWorldState->ServerData()->GetDataDirectory(), fName );

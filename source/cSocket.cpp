@@ -34,7 +34,7 @@ socket_error::socket_error( void ) : errorNum( -1 ), runtime_error( "" )
 {
 }
 
-socket_error::socket_error( const string& what_arg ) : errorNum( -1 ), runtime_error( what_arg )
+socket_error::socket_error( const std::string& what_arg ) : errorNum( -1 ), runtime_error( what_arg )
 {
 }
 
@@ -1275,7 +1275,7 @@ void cPBuffer::Log( FILE *fp )
 UI08& cPBuffer::operator [] ( long int Num )
 {
 	if( Num < 0 || Num > Length() )
-		throw runtime_error("out of bounds");
+		throw std::runtime_error("out of bounds");
 	return internalBuffer[Num];
 }
 

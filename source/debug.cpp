@@ -3,7 +3,7 @@
 #include "debug.h"
 #ifndef va_start
 	#include <cstdarg>
-	using namespace std;
+//	using namespace std;
 #endif
 //*******************************************************
 //                                                      *

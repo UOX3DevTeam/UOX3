@@ -5,8 +5,8 @@
 #undef DBGFILE
 #define DBGFILE "gumps.cpp"
 
-string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length );
-string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length );
+std::string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length );
+std::string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length );
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void HandleAccountButton( cSocket *s, long button, CChar *j )
@@ -337,7 +337,7 @@ void HandleHairDyeButton( cSocket *s, long button, CItem *j )
 //o---------------------------------------------------------------------------o
 void HandleAccountModButton( cSocket *s, long button )
 {
-	string username, emailAddy, password;
+	std::string username, emailAddy, password;
 	// if 18 is 1 then 22 is set to 1, and flag is toggled 
 	// username starts at 32, unicode, comes after 8 2 bytes before
 	// toggle status at 22-25 ?
@@ -1825,7 +1825,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Get string data from the socket
 //o---------------------------------------------------------------------------o
-string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+std::string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length )
 {
 	char temp[512];
 	strncpy( temp, (const char *)&(sock->Buffer()[offset]), length );
@@ -1840,7 +1840,7 @@ string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Get string data from the socket
 //o---------------------------------------------------------------------------o
-string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length )
+std::string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length )
 {
 	char temp[512];
 	for( int counter = 0; counter < length; counter++ )
