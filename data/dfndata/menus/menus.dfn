@@ -54,36 +54,6 @@ OTHER:=Use this for anything not listed above.
 GMPAGE=Other
 }
 
-//*****************************************************************
-//*                  Start of Batch Section                       *
-//*                                                               *
-//*****************************************************************
-
-[BATCH 1]
-{
-GUIINFORMATION
-}
-
-[BATCH 2]
-{
-// Normal male player body
-POLY=0190
-SKIN=83FF
-}
-
-[BATCH 3]
-{
-// GM body
-POLY=03DB
-SKIN=8021
-}
-
-[BATCH 4]
-{
-// Counselor body
-POLY=03DB
-SKIN=8002
-}
 
 EOF
 
