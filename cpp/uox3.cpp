@@ -8538,11 +8538,11 @@ void respawn(unsigned int currenttime)
 
 unsigned long int getclock( void )
 {
-	return clock() ;
-	struct timeval tv;
 	#ifdef __linux__
+	timeval tv;
 	gettimeofday(&tv, NULL);
 	#else
+	time_t tv ;
 	time(&tv) ;
 	#endif
 	// We want to keep the value within 32 bits; we could also substract
