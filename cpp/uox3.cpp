@@ -889,9 +889,6 @@ void gcollect( void ) // Remove items which were in deleted containers
 		removed=0;
 		for (i=0;i<itemcount;i++)
 		{
-			if (items[i].free || items[i].contserial == -1) //Small optimization from Wolfpack
-				continue;
-
 			if (items[i].free==0)
 			{
 				idelete=0;
@@ -899,7 +896,7 @@ void gcollect( void ) // Remove items which were in deleted containers
 				b=items[i].cont2;
 				c=items[i].cont3;
 				d=items[i].cont4;
-				serial = items[i].serial;
+				serial = calcserial( a, b, c, d );
 				if (!((a==255)&&(b==255)&&(c==255)&&(d==255)))
 				{
 					idelete=1;
@@ -7875,72 +7872,74 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				Network->Receive(s, ((buffer[s][1]<<8)+buffer[s][2]), 1);
 				chars[currchar[s]].unicode=1;
 
-				
-				// Check for command word versions of this packet
-				myoffset = 13 ;
-				myincrement = 2 ;
-				myj = 12 ;
+				int myoffset, mysize;
+				char mytempbuf[512];
+			    // Check for command word versions of this packet														
 
-				switch (buffer[s][3])
-				{
-					case 0xC0:
-					case 0xC9:
-					case 0xC1:
-					case 0xC2:
-					case 0xC6:
-					case 0xC8:
-				
-						myincrement = 1 ;
-						buffer[s][3] = buffer[s][3] & 0x0F ;  //set to normal to send it back
+				if ( (buffer[s][3]) >=0xc0 )
+				{					
+						                  
+						buffer[s][3] = buffer[s][3] & 0x0F ; // set to normal (cutting off the ascii indicator since we are converting back to unicode)					
 
-						switch (buffer[s][13] & 0xF0)
+					    int num_words,/*idx=0,*/ num_unknown;				
+
+						// number of distict trigger words
+						num_words = ( (static_cast<int>(buffer[s][12])) << 24 ) + ( (static_cast<int>(buffer[s][13])) << 16 );
+						num_words = num_words & 0xfff00000;
+						num_words = (num_words >> 20);
+
+						/*************************************/
+						// plz dont delete yet
+						// trigger word index in/from speech.mul, not required [yet]
+						/*idx = ( (static_cast<int>(buffer[s][13])) << 24 ) + ( (static_cast<int>(buffer[s][14])) << 16);
+						idx = idx & 0x0fff0000;
+						idx = ( (idx << 4) >> 20) ;*/						                       
+						//cout << "#keywords was " << hex << num_words << "\n" << hex << static_cast<int>(buffer[s][12]) << " " << hex << static_cast<int> (buffer[s][13]) << " " << static_cast<int> (buffer[s][14]) << " " << static_cast<int> (buffer[s][15]) << endl ;
+						// cout << "idx: " << idx << endl;
+						/*************************************/
+
+						if ((num_words %2) == 1)  // odd number ?
 						{
-							case 0x10:
-			
-							// Copy the buffer up, and convert it to unicode
-								myoffset = 15 ;
-								break ;
-							case 0x20:
-								myoffset = 17 ;
-								break ;
-							case 0x30 :
-								myoffset = 18 ;
-								break ;
-							case 0x40:
-								myoffset = 20 ;
-								break ;
+                          num_unknown = ( num_words / 2 )  * 3;
+						} else
+						{
+                          num_unknown = ( ( num_words / 2 ) * 3 ) -1 ;
 						}
+
+						myoffset = 15 + num_unknown;					
+				
 						//
 						//	Now adjust the buffer
 						int iWord ;
+						//int iTempBuf ;
 						iWord = static_cast<int> ((buffer[s][1] << 8)) + static_cast<int> (buffer[s][2]) ;
 						myj = 12 ;
-						char mytempbuf[512] ;
-						int mysize ;
+
+						//cout << "Max length characters will be " << dec << (iWord - myoffset) << endl ;
 						mysize = iWord - myoffset ;
+
 						for (i=0; i < mysize ; i++)
 						{
 							mytempbuf[i] = buffer[s][i+myoffset] ;
 						}
-						for (i=0; i < mysize; i++)
-						{
-							// we would overwrite our buffer, so we need to catch it before we do that.
-							buffer[s][myj] = 0 ;
+
+						for (i=0; i < mysize ; i++)
+						{							
 							myj++ ;
 							buffer[s][myj] = mytempbuf[i] ;
-							myj++ ;
+							//iTempBuf = static_cast<int> (mytempbuf[i]) ;
+							//cout << "Copying value of " << hex << iTempBuf << endl ;
+							myj++;
+							buffer[s][myj] = 0 ;
+							
 						}
 
-						iWord = ((iWord - myoffset ) * 2) + 12 ;
+						iWord = (((iWord - myoffset ) * 2) + 12) ;
+						//cout << "Setting buffer size to " << dec << iWord << endl ;
 						buffer[s][1] = static_cast<unsigned char> (((iWord &0xFF00) >>8)) ;
-						buffer[s][2] = static_cast<unsigned char> (iWord & 0x00FF) ;
-						break ;
-					default:
+						buffer[s][2] = static_cast<unsigned char> (iWord & 0x00FF) ;															
+				}	
 
-						break ;
-				}
-
-				
 				breakConcentration( currchar[s], s );
 				for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+2)
 				{

@@ -855,7 +855,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				}
 				return; //	case 105 (drinks)
 			case 202:
-					if((itemids==0x14F0)||(itemids==0x1869))
+					if( itemids==0x14F0 || itemids==0x1869 )
 						// Check for Deed/Teleporter + Guild Type
 					{
 						chars[currchar[s]].fx1=x;
@@ -883,7 +883,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					default:
 						break;
 					}
-					if((sec)&&(items[x].morez==0)) 
+					if( sec && items[x].morez==0 ) 
 					{
 						sysmessage(s, "You can not use that.");
 						return;
@@ -1167,7 +1167,9 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						items[c].priv |= 1;
 						items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
 						RefreshItem( c );
-						Items->DeleItem( x );
+						items[x].amount--;
+						if ( items[x].amount <= 0 )
+							Items->DeleItem( x );
 					}
 					else
 					{

@@ -1735,6 +1735,13 @@ void PlayerAttack( UOXSOCKET s )
 		chars[ourChar].targ = -1;
 		return;
 	}
+
+	if (chars[ourChar].cell > 0) //Prevent's someone from trying to gain skill in cells.
+	{
+		sysmessage (s, "There is no fighting in the jail cells!");
+		return;
+	}
+
 	if( chars[ourChar].dead )
 	{
 		if( chars[i].npc )

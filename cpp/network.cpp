@@ -813,7 +813,16 @@ void cNetworkStuff::sockInit( void )
 	}
 #ifndef __NT__
 	int on = 1;
-	setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+	bcode = setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+	if (bcode != 0)
+	{
+		printf("\nERROR: Unable to init. socket - Error code: %i\n", bcode);
+		keeprun = 0;
+		error = 1;
+		kr = 0;
+		fault = 1;
+		return;
+	}
 #endif
 	
 	len_connection_addr=sizeof (struct sockaddr_in);
@@ -1008,6 +1017,9 @@ int cNetworkStuff::Pack(void *pvIn, void *pvOut, int len)
 	int bitByte = 0;
 	int nrBits;
 	unsigned int value;
+
+	if (len <= 0)			//ensure termination.
+		return 0;
 
 	while(len--)
 	{

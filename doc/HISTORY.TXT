@@ -29,6 +29,25 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+26.02.2001               Thiago A. Corrêa
+			 Ported some fixes from Wolfpack:		
+  dbl_sinlge_click.cpp   Fixed: Kindling wont delete the whole pile anymore. 
+  combat.cpp             (Ripper)
+  uox3.cpp               (corrected some minor errata in Beo's and Punts work). 
+                         Should now work *perfect*. (LB)
+                         Changes to prevent skill gaining in jail:
+                             - Impossible to attack if jailled.
+                             - Can not use skills from skill window
+                         Fixed: Lockpicks will not delete the whole pile if more 
+                         than one :) (Ripper)
+
+                         Books not explictly writteable (morex == 666), are treated 
+                         as read-only
+  guildstones.cpp        Moved from if to case structure in Guild Menus and Input 
+                         Gump.
+  network.cpp            Added error check for socket init.
+  
+-------------------------------------------------------------------------------
 25.02.2001               Thiago A. Corrêa
   magic.cpp              More code clean-ups.
                          Changed a for by memset to initialize a vector.

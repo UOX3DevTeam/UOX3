@@ -4128,6 +4128,13 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 		sysmessage(s,"You cannot do that as a ghost.");
 		return;
 	}
+
+	if (chars[currchar[s]].cell > 0)
+	{
+		sysmessage (s, "You cannot do that in jail");
+		return;
+	}
+
 	if ((x!=STEALTH)&&(chars[currchar[s]].hidden)&&(!(chars[currchar[s]].priv2&8))) //AntiChrist - Stealth
 	{
 		chars[currchar[s]].hidden=0;
