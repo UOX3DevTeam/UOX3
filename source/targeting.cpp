@@ -4036,7 +4036,7 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 	char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	sprintf( temp, "account%i.log", mChar->GetAccount() );
+	sprintf( temp, "account%i.log", mChar->GetAccount().wAccountIndex );
 	sprintf( temp2, "%s has made %s a %s.\n", mChar->GetName(), targetChar->GetName(), targLevel->name );
 	savelog( temp2, temp );
 
