@@ -1,16 +1,17 @@
 //*****************************************************************
-//*                         UOX3 Scripts v.36                     *
+//*                         UOX3 DFNs v0.98	                  *
 //*                                                               *
-//* Last Update : 4/1/2000                                       *
-//* Script : house.scp                                            *
+//* Last Update : 01/4/2003                                       *
+//* Script : house.dfn                                            *
 //*****************************************************************
 //*                        How to use this script                 *
 //*                                                               *
-//* use the SECTION HOUSE # in your deed (14 f0)'s morey          *
+//* use the [HOUSE #] in your deed (14 f0)'s morey value          *
 //*                                                               *
 //* Example:                                                      *
-//* /setmorey # on a house deed (14 f0) to make it a              *
-//* to make it a particular house                                 *
+//* 'SETMOREY 1 on a house deed (14 f0) to make it a              *
+//* to make it a deed for a small brick (which is defined under	  *
+//* [HOUSE 1]...                                                  *
 //*                                                               *
 //*****************************************************************
 
@@ -25,7 +26,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6002
+HOUSE_DEED=smallbrickhousedeed
 }
 
 //Small Plaster
@@ -39,7 +40,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6000
+HOUSE_DEED=smallsnphousedeed
 }
 
 // Small Field Stone
@@ -53,7 +54,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6001
+HOUSE_DEED=smallstonehousedeed
 }
 
 //Small Wood
@@ -67,7 +68,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6003
+HOUSE_DEED=smallwoodhousedeed
 }
 
 //Small Wood & Plaster
@@ -81,7 +82,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6004
+HOUSE_DEED=smallwnphousedeed
 }
 
 //Small Hut
@@ -95,7 +96,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=1
 HOUSE_ITEM=2
-HOUSE_DEED=6005
+HOUSE_DEED=smallwoodstrawhousedeed
 }
 
 //Blue Tent
@@ -108,7 +109,7 @@ CHARX=0
 CHARY=0
 CHARZ=0
 HOUSE_ITEM=3
-HOUSE_DEED=6006
+HOUSE_DEED=bluetentdeed
 }
 
 //Green Tent
@@ -121,7 +122,7 @@ CHARX=0
 CHARY=0
 CHARZ=0
 HOUSE_ITEM=3
-HOUSE_DEED=6007
+HOUSE_DEED=greententdeed
 }
 
 //Guild Hall
@@ -138,7 +139,7 @@ HOUSE_ITEM=5
 HOUSE_ITEM=6
 HOUSE_ITEM=7
 HOUSE_ITEM=8
-HOUSE_DEED=6008
+HOUSE_DEED=3roombrickhousedeed
 }
 
 // 2 Story ( Wood & Plaster )
@@ -155,7 +156,7 @@ HOUSE_ITEM=10
 HOUSE_ITEM=11
 HOUSE_ITEM=12
 HOUSE_ITEM=13
-HOUSE_DEED=6009
+HOUSE_DEED=2storywnphousedeed
 }
 
 [HOUSE 11]
@@ -171,7 +172,7 @@ HOUSE_ITEM=14
 HOUSE_ITEM=11
 HOUSE_ITEM=12
 HOUSE_ITEM=13
-HOUSE_DEED=6010
+HOUSE_DEED=2storysnphousedeed
 }
 
 [HOUSE 12]
@@ -188,7 +189,7 @@ HOUSE_ITEM=17
 HOUSE_ITEM=18
 HOUSE_ITEM=19
 HOUSE_ITEM=20
-HOUSE_DEED=6011
+HOUSE_DEED=towerdeed
 }
 
 [HOUSE 13]
@@ -202,7 +203,7 @@ CHARZ=7
 HOUSE_ITEM=21
 HOUSE_ITEM=22
 HOUSE_ITEM=23
-HOUSE_DEED=6012
+HOUSE_DEED=keepdeed
 }
 
 [HOUSE 14]
@@ -220,7 +221,7 @@ HOUSE_ITEM=27
 HOUSE_ITEM=28
 HOUSE_ITEM=29
 HOUSE_ITEM=30
-HOUSE_DEED=6013
+HOUSE_DEED=castledeed
 }
 
 [HOUSE 15]
@@ -238,6 +239,7 @@ HOUSE_ITEM=34
 HOUSE_ITEM=35
 HOUSE_ITEM=36
 HOUSE_ITEM=37
+HOUSE_DEED=largeshoppatio
 }
 
 [HOUSE 16]
@@ -259,7 +261,7 @@ HOUSE_ITEM=38
 HOUSE_ITEM=39
 HOUSE_ITEM=40
 HOUSE_ITEM=41
-HOUSE_DEED=6014
+HOUSE_DEED=largesmithydeed
 }
 
 [HOUSE 17]
@@ -358,7 +360,7 @@ CHARY=0
 CHARZ=8
 HOUSE_ITEM=100
 HOUSE_ITEM=101
-HOUSE_DEED=6037
+HOUSE_DEED=smalltowerdeed
 }
 
 // Small Marble Shop
@@ -372,7 +374,7 @@ CHARY=0
 CHARZ=24
 HOUSE_ITEM=102
 HOUSE_ITEM=103
-HOUSE_DEED=6038
+HOUSE_DEED=smallmarbleshopdeed
 }
 
 // Small Stone Shop
@@ -386,7 +388,7 @@ CHARY=0
 CHARZ=27
 HOUSE_ITEM=104
 HOUSE_ITEM=105
-HOUSE_DEED=6039
+HOUSE_DEED=smallstoneshopdeed
 }
 
 // 2 Story Villa
@@ -403,7 +405,7 @@ HOUSE_ITEM=107
 HOUSE_ITEM=108
 HOUSE_ITEM=109
 HOUSE_ITEM=110
-HOUSE_DEED=6040
+HOUSE_DEED=2storyvilladeed
 }
 
 // Sandstone Patio House
@@ -417,7 +419,7 @@ CHARY=2
 CHARZ=7
 HOUSE_ITEM=111
 HOUSE_ITEM=112
-HOUSE_DEED=6041
+HOUSE_DEED=sandstonepatiohousedeed
 }
 
 
@@ -433,7 +435,7 @@ CHARZ=7
 HOUSE_ITEM=113
 HOUSE_ITEM=114
 HOUSE_ITEM=115
-HOUSE_DEED=6042
+HOUSE_DEED=2storylogcabindeed
 }
 
 // Large Marble Patio House
@@ -448,7 +450,7 @@ CHARZ=7
 HOUSE_ITEM=116
 HOUSE_ITEM=117
 HOUSE_ITEM=118
-HOUSE_DEED=6043
+HOUSE_DEED=largemarblepatiohousedeed
 }
 
 [HOUSE ITEM 1]

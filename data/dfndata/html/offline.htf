@@ -1,0 +1,25 @@
+<html><head><title>Ultima Offline eXperiment - ServerStatus - Server is currently down.</title></head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<div align="center"><br>
+  <br>
+  <table width="600" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td> 
+        <p><font size="4" face="Arial, Helvetica, sans-serif"><b><font color="#000099">U O X</font></b> - <font color="#666666">ServerStatus:<font size=+1 color=red>OFFLINE</font></font><br>
+          </font><font size="1"><font face="Arial, Helvetica, sans-serif">Build: 
+          %version</font></font><i> </i><font size="1" face="Arial, Helvetica, sans-serif">| %time | Page is updated every %updatetime sec.</font><i><br>
+          <br>
+          </i><font size="2"><font face="Arial, Helvetica, sans-serif"><b>Characters:</b> 
+          %charcount<br>
+          <b>Items:</b> %itemcount<br>
+          <b>Accounts:</b> %accounts<br>
+          <b>NPCs:</b> %npcs<br>
+          <b>Time:</b> %time</font><br>
+          <br>
+          <font face="Arial, Helvetica, sans-serif"><b>Server is OffLine</b><br>
+        </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,583 @@
+// lightsources.dfn
+// All types of things that give light
+// v1.0; 06/10/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+[0x09fb]
+{ E, off
+get=base_item
+name=wall sconce
+id=0x09fb
+movable=2
+}
+
+[0x09fc]
+{ E, without candle
+get=base_item
+name=wall sconce
+id=0x09fc
+movable=2
+}
+
+[0x09fd]
+{ E, burning (anim)
+get=base_item
+name=wall sconce
+id=0x09fd
+movable=2
+}
+
+[0x0a00]
+{ S, off
+get=base_item
+name=wall sconce
+id=0x0a00
+movable=2
+}
+
+[0x0a01]
+{ S, without candle
+get=base_item
+name=wall sconce
+id=0x0a01
+movable=2
+}
+
+[0x0a02]
+{ S, burning (anim)
+get=base_item
+name=wall sconce
+id=0x0a02
+movable=2
+}
+
+[0x0a05]
+{ E, off
+get=base_item
+name=wall torch
+id=0x0a05
+movable=2
+}
+
+[0x0a06]
+{ E, without torch
+get=base_item
+name=wall torch
+id=0x0a06
+movable=2
+}
+
+[0x0a07]
+{ E, burning (anim)
+get=base_item
+name=wall torch
+id=0x0a07
+movable=2
+}
+
+[0x0a0a]
+{ S, off
+get=base_item
+name=wall torch
+id=0x0a0a
+movable=2
+}
+
+[0x0a0b]
+{ S, without torch
+get=base_item
+name=wall torch
+id=0x0a0b
+movable=2
+}
+
+[0x0a0c]
+{ S, burning (anim)
+get=base_item
+name=wall torch
+id=0x0a0c
+movable=2
+}
+
+[0x0a0f]
+{ small candlestick, player carryable
+get=base_item
+name=candle
+id=0x0a0f
+weight=200
+value=6,3
+decay=1
+}
+
+[0x0a10]
+{ small candlestick, player carryable
+get=base_item
+name=candle
+id=0x0a10
+weight=200
+value=6,3
+decay=1
+}
+
+[0x0a11]
+{ small candlestick, player carryable
+get=base_item
+name=candle
+id=0x0a11
+weight=200
+value=6,3
+decay=1
+}
+
+[0x0a12]
+{ player carryable
+get=base_item
+name=torch
+id=0x0a12
+weight=100
+value=7,3
+decay=1
+}
+
+[0x0a13]
+{ player carryable
+get=base_item
+name=torch
+id=0x0a13
+weight=100
+value=7,3
+decay=1
+}
+
+[0x0a14]
+{ player carryable
+get=base_item
+name=torch
+id=0x0a14
+weight=100
+value=7,3
+decay=1
+}
+
+[0x0a15]
+{ E hanging, burning (anim)
+get=base_item
+name=lantern
+id=0x0a15
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a18]
+{ E hanging, off
+get=base_item
+name=lantern
+id=0x0a18
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a1a]
+{ S hanging, burning (anim)
+get=base_item
+name=lantern
+id=0x0a1a
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a1d]
+{ S hanging, off
+get=base_item
+name=lantern
+id=0x0a1d
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a22]
+{ burning (anim)
+get=base_item
+name=lantern
+id=0x0a22
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a25]
+{ off
+get=base_item
+name=lantern
+id=0x0a25
+weight=200
+value=7,2
+decay=1
+}
+
+[0x0a26]
+{ candlestick, off
+get=base_item
+name=candle
+id=0x0a26
+weight=100
+decay=1
+}
+
+[0x0a27]
+{ small, off
+get=base_item
+name=candlabra
+id=0x0a27
+weight=300
+decay=1
+}
+
+[0x0a28]
+{ small candlestick, off
+get=base_item
+name=candle
+id=0x0a28
+weight=100
+decay=1
+}
+
+[0x0a29]
+{ large, off
+get=base_item
+name=candlabra
+id=0x0a29
+weight=300
+decay=1
+}
+
+[0x0b1a]
+{ candlestick, burning (anim)
+get=base_item
+name=candle
+id=0x0b1a
+weight=100
+decay=1
+}
+
+[0x0b1d]
+{ small, burning (anim)
+get=base_item
+name=candlabra
+id=0x0b1d
+weight=300
+decay=1
+}
+
+[0x0b26]
+{ large, burning (anim)
+get=base_item
+name=candlabra
+id=0x0b26
+weight=300
+decay=1
+}
+
+[0x0b20]
+{ simple, on
+get=base_item
+name=lamp post
+id=0x0b20
+movable=2
+}
+
+[0x0b21]
+{ simple, off
+get=base_item
+name=lamp post
+id=0x0b21
+movable=2
+}
+
+[0x0b22]
+{ glass, on
+get=base_item
+name=lamp post
+id=0x0b22
+movable=2
+}
+
+[0x0b23]
+{ glass, off
+get=base_item
+name=lamp post
+id=0x0b23
+movable=2
+}
+
+[0x0b24]
+{ fancy, on
+get=base_item
+name=lamp post
+id=0x0b24
+movable=2
+}
+
+[0x0b25]
+{ fancy, off
+get=base_item
+name=lamp post
+id=0x0b25
+movable=2
+}
+
+[0x0e31]
+{ fired (anim)
+get=base_item
+name=brazier
+id=0x0e31
+movable=2
+}
+
+[0x0fac]
+{ 
+get=base_item
+name=fire pit
+id=0x0fac
+movable=2
+}
+
+[0x19aa]
+{ tall
+get=base_item
+name=brazier
+id=0x19aa
+movable=2
+}
+
+[0x19bb]
+{ small
+get=base_item
+name=brazier
+id=0x19bb
+movable=2
+}
+
+[0x19ab]
+{ blazing (anim) for brazier, firepit, etc.
+get=base_item
+name=fire
+id=0x19ab
+movable=2
+}
+
+[0x1ecd]
+{ green commcrystal, dark
+get=base_item
+name=light
+id=0x1ecd
+value=81,40
+}
+
+[0x1ece]
+{ green commcrystal, middle
+get=base_item
+name=light
+id=0x1ece
+value=81,40
+}
+
+[0x1ecf]
+{ green commcrystal, broad
+get=base_item
+name=light
+id=0x1ecf
+value=81,40
+}
+
+[0x1ed0]
+{ red commcrystal, dark
+get=base_item
+name=light
+id=0x1ed0
+value=81,40
+}
+
+[0x1ed1]
+{ red commcrystal, middle
+get=base_item
+name=light
+id=0x1ed1
+value=81,40
+}
+
+[0x1ed2]
+{ red commcrystal, broad
+get=base_item
+name=light
+id=0x1ed2
+value=81,40
+}
+
+[0x1f19]
+{ green glowing (anim)
+get=base_item
+name=magic crystal
+id=0x1f19
+}
+
+[0x1f1c]
+{ purple glowing (anim)
+get=base_item
+name=magic crystal
+id=0x1f1c
+}
+
+[0x1f2b]
+{ smallest
+get=base_item
+name=brazier
+id=0x1f2b
+movable=2
+}
+
+[0x0de3]
+{ burning (anim)
+get=base_item
+name=campfire
+id=0x0de3
+movable=2
+}
+
+[0x0de7]
+{ burning down 1
+get=base_item
+name=campfire
+id=0x0de7
+movable=2
+}
+
+[0x0de8]
+{ burning down 2
+get=base_item
+name=campfire
+id=0x0de8
+movable=2
+}
+
+[0x0de9]
+{ burnt down campfire
+get=base_item
+name=embers
+id=0x0de9
+movable=2
+}
+
+[0x0dea]
+{ burnt down campfire
+get=base_item
+name=burned wood
+id=0x0dea
+movable=2
+}
+
+[0x1853]
+{ right, off
+get=base_item
+name=skull with candle
+id=0x1853
+decay=1
+}
+
+[0x1854]
+{ right, burning (anim)
+get=base_item
+name=skull with candle
+id=0x1854
+decay=1
+}
+
+[0x1857]
+{ left, off
+get=base_item
+name=skull with candle
+id=0x1857
+decay=1
+}
+
+[0x1858]
+{ left, burning (anim)
+get=base_item
+name=skull with candle
+id=0x1858
+decay=1
+}
+
+[0x142c]
+{ thick, burning (anim)
+get=base_item
+name=candle
+id=0x142c
+weight=100
+decay=1
+}
+
+[0x142f]
+{ thick, off
+get=base_item
+name=candle
+id=0x142f
+weight=100
+decay=1
+}
+
+[0x1430]
+{ middle, burning (anim)
+get=base_item
+name=candle
+id=0x1430
+weight=100
+decay=1
+}
+
+[0x1433]
+{ middle, off
+get=base_item
+name=candle
+id=0x1433
+weight=100
+decay=1
+}
+
+[0x1434]
+{ slim, burning (anim)
+get=base_item
+name=candle
+id=0x1434
+weight=100
+decay=1
+}
+
+[0x1437]
+{ slim, off
+get=base_item
+name=candle
+id=0x1437
+weight=100
+decay=1
+}
+
+[0x0F64]
+{
+get=base_item
+name=torch
+id=0x0F64
+layer=2
+weight=100
+value=7,3
+restock=100
+decay=1
+}
+
+EOF

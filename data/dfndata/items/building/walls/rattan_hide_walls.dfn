@@ -1,0 +1,789 @@
+// rattan post
+[0x019B]
+{
+get=base_item
+name=rattan post
+id=0x019B
+}
+
+// rattan supports corner southwest
+[0x019C]
+{
+get=base_item
+name=rattan supports
+id=0x019C
+}
+
+// rattan supports west facing
+[0x019D]
+{
+get=base_item
+name=rattan supports
+id=0x019D
+}
+
+// rattan supports top west
+[0x019E]
+{
+get=base_item
+name=rattan supports
+id=0x019E
+}
+
+// rattan supports west with pole
+[0x019F]
+{
+get=base_item
+name=rattan supports
+id=0x019F
+}
+
+// rattan supports south
+[0x01A0]
+{
+get=base_item
+name=rattan supports
+id=0x01A0
+}
+
+// rattan supports top south
+[0x01A1]
+{
+get=base_item
+name=rattan supports
+id=0x01a1
+}
+
+// rattan supports south with pole
+[0x01A2]
+{
+get=base_item
+name=rattan supports
+id=0x01A2
+}
+
+// short rattan pole
+[0x01A3]
+{
+get=base_item
+name=rattan pole
+id=0x01A3
+}
+
+// rattan wall southwest corner
+[0x01A5]
+{
+get=base_item
+name=rattan wall
+id=0x01A5
+}
+
+// rattan wall west 
+[0x01A6]
+{
+get=base_item
+name=rattan wall
+id=0x01A6
+}
+
+// rattan wall west pole south edge
+[0x01A7]
+{
+get=base_item
+name=rattan wall
+id=0x01A7
+}
+
+// rattan pole
+[0x01A8]
+{
+get=base_item
+name=rattan pole
+id=0x01A8
+}
+
+// rattan wall south facing
+[0x01A9]
+{
+get=base_item
+name=rattan wall
+id=0x01A9
+}
+
+// rattan wall south facing with pole west edge
+[0x01AA]
+{
+get=base_item
+name=rattan wall
+id=0x01AA
+}
+
+// rattan wall west
+[0x01AB]
+{
+get=base_item
+name=rattan wall
+id=0x01AB
+}
+
+// rattan wall south
+[0x01AC]
+{
+get=base_item
+name=rattan wall
+id=0x01AC
+}
+
+// rattan wall with window facing west
+[0x01AD]
+{
+get=base_item
+name=window
+id=0x01AD
+}
+
+// rattan wall with window facing east
+[0x01AE]
+{
+get=base_item
+name=window
+id=0x01AE
+}
+
+// rattan wall with window facing south
+[0x01AF]
+{
+get=base_item
+name=window
+id=0x01AF
+}
+
+// rattan wall with window facing north
+[0x01B0]
+{
+get=base_item
+name=window
+id=0x01B0
+}
+
+// very short rattan post
+[0x01B5]
+{
+get=base_item
+name=rattan post
+id=0x01B5
+}
+
+// hide wall southwest corner
+[0x01B6]
+{
+get=base_item
+name=hide wall
+id=0x01B6
+}
+
+// hide wall south
+[0x01B7]
+{
+get=base_item
+name=hide wall
+id=0x01B7
+}
+
+// hide wall west
+[0x01B8]
+{
+get=base_item
+name=hide wall
+id=0x01B8
+}
+
+// dark green hide door west closed pole north edge
+[0x022C]
+{
+get=base_item
+name=door
+id=0x022C
+}
+
+// dark green hide door open west pole south edge
+[0x022D]
+{
+get=base_item
+name=door
+id=0x022D
+}
+
+// dark green hide door south open pole west edge
+[0x022E]
+{
+get=base_item
+name=door
+id=0x022E
+}
+
+// dark green hide door south closed pole east edge
+[0x022F]
+{
+get=base_item
+name=door
+id=0x022F
+}
+
+// rattan post
+[0x01B9]
+{
+get=base_item
+name=rattan post
+id=0x01B9
+}
+
+// hide wall south
+[0x01BA]
+{
+get=base_item
+name=hide wall
+id=0x01BA
+}
+
+// hide wall west
+[0x01BB]
+{
+get=base_item
+name=hide wall
+id=0x01BB
+}
+
+// hide wall west no post
+[0x01BC]
+{
+get=base_item
+name=hide wall
+id=0x01BC
+}
+
+// hide wall south no post
+[0x01BD]
+{
+get=base_item
+name=hide wall
+id=0x01BD
+}
+
+// hide wall west
+[0x01BE]
+{
+get=base_item
+name=hide wall
+id=0x01BE
+}
+
+// hide wall south
+[0x01BF]
+{
+get=base_item
+name=hide wall
+id=0x01BF
+}
+
+// hide wall west post on south edge
+[0x01C0]
+{
+get=base_item
+name=hide wall
+id=0x01C0
+}
+
+// hide wall south post on west edge
+[0x01C1]
+{
+get=base_item
+name=hide wall
+id=0x01C1
+}
+
+// hide wall west
+[0x01C2]
+{
+get=base_item
+name=hide wall
+id=0x01C2
+}
+
+// hide wall south
+[0x01C3]
+{
+get=base_item
+name=hide wall
+id=0x01C3
+}
+
+// hide wall with window west
+[0x01C4]
+{
+get=base_item
+name=window
+id=0x01C4
+}
+
+// hide wall with window south
+[0x01C5]
+{
+get=base_item
+name=window
+id=0x01C5
+}
+
+// hide wall with window east
+[0x01C6]
+{
+get=base_item
+name=window
+id=0x01C6
+}
+
+// hide wall with window north
+[0x01C7]
+{
+get=base_item
+name=window
+id=0x01C7
+}
+
+// very short hide wall west
+[0x01C8]
+{
+get=base_item
+name=hide wall
+id=0x01C8
+}
+
+// very short hide wall south
+[0x01C9]
+{
+get=base_item
+name=hide wall
+id=0x01C9
+}
+
+// very short rattan stub
+[0x01CB]
+{
+get=base_item
+name=dock pole
+id=0x01CB
+}
+
+[0x01CC]
+{
+get=base_item
+name=dock pole
+id=0x01CC
+}
+
+// short rattan stub
+[0x01CD]
+{
+get=base_item
+name=dock pole
+id=0x01CD
+}
+
+[0x01CE]
+{
+get=base_item
+name=dock pole
+id=0x01CE
+}
+
+// bamboo wall south
+[0x020F]
+{
+get=base_item
+name=bamboo wall
+id=0x020F
+}
+
+// bamboo wall north-northeast
+[0x0210]
+{
+get=base_item
+name=bamboo wall
+id=0x0210
+}
+
+// bamboo wall west
+[0x0211]
+{
+get=base_item
+name=bamboo wall
+id=0x0211
+}
+
+// bamboo wall northeast curved
+[0x0212]
+{
+get=base_item
+name=bamboo wall
+id=0x0212
+}
+
+// bamboo wall east
+[0x0213]
+{
+get=base_item
+name=bamboo wall
+id=0x0213
+}
+
+// bamboo wall west
+[0x0214]
+{
+get=base_item
+name=bamboo wall
+id=0x0214
+}
+
+// bamboo wall northwest
+[0x0215]
+{
+get=base_item
+name=bamboo wall
+id=0x0215
+}
+
+// bamboo wall south
+[0x0216]
+{
+get=base_item
+name=bamboo wall
+id=0x0216
+}
+
+// bamboo wall north-northwest
+[0x0217]
+{
+get=base_item
+name=bamboo wall
+id=0x0217
+}
+
+// bamboo wall northwest
+[0x0218]
+{
+get=base_item
+name=bamboo wall
+id=0x0218
+}
+
+// bamboo wall southeast
+[0x0219]
+{
+get=base_item
+name=bamboo wall
+id=0x0219
+}
+
+// bamboo wall northwest-west
+[0x021A]
+{
+get=base_item
+name=bamboo wall
+id=0x021A
+}
+
+// short palisade spikes west
+[0x021D]
+{
+get=base_item
+name=palisade
+id=0x021D
+}
+
+// short palisade spikes south
+[0x021E]
+{
+get=base_item
+name=palisade
+id=0x021E
+}
+
+// short palisade spikes west
+[0x021F]
+{
+get=base_item
+name=palisade
+id=0x021F
+}
+
+// short palisade spikes south
+[0x0220]
+{
+get=base_item
+name=palisade
+id=0x0220
+}
+
+// spiked palisade wall south
+[0x0221]
+{
+get=base_item
+name=palisade
+id=0x0221
+}
+
+// spiked palisade wall west
+[0x0222]
+{
+get=base_item
+name=palisade
+id=0x0222
+}
+
+// spiked palisade corner southwest
+[0x0223]
+{
+get=base_item
+name=palisade
+id=0x0223
+}
+
+// palisade corner southwest
+[0x0226]
+{
+get=base_item
+name=palisade
+id=0x0226
+}
+
+// palisade wall south
+[0x0227]
+{
+get=base_item
+name=wooden wall
+id=0x0227
+}
+
+// palisade wall west
+[0x0228]
+{
+get=base_item
+name=wooden wall
+id=0x0228
+}
+
+// palisade south spiked with skull west edge
+[0x0421]
+{
+get=base_item
+name=palisade
+id=0x0421
+}
+
+// palisade west spiked with skull south edge skull faces west
+[0x0422]
+{
+get=base_item
+name=palisade
+id=0x0422
+}
+
+// very short spiked palisade west
+[0x0423]
+{
+get=base_item
+name=palisade
+id=0x0423
+}
+
+// very short spiked palisade south
+[0x0424]
+{
+get=base_item
+name=palisade
+id=0x0424
+}
+
+// very short spiked palisade corner southwest
+[0x0425]
+{
+get=base_item
+name=palisade
+id=0x0425
+}
+
+// palisade spiked west skull south edge
+[0x0430]
+{
+get=base_item
+name=palisade
+id=0x0430
+}
+
+// light palisade spiked west skull south edge skull faces south
+[0x0431]
+{
+get=base_item
+name=palisade
+id=0x0431
+}
+
+// short rattan wall south
+[0x215A]
+{
+get=base_item
+name=rattan wall
+id=0x215A
+}
+
+// thin wooden log post
+[0x0229]
+{
+get=base_item
+name=wooden post
+id=0x0229
+}
+
+// very short palisade wall west
+[0x022A]
+{
+get=base_item
+name=wooden wall
+id=0x022A
+}
+
+// very short palisade wall south
+[0x022B]
+{
+get=base_item
+name=wooden wall
+id=0x022B
+}
+
+// dark wooden wall west top and bottom runner boards
+[0x0334]
+{
+get=base_item
+name=wooden wall
+id=0x0334
+}
+
+// dark wooden wall west top and bottom runner boards
+[0x0336]
+{
+get=base_item
+name=wooden wall
+id=0x0336
+}
+
+// dark wooden wall west top and bottom runner boards
+[0x0338]
+{
+get=base_item
+name=wooden wall
+id=0x0338
+}
+
+// dark wooden wall west top and bottom runner boards
+[0x033A]
+{
+get=base_item
+name=wooden wall
+id=0x033A
+}
+
+// dark wooden wall south top and bottom runner boards
+[0x033C]
+{
+get=base_item
+name=wooden wall
+id=0x033C
+}
+
+// dark wooden wall south top and bottom runner boards
+[0x033E]
+{
+get=base_item
+name=wooden wall
+id=0x033E
+}
+
+// dark wooden wall south top and bottom runner boards
+[0x0340]
+{
+get=base_item
+name=wooden wall
+id=0x0340
+}
+
+// dark wooden wall south top and bottom runner boards 
+[0x0342]
+{
+get=base_item
+name=wooden wall
+id=0x0342
+}
+
+// light wooden wall west
+[0x0344]
+{
+get=base_item
+name=wooden wall
+id=0x0344
+}
+
+// light wooden wall west
+[0x0346]
+{
+get=base_item
+name=wooden wall
+id=0x0346
+}
+
+// light wooden wall west
+[0x0348]
+{
+get=base_item
+name=wooden wall
+id=0x0348
+}
+
+// light wooden wall west
+[0x034A]
+{
+get=base_item
+name=wooden wall
+id=0x034A
+}
+
+// light wooden wall south
+[0x034C]
+{
+get=base_item
+name=wooden wall
+id=0x034C
+}
+
+// light wooden wall south
+[0x034E]
+{
+get=base_item
+name=wooden wall
+id=0x034E
+}
+
+// light wooden wall south
+[0x0350]
+{
+get=base_item
+name=wooden wall
+id=0x0350
+}
+
+// light wooden wall south
+[0x0352]
+{
+get=base_item
+name=wooden wall
+id=0x0352
+}

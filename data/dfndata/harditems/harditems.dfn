@@ -1,45 +1,84 @@
 //*****************************************************************
-//*                         UOX3 Scripts v.35                     *
+//*                         UOX3 DFNs v0.98                       *
 //*                                                               *
-//*                   http://www.uoxdev.com/scripts/              *
+//*                   http://www.uox3dev.net			  *
 //*                                                               *
-//* Last Update : 1/16/2000                                       *
-//* Script : harditems.scp                                        *
+//* Last Update : 01/4/2003                                       *
+//* Script : harditems.dfn                                        *
 //*****************************************************************
 //*                        How to use this script                 *
 //*                                                               *
 //* Insert here the ID of the items to automatically set when     *
 //* they will created via HARD-CODE. You can use all VARIABLES    *
-//* used into items.scp So for example you can enter:             *
+//* used in the item-dfns. So for example you can enter:          *
 //*                                                               *
-//*    NAME iron ore                                              *
-//*    WEIGHT 3000                                                *
+//*    NAME=iron ore                                              *
+//*    WEIGHT=3000                                                *
 //*    etc .......                                                *
 //*                                                               *
 //* NOTE : these settings only work if you add the item via       *
-//*        /add <hex1> <hex2> NOT /aditem <item_number>           *
+//*        /add 0x#### NOT /additem <item_number>                 *
 //*                                                               *
 //*****************************************************************
 
-//Logs
+// Logs
 [x1be0]
 {
-GOOD=1
-DECAY
+weight=200
+pile=1
+decay=1
+}
+
+[x1bdd]
+{
+weight=200
+pile=1
+decay=1
+}
+
+// Ores
+// Small Ore Pile
+[0x19b7]
+{
+weight=200
+pile=1
+decay=1
+}
+
+// Medium Ore Pile
+[0x19b8]
+{
+weight=700
+pile=1
+decay=1
+}
+
+// Large Ore Pile
+[0x19b9]
+{
+weight=1200
+pile=1
+decay=1
+}
+
+// Medium-small Ore Pile
+[0x19bb]
+{
+weight=700
+pile=1
+decay=1
 }
 
 //Doors
-[x675x677x67dx67fx685x687x68dx68fx695x697x69dx69fx6a5x67ax6adx6afx6b5x6b7x6BDx6BFx6C5x6C7x6CDx6CFx6D5x6D7x6DDx6DFx6E5x6E7x6EDx6EF]
+[0x06750x06770x067d0x067f0x06850x06870x068d0x068f0x06950x06970x069d0x069f0x06a50x067a0x06ad0x06af0x06b50x06b70x06bd0x06bf0x06c50x06c70x06cd0x06cf0x06d50x06d70x06dd0x06df0x06e50x06e70x06ed0x06ef]
 {
-NAME=a door
-TYPE=12
+type=12
 }
 
 //Fence Gates
-[x839x83Bx841x843x84Cx84Ex854x856x866x868x86Ex870]
+[0x08390x083b0x08410x08430x084c0x084e0x08540x08560x08660x08680x086e0x0870]
 {
-NAME=a gate
-TYPE=12
+type=12
 }
 
 EOF

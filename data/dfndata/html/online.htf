@@ -24,18 +24,15 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Counselors:</i> %online_couns<br>
           <br>
           <b>Server:</b> %server1 %ip1:%port1 <br>
-          <b>Simcycles:</b> %simcycles<br>
-          %performance<br>
-          <b>Uptime:</b> %uptime<br>
           <br>
           <b>Clients:</b> <br>
           %playerlist%<br>
-          %playername (%playertitle) %playerip %playeraccount (%playerx,%playery,%playerz)<br>
+          %playername (%playertitle) %playeraccount<br>
           %playerlist%<br>
           <br>
           Guilds (%guildcount):<br>
           %guildlist%<br>
-          %guildid. <a href="guilds/%guildid.html">%guildname</a><br>
+          %guildid. <a href="%guildid.html">%guildname</a><br>
           %guildlist%</font></font></p>
         </td>
     </tr>
