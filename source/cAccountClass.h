@@ -59,6 +59,8 @@
 #include <iosfwd>
 #include <algorithm>
 #include <cctype>
+#include <vector>
+#include <map>
 
 //#ifndef __LINUX__
 //#include <ios>
@@ -66,7 +68,6 @@
 //#include <iomanip.h>
 //#include <strstream.h>
 //#endif
-#include <map>
 
 //#include <sys/types.h>
 //#include <sys/stat.h>
