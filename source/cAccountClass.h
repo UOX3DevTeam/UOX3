@@ -22,7 +22,7 @@
 	#define __unix__
 #endif
 
-
+/*
 #if __LINUX__
 #include <dirent.h>
 /*
@@ -30,7 +30,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <unistd.h>
-*/
+*//*
 #define strnicmp(a,b,c) strnbasecmp(a,b,c)
 #define _stat stat
 #define _mkdir mkdir
@@ -40,7 +40,7 @@
 /*
 #include <winsock2.h>
 #include <windows.h>
-*/
+*//*
 #include <direct.h>
 /*
 #include <io.h>
@@ -48,7 +48,7 @@
 #include <sys/timeb.h>
 */
 #define _mkdir(s1,s2) _mkdir(s1)
-#endif
+//#endif
 
 #include <iostream>
 #include <sstream>

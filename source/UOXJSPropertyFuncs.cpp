@@ -143,6 +143,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		case CIP_OWNER:		
 			// The owner property is not the pack's owner, but the item's owner.
 			// If you want the container's owner, look that up instead
+			if(*vp!=JAVAL_NULL)
 			{
 				CChar *pOwner = (CChar *)gPriv->GetOwnerObj();
 
