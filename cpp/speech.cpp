@@ -233,7 +233,6 @@ void unicodetalking( UOXSOCKET s ) // PC speech
 			{
 				chars[currchar[s]].emotecolor1=buffer[s][4];
 				chars[currchar[s]].emotecolor2=buffer[s][5];
-				return;
 			}
 			if (server_data.log==2) //Logging -- Zippy
 			{
