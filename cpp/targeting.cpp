@@ -75,8 +75,7 @@ void cTargets::PlVBuy(int s)//PlayerVendors
 	}
 	else
 	{
-		int tAmount = 0;
-		tAmount = delequan(currchar[s], 0x0E, 0xED, items[i].value);
+		int tAmount = delequan(currchar[s], 0x0E, 0xED, items[i].value);
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
@@ -84,7 +83,7 @@ void cTargets::PlVBuy(int s)//PlayerVendors
 	chars[v].holdg += items[i].value;
 	unsetserial(i, 1);
 	setserial(i, p, 1);
-	RefreshItem(i);
+	RefreshItem( i );
 	Weight->NewCalc(currchar[s]);
 	statwindow(s, currchar[s]);
 }
@@ -512,13 +511,11 @@ void cTargets::AddTarget(int s)
 	addid2[s]=0;
 }
 
-void cTargets::RenameTarget(int s)
+void cTargets::RenameTarget( UOXSOCKET s )
 {
-	int i,serial;
-	//   
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if(addx[s]==1) //rename2 //New -- Zippy
@@ -585,11 +582,10 @@ void cTargets::TeleTarget( UOXSOCKET s )
 #endif
 	} 
 }
-void cTargets::GetAccount( int s )
+void cTargets::GetAccount( UOXSOCKET s )
 {
-	int i, serial;
-	serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	int i = calcCharFromSer( serial );
 
 	if( i != -1 )
 	{
@@ -597,22 +593,23 @@ void cTargets::GetAccount( int s )
 		{
 			Admin->GumpAMenu( s, i );
 		}
-		else sysmessage( s, "That is not a player!" );
+		else 
+			sysmessage( s, "That is not a player!" );
 	}
-	else sysmessage( s, "That is not a player!" );
+	else 
+		sysmessage( s, "That is not a player!" );
 }
-void cTargets::RemoveTarget(int s)
+void cTargets::RemoveTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		sysmessage(s, "Removing item.");
 		Items->DeleItem(i);
-    } else {
+    } 
+	else 
+	{
 		i = calcCharFromSer( serial );
 		if(i!=-1)
 		{
@@ -742,13 +739,10 @@ void cTargets::NewzTarget(int s)
 	}
 }
 
-void cTargets::TypeTarget(int s)
+void cTargets::TypeTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].type=addid1[s];
@@ -756,13 +750,10 @@ void cTargets::TypeTarget(int s)
 }
 
 
-void cTargets::IDtarget(int s)
+void cTargets::IDtarget( UOXSOCKET s )
 {
-	int i, serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].id1=addid1[s];
@@ -838,12 +829,10 @@ void cTargets::XTeleport(int s, int x)
 	}
 }
 
-void cTargets::XgoTarget(int s)
+void cTargets::XgoTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i+1000000);
@@ -857,13 +846,10 @@ void cTargets::XgoTarget(int s)
 	}
 }
 
-void cTargets::MoreXYZTarget(int s)
+void cTargets::MoreXYZTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morex=addx[s];
@@ -872,52 +858,40 @@ void cTargets::MoreXYZTarget(int s)
 	}
 }
 
-void cTargets::MoreXTarget(int s)
+void cTargets::MoreXTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morex=addx[s];
 	}
 }
 
-void cTargets::MoreYTarget(int s)
+void cTargets::MoreYTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morey=addx[s];
 	}
 }
 
-void cTargets::MoreZTarget(int s)
+void cTargets::MoreZTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].morez=addx[s];
 	}
 }
 
-void cTargets::PrivTarget(int s)
+void cTargets::PrivTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		//Logging
@@ -929,13 +903,10 @@ void cTargets::PrivTarget(int s)
 	}
 }
 
-void cTargets::MoreTarget(int s)
+void cTargets::MoreTarget( UOXSOCKET s )
 {
-	int i/*,j*/,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].more1=addid1[s];
@@ -946,12 +917,10 @@ void cTargets::MoreTarget(int s)
 	}
 }
 
-void cTargets::KeyTarget(int s) // new keytarget by Morollan
+void cTargets::KeyTarget( UOXSOCKET s ) // new keytarget by Morollan
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if ((items[i].more1==0)&&(items[i].more2==0)&&
@@ -1109,13 +1078,10 @@ void cTargets::CstatsTarget( UOXSOCKET s )
 	}
 }
 
-void cTargets::WstatsTarget(int s)
+void cTargets::WstatsTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		sprintf(temp, "Ser [%x %x %x %x] ID [%x %x] Name [%s]",
@@ -1151,7 +1117,7 @@ void cTargets::GMTarget(int s)
 		savelog( temp2, temp );
 		
 		//AntiChrist bugfix
-		unmounthorse( calcSocketFromChar( i ) );
+		unmounthorse( i );
 		chars[i].id1 = 0x03;
 		chars[i].id2 = 0xDB;
 		chars[i].skin1 = 0x80;
@@ -1249,7 +1215,7 @@ void cTargets::GMTarget(int s)
 	} //LB !!!
 }
 
-void cTargets::CnsTarget(int s)
+void cTargets::CnsTarget( UOXSOCKET s )
 {
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
@@ -1311,14 +1277,11 @@ void cTargets::KillTarget(int s, int ly)
 	}
 }
 
-void cTargets::FontTarget(int s)
+void cTargets::FontTarget( UOXSOCKET s )
 {
-	int i,serial;
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	
-	i = calcCharFromSer( serial );
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].fonttype=addid1[s];
@@ -1326,7 +1289,7 @@ void cTargets::FontTarget(int s)
 }
 
 
-void cTargets::GhostTarget(int s)
+void cTargets::GhostTarget( UOXSOCKET s )
 {
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
@@ -1358,7 +1321,7 @@ void cTargets::BoltTarget(UOXSOCKET s)
 	}
 }
 
-void cTargets::AmountTarget(int s)
+void cTargets::AmountTarget( UOXSOCKET s )
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcItemFromSer( serial );
@@ -1372,10 +1335,8 @@ void cTargets::AmountTarget(int s)
 }
 
 
-void cTargets::SetAmount2Target(int s)
+void cTargets::SetAmount2Target( UOXSOCKET s )
 {
-//	int j;
-	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcItemFromSer( serial );
 	if(i!=-1)
@@ -1385,7 +1346,7 @@ void cTargets::SetAmount2Target(int s)
 	}
 }
 
-void cTargets::CloseTarget(int s)
+void cTargets::CloseTarget( UOXSOCKET s )
 {
 	int j;
 	
@@ -1429,9 +1390,8 @@ int cTargets::NpcMenuTarget(int s)
 //	Npcs->AddRespawnNPC(s,x,0);
 }
 
-void cTargets::MovableTarget (int s)
+void cTargets::MovableTarget ( UOXSOCKET s )
 {
-//	int j;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcItemFromSer( serial );
@@ -1445,7 +1405,7 @@ void cTargets::MovableTarget (int s)
 
 void cTargets::VisibleTarget( UOXSOCKET s )
 {
-	int i;//,j;
+	int i;
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if( buffer[s][7] >= 0x40 )//item
 	{
@@ -1474,13 +1434,10 @@ void cTargets::VisibleTarget( UOXSOCKET s )
 	}
 }
 
-void cTargets::OwnerTarget(int s) // bugfixed by JM
+void cTargets::OwnerTarget( UOXSOCKET s ) // bugfixed by JM
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if( calcserial( addid1[s], addid2[s], addid3[s], addid4[s] ) == -1 )
@@ -1520,14 +1477,10 @@ void cTargets::OwnerTarget(int s) // bugfixed by JM
 	}
 }
 
-void cTargets::ColorsTarget (int s)
+void cTargets::ColorsTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if (((items[i].id1==0x0F)&&(items[i].id2==0xAB))||                        //dye vat
@@ -1548,7 +1501,7 @@ void cTargets::ColorsTarget (int s)
 	}
 }
 
-void cTargets::DvatTarget (int s)
+void cTargets::DvatTarget( UOXSOCKET s )
 {
 	int i,serial;
 	int count, j, x, c, change;
@@ -1645,37 +1598,29 @@ void cTargets::AddNpcTarget(int s)
 	updatechar(c);
 }
 
-void cTargets::FreezeTarget(int s)
+void cTargets::FreezeTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-		chars[i].priv2=chars[i].priv2|2;
+		chars[i].priv2 |= 2;
 	}
 }
 
-void cTargets::UnfreezeTarget(int s)
+void cTargets::UnfreezeTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-		chars[i].priv2 = chars[i].priv2 & 0xFD; // unfreeze, AntiChrist used LB bugfix
+		chars[i].priv2 &= 0xFD; // unfreeze, AntiChrist used LB bugfix
 	}
 }
 
-void cTargets::AllSetTarget(int s)
+void cTargets::AllSetTarget( UOXSOCKET s )
 {
 	int j, k;
-	
-	//unsigned short int tempskill;
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcCharFromSer( serial );
@@ -1805,7 +1750,9 @@ void cTargets::TweakTarget( UOXSOCKET s )//Lag fix -- Zippy
 	if (i!=-1)//Char
 	{
 		tweakmenu(s, i, 2);
-	} else {//item
+	} 
+	else 
+	{//item
 		i = calcItemFromSer( serial );
 		if(i!=-1)
 		{
@@ -1814,11 +1761,10 @@ void cTargets::TweakTarget( UOXSOCKET s )//Lag fix -- Zippy
 	}
 }
 
-void cTargets::LoadCannon(int s)
+void cTargets::LoadCannon( UOXSOCKET s )
 {
-	int i,serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if( i != -1 )
 	{
 		if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
@@ -1839,7 +1785,7 @@ void cTargets::LoadCannon(int s)
 	}
 }
 
-void cTargets::SetInvulFlag(int s)
+void cTargets::SetInvulFlag( UOXSOCKET s )
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcCharFromSer( serial );
@@ -1848,11 +1794,11 @@ void cTargets::SetInvulFlag(int s)
 	{
 		if (addx[s]==1)
 		{
-			chars[i].priv=chars[i].priv|4;
+			chars[i].priv |= 4;
 		}
 		else
 		{
-			chars[i].priv=chars[i].priv&0xFB; // Morrolan
+			chars[i].priv &= 0xFB; // Morrolan
 		}
 		//} for
 	}
@@ -1993,12 +1939,10 @@ void cTargets::ExpPotionTarget(int s) //Throws the potion and places it (unmovab
 	}
 }
 
-void cTargets::SquelchTarg(int s)//Squelch
+void cTargets::SquelchTarg( UOXSOCKET s )//Squelch
 {
-	int p, serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	p = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	CHARACTER p = calcCharFromSer( serial );
 	if (p!=-1)
 	{
 		if(chars[p].priv&1)             
@@ -2030,7 +1974,7 @@ void cTargets::SquelchTarg(int s)//Squelch
 }
 
 
-void cTargets::TeleStuff(int s)
+void cTargets::TeleStuff( UOXSOCKET s )
 {
     static int targ=-1;//What/who to tele
     int x, y, z;
@@ -2046,7 +1990,9 @@ void cTargets::TeleStuff(int s)
 		{
 			targ+=1000000;
 			target(s,0,1,0,222,"Select location to put this character.");
-		} else {
+		} 
+		else
+		{
 			targ = calcItemFromSer( serial );
 			if(targ!=-1)
 				target(s,0,1,0,222,"Select location to put this item.");
@@ -2126,7 +2072,7 @@ void cTargets::SwordTarget(int s)
 		else sysmessage(s,"You can't think of a way to use your blade on that.");
 }
 
-void cTargets::CorpseTarget(int s)
+void cTargets::CorpseTarget( UOXSOCKET s )
 {
 	int n=0;
 	
@@ -2562,11 +2508,10 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 	}
 }
 
-void cTargets::TitleTarget(int s)
+void cTargets::TitleTarget( UOXSOCKET s )
 {
-	int i,serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		strcpy(chars[i].title,xtext[s]);
@@ -2661,7 +2606,7 @@ void cTargets::xSpecialBankTarget( int s ) // AntiChrist
 	}
 }
 
-void cTargets::DupeTarget(int s)
+void cTargets::DupeTarget( UOXSOCKET s )
 {
 	int dupetimes,serial;
 	
@@ -2685,7 +2630,7 @@ void cTargets::DupeTarget(int s)
 	}
 }
 
-void cTargets::MoveToBagTarget(int s)
+void cTargets::MoveToBagTarget( UOXSOCKET s )
 {
 	int i, j, x, y, serial;
 	x=rand()%80;
@@ -2705,7 +2650,7 @@ void cTargets::MoveToBagTarget(int s)
 				unsetserial( i, 1 );
 				setserial( i, p, 1 );
 			}
-			items[i].layer=0x00;
+//			items[i].layer=0x00;
 			items[i].decaytime=0;//reset decaytimer
 			removeitem[1]=items[i].ser1;
 			removeitem[2]=items[i].ser2;
@@ -2728,7 +2673,7 @@ void cTargets::SellStuffTarget(int s)
 	}
 }
 
-void cTargets::ReleaseTarget(int s,int c)
+void cTargets::ReleaseTarget( UOXSOCKET s,int c)
 {
 	int i,serial;
 	
@@ -2786,11 +2731,8 @@ void cTargets::GmOpenTarget(int s)
 
 void cTargets::StaminaTarget(UOXSOCKET s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffects(s, 0x01, 0xF2, true);
@@ -2804,11 +2746,8 @@ void cTargets::StaminaTarget(UOXSOCKET s)
 
 void cTargets::ManaTarget(UOXSOCKET s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffects(s, 0x01, 0xF2, true);
@@ -2820,13 +2759,10 @@ void cTargets::ManaTarget(UOXSOCKET s)
 	sysmessage(s,"That is not a person.");
 }
 
-void cTargets::MakeShopTarget(int s)
+void cTargets::MakeShopTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		Commands->MakeShop(i);
@@ -2934,11 +2870,8 @@ void cTargets::TransferTarget(int s)
 
 void cTargets::BuyShopTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 		if ((chars[i].serial==serial))
 		{
@@ -2995,11 +2928,8 @@ int cTargets::BuyShop(int s, int c)
 
 void cTargets::SetValueTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if ((i!=-1))
 	{
 		items[i].value=addx[s];
@@ -3010,12 +2940,9 @@ void cTargets::SetValueTarget(int s)
 
 void cTargets::SetRestockTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
-	if ((i!=-1))
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
+	if( i != -1 )
 	{
 		items[i].restock=addx[s];
 		return;
@@ -3026,11 +2953,8 @@ void cTargets::SetRestockTarget(int s)
 
 void cTargets::permHideTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if(chars[i].hidden==1)
@@ -3038,7 +2962,7 @@ void cTargets::permHideTarget(int s)
 			sysmessage(s,"You are already hiding");
 			return;
 		}
-		chars[i].priv2=chars[i].priv2|8;
+		chars[i].priv2 |= 8;
 		chars[i].hidden=1;
 		updatechar(i); // crashfix LB
 	}
@@ -3052,11 +2976,8 @@ void cTargets::unHideTarget(int s)
 
 void cTargets::SetWipeTarget(int s)
 {
-	int i, serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		items[i].wipe=addid1[s];
@@ -3065,11 +2986,8 @@ void cTargets::SetWipeTarget(int s)
 }
 void cTargets::SetSpeechTarget(int s)
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		if (chars[i].npc==0)
@@ -3084,10 +3002,8 @@ void cTargets::SetSpeechTarget(int s)
 
 void cTargets::SetSpAttackTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].spattack=tempint[s];
@@ -3096,10 +3012,8 @@ void cTargets::SetSpAttackTarget(int s)
 
 void cTargets::SetSpaDelayTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].spadelay=tempint[s];
@@ -3108,10 +3022,8 @@ void cTargets::SetSpaDelayTarget(int s)
 
 void cTargets::SetPoisonTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].poison=tempint[s];
@@ -3120,26 +3032,20 @@ void cTargets::SetPoisonTarget(int s)
 
 void cTargets::SetPoisonedTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].poisoned=tempint[s];
 		chars[i].poisonwearofftime = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer));
 		impowncreate(calcSocketFromChar(i),i,1); //Lb, sends the green bar ! 
-		
 	}
 }
 
-void cTargets::FullStatsTarget(UOXSOCKET s)
+void cTargets::FullStatsTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		soundeffects(s, 0x01, 0xF2, true);
@@ -3158,10 +3064,8 @@ void cTargets::FullStatsTarget(UOXSOCKET s)
 
 void cTargets::SetAdvObjTarget(int s)
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		chars[i].advobj=tempint[s];
@@ -3293,29 +3197,23 @@ void cTargets::ObjPrivTarget(int s)
 
 void cTargets::SetDirTarget(int s)
 {
-	int i,serial;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
+	if (i == -1)
+		return;
 	
 	if (buffer[s][7]>=0x40)
 	{
-		i = calcItemFromSer( serial );
-		if (i!=-1)
-		{
-			items[i].dir=addx[s];
-			RefreshItem( i ); // AntiChrist
-			return;
-		}
+		items[i].dir=addx[s];
+		RefreshItem( i ); // AntiChrist
+		return;
 	}
 	else
 	{
-		i = calcCharFromSer( serial );
-		if (i!=-1)
-		{
-			chars[i].dir=addx[s] & 0x0F;	// make sure high-bits are cleared
-			updatechar(i);
-			return;
-		}
+		chars[i].dir=addx[s] & 0x0F;	// make sure high-bits are cleared
+		updatechar(i);
+		return;
 	}
 }
 
@@ -3386,10 +3284,8 @@ void cTargets::NpcResurrectTarget( CHARACTER i )
 
 void cTargets::NewXTarget(int s) // Notice a high similarity to th function above?  Wonder why.  - Gandalf
 {
-	int i, serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
@@ -3412,10 +3308,8 @@ void cTargets::NewXTarget(int s) // Notice a high similarity to th function abov
 void cTargets::NewYTarget(int s)
 
 {
-	int i, serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
@@ -3439,9 +3333,8 @@ void cTargets::NewYTarget(int s)
 void cTargets::IncXTarget(int s)
 
 {
-	int i/*,j*/,serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	
 	if(i!=-1)
 	{
@@ -3464,9 +3357,8 @@ void cTargets::IncXTarget(int s)
 
 void cTargets::IncYTarget(int s)
 {
-	int i, serial;
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if(i!=-1)
 	{
 		mapRegions->RemoveItem(i); //lb
@@ -3688,8 +3580,8 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 	}
 	if( items[i].contserial != -1 )
 	{
-		j = calcItemFromSer( items[i].contserial ); // in bp ?
-		l = calcCharFromSer( items[i].contserial ); // equipped ?
+		j = calcItemFromSer( items[i].contserial );
+		l = calcCharFromSer( items[i].contserial );
 		if( l == -1 )
 			k = GetPackOwner( j );
 		else
@@ -3762,8 +3654,8 @@ void cTargets::UnglowTarget( UOXSOCKET s )
 
 	if (items[i].contserial!=-1) 
 	{      
-	     j = calcItemFromSer( items[i].contserial ); // in bp ?
-		 l = calcCharFromSer( items[i].contserial ); // equipped ?
+	     j = calcItemFromSer( items[i].contserial );
+		 l = calcCharFromSer( items[i].contserial );
 		 if (l==-1
 			 ) k=GetPackOwner(j); 
 		 else 
@@ -4149,9 +4041,6 @@ void cTargets::ShowDetail( UOXSOCKET s ) // Abaddon
 				case 2:		strcat( message, "Mana potion" ); break;
 				default:	strcat( message, "Unknown Mana potion" ); break;
 				}
-				break;
-			case 10: // LB's LSD potion, 5'th November 1999
-				strcat( message, "LSD potion" );
 				break;
 			default:
 				strcat( message, "Unknown potion" );

@@ -339,8 +339,10 @@ void CWorldMain::SaveChar( long i )
 	// 7000 is reserved for pets
 	if (valid && chars[i].free==0 && chars[i].x > 200 && chars[i].x < 6144 && chars[i].y < 4096 && (strcmp(chars[i].name, "John Doe" )))
 		valid=1;
-	else valid = 0;
+	else 
+		valid = 0;
 	if( !valid && chars[i].x == 7000 && chars[i].y == 7000 )		// Required for saving of mounts
+		valid = 1;
 	if( valid && chars[i].spawn1 < 0x40 && chars[i].spawn2 == 1 )	// don't need npc check, pcs won't ever have a spawn2 of 1
 		valid = 0;
 				
@@ -549,6 +551,8 @@ void CWorldMain::SaveChar( long i )
 			fprintf(cWsc, "QUESTDESTREGION %i\n", chars[i].questDestRegion);	
 		if( chars[i].questOrigRegion )
 			fprintf(cWsc, "QUESTORIGREGION %i\n", chars[i].questOrigRegion );	
+		if( chars[i].holdg )
+			fprintf(cWsc, "HOLDG %i\n", chars[i].holdg);
 
 		if ( !(chars[i].npc || chars[i].priv&1 || chars[i].priv&80) )
 		{

@@ -330,13 +330,12 @@ char cMagic::GateCollision( PLAYER s )
 
 void cMagic::GateDestruction(unsigned int currenttime)
 {
-	unsigned int i, k;
+	unsigned int i;
 	
 	for (i = 0; i < itemcount; i++)
 	{
-		if ((items[i].type == 51 || items[i].type == 52) && items[i].gatetime <= currenttime) 
+		if ( (items[i].type == 51 || items[i].type == 52) && items[i].gatetime <= currenttime)
 		{
-			for (k = 0; k < 2; k++)
 				Items->DeleItem(i); 
 		}
 	}
@@ -611,10 +610,8 @@ int cMagic::CheckBook(int circle, int spell, int i)
 
 void cMagic::SbOpenContainer( UOXSOCKET s )
 {
-	int i,serial;
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if ( items[i].type==9 )
@@ -874,7 +871,7 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 		if( s != -1 ) 
 			sysmessage( s, "You are no longer frozen." );
 	}           
-	if( ( !( chars[p].priv&0x04 ) ) && (!(region[chars[p].region].priv&0x40)))
+	if( ( !( chars[p].priv&0x04 ) ) && ((region[chars[p].region].priv&0x40)))
 	{
 		if( poison > 5 ) 
 			poison = 5;
@@ -930,9 +927,10 @@ void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char time
 					if( items[mapitem].x == chars[c].x && items[mapitem].y == chars[c].y )
 					{
 						unsigned short itemID = (items[mapitem].id1<<8) + items[mapitem].id2;
+						int rNum = RandomNum( 0, 5 );
 						if( itemID == 0x3996 || itemID == 0x398C )
 						{
-							if( !CheckResist( -1, c, 4 ) )	
+							if( rNum <= 1 && !CheckResist( -1, c, 4 ) )	
 								MagicDamage( c, items[mapitem].morex / 100 );
 							else 
 								MagicDamage( c, items[mapitem].morex / 200 );
@@ -942,7 +940,7 @@ void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char time
 						} 
 						else if( itemID == 0x3915 || itemID == 0x3920 )
 						{ // Poison Field
-							if( !CheckResist( -1, c, 5 ) )
+							if( rNum <= 1 && !CheckResist( -1, c, 5 ) )
 							{
 								if( items[mapitem].morex < 997 )
 									PoisonDamage( c, 2 );
@@ -957,7 +955,7 @@ void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char time
 						} 
 						else if( itemID == 0x3979 || itemID == 0x3967 )
 						{	// Para Field
-							if( !CheckResist( -1, c, 6 ) )
+							if( rNum <= 1 && !CheckResist( -1, c, 6 ) )
 								tempeffect( c, c, 1, 0, 0, 0 );
 							soundeffect2( c, 0x02, 0x04 );
 							return;
@@ -981,18 +979,18 @@ void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char time
 
 void cMagic::BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2)
 {
-	int x, y, z, lenght;
+	int x, y, z, length;
 	
 	x=(buffer[s][11]<<8)+buffer[s][12];
 	y=(buffer[s][13]<<8)+buffer[s][14];
 	z=buffer[s][16];
 	
-	lenght=chars[currchar[s]].skill[MAGERY]/130; // increasde max-range, LB
+	length=chars[currchar[s]].skill[MAGERY]/130; // increasde max-range, LB
 	
-	x1=x-lenght;
-	x2=x+lenght;
-	y1=y-lenght;
-	y2=y+lenght;
+	x1=x-length;
+	x2=x+length;
+	y1=y-length;
+	y2=y+length;
 	z1=z;
 	z2=z+3;
 }
@@ -1352,11 +1350,11 @@ void cMagic::NPCMindBlastTarget( CHARACTER s, CHARACTER t )
 		
 		if( CheckResist( s, t, 5 ) )
 		{
-			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 4 ), 2 ), s );
+			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 12 ), 2 ), s );
 		}
 		else
 		{
-			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 2 ), 5 ), s );
+			MagicDamage( t, max( ( ( chars[s].in - chars[t].in ) / 6 ), 5 ), s );
 		}
 		return;
 	} 
@@ -1369,22 +1367,22 @@ void cMagic::NPCMindBlastTarget( CHARACTER s, CHARACTER t )
 		{
 			if (CheckResist(s, t, 5))
 			{
-				MagicDamage(t, max(((chars[s].in-chars[t].in)/2), 5), s );
+				MagicDamage(t, max(((chars[s].in-chars[t].in)/12), 5), s );
 			}
 			else
 			{
-				MagicDamage(t, max(((chars[s].in-chars[t].in)/2), 5), s );
+				MagicDamage(t, max(((chars[s].in-chars[t].in)/6), 5), s );
 			}
 		}
 		else
 		{
 			if (CheckResist(t, s, 5))
 			{
-				MagicDamage(s, max(((chars[s].in-chars[t].in)/2), 5), t );
+				MagicDamage(s, max(((chars[s].in-chars[t].in)/12), 5), t );
 			}
 			else
 			{
-				MagicDamage(s, max(((chars[s].in-chars[t].in)/2), 5), t );
+				MagicDamage(s, max(((chars[s].in-chars[t].in)/6), 5), t );
 			}
 		}
 		return;
@@ -2095,7 +2093,7 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 	
 	
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if (!chars[currchar[s]].priv&0x01)
+	if (!chars[currchar[s]].priv&0x01 && server_data.magicEquipCheck )
 	{
 		int serial, serhash, ci;
 		serial = chars[currchar[s]].serial;
@@ -2402,7 +2400,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							return;
 						}
 						npcattacktarget( i, currchar[s] );
-						if( chars[i].flag&0x04 && i != currchar[s] )
+						if( IsInnocent( i ) && i != currchar[s] )
 							criminal( currchar[s] );
 					}
 					if( spellReflectable( curSpell ) )
@@ -2433,11 +2431,11 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						break; 
 					case 4:    // Heal 2-26-00 changed by Homey, used OSI values from UO book
 						int bonus;//also fixes problem with low mages getting 1 or nothing from heal spell
-						bonus = (chars[currchar[s]].skill[MAGERY]/500) + ( chars[currchar[s]].skill[MAGERY]/100 );
+						bonus = (chars[currchar[s]].skill[MAGERY]/200);
 						if( bonus != 0 )
-							chars[i].hp = ( chars[i].hp + rand()%6 + bonus );
+							chars[i].hp += ( RandomNum( 0, 8 ) + bonus );
 						else
-							chars[i].hp = chars[i].hp+4;
+							chars[i].hp += RandomNum( 1, 8 );
 						SubtractHealth( currchar[s], bonus, curSpell );
 						updatestats( i, 0 );  
 						break; 
@@ -3424,7 +3422,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 			break;
 			
 			case 36:// Magic Reflection
-				chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x40;
+				chars[currchar[s]].priv2 |= 0x40;
 				break;
 			case 56:
 				PolymorphMenu( s, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
@@ -3478,7 +3476,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 										{
 											
 											deathstuff(ii);                              
-											if(chars[ii].flag&0x04 && Guilds->Compare( currchar[s], ii )==0 && Races->Compare( currchar[s], ii ) == 0)
+											if( IsInnocent(ii) && Guilds->Compare( currchar[s], ii )==0 && Races->Compare( currchar[s], ii ) == 0)
 											{
 												chars[currchar[s]].kills++;
 												sprintf(temp, "You have killed %i innocent people.", chars[currchar[s]].kills);

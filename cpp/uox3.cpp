@@ -239,9 +239,11 @@ int str2num(char *s) // Convert string to integer
 	{
 		if (s[i] == '-') 
 			neg = 1;
-		n *= 10; // Multiply by 10
 		if (isdigit(s[i]))
+		{
+			n *= 10; 
 			n += s[i] - 48; // Convert char to number from 0 to 9
+		}
 	}
 	if (neg) 
 		n = -n;
@@ -941,7 +943,7 @@ void gcollect( void ) // Remove items which were in deleted containers
 //|					non-commented, usable line. Commented lines are
 //|					preceeded with // chars.
 //o---------------------------------------------------------------------------o
-void readwscline ()
+void readwscline ( void )
 {
 	int i, valid=0;
 	char c;
@@ -1966,163 +1968,6 @@ void senditem(UOXSOCKET s, ITEM i) // Send items (on ground)
 		}
 	}
 }
-// sends item in differnt color and position than it actually is
-// used for LSd potions now, LB 5'th nov 1999
-
-void senditem_lsd(UOXSOCKET s, ITEM i,char color1, char color2, int x, int y, signed char z) 
-{
-	
-	unsigned char itmput[20]="\x1A\x00\x13\x40\x01\x02\x03\x20\x42\x00\x32\x06\x06\x06\x4A\x0A\x00\x00\x00";
-	
-	if (i==-1) return; //LB
-
-	if( items[i].visible >= 1 && !(chars[currchar[s]].priv&1 ) ) return;
-	
-	if ((items[i].contserial==-1))
-	{
-		itmput[3]=(items[i].ser1)+0x80; // Enable Piles
-		itmput[4]=items[i].ser2;
-		itmput[5]=items[i].ser3;
-		itmput[6]=items[i].ser4;
-		itmput[7]=items[i].id1;
-		itmput[8]=items[i].id2;
-		itmput[9]=items[i].amount>>8;
-		itmput[10]=items[i].amount%256;
-		itmput[11]=x>>8;
-		itmput[12]=x%256;
-		itmput[13]=(y>>8)+0xC0; // Enable Dye and Move
-		itmput[14]=y%256;
-		itmput[15]=z;
-		itmput[16]=color1;
-		itmput[17]=color2;
-		itmput[18]=0;
-		
-		if (items[i].visible==1)
-		{
-			if (chars[currchar[s]].serial!=items[i].ownserial)
-			{
-				itmput[18]+=(unsigned char)(0x80);
-			}
-		}
-		if (items[i].visible==2)
-		{
-			itmput[18]+=(unsigned char)(0x80);
-		}
-		if (items[i].visible==3)
-		{
-			if ((chars[currchar[s]].id1==0x03 && chars[currchar[s]].id2==0xDB) || !chars[currchar[s]].priv&1)
-				itmput[18]+=(unsigned char)(0x80);
-		}
-		
-		if (items[i].magic==1) itmput[18]+=0x20;
-		
-		if (chars[currchar[s]].priv2&1) itmput[18]+=0x20;
-		if (( items[i].magic==3 || items[i].magic == 4 ) && chars[currchar[s]].serial==items[i].ownserial)
-			itmput[18]+=0x20;
-		if (chars[currchar[s]].priv2&4)
-		{
-			if ((items[i].id1==0x40) && (items[i].id2<=0xFF))
-			{
-				itmput[7]=(unsigned char)(0x14);
-				itmput[8]=(unsigned char)(0xF0);
-			}
-		}
-		if (items[i].dir)
-		{
-			itmput[19]=itmput[18];
-			itmput[18]=itmput[17];
-			itmput[17]=itmput[16];
-			itmput[16]=itmput[15];
-			itmput[15]=items[i].dir;
-			itmput[2]=0x14;
-			itmput[11]+=(unsigned char)(0x80);
-			Network->xSend(s, itmput, 20, 0);
-		} else
-		{
-			itmput[2]=0x13;
-			Network->xSend(s, itmput, 19, 0);
-		}
-		
-		if ((items[i].id1==0x20)&&(items[i].id2==0x06))
-		{
-			backpack2(s, items[i].serial );
-		}
-	}
-	
-}
-
-
-void do_lsd(UOXSOCKET s)
-{
-	if (rand()%15==0)
-	{
-		int i,c1,c2,color,ctr=0,b,xx,yy,di,icnt=0;
-		signed char zz;
-		int  StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
-		unsigned int increment=0;
-		for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
-		{
-			for (int a=0;a<3;a++)
-			{
-				int mapitemptr=-1;
-				int mapitem=-1;
-				int mapchar=-1;
-				do //check all items in this cell
-				{
-					mapchar=-1;
-					mapitemptr=mapRegions->GetNextItem(checkgrid+a, mapitemptr);
-					if (mapitemptr==-1) break;
-					mapitem=mapRegions->GetItem(checkgrid+a, mapitemptr);
-					if(mapitem>999999) mapchar=mapitem-1000000;
-					if (mapitem!=-1 && mapitem<1000000)
-					{
-						i=mapitem;
-						color=(items[i].color1<<8)+items[i].color2; // fetch item's color and covert to 16 bit
-						if (rand()%44==0) color+=items[i].x-items[i].y; else
-							color+=chars[currchar[s]].x+chars[currchar[s]].y;
-						color+=rand()%3; // add random "noise"
-						ctr++; 
-						// lots of color consistancy checks
-						color=color%0x03E9; 
-						c1=color>>8;
-						c2=color%256;		
-						if ((((c1<<8)+c2)<0x0002) || (((c1<<8)+c2)>0x03E9) )
-						{
-							c1=0x03;
-							c2=0xE9;
-						}
-						b=((((c1<<8)+c2)&0x4000)>>14)+((((c1<<8)+c2)&0x8000)>>15);   
-						if (b)
-						{
-							c1=0x1;
-							c2=rand()%255;
-						}
-						
-						if (rand()%10==0) zz=items[i].z+rand()%33; else zz=items[i].z;
-						if (rand()%10==0) xx=items[i].x+rand()%3; else xx=items[i].x;
-						if (rand()%10==0) yy=items[i].y+rand()%3; else yy=items[i].y;
-						di=itemdist(currchar[s],i);
-						if (di<13) if (rand()%7==0) 
-						{  
-							icnt++;
-							if (icnt%10==0 || icnt<10) senditem_lsd(s, i,c1,c2,xx,yy,zz); // attempt to cut packet-bombing by this thing
-						}
-					}								
-					
-				} while (mapitem!=-1);
-			}
-		} // end of mapregions loop
-		
-		if (rand()%33==0) 
-		{
-			if (rand()%10>3) soundeffects(s, 0x00, 0xF8, false); // lsd sound :)
-			else { int snd=rand()%19; if (snd>9) soundeffects(s,0x01,snd-10, false);
-			else soundeffects(s,0,246+snd, false);
-			}
-		}
-	} 
-	
-}
 
 void all_items(int s) // Send ALL items to player
 {
@@ -2164,6 +2009,8 @@ void chardel (int s) // Deletion of character
 		if (k!=-1)
 		{
 			Npcs->DeleteChar(k);
+			WhoList->FlagUpdate();
+			OffList->FlagUpdate();
 		}
 		tlen=4+(5*60)+1+(startcount*63);
 		login04a[1]=tlen>>8;
@@ -2212,9 +2059,9 @@ unsigned short GetFlagColour( CHARACTER src, CHARACTER trg )
 //		return 0x0001;
 	else 
 	{
-		if( chars[trg].flag&0x01 )
+		if( IsMurderer( trg ) )
 			return 0x0026;
-		else if( chars[trg].flag&0x02 )
+		else if( IsCriminal( trg ) )
 			return 0x03B2;
 		else if( chars[trg].flag&0x08 )
 			return 0x0049;
@@ -2238,19 +2085,26 @@ void textflags (UOXSOCKET s, int i, char *name)
 	a4=chars[i].ser4;
 	if( !chars[i].npc && !( chars[i].priv&1 || chars[i].priv&80 ) && (chars[i].fame >= 10000 ) ) // Morollan, only normal players have titles now
 	{
-		if (chars[i].id2==0x91) sprintf(name2, "Lady %s", name); //Morrolan, added Lord/Lady to title overhead
-		else if (chars[i].id2==0x90) sprintf(name2, "Lord %s", name);
+		if (chars[i].id2==0x91) 
+			sprintf(name2, "Lady %s", name); //Morrolan, added Lord/Lady to title overhead
+		else if (chars[i].id2==0x90) 
+			sprintf(name2, "Lord %s", name);
 	}
 	
-	//if (chars[i].npc) itemmessage( s, "[NPC]", a1, a2, a3, a4 );
-	if( chars[i].priv&4 ) strcat( name2, " (invulnerable)" );
-	if(chars[i].priv2&2) strcat( name2, " (frozen) ");
-	if( chars[i].guarded ) strcat( name2, " (guarded)" );
-	if( chars[i].tamed && chars[i].npc && chars[i].ownserial > -1 && chars[i].npcaitype != 17 ) strcat( name2, " (tame) ");
-	if( chars[i].townpriv == 2 ) sprintf( name2, "Mayor %s", name2 );
+	if( chars[i].priv&4 ) 
+		strcat( name2, " (invulnerable)" );
+	if(chars[i].priv2&2) 
+		strcat( name2, " (frozen) ");
+	if( chars[i].guarded ) 
+		strcat( name2, " (guarded)" );
+	if( chars[i].tamed && chars[i].npc && chars[i].ownserial > -1 && chars[i].npcaitype != 17 ) 
+		strcat( name2, " (tame) ");
+	if( chars[i].townpriv == 2 ) 
+		sprintf( name2, "Mayor %s", name2 );
 	if( !chars[i].npc && chars[i].race != 0 && chars[i].race != 65535 )	// need to check for placeholder race (Abaddon)
 		sprintf( name2, "%s (%s)", name2, Races->getName( chars[i].race ) );
-	if( chars[i].kills > repsys.maxkills ) strcat( name2, " [Murderer]" );
+	if( chars[i].kills > repsys.maxkills ) 
+		strcat( name2, " [Murderer]" );
 	
 	
 	Guilds->Title(s,i);
@@ -2268,8 +2122,8 @@ void textflags (UOXSOCKET s, int i, char *name)
 	talk[9]=6; // Mode: "You see"
 	unsigned short targColour;
 	targColour = GetFlagColour( currchar[s], i );
-	talk[10] = targColour>>8;
-	talk[11] = targColour%256;
+	talk[10] = (unsigned char) (targColour>>8);
+	talk[11] = (unsigned char) (targColour%256);
 	talk[12]=0;
 	talk[13]=3;
 	Network->xSend(s, talk, 14, 0);
@@ -2311,38 +2165,20 @@ void showcname (int s, int i, char b) // Singleclick text for a character
 			int x;
 			temp[0]=0;
 			x=0;
-			//\/ Revert to old code for a sec..testing for bug Krozy mentioned....
-			/*  while (chars[i].name[x]!=0)
-			{
-			y=x;
-			while (chars[i].name[x]!='_' && chars[i].name[x]!=0) x++;
-			strncpy(temp+y,&chars[i].name[y],x-y);
-			if (chars[i].name[x]=='_')
-			{
-			temp[x]=' ';
-			x++;
-			}
-			}
-			temp[x]=0; */
 			do
 			{
 				c=chars[i].name[x];
 				if (/*(c!=' ')&&*/(c!=0))
 				{
-					//					if(c=='_')
-					//						c=' ';
-					//					sprintf(temp, "%s%c", temp, c);
 					char local_str[2];
 					if( c == '_' ) c = ' ';
 					local_str[0] = c;
 					local_str[1] = '\0';
 					strcat( temp, local_str );
-					//					sprintf( temp, "%s%c", temp, c ); // krazyglue - undefined results
 				}
 				x++;
 			}
 			while (/*(chars[i].name[x-1]!=' ')&&*/(c!=0));
-			//\/
 #else
 			// :Terrin: Just to replace '_'s? How about this (faster/cleaner):
 			strcpy( temp, chars[i].name );
@@ -2498,7 +2334,7 @@ void teleport2(int s) // used for /RESEND only - Morrolan, so people can find th
 		{
 			// Dupois - had to remove the && (k!=i)), doesn update the client
 			// Added Oct 08, 1998
-			if ( perm[i] && inrange1p(s, currchar[i]) )// && (k!=i)) // If inrange, and a player
+			if ( perm[i] && inrange1p(s, currchar[i]) ) // If inrange, and a player
 			{
 				impowncreate(i, s, 1);
 			}
@@ -3344,7 +3180,8 @@ void get_item(int s) // Client grabs an item
 			if (items[x].cont1<0x40) // it's a character
 			{
 				npc = calcCharFromSer( items[x].contserial );
-			} else  //its an item
+			} 
+			else  //its an item
 			{
 				if (items[x].contserial==-1)
 				{
@@ -3356,14 +3193,14 @@ void get_item(int s) // Client grabs an item
 				if (x!=-1) //LB overwriting x is essential here, odnt change it!!!
 				{
 					if (items[x].layer==0 && items[x].id1==0x1E && items[x].id2==0x5E)
-					{
-						// Trade window???
+					{	// Trade window???
 						serial=calcserial(items[x].moreb1, items[x].moreb2, items[x].moreb3, items[x].moreb4);
-						if( serial == -1 ) return;
+						if( serial == -1 ) 
+							return;
 						z = calcItemFromSer( serial );
 						if (z!=-1)
 						{
-							if ((items[z].morez || items[x].morez))
+							if ( items[z].morez || items[x].morez )
 							{
 								items[z].morez=0;
 								items[x].morez=0;
@@ -3373,15 +3210,17 @@ void get_item(int s) // Client grabs an item
 							soundeffects( calcSocketFromChar( calcCharFromSer( items[z].contserial ) ), 0x00, 0x57, false );
 						}
 					}
-					if (items[x].corpse!=0) npc=0;
+					if (items[x].corpse!=0) 
+						npc = -2;	// was 0
 				} // end if x!=-1
 				
-				if (x==-1) npc=0; 
+				if (x == -1) 
+					npc = -3;	// was 0
 			}
 		} while (npc==-1 && b < 100);
 	}
 	
-	if (npc>0) // 0=corpse, hence >0 ..
+	if (npc > -1) // 0=corpse, hence >0 ..
 	{
 		if (!(chars[currchar[s]].priv&0x01) && npc!=currchar[s] && chars[npc].ownserial!=chars[currchar[s]].serial)
 		{//Own serial stuff by Zippy -^ Pack aniamls and vendors.
@@ -3393,7 +3232,7 @@ void get_item(int s) // Client grabs an item
 	//End Zippy's change
 	
 	//Boats->
-	if (x!=-1 && npc!=-1)
+	if ( x != -1 && npc != -1 )
 	{
 		if( items[x].multis != -1 )
 			unsetserial( x, 7 );
@@ -3411,7 +3250,8 @@ void get_item(int s) // Client grabs an item
 			if(items[x].poisoned) 
 			{
 				chars[npc].poison-=items[x].poisoned;
-				if(chars[npc].poison<0) chars[npc].poison=0;
+				if( chars[npc].poison < 0 ) 
+					chars[npc].poison = 0;
 			}
 		}
 	}
@@ -3437,8 +3277,9 @@ void get_item(int s) // Client grabs an item
 			} // end if not corspe
 			else
 			{
-				items[i].layer=0;
-				if (items[i].cont1!=0xff) soundeffects(s,0x00,0x57, false);
+//				items[i].layer=0;
+				if ( items[i].cont1 != 0xFF ) 
+					soundeffects(s,0x00,0x57, false);
 				if (items[i].amount>1)
 				{
 					amount=(buffer[s][5]<<8)+buffer[s][6];
@@ -3519,9 +3360,11 @@ void wear_item(int s) // Item is dropped on paperdoll
 	a3 = buffer[s][3];
 	a4 = buffer[s][4];
 	cserial = calcserial( buffer[s][6],buffer[s][7],buffer[s][8],buffer[s][9] );
-	if( cserial == -1 ) return;
+	if( cserial == -1 ) 
+		return;
 	iserial = calcserial( a1, a2, a3, a4 );
-	if( iserial == -1 ) return;
+	if( iserial == -1 ) 
+		return;
 	//k=-1;
 	k = calcCharFromSer( cserial );
 	i = calcItemFromSer( iserial );
@@ -3530,6 +3373,14 @@ void wear_item(int s) // Item is dropped on paperdoll
 	{
 		if( k == -1 ) 
 			return;
+		if( items[i].contserial != -1 )
+		{
+			bounce[1] = 5;
+			Network->xSend( s, bounce, 2, 0 );
+			if( items[i].id1 >=  0x40 )
+				senditem( s, i );
+			return;
+		}
 		if( chars[currchar[s]].dead )
 		{
 			sysmessage( s, "You can't do much in your current state." );
@@ -4820,33 +4671,33 @@ int validtelepos(int s)
 	return z;
 }
 
-int unmounthorse( UOXSOCKET s ) // Get off a horse (Remove horse item and spawn new horse)
+int unmounthorse( CHARACTER s ) // Get off a horse (Remove horse item and spawn new horse)
 {
-	int k, ci,serial,serhash;
+	int k,ci,serial,serhash;
 	
-	serial = chars[currchar[s]].serial;
+	serial = chars[s].serial;
 	serhash = serial%HASHMAX;
-	for (k=0;k<contsp[serhash].max;k++)
+	for( k = 0; k < contsp[serhash].max; k++ )
 	{
-		ci=contsp[serhash].pointer[k];
-		if ((ci > -1) &&	//HoneyJar
-			(items[ci].contserial==serial) && (items[ci].layer==0x19)&&(items[ci].free==0))
+		ci = contsp[serhash].pointer[k];
+		if( ci != -1 && items[ci].contserial == serial && items[ci].layer == 0x19 && items[ci].free == 0 )
 		{
+			chars[s].onhorse = 0;
+
 			CHARACTER tMount = calcCharFromSer( items[ci].morex );
-			if ( tMount != -1 )
+			if( tMount != -1 )
 			{
-				chars[tMount].x = chars[currchar[s]].x;
-				chars[tMount].y = chars[currchar[s]].y;
-				chars[tMount].z = chars[currchar[s]].z;
-
+				chars[tMount].x = chars[s].x;
+				chars[tMount].y = chars[s].y;
+				chars[tMount].z = chars[s].z;
+		
 				chars[tMount].priv2 &= 0xFD; // unfreeze
-
 				if( items[ci].decaytime != 0 )
 					chars[tMount].summontimer = items[ci].decaytime;
 				mapRegions->AddItem( tMount + 1000000 );
 				updatechar( tMount );
 			}
-			Items->DeleItem(ci);
+			Items->DeleItem( ci );
 			return 0;
 		}
 	}
@@ -5210,7 +5061,7 @@ void callguards( int p )
 					{
 						if( chardist( p, mapchar ) < 15 )
 						{
-							if( !chars[mapchar].dead && !(chars[mapchar].flag&0x04) )
+							if( !chars[mapchar].dead && !IsInnocent( mapchar ) )
 								Combat->SpawnGuard( mapchar, mapchar, chars[mapchar].x, chars[mapchar].y, chars[mapchar].z );
 						}
 					}
@@ -5871,7 +5722,7 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 		}
 		else chars[i].regen3=currenttime+(server_data.manarate*CLOCKS_PER_SEC);  
 	}
-	if ((chars[i].hidden==2)&&((chars[i].invistimeout<=currenttime)||(overflow)) && ( !(chars[i].priv2&8 )))
+	if( chars[i].hidden == 2 &&( chars[i].invistimeout <= currenttime || overflow ) && ( !(chars[i].priv2&8 )))
 	{
 		chars[i].hidden=0;
 		chars[i].stealth = -1;
@@ -5882,7 +5733,8 @@ void genericCheck(int i, int currenttime)//Char mapRegions
 	doRainEffect(i, currenttime);
 	doSnowEffect(i, currenttime);
 	
-	if (chars[i].hp<=0 && !chars[i].dead) deathstuff(i);
+	if ( chars[i].hp <= 0 && !chars[i].dead ) 
+		deathstuff(i);
 }
 
 void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
@@ -5933,9 +5785,6 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 		}
 	}
 	
-	if (LSD[s])
-		do_lsd(s); // LB's LSD potion-stuff
-	
 	
 	if (!chars[i].npc && online(i) && chars[i].squelched == 2)
 	{
@@ -5952,7 +5801,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 	
 	if (!chars[i].npc && online(i))
 	{
-		if ((chars[i].crimflag > 0) &&(chars[i].crimflag <= currenttime || overflow) &&(chars[i].flag & 0x02))
+		if ( chars[i].crimflag != 0 && chars[i].crimflag != -1 && (chars[i].crimflag <= currenttime || overflow) && IsCriminal( i ) )
 		{
 			sysmessage(s, "You are no longer a criminal.");
 			chars[i].crimflag=-1;
@@ -6110,10 +5959,8 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						{
 							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
 							sprintf(t, "* %s looks a bit nauseous *", chars[i].name);
-							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
-							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
+							chars[i].emotecolor1 = 0x00;// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;// buffer[s][5];
 							npcemoteall(i, t, 1);
 						}
 						// npctalkall(i,t);
@@ -6126,10 +5973,8 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						{
 							chars[i].poisontxt = currenttime + (10*CLOCKS_PER_SEC);
 							sprintf(t, "* %s looks disoriented and nauseous! *", chars[i].name);
-							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
-							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
+							chars[i].emotecolor1 = 0x00;// buffer[s][4];
+							chars[i].emotecolor2 = 0x26;// buffer[s][5];
 							npcemoteall(i, t, 1);
 							// npctalkall(i,t);     
 						}
@@ -6833,7 +6678,10 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 					return;
 				} else if (chars[currchar[s]].fx2==18)//Describing an item
 				{
-					strcpy(items[chars[currchar[s]].fx1].desc,(char *)&buffer[s][8]);
+					if( buffer[s][8] == ' ' )
+						items[chars[currchar[s]].fx1].desc[0] = 0;
+					else 
+						strcpy(items[chars[currchar[s]].fx1].desc,(char *)&buffer[s][8]);
 					chars[currchar[s]].fx1=chars[currchar[s]].fx2=-1;
 					sprintf(temp, "This item is now described as %s,",&buffer[s][8]);
 					sysmessage(s, temp);
@@ -7017,7 +6865,10 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 					return;
 				} else if (chars[currchar[s]].fx2==18)//Describing an item
 				{
-					strcpy(items[chars[currchar[s]].fx1].desc,nonuni);
+					if( nonuni[0] == ' ' )
+						items[chars[currchar[s]].fx1].desc[0] = 0;
+					else
+						strcpy(items[chars[currchar[s]].fx1].desc,nonuni);
 					chars[currchar[s]].fx1=chars[currchar[s]].fx2=-1;
 					sprintf(temp, "This item is now described as %s,",nonuni);
 					sysmessage(s, temp);
@@ -7675,7 +7526,6 @@ int __cdecl main(int argc, char *argv[])
 		save_counter = 0;
 		for( i = 0; i < (MAXCLIENT); i++ )
 		{
-			LSD[i] = 0;
 			firstpacket[i] = false;
 		}
 		imem=0;
@@ -8308,8 +8158,8 @@ void Shutdown( int retCode )
 
 char iteminrange( UOXSOCKET s, ITEM i, int distance )
 {
-//	if( s > now || i < 0 || i > imem )
-//		return 0;
+	if( s > now || i < 0 || i > imem )
+		return 0;
 	if( chars[currchar[s]].priv&0x01 )	// GM
 		return 1;
 	short dx = abs( chars[currchar[s]].x - items[i].x );
@@ -8345,13 +8195,10 @@ int ishuman( CHARACTER p )
 		return 0;
 }
 
-void npcact(int s)
+void npcact( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		npcaction(i,addid1[s]);
@@ -9327,7 +9174,7 @@ void tempeffectsoff(void)
 			switch( Effect->num )
 			{
 			case 1:
-				chars[s].priv2=chars[s].priv2&0xFD;
+				chars[s].priv2 &= 0xFD;
 				break;
 			case 2:
 				chars[s].fixedlight=255;
@@ -9383,7 +9230,7 @@ void tempeffectson()
 			switch( Effect->num )
 			{
 			case 1:
-				chars[s].priv2=chars[s].priv2|0x02;
+				chars[s].priv2 |= 0x02;
 				break;
 			case 2:
 				chars[s].fixedlight=worldbrightlevel;
@@ -9424,9 +9271,9 @@ void tempeffectson()
 	} // end of if !=-1
 }
 
-void checktempeffects()
+void checktempeffects( void )
 {
-	int s, mortar,k;
+	int s, mortar;
 	unsigned int j=uiCurrentTime;
 	teffect_st *Effect;
 	for( Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
@@ -9458,7 +9305,7 @@ void checktempeffects()
 			case 1:
 				if (chars[s].priv2&0x02)
 				{
-					chars[s].priv2=chars[s].priv2&0xFD;
+					chars[s].priv2 &= 0xFD;
 					s=calcSocketFromChar(s);
 					if (s!=-1) sysmessage(s, "You are no longer frozen.");
 				}
@@ -9632,17 +9479,6 @@ void checktempeffects()
 				impowncreate(calcSocketFromChar(s), s, 0);
 				break;
 				
-			case 20: // LSD potions, LB 5'th nov 1999
-				k=calcSocketFromChar(s);
-				if (k==-1) return;
-				LSD[k]=0;
-				sysmessage(k,"LSD has worn off");
-				all_items(k); // absolutely necassairy here, AC !!!
-				chars[s].stm=3; // stamina near 0
-				chars[s].mn=3;
-				chars[s].hp=chars[s].hp/7;
-				impowncreate(k,s,0);
-				break;
 	        case 21:
 				  int toDrop;
 				  toDrop = Effect->more1;
@@ -9768,7 +9604,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 	switch (num)
 	{
 	case 1:
-		chars[dest].priv2=chars[dest].priv2|0x02;
+		chars[dest].priv2 |= 0x02;
 		toAdd.expiretime=uiCurrentTime+((chars[source].skill[MAGERY]/100)*CLOCKS_PER_SEC);
 		toAdd.num=1;
 		toAdd.more1=0;
@@ -9952,19 +9788,6 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.dispellable = 0;
 		break;
 		
-	case 20: // LSD potions, LB 5'th November 1999
-		k = calcSocketFromChar( source );
-		if( k == -1 )
-			return 0;
-		sysmessage( k, "Hmmm, tasty, LSD, you feel ... strong ... and .. allmighty and ... strange ..." );
-		LSD[k] = 1;
-		toAdd.expiretime = uiCurrentTime + 90 * CLOCKS_PER_SEC; // 90 seconds
-		toAdd.num = 20;
-		toAdd.dispellable = 0;
-		chars[source].hp = chars[source].st;
-		chars[source].mn = chars[source].in;
-		impowncreate( k, source, 0 );
-		break;
 	case 21:		// protection
 		toAdd.expiretime = uiCurrentTime + 120 * CLOCKS_PER_SEC;
 		toAdd.dispellable=1;
@@ -10238,7 +10061,7 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 	
 	// If the target is an innocent, not a racial or guild ally/enemy, then flag them as criminal
 	// and, of course, call the guards ;>
-	if( (chars[target].flag&0x04) && gCompare == 0 && rCompare == 0 )
+	if( IsInnocent( target ) && gCompare == 0 && rCompare == 0 )
 	{
 		bool regionGuarded = ( ( region[chars[target].region].priv&0x01 ) == 0x01 );
 		if( server_data.guardsactive && regionGuarded )
@@ -10260,6 +10083,21 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 		if( inrange1p( currchar[i], source ) && perm[i] )
 		{
 			npcemote( i, currchar[i], temp, 1 );
+		}
+	}
+	if( chars[target].guarded )
+	{
+		int j, k;
+		for( j = 0; j < cownsp[chars[target].serial%HASHMAX].max; j++ )
+		{
+			k = cownsp[chars[target].serial%HASHMAX].pointer[j];
+			if( k != -1 )
+			{
+				if( chars[k].ownserial == chars[target].serial && chars[k].npcaitype == 32 && chardist( target, k ) <= 20 )
+				{
+					npcattacktarget( source, k );
+				}
+			}
 		}
 	}
 }
@@ -10738,9 +10576,9 @@ void impowncreate(int s, int i, int z) //socket, player to send
 		oc[18]=5;
 	else
 	{
-		if( chars[i].flag&0x01 )
+		if( IsMurderer( i ) )
 			oc[18] = 6;
-		else if( chars[i].flag&0x04 )
+		else if( IsInnocent( i ) )
 			oc[18] = 1;
 		else if( chars[i].flag&0x08 )
 			oc[18] = 2;
@@ -11987,7 +11825,8 @@ void responsevendor(int s) //Modified by AntiChrist
 								target(s,0,1,0,224," ");
 								k=charcount;
 								return;
-							} else if(Targ->BuyShop(s, k)) 
+							} 
+							else if( Targ->BuyShop( s, k ) ) 
 							{
 								k = charcount;
 								return;
@@ -13031,19 +12870,6 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		staticeffect(p, 0x37, 0x6A, 0x09, 0x06); // Sparkle effect
 		soundeffect2(p, 0x01, 0xE7); //agility sound - SpaceDog
 		break;
-	case 10: // LB's LSD potion, 5'th November 1999
-		if( !(items[i].id1 == 0x18 && items[i].id2 == 0x41 ) ) return; // only works with an special flask
-		if( s == -1 ) return;
-		if( LSD[s] == 1 )
-		{
-			sysmessage( s, "No,no,no,can't you get enough ?" );
-			return;
-		}
-		tempeffect( p, p, 20, 60+RandomNum( 1, 120 ), 0, 0 ); // trigger effect
-		staticeffect( p, 0x37, 0x6A, 0x09, 0x06 ); // Sparkle effect
-		soundeffects( calcSocketFromChar( p ), 0x00, 0xF8, false ); // lsd sound :)
-		break;
-							
 	default:
 		printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 		return;
@@ -13061,7 +12887,6 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		removefromptr(&contsp[items[i].contserial%HASHMAX], i);
 	if (items[i].morey!=3)
 	{
-		int lsd = items[i].morey; // save morey before overwritten
 		unsigned char k1 = items[i].ser1;
 		unsigned char k2 = items[i].ser2;
 		unsigned char k3 = items[i].ser3;
@@ -13075,11 +12900,6 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		items[i].serial = kser;
 		items[i].id1 = 0x0F;
 		items[i].id2 = 0x0E;
-		if( lsd == 10 ) // empty Lsd potions
-		{
-			items[i].id1 = 0x18;
-			items[i].id2 = 0x3D;
-		}
 		items[i].pileable = 1;
 		mapRegions->RemoveItem( i );
 		int pItem = packitem( p );
@@ -13193,20 +13013,24 @@ int calcLastContainerFromSer( int ser )
 			{
 				newser = items[a].contserial;
 				if( newser == items[a].serial )
+				{
 					printf( "UOX3.CPP: Loop error in calcLastContainerFromSer().\n   Item [%i] [ID: %x%x] %s has contained in itself.\n   Check CONT variables into WSC!\n", a, items[a].id1, items[a].id2, items[a].name );
+					exi = 3;
+				}
 			}
 			else
 				exi = 1;
 		}
 	} while( exi == 0 );
 	
-	if( exi == 2 )
+	switch( exi )
 	{
+	case 2:
 		strcpy( script1, "NPC" );
 		return a; // npc
-	}
-	else
-	{
+	case 3:
+		return -1;
+	default:
 		strcpy( script1, "ITEM" );
 		return a; // item
 	}
@@ -14370,6 +14194,7 @@ void saveserverscript(char x)
 	fprintf( file, "NPC_BASE_REATTACKAT %i\n",server_data.npc_base_reattackat);
 	fprintf( file, "ATTACKSTAMINA %i\n", server_data.attackstamina ); // antichrist (6) - for ATTACKSTAMINA
 	fprintf( file, "EXPLODEDELAY %f\n", combat.explodeDelay );
+	fprintf( file, "MAGICEQUIPCHECK %i\n", (server_data.magicEquipCheck?1:0) );
 	fprintf( file, "}\n\n" );
 	
 	fprintf( file, "SECTION VENDOR\n" );
@@ -14468,7 +14293,7 @@ void saveserverscript(char x)
 	//else printf("UOX3: Server data saved.(AUTO)\n");
 }
 
-void loadspeed()//Lag Fix -- Zippy -- NEW FUNCTION
+void loadspeed( void )//Lag Fix -- Zippy -- NEW FUNCTION
 {
 	do
 	{
@@ -14488,34 +14313,45 @@ void loadspeed()//Lag Fix -- Zippy -- NEW FUNCTION
 	while (strcmp(script1, "}"));
 }
 
-void loadserverscript() // Load server script
+void loadserverscript( void ) // Load server script
 {
-	wscfile=fopen("server.scp", "r");
-	if(wscfile==NULL)
+	wscfile = fopen( "server.scp", "r" );
+	if( wscfile == NULL )
 	{
-		printf("server.scp not found...defaults are loaded\n");
+		printf( "server.scp not found...defaults are loaded\n" );
 		return;
 	}
 	do
 	{
 		readw2();
-		if (!(strcmp(script1, "SECTION")))
+		if( !strcmp( script1, "SECTION" ) )
 		{
-			if(!(strcmp(script2, "SERVER"))) loadserver();
-			else if(!(strcmp(script2, "SPEED"))) loadspeed();//Lag Fix -- Zippy
-			else if(!(strcmp(script2, "RESOURCE"))) loadresources();
-			else if(!(strcmp(script2, "REPSYS"))) loadrepsys();
-			else if(!(strcmp(script2, "TRACKING"))) loadtracking();
-			else if(!(strcmp(script2, "BEGGING"))) loadbegging();
-			else if(!(strcmp(script2, "FISHING"))) loadfishing();
-			else if(!(strcmp(script2, "SPIRITSPEAK"))) loadspiritspeak();
-			else if(!(strcmp(script2, "TIME_LIGHT"))) loadtime_light();
-			else if(!(strcmp(script2, "COMBAT" ))) loadCombat();
-			//	Magius(CHE)	-	(Date Unknown)
-			else if(!(strcmp(script2, "HUNGER" ))) loadhunger();
-			else if(!(strcmp(script2, "VENDOR" ))) loadvendor();
-			else if(!(strcmp(script2, "REGENERATE" ))) loadregenerate();
-			//	Magius(CHE)	- End
+			if( !strcmp( script2, "SERVER" ) ) 
+				loadserver();
+			else if( !strcmp( script2, "SPEED" ) ) 
+				loadspeed();
+			else if( !strcmp( script2, "RESOURCE" ) ) 
+				loadresources();
+			else if( !strcmp( script2, "REPSYS" ) ) 
+				loadrepsys();
+			else if( !strcmp( script2, "TRACKING" ) ) 
+				loadtracking();
+			else if( !strcmp( script2, "BEGGING" ) ) 
+				loadbegging();
+			else if( !strcmp( script2, "FISHING" ) ) 
+				loadfishing();
+			else if( !strcmp( script2, "SPIRITSPEAK" ) ) 
+				loadspiritspeak();
+			else if( !strcmp( script2, "TIME_LIGHT" ) ) 
+				loadtime_light();
+			else if( !strcmp( script2, "COMBAT" ) ) 
+				loadCombat();
+			else if( !strcmp( script2, "HUNGER" ) ) 
+				loadhunger();
+			else if( !strcmp( script2, "VENDOR" ) ) 
+				loadvendor();
+			else if( !strcmp( script2, "REGENERATE" ) ) 
+				loadregenerate();
 		}
 	}
 	while (strcmp(script1, "EOF"));
@@ -14523,28 +14359,47 @@ void loadserverscript() // Load server script
 	wscfile = NULL;
 }
 
-void loadCombat()
+void loadCombat( void )
 {
 	do
 	{
 		readw2();
-		if( !strcmp( script1, "ANIMALS_ATTACK_CHANCE" ) ) server_data.animals_attack_chance = str2num( script2 );
-		else if( !strcmp( script1, "ANIMALS_GUARDED" ) ) server_data.animals_guarded = str2num( script2 );
-		else if( !strcmp( script1, "ATTACKSTAMINA" ) ) server_data.attackstamina = str2num( script2 ); // antichrist (6) - for ATTACKSTAMINA
-		else if( !strcmp( script1, "COMBAT_HIT_MESSAGE" ) ) server_data.combathitmessage = str2num( script2 );
-		else if( !strcmp( script1, "DEATH_ON_THROAT" ) ) combat.deathOnThroat = str2num( script2 );
-		else if( !strcmp( script1, "DIST_TO_POISON" ) ) combat.dToPoison = str2num( script2 );
-		else if( !strcmp( script1, "EXPLODEDELAY" ) ) combat.explodeDelay = atof( script2 );
-		else if( !strcmp( script1, "MAX_ABSORBTION" ) ) server_data.maxabsorbtion = str2num( script2 ); // MAgius(CHE) 
-		else if( !strcmp( script1, "MAX_NON_HUMAN_ABSORBTION" ) ) server_data.maxnohabsorbtion = str2num( script2 ); // MAgius(CHE) (2)
-		else if( !strcmp( script1, "MAX_RANGE_SPELL" ) ) combat.maxRangeSpell = str2num( script2 );
-		else if( !strcmp( script1, "MAXDMG" ) ) combat.maxDmg = str2num( script2 );
-		else if( !strcmp( script1, "MAXRANGE" ) ) combat.maxRange = str2num( script2 );
-		else if( !strcmp( script1, "MONSTERS_VS_ANIMALS" ) ) server_data.monsters_vs_animals = str2num( script2 );
-		else if( !strcmp( script1, "NPC_BASE_FLEEAT" ) ) server_data.npc_base_fleeat = str2num( script2 );
-		else if( !strcmp( script1, "NPC_BASE_REATTACKAT" ) ) server_data.npc_base_reattackat = str2num( script2 );
-		else if( !strcmp( script1, "NPC_DAMAGE_RATE" ) ) server_data.npcdamage = str2num( script2 ); // MAgius(CHE) (3)
-		else if( !strcmp( script1, "WRESTLESPEED" ) ) combat.wrestleSpeed = str2num( script2 );
+		if( !strcmp( script1, "ANIMALS_ATTACK_CHANCE" ) ) 
+			server_data.animals_attack_chance = str2num( script2 );
+		else if( !strcmp( script1, "ANIMALS_GUARDED" ) ) 
+			server_data.animals_guarded = str2num( script2 );
+		else if( !strcmp( script1, "ATTACKSTAMINA" ) ) 
+			server_data.attackstamina = str2num( script2 ); // antichrist (6) - for ATTACKSTAMINA
+		else if( !strcmp( script1, "COMBAT_HIT_MESSAGE" ) ) 
+			server_data.combathitmessage = str2num( script2 );
+		else if( !strcmp( script1, "DEATH_ON_THROAT" ) ) 
+			combat.deathOnThroat = str2num( script2 );
+		else if( !strcmp( script1, "DIST_TO_POISON" ) ) 
+			combat.dToPoison = str2num( script2 );
+		else if( !strcmp( script1, "EXPLODEDELAY" ) ) 
+			combat.explodeDelay = atof( script2 );
+		else if( !strcmp( script1, "MAX_ABSORBTION" ) ) 
+			server_data.maxabsorbtion = str2num( script2 ); // MAgius(CHE) 
+		else if( !strcmp( script1, "MAX_NON_HUMAN_ABSORBTION" ) ) 
+			server_data.maxnohabsorbtion = str2num( script2 ); // MAgius(CHE) (2)
+		else if( !strcmp( script1, "MAX_RANGE_SPELL" ) ) 
+			combat.maxRangeSpell = str2num( script2 );
+		else if( !strcmp( script1, "MAXDMG" ) ) 
+			combat.maxDmg = str2num( script2 );
+		else if( !strcmp( script1, "MAXRANGE" ) ) 
+			combat.maxRange = str2num( script2 );
+		else if( !strcmp( script1, "MONSTERS_VS_ANIMALS" ) ) 
+			server_data.monsters_vs_animals = str2num( script2 );
+		else if( !strcmp( script1, "NPC_BASE_FLEEAT" ) ) 
+			server_data.npc_base_fleeat = str2num( script2 );
+		else if( !strcmp( script1, "NPC_BASE_REATTACKAT" ) ) 
+			server_data.npc_base_reattackat = str2num( script2 );
+		else if( !strcmp( script1, "NPC_DAMAGE_RATE" ) ) 
+			server_data.npcdamage = str2num( script2 ); // MAgius(CHE) (3)
+		else if( !strcmp( script1, "WRESTLESPEED" ) ) 
+			combat.wrestleSpeed = str2num( script2 );
+		else if( !strcmp( script1, "MAGICEQUIPCHECK" ) )
+			server_data.magicEquipCheck = ( str2num( script2 ) != 0 );
 	}
 	while( strcmp( script1, "}" ));
 }
@@ -14820,6 +14675,7 @@ void loadserverdefaults( void )
 	combat.maxRangeSpell = 10;
 	combat.deathOnThroat = 1;
 	combat.explodeDelay = 0;
+	server_data.magicEquipCheck = true;
 	strcpy( server_data.specialbanktrigger, SPECIALBANKTRIGGER ); // AntiChrist - Special Bank word trigger
 	server_data.usespecialbank = USESPECIALBANK; // AntiChrist - 1 = Special Bank enabled
 	server_data.stat_advance=20;			// Gunther - Added 09/23/2000 for stat advance fix
@@ -17080,7 +16936,7 @@ int addrandomhaircolor(int s, char *colorlist)
 
 void criminal( CHARACTER c ) //Repsys
 {
-	if( !(chars[c].flag&0x02) )	// if we're not a criminal already
+	if( !IsCriminal( c ) )	// if we're not a criminal already
 	{
 		chars[c].crimflag = (int)((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
 		sysmessage( calcSocketFromChar( c ), "You are now a criminal!" );
@@ -17132,8 +16988,9 @@ void criminal( CHARACTER c ) //Repsys
 	}
 }
 
-void setcharflag(int c)//repsys
+void setcharflag( int c )
 {
+	unsigned char oldFlag = chars[c].flag;
 	if( !chars[c].npc )
 	{
 		if( chars[c].kills > repsys.maxkills ) 
@@ -17146,7 +17003,7 @@ void setcharflag(int c)//repsys
 			chars[c].flag |= 0x04;
 			chars[c].flag &= 0x1C;
 		}
-		else if( chars[c].crimflag > 0 )
+		else if( chars[c].crimflag > 0 || chars[c].crimflag < -1 ) 
 		{
 			chars[c].flag |= 0x02;
 			chars[c].flag &= 0x1B;
@@ -17216,6 +17073,10 @@ void setcharflag(int c)//repsys
 			break;
 		}
 	}
+	if( chars[c].flag == oldFlag )
+	{
+		// No change
+	}
 }
 
 void loadrepsys( void ) //Repsys
@@ -17236,7 +17097,7 @@ void loadrepsys( void ) //Repsys
 	if (!repsys.crimtime) repsys.crimtime=120;
 }
 
-void loadresources()
+void loadresources( void )
 {
 	do
 	{
@@ -17520,14 +17381,15 @@ void AddToMenuList( int toAdd )
 //|   Purpose     -  Performs death stuff. I.E.- creates a corpse, moves items
 //|                  to it, take out of war mode, does animation and sound, etc.
 //o---------------------------------------------------------------------------o
-void deathstuff(CHARACTER i)
+void deathstuff( CHARACTER i )
 {
 	int p, j, ele, corpsenum, c = -1;
 	char murderername[50]; // AntiChrist
 	
 	if( chars[i].dead )	// DON'T KILL DEAD THINGS
 		return;
-
+	
+	j = unmounthorse( i );
 	UOXSOCKET playerSock = calcSocketFromChar( i );
 	int nType=0;
 
@@ -17554,8 +17416,6 @@ void deathstuff(CHARACTER i)
 		murderername[0] = 0;
 
 	p = packitem(i);
-	if( playerSock != -1 )
-		j = unmounthorse( playerSock );
 	KillTrades( i );
 
 	ele = 0;
@@ -18038,4 +17898,25 @@ void splitSerial ( SERIAL serial, unsigned char &a1, unsigned char &a2, unsigned
 	a2 = (unsigned char) (serial>>16);
 	a3 = (unsigned char) (serial>> 8);
 	a4 = (unsigned char) (serial%256);
+}
+
+bool IsInnocent( CHARACTER toCheck )
+{
+	if( toCheck < 0 || toCheck >= cmem )
+		return false;
+	return ( (chars[toCheck].flag&0x04) == 0x04 );
+}
+
+bool IsCriminal( CHARACTER toCheck )
+{
+	if( toCheck < 0 || toCheck >= cmem )
+		return false;
+	return ( (chars[toCheck].flag&0x02) == 0x02 );
+}
+
+bool IsMurderer( CHARACTER toCheck )
+{
+	if( toCheck < 0 || toCheck >= cmem )
+		return false;
+	return ( (chars[toCheck].flag&0x01) == 0x01 );
 }

@@ -125,11 +125,8 @@ char Script::find(const char *section) {
 	unsigned int lensection = strlen(section);
     for (sc = entries->rewind(); sc; sc = entries->next())
 	{
-		if( strlen( sc->name ) == lensection )
-		{
-			if(!strncmp( sc->name, section, strlen(section)))
-	            break;
-		}
+		if( !strcmp( sc->name, section ) )
+            break;
 	}
     if (!sc)
         return 0;

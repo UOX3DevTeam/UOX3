@@ -1301,7 +1301,7 @@ void command_gcollect( UOXSOCKET s )
 void command_allmoveon( UOXSOCKET s )
 // Enables GM ability to pick up all objects.
 {
-	chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x01;
+	chars[currchar[s]].priv2 |= 0x01;
 	teleport(currchar[s]);
 	sysmessage(s, "ALLMOVE enabled."); // Crackerjack 07/25/99
 	return;
@@ -1311,7 +1311,7 @@ void command_allmoveon( UOXSOCKET s )
 void command_allmoveoff( UOXSOCKET s )
 // Disables GM ability to pick up all objects.
 {
-	chars[currchar[s]].priv2=chars[currchar[s]].priv2&(0xFF-0x01);
+	chars[currchar[s]].priv2 &= (0xFF - 0x01);
 	teleport(currchar[s]);
 	sysmessage(s, "ALLMOVE disabled."); // Crackerjack 07/25/99
 	return;
@@ -1321,7 +1321,7 @@ void command_allmoveoff( UOXSOCKET s )
 void command_showhs( UOXSOCKET s )
 // Makes houses appear as deeds. (The walls disappear and there's a deed on the ground in their place.)
 {
-	chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x04;
+	chars[currchar[s]].priv2 |= 0x04;
 	teleport(currchar[s]);
 	sysmessage(s, "House icons visible. (Houses invisible)");
 	return;
@@ -1331,7 +1331,7 @@ void command_showhs( UOXSOCKET s )
 void command_hidehs( UOXSOCKET s )
 // Makes houses appear as houses (opposite of /SHOWHS).
 {
-	chars[currchar[s]].priv2=chars[currchar[s]].priv2&(0xFF-0x04);
+	chars[currchar[s]].priv2 &= (0xFF - 0x04);
 	teleport(currchar[s]);
 	sysmessage(s, "House icons hidden. (Houses visible)");
 	return;

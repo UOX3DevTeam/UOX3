@@ -44,6 +44,8 @@ cCharacterHandle::cCharacterHandle( void )
 	DefaultChar->free = 1;
 	DefaultChar->ser1 = DefaultChar->ser2 = DefaultChar->ser3 = DefaultChar->ser4 = 0xFF;
 	DefaultChar->serial = 0;
+	DefaultChar->account = -1;
+	DefaultChar->npc = 1;
 
 	Acctual = Free = 0;
 }
@@ -392,6 +394,7 @@ void cCharStuff::DeleteChar (int k) // Delete character
 		ycounter=0;
 		xcounter=0;
 	}
+	chars[k].account = -1;
 	chars.Delete( k );
 }
 
@@ -2721,7 +2724,7 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 							chars[i].emotecolor2 = 0x26;
 							npcemoteall(i, t, 1);
 						}
-						chars[i].hp = chars[i].hp - RandomNum(1, 2);
+						chars[i].hp -= RandomNum(1, 2);
 						updatestats(i, 0);
 						break;
 					case 2:

@@ -833,6 +833,7 @@ struct server_st
 	unsigned int polyduration;
  	int  bountysactive;       // Dupois - Added July 18, 2000 for bounty quests - whether bounties are active (1-default) or inactive (0)
  	int  bountysexpire;       // Dupois - Added July 18, 2000 for bounty quests - number of days when an unclaimed bounty expires and is deleted (0=never-default)
+	bool magicEquipCheck;
 	
 };
 struct title_st // For custom titles

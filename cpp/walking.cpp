@@ -702,7 +702,7 @@ bool cMovement::CheckForRunning(CHARACTER c, UOXSOCKET socket, int dir)
 bool cMovement::CheckForStealth(CHARACTER c, UOXSOCKET socket)
 // PARAM WARNING: unreferenced paramater socket
 {
-	if ((chars[c].hidden)&&(!(chars[c].priv2&8)))
+	if ( chars[c].hidden == 1 && !(chars[c].priv2&8) )
 	{
 		if(chars[c].stealth!=-1)
 		{ //AntiChrist - Stealth
@@ -1030,9 +1030,9 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 					extmove[16]=5;
 				else
 				{
-					if( chars[c].flag & 0x01 )
+					if( IsMurderer( c ) )
 						extmove[16] = 6;		// If a bad, show as red.
-					else if( chars[c].flag & 0x04 )
+					else if( IsInnocent( c ) )
 						extmove[16] = 1;		// If a good, show as blue.
 					else if( chars[c].flag & 0x08 )
 						extmove[16] = 2;		// green (guilds)
@@ -1180,11 +1180,12 @@ void cMovement::HandleItemCollision( CHARACTER c, UOXSOCKET socket, bool amTurni
 								 ( chars[c].z <= ( items[mapitem].z + 5 ) ) );
 					oldd = Distance( oldx, oldy, items[mapitem].x, items[mapitem].y );
 					newd = Distance( newx, newy, items[mapitem].x, items[mapitem].y );
+					int rNum = RandomNum( 0, 5 );
 					if( id1 == 0x39 && ( id2 == 0x96 || id2 == 0x8C ) )
-					{//Fire Field
+					{	// Fire Field
 						if( EffRange )
 						{
-							if (!Magic->CheckResist(-1, c, 4))
+							if( rNum >= 2 || ( rNum <= 1 && !Magic->CheckResist( -1, c, 4 ) ) )
 							{                                               
 								Magic->MagicDamage(c, items[mapitem].morex/300);
 							}
@@ -1195,7 +1196,7 @@ void cMovement::HandleItemCollision( CHARACTER c, UOXSOCKET socket, bool amTurni
 					{//Poison field
 						if( EffRange )
 						{
-							if (!Magic->CheckResist(-1, c, 5))
+							if( rNum >= 2 || ( rNum <= 1 && !Magic->CheckResist( -1, c, 5 ) ) )
 							{                                               
 								Magic->PoisonDamage(c,1);
 							}
@@ -1206,7 +1207,7 @@ void cMovement::HandleItemCollision( CHARACTER c, UOXSOCKET socket, bool amTurni
 					{//Para Field
 						if( EffRange )
 						{
-							if (!Magic->CheckResist(-1, c, 6))
+							if( rNum >= 2 || ( rNum <= 1 && !Magic->CheckResist( -1, c, 6 ) ) )
 							{
 								tempeffect(c, c, 1, 0, 0, 0);
 							}
@@ -1391,9 +1392,9 @@ void cMovement::CombatWalk(int s) // Only for switching to combat mode
                 extmove[16]=5;
             else 
 			{
-				if( chars[s].flag & 0x01 )
+				if( IsMurderer( s ) )
 					extmove[16] = 6;
-				else if( chars[s].flag & 0x04 )
+				else if( IsInnocent( s ) )
 					extmove[16] = 1;
 				else if( chars[s].flag & 0x08 )
 					extmove[16] = 2;

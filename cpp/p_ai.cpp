@@ -23,8 +23,8 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
 //------------------------------------------------------------------------
-#include <uox3.h>
-#include <debug.h>
+#include "uox3.h"
+#include "debug.h"
 
 #define DBGFILE "p_ai.cpp"
 
@@ -42,7 +42,7 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 		case 1 : // Good Healers
 			for (k=0;k<now;k++) 
 			{
-				if (chars[currchar[k]].dead && chars[currchar[k]].flag&0x04 && chardist(i, currchar[k])<=3 && chars[currchar[k]].flag!=0x02 && chars[currchar[k]].flag!=0x01) 
+				if( chars[currchar[k]].dead && IsInnocent( currchar[k] ) && chardist(i, currchar[k])<=3 && !IsCriminal( currchar[k] ) && !IsMurderer( currchar[k] ) ) 
 				{
 					npcaction(i, 0x10);
 					Targ->NpcResurrectTarget(currchar[k]);
@@ -55,11 +55,12 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 					case 3: npctalkall(i, "Live again, ghost!  Thy time in this world is not yet done.", 0); break;
 					case 4: npctalkall(i, "I shall attempt to resurrect thee.", 0); break;
 					}
-				} else if (chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && chars[currchar[k]].flag&0x01)
+				} 
+				else if( chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && IsMurderer( currchar[k] ) )
 				{
 					npctalkall(i, "I will nay give life to a scoundrel like thee!",1);
 				}
-				else if (chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && chars[currchar[k]].flag&0x02)
+				else if( chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && IsCriminal( currchar[k] ) )
 				{
 					npctalkall(i, "I will nay give life to thee for thou art a criminal!",1);
 				}
@@ -68,7 +69,7 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 		case 666 : //Evil Healers
 			for (k=0;k<now;k++) 
 			{
-				if (chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && chars[currchar[k]].flag&0x01) 
+				if( chars[currchar[k]].dead && chardist(i, currchar[k])<=3 && IsMurderer( currchar[k] ) ) 
 				{
 					npcaction(i, 0x10);
 					Targ->NpcResurrectTarget(currchar[k]);
@@ -81,8 +82,8 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 					case 3: npctalkall(i, "From hell to Britannia, come alive!.", 0); break;
 					case 4: npctalkall(i, "Since you are Evil, I will bring you back to consciouness.", 0); break;
 					}
-				} else if (chars[currchar[k]].flag!=0x01 && chars[currchar[k]].dead && chardist(i, currchar[k]) <= 3 ) {
-					npctalkall(i, "I dispise all things good. I shall not give thee another chance!", 1);
+				} else if( !IsMurderer( currchar[k] ) && chars[currchar[k]].dead && chardist(i, currchar[k]) <= 3 ) {
+					npctalkall(i, "I despise all things good. I shall not give thee another chance!", 1);
 				}
 			}
 			break;

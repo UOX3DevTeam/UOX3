@@ -125,7 +125,7 @@ public:
 class cCombat
 {
 private:
-	void ItemCastSpell(UOXSOCKET s, int c, int i);
+	void ItemCastSpell( UOXSOCKET s, int c, int i );
 	int TimerOk(int c);
 	void ItemSpell(int attacker, int defender);
 	void doSoundEffect( CHARACTER p, int fightskill, ITEM weapon ); // AntiChrist
@@ -162,14 +162,14 @@ public:
 	void MakePlace(int s, int i);
 	void Command( UOXSOCKET s );
 	void MakeShop(int c);
-	void RemoveShop(int s);
+	void RemoveShop( UOXSOCKET s );
 	void DyeItem(int s);
-	void SetItemTrigger(int s);
-	void SetTriggerType(int s);
-	void SetTriggerWord(int s);
-	void SetNPCTrigger(int s);
-	void DupeItem(UOXSOCKET s, int i, int amount);
-	void Possess(int s);
+	void SetItemTrigger( UOXSOCKET s );
+	void SetTriggerType( UOXSOCKET s );
+	void SetTriggerWord( UOXSOCKET s );
+	void SetNPCTrigger( UOXSOCKET s );
+	void DupeItem( UOXSOCKET s, int i, int amount );
+	void Possess( UOXSOCKET s );
 	void Load( void );
 	signed int FindIndex( char *toFind );
 	int cmd_offset;
@@ -270,10 +270,10 @@ public:
 	UI32 GetPos() const { return pos; }
 	UI32 GetLength() const { return length; }
 };
-// Thanks to LB
+
 #if ILSHENAR == 1
-const int MapTileWidth = 288 ;
-const int MapTileHeight = 200 ;
+const int MapTileWidth = 288;
+const int MapTileHeight = 200;
 #else
 const int MapTileWidth = 768;
 const int MapTileHeight = 512;
@@ -410,7 +410,7 @@ private:
 	void PlayInstrumentWell( UOXSOCKET s, int i);
 	void PlayInstrumentPoor( UOXSOCKET s, int i);
 	int GetInstrument(int s);
-	void RandomSteal(int s);
+	void RandomSteal( UOXSOCKET s );
 	int TrackingDirection(int s, int i);
 	void TellScroll(char *menu_name, int player, long item_param);
 	void CollectAmmo(int s, int a, int b);
@@ -426,11 +426,11 @@ public:
 	int GetIngotAmt(int s, unsigned char id1, unsigned char id2, unsigned char color1, unsigned char color2);
 	char AdvanceSkill(int s, int sk, char skillused);
 	void AdvanceStats(int s, int sk);
-	void TinkerAxel(int s);
-	void TinkerAwg(int s);
-	void TinkerClock(int s);
+	void TinkerAxel( UOXSOCKET s );
+	void TinkerAwg( UOXSOCKET s );
+	void TinkerClock( UOXSOCKET s );
 	void MakeDough(int s);
-	void MakePizza(int s);
+	void MakePizza( UOXSOCKET s );
 	void Track(int i);
 	void DoPotion(int s, int type, int sub, int mortar);
 	void Tailoring( UOXSOCKET s );
@@ -453,29 +453,29 @@ public:
 	void ProvocationTarget2( UOXSOCKET s );
 	void EnticementTarget1( UOXSOCKET s );
 	void EnticementTarget2( UOXSOCKET s );
-	void AlchemyTarget(int s);
-	void BottleTarget(int s);
+	void AlchemyTarget( UOXSOCKET s );
+	void BottleTarget( UOXSOCKET s );
 	void PotionToBottle(int s, int mortar);
 	char CheckSkill(int s, int sk, int low, int high);
 	void CreateBandageTarget(int s);
-	void HealingSkillTarget(int s);
+	void HealingSkillTarget( UOXSOCKET s );
 	void SpiritSpeak(int s);
-	void ArmsLoreTarget(int s);
-	void ItemIdTarget(int s);
+	void ArmsLoreTarget( UOXSOCKET s );
+	void ItemIdTarget( UOXSOCKET s );
 	void Evaluate_int_Target(int s);
-	void AnatomyTarget(int s);
+	void AnatomyTarget( UOXSOCKET s );
 	void TameTarget(int s);
 	void FishTarget(int s);
 	int GetCombatSkill(int i);
 	int GetShield(int i);
 	ITEM GetSecondHand( CHARACTER i );
 	void SkillUse(int s, int x);
-	void StealingTarget(int s);
+	void StealingTarget( UOXSOCKET s );
 	void CreateTrackingMenu(int s, int m);
 	void TrackingMenu(int s, int gmindex);
 	void BeggingTarget(int s);
-	void AnimalLoreTarget(int s);
-	void ForensicsTarget(int s);
+	void AnimalLoreTarget( UOXSOCKET s );
+	void ForensicsTarget( UOXSOCKET s );
 	void PoisoningTarget( UOXSOCKET s );
 	int Inscribe( UOXSOCKET s, long snum);
 	int EngraveAction(int s, int i, int cir, int spl);
@@ -483,7 +483,7 @@ public:
 	void LockPick( UOXSOCKET s );
 	void TDummy(int s);
 	void NewDummy(unsigned int currenttime);
-	void Tinkering(int s);
+	void Tinkering( UOXSOCKET s );
 	void AButte(int s1, int x);
 	void Persecute( UOXSOCKET s ); // AntiChrist persecute stuff
 	void Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial );
@@ -534,51 +534,51 @@ private:
 	void GlowTarget( UOXSOCKET s );
 	void UnglowTarget( UOXSOCKET s );
 	void PlVBuy(int s);
-	void RenameTarget(int s);
+	void RenameTarget( UOXSOCKET s );
 	void AddTarget(int s);
 	void TeleTarget( UOXSOCKET s );
-	void RemoveTarget(int s);
+	void RemoveTarget( UOXSOCKET s );
 	void DyeTarget(int s);
 	void NewzTarget(int s);
-	void TypeTarget(int s);
-	void XgoTarget(int s);
-	void MoreXYZTarget(int s);
-	void MoreXTarget(int s);
-	void MoreYTarget(int s);
-	void MoreZTarget(int s);
-	void PrivTarget(int s);
-	void MoreTarget(int s);
-	void KeyTarget(int s);
+	void TypeTarget( UOXSOCKET s );
+	void XgoTarget( UOXSOCKET s );
+	void MoreXYZTarget( UOXSOCKET s );
+	void MoreXTarget( UOXSOCKET s );
+	void MoreYTarget( UOXSOCKET s );
+	void MoreZTarget( UOXSOCKET s );
+	void PrivTarget( UOXSOCKET s );
+	void MoreTarget( UOXSOCKET s );
+	void KeyTarget( UOXSOCKET s );
 	void IstatsTarget(int s);
-	void WstatsTarget(int s);
+	void WstatsTarget( UOXSOCKET s );
 	void GMTarget(int s);
-	void CnsTarget(int s);
+	void CnsTarget( UOXSOCKET s );
 	void KillTarget(int s, int ly);
-	void FontTarget(int s);
-	void GhostTarget(int s);
-	void AmountTarget(int s);
-	void SetAmount2Target(int s);
-	void CloseTarget(int s);
+	void FontTarget( UOXSOCKET s );
+	void GhostTarget( UOXSOCKET s );
+	void AmountTarget( UOXSOCKET s );
+	void SetAmount2Target( UOXSOCKET s );
+	void CloseTarget( UOXSOCKET s );
 	void VisibleTarget( UOXSOCKET s );
-	void OwnerTarget(int s);
-	void ColorsTarget(int s);
-	void DvatTarget(int s);
+	void OwnerTarget( UOXSOCKET s );
+	void ColorsTarget( UOXSOCKET s );
+	void DvatTarget( UOXSOCKET s );
 	void AddNpcTarget(int s);
-	void FreezeTarget(int s);
-	void UnfreezeTarget(int s);
-	void AllSetTarget(int s);
+	void FreezeTarget( UOXSOCKET s );
+	void UnfreezeTarget( UOXSOCKET s );
+	void AllSetTarget( UOXSOCKET s );
 	void InfoTarget(int s);
-	void LoadCannon(int s);
-	void SetInvulFlag(int s);
+	void LoadCannon( UOXSOCKET s );
+	void SetInvulFlag( UOXSOCKET s );
 	void Tiling(int s);
 	void ExpPotionTarget(int s);
-	void SquelchTarg(int s);
-	void TeleStuff(int s);
+	void SquelchTarg( UOXSOCKET s );
+	void TeleStuff( UOXSOCKET s );
 	void SwordTarget(int s);
-	void CorpseTarget(int s);
+	void CorpseTarget( UOXSOCKET s );
 	void CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur, int wool);
 	void newCarveTarget( UOXSOCKET s, ITEM i );
-	void TitleTarget(int s);
+	void TitleTarget( UOXSOCKET s );
 	void NpcTarget( UOXSOCKET s );
 	void NpcTarget2( UOXSOCKET s );
 	void NpcRectTarget( UOXSOCKET s );
@@ -587,13 +587,13 @@ private:
 	void NpcAITarget(int s);
 	void xBankTarget(int s);
 	void xSpecialBankTarget( int s ); // AntiChrist
-	void DupeTarget(int s);
-	void MoveToBagTarget(int s);
+	void DupeTarget( UOXSOCKET s );
+	void MoveToBagTarget( UOXSOCKET s );
 	void SellStuffTarget(int s);
 	void GmOpenTarget(int s);
 	void StaminaTarget( UOXSOCKET s );
 	void ManaTarget( UOXSOCKET s );
-	void MakeShopTarget(int s);
+	void MakeShopTarget( UOXSOCKET s );
 	void AttackTarget( UOXSOCKET s );
 	void FollowTarget(int s);
 	void TransferTarget(int s);
@@ -621,9 +621,9 @@ private:
 	void IncYTarget(int s);
 	void IncZTarget( UOXSOCKET s );
 	void BoltTarget( UOXSOCKET s );
-	void MovableTarget(int s);
+	void MovableTarget( UOXSOCKET s );
 	void SetDirTarget(int s);
-	void HouseOwnerTarget(int s);
+	void HouseOwnerTarget( int s );
 	void HouseEjectTarget(int s);
 	void HouseBanTarget(int s);
 	void HouseFriendTarget(int s);
@@ -639,14 +639,14 @@ private:
 public:
 	void CstatsTarget( UOXSOCKET s );
 	void TweakTarget( UOXSOCKET s );
-	void GetAccount( int s );
-	void IDtarget(int s);
+	void GetAccount( UOXSOCKET s );
+	void IDtarget( UOXSOCKET s );
 	void MultiTarget(int s);
 	void Wiping(int s);
 	int NpcMenuTarget(int s);
 	void NpcResurrectTarget(int s);
 	void JailTarget(int s, int c);
-	void ReleaseTarget(int s, int c);
+	void ReleaseTarget( UOXSOCKET s, int c);
 	int AddMenuTarget(int s, int x, int addmitem);
 	void XTeleport(int s, int x);
 	int BuyShop(int s,int c);
@@ -666,7 +666,7 @@ public:
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
 private:
-//	void GenTable(int s, char a1, char a2, char a3, char a4);
+	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);
 
 	int xRecv(int s);

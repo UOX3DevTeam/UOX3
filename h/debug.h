@@ -25,8 +25,8 @@
 //------------------------------------------------------------------------
 #ifndef DEBUG_H
 #define DEBUG_H
-#include <uox3.h>
 #include <stdio.h>
+#include <uox3.h>
 #include <string.h>
 #ifndef __linux__
  #include <stdarg.h>

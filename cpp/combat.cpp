@@ -420,102 +420,103 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 			}
 			else
 			{
-				#pragma note( "This section needs revamping to support constants/array of percentages" )
-				hitin = RandomNum( 0, 2 );
-				if( x <= 44 )
+				for( long t = BODYPERCENT; t < TOTALTARGETSPOTS; t++ )
 				{
-					x=1;       // body
-					switch (hitin)
+					x -= LOCPERCENTAGES[t];		// So, it's not as fast.  But it's definitely more readable, and allows simpler customization of hit locations %.
+					if( x < 0 )	// Found it!
 					{
-					case 1:
-						//later take into account dir facing attacker during battle
-						if (damage < 10) strcpy(temp,"hits you in your Chest!");
-						if (damage >=10) strcpy(temp,"lands a terrible blow to your Chest!");
-						break;
-					case 2:
-						if (damage < 10) strcpy(temp,"lands a blow to your Stomach!");
-						if (damage >=10) strcpy(temp,"knocks the wind out of you!");
-						break;
-					default:
-						if (damage < 10) strcpy(temp,"hits you in your Ribs!");
-						if (damage >=10) strcpy(temp,"broken your Rib?!");
+						x = t + 1;
 						break;
 					}
 				}
-				else if (x<=58)
+				if( !chars[defend].npc )	// Don't bother 
 				{
-					x=2;  // arms
-					switch (hitin)
+					hitin = RandomNum( 0, 2 );
+					switch( x )
 					{
-					case 1:
-						if (damage > 1) strcpy(temp,"hits you in Left Arm!");
+					case 1:			// body
+						switch (hitin)
+						{
+						case 1:
+							if (damage < 10) strcpy(temp,"hits you in your Chest!");
+							if (damage >=10) strcpy(temp,"lands a terrible blow to your Chest!");
+							break;
+						case 2:
+							if (damage < 10) strcpy(temp,"lands a blow to your Stomach!");
+							if (damage >=10) strcpy(temp,"knocks the wind out of you!");
+							break;
+						default:
+							if (damage < 10) strcpy(temp,"hits you in your Ribs!");
+							if (damage >=10) strcpy(temp,"broken your Rib?!");
+							break;
+						}
 						break;
-					case 2:
-						if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+					case 2:  // arms
+						switch (hitin)
+						{
+						case 1:
+							if (damage > 1) strcpy(temp,"hits you in Left Arm!");
+							break;
+						case 2:
+							if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+							break;
+						default:
+							if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+							break;
+						}
 						break;
-					default:
-						if (damage > 1) strcpy(temp,"hits you in Right Arm!");
+					case 3:	// head
+						switch (hitin)
+						{
+						case 1:
+							if (damage < 10) strcpy(temp,"hits you you straight in the Face!");
+							if (damage >=10) strcpy(temp,"lands a stunning blow to your Head!");
+							break;
+						case 2:
+							if (damage < 10) strcpy(temp,"hits you to your Head!"); //kolours - (09/19/98)
+							if (damage >=10) strcpy(temp,"smashed a blow across your Face!");
+							break;
+						default:
+							if (damage < 10) strcpy(temp,"hits you you square in the Jaw!");
+							if (damage >=10) strcpy(temp,"lands a terrible hit to your Temple!");
+							break;
+						}
+						break;
+					case 4:  // legs
+						switch (hitin)
+						{
+						case 1:
+							strcpy(temp,"hits you in Left Thigh!");
+							break;
+						case 2:
+							strcpy(temp,"hits you in Right Thigh!");
+							break;
+						default:
+							strcpy(temp,"hits you in Groin!");
+							break;
+						}
+						break;
+					case 5:  // neck
+						strcpy( temp, "hits you to your Throat!" );
+						break;
+					case 6:  // hands
+						switch (hitin)
+						{
+						case 1:
+							if (damage > 1) strcpy(temp,"hits you in Left Hand!");
+							break;
+						case 2:
+							if (damage > 1) strcpy(temp,"hits you in Right Hand!");
+							break;
+						default:
+							if (damage > 1) strcpy(temp,"hits you in Right Hand!");
+							break;
+						}
 						break;
 					}
+					sprintf( temp2, "%s %s", chars[attack].name, temp );//AntiChrist
+					sysmessage( s2, temp2 ); //kolours -- hit display
 				}
-				else if (x<=72)
-				{
-					x=3;  // head
-					switch (hitin)
-					{
-					case 1:
-						if (damage < 10) strcpy(temp,"hits you you straight in the Face!");
-						if (damage >=10) strcpy(temp,"lands a stunning blow to your Head!");
-						break;
-					case 2:
-						if (damage < 10) strcpy(temp,"hits you to your Head!"); //kolours - (09/19/98)
-						if (damage >=10) strcpy(temp,"smashed a blow across your Face!");
-						break;
-					default:
-						if (damage < 10) strcpy(temp,"hits you you square in the Jaw!");
-						if (damage >=10) strcpy(temp,"lands a terrible hit to your Temple!");
-						break;
-					}
-				}
-				else if (x<=86) 
-				{
-					x=4;  // legs
-					switch (hitin)
-					{
-					case 1:
-						strcpy(temp,"hits you in Left Thigh!");
-						break;
-					case 2:
-						strcpy(temp,"hits you in Right Thigh!");
-						break;
-					default:
-						strcpy(temp,"hits you in Groin!");
-						break;
-					}
-				}
-				else if (x<=93)
-				{
-					x=5;  // neck
-					strcpy(temp,"hits you to your Throat!");
-				}
-				else
-				{
-					x=6;  // hands
-					switch (hitin)
-					{
-					case 1:
-						if (damage > 1) strcpy(temp,"hits you in Left Hand!");
-						break;
-					case 2:
-						if (damage > 1) strcpy(temp,"hits you in Right Hand!");
-						break;
-					default:
-						if (damage > 1) strcpy(temp,"hits you in Right Hand!");
-						break;
-					}
-				}
-				sprintf(temp2,"%s %s",chars[attack].name, temp);//AntiChrist
-				if (!chars[defend].npc) sysmessage(s2, temp2); //kolours -- hit display
 			}
 			x = CalcDef( defend, x );
 			
@@ -557,7 +558,7 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				{//if casting a normal spell (scroll: no concentration loosen)
 					chars[defend].spellCast = -1;
 					chars[defend].casting = 0;
-					chars[defend].priv2 &= 0xfd;
+					chars[defend].priv2 &= 0xFD;
 					sysmessage( s2, "Your concentration has been broken" );
 				}
 			}
@@ -868,7 +869,6 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 			if( chars[defend].hp < 1 )//Highlight //Repsys
 			{
 				Kill( attack, defend );
-				deathstuff( defend );
 				return;
 			}
 
@@ -1703,7 +1703,7 @@ void Kill( CHARACTER attack, CHARACTER defend )
 
 	if( !chars[attack].npc && chars[attack].account != -1 )	// if the attacker
 	{
-		if( (chars[defend].flag&0x04) && Guilds->Compare( attack, defend ) == 0 && Races->Compare( attack, defend ) == 0 && chars[attack].attackfirst )
+		if( IsInnocent( defend ) && Guilds->Compare( attack, defend ) == 0 && Races->Compare( attack, defend ) == 0 && chars[attack].attackfirst )
 		{
 			chars[attack].kills++;
 			UOXSOCKET attSocket = calcSocketFromChar( attack );
@@ -1715,6 +1715,7 @@ void Kill( CHARACTER attack, CHARACTER defend )
 		
 		sprintf( temp, "%s was killed by %s!\n", chars[defend].name, chars[attack].name );
 		savelog( temp, "PvP.log");
+		deathstuff( defend );
 	}
 }
 
@@ -1736,13 +1737,6 @@ void PlayerAttack( UOXSOCKET s )
 		chars[ourChar].targ = -1;
 		return;
 	}
-
-	if (chars[ourChar].cell > 0) //Prevent's someone from trying to gain skill in cells.
-	{
-		sysmessage (s, "There is no fighting in the jail cells!");
-		return;
-	}
-
 	if( chars[ourChar].dead )
 	{
 		if( chars[i].npc )
@@ -1750,7 +1744,7 @@ void PlayerAttack( UOXSOCKET s )
 			switch( chars[i].npcaitype )
 			{
 			case 1:	// good healer
-				if( !(chars[ourChar].flag&0x01) && !(chars[ourChar].flag&0x02) ) // changed from 0x01 so you cant attact a healer to get resed  -- eagle
+				if( !IsMurderer( ourChar ) && !IsCriminal( ourChar ) ) // changed from 0x01 so you cant attact a healer to get resed  -- eagle
 				{	//if character isn't red(bad guy)
 					if( chardist( i, ourChar ) <= 3 )
 					{	//let's resurrect him!
@@ -1773,7 +1767,7 @@ void PlayerAttack( UOXSOCKET s )
 					npctalkall( i, "I will not give life to a schodrel like thee!", 1 );
 				break;
 			case 666:	// evil healer
-				if( chars[ourChar].flag&0x01 )
+				if( IsMurderer( ourChar ) )
 				{//if character is red(bad guy)
 					if( chardist( i, ourChar ) <= 3 )	// let's resurrect him
 					{
@@ -1844,14 +1838,14 @@ void PlayerAttack( UOXSOCKET s )
 		}
 		if( chars[i].guarded )
 		{
-			for( j = 0; j < cownsp[chars[ourChar].serial%HASHMAX].max; j++ )
+			for( j = 0; j < cownsp[chars[i].serial%HASHMAX].max; j++ )
 			{
-				k = cownsp[chars[ourChar].serial%HASHMAX].pointer[j];
+				k = cownsp[chars[i].serial%HASHMAX].pointer[j];
 				if( k != -1 )
 				{
-					if( chars[k].ownserial == chars[ourChar].serial && chars[k].npcaitype == 32 && chardist( i, k ) <= 20 )
+					if( chars[k].ownserial == chars[i].serial && chars[k].npcaitype == 32 && chardist( i, k ) <= 20 )
 					{
-						npcattacktarget( ourChar, k );				// think this is the way to attack the attacker
+						npcattacktarget( ourChar, k );	// i's pets attack ourChar
 					}
 				}
 			}
@@ -1868,7 +1862,7 @@ void PlayerAttack( UOXSOCKET s )
 		}
 		int gCompare = Guilds->Compare( ourChar, i );
 		int rCompare = Races->Compare( ourChar, i );
-		if( ( chars[i].flag&0x04 ) && gCompare == 0 && rCompare == 0 ) //REPSYS
+		if( IsInnocent( i ) && gCompare == 0 && rCompare == 0 ) //REPSYS
 		{	// npcaitype 2 cannot be innocent
 			bool regionGuarded = ( ( region[chars[i].region].priv&0x01 ) == 0x01 );
 			unsigned short charID = (chars[i].id1<<8) + chars[i].id2;

@@ -884,13 +884,10 @@ void cCommands::DyeItem(int s) // Rehue an item
 }
 
 
-void cCommands::SetItemTrigger(int s)
+void cCommands::SetItemTrigger( UOXSOCKET s )
 {
-	int i,serial;
-	 
-	
-  serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i = calcItemFromSer( serial );
+  int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+  int i = calcItemFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Item triggered");
@@ -898,13 +895,10 @@ void cCommands::SetItemTrigger(int s)
   }
 }
 
-void cCommands::SetTriggerType(int s)
+void cCommands::SetTriggerType( UOXSOCKET s )
 {
-	int i,serial;
-	 
-	
-  serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i = calcItemFromSer( serial );
+  int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+  int i = calcItemFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Trigger type set");
@@ -912,13 +906,10 @@ void cCommands::SetTriggerType(int s)
   }
 }
 
-void cCommands::SetTriggerWord(int s)
+void cCommands::SetTriggerWord( UOXSOCKET s )
 {
-	int i,serial;
-	 
-	
-  serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i = calcCharFromSer( serial );
+  int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+  int i = calcCharFromSer( serial );
   if (i!=-1)
   {
 		sysmessage(s,"Trigger word set");
@@ -946,7 +937,6 @@ void cCommands::AddHere(int s, char z)
 		if (items[c].contserial==-1) mapRegions->AddItem(c); //add to region item list
 		items[c].doordir=0;
 		items[c].priv=0;
-		//for (j=0;j<now;j++) if (perm[j]) senditem(j,c);
 		RefreshItem( c ); // AntiChrist
 	}
 	addid1[s]=0;
@@ -954,13 +944,10 @@ void cCommands::AddHere(int s, char z)
 }
 
 
-void cCommands::SetNPCTrigger(int s)
+void cCommands::SetNPCTrigger( UOXSOCKET s )
 {
-	int i,serial;
-	 
-	
-  serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-  i = calcCharFromSer( serial );
+  int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+  int i = calcCharFromSer( serial );
   if (i!=-1)
   {
     sysmessage(s,"NPC triggered");
@@ -1117,12 +1104,12 @@ void cCommands::Wipe(int s)
 	sysbroadcast("All items have been wiped."); 
 }
 
-void cCommands::Possess(int s) 
+void cCommands::Possess( UOXSOCKET s ) 
 {
-	int i, serial, tmp;
+	int tmp;
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
 	if(i!=-1)
 	{
 			
@@ -1231,17 +1218,15 @@ signed int cCommands::FindIndex( char *toFind )
 		return curPointer;
 }
 
-void cCommands::RemoveShop(int s)
+void cCommands::RemoveShop( UOXSOCKET s )
 // PRE:	Target is valid, s is a valid socket
 // POST:	Removes the shop keeper layers from an npc or pc
 // CODER:	Abaddon
 // DATE:	February 17th, 2000
 {
-	SERIAL serial;
-	PLAYER i;
+	SERIAL serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	PLAYER i = calcCharFromSer( serial );
 
-	serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
 	if (i==-1)
 	{
 		sysmessage( s, "Target character not found..." );

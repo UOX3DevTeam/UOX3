@@ -44,15 +44,15 @@
 
 // product info
 #define VER " 0.70.03"
-#define BUILD "22"
+#define BUILD "23"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"
 #define PRODUCT "Ultima Offline eXperiment 3"
 #define TIMEZONE "GMT+10"
-#define NAME "Freelancers Group"
+#define NAME "Freelancers Group SnapShot"
 #define EMAIL "http://www.uox3.net/"
-#define PROGRAMMERS "Freelancers"
+#define PROGRAMMERS "UOX3 DevTeam[Abaddon/EvilDeD/Freelancers]"
 //#ifdef _WIN32
 //#define __NT__
 //#define _MSVC
@@ -312,7 +312,6 @@ extern char spc[2];
 extern char bounce[3];
 extern char extmove[18];
 extern unsigned char attackok[6]; // AntiChrist! 26/10/99
-extern unsigned char LSD[MAXCLIENT];
 extern bool firstpacket[MAXCLIENT];
 extern long idleTimeout[MAXCLIENT];
 extern unsigned int raindroptime;
@@ -625,7 +624,7 @@ int calcgold(int p);
 int packitem(int p);
 void titletarget(int s);
 int ishuman( int p );
-void npcact(int s);
+void npcact( UOXSOCKET s );
 void objTeleporters(int s);
 void npcToggleCombat(int s);
 int chardir(int a, int b);
@@ -639,7 +638,7 @@ int calcLastContainerFromSer( int ser ); // Magius(che) (2)
 int checkBoundingBox(int xPos, int yPos, int fx1, int fy1, int fz1, int fx2, int fy2);
 int checkBoundingCircle(int xPos, int yPos, int fx1, int fy1, int fz1, int radius);
 void updatechar(int c);
-int unmounthorse(UOXSOCKET s);
+int unmounthorse( CHARACTER s );
 void swordtarget(int s);
 void telltime( UOXSOCKET s );
 void visibletarget(int s);
@@ -1050,7 +1049,8 @@ void talking( UOXSOCKET s); // PC speech
 void unicodetalking( UOXSOCKET s); // PC speech
 
 
-
-
+bool IsInnocent( CHARACTER toCheck );
+bool IsCriminal( CHARACTER toCheck );
+bool IsMurderer( CHARACTER toCheck );
 
 #endif // __UOX3_H

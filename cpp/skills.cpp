@@ -67,7 +67,7 @@ int cSkills::GetIngotAmt(int s, unsigned char id1, unsigned char id2, unsigned c
 			{
 				if ((items[i].id1==id1 && items[i].id2==id2) &&
 					(items[i].color1==color1 && items[i].color2==color2)) total=total+items[i].amount;
-				if (items[i].type==1) total=total+Skills->GetSubIngotAmt(i, id1, id2, color1, color2);
+				if (items[i].type==1) total=total+ GetSubIngotAmt(i, id1, id2, color1, color2);
 			}
 		}
 	}
@@ -94,7 +94,7 @@ int cSkills::GetSubIngotAmt(int p, char id1, char id2, char color1, char color2)
 			{
 				if ((items[i].id1==id1 && items[i].id2==id2) &&
 					(items[i].color1==color1 && items[i].color2==color2)) total=total+items[i].amount;
-				if (items[i].type==1) total=total+Skills->GetSubIngotAmt(i, id1, id2, color1, color2);
+				if (items[i].type==1) total=total+ GetSubIngotAmt(i, id1, id2, color1, color2);
 			}
 		}
 	}
@@ -103,7 +103,7 @@ int cSkills::GetSubIngotAmt(int p, char id1, char id2, char color1, char color2)
 //***********************************************************************************************
 
 //***********************************************************************************************
-//Skills->DeleIngot routine for smithing skill  : Cork
+// DeleIngot routine for smithing skill  : Cork
 //added color checking on item
 //***********************************************************************************************
 void cSkills::DeleIngot(int s, int id1, int id2, int color1, int color2, int amount)
@@ -124,7 +124,7 @@ void cSkills::DeleIngot(int s, int id1, int id2, int color1, int color2, int amo
 			{
 				if (items[i].type==1)
 				{
-					total=total-Skills->DeleSubIngot(i, id1, id2, color1, color2, total);
+					total=total- DeleSubIngot(i, id1, id2, color1, color2, total);
 				}
 				if ((items[i].id1==id1 && items[i].id2==id2) &&
 					(items[i].color1==color1 && items[i].color2==color2))
@@ -169,7 +169,7 @@ int cSkills::DeleSubIngot(int p, int id1, int id2, int color1, int color2, int a
 			{
 				if (items[i].type==1)
 				{
-					k=Skills->DeleSubIngot(i, id1, id2, color1, color2, total);
+					k= DeleSubIngot(i, id1, id2, color1, color2, total);
 					total=total-k;
 					totaldel=totaldel+k;
 				}
@@ -244,15 +244,15 @@ void cSkills::Tailoring( UOXSOCKET s )
 					if( items[i].color1 == 0x00 && items[i].color2 == 0xEF )
 					{
 						chars[currchar[s]].runenumb = -17;
-						Skills->MakeMenu( s, 1600, TAILORING );
+						 MakeMenu( s, 1600, TAILORING );
 					}
 					else
 					{
 						chars[currchar[s]].runenumb = -1;
-						Skills->MakeMenu( s, 40, TAILORING );
+						 MakeMenu( s, 40, TAILORING );
 					}
 				}
-				else Skills->MakeMenu(s,30,TAILORING);
+				else  MakeMenu(s,30,TAILORING);
 			}
 			return;
 		}
@@ -721,7 +721,7 @@ void cSkills::Repair( UOXSOCKET s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void Skills->MakeMenutarget(int s,int x,int skill)
+//|   Function    :  void  MakeMenutarget(int s,int x,int skill)
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -737,21 +737,24 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 	int amt = 0;
 	int btmp = 0;
 	if( chars[currchar[s]].making!= 999 )	// when using /add and a door, skill was 1755
-		chkskill=Skills->CheckSkill( currchar[s], skill, itemmake[s].minskill, itemmake[s].maxskill );
+		chkskill= CheckSkill( currchar[s], skill, itemmake[s].minskill, itemmake[s].maxskill );
 	if(chars[currchar[s]].making==999) {}
 	else 
 		if(!chkskill && !(chars[currchar[s]].priv&0x01)) 
 		{
-			amt = getamount( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2 );
-			if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
-				amt *= 50;
-			if( amt < itemmake[s].needs )
+			if ( skill != INSCRIPTION )
 			{
-				sysmessage( s, "You do not have enough resources!!!" );
-				return;
+				amt = getamount( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2 );
+				if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
+					amt *= 50;
+				if( amt < itemmake[s].needs )
+				{
+					sysmessage( s, "You do not have enough resources!!!" );
+					return;
+				}
+				tmpneed = itemmake[s].needs / 2;
+				if( tmpneed == 0 ) itemmake[s].needs++;
 			}
-			tmpneed = itemmake[s].needs / 2;
-			if( tmpneed == 0 ) itemmake[s].needs++;
 			switch(skill) 
 			{
 			case BLACKSMITHING: 
@@ -845,7 +848,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					sysmessage(s, "You fail to create the item.");
 					break;
 					//default:
-					//				printf("ERROR: Fallout of switch statement without default. skills.cpp, Skills->MakeMenutarget()/n"); //Morrolan
+					//				printf("ERROR: Fallout of switch statement without default. skills.cpp,  MakeMenutarget()/n"); //Morrolan
 					// ----- AntiChrist (2) added the way to use every skill for making items not only the ones listed -----
 				default:
 					delequan( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs / 2 );
@@ -853,13 +856,16 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 			}
 			return;
 		}  
-		amt = getamount( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2 );
-		if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
-			amt *= 50;
-		if( amt < itemmake[s].needs && !chars[currchar[s]].priv&0x01 )
+		if( skill != INSCRIPTION )
 		{
-			sysmessage( s, "You do not have enough resources!!!" );
-			return;
+			amt = getamount( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2 );
+			if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
+				amt *= 50;
+			if( amt < itemmake[s].needs && !chars[currchar[s]].priv&0x01 )
+			{
+				sysmessage( s, "You do not have enough resources!!!" );
+				return;
+			}
 		}
 		
 		switch( skill )
@@ -899,7 +905,8 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 				if( carptype == 1 ) delequan( currchar[s], 0x1B, 0xE0, itemmake[s].needs );
 				if( carptype == 2 ) delequan( currchar[s], 0x1B, 0xD7, itemmake[s].needs );
 				break;
-			case INSCRIPTION:	delequan( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, 1 ); break; // don't use default, cauz we delete 1 scroll // use materialid
+			case INSCRIPTION:	
+				delequan( currchar[s], 0x0E, 0x34, 1 ); break; // don't use default, cauz we delete 1 scroll // use materialid
 			case BOWCRAFT:
 				delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs);
 				delequan(currchar[s], itemmake[s].materialid1b, itemmake[s].materialid2b, itemmake[s].needs);
@@ -936,7 +943,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 		c=Items->SpawnItemBackpack2(s, currchar[s], x, 0);
 		if (c==-1)
 		{
-			ConOut("[1]SKILLS.CPP: Skills->MakeMenutarget() bad script item # %d(Item Not found).\n", x);
+			ConOut("[1]SKILLS.CPP:  MakeMenutarget() bad script item # %d(Item Not found).\n", x);
 			return;  //invalid script item
 		}
 		else
@@ -982,7 +989,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 		//c=SpawnItemBackpack2(s, x, 0);
 		//if (c==-1)
 		//{
-		// ConOut("[2]SKILLS.CPP:Skills->MakeMenutarget() bad script item # %d.\n", x);
+		// ConOut("[2]SKILLS.CPP: MakeMenutarget() bad script item # %d.\n", x);
 		// return;  //invalid script item
 		//}
 		if(!chars[currchar[s]].making) sysmessage(s,"You create the item and place it in your backpack.");
@@ -1188,7 +1195,7 @@ void cSkills::Mine(int s)
 		  case 0xE0:
 		  case 0xE1:
 		  case 0xE8:
-			  Skills->GraveDig(s);							// check to see if we targetted a grave, if so, check it
+			   GraveDig(s);							// check to see if we targetted a grave, if so, check it
 			  break;
 		  default:
 			  break;
@@ -1285,7 +1292,7 @@ void cSkills::Mine(int s)
 	
 	soundeffects( s, 0x01, 0x25, true );
 	
-	if( !Skills->CheckSkill( currchar[s], MINING, 0, 1000 ) ) // check to see if our skill is good enough
+	if( ! CheckSkill( currchar[s], MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
 		sysmessage(s,"You sifted thru the dirt and rocks, but found nothing useable.");
 		if( oreamount[oreX][oreY] > 0 && rand()%2 == 1 )	// if we fail, random chance of mineral loss
@@ -1424,7 +1431,7 @@ void cSkills::GraveDig(int s) // added by Genesis 11-4-98
 	else
 		action(s,0x0b);
 	soundeffects(s,0x01,0x25, true);
-	if(!Skills->CheckSkill(currchar[s],MINING, 0, 800)) 
+	if(! CheckSkill(currchar[s],MINING, 0, 800)) 
 	{
 		sysmessage(s,"You sifted through the dirt and found nothing.");
 		return;
@@ -1679,7 +1686,7 @@ void cSkills::SmeltOre( UOXSOCKET s )
 						return;
 					}
 				}
-				if( !Skills->CheckSkill( chr, MINING, miningstuff.minSkill, 1000 ) )	// if we do not have minimum skill to use it
+				if( ! CheckSkill( chr, MINING, miningstuff.minSkill, 1000 ) )	// if we do not have minimum skill to use it
 				{
 					if( items[smeltedItem].amount == 1 )	// if only one ore, delete it
 					{
@@ -1730,7 +1737,7 @@ void cSkills::Wheel(int s, int mat)//Spinning wheel
 		{
 			if(iteminrange(s,i,3))  
 			{
-				if (!Skills->CheckSkill(currchar[s],TAILORING, 0, 1000)) 
+				if (! CheckSkill(currchar[s],TAILORING, 0, 1000)) 
 				{
 					sysmessage(s,"You failed to spin your material.");
 					return;
@@ -1775,7 +1782,7 @@ void cSkills::Loom(int s)
 		{
 			if(iteminrange(s,i,3))  
 			{
-				if (!Skills->CheckSkill(currchar[s],TAILORING, 0, 1000)) 
+				if (! CheckSkill(currchar[s],TAILORING, 0, 1000)) 
 				{
 					sysmessage(s,"You failed to make cloth.");
 					return;
@@ -1863,7 +1870,7 @@ void cSkills::MakeDough(int s)
 		{
 			if(iteminrange(s,i,3))  
 			{
-				if (!Skills->CheckSkill(currchar[s],COOKING, 0, 1000)) 
+				if (! CheckSkill(currchar[s],COOKING, 0, 1000)) 
 				{
 					sysmessage(s,"You failed to mix, and spilt your water.");
 					return;
@@ -1886,23 +1893,20 @@ void cSkills::MakeDough(int s)
 	if(!tailme) sysmessage(s,"You cant mix here.");
 }
 
-void cSkills::MakePizza(int s)
+void cSkills::MakePizza( UOXSOCKET s )
 {
-	//	unsigned int m;
-	int i,serial;
-	
 	int tailme=0;
 	
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if((items[i].id1==0x10 && items[i].id2==0x3D))
 		{
 			if(iteminrange(s,i,3))  
 			{
-				if (!Skills->CheckSkill(currchar[s],COOKING, 0, 1000)) 
+				if (! CheckSkill(currchar[s],COOKING, 0, 1000)) 
 				{
 					sysmessage(s,"You failed to mix.");
 					Items->DeleItem(i);
@@ -1939,7 +1943,7 @@ void cSkills::Hide(int s)
 		sysmessage( s, "You are already hidden" );
 		return;
 	}
-	if (!Skills->CheckSkill(currchar[s],HIDING, 0, 1000)) 
+	if (! CheckSkill(currchar[s],HIDING, 0, 1000)) 
 	{
 		sysmessage(s,"You are unable to hide here.");
 		return;
@@ -1956,6 +1960,12 @@ void cSkills::Stealth(int s)//AntiChrist
 		sysmessage(s,"You must hide first.");
 		return;
 	}
+	if ( chars[currchar[s]].onhorse )
+	{
+		sysmessage( s, "You cannot stealth while mounted" ); //Could be a T2A Animal.
+		return;
+	}
+
 	if (chars[currchar[s]].skill[HIDING]<700)
 	{
 		sysmessage(s,"You are not hidden well enough. Become better at hiding.");
@@ -1964,7 +1974,7 @@ void cSkills::Stealth(int s)//AntiChrist
 		updatechar(currchar[s]);
 		return;
 	}   		
-	if (!Skills->CheckSkill(currchar[s],STEALTH, 0, 1000)) 
+	if (! CheckSkill(currchar[s],STEALTH, 0, 1000)) 
 	{
 		chars[currchar[s]].hidden=0;
 		chars[currchar[s]].stealth=-1;
@@ -2061,7 +2071,7 @@ void cSkills::TreeTarget(int s)
 	else action(s,0x0D);
 	soundeffects(s,0x01,0x3E, true);
 	
-	if (!Skills->CheckSkill(currchar[s],LUMBERJACKING, 0, 1000)) 
+	if (! CheckSkill(currchar[s],LUMBERJACKING, 0, 1000)) 
 	{
 		sysmessage(s,"You chop for a while, but fail to produce any usable wood.");
 		if(logamount[a][b]>0 && rand()%2==1) logamount[a][b]--;//Randomly deplete resources even when they fail 1/2 chance you'll loose wood.
@@ -2146,7 +2156,7 @@ void cSkills::DetectHidden(int s)
 						if (low<0) low=0;
 						if (low>1000) low=1000;
 						
-						if ((Skills->CheckSkill(currchar[s],DETECTINGHIDDEN,low,1000))&&(c<=range))
+						if (( CheckSkill(currchar[s],DETECTINGHIDDEN,low,1000))&&(c<=range))
 						{
 							chars[i].hidden=0;
 							chars[i].stealth=-1; //AntiChrist
@@ -2167,17 +2177,17 @@ void cSkills::PeaceMaking(int s)
 {
 	unsigned int i;
 	int inst, res1, res2, j;
-	inst=Skills->GetInstrument(s);
+	inst= GetInstrument(s);
 	if (inst==-1) 
 	{
 		sysmessage(s, "You do not have an instrument to play on!");
 		return;
 	}
-	res1=Skills->CheckSkill(currchar[s], PEACEMAKING, 0, 1000);
-	res2=Skills->CheckSkill(currchar[s], MUSICIANSHIP, 0, 1000);
+	res1= CheckSkill(currchar[s], PEACEMAKING, 0, 1000);
+	res2= CheckSkill(currchar[s], MUSICIANSHIP, 0, 1000);
 	if (res1 && res2)
 	{
-		Skills->PlayInstrumentWell(s, inst);
+		 PlayInstrumentWell(s, inst);
 		sysmessage(s, "You play your hypnotic music, stopping the battle.");
 		//for (i=0;i<charcount;i++)
 		//{
@@ -2220,13 +2230,16 @@ void cSkills::PeaceMaking(int s)
 		}//for checkgrid
 	} else 
 	{
-		Skills->PlayInstrumentPoor(s, inst);
+		 PlayInstrumentPoor(s, inst);
 		sysmessage(s, "You attempt to calm everyone, but fail.");
 	}
 }
 
 void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 {
+	if( s < 0 || s >= now || i < 0 || i>= imem )
+		return;
+
 	switch(items[i].id2)
 	{
 	case 0x9C:	soundeffects( s, 0x00, 0x38, true );			break;
@@ -2237,7 +2250,7 @@ void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 	case 0xB3:
 	case 0xB4:	soundeffects( s, 0x00, 0x4C, true );			break;
 	default:
-		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentWell()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp,  PlayInstrumentWell()/n"); //Morrolan
 		return;
 		
 	}
@@ -2245,6 +2258,9 @@ void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 
 void cSkills::PlayInstrumentPoor( UOXSOCKET s, int i)
 {
+	if( s < 0 || s >= now || i < 0 || i>= imem )
+		return;
+
 	switch( items[i].id2 )
 	{
 	case 0x9C:	soundeffects( s, 0x00, 0x39, true );			break;
@@ -2255,107 +2271,132 @@ void cSkills::PlayInstrumentPoor( UOXSOCKET s, int i)
 	case 0xB3:
 	case 0xB4:	soundeffects( s, 0x00, 0x4D, true );			break;
 	default:
-		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentPoor()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp,  PlayInstrumentPoor()/n"); //Morrolan
 		return;
 	}
 }
 
 int cSkills::GetInstrument(int s)
 {
-	int i, x,serial,serhash,ci;
-	x=packitem(currchar[s]);
-	if (x==-1) return -1; //LB
-	serial=items[x].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	if( s < 0 || s >= now )
+		return -1;
+	int x = packitem( currchar[s] );
+	if( x == -1 ) 
+		return -1;
+	int serial = items[x].serial;
+	int serhash = serial%HASHMAX;
+	int i;
+	for( int ci = 0; ci < contsp[serhash].max; ci++ )
 	{
-		i=contsp[serhash].pointer[ci];
-		
-		if (i!=-1)
-			if ((items[i].contserial==items[x].serial) &&
-				(items[i].id1==0x0E) && (items[i].id2==0x9C || items[i].id2==0x9D || 
-				items[i].id2==0x9E || items[i].id2==0xB1 || items[i].id2==0xB2 || 
-				items[i].id2==0xB3 || items[i].id2==0xB4)) 
+		i = contsp[serhash].pointer[ci];
+		if( i != -1 )
+		{
+			if( items[i].contserial == items[x].serial )
 			{
-				return i;
+				unsigned short itemID = (items[i].id1<<8) + items[i].id2;
+				switch( itemID )
+				{
+				case 0x0E9C:
+				case 0x0E9D:
+				case 0x0E9E:
+				case 0x0EB1:
+				case 0x0EB2:
+				case 0x0EB3:
+				case 0x0EB4:
+					return i;
+				default:
+					break;
+				}
 			}
+		}
 	}
 	return -1;
 }
 
 void cSkills::ProvocationTarget1( UOXSOCKET s )
 {
-	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
+	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) 
+		return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( calcCharFromSer( serial ) == -1 ) return;
-	int inst;
-	inst=Skills->GetInstrument(s);
-	if (inst==-1) 
+	CHARACTER trgChar = calcCharFromSer( serial );
+	if( trgChar == -1 ) 
+		return;
+	int inst = GetInstrument( s );
+	if( inst == -1 ) 
 	{
-		sysmessage(s, "You do not have an instrument to play on!");
+		sysmessage( s, "You do not have an instrument to play on!" );
 		return;
 	}
-	addid1[s]=buffer[s][7];
-	addid2[s]=buffer[s][8];
-	addid3[s]=buffer[s][9];
-	addid4[s]=buffer[s][10];
 	
-	if (calcSocketFromChar(calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]))!=-1)
+	if( calcSocketFromChar( trgChar ) != -1 )
 	{
-		sysmessage(s, "You cannot provoke other players.");
+		sysmessage( s, "You cannot provoke other players." );
 	}
 	else
 	{
-		target(s, 0, 1, 0, 80, "You play your music, inciting anger, and your target begins to look furious.  Whom do you wish it to attack?");
-		Skills->PlayInstrumentWell(s, inst);
+		addid1[s] = buffer[s][7];
+		addid2[s] = buffer[s][8];
+		addid3[s] = buffer[s][9];
+		addid4[s] = buffer[s][10];
+
+		target( s, 0, 1, 0, 80, "You play your music, inciting anger, and your target begins to look furious.  Whom do you wish it to attack?" );
+		PlayInstrumentWell( s, inst );
 	}
 }
 
 void cSkills::EnticementTarget1( UOXSOCKET s )
 {
-	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
+	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) 
+		return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( calcCharFromSer( serial ) == -1 ) return;
+	CHARACTER trgChar = calcCharFromSer( serial );
+	if( trgChar == -1 ) 
+		return;
 	int inst;
-	inst=Skills->GetInstrument(s);
-	if (inst==-1) 
+	inst = GetInstrument( s );
+	if( inst == -1 ) 
 	{
-		sysmessage(s, "You do not have an instrument to play on!");
+		sysmessage( s, "You do not have an instrument to play on!" );
 		return;
 	}
-	addid1[s]=buffer[s][7];
-	addid2[s]=buffer[s][8];
-	addid3[s]=buffer[s][9];
-	addid4[s]=buffer[s][10];
-	if (calcSocketFromChar(calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]))!=-1)
+
+	if( calcSocketFromChar( trgChar ) != -1 )
 	{
-		sysmessage(s, "You cannot entice other players.");
+		sysmessage( s, "You cannot entice other players." );
 	}
 	else
 	{
-		target(s, 0, 1, 0, 82, "You play your music, luring them near.  Whom do you wish them to follow?");
-		Skills->PlayInstrumentWell(s, inst);
+		addid1[s] = buffer[s][7];
+		addid2[s] = buffer[s][8];
+		addid3[s] = buffer[s][9];
+		addid4[s] = buffer[s][10];
+
+		target( s, 0, 1, 0, 82, "You play your music, luring them near.  Whom do you wish them to follow?" );
+		PlayInstrumentWell( s, inst );
 	}
 }
 
 void cSkills::EnticementTarget2( UOXSOCKET s )
 {
-	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
+	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) 
+		return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( calcCharFromSer( serial ) == -1 ) return;
+	CHARACTER trgChar = calcCharFromSer( serial );
+	if( trgChar == -1 ) 
+		return;
 	int inst, target, res1, res2;
-	inst=Skills->GetInstrument(s);
-	if (inst==-1) 
+	inst = GetInstrument( s );
+	if( inst == -1 ) 
 	{
-		sysmessage(s, "You do not have an instrument to play on!");
+		sysmessage( s, "You do not have an instrument to play on!" );
 		return;
 	}
-	res1=Skills->CheckSkill(currchar[s], ENTICEMENT, 0, 1000);
-	res2=Skills->CheckSkill(currchar[s], MUSICIANSHIP, 0, 1000);
-	if (res1 && res2)
+	res1 = CheckSkill( currchar[s], ENTICEMENT, 0, 1000 );
+	res2 = CheckSkill( currchar[s], MUSICIANSHIP, 0, 1000 );
+	if( res1 && res2 )
 	{
 		if( region[chars[currchar[s]].region].priv&0x01 )
 			Combat->SpawnGuard( currchar[s], currchar[s], chars[currchar[s]].x+1, chars[currchar[s]].y, chars[currchar[s]].z );
@@ -2363,156 +2404,111 @@ void cSkills::EnticementTarget2( UOXSOCKET s )
 		chars[target].ftarg=calcCharFromSer(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
 		chars[target].npcWander=1;
 		sysmessage(s, "You play your hypnotic music, luring them near your target.");
-		Skills->PlayInstrumentWell(s, inst);
+		PlayInstrumentWell( s, inst );
 	}
 	else 
 	{
 		sysmessage(s, "Your music fails to attract them.");
-		Skills->PlayInstrumentPoor(s, inst);
+		PlayInstrumentPoor( s, inst );
 	}
 }
 
 void cSkills::ProvocationTarget2( UOXSOCKET s )
 {
-	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) return;
+	if( buffer[s][7]==0xFF && buffer[s][8]==0xFF && buffer[s][9]==0xFF && buffer[s][10]==0xFF ) 
+		return;
 	
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	if( calcCharFromSer( serial ) == -1 ) return;
+	CHARACTER trgChar = calcCharFromSer( serial );
+	if( trgChar == -1 ) 
+		return;
 	
-	int inst, target, target2, res1, res2;
 	unsigned int i;
-	inst=Skills->GetInstrument(s);
-	if (inst==-1) 
+	int inst = GetInstrument( s );
+	if( inst == -1 ) 
 	{
-		sysmessage(s, "You do not have an instrument to play on!");
+		sysmessage( s, "You do not have an instrument to play on!" );
 		return;
 	}
-	target=calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-	target2=calcCharFromSer(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
-	if (target==target2)
+	CHARACTER target = calcCharFromSer( addid1[s], addid2[s], addid3[s], addid4[s] );
+	if( target == trgChar )
 	{
 		sysmessage(s, "Silly bard!  You can't get something to attack itself.");
 		return;
 	}
-	res1=Skills->CheckSkill(currchar[s], PROVOCATION, 0, 1000);
-	res2=Skills->CheckSkill(currchar[s], MUSICIANSHIP, 0, 1000);
-	if (res2)
+	int res1 = CheckSkill( currchar[s], PROVOCATION, 0, 1000 );
+	int res2 = CheckSkill( currchar[s], MUSICIANSHIP, 0, 1000 );
+	if( res2 )
 	{
-		Skills->PlayInstrumentWell(s, inst);
-		if (res1)
+		PlayInstrumentWell( s, inst );
+		if( res1 )
 		{
-			if( region[chars[currchar[s]].region].priv&0x01 )
-				Combat->SpawnGuard( currchar[s], currchar[s], chars[currchar[s]].x+1, chars[currchar[s]].y, chars[currchar[s]].z ); // ripper
-			sysmessage(s, "Your music succeeds as you start a fight.");
-			chars[target].targ=target2;
-			chars[target2].targ=target;
-			if ((chars[target].hidden)&&(!(chars[target].priv2&8)))
-			{
-				chars[target].hidden=0;
-				chars[target].stealth=-1;//AntiChrist
-				updatechar(target);
-			}
-			if (chars[target].med)
-			{
-				chars[target].med=0; //Morrolan - Meditation
-			}
-			if ((chars[target2].hidden)&&(!(chars[target2].priv2&8))) //Morrolan bugfix (was target instead of target2)
-			{
-				chars[target2].hidden=0;
-				chars[target2].stealth=-1;
-				updatechar(target2);
-			}
-			if (chars[target2].med)
-			{
-				chars[target2].med=0; //Morrolan - Meditation
-			}
-			chars[target].attackfirst=1;
-			chars[target2].attackfirst=0;
-			chars[target].attacker=target2;
-			chars[target2].attacker=target;
-			if (chars[target].npc)
-			{
-				if (!(chars[target].war)) npcToggleCombat(target);
-				chars[target].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			}
-			if (chars[target2].npc)
-			{
-				if (!(chars[target2].war)) npcToggleCombat(target2);
-				chars[target2].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			}
-			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
-			for (i=0;i<now;i++)
-			{
-				if( perm[i] && inrange1p( currchar[i], target ) )
-				{
-					itemmessage(i, temp, chars[target].serial );
-				}
-			}
+			criminal( currchar[s] );
+			sysmessage( s, "Your music succeeds as you start a fight." );
 		}
 		else 
 		{
 			sysmessage(s, "Your music fails to incite enough anger.");
-			target2=currchar[s];
-			chars[target].targ=target2;
-			chars[target2].targ=target;
-			if ((chars[target].hidden)&&(!(chars[target].priv2&8)))
+			trgChar = currchar[s];
+		}
+
+		chars[target].targ = trgChar;
+		chars[trgChar].targ = target;
+		if ((chars[target].hidden)&&(!(chars[target].priv2&8)))
+		{
+			chars[target].hidden=0;
+			chars[target].stealth=-1;
+			updatechar(target);
+		}
+		if( chars[target].med )
+		{
+			chars[target].med = 0;
+		}
+		if ((chars[trgChar].hidden)&&(!(chars[trgChar].priv2&8)))
+		{
+			chars[trgChar].hidden=0;
+			chars[trgChar].stealth=-1;
+			updatechar( trgChar );
+		}
+		if (chars[trgChar].med)
+		{
+			chars[trgChar].med=0; //Morrolan - Meditation
+		}
+		chars[target].attackfirst=1;
+		chars[trgChar].attackfirst=0;
+		chars[target].attacker = trgChar;
+		chars[trgChar].attacker=target;
+		if (chars[target].npc)
+		{
+			if (!(chars[target].war)) npcToggleCombat(target);
+			chars[target].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+		}
+		if (chars[trgChar].npc)
+		{
+			if (!(chars[trgChar].war)) npcToggleCombat( trgChar );
+			chars[trgChar].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+		}
+		sprintf( temp, "* You see %s attacking %s *", chars[target].name, chars[trgChar].name );
+		for( i = 0; i < now; i++ )
+		{
+			if( perm[i] && inrange1p( currchar[i], target ) )
 			{
-				chars[target].hidden=0;
-				chars[target].stealth=-1;
-				updatechar(target);
-			}
-			if (chars[target].med)
-			{
-				chars[target].med=0; //Morrolan - Meditation
-			}
-			if ((chars[target2].hidden)&&(!(chars[target2].priv2&8))) //Morrolan bugfix (was target instead of target2)
-			{
-				chars[target2].hidden=0;
-				chars[target2].stealth=-1;
-				updatechar(target2);
-			}
-			if (chars[target2].med)
-			{
-				chars[target2].med=0; //Morrolan - Meditation
-			}
-			chars[target].attackfirst=1;
-			chars[target2].attackfirst=0;
-			chars[target].attacker=target2;
-			chars[target2].attacker=target;
-			if (chars[target].npc)
-			{
-				if (!(chars[target].war)) npcToggleCombat(target);
-				chars[target].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			}
-			if (chars[target2].npc)
-			{
-				if (!(chars[target2].war)) npcToggleCombat(target2);
-				chars[target2].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			}
-			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
-			for (i=0;i<now;i++)
-			{
-				if( perm[i] && inrange1p( currchar[i], target ) )
-				{
-					itemmessage(i, temp, chars[target].serial );
-				}
+				itemmessage( i, temp, chars[target].serial );
 			}
 		}
 	}
 	else
 	{
-		Skills->PlayInstrumentPoor(s, inst);
+		PlayInstrumentPoor(s, inst);
 		sysmessage(s, "You play rather poorly and to no effect.");
 	}
 }
 
-void cSkills::AlchemyTarget(int s)
+void cSkills::AlchemyTarget( UOXSOCKET s )
 {
-	int i, type,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int type;
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		type=(items[i].id1<<8)+items[i].id2;
@@ -2748,64 +2744,64 @@ void cSkills::CreatePotion(int s, char type, char sub, int mortar)
 	switch((256*type)+sub)
 	{
 	case 0x0101://agility
-		success=Skills->CheckSkill(s, ALCHEMY, 151, 651);
+		success= CheckSkill(s, ALCHEMY, 151, 651);
 		break;
 	case 0x0102://greater agility
-		success=Skills->CheckSkill(s, ALCHEMY, 351, 851);
+		success= CheckSkill(s, ALCHEMY, 351, 851);
 		break;
 	case 0x0201://lesser cure
-		success=Skills->CheckSkill(s, ALCHEMY, 0, 500);
+		success= CheckSkill(s, ALCHEMY, 0, 500);
 		break;
 	case 0x0202://cure
-		success=Skills->CheckSkill(s, ALCHEMY, 251, 751);
+		success= CheckSkill(s, ALCHEMY, 251, 751);
 		break;
 	case 0x0203://greater cure
-		success=Skills->CheckSkill(s, ALCHEMY, 651, 1151);
+		success= CheckSkill(s, ALCHEMY, 651, 1151);
 		break;
 	case 0x0301://lesser explosion
-		success=Skills->CheckSkill(s, ALCHEMY, 51, 551);
+		success= CheckSkill(s, ALCHEMY, 51, 551);
 		break;
 	case 0x0302://explosion
-		success=Skills->CheckSkill(s, ALCHEMY, 351, 851);
+		success= CheckSkill(s, ALCHEMY, 351, 851);
 		break;
 	case 0x0303://greater explosion
-		success=Skills->CheckSkill(s, ALCHEMY, 651, 1151);
+		success= CheckSkill(s, ALCHEMY, 651, 1151);
 		break;
 	case 0x0401://lesser heal
-		success=Skills->CheckSkill(s, ALCHEMY, 0, 500);
+		success= CheckSkill(s, ALCHEMY, 0, 500);
 		break;
 	case 0x0402://heal
-		success=Skills->CheckSkill(s, ALCHEMY, 151, 651);
+		success= CheckSkill(s, ALCHEMY, 151, 651);
 		break;
 	case 0x0403://greater heal
-		success=Skills->CheckSkill(s, ALCHEMY, 551, 1051);
+		success= CheckSkill(s, ALCHEMY, 551, 1051);
 		break;
 	case 0x0501://night sight
-		success=Skills->CheckSkill(s, ALCHEMY, 0, 500);
+		success= CheckSkill(s, ALCHEMY, 0, 500);
 		break;
 	case 0x0601://lesser poison
-		success=Skills->CheckSkill(s, ALCHEMY, 0, 500);
+		success= CheckSkill(s, ALCHEMY, 0, 500);
 		break;
 	case 0x0602://poison
-		success=Skills->CheckSkill(s, ALCHEMY, 151, 651);
+		success= CheckSkill(s, ALCHEMY, 151, 651);
 		break;
 	case 0x0603://greater poison
-		success=Skills->CheckSkill(s, ALCHEMY, 551, 1051);
+		success= CheckSkill(s, ALCHEMY, 551, 1051);
 		break;
 	case 0x0604://deadly poison
-		success=Skills->CheckSkill(s, ALCHEMY, 901, 1401);
+		success= CheckSkill(s, ALCHEMY, 901, 1401);
 		break;
 	case 0x0701://refresh
-		success=Skills->CheckSkill(s, ALCHEMY, 0, 500);
+		success= CheckSkill(s, ALCHEMY, 0, 500);
 		break;
 	case 0x0702://total refreshment
-		success=Skills->CheckSkill(s, ALCHEMY, 251, 751);
+		success= CheckSkill(s, ALCHEMY, 251, 751);
 		break;
 	case 0x0801://strength
-		success=Skills->CheckSkill(s, ALCHEMY, 251, 751);
+		success= CheckSkill(s, ALCHEMY, 251, 751);
 		break;
 	case 0x0802://greater strength
-		success=Skills->CheckSkill(s, ALCHEMY, 451, 951);
+		success= CheckSkill(s, ALCHEMY, 451, 951);
 		break;
 	default:
 		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, createpotion()/n"); //Morrolan
@@ -2833,19 +2829,15 @@ void cSkills::CreatePotion(int s, char type, char sub, int mortar)
 		sprintf(temp, "*%s pours the completed potion into a bottle.*", chars[s].name);
 		npcemoteall(s, temp, 0);
 		delequan(s, 0x0F, 0x0E, 1);
-		Skills->PotionToBottle(s, mortar);
+		 PotionToBottle(s, mortar);
 	} 
 }
 
-void cSkills::BottleTarget(int s)
+void cSkills::BottleTarget( UOXSOCKET s )
 {
-	int i,  mortar,serial;
-	//	unsigned int j;
-	
-	
-	mortar=calcItemFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int mortar = calcItemFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	ITEM i = calcItemFromSer( serial );
 	if (i!=-1)
 		if ((items[i].id1==0x0F)&&(items[i].id2==0x0E))
 		{
@@ -2864,7 +2856,7 @@ void cSkills::BottleTarget(int s)
 			{
 				sprintf(temp, "*%s pours the completed potion into a bottle.*", chars[currchar[s]].name);
 				npcemoteall(currchar[s], temp, 0);
-				Skills->PotionToBottle(currchar[s], mortar);
+				 PotionToBottle(currchar[s], mortar);
 			}
 		}
 		return;
@@ -3051,9 +3043,9 @@ char cSkills::CheckSkill(int s, int sk, int low, int high )
 	{
 //		if (sk!=MAGERY || (sk==MAGERY && currentSpellType[s]==0))
 //		{
-			if( Skills->AdvanceSkill( s, sk, skillused ) )
+			if(  AdvanceSkill( s, sk, skillused ) )
 			{
-				Skills->updateSkillLevel( s, sk ); 
+				 updateSkillLevel( s, sk ); 
 				updateskill( calcSocketFromChar( s ), sk );
 			}
 //		}
@@ -3101,7 +3093,7 @@ char cSkills::AdvanceSkill(int s, int sk, char skillused)
 	
 	if (retval && chars[s].lockState[sk] != 2 ) // if it's locked, stats can't advance
 	{
-		Skills->AdvanceStats(s, sk);
+		 AdvanceStats(s, sk);
 	}
 	return retval;
 }
@@ -3351,7 +3343,7 @@ void cSkills::CreateBandageTarget(int s)
 			((items[i].id1==0x17)&&((items[i].id2>=0x5d)&&(items[i].id2<=0x64))))
 		{
 			soundeffects (s, 0x02, 0x48, true);        
-//			if(!Skills->CheckSkill(currchar[s],TAILORING, 0, 1000)) 
+//			if(! CheckSkill(currchar[s],TAILORING, 0, 1000)) 
 //			{
 //				sysmessage(s,"You were unable to cut bandages.");
 //			}
@@ -3383,11 +3375,10 @@ void cSkills::CreateBandageTarget(int s)
 		sysmessage(s,"You cannot cut bandages from that item.");
 }
 
-void cSkills::HealingSkillTarget(int s)
+void cSkills::HealingSkillTarget( UOXSOCKET s )
 {
-	int i, serial;
-	serial = calcserial( buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10] );
-	i = calcCharFromSer( serial );
+	int serial = calcserial( buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10] );
+	int i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
 		unsigned char targetSkill;
@@ -3398,6 +3389,11 @@ void cSkills::HealingSkillTarget(int s)
 		}
 		else
 			targetSkill = VETERINARY;
+		if( !( npcinrange( s, i, 1 ) ) )
+		{
+			sysmessage(s,"You are not close enough to apply the bandages.");
+			return;
+		}
 		if( chars[i].dead == 1 )
 		{
 			if( chars[currchar[s]].baseskill[targetSkill] >= 800 && chars[currchar[s]].baseskill[ANATOMY] >= 800 )
@@ -3447,11 +3443,6 @@ void cSkills::HealingSkillTarget(int s)
 			sysmessage(s,"That being is undamaged");
 			return;
 		}
-		if( !( npcinrange( s, i, 1 ) ) )
-		{
-			sysmessage(s,"You are not close enough to apply the bandages.");
-			return;
-		}
 
 		if( !CheckSkill( currchar[s], targetSkill, 0, 1000 ) )
 		{
@@ -3472,7 +3463,7 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	//      Unsure if spirit speaking should they attempt again?
 	//      Suggestion: If they attempt the skill and the timer is !0 do not have it raise the skill
 	
-	if(!Skills->CheckSkill(currchar[s],SPIRITSPEAK, 0, 1000))
+	if(! CheckSkill(currchar[s],SPIRITSPEAK, 0, 1000))
 	{
 		sysmessage(s,"You fail your attempt at contacting the netherworld.");
 		return;
@@ -3485,14 +3476,14 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	chars[currchar[s]].spiritspeaktimer = (unsigned int)(uiCurrentTime + CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in ) ); // spirit speak duration
 }
 
-void cSkills::ArmsLoreTarget(int s)
+void cSkills::ArmsLoreTarget( UOXSOCKET s )
 {
-	int i, total,serial;
+	int total;
 	float totalhp;
 	char temp2[60];
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{                                                                                             
 		if ((items[i].def==0)||(items[i].pileable))
@@ -3508,7 +3499,7 @@ void cSkills::ArmsLoreTarget(int s)
 			}
 			else
 			{
-				if (!Skills->CheckSkill(currchar[s],ARMSLORE, 0, 250)) sysmessage(s,"You are not certain...");
+				if (! CheckSkill(currchar[s],ARMSLORE, 0, 250)) sysmessage(s,"You are not certain...");
 				else
 				{
 					if( items[i].maxhp==0)
@@ -3531,7 +3522,7 @@ void cSkills::ArmsLoreTarget(int s)
 						else                  strcpy(temp2,"is falling apart.");
 						strcat(temp,temp2);
 					}
-					if (Skills->CheckSkill(currchar[s],ARMSLORE, 250, 500))
+					if ( CheckSkill(currchar[s],ARMSLORE, 250, 500))
 					{
 						if (items[i].hidamage)
 						{
@@ -3545,7 +3536,7 @@ void cSkills::ArmsLoreTarget(int s)
 							else                  strcpy(temp2," Might scratch your opponent slightly.");
 							strcat(temp,temp2);
 							
-							if (Skills->CheckSkill(currchar[s], ARMSLORE, 500, 750))
+							if ( CheckSkill(currchar[s], ARMSLORE, 500, 750))
 							{
 								if      (items[i].spd > 35) strcpy(temp2," And is very fast.");
 								else if (items[i].spd > 25) strcpy(temp2," And is fast.");
@@ -3570,7 +3561,7 @@ void cSkills::ArmsLoreTarget(int s)
 					// Added by Magius(CHE) for Rank System
 					if(( items[i].rank < 1 ) || ( items[i].rank > 10 )) items[i].rank = 10;
 					*temp2 = '\0';
-					if( Skills->CheckSkill( currchar[s], ARMSLORE, 250, 500 ) && server_data.rank_system == 1 )
+					if(  CheckSkill( currchar[s], ARMSLORE, 250, 500 ) && server_data.rank_system == 1 )
 					{
 						switch( items[i].rank )
 						{
@@ -3595,16 +3586,14 @@ void cSkills::ArmsLoreTarget(int s)
 	}
 }
 
-void cSkills::ItemIdTarget(int s)
+void cSkills::ItemIdTarget( UOXSOCKET s )
 {
-	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
-		if (!Skills->CheckSkill(currchar[s], ITEMID, 0, 250))
+		if (! CheckSkill(currchar[s], ITEMID, 0, 250))
 		{
 			sysmessage(s, "You can't quite tell what this item is...");
 		}
@@ -3616,7 +3605,7 @@ void cSkills::ItemIdTarget(int s)
 				return;
 			}
 			// Identify Item by Antichrist // Changed by Magius(CHE)
-			if( Skills->CheckSkill( currchar[s], ITEMID, 250, 500 ))
+			if(  CheckSkill( currchar[s], ITEMID, 250, 500 ))
 				if( items[i].name2 && ( strcmp( items[i].name2, "#" ))) strcpy( items[i].name, items[i].name2 ); // Item identified! -- by Magius(CHE)
 				//sprintf(temp, "This item appears to be called: %s", items[i].name);
 				// ANTICHRIST -- FOR THE "#" BUG -- now you see the real name
@@ -3626,7 +3615,7 @@ void cSkills::ItemIdTarget(int s)
 				sysmessage(s, temp);
 				
 				// Show Creator by Magius(CHE)
-				if( Skills->CheckSkill( currchar[s], ITEMID, 250, 500 ) )
+				if(  CheckSkill( currchar[s], ITEMID, 250, 500 ) )
 				{
 					if( strlen( items[i].creator ) > 0 )
 					{
@@ -3645,7 +3634,7 @@ void cSkills::ItemIdTarget(int s)
 				sysmessage( s, temp2 );
 				// End Show creator
 				
-				if (!Skills->CheckSkill(currchar[s], ITEMID, 250, 500))
+				if (! CheckSkill(currchar[s], ITEMID, 250, 500))
 				{
 					sysmessage(s, "You can't tell if it is magical or not.");
 				}
@@ -3657,13 +3646,13 @@ void cSkills::ItemIdTarget(int s)
 					}
 					else
 					{
-						if (!Skills->CheckSkill(currchar[s], ITEMID, 500, 1000))
+						if (! CheckSkill(currchar[s], ITEMID, 500, 1000))
 						{
 							sysmessage(s,"This item is enchanted with a spell, but you cannot determine which");
 						}
 						else
 						{
-							if (!Skills->CheckSkill(currchar[s], ITEMID, 750, 1100))
+							if (! CheckSkill(currchar[s], ITEMID, 750, 1100))
 							{
 								sprintf(temp, "It is enchanted with the spell %s, but you cannot determine how many charges remain.",spellname[(8*(items[i].morex-1))+items[i].morey-1]);
 								sysmessage(s,temp);       
@@ -3686,7 +3675,7 @@ void cSkills::Evaluate_int_Target(int s)
 	char buf[75];
 	
 	
-	if (!Skills->CheckSkill(currchar[s],EVALUATINGINTEL, 0, 1000)) 
+	if (! CheckSkill(currchar[s],EVALUATINGINTEL, 0, 1000)) 
 	{
 		sysmessage(s,"You are not certain..");
 		return;
@@ -3728,14 +3717,13 @@ void cSkills::Evaluate_int_Target(int s)
 	}
 }
 
-void cSkills::AnatomyTarget(int s)
+void cSkills::AnatomyTarget( UOXSOCKET s )
 {
-	int i,serial;
 	char buf[125];
 	char buf2[125];
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i==-1)
 	{
 		sysmessage( s, "That is not a player!" );
@@ -3747,7 +3735,7 @@ void cSkills::AnatomyTarget(int s)
 		return;
 	}
 	
-	if (!Skills->CheckSkill(currchar[s],ANATOMY, 0, 1000)) 
+	if (! CheckSkill(currchar[s],ANATOMY, 0, 1000)) 
 	{
 		sysmessage(s,"You are not certain..");
 		return;
@@ -3841,7 +3829,7 @@ void cSkills::TameTarget(int s)
 				case 3: sprintf( temp, "Good %s.", chars[i].name ); npctalkall( currchar[s], temp, 0 ); break;
 				}
 			}
-			if( !Skills->CheckSkill( currchar[s], TAMING, chars[i].taming, chars[i].taming * 2 ) )	// Requires chars[i].taming as min skill, but won't gain skill if you have more than 2 * chars[i].taming
+			if( ! CheckSkill( currchar[s], TAMING, chars[i].taming, chars[i].taming * 2 ) )	// Requires chars[i].taming as min skill, but won't gain skill if you have more than 2 * chars[i].taming
 			{
 				sysmessage( s, "You were unable to tame it." );
 				return;
@@ -4163,11 +4151,11 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case HIDING:
-	   Skills->Hide(s);
+	    Hide(s);
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case STEALTH:
-	   Skills->Stealth(s);
+	    Stealth(s);
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case DETECTINGHIDDEN:
@@ -4175,7 +4163,7 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case PEACEMAKING:
-	   Skills->PeaceMaking(s);
+	    PeaceMaking(s);
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case PROVOCATION:
@@ -4187,7 +4175,7 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case SPIRITSPEAK:
-	   Skills->SpiritSpeak(s);
+	    SpiritSpeak(s);
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case STEALING:
@@ -4205,7 +4193,7 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case TRACKING:
-	   Skills->TrackingMenu(s,TRACKINGMENUOFFSET);
+	    TrackingMenu(s,TRACKINGMENUOFFSET);
 	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case BEGGING:
@@ -4227,7 +4215,7 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
    case MEDITATION:  //Morrolan - Meditation
 	   if(server_data.armoraffectmana)
 	   {
-		   Skills->Meditation(s);
+		    Meditation(s);
 		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   }
 	   else sysmessage(s, "Meditation is turned off.  Tell your GM to enable ARMOR_AFFECT_MANA_REGEN in server.scp to enable it.");
@@ -4240,15 +4228,16 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 		sysmessage(s, "You must wait a few moments before using another skill.");
 }
 
-void cSkills::RandomSteal(int s)
+void cSkills::RandomSteal( UOXSOCKET s )
 {
-	int npc, serial, p, i, skill, item;
+	int p, i, skill, item;
 	char temp2[512];
 	tile_st tile;
 	
-	serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	npc = calcCharFromSer( serial );
-	if (npc == -1) return;
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int npc = calcCharFromSer( serial );
+	if (npc == -1) 
+		return;
 	p = packitem(npc);
 	if (p == -1) 
 	{
@@ -4314,7 +4303,7 @@ void cSkills::RandomSteal(int s)
 			return;
 		}
 		
-		skill=Skills->CheckSkill(currchar[s],STEALING,0,999);
+		skill= CheckSkill(currchar[s],STEALING,0,999);
 		if (skill)
 		{
 			//pack=packitem(currchar[s]);
@@ -4331,7 +4320,7 @@ void cSkills::RandomSteal(int s)
 			
 			if (chars[npc].npc) npctalkall(npc, "Guards!! A thief is amoung us!", 0);
 			
-			if( (chars[npc].flag & 0x04) && chars[currchar[s]].attacker != npc && Guilds->Compare( currchar[s], npc ) == 0 && Races->Compare( currchar[s], npc ) == 0 )
+			if( IsInnocent( npc ) && chars[currchar[s]].attacker != npc && Guilds->Compare( currchar[s], npc ) == 0 && Races->Compare( currchar[s], npc ) == 0 )
 			{
 				//		EviLDeD -		March 1, 2000
 				//		Some extra console spam
@@ -4358,7 +4347,7 @@ void cSkills::RandomSteal(int s)
 	} else sysmessage(s, "You are too far away to steal that item.");
 }
 
-void cSkills::StealingTarget(int s)
+void cSkills::StealingTarget( UOXSOCKET s )
 {
 	int item, i, serial, pack, skill, npc = -1, x, cont,b, z, w = 0;
 	char temp2[512];
@@ -4368,7 +4357,7 @@ void cSkills::StealingTarget(int s)
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	if (buffer[s][7]<0x40)
 	{
-		Skills->RandomSteal(s);
+		 RandomSteal(s);
 		return;
 	}
 	item = calcItemFromSer( serial );
@@ -4437,9 +4426,9 @@ void cSkills::StealingTarget(int s)
 	}
 	// End Abaddon
 	if ( chars[currchar[s]].baseskill[STEALING] < 50 && w<=100)		// w<=1???  Less than 1/100th of a stone?! how about less than a stone?
-		skill = Skills->CheckSkill(currchar[s],STEALING,0,1000);
+		skill =  CheckSkill(currchar[s],STEALING,0,1000);
 	else
-		skill = Skills->CheckSkill(currchar[s],STEALING,min((w*50), 990),1000);
+		skill =  CheckSkill(currchar[s],STEALING,min((w*50), 990),1000);
 	
 	if (npcinrange(s,npc,1))
 	{
@@ -4463,7 +4452,7 @@ void cSkills::StealingTarget(int s)
 				if (chars[npc].npc) 
 					npctalkall(npc, "Guards!! A thief is amoung us!", 0);
 				
-				if( (chars[npc].flag & 0x04) && chars[currchar[s]].attacker!=npc && Guilds->Compare( currchar[s], npc )==0 && Races->Compare( currchar[s], npc )==0 )
+				if( IsInnocent( npc ) && chars[currchar[s]].attacker!=npc && Guilds->Compare( currchar[s], npc )==0 && Races->Compare( currchar[s], npc )==0 )
 				{
 					//		EviLDeD -		March 1, 2000
 					//		Some extra console spam
@@ -4494,7 +4483,9 @@ void cSkills::StealingTarget(int s)
 					sysmessage(i,temp2);
 			}
 		}
-	} else sysmessage(s, "You are too far away to steal that item.");
+	} 
+	else 
+		sysmessage(s, "You are too far away to steal that item.");
 }
 
 void cSkills::Tracking(int s,int selection)
@@ -4505,7 +4496,7 @@ void cSkills::Tracking(int s,int selection)
 	chars[i].trackingdisplaytimer = (unsigned int)( tracking_data.redisplaytime * CLOCKS_PER_SEC + uiCurrentTime );
 	sprintf(temp,"You are now tracking %s.",chars[chars[i].trackingtarget].name);
 	sysmessage(s,temp);
-	Skills->Track(i);
+	 Track(i);
 }
 
 void cSkills::CreateTrackingMenu(int s,int m)
@@ -4586,7 +4577,7 @@ void cSkills::CreateTrackingMenu(int s,int m)
 						chars[ii].trackingtargets[MaxTrackingTargets]=i;
 						MaxTrackingTargets++;
 						if( MaxTrackingTargets >= MAXTRACKINGTARGETS ) break; // lb crashfix
-						switch(Skills->TrackingDirection(s,i))
+						switch( TrackingDirection(s,i))
 						{
 						case NORTH:
 							strcpy(temp,"to the North");
@@ -4667,7 +4658,7 @@ void cSkills::TrackingMenu(int s,int gmindex)
 	int gmnumber=0;
 	if( gmindex < 1000 )
 	{
-		Skills->Tracking( s, gmindex );
+		 Tracking( s, gmindex );
 		return;
 	}
 	openscript("tracking.scp");
@@ -4799,7 +4790,7 @@ void cSkills::BeggingTarget(int s)
 
 		if( !chars[i].npc )
 		{
-			sysmessage( s,"Maybe you should just ask." );
+			sysmessage( s, "Maybe you should just ask" );
 			return;
 		}
 		if( chars[i].npcaitype == 17 )
@@ -4815,7 +4806,7 @@ void cSkills::BeggingTarget(int s)
 		if((chars[i].id1==0x01)&&((chars[i].id2==0x90)||(chars[i].id2==0x91))&&(chars[i].in != 0)) //Used on human
 		{
 			npctalkall(currchar[s], begging_data.text[rand()%3], 0); // npcemoteall?
-			if (!Skills->CheckSkill(currchar[s],BEGGING, 0, 1000))
+			if (! CheckSkill(currchar[s],BEGGING, 0, 1000))
 				sysmessage(s,"They seem to ignore your begging plees.");
 			else
 			{
@@ -4829,12 +4820,11 @@ void cSkills::BeggingTarget(int s)
 	}
 }
 
-void cSkills::AnimalLoreTarget(int s)
+void cSkills::AnimalLoreTarget( UOXSOCKET s )
 {
-	int i,serial;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcCharFromSer( serial );
+	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcCharFromSer( serial );
 	if (i>-1)
 	{
 		if(chars[i].priv&0x81)
@@ -4849,7 +4839,7 @@ void cSkills::AnimalLoreTarget(int s)
 		}
 		else // Lore used on a non-human
 		{
-			if (Skills->CheckSkill(currchar[s], ANIMALLORE, 0, 1000))
+			if ( CheckSkill(currchar[s], ANIMALLORE, 0, 1000))
 			{
 				sprintf(temp, "Attack [%i] Defense [%i] Taming [%i] Hit Points [%i]", chars[i].att,chars[i].def,chars[i].taming/10,chars[i].hp);
 				npcemote(s,i,temp, 0);
@@ -4864,13 +4854,12 @@ void cSkills::AnimalLoreTarget(int s)
 	}
 }
 
-void cSkills::ForensicsTarget(int s) //AntiChrist
+void cSkills::ForensicsTarget( UOXSOCKET s ) //AntiChrist
 {
-	int i,serial;
 	int curtim=uiCurrentTime;
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i>-1)
 	{
 		if (!(items[i].corpse))
@@ -4884,14 +4873,14 @@ void cSkills::ForensicsTarget(int s) //AntiChrist
 			sprintf(temp,"The %s is %i seconds old and the killer was  %s.", items[i].name, (curtim-items[i].murdertime)/CLOCKS_PER_SEC, items[i].murderer);
 			sysmessage(s, temp);
 		} else {
-			if (!Skills->CheckSkill(currchar[s], FORENSICS, 0, 500)) sysmessage(s,"You are not certain about the corpse."); else
+			if (! CheckSkill(currchar[s], FORENSICS, 0, 500)) sysmessage(s,"You are not certain about the corpse."); else
 			{
 				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)<=60) strcpy(temp2,"few");
 				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)>60) strcpy(temp2,"many");
 				if(((curtim-items[i].murdertime)/CLOCKS_PER_SEC)>180) strcpy(temp2,"many many");
 				sprintf(temp,"The %s is %s seconds old.",&items[i].name[2],temp2);
 				sysmessage(s,temp);
-				if (!Skills->CheckSkill(currchar[s], FORENSICS, 500, 1000) || *(items[i].murderer)=='\0') sysmessage(s,"You can't say who was the killer."); else
+				if (! CheckSkill(currchar[s], FORENSICS, 500, 1000) || *(items[i].murderer)=='\0') sysmessage(s,"You can't say who was the killer."); else
 				{
 					sprintf(temp,"The killer was %s.",items[i].murderer);
 					sysmessage(s,temp);
@@ -4938,16 +4927,16 @@ void cSkills::PoisoningTarget( UOXSOCKET s )
 		switch( items[poison].morez ) 
 		{
 		case 1://lesser poison
-			success = Skills->CheckSkill( mChar, POISONING, 0, 500 );
+			success =  CheckSkill( mChar, POISONING, 0, 500 );
 			break;
 		case 2://poison
-			success = Skills->CheckSkill( mChar, POISONING, 151, 651 );
+			success =  CheckSkill( mChar, POISONING, 151, 651 );
 			break;
 		case 3://greater poison
-			success = Skills->CheckSkill( mChar, POISONING, 551, 1051 );
+			success =  CheckSkill( mChar, POISONING, 551, 1051 );
 			break;
 		case 4://deadly poison
-			success = Skills->CheckSkill( mChar, POISONING, 901, 1401 );
+			success =  CheckSkill( mChar, POISONING, 901, 1401 );
 			break;
 		default:
 			ConOut("ERROR: Fallout of switch statement without default. skills.cpp, poisoningtarget()/n"); //Morrolan
@@ -5041,7 +5030,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 			//set range values based on scroll level
 			// changed by lord binary, fixed the problem that scroll-inscription works for ALL circles regardless of skill
 			// still needs tweaking ... *10,*9,*8,*7,*6,*5 ... dont know, needs testing.
-			Skills->CheckSkill(currchar[s], INSCRIPTION, (snum-810)*10, (snum-490)*10); /* just for skill-advancement */
+			 CheckSkill(currchar[s], INSCRIPTION, (snum-810)*10, (snum-490)*10); /* just for skill-advancement */
 			int num = ( 8 * ( cir - 1 ) ) + spl;
 			if( spells[num].action ) impaction(s, spells[num].action); // Should have a default action instead
 			npctalkall(currchar[s], spells[num].mantra, 0);
@@ -5061,7 +5050,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 			Magic->SubtractMana(currchar[s], spells[num].mana);
 			
 			// end of lord binary's delete reg changes
-			Skills->MakeMenuTarget(s,snum,INSCRIPTION); //put it in your pack
+			 MakeMenuTarget(s,snum,INSCRIPTION); //put it in your pack
 /*			if( items[i].amount <= 1 )
 				Items->DeleItem( i );
 			else
@@ -5078,44 +5067,44 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 			switch(cir)
 			{
 			case 1:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 11, 401);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 11, 401);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 11, 401);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 11, 401);
+				part +=  CheckSkill(currchar[s], MAGERY, 11, 401);
+				part +=  CheckSkill(currchar[s], TINKERING, 11, 401);
 				break;
 			case 2:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 61, 501);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 61, 501);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 61, 501);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 61, 501);
+				part +=  CheckSkill(currchar[s], MAGERY, 61, 501);
+				part +=  CheckSkill(currchar[s], TINKERING, 61, 501);
 				break;
 			case 3:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 161, 601);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 161, 601);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 161, 601);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 161, 601);
+				part +=  CheckSkill(currchar[s], MAGERY, 161, 601);
+				part +=  CheckSkill(currchar[s], TINKERING, 161, 601);
 				break;
 			case 4:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 261, 701);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 261, 701);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 261, 701);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 261, 701);
+				part +=  CheckSkill(currchar[s], MAGERY, 261, 701);
+				part +=  CheckSkill(currchar[s], TINKERING, 261, 701);
 				break;
 			case 5:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 361, 801);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 361, 801);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 361, 801);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 361, 801);
+				part +=  CheckSkill(currchar[s], MAGERY, 361, 801);
+				part +=  CheckSkill(currchar[s], TINKERING, 361, 801);
 				break;
 			case 6:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 461 , 901);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 461, 901);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 461, 901);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 461 , 901);
+				part +=  CheckSkill(currchar[s], MAGERY, 461, 901);
+				part +=  CheckSkill(currchar[s], TINKERING, 461, 901);
 				break;
 			case 7:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 661, 1101);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 661, 1101);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 661, 1101);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 661, 1101);
+				part +=  CheckSkill(currchar[s], MAGERY, 661, 1101);
+				part +=  CheckSkill(currchar[s], TINKERING, 661, 1101);
 				break;
 			case 8:
-				part += Skills->CheckSkill(currchar[s], INSCRIPTION, 761, 1201);
-				part += Skills->CheckSkill(currchar[s], MAGERY, 761, 1201);
-				part += Skills->CheckSkill(currchar[s], TINKERING, 761, 1201);
+				part +=  CheckSkill(currchar[s], INSCRIPTION, 761, 1201);
+				part +=  CheckSkill(currchar[s], MAGERY, 761, 1201);
+				part +=  CheckSkill(currchar[s], TINKERING, 761, 1201);
 				break;
 			default:
 				ConOut("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
@@ -5430,8 +5419,9 @@ void cSkills::LockPick( UOXSOCKET s )
 					}
 					soundeffect3(i, 0x01, 0xFF);
 					sysmessage(s, "You manage to pick the lock.");
-				} else
-					if(Skills->CheckSkill(currchar[s], LOCKPICKING, 0, 1000))
+				} 
+				else
+					if( CheckSkill(currchar[s], LOCKPICKING, 0, 1000))
 					{
 						switch(items[i].type)
 						{
@@ -5449,7 +5439,9 @@ void cSkills::LockPick( UOXSOCKET s )
 						if((rand()%100)>50) 
 						{
 							sysmessage(s, "You broke your lockpick!");
-							Items->DeleItem(addmitem[s]);
+							items[addmitem[s]].amount--;
+							if( items[addmitem[s]].amount <= 0)
+								Items->DeleItem(addmitem[s]);
 						} else
 						{
 							sysmessage(s, "You fail to open the lock.");
@@ -5473,7 +5465,7 @@ void cSkills::TDummy(int s)
 		sysmessage(s, "Practice archery on archery buttes !");
 		return;
 	}    
-	int skillused = Skills->GetCombatSkill(currchar[s]);
+	int skillused =  GetCombatSkill(currchar[s]);
 	
 	if (chars[currchar[s]].onhorse)
 		Combat->CombatOnHorse(currchar[s]);
@@ -5497,9 +5489,9 @@ void cSkills::TDummy(int s)
 	}
 	if(chars[currchar[s]].skill[skillused] < 300)
 	{
-		Skills->CheckSkill(currchar[s],skillused, 0, 1000);
+		 CheckSkill(currchar[s],skillused, 0, 1000);
 		if(chars[currchar[s]].skill[TACTICS] < 300)
-			Skills->CheckSkill(currchar[s],TACTICS, 0, 250);  //Dupois - Increase tactics but only by a fraction of the normal rate
+			 CheckSkill(currchar[s],TACTICS, 0, 250);  //Dupois - Increase tactics but only by a fraction of the normal rate
 	}
 	else
 		sysmessage(s, "You feel you would gain no more from using that.");   
@@ -5551,13 +5543,17 @@ void CollectAmmo(int s, int a, int b)
 	}
 }
 
-void cSkills::Tinkering(int s)
+void cSkills::Tinkering( UOXSOCKET s )
 {
 	int i, packnum, amt, serial;
 	
 	packnum=packitem(currchar[s]);
 	
-	if (packnum==-1) {sysmessage(s,"Time to buy a backpack"); return; } //LB
+	if ( packnum== -1 ) 
+	{
+		sysmessage(s,"Time to buy a backpack"); 
+		return; 
+	}
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	i = calcItemFromSer( serial );
@@ -5587,9 +5583,9 @@ void cSkills::Tinkering(int s)
 						sysmessage(s,"You don't have enough log's to make anything.");
 						return;
 					} 
-					else Skills->MakeMenu(s,70,TINKERING);
+					else  MakeMenu(s,70,TINKERING);
 				}
-				else Skills->MakeMenu(s,80,TINKERING);
+				else  MakeMenu(s,80,TINKERING);
 			}
 			return;
 		}
@@ -5695,7 +5691,7 @@ void cSkills::AButte(int s1, int x)
 		else Combat->CombatOnFoot(currchar[s1]);
 		
 		if (chars[currchar[s1]].skill[ARCHERY] < 350)
-			Skills->CheckSkill(currchar[s1],ARCHERY, 0, 1000);
+			 CheckSkill(currchar[s1],ARCHERY, 0, 1000);
 		else
 			sysmessage(s1, "You learn nothing from practicing here");
 		
@@ -5737,7 +5733,7 @@ void cSkills::AButte(int s1, int x)
 		sysmessage( s1, "You can't use that from here." );
 }
 
-void cSkills::TinkerAxel(int s)
+void cSkills::TinkerAxel( UOXSOCKET s )
 {
 	int i,c,serial;
 	long int origPart, origPartSer = -1;
@@ -5788,7 +5784,7 @@ void cSkills::TinkerAxel(int s)
 		}
 		if( tailme == 2 && iteminrange( s, i, 3 ) )
 		{
-			if( !Skills->CheckSkill( currchar[s], TINKERING, 0, 1000 ) )
+			if( ! CheckSkill( currchar[s], TINKERING, 0, 1000 ) )
 			{
 				sysmessage( s, "You failed to combine the parts." );
 			}
@@ -5818,7 +5814,7 @@ void cSkills::TinkerAxel(int s)
 	if(!tailme) sysmessage(s,"You can't combine these.");
 }
 
-void cSkills::TinkerAwg(int s)
+void cSkills::TinkerAwg( UOXSOCKET s )
 {
 	int i,c,packnum,serial;
 	char id2;
@@ -5875,15 +5871,13 @@ void cSkills::TinkerAwg(int s)
 	}
 }
 
-void cSkills::TinkerClock(int s)
+void cSkills::TinkerClock( UOXSOCKET s )
 {
-	int i,c,serial;
-	
 	int tailme=0;
 	
 	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i = calcItemFromSer( serial );
+	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	int i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
 		if((items[i].id1==0x10)&&(items[i].id2==0x4D)||(items[i].id2==0x4E)||
@@ -5891,7 +5885,7 @@ void cSkills::TinkerClock(int s)
 		{
 			if(iteminrange(s,i,3))  
 			{
-				if (!Skills->CheckSkill(currchar[s],TINKERING, 0, 1000)) 
+				if (! CheckSkill(currchar[s],TINKERING, 0, 1000)) 
 				{
 					sysmessage(s,"You failed to combine the parts.");
 				}
@@ -5899,7 +5893,7 @@ void cSkills::TinkerClock(int s)
 				{
 					sysmessage(s,"You combined the parts");
 					
-					c=Items->SpawnItem(s,1,"clock",0,0x10,0x4B,0,0,1,1);
+					int c = Items->SpawnItem(s,1,"clock",0,0x10,0x4B,0,0,1,1);
 					if( c == -1 ) return;
 				}
 				if(items[i].amount==1)
@@ -6010,7 +6004,7 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 // serial -> container's serial
 void cSkills::Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial ) 
 {
-	char mChar = currchar[s];
+	CHARACTER mChar = currchar[s];
 	char temp[64];
 
 	UOXSOCKET tSock = calcSocketFromChar( target );
@@ -6023,7 +6017,7 @@ void cSkills::Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial )
 		return;
 	}
 	
-	if( Skills->CheckSkill( mChar, SNOOPING, 0, 1000 ) )
+	if(  CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
 		backpack( s , serial );
 		sysmessage( s, "You successfully peek into that container." );
@@ -6044,7 +6038,7 @@ void cSkills::Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial )
 				npctalk( s, target, temp, 0 );
 				if( server_data.snoopiscrime )
 				{
-					if( RandomNum( 0, 100 ) < 50 && chars[mChar].crimflag > 0 )	//	50% chance of calling guards, on second time
+					if( RandomNum( 0, 100 ) < 50 && chars[mChar].crimflag != 0 && chars[mChar].crimflag != -1 )	//	50% chance of calling guards, on second time
 						callguards( mChar );
 				}
 			}
