@@ -1,6 +1,6 @@
 function CommandRegistration()
 {
-	RegisterCommand( "areacommand", 1, true );
+	RegisterCommand( "areacommand", 2, true );
 }
 
 function command_AREACOMMAND( socket, cmdString )

@@ -1,6 +1,6 @@
 // SWORDS
 
-[cutlass]
+[0x1440]
 { facing West
 get=base_item
 name=cutlass
