@@ -82,7 +82,7 @@ void cBoat::PlankStuff( cSocket *s, CItem *p )
 					CChar *pet = (*myPets)[a];
 					if( pet != NULL )
 					{
-						if( !pet->IsMounted() && pet->IsNpc() && getDist( mChar, pet ) <= 15 )
+						if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, 15 ) )
 						{
 							pet->SetLocation( boat2->GetX() + 1, boat2->GetY() + 1, boat2->GetZ() + 4 );
 							pet->SetMulti( boat2 );
@@ -144,14 +144,14 @@ void cBoat::LeaveBoat( cSocket *s, CItem *p )
 						CChar *pet = (*myPets)[a];
 						if( pet != NULL )
 						{
-							if( !pet->IsMounted() && pet->IsNpc() && getDist( mChar, pet ) <= 15 )
+							if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, 15 ) )
 							{
 								if( typ )
 									pet->SetLocation( x, y, sz );
 								else 
 									pet->SetLocation( x, y, mz );
 								
-								if( pet->GetMulti() != INVALIDSERIAL )
+								if( pet->GetMultiObj() != NULL )
 									pet->SetMulti( INVALIDSERIAL );
 								pet->Teleport();
 							}
@@ -232,12 +232,13 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 		return false;
 	}
 
+	CChar *mChar = s->CurrcharObj();
 	b->SetMore( id2, id2+3, b->GetMore( 3 ), b->GetMore( 4 ) );
 	b->SetType( 117 );// Boat type
 	b->SetZ( -5 );// Z in water
 	b->SetName( Dictionary->GetEntry( 1408 ) );//Name is something other than "%s's house"
 	SERIAL serial = b->GetSerial();
-	CItem *tiller = Items->SpawnItem(s, 1, Dictionary->GetEntry( 1409 ), false, 0x3E4E, 0, false, false );
+	CItem *tiller = Items->SpawnItem( NULL, mChar, 1, Dictionary->GetEntry( 1409 ), false, 0x3E4E, 0, false, false );
 	if( tiller == NULL ) 
 		return false;
 	tiller->SetPriv( 0 );
@@ -245,7 +246,7 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 	tiller->SetMore( serial );
 	tiller->SetMoreX( boattype );
 
-	CItem *p2 = Items->SpawnItem( s, 1, "#", false, 0x3EB2, 0, false, false );//Plank2 is on the RIGHT side of the boat
+	CItem *p2 = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x3EB2, 0, false, false );//Plank2 is on the RIGHT side of the boat
 	if( p2 == NULL ) 
 		return false;
 	p2->SetType( 117 );
@@ -253,7 +254,7 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 	p2->SetMore( serial );
 	p2->SetPriv( 0 );//Nodecay
 
-	CItem *p1 = Items->SpawnItem( s, 1, "#", false, 0x3EB1, 0, false, false );//Plank1 is on the LEFT side of the boat
+	CItem *p1 = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x3EB1, 0, false, false );//Plank1 is on the LEFT side of the boat
 	if( p1 == NULL ) 
 		return false;
 	p1->SetType( 117 );//Boat type
@@ -261,10 +262,10 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 	p1->SetMore( serial );
 	p1->SetPriv( 0 );
 
-	CItem *hold = Items->SpawnItem( s, 1, "#", false, 0x3EAE, 0, false, false );
+	CItem *hold = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x3EAE, 0, false, false );
 	if( hold == NULL ) 
 		return false;
-	hold->SetMore( b->GetSerial() );
+	hold->SetMore( serial );
 	hold->SetType( 1 );//Conatiner
 	hold->SetPriv( 0 );
 	
@@ -300,7 +301,6 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 		break;
 	}
 	//their x pos is set by BuildHouse(), so just fix their Z...
-	CChar *mChar = s->CurrcharObj();
 	mChar->SetZ( z + 3 );
 	mChar->SetDispZ( z + 3 );
     mChar->SetMulti( b );
@@ -315,13 +315,12 @@ bool cBoat::CreateBoat( cSocket *s, CItem *b, char id2, int boattype )
 //o---------------------------------------------------------------------------o
 CItem * cBoat::GetBoat( cSocket *s )
 {
-	UI16 mindist = 30;
 	CItem *boat = NULL;
 	CChar *mChar = s->CurrcharObj();
 
 	UI08 worldNumber = mChar->WorldNumber();
-    if( mChar->GetMulti() != INVALIDSERIAL )
-		return calcItemObjFromSer( mChar->GetMulti() );
+  if( mChar->GetMultiObj() != NULL )
+		return (CItem*)mChar->GetMultiObj();
 	else 
 	{
 		int xOffset = MapRegion->GetGridX( mChar->GetX() );
@@ -340,8 +339,7 @@ CItem * cBoat::GetBoat( cSocket *s )
 						continue;
 					if( itemCheck->GetID( 1 ) >= 0x40 )
 					{
-						UI16 distance = getDist( mChar, itemCheck );
-						if( distance <= mindist )
+						if( objInRange( mChar, itemCheck, 30 ) )
 						{
 							if( itemCheck->GetType() == 117 )
 								boat = itemCheck;
@@ -366,6 +364,7 @@ CItem * cBoat::GetBoat( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
 //o---------------------------------------------------------------------------o
+#pragma note( "Param Warning: in cBoat::BlockBoat(). Parameter dir is not referanced(used)." )
 bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	MapStaticIterator *msi;
@@ -566,8 +565,8 @@ void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
 	RefreshItem( tiller );
 	
 	MapRegion->RemoveItem( p1 );
-	p1->IncX( tx );
-	p1->IncY( ty );
+	//p1->IncX( tx );	// Jediman Boat fix
+	//p1->IncY( ty );
 	MapRegion->AddItem( p1 );
 	RefreshItem( p1 );
 	
@@ -676,7 +675,7 @@ void cBoat::TurnBoat( CItem *b, bool rightTurn )
 	Network->PushConn();
 	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		if( itemInRange( tSock->CurrcharObj(), b, BUILDRANGE ) )
+		if( objInRange( tSock, b, BUILDRANGE ) )
 		{
 			Send.push_back( tSock );
 			tSock->Send( &prSend );
@@ -724,7 +723,7 @@ void cBoat::TurnBoat( CItem *b, bool rightTurn )
 		return;
 	}
 
-	b->SetID( id2, 2 );//set the id
+	b->SetID( static_cast<UI08>(id2), 2 );//set the id
 	
 	if( b->GetID( 2 ) == b->GetMore( 1 ) ) 
 		b->SetDir( 0 );//extra DIR error checking
@@ -782,6 +781,10 @@ void cBoat::TurnBoat( CItem *b, bool rightTurn )
 		tiller->IncY( iSmallShipOffsets[dir][TILLER][YP] );
 		hold->IncX( iSmallShipOffsets[dir][HOLD][XP] );
 		hold->IncY( iSmallShipOffsets[dir][HOLD][YP] );
+		RefreshItem(p1);
+		RefreshItem(p2);
+		RefreshItem(hold);
+		RefreshItem(tiller);
 		break;
 	case 0x08:
 	case 0x0C:
@@ -994,10 +997,9 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 	CChar *mChar = s->CurrcharObj();
 
 	SERIAL serial = p1->GetMore();
-	if( i->GetOwner() == mChar->GetSerial() )
+	if( i->GetOwnerObj() == mChar )
 	{
-#pragma note( "DEPENDENT ON NUMERIC ITEM SECTION" )
-		CItem *model = Items->SpawnItemToPack( s, mChar, 10191, 0 );
+		CItem *model = Items->SpawnItemToPack( s, mChar, "0x14f3", 0 );
 		if( model == NULL )
 		{
 			Console.Error( 3, " Turning boat into model failed on model creation, attempted by character serial %i\n", mChar->GetSerial() );
@@ -1005,7 +1007,9 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 		}
 
 		model->SetMoreX( tiller->GetMoreX() );
+		Weight->SubtractItemWeight( mChar, model );
 		model->SetWeight( 0 );
+		Weight->AddItemWeight( mChar, model );
 		model->SetMagic( 0 );
 
 		for( CItem *a = hold->FirstItemObj(); !hold->FinishedItems(); a = hold->NextItemObj() )

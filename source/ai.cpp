@@ -1,16 +1,26 @@
+//o--------------------------------------------------------------------------o
+//|	File					-	ai.cpp
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
-#include "debug.h"
 
 #undef DBGFILE
-#define DBGFILE "p_ai.cpp"
+#define DBGFILE "ai.cpp"
 
 void cCharStuff::CheckAI( CChar *i )
 {
 	if( i == NULL ) 
 		return;
 
+	const SI16 combatRange = cwmWorldState->ServerData()->GetCombatMaxRange();
 	UI08 worldNumber = i->WorldNumber();
-	int d, d2;
 	cSocket *mSock = NULL;
 	CChar *realChar = NULL;
 	if( nextnpcaitime <= uiCurrentTime || overflow ) 
@@ -22,19 +32,19 @@ void cCharStuff::CheckAI( CChar *i )
 			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 			{
 				realChar = mSock->CurrcharObj();
-				UI16 distance = getDist( i, realChar );
+				bool inRange = objInRange(i,realChar,3);
 				if( LineOfSight( mSock, realChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 				{
-					if( realChar->IsDead() && realChar->IsInnocent() && distance <= 3 && !realChar->IsCriminal() && !realChar->IsMurderer() ) 
+					if( realChar->IsDead() && realChar->IsInnocent() && inRange && !realChar->IsCriminal() && !realChar->IsMurderer() ) 
 					{
 						npcAction( i, 0x10 );
 						Targ->NpcResurrectTarget( realChar );
 						staticeffect( realChar, 0x376A, 0x09, 0x06 );
 						npcTalkAll( i, ( 316 + RandomNum( 0, 4 ) ), false );
 					} 
-					else if( realChar->IsDead() && distance <= 3 && realChar->IsMurderer() )
+					else if( realChar->IsDead() && inRange && realChar->IsMurderer() )
 						npcTalkAll( i, 322, true );
-					else if( realChar->IsDead() && distance <= 3 && realChar->IsCriminal() )
+					else if( realChar->IsDead() && inRange && realChar->IsCriminal() )
 						npcTalkAll( i, 770, true );
 				}
 			}
@@ -45,15 +55,15 @@ void cCharStuff::CheckAI( CChar *i )
 			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 			{
 				realChar = mSock->CurrcharObj();
-				UI16 eDist = getDist( i, realChar );
-				if( realChar->IsDead() && eDist <= 3 && realChar->IsMurderer() ) 
+				bool inRange=objInRange(i,realChar,3);
+				if( realChar->IsDead() && inRange && realChar->IsMurderer() ) 
 				{
 					npcAction( i, 0x10 );
 					Targ->NpcResurrectTarget( realChar );
 					staticeffect( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 					npcTalkAll( i, ( 323 + RandomNum( 0, 4 ) ), false ); 
 				} 
-				else if( !realChar->IsMurderer() && realChar->IsDead() && eDist <= 3 ) 
+				else if( !realChar->IsMurderer() && realChar->IsDead() && InRange ) 
 					npcTalkAll( i, 329, true );
 			}
 			Network->PopConn();
@@ -61,8 +71,6 @@ void cCharStuff::CheckAI( CChar *i )
 		case 2 : // Monsters, PK's - (stupid NPCs)
 			if( !i->IsAtWar() ) 
 			{
-				d2 = cwmWorldState->ServerData()->GetCombatMaxRange();
-				
 				int xOffset = MapRegion->GetGridX( i->GetX() );
 				int yOffset = MapRegion->GetGridY( i->GetY() );
 				for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
@@ -80,10 +88,9 @@ void cCharStuff::CheckAI( CChar *i )
 								continue;
 							if( i == tempChar )
 								continue;
-							if( i->GetOwner() != INVALIDSERIAL && i->GetOwner() == tempChar->GetSerial() )
+							if( i->GetOwnerObj() != NULL && i->GetOwnerObj() == tempChar )
 								continue;
-							d = getDist( i, tempChar );
-							if( d > d2 )
+							if( !objInRange( i, tempChar, combatRange) )
 								continue;
 							if( tempChar->IsInvulnerable() || tempChar->GetHidden() != 0 || tempChar->IsDead() )
 								continue;
@@ -113,8 +120,6 @@ void cCharStuff::CheckAI( CChar *i )
 		case 4 : // Guards
 			if( !i->IsAtWar() ) 
 			{
-				d2 = 10;
-				
 				int xOffset = MapRegion->GetGridX( i->GetX() );
 				int yOffset = MapRegion->GetGridY( i->GetY() );
 				for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
@@ -132,8 +137,7 @@ void cCharStuff::CheckAI( CChar *i )
 								continue;
 							if( tempChar == i )
 								continue;
-							d = getDist( i, tempChar );
-							if( d <= 10 && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() == 0x02 )
+							if( objInRange( I, tempChar, combatRange ) && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() == 0x02 ) 
 							{
 								npcAttackTarget( tempChar, i );
 								npcTalkAll( i, 313, true );
@@ -149,8 +153,6 @@ void cCharStuff::CheckAI( CChar *i )
 		case 30:
 			if( !i->IsAtWar() )
 			{
-				d2=10;
-				
 				int xOffset = MapRegion->GetGridX( i->GetX() );
 				int yOffset = MapRegion->GetGridY( i->GetY() );
 				for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
@@ -168,8 +170,7 @@ void cCharStuff::CheckAI( CChar *i )
 								continue;
 							if( tempChar == i )
 								continue;
-							d = getDist( i, tempChar );
-							if( d > d2 && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() != 0x02 )
+							if( objInRange( i, tempChar, combatRange) && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() != 0x02 )
 							{
 								npcAttackTarget( tempChar, i );
 								MapArea->PopChar();
@@ -184,8 +185,6 @@ void cCharStuff::CheckAI( CChar *i )
 		case 0x50://Morrolan EV/BS logic
 			if( !i->IsAtWar() ) 
 			{
-				d2 = 18;
-				
 				int xOffset = MapRegion->GetGridX( i->GetX() );
 				int yOffset = MapRegion->GetGridY( i->GetY() );
 				for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
@@ -201,10 +200,9 @@ void cCharStuff::CheckAI( CChar *i )
 						{
 							if( tempChar == NULL || tempChar == i )
 								continue;
-							if( i->GetOwner() != INVALIDSERIAL && i->GetOwner() == tempChar->GetSerial() )
+							if( i->GetOwnerObj() != NULL && i->GetOwnerObj() == tempChar )
 								continue;
-							d = getDist( i, tempChar );
-							if( d > d2 )
+							if( !objInRange( i, tempChar, combatRange ) )
 								continue;
 							if( tempChar->IsInvulnerable() || tempChar->IsDead() )
 								continue;
@@ -224,20 +222,15 @@ void cCharStuff::CheckAI( CChar *i )
 		case 5: break; //morrolan - personal guard?
 		case 17: break; //Zippy Player Vendors.
 		case 32: 
-			SERIAL ownerSerial;
 			CChar *pOwner;
-			ownerSerial = i->GetSerial();
-			if( ownerSerial == INVALIDSERIAL )
+			pOwner = (CChar*)i->GetOwnerObj();
+			if( pOwner == NULL )
 			{
 				i->SetNPCAiType( 0 );	// not guarding because no owner
 				return;
 			}
-			pOwner = calcCharObjFromSer( ownerSerial );
-			if( pOwner != NULL )
-			{
-				if( pOwner->GetTarg() != INVALIDSERIAL )
-					npcAttackTarget( &chars[pOwner->GetTarg()], i );
-			}
+			if( pOwner->GetTarg() != INVALIDSERIAL )
+				npcAttackTarget( &chars[pOwner->GetTarg()], i );
 			break;	// Guard AI
 		default:
 			Console.Error( 2, " cCharStuff::CheckAI-> Error npc %i (%x %x %x %x) has invalid AI type %i", i, i->GetSerial( 1 ), i->GetSerial( 2 ), i->GetSerial( 3 ), i->GetSerial( 4 ), i->GetNPCAiType()); //Morrolan

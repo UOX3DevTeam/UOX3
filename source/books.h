@@ -20,7 +20,7 @@ class cBooks
 		// that private methods read and write from the *.bok files
 		void WriteAuthor( CItem *id,cSocket *s );
 		void WriteTitle( CItem *id, cSocket *s );
-		void WriteLine( CItem *id, int page, int line, char linestr[34], cSocket *s );
+		void WriteLine( CItem *id, int page, int line, char linestr[34] );
 		
 		void ReadAuthor( CItem *id, UI08 auth[31] );
 		void ReadTitle( CItem *id, UI08 title[61] );

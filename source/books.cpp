@@ -320,7 +320,7 @@ void cBooks::ReadWritableBook( cSocket *s, CItem *i, int p, int l )
 		{
 			lines_processed++;
 			lin = 0;
-			WriteLine( i, p, lines_processed, line, s );
+			WriteLine( i, p, lines_processed, line );
 		}
 	}
  	changeAT = false; // dont re-write author and title if not necassairy
@@ -411,7 +411,7 @@ void cBooks::WriteTitle( CItem *id, cSocket *s )
 	fclose( file );
 }
 
-void cBooks::WriteLine( CItem *id, int page, int line, char linestr[34], cSocket *s )
+void cBooks::WriteLine( CItem *id, int page, int line, char linestr[34] )
 {
 	char fileName[MAX_PATH];  // Standard 8.3 file name
 
