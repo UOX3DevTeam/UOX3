@@ -29,6 +29,13 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+27.02.2001               Thiago A. Corrêa
+  house.cpp              Fixed "inmulti() - Bad length in multi file." with non
+                         real multi items (Require a small script change, and 
+                         existing items need to be fixed by hand)
+  uox3.cpp               Possible fix for bug #404531 - needs confirmation.
+
+-------------------------------------------------------------------------------
 26.02.2001               Thiago A. Corrêa
 			 Ported some fixes from Wolfpack:		
   dbl_sinlge_click.cpp   Fixed: Kindling wont delete the whole pile anymore. 

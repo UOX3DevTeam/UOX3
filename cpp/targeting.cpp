@@ -404,7 +404,7 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 // FREE		case 242: break;
 // FREE		case 243: break;
 // FREE		case 244: break;
-// FREE		case 245: break;
+		case 245: buildhouse (s, addid3[s]); break; //No multi items
 // FREE		case 246: break;
 		case 247: Targ->ShowSkillTarget( s ); break; // showskill target
 //		case 248: Targ->MenuPrivTarg( s ); break; //menupriv target

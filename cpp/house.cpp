@@ -71,6 +71,8 @@ void buildhouse(int s, int i)
 	int boat=0;//Boats
 	int hdeed=0;//deed id #
 
+	int norealmulti = 0;
+
     if(buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return; // do nothing if user cancels, avoids CRASH!
 
 	hitem[0]=0;//avoid problems if there are no HOUSE_ITEMs by initializing the first one as 0
@@ -128,6 +130,7 @@ void buildhouse(int s, int i)
 					hdeed=str2num(script2);
 				}
 				else if (!(strcmp(script1, "BOAT"))) boat=1;//Boats
+				else if (!(strcmp(script1, "NOREALMULTI"))) norealmulti = 1;
 			}
 		}
 		while (strcmp(script1,"}"));
@@ -143,7 +146,10 @@ void buildhouse(int s, int i)
 		if (i)
 		{
 			addid1[s]=0x40;addid2[s]=100;//Used in addtarget
-			mtarget(s, 0, 1, 0, 0, id1-0x40, id2, "Select location for building.");
+			if (norealmulti) 
+				target(s, 0, 1, 0, 245, "Select a place  for your structure"); 
+			else
+				mtarget(s, 0, 1, 0, 0, id1-0x40, id2, "Select location for building.");
 		}
 		else
 		{
@@ -281,7 +287,8 @@ void buildhouse(int s, int i)
 							items[l].owner2=chars[currchar[s]].ser2;
 							items[l].owner3=chars[currchar[s]].ser3;
 							items[l].owner4=chars[currchar[s]].ser4;
-							setserial( l, house, 7 );
+							if (!norealmulti)
+								setserial( l, house, 7 );
 							//ConOut("[%i,%i,%i] Item %i\n",items[l].x,items[l].y,items[l].z,l);
 						}
 						if (!(strcmp(script1,"DECAY")))
@@ -334,10 +341,15 @@ void buildhouse(int s, int i)
 			}
 		}
 		all_items(s);//make sure they have all the items Sent....
-		chars[currchar[s]].x=x+cx; //move char inside house
-		chars[currchar[s]].y=y+cy;
-		chars[currchar[s]].dispz=chars[currchar[s]].z=z+cz;
-		teleport(currchar[s]);
+		if (!norealmulti)
+		{
+			chars[currchar[s]].x=x+cx; //move char inside house
+			chars[currchar[s]].y=y+cy;
+			chars[currchar[s]].dispz=chars[currchar[s]].z=z+cz;
+			teleport(currchar[s]);
+		} else {
+			Items->DeleItem(house);
+		}
 	}
 }
 

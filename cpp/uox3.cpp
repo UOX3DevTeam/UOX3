@@ -18591,15 +18591,17 @@ void deathstuff(int i)
 		items[corpsenum].corpse=0;
 	}
 
+	RefreshItem( corpsenum ); // AntiChrist
+
 	if( chars[i].summontimer )
 	{
 		staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );
 		soundeffect2( i, 0x01, 0xFE );
-		Items->DeleItem( corpsenum );
-		teleport( i );
-		return;
+//		Items->DeleItem( corpsenum );
+//		teleport( i );
+		ele = 65535;
 	}
-	RefreshItem( corpsenum ); // AntiChrist
+
 	if( chars[i].npc ) 
 		Npcs->DeleteChar(i);
 	if( ele == 65535 )
