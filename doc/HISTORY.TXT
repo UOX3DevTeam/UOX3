@@ -27,6 +27,24 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
+-------------------------------------------------------------------------------
+03.03.2001               Thiago A. Corrêa
+                         Added a new function splitSerial() to split 32bit serial
+   worldmain.cpp         into 4 different 8bit variables when needed by networking
+   walking.cpp           functions.
+   uox3.cpp              Reworked some functions to take less params (those which
+   targeting.cpp         requested serials split into 4 variables). This makes some
+   skills.cpp            of them more independent of network details.
+   network.cpp           Changed soundeffect2() by soundeffects() when socket was
+   magic.cpp             known (will run faster)
+   items.cpp             Fixed wrong dist. calculation function called from 
+   house.cpp             soundeffects()
+   gumps.cpp             Removed soundeffect5, all instances replaced by 
+   globals.cpp           soundeffects(xx, xx, xx, false)
+   dbl_sinlge_click.cpp
+   cweather.cpp
+   commands.cpp
+   combat.cpp
 
 -------------------------------------------------------------------------------
 01.03.2001               Thiago A. Corrêa
