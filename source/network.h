@@ -2,7 +2,6 @@
 #define __CNETWORK_H__
 
 #include "threadsafeobject.h"
-#include <stdexcept>
 
 namespace UOX
 {

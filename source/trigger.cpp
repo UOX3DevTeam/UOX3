@@ -3,9 +3,6 @@
 // *******************************************************************
 
 
-#if !defined(_MSC_VER)
-#include <stdexcept>
-#endif
 #include "uox3.h"
 #include "trigger.h"
 #include "cScript.h"

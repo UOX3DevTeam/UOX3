@@ -54,7 +54,7 @@ public:
 private:
 	void		GetScriptItemSettings( CItem *iCreated );
 	CItem *		PlaceItem( cSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack );
-	CItem *		CreateBaseItem( UI08 worldNumber, ObjectType itemType = OT_ITEM; );
+	CItem *		CreateBaseItem( UI08 worldNumber, ObjectType itemType = OT_ITEM );
 	CItem *		CreateRandomItem( std::string sItemList, UI08 worldNumber );
 };
 

@@ -1061,7 +1061,8 @@ void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 		SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
 	else
 	{
-		for( size_t pEntry = 0; pEntry < cwmWorldState->prowessTitles.size() - 1; ++pEntry )
+		size_t pEntry = 0;
+		for( pEntry = 0; pEntry < cwmWorldState->prowessTitles.size() - 1; ++pEntry )
 		{
 			if( skillLevel >= cwmWorldState->prowessTitles[pEntry].minBaseSkill && skillLevel < cwmWorldState->prowessTitles[pEntry+1].minBaseSkill )
 				break;

@@ -42,6 +42,9 @@
 #include <iomanip>
 #include <sstream>
 
+// We use exceptions in a lot of places
+#include <stdexcept>
+
 #ifdef __BORLANDC__
 namespace UOX
 {
