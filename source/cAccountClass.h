@@ -43,7 +43,6 @@
 
 #include "uox3.h"
 
-//#define __UOX3_DTL__
 #ifdef __UOX3_DTL__
 	#include "DTL.h"
 	#include "variant_cc.h"
