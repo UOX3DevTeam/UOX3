@@ -25,10 +25,6 @@
 //------------------------------------------------------------------------
 //Adapted by TANiS - Thanks to Armageddon for the original code.
 
-#if defined( __LINUX__ ) || defined( __MINGW32__ )
-	#define __cdecl
-#endif
-
 #include "debug.h"
 
 /********************************************************

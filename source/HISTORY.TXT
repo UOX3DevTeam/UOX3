@@ -28,6 +28,12 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 
+-------------------------------------------------------------------------------
+17.02.2001               Axel Kittenberger
+  debug.cpp             
+  debug.h                ressurected mingw compability / 
+  uox3.h                   std-warning-free compilation
+  walking.cpp
 
 -------------------------------------------------------------------------------
 >>> SYNCHRONOUS  0.70.03.21d                         Corrêa 

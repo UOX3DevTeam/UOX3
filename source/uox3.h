@@ -91,7 +91,7 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
   int max;
   int *pointer;
 };
-#if defined( __LINUX__ ) || defined( __MINGW32__ )
+#if (defined( __LINUX__ ) || defined( __MINGW32__ )) && (!defined(__cdecl)) 
 	#define __cdecl
 #endif
 #ifdef __LINUX__
@@ -105,9 +105,6 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #include <vector>
 #include <map>
 #include <fstream>
-#ifndef __LINUX__			// knox, somewhere inside pesters my linux/gnu system... *shrugs*
-	#include <strstream>
-#endif
 #include <iostream>
 
 #include <cstdio>
@@ -116,6 +113,11 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #include <ctime>
 #include <cmath>
 #include <sys/types.h>
+#ifdef __MINGW32__
+#  undef CLOCKS_PER_SEC
+#  define CLOCKS_PER_SEC 1000
+#endif
+
 #ifdef __NT__
 	#ifdef _BORLAND_
 		#include <condefs.h>
@@ -130,10 +132,6 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 	#include <conio.h>
 	#include <sys/timeb.h>
 	typedef long int32;
-	#ifdef __MINGW_32__
-		#undef CLOCKS_PER_SEC
-		#define CLOCKS_PER_SEC 1000
-	#endif
 #else
 	#include <ctype.h>
 	#include <netinet/in.h>
