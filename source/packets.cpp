@@ -2172,7 +2172,7 @@ bool CPISecondLogin::Handle( void )
 		Network->pSplit( (char *)&tSock->Buffer()[35] );
 		if( ourAccount->lpaarHolding->bFlags&0x01 )	// no point verifying if we're banned
 			t = LDR_ACCOUNTDISABLED;
-		else if( strcmp( pass1, ourAccount->lpaarHolding->Info.password ) )	// non matching password
+		else if( strcmp( pass1, ourAccount->lpaarHolding->password ) )	// non matching password
 			t = LDR_UNKNOWNUSER;
 		if( t == LDR_NODENY )
 			Network->GoodAuth( tSock, ourAccount );
