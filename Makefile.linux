@@ -79,7 +79,7 @@ SOURCES =	cpp/admin.cpp \
 		cpp/commands.cpp \
 		cpp/craces.cpp \
 		cpp/cweather.cpp \
-		cpp/dbl_sinlge_click.cpp \
+		cpp/dbl_single_click.cpp \
 		cpp/debug.cpp \
 		cpp/fileio.cpp \
 		cpp/globals.cpp \
@@ -121,7 +121,7 @@ OBJECTS =	admin.o \
 		commands.o \
 		craces.o \
 		cweather.o \
-		dbl_sinlge_click.o \
+		dbl_single_click.o \
 		debug.o \
 		fileio.o \
 		globals.o \
