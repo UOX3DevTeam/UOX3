@@ -9842,7 +9842,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		else if( num == 24 )
 		{
 			if( dest == source )
-				toAdd.expiretime = uiCurrentTime + RandomNum( 15 * MY_CLOCKS_PER_SEC, 18 * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + RandomNum( 15 * MY_CLOCKS_PER_SEC, 18 * MY_CLOCKS_PER_SEC );
 			else
 				toAdd.expiretime = uiCurrentTime + ( 6 * MY_CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to cure %s*", chars[source].name, chars[dest].name );
