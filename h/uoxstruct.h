@@ -305,6 +305,10 @@ struct char_st
 	int questDestRegion;
 	int questOrigRegion;
 	bool may_levitate;	// has this character climbed on ladder last move? if so he can levitate on next
+	int questBountyReward;      // The current reward amount for the return of this chars head
+	int questBountyPostSerial;  // The global posting serial number of the bounty message
+
+
 };
 //REPSYS
 struct repsys_st
@@ -827,6 +831,9 @@ struct server_st
 	short buyThreshold;
 	bool snoopiscrime;
 	unsigned int polyduration;
+ 	int  bountysactive;       // Dupois - Added July 18, 2000 for bounty quests - whether bounties are active (1-default) or inactive (0)
+ 	int  bountysexpire;       // Dupois - Added July 18, 2000 for bounty quests - number of days when an unclaimed bounty expires and is deleted (0=never-default)
+	
 };
 struct title_st // For custom titles
 {

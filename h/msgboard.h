@@ -67,4 +67,7 @@ void    MsgBoardQuestEscortArrive( int nNPCIndex, int nPCIndex );
 void    MsgBoardQuestEscortDelete( int nNPCIndex );
 void    MsgBoardQuestEscortRemovePost( int nNPCIndex );
 void    MsgBoardMaintenance( void );
+#ifdef __linux__
+std::vector<std::string> MsgBoardGetFile( char* pattern, char* path) ;
+#endif
 
