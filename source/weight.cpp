@@ -1,283 +1,375 @@
 #include "uox3.h"
 
-const UI08 WEIGHT_PER_STR = 4;
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cWeight::calcWeight( CChar *mChar )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Calculate the total weight of a player based on all items
-//|					 in his pack, on his paperdoll or in his hands
-//o---------------------------------------------------------------------------o
-void cWeight::calcWeight( CChar *mChar )
+/*
+New Weight Design
+Date: 2/23/2003
+Programmer: Zane (giwo)
+Purpose (Goals):
+	Basically, the old weight system is entirely screwy, so here's my idea, and how the system will work
+
+	Firstly we need to state some parameters
+		All weight is dealt with in the hundreths, so a GetWeight() of 1000 is actually 10.00 stones
+		Wieght limits:
+			Each Pack needs to have a weight limit, this is currently hardcapped to 400 stones, but should be scriptable and based upon container type
+			Characters must also have a total weight limit, for now we will hardcap it at 65535 stones.
+		Script-based Weight Settings:
+			Every item should have a base weight, this weight will be (100 * actual weight), if there is not one, we will try to grab weight from the MUL files, otherwise assume 0
+			NPC's should likewise have a base weight, so if someone was so inclined to make advanced AI that pickup and drop
+				items, they can also overload themselves.
+		Character Base Weight and Weight Per Strength
+			All PC's should have a base weight calculated on their bulk (body weight, IE strength)
+			Also their ability to hold items (take on more weight) should increase with their strength.
+				Currently this offset is ((Strength * WEIGHT_PER_STR) + 30), where a Weight value greater than this value overloads them
+				We will leave this value alone, for now, until we can find a better method of basing their total ability to hold items on their str
+
+	Next lets talk about how we handle weight for our in-game objects
+		Items:
+			On Item creation, grab its weight from the scripts and store it.
+			If the item is a normal item, its weight should never change, unless purposely changed by user
+				A special case would be pileable items, where the weight should be updated when the amount changes
+			If the item is a pack, then we will increase and decrease its weight as items are added/removed
+				from the pack. We will accomplish this as much as possible by adding/removing weight in the 
+				CItem::SetCont() function. This information will be stored as the items weight on worldsave,
+				and we should never need to recalc weight unless it becomes invalid.
+			Packs should also display the total weight of themselves and their contents on single-click
+		Characters:
+			Character has a base weight, setup by scripts and whatnot, once again this information is stored for the character.
+			Just like packs, weight will be added and removed as items enter and leave his person (equipped or in a pack he owns).
+			A Characters total weight will be saved in the worldfile and should never need to be recalced unless it becomes invalid.
+		Special Cases:
+			getItem, wearItem, packItem, and dropItem functions, will require special treatment, mostly due to the setting
+			of an items container to INVALIDSERIAL apon grabbing it, and the sporadic way in which theese functions have been
+			organized, hopefully the current implementation works, but special care will need to be taken in theese functions.
+
+	How we accomplish this:
+		calcWeight() will calc and return the total weight of a pack based upon all items inside, their amounts, etc
+		calcCharWeight() will calc and return the total weight of a Character, using calcWeight() to recurse his packs, and ignoring
+			items/layers we don't want to add weight for (bank box, etc)
+		calcAddWeight() Calculates the total weight of adding the new item to the container, returns false if it is over the weight limit
+		calcSubtractWeight() Calculates the total weight of subtracting the item from the container, returns false if it's over the weight limit
+		addItemWeight() this function will have two overloads, basically it adds the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
+		subtractItemWeight() this function will have two overloads, basically it subtracts the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
+		isOverloaded() returns true if a character can move or false if not (based upon his strength and weight)
+		checkPackWeight() returns false if a pack is at its maximum weight or not based upon MAX_PACKWEIGHT
+*/
+
+const SI32 MAX_PACKWEIGHT = 40000;	// Lets have maximum weight of packs be 400 stones for now
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI32 cWeight::calcWeight( CItem *pack )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Calculate the total weight of a pack based upon all items inside,
+//|							their amounts, etc. This function should never need to be called
+//|							but is available for bruteforce weight updating
+//o--------------------------------------------------------------------------o
+SI32 cWeight::calcWeight( CItem *pack )
 {
+	SI32 totalWeight = 0;
 
-	R64 totalweight = 0.0;
-	for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
-	{
-		if( i != NULL )
-		{
-			switch( i->GetLayer() )
-			{
-			case 0x0B:	// hair
-			case 0x10:	// beard
-			case 0x19:	// bank box
-			case 0x1D:	// steed
-				break;	// no weight for any of these
-			case 0x15:	// backpack
-				totalweight += RecursePacks( i );
-			default:
-				totalweight += ( calcItemWeight( i ) / 100.0 );
-				break;
-			}
-		}
-	}
-	if( totalweight > 32000 )
-		totalweight = 32000;
-	if( totalweight < 0 )
-		totalweight = 0;
-
-	mChar->SetWeight( (SI16)totalweight );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  R64 cWeight::RecursePacks( CItem *pack )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Checks all backpacks on a character for their weight
-//o---------------------------------------------------------------------------o
-R64 cWeight::RecursePacks( CItem *pack )
-{
-	if( pack == NULL ) 
-		return 0.0;
-
-	R64 totalweight = 0.0;
-
-	int itemsweight = 0;
+	CTile tile;
 	for( CItem *i = pack->FirstItemObj(); !pack->FinishedItems(); i = pack->NextItemObj() )
 	{
-		if( i != NULL )
+		if( i == NULL )
+			continue;
+
+		if( i->IsContType() )	// Item is a container
 		{
-			itemsweight = calcItemWeight( i );
-			if( i->IsContType() )
-			{
-				totalweight += ((R64)((R64)(itemsweight))/(R64)(100.00));
-				totalweight += RecursePacks( i ); //find the item's weight within this container
-			}
-			else if( i->GetID() == 0x0EED )
-				totalweight += (R64)((R64)(i->GetAmount())*(R64)(GOLD_WEIGHT));
-			else 
-				totalweight += (R64)(((R64)(itemsweight)*(R64)(i->GetAmount()))/100.00);
+			Map->SeekTile( i->GetID(), &tile );
+			totalWeight += (tile.Weight() * 100);	// Add the weight of the container
+			totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
+			if( totalWeight >= MAX_WEIGHT )
+				return MAX_WEIGHT;
+		}
+		else
+		{
+			if( !calcAddWeight( i, totalWeight ) )
+				return MAX_WEIGHT;
 		}
 	}
-	return totalweight;
+	return totalWeight;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  SI32 cWeight::calcItemWeight( CItem *item )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Search for and return the weight of an item
-//o---------------------------------------------------------------------------o
-SI32 cWeight::calcItemWeight( CItem *item )
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI32 cWeight::calcCharWeight( CChar *mChar )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Calculate the total weight of a character based upon all items he owns,
+//|							This function should never need to be called but is available for
+//|							bruteforce weight updating
+//o--------------------------------------------------------------------------o
+SI32 cWeight::calcCharWeight( CChar *mChar )
 {
-	if( item == NULL )
-		return 0;
+	SI32 totalWeight = 0;
 
-	SI32 itemweight = 0;
-	if( item->GetWeight() <= 0 ) //weight is defined in scripts for this item
+	CTile tile;
+	for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
+	{
+		if( i == NULL )
+			continue;
+
+		switch( i->GetLayer() )
+		{
+		case 0x0B:	// hair
+		case 0x10:	// beard
+		case 0x19:	// bank box
+		case 0x1D:	// steed
+			break;	// no weight for any of these
+		case 0x15:	// backpack
+			Map->SeekTile( i->GetID(), &tile );
+			totalWeight += (tile.Weight() * 100);	// Add the weight of the container
+			totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
+		default:
+			totalWeight += i->GetWeight();	// Normal item, just add its weight
+			break;
+		}
+		if( totalWeight >= MAX_WEIGHT )
+			return MAX_WEIGHT;
+	}
+	return totalWeight;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Calculate the total weight of adding an item to a container, returns
+//|							false if the item is over the max weight limit
+//o--------------------------------------------------------------------------o
+bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
+{
+	SI32 itemWeight = item->GetWeight();
+	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
 		CTile tile;
 		Map->SeekTile( item->GetID(), &tile );
-		if( tile.Weight() == 0 ) // can't find weight
-		{
-			if( item->GetType() != 14 )	
-				itemweight = 2; // not food weighs .02 stone
-			else
-				itemweight = 100; //food weighs 1 stone
-		}
-		else //found the weight from the tile, set it for next time
-		{			
-			itemweight = tile.Weight() * 100;
-			item->SetWeight( itemweight ); // set weight so next time don't have to search
-		}
+		itemWeight = (tile.Weight() * 100);
 	}
-	else 
-		itemweight = item->GetWeight();
-	return itemweight;
-}
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  R64 cWeight::calcPackWeight( CItem *pack )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Calculate the weight of a single backpack based on its
-//|					 contents
-//o---------------------------------------------------------------------------o
-R64 cWeight::calcPackWeight( CItem *pack )
-{
-	if( pack == NULL ) 
-		return 0.0;
+	if( item->GetAmount() > 0 )	// Stackable items weight is Amount * Weight
+		totalWeight += (item->GetAmount() * itemWeight);
+	else	// Else just the items weight
+		totalWeight += itemWeight;
 
-	R64 totalweight = 0;
-	CTile tile;
-	for( CItem *i = pack->FirstItemObj(); !pack->FinishedItems(); i = pack->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->IsContType() )
-			{
-				Map->SeekTile( i->GetID(), &tile );
-				totalweight += tile.Weight();
-				totalweight += calcPackWeight( i );
-			}
-			else 
-			{
-				Map->SeekTile( i->GetID(), &tile );
-				if( tile.Weight() == 0 )	
-				{
-					if( i->GetID() == 0x0EED )
-						totalweight += (R64)((R64)(i->GetAmount())*(R64)(GOLD_WEIGHT));
-					else 
-						totalweight += (R64)((R64)(i->GetAmount())*(R64)(0.1));
-				}
-				else 
-					totalweight += (i->GetAmount()*tile.Weight() );
-			}
-		}
-	}
-	return totalweight;
-}
- 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cWeight::checkMaxPackWeight( CChar *c )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check maximum capacity of container
-//o---------------------------------------------------------------------------o
-bool cWeight::checkMaxPackWeight( CChar *c )
-{
-	CItem *pack = getPack( c );
-	if( pack == NULL ) 
+	if( totalWeight > MAX_WEIGHT )	// Don't let them go over the weight limit
 		return false;
-
-	R64  totalweight=0;
-	CTile tile;
-	for( CItem *i = pack->FirstItemObj(); !pack->FinishedItems(); i = pack->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->IsContType() )
-				totalweight += calcPackWeight( i );
-			else 
-			{
-				Map->SeekTile( i->GetID(), &tile);
-				totalweight += (i->GetAmount()*tile.Weight() );
-			}
-		}
-	}
-	if( pack->GetWeight() >= totalweight ) 
-		return false;
-	sysmessage( calcSocketObjFromChar( c ), 1385 );
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cWeight::checkWeight( CChar *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check a players weight (used to tell if overloaded when walking )
-//o---------------------------------------------------------------------------o
-bool cWeight::checkWeight( CChar *s, bool isTele )
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool cWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Calculate the total weight of removing an item from a container, returns
+//|							false if the item is over the max weight limit or less than 0
+//o--------------------------------------------------------------------------o
+bool cWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 {
-	if( ( s->GetWeight() > ( s->GetStrength() * WEIGHT_PER_STR ) + 30 ) )
+	SI32 itemWeight = item->GetWeight();
+	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		if( isTele )
-		{
-			s->SetMana( s->GetMana() - 30 );
-			if( s->GetMana() <= 0 )
-				s->SetMana( 0 );
-			return false;
-		}
+		CTile tile;
+		Map->SeekTile( item->GetID(), &tile );
+		itemWeight = (tile.Weight() * 100);
+	}
 
-		R32 res = (R32)( s->GetWeight() - ( ( s->GetStrength() * WEIGHT_PER_STR ) + 30 ) ) * 2;
+	if( item->GetAmount() > 0 )	// Stackable items weight is Amount * Weight
+		totalWeight -= (item->GetAmount() * itemWeight);
+	else	// Else just the items weight
+		totalWeight -= itemWeight;
+
+	if( totalWeight < 0 || totalWeight > MAX_WEIGHT )	// Don't let them go under 0 or over the weight limit
+		return false;
+	return true;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::addItemWeight( cBaseObject *getObj, Citem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds an items weight to the total weight of the object
+//o--------------------------------------------------------------------------o
+void cWeight::addItemWeight( cBaseObject *getObj, CItem *item )
+{
+	if( getObj->GetObjType() == OT_CHAR )
+		addItemWeight( (CChar *)getObj, item );
+	else
+		addItemWeight( (CItem *)getObj, item );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::addItemWeight( CChar *mChar, CItem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds an items weight to the total weight of the character
+//o--------------------------------------------------------------------------o
+void cWeight::addItemWeight( CChar *mChar, CItem *item )
+{
+	SI32 totalWeight = mChar->GetWeight();
+
+	if( calcAddWeight( item, totalWeight ) )
+		mChar->SetWeight( totalWeight );
+	else
+		mChar->SetWeight( MAX_WEIGHT );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::addItemWeight( CItem *pack, CItem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Adds an items weight to the total weight of the pack updating
+//|							the packs container in the process
+//o--------------------------------------------------------------------------o
+void cWeight::addItemWeight( CItem *pack, CItem *item )
+{
+	SI32 totalWeight = pack->GetWeight();
 	
-		s->SetStamina( s->GetStamina() - (int)res );
-		if( s->GetStamina() <= 0 )
+	if( calcAddWeight( item, totalWeight ) )
+		pack->SetWeight( totalWeight );
+	else
+		pack->SetWeight( MAX_WEIGHT );
+
+	cBaseObject *pCont = pack->GetCont();
+	if( pCont != NULL )
+	{
+		if( pCont->GetObjType() == OT_ITEM )
 		{
-			s->SetStamina( 0 );
-			sysmessage( calcSocketObjFromChar( s ), 1386 );
-			return false;
+			CItem *pPack = (CItem *)pCont;
+			if( pPack != NULL )
+				addItemWeight( pPack, item );
+		}
+		else
+		{
+			CChar *packOwner = (CChar *)pCont;
+			if( packOwner != NULL )
+				addItemWeight( packOwner, item );
 		}
 	}
-	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cWeight::AddItemWeight( CItem *i, CChar *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Add an items weight to players total weight
-//o---------------------------------------------------------------------------o
-void cWeight::AddItemWeight( CItem *i, CChar *s )
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::subtractItemWeight( cBaseObject *getObj, Citem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Subtracts an items weight from the total weight of the object
+//o--------------------------------------------------------------------------o
+void cWeight::subtractItemWeight( cBaseObject *getObj, CItem *item )
 {
-	CTile tile;
-	Map->SeekTile( i->GetID(), &tile);
-	if( i->IsContType() )
-	{									    //and all item  weight
-		s->SetWeight( s->GetWeight() + tile.Weight() );
-		s->SetWeight( s->GetWeight() + (int)(calcPackWeight( i ) ) );
-	}
+	if( getObj->GetObjType() == OT_CHAR )
+		subtractItemWeight( (CChar *)getObj, item );
 	else
-	{
-		if( tile.Weight() == 0 )	
-		{
-			if( i->GetID() == 0x0EED )
-				s->SetWeight( s->GetWeight() + (int)(i->GetAmount()*GOLD_WEIGHT) );
-			else 
-				s->SetWeight( s->GetWeight() + (int)(i->GetAmount()*0.1) );
-		}	
-		else 
-			s->SetWeight( s->GetWeight() + (i->GetAmount()*tile.Weight() ) );
-	}
-	if( s->GetWeight() > 32000 )
-		s->SetWeight( 32000 );
+		subtractItemWeight( (CItem *)getObj, item );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cWeight::SubtractItemWeight( CItem *i, CChar *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Subtract an items weight from players total weight
-//o---------------------------------------------------------------------------o
-void cWeight::SubtractItemWeight( CItem *i, CChar *s )
-{									  
-	CTile tile;
-	Map->SeekTile( i->GetID(), &tile );
-	if( i->IsContType() )
-	{									   //and all item  weight
-		s->SetWeight( s->GetWeight() - tile.Weight() );
-		s->SetWeight( s->GetWeight() - (int)(calcPackWeight( i ) ) );
-	}
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::addItemWeight( CItem *pack, CItem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Subtracts an items weight from the total weight of the character
+//o--------------------------------------------------------------------------o
+void cWeight::subtractItemWeight( CChar *mChar, CItem *item )
+{
+	SI32 totalWeight = mChar->GetWeight();
+
+	if( calcSubtractWeight( item, totalWeight ) )
+		mChar->SetWeight( totalWeight );
 	else
-	{
-		if( tile.Weight() == 0 )	
-		{
-			if( i->GetID() == 0x0EED )
-				s->SetWeight( s->GetWeight() - (int)(i->GetAmount()*GOLD_WEIGHT) );
-			else 
-				s->SetWeight( s->GetWeight() - (int)(i->GetAmount()*0.1) );
-		}	
-		else 
-			s->SetWeight( s->GetWeight() - (i->GetAmount()*tile.Weight() ) );
-	}
-	if( s->GetWeight() < 0 )
-		s->SetWeight( 0 );
+		mChar->SetWeight( 0 );
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cWeight::subtractItemWeight( CItem *pack, CItem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Subtracts an items weight from the total weight of the pack updating
+//|							the packs container in the process
+//o--------------------------------------------------------------------------o
+void cWeight::subtractItemWeight( CItem *pack, CItem *item )
+{
+	SI32 totalWeight = pack->GetWeight();
+
+	if( calcSubtractWeight( item, totalWeight ) )
+		pack->SetWeight( totalWeight );
+	else
+		pack->SetWeight( 0 );
+
+	cBaseObject *pCont = pack->GetCont();
+	if( pCont != NULL )
+	{
+		if( pCont->GetObjType() == OT_ITEM )
+		{
+			CItem *pPack = (CItem *)pCont;
+			if( pPack != NULL )
+				subtractItemWeight( pPack, item );
+		}
+		else
+		{
+			CChar *packOwner = (CChar *)pCont;
+			if( packOwner != NULL )
+				subtractItemWeight( packOwner, item );
+		}
+	}
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool cWeight::isOverloaded( CChar *mChar )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns true if the character is overloaded based upon his strength
+//o--------------------------------------------------------------------------o
+bool cWeight::isOverloaded( CChar *mChar )
+{
+	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * WEIGHT_PER_STR) + 30) )
+		return true;
+	return false;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool cWeight::checkPackWeight( CItem *pack, CItem *item )
+//|	Date			-	2/23/2003
+//|	Developers		-	Zane
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns false if a pack will be overloaded when items weight is added
+//|							or true if not based upon MAX_PACKWEIGHT
+//o--------------------------------------------------------------------------o
+bool cWeight::checkPackWeight( CItem *pack, CItem *item )
+{
+	if( pack->GetCont() != NULL && pack->GetCont( 1 ) < 0x40 )	// Pack has a container and container is the character
+		return true;
+
+	SI32 packWeight = pack->GetWeight();
+	SI32 itemWeight = item->GetWeight();
+	if( item->GetAmount() > 0 )
+		itemWeight = (item->GetWeight() * item->GetAmount());
+	if( itemWeight <= MAX_PACKWEIGHT && packWeight < MAX_PACKWEIGHT && (itemWeight + packWeight) <= MAX_PACKWEIGHT )
+	{	// Calc the weight and compare to MAX_PACKWEIGHT
+		if( pack->GetCont() == NULL )	// No container above pack
+			return true;
+		if( pack->GetCont( 1 ) >= 0x40 )	// pack is in another pack, lets ensure it won't overload that pack
+			return checkPackWeight( (CItem *)pack->GetCont(), item );
+	}
+	return false;
+}
+

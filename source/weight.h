@@ -4,15 +4,23 @@
 class cWeight
 {
 private:
-	R64		RecursePacks( CItem *pack );
-	bool	checkMaxPackWeight( CChar *c );
+	bool	calcAddWeight( CItem *item, SI32 &totalWeight );
+	bool	calcSubtractWeight( CItem *item, SI32 &totalWeight );
+
 public:
-	bool	checkWeight( CChar *s, bool isTele );
-	void	calcWeight( CChar *p );
-	R64		calcPackWeight( CItem *pack );
-	SI32	calcItemWeight( CItem *item );
-	void	AddItemWeight( CItem *i, CChar *s );
-	void	SubtractItemWeight( CItem *i, CChar *s );
+	SI32	calcCharWeight( CChar *mChar );
+	SI32	calcWeight( CItem *pack );
+
+	bool	isOverloaded( CChar *mChar );
+	bool	checkPackWeight( CItem *pack, CItem *item );
+
+	void	addItemWeight( cBaseObject *getObj, CItem *item );
+	void	addItemWeight( CChar *mChar, CItem *item );
+	void	addItemWeight( CItem *pack, CItem *item );
+
+	void	subtractItemWeight( cBaseObject *getObj, CItem *item );
+	void	subtractItemWeight( CChar *mChar, CItem *item );
+	void	subtractItemWeight( CItem *pack, CItem *item );
 };
 
 #endif
