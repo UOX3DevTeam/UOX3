@@ -2329,8 +2329,12 @@ UI16 cAccountClass::Save(bool bForceLoad)
 			fsAccountsADM << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << (actbID.dwCharacters[i]!=INVALIDSERIAL&&actbID.dwCharacters[i]!=0?actbID.dwCharacters[i]:0xffffffff) << " [" << (actbID.lpCharacters[i]!=NULL?actbID.lpCharacters[i]->GetName():"UNKNOWN") << "]" << std::endl;
 		}
 		fsAccountsADM << "}" << std::endl << std::endl;;
+		// Need to check to see if the path is valid.
+		std::fstream fsTest(actbID.sPath.c_str(),std::ios::in);
+		bool bPathExists=fsTest.is_open();
+		fsTest.close();
 		// Make sure that if there is no path that we make one
-		if(!actbID.sPath.length())
+		if(!actbID.sPath.length()||!bPathExists)
 		{
 			std::string sTempPath(m_sAccountsDirectory);
 			if(sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/')
@@ -2355,6 +2359,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 				actbTemp.sPath=sTempPath;
 			}
 		}
+		// Close the test path
 		// Ok now that we got here we need to make the directory, and create the username.uad file
 		int nDummy=_mkdir(actbTemp.sPath.c_str(), 0777);
 		if(nDummy<0)
