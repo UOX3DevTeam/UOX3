@@ -1,0 +1,7 @@
+        KILLALL <percent> <message>
+
+  Purpose: 
+        Will kill a specified percentage of all
+        characters that exist in the world (both
+        NPCs and Player-Chars), while sending them
+        the specified message as a sysmessage.

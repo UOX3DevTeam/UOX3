@@ -1,0 +1,8 @@
+        TRAINER <target>
+
+  Purpose: 
+        Makes selected NPC a "trainer" - a
+        character which can teach players
+        in specific skills in exchange for gold.
+        NOTE: NPC needs to have the skills it
+        is going to train players in!

@@ -1,0 +1,10 @@
+        COMMANDLEVEL <value> <target>
+
+  Purpose: 
+        Set a targetted character's command-
+        level. Set it to 1 and character can
+        access all commands listed in the
+        commands.dfn file with a value of "1"
+        or below. Set it to 2 and char can 
+        access all commands listed with the 
+        value "2" or below. And so on.

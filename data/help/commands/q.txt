@@ -1,0 +1,4 @@
+        Q
+  Purpose: 
+        Displays the GM Queue, a list of all
+        un-answered "GM Pages" made by players.

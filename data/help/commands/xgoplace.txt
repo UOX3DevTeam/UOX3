@@ -1,0 +1,6 @@
+        XGOPLACE <value> <target>
+
+  Purpose: 
+        Teleports targeted character to a 
+        specified location from the 
+        locations.dfn file.

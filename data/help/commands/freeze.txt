@@ -1,0 +1,5 @@
+        FREEZE <target>
+
+  Purpose: 
+        Will freeze targetted character in 
+        place.

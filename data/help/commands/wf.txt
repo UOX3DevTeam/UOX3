@@ -1,0 +1,8 @@
+        WF <target>
+
+  Purpose: 
+        Sets targeted item to TYPE 255, which
+        is the type read by WorldForge and other
+        map-editing tools that "freeze" items
+        into the static-files making them a
+        permanent part of the map.

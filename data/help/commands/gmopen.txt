@@ -1,0 +1,4 @@
+        GMOPEN
+
+  Purpose: 
+        Opens targetted character's backpack.

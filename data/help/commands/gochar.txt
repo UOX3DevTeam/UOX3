@@ -1,0 +1,5 @@
+        GOCHAR <serial>/<login-number>
+
+  Purpose: 
+        Go to character that serial or
+        login-number belongs to.

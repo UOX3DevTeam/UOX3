@@ -1,0 +1,6 @@
+        GATE <target rune>
+
+  Purpose: 
+        Similar to the GATE spell. Target
+        a marked recall rune to put up a
+        moongate to marked location.

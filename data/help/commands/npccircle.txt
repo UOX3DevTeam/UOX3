@@ -1,0 +1,7 @@
+        NPCCIRCLE x y r <target>
+
+  Purpose: 
+        Specifies a radius(r) of how far an NPC
+        can wander from a certain location(x/y).
+        NPC will start wandering in this area
+        immediately after command has been used.

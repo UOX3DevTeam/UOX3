@@ -1,0 +1,4 @@
+        ZEROKILLS <target>
+
+  Purpose: 
+        Resets targeted character's kills to 0.
