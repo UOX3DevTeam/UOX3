@@ -617,10 +617,11 @@ void cMagic::SbOpenContainer( UOXSOCKET s )
 	i = calcItemFromSer( serial );
 	if (i!=-1)
 	{
-		if ((items[i].type==9))
+		if ( items[i].type==9 )
 		{
-			backpack(s,buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-		} else sysmessage(s,"That is not a spellbook.");
+			backpack( s, serial );
+		} else 
+			sysmessage(s,"That is not a spellbook.");
 	}
 }
 
@@ -1134,7 +1135,6 @@ void cMagic::PFireballTarget(int i, int k, int j) //j = % dammage
 	int dmg;
 	movingeffect(i, k, 0x36, 0xD5, 0x05, 0x00, 0x01);
 	soundeffect2(i, 0x1, 0x5E);
-	//dmg=(int)(((float)chars[i].hp/100) * j);
 	dmg=(int)(((float)chars[k].hp/100 ) * j );
 	DirectDamage(k, dmg);
 }
@@ -1154,7 +1154,7 @@ void cMagic::SpellFail( UOXSOCKET s )
 	if( currentSpellType[s] == 0 ) 
 		NewDelReagents( currchar[s], spells[chars[currchar[s]].spellCast].reags );
 	staticeffect(currchar[s], 0x37, 0x35, 0, 30);
-	soundeffect2(currchar[s], 0x00, 0x5C);
+	soundeffects(s, 0x00, 0x5C, true);
 	npcemote(s, currchar[s], "The spell fizzles.", 0);
 }
 
@@ -2995,7 +2995,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 											{
 												if (chars[ii].npc) npcattacktarget(currchar[s],ii);
 												bolteffect(ii);
-												soundeffect2(currchar[s], 0x00, 0x29); //Homey fix for chainlightning sound
+												soundeffects( s, 0x00, 0x29, true); 
 												int def, att;
 												if( CheckMagicReflect( ii ) )
 												{
@@ -3418,7 +3418,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 			teleport(currchar[s]);
 			impowncreate(s, currchar[s], 0);
 			
-			soundeffect2(currchar[s], 0x02, 0x03);
+			soundeffects(s, 0x02, 0x03, true);
 			tempeffect(currchar[s],currchar[s],19,0,0,0);
 			
 			break;
@@ -4105,7 +4105,7 @@ void cMagic::Polymorph(int s, int gmindex, int creaturenumber)
 	id1=k>>8;
 	id2=k%256;
 	
-	soundeffect2(currchar[s], 0x02, 0x0F);
+	soundeffects( s, 0x02, 0x0F, true);
 	tempeffect(currchar[s],currchar[s],18,id1,id2,0);
 	
 	teleport(currchar[s]);

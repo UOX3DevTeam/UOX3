@@ -126,7 +126,7 @@ int cCombat::GetArrowType( int j )
 
 
 //NEW FUNCTION -- AntiChrist merging codes -- (24/6/99)
-void cCombat::ItemCastSpell(int s, int c, int i)//S=Socket c=Char # Target i=Item // Itemid
+void cCombat::ItemCastSpell(UOXSOCKET s, int c, int i)//S=Socket c=Char # Target i=Item // Itemid
 {
 	if( i == -1 || s > now ) 
 		return;
@@ -161,7 +161,7 @@ void cCombat::ItemCastSpell(int s, int c, int i)//S=Socket c=Char # Target i=Ite
 	case 51:	Magic->NPCFlameStrikeTarget( ourChar, c ); break;
 	default:
 		staticeffect( ourChar, 0x37, 0x35, 0, 30 );
-		soundeffect2( ourChar, 0x00, 0x5C );
+		soundeffects( s, 0x00, 0x5C, true );
 		break;
 	}
 	if( chars[ourChar].mn != tempmana )
@@ -1683,6 +1683,7 @@ void Kill( CHARACTER attack, CHARACTER defend )
 {
 	Karma( attack, defend, ( 0 - ( chars[defend].karma ) ) );
 	Fame( attack, chars[defend].fame );
+	chars[defend].dead = 1;
 	if( chars[attack].npcaitype == 4 && chars[defend].npc )  // changed from 0x40 to 4
 	{
 		unsigned short xid = (chars[defend].xid1<<8) + chars[defend].xid2;

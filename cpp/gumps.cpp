@@ -90,7 +90,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 			break;
 	}
 #ifdef DEBUG
-	ConOut("Type is... %i button is %i\n", type, button );
+	printf("Type is... %i button is %i\n", type, button );
 #endif
 
 	if( button == 1 )
@@ -163,7 +163,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 						curLock++;
 					}
 				}
-				ConOut("Locked %i characters from %i\n", curLock, acctno[b] );
+				printf("Locked %i characters from %i\n", curLock, acctno[b] );
 
 				if( online( j ) ) 
 					Network->Disconnect( j );
@@ -214,57 +214,57 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 	{
 		switch( button )
 		{
-		case 2:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new name for the item. (# = default name)" );	break;
-		case 3:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new ID number for the item in hex." );			break;
-		case 4:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new hue for the item in hex." );				break;
-		case 5:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new X coordinate for the item in decimal." );	break;
-		case 6:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new Y coordinate for the item in decimal." );	break;
-		case 7:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new Z coordinate for the item in decimal." );	break;
-		case 8:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new type for the item in decimal." );			break;
-		case 9:		entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new itemhand for the item in decimal." );		break;//Xuri
-		case 10:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new layer for the item in decimal." );			break;
-		case 11:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter the new amount for the item in decimal." );			break;
-		case 12:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 8, "Enter the new More for the item in hex." );				break;
-		case 13:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 8, "Enter the new MoreB for the item in hex." );				break;
-		case 14:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new stackable toggle for the item. (0/1)" );	break;
-		case 15:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new dyeable toggle for the item. (0/1)" );		break;
-		case 16:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new corpse toggle for the item. (0/1)" );		break;
-		case 17:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new LODAMAGE value for the item in decimal." );	break;//|
-		case 18:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new HIDAMAGE value for the item in decimal." );	break;//| both of these replace the old "attack value" (Xuri)
-		case 19:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new defence value for the item in decimal." );	break;
-		case 20:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new magic value for the item in decimal." );	break;
-		case 21:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter the new visible value for the item in decimal." );	break;
+		case 2:		entrygump( s, serial, type, button, 50, "Enter a new name for the item. (# = default name)" );		break;
+		case 3:		entrygump( s, serial, type, button, 4, "Enter the new ID number for the item in hex." );			break;
+		case 4:		entrygump( s, serial, type, button, 4, "Enter the new hue for the item in hex." );					break;
+		case 5:		entrygump( s, serial, type, button, 4, "Enter the new X coordinate for the item in decimal." );		break;
+		case 6:		entrygump( s, serial, type, button, 4, "Enter the new Y coordinate for the item in decimal." );		break;
+		case 7:		entrygump( s, serial, type, button, 4, "Enter the new Z coordinate for the item in decimal." );		break;
+		case 8:		entrygump( s, serial, type, button, 4, "Enter the new type for the item in decimal." );				break;
+		case 9:		entrygump( s, serial, type, button, 4, "Enter the new itemhand for the item in decimal." );			break;//Xuri
+		case 10:	entrygump( s, serial, type, button, 4, "Enter the new layer for the item in decimal." );			break;
+		case 11:	entrygump( s, serial, type, button, 4, "Enter the new amount for the item in decimal." );			break;
+		case 12:	entrygump( s, serial, type, button, 8, "Enter the new More for the item in hex." );					break;
+		case 13:	entrygump( s, serial, type, button, 8, "Enter the new MoreB for the item in hex." );				break;
+		case 14:	entrygump( s, serial, type, button, 1, "Enter the new stackable toggle for the item. (0/1)" );		break;
+		case 15:	entrygump( s, serial, type, button, 1, "Enter the new dyeable toggle for the item. (0/1)" );		break;
+		case 16:	entrygump( s, serial, type, button, 1, "Enter the new corpse toggle for the item. (0/1)" );			break;
+		case 17:	entrygump( s, serial, type, button, 5, "Enter the new LODAMAGE value for the item in decimal." );	break;//|
+		case 18:	entrygump( s, serial, type, button, 5, "Enter the new HIDAMAGE value for the item in decimal." );	break;//| both of these replace the old "attack value" (Xuri)
+		case 19:	entrygump( s, serial, type, button, 5, "Enter the new defence value for the item in decimal." );	break;
+		case 20:	entrygump( s, serial, type, button, 1, "Enter the new magic value for the item in decimal." );		break;
+		case 21:	entrygump( s, serial, type, button, 1, "Enter the new visible value for the item in decimal." );	break;
 		//start addons by Xuri
-		case 22:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new HP value for the item in decimal." );		break;
-		case 23:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Max HP value for the item in decimal." );	break;
-		case 24:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Speed value for the item in decimal." );	break;
-		case 25:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Rank value for the item in decimal." );		break;
-		case 26:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Value for the item in decimal." );			break;
-		case 27:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Good value for the item in decimal." );		break;
-		case 28:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Made Skill value for the item in decimal." );	break;
-		case 29:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter the new Creator name for the item." );				break;
+		case 22:	entrygump( s, serial, type, button, 5, "Enter the new HP value for the item in decimal." );			break;
+		case 23:	entrygump( s, serial, type, button, 5, "Enter the new Max HP value for the item in decimal." );		break;
+		case 24:	entrygump( s, serial, type, button, 5, "Enter the new Speed value for the item in decimal." );		break;
+		case 25:	entrygump( s, serial, type, button, 5, "Enter the new Rank value for the item in decimal." );		break;
+		case 26:	entrygump( s, serial, type, button, 5, "Enter the new Value for the item in decimal." );			break;
+		case 27:	entrygump( s, serial, type, button, 5, "Enter the new Good value for the item in decimal." );		break;
+		case 28:	entrygump( s, serial, type, button, 5, "Enter the new Made Skill value for the item in decimal." );	break;
+		case 29:	entrygump( s, serial, type, button, 50, "Enter the new Creator name for the item." );				break;
 		//end addons by Xuri
-		default:	ConOut( "Unknown button pressed %i", button );																		break;
+		default:	printf( "Unknown button pressed %i", button );														break;
 		}
 	}
 	if( type == 2 ) // Char
 	{
 		switch( button )
 		{
-		case 2:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new Name for the character." );							break;
-		case 3:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new Title for the character." );							break;
-		case 4:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new X coordinate for the character in decimal." );			break;
-		case 5:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Y coordinate for the character in decimal." );			break;
-		case 6:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Z coordinate for the character in decimal." );			break;
-		case 7:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Direction for the character in decimal." );				break;
-		case 8:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Body Type for the character in hex." );					break;
-		case 9:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Skin Hue for the character in hex." );					break;
-		case 10: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Defence value for the character in decimal." );		break;	
-		case 11: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Race number for the character in decimal." );			break;	
-		case 12: entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter a new Hunger value for the character in decimal(0-6).");		break;			
-		case 13: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Strength value for the character in decimal.");		break;			
-		case 14: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Dexterity value for the character in decimal.");		break;			
-		case 15: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Intelligence value for the character in decimal.");	break;
+		case 2:	entrygump( s, serial, type, button, 50, "Enter a new Name for the character." );							break;
+		case 3:	entrygump( s, serial, type, button, 50, "Enter a new Title for the character." );							break;
+		case 4:	entrygump( s, serial, type, button, 4, "Enter a new X coordinate for the character in decimal." );			break;
+		case 5:	entrygump( s, serial, type, button, 4, "Enter a new Y coordinate for the character in decimal." );			break;
+		case 6:	entrygump( s, serial, type, button, 4, "Enter a new Z coordinate for the character in decimal." );			break;
+		case 7:	entrygump( s, serial, type, button, 3, "Enter a new Direction for the character in decimal." );				break;
+		case 8:	entrygump( s, serial, type, button, 4, "Enter a new Body Type for the character in hex." );					break;
+		case 9:	entrygump( s, serial, type, button, 4, "Enter a new Skin Hue for the character in hex." );					break;
+		case 10: entrygump( s, serial, type, button, 3, "Enter a new Defence value for the character in decimal." );		break;	
+		case 11: entrygump( s, serial, type, button, 3, "Enter a new Race number for the character in decimal." );			break;	
+		case 12: entrygump( s, serial, type, button, 1, "Enter a new Hunger value for the character in decimal(0-6).");		break;			
+		case 13: entrygump( s, serial, type, button, 5, "Enter a new Strength value for the character in decimal.");		break;			
+		case 14: entrygump( s, serial, type, button, 5, "Enter a new Dexterity value for the character in decimal.");		break;			
+		case 15: entrygump( s, serial, type, button, 5, "Enter a new Intelligence value for the character in decimal.");	break;
 		}
 	}
 	if (type==3) // Townstones
@@ -614,7 +614,7 @@ void cGump::Menu(int s, int m)
 	closescript();
 //	sprintf(temp, "Type set to %i", gump1[10]);
 //	sysmessage(s, temp);
-//	ConOut("%s\n", temp);
+//	printf("%s\n", temp);
 }
 
 void whomenu(int s, int type) //WhoList--By Homey-- Thx Zip and Taur helping me on this
@@ -1123,11 +1123,13 @@ void tweakmenu(int s, int j, int type)
 	while (script1[0]!='}');
 }
 
-void entrygump(int s, unsigned char tser1, unsigned char tser2, unsigned char tser3, unsigned char tser4, char type, char index, short int maxlength, char *text1)
+void entrygump(UOXSOCKET s, SERIAL serial, char type, char index, short int maxlength, char *text1)
 {
 	short int length;
-	char textentry1[12]="\xAB\x01\x02\x01\x02\x03\x04\x00\x01\x12\x34";
+	unsigned char textentry1[12]="\xAB\x01\x02\x01\x02\x03\x04\x00\x01\x12\x34";
 	char textentry2[9]="\x01\x01\x00\x00\x12\x34\x12\x34";
+	unsigned char tser1, tser2, tser3, tser4;
+	splitSerial(serial, tser1, tser2, tser3, tser4);
 	
 	sprintf(temp, "(%i chars max)", maxlength);
 	length=11+strlen(text1)+1+8+strlen(temp)+1;
@@ -1165,7 +1167,7 @@ void choice(int s) // Choice from GMMenu, Itemmenu or Makemenu received
 	sub=(buffer[s][7]<<8)+buffer[s][8];
 	
     //printf("main:%i sub:%i \n",main,sub);
-	// if ((main!=0) && (sub==0)) ConOut("add menu (gm menu) closed- including its submenus\n");
+	// if ((main!=0) && (sub==0)) printf("add menu (gm menu) closed- including its submenus\n");
 
 	if ((main>=8000)&&(main<=8100)) Guilds->GumpChoice(s,main,sub);
 	
@@ -1291,7 +1293,7 @@ void choice(int s) // Choice from GMMenu, Itemmenu or Makemenu received
 				itemmake[s].maxrank = 10;
 			}
 
-			//   ConOut("%s %i\n",script1,str2num(script2));
+			//   printf("%s %i\n",script1,str2num(script2));
 			if (i==sub)
 			{
 				closescript();

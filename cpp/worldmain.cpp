@@ -944,10 +944,7 @@ void CWorldMain::loadchar( CHARACTER x ) // Load a character from WSC
 			else if( !strcmp( script1, "OWN" ) )
 			{
 				i = str2num( script2 );
-				chars[x].own1 = (unsigned char)(i>>24);
-				chars[x].own2 = (unsigned char)(i>>16);
-				chars[x].own3 = (unsigned char)(i>>8);
-				chars[x].own4 = (unsigned char)(i%256);
+				splitSerial(i, chars[x].own1, chars[x].own2, chars[x].own3, chars[x].own4);
 				chars[x].ownserial = i;
 				if( chars[x].ownserial != -1 ) 
 				{
@@ -1024,10 +1021,7 @@ void CWorldMain::loadchar( CHARACTER x ) // Load a character from WSC
 			else if( !strcmp( script1, "SPAWN" ) )
 			{
 				i = str2num( script2 );
-				chars[x].spawn1=(unsigned char)(i>>24);
-				chars[x].spawn2=(unsigned char)(i>>16);
-				chars[x].spawn3=(unsigned char)(i>>8);
-				chars[x].spawn4=(unsigned char)(i%256);
+				splitSerial(i, chars[x].spawn1, chars[x].spawn2, chars[x].spawn3, chars[x].spawn4);
 				chars[x].spawnserial=i;
 				if( chars[x].spawn1 < 0x40 ) //Not an item (region spawn) //New -- Zippy respawn area (in reality, it's < 0x40, all item serials START at 0x40
 					spawnregion[chars[x].spawn3].current++;                                                       
@@ -1346,20 +1340,14 @@ void CWorldMain::loaditem (ITEM x) // Load an item from WSC
 				i = str2num( script2 );
 				if( itemcount2 <= i ) 
 					itemcount2 = i + 1;
-				items[x].ser1 = (unsigned char)(i>>24);
-				items[x].ser2 = (unsigned char)(i>>16);
-				items[x].ser3 = (unsigned char)(i>>8);
-				items[x].ser4 = (unsigned char)(i%256);
+				splitSerial(i, items[x].ser1, items[x].ser2, items[x].ser3, items[x].ser4);
 				items[x].serial = i; //Tauriel
 				setptr( &itemsp[i%HASHMAX], x ); //set item in pointer array
 			}
 			else if( !strcmp( script1, "SPAWN" ) )
 			{
 				i = str2num( script2 );
-				items[x].spawn1 = (unsigned char)(i>>24);
-				items[x].spawn2 = (unsigned char)(i>>16);
-				items[x].spawn3 = (unsigned char)(i>>8);
-				items[x].spawn4 = (unsigned char)(i%256);
+				splitSerial(i, items[x].spawn1, items[x].spawn2, items[x].spawn3, items[x].spawn4);
 				items[x].spawnserial = i;
 				setptr( &spawnsp[i%HASHMAX], x ); //set item in pointer array
 			}

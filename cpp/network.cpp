@@ -306,7 +306,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 	int i;
 	unsigned long int j, tlen, t;
 	unsigned long int ip;
-	char nopass[3] = "\x82\x03";
+	char errorpacket[3] = "\x82\x03";
 	char acctused[3]="\x82\x01";
 	char newlist1[7]="\xA8\x01\x23\xFF\x00\x01";
 	char newlist2[41]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
@@ -324,24 +324,28 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 		{
 		case BAD_PASSWORD:
 			acctno[s] = -1;
-			xSend( s, nopass, 2, 0 );
+			errorpacket[2] = 3;
+			xSend( s, errorpacket, 2, 0 );
 			Disconnect( s );
 			break;
 		case ACCOUNT_BANNED:
 			acctno[s] = -1;
-			xSend( s, acctblock, 2, 0 );
+			errorpacket[2] = 2;
+			xSend( s, errorpacket, 2, 0 );
 			Disconnect( s );
 			break;
 		case ACCOUNT_WIPE:
 			acctno[s] = -1;
-			xSend( s, noaccount, 2, 0 );
+			errorpacket[2] = 0;
+			xSend( s, errorpacket, 2, 0 );
 			Disconnect( s );
 			break;
 		case LOGIN_NOT_FOUND:
 			if( !server_data.auto_a_create )
 			{
 				acctno[s] = -1;
-				xSend( s, noaccount, 2, 0 );
+				errorpacket[2] = 0;
+				xSend( s, errorpacket, 2, 0 );
 				Disconnect( s );
 			}
 			else
@@ -556,7 +560,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 	char verify2[63]="\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 #endif
 #endif
-	char nopass[3] = "\x82\x03";
+	char errorpacket[3] = "\x82\x03";
 	
 	acctno[s] = -1;
 	pSplit((char *)&buffer[s][35]);
@@ -572,7 +576,8 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			ConOut("No account!\n");
 #endif
 			acctno[s] = -1;
-			xSend( s, noaccount, 2, 0 );
+			errorpacket[2] = 0;
+			xSend( s, errorpacket, 2, 0 );
 			Disconnect( s );
 			return;
 		case BAD_PASSWORD:
@@ -580,7 +585,8 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			ConOut("No password!\n");
 #endif
 			acctno[s]=-1;
-			xSend(s, nopass, 2, 0);
+			errorpacket[2] = 3;
+			xSend(s, errorpacket, 2, 0);
 			Disconnect(s);
 			return;
 		case ACCOUNT_BANNED:
@@ -588,14 +594,16 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			ConOut( "Player blocked!\n" );	// banned
 #endif
 			acctno[s]=-1;
-			xSend(s, acctblock, 2, 0);
+			errorpacket[2] = 2;
+			xSend(s, errorpacket, 2, 0);
 			Disconnect(s);
 			return;
 		default:
 #ifdef DEBUG_NETWORK
 			ConOut("No account!\n");
 #endif
-			xSend(s, noaccount, 2, 0);
+			errorpacket[2] = 0;
+			xSend(s, errorpacket, 2, 0);
 			Disconnect(s);
 			return;
 		}

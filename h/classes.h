@@ -125,7 +125,7 @@ public:
 class cCombat
 {
 private:
-	void ItemCastSpell(int s, int c, int i);
+	void ItemCastSpell(UOXSOCKET s, int c, int i);
 	int TimerOk(int c);
 	void ItemSpell(int attacker, int defender);
 	void doSoundEffect( CHARACTER p, int fightskill, ITEM weapon ); // AntiChrist
@@ -168,7 +168,7 @@ public:
 	void SetTriggerType(int s);
 	void SetTriggerWord(int s);
 	void SetNPCTrigger(int s);
-	void DupeItem(int s, int i, int amount);
+	void DupeItem(UOXSOCKET s, int i, int amount);
 	void Possess(int s);
 	void Load( void );
 	signed int FindIndex( char *toFind );
@@ -586,8 +586,8 @@ private:
 	void MoveToBagTarget(int s);
 	void SellStuffTarget(int s);
 	void GmOpenTarget(int s);
-	void StaminaTarget(int s);
-	void ManaTarget(int s);
+	void StaminaTarget( UOXSOCKET s );
+	void ManaTarget( UOXSOCKET s );
 	void MakeShopTarget(int s);
 	void AttackTarget( UOXSOCKET s );
 	void FollowTarget(int s);
@@ -602,7 +602,7 @@ private:
 	void SetSpAttackTarget(int s);
 	void SetPoisonTarget(int s);
 	void SetPoisonedTarget(int s);
-	void FullStatsTarget(int s);
+	void FullStatsTarget( UOXSOCKET s );
 	void SetAdvObjTarget(int s);
 	void CanTrainTarget(int s);
 	void SetSplitTarget(int s);
@@ -615,7 +615,7 @@ private:
 	void IncXTarget(int s);
 	void IncYTarget(int s);
 	void IncZTarget( UOXSOCKET s );
-	void BoltTarget(int s);
+	void BoltTarget( UOXSOCKET s );
 	void MovableTarget(int s);
 	void SetDirTarget(int s);
 	void HouseOwnerTarget(int s);

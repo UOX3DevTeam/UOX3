@@ -344,10 +344,7 @@ void cItem::InitItem(int nItem, char ser)
 
 	if (ser)
 	{
-		items[nItem].ser1=(unsigned char)(itemcount2>>24); // Item serial number
-		items[nItem].ser2=(unsigned char)(itemcount2>>16);
-		items[nItem].ser3=(unsigned char)(itemcount2>>8);
-		items[nItem].ser4=(unsigned char)(itemcount2%256);
+		splitSerial(itemcount2, items[nItem].ser1, items[nItem].ser2, items[nItem].ser3, items[nItem].ser4);
 		items[nItem].serial=itemcount2;
 		setptr(&itemsp[itemcount2%HASHMAX], nItem);
 		itemcount2++;

@@ -50,13 +50,13 @@ void cGuilds::StonePlacement(int s)
 	{
 		if (chars[currchar[s]].guildnumber!=0)
 		{
-			itemmessage(s,"You are already in a guild.",items[chars[currchar[s]].fx1].ser1,items[chars[currchar[s]].fx1].ser2,items[chars[currchar[s]].fx1].ser3,items[chars[currchar[s]].fx1].ser4);
+			itemmessage( s, "You are already in a guild.", items[chars[currchar[s]].fx1].serial );
 			return;
 		}
 		guildnumber=SearchSlot(0,1);
 		if (guildnumber==-1)
 		{
-			itemmessage(s,"There are already enough guildstones placed.",items[chars[currchar[s]].fx1].ser1,items[chars[currchar[s]].fx1].ser2,items[chars[currchar[s]].fx1].ser3,items[chars[currchar[s]].fx1].ser4);
+			itemmessage( s, "There are already enough guildstones placed.", items[chars[currchar[s]].fx1].serial );
 			return;
 		}
 		chars[currchar[s]].guildnumber=guildnumber;
@@ -87,7 +87,7 @@ void cGuilds::StonePlacement(int s)
 		Items->DeleItem(chars[currchar[s]].fx1);
 		guilds[guildnumber].stone=items[stone].serial;
 		guilds[guildnumber].master=chars[currchar[s]].serial;
-		entrygump(s,chars[currchar[s]].ser1,chars[currchar[s]].ser2,chars[currchar[s]].ser3,chars[currchar[s]].ser4,100,1,40,"Enter a name for the guild.");
+		entrygump( s, chars[currchar[s]].serial, 100, 1, 40, "Enter a name for the guild." );
 	}
 	else
 	{
@@ -119,7 +119,7 @@ void cGuilds::StonePlacement(int s)
 			guilds[guildnumber].stone=items[stone].serial;
 		}
 		else 
-			itemmessage(s,"You are not the guildmaster of this guild. Only the guildmaster may use this guildstone teleporter.",items[chars[currchar[s]].fx1].ser1,items[chars[currchar[s]].fx1].ser2,items[chars[currchar[s]].fx1].ser3,items[chars[currchar[s]].fx1].ser4);
+			itemmessage(s,"You are not the guildmaster of this guild. Only the guildmaster may use this guildstone teleporter.",items[chars[currchar[s]].fx1].serial );
 	}
 	if( stone > -1 ) 
 		mapRegions->AddItem( stone );
@@ -141,7 +141,7 @@ void cGuilds::Menu(int s, int page)
 	int guildnumber = SearchByStone(s);
 	if ( guilds[guildnumber].stone != items[stone].serial && !(chars[currchar[s]].priv&1) )
 	{
-		itemmessage(s, "You are not a member of this guild. Ask an existing guildmember to invite you into this guild.", items[stone].ser1, items[stone].ser2, items[stone].ser3, items[stone].ser4);
+		itemmessage(s, "You are not a member of this guild. Ask an existing guildmember to invite you into this guild.", items[stone].serial);
 		return;
 	}
 	
@@ -818,6 +818,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 	unsigned char ser2 = chars[currchar[s]].ser2;
 	unsigned char ser3 = chars[currchar[s]].ser3;
 	unsigned char ser4 = chars[currchar[s]].ser4;
+	SERIAL serial = chars[currchar[s]].serial;
 	char text[200];
 
 	int guildnumber = SearchByStone(s);
@@ -849,8 +850,8 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 	case 8002:												// guildmaster menu
 		switch (sub)
 		{
-		case 1:  entrygump(s,ser1,ser2,ser3,ser4,100,1,40,"Enter a new guildname.");		break;
-		case 2:  entrygump(s,ser1,ser2,ser3,ser4,100,2,3,"Enter a new guild abbreviation.");break;
+		case 1:  entrygump(s,serial,100,1,40,"Enter a new guildname.");						break;
+		case 2:  entrygump(s,serial,100,2,3,"Enter a new guild abbreviation.");				break;
 		case 3:  Menu(s,3);																	break;
 		case 4:  Menu(s,4);																	break;
 		case 5:  Menu(s,8);																	break;
@@ -859,7 +860,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 		case 8:  Menu(s,15);																break;
 		case 9:  Menu(s,10);																break;
 		case 10: Menu(s,9);																	break;
-		case 11: entrygump(s,ser1,ser2,ser3,ser4,100,3,20,"Enter new guildmastertitle.");	break;
+		case 11: entrygump(s,serial,100,3,20,"Enter new guildmastertitle.");				break;
 		case 12: Menu(s,12);																break;
 		case 13: StoneMove(s);																break;
 		case 14: Menu(s,1);																	break;
@@ -872,8 +873,8 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 		return;
 	case 8004:
 		if (sub==1) Menu(s,2);
-		if (sub==2) entrygump(s,ser1,ser2,ser3,ser4,100,5,50,"Enter a new charter.");
-		if (sub==3)	entrygump(s,ser1,ser2,ser3,ser4,100,6,50,"Enter a new URL.");
+		if (sub==2) entrygump(s,serial,100,5,50,"Enter a new charter.");
+		if (sub==3)	entrygump(s,serial,100,6,50,"Enter a new URL.");
 		return;
 	case 8005:													// view charter menu
 		if (sub==1) Menu(s,1);
@@ -979,7 +980,7 @@ void cGuilds::GumpChoice(int s,int main,int sub)
 				if (sub==counter)
 				{
 					guilds[guildnumber].priv = calcCharFromSer( guilds[guildnumber].member[member] );
-					entrygump(s,ser1,ser2,ser3,ser4,100,3,20,"Enter new guildtitle.");
+					entrygump(s,serial,100,3,20,"Enter new guildtitle.");
 					return;
 				}
 			}		

@@ -1346,7 +1346,7 @@ void cTargets::GhostTarget(int s)
 }
 
 
-void cTargets::BoltTarget(int s)
+void cTargets::BoltTarget(UOXSOCKET s)
 {
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i = calcCharFromSer( serial );
@@ -1354,7 +1354,7 @@ void cTargets::BoltTarget(int s)
 	if(i!=-1)
 	{
 		bolteffect(i);
-		soundeffect2(i, 0x00, 0x29);
+		soundeffects(s, 0x00, 0x29, true);
 	}
 }
 
@@ -2777,14 +2777,14 @@ void cTargets::GmOpenTarget(int s)
 		if (i!=-1)
 			if ((items[i].contserial==serial) && (items[i].layer==addmitem[s]))
 			{
-				backpack(s,items[i].ser1,items[i].ser2,items[i].ser3,items[i].ser4);
+				backpack(s,items[i].serial );
 				return;
 			}
 	}
 	sysmessage(s,"No object was found at that layer on that character");
 }
 
-void cTargets::StaminaTarget(int s)
+void cTargets::StaminaTarget(UOXSOCKET s)
 {
 	int i,serial;
 	
@@ -2793,7 +2793,7 @@ void cTargets::StaminaTarget(int s)
 	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-		soundeffect2(i, 0x01, 0xF2);
+		soundeffects(s, 0x01, 0xF2, true);
 		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
 		chars[i].stm=chars[i].dx;
 		updatestats(i, 2);
@@ -2802,7 +2802,7 @@ void cTargets::StaminaTarget(int s)
 	sysmessage(s,"That is not a person.");
 }
 
-void cTargets::ManaTarget(int s)
+void cTargets::ManaTarget(UOXSOCKET s)
 {
 	int i,serial;
 	
@@ -2811,7 +2811,7 @@ void cTargets::ManaTarget(int s)
 	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-		soundeffect2(i, 0x01, 0xF2);
+		soundeffects(s, 0x01, 0xF2, true);
 		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
 		chars[i].mn=chars[i].in;
 		updatestats(i, 1);
@@ -3133,7 +3133,7 @@ void cTargets::SetPoisonedTarget(int s)
 	}
 }
 
-void cTargets::FullStatsTarget(int s)
+void cTargets::FullStatsTarget(UOXSOCKET s)
 {
 	int i,serial;
 	
@@ -3142,7 +3142,7 @@ void cTargets::FullStatsTarget(int s)
 	i = calcCharFromSer( serial );
 	if (i!=-1)
 	{
-		soundeffect2(i, 0x01, 0xF2);
+		soundeffects(s, 0x01, 0xF2, true);
 		staticeffect(i, 0x37, 0x6A, 0x09, 0x06);
 		chars[i].mn=chars[i].in;
 		chars[i].hp=chars[i].st;
@@ -3516,8 +3516,7 @@ void cTargets::HouseOwnerTarget(int s) // crackerjack 8/10/99 - change house own
 		items[house].ownserial=o_serial;
 		setptr(&ownsp[items[sign].ownserial%HASHMAX], house);
 
-		killkeys(items[house].ser1,items[house].ser2,
-			items[house].ser3, items[house].ser4);
+		killkeys(items[house].serial);
 
 		os=-1;
 		for(i=0;i<now&&os==-1;i++)

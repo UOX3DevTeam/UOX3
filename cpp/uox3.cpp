@@ -1216,7 +1216,7 @@ void soundeffects( UOXSOCKET s, unsigned char a, unsigned char b, bool bAllHear 
 	if( bAllHear )
 	{
 		for( int i = 0; i < now; i++ )
-			if( ( perm[i] ) && ( inrange1p( s, i ) ) )
+			if( ( perm[i] ) && ( inrange1( s, i ) ) ) //inrange1p expects a CHARACTER, not a UOXSOCKET
 			{
 				Network->xSend( i, sfx, 12, 0 );
 			}
@@ -1337,7 +1337,7 @@ void sysbroadcast( char *txt ) // System broadcast in bold text
 
 //char sysname[31]="System\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-void __cdecl sysmessage(int s, char *txt, ...) // System message (In lower left corner)
+void __cdecl sysmessage(UOXSOCKET s, char *txt, ...) // System message (In lower left corner)
 {
 	va_list argptr;
 	if( s == -1) 
@@ -1366,9 +1366,11 @@ void __cdecl sysmessage(int s, char *txt, ...) // System message (In lower left 
 	Network->xSend(s, msg, strlen(msg)+1, 0);
 }
 
-void itemmessage(UOXSOCKET s, char *txt, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char loColour, unsigned char hiColour ) // The message when an item is clicked
+void itemmessage(UOXSOCKET s, char *txt, SERIAL serial, unsigned char loColour, unsigned char hiColour ) // The message when an item is clicked
 {
 	int tl;
+	unsigned char a1, a2, a3, a4;
+	splitSerial( serial, a1, a2, a3, a4);
 	tl = 44 + strlen(txt)+1;
 	talk[1] = tl>>8;
 	talk[2] = tl%256;
@@ -1420,13 +1422,16 @@ void wornitems( UOXSOCKET s, CHARACTER j) // Send worn items of player j
 	}
 }
 
-void backpack(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4) // Send Backpack (with items)
+void backpack(UOXSOCKET s, SERIAL serial) // Send Backpack (with items)
 {
-	int i, count=0,serial,serhash,ci;
-	char bpopen[13]="\x24\x40\x0B\x00\x1A\x00\x3C\x3C\x00\x05\x00\x00";
-	serial=calcserial(a1,a2,a3,a4);
-	if( serial == -1 ) return;
-	serhash=serial%HASHMAX;
+	int i, count=0, serhash,ci;
+	unsigned char bpopen[13]="\x24\x40\x0B\x00\x1A\x00\x3C\x3C\x00\x05\x00\x00";
+	unsigned char a1, a2, a3, a4;
+
+	if( serial == -1 ) 
+		return;
+	serhash = serial%HASHMAX;
+	splitSerial(serial, a1, a2, a3, a4);
 	for (i=0;i<contsp[serhash].max;i++)
 	{
 		ci=contsp[serhash].pointer[i];
@@ -1644,14 +1649,15 @@ void backpack(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3,
    // Network->xSend(s, restart, 2, 0);
 }
 
-void backpack2(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4) // Send corpse stuff
+void backpack2(UOXSOCKET s, SERIAL serial) // Send corpse stuff
 {
-	int i, count=0, count2,serial,serhash,ci;
+	int i, count=0, count2, serhash,ci;
 	char bpopen2[6]="\x3C\x00\x05\x00\x00";
 	char display1[8]="\x89\x00\x0D\x40\x01\x02\x03";
 	char display2[6]="\x01\x40\x01\x02\x03";
-	
-	serial=calcserial(a1,a2,a3,a4);
+	unsigned char a1, a2, a3, a4;
+
+	splitSerial(serial, a1, a2, a3, a4);
 	serhash=serial%HASHMAX;
 	for (i=0;i<contsp[serhash].max;i++)
 	{
@@ -1955,7 +1961,7 @@ void senditem(UOXSOCKET s, ITEM i) // Send items (on ground)
 			Network->xSend(s, itmput, 19+dir, 0);
 		if ((items[i].id1==0x20)&&(items[i].id2==0x06))
 		{
-			backpack2(s, items[i].ser1, items[i].ser2, items[i].ser3, items[i].ser4);
+			backpack2(s, items[i].serial);
 		}
 	}
 }
@@ -2038,7 +2044,7 @@ void senditem_lsd(UOXSOCKET s, ITEM i,char color1, char color2, int x, int y, si
 		
 		if ((items[i].id1==0x20)&&(items[i].id2==0x06))
 		{
-			backpack2(s, items[i].ser1, items[i].ser2, items[i].ser3, items[i].ser4);
+			backpack2(s, items[i].serial );
 		}
 	}
 	
@@ -2108,9 +2114,9 @@ void do_lsd(UOXSOCKET s)
 		
 		if (rand()%33==0) 
 		{
-			if (rand()%10>3) soundeffect5(s, 0x00, 0xF8); // lsd sound :)
-			else { int snd=rand()%19; if (snd>9) soundeffect5(s,0x01,snd-10);
-			else soundeffect5(s,0,246+snd);
+			if (rand()%10>3) soundeffects(s, 0x00, 0xF8, false); // lsd sound :)
+			else { int snd=rand()%19; if (snd>9) soundeffects(s,0x01,snd-10, false);
+			else soundeffects(s,0,246+snd, false);
 			}
 		}
 	} 
@@ -2279,7 +2285,7 @@ void showcname (int s, int i, char b) // Singleclick text for a character
 	a2 = chars[i].ser2;
 	a3 = chars[i].ser3;
 	a4 = chars[i].ser4;
-    if (chars[i].squelched) itemmessage(s, " [squelched]",a1,a2,a3,a4);
+    if (chars[i].squelched) itemmessage(s, " [squelched]",chars[i].serial);
 	
 	if ((chars[currchar[s]].priv&8)||b)
 	{
@@ -2292,7 +2298,7 @@ void showcname (int s, int i, char b) // Singleclick text for a character
 			if (chars[currchar[s]].priv&1)
 			{
 				sprintf(temp, "[%x %x %x %x]", a1, a2, a3, a4 );
-				itemmessage(s,temp,a1,a2,a3,a4);
+				itemmessage(s,temp,chars[i].serial);
 			}
 			if (!online(i)) sprintf(temp, "%s (OFF)", chars[i].name);
 			else strcpy(temp, chars[i].name);
@@ -2713,7 +2719,7 @@ void explodeitem(int s, unsigned int nItem)
 		items[nItem].x=chars[c].x;
 		items[nItem].y=chars[c].y;
 		items[nItem].z=chars[c].z;
-		soundeffect2(currchar[s], 0x02, 0x07);
+		soundeffects(s, 0x02, 0x07, true);
 		
 	}
 	else
@@ -3431,7 +3437,7 @@ void get_item(int s) // Client grabs an item
 			else
 			{
 				items[i].layer=0;
-				if (items[i].cont1!=0xff) soundeffect5(s,0x00,0x57);
+				if (items[i].cont1!=0xff) soundeffects(s,0x00,0x57, false);
 				if (items[i].amount>1)
 				{
 					amount=(buffer[s][5]<<8)+buffer[s][6];
@@ -4171,7 +4177,7 @@ void pack_item(int s) // Item is put into container
 				Magic->AddSpell( nCont, targSpellNum );
 			}
 		}
-		soundeffect5( s, 0x00, 0x42 );	// make dropping noise
+		soundeffects( s, 0x00, 0x42, false );	// make dropping noise
 		if( items[nItem].amount > 1 )
 		{
 			items[nItem].amount--;
@@ -10344,7 +10350,7 @@ void openbank(int s, int i)
 						wearitem[13]=items[j].color1;
 						wearitem[14]=items[j].color2;
 						Network->xSend(s, wearitem, 15, 0);
-						backpack(s, items[j].ser1, items[j].ser2, items[j].ser3, items[j].ser4);
+						backpack(s, items[j].serial );
 						return;
 					}
 				} else// else if not using specialbank
@@ -10363,7 +10369,7 @@ void openbank(int s, int i)
 					wearitem[13]=items[j].color1;
 					wearitem[14]=items[j].color2;
 					Network->xSend(s, wearitem, 15, 0);
-					backpack(s, items[j].ser1, items[j].ser2, items[j].ser3, items[j].ser4);
+					backpack(s, items[j].serial );
 					return;
 				}
 				
@@ -10397,7 +10403,7 @@ void openbank(int s, int i)
 	wearitem[13]=items[c].color1;
 	wearitem[14]=items[c].color2;
 	Network->xSend(s, wearitem, 15, 0);
-	backpack(s, items[c].ser1, items[c].ser2, items[c].ser3, items[c].ser4);
+	backpack(s, items[c].serial );
 }
 
 //
@@ -10446,7 +10452,7 @@ void openspecialbank( int s, int i )
 					wearitem[13] = items[j].color1;
 					wearitem[14] = items[j].color2;
 					Network->xSend( s, wearitem, 15, 0 );
-					backpack( s, items[j].ser1, items[j].ser2, items[j].ser3, items[j].ser4 );
+					backpack( s, items[j].serial );
 					return;
 				}
 			}
@@ -10480,7 +10486,7 @@ void openspecialbank( int s, int i )
 	wearitem[13] = items[c].color1;
 	wearitem[14] = items[c].color2;
 	Network->xSend( s, wearitem, 15, 0 );
-	backpack( s, items[c].ser1, items[c].ser2, items[c].ser3, items[c].ser4 );
+	backpack( s, items[c].serial );
 }
 
 
@@ -13026,7 +13032,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		}
 		tempeffect( p, p, 20, 60+RandomNum( 1, 120 ), 0, 0 ); // trigger effect
 		staticeffect( p, 0x37, 0x6A, 0x09, 0x06 ); // Sparkle effect
-		soundeffect5( calcSocketFromChar( p ), 0x00, 0xF8 ); // lsd sound :)
+		soundeffects( calcSocketFromChar( p ), 0x00, 0xF8, false ); // lsd sound :)
 		break;
 							
 	default:
@@ -18013,4 +18019,12 @@ void UseHairDye( UOXSOCKET s, short int colour, int x )	// s for socket, colour 
 		RefreshItem( beardobject );
 	}
 	Items->DeleItem( x );
+}
+
+void splitSerial ( SERIAL serial, unsigned char &a1, unsigned char &a2, unsigned char &a3, unsigned char &a4)
+{
+	a1 = (unsigned char) (serial>>24);
+	a2 = (unsigned char) (serial>>16);
+	a3 = (unsigned char) (serial>> 8);
+	a4 = (unsigned char) (serial%256);
 }

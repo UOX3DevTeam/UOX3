@@ -1001,7 +1001,7 @@ void cCommands::MakePlace(int s, int i) // Decode a teleport location number int
 }
 
 
-void cCommands::DupeItem(int s, int i, int amount)
+void cCommands::DupeItem(UOXSOCKET s, int i, int amount)
 {
 	int p, c;
 	p=packitem(currchar[s]);
@@ -1012,10 +1012,7 @@ void cCommands::DupeItem(int s, int i, int amount)
 		Items->InitItem(c,0);
 		//Tauriel - Crap... another one that can't use the standard stuff. (2nd so far)
 		memcpy(&items[c], &items[i], sizeof(item_st));
-		items[c].ser1 = (unsigned char)(itemcount2>>24);
-		items[c].ser2 = (unsigned char)(itemcount2>>16);
-		items[c].ser3 = (unsigned char)(itemcount2>>8);
-		items[c].ser4 = (unsigned char)(itemcount2%256);  //lb
+		splitSerial(itemcount2, items[c].ser1, items[c].ser2, items[c].ser3, items[c].ser4);
 		items[c].serial=itemcount2;
 		// This is... bad, to say the least.  It doesn't unset itself via the old serial
 		// I don't think (needs testing) that we really need to set it's serial some more
@@ -1030,7 +1027,6 @@ void cCommands::DupeItem(int s, int i, int amount)
 		
 		if (c==itemcount) itemcount++;
 		itemcount2++;
-//		for(j=0;j<now;j++) if (perm[j]) senditem(j, c);
 		RefreshItem( c ); // AntiChrist
 	}
 }

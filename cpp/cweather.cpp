@@ -481,18 +481,18 @@ void cWeatherAb::doPlayerWeather( UOXSOCKET s, unsigned char weathType )
 		break;
 	case 2:
 		if( rand()%2 )
-			soundeffect2( currchar[s], 0x00, 0x14 );
+			soundeffects( s, 0x00, 0x14, true );
 		else
-			soundeffect2( currchar[s], 0x00, 0x15 );
+			soundeffects( s, 0x00, 0x15, true );
 		Network->xSend( s, wsnow, 4, 0 );
 		break;
 	case 3:
 		raindroptime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( 3 + rand() % 3 ) );
 		Network->xSend( s, wrain, 4, 0 );
 		if( rand()%2 )
-			soundeffect2( currchar[s], 0x00, 0x14 );
+			soundeffects( s, 0x00, 0x14, true );
 		else
-			soundeffect2( currchar[s], 0x00, 0x15 );
+			soundeffects( s, 0x00, 0x15, true );
 		Network->xSend( s, wsnow, 4, 0 );
 		break;
 	default:		break;
@@ -505,6 +505,9 @@ void weather(int s, char bolt) // Send new weather to player
 	char wrain[5]="\x65\x01\x46\x00";
 	char wsnow[5]="\x65\x02\x46\xEC";
 	
+	if (s == -1)
+		return;
+
 	int i=calcCharFromSer(chars[currchar[s]].serial),n;
 	
 	for (int j=0;j<now;j++) 
@@ -523,17 +526,17 @@ void weather(int s, char bolt) // Send new weather to player
 	{
 		if (bolt)
 		{
-			n=1; /*n=66*/
+			n=1;
 			for (int a=0;a<n;a++) // reduce if too laggy (client only lag though)
 			{
 				if (rand()%2)
 				{
-					soundeffect2(i, 0x00, 0x28);
+					soundeffects(s, 0x00, 0x28, true);
 					bolteffect(i);
 				}
 				else
 				{
-					soundeffect2(i, 0x00, 0x29);
+					soundeffects(s, 0x00, 0x29, true);
 					bolteffect(i);
 				}
 			}
@@ -546,11 +549,11 @@ void weather(int s, char bolt) // Send new weather to player
 	{
 		if (rand()%2)
 		{
-			soundeffect2(i, 0x00, 0x14);
+			soundeffects(s, 0x00, 0x14, true);
 		}
 		else
 		{
-			soundeffect2(i, 0x00, 0x15);
+			soundeffects(s, 0x00, 0x15, true);
 		}
 		Network->xSend(s, wsnow, 4, 0);
 	}
@@ -564,11 +567,12 @@ void doSnowEffect(int i, int currenttime)
 		{
 			if( chars[i].weathDamage[SNOW] != 0 && chars[i].weathDamage[SNOW] <= currenttime )
 			{
-				sysmessage( calcSocketFromChar(i), "You are scalded by the intensity of the snow!" );
+				UOXSOCKET s = calcSocketFromChar(i);
+				sysmessage( s, "You are scalded by the intensity of the snow!" );
 				chars[i].hp -= Races->getSnowDamage( chars[i].race );
 				chars[i].weathDamage[SNOW] = (currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race ) );
 				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
-				soundeffect2(i, 0x02, 0x08);     
+				soundeffects(s, 0x02, 0x08, true);     
 				updatestats(i, 0);
 			}
 			else
@@ -591,11 +595,12 @@ void doRainEffect(int i, int currenttime)
 		{
 			if( chars[i].weathDamage[RAIN] != 0 && chars[i].weathDamage[RAIN] <= currenttime )
 			{
-				sysmessage( calcSocketFromChar(i), "You are bruised by the pelting rain!" );
+				UOXSOCKET s = calcSocketFromChar(i);
+				sysmessage( s, "You are bruised by the pelting rain!" );
 				chars[i].hp -= Races->getRainDamage( chars[i].race );
 				chars[i].weathDamage[RAIN] = ( currenttime + CLOCKS_PER_SEC * Races->getRainSecs( chars[i].race ) );
 				staticeffect( i, 0x37, 0x09, 0x09, 0x19 );
-				soundeffect2( i, 0x02, 0x08 );     
+				soundeffects( s, 0x02, 0x08, true );     
 				updatestats( i, 0 );
 			}
 			else

@@ -734,7 +734,7 @@ bool cMovement::CheckForHouseBan(CHARACTER c, UOXSOCKET socket)
         {
 			setserial(c, i, 8);//Set them inside the multi!
 
-            int j=on_hlist(i, chars[c].ser1, chars[c].ser2, chars[c].ser3, chars[c].ser4, NULL);
+            int j=on_hlist(i, chars[c].serial, NULL);
             if( j == H_BAN ) 
             {
                 int sx, sy, ex, ey;

@@ -80,7 +80,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					if( y != -1 )
 					{
-						backpack( s, items[y].ser1, items[y].ser2, items[y].ser3, items[y].ser4 );
+						backpack( s, items[y].serial );
 					}
 					else
 					{
@@ -105,7 +105,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			{
 				npctalk(s,x,"Take a look at my goods.", 0);
 				y=packitem(x);
-				if (y!=-1) backpack(s,items[y].ser1,items[y].ser2,items[y].ser3,items[y].ser4); // rippers bugfix for vendor bags not opening !!!
+				if (y!=-1) backpack(s, items[y].serial );
 				return;
 			}
 			if (chars[currchar[s]].serial==serial)
@@ -417,7 +417,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			if( packInRange )	// is the pack in range
 			{
 				if( onGround || packOwner == currchar[s] || (chars[currchar[s]].priv&0x80) || (chars[currchar[s]].priv&0x01) )	// owner, counselor or GM
-					backpack( s, a1, a2, a3, a4 );
+					backpack( s, serial );
 				else
 				{
 					Skills->Snooping( s, packOwner, serial );
@@ -593,7 +593,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					case 2:	sysmessage( s, "Your stomach turns over" );				break;
 					}
 
-					soundeffect2( currchar[s], 0x02, 0x46 ); //poison sound - SpaceDog
+					soundeffects( s, 0x02, 0x46, true ); 
 					chars[currchar[s]].poisoned = items[x].poisoned;
 					chars[currchar[s]].poisonwearofftime = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
 					impowncreate( s, currchar[s], 1 ); // sends the green bar
@@ -639,17 +639,17 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 
 			switch( RandomNum( 0, 9 ) )
 			{
-			case 0:  itemmessage( s, "Seek out the mystic llama herder.", a1, a2, a3, a4 );									break;
-			case 1:  itemmessage( s, "Wherever you go, there you are.", a1, a2, a3, a4 );									break;
-			case 2:  itemmessage( s, "Quick! Lord British is giving away gold at the castle!", a1, a2, a3, a4 );			break;
-			case 3:  itemmessage( s, "Remember, change your underwear once a day.", a1, a2, a3, a4 );						break;
-			case 4:  itemmessage( s, "The message appears to be too cloudy to make anything out of it.", a1, a2, a3, a4 );	break;
-			case 5:  itemmessage( s, "You have just lost five strength.. not!", a1, a2, a3, a4 );							break;
-			case 6:  itemmessage( s, "You're really playing a game you know", a1, a2, a3, a4 );								break;
-			case 7:  itemmessage( s, "You will be successful in all you do.", a1, a2, a3, a4 );								break;
-			case 8:  itemmessage( s, "You are a person of culture.", a1, a2, a3, a4 );										break;
+			case 0:  itemmessage( s, "Seek out the mystic llama herder.", items[x].serial );								break;
+			case 1:  itemmessage( s, "Wherever you go, there you are.", items[x].serial );									break;
+			case 2:  itemmessage( s, "Quick! Lord British is giving away gold at the castle!", items[x].serial );			break;
+			case 3:  itemmessage( s, "Remember, change your underwear once a day.", items[x].serial );						break;
+			case 4:  itemmessage( s, "The message appears to be too cloudy to make anything out of it.", items[x].serial );	break;
+			case 5:  itemmessage( s, "You have just lost five strength.. not!", items[x].serial );							break;
+			case 6:  itemmessage( s, "You're really playing a game you know", items[x].serial );							break;
+			case 7:  itemmessage( s, "You will be successful in all you do.", items[x].serial );							break;
+			case 8:  itemmessage( s, "You are a person of culture.", items[x].serial );										break;
 			case 9:  
-			default: itemmessage( s, "Give me a break! How much good fortune do you expect!", a1, a2, a3, a4 );				break;
+			default: itemmessage( s, "Give me a break! How much good fortune do you expect!", items[x].serial );			break;
 			}//switch
 			soundeffects(s, 0x01, 0xEC, true);
 			return;//case 18 (crystal ball?)
@@ -774,7 +774,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				teleport(currchar[s]);
 				return; //case 104 (teleport object (again?))
 			case 105:  // For drinking
-				soundeffect2(currchar[s], 0x00, 0x30+rand()%2);
+				soundeffects( s , 0x00, 0x30+rand()%2, true);
 				//Remove a drink
 				if (rand()%2)
 					npctalk(s, currchar[s], "Ahh...", 0);
@@ -938,22 +938,22 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					Skills->AButte(s,x);
 					return;// archery butte
 				case 0x0E9C: // drum
-					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffect2(currchar[s], 0x00, 0x38);
+					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffects( s, 0x00, 0x38, true );
 					else soundeffect2(currchar[s], 0x00, 0x39);
 					return;
 				case 0x0E9D: // tambourine
 				case 0x0E9E:
-					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffect2(currchar[s], 0x00, 0x52);
+					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffects( s, 0x00, 0x52, true);
 					else soundeffect2(currchar[s], 0x00, 0x53);
 					return;
 				case 0x0EB1: // standing harp
 				case 0x0EB2: // lap harp
-					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffect2(currchar[s], 0x00, 0x45);
+					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffects( s, 0x00, 0x45, true);
 					else soundeffect2(currchar[s], 0x00, 0x46);
 					return;
 				case 0x0EB3: // lute
 				case 0x0EB4: // lute
-					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffect2(currchar[s], 0x00, 0x4C);
+					if (Skills->CheckSkill(currchar[s], MUSICIANSHIP,0,1000)) soundeffects( s, 0x00, 0x4C, true);
 					else soundeffect2(currchar[s], 0x00, 0x4D);
 					return;
 					/* -- AXES -- */
@@ -1472,7 +1472,7 @@ void singleclick(int s)
 	else if (chars[currchar[s]].priv&8)
 	{
 		sprintf(temp, "%i %s [%x %x %x %x]", items[i].amount, items[i].name, a1, a2, a3, a4);
-		itemmessage(s, temp, a1, a2, a3, a4);
+		itemmessage(s, temp, serial);
 	}
 	else
 	{
@@ -1484,7 +1484,7 @@ void singleclick(int s)
 				{
 					if( strlen( items[i].creator ) > 0 && items[i].madewith > 0 ) sprintf( temp2, "%s %s by %s", items[i].desc, skill[items[i].madewith-1].madeword, items[i].creator ); // Magius(CHE)
 					sprintf(temp, "%s at %igp",temp2,items[i].value); // Changed by Magius(CHE)
-					itemmessage(s,temp,a1,a2,a3,a4);
+					itemmessage( s, temp, serial );
 				}
 		}
 		if (items[i].name[0]!='#')
@@ -1493,14 +1493,14 @@ void singleclick(int s)
 			{
 				if( strlen(items[i].creator)>0 && items[i].madewith>0) sprintf(temp2, "%s %s by %s",items[i].name,skill[items[i].madewith-1].madeword,items[i].creator); // Magius(CHE)
 				else strcpy(temp2, items[i].name); // By Magius(CHE)
-				itemmessage(s, temp2, a1, a2, a3, a4); // Changed by Magius(CHE)
+				itemmessage( s, temp2, serial ); // Changed by Magius(CHE)
 			}
 			else
 			{
 				sprintf(temp, "%i %ss", items[i].amount, items[i].name);
 				if( strlen(items[i].creator)>0 && items[i].madewith>0) sprintf(temp2, "%s %s by %s",temp,skill[items[i].madewith-1].madeword,items[i].creator); // Magius(CHE)
 				else strcpy(temp2, temp); // By Magius(CHE)
-				itemmessage(s, temp2, a1, a2, a3, a4); // Changed by Magius(CHE)
+				itemmessage(s, temp2, serial ); // Changed by Magius(CHE)
 			}
 		}
 		else
@@ -1562,10 +1562,10 @@ void singleclick(int s)
 				}
 			}
 			if( items[i].magic == 3 )
-				itemmessage( s, "[Locked down]", a1, a2, a3, a4, 0x04, 0x81 );
+				itemmessage( s, "[Locked down]", serial, 0x04, 0x81 );
 			if( strlen( items[i].creator ) > 0 && items[i].madewith > 0 ) sprintf( temp2, "%s %s by %s", temp, skill[items[i].madewith-1].madeword, items[i].creator ); // Magius(CHE)
 			else strcpy( temp2, temp ); // By Magius(CHE)
-			itemmessage(s, temp2, a1, a2, a3, a4); // Changed by Magius(CHE)
+			itemmessage(s, temp2, serial); // Changed by Magius(CHE)
 		}
 	}
 }

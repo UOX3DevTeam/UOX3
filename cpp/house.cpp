@@ -30,11 +30,12 @@
 
 #define DBGFILE "house.cpp"
 
-void mtarget(int s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char b1, unsigned char b2, char *txt)
+void mtarget(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char b1, unsigned char b2, char *txt)
 {
 	char multitarcrs[27]="\x99\x01\x40\x01\x02\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x00\x00\x00\x00\x00\x00";
 
-	targetok[s]=1; 
+
+	targetok[s] = 1; 
 	multitarcrs[2]=a1;
 	multitarcrs[3]=a2;
 	multitarcrs[4]=a3;
@@ -469,18 +470,18 @@ void addthere(int s, int xx, int yy, int zz, int t)
 	Map->SeekTile((items[c].id1<<8)+items[c].id2, &tile);
 	if(chars[currchar[s]].making==999) chars[currchar[s]].making=c; // store item #
 	if(tile.flag2&0x08) items[c].pileable=1;
-//	for (j=0;j<now;j++) if (perm[j]) senditem(j,c);
 	RefreshItem( c );
 	addid1[s]=0;
 	addid2[s]=0;
 }
 
-void killkeys(unsigned char s1, unsigned char s2, unsigned char s3,
-		unsigned char s4) // Crackerjack 8/11/99
+void killkeys(SERIAL serial) 
 // This function is rather CPU-expensive, but AFAIK there is no
 // better way to find all keys than to do it this way.. :/
 {
 	int i;
+	unsigned char s1, s2, s3, s4;
+	splitSerial(serial, s1, s2, s3, s4);
 	for(i=0;i<itemcount;i++) {
 		if(items[i].type==7&&items[i].more1==s1&&
 			items[i].more2==s2&&items[i].more3==s3&&
@@ -498,15 +499,17 @@ void killkeys(unsigned char s1, unsigned char s2, unsigned char s3,
 // Crackerjack 8/12/99 - House List Functions
 
 // Checks if somebody is on the house list.
-// on_hlist(int h (items[] index for house), unsigned char s1, s2, s3, s4 (char serial),
+// on_hlist(int h (items[] index for house), SERIAL serial (char serial),
 //		int *li (pointer to variable to put items[] index of list item in or NULL))
 // Returns:
 // 0 - Character is not on house list
 // Anything else - Character is on house list, type # is returned.
-int on_hlist(int h, unsigned char s1, unsigned char s2, unsigned char s3, unsigned char s4, int *li)
+int on_hlist(int h, SERIAL serial, int *li)
 {
 	
 	   int ci=-1;
+	   unsigned char s1, s2, s3, s4;
+	   splitSerial(serial, s1, s2, s3 ,s4);
 
 	   int  StartGrid=mapRegions->StartGrid(items[h].x,items[h].y);
 	   unsigned int increment=0;
@@ -554,7 +557,7 @@ int add_hlist(int c, int h, int t)
 {
 	int sx, sy, ex, ey, i;
 
-	if(on_hlist(h, chars[c].ser1, chars[c].ser2, chars[c].ser3, chars[c].ser4, NULL))
+	if(on_hlist(h, chars[c].serial, NULL))
 		return 2;
 
 	Map->MultiArea(h, &sx,&sy,&ex,&ey);
@@ -602,7 +605,7 @@ int del_hlist(int c, int h)
 {
 	int hl, li;
 
-	hl=on_hlist(h, chars[c].ser1, chars[c].ser2, chars[c].ser3, chars[c].ser4, &li);
+	hl=on_hlist(h, chars[c].serial, &li);
 	if(hl) {
 		mapRegions->RemoveItem(li);
 		Items->DeleItem(li);
@@ -618,12 +621,9 @@ void house_speech(int s, unsigned char *talk)
 	if(s<0 || s>MAXCLIENT) return;
 	i=findmulti(chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z);
 	if(i==-1) return; // not in a house, so we don't care.
-	fr=on_hlist(i, chars[currchar[s]].ser1, chars[currchar[s]].ser2,
-		chars[currchar[s]].ser3, chars[currchar[s]].ser4, NULL);
+	fr=on_hlist(i, chars[currchar[s]].serial, NULL);
 	if((fr!=H_FRIEND)&&(items[i].ownserial!=chars[currchar[s]].serial))
 		return; // not a friend or owner, so we don't care.
-//	strcpy(msg, talk);//Capitalize the msg
-//	strcpy(msg, strupr(msg));
 	strcpy( msg, strupr( (char *)talk ) ); // krazyglue - above two lines aren't necessary
 	if(strstr(msg, "I BAN THEE")) { // house ban
 		addid1[s]=items[i].ser1;

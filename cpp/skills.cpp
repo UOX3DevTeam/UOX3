@@ -2229,13 +2229,13 @@ void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 {
 	switch(items[i].id2)
 	{
-	case 0x9C:	soundeffect2( currchar[s], 0x00, 0x38 );		break;
+	case 0x9C:	soundeffects( s, 0x00, 0x38, true );			break;
 	case 0x9D:
-	case 0x9E:	soundeffect2( currchar[s], 0x00, 0x52 );		break;
-	case 0xB1:	soundeffect2( currchar[s], 0x00, 0x43 );		break;
-	case 0xB2:	soundeffect2( currchar[s], 0x00, 0x45 );		break;
+	case 0x9E:	soundeffects( s, 0x00, 0x52, true );			break;
+	case 0xB1:	soundeffects( s, 0x00, 0x43, true );			break;
+	case 0xB2:	soundeffects( s, 0x00, 0x45, true );			break;
 	case 0xB3:
-	case 0xB4:	soundeffect2( currchar[s], 0x00, 0x4C );		break;
+	case 0xB4:	soundeffects( s, 0x00, 0x4C, true );			break;
 	default:
 		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentWell()/n"); //Morrolan
 		return;
@@ -2247,13 +2247,13 @@ void cSkills::PlayInstrumentPoor( UOXSOCKET s, int i)
 {
 	switch( items[i].id2 )
 	{
-	case 0x9C:	soundeffect2( currchar[s], 0x00, 0x39 );		break;
+	case 0x9C:	soundeffects( s, 0x00, 0x39, true );			break;
 	case 0x9D:
-	case 0x9E:	soundeffect2( currchar[s], 0x00, 0x53 );		break;
-	case 0xB1:	soundeffect2( currchar[s], 0x00, 0x44 );		break;
-	case 0xB2:	soundeffect2( currchar[s], 0x00, 0x46 );		break;
+	case 0x9E:	soundeffects( s, 0x00, 0x53, true );			break;
+	case 0xB1:	soundeffects( s, 0x00, 0x44, true );			break;
+	case 0xB2:	soundeffects( s, 0x00, 0x46, true );			break;
 	case 0xB3:
-	case 0xB4:	soundeffect2( currchar[s], 0x00, 0x4D );		break;
+	case 0xB4:	soundeffects( s, 0x00, 0x4D, true );			break;
 	default:
 		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentPoor()/n"); //Morrolan
 		return;
@@ -2445,8 +2445,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			{
 				if( perm[i] && inrange1p( currchar[i], target ) )
 				{
-					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
-						chars[target].ser3, chars[target].ser4);
+					itemmessage(i, temp, chars[target].serial );
 				}
 			}
 		}
@@ -2495,8 +2494,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			{
 				if( perm[i] && inrange1p( currchar[i], target ) )
 				{
-					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
-						chars[target].ser3, chars[target].ser4);
+					itemmessage(i, temp, chars[target].serial );
 				}
 			}
 		}
@@ -6027,7 +6025,7 @@ void cSkills::Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial )
 	
 	if( Skills->CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
-		backpack( s , (serial>>24), (serial>>16), (serial>>8), (serial%256) );
+		backpack( s , serial );
 		sysmessage( s, "You successfully peek into that container." );
 	}
 	else 

@@ -782,7 +782,7 @@ void tellmessage(int i, int s, unsigned char *txt);
 void setwipetarget(int s);
 void setspeechtarget(int s);
 void xteleport(int s,int x);
-void __cdecl sysmessage(int, char *, ...);
+void __cdecl sysmessage(UOXSOCKET, char *, ...);
 void senditem(UOXSOCKET s, ITEM i);
 void wornitems( UOXSOCKET s, CHARACTER j );
 void RefreshItem( ITEM i ); // AntiChrist
@@ -810,7 +810,7 @@ int findsection (char *s);
 void read1( void );
 void read2( void );
 void read2( FILE *toRead ); 
-void itemmessage(UOXSOCKET s, char *txt, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char loColour = 0x03, unsigned char hiColour = 0xB2 );
+void itemmessage(UOXSOCKET s, char *txt, SERIAL serial, unsigned char loColour = 0x03, unsigned char hiColour = 0xB2 );
 int inrange1( UOXSOCKET a, UOXSOCKET b );
 int inrange1p (CHARACTER a, CHARACTER b);
 int inrange2 (UOXSOCKET s, ITEM i);
@@ -820,7 +820,7 @@ void teleport(int s);
 void npctalkall(int npc, char *txt, char antispam);
 void npctalk(int s, int npc, char *txt, char antispam); // NPC speech
 void cantraintarget(int s); //NPC Training
-void backpack(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4);
+void backpack(UOXSOCKET s, SERIAL serial);
 void loadserverscript(void);
 void saveserverscript(char);
 void loadserverdefaults(void);
@@ -845,15 +845,15 @@ void usehairdye(int s, int x);
 void UseHairDye( UOXSOCKET s, short int colour, int x );
 void buildhouse(int s, int i);
 void deedhouse(int s, int i); //crackerjack 8/9/99
-void killkeys(unsigned char s1, unsigned char s2, unsigned char s3, unsigned char s4); // crackerjack 8/11/99
+void killkeys(SERIAL serial);
 // house list functions - cj 8/12/99
-int on_hlist(int h, unsigned char s1, unsigned char s2, unsigned char s3, unsigned char s4, int *li);
+int on_hlist(int h, SERIAL serial, int *li);
 int add_hlist(int c, int h, int t);
 int del_hlist(int c, int h);
 //
 void house_speech(int s, unsigned char *talk);
 void addthere(int s, int xx, int yy, int zz, int t);
-void mtarget(int s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char b1, unsigned char b2, char *txt);
+void mtarget(UOXSOCKET s, unsigned char a1, unsigned char a2, unsigned char a3, unsigned char a4, unsigned char b1, unsigned char b2, char *txt);
 
 
 void lockpick(int s);
@@ -869,7 +869,6 @@ unsigned short int getstatskillvalue(char *stringguy);
 int bestskill( CHARACTER p );
 int secndbstskll(int m, int bstskll);
 int thrdbstskll(int n, int scnbst);
-//void addfromitemlist(int itemlist,int c);
 void newbieitems(unsigned int c);
 void read3 (); 
 void read4 ();
@@ -929,6 +928,8 @@ void triggernpc(int ts,int ti) ;  // trigger.cpp
 int checkenvoke(char eid1, char eid2);  //trigger.scp
 
 inline int calcserial(unsigned char a1,unsigned char a2,unsigned char a3,unsigned char a4) {return ((a1*16777216)+(a2*65536)+(a3*256)+a4);}	
+void splitSerial ( SERIAL serial, unsigned char &a1, unsigned char &a2, unsigned char &a3, unsigned char &a4);
+
 
 // Pointer.cpp functions
 // - set item in pointer array
@@ -957,7 +958,7 @@ void batchcheck( int s );
 void weblaunch(int s, char *txt);
 void readw2( void );
 void readw3( void );
-void entrygump(int s, unsigned char tser1, unsigned char tser2, unsigned char tser3, unsigned char tser4, char type, char index, short int maxlength, char *text1);
+void entrygump(UOXSOCKET s, SERIAL serial, char type, char index, short int maxlength, char *text1);
 SI32 grabNumber( int startPos, int length, UOXSOCKET s, char base = 10 );
 
 // DasRaetsels' stuff up, don't touch :)
