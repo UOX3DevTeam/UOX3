@@ -28,6 +28,13 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 -------------------------------------------------------------------------------
+04.03.2001               Thiago A. Corrêa
+   uox3.cpp              Won't create offline html when HTML is disabled in 
+   trigger.cpp           server.scp
+   speech.cpp            Fixed missing \n in AUTO_ACCT fix :)
+   admin.cpp             Clean-ups.
+   dbl_sinlge_click.cpp
+-------------------------------------------------------------------------------
 03.03.2001               Thiago A. Corrêa
                          Added a new function splitSerial() to split 32bit serial
    worldmain.cpp         into 4 different 8bit variables when needed by networking

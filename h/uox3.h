@@ -584,7 +584,7 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 void staticeffect2(int nItem, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode); //for items
 void staticeffect3(UI16 x, UI16 y, SI08 z, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode);
 
-void movingeffect(int source, int dest, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode);
+void movingeffect(CHARACTER source, CHARACTER dest, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode);
 void movingeffect2(int source, int dest, char eff1, char eff2, char speed, char loop, char explode);
 void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed char z, char eff1, char eff2, char speed, char loop, char explode);
 
