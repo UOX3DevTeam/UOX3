@@ -55,9 +55,9 @@
 #include <fstream>
 #include <vector>
 #include <cstdio>
-//#ifndef __LINUX__
+#ifndef __LINUX__
 #include <ios>
-//#else
+#endif
 //#include <iomanip.h>
 //#include <strstream.h>
 //#endif
