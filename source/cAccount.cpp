@@ -11,8 +11,11 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include <fstream>
+#include "cVersionClass.h"
 
 using namespace std;
+
+extern cVersionClass CVC;
 
 // Added MakeDirectory (DarkStorm)
 // DarkStorm, 2/22/2002:
@@ -32,7 +35,7 @@ bool makeDirectory( const char *Path )
 	if( !CreateDirectory( Path, NULL ) )
 		{
 		// directory was not crated, check to see if its becuase it alrady exists. 
-		// if se we build the path, we just dont create the directory.
+		// if so we build the path, we just dont create the directory.
 		Result = GetLastError();
 		if( Result != ERROR_ALREADY_EXISTS )
 		{
@@ -990,7 +993,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		return -1;
 	}
 
-	outStream << "//AV2.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+	outStream << "//AV2.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 	outStream << "//------------------------------------------------------------------------------\n";
 	outStream << "//access.adm[TEXT] : UOX3 uses this file for shared accounts access between servers\n";
 	outStream << "//\n";
@@ -1014,7 +1017,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	// the accounts character ids get written or they are lost.
 	if(cwmWorldState->ServerData()->GetExternalAccountStatus())
 	{
-		outStream2 << "//AV1.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+		outStream2 << "//AV1.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 		outStream2 << "//------------------------------------------------------------------------------\n";
 		outStream2 << "//accounds.adm[TEXT] : UOX3 uses this file to import new accounts when \n";
 		outStream2 << "//   EXTERNALACCOUNTS is set to 1 in the uox.ini file.\n";
@@ -1136,7 +1139,7 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		// Then open the file and write out all information
 		ofstream AccountStream( sWorking.c_str(), ios::out );
 
-		AccountStream << "//AI2.1" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+		AccountStream << "//AI2.1" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
 		AccountStream << "// UAD Path: " << sAccountsPath << "\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
@@ -1259,6 +1262,11 @@ bool cAccounts::AddCharacterToAccount( SI32 accountid, CChar *object)
 //o--------------------------------------------------------------------------o	
 void cAccounts::AddAccount( string username, string password, string contact )
 {
+	AddAccount(username,password,contact,0x0000);
+}
+//o--------------------------------------------------------------------------o	
+void cAccounts::AddAccount( string username, string password, string contact, UI16 nPrivs )
+{
 	ACTREC *toAdd = new ACTREC;
 	AAREC *toAddAA = new AAREC;
 	memset( toAdd, 0x00, sizeof( ACTREC ) );
@@ -1272,6 +1280,7 @@ void cAccounts::AddAccount( string username, string password, string contact )
 	strcpy( toAdd->lpaarHolding->Info.username, username.c_str() );
 	strcpy( toAdd->lpaarHolding->Info.password, password.c_str() );
 	strcpy( toAdd->lpaarHolding->Info.comment, contact.c_str() );
+	toAdd->lpaarHolding->bFlags=nPrivs;
 
 	// ok well we need to append data to the end of the access.adm migth as well do it now
 	string sAccessPath = cwmWorldState->ServerData()->GetAccessDirectory();
@@ -1360,7 +1369,7 @@ void cAccounts::AddAccount( string username, string password, string contact )
 
 	ofstream AccountStream( sWorking.c_str(), ios::out );
 
-	AccountStream << "//AI2.1" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
+	AccountStream << "//AI2.1" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
 	AccountStream << "//------------------------------------------------------------------------------\n";
 	AccountStream << "// UAD Path: " << sAccountPath << "\n";
 	AccountStream << "//------------------------------------------------------------------------------\n";
