@@ -269,9 +269,9 @@ public:
 	MAPUSERNAMEID m_mapUsernameIDMap;
 	MAPUSERNAMEID_ITERATOR I;
 
-//#ifdef __UOX3_DTL__
-//	std::vector<cDBAccountClass> m_vecDTLAccountVector;
-//#endif
+#ifdef __UOX3_DTL__
+	std::vector<cDBAccountClass> m_vecDTLAccountVector;
+#endif
 
 private:
 	// Member Functions
