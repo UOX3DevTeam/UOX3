@@ -24,7 +24,20 @@ CWorldMain::~CWorldMain()
 	delete sData;
 }
 
-
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	?/?/1997
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//|									
+//|	Modification	-	10/21/2002	-	Xuri fix for archiving. Now it wont always
+//|									archive :)
+//o--------------------------------------------------------------------------o
+//|	Returns				-	N/A
+//o--------------------------------------------------------------------------o	
 void CWorldMain::savenewworld( bool x )
 {
 	static unsigned int save_counter = 0;
@@ -58,15 +71,18 @@ void CWorldMain::savenewworld( bool x )
 		Network->ClearBuffers();
 
 		if( x )
-			Console << "Starting manual world data save...." << myendl;
+			Console << "| Starting manual world data save...." << myendl;
 		else 
-			Console << "Starting automatic world data save...." << myendl;
+			Console << "| Starting automatic world data save...." << myendl;
 		
-		if( strlen( ServerData()->GetBackupDirectory() ) > 1 )
+		if( ServerData()->GetServerBackupStatus() && strlen( ServerData()->GetBackupDirectory() ) > 1 )
 		{
 			save_counter++;
-			if(( save_counter % ServerData()->GetBackupRatio() ) == 0 ) 
+			if(( save_counter % ServerData()->GetBackupRatio() ) == 0 )
+			{
+				Console << "| Archiving world files." << myendl;
 				fileArchive();
+			}
 		}
 		Console << "Saving Misc. data... ";
 		//Accounts->SaveAccounts();
@@ -114,11 +130,24 @@ bool CWorldMain::Saving( void )
 	return isSaving;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	void CWorldMain::RegionSave( void )
+//|	Date					-	Unknown
+//|	Developer(s)	-	Abaddon
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//|	Returns				-
+//o--------------------------------------------------------------------------o
+//|	Notes					-	
+//o--------------------------------------------------------------------------o	
 void CWorldMain::RegionSave( void )
 {
 	char regionsFile[MAX_PATH];
 	sprintf(regionsFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "regions.wsc");
-	FILE *regions = fopen( regionsFile, "r" );
+	FILE *regions = fopen( regionsFile, "w" );
 	if( regions != NULL )
 	{
 		for( int regionCounter = 0; regionCounter < 256; regionCounter++ )
