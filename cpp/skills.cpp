@@ -712,7 +712,7 @@ void cSkills::Repair( UOXSOCKET s )
 	{
 		items[j].hp = items[j].maxhp;
 		sysmessage( s, "You repair the item succesfully." );
-		soundeffect( s, 0x00, 0x2a );
+		soundeffects( s, 0x00, 0x2a, true );
 	}
 	else
 	{
@@ -782,15 +782,15 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 				default:	delequan( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs / 2 );
 				}
 				
-				soundeffect(s,0x00,0x2a);
+				soundeffects( s, 0x00, 0x2a, true);
 				ingottype=0;
 				sysmessage(s,"You fail to create the item.");
 				break;
 				//*************************************************************************************************************
 				case CARPENTRY:     
 					if (carptype==1) delequan(currchar[s], 0x1B, 0xE0, itemmake[s].needs/2);
-					if (carptype==2) delequan(currchar[s], 0x1B, 0xD7, itemmake[s].needs/2);
-					soundeffect(s,0x02,0x3d);
+					else if (carptype==2) delequan(currchar[s], 0x1B, 0xD7, itemmake[s].needs/2);
+					soundeffects(s,0x02,0x3d, true);
 					sysmessage(s,"You fail to create the item.");
 					break;
 				case INSCRIPTION:
@@ -821,12 +821,12 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					else 
 						delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs / 2);  
 
-					soundeffect(s,0x02,0x48);
+					soundeffects(s,0x02,0x48, true);
 					sysmessage(s,"You fail to create the item.");
 					break;
 				case COOKING:     
 					delequan(currchar[s], 0x17, 0x5D, itemmake[s].needs/2);  
-					soundeffect(s,0x02,0x25);
+					soundeffects(s,0x02,0x25, true);
 					sysmessage(s,"You fail to create the item.");
 					break;
 				case BOWCRAFT:      
@@ -834,14 +834,14 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					else delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs/2);
 					if (itemmake[s].has2<2) delequan(currchar[s], itemmake[s].materialid1b, itemmake[s].materialid2b, 1);
 					else delequan(currchar[s], itemmake[s].materialid1b, itemmake[s].materialid2b, itemmake[s].needs/2);
-					soundeffect(s,0x00,0x4A);
+					soundeffects(s,0x00,0x4A, true);
 					sysmessage(s,"You fail to create the item.");
 					itemmake[s].has=0;
 					itemmake[s].has2=0;
 					break;
 				case TINKERING:
 					delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs/2);
-					soundeffect(s, 0x00, 0x2A);
+					soundeffects(s, 0x00, 0x2A, true);
 					sysmessage(s, "You fail to create the item.");
 					break;
 					//default:
@@ -965,13 +965,16 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 		items[c].magic = 1; // JM's bugfix
 		if(chars[currchar[s]].making==999) chars[currchar[s]].making=c; // store item #
 		else chars[currchar[s]].making=0;
-		if( skill == MINING ) soundeffect( s, 0x00, 0x54 ); // Added by Magius(CHE)
-		if (skill==BLACKSMITHING) soundeffect(s,0x00,0x2a);
-		if (skill==CARPENTRY) soundeffect(s,0x02,0x3d);
-		if (skill==INSCRIPTION) soundeffect(s,0x02,0x49);
-		if (skill==TAILORING) soundeffect(s,0x02,0x48);
-		if (skill==TINKERING) soundeffect(s,0x00,0x2A);
-		if (skill==COOKING) soundeffect(s,0x02,0x25);
+		switch (skill)
+		{
+		case MINING:			soundeffects( s, 0x00, 0x54, true );	break;
+		case BLACKSMITHING:		soundeffects( s, 0x00, 0x2a, true );	break;
+		case CARPENTRY:			soundeffects( s, 0x02, 0x3d, true );	break;
+		case INSCRIPTION:		soundeffects( s, 0x02, 0x49, true );	break;
+		case TAILORING:			soundeffects( s, 0x02, 0x48, true );    break;
+		case TINKERING:			soundeffects( s, 0x00, 0x2A, true );	break;
+		case COOKING:			soundeffects( s, 0x02, 0x25, true );	break;
+		}
 		// EviLDeD  -  I noticed that when there was a success there were 2
 		//          of the intended item created. Going to comment this out
 		//          until another time, or someone says that it should be there
@@ -1280,7 +1283,7 @@ void cSkills::Mine(int s)
 	else
 		action( s, 0x0B );
 	
-	soundeffect( s, 0x01, 0x25 );
+	soundeffects( s, 0x01, 0x25, true );
 	
 	if( !Skills->CheckSkill( currchar[s], MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
@@ -1420,7 +1423,7 @@ void cSkills::GraveDig(int s) // added by Genesis 11-4-98
 		action(s,0x1A);
 	else
 		action(s,0x0b);
-	soundeffect(s,0x01,0x25);
+	soundeffects(s,0x01,0x25, true);
 	if(!Skills->CheckSkill(currchar[s],MINING, 0, 800)) 
 	{
 		sysmessage(s,"You sifted through the dirt and found nothing.");
@@ -1432,7 +1435,7 @@ void cSkills::GraveDig(int s) // added by Genesis 11-4-98
 		action(s,0x1A);
 	else  
 		action(s,0x0b);
-	soundeffect(s,0x01,0x25);     
+	soundeffects(s,0x01,0x25, true);     
 	int nRandnum=rand()%13;
 	switch(nRandnum)
 	{
@@ -2065,7 +2068,7 @@ void cSkills::TreeTarget(int s)
 	
 	if (chars[currchar[s]].onhorse) action(s,0x1C);
 	else action(s,0x0D);
-	soundeffect(s,0x01,0x3E);
+	soundeffects(s,0x01,0x3E, true);
 	
 	if (!Skills->CheckSkill(currchar[s],LUMBERJACKING, 0, 1000)) 
 	{
@@ -2837,7 +2840,7 @@ void cSkills::CreatePotion(int s, char type, char sub, int mortar)
 	{
 		// Dupois - Added pouring potion sfx
 		// Added Oct 09, 1998
-		soundeffect(s, 0x02, 0x40);  // Liquid sfx
+		soundeffects(s, 0x02, 0x40, true);  // Liquid sfx
 		sprintf(temp, "*%s pours the completed potion into a bottle.*", chars[s].name);
 		npcemoteall(s, temp, 0);
 		delequan(s, 0x0F, 0x0E, 1);
@@ -3358,7 +3361,7 @@ void cSkills::CreateBandageTarget(int s)
 		if (((items[i].id1==0x0f)&&((items[i].id2>=0x95)&&(items[i].id2<=0x9c)))||
 			((items[i].id1==0x17)&&((items[i].id2>=0x5d)&&(items[i].id2<=0x64))))
 		{
-			soundeffect(s,0x02,0x48);        
+			soundeffects (s, 0x02, 0x48, true);        
 //			if(!Skills->CheckSkill(currchar[s],TAILORING, 0, 1000)) 
 //			{
 //				sysmessage(s,"You were unable to cut bandages.");
@@ -3487,7 +3490,7 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	}
 	
 	impaction(s,0x11);     // I heard there is no action...but I decided to add one
-	soundeffect(s,0x02,0x4A); // only get the sound if you are successful
+	soundeffects(s, 0x02, 0x4A, true); // only get the sound if you are successful
 	sysmessage(s,"You establish a connection to the netherworld.");
 	
 	chars[currchar[s]].spiritspeaktimer = (unsigned int)(uiCurrentTime + CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in ) ); // spirit speak duration
@@ -3942,7 +3945,7 @@ void cSkills::FishTarget(int s)
 		baseTime = fishing_data.basetime / 25;
 		baseTime += RandomNum( 0, fishing_data.randomtime / 15 );
 		chars[currchar[s]].fishingtimer = (unsigned int)(uiCurrentTime + (double)(baseTime * CLOCKS_PER_SEC ) );
-		soundeffect(s, 0x02, 0x3F );
+		soundeffects(s, 0x02, 0x3F, true );
 	}
 	else
 		sysmessage( s, "You can't fish there!" );
@@ -5486,16 +5489,16 @@ void cSkills::TDummy(int s)
 	
 	switch( RandomNum( 0, 2 ) )
 	{
-	case 0: soundeffect( s, 0x01, 0x3B );		break;
-	case 1: soundeffect( s, 0x01, 0x3C );		break;        
-	case 2: soundeffect( s, 0x01, 0x3D );		break;
+	case 0: soundeffects( s, 0x01, 0x3B, true );		break;
+	case 1: soundeffects( s, 0x01, 0x3C, true );		break;        
+	case 2: soundeffects( s, 0x01, 0x3D, true );		break;
 	}            
 	serial = calcserial((buffer[s][1]&0x7F),buffer[s][2],buffer[s][3],buffer[s][4]);
 	j = calcItemFromSer( serial );
 	if (j!=-1)
 	{
 		if (items[j].id2==0x70) items[j].id2=0x71;
-		if (items[j].id2==0x74) items[j].id2=0x75;
+		else if (items[j].id2==0x74) items[j].id2=0x75;
 		tempeffect2(0, j, 14, 0, 0, 0);
 		RefreshItem( j ); // AntiChrist
 	}
@@ -5709,29 +5712,29 @@ void cSkills::AButte(int s1, int x)
 		case 0:
 		case 1:
 			sysmessage(s1, "You miss the target");
-			soundeffect(s1, 0x02, 0x38);
+			soundeffects(s1, 0x02, 0x38, true);
 			break;
 		case 2:
 		case 3:
 			sysmessage(s1, "You hit the outer ring!");
-			soundeffect(s1, 0x02, 0x34);
+			soundeffects(s1, 0x02, 0x34, true);
 			break;
 		case 4:
 		case 5:
 		case 6:
 			sysmessage(s1, "You hit the middle ring!");
-			soundeffect(s1, 0x02, 0x34);
+			soundeffects(s1, 0x02, 0x34, true);
 			break;
 		case 7:
 		case 8:
 		case 9:
 			sysmessage(s1, "You hit the inner ring!");
-			soundeffect(s1, 0x02, 0x34);
+			soundeffects(s1, 0x02, 0x34, true);
 			break;
 		case 10:
 		case 11:
 			sysmessage(s1, "You hit the bullseye!!");
-			soundeffect(s1, 0x02, 0x34);
+			soundeffects(s1, 0x02, 0x34, true);
 			break;
 		default:
 			break;
@@ -5955,7 +5958,7 @@ void cSkills::Meditation( UOXSOCKET s ) // Morrolan - meditation(int socket)
 	{
 		sysmessage( s, "You enter a meditative trance." );
 		chars[currchar[s]].med = 1;
-		soundeffect(s, 0x00, 0xf9);
+		soundeffects(s, 0x00, 0xf9, true);
 		return;
 	}
 }

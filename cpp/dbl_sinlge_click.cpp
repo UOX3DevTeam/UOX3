@@ -667,7 +667,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			case 9:  
 			default: itemmessage( s, "Give me a break! How much good fortune do you expect!", a1, a2, a3, a4 );				break;
 			}//switch
-			soundeffect(s, 0x01, 0xEC);
+			soundeffects(s, 0x01, 0xEC, true);
 			return;//case 18 (crystal ball?)
 			case 19: //potions
 				if( chars[currchar[s]].usepotion == 1 )
@@ -1344,7 +1344,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				case 0x0C54: // cotton plants
 					if (!chars[s].onhorse) action(s,0x0D);
 					else action(s,0x1d);
-					soundeffect(s,0x01,0x3E);
+					soundeffects(s,0x01,0x3E, true);
 					c = Items->SpawnItem(s,1,"#",1,0x0D,0xF9,0,0,1,1);
 					if( c == -1 )
 						return;

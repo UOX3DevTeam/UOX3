@@ -787,8 +787,7 @@ void __cdecl sysmessage(int, char *, ...);
 void senditem(UOXSOCKET s, ITEM i);
 void wornitems( UOXSOCKET s, CHARACTER j );
 void RefreshItem( ITEM i ); // AntiChrist
-void soundeffects(int s, unsigned char a, unsigned char b, bool bAllHear = false);
-void soundeffect(int s, unsigned char a, unsigned char b);
+void soundeffects( UOXSOCKET s, unsigned char a, unsigned char b, bool bAllHear = false );
 void soundeffect2(int p, unsigned char a, unsigned char b);
 void updatestats(int c, char x);
 void action( UOXSOCKET s, int x );
@@ -816,7 +815,7 @@ void itemmessage(UOXSOCKET s, char *txt, unsigned char a1, unsigned char a2, uns
 int inrange1( UOXSOCKET a, UOXSOCKET b );
 int inrange1p (CHARACTER a, CHARACTER b);
 int inrange2 (UOXSOCKET s, ITEM i);
-void deathstuff(int i);
+void deathstuff(CHARACTER i);
 int online(CHARACTER c);
 void teleport(int s);
 void npctalkall(int npc, char *txt, char antispam);

@@ -267,7 +267,7 @@ void triggerwitem(int ts, int ti, int ttype)
 			{
 				cline = &script2[0];
 				splitline();
-				soundeffect(ts, hexnumber(0), hexnumber(1));
+				soundeffects(ts, hexnumber(0), hexnumber(1), true);
 			}
 			if (!(strcmp("REMOVE",script1)))  //Remove item after triggered
 			{

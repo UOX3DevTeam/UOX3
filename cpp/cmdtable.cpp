@@ -1136,7 +1136,7 @@ void command_sfx( UOXSOCKET s )
 {
 	if (tnum==3)
 	{
-		soundeffect(s, hexnumber(1), hexnumber(2));
+		soundeffects(s, hexnumber(1), hexnumber(2), true);
 	}
 	return;
 }

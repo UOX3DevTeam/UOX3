@@ -288,10 +288,7 @@ void cCharStuff::InitChar(int nChar, char ser)
 	chars[nChar].own3=255; // If Char is an NPC, this sets its owner
 	chars[nChar].own4=255; // If Char is an NPC, this sets its owner
 	chars[nChar].ownserial=-1; // If Char is an NPC, this sets its owner
-	chars[nChar].robe1=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe2=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe3=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].robe4=255; // Serial number of generated death robe (If char is a ghost)
+	chars[nChar].robe = -1; // Serial number of generated death robe (If char is a ghost)
 
 	chars[nChar].packitem=-1; // Only used during character creation
 	chars[nChar].fixedlight=255; // Fixed lighting level (For chars in dungeons, where they dont see the night)

@@ -38,8 +38,6 @@
 
 #define DBGFILE "im.cpp"
 
-#define Free(_) { if( _ ) free( _ ); }
-
 /* Static internal structure. List of menus waiting for an answer.
    waiting_status is 0 if free, 1 if occupied. firstfree points to
    the first free slot. */
@@ -58,7 +56,6 @@ static int waiting_firstfree = -1;
 item_menu *im_create( char * title, im_callback callback)
 {
 
-	//item_menu *new_menu = (item_menu *)malloc(sizeof(item_menu));		// new item_menu ???? Abaddon
 	item_menu *new_menu = new item_menu;
 
 	if( waiting_firstfree == -1 )
@@ -132,7 +129,6 @@ int im_close( item_menu *menu )
 	if( menu->nitems == 0 )
 		return -3;
 
-	//menu->gump_message = (unsigned char *)malloc( menu->total_bytes );		// new (unsigned char)[menu->total_bytes] ??? Abaddon
 	menu->gump_message = new unsigned char[menu->total_bytes];
 
 	/* Gump prefix */
@@ -264,12 +260,8 @@ int im_kill( item_menu *menu )
 	if( menu == NULL )
 		return -1;
 
-	//Free( menu->title );
 	delete menu->title;
-	//Free( menu->gump_message );
-  delete menu->gump_message;
-	//Free( menu );
-  //delete menu;
+    delete menu->gump_message;
 
 	return 0;
 }
@@ -444,7 +436,6 @@ static int read_menu( FILE *fmenu, im_menucallback callback )
   if( curr_token != TK_IDENT )
     return -1;
 
-  //node = (menulist_node *)malloc( sizeof( menulist_node ));		// new menulist_node ???? Abaddon
   node = new menulist_node;
 
   if( node == NULL ) /* God, I'm boring. :)) */
@@ -518,8 +509,7 @@ static int read_menu( FILE *fmenu, im_menucallback callback )
       return -10;
     }
     
-    //moi = (menu_option_info *)malloc( sizeof( menu_option_info ));		// new menu_option_info ??? Abaddon
-	  moi = new menu_option_info;
+    moi = new menu_option_info;
 
     if( moi == NULL ) /* This REALLY shouldn't happen. */
     {
@@ -624,7 +614,6 @@ void im_clearmenus()
   while( p ) {
     next = p->next;
     im_kill( p->menu );
-    //Free( p );
     delete p;
     p = next;
   }

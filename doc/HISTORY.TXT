@@ -31,7 +31,12 @@ DATE                     AUTHOR                     ARRANGER
 27.02.2001               Thiago A. Corrêa
   uox3.cpp               Moved loading char/items functions from uox3.cpp to 
   worldfile.cpp          worldfile.cpp.
-
+  			 Some bandwidth savings in updatestats() function.
+                         Changed the way death robes are stored (it's a long,
+                         instead of 4 unsigned chars)
+  (all files)            Changed all instances of soundeffect() by 
+                         soundeffects(s, xxx, xxx, true) - does the same thing.
+                         Few clean-ups
 -------------------------------------------------------------------------------
 27.02.2001               Thiago A. Corrêa
   house.cpp              Fixed "inmulti() - Bad length in multi file." with non

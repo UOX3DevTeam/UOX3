@@ -855,10 +855,9 @@ void cCommands::DyeItem(int s) // Rehue an item
 //				ConOut("spectral\n");
 			}
 
-//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 			RefreshItem( i ); // AntiChrist
 			
-			soundeffect( s, 0x02, 0x3e ); // plays the dye sound, LB
+			soundeffects( s, 0x02, 0x3e, true ); // plays the dye sound, LB
 			return;
 	}
 
@@ -889,7 +888,7 @@ void cCommands::DyeItem(int s) // Rehue an item
          } 
 		//} for
 	}
-	soundeffect( s, 0x02, 0x3e ); // plays the dye sound, LB
+	soundeffects( s, 0x02, 0x3e, true ); // plays the dye sound, LB
 }
 
 

@@ -573,7 +573,7 @@ void cTargets::TeleTarget( UOXSOCKET s )
 			}
 		}
 		
-//		soundeffect( s, 0x01, 0xFE );
+//		soundeffects( s, 0x01, 0xFE, true );
 		
 		mapRegions->RemoveItem( mChar + 1000000 );
 		
@@ -1637,7 +1637,7 @@ void cTargets::DvatTarget (int s)
 				items[i].color2=addid2[s];
 	//			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 				RefreshItem( i ); // AntiChrist
-				soundeffect( s, 0x02, 0x3E );	// plays the dye sound, LB
+				soundeffects( s, 0x02, 0x3E, true );	// plays the dye sound, LB
 			}
 			else
 			{
@@ -2133,7 +2133,7 @@ void cTargets::SwordTarget(int s)
 	{
 		if (!chars[s].onhorse) action(s,0x0D);
 		else action(s,0x1d);
-		soundeffect(s,0x01,0x3E);
+		soundeffects(s,0x01,0x3E, true);
 		c=Items->SpawnItem(s,1,"#",1,0x0D,0xE1,0,0,0,0); //Kindling
 		if( c == -1 ) return;
 
@@ -3403,8 +3403,7 @@ void cTargets::NpcResurrectTarget( CHARACTER i )
 					items[j].layer=0x15;
 					chars[i].packitem=j;  //Tauriel packitem speedup
 				}
-				if ((items[j].ser1==chars[i].robe1)&&(items[j].ser2==chars[i].robe2)&&
-					(items[j].ser3==chars[i].robe3)&&(items[j].ser4==chars[i].robe4))
+				if (items[j].serial == chars[i].robe)
 				{
 					Items->DeleItem(j);
 					

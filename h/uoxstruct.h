@@ -158,10 +158,7 @@ struct char_st
 	unsigned char own3; // If Char is an NPC, this sets its owner
 	unsigned char own4; // If Char is an NPC, this sets its owner
 	long ownserial; // If Char is an NPC, this sets its owner
-	unsigned char robe1; // Serial number of generated death robe (If char is a ghost)
-	unsigned char robe2; // Serial number of generated death robe (If char is a ghost)
-	unsigned char robe3; // Serial number of generated death robe (If char is a ghost)
-	unsigned char robe4; // Serial number of generated death robe (If char is a ghost)
+	long robe; // Serial number of generated death robe (If char is a ghost)
 	int karma;
 	signed int fame;
 	unsigned int kills; //PvP Kills

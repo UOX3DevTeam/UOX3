@@ -357,7 +357,7 @@ void CWorldMain::SaveChar( long i )
 	{
 		fprintf(cWsc, "SECTION CHARACTER %i\n", i);
 		fprintf(cWsc, "{\n");
-		fprintf(cWsc, "SERIAL %i\n", (chars[i].ser1<<24)+(chars[i].ser2<<16)+(chars[i].ser3<<8)+chars[i].ser4);
+		fprintf(cWsc, "SERIAL %i\n", chars[i].serial);
 		fprintf(cWsc, "NAME %s\n", chars[i].name);
 		if( chars[i].title[0] != '\0' )
 			fprintf(cWsc, "TITLE %s\n", chars[i].title);
@@ -427,8 +427,8 @@ void CWorldMain::SaveChar( long i )
 			fprintf(cWsc, "SHOP %i\n", chars[i].shop);
 		if ((chars[i].own1<<24)+(chars[i].own2<<16)+(chars[i].own3<<8)+chars[i].own4)
 			fprintf(cWsc, "OWN %i\n", (chars[i].own1<<24)+(chars[i].own2<<16)+(chars[i].own3<<8)+chars[i].own4);
-		if ((chars[i].robe1<<24)+(chars[i].robe2<<16)+(chars[i].robe3<<8)+chars[i].robe4)
-			fprintf(cWsc, "ROBE %i\n", (chars[i].robe1<<24)+(chars[i].robe2<<16)+(chars[i].robe3<<8)+chars[i].robe4);
+		if (chars[i].robe != -1)
+			fprintf(cWsc, "ROBE %i\n", chars[i].robe);
 		if (chars[i].karma)
 			fprintf(cWsc, "KARMA %i\n", chars[i].karma);
 		if (chars[i].fame)
@@ -987,14 +987,7 @@ void CWorldMain::loadchar( CHARACTER x ) // Load a character from WSC
 			else if( chars[x].cell == 255 ) chars[x].cell = 0;
 			// no cells have been marked as -1, but no cell=0
 			// with that line its not necassairy to take it manually out. 
-			else if( !strcmp( script1, "ROBE" ) )
-			{
-				i = str2num( script2 );
-				chars[x].robe1 = (unsigned char)i>>24;
-				chars[x].robe2 = (unsigned char)(i>>16);
-				chars[x].robe3 = (unsigned char)(i>>8);
-				chars[x].robe4 = (unsigned char)(i%256);
-			}
+			else if( !strcmp( script1, "ROBE" ) ) chars[x].robe = str2num ( script2 );
 			else if( !strcmp( script1, "RUNS" ) ) chars[x].runs = true;
 			break;
 		case 's':

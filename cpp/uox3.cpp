@@ -1183,10 +1183,10 @@ int packitem(int p) // Find packitem
 	
 	// - For some reason it's not defined, so go look for it.
 	serial = chars[p].serial;
-	j=serial%HASHMAX;
-	for (ci=0;ci<contsp[j].max;ci++)
+	j = serial%HASHMAX;
+	for (ci = 0; ci < contsp[j].max; ci++)
 	{
-		i=contsp[j].pointer[ci];
+		i = contsp[j].pointer[ci];
 		if (i!=-1)
 		{
 			if ((items[i].contserial==serial) &&
@@ -1203,7 +1203,7 @@ int packitem(int p) // Find packitem
 // Play sound effect for player or all players in range depending on bAllHear
 // (default only player)
 
-void soundeffects( int s, unsigned char a, unsigned char b, bool bAllHear )
+void soundeffects( UOXSOCKET s, unsigned char a, unsigned char b, bool bAllHear )
 {
 	sfx[2] = a;
 	sfx[3] = b;
@@ -1225,24 +1225,6 @@ void soundeffects( int s, unsigned char a, unsigned char b, bool bAllHear )
 	return;
 }
 
-
-
-void soundeffect(int s, unsigned char a, unsigned char b) // Play sound effect for player
-{
-	int i;
-	
-	sfx[2]=a;
-	sfx[3]=b;
-	sfx[6]=chars[currchar[s]].x>>8;
-	sfx[7]=chars[currchar[s]].x%256;
-	sfx[8]=chars[currchar[s]].y>>8;
-	sfx[9]=chars[currchar[s]].y%256;
-	for (i=0;i<now;i++)
-		if ((perm[i])&&((inrange1(s,i))||(s==i)))
-		{
-			Network->xSend(i, sfx, 12, 0);
-		}
-}
 
 void soundeffect2(int p, unsigned char a, unsigned char b)
 {
@@ -1351,8 +1333,8 @@ void sysbroadcast( char *txt ) // System broadcast in bold text
 void __cdecl sysmessage(int s, char *txt, ...) // System message (In lower left corner)
 {
 	va_list argptr;
-	if(s==-1) return;
-	//	int tl=44+strlen(txt)+1;
+	if( s == -1) 
+		return;
 	int tl;
 	char msg[512];
 	va_start( argptr, txt );
@@ -2184,8 +2166,8 @@ void chardel (int s) // Deletion of character
 			} 
 			
 		}
-		for (i=0;i<60;i++) login04b[i]=0;
-		for (i=j;i<5;i++)
+		memset(&login04b, 0, 60);
+		for (i=j;i<5;i++)  //Why are we sending Zeros?
 		{
 			Network->xSend(s, login04b, 60, 0);
 		}
@@ -2863,38 +2845,45 @@ void skillwindow(UOXSOCKET s) // Opens the skills list
 	Network->xSend(s, skillend, 2, 0);
 }
 
-void updatestats(int c, char x)
+void updatestats(CHARACTER c, char x)
 {
-	int i, a=0, b=0;
+	int i, a = 0, b = 0;
 	char updater[10]="\xA1\x01\x02\x03\x04\x01\x03\x01\x02";
+	
+	switch (x)
+	{
+	case 0:
+		a=chars[c].st;
+		b=chars[c].hp;
+		break;
+	case 1:
+		a=chars[c].in;
+		b=chars[c].mn;
+		break;
+	case 2:
+		a=chars[c].dx;
+		b=chars[c].stm;
+		break;
+	}
 	
 	updater[0]=0xA1+x;
 	updater[1]=chars[c].ser1;
 	updater[2]=chars[c].ser2;
 	updater[3]=chars[c].ser3;
 	updater[4]=chars[c].ser4;
-	if (x==0)
-	{
-		a=chars[c].st;
-		b=chars[c].hp;
-	}
-	if (x==2)
-	{
-		a=chars[c].dx;
-		b=chars[c].stm;
-	}
-	if (x==1)
-	{
-		a=chars[c].in;
-		b=chars[c].mn;
-	}
 	updater[5]=a>>8;
 	updater[6]=a%256;
 	updater[7]=b>>8;
 	updater[8]=b%256;
-	for (i=0;i<now;i++) 
-		if (perm[i] && inrange1p(currchar[i], c) ) 
-			Network->xSend(i, updater, 9, 0);
+	if (x == 0)  //Send to all, only if it's Health change
+	{
+		for (i=0;i<now;i++) 
+			if (perm[i] && inrange1p(currchar[i], c) ) 
+				Network->xSend(i, updater, 9, 0);
+	} else {
+		int s = calcSocketFromChar(c);
+		Network->xSend(s, updater, 9, 0);
+	}
 }
 
 void statwindow(int s, int i) // Opens the status window
@@ -4401,6 +4390,7 @@ void startchar(int s) // Send character startup stuff to player
 	startup[16]=chars[currchar[s]].z;
 	startup[17]=chars[currchar[s]].dir;
 	startup[28]=0;
+
 	if(chars[currchar[s]].poisoned) startup[28]=0x04; else startup[28]=0x00; //AntiChrist -- thnx to SpaceDog
 	chars[currchar[s]].spiritspeaktimer=0;  // initially set spiritspeak timer to 0
 	
@@ -4455,7 +4445,8 @@ void startchar(int s) // Send character startup stuff to player
 	}
 	sprintf(zbuf,"%s Logged in the game",chars[currchar[s]].name); //for logging to UOXmon
 	// if(heartbeat) Writeslot(zbuf);
-	acctinuse[acctno[s]]=1;
+	acctinuse[acctno[s]] = 1;
+	
 	teleport(currchar[s]);
 	chars[currchar[s]].step = 1;
 	updates( s ); 
@@ -8545,7 +8536,7 @@ int chardir(int a, int b)   // direction from character a to char b
 }
 
 
-int calcSocketFromChar(int i)
+int calcSocketFromChar(CHARACTER i)
 {
 	int j;
 	
@@ -8554,10 +8545,12 @@ int calcSocketFromChar(int i)
 		//LogMessage("calcSocketFromChar() - Bad char number (%i)\n" _ i);
 		return -1;
 	}
-	if (chars[i].npc) return -1;
-	for (j=0; j<now;j++)
+	if (chars[i].npc) 
+		return -1;
+	for (j = 0; j < now; j++)
 	{
-		if (currchar[j]==i && (perm[j])) return j;
+		if (currchar[j] == i && perm[j]) 
+			return j;
 	}
 	return -1;
 }
@@ -15454,12 +15447,9 @@ void init_creatures(void) // assigns the basesound, soundflag, who_am_i flag of 
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	for( int a = 0; a < 2048; a++ )
-	{ 
-		creatures[a].basesound = creatures[a].soundflag =
-			creatures[a].who_am_i = creatures[a].icon=0;
-	}
-	
+
+	memset (&creatures, 0, 2048*sizeof(creat_st));
+
 	creatures[0x01].basesound = 0x01AB;                            // Ogre
 	creatures[0x01].icon = 8415;
 
@@ -15851,7 +15841,6 @@ void bgsound( CHARACTER s ) // Plays background sounds of the game
 		{
 			
 			sound=((rand()%(y))+1);				
-			//		pl=rand()%66;
 			
 			xx=(chars[inrange[sound]].id1<<8)+chars[inrange[sound]].id2;
 			if (xx>-1 && xx<2048) 
@@ -15867,12 +15856,10 @@ void bgsound( CHARACTER s ) // Plays background sounds of the game
 					
 				case 0: ; basesound++; break;  // normal case -> play idle sound
 					
-				case 1: ; basesound++; break; // birds sounds will be implmented later
+				case 1: ; basesound++; break;  // birds sounds will be implmented later
 					
-				case 2:  // no idle sound, so dont play it !
-					basesound = -1;
-					break;
-				case 3: // no idle sound, so dont play it !
+				case 2:
+				case 3:						   // no idle sound, so dont play it !
 					basesound = -1;
 					break;
 				case 4: // only a single sound, play it !
@@ -15937,7 +15924,8 @@ void monstergate(int s, int x)
 	long int pos;
 	char rndlootlist[20];
 	
-  if (chars[s].npc) return;
+    if (chars[s].npc) 
+		return;
 	
 	mypack=-1;
 	retitem=-1;
@@ -15963,8 +15951,8 @@ void monstergate(int s, int x)
 		} else return;
 	} else strcpy(sect, "npc.scp");
 	
-	*(chars[s].title)='\0'; // was sprintf(chars[s].title, "");
-	//for(z=0;z<itemcount;z++)
+	chars[s].title[0] = 0;
+
 	for(j=0;j<contsp[chars[s].serial%HASHMAX].max;j++)
 	{
 		z=contsp[chars[s].serial%HASHMAX].pointer[j];
@@ -16365,114 +16353,113 @@ void monstergate(int s, int x)
  }
  if (donpcupdate==0)
  {
-	 //printf("1 "); /*DEBUG*/
 	 updatechar(s);
-	 //printf("2 "); /*DEBUG*/
 	 staticeffect(s, 0x37, 0x3A, 0, 15);
-	 //printf("3 "); /*DEBUG*/
 	 soundeffect2(s, 0x01, 0xE9);
  }
 }
 
-void Karma(int nCharID,int nKilledID, int nKarma)
+void Karma(int nCharID, int nKilledID, int nKarma)
 {                                                                                               // nEffect = 1 positive karma effect
-	int nCurKarma=0, nChange=0, nEffect=0;
+	int nCurKarma = 0, nChange = 0, nEffect = 0;
 	
 	nCurKarma = chars[nCharID].karma;
-	if((nCurKarma>10000)||(nCurKarma<-10000))
-		if(nCurKarma>10000)
-			chars[nCharID].karma=10000;
+	if ((nCurKarma>10000) || (nCurKarma < -10000))
+		if (nCurKarma>10000)
+			chars[nCharID].karma = 10000;
 		else
 			chars[nCharID].karma=-10000;
-		if(nCurKarma<nKarma && nKarma>0)
+	if (nCurKarma < nKarma && nKarma>0)
+	{
+		nChange = ((nKarma - nCurKarma)/75);
+		chars[nCharID].karma = (nCurKarma + nChange);
+		nEffect = 1;
+	}
+	if ((nCurKarma>nKarma) && (chars[nKilledID].karma>0)||
+		(nCurKarma>nKarma) && (nKilledID==-1))
+	{
+		nChange = ((nCurKarma - nKarma)/50);
+		chars[nCharID].karma = (nCurKarma - nChange);
+		nEffect = 0;
+	}
+	if (nChange == 0 || chars[nCharID].npc)
+		return;
+	if (nChange <= 25)
+		if (nEffect)
 		{
-			nChange=((nKarma-nCurKarma)/75);
-			chars[nCharID].karma=(nCurKarma+nChange);
-			nEffect=1;
-		}
-		if((nCurKarma>nKarma)&&(chars[nKilledID].karma>0)||
-			(nCurKarma>nKarma)&&(nKilledID==-1))
-		{
-			nChange=((nCurKarma-nKarma)/50);
-			chars[nCharID].karma=(nCurKarma-nChange);
-			nEffect=0;
-		}
-		if((nChange==0)||(chars[nCharID].npc==1))
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have gained a little karma.");
 			return;
-		if(nChange<=25)
-			if(nEffect)
-			{
-				sysmessage(calcSocketFromChar(nCharID),
-					"You have gained a little karma.");
-				return;
-			}
-			else
-			{
-				sysmessage(calcSocketFromChar(nCharID),
-					"You have lost a little karma.");
-				return;
-			}
-			if(nChange<=50)
-				if(nEffect)
-				{
-					sysmessage(calcSocketFromChar(nCharID),
-						"You have gained some karma.");
-					return;
-				}
-				else
-				{
-					sysmessage(calcSocketFromChar(nCharID),
-						"You have lost some karma.");
-					return;
-				}
-				if((nChange<=100)||(nChange>100))
-					if(nEffect)
-					{
-						sysmessage(calcSocketFromChar(nCharID),
-							"You have gained alot of karma.");
-						return;
-					}
-					else
-					{
-						sysmessage(calcSocketFromChar(nCharID),
-							"You have lost alot of karma.");
-						return;
-					}
+		}
+		else
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have lost a little karma.");
+			return;
+		}
+	if (nChange <= 50)
+		if (nEffect)
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have gained some karma.");
+			return;
+		}
+		else
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have lost some karma.");
+			return;
+		}
+	if ((nChange <= 100) || (nChange>100))
+		if (nEffect)
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have gained alot of karma.");
+			return;
+		}
+		else
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have lost alot of karma.");
+			return;
+		}
 }
+
 //added by Genesis 11-8-98
 void Fame(int nCharID, int nFame)   
 {
-	int nCurFame, nChange=0, nEffect=0;
+	int nCurFame, nChange = 0, nEffect = 0;
 	
 	nCurFame  = chars[nCharID].fame;
-	if(nCurFame>nFame) // if player fame greater abort function
+	if (nCurFame > nFame) // if player fame greater abort function
 	{
-		if(nCurFame>10000)
-			chars[nCharID].fame=10000;
+		if (nCurFame > 10000)
+			chars[nCharID].fame = 10000;
 		return;
 	}
-	if(nCurFame<nFame)
+	if (nCurFame < nFame)
 	{
-		nChange=(nFame-nCurFame)/75;
-		chars[nCharID].fame=(nCurFame+nChange);
-		nEffect=1;
+		nChange = (nFame - nCurFame)/75;
+		chars[nCharID].fame = (nCurFame + nChange);
+		nEffect = 1;
 	}
-	if(chars[nCharID].dead==1)
+	if (chars[nCharID].dead == 1)
 	{
-		if(nCurFame<=0)
-			chars[nCharID].fame=0;
+		if (nCurFame <= 0)
+			chars[nCharID].fame = 0;
 		else
 		{
-			nChange=(nCurFame-0)/25;
-			chars[nCharID].fame=(nCurFame-nChange);
+			nChange = (nCurFame - 0)/25;
+			chars[nCharID].fame = (nCurFame - nChange);
 		}
 		chars[nCharID].deaths++;
-		nEffect=0;
+		nEffect = 0;
 	}
-	if((nChange==0)||(chars[nCharID].npc==1))
+	if (nChange == 0 || chars[nCharID].npc)
 		return;
-	if(nChange<=25)
-		if(nEffect)
+	
+	if (nChange <= 25)
+		if (nEffect)
 		{
 			sysmessage(calcSocketFromChar(nCharID),
 				"You have gained a little fame.");
@@ -16484,37 +16471,37 @@ void Fame(int nCharID, int nFame)
 				"You have lost a little fame.");
 			return;
 		}
-		if(nChange<=50)
-			if(nEffect)
-			{
-				sysmessage(calcSocketFromChar(nCharID),
-					"You have gained some fame.");
-				return;
-			}
-			else
-			{
-				sysmessage(calcSocketFromChar(nCharID),
-					"You have lost some fame.");
-				return;
-			}
-			if((nChange<=100)||(nChange>100))
-				if(nEffect)
-				{
-					sysmessage(calcSocketFromChar(nCharID),
-						"You have gained alot of fame.");
-					return;
-				}
-				else
-				{
-					sysmessage(calcSocketFromChar(nCharID),
-						"You have lost alot of fame.");
-					return;
-				}
+	if (nChange <= 50)
+		if (nEffect)
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have gained some fame.");
+			return;
+		}
+		else
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have lost some fame.");
+			return;
+		}
+	if ((nChange <= 100) || (nChange > 100))
+		if (nEffect)
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have gained alot of fame.");
+			return;
+		}
+		else
+		{
+			sysmessage(calcSocketFromChar(nCharID),
+				"You have lost alot of fame.");
+			return;
+		}
 }
 
 void enlist(int s, int listnum) // listnum is stored in items morex
 {
-	int x,pos/*,i*/,j;
+	int x,pos,j;
 	char sect[50];
 	
 	openscript("items.scp");
@@ -16549,7 +16536,6 @@ void enlist(int s, int listnum) // listnum is stored in items morex
 			openscript(sect);
 			fseek(scpfile, pos, SEEK_SET);
 			strcpy(script1, "DUMMY");
-			//			for (i=0;i<now;i++) if (perm[i]) senditem(i,j);
 			RefreshItem( j ); // AntiChrist
 		}
 	} 
@@ -16575,8 +16561,6 @@ void checkdumpdata(unsigned int currenttime) // This dumps data for Ridcully's U
 	}
 	FILE *datafile;
 	unsigned int i;
-	
-	//printf("UOX3: Dumping data!\n");
 	
 	datafile=fopen("botdata.txt","w");
 	if (datafile==NULL)
@@ -17299,9 +17283,9 @@ void loadrepsys( void ) //Repsys
 	{
 		readw2();
 		if(!(strcmp(script1,"MURDER_DECAY"))) repsys.murderdecay=str2num(script2);
-		if(!(strcmp(script1,"MAXKILLS"))) repsys.maxkills=str2num(script2);
-		if(!(strcmp(script1,"CRIMINAL_TIME"))) repsys.crimtime=str2num(script2);
-		if( !strcmp( script1, "SNOOP_IS_CRIME" ) )
+		else if(!(strcmp(script1,"MAXKILLS"))) repsys.maxkills=str2num(script2);
+		else if(!(strcmp(script1,"CRIMINAL_TIME"))) repsys.crimtime=str2num(script2);
+		else if( !strcmp( script1, "SNOOP_IS_CRIME" ) )
 			server_data.snoopiscrime = ( str2num( script2 ) != 0 );
 	}
 	while (strcmp(script1, "}"));
@@ -17563,7 +17547,7 @@ void playTileSound( UOXSOCKET s )
 				break;
 	}
 	if( sndid1 != 0 && sndid2 != 0 )			// if we have a valid sound
-		soundeffect( s, sndid1, sndid2 );
+		soundeffects( s, sndid1, sndid2, true );
 }
 bool IsInMenuList( int toCheck )
 // PRE:		TRUE
@@ -17595,7 +17579,7 @@ void AddToMenuList( int toAdd )
 //|   Purpose     -  Performs death stuff. I.E.- creates a corpse, moves items
 //|                  to it, take out of war mode, does animation and sound, etc.
 //o---------------------------------------------------------------------------o
-void deathstuff(int i)
+void deathstuff(CHARACTER i)
 {
 	int p, j, ele, corpsenum, c = -1;
 	char murderername[50]; // AntiChrist
@@ -17669,10 +17653,7 @@ void deathstuff(int i)
 		c = Items->SpawnItem( playerSock, 1, temp, 0, 0x20, 0x4E, 0, 0, 0, 0);
 		if( c == -1 ) 
 			return;
-		chars[i].robe1 = items[c].ser1;
-		chars[i].robe2 = items[c].ser2;
-		chars[i].robe3 = items[c].ser3;
-		chars[i].robe4 = items[c].ser4;
+		chars[i].robe = items[c].serial;
 		setserial( c, i, 4 );
 		items[c].layer = 0x16;
 		items[c].def = 1;

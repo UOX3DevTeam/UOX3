@@ -661,7 +661,7 @@ public:
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
 private:
-	void GenTable(int s, char a1, char a2, char a3, char a4);
+//	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);
 
 	int xRecv(int s);
@@ -755,7 +755,7 @@ public:
 	void Mark( UOXSOCKET s);
 	void Gate( UOXSOCKET s);
 	void Heal( UOXSOCKET s);
-	bool CheckMagicReflect( CHARACTER &src, CHARACTER &target );
+	bool CheckMagicReflect( CHARACTER i );
 	void MagicDamage(int p, int amount, CHARACTER attacker = -1 );
 	void SpellFail( UOXSOCKET s );
 	char SubtractMana(int s, int mana);

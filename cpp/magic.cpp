@@ -309,7 +309,7 @@ char cMagic::GateCollision( PLAYER s )
 					// Teleport the current character
 					mapRegions->AddItem(s+1000000); //LB, add with new x,y
 					teleport(s);
-					soundeffect( calcSocketFromChar( s ), 0x01, 0xFE );
+					soundeffects( calcSocketFromChar( s ), 0x01, 0xFE, true );
 					staticeffect( s, 0x37, 0x2A, 0x09, 0x06 );
 				}
 			}
@@ -363,7 +363,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		// Revised Abaddon 17th February 2000
 		// Now successfully summons a monster, if you have an npc list 10000
 		Npcs->DeleteChar( c );
-		soundeffect( s, 0x02, 0x17 );
+		soundeffects( s, 0x02, 0x17, true );
 		c=Npcs->AddRandomNPC( s, "10000", -1 );
 		if( c == -1 )
 		{
@@ -383,7 +383,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 	case 0x000D: // Energy Vortex & Air elemental
 		if (color1==0x00 && color2==0x75)
 		{
-			soundeffect(s, 0x02, 0x16); // EV
+			soundeffects(s, 0x02, 0x16, true); // EV
 			chars[c].def=22;
 			chars[c].lodamage=10;
 			chars[c].hidamage=30;
@@ -400,7 +400,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		}
 		else
 		{
-			soundeffect(s, 0x02, 0x17); // AE
+			soundeffects(s, 0x02, 0x17, true); // AE
 			chars[c].def=19;
 			chars[c].lodamage=5;
 			chars[c].hidamage=13;
@@ -414,7 +414,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		}
 		break;
 	case 0x000A: // Daemon
-		soundeffect(s, 0x02, 0x16);
+		soundeffects(s, 0x02, 0x16, true);
 		chars[c].def=20;
 		chars[c].lodamage=10;
 		chars[c].hidamage=45;
@@ -427,7 +427,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].in=chars[c].mn=400;
 		break;
 	case 0x000E: //Earth
-		soundeffect(s, 0x02, 0x17);
+		soundeffects(s, 0x02, 0x17, true);
 		chars[c].def=15;
 		chars[c].lodamage=3;
 		chars[c].hidamage=18;
@@ -439,7 +439,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		break;
 	case 0x000F: //Fire
 	case 0x0010: //Water
-		soundeffect(s, 0x02, 0x17);
+		soundeffects(s, 0x02, 0x17, true);
 		chars[c].def=19;
 		chars[c].lodamage=4;
 		chars[c].hidamage=12;
@@ -452,7 +452,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].in=chars[c].mn=70;
 		break;
 	case 0x023E: //Blade Spirits
-		soundeffect(s, 0x02, 0x12); // I don't know if this is the right effect...
+		soundeffects(s, 0x02, 0x12, true); // I don't know if this is the right effect...
 		chars[c].def=24;
 		chars[c].lodamage=5;
 		chars[c].hidamage=10;
@@ -466,7 +466,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].poison = 2;
 		break;
 	case 0x03e2: // Dupre The Hero
-		soundeffect(s, 0x02, 0x46);
+		soundeffects(s, 0x02, 0x46, true);
 		chars[c].def=50;
 		chars[c].lodamage=50;
 		chars[c].hidamage=100;
@@ -483,7 +483,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].karma=10000;
 		break;
 	case 0x000B: // Black Night
-		soundeffect(s, 0x02, 0x16);
+		soundeffects(s, 0x02, 0x16, true);
 		chars[c].def=50;
 		chars[c].lodamage=50;
 		chars[c].hidamage=100;
@@ -498,7 +498,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].in=chars[c].mn=100;
 		break;
 	case 0x0190: // Death Knight
-		soundeffect(s, 0x02, 0x46);
+		soundeffects(s, 0x02, 0x46, true);
 		chars[c].def=20;
 		chars[c].lodamage=10;
 		chars[c].hidamage=45;
@@ -515,7 +515,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].karma=-10000;
 		break;
 	default:
-		soundeffect(s, 0x02, 0x15);
+		soundeffects(s, 0x02, 0x15, true);
 	}
 	strcpy(chars[c].name, monstername);
 	chars[c].id1=chars[c].xid1=id1;
@@ -638,9 +638,7 @@ void cMagic::SbOpenContainer( UOXSOCKET s )
 char cMagic::CheckMana( CHARACTER s, int num )
 {
 	int p;
-	if (chars[s].priv2&0x10)
-		return 1;
-	if( chars[s].mn >= spells[num].mana ) 
+	if (chars[s].priv2&0x10 || chars[s].mn >= spells[num].mana)
 		return 1;
 	p = calcSocketFromChar( s );
 	if( p != -1 ) 
@@ -651,10 +649,9 @@ char cMagic::CheckMana( CHARACTER s, int num )
 bool cMagic::CheckStamina( CHARACTER s, int num )
 {
 	int p;
-	if( chars[s].priv2&0x10 )
+	if( chars[s].priv2&0x10 || chars[s].stm >= spells[num].stamina )
 		return true;
-	if( chars[s].stm >= spells[num].stamina ) 
-		return true;
+
 	p = calcSocketFromChar( s );
 	if( p != -1 ) 
 		sysmessage( p, "You have insufficient stamina to cast that spell." );
@@ -693,17 +690,19 @@ bool cMagic::CheckHealth( CHARACTER s, int num )
 char cMagic::SubtractMana( CHARACTER s, int mana)
 {
 	int p;
-	char retval=1;
 	
 	if (chars[s].priv2&0x10)
 		return 1;
 	
-	chars[s].mn-=mana;
-	if(chars[s].mn<0) chars[s].mn=0;//Bug Fix -- Zippy
+	chars[s].mn -= mana;
+	if(chars[s].mn < 0)		//Bug Fix -- Zippy
+		chars[s].mn = 0;
+
 	p=calcSocketFromChar(s);
-	if (p!=-1) updatestats(p, 1);
+	if (p!=-1) 
+		updatestats(p, 1);
 	
-	return retval;
+	return 1;
 }
 
 char cMagic::SubtractStamina( CHARACTER s, int stamina )
@@ -752,15 +751,15 @@ char cMagic::SubtractHealth( CHARACTER s, int health, int spellNum )
 //|                              if yes, remove the protection and do visual effect.
 //o---------------------------------------------------------------------------o
 
-char cMagic::CheckMagicReflect( CHARACTER i ) 
+bool cMagic::CheckMagicReflect( CHARACTER i ) 
 {
 	if (chars[i].priv2&0x40)
 	{
 		chars[i].priv2 &= 0xBF;
 		staticeffect(i, 0x37, 0x3A, 0, 15);
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1427,6 +1426,7 @@ void cMagic::NPCMagicArrowTarget( CHARACTER s, CHARACTER t)
 	
 	return;
 }
+
 
 //o---------------------------------------------------------------------------o
 //|     Class         :          ::NPCHarmTarget( CHARACTER s, CHARACTER t )
@@ -2952,7 +2952,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 									} while (mapitem!=-1);
 								}//for a<3
 							}//for checkgrid
-							soundeffect(s,0x01,0xFD);
+							soundeffects( s, 0x01, 0xFD, true );
 						}
 						else
 						{
