@@ -104,23 +104,12 @@ typedef struct __ACCESSITEMDATA__
 //o--------------------------------------------------------------------------o
 typedef struct __ACCESSDATABLOCK__
 {
-	//__ACCESSDATABLOCK__() { memset( this, 0x00, sizeof( __ACCESSDATABLOCK__ ) ); }
 	SI32		id;
 	UI16		bFlags;		// Bit 0) Account Banned 1) XGM Account 2) Public List 3) Account InUse4) 5) 6) 7) 8) 9) 10) 11) 12) 13) 14) 15) Compressed
-	union
-	{
-		struct I
-		{
-			char username[MAX_NAME];		//	username for this account
-			char password[MAX_PASSWORD];	//	password for this account
-			char comment[MAX_COMMENT];	//	comment field for this account
-			char path[MAX_PATH];			//	Path to the file that contains this accounts chars/items	
-		} Info; 
-		struct R
-		{
-			UI08 *data;	// (sizeof(Info) * 1.01(rounded down)) + 12 might as well make is zlib compatible
-		} Raw; 
-	};
+	char username[MAX_NAME];		//	username for this account
+	char password[MAX_PASSWORD];	//	password for this account
+	char comment[MAX_COMMENT];	//	comment field for this account
+	char path[MAX_PATH];			//	Path to the file that contains this accounts chars/items	
 } AAREC, *LPAAREC;
 //
 typedef struct __ACCOUNTDATABLOCK__
