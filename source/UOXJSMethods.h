@@ -77,7 +77,6 @@ JSMethodFunc CChar_SpeechInput;
 JSMethodFunc CChar_CastSpell;
 JSMethodFunc CChar_SysMessage;
 JSMethodFunc CChar_MagicEffect;
-JSMethodFunc CChar_GetSerial;
 JSMethodFunc CChar_MakeMenu;
 JSMethodFunc CChar_Wander;
 JSMethodFunc CChar_Follow;
@@ -113,7 +112,6 @@ JSMethodFunc CItem_AddToBanList;
 JSMethodFunc CItem_AddToOwnerList;
 JSMethodFunc CItem_RemoveFromBanList;
 JSMethodFunc CItem_RemoveFromOwnerList;
-JSMethodFunc CItem_GetSerial;
 JSMethodFunc CItem_SetCont;
 JSMethodFunc CItem_SetPoison;
 JSMethodFunc CItem_Refresh;
@@ -140,6 +138,7 @@ JSMethodFunc CBase_FirstItem;
 JSMethodFunc CBase_NextItem;
 JSMethodFunc CBase_FinishedItems;
 JSMethodFunc CBase_DistanceTo;
+JSMethodFunc CBase_GetSerial;
 
 // Socket Methods
 JSMethodFunc CSocket_SysMessage;
@@ -171,12 +170,6 @@ JSMethodFunc CMisc_CustomTarget;
 JSMethodFunc CMisc_PopUpTarget;
 JSMethodFunc CMisc_GetTimer;
 JSMethodFunc CMisc_SetTimer;
-
-// Functions
-JSMethodFunc JS_CharbySerial;
-JSMethodFunc JS_ItembySerial;
-JSMethodFunc JS_AddNPC;
-JSMethodFunc JS_AddItem;
 
 // Race methods
 JSMethodFunc CRace_CanWearArmour;
@@ -266,7 +259,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },	
 	{ "SysMessage",			CChar_SysMessage,		1, 0, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
-	{ "GetSerial",			CChar_GetSerial,		1, 0, 0 },
+	{ "GetSerial",			CBase_GetSerial,		1, 0, 0 },
 	{ "MakeMenu",			CChar_MakeMenu,			1, 0, 0 },
 	{ "Wander",				CChar_Wander,			3, 0, 0 },
 	{ "Follow",				CChar_Follow,			1, 0, 0 },
@@ -325,7 +318,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "AddToOwnerList",		CItem_AddToOwnerList,		1, 0, 0 },
 	{ "RemoveFromBanList",	CItem_RemoveFromBanList,	1, 0, 0 },
 	{ "RemoveFromOwnerList",CItem_RemoveFromOwnerList,	1, 0, 0 },
-	{ "GetSerial",			CItem_GetSerial,			1, 0, 0 },
+	{ "GetSerial",			CBase_GetSerial,			1, 0, 0 },
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
 	{ "SetPoison",			CItem_SetPoison,			2, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
@@ -337,7 +330,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "DistanceTo",			CBase_DistanceTo,			1, 0, 0 },
 	{ "Glow",				CItem_Glow,					1, 0, 0 },
 	{ "UnGlow",				CItem_UnGlow,				1, 0, 0 },
-	{ "PlaceInPack",		CItem_PlaceInPack,			1, 0, 0 },
+	{ "PlaceInPack",		CItem_PlaceInPack,			0, 0, 0 },
 	{ "Dupe",				CItem_Dupe,					1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };

@@ -25,7 +25,7 @@ namespace UOX
 //		operator const char *()
 	protected:
 
-		bool			beenParsed[JSObjectType::JSOT_COUNT];
+		bool			beenParsed[JSOT_COUNT];
 		JSObjectType	nativeType;
 
 		int				intVal;

@@ -83,7 +83,7 @@ static JSFunctionSpec my_functions[] =
 	{ "NextCommand",				SE_NextCommand,				0, 0, 0 },
 	{ "FinishedCommandList",		SE_FinishedCommandList,		0, 0, 0 },
 	{ "CreateDFNItem",				SE_CreateDFNItem,			3, 0, 0 },
-	{ "CreateBlankItem",			SE_CreateBlankItem,			7, 0, 0 },
+	{ "CreateBlankItem",			SE_CreateBlankItem,			8, 0, 0 },
 	{ "SpawnNPC",					SE_SpawnNPC,				5, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
 	{ "CalcTargetedItem",			SE_CalcTargetedItem,		1, 0, 0 },
@@ -95,12 +95,6 @@ static JSFunctionSpec my_functions[] =
 	
 	// Added by DarkStorm
 	{ "GetRaceCount",				SE_GetRaceCount,			0, 0, 0 },
-
-	// Object Based Functions
-	{ "AddNPC",						JS_AddNPC,					1, 0, 0 },
-	{ "AddItem",					JS_AddItem,					1, 0, 0 },
-	{ "ItembySerial",				JS_ItembySerial,			1, 0, 0 },
-	{ "CharbySerial",				JS_CharbySerial,			1, 0, 0 },
 
 	{ "WorldBrightLevel",			SE_WorldBrightLevel,		0, 0, 0 },
 	{ "WorldDarkLevel",				SE_WorldDarkLevel,			0, 0, 0 },

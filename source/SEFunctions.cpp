@@ -629,7 +629,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 }
 JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 7 )
+	if( argc != 8 )
 	{
 		DoSEErrorMessage( "CreateBlankItem: Invalid number of arguments (takes 7)" );
 		return JS_FALSE;

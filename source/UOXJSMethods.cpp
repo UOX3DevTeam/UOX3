@@ -961,107 +961,6 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	return JS_TRUE;
 }
 
-JSBool JS_ItembySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	JSString *SerialJSString	= JSVAL_TO_STRING( argv[0] );
-	UString SerialString		= "0x";
-	SerialString				+= JS_GetStringBytes( SerialJSString );
-	CItem *myItem				= calcItemObjFromSer( SerialString.toULong() );
-
-	if( !ValidateObject( myItem ) )
-	{
-		*rval = JSVAL_NULL;
-	}
-	else
-	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, myItem );
-		*rval = OBJECT_TO_JSVAL( myObj );
-	}
-
-	return JS_TRUE;
-}
-
-JSBool JS_CharbySerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	JSString *SerialJSString	= JSVAL_TO_STRING( argv[0] );
-	UString SerialString		= "0x";
-	SerialString				+= JS_GetStringBytes( SerialJSString );
-	CChar *myChar				= calcCharObjFromSer( SerialString.toULong() );
-
-	if( !ValidateObject( myChar ) )
-	{
-		*rval = JSVAL_NULL;
-	}
-	else
-	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myObj, myChar );
-		*rval = OBJECT_TO_JSVAL( myObj );
-	}
-
-	return JS_TRUE;
-}
-
-// Spawns an Item
-JSBool JS_AddItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	std::string itemString	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	CItem *myItem			= NULL;
-
-	if( argc == 1 ) 
-	{
-		myItem = Items->CreateBaseScriptItem( itemString, 0 );
-	}
-	else if( argc == 2 )
-	{		
-		CChar *myChar	= (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] ) );
-		myItem			= Items->CreateScriptItem( calcSocketObjFromChar( myChar ), myChar, itemString, 1, OT_ITEM, true );
-	}
-	else if( argc == 3 )
-	{
-		CChar *myChar	= (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] ) );
-		myItem			= Items->CreateScriptItem( calcSocketObjFromChar( myChar ), myChar, itemString, 1, OT_ITEM, true );
-	}
-	else
-	{
-		MethodError( "Unknown Count of Arguments: %d", argc );
-		return JS_FALSE;
-	}
-
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
-	JS_SetPrivate( cx, myJSItem, myItem );
-
-	*rval = OBJECT_TO_JSVAL( myJSItem );
-
-	return JS_TRUE;
-}
-
-// Spawn a NPC
-JSBool JS_AddNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc == 1 ) 
-	{
-		std::string npcString	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-		CChar *myNPC			= Npcs->CreateBaseNPC( npcString );
-		cScript *myScript		= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-		JSObject *myJSChar		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myJSChar, myNPC );
-
-		*rval = OBJECT_TO_JSVAL( myJSChar );
-	}
-	else
-	{		
-		MethodError( "Unknown Count of Arguments: %d", argc );
-		return JS_FALSE;
-	}
-
-	return JS_TRUE;
-}
-
 // Character related methods!
 JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -2643,9 +2542,9 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
-JSBool CItem_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	CItem *myObj = (CItem*)JS_GetPrivate( cx, obj );
+	cBaseObject *myObj = (cBaseObject*)JS_GetPrivate( cx, obj );
 	UI08 part = (UI08)JSVAL_TO_INT( argv[0] );
 	
 	if( !ValidateObject( myObj ) || ( part <= 0 ) || ( part > 4 ) )
@@ -4252,15 +4151,15 @@ JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
 	cBaseObject *myObj	= (cBaseObject *)JS_GetPrivate( cx, jsObj );
 
-	cBaseObject *myChar	= static_cast<cBaseObject *>(JS_GetPrivate( cx, obj ) );
+	cBaseObject *thisObj	= static_cast<cBaseObject *>(JS_GetPrivate( cx, obj ) );
 
-	if( !ValidateObject( myChar ) || !ValidateObject( myObj ) )
+	if( !ValidateObject( thisObj ) || !ValidateObject( myObj ) )
 	{
 		MethodError( "DistanceTo: Invalid character" );
 		return JS_FALSE;
 	}
 	
-	*rval = INT_TO_JSVAL( getDist( myChar, myObj ) );
+	*rval = INT_TO_JSVAL( getDist( thisObj, myObj ) );
 	return JS_TRUE;
 }
 
@@ -4486,6 +4385,11 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 	CChar *mChar = (CChar *)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Kill: Invalid character passed" );
+		return JS_FALSE;
+	}
 	doDeathStuff( mChar );
 	return JS_TRUE;
 }
@@ -4498,6 +4402,11 @@ JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	CChar *mChar = (CChar *)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Resurrect: Invalid character passed" );
+		return JS_FALSE;
+	}
 	NpcResurrectTarget( mChar );
 	return JS_TRUE;
 }

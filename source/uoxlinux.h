@@ -1,3 +1,10 @@
+#include <malloc.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string>
+#include <string.h>
+
 #ifndef __UOXLINUX_H__
 #define __UOXLINUX_H__
 

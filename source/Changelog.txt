@@ -1,3 +1,7 @@
+7/28/2004 - giwo
+	Minor fixes, cleanups
+	Included che's linux fixes
+
 7/25/2004 - giwo
 	Removed several vtables from classes that were not subclassed
 	Added struct GoPlace_st and CWorldMain::goPlaces map to replace re-reading entries every time we use GoPlace.
