@@ -193,12 +193,14 @@ FILE=commands/targeting/jail.js
 FILE=commands/targeting/x.js
 FILE=commands/targeting/areacommand.js
 FILE=commands/targeting/wipe.js
+FILE=commands/targeting/showdetail.js
 }
 
 [MAGIC_SCRIPTS]
 {
 FILE=magic/clumsy.js
 }
+
 
 EOF
 
