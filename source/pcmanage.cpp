@@ -381,13 +381,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[EXTRA2]->SetDye( true );
 		CreatedItems[EXTRA2]->SetDef( 1 );
 	}	
-	CreatedItems[EXTRA3] = Items->CreateItem( tSock, mChar, 0x0F51, 1, 0, OT_ITEM );
-	if( CreatedItems[EXTRA3] != NULL ) 
-	{
-		CreatedItems[EXTRA3]->SetLayer( IL_RIGHTHAND );
-		CreatedItems[EXTRA3]->SetLoDamage( 5 );
-		CreatedItems[EXTRA3]->SetHiDamage( 5 );
-	}
+
 	for( UI08 ctr = 0; ctr < GOLD; ++ctr )
 	{
 		if( CreatedItems[ctr] != NULL )

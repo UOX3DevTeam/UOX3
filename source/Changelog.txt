@@ -1,3 +1,9 @@
+February 5 2005 - Maarc
+
+	Probable fix for Polymorph not returning to the right body (can't test)
+	The newbie dagger is no longer made on new character creation - use newbie.dfn people! (Not entirely complete, as not all references to EXTRA3 were removed)
+	SaveStatistics() added to CWorldMain, which only really writes out the total of characters and items, but using it to help with a fix for WorldBuilder
+
 January 15 2005 - Maarc
 
 	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system 

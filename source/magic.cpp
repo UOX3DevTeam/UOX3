@@ -3206,15 +3206,15 @@ void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 
 void cMagic::Polymorph( CSocket *s, UI16 polyID )
 {
-	UI08 id1 = static_cast<UI08>(polyID>>8);
-	UI08 id2 = static_cast<UI08>(polyID%256);
-	CChar *mChar = s->CurrcharObj();
-	Effects->PlaySound( mChar, 0x020F );
-	Effects->tempeffect( mChar, mChar, 18, id1, id2, 0 );
-	
-	mChar->SetOrgID( polyID );
-	mChar->SetID( polyID );
+	UI08 id1		= static_cast<UI08>(polyID>>8);
+	UI08 id2		= static_cast<UI08>(polyID%256);
+	CChar *mChar	= s->CurrcharObj();
 
+	// store our original ID
+	mChar->SetOrgID( mChar->GetID() );
+	Effects->PlaySound( mChar, 0x020F );
+	// Temp effect will actually switch our body for us
+	Effects->tempeffect( mChar, mChar, 18, id1, id2, 0 );
 	mChar->IsPolymorphed( true );
 }
 

@@ -31,6 +31,7 @@
 #include "regions.h"
 #include "jail.h"
 #include "Dictionary.h"
+#include "ObjectFactory.h"
 
 namespace UOX
 {
@@ -597,6 +598,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		JailSys->WriteData();
 		Skills->SaveResources();
 		Effects->SaveEffects();
+		SaveStatistics();
 
 		if( ServerData()->ServerAnnounceSavesStatus() )
 			sysBroadcast( "World Save Complete." );
@@ -652,8 +654,36 @@ CServerProfile *CWorldMain::ServerProfile( void )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Class				-	CServerProfile
-//|	Date				-	2004
+//|	Function/Class	-	void CWorldMain::SaveStatistics( void )
+//|	Date			-	February 5th, 2005
+//|	Developer(s)	-	Maarc
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Saves out some useful statistics so that some tools
+//|						such as Xuri's WB can do some memory reserve shortcuts
+//o--------------------------------------------------------------------------o	
+void CWorldMain::SaveStatistics( void )
+{
+	std::string		statsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "statistics.wsc";
+	std::ofstream	statsDestination( statsFile.c_str() );
+	if( !statsDestination ) 
+	{
+		Console.Error( 1, "Failed to open %s for writing", statsFile.c_str() );
+		return;
+	}
+
+	statsDestination << "[STATISTICS]" << std::endl << "{" << std::endl;
+	statsDestination << "PLAYERCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << std::endl;
+	statsDestination << "ITEMCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << std::endl;
+	statsDestination << "MULTICOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_MULTI ) << std::endl;
+	statsDestination << "}" << std::endl << std::endl;
+
+	statsDestination.close();
+}
+
+//o--------------------------------------------------------------------------o
+//|	Class			-	CServerProfile
+//|	Date			-	2004
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
 //|	Status			-	Currently under development

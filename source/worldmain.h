@@ -155,7 +155,7 @@ public:
 	UI32		GetEndTime( void ) const;
 	void		SetLClock( UI32 newVal );
 	UI32		GetLClock( void ) const;
-
+	
 	// Worldsave
 	void		SetNewTime( UI32 newVal );
 	UI32		GetNewTime( void ) const;
@@ -197,6 +197,7 @@ public:
 	CServerProfile * ServerProfile( void );
 private:
 	void			RegionSave( void );
+	void			SaveStatistics( void );
 
 	CServerData *	sData;
 	CServerProfile * sProfile;
