@@ -26,8 +26,8 @@
 
 #ifdef __LINUX__
 
-/*#include <dirent.h>
-#include <glob.h>
+#include <dirent.h>
+/*#include <glob.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -41,7 +41,7 @@
 
 /*#include <winsock2.h>
 #include <windows.h>*/
-//#include <direct.h>
+#include <direct.h>
 /*#include <io.h>
 #include <time.h>
 #include <sys/timeb.h>
@@ -58,6 +58,7 @@
 #include <cstdio>
 #include <iosfwd>
 #include <algorithm>
+#include <cctype>
 
 //#ifndef __LINUX__
 //#include <ios>
@@ -67,9 +68,9 @@
 //#endif
 #include <map>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <errno.h>
 
 #include "cChar.h"
 #include "cVersionClass.h"
