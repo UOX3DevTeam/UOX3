@@ -66,10 +66,11 @@
 #include "CChar.h"
 #include "cVersionClass.h"
 
+//#define __UOX3_DTL__
+#ifdef __UOX3_DTL__
 #include "DTL.h"
 #include "variant_cc.h"
-
-//#define __UOX3_DTL__
+#endif
 
 // Enums
 enum __ACCOUNTBBLOCK_FLAGS__
