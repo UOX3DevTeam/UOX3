@@ -691,10 +691,10 @@ long cAccounts::LoadAccounts( void )
 			memset(tbuffer,0x00,sizeof(tbuffer));
 			// Expects that the path value contains path and filename to actinfo.uad ins the users directory
 			UI32 slen = strlen( temp->path );
-			if( temp->Info.path[slen-1] == '\\' || temp->path[ slen -1] == '/' )
-				sprintf(tbuffer,"%s%s.uad",temp->Info.path,temp->username);
+			if( temp->path[slen-1] == '\\' || temp->path[ slen -1] == '/' )
+				sprintf(tbuffer,"%s%s.uad",temp->path,temp->username);
 			else
-				sprintf(tbuffer,"%s/%s.uad",temp->Info.path,temp->username);
+				sprintf(tbuffer,"%s/%s.uad",temp->path,temp->username);
 			// We have the path to the file now open and parse it into memory
 			ifstream ins;
 			ins.open(tbuffer);
@@ -1331,7 +1331,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 			break;
 	} // switch( )
 
-	strcpy( toAdd->lpaarHolding->Info.path, sAccountPath.c_str() );
+	strcpy( toAdd->lpaarHolding->path, sAccountPath.c_str() );
 
 	if( !makeDirectory( sAccountPath.c_str() ) ) 
 	{
@@ -1365,7 +1365,7 @@ void cAccounts::AddAccount( string username, string password, string contact, UI
 
 	// Build the correct Filename here
 	//AccountPath = AccountsPath+AccountPath;
-	string sWorking = sAccountPath + toAdd->lpaarHolding->Info.username;
+	string sWorking = sAccountPath + toAdd->lpaarHolding->username;
 	sWorking += ".uad";
 
 	ofstream AccountStream( sWorking.c_str(), ios::out );
