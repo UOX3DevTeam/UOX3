@@ -1698,6 +1698,7 @@
 1732=This Item 
 1733=Select item to set spwanobj on.
 1734=Select item to set spwanobjlist on.
+1735=Select player to own the object.
 }
 
 EOF
