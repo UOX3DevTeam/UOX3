@@ -565,14 +565,14 @@ void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
 	RefreshItem( tiller );
 	
 	MapRegion->RemoveItem( p1 );
-	//p1->IncX( tx );	// Jediman Boat fix
-	//p1->IncY( ty );
+	p1->IncX( tx );	// Jediman Boat fix
+	p1->IncY( ty );
 	MapRegion->AddItem( p1 );
 	RefreshItem( p1 );
 	
 	MapRegion->RemoveItem( p2 );
-	p2->IncX( tx );
-	p2->IncY( ty );
+	//p2->IncX( tx );
+	//p2->IncY( ty );
 	MapRegion->AddItem( p2 );
 	RefreshItem( p2 );
 	
@@ -1010,6 +1010,7 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 		Weight->subtractItemWeight( mChar, model );
 		model->SetWeight( 0 );
 		Weight->addItemWeight( mChar, model );
+		model->SetType(210);
 		model->SetMagic( 0 );
 
 		for( CItem *a = hold->FirstItemObj(); !hold->FinishedItems(); a = hold->NextItemObj() )
