@@ -11867,9 +11867,9 @@ void PlVGetgold(int s, int v)//PlayerVendors
 	unsigned int pay=0, give=chars[v].holdg, t=0;
 	if (chars[currchar[s]].serial==chars[v].ownserial)
 	{
-		if (chars[v].holdg==0)
+		if (chars[v].holdg<1)
 		{
-			npctalk(s,v,"I have no gold waiting for you.", 0);
+			npctalk(s,v,"I have no gold waiting for you.",0);
 			chars[v].holdg=0;
 			return;
 		} else if(chars[v].holdg<=65535)
@@ -11882,20 +11882,18 @@ void PlVGetgold(int s, int v)//PlayerVendors
 				pay=chars[v].holdg;
 				give=0;
 			}
-			//chars[v].holdg=0;
-		}/* else {
+			chars[v].holdg=0;
+		} else {
 			t=chars[v].holdg-65535;
 			chars[v].holdg=65535;
 			pay=6554;
 			give=58981;
-		}*/
-		if( give ) 
-			Items->SpawnItem( s, give, "#", 1, 0x0E, 0xED, 0, 0, 1, 1 );
-		
-		sprintf(temp, "Today's purchases total %i gold. I am keeping %i gold for my self. Here is the remaining %i gold. Have a nice day.",chars[v].holdg,pay,give);
-		npctalk(s,v,temp, 0);
-		chars[v].holdg=pay;
-	} else npctalk(s,v,"I don't work for you!", 0);
+		}
+		if (give) Items->SpawnItem(s,give,"#",1,0x0E,0xED,0,0,1,1);
+		sprintf((char*)temp, "Today's purchases total %i gold. I am keeping %i gold for my self. Here is the remaining %i gold. Have a nice day.",chars[v].holdg,pay,give);
+		npctalk(s,v,(char*)temp,0);
+		chars[v].holdg=t;
+	} else npctalk(s,v,"I don't work for you!",0);
 }
 
 void responsevendor(int s) //Modified by AntiChrist

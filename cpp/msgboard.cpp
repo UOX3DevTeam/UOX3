@@ -2142,7 +2142,6 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 	
 	return;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // FUNCTION:    MsgBoardMaintenance( void )
 //
@@ -2164,7 +2163,6 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 //              This will definetly have to be #ifdef'd to handle this.
 //              Anyone with LINUX experience please feel free to fix it up.
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __linux__
 void MsgBoardMaintenance( void )
 {
 	int loopexit=0, loopexit2=0;
@@ -2182,480 +2180,12 @@ void MsgBoardMaintenance( void )
 	
 	// WINDOWS OS structure to be passed to _findfirst() and _findnext()
 	// too make this work with LINUX some #ifdef'ing will have to happen.
-
+	#ifdef __linux__
+	std::vector<std::string> vecFiles ;
+	#else
 	struct _finddata_t    BBIFile;
 	struct _finddata_t    BBPFile;
-	
-	
-	long                  hBBIFile = NULL;
-	long                  hBBPFile = NULL;
-	
-	struct tm             currentDate;
-	time_t                now;
-	int                   dayOfYear;
-	int                   postDay;
-	int                   postAge;
-	int                   count;
-	
-	int                   newPostSN  = 0;
-	int                   basePostSN = 0;
-	unsigned int          sizeOfBBP  = 0;
-	
-	// Display progress message
-	//ConOut("WOLFPACK: Bulletin Board Maintenace - Cleaning and compacting BBI & BBP files.\nWOLFPACK: Progress");
-	ConOut("     Bulletin Board Maintenance - Cleaning and compacting BBI & BBP files.");
-	
-	// Load the MSGBOARDPATH into an array
-	// If a MSBBOARDPATH has been define in the SERVER.SCP file, then use it
-	if (server_data.msgboardpath)
-		strcpy( filePath, server_data.msgboardpath );
-	
-	// Set the Tmp file names
-	strcpy( fileBBITmp, filePath  );
-	strcat( fileBBITmp, "bbi.tmp" );
-	
-	strcpy( fileBBPTmp, filePath  );
-	strcat( fileBBPTmp, "bbp.tmp" );
-	
-	// Setup for the starting findfirst() call
-	strcpy( fileName, filePath );
-	strcat( fileName, "*.bbi"  );
-	
-	// Calculate current time and date to check if post retention period has expired
-	time( &now );
-	currentDate = *localtime( &now );
-	dayOfYear   = currentDate.tm_yday+1;
-	
-	// Find a *.BBI file, if none exist then no bulletin boards exist
-
-	if( (hBBIFile = _findfirst( fileName, &BBIFile )) == -1L )
-
-		{
-			ConOut( "\n\tNo BBI files found." );
-			
-			// Setup for the BBP findfirst() call
-			strcpy( fileName, filePath );
-			strcat( fileName, "*.bbp"  );
-			
-
-			if( (hBBPFile = _findfirst( fileName, &BBPFile )) == -1L )
-					ConOut( "\n\tNo BBP files found.\n\tNo Bulletin Board files found to process.\n" );
-				else
-					ConOut( "\n\tBBP files found with no matching BBI files.\n\t!!! Clean your bulletin board directory !!!\n", filePath );
-				
-				// Close the BBI & BBP file handles and exit routine
-
-				_findclose( hBBIFile );
-				_findclose( hBBPFile );
-				
-				return;
-		}
-		
-		
-		// If we made it through the first check then we found a BBI file.
-		do
-		{
-			// Set the number of messages compressed back to 0
-			count = 0;
-			
-			// Add the file path first then the name of the current BBI file
-			strcpy( fileName, filePath     );
-			strcat( fileName, BBIFile.name );
-			
-			// Setting up BBI file for cleaning and compression
-			// Rename the BBI file to the temporary file 
-			rename( fileName, fileBBITmp );
-			
-			// Open the new file with the same name as the original BBI file
-			pBBINew = fopen( fileName, "wb" );
-			
-			// Open the old BBI.TMP file
-			pBBIOld = fopen( fileBBITmp, "rb" );
-			
-			
-			
-			// Make sure ALL files opened ok
-			if ( feof(pBBINew) || feof(pBBIOld) )
-			{
-				fclose( pBBINew );
-				fclose( pBBIOld );
-				
-				// Delete the new file if it exists
-				remove ( fileName );
-				
-				// Put the old file name back
-				rename( fileBBITmp, fileName );
-				
-				ConOut("\n\tERROR:  couldn't open all the BBI files needed, aborting!\n");
-				break;
-			}
-			
-			// Set the fileName to the proper extension for the BBP file
-			fileName[strlen(fileName)-1] = 'p';
-			
-			// Rename the BBP file to the temporary file 
-			rename( fileName, fileBBPTmp );
-			
-			// Open the new file with the same name as the original BBP file
-			if ( !( pBBPNew = fopen( fileName, "a+b" ) ) )
-			{
-				ConOut("\n\tERROR:  couldn't open all the BBP files needed, aborting!\n");
-				return;
-			}
-			
-			// Open the old BBI.TMP file
-			if ( !( pBBPOld = fopen( fileBBPTmp, "rb" ) ) )
-			{
-				ConOut("\n\tERROR:  couldn't open all the BBP files needed, aborting!\n");
-				fclose( pBBPNew );
-				return;
-			}
-			
-			// Make sure ALL files opened ok
-			if ( feof(pBBPNew) || feof(pBBPOld) )
-			{
-				fclose( pBBPNew );
-				fclose( pBBPOld );
-				
-				// Delete the new file if it exists
-				remove ( fileName );
-				
-				// Put the old file name back
-				rename( fileBBPTmp, fileName );
-				
-				ConOut("\n\tERROR:  couldn't open all the BBP files needed, aborting!\n");
-				break;
-			}
-			
-			// Determine what type of file this is and initialize its starting post serial number accordingly
-			switch ( fileName[strlen(filePath)] )
-			{
-				// global.bbp
-			case 'g':
-				newPostSN = 0x01000000;
-				break;
-				
-				// region.bbp
-			case 'r':
-				newPostSN = 0x02000000;
-				break;
-				
-				// local.bbp ( ie 40000000.bbp )
-			default:
-				newPostSN = 0x03000000;
-				break;
-			}
-			
-			// Save the newPostSN for the BBP file
-			basePostSN = newPostSN;
-			
-			// Write out the new base SN to the new BBI file
-			msg[0] = newPostSN/16777216;
-			msg[1] = newPostSN/65536;
-			msg[2] = newPostSN/256;
-			msg[3] = newPostSN%256;
-			
-			if ( fwrite( msg, sizeof(char), 4, pBBINew ) != 4 )
-				ConOut("\tMsgBoardMaintenance() Failed to write out newPostSN to pBBINew\n");
-			
-			// Now lets find out what posts we keep and what posts to remove
-			
-			// Fill post2Keep array with all posts that are not marked for deletion or past the retention period
-			// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
-			if ( fseek( pBBIOld, 4, SEEK_SET ) )
-			{
-				ConOut("WOLFPACK: MsgBoardMaintenance() failed to seek to first message segment in pBBIOld\n");
-				return;
-			}
-			
-			// Loop until we have reached the end of the BBI file
-			while ( !feof(pBBIOld) )
-			{
-				//Increment progress dots
-				ConOut(".");
-				
-				// Fill up msg with data from the bbi file
-				if ( fread( msg, sizeof(char), 19, pBBIOld ) != 19 )
-					if ( feof(pBBIOld) ) break;
-					
-					// Day that post was created
-					postDay = (msg[7]*256) + msg[8];
-					
-					// Calculate the age of this post;
-					postAge = dayOfYear - postDay;
-					
-					// If postAge is negative, then we are wrapping around the end of the year so add 365 to 
-					// make it positive
-					if ( postAge < 0 )
-            postAge += 365;
-					
-					//  |Off| 1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18
-					//  |mg1|mg2|mg3|mg4|mo1|mo2|???|sg1|sg2|xx1|xx2|yy1|yy2|cS1|cS2|cS3|cS4|co1|co2|
-					// "\x40\x1c\x53\xeb\x0e\xb0\x00\x00\x00\x00\x3a\x00\x3a\x40\x00\x00\x19\x00\x00";
-					// cS = Charater SN ( only has a value when an NPC posted the message )
-					
-					// Check to see whether the post is a dangling quest posting.  Can occur if a quest was 
-					// generate and posted and then the server crashed without saving the world file.
-					// You would then have a post with no quest object related to it.  So we have to
-					// scan through the WSC file to figure out if the quest posted has a related object
-					// in the world.
-					// Message type > 0x05 is a quest && every quest must have an object associated with it
-					// So if this is true we must have a quest post with a valid quest object
-					if (  (msg[6]>0x05) && ( msg[13] || msg[14] || msg[15] || msg[16]) )
-					{
-						// Convert the post objects serial number to an int.
-						int postObjectSN  = (msg[13]*16777216) + (msg[14]*65536) + (msg[15]*256) + msg[16];
-						int postQuestType = msg[6];
-						int foundMatch    = 0;
-						
-						switch ( postQuestType )
-						{
-						case ESCORTQUEST:
-							{
-								// Use CHAR_ST to find owner of the post, Since the maintenance is performed
-								// after the world is loaded we can just whip through the array to find what we need
-								
-								//for ( int z=0; z<charcount; z++ )
-								//or... we can use hastables and do it 100x faster --Zippy
-								long z=findbyserial(&charsp[calcserial(msg[13],msg[14],msg[15],msg[16])%HASHMAX],calcserial(msg[13],msg[14],msg[15],msg[16]), 1);
-								if (z!=-1)
-								{
-									if ( (chars[z].ser1     == msg[13]) &&
-										(chars[z].ser2     == msg[14]) &&
-										(chars[z].ser3     == msg[15]) &&
-										(chars[z].ser4     == msg[16]) &&
-										(chars[z].npc      == 1      ) &&
-										(chars[z].questType > 0      )    )
-									{
-										// Now lets reset all of the escort timers after the server has reloaded the WSC file
-										// If this is an Escor Quest NPC 
-										if ( (chars[z].questType==ESCORTQUEST) )
-										{
-											// And it doesn't have a player escorting it yet
-											if ( chars[z].ftarg==-1 )
-											{
-												// Lets reset the summontimer to the escortinit
-												chars[z].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortinitexpire ) );
-											}
-											else // It must have an escort in progress so set the escortactiveexpire timer
-											{
-												// Lets reset the summontimers to the escortactive value
-												chars[z].summontimer = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortactiveexpire ) );
-											}
-											
-											// Found a matching NPC for this posted quest so flag the post for compression
-											foundMatch = 1;
-											break;
-										}
-									}
-								}
-							}
-							break;
-							
-						case BOUNTYQUEST:
-							{
-								// Use CHAR_ST to find owner of the post, Since the maintenance is performed
-								// after the world is loaded we can just whip through the array to find what we need
-								
-								//for ( int z=0; z<charcount; z++ )
-								//or... we can use hastables and do it 100x faster --Zippy
-								long z=findbyserial(&charsp[calcserial(msg[13],msg[14],msg[15],msg[16])%HASHMAX],calcserial(msg[13],msg[14],msg[15],msg[16]), 1);
-								if (z!=-1)
-								{
-									if ( (chars[z].serial             == postObjectSN) &&
-										   (chars[z].npc                == 0           ) &&
-										   (chars[z].questBountyReward  >  0           ) )
-									{
-                    // Check that if this is a BOUNTYQUEST that should be removed first!
-                    if( ( postAge>=server_data.bountysexpire ) && ( server_data.bountysexpire!=0 ) )
-                    {                    
-                      // Reset the Player so they have no bounty on them
-                      chars[z].questBountyReward     = 0;
-                      chars[z].questBountyPostSerial = 0;
-                    }
-                    else
-                    {
-                      // Found a matching PC for this posted quest and the post 
-                      // has not expired so flag the post for compression
-										  foundMatch = 1;
-                    }
-
-										break;
-									}
-								}
-							}
-							break;
-
-            default:
-							{
-								ConOut("\tUnhandled QuestType found during maintenance\n");
-							}
-						}
-						
-						// After looking through the char_st for a matching SN for the object that posted the message
-						// If we found a match , then everything is ok, other wise there is a dangling post with no
-						// related object owning it in the world.
-						if ( !foundMatch )
-						{
-							// Show the operator a message indicating that a dangling post has been removed
-							ConOut("\n\tDangling Post found (SN = %02x %02x %02x %02x, questType = %02x) REMOVING!\n",
-								msg[13], msg[14], msg[15], msg[16], msg[6] );
-							
-							// Set the flag to delete the dangling post
-							msg[6]=0x00;
-						}
-					}
-					
-					// If the segment 6 is 0x00 OR the postAge is greater than the MSGRETENTION period
-					// then the message is marked for deletion so don't add it to the post2Keep array
-					if ( (msg[6]!=0x00 || msg[6]==BOUNTYQUEST) && (postAge<=server_data.msgretention) ) 
-					{
-						// We found a message to be saved and compressed so lets find the matching
-						// message in the BBP file and compress it
-						
-						// Loop until we have reached the end of the BBP file
-						loopexit2=0;
-						while ( !feof(pBBPOld) )
-						{
-							//Increment progress dots
-							ConOut(".");
-							
-							// Fill up msg2 with the first 12 bytes of data from the bbp file
-							if ( fread( msg2, sizeof(char), 12, pBBPOld ) != 12 )
-								break;
-							
-							// Calculate the size of the remainder of this BBP segment ( -12 because we just read the first 12 bytes)
-							sizeOfBBP = (msg2[1]*256) + msg2[2] - 12;
-							
-							// Fill up the rest of the msg2 with data from the BBP file
-							if ( fread( &msg2[12], sizeof(char), sizeOfBBP, pBBPOld ) != sizeOfBBP )
-								if ( feof(pBBPOld) ) break;
-								
-								
-								// Check to see that the post SN of the message just read matches the SN in the BBI file
-								if ( (msg2[8]  == msg[0]) &&
-									(msg2[9]  == msg[1]) &&
-									(msg2[10] == msg[2]) &&
-									(msg2[11] == msg[3])    )
-								{
-									// This is a match so write the message out to the new BBP file
-									
-									// First set the serial number of this post to the newPostSN
-									msg2[8]  = newPostSN/16777216;
-									msg2[9]  = newPostSN/65536;
-									msg2[10] = newPostSN/256;
-									msg2[11] = newPostSN%256;
-									
-                  // If this is a BOUNTYQUEST, then make sure you update the
-                  // PC that references this bounty with the new BountyPostSerial#
-                  if( msg[6] == BOUNTYQUEST )
-                  {
-        						int postObjectSN  = (msg[13]*16777216) + (msg[14]*65536) + (msg[15]*256) + msg[16];
-							      long z=findbyserial(&charsp[calcserial(msg[13],msg[14],msg[15],msg[16])%HASHMAX],calcserial(msg[13],msg[14],msg[15],msg[16]), 1);
-							      if (z!=-1)
-							      {
-								      if ( (chars[z].serial             == postObjectSN) &&
-										       (chars[z].npc                == 0           ) &&
-										       (chars[z].questBountyReward  >  0           ) )
-								      {
-                        chars[z].questBountyPostSerial = newPostSN;
-                      }
-                    }
-                  }
-
-									// Write out the entire message
-									if ( fwrite( msg2, sizeof(char), (sizeOfBBP+12), pBBPNew ) != (sizeOfBBP+12) )
-										ConOut("\tMsgBoardMaintenance() Failed to write out BBP segment to pBBPNew\n");
-									
-									// We found the message we are looking for so exit the loop leaving the file
-									// pointer where it is (messages must be in the same order in both files).
-									// Update msg[] with newPostSN value
-									msg[0] = newPostSN/16777216;
-									msg[1] = newPostSN/65536;
-									msg[2] = newPostSN/256;
-									msg[3] = newPostSN%256;
-									
-									// Write out new BBI segment to pBBINew
-									if ( fwrite( msg, sizeof(char), 19, pBBINew ) != 19)
-										ConOut("WOLFPACK: MsgBoardMaintenance() Failed to write out BBI segment to pBBINew\n");
-									
-									// Increment the newPostSN
-									newPostSN++;
-									
-									// Increment the count of the number of times we compressed a message
-									count++;
-									
-									// We found the message we wanted so break out of this BBP loop
-									break;
-								}
-						}
-					}
-    }
-	
-    // Finished iterating through the BBI & BBP file so set the new max message SN in the BBI file
-    // and clean up in order to get ready for the next set of BBI & BBP files
-	
-    // Jump to the start of the pBBINew file
-    if ( fseek( pBBINew, 0, SEEK_SET ) )
-		ConOut("\tMsgBoardMaintenance() failed to seek to start of pBBINew file\n");
-	
-    // If we the number of times through the loop is 0 then we need to increment the newPostSN
-    if ( count == 0 ) newPostSN++;
-	
-    // Set the buffer to the newPostSN
-    msg[0] = (newPostSN-1)/16777216;
-    msg[1] = (newPostSN-1)/65536;
-    msg[2] = (newPostSN-1)/256;
-    msg[3] = (newPostSN-1)%256;
-	
-    // Write out the newPostSN
-    if ( fwrite( msg, sizeof(char), 4, pBBINew ) != 4)
-		ConOut("\tMsgBoardMaintenance() Failed to write out newPostSN pBBINew\n");
-	
-	
-    // Close both BBP files
-    fclose( pBBPOld );
-    fclose( pBBPNew );
-	
-    // Delete the BBP temp file
-    remove( fileBBPTmp );
-	
-    // Close both BBI files
-    fclose( pBBIOld );
-    fclose( pBBINew );
-	
-    // Delete the BBI temp file
-    remove( fileBBITmp );
-	
-	loopexit=0;
-
-
-  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) );
-  
-  // Close the _findfirst handle
-  _findclose( hBBIFile );
-   
-    ConOut("\n     Bulletin Board Maintenance - Completed.\n");
-   return;
-}
-
-#else
-
-void MsgBoardMaintenance( void )
-{
-	char                  filePath[256]   = "";
-	char                  fileName[256]   = "";
-	char                  fileBBITmp[256] = "";
-	char                  fileBBPTmp[256] = "";
-	char                  msg2[MAXBUFFER];
-	
-	FILE                  *pBBINew        = NULL;
-	FILE                  *pBBIOld        = NULL;
-	
-	FILE                  *pBBPNew        = NULL;
-	FILE                  *pBBPOld        = NULL;
-	
-	
+	#endif
 	
 	long                  hBBIFile = 0;
 	long                  hBBPFile = 0;
@@ -2690,33 +2220,44 @@ void MsgBoardMaintenance( void )
 	strcat( fileBBPTmp, "bbp.tmp" );
 	
 	// Setup for the starting findfirst() call
-	std::vector<std::string> vecFiles ;
-	vecFiles = MsgBoardGetFile( ".bbi", filePath) ;
-	
+	#ifdef __linux__
+	vecFiles = MsgBoardGetFile(".bbi",filePath) ;
+	#else
+	strcpy( fileName, filePath );
+	strcat( fileName, "*.bbi"  );
+	#endif
 	// Calculate current time and date to check if post retention period has expired
 	time( &now );
 	currentDate = *localtime( &now );
 	dayOfYear   = currentDate.tm_yday+1;
 	
 	// Find a *.BBI file, if none exist then no bulletin boards exist
-
-	if( vecFiles.size() ==0 )
-
+	#ifdef __linux__
+	if(vecFiles.size() ==0) 
+	#else
+	if( (hBBIFile = _findfirst( fileName, &BBIFile )) == -1L )
+	#endif
 		{
 			ConOut( "\n\tNo BBI files found." );
 			
 			// Setup for the BBP findfirst() call
-			vecFiles  = MsgBoardGetFile(".bbp",filePath) ;
-				
-
-			if( vecFiles.size() ==0 )
+			#ifdef __linux__
+			vecFiles = MsgBoardGetFile(".bbp",filePath) ;
+			if (vecFiles.size() == 0)
+			#else
+			strcpy( fileName, filePath );
+			strcat( fileName, "*.bbp"  );
+			if( (hBBPFile = _findfirst( fileName, &BBPFile )) == -1L )
+			#endif
 					ConOut( "\n\tNo BBP files found.\n\tNo Bulletin Board files found to process.\n" );
 				else
 					ConOut( "\n\tBBP files found with no matching BBI files.\n\t!!! Clean your bulletin board directory !!!\n", filePath );
 				
 				// Close the BBI & BBP file handles and exit routine
-
-							
+			#ifndef __linux__
+				_findclose( hBBIFile );
+				_findclose( hBBPFile );
+			#endif	
 				return;
 		}
 		
@@ -2728,8 +2269,12 @@ void MsgBoardMaintenance( void )
 			count = 0;
 			
 			// Add the file path first then the name of the current BBI file
-			//strcpy( fileName, filePath     );
-			strcpy( fileName, vecFiles[index].c_str() );
+			strcpy( fileName, filePath     );
+			#ifdef __linux__
+			strcat( fileName, vecFiles[index].c_str() );
+			#else
+			strcat( fileName, BBIFile.name );
+			#endif
 			
 			// Setting up BBI file for cleaning and compression
 			// Rename the BBI file to the temporary file 
@@ -2838,7 +2383,7 @@ void MsgBoardMaintenance( void )
 			}
 			
 			// Loop until we have reached the end of the BBI file
-			while ( !feof(pBBIOld) )
+			while ( !feof(pBBIOld) 	  )
 			{
 				//Increment progress dots
 				ConOut(".");
@@ -3098,18 +2643,20 @@ void MsgBoardMaintenance( void )
 	
 	loopexit=0;
 
-  index++ ;
-  } while ( (vecFiles.size() < index) 	  );
+    index++ ;
+#ifdef __linux__
+  } while ((vecFiles.size() < index)  );
+#else
+  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) 	&& (++loopexit < MAXLOOPS)  );
   
   // Close the _findfirst handle
-//  _findclose( hBBIFile );
-   
+  _findclose( hBBIFile );
+#endif   
     ConOut("\n     Bulletin Board Maintenance - Completed.\n");
    return;
 }
 
-
-
+#ifdef __linux__
 
 std::vector<std::string> MsgBoardGetFile( char* pattern, char* path)
 {
@@ -3132,8 +2679,8 @@ std::vector<std::string> MsgBoardGetFile( char* pattern, char* path)
 			// Was the pattern found?
 			if (sFilename.rfind(sPattern) != string::npos)
 			{
-		 	    // add the file path to it
-			    sFilename = sPath + sFilename ;
+		 	    // add the file path to it (NO, windows version doesn't either
+			    //sFilename = sPath + sFilename ;
 			    vecFile.push_back(sFilename) ;
 			}
 			free(stDirectory[count]) ;
@@ -3145,9 +2692,14 @@ std::vector<std::string> MsgBoardGetFile( char* pattern, char* path)
 	return vecFile ;
 
 }
-
-
 #endif
+
+
+
+
+
+
+
 
 
 
