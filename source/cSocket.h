@@ -6,11 +6,11 @@ class cSocket
 public:
 	// Account Related Member(s)
 	UI16			wAccountID;
-	ACCOUNTSBLOCK actbAccount;
-	ACCOUNTSBLOCK &GetAccount(void);
-	void SetAccount(ACCOUNTSBLOCK &actbBlock);
-	void SetAccount(SI16 wNewAccountID);
-	void SetAccount(std::string sUsername);
+	ACCOUNTSBLOCK	actbAccount;
+	ACCOUNTSBLOCK&	GetAccount( void );
+	void			SetAccount( ACCOUNTSBLOCK &actbBlock );
+	void			SetAccount( SI16 wNewAccountID );
+	void			SetAccount( std::string sUsername );
 	//
 
 	void			InternalReset( void );
@@ -20,7 +20,7 @@ public:
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
 	SI32			tempint;
-	//make_st			itemmake;
+//	make_st			itemmake;
 	char			dyeall;
 
 	UI08			buffer[MAXBUFFER];
@@ -33,7 +33,7 @@ public:
 	SI08			addz;
 	UI08			addid[4];
 	SI08			addid5;
-	CItem*		addmitem;
+	CItem *			addmitem;
 
 	bool			newClient;
 	bool			firstPacket;
@@ -126,7 +126,7 @@ public:
 	UI16			AcctNo( void ) const;
 	SI32			TempInt( void ) const;
 	SI08			AddID5( void ) const;
-	//make_st&		ItemMake( void );
+//	make_st&		ItemMake( void );
 	UI08			AddID1( void ) const;
 	UI08			AddID2( void ) const;
 	UI08			AddID3( void ) const;
@@ -137,7 +137,7 @@ public:
 	SI32			AddX2( void ) const;
 	SI32			AddY2( void ) const;
 	SI08			AddZ( void ) const;
-	CItem*		AddMItem( void ) const;
+	CItem *			AddMItem( void ) const;
 	char *			XText( void );
 	bool			CryptClient( void ) const;
 	int				CliSocket( void ) const;
@@ -180,7 +180,7 @@ public:
 	void			WalkSequence( SI16 newValue );
 	void			AcctNo( UI16 newValue );
 	void			TempInt( SI32 newValue );
-	//void			ItemMake( make_st& newValue );
+//	void			ItemMake( make_st& newValue );
 	void			AddID1( UI08 newValue );
 	void			AddID2( UI08 newValue );
 	void			AddID3( UI08 newValue );

@@ -14,7 +14,7 @@ struct ColourPair
 };
 
 typedef std::vector< ColourPair >	COLOURLIST;
-typedef UI16					BITLIST;
+typedef UI16						BITLIST;
 typedef std::vector< SI08 >			RACEIDLIST;
 
 class CRace 

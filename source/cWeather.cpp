@@ -106,7 +106,7 @@ bool CWeather::PeriodicUpdate( void )
 
 	if( LightMin() < 300 && LightMax() < 300 )
 	{
-		R32 hourIncrement = fabs( ( LightMax() - LightMin() ) / 12.0f );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
+		R32 hourIncrement = static_cast<R32>(fabs( ( LightMax() - LightMin() ) / 12.0f ));	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 		R32 minuteIncrement = hourIncrement / 60.0f;
 		R32 tempLight = hourIncrement * (R32)hour + minuteIncrement * (R32)minute;
 		if( ampm )
@@ -117,7 +117,7 @@ bool CWeather::PeriodicUpdate( void )
 
 	R32	effTempMax			= EffectiveMaxTemp();
 	R32	effTempMin			= EffectiveMinTemp();
-	R32	tempHourIncrement	= fabs( ( effTempMax - effTempMin ) / 12.0f );
+	R32	tempHourIncrement	= static_cast<R32>(fabs( ( effTempMax - effTempMin ) / 12.0f ));
 	R32	tempMinuteIncrement = tempHourIncrement / 60.0f;
 
 	R32	tempLightChange		= tempHourIncrement * (R32)hour + tempMinuteIncrement * (R32)minute;
@@ -851,7 +851,7 @@ bool cWeatherAb::Load( void )
 	const char *tag = NULL;
 	const char *data = NULL;
 
-	for( SI16 i = 0; i < weather.size(); i++ )
+	for( UI16 i = 0; i < weather.size(); i++ )
 	{
 		sprintf( sect, "WEATHERAB %d", i );
 		WeatherStuff = FileLookup->FindEntry( sect, weathab_def );
@@ -867,57 +867,57 @@ bool cWeatherAb::Load( void )
 			case 'c':
 			case 'C':
 				if( !strcmp( "COLDCHANCE", tag ) )			// chance for a cold day
-					ColdChance( i, makeNum( data ) );
+					ColdChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				else if( !strcmp( "COLDINTENSITY", tag ) )	// cold intensity
-					ColdIntensity( i, makeNum( data ) );
+					ColdIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data ) ));
 				break;
 
 			case 'h':
 			case 'H':
 				if( !strcmp( "HEATCHANCE", tag ) )			// chance for a hot day
-					HeatChance( i, makeNum( data ) );
+					HeatChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				else if( !strcmp( "HEATINTENSITY", tag ) )	// heat intensity
-					HeatIntensity( i, makeNum( data ) );
+					HeatIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				break;
 
 			case 'l':
 			case 'L':
 				if( !strcmp( "LIGHTMIN", tag ) )			// minimum light level
-					LightMin( i, atof( data ) );
+					LightMin( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				else if( !strcmp( "LIGHTMAX", tag ) )		// maximum light level
-					LightMax( i, atof( data ) );
+					LightMax( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				break;
 
 			case 'm':
 			case 'M':
 				if( !strcmp( "MAXTEMP", tag ) )				// maximum temperature
-					MaxTemp( i, atof( data ) );
+					MaxTemp( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				else if( !strcmp( "MINTEMP", tag ) )		// minimum temperature
-					MinTemp( i, atof( data ) );
+					MinTemp( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				else if( !strcmp( "MAXWIND", tag ) )		// maximum wind speed
-					MaxWindSpeed( i, atof( data ) );
+					MaxWindSpeed( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				else if( !strcmp( "MINWIND", tag ) )		// minimum wind speed
-					MinWindSpeed( i, atof( data ) );
+					MinWindSpeed( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
 				break;
 
 			case 'r':
 			case 'R':
 
 				if( !strcmp( "RAINCHANCE", tag ) )			// chance of rain
-					RainChance( i, makeNum( data ) );
+					RainChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				else if( !strcmp( "RAININTENSITY", tag ) )	// intensity of rain
-					RainIntensity( i, makeNum( data ) );
+					RainIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				break;
 
 			case 's':
 			case 'S':
 
 				if( !strcmp( "SNOWCHANCE", tag ) )			// chance of snow
-					SnowChance( i, makeNum( data ) );
+					SnowChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				else if( !strcmp( "SNOWINTENSITY", tag ) )	// intensity of snow
-					SnowIntensity( i, makeNum( data ) );
+					SnowIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
 				else if( !strcmp( "SNOWTHRESHOLD", tag ) )	// temperature at which snow kicks in
-					SnowThreshold( i, atof( data ) );
+					SnowThreshold( static_cast<weathID>(i), static_cast<R32>(atof( data ) ));
 				break;
 			}
 		}
@@ -1452,7 +1452,7 @@ bool doLightEffect( CChar *i )
 				{
 					sysmessage( mSock, 1217 );
 					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) * 2 ), LIGHT );
+					i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
 					staticeffect( i, 0x3709, 0x09, 0x19 );
 					soundeffect( i, 0x0208 );     
 					didDamage = true;
@@ -1496,7 +1496,7 @@ bool doLightEffect( CChar *i )
 					{
 						sysmessage( mSock, 1217 );
 						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-						i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) * 2 ), LIGHT );
+						i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
 						staticeffect( i, 0x3709, 0x09, 0x19 );
 						soundeffect( i, 0x0208 );     
 						didDamage = true;
@@ -1515,7 +1515,7 @@ bool doLightEffect( CChar *i )
 			if( hour >= 5 && hour <= 6 && ampm && i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
 			{
 				sysmessage( mSock, 1218 );
-				i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) * 2 ), LIGHT );
+				i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
 			}
 		}
 	}

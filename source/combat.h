@@ -10,14 +10,14 @@ private:
 	void	doSoundEffect( CChar *p, CItem *weapon );
 	void	doMissedSoundEffect( CChar *p );
 	void	Kill( CChar *attack, CChar *defend );
-	UI08	getWeaponType( CItem *i );
 public:
 //	UI16	GetSwingRate( CChar *iNPC, CItem *weapon );
 	UI08	getBowType( CChar *i );
+	UI08	getWeaponType( CItem *i );
 	UI08	getCombatSkill( CChar *i );
 	CItem *	getWeapon( CChar *i );
 	CItem *	getShield( CChar *i );
-	UI16	calcAtt( CChar *p );
+	SI16	calcAtt( CChar *p );
 	UI16	calcDef( CChar *p, SI08 x, bool doDamage);
 	void	CombatOnHorse( CChar *i );
 	void	CombatOnFoot( CChar *i );

@@ -655,7 +655,7 @@ void CGuild::Load( ScriptSection *toRead )
 			if( !strncmp( tag, "ABBREVIATION", 12 ) )
 				Abbreviation( data );
 			else if( !strncmp( tag, "Ally", 4 ) )
-				SetGuildRelation( makeNum( data ), GR_ALLY );
+				SetGuildRelation( static_cast<GuildID>(makeNum( data )), GR_ALLY );
 			break;
 		case 'C':
 			if( !strncmp( tag, "CHARTER", 7 ) )
@@ -671,7 +671,7 @@ void CGuild::Load( ScriptSection *toRead )
 			if( !strncmp( tag, "NAME", 4 ) )
 				Name( data );
 			else if( !strncmp( tag, "Neutral", 7 ) )
-				SetGuildRelation( makeNum( data ), GR_NEUTRAL );
+				SetGuildRelation( static_cast<GuildID>(makeNum( data )), GR_NEUTRAL );
 			break;
 		case 'R':
 			if( !strncmp( tag, "RECRUIT", 7 ) )
@@ -695,13 +695,13 @@ void CGuild::Load( ScriptSection *toRead )
 			break;
 		case 'U':
 			if( !strncmp( tag, "Unknown", 7 ) )
-				SetGuildRelation( makeNum( data ), GR_UNKNOWN );
+				SetGuildRelation( static_cast<GuildID>(makeNum( data )), GR_UNKNOWN );
 			break;
 		case 'W':
 			if( !strncmp( tag, "WEBPAGE", 7 ) )
 				Webpage( data );
 			else if( !strncmp( tag, "War", 3 ) )
-				SetGuildRelation( makeNum( data ), GR_WAR );
+				SetGuildRelation( static_cast<GuildID>(makeNum( data )), GR_WAR );
 			break;
 		}
 	}
@@ -724,7 +724,7 @@ void CGuild::CalcMaster( void )
 		return;
 	}
 	std::vector< int > votes;
-	std::vector< CChar * > mVoting;
+	CHARLIST mVoting;
 	votes.resize( members.size() );
 	mVoting.resize( members.size() );
 	for( UI32 ct = 0; ct < votes.size(); ct++ )		// Find pointer list so that we don't keep recalculating it
@@ -835,7 +835,7 @@ GuildID CGuildCollection::MaximumGuild( void )
 			maxVal = pFind->first;
 		pFind++;
 	}
-	return maxVal + 1;
+	return (GuildID)maxVal + 1;
 }
 GuildID CGuildCollection::NewGuild( void )
 {
@@ -895,7 +895,7 @@ void CGuildCollection::Load( void )
 	for( testSect = newScript.FirstEntry(); testSect != NULL; testSect = newScript.NextEntry() )
 	{
 		const char *text = newScript.EntryName();
-		guildNum = makeNum( &(text[6]) );
+		guildNum = static_cast<GuildID>(makeNum( &(text[6])) );
 		if( gList[guildNum] != NULL )
 			delete gList[guildNum];
 		gList[guildNum] = new CGuild();
@@ -931,7 +931,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 {
 	if( s == NULL )
 		return;
-	if( trgGuild >= NumGuilds() )
+	if( trgGuild >= static_cast<SI32>(NumGuilds()) )
 		return;
 	stringList one, two;
 	char tempString[128];
@@ -972,81 +972,82 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		strcpy( toggle, "On" );
 
 	std::string gName = gList[trgGuild]->Name();
-	UI16 tCtr = 0;
-	SERIAL tChar = 0;
+	UI16 tCtr			= 0;
+	SERIAL tChar		= 0;
 	GUILDREL::iterator toCheck;
 	GUILDREL *ourList;
 	s->TempInt( trgGuild );
+	UnicodeTypes sLang	= s->Language();
 	switch( menu )
 	{
 	case -1:			break;
 	case BasePage:		break;
 	case BasePage+1:	numButtons = 10;			// Main menu
-		two.push_back( Dictionary->GetEntry( 102 ) );
-		two.push_back( Dictionary->GetEntry( 103 ) );
-		two.push_back( Dictionary->GetEntry( 104 ) );
-		two.push_back( Dictionary->GetEntry( 105 ) );
-		sprintf( tempString, Dictionary->GetEntry( 106 ), guildfealty );
+		two.push_back( Dictionary->GetEntry( 102, sLang ) );
+		two.push_back( Dictionary->GetEntry( 103, sLang ) );
+		two.push_back( Dictionary->GetEntry( 104, sLang ) );
+		two.push_back( Dictionary->GetEntry( 105, sLang ) );
+		sprintf( tempString, Dictionary->GetEntry( 106, sLang ), guildfealty );
 		two.push_back( tempString );
-		sprintf( tempString, Dictionary->GetEntry( 107 ), toggle );
+		sprintf( tempString, Dictionary->GetEntry( 107, sLang ), toggle );
 		two.push_back( tempString );
-		two.push_back( Dictionary->GetEntry( 108 ) );
-		two.push_back( Dictionary->GetEntry( 109 ) );
-		sprintf( tempString, Dictionary->GetEntry( 110 ), gName.c_str() );
+		two.push_back( Dictionary->GetEntry( 108, sLang ) );
+		two.push_back( Dictionary->GetEntry( 109, sLang ) );
+		sprintf( tempString, Dictionary->GetEntry( 110, sLang ), gName.c_str() );
 		two.push_back( tempString );
-		sprintf( tempString, Dictionary->GetEntry( 111 ), gName.c_str() );
+		sprintf( tempString, Dictionary->GetEntry( 111, sLang ), gName.c_str() );
 		two.push_back( tempString );
-		two.push_back( Dictionary->GetEntry( 112 ) );
+		two.push_back( Dictionary->GetEntry( 112, sLang ) );
 
 	    if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 		{															
 			numButtons++;
-			sprintf( tempString, Dictionary->GetEntry( 113 ), gMstr->GetGuildTitle() );
+			sprintf( tempString, Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle() );
 			two.push_back( tempString );
 		} 
 		break;
 	case BasePage+2:	numButtons = 16;		// Guildmaster menu
-		two.push_back( Dictionary->GetEntry( 114 ) );
-		two.push_back( Dictionary->GetEntry( 115 ) );
-		two.push_back( Dictionary->GetEntry( 116 ) );
-		sprintf( tempString, Dictionary->GetEntry( 117 ), guildt );
+		two.push_back( Dictionary->GetEntry( 114, sLang ) );
+		two.push_back( Dictionary->GetEntry( 115, sLang ) );
+		two.push_back( Dictionary->GetEntry( 116, sLang ) );
+		sprintf( tempString, Dictionary->GetEntry( 117, sLang ), guildt );
 		two.push_back( tempString );
-		two.push_back( Dictionary->GetEntry( 118 ) );
-		two.push_back( Dictionary->GetEntry( 119 ) );
-		two.push_back( Dictionary->GetEntry( 120 ) );
-		two.push_back( Dictionary->GetEntry( 121 ) );
-		two.push_back( Dictionary->GetEntry( 122 ) );
-		two.push_back( Dictionary->GetEntry( 123 ) );
-		two.push_back( Dictionary->GetEntry( 124 ) );
-		two.push_back( Dictionary->GetEntry( 125 ) );
-		two.push_back( Dictionary->GetEntry( 126 ) );
-		two.push_back( Dictionary->GetEntry( 127 ) );
-		two.push_back( Dictionary->GetEntry( 128 ) );
-		two.push_back( Dictionary->GetEntry( 129 ) );
-		two.push_back( Dictionary->GetEntry( 130 ) );
+		two.push_back( Dictionary->GetEntry( 118, sLang ) );
+		two.push_back( Dictionary->GetEntry( 119, sLang ) );
+		two.push_back( Dictionary->GetEntry( 120, sLang ) );
+		two.push_back( Dictionary->GetEntry( 121, sLang ) );
+		two.push_back( Dictionary->GetEntry( 122, sLang ) );
+		two.push_back( Dictionary->GetEntry( 123, sLang ) );
+		two.push_back( Dictionary->GetEntry( 124, sLang ) );
+		two.push_back( Dictionary->GetEntry( 125, sLang ) );
+		two.push_back( Dictionary->GetEntry( 126, sLang ) );
+		two.push_back( Dictionary->GetEntry( 127, sLang ) );
+		two.push_back( Dictionary->GetEntry( 128, sLang ) );
+		two.push_back( Dictionary->GetEntry( 129, sLang ) );
+		two.push_back( Dictionary->GetEntry( 130, sLang ) );
 		break;
 	case BasePage+3:	numButtons = 4;			// Guild type
-		two.push_back( Dictionary->GetEntry( 131 ) );
-		two.push_back( Dictionary->GetEntry( 132 ) );
-		two.push_back( Dictionary->GetEntry( 133 ) );
-		two.push_back( Dictionary->GetEntry( 134 ) );
-		two.push_back( Dictionary->GetEntry( 135 ) );
+		two.push_back( Dictionary->GetEntry( 131, sLang ) );
+		two.push_back( Dictionary->GetEntry( 132, sLang ) );
+		two.push_back( Dictionary->GetEntry( 133, sLang ) );
+		two.push_back( Dictionary->GetEntry( 134, sLang ) );
+		two.push_back( Dictionary->GetEntry( 135, sLang ) );
 		break;
 	case BasePage+4:	numButtons = 3;			// Set charter
-		two.push_back( Dictionary->GetEntry( 136 ) );
-		two.push_back( Dictionary->GetEntry( 137 ) );
-		two.push_back( Dictionary->GetEntry( 138 ) );
-		two.push_back( Dictionary->GetEntry( 139 ) );
+		two.push_back( Dictionary->GetEntry( 136, sLang ) );
+		two.push_back( Dictionary->GetEntry( 137, sLang ) );
+		two.push_back( Dictionary->GetEntry( 138, sLang ) );
+		two.push_back( Dictionary->GetEntry( 139, sLang ) );
 		break;
 	case BasePage+5:	numButtons = 2;			// View charter
-		two.push_back( Dictionary->GetEntry( 140 ) );
-		sprintf( tempString, Dictionary->GetEntry( 141 ), gList[trgGuild]->Charter() );
+		two.push_back( Dictionary->GetEntry( 140, sLang ) );
+		sprintf( tempString, Dictionary->GetEntry( 141, sLang ), gList[trgGuild]->Charter() );
 		two.push_back( tempString );
-		sprintf( tempString, Dictionary->GetEntry( 142 ), gList[trgGuild]->Webpage() );
+		sprintf( tempString, Dictionary->GetEntry( 142, sLang ), gList[trgGuild]->Webpage() );
 		two.push_back( tempString );
 		break;
 	case BasePage+6:								// List of recruits
-		two.push_back( Dictionary->GetEntry( 143 ) );
+		two.push_back( Dictionary->GetEntry( 143, sLang ) );
 		tCtr = 0;
 		for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 		{
@@ -1056,7 +1057,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		numButtons = tCtr;
 		break;
 	case BasePage+7:								// List of members
-		two.push_back( Dictionary->GetEntry( 144 ) );
+		two.push_back( Dictionary->GetEntry( 144, sLang ) );
 		tCtr = 0;
 		for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 		{
@@ -1066,7 +1067,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		numButtons = tCtr;	break;
 		break;
 	case BasePage+8:								// Member dismiss
-		two.push_back( Dictionary->GetEntry( 145 ) );
+		two.push_back( Dictionary->GetEntry( 145, sLang ) );
 		tCtr = 0;
 		for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 		{
@@ -1075,7 +1076,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		numButtons = tCtr;	break;
 	case BasePage+9:								// Dismiss recruit
-		two.push_back( Dictionary->GetEntry( 146 ) );
+		two.push_back( Dictionary->GetEntry( 146, sLang ) );
 		tCtr = 0;
 		for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 		{
@@ -1084,7 +1085,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		numButtons = tCtr;	break;
 	case BasePage+10:								// Accept recruit
-		two.push_back( Dictionary->GetEntry( 147 ) );
+		two.push_back( Dictionary->GetEntry( 147, sLang ) );
 		tCtr = 0;
 		for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 		{
@@ -1093,7 +1094,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		numButtons = tCtr;	break;
 	case BasePage+11:								// War list
-		two.push_back( Dictionary->GetEntry( 148 ) );
+		two.push_back( Dictionary->GetEntry( 148, sLang ) );
 		tCtr = 0;
 		ourList = gList[trgGuild]->GuildRelationList();
 		toCheck = ourList->begin();
@@ -1112,7 +1113,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		two.push_back( "Unfilled functionality" );
 		break;
 	case BasePage+13:								// Declare war list
-		two.push_back( Dictionary->GetEntry( 149 ) );
+		two.push_back( Dictionary->GetEntry( 149, sLang ) );
 		tCtr = 0;
 		ourList = gList[trgGuild]->GuildRelationList();
 		toCheck = ourList->begin();
@@ -1127,7 +1128,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		numButtons = tCtr;	break;
 	case BasePage+14:								// Declare peace list
-		two.push_back( Dictionary->GetEntry( 150 ) );
+		two.push_back( Dictionary->GetEntry( 150, sLang ) );
 		tCtr = 0;
 		ourList = gList[trgGuild]->GuildRelationList();
 		toCheck = ourList->begin();
@@ -1190,7 +1191,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		break;
 	case BasePage+18:								// Ally list
-		two.push_back( Dictionary->GetEntry( 151 ) );
+		two.push_back( Dictionary->GetEntry( 151, sLang ) );
 		tCtr = 0;
 		ourList = gList[trgGuild]->GuildRelationList();
 		toCheck = ourList->begin();
@@ -1205,7 +1206,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		}
 		numButtons = tCtr;	break;
 	case BasePage+19:								// Declare Ally list
-		two.push_back( Dictionary->GetEntry( 152 ) );
+		two.push_back( Dictionary->GetEntry( 152, sLang ) );
 		tCtr = 0;
 		ourList = gList[trgGuild]->GuildRelationList();
 		toCheck = ourList->begin();
@@ -1555,24 +1556,24 @@ void CGuildCollection::PlaceStone( cSocket *s, CItem *deed )
 	{
 		if( mChar->GetGuildNumber() != -1 )	// in a guild
 		{
-			itemmessage( s, Dictionary->GetEntry( 173 ), (*deed) );
+			objMessage( s, 173, deed );
 			return;
 		}
 		GuildID gNum = NewGuild();
 		CGuild *nGuild = Guild( gNum );
 		if( nGuild == NULL )
 		{
-			itemmessage( s, Dictionary->GetEntry( 174 ), (*deed) );
+			objMessage( s, 174, deed );
 			Console.Error( 3, "Critical error adding guildstone, memory allocation failed.  Attempted by player %i", mChar->GetSerial() );
 			return;
 		}
 		mChar->SetGuildNumber( gNum );
 		s->TempInt( gNum );
 		nGuild->NewMember( (*mChar) );
-		CItem *stone = Items->SpawnItem( s, s->CurrcharObj(), 1, Dictionary->GetEntry( 175 ), false, 0x0ED5, 0, false, false );
+		CItem *stone = Items->SpawnItem( NULL, mChar, 1, Dictionary->GetEntry( 175 ), false, 0x0ED5, 0, false, false );
 		if( stone == NULL )
 		{
-			itemmessage( s, Dictionary->GetEntry( 176 ), (*deed) );
+			objMessage( s, 176, deed );
 			Console.Error( 3, "Critical error spawning guildstone, no stone made.  Attempted by player %i", mChar->GetSerial() );
 			return;
 		}
@@ -1651,6 +1652,6 @@ void CGuildCollection::DisplayTitle( cSocket *s, CChar *src ) const
 			else 
 				sprintf( title, "[%s]", abbreviation );
 		}
-		itemmessage( s, title, (*src) );
+		objMessage( s, title, src );
 	}
 }

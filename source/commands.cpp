@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "debug.h"
 #include "cmdtable.h"
 #include "ssection.h"
 
@@ -101,8 +100,8 @@ void cCommands::Command( cSocket *s )
 	CmdTableIterator toFind = cmd_table.find( comm );
 	if( toFind == cmd_table.end() ) 
 	{ 	
-		cScript *toGrab=Trigger->GetScript( s->CurrcharObj()->GetScriptTrigger() ); 	
-		if( toGrab == NULL || !toGrab->OnCommand(s)) 		
+		cScript *toGrab=Trigger->GetScript( mChar->GetScriptTrigger() ); 	
+		if( toGrab == NULL || !toGrab->OnCommand( s ) ) 		
 			sysmessage( s, 336 ); 	
 		return; 
 	} 	
@@ -313,17 +312,16 @@ void cCommands::MakeShop( CChar *c )
 	CItem *n = NULL;
 	c->SetShop( true );
 
-	cSocket *tSock = calcSocketObjFromChar( c );
-	CItem *buyPack = FindItemOnLayer( c, 0x1A );
-	CItem *boughtPack = FindItemOnLayer( c, 0x1B );
-	CItem *sellPack = FindItemOnLayer( c, 0x1C );
+	CItem *buyPack		= c->GetItemAtLayer( 0x1A );
+	CItem *boughtPack	= c->GetItemAtLayer( 0x1B );
+	CItem *sellPack		= c->GetItemAtLayer( 0x1C );
 	if( buyPack == NULL )
 	{
-		n = Items->SpawnItem( tSock, c, 1, "#", false, 0x2AF8, 0, false, false );
+		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
 		if( n != NULL )
 		{
 			n->SetLayer( 0x1A );
-			if( !n->SetCont( c->GetSerial() ) )
+			if( !n->SetCont( c ) )
 				Items->DeleItem( n );
 			else
 			{
@@ -334,11 +332,11 @@ void cCommands::MakeShop( CChar *c )
 	}
 	if( boughtPack == NULL )
 	{
-		n = Items->SpawnItem( tSock, c, 1, "#", false, 0x2AF8, 0, false, false );
+		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
 		if( n != NULL )
 		{
 			n->SetLayer( 0x1B );
-			if( n->SetCont( c->GetSerial() ) )
+			if( n->SetCont( c ) )
 			{
 				n->SetType( 1 );
 				n->SetNewbie( true );
@@ -347,11 +345,11 @@ void cCommands::MakeShop( CChar *c )
 	}
 	if( sellPack == NULL )
 	{
-		n = Items->SpawnItem( tSock, c, 1, "#", false, 0x2AF8, 0, false, false );
+		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
 		if( n != NULL )
 		{
 			n->SetLayer( 0x1C );
-			if( n->SetCont( c->GetSerial() ) )
+			if( n->SetCont( c ) )
 			{
 				n->SetType( 1 );
 				n->SetNewbie( true );
@@ -407,7 +405,7 @@ void cCommands::nextCall( cSocket *s, bool isGM )
 					GMNext.Send( 4, false, INVALIDSERIAL );
 					tempPage->IsHandled( true );
 					mChar->SetLocation( j );
-					mChar->SetCallNum( tempPage->RequestID() );
+					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
 					mChar->Teleport();
 					x++;
 				}
@@ -435,7 +433,7 @@ void cCommands::nextCall( cSocket *s, bool isGM )
 					CNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
 					CNext.Send( 4, false, INVALIDSERIAL );
 					tempPage->IsHandled( true );
-					mChar->SetCallNum( tempPage->RequestID() );
+					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID()) );
 					mChar->SetLocation( j );
 					mChar->Teleport();
 					x++;
@@ -512,32 +510,32 @@ void cCommands::KillSpawn( cSocket *s, int r )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::RegSpawnMax( cSocket *s, int r )
+//|	Function	-	void cCommands::RegSpawnMax( cSocket *s, cSpawnRegion *spawnReg )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn a region to its maximum capacity
 //o---------------------------------------------------------------------------o
 void cCommands::RegSpawnMax( cSocket *s, cSpawnRegion *spawnReg )
 {
-	int spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
+	SI32 spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
 	if( spawn > 250 )
 	{
 		sysmessage( s, 351 );
 		spawn = 250;
 	}
-  	char temps[650];  //  Adujested to 650 cause spawnregion[].name is 512 bytes long
+  	char temps[MAX_REGIONNAME + 150];
 	sprintf( temps, Dictionary->GetEntry( 352 ), spawnReg->GetName(), spawnReg->GetRegionNum(), spawn );
 	sysbroadcast( temps );
 
-	for( int i = 1; i < spawn; i++ )
+	for( SI32 i = 1; i < spawn; i++ )
 		spawnReg->doRegionSpawn();
-	spawnReg->SetNextTime( BuildTimeValue( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) ) );
+	spawnReg->SetNextTime( BuildTimeValue( static_cast<R32>(60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() )) ) );
 
 	sysmessage( s, 353, spawn, spawnReg->GetName(), spawnReg->GetRegionNum() );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::RegSpawnNum( cSocket *s, int r, int n)
+//|	Function	-	void cCommands::RegSpawnNum( cSocket *s, cSpawnRegion *spawnReg, int n)
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do a certain number of spawns in a region
@@ -551,18 +549,18 @@ void cCommands::RegSpawnNum( cSocket *s, cSpawnRegion *spawnReg, int n)
 	}
 	else
 	{
-		int spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
-		char temps[650];  //  Adjusted to 650 because spawnregion[].name is 512 bytes long
+		SI32 spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
+		char temps[MAX_REGIONNAME + 150];
 		if( spawn < n )
 			sysmessage( s, 355, n, spawnReg->GetName(), spawnReg->GetRegionNum(), spawn, spawnReg->GetMaxSpawn() );
 		else 
 			spawn = n;
 		sprintf( temps, Dictionary->GetEntry( 356 ), spawnReg->GetName(), spawnReg->GetRegionNum(), spawn);
 		sysbroadcast( temps );
-		for( int i = 1; i < spawn; i++ )
+		for( SI32 i = 1; i < spawn; i++ )
 			spawnReg->doRegionSpawn();
 
-		spawnReg->SetNextTime( BuildTimeValue( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) ) );
+		spawnReg->SetNextTime( BuildTimeValue(static_cast<R32>( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) )) );
 		sysmessage( s, 357, spawn, spawnReg->GetName(), spawnReg->GetRegionNum() );
 	}
 }
@@ -747,12 +745,12 @@ void cCommands::DyeTarget( cSocket *s )
 			k += 0x8000;
 
 		if( b == 16384 && (body >= 0x0190 && body <= 0x03e1 ) ) 
-			k = 0xf000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
+			k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
 
 		if( k != 0x8000 )
 		{
-			c->SetSkin( k );
-			c->SetxSkin( k );
+			c->SetSkin( static_cast<UI16>(k) );
+			c->SetxSkin( static_cast<UI16>(k) );
 			c->Teleport();
 		} 
 	}
@@ -773,7 +771,7 @@ void cCommands::AddHere( cSocket *s, SI08 z )
 	Map->SeekTile( itemID, &tile );
 	bool pileable = tile.Stackable();
 	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->SpawnItem( s, mChar, 1, "#", pileable, itemID, 0, false, false );
+	CItem *c = Items->SpawnItem( NULL, mChar, 1, "#", pileable, itemID, 0, false, false );
 	if( c != NULL )
 	{
 		c->SetLocation( mChar->GetX(), mChar->GetY(), z );
@@ -816,21 +814,20 @@ void cCommands::MakePlace( cSocket *s, int i )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, SI32 amount )
+//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Dupe selected item
 //o---------------------------------------------------------------------------o
-CItem *cCommands::DupeItem( cSocket *s, CItem *i, SI32 amount )
+CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
 {
 	CChar *mChar = s->CurrcharObj();
 	CItem *p = getRootPack( i ), *cp = mChar->GetPackItem();
 
-	if ( ( !p && !cp ) || !mChar || i->isCorpse() )
+	if ( ( p == NULL && cp == NULL ) || mChar == NULL || i->isCorpse() )
 		return NULL;
 	
-	ITEM tItem;
-	CItem *c = i->Dupe( tItem );
+	CItem *c = i->Dupe();
 	if( c == NULL )
 		return NULL;
 
@@ -838,12 +835,17 @@ CItem *cCommands::DupeItem( cSocket *s, CItem *i, SI32 amount )
 	c->IncY(2);
 	c->IncZ(1);
 
-	if ( !p && cp )
-		c->SetCont( cp->GetSerial() );
+	if ( p == NULL && cp != NULL )
+		c->SetCont( cp );
 
+	if( amount > MAX_STACK )
+	{
+		amount -= MAX_STACK;
+		DupeItem( s, i, amount );
+	}
 	c->SetAmount( amount );
-	if( c->GetSpawn() != 0 )
-		nspawnsp.AddSerial( c->GetSpawn(), tItem );
+	if( c->GetSpawnObj() != NULL )
+		nspawnsp.AddSerial( c->GetSpawn(), calcItemFromSer( c->GetSerial() ) );
 
 	RefreshItem( c );
 	return c;
@@ -862,7 +864,7 @@ void cCommands::Wipe( cSocket *s )
 	
 	for( ITEM k = 0; k <= itemcount; k++ )
 	{
-		if( items[k].GetCont() == INVALIDSERIAL && !items[k].isWipeable() )
+		if( items[k].GetCont() == NULL && !items[k].isWipeable() )
 			Items->DeleItem( &items[k] );
 	}
 	sysbroadcast( Dictionary->GetEntry( 365 ) ); 
@@ -899,7 +901,7 @@ void cCommands::Load( void )
 	const char *tag = NULL;
 	const char *data = NULL;
 
-	std::vector< std::string > badCommands;
+	stringList	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data = commands->GrabData();
@@ -921,7 +923,7 @@ void cCommands::Load( void )
 	if( badCommands.size() > 0 )
 	{
 		Console << myendl;
-		for( tablePos = 0; tablePos < badCommands.size(); tablePos++ )
+		for( tablePos = 0; static_cast<unsigned int>(tablePos) < badCommands.size(); tablePos++ )
 			Console << "Invalid command '" << badCommands[tablePos].c_str() << "' found in commands.dfn!" << myendl;
 	}
 
@@ -940,7 +942,7 @@ void cCommands::Load( void )
 		clearance.push_back( new commandLevel_st );
 		memset( &clearance[currentWorking], 0, sizeof( commandLevel_st ) );
 		strcpy( clearance[currentWorking]->name, tag );
-		clearance[currentWorking]->commandLevel = makeNum( data );
+		clearance[currentWorking]->commandLevel = static_cast<UI08>(makeNum( data ));
 	}
 	for( UI32 tempCounter = 0; tempCounter < clearance.size(); tempCounter++ )
 	{
@@ -984,9 +986,9 @@ void cCommands::RemoveShop( cSocket *s )
 	}
 
 	i->SetShop( false );
-	CItem *buyLayer   = FindItemOnLayer( i, 0x1A );
-	CItem *sellLayer  = FindItemOnLayer( i, 0x1B );
-	CItem *otherLayer = FindItemOnLayer( i, 0x1C );
+	CItem *buyLayer   = i->GetItemAtLayer( 0x1A );
+	CItem *sellLayer  = i->GetItemAtLayer( 0x1B );
+	CItem *otherLayer = i->GetItemAtLayer( 0x1C );
 	if( buyLayer != NULL )
 		Items->DeleItem( buyLayer );
 	if( sellLayer != NULL )
@@ -1013,19 +1015,7 @@ void cCommands::Log( char *command, CChar *player1, CChar *player2, char *extraI
 		return;
 	}
 	char dateTime[1024];
-	time_t ltime;
-	time( &ltime );
-	char *t = ctime( &ltime );
-	// just to be paranoid and avoid crashing
-	if( t == NULL )
-		t = "";
-	else
-	{
-		// some ctime()s like to stick \r\n on the end, we don't want that
-		for( int end = strlen(t) - 1; end >= 0 && isspace(t[end]); --end )
-			t[end] = '\0';
-	}
-	safeCopy( dateTime, t, 1024);
+	RealTime( dateTime );
 
 	if( player2 != NULL )
 		fprintf( commandLog, "[%s] %s (serial: %i ) used command <%s> on player %s (serial: %i ) Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), command, player2->GetName(), player2->GetSerial(), extraInfo );

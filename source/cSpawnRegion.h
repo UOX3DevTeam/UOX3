@@ -4,12 +4,12 @@
 class cSpawnRegion	//Regionspawns
 {
 protected:
-	char		name[128];			// Any Name to show up when this region is spawned [512]
+	char		name[MAX_REGIONNAME];			// Any Name to show up when this region is spawned [512]
 
-	stringList	npcs;				// Individual Npcs
-	stringList	items;				// Individual Items
+	STRINGLIST	npcs;				// Individual Npcs
+	STRINGLIST 	items;				// Individual Items
 
-	SI32		regionnum;			// Region Number
+	UI16		regionnum;			// Region Number
 
 // These two will replace maxspawn
 
@@ -21,8 +21,8 @@ protected:
 	SI32		curcspawn;			// Current amount of spawned characters
 	SI32		curispawn;			// Current amount of spawned items
 
-	SI32		mintime;			// Minimum spawn time
-	SI32		maxtime;			// Maximum spawn time
+	UI08		mintime;			// Minimum spawn time
+	UI08		maxtime;			// Maximum spawn time
 	SI32		nexttime;			// Nextspawn time for this region
 
 // These are to keep track of the items/characters spawned
@@ -43,7 +43,7 @@ protected:
 	UI08		worldNumber;		// which world are we spawning in?
 
 public:
-				cSpawnRegion( SI32 spawnregion );
+				cSpawnRegion( UI16 spawnregion );
 	virtual		~cSpawnRegion();
 	void		Load( ScriptSection *toScan );
 	void		doRegionSpawn( void );
@@ -52,15 +52,15 @@ public:
 	CItem *		RegionSpawnItem( void );
 
 	const char *	GetName( void ) const;
-	SI32		GetRegionNum( void ) const;
+	UI16		GetRegionNum( void ) const;
 	SI32		GetMaxSpawn( void ) const;
 	SI32		GetMaxCharSpawn( void ) const;
 	SI32		GetMaxItemSpawn( void ) const;
 	SI32		GetCurrent( void ) const;
 	SI32		GetCurrentCharAmt( void ) const;
 	SI32		GetCurrentItemAmt( void ) const;
-	SI32		GetMinTime( void ) const;
-	SI32		GetMaxTime( void ) const;
+	UI08		GetMinTime( void ) const;
+	UI08		GetMaxTime( void ) const;
 	SI32		GetNextTime( void ) const;
 	SI16		GetX1( void ) const;
 	SI16		GetY1( void ) const;
@@ -69,11 +69,11 @@ public:
 	SI08		GetZ( void ) const;
 
 	void		SetName( const char *newName );
-	void		SetRegionNum( SI32 newVal );
+	void		SetRegionNum( UI16 newVal );
 	void		SetMaxCharSpawn( SI32 newVal );
 	void		SetMaxItemSpawn( SI32 newVal );
-	void		SetMinTime( SI32 newVal );
-	void		SetMaxTime( SI32 newVal );
+	void		SetMinTime( UI08 newVal );
+	void		SetMaxTime( UI08 newVal );
 	void		SetNextTime( SI32 newVal );
 	void		SetX1( SI16 newVal );
 	void		SetY1( SI16 newVal );

@@ -8,6 +8,67 @@
 	#include <direct.h>
 #endif
 
+#ifdef _WIN32
+	#define getcwd _getcwd
+#endif
+
+std::string CurrentWorkingDir( void )
+{
+	char cwd[MAX_PATH + 1];
+
+	if( !getcwd( cwd, MAX_PATH + 1 ) )
+	{
+		Console.Error( 1, "Failed to allocate enough room for cwd" );
+		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+	}
+	return cwd;
+}
+std::string BuildPath( std::string extra )
+{
+	std::string temp = CurrentWorkingDir();
+	temp += "/";
+	temp += extra;
+	return temp;
+}
+
+void PathFix( char *sPath )
+{
+	// Loop through each char and replace the '\' to '/'
+	for( unsigned int i = 0; i < strlen( sPath ); i++ )
+	{
+		if( sPath[i] == '\\' )
+			sPath[i] = '/';
+	}
+}
+void PathFix( std::string& sPath )
+{
+	// Loop through each char and replace the '\' to '/'
+	for( unsigned int i = 0; i < sPath.length(); i++ )
+	{
+		if( sPath[i] == '\\' )
+			sPath[i] = '/';
+	}
+}
+
+std::string ShortDirectory( std::string sPath )
+{
+	std::string building = "";
+	int iFound = 0;
+	for( iFound = sPath.length() - 1; iFound >= 0; iFound-- )
+	{
+		if( sPath[iFound] == '/' )
+			break;
+	}
+	if( iFound < 0 )
+		return sPath;
+	else
+	{
+		for( unsigned int i = iFound + 1; i < sPath.length(); i++ )
+			building += sPath[i];
+	}
+	return building;
+}
+
 const std::string dirnames[NUM_DEFS] = 
 {
 	"items",
@@ -172,21 +233,23 @@ void cServerDefinitions::ReloadScriptObjects( void )
 	for( int sCtr = 0; sCtr < NUM_DEFS; sCtr++ )
 	{
 		CleanPriorityMap();
-		CleanFileList();
 		defaultPriority = 0;
 		UI08 wasPriod = 2;
 		BuildPriorityMap( (DefinitionCategories)sCtr, wasPriod );
-		BuildFileList( (DefinitionCategories)sCtr );
+		cDirectoryListing fileList( (DefinitionCategories)sCtr, defExt );
+		fileList.Flatten( true );
 		std::vector< PrioScan * >	mSort;
-		for( UI32 i = 0; i < filenameListings.size(); i++ )
+		stringList *shortListing	= fileList.FlattenedShortList();
+		stringList *longListing		= fileList.FlattenedList();
+		for( UI32 i = 0; i < shortListing->size(); i++ )
 		{
-			const char *fname = filenameListings[i].c_str();
-			mSort.push_back( new PrioScan( fname, GetPriority( fname ) ) );
+			const char *fullname	= (*longListing)[i].c_str();
+			const char *shortname	= (*shortListing)[i].c_str();
+			mSort.push_back( new PrioScan( fullname, GetPriority( shortname ) ) );
 		}
 		if( mSort.size() > 0 )
 		{
 			SortPrioVec( &mSort );
-			bool dirSet = PushDir( (DefinitionCategories)sCtr );
 			Console.Print( "Section %20s : %6i", dirnames[sCtr].c_str(), 0 );
 			UI32 iTotal = 0;
 			Console.TurnYellow();
@@ -200,25 +263,17 @@ void cServerDefinitions::ReloadScriptObjects( void )
 				mSort[iFile] = NULL;
 			}
 			Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( (DefinitionCategories)sCtr ) );
-			Console.TurnNormal();
-			Console.Print( " entries [" );
+			Console.Print( " entries" );
 			switch( wasPriod )
 			{
-			case 0:	Console.TurnGreen();	Console << "prioritized";					break;	// prioritized
-			case 1:	Console.TurnRed();		Console << "unprioritized - no section";	break;	// file exist, no section
+			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
+			case 1:	Console.PrintSpecial( CRED,		"unprioritized - no section" );		break;	// file exist, no section
 			default:
-			case 2:	Console.TurnBlue();		Console << "unprioritized - no file";		break;	// no file
+			case 2:	Console.PrintSpecial( CBLUE,	"unprioritized - no file" );		break;	// no file
 			};
-			
-			Console.TurnNormal();
-			Console << "]";
-			Console << myendl;
-			if( dirSet )
-				PopDir();
 		}
 	}
 	CleanPriorityMap();
-	CleanFileList();
 }
 
 SI32 cServerDefinitions::CountOfEntries( DefinitionCategories typeToFind )
@@ -242,105 +297,58 @@ ScpList *cServerDefinitions::GetFiles( DefinitionCategories typeToFind )
 	return &(ScriptListings[typeToFind]);
 }
 
-void cServerDefinitions::BuildFileList( DefinitionCategories category )
-{
-	bool dirSet = PushDir( category );
-#ifdef __LINUX__
-	DIR *dir = opendir(".");
-	struct dirent *dirp = NULL;
-
-	while( ( dirp = readdir( dir ) ) )	
-	{
-		if( dirp->d_type == DT_DIR )
-			continue;
-		filenameListings.push_back( dirp->d_name );
-	}
-
-#else
-
-	WIN32_FIND_DATA toFind;
-	HANDLE findHandle = FindFirstFile( defExt.c_str(), &toFind );		// grab first file that meets spec
-	bool retVal = 0;
-	if( findHandle != INVALID_HANDLE_VALUE )	// there is a file
-	{
-		filenameListings.push_back( toFind.cFileName );
-		retVal = 1;	// let's continue
-	}
-	while( retVal != 0 )	// while there are still files
-	{
-		retVal =(bool)FindNextFile( findHandle, &toFind );	// grab the next file
-		if( retVal != 0 )
-			filenameListings.push_back( toFind.cFileName );
-	}
-	if( findHandle != INVALID_HANDLE_VALUE )
-	{
-		FindClose( findHandle );
-		findHandle = INVALID_HANDLE_VALUE;
-	}
-#endif
-	if( dirSet )
-		PopDir();
-}
 void cServerDefinitions::CleanPriorityMap( void )
 {
 	priorityMap.erase( priorityMap.begin(), priorityMap.end() );
 }
 void cServerDefinitions::BuildPriorityMap( DefinitionCategories category, UI08& wasPrioritized )
 {
-	char fullName[256];
-	// for some reason, you need to change dir for it to work right, don't ask me why
-	bool dirSet = PushDir( category );
-	strcpy( fullName, defExt.c_str() );	// setup the file spec
-
-	//	Do we have any priority informat?
-	FILE *toScan = fopen( "priority.nfo", "r" );
-	if( toScan != NULL )	// the file exists, so perhaps we do
+	cDirectoryListing priorityFile( category, "priority.nfo", false );
+	stringList *longList = priorityFile.List();
+	if( longList->size() > 0 )
 	{
-		Script *prio = new Script( "priority.nfo", category, false );	// generate a script for it
-		if( prio != NULL )	// successfully made a script
+		std::string filename = (*longList)[0].c_str();
+		//	Do we have any priority informat?
+		FILE *toScan = fopen( filename.c_str(), "r" );
+		if( toScan != NULL )	// the file exists, so perhaps we do
 		{
-			const char *tag = NULL;
-			const char *data = NULL;
-			ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
-			if( prioInfo != NULL )
+			Script *prio = new Script( filename.c_str(), category, false );	// generate a script for it
+			if( prio != NULL )	// successfully made a script
 			{
-				for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
+				const char *tag = NULL;
+				const char *data = NULL;
+				ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
+				if( prioInfo != NULL )
 				{
-					data = prioInfo->GrabData();
-					if( !strcmp( tag, "DEFAULTPRIORITY" ) )
-						defaultPriority = (SI16)(makeNum( data ));
-					else
+					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
-						char filenametemp[128];
-						strcpy( filenametemp, tag );
-						strlwr( filenametemp );
-						priorityMap[filenametemp] = (SI16)(makeNum( data ));
+						data = prioInfo->GrabData();
+						if( !strcmp( tag, "DEFAULTPRIORITY" ) )
+							defaultPriority = (SI16)(makeNum( data ));
+						else
+						{
+							char filenametemp[128];
+							strcpy( filenametemp, tag );
+							strlwr( filenametemp );
+							priorityMap[filenametemp] = (SI16)(makeNum( data ));
+						}
 					}
+					wasPrioritized = 0;
 				}
-				wasPrioritized = 0;
+				else
+					wasPrioritized = 1;
+				delete prio;	// remove script
 			}
 			else
-				wasPrioritized = 1;
-			delete prio;	// remove script
+				wasPrioritized = 2;
+			fclose( toScan );	// close file
+			return;
 		}
-		else
-			wasPrioritized = 2;
-		fclose( toScan );	// close file
 	}
-	else
-	{
 #ifdef _DEBUG
-//		Console.Warning( 1, "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+//	Console.Warning( 1, "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
 #endif
-		wasPrioritized = 2;
-	}
-	if( dirSet )
-		PopDir();
-}
-
-void cServerDefinitions::CleanFileList( void )
-{
-	filenameListings.resize( 0 );
+	wasPrioritized = 2;
 }
 
 void cServerDefinitions::DisplayPriorityMap( void )
@@ -367,44 +375,238 @@ SI16 cServerDefinitions::GetPriority( const char *file )
 		return p->second;
 }
 
-bool cServerDefinitions::PushDir( DefinitionCategories toMove )
+bool cDirectoryListing::PushDir( DefinitionCategories toMove )
 {
 	char filePath[MAX_PATH];
 	sprintf( filePath, "%s%s", cwmWorldState->ServerData()->GetDefsDirectory(), dirnames[toMove].c_str() );
-#ifdef _WIN32
-# define getcwd _getcwd
-#endif
+	return PushDir( filePath );
+}
+bool cDirectoryListing::PushDir( std::string toMove )
+{
+	std::string cwd = CurrentWorkingDir();
+	dirs.push( cwd );
 
-	char cwd[MAX_PATH + 1];
-	if (!getcwd(cwd, MAX_PATH + 1))
+	if( _chdir( toMove.c_str() ) == 0 )
 	{
-		Console.Error(1, "Failed to allocate enough room for cwd");
-	  Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
-	}
-	dirs.push(cwd);
-	
-	if ( _chdir( filePath ) == 0 )
-	{
-		return 1;
+		currentDir = toMove;
+		PathFix( toMove );
+		shortCurrentDir = ShortDirectory( toMove );
+		return true;
 	}
 	else
 	{
-	  Console.Error( 1, "DFN directory %s does not exist", filePath );
-	  Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
-  }
-	return 0;
+		Console.Error( 1, "DFN directory %s does not exist", toMove.c_str() );
+		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+	}
+	return false;
+}
+void cDirectoryListing::PopDir( void )
+{
+	if( dirs.empty() )
+	{
+		Console.Error( 1, "cServerDefinition::PopDir called, but dirs is empty" );
+		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+	}
+	else
+	{
+		_chdir( dirs.top().c_str() );
+		dirs.pop();
+	}
+}
+cDirectoryListing::cDirectoryListing( bool recurse ) : extension( "*.dfn" ), doRecursion( recurse )
+{
+}
+cDirectoryListing::cDirectoryListing( std::string dir, std::string extent, bool recurse ) : doRecursion( recurse )
+{
+	Extension( extent );
+	Retrieve( dir );
+}
+cDirectoryListing::cDirectoryListing( DefinitionCategories dir, std::string extent, bool recurse ) : doRecursion( recurse )
+{
+	Extension( extent );
+	Retrieve( dir );
+}
+cDirectoryListing::~cDirectoryListing()
+{
+	while( !dirs.empty() )
+	{
+		_chdir( dirs.top().c_str() );
+		dirs.pop();
+	}
 }
 
-void cServerDefinitions::PopDir( void )
+void cDirectoryListing::Retrieve( std::string dir )
 {
-  if (dirs.empty())
-  {
-          Console.Error(1, "cServerDefinition::PopDir called, but dirs is empty");
-          Shutdown( FATAL_UOX3_DIR_NOT_FOUND);
-  }
-  else
-  {
-    _chdir(dirs.top().c_str());
-	  dirs.pop();
-  }
+	bool dirSet = PushDir( dir );
+	InternalRetrieve();
+	if( dirSet )
+		PopDir();
+}
+void cDirectoryListing::Retrieve( DefinitionCategories dir )
+{
+	bool dirSet = PushDir( dir );
+	InternalRetrieve();
+	if( dirSet )
+		PopDir();
+}
+
+stringList *cDirectoryListing::List( void )
+{
+	return &filenameList;
+}
+
+stringList *cDirectoryListing::ShortList( void )
+{
+	return &shortList;
+}
+
+stringList *cDirectoryListing::FlattenedList( void )
+{
+	return &flattenedFull;
+}
+
+stringList *cDirectoryListing::FlattenedShortList( void )
+{
+	return &flattenedShort;
+}
+
+void cDirectoryListing::InternalRetrieve( void )
+{
+	char filePath[512];
+#ifdef __LINUX__
+	DIR *dir = opendir(".");
+	struct dirent *dirp = NULL;
+
+	while( ( dirp = readdir( dir ) ) )	
+	{
+		if( dirp->d_type == DT_DIR && doRecursion )
+		{
+			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) )
+				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) );
+			continue;
+		}
+		shortList.push_back( dirp->d_name );
+		sprintf( filePath, "%s/%s", currentDir.c_str(), dirp->d_name );
+		filenameList.push_back( filePath );
+	}
+
+#else
+
+	WIN32_FIND_DATA toFind;
+	HANDLE findHandle = FindFirstFile( extension.c_str(), &toFind );		// grab first file that meets spec
+	BOOL retVal = 0;
+	if( findHandle != INVALID_HANDLE_VALUE )	// there is a file
+	{
+		shortList.push_back( toFind.cFileName );
+		sprintf( filePath, "%s/%s", currentDir.c_str(), toFind.cFileName );
+		filenameList.push_back( filePath );
+		retVal = 1;	// let's continue
+	}
+	while( retVal != 0 )	// while there are still files
+	{
+		retVal = FindNextFile( findHandle, &toFind );	// grab the next file
+		if( retVal != 0 )
+		{
+			shortList.push_back( toFind.cFileName );
+			sprintf( filePath, "%s/%s", currentDir.c_str(), toFind.cFileName );
+			filenameList.push_back( filePath );
+		}
+	}
+	if( findHandle != INVALID_HANDLE_VALUE )
+	{
+		FindClose( findHandle );
+		findHandle = INVALID_HANDLE_VALUE;
+	}
+	if( doRecursion )
+	{
+		std::string temp;
+		WIN32_FIND_DATA dirFind;
+		HANDLE directoryHandle = FindFirstFile( "*.*", &dirFind );
+		BOOL dirRetval = 0;
+
+		if( directoryHandle != INVALID_HANDLE_VALUE )	// there is a file
+		{
+			if( ( dirFind.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == FILE_ATTRIBUTE_DIRECTORY )
+			{
+				if( strcmp( dirFind.cFileName, "." ) && strcmp( dirFind.cFileName, ".." ) )
+				{
+					temp = BuildPath( dirFind.cFileName );
+					subdirectories.push_back( cDirectoryListing( temp, extension, doRecursion ) );
+				}
+				// it's a directory
+			}
+			dirRetval = 1;	// let's continue
+		}
+		while( dirRetval != 0 )	// while there are still files
+		{
+			dirRetval = FindNextFile( directoryHandle, &dirFind );	// grab the next file
+			if( dirRetval != 0 )
+			{
+				if( ( dirFind.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == FILE_ATTRIBUTE_DIRECTORY )
+				{
+					if( strcmp( dirFind.cFileName, "." ) && strcmp( dirFind.cFileName, ".." ) )
+					{
+						temp = BuildPath( dirFind.cFileName );
+						subdirectories.push_back( cDirectoryListing( temp, extension, doRecursion ) );
+					}
+					// it's a directory
+				}
+			}
+		}
+		if( directoryHandle != INVALID_HANDLE_VALUE )
+		{
+			FindClose( directoryHandle );
+			directoryHandle = INVALID_HANDLE_VALUE;
+		}
+	}
+#endif
+}
+
+void cDirectoryListing::Extension( std::string extent )
+{
+	extension = extent;
+}
+
+void cDirectoryListing::Flatten( bool isParent )
+{
+	ClearFlatten();
+	std::string temp;
+	for( unsigned int j = 0; j < filenameList.size(); j++ )
+	{
+		flattenedFull.push_back( filenameList[j] );
+		if( isParent )
+			temp = "";
+		else
+		{
+			temp = shortCurrentDir;
+			temp += "/";
+		}
+		temp += shortList[j];
+		flattenedShort.push_back( temp );
+	}
+	for( unsigned int i = 0; i < subdirectories.size(); i++ )
+	{
+		subdirectories[i].Flatten( false );
+		stringList *shortFlat	= subdirectories[i].FlattenedShortList();
+		stringList *longFlat	= subdirectories[i].FlattenedList();
+		for( unsigned int k = 0; k < longFlat->size(); k++ )
+		{
+			flattenedFull.push_back( (*longFlat)[k] );
+			if( isParent )
+				temp = "";
+			else
+			{
+				temp = shortCurrentDir;
+				temp += "/";
+			}
+			temp += (*shortFlat)[k];
+			flattenedShort.push_back( temp );
+		}
+		subdirectories[i].ClearFlatten();
+	}
+}
+void cDirectoryListing::ClearFlatten( void )
+{
+	flattenedFull.clear();
+	flattenedShort.clear();
 }

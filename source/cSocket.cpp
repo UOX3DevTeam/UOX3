@@ -112,25 +112,25 @@ void cSocket::XText( const char *newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::AddMItem( void )
+//|   Function    -  CItem *cSocket::AddMItem( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the socket's addmitem
 //o---------------------------------------------------------------------------o
-SI32 cSocket::AddMItem( void ) const
+CItem *cSocket::AddMItem( void ) const
 {
 	return addmitem;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddMItem( int newValue )
+//|   Function    -  void cSocket::AddMItem( CItem *newValue )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the socket's addmitem
 //o---------------------------------------------------------------------------o
-void cSocket::AddMItem( SI32 newValue )
+void cSocket::AddMItem( CItem *newValue )
 {
 	addmitem = newValue;
 }
@@ -534,47 +534,35 @@ void cSocket::WalkSequence( SI16 newValue )
 	walkSequence = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function			-	UI16 cSocket::AcctNo( void ) const
-//|	Date					-	11/29/2000
-//|	Developers		-	Abaddon
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Returns the ID of the account number socket belongs to
-//|									
-//|									
-//|	Modification	-	Maarc - 2/3/2003 - Updated return type to reflect changes
-//|									to account
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o---------------------------------------------------------------------------o
+//|		Function    -	UI16 cSocket::AcctNo( void )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Returns the ID of the account number socket belongs to
+//o---------------------------------------------------------------------------o
 UI16 cSocket::AcctNo( void ) const
 {
 	return wAccountID;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function			-	void cSocket::AcctNo( UI16 newValue )
-//|	Date					-	11/29/2000
-//|	Developers		-	Abaddon
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Sets the ID of the account number the socket belongs to
-//|									
-//|									
-//|	Modification	-	Maarc - 2/3/2003 - Updated paramters to reflect accounts
-//|									changes.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o---------------------------------------------------------------------------o
+//|		Function    -	void cSocket::AcctNo( UI16 newValue )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Sets the ID of the account number the socket belongs to
+//o---------------------------------------------------------------------------o
 void cSocket::AcctNo( UI16 newValue )
 {
-	if(!Accounts->GetAccountByID(newValue,(ACCOUNTSBLOCK&)actbAccount))
+	if( !Accounts->GetAccountByID( newValue, (ACCOUNTSBLOCK&)actbAccount ) )
 	{
 		wAccountID = AB_INVALID_ID;
-		actbAccount.wAccountIndex=AB_INVALID_ID;
+		actbAccount.wAccountIndex = AB_INVALID_ID;
 		return;
 	}
 	wAccountID = actbAccount.wAccountIndex;
@@ -628,6 +616,7 @@ void cSocket::AddID5( SI08 newValue )
 	addid5 = newValue;
 }
 
+/*
 //o---------------------------------------------------------------------------o
 //|   Function    -  make_st& cSocket::AddID4( void )
 //|   Date        -  November 29th, 2000
@@ -639,8 +628,6 @@ make_st& cSocket::ItemMake( void )
 {
 	return itemmake;
 }
-
-/*
 //o---------------------------------------------------------------------------o
 //|   Function    -  void cSocket::AddID4( make_st& newValue )
 //|   Date        -  November 29th, 2000
@@ -653,15 +640,14 @@ void cSocket::ItemMake( make_st& newValue )
 	itemmake = newValue;
 }
 */
-
-cSocket::cSocket() : currCharObj( NULL ), idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
+cSocket::cSocket() : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID( AB_INVALID_ID ),
 tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( NULL ), newClient( true ), firstPacket( true ), range( 15 ),
 cryptclient( false ), cliSocket( INVALID_SOCKET ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
 outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postAckCount( 0 ), postCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
 pX( 0 ), pY( 0 ), pZ( 0 ), lang( UT_ENU ), cliType( DefaultClientType ), clientVersion( DefaultClientVersion ), bytesReceived( 0 ), bytesSent( 0 )
 {
 	InternalReset();
-	actbAccount.wAccountIndex=AB_INVALID_ID;
+	actbAccount.wAccountIndex = AB_INVALID_ID;
 }
 
 cSocket::~cSocket()
@@ -922,7 +908,7 @@ int cSocket::Receive( int x )
 
 void cSocket::InternalReset( void )
 {
-	//memset( &itemmake, 0, sizeof( make_st ) );
+//	memset( &itemmake, 0, sizeof( make_st ) );
 	memset( buffer, 0, MAXBUFFER );
 	memset( outbuffer, 0, MAXBUFFER );
 	memset( tbuffer, 0, MAXBUFFER );
@@ -938,7 +924,7 @@ void cSocket::InternalReset( void )
 	UI32 mode = 1;
 	ioctlsocket( cliSocket, FIONBIO, &mode );
 }
-cSocket::cSocket( int sockNum ) : currCharObj( NULL ), idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
+cSocket::cSocket( int sockNum ) : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
 tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( NULL ), newClient( true ), firstPacket( true ), range( 15 ),
 cryptclient( false ), cliSocket( sockNum ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
 outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postCount( 0 ), postAckCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
@@ -1013,7 +999,7 @@ void cSocket::CurrcharObj( CChar *newValue )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK cSocket::GetAccount(void)
+ACCOUNTSBLOCK &cSocket::GetAccount(void)
 {
 	return actbAccount;
 }
@@ -1029,7 +1015,7 @@ ACCOUNTSBLOCK cSocket::GetAccount(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void cSocket::SetAccount(ACCOUNTSBLOCK actbBlock)
+void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
 {
 	if(actbBlock.wAccountIndex==AB_INVALID_ID)
 	{
@@ -1391,7 +1377,7 @@ UI08 *cPBuffer::Pointer( void )
 cPInputBuffer::cPInputBuffer() : tSock( NULL )
 {
 }
-cPInputBuffer::cPInputBuffer( void )
+cPInputBuffer::cPInputBuffer( cSocket *input )
 {
 	SetSocket( input );
 }

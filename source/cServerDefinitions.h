@@ -10,28 +10,60 @@
 typedef std::vector< Script * > ScpList;
 typedef	std::stack< std::string > dirList;
 
+class cDirectoryListing
+{
+protected:
+private:
+	typedef std::vector< cDirectoryListing > DIRLIST;
+
+	bool			PushDir( DefinitionCategories toMove );
+	bool			PushDir( std::string toMove );
+	void			PopDir( void );
+
+	stringList		filenameList, shortList;
+	stringList		flattenedShort, flattenedFull;
+	dirList			dirs;
+	std::string		extension;
+	std::string		currentDir;
+	std::string		shortCurrentDir;
+
+	DIRLIST			subdirectories;
+	bool			doRecursion;
+
+	void			InternalRetrieve( void );
+
+public:
+					cDirectoryListing( bool recurse = true );
+					cDirectoryListing( std::string dir, std::string extent, bool recurse = true );
+					cDirectoryListing( DefinitionCategories dir, std::string extent, bool recurse = true );
+					~cDirectoryListing();
+
+	void			Extension( std::string extent );
+	void			Retrieve( std::string dir );
+	void			Retrieve( DefinitionCategories dir );
+	void			Flatten( bool isParent );
+	void			ClearFlatten( void );
+
+	stringList *	List( void );
+	stringList *	ShortList( void );
+	stringList *	FlattenedList( void );
+	stringList *	FlattenedShortList( void );
+};
+
 class cServerDefinitions
 {
 protected:
 private:
-	std::vector< ScpList >	ScriptListings;
-	std::vector< std::string >	filenameListings;
+	std::vector< ScpList >			ScriptListings;
 	std::map< std::string, SI16 >	priorityMap;
-	dirList                 dirs;
-	SI16				defaultPriority;
+	SI16							defaultPriority;
 
 	void				ReloadScriptObjects( void );
-	void				BuildFileList( DefinitionCategories category );
 	void				BuildPriorityMap( DefinitionCategories category, UI08& wasPrioritized );
 	void				CleanPriorityMap( void );
-	void				CleanFileList( void );
 	void				DisplayPriorityMap( void );
 
 	SI16				GetPriority( const char *file );
-
-	bool				PushDir( DefinitionCategories toMove );
-	void				PopDir( void );
-
 public:
 						cServerDefinitions();
 						cServerDefinitions( const char *indexfilename );

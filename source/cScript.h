@@ -86,9 +86,9 @@ struct SEGump
 //o--------------------------------------------------------------------------o
 struct SEGumpData
 {
-	std::vector<std::string> sEdits;
-	std::vector<int> nButtons;
-	std::vector<short> nIDs;
+	stringList			sEdits;
+	std::vector<int>	nButtons;
+	std::vector<short>	nIDs;
 };
 
 struct InUseEntry
@@ -135,8 +135,12 @@ private:
 
 	bool		isFiring;
 	UI32		eventPresence[2];
+	UI32		needsChecking[2];
 	bool		EventExists( ScriptEvent eventNum ) const;
+	bool		NeedsChecking( ScriptEvent eventNum ) const;
 	void		SetEventExists( ScriptEvent eventNum, bool status );
+	void		SetNeedsChecking( ScriptEvent eventNum, bool status );
+	bool		ExistAndVerify( ScriptEvent eventNum, std::string functionName );
 
 	std::vector< InUseEntry >	raceObjects;
 	std::vector< InUseEntry >	charObjects;
@@ -162,7 +166,7 @@ public:
 	void		RemoveGumpList( SI32 index );
 	void		SendGumpList( SI32 index, UOXSOCKET toSendTo );
 
-	void		HandleGumpPress( cSocket *pressing, long button );
+	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( cSocket *pressing );
 
 	cScript( std::string targFile );
@@ -236,6 +240,7 @@ public:
 	bool		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill );
 	// MACTEP: 041802: Support for new event
 	bool		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i);
+	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSocket *s );
 
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 

@@ -30,7 +30,7 @@ public:
 	void			MakeShop( CChar *c );
 	void			RemoveShop( cSocket *s );
 	void			DyeTarget( cSocket *s );
-	CItem *			DupeItem( cSocket *s, CItem *i, SI32 amount );
+	CItem *			DupeItem( cSocket *s, CItem *i, UI32 amount );
 	void			Possess( cSocket *s );
 	void			Load( void );
 	int				cmd_offset;

@@ -44,7 +44,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATMAXRANGE|COMBATWRESTLESPEED|COMBATSPELLMAXRANGE|COMBATMAXMELEEDAMAGE|COMBATMAXSPELLDAMAGE|COMBATALLOWCRITICALS|COMBATMAXPOISONINGDISTANCE|COMBATDISPLAYHITMSG|COMBATMAXHUMANABSORBTION|COMBATMAXNONHUMANABSORBTION|COMBATMONSTERSVSANIMALS|"
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|ENGRAVEENABLED|BOOKSDIRECTORY|SERVERLIST|SCRIPTSECTIONHEADER|PORT|SAVEMODE|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD|HIDEWILEMOUNTED"
+	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD|HIDEWILEMOUNTED"
 );
 
 void cServerData::SetServerName( const char *setname )
@@ -623,22 +623,6 @@ void cServerData::SetLogsDirectory( char *text )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	const char *cServerData::GetGumpsDirectory( void )
-//|	Date					-	02/26/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-	[const char*] Pointing to the Log path data
-//o--------------------------------------------------------------------------o
-const char *cServerData::GetGumpsDirectory( void )
-{
-	return gumpsdirectory.c_str();
-}
-
-//o--------------------------------------------------------------------------o
 //|	Function/Class-	const char *cServerData::GetDictionaryDirectory( void )
 //|	Date					-	04/07/2002
 //|	Developer(s)	-	duckhead
@@ -655,29 +639,13 @@ const char *cServerData::GetDictionaryDirectory( void )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	void cServerData::SetGumpsDirectory( char *text )
-//|	Date					-	03/15/2002
-//|	Developer(s)	-	duckhead
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Holds the location of the gumps
-//o--------------------------------------------------------------------------o
-//|	Returns				-	N/A
-//o--------------------------------------------------------------------------o
-void cServerData::SetGumpsDirectory( char *text )
-{
-	setDirectoryHelper( "Gumps directory", gumpsdirectory, text );
-}
-
-//o--------------------------------------------------------------------------o
 //|	Function/Class-	void cServerData::SetDictionaryDirectory( char *text )
 //|	Date					-	04/07/2002
 //|	Developer(s)	-	duckhead
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status				-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Holds the location of the gumps
+//|	Description		-	Holds the location of the dictionary files
 //o--------------------------------------------------------------------------o
 //|	Returns				-	N/A
 //o--------------------------------------------------------------------------o
@@ -703,19 +671,19 @@ void cServerData::SetDictionaryDirectory( char *text )
 void cServerData::DumpPaths( void )
 {
 	Console.PrintSectionBegin();
-	Console << "| PathDump: \n";
-	Console << "|     Root      : " << GetRootDirectory() << "\n";
-	Console << "|     Accounts  : " << GetAccountsDirectory() << "\n";
-	Console << "|     Access    : " << GetAccessDirectory() << "\n";
-	Console << "|     Mul(Data) : " << GetDataDirectory() << "\n";
-	Console << "|     DFN(Defs) : " << GetDefsDirectory() << "\n";
-	Console << "|     JScript   : " << GetScriptsDirectory() << "\n";
-	Console << "|     HTML      : " << GetHTMLDirectory() << "\n";
-	Console << "|     MSGBoards : " << GetMsgBoardDirectory() << "\n";
-	Console << "|     Books     : " << GetBooksDirectory() << "\n";
-	Console << "|     Shared    : " << GetSharedDirectory() << "\n";
-	Console << "|     Backups   : " << GetBackupDirectory() << "\n";
-	Console << "|     Logs      : " << GetLogsDirectory() << "\n";
+	Console << "PathDump: \n";
+	Console << "    Root      : " << GetRootDirectory() << "\n";
+	Console << "    Accounts  : " << GetAccountsDirectory() << "\n";
+	Console << "    Access    : " << GetAccessDirectory() << "\n";
+	Console << "    Mul(Data) : " << GetDataDirectory() << "\n";
+	Console << "    DFN(Defs) : " << GetDefsDirectory() << "\n";
+	Console << "    JScript   : " << GetScriptsDirectory() << "\n";
+	Console << "    HTML      : " << GetHTMLDirectory() << "\n";
+	Console << "    MSGBoards : " << GetMsgBoardDirectory() << "\n";
+	Console << "    Books     : " << GetBooksDirectory() << "\n";
+	Console << "    Shared    : " << GetSharedDirectory() << "\n";
+	Console << "    Backups   : " << GetBackupDirectory() << "\n";
+	Console << "    Logs      : " << GetLogsDirectory() << "\n";
 	Console.PrintSectionBegin();
 }
 
@@ -1443,8 +1411,6 @@ void cServerData::ResetDefaults( void )
 	SetHTMLDirectory( tempStuff );
 	sprintf( tempStuff, "%s/books/", curWorkingDir );
 	SetBooksDirectory( tempStuff );
-	sprintf( tempStuff, "%s/gumps/", curWorkingDir );
-	SetGumpsDirectory( tempStuff );
 #else
 	SetRootDirectory( "./" );
 	SetDataDirectory( "./muldata/" );
@@ -1457,7 +1423,6 @@ void cServerData::ResetDefaults( void )
 	SetSharedDirectory( "./shared/" );
 	SetHTMLDirectory( "./html/" );
 	SetBooksDirectory( "./books/" );
-	SetGumpsDirectory( "./gumps/" );
 #endif
 
 	SetBuyThreshold( 2000 );
@@ -1982,7 +1947,6 @@ bool cServerData::save( const char *filename )
 	ofsOutput << "ACCESSDIRECTORY=" << GetAccessDirectory() << std::endl;
 	ofsOutput << "HTMLDIRECTORY=" << GetHTMLDirectory() << std::endl;
 	ofsOutput << "LOGSDIRECTORY=" << GetLogsDirectory() << std::endl;
-	ofsOutput << "GUMPSDIRECTORY=" << GetGumpsDirectory() << std::endl;
 	ofsOutput << "DICTIONARYDIRECTORY=" << GetDictionaryDirectory() << std::endl;
 	
 	ofsOutput << std::endl << "[settings]" << std::endl;
@@ -3044,17 +3008,14 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 				case 0x0A07:	 // NPCTRAININGENABLED[0161]
 					cServerData::SetNPCTrainingStatus( makeNum( r ) == 1 );
 					break;
-				case 0x0A1A:	 // GUMPSDIRECTORY[0162]
-					cServerData::SetGumpsDirectory( r );
+				case 0x0A1A:	 // DICTIONARYDIRECTORY[0162]
+					cServerData::SetDictionaryDirectory( r );
+				  break;
+				case 0x0A29:	 // BACKUPSAVERATIO[0163]
+					cServerData::SetBackupRatio( static_cast<SI16>(makeNum (r )) );
 					break;
-        case 0x0A29:	 // DICTIONARYDIRECTORY[0163]
-	        cServerData::SetDictionaryDirectory( r );
-          break;
-        case 0x0A3D:	 // BACKUPSAVERATIO[0164]
-	        cServerData::SetBackupRatio( makeNum (r ) );
-	        break;
-				case 0x0A57:	 // HIDEWILEMOUNTED[0166]
-					cServerData::SetCharHideWhileMounted( makeNum(r));
+				case 0x0A3D:	 // HIDEWILEMOUNTED[0164]
+					cServerData::SetCharHideWhileMounted( static_cast<SI16>(makeNum(r)));
 					break;
 				default:
 					//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
@@ -3532,7 +3493,7 @@ SI16 cServerData::GetServerStartGold( void ) const
 
 void cServerData::SetServerStartPrivs( SI16 slot, UI08 value )
 {
-	if( slot < 0 || slot > 1 && value ==0xffff )
+	if( slot < 0 || slot > 1 && value == 0xFFFF )
 		return;
 	startprivs[slot] = value;
 }
@@ -3541,7 +3502,7 @@ UI08 cServerData::GetServerStartPrivs( SI16 slot ) const
 {
 	if( slot < 0 || slot > 1 )
 		return 0;
-	return startprivs[slot];
+	return static_cast<UI08>(startprivs[slot]);
 }
 
 void cServerData::SetServerDecayTimer( UI32 value )

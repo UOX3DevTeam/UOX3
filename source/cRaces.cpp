@@ -112,7 +112,7 @@ void cRaces::load( void )
 						tag = CombatMods->Next();
 						data = CombatMods->GrabData();
 						if( data != NULL )
-							combat[i].value = makeNum( data );
+							combat[i].value = static_cast<UI08>(makeNum( data ));
 						else
 							combat[i].value = 100;
 					}
@@ -204,8 +204,8 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		lossMap[DEXTERITY] = "speed";
 		lossMap[INTELLECT] = "wisdom";
 	
-		beardobject = FindItemOnLayer( s, 0x10 );
-		hairobject = FindItemOnLayer( s, 0x0B );
+		beardobject = s->GetItemAtLayer( 0x10 );
+		hairobject	= s->GetItemAtLayer( 0x0B );
 		if( pRace->GenderRestriction() != 0 )
 		{
 			if( pRace->GenderRestriction() != FEMALE && s->GetID() == 0x0191 )
@@ -272,11 +272,11 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				hairColor = RandomBeard( x );
 			else
 				hairColor = 0x0480;
-			CItem *n = Items->SpawnItem( mSock, s, 1, "#", false, 0x204C, hairColor, false, false );
+			CItem *n = Items->SpawnItem( NULL, s, 1, "#", false, 0x204C, hairColor, false, false );
 			if( n != NULL )
 			{
 				n->SetLayer( 0x10 );
-				if( n->SetCont( s->GetSerial() ) )
+				if( n->SetCont( s ) )
 				{
 					RefreshItem( n );
 					beardobject = n;
@@ -498,7 +498,7 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 	if( skill >= ALLSKILLS )
 		return 0;
 	int modifier = races[x]->Skill( skill );
-	if( modifier >= combat.size() )
+	if( modifier >= static_cast<int>(combat.size()) )
 		return -(combat[modifier].value);
 	else
 		return (combat[modifier].value);
@@ -516,7 +516,7 @@ SI32 cRaces::FightPercent( int skill, RACEID x ) const
 	divValue = divValue / 10;
 	if( divValue == 0 )
 		return 100;
-	if( modifier >= combat.size() )
+	if( modifier >= static_cast<int>(combat.size()) )
 		return -(int)(100/(R32)divValue);
 	else
 		return (int)(100/(R32)divValue);
@@ -1400,7 +1400,7 @@ void CRace::Load( SI32 sectNum, int modCount )
 		case 'a':
 		case 'A':
 			if( !strcmp( "ARMORREST", tag ) )
-				ArmourClassRestriction( makeNum( data ) );		// 8 classes, value 0 is all, else it's a bit comparison
+				ArmourClassRestriction( static_cast<ARMORCLASS>(makeNum( data )) );		// 8 classes, value 0 is all, else it's a bit comparison
 			break;
 
 		case 'b':
@@ -1416,15 +1416,15 @@ void CRace::Load( SI32 sectNum, int modCount )
 			if( !strcmp( "COLDAFFECT", tag ) )	// are we affected by light?
 				AffectedByCold( true );
 			else if( !strcmp( "COLDDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), COLD );
+				WeatherDamage( static_cast<SI08>(makeNum( data )), COLD );
 			else if( !strcmp( "COLDSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), COLD );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), COLD );
 			break;
 
 		case 'd':
 		case 'D':
 			if( !strcmp( "DEXCAP", tag ) )
-				Skill( makeNum( data ), DEXTERITY );
+				Skill( static_cast<SKILLVAL>(makeNum( data )), DEXTERITY );
 			break;
 
 		case 'g':
@@ -1449,17 +1449,17 @@ void CRace::Load( SI32 sectNum, int modCount )
 			else if( !strcmp( "HEATAFFECT", tag ) )	// are we affected by light?
 				AffectedByHeat( true );
 			else if( !strcmp( "HEATDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), HEAT );
+				WeatherDamage( static_cast<SI08>(makeNum( data )), HEAT );
 			else if( !strcmp( "HEATSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), HEAT );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), HEAT );
 			else if( !strcmp( "HPMOD", tag ) ) // how much additional percent of strength are hitpoints
-				HPModifier( makeNum( data ) );
+				HPModifier( static_cast<SI16>(makeNum( data )) );
 			break;
 
 		case 'i':
 		case 'I':
 			if( !strcmp( "INTCAP", tag ) )
-				Skill( makeNum( data ), INTELLECT );
+				Skill( static_cast<SKILLVAL>(makeNum( data )), INTELLECT );
 			break;
 
 		case 'l':
@@ -1467,28 +1467,28 @@ void CRace::Load( SI32 sectNum, int modCount )
 			if( !strcmp( "LIGHTAFFECT", tag ) )	// are we affected by light?
 				AffectedByLight( true );
 			else if( !strcmp( "LIGHTDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), LIGHT );
+				WeatherDamage( static_cast<SI08>(makeNum( data )), LIGHT );
 			else if( !strcmp( "LIGHTLEVEL", tag ) )	// light level at which to take damage
-				LightLevel( makeNum( data ) );
+				LightLevel( static_cast<LIGHTLEVEL>(makeNum( data )) );
 			else if( !strcmp( "LIGHTSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), LIGHT );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), LIGHT );
 
 			else if( !strcmp( "LIGHTNINGAFFECT", tag ) )	// are we affected by light?
 				AffectedByLightning( true );
 			else if( !strcmp( "LIGHTNINGDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), LIGHTNING );
+				WeatherDamage( static_cast<SI08>(makeNum( data) ), LIGHTNING );
 			else if( !strcmp( "LIGHTNINGSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), LIGHTNING );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), LIGHTNING );
 			else if( !strcmp( "LANGUAGEMIN", tag ) ) // set language min 
-				LanguageMin( makeNum( data ) ); 
+				LanguageMin( static_cast<SKILLVAL>(makeNum( data )) ); 
 			break;
 
 		case 'm':
 		case 'M':
 			if( !strcmp( "MAGICRESISTANCE", tag ) )	// magic resistance?
-				MagicResistance( atof( data ) );
+				MagicResistance( static_cast<R32>(atof( data ) ));
 			else if( !strcmp( "MANAMOD", tag ) ) // how much additional percent of int are mana
-				ManaModifier( makeNum( data ) );
+				ManaModifier( static_cast<SI16>(makeNum( data )) );
 			break;
 
 		case 'n':
@@ -1498,7 +1498,7 @@ void CRace::Load( SI32 sectNum, int modCount )
 			else if( !strcmp( "NOBEARD", tag ) )
 				NoBeard( true );
 			else if( !strcmp( "NIGHTVIS", tag ) )					// night vision level... light bonus
-				NightVision( makeNum( data ) );
+				NightVision( static_cast<LIGHTLEVEL>(makeNum( data )) );
 			break;
 
 		case 'p':
@@ -1506,10 +1506,10 @@ void CRace::Load( SI32 sectNum, int modCount )
 			if( !strcmp( "PLAYERRACE", tag ) ) // is it a player race?
 				IsPlayerRace( (makeNum( data ) != 0) );
 			else if( !strcmp( "POISONRESISTANCE", tag ) )	// poison resistance?
-				PoisonResistance( atof( data ) );
+				PoisonResistance( static_cast<R32>(atof( data ) ));
 			else if( !strcmp( "PARENTRACE", tag ) )
 			{
-				CRace *pRace = Races->Race( makeNum( tag ) );
+				CRace *pRace = Races->Race( static_cast<RACEID>(makeNum( tag )) );
 				if( pRace != NULL )
 					(*this) = (*pRace);
 			}
@@ -1522,37 +1522,37 @@ void CRace::Load( SI32 sectNum, int modCount )
 			else if( !strcmp( "RAINAFFECT", tag ) )	// are we affected by light?
 				AffectedByRain( true );
 			else if( !strcmp( "RAINDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), RAIN );
+				WeatherDamage( static_cast<SI08>(makeNum( data )), RAIN );
 			else if( !strcmp( "RAINSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), RAIN );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), RAIN );
 			else if( !strcmp( "RACERELATION", tag ) )
 			{
 				int nValue;
 				if( sscanf( data, "%i %i", &raceDiff, &nValue ) == 2 )	// found 2 values
-					RaceRelation( (SI08)nValue, raceDiff );
+					RaceRelation( (SI08)nValue, static_cast<RACEID>(raceDiff) );
 			}
 			else if( !strcmp( "RACIALENEMY", tag ) )
 			{
 				raceDiff = makeNum( data );
-				if( raceDiff > racialEnemies.size() )
+				if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
 					Console << "Error in race " << sectNum << ", invalid enemy race " << raceDiff << myendl;
 				else
-					RaceRelation( MIN_ENEMY, raceDiff );
+					RaceRelation( MIN_ENEMY, static_cast<RACEID>(raceDiff) );
 			}
 			else if( !strcmp( "RACIALAID", tag ) )
 			{
 				raceDiff = makeNum( data );
-				if( raceDiff > racialEnemies.size() )
+				if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
 					Console << "Error in race " << sectNum << ", invalid ally race " <<  raceDiff << myendl;
 				else
-					RaceRelation( MIN_ALLY, raceDiff );
+					RaceRelation( MIN_ALLY, static_cast<RACEID>(raceDiff ));
 			}
 			break;
 
 		case 's':
 		case 'S':
 			if( !strcmp( tag, "STRCAP" ) )
-				Skill( makeNum( data ), STRENGTH );
+				Skill( static_cast<SKILLVAL>(makeNum( data) ), STRENGTH );
 			else if( !strcmp( "SKINMIN", tag ) )
 				skinMin = (UI16)makeNum( data );
 			else if( !strcmp( "SKINMAX", tag ) )
@@ -1560,17 +1560,17 @@ void CRace::Load( SI32 sectNum, int modCount )
 			else if( !strcmp( "SNOWAFFECT", tag ) )	// are we affected by light?
 				AffectedBySnow( true );
 			else if( !strcmp( "SNOWDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( makeNum( data ), SNOW );
+				WeatherDamage( static_cast<SI08>(makeNum( data )), SNOW );
 			else if( !strcmp( "SNOWSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( makeNum( data ), SNOW );
+				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), SNOW );
 			else if( !strcmp( "STAMMOD", tag ) ) // how much additional percent of int are mana
-				StamModifier( makeNum( data ) );
+				StamModifier( static_cast<SI16>(makeNum( data) ) );
 			break;
 
 		case 'v':
 		case 'V':
 			if( !strcmp( "VISRANGE", tag ) )					// set visibility range ... defaults to 18
-				VisibilityRange( makeNum( data ) );
+				VisibilityRange( static_cast<RANGE>(makeNum( data )) );
 			break;
 
 		}
@@ -1580,12 +1580,12 @@ void CRace::Load( SI32 sectNum, int modCount )
 			char skillthing[64];
 			sprintf( skillthing, "%sG", skillname[iCountA] );
 			if( !strcmp( skillthing, tag ) )
-				Skill( makeNum( data ), iCountA );
+				Skill( static_cast<SKILLVAL>(makeNum( data )), iCountA );
 			else
 			{
 				sprintf( skillthing, "%sL", skillname[iCountA] );
 				if( !strcmp( skillthing, tag ) )
-					Skill( modCount + makeNum( data ), iCountA );
+					Skill( modCount + static_cast<SKILLVAL>(makeNum( data )), iCountA );
 			}
 		}
 	}

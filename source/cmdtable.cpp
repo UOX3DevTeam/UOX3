@@ -11,7 +11,6 @@
 
 #include "uox3.h"
 #include "cmdtable.h"
-#include "debug.h"
 #include "mstring.h"
 #include "cAccountClass.h"
 
@@ -468,7 +467,6 @@ void command_resend( cSocket *s )
 	if( mChar == NULL )
 		return;
 	sendItemsInRange( s ); 
-	//Console << "ALERT: sendItemsInRange() called in command_resend(). This function could cause a lot of lag!" << myendl;
 	mChar->Teleport();
 }
 // Returns the current bulletin board posting mode for the player
@@ -478,15 +476,16 @@ void command_post( cSocket *s )
 	if( mChar == NULL )
 		return;
 
+	UnicodeTypes sLang = s->Language();
 	char temp[1024];
-	sprintf( temp, Dictionary->GetEntry( 269 ) );
+	sprintf( temp, Dictionary->GetEntry( 269, sLang ) );
 
 	switch( mChar->GetPostType() )
 	{
-	case LOCALPOST:		strcat( temp, Dictionary->GetEntry( 270 ) );		break;
-	case REGIONALPOST:	strcat( temp, Dictionary->GetEntry( 271 ) );		break;
-	case GLOBALPOST:	strcat( temp, Dictionary->GetEntry( 272 ) );		break;
-	default:			strcat( temp, Dictionary->GetEntry( 273 ) );
+	case LOCALPOST:		strcat( temp, Dictionary->GetEntry( 270, sLang ) );		break;
+	case REGIONALPOST:	strcat( temp, Dictionary->GetEntry( 271, sLang ) );		break;
+	case GLOBALPOST:	strcat( temp, Dictionary->GetEntry( 272, sLang ) );		break;
+	default:			strcat( temp, Dictionary->GetEntry( 273, sLang ) );
 						mChar->SetPostType( LOCALPOST );
 						break;
 	}
@@ -585,7 +584,7 @@ void command_goplace( cSocket *s )
 		Commands->MakePlace( s, makenumber( 1 ) );
 		if( s->AddX() != 0 )
 		{
-			mChar->SetLocation( s->AddX(), s->AddY(), s->AddZ() );
+			mChar->SetLocation( static_cast<SI16>(s->AddX()), static_cast<SI16>(s->AddY()), s->AddZ() );
 			mChar->Teleport();
 		}
 	}
@@ -620,8 +619,7 @@ void command_gochar( cSocket *s )
 	} 
 	else if( tnum == 2 )
 	{
-		UOXSOCKET i = makenumber( 1 );
-		cSocket *tSock = calcSocketObjFromSock( i );
+		cSocket *tSock = calcSocketObjFromSock( makenumber( 1 ) );
 		if( tSock != NULL )
 		{
 			CChar *tChar = tSock->CurrcharObj();
@@ -775,7 +773,7 @@ void command_xtele( cSocket *s )
 // </UL>
 {
 	if( tnum == 5 || tnum == 2 ) 
-		Targ->XTeleport( s, tnum );
+		Targ->XTeleport( s, static_cast<UI08>(tnum ));
 	else
 		target( s, 0, 1, 0, 136, 21 );
 }
@@ -801,10 +799,12 @@ void command_zerokills( cSocket *s )
 // Sets all PK counters to 0.
 {
 	sysmessage( s, 22 );
-	for( UI32 a = 0; a < charcount; a++ )
+	for( CChar *i = GPCL.begin(); i != NULL; i = GPCL.next() )
 	{
-		chars[a].SetKills( 0 );
-		setcharflag( &chars[a] );
+		if( i == NULL )
+			continue;
+		i->SetKills( 0 );
+		setcharflag( i );
 	}
 	sysmessage( s, 23 );
 }
@@ -980,7 +980,7 @@ void command_title( cSocket *s )
 	}
 }
 
-
+#pragma note( "Param Warning: in command_save, s is unrefrenced" )
 void command_save( cSocket *s )
 // Saves the current world data into ITEMS.WSC and CHARS.WSC.
 {
@@ -1050,6 +1050,7 @@ void command_showtime( cSocket *s )
 		sysmessage( s, "%s %2.2d %s %2.2d %s", "Time: ", hour, ":",minute, "AM" );
 }
 
+#pragma note( "Param Warning: in command_settime, s is unrefrenced" )
 void command_settime( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d d) Sets the current UO time in hours and minutes.
@@ -1070,13 +1071,14 @@ void command_settime( cSocket *s )
 	}
 }
 
+#pragma note( "Param Warning: in command_shutdown, s is unrefrenced" )
 void command_shutdown( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Shuts down the server. Argument is how many minutes until shutdown.
 {
 	if( tnum == 2 )
 	{
-		endtime = BuildTimeValue( makenumber( 1 ) );
+		endtime = BuildTimeValue( static_cast<R32>(makenumber( 1 )) );
 		if( makenumber( 1 ) == 0 )
 		{
 			endtime = 0;
@@ -1106,6 +1108,7 @@ void command_sfx( cSocket *s )
 	}
 }
 
+#pragma note( "Param Warning: in command_light, s is unrefrenced" )
 void command_light( cSocket *s)
 // PARAM WARNING: s is unreferenced
 // (h) Sets the light level. 0=brightest, 15=darkest, -1=enable day/night cycles.
@@ -1117,6 +1120,7 @@ void command_light( cSocket *s)
 	}
 }
 
+#pragma note( "Param Warning: in command_disconnect, s is unrefrenced" )
 void command_disconnect( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Disconnects the user logged in under the specified slot.
@@ -1165,7 +1169,7 @@ void command_additem( cSocket *s )
 	if( tnum >= 2 )	// might be quite long
 	{
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+8]) );	// let's store what we really want to add
-		sprintf( temp, Dictionary->GetEntry( 37 ), s->XText() );
+		sprintf( temp, Dictionary->GetEntry( 37, s->Language() ), s->XText() );
 		target( s, 0, 1, 0, 26, temp );
 	}
 }
@@ -1206,6 +1210,7 @@ void command_command( cSocket *s )
 	}
 }
 
+#pragma note( "Param Warning: in command_gcollect, s is unrefrenced" )
 void command_gcollect( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Runs garbage collection routines.
@@ -1358,6 +1363,7 @@ void command_gumpmenu( cSocket *s )
 		Gumps->Menu( s, makenumber( 1 ) );
 }
 
+#pragma note( "Function Warning: command_cachestats currently does nothing" )
 void command_cachestats( cSocket *s )
 // Display some information about the cache.
 {
@@ -1456,9 +1462,9 @@ void command_gmopen( cSocket *s )
 // </TABLE>
 {
 	if( tnum == 2 ) 
-		s->AddMItem( makenumber( 1 ) );
+		s->TempInt( makenumber( 1 ) );
 	else 
-		s->AddMItem( 0x15 );
+		s->TempInt( 0x15 );
 	target(s, 0, 1, 0, 115, 53 );
 }
 
@@ -1507,6 +1513,7 @@ void command_gumpopen( cSocket *s )
 	}
 }
 
+#pragma note( "Param Warning: in command_respawn, s is unrefrenced" )
 void command_respawn( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Forces a respawn.
@@ -1541,6 +1548,7 @@ void command_reloadserver( cSocket *s )
 	sysmessage( s, 58 );
 }
 
+#pragma note( "Param Warning: in command_loaddefaults, s is unrefrenced" )
 void command_loaddefaults( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Loads the server defaults.
@@ -1567,6 +1575,7 @@ void command_cclear( cSocket *s )
 	return;
 }
 
+#pragma note( "Param Warning: in command_minecheck, s is unrefrenced" )
 void command_minecheck( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Set the server mine check interval in minutes.
@@ -1592,6 +1601,7 @@ void command_noinvul( cSocket *s )
 	
 }
 
+#pragma note( "Param Warning: in command_guardson, s is unrefrenced" )
 void command_guardson( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Activates town guards.
@@ -1601,6 +1611,7 @@ void command_guardson( cSocket *s )
 	
 }
 
+#pragma note( "Param Warning: in command_guardsoff, s is unrefrenced" )
 void command_guardsoff( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Deactivates town guards.
@@ -1610,6 +1621,7 @@ void command_guardsoff( cSocket *s )
 	
 }
 
+#pragma note( "Param Warning: in command_announceon, s is unrefrenced" )
 void command_announceon( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Enable announcement of world saves.
@@ -1620,6 +1632,7 @@ void command_announceon( cSocket *s )
 	
 }
 
+#pragma note( "Param Warning: in command_announceoff, s is unrefrenced" )
 void command_announceoff( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // Disable announcement of world saves.
@@ -1672,11 +1685,11 @@ void command_pdump( cSocket *s )
 {
 	sysmessage( s, "Performace Dump:" );
 	
-	sysmessage( s, "Network code: %fmsec [%i]" _ (R32)((R32)networkTime/(R32)networkTimeCount) _ networkTimeCount);
-	sysmessage( s, "Timer code: %fmsec [%i]" _ (R32)((R32)timerTime/(R32)timerTimeCount) _ timerTimeCount);
-	sysmessage( s, "Auto code: %fmsec [%i]" _ (R32)((R32)autoTime/(R32)autoTimeCount) _ autoTimeCount);
-	sysmessage( s, "Loop Time: %fmsec [%i]" _ (R32)((R32)loopTime/(R32)loopTimeCount) _ loopTimeCount);
-	sysmessage( s, "Simulation Cycles/Sec: %f" _ (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
+	sysmessage( s, "Network code: %fmsec [%i]", (R32)((R32)networkTime/(R32)networkTimeCount), networkTimeCount );
+	sysmessage( s, "Timer code: %fmsec [%i]", (R32)((R32)timerTime/(R32)timerTimeCount), timerTimeCount );
+	sysmessage( s, "Auto code: %fmsec [%i]", (R32)((R32)autoTime/(R32)autoTimeCount), autoTimeCount );
+	sysmessage( s, "Loop Time: %fmsec [%i]", (R32)((R32)loopTime/(R32)loopTimeCount), loopTimeCount );
+	sysmessage( s, "Simulation Cycles/Sec: %f", (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount ) ) ) );
 }
 
 void command_rename2( cSocket *s )
@@ -1703,7 +1716,8 @@ void command_readspawnregions( cSocket *s )
 void command_gy( cSocket *s )
 // (text) GM Yell - Announce a message to all online GMs.
 {
-	if ( ! s ) return;
+	if( s == NULL ) 
+		return;
 
 	if( now == 1 )
 	{
@@ -1712,7 +1726,8 @@ void command_gy( cSocket *s )
 	}
 	char tmpString[512];
 	CChar *me = s->CurrcharObj();
-	if ( !me ) return;
+	if( me == NULL ) 
+		return;
 
 	sprintf( tmpString, "%s (GM ONLY): %s", me->GetName(), &(s->TBuffer()[Commands->cmd_offset+3]) );
 
@@ -1738,7 +1753,7 @@ void command_tilew( cSocket *s )
 // box being tiled.</LI>
 // <LI>The final number is the Z-Axis of the box being tiled.</LI></UL>
 {
-	UI16 targID = 0xFFFF;
+	UI16 targID = INVALIDID;
 	SI16 x1, x2, y1, y2;
 	SI08 z;
 	if( tnum == 7 )
@@ -1773,7 +1788,7 @@ void command_tilew( cSocket *s )
 	{
 		for( SI16 y = y1; y <= y2; y++ )
 		{
-			CItem *a = Items->SpawnItem( s, 1, "#", pile, targID, 0, false, false );
+			CItem *a = Items->SpawnItem( NULL, s->CurrcharObj(), 1, "#", pile, targID, 0, false, false );
 			if( a != NULL )	// Antichrist crash prevention
 			{
 				a->SetPriv( 0 ); //Make them not decay
@@ -1911,7 +1926,7 @@ void command_gms( cSocket *s )
 	int j = 0;
 	GumpDisplay Who( s, 400, 300 );
 	char temp[512];
-	Who.SetTitle( Dictionary->GetEntry( 77 ) );
+	Who.SetTitle( Dictionary->GetEntry( 77, s->Language() ) );
 	Network->PushConn();
 	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
@@ -1929,12 +1944,12 @@ void command_gms( cSocket *s )
 
 void command_regspawnall( cSocket *s )
 {
-	int spawn = 0;
-	char temps[60];
+	SI32 spawn = 0;
+	UI16 i;
 	cSpawnRegion *spawnReg = NULL;
-	for( UI32 n = 1; n < totalspawnregions; n++ )
+	for( i = 1; i < totalspawnregions; i++ )
 	{
-		spawnReg = spawnregion[n];
+		spawnReg = spawnregion[i];
 		if( spawnReg != NULL )
 			spawn += ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
 	}
@@ -1945,19 +1960,18 @@ void command_regspawnall( cSocket *s )
 	}
 	sysbroadcast( Dictionary->GetEntry( 79 ) );
 	
-	for( UI32 i = 1; i < totalspawnregions; i++ )
+	for( i = 1; i < totalspawnregions; i++ )
 	{
 		spawnReg = spawnregion[i];
 		if( spawnReg != NULL )
 		{
-			int k = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
-			for( int j = 1; j < k; j++ )
+			SI32 k = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
+			for( SI32 j = 1; j < k; j++ )
 				spawnReg->doRegionSpawn();
-			spawnReg->SetNextTime( BuildTimeValue( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) ) );
+			spawnReg->SetNextTime( BuildTimeValue(static_cast<R32>( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) )) );
 		}
 	}
-	sprintf( temps, Dictionary->GetEntry( 80 ), spawn, totalspawnregions );
-	sysmessage( s, temps );
+	sysmessage( s, 80, spawn, totalspawnregions );
 }
 
 void command_wipenpcs( cSocket *s )
@@ -2058,8 +2072,6 @@ void command_reportbug( cSocket *s )
 	fclose( bugs );
 	sysmessage( s, 87 );
 	bool x = false;
-	char temp[1024];
-	sprintf( temp, Dictionary->GetEntry( 277 ), mChar->GetName(), &(s->TBuffer()[Commands->cmd_offset+9] ) );
 	Network->PushConn();
 	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
@@ -2069,7 +2081,7 @@ void command_reportbug( cSocket *s )
 		if( iChar->IsGMPageable() )
 		{
 			x = true;
-			sysmessage( iSock, temp );
+			sysmessage( iSock, 277, mChar->GetName(), &(s->TBuffer()[Commands->cmd_offset + 9] ) );
 		}
 	}
 	Network->PopConn();
@@ -2382,7 +2394,7 @@ void command_xgate( cSocket *s )
 	{
 		Commands->MakePlace( s, makenumber( 1 ) );
 		if( s->AddX() != 0 )
-			SpawnGate( s, mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), s->AddX(), s->AddY(), s->AddZ() );
+			SpawnGate( s, mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), static_cast<SI16>(s->AddX()), static_cast<SI16>(s->AddY()), s->AddZ() );
 	}
 }
 

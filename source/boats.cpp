@@ -1007,9 +1007,9 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 		}
 
 		model->SetMoreX( tiller->GetMoreX() );
-		Weight->SubtractItemWeight( mChar, model );
+		Weight->subtractItemWeight( mChar, model );
 		model->SetWeight( 0 );
-		Weight->AddItemWeight( mChar, model );
+		Weight->addItemWeight( mChar, model );
 		model->SetMagic( 0 );
 
 		for( CItem *a = hold->FirstItemObj(); !hold->FinishedItems(); a = hold->NextItemObj() )

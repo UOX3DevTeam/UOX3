@@ -16,7 +16,7 @@ protected:
 	baseMap				charInMulti;
 	baseCharMap			owners;
 	baseCharMap			banList;
-	std::vector< CItem * >	lockedList;
+	ITEMLIST			lockedList;
 	UI16				maxLockedDown;
 
 	baseMapIterator		itemMultiIterator;

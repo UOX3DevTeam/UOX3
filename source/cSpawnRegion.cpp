@@ -1,13 +1,13 @@
 #include "uox3.h"
 #include "ssection.h"
 
-cSpawnRegion::cSpawnRegion( SI32 spawnregion ) : nexttime( 0 ), call( 1 ), x1( 0 ), x2( 0 ), y1( 0 ), y2( 0 ),
+cSpawnRegion::cSpawnRegion( UI16 spawnregion ) : nexttime( 0 ), call( 1 ), x1( 0 ), x2( 0 ), y1( 0 ), y2( 0 ),
 maxcspawn( 0 ), maxispawn( 0 ), maxtime( 0 ), mintime( 0 ), regionnum( spawnregion ), curcspawn( 0 ), curispawn( 0 ),
 worldNumber( 0 )
 {
 	items.resize( 0 );
 	npcs.resize( 0 );
-	strncpy( name, Dictionary->GetEntry( 1117 ), 128 );
+	strncpy( name, Dictionary->GetEntry( 1117 ), MAX_REGIONNAME );
 // note: doesn't go here, but i'll see it here.  when an item is spawned, as soon as it's moved it needs to lose it's
 // spawn setting.  If not, then when people pick up spawned items, they will disappear (on region spawns)
 }
@@ -38,7 +38,7 @@ const char *cSpawnRegion::GetName( void ) const
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::SetName( const char *newName )
 {
-	strncpy( name, newName, 128 );
+	strncpy( name, newName, MAX_REGIONNAME );
 }
 
 //o---------------------------------------------------------------------------o
@@ -130,71 +130,71 @@ SI32 cSpawnRegion::GetCurrentItemAmt( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetRegionNum( void )
+//|	Function	-	UI16 GetRegionNum( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs region number
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetRegionNum( void ) const
+UI16 cSpawnRegion::GetRegionNum( void ) const
 {
 	return regionnum;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SetRegionNum( void )
+//|	Function	-	SetRegionNum( UI16 newVal )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Sets region number
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::SetRegionNum( SI32 newVal )
+void cSpawnRegion::SetRegionNum( UI16 newVal )
 {
 	regionnum = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetMinTime( void )
+//|	Function	-	UI08 GetMinTime( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs the minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMinTime( void ) const
+UI08 cSpawnRegion::GetMinTime( void ) const
 {
 	return mintime;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SetMinTime( void )
+//|	Function	-	cSpawnRegion::SetMinTime( UI08 newVal )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Sets the minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMinTime( SI32 newVal )
+void cSpawnRegion::SetMinTime( UI08 newVal )
 {
 	mintime = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetMaxTime( void )
+//|	Function	-	UI08 GetMaxTime( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs the maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxTime( void ) const
+UI08 cSpawnRegion::GetMaxTime( void ) const
 {
 	return maxtime;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SetMaxTime( void )
+//|	Function	-	cSpawnRegion::SetMaxTime( UI08 newVal )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMaxTime( SI32 newVal )
+void cSpawnRegion::SetMaxTime( UI08 newVal )
 {
 	maxtime = newVal;
 }
@@ -250,7 +250,7 @@ SI08 cSpawnRegion::GetZ( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetY1( void )
+//|	Function	-	SI16 GetY1( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs y1 to get the y pos of the top corner of the spawnregion
@@ -272,7 +272,7 @@ void cSpawnRegion::SetY1( SI16 newVal )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetX1( void )
+//|	Function	-	SI16 GetX1( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs x1 to get the x pos of the top corner of the spawnregion
@@ -294,7 +294,7 @@ void cSpawnRegion::SetX1( SI16 newVal )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetY2( void )
+//|	Function	-	SI16 GetY2( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs y2 to get the y pos of the bottom corner of the spawnregion
@@ -316,7 +316,7 @@ void cSpawnRegion::SetY2( SI16 newVal )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetX2( void )
+//|	Function	-	SI16 GetX2( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Grabs x2 to get the x pos of the bottom corner of the spawnregion
@@ -395,11 +395,11 @@ void cSpawnRegion::Load( ScriptSection *toScan )
 		else if( !strcmp( tag, "Y2" ) )
 			y2 = (SI16)makeNum( data );
 		else if( !strcmp( tag, "MINTIME" ) )
-			mintime = makeNum( data );
+			mintime = static_cast<UI08>(makeNum( data ));
 		else if( !strcmp( tag, "MAXTIME" ) )
-			maxtime = makeNum( data );
+			maxtime = static_cast<UI08>(makeNum( data ));
 		else if( !strcmp( tag, "NAME" ) )
-			strncpy( name, data, 128 );
+			strncpy( name, data, MAX_REGIONNAME );
 		else if( !strcmp( tag, "CALL" ) )
 			call = (SI16)makeNum( data );
 		else if( !strcmp( tag, "WORLD" ) )
@@ -423,14 +423,14 @@ void cSpawnRegion::doRegionSpawn( void )
 	if( items.size() == 0 )
 		maxispawn = 0;
 
-	while( scharlist.size() < maxcspawn )
+	while( scharlist.size() < static_cast<unsigned int>(maxcspawn) )
 		scharlist.push_back(NULL);
-	while( sitemlist.size() < maxispawn )
+	while( sitemlist.size() < static_cast<unsigned int>(maxispawn ))
 		sitemlist.push_back(NULL);
 
 	for( SI32 i = 0 ; i < call ; i++ )
 	{
-		for( ; j < scharlist.size() ; j++ )
+		for( ; j < static_cast<SI32>(scharlist.size()) ; j++ )
 		{
 			if( scharlist[j] != NULL )
 				continue;
@@ -444,7 +444,7 @@ void cSpawnRegion::doRegionSpawn( void )
 		}
 
 // sitemlist.size() should be 
-		for( ; k < sitemlist.size() ; k++ )
+		for( ; k < static_cast<SI32>(sitemlist.size() ); k++ )
 		{
 			if( sitemlist[k] != NULL && !sitemlist[k]->ShouldSave())
 				continue;
@@ -458,7 +458,7 @@ void cSpawnRegion::doRegionSpawn( void )
 					if( FindSpotForItem( x, y, z ) )
 					{
 						sitemlist[k]->SetLocation( x, y, z ); // On a move, we should set save to true
-						sitemlist[k]->SetSpawn( 0, 1, regionnum, 0, calcItemFromSer( sitemlist[k]->GetSerial() ) );
+						sitemlist[k]->SetSpawn( calcserial( 0, 1, static_cast<UI08>(regionnum), 0 ), calcItemFromSer( sitemlist[k]->GetSerial() ) );
 						RefreshItem( sitemlist[k] );
 						sitemlist[k]->ShouldSave( false );
 					} 
@@ -528,30 +528,32 @@ bool cSpawnRegion::FindSpotForItem( SI16 &x, SI16 &y, SI08 &z )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an item/npc should be removed from spawnlist and saved
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::checkSpawned()
+void cSpawnRegion::checkSpawned( void )
 {
-	std::vector< CChar *>::iterator i;
-	std::vector< CItem *>::iterator j;
+	CHARLIST::iterator i;
+	ITEMLIST::iterator j;
 
 	for( i = scharlist.begin(); i != scharlist.end(); i++ )
 	{
-		if( ( i == NULL ) || ( (*i) == NULL ) )
+		CChar *charI = (CChar *)(*i);
+		if( charI == NULL )
 			continue;
-		else if ( (*i)->GetOwnerObj() != NULL )
+		if( charI->GetOwnerObj() != NULL )
 		{
-			(*i)->ShouldSave( true );
-			(*i) = NULL;
+			charI->ShouldSave( true );
+			charI = NULL;
 		}
 	}
 	
 	for( j = sitemlist.begin(); j != sitemlist.end(); j++ )
 	{
-		if( ( j == NULL ) || ( (*j) == NULL ) )
+		CItem *itemJ = (CItem *)(*j);
+		if( itemJ == NULL )
 			continue;
-		else if ( (*j)->GetCont() != INVALIDSERIAL )
+		if( itemJ->GetCont() != NULL )
 		{
-			(*j)->ShouldSave( true );
-			(*j) = NULL;
+			itemJ->ShouldSave( true );
+			itemJ = NULL;
 		}
 	}
 
@@ -565,15 +567,16 @@ void cSpawnRegion::checkSpawned()
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 {
-	std::vector< CChar *>::iterator i;
+	CHARLIST::iterator i;
 
 	for( i = scharlist.begin(); i != scharlist.end(); i++ )
 	{
-		if( ( i == NULL ) || ( (*i) == NULL ) )
+		CChar *iChar = (*i);
+		if( iChar == NULL )
 			continue;
-		else if ( (*i) == toDelete )
+		if( iChar == toDelete )
 		{
-			(*i) = NULL;
+			iChar = NULL;
 		}
 	}
 }
@@ -586,15 +589,14 @@ void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 {
-	std::vector< CItem *>::iterator i;
+	ITEMLIST::iterator i;
 
 	for( i = sitemlist.begin(); i != sitemlist.end(); i++ )
 	{
-		if( ( i == NULL ) || ( (*i) == NULL ) )
+		CItem *iItem = (*i);
+		if( iItem == NULL )
 			continue;
-		else if ( (*i) == toDelete )
-		{
-			(*i) = NULL;
-		}
+		if( iItem == toDelete )
+			iItem = NULL;
 	}
 }

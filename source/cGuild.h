@@ -13,7 +13,6 @@ const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknow
 const SI16 BasePage = 8000;
 
 typedef std::map< GuildID, GuildRelation >	GUILDREL;
-typedef std::vector< SERIAL > SERLIST;
 
 class CGuild
 {

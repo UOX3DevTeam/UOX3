@@ -298,7 +298,7 @@ bool CMultiObj::Save( std::ofstream &outStream, int mode )
 	if( isFree() )
 		return false;
 	typedef std::map< SERIAL, CChar *>::iterator iCounter;
-	if( GetCont() != INVALIDSERIAL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
+	if( GetCont() != NULL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
 	{
 		DumpHeader( outStream, mode );
 		DumpBody( outStream, mode );
@@ -387,7 +387,7 @@ bool CMultiObj::LoadRemnants( int arrayOffset )
 	if( itemcount2 <= serial ) 
 		itemcount2 = serial + 1;
 	SetSerial( serial, arrayOffset );
-	StoreItemRandomValue( &items[arrayOffset], -1 ); // Magius(CHE) (2)
+	StoreItemRandomValue( &items[arrayOffset], 0xFF ); // Magius(CHE) (2)
 	
 
 	// Add item weight if item doesn't have it yet
@@ -395,7 +395,7 @@ bool CMultiObj::LoadRemnants( int arrayOffset )
 		SetWeight( 0 );
 
 	// Tauriel adding region pointers
-	if( GetCont() == INVALIDSERIAL )
+	if( GetCont() == NULL )
 	{
 		MapRegion->AddItem( this );
 		if( GetX() < 0 || GetY() < 0 )
@@ -740,7 +740,7 @@ void CMultiObj::PostLoadProcessing( UI32 index )
 //o--------------------------------------------------------------------------
 void CMultiObj::SetOwner( CChar *newOwner )
 {
-	cBaseObject::SetOwner( newOwner->GetSerial() );
+	cBaseObject::SetOwner( (cBaseObject *)newOwner );
 	AddAsOwner( newOwner );
 }
 

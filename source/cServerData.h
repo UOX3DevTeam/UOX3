@@ -43,7 +43,7 @@
 #define SKILLLEVEL 5 // Range from 1 to 10 - This value if the difficult to create an item using a make command: 1 is easy, 5 is normal (default), 10 is difficult! - Magius(CHE)
 #define SELLMAXITEM 5 // Set maximum amount of items that one player can sell at a time ( 5 is standard OSI ) --- Magius(CHE)
 #define RANKSYSTEM 1 // Rank sstem to make various type of a single item based on the creator's skill! - Magius(CHE)
-#define NPCSPEED 0.5	// 2 steps every second, ab said to change this to 0.5 - fur
+#define NPCSPEED 1	// 2 steps every second, ab said to change this to 0.5 - fur - NPC's slowed down a bit - Zane
 #define TRACKINGRANGE 10        // tracking range is at least TRACKINGRANGE, additional distance is calculated by Skill,INT
 #define MAXTRACKINGTARGETS 20   // maximum number of trackable targets
 #define TRACKINGTIMER 30        // tracking last at least TRACKINGTIMER seconds, additional time is calculated by Skill,INT, & DEX
@@ -134,7 +134,6 @@ protected:
 	std::string		shareddirectory;		// This is where all files that will be shared with clients andother servers willbe kept
 	std::string		htmldirectory;			// Self explanitory.
 	std::string		logsdirectory;
-	std::string		gumpsdirectory;
 	std::string		dictionarydirectory;
 	std::string		booksdirectory;
 
@@ -410,8 +409,6 @@ public:
 	const char *GetDataDirectory( void );
 	void		SetLogsDirectory( char *text );
 	const char *GetLogsDirectory( void );
-	void		SetGumpsDirectory( char *text );
-	const char *GetGumpsDirectory( void );
 	void		SetDictionaryDirectory( char *text );
 	const char *GetDictionaryDirectory( void );
 

@@ -32,9 +32,6 @@ static JSFunctionSpec my_functions[] =
 	{ "SetDecayTime",				SE_SetDecayTime,			2, 0, 0 },	
 	{ "StringToNum",				SE_StringToNum,				1, 0, 0 },
 	{ "NumToString",				SE_NumToString,				1, 0, 0 },
-	{ "SetTag",						SE_SetTag,					4, 0, 0 },
-	{ "GetTag",						SE_GetTag,					3, 0, 0 },
-	{ "GetNumTags",					SE_GetNumTags,				2, 0, 0 },
 	{ "GetName2", 					SE_GetName2,				1, 0, 0 },
 	{ "SetName2", 					SE_SetName2,				2, 0, 0 },
 	{ "DoDamage",					SE_DoDamage,				3, 0, 0 },
@@ -44,9 +41,8 @@ static JSFunctionSpec my_functions[] =
 	{ "GetCharPack", 				SE_GetCharPack,				1, 0, 0 },
 	{ "CalcDefense", 				SE_CalcDefense,				1, 0, 0 },
 	{ "CalcAttack", 				SE_CalcAttack,				1, 0, 0 },
-	{ "OpenBank", 					SE_OpenBank,				2, 0, 0 },
 	{ "DoStaticEffect", 			SE_DoStaticEffect,			5, 0, 0 },
-	{ "DoMovingEffect", 			SE_DoMovingEffect,			8, 0, 0 },
+	{ "DoMovingEffect", 			SE_DoMovingEffect,			6, 0, 0 },
 	{ "GetLowDamage", 				SE_GetLowDamage,			1, 0, 0 },
 	{ "GetHiDamage", 				SE_GetHiDamage,				1, 0, 0 },
 	{ "SetAtt", 					SE_SetAtt,					3, 0, 0 },
@@ -54,8 +50,6 @@ static JSFunctionSpec my_functions[] =
 	{ "SetDef", 					SE_SetDef,					2, 0, 0 },
 	{ "BroadcastMessage",			SE_BroadcastMessage,		1, 0, 0 },
 	{ "ConsoleMessage",				SE_ConsoleMessage,			1, 0, 0 }, 
-	{ "YellMessage",				SE_YellMessage,				2, 0, 0 },
-	{ "WhisperMessage",				SE_WhisperMessage,			2, 0, 0 },
 	{ "ScriptPrintNumber",			ScriptPrintNumber,			1, 0, 0 },
 	{ "SetShowLayer",				SetShowLayer,				1, 0, 0 },
 	{ "GetShowLayer",				GetShowLayer,				0, 0, 0 },
@@ -80,15 +74,12 @@ static JSFunctionSpec my_functions[] =
 	{ "GetGender",					SE_GetGender,				1, 0, 0 },
 	{ "SetGender",					SE_SetGender,				2, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
-	{ "StartTimer",					SE_StartTimer,				4, 0, 0 },
 	{ "TurnToward",					SE_TurnToward,				3, 0, 0 },
 	{ "DirectionTo",				SE_DirectionTo,				3, 0, 0 },
 	{ "RaceCompare",				SE_RaceCompare,				2, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
 	{ "FindItemOnLayer",			SE_FindItemOnLayer,			2, 0, 0 },
 	{ "GetString",					SE_GetString,				2, 0, 0 },
-	{ "GetByte",					SE_GetByte,					2, 0, 0 },
-	{ "GetWord",					SE_GetWord,					2, 0, 0 },
 	{ "GetDWord",					SE_GetDWord,				2, 0, 0 },
 	{ "SetByte",					SE_SetByte,					3, 0, 0 },
 	{ "SetWord",					SE_SetWord,					3, 0, 0 },
@@ -169,7 +160,6 @@ static JSFunctionSpec my_functions[] =
 	{ "SetPrivateWord",				SE_SetPrivateWord,			4, 0, 0 },
 	{ "GetPrivateBitRange",			SE_GetPrivateBitRange,		5, 0, 0 },
 	{ "SetPrivateBitRange",			SE_SetPrivateBitRange,		6, 0, 0 },
-	{ "PopUpTarget",				SE_PopUpTarget,				3, 0, 0 },
 	{ "SpawnItem",					SE_SpawnItem,				4, 0, 0 },
 	{ "SpawnNPC",					SE_SpawnNPC,				4, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
@@ -207,11 +197,13 @@ static JSFunctionSpec my_functions[] =
 	{ "CharbySerial",				JS_CharbySerial,			1, 0, 0 },
 
 	{ "GetWorldBrightLevel",		JS_GetWorldBrightLevel,		0, 0, 0 },
-	{ "TriggerEvent",           SE_TriggerEvent,  3, 0, 0 },
+	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
+	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },
  	
 	{ NULL,							NULL,						0, 0, 0 }, 
 };
 
+#pragma note( "Param Warning: in UOX3ErrorReporter(), cx is unrefrenced" )
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
 	// If we're loading the world then do NOT print out anything!
@@ -231,6 +223,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 cScript::cScript( std::string targFile ) : isFiring( false )
 {
 	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
+	needsChecking[0] = needsChecking[1] = 0xFFFFFFFF;
 	targContext = JS_NewContext( jsRuntime, 0x2000 );
 	if( targContext == NULL )
 		return;
@@ -252,6 +245,7 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 	{
 		JS_DestroyContext( targContext );
 		targContext = NULL;//crash fix
+		throw std::runtime_error( "Compilation failed" );
 		return;
 	}
 	jsval rval;
@@ -264,16 +258,16 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 
 	// Expose Classes to the JS Engine
 	// We may NOT define Constructors here6
-	GumpProto   =	JS_InitClass( targContext, targObject, targObject, &UOXGump_class, Gump, 0, NULL, CGump_Methods, NULL, CGump_Methods );
-	GumpDataProto=JS_InitClass( targContext, targObject, targObject, &UOXGumpData_class, NULL, 0, NULL, CGumpData_Methods, NULL,CGumpData_Methods);
-	CharProto   =	JS_InitClass( targContext, targObject, targObject, &UOXChar_class, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
-	ItemProto   =	JS_InitClass( targContext, targObject, targObject, &UOXItem_class, NULL, 0, CItemProps, CItem_Methods, CItemProps, CItem_Methods );
-	SpellProto  =	JS_InitClass( targContext, targObject, targObject, &UOXSpell_class, NULL, 0, CSpellProperties, NULL, CSpellProperties, NULL );
-	SpellsProto =	JS_InitClass( targContext, targObject, targObject, &UOXSpells_class, NULL, 0, NULL, NULL, NULL, NULL );
-	SocketProto =	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
+	GumpProto		=	JS_InitClass( targContext, targObject, targObject, &UOXGump_class, Gump, 0, NULL, CGump_Methods, NULL, CGump_Methods );
+	GumpDataProto	=	JS_InitClass( targContext, targObject, targObject, &UOXGumpData_class, NULL, 0, NULL, CGumpData_Methods, NULL,CGumpData_Methods);
+	CharProto		=	JS_InitClass( targContext, targObject, targObject, &UOXChar_class, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
+	ItemProto		=	JS_InitClass( targContext, targObject, targObject, &UOXItem_class, NULL, 0, CItemProps, CItem_Methods, CItemProps, CItem_Methods );
+	SpellProto		=	JS_InitClass( targContext, targObject, targObject, &UOXSpell_class, NULL, 0, CSpellProperties, NULL, CSpellProperties, NULL );
+	SpellsProto		=	JS_InitClass( targContext, targObject, targObject, &UOXSpells_class, NULL, 0, NULL, NULL, NULL, NULL );
+	SocketProto		=	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
 
 	// Init the global Spells[] object
-	JS_DefineObject(targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
+	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 
 	// let's acquire items 0 and 1, and chars 0 and 1, by default, so that
 	// we can reuse these for parameter stuff
@@ -318,18 +312,9 @@ bool cScript::OnCreate( cBaseObject *thingCreated )
 {
 	if( thingCreated == NULL )
 		return false;
-	if( !EventExists( seOnCreate ) )
+	if( !ExistAndVerify( seOnCreate, "onCreate" ) )
 		return false;
 	
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onCreate", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnCreate, false );
-		return false;
-	}
-
 	jsval rval, params[2];
 	UI08 paramType = 0;
 	if( thingCreated->GetObjType() != OT_CHAR )
@@ -359,17 +344,8 @@ bool cScript::OnDelete( cBaseObject *thingDestroyed )
 {
 	if( thingDestroyed == NULL )
 		return false;
-	if( !EventExists( seOnDelete ) )
+	if( !ExistAndVerify( seOnDelete, "onDelete" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDelete", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDelete, false );
-		return false;
-	}
 
 	jsval rval, params[2];
 	UI08 paramType = 0;
@@ -399,17 +375,8 @@ bool cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talking
 {
 	if( speech == NULL || personTalking == NULL || talkingTo == NULL )
 		return false;
-	if( !EventExists( seOnSpeech ) )
+	if( !ExistAndVerify( seOnSpeech, "onSpeech" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpeech", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpeech, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 	JSString *strSpeech = NULL;
@@ -442,20 +409,10 @@ bool cScript::InRange( CChar *person, CChar *targPlayer )
 {
 	if( person == NULL || targPlayer == NULL )
 		return false;
-	if( !EventExists( seInRange ) )
+	if( !ExistAndVerify( seInRange, "inRange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "inRange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seInRange, false );
-		return false;
-	}
 
 	jsval params[3], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, person );
 	JS_SetPrivate( targContext, charObjects[1].toUse, targPlayer );
 	
@@ -475,20 +432,10 @@ bool cScript::InRange( CChar *person, CItem *targItem )
 {
 	if( person == NULL || targItem == NULL )
 		return false;
-	if( !EventExists( seInRange ) )
+	if( !ExistAndVerify( seInRange, "inRange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "inRange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seInRange, false );
-		return false;
-	}
 
 	jsval params[3], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, person );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, targItem );
 	
@@ -507,22 +454,12 @@ bool cScript::InRange( CChar *person, CItem *targItem )
 
 bool cScript::OnCollide( cSocket *tSock, CChar *objColliding, cBaseObject *objCollideWith )
 {
-	if( !EventExists( seOnCollide ) )
-		return false;
 	if( objColliding == NULL || objCollideWith == NULL || tSock == NULL )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onCollide", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnCollide, false );
+	if( !ExistAndVerify( seOnCollide, "onCollide" ) )
 		return false;
-	}
 
 	jsval rval, params[3];
-
 	JS_SetPrivate( targContext, sockObjects[0].toUse, tSock );
 	JS_SetPrivate( targContext, charObjects[0].toUse, objColliding );
 	if( objCollideWith->GetObjType() == OT_CHAR )
@@ -552,17 +489,8 @@ bool cScript::OnSteal( CChar *thief, CItem *theft )
 {
 	if( thief == NULL || theft == NULL )
 		return false;
-	if( !EventExists( seOnSteal ) )
+	if( !ExistAndVerify( seOnSteal, "onSteal" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSteal", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSteal, false );
-		return false;
-	}
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, thief );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, theft );
@@ -584,17 +512,8 @@ bool cScript::OnDispel( cBaseObject *dispelled )
 {
 	if( dispelled == NULL )
 		return false;
-	if( !EventExists( seOnDispel ) )
+	if( !ExistAndVerify( seOnDispel, "onDispel" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDispel", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDispel, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	if( dispelled->GetObjType() == OT_CHAR )
@@ -624,17 +543,8 @@ bool cScript::OnSkill( cBaseObject *skillUse, SI08 skillUsed )
 {
 	if( skillUse == NULL )
 		return false;
-	if( !EventExists( seOnSkill ) )
+	if( !ExistAndVerify( seOnSkill, "onSkill" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSkill", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSkill, false );
-		return false;
-	}
 
 	jsval rval, params[3];
 	if( skillUse->GetObjType() == OT_CHAR )
@@ -664,20 +574,10 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender )
 {
 	if( attacker == NULL || defender == NULL )
 		return false;
-	if( !EventExists( seOnAttack ) )
+	if( !ExistAndVerify( seOnAttack, "onAttack" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onAttack", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnAttack, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, attacker );
 	JS_SetPrivate( targContext, charObjects[1].toUse, defender );
 
@@ -696,20 +596,10 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender )
 {
 	if( attacker == NULL || defender == NULL )
 		return false;
-	if( !EventExists( seOnDefense ) )
+	if( !ExistAndVerify( seOnDefense, "onDefense" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDefense", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDefense, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, attacker );
 	JS_SetPrivate( targContext, charObjects[1].toUse, defender );
 
@@ -728,20 +618,10 @@ bool cScript::OnSkillGain( CChar *player, SI08 skill )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnSkillGain ) )
+	if( !ExistAndVerify( seOnSkillGain, "onSkillGain" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSkillGain", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSkillGain, false );
-		return false;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
 	
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -758,20 +638,10 @@ bool cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnStatGained ) )
+	if( !ExistAndVerify( seOnStatGained, "onStatGained" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onStatGained", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnStatGained, false );
-		return false;
-	}
 
 	jsval rval, params[3];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	params[1] = INT_TO_JSVAL( stat );
@@ -787,20 +657,10 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnStatGain ) )
+	if( !ExistAndVerify( seOnStatGain, "onStatGain" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onStatGain", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnStatGain, false );
-		return false;
-	}
 
 	jsval rval, params[3];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	params[1] = INT_TO_JSVAL( stat );
@@ -816,20 +676,10 @@ bool cScript::OnDrop( CItem *item, CChar *dropper )
 {
 	if( item == NULL || dropper == NULL )
 		return false;
-	if( !EventExists( seOnDrop ) )
+	if( !ExistAndVerify( seOnDrop, "onDrop" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDrop", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDrop, false );
-		return false;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, dropper );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, item );
 
@@ -849,20 +699,10 @@ bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
 {
 	if( item == NULL || pickerUpper == NULL )
 		return false;
-	if( !EventExists( seOnPickup ) )
+	if( !ExistAndVerify( seOnPickup, "onPickup" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onPickup", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnPickup, false );
-		return false;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, pickerUpper );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, item );
 	params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
@@ -881,17 +721,8 @@ bool cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 {
 	if( swinging == NULL || swinger == NULL || swingTarg == NULL )
 		return false;
-	if( !EventExists( seOnSwing ) )
+	if( !ExistAndVerify( seOnSwing, "onSwing" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSwing", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSwing, false );
-		return false;
-	}
 
 	JS_SetPrivate( targContext, itemObjects[0].toUse, swinging );
 	JS_SetPrivate( targContext, charObjects[0].toUse, swinger );
@@ -915,20 +746,10 @@ bool cScript::OnDecay( CItem *decaying )
 {
 	if( decaying == NULL )
 		return false;
-	if( !EventExists( seOnDecay ) )
+	if( !ExistAndVerify( seOnDecay, "onDecay" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDecay", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDecay, false );
-		return false;
-	}
 
 	jsval params[1], rval;
-
 	JS_SetPrivate( targContext, itemObjects[0].toUse, decaying );
 	params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDecay", 1, params, &rval );
@@ -943,20 +764,10 @@ bool cScript::OnTransfer( CItem *transferred, CChar *source, CChar *target )
 {
 	if( transferred == NULL || source == NULL || target == NULL )
 		return false;
-	if( !EventExists( seOnTransfer ) )
+	if( !ExistAndVerify( seOnTransfer, "onTransfer" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onTransfer", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnTransfer, false );
-		return false;
-	}
 
 	jsval params[3], rval;
-
 	JS_SetPrivate( targContext, itemObjects[0].toUse, transferred );
 	JS_SetPrivate( targContext, charObjects[0].toUse, source );
 	JS_SetPrivate( targContext, charObjects[1].toUse, target );
@@ -979,17 +790,8 @@ bool cScript::OnLeaving( CMultiObj *left, cBaseObject *leaving )
 {
 	if( left == NULL || leaving == NULL )
 		return false;
-	if( !EventExists( seOnLeaving ) )
+	if( !ExistAndVerify( seOnLeaving, "onLeaving" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onLeaving", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnLeaving, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 	if( leaving->GetObjType() == OT_CHAR )
@@ -1025,20 +827,10 @@ bool cScript::OnEquip( CChar *equipper, CItem *equipping )
 	if( equipper == NULL || equipping == NULL )
 		return false;
 
-	if( !EventExists( seOnEquip ) )
+	if( !ExistAndVerify( seOnEquip, "onEquip" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onEquip", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnEquip, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, equipper );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, equipping );
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -1057,20 +849,10 @@ bool cScript::OnUnequip( CChar *equipper, CItem *equipping )
 {
 	if( equipper == NULL || equipping == NULL )
 		return false;
-	if( !EventExists( seOnUnequip ) )
+	if( !ExistAndVerify( seOnUnequip, "onUnequip" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onUnequip", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnUnequip, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, equipper );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, equipping );
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -1089,17 +871,8 @@ bool cScript::OnUse( CChar *user, CItem *iUsing )
 {
 	if( user == NULL || iUsing == NULL )
 		return false;
-	if( !EventExists( seOnUse ) )
+	if( !ExistAndVerify( seOnUse, "onUse" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onUse", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnUse, false );
-		return false;
-	}
 
 	jsval rval, params[2];
 
@@ -1118,32 +891,23 @@ bool cScript::OnUse( CChar *user, CItem *iUsing )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
-//|	Date					-	04/18/2002
+//|	Function/Class	-	bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
+//|	Date			-	04/18/2002
 //|	Developer(s)	-	MACTEP
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Event to signal when an item is dropped on an NPC
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o	
 bool cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
 {
 	if( srcChar == NULL || dstChar == NULL || item == NULL)
 		return false;
-	if( !EventExists( seOnDropItemOnNpc ) )
+	if( !ExistAndVerify( seOnDropItemOnNpc, "onDropItemOnNpc" ) )
 		return false;
 		
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDropItemOnNpc", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDropItemOnNpc, false );
-		return false;
-	}
-
 	jsval rval, params[2];
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, srcChar );
@@ -1168,17 +932,8 @@ bool cScript::OnEntrance( CMultiObj *left, cBaseObject *leaving )
 {
 	if( left == NULL || leaving == NULL )
 		return false;
-	if( !EventExists( seOnEntrance ) )
+	if( !ExistAndVerify( seOnEntrance, "onEntrance" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onEntrance", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnEntrance, false );
-		return false;
-	}
 
 	jsval params[3], rval; 
 	if( leaving->GetObjType() == OT_CHAR )
@@ -1213,20 +968,10 @@ bool cScript::OnUsage( CChar *user, CItem *iUsing )
 {
 	if( user == NULL || iUsing == NULL )
 		return false;
-	if( !EventExists( seOnUsage ) )
+	if( !ExistAndVerify( seOnUsage, "onUsage" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onUsage", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnUsage, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, user );
 	JS_SetPrivate( targContext, itemObjects[0].toUse, iUsing );
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -1245,17 +990,8 @@ bool cScript::OutOfRange( CChar *person, cBaseObject *objVanish )
 {
 	if( person == NULL || objVanish == NULL )
 		return false;
-	if( !EventExists( seOutOfRange ) )
+	if( !ExistAndVerify( seOutOfRange, "outOfRange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "outOfRange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOutOfRange, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 	if( objVanish->GetObjType() == OT_CHAR )
@@ -1287,20 +1023,10 @@ bool cScript::OnLogin( cSocket *sockPlayer, CChar *pPlayer )
 {
 	if( pPlayer == NULL )
 		return false;
-	if( !EventExists( seOnLogin ) )
+	if( !ExistAndVerify( seOnLogin, "onLogin" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onLogin", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnLogin, false );
-		return false;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, sockObjects[0].toUse, sockPlayer );
 	JS_SetPrivate( targContext, charObjects[0].toUse, pPlayer );
 
@@ -1316,33 +1042,24 @@ bool cScript::OnLogin( cSocket *sockPlayer, CChar *pPlayer )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/06/2002
+//|	Function/Class	-	
+//|	Date			-	10/06/2002
 //|	Developer(s)	-	Brakhtus
 //|	Company/Team	-	
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o
-//|	Notes					-	
+//|	Notes			-	
 //o--------------------------------------------------------------------------o	
 bool cScript::OnLogout( cSocket *sockPlayer, CChar *pPlayer ) 
 { 
 	if( pPlayer == NULL ) 
 		return false; 
-	if( !EventExists( seOnLogout ) ) 
+	if( !ExistAndVerify( seOnLogout, "onLogout" ) ) 
 		return false;
-
-	jsval Func = JSVAL_NULL; 
-	JS_GetProperty( targContext, targObject, "onLogout", &Func ); 
-
-	if( Func == JSVAL_VOID ) 
-	{ 
-		SetEventExists( seOnLogout, false ); 
-		return false; 
-	}
 
 	jsval params[2], rval;
 
@@ -1361,57 +1078,41 @@ bool cScript::OnLogout( cSocket *sockPlayer, CChar *pPlayer )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/06/2002
+//|	Function/Class	-	
+//|	Date			-	10/06/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o
-//|	Notes					-	
+//|	Notes			-	
 //o--------------------------------------------------------------------------o	
 bool cScript::OnClick(cSocket *sockPlayer, CItem *iClicked)
 {
-	if(!EventExists(seOnClick))
+	if( !ExistAndVerify( seOnClick, "onClick" ) )
 		return false;
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty(targContext, targObject, "onClick", &Func);
-	if(Func==JSVAL_VOID)
-	{
-		SetEventExists(seOnClick,false);
-		return false;
-	}
 	jsval params[2], rval;
-	JS_SetPrivate(targContext, sockObjects[0].toUse, sockPlayer);
-	JS_SetPrivate(targContext, itemObjects[0].toUse, iClicked);
-	params[0]=OBJECT_TO_JSVAL(sockObjects[0].toUse);
-	params[1]=OBJECT_TO_JSVAL(itemObjects[0].toUse);
-	JSBool retVal = JS_CallFunctionName(targContext, targObject,"onClick",2,params,&rval);
-	if(retVal==JS_FALSE)
-		SetEventExists(seOnClick,false);
-	JS_SetPrivate(targContext,sockObjects[0].toUse,NULL);
-	JS_SetPrivate(targContext,itemObjects[0].toUse,NULL);
-	return (retVal == JS_TRUE);
+	JS_SetPrivate( targContext, sockObjects[0].toUse, sockPlayer );
+	JS_SetPrivate( targContext, itemObjects[0].toUse, iClicked );
+	params[0] = OBJECT_TO_JSVAL(sockObjects[0].toUse);
+	params[1] = OBJECT_TO_JSVAL(itemObjects[0].toUse);
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onClick", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnClick, false );
+	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	return( retVal == JS_TRUE );
 }
 
 bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 {
 	if( pFall == NULL )
 		return false;
-	if( !EventExists( seOnFall ) )
+	if( !ExistAndVerify( seOnFall, "onFall" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onFall", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnFall, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pFall );
@@ -1441,17 +1142,8 @@ bool cScript::OnAISliver( CChar *pSliver )
 {
 	if( pSliver == NULL )
 		return false;
-	if( !EventExists( seOnAISliver ) )
+	if( !ExistAndVerify( seOnAISliver, "onAISliver" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onAISliver", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnAISliver, false );
-		return false;
-	}
 
 	jsval params[1], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pSliver );
@@ -1465,17 +1157,8 @@ bool cScript::OnAISliver( CChar *pSliver )
 
 bool cScript::OnSystemSlice( void )
 {
-	if( !EventExists( seOnSystemSlice ) )
+	if( !ExistAndVerify( seOnSystemSlice, "onSystemSlice" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSystemSlice", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSystemSlice, false );
-		return false;
-	}
 
 	jsval rval;
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSystemSlice", 0, NULL, &rval );
@@ -1512,20 +1195,10 @@ bool cScript::OnTimer( cBaseObject *tObject, UI08 timerID )
 {
 	if( tObject == NULL )
 		return false;
-	if( !EventExists( seOnTimer ) )
+	if( !ExistAndVerify( seOnTimer, "onTimer" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onTimer", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnTimer, false );
-		return false;
-	}
 
 	jsval rval, params[2];
-
 	if( tObject->GetObjType() == OT_CHAR )
 	{
 		JS_SetPrivate( targContext, charObjects[0].toUse, tObject );
@@ -1549,17 +1222,8 @@ bool cScript::OnStatLoss( CChar *player, UI32 stat )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnStatLoss ) )
+	if( !ExistAndVerify( seOnStatLoss, "onStatLoss" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onStatLoss", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnStatLoss, false );
-		return false;
-	}
 
 	jsval rval, params[2];
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
@@ -1576,17 +1240,8 @@ bool cScript::OnStatChange( CChar *player, UI32 stat )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnStatChange ) )
+	if( !ExistAndVerify( seOnStatChange, "onStatChange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onStatChange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnStatChange, false );
-		return false;
-	}
 
 	jsval rval, params[2];
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
@@ -1603,17 +1258,8 @@ bool cScript::OnSkillLoss( CChar *player, SI08 skill )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnSkillLoss ) )
+	if( !ExistAndVerify( seOnSkillLoss, "onSkillLoss" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSkillLoss", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSkillLoss, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
@@ -1630,17 +1276,8 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill )
 {
 	if( player == NULL )
 		return false;
-	if( !EventExists( seOnSkillChange ) )
+	if( !ExistAndVerify( seOnSkillChange, "onSkillChange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSkillChange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSkillChange, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, player );
@@ -1677,25 +1314,40 @@ void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 	}
 }
 
+bool cScript::NeedsChecking( ScriptEvent eventNum ) const
+{
+	UI32 index = eventNum / 32;
+	if( index > 1 )
+		return false;
+	UI32 flagToSet = power( 2, (eventNum % 32) );
+	return( (needsChecking[index]&flagToSet) == flagToSet );
+}
+void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
+{
+	UI32 index = eventNum / 32;
+	if( index > 1 )
+		return;
+	UI32 flagToSet = power( 2, (eventNum % 32) );
+	if( status )
+		needsChecking[index] |= flagToSet;
+	else
+	{
+		UI32 flagMask = 0xFFFFFFFF;
+		flagMask ^= flagToSet;
+		needsChecking[index] &= flagMask;
+	}
+}
+
 bool cScript::OnDeath( CChar *pDead )
 {
 	if( pDead == NULL )
 		return false;
-	if( !EventExists( seOnDeath ) )
+	if( !ExistAndVerify( seOnDeath, "onDeath" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onDeath", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnDeath, false );
-		return false;
-	}
 
 	jsval params[1], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pDead );
-	params[0] = INT_TO_JSVAL( charObjects[0].toUse );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDeath", 1, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDeath, false );
@@ -1707,21 +1359,12 @@ bool cScript::OnResurrect( CChar *pAlive )
 {
 	if( pAlive == NULL )
 		return false;
-	if( !EventExists( seOnResurrect ) )
+	if( !ExistAndVerify( seOnResurrect, "onResurrect" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onResurrect", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnResurrect, false );
-		return false;
-	}
 
 	jsval params[1], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pAlive );
-	params[0] = INT_TO_JSVAL( charObjects[0].toUse );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onResurrect", 1, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnResurrect, false );
@@ -1733,17 +1376,8 @@ bool cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 {
 	if( pChanging == NULL )
 		return false;
-	if( !EventExists( seOnFlagChange ) )
+	if( !ExistAndVerify( seOnFlagChange, "onFlagChange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onFlagChange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnFlagChange, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pChanging );
@@ -1764,7 +1398,7 @@ bool cScript::DoCallback( cSocket *tSock, SERIAL targeted, UI08 callNum )
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, sockObjects[0].toUse, tSock );
 	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
-	if( targeted >= 0x40000000 )
+	if( targeted >= BASEITEMSERIAL )
 	{
 		JS_SetPrivate( targContext, itemObjects[0].toUse, calcItemObjFromSer( targeted ) );
 		params[1] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
@@ -1778,7 +1412,7 @@ bool cScript::DoCallback( cSocket *tSock, SERIAL targeted, UI08 callNum )
 	sprintf( targetFunction, "onCallback%i", callNum );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, targetFunction, 2, params, &rval );
 	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
-	if( targeted >= 0x40000000 )
+	if( targeted >= BASEITEMSERIAL )
 		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
 	else
 		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
@@ -1794,17 +1428,8 @@ bool cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 {
 	if( pChanging == NULL )
 		return false;
-	if( !EventExists( seOnHungerChange ) )
+	if( !ExistAndVerify( seOnHungerChange, "onHungerChange" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onHungerChange", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnHungerChange, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, pChanging );
@@ -1821,17 +1446,8 @@ bool cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 {
 	if( stealing == NULL || stolenFrom == NULL || stolen == NULL )
 		return false;
-	if( !EventExists( seOnStolenFrom ) )
+	if( !ExistAndVerify( seOnStolenFrom, "onStolenFrom" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onStolenFrom", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnStolenFrom, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 
@@ -1857,17 +1473,8 @@ bool cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 {
 	if( snooped == NULL || snooper == NULL )
 		return false;
-	if( !EventExists( seOnSnooped ) )
+	if( !ExistAndVerify( seOnSnooped, "onSnooped" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSnooped", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSnooped, false );
-		return false;
-	}
 
 	jsval params[3], rval;
 
@@ -1943,49 +1550,42 @@ void cScript::SendGumpList( SI32 index, UOXSOCKET toSendTo )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void cScript::HandleGumpPress( cSocket *pressing, long button )
+void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 {
+	if( packet == NULL )
+		return;
+	cSocket *pressing = packet->GetSocket();
 	if( pressing == NULL )
 		return;
 
-	int nButtons, nText;
+	UI32 button		= packet->ButtonID();
+	UI16 nButtons	= static_cast<UI16>(packet->SwitchCount());
+	UI16 nText		= static_cast<UI16>(packet->TextCount());
+
 	SEGumpData *segdGumpData = new SEGumpData;
-	nButtons = pressing->GetDWord(15);
-	JSObject *jsoObject=JS_NewObject(targContext, &UOXGumpData_class,GumpDataProto,NULL);
+	JSObject *jsoObject = JS_NewObject( targContext, &UOXGumpData_class, GumpDataProto, NULL );
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
-	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties);
-	JS_SetPrivate(targContext, jsoObject, segdGumpData);
+	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
+	JS_SetPrivate( targContext, jsoObject, segdGumpData );
+
 	int i;
 	// Loop through Buttons
-	for(i=0;i<nButtons;i++)
-		segdGumpData->nButtons.push_back(pressing->GetDWord(19+(i*4)));
+	for( i = 0; i < nButtons; i++ )
+		segdGumpData->nButtons.push_back( packet->SwitchValue( i ) );
 	// Process text for the buttons?
-	nText = pressing->GetDWord(19+(4*nButtons));
-	int nOffset = 23+(nButtons*4);
 	// Loop grabbing text
-	for(i=0;i<nText;i++)
+	for( i = 0; i < nText; i++ )
 	{
-		segdGumpData->nIDs.push_back(pressing->GetWord(nOffset));
-		short nLength = pressing->GetWord(nOffset+2);
-		char szTextEntry[2];
-		szTextEntry[1]=0x00;
-		std::string sInput;
-		nOffset+=4;
-		for(int j=0;j<nLength;j++)
-		{
-			szTextEntry[0]=pressing->GetByte(nOffset+(j*2)+1);
-			sInput+=szTextEntry;
-		}
-		nOffset+=(nLength*2);
-		segdGumpData->sEdits.push_back(sInput);
+		segdGumpData->nIDs.push_back( packet->GetTextID( i ) );
+		segdGumpData->sEdits.push_back( packet->GetTextUString( i ) );
 	}
 	jsval jsvParams[3], jsvRVal;
-	JS_SetPrivate(targContext, sockObjects[0].toUse, pressing);
-	jsvParams[0]=OBJECT_TO_JSVAL(sockObjects[0].toUse);
-	jsvParams[1]=INT_TO_JSVAL(button);
-	jsvParams[2]=OBJECT_TO_JSVAL(jsoObject);
-	JS_CallFunctionName(targContext,targObject,"onGumpPress",7,jsvParams,&jsvRVal);
-	JS_SetPrivate(targContext,sockObjects[0].toUse,NULL);
+	JS_SetPrivate( targContext, sockObjects[0].toUse, pressing);
+	jsvParams[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
+	jsvParams[1] = INT_TO_JSVAL( button );
+	jsvParams[2] = OBJECT_TO_JSVAL( jsoObject );
+	JS_CallFunctionName( targContext, targObject, "onGumpPress", 7, jsvParams, &jsvRVal );
+	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
 }
 
 void cScript::HandleGumpInput( cSocket *pressing )
@@ -2004,17 +1604,8 @@ bool cScript::OnEnterRegion( CChar *entering, SI16 region )
 {
 	if( entering == NULL )
 		return false;
-	if( !EventExists( seOnEnterRegion ) )
+	if( !ExistAndVerify( seOnEnterRegion, "onEnterRegion" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onEnterRegion", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnEnterRegion, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 
@@ -2032,17 +1623,8 @@ bool cScript::OnLeaveRegion( CChar *leaving, SI16 region )
 {
 	if( leaving == NULL )
 		return false;
-	if( !EventExists( seOnLeaveRegion ) )
+	if( !ExistAndVerify( seOnLeaveRegion, "onLeaveRegion" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onLeaveRegion", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnLeaveRegion, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, leaving );
@@ -2059,17 +1641,8 @@ bool cScript::OnSpellTarget( CChar *target, CChar *caster, UI08 spellNum )
 {
 	if( target == NULL || caster == NULL )
 		return false;
-	if( !EventExists( seOnSpellTarget ) )
+	if( !ExistAndVerify( seOnSpellTarget, "onSpellTarget" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellTarget", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellTarget, false );
-		return false;
-	}
 
 	jsval params[4], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, caster );
@@ -2090,17 +1663,8 @@ bool cScript::OnSpellTarget( CItem *target, CChar *caster, UI08 spellNum )
 {
 	if( target == NULL || caster == NULL )
 		return false;
-	if( !EventExists( seOnSpellTarget ) )
+	if( !ExistAndVerify( seOnSpellTarget, "onSpellTarget" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellTarget", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellTarget, false );
-		return false;
-	}
 
 	jsval params[4], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, caster );
@@ -2494,20 +2058,10 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellID )
 	if( tChar == NULL )
 		return -2;
 	
-	if( !EventExists( seOnSpellCast ) )
+	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ) )
 		return -2;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellCast", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellCast, false );
-		return -2;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, tChar );
 
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -2537,20 +2091,10 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellID )
 	if( tChar == NULL )
 		return -2;
 	
-	if( !EventExists( seOnScrollCast ) )
+	if( !ExistAndVerify( seOnScrollCast, "onScrollCast" ) )
 		return -2;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onScrollCast", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnScrollCast, false );
-		return -2;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, tChar );
 
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -2574,20 +2118,10 @@ bool cScript::OnSpellSuccess( CChar *tChar, UI08 SpellID )
 	if( tChar == NULL )
 		return false;
 	
-	if( !EventExists( seOnSpellSuccess ) )
+	if( !ExistAndVerify( seOnSpellSuccess, "onSpellSuccess" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellSuccess", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellSuccess, false );
-		return false;
-	}
 
 	jsval params[2], rval;
-
 	JS_SetPrivate( targContext, charObjects[0].toUse, tChar );
 
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
@@ -2608,17 +2142,8 @@ bool cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	if( myChar == NULL )
 		return true;
 	
-	if( !EventExists( seOnTalk ) )
+	if( !ExistAndVerify( seOnTalk, "onTalk" ) )
 		return true;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onTalk", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnTalk, false );
-		return true;
-	}
 
 	jsval params[2], rval;
 	JSString *strSpeech = NULL;
@@ -2654,17 +2179,8 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	if( myChar == NULL )
 		return true;
 	
-	if( !EventExists( seOnSpeechInput ) )
+	if( !ExistAndVerify( seOnSpeechInput, "onSpeechInput" ) )
 		return true;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpeechInput", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpeechInput, false );
-		return true;
-	}
 
 	jsval params[4], rval;
 	JSString *strSpeech = NULL;
@@ -2708,17 +2224,8 @@ bool cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 {
 	if( book == NULL )
 		return false;
-	if( !EventExists( seOnSpellGain ) )
+	if( !ExistAndVerify( seOnSpellGain, "onSpellGain" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellGain", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellGain, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, itemObjects[0].toUse, book );
@@ -2734,17 +2241,8 @@ bool cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 {
 	if( book == NULL )
 		return false;
-	if( !EventExists( seOnSpellLoss ) )
+	if( !ExistAndVerify( seOnSpellLoss, "onSpellLoss" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSpellLoss", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSpellLoss, false );
-		return false;
-	}
 
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, itemObjects[0].toUse, book );
@@ -2761,17 +2259,8 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 {
 	if( myChar == NULL || skill > ALLSKILLS )
 		return false;
-	if( !EventExists( seOnSkillCheck ) )
+	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ) )
 		return false;
-
-	jsval Func = JSVAL_NULL;
-	JS_GetProperty( targContext, targObject, "onSkillCheck", &Func );
-	
-	if( Func == JSVAL_VOID )
-	{
-		SetEventExists( seOnSkillCheck, false );
-		return false;
-	}
 
 	jsval params[4], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, myChar );
@@ -2786,12 +2275,50 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	return ( retVal == JS_TRUE );
 }
 
+//o--------------------------------------------------------------------------
+//|	Function	-	bool AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar )
+//|	Date		-	January 27, 2003
+//|	Programmer	-	Maarc
+//|	Modified	-
+//o--------------------------------------------------------------------------
+//|	Purpose		-	Calls the function represented in funcName for the script
+//|				-	passing in two character parameters
+//o--------------------------------------------------------------------------
+bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSocket *s )
+{
+	if( srcChar == NULL || tmpChar == NULL || funcName == NULL )
+		return false;
+
+	jsval params[3], rval;
+	JS_SetPrivate( targContext, charObjects[0].toUse, srcChar );
+	JS_SetPrivate( targContext, charObjects[1].toUse, tmpChar );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+
+	if( s != NULL )
+	{
+		JS_SetPrivate( targContext, sockObjects[0].toUse, s );
+		params[2] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
+	}
+	else
+	{
+		params[2] = JSVAL_NULL;
+	}
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+	if( s != NULL )
+		JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE );
+}
+
 //o--------------------------------------------------------------------------o
-//|	Function			-	bool cScript::OnCommand( cSocket *cS)
-//|	Date					-	1/13/2003 11:17:48 PM
+//|	Function		-	bool cScript::OnCommand( cSocket *cS)
+//|	Date			-	1/13/2003 11:17:48 PM
 //|	Developers		-	Brakhtus
 //|	Organization	-	Forum Submission
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
@@ -2799,19 +2326,13 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //o--------------------------------------------------------------------------o
 bool cScript::OnCommand( cSocket *cS) 
 { 	
-	if(cS == NULL) 		
-		return false; 	
-	if( !EventExists( seOnCommand ) ) 		
-		return false; 	
-	jsval Func = JSVAL_NULL; 	
-	JS_GetProperty( targContext, targObject, "onCommand", &Func ); 	 	
-	if( Func == JSVAL_VOID ) 	
-	{ 		
-		SetEventExists( seOnCommand, false ); 		
-		return false; 	
-	} 	
+	if( cS == NULL ) 		
+		return false;
+	if( !ExistAndVerify( seOnCommand, "onCommand" ) )
+		return false;
+
 	jsval params[1], rval; 	
-	JS_SetPrivate( targContext, sockObjects[0].toUse, cS); 	
+	JS_SetPrivate( targContext, sockObjects[0].toUse, cS ); 	
 	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse ); 	
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCommand", 1, params, &rval ); 	
 	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL ); 	
@@ -2820,4 +2341,20 @@ bool cScript::OnCommand( cSocket *cS)
 	return ( retVal == JS_TRUE ); 
 }
 
-
+bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
+{
+	if( !EventExists( eventNum ) )
+		return false;
+	if( NeedsChecking( eventNum ) )
+	{
+		SetNeedsChecking( eventNum, false );
+		jsval Func = JSVAL_NULL;
+		JS_GetProperty( targContext, targObject, functionName.c_str(), &Func );
+		if( Func == JSVAL_VOID ) 	
+		{
+			SetEventExists( eventNum, false );
+			return false;
+		}
+	}
+	return true;
+}
