@@ -32,6 +32,8 @@
 #include <uox3.h>
 #ifdef __linux__
 #include <dirent.h>
+#else
+#include <io.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2367,7 +2369,7 @@ void MsgBoardMaintenance( void )
 			}
 			
 			// Loop until we have reached the end of the BBI file
-			while ( !feof(pBBIOld) 	&& (loopexit < MAXLOOPS) )
+			while ( !feof(pBBIOld) )
 			{
 				//Increment progress dots
 				ConOut(".");
@@ -2513,7 +2515,7 @@ void MsgBoardMaintenance( void )
 						
 						// Loop until we have reached the end of the BBP file
 						loopexit2=0;
-						while ( !feof(pBBPOld) 	&& (++loopexit2 < MAXLOOPS) )
+						while ( !feof(pBBPOld) )
 						{
 							//Increment progress dots
 							ConOut(".");
@@ -2628,7 +2630,7 @@ void MsgBoardMaintenance( void )
 	loopexit=0;
 
 
-  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) 	&& (++loopexit < MAXLOOPS)  );
+  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) );
   
   // Close the _findfirst handle
   _findclose( hBBIFile );
@@ -2641,7 +2643,6 @@ void MsgBoardMaintenance( void )
 
 void MsgBoardMaintenance( void )
 {
-	int loopexit=0, loopexit2=0;
 	char                  filePath[256]   = "";
 	char                  fileName[256]   = "";
 	char                  fileBBITmp[256] = "";
