@@ -1730,4 +1730,23 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "ReloadJSFile: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	UI16 scriptID			= static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	if( scriptID == JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) )
+	{
+		DoSEErrorMessage( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptID );
+		return JS_FALSE;
+	}
+
+	JSMapping->Reload( scriptID );
+
+ 	return JS_TRUE;
+}
+
 }

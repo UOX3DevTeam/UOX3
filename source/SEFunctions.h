@@ -145,6 +145,8 @@ SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
 SEngineFunc SE_GetSocketFromIndex;
 
+SEngineFunc SE_ReloadJSFile;
+
 #endif
 
 }

@@ -114,6 +114,8 @@ static JSFunctionSpec my_functions[] =
 	{ "DisableSpell",				SE_DisableSpell,			1, 0, 0 },
 	{ "EnableSpell",				SE_EnableSpell,				1, 0, 0 },
 
+	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0, 0 },
+
 	{ NULL,							NULL,						0, 0, 0 }, 
 };
 
@@ -133,7 +135,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 	Console.Error( 2, "Erroneous Line: %s\nToken Ptr: %s", report->linebuf, report->tokenptr );
 }
 
-cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), scpType( sType )
+cScript::cScript( std::string targFile ) : isFiring( false )
 {
 	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
 	needsChecking[0] = needsChecking[1] = 0xFFFFFFFF;
@@ -255,16 +257,6 @@ cScript::~cScript()
 	RemoveFromRoot();
 	JS_GC( targContext );
 
-	// Need count, command, and magic clean up code now that cTriggerScripts is gone.
-	switch( scpType )
-	{
-	default:
-	case SCPT_NORMAL:
-	case SCPT_COUNT:		//Trigger->UnregisterObject( targObject );		break;
-	case SCPT_COMMAND:	//Trigger->GetCommandScripts()->UnregisterObject( targObject );	break;
-	case SCPT_MAGIC:		//Trigger->GetMagicScripts()->UnregisterObject( targObject );	break;
-		break;
-	}
 	if( targScript != NULL )
 		JS_DestroyScript( targContext, targScript );
 	JS_GC( targContext );

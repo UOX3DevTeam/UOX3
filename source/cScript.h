@@ -168,8 +168,6 @@ private:
 	void		SetNeedsChecking( ScriptEvent eventNum, bool status );
 	bool		ExistAndVerify( ScriptEvent eventNum, std::string functionName );
 
-	SCRIPTTYPE	scpType;
-
 	std::vector< InUseEntry >	raceObjects;
 	std::vector< InUseEntry >	charObjects;
 	std::vector< InUseEntry >	itemObjects;
@@ -197,7 +195,7 @@ public:
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-				cScript( std::string targFile, SCRIPTTYPE sType );
+				cScript( std::string targFile );
 				~cScript();
 	void		Cleanup( void );
 

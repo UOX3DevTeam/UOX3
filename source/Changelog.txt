@@ -1,3 +1,7 @@
+2/8/2005 - giwo
+	Added the ability to reload a single JS file to CJSMapping.
+	Added SE Function ReloadJSFile, along with a new command in js, RELOADJSFILE
+
 2/7/2005 - giwo
 	Replaced trigger.cpp/.h with CJSMapping.cpp/.h Fixing several issues with JS Scripts.
 	Added .desc prop to JS Items

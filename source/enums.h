@@ -575,15 +575,6 @@ enum ItemLayers
 	IL_BANKBOX				= 0x1D,
 };
 
-enum SCRIPTTYPE
-{
-	SCPT_NORMAL		= 0,
-	SCPT_COMMAND,
-	SCPT_MAGIC,
-	SCPT_SKILLUSE,
-	SCPT_COUNT
-};
-
 enum TargetIDs
 {
 	TARGET_ADDSCRIPTNPC = 0,

@@ -4,6 +4,15 @@
 namespace UOX
 {
 
+	enum SCRIPTTYPE
+	{
+		SCPT_NORMAL		= 0,
+		SCPT_COMMAND,
+		SCPT_MAGIC,
+		SCPT_SKILLUSE,
+		SCPT_COUNT
+	};
+
 	const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", "MAGIC_SCRIPTS", "SKILLUSE_SCRIPTS" };
 
 	class CJSMappingSection
@@ -14,12 +23,16 @@ namespace UOX
 
 		std::map< UI16, cScript * >::iterator	scriptIDIter;
 
-		SCRIPTTYPE									scriptType;
+		SCRIPTTYPE								scriptType;
 	public:
 					CJSMappingSection( SCRIPTTYPE sT );
 					~CJSMappingSection();
 
+
+		void		Reload( UI16 toLoad );
 		void		Parse( Script *fileAssocData );
+
+		bool		IsInMap( UI16 scriptID );
 
 		UI16		GetScriptID( JSObject *toFind );
 		cScript *	GetScript( UI16 toFind );

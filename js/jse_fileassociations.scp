@@ -171,7 +171,7 @@
 404=commands/resend.js
 405=commands/setrace.js
 406=commands/allmove.js
-a407=commands/houseicons.js
+407=commands/houseicons.js
 408=commands/yell.js
 409=commands/skin.js
 410=commands/showtime.js
