@@ -1,3 +1,6 @@
+12/30/2004 - Xuri
+	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
+
 12/29/2004 - giwo
 	Removed CChar::dispz as it served no purpose.
 	Fixed an issue causing the Buy Window to not display prices and display items only after scrolling.
