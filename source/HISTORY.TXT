@@ -27,10 +27,31 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
+
+
+-------------------------------------------------------------------------------
+01.02.2001               Axel Kittenber              Axel
+
+  classes.h              cTownStones members now return (const char)
+  townstones.cpp         variable types, to hinder it's caller to write to 
+                         unprotected memory.
+
+-------------------------------------------------------------------------------
+31.01.2001               Thiago A. Corrêa            Axel
+
+  uox3.cpp               Changed a few sprintf by strcpy for performance
+                         improvement.
+                         Also removed all dummy stuff from loaditem() and
+                         loadchar() functions.
+  network.cpp            Changed if logic to reduce 1 test.
+  books.cpp              Changed a few fors by memset.
+  items.cpp              Minor improvements in cItem::InitItem
+  magic.cpp              Added bug fix from official release 0.70.03.21b
+
 -------------------------------------------------------------------------------
 >>> SYNCHRONOUS  0.70.03.21a                         Corrêa / Axel
 -------------------------------------------------------------------------------
-25.01.2001               Official Dev Team           Corrêa / Axel
+31.01.2001               Official Dev Team           Corrêa / Axel
 
   admin.cpp              Synchronizations...
   archive.cpp            

@@ -432,7 +432,7 @@ void cCommands::NextCall(int s, int type)
           if ((chars[j].ser1==gmpages[i].ser1)&&(chars[j].ser2==gmpages[i].ser2)&&
 						(chars[j].ser3==gmpages[i].ser3)&&(chars[j].ser4==gmpages[i].ser4))
           {*/
-        	serial=calcserial(gmpages[i].ser1,gmpages[i].ser2,gmpages[i].ser3,gmpages[i].ser4);
+        serial=calcserial(gmpages[i].ser1,gmpages[i].ser2,gmpages[i].ser3,gmpages[i].ser4);
 		j=findbyserial(&charsp[serial%HASHMAX],serial,1);
 		if(j!=-1)
 		{

@@ -364,9 +364,11 @@ void cItem::InitItem(int nItem, char ser)
 	}
 	if (nItem==itemcount) itemcount++;
 
-	strcpy(items[nItem].name,"#");
-	strcpy( items[nItem].name2, "#" );	// abaddon
-	*(items[nItem].creator)='\0';
+//	strcpy(items[nItem].name,"#");
+//	strcpy( items[nItem].name2, "#" );	// abaddon
+	items[nItem].name[0] = '#';
+	items[nItem].name2[0] = '#';
+	items[nItem].creator[0] = 0;
 	items[nItem].good = -1; // Magius(CHE)
 
 	items[nItem].multi1 = 255;//Multi serial1

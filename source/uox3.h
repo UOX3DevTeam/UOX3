@@ -1021,4 +1021,13 @@ void Kill( CHARACTER attack, CHARACTER defend );
 void doRainEffect( int i, int currenttime );
 void doSnowEffect( int i, int currenttime );
 
+void callguards( int p );
+void broadcast( UOXSOCKET s); // GM Broadcast (Done if a GM yells something)
+void talking( UOXSOCKET s); // PC speech
+void unicodetalking( UOXSOCKET s); // PC speech
+
+
+
+
+
 #endif // __UOX3_H

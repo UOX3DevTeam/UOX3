@@ -108,7 +108,8 @@ void cTownStones::CalcNewMayor(int j)
 			}
 			if(c>d){ //if number of votes is higher then max then
 				d=c; //set new max votes
-				e=((chars[a].ser1<<24)+(chars[a].ser2<<16)+(chars[a].ser3<<8)+(chars[a].ser4));
+//				e=((chars[a].ser1<<24)+(chars[a].ser2<<16)+(chars[a].ser3<<8)+(chars[a].ser4));
+				e = calcserial(chars[a].ser1, chars[a].ser2, chars[a].ser3, chars[a].ser4);
 			}
 		}
 	}
@@ -138,10 +139,10 @@ void cTownStones::CalcNewMayor(int j)
 	}
 }
 
-char *cTownStones::TownName(int x, int type)
+const char *cTownStones::TownName(int x, int type)
 {
 	char *s;
-	char checkword[4]="of ";
+	const char checkword[]="of ";
 	int calcreg,len;
 	//checkword="of ";
 	len = strlen(checkword);
@@ -159,15 +160,15 @@ char *cTownStones::TownName(int x, int type)
 		} else {
 			return "the wilderness";
 		}
-		return s;
+   return s;
 }
 
-char *cTownStones::TownMayor(int j)
+const char *cTownStones::TownMayor(int j)
 {
-	char *s=NULL;
+	const char *s = NULL;
 	int a;
 	if(items[j].morex==0) {
-		s="unruled region";
+		s= "unruled region";
 	} else {
 		a = calcCharFromSer( items[j].morex );
 		if( a != -1 )
@@ -176,11 +177,10 @@ char *cTownStones::TownMayor(int j)
 	return s;
 }
 
-char *cTownStones::MayorVote(int s)
+const char * cTownStones::MayorVote(int s)
 {
 	int i;
-	char *t;
-	t="none";
+	const char *t = "none";
 
 	unsigned char s1 = chars[currchar[s]].townvote1;
 	unsigned char s2 = chars[currchar[s]].townvote2;

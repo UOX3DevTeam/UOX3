@@ -250,10 +250,6 @@ void cCharStuff::InitChar(int nChar, char ser)
 	} 
 	else 
 	{
-		chars[nChar].ser1=0;
-		chars[nChar].ser2=0;
-		chars[nChar].ser3=0;
-		chars[nChar].ser4=0;
 		chars[nChar].serial=-1;
 	}
 	if (nChar==charcount) charcount++;

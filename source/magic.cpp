@@ -208,10 +208,10 @@ void cMagic::SpellBook( UOXSOCKET s )
 	{
 		if (spellsList[i]) scount++;
 	}
-	sbookinit[1] = (char)((scount*19)+5)>>8;
-	sbookinit[2] = (char)((scount*19)+5)%256;
-	sbookinit[3] = (char)scount>>8;
-	sbookinit[4] = (char)scount%256;
+	sbookinit[1] = ((scount*19)+5)>>8;
+	sbookinit[2] = ((scount*19)+5)%256;
+	sbookinit[3] = scount>>8;
+	sbookinit[4] = scount%256;
 	if (scount>0) Network->xSend(s, sbookinit, 5, 0);
 	for (i=0;i<70;i++) 
 	{
@@ -220,8 +220,8 @@ void cMagic::SpellBook( UOXSOCKET s )
 			sbookspell[0] = 0x41;
 			sbookspell[1] = 0x00;
 			sbookspell[2] = 0x00;
-			sbookspell[3] = (char)i + 1;
-			sbookspell[8] = (char)i + 1;
+			sbookspell[3] = i + 1;
+			sbookspell[8] = i + 1;
 			sbookspell[13]=items[item].ser1;
 			sbookspell[14]=items[item].ser2;
 			sbookspell[15]=items[item].ser3;

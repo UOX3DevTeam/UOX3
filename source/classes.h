@@ -487,14 +487,14 @@ class cTownStones
 private:
 	void Line(int line, int j, char type, int s);
 	void Text(int line, int j, char type, int s);
-	char *TownMayor(int j);
-	char *MayorVote(int s);
+	const char *TownMayor(int j);
+	const char *MayorVote(int s);
 	int Population(int j);
 public:
 	cTownStones(); // LB might not work, but I dont care because nobody uses that unfished thing anymore
 	virtual ~cTownStones();
 	void Menu(int s, int j, int type);
-	char *TownName(int s, int type);
+	const char *TownName(int s, int type);
 	void CalcNewMayor(int j);
 	void VoteForMayorTarget(int s);
 };
