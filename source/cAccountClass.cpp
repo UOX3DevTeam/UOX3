@@ -656,7 +656,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				// Ok write out the characters and the charcter names if we know them
 				for(int i=0;i<5;i++)
 				{
-					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != 0xffffffff ? actbTemp.lpCharacters[i]->GetSerial() : 0xffffffff ) << " [" << (char*)(actbTemp.dwCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName() : "UNKNOWN" ) << "]\n"; 
+					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != 0xffffffff ? actbTemp.lpCharacters[i]->GetSerial() : 0xffffffff ) << " [" << (char*)(actbTemp.lpCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName() : "UNKNOWN" ) << "]\n"; 
 				}
 				// Close the files since we dont need them anymore
 				fsOut.close();
