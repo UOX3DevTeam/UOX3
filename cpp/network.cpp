@@ -919,11 +919,11 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			cryptclient[now]=0;
 			walksequence[now]=-1;
 			idleTimeout[now] = -1;
-#ifndef __linux__
-			ConOut("UOX3: Client %i [%i.%i.%i.%i] connected [Total:%i].\n",now,client_addr.sin_addr.S_un.S_un_b.s_b1 _ client_addr.sin_addr.S_un.S_un_b.s_b2 _ client_addr.sin_addr.S_un.S_un_b.s_b3 _ client_addr.sin_addr.S_un.S_un_b.s_b4,now+1);
-#else
-			ConOut("UOX3: Client %i connected [Total:%i].\n",now,now+1);
-#endif
+//#ifndef __linux__
+			ConOut("UOX3: Client %i [%i.%i.%i.%i] %s [Total:%i].\n",now,client_addr.sin_addr.s_addr&0xFF _ (client_addr.sin_addr.s_addr&0xFF00)>>8 _ (client_addr.sin_addr.s_addr&0xFF0000)>>16 _ (client_addr.sin_addr.s_addr&0xFF000000)>>24, temp2, now+1);
+//#else
+//			ConOut("UOX3: Client %i connected [Total:%i].\n",now,now+1);
+//#endif
 			now++;
 			return;
 		}
