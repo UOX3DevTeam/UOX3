@@ -18,9 +18,17 @@
 
 #pragma warning(disable : 4786 )
 
-#ifdef __linux__
-	#define __unix__
-#endif
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <cstdio>
+#include <iosfwd>
+#include <algorithm>
+#include <cctype>
+#include <vector>
+#include <map>
 
 #include "uox3.h"
 
@@ -49,18 +57,6 @@
 #define _mkdir(s1,s2) _mkdir(s1)
 
 #endif
-
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <cstdio>
-#include <iosfwd>
-#include <algorithm>
-#include <cctype>
-#include <vector>
-#include <map>
 
 //#ifndef __LINUX__
 //#include <ios>
