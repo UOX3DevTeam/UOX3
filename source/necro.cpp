@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  necro.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1998 - 2001 by Unknown real name (Genesis)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 /*
 Module : necro.cpp
 Purpose: store all necromancy related functions
@@ -39,7 +38,7 @@ void VialTargetItem( UOXSOCKET nSocket, ITEM nItemID );
 void VialTargetChar( UOXSOCKET nSocket, CHARACTER trgChar );
 
 
-int SpawnRandomMonster(int nCharID, char* cScript, char* cList, char* cNpcID)
+int SpawnRandomMonster( UOXSOCKET nCharID, char* cScript, char* cList, char* cNpcID)
 {
 	/*This function gets the random monster number from the from
 	the script and list specified.

@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  cmdtable.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1999 - 2001 by Unknown real name (Crackerjack)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 
 /* cmdtable.h - Crackerjack <crackerjack@crackerjack.net> July 24/99
  * This code is an attempt to clean up the messy "if/then/else" routines
@@ -70,7 +70,7 @@ struct cmdtable_s {
 };
 extern CMDTABLE_S command_table[];
 
-#define CMD_EXEC	void (*) (int)
+#define CMD_EXEC	void (*) (UOXSOCKET)
 #define CMD_DEFINE	void (*)()
 
 typedef struct target_s TARGET_S;
@@ -80,7 +80,7 @@ struct target_s {	/* arguments to the target() function */
 };
 
 /* All command_ functions take an int value of the player that triggered the command. */
-#define CMD_HANDLER(name) extern void name (int)
+#define CMD_HANDLER(name) extern void name (UOXSOCKET)
 #define TAR_HANDLER(name) extern TARGET_S name
 
 /* Defined commands that are just being mapped to internal functions */

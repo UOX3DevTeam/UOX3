@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  townstones.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1997 - 2001 by unknown real name (Krozy)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 
 #include "uox3.h"
 #include "debug.h"
@@ -86,10 +86,7 @@ cTownStones::cTownStones()
 
 void cTownStones::CalcNewMayor(int j)
 {
-	//j = the town (region), not the item.
-//	int a,b,c=0,d=0,e=0,s1,s2,s3,s4;
 	int a, b, c = 0, d = 0, e = 0;
-	unsigned char s1, s2, s3, s4;
 	struct tm *newtime;
 	time_t aclock;
 	newtime = localtime(&aclock);
@@ -133,14 +130,7 @@ void cTownStones::CalcNewMayor(int j)
 		}
 	}
 	//Set the Town privledges of the new mayor to '2'.
-	s1 = (unsigned char) (e>>24);
-	s2 = (unsigned char) (e>>16);
-	s3 = (unsigned char) (e>>8);
-	s4 = (unsigned char) (e%256);
-	
-    long int serial = calcserial( s1, s2, s3, s4 );
-	a = findbyserial(&charsp[serial%HASHMAX],serial,1); // lets find the new position of the old_serial in newly ordered array
-
+	a = calcCharFromSer( e );
 	if( a != -1 )
 	{
 		chars[a].townpriv = 2;
@@ -175,26 +165,11 @@ char *cTownStones::TownName(int x, int type)
 char *cTownStones::TownMayor(int j)
 {
 	char *s=NULL;
-//	int a,s1,s2,s3,s4;
 	int a;
-	unsigned char s1, s2, s3, s4;
 	if(items[j].morex==0) {
 		s="unruled region";
 	} else {
-		s1 = (unsigned char) ((items[j].morex)>>24);
-		s2 = (unsigned char) ((items[j].morex)>>16);
-		s3 = (unsigned char) ((items[j].morex)>>8);
-		s4 = (unsigned char) ((items[j].morex)%256);
-		long int serial = calcserial( s1, s2, s3, s4 );
-		a = findbyserial(&charsp[serial%HASHMAX],serial,1); // lets find the new position of the old_serial in newly ordered array
-/*		for (a=0;a<charcount;a++) {
-			if((chars[a].ser1==s1)&&
-				(chars[a].ser2==s2)&&
-				(chars[a].ser3==s3)&&
-				(chars[a].ser4==s4)) {
-				s=strstr(chars[a].name,chars[a].name);
-			}
-		}*/
+		a = calcCharFromSer( items[j].morex );
 		if( a != -1 )
 			s = strstr( chars[a].name, chars[a].name );
 	}
@@ -396,8 +371,8 @@ void cTownStones::Menu(int s, int j, int type)
 		Towns->Line(line, j, townpriv, s);
 		if (script1[0]!='}')
 		{
-			length += (short int) strlen(script1)+4;
-			length2 += (short int) strlen(script1)+4;
+			length += (short int)strlen(script1)+4;
+			length2 += (short int)strlen(script1)+4;
 		}
 	}
 	while (script1[0]!='}');
@@ -426,9 +401,9 @@ void cTownStones::Menu(int s, int j, int type)
 	gump1[7]=0;
 	gump1[8]=0;
 	gump1[9]=0;
-	gump1[10]= (char) type; // Gump Number
-	gump1[19]= (char) length2>>8;
-	gump1[20]= (char) length2%256;
+	gump1[10] = (char)type; // Gump Number
+	gump1[19] = (char)length2>>8;
+	gump1[20] = (char)length2%256;
 	Network->xSend(s, gump1, 21, 0);
 	line=0;
 	do

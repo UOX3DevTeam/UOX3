@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  boats.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1998 - 2001 by Unknown real name (Zippy)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,11 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-//Boats->cpp by Zippy Started on 7/12/99
-// Mapregion stuff + boat-blocking corrected/touched up by LB 7/24/99
-// great work Zippy :)
+//------------------------------------------------------------------------
 
 #include "uox3.h"
 #include "boats.h"
@@ -213,8 +209,8 @@ void cBoat::PlankStuff(int s, int p)//double click Will send them here
 					if (chars[b].npc && chars[b].ownserial==chars[currchar[s]].serial && inrange1p(currchar[s], b)<=15)
 					{
 						mapRegions->RemoveItem(b+1000000);
-						chars[b].x = (short int) items[boat2].x+1;
-						chars[b].y = (short int) items[boat2].y+1;
+						chars[b].x = (short int)items[boat2].x+1;
+						chars[b].y = (short int)items[boat2].y+1;
 						chars[b].z = chars[b].dispz=items[boat2].z+4;
 						mapRegions->AddItem(b+1000000);
 						setserial(b,boat2,8);
@@ -914,14 +910,14 @@ void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/i
 		break;
 	case 0x10:
 	case 0x14:
-		items[p1].x += (short int) iLargeShipOffsets[dir][PORT_PLANK][XP];
-		items[p1].y += (short int) iLargeShipOffsets[dir][PORT_PLANK][YP];
-		items[p2].x += (short int) iLargeShipOffsets[dir][STARB_PLANK][XP];
-		items[p2].y += (short int) iLargeShipOffsets[dir][STARB_PLANK][YP];
-		items[tiller].x += (short int) iLargeShipOffsets[dir][TILLER][XP];
-		items[tiller].y += (short int) iLargeShipOffsets[dir][TILLER][YP];
-		items[hold].x += (short int) iLargeShipOffsets[dir][HOLD][XP];
-		items[hold].y += (short int) iLargeShipOffsets[dir][HOLD][YP];
+		items[p1].x += (short int)iLargeShipOffsets[dir][PORT_PLANK][XP];
+		items[p1].y += (short int)iLargeShipOffsets[dir][PORT_PLANK][YP];
+		items[p2].x += (short int)iLargeShipOffsets[dir][STARB_PLANK][XP];
+		items[p2].y += (short int)iLargeShipOffsets[dir][STARB_PLANK][YP];
+		items[tiller].x += (short int)iLargeShipOffsets[dir][TILLER][XP];
+		items[tiller].y += (short int)iLargeShipOffsets[dir][TILLER][YP];
+		items[hold].x += (short int)iLargeShipOffsets[dir][HOLD][XP];
+		items[hold].y += (short int)iLargeShipOffsets[dir][HOLD][YP];
 		
 		break;
 	default: printf("DEBUG: Turnboatstuff() more1 error! more1 = %c not found!\n",items[b].more1);
@@ -945,7 +941,7 @@ void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
 	if(boat==-1) return;//if they aren't on a boat, then we don't care what they said
 	int dir=items[boat].dir&0x0F;
 	int serial, tiller;
-	char /*msg2[512],*/msg[128]; //No one can type more than 80 chars in UO Client
+	char /*msg2[512],*/msg[128];	// No one can type more than 80 chars in UO Client
 	
 	strcpy( msg, (char *)talk );
 	if (s<0 || s>=MAXCLIENT) return;

@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  uoxstruct.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 #include "uox3.h"
@@ -113,12 +113,12 @@ struct char_st
 	unsigned char	orgid2; // backup of .....
 	unsigned char	haircolor1;		// backup of hair/beard for incognito spell
 	unsigned char	haircolor2;
-	int				hairstyle1;
-	int				hairstyle2;
-	unsigned char	beardcolor1; //Color stuff can be unsigned char.
+	unsigned char	hairstyle1;
+	unsigned char	hairstyle2;
+	unsigned char	beardcolor1;
 	unsigned char	beardcolor2;
-	int				beardstyle1;
-	int				beardstyle2;
+	unsigned char	beardstyle1;
+	unsigned char	beardstyle2;
 	unsigned char	skin1; // Skin color
 	unsigned char	skin2; // Skin color
 	unsigned char	orgskin1;	// skin color backup for incognito spell
@@ -209,7 +209,6 @@ struct char_st
  int playercallnum; //GM Paging
  int pagegm; //GM Paging
  unsigned char region;
- // knox removed that linux difference here
  unsigned int skilldelay;
  unsigned int objectdelay;
  int combathitmessage;
@@ -701,10 +700,10 @@ struct skill_st
 };
 struct advance_st
 {
- char skill;
- int base;
- int success;
- int failure;
+	char skill;
+	int base;
+	int success;
+	int failure;
 };
 struct make_st
 {
@@ -723,42 +722,42 @@ struct make_st
 };
 struct gmpage_st
 {
- char reason[80];
- unsigned char ser1;
- unsigned char ser2;
- unsigned char ser3;
- unsigned char ser4;
- char timeofcall[9];
- char name[20];
- int handled;
+	char reason[80];
+	unsigned char ser1;
+	unsigned char ser2;
+	unsigned char ser3;
+	unsigned char ser4;
+	char timeofcall[9];
+	char name[20];
+	int handled;
 } PACK_NEEDED;
 struct jail_st
 {
- unsigned int x;
- unsigned int y;
- signed char z;
- unsigned int occupied;
+	unsigned int x;
+	unsigned int y;
+	signed char z;
+	unsigned int occupied;
 } PACK_NEEDED;
 struct tracking_st
 {
- unsigned int baserange;
- unsigned int maxtargets;
- unsigned int basetimer;
- unsigned int redisplaytime;
+	unsigned int baserange;
+	unsigned int maxtargets;
+	unsigned int basetimer;
+	unsigned int redisplaytime;
 };
 struct begging_st
 {
- unsigned int range;
- char text[3][256];
+	unsigned int range;
+	char text[3][256];
 };
 struct fishing_st
 {
- unsigned int basetime;
- unsigned int randomtime;
+	unsigned int basetime;
+	unsigned int randomtime;
 };
 struct spiritspeak_st
 {
- unsigned int spiritspeaktimer;
+	unsigned int spiritspeaktimer;
 };
 struct speed_st //Lag Fix
 {

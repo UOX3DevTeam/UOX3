@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  gumps.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 #include "uox3.h"
 #include "debug.h"
 
@@ -32,10 +32,10 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 {
 	int j=-1,serial,i;
 	
-    // if ((button)==0 || (button==1)) printf("gump-menu, type# %i closed\n",type); // lord bin
-	if(button>10000) {
-		i=button-10000;
-		Menu(s, i);
+	if( button > 10000 ) 
+	{
+		i = button - 10000;
+		Menu( s, i );
 		return;
 	}
 	int curLock = 0, b = 0, a = 0;
@@ -242,16 +242,20 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 	{
 		switch( button )
 		{
-		case 2:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new name for the character." );						break;
-		case 3:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new title for the character." );						break;
-		case 4:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new X coordinate for the character in decimal." );	break;
-		case 5:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Y coordinate for the character in decimal." );	break;
-		case 6:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Z coordinate for the character in decimal." );	break;
-		case 7:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new direction for the character in decimal." );		break;
-		case 8:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new body type for the character in hex." );			break;
-		case 9:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new skin hue for the character in hex." );			break;
-		case 10: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new defensive value for the character in hex." );	break;	
-		case 11: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Race number for the character in hex." );		break;	
+		case 2:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new Name for the character." );							break;
+		case 3:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter a new Title for the character." );							break;
+		case 4:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new X coordinate for the character in decimal." );			break;
+		case 5:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Y coordinate for the character in decimal." );			break;
+		case 6:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Z coordinate for the character in decimal." );			break;
+		case 7:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Direction for the character in decimal." );				break;
+		case 8:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Body Type for the character in hex." );					break;
+		case 9:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 4, "Enter a new Skin Hue for the character in hex." );					break;
+		case 10: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Defence value for the character in decimal." );		break;	
+		case 11: entrygump( s, tser1, tser2, tser3, tser4, type, button, 3, "Enter a new Race number for the character in decimal." );			break;	
+		case 12: entrygump( s, tser1, tser2, tser3, tser4, type, button, 1, "Enter a new Hunger value for the character in decimal(0-6).");		break;			
+		case 13: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Strength value for the character in decimal.");		break;			
+		case 14: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Dexterity value for the character in decimal.");		break;			
+		case 15: entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter a new Intelligence value for the character in decimal.");	break;
 		}
 	}
 	if (type==3) // Townstones
@@ -375,11 +379,11 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 	}
 }
 
-void cGump::Input(int s)
+void cGump::Input( UOXSOCKET s )
 {
 	char type, index, tser1, tser2, tser3, tser4;
 	char *text;
-	int j,k,serial; //Removed unreferenced local variables
+	int j, k, serial; // Removed unreferenced local variables
 	
 	type=buffer[s][7];
 	index=buffer[s][8];
@@ -484,6 +488,10 @@ void cGump::Input(int s)
 					break;
 		case 10:	k = str2num( text );	chars[j].def = k;	break;	// Defence
 		case 11:	k = str2num( text );	chars[j].race = k;	break;	// Race
+		case 12:	k = str2num( text );	chars[j].hunger = k;break;	// Hunger
+		case 13:	k = str2num( text );	chars[j].st = k;	break;	// Strength
+		case 14:	k = str2num( text );	chars[j].dx = k;	break;	// Dexterity
+		case 15:	k = str2num( text );	chars[j].in = k;	break;	// Intelligence
 		}
 		teleport( j );
 		tweakmenu( s, j, type );
@@ -844,6 +852,18 @@ void tline( int line, int j, char type )
 		line--; if( line == 0 ) strcpy( script1, "text 90 95 0 21");
 		line--; if( line == 0 ) strcpy( script1, "text 200 95 16 22");
 		line--; if( line == 0 ) strcpy( script1, "button 30 95 2116 2115 1 0 11");
+		line--; if( line==0 ) strcpy( script1, "text 90 120 0 23");
+		line--; if( line==0 ) strcpy( script1, "text 200 120 16 24");
+		line--; if( line==0 ) strcpy( script1, "button 30 120 2116 2115 1 0 12");
+		line--; if( line==0 ) strcpy( script1, "text 90 145 0 25");
+		line--; if( line==0 ) strcpy( script1, "text 200 145 16 26");
+		line--; if( line==0 ) strcpy( script1, "button 30 145 2116 2115 1 0 13");
+		line--; if( line==0 ) strcpy( script1, "text 90 170 0 27");
+		line--; if( line==0 ) strcpy( script1, "text 200 170 16 28");
+		line--; if( line==0 ) strcpy( script1, "button 30 170 2116 2115 1 0 14");
+		line--; if( line==0 ) strcpy( script1, "text 90 195 0 29");
+		line--; if( line==0 ) strcpy( script1, "text 200 195 16 30");
+		line--; if( line==0 ) strcpy( script1, "button 30 195 2116 2115 1 0 15");
 	}
 	line--; if( line == 0 ) strcpy( script1, "page 3");
 	line--; if( line == 0 ) strcpy( script1, "button 40 320 2223 2223 0 2");
@@ -988,6 +1008,14 @@ void ttext(int line, int j, char type)
 		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].def );
 		line--; if( line == 0 ) strcpy( script1, "Race" );
 		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].race );
+		line--; if( line == 0 ) strcpy( script1, "Hunger" );
+		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].hunger );
+		line--; if( line == 0 ) strcpy( script1, "Strength" );
+		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].st );
+		line--; if( line == 0 ) strcpy( script1, "Dexterity" );
+		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].dx );
+		line--; if( line == 0 ) strcpy( script1, "Intelligence" );
+		line--; if( line == 0 ) sprintf( script1,"%i", chars[j].in );
 	}
 	line--; if( line == 0) strcpy( script1, "}");
 }

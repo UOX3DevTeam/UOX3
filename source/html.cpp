@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  html.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1998 - 2001 by Unknown real name (Zippy)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 #include "uox3.h"
 
 //:Terrin: I was out to fix sprintf(s, "%s%c", s, c ) but here they were
@@ -38,7 +37,7 @@ void offlinehtml()//HTML
 	unsigned int total,hr,min,sec; // bugfix LB
 	FILE *html;
 	
-	total = (unsigned int) (( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
+	total = (unsigned int)( ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
 	hr=total/3600;
 	total-=hr*3600;
 	min=total/60;
@@ -161,7 +160,7 @@ void updatehtml()//HTML
 		}
 		else if(!(strcmp(script1,"UPTIME")))
 		{
-			total = (unsigned int) ((uiCurrentTime - starttime ) / CLOCKS_PER_SEC);
+			total = (unsigned int)( ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC );
 			hr=total/3600;
 			if(hr<10 && hr<=60) sprintf(sh,"0%i",hr);
 			else sprintf(sh,"%i",hr);

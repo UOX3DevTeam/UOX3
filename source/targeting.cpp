@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  targeting.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 #include "uox3.h"
 #include "debug.h"
 #include "cmdtable.h" // who took this out and why?? cj 8/11/99
@@ -254,9 +254,9 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 // FREE		case 84: break;
 // FREE		case 85: break;
 		case 86: Targ->SwordTarget(s); break;
-		case 87: /*if (chars[currchar[s]].priv&1)*/ Magic->SbOpenContainer(s); break;
-		case 88: /*if (chars[currchar[s]].priv&1)*/ Targ->SetDirTarget(s); break;
-		case 89: /*if (chars[currchar[s]].priv&1)*/ Targ->ObjPrivTarget(s); break;
+		case 87: Magic->SbOpenContainer(s); break;
+		case 88: Targ->SetDirTarget(s); break;
+		case 89: Targ->ObjPrivTarget(s); break;
 // FREE		case 90: break;
 // FREE		case 91: break;
 // FREE		case 92: break;
@@ -294,17 +294,17 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 		case 123: SetRestockTarget( s );		break;
 // FREE		case 124: break;
 // FREE		case 125: break;
-		case 126: /*if (chars[currchar[s]].priv&1 || chars[currchar[s]].priv&80)*/ Targ->JailTarget(s,-1); break;
-		case 127: /*if (chars[currchar[s]].priv&1 || chars[currchar[s]].priv&80)*/ Targ->ReleaseTarget(s,-1); break;
+		case 126: Targ->JailTarget(s,-1); break;
+		case 127: Targ->ReleaseTarget(s,-1); break;
 		case 128: Skills->CreateBandageTarget(s); break;
-		case 129: /*if (chars[currchar[s]].priv&1)*/ Targ->SetAmount2Target(s); break;
+		case 129: Targ->SetAmount2Target(s); break;
 		case 130: Skills->HealingSkillTarget(s); break;
-		case 131: /*if (chars[currchar[s]].priv&1)*/ Targ->permHideTarget(s); break; /* not used */
-		case 132: /*if (chars[currchar[s]].priv&1)*/ Targ->unHideTarget(s); break; /* not used */
-		case 133: /*if (chars[currchar[s]].priv&1)*/ Targ->SetWipeTarget(s); break;
+		case 131: Targ->permHideTarget(s); break; /* not used */
+		case 132: Targ->unHideTarget(s); break; /* not used */
+		case 133: Targ->SetWipeTarget(s); break;
 		case 134: Skills->Carpentry(s); break;
-		case 135: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpeechTarget(s); break;
-		case 136: /*if (chars[currchar[s]].priv&1)*/ Targ->XTeleport(s,0); break;
+		case 135: Targ->SetSpeechTarget(s); break;
+		case 136: Targ->XTeleport(s,0); break;
 // FREE		case 137: break;	// AntiChrist (9/99)
 // FREE		case 138: break;
 // FREE		case 139: break;
@@ -318,8 +318,8 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 // FREE		case 147: break;
 // FREE		case 148: break;
 // FREE		case 149: break;
-		case 150: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpAttackTarget(s); break;
-		case 151: /*if (chars[currchar[s]].priv&1)*/ Targ->FullStatsTarget(s); break;
+		case 150: Targ->SetSpAttackTarget(s); break;
+		case 151: Targ->FullStatsTarget(s); break;
 		case 152: Skills->BeggingTarget(s); break;
 		case 153: Skills->AnimalLoreTarget(s); break;
 		case 154: Skills->ForensicsTarget(s); break;
@@ -348,11 +348,11 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 		case 172: Skills->Fletching(s); break;
 		case 173: Skills->MakeDough(s); break;
 		case 174: Skills->MakePizza(s); break;
-		case 175: /*if (chars[currchar[s]].priv&1)*/ Targ->SetPoisonTarget(s); break;
-		case 176: /*if (chars[currchar[s]].priv&1)*/ Targ->SetPoisonedTarget(s); break;
-		case 177: /*if (chars[currchar[s]].priv&1)*/ Targ->SetSpaDelayTarget(s); break;
-		case 178: /*if (chars[currchar[s]].priv&1)*/ Targ->SetAdvObjTarget(s); break;
-		case 179: /*if (chars[currchar[s]].priv&1)*/ Targ->SetInvulFlag(s); break; /* not used ...*/
+		case 175: Targ->SetPoisonTarget(s); break;
+		case 176: Targ->SetPoisonedTarget(s); break;
+		case 177: Targ->SetSpaDelayTarget(s); break;
+		case 178: Targ->SetAdvObjTarget(s); break;
+		case 179: Targ->SetInvulFlag(s); break; /* not used ...*/
 		case 180: Skills->Tinkering(s); break;
 		case 181: Skills->PoisoningTarget(s); break;  
 //FREE		case 182: Magic->CureTarget(s); break;
@@ -373,10 +373,10 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 //FREE		case 197: Magic->MagicUntrapTarget(s); break;
 		case 198: Targ->Tiling(s); break;
 		case 199: Targ->Wiping(s); break;
-		case 200: /*if (chars[currchar[s]].priv&1)*/ Commands->SetItemTrigger(s); break;
-		case 201: /*if (chars[currchar[s]].priv&1)*/ Commands->SetNPCTrigger(s); break;
-		case 202: /*if (chars[currchar[s]].priv&1)*/ Commands->SetTriggerType(s); break;
-		case 203: /*if (chars[currchar[s]].priv&1)*/ Commands->SetTriggerWord(s); break;
+		case 200: Commands->SetItemTrigger(s); break;
+		case 201: Commands->SetNPCTrigger(s); break;
+		case 202: Commands->SetTriggerType(s); break;
+		case 203: Commands->SetTriggerWord(s); break;
 		case 204: triggertarget(s); break; // Fixed by Magius(CHE)
 		case 205: Skills->StealingTarget(s); break;
 		case 206: Targ->CanTrainTarget(s); break;
@@ -878,8 +878,8 @@ void cTargets::XgoTarget(int s)
 		chars[i].y=addy[s];
 		chars[i].dispz=chars[i].z=addz[s];
 		mapRegions->AddItem(i+1000000);
-    //updatechar(i);
 		teleport( i );	// need to see items, Abaddon 17th February, 2000
+		impowncreate( s, i, 1 );
 
 	}
 }
@@ -1110,11 +1110,9 @@ void cTargets::IstatsTarget(int s)
 	}
 }
 
-void cTargets::CstatsTarget(int s)
+void cTargets::CstatsTarget( UOXSOCKET s )
 {
 	int i,serial;
-	
-	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
@@ -1127,8 +1125,8 @@ void cTargets::CstatsTarget(int s)
 			chars[i].fame,chars[i].karma,chars[i].deaths,chars[i].kills,
 			chars[i].npcaitype, chars[i].npcWander, chars[i].weight);
 		sysmessage(s, temp);
-		sprintf(temp, "Other Info: Poisoned [%i] Poison [%i] Hunger [%i] Attacker [%i] Target [%i] Carve [%i]", // Changed by Magius(CHE)
-			chars[i].poisoned,chars[i].poison, chars[i].hunger, chars[i].attacker,chars[i].targ, chars[i].carve ); // Changed by Magius(CHE)
+		sprintf(temp, "Other Info: Poisoned [%i] Poison [%i] Hunger [%i] Attacker [%i] Target [%i] Carve [%i] LastOn [%s]", // Changed by Magius(CHE)
+			chars[i].poisoned,chars[i].poison, chars[i].hunger, chars[i].attacker,chars[i].targ, chars[i].carve, chars[i].laston ); // Changed by Magius(CHE)
 		sysmessage(s, temp);
 		sprintf( temp, "Race [%i], Race Gate [%i]", chars[i].race, chars[i].raceGate );
 		sysmessage( s, temp );
@@ -1484,9 +1482,7 @@ void cTargets::MovableTarget (int s)
 	if(i!=-1)
 	{
 		items[i].magic=addx[s];
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
-		
 	}
 }
 
@@ -1846,9 +1842,8 @@ void cTargets::InfoTarget(int s) // rewritten to work also with map-tiles, not o
 		printf("\n");
 }
 
-void cTargets::TweakTarget(int s)//Lag fix -- Zippy
+void cTargets::TweakTarget( UOXSOCKET s )//Lag fix -- Zippy
 {
-	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i;
 	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
@@ -1867,15 +1862,13 @@ void cTargets::TweakTarget(int s)//Lag fix -- Zippy
 void cTargets::LoadCannon(int s)
 {
 	int i,serial;
-	
-	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	if (i!=-1)
+	if( i != -1 )
 	{
 		if (((items[i].more1==addid1[s])&&(items[i].more2==addid2[s])&&
 			(items[i].more3==addid3[s])&&(items[i].more4==addid4[s]))||
-			(addid1[s] == 0xFF))
+			(addid1[s] == 0xFF ))
 		{
 			if ((items[i].morez==0)&&(iteminrange(s,i,2)))
 			{
@@ -2073,7 +2066,7 @@ void cTargets::SquelchTarg(int s)//Squelch
 			sysmessage(calcSocketFromChar(p), "You have been squelched!");
 			if (addid1[s]!=255 || addid1[s]!=0)			// 255 used to be -1, not good for unsigned chars
 			{
-				chars[p].mutetime = (unsigned int) (uiCurrentTime + (addid1[s] * CLOCKS_PER_SEC));
+				chars[p].mutetime = (unsigned int)( uiCurrentTime + ( addid1[s] * CLOCKS_PER_SEC ) );
 				addid1[s]=255;
 				chars[p].squelched=2;
 			}
@@ -2355,7 +2348,7 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 	mapRegions->RemoveItem(c);
     mapRegions->AddItem(c); // lord Binary
 	
-	items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
+	items[c].decaytime = (unsigned int)(uiCurrentTime+(server_data.decaytimer*CLOCKS_PER_SEC));
 	RefreshItem( c ); // AntiChrist
 	
 	if( feat )
@@ -2422,10 +2415,9 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 {
 	bool deletecorpse = false;
-
 	int c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 ); // add the blood puddle
-	if (c == -1) 
-      return;
+	if( c == -1 ) 
+		return;
 	items[c].x = items[npcshape[0]].x;
 	items[c].y = items[npcshape[0]].y;
 	items[c].z = items[npcshape[0]].z;
@@ -2433,10 +2425,10 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 	items[c].magic = 2; // AntiChrist - makes the item unmovable
 
 	mapRegions->RemoveItem( c );
-	mapRegions->AddItem( c ); 
+	mapRegions->AddItem( c );
 
-	items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
-	RefreshItem( c ); 
+	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+	RefreshItem( c );
 
 	// if it's a human corpse
 	if( items[i].morey )
@@ -2596,7 +2588,7 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 					items[c].y = items[i].y;
 					items[c].z = items[i].z;
 					mapRegions->AddItem( c ); // add this item to a map cell
-					items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
+					items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
 					RefreshItem( c ); // AntiChrist
 				} // if contserial == serial
 			} // if c != -1 
@@ -2610,8 +2602,6 @@ void cTargets::newCarveTarget( UOXSOCKET s, ITEM i )
 void cTargets::TitleTarget(int s)
 {
 	int i,serial;
-	
-	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if (i!=-1)
@@ -2620,39 +2610,36 @@ void cTargets::TitleTarget(int s)
 	}
 }
 
-void cTargets::NpcTarget(int s)
+void cTargets::NpcTarget( UOXSOCKET s )
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i != -1)
+	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	int i = calcCharFromSer( serial );
+	if( i != -1 )
 	{
-		
-		addid1[s]=chars[i].ser1;
-		addid2[s]=chars[i].ser2;
-		addid3[s]=chars[i].ser3;
-		addid4[s]=chars[i].ser4;
+		addid1[s] = chars[i].ser1;
+		addid2[s] = chars[i].ser2;
+		addid3[s] = chars[i].ser3;
+		addid4[s] = chars[i].ser4;
 		target(s, 0, 1, 0, 57, "Select NPC to follow this player.");
 	}
 }
 
-void cTargets::NpcTarget2(int s)
+void cTargets::NpcTarget2( UOXSOCKET s )
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if (chars[i].npc==1)
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( i != -1 )
+		if( chars[i].npc == 1 )
 		{
-			chars[i].ftarg=calcCharFromSer(addid1[s], addid2[s], addid3[s], addid4[s]);
+			chars[i].ftarg = calcCharFromSer( addid1[s], addid2[s], addid3[s], addid4[s] );
 			chars[i].npcWander=1;
 		}
 }
 
-void cTargets::NpcRectTarget(int s)
+void cTargets::NpcRectTarget( UOXSOCKET s )
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-		if ((chars[i].npc==1))
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( i != -1 )
+		if( chars[i].npc == 1 )
 		{
 			chars[i].fx1=addx[s];
 			chars[i].fy1=addy[s];
@@ -2663,12 +2650,10 @@ void cTargets::NpcRectTarget(int s)
 		}
 }
 
-void cTargets::NpcCircleTarget(int s)
+void cTargets::NpcCircleTarget( UOXSOCKET s )
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	
-	if (i!=-1)
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( i != -1 )
 		if ((chars[i].npc==1))
 		{
 			chars[i].fx1=addx[s];
@@ -2679,10 +2664,9 @@ void cTargets::NpcCircleTarget(int s)
 		}
 }
 
-void cTargets::NpcWanderTarget(int s)
+void cTargets::NpcWanderTarget( UOXSOCKET s )
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 		if ((chars[i].npc==1)) 
 			chars[i].npcWander=npcshape[0];
@@ -2690,9 +2674,7 @@ void cTargets::NpcWanderTarget(int s)
 
 void cTargets::NpcAITarget(int s)
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 	{
 		chars[i].npcaitype=addx[s];
@@ -2701,8 +2683,7 @@ void cTargets::NpcAITarget(int s)
 
 void cTargets::xBankTarget(int s)
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 	{
 		openbank(s, i);
@@ -2710,8 +2691,7 @@ void cTargets::xBankTarget(int s)
 }
 void cTargets::xSpecialBankTarget( int s ) // AntiChrist
 {
-	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
-	int i = findbyserial( &charsp[ serial%HASHMAX ], serial, 1 );
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if( i != -1 )
 	{
 		openspecialbank( s, i );
@@ -2735,12 +2715,8 @@ void cTargets::DupeTarget(int s)
 		{
 			for (dupeit=0;dupeit<dupetimes;dupeit++)
 			{
-  			//Commands->DupeItem(s, i, 1); // lb bugfix
-				// Abaddon 17th February, 2000
 				Commands->DupeItem( s, i, items[i].amount );	// we want to dupe the pile properly, shouldn't
 																// dupe a stack of gold and get ONE coin
-				// End Abaddon
-        //all_items(s); // lb bugfix
 			}
 		}
 	}
@@ -2776,7 +2752,6 @@ void cTargets::MoveToBagTarget(int s)
 			for(j=0;j<now;j++) if (perm[j])
 			{
 				Network->xSend(j, removeitem, 5, 0);
-//				senditem(j, i);
 			}
 				RefreshItem( i ); // AntiChrist
 		}
@@ -2784,8 +2759,7 @@ void cTargets::MoveToBagTarget(int s)
 
 void cTargets::SellStuffTarget(int s)
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 	{
 		sellstuff(s, i);
@@ -2947,9 +2921,9 @@ void cTargets::JailTarget(int s, int c)
 			return;
 		}
 	}
-    sysmessage(s,"All jails are currently full!");
+    sysmessage( s, "All jails are currently full!" );
+	
 }
-
 
 void cTargets::AttackTarget(UOXSOCKET s)
 {
@@ -3113,23 +3087,6 @@ void cTargets::unHideTarget(int s)
 {
 	addx[s] = 0;
 	VisibleTarget(s);	// better code reuse!
-/*	int i,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
-	if (i!=-1)
-	{
-		if(chars[i].hidden==0)
-		{
-			sysmessage(s,"You are not hiding");
-			return;
-		}
-		chars[i].priv2=chars[i].priv2|8;
-		chars[i].hidden=0;
-//		updatechar(calcSocketFromChar(i));
-		updatechar( i );
-	}*/
 }
 
 void cTargets::SetWipeTarget(int s)
@@ -3260,8 +3217,7 @@ void cTargets::SetAdvObjTarget(int s)
 //o---------------------------------------------------------------------------o
 void cTargets::CanTrainTarget(int s)
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 	{
 		if (chars[i].npc==0)
@@ -3361,41 +3317,25 @@ void cTargets::AxeTarget(int s)
 		Skills->BowCraft( s );
 //        sysmessage(s,"You are too far away to perform that action.");
     }
-/*	if (((buffer[s][0x11]==0x0C)&&
-		((buffer[s][0x12]==0xD0)||(buffer[s][0x12]==0xD3)||(buffer[s][0x12]==0xD6)||
-		(buffer[s][0x12]==0xD8)||(buffer[s][0x12]==0xDA)||(buffer[s][0x12]==0xDD)||
-		(buffer[s][0x12]==0xE0)||(buffer[s][0x12]==0xE3)||(buffer[s][0x12]==0xE6)||
-		((buffer[s][0x12]>=0xCA)&&(buffer[s][0x12]<=0xCD))))||
-		((buffer[s][0x11]==0x12)&&(buffer[s][0x12]>=0xB8)&&(buffer[s][0x12]<=0xBB))||
-		((buffer[s][0x11]==0x0D)&&
-		((buffer[s][0x12]==0x42)||(buffer[s][0x12]==0x43)||(buffer[s][0x12]==0x58)||
-		(buffer[s][0x12]==0x59)||(buffer[s][0x12]==0x70)||(buffer[s][0x12]==0x85)||
-		(buffer[s][0x12]==0x94)||(buffer[s][0x12]==0x95)||(buffer[s][0x12]==0x98)||
-		(buffer[s][0x12]==0xa4)||(buffer[s][0x12]==0xa8)||(buffer[s][0x12]==0x58))))
-	{
-		Skills->TreeTarget(s);
-	} else
-		if ((buffer[s][0x11]==0x20) && (buffer[s][0x12]==0x06))
-		{
-			Targ->CorpseTarget(s);
-		}*/
 }
 
 void cTargets::ObjPrivTarget(int s)
 {
-	int serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i = findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	int i = calcItemFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	if (i!=-1)
 	{
-		if(addid1[s]==0) items[i].priv=items[i].priv&0xFE; // lb ...
-		if (addid1[s]==1) items[i].priv=items[i].priv|0x01;
-		if (addid1[s]==3) items[i].priv=addid2[s];
+		switch( addid1[s] )
+		{
+		case 0:	items[i].priv &= 0xFE;	break;
+		case 1: items[i].priv |= 0x01;	break;
+		case 3: items[i].priv = addid2[s];	break;
+		}
 	}
 }
 
 void cTargets::SetDirTarget(int s)
 {
-	int i, serial;
+	int i,serial;
 	
 	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	
@@ -3555,7 +3495,6 @@ void cTargets::IncXTarget(int s)
 		mapRegions->RemoveItem(i); //lb
 		items[i].x=items[i].x + addx[s];
 		mapRegions->AddItem(i);
-//		for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
 		RefreshItem( i ); // AntiChrist
 	}
 	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
@@ -3565,6 +3504,7 @@ void cTargets::IncXTarget(int s)
 		chars[i].x = chars[i].x + addx[s];
 		mapRegions->AddItem(i+1000000);
 		teleport(i);
+		impowncreate( s, i, 1 );
 	}
 	
 }
@@ -3589,6 +3529,7 @@ void cTargets::IncYTarget(int s)
 		chars[i].y = chars[i].y + addx[s];
 		mapRegions->AddItem(i+1000000);
 		teleport(i);
+		impowncreate( s, i, 1 );
 	}
 	
 }
@@ -3722,8 +3663,8 @@ void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to
 	if((c!=-1)&&(h!=-1)) {
 		unsigned int r;
 		r=add_hlist(c, h, H_FRIEND);
-		switch(r) {
-		
+		switch( r )
+		{
 		case 1:
 			sprintf(temp, "%s has been made a friend of the house.", chars[c].name);
 			for( r = 0; r < now; r++ )
@@ -3734,7 +3675,7 @@ void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to
 				}
 			}
 			sysmessage(s, temp);
-			break; 
+			break;
 		case 2:
 			sysmessage(s, "That player is already on a house register.");
 			break;
@@ -3840,7 +3781,7 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 	{ 
 		items[c].x=chars[currchar[s]].x;
 		items[c].y=chars[currchar[s]].y;
-		items[c].z = (signed char) chars[currchar[s]].z+4;
+		items[c].z = (signed char)chars[currchar[s]].z+4;
 	}
 
 	//mapRegions->AddItem(c);
@@ -3856,11 +3797,9 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 
 }
 
-void cTargets::UnglowTarget(int s) // LB 4/9/99, removes the glow-effect from items
+void cTargets::UnglowTarget( UOXSOCKET s )
 {
-
 	int c,i,serial,j,k,l;
-
 	serial=calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
 	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
 

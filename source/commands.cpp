@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  commands.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1998 - 2001 by Marcus Rating (Cironian)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 
 #include "uox3.h"
 #include "debug.h"
@@ -39,7 +39,7 @@ static inline void _do_target(int s, TARGET_S *ts) {
 
 /* extensively modified 8/2/99 crackerjack@crackerjack.net -
  * see cmdtable.cpp for more details */
-void cCommands::Command(int s) // Client entred a command like 'ADD
+void cCommands::Command( UOXSOCKET s ) // Client entered a command like 'ADD
 {
 
 	int i=9;
@@ -609,31 +609,26 @@ void cCommands::KillSpawn(int s, int r)  //courtesy of Revana
 void cCommands::RegSpawnMax (int s, int r)
 {
 	int i;
-	unsigned int currenttime=uiCurrentTime;
+	unsigned int currenttime = uiCurrentTime;
 	
-	int spawn = (spawnregion[r].max-spawnregion[r].current);
-	if (spawn > 250)
+	int spawn = ( spawnregion[r].max - spawnregion[r].current );
+	if( spawn > 250 )
 	{
-		sysmessage(s, "Attempt to spawn more than 250 items/NPCs denied.  Spawning 250 instead.");
+		sysmessage( s, "Attempt to spawn more than 250 items/NPCs denied.  Spawning 250 instead." );
 		spawn = 250;
 	}
-  //  EviLDeD - February 24, 2000
-  //  Memory Cleanup - You think that allocating memory then not freeing
-  //  it then allocating over it cleans up space? NOT!! Bwhaahhahahahahh
-  
-  //  knox - and how about not allocating it in first place :o), * WE ALL LIVE IN A YELLOW STACK * umm submarine
-	char temps[650];  //  Adusted to 650 due to possible size of spawnregion[].name being 512 bytes
-	sprintf(temps, "Region %s [%d] is Spawning %d items/NPCs, this will cause some lag.", spawnregion[r].name, r, spawn);
-	sysbroadcast(temps);
+	char temps[650];
+	sprintf( temps, "Region %s [%d] is Spawning %d items/NPCs, this will cause some lag.", spawnregion[r].name, r, spawn );
+	sysbroadcast( temps );
 
-    for(i=1;i<spawn;i++)
+	for( i = 1; i < spawn; i++ )
 	{
-	  doregionspawn(r);
+		doregionspawn(r);
 	}	
 	
-	spawnregion[r].nexttime=(int) (currenttime+(CLOCKS_PER_SEC*60*RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime)));
-	sprintf(temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r);
-	sysmessage(s, temps);
+	spawnregion[r].nexttime = (int)( currenttime + ( CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
+	sprintf( temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r );
+	sysmessage( s, temps );
 }
 
 void cCommands::RegSpawnNum (int s, int r, int n)
@@ -641,46 +636,48 @@ void cCommands::RegSpawnNum (int s, int r, int n)
 	int i, spawn=0;
 	unsigned int currenttime=uiCurrentTime;
 	char temps[650];
-	if (n > 250)
+	if( n > 250 )
 	{
-		sysmessage(s, "Attempt to spawn more than 250 items/NPCs denied.  Try /REGSPAWN r n<250 instead.");
+		sysmessage( s, "Attempt to spawn more than 250 items/NPCs denied.  Try /REGSPAWN r n<250 instead." );
 		return;
 	}//if
 	else
 	{
 		spawn = (spawnregion[r].max-spawnregion[r].current);
-		if (spawn < n) 
+		if( spawn < n ) 
 		{
-			sprintf(temps, "%d too many for region %s [%d], spawning %d to reach MAX:%d instead.",n, spawnregion[r].name, r, spawn, spawnregion[r].max);
-			sysmessage(s, temps);
+			sprintf( temps, "%d too many for region %s [%d], spawning %d to reach MAX:%d instead.",n, spawnregion[r].name, r, spawn, spawnregion[r].max );
+			sysmessage( s, temps );
 		}
-		else spawn = n;
-		sprintf(temps, "Region %s [%d] is Spawning: %d NPCs/items, this will cause some lag.", spawnregion[r].name, r, spawn);
-		sysbroadcast(temps);
-		for(i=1;i<spawn;i++)
+		else 
+			spawn = n;
+		sprintf( temps, "Region %s [%d] is Spawning: %d NPCs/items, this will cause some lag.", spawnregion[r].name, r, spawn );
+		sysbroadcast( temps );
+
+		for( i = 1; i < spawn; i++ )
 		{
-			doregionspawn(r);
-		}//for	
+			doregionspawn( r );
+		}
 	
-		spawnregion[r].nexttime = (int) (currenttime+(CLOCKS_PER_SEC * 60 * RandomNum(spawnregion[r].mintime,spawnregion[r].maxtime)));
-		sprintf(temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r);
-		sysmessage(s, temps);
+		spawnregion[r].nexttime = (int)( currenttime + ( CLOCKS_PER_SEC * 60 * RandomNum( spawnregion[r].mintime, spawnregion[r].maxtime ) ) );
+		sprintf( temps, "Done. %d total NPCs/items spawned in Spawnregion %s [%d].",spawn, spawnregion[r].name, r );
+		sysmessage( s, temps );
 	}
 }//regspawnnum
 
 void cCommands::KillAll(int s, int percent, unsigned char* sysmsg)
 {
-	sysmessage(s,"Killing all characters, this may cause some lag...");
-	sysbroadcast( (char *)sysmsg);
-	for (int i=0; i < charcount; i++)
+	sysmessage( s, "Killing all characters, this may cause some lag..." );
+	sysbroadcast( (char *)sysmsg );
+	for( int i = 0; i < charcount; i++ )
 	{
-		if(!(chars[i].priv&1))
+		if( !( chars[i].priv&1 ) )
 		{
-			if(rand()%100+1<=percent)
+			if( rand()%100 + 1 <= percent )
 			{
-				bolteffect(i);
-				soundeffect2(i, 0x00, 0x29);
-				deathstuff(i);
+				bolteffect( i );
+				soundeffect2( i, 0x00, 0x29 );
+				deathstuff( i );
 			}
 		}
 	}

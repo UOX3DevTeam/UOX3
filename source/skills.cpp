@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  skills.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,9 +22,8 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-	/* 
+//------------------------------------------------------------------------
+/* 
 *  UOX3 Skills
 */
 
@@ -413,7 +412,7 @@ void cSkills::Carpentry(int s)
 //| Purpose     - Rewritten to use switch, You'll find it is easier to make 
 //|               it scriptable now
 //o--------------------------------------------------------------------------
-void cSkills::Smith(int s)
+void cSkills::Smith( UOXSOCKET s )
 {
 	int i, packnum;
 	int realID = 0, realColour = 0;
@@ -737,7 +736,6 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 	int tmpneed = 0;
 	int amt = 0;
 	int btmp = 0;
-	//chars[currchar[s]].making=0;
 	if( chars[currchar[s]].making!= 999 )	// when using /add and a door, skill was 1755
 		chkskill=Skills->CheckSkill( currchar[s], skill, itemmake[s].minskill, itemmake[s].maxskill );
 	if(chars[currchar[s]].making==999) {}
@@ -1122,7 +1120,7 @@ void cSkills::Mine(int s)
 {
 	bool floor = false;
 	bool mountain = false;
-	static unsigned int oretime[610][410];//610 and 410 were 1000 in LB release //times can be unsigned
+	static unsigned int oretime[610][410];//610 and 410 were 1000 in LB release
 	static short int oreamount[610][410];//for now i'll put zippy values
 	unsigned char targetID1, targetID2;
 	short int targetX, targetY;
@@ -1146,7 +1144,7 @@ void cSkills::Mine(int s)
 			for( gridY = 1; gridY < 410; gridY++ )
 	 		{
 				oreamount[gridX][gridY] = resource.ore;
-				oretime[gridX][gridY] = (unsigned int) (uiCurrentTime + resource.oretime * CLOCKS_PER_SEC);
+				oretime[gridX][gridY] = (unsigned int)( uiCurrentTime + resource.oretime * CLOCKS_PER_SEC );
 			}
 		}
 	}
@@ -1255,7 +1253,7 @@ void cSkills::Mine(int s)
 			else
 				break;
 		}
-		oretime[oreX][oreY] = (unsigned int) (uiCurrentTime + resource.oretime * CLOCKS_PER_SEC);	// reset ore regen timer
+		oretime[oreX][oreY] = (unsigned int)(uiCurrentTime + resource.oretime * CLOCKS_PER_SEC);	// reset ore regen timer
 	}
 	
 	if( oreamount[oreX][oreY] > resource.ore )	// if there's too much ore, then put a ceiling on it
@@ -1289,7 +1287,7 @@ void cSkills::Mine(int s)
 		unsigned char chanceFindBigOre = RandomNum( 0, 20 );	// pick random num from 0-20
 		chanceFindingColoured = RandomNum( 0, 100 );			// chance of finding coloured ore
 		unsigned short int playersSkill = chars[currchar[s]].skill[MINING];
-		playersSkill += (unsigned short int) Races->getDamageFromSkill( MINING, chars[currchar[s]].race );	// remember we could be exceptional miners!
+		playersSkill += (unsigned short int)Races->getDamageFromSkill( MINING, chars[currchar[s]].race );	// remember we could be exceptional miners!
 		
 		//  Cork  - Unknown
 		//  If mining skill is lower than 65 can only mine iron ore
@@ -1660,7 +1658,7 @@ void cSkills::SmeltOre( UOXSOCKET s )
 				if( miningstuff.foreign )	// if not iron, generally
 				{
 					short int playersSkill = chars[chr].skill[MINING];
-					playersSkill += (short int) Races->getDamageFromSkill( MINING, chars[chr].race );	// apply racial skill bonus
+					playersSkill += (short int)Races->getDamageFromSkill( MINING, chars[chr].race );	// apply racial skill bonus
 					if( playersSkill < miningstuff.minSkill )
 					{
 						sysmessage( s, "You have no idea what to do with this strange ore" );
@@ -1996,8 +1994,8 @@ void cSkills::TreeTarget(int s)
 		{
 			for(b=1;b<410;b++)
 			{
-				logamount[a][b] = resource.logs;
-				logtime[a][b] = (unsigned int) (curtime + resource.logtime * CLOCKS_PER_SEC);
+				logamount[a][b]=resource.logs;
+				logtime[a][b] = (unsigned int)( curtime + resource.logtime * CLOCKS_PER_SEC );
 			}
 		}
 		printf(" Done.\n");
@@ -2010,16 +2008,14 @@ void cSkills::TreeTarget(int s)
 	py = ((buffer[s][0x0d]<<8) + (buffer[s][0x0e]%256 ));
 	cx = abs( chars[currchar[s]].x - px );
 	cy = abs( chars[currchar[s]].y - py );
-	if(!((cx<=5)&&(cy<=5)))
+	if( cx >= 3 || cy >= 3 )
 	{
 		sysmessage( s, "You are too far away to reach that" );
 		return;
 	}
 	
-	//a=chars[currchar[s]].x/10;
-	//b=chars[currchar[s]].y/10;
-	a=chars[currchar[s]].x/resource.logarea; //Zippy
-	b=chars[currchar[s]].y/resource.logarea;
+	a = chars[currchar[s]].x / resource.logarea; //Zippy
+	b = chars[currchar[s]].y / resource.logarea;
 	
 	
 	if(a>=610 || b>=410 ) return; // wih the previous a < 20 || b < 20, wind may not have worked right, as well as some dungeons
@@ -2035,7 +2031,7 @@ void cSkills::TreeTarget(int s)
 				logamount[a][b]++;
 			else break;
 		}
-		logtime[a][b] = (unsigned int) (curtime + resource.logtime * CLOCKS_PER_SEC);//10 more mins
+		logtime[a][b] = (unsigned int)( curtime + resource.logtime * CLOCKS_PER_SEC );//10 more mins
 	}
 	
 	if(logamount[a][b]>resource.logs) logamount[a][b]=resource.logs;
@@ -2235,7 +2231,7 @@ void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 	}
 }
 
-void cSkills::PlayInstrumentPoor(int s, int i)
+void cSkills::PlayInstrumentPoor( UOXSOCKET s, int i)
 {
 	switch( items[i].id2 )
 	{
@@ -3469,12 +3465,6 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	if(!Skills->CheckSkill(currchar[s],SPIRITSPEAK, 0, 1000))
 	{
 		sysmessage(s,"You fail your attempt at contacting the netherworld.");
-		
-		// if they try again and fail should that set the current spiritspeaktimer counter? 
-		// This may pervent people from macroing the skill and force people to wait until it is done to attempt again.....
-		
-		//  chars[i].spiritspeaktimer=0;
-		
 		return;
 	}
 	
@@ -3482,11 +3472,7 @@ void cSkills::SpiritSpeak(int s)  // spirit speak time, on a base of 30 seconds 
 	soundeffect(s,0x02,0x4A); // only get the sound if you are successful
 	sysmessage(s,"You establish a connection to the netherworld.");
 	
-	//chars[currchar[s]].spiritspeaktimer=spiritspeak_data.spiritspeaktimer+chars[currchar[s]].skill[SPIRITSPEAK]/50+chars[currchar[s]].in; // spirit speak duration
-	//modified by AntiChrist
-	chars[currchar[s]].spiritspeaktimer = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in)); // spirit speak duration
-	//	chars[currchar[s]].spiritspeaktimer = uiCurrentTime + CLOCKS_PER_SEC * 5;
-	// care to make up your mind on which to use??? I chose the more complex one (Abaddon)
+	chars[currchar[s]].spiritspeaktimer = (unsigned int)(uiCurrentTime + CLOCKS_PER_SEC * ( spiritspeak_data.spiritspeaktimer + chars[currchar[s]].skill[SPIRITSPEAK] / 10 + chars[currchar[s]].in ) ); // spirit speak duration
 }
 
 void cSkills::ArmsLoreTarget(int s)
@@ -3817,7 +3803,7 @@ void cSkills::TameTarget(int s)
 	i=findbyserial(&charsp[serial%HASHMAX], serial, 1);
 	if(buffer[s][7]==0xFF) return;
 	if (i!=-1)
-		if ((chars[i].npc==1 && (chardist(currchar[s], i ) <= 3 ) ) )
+		if ((chars[i].npc==1 && (chardist(currchar[s], i ) <= 4 ) ) )
 		{
 			if (chars[i].taming>1000||chars[i].taming==0)//Morrolan default is now no tame
 			{
@@ -3863,6 +3849,8 @@ void cSkills::TameTarget(int s)
 			chars[i].npcaitype=0;
 			chars[i].tamed = true;
 		}
+		if( chars[i].npc == 1 && chardist( currchar[s], i ) > 4 )
+			sysmessage( s, "Creature is too far away!" );
 		if (tamed==0) sysmessage(s,"You can't tame that!");
 }
 
@@ -3948,29 +3936,63 @@ void cSkills::FishTarget(int s)
 
 void cSkills::Fish(unsigned int i)
 {
-	int c;
 	unsigned char idnum = 0xCF;
 	int s = calcSocketFromChar( i );
 	if( !CheckSkill( i, FISHING, 0, 1000 ) ) 
 	{
-		sysmessage( s, "You fish for a while, but fail to catch anything." );
+		sysmessage( s, "You failed to catch anything!" );
 		return;
 	}
 	int randomID;
 	randomID = rand()%4;
 	idnum = 0xCC + randomID;
-	
-	c = Items->SpawnItem( s, 1, "#", 0, 0x09, idnum, 0, 0, 0, 0 );
-	if( c == -1 ) return;
-	mapRegions->RemoveItem(c);		// we remove it before moving it!
-	items[c].type = 0;
-	items[c].x = chars[i].x;
-	items[c].y = chars[i].y;
-	items[c].z = chars[i].z;
-    mapRegions->AddItem(c); // lord Binary
-	
-	RefreshItem( c ); // AntiChrist
-	sysmessage( s, "You pull out a nice fish!" );
+	int nRandnum = RandomNum( 0, 25 );
+	unsigned short playersSkill = chars[i].skill[FISHING];
+	int nAmount;
+	switch( nRandnum )
+	{
+	case 1:
+		if( playersSkill > 920 )
+		{
+			SpawnRandomItem( s, 1, "necro.scp", "ITEMLIST", "1" );	// random paintings
+			sysmessage( s, "You fished up an ancient painting!" );
+		}
+		break;
+	case 2:
+		if( playersSkill > 970 )
+		{
+			SpawnRandomItem( s, 1, "necro.scp", "ITEMLIST", "2" );	// Some new weapons
+			sysmessage( s, "You fished up a weapon!" );
+		}
+		break;
+	case 3:	// Random gold and gems
+		nRandnum = RandomNum( 0, 12 );
+		if( nRandnum )
+		{
+			SpawnRandomItem( s, 1, "necro.scp", "ITEMLIST", "3" ); 
+			sysmessage( s, "You fished up a gem." );
+		}
+		else
+		{	// Create between 200 and 1300 gold
+			nAmount = RandomNum( 200, 1300 );
+			addgold( s, nAmount );
+			goldsfx( s, nAmount );
+			sprintf( temp, "You fished up %i gold coins!", nAmount );
+			sysmessage( s, temp );
+		}
+		break;
+	case 4:
+		if( playersSkill > 850 )
+		{
+			SpawnRandomItem( s, 1, "necro.scp", "ITEMLIST", "4" );	// Random bones and crap
+			sysmessage( s, "You fished up some flotsam!" );
+		}
+		break;
+	default:
+		SpawnRandomItem( s, 1, "necro.scp", "ITEMLIST", "5" );	// User defined fish
+		sysmessage( s, "You pulled out a pretty good size fish!" );
+		break;
+	}
 }
 
 int cSkills::GetCombatSkill(int i)
@@ -4104,7 +4126,7 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 		updatechar(currchar[s]);
 	}
 	breakConcentration( currchar[s], s );
-	if( chars[currchar[s]].spellCast && ( chars[currchar[s]].casting == -1 || chars[currchar[s]].casting == 1))
+	if( chars[currchar[s]].spellCast && ( chars[currchar[s]].casting == -1 || chars[currchar[s]].casting == 1 ) )
 	{
 		sysmessage( s, "You can't do that while you are casting" );
 		return;
@@ -4114,57 +4136,57 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	{
    case ARMSLORE:
 	   target(s, 0, 1, 0, 29, "What item do you wish to get information about?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case ANATOMY:
 	   target(s, 0, 1, 0, 37, "Whom shall I examine?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case ITEMID:
 	   target(s, 0, 1, 0, 40, "What do you wish to appraise and identify?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case EVALUATINGINTEL:
 	   target(s, 0, 1, 0, 41, "What would you like to evaluate?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case TAMING:
 	   target(s, 0, 1, 0, 42, "Tame which animal?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case HIDING:
 	   Skills->Hide(s);
-	   chars[currchar[s]].skilldelay = uiCurrentTime+ (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case STEALTH:
 	   Skills->Stealth(s);
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case DETECTINGHIDDEN:
 	   target(s, 0, 1, 0, 77, "Where do you wish to search for hidden characters?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case PEACEMAKING:
 	   Skills->PeaceMaking(s);
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case PROVOCATION:
 	   target(s, 0, 1, 0, 79, "Whom do you wish to incite?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case ENTICEMENT:
 	   target(s, 0, 1, 0, 81, "Whom do you wish to entice?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case SPIRITSPEAK:
 	   Skills->SpiritSpeak(s);
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case STEALING:
 	   if (server_data.rogue)
 	   {
 		   target(s,0,1,0,205, "What do you wish to steal?");
-		   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 		   return;
 	   } else {
 		   sysmessage(s, "Contact your shard operator if you want stealing available.");
@@ -4172,33 +4194,33 @@ void cSkills::SkillUse(int s, int x) // Skill is clicked on the skill list
 	   }
    case INSCRIPTION:
 	   target(s, 0, 1, 0, 160, "What do you wish to place a spell on?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case TRACKING:
 	   Skills->TrackingMenu(s,TRACKINGMENUOFFSET);
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case BEGGING:
 	   target(s, 0, 1, 0, 152, "Whom do you wish to annoy?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case ANIMALLORE:
 	   target(s, 0, 1, 0, 153, "What animal do you wish to get information about?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case FORENSICS:
 	   target(s, 0, 1, 0, 154, "What corpse do you want to examine?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case POISONING:
 	   target(s, 0, 1, 0, 155, "What poison do you want to apply?");
-	   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+	   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   return;
    case MEDITATION:  //Morrolan - Meditation
 	   if(server_data.armoraffectmana)
 	   {
 		   Skills->Meditation(s);
-		   chars[currchar[s]].skilldelay = uiCurrentTime + (server_data.skilldelay * CLOCKS_PER_SEC);
+		   chars[currchar[s]].skilldelay=uiCurrentTime+(server_data.skilldelay*CLOCKS_PER_SEC);
 	   }
 	   else sysmessage(s, "Meditation is turned off.  Tell your GM to enable ARMOR_AFFECT_MANA_REGEN in server.scp to enable it.");
 	   return;
@@ -4216,7 +4238,7 @@ void cSkills::RandomSteal(int s)
 	char temp2[512];
 	tile_st tile;
 	
-	serial = calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
+	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	npc=findbyserial(&charsp[serial%HASHMAX], serial,1);
 	if (npc==-1) return;
 	p=packitem(npc);
@@ -4472,9 +4494,9 @@ void cSkills::StealingTarget(int s)
 void cSkills::Tracking(int s,int selection)
 {
 	int i = currchar[s];
-	chars[i].trackingtarget=chars[i].trackingtargets[selection]; // sets trackingtarget that was selected in the gump
-	chars[i].trackingtimer = ((((tracking_data.basetimer*chars[i].skill[TRACKING])/1000)+1)*CLOCKS_PER_SEC) + uiCurrentTime; // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
-	chars[i].trackingdisplaytimer = (unsigned int) (tracking_data.redisplaytime * CLOCKS_PER_SEC + uiCurrentTime);
+	chars[i].trackingtarget = chars[i].trackingtargets[selection]; // sets trackingtarget that was selected in the gump
+	chars[i].trackingtimer = ((((tracking_data.basetimer*chars[i].skill[TRACKING])/1000)+1)*CLOCKS_PER_SEC)+uiCurrentTime; // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
+	chars[i].trackingdisplaytimer = (unsigned int)( tracking_data.redisplaytime * CLOCKS_PER_SEC + uiCurrentTime );
 	sprintf(temp,"You are now tracking %s.",chars[chars[i].trackingtarget].name);
 	sysmessage(s,temp);
 	Skills->Track(i);
@@ -4745,10 +4767,10 @@ void cSkills::Track(int i)
 	unsigned char arrow[7];
 	arrow[0]=0xBA;
 	arrow[1]=1;
-	arrow[2]=(unsigned char) (chars[chars[i].trackingtarget].x-1)>>8;
-	arrow[3]=(unsigned char) (chars[chars[i].trackingtarget].x-1)%256;
-	arrow[4]=(unsigned char) chars[chars[i].trackingtarget].y>>8;
-	arrow[5]=(unsigned char) chars[chars[i].trackingtarget].y%256;
+	arrow[2] = (unsigned char)(chars[chars[i].trackingtarget].x-1)>>8;
+	arrow[3] = (unsigned char)(chars[chars[i].trackingtarget].x-1)%256;
+	arrow[4] = (unsigned char)chars[chars[i].trackingtarget].y>>8;
+	arrow[5] = (unsigned char)chars[chars[i].trackingtarget].y%256;
 	Network->xSend(s, arrow, 6, 0);
 #endif
 }

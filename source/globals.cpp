@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  globals.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 // Global Variables
 
 #include "uox3.h"
@@ -104,7 +103,7 @@ bool firstpacket[MAXCLIENT];
 long idleTimeout[MAXCLIENT];
 
 unsigned int polyduration=90;
-short int gatex[MAXGATES][2], gatey[MAXGATES][2];
+short int gatex[MAXGATES][2],gatey[MAXGATES][2];
 signed char gatez[MAXGATES][2];
 int gatecount=0;
 int totalspawnregions=0;

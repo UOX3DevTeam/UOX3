@@ -1,29 +1,31 @@
-/* This File is part of UOX3
-   Ultima Offline eXperiment III
-   UO Server Emulation Program
-  
-   Copyright 1997 - 2001 by Marcus Rating (Cironian)
+/*
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+  Ultima Offline eXperiment III (UOX3)
+  UO Server Emulation Program
+  
+	Copyright 1997 - 2001 by Marcus Rating (Cironian)
+	
+	  This program is free software; you can redistribute it and/or modify
+	  it under the terms of the GNU General Public License as published by
+	  the Free Software Foundation; either version 2 of the License, or
+	  (at your option) any later version.
 	  
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
 		
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-	  
-   * In addition to that license, if you are running this program or modified  *
-   * versions of it on a public system you HAVE TO make the complete source of *
-   * the version used by you available or provide people with a location to    *
-   * download it.                                                              *
+		  You should have received a copy of the GNU General Public License
+		  along with this program; if not, write to the Free Software
+		  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+		  
+			* In addition to that license, if you are running this program or modified  *
+			* versions of it on a public system you HAVE TO make the complete source of *
+			* the version used by you available or provide people with a location to    *
+			* download it.                                                              *
 			
-   You can contact the author by sending email to <cironian@stratics.com>     
+			  You can contact the author by sending email to <cironian@stratics.com>
+			  
 */
 #ifdef __LINUX__
 #include <errno.h>
@@ -196,8 +198,8 @@ int cl_getch( void )
 	}
 	// the wiered cluox getter.
 	unsigned char c = 0;
-	unsigned long bytes_written = 0; //Fixes L4 Warning
-	int asw = 0;  //Fixes L4 Warning
+	unsigned long bytes_written = 0;
+	int asw = 0;
 	if (!cluox_nopipe_fill) 
 	{
 		asw = WriteFile(cluox_stdin_writeback, &c, 1, &bytes_written, NULL);
@@ -586,9 +588,12 @@ void safeCopy(char *dest, const char *src, unsigned int maxLen)
 int online(CHARACTER c) // Is the player owning the character c online
 {
 	unsigned int i;
-
-	if( c == -1 || chars[c].npc ) return 0;		// invalid subscript stuff
-	else if (inworld[chars[c].account]==c) return 1;//Instalog
+	if( c == -1 ) 
+		return 0;		// invalid subscript stuff
+	else if( chars[c].npc ) 
+		return 0;
+	else if( inworld[chars[c].account] == c ) 
+		return 1;//Instalog
 	else 
 	{
 		for (i=0;i<now;i++) 
@@ -688,7 +693,7 @@ void loadcustomtitle() // for custom titles
 char *title1(CHARACTER p) // Paperdoll title for character p (1)
 {
 	int titlenum;
-    int x=chars[p].baseskill[bestskill(p)];
+  int x=chars[p].baseskill[bestskill(p)];
   
 	titlenum=0;
 	if (x>=300) titlenum=1;
@@ -838,17 +843,16 @@ char *title3(CHARACTER p) // Paperdoll title for character p (3)
 	
 	return fametitle;
 }
-void gcollect () // Remove items which were in deleted containers 
+void gcollect( void ) // Remove items which were in deleted containers 
 // remarks : Okay LB... I'll just keep re-writing it until someone shuts up.
 {
-//	int a,b,c,d,i,j, removed, rtotal=0, serial;
 	unsigned char a, b, c, d;
 	int j, removed, rtotal = 0, serial;
 	int idelete;
 	unsigned int i;
 	uiCurrentTime = 0;
 	
-	printf("Preforming Garbage Collection...");
+	printf( "Performing Garbage Collection...");
 	do
 	{
 		removed=0;
@@ -2457,7 +2461,6 @@ void action( UOXSOCKET s, int x) // Character does a certain action
 			Network->xSend( i, doact, 14, 0 );
 }
 
-
 void sysbroadcast( char *txt ) // System broadcast in bold text
 {
 	int tl, i;
@@ -2490,7 +2493,7 @@ void sysbroadcast( char *txt ) // System broadcast in bold text
 
 //char sysname[31]="System\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-void sysmessage(int s, char *txt, ...) // System message (In lower left corner)
+void __cdecl sysmessage(int s, char *txt, ...) // System message (In lower left corner)
 {
 	va_list argptr;
 	if(s==-1) return;
@@ -3546,7 +3549,6 @@ void teleport(int s) // Teleports character to its current set coordinates
 		goxyz[17]=chars[s].dir|0x80;
 		goxyz[18]=chars[s].dispz;
 		Network->xSend(k, goxyz, 19, 0);
-		//all_items(k);
 		Weight->NewCalc(s);  // Ison 2-20-99
 		statwindow(k, s);  // Ison 2-20-99
 		walksequence[k]=-1;
@@ -3562,12 +3564,7 @@ void teleport(int s) // Teleports character to its current set coordinates
 	}
 	if (k!=-1)
 	{
-		//for (i=0;i<charcount;i++)
-		//{ //Tauriel only send inrange people (walking takes care of out of view)
-		
-		//Char mapRegions
 		int	StartGrid=mapRegions->StartGrid(chars[s].x,chars[s].y);
-		//int getcell=mapRegions->GetCell(chars[s].x,chars[s].y);
 		
 		unsigned int increment=0;
 		for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
@@ -3587,7 +3584,7 @@ void teleport(int s) // Teleports character to its current set coordinates
 					if (mapitem!=-1 && mapitem>=1000000)
 					{
 						i=mapchar;
-						if ((chars[i].npc||online(i)||chars[s].priv&1)&&(s!=i)&&(inrange1p(s, i)))
+						if ((chars[i].npc||online(i)||chars[s].priv&1)&&(s!=i)&&(inrange1p(s, i) && server_data.showloggedoutpcs ))
 						{
 							impowncreate(k, i, 1);
 						}
@@ -3601,9 +3598,6 @@ void teleport(int s) // Teleports character to its current set coordinates
 				} while (mapitem!=-1);
 			}
 		}
-		
-//		if (perm[k]) dolight(k, worldcurlevel);	
-//		weather(k,0); 
 	}
 	
 	checkregion(s);
@@ -3975,8 +3969,6 @@ void explodeitem(int s, unsigned int nItem)
 
 // s: player socket, I: send bolt if it rains or not ?
 
-
-
 void skillwindow(int s) // Opens the skills list
 {
 	int i,k;
@@ -4255,7 +4247,6 @@ void tips(int s, int i) // Tip of the day window
 	}
 	closescript();
 }
-
 
 // Dupois - added doorsfx() to be used with dooruse()
 // Added Oct 8, 1998
@@ -4693,6 +4684,11 @@ void get_item(int s) // Client grabs an item
 			}
 		}
 	} // end of if i!=-1
+	if( i != -1 )
+	{
+		chars[currchar[s]].weight += ( items[i].amount * Weight->ItemWeight( i ) / 100 );
+		update = 1;
+	}
 	if (update) statwindow(s,currchar[s]);
 }
 
@@ -5592,8 +5588,11 @@ void startchar(int s) // Send character startup stuff to player
 	chars[currchar[s]].spiritspeaktimer=0;  // initially set spiritspeak timer to 0
 	
 	// Retain previous hidden status
-//	chars[currchar[s]].stealth = -1; // AntiChrist
-//	chars[currchar[s]].hidden = 0; // AntiChrist
+	if( !( chars[currchar[s]].priv&0x01 ) )
+	{
+		chars[currchar[s]].stealth = -1;
+		chars[currchar[s]].hidden = 0;
+	}
 	
 	Network->xSend(s, startup, 37, 0);
 	chars[currchar[s]].war=0;
@@ -6563,7 +6562,6 @@ void callguards( int p )
 		}
 	}
 }
-
 /*
 Unicode speech format
 byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
@@ -7649,10 +7647,6 @@ void doLightEffect(int i, int currenttime)
 		updatestats(i, 0);
 }
 
-
-
-
-
 //NEW LAGFIX ZIPPY CODE STARTS HERE -- AntiChrist merging codes -- (24/6/99)
 void genericCheck(int i, int currenttime)//Char mapRegions
 {
@@ -8112,7 +8106,6 @@ void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
 	
 }
 
-
 void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting and regeneration)
 {
 	//char zbuf[10];
@@ -8165,7 +8158,7 @@ void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting 
 					acctinuse[accountCheck] = 0;
 			}
 		}
-		accountFlush = (unsigned int) (speed.accountFlush * 60 * CLOCKS_PER_SEC + currenttime );
+		accountFlush = (unsigned int)( speed.accountFlush*60*CLOCKS_PER_SEC + currenttime );
 	}
 
 	for( signed int ij = now - 1; ij >= 0; ij-- )
@@ -8939,7 +8932,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				Network->Receive(s, 5, 1);
 				chars[currchar[s]].war=buffer[s][1];
 				chars[currchar[s]].targ=-1;
-				chars[currchar[s]].timeout = (SI32) (uiCurrentTime + CLOCKS_PER_SEC);
+				chars[currchar[s]].timeout = (SI32)(uiCurrentTime + CLOCKS_PER_SEC);
 				Network->xSend(s, buffer[s], 5, 0);
 				Movement->CombatWalk(currchar[s]);
 				dosocketmidi(s);
@@ -9270,7 +9263,7 @@ void start_glow( void )	// better to make an extra function cause in loaditem it
 
 
 //int realmain(int argc, char *argv[])
-int main(int argc, char *argv[])
+int __cdecl main(int argc, char *argv[])
 {
 	int i;
 	
@@ -9991,7 +9984,6 @@ int main(int argc, char *argv[])
 	
 	return( 0 );	
 }
-
 
 
 //o---------------------------------------------------------------------------o
@@ -10889,6 +10881,7 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	effect[3]=chars[source].ser2;
 	effect[4]=chars[source].ser3;
 	effect[5]=chars[source].ser4;
+
 	effect[10]=eff1;// Object id of the effect
 	effect[11]=eff2;
 	effect[12]=chars[source].x>>8;
@@ -10896,13 +10889,14 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	effect[14]=chars[source].y>>8;
 	effect[15]=chars[source].y%256;
 	effect[16]=chars[source].z;
-	effect[17]= (char) x>>8;
-	effect[18]= (char) x%256;
-	effect[19]= (char) y>>8;
-	effect[20]= (char) y%256;
+	effect[17] = (char)x>>8;
+	effect[18] = (char)x%256;
+	effect[19] = (char)y>>8;
+	effect[20] = (char)y%256;
 	effect[21]=z;
 	effect[22]=speed;
 	effect[23]=loop; // 0 is really long.  1 is the shortest.
+
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{   // - If in range of source person or destination position and online send effect
@@ -10994,7 +10988,7 @@ void doworldlight(void)
 }
 
 
-void telltime(int s)
+void telltime( UOXSOCKET s )
 {
 	char tstring[100];
 	char tstring2[100];
@@ -11881,13 +11875,13 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 			if( dest == source )
 				toAdd.expiretime = uiCurrentTime + ( 13 * CLOCKS_PER_SEC ) + ( ( 5 - RandomNum( 0, chars[source].skill[HEALING] / 200 ) ) * CLOCKS_PER_SEC );
 			else
-				toAdd.expiretime = uiCurrentTime + (4 * CLOCKS_PER_SEC) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
+				toAdd.expiretime = uiCurrentTime + ( 4 * CLOCKS_PER_SEC ) + ( ( 3 - RandomNum( 0, chars[source].skill[HEALING] / 333 ) ) * CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to heal %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
 		else if( num == 23 )
 		{
-			toAdd.expiretime = uiCurrentTime + (15 * CLOCKS_PER_SEC);
+			toAdd.expiretime = uiCurrentTime + ( 15 * CLOCKS_PER_SEC );
 			sprintf( temp, "*%s begins to resurrect %s*", chars[source].name, chars[dest].name );
 			npcemoteall( source, temp, 1 );
 		}
@@ -11910,7 +11904,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		chars[dest].usepotion = 1;
 		break;
 	case 26:
-		toAdd.expiretime = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * combat.explodeDelay);
+		toAdd.expiretime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * combat.explodeDelay);
 		toAdd.num = 26;
 		toAdd.more1 = more1;
 		break;
@@ -11937,7 +11931,7 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 	switch (num)
 	{
 	case 10:
-		toAdd.expiretime = (unsigned int) (uiCurrentTime + (12 * CLOCKS_PER_SEC));
+		toAdd.expiretime = (unsigned int)(uiCurrentTime+(12*CLOCKS_PER_SEC));
 		toAdd.dispellable=0;
 		toAdd.more1=more1;
 		toAdd.more2=more2;
@@ -11949,7 +11943,7 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 			items[dest].dooropen=0;
 			return 0;
 		}
-		toAdd.expiretime = uiCurrentTime + 10 * CLOCKS_PER_SEC;
+		toAdd.expiretime=uiCurrentTime + 10 * CLOCKS_PER_SEC;
 		toAdd.num=13;
 		toAdd.dispellable=0;
 		items[dest].dooropen=1;
@@ -12415,7 +12409,7 @@ void deathaction(int s, int x) // Character does a certain action
 	deathact[6] = items[x].ser2;
 	deathact[7] = items[x].ser3;
 	deathact[8] = items[x].ser4;
-	deathact[12] = (char) RandomNum( 0, 1 );	// 0 = backward, 1 = forward
+	deathact[12] = (char)RandomNum( 0, 1 );	// 0 = backward, 1 = forward
 	for( i = 0; i < now; i++ ) 
 		if( ( inrange1p( s, currchar[i] ) ) && ( perm[i] ) && ( currchar[i] != s ) ) 
 			Network->xSend( i, deathact, 13, 0 );
@@ -13075,7 +13069,7 @@ int response(int s)
 										chars[k].npcWander = 1;
 										
 										// Set the expire time if nobody excepts the quest
-										chars[k].summontimer = uiCurrentTime + (CLOCKS_PER_SEC * server_data.escortactiveexpire);
+										chars[k].summontimer = uiCurrentTime + ( CLOCKS_PER_SEC * server_data.escortactiveexpire );
 										
 										// Send out the rant about accepting the escort
 										sprintf(temp, "Lead on! Payment shall be made when we arrive at %s.", region[chars[k].questDestRegion].name);
@@ -13206,7 +13200,7 @@ int response(int s)
 			if (response1 || response2 || response3) //if the player wants to train
 			{
 				// Stop the NPC from moving for a minute while talking with the player
-				chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (60 * CLOCKS_PER_SEC));
+				chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( 60 * CLOCKS_PER_SEC ) );
 				unsigned int nChar=currchar[s];  //for the chars[] #
 				chars[nChar].trainer=-1; //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				for(i=0;i<ALLSKILLS;i++)
@@ -13828,7 +13822,7 @@ void responsevendor(int s) //Modified by AntiChrist
 				{
 					k=mapchar;
 					// Stop the NPC from moving for a minute while talking with the player
-					chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * 60));
+					chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
 					strcpy(search3,chars[k].name);
 					strupr(search3);
 					response3=(strstr( comm, search3));
@@ -13914,7 +13908,7 @@ void responsevendor(int s) //Modified by AntiChrist
 							abs(chars[currchar[s]].z-chars[k].z)<=5)
 						{
 							// Stop the NPC from moving for a minute while talking with the player
-							chars[k].npcmovetime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * 60));
+							chars[k].npcmovetime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * 60 ) );
 							//if (sellstuff(s, k)) k=charcount; //Morrolan bugfix
 							sellstuff(s, k);
 						}
@@ -14838,7 +14832,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 	case 6: // Poison Potion
 		if(chars[p].poisoned<items[i].morez) chars[p].poisoned=items[i].morez;
 		if(items[i].morez>4) items[i].morez=4;
-		chars[p].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer)); // lb, poison wear off timer setting
+		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime+(CLOCKS_PER_SEC*server_data.poisontimer)); // lb, poison wear off timer setting
 		impowncreate(calcSocketFromChar(p),p,1); //Lb, sends the green bar ! 
 		soundeffect2(p, 0x02, 0x46); //poison sound - SpaceDog
 		sysmessage(s, "You poisoned yourself! *sigh*"); //message -SpaceDog
@@ -15245,7 +15239,6 @@ void clearalltrades()
 void trademsg(int s)
 {
 	int cont1 = -1, cont2 = -1;
-	//printf("%x %x %x %x %x\n", buffer[s][3], buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
 	switch(buffer[s][3])
 	{
 	case 0://Start trade - Never happens, sent out by the server only.
@@ -15674,32 +15667,35 @@ void loadregions()//New -- Zippy spawn regions
 				else if (!(strcmp("GUARDED",script1)))
 				{
 					if( str2num(script2) ) 
-						region[i].priv = (char) region[i].priv|0x01;   
+						region[i].priv |= 0x01;   
 				}
 				else if (!(strcmp("MAGICDAMAGE",script1)))
 				{
 					if( str2num(script2) ) 
-						region[i].priv = (char) region[i].priv|0x40;
+						region[i].priv |= 0x40;
 				}
 				else if (!(strcmp("MARK",script1)))
 				{
-					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x02;
+					if (str2num(script2)) 
+						region[i].priv |= 0x02;
 				}
 				else if (!(strcmp("GATE",script1)))
 				{
-					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x04;
+					if (str2num(script2)) 
+						region[i].priv |= 0x04;
 				}
 				else if (!(strcmp("RECALL",script1)))
 				{
-					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x08;
+					if (str2num(script2)) 
+						region[i].priv |= 0x08;
 				}
 				else if (!(strcmp("SNOWCHANCE", script1)))
 				{
-					region[i].snowchance = (char) str2num(script2);
+					region[i].snowchance = (char)str2num(script2);
 				}
 				else if (!(strcmp("RAINCHANCE", script1)))
 				{
-					region[i].rainchance = (char) str2num(script2);
+					region[i].rainchance = (char)str2num(script2);
 				}
 				else if(!(strcmp( "GOOD", script1 ) ) ) // Magius(CHE)
 				{
@@ -15751,7 +15747,7 @@ void loadregions()//New -- Zippy spawn regions
 				else if (!(strcmp("Y2", script1)))
 				{
 					location[l].y2=str2num(script2);
-					location[l].region = (char) i;
+					location[l].region = (char)i;
 					l++;
 				}
 				else if (!(strcmp("SPAWN", script1)))
@@ -15822,7 +15818,6 @@ char calcRegionFromXY(int x, int y)
 
 void checkregion(int i)
 {
-	
 	int calcreg, s, j;
 	
 	calcreg=calcRegionFromXY(chars[i].x, chars[i].y);
@@ -15877,7 +15872,7 @@ void checkregion(int i)
 				}
 			}
 		}
-		chars[i].region = (unsigned char) calcreg;
+		chars[i].region = (unsigned char)calcreg;
 		if( s != -1 )
 		{
 			dosocketmidi( s );
@@ -16499,10 +16494,10 @@ void loadserver( void )
 		else if(!(strcmp(script1,"OBJECTDELAY"))) server_data.objectdelay=str2num(script2);
 		else if(!(strcmp(script1,"GATETIMER"))) server_data.gatetimer=str2num(script2);
 		else if(!(strcmp(script1,"SHOWDEATHANIM"))) server_data.showdeathanim=str2num(script2);
-		else if(!(strcmp(script1,"GUARDSACTIVE"))) server_data.guardsactive = (unsigned char) str2num(script2);
+		else if(!(strcmp(script1,"GUARDSACTIVE"))) server_data.guardsactive = (unsigned char)str2num(script2);
 		//  EviLDeD  -  Server information token for toggling world save announcements on or off
 		//  December 27, 1998
-		else if(!(strcmp(script1,"ANNOUNCE_WORLDSAVES"))) server_data.announceworldsaves = (char) str2num(script2);
+		else if(!(strcmp(script1,"ANNOUNCE_WORLDSAVES"))) server_data.announceworldsaves = (char)str2num(script2);
 		//	February 10, 2000
 		else if(!(strcmp(script1,"WWWACCOUNTS"))) server_data.wwwaccounts=(strcmp(script2,"1")==0)?true:false;
 		//  EviLDeD  -  End
@@ -16639,13 +16634,13 @@ void loadtime_light()
 		else if(!(strcmp(script1,"AMPM"))) ampm=str2num(script2);
 		else if(!(strcmp(script1,"MOON1UPDATE"))) moon1update=str2num(script2);
 		else if(!(strcmp(script1,"MOON2UPDATE"))) moon2update=str2num(script2);
-		else if(!(strcmp(script1,"MOON1"))) moon1 = (char) str2num(script2);
-		else if(!(strcmp(script1,"MOON2"))) moon2 = (char) str2num(script2);
-		else if(!(strcmp(script1,"DUNGEONLIGHTLEVEL"))) dungeonlightlevel = (char) str2num(script2);
-		else if(!(strcmp(script1,"WORLDFIXEDLEVEL"))) worldfixedlevel = (char) str2num(script2);
-		else if(!(strcmp(script1,"WORLDCURLEVEL"))) worldcurlevel = (char) str2num(script2);
-		else if(!(strcmp(script1,"WORLDBRIGHTLEVEL"))) worldbrightlevel = (char) str2num(script2);
-		else if(!(strcmp(script1,"WORLDDARKLEVEL"))) worlddarklevel = (char) str2num(script2);
+		else if(!(strcmp(script1,"MOON1"))) moon1 = (char)str2num(script2);
+		else if(!(strcmp(script1,"MOON2"))) moon2 = (char)str2num(script2);
+		else if(!(strcmp(script1,"DUNGEONLIGHTLEVEL"))) dungeonlightlevel = (char)str2num(script2);
+		else if(!(strcmp(script1,"WORLDFIXEDLEVEL"))) worldfixedlevel = (char)str2num(script2);
+		else if(!(strcmp(script1,"WORLDCURLEVEL"))) worldcurlevel = (char)str2num(script2);
+		else if(!(strcmp(script1,"WORLDBRIGHTLEVEL"))) worldbrightlevel = (char)str2num(script2);
+		else if(!(strcmp(script1,"WORLDDARKLEVEL"))) worlddarklevel = (char)str2num(script2);
 		else if(!(strcmp(script1,"SECONDSPERUOMINUTE"))) secondsperuominute=str2num(script2);
 	}
 	while (strcmp(script1, "}"));
@@ -16822,12 +16817,12 @@ unsigned short int getstatskillvalue(char *stringguy) {
 	
 	strcpy(values, stringguy);
 	gettokennum(values, 0);
-	lovalue = (unsigned short int) str2num(gettokenstr);
+	lovalue = (unsigned short int)str2num(gettokenstr);
 	gettokennum(values, 1);
-	hivalue = (unsigned short int) str2num(gettokenstr);
+	hivalue = (unsigned short int)str2num(gettokenstr);
 	
 	if (hivalue) {
-		retcode = (unsigned short int) RandomNum(lovalue, hivalue);
+		retcode = (unsigned short int)RandomNum(lovalue, hivalue);
 	} else {
 		retcode = lovalue;
 	}
@@ -16999,8 +16994,8 @@ void advancementobjects(int s, int x, int allways)
 							packnum=packitem(s);
 							if (retitem>-1)
 							{
-								items[retitem].x=50+(rand()%80);
-								items[retitem].y=50+(rand()%80);
+								items[retitem].x = (short int)50+(rand()%80);
+								items[retitem].y = (short int)50+(rand()%80);
 								items[retitem].z=9;
 								if(items[retitem].layer==0x0b || items[retitem].layer==0x10)
 								{
@@ -17306,7 +17301,7 @@ void init_creatures(void) // assigns the basesound, soundflag, who_am_i flag of 
 	creatures[0x16].basesound = 0x0179;                               // Gazer
 	creatures[0x16].icon = 8436;
 	
-	creatures[0x18].basesound = 0x0200;                               // Lich
+	creatures[0x18].basesound = 0x019D;                               // Lich
 	creatures[0x18].icon = 8440;
 	
 	creatures[0x1a].basesound = 0x017E;                               // Shade, Spectre, Ghoul & Wraith
@@ -17368,7 +17363,7 @@ void init_creatures(void) // assigns the basesound, soundflag, who_am_i flag of 
 	creatures[0x33].basesound = 0x01C8;								// Slime	
     creatures[0x33].icon = 8424;
 
-	creatures[0x34].basesound = 0x00DB;								// Snake
+	creatures[0x34].basesound = 0x00DC;								// Snake
 	creatures[0x34].icon = 8446;
 
     creatures[0x35].basesound = 0x01CD;								// Troll with axe				
@@ -18035,9 +18030,9 @@ void monstergate(int s, int x)
 					if (retitem >-1)
 					{
 						setserial(retitem,mypack,1);
-						items[retitem].x = (short int) 50+(rand()%80);
-						items[retitem].y = (short int) 50+(rand()%80);
-						items[retitem].z=9;
+						items[retitem].x = (short int)50+(rand()%80);
+						items[retitem].y = (short int)50+(rand()%80);
+						items[retitem].z = 9;
 					}
 					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					
@@ -18080,12 +18075,12 @@ void monstergate(int s, int x)
 					gettokennum(script2, 0);
 					z=str2num(gettokenstr);
 					gettokennum(script2, 1);
-					chars[s].baseskill[z] = (unsigned short int) str2num(gettokenstr);
+					chars[s].baseskill[z] = (unsigned short int)str2num(gettokenstr);
 				}
 				else if(!(strncmp(script1, "SKILL", 5)))
 				{
 					z = str2num( &script1[5] );
-					chars[s].baseskill[z] = (unsigned short int) str2num( script2 );
+					chars[s].baseskill[z] = (unsigned short int)str2num( script2 );
 				}
 				else if ((!(strcmp("SNOOPING",script1)))||(!(strcmp("SKILL28",script1))))
 					chars[s].baseskill[SNOOPING] = getstatskillvalue(script2);
@@ -18430,7 +18425,7 @@ Look at uox3.h to see options. Works like npc magic.
 	*/
 	
 	int a, b;     //  Lengths of sides a & b
-	int /*xcheck=x1, ycheck=y1, */zcheck=z1, prexcheck=-128, preycheck=-128, prezcheck=-128;
+	int zcheck=z1, prexcheck=-128, preycheck=-128, prezcheck=-128;
 	short int xcheck = x1, ycheck = y1;
 	double c;      //  Length of side c,  Line of sight
 	int asquared, bsquared, csquared;  // Squares of a, b, c
@@ -18454,8 +18449,10 @@ Look at uox3.h to see options. Works like npc magic.
 	int itemtype;
 	/////item cahcing until item lookup is implimented
 	int loscachecount=0;
-	if( ( x1 <= 200 && y1<= 200 ) || ( x2 <= 200 && y2 <= 200 ) ) return not_blocked;
-	if( (abs(x1-x2)>18) || (abs(y1-y2)>18)) return blocked;
+	if( ( x1 <= 200 && y1<= 200 ) || ( x2 <= 200 && y2 <= 200 ) ) 
+		return not_blocked;
+	if( ( abs( x1 - x2 ) > 18 ) || ( abs( y1 - y2 ) > 18 ) ) 
+		return blocked;
 	///////////////////////////////////////////////////////////
 	/////////////////  These next lines initialize arrays
 	/*
@@ -18478,14 +18475,11 @@ Look at uox3.h to see options. Works like npc magic.
 			int mapitemptr=-1;
 			do //check all items in this cell
 			{
-				//			mapitem=mapRegions->GetNextItem(checkgrid+i, mapitem);
 				mapitemptr=mapRegions->GetNextItem(checkgrid+i, mapitemptr);
 				if (mapitemptr==-1) break;
 				mapitem=mapRegions->GetItem(checkgrid+i, mapitemptr);
 				if (mapitem!=-1 && mapitem<1000000)
 				{
-					//					for (i=0;i<itemcount;i++)//  LoS Cache
-					//					{
 					if (
 						(items[mapitem].x<= x1 +20)&& 
 						(items[mapitem].x>= x1 -20)&&
@@ -18500,22 +18494,8 @@ Look at uox3.h to see options. Works like npc magic.
 				}
 			} while (mapitemptr!=-1);
 		}
-		/* for (i=0;i<itemcount;i++)//  LoS Cache
-		{
-		if (
-		(items[i].x<= x1 +20)&& 
-		(items[i].x>= x1 -20)&&
-		(items[i].y<= y1 +20)&&
-		(items[i].y>= y1 -20)
-		)
-		{
-		loscache[loscachecount]=i;
-		loscachecount++;
-		}
- }*/
-		//for (i=0;i<itemcount;i++) itemids[i]=NULL; // Initializing
-		for  (i=0;i<ITEM_TYPE_CHOICES; i++) checkthis[i] = 0 ; //Null is for pointer types
-		//for (i=0;i<ITEM_TYPE_CHOICES;i++) checkthis[i]=NULL; // Initializing	(replace with a memcpy????  could be a lot quicker)
+		for ( i = 0; i < ITEM_TYPE_CHOICES; i++ ) 
+			checkthis[i] = 0 ; //Null is for pointer types
 		// Zippy moved ----^ to main for initalization.
 		
 		
@@ -18533,11 +18513,10 @@ Look at uox3.h to see options. Works like npc magic.
 		*
 		target
 		*/
-		
-        // knox - THIS CAN NEVER BE TRUE!, x2 any y2 have 32768 as maximum!!!
-		//         so i commented it out, hope it wasn't important %)
-        // if ((x2==65535) && (y2==65535))  return not_blocked;  // target cancled                
-        //
+
+		// Can't occur, outside scope of variable size
+//		if( x2 == 65535 && y2 == 65535 )  
+//			return not_blocked;  // target cancled
 		
 		
 		
@@ -18847,8 +18826,7 @@ Look at uox3.h to see options. Works like npc magic.
 int addrandomcolor(int s, char *colorlist)
 {
 	char sect[512];
-	int i,j,storeval = 0;
-	i=0; j=0;
+	int i = 0, j = 0, storeval = 0;
 	openscript("colors.scp");
 	sprintf(sect, "RANDOMCOLOR %s", colorlist);
 	if (!i_scripts[colors_script]->find(sect)) 
@@ -18899,8 +18877,8 @@ int addrandomcolor(int s, char *colorlist)
 int addrandomhaircolor(int s, char *colorlist)
 {
 	char sect[512];
-	int i,j,haircolor = 0;
-	i=0; j=0;
+	int i = 0, j = 0, haircolor = 0;
+
 	openscript("colors.scp");
 	sprintf(sect, "RANDOMCOLOR %s", colorlist);
 	if (!i_scripts[colors_script]->find(sect)) 
@@ -18952,7 +18930,7 @@ void criminal( CHARACTER c ) //Repsys
 {
 	if( !(chars[c].flag&0x02) )	// if we're not a criminal already
 	{
-		chars[c].crimflag = (int) ((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
+		chars[c].crimflag = (int)((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
 		sysmessage( calcSocketFromChar( c ), "You are now a criminal!" );
 		setcharflag( c );
 		if( (region[chars[c].region].priv&1) && server_data.guardsactive )//guarded
@@ -18960,7 +18938,7 @@ void criminal( CHARACTER c ) //Repsys
 	}
 	else	// they're already a criminal, and have done something MORE criminal
 	{	// let's update their flag, as another criminal act will reset the timer
-		chars[c].crimflag = (int) ((repsys.crimtime * CLOCKS_PER_SEC ) + uiCurrentTime);
+		chars[c].crimflag = (int)((repsys.crimtime * CLOCKS_PER_SEC ) + uiCurrentTime);
 		// check to see if there is a guard nearby, otherwise spawn us a new one
 		if( !(region[chars[c].region].priv&1) || !server_data.guardsactive )
 			return;
@@ -19358,8 +19336,6 @@ void playTileSound( UOXSOCKET s )
 	if( sndid1 != 0 && sndid2 != 0 )			// if we have a valid sound
 		soundeffect( s, sndid1, sndid2 );
 }
-
-
 bool IsInMenuList( int toCheck )
 // PRE:		TRUE
 // POST:	returns true if item is in menu list, otherwise returns false on all other conditions
@@ -19627,7 +19603,7 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 	items[c].y = chars[i].y;
 	items[c].z = chars[i].z;
 	
-	items[c].more1 = (unsigned char) nType;
+	items[c].more1 = (unsigned char)nType;
 	items[c].dir = chars[i].dir;
 	items[c].corpse = 1;
 	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
@@ -19682,8 +19658,8 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 									// I think the lack of this line below is the source of some of the vendor sell issues
 									contsp[serhash1].pointer[ci1] = -1;	// it's no longer in this container, it's now on the corpse!
 									setserial( k, c, 1 );
-									items[k].x = (short int) (20 + ( rand()%50 ));
-									items[k].y = (short int) (85 + ( rand()%75 ));
+									items[k].x = (short int)(20 + ( rand()%50 ));
+									items[k].y = (short int)(85 + ( rand()%75 ));
 									items[k].z = 9;
 									RefreshItem( k );
 								}
@@ -19915,4 +19891,3 @@ void UseHairDye( UOXSOCKET s, short int colour, int x )	// s for socket, colour 
 	}
 	Items->DeleItem( x );
 }
-

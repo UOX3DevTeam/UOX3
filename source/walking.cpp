@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  walking.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 // Thyme 2000.09.21
 // This is my attempt to rewriting the walking code. I'm going to take the code and documentation
 // that others before me have used and incorporate my little (big?) fixes and comments.
@@ -192,16 +192,16 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 		return;
 	}
 
-    UOXSOCKET socket = calcSocketFromChar(c);
+    UOXSOCKET socket = calcSocketFromChar( c );
     
-    if (!VerifySequence(c, socket, sequence))
+    if( !VerifySequence( c, socket, sequence ) )
         return;
 
 	// If checking for weight is more expensive, shouldn't we check for frozen first?
 	if( isFrozen( c, socket, sequence ) )
 		return;
     
-    if ( isOverloaded( c, socket, sequence ))
+    if( isOverloaded( c, socket, sequence ) )
         return;
     
     
@@ -674,11 +674,17 @@ bool cMovement::CheckForRunning(CHARACTER c, UOXSOCKET socket, int dir)
 		chars[c].regen2=uiCurrentTime+(server_data.staminarate*CLOCKS_PER_SEC);
 		chars[c].running++;
 		// if all these things
-		if(!chars[c].dead && !chars[c].onhorse && chars[c].running>(server_data.runningstaminasteps)*2)
-		{	//The *2 it's because i noticed that a step(animation) correspond to 2 walking calls
-			chars[c].running=0;
-			chars[c].stm--;
-			updatestats(c,2);
+		if( !chars[c].dead )
+		{
+			bool reduceStamina = ( chars[c].onhorse && chars[c].running > ( server_data.runningstaminasteps * 2 ) );
+			if( !reduceStamina )
+				reduceStamina = ( chars[c].running > ( server_data.runningstaminasteps * 4 ) );
+			if( reduceStamina )
+			{
+				chars[c].running = 0;
+				chars[c].stm--;
+				updatestats( c, 2 );
+			}
 		}
 		if( chars[c].war && chars[c].targ != -1 )
 		{
@@ -853,6 +859,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, unitile_st *xyblock, int &x
 							xyblock[xycount].type = 1;
 							xyblock[xycount].basez = items[mapitem].z;
 							xyblock[xycount].id = ( items[mapitem].id1<<8 ) + items[mapitem].id2;
+							// Potential thought.  NPCs don't automatically open doors anymore :(  Perhaps store the Index of the item in flag1->4?  Set up as a union, of course
 							xyblock[xycount].flag1 = tile.flag1;
 							xyblock[xycount].flag2 = tile.flag2;
 							xyblock[xycount].flag3 = tile.flag3;
@@ -970,8 +977,8 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 	const int visibleRange = Races->getVisRange( chars[c].race );
 	const int newx = chars[c].x;
 	const int newy = chars[c].y;
-	unsigned int i;
 
+	UOXSOCKET i;
 	for( i = 0; i < now; i++ )
 	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this
 		if ((perm[i]) && (inrange1p(c, currchar[i])))
@@ -995,7 +1002,7 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 				extmove[7] = chars[c].x>>8;
 				extmove[8] = chars[c].x%256;
 				extmove[9] = chars[c].y>>8;
-				extmove[10]= chars[c].y%256;
+				extmove[10]=chars[c].y%256;
 				extmove[11]=chars[c].dispz;
 				extmove[12]=dir;
 				extmove[13]=chars[c].skin1; //ripper, skin problems bugfix
@@ -1367,9 +1374,14 @@ void cMovement::CombatWalk(int s) // Only for switching to combat mode
             extmove[14]=chars[s].skin2;
             
             
-            if (chars[s].war) extmove[15]=0x40; else extmove[15]=0x00;
-            if (chars[s].hidden) extmove[15] = (char) extmove[15]|0x80;
-            if (chars[s].poisoned) extmove[15] = (char) extmove[15]|0x04; //AntiChrist -- thnx to SpaceDog
+            if( chars[s].war ) 
+				extmove[15] = 0x40; 
+			else 
+				extmove[15] = 0x00;
+            if( chars[s].hidden ) 
+				extmove[15] |= 0x80;
+            if( chars[s].poisoned ) 
+				extmove[15] |= 0x04; //AntiChrist -- thnx to SpaceDog
             const int guild = Guilds->Compare( s, currchar[i] );
             const int race=Races->Compare( s, currchar[i] );
             if (chars[s].kills > repsys.maxkills ) extmove[16]=6; // ripper
@@ -1410,19 +1422,30 @@ void cMovement::NpcWalk(CHARACTER i, int j, int type)   //type is npcwalk mode (
         ((2 == type) && ( chars[i].fx1 == -1 || chars[i].fx2 == -1 || chars[i].fy1 == -1)))
         // circle's don't use fy2, so don't require them! fur 10/30/1999
     {
-        //printf("Rect/circle error!\n" );
         chars[i].npcWander = 2; // Wander freely from now on
         type = 0;
     }
 	// Thyme New Stuff 2000.09.21
 	short int newx = GetXfromDir( j, chars[i].x );
 	short int newy = GetYfromDir( j, chars[i].y );
-	if (
-	    (!type)||
-	    ((type==1)&&(checkBoundingBox(newx, newy, chars[i].fx1, chars[i].fy1, chars[i].fz1, chars[i].fx2, chars[i].fy2)))||
-	    ((type==2)&&(checkBoundingCircle(newx, newy, chars[i].fx1, chars[i].fy1, chars[i].fz1, chars[i].fx2)))
-	   )
-		Walking(i, j & 0x87, 256); // arm code
+	// Let's make this a little more readable.
+	switch( type )
+	{
+	case 0:
+		Walking( i, (j & 0x87), 256 );
+		break;
+	case 1:
+		if( checkBoundingBox( newx, newy, chars[i].fx1, chars[i].fy1, chars[i].fz1, chars[i].fx2, chars[i].fy2 ) )
+			Walking( i, (j & 0x87), 256 );
+		break;
+	case 2:
+		if( checkBoundingCircle( newx, newy, chars[i].fx1, chars[i].fy1, chars[i].fz1, chars[i].fx2 ) )
+			Walking( i, (j & 0x87), 256 );
+		break;
+	default:
+		printf( "ERROR: Unknown NpcWalk %i\n", type );
+		break;
+	};
 }
 
 
@@ -1577,6 +1600,17 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
             {
                 if( chardist(i, l) > 1 /* || chardir(i, l)!=chars[i].dir // by Thyme: causes problems, will fix */)
                 {
+					if( Skills->GetCombatSkill( i ) == ARCHERY )
+					{
+						UOXSOCKET s1 = calcSocketFromChar( i ), s2 = calcSocketFromChar( l );
+						unsigned short los = line_of_sight( s1, chars[i].x, chars[i].y, chars[i].z, chars[l].x, chars[l].y, chars[l].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+						if( los == 1 )
+						{
+							chars[i].dir = chardirxyz( i, chars[l].x, chars[l].y, chars[l].z );
+							updatechar( i );
+							return;
+						}
+					}
                     if( online( l ) || chars[l].npc )
                     {
 						PathFind( i, chars[l].x, chars[l].y );
@@ -1668,8 +1702,8 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
 						else
 							yfactor = 1;
 
-					myx += (short int) ( xfactor * mydist );
-					myy += (short int) ( yfactor * mydist );
+					myx += (short int)( xfactor * mydist );
+					myy += (short int)( yfactor * mydist );
 
 					// now, got myx, myy... lets go.
 

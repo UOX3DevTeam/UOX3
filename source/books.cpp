@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  books.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 2000 - 2001 by Nikolaus Gerstmayr (Lord Binary)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 // Books class by Lord Binary 7'th December 1999
 // Implements writable books
 
@@ -730,7 +729,7 @@ char cBooks::make_new_book_file(char *fileName, int id)
   fclose(file);
   return 0;
 }
-
+ 
 void readbook(int s, int i, int p) // Book window
 {
 	int x, y, pos, j;
@@ -839,4 +838,4 @@ void openbook(int s, int i)
 	// Network->xSend(s, restart, 2, 0);
 	closescript();
 }
- 
+

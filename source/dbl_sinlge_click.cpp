@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  dbl_single_click.cpp
+//------------------------------------------------------------------------
+//  dbl_sinlge_click.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1998 - 2001 by Marcus Rating (Cironian)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
+
 #include "uox3.h"
 #include "debug.h"
 #include "cmdtable.h"
@@ -34,11 +35,8 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 {
 	unsigned char a1, a2, a3, a4;
 	int x, i, j, c, w = 0, k, keyboard, serial, z, y;
-//	char pdoll[67]="\x88\x00\x05\xA8\x90\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 	char pdoll[67]= {"\x88\x00\x05\xA8\x90", };	// knox: comma at end tells compiler to fill the rest with NULLs
-	// char map1[22]="\x33\x01\x90\x40\x01\x02\x03\x13\x9D\x04\x44\x05\x74\x06\xC8\x07\x84\x00\xC8\x00\xC8";
 	char map1[20]="\x90\x40\x01\x02\x03\x13\x9D\x00\x00\x00\x00\x13\xFF\x0F\xA0\x01\x90\x01\x90";
-//	char map2[12]="\x56\x40\x01\x02\x03\x05\x00\x00\x00\x00\x00";
 	char map2[12] = {"\x56\x40\x01\x02\x03\x05", };
 	int p = -1;
 	unsigned long int itemids;
@@ -185,13 +183,13 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			return;
 		}//char
 	}//End of Characters/NPCs Section
-	if( chars[currchar[s]].objectdelay >= uiCurrentTime || overflow )
+	if( ( chars[currchar[s]].objectdelay >= uiCurrentTime || overflow ) && !( chars[currchar[s]].priv&0x01 ) )
 	{
 		sysmessage( s, "You must wait to perform another action." );
 		return;
 	}
 	else
-		chars[currchar[s]].objectdelay = (unsigned int) (server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime);
+		chars[currchar[s]].objectdelay = (unsigned int)( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime );
 	
 	x = calcItemFromSer( serial );
 	//PlayerVendors
@@ -243,7 +241,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		// Begin Items/Guildstones Section 
 		itype=items[x].type;
 		itemids = (unsigned long int)items[x].id1 << 8;
-		itemids += (unsigned int) items[x].id2;
+		itemids += (unsigned int)items[x].id2;
 		if( itype == 16 )			// Check for 'resurrect item type' this is the ONLY type one can use if dead.
 		{
 			if (chars[currchar[s]].dead==1)
@@ -613,20 +611,19 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					break;
 				}//switch(chars[currchar[s]].hunger)
 				
-				if((items[x].poisoned)&&(chars[currchar[s]].poisoned<items[x].poisoned)) 
+				if( ( items[x].poisoned ) && ( chars[currchar[s]].poisoned < items[x].poisoned ) )
 				{
-					sysmessage(s,"You have been poisoned!");
-					soundeffect2(currchar[s], 0x02, 0x46); //poison sound - SpaceDog
-					chars[currchar[s]].poisoned=items[x].poisoned;
-					chars[currchar[s]].poisonwearofftime= (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer));
-					impowncreate(s,currchar[s],1); //Lb, sends the green bar ! 
+					sysmessage( s, "You have been poisoned!" );
+					soundeffect2( currchar[s], 0x02, 0x46 ); //poison sound - SpaceDog
+					chars[currchar[s]].poisoned = items[x].poisoned;
+					chars[currchar[s]].poisonwearofftime = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
+					impowncreate( s, currchar[s], 1 ); // sends the green bar
 				}
 				//Remove a food item
-				if (items[x].amount!=1)
+				if( items[x].amount != 1 )
 				{
 					items[x].amount--;
-					//for (j=0;j<now;j++) if (perm[j] && inrange2(j,x)) senditem(j,x);
-					RefreshItem(x); 
+					RefreshItem( x );
 				}
 				else
 				{
@@ -738,7 +735,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				return; // case Moongates
 			case 185: // let's smoke! :)
 				chars[currchar[s]].smoketimer = (items[x].morex * CLOCKS_PER_SEC + uiCurrentTime);
-				sysmessage(s,"You think you feel much better after you smoke... *cough* cough* *ughh*"); // knox, I simply couldn't resist modifing this :o)
+				sysmessage( s, "You feel much better after you smoke... *cough* *splutter*" );
 				Items->DeleItem( x );
 				return;
 			case 186: // rename deed! -- eagle 1/29/00
@@ -1182,13 +1179,12 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 							items[c].y=chars[currchar[s]].y;
 							items[c].z=chars[currchar[s]].z;
 						}
-						mapRegions->RemoveItem(c);
-						mapRegions->AddItem(c); // lord Binary
-						items[c].priv=items[c].priv|1;
-						items[c].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer * CLOCKS_PER_SEC));
-						//							for (k=0;k<now;k++) if (perm[k]) senditem(k,c);
-						RefreshItem( c ); 
-						Items->DeleItem(x);
+						mapRegions->RemoveItem( c );
+						mapRegions->AddItem( c );
+						items[c].priv |= 1;
+						items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
+						RefreshItem( c );
+						Items->DeleItem( x );
 					}
 					else
 					{

@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  admin.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 
 /* Admin code by Cironian */
 
@@ -104,8 +104,8 @@ void cAdmin::GumpAMenu(int s, int j)//Revana*
 		GumpAText(line, account);
 		if (script1[0]!='}')
 		{
-			gump3[0] = (char) strlen(script1)>>8;
-			gump3[1] = (char) strlen(script1)%256;
+			gump3[0] = (char)strlen(script1)>>8;
+			gump3[1] = (char)strlen(script1)%256;
 			Network->xSend(s, gump3, 2, 0);
 			gump3[0]=0;
 			for (i=0;i<strlen(script1);i++)

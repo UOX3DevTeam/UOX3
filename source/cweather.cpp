@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  cweather.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1999 - 2001 by Daniel Stratton (Abaddon)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 #include "uox3.h"
 
 cWeatherAb::cWeatherAb()
@@ -296,7 +295,6 @@ void cWeatherAb::setSnowThreshold( weathID toCheck, float value )
 	weather[toCheck].snowThreshold = value;
 }
 
-
 bool cWeatherAb::newDay( void )
 {
 	weathID currval;
@@ -440,13 +438,13 @@ bool cWeatherAb::doPlayerStuff( CHARACTER p )
 	{
 		doPlayerWeather( calcSocketFromChar( p ), 2 );
 		if( chars[p].weathDamage[SNOW] == 0 )
-			chars[p].weathDamage[SNOW] = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * ( Races->getSnowSecs( chars[p].race ) ) );
+			chars[p].weathDamage[SNOW] = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( Races->getSnowSecs( chars[p].race ) ) );
 	} 
 	else if( isRaining )
 	{
 		doPlayerWeather( calcSocketFromChar( p ), 1 );
 		if( chars[p].weathDamage[RAIN] == 0 )
-			chars[p].weathDamage[RAIN] = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * (Races->getRainSecs(chars[p].race)));
+			chars[p].weathDamage[RAIN] = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( Races->getRainSecs( chars[p].race ) ) );
 	}
 	else
 	{
@@ -478,24 +476,24 @@ void cWeatherAb::doPlayerWeather( UOXSOCKET s, unsigned char weathType )
 	{
 	case 0: 		break;
 	case 1:
-		raindroptime = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * ( 3 + rand() % 3 ));
+		raindroptime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( 3 + rand() % 3 ) );
 		Network->xSend(s, wrain, 4, 0);
 		break;
 	case 2:
-		if (rand()%2)
-			soundeffect2(currchar[s], 0x00, 0x14);
+		if( rand()%2 )
+			soundeffect2( currchar[s], 0x00, 0x14 );
 		else
-			soundeffect2(currchar[s], 0x00, 0x15);
-		Network->xSend(s, wsnow, 4, 0);
+			soundeffect2( currchar[s], 0x00, 0x15 );
+		Network->xSend( s, wsnow, 4, 0 );
 		break;
 	case 3:
-		raindroptime = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * (3 + rand() % 3));
-		Network->xSend(s, wrain, 4, 0);
-		if (rand()%2)
-			soundeffect2(currchar[s], 0x00, 0x14);
+		raindroptime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( 3 + rand() % 3 ) );
+		Network->xSend( s, wrain, 4, 0 );
+		if( rand()%2 )
+			soundeffect2( currchar[s], 0x00, 0x14 );
 		else
-			soundeffect2(currchar[s], 0x00, 0x15);
-		Network->xSend(s, wsnow, 4, 0);
+			soundeffect2( currchar[s], 0x00, 0x15 );
+		Network->xSend( s, wsnow, 4, 0 );
 		break;
 	default:		break;
 	}
@@ -541,7 +539,7 @@ void weather(int s, char bolt) // Send new weather to player
 			}
 		}
 		
-		raindroptime = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * (6 + rand() % 24));
+		raindroptime = (unsigned int)( uiCurrentTime + CLOCKS_PER_SEC * ( 6 + rand() % 24 ) );
 		Network->xSend(s, wrain, 4, 0);
 	}
 	if (wtype==2)
@@ -568,14 +566,14 @@ void doSnowEffect(int i, int currenttime)
 			{
 				sysmessage( calcSocketFromChar(i), "You are scalded by the intensity of the snow!" );
 				chars[i].hp -= Races->getSnowDamage( chars[i].race );
-				chars[i].weathDamage[SNOW] = (currenttime + CLOCKS_PER_SEC*Races->getSnowSecs(chars[i].race));
+				chars[i].weathDamage[SNOW] = (currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race ) );
 				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
 				soundeffect2(i, 0x02, 0x08);     
 				updatestats(i, 0);
 			}
 			else
 			{
-				chars[i].weathDamage[SNOW] = (currenttime + CLOCKS_PER_SEC*Races->getSnowSecs(chars[i].race));
+				chars[i].weathDamage[SNOW] = ( currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race ) );
 			}
 		}
 		else
@@ -595,14 +593,14 @@ void doRainEffect(int i, int currenttime)
 			{
 				sysmessage( calcSocketFromChar(i), "You are bruised by the pelting rain!" );
 				chars[i].hp -= Races->getRainDamage( chars[i].race );
-				chars[i].weathDamage[RAIN] = (currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race ) );
-				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
-				soundeffect2(i, 0x02, 0x08);     
-				updatestats(i, 0);
+				chars[i].weathDamage[RAIN] = ( currenttime + CLOCKS_PER_SEC * Races->getRainSecs( chars[i].race ) );
+				staticeffect( i, 0x37, 0x09, 0x09, 0x19 );
+				soundeffect2( i, 0x02, 0x08 );     
+				updatestats( i, 0 );
 			}
 			else
 			{
-				chars[i].weathDamage[RAIN] = (currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race ) );
+				chars[i].weathDamage[RAIN] = ( currenttime + CLOCKS_PER_SEC * Races->getRainSecs( chars[i].race ) );
 			}
 		}
 		else
@@ -611,3 +609,4 @@ void doRainEffect(int i, int currenttime)
 		}
 	}
 }
+

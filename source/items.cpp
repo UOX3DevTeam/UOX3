@@ -1,16 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  items.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  Item specific routines (add, delete change) in preperation for
-//  going to a pointer based system
-//
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Pedro Rabinovitch
+//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -26,7 +22,11 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
+//
+// -- Items.cpp  Item specific routines (add, delete change) in preperation for
+//               going to a pointer based system
+//
 #include "uox3.h"
 #include "debug.h"
 
@@ -369,19 +369,19 @@ void cItem::InitItem(int nItem, char ser)
 	*(items[nItem].creator)='\0';
 	items[nItem].good = -1; // Magius(CHE)
 
-	items[nItem].multi1=255;//Multi serial1
-	items[nItem].multi2=255;//Multi serial2
-	items[nItem].multi3=255;//Multi serial3
-	items[nItem].multi4=255;//Multi serial4
-	items[nItem].multis=-1;//Multi serial
+	items[nItem].multi1 = 255;//Multi serial1
+	items[nItem].multi2 = 255;//Multi serial2
+	items[nItem].multi3 = 255;//Multi serial3
+	items[nItem].multi4 = 255;//Multi serial4
+	items[nItem].multis = -1;//Multi serial
 	
-	items[nItem].id2=0x01;
+	items[nItem].id2 = 0x01;
 	items[nItem].x=100;
 	items[nItem].y=100;
-	items[nItem].cont1=255; // Container that this item is found in
-	items[nItem].cont2=255;
-	items[nItem].cont3=255;
-	items[nItem].cont4=255;
+	items[nItem].cont1 = 255; // Container that this item is found in
+	items[nItem].cont2 = 255;
+	items[nItem].cont3 = 255;
+	items[nItem].cont4 = 255;
 	items[nItem].contserial=-1;
 	items[nItem].amount=1; // Amount of items in pile
 	items[nItem].carve = -1; // AntiChrist - for new carving system
@@ -1225,7 +1225,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 		{  // decaytime = 5 minutes, * 60 secs per min, * clocks_per_sec
 			if (items[i].decaytime==0) 
 			{
-				items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
+				items[i].decaytime = (unsigned int)( server_data.decaytimer * CLOCKS_PER_SEC + currenttime );
 			}
 			
 			if (items[i].decaytime<=currenttime)
@@ -1257,24 +1257,24 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 				//End Boats/Mutlis
 				//JustMichael--Keep player's corpse as long as it has more than 1 item on it
 				//up to playercorpsedecaymultiplier times the decay rate
-				if (items[i].corpse == 1 && items[i].ownserial!=-1)
+				if( items[i].corpse == 1 && items[i].ownserial != -1 )
 				{
 					preservebody=0;
 					serial=items[i].serial;
 					serhash=serial%HASHMAX;
 					for( ci=0; ci < contsp[serhash].max; ci++ )
 					{
-						j=contsp[serhash].pointer[ci];
+						j = contsp[serhash].pointer[ci];
 						if( j != -1 )
 						{
-							preservebody++;
+							if( items[j].contserial == serial )	// hash container issue *sighs*  Potentially premature decay based on items in same hash line
+								preservebody++;
 						}
-//						if( preservebody) break; // lagfix - AntiChrist - not necessary to check ALL the items // Umm... this will break code further down... just look at the next if statement
 					}
 					if( preservebody > 1 && items[i].more4 )
 					{
 						items[i].more4--;
-						items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
+						items[i].decaytime = server_data.decaytimer * CLOCKS_PER_SEC + currenttime;
 						return;
 					}
 				}
@@ -1285,40 +1285,27 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 					for (ci=0;ci<contsp[serhash].max;ci++)
 					{
 						j=contsp[serhash].pointer[ci];
-                        if (j!=-1) //lb
+						if( j != -1 )
 						{
-						   if ((items[j].contserial==items[i].serial)/* &&
-						    	(items[j].layer!=0x0B)&&(items[j].layer!=0x10)*/)
-						   {
-							if( items[j].contserial != -1 ) removefromptr(&contsp[items[j].contserial%HASHMAX], j);
-							items[j].cont1=255;
-							items[j].cont2=255;
-							items[j].cont3=255;
-							items[j].cont4=255;
-							items[j].contserial=-1;
-							//mapRegions->RemoveItem(i);
-							mapRegions->RemoveItem(j); 
-							items[j].x=items[i].x;
-							items[j].y=items[i].y;
-							items[j].z=items[i].z;
-							mapRegions->AddItem(j); //add this item to a map cell
-
-							items[j].decaytime = (unsigned int) (uiCurrentTime + (server_data.decaytimer*CLOCKS_PER_SEC ) ); // AntiChrist - make the item decay
-							RefreshItem( j ); 
-/*							for (k=0;k<now;k++) 
+							if( items[j].contserial == items[i].serial )
 							{
-								if (perm[k] && inrange2(k, j)) 
-								{
-									senditem(k,j);
-								}
-							}*/
+								if( items[j].contserial != -1 ) 
+									removefromptr(&contsp[items[j].contserial%HASHMAX], j);
+								items[j].cont1 = 255;
+								items[j].cont2 = 255;
+								items[j].cont3 = 255;
+								items[j].cont4 = 255;
+								items[j].contserial = -1;
+								mapRegions->RemoveItem( j );
+								items[j].x = items[i].x;
+								items[j].y = items[i].y;
+								items[j].z = items[i].z;
+								mapRegions->AddItem( j ); //add this item to a map cell
+
+								items[j].decaytime = (unsigned int)( uiCurrentTime + (server_data.decaytimer*CLOCKS_PER_SEC ) ); // AntiChrist - make the item decay
+								RefreshItem( j ); // AntiChrist
+							}
 						}
-						/*else if ((items[j].contserial==items[i].serial) &&
-							((items[j].layer==0x0B)||(items[j].layer==0x10)))
-						{
-							DeleItem(j);
-						}*/
-						} // enof of if j!=-1
 					}
 					DeleItem(i);
 				} 
@@ -1330,7 +1317,7 @@ void cItem::DecayItem(unsigned int currenttime, int i)
 					}
 					else
 					{
-						items[i].decaytime = (unsigned int) (server_data.decaytimer * CLOCKS_PER_SEC + currenttime);
+						items[i].decaytime = (unsigned int)(server_data.decaytimer*CLOCKS_PER_SEC + currenttime);
 					}
 				}
 			}
@@ -1399,7 +1386,6 @@ void cItem::RespawnItem(unsigned int currenttime, int i)
 					}
 					if ((items[i].gatetime<=currenttime ||(overflow)) && items[i].morex!=0)
 					{
-						//AddRespawnItem(i,items[i].morex, 0);
 						AddRespawnItem( i, items[i].morex, 0 );
 						items[i].gatetime=0;
 					}
@@ -1428,9 +1414,9 @@ void cItem::RespawnItem(unsigned int currenttime, int i)
 				{
 					if (items[i].gatetime==0)
 					{
-						items[i].gatetime = (unsigned int) ((rand()%((int)( 1 +
-							((items[i].morez - items[i].morey) * (CLOCKS_PER_SEC * 60))))) +
-							 (items[i].morey*CLOCKS_PER_SEC*60)+currenttime);
+						items[i].gatetime = (unsigned int)((rand()%((int)(1+
+							((items[i].morez-items[i].morey)*(CLOCKS_PER_SEC*60))))) +
+							(items[i].morey*CLOCKS_PER_SEC*60)+currenttime);
 					}
 					if ((items[i].gatetime<=currenttime || (overflow)) && items[i].morex!=0)
 					{
@@ -1572,13 +1558,13 @@ void cItem::AddRespawnItem(int s, int x, int y)
 			items[c].z = 9;
 			switch( k )
 			{
-			case 1:	items[c].y = (short int) ( rand()%50 ) + 50; break;
-			case 2:	items[c].y = (short int) ( rand()%50 ) + 30; break;
-			case 3:	items[c].y = (short int) ( rand()%40 ) + 100; break;
-			case 4:	items[c].y = (short int) ( rand()%80 ) + 60; // bugfix
-					items[c].x = (short int) ( rand()%80 ) + 60; break;
+			case 1:	items[c].y = (short int)( rand()%50 ) + 50; break;
+			case 2:	items[c].y = (short int)( rand()%50 ) + 30; break;
+			case 3:	items[c].y = (short int)( rand()%40 ) + 100; break;
+			case 4:	items[c].y = (short int)( rand()%80 ) + 60; // bugfix
+					items[c].x = (short int)( rand()%80 ) + 60; break;
 			default:	
-				    items[c].y = (short int) ( rand()%50 ) + 30;
+					items[c].y = (short int)( rand()%50 ) + 30;
 			}
 		}
 	}
@@ -1670,9 +1656,8 @@ ARMORCLASS cItem::ArmorClass( ITEM i )
 	return items[i].armorClass;
 }
 
-void cItem::GlowItem( int s, int i )
+void cItem::GlowItem( UOXSOCKET s, int i )
 {
-
 	int j,c;
 
 	//printf("glow check called, char#: %i\n",s);
@@ -1695,18 +1680,16 @@ void cItem::GlowItem( int s, int i )
 			items[j].z=items[i].z;
 		} else if (items[j].layer==0 && items[i].contserial!=-1) // euqipped -> light source coords = players coords
 		{
-			//printf("gi in pack\n");
 			items[j].x = chars[s].x;
 			items[j].y = chars[s].y;
-			items[j].z = (signed char) chars[s].z+4;
-			items[j].dir=99; // gives no light in backpacks
-			//if (rand()%4==2) items[j].dir=2; else items[j].dir=1;
+			items[j].z = (signed char)chars[s].z+4;
+			items[j].dir = 99; // gives no light in backpacks
 		} else
 		{
 			items[j].x = chars[s].x;
 			items[j].y = chars[s].y;
-			items[j].z = (signed char) chars[s].z+4;
-			items[j].dir=29;
+			items[j].z = (signed char)chars[s].z+4;
+			items[j].dir = 29;
 
 		}
 		RefreshItem( j ); // AntiChrist
@@ -1715,65 +1698,64 @@ void cItem::GlowItem( int s, int i )
 
 void cItem::CheckEquipment(CHARACTER p) // check equipment of character p
 {
-	int i=-1, serial,serhash,ci;
+	int i = -1, serial, serhash, ci;
 	unsigned int j;
+	if( p < 0 ) 
+		return;
 
-	if (p<0) return; // LB crashfix
+	serial = chars[p].serial;
+	serhash = serial%HASHMAX;
 
-	serial=chars[p].serial;
-	serhash=serial%HASHMAX;
-
-	//printf("-- CHARSTR: %i CHARSTRNOW: %i\n",chars[p].st,chars[p].st);
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	for( ci = 0; ci < contsp[serhash].max; ci++ )
 	{
-		i=contsp[serhash].pointer[ci];
-		if (i>-1) //  crashfix
-		if (items[i].contserial==serial)
-		{
-//			printf("-- ITMNAME: %s ITMSTR: %i ITEMCOUNT: %i\n",items[i].name,items[i].st,itemcount);
-
-			if(items[i].st>chars[p].st)//if strength required > character's strength
+		i = contsp[serhash].pointer[ci];
+		if( i != -1 ) //  crashfix
+			if( items[i].contserial == serial )
 			{
-				if(items[i].name[0]=='#') getname(i,temp2);
-				else strcpy(temp2,items[i].name);
+				if( items[i].st > chars[p].st ) //if strength required > character's strength
+				{
+					if( items[i].name[0] == '#' ) 
+						getname( i, temp2 );
+					else 
+						strcpy( temp2, items[i].name );
 
-				sprintf(temp, "You are not strong enough to keep %s equipped!", temp2);
-				sysmessage(calcSocketFromChar(p), temp);
-				itemsfx(calcSocketFromChar(p), items[i].id1, items[i].id2);
-  	            
-				//Subtract stats bonus and poison
-				chars[p].st-=items[i].st2;
-				chars[p].dx-=items[i].dx2;
-				chars[p].in-=items[i].in2;
-               	if(chars[p].poison && items[i].poisoned) chars[p].poison-=items[i].poisoned;
-				if(chars[p].poison<0) chars[p].poison=0;
+					sprintf( temp, "You are not strong enough to keep %s equipped!", temp2 );
+					UOXSOCKET pSock = calcSocketFromChar( p );
+					sysmessage( pSock, temp );
+					itemsfx( pSock, items[i].id1, items[i].id2 );
+  					
+					//Subtract stats bonus and poison
+					chars[p].st -= items[i].st2;
+					chars[p].dx -= items[i].dx2;
+					chars[p].in -= items[i].in2;
+               		if( chars[p].poison && items[i].poisoned ) 
+						chars[p].poison -= items[i].poisoned;
+					if( chars[p].poison < 0 ) 
+						chars[p].poison = 0;
 
-				// AntiChrist - this should be .contserial, not .serial       |THIS|
-				//if (items[i].contserial!=-1) removefromptr(&contsp[items[i].serial%HASHMAX], i);
-				if (items[i].contserial!=-1) removefromptr(&contsp[items[i].contserial%HASHMAX], i);
-				items[i].cont1=255;
-				items[i].cont2=255;
-				items[i].cont3=255;
-				items[i].cont4=255;
-				items[i].contserial=-1;
-				mapRegions->RemoveItem(i);
-				items[i].x=chars[p].x;
-				items[i].y=chars[p].y;
-				items[i].z=chars[p].z;
-				mapRegions->AddItem(i);
-							
-				//teleport(currchar[s]);
-				//impowncreate(s, currchar[s], 0);
-
-				for (j=0;j<now;j++)
-					if (inrange1p(p, currchar[j])&&perm[j])
-					{
-						wornitems(j, p);
-//						senditem(j, i);		// replaced with refreshitem
-					}
-				RefreshItem( i );			// changed to be put here (Abaddon)
-			}
-		}	
+					// AntiChrist - this should be .contserial, not .serial       |THIS|
+					//if (items[i].contserial!=-1) removefromptr(&contsp[items[i].serial%HASHMAX], i);
+					if( items[i].contserial != -1 ) 
+						removefromptr( &contsp[items[i].contserial%HASHMAX], i );
+					items[i].cont1 = 255;
+					items[i].cont2 = 255;
+					items[i].cont3 = 255;
+					items[i].cont4 = 255;
+					items[i].contserial = -1;
+					mapRegions->RemoveItem( i );
+					items[i].x = chars[p].x;
+					items[i].y = chars[p].y;
+					items[i].z = chars[p].z;
+					mapRegions->AddItem( i );
+								
+					for( j = 0; j < now; j++ )
+						if( inrange1p( p, currchar[j] ) && perm[j] )
+						{
+							wornitems(j, p);
+						}
+					RefreshItem( i );
+				}
+			}	
 	}		
 }
 
@@ -1852,20 +1834,20 @@ void cItem::BounceInBackpack(CHARACTER p, ITEM i)
 		else // no autostacking
 		{ 
 			setserial(i, newpack,1);      // no autostacking -> add it to container hash ! 
-			items[i].x = (short int) 20+(rand()%100);// and set new random pack coords
-			items[i].y = (short int) 40+(rand()%80);
-			items[i].z=9;
+			items[i].x = (short int)20 + ( rand() % 100) ;// and set new random pack coords
+			items[i].y = (short int)40 + ( rand() % 80 );
+			items[i].z = 9;
 
 			//LB GLOWING STUFF
 			setptr(&glowsp[chars[newp].serial%HASHMAX],i);//add in new char
 			GlowItem(newp,i);
 
-			unsigned int k;
-			for (k=0;k<now;k++) 
+			UOXSOCKET k;
+			for( k = 0; k < now; k++ )
 			{
-				if (perm[k])
+				if( perm[k] )
 				{
-					Network->xSend(k, removeitem, 5, 0);
+					Network->xSend( k, removeitem, 5, 0 );
 				}
 			} // end for k
 
@@ -1921,14 +1903,16 @@ void cItem::BounceItemOnGround(CHARACTER p, ITEM i)
 
 bool cItem::isShieldType( ITEM i )
 {
-	unsigned short itemID = (unsigned short) (items[i].id1<<8) + items[i].id2;
-	if( itemID >= 0x1B72 && itemID <= 0x1B7B ) return true;
-	if( itemID >= 0x1BC3 && itemID <= 0x1BC5 ) return true;
+	unsigned short itemID = (unsigned short)(items[i].id1<<8) + items[i].id2;
+	if( itemID >= 0x1B72 && itemID <= 0x1B7B ) 
+		return true;
+	if( itemID >= 0x1BC3 && itemID <= 0x1BC5 ) 
+		return true;
 	tile_st toCheck;
 	Map->SeekTile( itemID, &toCheck );
 	if( toCheck.layer == 2 )
 	{
-		if( (toCheck.flag3 & 0xC0 ) )	// if equipable, and on layer 2	// cna't use wearable/holdable, as not all lanterns have that
+		if( (toCheck.flag3 & 0xC0 ) )	// if equipable, and on layer 2	// can't use wearable/holdable, as not all lanterns have that
 			return true;
 	}
 	return false;
@@ -1944,8 +1928,6 @@ bool cItem::isShieldType( ITEM i )
 //I also added the inpack check and the worned check....
 //
 //Added a check if invisible and not GM, not sent (Abaddon)
-
-
 void RefreshItem( ITEM i ) //  Send this item to all online people in range
 { // check if item is in a pack or on the ground, then use different methods
 	

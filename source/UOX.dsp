@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /J /FD /c
+# ADD CPP /nologo /G5 /Gr /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /J /FD /c
 # ADD BASE RSC /l 0xc09 /d "NDEBUG"
 # ADD RSC /l 0xc09 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W4 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
 # ADD BASE RSC /l 0xc09 /d "_DEBUG"
 # ADD RSC /l 0xc09 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -136,10 +136,6 @@ SOURCE=.\craces.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\cshop.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\cweather.cpp
 # End Source File
 # Begin Source File
@@ -197,15 +193,6 @@ SOURCE=.\im.h
 # Begin Source File
 
 SOURCE=.\items.cpp
-
-!IF  "$(CFG)" == "UOX - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "UOX - Win32 Debug"
-
-# ADD CPP /W4
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -270,6 +257,10 @@ SOURCE=.\scriptc.h
 # Begin Source File
 
 SOURCE=.\skills.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\speech.cpp
 # End Source File
 # Begin Source File
 

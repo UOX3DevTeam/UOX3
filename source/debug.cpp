@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  debug.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,13 +22,14 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
+//------------------------------------------------------------------------
 //Adapted by TANiS - Thanks to Armageddon for the original code.
 
 #include "debug.h"
 
+#ifdef __LINUX__
+	#define __cdecl
+#endif
 /********************************************************
  *                                                      *
  *  Function to be called when a string is ready to be  *
@@ -47,7 +48,7 @@ void MessageReady(char *OutputMessage)
  *                                                      *
  ********************************************************/
 #ifdef WIN32
-void LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...)
+void __cdecl LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...)
 {
 	char fullMessage[512];
 	char builtMessage[512];

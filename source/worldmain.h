@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-//  worldmain.h: interface for the CWorldMain class.
+//------------------------------------------------------------------------
+//  worldmain.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,10 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
+// WorldMain.h: interface for the CWorldMain class.
+//
+//////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_WORLDMAIN_H__FA78B1D3_99E2_11D2_8143_00104B73C455__INCLUDED_)
 #define AFX_WORLDMAIN_H__FA78B1D3_99E2_11D2_8143_00104B73C455__INCLUDED_

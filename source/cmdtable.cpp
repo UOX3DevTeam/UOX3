@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  cmdtable.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1999 - 2001 by Unknown real name (Crackerjack)
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 
 /*
 * This code is an attempt to clean up the messy "if/then/else" routines
@@ -367,7 +367,7 @@ static char *ch="abcdefg";
 * the name of the function in lowercase, a void function, accepting one
 * integer, which is the player # that sent the command.
 * Like this:
-* void command_rain(int s)
+* void command_rain(UOXSOCKET s)
 *
 * If you stick comments (double-slash comments) between the function definition
 * and the opening block, they will automatically be used as the
@@ -377,7 +377,7 @@ static char *ch="abcdefg";
 * everything is fit into a template.
 */
 
-void command_setrace(int s)
+void command_setrace( UOXSOCKET s)
 {
 	RACEID race;
 	if( tnum == 2 )
@@ -393,7 +393,7 @@ void command_getlight( UOXSOCKET s )
 {
 	sysmessage( s, "Light value is currently %i", worldcurlevel );
 }
-void command_setmurder(int s)
+void command_setmurder(UOXSOCKET s)
 {
 	if( tnum == 2 )
 	{
@@ -402,37 +402,37 @@ void command_setmurder(int s)
 	}
 }
 
-void command_setacct(int s)
+void command_setacct(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 {
 	
 }
 
-void command_addacct(int s)
+void command_addacct(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 {
 	
 }
 
-void command_banacct(int s)
+void command_banacct(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 {
 	
 }
 
-void command_unbanacct(int s)
+void command_unbanacct(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 {
 	
 }
 
-void command_removeacct(int s)
+void command_removeacct(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 {
 	
 }
 
-void command_resend(int s)
+void command_resend(UOXSOCKET s)
 // Resends server data to client.
 {
 	all_items(s); 
@@ -442,7 +442,7 @@ void command_resend(int s)
 }
 
 // Returns the current bulletin board posting mode for the player
-void command_post(int s)
+void command_post(UOXSOCKET s)
 {
   sprintf( temp, "You are currently posting " );
 
@@ -471,7 +471,7 @@ void command_post(int s)
 
 // Sets the current bulletin board posting mode for the player to GLOBAL
 // ALL bulletin boards will see the next message posted to any bulletin board
-void command_gpost(int s)
+void command_gpost(UOXSOCKET s)
 {
   chars[currchar[s]].postType = GLOBALPOST;
   sysmessage( s, "Now posting GLOBAL messages." );
@@ -481,7 +481,7 @@ void command_gpost(int s)
 // Sets the current bulletin board posting mode for the player to REGIONAL
 // All bulletin boards in the same region as the board posted to will show the
 // next message posted
-void command_rpost(int s)
+void command_rpost(UOXSOCKET s)
 {
   chars[currchar[s]].postType = REGIONALPOST;
   sysmessage( s, "Now posting REGIONAL messages." );
@@ -490,42 +490,34 @@ void command_rpost(int s)
 
 // Sets the current bulletin board posting mode for the player to LOCAL
 // Only this bulletin board will have this post
-void command_lpost(int s)
+void command_lpost(UOXSOCKET s)
 {
   chars[currchar[s]].postType = REGIONALPOST;
   sysmessage( s, "Now posting LOCAL messages." );
 	return;
 }
 
-void command_teleport(int s)
+void command_teleport(UOXSOCKET s)
 {
 	teleport(currchar[s]); 
 	return;
 }
 
-void command_where(int s)
+void command_where(UOXSOCKET s)
 // Prints your current coordinates+region.
 // added region-name too, LB
 {
-//  knox - region is a UNSIGNED CHAR, does that if is ALWAYS true.
-//	if (chars[currchar[s]].region>=0 && chars[currchar[s]].region<4000) 
-//	{
-	if (strlen(region[chars[currchar[s]].region].name)>0) {
+	//Region is UNSIGNED CHAR, so never < 0 || > 255
+	if (strlen(region[chars[currchar[s]].region].name)>0) 
 	  sysmessage(s, "You are at: %s",region[chars[currchar[s]].region].name); 
-	} else {
+	  else
       sysmessage(s,"You are at: nirvana");
-    }
-//	}
-//	else 
-//	{ 
-//		sysmessage(s, "You are at: %s","invalid region"); 
-//	}
 	
 	sysmessage(s, "%i %i (%i/%i)",chars[currchar[s]].x,chars[currchar[s]].y,chars[currchar[s]].z,chars[currchar[s]].dispz); 
 	return;
 }
 
-void command_q(int s)
+void command_q(UOXSOCKET s)
 // Shows the GM or Counsellor queue.
 {
 	if (!(chars[currchar[s]].priv&0x01)) //They are not a GM
@@ -538,7 +530,7 @@ void command_q(int s)
 }
 
 
-void command_next(int s)
+void command_next(UOXSOCKET s)
 // For Counselors or GM's, goes to next call in queue.
 {
 	if (!(chars[currchar[s]].priv&0x01)) //They are not a GM
@@ -553,7 +545,7 @@ void command_next(int s)
 	
 }
 
-void command_clear(int s)
+void command_clear(UOXSOCKET s)
 // For Counselor's and GM's, removes current call from queue.
 {
 	if (!(chars[currchar[s]].priv&0x01)) //They are not a GM
@@ -568,7 +560,7 @@ void command_clear(int s)
 	
 }
 
-void command_goplace(int s)
+void command_goplace(UOXSOCKET s)
 // (d) Teleports you to a location from the LOCATIONS.SCP file.
 {
 	if (tnum==2)
@@ -588,7 +580,7 @@ void command_goplace(int s)
 	
 }
 
-void command_gochar(int s)
+void command_gochar(UOXSOCKET s)
 // (h h h h) Teleports you to another character.
 {
 	int i;
@@ -639,7 +631,7 @@ void command_gochar(int s)
 	return;
 }
 
-void command_fix(int s)
+void command_fix(UOXSOCKET s)
 // Try to compensate for messed up Z coordinates. Use this if you find yourself half-embedded in the ground.
 {
 	if (tnum==2)
@@ -657,7 +649,7 @@ void command_fix(int s)
 	return;
 }
 
-void command_xgoplace(int s)
+void command_xgoplace(UOXSOCKET s)
 // (d) Send another character to a location in your LOCATIONS.SCP file.
 {
 	if (tnum==2)
@@ -672,7 +664,7 @@ void command_xgoplace(int s)
 	
 }
 
-void command_showids(int s)
+void command_showids(UOXSOCKET s)
 // Display the serial number of every item on your screen.
 {
 	int i;
@@ -702,7 +694,7 @@ void command_showids(int s)
 	
 }
 
-void command_poly(int s)
+void command_poly(UOXSOCKET s)
 // (h h) Polymorph yourself into any other creature.
 {
 	if (tnum==3)
@@ -740,7 +732,7 @@ void command_poly(int s)
 	
 }
 
-void command_skin(int s)
+void command_skin(UOXSOCKET s)
 // (h h) Change the hue of your skin.
 {
 	if (tnum==3)
@@ -766,14 +758,14 @@ void command_skin(int s)
 	
 }
 
-void command_action(int s)
+void command_action(UOXSOCKET s)
 // (h) Preform an animated action sequence.
 {
 	if (tnum==2) action(s, hexnumber(1));
 	return;
 }
 
-void command_xtele(int s)
+void command_xtele(UOXSOCKET s)
 // (d / h h h h / nothing) Teleport a player to your position.
 // <UL><LI>If you specify nothing (/XTELE), you click on the player to teleport in.</LI>
 // <LI>If you specify a serial number (/XTELE .. .. .. ..), you teleport that player to you.</LI>
@@ -789,7 +781,7 @@ void command_xtele(int s)
 	return;
 }
 
-void command_go(int s)
+void command_go(UOXSOCKET s)
 // (d d d) Go to the specified X/Y/Z coordinates
 {
 	if (tnum==4)
@@ -808,7 +800,7 @@ void command_go(int s)
 	return;
 }
 
-void command_zerokills(int s)
+void command_zerokills(UOXSOCKET s)
 // Sets all PK counters to 0.
 {
 	sysmessage(s,"Zeroing all player kills...");
@@ -820,7 +812,7 @@ void command_zerokills(int s)
 	sysmessage(s,"All player kills are now 0.");
 }
 
-void command_tile(int s)
+void command_tile(UOXSOCKET s)
 // (h h) Tiles the item specified over a square area.
 // To find the hexidecimal ID code for an item to tile,
 // either create the item with /add or find it in the
@@ -837,7 +829,7 @@ void command_tile(int s)
 	return;
 }
 
-void command_wipe(int s)
+void command_wipe(UOXSOCKET s)
 // (d d d d / nothing) Deletes ALL NPC's and items inside a specified square.
 // <UL><LI>With no arguments, /WIPE will ask you to click in opposing corners of
 // the square.</LI>
@@ -866,7 +858,7 @@ void command_wipe(int s)
 	
 }
 
-void command_iwipe(int s)
+void command_iwipe(UOXSOCKET s)
 // (d d d d / nothing) Deletes ALL NPC's and items NOT inside a specified square.
 // <UL><LI>With no arguments, /IWIPE will ask you to click in opposing corners of
 // the square.</LI>
@@ -894,7 +886,7 @@ void command_iwipe(int s)
 	
 }
 
-void command_eagle(int s)
+void command_eagle(UOXSOCKET s)
 // eagle's new test for the add menu
 {
 	if (tnum==2 || tnum>3) 
@@ -916,7 +908,7 @@ void command_eagle(int s)
 	return;
 }
 
-void command_add(int s)
+void command_add(UOXSOCKET s)
 // (h h) Adds a new item, or opens the GM menu if no hex codes are specified.
 {
 	if (tnum==2 || tnum>3) // AntiChrist
@@ -942,7 +934,7 @@ void command_add(int s)
 	return;
 }
 
-/*void command_add(int s)
+/*void command_add(UOXSOCKET s)
 // (h h) Adds a new item, or opens the GM menu if no hex codes are specified.
 {
 	if (tnum==2 || tnum>3) // AntiChrist
@@ -985,7 +977,7 @@ void command_add(int s)
 	return;
 }*/
 
-void command_addx(int s)
+void command_addx(UOXSOCKET s)
 // (h h) Adds a new item to your current location.
 {
 	if (tnum==3)
@@ -1003,7 +995,7 @@ void command_addx(int s)
 	return;
 }
 
-void command_rename(int s)
+void command_rename(UOXSOCKET s)
 // (text) Renames any dynamic item in the game.
 {
 	if (tnum>1)
@@ -1015,7 +1007,7 @@ void command_rename(int s)
 	
 }
 
-void command_title(int s)
+void command_title(UOXSOCKET s)
 // (text) Changes the title of any player or NPC.
 {
 	if (tnum>1)
@@ -1028,7 +1020,7 @@ void command_title(int s)
 }
 
 
-void command_save(int s)
+void command_save(UOXSOCKET s)
 // Saves the current world data into ITEMS.WSC and CHARS.WSC.
 {
 	//savenewworld(1);
@@ -1040,7 +1032,7 @@ void command_save(int s)
 	return;
 }
 
-void command_dye(int s)
+void command_dye(UOXSOCKET s)
 // (h h/nothing) Dyes an item a specific color, or brings up a dyeing menu if no color is specified.
 {
 	dyeall[s]=1;
@@ -1059,7 +1051,7 @@ void command_dye(int s)
 	
 }
 
-void command_wtrig(int s)
+void command_wtrig(UOXSOCKET s)
 // (word) Sets the trigger word on an NPC.
 {
 	if (tnum>1)
@@ -1072,7 +1064,7 @@ void command_wtrig(int s)
 	
 }
 
-void command_setpriv(int s)
+void command_setpriv(UOXSOCKET s)
 // (Chars/NPCs: h h, Objects: h) Sets priviliges on a Character or object.
 {
 	if (tnum==3)
@@ -1090,7 +1082,7 @@ void command_setpriv(int s)
 	return;
 }
 
-void command_nodecay(int s)
+void command_nodecay(UOXSOCKET s)
 // Prevents an object from ever decaying.
 {
 	addid1[s]=0; 
@@ -1100,7 +1092,7 @@ void command_nodecay(int s)
 
 
 #ifdef UNRELEASED
-void command_send(int s)
+void command_send(UOXSOCKET s)
 // Debugging command
 {
 	int i;
@@ -1113,7 +1105,7 @@ void command_send(int s)
 }
 #endif
 
-void command_showtime(int s)
+void command_showtime(UOXSOCKET s)
 // Displays the current UO time.
 {
 	if (ampm || (!ampm && hour==12))
@@ -1124,7 +1116,7 @@ void command_showtime(int s)
 	
 }
 
-void command_settime(int s)
+void command_settime(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // (d d) Sets the current UO time in hours and minutes.
 {
@@ -1152,7 +1144,7 @@ void command_settime(int s)
 	
 }
 
-void command_shutdown(int s)
+void command_shutdown(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // (d) Shuts down the server. Argument is how many minutes until shutdown.
 {
@@ -1165,12 +1157,13 @@ void command_shutdown(int s)
 			endtime=0;
 			sysbroadcast( "Shutdown has been interrupted.");
 		}
-		else endmessage(0);
+		else 
+			endmessage(0);
 	}
 	return;
 }
 
-void command_wholist(int s)
+void command_wholist(UOXSOCKET s)
 // Brings up an interactive listing of online users.
 {
 	if( strcmp( (char *)&tbuffer[Commands->cmd_offset+8], "off" ) )
@@ -1181,7 +1174,7 @@ void command_wholist(int s)
 }
 
 #ifdef UNRELEASED
-void command_blt2(int s)
+void command_blt2(UOXSOCKET s)
 // Debugging command.
 {
 	if (tnum==4)
@@ -1200,7 +1193,7 @@ void command_blt2(int s)
 }
 #endif
 
-void command_sfx(int s)
+void command_sfx(UOXSOCKET s)
 // (h h) Plays the specified sound effect.
 {
 	if (tnum==3)
@@ -1210,7 +1203,7 @@ void command_sfx(int s)
 	return;
 }
 
-void command_light(int s)
+void command_light(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // (h) Sets the light level. 0=brightest, 15=darkest, -1=enable day/night cycles.
 {
@@ -1224,7 +1217,7 @@ void command_light(int s)
 }
 
 #ifdef UNRELEASED
-void command_web(int s)
+void command_web(UOXSOCKET s)
 // Debugging command.
 {
 	if (tnum>1)
@@ -1236,7 +1229,7 @@ void command_web(int s)
 }
 #endif
 
-void command_disconnect(int s)
+void command_disconnect(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // (d) Disconnects the user logged in under the specified slot.
 {
@@ -1244,7 +1237,7 @@ void command_disconnect(int s)
 	return;
 }
 
-void command_tell(int s)
+void command_tell(UOXSOCKET s)
 // (d text) Sends an anonymous message to the user logged in under the specified slot.
 {
 	if (tnum>2) tellmessage(s, makenumber(1), &tbuffer[Commands->cmd_offset+6]);
@@ -1252,7 +1245,7 @@ void command_tell(int s)
 }
 
 /* Lord binary's debugging code
-void command_npcs(int s)
+void command_npcs(UOXSOCKET s)
 {
 int i=0,j=0;
 for (j=0;j<charcount;j++)
@@ -1262,7 +1255,7 @@ if (chars[j].account==-1) i++;
 printf("Total# of npcs: %i\n",i);
 }
 
-  void command_npcsd(int s)
+  void command_npcsd(UOXSOCKET s)
   {
 		int i=0,j=0;
 		for (j=0;j<charcount;j++)
@@ -1272,7 +1265,7 @@ printf("Total# of npcs: %i\n",i);
 		printf("Total# of npcs: %i\n",i);
 		}
 		
-		  void command_pcs(int s)
+		  void command_pcs(UOXSOCKET s)
 		  {
 		  int i=0,j=0;
 		  for (j=0;j<charcount;j++)
@@ -1282,11 +1275,11 @@ printf("Total# of npcs: %i\n",i);
 		  printf("Total# of players: %i\n",i);
 		  }
 		  
-			void command_charc(int s) { }
-			void command_itemc(int s) { }
+			void command_charc(UOXSOCKET s) { }
+			void command_itemc(UOXSOCKET s) { }
 * end of lord binary's debugging code */
 
-void command_gmmenu(int s)
+void command_gmmenu(UOXSOCKET s)
 // (d) Opens the specified GM Menu.
 {
 	if( tnum == 2 ) 
@@ -1294,7 +1287,7 @@ void command_gmmenu(int s)
 	return;
 }
 
-void command_itemmenu(int s)
+void command_itemmenu(UOXSOCKET s)
 // (d) Opens the specified Item Menu from ITEMS.SCP.
 {
 	int i;
@@ -1312,7 +1305,7 @@ void command_itemmenu(int s)
 	return;
 }
 
-void command_additem(int s)
+void command_additem(UOXSOCKET s)
 // (d) Adds the specified item from ITEMS.SCP.
 {
 	if (tnum==2)
@@ -1325,7 +1318,7 @@ void command_additem(int s)
 	
 }
 
-void command_dupe(int s)
+void command_dupe(UOXSOCKET s)
 // (d / nothing) Duplicates an item. If a parameter is specified, it's how many copies to make.
 {
 	if (tnum==2)
@@ -1342,7 +1335,7 @@ void command_dupe(int s)
 }
 
 
-void command_command(int s)
+void command_command(UOXSOCKET s)
 // Executes a trigger scripting command.
 {
 	int i;
@@ -1361,7 +1354,7 @@ void command_command(int s)
 	return;
 }
 
-void command_gcollect(int s)
+void command_gcollect(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Runs garbage collection routines.
 {
@@ -1369,7 +1362,7 @@ void command_gcollect(int s)
 	return;
 }
 
-void command_allmoveon(int s)
+void command_allmoveon(UOXSOCKET s)
 // Enables GM ability to pick up all objects.
 {
 	chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x01;
@@ -1379,7 +1372,7 @@ void command_allmoveon(int s)
 	
 }
 
-void command_allmoveoff(int s)
+void command_allmoveoff(UOXSOCKET s)
 // Disables GM ability to pick up all objects.
 {
 	chars[currchar[s]].priv2=chars[currchar[s]].priv2&(0xFF-0x01);
@@ -1389,7 +1382,7 @@ void command_allmoveoff(int s)
 	
 }
 
-void command_showhs(int s)
+void command_showhs(UOXSOCKET s)
 // Makes houses appear as deeds. (The walls disappear and there's a deed on the ground in their place.)
 {
 	chars[currchar[s]].priv2=chars[currchar[s]].priv2|0x04;
@@ -1399,7 +1392,7 @@ void command_showhs(int s)
 	
 }
 
-void command_hidehs(int s)
+void command_hidehs(UOXSOCKET s)
 // Makes houses appear as houses (opposite of /SHOWHS).
 {
 	chars[currchar[s]].priv2=chars[currchar[s]].priv2&(0xFF-0x04);
@@ -1409,7 +1402,7 @@ void command_hidehs(int s)
 }
 
 
-void command_set(int s)
+void command_set(UOXSOCKET s)
 // (text, d) Set STR/DEX/INT/Skills on yourself arguments are skill & amount.
 {
 	int i;
@@ -1439,7 +1432,7 @@ void command_set(int s)
 }
 
 #ifdef UNRELEASED
-void command_temp(int s)
+void command_temp(UOXSOCKET s)
 // Debugging command.
 {
 	if(tnum==2) {
@@ -1451,7 +1444,7 @@ void command_temp(int s)
 }
 #endif
 
-void command_addnpc(int s)
+void command_addnpc(UOXSOCKET s)
 // (d or h h) Add the specified NPC from NPC.SCP or by hex ID code.
 {
 	if (tnum==3)
@@ -1469,7 +1462,7 @@ void command_addnpc(int s)
 	
 }
 
-void command_readini(int s)
+void command_readini(UOXSOCKET s)
 // Re-loads the UOX3.INI file.
 {
 	int i;
@@ -1481,7 +1474,7 @@ void command_readini(int s)
 		
 }
 
-void command_gumpmenu(int s)
+void command_gumpmenu(UOXSOCKET s)
 // (d) Opens the specified GUMP menu.
 {
 	if (tnum==2)
@@ -1492,7 +1485,7 @@ void command_gumpmenu(int s)
 	
 }
 
-void command_cachestats(int s)
+void command_cachestats(UOXSOCKET s)
 // Display some information about the cache.
 {
 	sysmessage(s, "Hits: %d", stablockcachehit);
@@ -1501,7 +1494,7 @@ void command_cachestats(int s)
 	return;
 }
 
-void command_npcrect(int s)
+void command_npcrect(UOXSOCKET s)
 // (d d d d) Set bounding box for a NPC with a NPCWANDER of 3.
 {
 	if (tnum==5)
@@ -1516,7 +1509,7 @@ void command_npcrect(int s)
 	
 }
 
-void command_npccircle(int s)
+void command_npccircle(UOXSOCKET s)
 // (d d d) Set bounding circle for a NPC with a NPCWANDER of 2.
 {
 	if (tnum==4)
@@ -1530,7 +1523,7 @@ void command_npccircle(int s)
 	
 }
 
-void command_npcwander(int s)
+void command_npcwander(UOXSOCKET s)
 // (d) Sets the type of wandering a NPC does.
 // <UL><LI>0 = NPC Does not move.</LI>
 // <LI>1 = NPC Follows specified target. (See
@@ -1548,7 +1541,7 @@ void command_npcwander(int s)
 	
 }
 
-void command_secondsperuominute(int s)
+void command_secondsperuominute(UOXSOCKET s)
 // (d) Sets the number of real-world seconds that pass for each UO minute.
 {
 	if (tnum==2)
@@ -1560,7 +1553,7 @@ void command_secondsperuominute(int s)
 	
 }
 
-void command_brightlight(int s)
+void command_brightlight(UOXSOCKET s)
 // (h) Sets default daylight level.
 {
 	if (tnum==2)
@@ -1572,7 +1565,7 @@ void command_brightlight(int s)
 	
 }
 
-void command_darklight(int s)
+void command_darklight(UOXSOCKET s)
 // (h) Sets default nighttime light level.
 {
 	if (tnum==2)
@@ -1584,7 +1577,7 @@ void command_darklight(int s)
 	
 }
 
-void command_dungeonlight(int s)
+void command_dungeonlight(UOXSOCKET s)
 // (h) Sets default dungeon light level.
 {
 	if (tnum==2)
@@ -1596,7 +1589,7 @@ void command_dungeonlight(int s)
 	
 }
 
-void command_gmopen(int s)
+void command_gmopen(UOXSOCKET s)
 // (h / nothing) Opens specified layer on player/NPC, or player's pack if no layer specified.
 // <P>Useful hex codes for this command are:</P>
 // <TABLE BORDER=1>
@@ -1614,7 +1607,7 @@ void command_gmopen(int s)
 	
 }
 
-void command_restock(int s)
+void command_restock(UOXSOCKET s)
 // Forces a manual vendor restock.
 {
 	restock(0);
@@ -1623,7 +1616,7 @@ void command_restock(int s)
 	
 }
 
-void command_restockall(int s)
+void command_restockall(UOXSOCKET s)
 // Forces a manual vendor restock to maximum values.
 {
 	restock(1);
@@ -1632,7 +1625,7 @@ void command_restockall(int s)
 	
 }
 
-void command_setshoprestockrate(int s)
+void command_setshoprestockrate(UOXSOCKET s)
 // (d) Sets the universe's shop restock rate.
 {
 	if (tnum==2)
@@ -1645,7 +1638,7 @@ void command_setshoprestockrate(int s)
 	
 }
 
-void command_midi(int s)
+void command_midi(UOXSOCKET s)
 // (d d) Plays the specified MIDI file.
 {
 	if (tnum==3) playmidi(s, makenumber(1), makenumber(2));
@@ -1653,7 +1646,7 @@ void command_midi(int s)
 	
 }
 
-void command_gumpopen(int s)
+void command_gumpopen(UOXSOCKET s)
 // (h h) Opens the specified GUMP menu.
 {
 	if (tnum==3) Gumps->Open(s, currchar[s], hexnumber(1), hexnumber(2));
@@ -1661,7 +1654,7 @@ void command_gumpopen(int s)
 	
 }
 
-void command_respawn(int s)
+void command_respawn(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Forces a respawn.
 {
@@ -1670,7 +1663,7 @@ void command_respawn(int s)
 	
 }
 
-void command_regspawnmax(int s)
+void command_regspawnmax(UOXSOCKET s)
 // (d) Spawns in all regions up to the specified maximum number of NPCs/Items.
 {
 	if (tnum==2)
@@ -1682,7 +1675,7 @@ void command_regspawnmax(int s)
 	
 }
 
-void command_regspawn(int s)
+void command_regspawn(UOXSOCKET s)
 // (d d) Preforms a region spawn. First argument is region, second argument is max # of items/NPCs to spawn in that region.
 {
 	if (tnum==3)
@@ -1694,7 +1687,7 @@ void command_regspawn(int s)
 	
 }
 
-void command_reloadserver(int s)
+void command_reloadserver(UOXSOCKET s)
 // Reloads the SERVER.SCP file.
 {
 	loadserverscript();
@@ -1702,7 +1695,7 @@ void command_reloadserver(int s)
 	return;
 }
 
-void command_loaddefaults(int s)
+void command_loaddefaults(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Loads the server defaults.
 {
@@ -1711,14 +1704,14 @@ void command_loaddefaults(int s)
 	
 }
 
-void command_cq(int s)
+void command_cq(UOXSOCKET s)
 // Display the counselor queue.
 {
 	Commands->ShowGMQue(s, 0); // Show the Counselor queue, not GM queue   
 	return;
 }
 
-void command_cnext(int s)
+void command_cnext(UOXSOCKET s)
 // Attend to the next call in the counselor queue.
 {
 	Commands->NextCall(s, 0); // Show the Counselor queue, not GM queue   
@@ -1726,7 +1719,7 @@ void command_cnext(int s)
 	
 }
 
-void command_cclear(int s)
+void command_cclear(UOXSOCKET s)
 // Remove the current call from the counselor queue.
 {
 	donewithcall(s, 0); // Show the Counselor queue, not GM queue   
@@ -1734,7 +1727,7 @@ void command_cclear(int s)
 	
 }
 
-void command_minecheck(int s)
+void command_minecheck(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // (d) Set the server mine check interval in minutes.
 {
@@ -1743,7 +1736,7 @@ void command_minecheck(int s)
 	return;
 }
 
-void command_invul(int s)
+void command_invul(UOXSOCKET s)
 // Makes the targeted character immortal.
 {
 	addx[s]=1;
@@ -1751,7 +1744,7 @@ void command_invul(int s)
 	
 }
 
-void command_noinvul(int s)
+void command_noinvul(UOXSOCKET s)
 // Makes the targeted character mortal.
 {
 	addx[s]=0;
@@ -1759,7 +1752,7 @@ void command_noinvul(int s)
 	
 }
 
-void command_guardson(int s)
+void command_guardson(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Activates town guards.
 {
@@ -1768,7 +1761,7 @@ void command_guardson(int s)
 	
 }
 
-void command_guardsoff(int s)
+void command_guardsoff(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Deactivates town guards.
 {
@@ -1777,7 +1770,7 @@ void command_guardsoff(int s)
 	
 }
 
-void command_announceon(int s)
+void command_announceon(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Enable announcement of world saves.
 {
@@ -1786,7 +1779,7 @@ void command_announceon(int s)
 	
 }
 
-void command_announceoff(int s)
+void command_announceoff(UOXSOCKET s)
 // PARAM WARNING: s is unreferenced
 // Disable announcement of world saves.
 {
@@ -1795,7 +1788,7 @@ void command_announceoff(int s)
 	
 }
 
-void command_wf(int s)
+void command_wf(UOXSOCKET s)
 // Make the specified item worldforge compatible.
 {
 	if (tnum==2)
@@ -1807,7 +1800,7 @@ void command_wf(int s)
 	
 }
 
-void command_decay(int s)
+void command_decay(UOXSOCKET s)
 // Enables decay on an object.
 {
 	addid1[s]=1;
@@ -1816,7 +1809,7 @@ void command_decay(int s)
 	
 }
 
-void command_killall(int s)
+void command_killall(UOXSOCKET s)
 // (d text) Kills all of a specified item.
 {
 	if(tnum>2)
@@ -1832,7 +1825,7 @@ void command_killall(int s)
 	
 }
 
-void command_pdump(int s)
+void command_pdump(UOXSOCKET s)
 // Display some performance information.
 {
 	sysmessage(s, "Performace Dump:");
@@ -1844,7 +1837,7 @@ void command_pdump(int s)
 	sysmessage(s, "Simulation Cycles/Sec: %f" _ (1000.0*(1.0/(float)((float)loopTime/(float)loopTimeCount))));
 }
 
-void command_rename2(int s)
+void command_rename2(UOXSOCKET s)
 // (text) Rename an item or character.
 {
 	 if( tnum > 1 )
@@ -1855,14 +1848,14 @@ void command_rename2(int s)
 	 } 
 }
 
-void command_readspawnregions(int s)
+void command_readspawnregions(UOXSOCKET s)
 // Re-read the SPAWN.SCP file.
 {
 	loadspawnregions();
 	sysmessage(s,"Spawnregions reloaded.");
 }
 
-void command_gy(int s)
+void command_gy(UOXSOCKET s)
 // (text) GM Yell - Announce a message to all online GMs.
 {
 	if( now == 1 )
@@ -1902,7 +1895,7 @@ void command_gy(int s)
 	
 }
 
-void command_tilew(int s)
+void command_tilew(UOXSOCKET s)
 // (h h d d d d d) id id x1 x2 y1 y2 z - Tile an object using specified id & coordinates.
 // <UL><LI>The first two numbers are hexidecimal, and are the ID codes for
 // the item to tile.</LI>
@@ -1950,7 +1943,7 @@ void command_tilew(int s)
 	
 }
 
-void command_squelch(int s)
+void command_squelch(UOXSOCKET s)
 // (d / nothing) Squelchs specified player. (Makes them unnable to speak.)
 {
 	
@@ -1967,7 +1960,7 @@ void command_squelch(int s)
 	
 }
 
-void command_spawnkill(int s)
+void command_spawnkill(UOXSOCKET s)
 // (d) Kills spawns from the specified spawn region in SPAWN.SCP.
 {
 	if (tnum==2)
@@ -1977,7 +1970,7 @@ void command_spawnkill(int s)
 }
 
 
-void command_wanim(int s)
+void command_wanim(UOXSOCKET s)
 // (d d) Changes server lighting animation.
 {
 	if(tnum==3)
@@ -1989,7 +1982,7 @@ void command_wanim(int s)
 	}
 }
 
-void command_gotocur(int s)
+void command_gotocur(UOXSOCKET s)
 // Goes to the current call in the GM/Counsellor Queue
 {
 	int i;
@@ -2048,7 +2041,7 @@ void command_gotocur(int s)
 	
 }
 
-void command_gmtransfer(int s)
+void command_gmtransfer(UOXSOCKET s)
 // Escilate a Counsellor Page into the GM Queue
 {
 	int i;
@@ -2098,7 +2091,7 @@ void command_gmtransfer(int s)
 	}
 }
 
-void command_who(int s)
+void command_who(UOXSOCKET s)
 // Displays a list of users currently online.
 {
 	if( now == 1 )
@@ -2120,7 +2113,7 @@ void command_who(int s)
 	sysmessage(s,"End of userlist");
 }
 
-void command_gms(int s)
+void command_gms(UOXSOCKET s)
 {
 	int i, j=0;
 	sysmessage(s,"Current GMs and Counselors in the world:");
@@ -2136,7 +2129,7 @@ void command_gms(int s)
 	sysmessage(s,"End of stafflist");
 }
 
-void command_regspawnall(int s)
+void command_regspawnall(UOXSOCKET s)
 {
 	int i, j, k, spawn=0;
 	//	unsigned int currenttime=getclock();
@@ -2170,7 +2163,7 @@ void command_regspawnall(int s)
 	sysmessage(s, temps);
 }
 
-void command_wipenpcs(int s)
+void command_wipenpcs(UOXSOCKET s)
 {
 	int deleted=0;
 	
@@ -2215,7 +2208,7 @@ void command_wipenpcs(int s)
 	
 }
 
-void command_cleanup(int s)
+void command_cleanup(UOXSOCKET s)
 {
 	int corpses=0;
 	//        char temp[100];
@@ -2234,7 +2227,7 @@ void command_cleanup(int s)
 	sysmessage(s, "%i corpses or gates have been cleaned.",corpses);
 }
 
-void command_reloadaccounts( int s )
+void command_reloadaccounts( UOXSOCKET s )
 // Reloads the ACCOUNTS.ADM file.
 {
 	Admin->LoadAccounts();

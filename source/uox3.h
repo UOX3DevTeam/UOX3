@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  uox3.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,12 +22,12 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 #ifndef __UOX3_H
 #define __UOX3_H
 // product info
 #define VER " 0.70.03"
-#define BUILD "21"
+#define BUILD "21a"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"
@@ -55,11 +55,12 @@
 #define PACK_NEEDED
 #endif
 
+
 #ifdef _MSVC
-#pragma pack(1)        //fixes tile problem in MSVC++ (maybe others)
 #pragma warning(disable: 4786) //Gets rid of BAD stl warnings
 #pragma warning(disable: 4503)
 #endif
+
 
 
 #ifndef _DEBUG//Never define crash protection in debug mode
@@ -77,10 +78,11 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
   int *pointer;
 };
 #ifdef __LINUX__
-#define XP_UNIX
-typedef unsigned char BYTE;
+	#define XP_UNIX
+	typedef unsigned char BYTE;
+	#define __cdecl
 #else
-#define XP_PC
+	#define XP_PC
 #endif
 // new includes for VC 6
 // Include files
@@ -110,12 +112,10 @@ typedef unsigned char BYTE;
 	#include <conio.h>
 	#include <sys/timeb.h>
 	typedef long int32;
-
-    #ifdef __MINGW32__              // knox, there is a smeal tweak in the mingw target-spec headers
-      #undef  CLOCKS_PER_SEC        //       I'll report that to these guys... maybe it'll be fixed in future releases
-      #define CLOCKS_PER_SEC 1000   //       CLOCKS_PER_SEC is defined as "1000.0" there
-    #endif
-
+	#ifdef __MINGW_32__
+		#undef CLOCKS_PER_SEC
+		#define CLOCKS_PER_SEC 1000
+	#endif
 #else
 	#include <ctype.h>
 	#include <netinet/in.h>
@@ -149,7 +149,6 @@ using namespace std;
 #include "xgm.h"
 
 #include "craces.h"
-#include "cshop.h"
 #include "cweather.h"
 
 #ifdef _BORLAND_
@@ -575,20 +574,18 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 void explodeitem(int s, unsigned int nItem);
 void bolteffect(int player);
 void monstergate(int s, int x);
-//void npcMovement2(unsigned int, int);//Lag fix -- Zippy
 void npcMovement(unsigned int);
 void Karma(int nCharID,int nKilledID, int nKarma);
 void Fame(int nCharID, int nFame);
 void charstartup(int s);
 void checkdumpdata(unsigned int currenttime); // This dumps data for Ridcully's UOXBot 0.02 (jluebbe@hannover.aball.de)
-//void weather(int s);
 void weather(int s, char bolt);
 void killall(int s, int percent, char* sysmsg);
 
 // functions in necro.cpp
 int SpawnRandomMonster(UOXSOCKET nCharID, char* cScript, char* cList, char* cNpcID);
 int SpawnRandomItem(UOXSOCKET nCharID,int nInPack, char* cScript, char* cList, char* cItemID);
-void vialtarget(int nSocket);
+void vialtarget( UOXSOCKET nSocket);
 void MakeNecroReg( UOXSOCKET nSocket, ITEM nItem, unsigned char cItemID1, unsigned char cItemID2 );
 
 #ifndef __NT__
@@ -603,7 +600,7 @@ unsigned long int getclock();
 
 void cleanup(int s);
 void npcaction(int npc, int x);
-void checkNPC(int i, int currenttime);//Char mapRegions
+void checkNPC( int i, int currenttime );
 int calcgold(int p);
 int packitem(int p);
 void titletarget(int s);
@@ -624,7 +621,7 @@ int checkBoundingCircle(int xPos, int yPos, int fx1, int fy1, int fz1, int radiu
 void updatechar(int c);
 int unmounthorse(int s);
 void swordtarget(int s);
-void telltime(int s);
+void telltime( UOXSOCKET s );
 void visibletarget(int s);
 void impaction(int s, int act);
 int chardirxyz(int a, int x, int y, int z);
@@ -677,7 +674,7 @@ void checkkey();
 int compare_charst (const char_st *a, const char_st *b);
 int compare_itemst (const item_st *a, const item_st *b);
 
-char iteminrange (int s, int i, int distance);
+char iteminrange( UOXSOCKET s, int i, int distance);
 void updateskill(int s, int skillnum);
 char npcinrange (int s, int i, int distance);  //check for horse distance...
 void openbank(int s, int i);
@@ -731,8 +728,8 @@ void playmonstersound(int monster, int id1, int id2, int sfx);
 void playTileSound( UOXSOCKET s );
 void getsellsubitem( int npc, int p, int q, unsigned char *m1, int &m1t );
 void sellstufftarget(int s);
-int sellstuff(int s, int i);
-void sellaction(int s);
+int sellstuff( UOXSOCKET s, int i );
+void sellaction( UOXSOCKET s );
 void addgold(int s, int totgold);
 void playmidi(int s, char num1, char num2);
 void tradetesttarget(int s);
@@ -765,7 +762,7 @@ void tellmessage(int i, int s, unsigned char *txt);
 void setwipetarget(int s);
 void setspeechtarget(int s);
 void xteleport(int s,int x);
-void sysmessage(int, char *, ...);
+void __cdecl sysmessage(int, char *, ...);
 void senditem(UOXSOCKET s, ITEM i);
 void wornitems( UOXSOCKET s, CHARACTER j );
 void RefreshItem( ITEM i ); // AntiChrist
@@ -773,7 +770,7 @@ void soundeffects(int s, unsigned char a, unsigned char b, bool bAllHear = false
 void soundeffect(int s, unsigned char a, unsigned char b);
 void soundeffect2(int p, unsigned char a, unsigned char b);
 void updatestats(int c, char x);
-void action(int s, int x);
+void action( UOXSOCKET s, int x );
 int str2num (char *s);
 int hstr2num (char *s);
 void numtostr( int i, char *string );
@@ -1020,5 +1017,8 @@ void breakConcentration( CHARACTER p , UOXSOCKET s = -1 );
 int GetBankCount( CHARACTER p, unsigned short itemID, unsigned short colour = 0x0000 );
 int DeleBankItem( CHARACTER p, unsigned short itemID, unsigned short colour, int amt );
 void Kill( CHARACTER attack, CHARACTER defend );
+
+void doRainEffect( int i, int currenttime );
+void doSnowEffect( int i, int currenttime );
 
 #endif // __UOX3_H

@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  debug.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 #ifndef DEBUG_H
 #define DEBUG_H
 
@@ -35,11 +34,10 @@
 #else
  #include <stdarg.h>
  #include <time.h>
- #ifdef __MINGW32__ // knox, small failure in the mingw target headers, they define CLOCKS_PER_SEC as 1000.0
-   #undef  CLOCKS_PER_SEC
-   #define CLOCKS_PER_SEC 1000
- #endif
- //#include <varargs.h>
+#ifdef __MINGW32__ // knox, small failure in the mingw target headers, they define CLOCKS_PER_SEC as 1000.0
+	#undef CLOCKS_PER_SEC
+	#define CLOCKS_PER_SEC 1000
+#endif
 #endif
           
 
@@ -47,19 +45,11 @@
 //     Prototypes of functions
 //---------------------------------------------------------------------------
 void MessageReady(char *OutputMessage);
-#ifdef WIN32
-	void LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...);
-#else
-	void LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...);
-#endif
+	void __cdecl LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...);
 //---------------------------------------------------------------------------
 //     Translator macros for functions
 //---------------------------------------------------------------------------
-#ifdef WIN32
   #define LogMessage(Message)	LogMessageF('M', __LINE__, DBGFILE, Message)
-#else
-  #define LogMessage(Message)	LogMessageF('M', __LINE__, DBGFILE, Message)
-#endif
 #define LogWarning(WarningMessage)	LogMessageF('W', __LINE__, DBGFILE, WarningMessage)
 #define LogError(ErrorMessage)	LogMessageF('E', __LINE__, DBGFILE, ErrorMessage)
 #define LogCritical(CriticalMessage)	LogMessageF('C', __LINE__, DBGFILE, CriticalMessage)

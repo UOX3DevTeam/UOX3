@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  npcs.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 #include "uox3.h"
 #include "debug.h"
 
@@ -238,8 +237,8 @@ void cCharStuff::InitChar(int nChar, char ser)
 {
 	static unsigned int LastInitTE=0;
 	int i;
-	memset(&chars[nChar], 0, sizeof ( char_st ));
-	if (ser)
+	memset( &chars[nChar], 0, sizeof( char_st ) );
+	if( ser )
 	{
 		chars[nChar].ser1 = (unsigned char)(charcount2>>24); // Character serial number
 		chars[nChar].ser2 = (unsigned char)(charcount2>>16);
@@ -248,7 +247,9 @@ void cCharStuff::InitChar(int nChar, char ser)
 		chars[nChar].serial=charcount2;
 		setptr(&charsp[charcount2%HASHMAX], nChar);
 		charcount2++;
-	} else {
+	} 
+	else 
+	{
 		chars[nChar].ser1=0;
 		chars[nChar].ser2=0;
 		chars[nChar].ser3=0;
@@ -262,61 +263,29 @@ void cCharStuff::InitChar(int nChar, char ser)
 	chars[nChar].multi3=255;//Multi serial3
 	chars[nChar].multi4=255;//Multi serial4
 	chars[nChar].multis=-1;//Multi serial
-	chars[nChar].free=0;
 	strcpy(chars[nChar].name,"Mr. noname");
-	chars[nChar].title[0]=0x00;
-	chars[nChar].orgname[0]=0x00;
-	chars[nChar].antispamtimer = 0; // LB - anti spam
-	chars[nChar].unicode=0; // This is set to 1 if the player uses unicode speech, 0 if not
+
 	chars[nChar].account=-1;
 	chars[nChar].x=100;
 	chars[nChar].y=100;
-	chars[nChar].z=chars[nChar].dispz=0;
-	
-	chars[nChar].oldx=0; // fix for jail bug
-	chars[nChar].oldy=0; // fix for jail bug
-	chars[nChar].oldz=0; // LB, experimental, change back to unsignbed if this give sproblems
-	
-	chars[nChar].dir=0; //&0F=Direction
+
 	chars[nChar].id1=chars[nChar].xid1=chars[nChar].orgid1=0x01; // Character body type
 	chars[nChar].id2=chars[nChar].xid2=chars[nChar].orgid2=0x90; // Character body type
 	chars[nChar].skin1=chars[nChar].xskin1=0x00; // Skin color
 	chars[nChar].skin2=chars[nChar].xskin2=0x00; // Skin color
 	chars[nChar].keynumb=-1;  // for renaming keys 
-	chars[nChar].priv=0;	// 1:GM clearance, 2:Broadcast, 4:Invulnerable, 8: single click serial numbers
-	// 10: Don't show skill titles, 20: GM Pagable, 40: Can snoop others packs, 80: Counselor clearance
-	chars[nChar].priv2=0;	// 1:Allmove, 2: Frozen, 4: View houses as icons, 8: permanently hidden
-	// 10: no need mana, 20: dispellable, 40: permanent magic reflect, 80: no need reagents
 	chars[nChar].fonttype=3; // Speech font to use
 	chars[nChar].saycolor1=0x17; // Color for say messages
-	chars[nChar].saycolor2=0x00; // Color for say messages
-	chars[nChar].emotecolor1=0x00; // Color for emote messages
 	chars[nChar].emotecolor2=0x23; // Color for emote messages
 	chars[nChar].st=50; // Strength
-	chars[nChar].st2=0; // Reserved for calculation
 	chars[nChar].dx=50; // Dexterity
-	chars[nChar].dx2=0; // Reserved for calculation
 	chars[nChar].in=50; // Intelligence
-	chars[nChar].in2=0; // Reserved for calculation
 	chars[nChar].hp=50; // Hitpoints
 	chars[nChar].stm=50; // Stamina
 	chars[nChar].mn=50; // Mana
-	chars[nChar].mn2=0; // Reserved for calculation
-	chars[nChar].hidamage=0; //NPC Damage
-	chars[nChar].lodamage=0; //NPC Damage
-	for (i=0;i<TRUESKILLS;i++)
-	{
-		chars[nChar].baseskill[i]=10;
-		chars[nChar].skill[i]=0;
-	}
 
 	for (i=0;i<ALLSKILLS;i++)
 		chars[nChar].atrophy[i] = i;
-
-	chars[nChar].npc=0;
-	chars[nChar].shop=0; //1=npc shopkeeper
-	chars[nChar].cell=0; // Reserved for jailing players 
-	                     // bugfix, LB 0= player not in jail !, not -1
 
 	chars[nChar].own1=255; // If Char is an NPC, this sets its owner
 	chars[nChar].own2=255; // If Char is an NPC, this sets its owner
@@ -327,154 +296,65 @@ void cCharStuff::InitChar(int nChar, char ser)
 	chars[nChar].robe2=255; // Serial number of generated death robe (If char is a ghost)
 	chars[nChar].robe3=255; // Serial number of generated death robe (If char is a ghost)
 	chars[nChar].robe4=255; // Serial number of generated death robe (If char is a ghost)
-	chars[nChar].karma=0;
-	chars[nChar].fame=0;
-	chars[nChar].kills=0; //PvP Kills
-	chars[nChar].deaths=0;
-	chars[nChar].dead=0; // Is character dead
+
 	chars[nChar].packitem=-1; // Only used during character creation
 	chars[nChar].fixedlight=255; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 	// was -1 thanks to LB, nice idea, but this is UNSIGNED, therefore 255
-	chars[nChar].speech=0; // For NPCs: Number of the assigned speech block
-	chars[nChar].weight=0; //Total weight
-	chars[nChar].att=0; // Intrinsic attack (For monsters that cant carry weapons)
-	chars[nChar].def=0; // Intrinsic defense
-	chars[nChar].war=0; // War Mode
+
 	chars[nChar].runs = false;  
 	chars[nChar].targ=-1; // Current combat target
-	chars[nChar].timeout=0; // Combat timeout (For hitting)
-	chars[nChar].regen=0;
-	chars[nChar].regen2=0;
-	chars[nChar].regen3=0;//Regeneration times for mana, stamin, and str
+
 	chars[nChar].runenumb=-1; // Used for naming runes
 	chars[nChar].attacker=-1; // Character who attacked this character
-	chars[nChar].npcmovetime=0; // Next time npc will walk
-	chars[nChar].npcWander=0; // NPC Wander Mode
-	chars[nChar].oldnpcWander=0; // Used for fleeing npcs
+
 	chars[nChar].ftarg=-1; // NPC Follow Target
 	chars[nChar].fx1=-1; //NPC Wander Point 1 x
 	chars[nChar].fx2=-1; //NPC Wander Point 2 x
 	chars[nChar].fy1=-1; //NPC Wander Point 1 y
 	chars[nChar].fy2=-1; //NPC Wander Point 2 y
 	chars[nChar].fz1=-1; //NPC Wander Point 1 z
-	chars[nChar].spawn1 = 0;
-	chars[nChar].spawn2 = 0;
-	chars[nChar].spawn3 = 0;
-	chars[nChar].spawn4 = 0;
-	chars[nChar].spawnserial = 0;	// spawn1 < 0x40, indicates region spawn but spawn2 == 0, so not a region spawn at all
-	chars[nChar].hidden=0; // 0 = not hidden, 1 = hidden, 2 = invisible spell
-	chars[nChar].invistimeout=0;
-	chars[nChar].attackfirst=0; // 0 = defending, 1 = attacked first
-	chars[nChar].onhorse=0; // On a horse?
+
 	chars[nChar].hunger=6;  // Level of hungerness, 6 = full, 0 = "empty"
-	chars[nChar].hungertime=0; // Timer used for hunger, one point is dropped every 20 min
 	chars[nChar].smeltitem=-1;
 	chars[nChar].tailitem=-1;
-	chars[nChar].npcaitype=0; // NPC ai
 	chars[nChar].callnum=-1; //GM Paging
 	chars[nChar].playercallnum=-1; //GM Paging
-	chars[nChar].pagegm=0; //GM Paging
 	chars[nChar].region=(unsigned char)(255);
-	chars[nChar].skilldelay=0;
-	chars[nChar].objectdelay=0;
-	chars[nChar].combathitmessage=0;
 	chars[nChar].making=-1; // skill number of skill using to make item, 0 if not making anything.
-	chars[nChar].blocked=0;
-	chars[nChar].dir2=0;
-	chars[nChar].spiritspeaktimer=0; // Timer used for duration of spirit speak
-	chars[nChar].spattack=0;
-	chars[nChar].spadelay=0;
-	chars[nChar].spatimer=0;
-	chars[nChar].taming=0; //Skill level required for taming
-	chars[nChar].summontimer=0; //Timer for summoned creatures.
-	chars[nChar].trackingtimer=0; // Timer used for the duration of tracking
-	chars[nChar].trackingtarget=0; // Tracking target ID
-	for (i=0;i<MAXTRACKINGTARGETS;i++)
-		chars[nChar].trackingtargets[i]=0;
-	chars[nChar].fishingtimer=0; // Timer used to delay the catching of fish
+
 	chars[nChar].town=(unsigned char)(255);       //Matches Region number in regions.scp
 	chars[nChar].townvote1=255; //Serial Number of who they want to be mayor.
 	chars[nChar].townvote2=255; //Serial Number of who they want to be mayor.
 	chars[nChar].townvote3=255; //Serial Number of who they want to be mayor.
 	chars[nChar].townvote4=255; //Serial Number of who they want to be mayor.
-	chars[nChar].towntitle=0;  //0=off (default), 1=on. (i.e. - The Honorable Joe of Moonglow, Expert Swordsman)
-	chars[nChar].townpriv=0;  //0=non resident (Other privledges added as more functionality added)
-	chars[nChar].advobj=0; //Has used advance gate?
-	
-	chars[nChar].poison=0; // used for poison skill 
-	chars[nChar].poisoned=0; // type of poison
-	chars[nChar].poisontime=0; // poison damage timer
-	chars[nChar].poisontxt=0; // poision text timer
-	chars[nChar].poisonwearofftime=0; // LB, makes poision wear off ...
-	
-	chars[nChar].fleeat=0;
-	chars[nChar].reattackat=0;
-	chars[nChar].trigger=0; //Trigger number that character activates
-	chars[nChar].trigword[0]='\x00'; //Word that character triggers on.
-	chars[nChar].disabled=0; //Character is disabled, cant trigger.
-	chars[nChar].envokeid1=0x00; //ID1 of item user envoked
-	chars[nChar].envokeid2=0x00; //ID2 of item user envoked
+
 	chars[nChar].envokeitem=-1;
-	chars[nChar].split=0;
-	chars[nChar].splitchnc=0;
-	chars[nChar].targtrig=0; //Stores the number of the trigger the character for targeting
-	chars[nChar].ra=0;  // Reactive Armor spell
-	chars[nChar].trainer=0; // Serial of the NPC training the char, -1 if none.
-	chars[nChar].trainingplayerin=0; // Index in skillname of the skill the NPC is training the player in
+
 	chars[nChar].cantrain=1;
-	chars[nChar].laston[0] = '\x00'; //Last time a character was on
-	// Begin of Guild Related Character information (DasRaetsel)
-	chars[nChar].guildtoggle=0;		// Toggle for Guildtitle								(DasRaetsel)
-	chars[nChar].guildtitle[0]='\x00';	// Title Guildmaster granted player						(DasRaetsel)
+
 	chars[nChar].guildfealty=-1;		// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
-	chars[nChar].guildnumber=0;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-	chars[nChar].flag=0x02; //1=red 2=grey 4=Blue 8=green 10=Orange
-	//chars[nChar].tempflagtime=0;
-	// End of Guild Related Character information
-	chars[nChar].murderrate=0; //#of ticks until one murder decays //REPSYS 
+
+	chars[nChar].flag = 0x02; //1=red 2=grey 4=Blue 8=green 10=Orange
+
 	chars[nChar].crimflag=-1; //Time when No longer criminal -1=Not Criminal
-	chars[nChar].casting=0; // 0/1 is the cast casting a spell?
-	chars[nChar].spelltime=0; //Time when they are done casting....
 	chars[nChar].spellCast=-1; //current spell they are casting....
-	chars[nChar].spellaction=0; //Action of the current spell....
-	chars[nChar].nextact=0; //time to next spell action....
 	chars[nChar].poisonserial=-1; //AntiChrist -- poisoning skill
 	
-	chars[nChar].squelched=0; // zippy  - squelching
-	chars[nChar].mutetime=0; //Time till they are UN-Squelched.
-	chars[nChar].med=0; // 0=not meditating, 1=meditating //Morrolan - Meditation 
-	for (i=0;i<3;i++)
-		chars[nChar].statuse[i]=0; //Morrolan - stat/skill cap STR/INT/DEX in that order
-	for (i=0;i<TRUESKILLS;i++)
-		chars[nChar].skilluse[i][1]=0;
 	chars[nChar].stealth=-1; //AntiChrist - stealth ( steps already done, -1=not using )
-	chars[nChar].running=0; //AntiChrist - Stamina Loose while running
-	chars[nChar].logout=0;//Time till logout for this char -1 means in the world or already logged out //Instalog
+
 	chars[nChar].swingtarg=-1; //Target they are going to hit after they swing
-	chars[nChar].holdg=0; // Gold a player vendor is holding for Owner
-	chars[nChar].race = 0;
+
 	chars[nChar].raceGate = 65535;
 	chars[nChar].shopSpawn = -1;
 
 	chars[nChar].tamed = false; // True if NPC is tamed
 	chars[nChar].pathnum = PATHNUM;
-	chars[nChar].fly_steps = 0; // LB -> used for flying creatures
-	chars[nChar].guarded = false;	// True if CHAR is guarded by some NPC
-	chars[nChar].smoketimer = 0;
-	chars[nChar].smokedisplaytimer = 0;
-	chars[nChar].carve = -1; // AntiChrist - for new carving system
-	chars[nChar].commandLevel = 0; // Player level commands only
-	chars[nChar].postType = LOCALPOST;
-	chars[nChar].questType = 0;
-	chars[nChar].questDestRegion = 0;
-	chars[nChar].questOrigRegion = 0;
- 
-    //initialize weatherdamage
-    for (i = 0; i < WEATHNUM; ++i)   
-		chars[nChar].weathDamage[i] = 0; 
 
-	// This last bit is not needed at all, due to the teffect changes
-	// Abaddon 17th February, 2000
+	chars[nChar].guarded = false;	// True if CHAR is guarded by some NPC
+
+	chars[nChar].carve = -1; // AntiChrist - for new carving system
+
+	chars[nChar].postType = LOCALPOST;
 }
 void cCharStuff::DeleteChar (int k) // Delete character
 {
@@ -2721,124 +2601,6 @@ void npcaction( CHARACTER npc, int x ) // NPC character does a certain action
 			Network->xSend( i, doact, 14, 0 );
 }
 
-void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
-{
-	int tl;
-	char machwas;
-	
-	if (npc==-1 || s==-1) return; //lb
-	
-	if( antispam )
-	{
-		if( chars[npc].antispamtimer < uiCurrentTime )
-		{
-			chars[npc].antispamtimer = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * 10);
-			machwas = 1;
-		} 
-		else
-			machwas = 0;
-	}
-	else
-		machwas = 1;
-	
-	if( machwas )
-	{
-		
-		
-		tl=44+strlen(txt)+1;
-		talk[1]=tl>>8;
-		talk[2]=tl%256;
-		talk[3]=chars[npc].ser1;
-		talk[4]=chars[npc].ser2;
-		talk[5]=chars[npc].ser3;
-		talk[6]=chars[npc].ser4;
-		talk[7]=chars[npc].id1;
-		talk[8]=chars[npc].id2;
-		talk[9]=0; // Type
-		talk[10]=chars[npc].saycolor1=0x00;
-		talk[11]=chars[npc].saycolor2=0x5b;
-		talk[12]=0;
-		talk[13]=chars[currchar[s]].fonttype;
-		if( chars[npc].npcaitype == 0x02 ) // bad npcs speech (red)..Ripper
-		{
-			talk[10] = 0x00;
-			talk[11] = 0x26;
-		}
-		Network->xSend(s, talk, 14, 0);
-		Network->xSend(s, chars[npc].name, 30, 0);
-		Network->xSend(s, txt, strlen(txt)+1, 0);
-	}
-}
-
-void npctalkall(int npc, char *txt, char antispam ) // NPC speech to all in range.
-{
-	
-	if (npc==-1) return;
-	
-	int i;
-	
-	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
-			npctalk(i, npc, txt, antispam );
-}
-
-void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
-{
-	int tl;
-	char machwas;
-	
-	if( s == -1 || npc == -1 ) 
-		return;
-	
-	if( antispam )
-	{
-		if( chars[npc].antispamtimer < uiCurrentTime )
-		{
-			chars[npc].antispamtimer = (unsigned int) (uiCurrentTime + CLOCKS_PER_SEC * 10);
-			machwas = 1;
-		}
-		else
-			machwas = 0;
-	}
-	else
-		machwas = 1;
-	
-	if( machwas )
-	{
-		tl = 44 + strlen(txt)+1;
-		talk[1] = tl>>8;
-		talk[2] = tl%256;
-		talk[3] = chars[npc].ser1;
-		talk[4] = chars[npc].ser2;
-		talk[5] = chars[npc].ser3;
-		talk[6] = chars[npc].ser4;
-		talk[7] = chars[npc].id1;
-		talk[8] = chars[npc].id2;
-		talk[9] = 2; // Type
-		talk[10] = chars[npc].emotecolor1;
-		talk[11] = chars[npc].emotecolor2;
-//		talk[10]=chars[npc].emotecolor1=0x00;
-//		talk[11]=chars[npc].emotecolor2=0x26;
-		talk[12] = 0;
-		talk[13] = chars[currchar[s]].fonttype;
-		Network->xSend(s, talk, 14, 0);
-		Network->xSend(s, chars[npc].name, 30, 0);
-		Network->xSend(s, txt, strlen(txt)+1, 0);
-	}
-}
-
-void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in range.
-{
-	int i;
-	
-	if (npc==-1) return;
-	
-	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
-			npcemote(i, npc, txt, antispam );
-}
-
-
 void restockNPC(unsigned int currenttime, int i)
 {
 	int a, b, c, ci, tmp;
@@ -2880,7 +2642,6 @@ void restockNPC(unsigned int currenttime, int i)
 		}
 	}//for a
 }
-
 
 void checkNPC(int i, int currenttime)//Char mapRegions
 {
@@ -2961,10 +2722,10 @@ void checkNPC(int i, int currenttime)//Char mapRegions
 				switch (chars[i].poisoned)
 				{
 				case 1:
-					chars[i].poisontime = (unsigned int) (currenttime + (5 * CLOCKS_PER_SEC));
+					chars[i].poisontime = (unsigned int)( currenttime + ( 5 * CLOCKS_PER_SEC ) );
 					if ((chars[i].poisontxt<=currenttime)||(overflow))
 					{
-						chars[i].poisontxt = (unsigned int) (currenttime + (10 * CLOCKS_PER_SEC));
+						chars[i].poisontxt = (unsigned int)( currenttime + ( 10 * CLOCKS_PER_SEC ) );
 						sprintf(t,"* %s looks a bit nauseous *",chars[i].name);
 						chars[i].emotecolor1=0x00;//buffer[s][4];
 						chars[i].emotecolor2=0x26;//buffer[s][5];
@@ -2975,10 +2736,10 @@ void checkNPC(int i, int currenttime)//Char mapRegions
 					updatestats(i, 0);
 					break;
 				case 2:
-					chars[i].poisontime = (unsigned int) (currenttime + (4 * CLOCKS_PER_SEC));
+					chars[i].poisontime = (unsigned int)( currenttime + ( 4 * CLOCKS_PER_SEC ) );
 					if ((chars[i].poisontxt<=currenttime)||(overflow))
 					{
-						chars[i].poisontxt = (unsigned int) (currenttime + (10 * CLOCKS_PER_SEC));
+						chars[i].poisontxt = (unsigned int)( currenttime + ( 10 * CLOCKS_PER_SEC ) );
 						sprintf(t,"* %s looks disoriented and nauseous! *",chars[i].name);
 						chars[i].emotecolor1=0x00;//buffer[s][4];
 						chars[i].emotecolor2=0x26;//buffer[s][5];
@@ -2992,10 +2753,10 @@ void checkNPC(int i, int currenttime)//Char mapRegions
 					updatestats(i, 0);
 					break;
 				case 3:
-					chars[i].poisontime = (unsigned int) (currenttime + (3 * CLOCKS_PER_SEC));
+					chars[i].poisontime = (unsigned int)(currenttime + ( 3 * CLOCKS_PER_SEC ) );
 					if ((chars[i].poisontxt<=currenttime)||(overflow))
 					{
-						chars[i].poisontxt = (unsigned int) (currenttime + (10 * CLOCKS_PER_SEC));
+						chars[i].poisontxt = (unsigned int)( currenttime + ( 10 * CLOCKS_PER_SEC ) );
 						sprintf(t,"* %s is in severe pain! *",chars[i].name);
 						chars[i].emotecolor1=0x00;//buffer[s][4];
 						chars[i].emotecolor2=0x26;//buffer[s][5];
@@ -3010,18 +2771,15 @@ void checkNPC(int i, int currenttime)//Char mapRegions
 					updatestats(i, 0);
 					break; // lb !!!
 				case 4:
-					chars[i].poisontime = (unsigned int) (currenttime + (3 * CLOCKS_PER_SEC));
-					if ((chars[i].poisontxt <= currenttime) || (overflow))
+					chars[i].poisontime = (unsigned int)( currenttime + ( 3 * CLOCKS_PER_SEC ) );
+					if ((chars[i].poisontxt<=currenttime)||(overflow))
 					{
-						chars[i].poisontxt = (unsigned int) (currenttime + (10 * CLOCKS_PER_SEC));
-						sprintf(t,"* %s looks extremely weak and is wrecked in pain! *",chars[i].name);
+						chars[i].poisontxt = (unsigned int)( currenttime + ( 10 * CLOCKS_PER_SEC ) );
+						sprintf(t,"* %s looks extremely weak and is wrecked in pain! *", chars[i].name );
 						chars[i].emotecolor1=0x00;//buffer[s][4];
 						chars[i].emotecolor2=0x26;//buffer[s][5];
 						npcemoteall(i,t, 1);
-						//npctalkall(i,t);
 					}
-					
-					
 					x=RandomNum(3,6);
 					y=20;
 					pcalc=(chars[i].hp*y/100)+x; // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
@@ -3035,21 +2793,19 @@ void checkNPC(int i, int currenttime)//Char mapRegions
 				}
 				if (chars[i].hp<1)
 				{
-					deathstuff(i);
-					// sysmessage(s, "The poison has killed you.");
+					deathstuff( i );
 				} 
 			} // end switch
 			
 		}  // end if poison-wear off-timer
 	} // end if poison-damage timer
 	
-	if ((chars[i].poisonwearofftime<=currenttime))
+	if( chars[i].poisonwearofftime <= currenttime )
 	{
-		if ((chars[i].poisoned))
+		if( chars[i].poisoned )
 		{
-            chars[i].poisoned=0; 
-			impowncreate(calcSocketFromChar(i),i,1); // updating to blue stats-bar ...
-            // sysmessage(s, "The poison has worn off.");
+            chars[i].poisoned = 0;
+			impowncreate( calcSocketFromChar( i ), i, 1 ); // updating to blue stats-bar ...
 		}
 	}	
 }

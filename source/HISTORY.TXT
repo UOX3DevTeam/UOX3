@@ -27,8 +27,80 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
+-------------------------------------------------------------------------------
+>>> SYNCHRONOUS  0.70.03.21a                         Corrêa / Axel
+-------------------------------------------------------------------------------
+25.01.2001               Official Dev Team           Corrêa / Axel
 
-
+  admin.cpp              Synchronizations...
+  archive.cpp            
+  boats.cpp              
+  boats.h
+  books.cpp
+  books.h
+  classes.h
+  cmdtable.cpp
+  cmdtable.h
+  combat.cpp
+  commands.cpp
+  craces.cpp
+  craces.h
+  crypt.cpp
+  crypt.h
+  cshop.h
+  cweather.cpp
+  cweather.h
+  dbl_sinlge_click.cpp
+  debug.cpp
+  debug.h
+  fileio.cpp
+  fileio.h
+  globals.cpp
+  guildstones.cpp
+  gumps.cpp
+  house.cpp
+  html.cpp
+  im.cpp
+  im.h
+  items.cpp
+  magic.cpp
+  makefile
+  makefile.solaris
+  mapstuff.cpp
+  mkdep.c
+  msgboard.cpp
+  msgboard.h
+  necro.cpp
+  network.cpp
+  newbie.cpp
+  npcs.cpp
+  pointer.cpp
+  p_ai.cpp
+  regions.cpp
+  regions.h
+  resource.h
+  speech.cpp
+  scriptc.cpp
+  scriptc.h
+  skills.cpp
+  srvkey.h
+  targeting.cpp
+  teffect.cpp
+  townstones.cpp
+  trigger.cpp
+  typedefs.h
+  uox3.cpp
+  uox3.h
+  uoxlist.h
+  uoxstruct.h
+  walking.cpp
+  weight.cpp
+  wholist.cpp
+  worldmain.cpp
+  worldmain.h
+  xgm.cpp
+  xgm.h
+  
 -------------------------------------------------------------------------------
 28.01.2001              Axel Kittenberger               Axel
 

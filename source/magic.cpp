@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  magic.cpp
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,9 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
+//------------------------------------------------------------------------
 /*  
 *   UOX3 Magic stuff
 *
@@ -210,20 +208,20 @@ void cMagic::SpellBook( UOXSOCKET s )
 	{
 		if (spellsList[i]) scount++;
 	}
-	sbookinit[1]= (char) ((scount*19)+5)>>8;
-	sbookinit[2]= (char) ((scount*19)+5)%256;
-	sbookinit[3]= (char) scount>>8;
-	sbookinit[4]= (char) scount%256;
+	sbookinit[1] = (char)((scount*19)+5)>>8;
+	sbookinit[2] = (char)((scount*19)+5)%256;
+	sbookinit[3] = (char)scount>>8;
+	sbookinit[4] = (char)scount%256;
 	if (scount>0) Network->xSend(s, sbookinit, 5, 0);
 	for (i=0;i<70;i++) 
 	{
 		if (spellsList[i])
 		{
-			sbookspell[0]=0x41;
-			sbookspell[1]=0x00;
-			sbookspell[2]=0x00;
-			sbookspell[3]= (char) i+1;
-			sbookspell[8]= (char) i+1;
+			sbookspell[0] = 0x41;
+			sbookspell[1] = 0x00;
+			sbookspell[2] = 0x00;
+			sbookspell[3] = (char)i + 1;
+			sbookspell[8] = (char)i + 1;
 			sbookspell[13]=items[item].ser1;
 			sbookspell[14]=items[item].ser2;
 			sbookspell[15]=items[item].ser3;
@@ -381,7 +379,7 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].y = chars[currchar[s]].y;
 		chars[c].z = chars[currchar[s]].z;
 		mapRegions->AddItem( c + 1000000 );
-		chars[c].summontimer = (unsigned int) (uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
+		chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( CLOCKS_PER_SEC * 2 ) ) );
 		updatechar(c);
 		npcaction( c, 0x0C);
 		return;
@@ -536,11 +534,11 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		setserial(c, currchar[s], 5);
 	mapRegions->RemoveItem(c+1000000);
 	
-	if (x==0)
+	if( x == 0 )
 	{
-		chars[c].x = (short int) chars[currchar[s]].x-1;
-		chars[c].y = (short int) chars[currchar[s]].y;
-		chars[c].dispz=chars[c].z=chars[currchar[s]].z;
+		chars[c].x = (short int)chars[currchar[s]].x - 1;
+		chars[c].y = (short int)chars[currchar[s]].y;
+		chars[c].dispz = chars[c].z = chars[currchar[s]].z;
 	}
 	else
 	{
@@ -549,20 +547,20 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 		chars[c].dispz=chars[c].z=z;
 	}
 	
-	mapRegions->AddItem(c+1000000); 
+	mapRegions->AddItem( c + 1000000 );
 	
 	chars[c].spadelay=10;
-	chars[c].summontimer = (unsigned int) (uiCurrentTime+((chars[currchar[s]].skill[MAGERY]/10)*(CLOCKS_PER_SEC*2)));
+	chars[c].summontimer = (unsigned int)( uiCurrentTime + ( ( chars[currchar[s]].skill[MAGERY] / 10 ) * ( CLOCKS_PER_SEC * 2 ) ) );
 	updatechar(c);
 	npcaction(c, 0x0C);
 	// AntiChrist (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
 	if( buffer[s][7] == 0xFF && buffer[s][8] == 0xFF && buffer[s][9] == 0xFF && buffer[s][10] == 0xFF ) 
-      return;
+		return;
 	int serial = calcserial( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
 	i = findbyserial( &charsp[serial%HASHMAX], serial, 1 );
-	if (i == -1)
-      return;
+	if( i == -1 ) 
+		return;
 	npcattacktarget( i, c );
 }
 
@@ -888,7 +886,7 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 		if( poison < 0 ) 
 			poison = 1;
 		chars[p].poisoned = poison;
-		chars[p].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer));
+		chars[p].poisonwearofftime = (unsigned int)(uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
 		if( !chars[p].npc ) 
 			impowncreate( calcSocketFromChar( p ), p, 1 );
 		
@@ -1070,28 +1068,26 @@ void cMagic::DeleReagents( CHARACTER s, int ash, int drake, int garlic, int gins
 char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
 {
 	reag_st failmsg;
-
 	if (chars[s].priv2&0x80) return 1;
 	memset( &failmsg, 0, sizeof( reag_st ) ); // set all members to 0
-
-	if (reagents.ash!=0 && getamount(s, 0x0F, 0x8C)<reagents.ash) //{RegMsg(s); return 0;}
+	if( reagents.ash!=0 && getamount(s, 0x0F, 0x8C)<reagents.ash )
 		failmsg.ash = 1;
-	if (reagents.drake!=0 && getamount(s, 0x0F, 0x86)<reagents.drake) //{RegMsg(s); return 0;}
+	if( reagents.drake!=0 && getamount(s, 0x0F, 0x86)<reagents.drake )
 		failmsg.drake = 1;
-	if (reagents.garlic!=0 && getamount(s, 0x0F, 0x84)<reagents.garlic) //{RegMsg(s); return 0;}
+	if( reagents.garlic!=0 && getamount(s, 0x0F, 0x84)<reagents.garlic )
 		failmsg.garlic = 1;
-	if (reagents.ginseng!=0 && getamount(s, 0x0F, 0x85)<reagents.ginseng) //{RegMsg(s); return 0;}
+	if( reagents.ginseng!=0 && getamount(s, 0x0F, 0x85)<reagents.ginseng )
 		failmsg.ginseng = 1;
-	if (reagents.moss!=0 && getamount(s, 0x0F, 0x7B)<reagents.moss) //{RegMsg(s); return 0;}
+	if( reagents.moss!=0 && getamount(s, 0x0F, 0x7B)<reagents.moss )
 		failmsg.moss = 1;
-	if (reagents.pearl!=0 && getamount(s, 0x0F, 0x7A)<reagents.pearl) //{RegMsg(s); return 0;}
+	if( reagents.pearl!=0 && getamount(s, 0x0F, 0x7A)<reagents.pearl )
 		failmsg.pearl = 1;
-	if (reagents.shade!=0 && getamount(s, 0x0F, 0x88)<reagents.shade) //{RegMsg(s); return 0;}
+	if( reagents.shade!=0 && getamount(s, 0x0F, 0x88)<reagents.shade )
 		failmsg.shade = 1;
-	if (reagents.silk!=0 && getamount(s, 0x0F, 0x8D)<reagents.silk) //{RegMsg(s); return 0;}
+	if( reagents.silk!=0 && getamount(s, 0x0F, 0x8D)<reagents.silk )
 		failmsg.silk = 1;
 	
-	char fail = (char) RegMsg( s, failmsg );
+	char fail = (char)RegMsg( s, failmsg );
 	
 	return fail;
 	
@@ -1152,9 +1148,10 @@ void cMagic::DirectDamage( CHARACTER p, int amount)
 		return;
 	if (chars[p].priv2&0x02)
 	{
-		chars[p].priv2 = (unsigned char) chars[p].priv2&0xFD;
-		s=calcSocketFromChar(p);
-		if (s!=-1) sysmessage(s, "You are no longer frozen.");
+		chars[p].priv2 &= 0xFD;
+		s = calcSocketFromChar( p );
+		if( s != -1 ) 
+			sysmessage( s, "You are no longer frozen." );
 	}           
 	chars[p].hp = max(0, chars[p].hp-amount);
 	updatestats( p, 0 );
@@ -1190,7 +1187,7 @@ void cMagic::PFireballTarget(int i, int k, int j) //j = % dammage
 //|                              fails to cast a spell.
 //o---------------------------------------------------------------------------o
 
-void cMagic::SpellFail( UOXSOCKET s)
+void cMagic::SpellFail( UOXSOCKET s )
 {
 	// Use Reagents on failure ( if casting from a spellbook )
 	if( currentSpellType[s] == 0 ) NewDelReagents( currchar[s], spells[chars[currchar[s]].spellCast].reags );
@@ -2206,7 +2203,7 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 				SpellFail( s );
 				chars[currchar[s]].spellCast = 0;
 				chars[currchar[s]].casting = 0;
-				chars[currchar[s]].spelltime = (unsigned int) (((curSpellCasting.delay / 10) * CLOCKS_PER_SEC) + uiCurrentTime);
+				chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * CLOCKS_PER_SEC ) + uiCurrentTime );
 				return false;
 			}
 		}
@@ -2217,8 +2214,8 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 	chars[currchar[s]].nextact = 75;		// why 75?
 	if( type==0 && (!(chars[currchar[s]].priv&1 ))) // if they are a gm they don't have a delay :-)
 	{
-		chars[currchar[s]].spelltime = (unsigned int) (((curSpellCasting.delay / 10) * CLOCKS_PER_SEC) + uiCurrentTime);
-		chars[currchar[s]].priv2 = (unsigned char) chars[currchar[s]].priv2 | 2; //freeze
+		chars[currchar[s]].spelltime = (unsigned int)( ( ( curSpellCasting.delay / 10 ) * CLOCKS_PER_SEC ) + uiCurrentTime );
+		chars[currchar[s]].priv2 |= 2; //freeze
 	}
 	else
 	{
@@ -2327,9 +2324,9 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							else
 							{
 								mapRegions->RemoveItem(currchar[s]+1000000); //LB
-								chars[currchar[s]].x = (short int) items[i].morex;
-								chars[currchar[s]].y = (short int) items[i].morey;
-								chars[currchar[s]].dispz=chars[currchar[s]].z=items[i].morez;
+								chars[currchar[s]].x = (short int)items[i].morex;
+								chars[currchar[s]].y = (short int)items[i].morey;
+								chars[currchar[s]].dispz = chars[currchar[s]].z = items[i].morez;
 								mapRegions->AddItem(currchar[s]+1000000); //LB
 								teleport(currchar[s]);
 								sysmessage(s,"You have recalled from the rune.");
@@ -2338,6 +2335,11 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							break;
 							//////////// (45) MARK //////////////////
 						case 45:
+							if( items[i].magic == 3 ) // Locked down
+							{
+								sysmessage( s, "You cannot mark a locked down rune!" );
+								return;
+							}
 							items[i].morex=chars[currchar[s]].x;
 							items[i].morey=chars[currchar[s]].y;
 							items[i].morez=chars[currchar[s]].z;
@@ -2376,7 +2378,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 										items[c].x = gatex[gatecount][n];
 										items[c].y = gatey[gatecount][n];
 										items[c].z = gatez[gatecount][n];
-										items[c].gatetime = (unsigned int) (uiCurrentTime + (server_data.gatetimer * CLOCKS_PER_SEC));
+										items[c].gatetime = (unsigned int)(uiCurrentTime+(server_data.gatetimer*CLOCKS_PER_SEC));
 										items[c].gatenumber=gatecount;
 										items[c].dir=1;
 										
@@ -2527,8 +2529,8 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						if(CheckResist(currchar[s], i, 1)) return;
 						{
 							chars[i].poisoned=2;   
-							chars[i].poisonwearofftime = (unsigned int) (uiCurrentTime + (CLOCKS_PER_SEC * server_data.poisontimer)); 
-							impowncreate(s, i, 1); //Lb, sends the green bar ! 
+							chars[i].poisonwearofftime = (unsigned int)( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );
+							impowncreate( s, i, 1); //Lb, sends the green bar ! 
 						}
 						break; 
 					case 27: // Curse
@@ -2596,15 +2598,13 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 					case 43: // Explosion
 						if (CheckResist(currchar[s], i, 6))
 							tempeffect( src, i, 26, (chars[currchar[s]].skill[MAGERY]/120 + RandomNum( 1, 5)), 0, 0 );
-//							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/120+RandomNum(1,5), src);
 						else 
 							tempeffect( src, i, 26, (chars[currchar[s]].skill[MAGERY]/40 + RandomNum(1, 10)), 0, 0 );
-//							MagicDamage(i, chars[currchar[s]].skill[MAGERY]/40+RandomNum(1,10), src);
 						break; 
 					case 44: // Invisibility
 						chars[i].hidden=2;
 						updatechar(i);
-						chars[i].invistimeout = (unsigned int) (uiCurrentTime + (server_data.invisibiliytimer * CLOCKS_PER_SEC));
+						chars[i].invistimeout = (unsigned int)( uiCurrentTime + ( server_data.invisibiliytimer * CLOCKS_PER_SEC ) );
 						break; 
 					case 51: // Flamestrike
 						if (CheckResist(currchar[s], i, 7))
@@ -3544,25 +3544,25 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 				}
 				break;
 			case 60:// Summon Air Elemental
-				SummonMonster( s, 0x00, 0x0d, "Air", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x0d, "an air elemental", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 61:// Summon Daemon
-				SummonMonster( s, 0x00, 0x0A, "Bob", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x0A, "a daemon", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 62:// Summon Earth Elemental
-				SummonMonster( s, 0x00, 0x0E, "Earth", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x0E, "an earth elemental", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 63:// Summon Fire Elemental
-				SummonMonster( s, 0x00, 0x0F, "Fire", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x0F, "a fire elemental", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 64:// Summon Water Elemental
-				SummonMonster( s, 0x00, 0x10, "Water", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x10, "a water elemental", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 65:// Summon Hero
 				SummonMonster( s, 0x03, 0xE2, "Dupre the Hero", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			case 67:
-				SummonMonster( s, 0x00, 0x0A, "Black Night", (unsigned char)(5000>>8), (unsigned char)(5000%256), chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
+				SummonMonster( s, 0x00, 0x0A, "a black knight", (unsigned char)(5000>>8), (unsigned char)(5000%256), chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			default:	
 				printf("MAGIC-ERROR: Unknown NonTarget spell %i, magic.cpp\n", curSpell );

@@ -1,12 +1,12 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  classes.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
 //  
-//  Copyright 1997 - 2001 by Marcus Rating (Cironian)
+//  Copyright 1999 - 2001
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+//------------------------------------------------------------------------
 //---Classes code by Zippy Started 7/29/99---//
 
 #ifndef __Classes_h
@@ -161,7 +160,7 @@ public:
 	void CPage(int s, char * reason);
 	void GMPage(int s, char * reason);
 	void MakePlace(int s, int i);
-	void Command( int s);
+	void Command( UOXSOCKET s );
 	void MakeShop(int c);
 	void RemoveShop(int s);
 	void DyeItem(int s);
@@ -216,7 +215,7 @@ class cGump
 {
 public:
 	void Button(int s, int button, unsigned char tser1, unsigned char tser2, unsigned char tser3, unsigned char tser4, char type);
-	void Input(int s);
+	void Input( UOXSOCKET s );
 	void Menu(int s, int m);
 	void Open(int s, int i, int num, int num2);
 };
@@ -402,14 +401,14 @@ private:
 	void Hide(int s);
 	void Stealth(int s);
 	void PeaceMaking(int s);
-	void PlayInstrumentWell(int s, int i);
-	void PlayInstrumentPoor(int s, int i);
+	void PlayInstrumentWell( UOXSOCKET s, int i);
+	void PlayInstrumentPoor( UOXSOCKET s, int i);
 	int GetInstrument(int s);
 	void RandomSteal(int s);
 	int TrackingDirection(int s, int i);
 	void TellScroll(char *menu_name, int player, long item_param);
 	void CollectAmmo(int s, int a, int b);
-	void Meditation(int s);
+	void Meditation( UOXSOCKET s );
 	int CalcRank( int s, int skill ); // by Magius(CHE)
 	void ApplyRank( int s, int c, int rank ); // by Magius(CHE)
 	void Zero_Itemmake( int s ); // by Magius(CHE)
@@ -428,7 +427,7 @@ public:
 	void MakePizza(int s);
 	void Track(int i);
 	void DoPotion(int s, int type, int sub, int mortar);
-	void Tailoring(int s);
+	void Tailoring( UOXSOCKET s );
 	void Fletching(int s);
 	void BowCraft(int s);
 	void Carpentry(int s);
@@ -438,16 +437,16 @@ public:
 	void MakeMenu(int s, int m, int skill);
 	void Mine(int s);
 	void GraveDig(int s);
-	void SmeltOre(int s);
+	void SmeltOre( UOXSOCKET s );
 	void Wheel(int s, int mat);
 	void Loom(int s);
 	void CookMeat(int s);
 	void TreeTarget(int s);
 	void DetectHidden(int s);
-	void ProvocationTarget1(int s);
-	void ProvocationTarget2(int s);
-	void EnticementTarget1(int s);
-	void EnticementTarget2(int s);
+	void ProvocationTarget1( UOXSOCKET s );
+	void ProvocationTarget2( UOXSOCKET s );
+	void EnticementTarget1( UOXSOCKET s );
+	void EnticementTarget2( UOXSOCKET s );
 	void AlchemyTarget(int s);
 	void BottleTarget(int s);
 	void PotionToBottle(int s, int mortar);
@@ -471,8 +470,8 @@ public:
 	void BeggingTarget(int s);
 	void AnimalLoreTarget(int s);
 	void ForensicsTarget(int s);
-	void PoisoningTarget(int s);
-	int Inscribe(int s, long snum);
+	void PoisoningTarget( UOXSOCKET s );
+	int Inscribe( UOXSOCKET s, long snum);
 	int EngraveAction(int s, int i, int cir, int spl);
 	void updateSkillLevel(int c, int s);
 	void LockPick(int s);
@@ -530,7 +529,7 @@ private:
 	void PlVBuy(int s);
 	void RenameTarget(int s);
 	void AddTarget(int s);
-	void TeleTarget(int s);
+	void TeleTarget( UOXSOCKET s );
 	void RemoveTarget(int s);
 	void DyeTarget(int s);
 	void NewzTarget(int s);
@@ -553,7 +552,7 @@ private:
 	void AmountTarget(int s);
 	void SetAmount2Target(int s);
 	void CloseTarget(int s);
-	void VisibleTarget(int s);
+	void VisibleTarget( UOXSOCKET s );
 	void OwnerTarget(int s);
 	void ColorsTarget(int s);
 	void DvatTarget(int s);
@@ -570,14 +569,14 @@ private:
 	void TeleStuff(int s);
 	void SwordTarget(int s);
 	void CorpseTarget(int s);
-	void CarveTarget(int s, int feat, int ribs, int hides, int fur, int wool);
+	void CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur, int wool);
 	void newCarveTarget( UOXSOCKET s, ITEM i );
 	void TitleTarget(int s);
-	void NpcTarget(int s);
-	void NpcTarget2(int s);
-	void NpcRectTarget(int s);
-	void NpcCircleTarget(int s);
-	void NpcWanderTarget(int s);
+	void NpcTarget( UOXSOCKET s );
+	void NpcTarget2( UOXSOCKET s );
+	void NpcRectTarget( UOXSOCKET s );
+	void NpcCircleTarget( UOXSOCKET s );
+	void NpcWanderTarget( UOXSOCKET s );
 	void NpcAITarget(int s);
 	void xBankTarget(int s);
 	void xSpecialBankTarget( int s ); // AntiChrist
@@ -588,7 +587,7 @@ private:
 	void StaminaTarget(int s);
 	void ManaTarget(int s);
 	void MakeShopTarget(int s);
-	void AttackTarget(int s);
+	void AttackTarget( UOXSOCKET s );
 	void FollowTarget(int s);
 	void TransferTarget(int s);
 	void BuyShopTarget(int s);
@@ -675,7 +674,7 @@ private:
 	void CharList(int s);
 	int Receive(int s, int x, int a);
 	void GetMsg(int s);
-	void LogOut(int s);
+	void LogOut( UOXSOCKET s );
 	void pSplit(char *pass0);
 	void sockInit( void );
 	int Pack(void *pvIn, void *pvOut, int len);
@@ -693,10 +692,10 @@ public:
 	unsigned char HasSpell( int book, int spellNum );
 
 	void LoadScript( void ); //:Terrin: adding function for spell system "cache"
-	void SpellBook(int s);
+	void SpellBook( UOXSOCKET s );
 	char GateCollision(int s);
 	void GateDestruction(unsigned int currenttime);
-	bool newSelectSpell2Cast( int s, int num );
+	bool newSelectSpell2Cast( UOXSOCKET s, int num );
 	bool requireTarget( unsigned char num );
 	bool reqItemTarget( int num );
 	bool reqLocTarget( int num );
@@ -713,7 +712,7 @@ public:
 	void playSound( int source, int num );
 	void NewDelReagents( CHARACTER s, reag_st reags );
 	void NewCastSpell( UOXSOCKET s );
-	void SbOpenContainer(int s);
+	void SbOpenContainer( UOXSOCKET s );
 	char CheckResist( CHARACTER attacker, CHARACTER defender, int circle );	// umm, why?
 	void PoisonDamage(int p, int posion);
 	void CheckFieldEffects2(unsigned int currenttime, int c, char timecheck);
@@ -759,18 +758,18 @@ public:
 	void Heal( UOXSOCKET s);
 	char CheckMagicReflect(int i);
 	void MagicDamage(int p, int amount, CHARACTER attacker = -1 );
-	void SpellFail(int s);
+	void SpellFail( UOXSOCKET s );
 	char SubtractMana(int s, int mana);
-	char SubtractStamina( UOXSOCKET s, int stamina );
-	char SubtractHealth( UOXSOCKET s, int health, int spellNum );
+	char SubtractStamina( CHARACTER s, int stamina );
+	char SubtractHealth( CHARACTER s, int health, int spellNum );
 	void MagicTrap(int s, int i);	// moved here by AntiChrist (9/99)
 	void Polymorph( int s, int gmindex, int creaturenumer); // added by AntiChrist (9/99)
 
 
 private:
-	void SummonMonster(int s, unsigned char d1, unsigned char id2, char *monstername, unsigned char color1, unsigned char color2, int x, int y, int z);
+	void SummonMonster( UOXSOCKET s, unsigned char d1, unsigned char id2, char *monstername, unsigned char color1, unsigned char color2, int x, int y, int z);
 	void MagicReflect(int s);
-	void BoxSpell(int s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2);
+	void BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2);
 	int RegMsg( CHARACTER s, reag_st failmsg );
 	void DirectDamage(int p, int amount);
 	void PolymorphMenu( int s, int gmindex ); // added by AntiChrist (9/99)

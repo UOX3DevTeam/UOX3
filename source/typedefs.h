@@ -1,7 +1,7 @@
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  typedefs.h
 //
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 //  This File is part of UOX3
 //  Ultima Offline eXperiment III
 //  UO Server Emulation Program
@@ -22,7 +22,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //   
-//""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+//------------------------------------------------------------------------
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
 
@@ -60,7 +60,7 @@ typedef signed char			SI08;
 #endif
 typedef int					GUILDID;
 typedef unsigned int		TIMERVAL;
-typedef int					UOXSOCKET;
+typedef unsigned int		UOXSOCKET;
 typedef int					PLAYER;
 typedef int					CHARACTER;
 typedef unsigned int		RACEID;
@@ -207,7 +207,7 @@ typedef vector< string *>	stringList;
 #define VERFILE_TILEDATA 0x1E
 #define VERFILE_ANIMDATA 0x1F
 #define TILEDATA_TILES 0x68800
-//#define UOX_PORT 2593
+
 #define REGENRATE1 8 // Seconds to heal ONE hp
 #define REGENRATE2 3 // Seconds to heal ONE stm
 #define REGENRATE3 5 // Seconds to heal ONE mn
