@@ -162,7 +162,7 @@ void Triggers::ParseEnvoke( void )
 		if( verify != NULL )
 			envokeList[itemID] = scriptID;
 		else
-			Console << "Error with envoke, itemID " << itemID << " refers to scriptID " << scriptID << " which doesn't exist" << myendl;
+			Console.Error(2,"(ENVOKE) itemID 0x%08X refers for scriptID 0x%08X which does not exist.",itemID,scriptID); //,myendl;
 	}
 	envokefile.close();
 }
@@ -242,10 +242,17 @@ void Triggers::ParseScript( void )
 					else
 					{
 						fclose( toTest );	// exists
-						cScript *toAdd = new cScript( fullpath );
-						scriptTriggers[triggerNumber] = toAdd;
-						if( toAdd != NULL )
-							RegisterObject( toAdd->Object(), triggerNumber );
+						try
+						{
+							cScript *toAdd = new cScript( fullpath );
+							scriptTriggers[triggerNumber] = toAdd;
+							if( toAdd != NULL )
+								RegisterObject( toAdd->Object(), triggerNumber );
+						}
+						catch(std::runtime_error &e)
+						{
+							Console.Error(2,"Compiling %s caused a construction failure (Details: %s)",fullpath,e.what());
+						}
 					}
 				}
 			}
@@ -269,7 +276,9 @@ void Triggers::ReloadJS( void )
 {
 	std::map< UI16, cScript *>::iterator p;
 	for( p = scriptTriggers.begin(); p != scriptTriggers.end(); p++ )
+	{
 		delete p->second;
+	}
 	scriptTriggers.erase( scriptTriggers.begin(), scriptTriggers.end() );	// erase it all
 	ParseScript();
 }

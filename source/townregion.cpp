@@ -675,7 +675,7 @@ void cTownRegion::SendEnemyGump( cSocket *sock )
 {
 	char temp[512];
 
-	stringList one, two;
+	STRINGLIST one, two;
 	one.push_back( "noclose" );
 	one.push_back( "page 0" );
 	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
@@ -719,7 +719,7 @@ void cTownRegion::SendBasicInfo( cSocket *sock )
 }
 void cTownRegion::SendPotentialMember( cSocket *sock )
 {
-	stringList one, two;
+	STRINGLIST one, two;
 	char temp[512];
 	UnicodeTypes sLang	= sock->Language();
 
@@ -763,7 +763,7 @@ void cTownRegion::SendPotentialMember( cSocket *sock )
 
 void cTownRegion::SendMayorGump( cSocket *sock )
 {
-	stringList one, two;
+	STRINGLIST one, two;
 	char temp[512];
 	UnicodeTypes sLang	= sock->Language();
 
@@ -836,7 +836,7 @@ void cTownRegion::SendMayorGump( cSocket *sock )
 
 void cTownRegion::SendDefaultGump( cSocket *sock )
 {
-	stringList one, two;
+	STRINGLIST one, two;
 	char temp[512];
 
 	one.push_back( "noclose" );
@@ -1122,7 +1122,7 @@ WorldType cTownRegion::GetAppearance( void ) const
 
 void cTownRegion::ViewTaxes( cSocket *sock )
 {
-	stringList one, two;
+	STRINGLIST one, two;
 	char temp[512];
 
 	one.push_back( "noclose" );
