@@ -59,8 +59,6 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 
 	char temp[1024];
 
-	connClients[s]->FlushBuffer();
-	connClients[s]->CloseSocket();
 	if( currChar != NULL )
 	{
 		if( currChar->GetAccount() == connClients[s]->AcctNo() && cwmWorldState->ServerData()->GetServerJoinPartAnnouncementsStatus() ) 
@@ -75,8 +73,15 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 		if( ourAccount != NULL )
 		{
 			// EviLDeD:	022502: This is kind of just a band aid, if anyone can tell why this is comming in NULL(lpaarHolding)
-			if(ourAccount->lpaarHolding!=NULL || ourAccount->lpaarHolding!=(AAREC*)0xDDDDDDDD) // Not sure why, but this wont work out to null
-				ourAccount->lpaarHolding->bFlags&=0xFFFFFFF7; // acctinuse = false;
+			try
+			{
+				if(ourAccount->lpaarHolding!=NULL || ourAccount->lpaarHolding!=(AAREC*)0xDDDDDDDD) // Not sure why, but this wont work out to null
+					ourAccount->lpaarHolding->bFlags&=0xFFFFFFF7; // acctinuse = false;
+			}
+			catch(...)
+			{
+				Console << "| CATCH: Invalid AccountAccessRecord(AAR) encountered. Ignoring assignment." << myendl;
+			}
 		}
 	}
 	//Instalog
@@ -87,7 +92,10 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	}
 	connClients[s]->AcctNo( -1 );
 	connClients[s]->IdleTimeout( -1 );
-	delete connClients[s];
+
+	connClients[s]->FlushBuffer();
+	connClients[s]->CloseSocket();
+
 	connClients.erase( connClients.begin() + s );
 	for( int q = 0; q < connIteratorBackup.size(); q++ )
 	{
@@ -97,6 +105,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	now--;
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
+	delete connClients[s];
 }
 
 
