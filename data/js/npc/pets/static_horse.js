@@ -10,19 +10,19 @@ function onUse( pUser, iUsed )
 	var look = RollDice( 1, 4, 0 ); 
 	if( look == 1 ) 
 	{
-		var nSpawned = SpawnNPC( null, "horse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "horse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( look == 2 ) 
 	{
-		var nSpawned = SpawnNPC( null, "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( look == 3 ) 
 	{
-		var nSpawned = SpawnNPC( null, "grayhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "grayhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( look == 4 ) 
 	{
-		var nSpawned = SpawnNPC( null, "darkhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "darkhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( nSpawned == null )
 	{
