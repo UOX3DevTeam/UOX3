@@ -73,8 +73,8 @@
 //#include <sys/stat.h>
 //#include <errno.h>
 
-#include "cChar.h"
-#include "cVersionClass.h"
+//#include "cChar.h"
+//#include "cVersionClass.h"
 
 //#define __UOX3_DTL__
 //#ifdef __UOX3_DTL__
@@ -307,10 +307,10 @@ public:
 #endif
 private:
 	// Member Functions
-	VOID WriteAccountsHeader(std::fstream &fsOut);
-	VOID WriteAccessHeader(std::fstream &fsOut);
-	VOID WriteOrphanHeader(std::fstream &fsOut);
-	VOID WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
+	void WriteAccountsHeader(std::fstream &fsOut);
+	void WriteAccessHeader(std::fstream &fsOut);
+	void WriteOrphanHeader(std::fstream &fsOut);
+	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
 };
 
 #endif // __CACCOUNTCLASS_H__

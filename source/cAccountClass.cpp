@@ -1433,7 +1433,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 
 //o--------------------------------------------------------------------------o
 //|	Function			-	bool cAccountClass::AddCharacter(WORD accountid, CChar *object)
-//|									bool cAccountClass::AddCharacter(WORD accountid, VOID *object)
+//|									bool cAccountClass::AddCharacter(WORD accountid, void *object)
 //|	Date					-	12/18/2002 2:09:04 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -2243,7 +2243,7 @@ cAccountClass& cAccountClass::operator--(int)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	VOID cAccountClass::AccountsHeader(fstream &fsOut)
+//|	Function			-	void cAccountClass::AccountsHeader(fstream &fsOut)
 //|	Date					-	12/19/2002 2:56:36 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -2254,7 +2254,7 @@ cAccountClass& cAccountClass::operator--(int)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-VOID cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
+void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 {
 #ifdef cVersionClass
 	fsOut << "//AV3.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << std::endl;
@@ -2297,7 +2297,7 @@ VOID cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 //|	Description		-	Writes the Access.Adm header to the specified output
 //|									stream.
 //o--------------------------------------------------------------------------o
-VOID cAccountClass::WriteAccessHeader(std::fstream &fsOut)
+void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 {
 #ifdef cVersionClass
 	fsOut << "//SA3.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << std::endl;
@@ -2328,7 +2328,7 @@ VOID cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 //|	Description		-	Writes the Orphan.Adm header to the specified output
 //|									stream.
 //o--------------------------------------------------------------------------o
-VOID cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
+void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 {
 #ifdef cVersionClass
 	fsOut << "//OI3.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << "\n";
@@ -2354,7 +2354,7 @@ VOID cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 //|	Description		-	Writes the Username.uad header to the specified output
 //|									stream.
 //o--------------------------------------------------------------------------o
-VOID cAccountClass::WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp)
+void cAccountClass::WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp)
 {
 #ifdef cVersionClass
 	fsOut << "//AI3.0" << "-UV" << CVC.GetVersion() << "-BD" << CVC.GetBuild() << "-DS" << time(NULL) << "-ED" << CVC.GetRealBuild() << std::endl;
