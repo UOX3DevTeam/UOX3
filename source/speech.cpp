@@ -1398,7 +1398,7 @@ bool response( cSocket *mSock )
 				{
 					if( Npc->IsNpc() )
 					{
-						if( getCharDist( Npc, mChar ) <= 3 && Npc->GetID() == 0x0190 || Npc->GetID() == 0x0191 )
+						if( getCharDist( Npc, mChar ) <= 3 && (Npc->GetID() == 0x0190 || Npc->GetID() == 0x0191) )
 						{
 							if( !Npc->CanTrain() )
 							{

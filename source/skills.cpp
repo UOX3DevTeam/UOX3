@@ -116,7 +116,7 @@ void cSkills::Fletching( cSocket *s )
 				mMake.has  = getAmount( mChar, mMake.material1 ); 
 				mMake.has2 = getAmount( mChar, mMake.material2 );
 				s->ItemMake( mMake );
-				NewMakeMenu( s, 49, BOWCRAFT );
+				NewMakeMenu( s, 51, BOWCRAFT );
 			}
 			return;
 		}
@@ -5866,7 +5866,7 @@ bool cSkills::AdvanceSkill( CChar *s, int sk, bool skillUsed )
 		advSkill = true;
 		if( RandomNum( 0, 99 ) <= 10 )
 		{
-			if( s->GetSkillLock( sk ) == 1 && s->GetBaseSkill( sk ) > 0 )
+			if( s->GetSkillLock( sk ) == 0 && s->GetBaseSkill( sk ) > 0 )
 				s->SetBaseSkill( s->GetBaseSkill( sk ) + 1, sk );
 		}
 		else if( s->GetSkillLock( sk ) == 0 )

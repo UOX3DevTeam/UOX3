@@ -2238,59 +2238,94 @@ void cTargets::SwordTarget( cSocket *s )
 
 	switch( targetID )
 	{
-	case 0x0CD0:
-	case 0x0CD3:
-	case 0x0CD6:
-	case 0x0CD8:
-	case 0x0CDA:
-	case 0x0CDD:
-	case 0x0CE0:
-	case 0x0CE3:
-	case 0x0CE6:
-	case 0x0CCA:
-	case 0x0CCB:
-	case 0x0CCC:
-	case 0x0CCD:
-	case 0x0C12:
-	case 0x0CB8:
-	case 0x0CB9:
-	case 0x0CBA:
-	case 0x0CBB:
-	{
-		SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
-		SI16 targetY = s->GetWord( 0x0D );
-		SI08 targetZ = s->GetByte( 0x10 );
-
-		SI08 distZ = abs( targetZ - mChar->GetZ() );
-		SI16 distY = abs( targetY - mChar->GetY() );
-		SI16 distX = abs( targetX - mChar->GetX() );
-
-		if( distY > 5 || distX > 5 || distZ > 9 )
+		case 0x0CD0:
+		case 0x0CD3:
+		case 0x0CD6:
+		case 0x0CD8:
+		case 0x0CDA:
+		case 0x0CDD:
+		case 0x0CE0:
+		case 0x0CE3:
+		case 0x0CE6:
+		case 0x0CCA:
+		case 0x0CCB:
+		case 0x0CCC:
+		case 0x0CCD:
+		case 0x0C12:
+		case 0x0CB8:
+		case 0x0CB9:
+		case 0x0CBA:
+		case 0x0CBB:
 		{
-			sysmessage( s, 393 );
+			SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
+			SI16 targetY = s->GetWord( 0x0D );
+			SI08 targetZ = s->GetByte( 0x10 );
+
+			SI08 distZ = abs( targetZ - mChar->GetZ() );
+			SI16 distY = abs( targetY - mChar->GetY() );
+			SI16 distX = abs( targetX - mChar->GetX() );
+
+			if( distY > 5 || distX > 5 || distZ > 9 )
+			{
+				sysmessage( s, 393 );
+				return;
+			}
+			if( !mChar->IsOnHorse() )
+				action( s, 0x0D );
+			else 
+				action( s, 0x1D );
+			soundeffect( s, 0x013E, true );
+			CItem *c = Items->SpawnItem( s, 1, "#", true, 0x0DE1, 0, false, false ); //Kindling
+			if( c == NULL ) 
+				return;
+
+			c->SetLocation( mChar );
+			RefreshItem( c );
+			sysmessage( s, 1049 );
 			return;
 		}
-		if( !mChar->IsOnHorse() )
-			action( s, 0x0D );
-		else 
-			action( s, 0x1D );
-		soundeffect( s, 0x013E, true );
-		CItem *c = Items->SpawnItem( s, 1, "#", true, 0x0DE1, 0, false, false ); //Kindling
-		if( c == NULL ) 
+		case 0x09CC: 
+		case 0x09CD: 
+		case 0x09CE: 
+		case 0x09CF: 
+		{	
+			CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) ); 
+			if( i == NULL ) 
+				return;		
+			if( getPackOwner( i ) != mChar ) 
+			{ 
+				sysmessage( s, 775 ); 
+				return; 
+			} 
+			else 
+			{ 
+				int getAmt = getAmount( mChar, i->GetID() ); 
+				if( getAmt < 1 ) 
+				{ 
+					sysmessage( s, 776 ); 
+					return; 
+				} 
+				soundeffect( s, 0x013E, true); // I'm not sure 
+				CItem *c = Items->SpawnItem( s, 4, "raw fish steak", true, 0x097A, 0, true, true); 
+				if( c == NULL ) 
+				{ 
+					return; 
+				} 
+				decItemAmount( i ); 
+				return; 
+			} 
+		}
+		case 0x1BDD:
+		case 0x1BE0:
+		{
+			Skills->BowCraft( s );
 			return;
-
-		c->SetLocation( mChar );
-		RefreshItem( c );
-		sysmessage( s, 1049 );
-		return;
-	}
-	case 0x1BDD:
-	case 0x1BE0:
-		Skills->BowCraft( s );
-		return;
-	case 0x2006:
-		CorpseTarget( s );
-		return;
+		}
+		case 0x2006:
+		{
+			CorpseTarget( s );
+			return;
+		}
 	}
 	sysmessage( s, 1050 );
 }

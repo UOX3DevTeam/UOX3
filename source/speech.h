@@ -292,6 +292,8 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_UNKNOWN	// Konkani India 
 };
 
+#define MAX_SPEECH 255
+
 class CSpeechEntry
 {
 protected:
@@ -305,7 +307,7 @@ protected:
 	FontType		targFont;
 	UnicodeTypes	targLanguage;
 	long			timeToSayAt;	// time when it should be said
-	char			toSay[96];
+	char			toSay[MAX_SPEECH];
 	char			sName[32];			// sysname potentially
 	UI08			minCmdLevelToReceive;
 
@@ -337,8 +339,8 @@ public:
 	inline void			Font( FontType type )			{	targFont = type;		}
 	inline void			Language( UnicodeTypes val )	{	targLanguage = val;		}
 	inline void			At( long newTime )				{	timeToSayAt = newTime;	}
-	inline void			Speech( const char *said )		{	strcpy( toSay, said );			}
-	inline void			SpeakerName( const char *spkName )	{	strcpy( sName, spkName );	}
+	inline void			Speech( const char *said )		{	strncpy( toSay, said, (sizeof(char)*MAX_SPEECH) );			}
+	inline void			SpeakerName( const char *spkName )	{	strncpy( sName, spkName, (sizeof(char)*MAX_NAME) );	}
 	inline void			CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
 
 	inline SpeakerType	SpkrType( void )
