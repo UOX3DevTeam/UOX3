@@ -1,6 +1,5 @@
 // tailoring script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// 21/07/2003 Xuri; Updated the script
+// Last Updated: January 24th 2005
 // five spools of thread : loom : bolt of cloth
 
 function onUse ( pUser, iUsed ) 
@@ -8,60 +7,54 @@ function onUse ( pUser, iUsed )
 	// get users socket
 	var srcSock = pUser.socket;
 
-	// is it in users pack?
-	if( iUsed.container != null )
+	if( srcSock && iUsed && iUsed.isItem )
 	{
 		var iPackOwner = GetPackOwner( iUsed, 0 );
-		if( iPackOwner.serial != pUser.serial )
+		if( iPackOwner && pUser.serial == iPackOwner.serial )
 		{
-			pUser.SysMessage( "This has to be in your backpack!" );
-			return;
+			srcSock.tempObj = iUsed;
+			srcSock.CustomTarget( 0, GetDictionaryEntry( 452, srcSock.Language ) ); // Select loom to make your cloth.
 		}
 		else
-			// let the user target the heat source
-			srcSock.CustomTarget( 0, "What do you want to weave the thread on?" );
+			pUser.SysMessage( GetDictionaryEntry( 775, srcSock.Language ) ); //You can't use material outside your backpack.
 	}
-	else
-		pUser.SysMessage( "This has to be in your backpack!" );
+	return false;	
 }
 
-function onCallback0( tSock, targSerial )
+function onCallback0( tSock, myTarget )
 {
+	var iUsed = tSock.tempObj;
 	var pUser = tSock.currentChar;
 	var StrangeByte   = tSock.GetWord( 1 );
-	var targX	= tSock.GetWord( 11 );
-	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
-	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
-	{ //Target is a Maptile/Character
-		pUser.SysMessage("You cannot weave your thread on that!");
-	}
-	if( tileID >= 0x105f && tileID <= 0x1066 )
-        // check if its in range
-	if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
-	{
-		pUser.SysMessage( "You are too far away from the target!" );
+
+	if(( myTarget == null ) || ( myTarget.isChar ) || !( tileID >= 0x105f && tileID <= 0x1066 ))
+	{ //Target is a Maptile/Character/wrong item
+		pUser.SysMessage( "You can only weave yarn on a loom.");
 		return;
-	}	
-        // remove five spools of thread
-    	var iMakeResource1 = pUser.ResourceCount( 0x0fA0 );	// is there enough resources to use up to make it
-    	var iMakeResource2 = pUser.ResourceCount( 0x0fA1 );	// is there enough resources to use up to make it
-    	if( iMakeResource1 < 5 )
+	}
+	else
+	{
+		if( !pUser.InRange( myTarget, 3 ) )
+		{
+			pUser.SysMessage( GetDictionaryEntry( 393, tSock.Language ) ); //That is too far away
+			return;
+		}
+	}
+    	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
+    	if( iMakeResource < 5 )
     	{
-    		if( iMakeResource2 < 5 )
-    		{
-		    SysMessage( pUser, "You dont seem to have enough thread!" );
-  			return;
-	    	}
-	    	else
-	        	pUser.UseResource( 5, 0x0fa1 );
-        }
-        else
-        	pUser.UseResource( 5, 0x0fa0 );
-	pUser.SoundEffect( 0x0190, true );        
-        // add bolt of cloth
-	var itemMade = CreateDFNItem( pUser.socket, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
-        pUser.SysMessage( "You weave some folded cloth." );
+		pUser.SysMessage( "You dont seem to have enough thread!" );
+  		return;
+	}
+	if( pUser.CheckSkill( 34, 0, 1000 ) )
+	{
+        	pUser.UseResource( 5, iUsed.id ); 	// remove five balls of thread
+		pUser.SoundEffect( 0x0190, true );        
+	        var itemMade = CreateDFNItem( pUser.socket, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth        
+		pUser.SysMessage( "You weave some folded cloth, and put it in your backpack." );
+	}
+	else
+		pUser.SysMessage( GetDictionaryEntry( 821, tSock.Language ) ); //You failed to spin your material.
         return;
 }
