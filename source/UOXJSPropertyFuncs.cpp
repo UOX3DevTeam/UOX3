@@ -916,7 +916,13 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		case CIP_ID:		gPriv->SetID( (UI16)JSVAL_TO_INT( *vp ) );		RefreshItem( gPriv );	break;
 		case CIP_COLOUR:	gPriv->SetColour( (UI16)JSVAL_TO_INT( *vp ) );	RefreshItem( gPriv );	break;
 		case CIP_OWNER:		
-			
+			if( *vp != JSVAL_NULL )
+			{
+				CChar *myChar = (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( *vp ) );
+				if( myChar == NULL )
+					break;
+				gPriv->SetOwner( myChar->GetSerial() );
+			}
 			break;
 		case CIP_VISIBLE:	gPriv->SetVisible( (SI08)JSVAL_TO_INT( *vp ) );	RefreshItem( gPriv );	break;
 		case CIP_SERIAL:	
