@@ -547,7 +547,7 @@ UI16 addRandomColor( std::string colorlist )
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
 	if( RandomColours == NULL )
 	{
-		Console.Warning( 2, "Error Colorlist %s Not Found", colorlist );
+		Console.Warning( 2, "Error Colorlist %s Not Found", colorlist.c_str() );
 		return 0;
 	}
 	size_t i = RandomColours->NumEntries();

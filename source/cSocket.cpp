@@ -1747,9 +1747,9 @@ void cSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 		if( i->GetCommandLevel() < CNS_CMDLEVEL && i->GetFame() >= 10000 )	// Morollan, only normal players have titles now
 		{
 			if( i->GetID( 2 ) == 0x91 )
-				newName = UString::sprintf( Dictionary->GetEntry( 1740, Language() ).c_str(), newName );	// Morrolan, added Lord/Lady to title overhead
+				newName = UString::sprintf( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
 			else if( i->GetID( 1 ) == 0x90 )
-				newName = UString::sprintf( Dictionary->GetEntry( 1739, Language() ).c_str(), newName );
+				newName = UString::sprintf( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
 		}
 		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race (Abaddon)
 		{
@@ -1758,7 +1758,7 @@ void cSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 			newName += ")";
 		}
 		if( i->GetTownPriv() == 2 )
-			newName = UString::sprintf( Dictionary->GetEntry( 1738, Language() ).c_str(), newName );
+			newName = UString::sprintf( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
 		if( !isOnline( i ) )
 			newName += " (OFF)";
 	}

@@ -440,7 +440,7 @@ bool cTownRegion::InitFromScript( ScriptSection *toScan )
 						orePrefLoaded = true;
 					}
 					else
-						Console.Error( 2, "Invalid ore preference in region %i as %s", regionNum, oreName );
+						Console.Error( 2, "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() );
 				}
 				break;
 			case 'r':

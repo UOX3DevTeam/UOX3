@@ -648,7 +648,8 @@ void command_add( cSocket *s )
 	{
 		s->AddID1( (UI08)(Commands->Argument( 1 )>>8) );
 		s->AddID2( (UI08)(Commands->Argument( 1 )%256) );
-		s->target( 0, TARGET_ADDITEM, 37, UString::number( Commands->Argument( 1 ) ) );
+		UString dictID = UString::number( Commands->Argument( 1 ) );
+		s->target( 0, TARGET_ADDITEM, 37, UString::number( Commands->Argument( 1 ) ).c_str() );
 	}
 }
 

@@ -1136,10 +1136,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
 	dumping << "MoreXYZ=" << "0x" << std::hex << GetTempVar( CITV_MOREX ) << "," << "0x" << GetTempVar( CITV_MOREY ) << "," << "0x" << GetTempVar( CITV_MOREZ ) << std::endl;
 	dumping << "Amount=" << std::dec;
-	if( GetAmount() > MAX_STACK )
-		dumping << MAX_STACK << std::endl;
-	else
-		dumping << GetAmount() << std::endl;
+	dumping << GetAmount() << std::endl;
 	dumping << "MaxHP=" << GetMaxHP() << std::endl;
 	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
 	dumping << "Movable=" << (SI16)GetMovable() << std::endl;

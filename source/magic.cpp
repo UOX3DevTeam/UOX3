@@ -2881,9 +2881,8 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 				z				= defender->GetZ();
 			}
 
-			if( !caster->IsNpc() && validSocket && s->GetWord( 11 ) != INVALIDSERIAL )
+			if( !caster->IsNpc() && validSocket && s->GetDWord( 11 ) != INVALIDSERIAL )
 			{
-				
 				if( LineOfSight( s, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
 					if( spells[curSpell].FieldSpell() )
