@@ -11,39 +11,39 @@
 //
 // For use with the UOX emulator or any with permission from the author
 
-
-
+[ENVOKE]
+{
 // -------------
 // cooking start
 // use : on : to get
 
 // Wheat (4 sheaves) : Flour mill : Flour
-0x1ebd 101
+0x1ebd=101
 // Flour : Water : Dough
-0x1039 102
-0x103a 102
-0x1045 102
-0x1046 102
+0x1039=102
+0x103a=102
+0x1045=102
+0x1046=102
 // Dough : Heat source : Bread
-0x103d 103
+0x103d=103
 // knives : fish : raw fish steak
-0x0ec4 104
-0x0ec5 104
-0x13f6 104
-0x13f7 104
+0x0ec4=104
+0x0ec5=104
+0x13f6=104
+0x13f7=104
 // Raw fish steak  : Heat source : Cooked fish steak
-0x097a 105
+0x097a=105
 // Raw cut of ribs : heat source : Cut of ribs 
-0x09f1 106
+0x09f1=106
 // Raw bird : Heat source : Cooked bird
-0x09b9 107
-0x09ba 107
+0x09b9=107
+0x09ba=107
 // Raw chicken leg : Heat source : Chicken Leg
-0x1607 109
+0x1607=109
 // Raw leg of lamb : Heat source : Leg of Lamb
-0x1609 110
+0x1609=110
 // Eggs : Heat source : Fried Eggs
-0x09b5 111
+0x09b5=111
 
 // !! Following arent scripted yet because the resources have to be defined
 // !! They would be done by using existing resources and alter them with colors
@@ -83,71 +83,71 @@
 // misc. resources start
 
 // use beehive : wax and honey
-0x091a 2011
+0x091a=2011
 // pitchers, bottles, jars, cups, mugs, glasses - fill and pour: 
-0x0995 2100
-0x0996 2100
-0x0997 2100
-0x0998 2100
-0x0999 2100
-0x099a 2100
-0x099b 2100
-0x099f 2100
-0x09b3 2100
-0x09bf 2100
-0x09c7 2100
-0x0ff6 2100
-0x0ff7 2100
-0x0ff8 2100
-0x0ff9 2100
-0x09a7 2100
-0x09ad 2100
-0x09ca 2100
-0x09cb 2100
-0x09ee 2100
-0x09ef 2100
-0x0ffb 2100
-0x0ffc 2100
-0x0ffd 2100
-0x0ffe 2100
-0x0fff 2100
-0x1000 2100
-0x1001 2100
-0x1002 2100
-0x1f7d 2100
-0x1f7e 2100
-0x1f7f 2100
-0x1f80 2100
-0x1f81 2100
-0x1f82 2100
-0x1f83 2100
-0x1f84 2100
-0x1f85 2100
-0x1f86 2100
-0x1f87 2100
-0x1f88 2100
-0x1f89 2100
-0x1f8a 2100
-0x1f8b 2100
-0x1f8c 2100
-0x1f8d 2100
-0x1f8e 2100
-0x1f8f 2100
-0x1f90 2100
-0x1f91 2100
-0x1f92 2100
-0x1f93 2100
-0x1f94 2100
-0x1f95 2100
-0x1f96 2100
-0x1f97 2100
-0x1f98 2100
-0x1f99 2100
-0x1f9a 2100
-0x1f9b 2100
-0x1f9c 2100
-0x1f9d 2100
-0x1f9e 2100
+0x0995=2100
+0x0996=2100
+0x0997=2100
+0x0998=2100
+0x0999=2100
+0x099a=2100
+0x099b=2100
+0x099f=2100
+0x09b3=2100
+0x09bf=2100
+0x09c7=2100
+0x0ff6=2100
+0x0ff7=2100
+0x0ff8=2100
+0x0ff9=2100
+0x09a7=2100
+0x09ad=2100
+0x09ca=2100
+0x09cb=2100
+0x09ee=2100
+0x09ef=2100
+0x0ffb=2100
+0x0ffc=2100
+0x0ffd=2100
+0x0ffe=2100
+0x0fff=2100
+0x1000=2100
+0x1001=2100
+0x1002=2100
+0x1f7d=2100
+0x1f7e=2100
+0x1f7f=2100
+0x1f80=2100
+0x1f81=2100
+0x1f82=2100
+0x1f83=2100
+0x1f84=2100
+0x1f85=2100
+0x1f86=2100
+0x1f87=2100
+0x1f88=2100
+0x1f89=2100
+0x1f8a=2100
+0x1f8b=2100
+0x1f8c=2100
+0x1f8d=2100
+0x1f8e=2100
+0x1f8f=2100
+0x1f90=2100
+0x1f91=2100
+0x1f92=2100
+0x1f93=2100
+0x1f94=2100
+0x1f95=2100
+0x1f96=2100
+0x1f97=2100
+0x1f98=2100
+0x1f99=2100
+0x1f9a=2100
+0x1f9b=2100
+0x1f9c=2100
+0x1f9d=2100
+0x1f9e=2100
 
 // misc. resources end
 // -------------------
@@ -160,71 +160,71 @@
 // Later some of these should be enhanced to eat resources
 
 // 09fb <> 09fd, E, wall sconce
-0x9fb 501
-0x9fd 502
+0x9fb=501
+0x9fd=502
 // 0a00 <> 0a02, S, wall sconce
-0xa00 503
-0xa02 504
+0xa00=503
+0xa02=504
 // 0a05 <> 0a07, E, wall torch
-0xa05 505
-0xa07 506
+0xa05=505
+0xa07=506
 // 0a0a <> 0a0c, S, wall torch
-0xa0a 507
-0xa0c 508
+0xa0a=507
+0xa0c=508
 // 0f64 <> 0a12, player carryable torch
-0xf64 509
-0xa12 510
+0xf64=509
+0xa12=510
 // 0a18 <> 0a15, E, hanging lantern
-0xa18 511
-0xa15 512
+0xa18=511
+0xa15=512
 // 0a1d <> 0a1a, S, hanging lantern
-0xa1d 513
-0xa1a 514
+0xa1d=513
+0xa1a=514
 // 0a25 <> 0a22, lantern
-0xa25 515
-0xa22 516
+0xa25=515
+0xa22=516
 // 0a26 <> 0b1a, candlestick candle
-0xa26 517
-0xb1a 518
+0xa26=517
+0xb1a=518
 // 0a27 <> 0b1d, small candlabra
-0xa27 519
-0xb1d 520
+0xa27=519
+0xb1d=520
 // 0a28 <> 0a0f, player carryable candle
-0xa28 521
-0xa0f 522
+0xa28=521
+0xa0f=522
 // 0a29 <> 0b26, large candlabra
-0xa29 523
-0xb26 524
+0xa29=523
+0xb26=524
 // 0b21 <> 0b20, simple lamp post
-0xb21 525
-0xb20 526
+0xb21=525
+0xb20=526
 // 0b23 <> 0b22, glass lamp post
-0xb23 527
-0xb22 528
+0xb23=527
+0xb22=528
 // 0b25 <> 0b24, fancy lamp post
-0xb25 529
-0xb24 530
+0xb25=529
+0xb24=530
 // 1849 <> 184a, SW heating stand
-0x1849 533
-0x184a 534
+0x1849=533
+0x184a=534
 // 184d <> 184e, NE heating stand
-0x184d 535
-0x184e 536
+0x184d=535
+0x184e=536
 // 1853 <> 1854, right skull with candle
-0x1853 537
-0x1854 538
+0x1853=537
+0x1854=538
 // 1857 <> 1858, left skull with candle
-0x1857 539
-0x1858 540
+0x1857=539
+0x1858=540
 // 142f <> 142c, thick candle
-0x142f 541
-0x142c 542
+0x142f=541
+0x142c=542
 // 1433 <> 1430, middle candle
-// 0x1433 543
-// 0x1430 544
+// 0x1433=543
+// 0x1430=544
 // 1437 <> 1434, slim candle
-// 0x1437 545
-0x1434 546
+// 0x1437=545
+0x1434=546
 // light sources end
 // -----------------
 
@@ -234,78 +234,78 @@
 // harvesting and picking fruits start
 
 // use xd9axd96 to pick apples
-0x0d9a 2001
-0x0d96 2001
+0x0d9a=2001
+0x0d96=2001
 // use xd9exda2 to pick peaches
-0x0d9e 2002
-0x0da2 2002
+0x0d9e=2002
+0x0da2=2002
 // use xdaaxda6 to pick pears
-0x0daa 2003
-0x0da6 2003
+0x0daa=2003
+0x0da6=2003
 // use xca8xcaaxcab to pick bananas
-0x0ca8 2004
-0x0caa 2004
-0x0cab 2004
+0x0ca8=2004
+0x0caa=2004
+0x0cab=2004
 // use xc95 to pick coconuts
-0x0c95 2005
+0x0c95=2005
 // use xc96 to pick dates
-0x0c96 2006
+0x0c96=2006
 // use xd1bxd1cxd1dxd1exd1fxd20xd21xd22xd23xd24 to pick grapes
-0x0d1b 2007
-0x0d1c 2007
-0x0d1d 2007
-0x0d1e 2007
-0x0d1f 2007
-0x0d20 2007
-0x0d21 2007
-0x0d22 2007
-0x0d23 2007
-0x0d24 2007
+0x0d1b=2007
+0x0d1c=2007
+0x0d1d=2007
+0x0d1e=2007
+0x0d1f=2007
+0x0d20=2007
+0x0d21=2007
+0x0d22=2007
+0x0d23=2007
+0x0d24=2007
 
 // Pick wheat
-0x0c55 2008
-0x0c56 2008
-0x0c57 2008
-0x0c58 2008
-0x0c59 2008
-0x0c5a 2008
-0x0c5b 2008
+0x0c55=2008
+0x0c56=2008
+0x0c57=2008
+0x0c58=2008
+0x0c59=2008
+0x0c5a=2008
+0x0c5b=2008
 // pick cotton
-0x0c4f 2009
-0x0c50 2009
-0x0c51 2009
-0x0c52 2009
-0x0c53 2009
-0x0c54 2009
+0x0c4f=2009
+0x0c50=2009
+0x0c51=2009
+0x0c52=2009
+0x0c53=2009
+0x0c54=2009
 // pick flax
-0x1a99 2010
-0x1a9a 2010
-0x1a9b 2010
+0x1a99=2010
+0x1a9a=2010
+0x1a9b=2010
 
 // harvesting and picking fruits end
 // ----------------------------------
 
 
-// ----------------------------
+// ----------------------------
 // tailoring and spinning start
 
 // scissors : unshorn sheep : shorn sheep & unspun wool
-0x0f9e 131
-0x0f9f 131
+0x0f9e=131
+0x0f9f=131
 // bale of cotton : spinning wheel : six spools of thread
-0x0df9 132
+0x0df9=132
 // flax bundle : spinning wheel : six spools of thread
-0x1a9c 133
-0x1a9d 133
+0x1a9c=133
+0x1a9d=133
 // unspun wool : spinning wheel : three balls of yarn
-0x0df8 134
+0x0df8=134
 // five balls of yarn : loom : bolt of cloth
-0x0e1d 135
-0x0e1e 135
-0x0e1f 135
+0x0e1d=135
+0x0e1e=135
+0x0e1f=135
 // five spools of thread : loom : bolt of cloth
-0x0fa0 136
-0x0fa1 136
+0x0fa0=136
+0x0fa1=136
 
 // tailoring and spinning end
 // --------------------------
@@ -349,24 +349,24 @@
 // pets from pet static start
 
 // horse static, 211f, 2120, 2121, 2124
-0x211f 3100
-0x2120 3100
-0x2121 3100
-0x2124 3100
+0x211f=3100
+0x2120=3100
+0x2121=3100
+0x2124=3100
 // ostard static, 2135, 2136, 2137
-0x2135 3101
-0x2136 3101
-0x2137 3101
+0x2135=3101
+0x2136=3101
+0x2137=3101
 // llama static, 20f6
-0x20f6 3102
+0x20f6=3102
 // pack horse static, 2126
-0x2126 3103
+0x2126=3103
 // pack llama static, 2127
-0x2127 3104
+0x2127=3104
 
 // pets from pet static end
 // ------------------------
-
+}
 
 
 

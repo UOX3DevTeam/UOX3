@@ -1,254 +1,128 @@
 //-------------------------------------------
-
 // CORE		0-99
-
 // SYSTEM	100-2999
-
 // NPC/AI	3000-5999
-
 //-------------------------------------------
+// Server tacks it's base path in front of the filenames found here
 
-SECTION SCRIPT_LIST
-
+[SCRIPT_LIST]
 {
-
 //-------------------------------------------
-
 // CORE:[0-99] Rerserved for specific core server needs
-
 //-------------------------------------------
-
 // turn furniture start[50-54]
-
-50 /server/misc/furniture_smartturn.js
-
+50=server/misc/furniture_smartturn.js
 //-------------------------------------------
-
 // deeds start[55-59]
-
-// 55 /server/misc/deeds_005.js
-
+// 55=server/misc/deeds_005.js
 //-------------------------------------------
-
 // House addon[60-64]
-
-60 /server/misc/furniture_destroy.js
-
+60=server/misc/furniture_destroy.js
 //-------------------------------------------
-
 // SYSTEM:[100-2999] Rerserved for specific core server needs
-
 //-------------------------------------------
-
 // Cooking start[100-129]
-
-101 /skill/cooking/flour.js
-
-102 /skill/cooking/dough.js
-
-103 /skill/cooking/bread.js
-
-104 /skill/cooking/rawfish.js
-
-105 /skill/cooking/cookedfish.js
-
-106 /skill/cooking/cookedribs.js
-
-107 /skill/cooking/cookedbird.js
-
-109 /skill/cooking/cookedchicken.js
-
-110 /skill/cooking/cookedlegoflamb.js
-
-111 /skill/cooking/friedeggs.js
-
+101=skill/cooking/flour.js
+102=skill/cooking/dough.js
+103=skill/cooking/bread.js
+104=skill/cooking/rawfish.js
+105=skill/cooking/cookedfish.js
+106=skill/cooking/cookedribs.js
+107=skill/cooking/cookedbird.js
+109=skill/cooking/cookedchicken.js
+110=skill/cooking/cookedlegoflamb.js
+111=skill/cooking/friedeggs.js
 //-------------------------------------------
-
 // Tailoring and spinning start[130-159]
-
-131 /skill/tailoring/scissors.js
-
-132 /skill/tailoring/wthreadspools-6.js
-
-133 /skill/tailoring/flaxtothread.js
-
-134 /skill/tailoring/wyarnballs-3.js
-
-135 /skill/tailoring/wclothbolt.js
-
-136 /skill/tailoring/wsclothbolt.js
-
+131=skill/tailoring/scissors.js
+132=skill/tailoring/wthreadspools-6.js
+133=skill/tailoring/flaxtothread.js
+134=skill/tailoring/wyarnballs-3.js
+135=skill/tailoring/wclothbolt.js
+136=skill/tailoring/wsclothbolt.js
 //-------------------------------------------
-
 // Lightsources startSYSTEM[500-699]
-
-501 /server/light/candle01_on.js
-
-502 /server/light/candle01_off.js
-
-503 /server/light/candle02_on.js
-
-504 /server/light/candle02_off.js
-
-505 /server/light/torch01_on.js
-
-506 /server/light/torch01_off.js
-
-507 /server/light/torch02_on.js
-
-508 /server/light/torch02_off.js
-
-509 /server/light/torch03_on.js
-
-510 /server/light/torch03_off.js
-
-511 /server/light/lantern01_on.js
-
-512 /server/light/lantern01_off.js
-
-513 /server/light/lantern02_on.js
-
-514 /server/light/lantern02_off.js
-
-515 /server/light/lantern03_on.js
-
-516 /server/light/lantern03_off.js
-
-517 /server/light/candle03_on.js
-
-518 /server/light/candle03_off.js
-
-519 /server/light/candelabra01_on.js
-
-520 /server/light/candelabra01_off.js
-
-521 /server/light/candle04_off.js
-
-522 /server/light/candle04_off.js
-
-523 /server/light/candelabra02_on.js
-
-524 /server/light/candelabra02_off.js
-
-525 /server/light/lamp01_on.js
-
-526 /server/light/lamp01_off.js
-
-527 /server/light/lamp02_on.js
-
-528 /server/light/lamp02_off.js
-
-529 /server/light/lamp03_on.js
-
-530 /server/light/lamp03_off.js
-
-531 /server/light/heatingstand01_on.js
-
-532 /server/light/heatingstand01_off.js
-
-532 /server/light/heatingstand02_on.js
-
-533 /server/light/heatingstand02_off.js
-
-534 /server/light/candle05_on.js
-
-535 /server/light/candle05_off.js
-
-536 /server/light/candle06_on.js
-
-537 /server/light/candle06_off.js
-
-538 /server/light/candle07_on.js
-
-539 /server/light/candle07_off.js
-
-540 /server/light/candle08_on.js
-
-541 /server/light/candle08_off.js
-
-542 /server/light/candle09_on.js
-
-546 /server/light/candle09_off.js
-
+501=server/light/candle01_on.js
+502=server/light/candle01_off.js
+503=server/light/candle02_on.js
+504=server/light/candle02_off.js
+505=server/light/torch01_on.js
+506=server/light/torch01_off.js
+507=server/light/torch02_on.js
+508=server/light/torch02_off.js
+509=server/light/torch03_on.js
+510=server/light/torch03_off.js
+511=server/light/lantern01_on.js
+512=server/light/lantern01_off.js
+513=server/light/lantern02_on.js
+514=server/light/lantern02_off.js
+515=server/light/lantern03_on.js
+516=server/light/lantern03_off.js
+517=server/light/candle03_on.js
+518=server/light/candle03_off.js
+519=server/light/candelabra01_on.js
+520=server/light/candelabra01_off.js
+521=server/light/candle04_off.js
+522=server/light/candle04_off.js
+523=server/light/candelabra02_on.js
+524=server/light/candelabra02_off.js
+525=server/light/lamp01_on.js
+526=server/light/lamp01_off.js
+527=server/light/lamp02_on.js
+528=server/light/lamp02_off.js
+529=server/light/lamp03_on.js
+530=server/light/lamp03_off.js
+531=server/light/heatingstand01_on.js
+532=server/light/heatingstand01_off.js
+532=server/light/heatingstand02_on.js
+533=server/light/heatingstand02_off.js
+534=server/light/candle05_on.js
+535=server/light/candle05_off.js
+536=server/light/candle06_on.js
+537=server/light/candle06_off.js
+538=server/light/candle07_on.js
+539=server/light/candle07_off.js
+540=server/light/candle08_on.js
+541=server/light/candle08_off.js
+542=server/light/candle09_on.js
+546=server/light/candle09_off.js
 //-------------------------------------------
-
 // Fruit Picking[2000-2099]
-
-2001 /server/resource/apples.js
-
-2002 /server/resource/peaches.js
-
-2003 /server/resource/pears.js
-
-2004 /server/resource/bananas.js
-
-2005 /server/resource/coconuts.js
-
-2006 /server/resource/dates.js
-
-2007 /server/resource/grapes.js
-
-2008 /server/resource/wheat.js
-
-2009 /server/resource/cotton.js
-
-2010 /server/resource/flax.js
-
-2011 /server/resource/bee_hives.js
-
+2001=server/resource/apples.js
+2002=server/resource/peaches.js
+2003=server/resource/pears.js
+2004=server/resource/bananas.js
+2005=server/resource/coconuts.js
+2006=server/resource/dates.js
+2007=server/resource/grapes.js
+2008=server/resource/wheat.js
+2009=server/resource/cotton.js
+2010=server/resource/flax.js
+2011=server/resource/bee_hives.js
 //-------------------------------------------
-
 // Water, milk containers[2100-2199]
-
-2100 /server/resource/pitchers.js
-
-2101 /server/resource/fill_water_pitcher.js
-
-2102 /server/resource/fill_milk_pitcher.js
-
+2100=server/resource/pitchers.js
+2101=server/resource/fill_water_pitcher.js
+2102=server/resource/fill_milk_pitcher.js
 //-------------------------------------------
 
 
-
-
-
 //-------------------------------------------
-
 // NPC, and AI[3000-5999]
-
 //-------------------------------------------
-
 // NPC Basic Speech[3000-3099]
-
-3000 /npc/speech/speech_001.js
-
+3000=npc/speech/speech_001.js
 //-------------------------------------------
-
 // Pets, and Stable Hands[3100-3199]
-
-3100 /npc/pets/static_horse.js
-
-3101 /npc/pets/static_ostard.js
-
-3102 /npc/pets/static_llama.js
-
-3103 /npc/pets/static_packhorse.js
-
-3104 /npc/pets/static_packllama.js
-
+3100=npc/pets/static_horse.js
+3101=npc/pets/static_ostard.js
+3102=npc/pets/static_llama.js
+3103=npc/pets/static_packhorse.js
+3104=npc/pets/static_packllama.js
 // pets from pet static end
-
 // ------------------------
-
-
 
 }
 
-
-
 EOF
-
-
-
-
 
