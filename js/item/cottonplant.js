@@ -15,11 +15,11 @@ function onUse( pUser, iUsed )
 			if( newItem && newItem.isItem )
 			{
 				newItem.decay = true;
-				socket.SysMessage( GetDictionaryEntry( 476, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 476, socket.Language ) ); //You reach down and pick some cotton.
 			}
 		}
 		else
-			socket.SysMessage( "That is too far away." );
+			socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); //That is too far away
 	}
 	return false;
 }

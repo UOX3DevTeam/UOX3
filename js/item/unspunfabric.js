@@ -7,11 +7,11 @@ function onUse( pUser, iUsed )
 		if( ownerObj && pUser.serial == ownerObj.serial )
 		{
 			socket.tempObj = iUsed;
-			var targMsg = GetDictionaryEntry( 449, socket.Language );
+			var targMsg = GetDictionaryEntry( 449, socket.Language ); //Select spinning wheel to spin cotton.
 			socket.CustomTarget( 0, targMsg );
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) ); //You can't use material outside your backpack.
 	}
 	return false;
 }
@@ -27,7 +27,7 @@ function onCallback0( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 823, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 823, socket.Language ) ); //You can't tailor here.
 			return;
 		}
 
@@ -38,7 +38,7 @@ function onCallback0( socket, ourObj )
 			{
 				if( mChar.CheckSkill( 34, 0, 1000 ) )
 				{
-					socket.SysMessage( GetDictionaryEntry( 822, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 822, socket.Language ) ); //You have successfully spun your material.
 					var itemID = 0x0FA0;
 					if( bItem.id == 0x0DF8 )	// Wool
 						itemID = 0x0E1D;
@@ -55,10 +55,10 @@ function onCallback0( socket, ourObj )
 						bItem.Delete();
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 821, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 821, socket.Language ) ); //You failed to spin your material.
 			}
 			else
-				socket.SysMessage( "That is too far away." );
+				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); //That is too far away
 		}
 		else
 			socket.SysMessage( "You can't make anything with that." );

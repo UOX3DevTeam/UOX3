@@ -1,10 +1,11 @@
+// REDUNDANT, already exists in JS/SKILL/TAILORING/SCISSORS.JS (that one also includes sheep-shearing)
 function onUse( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 471, socket.Language );
+		var targMsg = GetDictionaryEntry( 471, socket.Language ); //What cloth should I use these scissors on?
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -21,7 +22,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1491, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1491, socket.Language ) ); // You cannot cut bandages from that item.
 			return;
 		}
 
@@ -32,7 +33,7 @@ function onCallback1( socket, ourObj )
 			var resID = ourObj.id;
 			if( resID >= 0x0F95 && resID <= 0x0F9C )		// Bolt of Cloth
 			{
-				CreateBlankItem( socket, mChar, 50, GetDictionaryEntry( 1490 ), 0x175F, 0, "ITEM", true );
+				CreateBlankItem( socket, mChar, 50, GetDictionaryEntry( 1490 ), 0x175F, 0, "ITEM", true ); //1490=cut cloth
 				mChar.SoundEffect( 0x0248, true );
 				if( ourObj.amount > 1 )
 					ourObj.amount = (ourObj.amount-1);
@@ -45,7 +46,7 @@ function onCallback1( socket, ourObj )
 			{
 				if( ourObj.container.serial != mChar.serial )
 				{
-					CreateBlankItem( socket, mChar, RandomNumber( 0, 4 ), GetDictionaryEntry( 1489 ), 0x0E21, 0, "ITEM", true );
+					CreateBlankItem( socket, mChar, RandomNumber( 0, 4 ), GetDictionaryEntry( 1489 ), 0x0E21, 0, "ITEM", true ); //1489 = "clean bandages"
 					mChar.SoundEffect( 0x0248, true );
 					if( ourObj.amount > 1 )
 						ourObj.amount = (ourObj.amount-1);
@@ -53,12 +54,12 @@ function onCallback1( socket, ourObj )
 						ourObj.Delete();
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1491, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 1491, socket.Language ) ); //You cannot cut bandages from that item.
 			}
 			else if( resID >= 0x175D && resID <= 0x1764 )		// Folded Cloth
 			{
-				socket.SysMessage( GetDictionaryEntry( 1488, socket.Language ) );
-				CreateBlankItem( socket, mChar, 2, GetDictionaryEntr( 1489 ), 0x0E21, 0, "ITEM", true );
+				socket.SysMessage( GetDictionaryEntry( 1488, socket.Language ) ); //You cut some cloth into a bandage, and put it in your backpack.
+				CreateBlankItem( socket, mChar, 2, GetDictionaryEntr( 1489 ), 0x0E21, 0, "ITEM", true ); //1489 = "clean bandages"
 				mChar.SoundEffect( 0x0248, true );
 				if( ourObj.amount > 1 )
 					ourObj.amount = (ourObj.amount-1);

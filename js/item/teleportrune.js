@@ -4,7 +4,7 @@ function onUse( pUser, iUsed )
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 401, socket.Language );
+		var targMsg = GetDictionaryEntry( 401, socket.Language ); //Select teleport target.
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;

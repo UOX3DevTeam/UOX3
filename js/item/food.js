@@ -8,14 +8,14 @@ function onUse( pUser, iUsed )
 		{
 			pUser.SoundEffect( (0x003A + RandomNumber( 0, 2 )), true );
 			if( pHunger >= 0 )
-				socket.SysMessage( GetDictionaryEntry( (408 + pHunger), socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( (408 + pHunger), socket.Language ) ); //You eat the food, but are still extremely hungry.
 			else
-				socket.SysMessage( GetDictionaryEntry( 415, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 415, socket.Language ) ); //You are simply too full to eat any more!
 
 			iPoison = iUsed.poison;
 			if( iPoison && pUser.poison < iPoison )
 			{
-				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.Language ) ); //You feel disoriented and nauseous.
 				pUser.SoundEffect( 0x0246, true );
 				pUser.poison = iPoison;
 				pUser.SetTimer( 5, 180000 );	// Set the Poison Timer (Need to use uox.ini eventually)
@@ -29,7 +29,7 @@ function onUse( pUser, iUsed )
 			pUser.hunger = (pHunger+1);
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 407, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 407, socket.Language ) ); //You are simply too full to eat any more!
 	}
 	return false;
 }
