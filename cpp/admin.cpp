@@ -510,84 +510,76 @@ void cAdmin::ReadIni()
 
 	// name resovling of server-address, LB 7-JULY 2000
 
-	int len,i,j;
+	int i;
 	unsigned long ip;		
 	SOCKADDR_IN m_sin;
 	HOSTENT *hpe;
 	char *name;
 	char result[64];
-	char okt_1[10]; char okt_2[10];
-	char okt_3[10]; char okt_4[10];
-	unsigned char b1,b2,b3,b4;
+	char okt_1[10];
+	char okt_2[10];
+	char okt_3[10];
+	char okt_4[10];
+	unsigned char b1, b2, b3, b4;
 	
     m_sin.sin_family = AF_INET;   
 	
-	for (i=0; i<servcount; i++)
+	for (i = 0; i < servcount; i++)
 	{	  
-	   ip=inet_addr(serv[i][1]);
-	   
-	   if (ip==INADDR_NONE) // adresse-name instead of ip adress given ! trnslate to ip string
-	   {
-		      
-               name=serv[i][1];
-			   printf("host: %s\n",name);
-               hpe = gethostbyname(name);
-			   			 
-			   if (hpe == NULL)  
-			   { 				  
-				   sprintf(temp,"warning: %d resolving name: %s\n", WSAGetLastError(), name);
-				   LogWarning(temp);
-				   LogWarning("switching to localhost\n");
-
-				   serv[i][1][0]='1';serv[i][1][1]='2';serv[i][1][2]='7';
-				   serv[i][1][3]='.';serv[i][1][4]='0';serv[i][1][5]='.';
-				   serv[i][1][6]='0';serv[i][1][7]='.';serv[i][1][8]='1';
-				   serv[i][1][9]=0;
+		ip = inet_addr(serv[i][1]);
+		
+		if (ip == INADDR_NONE) // adresse-name instead of ip adress given ! trnslate to ip string
+		{
+			name = serv[i][1];
+			printf("host: %s\n", name);
+			hpe = gethostbyname(name);
 			
-			   }
-               else
-			   {
-                  memcpy((char FAR *)&(m_sin.sin_addr), hpe->h_addr, hpe->h_length);
-
-				  b1=m_sin.sin_addr.S_un.S_un_b.s_b1;
-				  b2=m_sin.sin_addr.S_un.S_un_b.s_b2;
-				  b3=m_sin.sin_addr.S_un.S_un_b.s_b3;
-				  b4=m_sin.sin_addr.S_un.S_un_b.s_b4;
-				  //ip=m_sin.sin_addr.S_un.S_addr;
-				                
-				  numtostr(b1 , okt_1);
-				  numtostr(b2 , okt_2);
-				  numtostr(b3 , okt_3);
-				  numtostr(b4 , okt_4);
-
-				  //printf("server ip: %s.%s.%s.%s\n",okt_1,okt_2,okt_3,okt_4);
-
-			      strcpy(result, okt_1);
-				  strcat(result,".");
-				  strcat(result,okt_2);
-				  strcat(result,".");
-				  strcat(result,okt_3);
-				  strcat(result,".");
-				  strcat(result,okt_4);
-
-				  len=strlen(result);				 
-
-				  for (j=0;j<len;j++)
-				  {
-                     serv[i][1][j]=result[j];
-				  }
-				  serv[i][1][j]=0;
-				                    
-				  //printf("result: %s\n",serv[i][1]);
-				 
-				   			  
-			   } // end else resolvable
-
-	   }
-
-	    printf("server IP: %s\n",serv[i][1]);	
-	    printf("server port: %i\n", UOX_PORT);
-
+			if (hpe == NULL)  
+			{ 	
+#ifndef __linux__
+				sprintf(temp, "warning: %d resolving name: %s\n", WSAGetLastError(), name);
+#else
+				sprintf(temp, "warning: unable to resolve host name: %s\n", name);
+#endif
+				LogWarning(temp);
+				LogWarning("switching to localhost\n");
+				
+				strcpy(serv[i][1], "127.0.0.1");
+			}
+			else
+			{
+				memcpy((char FAR *)&(m_sin.sin_addr), hpe->h_addr, hpe->h_length);
+				
+				b1 = m_sin.sin_addr.S_un.S_un_b.s_b1;
+				b2 = m_sin.sin_addr.S_un.S_un_b.s_b2;
+				b3 = m_sin.sin_addr.S_un.S_un_b.s_b3;
+				b4 = m_sin.sin_addr.S_un.S_un_b.s_b4;
+				// ip=m_sin.sin_addr.S_un.S_addr;
+				
+				numtostr(b1 , okt_1);
+				numtostr(b2 , okt_2);
+				numtostr(b3 , okt_3);
+				numtostr(b4 , okt_4);
+				
+				// printf("server ip: %s.%s.%s.%s\n",okt_1,okt_2,okt_3,okt_4);
+				
+				strcpy(result, okt_1);
+				strcat(result, ".");
+				strcat(result, okt_2);
+				strcat(result, ".");
+				strcat(result, okt_3);
+				strcat(result, ".");
+				strcat(result, okt_4);
+				
+				strncpy(serv[i][1], result, 28);
+				serv[i][1][29] = 0;
+				
+				// printf("result: %s\n",serv[i][1]);
+			} // end else resolvable
+		}
+		
+		printf("server IP: %s\n", serv[i][1]);	
+		printf("server port: %i\n", UOX_PORT);
 	} // end server loop
 	
 	// end name resovling

@@ -76,7 +76,7 @@ void Script::reload() {
     // Snarf the part of SECTION... until EOL
     while(fgets(buf, sizeof(buf), fp))
         if (sscanf(buf, "SECTION %256[^\n]", section_name) == 1) {
-			section_name[length(section_name)-1] = 0;			//Removes trailing \n
+			section_name[strlen(section_name)-1] = 0;			//Removes trailing \n
             entries->insert(new ScriptEntry(section_name, ftell(fp)));	
             count++;
         }
