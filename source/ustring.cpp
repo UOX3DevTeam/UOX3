@@ -13,6 +13,7 @@
 #endif
 
 #include "ustring.h" 
+#include "Prerequisites.h"
 
 namespace UOX
 {

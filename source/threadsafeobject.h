@@ -1,6 +1,8 @@
 #ifndef __THREAD_SAFE_OBJ__
 #define __THREAD_SAFE_OBJ__
 
+#include "Prerequisites.h"
+
 namespace UOX
 {
 
