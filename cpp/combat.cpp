@@ -868,6 +868,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 			if( chars[defend].hp < 1 )//Highlight //Repsys
 			{
 				Kill( attack, defend );
+				deathstuff( defend );
 				return;
 			}
 
@@ -1683,7 +1684,6 @@ void Kill( CHARACTER attack, CHARACTER defend )
 {
 	Karma( attack, defend, ( 0 - ( chars[defend].karma ) ) );
 	Fame( attack, chars[defend].fame );
-	chars[defend].dead = 1;
 	if( chars[attack].npcaitype == 4 && chars[defend].npc )  // changed from 0x40 to 4
 	{
 		unsigned short xid = (chars[defend].xid1<<8) + chars[defend].xid2;
