@@ -29,7 +29,7 @@
 #include "skills.h"
 #include "speech.h"
 #include "gump.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "teffect.h"
@@ -935,7 +935,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			return JS_FALSE;
 		}
 
-		mySock->TempInt( (SI32)Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) ) );
+		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) ) 
@@ -949,7 +949,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 		CSocket *mySock = calcSocketObjFromChar( myChar );
 
-		mySock->TempInt( (SI32)Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) ) );
+		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
 	}
 	else
@@ -1698,9 +1698,17 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	
-	char *TagName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-
-	*rval = myObj->GetTag( TagName );
+	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	TAGMAPOBJECT localObject = myObj->GetTag( localString );
+	if(localObject.m_ObjectType==TAGMAP_TYPE_STRING)
+	{
+		JSString *localJSString = JS_NewString( cx, (char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
+		*rval = (jsval)STRING_TO_JSVAL(localJSString);
+	}
+	else
+	{
+		*rval = (jsval)INT_TO_JSVAL(localObject.m_IntValue);
+	}
 	return JS_TRUE;
 }
 
@@ -1719,16 +1727,46 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	
-	char *TagName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	
-	if( argc == 2 && JSVAL_IS_STRING( argv[1] ) && !strcmp( "", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) ) )
-		argv[1] = JSVAL_NULL;
-
+	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	TAGMAPOBJECT localObject;
 	if( argc == 2 )
-		myObj->SetTag( TagName, argv[1] );
+	{
+		if( JSVAL_IS_STRING( argv[1] ) )
+		{
+			// String value handling
+			if( !strcmp("", JS_GetStringBytes(JS_ValueToString(cx, argv[1]))) )
+			{
+            localObject.m_Destroy=TRUE;
+				localObject.m_IntValue=0;
+				localObject.m_ObjectType=TAGMAP_TYPE_INT;
+				localObject.m_StringValue="";
+			}
+			else
+			{
+            localObject.m_Destroy=FALSE;
+				localObject.m_StringValue = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
+				localObject.m_IntValue=localObject.m_StringValue.length();
+				localObject.m_ObjectType=TAGMAP_TYPE_STRING;
+			}			
+		}
+		else
+		{
+			// Int value handling
+			localObject.m_Destroy=FALSE;
+			localObject.m_StringValue="";
+			localObject.m_ObjectType=TAGMAP_TYPE_INT;
+			JS_ValueToInt32(cx, argv[1],(int32*)&localObject.m_IntValue);
+		}
+		myObj->SetTag( localString, localObject );
+	}
 	else
-		myObj->SetTag( TagName, JSVAL_NULL );
-
+	{
+		localObject.m_Destroy=TRUE;
+		localObject.m_ObjectType=TAGMAP_TYPE_INT;
+		localObject.m_IntValue=0;
+		localObject.m_StringValue="";
+		myObj->SetTag( localString, localObject );
+	}
 	return JS_TRUE;
 }
 
@@ -2071,7 +2109,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_TRUE;
 	}
 
-	mySock->TempInt( (SI32)Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) ) );
+	mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 	UI08 tNum = (UI08)JSVAL_TO_INT( argv[0] );
 	char toSay[512] = { 0, }; // Could become long (make sure it's NULL )
  	
@@ -2201,7 +2239,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( JSVAL_IS_BOOLEAN( argv[2] ) )	// Is it a boolean?  If so, might be calling back into here
 		{
 			if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
-				Effect->AssocScript( Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) ) );
+				Effect->AssocScript( JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 			else
 				Effect->More2( 0xFFFF );
 		}
@@ -2272,7 +2310,7 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_TRUE;
 	}
 
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
 	JS_SetPrivate( cx, myJSItem, myItem );
 
@@ -2305,7 +2343,7 @@ JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_TRUE;
 	}
 
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
 	JS_SetPrivate( cx, myJSItem, myItem );
 
@@ -2378,7 +2416,7 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		myChar->SetSpeechItem( NULL );
 
 	myChar->SetSpeechID( speechID );
-	myChar->SetSpeechCallback( Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) ) );
+	myChar->SetSpeechCallback( JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 
 	return JS_TRUE;
 }
@@ -3881,7 +3919,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->First();
 	if( ValidateObject( firstItem ) )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, firstItem );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -3922,7 +3960,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->Next();
 	if( ValidateObject( firstItem ) )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, firstItem );
 		*rval = OBJECT_TO_JSVAL( myObj );

@@ -53,7 +53,7 @@
 #include "msgboard.h"
 #include "cRaces.h"
 #include "cMagic.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -863,7 +863,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	SI16 y				= c->GetY();
 	SI08 z				= c->GetZ();
 	UI16 targTrig		= c->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	for( ourChar = regChars->First(); !regChars->Finished(); ourChar = regChars->Next() )
 	{
 		if( !ValidateObject( ourChar ) )
@@ -875,7 +875,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				if( toExecute != NULL )
 					toExecute->OnCollide( mSock, c, ourChar );
 				UI16 tTrig		= ourChar->GetScriptTrigger();
-				cScript *tExec	= Trigger->GetScript( tTrig );
+				cScript *tExec	= JSMapping->GetScript( tTrig );
 				if( tExec != NULL )
 					tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
 				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
@@ -916,7 +916,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			if( mSock != NULL )
 				tItem->SendToSocket( mSock );
 			UI16 targTrig		= mChar->GetScriptTrigger();
-			cScript *toExecute	= Trigger->GetScript( targTrig );
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
 			if( toExecute != NULL )
 				toExecute->InRange( mChar, tItem );
 			return true;
@@ -925,7 +925,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 	else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 	{
 		UI16 targTrig		= mChar->GetScriptTrigger();
-		cScript *toExecute	= Trigger->GetScript( targTrig );
+		cScript *toExecute	= JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 			toExecute->OutOfRange( mChar, tItem );
 		if( mSock != NULL )
@@ -941,7 +941,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 	{
 		tChar->SendToSocket( mSock );
 		UI16 targTrig		= mChar->GetScriptTrigger();
-		cScript *toExecute	= Trigger->GetScript( targTrig );
+		cScript *toExecute	= JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 			toExecute->InRange( mChar, tChar );
 		return true;
@@ -950,7 +950,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 	{
 		tChar->RemoveFromSight( mSock );
 		UI16 targTrig		= mChar->GetScriptTrigger();
-		cScript *toExecute	= Trigger->GetScript( targTrig );
+		cScript *toExecute	= JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 			toExecute->OutOfRange( mChar, tChar );
 		return true;
@@ -1070,7 +1070,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 					{
 						tempChar->SendToSocket( mSock );
 						UI16 targTrig		= mChar->GetScriptTrigger();
-						cScript *toExecute	= Trigger->GetScript( targTrig );
+						cScript *toExecute	= JSMapping->GetScript( targTrig );
 						if( toExecute != NULL )
 							toExecute->InRange( mChar, tempChar );
 					}
@@ -1078,7 +1078,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 					{
 						tempChar->RemoveFromSight( mSock );
 						UI16 targTrig		= mChar->GetScriptTrigger();
-						cScript *toExecute	= Trigger->GetScript( targTrig );
+						cScript *toExecute	= JSMapping->GetScript( targTrig );
 						if( toExecute != NULL )
 							toExecute->OutOfRange( mChar, tempChar );
 					}
@@ -1120,7 +1120,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 					if( id < 0x4000 )
 					{
 						UI16 targTrig		= tItem->GetScriptTrigger();
-						cScript *toExecute	= Trigger->GetScript( targTrig );
+						cScript *toExecute	= JSMapping->GetScript( targTrig );
 						if( toExecute != NULL )
 							toExecute->OnCollide( mSock, mChar, tItem );
 					}
@@ -1147,7 +1147,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						if( mSock != NULL )
 							tItem->SendToSocket( mSock );
 						UI16 targTrig		= mChar->GetScriptTrigger();
-						cScript *toExecute	= Trigger->GetScript( targTrig );
+						cScript *toExecute	= JSMapping->GetScript( targTrig );
 						if( toExecute != NULL )
 							toExecute->InRange( mChar, tItem );
 					}
@@ -1155,7 +1155,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				else if( nDist > (visibleRange+1) && oDist == (visibleRange+1) )	// Just went out of range
 				{
 					UI16 targTrig		= mChar->GetScriptTrigger();
-					cScript *toExecute	= Trigger->GetScript( targTrig );
+					cScript *toExecute	= JSMapping->GetScript( targTrig );
 					if( toExecute != NULL )
 						toExecute->OutOfRange( mChar, tItem );
 					if( mSock != NULL )

@@ -5,7 +5,7 @@
 #include "SEFunctions.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "CPacketReceive.h"
 
 namespace UOX
@@ -137,7 +137,7 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 {
 	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
 	needsChecking[0] = needsChecking[1] = 0xFFFFFFFF;
-	targContext = JS_NewContext( jsRuntime, 0x4000 );
+	targContext = JS_NewContext( jsRuntime, 0x2000 );
 	if( targContext == NULL )
 		return;
 	targObject = JS_NewObject( targContext, &uox_class, NULL, NULL ); 
@@ -255,13 +255,15 @@ cScript::~cScript()
 	RemoveFromRoot();
 	JS_GC( targContext );
 
+	// Need count, command, and magic clean up code now that cTriggerScripts is gone.
 	switch( scpType )
 	{
 	default:
 	case SCPT_NORMAL:
-	case SCPT_COUNT:		Trigger->UnregisterObject( targObject );		break;
-	case SCPT_COMMAND:		Trigger->GetCommandScripts()->UnregisterObject( targObject );	break;
-	case SCPT_MAGIC:		Trigger->GetMagicScripts()->UnregisterObject( targObject );	break;
+	case SCPT_COUNT:		//Trigger->UnregisterObject( targObject );		break;
+	case SCPT_COMMAND:	//Trigger->GetCommandScripts()->UnregisterObject( targObject );	break;
+	case SCPT_MAGIC:		//Trigger->GetMagicScripts()->UnregisterObject( targObject );	break;
+		break;
 	}
 	if( targScript != NULL )
 		JS_DestroyScript( targContext, targScript );
@@ -1648,7 +1650,7 @@ void cScript::SendGumpList( SI32 index, CSocket *toSendTo )
 	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return;
 
-	toSendTo->TempInt( (SI32)Trigger->GetAssociatedScript( targObject ) );
+	toSendTo->TempInt( (SI32)JSMapping->GetScript( targObject ) );
 	SendVecsAsGump( toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), 20, INVALIDSERIAL );
 }
 
@@ -2484,19 +2486,13 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 //o---------------------------------------------------------------------------o
 bool cScript::commandRegistration( void )
 {
-#ifdef _DEBUG
-	Console.Print( "Command registration executing\n" );
-#endif
 	jsval params[1], rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "CommandRegistration", 0, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "CommandRegistration", 1, params, &rval );
 	return ( retVal == JS_TRUE );
 }
 
 bool cScript::spellRegistration( void )
 {
-#ifdef _DEBUG
-	Console.Print( "Magic spell registration executing\n" );
-#endif
 	jsval params[1], rval;
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "SpellRegistration", 0, params, &rval );
 	return ( retVal == JS_TRUE );

@@ -1090,14 +1090,30 @@ void cCommands::CommandReset( void )
 	//Z
 }
 
-void cCommands::Register( std::string cmdName, cScript *toRegister, UI08 cmdLevel, bool isEnabled )
+void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 {
 #ifdef _DEBUG
-	Console.Print( "Registering command %s at command level %i\n", cmdName.c_str(), cmdLevel );
+	Console.Print( "   UnRegistering command %s\n", cmdName.c_str());
 #endif
 	UString upper		= cmdName;
 	upper				= upper.upper();
-	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, toRegister, isEnabled );
+	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
+	if( p != JSCommandMap.end() )
+		JSCommandMap.erase( p );
+#ifdef _DEBUG
+	else
+		Console.Print( "         Command \"%s\" was not found.\n", cmdName.c_str());
+#endif
+}
+
+void cCommands::Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
+{
+#ifdef _DEBUG
+	Console.Print( "         Registering \"%s\" @ command level %i\n", cmdName.c_str(), cmdLevel );
+#endif
+	UString upper		= cmdName;
+	upper				= upper.upper();
+	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
 void cCommands::SetCommandStatus( std::string cmdName, bool isEnabled )

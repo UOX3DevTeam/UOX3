@@ -8,7 +8,7 @@
 #include "cMagic.h"
 #include "ssection.h"
 #include "gump.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -171,7 +171,7 @@ void HandleSetScpTrig( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	UI16 targTrig		= (UI16)s->TempInt();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute == NULL )
 	{
 		s->sysmessage( 1752 );
@@ -1142,7 +1142,7 @@ void NpcResurrectTarget( CChar *i )
 				}
 			}
 			UI16 targTrig		= i->GetScriptTrigger();
-			cScript *toExecute	= Trigger->GetScript( targTrig );
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
 			if( toExecute != NULL )
 				toExecute->OnResurrect( i );
 		}

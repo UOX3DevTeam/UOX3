@@ -9,7 +9,7 @@
 #include "cMagic.h"
 #include "skills.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -560,7 +560,7 @@ bool splDispelField( CSocket *sock, CChar *caster )
 			if( i->isDecayable() || i->isDispellable() ) 
 			{
 				UI16 scpNum = i->GetScriptTrigger();
-				cScript *tScript = Trigger->GetScript( scpNum );
+				cScript *tScript = JSMapping->GetScript( scpNum );
 				if( tScript != NULL )
 					tScript->OnDispel( i );
 				i->Delete();
@@ -714,7 +714,7 @@ bool splDispel( CChar *caster, CChar *target, CChar *src )
 		{
 			cScript *tScript = NULL;
 			UI16 scpNum = target->GetScriptTrigger();
-			tScript = Trigger->GetScript( scpNum );
+			tScript = JSMapping->GetScript( scpNum );
 			if( tScript != NULL )
 				tScript->OnDispel( target );
 			target->Delete();
@@ -957,7 +957,7 @@ void MassDispelStub( CChar *caster, CChar *target )
 		{
 			cScript *tScript = NULL;
 			UI16 scpNum = target->GetScriptTrigger();
-			tScript = Trigger->GetScript( scpNum );
+			tScript = JSMapping->GetScript( scpNum );
 			if( tScript != NULL )
 				tScript->OnDispel( target );
 			Effects->PlaySound( target, 0x0204 );
@@ -1367,7 +1367,7 @@ void cMagic::AddSpell( CItem *book, int spellNum )
 {
 	cScript *tScript	= NULL;
 	UI16 scpNum			= book->GetScriptTrigger();
-	tScript				= Trigger->GetScript( scpNum );
+	tScript				= JSMapping->GetScript( scpNum );
 	if( tScript != NULL )
 		tScript->OnSpellGain( book, spellNum );	
 
@@ -1388,7 +1388,7 @@ void cMagic::RemoveSpell( CItem *book, int spellNum )
 {
 	cScript *tScript = NULL;
 	UI16 scpNum = book->GetScriptTrigger();
-	tScript = Trigger->GetScript( scpNum );
+	tScript = JSMapping->GetScript( scpNum );
 	if( tScript != NULL )
 	tScript->OnSpellLoss( book, spellNum );	
 
@@ -2483,7 +2483,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	SI16 Delay = -2;
 
 	UI16 spellTrig = mChar->GetScriptTrigger();
-	cScript *toExecute = Trigger->GetScript( spellTrig );
+	cScript *toExecute = JSMapping->GetScript( spellTrig );
 	if( toExecute != NULL )
 	{
 		// Events:
@@ -2653,7 +2653,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	caster->StopSpell();
 
 	UI16 spellTrig		= caster->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( spellTrig );
+	cScript *toExecute	= JSMapping->GetScript( spellTrig );
 	if( toExecute != NULL )
 	{
 		toExecute->OnSpellSuccess( caster, curSpell );
@@ -2714,7 +2714,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							case 45: //////////// (45) MARK //////////////////
 							case 52: //////////// (52) GATE //////////////////
 								tScript = i->GetScriptTrigger();
-								tScriptExec = Trigger->GetScript( tScript );
+								tScriptExec = JSMapping->GetScript( tScript );
 								if( tScriptExec != NULL )
 								{
 									tScriptExec->OnSpellTarget( i, caster, curSpell );
@@ -2820,7 +2820,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 53: // Mana Vampire
 						case 59: // Resurrection
 							tScript = c->GetScriptTrigger();
-							tScriptExec = Trigger->GetScript( tScript );
+							tScriptExec = JSMapping->GetScript( tScript );
 							if( tScriptExec != NULL )
 							{
 								tScriptExec->OnSpellTarget( c, caster, curSpell );
@@ -2840,7 +2840,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 54:	// Mass Dispel
 						case 55:	// Meteor Swarm
 							tScript = c->GetScriptTrigger();
-							tScriptExec = Trigger->GetScript( tScript );
+							tScriptExec = JSMapping->GetScript( tScript );
 							if( tScriptExec != NULL )
 							{
 								tScriptExec->OnSpellTarget( c, caster, curSpell );
@@ -3150,9 +3150,12 @@ void cMagic::LoadScript( void )
 #ifdef _DEBUG
 	Console.Print( "Registering spells\n" );
 #endif
-	for( cScript *toRegister = Trigger->GetMagicScripts()->First(); !Trigger->GetMagicScripts()->Finished(); toRegister = Trigger->GetMagicScripts()->Next() )
+
+	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_MAGIC );
+	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
-		toRegister->spellRegistration();
+		if( ourScript != NULL )
+			ourScript->spellRegistration();
 	}
 }
 

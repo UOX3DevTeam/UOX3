@@ -23,7 +23,7 @@
 #include "townregion.h"
 #include "cRaces.h"
 #include "skills.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "regions.h"
 #include "magic.h"
@@ -178,7 +178,7 @@ namespace UOX
 						else
 						{
 							// Otherwise Acquire an object
-							cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 							JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 							JS_SetPrivate( cx, myObj, pOwner );
 							*vp = OBJECT_TO_JSVAL( myObj );
@@ -219,7 +219,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						if( TempSerial >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 						{
 							JSObject *myItem = myScript->AcquireObject( IUE_ITEM );
@@ -266,7 +266,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myRace	= myScript->AcquireObject( IUE_RACE );
 						JS_SetPrivate( cx, myRace, TempRace );
 						*vp = OBJECT_TO_JSVAL( myRace );
@@ -285,6 +285,10 @@ namespace UOX
 				case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 				case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
 				case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
+				case CIP_DESC:
+					tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+					break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -355,7 +359,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
 						JS_SetPrivate( cx, myChar, TempObj );
 						*vp = OBJECT_TO_JSVAL( myChar );
@@ -383,7 +387,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
 						JS_SetPrivate( cx, myChar, tempChar );
 						*vp = OBJECT_TO_JSVAL( myChar );
@@ -428,7 +432,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myItem	= myScript->AcquireObject( IUE_ITEM );
 						JS_SetPrivate( cx, myItem, TempItem );
 						*vp = OBJECT_TO_JSVAL( myItem );
@@ -453,7 +457,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myRace = myScript->AcquireObject( IUE_RACE );
 						JS_SetPrivate( cx, myRace, TempRace );
 						*vp = OBJECT_TO_JSVAL( myRace );
@@ -486,7 +490,7 @@ namespace UOX
 							*vp = JSVAL_NULL;
 						else
 						{
-							cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 							JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
 				
 							JS_SetPrivate( cx, myTown, myReg );
@@ -506,7 +510,7 @@ namespace UOX
 					else
 					{
 						// Should build the town here
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
 			
 						JS_SetPrivate( cx, myTown, regions[TempTownID] );
@@ -524,7 +528,7 @@ namespace UOX
 					else
 					{
 						// if he has one, lets build our guild !
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myGuild	= myScript->AcquireObject( IUE_GUILD );
 			
 						JS_SetPrivate( cx, myGuild, GuildSys->Guild( TempGuildID ) );
@@ -533,7 +537,7 @@ namespace UOX
 					break;
 				case CCP_SOCKET:
 					{ // So we can declar the variables here
-					cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+					cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 					JSObject *mySock	= myScript->AcquireObject( IUE_SOCK );
 					JS_SetPrivate( cx, mySock, calcSocketObjFromChar( gPriv ) );
 					*vp = OBJECT_TO_JSVAL( mySock );
@@ -582,7 +586,7 @@ namespace UOX
 						else
 						{
 							// Otherwise Acquire an object
-							cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 							JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
 							JS_SetPrivate( cx, myChar, tempChar );
 							*vp = OBJECT_TO_JSVAL( myChar );
@@ -1123,6 +1127,7 @@ namespace UOX
 				case CIP_WEIGHT:	gPriv->SetWeight( (SI32)encaps.toInt() );						break;
 				case CIP_STRENGTH:	gPriv->SetStrength( (SI16)encaps.toInt() );						break;
 				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
+				case CIP_DESC:		gPriv->SetDesc( encaps.toString() );							break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -1235,7 +1240,7 @@ namespace UOX
 					}
 					else
 					{
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 						JS_SetPrivate( cx, myObj, gPriv->CurrcharObj() );
 						*vp = OBJECT_TO_JSVAL( myObj );
@@ -1247,7 +1252,7 @@ namespace UOX
 				case CSOCKP_TEMPINT:			*vp = INT_TO_JSVAL( gPriv->TempInt() );					break;
 				case CSOCKP_TEMPOBJ:
 					{
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						CBaseObject *mObj	= gPriv->TempObj();
 						if( !ValidateObject( mObj ) )
 							*vp = JSVAL_NULL;
@@ -1298,7 +1303,7 @@ namespace UOX
 				case CSOCKP_TARGET:
 					{
 						SERIAL mySerial		= gPriv->GetDWord( 7 );
-						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						// Item
 						if( mySerial >= BASEITEMSERIAL )
 						{
@@ -1358,7 +1363,7 @@ namespace UOX
 		}
 		
 		// Otherwise Acquire an object
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myJSItem, mySubItem );
 		*vp = OBJECT_TO_JSVAL( myJSItem );

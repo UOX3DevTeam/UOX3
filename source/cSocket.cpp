@@ -918,7 +918,6 @@ ACCOUNTSBLOCK &CSocket::GetAccount( void )
 //o--------------------------------------------------------------------------o
 void CSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
 {
-	ACCOUNTSBLOCK &tBlock = actbBlock;
 
 	if( actbBlock.wAccountIndex == AB_INVALID_ID )
 	{
@@ -1322,7 +1321,7 @@ cPBaseBuffer& cPBaseBuffer::operator<<( const UI08 value )
 	}
 	else
 		internalBuffer.resize( internalBufferOffset + 1 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI08)value );
+	PackInto( &internalBuffer[0], internalBufferOffset, (UI08&)value );
 	return (*this);
 }
 cPBaseBuffer& cPBaseBuffer::operator<<( const UI16 value )
@@ -1334,7 +1333,7 @@ cPBaseBuffer& cPBaseBuffer::operator<<( const UI16 value )
 	}
 	else
 		internalBuffer.resize( internalBufferOffset + 2 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI16)value );
+	PackInto( &internalBuffer[0], internalBufferOffset, (UI16&)value );
 	return (*this);
 }
 cPBaseBuffer& cPBaseBuffer::operator<<( const UI32 value )
@@ -1346,7 +1345,7 @@ cPBaseBuffer& cPBaseBuffer::operator<<( const UI32 value )
 	}
 	else
 		internalBuffer.resize( internalBufferOffset + 4 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI32)value );
+	PackInto( &internalBuffer[0], internalBufferOffset, (UI32&)value );
 	return (*this);
 }
 cPBaseBuffer& cPBaseBuffer::operator<<( const SI08 value )

@@ -254,6 +254,7 @@ enum CI_Properties
 	CIP_WEIGHT,
 	CIP_STRENGTH,
 	CIP_CORPSE,
+	CIP_DESC,
 	// The following entries are specifically for CSpawnItem objects
 	CIP_SPAWNSECTION,
 	CIP_SECTIONALIST,

@@ -4,7 +4,7 @@
 #include "cRaces.h"
 #include "skills.h"
 #include "cMagic.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "mapstuff.h"
 #include "cScript.h"
 #include "cEffects.h"
@@ -529,7 +529,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	bool stackDeleted	= false;
 	bool executeNpc		= true;
 	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	UI08 rVal			= 0;
 	if( toExecute != NULL )
 	{
@@ -556,7 +556,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	if( executeNpc )
 	{
 		targTrig	= targNPC->GetScriptTrigger();
-		toExecute	= Trigger->GetScript( targTrig );
+		toExecute	= JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 		{
 			rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );
@@ -700,7 +700,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	}
 
 	UI16 targTrig			= i->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->OnDrop( i, nChar );
 
@@ -774,7 +774,7 @@ void DropOnItem( CSocket *mSock )
 		return;
 
 	UI16 targTrig			= nItem->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->OnDrop( nItem, mChar );
 
@@ -2232,7 +2232,7 @@ bool CPIDblClick::Handle( void )
 	{
 		UI16 envTrig		= 0;
 		UI16 itemTrig		= x->GetScriptTrigger();
-		cScript *toExecute	= Trigger->GetScript( itemTrig );
+		cScript *toExecute	= JSMapping->GetScript( itemTrig );
 		if( toExecute != NULL )
 		{
 			// on ground and not in range
@@ -2251,17 +2251,17 @@ bool CPIDblClick::Handle( void )
 		}
 		//check this on trigger in the event that the .trigger property is not set on the item
 		//trigger code.  Check to see if item is envokable by id
-		else if( Trigger->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
+		else if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
-			envTrig = Trigger->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
-			cScript *envExecute = Trigger->GetScript( envTrig );
+			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
+			cScript *envExecute = JSMapping->GetScript( envTrig );
 			if( envExecute->OnUse( ourChar, x ) == 1 )
 				return true;
 		}
-		else if( Trigger->GetEnvokeByID()->Check( itemID ) )
+		else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
 		{
-			envTrig = Trigger->GetEnvokeByID()->GetScript( itemID );
-			cScript *envExecute = Trigger->GetScript( envTrig );
+			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
+			cScript *envExecute = JSMapping->GetScript( envTrig );
 			if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
 				return true;
 		}
@@ -2430,7 +2430,7 @@ bool CPISingleClick::Handle( void )
 	if( !ValidateObject( i ) )		// invalid item
 		return true;
 	// October 6, 2002 - Brakhtus - Added support for the onClick event
-	cScript *onClickScp = Trigger->GetScript( i->GetScriptTrigger() );
+	cScript *onClickScp = JSMapping->GetScript( i->GetScriptTrigger() );
 	if( onClickScp != NULL )
 		onClickScp->OnClick( tSock, i );
 
@@ -2451,10 +2451,10 @@ bool CPISingleClick::Handle( void )
 					if( ValidateObject( mCreater ) )
 						sprintf( temp2, "%s %s by %s", i->GetDesc(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 					else
-						strcpy( temp2, i->GetDesc() );
+						strcpy( temp2, i->GetDesc().c_str() );
 				}
 				else
-					strcpy( temp2, i->GetDesc() );
+					strcpy( temp2, i->GetDesc().c_str() );
 				sprintf( temp, "%s at %igp", temp2, i->GetBuyValue() );
 				tSock->objMessage( AppendData( i, temp ), i );
 				return true;

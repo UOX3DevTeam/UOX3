@@ -8,7 +8,7 @@
 #include "cMagic.h"
 #include "cVersionClass.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -824,7 +824,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			currentPage++;
 		}		
 	}
-	else
+	else	// m != 1
 	{
 		// Now we make the first page that will essentially display our list of Main GM Groups.
 		pagenum = 2;
@@ -840,6 +840,13 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		xOffset			= SXOFFSET;
 		yOffset			= SYOFFSET;
 		
+		// Drop in the page number text area image
+		toSend.AddCommand( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E);
+		// Add the page number text to the text area for display
+		toSend.AddCommand( "text %u %u %u %u",xStart+295,yWidth-27,901,linenum++);
+		szBuffer = UString::sprintf( "Menu %i - Page %i", m, pagenum-1 );
+		toSend.AddText( szBuffer );
+
 		for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next() )
 		{
 			data = ItemMenu->GrabData();
@@ -852,11 +859,11 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			toSend.AddCommand( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E);
+			//toSend.AddCommand( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E);
 			// Add the page number text to the text area for display
-			toSend.AddCommand( "text %u %u %u %u",xStart+295,yWidth-27,901,linenum++);
-			szBuffer = UString::sprintf( "Menu %i - Page %i", m, pagenum-1 );
-			toSend.AddText( szBuffer );
+			//toSend.AddCommand( "text %u %u %u %u",xStart+295,yWidth-27,901,linenum++);
+			//szBuffer = UString::sprintf( "Menu %i - Page %i", m, pagenum-1 );
+			//toSend.AddText( szBuffer );
 			if( tag.upper() == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
@@ -980,15 +987,16 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Ok display the scroll that we use to display our help information
 	toSend.AddCommand( "resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200 );
 	// Write out what page were on (Mainly for debug purposes
-	szBuffer = UString::sprintf( "%5u", 2000 );
+	szBuffer = UString::sprintf( "%5u", 31 );
 	toSend.AddCommand( "text %u %u %u %u",xWidth-58,yWidth-25,110, linenum++ );
 	toSend.AddText( szBuffer );
 	// Ok, now the job of pulling the rest of the first itemmenu information and making tabs for them
-	szBuffer = "Page 2000";
+	szBuffer = "Page 31";
 	toSend.AddCommand( "text %u %u %u %u",30, yStart + 200, 87, linenum++ );
 	toSend.AddText( szBuffer );
 	toSend.AddCommand( "button %u %u %u %u %u %u %u",104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++ );
 
+	printf("==============================\n");
 	// Finish up and send the gump to the client socket.	
 	toSend.Finalize();
 	s->Send( &toSend );

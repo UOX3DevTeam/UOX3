@@ -11,7 +11,7 @@
 #include "skills.h"
 #include "commands.h"
 #include "cMagic.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "classes.h"
@@ -202,7 +202,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
 
 	CItem *newItem		= calcItemObjFromSer( targSerial );
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 	JS_SetPrivate( cx, myObj, newItem );
 	*rval = OBJECT_TO_JSVAL( myObj );
@@ -223,7 +223,7 @@ JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
 
 	CChar *newChar		= calcCharObjFromSer( targSerial );
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 	JS_SetPrivate( cx, myObj, newChar );
 	*rval = OBJECT_TO_JSVAL( myObj );
@@ -414,14 +414,14 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 {
 	if( argc != 3 )
 	{
-		DoSEErrorMessage( "RegisterCommand: Invalid number of arguments (takes 3)" );
+		DoSEErrorMessage( "  RegisterCommand: Invalid number of arguments (takes 4)" );
  		return JS_FALSE;
 	}
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
  	UI08 execLevel			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
-	cScript *myScript		= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-	Commands->Register( toRegister, myScript, execLevel, isEnabled );
+
+	Commands->Register( toRegister, JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ), execLevel, isEnabled );
  	return JS_TRUE;
 }
 
@@ -434,7 +434,7 @@ JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	int spellNumber			= JSVAL_TO_INT( argv[0] );
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	cScript *myScript		= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript		= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	Magic->Register( myScript, spellNumber, isEnabled );
  	return JS_TRUE;
 }
@@ -550,7 +550,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, wrld );
 	if( cMade != NULL )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myobj		= myScript->AcquireObject( IUE_CHAR );
 		JS_SetPrivate( cx, myobj, cMade );
 		*rval				= OBJECT_TO_JSVAL( myobj );
@@ -591,7 +591,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
 	if( newItem != NULL )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, newItem );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -633,7 +633,7 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( newItem != NULL )
 	{
 		newItem->SetName( itemName );
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, newItem );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -752,7 +752,7 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	CMultiObj *multi = findMulti( xLoc, yLoc, zLoc, worldNumber );
 	if( ValidateObject( multi ) )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, multi );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -956,7 +956,7 @@ JSBool SE_GetTownMayor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	CChar *mayor		= regions[town]->GetMayor();
 	if( ValidateObject( mayor ) )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 		JS_SetPrivate( cx, myObj, mayor );
 		*rval				= OBJECT_TO_JSVAL( myObj );
@@ -1104,7 +1104,7 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 	UI16 scriptNumberToFire = (UI16)JSVAL_TO_INT( argv[0] );
  	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	cScript *toExecute		= Trigger->GetScript( scriptNumberToFire );
+	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
 	if( toExecute == NULL || eventToFire == NULL )
 		return JS_FALSE;
@@ -1139,7 +1139,7 @@ JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	if( ValidateObject( pOwner ) )
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 		JS_SetPrivate( cx, myObj, pOwner );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -1172,7 +1172,7 @@ JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	else
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
 		JS_SetPrivate( cx, myObj, calcedItem );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -1203,7 +1203,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	else
 	{
-		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 		JS_SetPrivate( cx, myObj, calcedChar );
 		*rval = OBJECT_TO_JSVAL( myObj );
@@ -1332,7 +1332,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcCharacterObj );
 	}
 	
-	cScript *myScript			= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
@@ -1648,7 +1648,7 @@ JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	UI32 b				= 0;
 	std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	ObjectType toCheck	= FindObjTypeFromString( objType );
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	if( myScript != NULL )
 		ObjectFactory::getSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
 	*rval = INT_TO_JSVAL( b );
@@ -1723,7 +1723,7 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
 	JS_SetPrivate( cx, myObj, mChar );
 	*rval = OBJECT_TO_JSVAL( myObj );

@@ -1,7 +1,7 @@
 #include "uox3.h"
 #include "cEffects.h"
 #include "regions.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 
 namespace UOX
@@ -37,7 +37,7 @@ void useDoor( CSocket *s, CItem *item )
 			return;
 		}
 		UI16 itemTrig		= item->GetScriptTrigger();
-		cScript *toExecute	= Trigger->GetScript( itemTrig );
+		cScript *toExecute	= JSMapping->GetScript( itemTrig );
 		if( toExecute != NULL )
 		{
 			if( toExecute->OnUse( mChar, item ) == 1 )	// if it exists and we don't want hard code, return

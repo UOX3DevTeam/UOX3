@@ -50,7 +50,7 @@
 #include "ssection.h"
 #include "cHTMLSystem.h"
 #include "gump.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "teffect.h"
@@ -204,7 +204,7 @@ void DoMessageLoop( void )
 			case MSG_COUNT:															break; 
 			case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
 			case MSG_PRINT:			Console << tVal.data << myendl;					break;
-			case MSG_RELOADJS:		Trigger->ReloadJS();	Console.PrintDone();	break;
+			case MSG_RELOADJS:		JSMapping->Reload();	Console.PrintDone();	break;
 			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data );						break;
 			case MSG_PRINTDONE:		Console.PrintDone();							break;
 			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
@@ -926,13 +926,16 @@ void processkey( int c )
 				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
 				if( !cwmWorldState->GetReloadingScripts() )
 				{
-					messageLoop << "CMD: Loading JSE Scripts... ";
 					cwmWorldState->SetReloadingScripts( true );
 					messageLoop << MSG_RELOADJS;
 					cwmWorldState->SetReloadingScripts( false );
 				}
 				else
 					messageLoop << "Server can only load one script at a time";
+				
+				/*messageLoop << "Due to a bug, this function has been temporarily disabled.";
+				messageLoop << "Please shut down the server, make your changes and re-start the server.";
+				messageLoop << "Sorry for the inconvienences.";*/
 				break;
 			case '9':
 				// Reload the HTML output templates
@@ -980,7 +983,10 @@ void processkey( int c )
 					messageLoop << MSG_PRINTDONE;
 					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
 					messageLoop << "     Loading JSE Scripts... ";
-					messageLoop << MSG_RELOADJS;
+					
+					//messageLoop << MSG_RELOADJS;
+
+
 					// Reload the current Spells 
 					messageLoop << "     Loading spells... ";
 					Magic->LoadScript();
@@ -1314,7 +1320,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 			mChar.DecHunger(); //Morrolan GMs and Counselors don't get hungry
 		
 		UI16 HungerTrig = mChar.GetScriptTrigger();
-		cScript *toExecute = Trigger->GetScript( HungerTrig );
+		cScript *toExecute = JSMapping->GetScript( HungerTrig );
 		bool doHunger = true;
 		if( toExecute != NULL )
 			doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
@@ -1591,7 +1597,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 	// AI can never be faster than how often we check npcs
 	// This periodically generates access violations.  No idea why either
 	UI16 AITrig			= mChar.GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( AITrig );
+	cScript *toExecute	= JSMapping->GetScript( AITrig );
 	bool doAICheck		= true;
 	if( toExecute != NULL )
 	{
@@ -2101,7 +2107,7 @@ void LoadJSEngine( void )
 	
 	if( jsRuntime == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	jsContext = JS_NewContext( jsRuntime, 0x2000 );
+	jsContext = JS_NewContext( jsRuntime, 0x4B000 );
 	if( jsContext == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	jsGlobal = JS_NewObject( jsContext, &global_class, NULL, NULL ); 
@@ -2120,7 +2126,7 @@ void LoadJSEngine( void )
 //o---------------------------------------------------------------------------o
 void InitClasses( void )
 {
-	Trigger			= NULL;
+	JSMapping		= NULL;
 	Commands		= NULL;	Combat		= NULL;
 	Items			= NULL;	Map			= NULL;
 	Npcs			= NULL;	Skills		= NULL;	
@@ -2159,9 +2165,9 @@ void InitClasses( void )
 	if(( Books			= new cBooks )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
 	if(( GMQueue		= new PageVector( "GM Queue" ) )		== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
 	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( Trigger		= new CTrigger )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
-	Trigger->GetEnvokeByID()->Parse();
-	Trigger->GetEnvokeByType()->Parse();
+	if(( JSMapping		= new CJSMapping )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	JSMapping->GetEnvokeByID()->Parse();
+	JSMapping->GetEnvokeByType()->Parse();
 	if(( MapRegion		= new cMapRegion )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
 	if(( Effects		= new cEffects )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
 	if(( HTMLTemplates	= new cHTMLTemplates )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
@@ -2393,9 +2399,9 @@ void Shutdown( SI32 retCode )
 	delete CounselorQueue;
 	delete Dictionary;
 	delete Accounts;
-	if( Trigger )
-		Trigger->Cleanup();//must be called to delete some things the still reference Trigger.
-	delete Trigger;
+	if( JSMapping )
+		JSMapping->Cleanup();//must be called to delete some things the still reference JSMapping.
+	delete JSMapping;
 	delete MapRegion;
 	delete SpeechSys;
 	delete GuildSys;
@@ -2910,7 +2916,7 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 		if( iRegion != NULL && calcReg != NULL )
 		{
 			UI16 leaveScript = mChar.GetScriptTrigger();
-			cScript *tScript = Trigger->GetScript( leaveScript );
+			cScript *tScript = JSMapping->GetScript( leaveScript );
 			if( tScript != NULL )
 			{
 				tScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
@@ -2918,12 +2924,12 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 			}
 
 			UI16 regLeaveScript	= iRegion->GetScriptTrigger();
-			cScript *trScript	= Trigger->GetScript( regLeaveScript );
+			cScript *trScript	= JSMapping->GetScript( regLeaveScript );
 			if( trScript != NULL )
 				trScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
 
 			UI16 regEnterScript	= calcReg->GetScriptTrigger();
-			cScript *teScript	= Trigger->GetScript( regEnterScript );
+			cScript *teScript	= JSMapping->GetScript( regEnterScript );
 			if( teScript != NULL )
 				teScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
 		}
@@ -3026,7 +3032,7 @@ void setcharflag( CChar *c )
 	if( oldFlag != newFlag )
 	{
 		UI16 targTrig = c->GetScriptTrigger();
-		cScript *toExecute = Trigger->GetScript( targTrig );
+		cScript *toExecute = JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 			toExecute->OnFlagChange( c, newFlag, oldFlag );
 	}
@@ -3278,7 +3284,7 @@ int main( int argc, char *argv[] )
 		Weather->NewDay();
 		Console.PrintDone();
 
-		Console << "Loading Commands               ";
+		Console << "Loading Commands               " << myendl;
 		Commands->Load();
 		Console.PrintDone();
 		
@@ -3370,7 +3376,7 @@ int main( int argc, char *argv[] )
 		cwmWorldState->SetLoaded( true );
 		Console << "UOX: Startup Complete" << myendl;
 		Console.PrintSectionBegin();
-		
+
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{

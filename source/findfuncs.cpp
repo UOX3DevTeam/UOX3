@@ -283,7 +283,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 		{
 			if( !ValidateObject( itemCheck ) )
 				continue;
-			if( itemCheck->GetID( 1 ) >= 0x40 )
+			if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
 			{
 				dx = abs( x - itemCheck->GetX() );
 				dy = abs( y - itemCheck->GetY() );

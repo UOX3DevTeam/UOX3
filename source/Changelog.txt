@@ -1,11 +1,43 @@
-February 5 2005 - Maarc
+2/7/2005 - giwo
+	Replaced trigger.cpp/.h with CJSMapping.cpp/.h Fixing several issues with JS Scripts.
+	Added .desc prop to JS Items
 
+2/6/2005 - giwo
+	Fixed an issue causing JS commands to not function or crash the server
+	Fixed an issue causing findMulti() to return items that were not Multis.
+
+February 5 2005 - Maarc
 	Probable fix for Polymorph not returning to the right body (can't test)
 	The newbie dagger is no longer made on new character creation - use newbie.dfn people! (Not entirely complete, as not all references to EXTRA3 were removed)
 	SaveStatistics() added to CWorldMain, which only really writes out the total of characters and items, but using it to help with a fix for WorldBuilder
 
-January 15 2005 - Maarc
+2/3/2005 - EviLDeD
+	Fixed a small problem with VC6 not liking the initializer list for the TAGMAPOBJECT structure. 
 
+2/3/2005 - EviLDeD
+	Fixed the Crash on save bug after reloading the JS. 
+	Moved the TAGMAP system from jsval to TAGMAPOBJECT(See source)
+	Removed some of the console spam used for testing purposes
+
+1/30/2005 - EviLDeD (Contrib: Rynet)
+	Corrected a display problem with boats. This has been commented out due to being a work around for teh SetZ/SetDispZ bug which has been fixed I believe
+	Corrected some copy/referance issues in cSocket
+ 
+1/28/2005 - EviLDeD
+	Removed CTriggerScript class as it was redundant. Moved functionality into CTrigger class
+	Improved the command load process by having CommandRegistration() send in the contextID responsible for command RegisterCommand()
+	Increased amount of console spam looking for the full JS reload IE: console '8' that will crash the server on the next world save
+	NOTE: Currently the console '6' Reload commands appears to operate correctly with no crash upon save. At this point it is recomended that any object/item/char script changes that are NOT magic or command related be done while the server is shut down until a solution can be found for this.
+	NOTE: When solutio is found all console spam and comments will be removed internally.
+
+1/16/2005 - EviLDeD
+	Increased the JS global context stack size to 32kb from 8kb just to be safer
+	Added cCommand::UnRegister(string,cScript*) function to facilitate removal of named command objects. Currently not in use.
+	Added some console spam to help diagnose the AddMenu/PolyMorph gump issues not displaying correctly
+	Fixed(Partially) the JS Command reloading. Now commands are correctly loaded, however side effect is that the server will
+	 crash at save time. Once this last issue is sorted out then this bug will be fixed.
+
+January 15 2005 - Maarc
 	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system 
 	Explicitly setting some pointers NULL after they have been destroyed
 	Removed call to StoreRandomItemValue() in CMultiObj::LoadRemnants() - not really necessary, and the function call needs to be after world load, not during (ie candidate for PostLoad, if any)

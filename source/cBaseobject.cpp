@@ -22,7 +22,7 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "power.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "network.h"
 #include "ObjectFactory.h"
@@ -137,67 +137,67 @@ size_t CBaseObject::GetNumTags( void ) const
 //o--------------------------------------------------------------------------o
 //| Modifications		-	
 //o--------------------------------------------------------------------------o
-jsval CBaseObject::GetTag( std::string tagname ) const 
+TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const 
 {
-	jsval rvalue		= 0;
-	TAGMAP_CITERATOR CI = tags.find( tagname );
+	TAGMAPOBJECT localObject;
+	localObject.m_ObjectType = TAGMAP_TYPE_INT;
+	localObject.m_IntValue = 0;
+	localObject.m_Destroy=FALSE;
+	localObject.m_StringValue="";
+	TAGMAP2_CITERATOR CI = tags.find( tagname );
 	if( CI != tags.end() )
 	{
-		rvalue = CI->second;
+		localObject = CI->second;
 	}
-	return rvalue;
+	return localObject;
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void CBaseObject::SetTag( std::string tagname, jsval tagval ) 
-//|	Date				-	
-//|	Developers			-	
-//|	Organization		-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Function			-	void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval ) 
+//|	Date				-	Unknown / Feb 3, 2005
+//|	Developers		-	Unknown / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
-//|	Description			-	
+//|	Description		-	
 //o--------------------------------------------------------------------------o
-//| Modifications		-	
+//| Modifications		-	Updated the function to use the internal tagmap object
+//|							instead of using some stored jsval in a context that
+//|							may or may not change when reloaded.
 //o--------------------------------------------------------------------------o
-void CBaseObject::SetTag( std::string tagname, jsval tagval ) 
+void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval ) 
 {
-	TAGMAP_ITERATOR I = tags.find( tagname );
+	TAGMAP2_ITERATOR I = tags.find( tagname );
 	if( I != tags.end() )
 	{
-		// This tag exists so process it(Do something)
-		if( JSVAL_IS_NULL(tagval) )
-			tags.erase(I);
-		else
+		// Check to see if this object needs to be destroyed
+		bool reAdd = FALSE;
+		if( I->second.m_Destroy )
 		{
-			//Change the tag's value.
-			if( JSVAL_IS_STRING( tagval ) )
-			{
-				char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tagval ) );
-				JSString *s_string = JS_NewStringCopyZ( jsContext, s_tagval);
-				I->second = STRING_TO_JSVAL(s_string);
-			}
-			else
-			{
-				I->second = tagval;
-			}
+			tags.erase( I );
+			return;
+		}
+		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
+		if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
+		{
+			I->second.m_Destroy = FALSE;
+			I->second.m_ObjectType	= tagval.m_ObjectType;
+			I->second.m_StringValue	= tagval.m_StringValue;
+			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
+			I->second.m_IntValue		= tagval.m_StringValue.length();
+		}
+		else
+		{	
+			I->second.m_Destroy = FALSE;
+			I->second.m_ObjectType = tagval.m_ObjectType;
+			I->second.m_StringValue = "";
+			I->second.m_IntValue = tagval.m_IntValue;
 		}
 	}
 	else
 	{
-		// We dont want to create an entry if the valie is NULL
-		if( !JSVAL_IS_NULL( tagval ) )
-		{
-			if( JSVAL_IS_STRING( tagval ) )
-			{
-				char *s_tagval		= JS_GetStringBytes( JS_ValueToString( jsContext, tagval ) );
-				JSString *s_string	= JS_NewStringCopyZ( jsContext, s_tagval);
-				tags[tagname]		= STRING_TO_JSVAL(s_string);
-			}
-			else
-			{
-				tags[tagname] = tagval;
-			}
-		}
+		// We need to create a TAGMAPOBJECT and initialize and store into the tagmap, NOTE that an opbject will be created regardless 
+		tags[tagname]		= tagval;
 	}
 }
 //o--------------------------------------------------------------------------
@@ -631,18 +631,17 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
 	dumping << "DWords=" << genericDWords[0] << "," << genericDWords[1] << "," << genericDWords[2] << "," << genericDWords[3] << std::endl;
 	// Spin the character tags to save make sure to dump them too
-	TAGMAP_CITERATOR CI;
+	TAGMAP2_CITERATOR CI;
 	for( CI = tags.begin(); CI != tags.end(); ++CI )
 	{
 		dumping << "TAGNAME=" << CI->first << std::endl;
-		if( JSVAL_IS_STRING(CI->second) )
+		if( CI->second.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, CI->second ) );
-			dumping << "TAGVALS=" << (s_tagval) << std::endl;
+			dumping << "TAGVALS=" << CI->second.m_StringValue << std::endl;
 		}
 		else
 		{
-			dumping << "TAGVAL=" << ((SI32)CI->second) << std::endl;
+			dumping << "TAGVAL=" << ((SI32)CI->second.m_IntValue) << std::endl;
 		}
 	}
 	//====================================================================================
@@ -930,7 +929,7 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			multis->RemoveFromMulti( this );
 			if( fireTrigger )
 			{
-				cScript *onLeaving = Trigger->GetScript( GetScriptTrigger() );
+				cScript *onLeaving = JSMapping->GetScript( GetScriptTrigger() );
 				if( onLeaving != NULL )
 					onLeaving->OnLeaving( multis, this );
 			}
@@ -957,7 +956,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			multis->AddToMulti( this );
 			if( fireTrigger )
 			{
-				cScript *onEntrance = Trigger->GetScript( GetScriptTrigger() );
+				cScript *onEntrance = JSMapping->GetScript( GetScriptTrigger() );
 				if( onEntrance != NULL )
 					onEntrance->OnEntrance( multis, this );
 			}
@@ -1569,7 +1568,6 @@ bool CBaseObject::Load( std::ifstream &inStream )
 		if( tag != "o---o" )
 		{
 			UTag = tag.upper();
-			HandleLine( UTag, data );
 			if( !HandleLine( UTag, data ) )
 				Console.Warning( 1, "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() );
 		}
@@ -1749,7 +1747,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			break;
 		case 'O':
-			if( UTag == "OWNERID" )
+			if( UTag == "OBJECTTYPE" )
+			{
+				rvalue	= true;
+			}
+			else if( UTag == "OWNERID" )
 			{
 				owner	= (CChar *)data.toULong();
 				rvalue	= true;
@@ -1827,14 +1829,23 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "TAGVAL" )
 			{
-				SetTag( staticTagName, static_cast<jsval>(data.toULong() ) );
+				TAGMAPOBJECT tagvalObject;
+				tagvalObject.m_ObjectType=TAGMAP_TYPE_INT;
+				tagvalObject.m_IntValue=data.toULong();
+				tagvalObject.m_Destroy=FALSE;
+				tagvalObject.m_StringValue="";
+				SetTag( staticTagName, tagvalObject );
 				rvalue = true;
 			}
 			else if( UTag == "TAGVALS" )
 			{
-				JSString *tagvals	= JS_NewStringCopyZ( jsContext, data.c_str() );
-				jsval tagvali		= STRING_TO_JSVAL(tagvals);
-				SetTag( staticTagName, tagvali );
+				std::string localString = data;
+				TAGMAPOBJECT tagvalObject;
+				tagvalObject.m_ObjectType=TAGMAP_TYPE_STRING;
+				tagvalObject.m_IntValue=localString.length();
+				tagvalObject.m_Destroy=FALSE;
+				tagvalObject.m_StringValue=localString;
+				SetTag( staticTagName, tagvalObject );
 				rvalue = true;
 			}
 			break;
@@ -2174,7 +2185,7 @@ void CBaseObject::SetDisabled( bool newVal )
 void CBaseObject::Cleanup( void )
 {
 	UI16 scpNum			= GetScriptTrigger();
-	cScript *tScript	= Trigger->GetScript( scpNum );
+	cScript *tScript	= JSMapping->GetScript( scpNum );
 	if( tScript != NULL )
 		tScript->OnDelete( this );
 

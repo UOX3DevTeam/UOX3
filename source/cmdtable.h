@@ -56,12 +56,13 @@ struct TargetMapEntry
 struct JSCommandEntry
 {
 	UI08		cmdLevelReq;
-	cScript *	executing;
+	UI16		scriptID;
+	//cScript	*executing;
 	bool		isEnabled;
-	JSCommandEntry() : cmdLevelReq( 0 ), executing( NULL ), isEnabled( true )
+	JSCommandEntry() : cmdLevelReq( 0 ), scriptID( 0 ), isEnabled( true )
 	{
 	}
-	JSCommandEntry( UI08 cLR, cScript *exec, bool iE ) : cmdLevelReq( cLR ), executing( exec ), isEnabled( iE )
+	JSCommandEntry( UI08 cLR, UI16 id, bool iE ) : cmdLevelReq( cLR ), scriptID( id ), isEnabled( iE )
 	{
 	}
 };

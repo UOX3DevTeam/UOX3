@@ -9,7 +9,7 @@
 #include "cServerDefinitions.h"
 #include "cMagic.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "scriptc.h"
 #include "cScript.h"
 #include "cEffects.h"
@@ -1234,7 +1234,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 {
 	bool skillCheck		= false;
 	UI16 scpNum			= s->GetScriptTrigger();
-	cScript *tScript	= Trigger->GetScript( scpNum );
+	cScript *tScript	= JSMapping->GetScript( scpNum );
 	bool exists			= false;
 
 	if( tScript != NULL )
@@ -1330,7 +1330,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	UI08 counter = 0;
 	CSocket *mSock = calcSocketObjFromChar( c );
 	UI16 skillTrig = c->GetScriptTrigger();
-	cScript *scpSkill = Trigger->GetScript( skillTrig );
+	cScript *scpSkill = JSMapping->GetScript( skillTrig );
 		
 	if( c->IsNpc() || c->GetCommandLevel() >= CNS_CMDLEVEL || mSock == NULL )	// GM's and NPC's dont atrophy
 	{
@@ -1959,7 +1959,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	}
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
 	{
-		cScript *skScript = Trigger->GetScript( mChar->GetScriptTrigger() );
+		cScript *skScript = JSMapping->GetScript( mChar->GetScriptTrigger() );
 		bool doSwitch = true;
 		if( skScript != NULL )
 			doSwitch = !skScript->OnSkill( mChar, x );
@@ -2139,12 +2139,12 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			s->sysmessage( 880 );
 
 			UI16 targTrig		= item->GetScriptTrigger();
-			cScript *toExecute	= Trigger->GetScript( targTrig );
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
 			if( toExecute != NULL )
 				toExecute->OnSteal( mChar, item );
 
 			targTrig	= npc->GetScriptTrigger();
-			toExecute	= Trigger->GetScript( targTrig );
+			toExecute	= JSMapping->GetScript( targTrig );
 			if( toExecute != NULL )
 				toExecute->OnStolenFrom( mChar, npc, item );
 		} 
@@ -4143,7 +4143,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence }; 
 	
 	UI16 skillUpdTrig = s->GetScriptTrigger();
-	cScript *skillTrig = Trigger->GetScript( skillUpdTrig );
+	cScript *skillTrig = JSMapping->GetScript( skillUpdTrig );
 	
     for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount ) 
 	{ 
@@ -4682,14 +4682,14 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	{
 		s->openPack( pack );
 		s->sysmessage( 993 );
-		cScript *successSnoop = Trigger->GetScript( target->GetScriptTrigger() );
+		cScript *successSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
 		if( successSnoop != NULL )
 			successSnoop->OnSnooped( target, mChar, true );
 	}
 	else 
 	{
 		bool doNormal = true;
-		cScript *failSnoop = Trigger->GetScript( target->GetScriptTrigger() );
+		cScript *failSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
 		if( failSnoop != NULL )
 			doNormal = !failSnoop->OnSnooped( target, mChar, true );
 

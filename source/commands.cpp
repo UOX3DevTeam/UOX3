@@ -2,7 +2,7 @@
 #include "commands.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
 
@@ -102,18 +102,18 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
 
 #ifdef _DEBUG
-	Console.Print( "Command search for %s\n", command.c_str() );
+	Console.Print( "Command search for %s -", command.c_str() );
 #endif
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
 	{
 #ifdef _DEBUG
-		Console.Print( "Command %s found in JS map\n", command.c_str() );
+		Console.Print( " FOUND - ", command.c_str() );
 #endif
 		if( toFind->second.isEnabled )
 		{
 #ifdef _DEBUG
-			Console.Print( "JS Command %s is enabled\n", command.c_str() );
+			Console.Print( "Enabled\n", command.c_str() );
 #endif
 			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
@@ -123,7 +123,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 				s->sysmessage( 337 );
 				return;
 			}
-			cScript *toExecute = toFind->second.executing;
+			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
 			if( toExecute != NULL )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #ifdef _DEBUG
@@ -188,7 +188,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 		COMMANDMAP_ITERATOR toFind = CommandMap.find( command );
 		if( toFind == CommandMap.end() )
 		{
-			cScript *toGrab = Trigger->GetScript( mChar->GetScriptTrigger() );
+			cScript *toGrab = JSMapping->GetScript( mChar->GetScriptTrigger() );
 			if( toGrab == NULL || !toGrab->OnCommand( s ) )
 				s->sysmessage( 336 );
 			return;
@@ -271,7 +271,8 @@ void cCommands::Load( void )
 			++tablePos;
 		}
 	}
-
+	
+	Console << "   o Loading command levels" << myendl;
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == NULL )
 		InitClearance();
@@ -318,15 +319,12 @@ void cCommands::Load( void )
 	}
 
 	// Now we'll load our JS commands, what fun!
-
-#ifdef _DEBUG
-	Console.Print( "Registering commands\n" );
-#endif
-	for( cScript *toRegister = Trigger->GetCommandScripts()->First(); !Trigger->GetCommandScripts()->Finished(); toRegister = Trigger->GetCommandScripts()->Next() )
+	CJSMappingSection *commandSection = JSMapping->GetSection( SCPT_COMMAND );
+	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
 	{
-		toRegister->commandRegistration();
+		if( ourScript != NULL )
+			ourScript->commandRegistration();
 	}
-	Console << myendl << "   o Loaded " << JSCommandMap.size() << " Commands from JavaScript" << myendl;
 }
 
 //o---------------------------------------------------------------------------o

@@ -5,7 +5,7 @@
 #include "cSpawnRegion.h"
 #include "skills.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "teffect.h"
 #include "CPacketSend.h"
@@ -92,7 +92,7 @@ CChar *cCharStuff::CreateBaseNPC( std::string npc )
 		if( !ApplyNpcSection( cCreated, npcCreate ) )
 			Console.Error( 2, "Trying to apply an npc section failed" );
 
-		cScript *toGrab = Trigger->GetScript( cCreated->GetScriptTrigger() );
+		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
 		if( toGrab != NULL )
 			toGrab->OnCreate( cCreated );
 	}

@@ -268,6 +268,7 @@ static JSPropertySpec CItemProps[] =
 	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM },
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
+	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM },
 	{ "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM },

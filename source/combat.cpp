@@ -13,7 +13,7 @@
 #include "Dictionary.h"
 #include "movement.h"
 #include "cScript.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
@@ -1287,7 +1287,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 	bool checkDist		= (ourDist <= 1);
 
 	UI16 targTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->OnSwing( mWeapon, mChar, ourTarg );
 
@@ -1403,7 +1403,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 			if( toExecute != NULL )
 				toExecute->OnAttack( mChar, ourTarg );
 			UI16 defScript	= ourTarg->GetScriptTrigger();
-			toExecute		= Trigger->GetScript( defScript );
+			toExecute		= JSMapping->GetScript( defScript );
 			if( toExecute != NULL )
 				toExecute->OnDefense( mChar, ourTarg );
 		}

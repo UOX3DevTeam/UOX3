@@ -8,7 +8,7 @@
 #include "commands.h"
 #include "cMagic.h"
 #include "PageVector.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "cThreadQueue.h"
@@ -107,12 +107,12 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 		if( !currChar->isFree() && connClients[s] != NULL )
 		{
 			// October 6, 2002 - Brakhtus Support for the onLogout event.
-			cScript *onLogoutScp = Trigger->GetScript(currChar->GetScriptTrigger());
+			cScript *onLogoutScp = JSMapping->GetScript(currChar->GetScriptTrigger());
 			if( onLogoutScp!=NULL )
 				onLogoutScp->OnLogout(connClients[s], currChar);
 			else
 			{
-				onLogoutScp = Trigger->GetScript(0);
+				onLogoutScp = JSMapping->GetScript( (UI16)0 );
 				if( onLogoutScp!=NULL )
 					onLogoutScp->OnLogout(connClients[s],currChar);
 			}

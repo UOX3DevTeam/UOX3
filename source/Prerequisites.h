@@ -120,6 +120,8 @@ namespace UOX {
 	class cHTMLTemplates;
 	class cItem;
 	class CItem;
+	class CJSMapping;
+	class CJSMappingSection;
 	class CLand;
 	class cMagic;
 	class CMagicMove;
@@ -151,8 +153,6 @@ namespace UOX {
 	class CTile;
 	class CTileUni;
 	class CTownRegion;
-	class CTrigger;
-	class CTriggerScripts;
 	class CVersionClass;
 	class CWeather;
 	class cWeatherAb;

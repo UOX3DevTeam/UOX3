@@ -5,7 +5,7 @@
 #include "cRaces.h"
 #include "commands.h"
 #include "skills.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
@@ -133,7 +133,7 @@ bool response( CSocket *mSock, CChar *mChar, std::string text )
 			if( ourDist <= 5 && abs( diffZ ) <= 9 )
 			{
 				UI16 speechTrig = Npc->GetScriptTrigger();
-				cScript *toExecute = Trigger->GetScript( speechTrig );
+				cScript *toExecute = JSMapping->GetScript( speechTrig );
 				if( toExecute != NULL )
 				{
 //|					-1	=> No such function or bad call
@@ -203,7 +203,7 @@ bool CPITalkRequest::Handle( void )
 		return true;
 
 	char *asciiText		= Text();
-	cScript *myScript	= Trigger->GetScript( mChar->GetScriptTrigger() );
+	cScript *myScript	= JSMapping->GetScript( mChar->GetScriptTrigger() );
 	if( myScript != NULL )
 	{
 		if( !myScript->OnTalk( mChar, asciiText ) )

@@ -1,7 +1,7 @@
 #include "uox3.h"
 #include "skills.h"
 #include "cMagic.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "mapstuff.h"
 #include "cScript.h"
 #include "cEffects.h"
@@ -596,19 +596,19 @@ void cEffects::checktempeffects( void )
 						scpNum = Effect->More2();
 					else
 						scpNum = myObj->GetScriptTrigger();
-					tScript = Trigger->GetScript( scpNum );
+					tScript = JSMapping->GetScript( scpNum );
 				}
 				if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
 				{
-					if( Trigger->GetEnvokeByType()->Check( static_cast<UI16>(((CItem *)myObj)->GetType()) ) )
+					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(((CItem *)myObj)->GetType()) ) )
 					{
-						scpNum	= Trigger->GetEnvokeByType()->GetScript( static_cast<UI16>(((CItem *)myObj)->GetType()) );
-						tScript = Trigger->GetScript( scpNum );
+						scpNum	= JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(((CItem *)myObj)->GetType()) );
+						tScript = JSMapping->GetScript( scpNum );
 					}
-					else if( Trigger->GetEnvokeByID()->Check( myObj->GetID() ) )
+					else if( JSMapping->GetEnvokeByID()->Check( myObj->GetID() ) )
 					{
-						scpNum	= Trigger->GetEnvokeByID()->GetScript( myObj->GetID() );
-						tScript	= Trigger->GetScript( scpNum );
+						scpNum	= JSMapping->GetEnvokeByID()->GetScript( myObj->GetID() );
+						tScript	= JSMapping->GetScript( scpNum );
 					}
 				}
 				if( tScript != NULL )				// do OnTimer stuff here

@@ -43,7 +43,7 @@
 #include "cRaces.h"
 #include "cSpawnRegion.h"
 #include "cScript.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "Dictionary.h"
 
 namespace UOX
@@ -89,9 +89,9 @@ creator( DEFITEM_CREATOR )
 	objType = OT_ITEM;
 	strcpy( name2, "#" );
 	name = "#";
-	desc[0] = 0;
 	race = 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
+	desc.reserve( MAX_NAME );
 }
 
 CItem::~CItem()	// Destructor to clean things up when deleted
@@ -437,13 +437,13 @@ void CItem::SetCreator( SERIAL newValue )
 	creator = newValue;
 }
 
-const char *CItem::GetDesc( void ) const
+std::string CItem::GetDesc( void ) const
 {
 	return desc;
 }
-void CItem::SetDesc( const char *newValue )
+void CItem::SetDesc( std::string newValue )
 {
-	strncpy( desc, newValue, 100 );
+	desc = newValue.substr( 0, MAX_NAME - 1 );
 }
 
 void CItem::IncZ( SI16 newValue )

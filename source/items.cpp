@@ -3,7 +3,7 @@
 #include "cServerDefinitions.h"
 #include "cSpawnRegion.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "scriptc.h"
 #include "cScript.h"
 #include "cEffects.h"
@@ -416,7 +416,7 @@ CItem * cItem::CreateBaseScriptItem( std::string item, UI08 worldNum, ObjectType
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() ) 
 			iCreated->SetMaxHP( iCreated->GetHP() );
 
-		cScript *toGrab = Trigger->GetScript( iCreated->GetScriptTrigger() );
+		cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
 		if( toGrab != NULL )
 			toGrab->OnCreate( iCreated );
 	}

@@ -15,10 +15,28 @@
 namespace UOX
 {
 
+enum TAGMAPOBJECT_TYPE
+{
+	TAGMAP_TYPE_INT=0,
+	TAGMAP_TYPE_STRING
+};
+
+typedef struct __TAGMAP_STRUCT__
+{
+	UI08	m_ObjectType;
+	UI32	m_IntValue;
+	bool	m_Destroy;
+	std::string m_StringValue;
+} TAGMAPOBJECT,*LPTAGMAPOBJECT;
+
+typedef std::map< std::string, TAGMAPOBJECT > TAGMAP2;
+typedef std::map< std::string, TAGMAPOBJECT >::iterator TAGMAP2_ITERATOR;
+typedef std::map< std::string, TAGMAPOBJECT >::const_iterator TAGMAP2_CITERATOR;
+
 // Some helpers for iteators, and readability
-typedef std::map< std::string, jsval> TAGMAP;
-typedef std::map< std::string, jsval>::iterator TAGMAP_ITERATOR;
-typedef std::map< std::string, jsval>::const_iterator TAGMAP_CITERATOR;
+//typedef std::map< std::string, jsval> TAGMAP;
+//typedef std::map< std::string, jsval>::iterator TAGMAP_ITERATOR;
+//typedef std::map< std::string, jsval>::const_iterator TAGMAP_CITERATOR;
 
 enum UpdateTypes
 {
@@ -44,7 +62,7 @@ enum UpdateTypes
 class CBaseObject
 {
 protected:
-	TAGMAP			tags;
+	TAGMAP2			tags;
 	std::string 	title;
 	SI16			kills;
 	SI16			fame;
@@ -97,9 +115,13 @@ protected:
 public:
 
 	size_t 					GetNumTags( void ) const;
-	jsval 					GetTag( std::string tagname ) const;
-	void 					SetTag( std::string tagname, jsval tagval );
 	
+	//jsval					GetTag( std::string tagname ) const;
+	//void 					SetTag( std::string tagname, jsval tagval );
+	
+	TAGMAPOBJECT		GetTag( std::string tagname ) const;
+	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
+
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;
 	void					SetKills( SI16 value );

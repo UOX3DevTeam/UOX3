@@ -24,7 +24,7 @@ protected:
 
 	char			name2[MAX_NAME];
 	SERIAL			creator;	// Store the serial of the player made this item
-	char			desc[100];
+	std::string		desc;
 
 	UI08			layer; // Layer if equipped on paperdoll
 	ItemTypes		type; // For things that do special things on doubleclicking
@@ -122,11 +122,11 @@ public:
 
 	const char *	GetName2( void ) const;
 	SERIAL			GetCreator( void ) const;
-	const char *	GetDesc( void ) const;
+	std::string 	GetDesc( void ) const;
 
 	void			SetName2( const char *newValue );
 	void			SetCreator( SERIAL newValue );
-	void			SetDesc( const char *newValue );
+	void			SetDesc( std::string newValue );
 
 	void			PlaceInPack( void );
 	virtual void	SetLocation( const CBaseObject *toSet );

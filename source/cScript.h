@@ -1,6 +1,7 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+
 namespace UOX
 {
 
@@ -124,6 +125,14 @@ private:
 		InUseEntry( bool iU, JSObject *tU ) : inUse( iU ), toUse( tU )
 		{
 		}
+	};
+
+	struct InUseEntry2
+	{
+		bool inUse;
+		UI16 toUseID;
+		InUseEntry2() : inUse( false ), toUseID( INVALIDID ) {}
+		InUseEntry2( bool iU, UI16 iUID ) : inUse( iU ), toUseID( iUID ) {}
 	};
 
 	JSScript *	targScript;
@@ -269,6 +278,7 @@ public:
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 
 	bool		commandRegistration( void );
+
 	bool		spellRegistration( void );
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	

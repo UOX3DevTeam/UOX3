@@ -381,14 +381,14 @@ SOURCE=.\npcs.cpp
 
 SOURCE=.\pcmanage.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\trigger.cpp
-# End Source File
 # End Group
 # Begin Group "JS Engine"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CJSMapping.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\cScript.cpp
@@ -599,10 +599,6 @@ SOURCE=.\teffect.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\trigger.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\weight.h
 # End Source File
 # Begin Source File
@@ -685,6 +681,10 @@ SOURCE=.\uox3.h
 # Begin Group "JS Engine Nr. 1"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CJSMapping.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\cScript.h

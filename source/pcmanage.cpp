@@ -5,7 +5,7 @@
 #include "wholist.h"
 #include "skills.h"
 #include "ssection.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
 #include "classes.h"
@@ -668,17 +668,17 @@ void startChar( CSocket *mSock, bool onCreate )
 				//DumpPlayerHTML( mChar );
 			if( onCreate )
 			{
-				cScript *onCreateScp = Trigger->GetScript( 0 );	// 0 == global script
+				cScript *onCreateScp = JSMapping->GetScript( (UI16)0 );	// 0 == global script
 				if( onCreateScp != NULL )
 					onCreateScp->OnCreate( mChar );
 			}
 
-			cScript *onLoginScp = Trigger->GetScript( mChar->GetScriptTrigger() );
+			cScript *onLoginScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
 			if( onLoginScp != NULL )
 				onLoginScp->OnLogin( mSock, mChar );
 			else 
 			{
-				onLoginScp = Trigger->GetScript( 0 );
+				onLoginScp = JSMapping->GetScript( (UI16)0 );
 				
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
@@ -889,7 +889,7 @@ void HandleDeath( CChar *mChar )
 	}
 	
 	UI16 targTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->OnDeath( mChar );
 

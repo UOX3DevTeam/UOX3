@@ -578,9 +578,10 @@ enum ItemLayers
 enum SCRIPTTYPE
 {
 	SCPT_NORMAL		= 0,
-	SCPT_COMMAND	= 1,
-	SCPT_MAGIC		= 2,
-	SCPT_COUNT		= 3
+	SCPT_COMMAND,
+	SCPT_MAGIC,
+	SCPT_SKILLUSE,
+	SCPT_COUNT
 };
 
 enum TargetIDs

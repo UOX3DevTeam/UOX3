@@ -40,7 +40,7 @@
 #include "townregion.h"
 #include "cRaces.h"
 #include "skills.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
 #include "classes.h"
@@ -2095,7 +2095,7 @@ bool CChar::WearItem( CItem *toWear )
 					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 
 				UI16 scpNum			= toWear->GetScriptTrigger();
-				cScript *tScript	= Trigger->GetScript( scpNum );
+				cScript *tScript	= JSMapping->GetScript( scpNum );
 				if( tScript != NULL )
 					tScript->OnEquip( this, toWear );
 			}
@@ -2135,7 +2135,7 @@ bool CChar::TakeOffItem( UI08 Layer )
 
 		cScript *tScript = NULL;
 		UI16 scpNum = itemLayers[Layer]->GetScriptTrigger();
-		tScript = Trigger->GetScript( scpNum );
+		tScript = JSMapping->GetScript( scpNum );
 		if( tScript != NULL )
 			tScript->OnUnequip( this, itemLayers[Layer] );
 

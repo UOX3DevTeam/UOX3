@@ -47,7 +47,7 @@ CGuild::~CGuild()
 //o---------------------------------------------------------------------------o
 GUILDID CGuild::FirstWar( void )
 {
-	warPtr = relationList.end();
+	warPtr = relationList.begin();
 	return NextWar();
 }
 
