@@ -9,14 +9,13 @@
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
+#pragma warning(disable : 4786 )
 #ifndef __CACCOUNTCLASS_H__
 #define __CACCOUNTCLASS_H__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
-#pragma warning(disable : 4786 )
 
 #include <iostream>
 #include <sstream>
@@ -287,4 +286,4 @@ private:
 	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
 };
 
-#endif /* __CACCOUNTCLASS_H__ */
+#endif
