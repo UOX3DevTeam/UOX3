@@ -43,7 +43,6 @@ char bpitem[20]="\x40\x0D\x98\xF7\x0F\x4F\x00\x00\x09\x00\x30\x00\x52\x40\x0B\x0
 char gump1[22]="\xB0\x04\x0A\x40\x91\x51\xE7\x00\x00\x00\x03\x00\x00\x00\x6E\x00\x00\x00\x46\x02\x3B";
 char gump2[4]="\x00\x00\x00";
 char gump3[3]="\x00\x00";
-char updscroll[11]="\xA6\x01\x02\x02\x00\x00\x00\x00\x01\x02";
 char spc[2]="\x20";
 char xgm;
 #ifdef __NT__
@@ -52,7 +51,7 @@ WORD wVersionRequested;
 #endif
 
 UI32 polyduration = 90;
-UI32 totalspawnregions = 0;
+UI16 totalspawnregions = 0;
 //Time variables
 UI16 secondsperuominute = 5;					// Number of seconds for a UOX minute. Changed from int to UI16 (Mr. Fixit)
 UI32 uotickcount = 1;							// Changed from int to UI16 (Mr. Fixit)
@@ -127,15 +126,12 @@ UI32 npcshape[5];							// Stores the coords of the bouding shape for the NPC. D
 UI32 starttime, endtime, lclock;
 bool overflow;
 char idname[256];
-char pass1[256];
-char pass2[256];
 SI32 executebatch;							// Changed from int to SI32 (Mr. Fixit)
 bool showlayer;
-SI32 ph1, ph2, ph3, ph4;					// Not used for anything (Mr. Fixit)
+//SI32 ph1, ph2, ph3, ph4;					// Not used for anything (Mr. Fixit)
 
 UI32 shoprestocktime = 0;					// Changed from int to UI32 (Mr. Fixit)
 SI32 shoprestockrate = 5;					// Changed from int to SI32 (Mr. Fixit)
-UI32 respawntime=0;
 // Profiling
 UI32 networkTime = 0;						// Changed from int to UI32 (Mr. Fixit)
 UI32 timerTime = 0;							// Changed from int to UI32 (Mr. Fixit)

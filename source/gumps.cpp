@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "debug.h"
 #include "ssection.h"
 
 #undef DBGFILE
@@ -49,7 +48,7 @@ void HandleAccountButton( cSocket *s, long button, CChar *j )
 			sysmessage( s, 490 );
 			sysmessage( targSocket, 491 );
 			actbTemp.wFlags|=AB_FLAGS_BANNED;
-			actbTemp.wTimeBan=BuildTimeValue( 60 * 60 * 24 );
+			actbTemp.wTimeBan=static_cast<UI16>(BuildTimeValue( 60 * 60 * 24 ));
 
 			if( isOnline( j ) ) 
 				Network->Disconnect( calcCharFromSer( j->GetSerial() ) );
@@ -89,7 +88,7 @@ void HandleTweakItemButton( cSocket *s, long button, SERIAL ser, long type )
 	case 17:	// Defense
 	case 18:	// Speed
 	case 19:	// Rank
-		entrygump( s, ser, type, button, 4, 495 + button );	// allow 0x for hex value
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 4, 495 + button );	// allow 0x for hex value
 		break;
 	case 1:		// ID
 	case 4:		// Colour
@@ -108,7 +107,7 @@ void HandleTweakItemButton( cSocket *s, long button, SERIAL ser, long type )
 	case 28:	// Good
 	case 29:	// Value
 	case 30:	// Carve
-		entrygump( s, ser, type, button, 6, 495 + button );	// allow 0x for hex value
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 6, 495 + button );	// allow 0x for hex value
 		break;
 	case 7:		// Moveable
 	case 25:	// Poisoned
@@ -117,17 +116,17 @@ void HandleTweakItemButton( cSocket *s, long button, SERIAL ser, long type )
 	case 32:	// Dyable
 	case 33:	// Corpse
 	case 34:	// Visible
-		entrygump( s, ser, type, button, 1, 495 + button );
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 1, 495 + button );
 		break;
 	case 11:	// Amount
 	case 12:	// Strength
 	case 26:	// Weight
-		entrygump( s, ser, type, button, 7, 495 + button );	// allow 0x for hex value
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 7, 495 + button );	// allow 0x for hex value
 		break;
 	case 2:		// Name
 	case 3:		// Name 2
 	case 35:	// Creator
-		entrygump( s, ser, type, button, 50, 495 + button );
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 50, 495 + button );
 		break;
 	default:	Console << Dictionary->GetEntry( 525 ) << (SI32)button << myendl;	break;
 	}
@@ -153,7 +152,7 @@ void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
 	{
 	case 1:		// Name
 	case 2:		// Title
-		entrygump( s, ser, type, button, 50, 1700 + button );
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 50, 1700 + button );
 		break;
 	case 3:		// Body
 	case 4:		// Skin
@@ -167,7 +166,7 @@ void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
 	case 15:	// Mana
 	case 21:	// Kills
 	case 27:	// Carve
-		entrygump( s, ser, type, button, 6, 1700 + button );	// allow 0x for hex
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 6, 1700 + button );	// allow 0x for hex
 		break;
 	case 10:	// Strength
 	case 11:	// Dexterity
@@ -175,7 +174,7 @@ void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
 	case 19:	// Fame
 	case 20:	// Karma
 	case 26:	// Weight
-		entrygump( s, ser, type, button, 7, 1700 + button );	// allow 0x for hex
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 7, 1700 + button );	// allow 0x for hex
 		break;
 
 	case 16:	// Low Damage
@@ -183,12 +182,12 @@ void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
 	case 18:	// Defense
 	case 22:	// AI Type
 	case 24:	// Hunger
-		entrygump( s, ser, type, button, 4, 1700 + button );	// allow 0x for hex
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 4, 1700 + button );	// allow 0x for hex
 		break;
 	case 23:	// NPC Wander
 	case 25:	// Poison
 	case 28:	// Visible
-		entrygump( s, ser, type, button, 1, 1700 + button );
+		entrygump( s, ser, static_cast<char>(type), static_cast<char>(button), 1, 1700 + button );
 		break;
 	}
 }
@@ -203,7 +202,7 @@ void HandleTweakCharButton( cSocket *s, long button, SERIAL ser, long type )
 void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 {
 	CChar *mChar = s->CurrcharObj();
-	SI16 targetRegion;
+	UI08 targetRegion;
 	switch( button )
 	{
 		// buttons 2-20 are for generic town members
@@ -219,23 +218,23 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 		break;
 	case 3:		// view taxes
 		targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-		if( targetRegion != -1 )
+		if( targetRegion != 0xFF )
 			region[targetRegion]->ViewTaxes( s );
 		else
 			sysmessage( s, 541 );
 		break;
 	case 4:		// toggle town title
 		mChar->SetTownTitle( !mChar->GetTownTitle() );
-		region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s );
+		region[mChar->GetTown()]->DisplayTownMenu( NULL, s );
 		break;
 	case 5:		target( s, 0, 1, 0, 161, 542 );								break;		// vote for town mayor
-	case 6:		entrygump(  s, ser, type, button, 6, 543 );	break;		// gold donation
+	case 6:		entrygump(  s, ser, static_cast<char>(type), static_cast<char>(button), 6, 543 );	break;		// gold donation
 	case 7:		region[mChar->GetTown()]->ViewBudget( s );			break;		// View Budget
 	case 8:		region[mChar->GetTown()]->SendAlliedTowns( s );		break;		// View allied towns
 	case 9:		region[mChar->GetTown()]->SendEnemyTowns( s );		break;
 	case 20:	// access mayoral functions, never hit here if we don't have mayoral access anyway!
 				// also, we'll only get access, if we're in our OWN region
-		region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s, 0x01 );	// mayor
+		region[mChar->GetTown()]->DisplayTownMenu( NULL, s, 0x01 );	// mayor
 		break;
 	case 21:	sysmessage( s, 544 );				break;	// set taxes
 	case 22:	region[mChar->GetTown()]->DisplayTownMembers( s );	break;	// list town members
@@ -243,7 +242,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 	case 24:	sysmessage( s, 545 );	break;	// purchase more guards
 	case 25:	sysmessage( s, 546 );	break;	// fire a guard
 	case 26:	target( s, 0, 1, 0, 49, 547 );								break;	// make a town an ally
-	case 40:	region[mChar->GetTown()]->DisplayTownMenu( INVALIDSERIAL, s );	break;	// we can't return from mayor menu if we weren't mayor!
+	case 40:	region[mChar->GetTown()]->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
 	case 41:	// join town!
 		if( !(region[calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() )]->AddAsTownMember( (*mChar) ) ) )
 			sysmessage( s, 548 );
@@ -252,7 +251,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 		if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
 		{
 			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-			if( targetRegion != -1 )
+			if( targetRegion != 0xFF )
 			{
 				int chanceToSteal = RandomNum( 0, region[targetRegion]->GetHealth() / 2 );
 				int fudgedStealing = RandomNum( mChar->GetSkill( STEALING ), mChar->GetSkill( STEALING ) * 2 );
@@ -281,7 +280,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 									CItem *charPack = getPack( mChar );
 									if( charPack != NULL )
 									{
-										itemCheck->SetCont( charPack->GetSerial() );
+										itemCheck->SetCont( charPack );
 										itemCheck->SetMoreX( targetRegion );
 										sysmessage( s, 550 );
 										region[targetRegion]->TellMembers( 551, mChar->GetName() );
@@ -305,7 +304,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 		break;
 	case 62:	// attack townstone
 		targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-		for( int counter = 0; counter < RandomNum( 5, 10 ); counter++ )
+		for( UI08 counter = 0; counter < RandomNum( 5, 10 ); counter++ )
 		{
 			movingeffect( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
 			staticeffect( mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x373A + RandomNum( 0, 4 ) * 0x10, 0x09, 0, 0 );
@@ -322,6 +321,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in hair dye gump
 //o---------------------------------------------------------------------------o
+#pragma note( "Param Warning: in HandleHairDyeButton, button is unrefrenced" )
 void HandleHairDyeButton( cSocket *s, long button, CItem *j )
 {
 	if( j == NULL )
@@ -339,35 +339,35 @@ void HandleHairDyeButton( cSocket *s, long button, CItem *j )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in account gump
 //o---------------------------------------------------------------------------o
-void HandleAccountModButton( cSocket *s, long button )
+void HandleAccountModButton( CPIGumpMenuSelect *packet )
 {
-	std::string username, emailAddy, password;
-	// if 18 is 1 then 22 is set to 1, and flag is toggled 
-	// username starts at 32, unicode, comes after 8 2 bytes before
-	// toggle status at 22-25 ?
-	// first text field starts at byte 26
-	// 3 -23 field id?
-	// id1 id2 len1 len2 ??? seems to be
-	// 3 -24 0 8 0 before username
-	// 3 -23 0 8 0 then password
-	// 3 -22 0 24 0 then email
-	int offset, tmpOffset;
-	offset = s->GetWord( 29 );
-	tmpOffset = 31;
-	username = GetUniStrFromSock( s, tmpOffset, offset );
+	cSocket *s = packet->GetSocket();
+
+	std::string username	= "";
+	std::string password	= "";
+	std::string emailAddy	= "";
+
+	for( unsigned int i = 0; i < packet->TextCount(); i++ )
+	{
+		UI16 textID = packet->GetTextID( i );
+		switch( textID )
+		{
+		case 1000:	username	= packet->GetTextUString( i );	break;
+		case 1001:	password	= packet->GetTextUString( i );	break;
+		case 1002:	emailAddy	= packet->GetTextUString( i );	break;
+		default:
+			Console.Warning( 1, "Unknown textID %i with string %s", textID, packet->GetTextUString( i ).c_str() );
+		}
+	}
+
 	ACCOUNTSBLOCK actbAccountFind;
-	if(!Accounts->GetAccountByName(username,actbAccountFind))
+	if( Accounts->GetAccountByName( username, actbAccountFind ) )
 	{
 		sysmessage( s, 555 );
 		return;
 	}
-	tmpOffset += 2 * offset;
-	offset = s->GetWord( tmpOffset + 2 );
-	password = GetUniStrFromSock( s, tmpOffset + 4, offset );
-	tmpOffset += 4 + 2 * offset;
-	offset = s->GetWord( tmpOffset + 2 );
-	emailAddy = GetUniStrFromSock( s, tmpOffset + 4, offset );
-	Accounts->AddAccount( username, password, emailAddy );
+	Console.Print( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() );
+//	Accounts->AddAccount( username, password, emailAddy );
 }
 
 //o---------------------------------------------------------------------------o
@@ -383,7 +383,7 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 		return;
 
 	char temp[1024];
-	SI32 i = s->GetWord( 21 );
+	SI16 i = s->GetWord( 21 );
 	if( button != 20 && button != 2 ) 
 		s->AddID( j->GetSerial() );
 	switch( button )
@@ -455,53 +455,60 @@ void HandleHowToButton( cSocket *s, long button )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3, UI08 tser4, SI32 type )
+//|   Function    :  void void cGump::Button( CPIGumpMenuSelect *packet )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button press in gumps
 //o---------------------------------------------------------------------------o
-void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3, UI08 tser4, SI32 type )
+void cGump::Button( CPIGumpMenuSelect *packet )
 {
+	if( packet == NULL )
+		return;
+	cSocket *s = packet->GetSocket();
+	if( s == NULL )
+		return;
 	CChar *mChar = s->CurrcharObj();
 
+	UI32 button = packet->ButtonID();
 	if( button > 10000 ) 
 	{
 		button -= 10000;
 		Menu( s, button );
 		return;
 	}
-	SERIAL serial = calcserial( tser1, tser2, tser3, tser4 );
-	if( type >= 8000 && type <= 8020 )
+	SERIAL serial = packet->ID();
+	SERIAL gumpID = packet->GumpID();
+	if( gumpID >= 8000 && gumpID <= 8020 )
 	{
 		GuildSys->GumpChoice( s );
 		// guild collection call goes here
 		return;
 	}
-	else if( type == 20 )	// script gump
+	else if( gumpID == 20 )	// script gump
 	{
 		UI16 gumpTrig = (UI16)s->TempInt();
 		cScript *toExecute = Trigger->GetScript( gumpTrig );
 		if( toExecute != NULL )
-			toExecute->HandleGumpPress( s, button );
+			toExecute->HandleGumpPress( packet );
 	}
-	else if( type == 21 ) // Multi functional gump
+	else if( gumpID == 21 ) // Multi functional gump
 	{
 		MultiGumpCallback( s, serial, button );
 		return;
 	}
-	else if( type == 0x01CD )
+	else if( gumpID == 0x01CD )
 	{
 #pragma note( "Newly passed button press due to the pentagram in the 2D and 3D clients" )
 #pragma note( "The question is... what does it DO?" )
 	}
-	else if( type > 13 ) 
+	else if( gumpID > 13 ) 
 		return; //increase this value with each new gump added.
 	if( button == 1 ) 
 	{
-		if( type == 4 )
+		if( gumpID == 4 )
 			WhoList->GMLeave();
-		else if( type == 11 )
+		else if( gumpID == 11 )
 			OffList->GMLeave();
 		return;
 	}
@@ -525,17 +532,17 @@ void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3,
 	// 13	HOWTO
 
 #ifdef DEBUG
-	Console << "Type is " << type << " button is " <<  button << myendl;
+	Console << "Type is " << gumpID << " button is " <<  button << myendl;
 #endif
 
 	SERIAL is;
 	CItem *j;
-	switch( type )
+	switch( gumpID )
 	{
-	case 1:	HandleTweakItemButton( s, button, serial, type );			break;	// Tweak Item
-	case 2:	HandleTweakCharButton( s, button, serial, type );			break;	// Tweak Char
-	case 3:	HandleTownstoneButton( s, button, serial, type );			break;	// Townstones
-	case 4:	WhoList->ButtonSelect( s, button, type );					break;	// Wholist
+	case 1:	HandleTweakItemButton( s, button, serial, gumpID );			break;	// Tweak Item
+	case 2:	HandleTweakCharButton( s, button, serial, gumpID );			break;	// Tweak Char
+	case 3:	HandleTownstoneButton( s, button, serial, gumpID );			break;	// Townstones
+	case 4:	WhoList->ButtonSelect( s, static_cast<UI16>(button), static_cast<UI08>(gumpID) );					break;	// Wholist
 	case 5:																		// House Functions
 		is = s->AddID();
 		j = calcItemObjFromSer( is );
@@ -556,10 +563,10 @@ void cGump::Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3,
 		c = calcCharObjFromSer( serial );
 		HandleAccountButton( s, button, c );
 		break;
-	case 8:	HandleAccountModButton( s, button );						break;	// Race Editor
+	case 8:	HandleAccountModButton( packet );							break;	// Race Editor
 	case 9:	HandleAddMenuButton( s, button );							break;	// Add Menu
-	case 11: OffList->ButtonSelect( s, button, type );					break;	// Who's Offline
-	case 12: Skills->HandleMakeMenu( s, button, mChar->GetMaking() );	break;	// New Make Menu
+	case 11: OffList->ButtonSelect( s, static_cast<UI16>(button), static_cast<UI08>(gumpID) );				break;	// Who's Offline
+	case 12: Skills->HandleMakeMenu( s, button, static_cast<int>(mChar->GetMaking() ));	break;	// New Make Menu
 	case 13: HandleHowToButton( s, button );							break;	// Howto
 	}
 }
@@ -589,39 +596,39 @@ void HandleTweakItemText( cSocket *s, long index )
 		}
 		switch( index )
 		{
-		case 1:		j->SetID( makeNum( text ) );				break;	// ID
+		case 1:		j->SetID( static_cast<UI16>(makeNum( text )) );				break;	// ID
 		case 2:		j->SetName( text );							break;	// Name
 		case 3:		j->SetName2( text );						break;	// Name 2
-		case 4:		j->SetColour( makeNum( text ) );			break;	// Colour
-		case 5:		j->SetLayer( makeNum( text ) );				break;	// Layer
-		case 6:		j->SetType( makeNum( text ) );				break;	// Type
-		case 7:		j->SetMagic( makeNum( text ) );				break;	// Moveable
+		case 4:		j->SetColour( static_cast<UI16>(makeNum( text )) );			break;	// Colour
+		case 5:		j->SetLayer( static_cast<SI08>(makeNum( text ) ));				break;	// Layer
+		case 6:		j->SetType( static_cast<UI08>(makeNum( text )) );				break;	// Type
+		case 7:		j->SetMagic( static_cast<SI08>(makeNum( text ) ));				break;	// Moveable
 		case 8:
 			MapRegion->RemoveItem( j );
-			j->SetX( makeNum( text ) );
+			j->SetX( static_cast<SI16>(makeNum( text )) );
 			MapRegion->AddItem( j );
 			break;	// X
 		case 9:		
 			MapRegion->RemoveItem( j );
-			j->SetY( makeNum( text ) );					
+			j->SetY( static_cast<SI16>(makeNum( text )) );					
 			MapRegion->AddItem( j );
 			break;	// Y
-		case 10:	j->SetZ( makeNum( text ) );					break;	// Z
+		case 10:	j->SetZ(static_cast<SI08>( makeNum( text )) );					break;	// Z
 		case 11:	j->SetAmount( (UI32)makeNum( text ) );			break;	// Amount
-		case 12:	j->SetStrength( makeNum( text ) );			break;	// Strength
-		case 13:	j->SetHP( makeNum( text ) ); 				break;	// Hit Points
-		case 14:	j->SetMaxHP( makeNum( text ) );				break;	// Max HP
-		case 15:	j->SetLoDamage( makeNum( text ) );			break;	// Low Damage
-		case 16:	j->SetHiDamage( makeNum( text ) );			break;	// High Damage
-		case 17:	j->SetDef( makeNum( text ) );				break;	// Defense
-		case 18:	j->SetSpeed( makeNum( text ) );				break;	// Speed
-		case 19:	j->SetRank( makeNum( text ) );				break;	// Rank
+		case 12:	j->SetStrength( static_cast<SI16>(makeNum( text )) );			break;	// Strength
+		case 13:	j->SetHP( static_cast<SI16>(makeNum( text )) ); 				break;	// Hit Points
+		case 14:	j->SetMaxHP( static_cast<SI16>(makeNum( text) ) );				break;	// Max HP
+		case 15:	j->SetLoDamage( static_cast<SI16>(makeNum( text )) );			break;	// Low Damage
+		case 16:	j->SetHiDamage( static_cast<SI16>(makeNum( text )) );			break;	// High Damage
+		case 17:	j->SetDef( static_cast<UI16>(makeNum( text )) );				break;	// Defense
+		case 18:	j->SetSpeed( static_cast<UI08>(makeNum( text )) );				break;	// Speed
+		case 19:	j->SetRank( static_cast<SI08>(makeNum( text )) );				break;	// Rank
 		case 20:	j->SetMore( makeNum( text ) );				break;	// More
 		case 21:	j->SetMoreX( makeNum( text ) );				break;	// More X
 		case 22:	j->SetMoreY( makeNum( text ) );				break;	// More Y
 		case 23:	j->SetMoreZ( makeNum( text ) );				break;	// More Z
 		case 24: 	j->SetMoreB( makeNum( text ) );				break;	// More B
-		case 25:	j->SetPoisoned( makeNum( text ) );			break;	// Poisoned
+		case 25:	j->SetPoisoned( static_cast<UI08>(makeNum( text) ) );			break;	// Poisoned
 		case 26:	j->SetWeight( makeNum( text ) );			break;	// Weight
 		case 27:	j->SetDecayable( makeNum( text ) != 0 );	break;	// Decay
 		case 28:	j->SetGood( makeNum( text ) );				break;	// Good
@@ -630,7 +637,7 @@ void HandleTweakItemText( cSocket *s, long index )
 		case 31: 	j->SetPileable( makeNum( text ) != 0 );		break;	// Stackable
 		case 32:	j->SetDye( makeNum( text ) != 0 );			break;	// Dyable
 		case 33:	j->SetCorpse( makeNum( text ) != 0 );		break;	// Corpse
-		case 34:	j->SetVisible( makeNum( text ) );			break;	// Visible
+		case 34:	j->SetVisible( static_cast<SI08>(makeNum( text ) ));			break;	// Visible
 		case 35:	j->SetCreator( makeNum( text ) );			break;	// Creator
 		}
 		RefreshItem( j );
@@ -681,7 +688,7 @@ void HandleTweakCharText( cSocket *s, long index )
 			j->SetxSkin( (UI16)k );
 			j->SetOrgSkin( (UI16)k );
 			break;
-		case 5:		j->SetRace( makeNum( text ) );			break;	// Race
+		case 5:		j->SetRace( static_cast<RACEID>(makeNum( text )) );			break;	// Race
 		case 6:		
 			MapRegion->RemoveChar( j );
 			j->SetX( (SI16)makeNum( text ) );
@@ -693,53 +700,53 @@ void HandleTweakCharText( cSocket *s, long index )
 			MapRegion->AddChar( j );
 			break;	// Y
 		case 8:													// Z
-			j->SetZ( makeNum( text ) );
-			j->SetDispZ( makeNum( text ) );
+			j->SetZ( static_cast<SI08>(makeNum( text) ) );
+			j->SetDispZ( static_cast<SI08>(makeNum( text )) );
 			break;
-		case 9:		j->SetDir( makeNum( text )&0x0F );		break;	// Direction
+		case 9:		j->SetDir( static_cast<UI08>(makeNum( text ))&0x0F );		break;	// Direction
 		case 10:												// Strength
 			if( makeNum( text ) > 0 ) 
-				j->SetStrength( makeNum( text ) ); 
+				j->SetStrength( static_cast<SI16>(makeNum( text) ) ); 
 			break;
 		case 11:												// Dexterity
 			if( makeNum( text ) > 0 ) 
-				j->SetDexterity( makeNum( text ) );
+				j->SetDexterity(static_cast<SI16>( makeNum( text )) );
 			break;
 		case 12:												// Intelligence
 			if( makeNum( text ) > 0 ) 
-				j->SetIntelligence( makeNum( text ) ); 
+				j->SetIntelligence( static_cast<SI16>(makeNum( text )) ); 
 			break;
 		case 13:												// Hitpoints
 			if( makeNum( text ) > 0 )
-				j->SetHP( makeNum( text ) );
+				j->SetHP( static_cast<SI16>(makeNum( text )) );
 			break;
 		case 14:												// Stamina
 			if( makeNum( text ) > 0 )
-				j->SetStamina( makeNum( text ) );
+				j->SetStamina( static_cast<UI16>(makeNum( text )) );
 			break;
 		case 15:												// Mana
 			if( makeNum( text ) > 0 )
-				j->SetMana( makeNum( text ) );
+				j->SetMana( static_cast<SI16>(makeNum( text )) );
 			break;
-		case 16:	j->SetHiDamage( makeNum( text ) );		break;	// Low Damage
-		case 17:	j->SetLoDamage( makeNum( text ) );		break;	// High Damage
-		case 18:	j->SetDef( makeNum( text ) );			break;	// Defense
-		case 19:	j->SetFame( makeNum( text ) );			break;	// Fame
-		case 20:	j->SetKarma( makeNum( text ) );		break;	// Karma
-		case 21:	j->SetKills( makeNum( text ) );		break;	// Kills
+		case 16:	j->SetHiDamage( static_cast<SI16>(makeNum( text )) );		break;	// Low Damage
+		case 17:	j->SetLoDamage( static_cast<SI16>(makeNum( text )) );		break;	// High Damage
+		case 18:	j->SetDef( static_cast<UI16>(makeNum( text )) );			break;	// Defense
+		case 19:	j->SetFame( static_cast<SI16>(makeNum( text )) );			break;	// Fame
+		case 20:	j->SetKarma( static_cast<SI16>(makeNum( text )) );		break;	// Karma
+		case 21:	j->SetKills( static_cast<SI16>(makeNum( text )) );		break;	// Kills
 		case 22:												// AI Type
 			if( j->IsNpc() )
-				j->SetNPCAiType( makeNum( text ) );
+				j->SetNPCAiType( static_cast<SI16>(makeNum( text )) );
 			break;
 		case 23:												// NPC Wander
 			if( j->IsNpc() )
-				j->SetNpcWander( makeNum( text ) );
+				j->SetNpcWander( static_cast<SI08>(makeNum( text ) ));
 			break;
-		case 24:	j->SetHunger( makeNum( text ) );		break;	// Hunger
-		case 25:	j->SetPoison( makeNum( text ) );		break;	// Poison
-		case 26:	j->SetWeight( makeNum( text ) );		break;	// Weight
+		case 24:	j->SetHunger( static_cast<SI08>(makeNum( text )) );		break;	// Hunger
+		case 25:	j->SetPoison( static_cast<SI08>(makeNum( text ) ));		break;	// Poison
+		case 26:	j->SetWeight( static_cast<SI16>(makeNum( text )) );		break;	// Weight
 		case 27:	j->SetCarve( makeNum( text ) );		break;	// Carve
-		case 28:	j->SetVisible( makeNum( text ) );		break;	// Visible
+		case 28:	j->SetVisible( static_cast<SI08>(makeNum( text ) ));		break;	// Visible
 		}
 		j->Teleport();
 		tweakCharMenu( s, j );
@@ -802,7 +809,7 @@ void cGump::Input( cSocket *s )
 	case 3:		HandleTownstoneText( s, index );	break;
 	case 20:
 		{
-			UI16 gumpTrig = s->TempInt();
+			UI16 gumpTrig = static_cast<UI16>(s->TempInt());
 			cScript *toExecute = Trigger->GetScript( gumpTrig );
 			if( toExecute != NULL )
 				toExecute->HandleGumpInput( s );
@@ -811,6 +818,72 @@ void cGump::Input( cSocket *s )
 	case 100:	GuildSys->GumpInput( s );			break;
 	}
 
+}
+
+enum TXTREPLACEMENT
+{
+	TXT_ACCOUNTCOUNT	=	0,
+	TXT_NUMBERPCS,
+	TXT_NUMCHARACTERS,
+	TXT_NUMBERNPCS,
+	TXT_NUMBERITEMS,
+	TXT_SERVERTIME,
+	TXT_SERVERVERSION,
+	TXT_PLAYERSONLINE,
+	TXT_COUNT
+};
+
+extern cGlobalPCList GPCL;
+extern cVersionClass CVC;
+
+const std::string replacements[TXT_COUNT] =
+{
+	"%accountcount%",
+	"%pcs%",
+	"%chars%",
+	"%npcs",
+	"%items%",
+	"%servertime",
+	"%serverver",
+	"%onlinecount%"
+};
+
+std::string ReplaceObj( TXTREPLACEMENT toReplace )
+{
+	char temp[128];
+	UI32 ampm = cwmWorldState->ServerData()->GetServerTimeAMPM();
+	SI16 hour = cwmWorldState->ServerData()->GetServerTimeHours();
+	SI16 minute = cwmWorldState->ServerData()->GetServerTimeMinutes();
+
+	switch( toReplace )
+	{
+	case TXT_ACCOUNTCOUNT:
+		sprintf( temp, "%i", Accounts->size() );
+		return temp;
+	case TXT_NUMBERPCS:
+		sprintf( temp, "%i", GPCL.count() );
+		return temp;
+	case TXT_NUMCHARACTERS:
+		sprintf( temp, "%i", charcount );
+		return temp;
+	case TXT_NUMBERNPCS:
+		sprintf( temp, "%i", charcount - GPCL.count() );
+		return temp;
+	case TXT_NUMBERITEMS:
+		sprintf( temp, "%i", itemcount );
+		return temp;
+	case TXT_SERVERTIME:
+		sprintf( temp, " %i:%i %s", hour, minute, ((ampm!=0)?"pm":"am") );
+		return temp;
+	case TXT_SERVERVERSION:
+		sprintf( temp, " %s v%i(%i)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
+		return temp;
+	case TXT_PLAYERSONLINE:
+		sprintf( temp, "%i", now );
+		return temp;
+		break;
+	}
+	return "";
 }
 
 //o---------------------------------------------------------------------------o
@@ -839,7 +912,7 @@ void cGump::Menu( cSocket *s, int m )
 		if( strncmp( temp, "type ", 5 ) )
 			one.push_back( temp );
 		else
-			targType = makeNum( &temp[5] );
+			targType = static_cast<UI08>(makeNum( &temp[5] ));
 	}
 	sprintf( sect, "GUMPTEXT %i", m );
 	gump = FileLookup->FindEntry( sect, misc_def );
@@ -1012,52 +1085,28 @@ void entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, S
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void choice( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|		Function    :	void choice( cSocket *s )
+//|		Date        :	Unknown
+//|		Programmer  :	Unknown
+//|		Modified	:	Zane - 2/10/2003	
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles choice in gmmenu's, itemmenu's, and makemenus
+//|   Purpose     :  Handles choice "Help" menu, Tracking Menu, and Polymorph menu
 //o---------------------------------------------------------------------------o
 void choice( cSocket *s )
 {
-	int main, sub, model_num;
-	int making, found;
 	char sect[512];
-	int i;
-	char lscomm[512], lsnum[512];
 	DefinitionCategories script;
 	
-	main = s->GetWord( 5 );
-	sub = s->GetWord( 7 );
-	model_num = s->GetWord( 9 );
+	SI16 main = s->GetWord( 5 );
+	SI16 sub = s->GetWord( 7 );
 	CChar *mChar = s->CurrcharObj();
 
-	if( (main&0xFF00) == 0xFF00 )
-	{
-		if( im_choice( s, main, sub ) ) 
-			return;
-	}
-
-	if( main > 1246 && main < 1255 )
-	{
-		Skills->DoPotion( s, main - 1246, sub, calcItemObjFromSer( s->AddID() ) );
-		return;
-	}
-	else if( main < ITEMMENUOFFSET ) // GM Menus
+	if( main < ITEMMENUOFFSET ) // GM Menus
 	{
 		sprintf(sect, "GMMENU %i", main);
 		script = menus_def;
 	}
-	else if( ( main >= ITEMMENUOFFSET && main < MAKEMENUOFFSET ) || ( main >= 5256 ) && ( main < 8192 ) )
-	{
-		sprintf( sect, "ITEMMENU %i", main - ITEMMENUOFFSET );
-		script = items_def;
-	}
-	else if( main >= MAKEMENUOFFSET && main < TRACKINGMENUOFFSET )
-	{
-		sprintf( sect, "MAKEMENU %i", main - MAKEMENUOFFSET );
-		script = create_def;
-	} // PolyMorph spell menu (scriptable) by AntiChrist (9/99)
+	// PolyMorph spell menu (scriptable) by AntiChrist (9/99)
 	else if( main >= POLYMORPHMENUOFFSET && main < POLYMORPHMENUOFFSET + 50 )
 	{
 		if( mChar->IsOnHorse() )
@@ -1086,63 +1135,22 @@ void choice( cSocket *s )
 	if( sectionData == NULL )
 		return;
 
+	char lscomm[512], lsnum[512];
 	const char *data = NULL;
 	const char *tag = sectionData->First();
-	i = 0;
-	making = (main >= MAKEMENUOFFSET && main < TRACKINGMENUOFFSET );
-	found = 0;
 	tag = sectionData->Next();
-	data = sectionData->GrabData();
-	make_st mMake = s->ItemMake();
-	for( ; !sectionData->AtEnd() && !found; )
+	for( UI16 i = 0; !sectionData->AtEnd(); tag = sectionData->Next() )
 	{
-		// When choosing to MAKE an item, the menu only has displayed
-		// those entries which can be made, so look for that item.
 		i++;
-		if( making )
-		{ // Start Here Changes by Magius(CHE)
-			if( makeNum( tag ) == model_num )
-				found = 1;
-			tag = sectionData->Next(); data = sectionData->GrabData();
-			mMake.needs = makeNum( data );
-			tag = sectionData->Next(); data = sectionData->GrabData();
-			mMake.minskill = makeNum( data );
-			mMake.maxskill = mMake.minskill * cwmWorldState->ServerData()->GetSkillLevel();
-		}
-		tag = sectionData->Next(); data = sectionData->GrabData();
-		strcpy( lscomm, tag );
-		strcpy( lsnum, data );
-		mMake.number = makeNum( data );
-		tag = sectionData->Next(); data = sectionData->GrabData();
-		if( tag != NULL && !strcmp( tag, "RANK" ) )
+		tag = sectionData->Next();
+		if( i == sub )
 		{
-			char mrank[256];
-			gettokennum( data, 0, mrank );
-			mMake.minrank = (UI08)makeNum( mrank );
-			gettokennum( data, 1, mrank );
-			mMake.maxrank = (UI08)makeNum( mrank );
-			tag = sectionData->Next(); data = sectionData->GrabData();
-		} 
-		else 
-		{ // Set maximum rank if the item is not ranked!
-			mMake.minrank = 10;
-			mMake.maxrank = 10;
+			data = sectionData->GrabData();
+			strcpy( lscomm, tag );
+			strcpy( lsnum, data );
+			scriptcommand( s, lscomm, lsnum );
+			break;
 		}
-		if( !cwmWorldState->ServerData()->GetRankSystemStatus() )
-		{
-			mMake.minrank = 10;
-			mMake.maxrank = 10;
-		}
-
-		if( !making )
-			found = ( i == sub );
-	}
-	s->ItemMake( mMake );
-	if( found )
-	{
-		scriptcommand( s, lscomm, lsnum );
-		if( mMake.maxskill < 200 )
-			mMake.maxskill = 200;
 	}
 }
 
@@ -1671,7 +1679,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 	numToPage = (UI08)((( height - 30 ) / 20) - 2);
 	stringWidth = (UI08)( ( width / 2 ) / 10 );
 	UI32 lineForButton;
-	for( i = 0, lineForButton = 0; i < gumpData.size(); i++, lineForButton++ )
+	for( i = 0, lineForButton = 0; static_cast<unsigned int>(i) < gumpData.size(); i++, lineForButton++ )
 	{
 		if( lineForButton > 0 && ( !( lineForButton % numToPage ) ) )
 		{
@@ -1768,7 +1776,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 				strcpy( temp, sVal );
 			int sWidth;
 			sWidth = stringWidth * 2;
-			if( strlen( temp ) > sWidth )	// too wide for one line, CRAP!
+			if( strlen( temp ) > static_cast<size_t>(sWidth) )	// too wide for one line, CRAP!
 			{
 				char temp2[512], temp3[512];
 				int tempWidth;
@@ -1802,7 +1810,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 	}
 	
 	pagenum = 1; 
-	for( i = 0; i <= lineForButton; i += numToPage )
+	for( i = 0; static_cast<UI32>(i) <= lineForButton; i += numToPage )
 	{
 		sprintf( temp, "page %i", pagenum );
 		one.push_back( temp );
@@ -1811,7 +1819,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 			sprintf( temp, "button 10 %i %i %i 0 %i", height - 40, cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum-1); //back button
 			one.push_back( temp );
 		}
-		if( lineForButton > numToPage && ( i + numToPage ) < lineForButton )
+		if( lineForButton > numToPage && static_cast<UI32>(( i + numToPage )) < lineForButton )
 		{
 			sprintf( temp, "button %i %i %i %i 0 %i", width - 40, height - 40, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum+1); //forward button
 			one.push_back( temp );

@@ -22,8 +22,8 @@ void MultiGumpCallback( cSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 class CGump
 {
 private:
-	stringList TagList;
-	stringList TextList;
+	STRINGLIST TagList;
+	STRINGLIST TextList;
 	bool NoMove;
 	bool NoClose;
 	UI32 Serial;
@@ -56,7 +56,7 @@ private:
 	std::vector< GumpInfo * > gumpData;
 	UI16 width, height;	// gump width / height
 	cSocket *toSendTo;
-	stringList one, two;
+	STRINGLIST one, two;
 	std::string title;
 public:
 	void AddData( GumpInfo *toAdd );
@@ -73,7 +73,7 @@ public:
 class cGump
 {
 public:
-	void Button( cSocket *s, SI32 button, UI08 tser1, UI08 tser2, UI08 tser3, UI08 tser4, SI32 type );
+	void Button( CPIGumpMenuSelect *packet );
 	void Input( cSocket *s );
 	void Menu( cSocket *s, int m );
 	void Open( cSocket *s, CChar *i, UI16 gumpNum );

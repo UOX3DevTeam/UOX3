@@ -99,17 +99,3 @@ CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 	}
 	return NULL;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *FindItemOnLayer( CChar *toFind, UI08 layer )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Search for item in their pack with specific ID
-//o---------------------------------------------------------------------------o
-CItem *FindItemOnLayer( CChar *toFind, UI08 layer )
-{
-	if( toFind == NULL )
-		return NULL;
-	return toFind->GetItemAtLayer( layer );
-}
-

@@ -33,13 +33,20 @@ struct MagicTable_s
 	bool			(*mag_extra) ();	// extra data - see above
 };
 
+struct jsMagicTable_st
+{
+	std::string		spellName;
+	cScript *		spellObj;
+};
+
 bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) );
 bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir );
 bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 
-extern MagicTable_s magic_table[];
+extern MagicTable_s						magic_table[];
+extern std::vector< jsMagicTable_st >	jsMagicTable;
 
 MAG_CHARHANDLER( splClumsy );
 MAG_NOHANDLER( splCreateFood );

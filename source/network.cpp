@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "debug.h"
 
 #ifdef __LINUX__
 #include <unistd.h>
@@ -67,14 +66,14 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 			sysbroadcast( temp );//message upon leaving a server 
 		} 
 	}
-	if( connClients[s]->AcctNo() != -1 ) 
+	if( connClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
 		ACCOUNTSBLOCK actbAccount;
-		actbAccount=connClients[s]->GetAccount();
-		if(actbAccount.wAccountIndex!=AB_INVALID_ID)
+		actbAccount = connClients[s]->GetAccount();
+		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{
-			if(actbAccount.wAccountIndex!=AB_INVALID_ID)
-				actbAccount.wFlags&=0xFFFFFFF7;
+			if( actbAccount.wAccountIndex != AB_INVALID_ID )
+				actbAccount.wFlags &= 0xFFFFFFF7;
 		}
 	}
 	//Instalog
@@ -97,13 +96,13 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	}
 	try
 	{
-		connClients[s]->AcctNo( -1 );
+		connClients[s]->AcctNo( AB_INVALID_ID );
 		connClients[s]->IdleTimeout( -1 );
 		connClients[s]->FlushBuffer();
 		connClients[s]->CloseSocket();
 		delete connClients[s];
 		connClients.erase( connClients.begin() + s );
-		for( int q = 0; q < connIteratorBackup.size(); q++ )
+		for( unsigned int q = 0; q < connIteratorBackup.size(); q++ )
 		{
 			if( connIteratorBackup[q] >= s )
 				connIteratorBackup[q]--;
@@ -118,162 +117,6 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	OffList->FlagUpdate();
 }
 
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void cNetworkStuff::Login1( cSocket *s )
-//|	Date					-	
-//|	Developers		-	
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Process phase one of the login server process.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void cNetworkStuff::Login1( cSocket *s )
-{	
-	s->AcctNo( -1 );
-	LoginDenyReason t = LDR_NODENY;
-	ACCOUNTSBLOCK actbTemp;
-	if(Accounts->GetAccountByName((char *)&s->Buffer()[1],actbTemp))
-		s->SetAccount(actbTemp);
-	// Need auto account creation code here
-	if( s->AcctNo() == -1 || s->AcctNo()==0xffff)
-	{
-		if( cwmWorldState->ServerData()->GetInternalAccountStatus() )
-		{
-			pSplit( (char *)&s->Buffer()[31] );
-			Accounts->AddAccount( (char *)&s->Buffer()[1], pass1, "" );
-			if(Accounts->GetAccountByName( (char *)&s->Buffer()[1],actbTemp))	// grab our account number
-				s->SetAccount(actbTemp);
-		}
-	}
-	if( s->AcctNo() != -1 )
-	{
-		pSplit( (char *)&s->Buffer()[31] );
-		if(actbTemp.wFlags&AB_FLAGS_BANNED)
-			t = LDR_ACCOUNTDISABLED;
-		else if( strcmp(actbTemp.sPassword.c_str(), pass1 ) )
-			t = LDR_BADPASSWORD;
-		if( t != LDR_NODENY )
-		{
-			CPLoginDeny pckDeny( t );
-			s->Send( &pckDeny );
-			s->AcctNo( -1 );
-			LoginDisconnect( s );
-			return;
-		}
-	}
-	else
-	{
-		CPLoginDeny noAcct( LDR_UNKNOWNUSER );
-		s->Send( &noAcct );
-		LoginDisconnect( s );
-		return;
-	}
-	if(actbTemp.wFlags&AB_FLAGS_ONLINE)
-	{
-		CPLoginDeny inUse( LDR_ACCOUNTINUSE );
-		s->Send( &inUse );
-		LoginDisconnect( s );
-		return;
-	}
-	if( s->AcctNo() != -1 )
-		Login2( s, actbTemp );
-
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void cNetworkStuff::Login2(cSocket *s, ACCOUNTSBLOCK &actbBlock)
-//|	Date					-	
-//|	Developers		-	
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Process the second phase of a standard login procedure.
-//|									Usualy the only time this function will be called is when
-//|									a successfull phase one login, and correct server selection
-//|									has been made, and submitted by the client
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void cNetworkStuff::Login2(cSocket *s, ACCOUNTSBLOCK &actbBlock)
-{
-	char temp[1024];
-	char newlist1[7] = "\xA8\x01\x23\xFF\x00\x01";
-	cPBuffer bufNewlist1( newlist1, 6 );
-	char newlist2[41] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
-	actbBlock.dwLastIP=calcserial( s->ClientIP4(), s->ClientIP3(), s->ClientIP2(), s->ClientIP1() );
-	sprintf( temp, "Client [%i.%i.%i.%i] connected using Account '%s'.", s->ClientIP4(), s->ClientIP3(), s->ClientIP2(), s->ClientIP1() , &s->Buffer()[1]);
-	savelog( temp, "server.log" );
-	messageLoop << temp;
-
-	actbBlock.wFlags|=AB_FLAGS_ONLINE;
-
-	UI32 servcount = cwmWorldState->ServerData()->GetServerCount();
-	UI32 tlen = 6 + ( servcount * 40 );
-	bufNewlist1[1] = (UI08)( tlen>>8 );
-	bufNewlist1[2] = (UI08)( tlen%256 );
-	bufNewlist1[4] = (UI08)( servcount>>8 );
-	bufNewlist1[5] = (UI08)( servcount%256 );
-
-	s->Send( &bufNewlist1 );
-	for( UI16 i = 0; i < servcount; i++ )
-	{
-		physicalServer *sData = cwmWorldState->ServerData()->GetServerEntry( i );
-		newlist2[0] = (UI08)((i+1)>>8);
-		newlist2[1] = (UI08)((i+1)%256);
-		strcpy( &newlist2[2], sData->getName().c_str() );
-		UI32 ip = htonl( inet_addr( sData->getIP().c_str() ) );
-		newlist2[36] = (UI08)( ip>>24 );
-		newlist2[37] = (UI08)( ip>>16 );
-		newlist2[38] = (UI08)( ip>>8 );
-		newlist2[39] = (UI08)( ip%256 );
-		s->Send( newlist2, 40 );
-	}
-}
-
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void cNetworkStuff::GoodAuth( cSocket *s, ACCOUNTSBLOCK& actbBlock)
-//|	Date					-	
-//|	Developers		-	
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Send this connectiona successful authentication packet
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void cNetworkStuff::GoodAuth( cSocket *s, ACCOUNTSBLOCK& actbBlock)
-{
-	UI08 charCount = 0;
-	for( UI32 i = 0; i < 5; i++ )
-	{
-		if(actbBlock.dwCharacters[i] != 0xffffffff )
-			charCount++;
-	}
-	cServerData *sd = cwmWorldState->ServerData();
-	UI32 serverCount = sd->GetNumServerLocations();
-	CPCharAndStartLoc toSend(actbBlock, charCount, serverCount );
-	for( UI32 j = 0; j < serverCount; j++ )
-	{
-		toSend.AddStartLocation( sd->GetServerLocation( j ), j );
-	}
-	s->Send( &toSend );
-}
-
-void cNetworkStuff::pSplit( char *pass0 ) // Split login password into UOX password and UO password
-{
-	int i = 0;
-	pass1[0] = 0;
-	while( pass0[i] != '/' && pass0[i] != 0 ) 
-		i++;
-	strncpy( pass1, pass0, i );
-	pass1[i] = 0;
-	if( pass0[i] != 0 ) 
-		strcpy( pass2, pass0 + i + 1 );
-}
 
 //o--------------------------------------------------------------------------o
 //|	Function			-	void cNetworkStuff::LogOut( UOXSOCKET s )
@@ -299,7 +142,7 @@ void cNetworkStuff::LogOut( UOXSOCKET s )
 		valid = true;
 	else 
 	{
-		for( a = 0; a < logoutcount; a++ )
+		for( a = 0; static_cast<UI32>(a) < logoutcount; a++ )
 		{
 			if( logout[a].x1 <= x && logout[a].y1 <= y && logout[a].x2 >= x && logout[a].y2 >= y )
 			{
@@ -311,10 +154,10 @@ void cNetworkStuff::LogOut( UOXSOCKET s )
 
 	if( !valid )
 	{
-		if( p->GetMulti() == INVALIDSERIAL )
-			multi = findMulti( x, y, p->GetZ(), p->WorldNumber() );
+		if( p->GetMultiObj() == NULL )
+			multi = findMulti( p );
 		else 
-			multi = static_cast<CMultiObj *>(calcItemObjFromSer( p->GetMulti() ));
+			multi = static_cast<CMultiObj *>(p->GetMultiObj() );
 	}
 	
 	if( multi != NULL && !valid )//It they are in a multi... and it's not already valid (if it is why bother checking?)
@@ -340,22 +183,22 @@ void cNetworkStuff::LogOut( UOXSOCKET s )
 	actbAccount=p->GetAccount();
 	if( valid )
 	{
-		if(actbAccount.wAccountIndex!=0xffff)
-			actbAccount.dwInGame=INVALIDSERIAL;
+		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+			actbAccount.dwInGame = INVALIDSERIAL;
 		p->SetLogout( -1 );
 	}
 	else
 	{
-		if(actbAccount.wAccountIndex!=0xffff)
+		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = p->GetSerial();
-		p->SetLogout( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) ) );
+		p->SetLogout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) )) );
 	}
 	p->Teleport();
 }
 
 void cNetworkStuff::sockInit( void )
 {
-	char h1=0, h2=0, h3=0, h4=0;
+//	char h1=0, h2=0, h3=0, h4=0;
 	int bcode;
 	
 	kr = true;
@@ -410,10 +253,10 @@ void cNetworkStuff::sockInit( void )
 	ioctlsocket( a_socket, FIONBIO, &mode );
 
 	listen( a_socket, 42 );
-	ph1 = h1;
-	ph2 = h2;
-	ph3 = h3;
-	ph4 = h4;
+//	ph1 = h1;
+//	ph2 = h2;
+//	ph3 = h3;
+//	ph4 = h4;
 }
 
 void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
@@ -501,7 +344,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 {
 	bool match[4];
-	for( int i = 0; i < slEntries.size(); i++ )
+	for( unsigned int i = 0; i < slEntries.size(); i++ )
 	{
 		for( UI08 k = 0; k < 4; k++ )
 		{
@@ -518,7 +361,7 @@ bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 cNetworkStuff::~cNetworkStuff()
 {
 	int i, s = 0;
-	for( i = 0; i < loggedInClients.size(); i++ )
+	for( i = 0; static_cast<unsigned int>(i) < loggedInClients.size(); i++ )
 	{
 		loggedInClients[i]->FlushBuffer();
 		loggedInClients[i]->CloseSocket();
@@ -610,12 +453,12 @@ cSocket& cNetworkStuff::GetSocket( UOXSOCKET s )
 
 cSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
-	if( s < 0 || s >= connClients.size() )
+	if( s < 0 || s >= static_cast<UOXSOCKET>(connClients.size()) )
 		return NULL;
 	return connClients[s];
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID );
+cPInputBuffer *WhichPacket( UI08 packetID, cSocket *s );
 
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 {
@@ -625,7 +468,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	int count, ho, mi, se, total, j, book;
 	SERIAL serial;
 	CItem *i = NULL;
-	CChar *c = NULL;
 	char nonuni[512];
 	char temp[1024];
 	cSocket *mSock = GetSockPtr( s );
@@ -678,18 +520,14 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				return;
 			}
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
-				mSock->IdleTimeout( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) ) );
-			cPInputBuffer *test = WhichPacket( packetID );
+				mSock->IdleTimeout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) )) );
+			cPInputBuffer *test = WhichPacket( packetID, mSock );
 			bool doSwitch = true;
 			if( test != NULL )
 			{
-				test->SetSocket( mSock );
-				test->Receive( mSock );
 				if( test->Handle() )
 					doSwitch = false;
 				delete test;
-
-			
 			}
 			if( doSwitch )
 			{
@@ -702,32 +540,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				{
 				case 0x01: // Main Menu on the character select screen
 					Disconnect( s );
-					break;
-				case 0x04:	// God client toggle
-					mSock->Receive( 2 );
-					if( ourChar->IsGM() )
-					{
-						CPGodModeToggle cpgmt = mSock;
-						mSock->Send( &cpgmt );
-					}
-					else
-					{
-						sysmessage( mSock, 1641 );
-						Console << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Usename[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
-						Disconnect( s );
-					}
-					break;
-				case 0x02:// Walk
-					mSock->Receive( 7 );
-					Movement->Walking( ourChar, buffer[1], buffer[2] );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x73:// Keep alive
-					mSock->Receive( 2 );
-					mSock->Send( buffer, 2 );
-					break;
-				case 0x22:// Resync Request
-					mSock->Receive( 3 );
 					break;
 				case 0x03:// Speech
 					mSock->Receive( 3 );
@@ -1050,44 +862,11 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						break;
 					}
 					break;    
-				case 0x06:// Doubleclick
-					mSock->Receive( 5 );
-					doubleClick( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x09:// Singleclick
-					mSock->Receive( 5 );
-					singleClick( mSock );
-					break;
-				case 0x6C:// Targeting
-					mSock->Receive( 19 );
-					if( mSock->TargetOK() )
-						Targ->MultiTarget( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x13:// Equip Item
-					mSock->Receive( 10 );
-					wearItem( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x07:// Get Item
-					mSock->Receive( 7 );
-					grabItem( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x08:// Drop Item
-					mSock->Receive( 14 );
-					if( buffer[10] >= 0x40 && buffer[10] != 0xFF )
-						packItem( mSock );
-					else 
-						dropItem( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
 				case 0x72:// Combat Mode
 					mSock->Receive( 5 );
 					ourChar->SetWar( buffer[1] != 0 );
 					ourChar->SetTarg( INVALIDSERIAL );
-					if( ourChar->GetTimeout() <= uiCurrentTime )
+					if( static_cast<UI32>(ourChar->GetTimeout()) <= uiCurrentTime )
 						ourChar->SetTimeout( BuildTimeValue( 1 ) );
 					else
 						ourChar->SetTimeout( ourChar->GetTimeout() + CLOCKS_PER_SEC );
@@ -1131,7 +910,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						while( buffer[j] != ' ' ) 
 							j++;
 						buffer[j] = 0;
-						Skills->SkillUse( mSock, makeNum( (char*)&buffer[4] ) );
+						Skills->SkillUse( mSock, static_cast<UI08>(makeNum( (char*)&buffer[4] )) );
 						break;
 					} 
 					else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
@@ -1143,9 +922,9 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						validLoc = false;
 						if( sBook != NULL )
 						{
-							if( sBook->GetCont() == ourChar->GetSerial() )
+							if( sBook->GetCont() == ourChar )
 								validLoc = true;
-							else if( p != NULL && sBook->GetCont() == p->GetSerial() )
+							else if( p != NULL && sBook->GetCont() == p )
 								validLoc = true;
 
 							if( validLoc )
@@ -1193,19 +972,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				case 0x95:// Color Select
 					mSock->Receive( 9 );
 					Commands->DyeTarget( mSock );
-					break;
-				case 0x34:// Status Request
-					mSock->Receive( 10 );
-					srequest( mSock );
-					break;
-				case 0x75:// Rename Character
-					mSock->Receive( 0x23 );
-					serial = mSock->GetDWord( 1 );
-					if( serial == INVALIDSERIAL ) 
-						return;
-					c = calcCharObjFromSer( serial );
-					if( c != NULL )
-						c->SetName( (char *)&buffer[5] );
 					break;
 				case 0x66:// Read Book
 					int size;
@@ -1268,35 +1034,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							ch = 0;
 					}
 					break;
-
-				case 0xA7:// Get Tip
-					mSock->Receive( 4 );
-					tips( mSock, mSock->GetWord( 1 ) + 1 );
-					break;
-				case 0xA4:// Spy
-					mSock->Receive( 0x95 );
-					break;
-				case 0x05:// Attack
-					mSock->Receive( 5 );
-					ourChar->BreakConcentration( mSock );
-					PlayerAttack( mSock );
-					break;
-				case 0xB1:// Gumpmenu choice
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					Gumps->Button( mSock, mSock->GetDWord( 11 ), buffer[3], buffer[4], buffer[5], buffer[6], mSock->GetDWord( 7 ) );
-					break;
 				case 0xAC:// Textentry input
 					mSock->Receive( 3 );
 					mSock->Receive( mSock->GetWord( 1 ) );
 					Gumps->Input( mSock );
-					break;
-				case 0x2C:// Resurrect menu choice
-					mSock->Receive( 2 );
-					if( buffer[1] == 0x02 ) 
-						sysmessage( mSock, 766 );
-					if( buffer[1] == 0x01 ) 
-						sysmessage( mSock, 767 );
 					break;
 				case 0x3B:// Buy from vendor...
 					mSock->Receive( 3 );
@@ -1347,7 +1088,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							strncpy( (char *)&tempBuffer[7], chars[player].GetName(), 30 );
 							strncpy( (char *)&tempBuffer[38], chars[player].GetTitle(), 30 );
 							strcpy( ourMessage, "Test of Char Profile" );
-							for( j = 0; j < strlen( ourMessage ); j++ )
+							for( j = 0; j < static_cast<int>(strlen( ourMessage )); j++ )
 							{
 								tempBuffer[69 + j * 2] = 0;
 								tempBuffer[70 + j * 2] = ourMessage[j];
@@ -1468,7 +1209,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	FD_ZERO( &errsock );
 	
 	int nfds = 0;
-	for( i = 0; i < loggedInClients.size(); i++ )
+	for( i = 0; i < static_cast<int>(loggedInClients.size()); i++ )
 	{
 		int clientSock = loggedInClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
@@ -1480,7 +1221,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	if( s > 0 )
 	{
 		int oldnow = loggedInClients.size();
-		for( i = 0; i < loggedInClients.size(); i++ )
+		for( i = 0; i < static_cast<int>(loggedInClients.size()); i++ )
 		{
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
@@ -1533,17 +1274,16 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	loggedInClients[s]->CloseSocket();
 
 	//Zippy 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
-	if( loggedInClients[s]->AcctNo() != -1 ) 
+	if( loggedInClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK actbAccount;
-		actbAccount=loggedInClients[s]->GetAccount();
-		if(actbAccount.wAccountIndex!=0xffff)
+		ACCOUNTSBLOCK actbAccount = loggedInClients[s]->GetAccount();
+		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.wFlags&=0xFFFFFFF7;
 	}
 
 	delete loggedInClients[s];
 	loggedInClients.erase( loggedInClients.begin() + s );
-	for( int q = 0; q < loggIteratorBackup.size(); q++ )
+	for( unsigned int q = 0; q < loggIteratorBackup.size(); q++ )
 	{
 		if( loggIteratorBackup[q] >= s )
 			loggIteratorBackup[q]--;
@@ -1557,9 +1297,15 @@ void cNetworkStuff::LoginDisconnect( cSocket *s ) // Force disconnection of play
 	//LoginDisconnect(s->CliSocket());
 }
 
+void cNetworkStuff::Disconnect( cSocket *s ) // Force disconnection of player //Instalog
+{
+	UOXSOCKET i = FindNetworkPtr( s );
+	Disconnect( i );
+}
+
 UOXSOCKET cNetworkStuff::FindLoginPtr( cSocket *s )
 {
-	for( UOXSOCKET i = 0; i < loggedInClients.size(); i++ )
+	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(loggedInClients.size()); i++ )
 	{
 		if( loggedInClients[i] == s )
 			return i;
@@ -1633,18 +1379,15 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				LoginDisconnect( s );
 				return;
 			}
-			cPInputBuffer *test = WhichPacket( packetID );
+			cPInputBuffer *test = WhichPacket( packetID, mSock );
 			bool doSwitch = true;
 			if( test != NULL )
 			{
-				test->SetSocket( mSock );
-				test->Receive( mSock );
 				if( test->Handle() )
 					doSwitch = false;
 				delete test;
-
 			}
-			if (packetID == 0x5D)
+			if( packetID == 0x5D )
 			{
 
 				// ----------------------------------------------------
@@ -1686,16 +1429,6 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 					trnsfr = Transfer( s );
 					playChar( mSock );
 					break;
-				case 0x73:// Keep alive
-					mSock->Receive( 2 );
-					mSock->Send( buffer, 2 );
-					break;
-				case 0x22:// Resync Request
-					mSock->Receive( 3 );
-					break;
-				case 0xA4:// Spy
-					mSock->Receive( 0x95 );
-					break;
 				case 0xBB: // No idea
 					mSock->Receive( 9 );
 					break;
@@ -1725,7 +1458,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 
 UOXSOCKET cNetworkStuff::FindNetworkPtr( cSocket *toFind )
 {
-	for( UOXSOCKET i = 0; i < connClients.size(); i++ )
+	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(connClients.size()); i++ )
 	{
 		if( connClients[i] == toFind )
 			return i;
@@ -1751,7 +1484,7 @@ cSocket *cNetworkStuff::NextSocket( void )
 }
 bool cNetworkStuff::FinishedSockets( void )
 {
-	return ( currConnIter >= connClients.size() );
+	return ( currConnIter >= static_cast<SI32>(connClients.size() ));
 }
 
 cSocket *cNetworkStuff::PrevSocket( void )
@@ -1790,25 +1523,25 @@ void cNetworkStuff::LoadFirewallEntries( void )
 				if( strcmp( p, "*" ) == 0 )
 					p1 = -1;
 				else
-					p1 = makeNum( p );
+					p1 = static_cast<SI16>(makeNum( p ));
 				if( ( p = strtok( NULL, "." ) ) != NULL )
 				{
 					if( strcmp( p, "*" ) == 0 )
 						p2 = -1;
 					else
-						p2 = makeNum( p );
+						p2 =static_cast<SI16>( makeNum( p ));
 					if( ( p = strtok( NULL, "." ) ) != NULL )
 					{
 						if( strcmp( p, "*" ) == 0 )
 							p3 = -1;
 						else
-							p3 = makeNum( p );
+							p3 = static_cast<SI16>(makeNum( p ));
 						if( ( p = strtok( NULL, "\0" ) ) != NULL )
 						{
 							if( strcmp( p, "*" ) == 0 )
 								p4 = -1;
 							else
-								p4 = makeNum( p );
+								p4 = static_cast<SI16>(makeNum( p ));
 
 							slEntries.push_back( FirewallEntry( p1, p2, p3, p4 ) );
 							p1 = p2 = p3 = p4 = false;
@@ -1862,7 +1595,7 @@ void cNetworkStuff::CheckXGM( void )
 	FD_ZERO( &errsock );
 	int nfds = 0;
 
-	for( int i = 0; i < xgmClients.size(); i++ )
+	for( unsigned int i = 0; i < xgmClients.size(); i++ )
 	{
 		int clientSock = xgmClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
@@ -1874,7 +1607,7 @@ void cNetworkStuff::CheckXGM( void )
 	if( s > 0 )
 	{
 		int oldnow = xgmClients.size();
-		for( SI32 i = 0; i < xgmClients.size(); i++ )
+		for( UI32 i = 0; i < xgmClients.size(); i++ )
 		{
 			cSocket *mXGMSock = xgmClients[i];
 			if( mXGMSock == NULL )
@@ -1917,7 +1650,7 @@ void cNetworkStuff::CheckXGM( void )
 void cNetworkStuff::ShutdownXGM( void )
 {
 	closesocket( xgmSocket );
-	for( int i = 0; i < xgmClients.size(); i++ )
+	for( unsigned int i = 0; i < xgmClients.size(); i++ )
 	{
 		xgmClients[i]->CloseSocket();
 		delete xgmClients[i];
@@ -1935,7 +1668,7 @@ void cNetworkStuff::XGMDisconnect( UOXSOCKET s )
 
 	delete xgmClients[s];
 	xgmClients.erase( xgmClients.begin() + s );
-	for( int q = 0; q < xgmIteratorBackup.size(); q++ )
+	for(unsigned int q = 0; q < xgmIteratorBackup.size(); q++ )
 	{
 		if( xgmIteratorBackup[q] >= s )
 			xgmIteratorBackup[q]--;
@@ -1950,7 +1683,7 @@ void cNetworkStuff::XGMDisconnect( cSocket *s )
 
 UOXSOCKET cNetworkStuff::FindXGMPtr( cSocket *s )
 {
-	for( UOXSOCKET i = 0; i < xgmClients.size(); i++ )
+	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(xgmClients.size()); i++ )
 	{
 		if( xgmClients[i] == s )
 			return i;
@@ -1958,7 +1691,7 @@ UOXSOCKET cNetworkStuff::FindXGMPtr( cSocket *s )
 	return -1;
 }
 
-cPInputBuffer *WhichXGMPacket( UI08 packetID );
+cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s );
 
 void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
 {
@@ -1978,11 +1711,9 @@ void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
 			XGMDisconnect( s );
 			return;
 		}
-		cPInputBuffer *test = WhichXGMPacket( packetID );
+		cPInputBuffer *test = WhichXGMPacket( packetID, mSock );
 		if( test != NULL )
 		{
-			test->SetSocket( mSock );
-			test->Receive( mSock );
 			test->Handle();
 			delete test;
 		}

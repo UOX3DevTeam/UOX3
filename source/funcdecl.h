@@ -6,26 +6,22 @@
 CItem *	getRootPack( CItem *p );
 CChar *	getPackOwner( CItem *p );
 CItem *	getPack( CChar *p );
-void	openPack( cSocket  *s, SERIAL serial );
-void	openPack( cSocket  *s, CItem *serial );
+void	openPack( cSocket  *s, CItem *i );
 
 // Distance functions
 UI16	getDist( cBaseObject *a, cBaseObject *b );
-UI16	getCharDist( CChar *a, CChar *b );
-UI16	getItemDist( CChar *a, CItem *i );
 
 // Range check functions
 bool	checkItemRange( CChar *mChar, CItem *i, UI16 distance );
+bool	objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance );
 bool	objInRange( cBaseObject *a, cBaseObject *b, UI16 distance );
-bool	itemInRange( CChar *mChar, CItem *i, UI16 distance );
 bool	itemInRange( CChar *mChar, CItem *i );
-bool	charInRange( cSocket *s, CChar *i, UI16 distance );
-bool	charInRange( cSocket *a, cSocket *b );
 bool	charInRange( CChar *a, CChar *b );
 bool	inBankRange( CChar *i );
 
 // Multi functions
 CMultiObj *	findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+CMultiObj *	findMulti( cBaseObject *i );
 bool		inMulti( SI16 x, SI16 y, SI08 z, CItem *m, UI08 worldNumber );
 
 // Speech functions
@@ -33,17 +29,17 @@ bool	response( cSocket *mSock );
 void	responsevendor( cSocket *mSock );
 void	sysmessage( cSocket *s, const char *txt, ... );
 void	sysmessage( cSocket *s, SI32 dictEntry, ... );
-void	itemmessage( cSocket *s, const char *txt, CItem& item, R32 secsFromNow = 0.0f, UI16 Colour = 0x03B2 );
-void	itemmessage( cSocket *s, const char *txt, CChar& mChar, R32 secsFromNow = 0.0f, UI16 Colour = 0x03B2 );
+void	objMessage( cSocket *s, const char *txt, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
+void	objMessage( cSocket *s, SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
 void	itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0 );
 void	npcTalkAll( CChar *npc, const char *txt, bool antispam );
-void	npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam );
+void	npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam, ... );
 void	npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam ); // NPC speech
-void	npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam ); // NPC speech
+void	npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... ); // NPC speech
 void	npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam );
 void	npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... );
 void	npcEmoteAll( CChar *npc, const char *txt, bool antispam );
-void	npcEmoteAll( CChar *npc, SI32 dictEntry, bool antispam );
+void	npcEmoteAll( CChar *npc, SI32 dictEntry, bool antispam, ... );
 void	unicodetalking( cSocket *mSock ); // PC speech
 void	talking( cSocket *mSock ); // PC speech
 void	textflags( cSocket *s, CChar *i, const char *name );
@@ -60,15 +56,17 @@ void	singleClick( cSocket *mSock );
 // Effect functions
 void	staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode = false );
 void	staticeffect( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode );
-void	movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode );
-void	movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode );
+void	movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
+void	movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
+void	action( cSocket *s, SI16 x );
+void	impaction( cSocket *s, SI16 act );
 void	bolteffect( CChar *player );
-void	tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, UI32 targItemPtr = INVALIDSERIAL );
-void	tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, UI32 targItemPtr = INVALIDSERIAL );
+void	tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr = NULL);
+void	tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3 );
 void	tempeffectsoff( void );
 void	tempeffectson( void );
 void	checktempeffects( void );
-void	reverse_effect( int i );
+void	reverseEffect( UI16 i );
 void	SaveEffects( void );
 void	LoadEffects( void );
 
@@ -78,10 +76,10 @@ void	soundeffect( cSocket *s, UI16 effect, bool allHear );
 void	soundeffect( CChar *p, UI16 effect );
 void	soundeffect( CItem *p, UI16 effect );
 void	soundeffect( CItem *p, cSocket *s, UI16 effect );
-void	itemsfx( cSocket *s, UI16 effect, bool bAllHear = false );
+void	itemSound( cSocket *s, CItem *item, bool bAllHear = false );
 void	bgsound( CChar *s );
 void	doorsfx( CItem *item, UI16 id, bool isOpen );
-void	goldsfx( cSocket *s, int goldtotal, bool bAllHear = false);
+void	goldSound( cSocket *s, UI32 goldtotal, bool bAllHear = false);
 void	playMonsterSound( CChar *monster, UI16 id, UI08 sfx );
 void	playTileSound( cSocket *mSock );
 void	playDeathSound( CChar *i );
@@ -104,16 +102,17 @@ CItem *		calcItemObjFromSer( SERIAL targSerial );
 CHARACTER	calcCharFromSer( UI08 ser1, UI08 ser2, UI08 ser3, UI08 ser4 );
 CHARACTER	calcCharFromSer( SERIAL ser );
 CChar *		calcCharObjFromSer( SERIAL targSerial );
-SI32		calcGold( CChar *p );
+UI32		calcGold( CChar *p );
 inline UI32 calcserial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 ) { return ( (a1<<24) + (a2<<16) + (a3<<8) + a4 ); }	
 
 // Doors
 void	useDoor( cSocket *s, CItem *item );
 bool	isDoorBlocked( CItem *door );
 void	DoorMacro( cSocket *s );
+bool	keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x );
 
 // Socket stuff
-void	SendVecsAsGump( cSocket *sock, stringList& one, stringList& two, long type, SERIAL serial );
+void	SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial );
 void	SendWorldChange( WorldType season, cSocket *sock );
 void	SendMapChange( UI08 worldNumber, cSocket *sock, bool initialLogin = false );
 void	SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate );
@@ -125,21 +124,16 @@ void	sendItemsInRange( cSocket *s );
 void	wornItems( cSocket *s, CChar *j );
 void	RefreshItem( CItem *i );
 void	updateStats( CChar *c, char x );
-void	action( cSocket *s, SI16 x );
-void	impaction( cSocket *s, int act);
 bool	isOnline( CChar *c );
 void	updateskill( cSocket *mSock, UI08 skillnum );
 void	playChar( cSocket *mSock ); // After hitting "Play Character" button //Instalog
-void	srequest( cSocket *s );
-void	tips( cSocket *s, UI08 i ); // Tip of the day window
 
 // File IO
-void	loadPreDefSpawnRegion( SI32 r, std::string name );
+void	loadPreDefSpawnRegion( UI16 r, std::string name );
 void	loadcustomtitle( void );
 void	saveserverscript( char x );
 void	loadskills( void );
 r2Data	readline( std::ifstream &toRead );
-void	savelog( const char *msg, const char *logfile );
 void	loadnewworld( void );
 void	loadSpawnRegions( void );
 void	loadregions( void );
@@ -182,20 +176,19 @@ bool	inDungeon( CChar *s );
 //void	weather(int s, char bolt);
 
 // Amount related
-UI16	getAmount( CChar *s, UI16 realID );
-SI32	getSubAmount( CItem *p, UI16 realID );
-SI32	deleQuan( CChar *s, UI16 realID, SI32 amount );
-SI32	deleSubQuan( CItem *p, UI16 realID, SI32 amount );
-SI32	getItemAmt( CChar *s, UI16 realID, UI16 realColour );
-SI32	getSubItemAmt( CItem *p, UI16 realID, UI16 realColour );
-SI32	deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount );
-SI32	deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount );
-SI16	deleteItemsFromChar( CChar *toFind, UI16 itemID );
-SI16	deleteItemsFromPack( CItem *item, UI16 itemID );
-SI32	getBankCount( CChar *p, UI16 itemID, UI16 colour = 0x0000 );
-SI32	deleBankItem( CChar *p, UI16 itemID, UI16 colour, SI32 amt );
-CItem *	decItemAmount( CItem *toDelete, SI32 amt = 1 );
-ITEM	decItemAmount( ITEM toDelete, SI32 amt = 1 );
+UI32	GetAmount( CChar *s, UI16 realID );
+UI32	GetSubAmount( CItem *p, UI16 realID );
+UI32	DeleteQuantity( CChar *s, UI16 realID, UI32 amount );
+UI32	DeleteSubQuantity( CItem *p, UI16 realID, UI32 amount );
+UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour );
+UI32	GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour );
+UI32	DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount );
+UI32	DeleteSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 amount );
+SI16	DeleteItemsFromChar( CChar *toFind, UI16 itemID );
+SI16	DeleteItemsFromPack( CItem *item, UI16 itemID );
+UI32	GetBankCount( CChar *p, UI16 itemID, UI16 colour = 0x0000 );
+UI32	DeleteBankItem( CChar *p, UI16 itemID, UI16 colour, UI32 amt );
+CItem *	DecreaseItemAmount( CItem *toDelete, UI16 amt = 1 );
 
 // Trade related
 CItem *	startTrade( cSocket *mSock, CChar *i );
@@ -213,9 +206,9 @@ bool	sendSellStuff( cSocket *s, CChar *i );
 void	sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t);
 void	buyItem( cSocket *mSock );
 void	sellItem( cSocket *mSock );
-int		calcValue( CItem *i, int value);
-int		calcGoodValue( CChar *npcnum2, CItem *i, int value, int goodtype );
-void	StoreItemRandomValue( CItem *i, int tmpreg );
+UI32		calcValue( CItem *i, UI32 value);
+UI32		calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling );
+void	StoreItemRandomValue( CItem *i, UI08 region );
 void	PlVGetgold( cSocket *mSock, CChar *v );
 
 // Region related
@@ -223,7 +216,7 @@ void	checkRegion( CChar *i );
 UI08	calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber );
 
 // House related
-void	buildHouse( cSocket *s, int i );
+void	buildHouse( cSocket *s, UI32 i );
 void	deedHouse( cSocket *s, CItem *i);
 void	killKeys( SERIAL targSerial );
 UI08	AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
@@ -235,7 +228,6 @@ CItem *	FindItemOfType( CChar *toFind, UI08 type );
 CItem *	SearchSubPackForItemOfType( CItem *toSearch, UI08 type );
 CItem *	FindItem( CChar *toFind, UI16 itemID );
 CItem *	SearchSubPackForItem( CItem *toSearch, UI16 itemID );
-CItem *	FindItemOnLayer( CChar *toFind, UI08 layer );
 
 void	wearItem( cSocket *s ); // Item is dropped on paperdoll
 void	grabItem( cSocket *s ); // Client grabs an item
@@ -246,12 +238,11 @@ void	dropItem( cSocket *s ); // Item is dropped on ground
 void	deleteChar( cSocket *s ); // Deletion of character
 void	createChar( cSocket *mSock ); // All the character creation stuff
 UI16	addRandomColor( const char *colorlist );
-void	newbieItems( CChar *c );
 bool	isHuman( CChar *p );
 
 // Reputation Stuff
-void	Karma( CChar *nCharID, CChar *nKilledID, int nKarma );
-void	Fame( CChar *nCharID, int nFame );
+void	Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma );
+void	Fame( CChar *nCharID, SI16 nFame );
 
 // Combat Stuff
 void	PlayerAttack( cSocket *s );
@@ -264,12 +255,12 @@ void	callGuards( CChar *mChar, CChar *targChar );
 
 // Death Handling
 void	doDeathStuff( CChar *i );
-CItem *	GenerateCorpse( CChar *i, int nType, CChar *murderer );
+CItem *	GenerateCorpse( CChar *i, UI08 nType, CChar *murderer );
 void	deathAction( CChar *s, CItem *x );
 void	deathMenu( cSocket *s);
 
 // NPC Actions
-void	npcAction( CChar *npc, int x );
+void	npcAction( CChar *npc, SI16 x );
 void	npcAct( cSocket *s );
 void	npcToggleCombat( CChar *s );
 
@@ -278,7 +269,6 @@ void	entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, c
 void	entrygump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry );
 void	NewAddMenu( cSocket *s, int m ); // Menus for item creation
 void	itemmenu( cSocket *s, int m );
-void	TellScroll( const char *menu_name, cSocket *player, long item_param );
 void	gmmenu( cSocket *s, int m );
 void	tweakItemMenu( cSocket *s, CItem *j );
 void	tweakCharMenu( cSocket *s, CChar *c );
@@ -298,8 +288,8 @@ void	explodeItem( cSocket *mSock, CItem *nItem );
 void	MonsterGate( CChar *s, SI32 x );
 void	init_creatures( void );
 void	teleporters( CChar *s );
-CChar	*SpawnRandomMonster( cSocket *nCharID, char* cScript, char* cList, char* cNpcID);
-CItem	*SpawnRandomItem( cSocket *nCharID, bool nInPack, char* cScript, char* cList, char* cItemID);
+CChar	*SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* cNpcID);
+CItem	*SpawnRandomItem( cSocket *nCharID, bool useNecro, char* cList, char* cItemID);
 void	MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID );
 void	objTeleporters( CChar *s );
 bool	checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2, UI08 worldNumber );
@@ -316,10 +306,10 @@ void	openBank( cSocket *s, CChar *i );
 void	openSpecialBank( cSocket *s, CChar *i );
 int		getTileName( CItem *i, char* itemname);
 
-void	addgold( cSocket *s, SI32 totgold );
+void	addgold( cSocket *s, UI32 totgold );
 void	usePotion( CChar *p, CItem *i );
 void	respawnnow( void );
-void	advanceObj( CChar *s, SI32 x, bool multiUse );
+void	advanceObj( CChar *s, UI16 x, bool multiUse );
 void	statwindow( cSocket *s, CChar *i );
 
 inline int RandomNum( int nLowNum, int nHighNum )

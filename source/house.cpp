@@ -1,7 +1,6 @@
 // House code for deed creation by Tal Strake, revised by Cironian
 
 #include "uox3.h"
-#include "debug.h"
 #include "ssection.h"
 
 #undef DBGFILE
@@ -24,7 +23,7 @@ void mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, 
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void buildhouse(int s, int i)
+//|   Function    -  void buildHouse( cSocket *s, UI32 i )
 //|   Date        -  UnKnown - Rewrite Date 1/24/99
 //|   Programmer  -  UnKnown - Rewrite by Zippy (onlynow@earthlink.net)
 //o---------------------------------------------------------------------------o
@@ -33,7 +32,7 @@ void mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, 
 //|						using HOUSE ITEM, (this includes all doors!) and locked "LOCK"
 //|						Space around the house with SPACEX/Y and CHAR offset CHARX/Y/Z
 //o---------------------------------------------------------------------------o
-void buildHouse( cSocket *s, int i )
+void buildHouse( cSocket *s, UI32 i )
 {
 	SI16 x, y, sx = 0, sy = 0, cx = 0, cy = 0;
 	SI08 z, cz = 8;
@@ -63,17 +62,17 @@ void buildHouse( cSocket *s, int i )
 			if( !strcmp( tag,"ID") )
 				houseID = (UI16)makeNum( data );
 			else if( !strcmp( tag,"SPACEX" ) )
-				sx = makeNum( data ) + 1;
+				sx = static_cast<SI16>(makeNum( data ) + 1);
 			else if( !strcmp( tag,"SPACEY" ) )
-				sy = makeNum( data ) + 1;
+				sy = static_cast<SI16>(makeNum( data ) + 1);
 			else if( !strcmp( tag,"CHARX" ) )
-				cx = makeNum( data );
+				cx = static_cast<SI16>(makeNum( data ));
 			else if( !strcmp( tag,"CHARY" ) )
-				cy = makeNum( data );
+				cy = static_cast<SI16>(makeNum( data ));
 			else if( !strcmp( tag,"CHARZ" ) )
-				cz = makeNum( data );
+				cz = static_cast<SI08>(makeNum( data ));
 			else if( !strcmp( tag, "ITEMSDECAY" ) )
-				itemsdecay = makeNum( data );
+				itemsdecay = static_cast<char>(makeNum( data ));
 			else if( !strcmp( tag,"HOUSE_ITEM" ) )
 			{
 				hitem[icount] = makeNum( data );
@@ -86,7 +85,7 @@ void buildHouse( cSocket *s, int i )
 		}
 		if( !houseID )
 		{
-			printf("ERROR: Bad house script # %i!\n",i);
+			Console.Error( 1, "Bad house script # %i!\n",i);
 			return;
 		}
 	}
@@ -97,12 +96,12 @@ void buildHouse( cSocket *s, int i )
 			s->AddID1( 0x40 );
 			s->AddID2( 100 );
 			if( houseID >= 0x4000 )
-				mtarget( s, calcserial( 0, 1, 0, 0 ), houseID - 0x4000, Dictionary->GetEntry( 576 ) );
+				mtarget( s, calcserial( 0, 1, 0, 0 ), houseID - 0x4000, Dictionary->GetEntry( 576, s->Language() ) );
 			else
 				target( s, 0, 1, 0, 0, 576 );
 		}
 		else
-			mtarget( s, 0, 1, 0, 0, s->AddID1() - 0x40, s->AddID2(), Dictionary->GetEntry( 576 ) );
+			mtarget( s, 0, 1, 0, 0, s->AddID1() - 0x40, s->AddID2(), Dictionary->GetEntry( 576, s->Language() ) );
 
 		looptimes++;//for when we come back after they target something
 		return;
@@ -150,11 +149,11 @@ void buildHouse( cSocket *s, int i )
 				sprintf( temp, "%s's house", mChar->GetName() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 			else 
 				strcpy( temp, "a mast" );
-			house = Items->SpawnMulti( s, mChar, temp, houseID );
+			house = Items->SpawnMulti( mChar, temp, houseID );
 			if( house == NULL )
 				return;
-			house->SetLocation( x, y, z );
 
+			house->SetLocation( x, y, z );
 			house->SetPriv( 0 );
 			house->SetMore( itemsdecay, 4 ); // set to 1 to make items in houses decay
 			house->SetMoreX( hdeed ); // crackerjack 8/9/99 - for converting back *into* deeds
@@ -169,7 +168,7 @@ void buildHouse( cSocket *s, int i )
 			fakeHouse->SetLocation( x, y, z );
 
 			fakeHouse->SetPriv( 0 );
-			fakeHouse->SetOwner( mChar );
+			fakeHouse->SetOwner( (cBaseObject *)mChar );
 			fakeHouse->SetDecayable( false );
 		}
 
@@ -238,7 +237,7 @@ void buildHouse( cSocket *s, int i )
 							hItem->SetMagic( 2 );//Non-Moveable by default
 							hItem->SetPriv( 0 );//since even things in houses decay, no-decay by default
 							hItem->SetLocation( x, y, z );
-							hItem->SetOwner( mChar->GetSerial() );
+							hItem->SetOwner( (cBaseObject *)mChar );
 							if( houseID >= 0x4000 )
 								hItem->SetMulti( house );
 						}
@@ -250,7 +249,7 @@ void buildHouse( cSocket *s, int i )
 					else if( !strcmp( tag, "PACK" ) )//put the item in the Builder's Backpack
 					{
 						CItem *pack = getPack( mChar );
-						hItem->SetCont( pack->GetSerial() );
+						hItem->SetCont( pack );
 						hItem->SetX( RandomNum( 31, 120 ) );
 						hItem->SetY( RandomNum( 31, 120 ) );
 						hItem->SetZ( 9 );
@@ -260,13 +259,13 @@ void buildHouse( cSocket *s, int i )
 					else if( !strcmp( tag, "LOCK" ) && houseID >= 0x4000 )//lock it with the house key
 						hItem->SetMore( house->GetSerial() );
 					else if( !strcmp( tag, "X" ) )//offset + or - from the center of the house:
-						hItem->SetX( x + makeNum( data ) );
+						hItem->SetX( x + static_cast<SI16>(makeNum( data )) );
 					else if( !strcmp( tag, "Y" ) )
-						hItem->SetY( y + makeNum( data ) );
+						hItem->SetY( y + static_cast<SI16>(makeNum( data )) );
 					else if( !strcmp( tag, "Z" ) )
-						hItem->SetZ( z + makeNum( data ) );
+						hItem->SetZ( z + static_cast<SI08>(makeNum( data )) );
 				}
-				if( hItem != NULL && hItem->GetCont() == INVALIDSERIAL )
+				if( hItem != NULL && hItem->GetCont() == NULL )
 					MapRegion->AddItem( hItem );
 			}
 		}
@@ -292,7 +291,7 @@ void deedHouse( cSocket *s, CItem *i )
 	CChar *mChar = s->CurrcharObj();
 	char temp[1024];
 
-	if( i->GetOwner() == mChar->GetSerial() || mChar->IsGM() )
+	if( i->GetOwnerObj() == mChar || mChar->IsGM() )
 	{
 		Map->MultiArea( (CMultiObj *)i, x1, y1, x2, y2 );
 
@@ -341,7 +340,7 @@ void deedHouse( cSocket *s, CItem *i )
 						if( charCheck->GetNPCAiType() == 17 ) // player vendor in right place
 						{
 							sprintf( temp, Dictionary->GetEntry( 580 ), charCheck->GetName() );
-							pvDeed = Items->SpawnItem( s, mChar, 1, temp, false, 0x14F0, 0, true, false );
+							pvDeed = Items->SpawnItem( NULL, mChar, 1, temp, false, 0x14F0, 0, true, false );
 							if( pvDeed != NULL )
 							{
 								pvDeed->SetType( 217 );
@@ -436,9 +435,11 @@ void house_speech( cSocket *mSock, const char *talk )
 	if( mSock == NULL ) 
 		return;
 
+	UnicodeTypes sLang = mSock->Language();
+
 	char msg[512], msg2[512];
 	CChar *mChar = mSock->CurrcharObj();
-	CMultiObj *realHouse = findMulti( mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
+	CMultiObj *realHouse = findMulti( mChar );
 	if( realHouse == NULL ) 
 		return; // not in a house, so we don't care.
 	if( realHouse->GetObjType() != OT_MULTI )
@@ -446,19 +447,19 @@ void house_speech( cSocket *mSock, const char *talk )
 
 	strcpy( msg2, talk );
 	strcpy( msg, strupr( msg2 ) ); // krazyglue - above two lines aren't necessary
-	if( strstr( msg, Dictionary->GetEntry( 584 ) ) ) 
+	if( strstr( msg, Dictionary->GetEntry( 584, sLang ) ) ) 
 	{ // realHouse ban
 		mSock->AddID( realHouse->GetSerial() );
 		target( mSock, 0, 1, 0, 229, 585 );
 		return;
 	}
-	if( strstr( msg, Dictionary->GetEntry( 586 ) ) ) 
+	if( strstr( msg, Dictionary->GetEntry( 586, sLang ) ) ) 
 	{ // kick out of realHouse
 		mSock->AddID( realHouse->GetSerial() );
 		target( mSock, 0, 1, 0, 228, 587 );
 		return;
 	}
-	if( strstr( msg, Dictionary->GetEntry( 588 ) ) )
+	if( strstr( msg, Dictionary->GetEntry( 588, sLang ) ) )
 	{ // lock down item
 		if( realHouse->GetLockDownCount() < realHouse->GetMaxLockDowns() )
 		{
@@ -467,7 +468,7 @@ void house_speech( cSocket *mSock, const char *talk )
 		}
 		return;
 	}
-	if( strstr( msg, Dictionary->GetEntry( 590 ) ) )
+	if( strstr( msg, Dictionary->GetEntry( 590, sLang ) ) )
 	{ // lock down item
 		if( realHouse->GetLockDownCount() > 0 )
 		{

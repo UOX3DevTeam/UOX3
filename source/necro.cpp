@@ -5,7 +5,6 @@
 //	History:	None
 
 #include "uox3.h"
-#include "debug.h"
 #include "ssection.h"
 
 #undef DBGFILE
@@ -13,12 +12,11 @@
 
 void VialTargetChar( cSocket *nSocket, CChar *trgChar )
 {
-	int nDist = 0;
 	CChar *mChar = nSocket->CurrcharObj();
 	if( mChar == NULL )
 		return;
-	ITEM nVialID = nSocket->AddX();
-	if( nVialID == INVALIDSERIAL )
+	CItem *nVialID = nSocket->AddMItem();
+	if( nVialID == NULL )
 		return;
 	CChar *nCharID = trgChar;
 	CItem *nDagger = Combat->getWeapon( mChar );
@@ -33,9 +31,8 @@ void VialTargetChar( cSocket *nSocket, CChar *trgChar )
 		return;
 	}
 
-	items[nVialID].SetMore( 0, 1 );
+	nVialID->SetMore( 0, 1 );
 
-	char temp[1024];
 	if( nCharID == mChar )
 	{
 		if( nCharID->GetHP() <= 10 )
@@ -46,25 +43,23 @@ void VialTargetChar( cSocket *nSocket, CChar *trgChar )
 		else
 		{
 			sysmessage( nSocket, 745 );
-			nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
-			MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
+			nCharID->SetHP( nCharID->GetHP() - ( RandomNum( 0, 5 ) + 2 ) );
+			MakeNecroReg( nSocket, nVialID, 0x0E24 );
 			return;
 		}
 	}
 	else
 	{
-		nDist = getDist( mChar, nCharID );
-		if( charInRange( mChar, nCharID ) && nDist <= 2 )
+		if( objInRange( mChar, nCharID, 2 ) )
 		{
-			sprintf( temp, Dictionary->GetEntry( 746 ), mChar->GetName() );
 			if( nCharID->IsNpc() )
 			{
 				Karma( mChar, nCharID, -nCharID->GetKarma() );
 				if( nCharID->GetID( 1 ) == 0x00 && ( nCharID->GetID( 2 ) == 0x0C ||
 					( nCharID->GetID( 2 ) >= 0x3B && nCharID->GetID( 2 ) <= 0x3D ) ) )
-					items[nVialID].SetMore( 1, 1 );
-				nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
-				MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
+					nVialID->SetMore( 1, 1 );
+				nCharID->SetHP( nCharID->GetHP() - ( RandomNum( 0, 5 ) + 2 ) );
+				MakeNecroReg( nSocket, nVialID, 0x0E24 );
 				// Guard be summuned if in town and good npc
 				// if good flag criminal
 				// if evil npc attack necromancer but don't flag criminal
@@ -73,8 +68,8 @@ void VialTargetChar( cSocket *nSocket, CChar *trgChar )
 			{
 				Karma( mChar, nCharID, -nCharID->GetKarma() );
 				nCharID->SetHP( nCharID->GetHP() - ( rand()%6 + 2 ) );
-				sysmessage( calcSocketObjFromChar( nCharID ), temp );
-				MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
+				sysmessage( calcSocketObjFromChar( nCharID ), 746, mChar->GetName() );
+				MakeNecroReg( nSocket, nVialID, 0x0E24 );
 				// flag criminal						
 			}
 		}
@@ -90,8 +85,8 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 	CChar *mChar = nSocket->CurrcharObj();
 	if( mChar == NULL || nItemID == NULL )
 		return;
-	ITEM nVialID = nSocket->AddX();
-	if( nVialID == INVALIDSERIAL )
+	CItem *nVialID = nSocket->AddMItem();
+	if( nVialID == NULL )
 		return;
 
 	CItem *nDagger = Combat->getWeapon( mChar );
@@ -106,17 +101,17 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 		return;
 	}
 
-	items[nVialID].SetMore( 0, 1 );
+	nVialID->SetMore( 0, 1 );
 	if( !nItemID->isCorpse() )
 		sysmessage( nSocket, 749 );
 	else
 	{
-		items[nVialID].SetMore( nItemID->GetMore( 1 ), 1 );
+		nVialID->SetMore( nItemID->GetMore( 1 ), 1 );
 		Karma( mChar, NULL, -1000 );
 		if( nItemID->GetMore( 2 ) < 4 )
 		{
 			sysmessage( nSocket, 750 );
-			MakeNecroReg( nSocket, &items[nVialID], 0x0E24 );
+			MakeNecroReg( nSocket, nVialID, 0x0E24 );
 			nItemID->SetMore( nItemID->GetMore( 2 ) + 1, 2 );
 		}
 		else 
@@ -125,7 +120,7 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	CChar *SpawnRandomMonster( cSocket *nCharID, char *script, char *cList, char *cNpcID )
+//|	Function		-	CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char *cList, char *cNpcID )
 //|	Date			-	Unknown
 //|	Programmer		-	Unknown
 //|	Modified		-	Changed to FileLookup based and return CChar * 
@@ -134,12 +129,12 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 //|	Purpose			-	Gets the random monster number from the script and list specified
 //|						Creates the creature and returns it
 //o--------------------------------------------------------------------------
-CChar *SpawnRandomMonster( cSocket *nCharID, char* cScript, char* cList, char* cNpcID )
+CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* cNpcID )
 {
 	char sect[512];
  	sprintf( sect, "%s %s", cList, cNpcID );
 	ScriptSection *targData = NULL;
-	if( !strcmp( "necro.scp", cScript ) )
+	if( useNecro )
 	{
 		targData = FileLookup->FindEntry( sect, necro_def );
 		if( targData == NULL )
@@ -151,22 +146,20 @@ CChar *SpawnRandomMonster( cSocket *nCharID, char* cScript, char* cList, char* c
 		if( targData == NULL )
 			return NULL;
 	}
-	int i = targData->NumEntries();
+	SI32 i = targData->NumEntries();
 	CChar *tChar = nCharID->CurrcharObj();
 	if( i > 0 )
 	{
 		i = rand()%(i);
 		const char *targID = targData->MoveTo( i );
 		if( targID != NULL )
-		{
 			return Npcs->AddNPC( nCharID, NULL, targID, tChar->WorldNumber() );
-		}
 	}
 	return NULL;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	CItem *SpawnRandomItem( cSocket *nCharID, bool nInPack, char *script, char *cList, char *cItemID )
+//|	Function		-	CItem *SpawnRandomItem( cSocket *nCharID, bool useNecro, char *cList, char *cItemID )
 //|	Date			-	Unknown
 //|	Programmer		-	Unknown
 //|	Modified		-	Changed to FileLookup based and return CItem * 
@@ -175,12 +168,12 @@ CChar *SpawnRandomMonster( cSocket *nCharID, char* cScript, char* cList, char* c
 //|	Purpose			-	Gets the random item number from the script and list specified
 //|						Creates the item and returns it
 //o--------------------------------------------------------------------------
-CItem *SpawnRandomItem( cSocket *nCharID, bool nInPack, char* cScript, char* cList, char* cItemID )
+CItem *SpawnRandomItem( cSocket *nCharID, bool useNecro, char* cList, char* cItemID )
 {
 	char sect[512];
 	sprintf( sect, "%s %s", cList, cItemID );
 	ScriptSection *randData = NULL;
-	if( !strcmp( "necro.scp", cScript ) )
+	if( useNecro )
 	{
 		randData = FileLookup->FindEntry( sect, necro_def );
 		if( randData == NULL )
@@ -192,18 +185,13 @@ CItem *SpawnRandomItem( cSocket *nCharID, bool nInPack, char* cScript, char* cLi
 		if( randData == NULL )
 			return NULL;
 	}
-	int numEntries = randData->NumEntries();
+	SI32 numEntries = randData->NumEntries();
 	if( numEntries > 0 )
 	{
-		int i = rand()%(numEntries);
+		SI32 i = rand()%(numEntries);
 		const char *targID = randData->MoveTo( i );
 		if( targID != NULL )
-		{
-			if( nInPack )
-			{
-				return Items->SpawnItemToPack( nCharID, nCharID->CurrcharObj(), targID, true );
-			}
-		}
+			return Items->SpawnItemToPack( nCharID, nCharID->CurrcharObj(), targID, true );
 	}
 	return NULL;
 }
@@ -212,17 +200,14 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 {
 	CItem *iItem = NULL;
 	CChar *iCharID = nSocket->CurrcharObj();
-	char temp[1024];
-
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		sprintf( temp, Dictionary->GetEntry( 741 ), iCharID->GetName() );
-		npcEmoteAll( iCharID, temp, true );
+		npcEmoteAll( iCharID, 741, true, iCharID->GetName() );
 		tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
 		tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
-		iItem = Items->SpawnItem( nSocket, 1, "bone powder", true, 0x0F8F, 0, true, true );
+		iItem = Items->SpawnItem( nSocket, iCharID, 1, "bone powder", true, 0x0F8F, 0, true, true );
 		if( iItem == NULL ) 
 			return;
 		iItem->SetMoreX( 666 );
@@ -234,7 +219,7 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 	{
 		if( nItem->GetMore( 1 ) == 1 )
 		{
-			iItem = Items->SpawnItem( nSocket, 1, "#", true, 0x0F82, 0, true, true );
+			iItem = Items->SpawnItem( nSocket, iCharID, 1, "#", true, 0x0F82, 0, true, true );
 			if( iItem == NULL ) 
 				return;
 			iItem->SetValue( 15 );
@@ -242,7 +227,7 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 		}
 		else
 		{
-			iItem = Items->SpawnItem( nSocket, 1, "#", true, 0x0F7D, 0, true, true );
+			iItem = Items->SpawnItem( nSocket, iCharID, 1, "#", true, 0x0F7D, 0, true, true );
 			if( iItem == NULL ) 
 				return;
 			iItem->SetValue( 10 );

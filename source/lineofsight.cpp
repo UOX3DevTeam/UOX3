@@ -230,23 +230,29 @@ Look at uox3.h to see options. Works like npc magic.
 
 	
 	if( sgn_x == 0 && sgn_y == 0 && !sgn_z == 0 ) // should fix shooting through floor issues
+	{
 		for( i = 0; i < abs( koz2 - koz1 ); i++ )
 		{
 			collisions[collisioncount] = vector3D( kox1, koy1, koz1 + sgn_z );
 			collisioncount++;
 		}
+	}
 	else if( sgn_x == 0 ) // if we are on the same x-level, just push every x/y coordinate in y-direction from src to trg into the array
+	{
 		for( i = 0; i < (sgn_y * m); i++ )
 		{
 			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) );
 			collisioncount++;
 		}
+	}
 	else if ( sgn_y == 0 ) // if we are on the same y-level, just push every x/y coordinate in x-direction from src to trg into the array
+	{
 		for( i = 0; i < (sgn_x * n); i++ )
 		{
 			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) );
 			collisioncount++;
 		}
+	}
 	else
 	{
 		for( i = 0; (n >= m) && (i < (sgn_x * n)); i++ )
@@ -400,8 +406,8 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		MapStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
 		// Texture mapping  
-		map1 = Map->SeekMap0( collisions[i].x, collisions[i].y, worldNumber );
-		map2 = Map->SeekMap0( collisions[i].x + sgn_x, collisions[i].y + sgn_y, worldNumber );
+		map1 = Map->SeekMap0( static_cast<SI16>(collisions[i].x), static_cast<SI16>(collisions[i].y), worldNumber );
+		map2 = Map->SeekMap0( static_cast<SI16>(collisions[i].x + sgn_x), static_cast<SI16>(collisions[i].y + sgn_y), worldNumber );
 		
 		if( (map1.id != 2) && (map2.id != 2) ) 
 		{
@@ -424,7 +430,7 @@ Look at uox3.h to see options. Works like npc magic.
 				( map1.id >= 1881 && map1.id <= 1884 ) ) &&
 				( msi.First() == NULL ) ) ) // make sure there is no static item!
 			{
-				if( mSock != NULL && mSock->CurrcharObj() != NULL && mSock->CurrcharObj() == mChar )
+				if( mSock != NULL )
 					sysmessage( mSock, 683 );
 				return blocked;
 			}
@@ -494,7 +500,7 @@ Look at uox3.h to see options. Works like npc magic.
 		}
 	} // for loop
  
-	for( i = 0; i < checkitemcount; i++ )
+	for( i = 0; i < static_cast<int>(checkitemcount); i++ )
 	{
 		for( j = 0; j < checkthistotal; j++ )
 		{

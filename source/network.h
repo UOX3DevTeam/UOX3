@@ -38,11 +38,11 @@ class cPInputBuffer
 {
 protected:
 	std::vector< UI08 > internalBuffer;
-	cSocket *tSock;
+	cSocket *			tSock;
 public:
 							cPInputBuffer();
 							cPInputBuffer( cSocket *input );
-	virtual void			Receive( cSocket *input ) = 0;
+	virtual void			Receive( void ) = 0;
 	UI08& operator[] ( long int num );
 	virtual int				Length( void );
 	virtual UI08 *			Pointer( void );
@@ -52,9 +52,8 @@ public:
 	UI08					Byte( int offset );
 	virtual bool			Handle( void );
 	virtual void			SetSocket( cSocket *toSet );
+	cSocket *				GetSocket( void ) const;
 };
-
-typedef std::vector< cSocket * >	SOCKLIST;
 
 class cNetworkStuff
 {
@@ -62,6 +61,7 @@ public:
 				cNetworkStuff();
 	virtual		~cNetworkStuff();
 	void		Disconnect( UOXSOCKET s );
+	void		Disconnect( cSocket *s );
 	void		ClearBuffers( void );
 	void		CheckConn( void );
 	void		CheckMessage( void );
@@ -88,7 +88,6 @@ public:
 	void		On( void ) { InternalControl.On(); }
 	void		Off( void ) { InternalControl.Off(); }
 	UOXSOCKET	Transfer( UOXSOCKET s );
-	void		pSplit( char *pass0 );
 
 	SI32		PeakConnectionCount( void ) const;
 
@@ -102,12 +101,9 @@ public:
 	void		PopXGM( void );
 	
 	// Login Specific
-	void		Login1(cSocket *s);
-	void		Login2(cSocket *s, ACCOUNTSBLOCK& actbAccount);
 	void		LoginDisconnect(UOXSOCKET s);
 	void		LoginDisconnect(cSocket *s);
 	void		LogOut(UOXSOCKET s);
-	void		GoodAuth(cSocket *s, ACCOUNTSBLOCK& actbBlock);
 	//
 	
 	void		GetMsg( UOXSOCKET s );
@@ -125,6 +121,9 @@ public:
 	void		CheckXGMConn( void );
 	bool		IsFirewallBlocked( UI08 part[4] );
 
+private:
+	typedef std::vector< cSocket * >	SOCKLIST;
+
 	std::vector< FirewallEntry >	slEntries;
 	int						a_socket, xgmSocket;
 	SOCKLIST				connClients, loggedInClients, xgmClients;
@@ -135,7 +134,7 @@ public:
 	ThreadSafeObject		InternalControl;
 	SI32					peakConnectionCount;
 
-	std::vector< SI32 >			connIteratorBackup, loggIteratorBackup, xgmIteratorBackup;
+	std::vector< SI32 >		connIteratorBackup, loggIteratorBackup, xgmIteratorBackup;
 	SI32					currConnIter, currLoggIter, currXGMIter;
 };
 

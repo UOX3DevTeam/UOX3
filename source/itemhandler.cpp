@@ -194,9 +194,9 @@ CItem& cItemHandle::operator[] ( UI32 Num )
 	//Make sure these props are always this way, they may have been chaged by other functions, so put them back
 	DefaultItem->SetFree( true );
 	DefaultItem->SetSerial( INVALIDSERIAL, INVALIDSERIAL );
-	DefaultItem->SetOwner( INVALIDSERIAL );
+	DefaultItem->SetOwner( NULL );
 	DefaultItem->SetSpawn( INVALIDSERIAL, INVALIDSERIAL );
-	DefaultItem->SetCont( INVALIDSERIAL );
+	DefaultItem->SetCont( NULL );
 	DefaultItem->SetX( 0 );
 	DefaultItem->SetY( 0 );
 	return *DefaultItem;

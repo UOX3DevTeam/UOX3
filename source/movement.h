@@ -26,19 +26,20 @@ private:
 	SI08 z, dispz;
 	// Function declarations
 public:
-	void	Walking( CChar *s, UI08 dir, int seq );
+	void	Walking( CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
-	int		calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
-	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
 	void	NpcMovement( CChar *i );
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 private:
 
+	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
+	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
+
 	bool	MoveHeightAdjustment( int MoveType, CTileUni *thisblock, int &ontype, SI32 &nItemTop, SI32 &nNewZ );
 	bool	isValidDirection( UI08 dir );
-	bool	isFrozen( CChar *c, cSocket *mSock, int sequence );
-	bool	isOverloaded( CChar *c, cSocket *mSock, int sequence );
+	bool	isFrozen( CChar *c, cSocket *mSock, SI16 sequence );
+	bool	isOverloaded( CChar *c, cSocket *mSock, SI16 sequence );
 
 	bool	CanGMWalk( CTileUni &xyb );
 	bool	CanPlayerWalk( CTileUni &xyb );
@@ -55,11 +56,11 @@ private:
 
 	SI16	CheckMovementType( CChar *c );
 	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
-	void	NpcWalk( CChar *i, UI08 j, int type );
+	void	NpcWalk( CChar *i, UI08 j, SI08 getWander );
 	SI16	GetXfromDir( UI08 dir, SI16 x );
 	SI16	GetYfromDir( UI08 dir, SI16 y );
 
-	bool	VerifySequence( CChar *c, cSocket *mSock, int sequence);
+	bool	VerifySequence( CChar *c, cSocket *mSock, SI16 sequence);
 	bool	CheckForRunning( CChar *c, UI08 dir );
 	bool	CheckForStealth( CChar *c );
 	bool	CheckForHouseBan( CChar *c, cSocket *mSock );
@@ -67,13 +68,13 @@ private:
 	void	HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy );
 	void	SendWalkToPlayer( CChar *c, cSocket *mSock, SI16 sequence );
 	void	SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy );
-	void	OutputShoveMessage( CChar *c, cSocket *mSock, SI16 oldx, SI16 oldy );
+	void	OutputShoveMessage( CChar *c, cSocket *mSock );
 	void	HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, SI16 oldx, SI16 oldy );
 	void	HandleTeleporters( CChar *c, SI16 oldx, SI16 oldy );
 	void	HandleWeatherChanges( CChar *c, cSocket *mSock );
 	bool	IsGMBody( CChar *c );
 
-	void	deny( cSocket *mSock, CChar *s, int sequence );
+	void	deny( cSocket *mSock, CChar *s, SI16 sequence );
 };
 
 #endif

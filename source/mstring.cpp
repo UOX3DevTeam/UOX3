@@ -686,7 +686,7 @@ string mstring::pop(string sSep)
 		// Found it
 		sReturn = (*this).substr(0, siFind);
 		// reset ourselves
-		if ((siFind + 1) < (*this).size())
+		if ((siFind + 1) < static_cast<SI32>((*this).size()))
 		{
 			(*this) = (*this).substr(siFind + 1);
 		}

@@ -56,14 +56,14 @@ void JailCell::AddOccupant( JailOccupant *toAdd )
 
 void JailCell::EraseOccupant( SI32 occupantID )
 {
-	if( occupantID < 0 || occupantID >= playersInJail.size() )
+	if( occupantID < 0 || occupantID >= static_cast<int>(playersInJail.size()) )
 		return;
 	delete playersInJail[occupantID];
 	playersInJail.erase( playersInJail.begin() + occupantID );
 }
 JailOccupant *JailCell::Occupant( SI32 occupantID ) 
 { 
-	if( occupantID < 0 || occupantID >= playersInJail.size() )
+	if( occupantID < 0 || occupantID >= static_cast<int>(playersInJail.size()) )
 		return NULL;
 	return playersInJail[occupantID];
 }
@@ -172,15 +172,15 @@ void JailSystem::ReadData( void )
 				{
 				case 'C':
 					if( !strcmp( tag, "CELL" ) )
-						cellNumber = makeNum( data );
+						cellNumber = static_cast<UI08>(makeNum( data ));
 					break;
 				case 'O':
 					if( !strcmp( tag, "OLDX" ) )
-						toPush->x = makeNum( data );
+						toPush->x = static_cast<SI16>(makeNum( data ));
 					else if( !strcmp( tag, "OLDY" ) )
-						toPush->y = makeNum( data );
+						toPush->y = static_cast<SI16>(makeNum( data ));
 					else if( !strcmp( tag, "OLDZ" ) )
-						toPush->z = makeNum( data );
+						toPush->z = static_cast<SI08>(makeNum( data) );
 					break;
 				case 'R':
 					if( !strcmp( tag, "RELEASE" ) )
@@ -241,7 +241,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 	if( toRelease == NULL )
 		return;
 	SI08 cellNum = toRelease->GetCell();
-	if( cellNum < 0 || cellNum >= jails.size() )
+	if( cellNum < 0 || cellNum >= static_cast<int>(jails.size()) )
 		return;
 	for( UI32 iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); iCounter++ )
 	{

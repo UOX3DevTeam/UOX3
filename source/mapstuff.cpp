@@ -1,8 +1,29 @@
 #include "uox3.h"
-#include "debug.h"
 
 #undef DBGFILE
 #define DBGFILE "mapstuff.cpp"
+
+const SI32 VERFILE_MAP			= 0x00;
+const SI32 VERFILE_STAIDX		= 0x01;
+const SI32 VERFILE_STATICS		= 0x02;
+const SI32 VERFILE_ARTIDX		= 0x03;
+const SI32 VERFILE_ART			= 0x04;
+const SI32 VERFILE_ANIMIDX		= 0x05;
+const SI32 VERFILE_ANIM			= 0x06;
+const SI32 VERFILE_SOUNDIDX		= 0x07;
+const SI32 VERFILE_SOUND		= 0x08;
+const SI32 VERFILE_TEXIDX		= 0x09;
+const SI32 VERFILE_TEXMAPS		= 0x0A;
+const SI32 VERFILE_GUMPIDX		= 0x0B;
+const SI32 VERFILE_GUMPART		= 0x0C;
+const SI32 VERFILE_MULTIIDX		= 0x0D;
+const SI32 VERFILE_MULTI		= 0x0E;
+const SI32 VERFILE_SKILLSIDX	= 0x0F;
+const SI32 VERFILE_SKILLS		= 0x10;
+const SI32 VERFILE_TILEDATA		= 0x1E;
+const SI32 VERFILE_ANIMDATA		= 0x1F;
+
+const SI32 TILEDATA_TILES		= 0x68800;
 
 /*
 ** Hey, its me fur again. I'm going to tear through this file next
@@ -902,16 +923,16 @@ bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 **  		    ... your code here...
 **	  	}
 */
-MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : worldNumber( world ), baseX( x / 8 ), baseY( y / 8 ), remainX( x % 8 ), remainY( y % 8 ), length( 0 ), index( 0 ), pos( 0 ), exactCoords( exact ), tileid( 0 )
+MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : worldNumber( world ), baseX( static_cast<SI32>(x / 8 )), baseY( static_cast<SI32>(y / 8) ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), length( 0 ), index( 0 ), pos( 0 ), exactCoords( exact ), tileid( 0 )
 {
-	if( !Map->InsideValidWorld( baseX, baseY, world ) )
+	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
 	{
 		Console.Error( 3, "ASSERT: MapStaticIterator(); Not inside a valid world" );
 		return;
 	}
 	if( Map->Cache )
 	{
-		StaCache_st *cacheEntry = Map->GrabCacheEntry( baseX, baseY, world );
+		StaCache_st *cacheEntry = Map->GrabCacheEntry( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world );
 		if( cacheEntry == NULL )
 			length = 0;
 		else
@@ -977,7 +998,7 @@ staticrecord *MapStaticIterator::Next( void )
 			}
 		}
 #endif
-		StaCache_st *mCache = Map->GrabCacheEntry( baseX, baseY, worldNumber );
+		StaCache_st *mCache = Map->GrabCacheEntry( static_cast<SI16>(baseX), static_cast<SI16>(baseY), worldNumber );
 		if( mCache != NULL )
 		{
 			do
@@ -1092,7 +1113,7 @@ void cMapStuff::CacheStatics( void )
 				UI32 length = msi.GetLength();
 				if( length )
 				{
-					mCache->CacheLen = length;
+					mCache->CacheLen = static_cast<UI16>(length);
 					mCache->Cache = new staticrecord[length];
 					// read them all in at once!
 					statArrays[wrldCtr]->seek( msi.GetPos(), SEEK_SET );
@@ -1360,7 +1381,7 @@ void cMapStuff::CacheMultis( void )
 	SI32 fileLen = ftell( multiIDXRec );
 	fclose( multiIDXRec );
 
-	UI16 numRecords = fileLen / MultiIndexRecordSize;
+	UI32 numRecords = fileLen / MultiIndexRecordSize;
 
 	temp = BuildFilePath( "multi.idx" );
 	UOXFile *multiIDX = new UOXFile( temp.c_str(), "rb" );
@@ -1555,10 +1576,10 @@ StaCache_st *cMapStuff::GrabCacheEntry( SI16 x, SI16 y, UI08 worldNumber )
 UOMapType cMapStuff::CalcFromFileLength( UOXFile *toCalcFrom )
 {
 	if( toCalcFrom == NULL )
-	  {
-	        Console << "Invalid file in cMapStuff:CaclFromFileLength";
+	{
+		Console << "Invalid file in cMapStuff:CaclFromFileLength";
 		return UOMT_UNKNOWN;
-	  }
+	}
 	SI32 fLength = toCalcFrom->getLength();
 	for( UI32 i = 0; i < UOMT_COUNT; i++ )
 	{

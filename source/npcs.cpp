@@ -1,7 +1,6 @@
 #pragma warning( disable : 4786 )
 
 #include "uox3.h"
-#include "debug.h"
 #include "ssection.h"
 
 #undef DBGFILE
@@ -21,8 +20,7 @@ void cCharStuff::DeleteChar( CChar *k )
 	MapRegion->RemoveChar( k );
 
 	// If we delete a NPC we should delete his tempeffects as well
-	for( teffect_st *Effect = Effects->First(); 
-	     !Effects->AtEnd(); Effect = Effects->Next() )
+	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
 	{
 		if( Effect->Destination() == k->GetSerial() )
 			Effect->Destination( INVALIDSERIAL );
@@ -37,7 +35,7 @@ void cCharStuff::DeleteChar( CChar *k )
 	{
 		cSpawnRegion *spawnReg = NULL;
 
-		for( UI32 i = 1; i < totalspawnregions; i++ )
+		for( UI16 i = 1; i < totalspawnregions; i++ )
 		{
 			spawnReg = spawnregion[i];
 
@@ -48,8 +46,7 @@ void cCharStuff::DeleteChar( CChar *k )
 		}
 	}
 
-	for( CItem *tItem = k->FirstItem(); !k->FinishedItems(); 
-	     tItem = k->NextItem() )
+	for( CItem *tItem = k->FirstItem(); !k->FinishedItems(); tItem = k->NextItem() )
 	{
 		if( tItem != NULL )
 			Items->DeleItem( tItem );
@@ -58,13 +55,13 @@ void cCharStuff::DeleteChar( CChar *k )
 	if( !k->IsNpc() )
 	{
 		ACCOUNTSBLOCK mAcct = k->GetAccount();
-		if(mAcct.wAccountIndex!=AB_INVALID_ID)
+		if( mAcct.wAccountIndex != AB_INVALID_ID )
 		{
 			for( UI08 actr = 0; actr < 5; actr++ )
 			{
 				if( mAcct.lpCharacters[actr] != NULL && mAcct.lpCharacters[actr]->GetSerial() == k->GetSerial() )
 				{
-					Accounts->DelCharacter(mAcct.wAccountIndex, actr);
+					Accounts->DelCharacter( mAcct.wAccountIndex, actr );
 					break;
 				}
 			}
@@ -76,7 +73,7 @@ void cCharStuff::DeleteChar( CChar *k )
 	if( tScript != NULL )
 		tScript->OnDelete( k );
 
-	if( k->GetSpawn() != 0 )
+	if( k->GetSpawnObj() != NULL )
 		ncspawnsp.Remove( k->GetSpawn(), kChar );
 
 	if( k->IsGuarded() )
@@ -124,7 +121,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const char *lootlist )
 	ScriptSection *LootList = FileLookup->FindEntry( sect, npc_def );
 	if( LootList == NULL )
 		return NULL;
-	int i = LootList->NumEntries();
+	SI32 i = LootList->NumEntries();
 	if( i > 0 )
 	{
 		i = RandomNum( 0, i - 1 );
@@ -137,32 +134,32 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const char *lootlist )
 			retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			retitem->SetY( 50 + RandomNum( 0, 79 ) );
 			retitem->SetZ( 9 );
-			retitem->SetCont( s->GetSerial() );
+			retitem->SetCont( s );
 		}
 	}
 	return retitem;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CHARACTER CreateRandomNpc( cSocket *s, char * npclist, UI08 worldNumber )
+//|	Function	-	CHARACTER CreateRandomNpc( char * npclist, UI08 worldNumber )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Adds a random NPC
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::CreateRandomNpc( cSocket *s, const char * npcList, UI08 worldNumber )
+CChar *cCharStuff::CreateRandomNpc( const char * npcList, UI08 worldNumber )
 {
 	char sect[512];
 	sprintf( sect, "NPCLIST %s", npcList );
 	ScriptSection *NpcList = FileLookup->FindEntry( sect, npc_def );
 	if( NpcList == NULL )
 		return NULL;
-	int i = NpcList->NumEntries();
+	SI32 i = NpcList->NumEntries();
 	if( i == 0 )
 		return NULL;
 	const char *k = NpcList->MoveTo( RandomNum( 0, i - 1 ) );
 
 	if( k != NULL )
-		return CreateScriptNpc( s, k, worldNumber );
+		return CreateScriptNpc( k, worldNumber );
 	return NULL;
 }
 
@@ -183,20 +180,20 @@ CChar *cCharStuff::SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, boo
 	}
 	CChar *c = NULL;
 	if( randomNPC )
-		c = CreateRandomNpc( NULL, npcNum.c_str(), worldNumber );
+		c = CreateRandomNpc( npcNum.c_str(), worldNumber );
 	else
-		c = CreateScriptNpc( NULL, npcNum, worldNumber );
+		c = CreateScriptNpc( npcNum, worldNumber );
 	if( c == NULL )
 		return NULL;
 	CHARACTER mChar = calcCharFromSer( c->GetSerial() );
-	c->SetSpawn( 0, mChar );
+	c->SetSpawn( INVALIDSERIAL, mChar );
 	// see if we are item spawning or region spawning
 	if( i != NULL )
 	{
-		int awayX = 0, awayY = 0;
-		if( i->GetType() == 69 && i->GetCont() == INVALIDSERIAL )
+		SI16 awayX = 0, awayY = 0;
+		if( i->GetType() == 69 && i->GetCont() == NULL )
 			awayX = awayY = 10;
-		else if( i->GetType() == 125 && i->GetCont() == INVALIDSERIAL )
+		else if( i->GetType() == 125 && i->GetCont() == NULL )
 		{
 			awayX = i->GetMore( 3 );
 			awayY = i->GetMore( 4 );
@@ -220,14 +217,13 @@ CChar *cCharStuff::SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, boo
 //o---------------------------------------------------------------------------o
 CChar *cCharStuff::SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber )
 {
-	CChar *c = CreateScriptNpc( NULL, npcNum, worldNumber );
+	CChar *c = CreateScriptNpc( npcNum, worldNumber );
 	if( c == NULL )
 		return NULL;
 	if( spawnReg != NULL )
-		c->SetSpawn( calcserial( 0, 1, spawnReg->GetRegionNum(), 0 ), 
-			     calcCharFromSer( c->GetSerial() ) );
+		c->SetSpawn( calcserial( 0, 1, static_cast<UI08>(spawnReg->GetRegionNum()), 0 ), calcCharFromSer( c->GetSerial() ) );
 	else
-		c->SetSpawn( 0, calcCharFromSer( c->GetSerial() ) );
+		c->SetSpawn( INVALIDSERIAL, calcCharFromSer( c->GetSerial() ) );
 	// see if we are item spawning or region spawning
 	if( spawnReg != NULL )
 	{
@@ -260,7 +256,7 @@ void cCharStuff::PostSpawnUpdate( CChar *c )
 {
 	c->SetRegion( calcRegionFromXY( c->GetX(), c->GetY(), c->WorldNumber() ) );
 
-	for( int z = 0; z < TRUESKILLS; z++ )
+	for( UI08 z = 0; z < TRUESKILLS; z++ )
 		Skills->updateSkillLevel( c, z );
 
 	c->Update();
@@ -279,13 +275,13 @@ void cCharStuff::PostSpawnUpdate( CChar *c )
 //o---------------------------------------------------------------------------o
 CChar *cCharStuff::AddNPC( cSocket *s, cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber )
 {
-	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
+	CChar *c = CreateScriptNpc( npcNum, worldNumber );
 	if( c == NULL )
 		return NULL;
 	if( spawnReg != NULL )
-		c->SetSpawn( calcserial( 0, 1, spawnReg->GetRegionNum(), 0 ), calcCharFromSer( c->GetSerial() ) );
+		c->SetSpawn( calcserial( 0, 1, static_cast<UI08>(spawnReg->GetRegionNum()), 0 ), calcCharFromSer( c->GetSerial() ) );
 	else
-		c->SetSpawn( 0, calcCharFromSer( c->GetSerial() ) );
+		c->SetSpawn( INVALIDSERIAL, calcCharFromSer( c->GetSerial() ) );
 	if( s != NULL )
 	{
 		const SI16 coreX = s->GetWord( 11 );
@@ -412,7 +408,7 @@ void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAwa
 	
 	if( c == NULL )
 		return;
-	int k = xAway * yAway / 2;
+	SI32 k = xAway * yAway / 2;
 	SI16 xos = 0, yos = 0;
 	bool foundSpot = false;
 	if( k > 50 )
@@ -451,14 +447,14 @@ void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAwa
 
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CHARACTER cCharStuff::AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
+//|	Function	-	CHARACTER cCharStuff::AddNPCxyz( cSocket *s, string npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Add NPC at a given location
 //o---------------------------------------------------------------------------o
 CChar * cCharStuff::AddNPCxyz( cSocket *s, std::string npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
 {
-	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
+	CChar *c = CreateScriptNpc( npcNum, worldNumber );
 	if( c == NULL )
 		return NULL;
 	c->SetLocation( x1, y1, z1 );
@@ -476,7 +472,7 @@ CChar * cCharStuff::AddNPCxyz( cSocket *s, std::string npcNum, SI16 x1, SI16 y1,
 
 	c->SetRegion( calcRegionFromXY(c->GetX(), c->GetY(), worldNumber ) );
 
-	for( int z = 0; z < TRUESKILLS; z++ )
+	for( UI08 z = 0; z < TRUESKILLS; z++ )
 		Skills->updateSkillLevel( c, z );
 
 	c->Update();
@@ -522,9 +518,9 @@ void cCharStuff::Split( CChar *k )
 //o---------------------------------------------------------------------------o
 void cCharStuff::LoadShopList( const char *list, CChar *c )
 {
-	CItem *buyLayer = FindItemOnLayer( c, 0x1A );
-	CItem *boughtLayer = FindItemOnLayer( c, 0x1B );
-	CItem *sellLayer = FindItemOnLayer( c, 0x1C );
+	CItem *buyLayer		= c->GetItemAtLayer( 0x1A );
+	CItem *boughtLayer	= c->GetItemAtLayer( 0x1B );
+	CItem *sellLayer	= c->GetItemAtLayer( 0x1C );
 
 	char sect[512];
 	sprintf( sect, "SHOPLIST %s", list );
@@ -548,7 +544,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
 					if( retitem != NULL )
 					{
-						retitem->SetCont( buyLayer->GetSerial() );
+						retitem->SetCont( buyLayer );
 						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetZ( 9 );
@@ -565,7 +561,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
 					if( retitem != NULL )
 					{
-						retitem->SetCont( sellLayer->GetSerial() );
+						retitem->SetCont( sellLayer );
 						retitem->SetValue( retitem->GetValue() / 2 );
 						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
@@ -583,7 +579,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
 					if( retitem != NULL )
 					{
-						retitem->SetCont( boughtLayer->GetSerial() );
+						retitem->SetCont( boughtLayer );
 						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetZ( 9 );
@@ -613,7 +609,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 	if( NpcCreation == NULL || applyTo == NULL )
 		return false;
 
-	UI16 haircolor	= 0xFFFF;
+	UI16 haircolor	= INVALIDCOLOUR;
 	UI16 storeval	= 0xFFFF;
 	char rndlootlist[20];
 
@@ -661,7 +657,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 			  n->SetY( 0 );
 			  n->SetZ( 0 );
 			  n->SetLayer( 0x15 );
-			  if( !n->SetCont( applyTo->GetSerial() ) )
+			  if( !n->SetCont( applyTo ) )
 			    retitem = NULL;
 			  else
 			    {
@@ -699,10 +695,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 			applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), COOKING );
 			break;
 		case DFNTAG_COLOURMATCHHAIR:	
-		  if ( retitem != NULL )
-		    retitem->SetColour( (UI16)haircolor );
-						
-		  break;
+			if ( retitem != NULL )
+				retitem->SetColour( (UI16)haircolor );
+			break;
 		case DFNTAG_COLOURLIST:
 		  storeval = addRandomColor( cdata );
 		  if( retitem != NULL )
@@ -730,8 +725,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		    applyTo->SetDir( 0 );
 		  break;
 		case DFNTAG_DEX:
-		  applyTo->SetDexterity( (SI16)RandomNum( ndata, odata ) );
-		  
+		  applyTo->SetDexterity( (SI16)RandomNum( ndata, odata ) );		  
 		  applyTo->SetStamina( applyTo->GetMaxStam() );
 		  break;
 		case DFNTAG_DETECTINGHIDDEN:
@@ -788,9 +782,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		      if( n != NULL )
 			{
 			  n->SetDecayable( true );
-			  n->SetAmount( (UI16)( RandomNum( (int)(ndata) , 
-							   (int)(odata) ) ) );
-			  n->SetCont( mypack->GetSerial() );
+			  n->SetAmount( (UI16)( RandomNum( (int)(ndata), (int)(odata) ) ) );
+			  n->SetCont( mypack );
 			}
 		    }
 		  else
@@ -833,7 +826,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		  retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
 		  if( retitem != NULL )
 		    {
-		      if( !retitem->SetCont( applyTo->GetSerial() ) )
+		      if( !retitem->SetCont( applyTo ) )
 			retitem = NULL;
 		      else if( retitem->GetLayer() == 0 )
 			Console << "Warning: Bad NPC Script with problem item " << cdata << " executed!" << myendl;
@@ -913,7 +906,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		      retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
 		      if( retitem != NULL )
 			{
-			  retitem->SetCont( mypack->GetSerial() );
+			  retitem->SetCont( mypack );
 			  retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetY( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetZ( 9 );
@@ -945,13 +938,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		  break;
 		case DFNTAG_RSHOPITEM:
 		  if( buyPack == NULL )
-		    buyPack = FindItemOnLayer( applyTo, 0x1A );
+		    buyPack = applyTo->GetItemAtLayer( 0x1A );
 		  if( buyPack != NULL )
 		    {
 		      retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
 		      if( retitem != NULL )
 			{
-			  retitem->SetCont( buyPack->GetSerial() );
+			  retitem->SetCont( buyPack );
 			  retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetY( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetZ( 9 );
@@ -986,13 +979,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		  break;
 		case DFNTAG_SELLITEM:
 		  if( sellPack == NULL )
-		    sellPack = FindItemOnLayer( applyTo, 0x1C );
+		    sellPack = applyTo->GetItemAtLayer( 0x1C );
 		  if( sellPack != NULL )
 		    {
 		      retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
 		      if( retitem != NULL )
 			{
-			  retitem->SetCont( sellPack->GetSerial() );
+			  retitem->SetCont( sellPack );
 			  retitem->SetValue( retitem->GetValue() / 2 );
 			  retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetY( 50 + RandomNum( 0, 79 ) );
@@ -1006,13 +999,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		  break;
 		case DFNTAG_SHOPITEM:
 		  if( boughtPack == NULL )
-		    boughtPack = FindItemOnLayer( applyTo, 0x1B );
+		    boughtPack = applyTo->GetItemAtLayer( 0x1B );
 		  if( boughtPack != NULL )
 		    {
 		      retitem = Items->CreateScriptItem( NULL, cdata, false, applyTo->WorldNumber() );
 		      if( retitem != NULL )
 			{
-			  retitem->SetCont( boughtPack->GetSerial() );
+			  retitem->SetCont( boughtPack );
 			  retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetY( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetZ( 9 );
@@ -1146,24 +1139,24 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CHARACTER CreateScriptNpc( cSocket *s, int targNPC, UI08 worldNumber )
+//|	Function	-	CChar *CreateScriptNpc( int targNPC, UI08 worldNumber )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Create an NPC and assign their variables based on npc.scp entrys
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::CreateScriptNpc( cSocket *s, int targNPC, UI08 worldNumber )
+CChar *cCharStuff::CreateScriptNpc( int targNPC, UI08 worldNumber )
 {
 	char sect[512];
 	sprintf( sect, "%i", targNPC );
-	return CreateScriptNpc( s, sect, worldNumber );
+	return CreateScriptNpc( sect, worldNumber );
 }
 //o---------------------------------------------------------------------------o
-//|	Function	-	CHARACTER CreateScriptNpc( cSocket *s, string targNPC, UI08 worldNumber )
+//|	Function	-	CChar *CreateScriptNpc( string targNPC, UI08 worldNumber )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Create an NPC and assign their variables based on npc.scp entrys
 //o---------------------------------------------------------------------------o
-CChar *cCharStuff::CreateScriptNpc( cSocket *s, std::string targNPC, UI08 worldNumber )
+CChar *cCharStuff::CreateScriptNpc( std::string targNPC, UI08 worldNumber )
 {
 	char npcSect[512];
 	if( cwmWorldState->ServerData()->ServerScriptSectionHeader() )
@@ -1174,15 +1167,8 @@ CChar *cCharStuff::CreateScriptNpc( cSocket *s, std::string targNPC, UI08 worldN
 	if( NpcCreation == NULL )
 		return NULL;
 
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
-	for( tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
-	{
-		if( tag == DFNTAG_NPCLIST )
-		{
-			UI32 tValue, uValue;
-			return CreateRandomNpc( s, NpcCreation->GrabData( tValue, uValue ), worldNumber );
-		}
-	}
+	if( NpcCreation->NpcListExist() )
+		return CreateRandomNpc( NpcCreation->NpcListData(), worldNumber );
 
 	CHARACTER npcNumOff;
 	CChar *npcNum = MemCharFree( npcNumOff );
@@ -1204,12 +1190,12 @@ CChar *cCharStuff::CreateScriptNpc( cSocket *s, std::string targNPC, UI08 worldN
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void npcAction( CChar *npc, int x )
+//|	Function	-	void npcAction( CChar *npc, SI16 x )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	NPC does a certain action
 //o---------------------------------------------------------------------------o
-void npcAction( CChar *npc, int x )
+void npcAction( CChar *npc, SI16 x )
 {
 	CPCharacterAnimation toSend = (*npc);
 	toSend.Action( x );
@@ -1271,7 +1257,7 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, SERIAL guarded )
 				if( !pet->IsMounted() && 
 				    pet->GetNPCAiType() == 32 && 
 				    pet->GetGuarding() == guarded &&
-				    pet->GetOwner() != mChar->GetSerial() )
+				    pet->GetOwnerObj() != mChar )
 					return pet;
 			}
 		}
@@ -1333,7 +1319,6 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 UI16 addRandomColor( const char *colorlist )
 {
 	char sect[512];
-	int i = 0;
 	sprintf( sect, "RANDOMCOLOR %s", colorlist );
 	ScriptSection *RandomColours = FileLookup->FindEntry( sect, colors_def );
 	if( RandomColours == NULL )
@@ -1341,7 +1326,7 @@ UI16 addRandomColor( const char *colorlist )
 		Console.Warning( 2, "Error Colorlist %s Not Found", colorlist );
 		return 0;
 	}
-	i = RandomColours->NumEntries();
+	SI32 i = RandomColours->NumEntries();
 	if( i > 0 )
 	{
 		i = rand()%i;
@@ -1350,3 +1335,18 @@ UI16 addRandomColor( const char *colorlist )
 	}
 	return 0;
 }
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool isHuman( CChar *p )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check if character is Human or NPC
+//o---------------------------------------------------------------------------o
+bool isHuman( CChar *p )
+{
+	if( p->GetxID() == 0x0190 || p->GetxID() == 0x0191 )
+		return true;
+	else 
+		return false;
+}
+

@@ -6,7 +6,7 @@ class cCharacterHandle
 protected:
 	CChar *	DefaultChar;//The item send if an out of bounds is referenced.
 
-	std::vector< CChar * > Chars;			// Vector of pointers to items, NULL if no item at that pos
+	CHARLIST Chars;			// Vector of pointers to items, NULL if no item at that pos
 	UI32	Actual;					// Number of items in existance
 
 	std::vector< UI32 > FreeNums;		// Vector of free item numbers
@@ -33,7 +33,7 @@ class cItemHandle
 protected:
 	CItem *	DefaultItem;				// The item send if an out of bounds is referenced.
 
-	std::vector< CItem * > Items;			// Vector of pointers to items, NULL if no item at that pos
+	ITEMLIST Items;			// Vector of pointers to items, NULL if no item at that pos
 	UI32	Actual;						// Number of items in existance
 
 	std::vector< UI32 > FreeNums;			// Vector of free item numbers

@@ -1,11 +1,12 @@
 #include "uox3.h"
-#include "debug.h"
 #include "magic.h" 
 #include "power.h"
 #include "ssection.h"
 
 #undef DBGFILE
 #define DBGFILE "magic.cpp"
+
+std::vector< jsMagicTable_st >	jsMagicTable;
 
 MagicTable_s magic_table[] = {
 	{ 593, (MAGIC_DEFN)&splClumsy }, 
@@ -88,26 +89,27 @@ MagicTable_s magic_table[] = {
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and another at trgX / trgY / trgZ
 //o---------------------------------------------------------------------------o
+#pragma note( "Param Warning: in SpawnGate(), sock is unrefrenced" )
 void SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ )
 {
-	CItem *g1 = Items->SpawnItem( sock, caster, 1, "#", false, 0x0F6C, 0, false, false );
+	CItem *g1 = Items->SpawnItem( NULL, caster, 1, "#", false, 0x0F6C, 0, false, false );
 	if( g1 != NULL )
 	{
 		g1->SetType( 51 );
 		g1->SetLocation( srcX, srcY, srcZ );
-		g1->SetGateTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) ) );
+		g1->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) )) );
 		g1->SetDir( 1 );
 		RefreshItem( g1 );
 	}
 	else
 		return;
 
-	CItem *g2 = Items->SpawnItem( sock, caster, 1, "#", false, 0x0F6C, 0, false, false );
+	CItem *g2 = Items->SpawnItem( NULL, caster, 1, "#", false, 0x0F6C, 0, false, false );
 	if( g2 != NULL )
 	{
 		g2->SetType( 52 );
 		g2->SetLocation( trgX, trgY, trgZ );
-		g2->SetGateTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) ) );
+		g2->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( GATE ) )) );
 		g2->SetDir( 1 );
 		RefreshItem( g2 );
 
@@ -118,6 +120,7 @@ void SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, S
 		return;
 }
 
+#pragma note( "Param Warning: in FieldSpell(), sock is unrefrenced" )
 bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 {
 	SI16 fx[5], fy[5];
@@ -141,14 +144,14 @@ bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 	}
 	CItem *i = NULL;
 	UI08 worldNumber = caster->WorldNumber();
-	for( int j = 0; j < 5; j++ )		// how about we make this 5, huh?  missing part of the field
+	for( UI08 j = 0; j < 5; j++ )		// how about we make this 5, huh?  missing part of the field
 	{
-		i = Items->SpawnItem( sock, 1, "#", false, id, 0, false, false );
+		i = Items->SpawnItem( NULL, caster, 1, "#", false, id, 0, false, false );
 		if( i != NULL )
 		{
 			i->SetDispellable( true );
 			i->SetDecayable( true );
-			i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+			i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 			i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 			i->SetMoreY( caster->GetSerial() );
 			i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber ) );
@@ -160,14 +163,16 @@ bool FieldSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 	return true;
 }
 
+#pragma note( "Param Warning: in splClumsy(), sock is unrefrenced" )
 bool splClumsy( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
+#pragma note( "Param Warning: in splCreateFood(), sock is unrefrenced" )
 bool splCreateFood( cSocket *sock, CChar *caster )
 {
-	CItem *j = Items->SpawnItem( sock, 1, "#", true, 0x09D3, 0x0000, true, true );
+	CItem *j = Items->SpawnItem( NULL, caster, 1, "#", true, 0x09D3, 0x0000, true, true );
 	if( j != NULL )
 	{
 		j->SetType( 14 );
@@ -175,11 +180,13 @@ bool splCreateFood( cSocket *sock, CChar *caster )
 	}
 	return true;
 }
+#pragma note( "Param Warning: in splFeeblemind(), sock is unrefrenced" )
 bool splFeeblemind( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
+#pragma note( "Param Warning: in splHeal(), sock, src is unrefrenced" )
 bool splHeal( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	int bonus = (caster->GetSkill( MAGERY )/500) + ( caster->GetSkill( MAGERY )/100 );
@@ -193,11 +200,13 @@ bool splHeal( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splMagicArrow(), src, sock is unrefrenced" )
 bool splMagicArrow( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	Magic->MagicDamage( target, (1+(rand()%1)+1)*(caster->GetSkill( MAGERY )/2000+1), caster );
 	return true;
 }
+#pragma note( "Param Warning: in splNightSight(), sock is unrefrenced" )
 bool splNightSight( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 2, 0, 0, 0);
@@ -205,17 +214,20 @@ bool splNightSight( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splReactiveArmor(), sock is unrefrenced" )
 bool splReactiveArmor( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
 	target->SetReactiveArmour( true );
 	return true;
 }
+#pragma note( "Param Warning: in splWeaken(), sock is unrefrenced" )
 bool splWeaken( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
+#pragma note( "Param Warning: in splAgility(), sock is unrefrenced" )
 bool splAgility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -223,6 +235,7 @@ bool splAgility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splCunning(), sock is unrefrenced" )
 bool splCunning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -230,6 +243,7 @@ bool splCunning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splCure(), src is unrefrenced" )
 bool splCure( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	target->SetPoisoned( 0 );
@@ -239,6 +253,7 @@ bool splCure( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splHarm(), sock, src is unrefrenced" )
 bool splHarm( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 2 ) )
@@ -264,7 +279,7 @@ bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
 	{
 		if( target->GetMoreB( 1 ) == 1 )
 		{
-			if( rand()%100 <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetMoreB( 3 ) )
+			if( RandomNum( 1, 100 ) <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetMoreB( 3 ) )
 			{
 				target->SetMoreB( 0, 0, 0, target->GetMoreB( 4 ) );
 				soundeffect(target, 0x01F1 );
@@ -280,6 +295,7 @@ bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
 		sysmessage( sock, 668 );
 	return true;
 }
+#pragma note( "Param Warning: in splProtection(), sock is unrefrenced" )
 bool splProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
@@ -287,6 +303,7 @@ bool splProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
+#pragma note( "Param Warning: in splStrength(), sock is unrefrenced" )
 bool splStrength( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -336,7 +353,7 @@ bool splPoison( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 		return false;
 		
 	target->SetPoisoned( 2 );   
-	target->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+	target->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) )) );
 	target->SendToSocket( sock, true, target );
 
 	return true;
@@ -348,7 +365,7 @@ bool splTelekinesis( cSocket *sock, CChar *caster, CItem *target )
 bool splTeleport( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber() );
-	if( m != NULL && m->GetOwner() != caster->GetSerial() && !caster->IsNpc() )
+	if( m != NULL && m->GetOwnerObj() != caster && !caster->IsNpc() )
 	{
 		sysmessage( sock, 670 );
 		return false;
@@ -365,6 +382,16 @@ bool splTeleport( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 		if( tile.WallRoofWeap() )	// slanted roof tile!!! naughty naughty
 		{
 			sysmessage( sock, 672 );
+			return false;
+		}
+	}
+	if( Weight->isOverloaded( caster ) )
+	{
+		if( caster->GetMana() >= 20 )
+			caster->SetMana( (SI16)(caster->GetMana() - 20) );
+		else
+		{
+			sysmessage( sock, 1386 );
 			return false;
 		}
 	}
@@ -417,6 +444,7 @@ void ArchCureStub( CChar *caster, CChar *target )
 		target->SetPoisoned( 0 );
 	}
 }
+#pragma note( "Param Warning: in splArchCure(), x, y, z is unrefrenced" )
 bool splArchCure( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	AreaAffectSpell( sock, caster, &ArchCureStub );
@@ -429,7 +457,7 @@ void ArchProtectionStub( CChar *caster, CChar *target )
 	Magic->doStaticEffect( target, 15 );	// protection
 	tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 }
-
+#pragma note( "Param Warning: in splArchProtection(), x, y, z is unrefrenced" )
 bool splArchProtection( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	AreaAffectSpell( sock, caster, &ArchProtectionStub );
@@ -492,8 +520,8 @@ bool splRecall( cSocket *sock, CChar *caster, CItem *i )
 	{
 		sysmessage( sock, 679 );
 		return false;
-	} 
-	else if( caster->GetCommandLevel() < CNSCMDLEVEL && !Weight->checkWeight( caster, true ) ) // no recall if too heavy, GM's excempt
+	}
+	else if( caster->GetCommandLevel() < CNSCMDLEVEL && !Weight->isOverloaded( caster ) ) // no recall if too heavy, GM's excempt
 	{
 		sysmessage( sock, 680 );
 		sysmessage( sock, 681 );
@@ -502,7 +530,7 @@ bool splRecall( cSocket *sock, CChar *caster, CItem *i )
 	}
 	else
 	{
-		caster->SetLocation( i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		caster->SetLocation( static_cast<SI16>(i->GetMoreX()), static_cast<SI16>(i->GetMoreY()), static_cast<SI08>(i->GetMoreZ() ));
 		caster->Teleport();
 		sysmessage( sock, 682 );
 		return true;
@@ -514,6 +542,7 @@ bool splBladeSpirits( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	Magic->SummonMonster( sock, caster, 0x023E, "a blade spirit", 0x00, x, y, z );
 	return true;
 }
+#pragma note( "Param Warning: in splDispelField(), x, y, z is unrefrenced" )
 bool splDispelField( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
@@ -545,7 +574,7 @@ bool splIncognito( cSocket *sock, CChar *caster )
 	}
 	// ------ SEX ------
 	caster->SetOrgID( caster->GetID() );
-	if( ( rand()%2 ) == 0 ) 
+	if( RandomNum( 0, 1 ) == 0 ) 
 		caster->SetID( 0x0190 ); 
 	else 
 		caster->SetID( 0x0191 );
@@ -559,7 +588,7 @@ bool splIncognito( cSocket *sock, CChar *caster )
 		setRandomName( caster, "2" );//get a name from female list
 
 	int color = RandomNum( 0x044E, 0x047D );
-	CItem *j = FindItemOnLayer( caster, 0x0B );
+	CItem *j = caster->GetItemAtLayer( 0x0B );
 	if( j != NULL ) 
 	{
 		caster->SetHairColour( j->GetColour() );
@@ -586,7 +615,7 @@ bool splIncognito( cSocket *sock, CChar *caster )
 	}			
 	if( caster->GetID() == 0x0190 )
 	{
-		j = FindItemOnLayer( caster, 0x10 );
+		j = caster->GetItemAtLayer( 0x10 );
 		if( j != NULL ) 
 		{
 			caster->SetBeardColour( j->GetColour() );
@@ -704,7 +733,7 @@ bool splInvisibility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	target->SetHidden( 2 );
 	target->Update();
-	target->SetInvisTimeout( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( INVISIBILITY ) ) );
+	target->SetInvisTimeout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( INVISIBILITY ) )) );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -727,7 +756,7 @@ bool splInvisibility( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 bool splMark( cSocket *sock, CChar *caster, CItem *i )
 {
 	// Sept 22, 2002 - Xuri
-	if ( i->GetMagic() == 3)
+	if( i->IsLockedDown() )
 	{
 		sysmessage( sock, 774 );
 		return false;
@@ -766,7 +795,7 @@ void MassCurseStub( CChar *caster, CChar *target )
 	tempeffect( caster, target, 12, j, j, j );
 
 }
-
+#pragma note( "Param Warning: in splMassCurse(), x, y, z is unrefrenced" )
 bool splMassCurse( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	AreaAffectSpell( sock, caster, &MassCurseStub );
@@ -788,7 +817,7 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	if( LineOfSight( sock, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 	{ 
-		int j = caster->GetSkill( MAGERY ); 
+		UI16 j = caster->GetSkill( MAGERY ); 
 		int range=(((j-261)*(15))/739)+5;
 		//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
 		//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
@@ -850,7 +879,7 @@ void ChainLightningStub( CChar *caster, CChar *target )
 	else 
 		Magic->MagicDamage( def, caster->GetSkill( MAGERY )/50, att );
 }
-
+#pragma note( "Param Warning: in splChainLightning(), x, y, z is unrefrenced" )
 bool splChainLightning( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	AreaAffectSpell( sock, caster, &ChainLightningStub );
@@ -885,7 +914,7 @@ bool splGateTravel( cSocket *sock, CChar *caster, CItem *i )
 	}
 	else
 	{
-		SpawnGate( sock, caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		SpawnGate( sock, caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), static_cast<SI16>(i->GetMoreX()),static_cast<SI16>( i->GetMoreY()), static_cast<SI08>(i->GetMoreZ() ));
 		return true;
 	}
 	return true;
@@ -914,7 +943,7 @@ void MassDispelStub( CChar *caster, CChar *target )
 {
 	if( target->IsDispellable() )
 	{
-		if( Magic->CheckResist( caster, target, 7 ) && rand()%2 == 0 )  // cant be 100% resisted , osi
+		if( Magic->CheckResist( caster, target, 7 ) && RandomNum( 0, 1 ) == 0 )  // cant be 100% resisted , osi
 		{
 			if( target->IsNpc() ) 
 				npcAttackTarget( target, caster );
@@ -1023,18 +1052,17 @@ void EarthquakeStub( CChar *caster, CChar *target )
 {
 	int distx = abs(target->GetX() - caster->GetX() );
 	int disty = abs(target->GetY() - caster->GetY() );
-	int dmg = (caster->GetSkill( MAGERY )/40)+(rand()%20-10);
+	int dmg = (caster->GetSkill( MAGERY )/40) + ( RandomNum( 0, 19 ) - 10 );
 	int dmgmod = min( distx, disty );
 	dmgmod = -(dmgmod - 7);
 	target->IncHP( - (dmg+dmgmod) );
-	target->SetStamina( target->GetStamina() - (rand()%10+5) );
+	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 	
-	if( target->GetStamina() == 0xffff )
+	if( target->GetStamina() == 0xFFFF )
 		target->SetStamina( 0 );
 	if( target->GetHP() < 0 )
 		target->SetHP( 0 );
 	
-	char temp[1024];
 	if( !target->IsNpc() && isOnline( target ) )
 	{
 		if( RandomNum( 0, 1 ) ) 
@@ -1050,9 +1078,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 				if( caster->GetKills() == cwmWorldState->ServerData()->GetRepMaxKills() + 1 )
 					sysmessage( calcSocketObjFromChar( caster ), 690 );
 			}
-			
-			sprintf( temp, Dictionary->GetEntry( 691 ) ,target->GetName(), caster->GetName() );
-			savelog( temp, "PvP.log" );
+			Console.Log( Dictionary->GetEntry( 691 ), "PvP.log", target->GetName(), caster->GetName() );
 			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
 			Fame( caster, target->GetFame() );
 			doDeathStuff( target );                              
@@ -1167,12 +1193,12 @@ bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	UI08 worldNumber = caster->WorldNumber();
 	for( j = 0; j < 4; j++ )	// Draw the corners of our diamond
 	{
-		i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+		i = Items->SpawnItem( NULL, caster, 1, "#", false, id, 0, false, false );
 		if( i != NULL )
 		{
 			i->SetDispellable( true );
 			i->SetDecayable( true );
-			i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+			i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 			i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 			i->SetMoreY( caster->GetSerial() );
 			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber ) );
@@ -1187,12 +1213,12 @@ bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 		{
 			for( int counter3 = 1; counter3 < yOffset; counter3++ )
 			{
-				i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+				i = Items->SpawnItem( NULL, caster, 1, "#", false, id, 0, false, false );
 				if( i != NULL )
 				{
 					i->SetDispellable( true );
 					i->SetDecayable( true );
-					i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+					i->SetDecayTime( BuildTimeValue(static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )) );
 					i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 					i->SetMoreY( caster->GetSerial() );
 					const SI16 newX = x + counter2 * counter3;
@@ -1225,12 +1251,12 @@ bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 	{
 		for( int counter = fx[j]; counter < fy[j]; counter++ )
 		{
-			i = Items->SpawnItem( sock, caster, 1, "#", false, id, 0, false, false );
+			i = Items->SpawnItem( NULL, caster, 1, "#", false, id, 0, false, false );
 			if( i != NULL )
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
-				i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+				i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 				i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 				i->SetMoreY( caster->GetSerial() );
 				switch( j )
@@ -1268,12 +1294,12 @@ bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 	{
 		for( int counter2 = minY; counter2 <= maxY; counter2++ )
 		{
-			CItem *i = Items->SpawnItem( sock, caster, 1, "#", 0, id, 0, false, false );
+			CItem *i = Items->SpawnItem( NULL, caster, 1, "#", 0, id, 0, false, false );
 			if( i != NULL )
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
-				i->SetDecayTime( BuildTimeValue( caster->GetSkill( MAGERY ) / 15 ) );
+				i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 				i->SetMoreX( caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 				i->SetMoreY( caster->GetSerial() );
 				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber ) );
@@ -1432,7 +1458,7 @@ void cMagic::SpellBook( cSocket *mSock )
 		sysmessage( mSock, 692 );
 		return;
 	}
-	if( spellBook->GetCont() != mChar->GetSerial() && spellBook->GetCont() != x->GetSerial() )
+	if( spellBook->GetCont() != mChar && spellBook->GetCont() != x )
 	{
 		sysmessage( mSock, 403 );
 		return;
@@ -1549,9 +1575,9 @@ bool cMagic::GateCollision( CChar *s )
 					{
 						if( charCheck == NULL )
 							continue;
-						if( charCheck->IsNpc() && charCheck->GetOwner() == s->GetSerial() )	// follow our owner
+						if( charCheck->IsNpc() && charCheck->GetOwnerObj() == s )	// follow our owner
 						{
-							if( getDist( charCheck, s ) <= 4 )
+							if( objInRange( charCheck, s, 4 ) )
 							{
 								charCheck->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
 								charCheck->Teleport();
@@ -1599,14 +1625,14 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 	case 0x0000:	// summon monster
 		Npcs->DeleteChar( newChar );
 		soundeffect( s, 0x0217, true );
-		newChar = Npcs->CreateRandomNpc( s, "10000", caster->WorldNumber() );
+		newChar = Npcs->CreateRandomNpc( "10000", caster->WorldNumber() );
 		if( newChar == NULL )
 		{
 			sysmessage( s, 694 );
 			return;
 		}
-		newChar->SetOwner( caster->GetSerial() );
-		newChar->SetSummonTimer( BuildTimeValue( caster->GetSkill( MAGERY ) / 5 ) );
+		newChar->SetOwner( (cBaseObject *)caster );
+		newChar->SetSummonTimer( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
 		newChar->SetLocation( caster );
 		newChar->Teleport();
 		npcAction( newChar, 0x0C );
@@ -1795,7 +1821,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 
 	// pc's don't own BS/EV, NPCs do
 	if( caster->IsNpc() || ( id != 0x023E && !( id == 0x000D && colour == 0x0075 ) ) )
-		newChar->SetOwner( caster->GetSerial() );
+		newChar->SetOwner( (cBaseObject *)caster );
 	
 	if( x == 0 )
 		newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
@@ -1804,7 +1830,7 @@ void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, char * monsterna
 	
 	
 	newChar->SetSpDelay( 10 );
-	newChar->SetSummonTimer( BuildTimeValue( caster->GetSkill( MAGERY ) / 5 ) );
+	newChar->SetSummonTimer( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
 	newChar->Update();
 	npcAction( newChar, 0x0C );
 	// AntiChrist (9/99) - added the chance to make the monster attack
@@ -1936,7 +1962,7 @@ void cMagic::SubtractStamina( CChar *s, int stamina )
 	if( s->NoNeedMana() )
 		return;
 	s->SetStamina( s->GetStamina() - stamina );
-	if( s->GetStamina() ==0xffff ) 
+	if( s->GetStamina() == 0xFFFF ) 
 		s->SetStamina( 0 );
 
 	updateStats( s, 2 );
@@ -2028,7 +2054,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 {
 	cSocket *s = NULL;
-	if ( !p || !attacker )
+	if( p == NULL || attacker == NULL )
 		return;
 
 	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
@@ -2084,7 +2110,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 		if( poison < 0 ) 
 			poison = 1;
 		p->SetPoisoned( poison );
-		p->SetPoisonWearOffTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) ) );
+		p->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) )) );
 		if( !p->IsNpc() )
 			p->SendToSocket( calcSocketObjFromChar( p ), true, p );
 	}
@@ -2218,7 +2244,6 @@ void cMagic::BoxSpell( cSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 		x = s->GetWord( 11 );
 		y = s->GetWord( 13 );
 		z = s->GetByte( 16 );
-		caster = s->CurrcharObj();
 	}
 	else
 	{
@@ -2396,7 +2421,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 //Abaddon: Perma cached
 //DarkStorm: Added JS handling
 {
-	int lowSkill = 0, highSkill = 0;
+	SI16 lowSkill = 0, highSkill = 0;
 	CChar *mChar = mSock->CurrcharObj();
 	int type = mSock->CurrentSpellType();
 	SpellInfo curSpellCasting = spells[num];
@@ -2408,7 +2433,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 			sysmessage( mSock, 762 );
 			return false;
 		}
-		else if( mChar->GetSpellTime() > uiCurrentTime )
+		else if( static_cast<UI32>(mChar->GetSpellTime()) > uiCurrentTime )
 		{
 			sysmessage( mSock, 1638 );
 			return false;
@@ -2416,7 +2441,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 	}
 	
 	mChar->SetSpellCast( num );
-	if( num > 63 && num <= spellCount && spellCount <= 70 )
+	if( num > 63 && num <= static_cast<int>(spellCount) && spellCount <= 70 )
 		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, NULL, "(Attempted)");
 	if( mChar->IsJailed() && !mChar->IsGM() )
 	{
@@ -2557,18 +2582,18 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 		}
 	}	
 	   
-	mChar->SetSpellAction( curSpellCasting.Action() );
+	mChar->SetSpellAction( static_cast<SI16>(curSpellCasting.Action()) );
 	mChar->SetNextAct( 75 );		// why 75?
 
 	// Delay measurement...
 	if( Delay >= 0 ) 
 	{
-		mChar->SetSpellTime( BuildTimeValue( Delay / 1000 ) );
+		mChar->SetSpellTime( BuildTimeValue(static_cast<R32>( Delay / 1000 )) );
 		mChar->SetFrozen( true );
 	}
 	else if( type == 0 && !mChar->IsGM() ) // if they are a gm they don't have a delay :-)
 	{
-		mChar->SetSpellTime( BuildTimeValue( curSpellCasting.Delay() / 10 ) );
+		mChar->SetSpellTime( BuildTimeValue( static_cast<R32>(curSpellCasting.Delay() / 10 )) );
 		mChar->SetFrozen( true );
 	}
 	else
@@ -2602,13 +2627,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 	SI16 x, y;
 	SI08 z;
 
-	if( s == NULL ) 
-		curSpell = caster->GetSpellCast();
-	else
-	{
-		caster = s->CurrcharObj();
-		curSpell = caster->GetSpellCast();
-	}
+	curSpell = caster->GetSpellCast();
 
 	if( caster->GetCasting() == 0 && caster->GetSpellCast() == -1 )
 		return;	// interrupted
@@ -2624,7 +2643,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 
 	CChar *src = caster;
 
-	if( curSpell > 63 && curSpell <= spellCount && spellCount <= 70 )
+	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
 		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, NULL, "(Succeeded)");
 	if( caster->IsNpc() || s != NULL && s->CurrentSpellType() != 2 )	// delete mana if NPC, s is -1 otherwise!
 	{
@@ -2660,7 +2679,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( i != NULL )
 			{
-				if( i->GetCont() != INVALIDSERIAL || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+				if( i->GetCont() != NULL || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
 					if( i->GetType() == 50 )
 					{
@@ -2706,7 +2725,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 
 			if( c != NULL ) // we have to have targetted a person to kill them :)
 			{
-				if( getDist( c, caster ) > cwmWorldState->ServerData()->GetCombatMaxSpellRange() )
+				if( !objInRange( c, caster, cwmWorldState->ServerData()->GetCombatMaxSpellRange() ) )
 				{
 					sysmessage( s, 712 );
 					return;
@@ -2874,7 +2893,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( i != NULL )
 			{
-				if( ( i->GetCont() != INVALIDSERIAL && getPackOwner( i ) != caster ) || ( getDist( caster, i ) > cwmWorldState->ServerData()->GetCombatMaxSpellRange() ) )
+				if( ( i->GetCont() != NULL && getPackOwner( i ) != caster ) || ( objInRange( caster, i, cwmWorldState->ServerData()->GetCombatMaxSpellRange() ) ) )
 				{
 					sysmessage( s, 718 );
 					return;
@@ -2974,7 +2993,7 @@ void cMagic::LoadScript( void )
 	}
 	ScriptSection *SpellLoad = NULL;
 	
-	for( i = 1; i <= spellCount; i++ )
+	for( i = 1; i <= static_cast<int>(spellCount); i++ )
 	{
 		sprintf(sect, "SPELL %d", i);
 		SpellLoad = FileLookup->FindEntry( sect, spells_def );
@@ -2993,7 +3012,7 @@ void cMagic::LoadScript( void )
 				if( !strcmp("ACTION", tag ) ) 
 					spells[i].Action( (SI32)makeNum( data ) );
 				else if( !strcmp("ASH", tag ) ) 
-					mRegs->ash = makeNum( data );
+					mRegs->ash = static_cast<UI08>(makeNum( data ));
 				break;
 
 			case 'c':
@@ -3007,7 +3026,7 @@ void cMagic::LoadScript( void )
 				if( !strcmp("DELAY", tag ) ) 
 					spells[i].Delay( (SI32)makeNum( data ) );
 				else if( !strcmp("DRAKE", tag ) ) 
-					mRegs->drake   = makeNum( data );
+					mRegs->drake   = static_cast<UI08>(makeNum( data ));
 				break;
 
 			case 'e':
@@ -3029,33 +3048,33 @@ void cMagic::LoadScript( void )
 			case 'g':
 			case 'G':
 				if( !strcmp("GARLIC", tag ) ) 
-					mRegs->garlic  = makeNum( data );
+					mRegs->garlic  = static_cast<UI08>(makeNum( data ));
 				else if( !strcmp("GINSENG", tag ) ) 
-					mRegs->ginseng = makeNum( data );
+					mRegs->ginseng = static_cast<UI08>(makeNum( data ));
 				break;
 
 			case 'h':
 			case 'H':
 				if( !strcmp("HISKILL", tag ) ) 
-					spells[i].HighSkill( makeNum( data ) );
+					spells[i].HighSkill( static_cast<SI16>(makeNum( data )) );
 				else if( !strcmp( "HEALTH", tag ) )
-					spells[i].Health( makeNum( data ) );
+					spells[i].Health( static_cast<SI16>(makeNum( data )) );
 				break;
 
 			case 'l':
 			case 'L':
 				if( !strcmp("LOSKILL", tag ) ) 
-					spells[i].LowSkill( makeNum( data ) );
+					spells[i].LowSkill( static_cast<SI16>(makeNum( data )) );
 				break;
 
 			case 'm':
 			case 'M':
 				if( !strcmp("MANA", tag ) ) 
-					spells[i].Mana( makeNum( data ) );
+					spells[i].Mana( static_cast<SI16>(makeNum( data )) );
 				else if( !strcmp("MANTRA", tag ) ) 
 					spells[i].Mantra( data );
 				else if( !strcmp("MOSS", tag ) ) 
-					mRegs->moss = makeNum( data );
+					mRegs->moss = static_cast<UI08>(makeNum( data ));
 				else if( !strcmp("MOVEFX", tag ) ) 
 				{
 					sscanf( data, "%x%x%x%x%x", &moveFX[0], &moveFX[1], &moveFX[2], &moveFX[3], &moveFX[4] );
@@ -3070,15 +3089,15 @@ void cMagic::LoadScript( void )
 			case 'p':
 			case 'P':
 				if( !strcmp("PEARL", tag ) ) 
-					mRegs->pearl = makeNum( data );
+					mRegs->pearl = static_cast<UI08>(makeNum( data ));
 				break;
 
 			case 's':
 			case 'S':
 				if( !strcmp("SHADE", tag ) ) 
-					mRegs->shade = makeNum( data );
+					mRegs->shade = static_cast<UI08>(makeNum( data ));
 				else if( !strcmp("SILK", tag ) ) 
-					mRegs->silk = makeNum( data );
+					mRegs->silk = static_cast<UI08>(makeNum( data ));
 				else if( !strcmp("SOUNDFX", tag ) ) 
 				{
 					sscanf( data, "%x%x", &sFX[0], &sFX[1] );
@@ -3094,11 +3113,11 @@ void cMagic::LoadScript( void )
 					stat->Loop( stFX[3] );
 				}
 				else if( !strcmp("SCLO", tag ) ) 
-					spells[i].ScrollLow( makeNum( data ) );
+					spells[i].ScrollLow( static_cast<SI16>(makeNum( data) ) );
 				else if( !strcmp("SCHI", tag ) ) 
-					spells[i].ScrollHigh( makeNum( data ) );
+					spells[i].ScrollHigh( static_cast<SI16>(makeNum( data) ) );
 				else if( !strcmp( "STAMINA", tag ) )
-					spells[i].Stamina( makeNum( data ) );
+					spells[i].Stamina( static_cast<SI16>(makeNum( data )) );
 				break;
 
 			case 't':
@@ -3285,7 +3304,7 @@ void cMagic::Recall( cSocket *s )
 		sysmessage( s, 431 );
 	else
 	{
-		mChar->SetLocation( i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		mChar->SetLocation(static_cast<SI16>( i->GetMoreX()), static_cast<SI16>(i->GetMoreY()), static_cast<SI08>(i->GetMoreZ()) );
 		mChar->Teleport();
 		sysmessage( s, 682 );
 	}
@@ -3325,7 +3344,7 @@ void cMagic::Gate( cSocket *s )
 	if( i->GetMoreX() <= 200 && i->GetMoreY() <= 200 )
 		sysmessage( s, 679 );
 	else
-		SpawnGate( s, mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), i->GetMoreX(), i->GetMoreY(), i->GetMoreZ() );
+		SpawnGate( s, mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), static_cast<SI16>(i->GetMoreX()), static_cast<SI16>(i->GetMoreY()), static_cast<SI08>(i->GetMoreZ()) );
 }
 
 void cMagic::Log( const char *spell, CChar *player1, CChar *player2, const char *extraInfo )
@@ -3343,19 +3362,7 @@ void cMagic::Log( const char *spell, CChar *player1, CChar *player2, const char 
 		return;
 	}
 	char dateTime[1024];
-	time_t ltime;
-	time( &ltime );
-	char *t = ctime( &ltime );
-	// just to be paranoid and avoid crashing
-	if( NULL == t )
-		t = "";
-	else
-	{
-		// some ctime()s like to stick \r\n on the end, we don't want that
-		for( int end = strlen(t) - 1; end >= 0 && isspace(t[end]); --end )
-			t[end] = '\0';
-	}
-	safeCopy( dateTime, t, 1024 );
+	RealTime( dateTime );
 
 	if( player2 != NULL )
 		fprintf( spellLog, "[%s] %s (serial: %i ) cast spell <%s> on player %s (serial: %i ) Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), spell, player2->GetName(), player2->GetSerial(), extraInfo );

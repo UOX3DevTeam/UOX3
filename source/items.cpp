@@ -1,11 +1,8 @@
 #include "uox3.h"
-#include "debug.h"
 #include "ssection.h"
 
 #undef DBGFILE
 #define DBGFILE "items.cpp"
-
-UI32 calcLastContainerFromSer( SERIAL ser, SI08 &exiMode );
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	CItem * cItem::MemItemFree( bool zeroSer, UI08 itemType )
@@ -121,16 +118,17 @@ void cItem::DeleItem( CItem *i )
 	{
 		cSpawnRegion *spawnReg = NULL;
 
-		for( UI32 k = 1; k < totalspawnregions; k++ )
+		for( UI16 k = 1; k < totalspawnregions; k++ )
 		{
 			spawnReg = spawnregion[k];
-
 			if( spawnReg == NULL )
 				continue;
 			else
 				spawnReg->deleteSpawnedItem( i );
 		}
 	}
+
+	i->SetCont( NULL );
 
 	cScript *tScript = NULL;
 	UI16 scpNum = i->GetScriptTrigger();
@@ -155,14 +153,14 @@ void cItem::DeleItem( CItem *i )
 	if( i->GetType() == 61 )
 	{
 		HashBucketMulti< ITEM > *hashBucketI = nspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
-		for( int j = 0; j < hashBucketI->NumEntries(); j++ )
+		for( unsigned int j = 0; j < hashBucketI->NumEntries(); j++ )
 		{
 			ci = hashBucketI->GetEntry( j );
 			if( ci != INVALIDSERIAL )
 			{
 				if( items[ci].isFree() )
 					continue;
-				if( i->GetSerial() == items[ci].GetSpawn() )
+				if( i == items[ci].GetSpawnObj() )
 				{
 					if( i != &items[ci] )
 						items[ci].SetSpawn( INVALIDSERIAL, ci );
@@ -174,20 +172,20 @@ void cItem::DeleItem( CItem *i )
 	if( i->GetType() == 62 || i->GetType() == 69 || i->GetType() == 125 )
 	{
 		HashBucketMulti< CHARACTER > *hashBucketC = ncspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
-		for( int l = 0; l < hashBucketC->NumEntries(); l++ )
+		for( unsigned int l = 0; l < hashBucketC->NumEntries(); l++ )
 		{
 			ci = hashBucketC->GetEntry( l );
 			if( ci != INVALIDSERIAL )
 			{
 				if( chars[ci].isFree() )
 					continue;
-				if( chars[ci].GetSpawn() == i->GetSerial() )
+				if( chars[ci].GetSpawnObj() == i )
 					chars[ci].SetSpawn( INVALIDSERIAL, ci );
 			}
 		}
 	}
 
-	if( i->GetSpawn() != 0 ) 
+	if( i->GetSpawnObj() != NULL ) 
 		nspawnsp.Remove( i->GetSpawn(), calcedItem );
 
 	for( CItem *tItem = i->FirstItemObj(); !i->FinishedItems(); tItem = i->NextItemObj() )
@@ -199,7 +197,7 @@ void cItem::DeleItem( CItem *i )
 	if( i->isGuarded() )
 	{
 		CChar *owner = NULL;
-		CMultiObj *multi = findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
+		CMultiObj *multi = findMulti( i );
 		if( multi != NULL )
 			owner = (CChar *)multi->GetOwnerObj();
 		if( owner == NULL )
@@ -326,7 +324,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										applyTo->SetRank( 10 );
 									break;
 		case DFNTAG_RACE:			applyTo->SetRace( (UI16)ndata );			break;
-		case DFNTAG_RESTOCK:		applyTo->SetRestock( ndata );				break;
+		case DFNTAG_RESTOCK:		applyTo->SetRestock( (UI16)ndata );			break;
 		case DFNTAG_RAIN:			applyTo->RainDamage( ndata != 0 );			break;
 		case DFNTAG_SK_MADE:		applyTo->SetMadeWith( (SI08)ndata );		break;
 		case DFNTAG_SPD:			applyTo->SetSpeed( (UI08)ndata );			break;
@@ -378,18 +376,12 @@ CItem *cItem::CreateItem( cSocket *s, std::string name, UI08 worldNumber )
 	// Scan through for an itemlist, if we make an itemlist, then we'll call our random item func and return instantly
 	// This way, we skip over some code we double up like an itemcount and itemcount2 increase
 
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
-	for( tag = itemCreate->FirstTag(); !itemCreate->AtEndTags(); tag = itemCreate->NextTag() )
+	if( itemCreate->ItemListExist() )
 	{
-		if( tag == DFNTAG_ITEMLIST )		// we really do have an itemlist here!
-		{
-			UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
-			const char *cdata = itemCreate->GrabData( ndata, odata );
-			CItem *iListMade = CreateRandomItem( s, cdata, true, worldNumber );
-			if( iListMade != NULL )
-				iListMade->WorldNumber( worldNumber );
-			return iListMade;
-		}
+		CItem *iListMade = CreateRandomItem( s, itemCreate->ItemListData(), true, worldNumber );
+		if( iListMade != NULL )
+			iListMade->WorldNumber( worldNumber );
+		return iListMade;
 	}
 	ITEM iMadeOff;
 	CItem *iMade = MemItemFree( iMadeOff, true );
@@ -428,12 +420,15 @@ CItem * cItem::CreateScriptItem( cSocket *s, std::string name, bool nSpawned, UI
 		name[ name.size()-1] = 0x00;
 	CItem *iMade = CreateItem( s, name, worldNumber );
 	if( iMade == NULL )
+	{
+		Console.Error( 2, "CreateScriptItem(): Bad script item %s (Item Not Found).\n", name.c_str() );
 		return NULL;
+	}
  
 	if( s != NULL && !nSpawned )
 		iMade->SetLocation( s->GetWord( 11 ), s->GetWord( 13 ), s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
 
-	if( iMade->GetCont() == INVALIDSERIAL ) 
+	if( iMade->GetCont() == NULL ) 
 		MapRegion->AddItem( iMade );
 	cScript *toGrab = Trigger->GetScript( iMade->GetScriptTrigger() );
 	if( toGrab != NULL )
@@ -467,24 +462,7 @@ CItem *cItem::CreateRandomItem( cSocket *s, const char *sItemList, bool nSpawned
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem * cItem::SpawnItem( cSocket *nSocket, int nAmount, char* cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Spawn an item
-//o---------------------------------------------------------------------------o
-CItem * cItem::SpawnItem( cSocket *nSocket, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
-{
-	if( nSocket == NULL ) 
-	{
-		Console.Error( 3, "FATAL: nSocket returned no valid value. Ignore, and continue.");
-		return NULL;
-	}
-	CChar *ch = nSocket->CurrcharObj();
-	return SpawnItem( nSocket, ch, nAmount, cName, nStackable, realItemId, realColour, nPack, nSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem * cItem::SpawnItem( cSocket *nSocket, CHARACTER ch, int nAmount, char* cName, bool nStackable, UI16 realItemId, UI16 realColour, bool nPack, bool nSend )
+//|	Function	-	CItem * cItem::SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemID, UI16 realColour, bool nPack, bool nSend )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an item
@@ -531,7 +509,7 @@ CItem * cItem::SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char 
 		{
 			if( p != NULL )
 			{
-				i->SetCont( p->GetSerial() );
+				i->SetCont( p );
 				i->SetX( ( 50 + RandomNum( 0, 79 ) ) );
 				i->SetY( ( 50 + RandomNum( 0, 79 ) ) );
 				i->SetZ( 9 );
@@ -553,7 +531,6 @@ CItem * cItem::SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char 
 	   //as i supposed the weight of the total package had been added before
 	   UI16 sum_nAmount = i->GetAmount(); 
 	   i->SetAmount( nAmount ); 
-	   Weight->AddItemWeight( i, ch ); 
 	   statwindow( nSocket, ch ); 
 	   i->SetAmount( sum_nAmount ); 
 	} 
@@ -565,12 +542,12 @@ CItem * cItem::SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char 
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cItem::SpawnMulti( cSocket *nSocket, CChar *ch, char* cName, UI16 realItemId )
+//|	Function	-	CItem *cItem::SpawnMulti( CChar *ch, char* cName, UI16 realItemId )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn a Multi
 //o---------------------------------------------------------------------------o
-CMultiObj *cItem::SpawnMulti( cSocket *nSocket, CChar *ch, const char *cName, UI16 realItemID )
+CMultiObj *cItem::SpawnMulti( CChar *ch, const char *cName, UI16 realItemID )
 {
 	ITEM cOff;
 	CItem *c = MemItemFree( cOff, true, 1 );
@@ -616,17 +593,37 @@ void cItem::GetScriptItemSetting( CItem *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an item inside a pack
 //o---------------------------------------------------------------------------o
-CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, std::string name, bool nDigging )
+CItem * cItem::SpawnItemToPack( cSocket *s, CChar *mChar, std::string name, bool nDigging )
 {
-	CItem *p = getPack( ch );
+	CItem *p = getPack( mChar );
 	if( p == NULL ) 
-		return NULL;
+	{
+		Console.Warning( 2, "SpawnItemToPack(): Character %s(%i) has no pack, attempting creation of new pack.....\n", mChar->GetName(), mChar->GetSerial() );
+		CItem *newPack = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x0E75, 0, false, false );
+		if( newPack != NULL )
+		{
+			mChar->SetPackItem( newPack );
+			newPack->SetLayer( 0x15 );
+			newPack->SetCont( mChar );
+			newPack->SetType( 1 );
+			newPack->SetDye( true );
+			RefreshItem( newPack );
+			p = newPack;
+			Console.Print( "SpawnItemToPack(): Pack creation successful for Character %s(%i).\n", mChar->GetName(), mChar->GetSerial() );
+		}
+		else
+		{
+			Console.Error( 2, "SpawnItemToPack(): Pack creation failed for Character %s(%i).\n", mChar->GetName(), mChar->GetSerial() );
+			return NULL;
+		}
+	}
 
 	CItem *c = CreateScriptItem( s, name, false, p->WorldNumber() );
 
 	if( c == NULL )
 		return NULL;
-	c->SetCont( p->GetSerial() );
+
+	c->SetCont( p );
 	c->SetX( 50 + RandomNum( 0, 79 ) );
 	c->SetY( 50 + RandomNum( 0, 79 ) );
 	c->SetZ( 9 );
@@ -643,11 +640,7 @@ CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, std::string name, bool nD
 	GetScriptItemSetting( c );
 	RefreshItem( c );
 	if( s != NULL )
-	{
-		CChar *mChar = s->CurrcharObj();
 		statwindow( s, mChar );
-		Weight->AddItemWeight( c, mChar );
-	}
 	return c;
 }
 
@@ -657,11 +650,11 @@ CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, std::string name, bool nD
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn an item inside a pack
 //o---------------------------------------------------------------------------o
-CItem * cItem::SpawnItemToPack( cSocket *s, CChar *ch, int nItem, bool nDigging )
+CItem * cItem::SpawnItemToPack( cSocket *s, CChar *mChar, int nItem, bool nDigging )
 {
 	char temp[128];
 	sprintf( temp, "%i", nItem );
-	return SpawnItemToPack( s, ch, temp, nDigging );
+	return SpawnItemToPack( s, mChar, temp, nDigging );
 }
 
 //o---------------------------------------------------------------------------o
@@ -681,11 +674,12 @@ bool cItem::DecayItem( CItem *i )
 		return false;
 
 	bool retVal = false;
-	if( i->GetCont() == INVALIDSERIAL )	// Are we on the ground?
+	if( i->GetCont() == NULL )	// Are we on the ground?
 	{  // decaytime = 5 minutes, * 60 secs per min, * clocks_per_sec
+		SI32 decayTimer = BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ));
 		if( i->GetDecayTime() == 0 ) 
 		{
-			i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+			i->SetDecayTime( decayTimer );
 			return false;
 		}
 		
@@ -694,12 +688,12 @@ bool cItem::DecayItem( CItem *i )
 		{
 			if( i->GetMultiObj() == NULL )
 			{
-				CMultiObj *multi = findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
+				CMultiObj *multi = findMulti( i );
 				if( multi != NULL )
 				{
 					if( multi->GetMore( 4 ) == 0 )
 					{
-						i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+						i->SetDecayTime( decayTimer );
 						i->SetMulti( multi );
 						return false;
 					}
@@ -707,52 +701,42 @@ bool cItem::DecayItem( CItem *i )
 			} 
 			else	// in a house, therefore... no decay
 			{					
-				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+				i->SetDecayTime( decayTimer );
 				return false;
 			}
 		}
 
-		if( i->isCorpse() && i->GetOwner() != INVALIDSERIAL )
+		if( i->isCorpse() && i->GetOwnerObj() != NULL && i->GetMore( 4 ) )
 		{
-			int preservebody = 0;
+			UI32 preservebody = 0;
 			for( CItem *j = i->FirstItemObj(); !i->FinishedItems(); j = i->NextItemObj() )
 			{
 				if( j != NULL )
 					preservebody++;
 			}
-			if( preservebody > 1 && i->GetMore( 4 ) )
+			if( preservebody > 1  )
 			{
 				i->SetMore( i->GetMore( 4 ) - 1, 4 );
-				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+				i->SetDecayTime( decayTimer );
 				return false;
 			}
 		}
-		if( ( !i->isCorpse() && i->GetType() == 1 ) || ( i->isCorpse() && ( i->GetOwner() != INVALIDSERIAL || !cwmWorldState->ServerData()->GetCorpseLootDecay() ) ) )
+		if( ( !i->isCorpse() && i->GetType() == 1 ) || ( i->isCorpse() && ( i->GetOwnerObj() != NULL || !cwmWorldState->ServerData()->GetCorpseLootDecay() ) ) )
 		{
 			for( CItem *io = i->FirstItemObj(); !i->FinishedItems(); io = i->NextItemObj() )
 			{
                 if( io != NULL )
 				{
-					io->SetCont( INVALIDSERIAL );
+					io->SetCont( NULL );
 					io->SetLocation( i );
 
-					io->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
+					io->SetDecayTime( decayTimer );
 					RefreshItem( io );
 				}
 			}
-			DeleItem( i );
-			retVal = true;
-		} 
-		else 
-		{
-			if( i->GetCont() == INVALIDSERIAL )
-			{
-				DeleItem( i );
-				retVal = true;
-			}
-			else
-				i->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) ) );
 		}
+		DeleItem( i );
+		retVal = true;
 	}
 	return retVal;
 }
@@ -797,14 +781,14 @@ void cItem::RespawnItem( CItem *i )
 			case 61:
 				k = 0;
 				hashBucketI = nspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
-				for( j = 0; j < hashBucketI->NumEntries(); j++ )
+				for( j = 0; j < static_cast<int>(hashBucketI->NumEntries()); j++ )
 				{
 					ci = hashBucketI->GetEntry( j );
 					if( ci != INVALIDSERIAL )
 					{
 						if( items[ci].isFree() )
 							continue;
-						if( i->GetSerial() == items[ci].GetSpawn() )
+						if( i == items[ci].GetSpawnObj() )
 						{
 							if( i != &items[ci] && items[ci].GetX() == i->GetX() && items[ci].GetY() == i->GetY() && items[ci].GetZ() == i->GetZ() )
 							{
@@ -819,7 +803,7 @@ void cItem::RespawnItem( CItem *i )
 				{
 					if( i->GetGateTime() == 0 )
 					{
-						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
+						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) )) );
 					}
 					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
@@ -844,14 +828,14 @@ void cItem::RespawnItem( CItem *i )
 				k = 0;
 
 				hashBucketC = ncspawnsp.GetBucket( (i->GetSerial())%HASHMAX );
-				for( j = 0; j < hashBucketC->NumEntries(); j++ )
+				for( j = 0; j < static_cast<int>(hashBucketC->NumEntries()); j++ )
 				{
 					ci = hashBucketC->GetEntry( j );
 					if( ci != INVALIDSERIAL )
 					{
 						if( chars[ci].isFree() )
 							continue;
-						if( chars[ci].GetSpawn() == i->GetSerial() )
+						if( chars[ci].GetSpawnObj() == i )
 							k++;
 					}
 				}
@@ -860,7 +844,7 @@ void cItem::RespawnItem( CItem *i )
 				{
 					if( i->GetGateTime() == 0 )
 					{
-						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
+						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 )) ) );
 					}
 					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
@@ -897,7 +881,7 @@ void cItem::RespawnItem( CItem *i )
 				{
 					if( i->GetGateTime() == 0 )
 					{
-						i->SetGateTime( BuildTimeValue( RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) ) );
+						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 )) ) );
 					}
 					if( i->GetGateTime() <= uiCurrentTime || overflow )
 					{
@@ -997,7 +981,7 @@ void cItem::AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomIte
 		return;
 
 	if( inCont )
-		c->SetCont( s->GetSerial() );
+		c->SetCont( s );
 	else
 		c->SetLocation( s );
 	c->SetSpawn( s->GetSerial(), calcItemFromSer( c->GetSerial() ) );
@@ -1005,8 +989,8 @@ void cItem::AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomIte
 	if( inCont )
 	{
 		CItem *z = NULL;
-		if( c->GetSpawn() != 0 )
-			z = calcItemObjFromSer( c->GetSpawn() );
+		if( c->GetSpawnObj() != NULL )
+			z = (CItem *)c->GetSpawnObj();
 		if( z != NULL )
 		{
 			UI08 k = PackType( z->GetID() );
@@ -1034,6 +1018,25 @@ void cItem::AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomIte
 }
 
 //o---------------------------------------------------------------------------o
+//|		Function	-	menuAddItem( cSocket *s, std::string item )
+//|		Programmer	-	Zane
+//|		Date		-	January 31, 2003
+//o---------------------------------------------------------------------------o
+//|		Purpose		-	Create an item selected from the Add menu
+//o---------------------------------------------------------------------------o
+void cItem::menuAddItem( cSocket *s, std::string item )
+{
+	CChar *mChar = s->CurrcharObj();
+	CItem *c = Items->SpawnItemToPack( s, mChar, item, false );
+	if( c == NULL )
+		return;
+	c->SetName2( c->GetName() );
+	c->SetCreator( INVALIDSERIAL );
+	c->SetMagic( 1 );
+	statwindow( s, mChar );
+}
+
+//o---------------------------------------------------------------------------o
 //|	Function	-	void cItem::GlowItem( CItem *i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -1049,14 +1052,14 @@ void cItem::GlowItem( CItem *i )
 
 		//j->SetLayer( i->GetLayer() ); // copy layer information of the glowing item to the invisible light emitting object
 
-		SERIAL getCont = i->GetCont();
-		if( getCont == INVALIDSERIAL ) // On the ground
+		cBaseObject *getCont = i->GetCont();
+		if( getCont == NULL ) // On the ground
 		{
-			j->SetCont( INVALIDSERIAL );
+			j->SetCont( NULL );
 			j->SetDir( 29 );
 			j->SetLocation( i );
 		}
-		else if( getCont >= 0x40000000 ) // In a pack
+		else if( getCont->GetObjType() == OT_ITEM ) // In a pack
 		{
 			MapRegion->RemoveItem( j );
 			j->SetCont( getCont );
@@ -1067,7 +1070,7 @@ void cItem::GlowItem( CItem *i )
 		}
 		else // Equipped
 		{
-			CChar *s = calcCharObjFromSer( getCont );
+			CChar *s = (CChar *)getCont;
 			if( s != NULL )
 			{
 				MapRegion->RemoveItem( j );
@@ -1100,7 +1103,8 @@ void cItem::CheckEquipment( CChar *p )
 	char temp[512];
 
 	cSocket *pSock = calcSocketObjFromChar( p );
-	if ( !pSock ) return;
+	if( pSock == NULL ) 
+		return;
 
 	const SI16 StrengthToCompare = p->GetStrength();
 	for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
@@ -1114,10 +1118,8 @@ void cItem::CheckEquipment( CChar *p )
 				getTileName( i, temp );
 			else 
 				strcpy( temp, itemname );
-			sysmessage( pSock, 1604, temp );
-			itemsfx( pSock, i->GetID() );
 
-			i->SetCont( INVALIDSERIAL );
+			i->SetCont( NULL );
 			i->SetLocation( p );
 							
 			Network->PushConn();
@@ -1128,40 +1130,34 @@ void cItem::CheckEquipment( CChar *p )
 			}
 			Network->PopConn();
 			RefreshItem( i );
+			sysmessage( pSock, 1604, temp );
+			itemSound( pSock, i );
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void StoreItemRandomValue( CItem *i, int tmpreg )
+//|	Function	-	void StoreItemRandomValue( CItem *i, UI08 tmpreg )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remember an items value
 //o---------------------------------------------------------------------------o
-void StoreItemRandomValue( CItem *i, int tmpreg )
+void StoreItemRandomValue( CItem *i, UI08 tmpreg )
 {
-	UI32 a = INVALIDSERIAL;
 	if( i->GetGood() < 0 ) 
 		return;
-	if( tmpreg < 0 )
+	if( tmpreg == 0xFF )
 	{
-		SI08 exiMode = 0;
-		a = calcLastContainerFromSer( i->GetCont(), exiMode );
-		if( a != INVALIDSERIAL )
-		{
-			if( exiMode == 2 )
-				tmpreg = calcRegionFromXY( chars[a].GetX(), chars[a].GetY(), chars[a].WorldNumber() );
-			else if( exiMode == 1 )
-				tmpreg = calcRegionFromXY( items[a].GetX(), items[a].GetY(), items[a].WorldNumber() );
-		}
+		cBaseObject *getLastCont = i->GetCont();
+		if( getLastCont != NULL )
+			tmpreg = calcRegionFromXY( getLastCont->GetX(), getLastCont->GetY(), getLastCont->WorldNumber() );
+		if( tmpreg == 0xFF )
+			return;
 	}
 	
-	if( tmpreg < 0 )
-		return;
-	
-	int min = region[tmpreg]->GetGoodRnd1( i->GetGood() );
-	int max = region[tmpreg]->GetGoodRnd2( i->GetGood() );
+	SI32 min = region[tmpreg]->GetGoodRnd1( static_cast<UI08>(i->GetGood()) );
+	SI32 max = region[tmpreg]->GetGoodRnd2( static_cast<UI08>(i->GetGood()) );
 	
 	if( max != 0 || min != 0 )
-		i->SetRndValueRate( (int) RandomNum( min, max ) );
+		i->SetRndValueRate( (SI32) RandomNum( min, max ) );
 }

@@ -46,7 +46,6 @@
 // behind what I've done to make things easier.
 
 #include "uox3.h"
-#include "debug.h"
 
 
 // These are defines that I'll use. I have a history of working with properties, so that's why
@@ -74,30 +73,24 @@
 												// Items with a mark as climbable have no height limit
 
 
-inline SI32 higher( SI32 a, SI32 b )
+inline SI08 higher( SI08 a, SI08 b )
 {
 	if( a < b )
 		return b;
 	else
 		return a;
 }
-inline SI32 LOWER( SI32 a, SI32 b )
-{
-	if( a < b )
-		return a;
-	else
-		return b;
-}
+
 inline UI08 turn_clock_wise( UI08 dir )
 {
 	UI08 t = ((dir & 0x07 ) + 1) % 8;
-	return (dir & 0x80) ? ( t | 0x80) : t;
+	return (UI08)(dir & 0x80) ? ( t | 0x80) : t;
 }
 
 inline UI08 turn_counter_clock_wise( UI08 dir )
 {
 	UI08 t = (dir - 1) & 7;
-	return (dir & 0x80) ? ( t | 0x80) : t;
+	return (UI08)(dir & 0x80) ? ( t | 0x80) : t;
 }
 
 
@@ -120,38 +113,13 @@ inline UI08 turn_counter_clock_wise( UI08 dir )
 //|   the value was "negative"
 //o-------------------------------------------------------------o
 
-inline int calcTileHeight( int h )
+inline SI08 calcTileHeight( SI08 h )
 {
   ///return ((h & 0x8) ? (((h & 0xF) ^ 0xF) + 1) : h & 0xF);
 	//return (h & 0x7);
 	//return ((h & 0x8) ? (((h & 0xF) ^ 0xF) + 1) : h & 0xF);
-	return ((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
+	return (SI08)((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
 } 
-
-/*
-** Walking() This function is called whenever we get a message from the client
-** to walk/run somewhere.   It is also called by the NPC movement functions in this
-** class to make the NPCs move.  The arguments are fairly fixed because we don't
-** have a lot of control about what the client gives us.
-**
-** CHARACTER s - Obviously the character index of the character trying to move.
-**
-** dir - Which direction the character is trying to move. The first nibble holds
-** the cardinal direction.      If the bit 0x80 is set, it means the character is
-** running instead of walking.  
-**              0: // North
-**              1: // Northeast
-**              2: // East
-**              3: // Southeast
-**              4: // South
-**              5: // Southwest
-**              6: // West
-**              7: // Northwest
-**
-** sequence - This is what point in the walking sequence we are at, this seems to
-**            roll over once it hits 256
-**
-*/
 
 UI08 FlagColour( CChar *a, CChar *b )
 {
@@ -187,7 +155,32 @@ UI08 FlagColour( CChar *a, CChar *b )
 		return 3;		// grey
 }
 
-void cMovement::Walking( CChar *c, UI08 dir, int sequence )
+/*
+** Walking() This function is called whenever we get a message from the client
+** to walk/run somewhere.   It is also called by the NPC movement functions in this
+** class to make the NPCs move.  The arguments are fairly fixed because we don't
+** have a lot of control about what the client gives us.
+**
+** CHARACTER s - Obviously the character index of the character trying to move.
+**
+** dir - Which direction the character is trying to move. The first nibble holds
+** the cardinal direction.      If the bit 0x80 is set, it means the character is
+** running instead of walking.  
+**              0: // North
+**              1: // Northeast
+**              2: // East
+**              3: // Southeast
+**              4: // South
+**              5: // Southwest
+**              6: // West
+**              7: // Northwest
+**
+** sequence - This is what point in the walking sequence we are at, this seems to
+**            roll over once it hits 256
+**
+*/
+
+void cMovement::Walking( CChar *c, UI08 dir, SI16 sequence )
 {
 	// sometimes the NPC movement code comes up with -1, for example, if we are following someone
 	// and we are directly on top of them
@@ -252,9 +245,9 @@ void cMovement::Walking( CChar *c, UI08 dir, int sequence )
 		if( !calc_move( c, c->GetX(), c->GetY(), myz, dir ) )
 		{
 #if DEBUG_WALK
-			printf("%s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, chars[c].GetName() );
-			printf("%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].GetX(), chars[c].GetY(), chars[c].GetZ() );
-			printf("%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
+			Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, chars[c].GetName() );
+			Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].GetX(), chars[c].GetY(), chars[c].GetZ() );
+			Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
 #endif
 			if( mSock != NULL )
 				deny( mSock, c, sequence );
@@ -264,9 +257,9 @@ void cMovement::Walking( CChar *c, UI08 dir, int sequence )
 		}
 		dispz = z = myz;
 #if DEBUG_WALK
-		printf( "%s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, chars[c].GetName() );
-		printf( "%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].GetX(), chars[c].GetY(), chars[c].GetZ() );
-		printf( "%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
+		Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, chars[c].GetName() );
+		Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].GetX(), chars[c].GetY(), chars[c].GetZ() );
+		Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
 #endif
 
 		if( c->IsNpc() && CheckForCharacterAtXYZ( c, myx, myy, myz ) )
@@ -307,7 +300,7 @@ void cMovement::Walking( CChar *c, UI08 dir, int sequence )
 	
 	SendWalkToPlayer( c, mSock, sequence );
 	SendWalkToOtherPlayers( c, dir, oldx, oldy );
-	OutputShoveMessage( c, mSock, oldx, oldy );
+	OutputShoveMessage( c, mSock );
 	
 	// keep on checking this even if we just turned, because if you are taking damage
 	// for standing here, lets keep on dishing it out. if we pass whether we actually
@@ -365,7 +358,7 @@ bool cMovement::isValidDirection( UI08 dir )
 // end of the spell cast. With this new check, we don't even need to set the frozen bit when
 // casting a spell!
 
-bool cMovement::isFrozen( CChar *c, cSocket *mSock, int sequence )
+bool cMovement::isFrozen( CChar *c, cSocket *mSock, SI16 sequence )
 {
 	if( c->GetCasting() > 0 )
 	{
@@ -375,7 +368,7 @@ bool cMovement::isFrozen( CChar *c, cSocket *mSock, int sequence )
 			deny( mSock, c, sequence );
 		}
 #if DEBUG_WALK
-		printf( "%s (cMovement::isFrozen) casting char %s\n", DBGFILE, chars[c].GetName() );
+		Console.Print( "DEBUG: %s (cMovement::isFrozen) casting char %s\n", DBGFILE, chars[c].GetName() );
 #endif
 		return true;
 	}
@@ -387,7 +380,7 @@ bool cMovement::isFrozen( CChar *c, cSocket *mSock, int sequence )
 			deny( mSock, c, sequence );
 		}
 #if DEBUG_WALK
-		printf( "%s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() );
+		Console..Print( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() );
 #endif
 		return true;
 	} 
@@ -408,19 +401,22 @@ bool cMovement::isFrozen( CChar *c, cSocket *mSock, int sequence )
 
 // Rewrote to deny the client... We'll see if it works.
 
-bool cMovement::isOverloaded( CChar *c, cSocket *mSock, int sequence )
+bool cMovement::isOverloaded( CChar *c, cSocket *mSock, SI16 sequence )
 {
 	// Who are we going to check for weight restrictions?
 	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CNSCMDLEVEL )
 	{
 		if( mSock != NULL )
 		{
-			if( !Weight->checkWeight( c, false ) || c->GetStamina() < 3 )
+			if( Weight->isOverloaded( c ) )
+				c->SetStamina( (UI16)(((c->GetWeight() / 100) - ((c->GetStrength() * WEIGHT_PER_STR) + 30)) * 2) );
+			if( c->GetStamina() <= 0 )
 			{
+				c->SetStamina( 0 );
 				sysmessage( mSock, 1382 );
 				deny( mSock, c, sequence );
 #if DEBUG_WALK
-				printf( "%s (cMovement::Walking) overloaded char %s\n", DBGFILE, c->GetName() );
+				Console.Print( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, c->GetName() );
 #endif
 				updateStats( c, 2 );
 				return true;
@@ -619,7 +615,7 @@ bool cMovement::CanBirdWalk( CTileUni &xyb )
 
 // if we have a valid socket, see if we need to deny the movement request because of
 // something to do with the walk sequence being out of sync.
-bool cMovement::VerifySequence( CChar *c, cSocket *mSock, int sequence )
+bool cMovement::VerifySequence( CChar *c, cSocket *mSock, SI16 sequence )
 {
     if( mSock != NULL )
     {
@@ -646,7 +642,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 		if( c->GetStealth() != -1 )	// Stealth - stop hiding if player runs
 			c->ExposeToView();
 		//Don't regenerate stamina while running
-		c->SetRegen( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) ), 1 );
+		c->SetRegen( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) )), 1 );
 		c->SetRunning( c->GetRunning() + 1 );
 
 		if( !c->IsDead() && c->GetCommandLevel() < CNSCMDLEVEL )
@@ -715,12 +711,13 @@ bool cMovement::CheckForStealth( CChar *c )
 // see if a player has tried to move into a house they were banned from
 bool cMovement::CheckForHouseBan( CChar *c, cSocket *mSock )
 {
-    if( !c->IsNpc() ) // this code is also called from npcs-walking code, so only check for players to cut down lag!
-    {
-        CMultiObj *house = findMulti( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber() );
-        if( house != NULL ) 
-        {
-			c->SetMulti( house );//Set them inside the multi!
+	if( !c->IsNpc() ) // this code is also called from npcs-walking code, so only check for players to cut down lag!
+	{
+		CMultiObj *house = findMulti( c );
+		if( house != NULL ) 
+		{
+			if( c->GetMultiObj() != house )
+				c->SetMulti( house );//Set them inside the multi!
 			if( house->IsOnBanList( c ) )
 			{
 				SI16 sx, sy, ex, ey;
@@ -734,14 +731,14 @@ bool cMovement::CheckForHouseBan( CChar *c, cSocket *mSock )
 				}
 				return false;
 			}
-        }
+		}
 		else
 		{
 			if( c->GetMultiObj() != NULL )
 				c->SetMulti( INVALIDSERIAL );
 		}
-    } 
-    return true;
+	} 
+	return true;
 }
 
 // Thyme 2000.09.21
@@ -823,7 +820,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 		if( tItem->GetID() < 0x4000 )
 		{
 #if DEBUG_WALKING
-			printf( "Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
+			Console.Print( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
 #endif
 			if( tItem->GetX() == x && tItem->GetY() == y )
 			{
@@ -845,7 +842,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 			Map->SeekMulti( multiID, &length );
 			if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 			{
-				Console << "Walking() - Bad length in multi file. Avoiding stall" << myendl;
+				Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
 				length = 0;
 			}
 			for( int j = 0; j < length; j++ )
@@ -892,7 +889,7 @@ void cMovement::HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy )
 	}
 #if DEBUG_WALKING
 	else
-		Console << "Guess what? I didn't change regions." << myendl;
+		Console.Print( "DEBUG: Character: %s(%i) didn't change regions.", c->GetName(), c->GetSerial() );
 #endif
 
 	// i'm moving this to the end because the regions shouldn't care what the z was
@@ -952,7 +949,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 			continue;
 		const UI08 visibleRange = (UI08)(tSend->Range() + Races->VisRange( mChar->GetRace() ) + 1);
 		const UI08 clientRange = tSend->Range();
-		if( c != mChar && getCharDist( c, mChar ) <= visibleRange )
+		if( c != mChar && objInRange( c, mChar, visibleRange ) )
 		{
 			SI16 dxNew = (SI16)abs( newx - mChar->GetX() );
 			SI16 dyNew = (SI16)abs( newy - mChar->GetY() );
@@ -985,83 +982,76 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 }
 
 // see if we should mention that we shove something out of the way
-void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock, SI16 oldx, SI16 oldy )
+void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 {
-	if( mSock != NULL )
+	if( mSock == NULL )
+		return;
+
+	// GMs, counselors, and ghosts don't shove things
+	if( c->GetCommandLevel() >= CNSCMDLEVEL || c->GetID() == 0x03DB || c->IsDead() )
+		return;
+	// lets cache these vars in advance
+	UI08 worldNumber = c->WorldNumber();
+	SubRegion *grid = MapRegion->GetCell( c->GetX(), c->GetY(), worldNumber );
+	if( grid == NULL )
+		return;
+	CChar *ourChar = NULL;
+	grid->PushChar();
+	SI16 x = c->GetX();
+	SI16 y = c->GetY();
+	SI08 z = c->GetZ();
+	UI16 targTrig = c->GetScriptTrigger();
+	cScript *toExecute = Trigger->GetScript( targTrig );
+	for( ourChar = grid->FirstChar(); !grid->FinishedChars(); ourChar = grid->GetNextChar() )
 	{
-		// GMs, counselors, and ghosts don't shove things
-		if( c->GetCommandLevel() >= CNSCMDLEVEL || c->GetID() == 0x03DB || c->IsDead() )
-			return;
-		// lets cache these vars in advance
-		UI08 worldNumber = c->WorldNumber();
-		SubRegion *grid = MapRegion->GetCell( c->GetX(), c->GetY(), worldNumber );
-		if( grid == NULL )
-			return;
-		CChar *ourChar = NULL;
-		grid->PushChar();
-		SI16 x = c->GetX();
-		SI16 y = c->GetY();
-		SI08 z = c->GetZ();
-		UI16 targTrig = c->GetScriptTrigger();
-		cScript *toExecute = Trigger->GetScript( targTrig );
-		for( ourChar = grid->FirstChar(); !grid->FinishedChars(); ourChar = grid->GetNextChar() )
+		if( ourChar == NULL )
+			continue;
+		if( ourChar != c && ( ourChar->IsNpc() || isOnline( ourChar ) ) )
 		{
-			if( ourChar == NULL )
-				continue;
-			if( ourChar != c && ( ourChar->IsNpc() || isOnline( ourChar ) ) )
+			if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
 			{
-				if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
+				if( toExecute != NULL )
+					toExecute->OnCollide( mSock, c, ourChar );
+				UI16 tTrig = ourChar->GetScriptTrigger();
+				cScript *tExec = Trigger->GetScript( tTrig );
+				if( tExec != NULL )
+					tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
+				if( !ourChar->GetHidden() && !ourChar->IsPermHidden() )
 				{
-					if( toExecute != NULL )
-						toExecute->OnCollide( mSock, c, ourChar );
-					UI16 tTrig = ourChar->GetScriptTrigger();
-					cScript *tExec = Trigger->GetScript( tTrig );
-					if( tExec != NULL )
-						tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
-					if( !ourChar->GetHidden() && !ourChar->IsPermHidden() )
-					{
-						sysmessage( mSock, 1383, ourChar->GetName() );
-						c->SetStamina( max( c->GetStamina() - 4, 0 ) );
-						updateStats( c, 2 );  // arm code
-					}
-					else if( ourChar->GetCommandLevel() < CNSCMDLEVEL )
-					{
-						sysmessage( mSock, 1384 );
-						c->SetStamina( max( c->GetStamina() - 4, 0 ) );
-						updateStats( c, 2 );  // arm code
-					}
+					sysmessage( mSock, 1383, ourChar->GetName() );
+					c->SetStamina( max( c->GetStamina() - 4, 0 ) );
+					updateStats( c, 2 );  // arm code
+				}
+				else if( ourChar->GetCommandLevel() < CNSCMDLEVEL )
+				{
+					sysmessage( mSock, 1384 );
+					c->SetStamina( max( c->GetStamina() - 4, 0 ) );
+					updateStats( c, 2 );  // arm code
 				}
 			}
 		}
-		grid->PopChar();
 	}
+	grid->PopChar();
 }
 
 // handle item collisions, make items that appear on the edge of our sight because
 // visible, buildings when they get in range, and if the character steps on something
 // that might cause damage
-void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, SI16 oldx, SI16 oldy )
+void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, bool amTurning, SI16 oldx, SI16 oldy )
 {
 	// lets cache these vars in advance
 	UI08 visibleRange = 18;
 	if( mSock != NULL )
-		visibleRange = (UI08)(mSock->Range() + Races->VisRange( c->GetRace() ) + 1);
-	const SI16 newx = c->GetX();
-	const SI16 newy = c->GetY();
+		visibleRange = (UI08)(mSock->Range() + Races->VisRange( mChar->GetRace() ) + 1);
+	const SI16 newx = mChar->GetX();
+	const SI16 newy = mChar->GetY();
 	UI16 id;
 	bool EffRange;
 	
 	int xOffset = MapRegion->GetGridX( newx );
 	int yOffset = MapRegion->GetGridY( newy );
 
-	bool isGM = false;
-	if( mSock != NULL )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( mChar != NULL )
-			isGM = mChar->IsGM();
-	}
-
+	bool isGM = mChar->IsGM();
 	SI16 dxNew, dyNew, dxOld, dyOld;
 	/*
 	A note to future people (from Zippy on 2/10/02)
@@ -1077,7 +1067,7 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 	the future, and I'm no longer around...  This is your piece of the puzzle.
 	*/
 
-	UI08 worldNumber = c->WorldNumber();
+	UI08 worldNumber = mChar->WorldNumber();
 	const SI16 justOut = (SI16)(visibleRange + 1);
 	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 	{
@@ -1094,7 +1084,7 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 					if( tempChar == NULL )
 						continue;
 					// Character Send Stuff
-					if( tempChar->IsNpc() || isOnline( tempChar ) || ( c->IsGM() && cwmWorldState->ServerData()->GetShowHiddenNpcStatus() ) )
+					if( tempChar->IsNpc() || isOnline( tempChar ) || ( isGM && cwmWorldState->ServerData()->GetShowHiddenNpcStatus() ) )
 					{
 						dxNew = (SI16)abs( tempChar->GetX() - newx );
 						dyNew = (SI16)abs( tempChar->GetY() - newy );
@@ -1105,17 +1095,17 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							( dxNew == visibleRange && dyNew == visibleRange ) )
 						{
 							tempChar->SendToSocket( mSock, true, tempChar );
-							UI16 targTrig = c->GetScriptTrigger();
+							UI16 targTrig = mChar->GetScriptTrigger();
 							cScript *toExecute = Trigger->GetScript( targTrig );
 							if( toExecute != NULL )
-								toExecute->InRange( c, tempChar );
+								toExecute->InRange( mChar, tempChar );
 						}
 						else if( ( dxNew == justOut && dxOld == visibleRange ) || ( dyNew == justOut && dyOld == visibleRange ) )
 						{
-							UI16 targTrig = c->GetScriptTrigger();
+							UI16 targTrig = mChar->GetScriptTrigger();
 							cScript *toExecute = Trigger->GetScript( targTrig );
 							if( toExecute != NULL )
-								toExecute->OutOfRange( c, tempChar );
+								toExecute->OutOfRange( mChar, tempChar );
 							// item out of range
 						}
 					}
@@ -1134,49 +1124,49 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 				// Why recalculate all this stuff several times?
 				EffRange = ( ( tItem->GetX() == newx ) && 
 							 ( tItem->GetY() == newy ) && 
-							 ( c->GetZ() >= tItem->GetZ() ) && 
-							 ( c->GetZ() <= ( tItem->GetZ() + 5 ) ) );
+							 ( mChar->GetZ() >= tItem->GetZ() ) && 
+							 ( mChar->GetZ() <= ( tItem->GetZ() + 5 ) ) );
 				if( EffRange )
 				{
 					switch( id )
 					{
 					case 0x3996:	// Fire Field
 					case 0x398C:
-						if( c->IsInnocent() )
+						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( c, 520 );
-						if( !Magic->CheckResist( NULL, c, 4 ) )
-							Magic->MagicDamage( c, tItem->GetMoreX() / 300 );
+						soundeffect( mChar, 520 );
+						if( !Magic->CheckResist( NULL, mChar, 4 ) )
+							Magic->MagicDamage( mChar, tItem->GetMoreX() / 300 );
 
 						break;
 					case 0x3915:
 					case 0x3920:	// Poison field
-						if( c->IsInnocent() )
+						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( c, 520 );
-						if( !Magic->CheckResist( NULL, c, 5 ) )
-							Magic->PoisonDamage( c, 1 );
+						soundeffect( mChar, 520 );
+						if( !Magic->CheckResist( NULL, mChar, 5 ) )
+							Magic->PoisonDamage( mChar, 1 );
 
 						break;
 					case 0x3979:	// Paralyze Field
 					case 0x3967:
-						if( c->IsInnocent() )
+						if( mChar->IsInnocent() )
 						{
 							caster = calcCharObjFromSer( tItem->GetMoreY() );	// store caster in morey
-							if( c->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
+							if( mChar->IsInnocent() && caster != NULL && caster->GetCommandLevel() < CNSCMDLEVEL )
 								criminal( caster );
 						}
-						soundeffect( c, 0x0204 );
-						if( !Magic->CheckResist( NULL, c, 6 ) )
-							tempeffect( c, c, 1, 0, 0, 0 );
+						soundeffect( mChar, 0x0204 );
+						if( !Magic->CheckResist( NULL, mChar, 6 ) )
+							tempeffect( mChar, mChar, 1, 0, 0, 0 );
 
 						break;
 					default:
@@ -1185,7 +1175,7 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							UI16 targTrig = tItem->GetScriptTrigger();
 							cScript *toExecute = Trigger->GetScript( targTrig );
 							if( toExecute != NULL )
-								toExecute->OnCollide( mSock, c, tItem );
+								toExecute->OnCollide( mSock, mChar, tItem );
 						}
 						break;
 					}
@@ -1214,18 +1204,18 @@ void cMovement::HandleItemCollision( CChar *c, cSocket *mSock, bool amTurning, S
 							if( tItem->GetVisible() < 2 || isGM )// we're a GM, or not hidden
 							{
 								sendItem( mSock, tItem );
-								UI16 targTrig = c->GetScriptTrigger();
+								UI16 targTrig = mChar->GetScriptTrigger();
 								cScript *toExecute = Trigger->GetScript( targTrig );
 								if( toExecute != NULL )
-									toExecute->InRange( c, tItem );
+									toExecute->InRange( mChar, tItem );
 							}
 						}
 						else if( ( dxNew == justOut && dxOld == visibleRange ) || ( dyNew == justOut && dyOld == visibleRange ) )
 						{//leaving range?
-							UI16 targTrig = c->GetScriptTrigger();
+							UI16 targTrig = mChar->GetScriptTrigger();
 							cScript *toExecute = Trigger->GetScript( targTrig );
 							if( toExecute != NULL )
-								toExecute->OutOfRange( c, tItem );
+								toExecute->OutOfRange( mChar, tItem );
 							// item out of range
 						}
 					}
@@ -1247,6 +1237,7 @@ void cMovement::HandleTeleporters( CChar *c, SI16 oldx, SI16 oldy )
 }
 
 // start of LB's no rain & snow in buildings stuff 
+#pragma note( "Param Warning: in cMovement::HandleWeatherChanges(), mSock is unrefrenced" )
 void cMovement::HandleWeatherChanges( CChar *c, cSocket *mSock )
 {
 	if( !c->IsNpc() && isOnline( c ) ) // check for being in buildings (for weather) only for PC's
@@ -1271,13 +1262,14 @@ void cMovement::CombatWalk( CChar *i ) // Only for switching to combat mode
 	char flag = 0;
 	if( i->IsAtWar() ) 
 		flag = 0x40; 
-	if( i->GetHidden() ) 
-		flag |= 0x80;
-	if( i->IsDead() && !i->IsAtWar() ) 
+	if( i->GetHidden() || ( i->IsDead() && !i->IsAtWar() ) )
 		flag |= 0x80;
 	if( i->GetPoisoned() ) 
 		flag |= 0x04;
 	toSend.Flag( flag );
+
+	if( !i->IsAtWar() )
+		i->SetTarg( INVALIDSERIAL );
     
 	Network->PushConn();
 	for( cSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
@@ -1288,15 +1280,13 @@ void cMovement::CombatWalk( CChar *i ) // Only for switching to combat mode
 		if( mChar != i && charInRange( i, mChar ) )
         {
 			toSend.FlagColour( FlagColour( i, mChar ) );
-            if( !i->IsAtWar() )
-                i->SetTarg( INVALIDSERIAL );
             tSend->Send( &toSend );
         }
     }
 	Network->PopConn();
 }
 
-void cMovement::NpcWalk( CChar *i, UI08 j, int type )   //type is npcwalk mode (0 for normal, 1 for box, 2 for circle)
+void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )   //type is npcwalk mode (0 for normal, 1 for box, 2 for circle)
 {
 	SI16 fx1 = i->GetFx( 1 );
 	SI16 fx2 = i->GetFx( 2 );
@@ -1304,12 +1294,11 @@ void cMovement::NpcWalk( CChar *i, UI08 j, int type )   //type is npcwalk mode (
 	SI16 fy2 = i->GetFy( 2 );
 	SI08 fz1 = i->GetFz();
     // if we are walking in an area, and the area is not properly defined, just don't bother with the area anymore
-    if( ( ( 1 == type ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 || fy2 == -1 ) ) ||
-        ( ( 2 == type ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 ) ) )
-        // circle's don't use fy2, so don't require them! fur 10/30/1999
+    if( ( ( getWander == 3 ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 || fy2 == -1 ) ) ||
+        ( ( getWander == 4 ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 ) ) ) // circle's don't use fy2, so don't require them! fur 10/30/1999
+        
     {
         i->SetNpcWander( 2 ); // Wander freely from now on
-        type = 0;
     }
 	// Thyme New Stuff 2000.09.21
 	SI16 newx = GetXfromDir( j, i->GetX() );
@@ -1317,23 +1306,24 @@ void cMovement::NpcWalk( CChar *i, UI08 j, int type )   //type is npcwalk mode (
 	UI08 worldNumber = i->WorldNumber();
 	// Let's make this a little more readable.
 	UI08 jMod = (j & 0x87);
-	switch( type )
+	switch( getWander )
 	{
-	case 0:	// normal
+	case 2:	// Wander freely
+	case 5:	// Wander freely after fleeing
 		Walking( i, jMod, 256 );
 		break;
-	case 1:	// box
+	case 3:	// Wander inside a box
 		if( checkBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber ) )
 			Walking( i, jMod, 256 );
 		break;
-	case 2:	// circle
+	case 4:	// Wander inside a circle
 		if( checkBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber ) )
 			Walking( i, jMod, 256 );
 		break;
 	default:
-		Console.Error( 2, "Unknown NpcWalk %i\n", type );
+		Console.Error( 2, "Bad NPC Wander type passed to NpcWalk: %i\n", getWander );
 		break;
-	};
+	}
 }
 
 // Function      : cMovement::GetYfromDir
@@ -1424,7 +1414,7 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 	const SI16 oldy = c->GetY();
 
 #pragma note( "PathFind() needs to be touched up, UI08 can possibly be set to -1" )
-	for( int pn = 0; pn < pathLen; pn++ )
+	for( UI08 pn = 0; pn < pathLen; pn++ )
 	{
 		bool bFound = false;
 		int pf_neg = ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
@@ -1475,13 +1465,13 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 //o--------------------------------------------------------------------------o	
 void cMovement::NpcMovement( CChar *i )
 {
-    register int k;
-	UI08 j = RandomNum( 0, 39 );
-    int dnpctime = 0;
+    CHARACTER k;
+	UI08 j;
+	const R32 npcSpeed = static_cast< R32 >(cwmWorldState->ServerData()->GetNPCSpeed());
     if( i->IsNpc() && ( i->GetNpcMoveTime() <= uiCurrentTime || overflow ) )
     {
 #if DEBUG_NPCWALK
-		printf( "ENTER (%s): %d AI %d WAR %d J\n", chars[i].GetName(), chars[i].GetNpcWander(), chars[i].IsAtWar(), j );
+		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", chars[i].GetName(), chars[i].GetNpcWander(), chars[i].IsAtWar(), j );
 #endif
 		if( i->IsAtWar() && i->GetNpcWander() != 5 )
         {
@@ -1489,7 +1479,7 @@ void cMovement::NpcMovement( CChar *i )
             if( l != INVALIDSERIAL && ( isOnline( &chars[l] ) || chars[l].IsNpc() ) )
             {
 				UI08 charDir = getCharDir( i, chars[l].GetX(), chars[l].GetY() );
-				UI16 charDist = getCharDist( i, &chars[l] );
+				UI16 charDist = getDist( i, &chars[l] );
                 if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( i ) == ARCHERY && charDist <= 3 ) ) )
 				{
 					i->FlushPath();
@@ -1526,7 +1516,7 @@ void cMovement::NpcMovement( CChar *i )
                 if( isOnline( &chars[k] ) || chars[k].IsNpc() )
                 {
 					UI08 charDir = getCharDir( i, chars[k].GetX(), chars[k].GetY() );
-					if( getCharDist( i, &chars[k] ) > 1 && charDir < 8 )
+					if( !objInRange( i, &chars[k], 1 ) && charDir < 8 )
                     {
                         PathFind( i, chars[k].GetX(), chars[k].GetY() );
 						j = i->PopDirection();
@@ -1540,33 +1530,24 @@ void cMovement::NpcMovement( CChar *i )
                 }
                 break;
             case 2: // Wander freely, avoiding obstacles.
-                if( j < 8 || j > 32 ) 
-					dnpctime = 2;
-                if( j > 7 && j< 33 ) // Let's move in the same direction lots of the time.  Looks nicer.
-                    j = i->GetDir();
-                NpcWalk( i, j, 0 );
-                break;
             case 3: // Wander freely, within a defined box
-                if( j < 8 || j > 32 ) 
-					dnpctime = 2;
-                if( j > 7 && j < 33 ) // Let's move in the same direction lots of the time.  Looks nicer.
-                    j = i->GetDir();
-                NpcWalk( i, j, 1 );
-                break;
             case 4: // Wander freely, within a defined circle
-                if( j < 8 || j > 32 ) 
-					dnpctime = 2;
-                if( j > 7 && j < 33 ) // Let's move in the same direction lots of the time.  Looks nicer.
+				j = RandomNum( 1, 5 );
+				if( j == 1 )
+					break;
+				else if( j == 2 )
+					j = RandomNum( 0, 8 );
+				else	// Move in the same direction the majority of the time
                     j = i->GetDir();
-                NpcWalk( i, j, 2 );
+                NpcWalk( i, j, i->GetNpcWander() );
                 break;
             case 5: //FLEE!!!!!!
                 k = i->GetTarg();
                 if( k == INVALIDSERIAL || k >= (int)cmem ) 
 					return;
-				if( getCharDist( i, &chars[k] ) < P_PF_MFD )
+				if( getDist( i, &chars[k] ) < P_PF_MFD )
 				{	// calculate a x,y to flee towards
-					UI16 mydist = P_PF_MFD - getCharDist( i, &chars[k] ) + 1;
+					UI16 mydist = P_PF_MFD - getDist( i, &chars[k] ) + 1;
 					j = getCharDir( i, chars[k].GetX(), chars[k].GetY() );
 					SI16 myx = GetXfromDir( j, i->GetX() );
 					SI16 myy = GetYfromDir( j, i->GetY() );
@@ -1600,30 +1581,24 @@ void cMovement::NpcMovement( CChar *i )
 				}
 				else
 				{ // wander freely... don't just stop because I'm out of range.
-					j = RandomNum( 0, 39 );
-					if( j < 8 || j > 32 ) 
-						dnpctime = 2;
-					if( j > 7 && j < 33 ) // Let's move in the same direction lots of the time.  Looks nicer.
+					j = RandomNum( 1, 5 );
+					if( j == 1 )
+						break;
+					else if( j == 2 )
+						j = RandomNum( 0, 8 );
+					else	// Move in the same direction the majority of the time
         				j = i->GetDir();
-					NpcWalk( i, j, 0 );
+					NpcWalk( i, j, i->GetNpcWander() );
 				}
                 break;
             default:
                 break;
             }
         }
-		const R32 npcSpeed = cwmWorldState->ServerData()->GetNPCSpeed();
-		if( dnpctime != 0 )
-			i->SetNpcMoveTime( BuildTimeValue( npcSpeed * (R32)dnpctime ) );
+		if( i->GetNpcWander() == 1 )	// Followers need to keep up with Players
+			i->SetNpcMoveTime( BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
 		else
-		{
-			if( i->IsTamed() )
-				i->SetNpcMoveTime( BuildTimeValue( npcSpeed / 4 ) ); //reset move timer
-			else if( i->IsShop() && !i->IsAtWar() )	// Stop the hyperactive Shopkeeper, unless they are out to pack a punch :) (Thunderstorm)
-				i->SetNpcMoveTime( BuildTimeValue( npcSpeed * 4 ) );	// reset move timer
-			else
-				i->SetNpcMoveTime( BuildTimeValue( npcSpeed ) ); //reset move timer
-		}
+			i->SetNpcMoveTime( BuildTimeValue( npcSpeed ) );
     }
 }
 
@@ -1710,16 +1685,16 @@ UI08 cMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
     illegal_z == -128, if walk is blocked
 
 ********************************************************/
-int cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
+SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
 {
 	if( c == NULL )
 		return illegal_z;
-	const SI32 oldz = c->GetZ();
+	const SI08 oldz = c->GetZ();
 	bool may_levitate = c->MayLevitate();
 	bool on_ladder = false;
-	SI32 newz = illegal_z;
+	SI08 newz = illegal_z;
 	bool blocked = false;
-	int ontype = 0;
+	char ontype = 0;
 
 	int xycount = 0;
 	UI08 worldNumber = c->WorldNumber();
@@ -1734,7 +1709,7 @@ int cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool j
 		CTileUni *tb = &xyblock[i]; // this is a easy/little tricky, to save a little calculation
 		                                 // since the [i] is calclated several times below
 			                             // if it doesn't help, it doesn't hurt either.
-		SI32 nItemTop = tb->BaseZ() + ((xyblock[i].Type() == 0) ? xyblock[i].Height() : calcTileHeight( xyblock[i].Height() ) ); // Calculate the items total height
+		SI08 nItemTop = (SI08)(tb->BaseZ() + ((xyblock[i].Type() == 0) ? xyblock[i].Height() : calcTileHeight( xyblock[i].Height() ) )); // Calculate the items total height
 
 		// check if the creature is floating on a static (keeping Z or falling)
 		if( nItemTop >= newz && nItemTop <= oldz )
@@ -1777,9 +1752,9 @@ int cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool j
 	}
 
 #if DEBUG_WALKING
-		printf( "CheckWalkable calculate Z=%d\n", newz );
+		Console.Print( "DEBUG: CheckWalkable calculate Z=%d\n", newz );
 #endif
-    int item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
+    SI08 item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
 	// also take care to look on all tiles the creature has fallen through
 	// (npc's walking on ocean bug)
 	// now the new Z-cordinate of creature is known, 
@@ -1796,7 +1771,7 @@ int cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool j
 			{ // in effact radius?
 				newz = illegal_z;
 #if DEBUG_WALKING
-				printf( "CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[ii].ID(), xyblock[ii].BaseZ() );
+				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[ii].ID(), xyblock[ii].BaseZ() );
 #endif
 				blocked = true;
 				break;
@@ -1812,7 +1787,7 @@ int cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool j
 	}
 
 #if DEBUG_WALK
-	printf("CanCharWalk: %dx %dy %dz\n", x, y, z);
+	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, z );
 #endif
 	if( (newz > illegal_z) && (!justask) ) // save information if we have climbed on last move.
 		c->MayLevitate( on_ladder );
@@ -1840,6 +1815,7 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 	return z > illegal_z;
 }
 
+#pragma note( "cMovement::MoveHeightAdjustment() is currently unrefrenced, are we planning on making use of it in the future?" )
 bool cMovement::MoveHeightAdjustment( int MoveType, CTileUni *thisblock, int &ontype, SI32 &nItemTop, SI32 &nNewZ )
 {
 	if( ( MoveType & P_C_IS_GM_BODY ) && ( CanGMWalk( *(thisblock) ) ) )
@@ -1931,7 +1907,7 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
     return false;
 }
 
-void cMovement::deny( cSocket *mSock, CChar *s, int sequence )
+void cMovement::deny( cSocket *mSock, CChar *s, SI16 sequence )
 {
 	CPWalkDeny denPack;
 

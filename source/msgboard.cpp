@@ -1762,7 +1762,7 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 	
 	// Set the expirey time on the NPC if no body accepts the quest
 	if( cwmWorldState->ServerData()->GetEscortInitExpire() )
-		npcIndex->SetSummonTimer( BuildTimeValue( cwmWorldState->ServerData()->GetEscortInitExpire() ) );
+		npcIndex->SetSummonTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetEscortInitExpire() )) );
 	
 	// Make sure the questDest is valid otherwise don't post and delete the NPC
 	if( !npcIndex->GetQuestDestRegion() )
@@ -1800,29 +1800,24 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 //////////////////////////////////////////////////////////////////////////////
 void MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock )
 {
-	char temp[1024];
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar == NULL )
 		return;
 
 	// Calculate payment for services rendered
-	int servicePay = ( RandomNum(0, 20) * RandomNum(1, 30) );  // Equals a range of 0 to 600 possible gold with a 5% chance of getting 0 gold
+	UI16 servicePay = ( RandomNum(0, 20) * RandomNum(1, 30) );  // Equals a range of 0 to 600 possible gold with a 5% chance of getting 0 gold
 
 	// If they have no money, well, oops!
 	if( servicePay == 0 )
-	{
-		sprintf( temp, Dictionary->GetEntry( 738 ), mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
-		npcTalk( mSock, npcIndex, temp, false );
-	}
+		npcTalk( mSock, npcIndex, 738, false, mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
 	else // Otherwise pay the poor sod for his time
 	{
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
 		if( servicePay < 75 ) 
 			servicePay += RandomNum( 75, 100 );
 		addgold( mSock, servicePay );
-		goldsfx( mSock, servicePay );
-		sprintf( temp, Dictionary->GetEntry( 739 ), mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
-		npcTalk( mSock, npcIndex, temp, false );
+		goldSound( mSock, servicePay );
+		npcTalk( mSock, npcIndex, 739, false, mChar->GetName(), region[npcIndex->GetQuestDestRegion()]->GetName() );
 	}
 	
 	// Inform the PC of what he has just been given as payment
@@ -1836,8 +1831,8 @@ void MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock )
 	npcIndex->SetQuestDestRegion( 0 );   // Reset quest destination region
 	
 	// Set a timer to automatically delete the NPC
-	npcIndex->SetSummonTimer( BuildTimeValue( cwmWorldState->ServerData()->GetEscortDoneExpire() ) );
-	npcIndex->SetOwner( INVALIDSERIAL );
+	npcIndex->SetSummonTimer( BuildTimeValue(static_cast<R32>( cwmWorldState->ServerData()->GetEscortDoneExpire() )) );
+	npcIndex->SetOwner( NULL );
 }
 
 
