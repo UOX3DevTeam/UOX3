@@ -1695,6 +1695,8 @@ void tips( cSocket *s, UI08 i )
 //|					 an item can stack) then stacks it. If the item is not stackable
 //|					 or it cannot stack the item with a pile and have an amount that
 //|					 is <= 65355 then it creates a new pile.
+//|									
+//|	Modification	-	09/25/2002	-	Brakthus - Weight fixes
 //o---------------------------------------------------------------------------o
 bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 {
@@ -1734,6 +1736,8 @@ bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
 					Network->PopConn();
 
 					stack->SetAmount( newAmt );
+					// Sept 25, 2002 - Brakthus
+					Weight->AddItemWeight(i, mChar); 
 					Items->DeleItem( i );
 					RefreshItem( stack );
 					if( mSock != NULL )
@@ -1945,6 +1949,9 @@ void grabItem( cSocket *mSock )
 		}
 		
 		i->SetCont( INVALIDSERIAL );
+		// Sept 25, 2002 - Brakthus - Weight fixes
+		if(mSock->PickupSpot()!=PL_OWNPACK && mSock->PickupSpot()!=PL_PAPERDOLL)
+			Weight->AddItemWeight(i, mChar);
 		MapRegion->RemoveItem( i );
 		CPRemoveItem remove( *i );
 		Network->PushConn();
@@ -2022,7 +2029,7 @@ void wearItem( cSocket *mSock )
 			sendItem( mSock, i );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
-			Weight->SubtractItemWeight( i, mChar );
+			//Weight->SubtractItemWeight( i, mChar );
 			statwindow( mSock, mChar );
 		}
 		return;
@@ -2081,6 +2088,8 @@ void wearItem( cSocket *mSock )
 		if( j != NULL )
 		{
 			Bounce( mSock, i );
+			// Sept 25, 2002 - Xuri - Weight Fixes
+			RefreshItem(i);
 			sysmessage( mSock, 1192 );
 			if( i->GetID( 1 ) >= 0x40 )
 				sendItem( mSock, i );
@@ -2101,6 +2110,8 @@ void wearItem( cSocket *mSock )
 	}
 
 	i->SetCont( cserial );
+
+	// Add item weight if pickupspot is not ownpack or paperdoll
 
 	if( showlayer ) 
 		Console << "Item equipped on layer " << i->GetLayer() << myendl;
@@ -2126,6 +2137,8 @@ void wearItem( cSocket *mSock )
 //|	  Modified	  :	 Abaddon, September 14th, 2001, returns true if item deleted
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when an item is dropped on a character
+//|									
+//|	Modification	-	09/25/2002	-	Xuri/Brakthus - Weight fixes
 //o---------------------------------------------------------------------------o
 bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 {
@@ -2140,13 +2153,16 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 		if( pack == NULL ) // if player has no pack, put it at its feet
 		{ 
 			i->SetLocation( mChar );
+			// Sept 25, 2002 - Xuri - Weight bugs
+			Weight->SubtractItemWeight(i, mChar);
 			RefreshItem( i );
 		} 
 		else
 		{
-			if( targChar == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
-				Weight->AddItemWeight( i, mChar );
+			//if( targChar == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
+			//	Weight->AddItemWeight( i, mChar );
 			stackDeleted = autoStack( mSock, i, pack );
+			return true;
 		}
 	}
 	else if( targChar->IsNpc() )
@@ -2172,6 +2188,10 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 		}
 		if( targChar->GetID() != 0x0190 && targChar->GetID() != 0x0191 )
 		{
+			// Sept 25, 2002 - Xuri - Weight fixes
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->SubtractItemWeight( i, mChar );
+			//
 			Bounce( mSock, i );
 			if( i->GetCont() == INVALIDSERIAL )
 			{
@@ -2183,6 +2203,10 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 		}
 		else if( mChar->GetTrainer() != targChar->GetSerial() )
 		{
+			// Sept 25, 2002 - Xuri - weight fix
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->SubtractItemWeight( i, mChar );
+			//
 			npcTalk( mSock, targChar, 1197, false );
 			Bounce( mSock, i );
 			if( i->GetCont() == INVALIDSERIAL )
@@ -2215,7 +2239,8 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 					if( i->GetCont() == INVALIDSERIAL )
 					{
 						if( i->GetID( 1 ) >= 0x40 ) 
-							sendItem( mSock, i );
+							RefreshItem(i);
+							//sendItem( mSock, i );
 					}
 					else
 						sendItem( mSock, i );
@@ -2236,12 +2261,14 @@ bool dropItemOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 				if( i->GetCont() == INVALIDSERIAL )
 				{
 					if( i->GetID( 1 ) >= 0x40 ) 
-						sendItem( mSock, i );
+						RefreshItem(i);
+						//sendItem( mSock, i );
 				}
 				else
 					sendItem( mSock, i );
 			}
 		}
+		RefreshItem(i); 
 	}
 	else // Trade stuff
 	{
@@ -2317,7 +2344,8 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 	{
 		Bounce( mSock, i );
 		if( i->GetID( 1 ) >= 0x40 ) 
-			sendItem( mSock, i );
+			RefreshItem(i);
+			//sendItem( mSock, i );
 		return;
 	}
 
@@ -2328,7 +2356,8 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 	{
 		Bounce( mSock, i );
 		if( i->GetID( 1 ) >= 0x40 )
-			sendItem( mSock, i );
+			RefreshItem(i);
+			//sendItem( mSock, i );
 		return;
 	}
 	
@@ -2434,7 +2463,8 @@ void packItem( cSocket *mSock )
 	{
 		Bounce( mSock, nItem );
 		if( nItem->GetID( 1 ) >= 0x40 )
-			sendItem( mSock, nItem );
+			RefreshItem(nItem);
+			//sendItem( mSock, nItem );
 		return;
 	}
 
@@ -2444,6 +2474,7 @@ void packItem( cSocket *mSock )
 		( nItem->GetMagic() == 3 && nItem->GetOwner() != mChar->GetSerial() ) )
 	{
 		Bounce( mSock, nItem );
+		RefreshItem(nItem);
 		if( nCont->GetID( 1 ) >= 0x40 ) 
 			sendItem( mSock, nCont );
 		return;
@@ -2472,6 +2503,7 @@ void packItem( cSocket *mSock )
 		if( c != NULL && c != mChar && !mChar->CanSnoop() )
 		{
 			Bounce( mSock, nItem );
+			RefreshItem(nItem);
 			sysmessage( mSock, 1203 );
 			if( nCont->GetID( 1 ) >= 0x40 ) 
 				sendItem( mSock, nCont );
@@ -2532,10 +2564,14 @@ void packItem( cSocket *mSock )
 		{
 			CPRemoveItem toRemove = (*nItem);
 			
-			nCont->SetAmount( nCont->GetAmount() + nItem->GetAmount() );
 			CChar *nChar = getPackOwner( nCont );
-			if( nChar != mChar )
+			nCont->SetAmount( nCont->GetAmount() + nItem->GetAmount() );
+			RefreshItem(nCont);
+			if(nChar)
+				Weight->AddItemWeight(nItem,nChar);
+			if(mChar)
 				Weight->SubtractItemWeight( nItem, mChar );
+
 			Items->DeleItem( nItem );
 
 			Network->PushConn();
@@ -2566,13 +2602,19 @@ void packItem( cSocket *mSock )
 					mChar->SetSpeechMode( 3 );
 					mChar->SetSpeechItem( nItem->GetSerial() );
 					sysmessage( mSock, 1207 );
+					Weight->SubtractItemWeight(nItem,mChar);
 				}
 				else if( j != mChar && mChar->GetCommandLevel() < CNSCMDLEVEL )
 				{
 					sysmessage( mSock, 1630 );
 					Bounce( mSock, nItem );
+					RefreshItem(nItem);
 					return;
 				}
+			}
+			else
+			{
+				Weight->SubtractItemWeight(nItem,mChar);
 			}
 			nItem->SetZ( 9 );
 
@@ -2584,10 +2626,10 @@ void packItem( cSocket *mSock )
 
 			RefreshItem( nItem );
 
-			if( j != NULL && j != mChar )
-				Weight->SubtractItemWeight( nItem, mChar );
-			else if( j != NULL && j == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
-				Weight->AddItemWeight( nItem, mChar );
+			//if( j != NULL && j != mChar )
+			//	Weight->SubtractItemWeight( nItem, mChar );
+			//else if( j != NULL && j == mChar && !( mSock->PickupSpot() == PL_OWNPACK || mSock->PickupSpot() == PL_PAPERDOLL ) )
+			//	Weight->AddItemWeight( nItem, mChar );
 
 			statwindow( mSock, mChar );
 
@@ -2677,23 +2719,11 @@ void MountCreature( CChar *s, CChar *x )
 	char temp[1024];
 	if( x->GetOwner() == s->GetSerial() || s->IsGM() )
 	{
-		//if( s->IsOnHorse() )
-		//{
-		//	sysmessage( sockPtr, 1213 );
-		//	return;
-		//}
-		// Sept 22, 2002 - Xuri
 		if(s->IsOnHorse() )
 		{
 			if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
 				s->ExposeToView();
-			//else
-			//{
-			//	sysmessage( sockPtr, 1213 );
-			//	return;
-			//}
 		}
-		//
 		strcpy( temp, x->GetName() );
 		s->SetOnHorse( true );
 		CItem *c = Items->SpawnItem( sockPtr, 1, temp, false, 0x0915, x->GetSkin(), false, false );
@@ -4614,7 +4644,7 @@ void ParseArgs( int argc, char *argv[] )
 			Accounts->AddAccount( username, password, email );
 			Console << "|    Username: " << username << " Email: " << email << "\n";
 		}
-		else if( !strncmp( argv[i], "+import:", sizeof(char)*9 ) )
+		else if( !strncmp( argv[i], "+import:", sizeof(char)*8 ) )
 		{
 			//	EviLDeD:	030902:	Added this so people could add accounts froma file that contains username/password/email format per line
 			string  filename,username,password,email;
@@ -8083,12 +8113,14 @@ void loadregions( void )
 	const char *data = NULL;
 	bool performLoad = false;
 	Script *ourRegions = NULL;
-	FILE *ourReg = fopen( "regions.wsc", "r" );
+	char regionsFile[MAX_PATH];
+	sprintf(regionsFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "regions.wsc");
+	FILE *ourReg = fopen( regionsFile, "r" );
 	if( ourReg != NULL )
 	{
 		performLoad = true;
 		fclose( ourReg );
-		ourRegions = new Script( "regions.wsc", NUM_DEFS, false );
+		ourRegions = new Script( regionsFile, NUM_DEFS, false );
 	}
 	for( i = 0; i < 256; i++ )
 	{

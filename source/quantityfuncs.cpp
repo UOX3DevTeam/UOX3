@@ -306,7 +306,12 @@ SI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Remove a certain amount of an item of specified color on a character
+//|   Purpose     :  Remove a certain amount of an item of specified color on 
+//|									a character
+//|									
+//|	Modification	-	09/24/2002	-	EviLDeD - Resource calculations fixed.
+//|									
+//|	Modification	-	09/25/2002	-	Brakhtus - Weight Fixes
 //o---------------------------------------------------------------------------o
 SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 {
@@ -325,10 +330,11 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 		{
 			if( i->GetType() == 1 )	// Is item an pack or contaier ?
 			{
-				printf("\n*****\nItemname: %s\nRealID: %i\nitemColor: %i\nAmmount: %i\n*****\n",
-					i->GetName(), realID, realColour, amount);
+				Weight->SubtractItemWeight(i,s);
 				SI32 deld;
 				deld = deleSubItemAmt( i, realID, realColour, amount );
+				if(i)
+					Weight->AddItemWeight(i,s);
 				total -= deld;
 				amtDeleted += deld;
 			}
@@ -338,11 +344,15 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 				{
 					total -= i->GetAmount();
 					amtDeleted += i->GetAmount();
+					Weight->SubtractItemWeight(i,s);
 					Items->DeleItem( i );
 				}
 				else
 				{
+					Weight->SubtractItemWeight(i,s);
 					decItemAmount( i, total );
+					if(i)
+						Weight->AddItemWeight(i,s);
 					total = 0;
 					amtDeleted = amount;
 				}
