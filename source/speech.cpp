@@ -82,7 +82,7 @@ void npctalkall(int npc, char *txt, char antispam ) // NPC speech to all in rang
 	int i;
 	
 	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
+		if (perm[i] && inrange1p(npc, currchar[i]))
 			npctalk(i, npc, txt, antispam );
 }
 
@@ -138,7 +138,7 @@ void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in ran
 	if (npc==-1) return;
 	
 	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
+		if (perm[i] && inrange1p(npc, currchar[i]))
 			npcemote(i, npc, txt, antispam );
 }
 
@@ -228,7 +228,7 @@ void talking( UOXSOCKET s ) // PC speech
 			for (i=0;i<now;i++)
 			{
 				//if ((inrange1(i, s)&&perm[i]))
-				if (inrange1(i, s) && perm[i])// && //LOS check commented out for now -- AntiChrist
+				if ( perm[i] && inrange1(i, s) )// && //LOS check commented out for now -- AntiChrist
 					//line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING))
 				{
 					Network->xSend(i, talk, 14, 0);
@@ -483,7 +483,7 @@ void unicodetalking( UOXSOCKET s) // PC speech
 				//if ((inrange1(i, s)&&perm[i]))
 				// AntiChrist - don't check line of sight for talking!!!
 				// we can talk normally through walls, can we?  That's new to me (Abaddon)
-				if (inrange1(i, s)&&perm[i])//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
+				if ( perm[i] && inrange1(i, s) )//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
 				{
 					Network->xSend(i, talk2, 18, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);          

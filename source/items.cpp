@@ -1751,7 +1751,7 @@ void cItem::CheckEquipment(CHARACTER p) // check equipment of character p
 					mapRegions->AddItem( i );
 								
 					for( j = 0; j < now; j++ )
-						if( inrange1p( p, currchar[j] ) && perm[j] )
+						if( perm[j] && inrange1p( p, currchar[j] ) )
 						{
 							wornitems(j, p);
 						}

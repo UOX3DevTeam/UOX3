@@ -28,6 +28,22 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 
+-------------------------------------------------------------------------------
+01.02.2001
+   uox3.cpp              Changed inrange1(), inrange1p(), chardist(), itemdist(),
+                         inrange2(), iteminrange() and npcinrange() to use less 
+                         memory and gives some minor speed up.
+                         Changed telltime() to use switch structure.
+   trigger.cpp           Using distance calculation functions in script processing,
+   items.cpp             rather than implementing it again.
+   combat.cpp            Changed order of if evaluation to take advantage of boolean
+   npcs.cpp              short-cut.
+   skills.cpp
+   speech.cpp
+   dbl_sinlge_click.cpp  Changed object delay is half server's default when openning
+                         or closing doors.
+                         Changed message "You have been poisoned!" to
+                         "Thou ain't feeling well" (only when eating poisoned food).
 
 -------------------------------------------------------------------------------
 01.02.2001               Axel Kittenber              Axel

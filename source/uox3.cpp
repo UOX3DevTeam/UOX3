@@ -286,6 +286,7 @@ void hextostr( int i, char *string )
 	sprintf(string, "%x", i);
 #endif
 }
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	void readscript(void)
 //|	Date		-	Uknown
@@ -479,98 +480,79 @@ void read2( FILE *toRead ) // Read line from script
 
 int inrange1 (UOXSOCKET a, UOXSOCKET b) // Are players from sockets a and b in visual range (Obsolete)
 {
-	int c=1;
-	int xa, xb, ya, yb, dx, dy;
-	if (a==b) c=0;
-	xa=chars[currchar[a]].x;
-	ya=chars[currchar[a]].y;
-	xb=chars[currchar[b]].x;
-	yb=chars[currchar[b]].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-	if ( dx > Races->getVisRange( chars[currchar[a]].race ) ) c=0;
-	if ( dy > Races->getVisRange( chars[currchar[a]].race ) ) c=0;
-	return c;
-}
+	int dx, dy;
+	if (a == b) return 1;        //If a == b they are not in range? Changed to c = 1
 
+	dx = abs(chars[currchar[a]].x - chars[currchar[b]].x);
+	dy = abs(chars[currchar[a]].y - chars[currchar[b]].y);
+	if ( dx > Races->getVisRange( chars[currchar[a]].race ) ||
+	     dy > Races->getVisRange( chars[currchar[a]].race ) ) return 0;
+	else 
+		return 1;
+}
 int inrange1p (CHARACTER a, CHARACTER b) // Are characters a and b in visual range
 {
-	int c=1;
-	int xa, xb, ya, yb, dx, dy;
-	
-	if (a<0 || a>cmem || b<0 || c>cmem) return 0; //LB
 
-	if( a == b ) return 1; // AntiChrist
-	xa=chars[a].x;
-	ya=chars[a].y;
-	xb=chars[b].x;
-	yb=chars[b].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-	if ( dx > Races->getVisRange( chars[a].race ) ) c=0;
-	if ( dy > Races->getVisRange( chars[a].race ) ) c=0;
-	return c;
+	int dx, dy;
+	
+	if ( a < 0 || a > cmem || b < 0 || b > cmem) return 0; //LB
+
+	if ( a == b ) return 1; // AntiChrist
+
+	dx = abs(chars[a].x - chars[b].x);
+	dy = abs(chars[a].y - chars[b].y);
+	if ( dx > Races->getVisRange( chars[a].race ) ||
+	     dy > Races->getVisRange( chars[a].race ) ) return 0;
+	else 
+		return 1;
 }
+
 
 unsigned int chardist (CHARACTER a, CHARACTER b) // Distance between characters a and b
 {
-	int c=1;
-	if (a==-1 || b==-1) 
+	if (a == -1 || b == -1) 
 		return 30;
-	int xa, xb, ya, yb, dx, dy;
 
-	xa=chars[a].x;
-	ya=chars[a].y;
-	xb=chars[b].x;
-	yb=chars[b].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-#ifdef __NT__
-	c=(int)(sqrt(dx*dx+dy*dy));
-#else
-	c=(int)(hypot(dx, dy));
-#endif
+	int c = 1;
+	int dx, dy;
+
+	dx = abs(chars[a].x - chars[b].x);
+	dy = abs(chars[a].y - chars[b].y);
+	c = (int) (hypot(dx, dy));   //hypot is present in win32 as well as in Unix.
 	return c;
 }
 
 // calculates distance between item i and player a
 unsigned int itemdist( CHARACTER a, int i )
 {
+	if( a == -1 || i == -1 )
+		return 30;
+
 	int c = 1;
-	if( a == -1 || i == -1 ) return 30;
-	int xa, xb, ya, yb, dx, dy;
-	xa = chars[a].x;
-	ya = chars[a].y;
-	xb = items[i].x;
-	yb = items[i].y;
-	dx = abs( xa - xb );
-	dy = abs( ya - yb );
-#ifdef __NT__
-	c = (int)(sqrt( dx*dx + dy*dy ));
-#else
-	c = (int)(hypot( dx, dy ));
-#endif
+	int dx, dy;
+
+	dx = abs( chars[a].x - items[i].x );
+	dy = abs( chars[a].y - items[i].y );
+	c = (int) (hypot( dx, dy ));   //hypot is present in win32 as well as in Unix
 	return c;
 }
-
 
 int inrange2 (UOXSOCKET s, ITEM i) // Is item i in visual range for player on socket s
 {
 	int c=1;
-	int xa, xb, ya, yb, dx, dy;
-	int vr=Races->getVisRange( chars[currchar[s]].race );
+	int dx, dy;
+	int vr = Races->getVisRange( chars[currchar[s]].race );
 	
-  if ((items[i].id1==0x40)&&(items[i].id2>=0x7C)&&(items[i].id2<=0x7F)) vr=BUILDRANGE;
-	xa=chars[currchar[s]].x;
-	ya=chars[currchar[s]].y;
-	xb=items[i].x;
-	yb=items[i].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-	if (dx>vr) c=0;
-	if (dy>vr) c=0;
-	return c;
+    if ((items[i].id1==0x40)&&(items[i].id2>=0x7C)&&(items[i].id2<=0x7F)) vr = BUILDRANGE;
+  
+	dx = abs(chars[currchar[s]].x - items[i].x);
+	dy = abs(chars[currchar[s]].y - items[i].y);
+	if (dx > vr || dy > vr)
+		return 0;
+	else
+		return 1;
 }
+
 
 // safely copy a string that might be longer than the destination, truncating if needed,
 // but never copy over to much so it might crash.
@@ -692,10 +674,10 @@ void loadcustomtitle() // for custom titles
 
 char *title1(CHARACTER p) // Paperdoll title for character p (1)
 {
-	int titlenum;
-  int x=chars[p].baseskill[bestskill(p)];
-  
-	titlenum=0;
+	int titlenum = 0;
+    int x = chars[p].baseskill[bestskill(p)];
+
+	//Not sure if it worst changing to else..if structure.
 	if (x>=300) titlenum=1;
 	if (x>=410) titlenum=2;
 	if (x>=510) titlenum=3;
@@ -727,9 +709,9 @@ char *title3(CHARACTER p) // Paperdoll title for character p (3)
 	int k;
 	unsigned int f;
 	
-  k=chars[p].karma;
+    k=chars[p].karma;
 	f=chars[p].fame;
-	*thetitle='\0'; // was sprintf(thetitle,"");
+	thetitle[0] = 0; //Initialize with empty string.
 	
 	if (k>=10000)
 	{
@@ -834,7 +816,7 @@ char *title3(CHARACTER p) // Paperdoll title for character p (3)
 			strcpy(fametitle,"The Murderer "); //Morrolan rep
         }
 		else if (!(strcmp(thetitle," ")==0)) sprintf(fametitle,"The %s",thetitle);
-		else *fametitle='\0'; // was sprintf(fametitle,"");
+		else fametitle[0] = 0;
 	}
 	
 	//
@@ -996,18 +978,18 @@ void loadatrophy( CHARACTER c, char *astr )
 void loadchar(int x) // Load a character from WSC
 {
 	unsigned long int i,k,b,c1;
-	int j,a=0, loops=0;
-	char newpoly=0;
+	int j,a = 0, loops = 0;
+	char newpoly = 0;
 
 	x=Npcs->MemCharFree();
 	if (x==-1) return;
 	Npcs->InitChar(x,0);
-	chars[x].dir=4;
-	chars[x].hp=chars[x].st=10;
-	chars[x].stm=chars[x].dx=10;
-	chars[x].mn=chars[x].in=10;
-	chars[x].race=0;
-	chars[x].raceGate=65535;
+	chars[x].dir = 4;
+	chars[x].hp = chars[x].st = 10;
+	chars[x].stm = chars[x].dx = 10;
+	chars[x].mn = chars[x].in = 10;
+	chars[x].race = 0;
+	chars[x].raceGate = 65535;
 	chars[x].tamed = false;
 	chars[x].runs = false;
 	chars[x].guarded = false;
@@ -1429,20 +1411,10 @@ void loaditem (int x) // Load an item from WSC
 		case 'C':
 			if (!(strcmp(script1, "COLOR")))
 			{
-				i=str2num(script2);
+				i = str2num(script2);
 				
-//				b=((i&0x4000)>>14)+((i&0x8000)>>15);	       
-//				if (!b)
-//				{
-					items[x].color1=(unsigned char)(i>>8);
-					items[x].color2=(unsigned char)(i%256);
-//				} else 
-//				{
-//					dummy.color1 = items[x].color1=0; // bugged color found, leave it undyed
-//					dummy.color2 = items[x].color2=0;
-//					printf("item# %i with problematic hue corrected\n",items[x].serial);
-//				}
-			
+					items[x].color1 = (unsigned char)(i>>8);
+					items[x].color2 = (unsigned char)(i%256);
 			}
 			else if (!(strcmp(script1, "CONT")))
 			{
@@ -1779,10 +1751,9 @@ void savelog(const char *msg, char *logfile)
 // Load character and item data from load chars.wsc and items.wsc
 void loadnewworld ( void )
 {
-	char outper[4]; // Magius(CHE) (1)
+	char outper[4] = {0,}; // Magius(CHE) (1)
 	unsigned int i=0;
 	unsigned int percent = 0, a = 0, pred = 0, maxm = 0; // Magius(CHE) (1)
-	*outper='\0';
 	cmem=0;
 	imem=0;
 	printf("Loading World, Building map Regions, checking Item weight...\n");
@@ -1915,7 +1886,7 @@ void loadnewworld ( void )
 						percent = (int)(a*100)/(maxm - 1); // Magius(CHE) (1)
 					if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 						for( i = 1; i <= strlen( outper ) + 1; i++ ) printf("\b" );
-						*outper = '\0';
+						outper[0] = 0;
 					}
 				}
 				if( percent > pred ) // Changed by MAgius(CHE) (1)
@@ -1931,7 +1902,7 @@ void loadnewworld ( void )
 		}
 		if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 			for( i = 1; i <= strlen( outper ) + 1; i++ ) printf( "\b" );
-			*outper = '\0';
+			outper[0] = 0;
 		}
 		printf("Done.\n" ); // Magius(CHE)
 		printf("World Loaded.\n");
@@ -2216,7 +2187,7 @@ void action( UOXSOCKET s, int x) // Character does a certain action
 	doact[6] = x%256;
 	Network->xSend( s, doact, 14, 0 );
 	for( i = 0; i < now; i++ ) 
-		if( ( inrange1( s, i ) ) && ( perm[i] ) ) 
+		if( ( perm[i] ) && ( inrange1( s, i ) ) ) 
 			Network->xSend( i, doact, 14, 0 );
 }
 
@@ -3318,7 +3289,7 @@ void teleport(int s) // Teleports character to its current set coordinates
 		// Dupois - had to remove the && (k!=i)), doesn update the client
 		// Added Oct 08, 1998
 		if (perm[i]) Network->xSend(i, removeitem, 5, 0);
-		if ((inrange1p(s, currchar[i]))&&(perm[i]))// && (k!=i)) // If inrange, and a player
+		if ((perm[i])&&(inrange1p(s, currchar[i])))// && (k!=i)) // If inrange, and a player
 			impowncreate(i, s, 1);
 	}
 	if (k!=-1)
@@ -3418,7 +3389,7 @@ void teleport2(int s) // used for /RESEND only - Morrolan, so people can find th
 		{
 			// Dupois - had to remove the && (k!=i)), doesn update the client
 			// Added Oct 08, 1998
-			if ((inrange1p(s, currchar[i]))&&(perm[i]))// && (k!=i)) // If inrange, and a player
+			if ((perm[i])&&(inrange1p(s, currchar[i])))// && (k!=i)) // If inrange, and a player
 			{
 				impowncreate(i, s, 1);
 			}
@@ -3808,7 +3779,9 @@ void updatestats(int c, char x)
 	updater[6]=a%256;
 	updater[7]=b>>8;
 	updater[8]=b%256;
-	for (i=0;i<now;i++) if (inrange1p(currchar[i], c) && perm[i]) Network->xSend(i, updater, 9, 0);
+	for (i=0;i<now;i++) 
+		if (perm[i] && inrange1p(currchar[i], c) ) 
+			Network->xSend(i, updater, 9, 0);
 }
 
 void statwindow(int s, int i) // Opens the status window
@@ -6447,7 +6420,7 @@ void unicodetalking(int s) // PC speech
 				//if ((inrange1(i, s)&&perm[i]))
 				// AntiChrist - don't check line of sight for talking!!!
 				// we can talk normally through walls, can we?  That's new to me (Abaddon)
-				if (inrange1(i, s)&&perm[i])//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
+				if (perm[i] && inrange1(i, s))//&&line_of_sight(s, chars[currchar[s]].x, chars[currchar[s]].y, chars[currchar[s]].z, chars[currchar[i]].x, chars[currchar[i]].y, chars[currchar[i]].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING)) //AntiChrist
 				{
 					Network->xSend(i, talk2, 18, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);          
@@ -6682,7 +6655,8 @@ void mounthorse(int s, int x) // Remove horse char and give player a horse item
 		wornitems(s, currchar[s]); // send update to current socket
 		for (j=0;j<now;j++) // and to all inrange sockets (without re-sending to current socket )
 		{
-			if (inrange1(s, j) && perm[j] && ( s!=j ) ) wornitems(j, currchar[s]);
+			if ( perm[j] && inrange1(s, j) && ( s!=j ) ) 
+				wornitems(j, currchar[s]);
 		}
 		Npcs->DeleteChar(x);
 	}
@@ -9669,40 +9643,34 @@ void Shutdown( int retCode )
 
 char iteminrange( UOXSOCKET s, ITEM i, int distance )
 {
-	int c=1;
-	int xa, xb, ya, yb, dx, dy;
-	int vr=distance;
-	xa = chars[currchar[s]].x;
-	ya = chars[currchar[s]].y;
-	xb = items[i].x;
-	yb = items[i].y;
-	dx = abs( xa - xb );
-	dy = abs( ya - yb );
-	if( dx > vr ) 
-		c = 0;
-	if( dy > vr ) 
-		c = 0;
+
+	int dx, dy;
+
 	if( chars[currchar[s]].priv&1 ) 
-		c = 1;
-	return c;
+		return 1;
+
+	dx = abs( chars[currchar[s]].x - items[i].x );
+	dy = abs( chars[currchar[s]].y - items[i].y );
+	if ( dx > distance || dy > distance )
+		return 0;
+	else
+		return 1;
 }
 
 char npcinrange (int s, int i, int distance)
 {
 	int c=1;
-	int xa, xb, ya, yb, dx, dy;
-	int vr=distance;
-	if (i==-1) return 1;
-	xa=chars[currchar[s]].x;
-	ya=chars[currchar[s]].y;
-	xb=chars[i].x;
-	yb=chars[i].y;
-	dx=abs(xa-xb);
-	dy=abs(ya-yb);
-	if (dx>vr) c=0;
-	if (dy>vr) c=0;
-	if (chars[currchar[s]].priv&1) c=1;
-	return c;
+	int dx, dy;
+
+	if ((chars[currchar[s]].priv&1) || (i==-1)) return 1;
+
+	dx = abs(chars[currchar[s]].x - chars[i].x);
+	dy = abs(chars[currchar[s]].y - chars[i].y);
+
+	if (dx > distance || dy > distance) 
+		return 0;
+	else
+		return c;
 }
 
 int ishuman( int p )
@@ -10102,7 +10070,7 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 	// printf("CRASH2??\n");
 	for (j=0;j<now;j++)
 	{
-		if ((inrange1p(currchar[j],player))&&(perm[j]))
+		if ((perm[j]) && (inrange1p(currchar[j],player)))
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10191,7 +10159,7 @@ void staticeffect2(int nItem, unsigned char eff1, unsigned char eff2, char speed
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{  // if inrange of effect and online send effect
-		if (inrange2(j,nItem) && perm[j])
+		if ( perm[j] && inrange2(j,nItem) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10224,7 +10192,7 @@ void bolteffect(int player)
 	effect[27] = 0;
 	for (j=0;j<now;j++)
 	{
-		if ((inrange1p(currchar[j],player))&&(perm[j]))
+		if ((perm[j]) && (inrange1p(currchar[j],player)))
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10283,7 +10251,7 @@ void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
 	
 	for (j=0;j<now;j++)
 	{
-		if ((inrange1p(currchar[j],player))&&(perm[j]))
+		if ((perm[j]) && (inrange1p(currchar[j],player)))
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10509,8 +10477,8 @@ void doworldlight(void)
 
 void telltime( UOXSOCKET s )
 {
-	char tstring[100];
-	char tstring2[100];
+	char tstring[60];  //Won't even be 35.
+	char tstring2[60];
 	int lhour;
 	lhour=hour;
 	
@@ -10524,20 +10492,48 @@ void telltime( UOXSOCKET s )
 		if (lhour==0) lhour=12;
 	}
 	
-	if (lhour==1) sprintf(tstring2,"%s one o'clock",tstring);
-	else if (lhour==2) sprintf(tstring2,"%s two o'clock",tstring);
-	else if (lhour==3) sprintf(tstring2,"%s three o'clock",tstring);
-	else if (lhour==4) sprintf(tstring2,"%s four o'clock",tstring);
-	else if (lhour==5) sprintf(tstring2,"%s five o'clock",tstring);
-	else if (lhour==6) sprintf(tstring2,"%s six o'clock",tstring);
-	else if (lhour==7) sprintf(tstring2,"%s seven o'clock",tstring);
-	else if (lhour==8) sprintf(tstring2,"%s eight o'clock",tstring);
-	else if (lhour==9) sprintf(tstring2,"%s nine o'clock",tstring);
-	else if (lhour==10) sprintf(tstring2,"%s ten o'clock",tstring);
-	else if (lhour==11) sprintf(tstring2,"%s eleven o'clock",tstring);
-	else if ((lhour==12)&&(ampm)) sprintf(tstring2,"%s midnight.",tstring);
-	else sprintf(tstring2,"%s noon.",tstring);
-	
+	switch (lhour) {
+	case 1:
+		sprintf(tstring2,"%s one o'clock",tstring);
+		break;
+	case 2:
+		sprintf(tstring2,"%s two o'clock",tstring);
+		break;
+	case 3:
+		sprintf(tstring2,"%s three o'clock",tstring);
+		break;
+	case 4:
+		sprintf(tstring2,"%s four o'clock",tstring);
+		break;
+	case 5:
+		sprintf(tstring2,"%s five o'clock",tstring);
+		break;
+	case 6:
+		sprintf(tstring2,"%s six o'clock",tstring);
+		break;
+	case 7:
+		sprintf(tstring2,"%s seven o'clock",tstring);
+		break;
+	case 8:
+		sprintf(tstring2,"%s eight o'clock",tstring);
+		break;
+	case 9:
+		sprintf(tstring2,"%s nine o'clock",tstring);
+		break;
+	case 10:
+		sprintf(tstring2,"%s ten o'clock",tstring);
+		break;
+	case 11:
+		sprintf(tstring2,"%s eleven o'clock",tstring);
+		break;
+	case 12:
+		if (ampm)
+			sprintf(tstring2,"%s midnight.",tstring);
+		else 
+			sprintf(tstring2,"%s noon.",tstring);
+		break;
+	}
+
 	if (lhour==12) strcpy(tstring, tstring2);
 	else if (ampm)
 	{
@@ -10964,7 +10960,7 @@ void checktempeffects()
 				teleport(s);
 				break;
 			case 19: //Incognito spell by AntiChrist
-				printf("INCOGNITO SPELL FINISHED!!\n");
+//				printf("INCOGNITO SPELL FINISHED!!\n");
 				int serhash,ci,serial;
 				
 				// ------ SEX ------
@@ -10982,7 +10978,7 @@ void checktempeffects()
 					if (j!=-1) {
 						// ------ HAIR -----
 						if(items[j].layer==0x0B) { //change hair style/color
-							printf("HAIR FOUND!!\n");
+							//printf("HAIR FOUND!!\n");
 							//stores old hair values
 							items[j].color1=chars[s].haircolor1;
 							items[j].color2=chars[s].haircolor2;
@@ -10997,7 +10993,7 @@ void checktempeffects()
 						// only if a men :D
 						if(chars[s].id2==0x90)
 							if(items[j].layer==0x10) { //change beard style/color
-								printf("BEARD FOUND!!\n");
+								//printf("BEARD FOUND!!\n");
 								//stores old beard values
 								items[j].color1=chars[s].beardcolor1;
 								items[j].color2=chars[s].beardcolor2;
@@ -11088,7 +11084,6 @@ void checktempeffects()
 				Magic->doMoveEffect( 43, targ, src );
 				Magic->doStaticEffect( targ, 43 );
 				Magic->MagicDamage( targ, Effect->more1, src );				
-//				Magic->MagicDamage( );
 				break;
 			default:
 				printf("ERROR: Fallout of switch statement without default. uox3.cpp, checktempeffects()\n"); //Morrolan
@@ -11308,8 +11303,9 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		int c1, b, k;
 		// Grey flag when polymorphed - AntiChrist (9/99)
 		chars[dest].crimflag=(polyduration*CLOCKS_PER_SEC)+uiCurrentTime;
-		if( chars[dest].onhorse) k = unmounthorse(dest);
-		k=(more1<<8)+more2;
+		if( chars[dest].onhorse) 
+			k = unmounthorse(dest);
+		k = (more1<<8)+more2;
 		
 		if (k>=0x000 && k<=0x3e1) // lord binary, body-values >0x3e crash the client
 		{ 

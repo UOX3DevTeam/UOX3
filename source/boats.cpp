@@ -794,7 +794,7 @@ void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/i
 	
 	for (a=0;a<now;a++)
 	{
-		if (iteminrange(a,b,BUILDRANGE) && perm[a])
+		if (perm[a] && iteminrange(a,b,BUILDRANGE))
 		{
 			Send[d]=a;
 			Network->xSend(a,pausex,2,0);

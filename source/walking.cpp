@@ -942,7 +942,7 @@ void cMovement::HandleRegionStuffAfterMove(CHARACTER c, short int oldx, short in
 #if DEBUG_WALKING
 	else
 	{
-		//printf("Guess what? I didn't change regions.\n");
+		printf("Guess what? I didn't change regions.\n");
 	}
 #endif
 

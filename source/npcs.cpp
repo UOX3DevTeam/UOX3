@@ -2593,7 +2593,7 @@ void npcaction( CHARACTER npc, int x ) // NPC character does a certain action
 	doact[5] = x>>8;
 	doact[6] = x%256;
 	for( i = 0; i < now; i++ ) 
-		if( ( inrange1p( currchar[i], npc ) ) && ( perm[i] ) ) 
+		if( ( perm[i] ) && ( inrange1p( currchar[i], npc ) ) ) 
 			Network->xSend( i, doact, 14, 0 );
 }
 

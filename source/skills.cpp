@@ -2431,7 +2431,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
 			for (i=0;i<now;i++)
 			{
-				if (inrange1p(currchar[i], target)&&perm[i])
+				if ( perm[i] && inrange1p(currchar[i], target ) )
 				{
 					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
 						chars[target].ser3, chars[target].ser4);
@@ -2481,7 +2481,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
 			for (i=0;i<now;i++)
 			{
-				if (inrange1p(currchar[i], target)&&perm[i])
+				if (perm[i] && inrange1p(currchar[i], target))
 				{
 					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
 						chars[target].ser3, chars[target].ser4);
@@ -6002,7 +6002,7 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 			sprintf( temp, "%s is persecuted by a ghost!!", chars[target].name );
 			for( int j = 0; j < now; j++ )
 			{
-				if(( inrange1( s, j ) && perm[j] ) && ( s != j ))
+				if(( perm[j] && inrange1( s, j ) ) && ( s != j ))
 				{
 					chars[currchar[s]].emotecolor1 = 0x00;
 					chars[currchar[s]].emotecolor2 = 0x26;

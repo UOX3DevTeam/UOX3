@@ -1801,7 +1801,7 @@ void PlayerAttack( UOXSOCKET s )
 		// Dupois pointed out the for loop was changing i which would drive stuff nuts later
 		for( j = 0; j < now; j++ )
 		{
-			if((inrange1(s, j) && perm[j]) && (s!=j))
+			if((perm[j] && inrange1(s, j)) && (s!=j))
 			{
 				npcemote(j, ourChar, temp, 1);
 			}

@@ -75,15 +75,11 @@ void triggerwitem(int ts, int ti, int ttype)
 	// Addons by Magius(CHE)
 	int evti = -1;
 	tile_st tile;
-	char tempname[512], tempname2[512], tempname3[512], tempstr[512];
-	*tempname='\0';
-	*tempname2='\0';
-	*tempname3='\0';
-	*tempstr='\0';
-	*cmsg='\0';
+	char tempname[512] = {0,}, tempname2[512] = {0,}, tempname3[512] = {0,}, tempstr[512] = {0,};
+	cmsg[0] = 0;
 	// end declaration for Magius
 	
-	*fmsg='\0'; // was sprintf(fmsg,"");
+	fmsg[0] = 0; 
 	
 	if (ttype==1)
 	{
@@ -153,21 +149,14 @@ void triggerwitem(int ts, int ti, int ttype)
 			// End Tauriel's new trigger token
 			if (!(strcmp("RANGE",script1)))  //Player in in range
 			{
-				x1=chars[currchar[ts]].x;
-				y1=chars[currchar[ts]].y;
 				if (ti>-1)
 				{
-					x2=items[ti].x;
-					y2=items[ti].y;
-					z2=items[ti].z;
 					p=currchar[ts];
 					r=packitem(currchar[ts]);
 					if (r!=-1) //lb
 						if (items[ti].contserial!=items[r].serial)
 						{
-							dx=abs(x1-x2);
-							dy=abs(y1-y2);
-							if ((dx>str2num(script2))||(dy>str2num(script2)))
+							if (itemdist(currchar[ts], ti) > str2num(script2))
 							{
 								strcpy(sect,"You are not close enough to use that.");
 								sysmessage(ts,sect);
@@ -181,7 +170,8 @@ void triggerwitem(int ts, int ti, int ttype)
 					z2=(buffer[ts][15]<<8)+buffer[ts][16];
 					dx=abs(x1-x2);
 					dy=abs(y1-y2);
-					if ((dx>str2num(script2))||(dy>str2num(script2)))
+					if (str2num(script2) < (int) hypot(dx, dy))
+//					if ((dx>str2num(script2))||(dy>str2num(script2)))
 					{
 						strcpy(sect,"You are not close enough to use that.");
 						sysmessage(ts,sect);
@@ -195,7 +185,7 @@ void triggerwitem(int ts, int ti, int ttype)
 				strcpy(sect, script2);
 				for (i=0;i<now;i++)
 				{
-					if (inrange1p(currchar[ts], currchar[i])&&perm[i])
+					if ( perm[i] && inrange1p(currchar[ts], currchar[i]) )
 					{
 						tl=44+strlen(sect)+1;
 						talk[1] = (unsigned char)tl>>8;
@@ -1192,7 +1182,7 @@ void triggerwitem(int ts, int ti, int ttype)
 				effect[27]=0x01; // This value is used for moving effects that explode on impact.
 				for (uiTempi=0;uiTempi<now;uiTempi++)
 				{
-					if ((inrange1p(currchar[uiTempi],ts))&&(inrange1p(currchar[uiTempi],ts))&&(perm[uiTempi]))
+					if ((perm[uiTempi])&&(inrange1p(currchar[uiTempi],ts))&&(inrange1p(currchar[uiTempi],ts)))
 					{
 						Network->xSend(uiTempi, effect, 28, 0);
 					}
@@ -1875,7 +1865,7 @@ void triggernpc(int ts,int ti)
 				effect[27]=0x00; // This value is used for moving effects that explode on impact.
 				for (j=0;j<now;j++)
 				{
-					if ((inrange1p(currchar[j],currchar[ts]))&&(inrange1p(currchar[j],currchar[ts]))&&(perm[j]))
+					if ((perm[j])&&(inrange1p(currchar[j],currchar[ts]))&&(inrange1p(currchar[j],currchar[ts])))
 					{
 						Network->xSend(j, effect, 28, 0);
 					}
