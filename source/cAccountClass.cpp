@@ -15,10 +15,6 @@
 
 extern cVersionClass CVC;
 
-//#ifndef __UOX3_DTL__
-//#define __UOX3_DTL__
-//#endif
-
 //o--------------------------------------------------------------------------o
 //|	Function			-	Class Construction and Desctruction
 //|	Date					-	12/6/2002 4:18:58 AM
@@ -30,22 +26,10 @@ extern cVersionClass CVC;
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-/*
-#ifdef __UOX3_DTL__
-cAccountClass::cAccountClass():m_sAccountsDirectory("dsn:uox3db")
-#else
-*/
 cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
-/*#endif*/
 {
 	m_wHighestAccount=0x0000;
 	I = m_mapUsernameIDMap.end();
-/*
-#ifdef __UOX3_DTL__
-	// We need to open this DB Connection
-	dtl::DBConnection::GetDefaultConnection().Connect(m_sAccountsDirectory); //"uid=example;pwd=example;dsn=exampleA;");
-#endif
-*/
 }
 //
 cAccountClass::cAccountClass(std::string sAccountsPath)
@@ -1311,44 +1295,6 @@ UI16 cAccountClass::Load(void)
 		fsAccountsADM.getline(sLine,128);
 		memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
 	}
-//#else
-	// Clear out the vector before using it
-	//m_vecDTLAccountVector.clear();
-	// Make sure to implement a configurable entery for this table name later
-	//dtl::DBView<cDBAccountClass> dbvView("T_ACCOUNTS");
-	//dtl::DBView::select_iterator I = dbvView.begin();
-	//for(;I!=dbvView.end();I++)
-	//{
-		// Push every valid iterator into the internal vector for transfer to the accounts maps.
-		//m_vecDTLAccountVector	.push_back(*I);
-	//}
-	// Crawl over the vector, inserting records from the DBView and put them into the maps
-	//std::vector<cDBAccountClass>::iterator J=m_vecDTLAccountVector.begin();
-	//for(;J!=m_vecDTLAccountVector.end();J++)
-	//{
-		// Ok push each record into the maps
-		//ACCOUNTSBLOCK actbTemp;
-		//actbTemp.sUsername=J->sUsername;
-		//actbTemp.sPassword=J->sPassword;
-		//actbTemp.sPath=J->sPath;
-		//actbTemp.sContact=J->sComment;
-		//actbTemp.wAccountIndex=(UI16)J->dwAccountID;
-		// Uncomment this when support has been implemented
-		// actbTemp.dwCommenetID=J->dwCommentID;
-		//
-		//actbTemp.wFlags=(UI16)J->dwFlags;
-		//actbTemp.dwInGame=J->dwInGame;
-		//actbTemp.dwLastIP=J->dwLaspIP;
-		//actbTemp.dwCharacters[0]=J->dwCharacter1;
-		//actbTemp.dwCharacters[1]=J->dwCharacter2;
-		//actbTemp.dwCharacters[2]=J->dwCharacter3;
-		//actbTemp.dwCharacters[3]=J->dwCharacter4;
-		//actbTemp.dwCharacters[4]=J->dwCharacter5;
-		// Ok this should be complete as supported, so push it into the maps
-		//m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
-		//m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
-	//}
-//#endif
 	// Return the number of accounts loaded
 	return m_mapUsernameMap.size();
 }
