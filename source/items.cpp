@@ -367,10 +367,7 @@ void cItem::InitItem(int nItem, char ser)
 	strcpy(items[nItem].name,"#");
 	strcpy( items[nItem].name2, "#" );	// abaddon
 	*(items[nItem].creator)='\0';
-	items[nItem].madewith = 0; // Added by Magius(CHE)
-	items[nItem].rank = 0; // Magius(CHE)
 	items[nItem].good = -1; // Magius(CHE)
-	items[nItem].rndvaluerate = 0; // Magius(CHE) (2)
 
 	items[nItem].multi1=255;//Multi serial1
 	items[nItem].multi2=255;//Multi serial2
@@ -394,11 +391,6 @@ void cItem::InitItem(int nItem, char ser)
 	items[nItem].owner3=255;
 	items[nItem].owner4=255;
 	items[nItem].ownserial=-1;
-	items[nItem].spawn1 = 0;
-	items[nItem].spawn2 = 0;
-	items[nItem].spawn3 = 0;
-	items[nItem].spawn4 = 0;
-	items[nItem].spawnserial = 0;
 	items[nItem].racialEffect = 65535;
 }
 // -- delete an item (Actually just mark it is free)
@@ -1940,4 +1932,100 @@ bool cItem::isShieldType( ITEM i )
 			return true;
 	}
 	return false;
+}
+
+// Written by AntiChrist - 4/11/1999
+//
+//This is very useful for bandwidth I think.... I replaced all the
+//stupid loops in the entire code sending an item to ALL the
+//sockets... without checkomg if the socket's character was in
+//range.....very baaad!
+//
+//I also added the inpack check and the worned check....
+//
+//Added a check if invisible and not GM, not sent (Abaddon)
+
+
+void RefreshItem( ITEM i ) //  Send this item to all online people in range
+{ // check if item is in a pack or on the ground, then use different methods
+	
+	unsigned int a;
+	
+	if( i == -1 ) return; // just to be on the right side
+	
+	if( items[i].contserial == items[i].serial )
+	{
+		printf( "\nALERT ! item %s [serial: %i] has dangerous container value, autocorrecting\n", items[i].name, items[i].serial );
+		items[i].contserial = -1;
+	}
+	
+	// first check: let's check if it's on the ground....
+	if( items[i].cont1 == 255 && items[i].cont2 == 255 && items[i].cont3 == 255 && items[i].cont4 == 255 )
+	{ // yeah, it's on ground!
+		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
+		{
+			if( perm[a] && iteminrange( a, i, Races->getVisRange( chars[currchar[a]].race ) ) )
+			{
+				if( ( items[i].visible == 0 ) || ( ( items[i].visible == 1 || items[i].visible == 2 ) && ( chars[a].priv&0x01 ) ) )// we're a GM, or not hidden
+					senditem( a, i );
+			}
+		}
+		return;
+	}
+	
+	// if not, let's check if it's on a char or in a pack
+	
+	int cserial = items[i].contserial;
+	int iserial = items[i].contserial;
+	int charcont = -1;
+	int itemcont = -1;
+	
+	if( (unsigned char)(cserial>>24) < 0x40 )
+		charcont = findbyserial( &charsp[cserial%HASHMAX], cserial, 1 );
+	else
+		itemcont = findbyserial( &itemsp[iserial%HASHMAX], iserial, 0 );
+	//		EviLDeD -		February 29, 2000
+#ifdef DEBUG
+	printf("DEBUG:Item=%i(%s) charcont=%i itemcont=%i\n", i, items[i].name, charcont, itemcont );
+#endif
+	//		EviLDeD -		End
+	
+	if( charcont > -1 ) // container is a player... it means it's equipped on a character!
+	{
+		wearitem[1] = items[i].ser1;
+		wearitem[2] = items[i].ser2;
+		wearitem[3] = items[i].ser3;
+		wearitem[4] = items[i].ser4;
+		wearitem[5] = items[i].id1;
+		wearitem[6] = items[i].id2;
+		wearitem[8] = items[i].layer;
+		wearitem[9] = items[i].cont1;
+		wearitem[10] = items[i].cont2;
+		wearitem[11] = items[i].cont3;
+		wearitem[12] = items[i].cont4;
+		wearitem[13] = items[i].color1;
+		wearitem[14] = items[i].color2;
+		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
+		{
+			if( perm[a] && inrange1p( currchar[a], charcont ) )
+			{
+				Network->xSend( a, wearitem, 15, 0 );
+			}
+		}
+		return;
+	}
+	
+	if( itemcont > -1 ) // container is an item... it means we have to use sendbpitem()!!
+	{
+		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
+		{
+			if( perm[a] )
+				sendbpitem( a, i ); // NOTE: there's already the inrange check
+			// in the sendbpitem() function, so it's unuseful
+			// to do a double check!!
+		}
+		return;
+	}
+	
+	printf("Error in RefreshItem(%i): cannot determine container type!", i );
 }

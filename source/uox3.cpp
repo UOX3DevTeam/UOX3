@@ -196,8 +196,8 @@ int cl_getch( void )
 	}
 	// the wiered cluox getter.
 	unsigned char c = 0;
-	unsigned long bytes_written;
-	int asw;
+	unsigned long bytes_written = 0; //Fixes L4 Warning
+	int asw = 0;  //Fixes L4 Warning
 	if (!cluox_nopipe_fill) 
 	{
 		asw = WriteFile(cluox_stdin_writeback, &c, 1, &bytes_written, NULL);
@@ -690,7 +690,7 @@ void loadcustomtitle() // for custom titles
 char *title1(CHARACTER p) // Paperdoll title for character p (1)
 {
 	int titlenum;
-  int x=chars[p].baseskill[bestskill(p)];
+    int x=chars[p].baseskill[bestskill(p)];
   
 	titlenum=0;
 	if (x>=300) titlenum=1;
@@ -2458,20 +2458,6 @@ void action( UOXSOCKET s, int x) // Character does a certain action
 			Network->xSend( i, doact, 14, 0 );
 }
 
-void npcaction( CHARACTER npc, int x ) // NPC character does a certain action
-{
-	unsigned int i;
-	
-	doact[1] = chars[npc].ser1;
-	doact[2] = chars[npc].ser2;
-	doact[3] = chars[npc].ser3;
-	doact[4] = chars[npc].ser4;
-	doact[5] = x>>8;
-	doact[6] = x%256;
-	for( i = 0; i < now; i++ ) 
-		if( ( inrange1p( currchar[i], npc ) ) && ( perm[i] ) ) 
-			Network->xSend( i, doact, 14, 0 );
-}
 
 void sysbroadcast( char *txt ) // System broadcast in bold text
 {
@@ -3990,62 +3976,6 @@ void explodeitem(int s, unsigned int nItem)
 
 // s: player socket, I: send bolt if it rains or not ?
 
-void weather(int s, char bolt) // Send new weather to player
-{
-	char wdry[5]="\x65\x00\x00\x00";
-	char wrain[5]="\x65\x01\x46\x00";
-	char wsnow[5]="\x65\x02\x46\xEC";
-	
-	int i=calcCharFromSer(chars[currchar[s]].serial),n;
-	
-	for (int j=0;j<now;j++) 
-	{
-		if (noweather[currchar[j]] && wtype!=0) 
-		{
-			Network->xSend(s,wdry,4,0); 
-			return;
-		}
-	}
-	// send wdry to non moving(!) players if it rains or snows and they are inside buildings
-	
-	if( wtype==0) Network->xSend( s, wdry, 4, 0 );
-	
-	if (wtype==1)
-	{
-		if (bolt)
-		{
-			n=1; /*n=66*/
-			for (int a=0;a<n;a++) // reduce if too laggy (client only lag though)
-			{
-				if (rand()%2)
-				{
-					soundeffect2(i, 0x00, 0x28);
-					bolteffect(i);
-				}
-				else
-				{
-					soundeffect2(i, 0x00, 0x29);
-					bolteffect(i);
-				}
-			}
-		}
-		
-		raindroptime=uiCurrentTime+CLOCKS_PER_SEC*(6+rand()%24);
-		Network->xSend(s, wrain, 4, 0);
-	}
-	if (wtype==2)
-	{
-		if (rand()%2)
-		{
-			soundeffect2(i, 0x00, 0x14);
-		}
-		else
-		{
-			soundeffect2(i, 0x00, 0x15);
-		}
-		Network->xSend(s, wsnow, 4, 0);
-	}
-}
 
 
 void skillwindow(int s) // Opens the skills list
@@ -4327,114 +4257,6 @@ void tips(int s, int i) // Tip of the day window
 	closescript();
 }
 
-void readbook(int s, int i, int p) // Book window
-{
-	int x, y, pos, j;
-	char bookpage[14]="\x66\x01\x02\x40\x01\x02\x03\x00\x01\x00\x01\x00\x01";
-	
-	openscript("misc.scp");
-	sprintf(temp, "BOOK %i",
-		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
-		return;
-	}
-	x=p;
-	do
-	{
-		do
-		{
-			read2();
-		}
-		while (strcmp(script1, "PAGE"));
-		x--;
-	}
-	while (x>0);
-	closescript();
-	openscript("misc.scp");
-	sprintf(temp, "PAGE %s", script2);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
-		return;
-	}
-	pos=ftell(scpfile);
-	x=-1;
-	y=-2;
-	do
-	{
-		read1();
-		x++;
-		y+=strlen(script1)+1;
-	}
-	while (strcmp(script1, "}"));
-	y+=13;
-	fseek(scpfile, pos, SEEK_SET);
-	bookpage[1]=y>>8;
-	bookpage[2]=y%256;
-	bookpage[3]=items[i].ser1;
-	bookpage[4]=items[i].ser2;
-	bookpage[5]=items[i].ser3;
-	bookpage[6]=items[i].ser4;
-	bookpage[9]=p>>8;
-	bookpage[10]=p%256;
-	bookpage[11]=x>>8;
-	bookpage[12]=x%256;
-	// Network->xSend(s, pause, 2, 0);
-	Network->xSend(s, bookpage, 13, 0);
-	for (j=0;j<x;j++)
-	{
-		read1();
-		Network->xSend(s, script1, strlen(script1)+1, 0);
-	}
-	// Network->xSend(s, restart, 2, 0);
-	closescript();
-}
-
-void openbook(int s, int i)
-{
-	char bookopen[9]="\x93\x40\x01\x02\x03\x00\x00\x02";
-	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	
-	openscript("misc.scp");
-	sprintf(temp, "BOOK %i",
-		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
-	if (!i_scripts[misc_script]->find(temp))
-	{
-		closescript();
-		return;
-	}
-	bookopen[1]=items[i].ser1;
-	bookopen[2]=items[i].ser2;
-	bookopen[3]=items[i].ser3;
-	bookopen[4]=items[i].ser4;
-	do
-	{
-		read2();
-	}
-	while (strcmp(script1, "PAGES"));
-	bookopen[7]=str2num(script2);
-	do
-	{
-		read2();
-	}
-	while (strcmp(script1, "TITLE"));
-	strcpy(booktitle, script2);
-	do
-	{
-		read2();
-	}
-	while (strcmp(script1, "AUTHOR"));
-	strcpy(bookauthor, script2);
-	// Network->xSend(s, pause, 2, 0);
-	Network->xSend(s, bookopen, 8, 0);
-	Network->xSend(s, booktitle, 60, 0);
-	Network->xSend(s, bookauthor, 30, 0);
-	// Network->xSend(s, restart, 2, 0);
-	closescript();
-}
 
 // Dupois - added doorsfx() to be used with dooruse()
 // Added Oct 8, 1998
@@ -6704,123 +6526,6 @@ void itemtalk(int s, int item, char *txt) // Item "speech"
 	Network->xSend(s, txt, strlen(txt)+1, 0);
 }
 
-void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
-{
-	int tl;
-	char machwas;
-	
-	if (npc==-1 || s==-1) return; //lb
-	
-	if( antispam )
-	{
-		if( chars[npc].antispamtimer < uiCurrentTime )
-		{
-			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
-			machwas = 1;
-		} 
-		else
-			machwas = 0;
-	}
-	else
-		machwas = 1;
-	
-	if( machwas )
-	{
-		
-		
-		tl=44+strlen(txt)+1;
-		talk[1]=tl>>8;
-		talk[2]=tl%256;
-		talk[3]=chars[npc].ser1;
-		talk[4]=chars[npc].ser2;
-		talk[5]=chars[npc].ser3;
-		talk[6]=chars[npc].ser4;
-		talk[7]=chars[npc].id1;
-		talk[8]=chars[npc].id2;
-		talk[9]=0; // Type
-		talk[10]=chars[npc].saycolor1=0x00;
-		talk[11]=chars[npc].saycolor2=0x5b;
-		talk[12]=0;
-		talk[13]=chars[currchar[s]].fonttype;
-		if( chars[npc].npcaitype == 0x02 ) // bad npcs speech (red)..Ripper
-		{
-			talk[10] = 0x00;
-			talk[11] = 0x26;
-		}
-		Network->xSend(s, talk, 14, 0);
-		Network->xSend(s, chars[npc].name, 30, 0);
-		Network->xSend(s, txt, strlen(txt)+1, 0);
-	}
-}
-
-void npctalkall(int npc, char *txt, char antispam ) // NPC speech to all in range.
-{
-	
-	if (npc==-1) return;
-	
-	int i;
-	
-	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
-			npctalk(i, npc, txt, antispam );
-}
-
-void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
-{
-	int tl;
-	char machwas;
-	
-	if( s == -1 || npc == -1 ) 
-		return;
-	
-	if( antispam )
-	{
-		if( chars[npc].antispamtimer < uiCurrentTime )
-		{
-			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
-			machwas = 1;
-		}
-		else
-			machwas = 0;
-	}
-	else
-		machwas = 1;
-	
-	if( machwas )
-	{
-		tl = 44 + strlen(txt)+1;
-		talk[1] = tl>>8;
-		talk[2] = tl%256;
-		talk[3] = chars[npc].ser1;
-		talk[4] = chars[npc].ser2;
-		talk[5] = chars[npc].ser3;
-		talk[6] = chars[npc].ser4;
-		talk[7] = chars[npc].id1;
-		talk[8] = chars[npc].id2;
-		talk[9] = 2; // Type
-		talk[10] = chars[npc].emotecolor1;
-		talk[11] = chars[npc].emotecolor2;
-//		talk[10]=chars[npc].emotecolor1=0x00;
-//		talk[11]=chars[npc].emotecolor2=0x26;
-		talk[12] = 0;
-		talk[13] = chars[currchar[s]].fonttype;
-		Network->xSend(s, talk, 14, 0);
-		Network->xSend(s, chars[npc].name, 30, 0);
-		Network->xSend(s, txt, strlen(txt)+1, 0);
-	}
-}
-
-void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in range.
-{
-	int i;
-	
-	if (npc==-1) return;
-	
-	for (i=0;i<now;i++)
-		if (inrange1p(npc, currchar[i])&&perm[i])
-			npcemote(i, npc, txt, antispam );
-}
-
 void callguards( int p )
 {
 	if( p == -1 ) return;
@@ -6859,6 +6564,7 @@ void callguards( int p )
 		}
 	}
 }
+
 /*
 Unicode speech format
 byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
@@ -7720,168 +7426,6 @@ void checkkey( void )
 			if( c != 0x0a )
 			{
 #endif
-/*				if (c=='S')
-				{
-					if (secure)
-					{
-						printf("UOX3: Secure mode disabled. Press ? for a commands list.\n");
-						secure=0;
-						return;
-					}
-					else
-					{
-						printf("UOX3: Secure mode re-enabled.\n");
-						secure=1;
-						return;
-					}
-				} 
-				else 
-				{
-					if (secure==1)
-					{
-						printf("UOX3: Secure mode prevents keyboard commands! Press 'S' to disable.\n");
-						return;
-					}
-					
-					switch(c)
-					{
-					case '\x1B':
-					case 'Q':
-						printf("UOX3: Immediate Shutdown initialized!\n");
-						keeprun=0;
-						break;
-					case 'T':
-						endtime=uiCurrentTime+(CLOCKS_PER_SEC*600);
-						endmessage(0);
-						break;
-					case '#':
-						if ( !cwmWorldState->Saving() )
-						{
-							cwmWorldState->savenewworld(1);
-							saveserverscript(1);
-						}
-						break;
-					case 'L':
-						if (showlayer)
-						{
-							printf("UOX3: Layer display disabled.\n");
-							showlayer=0;
-						}
-						else
-						{
-							printf("UOX3: Layer display enabled.\n");
-							showlayer=1;
-						}
-						break;
-					case 'I':
-						Admin->ReadIni();
-						//  for (i=0;i<servcount;i++)
-						//  if (serv[i][1][0]=='*') sprintf(serv[i][1],"%i.%i.%i.%i",ph1,ph2,ph3,ph4);
-						printf("UOX3: INI file reloaded.\n");
-						break;
-					case  'D':    // Disconnect account 0 (useful when client crashes)
-						for (i=0;i<now;i++)
-							if (acctno[i]==0) Network->Disconnect(i);
-						break;
-					case 'H':                // Enable/Disable heartbeat
-						if (heartbeat==1) printf("UOX3: Heartbeat Disabled\n");
-						else printf("UOX3: Heartbeat Enabled\n");
-						heartbeat = !heartbeat;
-						break;
-					case 'P':                // Display profiling information
-						LogMessage("Performace Dump:\n");
-						LogMessage("Network code: %fmsec [%i samples]\n" _ (float)((float)networkTime/(float)networkTimeCount) _ networkTimeCount);
-						LogMessage("Timer code: %fmsec [%i samples]\n" _ (float)((float)timerTime/(float)timerTimeCount) _ timerTimeCount);
-						LogMessage("Auto code: %fmsec [%i samples]\n" _ (float)((float)autoTime/(float)autoTimeCount) _ autoTimeCount);
-						LogMessage("Loop Time: %fmsec [%i samples]\n" _ (float)((float)loopTime/(float)loopTimeCount) _ loopTimeCount);
-						LogMessage("Characters: %i/%i - Items: %i/%i (Dynamic)\n" _ chars.Count() _ cmem _ items.Count() _ imem);
-						LogMessage("Simulation Cycles: %f per sec\n" _ (1000.0*(1.0/(float)((float)loopTime/(float)loopTimeCount))));
-						break;
-					case 'W':                // Display logged in chars
-						printf("Current Users in the World:\n");
-						for (i=0;i<now;i++)
-						{
-							if(perm[i]) //Keeps NPC's from appearing on the list
-							{
-								j++;
-								printf("%i) %s [%x %x %x %x]\n", (j-1), chars[currchar[i]].name, chars[currchar[i]].ser1, chars[currchar[i]].ser2, chars[currchar[i]].ser3, chars[currchar[i]].ser4);
-							}
-						}
-						printf("Total Users Online: %d\n", j);
-						break;
-					case 'A': //reload the accounts file
-						Admin->LoadAccounts();
-						break;
-					case 'R':
-						printf("UOX3: Reloading Server/Spawn/Regions/Spells Script files:\n");
-						printf( "Loading spawn regions..." );
-						loadspawnregions();
-						printf( "Done!\nLoading regions..." );
-						loadregions();
-						printf( "Done!\nLoading server.scp..." );
-						loadserverscript();
-						printf( "Done!\nLoading Spells.scp...");
-						Magic->LoadScript();
-						printf( "Done!\n" );
-						Commands->Load();
-						
-						break;
-					case 'M':
-						unsigned long int tmp, total;
-						total = 0;
-						tmp = 0;
-						printf("UOX3 Memory Information:\n" );
-						printf("        Cache:\n");
-						printf("                Tiles: %li bytes\n", Map->TileMem );
-						printf("                Statics: %li bytes\n", Map->StaMem );
-						printf("                Version: %li bytes\n", Map->versionMemory );
-						printf("                Map0: %i bytes [%i Hits - %i Misses]\n", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
-						total += tmp = chars.Size() + cmem*sizeof( teffect_st ) + cmem*sizeof(char) + cmem*sizeof(int)*5;
-						printf("        Characters: %li bytes [%i chars (%i allocated)]\n", tmp, chars.Count(), cmem );
-						total += tmp = items.Size() + imem*sizeof(int)*4;
-						printf("        Items: %li bytes [%i items (%i allocated)]\n", tmp, items.Count(), imem );
-						printf("                You save I:%li & C:%li bytes!\n", ((imem*sizeof(item_st))-items.Size()), (((cmem*sizeof(char_st))-chars.Size())+((sizeof(teffect_st)*5*cmem)-(sizeof(teffect_st)*cmem))));
-						total+= tmp = 69 * sizeof( splInfo_st );
-						printf("        Spells: %i bytes\n", tmp );
-						printf("        Sizes:\n" );
-						printf("                Item_st: %i bytes\n", sizeof( item_st ) );
-						printf("                Char_st: %i bytes\n", sizeof( char_st ) );
-						printf("                TEffect: %i bytes (%i total)\n", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
-						printf("                Int    : %i bytes\n", sizeof( int ) );
-						printf("                Short  : %i bytes\n", sizeof( short int ) );
-						total+= tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
-						printf("Approximate Total: %i bytes\n", total );
-						//printf("End of Memory Information.\n" );
-						break;
-						
-					case '?':
-						printf("Console commands:\n");
-						printf("	<Esc> or Q: Shutdown the server.\n");
-						printf("	# - Save world\n");
-						printf("	A - Reload accounts file\n");
-						printf("	C - Dump Items.scp menu into a file.\n" );
-						printf("	D - Disconnect Account 0\n");
-						printf("	H - Toggle hearbeat\n");
-						printf("	I - Reload INI file.\n");
-						printf("	L - Toggle layer Display\n");
-						printf("	M - Display Memory Information\n" );
-						printf("	P - Performance Dump\n");
-						printf("	R - Reload server, spawn, commands, and regions scripts.\n");
-						printf("	T - System Message: The server is shutting down in 10 minutes.\n");
-						printf("	W - Display logged in characters\n");
-						printf("	X - Mass Disconnect\n" );
-						printf("	? - Commands list (this)\n");
-						printf("End of commands list.\n");
-						break;
-
-					case 'X':
-						for( i = now - 1; i >= 0; i-- )
-							Network->Disconnect( i );
-						break;
-					default:
-						printf("UOX3: Key %c [%x] does not perform a function.\n",c,c);
-						break;
-			}*/
 			processkey( c );
 #ifdef __LINUX__
 		}
@@ -7996,48 +7540,6 @@ void doregionspawn(int r)//Regionspawns
 }
 //NEW REGIONSPAWNS ZIPPY CODE ENDS HERE -- AntiChrist merging codes --
 
-void restockNPC(unsigned int currenttime, int i)
-{
-	int a, b, c, ci, tmp;
-	if( chars[i].shop != 1 || !chars[i].npc )
-		return;
-	if( !(shoprestocktime<=currenttime||(overflow) ) )
-		return;
-	int hash;
-	int hashI;
-	hash = chars[i].serial%HASHMAX;
-	for( a = 0; a < contsp[hash].max; a++ )
-	{
-		ci = contsp[hash].pointer[a];
-		if( ci != -1 )
-		{
-			if( items[ci].contserial == chars[i].serial && items[ci].layer == 0x1A ) //morrolan item restock fix
-			{
-				hashI = items[ci].serial%HASHMAX;
-				for( b = 0; b < contsp[hashI].max; b++ )
-				{
-					c = contsp[hashI].pointer[b];
-					if( c != -1 )
-					{
-						if( items[c].contserial == items[ci].serial )
-						{
-							if( items[c].restock )
-							{
-								tmp = min( items[c].restock, (items[c].restock/2)+1 );
-								items[c].amount = items[c].amount + tmp;
-								items[c].restock = items[c].restock - tmp;
-							}
-							// MAgius(CHE): All items in shopkeeper need a new randomvaluerate.
-							if( server_data.trade_system == 1 ) 
-								StoreItemRandomValue( c, calcRegionFromXY( chars[i].x, chars[i].y ) ); // Magius(CHE) (2)
-						}
-					}
-				}// for b
-			}//if items[ci]
-		}
-	}//for a
-}
-
 void doLightEffect(int i, int currenttime)
 {
 	bool didDamage = false;
@@ -8148,59 +7650,8 @@ void doLightEffect(int i, int currenttime)
 		updatestats(i, 0);
 }
 
-void doRainEffect(int i, int currenttime)
-{
-	if( !chars[i].npc && online( i ) && Races->getRainAffect( chars[i].race ) )
-	{
-		if( !indungeon(i) && Weather->getRainActive( region[chars[i].region].weather ) )
-		{
-			if( chars[i].weathDamage[RAIN] != 0 && chars[i].weathDamage[RAIN] <= currenttime )
-			{
-				sysmessage( calcSocketFromChar(i), "You are bruised by the pelting rain!" );
-				chars[i].hp -= Races->getRainDamage( chars[i].race );
-				chars[i].weathDamage[RAIN] = currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race );
-				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
-				soundeffect2(i, 0x02, 0x08);     
-				updatestats(i, 0);
-			}
-			else
-			{
-				chars[i].weathDamage[RAIN] = currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race );
-			}
-		}
-		else
-		{
-			chars[i].weathDamage[RAIN] = 0;
-		}
-	}
-}
 
-void doSnowEffect(int i, int currenttime)
-{
-	if( !chars[i].npc && online( i ) && Races->getSnowAffect( chars[i].race ) )
-	{
-		if( !indungeon(i) && Weather->getSnowActive( region[chars[i].region].weather ) )
-		{
-			if( chars[i].weathDamage[SNOW] != 0 && chars[i].weathDamage[SNOW] <= currenttime )
-			{
-				sysmessage( calcSocketFromChar(i), "You are scalded by the intensity of the snow!" );
-				chars[i].hp -= Races->getSnowDamage( chars[i].race );
-				chars[i].weathDamage[SNOW] = currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race );
-				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
-				soundeffect2(i, 0x02, 0x08);     
-				updatestats(i, 0);
-			}
-			else
-			{
-				chars[i].weathDamage[SNOW] = currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race );
-			}
-		}
-		else
-		{
-			chars[i].weathDamage[SNOW] = 0;
-		}
-	}
-}
+
 
 
 //NEW LAGFIX ZIPPY CODE STARTS HERE -- AntiChrist merging codes -- (24/6/99)
@@ -8662,177 +8113,6 @@ void checkPC(int i, int currenttime, bool doWeather )//Char mapRegions
 	
 }
 
-void checkNPC(int i, int currenttime)//Char mapRegions
-{
-	int y,x, pcalc;
-	char t[120];
-	
-	Npcs->CheckAI(currenttime, i);//Lag fix
-	Movement->NpcMovement(currenttime, i);//Lag fix
-	setcharflag(i);		// possibly not...
-	
-	if (!chars[i].dead && chars[i].swingtarg==-1 )
-		Combat->DoCombat(i,currenttime);
-	else if(!chars[i].dead && (chars[i].swingtarg>=0 && chars[i].timeout<=currenttime))
-		Combat->CombatHit(i,chars[i].swingtarg,currenttime);
-	
-	Magic->CheckFieldEffects2(currenttime, i, 0);//Lag fix
-	
-	restockNPC(currenttime, i);
-	
-	if (!chars[i].free) //bud
-	{
-		if ((chars[i].disabled>0)&&((chars[i].disabled<=currenttime)||(overflow)))
-		{
-			chars[i].disabled=0;
-		}
-		if (chars[i].summontimer<=currenttime||(overflow))
-		{
-			if(chars[i].summontimer>0)
-			{
-				// Dupois - Added Dec 20, 1999
-				// QUEST expire check - after an Escort quest is created a timer is set
-				// so that the NPC will be deleted and removed from the game if it hangs around
-				// too long without every having its quest accepted by a player so we have to remove 
-				// its posting from the messageboard before icing the NPC
-				// Only need to remove the post if the NPC does not have a follow target set
-				if( ( chars[i].questType == ESCORTQUEST ) && ( chars[i].ftarg == -1 ) )
-				{
-					MsgBoardQuestEscortRemovePost( i );
-					MsgBoardQuestEscortDelete( i );
-					return;
-				}
-				// Dupois - End
-				soundeffect2(i, 0x01, 0xFE);
-				chars[i].dead=1;
-				Npcs->DeleteChar(i);
-				return;
-			}
-		}
-	}
-	
-	if ((chars[i].fleeat==0)) chars[i].fleeat=NPC_BASE_FLEEAT;
-	if ((chars[i].reattackat==0)) chars[i].reattackat=NPC_BASE_REATTACKAT;
-	
-	if (!(chars[i].npcWander==5)&&
-		(chars[i].hp<chars[i].st*chars[i].fleeat/100))
-	{
-		chars[i].oldnpcWander=chars[i].npcWander;
-		chars[i].npcWander=5;
-		chars[i].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-	}
-	
-	if ((chars[i].npcWander==5)&&
-		(chars[i].hp>chars[i].st*chars[i].reattackat/100))
-	{
-		chars[i].npcWander=chars[i].oldnpcWander;
-		chars[i].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-		chars[i].oldnpcWander=0; // so it won't save this at the wsc file
-	}
-	// end of flee code
-	
-	// new poisoning code, Lord Binary
-	if (chars[i].poisoned && !(chars[i].priv&4) )
-	{
-		if ((chars[i].poisontime<=currenttime)||(overflow))
-		{
-			if (chars[i].poisonwearofftime>currenttime) // lb, makes poison wear off pc's
-			{
-				switch (chars[i].poisoned)
-				{
-				case 1:
-					chars[i].poisontime=currenttime+(5*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks a bit nauseous *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-					}
-					//npctalkall(i,t);
-					chars[i].hp=chars[i].hp-RandomNum(1,2);
-					updatestats(i, 0);
-					break;
-				case 2:
-					chars[i].poisontime=currenttime+(4*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks disoriented and nauseous! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);     
-					}
-					x=RandomNum(0,2);
-					y=RandomNum(2,5);
-					pcalc=(chars[i].hp*y/100)+x; // damage: 1..2..5% of hp's+ 1..2 constant
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break;
-				case 3:
-					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s is in severe pain! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);
-					}
-					x=RandomNum(1,3);
-					y=RandomNum(5,10);
-					y=10;
-					pcalc=(chars[i].hp*y/100)+x; // damage: 5..10% of hp's+ 1..2 constant
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break; // lb !!!
-				case 4:
-					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
-					if ((chars[i].poisontxt<=currenttime)||(overflow))
-					{
-						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
-						sprintf(t,"* %s looks extremely weak and is wrecked in pain! *",chars[i].name);
-						chars[i].emotecolor1=0x00;//buffer[s][4];
-						chars[i].emotecolor2=0x26;//buffer[s][5];
-						npcemoteall(i,t, 1);
-						//npctalkall(i,t);
-					}
-					
-					
-					x=RandomNum(3,6);
-					y=20;
-					pcalc=(chars[i].hp*y/100)+x; // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-					chars[i].hp=chars[i].hp-pcalc;
-					updatestats(i, 0);
-					break;
-				default:
-					printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkNPC()\n"); //Morrolan
-					chars[i].poisoned=0;
-					return;
-				}
-				if (chars[i].hp<1)
-				{
-					deathstuff(i);
-					// sysmessage(s, "The poison has killed you.");
-				} 
-			} // end switch
-			
-		}  // end if poison-wear off-timer
-	} // end if poison-damage timer
-	
-	if ((chars[i].poisonwearofftime<=currenttime))
-	{
-		if ((chars[i].poisoned))
-		{
-            chars[i].poisoned=0; 
-			impowncreate(calcSocketFromChar(i),i,1); // updating to blue stats-bar ...
-            // sysmessage(s, "The poison has worn off.");
-		}
-	}	
-}
 
 void checkauto( void ) // Check automatic/timer controlled stuff (Like fighting and regeneration)
 {
@@ -10448,7 +9728,6 @@ int main(int argc, char *argv[])
 		lclock=0;
 		printf("Initializing Que System...");
 		initque(); // Initialize gmpages[] array
-		//loadskills();  why do we need to loadskills() twice? - fur
 		printf(" Done.\nLoading custom titles...");
 		loadcustomtitle();
 		printf(" Done.\n");
@@ -10714,31 +9993,6 @@ int main(int argc, char *argv[])
 	return( 0 );	
 }
 
-/*
-//Commented out by Zippy 1/16/00 ifdef'd try/catch to fix this problem.
-int realmain( int argc, char *argv[] );
-
-  int main(int argc, char *argv[])
-  {
-  loadserverdefaults();
-  loadserverscript();	// attempt to move higher up (Abaddon)
-  if( server_data.crashprotect != 0 )
-  {
-		try {//Crappy error trapping....	// now it will never crash on the correct line
-		realmain( argc, argv );
-		} catch ( ... ) 
-		{//Crappy error handling...
-		printf("Unknown exception caught, hard crash avioded!\n");
-		Shutdown( UNKNOWN_ERROR );
-		}
-		}
-		else
-		{
-		realmain( argc, argv );
-		}
-		
-		  return( 0 );
-}*/
 
 
 //o---------------------------------------------------------------------------o
@@ -13172,7 +12426,7 @@ void deathaction(int s, int x) // Character does a certain action
 	deathact[6] = items[x].ser2;
 	deathact[7] = items[x].ser3;
 	deathact[8] = items[x].ser4;
-	deathact[12] = RandomNum( 0, 1 );	// 0 = backward, 1 = forward
+	deathact[12] = (char) RandomNum( 0, 1 );	// 0 = backward, 1 = forward
 	for( i = 0; i < now; i++ ) 
 		if( ( inrange1p( s, currchar[i] ) ) && ( perm[i] ) && ( currchar[i] != s ) ) 
 			Network->xSend( i, deathact, 13, 0 );
@@ -20112,99 +19366,7 @@ void playTileSound( UOXSOCKET s )
 	if( sndid1 != 0 && sndid2 != 0 )			// if we have a valid sound
 		soundeffect( s, sndid1, sndid2 );
 }
-// Written by AntiChrist - 4/11/1999
-//
-//This is very useful for bandwidth I think.... I replaced all the
-//stupid loops in the entire code sending an item to ALL the
-//sockets... without checkomg if the socket's character was in
-//range.....very baaad!
-//
-//I also added the inpack check and the worned check....
-//
-//Added a check if invisible and not GM, not sent (Abaddon)
-void RefreshItem( ITEM i ) //  Send this item to all online people in range
-{ // check if item is in a pack or on the ground, then use different methods
-	
-	unsigned int a;
-	
-	if( i == -1 ) return; // just to be on the right side
-	
-	if( items[i].contserial == items[i].serial )
-	{
-		printf( "\nALERT ! item %s [serial: %i] has dangerous container value, autocorrecting\n", items[i].name, items[i].serial );
-		items[i].contserial = -1;
-	}
-	
-	// first check: let's check if it's on the ground....
-	if( items[i].cont1 == 255 && items[i].cont2 == 255 && items[i].cont3 == 255 && items[i].cont4 == 255 )
-	{ // yeah, it's on ground!
-		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
-		{
-			if( perm[a] && iteminrange( a, i, Races->getVisRange( chars[currchar[a]].race ) ) )
-			{
-				if( ( items[i].visible == 0 ) || ( ( items[i].visible == 1 || items[i].visible == 2 ) && ( chars[a].priv&0x01 ) ) )// we're a GM, or not hidden
-					senditem( a, i );
-			}
-		}
-		return;
-	}
-	
-	// if not, let's check if it's on a char or in a pack
-	
-	int cserial = items[i].contserial;
-	int iserial = items[i].contserial;
-	int charcont = -1;
-	int itemcont = -1;
-	
-	if( (unsigned char)(cserial>>24) < 0x40 )
-		charcont = findbyserial( &charsp[cserial%HASHMAX], cserial, 1 );
-	else
-		itemcont = findbyserial( &itemsp[iserial%HASHMAX], iserial, 0 );
-	//		EviLDeD -		February 29, 2000
-#ifdef DEBUG
-	printf("DEBUG:Item=%i(%s) charcont=%i itemcont=%i\n", i, items[i].name, charcont, itemcont );
-#endif
-	//		EviLDeD -		End
-	
-	if( charcont > -1 ) // container is a player... it means it's equipped on a character!
-	{
-		wearitem[1] = items[i].ser1;
-		wearitem[2] = items[i].ser2;
-		wearitem[3] = items[i].ser3;
-		wearitem[4] = items[i].ser4;
-		wearitem[5] = items[i].id1;
-		wearitem[6] = items[i].id2;
-		wearitem[8] = items[i].layer;
-		wearitem[9] = items[i].cont1;
-		wearitem[10] = items[i].cont2;
-		wearitem[11] = items[i].cont3;
-		wearitem[12] = items[i].cont4;
-		wearitem[13] = items[i].color1;
-		wearitem[14] = items[i].color2;
-		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
-		{
-			if( perm[a] && inrange1p( currchar[a], charcont ) )
-			{
-				Network->xSend( a, wearitem, 15, 0 );
-			}
-		}
-		return;
-	}
-	
-	if( itemcont > -1 ) // container is an item... it means we have to use sendbpitem()!!
-	{
-		for( a = 0; a < now; a++ ) // send this item to all the sockets in range
-		{
-			if( perm[a] )
-				sendbpitem( a, i ); // NOTE: there's already the inrange check
-			// in the sendbpitem() function, so it's unuseful
-			// to do a double check!!
-		}
-		return;
-	}
-	
-	printf("Error in RefreshItem(%i): cannot determine container type!", i );
-}
+
 
 bool IsInMenuList( int toCheck )
 // PRE:		TRUE
@@ -20762,175 +19924,3 @@ void UseHairDye( UOXSOCKET s, short int colour, int x )	// s for socket, colour 
 	Items->DeleItem( x );
 }
 
-void PlayerAttack( UOXSOCKET s )
-{
-	SERIAL serial;
-	long i;
-	int j, k;
-	CHARACTER ourChar = currchar[s];
-	serial = calcserial( buffer[s][1], buffer[s][2], buffer[s][3], buffer[s][4] );
-	if( serial == -1 ) 
-	{
-		chars[ourChar].targ = -1;
-		return;
-	}
-	i = calcCharFromSer( serial );
-	if( i == -1 )
-	{
-		chars[ourChar].targ = -1;
-		return;
-	}
-	if( chars[ourChar].dead )
-	{
-		if( chars[i].npc )
-		{	// if target is a npc..
-			switch( chars[i].npcaitype )
-			{
-			case 1:	// good healer
-				if( !(chars[ourChar].flag&0x01) && !(chars[ourChar].flag&0x02) ) // changed from 0x01 so you cant attact a healer to get resed  -- eagle
-				{	//if character isn't red(bad guy)
-					if( chardist( i, ourChar ) <= 3 )
-					{	//let's resurrect him!
-						npcaction( i, 0x10 );
-						Targ->NpcResurrectTarget( ourChar );
-						staticeffect( ourChar, 0x37, 0x6A, 0x09, 0x06 );
-						switch( rand()%5 )
-						{
-						case 0: npctalkall( i, "Thou art dead, but 'tis within my power to resurrect thee.  Live!", 0 ); break;
-						case 1: npctalkall( i, "Allow me to resurrect thee ghost.  Thy time of true death has not yet come.", 0 ); break;
-						case 2: npctalkall( i, "Perhaps thou shouldst be more careful.  Here, I shall resurrect thee.", 0 ); break;
-						case 3: npctalkall( i, "Live again, ghost!  Thy time in this world is not yet done.", 0 ); break;
-						case 4: npctalkall( i, "I shall attempt to resurrect thee.", 0 ); break;
-						}
-					} 
-					else //if dist>3
-						npctalkall( i, "Come nearer, ghost, and i'll give you life!",1 );
-				} 
-				else //if a bad guy
-					npctalkall( i, "I will not give life to a schodrel like thee!", 1 );
-				break;
-			case 666:	// evil healer
-				if( chars[ourChar].flag&0x01 )
-				{//if character is red(bad guy)
-					if( chardist( i, ourChar ) <= 3 )	// let's resurrect him
-					{
-						npcaction( i, 0x10 );
-						Targ->NpcResurrectTarget( ourChar );
-						staticeffect( ourChar, 0x37, 0x09, 0x09, 0x19 ); //Flamestrike effect
-						switch( rand()%5 )
-						{
-						case 0: npctalkall( i, "Fellow minion of Mondain, Live!!", 0 ); break;
-						case 1: npctalkall( i, "Thou has evil flowing through your veins, so I will bring you back to life.", 0 ); break;
-						case 2: npctalkall( i, "If I res thee, promise to raise more hell!.", 0 ); break;
-						case 3: npctalkall( i, "From hell to Britannia, come alive!.", 0 ); break;
-						case 4: npctalkall( i, "Since you are Evil, I will bring you back to consciouness.", 0 ); break;
-						}
-					} 
-					else //if dist >3
-						npctalkall(i, "Come nearer, evil soul, and i'll give you life!",1);
-				} 
-				else //if player is a good guy
-					npctalkall( i, "I despise all things good. I shall not give thee another chance!", 1 );
-				break;
-			default:
-				sysmessage( s, "You are dead and cannot do that." );
-				break;
-			}
-			return;
-		} 
-		else
-		{//if this not a npc but a player
-			if( server_data.persecute )
-			{//start persecute stuff - AntiChrist
-				chars[ourChar].targ = i;
-				Skills->Persecute( s );
-				return;
-			} 
-			else
-			{
-				sysmessage(s,"You are dead and cannot do that.");
-				return;
-			}
-		}//if npc
-	}
-	else
-	{
-		chars[ourChar].targ = i;
-		if( ( chars[ourChar].hidden ) && ( !( chars[ourChar].priv2&8 ) ) )
-		{
-			chars[ourChar].hidden = 0;
-			chars[ourChar].stealth = -1;
-			updatechar( ourChar );
-		}
-		if( chars[i].dead || chars[i].hp <= 0 )//AntiChrist
-		{
-			sysmessage( s, "That person is already dead!" );
-			return;
-		}
-		
-		if( chars[i].npcaitype == 17 )//PlayerVendors
-		{
-			sprintf( temp, "%s cannot be harmed.", chars[i].name );
-			sysmessage( s, temp );
-			return;
-		}
-		if( chars[i].priv&0x04 )
-		{
-			sysmessage( s, "You cannot fight the invincible" );
-			return;
-		}
-		if( chars[i].guarded )
-		{
-			for( j = 0; j < cownsp[chars[ourChar].serial%HASHMAX].max; j++ )
-			{
-				k = cownsp[chars[ourChar].serial%HASHMAX].pointer[j];
-				if( k != -1 )
-				{
-					if( chars[k].ownserial == chars[ourChar].serial && chars[k].npcaitype == 32 && chardist( i, k ) <= 20 )
-					{
-						npcattacktarget( ourChar, k );				// think this is the way to attack the attacker
-					}
-				}
-			}
-		}
-		sprintf( temp, "You see %s attacking %s!", chars[ourChar].name, chars[i].name );
-		
-		// Dupois pointed out the for loop was changing i which would drive stuff nuts later
-		for( j = 0; j < now; j++ )
-		{
-			if((inrange1(s, j) && perm[j]) && (s!=j))
-			{
-				npcemote(j, ourChar, temp, 1);
-			}
-		}
-		int gCompare = Guilds->Compare( ourChar, i );
-		int rCompare = Races->Compare( ourChar, i );
-		if( ( chars[i].flag&0x04 ) && gCompare == 0 && rCompare == 0 ) //REPSYS
-		{	// npcaitype 2 cannot be innocent
-			bool regionGuarded = ( ( region[chars[i].region].priv&0x01 ) == 0x01 );
-			unsigned short charID = (chars[i].id1<<8) + chars[i].id2;
-			if( server_data.guardsactive && regionGuarded && chars[i].npc && chars[i].npcaitype != 4 && charID >= 0x0190 && charID <= 0x0193 )
-				npctalkall( i, "Help! Guards! I've been attacked!", 1 );
-			criminal( ourChar );
-		}
-		
-		//AntiChrist!
-		// keep the target highlighted
-		// so that we know who we're attacking =)
-		// 26/10/99
-		attackok[1] = chars[i].ser1;
-		attackok[2] = chars[i].ser2;
-		attackok[3] = chars[i].ser3;
-		attackok[4] = chars[i].ser4;
-		Network->xSend( s, attackok, 5, 0 );
-		
-		if( chars[i].npcaitype != 4 && chars[i].targ == -1 )
-		{
-			chars[i].attacker = ourChar;
-			chars[i].attackfirst = 0;
-		}
-		chars[ourChar].attackfirst = 1;
-		chars[ourChar].attacker = i;
-		npcattacktarget( ourChar, i );
-	}
-}

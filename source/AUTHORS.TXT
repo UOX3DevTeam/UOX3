@@ -30,6 +30,27 @@ DATE                     AUTHOR                     ARRANGER
   
 
 -------------------------------------------------------------------------------
+27.01.2001              Thiago A. Correa
+
+   uox3.rc              Comented out the .ico file to allow MSVC build.
+   uox3.h               Removed non-sense #ifdefs
+   uox3.cpp             Removed a big crunch of checkkey() commented code, it's
+   npcs.cpp             a bit old and is inside it's own function now (processkey)
+   books.cpp            Moved openbook() and readbook to books.cpp
+   combat.cpp           Moved npcaction(), npctalk(), npctalkall(), npcemote(), items.cpp
+                        npcemoteall(), checkNpc(), restocknpc() to npcs.cpp
+   cweather.cpp         Moved playerattack() to combat.cpp
+   cweather.h           Moved refreshitems() to items.cpp
+                        Moved doSnowEffect() and doRainEffect() to cweather.cpp
+                        Removed some items[nItem].x = 0, they are already set to 0 by
+                        memset on the 2nd line.
+                        Added memset(&chars[nChar], 0, sizeof ( char_st )) to
+                        cCharStuff::InitChar() - let's us remove a lot of 
+                        chars[nChar].x = 0;
+   gumps.cpp            Removed unused variables from cGump::Input(int s)
+   uoxstruct.h          Removed oldx, oldy and oldz from jail_st - It was never used.
+
+-------------------------------------------------------------------------------
 26.01.2001               ---                        Axel Kittenberger  
 
    srvkey.h              Removed these files.
@@ -40,7 +61,7 @@ DATE                     AUTHOR                     ARRANGER
                          *** isn't CVS beautiful :o) ***
    
 -------------------------------------------------------------------------------
-26.01.2001               Thiago A. Corrêa           Axel Kittenberger  
+26.01.2001               Thiago A. Correa           Axel Kittenberger  
 
    boats.cpp             Removed old UDP junk.             
    classes.h             Optimized some sprintf's to strcpy. 

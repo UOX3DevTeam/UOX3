@@ -102,4 +102,7 @@ class cWeatherAb
 		void doPlayerWeather( UOXSOCKET s, unsigned char weathType );
 };
 
+void doSnowEffect(int i, int currenttime);
+void doRainEffect(int i, int currenttime);
+
 #endif

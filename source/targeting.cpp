@@ -2969,13 +2969,12 @@ void cTargets::JailTarget(int s, int c)
 			jails[i].occupied=1;
 			sprintf(temp,"Player %s has been jailed in jail %i.",chars[tmpnum].name,i);
 			sysmessage(s,temp);
-			x++;
-			break;
+			return;
 		}
 	}
-    if(x==0) sysmessage(s,"All jails are currently full!");
-	
+    sysmessage(s,"All jails are currently full!");
 }
+
 
 void cTargets::AttackTarget(UOXSOCKET s)
 {

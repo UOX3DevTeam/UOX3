@@ -379,7 +379,7 @@ void cGump::Input(int s)
 {
 	char type, index, tser1, tser2, tser3, tser4;
 	char *text;
-	int c1,body,b,/*i,*/j,k,serial;
+	int j,k,serial; //Removed unreferenced local variables
 	
 	type=buffer[s][7];
 	index=buffer[s][8];

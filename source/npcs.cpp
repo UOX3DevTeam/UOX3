@@ -238,7 +238,7 @@ void cCharStuff::InitChar(int nChar, char ser)
 {
 	static unsigned int LastInitTE=0;
 	int i;
-
+	memset(&chars[nChar], 0, sizeof ( char_st ));
 	if (ser)
 	{
 		chars[nChar].ser1 = (unsigned char)(charcount2>>24); // Character serial number
@@ -2704,4 +2704,352 @@ int cCharStuff::SearchSubPackForItem( ITEM toSearch, unsigned char id1, unsigned
 	}
 	// if we haven't hit it by now, we won't hit it at all
 	return -1;
+}
+
+void npcaction( CHARACTER npc, int x ) // NPC character does a certain action
+{
+	unsigned int i;
+	
+	doact[1] = chars[npc].ser1;
+	doact[2] = chars[npc].ser2;
+	doact[3] = chars[npc].ser3;
+	doact[4] = chars[npc].ser4;
+	doact[5] = x>>8;
+	doact[6] = x%256;
+	for( i = 0; i < now; i++ ) 
+		if( ( inrange1p( currchar[i], npc ) ) && ( perm[i] ) ) 
+			Network->xSend( i, doact, 14, 0 );
+}
+
+void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
+{
+	int tl;
+	char machwas;
+	
+	if (npc==-1 || s==-1) return; //lb
+	
+	if( antispam )
+	{
+		if( chars[npc].antispamtimer < uiCurrentTime )
+		{
+			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
+			machwas = 1;
+		} 
+		else
+			machwas = 0;
+	}
+	else
+		machwas = 1;
+	
+	if( machwas )
+	{
+		
+		
+		tl=44+strlen(txt)+1;
+		talk[1]=tl>>8;
+		talk[2]=tl%256;
+		talk[3]=chars[npc].ser1;
+		talk[4]=chars[npc].ser2;
+		talk[5]=chars[npc].ser3;
+		talk[6]=chars[npc].ser4;
+		talk[7]=chars[npc].id1;
+		talk[8]=chars[npc].id2;
+		talk[9]=0; // Type
+		talk[10]=chars[npc].saycolor1=0x00;
+		talk[11]=chars[npc].saycolor2=0x5b;
+		talk[12]=0;
+		talk[13]=chars[currchar[s]].fonttype;
+		if( chars[npc].npcaitype == 0x02 ) // bad npcs speech (red)..Ripper
+		{
+			talk[10] = 0x00;
+			talk[11] = 0x26;
+		}
+		Network->xSend(s, talk, 14, 0);
+		Network->xSend(s, chars[npc].name, 30, 0);
+		Network->xSend(s, txt, strlen(txt)+1, 0);
+	}
+}
+
+void npctalkall(int npc, char *txt, char antispam ) // NPC speech to all in range.
+{
+	
+	if (npc==-1) return;
+	
+	int i;
+	
+	for (i=0;i<now;i++)
+		if (inrange1p(npc, currchar[i])&&perm[i])
+			npctalk(i, npc, txt, antispam );
+}
+
+void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
+{
+	int tl;
+	char machwas;
+	
+	if( s == -1 || npc == -1 ) 
+		return;
+	
+	if( antispam )
+	{
+		if( chars[npc].antispamtimer < uiCurrentTime )
+		{
+			chars[npc].antispamtimer = uiCurrentTime + CLOCKS_PER_SEC*10;
+			machwas = 1;
+		}
+		else
+			machwas = 0;
+	}
+	else
+		machwas = 1;
+	
+	if( machwas )
+	{
+		tl = 44 + strlen(txt)+1;
+		talk[1] = tl>>8;
+		talk[2] = tl%256;
+		talk[3] = chars[npc].ser1;
+		talk[4] = chars[npc].ser2;
+		talk[5] = chars[npc].ser3;
+		talk[6] = chars[npc].ser4;
+		talk[7] = chars[npc].id1;
+		talk[8] = chars[npc].id2;
+		talk[9] = 2; // Type
+		talk[10] = chars[npc].emotecolor1;
+		talk[11] = chars[npc].emotecolor2;
+//		talk[10]=chars[npc].emotecolor1=0x00;
+//		talk[11]=chars[npc].emotecolor2=0x26;
+		talk[12] = 0;
+		talk[13] = chars[currchar[s]].fonttype;
+		Network->xSend(s, talk, 14, 0);
+		Network->xSend(s, chars[npc].name, 30, 0);
+		Network->xSend(s, txt, strlen(txt)+1, 0);
+	}
+}
+
+void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in range.
+{
+	int i;
+	
+	if (npc==-1) return;
+	
+	for (i=0;i<now;i++)
+		if (inrange1p(npc, currchar[i])&&perm[i])
+			npcemote(i, npc, txt, antispam );
+}
+
+
+void restockNPC(unsigned int currenttime, int i)
+{
+	int a, b, c, ci, tmp;
+	if( chars[i].shop != 1 || !chars[i].npc )
+		return;
+	if( !(shoprestocktime<=currenttime||(overflow) ) )
+		return;
+	int hash;
+	int hashI;
+	hash = chars[i].serial%HASHMAX;
+	for( a = 0; a < contsp[hash].max; a++ )
+	{
+		ci = contsp[hash].pointer[a];
+		if( ci != -1 )
+		{
+			if( items[ci].contserial == chars[i].serial && items[ci].layer == 0x1A ) //morrolan item restock fix
+			{
+				hashI = items[ci].serial%HASHMAX;
+				for( b = 0; b < contsp[hashI].max; b++ )
+				{
+					c = contsp[hashI].pointer[b];
+					if( c != -1 )
+					{
+						if( items[c].contserial == items[ci].serial )
+						{
+							if( items[c].restock )
+							{
+								tmp = min( items[c].restock, (items[c].restock/2)+1 );
+								items[c].amount = items[c].amount + tmp;
+								items[c].restock = items[c].restock - tmp;
+							}
+							// MAgius(CHE): All items in shopkeeper need a new randomvaluerate.
+							if( server_data.trade_system == 1 ) 
+								StoreItemRandomValue( c, calcRegionFromXY( chars[i].x, chars[i].y ) ); // Magius(CHE) (2)
+						}
+					}
+				}// for b
+			}//if items[ci]
+		}
+	}//for a
+}
+
+
+void checkNPC(int i, int currenttime)//Char mapRegions
+{
+	int y,x, pcalc;
+	char t[120];
+	
+	Npcs->CheckAI(currenttime, i);//Lag fix
+	Movement->NpcMovement(currenttime, i);//Lag fix
+	setcharflag(i);		// possibly not...
+	
+	if (!chars[i].dead && chars[i].swingtarg==-1 )
+		Combat->DoCombat(i,currenttime);
+	else if(!chars[i].dead && (chars[i].swingtarg>=0 && chars[i].timeout<=currenttime))
+		Combat->CombatHit(i,chars[i].swingtarg,currenttime);
+	
+	Magic->CheckFieldEffects2(currenttime, i, 0);//Lag fix
+	
+	restockNPC(currenttime, i);
+	
+	if (!chars[i].free) //bud
+	{
+		if ((chars[i].disabled>0)&&((chars[i].disabled<=currenttime)||(overflow)))
+		{
+			chars[i].disabled=0;
+		}
+		if (chars[i].summontimer<=currenttime||(overflow))
+		{
+			if(chars[i].summontimer>0)
+			{
+				// Dupois - Added Dec 20, 1999
+				// QUEST expire check - after an Escort quest is created a timer is set
+				// so that the NPC will be deleted and removed from the game if it hangs around
+				// too long without every having its quest accepted by a player so we have to remove 
+				// its posting from the messageboard before icing the NPC
+				// Only need to remove the post if the NPC does not have a follow target set
+				if( ( chars[i].questType == ESCORTQUEST ) && ( chars[i].ftarg == -1 ) )
+				{
+					MsgBoardQuestEscortRemovePost( i );
+					MsgBoardQuestEscortDelete( i );
+					return;
+				}
+				// Dupois - End
+				soundeffect2(i, 0x01, 0xFE);
+				chars[i].dead=1;
+				Npcs->DeleteChar(i);
+				return;
+			}
+		}
+	}
+	
+	if ((chars[i].fleeat==0)) chars[i].fleeat=NPC_BASE_FLEEAT;
+	if ((chars[i].reattackat==0)) chars[i].reattackat=NPC_BASE_REATTACKAT;
+	
+	if (!(chars[i].npcWander==5)&&
+		(chars[i].hp<chars[i].st*chars[i].fleeat/100))
+	{
+		chars[i].oldnpcWander=chars[i].npcWander;
+		chars[i].npcWander=5;
+		chars[i].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+	}
+	
+	if ((chars[i].npcWander==5)&&
+		(chars[i].hp>chars[i].st*chars[i].reattackat/100))
+	{
+		chars[i].npcWander=chars[i].oldnpcWander;
+		chars[i].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
+		chars[i].oldnpcWander=0; // so it won't save this at the wsc file
+	}
+	// end of flee code
+	
+	// new poisoning code, Lord Binary
+	if (chars[i].poisoned && !(chars[i].priv&4) )
+	{
+		if ((chars[i].poisontime<=currenttime)||(overflow))
+		{
+			if (chars[i].poisonwearofftime>currenttime) // lb, makes poison wear off pc's
+			{
+				switch (chars[i].poisoned)
+				{
+				case 1:
+					chars[i].poisontime=currenttime+(5*CLOCKS_PER_SEC);
+					if ((chars[i].poisontxt<=currenttime)||(overflow))
+					{
+						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
+						sprintf(t,"* %s looks a bit nauseous *",chars[i].name);
+						chars[i].emotecolor1=0x00;//buffer[s][4];
+						chars[i].emotecolor2=0x26;//buffer[s][5];
+						npcemoteall(i,t, 1);
+					}
+					//npctalkall(i,t);
+					chars[i].hp=chars[i].hp-RandomNum(1,2);
+					updatestats(i, 0);
+					break;
+				case 2:
+					chars[i].poisontime=currenttime+(4*CLOCKS_PER_SEC);
+					if ((chars[i].poisontxt<=currenttime)||(overflow))
+					{
+						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
+						sprintf(t,"* %s looks disoriented and nauseous! *",chars[i].name);
+						chars[i].emotecolor1=0x00;//buffer[s][4];
+						chars[i].emotecolor2=0x26;//buffer[s][5];
+						npcemoteall(i,t, 1);
+						//npctalkall(i,t);     
+					}
+					x=RandomNum(0,2);
+					y=RandomNum(2,5);
+					pcalc=(chars[i].hp*y/100)+x; // damage: 1..2..5% of hp's+ 1..2 constant
+					chars[i].hp=chars[i].hp-pcalc;
+					updatestats(i, 0);
+					break;
+				case 3:
+					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
+					if ((chars[i].poisontxt<=currenttime)||(overflow))
+					{
+						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
+						sprintf(t,"* %s is in severe pain! *",chars[i].name);
+						chars[i].emotecolor1=0x00;//buffer[s][4];
+						chars[i].emotecolor2=0x26;//buffer[s][5];
+						npcemoteall(i,t, 1);
+						//npctalkall(i,t);
+					}
+					x=RandomNum(1,3);
+					y=RandomNum(5,10);
+					y=10;
+					pcalc=(chars[i].hp*y/100)+x; // damage: 5..10% of hp's+ 1..2 constant
+					chars[i].hp=chars[i].hp-pcalc;
+					updatestats(i, 0);
+					break; // lb !!!
+				case 4:
+					chars[i].poisontime=currenttime+(3*CLOCKS_PER_SEC);
+					if ((chars[i].poisontxt<=currenttime)||(overflow))
+					{
+						chars[i].poisontxt=currenttime+(10*CLOCKS_PER_SEC);
+						sprintf(t,"* %s looks extremely weak and is wrecked in pain! *",chars[i].name);
+						chars[i].emotecolor1=0x00;//buffer[s][4];
+						chars[i].emotecolor2=0x26;//buffer[s][5];
+						npcemoteall(i,t, 1);
+						//npctalkall(i,t);
+					}
+					
+					
+					x=RandomNum(3,6);
+					y=20;
+					pcalc=(chars[i].hp*y/100)+x; // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
+					chars[i].hp=chars[i].hp-pcalc;
+					updatestats(i, 0);
+					break;
+				default:
+					printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkNPC()\n"); //Morrolan
+					chars[i].poisoned=0;
+					return;
+				}
+				if (chars[i].hp<1)
+				{
+					deathstuff(i);
+					// sysmessage(s, "The poison has killed you.");
+				} 
+			} // end switch
+			
+		}  // end if poison-wear off-timer
+	} // end if poison-damage timer
+	
+	if ((chars[i].poisonwearofftime<=currenttime))
+	{
+		if ((chars[i].poisoned))
+		{
+            chars[i].poisoned=0; 
+			impowncreate(calcSocketFromChar(i),i,1); // updating to blue stats-bar ...
+            // sysmessage(s, "The poison has worn off.");
+		}
+	}	
 }

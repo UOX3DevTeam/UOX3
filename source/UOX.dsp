@@ -197,6 +197,15 @@ SOURCE=.\im.h
 # Begin Source File
 
 SOURCE=.\items.cpp
+
+!IF  "$(CFG)" == "UOX - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "UOX - Win32 Debug"
+
+# ADD CPP /W4
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -261,10 +270,6 @@ SOURCE=.\scriptc.h
 # Begin Source File
 
 SOURCE=.\skills.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\srvkey.h
 # End Source File
 # Begin Source File
 

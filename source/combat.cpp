@@ -1651,3 +1651,176 @@ void Kill( CHARACTER attack, CHARACTER defend )
 		savelog( temp, "PvP.log");
 	}
 }
+
+void PlayerAttack( UOXSOCKET s )
+{
+	SERIAL serial;
+	long i;
+	int j, k;
+	CHARACTER ourChar = currchar[s];
+	serial = calcserial( buffer[s][1], buffer[s][2], buffer[s][3], buffer[s][4] );
+	if( serial == -1 ) 
+	{
+		chars[ourChar].targ = -1;
+		return;
+	}
+	i = calcCharFromSer( serial );
+	if( i == -1 )
+	{
+		chars[ourChar].targ = -1;
+		return;
+	}
+	if( chars[ourChar].dead )
+	{
+		if( chars[i].npc )
+		{	// if target is a npc..
+			switch( chars[i].npcaitype )
+			{
+			case 1:	// good healer
+				if( !(chars[ourChar].flag&0x01) && !(chars[ourChar].flag&0x02) ) // changed from 0x01 so you cant attact a healer to get resed  -- eagle
+				{	//if character isn't red(bad guy)
+					if( chardist( i, ourChar ) <= 3 )
+					{	//let's resurrect him!
+						npcaction( i, 0x10 );
+						Targ->NpcResurrectTarget( ourChar );
+						staticeffect( ourChar, 0x37, 0x6A, 0x09, 0x06 );
+						switch( rand()%5 )
+						{
+						case 0: npctalkall( i, "Thou art dead, but 'tis within my power to resurrect thee.  Live!", 0 ); break;
+						case 1: npctalkall( i, "Allow me to resurrect thee ghost.  Thy time of true death has not yet come.", 0 ); break;
+						case 2: npctalkall( i, "Perhaps thou shouldst be more careful.  Here, I shall resurrect thee.", 0 ); break;
+						case 3: npctalkall( i, "Live again, ghost!  Thy time in this world is not yet done.", 0 ); break;
+						case 4: npctalkall( i, "I shall attempt to resurrect thee.", 0 ); break;
+						}
+					} 
+					else //if dist>3
+						npctalkall( i, "Come nearer, ghost, and i'll give you life!",1 );
+				} 
+				else //if a bad guy
+					npctalkall( i, "I will not give life to a schodrel like thee!", 1 );
+				break;
+			case 666:	// evil healer
+				if( chars[ourChar].flag&0x01 )
+				{//if character is red(bad guy)
+					if( chardist( i, ourChar ) <= 3 )	// let's resurrect him
+					{
+						npcaction( i, 0x10 );
+						Targ->NpcResurrectTarget( ourChar );
+						staticeffect( ourChar, 0x37, 0x09, 0x09, 0x19 ); //Flamestrike effect
+						switch( rand()%5 )
+						{
+						case 0: npctalkall( i, "Fellow minion of Mondain, Live!!", 0 ); break;
+						case 1: npctalkall( i, "Thou has evil flowing through your veins, so I will bring you back to life.", 0 ); break;
+						case 2: npctalkall( i, "If I res thee, promise to raise more hell!.", 0 ); break;
+						case 3: npctalkall( i, "From hell to Britannia, come alive!.", 0 ); break;
+						case 4: npctalkall( i, "Since you are Evil, I will bring you back to consciouness.", 0 ); break;
+						}
+					} 
+					else //if dist >3
+						npctalkall(i, "Come nearer, evil soul, and i'll give you life!",1);
+				} 
+				else //if player is a good guy
+					npctalkall( i, "I despise all things good. I shall not give thee another chance!", 1 );
+				break;
+			default:
+				sysmessage( s, "You are dead and cannot do that." );
+				break;
+			}
+			return;
+		} 
+		else
+		{//if this not a npc but a player
+			if( server_data.persecute )
+			{//start persecute stuff - AntiChrist
+				chars[ourChar].targ = i;
+				Skills->Persecute( s );
+				return;
+			} 
+			else
+			{
+				sysmessage(s,"You are dead and cannot do that.");
+				return;
+			}
+		}//if npc
+	}
+	else
+	{
+		chars[ourChar].targ = i;
+		if( ( chars[ourChar].hidden ) && ( !( chars[ourChar].priv2&8 ) ) )
+		{
+			chars[ourChar].hidden = 0;
+			chars[ourChar].stealth = -1;
+			updatechar( ourChar );
+		}
+		if( chars[i].dead || chars[i].hp <= 0 )//AntiChrist
+		{
+			sysmessage( s, "That person is already dead!" );
+			return;
+		}
+		
+		if( chars[i].npcaitype == 17 )//PlayerVendors
+		{
+			sprintf( temp, "%s cannot be harmed.", chars[i].name );
+			sysmessage( s, temp );
+			return;
+		}
+		if( chars[i].priv&0x04 )
+		{
+			sysmessage( s, "You cannot fight the invincible" );
+			return;
+		}
+		if( chars[i].guarded )
+		{
+			for( j = 0; j < cownsp[chars[ourChar].serial%HASHMAX].max; j++ )
+			{
+				k = cownsp[chars[ourChar].serial%HASHMAX].pointer[j];
+				if( k != -1 )
+				{
+					if( chars[k].ownserial == chars[ourChar].serial && chars[k].npcaitype == 32 && chardist( i, k ) <= 20 )
+					{
+						npcattacktarget( ourChar, k );				// think this is the way to attack the attacker
+					}
+				}
+			}
+		}
+		sprintf( temp, "You see %s attacking %s!", chars[ourChar].name, chars[i].name );
+		
+		// Dupois pointed out the for loop was changing i which would drive stuff nuts later
+		for( j = 0; j < now; j++ )
+		{
+			if((inrange1(s, j) && perm[j]) && (s!=j))
+			{
+				npcemote(j, ourChar, temp, 1);
+			}
+		}
+		int gCompare = Guilds->Compare( ourChar, i );
+		int rCompare = Races->Compare( ourChar, i );
+		if( ( chars[i].flag&0x04 ) && gCompare == 0 && rCompare == 0 ) //REPSYS
+		{	// npcaitype 2 cannot be innocent
+			bool regionGuarded = ( ( region[chars[i].region].priv&0x01 ) == 0x01 );
+			unsigned short charID = (chars[i].id1<<8) + chars[i].id2;
+			if( server_data.guardsactive && regionGuarded && chars[i].npc && chars[i].npcaitype != 4 && charID >= 0x0190 && charID <= 0x0193 )
+				npctalkall( i, "Help! Guards! I've been attacked!", 1 );
+			criminal( ourChar );
+		}
+		
+		//AntiChrist!
+		// keep the target highlighted
+		// so that we know who we're attacking =)
+		// 26/10/99
+		attackok[1] = chars[i].ser1;
+		attackok[2] = chars[i].ser2;
+		attackok[3] = chars[i].ser3;
+		attackok[4] = chars[i].ser4;
+		Network->xSend( s, attackok, 5, 0 );
+		
+		if( chars[i].npcaitype != 4 && chars[i].targ == -1 )
+		{
+			chars[i].attacker = ourChar;
+			chars[i].attackfirst = 0;
+		}
+		chars[ourChar].attackfirst = 1;
+		chars[ourChar].attacker = i;
+		npcattacktarget( ourChar, i );
+	}
+}

@@ -730,4 +730,113 @@ char cBooks::make_new_book_file(char *fileName, int id)
   fclose(file);
   return 0;
 }
+
+void readbook(int s, int i, int p) // Book window
+{
+	int x, y, pos, j;
+	char bookpage[14]="\x66\x01\x02\x40\x01\x02\x03\x00\x01\x00\x01\x00\x01";
+	
+	openscript("misc.scp");
+	sprintf(temp, "BOOK %i",
+		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
+	if (!i_scripts[misc_script]->find(temp))
+	{
+		closescript();
+		return;
+	}
+	x=p;
+	do
+	{
+		do
+		{
+			read2();
+		}
+		while (strcmp(script1, "PAGE"));
+		x--;
+	}
+	while (x>0);
+	closescript();
+	openscript("misc.scp");
+	sprintf(temp, "PAGE %s", script2);
+	if (!i_scripts[misc_script]->find(temp))
+	{
+		closescript();
+		return;
+	}
+	pos=ftell(scpfile);
+	x=-1;
+	y=-2;
+	do
+	{
+		read1();
+		x++;
+		y+=strlen(script1)+1;
+	}
+	while (strcmp(script1, "}"));
+	y+=13;
+	fseek(scpfile, pos, SEEK_SET);
+	bookpage[1]=y>>8;
+	bookpage[2]=y%256;
+	bookpage[3]=items[i].ser1;
+	bookpage[4]=items[i].ser2;
+	bookpage[5]=items[i].ser3;
+	bookpage[6]=items[i].ser4;
+	bookpage[9]=p>>8;
+	bookpage[10]=p%256;
+	bookpage[11]=x>>8;
+	bookpage[12]=x%256;
+	// Network->xSend(s, pause, 2, 0);
+	Network->xSend(s, bookpage, 13, 0);
+	for (j=0;j<x;j++)
+	{
+		read1();
+		Network->xSend(s, script1, strlen(script1)+1, 0);
+	}
+	// Network->xSend(s, restart, 2, 0);
+	closescript();
+}
+
+void openbook(int s, int i)
+{
+	char bookopen[9]="\x93\x40\x01\x02\x03\x00\x00\x02";
+	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	
+	openscript("misc.scp");
+	sprintf(temp, "BOOK %i",
+		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
+	if (!i_scripts[misc_script]->find(temp))
+	{
+		closescript();
+		return;
+	}
+	bookopen[1]=items[i].ser1;
+	bookopen[2]=items[i].ser2;
+	bookopen[3]=items[i].ser3;
+	bookopen[4]=items[i].ser4;
+	do
+	{
+		read2();
+	}
+	while (strcmp(script1, "PAGES"));
+	bookopen[7]=str2num(script2);
+	do
+	{
+		read2();
+	}
+	while (strcmp(script1, "TITLE"));
+	strcpy(booktitle, script2);
+	do
+	{
+		read2();
+	}
+	while (strcmp(script1, "AUTHOR"));
+	strcpy(bookauthor, script2);
+	// Network->xSend(s, pause, 2, 0);
+	Network->xSend(s, bookopen, 8, 0);
+	Network->xSend(s, booktitle, 60, 0);
+	Network->xSend(s, bookauthor, 30, 0);
+	// Network->xSend(s, restart, 2, 0);
+	closescript();
+}
  

@@ -39,7 +39,7 @@ static inline void _do_target(int s, TARGET_S *ts) {
 
 /* extensively modified 8/2/99 crackerjack@crackerjack.net -
  * see cmdtable.cpp for more details */
-void cCommands::Command(int s) // Client entred a '/' command like /ADD
+void cCommands::Command(int s) // Client entred a command like 'ADD
 {
 
 	int i=9;

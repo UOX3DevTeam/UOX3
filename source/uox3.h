@@ -55,12 +55,12 @@
 #define PACK_NEEDED
 #endif
 
-/*#ifdef _MSVC
+#ifdef _MSVC
 #pragma pack(1)        //fixes tile problem in MSVC++ (maybe others)
 #pragma warning(disable: 4786) //Gets rid of BAD stl warnings
 #pragma warning(disable: 4503)
 #endif
-*/
+
 
 #ifndef _DEBUG//Never define crash protection in debug mode
 /*Crash protection stuff:
@@ -106,11 +106,7 @@ typedef unsigned char BYTE;
 	#include <process.h>
 	#include <cstddef>
 	#include <winbase.h>
-#ifdef  __MINGW32__
 	#include <limits.h>
-#else
-	#include <limits>
-#endif
 	#include <conio.h>
 	#include <sys/timeb.h>
 	typedef long int32;
@@ -601,6 +597,7 @@ unsigned long int getclock();
 
 void cleanup(int s);
 void npcaction(int npc, int x);
+void checkNPC(int i, int currenttime);//Char mapRegions
 int calcgold(int p);
 int packitem(int p);
 void titletarget(int s);

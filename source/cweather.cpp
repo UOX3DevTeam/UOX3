@@ -500,3 +500,114 @@ void cWeatherAb::doPlayerWeather( UOXSOCKET s, unsigned char weathType )
 	default:		break;
 	}
 }
+
+void weather(int s, char bolt) // Send new weather to player
+{
+	char wdry[5]="\x65\x00\x00\x00";
+	char wrain[5]="\x65\x01\x46\x00";
+	char wsnow[5]="\x65\x02\x46\xEC";
+	
+	int i=calcCharFromSer(chars[currchar[s]].serial),n;
+	
+	for (int j=0;j<now;j++) 
+	{
+		if (noweather[currchar[j]] && wtype!=0) 
+		{
+			Network->xSend(s,wdry,4,0); 
+			return;
+		}
+	}
+	// send wdry to non moving(!) players if it rains or snows and they are inside buildings
+	
+	if( wtype==0) Network->xSend( s, wdry, 4, 0 );
+	
+	if (wtype==1)
+	{
+		if (bolt)
+		{
+			n=1; /*n=66*/
+			for (int a=0;a<n;a++) // reduce if too laggy (client only lag though)
+			{
+				if (rand()%2)
+				{
+					soundeffect2(i, 0x00, 0x28);
+					bolteffect(i);
+				}
+				else
+				{
+					soundeffect2(i, 0x00, 0x29);
+					bolteffect(i);
+				}
+			}
+		}
+		
+		raindroptime=uiCurrentTime+CLOCKS_PER_SEC*(6+rand()%24);
+		Network->xSend(s, wrain, 4, 0);
+	}
+	if (wtype==2)
+	{
+		if (rand()%2)
+		{
+			soundeffect2(i, 0x00, 0x14);
+		}
+		else
+		{
+			soundeffect2(i, 0x00, 0x15);
+		}
+		Network->xSend(s, wsnow, 4, 0);
+	}
+}
+
+void doSnowEffect(int i, int currenttime)
+{
+	if( !chars[i].npc && online( i ) && Races->getSnowAffect( chars[i].race ) )
+	{
+		if( !indungeon(i) && Weather->getSnowActive( region[chars[i].region].weather ) )
+		{
+			if( chars[i].weathDamage[SNOW] != 0 && chars[i].weathDamage[SNOW] <= currenttime )
+			{
+				sysmessage( calcSocketFromChar(i), "You are scalded by the intensity of the snow!" );
+				chars[i].hp -= Races->getSnowDamage( chars[i].race );
+				chars[i].weathDamage[SNOW] = currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race );
+				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
+				soundeffect2(i, 0x02, 0x08);     
+				updatestats(i, 0);
+			}
+			else
+			{
+				chars[i].weathDamage[SNOW] = currenttime + CLOCKS_PER_SEC*Races->getSnowSecs( chars[i].race );
+			}
+		}
+		else
+		{
+			chars[i].weathDamage[SNOW] = 0;
+		}
+	}
+}
+
+void doRainEffect(int i, int currenttime)
+{
+	if( !chars[i].npc && online( i ) && Races->getRainAffect( chars[i].race ) )
+	{
+		if( !indungeon(i) && Weather->getRainActive( region[chars[i].region].weather ) )
+		{
+			if( chars[i].weathDamage[RAIN] != 0 && chars[i].weathDamage[RAIN] <= currenttime )
+			{
+				sysmessage( calcSocketFromChar(i), "You are bruised by the pelting rain!" );
+				chars[i].hp -= Races->getRainDamage( chars[i].race );
+				chars[i].weathDamage[RAIN] = currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race );
+				staticeffect(i, 0x37, 0x09, 0x09, 0x19);
+				soundeffect2(i, 0x02, 0x08);     
+				updatestats(i, 0);
+			}
+			else
+			{
+				chars[i].weathDamage[RAIN] = currenttime + CLOCKS_PER_SEC*Races->getRainSecs( chars[i].race );
+			}
+		}
+		else
+		{
+			chars[i].weathDamage[RAIN] = 0;
+		}
+	}
+}

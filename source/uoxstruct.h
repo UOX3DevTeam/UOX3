@@ -737,9 +737,6 @@ struct gmpage_st
 } PACK_NEEDED;
 struct jail_st
 {
- unsigned int oldx;
- unsigned int oldy;
- signed char oldz;
  unsigned int x;
  unsigned int y;
  signed char z;
