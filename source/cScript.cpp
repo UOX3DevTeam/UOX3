@@ -261,8 +261,8 @@ cScript::~cScript()
 	default:
 	case SCPT_NORMAL:
 	case SCPT_COUNT:		Trigger->UnregisterObject( targObject );		break;
-	case SCPT_COMMAND:		Trigger->UnregisterCommandObject( targObject );	break;
-	case SCPT_MAGIC:		Trigger->UnregisterMagicObject( targObject );	break;
+	case SCPT_COMMAND:		Trigger->GetCommandScripts()->UnregisterObject( targObject );	break;
+	case SCPT_MAGIC:		Trigger->GetMagicScripts()->UnregisterObject( targObject );	break;
 	}
 	if( targScript != NULL )
 		JS_DestroyScript( targContext, targScript );
@@ -1181,7 +1181,7 @@ bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 //o--------------------------------------------------------------------------o
 //|	Notes			-	
 //o--------------------------------------------------------------------------o	
-bool cScript::OnClick(CSocket *sockPlayer, CItem *iClicked)
+bool cScript::OnClick( CSocket *sockPlayer, CItem *iClicked )
 {
 	if( !ExistAndVerify( seOnClick, "onClick" ) )
 		return false;

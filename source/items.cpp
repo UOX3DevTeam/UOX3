@@ -734,13 +734,13 @@ void cItem::GlowItem( CItem *i )
 		else // Equipped
 		{
 			CChar *s = (CChar *)getCont;
-			if( s != NULL )
+			if( ValidateObject( s ) )
 			{
 				j->SetCont( getCont );
 				j->SetX( s->GetX() );
 				j->SetY( s->GetY() );
 				j->SetZ( s->GetZ()+4 );
-				if( isOnline( s ) )
+				if( isOnline( (*s) ) )
 					j->SetDir( 29 );
 				else
 					j->SetDir( 99 );
@@ -772,7 +772,7 @@ void cItem::CheckEquipment( CChar *p )
 				{
 					std::string itemname;
 					if( i->GetName() == "#" ) 
-						getTileName( i, itemname );
+						getTileName( (*i), itemname );
 					else 
 						itemname = i->GetName();
 

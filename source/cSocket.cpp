@@ -1736,7 +1736,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 		}
 		if( i->GetTownPriv() == 2 )
 			newName = UString::sprintf( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
-		if( !isOnline( i ) )
+		if( !isOnline( (*i) ) )
 			newName += " (OFF)";
 	}
 	else

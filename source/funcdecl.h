@@ -51,7 +51,7 @@ inline UI32 calcserial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 //o---------------------------------------------------------------------------o
 void	SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial );
 void	SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin = false );
-bool	isOnline( CChar *c );
+bool	isOnline( CChar& mChar );
 
 //o---------------------------------------------------------------------------o
 // Light related functions
@@ -149,7 +149,7 @@ inline char *	RealTime( char *time_str )
 //o---------------------------------------------------------------------------o
 bool	FileExists( std::string filepath );
 void	DismountCreature( CChar *s );
-size_t	getTileName( CItem *i, std::string& itemname );
+size_t	getTileName( CItem& mItem, std::string& itemname );
 bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor );
 void	Shutdown( SI32 retCode );
 void	useDoor( CSocket *s, CItem *item );

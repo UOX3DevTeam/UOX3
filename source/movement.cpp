@@ -236,7 +236,7 @@ void HandleTeleporters( CChar *s )
 	}
 }
 
-void checkRegion( CSocket *mSock, CChar *i );
+void checkRegion( CSocket *mSock, CChar& mChar );
 void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 {
 	// sometimes the NPC movement code comes up with -1, for example, if we are following someone
@@ -346,7 +346,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		HandleItemCollision( c, mSock, oldx, oldy );
 		HandleTeleporters( c );
 		HandleWeatherChanges( c, mSock );
-		checkRegion( mSock, c );
+		checkRegion( mSock, (*c) );
 	}
 }
 
@@ -477,7 +477,7 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 	{
 		if( !ValidateObject( tempChar ) )
 			continue;
-		if( tempChar != c && ( isOnline( tempChar ) || tempChar->IsNpc() ) )
+		if( tempChar != c && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
 		{	// x=x,y=y, and distance btw z's <= MAX STEP
 			if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) )	// 2 people will still bump into each other, if slightly offset
 			{
@@ -868,7 +868,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	{
 		if( !ValidateObject( ourChar ) )
 			continue;
-		if( ourChar != c && ( ourChar->IsNpc() || isOnline( ourChar ) ) )
+		if( ourChar != c && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) )
 		{
 			if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
 			{
@@ -922,7 +922,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			return true;
 		}
 	}
-	else if( dOld == visibleRange && dNew > visibleRange )	// Just went out of range
+	else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 	{
 		UI16 targTrig		= mChar->GetScriptTrigger();
 		cScript *toExecute	= Trigger->GetScript( targTrig );
@@ -946,7 +946,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 			toExecute->InRange( mChar, tChar );
 		return true;
 	}
-	if( dOld == visibleRange && dNew > visibleRange )	// Just went out of range
+	if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 	{
 		tChar->RemoveFromSight( mSock );
 		UI16 targTrig		= mChar->GetScriptTrigger();
@@ -1008,7 +1008,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 			break;
 	}
 }
-
+#define DEBUG_UPDATERANGE 0;
 // handle item collisions, make items that appear on the edge of our sight because
 // visible, buildings when they get in range, and if the character steps on something
 // that might cause damage
@@ -1025,9 +1025,14 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	bool EffRange;
 	
 	bool isGM			= mChar->IsGM();
+#ifdef DEBUG_UPDATERANGE
+	UI16 nDist	= 0;
+	UI16 oDist	= 0;
+#else
 	UI16 dxNew, dyNew, dxOld, dyOld;
 	const bool checkX	= (oldx != newx);
 	const bool checkY	= (oldy != newy);
+#endif
 	/*
 	A note to future people (from Zippy on 2/10/02)
 
@@ -1041,7 +1046,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	a region issue (fixed now).  So I have not updated this code.  If this problem pops up in
 	the future, and I'm no longer around...  This is your piece of the puzzle.
 	*/
-
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( newx, newy, mChar->WorldNumber() );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
@@ -1057,8 +1061,28 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( !ValidateObject( tempChar ) )
 					continue;
 				// Character Send Stuff
-				if( tempChar->IsNpc() || isOnline( tempChar ) || ( isGM && cwmWorldState->ServerData()->ShowHiddenNpcStatus() ) )
+				if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowHiddenNpcStatus() ) )
 				{
+#ifdef DEBUG_UPDATERANGE
+					nDist	= getDist( mChar, tempChar );
+					oDist	= getOldDist( mChar, tempChar );
+					if( nDist == visibleRange && oDist > visibleRange )	// Just came into range
+					{
+						tempChar->SendToSocket( mSock );
+						UI16 targTrig		= mChar->GetScriptTrigger();
+						cScript *toExecute	= Trigger->GetScript( targTrig );
+						if( toExecute != NULL )
+							toExecute->InRange( mChar, tempChar );
+					}
+					else if( nDist > (visibleRange+1) && oDist == (visibleRange+1) )	// Just went out of range
+					{
+						tempChar->RemoveFromSight( mSock );
+						UI16 targTrig		= mChar->GetScriptTrigger();
+						cScript *toExecute	= Trigger->GetScript( targTrig );
+						if( toExecute != NULL )
+							toExecute->OutOfRange( mChar, tempChar );
+					}
+#else
 					if( checkX )	// Only update on x plane if our x changed
 					{
 						dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
@@ -1074,6 +1098,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						if( UpdateCharsOnPlane( mSock, mChar, tempChar, dyNew, dyOld, visibleRange ) )
 							continue;
 					}
+#endif
 				}
 			}
 			regChars->Pop();
@@ -1103,7 +1128,41 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				HandleObjectCollisions( mSock, mChar, tItem, type );
 				Magic->GateCollision( mSock, mChar, tItem, type );
 			}
-
+#ifdef DEBUG_UPDATERANGE
+			nDist	= getDist( mChar, tItem );
+			oDist	= getOldDist( mChar, tItem );
+			if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
+			{
+				if( nDist == DIST_BUILDRANGE && oDist > DIST_BUILDRANGE )	// It's a building
+					tItem->SendToSocket( mSock );
+				else if( oDist == DIST_BUILDRANGE && nDist > DIST_BUILDRANGE )
+					tItem->RemoveFromSight( mSock );
+			}
+			else
+			{
+				if( nDist == visibleRange && oDist > visibleRange )	// Just came into range
+				{
+					if( tItem->GetVisible() != VT_PERMHIDDEN || isGM )
+					{
+						if( mSock != NULL )
+							tItem->SendToSocket( mSock );
+						UI16 targTrig		= mChar->GetScriptTrigger();
+						cScript *toExecute	= Trigger->GetScript( targTrig );
+						if( toExecute != NULL )
+							toExecute->InRange( mChar, tItem );
+					}
+				}
+				else if( nDist > (visibleRange+1) && oDist == (visibleRange+1) )	// Just went out of range
+				{
+					UI16 targTrig		= mChar->GetScriptTrigger();
+					cScript *toExecute	= Trigger->GetScript( targTrig );
+					if( toExecute != NULL )
+						toExecute->OutOfRange( mChar, tItem );
+					if( mSock != NULL )
+						tItem->RemoveFromSight( mSock );
+				}
+			}
+#else
 			if( checkX )	// Only update items on furthest x plane if our x changed
 			{
 				dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
@@ -1119,6 +1178,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM ) )
 					continue;
 			}
+#endif
 		}
 		regItems->Pop();
 	}
@@ -1127,7 +1187,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 // start of LB's no rain & snow in buildings stuff 
 void cMovement::HandleWeatherChanges( CChar *c, CSocket *mSock )
 {
-//	if( !c->IsNpc() && isOnline( c ) ) // check for being in buildings (for weather) only for PC's
+//	if( !c->IsNpc() && isOnline( &c ) ) // check for being in buildings (for weather) only for PC's
 //		return;
 }
 
@@ -1327,85 +1387,85 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	void cMovement::NpcMovement( CChar *i )
+//|	Function/Class	-	void cMovement::NpcMovement( CChar& mChar )
 //|	Date			-	09/22/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Calculate, and handle NPC AI movement
 //|									
 //|	Modification	-	09/22/2002	-	Fixed fleeing NPCs by reversing values for 
 //|									xfactor & yfactor lines
 //o--------------------------------------------------------------------------o
-//|	Returns				- NA
+//|	Returns			- NA
 //o--------------------------------------------------------------------------o	
-void cMovement::NpcMovement( CChar *i )
+void cMovement::NpcMovement( CChar& mChar )
 {
     CChar *kChar;
 	UI08 j;
 	const R32 npcSpeed	= static_cast< R32 >(cwmWorldState->ServerData()->NPCSpeed());
 	bool shouldRun		= false;
-    if( i->IsNpc() && ( i->GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+    if( mChar.IsNpc() && ( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
     {
 #if DEBUG_NPCWALK
-		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", i->GetName(), i->GetNpcWander(), i->IsAtWar(), j );
+		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", mChar.GetName(), mChar.GetNpcWander(), mChar.IsAtWar(), j );
 #endif
-		if( i->IsAtWar() && i->GetNpcWander() != 5 )
+		if( mChar.IsAtWar() && mChar.GetNpcWander() != 5 )
         {
-            CChar *l = i->GetAttacker();
-            if( ValidateObject( l ) && ( isOnline( l ) || l->IsNpc() ) )
+            CChar *l = mChar.GetAttacker();
+            if( ValidateObject( l ) && ( isOnline( (*l) ) || l->IsNpc() ) )
             {
-				UI08 charDir	= Direction( i, l->GetX(), l->GetY() );
-				UI16 charDist	= getDist( i, l );
-                if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( i ) ) == ARCHERY && charDist <= 3 ) ) )
+				UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
+				UI16 charDist	= getDist( &mChar, l );
+                if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= 3 ) ) )
 				{
-					i->FlushPath();
+					mChar.FlushPath();
 
-					bool los = LineOfSight( NULL, i, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
-					if( los && charDir != i->GetDir() )
+					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+					if( los && charDir != mChar.GetDir() )
 					{
-						i->SetDir( charDir );
-						Walking( NULL, i, charDir, 256 );
+						mChar.SetDir( charDir );
+						Walking( NULL, &mChar, charDir, 256 );
 						return;
 					}
 				}
 				else
                 {
-					PathFind( i, l->GetX(), l->GetY() );
-					j = i->PopDirection();
+					PathFind( &mChar, l->GetX(), l->GetY() );
+					j = mChar.PopDirection();
 					shouldRun = (( j&0x80 ) != 0);
-					Walking( NULL, i, j, 256 );
+					Walking( NULL, &mChar, j, 256 );
                 }	
 	        }
 			else
-				i->FlushPath();
+				mChar.FlushPath();
         }
         else
         {
-            switch( i->GetNpcWander() )
+            switch( mChar.GetNpcWander() )
             {
 				case 0: // No movement
 					break;
 				case 1: // Follow the follow target
-					kChar = i->GetFTarg();
+					kChar = mChar.GetFTarg();
 					if( !ValidateObject( kChar ) ) 
 						return;
-					if( isOnline( kChar ) || kChar->IsNpc() )
+					if( isOnline( (*kChar) ) || kChar->IsNpc() )
 					{
-						UI08 charDir = Direction( i, kChar->GetX(), kChar->GetY() );
-						if( !objInRange( i, kChar, DIST_NEXTTILE ) && charDir < 8 )
+						UI08 charDir = Direction( &mChar, kChar->GetX(), kChar->GetY() );
+						if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && charDir < 8 )
 						{
-							PathFind( i, kChar->GetX(), kChar->GetY() );
-							j = i->PopDirection();
-							Walking( NULL, i, j, 256 );
+							PathFind( &mChar, kChar->GetX(), kChar->GetY() );
+							j = mChar.PopDirection();
+							Walking( NULL, &mChar, j, 256 );
 							shouldRun = (( j&0x80 ) != 0);
 						}
 						// Dupois - Added April 4, 1999
 						// Has the Escortee reached the destination ??
 						// no need for -1 check on k, as we wouldn't be here if that were true
-						if( !kChar->IsDead() && i->GetQuestDestRegion() == i->GetRegionNum() )	// Pay the Escortee and free the NPC
-							MsgBoardQuestEscortArrive( i, calcSocketObjFromChar( kChar ) );
+						if( !kChar->IsDead() && mChar.GetQuestDestRegion() == mChar.GetRegionNum() )	// Pay the Escortee and free the NPC
+							MsgBoardQuestEscortArrive( &mChar, calcSocketObjFromChar( kChar ) );
 					}
 					break;
 				case 2: // Wander freely, avoiding obstacles.
@@ -1417,35 +1477,35 @@ void cMovement::NpcMovement( CChar *i )
 					else if( j == 2 )
 						j = RandomNum( 0, 8 );
 					else	// Move in the same direction the majority of the time
-						j = i->GetDir();
+						j = mChar.GetDir();
 					shouldRun = (( j&0x80 ) != 0);
-					NpcWalk( i, j, i->GetNpcWander() );
+					NpcWalk( &mChar, j, mChar.GetNpcWander() );
 					break;
 				case 5: //FLEE!!!!!!
-					kChar = i->GetTarg();
+					kChar = mChar.GetTarg();
 					if( !ValidateObject( kChar ) ) 
 						return;
-					if( getDist( i, kChar ) < P_PF_MFD )
+					if( getDist( &mChar, kChar ) < P_PF_MFD )
 					{	// calculate a x,y to flee towards
-						UI16 mydist = P_PF_MFD - getDist( i, kChar ) + 1;
-						j = Direction( i, kChar->GetX(), kChar->GetY() );
-						SI16 myx = GetXfromDir( j, i->GetX() );
-						SI16 myy = GetYfromDir( j, i->GetY() );
+						UI16 mydist = P_PF_MFD - getDist( &mChar, kChar ) + 1;
+						j = Direction( &mChar, kChar->GetX(), kChar->GetY() );
+						SI16 myx = GetXfromDir( j, mChar.GetX() );
+						SI16 myy = GetYfromDir( j, mChar.GetY() );
 
 						SI16 xfactor = 0;
 						SI16 yfactor = 0;
 						// Sept 22, 2002 - Xuri
-						if( myx != i->GetX() )
+						if( myx != mChar.GetX() )
 						{
-							if( myx < i->GetX() )
+							if( myx < mChar.GetX() )
 								xfactor = 1;
 							else
 								xfactor = -1;
 						}
 
-						if( myy != i->GetY() )
+						if( myy != mChar.GetY() )
 						{
-							if( myy < i->GetY() )
+							if( myy < mChar.GetY() )
 								yfactor = 1;
 							else
 								yfactor = -1;
@@ -1455,10 +1515,10 @@ void cMovement::NpcMovement( CChar *i )
 						myy += (SI16)( yfactor * mydist );
 
 						// now, got myx, myy... lets go.
-						PathFind( i, myx, myy );
-						j = i->PopDirection();
+						PathFind( &mChar, myx, myy );
+						j = mChar.PopDirection();
 						shouldRun = (( j&0x80 ) != 0);
-						Walking( NULL, i, j, 256 );
+						Walking( NULL, &mChar, j, 256 );
 					}
 					else
 					{ // wander freely... don't just stop because I'm out of range.
@@ -1468,31 +1528,31 @@ void cMovement::NpcMovement( CChar *i )
 						else if( j == 2 )
 							j = RandomNum( 0, 8 );
 						else	// Move in the same direction the majority of the time
-        					j = i->GetDir();
+        					j = mChar.GetDir();
 						shouldRun = (( j&0x80 ) != 0);
-						NpcWalk( i, j, i->GetNpcWander() );
+						NpcWalk( &mChar, j, mChar.GetNpcWander() );
 					}
 					break;
 				case 6:		// Pathfinding!!!!
-					if( i->StillGotDirs() )
+					if( mChar.StillGotDirs() )
 					{
-						j = i->PopDirection();
+						j = mChar.PopDirection();
 						shouldRun = (( j&0x80 ) != 0);
-						Walking( NULL, i, j, 256 );
+						Walking( NULL, &mChar, j, 256 );
 					}
 					else
-						i->SetNpcWander( i->GetOldNpcWander() );
+						mChar.SetNpcWander( mChar.GetOldNpcWander() );
 					break;
 				default:
 					break;
             }
         }
-		if( i->GetNpcWander() == 1 )	// Followers need to keep up with Players
-			i->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
+		if( mChar.GetNpcWander() == 1 )	// Followers need to keep up with Players
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
 		else if( shouldRun )
-			i->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
 		else
-			i->SetTimer( tNPC_MOVETIME, BuildTimeValue( npcSpeed ) );
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( npcSpeed ) );
     }
 }
 

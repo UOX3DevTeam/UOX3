@@ -108,7 +108,7 @@ void		clearTrades( void );
 void		sysBroadcast( const std::string txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, UI32 nextDecayItems );
-void		CheckAI( CChar *i );
+void		CheckAI( CChar& mChar );
 
 bool cluox_io          = false;   // is cluox-IO enabled?
 bool cluox_nopipe_fill = false;   // the stdin-pipe is known to be none-empty, no need to fill it.
@@ -282,7 +282,7 @@ void closesocket( UOXSOCKET s )
 #endif
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool isOnline( CChar *c )
+//|	Function		-	bool isOnline( CChar& mChar )
 //|	Date			-	
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -292,22 +292,20 @@ void closesocket( UOXSOCKET s )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-bool isOnline( CChar *c )
+bool isOnline( CChar& mChar )
 {
-	if( !ValidateObject( c ) )
+	if( mChar.IsNpc() )
 		return false;
-	if( c->IsNpc() )
-		return false;
-	ACCOUNTSBLOCK& actbTemp = c->GetAccount();
+	ACCOUNTSBLOCK& actbTemp = mChar.GetAccount();
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 	{
-		if( actbTemp.dwInGame == c->GetSerial() )
+		if( actbTemp.dwInGame == mChar.GetSerial() )
 			return true;
 	}
 	Network->PushConn();
 	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		if( tSock->CurrcharObj() == c )
+		if( tSock->CurrcharObj() == &mChar )
 		{
 			Network->PopConn();
 			return true;
@@ -1450,12 +1448,12 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void checkPC( CChar *mChar, bool doWeather )
+//|	Function	-	void checkPC( CChar& mChar, bool doWeather )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check a PC's status
 //o---------------------------------------------------------------------------o
-void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
+void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 {
 	LIGHTLEVEL toShow;
 	Combat->CombatLoop( mSock, mChar );
@@ -1463,70 +1461,70 @@ void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 	if( doWeather )
 	{
 		UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-		if( Races->VisLevel( mChar->GetRace() ) > curLevel )
+		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
 			toShow = 0;
 		else
-			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar->GetRace() ) );
+			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
 
 		doLight( mSock, toShow );
-		Weather->DoPlayerStuff( mSock, mChar );
+		Weather->DoPlayerStuff( mSock, &mChar );
 	}
 	
-	if( mChar->GetSquelched() == 2 )
+	if( mChar.GetSquelched() == 2 )
 	{
 		if( mSock->GetTimer( tPC_MUTETIME ) != 0 && ( mSock->GetTimer( tPC_MUTETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
-			mChar->SetSquelched( 0 );
+			mChar.SetSquelched( 0 );
 			mSock->SetTimer( tPC_MUTETIME, 0 );
 			mSock->sysmessage( 1237 );
 		}
 	}
 	
-	if( mChar->IsCriminal() && mChar->GetTimer( tCHAR_CRIMFLAG ) && ( mChar->GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
 		if( mSock != NULL )
 			mSock->sysmessage( 1238 );
-		mChar->SetTimer( tCHAR_CRIMFLAG, 0 );
-		setcharflag( mChar );
+		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
+		setcharflag( &mChar );
 	}
-	if( mChar->GetTimer( tCHAR_MURDERRATE ) && ( mChar->GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	if( mChar.GetTimer( tCHAR_MURDERRATE ) && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
-		mChar->SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mChar->GetKills() )
-			mChar->SetKills( static_cast<SI16>( mChar->GetKills() - 1 ) );
-		if( mChar->GetKills() )
-			mChar->SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepMurderDecay() ) ) );
+		mChar.SetTimer( tCHAR_MURDERRATE, 0 );
+		if( mChar.GetKills() )
+			mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
+		if( mChar.GetKills() )
+			mChar.SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepMurderDecay() ) ) );
 		else
-			mChar->SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mChar->GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
+			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
+		if( mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
 			mSock->sysmessage( 1239 );
-		setcharflag( mChar );
+		setcharflag( &mChar );
 	}
 	
-	if( mChar->IsCasting() && !mChar->IsJSCasting() )	// Casting a spell
+	if( mChar.IsCasting() && !mChar.IsJSCasting() )	// Casting a spell
 	{
-		mChar->SetNextAct( mChar->GetNextAct() - 1 );
-		if( mChar->GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )//Spell is complete target it.
+		mChar.SetNextAct( mChar.GetNextAct() - 1 );
+		if( mChar.GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )//Spell is complete target it.
 		{
-			if( Magic->spells[mChar->GetSpellCast()].RequireTarget() )
+			if( Magic->spells[mChar.GetSpellCast()].RequireTarget() )
 			{
-				mChar->SetCasting( false );
-				mChar->SetFrozen( false );
-				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[mChar->GetSpellCast()].StringToSay().c_str() );
+				mChar.SetCasting( false );
+				mChar.SetFrozen( false );
+				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[mChar.GetSpellCast()].StringToSay().c_str() );
 			}
 			else
 			{
-				mChar->SetCasting( false );
-				Magic->CastSpell( mSock, mChar );
-				mChar->SetTimer( tCHAR_SPELLTIME, 0 );
-				mChar->SetFrozen( false );
+				mChar.SetCasting( false );
+				Magic->CastSpell( mSock, &mChar );
+				mChar.SetTimer( tCHAR_SPELLTIME, 0 );
+				mChar.SetFrozen( false );
 			}
 		} 
-		else if( mChar->GetNextAct() <= 0 )//redo the spell action
+		else if( mChar.GetNextAct() <= 0 )//redo the spell action
 		{
-			mChar->SetNextAct( 75 );
-			if( !mChar->IsOnHorse() )
-				Effects->PlaySpellCastingAnimation( mChar, Magic->spells[mChar->GetSpellCast()].Action() );
+			mChar.SetNextAct( 75 );
+			if( !mChar.IsOnHorse() )
+				Effects->PlaySpellCastingAnimation( &mChar, Magic->spells[mChar.GetSpellCast()].Action() );
 		}
 	}
 	
@@ -1535,8 +1533,8 @@ void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 		if( cwmWorldState->ServerData()->WorldAmbientSounds() > 10 )
 			cwmWorldState->ServerData()->WorldAmbientSounds( 10 );
 		SI16 soundTimer = static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
-		if( !mChar->IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
-			Effects->PlayBGSound( (*mSock), (*mChar) ); // bgsound uses array positions not sockets!
+		if( !mChar.IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
+			Effects->PlayBGSound( (*mSock), mChar ); // bgsound uses array positions not sockets!
 	}
 	
 	if( mSock->GetTimer( tPC_SPIRITSPEAK ) > 0 && mSock->GetTimer( tPC_SPIRITSPEAK) < cwmWorldState->GetUICurrentTime() )
@@ -1547,7 +1545,7 @@ void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 		if( mSock->GetTimer( tPC_TRACKINGDISPLAY ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			mSock->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( (R32)cwmWorldState->ServerData()->TrackingRedisplayTime() ) );
-			Skills->Track( mChar );
+			Skills->Track( &mChar );
 		}
 	}
 	else
@@ -1555,7 +1553,7 @@ void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 		if( mSock->GetTimer( tPC_TRACKING ) > ( cwmWorldState->GetUICurrentTime() / 10 ) ) // dont send arrow-away packet all the time
 		{
 			mSock->SetTimer( tPC_TRACKING, 0 );
-			CPTrackingArrow tSend = (*mChar->GetTrackingTarget());
+			CPTrackingArrow tSend = (*mChar.GetTrackingTarget());
 			tSend.Active( 0 );
 			mSock->Send( &tSend );
 		}
@@ -1565,62 +1563,60 @@ void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 	{
 		if( mSock->GetTimer( tPC_FISHING ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			Skills->Fish( mChar );
+			Skills->Fish( &mChar );
 			mSock->SetTimer( tPC_FISHING, 0 );
 		}
 	}
 	
-	if( mChar->IsOnHorse() )
+	if( mChar.IsOnHorse() )
 	{
-		CItem *horseItem = mChar->GetItemAtLayer( IL_MOUNT );
+		CItem *horseItem = mChar.GetItemAtLayer( IL_MOUNT );
 		if( !ValidateObject( horseItem ) )
-			mChar->SetOnHorse( false );	// turn it off, we aren't on one because there's no item!
+			mChar.SetOnHorse( false );	// turn it off, we aren't on one because there's no item!
 		else if( horseItem->GetDecayTime() != 0 && ( horseItem->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
-			mChar->SetOnHorse( false );
+			mChar.SetOnHorse( false );
 			horseItem->Delete();
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void checkNPC( CChar *i )
-//|	Programmer	-	Unknown
+//|	Function	-	void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
+//|	Programmer	-	UOX Devteam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check NPC's status
 //o---------------------------------------------------------------------------o
-void checkNPC( CChar *i, bool checkAI, bool doRestock )
+void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 {
-	if( !ValidateObject( i ) || i->isFree() )
-		return;
 	// okay, this will only ever trigger after we check an npc...  Question is:
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
 	// AI can never be faster than how often we check npcs
 	// This periodically generates access violations.  No idea why either
-	UI16 AITrig			= i->GetScriptTrigger();
+	UI16 AITrig			= mChar.GetScriptTrigger();
 	cScript *toExecute	= Trigger->GetScript( AITrig );
 	bool doAICheck		= true;
 	if( toExecute != NULL )
 	{
-		if( toExecute->OnAISliver( i ) )
+		if( toExecute->OnAISliver( &mChar ) )
 			doAICheck = false;
 	}
 	if( doAICheck && checkAI )
-		CheckAI( i );
-	Movement->NpcMovement( i );
+		CheckAI( mChar );
+	Movement->NpcMovement( mChar );
 
 	if( doRestock )
-		restockNPC( (*i), false );
+		restockNPC( mChar, false );
 
-	if( ValidateObject( i->GetOwnerObj() ) && i->GetHunger() == 0 && i->GetNPCAiType() != aiPLAYERVENDOR ) // tamed animals but not player vendors ;)=
+	if( ValidateObject( mChar.GetOwnerObj() ) && mChar.GetHunger() == 0 && mChar.GetNPCAiType() != aiPLAYERVENDOR ) // tamed animals but not player vendors ;)=
 	{
-		Effects->tempeffect( i, i, 44, 0, 0, 0 ); // (go wild in some minutes ...)-effect
-		i->SetHunger( -1 );
+		Effects->tempeffect( &mChar, &mChar, 44, 0, 0, 0 ); // (go wild in some minutes ...)-effect
+		mChar.SetHunger( -1 );
 	}
 	
-	if( i->GetTimer( tNPC_SUMMONTIME ) )
+	if( mChar.GetTimer( tNPC_SUMMONTIME ) )
 	{
-		if( i->GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar.GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
 			// Dupois - Added Dec 20, 1999
 			// QUEST expire check - after an Escort quest is created a timer is set
@@ -1628,43 +1624,43 @@ void checkNPC( CChar *i, bool checkAI, bool doRestock )
 			// too long without every having its quest accepted by a player so we have to remove 
 			// its posting from the messageboard before icing the NPC
 			// Only need to remove the post if the NPC does not have a follow target set
-			if( i->GetQuestType() == ESCORTQUEST && !ValidateObject( i->GetFTarg() ) )
+			if( mChar.GetQuestType() == ESCORTQUEST && !ValidateObject( mChar.GetFTarg() ) )
 			{
-				MsgBoardQuestEscortRemovePost( i );
-				MsgBoardQuestEscortDelete( i );
+				MsgBoardQuestEscortRemovePost( &mChar );
+				MsgBoardQuestEscortDelete( &mChar );
 				return;
 			}
 			// Dupois - End
-			if( i->GetNPCAiType() == aiGUARD && i->IsAtWar() )
+			if( mChar.GetNPCAiType() == aiGUARD && mChar.IsAtWar() )
 			{
-				i->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
+				mChar.SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
 				return;
 			}
-			Effects->PlaySound( i, 0x01FE );
-			i->SetDead( true );
-			i->Delete();
+			Effects->PlaySound( &mChar, 0x01FE );
+			mChar.SetDead( true );
+			mChar.Delete();
 			return;
 		}
 	}
 	
-	if( i->GetFleeAt() == 0 )
-		i->SetFleeAt( cwmWorldState->ServerData()->CombatNPCBaseFleeAt() );
-	if( i->GetReattackAt() == 0 )
-		i->SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
+	if( mChar.GetFleeAt() == 0 )
+		mChar.SetFleeAt( cwmWorldState->ServerData()->CombatNPCBaseFleeAt() );
+	if( mChar.GetReattackAt() == 0 )
+		mChar.SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
 	
-	if( i->GetNpcWander() != 5 && ( i->GetHP() < i->GetStrength() * i->GetFleeAt() / 100 ) )
+	if( mChar.GetNpcWander() != 5 && ( mChar.GetHP() < mChar.GetStrength() * mChar.GetFleeAt() / 100 ) )
 	{
-		i->SetOldNpcWander( i->GetNpcWander() );
-		i->SetNpcWander( 5 );
-		i->SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)( cwmWorldState->ServerData()->NPCSpeed() / 2 ) ) );	// fleeing enemies are 2x faster
+		mChar.SetOldNpcWander( mChar.GetNpcWander() );
+		mChar.SetNpcWander( 5 );
+		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)( cwmWorldState->ServerData()->NPCSpeed() / 2 ) ) );	// fleeing enemies are 2x faster
 	}
-	else if( i->GetNpcWander() == 5 && (i->GetHP() > i->GetStrength() * i->GetReattackAt() / 100))
+	else if( mChar.GetNpcWander() == 5 && (mChar.GetHP() > mChar.GetStrength() * mChar.GetReattackAt() / 100))
 	{
-		i->SetNpcWander( i->GetOldNpcWander() );
-		i->SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)cwmWorldState->ServerData()->NPCSpeed() ) );
-		i->SetOldNpcWander( 0 ); // so it won't save this at the wsc file
+		mChar.SetNpcWander( mChar.GetOldNpcWander() );
+		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)cwmWorldState->ServerData()->NPCSpeed() ) );
+		mChar.SetOldNpcWander( 0 ); // so it won't save this at the wsc file
 	}
-	Combat->CombatLoop( NULL, i );
+	Combat->CombatLoop( NULL, mChar );
 }
 
 void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
@@ -1952,7 +1948,7 @@ void CWorldMain::CheckAutoTimers( void )
 		if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 		{
 			genericCheck( iSock, (*mChar), checkFieldEffects, checkHunger );
-			checkPC( iSock, mChar, doWeather );
+			checkPC( iSock, (*mChar), doWeather );
 
 			SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
 			SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
@@ -2010,7 +2006,7 @@ void CWorldMain::CheckAutoTimers( void )
 				{
 					if( setNPCFlags )
 						setcharflag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
-					checkNPC( charCheck, checkAI, doRestock );
+					checkNPC( (*charCheck), checkAI, doRestock );
 				}
 			}
 			else if( charCheck->GetTimer( tPC_LOGOUT ) )
@@ -2167,7 +2163,9 @@ void InitClasses( void )
 	if(( Books			= new cBooks )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
 	if(( GMQueue		= new PageVector( "GM Queue" ) )		== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
 	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( Trigger		= new Triggers )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	if(( Trigger		= new CTrigger )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	Trigger->GetEnvokeByID()->Parse();
+	Trigger->GetEnvokeByType()->Parse();
 	if(( MapRegion		= new cMapRegion )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
 	if(( Effects		= new cEffects )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
 	if(( HTMLTemplates	= new cHTMLTemplates )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
@@ -2796,7 +2794,7 @@ void telltime( CSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	int getTileName( CItem *i, char* itemname )
+//|	Function	-	size_t getTileName( CItem& mItem, std::string& itemname )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of an items name from tiledata.mul and
@@ -2806,18 +2804,18 @@ void telltime( CSocket *s )
 // The format it accepts is same as UO style - %plural/single% or %plural%
 // eg arrow%s%
 //    loa%ves/f% of bread
-size_t getTileName( CItem *i, std::string& itemname )
+size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	CTile tile;
-	Map->SeekTile( i->GetID(), &tile );
-	UString temp	= i->GetName() ;
+	Map->SeekTile( mItem.GetID(), &tile );
+	UString temp	= mItem.GetName() ;
 	temp			= temp.simplifyWhiteSpace();
 	if( temp.substr( 0, 1 ) == "#" )
 	{
 		temp =  static_cast< UString >( tile.Name() );
 	}
 	
-	UI16 getAmount = i->GetAmount();
+	UI16 getAmount = mItem.GetAmount();
 	if( getAmount == 1 )
 	{
 		if( tile.DisplayAsAn() )
@@ -2848,19 +2846,17 @@ size_t getTileName( CItem *i, std::string& itemname )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void checkRegion( CChar *i )
+//|	Function	-	void checkRegion( CChar& mChar )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check what region a character is in
 //o---------------------------------------------------------------------------o
-void checkRegion( CSocket *mSock, CChar *i )
+void checkRegion( CSocket *mSock, CChar& mChar )
 {
-	if( !ValidateObject( i ) )
-		return;
-	CTownRegion *iRegion	= i->GetRegion();
-	CTownRegion *calcReg	= calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() );
+	CTownRegion *iRegion	= mChar.GetRegion();
+	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber() );
 	if( iRegion == NULL && calcReg != NULL )
-		i->SetRegion( calcReg->GetRegionNum() );
+		mChar.SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
 	{
 		if( mSock != NULL )
@@ -2899,10 +2895,10 @@ void checkRegion( CSocket *mSock, CChar *i )
 					CPWorldChange wrldChange( calcReg->GetAppearance(), 1 );
 					mSock->Send( &wrldChange );
 				}
-				if( calcReg == regions[i->GetTown()] )	// enter our home town
+				if( calcReg == regions[mChar.GetTown()] )	// enter our home town
 				{
 					mSock->sysmessage( 1364 );
-					CItem *packItem = i->GetPackItem();
+					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
 						CDataList< CItem * > *piCont = packItem->GetContainsList();
@@ -2916,7 +2912,7 @@ void checkRegion( CSocket *mSock, CChar *i )
 									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
-									i->SetFame( (SI16)( i->GetFame() + i->GetFame() / 5 ) );	// 20% fame boost
+									mChar.SetFame( (SI16)( mChar.GetFame() + mChar.GetFame() / 5 ) );	// 20% fame boost
 									break;
 								}
 							}
@@ -2927,31 +2923,31 @@ void checkRegion( CSocket *mSock, CChar *i )
 		}
 		if( iRegion != NULL && calcReg != NULL )
 		{
-			UI16 leaveScript = i->GetScriptTrigger();
+			UI16 leaveScript = mChar.GetScriptTrigger();
 			cScript *tScript = Trigger->GetScript( leaveScript );
 			if( tScript != NULL )
 			{
-				tScript->OnLeaveRegion( i, iRegion->GetRegionNum() );
-				tScript->OnEnterRegion( i, calcReg->GetRegionNum() );
+				tScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+				tScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
 			}
 
 			UI16 regLeaveScript	= iRegion->GetScriptTrigger();
 			cScript *trScript	= Trigger->GetScript( regLeaveScript );
 			if( trScript != NULL )
-				trScript->OnLeaveRegion( i, iRegion->GetRegionNum() );
+				trScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
 
 			UI16 regEnterScript	= calcReg->GetScriptTrigger();
 			cScript *teScript	= Trigger->GetScript( regEnterScript );
 			if( teScript != NULL )
-				teScript->OnEnterRegion( i, calcReg->GetRegionNum() );
+				teScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
 		}
 		if( calcReg != NULL )
-			i->SetRegion( calcReg->GetRegionNum() );
+			mChar.SetRegion( calcReg->GetRegionNum() );
 		if( mSock != NULL )
 		{
 			Effects->dosocketmidi( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );	// force it to update the light level straight away
-			Weather->DoPlayerStuff( mSock, i );	// force a weather update too
+			Weather->DoPlayerStuff( mSock, &mChar );	// force a weather update too
 		}
 	}
 }

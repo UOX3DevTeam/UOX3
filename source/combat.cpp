@@ -630,7 +630,7 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 					if( mSock != NULL )
 					{
 						std::string name;
-						getTileName( weapon, name );
+						getTileName( (*weapon), name );
 						mSock->sysmessage( 311, name.c_str() );
 					}
 					weapon->Delete();
@@ -816,7 +816,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 				if( mSock != NULL )
 				{
 					std::string name;
-					getTileName( defendItem, name );
+					getTileName( (*defendItem), name );
 					mSock->sysmessage( 311, name.c_str() );
 					mSock->statwindow( mChar );
 				}
@@ -1702,54 +1702,54 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	HandleDeath( ourTarg );
 }
 
-void CHandleCombat::CombatLoop( CSocket *mSock, CChar *mChar )
+void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 {
-	CChar *ourTarg = mChar->GetTarg();
+	CChar *ourTarg = mChar.GetTarg();
 	if( ourTarg == NULL )
 		return;
 
-	if( mChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		bool validTarg = false;
-		if( !mChar->IsDead() && ValidateObject( ourTarg ) && !ourTarg->isFree() && ( ourTarg->IsNpc() || isOnline( ourTarg ) ) )
+		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->isFree() && ( ourTarg->IsNpc() || isOnline( (*ourTarg) ) ) )
 		{
 			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != aiPLAYERVENDOR )
 			{
-				if( charInRange( mChar, ourTarg ) )
+				if( charInRange( &mChar, ourTarg ) )
 				{
 					validTarg = true;
-					if( mChar->IsNpc() && mChar->GetSpAttack() > 0 && mChar->GetMana() > 0 && !RandomNum( 0, 4 ) )
-						HandleNPCSpellAttack( mChar, ourTarg, getDist( mChar, ourTarg ) );
+					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 4 ) )
+						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );
 					else
-						HandleCombat( mSock, mChar, ourTarg );
+						HandleCombat( mSock, &mChar, ourTarg );
 
 					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
-						StartAttack( ourTarg, mChar );
+						StartAttack( ourTarg, &mChar );
 				}
-				else if( mChar->IsNpc() && mChar->GetNPCAiType() == aiGUARD && mChar->GetRegion()->IsGuarded() )
+				else if( mChar.IsNpc() && mChar.GetNPCAiType() == aiGUARD && mChar.GetRegion()->IsGuarded() )
 				{
 					validTarg = true;
-					mChar->SetLocation( ourTarg );
-					Effects->PlaySound( mChar, 0x01FE );
-					Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
-					mChar->talkAll( 1616, true );
+					mChar.SetLocation( ourTarg );
+					Effects->PlaySound( &mChar, 0x01FE );
+					Effects->PlayStaticAnimation( &mChar, 0x372A, 0x09, 0x06 );
+					mChar.talkAll( 1616, true );
 				}
 				else
-					InvalidateAttacker( mChar );
+					InvalidateAttacker( &mChar );
 			}
 		}
 		if( !validTarg )
 		{
-			mChar->ToggleCombat();
-			mChar->SetTarg( NULL );
-			mChar->SetAttacker( NULL );
-			mChar->SetAttackFirst( false );
+			mChar.ToggleCombat();
+			mChar.SetTarg( NULL );
+			mChar.SetAttacker( NULL );
+			mChar.SetAttackFirst( false );
 		}
 		else
 		{
 			if( ourTarg->GetHP() <= 0 )
-				Kill( mChar, ourTarg );
-			mChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( mChar ) ) );
+				Kill( &mChar, ourTarg );
+			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar ) ) );
 		}
 	}
 }

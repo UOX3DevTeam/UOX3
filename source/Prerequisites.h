@@ -112,6 +112,7 @@ namespace UOX {
 	class cDirectoryListing;
 	class CEndL;
 	class cEffects;
+	class CEnvoke;
 	class CGuild;
 	class CGuildCollection;
 	class CGump;
@@ -150,6 +151,8 @@ namespace UOX {
 	class CTile;
 	class CTileUni;
 	class CTownRegion;
+	class CTrigger;
+	class CTriggerScripts;
 	class CVersionClass;
 	class CWeather;
 	class cWeatherAb;
@@ -165,7 +168,6 @@ namespace UOX {
 	class ScriptSection;
 	class SpellInfo;
 	class SubRegion;
-	class Triggers;
 	class UOXFile;
 	class UString;
 

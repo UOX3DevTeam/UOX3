@@ -54,7 +54,7 @@ public:
 	void	AttackTarget( CChar *mChar, CChar *ourTarg );
 	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded );
 
-	void	CombatLoop( CSocket *mSock, CChar *mChar );
+	void	CombatLoop( CSocket *mSock, CChar& mChar );
 
 	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
 	SI16	calcAtt( CChar *mChar, bool doDamage = false );

@@ -474,7 +474,7 @@ namespace UOX
 					break;
 				case CCP_DEAD:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDead() );		break;
 				case CCP_NPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNpc() );		break;
-				case CCP_ONLINE:		*vp = BOOLEAN_TO_JSVAL( isOnline( gPriv ) );	break;
+				case CCP_ONLINE:		*vp = BOOLEAN_TO_JSVAL( isOnline( (*gPriv) ) );	break;
 				case CCP_DIRECTION:		*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 				
 				// 3  objects: regions + towns + guilds

@@ -562,7 +562,7 @@ bool CPIUpdateRangeChange::Handle( void )
 		case CV_NORMAL:
 		case CV_T2A:
 		case CV_UO3D:
-			tSock->Range( tSock->GetByte( 1 ) - 3 );
+			tSock->Range( tSock->GetByte( 1 ) - 4 );
 			break;
 		default:
 			tSock->Range( tSock->GetByte( 1 ) );

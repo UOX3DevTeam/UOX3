@@ -572,6 +572,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Set and resize the gumps background image.
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth );
 	toSend.AddCommand( "checkertrans %u %u %u %u",xStart+5,yStart+5,xWidth-10,yWidth-11);
+	
 	// Next we create and position the close window button as well set its Down, and Up states.
 	toSend.AddCommand( "button %u %u %u %u %u %u %u",xWidth-28,yStart+1,0xA51/*cancelDown*/, 0xA50/*cancelUp*/, 1, 0, 1); 
 	//toSend.AddCommand( "button %u %u %u %u %u %u %u",xWidth-34,yStart+21,0xFB7, 0xFB8, 1, 0, 1); 
@@ -619,7 +620,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	szBuffer = UString::sprintf( "%s %.8s%s", tmpBuffer, asctime( today ) + 11, ( (isAM)?"Am":"Pm") );
 	toSend.AddCommand( "text %u %u %u %u",280,yStart+13, 25, linenum++);
 	toSend.AddText( szBuffer ); 
-	
+		
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 0x13EC, 190, 300);
 	UI32 tabNumber = 1;
@@ -632,7 +633,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddCommand( "text %u %u %u %u",42,yStart+46, 47, linenum++);
 		toSend.AddText( szBuffer );
 		// Do the server tab
-		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 1000, 1); 
+		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1); 
 		toSend.AddCommand( "text %u %u %u %u",132,yStart+46, 47, linenum++);
 		toSend.AddText( "Server" );
 	}
@@ -644,7 +645,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddCommand( "text %u %u %u %u",42,yStart+46, 47, linenum++);
 		toSend.AddText( szBuffer );
 		// Do the server tab
-		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 1000, 1); 
+		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1); 
 		UI32 myLinenum = linenum;
 		toSend.AddCommand( "text %u %u %u %u",132,yStart+46, 47, linenum++);
 		toSend.AddText( "Server" );
@@ -666,8 +667,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI32 yOffset;
 #define SXOFFSET	210
 #define SYOFFSET	44
-#define YOFFSET		103
-#define XOFFSET		68
+#define YOFFSET	103
+#define XOFFSET	68
 	if( m == 1 )
 	{
 		// Now we make the fisrt page that will escentially display our list of Main GM Groups.
@@ -802,6 +803,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			tag = ItemMenu->Next();
 		}
 		UI32 currentPage = 1;
+		
 		for( i = 0; i < numCounter; i += 12 )
 		{
 			toSend.AddCommand( "page %i", currentPage );
@@ -837,6 +839,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		position		= 80;
 		xOffset			= SXOFFSET;
 		yOffset			= SYOFFSET;
+		
 		for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next() )
 		{
 			data = ItemMenu->GrabData();
@@ -922,6 +925,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 
 			tag = ItemMenu->Next();
 		}
+		
 		UI32 currentPage = 1;
 		for( i = 0; i < numCounter; i += 12 )
 		{
@@ -944,9 +948,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		}		
 	}
 
-	
-	// Reserved page # 1000-1999 for the server support pages
-	toSend.AddCommand( "page 1000" );  
+
+	// Reserved page # 800 - 899 for the server support pages
+	toSend.AddCommand( "page 30" );  
 	// Show the selected tab image for this page. 
 	toSend.AddCommand( "gumppic %u %u %u",105, yStart + 47, 0x138F );
 	toSend.AddCommand( "text %u %u %u %u",132, yStart + 46, 70, linenum++ );
@@ -959,9 +963,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddCommand( "text %u %u %u %u", 54, yStart + 76, 52, linenum++ );
 	toSend.AddText( "ShutdownServer" );
 	if( s->ClientVersionMajor() >= 4 )
-		toSend.AddCommand( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x5689, 0x568A, 0, 2000, tabNumber++ );
+		toSend.AddCommand( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x5689, 0x568A, 0, 31, tabNumber++ );
 	else
-		toSend.AddCommand( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x047F, 0x0480, 0, 2000, tabNumber++ );
+		toSend.AddCommand( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x047F, 0x0480, 0, 31, tabNumber++ );
 	// Need a seperator
 	if( s->ClientVersionMajor() >= 4 )
 		toSend.AddCommand( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 );
@@ -971,8 +975,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddCommand( "htmlgump %u %u %u %u %u %u %u", xStart + 16, yStart + 130, 175, 50, linenum++, 2, 0 );
 	toSend.AddText( "Currently this tab is under construction." );
 
-	// Reserved pages 2000-2999 for the online help system. (comming soon)
-	toSend.AddCommand( "page 2000" );
+	// Reserved pages 900-999 for the online help system. (comming soon)
+	toSend.AddCommand( "page 31" );
 	// Ok display the scroll that we use to display our help information
 	toSend.AddCommand( "resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200 );
 	// Write out what page were on (Mainly for debug purposes
@@ -984,7 +988,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddCommand( "text %u %u %u %u",30, yStart + 200, 87, linenum++ );
 	toSend.AddText( szBuffer );
 	toSend.AddCommand( "button %u %u %u %u %u %u %u",104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++ );
-	
+
 	// Finish up and send the gump to the client socket.	
 	toSend.Finalize();
 	s->Send( &toSend );

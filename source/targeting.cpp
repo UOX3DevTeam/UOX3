@@ -1311,7 +1311,7 @@ void FriendTarget( CSocket *s )
 		s->sysmessage( 1103 );
 		return;
 	}
-	if( targChar->IsNpc() || !isOnline( targChar ) || targChar == mChar )
+	if( targChar->IsNpc() || !isOnline( (*targChar) ) || targChar == mChar )
 	{
 		s->sysmessage( 1622 );
 		return;

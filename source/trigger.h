@@ -4,48 +4,81 @@
 namespace UOX
 {
 
-class Triggers
+	const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", "MAGIC_SCRIPTS" };
+
+	class CEnvoke
+	{
+	private:
+		std::map< UI16, UI16 >	envokeList;
+		std::string				envokeType;
+
+	public:
+				CEnvoke( std::string envokeType );
+				~CEnvoke();
+
+		void	Parse( void );
+		bool	Check( UI16 envokeID ) const;
+		UI16	GetScript( UI16 envokeID ) const;
+	};
+
+	class CTriggerScripts
+	{
+	private:
+		std::map< JSObject *, cScript * >			scriptMapping;
+		std::map< JSObject *, cScript * >::iterator scriptIterator;
+
+		SCRIPTTYPE									scriptType;
+
+	public:
+					CTriggerScripts( SCRIPTTYPE sT );
+					~CTriggerScripts();
+
+		void		Parse( void );
+		void		RegisterObject( JSObject *toReg, cScript *tNum );
+		void		UnregisterObject( JSObject *toUnreg );
+
+		cScript *	GetScript( JSObject *toFind );
+		cScript *	First( void );
+		cScript *	Next( void );
+		bool		Finished( void );
+	};
+
+class CTrigger
 {
 private:
-
-	std::map< UI16, UI16 >						envokeList;		// item ID -> script ID mapping
 	std::map< UI16, cScript * >					scriptTriggers;
 	std::map< JSObject *, UI16 >				scriptToTriggerMapping;
-	std::map< JSObject *, cScript * >			commandScripts;
-	std::map< JSObject *, cScript * >			magicScripts;
-	std::map< JSObject *, cScript * >::iterator commandScpIterator;
-	std::map< JSObject *, cScript * >::iterator magicScpIterator;
 
-	void				ParseEnvoke( void );
+	CEnvoke *			envokeByID;
+	CEnvoke *			envokeByType;
+
+	CTriggerScripts *	magicScripts;
+	CTriggerScripts *	commandScripts;
+
 	void				ParseScript( void );
-	void				ParseCommands( void );
-	void				ParseMagic( void );
+
 public:
-						Triggers();
+						CTrigger();
+						~CTrigger();
+
 	void				Cleanup();
-						~Triggers();
-	bool				CheckEnvoke( UI16 itemID ) const;
+	void				ReloadJS( void );
+
 	cScript *			GetScript( UI16 triggerNumber );
 	cScript *			GetAssociatedScript( JSObject *toFind );
-	void				ReloadJS( void );
+	UI16				GetScriptNumber( JSObject *toFind );
+
 	void				RegisterObject( JSObject *toReg, UI16 tNum );
 	void				UnregisterObject( JSObject *toUnreg );
-	void				RegisterCommandObject( JSObject *toReg, cScript *tNum );
-	void				RegisterMagicObject( JSObject *toReg, cScript *tNum );
-	void				UnregisterCommandObject( JSObject *toUnreg );
-	void				UnregisterMagicObject( JSObject *toUnreg );
-	UI16				GetScriptFromEnvoke( UI16 itemID ) const;
 
-	cScript *			FirstCommand( void );
-	cScript *			NextCommand( void );
-	bool				FinishedCommands( void );
+	CEnvoke *			GetEnvokeByID( void );
+	CEnvoke *			GetEnvokeByType( void );
 
-	cScript *			FirstSpell( void );
-	cScript *			NextSpell( void );
-	bool				FinishedSpells( void );
+	CTriggerScripts *	GetMagicScripts( void );
+	CTriggerScripts *	GetCommandScripts( void );
 };
 
-extern Triggers *Trigger;
+extern CTrigger *Trigger;
 
 }
 

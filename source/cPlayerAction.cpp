@@ -492,7 +492,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 	}
 	else // Trade stuff
 	{
-		if( isOnline( targPlayer ) )
+		if( isOnline( (*targPlayer) ) )
 		{
 			CItem *j = startTrade( mSock, targPlayer );
 			if( j )
@@ -852,7 +852,7 @@ void DropOnItem( CSocket *mSock )
 		std::string name;
 		name.reserve( MAX_NAME );
 		if( nItem->GetName()[0] == '#' )
-			getTileName( nItem, name );
+			getTileName( (*nItem), name );
 		else
 			name = nItem->GetName();
 
@@ -2552,6 +2552,7 @@ bool CPIDblClick::Handle( void )
 	// Begin checking objects that we force an object delay for (std objects)
 	else if( tSock != NULL )
 	{
+		UI16 envTrig		= 0;
 		UI16 itemTrig		= x->GetScriptTrigger();
 		cScript *toExecute	= Trigger->GetScript( itemTrig );
 		if( toExecute != NULL )
@@ -2572,9 +2573,16 @@ bool CPIDblClick::Handle( void )
 		}
 		//check this on trigger in the event that the .trigger property is not set on the item
 		//trigger code.  Check to see if item is envokable by id
-		else if( Trigger->CheckEnvoke( itemID ) )
+		else if( Trigger->GetEnvokeByType()->Check( iType ) )
 		{
-			UI16 envTrig = Trigger->GetScriptFromEnvoke( itemID );
+			envTrig = Trigger->GetEnvokeByType()->GetScript( iType );
+			cScript *envExecute = Trigger->GetScript( envTrig );
+			if( envExecute->OnUse( ourChar, x ) == 1 )
+				return true;
+		}
+		else if( Trigger->GetEnvokeByID()->Check( itemID ) )
+		{
+			envTrig = Trigger->GetEnvokeByID()->GetScript( itemID );
 			cScript *envExecute = Trigger->GetScript( envTrig );
 			if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
 				return true;
@@ -2718,15 +2726,9 @@ const char *AppendData( CItem *i, std::string currentName )
 //o---------------------------------------------------------------------------o
 bool CPISingleClick::Handle( void )
 {
-	char temp2[200];
-	std::string realname;
-	char temp[512];
-	
 	if( objectID == INVALIDSERIAL ) // invalid
-		return true;	// don't bother if it's cancelled
-	CChar *mChar = tSock->CurrcharObj();
-
-	if( objectID < BASEITEMSERIAL )
+		return true;
+	else if( objectID < BASEITEMSERIAL )
 	{
 		// Begin chars/npcs section
 		CChar *c = calcCharObjFromSer( objectID );
@@ -2735,6 +2737,12 @@ bool CPISingleClick::Handle( void )
 		//End chars/npcs section
 		return true;
 	}
+
+	char temp2[200];
+	std::string realname;
+	char temp[512];
+
+	CChar *mChar = tSock->CurrcharObj();
 
 	//Begin items section
 	UI08 a1		= tSock->GetByte( 1 );
@@ -2796,7 +2804,7 @@ bool CPISingleClick::Handle( void )
 	}
 	else
 	{
-		getTileName( i, realname );
+		getTileName( (*i), realname );
 		if( i->GetAmount() > 1 )
 			realname = UString::number( getAmount ) + " " + realname;
 	}

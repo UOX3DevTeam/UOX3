@@ -3159,7 +3159,7 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 		sLen = static_cast<UI08>(itemname.size() + 1);
 	}
 	else
-		sLen = static_cast<UI08>(getTileName( toAdd, itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
+		sLen = static_cast<UI08>(getTileName( (*toAdd), itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
 
 	internalBuffer.resize( baseOffset + 5 + sLen );
 	PackLong( &internalBuffer[0], baseOffset, value );
@@ -3685,7 +3685,7 @@ void CPDrawObject::CopyData( CChar& mChar )
 	UI08 cFlag = 0;
 	if( mChar.GetPoisoned() )
 		cFlag |= 0x04;
-	if( ( !mChar.IsNpc() && !isOnline( &mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) )
+	if( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) )
 		cFlag |= 0x80;
 	if( mChar.IsAtWar() )
 		cFlag |= 0x40;
@@ -4832,7 +4832,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 	else if( cItem.GetName()[0] == '#' )
 	{
 		std::string temp;
-		getTileName( &cItem, temp );
+		getTileName( cItem, temp );
 		if( cItem.GetAmount() > 1 )
 			tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
 		else
@@ -5067,7 +5067,7 @@ void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 void CPSellList::AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_t &packetLen )
 {
 	std::string itemname;
-	size_t stringLen	= getTileName( opItem, itemname );
+	size_t stringLen	= getTileName( (*opItem), itemname );
 	size_t newLen		= (packetLen + 14 + stringLen);
 	internalBuffer.resize( newLen );
 	PackLong( &internalBuffer[0], packetLen, opItem->GetSerial() );

@@ -219,12 +219,14 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
+			if( !ValidateObject( tempChar ) )
+				continue;
 			dx = abs( tempChar->GetX() - nItem->GetX() );
 			dy = abs( tempChar->GetY() - nItem->GetY() );
 			dz = abs( tempChar->GetZ() - nItem->GetZ() );
 			if( dx <= len && dy <= len && dz <= len )
 			{
-				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( tempChar ) ) )
+				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
 					if( Combat->WillResultInCriminal( c, tempChar ) )
 						criminal( c );
@@ -598,9 +600,14 @@ void cEffects::checktempeffects( void )
 				}
 				if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
 				{
-					if( Trigger->CheckEnvoke( myObj->GetID() ) )
+					if( Trigger->GetEnvokeByType()->Check( ((CItem *)myObj)->GetType() ) )
 					{
-						scpNum	= Trigger->GetScriptFromEnvoke( myObj->GetID() );
+						scpNum	= Trigger->GetEnvokeByType()->GetScript( ((CItem *)myObj)->GetType() );
+						tScript = Trigger->GetScript( scpNum );
+					}
+					else if( Trigger->GetEnvokeByID()->Check( myObj->GetID() ) )
+					{
+						scpNum	= Trigger->GetEnvokeByID()->GetScript( myObj->GetID() );
 						tScript	= Trigger->GetScript( scpNum );
 					}
 				}

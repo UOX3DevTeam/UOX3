@@ -322,7 +322,7 @@ void cCommands::Load( void )
 #ifdef _DEBUG
 	Console.Print( "Registering commands\n" );
 #endif
-	for( cScript *toRegister = Trigger->FirstCommand(); !Trigger->FinishedCommands(); toRegister = Trigger->NextCommand() )
+	for( cScript *toRegister = Trigger->GetCommandScripts()->First(); !Trigger->GetCommandScripts()->Finished(); toRegister = Trigger->GetCommandScripts()->Next() )
 	{
 		toRegister->commandRegistration();
 	}

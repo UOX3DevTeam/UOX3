@@ -119,10 +119,7 @@ UI16 getOldDist( CBaseObject *a, CBaseObject *b )
 		distA = ((CChar *)a)->GetOldLocation();
 	else
 		distA = a->GetLocation();
-	if( b->CanBeObjType( OT_CHAR ) )
-		distB = ((CChar *)b)->GetOldLocation();
-	else
-		distB = b->GetLocation();
+	distB = b->GetLocation();
 	point3 difference = distA - distB;
 	return static_cast<UI16>(difference.Mag());
 }

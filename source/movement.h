@@ -23,7 +23,7 @@ public:
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
-	void	NpcMovement( CChar *i );
+	void	NpcMovement( CChar& mChar );
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 private:

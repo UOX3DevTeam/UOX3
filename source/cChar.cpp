@@ -1909,7 +1909,7 @@ void CChar::SendToSocket( CSocket *s )
 	}
 }
 
-void checkRegion( CSocket *mSock, CChar *i );
+void checkRegion( CSocket *mSock, CChar& mChar );
 void CChar::Teleport( void )
 {
 	CSocket *mSock = calcSocketObjFromChar( this );
@@ -1933,7 +1933,7 @@ void CChar::Teleport( void )
 			{
 				if( ValidateObject( tempChar ) )
 				{
-					if( this != tempChar && objInRange( this, tempChar, visrange ) && ( isOnline( tempChar ) || tempChar->IsNpc() || IsGM() ) )
+					if( this != tempChar && objInRange( this, tempChar, visrange ) && ( isOnline( (*tempChar) ) || tempChar->IsNpc() || IsGM() ) )
 						tempChar->SendToSocket( mSock );
 				}
 			}
@@ -1954,7 +1954,7 @@ void CChar::Teleport( void )
 		}
 	}
 
-	checkRegion( mSock, this );
+	checkRegion( mSock, (*this) );
 }
 
 void CChar::ExposeToView( void )

@@ -112,13 +112,13 @@ const MagicTable_s magic_table[] = {
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and another at trgX / trgY / trgZ
 //o---------------------------------------------------------------------------o
-void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ )
+void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
 {
 	CItem *g1 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( g1 != NULL )
 	{
 		g1->SetType( IT_GATE );
-		g1->SetLocation( srcX, srcY, srcZ );
+		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
 		g1->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( GATE ) )) );
 		g1->SetDir( 1 );
 	}
@@ -129,7 +129,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 
 	if( g2 != NULL )
 	{
 		g2->SetType( IT_ENDGATE );
-		g2->SetLocation( trgX, trgY, trgZ );
+		g2->SetLocation( trgX, trgY, trgZ, trgWorld );
 		g2->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( GATE ) )) );
 		g2->SetDir( 1 );
 
@@ -536,7 +536,10 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 	}
 	else
 	{
-		caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ ) ));
+		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
+		if( !Map->MapExists( worldNum ) )
+			worldNum = caster->WorldNumber();
+		caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
 		sock->sysmessage( 682 );
 		return true;
 	}
@@ -772,6 +775,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i )
 	i->SetTempVar( CITV_MOREX, caster->GetX() ); 
 	i->SetTempVar( CITV_MOREY, caster->GetY() );
 	i->SetTempVar( CITV_MOREZ, caster->GetZ() );
+	i->SetTempVar( CITV_MORE, caster->WorldNumber() );
 
 	char tempitemname[512];
 
@@ -914,7 +918,10 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
 	}
 	else
 	{
-		SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), static_cast<SI16>(i->GetTempVar( CITV_MOREX )),static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ ) ));
+		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
+		if( !Map->MapExists( worldNum ) )
+			worldNum = caster->WorldNumber();
+		SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
 		return true;
 	}
 	return true;
@@ -1005,7 +1012,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 				continue;
 
 			if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
-				tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( tempChar ) || tempChar->IsNpc() ) )
+				tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
 			{
 				if( tempChar == caster )
 				{//we can't cast on ourselves till this loop is over, because me might kill ourself, then try to LOS with someone after we are deleted.
@@ -1057,7 +1064,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 	if( target->GetHP() < 0 )
 		target->SetHP( 0 );
 	
-	if( !target->IsNpc() && isOnline( target ) )
+	if( !target->IsNpc() && isOnline( (*target) ) )
 	{
 		if( RandomNum( 0, 1 ) ) 
 			Effects->PlayCharacterAnimation( target, 0x15 );
@@ -3143,7 +3150,7 @@ void cMagic::LoadScript( void )
 #ifdef _DEBUG
 	Console.Print( "Registering spells\n" );
 #endif
-	for( cScript *toRegister = Trigger->FirstSpell(); !Trigger->FinishedSpells(); toRegister = Trigger->NextSpell() )
+	for( cScript *toRegister = Trigger->GetMagicScripts()->First(); !Trigger->GetMagicScripts()->Finished(); toRegister = Trigger->GetMagicScripts()->Next() )
 	{
 		toRegister->spellRegistration();
 	}

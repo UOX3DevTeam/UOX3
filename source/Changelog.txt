@@ -1,3 +1,15 @@
+1/7/2005 - giwo
+	Made some adjustments to the Client update range.
+	Converted many functions to use references rather than pointers.
+	Fixed Mark, Recall, and Gate Spells and Commands to handle different worlds.
+	Added js/jse_typeassociations.scp
+	Added CEnvoke to handle all envoke functions.
+	Added CTriggerScripts to simplify script handling in CTrigger class.
+	Renamed the class Triggers to CTrigger to conform to proper class naming standards.
+
+1/2/2005 - EviLDeD
+	Fixed the issue of client crash on the 3D client when access the 'add menu
+
 1/1/2005 - giwo
 	Fixed an issue causing corpses to not display to their "owner".
 	Changed how we play the Death Animation to stop corpses from "moving".

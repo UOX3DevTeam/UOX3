@@ -1,22 +1,22 @@
 [ITEMMENU 1000]
 {
 Polymorphing
-//0x20cd=Male
-//POLY=0x0190
-//0x20CE=Female
-//POLY=0x0191
-//0x20CD=Game Master
-//POLY=0x03DB
+0x20cd=Male
+POLY=0x0190
+0x20CE=Female
+POLY=0x0191
+0x20CD=Game Master
+POLY=0x03DB
 0x20CF=Animals
 ITEMMENU=1001
 0x20D3=Monsters
 ITEMMENU=1002
 0x212e=T2A Creatures
 ITEMMENU=1003
-//0x20D3=TD/LBR Creatures
-//ITEMMENU=1004
-//0x20D3=AoS Creatures
-//ITEMMENU=1005
+0x20D3=TD/LBR Creatures
+ITEMMENU=1004
+0x20D3=AoS Creatures
+ITEMMENU=1005
 <=Previous Menu
 ITEMMENU=0
 }

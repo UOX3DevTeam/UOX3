@@ -402,11 +402,10 @@ void restockNPC( CChar& i, bool stockAll )
 bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
-	if( ValidateObject( a ) )
-	{
-		CChar *c = static_cast< CChar * >(a);
-		restockNPC( (*c), (b == 1) );
-	}
+	CChar *c = static_cast< CChar * >(a);
+	if( ValidateObject( c ) )
+			restockNPC( (*c), (b == 1) );
+
 	return retVal;
 }
 //o---------------------------------------------------------------------------o

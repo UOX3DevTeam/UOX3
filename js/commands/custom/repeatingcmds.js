@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.03
-// Last updated: July 26th 2004
+// v1.04
+// Last updated: December 28th 2004
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -164,11 +164,11 @@ function onCallback6( pSock, myTarget )
 	var TempItemID = Number(TempItemID);
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetByte( 16 );
+	var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+
 	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );	
-	tempItem.x = targX;
-	tempItem.y = targY;
-	tempItem.z = targZ;
+	if( tempItem )
+		tempItem.SetLocation( targX, targY, targZ );
 	pUser.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
 }
 
@@ -208,7 +208,7 @@ function onCallback8( pSock, myTarget )
 	{
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetByte( 16 );
+		var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 		pUser.SysMessage( TempItemID );
 		var tempItem = CreateDFNItem( pSock, pUser, TempItemID, false, 10, false );
 		tempItem.x = targX;

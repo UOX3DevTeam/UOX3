@@ -2000,7 +2000,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 		if( i->GetName2() && strcmp( i->GetName2(), "#" ) ) 
 			i->SetName( i->GetName2() );
 		if( i->GetName()[0] == '#') 
-			getTileName( i, name );
+			getTileName( (*i), name );
 		else 
 			name = i->GetName();
 		s->sysmessage( 1547, name.c_str() );
@@ -2605,7 +2605,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
-				getTileName( item, tileName );
+				getTileName( (*item), tileName );
 				sprintf( temp, Dictionary->GetEntry( 884 ).c_str(), mChar->GetName().c_str(), tileName.c_str() );
 				sprintf( temp2, Dictionary->GetEntry( 885 ).c_str(), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
 			}
@@ -2750,7 +2750,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 				continue;
 			id					= tempChar->GetID();
 			CSocket *tSock		= calcSocketObjFromChar( tempChar );
-			bool cmdLevelCheck	= isOnline( tempChar ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
+			bool cmdLevelCheck	= isOnline( (*tempChar) ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
 			if( objInRange( tempChar, c, static_cast<UI16>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
 			{
 				c->SetTrackingTargets( tempChar, static_cast<UI08>(MaxTrackingTargets) );

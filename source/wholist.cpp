@@ -214,7 +214,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			else
 			{
-				if( !UOX::isOnline( targetChar ) )	// local var overloads it
+				if( !UOX::isOnline( (*targetChar) ) )	// local var overloads it
 				{
 					toSendTo->sysmessage( 1394 );		// you realize the break isn't necessary?
 					break;
@@ -436,7 +436,7 @@ void cWhoList::Update( void )
 				ourChar = actbSearch.lpCharacters[i];
 				if( ValidateObject( ourChar ) )
 				{
-					if( !UOX::isOnline( ourChar ) )
+					if( !UOX::isOnline( (*ourChar) ) )
 					{
 						if( realCount > 0 && !(realCount%numPerPage) )
 						{

@@ -72,7 +72,7 @@ enum ScriptEvent
 	seOnDropItemOnNpc,
 	seOnStart,
 	seOnStop,
-	seOnIterate,
+	seOnIterate
 };
 
 struct SEGump

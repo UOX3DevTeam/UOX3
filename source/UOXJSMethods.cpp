@@ -45,12 +45,13 @@
 #include "jail.h"
 #include "magic.h"
 #include "CPacketSend.h"
+#include "mapstuff.h"
 
 namespace UOX
 {
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
-void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
+void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
 bool BuyShop( CSocket *s, CChar *c );
 
 void MethodError( char *txt, ... )
@@ -4281,6 +4282,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 	SI16 destX = -1, destY = -1;
 	SI08 destZ = -1;
+	UI08 destWorld = 0;
 
 	if( JSVAL_IS_OBJECT( argv[0] ) )
 	{
@@ -4292,9 +4294,10 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			return JS_FALSE;
 		}
 
-		destX = mItem->GetTempVar( CITV_MOREX );
-		destY = mItem->GetTempVar( CITV_MOREY );
-		destZ = mItem->GetTempVar( CITV_MOREZ );
+		destX		= mItem->GetTempVar( CITV_MOREX );
+		destY		= mItem->GetTempVar( CITV_MOREY );
+		destZ		= mItem->GetTempVar( CITV_MOREZ );
+		destWorld	= mItem->GetTempVar( CITV_MORE );
 	}
 	else
 	{
@@ -4302,14 +4305,18 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		if( placeNum < cwmWorldState->goPlaces.size() )
 		{
 			GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
-			destX = toGoTo.x;
-			destY = toGoTo.y;
-			destZ = toGoTo.z;
+			destX		= toGoTo.x;
+			destY		= toGoTo.y;
+			destZ		= toGoTo.z;
+			destWorld	= toGoTo.worldNum;
 		}
 
 	}
 
-	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), destX, destY, destZ );
+	if( !Map->MapExists( destWorld ) )
+		destWorld = mChar->WorldNumber();
+
+	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), destX, destY, destZ, destWorld );
 
 	return JS_TRUE;
 }
@@ -4339,7 +4346,12 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
 	SI08 destZ = mItem->GetTempVar( CITV_MOREZ );
-	mChar->SetLocation( destX, destY, destZ );
+	UI08 destWorld = mItem->GetTempVar( CITV_MORE );
+
+	if( !Map->MapExists( destWorld ) )
+		destWorld = mChar->WorldNumber();
+
+	mChar->SetLocation( destX, destY, destZ, destWorld );
 
 	return JS_TRUE;
 }
@@ -4370,6 +4382,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	mItem->SetTempVar( CITV_MOREX, mChar->GetX() );
 	mItem->SetTempVar( CITV_MOREY, mChar->GetY() );
 	mItem->SetTempVar( CITV_MOREZ, mChar->GetZ() );
+	mItem->SetTempVar( CITV_MORE, mChar->WorldNumber() );
 
 	char tempname[512];
 	if( mChar->GetRegion()->GetName()[0] != 0 )
