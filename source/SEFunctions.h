@@ -144,6 +144,7 @@ SEngineFunc SE_IterateOver;
 SEngineFunc SE_WorldBrightLevel;
 SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
+SEngineFunc SE_GetSocketFromIndex;
 
 #endif
 

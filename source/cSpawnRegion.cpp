@@ -31,8 +31,6 @@ curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), worldNumber( D
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
-	scharlist.resize( 0 );
-	sitemlist.resize( 0 );
 	name = Dictionary->GetEntry( 1117 );
 // note: doesn't go here, but i'll see it here.  when an item is spawned, as soon as it's moved it needs to lose it's
 // spawn setting.  If not, then when people pick up spawned items, they will disappear (on region spawns)
@@ -42,8 +40,6 @@ cSpawnRegion::~cSpawnRegion()
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
-	scharlist.resize( 0 );
-	sitemlist.resize( 0 );
 // Wipe out all items and npcs
 }
 
@@ -403,8 +399,8 @@ void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	if( sItems.size() == 0 )
 		maxispawn = 0;
 
-	bool shouldSpawnChars	= ( !sNpcs.empty() && maxcspawn >= static_cast<SI32>(scharlist.size()) );
-	bool shouldSpawnItems	= ( !sItems.empty() && maxispawn >= static_cast<SI32>(sitemlist.size()) );
+	bool shouldSpawnChars	= ( !sNpcs.empty() && maxcspawn >= static_cast<SI32>(spawnedChars.Num()) );
+	bool shouldSpawnItems	= ( !sItems.empty() && maxispawn >= static_cast<SI32>(spawnedItems.Num()) );
 	CChar *spawnChar		= NULL;
 	CItem *spawnItem		= NULL;
 
@@ -419,9 +415,9 @@ void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 				spawnItem = RegionSpawnItem();
 				if( ValidateObject( spawnItem ) )
 				{
-					sitemlist.push_back( spawnItem );
+					spawnedItems.Add( spawnItem );
 					++itemsSpawned;
-					shouldSpawnItems = ((SI32)sitemlist.size() < maxispawn);
+					shouldSpawnItems = ((SI32)spawnedItems.Num() < maxispawn);
 				}
 			}
 		}
@@ -432,9 +428,9 @@ void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 				spawnChar = RegionSpawnChar();
 				if( ValidateObject( spawnChar ) )
 				{
-					scharlist.push_back( spawnChar );
+					spawnedChars.Add( spawnChar );
 					++npcsSpawned;
-					shouldSpawnChars = ((SI32)scharlist.size() < maxcspawn);
+					shouldSpawnChars = ((SI32)spawnedChars.Num() < maxcspawn);
 				}
 			}
 		}
@@ -535,28 +531,26 @@ bool cSpawnRegion::FindSpotToSpawn( cBaseObject *mObj )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::checkSpawned( void )
 {
-	for( CHARLIST_ITERATOR I = scharlist.begin(); I != scharlist.end(); ++I )
+	for( CChar *cCheck = spawnedChars.First(); !spawnedChars.Finished(); cCheck = spawnedChars.Next() )
 	{
-		CChar *charI = (*I);
-		if( ValidateObject( charI ) )
+		if( ValidateObject( cCheck ) )
 		{
-			if( ValidateObject( charI->GetOwnerObj() ) )
+			if( ValidateObject( cCheck->GetOwnerObj() ) )
 			{
-				charI->ShouldSave( true );
-				charI = NULL;
+				cCheck->ShouldSave( true );
+				spawnedChars.Remove( cCheck );
 			}
 		}
 	}
 	
-	for( ITEMLIST_ITERATOR J = sitemlist.begin(); J != sitemlist.end(); ++J )
+	for( CItem *iCheck = spawnedItems.First(); !spawnedItems.Finished(); iCheck = spawnedItems.Next() )
 	{
-		CItem *itemJ = (*J);
-		if( ValidateObject( itemJ ) )
+		if( ValidateObject( iCheck ) )
 		{
-			if( ValidateObject( itemJ->GetCont() ) )
+			if( ValidateObject( iCheck->GetCont() ) )
 			{
-				itemJ->ShouldSave( true );
-				itemJ = NULL;
+				iCheck->ShouldSave( true );
+				spawnedItems.Remove( iCheck );
 			}
 		}
 	}
@@ -570,17 +564,8 @@ void cSpawnRegion::checkSpawned( void )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 {
-	for( CHARLIST_ITERATOR I = scharlist.begin(); I != scharlist.end(); ++I )
-	{
-		if( (*I) == toDelete )
-		{
-			if( I != scharlist.begin() && I >= charCounter )
-				--charCounter;
-			scharlist.erase( I );
-			IncCurrentCharAmt( -1 );
-			break;
-		}
-	}
+	if( spawnedChars.Remove( toDelete ) )
+		IncCurrentCharAmt( -1 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -591,69 +576,8 @@ void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 //o---------------------------------------------------------------------------o
 void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 {
-	for( ITEMLIST_ITERATOR I = sitemlist.begin(); I != sitemlist.end(); ++I )
-	{
-		if( (*I) == toDelete )
-		{
-			if( I != sitemlist.begin() && I >= itemCounter )
-				--itemCounter;
-			sitemlist.erase( I );
-			IncCurrentItemAmt( -1 );
-			break;
-		}
-	}
-}
-
-CItem * cSpawnRegion::FirstItem( void )
-{
-	CItem *rItem = NULL;
-	itemCounter = sitemlist.begin();
-	if( !FinishedItems() )
-		rItem = (*itemCounter);
-	return rItem;
-}
-
-CItem * cSpawnRegion::NextItem( void )
-{
-	CItem *rItem = NULL;
-	if( !FinishedItems() )
-	{
-		++itemCounter;
-		if( !FinishedItems() )
-			rItem = (*itemCounter);
-	}
-	return rItem;
-}
-
-bool cSpawnRegion::FinishedItems( void )
-{
-	return ( itemCounter == sitemlist.end() );
-}
-
-CChar * cSpawnRegion::FirstChar( void )
-{
-	CChar *rChar = NULL;
-	charCounter = scharlist.begin();
-	if( !FinishedChars() )
-		rChar = (*charCounter);
-	return rChar;
-}
-
-CChar * cSpawnRegion::NextChar( void )
-{
-	CChar *rChar = NULL;
-	if( !FinishedChars() )
-	{
-		++charCounter;
-		if( !FinishedChars() )
-			rChar = (*charCounter);
-	}
-	return rChar;
-}
-
-bool cSpawnRegion::FinishedChars( void )
-{
-	return ( charCounter == scharlist.end() );
+	if( spawnedItems.Remove( toDelete ) )
+		IncCurrentItemAmt( -1 );
 }
 
 }

@@ -105,6 +105,7 @@ static JSFunctionSpec my_functions[] =
 	{ "SendStaticStats",			SE_SendStaticStats,			1, 0, 0 },
 	{ "GetTileHeight",				SE_GetTileHeight,			1, 0, 0 },
 	{ "IterateOver",				SE_IterateOver,				1, 0, 0 },
+	{ "GetSocketFromIndex",			SE_GetSocketFromIndex,		1, 0, 0 },
  	
 	{ "RegisterCommand",			SE_RegisterCommand,			3, 0, 0 },
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },
@@ -205,7 +206,7 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 
 void cScript::Cleanup( void )
 {
-	UI32 i = 0;
+	size_t i = 0;
 	for( i = 0; i < gumpDisplays.size(); ++i )
 		delete gumpDisplays[i];
 	gumpDisplays.resize( 0 );
@@ -1627,13 +1628,13 @@ size_t cScript::NewGumpList( void )
 }
 SEGump * cScript::GetGumpList( SI32 index )
 {
-	if( index < 0 || (UI32) index >= gumpDisplays.size() )
+	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return NULL;
 	return gumpDisplays[index];
 }
 void cScript::RemoveGumpList( SI32 index )
 {
-	if( index < 0 || (UI32) index >= gumpDisplays.size() )
+	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return;
 
 	delete gumpDisplays[index]->one;
@@ -1644,7 +1645,7 @@ void cScript::RemoveGumpList( SI32 index )
 }
 void cScript::SendGumpList( SI32 index, cSocket *toSendTo )
 {
-	if( index < 0 || (UI32) index >= gumpDisplays.size() )
+	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return;
 
 	toSendTo->TempInt( (SI32)Trigger->GetAssociatedScript( targObject ) );
@@ -1805,7 +1806,7 @@ bool cScript::OnSpellTarget( CItem *target, CChar *caster, UI08 spellNum )
 //o---------------------------------------------------------------------------o
 UI32 cScript::FindFreePosition( IUEEntries iType ) const
 {
-	UI32 toSearch = 0;
+	size_t toSearch = 0;
 	switch( iType )
 	{
 		case IUE_RACE:
@@ -2123,7 +2124,7 @@ bool cScript::CallParticularEvent( char *eventToCall, jsval *params, SI32 numPar
 //o---------------------------------------------------------------------------o
 void cScript::RemoveFromRoot( void )
 {
-	UI32 i = 0;
+	size_t i = 0;
 	for( i = 0; i < raceObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, raceObjects[i].toUse );

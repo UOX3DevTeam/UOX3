@@ -44,7 +44,7 @@ namespace UOX
 
 	JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		UI32 SpellID = JSVAL_TO_INT(id);
+		size_t SpellID = JSVAL_TO_INT(id);
 
 		if( SpellID >= Magic->spells.size() || SpellID < 0 )
 		{
@@ -53,9 +53,17 @@ namespace UOX
 			return JS_FALSE;
 		}
 
+		SpellInfo *mySpell = &Magic->spells[SpellID];
+		if( mySpell == NULL )
+		{
+			Console.Error( 2, "Invalid Spell" );
+			*vp = JSVAL_NULL;
+			return JS_FALSE;
+		}
+
 		JSObject *jsSpell = JS_NewObject( cx, &UOXSpell_class, NULL, obj );
 		JS_DefineProperties( cx, jsSpell, CSpellProperties );
-		JS_SetPrivate( cx, jsSpell, &Magic->spells[SpellID ] );
+		JS_SetPrivate( cx, jsSpell, mySpell );
 
 		*vp = OBJECT_TO_JSVAL( jsSpell );
 		return JS_TRUE;
@@ -72,7 +80,7 @@ namespace UOX
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSString *tString = NULL;
-		UI32 i;
+		size_t i;
 		bool bDone = false;
 
 		if( JSVAL_IS_INT( id ) ) 
@@ -123,6 +131,7 @@ namespace UOX
 				case CSP_AGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
 				case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
 				case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->SoundEffect().Effect() );	break;
+				case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
 				default:																			break;
 			}
 		}
@@ -235,7 +244,7 @@ namespace UOX
 				case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
 				case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetDef() );				break;
 				case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
-				case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->NumItems() );			break;
+				case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->Contains.Num() );		break;
 				case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDecayable() );		break;
 				case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
 				case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
@@ -470,7 +479,21 @@ namespace UOX
 				
 				// 3  objects: regions + towns + guilds
 				// Goal: myChar.target.textmessage( "Your target is a member of " + myChar.guild.name );
-				case CCP_REGION:		*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );		break;
+				case CCP_REGION:
+					{
+						cTownRegion *myReg = gPriv->GetRegion();
+						if( myReg == NULL )
+							*vp = JSVAL_NULL;
+						else
+						{
+							cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+							JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
+				
+							JS_SetPrivate( cx, myTown, myReg );
+							*vp = OBJECT_TO_JSVAL( myTown );
+							break;
+						}
+					}
 				case CCP_TOWN:
 					TempTownID = gPriv->GetTown();
 
@@ -589,6 +612,7 @@ namespace UOX
 				case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
 				case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
+				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
 				default:
 					break;
 			}
@@ -612,7 +636,8 @@ namespace UOX
 				case CCP_TITLE:	gPriv->SetTitle( encaps.toString() );										break;
 				case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
 				case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
-				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
+				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );
+								gPriv->SetDispZ( (SI08)encaps.toInt() );									break;
 				case CCP_ID:		
 					gPriv->SetID( (UI16)encaps.toInt() );
 					gPriv->SetOrgID( (UI16)encaps.toInt() );
@@ -789,6 +814,7 @@ namespace UOX
 				case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
 				case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
+				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 			}
 		}
 		return JS_TRUE;
@@ -1321,7 +1347,7 @@ namespace UOX
 			return JS_FALSE;
 		
 		UI32 Index			= JSVAL_TO_INT( id );
-		CItem *mySubItem	= myItem->GetItemObj( Index );
+		CItem *mySubItem	= myItem->Contains.GetCurrent( Index );
 		if( !ValidateObject( mySubItem ) )
 		{
 			*vp = JSVAL_NULL;
@@ -1453,7 +1479,7 @@ namespace UOX
 		if( gPriv == NULL )
 			return JS_FALSE;
 		
-		//if( JSVAL_IS_INT( id ) ) 
+		if( JSVAL_IS_INT( id ) ) 
 		{
 			switch( JSVAL_TO_INT( id ) )
 			{
@@ -1483,7 +1509,7 @@ namespace UOX
 				case CFILE_POS:		*vp = INT_TO_JSVAL( ftell( gPriv->mWrap ) );				break;
 				case CFILE_LENGTH:
 					{
-						int fpos = ftell( gPriv->mWrap );
+						long fpos = ftell( gPriv->mWrap );
 						fseek( gPriv->mWrap, 0, SEEK_END );
 						*vp = INT_TO_JSVAL( ftell( gPriv->mWrap ) );
 						fseek( gPriv->mWrap, fpos, SEEK_SET );

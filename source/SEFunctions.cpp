@@ -25,6 +25,7 @@
 #include "speech.h"
 #include "gump.h"
 #include "ObjectFactory.h"
+#include "network.h"
 
 namespace UOX
 {
@@ -167,9 +168,6 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			DoSEErrorMessage( "DoTempEffect: Invalid target " );
 			return JS_FALSE;
 		}
-		if( argc == 8 )
-			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
-		else
 			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	return JS_TRUE;
@@ -1358,15 +1356,15 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->PushChar();
-		for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+		MapArea->charData.Push();
+		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
 			if( objInRange( srcChar, tempChar, (UI16)distance ) )
 				myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
 		}
-		MapArea->PopChar();
+		MapArea->charData.Pop();
 	}
 	return JS_TRUE;
 }
@@ -1718,6 +1716,33 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() );
+	return JS_TRUE;
+}
+
+JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetSocketFromIndex: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	UOXSOCKET index = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
+
+	cSocket *mSock	= Network->GetSockPtr( index );
+	CChar *mChar	= NULL;
+	if( mSock != NULL )
+		mChar = mSock->CurrcharObj();
+
+	if( !ValidateObject( mChar ) )
+	{
+		*rval = JSVAL_NULL;
+		return JS_FALSE;
+	}
+
+	cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+	JS_SetPrivate( cx, myObj, mChar );
+	*rval = OBJECT_TO_JSVAL( myObj );
 	return JS_TRUE;
 }
 

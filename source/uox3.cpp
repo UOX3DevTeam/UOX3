@@ -566,8 +566,8 @@ void callGuards( CChar *mChar )
 	SubRegion *toCheck = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	if( toCheck == NULL )
 		return;
-	toCheck->PushChar();
-	for( CChar *tempChar = toCheck->FirstChar(); !toCheck->FinishedChars(); tempChar = toCheck->GetNextChar() )
+	toCheck->charData.Push();
+	for( CChar *tempChar = toCheck->charData.First(); !toCheck->charData.Finished(); tempChar = toCheck->charData.Next() )
 	{
 		if( !ValidateObject( tempChar ) )
 			break;
@@ -581,7 +581,7 @@ void callGuards( CChar *mChar )
 			}
 		}
 	}
-	toCheck->PopChar();
+	toCheck->charData.Pop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -717,6 +717,7 @@ void processkey( int c )
 	int indexcount = 0;
 	int j;
 	int keyresp;
+	cSocket *tSock;
 
 	if( c == '*' )
 	{
@@ -1016,7 +1017,6 @@ void processkey( int c )
 				break;
 			case  'D':    
 				// Disconnect account 0 (useful when client crashes)
-				cSocket *tSock;
 				for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
 				{
 					if( tSock->AcctNo() == 0 )
@@ -1026,11 +1026,10 @@ void processkey( int c )
 				break;
 			case 'K':
 			{
-				// mass disconnect
-				size_t massCount = cwmWorldState->GetPlayersOnline();
-				// size_t is unsigned, so it WILL wrap around
-				for( size_t m = massCount - 1; m >= 0 && m < massCount; --m )
-					Network->Disconnect( m );
+				for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+				{
+					Network->Disconnect( tSock );
+				}
 				messageLoop << "CMD: All Connections Closed.";
 			}
 				break;
@@ -1681,8 +1680,8 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 {
 	// Exception Spinner. This is cheap, but should allow for some sureness that the loop is finished
 	UI16 nSpinner = 0;
-	toCheck->PushItem();
-	for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+	toCheck->itemData.Push();
+	for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
 	{
 		if( !ValidateObject( itemCheck ) || itemCheck->isFree() )
 			continue;
@@ -1763,7 +1762,7 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			}
 		}
 	}
-	toCheck->PopItem();
+	toCheck->itemData.Pop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1819,10 +1818,9 @@ void CWorldMain::CheckAutoTimers( void )
 
 	if( GetWorldSaveProgress() == SS_NOTSAVING )
 	{
-		size_t totalPlayers = GetPlayersOnline();
-		for( size_t ij = totalPlayers - 1; ij >= 0 && ij < totalPlayers; --ij )
+		Network->PushConn();
+		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			cSocket *tSock = Network->GetSockPtr( ij );
 			if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= GetUICurrentTime() )
 			{
 				CChar *tChar = tSock->CurrcharObj();
@@ -1832,7 +1830,7 @@ void CWorldMain::CheckAutoTimers( void )
 				{
 					tSock->IdleTimeout( -1 );
 					tSock->sysmessage( 1246 );
-					Network->Disconnect( ij );
+					Network->Disconnect( tSock );
 				}
 			}
 			else if( ( ( (UI32)( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime() && (UI32)( tSock->IdleTimeout()+200*1000) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned()  )
@@ -1842,6 +1840,7 @@ void CWorldMain::CheckAutoTimers( void )
 				tSock->WasIdleWarned( true );
 			}
 		}
+		Network->PopConn();
 	}
 	else if( GetWorldSaveProgress() == SS_JUSTSAVED )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
@@ -2011,8 +2010,8 @@ void CWorldMain::CheckAutoTimers( void )
 	while( tcCheck != regionList.end() )
 	{
 		SubRegion *toCheck = (*tcCheck);
-		toCheck->PushChar();
-		for( CChar *charCheck = toCheck->FirstChar(); !toCheck->FinishedChars(); charCheck = toCheck->GetNextChar() )
+		toCheck->charData.Push();
+		for( CChar *charCheck = toCheck->charData.First(); !toCheck->charData.Finished(); charCheck = toCheck->charData.Next() )
 		{
 			if( !ValidateObject( charCheck ) || charCheck->isFree() )
 				continue;
@@ -2045,7 +2044,7 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 			}
 		}
-		toCheck->PopChar();
+		toCheck->charData.Pop();
 
 		checkItem( toCheck, checkItems, nextDecayItems );
 		++tcCheck;
@@ -2254,13 +2253,8 @@ bool FindMultiFunctor( cBaseObject *a, UI32 &b, void *extraData )
 		{
 			CItem *i			= static_cast< CItem * >(a);
 			CMultiObj *multi	= findMulti( i );
-			if( multi != NULL )
-			{
-				if( multi != i )
-					i->SetMulti( multi );
-				else 
-					i->SetMulti( INVALIDSERIAL );
-			}
+			if( ValidateObject( multi ) )
+				i->SetMulti( multi );
 			else
 				i->SetMulti( INVALIDSERIAL );
 		}
@@ -2924,7 +2918,7 @@ void checkRegion( cSocket *mSock, CChar *i )
 					CItem *packItem = i->GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
-						for( CItem *toScan = packItem->FirstItem(); !packItem->FinishedItems(); toScan = packItem->NextItem() )
+						for( CItem *toScan = packItem->Contains.First(); !packItem->Contains.Finished(); toScan = packItem->Contains.Next() )
 						{
 							if( ValidateObject( toScan ) )
 							{
@@ -3160,7 +3154,7 @@ void GenerateCorpse( CChar *mChar )
 			j->SetZ( 0 );
 			break;
 		case IL_PACKITEM:
-			for( k = j->FirstItem(); !j->FinishedItems(); k = j->NextItem() )
+			for( k = j->Contains.First(); !j->Contains.Finished(); k = j->Contains.Next() )
 			{
 				if( !ValidateObject( k ) )
 					continue;

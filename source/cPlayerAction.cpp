@@ -137,7 +137,7 @@ CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack )
 	{
 		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
 			Weight->subtractItemWeight( mChar, iToStack );
-		for( CItem *stack = iPack->FirstItem(); !iPack->FinishedItems(); stack = iPack->NextItem() )
+		for( CItem *stack = iPack->Contains.First(); !iPack->Contains.Finished(); stack = iPack->Contains.Next() )
 		{
 			if( !ValidateObject( stack ) )
 				continue;
@@ -281,7 +281,7 @@ bool CPIGetItem::Handle( void )
 		{
 			CItem *pItem = (CItem *)iCont;
 			if( pItem )
-				pItem->ReleaseItem( i );
+				pItem->Contains.Remove( i );
 		}
 	}
 
@@ -1943,7 +1943,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_TILLER:	// Tillerman
 			if( ValidateObject( GetBoat( mSock ) ) )
 			{
-				CBoatObj *boat = static_cast<CBoatObj *>(calcItemObjFromSer( x->GetTempVar( CITV_MORE ) ));
+				CBoatObj *boat = static_cast<CBoatObj *>(calcMultiFromSer( x->GetTempVar( CITV_MORE ) ));
 				if( ValidateObject( boat ) )
 					ModelBoat( mSock, boat );
 			}
@@ -2673,12 +2673,12 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = " (" + UString::number( i->NumItems() ) + " items, ";
+			dataToAdd = " (" + UString::number( i->Contains.Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones)";
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = " (" + UString::number( i->NumItems() ) + " items, ";
+			dataToAdd = " (" + UString::number( i->Contains.Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones) [Locked]";
 			break;
 		case IT_LOCKEDDOOR:
@@ -2798,7 +2798,7 @@ bool CPISingleClick::Handle( void )
 	}
 	else if( i->IsContType() )
 	{
-		realname += UString::sprintf( ", (%u items, %u stones)", i->NumItems(), (i->GetWeight()/100) );
+		realname += UString::sprintf( ", (%u items, %u stones)", i->Contains.Num(), (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{

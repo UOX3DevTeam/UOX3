@@ -12,7 +12,7 @@ function command_MOVETOBAG( socket, cmdString )
 function onCallback0( socket, ourObj )
 {
 	var ourChar = socket.currentChar;
-	if( ourChar )
+	if( !socket.GetWord( 1 ) && ourChar )
 	{
 		var ourPack = ourChar.pack;
 		if( ourObj.isItem && ourPack )

@@ -12,18 +12,21 @@ function command_REMOVE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) )
 	{
-		if( ourObj.npc )
+		if( ourObj.isChar )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1015 ) );
+			if( ourObj.npc )
+			{
+				socket.SysMessage( GetDictionaryEntry( 1015 ) );
+				ourObj.Delete();
+			}
+		}
+		else if( ourObj.isItem )
+		{
+			socket.SysMessage( GetDictionaryEntry( 1013 ) );
 			ourObj.Delete();
 		}
-	}
-	else if( ourObj.isItem )
-	{
-		socket.SysMessage( GetDictionaryEntry( 1013 ) );
-		ourObj.Delete();
 	}
 }
 
@@ -35,7 +38,7 @@ function commmand_DELETECHAR( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar && ourObj != socket.currentChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj != socket.currentChar )
 	{
 		if( !ourObj.npc && ourObj.online )
 		{

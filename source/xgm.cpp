@@ -456,7 +456,7 @@ bool cPIXGMWhoOnline::Handle( void )
 	cSocket *toGet = NULL;
 	//
 	CHARLIST charListing;
-	UI32 i = 0;
+	size_t i = 0;
 	//
 	ACCOUNTSBLOCK actbBlock;
 	MAPUSERNAMEID_ITERATOR I;

@@ -14,43 +14,19 @@ namespace UOX
 
 class SubRegion
 {
-protected:
-	DCHARLIST							charData;
-	DITEMLIST							itemData;
-	std::vector< size_t >	charIteratorBackup;
-	std::vector< size_t >	itemIteratorBackup;
-
-	DCHARLIST_ITERATOR					charCounter;
-	DITEMLIST_ITERATOR					itemCounter;
-
 public:
-			SubRegion(); //constructor
-			~SubRegion(); //destructor
-	CItem *	GetCurrentItem( void );
-	CChar *	GetCurrentChar( void );
+	CDataList< CItem * >		itemData;
+	CDataList< CChar * >		charData;
 
-	CItem *	FirstItem( void );
-	CChar *	FirstChar( void );
-
-	CItem *	GetNextItem( void );
-	CChar *	GetNextChar( void );
-
-	bool	FinishedItems( void );
-	bool	FinishedChars( void );
-
-	bool	AddItem( CItem *toAdd );
-	bool	AddChar( CChar *toAdd );
-
-	bool	RemoveItem( CItem *toRemove );
-	bool	RemoveChar( CChar *toRemove );
+			SubRegion()
+			{
+			}
+			~SubRegion()
+			{
+			}
 
 	void	SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
 	void	LoadFromDisk( std::ifstream& readDestination );
-
-	void	PopItem( void );
-	void	PopChar( void );
-	void	PushItem( void );
-	void	PushChar( void );
 };
 
 const SI16 MapColSize = 32;

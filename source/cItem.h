@@ -60,9 +60,6 @@ protected:
 	COLOUR			glowColour;
 	UI08			glow_effect;
 
-	DITEMLIST		Contains;
-	DITEMLIST_ITERATOR	cIter;
-
 	UI08			weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
 	void			RemoveSelfFromCont( void );
@@ -80,6 +77,9 @@ protected:
 
 public:
 
+
+	CDataList< CItem * >	Contains;
+
 	UI16			EntryMadeFrom( void ) const;
 	void			EntryMadeFrom( UI16 newValue );
 
@@ -87,10 +87,6 @@ public:
 	void			SetWeatherDamage( WeatherType effectNum, bool value );
 
 	CItem *			Dupe( ObjectType itemType = OT_ITEM );
-
-	virtual bool	FinishedItems( void );
-	virtual CItem *	FirstItem( void );
-	virtual CItem *	NextItem( void );
 
 	cBaseObject *	GetCont(   void ) const;
 	SERIAL			GetContSerial( void ) const;
@@ -227,11 +223,6 @@ public:
 					CItem();
 	virtual			~CItem();
 
-	bool			HoldItem( CItem *toHold );
-	bool			ReleaseItem( CItem *index );
-	size_t			NumItems( void ) const;
-	CItem *			GetItemObj( size_t index ) const;
-
 	UI08			IsFieldSpell( void ) const;
 	bool			IsLockedDown( void ) const;
 	bool			IsShieldType( void ) const;
@@ -247,7 +238,7 @@ public:
 	void			SendPackItemToSocket( cSocket *mSock );
 	virtual void	RemoveFromSight( cSocket *mSock = NULL );
 
-	virtual bool	Save( std::ofstream &outStream ) const;
+	virtual bool	Save( std::ofstream &outStream );
 	virtual bool	DumpBody( std::ofstream &outStream ) const;
 	virtual bool	HandleLine( UString &UTag, UString &data );
 	virtual void	PostLoadProcessing( void );
@@ -263,27 +254,18 @@ public:
 class CSpawnItem : public CItem
 {
 protected:
-	std::deque< cBaseObject * >				spawnedItems;
-	std::deque< cBaseObject * >::iterator	siIter;
-
 	UI08				Interval[2];
 	std::string			spawnSection;
 	bool				isSectionAList;
 
 	void				CopyData( CSpawnItem *target );
 public:
+	CDataList< cBaseObject * >		spawnedList;
+
 						CSpawnItem();
-						~CSpawnItem()
+	virtual				~CSpawnItem()
 						{
 						}
-
-	bool				AddSpawn( cBaseObject *toAdd );
-	bool				RemoveSpawn( cBaseObject *toRem );
-
-	cBaseObject *		FirstSpawn( void );
-	cBaseObject *		NextSpawn( void );
-	bool				FinishedSpawn( void );
-	size_t				NumSpawned( void ) const;
 
 	UI08				GetInterval( UI08 part ) const;
 	void				SetInterval( UI08 part, UI08 newVal );

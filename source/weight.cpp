@@ -90,7 +90,7 @@ SI32 cWeight::calcWeight( CItem *pack )
 	SI32 totalWeight = 0;
 
 	CTile tile;
-	for( CItem *i = pack->FirstItem(); !pack->FinishedItems(); i = pack->NextItem() )
+	for( CItem *i = pack->Contains.First(); !pack->Contains.Finished(); i = pack->Contains.Next() )
 	{
 		if( !ValidateObject( i ) )
 			continue;

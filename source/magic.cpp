@@ -837,8 +837,8 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->PushChar();
-			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			MapArea->charData.Push();
+			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
@@ -851,7 +851,7 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 					}
 				}
 			}
-			MapArea->PopChar();
+			MapArea->charData.Pop();
 		}
 		Effects->PlaySound( sock, 0x01FD, true );
 	}
@@ -1000,8 +1000,8 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->PushChar();
-		for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+		MapArea->charData.Push();
+		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -1021,7 +1021,7 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 					sock->sysmessage( 688 );
 			}
 		}
-		MapArea->PopChar();
+		MapArea->charData.Pop();
 	}
 
 	if( HurtSelf )	
@@ -2057,8 +2057,8 @@ void cMagic::CheckFieldEffects( CChar *c )
 	SubRegion *toCheck = MapRegion->GetCell( c->GetX(), c->GetY(), c->WorldNumber() );
 	if( toCheck == NULL )	// no valid region
 		return;
-	toCheck->PushItem();
-	for( CItem *inItemList = toCheck->FirstItem(); !toCheck->FinishedItems(); inItemList = toCheck->GetNextItem() )
+	toCheck->itemData.Push();
+	for( CItem *inItemList = toCheck->itemData.First(); !toCheck->itemData.Finished(); inItemList = toCheck->itemData.Next() )
 	{
 		if( !ValidateObject( inItemList ) )
 			continue;
@@ -2068,7 +2068,7 @@ void cMagic::CheckFieldEffects( CChar *c )
 				break;
 		}
 	}
-	toCheck->PopItem();
+	toCheck->itemData.Pop();
 }
 
 bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
@@ -2778,17 +2778,12 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 					if( curSpell != 43 )
 					{
 						if( caster->IsNpc() )
-						{
 							playSound( c, curSpell );
-							doMoveEffect( curSpell, c, src );
-							doStaticEffect( c, curSpell );
-						}
 						else
-						{
 							playSound( src, curSpell );
-							doMoveEffect( curSpell, c, src );
-							doStaticEffect( c, curSpell );
-						}
+
+						doMoveEffect( curSpell, c, src );
+						doStaticEffect( c, curSpell );
 					}
 					switch( curSpell )
 					{

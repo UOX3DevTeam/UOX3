@@ -591,11 +591,11 @@ ScriptSection::~ScriptSection()
 //o--------------------------------------------------------------------------
 bool ScriptSection::FlushData( void )
 {
-	for( UI32 i = 0; i < data.size(); ++i )
+	for( size_t i = 0; i < data.size(); ++i )
 	{
 		delete data[i];
 	}
-	for( UI32 j = 0; j < dataV2.size(); ++j )
+	for( size_t j = 0; j < dataV2.size(); ++j )
 	{
 		delete dataV2[j];
 	}

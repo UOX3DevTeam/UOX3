@@ -12,7 +12,7 @@ function command_OPENBANK( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		ourObj.OpenBank( socket );
 }
 
@@ -28,7 +28,7 @@ function command_OPENLAYER( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		ourObj.OpenLayer( socket, socket.tempint );
 	}

@@ -1416,7 +1416,7 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << std::endl << "[play server list]" << std::endl << "{" << std::endl;
 
-		for( UI32 cnt = 0; cnt < serverList.size(); ++cnt )
+		for( size_t cnt = 0; cnt < serverList.size(); ++cnt )
 		{
 			ofsOutput << "SERVERLIST=" << serverList[cnt].getName() << ",";
 			if( serverList[cnt].getDomain().size() > 0 )
@@ -1602,7 +1602,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[start locations]" << std::endl << "{" << std::endl;
-		for( UI32 lCtr = 0; lCtr < startlocations.size(); ++lCtr )
+		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 			ofsOutput << "LOCATION=" << startlocations[lCtr].town << "," << startlocations[lCtr].description << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << std::endl;
 		ofsOutput << "}" << std::endl;
 		

@@ -331,14 +331,14 @@ struct createEntry
 	R32 AverageMinSkill( void ) 
 	{ 
 		R32 sum = 0;
-		for( UI32 i = 0; i < skillReqs.size(); ++i )
+		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].minSkill;
 		return sum / skillReqs.size();
 	}
 	R32 AverageMaxSkill( void ) 
 	{ 
 		R32 sum = 0;
-		for( UI32 i = 0; i < skillReqs.size(); ++i )
+		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].maxSkill;
 		return sum / skillReqs.size();
 	}

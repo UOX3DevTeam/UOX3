@@ -40,8 +40,6 @@ CMultiObj::CMultiObj() : CItem(), maxLockedDown( DEFMULTI_MAXLOCKEDDOWN ), deed(
 
 CMultiObj::~CMultiObj()
 {
-	charInMulti.resize( 0 );
-	itemInMulti.resize( 0 );
 	owners.resize( 0 );
 	banList.resize( 0 );
 }
@@ -124,46 +122,6 @@ void CMultiObj::ClearOwners( void )
 	owners.resize( 0 );
 }
 
-bool CMultiObj::ItemIsInMulti( CItem *toFind ) const
-{
-	ITEMLIST_CITERATOR iIter;
-	for( iIter = itemInMulti.begin(); iIter != itemInMulti.end(); ++iIter )
-	{
-		if( toFind == (*iIter) )
-			return true;
-	}
-	return false;
-}
-
-bool CMultiObj::CharIsInMulti( CChar *toFind ) const
-{
-	CHARLIST_CITERATOR cIter;
-	for( cIter = charInMulti.begin(); cIter != charInMulti.end(); ++cIter )
-	{
-		if( toFind == (*cIter) )
-			return true;
-	}
-	return false;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool IsInMulti( cBaseObject *toFind )
-//|	Date			-	28th July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns true if an item or character is in the multi
-//o--------------------------------------------------------------------------o
-bool CMultiObj::IsInMulti( cBaseObject *toFind ) const
-{
-	bool rvalue;
-	if( toFind->GetObjType() == OT_CHAR )
-		rvalue = CharIsInMulti( static_cast< CChar * >(toFind) );
-	else
-		rvalue = ItemIsInMulti( static_cast< CItem * >(toFind) );
-	return rvalue;
-}
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool IsOnBanList( CChar *toBan )
 //|	Date			-	28th July, 2000
@@ -202,15 +160,6 @@ bool CMultiObj::IsOwner( CChar *toFind ) const
 	return false;
 }
 
-void CMultiObj::AddCharToMulti( CChar *toFind )
-{
-	charInMulti.push_back( toFind );
-}
-void CMultiObj::AddItemToMulti( CItem *toFind )
-{
-	itemInMulti.push_back( toFind );
-}
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	AddToMulti( cBaseObject *toAdd )
 //|	Date			-	28th July, 2000
@@ -221,42 +170,10 @@ void CMultiObj::AddItemToMulti( CItem *toFind )
 //o--------------------------------------------------------------------------o
 void CMultiObj::AddToMulti( cBaseObject *toAdd )
 {
-	if( !IsInMulti( toAdd ) )
-	{
-		if( toAdd->GetObjType() == OT_CHAR )
-			AddCharToMulti( static_cast< CChar * >(toAdd) );
-		else
-			AddItemToMulti( static_cast< CItem * >(toAdd) );
-	}
-}
-
-void CMultiObj::RemoveCharFromMulti( CChar *toFind )
-{
-	CHARLIST_ITERATOR rIter;
-	for( rIter = charInMulti.begin(); rIter != charInMulti.end(); ++rIter )
-	{
-		if( toFind == (*rIter) )
-		{
-			if( charMultiIterator != charInMulti.begin() && rIter <= charMultiIterator )
-				--charMultiIterator;
-			charInMulti.erase( rIter );
-			return;
-		}
-	}
-}
-void CMultiObj::RemoveItemFromMulti( CItem *toFind )
-{
-	ITEMLIST_ITERATOR rIter;
-	for( rIter = itemInMulti.begin(); rIter != itemInMulti.end(); ++rIter )
-	{
-		if( toFind == (*rIter) )
-		{
-			if( itemMultiIterator != itemInMulti.begin() && rIter <= itemMultiIterator )
-				--itemMultiIterator;
-			itemInMulti.erase( rIter );
-			return;
-		}
-	}
+	if( toAdd->GetObjType() == OT_CHAR )
+		charInMulti.Add( static_cast< CChar * >(toAdd) );
+	else
+		itemInMulti.Add( static_cast< CItem * >(toAdd) );
 }
 
 //o--------------------------------------------------------------------------o
@@ -270,9 +187,9 @@ void CMultiObj::RemoveItemFromMulti( CItem *toFind )
 void CMultiObj::RemoveFromMulti( cBaseObject *toRemove )
 {
 	if( toRemove->GetObjType() == OT_CHAR )
-		RemoveCharFromMulti( static_cast< CChar * >(toRemove) );
+		charInMulti.Remove( static_cast< CChar * >(toRemove) );
 	else
-		RemoveItemFromMulti( static_cast< CItem * >(toRemove) );
+		itemInMulti.Remove( static_cast< CItem * >(toRemove) );
 }
 
 //o--------------------------------------------------------------------------o
@@ -355,7 +272,7 @@ void CMultiObj::RemoveLockDown( CItem *toRemove )
 //|	Purpose			-	Saves a multi out to disk
 //|						outStream is the file to write to
 //o--------------------------------------------------------------------------o
-bool CMultiObj::Save( std::ofstream &outStream ) const
+bool CMultiObj::Save( std::ofstream &outStream )
 {
 	bool rvalue = false;
 	if( !isFree() )
@@ -402,132 +319,6 @@ bool CMultiObj::LoadRemnants( void )
 void CMultiObj::SetMaxLockDowns( UI16 newValue )
 {
 	maxLockedDown = newValue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *FirstCharMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns the first character in the multi (if none, NULL)
-//o--------------------------------------------------------------------------o
-CChar *CMultiObj::FirstCharMulti( void )
-{
-	CChar *rvalue		= NULL;
-	charMultiIterator	= charInMulti.begin();
-	if( !FinishedCharMulti() )
-		rvalue = (*charMultiIterator);
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *NextCharMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns the next character in the multi
-//o--------------------------------------------------------------------------o
-CChar *CMultiObj::NextCharMulti( void )
-{
-	CChar *rvalue = NULL;
-	if( !FinishedCharMulti() )
-	{
-		++charMultiIterator;
-		if( !FinishedCharMulti() )
-			rvalue = (*charMultiIterator);
-	}
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool FinishedCharMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns true if there are no more chars in the multi
-//o--------------------------------------------------------------------------o
-bool CMultiObj::FinishedCharMulti( void ) const
-{
-	return ( charMultiIterator == charInMulti.end() );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 NumCharMulti()
-//|	Date			-	6/23/04
-//|	Programmer	-	giwo
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Returns the total number of characters in a multi.
-//o--------------------------------------------------------------------------o
-UI32 CMultiObj::NumCharMulti( void ) const
-{
-	return charInMulti.size();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *FirstItemMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns the first item in the multi
-//o--------------------------------------------------------------------------o
-CItem *CMultiObj::FirstItemMulti( void )
-{
-	CItem *rvalue		= NULL;
-	itemMultiIterator	= itemInMulti.begin();
-	if( !FinishedItemMulti() )
-		rvalue = (*itemMultiIterator);
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *NextItemMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns the next item (if any) in the multi
-//o--------------------------------------------------------------------------o
-CItem *CMultiObj::NextItemMulti( void )
-{
-	CItem *rvalue = NULL;
-	if( !FinishedItemMulti() )
-	{
-		++itemMultiIterator;
-		if( !FinishedItemMulti() )
-			rvalue = (*itemMultiIterator);
-	}
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool FinishedItemMulti()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns true if there are no more items in the multi
-//o--------------------------------------------------------------------------o
-bool CMultiObj::FinishedItemMulti( void ) const
-{
-	return ( itemMultiIterator == itemInMulti.end() );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 NumItemMulti()
-//|	Date			-	6/23/04
-//|	Programmer	-	giwo
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Returns the total number of items in a multi.
-//o--------------------------------------------------------------------------o
-UI32 CMultiObj::NumItemMulti( void ) const
-{
-	return itemInMulti.size();
 }
 
 //o--------------------------------------------------------------------------o
@@ -679,10 +470,8 @@ void CMultiObj::SetOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------o
 void CMultiObj::Cleanup( void )
 {
-	ITEMLIST_ITERATOR iIter = itemInMulti.begin();
-	while( iIter != itemInMulti.end() )
+	for( CItem *iRemove = itemInMulti.First(); !itemInMulti.Finished(); iRemove = itemInMulti.Next() )
 	{
-		CItem *iRemove = (*iIter);
 		if( ValidateObject( iRemove ) )
 		{
 			ItemTypes iType = iRemove->GetType();
@@ -691,16 +480,11 @@ void CMultiObj::Cleanup( void )
 			else
 				iRemove->SetMulti( INVALIDSERIAL );
 		}
-		else
-			++iIter;
 	}
-	CHARLIST_ITERATOR cIter = charInMulti.begin();
-	while( cIter != charInMulti.end() )
+	for( CChar *cRemove = charInMulti.First(); !charInMulti.Finished(); cRemove = charInMulti.Next() )
 	{
-		CChar *cRemove = (*cIter);
 		if( ValidateObject( cRemove ) )
 			cRemove->SetMulti( INVALIDSERIAL );
-		else ++cIter;
 	}
 	CItem::Cleanup();
 }

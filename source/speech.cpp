@@ -125,8 +125,8 @@ bool response( cSocket *mSock, CChar *mChar, std::string text )
 		if( CellResponse == NULL )
 			return false;
 
-		CellResponse->PushChar();
-		for( CChar *Npc = CellResponse->FirstChar(); !CellResponse->FinishedChars(); Npc = CellResponse->GetNextChar() )
+		CellResponse->charData.Push();
+		for( CChar *Npc = CellResponse->charData.First(); !CellResponse->charData.Finished(); Npc = CellResponse->charData.Next() )
 		{
 			if( !ValidateObject( Npc ) || Npc == mChar )
 				continue;
@@ -152,10 +152,10 @@ bool response( cSocket *mSock, CChar *mChar, std::string text )
 					switch( rVal )
 					{
 						case 1:		// No other NPCs to see it, but PCs should
-							CellResponse->PopChar();
+							CellResponse->charData.Pop();
 							return false;
 						case 2:		// no one else to see it
-							CellResponse->PopChar();
+							CellResponse->charData.Pop();
 							return true;
 						case 0:		// Other NPCs and PCs to see it
 						case -1:	// no function, so do nothing... NOT handled!
@@ -165,7 +165,7 @@ bool response( cSocket *mSock, CChar *mChar, std::string text )
 				}
 			}
 		}
-		CellResponse->PopChar();
+		CellResponse->charData.Pop();
 	}
 	WhichResponse( mSock, mChar, text );
 	return retVal;

@@ -217,16 +217,16 @@ void cTownRegion::CalcNewMayor( void )
 	// if there are no members, there are no new mayors
 	std::vector< int > votes;
 	votes.resize( townMember.size() );
-	for( UI32 counter = 0; counter < votes.size(); ++counter )
+	for( size_t counter = 0; counter < votes.size(); ++counter )
 	{
 		votes[counter] = 0;	// init the count before adding
-		for( UI32 counter2 = 0; counter2 < votes.size(); ++counter2 )
+		for( size_t counter2 = 0; counter2 < votes.size(); ++counter2 )
 		{
 			if( townMember[counter].townMember == townMember[counter2].targVote )
 				++votes[counter];
 		}
 	}
-	int maxIndex = 0;
+	size_t maxIndex = 0;
 	for( size_t indexCounter = 1; indexCounter < votes.size(); ++indexCounter )
 	{
 		if( votes[indexCounter] > votes[maxIndex] )
@@ -305,7 +305,7 @@ bool cTownRegion::RemoveTownMember( CChar& toAdd )
 	if( toAdd.GetTown() != regionNum )
 		return false;	// not in our town
 
-	for( UI32 counter = 0; counter < townMember.size(); ++counter )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 	{
 		if( toAdd.GetSerial() == townMember[counter].townMember )
 		{
@@ -660,7 +660,7 @@ bool cTownRegion::IsMemberOfTown( CChar *player ) const
 {
 	if( !ValidateObject( player ) )
 		return false;
-	for( UI32 counter = 0; counter < townMember.size(); ++counter )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 	{
 		if( townMember[counter].townMember == player->GetSerial() )
 			return true;
@@ -976,7 +976,7 @@ bool cTownRegion::PeriodicCheck( void )
 	time( &now );
 	if( difftime( now, timeSinceTaxedMembers ) >= cwmWorldState->ServerData()->TownTaxPeriod() )
 	{
-		for( UI32 memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
+		for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 		{
 			CChar *townMem = calcCharObjFromSer( townMember[memberCounter].townMember );
 			if( ValidateObject( townMem ) )
@@ -1098,7 +1098,7 @@ void cTownRegion::DoDamage( SI16 reduction )
 
 bool cTownRegion::IsAlliedTown( UI08 townToCheck ) const
 {
-	for( UI32 counter = 0; counter < alliedTowns.size(); ++counter )
+	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
 	{
 		if( alliedTowns[counter] == townToCheck )
 			return true;
@@ -1132,7 +1132,7 @@ void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 	char msg[512];
 	char tmpMsg[512];
 
-	for( UI32 memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
+	for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 	{
 		CChar *targetChar = calcCharObjFromSer( townMember[memberCounter].townMember );
 		cSocket *targetSock = calcSocketObjFromChar( targetChar );
@@ -1171,7 +1171,7 @@ void cTownRegion::SendAlliedTowns( cSocket *sock )
 	char temp[100];
 	sprintf( temp, Dictionary->GetEntry( 1173, sock->Language() ).c_str(), alliedTowns.size() );
 	Ally.SetTitle( temp );
-	for( UI32 counter = 0; counter < alliedTowns.size(); ++counter )
+	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
 		Ally.AddData( regions[alliedTowns[counter]]->GetName(), " " );
 
 	Ally.Send( 4, false, INVALIDSERIAL );
@@ -1184,7 +1184,7 @@ void cTownRegion::ForceEarlyElection( void )
 	CChar *mayor	= GetMayor();
 	timeToNextPoll	= now;	// time to open poll
 	TellMembers( 1174 );
-	for( UI32 counter = 0; counter < townMember.size(); ++counter )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 		townMember[counter].targVote = INVALIDSERIAL;
 	if( ValidateObject( mayor ) )
 		mayor->SetTownpriv( 1 );

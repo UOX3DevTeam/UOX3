@@ -33,13 +33,13 @@ void CTEffectContainer::StartQueue( void )
 }
 void CTEffectContainer::Prune( void )
 {
-	for( int i = 0; i < backupRemove.size(); ++i )
+	for( size_t i = 0; i < backupRemove.size(); ++i )
 	{
 		delete backupRemove[i];
 	}
 	internalData.clear();
 	internalData.resize( backupKeep.size() );
-	for( int j = 0; j < backupKeep.size(); ++j )
+	for( size_t j = 0; j < backupKeep.size(); ++j )
 	{
 		internalData[j] = backupKeep[j];
 	}

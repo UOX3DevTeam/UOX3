@@ -1,3 +1,67 @@
+8/3/2004 - giwo
+	JS Changes:
+		Modified SoundEffect() as it was playing a sound one less than specified.
+		Updated CChar_SetSkillByName() to return true if it successfully set, false otherwise.
+		Updated many of the JS commands to fix some minor issues and improve output.
+		Added GetSocketFromIndex()
+	Command Updates:
+		Moved 'fix' out to JS.
+		Moved 'tele' out to JS.
+		Moved 'xteleport' out to JS.
+
+8/1/2004 - giwo
+	Changed some variable sizes in order to reduce type mismatches and memory waste.
+	Created a new class, CDataList, this is basically a safe wrapper for deque, where one can specify what they are storing.
+	This allows us to consolidate quite a bit of code from several different classes by simply making our lists CDataList< objtype * >
+	rather than using DCHARLIST or DITEMLIST, etc.
+
+	Old style listings:
+	------------------
+private:
+	DCHARLIST chars;
+	DITEMLIST items;
+	DCHARLIST_ITERATOR charsIter;
+	DITEMLIST_ITERATOR itemsIter;
+public:
+	FirstChar();
+	NextChar();
+	FinishedChars();
+	NumChars();
+
+	FirstItem();
+	NextItem();
+	FinishedItems();
+	NumItems();
+	
+	AddChar();
+	RemoveChar();
+
+	AddItem();
+	RemoveItem();
+	------------------
+
+	New Style:
+	------------------
+public:
+	CDataList< CChar * >	chars;
+	CDataList< CItem * >	items;
+	------------------
+
+	Everything else is handled internally (and thus any bugs that arise can be fixed in one place, not half a dozen).
+	
+	JS Changes:
+		New character prop: magicReflect, sets and returns if they have magic reflect on
+		New character methods:
+			SpellMoveEffect( target, spell )
+			SpellStaticEffect( spell )
+			BreakConcentration( [socket] )
+		Wrote clumsy.js, the first UOX3 spell to be put in JS. This script is mostly working, but there are
+		some issues that need to be worked out before the entire spell system is put out to the JS engine.
+
+		Currently known issues:
+			No way to cause one target to attack another in JS.
+			No Line of Sight checks in JS.
+
 August 2 2004
 	Changed __unix__ references to UOX_PLATFORM != PLATFORM_WIN32
 

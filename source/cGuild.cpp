@@ -753,10 +753,10 @@ void CGuild::CalcMaster( void )
 	votes.resize( members.size() );
 	UI32 maxIndex = 0;
 
-	for( UI32 counter = 0; counter < votes.size(); ++counter )
+	for( size_t counter = 0; counter < votes.size(); ++counter )
 	{
 		votes[counter] = 0;	// init the count before adding
-		for( UI32 counter2 = 0; counter2 < votes.size(); ++counter2 )
+		for( size_t counter2 = 0; counter2 < votes.size(); ++counter2 )
 		{
 			CChar *myChar = calcCharObjFromSer( members[counter2] );
 			if( ValidateObject( myChar ) && myChar->GetGuildFealty() == members[counter] )
@@ -1196,14 +1196,14 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			numButtons = ++tCtr;	break;
 	}
 
-	for( int iCtr = 0; iCtr < numButtons; ++iCtr )
+	for( UI16 iCtr = 0; iCtr < numButtons; ++iCtr )
 	{
 		toSend.AddCommand( "button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2 );
 		toSend.AddCommand( "text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1 );
 	}
 	if( numText != 0 )
 	{
-		for( int iCtr = 0; iCtr < numText; ++iCtr )
+		for( UI16 iCtr = 0; iCtr < numText; ++iCtr )
 		{
 			if( numColumns == 1 )
 				toSend.AddCommand( "text 50 %i %i %i", 30 + 20 * ( iCtr + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 );

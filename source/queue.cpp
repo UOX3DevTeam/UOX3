@@ -159,7 +159,7 @@ SERIAL PageVector::GetCallNum( void ) const
 SI32 PageVector::FindCallNum( SERIAL callNum )
 // returns position of page with call number callNum
 { 
-	for( UI32 counter = 0; counter < Queue.size(); ++counter )
+	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		if( Queue[counter]->RequestID() == callNum )
 			return counter;

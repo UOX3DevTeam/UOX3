@@ -17,7 +17,9 @@ function command_INCX( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	ourObj.x = (ourObj.x + socket.tempint);
+	if( !socket.GetWord( 1 ) )
+		ourObj.x = (ourObj.x + socket.tempint);
+	socket.tempint = 0;
 }
 
 function command_INCY( socket, cmdString )
@@ -32,7 +34,9 @@ function command_INCY( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	ourObj.y = (ourObj.y + socket.tempint);
+	if( !socket.GetWord( 1 ) )
+		ourObj.y = (ourObj.y + socket.tempint);
+	socket.tempint = 0;
 }
 
 function command_INCZ( socket, cmdString )
@@ -47,6 +51,8 @@ function command_INCZ( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	ourObj.z = (ourObj.z + socket.tempint);
+	if( !socket.GetWord( 1 ) )
+		ourObj.z = (ourObj.z + socket.tempint);
+	socket.tempint = 0;
 }
 

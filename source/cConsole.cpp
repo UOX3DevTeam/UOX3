@@ -392,7 +392,7 @@ void CConsole::Width( UI16 nVal )
 void CConsole::PrintSectionBegin( void )
 {
 	TurnBrightWhite();
-	for( int i = 0; i < left; ++i )
+	for( UI16 i = 0; i < left; ++i )
 		std::cout << " ";
 	std::cout << "o";
 	for( int j = left + 1; j < width - 1; ++j )
@@ -412,7 +412,7 @@ void CConsole::PrintSectionBegin( void )
 //o---------------------------------------------------------------------------o
 void CConsole::Start( char *temp )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if !defined(__unix__)
 	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &csbi );
 	width	= csbi.dwSize.X;

@@ -12,7 +12,7 @@ function onCallback0( socket, ourObj )
 {
 	var message;
 
-	if( ourObj )
+	if( !socket.GetWord( 1 ) && ourObj )
 	{
 		switch( ourObj.type )
 		{

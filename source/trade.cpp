@@ -89,7 +89,7 @@ bool clearTradesFunctor( cBaseObject *a, UI32 &b, void *extraData )
 			CItem *p = k->GetPackItem();
 			if( ValidateObject( p ) )	// can we move this check to outside the for loop?? I should think so!
 			{
-				for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
+				for( CItem *j = i->Contains.First(); !i->Contains.Finished(); j = i->Contains.Next() )
 				{
 					if( ValidateObject( j ) )
 						j->SetCont( p );
@@ -146,7 +146,7 @@ void endTrade( SERIAL targSerial )
 		nSock->Send( &cpstTwo );
 	}
 	CItem *i = NULL, *j = NULL;
-	for( i = cont1->FirstItem(); !cont1->FinishedItems(); i = cont1->NextItem() )
+	for( i = cont1->Contains.First(); !cont1->Contains.Finished(); i = cont1->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -165,7 +165,7 @@ void endTrade( SERIAL targSerial )
 			}
 		}
 	}
-	for( i = cont2->FirstItem(); !cont2->FinishedItems(); i = cont2->NextItem() )
+	for( i = cont2->Contains.First(); !cont2->Contains.Finished(); i = cont2->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -210,7 +210,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 	cSocket *nSock = calcSocketObjFromChar( p2 );
 	
 	CItem *i = NULL, *j = NULL;
-	for( i = cont1->FirstItem(); !cont1->FinishedItems(); i = cont1->NextItem() )
+	for( i = cont1->Contains.First(); !cont1->Contains.Finished(); i = cont1->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -230,7 +230,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 
 		}
 	}
-	for( i = cont2->FirstItem(); !cont2->FinishedItems(); i = cont2->NextItem() )
+	for( i = cont2->Contains.First(); !cont2->Contains.Finished(); i = cont2->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{

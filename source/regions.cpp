@@ -62,346 +62,6 @@ void LoadSpawnItem( std::ifstream& readDestination )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	SubRegion constructor
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	This function is does basically what the name implies
-//o--------------------------------------------------------------------------o
-SubRegion::SubRegion() //constructor
-{
-	charData.resize( 0 );
-	itemData.resize( 0 );
-	charIteratorBackup.resize( 0 );
-	itemIteratorBackup.resize( 0 );
-	charCounter = charData.end();
-	itemCounter = itemData.end();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SubRegion destructor
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Removes all map entries
-//o--------------------------------------------------------------------------o
-SubRegion::~SubRegion()
-{
-	itemData.clear();
-	charData.clear();
-	charIteratorBackup.clear();
-	itemIteratorBackup.clear();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *GetCurrentItem()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns a CItem * to the current referenced item
-//o--------------------------------------------------------------------------o
-CItem *SubRegion::GetCurrentItem( void )
-{
-	return (*itemCounter);
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *GetCurrentChar()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns a CChar * to the current referenced char
-//o--------------------------------------------------------------------------o
-CChar *SubRegion::GetCurrentChar( void )
-{
-	return (*charCounter);
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *FirstItem()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Moves iterator to start and returns the first CItem *
-//o--------------------------------------------------------------------------o
-CItem *SubRegion::FirstItem( void )
-{
-	CItem *rvalue	= NULL;
-	itemCounter		= itemData.begin();
-	if( !FinishedItems() )
-		rvalue = (*itemCounter);
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *FirstChar()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Moves iterator to start and returns the first CChar *
-//o--------------------------------------------------------------------------o
-CChar *SubRegion::FirstChar( void )
-{
-	CChar *rvalue	= NULL;
-	charCounter		= charData.begin();
-	if( !FinishedChars() )
-		rvalue = (*charCounter);
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *GetNextItem()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Moves along the iterator, returning the next CItem *
-//o--------------------------------------------------------------------------o
-CItem *SubRegion::GetNextItem( void )
-{
-	CItem *rvalue = NULL;
-	if( !FinishedItems() )
-	{
-		++itemCounter;
-		if( !FinishedItems() )
-			rvalue = (*itemCounter);
-	}
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *GetNextChar()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Moves along the iterator, returning the next CChar *
-//o--------------------------------------------------------------------------o
-CChar *SubRegion::GetNextChar( void )
-{
-	CChar *rvalue = NULL;
-	if( !FinishedChars() )
-	{
-		++charCounter;
-		if( !FinishedChars() )
-			rvalue = (*charCounter);
-	}
-	return rvalue;
-}
-
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool FinishedItems()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	returns true if we hit the end of the iterator
-//o--------------------------------------------------------------------------o
-bool SubRegion::FinishedItems( void )
-{
-	return ( itemCounter == itemData.end() );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool FinishedChars()
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Returns true if we hit the end of the iterator
-//o--------------------------------------------------------------------------o
-bool SubRegion::FinishedChars( void )
-{
-	return ( charCounter == charData.end() );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool AddItem( CItem *toAdd )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Adds toAdd to the map if it doesn't already exist
-//o--------------------------------------------------------------------------o
-bool SubRegion::AddItem( CItem *toAdd )
-{
-	DITEMLIST_ITERATOR iIter;
-	for( iIter = itemData.begin(); iIter != itemData.end(); ++iIter )
-	{
-		if( (*iIter) == toAdd )
-			return false;
-	}
-	bool updateCounter = (itemCounter == itemData.end());
-	itemData.push_back( toAdd );
-	if( updateCounter )
-		itemCounter = itemData.end();
-	return true;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool AddChar( CChar *toAdd )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Adds toAdd to the map if it doesn't already exist
-//o--------------------------------------------------------------------------o
-bool SubRegion::AddChar( CChar *toAdd )
-{
-	DCHARLIST_ITERATOR cIter;
-	for( cIter = charData.begin(); cIter != charData.end(); ++cIter )
-	{
-		if( (*cIter) == toAdd )
-			return false;
-	}
-	bool updateCounter = (charCounter == charData.end());
-	charData.push_back( toAdd );
-	if( updateCounter )
-		charCounter = charData.end();
-	return true;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool RemoveItem( CItem *toRemove )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Removes toRemove from the map if it is in there
-//o--------------------------------------------------------------------------o
-bool SubRegion::RemoveItem( CItem *toRemove )
-{
-	DITEMLIST_ITERATOR rIter;
-	for( rIter = itemData.begin(); rIter != itemData.end(); ++rIter )
-	{
-		CItem *blah = (*rIter);
-		if( (*rIter) == toRemove )
-		{
-			const bool updateCounter = (itemCounter != itemData.end());
-			if( rIter != itemData.begin() && rIter <= itemCounter )
-				--itemCounter;
-
-			const size_t iterPos			= (rIter - itemData.begin());
-			const size_t iCounterPos	= (itemCounter - itemData.begin());
-				
-			for( size_t q = 0; q < itemIteratorBackup.size(); ++q )
-			{
-				if( itemIteratorBackup[q] > 0 && iterPos <= itemIteratorBackup[q] )
-					--itemIteratorBackup[q];
-			}
-			itemData.erase( rIter );
-
-			if( updateCounter )
-				itemCounter = (itemData.begin() + iCounterPos );
-			else
-				itemCounter = itemData.end();
-			return true;
-		}
-	}
-	return false;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool RemoveChar( CChar *toRemove )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Removes toRemove from the map if it is in there
-//o--------------------------------------------------------------------------o
-bool SubRegion::RemoveChar( CChar *toRemove )
-{
-	DCHARLIST_ITERATOR rIter;
-	for( rIter = charData.begin(); rIter != charData.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			const bool updateCounter = (charCounter != charData.end());
-			if( rIter > charData.begin() && rIter <= charCounter )
-				--charCounter;
-
-			const size_t iterPos			= (rIter - charData.begin());
-			const size_t cCounterPos	= (charCounter - charData.begin());
-
-			for( size_t q = 0; q < charIteratorBackup.size(); ++q )
-			{
-				if( charIteratorBackup[q] > 0 && iterPos <= charIteratorBackup[q] )
-					--charIteratorBackup[q];
-			}
-			charData.erase( rIter );
-
-			if( updateCounter )
-				charCounter = (charData.begin() + cCounterPos);
-			else
-				charCounter = charData.end();
-			return true;
-		}
-	}
-	return false;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void SubRegion::PopItem( void )
-//|	Date				-	Unknown
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Pops the Item iterator backup vector forward (to avoid corruption on nested loops)
-//o--------------------------------------------------------------------------o
-void SubRegion::PopItem( void )
-{
-	itemCounter = (itemData.begin() + itemIteratorBackup.back());
-	itemIteratorBackup.pop_back();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void SubRegion::PopChar( void )
-//|	Date				-	Unknown
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Pops the Character iterator backup vector forward (to avoid corruption on nested loops)
-//o--------------------------------------------------------------------------o
-void SubRegion::PopChar( void )
-{
-	charCounter = (charData.begin() + charIteratorBackup.back());
-	charIteratorBackup.pop_back();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void SubRegion::PushItem( void )
-//|	Date				-	Unknown
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Push back the Item iterator backup vector (to avoid corruption on nested loops)
-//o--------------------------------------------------------------------------o
-void SubRegion::PushItem( void )
-{
-	itemIteratorBackup.push_back( (itemCounter - itemData.begin()) );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function			-	void SubRegion::PushChar( void )
-//|	Date				-	Unknown
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Push back the Character iterator backup vector (to avoid corruption on nested loops)
-//o--------------------------------------------------------------------------o
-void SubRegion::PushChar( void )
-{
-	charIteratorBackup.push_back( (charCounter - charData.begin()) );
-}
-
-//o--------------------------------------------------------------------------o
 //|	Function			-	void SubRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination )
 //|	Date				-	Unknown
 //|	Developers		-	Unknown
@@ -417,12 +77,12 @@ void SubRegion::PushChar( void )
 //o--------------------------------------------------------------------------o
 void SubRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination )
 {
-	PushChar();
-	for( CChar* charToWrite = FirstChar(); !FinishedChars(); charToWrite = GetNextChar() )
+	charData.Push();
+	for( CChar* charToWrite = charData.First(); !charData.Finished(); charToWrite = charData.Next() )
 	{
 		if( !ValidateObject( charToWrite ) )
 		{
-			RemoveChar( charToWrite );
+			charData.Remove( charToWrite );
 			continue;
 		}
 		//if( !charToWrite->IsNpc() && charToWrite->GetAccount() != -1 ) {
@@ -433,34 +93,32 @@ void SubRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hous
 		if( charToWrite->ShouldSave() ) 
 			charToWrite->Save( writeDestination );
 	}
-	PopChar();
-	PushItem();
-	for( CItem *itemToWrite = FirstItem(); !FinishedItems(); itemToWrite = GetNextItem() )
+	charData.Pop();
+	itemData.Push();
+	for( CItem *itemToWrite = itemData.First(); !itemData.Finished(); itemToWrite = itemData.Next() )
 	{
 		if( !ValidateObject( itemToWrite ) )
 		{
-			RemoveItem( itemToWrite );
+			itemData.Remove( itemToWrite );
 			continue;
 		}
 		if( itemToWrite->ShouldSave() )
 		{
 			if( itemToWrite->GetObjType() == OT_MULTI )
 			{
-				CMultiObj *iMulti = static_cast< CMultiObj * >(itemToWrite);
-				if( ValidateObject( iMulti ) )
-					iMulti->Save( houseDestination );
+				CMultiObj *iMulti = static_cast<CMultiObj *>(itemToWrite);
+				iMulti->Save( houseDestination );
 			}
 			else if( itemToWrite->GetObjType() == OT_BOAT )
 			{
 				CBoatObj *iBoat = static_cast< CBoatObj * >(itemToWrite);
-				if( ValidateObject( iBoat ) )
-					iBoat->Save( houseDestination );
+				iBoat->Save( houseDestination );
 			}
 			else
 				itemToWrite->Save( writeDestination );
 		}
 	}
-	PopItem();
+	itemData.Pop();
 }
 
 //o--------------------------------------------------------------------------o
@@ -557,10 +215,10 @@ bool cMapRegion::AddItem( CItem *nItem )
 	SubRegion *cell = GetCell( nItem->GetX(), nItem->GetY(), nItem->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.AddItem( nItem );
+		overFlow.itemData.Add( nItem );
 		return false;
 	}
-	return cell->AddItem( nItem );
+	return cell->itemData.Add( nItem );
 }
 
 //o--------------------------------------------------------------------------o
@@ -579,10 +237,10 @@ bool cMapRegion::RemoveItem( CItem *nItem )
 	SubRegion *cell = GetCell( nItem->GetX(), nItem->GetY(), nItem->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.RemoveItem( nItem );
+		overFlow.itemData.Remove( nItem );
 		return false;
 	}
-	return cell->RemoveItem( nItem );
+	return cell->itemData.Remove( nItem );
 }
 
 //o--------------------------------------------------------------------------o
@@ -600,10 +258,10 @@ bool cMapRegion::AddChar( CChar *toAdd )
 	SubRegion *cell = GetCell( toAdd->GetX(), toAdd->GetY(), toAdd->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.AddChar( toAdd );
+		overFlow.charData.Add( toAdd );
 		return false;
 	}
-	return cell->AddChar( toAdd );
+	return cell->charData.Add( toAdd );
 }
 
 //o--------------------------------------------------------------------------o
@@ -622,10 +280,10 @@ bool cMapRegion::RemoveChar( CChar *toRemove )
 	SubRegion *cell = GetCell( toRemove->GetX(), toRemove->GetY(), toRemove->WorldNumber() );
 	if( cell == &overFlow )
 	{
-		overFlow.RemoveChar( toRemove );
+		overFlow.charData.Remove( toRemove );
 		return false;
 	}
-	return cell->RemoveChar( toRemove );
+	return cell->charData.Remove( toRemove );
 }
 
 //o--------------------------------------------------------------------------o
@@ -881,7 +539,7 @@ bool cMapRegion::Add( cBaseObject *toAdd )
 {
 	if( !ValidateObject( toAdd ) )
 		return false;
-	if( toAdd->GetObjType() == OT_CHAR )
+	if( toAdd->CanBeObjType( OT_CHAR ) )
 		return AddChar( static_cast< CChar *>(toAdd) );
 	else
 		return AddItem( (CItem *)(toAdd) );
@@ -890,7 +548,7 @@ bool cMapRegion::Remove( cBaseObject *toRemove )
 {
 	if( !ValidateObject( toRemove ) )
 		return false;
-	if( toRemove->GetObjType() == OT_CHAR )
+	if( toRemove->CanBeObjType( OT_CHAR ) )
 		return RemoveChar( static_cast< CChar *>(toRemove) );
 	else
 		return RemoveItem( (CItem *)(toRemove) );

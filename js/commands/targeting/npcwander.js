@@ -13,7 +13,7 @@ function command_FOLLOW( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var targMsg = GetDictionaryEntry( 1742, socket.Language );
 		socket.tempObj = ourObj;
@@ -23,7 +23,7 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var toFollow = socket.tempObj;
 		if( ourObj.npc && toFollow )
@@ -51,7 +51,7 @@ function command_NPCRECT( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( ourObj.isChar && ourObj.npc )
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )
 	{
 		ourObj.Wander( x1, y1, x2, y2 );
 	}
@@ -75,7 +75,7 @@ function command_NPCCIRCLE( socket, cmdString )
 
 function onCallback3( socket, ourObj )
 {
-	if( ourObj.isChar && ourObj.npc )
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )
 	{
 		ourObj.Wander( x1, y1, x2 );
 	}

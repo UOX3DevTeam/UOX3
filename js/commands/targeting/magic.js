@@ -14,7 +14,7 @@ function command_GATE( socket, cmdString )
 function onCallback0( socket, ourObj )
 {
 	var mChar 	= socket.currentChar;
-	if( ourObj.isItem && mChar )
+	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
@@ -35,7 +35,7 @@ function command_RECALL( socket, cmdString )
 function onCallback1( socket, ourObj )
 {
 	var mChar 	= socket.currentChar;
-	if( ourObj.isItem && mChar )
+	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		var txtMessage;
 		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
@@ -61,7 +61,7 @@ function command_MARK( socket, cmdString )
 function onCallback2( socket, ourObj )
 {
 	var mChar 	= socket.currentChar;
-	if( ourObj.isItem && mChar )
+	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		var txtMessage = GetDictionaryEntry( 686 );
 		socket.SysMessage( txtMessage );

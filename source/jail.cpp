@@ -249,7 +249,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 	SI08 cellNum = toRelease->GetCell();
 	if( cellNum < 0 || cellNum >= static_cast<SI08>(jails.size()) )
 		return;
-	for( UI32 iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter )
+	for( size_t iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter )
 	{
 		JailOccupant *mOccupant = jails[cellNum].Occupant( iCounter );
 		if( mOccupant == NULL )
@@ -268,7 +268,7 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 	if( jails.size() == 0 || toJail == NULL )
 		return false;
 	int minCell = 0;
-	for( UI32 i = 0; i < jails.size(); ++i )
+	for( size_t i = 0; i < jails.size(); ++i )
 	{
 		if( jails[i].IsEmpty() )
 		{

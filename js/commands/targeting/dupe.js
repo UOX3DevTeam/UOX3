@@ -15,7 +15,7 @@ function command_DUPE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj && ourObj.isItem )
+	if( !socket.GetWord( 1 ) && ourObj && ourObj.isItem )
 	{
 		var numToDupe = socket.tempint;
 		for( var i = 0; i < numToDupe; ++i )

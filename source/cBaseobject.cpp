@@ -512,7 +512,7 @@ void cBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 	RemoveFromMulti( fireTrigger );
 	if( newSerial >= BASEITEMSERIAL )
 	{
-		CMultiObj *newMulti = static_cast<CMultiObj *>(calcItemObjFromSer( newSerial ));
+		CMultiObj *newMulti = calcMultiFromSer( newSerial );
 		if( ValidateObject( newMulti ) )
 		{
 			multis = newMulti;
@@ -996,13 +996,13 @@ void cBaseObject::SetSpawn( SERIAL newSpawn )
 {
 	CSpawnItem *ourSpawner = GetSpawnObj();
 	if( ourSpawner != NULL )
-		ourSpawner->RemoveSpawn( this );
+		ourSpawner->spawnedList.Remove( this );
 	spawnserial = newSpawn;
 	if( newSpawn != INVALIDSERIAL )
 	{
 		ourSpawner = GetSpawnObj();
 		if( ourSpawner != NULL )
-			ourSpawner->AddSpawn( this );
+			ourSpawner->spawnedList.Add( this );
 	}
 }
 

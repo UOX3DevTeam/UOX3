@@ -98,7 +98,7 @@ CBoatObj * GetBoat( cSocket *s )
 //o---------------------------------------------------------------------------o
 void LeaveBoat( cSocket *s, CItem *p )
 {
-	CItem *boat = GetBoat( s );
+	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
 		return;
 
@@ -165,12 +165,12 @@ void LeaveBoat( cSocket *s, CItem *p )
 void PlankStuff( cSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
-	CItem *boat = GetBoat( s );
+	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
 	{
 		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 5 );
 		SERIAL mser			= p->GetTempVar( CITV_MORE );
-		CMultiObj *boat2	= static_cast< CMultiObj * >(calcItemObjFromSer( mser ));
+		CMultiObj *boat2	= calcMultiFromSer( mser );
 		if( ValidateObject( boat2 ) )
 		{
 			CHARLIST *myPets = mChar->GetPetList();
@@ -234,7 +234,7 @@ void OpenPlank( CItem *p )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
 //o---------------------------------------------------------------------------o
-bool BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
+bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	MapStaticIterator *msi;
 	staticrecord *stat = NULL;
@@ -535,14 +535,14 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	hold->IncLocation( tx, ty );
 
 	CBoatObj *realBoat = static_cast< CBoatObj *>(boat);
-	for( CItem *bItem = realBoat->FirstItemMulti(); !realBoat->FinishedItemMulti(); bItem = realBoat->NextItemMulti() )
+	for( CItem *bItem = realBoat->itemInMulti.First(); !realBoat->itemInMulti.Finished(); bItem = realBoat->itemInMulti.Next() )
 	{
 		if( !ValidateObject( bItem ) )
 			continue;
 		bItem->IncLocation( tx, ty );
 	}
 
-	for( CChar *bChar = realBoat->FirstCharMulti(); !realBoat->FinishedCharMulti(); bChar = realBoat->NextCharMulti() )
+	for( CChar *bChar = realBoat->charInMulti.First(); !realBoat->charInMulti.Finished(); bChar = realBoat->charInMulti.Next() )
 	{
 		if( !ValidateObject( bChar ) )
 			continue;
@@ -560,7 +560,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Turn an item on a boat
 //o---------------------------------------------------------------------------o
-void TurnStuff( CItem *b, cBaseObject *i, bool rightTurn )
+void TurnStuff( CBoatObj *b, cBaseObject *i, bool rightTurn )
 {
 	if( !ValidateObject( b ) )
 		return;
@@ -647,13 +647,13 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 
 	CBoatObj *realBoat = static_cast< CBoatObj * >(b);
 
-	for( CItem *bItem = realBoat->FirstItemMulti(); !realBoat->FinishedItemMulti(); bItem = realBoat->NextItemMulti() )
+	for( CItem *bItem = realBoat->itemInMulti.First(); !realBoat->itemInMulti.Finished(); bItem = realBoat->itemInMulti.Next() )
 	{
 		if( !ValidateObject( bItem ) )
 			continue;
 		TurnStuff( b, bItem, rightTurn );
 	}
-	for( CChar *bChar = realBoat->FirstCharMulti(); !realBoat->FinishedCharMulti(); bChar = realBoat->NextCharMulti() )
+	for( CChar *bChar = realBoat->charInMulti.First(); !realBoat->charInMulti.Finished(); bChar = realBoat->charInMulti.Next() )
 	{
 		if( !ValidateObject( bChar ) )
 			continue;
@@ -824,7 +824,7 @@ void ModelBoat( cSocket *s, CBoatObj *i )
 	SERIAL serial = p1->GetTempVar( CITV_MORE );
 	if( i->GetOwnerObj() == mChar )
 	{
-		if( i->NumItemMulti() > 4 || i->NumCharMulti() > 0 )
+		if( i->itemInMulti.Num() > 4 || i->charInMulti.Num() > 0 )
 		{
 			s->sysmessage( "This boat must be empty before it can be converted to a model!" );
 			return;
@@ -843,9 +843,6 @@ void ModelBoat( cSocket *s, CBoatObj *i )
 		Weight->addItemWeight( mChar, model );
 		model->SetType( IT_MODELMULTI );
 		model->SetMovable( 0 );
-
-		for( CItem *a = hold->FirstItem(); !hold->FinishedItems(); a = hold->NextItem() )
-			a->Delete();
 
 		tiller->Delete();
 		p1->Delete();

@@ -39,7 +39,6 @@
 #include "classes.h"
 #include "regions.h"
 #include "ObjectFactory.h"
-
 #include "speech.h"
 #include "cRaces.h"
 #include "cSpawnRegion.h"
@@ -88,8 +87,6 @@ creator( DEFITEM_CREATOR )
 	value[0] = value[1] = 0;
 	spells[0] = spells[1] = spells[2] = 0;
 	objType = OT_ITEM;
-	Contains.resize( 0 );
-	cIter = Contains.end();
 	strcpy( name2, "#" );
 	name = "#";
 	desc[0] = 0;
@@ -266,7 +263,7 @@ bool CItem::SetCont( cBaseObject *newCont )
 					}
 				}
 				else
-					itemHolder->HoldItem( this );
+					itemHolder->Contains.Add( this );
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
 				return true;
@@ -770,88 +767,6 @@ void CItem::IncID( SI16 incAmount )
 	SetID( id + incAmount );
 }
 
-bool CItem::HoldItem( CItem *toHold )
-{
-	DITEMLIST_ITERATOR hIter;
-	for( hIter = Contains.begin(); hIter != Contains.end(); ++hIter )
-	{
-		if( (*hIter) == toHold )	// same pointer ie same thing
-		{
-			Console.Warning( 3, "%s(0x%X) already contains %s(0x%X)", GetName().c_str(), GetSerial(), toHold->GetName().c_str(), toHold->GetSerial() );
-			return false;
-		}
-	}
-	bool updateCounter = (cIter == Contains.end());
-	Contains.push_back( toHold );
-	if( updateCounter )
-		cIter = Contains.end();
-	return true;
-}
-bool CItem::ReleaseItem( CItem *index )
-{
-	DITEMLIST_ITERATOR rIter;
-	for( rIter = Contains.begin(); rIter != Contains.end(); ++rIter )
-	{
-		if( (*rIter) == index )
-		{
-			const bool updateCounter = (cIter != Contains.end());
-			if( rIter != Contains.begin() && rIter <= cIter )
-				--cIter;
-
-			const size_t cIterPos = (cIter - Contains.begin());
-
-			Contains.erase( rIter );
-
-			if( updateCounter )
-				cIter = (Contains.begin() + cIterPos);
-			else
-				cIter = Contains.end();
-
-			return true;
-		}
-	}
-	return false;
-}
-
-CItem *CItem::FirstItem( void )
-{
-	CItem *retItem	= NULL;
-	cIter			= Contains.begin();
-	if( !FinishedItems() )
-		retItem = (*cIter);
-	return retItem;
-}
-
-CItem *CItem::NextItem( void )
-{
-	CItem *retItem = NULL;
-	if( !FinishedItems() )
-	{
-		++cIter;
-		if( !FinishedItems() )
-			retItem = (*cIter);
-	}
-	return retItem;
-}
-
-bool CItem::FinishedItems( void )
-{
-	return ( cIter == Contains.end() );
-}
-
-size_t CItem::NumItems( void ) const
-{
-	return Contains.size();
-}
-
-CItem *CItem::GetItemObj( size_t index ) const
-{
-	if( index >= Contains.size() )
-		return NULL;
-	return Contains[index];
-}
-
-
 UI08 CItem::IsFieldSpell( void ) const
 {
 	switch( id )
@@ -898,7 +813,7 @@ void CItem::LockDown( void )
 	movable = 3;
 }
 
-bool CItem::Save( std::ofstream &outStream ) const
+bool CItem::Save( std::ofstream &outStream )
 {
 	if( isFree() )
 		return false;
@@ -906,15 +821,13 @@ bool CItem::Save( std::ofstream &outStream ) const
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
-
 		DumpFooter( outStream );
 
 		//Console << "Contains: " << (UI32)Contains.size() << myendl;
-		DITEMLIST_CITERATOR sIter;
-		for( sIter = Contains.begin(); sIter != Contains.end(); ++sIter )
+		for( CItem *toSave = Contains.First(); !Contains.Finished(); toSave = Contains.Next() )
 		{
-			if( ValidateObject( (*sIter) ) && (*sIter)->ShouldSave() )
-				(*sIter)->Save( outStream );
+			if( ValidateObject( toSave ) && toSave->ShouldSave() )
+				toSave->Save( outStream );
 		}
 	}
 	return true;
@@ -959,7 +872,7 @@ void CItem::RemoveSelfFromCont( void )
 				if( targItem != NULL )
 				{
 					Weight->subtractItemWeight( targItem, this );
-					targItem->ReleaseItem( this );
+					targItem->Contains.Remove( this );
 					//if( !targItem->ReleaseItem( this ) )
 					//Console.Error( "Error removing %s(0x%X) from %s(0x%X)\n", GetName(), GetSerial(), targItem->GetName(), contserial );
 				}
@@ -1666,9 +1579,9 @@ inline bool operator>(const CItem& x, const CItem& y )
 
 void CItem::Sort( void )
 {
-	if( Contains.size() < 2 )
+	if( Contains.Num() < 2 )
 		return;
-	std::sort( Contains.begin(), Contains.end() );
+//	std::sort( Contains.begin(), Contains.end() );
 	SI16 baseY = 0, baseX = 0;
 	switch( GetLayer() )
 	{
@@ -1679,13 +1592,12 @@ void CItem::Sort( void )
 			break;
 		default:	return;
 	}
-	DITEMLIST_ITERATOR sIter;
-	for( sIter = Contains.begin(); sIter != Contains.end(); ++sIter )
+	for( CItem *toSort = Contains.First(); !Contains.Finished(); toSort = Contains.Next() )
 	{
-		if( !ValidateObject( (*sIter) ) )
+		if( !ValidateObject( toSort ) )
 			continue;
-		(*sIter)->SetX( ++baseX );
-		(*sIter)->SetY( baseY );
+		toSort->SetX( ++baseX );
+		toSort->SetY( baseY );
 		if( baseX == 200 )
 		{
 			baseX = 0;
@@ -1957,7 +1869,7 @@ void CItem::Cleanup( void )
 	{
 		cBaseObject::Cleanup();
 
-		for( CItem *tItem = FirstItem(); !FinishedItems(); tItem = NextItem() )
+		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
 		{
 			if( ValidateObject( tItem ) )
 				tItem->Delete();
@@ -2006,7 +1918,6 @@ void CItem::Cleanup( void )
 
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
-	#pragma note( "Check this, but I think that DestroyObject would be good enough that we don't have to unregister here" )
 	}
 }
 
@@ -2064,104 +1975,9 @@ CSpawnItem::CSpawnItem() : CItem(),
 isSectionAList( false )
 {
 	objType = OT_SPAWNER;
-	spawnedItems.resize( 0 );
-	siIter = spawnedItems.end();
 	Interval[0] = Interval[1] = 0;
 	spawnSection.reserve( 100 );
 	spawnSection = "";
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  FirstSpawn(), NextSpawn(), FinishedSpawn()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Wrappers to handle iteration through spawnedItems vector
-//o---------------------------------------------------------------------------o
-cBaseObject *CSpawnItem::FirstSpawn( void )
-{
-	cBaseObject *retObj	= NULL;
-	siIter					= spawnedItems.begin();
-	if( !FinishedSpawn() )
-		retObj = (*siIter);
-	return retObj;
-}
-cBaseObject *CSpawnItem::NextSpawn( void )
-{
-	cBaseObject *retObj = NULL;
-	if( !FinishedSpawn() )
-	{
-		++cIter;
-		if( !FinishedSpawn() )
-			retObj = (*siIter);
-	}
-	return retObj;
-}
-bool CSpawnItem::FinishedSpawn( void )
-{
-	return ( siIter == spawnedItems.end() );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  NumSpawned()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Total number of objects spawned by this spawner
-//o---------------------------------------------------------------------------o
-size_t CSpawnItem::NumSpawned( void ) const
-{
-	return spawnedItems.size();
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  AddSpawn() & RemoveSpawn()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Wrappers to handle vector.push_back() and vector.erase()
-//o---------------------------------------------------------------------------o
-bool CSpawnItem::AddSpawn( cBaseObject *toAdd )
-{
-	std::deque< cBaseObject * >::iterator aIter;
-	for( aIter = spawnedItems.begin(); aIter != spawnedItems.end(); ++aIter )
-	{
-		if( (*aIter) == toAdd )
-		{
-			Console.Warning( 3, "Spawner %s(0x%X) already contains %s(0x%X)", GetName().c_str(), GetSerial(), toAdd->GetName().c_str(), toAdd->GetSerial() );
-			return false;
-		}
-	}
-	const bool updateCounter = (siIter == spawnedItems.end());
-	spawnedItems.push_back( toAdd );
-	if( updateCounter )
-		siIter = spawnedItems.end();
-	return true;
-}
-bool CSpawnItem::RemoveSpawn( cBaseObject *toRem )
-{
-	std::deque< cBaseObject * >::iterator rIter;
-	for( rIter = spawnedItems.begin(); rIter != spawnedItems.end(); ++rIter )
-	{
-		if( (*rIter) == toRem )
-		{
-			const bool updateCounter = (siIter != spawnedItems.end());
-			if( rIter != spawnedItems.begin() && rIter <= siIter )
-				--siIter;
-
-			const size_t siIterPos = (siIter - spawnedItems.begin());
-
-			spawnedItems.erase( rIter );
-
-			if( updateCounter )
-				siIter = (spawnedItems.begin() + siIterPos);
-			else
-				siIter = spawnedItems.end();
-
-			return true;
-		}
-	}
-	return false;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2315,7 +2131,7 @@ bool CSpawnItem::DoRespawn( void )
 bool CSpawnItem::HandleItemSpawner( void )
 {
 	bool shouldSpawn = true;
-	for( cBaseObject *mObj = FirstSpawn(); !FinishedSpawn(); mObj = NextSpawn() )
+	for( cBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
 	{
 		if( ValidateObject( mObj ) && !mObj->isFree() )
 		{
@@ -2349,7 +2165,7 @@ bool CSpawnItem::HandleItemSpawner( void )
 
 bool CSpawnItem::HandleNPCSpawner( void )
 {
-	if( NumSpawned() < GetAmount() )
+	if( spawnedList.Num() < GetAmount() )
 	{
 		std::string listObj = GetSpawnSection();
 		if( !listObj.empty() )
@@ -2367,7 +2183,7 @@ bool CSpawnItem::HandleNPCSpawner( void )
 }
 bool CSpawnItem::HandleSpawnContainer( void )
 {
-	if( NumItems() < GetAmount() )
+	if( Contains.Num() < GetAmount() )
 	{
 		std::string listObj = GetSpawnSection();
 		if( GetType() == IT_SPAWNCONT )
@@ -2397,7 +2213,7 @@ void CSpawnItem::Cleanup( void )
 {
 	CItem::Cleanup();
 
-	for( cBaseObject *mObj = FirstSpawn(); !FinishedSpawn(); mObj = NextSpawn() )
+	for( cBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
 	{
 		if( mObj->GetSpawnObj() == this )
 			mObj->SetSpawn( INVALIDSERIAL );

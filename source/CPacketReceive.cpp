@@ -393,7 +393,7 @@ bool CPISecondLogin::Handle( void )
 	else
 	{
 		UI08 charCount = 0;
-		for( UI32 i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 6; ++i )
 		{
 			if( actbTemp.dwCharacters[i] != INVALIDSERIAL )
 				++charCount;
@@ -1193,7 +1193,7 @@ std::string CPIGumpMenuSelect::GetTextUString( UI08 number ) const
 		return "";
 	std::string toReturn = "";
 	UI16 offset = textLocationOffsets[number] + 4;
-	for( int counter = 0; counter < GetTextLength( number ); ++counter )
+	for( UI16 counter = 0; counter < GetTextLength( number ); ++counter )
 		toReturn += tSock->GetByte( offset + counter * 2 + 1 );
 	return toReturn;
 }

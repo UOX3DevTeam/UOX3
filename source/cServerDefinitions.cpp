@@ -134,9 +134,9 @@ bool cServerDefinitions::Reload( void )
 
 cServerDefinitions::~cServerDefinitions()
 {
-	for( UI32 i = 0; i < ScriptListings.size(); ++i )
+	for( size_t i = 0; i < ScriptListings.size(); ++i )
 	{
-		for( UI32 j = 0; j < ScriptListings[i].size(); ++j )
+		for( size_t j = 0; j < ScriptListings[i].size(); ++j )
 		{
 			VECSCRIPTLIST *toDel = &(ScriptListings[i]);
 			if( toDel == NULL )
@@ -245,7 +245,7 @@ void cServerDefinitions::ReloadScriptObjects( void )
 		std::vector< PrioScan * >	mSort;
 		STRINGLIST *shortListing	= fileList.FlattenedShortList();
 		STRINGLIST *longListing		= fileList.FlattenedList();
-		for( UI32 i = 0; i < shortListing->size(); ++i )
+		for( size_t i = 0; i < shortListing->size(); ++i )
 		{
 			mSort.push_back( new PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
 		}
@@ -581,7 +581,7 @@ void cDirectoryListing::Flatten( bool isParent )
 {
 	ClearFlatten();
 	std::string temp;
-	for( unsigned int j = 0; j < filenameList.size(); ++j )
+	for( size_t j = 0; j < filenameList.size(); ++j )
 	{
 		flattenedFull.push_back( filenameList[j] );
 		if( isParent )
@@ -600,7 +600,7 @@ void cDirectoryListing::Flatten( bool isParent )
 		(*dIter).Flatten( false );
 		STRINGLIST *shortFlat	= (*dIter).FlattenedShortList();
 		STRINGLIST *longFlat	= (*dIter).FlattenedList();
-		for( unsigned int k = 0; k < longFlat->size(); ++k )
+		for( size_t k = 0; k < longFlat->size(); ++k )
 		{
 			flattenedFull.push_back( (*longFlat)[k] );
 			if( isParent )

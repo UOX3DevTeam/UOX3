@@ -231,7 +231,7 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 //o---------------------------------------------------------------------------o
 void cCommands::Load( void )
 {
-	SI32 tablePos;
+	size_t tablePos;
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
 	if( commands == NULL )
@@ -267,7 +267,7 @@ void cCommands::Load( void )
 	if( badCommands.size() > 0 )
 	{
 		Console << myendl;
-		for( tablePos = 0; static_cast<unsigned int>(tablePos) < badCommands.size(); ++tablePos )
+		for( tablePos = 0; tablePos < badCommands.size(); ++tablePos )
 			Console << "Invalid command '" << badCommands[tablePos].c_str() << "' found in commands.dfn!" << myendl;
 	}
 

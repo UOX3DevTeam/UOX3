@@ -12,7 +12,7 @@ function command_GLOW( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isItem )
+	if( !socket.GetWord( 1 ) && ourObj.isItem )
 		ourObj.Glow( socket );
 }
 
@@ -24,6 +24,6 @@ function command_UNGLOW( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isItem )
+	if( !socket.GetWord( 1 ) && ourObj.isItem )
 		ourObj.UnGlow( socket );
 }

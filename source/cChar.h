@@ -315,13 +315,13 @@ public:
 	bool			WearItem( CItem *toWear );
 	bool			TakeOffItem( UI08 Layer );
 
-	virtual CItem *	FirstItem( void );
-	virtual CItem *	NextItem( void );
-	virtual bool	FinishedItems( void );
+	CItem *			FirstItem( void );
+	CItem *			NextItem( void );
+	bool			FinishedItems( void );
 
 	void			BreakConcentration( cSocket *sock = NULL );
 
-	virtual bool	Save( std::ofstream &outStream ) const;
+	virtual bool	Save( std::ofstream &outStream );
 	virtual void	PostLoadProcessing( void );
 
 	SI16			ActualStrength( void ) const;

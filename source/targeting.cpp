@@ -419,48 +419,6 @@ void DyeTarget( cSocket *s )
 	}
 }
 
-void XTeleport( cSocket *s, UI08 x )
-{
-	VALIDATESOCKET( s );
-	SERIAL serial	= INVALIDSERIAL;
-	CChar *c		= NULL;
-	// Abaddon 17th February 2000 Converted if to switch (easier to read)
-	// Also made it so that it calls teleport, not updatechar, else you don't get the items in range
-	CChar *mChar = s->CurrcharObj();
-	switch( x )
-	{
-		case 0:
-			serial	= s->GetDWord( 7 );
-			c		= calcCharObjFromSer( serial );
-			break;
-		case 5:
-			serial	= calcserial( (UI08)Commands->Argument( 1 ), (UI08)Commands->Argument( 2 ), (UI08)Commands->Argument( 3 ), (UI08)Commands->Argument( 4 ) );
-			c		= calcCharObjFromSer( serial );
-			break;
-		case 2:
-			cSocket *mSock;
-			mSock = Network->GetSockPtr( Commands->Argument( 1 ) );
-			if( mSock != NULL )
-				c = mSock->CurrcharObj();
-			else 
-				return;
-			break;
-		default:
-			s->sysmessage( 1654, x );
-			return;
-	}
-	
-	if( ValidateObject( c ) )
-	{
-		c->SetLocation( mChar );
-		return;
-	}
-
-	CItem *i = calcItemObjFromSer( serial );
-	if( ValidateObject( i ) )
-		i->SetLocation( mChar );
-}
-
 void KeyTarget( cSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1107,7 +1065,7 @@ void newCarveTarget( cSocket *s, CItem *i )
 
 	if( deletecorpse )
 	{
-		for( c = i->FirstItem(); !i->FinishedItems(); c = i->NextItem() )
+		for( c = i->Contains.First(); !i->Contains.Finished(); c = i->Contains.Next() )
 		{
 			if( ValidateObject( c ) )
 			{
@@ -1546,13 +1504,12 @@ void HouseBanTarget( cSocket *s )
 	VALIDATESOCKET( s );
 	// first, eject the player
 	HouseEjectTarget( s );
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = static_cast<CItem *>(s->TempObj());
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
 	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		UI08 r = AddToHouse( house, c, 1 );
+		UI08 r = AddToHouse( h, c, 1 );
 		if( r == 1 ) 
 			s->sysmessage( 1085, c->GetName().c_str() );
 		else if( r == 2 ) 
@@ -1565,13 +1522,12 @@ void HouseBanTarget( cSocket *s )
 void HouseFriendTarget( cSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = static_cast<CItem *>(s->TempObj());
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
 	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		UI08 r = AddToHouse( house, c );
+		UI08 r = AddToHouse( h, c );
 		if( r == 1 ) 
 		{
 			cSocket *cSock = calcSocketObjFromChar( c );
@@ -1590,13 +1546,12 @@ bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode = 0 );
 void HouseUnlistTarget( cSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = static_cast<CItem *>(s->TempObj());
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	=  static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
 	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		bool r = DeleteFromHouseList( house, c );
+		bool r = DeleteFromHouseList( h, c );
 		if( r )
 			s->sysmessage( 1092, c->GetName().c_str() );
 		else 
@@ -1804,7 +1759,7 @@ void HouseLockdown( cSocket *s ) // Abaddon
 			s->sysmessage( 1106 );
 			return;
 		}
-		CItem *house = static_cast<CItem *>(s->TempObj());
+		CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
 		s->TempObj( NULL );
 		// time to lock it down!
 		CMultiObj *multi = findMulti( itemToLock );
@@ -1839,7 +1794,7 @@ void HouseRelease( cSocket *s ) // Abaddon
 
 	if( ValidateObject( itemToLock ) || !itemToLock->IsLockedDown() )
 	{
-		CItem *house = static_cast<CItem *>(s->TempObj());	// let's find our house
+		CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
 		s->TempObj( NULL );
 		// time to lock it down!
 		CMultiObj *multi = findMulti( itemToLock );
@@ -2011,9 +1966,7 @@ void MakeStatusTarget( cSocket *sock )
 void SmeltTarget( cSocket *s )
 {
 	VALIDATESOCKET( s );
-#if defined( _MSC_VER )
-#pragma todo( "Smelting needs to be heavily updated" )
-#endif
+
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) || i->GetCont() == NULL )
 		return;
@@ -2236,7 +2189,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_AXE:			AxeTarget( tSock );						break;
 					case TARGET_SWORD:			SwordTarget( tSock );					break;
 					case TARGET_AREACOMMAND:	AreaCommand( tSock );					break;
-					case TARGET_XTELEPORT:		XTeleport( tSock, 0 );					break;
 					case TARGET_LOADCANNON:		LoadCannon( tSock );					break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;

@@ -12,10 +12,13 @@ function command_HIDE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.visible )
-		socket.SysMessage( GetDictionaryEntry( 833, socket.Language ) );
-	else
-		ourObj.visible = 3;
+	if( !socket.GetWord( 1 ) )
+	{
+		if( ourObj.visible )
+			socket.SysMessage( GetDictionaryEntry( 833, socket.Language ) );
+		else
+			ourObj.visible = 3;
+	}
 }
 
 function command_UNHIDE( socket, cmdString )
@@ -26,20 +29,23 @@ function command_UNHIDE( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.visible == 0 )
-		socket.SysMessage( "That object is already visible!" );
-	else
+	if( !socket.GetWord( 1 ) )
 	{
-		if( ourObj.isChar )
+		if( ourObj.visible == 0 )
+			socket.SysMessage( "That object is already visible!" );
+		else
 		{
-			mChar = socket.currentChar;
-			if( ourObj.commandlevel > mChar.commandlevel )
+			if( ourObj.isChar )
 			{
-				socket.SysMessage( "You cannot unhide that person!" );
-				return;
+				mChar = socket.currentChar;
+				if( ourObj.commandlevel > mChar.commandlevel )
+				{
+					socket.SysMessage( "You cannot unhide that person!" );
+					return;
+				}
 			}
+			ourObj.visible = 0;
 		}
-		ourObj.visible = 0;
 	}
 }
 

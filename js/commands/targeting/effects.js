@@ -16,7 +16,7 @@ function command_ACTION( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		ourObj.DoAction( socket.tempint );
 	socket.tempint = 0;
 }
@@ -29,7 +29,7 @@ function command_BOLT( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		ourObj.BoltEffect();
 		ourObj.SoundEffect( 0x0029, true );

@@ -30,7 +30,7 @@ function command_SQUELCH( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar && ourObj.online )
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )
 	{
 		var ourSock = ourObj.socket;
 		if( ourObj.commandlevel > 0 )

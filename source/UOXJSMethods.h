@@ -62,7 +62,7 @@ JSMethodFunc CGumpData_getEdit;
 JSMethodFunc CGumpData_getButton;
 
 // Character Methods
-JSMethodFunc CChar_Action;
+JSMethodFunc CChar_DoAction;
 JSMethodFunc CChar_EmoteMessage;
 JSMethodFunc CChar_Freeze;
 JSMethodFunc CChar_Unfreeze;
@@ -101,6 +101,9 @@ JSMethodFunc CChar_Kill;
 JSMethodFunc CChar_Resurrect;
 JSMethodFunc CChar_Jail;
 JSMethodFunc CChar_Release;
+JSMethodFunc CChar_SpellMoveEffect;
+JSMethodFunc CChar_SpellStaticEffect;
+JSMethodFunc CChar_BreakConcentration;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
@@ -248,7 +251,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "WhisperMessage",		CChar_WhisperMessage,	1, 0, 0 },
 	{ "EmoteMessage",		CChar_EmoteMessage,		1, 0, 0 },
 	{ "Delete",				CBase_Delete,			0, 0, 0 },
-	{ "DoAction",			CChar_Action,			1, 0, 0 },
+	{ "DoAction",			CChar_DoAction,			1, 0, 0 },
 	{ "StaticEffect",		CBase_StaticEffect,		3, 0, 0 },
 	{ "Teleport",			CBase_Teleport,			3, 0, 0 },
 	{ "SetLocation",		CBase_Teleport,			3, 0, 0 },
@@ -307,6 +310,9 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Release",			CChar_Release,			0, 0, 0 },
 	{ "GetTimer",			CMisc_GetTimer,			1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,			2, 0, 0 },
+	{ "SpellMoveEffect",	CChar_SpellMoveEffect,	2, 0, 0 },
+	{ "SpellStaticEffect",	CChar_SpellStaticEffect,1, 0, 0 },
+	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
 
 	{ NULL,					NULL,					0, 0, 0 }
 };

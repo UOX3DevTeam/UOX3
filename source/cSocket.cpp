@@ -116,25 +116,25 @@ socket_error::socket_error( const long errorNumber ) : errorNum( errorNumber ), 
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::CliSocket( void )
+//|   Function    -  size_t cSocket::CliSocket( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the socket identifier for our socket
 //o---------------------------------------------------------------------------o
-int cSocket::CliSocket( void ) const
+size_t cSocket::CliSocket( void ) const
 {
 	return cliSocket;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::CliSocket( int newValue )
+//|   Function    -  void cSocket::CliSocket( size_t newValue )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Assigns a new socket value
 //o---------------------------------------------------------------------------o
-void cSocket::CliSocket( int newValue )
+void cSocket::CliSocket( size_t newValue )
 {
 	cliSocket = newValue;
 	UI32 mode = 1;
@@ -530,7 +530,7 @@ const bool				DEFSOCK_RECEIVEDVERSION			= false;
 cBaseObject *			DEFSOCK_TMPOBJ					= NULL;
 const UI16				DEFSOCK_TRIGGERWORD				= 0xFFFF;
 
-cSocket::cSocket( int sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), wAccountID( DEFSOCK_ACCOUNTID ),
+cSocket::cSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), wAccountID( DEFSOCK_ACCOUNTID ),
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
@@ -571,7 +571,7 @@ void cSocket::InternalReset( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the current spell type of the socket
 //o---------------------------------------------------------------------------o
-char cSocket::CurrentSpellType( void ) const
+UI08 cSocket::CurrentSpellType( void ) const
 {
 	return currentSpellType;
 }
@@ -583,7 +583,7 @@ char cSocket::CurrentSpellType( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the spell type of the socket
 //o---------------------------------------------------------------------------o
-void cSocket::CurrentSpellType( char newValue )
+void cSocket::CurrentSpellType( UI08 newValue )
 {
 	currentSpellType = newValue;
 }

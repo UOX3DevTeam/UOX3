@@ -284,7 +284,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	if( s > 0 )
 	{
 		int len = sizeof( struct sockaddr_in );
-		int newClient;
+		size_t newClient;
 #if UOX_PLATFORM == PLATFORM_WIN32
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, &len );
 #else
@@ -352,7 +352,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 {
 	bool match[4];
-	for( unsigned int i = 0; i < slEntries.size(); ++i )
+	for( size_t i = 0; i < slEntries.size(); ++i )
 	{
 		for( UI08 k = 0; k < 4; ++k )
 		{
@@ -369,7 +369,7 @@ bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 cNetworkStuff::~cNetworkStuff()
 {
 	size_t i = 0;
-	int s = 0;
+	size_t s = 0;
 	for( i = 0; i < loggedInClients.size(); ++i )
 	{
 		loggedInClients[i]->FlushBuffer();
@@ -1053,7 +1053,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 {
 	fd_set all;
 	fd_set errsock;
-	int i;
+	size_t i;
 	
 	cwmWorldState->uoxtimeout.tv_sec = 0;
 	cwmWorldState->uoxtimeout.tv_usec = 1;
@@ -1062,9 +1062,9 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	FD_ZERO( &errsock );
 	
 	int nfds = 0;
-	for( i = 0; i < static_cast<int>(loggedInClients.size()); ++i )
+	for( i = 0; i < loggedInClients.size(); ++i )
 	{
-		int clientSock = loggedInClients[i]->CliSocket();
+		size_t clientSock = loggedInClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
@@ -1074,7 +1074,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
-		for( i = 0; i < static_cast<int>(loggedInClients.size()); ++i )
+		for( i = 0; i < loggedInClients.size(); ++i )
 		{
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
@@ -1147,7 +1147,6 @@ void cNetworkStuff::LoginDisconnect( cSocket *s ) // Force disconnection of play
 {
 	UOXSOCKET i = FindLoginPtr( s );
 	LoginDisconnect( i );
-	//LoginDisconnect(s->CliSocket());
 }
 
 void cNetworkStuff::Disconnect( cSocket *s ) // Force disconnection of player //Instalog
@@ -1402,7 +1401,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 							{
 								if( data.sectionCount( "." ) == 3 )	// Wellformed IP address
 								{
-									for( int i = 0; i < 4; ++i )
+									for( UI08 i = 0; i < 4; ++i )
 									{
 										token = data.section( ".", i, i );
 										if( token == "*" )
@@ -1468,7 +1467,7 @@ void cNetworkStuff::CheckXGM( void )
 	SOCKLIST_ITERATOR toCheck;
 	for( toCheck = xgmClients.begin(); toCheck != xgmClients.end(); ++toCheck )
 	{
-		int clientSock = (*toCheck)->CliSocket();
+		size_t clientSock = (*toCheck)->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
@@ -1521,7 +1520,7 @@ void cNetworkStuff::CheckXGM( void )
 void cNetworkStuff::ShutdownXGM( void )
 {
 	closesocket( xgmSocket );
-	for( unsigned int i = 0; i < xgmClients.size(); ++i )
+	for( size_t i = 0; i < xgmClients.size(); ++i )
 	{
 		xgmClients[i]->CloseSocket();
 		delete xgmClients[i];
@@ -1622,9 +1621,9 @@ void cNetworkStuff::CheckXGMConn( void )
 		sockaddr_in client_addr;
 		int len = sizeof( struct sockaddr_in );
 #if UOX_PLATFORM == PLATFORM_WIN32
-		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, &len );
+		size_t newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, &len );
 #else
-		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
+		size_t newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
 #endif
 		cSocket *toMake = new cSocket( newClient );
 		if( newClient < 0 )

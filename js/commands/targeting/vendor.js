@@ -13,7 +13,7 @@ function command_BUY( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		socket.BuyFrom( ourObj );
 }
 
@@ -25,7 +25,7 @@ function command_SELL( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		socket.SellTo( ourObj );
 }
 
@@ -37,7 +37,7 @@ function command_REMOVESHOP( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var txtMessage = GetDictionaryEntry( 367 );
 		var buyLayer = ourObj.FindItemLayer( 0x1A );

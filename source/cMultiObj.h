@@ -9,28 +9,17 @@ class CMultiObj : public CItem
 protected:
 	std::string			deed;
 
-	ITEMLIST			itemInMulti;
-	CHARLIST			charInMulti;
 	CHARLIST			owners;
 	CHARLIST			banList;
 	ITEMLIST			lockedList;
 	UI16				maxLockedDown;
 
-	ITEMLIST_ITERATOR	itemMultiIterator;
-	CHARLIST_ITERATOR	charMultiIterator;
-
-	bool				CharIsInMulti( CChar *toFind ) const;
-	bool				ItemIsInMulti( CItem *toFind ) const;
-
-	void				RemoveCharFromMulti( CChar *toFind );
-	void				RemoveItemFromMulti( CItem *toFind );
-
-	void				AddCharToMulti( CChar *toFind );
-	void				AddItemToMulti( CItem *toFind );
-
 	virtual bool		LoadRemnants( void );
 
 public:
+	CDataList< CItem * >	itemInMulti;
+	CDataList< CChar * >	charInMulti;
+
 						CMultiObj();
 	virtual				~CMultiObj();
 
@@ -41,7 +30,6 @@ public:
 	void				RemoveAsOwner( CChar *toRemove );
 	void				ClearOwners( void );
 
-	bool				IsInMulti( cBaseObject *toFind ) const;
 	bool				IsOnBanList( CChar *toBan ) const;
 	bool				IsOwner( CChar *toFind ) const;
 
@@ -54,20 +42,10 @@ public:
 	void				LockDownItem( CItem *toLock );
 	void				RemoveLockDown( CItem *toRemove );
 
-	virtual bool		Save( std::ofstream &outStream ) const;
+	virtual bool		Save( std::ofstream &outStream );
 	virtual bool		DumpHeader( std::ofstream &outStream ) const;
 	virtual bool		DumpBody( std::ofstream &outStream ) const;
 	virtual bool		HandleLine( UString &UTag, UString &data );
-
-	CChar *				FirstCharMulti( void );
-	CChar *				NextCharMulti( void );
-	bool				FinishedCharMulti( void ) const;
-	UI32					NumCharMulti( void ) const;
-
-	CItem *				FirstItemMulti( void );
-	CItem *				NextItemMulti( void );
-	bool				FinishedItemMulti( void ) const;
-	UI32				NumItemMulti( void ) const;
 
 	virtual void		SetOwner( CChar *newOwner );
 

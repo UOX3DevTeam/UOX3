@@ -15,7 +15,7 @@ function command_KILL( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var splitString = socket.xText.split( " " );
 		var uKey 	= splitString[0].toUpperCase();
@@ -24,6 +24,7 @@ function onCallback0( socket, ourObj )
 		{
 		case "HAIR":	layer = 0x0B;			break;
 		case "BEARD":	layer = 0x10;			break;
+		case "PACK":	layer = 0x15;			break;
 		case "LAYER":
 				if( splitString[1] )
 					layer = StringToNum( splitString[1] ); 
@@ -57,6 +58,6 @@ function command_RESURRECT( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		ourObj.Resurrect();
 }

@@ -15,12 +15,10 @@ protected:
 	UI16		regionnum;			// Region Number
 
 // These two will replace maxspawn
-
 	SI32		maxcspawn;			// Maximum amount of characters to spawn
 	SI32		maxispawn;			// Maximum amount of items to spawn
 
 // These two will replace current
-
 	SI32		curcspawn;			// Current amount of spawned characters
 	SI32		curispawn;			// Current amount of spawned items
 
@@ -28,15 +26,7 @@ protected:
 	UI08		maxtime;			// Maximum spawn time
 	SI32		nexttime;			// Nextspawn time for this region
 
-// These are to keep track of the items/characters spawned
-
-	CHARLIST			scharlist;			// Vector of pointers to spawned characters
-	ITEMLIST			sitemlist;			// Vector of pointers to spawned items
-
-	CHARLIST_ITERATOR	charCounter;
-	ITEMLIST_ITERATOR	itemCounter;
 // Box values
-
 	SI16		x1;					// Top left X
 	SI16		x2;					// Bottom right x
 	SI16		y1;					// Top left y
@@ -48,8 +38,12 @@ protected:
 	UI08		worldNumber;		// which world are we spawning in?
 
 public:
+	CDataList< CChar * >	spawnedChars;
+	CDataList< CItem * >	spawnedItems;
+
 				cSpawnRegion( UI16 spawnregion );
 				~cSpawnRegion();
+
 	void		Load( ScriptSection *toScan );
 	void		doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned );
 
@@ -92,13 +86,6 @@ public:
 	void		deleteSpawnedChar( CChar *toDelete );
 	void		deleteSpawnedItem( CItem *toDelete );
 
-	CItem *		FirstItem( void );
-	CItem *		NextItem( void );
-	bool		FinishedItems( void );
-
-	CChar *		FirstChar( void );
-	CChar *		NextChar( void );
-	bool		FinishedChars( void );
 private:
 	CChar *		RegionSpawnChar( void );
 	CItem *		RegionSpawnItem( void );

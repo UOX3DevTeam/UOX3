@@ -38,10 +38,9 @@ CMultiObj *	findMulti( cBaseObject *i );
 // Calculation functions (socket, char, item and so forth)
 //o---------------------------------------------------------------------------o
 cSocket		*calcSocketObjFromChar( CChar *i );
-ITEM		calcItemFromSer( SERIAL ser );
 CItem *		calcItemObjFromSer( SERIAL targSerial );
-CHARACTER	calcCharFromSer( SERIAL ser );
 CChar *		calcCharObjFromSer( SERIAL targSerial );
+CMultiObj *	calcMultiFromSer( SERIAL targSerial );
 inline UI32 calcserial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 {
 	return ( (a1<<24) + (a2<<16) + (a3<<8) + a4 );

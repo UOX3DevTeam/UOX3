@@ -277,7 +277,7 @@ void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 	std::string itemname;
 	itemname.reserve( MAX_NAME );
 	
-	for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
+	for( CItem *i = p->Contains.First(); !p->Contains.Finished(); i = p->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -358,11 +358,11 @@ bool sendSellStuff( cSocket *s, CChar *i )
 	m1[8] = 0; // Num items
 	int m1t = 9;
 
-	for( CItem *q = vendorPack->FirstItem(); !vendorPack->FinishedItems(); q = vendorPack->NextItem() )
+	for( CItem *q = vendorPack->Contains.First(); !vendorPack->Contains.Finished(); q = vendorPack->Contains.Next() )
 	{
 		if( ValidateObject( q ) )
 		{
-			for( CItem *j = pack->FirstItem(); !pack->FinishedItems(); j = pack->NextItem() )
+			for( CItem *j = pack->Contains.First(); !pack->Contains.Finished(); j = pack->Contains.Next() )
 			{
 				if( ValidateObject( j ) )
 				{
@@ -468,7 +468,7 @@ bool CPISellItem::Handle( void )
 					return true;
 				}
 				CItem *join = NULL;
-				for( k = sellPack->FirstItem(); !sellPack->FinishedItems(); k = sellPack->NextItem() )
+				for( k = sellPack->Contains.First(); !sellPack->Contains.Finished(); k = sellPack->Contains.Next() )
 				{
 					if( ValidateObject( k ) )
 					{
@@ -476,7 +476,7 @@ bool CPISellItem::Handle( void )
 							join = k;
 					}
 				}
-				for( k = buyPack->FirstItem(); !buyPack->FinishedItems(); k = buyPack->NextItem() )
+				for( k = buyPack->Contains.First(); !buyPack->Contains.Finished(); k = buyPack->Contains.Next() )
 				{
 					if( ValidateObject( k ) )
 					{
@@ -529,7 +529,7 @@ void restockNPC( CChar *i, bool stockAll )
 	CItem *ci = i->GetItemAtLayer( IL_BUYCONTAINER );
 	if( ValidateObject( ci ) )
 	{
-		for( CItem *c = ci->FirstItem(); !ci->FinishedItems(); c = ci->NextItem() )
+		for( CItem *c = ci->Contains.First(); !ci->Contains.Finished(); c = ci->Contains.Next() )
 		{
 			if( ValidateObject( c ) )
 			{

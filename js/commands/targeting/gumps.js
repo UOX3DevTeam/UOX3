@@ -21,7 +21,7 @@ function command_ISTATS( socket, cmdString )
 // Random Value Rate
 function onCallback0( socket, ourObj )
 {
-	if( ourObj && ourObj.isItem )
+	if( !socket.GetWord( 1 ) && ourObj && ourObj.isItem )
 	{
 		position 	= 40;
 		var myGump 	= new Gump;
@@ -107,7 +107,7 @@ function command_CSTATS( socket, cmdString )
 // Region
 function onCallback1( socket, ourObj )
 {
-	if( ourObj && ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj && ourObj.isChar )
 	{
 		position 	= 40;
 		var myGump 	= new Gump;

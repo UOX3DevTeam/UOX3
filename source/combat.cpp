@@ -1725,7 +1725,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 
 	if( toCheck != NULL )
 	{
-		for( getGuard = toCheck->FirstChar(); !toCheck->FinishedChars(); getGuard = toCheck->GetNextChar() )
+		for( getGuard = toCheck->charData.First(); !toCheck->charData.Finished(); getGuard = toCheck->charData.Next() )
 		{
 			if( !ValidateObject( getGuard ) )
 				continue;

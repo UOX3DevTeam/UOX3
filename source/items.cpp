@@ -339,16 +339,12 @@ CItem *cItem::CreateRandomItem( std::string sItemList, UI08 worldNum )
 //o--------------------------------------------------------------------------o
 CMultiObj * cItem::CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool isBoat )
 {
-	CItem *iCreated = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
-	if( iCreated == NULL ) 
-		return NULL;
-
-	CMultiObj *mCreated = static_cast<CMultiObj *>(iCreated);
-	if( mCreated == NULL )
+	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
+	if( mCreated == NULL ) 
 		return NULL;
 
 	mCreated->SetID( iID );
-	GetScriptItemSettings( iCreated );
+	GetScriptItemSettings( mCreated );
 	mCreated->WorldNumber( mChar->WorldNumber() );
 	mCreated->SetDecayable( false );
 	if( !cName.empty() )
@@ -498,7 +494,7 @@ bool DecayItem( CItem *i, UI32 nextDecayItems )
 	{
 		if( !isCorpse || ( isCorpse && ( ValidateObject( i->GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() ) ) )
 		{
-			for( CItem *io = i->FirstItem(); !i->FinishedItems(); io = i->NextItem() )
+			for( CItem *io = i->Contains.First(); !i->Contains.Finished(); io = i->Contains.Next() )
 			{
 				if( ValidateObject( io ) )
 				{

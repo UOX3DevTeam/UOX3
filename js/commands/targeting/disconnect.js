@@ -18,7 +18,7 @@ function command_DISCONNECT( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar && ourObj.online )
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )
 	{
 		var targSock = ourObj.socket;
 		if( targSock && targSock != socket )

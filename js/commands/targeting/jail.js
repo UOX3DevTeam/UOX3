@@ -16,7 +16,7 @@ function command_JAIL( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		if( ourObj.isJailed )
 			socket.SysMessage( GetDictionaryEntry( 1070, socket.Language ) );
@@ -34,7 +34,7 @@ function command_RELEASE( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		if( ourObj.isJailed )
 			socket.SysMessage( GetDictionaryEntry( 1064, socket.Language ) );

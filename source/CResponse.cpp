@@ -130,15 +130,15 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 		if( CellResponse == NULL )
 			continue;
 
-		CellResponse->PushChar();
-		for( CChar *Npc = CellResponse->FirstChar(); !CellResponse->FinishedChars(); Npc = CellResponse->GetNextChar() )
+		CellResponse->charData.Push();
+		for( CChar *Npc = CellResponse->charData.First(); !CellResponse->charData.Finished(); Npc = CellResponse->charData.Next() )
 		{
 			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() )
 				continue;
 			if( objInRange( mChar, Npc, distance ) )
 				ourNpcs.push_back( Npc );
 		}
-		CellResponse->PopChar();
+		CellResponse->charData.Pop();
 	}
 	return ourNpcs;
 }

@@ -220,7 +220,7 @@ cMapStuff::~cMapStuff()
 		delete multifile;
 	if( midxfile )  
 		delete midxfile;
-	for( UI32 j = 0; j < multiCache.size(); ++j )
+	for( size_t j = 0; j < multiCache.size(); ++j )
 	{
 		delete[] multiCache[j]->cache;
 		delete multiCache[j];
@@ -497,8 +497,8 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return z;
-	MapArea->PushItem();
-	for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
+	MapArea->itemData.Push();
+	for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
 	{
 		if( !ValidateObject( tempItem ) )
 			continue;
@@ -514,7 +514,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 				z = ztemp;
 		}
 	}
-	MapArea->PopItem();
+	MapArea->itemData.Pop();
 	return z;
 }
 
@@ -548,23 +548,23 @@ int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return -1;
-	MapArea->PushItem();
-	for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
+	MapArea->itemData.Push();
+	for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
 	{
 		if( !ValidateObject( tempItem ) )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
 		{
-			MapArea->PopItem();
+			MapArea->itemData.Pop();
 			return MultiTile( tempItem, x, y, oldz );
 		}
 		else if( tempItem->GetX() == x && tempItem->GetY() == y )
 		{
-			MapArea->PopItem();
+			MapArea->itemData.Pop();
 			return tempItem->GetID();
 		}
 	}
-	MapArea->PopItem();
+	MapArea->itemData.Pop();
 	return -1;
 }
 
@@ -1336,7 +1336,7 @@ bool cMapStuff::IsRoofOrFloorTile( CTileUni *tile )
 
 void cMapStuff::CalculateMultiSizes( void )
 {
-	for( UI32 i = 0; i < multiCache.size(); ++i )
+	for( size_t i = 0; i < multiCache.size(); ++i )
 	{
 		if( multiCache[i] == NULL )
 			continue;

@@ -53,7 +53,8 @@ static JSPropertySpec CSpellProperties[] =
 	{ "agressiveSpell",		CSP_AGRESSIVESPELL,		JSPROP_ENUMANDPERM },
 	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM },
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM },
-	{ NULL,			-1,			(UI08)0	   }
+	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM },
+	{ NULL,					(SI08)NULL,				(UI08)0			   }
 };
 
 static JSPropertySpec CRaceProperties[] = 
@@ -210,6 +211,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM },
 	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
 	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO  },
+	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };

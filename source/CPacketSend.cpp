@@ -268,7 +268,7 @@ CPacketSpeech &CPacketSpeech::operator=( CSpeechEntry &toCopy )
 CPacketSpeech &CPacketSpeech::operator=( CPacketSpeech &toCopy )
 {
 	internalBuffer.resize( toCopy.Length() );
-	for( UI32 i = 0; i < internalBuffer.size(); ++i )
+	for( size_t i = 0; i < internalBuffer.size(); ++i )
 		internalBuffer[i] = toCopy[i];
 	return (*this);
 }
@@ -3149,7 +3149,7 @@ void CPItemsInContainer::CopyData( cSocket *mSock, CItem& toCopy )
 	UI16 itemCount		= 0;
 	bool itemIsCorpse	= toCopy.isCorpse();
 
-	for( CItem *ctr = toCopy.FirstItem(); !toCopy.FinishedItems(); ctr = toCopy.NextItem() )
+	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
 	{
 		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) )
 		{
@@ -3253,7 +3253,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *p )
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
-	for( CItem *ctr = toCopy.FirstItem(); !toCopy.FinishedItems(); ctr = toCopy.NextItem() )
+	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
 	{
 		if( ValidateObject( ctr ) )
 		{
@@ -3827,7 +3827,7 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 {
 	PackLong( &internalBuffer[0], 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
-	for( CItem *ctr = toCopy.FirstItem(); !toCopy.FinishedItems(); ctr = toCopy.NextItem() )
+	for( CItem *ctr = toCopy.Contains.First(); !toCopy.Contains.Finished(); ctr = toCopy.Contains.Next() )
 	{
 		if( ValidateObject( ctr ) )
 		{
@@ -4054,7 +4054,7 @@ void CPSpeech::GhostIt( UI08 method )
 CPSpeech &CPSpeech::operator=( CPSpeech &copyFrom )
 {
 	internalBuffer.resize( copyFrom.internalBuffer.size() );
-	for( UI32 i = 0; i < copyFrom.internalBuffer.size(); ++i )
+	for( size_t i = 0; i < copyFrom.internalBuffer.size(); ++i )
 		internalBuffer[i] = copyFrom.internalBuffer[i];
 	return (*this);
 }
@@ -4209,7 +4209,7 @@ void CPUnicodeSpeech::GhostIt( UI08 method )
 CPUnicodeSpeech &CPUnicodeSpeech::operator=( CPUnicodeSpeech &copyFrom )
 {
 	internalBuffer.resize( copyFrom.internalBuffer.size() );
-	for( UI32 i = 0; i < copyFrom.internalBuffer.size(); ++i )
+	for( size_t i = 0; i < copyFrom.internalBuffer.size(); ++i )
 		internalBuffer[i] = copyFrom.internalBuffer[i];
 	return (*this);
 }
@@ -4561,7 +4561,7 @@ void CPSendGumpMenu::Finalize( void )
 	UI32 length		= 21;
 	UI32 length2	= 1;
 	UI16 increment	= 0;
-	UI32 line		= 0;
+	size_t line		= 0;
 
 	std::string cmdString;
 
@@ -4639,10 +4639,10 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 //	outStream << "Num text lines   : " << UnpackUShort( &internalBuffer[0], 15 ) << std::endl;
 //	outStream << "Text Sec Len     : " << internalBuffer[17] << std::endl;
 	outStream << "Commands         : " << std::endl;
-	for( int x = 0; x < commands.size(); ++x )
+	for( size_t x = 0; x < commands.size(); ++x )
 		outStream << "     " << commands[x] << std::endl;
 	outStream << "Text             : " << std::endl;
-	for( int y = 0; y < text.size(); ++y )
+	for( size_t y = 0; y < text.size(); ++y )
 		outStream << "     " << text[y] << std::endl;
 
 	outStream << "  Raw dump     :" << std::endl;
@@ -4671,7 +4671,7 @@ void CPNewSpellBook::InternalReset( void )
 void CPNewSpellBook::CopyData( CItem& obj )
 {
 	PackLong( &internalBuffer[0], 7, obj.GetSerial() );
-	for( int i = 0 ; i < 64 ; ++i )
+	for( UI08 i = 0 ; i < 64 ; ++i )
 	{
 		int y = (i % 8);
 		int x = 15 + (int)(i / 8);
@@ -4869,7 +4869,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
-		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.NumItems(), (cItem.GetWeight()/100) );
+		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.Contains.Num(), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )

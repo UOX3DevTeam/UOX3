@@ -229,8 +229,8 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 		SubRegion *Cell = (*rIter);
 		bool chain = false;
 	
-		Cell->PushChar();
-		for( CChar *tempChar = Cell->FirstChar(); !Cell->FinishedChars(); tempChar = Cell->GetNextChar() )
+		Cell->charData.Push();
+		for( CChar *tempChar = Cell->charData.First(); !Cell->charData.Finished(); tempChar = Cell->charData.Next() )
 		{
 			dx = abs( tempChar->GetX() - nItem->GetX() );
 			dy = abs( tempChar->GetY() - nItem->GetY() );
@@ -249,9 +249,9 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 				}
 			}
 		}
-		Cell->PopChar();
-		Cell->PushItem();
-		for( CItem *tempItem = Cell->FirstItem(); !Cell->FinishedItems(); tempItem = Cell->GetNextItem() )
+		Cell->charData.Pop();
+		Cell->itemData.Push();
+		for( CItem *tempItem = Cell->itemData.First(); !Cell->itemData.Finished(); tempItem = Cell->itemData.Next() )
 		{
 			if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
 			{
@@ -270,7 +270,7 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 				}
 			}
 		}
-		Cell->PopItem();
+		Cell->itemData.Pop();
 	}
 	nItem->Delete();
 }
@@ -288,7 +288,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	cSocket *sock = calcSocketObjFromChar( src );
 	// Create the item in our backpack
 	CItem *targItem = Items->CreateScriptItem( sock, src, toMake->addItem, 1, OT_ITEM, true );
-	for( UI32 skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
+	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
@@ -307,7 +307,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 			targItem->SetCreator( src->GetSerial() );
 			int avgSkill, sumSkill = 0;
 			// Find the average of our player's skills
-			for( UI32 resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
+			for( size_t resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
 				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
 			avgSkill = sumSkill / toMake->skillReqs.size();
 			if( avgSkill > 950 ) 

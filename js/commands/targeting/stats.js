@@ -14,7 +14,7 @@ function command_FULLSTATS( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		ourObj.SoundEffect( 0x01F2, true );
 		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );
@@ -32,7 +32,7 @@ function command_HEAL( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var mSpell = Spells[4];
 		ourObj.MagicEffect( 4 );
@@ -49,11 +49,11 @@ function command_STAMINA( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( ourObj.isCHar )
+	if( !socket.GetWord( 1 ) && ourObj.isCHar )
 	{
 		ourObj.SoundEffect( 0x01F2, true );
 		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );
-		ourObj.stamina	= ourObj.maxstamina;
+		ourObj.stamina = ourObj.maxstamina;
 	}
 }
 
@@ -65,11 +65,11 @@ function command_MANA( socket, cmdString )
 
 function onCallback3( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		ourObj.SoundEffect( 0x01F2, true );
 		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );
-		ourObj.mana	= ourObj.maxmana;
+		ourObj.mana = ourObj.maxmana;
 	}
 }
 

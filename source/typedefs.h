@@ -83,14 +83,6 @@ typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
 typedef std::map< cBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< cBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
 typedef std::map< cBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
-//
-typedef std::deque< CChar* >							DCHARLIST;
-typedef std::deque< CChar* >::iterator					DCHARLIST_ITERATOR;
-typedef std::deque< CChar* >::const_iterator			DCHARLIST_CITERATOR;
-//
-typedef std::deque< CItem* >							DITEMLIST;
-typedef std::deque< CItem* >::iterator					DITEMLIST_ITERATOR;
-typedef std::deque< CItem* >::const_iterator			DITEMLIST_CITERATOR;
 
 typedef void (TargetFunc)( cSocket *s );
 

@@ -185,7 +185,7 @@ bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 {
 	if( ValidateObject( pack ) )
 	{
-		for( CItem *nItem = pack->FirstItem(); !pack->FinishedItems(); nItem = pack->NextItem() )
+		for( CItem *nItem = pack->Contains.First(); !pack->Contains.Finished(); nItem = pack->Contains.Next() )
 		{
 			if( ValidateObject( nItem ) )
 			{
@@ -238,8 +238,8 @@ void DoorMacro( cSocket *s )
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		toCheck->PushItem();
-		for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+		toCheck->itemData.Push();
+		for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
 		{
 			if( !ValidateObject( itemCheck ) )
 				continue;
@@ -251,27 +251,27 @@ void DoorMacro( cSocket *s )
 					if( mChar->IsGM() )
 					{
 						useDoor( s, itemCheck );
-						toCheck->PopItem();
+						toCheck->itemData.Pop();
 						return;
 					}
 					if( itemCheck->GetType() == IT_LOCKEDDOOR )
 					{
 						if( keyInPack( s, mChar, mChar->GetPackItem(), itemCheck ) )
 						{
-							toCheck->PopItem();
+							toCheck->itemData.Pop();
 							return;
 						}
 						s->sysmessage( 1247 );
-						toCheck->PopItem();
+						toCheck->itemData.Pop();
 						return;
 					}
 					useDoor( s, itemCheck );
-					toCheck->PopItem();
+					toCheck->itemData.Pop();
 					return;
 				}
 			}
 		}
-		toCheck->PopItem();
+		toCheck->itemData.Pop();
 	}
 }
 
@@ -403,16 +403,16 @@ bool isDoorBlocked( CItem *door )
 	SubRegion *Cell = MapRegion->GetCell( targX, targY, worldNumber );
 	if( Cell != NULL )
 	{
-		Cell->PushChar();
-		for( CChar *mCheck = Cell->FirstChar(); !Cell->FinishedChars(); mCheck = Cell->GetNextChar() )
+		Cell->charData.Push();
+		for( CChar *mCheck = Cell->charData.First(); !Cell->charData.Finished(); mCheck = Cell->charData.Next() )
 		{
 			if( mCheck->GetX() == targX && mCheck->GetY() == targY && ( mCheck->IsNpc() || isOnline( mCheck ) ) )
 			{
-				Cell->PopChar();
+				Cell->charData.Pop();
 				return true;
 			}
 		}
-		Cell->PopChar();
+		Cell->charData.Pop();
 	}
 	return false;
 }

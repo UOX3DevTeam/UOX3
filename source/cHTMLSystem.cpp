@@ -151,22 +151,15 @@ void cHTMLTemplate::Process( void )
 	for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		tChar = tSock->CurrcharObj();
-		try
-		{
-			if( !ValidateObject( tChar ) )
-				continue;
-
-			if( tChar->IsGM() )
-				++gm;
-			else if( tChar->IsCounselor() )
-				++cns;
-			else
-				++ccount;
-		}
-		catch( ... )
-		{
+		if( !ValidateObject( tChar ) )
 			continue;
-		}
+
+		if( tChar->IsGM() )
+			++gm;
+		else if( tChar->IsCounselor() )
+			++cns;
+		else
+			++ccount;
 	}
 	Network->PopConn();
 

@@ -644,7 +644,7 @@ void startChar( cSocket *mSock, bool onCreate )
 			CItem *nItem = mChar->GetItemAtLayer( IL_PACKITEM );
 			mChar->SetPackItem( nItem );
 
-			mChar->SetRegion( 255 );
+			mChar->SetRegion( 0xFF );
 			mChar->Teleport();					// implicit checkRegion in Teleport()
 			mChar->SetStep( 1 );
 

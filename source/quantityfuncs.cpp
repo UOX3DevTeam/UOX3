@@ -13,7 +13,7 @@ namespace UOX
 UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 {
 	UI32 total = 0;
-	for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
+	for( CItem *i = p->Contains.First(); !p->Contains.Finished(); i = p->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -53,7 +53,7 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 		return 0;
 	UI32 amtDeleted = 0;
 	UI32 total		= amount;
-	for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
+	for( CItem *i = p->Contains.First(); !p->Contains.Finished(); i = p->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{

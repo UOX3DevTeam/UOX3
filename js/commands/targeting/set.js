@@ -1,6 +1,7 @@
 function CommandRegistration()
 {
 	RegisterCommand( "set", 2, true );
+	RegisterCommand( "setpoisoned", 2, true );
 }
 
 function command_SET( socket, cmdString )
@@ -9,12 +10,18 @@ function command_SET( socket, cmdString )
 	{
 		var targMsg = GetDictionaryEntry( 1741, socket.Language );
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, targMsg );
+		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
 	}
 }
 
 function onCallback0( socket, ourObj )
 {
+	if( socket.GetWord( 1 ) )
+	{
+		socket.SysMessage( "'Set': Invalid target" );
+		return;
+	}
+
 	var splitString = socket.xText.split( " ", 2 );
 	uKey = splitString[0].toUpperCase();
 	switch( uKey )
@@ -58,12 +65,12 @@ function onCallback0( socket, ourObj )
 		ourObj.y = StringToNum( splitString[1] );
 		break;
 	default:
-		if( ourObj.isSpawner )
-			HandleSetSpawner( socket, ourObj, uKey, splitString[1] );
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, splitString[1] );
-		if( ourObj.isItem )
+		else if( ourObj.isItem )
 			HandleSetItem( socket, ourObj, uKey, splitString[1] );
+		else
+			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
@@ -127,6 +134,10 @@ function HandleSetItem( socket, ourItem, uKey, value )
 		ourItem.visible = StringToNum( value );
 		break;
 	default:
+		if( ourObj.isSpawner )
+			HandleSetSpawner( socket, ourObj, uKey, splitString[1] );
+		else
+			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
@@ -154,6 +165,8 @@ function HandleSetSpawner( socket, ourSpawn, uKey, value )
 	case "MAXINTERVAL":
 		ourSpawn.maxinterval = StringToNum( value );
 		break;
+	default:
+		socket.SysMessage( "Invalid set command " + uKey );
 	}
 }
 
@@ -219,7 +232,8 @@ function HandleSetChar( socket, ourChar, uKey, value )
 		ourChar.visible = StringToNum( value );
 		break;
 	default:
-		ourChar.SetSkillByName( uKey, StringToNum( value ) );
+		if( !ourChar.SetSkillByName( uKey, StringToNum( value ) ) )
+			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
@@ -227,8 +241,28 @@ function HandleSetChar( socket, ourChar, uKey, value )
 function onCallBack1( socket, ourObj )
 {
 	var toOwn = socket.tempObj;
-	if( ourObj.isChar && toOwn )
-	{
+	if( !socket.GetWord( 1 ) && ourObj.isChar && toOwn )
 		toOwn.owner = ourObj;
+
+	socket.tempObj = null;
+}
+
+function command_SETPOISONED( socket, cmdString )
+{
+	if( cmdString )
+	{
+		var targMsg = GetDictionaryEntry( 240, socket.Language );
+		socket.tempint = StringToNum( cmdString );
+		socket.CustomTarget( 2, targMsg );
 	}
+}
+
+function onCallback2( socket, ourObj )
+{
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
+	{
+		var poisonStrength = socket.tempint;
+		ourObj.SetPoisoned( poisonStrength, 180000 );
+	}
+	socket.tempint = 0;
 }

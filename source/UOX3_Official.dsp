@@ -745,6 +745,10 @@ SOURCE=.\network.h
 # End Group
 # Begin Source File
 
+SOURCE=.\CDataList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Config.h
 # End Source File
 # Begin Source File

@@ -359,7 +359,7 @@ void CChar::SetAccount( ACCOUNTSBLOCK actbAccount )
 		ourAccount.sPath         = actbAccount.sPath;
 		ourAccount.wFlags        = actbAccount.wFlags;
 		ourAccount.wTimeBan      = actbAccount.wTimeBan;
-		for( int ii = 0; ii < 5; ++ii )
+		for( UI08 ii = 0; ii < 5; ++ii )
 		{
 			ourAccount.dwCharacters[ii] = actbAccount.dwCharacters[ii];
 			ourAccount.lpCharacters[ii] = actbAccount.lpCharacters[ii];
@@ -1986,8 +1986,8 @@ void CChar::Teleport( void )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->PushChar();
-			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			MapArea->charData.Push();
+			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 			{
 				if( ValidateObject( tempChar ) )
 				{
@@ -1995,9 +1995,9 @@ void CChar::Teleport( void )
 						tempChar->SendToSocket( mSock );
 				}
 			}
-			MapArea->PopChar();
-			MapArea->PushItem();
-			for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
+			MapArea->charData.Pop();
+			MapArea->itemData.Push();
+			for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
 			{
 				if( ValidateObject( tempItem ) )
 				{
@@ -2007,7 +2007,7 @@ void CChar::Teleport( void )
 						tempItem->SendToSocket( mSock );
 				}
 			}
-			MapArea->PopItem();
+			MapArea->itemData.Pop();
 		}
 	}
 
@@ -2430,7 +2430,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------o
 //|	Returns		-	true/false indicating the success of the write operation
 //o-----------------------------------------------------------------------o
-bool CChar::Save( std::ofstream &outStream ) const
+bool CChar::Save( std::ofstream &outStream )
 {
 	bool rvalue = false;
 	if( !isFree() )
@@ -4048,7 +4048,6 @@ void CChar::Cleanup( void )
 				tempChar->SetOwner( NULL );
 		}
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
-	#pragma note( "We'll want to check this, but I don't think we'll actually have to do an unregister here" )
 	}
 }
 

@@ -1076,8 +1076,8 @@ void cSkills::DetectHidden( cSocket *s )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->PushChar();
-		for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+		MapArea->charData.Push();
+		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -1103,7 +1103,7 @@ void cSkills::DetectHidden( cSocket *s )
 					s->sysmessage( 1437 );
 			}
 		}
-		MapArea->PopChar();
+		MapArea->charData.Pop();
 	}
 }
 
@@ -1139,8 +1139,8 @@ void cSkills::PeaceMaking( cSocket *s )
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			MapArea->PushChar();
-			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			MapArea->charData.Push();
+			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
@@ -1156,7 +1156,7 @@ void cSkills::PeaceMaking( cSocket *s )
 					tempChar->SetAttackFirst( false );
 				}
 			}
-			MapArea->PopChar();
+			MapArea->charData.Pop();
 		}
 	}
 	else 
@@ -1230,7 +1230,7 @@ CItem * cSkills::GetInstrument( cSocket *s )
 	CItem *x		= mChar->GetPackItem();
 	if( !ValidateObject( x ) ) 
 		return NULL;
-	for( CItem *i = x->FirstItem(); !x->FinishedItems(); i = x->NextItem() )
+	for( CItem *i = x->Contains.First(); !x->Contains.Finished(); i = x->Contains.Next() )
 	{
 		if( ValidateObject( i ) )
 		{
@@ -2470,7 +2470,7 @@ void cSkills::RandomSteal( cSocket *s )
 	CItem *item = NULL;
 	for( UI08 i = 0; i < 50; ++i )
 	{
-		item = p->GetItemObj( RandomNum( static_cast< size_t >(0), p->NumItems() - 1 ) );
+		item = p->Contains.GetCurrent( RandomNum( static_cast< size_t >(0), p->Contains.Num() - 1 ) );
 		if( ValidateObject( item ) ) 
 			break;
 	} 
@@ -2746,8 +2746,8 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->PushChar();
-		for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+		MapArea->charData.Push();
+		for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
@@ -2760,7 +2760,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 				++MaxTrackingTargets;
 				if( MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets() ) 
 				{
-					MapArea->PopChar();
+					MapArea->charData.Pop();
 					return;
 				}
 				SI32 dirMessage = 898;
@@ -2780,7 +2780,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 				toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 			}
 		}
-		MapArea->PopChar();
+		MapArea->charData.Pop();
 	}
 	
 	if( MaxTrackingTargets == 0 )
@@ -4024,8 +4024,8 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		MapArea->PushItem();
-		for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
+		MapArea->itemData.Push();
+		for( CItem *tempItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tempItem = MapArea->itemData.Next() )
 		{
 			if( !ValidateObject( tempItem ) )
 				continue;
@@ -4037,16 +4037,16 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
 					if( getAmt < oreType->minAmount )
 					{ 
 						s->sysmessage( 980, oreType->name.c_str() );
-						MapArea->PopItem();
+						MapArea->itemData.Pop();
 						return;
 					}
 					NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
-					MapArea->PopItem();
+					MapArea->itemData.Pop();
 					return;
 				}
 			}
 		}
-		MapArea->PopItem();
+		MapArea->itemData.Pop();
 	}
 	s->sysmessage( 981 );
 }
@@ -4592,7 +4592,7 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 {
 	SI08 retVal = -1;
-	for( unsigned int iCounter = 0; iCounter < cwmWorldState->skill[sk].advancement.size() - 1; ++iCounter )
+	for( size_t iCounter = 0; iCounter < cwmWorldState->skill[sk].advancement.size() - 1; ++iCounter )
 	{
 		if( cwmWorldState->skill[sk].advancement[iCounter].base <= value && value < cwmWorldState->skill[sk].advancement[iCounter+1].base )
 		{
@@ -4899,7 +4899,7 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 		{
 			createEntry iItem = imIter->second;
 			bool canMake = true;
-			for( unsigned int sCounter = 0; sCounter < iItem.skillReqs.size() && canMake; ++sCounter )
+			for( size_t sCounter = 0; sCounter < iItem.skillReqs.size() && canMake; ++sCounter )
 			{
 				UI08 skillNum = iItem.skillReqs[sCounter].skillNumber;
 				UI16 ourSkill = ourChar->GetSkill( skillNum );
@@ -4916,8 +4916,8 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 					canMake = false;
 				else
 				{
-					unsigned getCir = (int)( iItem.spell * .1 );
-					unsigned getSpell = iItem.spell - ( getCir * 10 ) + 1;
+					int getCir = (int)( iItem.spell * .1 );
+					int getSpell = iItem.spell - ( getCir * 10 ) + 1;
 					if( !Magic->CheckBook( getCir, getSpell - 1, spellBook ) )
 						canMake = false;
 				}
@@ -5018,13 +5018,13 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 	// we need to check ALL skills, even if the first one fails
 	if( player->GetCommandLevel() < CNS_CMDLEVEL )
 	{
-		for( unsigned int sCounter = 0; sCounter < toMake.skillReqs.size(); ++sCounter )
+		for( size_t sCounter = 0; sCounter < toMake.skillReqs.size(); ++sCounter )
 		{
 			if( !CheckSkill( player, toMake.skillReqs[sCounter].skillNumber, toMake.skillReqs[sCounter].minSkill, toMake.skillReqs[sCounter].maxSkill ) )
 				canMake = false;
 		}
 	}
-	UI32 resCounter;
+	size_t resCounter;
 	UI16 toDelete;
 	UI16 targColour;
 	UI16 targID;

@@ -81,6 +81,18 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 	return toRet;
 }
 
+CMultiObj *calcMultiFromSer( SERIAL targSerial )
+{
+	cBaseObject *findMulti = ObjectFactory::getSingleton().FindObject( targSerial );
+	CMultiObj *toRet = NULL;
+	if( findMulti != NULL )
+	{
+		if( findMulti->CanBeObjType( OT_MULTI ) )
+			toRet = static_cast<CMultiObj *>(findMulti);
+	}
+	return toRet;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 //|	Date			-	Unknown

@@ -119,7 +119,7 @@ CChar *FindItemOwner( CItem *p )
 //o---------------------------------------------------------------------------o
 CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 {
-	for( CItem *toCheck = toSearch->FirstItem(); !toSearch->FinishedItems(); toCheck = toSearch->NextItem() )
+	for( CItem *toCheck = toSearch->Contains.First(); !toSearch->Contains.Finished(); toCheck = toSearch->Contains.Next() )
 	{
 		if( ValidateObject( toCheck ) )
 		{
@@ -169,7 +169,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o---------------------------------------------------------------------------o
 CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 {
-	for( CItem *toCheck = toSearch->FirstItem(); !toSearch->FinishedItems(); toCheck = toSearch->NextItem() )
+	for( CItem *toCheck = toSearch->Contains.First(); !toSearch->Contains.Finished(); toCheck = toSearch->Contains.Next() )
 	{
 		if( ValidateObject( toCheck ) )
 		{
@@ -217,7 +217,7 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if item is in a multi
 //o---------------------------------------------------------------------------o
-bool inMulti( SI16 x, SI16 y, SI08 z, CItem *m )
+bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 {
 	if( !ValidateObject( m ) )
 		return false;
@@ -266,8 +266,8 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		toCheck->PushItem();
-		for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+		toCheck->itemData.Push();
+		for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
 		{
 			if( !ValidateObject( itemCheck ) )
 				continue;
@@ -279,16 +279,16 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 				if( ret <= lastdist )
 				{
 					lastdist = ret;
-					if( inMulti( x, y, z, itemCheck ) )
+					multi = static_cast<CMultiObj *>(itemCheck);
+					if( inMulti( x, y, z, multi ) )
 					{
-						multi = static_cast<CMultiObj *>(itemCheck);
-						toCheck->PopItem();
+						toCheck->itemData.Pop();
 						return multi;
 					}
 				}
 			}
 		}
-		toCheck->PopItem();
+		toCheck->itemData.Pop();
 	}
 	return multi;
 }

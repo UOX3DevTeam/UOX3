@@ -62,7 +62,7 @@
 518=server/light/candle03_off.js
 519=server/light/candelabra01_on.js
 520=server/light/candelabra01_off.js
-521=server/light/candle04_off.js
+521=server/light/candle04_on.js
 522=server/light/candle04_off.js
 523=server/light/candelabra02_on.js
 524=server/light/candelabra02_off.js
@@ -126,6 +126,8 @@
 
 [COMMAND_SCRIPTS]
 {
+FILE=commands/custom/repeatingcmds.js
+FILE=commands/custom/misc-cmd.js
 FILE=commands/reload.js
 FILE=commands/resend.js
 FILE=commands/setrace.js
@@ -145,12 +147,12 @@ FILE=commands/killall.js
 FILE=commands/gumpmenu.js
 FILE=commands/secondsperuominute.js
 FILE=commands/consoletest.js
+FILE=commands/fix.js
 FILE=commands/targeting/effects.js
 FILE=commands/targeting/vendor.js
 FILE=commands/targeting/stats.js
 FILE=commands/targeting/glow.js
 FILE=commands/targeting/remove.js
-FILE=commands/targeting/setpoisoned.js
 FILE=commands/targeting/open.js
 FILE=commands/targeting/movetobag.js
 FILE=commands/targeting/npcwander.js
@@ -165,6 +167,12 @@ FILE=commands/targeting/dupe.js
 FILE=commands/targeting/squelch.js
 FILE=commands/targeting/hide.js
 FILE=commands/targeting/jail.js
+FILE=commands/targeting/xteleport.js
+}
+
+[MAGIC_SCRIPTS]
+{
+FILE=magic/clumsy.js
 }
 
 EOF

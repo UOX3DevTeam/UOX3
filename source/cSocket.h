@@ -64,11 +64,11 @@ protected:
 	bool			firstPacket;
 	bool			cryptclient;
 
-	int				cliSocket;		// client
+	size_t			cliSocket;		// client
 	UI08			clientip[4];
 	SI16			walkSequence;
 
-	char			currentSpellType;
+	UI08			currentSpellType;
 
 	int				outlength;
 	int				inlength;
@@ -109,7 +109,7 @@ protected:
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];
 public:
-					cSocket( int sockNum );
+					cSocket( size_t sockNum );
 					~cSocket();
 
 	UI32			ClientVersion( void ) const;
@@ -153,8 +153,8 @@ public:
 	UI16			AcctNo( void ) const;
 	std::string		XText( void );
 	bool			CryptClient( void ) const;
-	int				CliSocket( void ) const;
-	char			CurrentSpellType( void ) const;
+	size_t			CliSocket( void ) const;
+	UI08			CurrentSpellType( void ) const;
 	int				OutLength( void ) const;
 	int				InLength( void ) const;
 	bool			Logging( void ) const;
@@ -202,8 +202,8 @@ public:
 	void			WalkSequence( SI16 newValue );
 	void			AcctNo( UI16 newValue );
 	void			CryptClient( bool newValue );
-	void			CliSocket( int newValue );
-	void			CurrentSpellType( char newValue );
+	void			CliSocket( size_t newValue );
+	void			CurrentSpellType( UI08 newValue );
 	void			OutLength( int newValue );
 	void			InLength( int newValue );
 	void			Logging( bool newValue );

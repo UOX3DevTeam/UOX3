@@ -36,7 +36,6 @@ void Triggers::Cleanup()
 {//this MUST be done BEFORE deleteing Triggers, because ~cScript uses Triggers->Whatever()
 	std::map< JSObject *, cScript *>::iterator mIter;
 	std::vector< cScript * > toDestroy;
-	int i;
 	for( mIter = commandScripts.begin(); mIter != commandScripts.end(); ++mIter )
 	{
 		cScript *qScript = mIter->second;
@@ -53,7 +52,7 @@ void Triggers::Cleanup()
 			toDestroy.push_back( rScript );
 		}
 	}
-	for( i = 0; i < toDestroy.size(); ++i )
+	for( size_t i = 0; i < toDestroy.size(); ++i )
 	{
 		toDestroy[i]->Cleanup();
 		delete toDestroy[i];

@@ -43,6 +43,7 @@
 #include "townregion.h"
 #include "Dictionary.h"
 #include "jail.h"
+#include "magic.h"
 
 namespace UOX
 {
@@ -144,8 +145,8 @@ JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc,jsval *argv, 
 		*rval = STRING_TO_JSVAL("") ;
 		return JS_TRUE;
 	}
-	;
-	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+
+	size_t index = JSVAL_TO_INT(argv[0]); 
 	
 	if( index < myItem->sEdits.size() )
 		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ( cx,myItem->sEdits[index].c_str()));
@@ -171,7 +172,7 @@ JSBool CGumpData_getID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		*rval = INT_TO_JSVAL(-1);
 		return JS_TRUE;
 	}
-	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+	size_t index = JSVAL_TO_INT(argv[0]); 
 	
 	if( index < myItem->nIDs.size() )
 		*rval = INT_TO_JSVAL(myItem->nIDs[index]);
@@ -198,7 +199,7 @@ JSBool CGumpData_getButton( JSContext *cx, JSObject *obj, uintN argc,jsval *argv
 		*rval = INT_TO_JSVAL(-1);
 		return JS_TRUE;
 	}
-	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+	size_t index = JSVAL_TO_INT(argv[0]); 
 	if( index < myItem->nButtons.size())
 		*rval = INT_TO_JSVAL(myItem->nButtons[index]);
 	else
@@ -1127,11 +1128,11 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
-JSBool CChar_Action( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
-		MethodError( "Action: Invalid number of arguments (takes 1, action)" );
+		MethodError( "DoAction: Invalid number of arguments (takes 1, action)" );
 		return JS_FALSE;
 	}
 
@@ -1295,8 +1296,8 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 					break;
 				}
 			}
-			// Needs yet to be implemented
-			MethodError( "Text-styled Parameters may be added later" );
+			else		// Needs yet to be implemented
+				MethodError( "Text-styled Parameters may be added later" );
 			break;
 
 		// 2 Parameters, x + y
@@ -1412,7 +1413,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 		if( ValidateObject( myObj ) )
 		{
-			Effects->PlaySound( myObj, (sound-1), allHear );
+			Effects->PlaySound( myObj, sound, allHear );
 		}
 	}
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
@@ -1420,7 +1421,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		cSocket *mySock = (cSocket*)JS_GetPrivate( cx, obj );
 
 		if( mySock != NULL )
-			Effects->PlaySound( mySock, (sound-1), allHear );
+			Effects->PlaySound( mySock, sound, allHear );
 	}
 
 	return JS_TRUE;
@@ -2624,9 +2625,10 @@ JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsInMulti( toFind ) );
+	*rval = BOOLEAN_TO_JSVAL( ( toFind->GetMultiObj() == myItem ) );
 	return JS_TRUE;
 }
+
 JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -3378,9 +3380,9 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o--------------------------------------------------------------------------o	
 JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 0 )
 	{
-		MethodError( "AddSpell: Invalid number of arguments (takes 1)" );
+		MethodError( "SpellFail: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
 
@@ -3825,7 +3827,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( myObj->GetObjType() == OT_CHAR )
 		firstItem = ( static_cast< CChar * >(myObj) )->FirstItem();
 	else
-		firstItem = ( static_cast< CItem * >(myObj) )->FirstItem();
+		firstItem = ( static_cast< CItem * >(myObj) )->Contains.First();
 	if( ValidateObject( firstItem ) )
 	{
 		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
@@ -3866,7 +3868,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( myObj->GetObjType() == OT_CHAR )
 		firstItem = ( static_cast< CChar * >(myObj) )->NextItem();
 	else
-		firstItem = ( static_cast< CItem * >(myObj) )->NextItem();
+		firstItem = ( static_cast< CItem * >(myObj) )->Contains.Next();
 	if( ValidateObject( firstItem ) )
 	{
 		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
@@ -3906,7 +3908,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( myObj->GetObjType() == OT_CHAR )
 		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CChar * >(myObj) )->FinishedItems() );
 	else
-		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CItem * >(myObj) )->FinishedItems() );
+		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CItem * >(myObj) )->Contains.Finished() );
 	return JS_TRUE;
 }
 
@@ -4371,9 +4373,11 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
 			if( mSock != NULL ) 
 				mSock->updateskill( i );
-			break;
+			*rval = true;
+			return JS_TRUE;
 		}
 	}
+	*rval = false;
 	return JS_TRUE;
 }
 
@@ -4689,6 +4693,97 @@ JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	JSEncapsulate arg0( cx, &(argv[0]) );
 	JSEncapsulate arg1( cx, &(argv[1]) );
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
+	return JS_TRUE;
+}
+JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "SpellMoveEffect: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+
+	SpellInfo *mySpell	= (SpellInfo *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] ) );
+	if( mySpell == NULL )
+	{
+		MethodError( "SpellMoveEffect: Invalid spell" );
+		return JS_FALSE;
+	}
+
+	CChar *source = static_cast<CChar *>(JS_GetPrivate( cx, obj ) );
+	cBaseObject *target = (cBaseObject *)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
+	if( !ValidateObject( source ) || !ValidateObject( target ) )
+	{
+		MethodError( "SpellMoveEffect: Invalid object passed" );
+		return JS_FALSE;
+	}
+
+	CMagicMove temp = mySpell->MoveEffect();
+	
+	if( temp.Effect() != INVALIDID )
+		Effects->PlayMovingAnimation( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ) );
+
+	return JS_TRUE;
+}
+
+JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "SpellStaticEffect: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CChar *source = (CChar *)JS_GetPrivate( cx, obj );
+	if( !ValidateObject( source ) )
+	{
+		MethodError( "SpellStaticEffect: Invalid character passed" );
+		return JS_FALSE;
+	}
+
+	SpellInfo *mySpell = static_cast<SpellInfo *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+	if( mySpell == NULL )
+	{
+		MethodError( "SpellStaticEffect: Invalid spell" );
+		return JS_FALSE;
+	}
+
+	CMagicStat temp = mySpell->StaticEffect();
+	
+	if( temp.Effect() != INVALIDID )
+		Effects->PlayStaticAnimation( source, temp.Effect(), temp.Speed(), temp.Loop() );
+
+	return JS_TRUE;
+}
+
+JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "BreakConcentration: Invalid number of arguments (takes 0 or 1)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar = static_cast<CChar *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "BreakConcentration: Invalid character" );
+		return JS_FALSE;
+	}
+
+	cSocket *mSock = NULL;
+	if( argc == 1 )
+	{
+		mSock = static_cast<cSocket *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+		if( mSock == NULL )
+		{
+			MethodError( "BreakConcentration: Invalid socket" );
+			return JS_FALSE;
+		}
+	}
+
+	mChar->BreakConcentration( mSock );
+
 	return JS_TRUE;
 }
 

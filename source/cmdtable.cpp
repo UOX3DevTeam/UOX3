@@ -42,7 +42,6 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 
 void sysBroadcast( std::string txt );
 void HandleHowTo( cSocket *sock, int cmdNumber );
 void telltime( cSocket *s );
-void XTeleport( cSocket *s, UI08 x );
 void Wiping( cSocket *s );
 
 //o---------------------------------------------------------------------------o
@@ -259,45 +258,6 @@ void command_where( cSocket *s )
 	s->sysmessage( "%i %i (%i/%i) %u", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->GetDispZ(), mChar->WorldNumber() ); 
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI08 validTelePos( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Checks if location is valid to teleport to
-//o---------------------------------------------------------------------------o
-SI08 validTelePos( cSocket *s )
-{
-	CChar *mChar = s->CurrcharObj();
-	SI08 z = -1;
-	SI16 tX = mChar->GetX();
-	SI16 tY = mChar->GetY();
-	if( tX >= 1397 && tX <= 1400 && tY >= 1622 && tY <= 1630 )
-		z = 28;
-	if( tX >= 1510 && tX <= 1537 && tY >= 1455 && tY <= 1456 )
-		z = 15;
-	return z;
-}
-
-void command_fix( cSocket *s )
-// Try to compensate for messed up Z coordinates. Use this if you find yourself half-embedded in the ground.
-{ // Rewrite to do it properly
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Commands->NumArguments() == 2 )
-	{
-		if( validTelePos( s ) == -1 )
-		{
-			mChar->SetDispZ( static_cast<SI08>(Commands->Argument( 1 )) );
-			mChar->SetZ( static_cast<SI08>(Commands->Argument( 1 )) );
-		}
-		else
-		{
-			mChar->SetDispZ( validTelePos( s ) );
-			mChar->SetZ( validTelePos( s ) );
-		}
-	}
-}
-
 void command_xgoplace( cSocket *s )
 // (d) Send another character to a location in your LOCATIONS.SCP file.
 {
@@ -324,30 +284,15 @@ void command_showids( cSocket *s )
 	SubRegion *Cell = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	if( Cell == NULL )	// nothing to show
 		return;
-	Cell->PushChar();
-	for( CChar *toShow = Cell->FirstChar(); !Cell->FinishedChars(); toShow = Cell->GetNextChar() )
+	Cell->charData.Push();
+	for( CChar *toShow = Cell->charData.First(); !Cell->charData.Finished(); toShow = Cell->charData.Next() )
 	{
 		if( !ValidateObject( toShow ) )
 			continue;
 		if( charInRange( mChar, toShow ) )
 			s->ShowCharName( toShow, true );
 	}
-	Cell->PopChar();
-}
-
-void command_xtele( cSocket *s )
-// (d / h h h h / nothing) Teleport a player to your position.
-// <UL><LI>If you specify nothing (/XTELE), you click on the player to teleport in.</LI>
-// <LI>If you specify a serial number (/XTELE .. .. .. ..), you teleport that player to you.</LI>
-// <LI>If you specify a single number (/XTELE ..), you teleport the player logged in
-// under that slot to you.</LI>
-// </UL>
-{
-	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 5 || Commands->NumArguments() == 2 )
-		XTeleport( s, static_cast<UI08>(Commands->NumArguments() ));
-	else
-		s->target( 0, TARGET_XTELEPORT, 21 );
+	Cell->charData.Pop();
 }
 
 void command_go( cSocket *s )
@@ -596,6 +541,7 @@ void command_iwipe( cSocket *s )
 void command_add( cSocket *s )
 {
 	VALIDATESOCKET( s );
+
 	UString UTag = Commands->CommandString( 2, 2 ).upper();
 	if( Commands->NumArguments() == 1 )
 		BuildAddMenuGump( s, 1 );
@@ -1089,7 +1035,7 @@ void command_spawnkill( cSocket *s )
 		int killed	= 0;
 
 		s->sysmessage( 349 );
-		for( CChar *i = spawnReg->FirstChar(); !spawnReg->FinishedChars(); i = spawnReg->NextChar() )
+		for( CChar *i = spawnReg->spawnedChars.First(); !spawnReg->spawnedChars.Finished(); i = spawnReg->spawnedChars.Next() )
 		{
 			if( !ValidateObject( i ) )
 				continue;
@@ -1106,49 +1052,39 @@ void command_spawnkill( cSocket *s )
 	}
 }
 
+void BuildWhoGump( cSocket *s, UI08 commandLevel, std::string title )
+{
+	size_t j = 0;
+	char temp[512];
+
+	GumpDisplay Who( s, 400, 300 );
+	Who.SetTitle( title );
+
+	Network->PushConn();
+	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+	{
+		CChar *iChar = iSock->CurrcharObj();
+		if( iChar->GetCommandLevel() >= commandLevel )
+		{
+			sprintf( temp, "%i) %s", j, iChar->GetName().c_str() );
+			Who.AddData( temp, iChar->GetSerial(), 3 );
+		}
+		++j;
+	}
+	Network->PopConn();
+	Who.Send( 4, false, INVALIDSERIAL );
+}
 void command_who( cSocket *s )
 // Displays a list of users currently online.
 {
 	VALIDATESOCKET( s );
-	if( cwmWorldState->GetPlayersOnline() == 1 )
-	{
-		s->sysmessage( 69 );
-		return;
-	}
-	int j = 0;
-
-	Network->PushConn();
-	s->sysmessage( "Who's online:" );
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-	{
-		CChar *iChar = iSock->CurrcharObj();
-		++j;
-		s->sysmessage( "%i) %s", ( j - 1 ), iChar->GetName().c_str() );
-	}
-	Network->PopConn();
-	s->sysmessage( "Total: %i users online.", j );
+	BuildWhoGump( s, 0, "Who's Online" );
 }
 
 void command_gms( cSocket *s )
 {
 	VALIDATESOCKET( s );
-	int j = 0;
-	GumpDisplay Who( s, 400, 300 );
-	char temp[512];
-	Who.SetTitle( Dictionary->GetEntry( 77, s->Language() ) );
-	Network->PushConn();
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-	{
-		CChar *iChar = iSock->CurrcharObj();
-		++j;
-		if( iChar->GetCommandLevel() >= CNS_CMDLEVEL )
-		{
-			sprintf( temp, "%i) %s", ( j - 1 ), iChar->GetName().c_str() );
-			Who.AddData( temp, iChar->GetSerial(), 3 );
-		}
-	}
-	Network->PopConn();
-	Who.Send( 4, false, INVALIDSERIAL );
+	BuildWhoGump( s, CNS_CMDLEVEL, Dictionary->GetEntry( 77, s->Language() ) );
 }
 
 void command_reportbug( cSocket *s )
@@ -1421,7 +1357,6 @@ void cCommands::CommandReset( void )
 	TargetMap["SHOWSKILLS"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	// T
 	TargetMap["TWEAK"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_TWEAK,			229);
-	TargetMap["TELE"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_TELE,			185);
 	// U
 	// V
 	// W
@@ -1447,7 +1382,6 @@ void cCommands::CommandReset( void )
 	//E
 	//F
 	CommandMap["FORCEWHO"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_forcewho);
-	CommandMap["FIX"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_fix);
 	CommandMap["FIXSPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_fixspawn);
 	//G,
 	CommandMap["GETLIGHT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getlight);
@@ -1502,7 +1436,6 @@ void cCommands::CommandReset( void )
 	CommandMap["WIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_wipe);
 	CommandMap["WHERE"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_where);
 	//X
-	CommandMap["XTELE"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_xtele);
 	CommandMap["XGATE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_xgate );
 	CommandMap["XGOPLACE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_xgoplace);
 	//Y

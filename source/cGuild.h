@@ -50,8 +50,8 @@ protected:
 	SERLIST_ITERATOR	recruitPtr;
 	SERLIST_ITERATOR	memberPtr;
 
-	GUILDREL::iterator	warPtr;
-	GUILDREL::iterator	allyPtr;
+	GUILDREL_ITERATOR	warPtr;
+	GUILDREL_ITERATOR	allyPtr;
 public:
 
 	GUILDID		FirstWar( void );

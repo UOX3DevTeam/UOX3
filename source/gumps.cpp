@@ -363,8 +363,8 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 							SubRegion *toCheck = (*rIter);
 							if( toCheck == NULL )	// no valid region
 								continue;
-							toCheck->PushItem();
-							for( CItem *itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+							toCheck->itemData.Push();
+							for( CItem *itemCheck = toCheck->itemData.First(); !toCheck->itemData.Finished(); itemCheck = toCheck->itemData.Next() )
 							{
 								if( !ValidateObject( itemCheck ) )
 									continue;
@@ -377,12 +377,12 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 										itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
 										s->sysmessage( 550 );
 										targetRegion->TellMembers( 551, mChar->GetName().c_str() );
-										toCheck->PopItem();
+										toCheck->itemData.Pop();
 										return;	// dump out
 									}
 								}
 							}
-							toCheck->PopItem();
+							toCheck->itemData.Pop();
 						}
 					}
 					else
@@ -449,7 +449,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 	std::string password	= "";
 	std::string emailAddy	= "";
 
-	for( unsigned int i = 0; i < packet->TextCount(); ++i )
+	for( UI32 i = 0; i < packet->TextCount(); ++i )
 	{
 		UI16 textID = packet->GetTextID( i );
 		switch( textID )
@@ -484,8 +484,10 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 	if( !ValidateObject( j ) )
 		return;
 
+	CMultiObj *house = calcMultiFromSer( j->GetTempVar( CITV_MORE ) );
+
 	if( button != 20 && button != 2 ) 
-		s->TempObj( j  );
+		s->TempObj( house );
 	switch( button )
 	{
 		case 20: // Change house sign's appearance
@@ -498,7 +500,7 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 		case 0:		return;
 		case 2:	s->target( 0, TARGET_HOUSEOWNER, 557 );			return;  // Bestow ownership upon someone else
 		case 3:	
-			deedHouse( s, static_cast<CMultiObj *>(j) );
+			deedHouse( s, house );
 			return;  // Turn house into a deed
 		case 4:	s->target( 0, TARGET_HOUSEEJECT, 558 );			return;  // Kick someone out of house
 		case 5:	s->target( 0, TARGET_HOUSEBAN, 559 );			return;  // Ban somebody
@@ -1500,18 +1502,19 @@ bool CPIGumpMenuSelect::Handle( void )
 			j = static_cast<CItem *>(tSock->TempObj());
 			tSock->TempObj( NULL );
 			if( ValidateObject( j ) ) 
-				j = calcItemObjFromSer( j->GetTempVar( CITV_MORE ) );
-			HandleHouseButton( tSock, buttonID, j );
+				HandleHouseButton( tSock, buttonID, j );
 			break;
 		case 6:																		// Hair Dye Menu
 			j = static_cast<CItem *>(tSock->TempObj());
 			tSock->TempObj( NULL );
-			HandleHairDyeButton( tSock, j );
+			if( ValidateObject( j ) )
+				HandleHairDyeButton( tSock, j );
 			break;
 		case 7:																		// Accounts
 			CChar *c;
 			c = calcCharObjFromSer( id );
-			HandleAccountButton( tSock, buttonID, c );
+			if( ValidateObject( c ) )
+				HandleAccountButton( tSock, buttonID, c );
 			break;
 		case 8:	HandleAccountModButton( this );							break;	// Race Editor
 		case 9:	HandleAddMenuButton( tSock, buttonID );							break;	// Add Menu
@@ -2065,7 +2068,7 @@ GumpDisplay::GumpDisplay( cSocket *target, UI16 gumpWidth, UI16 gumpHeight ) :
 //o---------------------------------------------------------------------------o
 GumpDisplay::~GumpDisplay()
 {
-	for( UI32 i = 0; i < gumpData.size(); ++i )
+	for( size_t i = 0; i < gumpData.size(); ++i )
 		delete gumpData[i];
 	Delete();
 	gumpData.resize( 0 );
@@ -2109,7 +2112,7 @@ void SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type,
 	toSend.GumpID( type );
 	toSend.UserID( serial );
 
-	UI32 line = 0;
+	size_t line = 0;
 	for( line = 0; line < one.size(); ++line )
 		toSend.AddCommand( one[line] );
 
@@ -2130,7 +2133,7 @@ void SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type,
 void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 {
 	char temp[512];
-	int i;
+	size_t i;
 	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 	UI08 numToPage = 10, stringWidth = 10;
 
@@ -2162,7 +2165,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 	numToPage = (UI08)((( height - 30 ) / 20) - 2);
 	stringWidth = (UI08)( ( width / 2 ) / 10 );
 	UI32 lineForButton;
-	for( i = 0, lineForButton = 0; static_cast<unsigned int>(i) < gumpData.size(); ++i, ++lineForButton )
+	for( i = 0, lineForButton = 0; i < gumpData.size(); ++i, ++lineForButton )
 	{
 		if( lineForButton > 0 && ( !( lineForButton % numToPage ) ) )
 		{

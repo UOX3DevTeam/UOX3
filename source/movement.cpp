@@ -473,8 +473,8 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 	SubRegion *MapArea = MapRegion->GetCell( cx, cy, c->WorldNumber() );	// check 3 cols... do we really NEED to?
 	if( MapArea == NULL )	// no valid region
 		return false;
-	MapArea->PushChar();
-	for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+	MapArea->charData.Push();
+	for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 	{
 		if( !ValidateObject( tempChar ) )
 			continue;
@@ -482,12 +482,12 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 		{	// x=x,y=y, and distance btw z's <= MAX STEP
 			if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) )	// 2 people will still bump into each other, if slightly offset
 			{
-				MapArea->PopChar();	// restore before returning
+				MapArea->charData.Pop();	// restore before returning
 				return true;
 			}
 		}
 	}
-	MapArea->PopChar();
+	MapArea->charData.Pop();
 	return false;
 }
 
@@ -683,8 +683,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return;
-	MapArea->PushItem();
-	for( CItem *tItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tItem = MapArea->GetNextItem() )
+	MapArea->itemData.Push();
+	for( CItem *tItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tItem = MapArea->itemData.Next() )
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
@@ -704,7 +704,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 				++xycount;
 				if( xycount >= XYMAX )	// don't overflow
 				{
-					MapArea->PopItem();
+					MapArea->itemData.Pop();
 					return;
 				}
 			}
@@ -735,14 +735,14 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 					++xycount;
 					if( xycount >= XYMAX )	// don't overflow
 					{
-						MapArea->PopItem();
+						MapArea->itemData.Pop();
 						return;
 					}
 				}
 			}
 		}
 	}
-	MapArea->PopItem();
+	MapArea->itemData.Pop();
 }
 
 // so we are going to move, lets update the regions
@@ -761,9 +761,9 @@ void cMovement::HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy )
 	SubRegion *cell2 = MapRegion->GetCell( nowx, nowy, worldNumber );
 	if( cell1 != cell2 )
 	{
-		cell1->RemoveChar( c );
+		cell1->charData.Remove( c );
 		if( ValidateObject( c ) )
-			cell2->AddChar( c );
+			cell2->charData.Add( c );
 	}
 #if DEBUG_WALKING
 	else
@@ -859,13 +859,13 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 	if( grid == NULL )
 		return;
 	CChar *ourChar		= NULL;
-	grid->PushChar();
+	grid->charData.Push();
 	SI16 x				= c->GetX();
 	SI16 y				= c->GetY();
 	SI08 z				= c->GetZ();
 	UI16 targTrig		= c->GetScriptTrigger();
 	cScript *toExecute	= Trigger->GetScript( targTrig );
-	for( ourChar = grid->FirstChar(); !grid->FinishedChars(); ourChar = grid->GetNextChar() )
+	for( ourChar = grid->charData.First(); !grid->charData.Finished(); ourChar = grid->charData.Next() )
 	{
 		if( !ValidateObject( ourChar ) )
 			continue;
@@ -892,7 +892,7 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 			}
 		}
 	}
-	grid->PopChar();
+	grid->charData.Pop();
 }
 
 bool UpdateItemsOnPlane( cSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld, UI16 visibleRange, bool isGM )
@@ -1052,8 +1052,8 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI
 			continue;
 		if( mSock != NULL )		// Only send char stuff if we have a valid socket
 		{
-			MapArea->PushChar();
-			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			MapArea->charData.Push();
+			for( CChar *tempChar = MapArea->charData.First(); !MapArea->charData.Finished(); tempChar = MapArea->charData.Next() )
 			{
 				if( !ValidateObject( tempChar ) )
 					continue;
@@ -1077,11 +1077,11 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI
 					}
 				}
 			}
-			MapArea->PopChar();
+			MapArea->charData.Pop();
 		}
-		MapArea->PushItem();
+		MapArea->itemData.Push();
 		CChar *caster = NULL;
-		for( CItem *tItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tItem = MapArea->GetNextItem() )
+		for( CItem *tItem = MapArea->itemData.First(); !MapArea->itemData.Finished(); tItem = MapArea->itemData.Next() )
 		{
 			if( !ValidateObject( tItem ) )
 				continue;
@@ -1121,14 +1121,11 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI
 					continue;
 			}
 		}
-		MapArea->PopItem();
+		MapArea->itemData.Pop();
 	}
 }
 
 // start of LB's no rain & snow in buildings stuff 
-#if defined( _MSC_VER )
-#pragma note( "Param Warning: in cMovement::HandleWeatherChanges(), mSock is unrefrenced" )
-#endif
 void cMovement::HandleWeatherChanges( CChar *c, cSocket *mSock )
 {
 //	if( !c->IsNpc() && isOnline( c ) ) // check for being in buildings (for weather) only for PC's
@@ -1728,8 +1725,8 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
     SubRegion *cell = MapRegion->GetCell( x, y, worldNumber );
 	if( cell == NULL )
 		return true;
-	cell->PushItem();
-	for( CItem *tItem = cell->FirstItem(); !cell->FinishedItems(); tItem = cell->GetNextItem() )
+	cell->itemData.Push();
+	for( CItem *tItem = cell->itemData.First(); !cell->itemData.Finished(); tItem = cell->itemData.Next() )
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
@@ -1740,17 +1737,17 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 			UI16 id = tItem->GetID();
 			if( id == 0x3946 || id == 0x3956 )
 			{
-				cell->PopItem();
+				cell->itemData.Pop();
 				return false;
 			}
 			if( id <= 0x0200 || id >= 0x0300 && id <= 0x03E2 ) 
 			{
-				cell->PopItem();
+				cell->itemData.Pop();
 				return false;
 			}
 			if( id > 0x0854 && id < 0x0866 ) 
 			{
-				cell->PopItem();
+				cell->itemData.Pop();
 				return false;
 			}
         
@@ -1758,12 +1755,12 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 			{
 				if( s->IsNpc() && ( !s->GetTitle().empty() || s->GetNPCAiType() != aiNOAI ) )
 					useDoor( NULL, tItem );
-				cell->PopItem();
+				cell->itemData.Pop();
 				return false;
 			}
 		}
 	}
-	cell->PopItem();
+	cell->itemData.Pop();
 
     // see if the map says its ok to move here
     if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )

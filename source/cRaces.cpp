@@ -50,7 +50,7 @@ cRaces::~cRaces( void )
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
-	for( UI32 i = 0; i < races.size(); ++i )
+	for( size_t i = 0; i < races.size(); ++i )
 	{
 		delete races[i];
 		races[i] = NULL;
@@ -481,8 +481,8 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 		return 0;
 	if( skill >= ALLSKILLS )
 		return 0;
-	int modifier = races[x]->Skill( skill );
-	if( modifier >= static_cast<int>(combat.size()) )
+	SKILLVAL modifier = races[x]->Skill( skill );
+	if( modifier >= static_cast<SKILLVAL>(combat.size()) )
 		return -(combat[modifier].value);
 	else
 		return (combat[modifier].value);
@@ -495,7 +495,7 @@ SI32 cRaces::FightPercent( int skill, RACEID x ) const
 {
 	if( InvalidRace( x ) )
 		return 100;
-	int modifier = races[x]->Skill( skill );
+	SKILLVAL modifier = races[x]->Skill( skill );
 	int divValue = combat[modifier].value / 10;
 	divValue = divValue / 10;
 	if( divValue == 0 )
@@ -1290,7 +1290,7 @@ bool CRace::IsValidSkin( COLOUR val ) const
 {
 	if( !IsSkinRestricted() )
 		return true;
-	for( UI32 i = 0; i < skinColours.size(); ++i )
+	for( size_t i = 0; i < skinColours.size(); ++i )
 	{
 		if( val >= skinColours[i].cMin && val <= skinColours[i].cMax )
 			return true;
@@ -1301,7 +1301,7 @@ bool CRace::IsValidHair( COLOUR val ) const
 {
 	if( !IsHairRestricted() )
 		return true;
-	for( UI32 i = 0; i < hairColours.size(); ++i )
+	for( size_t i = 0; i < hairColours.size(); ++i )
 	{
 		if( val >= hairColours[i].cMin && val <= hairColours[i].cMax )
 			return true;
@@ -1312,7 +1312,7 @@ bool CRace::IsValidBeard( COLOUR val ) const
 {
 	if( !IsBeardRestricted() )
 		return true;
-	for( UI32 i = 0; i < beardColours.size(); ++i )
+	for( size_t i = 0; i < beardColours.size(); ++i )
 	{
 		if( val >= beardColours[i].cMin && val <= beardColours[i].cMax )
 			return true;
@@ -1603,21 +1603,21 @@ CRace& CRace::operator =( CRace& trgRace )
 	raceName = trgRace.raceName;;
 
 	beardColours.resize( trgRace.beardColours.size() );
-	for( UI32 bCtr = 0; bCtr < beardColours.size(); ++bCtr )
+	for( size_t bCtr = 0; bCtr < beardColours.size(); ++bCtr )
 	{
 		beardColours[bCtr].cMax = trgRace.beardColours[bCtr].cMax;
 		beardColours[bCtr].cMin = trgRace.beardColours[bCtr].cMin;
 	}
 
 	hairColours.resize( trgRace.hairColours.size() );
-	for( UI32 hCtr = 0; hCtr < hairColours.size(); ++hCtr )
+	for( size_t hCtr = 0; hCtr < hairColours.size(); ++hCtr )
 	{
 		hairColours[hCtr].cMax = trgRace.hairColours[hCtr].cMax;
 		hairColours[hCtr].cMin = trgRace.hairColours[hCtr].cMin;
 	}
 
 	skinColours.resize( trgRace.skinColours.size() );
-	for( UI32 sCtr = 0; sCtr < skinColours.size(); ++sCtr )
+	for( size_t sCtr = 0; sCtr < skinColours.size(); ++sCtr )
 	{
 		skinColours[sCtr].cMax = trgRace.skinColours[sCtr].cMax;
 		skinColours[sCtr].cMin = trgRace.skinColours[sCtr].cMin;
@@ -1627,7 +1627,7 @@ CRace& CRace::operator =( CRace& trgRace )
 	restrictGender = trgRace.restrictGender;
 
 	racialEnemies.resize( trgRace.racialEnemies.size() );
-	for( UI32 rCtr = 0; rCtr < racialEnemies.size(); ++rCtr )
+	for( size_t rCtr = 0; rCtr < racialEnemies.size(); ++rCtr )
 		racialEnemies[rCtr] = trgRace.racialEnemies[rCtr];
 
 	lightLevel = trgRace.lightLevel;

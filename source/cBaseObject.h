@@ -158,17 +158,12 @@ public:
 	void					SetSpawn(  SERIAL newSpawn );
 	virtual void			SetOwner(  CChar *newOwner );
 
-	virtual bool			Save( std::ofstream &outStream ) const = 0;
+	virtual bool			Save( std::ofstream &outStream ) = 0;
 	virtual bool			DumpHeader( std::ofstream &outStream ) const = 0;
 	virtual bool			DumpBody( std::ofstream &outStream ) const;
 	bool					DumpFooter( std::ofstream &outStream ) const;
 	bool					Load( std::ifstream &inStream );
 	virtual bool			HandleLine( UString &UTag, UString &data );
-
-	//	Char uses fixed array, Item uses variable based vector
-	virtual CItem			*FirstItem( void ) = 0;
-	virtual CItem			*NextItem( void ) = 0;
-	virtual bool			FinishedItems( void ) = 0;
 
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );

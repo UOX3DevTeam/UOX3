@@ -48,6 +48,7 @@
 // The UOX project includes
 //o---------------------------------------------------------------------------o
 #include "uoxstruct.h"
+#include "CDataList.h"
 #include "cAccountClass.h"
 #include "ustring.h"
 #include "cBaseObject.h"

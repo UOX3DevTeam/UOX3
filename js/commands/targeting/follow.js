@@ -11,7 +11,7 @@ function command_FOLLOW( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var targMsg = GetDictionaryEntry( 1742 );
 		socket.tempObj = ourObj;
@@ -21,10 +21,10 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	if( ourObj.isChar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var toFollow = socket.tempObj;
-		if( ourObj.npc && toFollow )
+		if( ourTarg.npc && toFollow )
 			ourObj.Follow( toFollow );
 	}
 	socket.tempObj = null;
