@@ -58,6 +58,26 @@ cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPri
 	Console.PrintSectionBegin();
 }
 
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	bool cServerDefinitions::Reload( void )
+//|	Date					-	04/17/2002
+//|	Developer(s)	-	EviLDeD
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Reload the dfn files.
+//o--------------------------------------------------------------------------o
+//|	Returns				-	[TRUE] if succesfull
+//o--------------------------------------------------------------------------o	
+bool cServerDefinitions::Reload( void )
+{
+	ScriptListings.clear();
+	ScriptListings.resize( NUM_DEFS );
+	ReloadScriptObjects();
+	return true;
+}
+
 cServerDefinitions::~cServerDefinitions()
 {
 	for( UI32 i = 0; i < ScriptListings.size(); i++ )

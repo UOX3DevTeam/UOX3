@@ -5044,7 +5044,8 @@ bool CChar::LoadRemnants( int arrayOffset )
 		SetCommandLevel( CNSCMDLEVEL );
 	if( IsGM() && GetCommandLevel() < GMCMDLEVEL )	// SI32erim line to retain compatibility, MUST BE TAKEN out in the SI32 term!
 		SetCommandLevel( GMCMDLEVEL );
-
+	//if(ourAccount->lpaarHolding->->bFlags|=0x8000)
+	//	SetCommandLevel( GMCMDLEVEL );
 	////////////////////////////////////////////////////////////////////
 
 	SetRegion( calcRegionFromXY( GetX(), GetY(), worldNumber ) );

@@ -36,6 +36,7 @@ public:
 						cServerDefinitions();
 						cServerDefinitions( const char *indexfilename );
 	virtual				~cServerDefinitions();
+	bool				Reload( void );
 
 	ScriptSection	*	FindEntry( const char *toFind, DefinitionCategories typeToFind );
 	Script			*	FindScript( const char *toFind, DefinitionCategories typeToFind );

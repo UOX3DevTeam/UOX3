@@ -152,6 +152,32 @@ void handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
 		}
 	}
 }
+
+bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
+{
+	if( pack != NULL )
+	{
+		for( CItem *nItem = pack->FirstItemObj(); !pack->FinishedItems(); nItem = pack->NextItemObj() )
+		{
+			if( nItem != NULL )
+			{
+				if( nItem->GetMore() == x->GetMore() )
+				{
+					npcTalk( mSock, mChar, 405, false );
+					useDoor( mSock, x );
+					mChar->SetObjectDelay( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( OBJECT_USAGE ) ) );
+					return true;
+				} else if ( nItem->GetType() == 1 )
+				{
+					if ( keyInPack( mSock, mChar, nItem, x ) )
+						return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    :  void doubleClick( cSocket *mSock )
 //|   Date        :  Unknown
@@ -457,23 +483,8 @@ void doubleClick( cSocket *mSock )
 				useDoor( mSock, x );
 				return;
 			}
-			pack = getPack( mChar );
-			if( pack != NULL )
-			{
-				for( CItem *nItem = pack->FirstItemObj(); !pack->FinishedItems(); nItem = pack->NextItemObj() )
-				{
-					if( nItem != NULL )
-					{
-						if( nItem->GetMore() == x->GetMore() )
-						{
-							npcTalk( mSock, mChar, 405, false );
-							useDoor( mSock, x );
-							mChar->SetObjectDelay( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( OBJECT_USAGE ) ) );
-							return;
-						}
-					}
-				}
-			}
+			if ( keyInPack( mSock, mChar, mChar->GetPackItem(), x ) ) return;
+
 			sysmessage( mSock, 406 );
 			return;
 		case 14: // Food

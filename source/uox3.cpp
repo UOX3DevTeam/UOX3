@@ -2707,6 +2707,11 @@ void MountCreature( CChar *s, CChar *x )
 		case 0x8A:	c->SetID( 0x3EB4 );	break;	// Dragon Horse
 		case 0x74:	c->SetID( 0x3EB5 );	break;	// Nightmare
 		case 0xBB:	c->SetID( 0x3EB8 );	break;	// Ridgeback
+		case 0x319:     c->SetID( 0x3EBB );     break;  // Skeletal Mount 
+		case 0x317:     c->SetID( 0x3EBC );     break;  // Giant Beetle  
+		case 0x31A:     c->SetID( 0x3EBD );     break;  // Swamp Dragon  
+		case 0x31F:     c->SetID( 0x3EBE );     break;  // Armored Swamp Dragon  
+
 		default:	c->SetID( 0x3E00 );	break;	// Bad
 		}
 		
@@ -3163,7 +3168,7 @@ void processkey( int c )
 	int i, j;
 	int keyresp;
 
-	if( c == 'S' )
+	if( c == '*' )
 	{
 		if( secure )
 			messageLoop << "Secure mode disabled. Press ? for a commands list";
@@ -3182,12 +3187,10 @@ void processkey( int c )
 		
 		switch( c )
 		{
-		case 0x1B:
-		case 'Q':
-			messageLoop << MSG_SECTIONBEGIN;
-			messageLoop << "Immediate Shutdown initialized!";
-			messageLoop << MSG_SHUTDOWN;
-			break;
+			case '@':
+				// Force server to save all files.(Manual save)
+				messageLoop << MSG_WORLDSAVE;
+				break;
 		case 'Y':
 #pragma note("Console Broadcast needs to not require cout anymore.  Is there a better way?")
 			//messageLoop << "Console> ";
@@ -3205,7 +3208,7 @@ void processkey( int c )
 					indexcount = 0;
 					kill = true;
 					cout << endl;
-					messageLoop << "System broadcast canceled.  No message sent.";
+					messageLoop << "| CMD: System broadcast canceled.";
 					break;
 				case 0x08:
 					indexcount--;
@@ -3221,7 +3224,7 @@ void processkey( int c )
 					indexcount = 0;
 					kill = true;
 					cout << endl;
-					sprintf( temp, "System broadcast sent message \"%s\"", outputline );
+					sprintf( temp, "| CMD: System broadcast sent message \"%s\"", outputline );
 					memset( outputline, 0x00, sizeof( outputline ) );
 					messageLoop << temp;
 					break;
@@ -3236,58 +3239,151 @@ void processkey( int c )
 				keyresp = 0x00;
 			}
 			break;
+			case 0x1B:
+			case 'Q':
+				messageLoop << MSG_SECTIONBEGIN;
+				messageLoop << "| CMD: Immediate Shutdown initialized!";
+				messageLoop << MSG_SHUTDOWN;
+				break;
+			case '1':
+				// Reload server ini file
+				messageLoop << "| CMD: Loading Server INI... ";
+				cwmWorldState->ServerData()->load();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '2':
+				// Reload accounts, and update Access.adm if new accounts available.
+				messageLoop << "| CMD: Loading Accounts... ";
+				Accounts->LoadAccounts();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '3':
+				// Reload Region Files
+				messageLoop << "| CMD: Loading Regions... ";
+				loadregions();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '4':
+				// Reload the serve spawn regions
+				messageLoop << "| CMD: Loading Spawn Regions... ";
+				loadSpawnRegions();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '5':
+				// Reload the current Spells 
+				messageLoop << "| CMD: Loading spells... ";
+				Magic->LoadScript();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '6':
+				// Reload the server command list
+				messageLoop << "| CMD: Loading commands... ";
+				Commands->Load();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '7':
+				// Reload the server defantion files
+				messageLoop << "| CMD: Loading Server DFN... ";
+				FileLookup->Reload();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '8':
+				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
+				messageLoop << "| CMD| Loading JSE Scripts... ";
+				messageLoop << MSG_RELOADJS;
+				break;
+			case '9':
+				// Reload the HTML output templates
+				messageLoop << "| CMD: Loading HTML Templates... ";
+				HTMLTemplates->Load();
+				messageLoop << MSG_PRINTDONE;
+				break;
+			case '0':
+				// Reload all the files. If there are issues with these files change the order reloaded from here first.
+				cwmWorldState->ServerData()->load();
+				messageLoop << "| CMD: Loading All";
+				messageLoop << "|      Server INI... ";
+				// Reload accounts, and update Access.adm if new accounts available.
+				messageLoop << "|      Loading Accounts... ";
+				Accounts->LoadAccounts();
+				messageLoop << MSG_PRINTDONE;
+				// Reload Region Files
+				messageLoop << "|      Loading Regions... ";
+				loadregions();
+				messageLoop << MSG_PRINTDONE;
+				// Reload the serve spawn regions
+				messageLoop << "|      Loading Spawn Regions... ";
+				loadSpawnRegions();
+				messageLoop << MSG_PRINTDONE;
+				// Reload the current Spells 
+				messageLoop << "|      Loading spells... ";
+				Magic->LoadScript();
+				messageLoop << MSG_PRINTDONE;
+				// Reload the server command list
+				messageLoop << "|      Loading commands... ";
+				Commands->Load();
+				messageLoop << MSG_PRINTDONE;
+				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
+				messageLoop << "|      Loading JSE Scripts... ";
+				messageLoop << MSG_RELOADJS;
+				// Reload the HTML output templates
+				messageLoop << "|      Loading HTML Templates... ";
+				HTMLTemplates->Load();
+				messageLoop << MSG_PRINTDONE;
+				break;
 		case 'T':
+			// Timed shut down(10 minutes)
+			messageLoop << "| CMD: 10 Minute Server Shutdown Announced(Timed)";
 			endtime = BuildTimeValue( 600 );
 			endmessage(0);
 			break;
-		case '#':
-			messageLoop << MSG_WORLDSAVE;
-			break;
 		case 'L':
+			// Show Layer info
 			if( showlayer )
-				messageLoop << "Show Layer Disabled";
+				messageLoop << "| CMD: Show Layer Disabled";
 			else
-				messageLoop << "Show Layer Enabled";
+				messageLoop << "| CMD: Show Layer Enabled";
 			showlayer = !showlayer;
 			break;
-		case 'I':
-			cwmWorldState->ServerData()->load();
-			messageLoop << "INI file reloaded";
-			break;
-		case  'D':    // Disconnect account 0 (useful when client crashes)
+		case  'D':    
+			// Disconnect account 0 (useful when client crashes)
 			cSocket *tSock;
 			for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
 			{
 				if( tSock->AcctNo() == 0 )
 					Network->Disconnect( calcSocketFromSockObj( tSock ) );
 			}
-			messageLoop << "Socket disconnected.";
+			messageLoop << "| CMD: Socket Disconnected(Account 0).";
 			break;
-		case 'K':		// mass disconnect
+		case 'K':		
+			// mass disconnect
 			for( i = now - 1; i >= 0; i-- )
 				Network->Disconnect( i );
-			messageLoop << "All connections closed.";
+			messageLoop << "| CMD: All Connections Closed.";
 			break;
-		case 'H':                // Enable/Disable heartbeat
+		case 'H':                
+			// Enable/Disable heartbeat
 			if( heartbeat == 1 ) 
-				messageLoop << "Heartbeat Disabled";
+				messageLoop << "| CMD: Heartbeat Disabled";
 			else 
-				messageLoop << "Heartbeat Enabled";
+				messageLoop << "| CMD: Heartbeat Enabled";
 			heartbeat = !heartbeat;
 			break;
-		case 'P':                // Display profiling information
-			LogMessage("Performace Dump:\n");
-			LogMessage("Network code: %fmsec [%i samples]\n" _ (R32)((R32)networkTime/(R32)networkTimeCount) _ networkTimeCount);
-			LogMessage("Timer code: %fmsec [%i samples]\n" _ (R32)((R32)timerTime/(R32)timerTimeCount) _ timerTimeCount);
-			LogMessage("Auto code: %fmsec [%i samples]\n" _ (R32)((R32)autoTime/(R32)autoTimeCount) _ autoTimeCount);
-			LogMessage("Loop Time: %fmsec [%i samples]\n" _ (R32)((R32)loopTime/(R32)loopTimeCount) _ loopTimeCount);
-			LogMessage("Characters: %i/%i - Items: %i/%i (Dynamic)\n" _ chars.Count() _ cmem _ items.Count() _ imem);
-			LogMessage("Simulation Cycles: %f per sec\n" _ (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
-			sprintf( temp, "Bytes sent: %i\n| Bytes Received: %i", globalSent, globalRecv );
+		case 'P':                
+			// Display profiling information
+			LogMessage("| CMD: Performace Dump:\n");
+			LogMessage("|      Network code: %fmsec [%i samples]\n" _ (R32)((R32)networkTime/(R32)networkTimeCount) _ networkTimeCount);
+			LogMessage("|      Timer code: %fmsec [%i samples]\n" _ (R32)((R32)timerTime/(R32)timerTimeCount) _ timerTimeCount);
+			LogMessage("|      Auto code: %fmsec [%i samples]\n" _ (R32)((R32)autoTime/(R32)autoTimeCount) _ autoTimeCount);
+			LogMessage("|      Loop Time: %fmsec [%i samples]\n" _ (R32)((R32)loopTime/(R32)loopTimeCount) _ loopTimeCount);
+			LogMessage("|      Characters: %i/%i - Items: %i/%i (Dynamic)\n" _ chars.Count() _ cmem _ items.Count() _ imem);
+			LogMessage("|      Simulation Cycles: %f per sec\n" _ (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
+			sprintf( temp, "|      Bytes sent: %i\n| Bytes Received: %i", globalSent, globalRecv );
 			messageLoop << temp;
 			break;
-		case 'W':                // Display logged in chars
-			messageLoop << "Current Users in the World:";
+		case 'W':                
+			// Display logged in chars
+			messageLoop << "| CMD: Current Users in the World:";
 			j = 0;
 			cSocket *iSock;
 			Network->PushConn();
@@ -3295,78 +3391,50 @@ void processkey( int c )
 			{
 				j++;
 				CChar *mChar = iSock->CurrcharObj();
-				sprintf( temp, "%i) %s [%i %i %i %i]", j - 1, mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
+				sprintf( temp, "|      %i) %s [%i %i %i %i]", j - 1, mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
 				messageLoop << temp;
 			}
 			Network->PopConn();
-			sprintf( temp, "Total users online: %i", j );
+			sprintf( temp, "|      Total users online: %i", j );
 			messageLoop << temp;
-			break;
-		case 'a':
-		case 'A': //reload the accounts file
-			messageLoop << "Reloading accounts... ";
-			Accounts->LoadAccounts();
-			messageLoop << MSG_PRINTDONE;
-			break;
-		case 'R':
-			messageLoop << "Loading HTML Templates      ";
-			HTMLTemplates->Load();
-			messageLoop << MSG_PRINTDONE;
-
-			messageLoop << "Loading spawnregions        ";
-			loadSpawnRegions();
-			messageLoop << MSG_PRINTDONE;
-			
-			messageLoop << "Loading regions             ";
-			loadregions();
-			messageLoop << MSG_PRINTDONE;
-
-			messageLoop << "Loading spells              ";
-			Magic->LoadScript();
-			messageLoop << MSG_PRINTDONE;
-
-			messageLoop << "Loading commands            ";
-			Commands->Load();
-			messageLoop << MSG_PRINTDONE;
-
 			break;
 		case 'M':
 			UI32 tmp, total;
 			total = 0;
 			tmp = 0;
-			messageLoop << "UOX Memory Information:";
-			messageLoop << "       Cache:";
-			sprintf( temp, "               Tiles: %i bytes", Map->TileMem );
+			messageLoop << "| CMD: UOX Memory Information:";
+			messageLoop << "|      Cache:";
+			sprintf( temp, "|         Tiles: %i bytes", Map->TileMem );
 			messageLoop << temp;
-			sprintf( temp, "               Statics: %i bytes", Map->StaMem );
+			sprintf( temp, "|         Statics: %i bytes", Map->StaMem );
 			messageLoop << temp;
-			sprintf( temp, "               Version: %i bytes", Map->versionMemory );
+			sprintf( temp, "|         Version: %i bytes", Map->versionMemory );
 			messageLoop << temp;
-			sprintf( temp, "               Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
+			sprintf( temp, "|         Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
 			messageLoop << temp;
 			total += tmp = chars.Size() + cmem*sizeof( teffect_st ) + cmem*sizeof(char) + cmem*sizeof(int)*5;
-			sprintf( temp, "       Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cmem );
+			sprintf( temp, "|      Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cmem );
 			messageLoop << temp;
 			total += tmp = items.Size() + imem*sizeof(int)*4;
-			sprintf( temp, "       Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), imem );
+			sprintf( temp, "|      Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), imem );
 			messageLoop << temp;
-			sprintf( temp, "               You save I: %i & C: %i bytes!", imem * sizeof(CItem) - items.Size(), cmem * sizeof( CChar ) - chars.Size() );
+			sprintf( temp, "|         You save I: %i & C: %i bytes!", imem * sizeof(CItem) - items.Size(), cmem * sizeof( CChar ) - chars.Size() );
 			total += tmp = 69 * sizeof( SpellInfo );
-			sprintf( temp, "       Spells: %i bytes", tmp );
-			messageLoop << "       Sizes:";
-			sprintf( temp, "               CItem  : %i bytes", sizeof( CItem ) );
+			sprintf( temp, "|      Spells: %i bytes", tmp );
+			messageLoop << "|      Sizes:";
+			sprintf( temp, "|         CItem  : %i bytes", sizeof( CItem ) );
 			messageLoop << temp;
-			sprintf( temp, "               CChar  : %i bytes", sizeof( CChar ) );
+			sprintf( temp, "|         CChar  : %i bytes", sizeof( CChar ) );
 			messageLoop << temp;
-			sprintf( temp, "               TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
+			sprintf( temp, "|         TEffect: %i bytes (%i total)", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
 			messageLoop << temp;
 			total += tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
-			sprintf( temp, "Approximate Total: %i bytes", total );
+			sprintf( temp, "|         Approximate Total: %i bytes", total );
 			messageLoop << temp;
 			break;
-
 		case 'e':
 		case 'E':
+			// Toggle Layer errors
 			j = 0;
 			for( i = 0; i < MAXLAYERS; i++ )
 			{
@@ -3374,77 +3442,77 @@ void processkey( int c )
 				{
 					j ++;
 					if( i < 10 )
-						sprintf( temp, "Layer 0%i -> %i errors", i, erroredLayers[i] );
+						sprintf( temp, "| ERROR: Layer 0%i -> %i errors", i, erroredLayers[i] );
 					else
-						sprintf( temp, "Layer %i -> %i errors", i, erroredLayers[i] );
+						sprintf( temp, "| ERROR: Layer %i -> %i errors", i, erroredLayers[i] );
 					messageLoop << temp;
 				}
 			}
-			sprintf( temp, "Found errors on %i layers.", j );
+			sprintf( temp, "| ERROR: Found errors on %i layers.", j );
 			messageLoop << temp;
 			break;
-			
 		case '?':
-			messageLoop << "Console commands:";
-			messageLoop << " 	<Esc> or Q: Shutdown the server";
-			messageLoop << "	# - Save world";
-			messageLoop << "	A - Reload accounts file";
-			messageLoop << "	C - Displays configuration";
-			messageLoop << "	D - Disconnect Account 0";
-			messageLoop << "	E - Show # of layer errors";
-			messageLoop << "	H - Toggle hearbeat";
-			messageLoop << "	I - Reload INI file";
-			messageLoop << "	K - Mass disconnect (disconnects everyone)";
-			messageLoop << "	L - Toggle layer Display";
-			messageLoop << "	M - Display Memory Information";
-			messageLoop << "	N - Dump Nasty creature information to file";
-			messageLoop << "	P - Performance Dump";
-			messageLoop << "	R - Reload Server, Spawn, Regions, Spells and Commands Scripts";
-			messageLoop << "	S - Secure Mode Toggle";
-			messageLoop << "	T - System Message: The server is shutting down in 10 minutes";
-			messageLoop << "	U - Dump speech information";
-			messageLoop << "	V - Dump server lookup information";
-			messageLoop << "	W - Display logged in characters";
-			messageLoop << "	X - Reload JS scripts";
-			messageLoop << "	Y - Broadcast a console message";
-			messageLoop << "	Z - Turn on socket logging for current sockets";
-			messageLoop << "	? - Commands list (this)";
-			messageLoop << "End of commands list";
+			messageLoop << "o-------------------------";
+			messageLoop << "| Console commands:";
+			messageLoop << "o-------------------------";
+			messageLoop << "|  ShardOP:";
+			messageLoop << "|     * - Lock/Unlock Console ? - Commands list(this)";
+			messageLoop << "|     C - Configuration       H - Heart Beat";
+			messageLoop << "|     Y - Console Broadcast   Q - Quit/Exit           ";
+			messageLoop << "|  Load Commands:";
+			messageLoop << "|     1 - Accounts            2 - Ini";
+			messageLoop << "|     3 - Regions             4 - Spawn Regions";
+			messageLoop << "|     5 - Spells              6 - Commands";
+			messageLoop << "|     7 - Dfn's               8 - JavaScript";
+			messageLoop << "|     9 - HTML Templates      0 - ALL(1-9)";
+			messageLoop << "|  Save Commands:";
+			messageLoop << "|     ! - Accounts            @ - World";
+			messageLoop << "|     # - Unused              $ - Unused";
+			messageLoop << "|     % - Unused              ^ - Unused";
+			messageLoop << "|     & - Unused              ( - Unused";
+			messageLoop << "|     ) - Unused";
+			messageLoop << "|  Server Maintenence:";
+			messageLoop << "|     P - Performance         W - Characters Online";
+			messageLoop << "|     M - Memory Information  T - 10 Minute Shutdown";
+			messageLoop << "|     V - Dump Lookups(Devs)  N - Dump Npc.Dat";
+			messageLoop << "|     L - Layer Information"; 
+			messageLoop << "|  Network Maintenence:";
+			messageLoop << "|     D - Disconnect Acct0    K - Disconnect All";
+			messageLoop << "|     Z - Socket Logging      ";
+			messageLoop << "o-------------------------";
 			break;
-
-		case 'u':
-		case 'U':
-
-			break;
-
 		case 'v':
 		case 'V':
-			messageLoop << "Dumping lookups....";
+			// Dump look up data to files so developers working with extending the ini will have a table to use
+			messageLoop << "| CMD: Creating Server.scp and Uox3.ini Tag Lookup files(For Developers)....";
 			cwmWorldState->ServerData()->DumpLookup( 0 );
 			cwmWorldState->ServerData()->DumpLookup( 1 );
 			cwmWorldState->ServerData()->save( "./uox.tst.ini" );
-			messageLoop << "Done!";
-			break;
-
-		case 'x':
-		case 'X':
-			// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-			messageLoop << "Reloading JS scripts";
-			messageLoop << MSG_RELOADJS;
+			messageLoop << MSG_PRINTDONE;
 			break;
 		case 'z':
 		case 'Z':
+			// Log socket activity
 			cSocket *snSock;
 			Network->PushConn();
 			for( snSock = Network->FirstSocket(); !Network->FinishedSockets(); snSock = Network->NextSocket() )
 			{
 				if( snSock != NULL )
-					snSock->Logging( true );
+				{
+					if(	snSock->Logging() )
+						snSock->Logging( false );
+					else
+						snSock->Logging( true );
+				}
 			}
 			Network->PopConn();
-			messageLoop << "Logging enabled.";
+			if( snSock->Logging() )
+				messageLoop << "| CMD: Network Logging Enabled.";
+			else
+				messageLoop << "| CMD: Network Logging Disabled.";
 			break;
 		case 'N':
+			//. Dump a file that contains the id and sound some toher misc data about monster NPC.
 			DumpCreatures();
 			break;
 		case 'c':
@@ -4116,7 +4184,7 @@ void checkauto( void )
 	
 	Trigger->PeriodicTriggerCheck();
 	// modify this stuff to take into account more variables
-	if( cwmWorldState->ServerData()->GetAccountFlushTimer() != 0 && accountFlush <= uiCurrentTime || overflow )
+	if( /*cwmWorldState->ServerData()->GetAccountFlushTimer() != 0 &&*/ accountFlush <= uiCurrentTime || overflow )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
@@ -4125,7 +4193,7 @@ void checkauto( void )
 			if( ourAccount == NULL )
 				continue;
 
-			if( ourAccount->lpaarHolding->bFlags&0x08 )
+			if( ourAccount->lpaarHolding->bFlags&0x0008 )
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				Network->PushConn();
@@ -4139,7 +4207,7 @@ void checkauto( void )
 				}
 				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
-					ourAccount->lpaarHolding->bFlags&=0xFFFFFFF7;
+					ourAccount->lpaarHolding->bFlags&=0xFFF7;
 			}
 		}
 		accountFlush = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetAccountFlushTimer() * 60 );
@@ -4798,7 +4866,7 @@ int main( int argc, char *argv[] )
 		uiCurrentTime = getclock();
 		
 #ifdef __NT__
-		sprintf( temp, "%s v%s(Build)", PRODUCT, VER, BUILD );
+		sprintf( temp, "%s v%s(%s)", PRODUCT, VER, BUILD );
 		Console.Start( temp );
 #else
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
@@ -7975,7 +8043,10 @@ void loadregions( void )
 			region[i]->Load( ourRegions );
 	}
 	if( performLoad )
+	  {
 		delete ourRegions;
+		ourRegions = NULL;
+	  }
 	locationcount = (UI16)l;
 	logoutcount = 0;
 	//Instalog

@@ -103,12 +103,16 @@ cItemHandle items;
 cCharacterHandle chars;
 
 location_st location[4000];
+UI16 locationcount;					// Changed from int to UI08 (Mr. Fixit)
+
 cTownRegion *region[256];
-logout_st logout[1024];						// Instalog
-cSpawnRegion *spawnregion[512];				//Regionspawns
+
+logout_st logout[1024];					// Instalog
+UI32 logoutcount;					// Instalog
+
+cSpawnRegion *spawnregion[4098];				//Regionspawns
+
 skill_st skill[SKILLS+1];
-UI16 locationcount;							// Changed from int to UI08 (Mr. Fixit)
-UI32 logoutcount;							// Instalog
 title_st title[ALLSKILLS+1];				// For custom titles reads titles.scp
 vector< JailCell > jails;
 

@@ -24,6 +24,7 @@ CWorldMain::~CWorldMain()
 	delete sData;
 }
 
+
 void CWorldMain::savenewworld( bool x )
 {
 	static unsigned int save_counter = 0;
@@ -232,3 +233,4 @@ const UI08 ItemSaveTable[256] =
 	0,	0,	0,	0,	0,	0,	0,	0,	//248 (f8)
 	//ff
 };
+

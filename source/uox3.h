@@ -48,7 +48,7 @@
 //									you increment this build number? Im am gonna up the build Num
 //									here cause Oi was told that MrFixit, and some others were in
 //									code and made some changes.
-#define BUILD "18"
+#define BUILD "20"
 #define REALBUILD "0"
 #define SVER "2.0"
 #define CVER "2.0"
@@ -332,7 +332,7 @@ extern CItem *DefItem;
 extern location_st location[4000];
 extern logout_st logout[1024];			// Instalog
 extern cTownRegion *region[256];
-extern cSpawnRegion *spawnregion[512];	// Zippy
+extern cSpawnRegion *spawnregion[4098];	// Zippy
 extern skill_st skill[SKILLS+1];
 extern UI16 locationcount;				// Changed from int to UI08 (Mr. Fixit)
 extern UI32 logoutcount;				// Instalog

@@ -304,7 +304,7 @@ void createChar( cSocket *mSock )
 	
 	if( mSock->AcctNo() == 0 )
 	{ 
-		mChar->SetPriv( 0xFD );
+		mChar->SetPriv( 0xFF );
 		mChar->SetCommandLevel( GMCMDLEVEL );
 	}
 	LPSTARTLOCATION toGo = cwmWorldState->ServerData()->GetServerLocation( Buffer[0x5B] );

@@ -39,7 +39,7 @@ const string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|C
 	"COMBATMAXRANGE|COMBATWRESTLESPEED|COMBATSPELLMAXRANGE|COMBATMAXMELEEDAMAGE|COMBATMAXSPELLDAMAGE|COMBATALLOWCRITICALS|COMBATMAXPOISONINGDISTANCE|COMBATDISPLAYHITMSG|COMBATMAXHUMANABSORBTION|COMBATMAXNONHUMANABSORBTION|COMBATMONSTERSVSANIMALS|"
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|ENGRAVEENABLED|BOOKSDIRECTORY|SERVERLIST|SCRIPTSECTIONHEADER|PORT|SAVEMODE|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY"
+	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|GUMPSDIRECTORY|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD"
 );
 
 void cServerData::SetServerName( const char *setname )
@@ -376,11 +376,8 @@ SI32 cServerData::GetSystemTimerStatus( TID timerid )
 void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
 {
         // First, let's normalize the path name and fix common errors
-#ifdef __LINUX__
         const char dirSep = '/';
-#else
-	const char dirSep = '\\';
-#endif
+
         if (!text)
 	{
 		Console.Error( 1, " %s directory is blank, set in uox.ini", dirName.c_str() );
@@ -395,8 +392,11 @@ void cServerData::setDirectoryHelper( string dirName, string &dir, char *text )
 
 	// Make sure we're terminated with a directory separator
 	// Just incase it's not set in the .ini
-
+#ifdef __LINUX__
 	bool addSep = text[length - 1] != dirSep;
+#else
+	bool addSep = (text[length - 1] != dirSep) && (text[length - 1] != '\\');
+#endif
 
 	bool error = false;
 	if( !resettingDefaults )
@@ -1876,7 +1876,8 @@ bool cServerData::save( const char *filename )
 	ofsOutput << "ANNOUNCEWORLDSAVES=" << (GetServerAnnounceSavesStatus()?1:0) << endl;
 	ofsOutput << "JOINPARTMSGS=" << (GetServerJoinPartAnnouncementsStatus()?1:0) << endl;
 	ofsOutput << "MULCACHING=" << (GetServerMulCachingStatus()?1:0) << endl;
-	ofsOutput << "BACKUPSENABLED=" << GetBackupRatio() << endl;
+	ofsOutput << "BACKUPSENABLED=" << GetServerBackupStatus() << endl;
+	ofsOutput << "BACKUPSAVERATIO=" << GetBackupRatio() << endl;
 	ofsOutput << "SAVESTIMER=" << GetServerSavesTimerStatus() << endl;
 	ofsOutput << "MAINTHREADSLEEP=" << GetNiceness()  << endl;
 	ofsOutput << "ACCOUNTISOLATION=" << "1" /*GetAccountsIsolationLevel()*/ << endl;
@@ -2482,7 +2483,7 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 					SetServerMulCaching((makeNum( r )==1?true:false));
 					break;
 				case 0x006B:	// BACKUPSENABLED
-					SetServerBackups((makeNum( r )==1?true:false));
+					SetServerBackups((makeNum( r )>0?true:false));
 					break;
 				case 0x007A:	// SAVESPERLOOP
 					//printf("\nr == %i(%s)\n",makeNum( r ),r);
@@ -2967,6 +2968,9 @@ cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
 			        case 0x0A29:	 // DICTIONARYDIRECTORY[0163]
 				        cServerData::SetDictionaryDirectory( r );
 	                                break;
+			        case 0x0A3D:	 // BACKUPSAVERATIO[0164]
+				        cServerData::SetBackupRatio( makeNum (r ) );
+			                break;
 				default:
 					//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
 					break;
@@ -3413,6 +3417,9 @@ cServerData * cServerData::ParseUox3ServerScp(const char *filename)
 				break;
 			case 0x072D:	 // ENGRAVEENABLED[0132]
 				SetEngraveStatus( makeNum( r ) != 0 );
+				break;
+		        case 0x086F:	 // STARTGOLD[0127]
+				SetServerStartGold( (SI16)makeNum( r ) );
 				break;
 			default:
 				inFile.getline( szLine, 128 );

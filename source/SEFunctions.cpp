@@ -2410,7 +2410,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 4 or 6)" );
 		return JS_FALSE;
 	}
-	if( argc == 3 )
+	if( argc == 4 )
 	{
 		UOXSOCKET bpSocket = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
 		int region = (int)JSVAL_TO_INT( argv[1] );

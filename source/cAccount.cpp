@@ -246,7 +246,7 @@ long cAccounts::LoadAccessList( void )
 			ifsFile.getline( szLine, 127 );
 			continue;
 		}
-		if( !strnicmp( szLine, "SECTION ACCESS", strlen( "SECTION ACCESS" ) ) )
+		else if( !strnicmp( szLine, "SECTION ACCESS", strlen( "SECTION ACCESS" ) ) )
 		{
 			aarPointer = new AAREC;	
 			memset( aarPointer, 0x00, sizeof( AAREC ) );
@@ -262,7 +262,7 @@ long cAccounts::LoadAccessList( void )
 			ifsFile.getline( szLine, 127 );
 			continue;	// get next line
 		}
-		if( braces[0] && szLine[0] == '{' ) 
+		else if( braces[0] && szLine[0] == '{' ) 
 		{
 			if( !braces[1] )
 			{
@@ -278,7 +278,7 @@ long cAccounts::LoadAccessList( void )
 				return -1;
 			}
 		}
-		if( braces[0] && braces[1] && szLine[0] == '}' )
+		else if( braces[0] && braces[1] && szLine[0] == '}' )
 		{
 			braces[0] = braces[1] = false;
 			aarPointer->id = aclidx;
@@ -292,21 +292,24 @@ long cAccounts::LoadAccessList( void )
 			ifsFile.getline( szLine, 127 );
 			continue;
 		}
-		if( !braces[0] && ( braces[1] || braces[2] ) )
+		else if( !braces[0] && ( braces[1] || braces[2] ) )
 		{
 			ifsFile.close();
 			ErrNum = 0x00000001;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
 			ErrDesc = "Invalid block encountered";
 			return -1;
 		}
+
+		//
 		char *token[2] = { NULL, NULL };
-		token[0] = strtok( szLine, " " );	token[1] = strtok( NULL, "\n" );
+		token[0] = strtok( szLine, " " );
+		token[1] = strtok( NULL, "\n" );
 		if( token[1] == NULL )	// no data!
 		{
 			ifsFile.getline( szLine, 127 );
 			continue;
 		}
-		if( braces[0] && braces[1] )
+		else if( braces[0] && braces[1] )
 		{
 			if( !stricmp( token[0], "NAME" ) )
 				strcpy( aarPointer->Info.username, token[1] );
@@ -353,6 +356,8 @@ long cAccounts::LoadAccessList( void )
 			}
 			ifsFile.getline( szLine, 127 );
 		}
+		else
+			ifsFile.getline( szLine, 127 );
 	}
 
 
@@ -422,10 +427,17 @@ long cAccounts::LoadAccounts( void )
 			}
 			if( !strnicmp( szLine, "SECTION ACCOUNT", strlen( "SECTION ACCOUNT" ) ) )
 			{
-				actPointer = new ACTREC;	// only create a new account when we enter a new area
-				aarPointer = new AAREC;
-				memset( actPointer, 0x00, sizeof( ACTREC ) );
-				memset( aarPointer, 0x00, sizeof( AAREC ) );
+				try
+				{
+					actPointer = new ACTREC;	// only create a new account when we enter a new area
+					aarPointer = new AAREC;
+				}
+				catch(...)
+				{
+					// Need to call from globalheap
+					Console << "\n****\nThe memory allocation was bad.\n";
+					return -1;
+				}
 
 				// Associate the AAREC to the ACTREC
 				actPointer->lpaarHolding=aarPointer;
@@ -469,11 +481,16 @@ long cAccounts::LoadAccounts( void )
 				{
 					// Ok this record is already in memory no need to re read it.
 					actPointer->charactercount = alreadyExists->charactercount;
-					actPointer->characters[0] = alreadyExists->characters[0];
-					actPointer->characters[1] = alreadyExists->characters[1];
-					actPointer->characters[2] = alreadyExists->characters[2];
-					actPointer->characters[3] = alreadyExists->characters[3];
-					actPointer->characters[4] = alreadyExists->characters[4];
+					for(int uu=0;uu<5;uu++)
+					{
+						actPointer->characters[uu] = alreadyExists->characters[uu];
+						if(actPointer->lpaarHolding->id==0)
+							actPointer->characters[uu]->SetCommandLevel( GMCMDLEVEL );
+					}
+					//actPointer->characters[1] = alreadyExists->characters[1];
+					//actPointer->characters[2] = alreadyExists->characters[2];
+					//actPointer->characters[3] = alreadyExists->characters[3];
+					//actPointer->characters[4] = alreadyExists->characters[4];
 				}
 				else
 				{
@@ -486,6 +503,9 @@ long cAccounts::LoadAccounts( void )
 				}
 				if(alreadyExists)
 					delete alreadyExists;
+				// Just as a safty precation make sure if this is superGM (account0) that GM flags are set by default each save
+				if(actPointer->lpaarHolding->id==0)
+					actPointer->lpaarHolding->bFlags|=0x8000;
 				// Just in case this didn't happen in the conditions above we'll do it again for safty
 				actPointer->lpaarHolding=aarPointer;
 				actMap[keystring] = actPointer;
@@ -525,6 +545,8 @@ long cAccounts::LoadAccounts( void )
 				{
 					if( ( actPointer->lpaarHolding->id = atol( token[1] ) ) == 0L )
 						actPointer->lpaarHolding->id = -1;
+					else
+						actPointer->lpaarHolding->bFlags|=0x8000;	// Set the GM BIT 
 				}
 				else if( !stricmp( token[0], "CONTACT" ) || !stricmp( token[0], "EMAIL" ))
 				{
@@ -562,16 +584,16 @@ long cAccounts::LoadAccounts( void )
 				else if( !stricmp( token[0], "BAN" ) )
 				{
 					if( makeNum( token[1] ) > 0)
-						actPointer->lpaarHolding->bFlags|=0x01; //tban=true;
+						actPointer->lpaarHolding->bFlags|=0x0001; //tban=true;
 					else
-						actPointer->lpaarHolding->bFlags&=0xFFFFFFFE; //tban=false;
+						actPointer->lpaarHolding->bFlags&=0xFFFE; //tban=false;
 				}
 				else if( !stricmp( token[0], "PUBLIC" ) )
 				{
 					if( !stricmp( token[1], "ON" ) )
-						actPointer->lpaarHolding->bFlags|=0x04;	//tpub=true;
+						actPointer->lpaarHolding->bFlags|=0x0004;	//tpub=true;
 					else
-						actPointer->lpaarHolding->bFlags&=0xFFFFFFFB;	//tpub=false;
+						actPointer->lpaarHolding->bFlags&=0xFFFB;	//tpub=false;
 				}
 				else if( !stricmp( token[0], "PATH" ) )
 				{
@@ -580,9 +602,9 @@ long cAccounts::LoadAccounts( void )
 				else if( !stricmp( token[0], "XGMCLIENT" ) )
 				{
 					if(!stricmp( token[1], "ON" ) )
-						actPointer->lpaarHolding->bFlags|=0x02; //txgm=true;
+						actPointer->lpaarHolding->bFlags|=0x0002; //txgm=true;
 					else
-						actPointer->lpaarHolding->bFlags&=0xFFFFFFFD;	// False
+						actPointer->lpaarHolding->bFlags&=0xFFFD;	// False
 				}
 				ifsFile.getline( szLine, 127 );
 			}
@@ -602,8 +624,8 @@ long cAccounts::LoadAccounts( void )
 			char tbuffer[MAX_PATH];
 			memset(tbuffer,0x00,sizeof(tbuffer));
 			// Expects that the path value contains path and filename to actinfo.uad ins the users directory
-			UI32 slen = strlen( temp->Info.username );
-			if( temp->Info.path,temp->Info.username[slen-1] == '\\' && temp->Info.username[ slen -1] == '/' )
+			UI32 slen = strlen( temp->Info.path );
+			if( temp->Info.path[slen-1] == '\\' || temp->Info.path[ slen -1] == '/' )
 				sprintf(tbuffer,"%s%s.uad",temp->Info.path,temp->Info.username);
 			else
 				sprintf(tbuffer,"%s/%s.uad",temp->Info.path,temp->Info.username);
@@ -838,6 +860,10 @@ ACTREC *cAccounts::GetAccount( const char *username )
 //|	Modification	-	02/22/2002	-	DarkStorm: Removed strlwr for the AccountsPath
 //|									the Pathnames might be mixed lwr/upr case in the ini
 //|									that would lead to serious *nix problems!
+//|									
+//|	Modification	-	04/11/2002	-	EviLDeD: Changed the directory lettering
+//|									to use 3 chracters instead of 2. Make sure that characters
+//|									have 3 or more characters to thier usernames.
 //|
 //o--------------------------------------------------------------------------o
 //|	Returns				- [LONG] Count of number of accounts writen to the file.
@@ -880,6 +906,22 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	outStream << "//AV2.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
 	outStream << "//------------------------------------------------------------------------------\n";
 	outStream << "//access.adm[TEXT] : UOX3 uses this file for shared accounts access between servers\n";
+	outStream << "//\n";
+	outStream << "//   Format: \n";
+	outStream << "//      SECTION ACCESS 0\n";
+	outStream << "//      {\n";
+	outStream << "//         NAME username\n";
+	outStream << "//         PASS password\n";
+	outStream << "//         PATH c:/uox3/Accounts/path2userdata/\n";
+	outStream << "//         FLAGS 0x0008\n";
+	outStream << "//         EMAIL NONE\n";
+	outStream << "//      }\n";
+	outStream << "//\n";
+	outStream << "//   FLAGS: \n";
+	outStream << "//      Bit:  0) Banned  1) XGMClient    2) Public   3)\n";
+	outStream << "//            4)         5)              6)          7)\n";
+	outStream << "//            8)         9)             10)         11)\n";
+	outStream << "//           12)        13)             14)         15) GM Account\n";
 	outStream << "//------------------------------------------------------------------------------\n";
 	
 	// We need that Path more often
@@ -910,7 +952,9 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		// 0: Each Account has an own directory
 		// 1: Each Account is stored in a Directory 'AB' where ab are the first 2 chars of the account-name
 		// 2: Each Account-file is stored directly in the Account-directory
-		string AccountPath = "";
+		string AccountPath = RealAccountsPath;
+		if( ( AccountPath[ AccountPath.size() - 1 ] != '/' ) && ( AccountPath[ AccountPath.size() - 1 ] != '\\' ) )
+			AccountPath += '/'; // I think it's sufficient to add a / here
 
 		//{
 		switch( 1 /*cwmWorldState->ServerData()->GetAccountIsolationValue()*/ )
@@ -922,9 +966,9 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 			case 1:	
 				// Get the first two characters of the username
 
-				char TwoChars[3];
-				memset( TwoChars, 0x00,( sizeof(char)*3 ) );
-				memcpy( TwoChars, CurrentAccount->lpaarHolding->Info.username,( sizeof(char)*2 ) );
+				char TwoChars[4];
+				memset( TwoChars, 0x00,( sizeof(char)*4 ) );
+				memcpy( TwoChars, CurrentAccount->lpaarHolding->Info.username,( sizeof(char)*3 ) );
 
 				// Fix for linux, directory names are case sensitive
 				// dE, De, DE etc.
@@ -934,12 +978,11 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 				AccountPath += TwoChars;
 				AccountPath += "/";
 				// We also need to put it back in the access.adm file. No wonder people are having trouble
-
-				
 				break;
 		} // switch( )
 
-		if( !makeDirectory( (AccountsPath + AccountPath).c_str() ) )
+		//AccountsPath += AccountPath;
+		if( !makeDirectory( AccountPath.c_str() ) )
 		{
 			// Now when this function return it will have the proper loaded bool. ie 
 			// if the directory failes but exists it still tells us that we created 
@@ -947,17 +990,17 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 			// the directory exists, only if there was a problem creating it and
 			// it was never created.
 			outStream << "PATH ERROR\n";
-			outStream << "FLAGS 0x00000001\n";
+			outStream << "FLAGS 0x0001\n";
 			outStream << "}\n";
 			outStream.close();
 			return -1;
 		}
 
-		outStream << "PATH " << (RealAccountsPath+AccountPath) << "\n";
-		strcpy( CurrentAccount->lpaarHolding->Info.path, (RealAccountsPath+AccountPath).c_str() );	// copy to accounts structure just in case this is the conversion run
+		outStream << "PATH " << AccountsPath << "\n";
+		strcpy( CurrentAccount->lpaarHolding->Info.path, AccountsPath.c_str() );	// copy to accounts structure just in case this is the conversion run
 
 		// HEX-ify the flags and save them
-		sprintf( TempString, "0x%08X", CurrentAccount->lpaarHolding->bFlags );
+		sprintf( TempString, "0x%04X", CurrentAccount->lpaarHolding->bFlags );
 		outStream << "FLAGS " << TempString << "\n";
 
 		// We should eventually add a new field called "EMAIL"
@@ -981,16 +1024,17 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 		
 		// Build the correct Filename here
 		// AccountPath + Username + .uad
-		AccountPath = AccountsPath+AccountPath;
-		AccountPath += CurrentAccount->lpaarHolding->Info.username;
-		AccountPath += ".uad";
+		//AccountPath = AccountsPath+AccountPath;
+		AccountsPath = AccountPath + CurrentAccount->lpaarHolding->Info.username + ".uad";
+		//AccountsPath += CurrentAccount->lpaarHolding->Info.username;
+		//AccountsPath += ".uad";
 
 		// Then open the file and write out all information
-		ofstream AccountStream( AccountPath.c_str(), ios::out );
+		ofstream AccountStream( AccountsPath.c_str(), ios::out );
 
 		AccountStream << "//AI2.0" << "-UV" << VER << "-BD" << BUILD << "-DS" << time(NULL) << "-ED" << REALBUILD << "\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
-		AccountStream << "//" << AccountPath << "\n//   UOX3 uses this file to store any extra administration info\n";
+		AccountStream << "//" << AccountsPath << "\n//   UOX3 uses this file to store any extra administration info\n";
 		AccountStream << "//------------------------------------------------------------------------------\n";
 		AccountStream << "ID " << CurrentAccount->lpaarHolding->id << "\n";
 		AccountStream << "BANTIME " << CurrentAccount->ban_duration << "\n";
@@ -1007,7 +1051,8 @@ long cAccounts::SaveAccounts( string AccessPath, string AccountsPath )
 	}
 	outStream.flush();
 	outStream.close();
-
+	// See if this clears all this up..
+	AccountsPath="";
 	// We return the size of the map. Actual number of accounts in the map
 	return (long)actMap.size();
 }

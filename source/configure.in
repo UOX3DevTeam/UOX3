@@ -1,6 +1,6 @@
 AC_INIT(uox3.cpp)
 
-AM_INIT_AUTOMAKE(uox3,0.95)
+AM_INIT_AUTOMAKE(uox3,0.97)
 
 AC_PROG_CXX
 

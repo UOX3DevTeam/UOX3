@@ -42,6 +42,25 @@ bool fileCopy( const char *sourceFile, const char *targetFile )
    
 //o---------------------------------------------------------------------------o
 //|   Function    :  void fileArchive( void )
+//|   Date        :  11th April, 2002
+//|   Programmer  :  duckhead
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Makes a backup copy of a file in the shared directory.
+//|                  puts the copy in the backup directory
+//o---------------------------------------------------------------------------o
+static void backupFile(char * filename, char * backupDir)
+{
+        char backupFromFileName[MAX_PATH];
+        char backupToFileName[MAX_PATH];
+	
+	sprintf(backupFromFileName, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), filename);
+	sprintf(backupToFileName, "%s%s", backupDir, filename);
+
+	fileCopy( backupFromFileName, backupToFileName );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void fileArchive( void )
 //|   Date        :  24th September, 2001
 //|   Programmer  :  Abaddon (rewritten for 0.95)
 //o---------------------------------------------------------------------------o
@@ -65,22 +84,16 @@ void fileArchive( void )
 			timebuffer[a]='-';
 	}
 
-	int chResult = _chdir( cwmWorldState->ServerData()->GetBackupDirectory() );
-	if( chResult != 0 )
-	{
-		Console << "Cannot find backup directory, please check server.scp" << myendl;
-		return;
-	}
+	char filename1[MAX_PATH], filename2[MAX_PATH];
 
-	int makeResult = _mkdir( timebuffer );
+	sprintf( filename1, "%s%s", 
+		 cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
+	int makeResult = _mkdir( filename1 );
 	if( makeResult != 0 )
 	{
 		Console << "Cannot create backup directory, please check available disk space" << myendl;
-		_chdir( cwmWorldState->ServerData()->GetRootDirectory() );
 		return;
 	}
-
-	char filename1[MAX_PATH], filename2[MAX_PATH];
 
 	sprintf( filename1, "%s%s/accounts", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
 	makeResult = _mkdir( filename1 );
@@ -89,46 +102,41 @@ void fileArchive( void )
 	else if ( Accounts->SaveAccounts( (string)filename1, (string)filename1 ) == -1 )
 		Console << "Cannot save accounts for backup" << myendl;
 
-	sprintf( filename1, "%shouse.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	sprintf( filename2, "%s%s/house.wsc", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
+	char backupDir[MAX_PATH];
 
-	fileCopy( filename1, filename2 );
+	sprintf( backupDir, "%s%s/", 
+		 cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
+	backupFile("house.wsc", backupDir);
 
 	// effect backups
-	sprintf( filename1, "%seffects.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	sprintf( filename2, "%s%s/effects.wsc", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
-
-	fileCopy( filename1, filename2 );
+	backupFile("effects.wsc", backupDir);
 
 	const SI32 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI32 AreaY = UpperY / 8;
+	char backupPath[MAX_PATH + 1];
+
+	sprintf(backupPath, "%s%s/", 
+		cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
 
 	for( SI32 counter1 = 0; counter1 < AreaX; counter1++ )	// move left->right
 	{
 		for( SI32 counter2 = 0; counter2 < AreaY; counter2++ )	// move up->down
 		{
-			sprintf( filename1, "%s%i.%i.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), counter1, counter2 );				// let's name our file
-			sprintf( filename2, "%s%s/%i.%i.wsc", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer, counter1, counter2 );	// let's name our file
-			fileCopy( filename1, filename2 );
+			sprintf( filename1, "%i.%i.wsc", counter1, counter2 );
+			backupFile(filename1, backupDir);
 		}
 	}
-	sprintf( filename1, "%soverflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	sprintf( filename2, "%s%s/overflow.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
-	fileCopy( filename1, filename2 );
+	
+	backupFile("overflow.wsc", backupDir);
+	backupFile("jails.wsc", backupDir);
+	backupFile("guilds.wsc", backupDir);
 
-	sprintf( filename1, "%sjails.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
-	sprintf( filename2, "%s%s/jails.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
-	fileCopy( filename1, filename2 );
-
-	sprintf( filename1, "%sguilds.wsc", cwmWorldState->ServerData()->GetRootDirectory() );
-	sprintf( filename2, "%s%s/guilds.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
-	fileCopy( filename1, filename2 );
-
-	sprintf( filename1, "%sregions.wsc", cwmWorldState->ServerData()->GetRootDirectory() );
-	sprintf( filename2, "%s%s/regions.wsc", cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
+	sprintf( filename1, "%sregions.wsc", 
+		 cwmWorldState->ServerData()->GetRootDirectory() );
+	sprintf( filename2, "%s%s/regions.wsc", 
+		 cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
 	fileCopy( filename1, filename2 );
 
 	Console << "Finished backup" << myendl;
-	_chdir( cwmWorldState->ServerData()->GetRootDirectory() );
 	return;
 }

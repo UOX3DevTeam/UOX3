@@ -1,7 +1,6 @@
-//AV1.0-UV0.95.11-BD0-DS1010651861-ED0
-//------------------------------------------------------------------------------
-//Accounts.adm[TEXT] : UOX3 uses this file for accounts storage for shard access
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//Accounts.adm[TEXT]: UOX3 uses this file for accounts storage for shard access
+//-----------------------------------------------------------------------------
 SECTION ACCOUNT 0
 {
 NAME admin
@@ -11,7 +10,7 @@ LASTIP 0.0.0.1
 PUBLIC OFF
 CONTACT 
 XGMCLIENT OFF
-CHARACTER-1 1
+CHARACTER-1 -1
 CHARACTER-2 -1
 CHARACTER-3 -1
 CHARACTER-4 -1
