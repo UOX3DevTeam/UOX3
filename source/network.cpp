@@ -528,12 +528,16 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 		for( i = 0; i < now; i++ )
 		{
 			if( FD_ISSET( connClients[i]->CliSocket(), &errsock ) )
+			{
 				Disconnect( i );
+				//Disconnect( connClients[i]->CliSocket() );
+			}
 			if( ( FD_ISSET( connClients[i]->CliSocket(), &all ) ) && ( oldnow == now ) )
 			{
 				try
 				{
 					GetMsg( i );
+					//GetMsg(connClients[i]->CliSocket());
 				}
 				catch( socket_error& blah )
 				{
@@ -1449,6 +1453,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
 				LoginDisconnect( i );
+				//LoginDisconnect(loggedInClients[i]->CliSocket());
 				continue;
 			}
 			if( ( FD_ISSET( loggedInClients[i]->CliSocket(), &all ) ) && ( oldnow == loggedInClients.size() ) )
@@ -1456,6 +1461,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 				try
 				{
 					GetLoginMsg( i );
+					//GetLoginMsg(loggedInClients[i]->CliSocket());
 				}
 				catch( socket_error& blah )
 				{
@@ -1515,6 +1521,7 @@ void cNetworkStuff::LoginDisconnect( cSocket *s ) // Force disconnection of play
 {
 	UOXSOCKET i = FindLoginPtr( s );
 	LoginDisconnect( i );
+	//LoginDisconnect(s->CliSocket());
 }
 
 UOXSOCKET cNetworkStuff::FindLoginPtr( cSocket *s )

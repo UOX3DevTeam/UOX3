@@ -81,18 +81,26 @@ void cHTMLTemplate::Process( void )
 	// Get all Network Connections
 	Network->PushConn();
 	cSocket *tSock = NULL;
+	CChar *tChar = NULL;
 	for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		CChar *tChar = tSock->CurrcharObj();
-		if( tChar == NULL )
-				continue;
-	
-		if( tChar->IsGM() )
-			gm++;
-		else if( tChar->IsCounselor() )
-			cns++;
-		else 
-			ccount++;
+		tChar = tSock->CurrcharObj();
+		try
+		{
+			if( tChar == NULL )
+					continue;
+		
+			if( tChar->IsGM() )
+				gm++;
+			else if( tChar->IsCounselor() )
+				cns++;
+			else 
+				ccount++;
+		}
+		catch(...)
+		{
+			continue;
+		}
 	}
 	Network->PopConn();
 
