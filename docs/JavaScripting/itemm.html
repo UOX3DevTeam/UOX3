@@ -1,0 +1,145 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+        <h1>UOX3 Script Engine</h1>
+        <h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h3><a name="CharFuncs">Item Related Methods</a></h3>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="CreateDFNItem">CreateDFNItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM CreateDFNItem( socket, character, sectionToMake, [int Amount], [objectType], [bool inPack] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Spawns an item from a DFN section number/id.
+<tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>sectionToMake - section # to spawn from<br>int Amount - Amount of items to spawn (Optional)<br>objectType - specify the type of object being added: "BASEOBJ" "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"<br>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUse( pUser, iUsed )
+{
+	var myItem = CreateDFNItem( pUser.socket, pUser, "0x09d0", 10, "ITEM", true );
+	pUser.SysMessage( "Oh my, 10 apples just appeared in my backpack! Magic!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="CreateBlankItem">CreateBlankItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM CreateBlankItem( socket, character, amount, itemName, itemID, colour, objectType, inPack );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Spawns a "blank" item with values from the UO client's tiledata file.
+<tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>amount - The amount of items to spawn<br>itemName - the name to give to the newly spawned item<br>itemID - itemID(hex) to spawn item from<br>colour - colour of the spawned item<br>objectType - specify the type of object being added: "BASEOBJ" "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"<br>inPack - True/false whether to spawn in pack or not<br>bSend - Whether or not to send update to all players
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUse( pUser, iUsed )
+{
+	var myItem = CreateBlankItem( pUser.socket, pUser, 10, "apple", 0x09d0, 0x0, "ITEM", true );
+	pUser.SysMessage( "Oh my, 10 apples just appeared in my backpack! Magic!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSerial">GetSerial</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetSerial( part );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Part have to be between 1 and 4.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iSerial = myItem.GetSerial( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="HasSpell">HasSpell</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool HasSpell( spellNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Scans through player's contents to see if they have spellNum in the first spellbook encountered
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if(myPlayer.HasSpell( 0 )==1);
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="InRange">InRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int InRange( trgObj, srcType, trgType, distance );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>srcType and trgType are like objType for other funcs.  0 indicates a char, 1 indicates an item.<br>Returns true if the distance from srcObj to trgObj is less than distance
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if(myItem.InRange( trgItem, 0, 1, 18 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="KillTimers">KillTimers</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Killtimers( );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Kills all timers of the Char.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.KillTimers;
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="OpenPlank">OpenPlank</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenPlank( void )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens the plank of a boat.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myPlank.OpenPlank()
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="RemoveSpell">RemoveSpell</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void RemoveSpell( spellNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes spellNum from player's spellbook
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.RemoveSpell( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetCont">SetCont</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetCont( object );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the container of the item to the specified object.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.SetCont( mChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetPoison">SetPoison</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetPoison ( poisonLevel );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets a specified level of posion for an item/weapon.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myItem.SetPoison( 2 );
+//Applies level 2 poison to item
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SoundEffect">SoundEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SoundEffect( soundID, bAllHear );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Plays a sound from Character. SoundID is the full ID of the sound to play.  If bAllHear is TRUE, then everyone nearby hears it.  If it's false, then only the Character hears it. NOTE: Soundlist
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.SoundEffect( 568, TRUE );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="StartTimer">StartTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void StartTimer( numMiliSec, timerID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Starts a timer that will elapse after numHundredthsOfSec seconds pass, for a character tChar.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.StartTimer( 600, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Glow">Glow</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Glow( socket );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes the object to begin glowing.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.Glow( pSock );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="UnGlow">UnGlow</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void UnGlow( socket );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes the object to stop glowing.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.UnGlow( pSock );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="PlaceInPack">PlaceInPack</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PlaceInPack();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Randomly sets the placement of an item inside the container it is in.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.PlaceInPack();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Dupe">Dupe</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Dupe( socket );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Creates a duplicate of the item.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.Dupe( mySock );
+</pre></table>
+
+<p>&nbsp;</p><center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+</body>

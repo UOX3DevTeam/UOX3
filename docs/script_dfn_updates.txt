@@ -1,0 +1,186 @@
+// This file contains the update logs for all scripts/DFNS in the entire UOX3 folder
+// with the exception of the ITEMS folder, which has it's own update-log files.
+
+-ToDo:
+	-Rewrite/Fix up NPC equipment/loot
+	-Add toprov, topeace, fleeat, reattackat tags & values to all npcs.
+
+-=================-
+-= 26/7/04  JScripts =-
+-=================-
+-JavaScripts:
+		-Updated all scripts with CreateDFNItem/CreateBlankItem entries to support new format of said JS methods
+		-Lots of commands converted to JS
+		-Updated the basic Speech001.js file to include regular expressions in the speech-searches for more control over which words trigger NPC speech and not.		
+
+-=================-
+-= 06/11/03  DFNs =-
+-=================-
+DIGGING:
+		-Changed all UNDEADLIST entries to NPCLIST, to match change in sourcecode
+
+-=================-
+-= 19/9/03  DFNs =-
+-=================-
+GENERAL:
+		-Banlist.ini, teleport.scp, jse_fileassociations.scp and jse_objectassociations.scp, and all dictionary files
+		 have been updated to use the DFN style syntax, like this:
+			[sectionheader]
+			{
+			contents
+			}
+
+-=================-
+-= 7/9/03  DFNs =-
+-=================-
+ITEMS:
+		-Replaced iron ingot 0x1bef with 0x1bf2 in add-menu - was wrong ingot id.
+
+COMMANDS:
+		-Removed LIGHT command - light is controlled through regions now.
+
+-=================-
+-= 31/8/03  DFNs =-
+-=================-
+NPCs:
+		-Moved f-mage from femalehumans.dfn to femalevendors.dfn.
+		-Fixed ID of Imps (no longer appears as mongbat in 3D client).
+		-Added 30 gargoyle names, assigned to normal gargoyles plus shopkeeper gargoyles
+
+ITEMS:
+		-Added magic key to misc\keys.dfn
+
+DICTIONARIES:	-Added .ENG, .FRE, .UNK dictionaries, renamed dictionary.zro to dictionary.ZRO
+
+-=================-
+-= 8/8/03  DFNs =-
+-=================-
+ITEMS:
+		-Added LAYER tag to torches
+
+HTML:
+		-Added new template pages for online, offline, player, guild and gmstatus-pages have been added (EviLDeD)
+		 (Completely replaces the existing template pages)
+
+-=====================-
+-= 21/7/03  JScripts =-
+-=====================-
+
+-JavaScripts:
+		-Replaced fthreadspools-6.js in favor of flaxtothread.js
+		-Added more data to jse_objectassociations.scp (for pitchers/bottles etc, and more)
+		-Fixed/rewrote all the cooking-scripts(They should now work with both dynamic and static heat-sources.)
+		-Fixed the cutting of raw fish into fish steaks (using skinning/butcher knives), as well as grinding
+		 wheat on flour mills.
+		-Replaced cookedbird-a.js and cookedbird-b.js with cookedbird.js, no need for a seperate
+		 script for the each version of a raw bird.
+		-Fixed/rewrote all the tailoring scripts(Should now work with both dynamic and static looms/spinning wheels)
+		-Fixed the SFX for all light-source igniting/dousing.
+		-Replaced the obsolete SpawnItem methods with new CreateDFNItem ones
+		-Removed "buy" and "sell" from the keywords, so they wouldn't break the shopkeeper commands..but the
+		 uox3 sourcecode needs to be updated with a fix for SubStringSearch before this will work correctly.
+		-Added pitchers.js to /js/server/resource/ - script for using bottles/pitchers/jars/glasses.
+
+(DFNS)-NPC:
+	-Gave the Orc Scout a bow and some arrows so he can fight =)
+
+-=====================-
+-= 17/4/03  JScripts =-
+-=====================-
+
+ADDED:
+	-scissors.js (server/skill/tailoring) replaces rawwool.js, and now
+	 contains all the functions of scissors - from sheep shearing to cloth cutting.
+
+REWRITTEN:
+	-In server/resources the following scripts have had timers added to
+	 make sure it's no longer possible to harvest an enormous amount of items
+	 with no pause/delay whatsoever (also, some have visual indicators of whether
+	 or not it's at any given time possible to harvest or not):
+		Apples.js, bananas.js, coconuts.js, cotton.js, dates.js, flax.js
+		grapes.js, peaches.js, pears.js and wheat.js 
+
+FIXED:
+	-bee_hives.js (server/resources) has been fixed & given more potential outcomes
+	 for the attempt at harvesting honey/wax.
+	-furniture_destroy.js (server/misc)
+	-static_horse.js, static_llama.js, static_ostard.js, static_packhorse.js, static_packllama.js,
+	 (all found in server/npc/pets)
+
+-=================-
+-= 15/4/03  DFNs =-
+-=================-
+	
+-New Files/Folders:
+	-necro/necro.DFN split into fishing/fishing.dfn and digging/digging.dfn
+	-npc/gargoyles.dfn
+	-npc/arachnids.dfn
+	-npc/humanoids.dfn
+	-npc/reptiles.dfn
+	-npc/miscmonsters.dfn
+
+-Generic Changes:
+	-Updated version info of all DFNs to 0.98
+	-Changed all ITEM= tags to EQUIPITEM= (goes hand in hand with PACKITEM=).
+	-Removed old npclist entries
+
+-CARVE
+	-Rewrote file using UOSS Hunter's Guide as reference for both sorting
+	 and which items to give when corpse is carved, for all animals and all monsters
+	 that are reported to give carved-loot.
+
+-COMMANDS
+	-Added HOWTO= command with privilege level 1
+	-Added some privilege/detail stuff concerning what happens when a character is made
+	 GM, Counselor or Player.
+	-Removed some unused commands (USE, Trigger-related commands, XSBANK, TILEDATA, SETHEXMOREXYZ, SETSPEECH
+
+-CREATE
+	-Fixed some wrong item-ids in alchemy.dfn
+	-Added inscribe.dfn, which replaces the old inscribe.gmp file in /UOX3/GUMPS
+
+-HARDITEMS
+	-Added logs and ores with default OSI weight values.
+
+-HOUSE
+	-Updated tags that pointed to deed-items from old item-ids (ex. 6000) to new (ex. smallbrickdeed)
+
+-ITEMS
+	-Numerous changes, check dfndata/items/item-updates.txt for more details
+
+-NPC
+	-Added some missing NPCs; large hellcat, ophidian knight, ratman archer, ore-elementals,
+	 skeletal dragon, serpentine dragon, white/shadow wyrm, chaos daemon, arcane daemon, moloch, 
+	 exodus, jack rabbit, lava/ice snakes, silver serpent, rat, ethereal warrior, pixie, centaur,
+	 succubus, unicorn, ki-rin, dread spider, ilshenar gargoyles(from older DFNs by $ymbiotic)
+	-Added CARVE= tags to all animals and monsters that should have them.
+	-Added new Namelists to namelist.dfn for the following NPC-types: Daemon, Ratman, small birds,
+	 ethereal warrior, centaur, pixie - and applied them to the respective NPCs.
+	-Updated total number of random orc names to 716
+	-Updated total number of random lizardman names to 284
+	-Updated the values of tags that pointed to old itemlists, to the new ones.
+	-Updated the values of stats, skills, fame, karma and damage to match new OSI playguide
+	-Renamed the wrong SHOPPINGLIST= for malevendors.dfn to SHOPLIST=
+	-Renamed monster.dfn to miscmonsters.dfn
+	-Merged Slayer, Collector of Souls and Lord of the Abyss into one NPC: Balron, with name randomly
+	 chosen between those three.
+	-Merged orcs, lizard-men, rat-men into humanoids.dfn
+	-Merged ophidiands.dfn and terathan.dfn into t2a.dfn
+	-Merged slimes&oozes.dfn into miscmonsters.dfn
+	-Merged Namelist.dfn into Namelists.dfn
+	-Moved all NPCLISTS to NPCLISTS.DFN
+	-Removed /FLETCHING from the BOWCRAFT skill-tag for male & female bowyers
+	-Removed all SPEECH= tags as they are no longer used. NPC speech is now handled through the JS Engine.
+	-Removed Orckin.dfn - contains just duplicate NPCs
+	-Removed npc.dfn - ancient relic from days past
+	-Removed overworld.dfn
+	-Removed t2a.dfn - contents split into other files
+
+-RACES
+	-Defined 19 new races, with no special properties for each race - and placed all npcs into
+	 either of these races - preliminary work for racial/virtue/slayer weapons etc. For instance,
+	 giving a sword the tag RACE=11 will make it do twice the amount of damage against NPCs that
+	 belong to RACE 11 (which are the undeads, so we're talking about silver weapons).
+
+-TITLES
+	-Added different murderer-titles for different amount of killed people =)

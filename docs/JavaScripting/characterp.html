@@ -1,0 +1,314 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h2>Character Properties</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Property
+    <th bgcolor="maroon">Purpose
+  <tr>
+    <td>name
+    <td>The name of the character.
+  <tr>
+    <td>title
+    <td>The title of the character.
+  <tr>
+    <td>x
+    <td>The x-coordinate of the character.
+  <tr>
+    <td>y
+    <td>The y-coordinate of the character.
+  <tr>
+    <td>z
+    <td>The z-coordinate of the character. 
+  <tr>
+    <td>id
+    <td>The id of the character.
+  <tr>
+    <td>colour
+    <td>The colour of the character. 
+  <tr>
+    <td>owner
+    <td>The character that owns this character.
+  <tr>
+    <td>visible
+    <td>Characters visible status:<ul>
+		0 = Visible<br>
+		1 = Temporary Hidden (Skill, Item visible to owner)<br>
+		2 = Invisible (Magic Invis)<br>
+		3 = Permanent Hidden (GM Hide)</ul>
+  <tr>
+    <td>serial
+    <td>The serial of the character (unique identifying number).
+  <tr>
+    <td>health
+    <td>The characters' current health.
+  <tr>
+    <td>scripttrigger
+    <td>
+  <tr>
+    <td>privateword
+    <td>
+  <tr>
+    <td>worldnumber
+    <td>The number of the world this character is currently in.
+  <tr>
+    <td>target
+    <td>The characters' current target.
+  <tr>
+    <td>dexterity
+    <td>The dexterity attribute of the character.
+  <tr>
+    <td>intelligence
+    <td>The intelligence attribute of the character.
+  <tr>
+    <td>strength
+    <td>The strength attribute of the character.
+  <tr>
+    <td>skills
+    <td>Used to set and return a specific skill value of a character.
+  <tr>
+    <td>mana
+    <td>The characters' current mana.
+  <tr>
+    <td>stamina
+    <td>The characters' current stamina.
+  <tr>
+    <td>pack
+    <td>The root pack (backpack) of the character.
+  <tr>
+    <td>fame
+    <td>The fame reputation of a character.
+  <tr>
+    <td>karma
+    <td>The karma reputation of a character.
+  <tr>
+    <td>defense
+    <td>The total defense of a character (with armor).
+  <tr>
+    <td>attack
+    <td>The characters' current attack value (damage).
+  <tr>
+    <td>hunger
+    <td>The hunger level of a character.
+  <tr>
+    <td>frozen
+    <td>Toggles whether or not a character can move.
+  <tr>
+    <td>commandlevel
+    <td>The characters command level:<ul>
+	0 = Player<br>
+	1 = Counsellor<br>
+	2 = GM<br>
+	3 = Admin</ul>
+  <tr>
+    <td>race
+    <td>The characters' race.
+  <tr>
+    <td>criminal
+    <td>The characters' status as a criminal.
+  <tr>
+    <td>murderer
+    <td>The characters' status as a murderer.
+  <tr>
+    <td>innocent
+    <td>The characters' status as an innocent.
+  <tr>
+    <td>murdercount
+    <td>Total number of players this character has killed.
+  <tr>
+    <td>gender
+    <td>The gender of a character.
+  <tr>
+    <td>dead
+    <td>The characters' status (alive or dead).
+  <tr>
+    <td>npc
+    <td>Used to determine if a character is an npc or pc.
+  <tr>
+    <td>online
+    <td>Is the player online.
+  <tr>
+    <td>direction
+    <td>The direction the character is facing.
+  <tr>
+    <td>region
+    <td>The region this character is currently in.
+  <tr>
+    <td>town
+    <td>The town this character is currently in.
+  <tr>
+    <td>guild
+    <td>The guild this character is a member of.
+  <tr>
+    <td>baseskills
+    <td>Used to get and set the baseskill value of the characters' selected skill (IE myChar.baseskills.alchemy = 1000).
+  <tr>
+    <td>skillsused
+    <td>
+  <tr>
+    <td>socket
+    <td>The socket attached to this player.
+  <tr>
+    <td>isChar
+    <td>Returns true if this object is a character.
+  <tr>
+    <td>isItem
+    <td>Returns true if this object is an item.
+  <tr>
+    <td>isSpawner
+    <td>Returns true if this object is a spawn item.
+  <tr>
+    <td>raceID
+    <td>
+  <tr>
+    <td>maxhp
+    <td>The maximum health of this character.
+  <tr>
+    <td>maxstamina
+    <td>The maximum stamina of this character.
+  <tr>
+    <td>maxmana
+    <td>The maximum mana of this character.
+  <tr>
+    <td>wandertype
+    <td>The wander type of this npc:<ul>
+	0 = No movement<br>
+	1 = Following the ftarg<br>
+	2 = Wander Freely<br>
+	3 = Wander inside a box<br>
+	4 = Wander inside a circle<br>
+	5 = Flee<br>
+	6 = Pathfinding</ul>
+  <tr>
+    <td>isonhorse
+    <td>Toggles whether or not the character is currently riding a horse.
+  <tr>
+    <td>tempdex
+    <td>
+  <tr>
+    <td>tempint
+    <td>
+  <tr>
+    <td>tempstr
+    <td>
+  <tr>
+    <td>poison
+    <td>Character is poisoned
+  <tr>
+    <td>lightlevel
+    <td>The fixed light level of the character.
+  <tr>
+    <td>armour
+    <td>The base defense of a character (before armor).
+  <tr>
+    <td>vulnerable
+    <td>Sets character to either vulnerable (true) or invulnerable (false).
+  <tr>
+    <td>willhunger
+    <td>Sets character to either hunger (true) or stay full(false).
+  <tr>
+    <td>lodamage
+    <td>The minimum amount of damage an npc will do.
+  <tr>
+    <td>hidamage
+    <td>The maximum amount of damage an npc will do.
+  <tr>
+    <td>atWar
+    <td>Toggles whether or not a character is at war.
+  <tr>
+    <td>spellCast
+    <td>The spell this character is casting.
+  <tr>
+    <td>isCasting
+    <td>Character is casting a spell.
+  <tr>
+    <td>townPriv
+    <td>The privledges this character has with his town.
+  <tr>
+    <td>guildTitle
+    <td>The guild title of this character.
+  <tr>
+    <td>fontType
+    <td>The font type of this character (for speech).
+  <tr>
+    <td>sayColour
+    <td>The color of the speech of this character.
+  <tr>
+    <td>emoteColour
+    <td>The color of the emote speech of this character.
+  <tr>
+    <td>attacker
+    <td>The character attacking this character.
+  <tr>
+    <td>raceGate
+    <td>Character has used a race gate.
+  <tr>
+    <td>skillLock
+    <td>
+  <tr>
+    <td>deaths
+    <td>How many times has this character died.
+  <tr>
+    <td>nextAct
+    <td>The next action this character is going to do.
+  <tr>
+    <td>petCount
+    <td>The total number of pets this character owns.
+  <tr>
+    <td>ownedItemsCount
+    <td>The total number of items this character owns.
+  <tr>
+    <td>cell
+    <td>The jail cell this character is jailed in.
+  <tr>
+    <td>allmove
+    <td>Toggles whether or not this charracter can move any items in the world.
+  <tr>
+    <td>houseicons
+    <td>Toggles whether or not this character views the "deed item" instead of houses.
+  <tr>
+    <td>spattack
+    <td>The NPCs' spattack setting.
+  <tr>
+    <td>spdelay
+    <td>The delay between spellcasts with NPC spattack.
+  <tr>
+    <td>aitype
+    <td>The NPCs' ai type.
+  <tr>
+    <td>split
+    <td>The amount of NPCs' to split in to when hit.
+  <tr>
+    <td>splitchance
+    <td>The chance for this NPC to split when hit.
+  <tr>
+    <td>trainer
+    <td>Toggles whether or not this NPC can train players.
+  <tr>
+    <td>weight
+    <td>The total weight of this character.
+  <tr>
+    <td>squelch
+    <td>The squelched status of this character.
+  <tr>
+    <td>isJailed
+    <td>Is this character in jail?
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font>
+</center>
+
+</body>

@@ -1,0 +1,109 @@
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h2>Revision History - Last Update: 28 July 2004</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Version
+    <th bgcolor="maroon">Change 
+  <tr>
+    <td>0.40</td>
+    <td><b>Events Added:</b> onIterate<br>
+	<b>Functions Added:</b> GetDictionaryEntry, NumToString, NumToHexString, StringToNum, Yell, RaceGate, SendStaticStats, GetTileHeight, IterateOver, WorldBrightLevel, WorldDarkLevel, WorldDungeonLevel<br>
+	<b>Functions Updated:</b> SetSecondsPerUOMinute renamed to SecondsPerUOMinute<br>
+	<b>Gump Methods Added:</b> AddPageButton<br>
+	<b>Socket Methods Added:</b> BuyFrom, SellTo, WhoList, Midi, GetTimer, SetTimer<br>
+	<b>Character Methods Added:</b> DistanceTo, OpenLayer, BoltEffect, Gate, Recall, Mark, SetSkillByName, Kill, Resurrect, Jail, Release<br>
+	<b>Item Methods Added:</b> DistanceTo, Glow, UnGlow, PlaceInPack, Dupe<br>
+	<b>Methods Updated:</b> (Character)WanderBox renamed to Wander<br>
+	<b>Character Properties:</b> isSpawner, willhunger, lodamage, hidamage, atWar, spellCast, isCasting, townPriv, guildTitle, fontType, sayColour, emoteColour, attacker, raceGate, skillLock, deaths, nextAct, petCount, ownedItemsCount, cell, allmove, houseicons, spattack, spdelay, aitype, split, splitchance, trainer, weight, squelch, isJailed<br>
+	<b>Item Properties:</b> isSpawner, dir, wipable, buyvalue, sellvalue, restock, devinelock, weight, strength, corpse, spawnsection, sectionalist, mininterval, maxinterval
+    </td>
+  </tr>
+  <tr>
+    <td>0.37
+    <td><b>Events Added:</b> onSpeechInput, onGumpPress<br>
+	<b>Methods Added:</b> AddHTMLGump<br>
+	<b>Methods Updated:</b> AddTextEntry, CreateDFNItem, CreateBlankItem<br>
+  <tr>
+    <td>0.37
+    <td><b>Events Updated:</b> onDropItemOnNpc<br>
+  <tr>
+    <td>0.36
+    <td><b>Methods Added:</b> ExecuteCommand<br>
+	<b>Methods Updated:</b> WalkTo, RunTo
+  <tr>
+    <td>0.35
+    <td><b>Methods Updated:</b> DoStaticEffect is now StaticEffect, FirstIteminCont->FirstItem, NextItemInCont->NextItem, FinishedItemInCont->FinishedItems, BuyFrom, SellTo<br>
+	<b>Events Updated:</b> onUsage has been merged into onUse, onDropItemOnNpc
+  <tr>
+    <td>0.34
+    <td><b>Events Added:</b> onScrollCast, onSkillCheck, onSpellCast, onSpellTarget, onSpellSuccess<br>
+	<b>Methods Added:</b> (Gumps)AddCheckerTrans, AddCroppedText, AddGroup, AddTiledGump, AddXMFHTMLGump, AddXMFHTMLGumpColor, NoDispose, NoResize<br>
+	<b>Updated:</b> Sorted Events alphabetically<br>
+  <tr>
+    <td>0.33
+    <td><b>Added:</b> Gump-Example, Method/Function/Property Index<br>
+	<b>Methods Added:</b> CreateDFNItem, CreateBlankItem (these two replace SpawnItem)<br>
+	<b>Methods Updated:</b> SpawnNPC
+	<b>File-Object Methods:</b> Open, Close, Write, Read, ReadUntil, Free<br>
+	<b>File-Object Properties:</b> pos, length, eof<br>
+    	<b>Removed:</b> SpawnItem method, many obsolote Race-related functions<br>
+  <tr>
+    <td>0.32
+    <td><b>Added:</b> AreaCharacterFunction to function-index...forgot in last upate.<br>
+    		<b>Methods Updated:</b> DoMovingEffect<br>
+
+  <tr>
+    <td>0.31
+    <td><b>Methods Added:</b> TriggerEvent, AreaCharacterFunction, NoMove(Gumps)<br>
+		<b>Methods Updated:</b> CustomTarget, PopUpTarget, SpeechInput, MagicEffect, SetPoisoned, SetPoison, ExplodeItem, SetInvisible, GetTag & SetTag(for Items) <br>
+		<b>Methods Removed:</b> SetLocation (See Teleport)<br>
+		<b>Events Updated:</b> onStatGain, onStatLoss, onStatChange, onLeaving, onEntrance, onEquip, onUnequip, onUse, onClick, onLogin, onAISliver<br>
+		<b>Currently Broken</b>-comment added to: onDecay, onFall, onSwing, onTransfer, onDeath, onResurrect
+
+  <tr>
+    <td>0.30
+    <td><b>Added:</b> onTalk event. <br>
+	<b>Updated Events:</b> onCreate, onDelete, onCollide, onSteal, onDispel, onSkill, onSkillGain, onSkillLoss<br>
+	  	<b>Currently Broken</b>-comment added to: inRange(event), onAttack, onDefense 
+
+  <tr>
+    <td>0.29
+    <td><b>Updated</b> UseResource<br>
+
+  <tr>
+    <td>0.28
+    <td><b>Added</b> onLogout event, onClick event, OpenUrl function<br>
+		
+  <tr>
+    <td>0.27
+    <td>!!Beta-Version!!<br>
+		<b>Added:</b> A few methods and properties list, but still a lot of missing.<br>
+		<b>Updated:</b> A lot of examples.<br>
+		<b>Removed:</b> Old functions.<br>
+		NOTE: In this version are a lot of bugs, missing things etc. I've just released it in the hope, that
+		the already existing stuff will help you.
+  <tr>
+    <td>before 0.27
+    <td>See old news <a href="oldupdates.html">here</a>
+  
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3dev.net">WWW.UOX3dev.NET</a> (Daniel Stratton/Matthew Randall)</font>
+
+</center>
+
+
+</body>

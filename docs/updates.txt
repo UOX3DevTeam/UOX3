@@ -1,0 +1,719 @@
+UOX3 0.96.01 Build 0
+====================
+Fixes
+	Deleting a spawner will no longer crash the server if the spawner has spawned items/creatures
+	Visibility range for invalid races is now 0 and not 18 (may fix visibility issues when using a file with no races dfn)
+	Fixed vendor buy window so that pictures and text will order correctly
+	Reading scripts will now cope with an end of section (the }) that has trailing characters after it
+	Creatuer dismount code is cleaner and should work faster (ensuring creature is visible)
+	Krrios' client now can change worlds
+	Fixed a wholist bug where the world wouldn't update correctly
+	Offline PCs and the speaker will now no longer be considered in responding to vendor commands
+	Fixed a display message associated with bad x/y coords in region spawns
+	Summoned monsters should be effective in combat now
+	Fixed a crash bug with regards to colour on Linux
+	Updated DecayItem code so that items should decay correctly
+	The JS function MakeMenu and MakeItem should work correctly now
+Changes
+	Console cleaned up, including white borders
+	Console displays if a script is prioritized
+	Slight optimizations to item duping
+	Header includes changed for scriptsection so that adjustment to the scriptsection header won't force a full recompile
+	The where command now mentions what world the person is in
+Additions
+	Added the spawnobj and spawnobjlist tags for spawners
+
+Script Fixes
+	The OpenPlank command for JS items properly set to take 0 parameters
+	Dyes, map and keys fixed
+	Bow references fixed
+	Shields fixed
+	Wandering healer and necromancer fixed, along with spawners
+	Most coloured armour fixed in add menu
+	All spawners fixed
+Script Changes
+	More generic MOTD and tips
+	Commands dfn cleaned up and tidied up
+	Create dfn spread out over multiple files
+	All vendors use shopping lists now
+	Regions now use default names and have weather applied
+Script Additions
+	Weather entries made
+	Recall runes added
+	Tinker tools added
+	Gameboards and other decorations added to 'add menu
+	Freeze/Unfreeze added for JS character objects
+	Added maxhp property to items
+	Added IsMulti			to JS item objects (eg if( house.IsMulti() ) )
+	Added IsInMulti			to JS item objects (eg if( house.IsInMulti( mChar ) ) )
+	Added IsOnOwnerList		to JS item objects (eg if( house.IsOnOwnerList( mChar ) ) )
+	Added IsOnBanList		to JS item objects (eg if( house.IsOnBanList( mChar ) ) )
+	Added AddToOwnerList		to JS item objects (eg house.AddToOwnerList( mChar ) )
+	Added AddToBanList		to JS item objects (eg house.AddToBanList( mChar ) )
+	Added RemoveFromBanList		to JS item objects (eg house.RemvoeFromBanList( mChar ) )
+	Added RemoveFromOwnerList	to JS item objects (eg house.RemoveFromOwnerList( mChar ) )
+	Added CastSpell			to JS char objects
+
+
+UOX3 0.96.00 Build 0
+====================
+Fixes
+	Fixed a bug where name2 was returning the name property instead
+	Hopefully fixed %playerrace in HTML
+	Fixed client crash relating to pentagram deeds
+	Creating houses now works correctly
+	Creating houses with invalid items will no longer crash the server
+	Using 'gochar on non existent socket will no longer crash
+	Player's cannot 'deletechar themselves
+	FindMulti takes 1 or 4 parameters (ie an object or x, y, z, worldNumber)
+	SE function SpawnItem now OO friendly, taking a string instead of a number for section number (so make sure it's "0x0EED" not 0x0EED)
+	DoTempEffect now OO friendly
+	Fixed a 'makeshop bug where new buy containers weren't sent out to other clients around
+Script Fixes
+	All houses and house deeds should work properly now
+	Multi item deeds like pentagrams should work correctly
+	Many creature spawners should be fixed
+	The harvest JS scripts should work correctly now
+	A lot of the 'add menu works more now (forge and resources, footwear, spawners)
+Changes
+	The race property visRange has changed in purpose.  It's no longer the distance that can be seen, but the addition to the normal range.  So if you wanted it to be longer, set it to 2 (sees 2 more than "normal")
+	Unknown world file tags are now warnings, not errors, and shown in blue
+	Range checking for characters and items have been updated, hopefully resolving the disappearing items/characters problems
+	Quite a bit more error reporting
+	Console streamlined so it doesn't print so many blank lines
+	Dictionary loading will report on dictionaries it doesn't have
+	Code cleanup, to reduce the complexity of some SetLocation calls
+	After a 'rename, statwindow packet sent
+	Map loading routine streamlined and simplified
+	Reloading accounts from console will tell you about it's success or failure
+	onLogin on the global script fires if there is no assigned script to the PC logging in
+Script Changes
+	More vendors use shopping lists now
+
+Removals
+	Some SE functions now removed, as they have equivalent JS properties
+	SE functions removed:
+		CheckSkill
+		CustomTarget
+		SetLocation
+		SetSkill
+		DoSoundEffect
+		InRange
+
+Additions
+	FindItemLayer added to JS char as method
+	StartTimer added to JS items and characters, taking 2 parameters (delay in MS, timer ID)
+	Added setscptrig to area comand support
+	Krrios' client is now recognized as such
+	Update Range packet works now, we assume Krrios' client is correct, and that normal OSI clients are range - 3 for validity.
+	Binary save mode added, still experimental only
+	The CheckSkill() method added to JS characters, so mChar.CheckSkill( skillNum, minSkill, maxSkill ) will return true or false if the check passed
+	OpenPlank method added to JS Item
+Script Additions
+	Added all 192 known creature statues (98 normal, 94 UOTD)
+
+UOX3 0.95.11 Build 0
+====================
+Fixes
+	Houses and boats save out and load correctly
+	Installer creates the dfndata\html\tpl directory
+	Default accounts.adm is now numbered
+	Default uox.ini contains corrected SCRIPTSECTIONHEADER setting
+	Updated commands.dfn to get rid of the warnings
+	Fixed a bug in the regions.dfn with bad section headers for regions 1 and 2
+	Updated UOTD mounts
+	Removed amount2 property from items as it's never used
+
+UOX3 0.95.10 Build 0
+====================
+Fixes
+	Fixed a bug where 'killall would kill PCs
+	Standing harp (0x01B1) has proper sound effects on failure and success
+	Fixed a bug relating to killing a pack
+	Fixed bug where attacking monster in guarded area without default npc.scp would crash server
+	World save text is forcibly displayed on clients when it starts
+	Fixed a bug where the day timer would go nuts
+	Fixed a bug where calcItemObjFromSer with INVALIDSERIAL would return valid object
+	Multi related events should fire more frequently
+	Fixed item creation code so it spawns less serials
+	for loops and such should work on JS scripts now
+	Fixed a bug where logging would occur even if not turned on
+	Fixed a bug where shop layers were not showing up with 'gmopen
+	Fixed dropItem bug
+	Fixed linux freezes
+	Fixed char creation with 0 intelligence
+	Fixed a bug where spawn serials and owner serials were not properly set
+	Fixed bug where SpawnRandomMonster would fail
+	Crash fixes
+	Fixed NPCs killing themselves when casting area spells in combat
+	Meditation fixes
+	Fixed a reload JS scripts bug
+	Fixed shutdown crashes
+	SetSkill updated so that it updates skill values to the client
+	Fixed a bug with SetSerial where it would put an itme in the hash table twice
+	Smithing only works on valid ingot IDs
+	Fixed repair tools as they would do the wrong action
+	No longer forced to have skin colours > 0x8000
+Changes
+	Updated repair code
+	Smith action on non-ingots attempts a repair
+	server.scp doesn't reload from R, as it no longer exists
+	'tile and 'tilew now support single field ID, eg 'tile 0x0EED
+	Tweaks/clean up in CheckEquipment
+	Temperature changed from UI08 to SI08, for Krrios' client support
+	Switched over to the DFN system
+	Switched to a new HTML page template system
+	Changed the JS system from a functional one to an object driven one
+	Prepared code for an update to the spawner system
+	Performance updates
+	Murderer and creator is now SERIAL based not STRING based
+	JS scripts that ship converted to newer object format (no compilation errors)
+Additions
+	Added skill delay when successfully targeting with mining
+	Added onSpellTarget event, fires on a character or item when it's targeted by a spell.  Also triggers before the server does damage effects.
+	Added CV_KRRIOS to client types
+	Added STRIPOFF tag in command level description to tell 'make whether to remove items in pack and hair/beard
+	Added 'reloaddefs command to reload definitions
+	Added 'temp command to find the temperature of a curretion  region
+	Added a script error reporter, detailing what went wrong if scripts don't succeed
+	Added colour coding for success / failure of startup stuff
+	Added the areacommand command, it works on all the items in an area.  Valid syntaxes are:
+		'areacommand dye ####
+		'areacommand wipe
+		'areacommand incx ####
+		'areacommand incy ####
+		'areacommand incz ####
+		'areacommand setx ####
+		'areacommand sety ####
+		'areacommand setz ####
+		'areacommand settype ####
+		'areacommand newbie ####
+	Where for newbie, if it's 0, not newbie, if it's 1, it is
+
+JS System changes
+	As it currently stands, a lot of the old functionality has gone out, with newer stuff put in it's place.  A lot of the old SE functions have changed to be replaced with item properties.  Here is a list:
+	Documentation updates WILL be made in the next week, so that people can get a firmer grasp on things.
+
+Item properties
+	New property	Old Function
+	============================
+	name		GetName / SetName
+	title		GetTitle / SetTitle
+	x		GetX / SetX
+	y		GetY / SetY
+	z		GetZ / SetZ
+	id		GetID / SetID
+	colour		GetColour / SetColour
+	owner		GetOwner / SetOwner
+	visible		GetVisible / SetVisible
+	serial		GetSerial / SetSerial
+	health		GetHealth / SetHealth
+	scripttrigger	GetScriptTrigger / NewScriptTrigger
+	worldnumber	GetWorldNumber / SetWorldNumber
+	amount		GetAmount / SetAmount
+	container	GetContainer / SetContainer
+	type		GetType / SetType
+	more		GetMore / SetMore
+	morex		GetMoreX / SetMoreX
+	morey		GetMoreY / SetMoreY
+	morez		GetMoreZ / SetMoreZ
+	movable		GetMovable / SetMovable
+	att		GetAtt / SetAtt
+	def		GetDef / SetDef
+	layer		GetLayer / SetLayer
+	lodamage	GetLowDamage
+	hidamage	GetHiDamage
+	name2
+	isChar
+	isItem
+	race
+	raceID
+
+for simplicity, let's take an example.  Old style code might look like:
+
+	var iID = GetID( iSwung, 1 );
+	iID = iID + 5;
+	SetID( iID, iSwung, 1 );
+
+You could replace that with:
+
+	iSwung.id = iSwung.id + 5;
+
+Thus, we're now on a PROPERTY system.
+
+Character properties
+====================
+	name
+	title
+	x
+	y
+	z
+	id
+	colour
+	owner
+	visible
+	serial
+	health
+	scripttrigger
+	privateword
+	worldnumber
+	target
+	dexterity
+	intelligence
+	strength
+	skills
+	mana
+	stamina
+	pack
+	fame
+	karma
+	defense
+	attack
+	hunger
+	frozen
+	commandlevel
+	race
+	criminal
+	murderer
+	innocent
+	murdercount
+	gender
+	dead
+	npc
+	online
+	direction
+	region
+	town
+	guild
+	baseskills
+	skillsused
+	socket
+	xid
+	xskin
+	isChar
+	isItem
+	raceID
+	
+
+UOX3 0.95.07 Build 0
+====================
+
+Fixes
+	Number of crash fixes made
+	Iterator preservation system in place for sockets, avoiding infinite loops and allowing loops to pick up properly
+	Resource.bin is saved on each world save and reloaded on startup
+	TreeTarget code updated so that it should always generate logs (if any) when tree targeted
+	Fixed an account reload bug that reset characters forcing new ones to be made
+	Debug builds have socket logging on by default
+	Animals will highlight blue in guarded regions, gray outside
+	Monsters will no longer attack animals if monsters vs animals is set to off
+	Won't change worlds if the client doesn't support it
+	Gump text entries that take numbers extended by 2 to support 0x
+	All planks and logs will fire the carpentry menu
+	Updated makemenu handling so that if a bad item is created, skills in use are turned off
+	CACHE_MULS 1 will now work properly
+	Deleting a multi (via deeding or 'showhs) crash now fixed
+	Fixed a MoreB and More corruption bug when only part of it was set
+	Fixed an auto account creation bug causing new characters to be put in the wrong account
+	Account reading code will ensure no accounts will have the same number as another
+	Archiving now saves all the files properly
+	Slight combat fixes
+	Vendor stuff should be displayed
+	Criminal flagging should be correct
+Changes
+	Console Thread cleanups
+	Compiles under mingw
+	Writes out new accounts file format
+	Memory consumption lowered slightly
+	Source code cleanups and tidy ups
+	Some structures converted to more OO friendly classes
+	Multi area caching added, speeding up all functions that rely on multi area size calculations
+	Code should be MUCH more CPU independent (proper sizing)
+	Increased compiler compatability
+Additions
+	Added JS functions FileOpen, FileClose, EndOfFile, Read, ReadUntil, Write, StringToNum, NumToString JS.
+	All UOTD animations now supported
+	Added item type 89 which is a map change gate.  MoreXYZ is the target location and MORE is the target world number.
+	World transfer support via teleport.scp exists (7th parameter is source world which can be -1 for all, 8th parameter is target world)
+	GetWorldNumber added to JS functions, taking 2 parameters (object and object type)
+	Animal flags added to creature structures
+	UOTD map support is now in (including spawning of NPCs and ITEMs on it).  Just plonk map2.mul, staidx2.mul and statics2.mul in the same directory as your others, and it will support it.
+
+
+UOX3 0.95.01 Build 2
+====================
+Fixes
+	Fixed a nasty bug with makeNum that was causing data loss (full spellbooks becoming empty, etc)
+	Gate code replaced, fixing some bugs where gates wouldn't always link properly
+	Stacking code now will no longer crash (as exhibited by dropping gold on a character when they already had gold in their pack)
+	Fixed a windows bug where commands were not reading hex values correctly
+	Fixed a bug where casting a spell when you're already casting would give an already casting message, but change the casted spell to the second spell
+Changes
+	Reduced global memory consumption
+	Weather damage is now signed, allowing for healing for races
+	dumpgump.txt only generated in debug mode
+Additions
+	Zippy and Retalin now are members of the group
+
+UOX3 0.95.01 Build 1
+====================
+
+Fixes
+	Fixed the auto save not working bug
+	Fixed the console broadcast corruption bug
+	Fixed a crash bug that occurs near the edge of a map
+	Fixed a bug where it would try and colourize a beard object that didn't exist (in relation to races)
+	Fixed envoke.scp parsing under windows
+	VERSION tag in menus.scp now properly displays the version
+	Fixed a linux path mapping bug
+	Fixed a guildstone naming bug
+	Fixed soem crash bugs due to faulty code (ie 'remove on an item now won't crash the server)
+	Fixed the rename crash bug
+	Fixes to the SE functions GetPackOwner, FindMulti and SpawnItem (courtesy of harkon)
+	Fixed guildstone placement bug
+	Fixed script function lookup problem (harkon)
+	Fixed some crashes related to SpawnRegions
+	Fixed some book related issues
+	Fixed the summon daemon death crash
+	Fixed a death related crash bug
+	Fixed some item / char deletion issues
+	Fixed auto account creation bug (Mr_Fixit)
+	Fixed a bug where guildstones were not properly removed when last member resigns
+	Fixed some endless loops
+Changes
+	Books are now saved in the books/ subdirectory.  Move your existing books in there for them to still work.
+	REQUIREBEARD is now off by default
+	gmpage_st is now a HelpRequest class
+	Combat spam only put out during debug
+	Lots of code clean up / tidy ups
+	UINT, INT, UCHAR, CHAR and TCHAR are removed and replaced with their xIxx equivalents
+	'skin takes 1 parameter (single combined id)
+	'dye takes 1 parameter (single combined id)
+	'sfx takes 1 or 2 parameters (single combined id, or separate)
+	'gumpopen takes 1 or 2 parameters (single combined id, or separate)
+	'delid takes 1 or 2 parameters (single combined id, or separate)
+	Smelting heavily rewritten, on newly created items should return half the resources required to make it
+	Removed the 'wanim command
+	ping statistic is now updated to also return the time of the server
+	Removed a large number of #ifdef's related to operating system
+	xGM who packet updated to properly reflect who's online, offline or logging
+	~CItem now does the bulk of meaningful work when an item is deleted
+	ACTREC's inworld is now a SERIAL instead of a char index, allowing greater speed and flexibility
+	Must be online or an NPC to sustain hunger damage or change hunger status
+	Rewritten tweak menu
+Additions
+	create.scp item creation now tracks which entry it was made from
+	PeakConnectionCount added to cNetworkStuff
+	Placeholder code in place for show queue quest xGM packet
+	Added GUIINFORMATION tag to menus.scp batch section.  Use in place of VERSION and INFORMATION for a gump based view of it
+	GetLightLevel (SE function) added to function table, can now be called
+	Input packet class handles packet 0xC8
+	Added Access Level Change Request and Response for xGM (JoeMC)
+Notes
+	STLPort compatability with VC6 improved (but not complete)
+
+
+UOX3 0.95.04
+============
+
+Fixes
+	Numerous xGM related crash bugs fixed.  It is now possible to login and receive stats, as well as submit and receive protocol version information correctly.
+	Adjusting the PORT value in server.scp will now affect the port that the server listens to
+	Weblaunch bug fix (works correctly)
+	Guild name crash bug fix
+	Disappearing boat bug is now fixed
+	Guards no longer attack the person who summoned them
+	Guards won't disappear in the middle of battle
+	Character creation crash bugs were stopped
+	NPC walking crash bug fixed
+	Fixed a non-swinging NPC combat bug
+	Some corrected pack checks
+	Fixed some disappearing item / layer bugs
+	Removed some dead and unreachable code
+	Archers cannot fire while running
+	Fixed a crash bug when using 'make on an offline character
+	Fixed some duping bugs
+	Tracking menus now work correctly
+	Night sight fixes
+	Linux compilation fixes
+	Fixed a tempeffect bug that stopped any noncharacter based temp effect from completing
+Changes
+	GMs now gain skill
+	Archers must be 2 or more paces away to fire
+	Autostacking is now in it's own function
+	Deprecated ITEMHAND in favour of using LAYERs
+	Guildmaster title is 15 characters not 3
+	Beggingtext is now dictionary entry based
+	The dictionary system has been collapsed down to a simpler system.  Rather than a dictionary for each language code, there is now a dictionary for each group (ie all English use .ENG, and so on).  The language files are:
+		ENG	English
+		GER	German
+		JAP	Japanese
+		FRE	French
+		SPA	Spanish
+		UNK	Unknown (untranslateable by systran)
+		ZRO	Default
+Notes
+
+Additions
+	Carving up creatures now uses carve.scp instead of hard coded values.
+	Added GetMoreX, GetMoreY, GetMoreZ, SetMoreX, SetMoreY, SetMoreZ SE functions
+
+UOX3 0.95.03 Build 2
+====================
+
+Fixes
+	Doors should be useable correctly again
+	Combat lag fixes
+	Fixed several crash bugs and -1 character references
+	Fixed NPC spellcasting crash
+	Fixed a bug allowing people to do melee combat from a distance
+	Fixed bad direction errors
+	Fixed a world load crash bug when the path length was more than 50 characters
+	Fixed some small issues with NPCs in combat
+	Fixed some spurious boat issues where movement wouldn't always occur
+Notes
+	Greater cleanliness of code and optimizations
+Additions
+	Added a truly stupendous amount of unicode language pairs.  Note that this won't be the final implementation, as we want to collapse some of the englishes into a single english dict, and so on.
+
+UOX3 0.95.03 Build 1
+====================
+
+Fixes
+	Fixed a bug where events would prematurely be cancelled out
+	Fixed some empty speech crash bugs
+	Fixed xGM crash bugs
+	Fixed begging gold exploit
+	Doors are no longer blocked by offline characters
+	Inscribing will no longer gain skill if you don't have enough reags or mana
+	Fixed some SE Gump function bugs
+	Character deletion packet fixes
+	Fixed unknown language problem when based on case
+	Fixed a potential monster gate issue
+	Fixed a combat crash bug
+	Fixed a script reading bug when making items
+	Fixed a duping bug
+	Fixed the SE functions CalcRank and CommandDetails
+	Fixed SpawnNPC to use only the variables it needs to.
+	Only items inside multis will display [Locked down]
+Changes
+	Rewritten jail system
+	Greater linux compatability
+	Code clean up / tidy ups
+	Optimizations and cleanups (reducing binary size)
+	Will only go criminal if an innocent walks into a fire / para / poison field
+	Looting corpses, if innocent and not a racial / guild enemy/ally, will flag you criminal
+	All log files should be written into the logs/ directory
+	Need line of sight and range check to do forensics now
+	Using an explosion potion that damages an innocent turns the user criminal
+Additions
+	Implemented the SE function GetLightLevel
+	Added jail location scriptability.  It's in SECTION JAILS in regions.scp.  The X and Y tags need to come before the Z tag (to ensure a valid location)
+	eg
+	SECTION JAILS
+	{
+	X 5276
+	Y 1164
+	Z 0	// Jail 1
+	X 5286
+	Y 1164
+	Z 0	// Jail 2
+	}
+	Added InRange and OutOfRange support for characters
+	Added periodic sound playback and item creation delays into create.scp.  Use the DELAY # tag in an item in create.scp where # is number secs * 100.  So 1 sec == 100. Use the SOUND # tag to specify what sound to play every 3 seconds, where # is a hex number.
+	Added UO3D mount support (some are stlil wrong)
+	Added weapon damage support
+	Added deletechar command to delete a PC
+Notes
+	Greater compatability (but not implementation of) DFN system.  This means the create.scp stuff should work a lot better now.
+
+UOX3 0.95.02 Build 1
+====================
+
+Fixes
+	Playing instrument via peacemaking will sound out correctly
+	Weight code updated/corrected so that it should work correctly
+	Doors should automatically close correctly (provided they're not blocked)
+	Skill window displays skill data correctly
+	Solved the 0 effective skill bug
+	Bank boxes will open repeatedly (not just once)
+	No longer crashes when entering jail area
+	Housing/boat placement ghosting works correctly
+	Magery will now properly delete reagents (and not take too many/too little)
+	Won't get an out of range error when trying to open your corpse when you die in a multi
+	Will no longer crash on overloaded tiles
+	IP Connection display under Win32 should be better
+	Fixed some racially based crash bugs
+
+Changes
+	Repositioned buttons on new make menu
+	Adjusted range of being able to make items from minSkill->maxSkill to minSkill->maxSkill * 1.5
+	Add menu now displays the menu #
+	Changed the listening socket to a nonblocking listening socket
+	GMs and players will see items the same way (though GMs will see the serial).  This includes all aspects of it (name, charges, pluralization and such)
+	It will no longer be possible to engrave most items (gold, corpses and such)
+	Stealing will now depend on player's AR
+	Significant code cleanups
+
+Additions
+	Added onEnterRegion and onLeaveRegion events
+	Added GetClientVersion and GetClientType SE functions
+	Added GetTileIDAtMapCoord SE function
+	Added SCRIPT tag to items.scp and npc.scp
+	Linux source compatability (requires GCC 2.96 or above, as 2.95 doesn't support anonymouse unions)
+
+Notes
+	The create.scp will mostly not work currently as it is geared towards the definition system, and thus most things won't work correctly
+
+UOX3 0.95.01
+====================
+
+Fixes
+	More constructor fixes, values should be written out correctly for races and a few other things
+	Spellbook (full spellbook should highlight properly)
+	Town HTML now has directory support (see example code)
+	Installer now comes with msvcrtd.dll
+	Empty bottle creation via potion usage / poisoning has been corrected, so it spawns in the proper location
+	Number of possible crashes due to races have been stopped
+	Some SE functions have been fixed due to bad boolean comparison (soundeffect should now work).
+	CustomTarget now calls back through the script that started the target
+Changes
+	Mapping a JS script # to a JS script where the JS script does not exist will no longer crash on script usage
+	Mapping a JS script # to a JS script that does not exist will print out a message saying so
+	Slight tweaks to the console
+	Weapon repair is now possible
+	Multiple file scanning through SCP files
+	Priority scanning of multiple SCP searches
+	Debug output generated for a significant number of SE functions
+	Multiple healing speed ups
+	Skill code simplifications
+	Definition file updates
+	Incognito will now no longer show up guild colourings/names
+	SE Gump functions have now been implemented (though are still undocumented).  These functions are:
+		Gump_CreateGump
+		Gump_Delete
+		Gump_AddCheckbox
+		Gump_AddButton
+		Gump_AddText
+		Gump_AddTextEntry
+		Gump_AddRadio
+		Gump_AddPage
+		Gump_AddPicture
+		Gump_AddGump
+		Gump_AddBackground
+		Gump_SendToSocket
+	Few more SE functions have also been written (and are still currently not documented)
+		CalcTargetedItem
+		CalcTargetedChar
+		CheckSkill
+		GetPackOwner
+		TriggerEvent
+		SpawnItem
+		SpawnNPC
+	The following commands have been removed
+		acct
+		makegm
+		makecns
+		dry
+		snow
+		rain
+	Instead of makegm and makecns, you could be using 'make gm or 'make counselor.  Note that you can also use 'make player.
+	The command 'nacct is being worked upon, and will replace the point of acct.
+	Envoke.scp format has now changed and is used for JS functions.  It's format is now:
+
+	ItemID	Script #
+	ItemID	Script #
+
+	and so on.  Check the bundled envoke.scp for examples (script # points to a mapped JS script number.  It will be OnUse that fires).
+
+UOX3 0.95.00 Build 3
+====================
+
+Fixes
+	Mount saving while mounted should work
+	The getlight command gets regional values
+	Large item and loot lists now won't crash
+Changes
+	The range for onSpeech event is increased to 5 paces from 2
+	SnoopIsCrime support in server.scp added
+	Cannon building code was removed
+	Horse mounting/unmounting is char based, not socket based, allowing for NPCs to mount/unmount
+	Added support for the GET tag for items.scp.  Currently, if you use GET, the data you pass is a SECTION ITEM #.  The # is the value you put in
+		eg
+			SECTION ITEM 123
+			{
+			GET 124
+			}
+	
+
+UOX3 0.95.00 Build 2
+====================
+
+Fixes
+	Loading both possible public build format uox3.ini files works correctly
+	OnEquip and OnUnequip should fire correctly
+	Fixed a create menu skill crash bug
+	Fixed JS reload crash bug
+	Using a potion will create a new empty bottle, or add to existing stack, while decrementing (or deleting) current potion used
+	Using the poisoning skill now properly deletes/decrements the potions used, and creates an empty bottle
+	Can't poison bows
+	Can only poison items with a HiDamage value > 0 
+	Incognito'd players only display skill, not title
+Tasks
+	Need to update TOwn HTML to support directory selection (as it currently outputs to ./town/ from where it is run from)
+	Need to update world save code so that mounted pets save/load properly
+Changes
+	During world save, player HTML is generated for all PCs
+	Town HTML is now generated on HTML generation event
+	General code tidy ups in regards to double and single click
+
+Valid Town HTML tags
+(section TOWN_MAIN in htmlstrm.scp)
+
+	LINE	same as others
+	TIME	current real time
+	TOWNLIST Table based set of links to other towns
+
+(section TOWN_PAGE in htmlstrm.scp)
+	APPEARANCE	Summer, Autumn, Winter, Spring, Desolation
+	CURTEMP		Current temperature
+	CURLIGHT	Current light level
+	CURWIND		Current Wind speed
+	ENUMORE		Table of ore preferences (name and % chance)
+	ENUMENEMYTOWNS	Table list of enemy towns (name, population and race)
+	IFGUARDED	Prints true if guarded, false if not
+	IFGATE		Prints true if gate is allowed, false if not
+	IFRECALL	Prints true if recall is allowed, false if not
+	IFMARK		Prints true if mark is allowed, false if not
+	IFAGGRESSIVE	Prints true if aggressive magic is allowed, false if not
+	MAYOR		Prints out mayor's name
+	MAXTEMP		Prints maximum temperature of town
+	MAXLIGHT	Prints maximum light level of town
+	MAXWIND		Prints maximum wind speed of town
+	MINTEMP		Prints minimum temperature of town
+	MINLIGHT	Prints minimum light level of town
+	MINWIND		Prints minimum wind speed of town
+	NUMGUARDS	Prints number of guards of the town
+	NUMMEMBERS	Prints out the town's population
+	NAME		Prints out town name (putting "Dungeon" in front if it's a dungeon)
+	NUMORE		Prints number of ores that can be found
+	OWNER		Prints the town's owner
+	RACE		Prints the town's race name
+
+UOX3 0.95.00 Build 1
+====================
+
+Fixes
+	Character list changes to accomodate newer client types
+	Slight dictionary fixes (memory clean up  / crash fix)
+	Cannot polymorph once polymorphed
+	Cannot go incognito once incognito
+	Cannot cast a spell while already casting a spell
+	Corrected an onCollide issue occuring when the event was triggered by the item being within range
+	Corrected a townstone crash bug
+	Corrected a bug where it was looking for scpTrig.scp in the binary dir, not the scripts dir
+Changes
+	Dictionary.def fleshed out and used throughout the code
+	General code tidy up / clean ups
+	Integrated public source HTML updates
+	Integrated public source beneficial to murderer->criminal situations

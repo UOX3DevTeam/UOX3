@@ -1,0 +1,1672 @@
+7/24/2004 - giwo
+	Fixed an issue with UString::number() causing it to only return decimal values.
+	JS Updates:
+		Added SendStaticStats() to build an info gump for statics and map tiles.
+		Added Gump.AddPageButton() to allow Next/Last page buttons.
+		Added NumToHexString() to allow converting a number to a hex string.
+		Added SetSkillByName() method to CChar to simplify setting skill by name.
+		Properties:
+			Characters:
+			Added spattack prop to set NPC's Spell Attack value.
+			Added spdelay prop to set NPC's Spell Delay value.
+			Added aitype prop to set NPC's AI Type.
+			Added split prop to set amount of NPC's to split into on hit.
+			Added splitchance prop to set NPC's chance of splitting on hit.
+			Added trainer prop to toggle NPC's ability to train skills.
+			Items:
+			Added strength prop to set items str-to-wear value.
+			Added wipable prop to toggle items ability to be wiped.
+			Added buyvalue and sellvalue props to set items value.
+			Added restock prop to set amount of items to restock in a shop.
+			Added devinelock prop to set items Devinely Locked property.
+			Spawners:
+			Added spawnsection prop to set script section for spawner to pull from.
+			Added sectionalist prop to toggle whether or not the above section is a list.
+			Added mininterval and maxinterval to set how many of an item to respawn per call.
+			Misc:
+			Added weight prop to Characters and Items to get and set the weight value.
+			Added isSpawner prop to Characters and Items to identify a SpawnItem.
+			Added allskills prop to Skills class to set all skills at once.
+	Command Updates:
+		Moved ISTATS out to JS.
+		Moved CSTATS out to JS.
+		Moved SET out to JS.
+		Moved INCX, INCY, and INCZ out to JS.
+		Removed WF
+
+7/22/2004 - giwo
+	Added JS access to sockets xtext (string) property.
+
+7/20/2004 - giwo
+	Fixed an issue causing a crash on shutting down the server.
+	Modified UOX to disallow loading one script whilst another is loading.
+	Fixed an issue causing newer clients to lockup when using a boat.
+	Fixed an issue causing PostLoadProcessing() to never be called for Multis.
+
+7/18/2004 - giwo
+	Fixed an issue causing items and characters not to be properly removed from sight.
+	Fixed a minor problem causing statwindows to not update properly.
+	Fixed an issue causing item and characters to not be distinguished properly when doing a calcFromSer().
+	Fixed an issue causing client to lag permanently shortly after logging in.
+	Fixed an issue causing UOX to bail out when setting the container of an item in JS.
+	Consolidated some code in cSocket.cpp
+	Began moving commands out to js:
+		ACTION
+		ALLMOVE
+		BOLT
+		BRIGHTLIGHT
+		BUY
+		CY		(Now cnsyell)
+		DARKLIGHT
+		DUNGEONLIGHT
+		FULLSTATS
+		GATE
+		GLOW
+		GMOPEN		(Now openlayer)
+		GY		(Now gmyell)
+		SGY		(Now adminyell)
+		SHOWTIME
+		HEAL
+		HOUSEICONS
+		MANA
+		MARK
+		MIDI
+		MOVETOBAG
+		NPCTARGET	(Now follow)
+		READINI		(Now reloadini)
+		RECALL
+		RELOADACCOUNTS
+		RELOADDEFS
+		REMOVE
+		REMOVESHOP
+		RESEND
+		SELL
+		SETPOISONED
+		SETRACE
+		SFX
+		SKIN
+		STAMINA
+		UNGLOW
+		WHOLIST
+		XBANK		(Now openbank)
+	Added the following functions to the JS engine:
+		Yell( socket, toYell, commandLevel )
+		GetDictionaryEntry( entryNum, [language] )
+		RaceGate( socket, character, raceNum )
+		WorldDarkLevel() to set and return cSD:WorldLightDarkLevel().
+		WorldDungeonLevel() to set and return cSD:DungeonLightLevel()
+	Added the following character props & methods:
+		(bool) allmove
+		(bool) houseicons
+		OpenLayer()
+	Added the following item methods:
+		UnGlow()
+		PlaceInPack()
+	Added the following cSocket props & methods
+		(object) tempObj
+		WhoList()
+	Modified:
+		Reload(), Now accepts case 9, reload accounts.
+		GetWorldBrightLevel() renamed to WorldBrightLevel(), now sets and returns cSD::WorldLightBrightLevel()
+
+14 July 2004 - Maarc
+============
+	Integrated Xuri's dir property for JS items
+	Bug fix on command_darklight (Xuri)
+	Altered the ACCOUNTSBLOCK code so that it uses proper constructor rather than assignment (double assignment, essentially)
+	Removed some unused properties of accounts (bPackPacket)
+
+
+7/12/2004 - giwo
+	Added 'FIXSPAWN command to update all item spawners in the world to work with CSpawnItem.
+	Minor changes.
+
+7/11/2004 - giwo
+	Fully implemented CSpawnItem, removing remnants of old spawners.
+	(Note this will break any current spawn items you have in your world, sorry for the inconvenience).
+	Broke cBaseObject::Dupe() into two functions, Dupe() and CopyData() to allow carrying over cBO settings
+		to the Duped item and make way for future sub-classes of CItem and CChar.
+	Modified townregions to now store an npclist to pull guards from and the total amount of guards to spawn.
+	Updated the CommandList docs with the latest changes to the command list.
+	Minor consolidations and modifications to the scripts.
+		Removed /tracking/ and /polymorph/ moving their scripts into /menus/.
+		Removed /digging/ and /fishing/ moving their scripts into /items/itemlists/.
+		Fixed up /items/gmmenu/spawners.dfn to function with CSpawnItem changes.
+		Modified regions.dfn to match up with changes to TownRegions.
+		Fixed an issue causing advance.dfn to not read in properly.
+	Fixed an issue causing nested itemlists and npcslists to not function properly.
+	Added a few more dictionary entries.
+
+09 July 2004 - Maarc
+============
+	Completely switched over to ObjectFactory code, getting rid of the other stuff - think its best for debugging
+	Fixed a bug with 'make gm, we were trying to sprintf a std::string
+	Removed periodic trigger code, as it never has a chance to load or activate, and needs a rethink (more like commands or spells?)
+
+08 July 2004 - Maarc
+============
+	Changed the saving of Damage property, we read it in as lo,hi and write it as hi,lo - now consistent
+	Found the non-disappearing horse bug on mounting.... Teleport() does a RemoveFromSight, but by THAT time, we've already... gone :)
+		2 possible fixes
+			1) Store the old location so it can be used on RemoveFromSight
+			2) Tell *everyone* about it
+		For the moment, I have elected the former until we can decide on a better strategy, as the implementation does get a bit hairy
+	Implementation was missing for Delete() for CItem and CChar under ObjectFactory mode - by implementing this, wipe works again, amongst other things.
+
+7/7/2004 - giwo
+	Consolidated all the more's in CItem into a single tempVars[] array.
+	Once again implemented deques in SubRegions and fixed some issues with list corruption.
+	Implemented deques in CItem to avoid corruption in Containers
+	Added CObjectHandler class to replace need for hash tables to map serials to indexes.
+	Fixed some possible issues with cSpawnRegions.
+	Fixed an issue causing some crashes involving speech.
+	Further implementation of CSpawnItem.
+	Fixed many areas where a hex value did not have the 0x infront of it.
+	Modified CreateDFNItem() and CreateBlankItem(), now accepts specification of the objecttype (defaults to normal item).
+	Modified a few of the targeting functions to make way for adding spawner items.
+
+07 July 2004 - Maarc
+============
+	JS related fixes
+		"scrollLow" property of Spell objects was set as an index... it's not that, it's an individual value
+		skillsused is now like baseskills and skills for characters (previously unaccessible)
+		Removed GetGuildMaster function as it referred to old chars[] array
+		Converted CalcTargetedChar function to be similar to CalcTargetedItem so it returns a real object
+		onCallback%i will now set targeted to a NULL object if the object clicked on is not valid, or not an object (eg a tile)
+	
+	Added the following properties to the JS Character object
+	
+		townpriv
+		guildtitle
+		fonttype
+		saycolor
+		emotecolor
+		attacker
+		racegate
+		skillLock
+		deaths
+		nextAct
+		petCount		read only
+		ownedItemsCount		read only
+		cell
+	
+	Added the following methods to the JS Character Object
+	
+		GetTimer( timerID );
+		SetTimer( timerID, numMilliseconds );
+	
+	Valid values for timerID are:
+	
+		0	//	tCHAR_TIMEOUT
+		1	//	tCHAR_INVIS
+		2	//	tCHAR_HUNGER
+		3	//	tCHAR_POISONTIME
+		4	//	tCHAR_POISONTEXT
+		5	//	tCHAR_POISONWEAROFF
+		6	//	tCHAR_SPELLTIME
+		7	//	tCHAR_ANTISPAM
+		8	//	tCHAR_CRIMFLAG
+		9	//	tCHAR_MURDERRATE
+	
+			// NPC Timers
+		10	//	tNPC_MOVETIME
+		11	//	tNPC_SPATIMER
+		12	//	tNPC_SUMMONTIME
+	
+			// PC Timers
+		13	//	tPC_LOGOUT
+	
+	Updated CItem::SetCont so that it doesn't try and do things it shouldn't during world load
+	NOTE: We have an issue... we can't validly set all the weight stuff until the world's loaded
+	OKAY, the base default world now loads with the new object factory, and it's all fun and games.
+
+06 July 2004 - Maarc
+============
+	JS related fixes
+		Reenabled the ability to set poison and magic resistance on a race object
+		All setProperty routines now use JSEncapsulated, should be *much* more tolerant now
+		Any attempt to do something like mSock.currentChar = pUser; would fail, replacing pUser with the actual current char.  It should now behave properly
+		It is now possible to set a socket's tempInt property
+
+05 July 2004 - Maarc
+============
+	Fixed a problem where it would crash on reloading JS scripts (via magic and commands)
+	Removed commented out code that was never used (including tempeffectsoff and tempeffectson)
+	Added some methods to help with deletion issues in the temp effects queues
+	These fixed an issue where creating a timer on a just elapsed timer would cause a crash
+	CCP_TARGET can now be set - char.target = npc;
+	More support for floats in the use of properties for characters - dex (x2), int (x2), str (x2), mana, stamina, health
+	Note that it will throw an exception if you do not pass a parameter of the right type
+	We need a longer term solution to this particular problem.  One idea - create a class JSEncapsulate that takes the JSVal and context, and stores the data internally, with methods that allow it to be casted back to a "proper" value
+	As certainly we will need this for more than just the character class
+
+04 July 2004 - Maarc
+============
+	nspawnsp and ncspawnsp rolled into CItem class.  Only items can be spawners (not NPCs), and all references to those objects now are done within the CItem class, or through FirstSpawn/NextSpawn/FinishedSpawn
+	Updated documents to not use CHARACTER or ITEM unless where it is actually used, to aid in finding where CHARACTER and ITEM references are that need to be ported to CChar * / CItem *
+	Updated ObjectFactory with a CountOfObjects method, which allows us to discretely count (if we wish) the number of objects for each type we have
+	I believe we've just about covered everything in ObjectFactory that is required to encapsulate chars[] and items[]
+	Removed an unused method in WhoList (GrabSerial)
+	From what I can see, all references to CHARACTER and ITEM are now done by deletion queues or the char/item handlers
+	Added Singleton.h from OGRE, and adapted ObjectFactory to be one.  We can create and delete this in a local context, and use ObjectFactory::getSingleton() everywhere else we might need it.
+	Spelling fixes
+	Begun the integration of  the ObjectFactory which is #ifdef'd at the moment.  The ObjectFactory integration does NOT compile, and error messages are left in place for what needs to be done.
+	Some of the stuff we need to be able to do with the ObjectFactory is essentially, a for every char/item in the world... so what we need to do is support FUNCTORS, I think that would be the most useful
+	The question becomes... what sort of functors?  something of the variety of:
+	
+	bool MyFunction( cBaseObject *working, UI32 &counter, void *extraData );
+	
+	As this will solve almost everything we want to do (reset kills, remove keys and so on), and allow us to bail out early if needed (via the bool, return true if continue, false if not)
+	
+	A few functions are implemented thusly (including world load postloadprocessing)
+
+03 July 2004 - Maarc
+============
+	Fixed an accidental bug where it would constantly process legacy accounts
+	More use of upper() caching
+	Added Config.h, Platform.h, Prerequisites.h and UOXStdHeaders.h
+	Thrown *everything* into the UOX namespace
+	Predeclared most of your classes (not packets, and not a few other minor ones) in Prerequisites.h
+	Begun an implementation of an object factory for creation, destruction and recycling of objects.  This is not hooked into the main code pipeline, because some of it still relies on ITEM or CHARACTER types, which we want to eliminate (no more global chars or items!)
+	
+	Removed some SE functions (not JS object functions) that relied on chars[]/items[] and hence would fail miserably
+	
+		GetLightLevel
+		SetPrivateBitRange
+		GetPrivateBitRange
+		SetPrivateWord
+		GetPrivateWord
+		SetPrivateBit
+		GetPrivateBit
+		SetSkillUse
+		SkillBeingUsed
+		GetGuild
+		CompareGuild
+		RemoveFromGuild
+		AddToGuild
+		AttackTarget
+		Attack
+		IsMemberOfTown
+		CalcRank
+		UseReagants
+		UseReagant
+		FindItemOnLayer
+		RaceCompare
+		GetCharPack
+		SetSerial
+	
+		SetDecayTime
+		GetDecayTime
+	
+	chars[] and items[] are now really only referenced in a few small places (less than 10 by array on both, less than 50 by member funcs eg calling Count)
+	
+	================
+	Discussion Ideas
+	================
+	
+	OgreConfig	- Compile time configuration options
+	OgrePlatform	- Platform / compiler compatibility file - includes OgreConfig
+	OgrePrequesites	- Includes OgrePlatform.  Disables any compiler warnings, stl compliance (eg HashMap) and some typedefs (eg uchar).  Also includes OgreStdHeaders and forward declares any classes needed.
+	
+	Should lift off the Singleton class, as it would help with some of our data and initialisation
+	
+	Useful classes as Singleton (some possibly lifted from OGRE)
+	
+		LogManager
+	
+	Other potential useful classes
+	
+		template <> FactoryObj
+		ResourceManager
+	
+	
+	Other possibilities
+	
+		Asynchronous network!  Esp under windows, where it can callback at any time - inject events into a queue for the PC
+		Consider using a multimap or hash_multimap for storing our object types... given that hash_multimap is like standard, multimap may be a better bet
+		However, there are differences: multimaps are sorted, ergo inserts/deletes are logarithmic - hash_maps are not, only hashed, so constant time.  In theory, hash will be better, but given we do little in the way of insert/deletes, multimap would be agood start
+	
+7/2/2004 - giwo
+	Made use of OnDrop() JS function.
+	Cleaned up some areas where we were calling UString::upper() far too many times for a single string.
+	Removed unneeded cBO::Load overloads in CItem, CChar, CMultiObj and others.
+	Initial implementation of CSpawnItem in order to break CItem up into smaller classes.
+
+02 July 2004 - Maarc
+============
+
+	Fixed display issue with saving packet logs (hex values a->f weren't displayed right)
+	Fixed an issue with the add menu that was relying on gumps that didn't exist in older clients
+	Fixed CTEffect constructor so it inits the assocScript
+	Fixed an issue with StartTimer - it would never call back into another script properly
+	Fixed an issue with the action property of spells in JS - it was wrongly declared as an index, not a static param!
+	Added ClientCanReceive to CPNewSpellbook so it can fallback on pre-4.x clients to the old method
+	Added CCP_SPELLCAST/"spellCast" property to JS Character objects
+	Added CCP_ISCASTING/"isCasting" property to JS Character objects
+	Added SetJSCasting/IsJSCasting to CChar but this is a *temporary* measure only.  When all spells are outsourced to the JS scripts, it can be removed, so that other code doesn't misbehave (ie the code currently will call CastSpell if you're in casting mode and the timer has elapsed... which won't happen under JS!)
+	
+	onSpellCast for JS spells has been changed to:
+	
+	onSpellCast( socket, character, directCast, spellNum );
+	
+	This allows for multiple spells registered in a single file (eg think all the summon ones, for instance)
+	StartTimer now looks like
+		BaseObject.StartTime( numMillis, TimerID[, optVal] );
+	
+	optVal can either be a boolean (call back into this script, so we don't have to know it's number... this solves non-item/npc scripts so magic can work right) or an integer (the script number to call back into)
+	A very basic workflow script exists for clumsy - it does not take everything into account, nor does it actually do the clumsy part, it's just an example.
+
+01 July 2004 - Maarc
+============
+	Fixed a bug with newaccounts.adm and parsing
+	Converted ImportAccounts to use std::string and UStrings
+	Removed the ability to pass "+add:user,pass,email" and "+import:filename.import" arguments to the binary.  This *cannot* be done at this stage, as the accounts haven't been initialised and loaded, so conflict resolution cannot occur.
+	Removed typedef of CLPSTR as no variables use it
+	Removed some strlwr's in favour of using a UString with lower()
+	Substring search now uses UStrings rather than allocating and deallocating char * arrays
+	Added character6 to the account property object for JS
+	Added a #define CHARACTERCOUNT to cAccountClass to help centralise any changes
+	Removed old jsMagicTable_st data
+	Added spell equivalents to the JS command registration
+	
+		RegisterSpell( spellNumber, isEnabled );
+		DisableSpell( spellNumber );
+		EnableSpell( spellNumber );
+	
+	Spell JS files can be registered by adding entries like this:
+	
+	FILE=path/file.js
+	
+	into [MAGIC_SCRIPTS]
+	
+	Note that it automatically prepends the path to the JS scripts before it, so you only need to put in a relative path (ie same as command scripts)
+	
+	onSpellCast( socket, character, directCast );
+	
+	socket is the character's socket (not guaranteed to exist, only if PC is casting)
+	character is the character casting
+	directCast is a boolean
+			true if 
+				an NPC
+			false if 
+				a PC selecting from a spellbook, wand or scroll
+				a PC who has casted from a JS script depending on param (ie char.CastSpell( spellNum, true/false ) (if true))
+	
+	// It is the responsibility of the JS script to call the proper events (ie onSpellSuccess and so forth)
+	// They deal with their own mana subtraction and all sorts of things
+	// They also deal with valid regions and what not.  s is *not* guaranteed to be valid (ie it could be an NPC)
+	// Suggested script workflow:
+	//	* Check if already casting, if so, stop and dump out
+	//	* Check if frozen, if so, can't cast spell
+	//	* Check if enabled
+	//	* Check if scroll, wand or normal cast (scroll reduce requirements, wand do straight away)
+	//	* Check requirements (min int, dex, str)
+	//	* Check for reagants
+	//	* Check if can cast in this area
+	//	* Determine if the cast "succeeded"
+	//	* If so, fire onSpellSuccess, otherwise fire onSpellFailure.  If failed, speak and return
+	//	* Set the player as "casting" and freeze
+	//	* Create timer for when the spell will be complete
+	//	* Wait for timer to elapse
+	//	* Upon timer elapsing,
+	//	*	Unfreeze player
+	//	*	Send target identifier if any (based on timer) and wait for callback
+	//	*	If not target, do action (if any)
+	//	*	If target, create onCallback function
+	//	*	On callback, do stuff
+	//	* NOTE * For area affect spells, use an AreaCharacterFunction
+	
+	Note to self - Want to update TriggerEvent so that you don't just pass a script number (though it's possible) but also a variant where you pass a character/socket/item, so that it can use the script associated with that
+	
+	The spell JS file also has to include a SpellRegistration command
+	
+	function SpellRegistration()
+	{
+		RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
+	}
+	
+	As it stands, only 1 spell per file, unlike the JS commands, which I should probably fix up by adding a spell ID to onSpellCast and passing it all in (would make life much easier for area effect versions of single spells)
+
+6/27/2004 - giwo
+	Broke packets.cpp/.h into CPacketSend.cpp/.h and CPacketReceive.cpp/.h
+	Implemented some debug code to hopefully clear up some crash issues with region loops.
+	Modified the deltionQueue in order to ensure proper deletion of objects.
+	Fixed an issue causing characters to never switch targets in combat until their target died.
+	Fixed a minor issue with Packet Logging.
+	Fixed an issue causing a crash on creation of a new character.
+	Fixed issue causing many regions to not be recognized.
+	Added display of characters region to 'cstats command.
+	Implemented support for new Popup ToolTip displays.
+	Implemented support for new Spellbook packets via CPNewSpellBook packet class.
+	Implemented support for OSI displaying damage above victims head via CPDisplayDamage packet class.
+
+6/25/2004 - giwo
+	Fixed a small bug causing things to crash intermitently and appearingly random(Thanks Abaddon!) 
+		There was ONE sName[32] still left in the code, and he found it! This is only an upate
+		pactch.
+
+6/19/2004 - giwo
+	Fixed several issues with boats, should function normally again.
+	Fixed an issue causing "bad multi setting" error message.
+	Fixed create menus coming up as blank gumps (note they seem to have other issues though).
+	Removed deques from SubRegions, as they seemed to be causing some crashes.
+	Upped the limit on a characters Name and Name2 attribute to 50 characters.
+	Fixed items with a SpawnObjList setting in the DFN's, should now properly spawn NPC's.
+	Fixed 'wipe and 'iwipe commands, should now properly wipe all items in(or out of) selection.
+
+6/13/2004 - giwo
+	Fixed an issue causing characters without fame/karma titles to display as "The  Name".
+	Fixed an issue where characters with Grandmaster status would not have a prowess title.
+	Fixed a flagging problem causing offline characters not to appear "greyed" out.
+
+6/12/2004 - giwo
+	Corrected some small logic errors with the new account slot. Should work well now.
+	Modified command handling so strings of text would not be converted to all caps.
+	Added missing "Name" entry into 'set (IE 'set name blah).
+	Fixed an issue causing JS gumps not to respond when a button was pressed.
+	Fixed an issue causing 'set movable # not to work.
+	Updated allmove and houseicons commands to automatically update the client.
+
+6/11/2004 - giwo
+	Fixed a small bug with the offline html output overwriting the online file.
+	Added server side support for 6 character slots. (Currently disabled still)
+	Adder server side support to allow player to select paladin, or necromancer at char creation
+	More support for cBoatObj made it into this commit to the cvs as well.
+
+6/7/2004 - giwo
+	Made use of deques in place of vectors in SubRegions to allow faster memory recovery.
+	Fixed an issue where an object in a multi was not being removed from the multi container.
+	Modified CreateItem() routines so items created directly by ID are not decayable by default.
+	Fixed 'add <hex-id> to pull directly from .mul files, not the scripts.
+
+6/06/2004 - giwo
+	Many changes have been made. Specifically dealing with structure, and  STL conformity. Other changes include dynamic gm menu item
+	fetching, a very large bug preventing valid world files from being saved to disk correctly or at all. 
+	Added a new GM Menu gump design with new functionality. Documentation to come, but you can now tag items directly from the DFN blocks and assign them to a itemmenu group dynamically at runtime.
+	fixed some spacing and other whitespace related issues.
+
+6/5/2004 - giwo
+	Fixed a crash caused by placing a house.
+	Fixed certain entries in the Help gump not functioning.
+	Fixed a crash caused by invalid objects in the tempeffects queue.
+	Fixed a crash caused by 'dupeing items on the ground
+	Changed 'add tile <hex-id> to 'add <hex-id>
+	Documented Weight.cpp
+	Documented ai.cpp
+
+12/30/2003 - giwo
+	Rewrote much of the combat code, renamed cCombat to CHandleCombat.
+	Fixed a problem causing characters accounts not to be properly set.
+	Fixed an issue causing monsters to not play any sounds.
+		Changed NPCLIST and ITEMLIST behavior to allow nesting lists (for instance, if you want all
+	orcs on another list, add npclist=allorc rather than manually adding each NPC entry).
+	Updated spawnregion NPCLIST and ITEMLIST loading to handle the above changes.
+	Many optimizations done to checkauto(), checkNPC(), checkPC, and genericCHeck().
+	Moved checkauto() to CWorldMain class and renamed it CheckAutoTimers().
+	Fixed Polymorph spell and tracking skill, unifying the code a bit for easier maintenance.
+	Moved Polymorph Duration out of polymorph.dfn and into uox.ini to remove needless re-loading.
+	Broke CheckAI() out into several smaller functions simplifying things a bit.
+	Tweaked checkItem() cleaning up RespawnItem() and DecayItem() and optimizing things a bit.
+	Fixed display of clothing on corpses.
+	Made more use of RefreshQueue, now is used for updateStats, Thus SetStrength/SetHP and other Stat-modifying mutators use Dirty().
+	Updated Dirty() to allow passing of a var (matched to an enum) that is then used to determine the type of refresh.
+	Created virtual functions of many pre-existent functions in CChar to allow setting of Dirty() var for updateStats().
+	Changed most object pointers in CChar to serials, this is less speedy, but safer (we were getting item objects passed back as character objects, etc).
+	Fixed many scenarios causing crashes due to a bad socket pointer in tempeffects.
+	Fixed several bad socket crashes in magic.cpp.
+	Fixed several instances where invalid objects would be left around causing later issues/crashes.
+	Updated / fixed-up Spawnregions to improve functionality, speed, and all-around usability.
+	Fixed SetSpawn() when object is spawned by a spawnregion, was forcing the region num down to a UI08 (which we handle them as a UI16),
+		also this allows us to calculate our spawnregion (and thus not need to search through all of them in Cleanup()).
+	Commands:
+		Removed many commands updating other commands to take their place.
+		Fixed command "regspawn" and gave it capability to pass "ALL" rather than region number to allow removal of "regspawnall"
+		Removed regspawnmax
+		Removed wipenpcs, moving its functionality to wipe (usage "wipe NPCS", "wipe ITEMS", "wipe ALL")
+		Made wiping commands default to Admin-Only.
+		Fixed an issue causing many commands not to function properly, if at all.
+	Fixed display of (# items, # stones) on containers.
+	Added SetDecayable( true ) to cItem::CreateBaseItem() to default items to decayable.
+
+12/7/2003 - giwo
+	Optimized and cleaned up walking code a great deal.
+	Removed calcSocketObjFromChar() in favor of passing along a socket wherever possible.
+	Added cMapRegion::PopulateList() to simplify region loops.
+	Made CChar and CItem SendToSocket public members and made use of them in some areas.
+	Removed cBoat class and locally declared the few functions it contained where needed.
+	Fixed a minor bug with triggerwords.
+	Fixed house creation and broke buildHouse() into several smaller functions.
+	Fixed door and sign deletion upon re-deeding houses.
+
+11/29/2003
+	Made extensive use of iterators for iterating through vectors.
+	Made use of .erase() and .push_back() to simplify our vector handling.
+	Rewrote our command table to simplify it a bit and remove the need for two structs.
+	Extensive fixes/changes to HTMLTemplates and HTMLTemplate classes.
+	Fixed an issue when using CChar::SetLocation() where Dirty() was not called.
+	Removed Dictionary.h from global scope.
+	Moved several structs and typedefs into private members of their only calling class.
+	Made use of UString::replaceSlash() in place of our current PathFix() functions.
+	Removed vtables from a few more functions that had no need of virtual functions.
+	Rewrote JailSystem::WriteData() to make use of an ofstream, and moved out the code specific to
+		a Jail Cell into its own WriteData() function.
+	Changed insta-log code so only house owners are logged out in their house, saving us some time searching for a matching house key.
+	Removed Network::kr and faul as they performed the same function as cWmWorldState::KeepRun() and Error().
+	Fixed an issue in loading mapregions where Items and Characters would not be properly deleted if they failed to load.
+	Took our main classes out of global scope, now only files that include their headers will have access to them.
+	Added CServerProfile class to remove our profiling variables from global scope.
+	Simplified a bit of the handling in targeting.cpp, allowing the removal of many functions.
+	Tinkered with lineofsight.cpp a bit allowing the removal of itemids and loscache from cItem class.
+	Moved doorbase[] out of global scope and into door.cpp.
+	Made use of cSkillClass in cPlayerAction.cpp BestSkill().
+
+11/22/2003
+	Fixed bug causing NPC's not to be created.
+	Fixed a server crash upon login (caused by checking an invalid region).
+	Simplified much of gumps.cpp, removing cGump in the process.
+	Removed several members of cCommands and moved them to their only usage in cmdtable.cpp.
+	Added packet classes CPIGumpInput, CPIHelpRequest, CPITradeMessage and CPIDyeWindow.
+	Fixed a few instances where UString::sprintf() was causing a server crash (unknown as to why).
+	Removed some repetitious code.
+	Removed unneeded overloads of cSocket::target and cSocket::mtarget
+	Combined cSocket::ShowCharName() and cSocket::textFlags.
+	Made more use of strings and UString.
+
+11/17/2003
+	Added CResponse.cpp & CResponse.h
+	Moved the bulk of cSpeech::Response() into CResponse() classes.
+	cSpeech Changes:
+		Changed genericTalking into CPTalkRequest::Handle().
+		Combined sysbroadcast and consolebroadcast to sysBroadcast.
+		Removed checkForVendorResponse() and responsevendor().
+		Removed cSpeech class, locally declared its remaining functions.
+	Removed cSpeech.cpp/.h from the project.
+	Fixed up packet logging, making use of an ofstream.
+	Added support for OSI TriggerWords rather than doing our own string searches.
+	Made use of ofstream in several areas where we currently used fopen().
+	Made RealTime inline and used it in place of duplicate code in CConsole.cpp.
+
+11/10/2003 - giwo
+	Added script creatures.dfn to store (and allow easy modification of) our creature data.
+	Removed CWorldMain::initCreatures().
+	Reduced redundant code.
+	Fixed some minor issues.
+
+11/7/2003 - giwo
+	Implemented Object deletion queue.
+	Made use of VALIDATESOCKET(s) in skills.cpp and cmdtable.cpp.
+	Changed itemQueue and npcQueue to a single refreshQueue.
+	Converted spawnregion[] to a cSpawnRegion vector spawnregions.
+	Fixed up many classes to avoid using virtual functions unless necesarry (IE they have derived classes).
+	Added ValidateObject() to take the place of NULL checks on pointers to cBO and its derivatives.
+	Added CItem::Cleanup(), CChar::Cleanup() & cBO::Cleanup().
+	Added cBO::Delete(), and IsDeleted();
+	Added CItem::Spells() to take the place of MoreXYZ in Spellbook handling
+	Removed CItem::Dirty() and CChar::Dirty().
+	Removed cItem::DeleItem() and cCharStuff::DeleteChar().
+	Removed cWM::TotalTownRegions() and TotalSpawnRegions().
+	Removed CChar::SpellAction().
+	Removed CItem::Doordir().
+
+Oct 31 2003 - giwo
+	Added struct ProwessTitle to allow more customization when dealing with prowess titles in titles.dfn.
+	Added vector prowessTitles to CWorldMain.
+	Added map idToItemType in cPlayerAction.cpp to remove redundant doubleclick item handling based on both ID and Type.
+	Added scriptability (itemtypes.dfn in /items/ dir) for automatically associating an items ID to an item type.
+	Added cSocket::TempObj() in place of addmitem and overuse of AddID.
+	Changed cSocket AddX() and AddY() to SI16, made more use of TempInt().
+	LoadSkills() now sets a skills madeword to "made" by default.
+	Updated several areas where we loaded in scripts to make use of UString.
+	UOX now reads in a skills madeword from skills.dfn rather than setting them manually in ResetVars().
+	Converted skill[].madeword into a string.
+	Combined skillTitle() & prowessTitle() into getSkillProwessTitle() to reduce wasted cycles in PaperDoll().
+	Moved npcAct() to cTargets and renamed it to DoActionTarget().
+	Changed command SETID to require only one value (IE 'setid 0x0191 rather than 0x01 0x91)
+	Implimented Character update queue.
+	Renamed fameTitle() to getFameTitle().
+	Removed handleDoubleClickIDs().
+	Removed npcAction() as cEffects::PlayCharacterAnimation() did the same thing.
+	Removed std::string prowess from titles_st.
+	Removed some unneeded typedefs and defines.
+	Removed ResetVars() as it was no longer needed.
+	Removed SleepNiceness() and CServerData::niceness as there was no need for it any longer.
+
+	Changes to cBaseObject and its derived classes:
+		Added CItem::ItemDecayed() to simplify CItem::Save().
+		Removed CItem::enhanced, making use of priv variable instead.
+		Removed CChar SkillItem() and Trainer().
+		Removed some unused functions.
+		Removed CChar may_levitate, willHunger, casting, and med variables, making use of the bools variable instead.
+		Moved CChar::GetBestSkill() to cPlayerAction.cpp as BestSkill().
+		Changed CChar fx1, fx2, and fy1, fy2, to fx[2], fy[2] to simplify handling.
+		Changed CChar::petguarding to a cBaseObject.
+		Changed CChar::ftarg, targ, trainer, and trackingtarget to a CChar pointer.
+		Changed CChar::trackingtargets to a CHARLIST.
+		Changed CChar::skillitem, speechItem to a CItem pointer.
+		Changed CItem::Refresh() to CItem::Update() and added a pure virtual cBaseObject::Update().
+		Updated CChar::Update() to accept a single socket to update to.
+		Made CChar::SendToSocket() private and removed a superfluous CChar refrence.
+		Added cBaseObject::LocationChanged() for npc updating (if location changes, uses CChar::Teleport(), otherwise CChar::Update() ).
+		Made those functions which were only used inside the class private
+		Updated cBO::PostLoadProcessing() to use the proper function based upon the object type.
+		Made some members of cBaseObject pure virtuals, also changed some functions that didn't need to be virtual.
+
+	Changes to cEffects:
+		Renamed action() to PlayCharacterAnimation() and changed it to accept a CChar rather than a cSocket.
+		Renamed impaction() to PlaySpellCastingAnimation() and changed it to accept a CChar rather than a cSocket.
+		Renamed movingeffect() to PlayMovingAnimation().
+		Renamed staticeffect() to PlayStaticAnimation().
+
+	Script Changes:
+		itemtypes.dfn - Allows players to define how items of a certain ID will be handled on doubleclick
+			(IE: "forge=0x0FB1,0x1982,0x197A,0x197E" causes all items with those ID's to behave as a forge when double-clicked, unless they are given a type)
+		skills.dfn - Added MADEWORD= entries to those skills which have a madeword other than "made"
+		titles.dfn - Updated [PROWESS] to: minReqSkill=ProwessTitle type entries
+
+Oct 19 2003 - giwo
+	Changes to CWorldMain class:
+		Added worldTimers[] Get/Set Timer(), and enum CWM_TID to group all timer values together
+		Removed Get/Set NextNPCAITime, NextFieldEffectTime, HungerDamageTimer, LightTime, ShopRestock
+		Removed erroredLayers.
+		Removed ShowLayer().
+		Removed ItemCount & CharCount.
+		Removed IncIMem() as it was not used.
+		Removed ExecuteBatch as no good use for it could be found.
+		Renamed ItemCount2() to NextItemSerial().
+		Renamed CharCount2() to NextCharSerial().
+		Moved creatures[] from uox3.h.
+		Moved initCreatures() from cFileIO class.
+		Moved weightPerSTR to CServerData class.
+		Moved secondsperuominute to CServerData class.
+
+	Added enum ItemTypes to simplify handling of items by their type.
+	Added First(), Next() and Finished() functions to cItemHandle and cCharHandle inplace of our Item / Char Count() loops.
+	Added CPICreateCharacter, CPIDeleteCharacter, and CPIPlayCharacter packet classes.
+	Added WEIGHTPERSTR= value to uox.ini.
+	Added a cItem constructor and destructor to handle creating and deleting loscache[] and itemids[].
+	Added ADVOBJ, DYEHAIR, DYEBEARD, KILLHAIR, KILLBEARD, KILLPACK, and POLY to DFNTAGS enum to support advance.dfn
+	Removed a good number of function declarations from funcdecl.h and declared them locally in the files that used them.
+	Removed some includes that no longer seem to be used.
+	Removed index reference from PostLoadProcessing()
+	Removed cFileIO->LoadNewWorld() as all the defaults set there were set by the CWorldMain constructor.
+	Removed class cFileIO as most of its functions were called only by uox3.cpp.
+	Removed cNetworkStuff::BatchCheck().
+	Moved creation of initial player items from createChar() to newbieItems().
+	Updated advanceObj() to take advantage of our DFNTAGS enum
+	Changed CItem::Get/Set Type() to use enum ItemTypes.
+	Fixed up some functions in movement.cpp and commented out those that are unused.
+	Reorganized globals.cpp to better match with uox3.h
+	Moved spells[] to CMagic class.
+	Moved itemids[] and loscache[] to cItem class.
+
+Oct 13 2003 - giwo
+	Changed CWorldMain::logout to a vector logoutLocs.
+	Moved some structs from CWorldMain.h to uoxstruct.h.
+	Changed CWorldMain::escortRegions to a vector.
+	Removed cFileIO::LoadPreDefSpawnRegions() and moved its contents to the one refrence of it.
+	Removed cWorldMain::ResetDefaults() and allowed the constructor to do the work itself.
+	Removed calcSocketObjFromSock() and used Network->GetSockPtr() in its' place.
+	Added cSpawnRegion:: WorldNumber(), IncCurrentCharAmt(), and IncCurrentItemAmt().
+	Removed handlers.h from global scope, included it in those files which used it
+	Made Combat::WillResultInCriminal() public and made use of it throughout the source
+	Removed VialTargetItem() and VialTargetChar(), tweaked them a bit, and made them a part of vialtarget()
+	Made VialTarget() a part of cTargets class, and MakeNecroReg() a part of cSkills class.
+	Removed necro.cpp from the project
+
+	cItem changes:
+		Added:   CreateMulti(), CreateBaseItem(), CreateBaseScriptItem(), PlaceItem(), CreateRandomItem()
+		Removed: SpawnItem(), SpawnItemToPack(), SpawnMulti(), SpawnRandomItem()
+		Rewrote: CreateItem(), CreateScriptItem(), CreateRandomItem()
+
+	cCharStuff changes:
+		Added:	CreateNPC() (and an overload), CreateBaseNPC(), CreateNPCxyz()
+		Removed: AddNPC(), AddNPCxyz(), SpawnNPC(), CreateScriptNpc(), SpawnRandomMonster()
+		Rewrote: AddRandomNPC(), PostSpawnUpdate().
+
+	cTownRegion Changes:
+		Updated CChar->GetRegion() and calcRegionFromXY to return a cTownRegion pointer.
+		Moved locations from CWorldMain class to cTownRegion and made it a vector.
+		Changed how we load in regions.dfn and handle regions.wsc to avoid having unneeded extra TownRegions.
+		Updated cTownRegion::Save() to use std::ofstream to match with the rest of our save routines.
+
+	Script Changes:
+		Changed all UNDEADLIST to NPCLIST entries in digging.dfn.
+
+Oct 04 2003 - giwo
+	Removed some superfluous #includes and moved others to more appropriate places.
+	Removed jail.h from global scope and included it only where it was needed.
+	Added CPIGumpChoice, CPIBuyItem, and CPISellItem to handle those packets.
+	Removed some functions from funcdecl.h which did not need to be in the global scope.
+	Replaced getRootPack() and getPackOwner() with FindItemOwner() and an overload to simplify it.
+	Removed getPack() in favor of using CItem::GetPackItem(), also made GetPackItem() a bit more useful.
+	Replaced cItem::PackType with cItem::getPackType(), created enum PackTypes to simplify it, and made it more useful.
+	Added some #ifndef's in header files which were missing it.
+	Moved openPack() and openBank() into cSocket class.
+	Moved batchcheck() into cNetworkStuff class, since that was its only usage.
+	Made several members of cNetworkStuff private, as they had no reason to be public.28 Sep 2003
+
+	Removed CItem::FirstItem() and NextItem() as they were no longer used.
+	Renamed CItem::FirstItemObj() and NextItemObj() to FirstItem() and NextItem().
+	Simplified setting and evaluating default values for cSocket, CChar, CItem, CMultiObj, and CBoatObj classes.
+	Made wider usage of COLOUR typedef.
+	Changed GENDER typedef to a UI08.
+	Updated function documentation in quantityfuncs.cpp.
+
+27 Sep 2003 - Maarc
+	Removed some uox.ini options that don't have code backing
+		NPCTILECHECK
+		ANTILAGSAVESPERLOOP
+		MAINTHREADSLEEP
+		STATDELAY
+		EXTERNALACCOUNTCREATION
+		ENGRAVEENABLED
+		SPEEDCHECKNPCS
+		MSGBOARDKEEPMESSAGES
+		MSGBOARDMAXMESSAGESALLOWED
+		MSGBOARDMAXMSGSRESPONSE
+		LIGHTMOON1UPDATE
+		LIGHTMOON2UPDATE
+		COMBATWRESTLINGSPEED
+		COMBATMAXMELEEDAMAGE
+		COMBATMAXSPELLDAMAGE
+		COMBATMAXPOISONINGDISTANCE
+		COMBATMAXHUMANABSORBTION
+		COMBATMAXNONHUMANABSORBTION
+	Note that these INI options have been removed from all code, except they will still be parsed (just ignored)
+	Heavily documented each option in cServerData
+	onCreate wasn't executing for PCs if HTML status was disabled
+	Simplified some function naming within CServerData, as the lines were getting very long when using them
+	Removed parsing of unused tags ripped out earlier
+
+26 Sep 2003 - giwo
+	Changed CChar's trackingtargets from a fixed size to a std::vector and used the maximum number of tracking targets specified in the INI
+	Collapsed the CChar's timers to use an array based on the timer enums
+	Removed some unused functions from CChar
+	Fixed bug where CChar's PoisonStrength attribute was not being saved/loaded
+	Note: Character's FlySteps property is saved/loaded, but never used - removed
+
+25 Sep 2003 - Maarc
+	cServerData renamed to CServerData, in a beginning attempt to get a consistent class naming scheme
+	Removed an excess print message at startup
+	Consolidation of some CServerData members into arrays, reducing number of get/set functions required
+
+24 Sep 2003 - Maarc
+	Fixed resurrecting not logged in PC character, we were making a bad assumption about NPCs and sockets
+	Updated console code to get the width/height properly under windows
+	Added help/commands directory to data directory, and put an ACTION.txt in there
+	Fix to ScriptSection::MoveTo
+
+22 Sep 2003 - Maarc
+	Killed some warnings
+	Couple of linux compilation fixes
+
+21 Sep 2003 - Maarc
+	Fixed crash bug with CPBookPage
+
+	Modification of these submissions from giwo
+
+		Moved statwindow() into the cSocket class
+		Removed sendItem(), sendPackItem(), and openCorpse()
+		Replaced the aforementioned functions with an improved cItem::Refresh(), cItem::SendToSocket(), and cItem::SendPackItemToSocket().
+		Added cItem::RemoveFromSight() to better handle usage of the CPRemoveItem() packet class
+		Added cPlayerAction.cpp and cPlayerAction.h to move many functions out of global scope.
+		Removed cClick.cpp as the aforementioned file holds its functions now.
+		Moved updateskill() into the cSocket class
+
+	The modifications
+		No cPlayerAction.h
+		Many of the functions moved into cPlayerAction are put into Handle() routines of the right packets
+
+19 Sep 2003 - Maarc
+	Crash fixes
+	Fixes to getTileName to work better with strings and plurality
+	banlist.ini/firewall.ini now structured much like a DFN.  It expects all entries to be in the form of:
+
+	[BANNED]
+	{
+	IP=x.x.x.x
+	}
+
+	The [BANNED] is non-specific, it will search through all the sections in that file
+	Template banlist.ini is updated as well
+	teleport.scp has been reengineered to be like a DFN style.  See example in the CVS, as it has been updated
+	Updated jse_fileassociations.scp to a DFN style syntax
+	Updated jse_objectassociations.scp to a DFN style syntax
+	CVS versions of jse_*.scp have been updated to new style
+	Reduced number of fopen() calls required by using FileIO->FileExists more
+	cVersionClass converted so that most of it's methods are now static, as we don't adjust versioning at runtime
+	It also means we don't actually have to create a cVersionClass object
+	Console and Magic log routines now take strings instead of char *
+	Dictionaries updated to use DFN style syntaxing
+
+18 Sep 2003 - Maarc
+	As a guess... more strings!
+	Fixed a few minor issues here and there
+	cStringTools used even less
+	Contemplating replaced cMagic::Log and Command::Log with a templated log function
+	Considering use of XML type of output for server logs
+
+17 Sep 2003 - Maarc
+	More strings!
+	Fixed a bug with telltime
+	Updated dictionaries
+	More functions take strings than char * now
+	Fixes to tellmessage
+	Fixed bug in DictionarySpeech
+
+16 Sep 2003 - Maarc
+	More char * stuff replaced with std::string and UString
+	Few minor cleanups to code, increasing readability
+	Replaced CapIt and CapColour with a templated Capped function, which takes a min/max value
+	Removed BuildFilePath from mapstuff.h and used UString in its place, to fix some path issues
+
+15 Sep 2003 - Maarc
+	More internal class members are now either UStrings or std::strings
+	More functions updated to use std::string
+	Updated HTML template stuff to use UString more
+	Almost completely removed all instances of cStringTools::makeString in favour of UString functionality
+	Fixed some parsing problems introduced in recent updates
+	Fixed single clicking with 3D clients
+	Stripped out more unnecessary / unused code
+	CharBySerial behaves the same as ItemBySerial in lookups (JS funcs)
+	Area commands now use UStrings, need testing
+	Use of cStringTools down to less than 100 references
+
+14 Sep 2003 - Maarc
+	UString classed used in many more places
+	Script/ScriptSection updated to use an ifstream rather than a FILE *
+	Code reduction through use of UString and ifstreams
+	Reordered some logic in functions
+	Fixed a bug where PARENTRACE wouldn't work
+	Fixed some bugs dealing with polymorph script reading
+	Due to VC6 issues, the strToDFN table in ssection.cpp is now a series of assignments instead.  Functionally the same, just something VC6 will handle
+	Binary saves ripped out in it's entirety, as there were bugs dealing with it, and a future implementation is planned
+	cPBuffer renamed to CPBaseBuffer
+	cPUOXBuffer and cPXGMBuffer subclassed from cPBaseBuffer - cPBaseBuffer's old Pack() routine now belongs in cPUOXBuffer
+	Enables possible future encryption of xGM seperate from normal UOX packing
+
+12 Sep 2003 - Maarc
+	cStringTools is no longer created and instantiated.  It's methods are now static, as it makes clearer sense that way
+	Stripped out some functions that weren't called but were transitionary from 0.7x
+	Removed cAccountClass::atol as cStringTools offers methods to do that
+	Fixed up logic dealing with std::string and the find method
+	Few more error checks
+	More warning fixes
+	Unified timer code, presenting a consistent interface across both Windows and Linux
+	Updates to use std::string instead of char *, to make the logic look simpler
+	Added a UString class that supports stripping of whitespace, comments and other commonly used functions on strings
+	Implemented some use of UString already, simplifying some of our string parsing
+	VALIDATESOCKET macro added into targeting.cpp to help with the validation of socket pointers in most functions
+	Added operator overloading for basic UI/SI 08,16,32 bit and std::string types for cPBuffer, to allow in future for serialisation potentials
+
+11 Sep 2003 - Maarc
+	Few more warning fixes
+	Many, many, many changes to try and fix the size comparison issues that VC7.1 pops up with.  This should also make it more portable from 32/64 bit.
+	The command 'cachestats now has a basic implementation
+	Identified a problem with privileges and binary saves
+	Made RandomNum a templated function
+	Fixed possible bug with converting strings to dice, wasn't working correctly
+
+10 Sep 2003 - Maarc
+	Improved VC compatability with std::min/max
+	Cleaned up quite a few warnings and size issues, as revealed by VC7.1
+	This means a lot of changes to using size_t where possible
+
+08 Sep 2003 - Maarc
+	Some sign issues fixed
+	Used std::min / std::max better.  VC6 issue, unsure about higher versions.  VC6 doesn't define min/max in std:: space, but _MIN/_MAX instead.  
+	Consequently, non VC compilers have std::min/std::max remapped to std::_MIN and std::_MAX.  Not nice, but it works
+	Dead functions removed, cleanup of some logic, removed instances where comparisons were always true
+	Fixed warnings associated with the running changes implemented last night
+	Removed some files that aren't actually used
+
+07 Sep 2003 - Maarc
+	Fixed an issue with WalkTo/RunTo, it was aborting incorrectly with wrong number of arguments
+	WalkTo/RunTo also flush the existing walk path before calling PathFind, to ensure that the new walk path is executed
+	Fixed a lack of type with a const value in cScript module
+	Fixed some iterator problems, increasing compatability
+	Changed a #ifdef compare to __unix__ to a !defined _MSC_VER, helping out mingw compatability
+	Fixed some non-msvc compile issues
+	Updated some places that were doing a Refresh, which should have done a Dirty
+	Slight tweaks to picking up/dropping
+	Updated packet logging to help with more useful dumps
+	Updated some more x++ to ++x type of code
+	CMapChange renamed to CPMapChange, to reflect better naming style
+	cPCharLocBody renamed to CPCharLocBody, to reflect better naming style
+	Debug message in WalkTo/RunTo when in debug compile
+	Fixed a MethodError problem with WalkTo/RunTo occurring when it shouldn't
+	Following packets now have log routines:
+		CPMapChange
+		CPCharAndStartLoc
+		CPCharLocBody
+		CPOpenGump
+	Updated CPOpenGump so that it's no longer a fragmented packet class, requiring FlushBuffer
+	Removed a dead function (itemmenu) that's never used
+	Removed dead SE function RunTo, as it's now a character method
+	Fixed WalkTo/RunTo as methods - the pathfinding was never doing anything.  Used new npc wander mode of 6, which will purely follow the path
+	Those NPCs that are supposed to be running really will be now
+
+06 Sep 2003 - Maarc
+	The bounce routine flags the bouncing object as dirty
+	---- After preprune tag
+	Removed heartbeat and wilderness tags from uox.ini
+	Removed partmsg from uox.ini as joinmsg sets the same value
+	Removed uoxbot from uox.ini
+	Removed lagfix from uox.ini
+	Removed checkmem from uox.ini
+	Removed combatallowcriticals from uox.ini
+	Removed fixedlightlevel from uox.ini as it is unused (also removing the 'light command, as it was the only thing that used it.  Set, but never read)
+	Removed scriptsectionheader from uox.ini - it was transitionary only, if you haven't changed over by now, you never will
+	Removed an extra startgold entry from uox.ini code
+	No longer parse old 0.7x server.scp types
+	Fixed Bug: Seconds per UO minute used, but never actually read from the INI file.  Now read/written from/to file.
+	Added Console support to dump ini file lookup offsets without running the server.
+	Updated console 'V' command to reflect the upcomming pruning of the unused INI tags.
+	Fixed a crash bug with onDropItemOnNPC, stupid typo problem
+	Updated some setcont code to deal better with layer 0 items, should help with secure trade better
+	Change to onAISliver JS event - if js returns true, then server doesn't do normal AI check.  if js returns false, server goes through it's normal routine
+	Added some more #ifdef code for some basic boost use - trouble with filesystem currently
+	Lots of whitespace updates
+	Allowed scripts to be attached to regions, not just items/characters - use SCRIPT tag in the DFN for the region.  Currently supports onEnterRegion and onLeaveRegion (same params as the character version)
+	Minor rework of some of the logic in trade code, may or may not help
+	Playervendor deed altered to spawn [playervendor] rather than [2117]
+	Removed excess PathFix function in cServerDefinitions
+	Should be able to browse player vendor packs without a snooping check
+	Minor issue with loading multis, was erroneously reporting DeedName as an unknown tag
+	Removed some unused dead code dealing with gumps
+	Added atWar property to JS characters
+	Hid most of cSocket's members
+	Added BytesSent/BytesReceived methods to cSocket
+	Implemented WalkTo and RunTo as character methods.  Takes 2 (object + maxsteps) or 3 (x, y and maxsteps) parameters
+	Included the js32.h, and js32.lib files to the source tree. TO help ease *nix users
+
+30 Aug 2003 - Maarc
+	Updated InternalPoll for speech, which should solve some compatability issues, and solve delayed speech from not occurring.
+	Added some batch files for windows which should help with deployment in future.  They are found in the root, in uox3
+	There are 3 predefined templates
+		pureinstallcopy		copies data and built binaries
+		buildanddatacopy	builds a release executable and does same as pureinstallcopy
+		doall			same as buildanddatacopy, but copies source as well
+	Each must be called like
+		doall c:\app\uoxtest
+	The batch files accept a parameter which dictates where the files are to be copied to.
+	From there, simple zips can be made.
+	Work continues on resurrecting a win32 installer, and communication with Rynet will see a similar process created for Linux.
+
+29 Aug 2003 - Maarc
+	Warning and scope fixes only
+
+22 Aug 2003 - Maarc
+	Added Empty OnStartup/OnShutdown events( to be expanded upon later )
+	Added a JSE class wrapper around UOX3 Account instance to provide access to methods
+	Implemented CAccountClass wrapper
+	   Created .AddAccount(name,pass,email,flags) to add an account to the server
+	   Created .DelAccount(name) or .DelAccount(accountid); 
+	   NOTE: These are pretty self explanitary.
+	Updated JS implementation of wrapper for cAccountClass.  No longer var i = new CAccountClass syntax, it exposes a global object "Accounts"
+	With minor tweaks, managed to get Slasher's account editing stuff to work
+
+
+13 Aug 2003 - Maarc
+	Fixed a crash bug with multis and deeds - the deed property wasn't always being set correctly and could crash on worldsave
+	Updated deed property of cMultiObj to be a std::string rather than a const char *, to avoid pointer issues as it's used infrequently
+	Added ExecuteCommand as a character object method (Example: pUser.ExecuteCommand( "add 0x04a9" ); )
+	Minor whitespace fixes
+	Changed MethodError of CChar_ExecuteCommand to the right func name, was SysMessage
+	Removed old standalone ExecuteCommand function from JS engine, so only character method is available
+	Updated version number
+
+11 Aug 2003 - Maarc
+	Fixed a bug where insufficient templates in the HTML template system would cause a crash at runtime
+	Added 'setspawnobj and 'setspawnobjlist commands
+	Fixed a bug with tweaking items where the text strings were incorrect at the end of the property list
+	Fixed a bug with tweaking items where there was no text string at the end of the property list
+	Added spawnobj/spawnobjlist property to tweaking of items
+	Whitespace updates
+	Fixed typo in debug print of CChar_UseResource
+	Updated dictionaries in the tree
+
+
+07 Aug 2003 - Maarc
+===========
+	Overhauled HTMLTemplate Class to actually handle multiple templates correctly. 
+	
+	Templates Supported at this time are :
+
+	ETT_ALLTEMPLATES : Update aLL templates found in default_templates.dfn
+	ETT_GMSTATUS     : Update the GMSTATUS template
+	ETT_GUILD        : Update the GUILD template
+	ETT_OFFLINE      : Update the OFFLINE template(no player functionality yet) 
+	ETT_PLAYER       : Update the PLAYER template(no guild functionality yet)
+	ETT_ONLINE       : Update the default server STATUS template
+
+
+	Supported template Types:
+	
+	STATUS           :
+	PLAYER           :
+	GUILD            :
+	GMSTATUS         :
+        OFFLINE          :
+
+	NOTE: The format and extention of the template files has changed slightly
+	      Here is a complete default templates example (Filename: default_templates.dfn).
+
+	//o-------------------------------------------------------o
+	//| QUick note: TYPE must always be the first tag found in
+	//|             a block.
+	//o-------------------------------------------------------o
+	[DEFAULT_STATUS]
+	{ 
+	TYPE=STATUS
+	NAME=Server Status Template
+	UPDATE=5
+	INPUT=C:/uox3/dfndata/html/online.htf
+	OUTPUT=D:/mywebserverdir/serverstatus.html
+	} 
+
+	[DEFAULT_PLAYER]
+	{
+	TYPE=PLAYER
+	NAME=Server Offline Template
+	INPUT=C:/uox3/dfndata/html/player.htf
+	OUTPUT=D:/mywebserverdir/player.html
+	}
+
+	[DEFAULT_GUILD]
+	{
+	TYPE=GUILD
+	NAME=Server Guild Template
+	UPDATE=5
+	INPUT=C:/uox3/dfndata/html/guild.htf
+	OUTPUT=D:/mywebserverdir/guild.html
+	}
+
+	[DEFAULT_GMSTATUS]
+	{
+	TYPE=GMSTATUS
+	NAME=Server GameMaster Status Template
+	UPDATE=5
+	INPUT=C:/uox3/dfndata/html/gmstatus.htf
+	OUTPUT=D:/mywebserverdir/gmstatus.html
+	}
+
+	[DEFAULT_OFFLINE]
+	{
+	TYPE=OFFLINE
+	NAME=Server Offline Template
+	INPUT=C:/uox3/dfndata/html/offline.htf
+	OUTPUT=D:/mywebserverdir/serverstatus.html
+	}
+
+	EOF
+	
+	NOTE: At all time in any template block the first tag MUST be the TYPE tag.
+
+	A detailed list of supported template tags will be forth comming.
+
+
+05 Aug 2003 - Maarc
+===========
+	Fixed PC dying issue, not changing to ghost and not turning to gray
+	Reinstated terminating NULL with regards to CPOpenBuyWindow, which should hopefully restore pricing in 3D client
+
+03 Aug 2003 - Maarc
+=======
+	Fixed issue with delete characters. Now characters should delete correctly, and not list unknown
+	values, and erroneous data.
+	Fixed an issue with CPIGumpMenuSelect, which was getting radio buttons wrong
+	Fixed an issue with BuyFrom, where the logic was backward... should be more like pUser.BuyFrom( NPC ) than NPC.BuyFrom( pUser )
+	Fixed similar issue with SellTo
+	Added "movable" to area commands on request of Xuri
+>>>>>>> 1.1.2.22
+
+02 Aug 2003 - Maarc
+	Updated CPItemsInContainer so that it will work faster and should work better with vendors
+	Updated CPOpenBuyWindow to work better with vendors, and go faster
+	Added AoS weapons and LBR-monster weapons (Xuri)
+	Vendors work fine in 3D client but not in 2D
+	Added a packet specific log routine to CPOpenBuyWindow
+	Updated cSocket and other routines to allow for packet specific logging on receive
+	Sideeffect of that is that non-packet classes save data already logged for variable length packet
+	Implemented Log() routine for CPIFirstLogin, CPISecondLogin, CPIServerSelect, CPIClientVersion and CPIUpdateRangeChange
+	Whitespace updates
+	setid now has character body restrictions, and is the same as 'poly, which has been upgraded to 0->0x7CF
+	Removed JS functions due to equivs
+		GetTarget
+		SetTarget
+		CalcSockFromChar
+		CalcDefense
+		CalcAttack
+		CalcCharFromSock
+		GetFlag
+		GetTown
+		SetTown
+		GetRegion
+		SetRegion
+		VendorBuy	-> BuyFrom method of Char/socket
+		VendorSell	-> SellTo method of char/socket
+	Added flag property to characters in JS (deals with criminal, murder and so on, read only property)
+	Migrated base JS functions to character/item methods
+		FinishedItemInCont	-> FinishedItems
+		FirstItemInCont		-> FirstItem
+		NextItemInCont		-> NextItem
+	Dismounting a creature will have the creature face the same way as you
+	onDropItemOnNpc event implemented
+	First executes for item and if item doesn't bounce, executes for NPC (so item can override bouncing)
+	scripts must return a value between 0 and 2
+	0 == bounce
+	1 == don't bounce, use code
+	2 == don't bounce, don't use code
+	Updated mounts to support rest of LBR/AOS mounts
+
+01 Aug 2003 - Maarc
+	Fixed issue with delete characters. Now characters should delete correctly, and not list unknown values, and erroneous data.
+	CChar's attacker property was a CHARACTER, not a CChar * - This lead to mixed ideas of what it's values are
+	Changed attacker property to CChar *, which should provide some minor performance benefits
+	Fixed a bug with stealing which would flag an index error on failure when not in combat
+	OpenURL function on a socket is now enabled
+	Closed a minor memory leak with the JS OnTalk event
+	Updated version number
+	Fixed an issue with NPC response (bank and other commands were not working) - Also affected JS speech
+	Found an issue with the vendor buy list.... not working correctly, unsure as to the reason why.  All items are (null) at 0 gp, though icons are fine
+
+31 Jul 2003 - Maarc
+	DoStaticEffect (JS function) was both a standalone method (DoStaticEffect) and item/char method (StaticEffect)
+	Removed standalone implementation of DoStaticEffect, as it wasn't updated to current implementations and one impl should be used
+	Fixed a bug with JS StaticEffect method that would make it not work correctly with items
+	JS method table for chars updated to reflect that StaticEffect takes 3 parameters, not 4
+	Fixed a crash bug when items tried to talk (via JS or not)
+	Some more basic implementation (ifdef'd out) of using boost tokenisation
+	Whitespace cleanups
+	CPObjectInfo caused crash bug when firefield was cast, fixed
+	The criminal() function would cause a server crash if the thing going criminal was an NPC (symptom of EV's crashing server)
+	Removed JS onUsage event, and updated onUse in its place
+	onUse now requires a return value of either true or false in the script
+	if return value true, then it continues on executing with hard coded implementation
+	if return value false, then no hard code is executed
+	Fixed 'make so that 'make player would work again
+	Items can now use the third optional parameter of StartTimer in JS, which enables to call back into the currently executing script
+	Updated SetCont so that if it fails to equip, it prints out serial and layer, and resets contObj properly
+	Fixed crash with killing characters and corpse clothing
+	onUse event fires for a door when it is used, allowing for greater customisation of whether the door can be opened or not
+
+24 Jul 2003 - Maarc
+	cPBuffer now has an internal packed buffer, as well as an internal Pack() routine
+	cSocket::Send adjusted to use the cPBuffer packed buffer/unpacked where possible
+	cPBuffer's packed implementation means that if the packet is sent to multiple sockets, only one pack is needed
+	And consequently, runtime performance should be slightly improved (only affects removeitem sort of packets)
+	Updated version number
+
+	getTileName updated to behave like in singleClick()
+	singleClick now calls getTileName for name lookups rather than basically reproducing the code
+	singleClick slightly optimized to only do a character lookup if required
+	whitespace cleanups
+
+20 Jul 2003 - Maarc
+	Fixed long packet problem
+	Fixed possible problem with create skill window
+	Converted more things to use CPSendGumpMenu
+	Fixed item refresh bug for items created after server load
+	Optimized code size for cGuild gumps a touch
+	SendVecsAsGump uses CPSendGumpMenu - note, we should be trying to get rid of all uses of SendVecsAsGump
+	Commented out a call to Gumps->Open() that locks up later clients (see cstatstarget in cTargets)
+	Optimization note for CPSendGumpMenu reuse - look at moving some of the processing from Finalize() to AddCommand()/AddText()
+
+19 Jul 2003 - Maarc
+	Fixed a problem with WhichLoginPacket, as it would ignore some valid packet IDs
+	Implemented CPSendGumpMenu, an attempt to write a packet class for 0xB0 outbound
+	CPSendGumpMenu works for part of wholist and is implemented for 'howto
+	However, the size of the packet is bigger than our largest buffer.... and that means that it tramples all over memory
+	A fragmenting version is implemented, but the client is more likely than not to lockup
+	Real answer?  Crypt and send a buffer big enough to hold the entire packet
+
+18 Jul 2003 - Maarc
+	Created a WhichLoginPacket function, to deal specifically with logins only
+	WhichLoginPacket will throw an exception if it receives a request that it knows nothing about
+	This request is caught and swallowed, via new cSocket::FlushIncoming
+
+17 Jul 2003 - Maarc
+	Reduced a number of flush locations
+	Books updated to packet classes
+	Fixed a bug with reading predefined books
+	If cannot wear an item, returns failure (only prints in debug mode)
+	Removed some commented code
+	Updated spellbooks to use packet classes
+	Slight spellbook speed up 
+	Removed some dead variables
+	Some messages now only print in debug mode
+	Packet 0x98 (allnames 3D) moved to packet class
+	Game server list moved to own packet class
+	Added Add() method to CPItemsInContainer
+	Turned outbound 0x66 into CPBookPage
+	Turned outbound 0x6F into CPSecureTrading
+	UseDoor SE function now supports objects not indexes
+	MAXLAYERS reduced to 30
+	Fixed crashes related to system speech and npcs
+	Edited changelog to explicitly mention the month, not using a numeric (not everyone is an American)
+	CPDrawContainer model changed from SI16 to UI16
+	Updated to version 1g
+
+	Addendum
+		Replaced almost all instances of a++ and a-- code with ++a and --a, without breaking semantics
+		Implemented a basic boost tokenisation on account parsing of v3 files (ifdef'd out by default)
+			Saves approximately 100 lines of code and is more readable
+
+15 Jul 2003 - Maarc
+	Should fix deleting characters
+
+30 Jun 2003 - Maarc
+	RefreshItem() changed to Item->Refresh() 
+	Implemented RefreshItem queueing 
+	talking/unicodetalking merged into generictalking 
+	Speech (both unicode and non-unicode) converted to a packet based system 
+	Much greater compliance with packet packing rules 
+	Very simple handler for NPC context menus (UOXClassic as inspiration) 
+	NPC context menus turned on by default during login 
+	All-names 3D basic implementation (for testing) 
+	Extended status window 
+	talk, talkAll, emote and emoteAll are character methods 
+	itemTalk is a method of an item 
+	sysmessage is a method of cSocket 
+	Removed DefBase object and used constants for defaulting instead 
+	Added ApplySection to Items and Chars in the JS engine 
+	Split SpawnItem into CreateDFNItem and CreateBlankItem 
+	Campfires now have 1 HP forced 
+	OnSpeech event altered. Forces script to return a value. (0 == NPCs/PCs 
+	see the speech, 1 == PCs see it, 2 == no one sees it, defaults to 0) 
+	Female bit specified on CPExtMove if person is female 
+	Yellow bit specified on CPExtMove if full health 
+	Command handlers no longer need the offset value, as speech is unified 
+	Books have partial packet class implementation 
+	Better use of BASEITEMSERIAL and INVALIDSERIAL 
+	CChar::SendToSocket implemented as packet class 
+	target() and mtarget() are cSocket methods 
+	Added pragma note for start of Move Guildstone functionality location 
+	structure cleanups/movement 
+	cCommands::MakeShop streamlined 
+	Prints to console when a fragmented packet is attempted 
+	Changed a dynamic memory allocation to static in cSocket::Send 
+	cGump::OPen converted to use packet class 
+	Addmenu no longer has nomove tag 
+	Spellbook start converted to packet class 
+	CPExtMove now handles flag setting 
+	Streamlined startChar routine 
+	I've removed these JS functions (as they have attrib or method equivs) 
+
+		Gump_CreateGump 
+		Gump_AddButton 
+		Gump_AddText 
+		Gump_AddRadio 
+		Gump_AddPage 
+		Gump_AddPicture 
+		Gump_AddGump 
+		Gump_AddBackground 
+		Gump_AddTextEntry 
+		Gump_AddCheckbox 
+		Gump_Delete 
+		Gump_SendToSocket 
+		GetName2 
+		SetName2 
+		GetLowDamage 
+		GetHiDamage 
+		SetAtt 
+		GetAtt 
+		SetDef 
+		GetDef 
+		SetDecayable 
+		IsDecayable 
+		IsCriminal 
+		IsMurderer 
+		IsInnocent 
+		MakeCriminal 
+		MakeInnocent 
+		GetGender 
+		SetGender 
+		TurnToward 
+		DirectionTo 
+		GetRaceName 
+		SetRaceName 
+		IsPlayerRace 
+		GetRacialGenderRestrict 
+		GetRacialArmourClass 
+		GetRaceLanguageSkill 
+		GetRacePoisonResistance 
+		GetRaceMagicResistance 
+		GetRaceVisibleDistance 
+		GetRaceNightVision 
+		GetClientVersion 
+		GetClientType 
+	These have been migrated to newer methods: 
+		CastSpell (chars) 
+		AddSpell (chars) 
+		SpellFail (chars) 
+		ApplyRank (items) 
+		RequiresBeard (races) 
+		RequiresNoBeard (races) 
+		CanRaceWearArmour (races) 
+		IsValidHairColour (races) 
+		IsValidSkinColour (races) 
+		IsValidBeardColour (races) 
+	SpawnItem has been split into CreateDFNItem and CreateBlankItem. 
+	A new object type, UOXCFile, has been made. 
+		eg var mFile = new UOXCFile; 
+	It has the following methods 
+		Open 
+		Close 
+		Write 
+		Read 
+		ReadUntil 
+		Free 
+
+	and properties: 
+		pos (read/write) 
+		length (read) 
+		eof (read) 
+
+
+25 Apr 2003 - giwo
+Added:
+	Added enum distLocs to simplify distance checking (to avoid confusion over what a certain distance would be IE 1 tile away = 2)
+	Added support for setting an items container in JavaScript (object.conainer = newcontainer)
+	Added string support for house.dfn allowing house items and house deeds to be strings, not just numbers
+	Added new cStringTools class to replace makeNum() with type-matching string-to-number functions
+	Added new type of command func, CMD_SOCKFUNC, this will be used to define those commands which need a socket passed to it
+	Added Get/Set wrappers for cmd_offset and made it a private member of the cCommands class
+	Added cSpeech class and cSpeech.h to remove the speech functions from global scope
+	Added support for ADDITEM item,amount in the itemmenu's (note if you specify an amount it will override the default amount setting of that item)
+		-Same support for PACKITEM in newbie.dfn and npc dfn's and ADDITEM in carve.dfn
+	Added EQUIPITEM and PACKITEM in place of ITEM in advance.dfn, note PACKITEM has support for amounts, EQUIPITEM will attempt to equip the item on the character
+Changed:
+	Cleaned up applyNPCSection and added support for reading in HP tags
+	Fixed issues with reading in certain tags from NPC-defs
+	Made console output hexadecimal numbers where applicable also reduced signed/unsigned mismatches in sprintf's
+	Moved CChar::carve and CItem::carve into cBaseObject::carve, and changed it to an SI16
+	Changed CItem::good to an SI16
+	Changed CItem::glow to a UI32 possibly fixing some issues where it would not read in properly
+	Fixed deletion of house items upon re-deeding a house
+	Fixed commandlevel overrides in command.dfn to read-in properly
+	Overhaul to cCombat to make way for future split of Players and NPC's
+	Created an enum for aiTypes allowing easy refrence of NPCAI
+	Created a TargetIDs enum to allow easy refrence of target-based commands when calling target() and using cTargets::MultiTarget()
+	Moved target() and its overloads to targeting.h
+	Updated many timers that were using an SI32 to use TIMERVAL reducing Signed/Unsigned mismatches
+	Moved safeCopy() into the cStringTools class, also moved numtostr and renamed it makeString()
+	Fixed up command_set and AllSetTarget() to remove the need for mstring
+	Moved gettokennum() into the cStringTools class as GetToken() and made better use of it
+	Change cServerData::SetServerStartPrivs() to a UI16
+	Changed UI08 CChar::Get/Set Priv() & Priv2() into UI16 Get/SetPriv()
+	Fixed areas where ifdef'd code had never been updated to make use of new CChar & CItem handling
+	ITEM tags in npc dfn's changed to EQUIPITEM, be sure to update your scripts
+	Changed JS function CalcSocketFromChar() to return an object
+	Moved findMulti() and inMulti() to findfuncs.cpp and removed inMulti() from global scope
+	Changed worldsaves to output many values in hex format
+	Fixed some issues in cServerData where settings were not initialized upon creation of the class
+	Many type mismatches fixed in cServerData along with the resizing of many variables in the class greatly reducing the total memory it uses
+	Fixed a crash bug in combat when attempting to calc the defense covering a certain layer
+	Fixed several magic commands which had unused variables sent to them
+	Moved comm[CMAX] to the cCommmands class and added Get/Set wrappers to it
+	Moved makenumber() to the cCommands class and renamed it to GetArgument()
+	Minor fixes / tweaks to the cBooks class
+	Fixed some container mismatches
+Removed:
+	Functions:
+		CSocket::currchar & CSocket::addid5
+		Removed item_test and added CItem::CheckItemIntegrity() in its place
+		Fully depreciated and removed makeNum() and its overloads
+		UOXSOCKET calcSocketFromChar() overloads
+		calcSocketFromSockObj()
+		Legacy calcCharFromSer() and calcItemFromSer() overloads
+		UseHairDye() and moved all contained code to its' one usage
+		enlist()
+		CChar: Murderer(), Skin2(), ID2(), xID(), xSkin() and many unused overloads
+	Commands:
+		'USE' Because it has not had supporting code for it for quite some time
+		'CTRIG','ITRIG', and 'TTRIG' As they were remnants of the old trigger system
+		'SETHEXMOREXYZ' Because SetMOREXYZ will support both HEX and Decimal
+		'SETSPEECH' Because it did nothing
+		'TILEDATA' Because 'SHOWDETAIL does the exact same thing
+		'XSBANK' Because 'XBANK does the exact same thing
+
+	regions.h and classes.h from global scope and included them in those files which actually used them
+	utilsys.cpp and utilsys.h from the project as they were not used anywhere
+	mstring.cpp and mstring.h from the project
+	Many unused and duplicate global includes
+	Many unused #defines and const's
+
+19 Mar 2003 - giwo
+Added:
+	JS Get/Set "vulnerable" handlers for character properties (Abaddon)
+	willHunger with Get/Set HungerStatus() wrappers to CChar class (can now selectively stop a character/creature from continuing to hunger)
+	JS Get/Set "willhunger" handlers for character properties
+Changed:
+	Linux compile fixes (thanks Malketh)
+	Hash.h warning fixed (thanks Philantrop)
+	Fixes to getRootPack() and getPackOwner()
+	Removed many #includes from the global scope, including them in the specific files that need them
+		This should greatly reduce compile time and filesize, along with the need to recompile after altering most headers
+	Removed the linux ifdefs around typedefd function declarations, this should work with gcc 3.2
+	Moved global loading functions into a new cFileIO() class to take them out of global scope
+	Fixed an issue causing items to not be sent to the client (thanks Malketh)
+	Moved some global structs into the CWorldMain class
+	Fixed a bug causing a crash on character / item creation
+	Moved all effects stuff into its own class to take it out of global scope
+	Changed the variable CChar::region to CChar::regionNum to avoid conflicts with the cTownRegion region[] indexes
+	Moved getbestskill(), isHuman(), and inDungeon() into the CChar class to remove them from global scope
+	Took npcSimpleAttackTarget() out of global scope
+	Rewrote restock() to make use of restockNPC()
+	Changed the typedef'd iterator in hash.h to HASHITERATOR to kill a Linux warning
+	Renamed cEffects::soundeffect() to PlaySound() and removed unneeded overloads
+	Fixed a bug causing executebatch to be set with locationcount data
+	Rewrote cEffects::bgsound()
+	Documented sounds.cpp
+	Misc minor cleanups / fixes
+Removed:
+	sendItemsInRange() (CChar::Teleport() does the same thing)
+	Many #includes that were not being used
+	deathMenu()
+	respawnnow() and moved all of its code into command_respawn()
+	one instance of cEffects::scpSoundEffect() and renamed the other to PlaySound()
+
+13 Mar 2003 - giwo
+Changed
+	Fixed an issue allowing the server to not have a dictionary.ZRO (which would cause a crash when a dictionary entry was called with no language)
+	Fixed an issue causing the server to puke when it attempted a restart
+	Moved SpawnRandomItem() into cItem class
+	Moved SpawnRandomMonster() into cCharHandle class
+	Broke necro.dfn into fishing.dfn and digging.dfn
+	Made better use of SpawnRandomItem() and SpawnRandomMonster()
+
+12 Mar 2003 - giwo
+Added:
+	CPOpenGump and CPSpeech packet class to remove some global vars (Note these are pretty basic classes and someone
+		with a better understanding of how we handle sending/recieving packets could probably expand these to make better use of them)
+Changed:
+	Moved many global vars into the CWorldMain() class
+	Cleaned ResetVars() in uox3.cpp as ResetDefaults() in CWorldMain() now handles much of that
+	Added a check to ensure text wasn't sent twice in talking(), should fix double-speech
+	Cleaned up cmdtable.cpp removing a couple duplicate entries, etc
+	Changed target() to only require 4 values (as the first two were always 0 and 1)
+	Removed many unneeded typedefs and globals
+	Went through cServerData() and noted unused server.ini entries
+	Moved title1(), title2(), and title3() to cClick.cpp since that is their only usage, made use
+		of MAX_TITLE to ensure we wouldn't overrun the buffers, and renamed them matching what title they were
+
+11 Mar 2003 - giwo
+Changed:
+	Fixed a potentially very serious bugs with how containers were being set upon loading the world
+	Fixed possible re-adding of weight to containers and characters at load
+	Fixed a bug causing equipped items that were not weapons to take damage in combat
+	Minor cleanups / warning fixes / Linux compatability issues (punt)
+
+07 Mar 2003 - giwo
+	Overhauls/Additions/Major Changes
+	Changed:
+	
+	Tweaks/Object Conversions/Misc Small Changes
+	Changed:
+		Changed CItem::Get/SetLayer() to a UI08
+		Fixed a bug in speech causing you to see your own text twice
+		Fixed a nasty crash bug caused by changing an items layer
+		Fixed a bug causing NPC's to always be the first attacker
+	
+	Removed:
+		CChar::Fame2() and CChar::Karma2()
+		CChar::Stamina2(), CChar::Mana2()
+
+
+05 Mar 2003 - giwo
+	Overhauls/Additions/Major Changes
+	Changed:
+		Armor DEF system overhauled to match OSI system
+	
+	Tweaks/Object Conversions/Misc Small Changes
+	Changed:
+		-Updated Hash Table Remove() calls to remove unrefrenced parameter "index"
+		-Changed cSocket::Get/SetDWord() to a UI32 to fix problems checking it against INVALIDSERIAL and storing large serial numbers
+		-Changed cSocket::AddID() to a UI32 for the same reason as above
+		-Changed cSocket:::Get/SetWord() to a UI16 to fix possible problems storing ID's
+		-Fixed up calcStealDiff() to match new weight system
+		-Minor updates to CPStatsWindow to match the new Armor DEF system and Weight system
+		-Fixed calls to getTileName() so the names container was set with MAX_NAME
+		-Fixed up getFieldDir() using direction typedefs
+		-Changed Get/SetMagic() to Get/SetMovable()
+		-Cleaned up some unrefrenced params
+		-Changed some int's to UI16's in books.cpp
+		-WorldSave Changes:
+			-XYZ and worldnum to Location=x,y,z,worldnum
+			-HiDamage and LoDamage into Damage=hidamage,lodamage
+			-Strength,st2,Dexterity,dx2,Intelligence,in2 changed to Strength=str,st2, Intelligence=int,in2, Dexterity=dex,dx2
+			-DWord0-3 changed to DWords=0,1,2,3
+			-FX1,FY1,FX2,FY2,FZ1 changed to WanderArea=FX1,FY1,FX2,FY2,FZ1
+			-MoreX,MoreY,MoreZ changed to MoreXYZ=morex,morey,morez
+			-More,More2 changed to More=more,more2
+			-Type,Type2 changed to Type=type,type2
+			-Light,Rain,Heat,Cold,Snow,Lightning changed to RaceDamage=Light,Rain,Heat,Cold,Snow,Lightning
+			-Fame,Karma,Kills changed to Reputation=fame,karma,kills
+	
+	Removed:
+		Removed all smoking stuff, as it's nothing but a waste of code
+
+26 Feb 2003 - giwo
+	Overhauls/Additions/Major Changes
+	Changed:
+		-Complete rewrite to the Weight system
+			-Weight is more permanent, removed need to recalc it constantly
+			-Packs now show the weight of themselves and all their contents
+			-Packs now have a weight limit (currently hardcapped to 400, should make it based on type of container and possibly scriptable)
+			-All items use the weight value given to them in the scripts unless the entry is 0 in which case they pull weight from the MUL's
+			-Better handling of overloaded for teleport / recall / walking
+			-Weight will max out at 65535 stones and can not go lower than 0 stones
+		-Items container is now set as a cBaseObject
+	
+	Tweaks/Object Conversions/Misc Small Changes
+	Changed:
+		-Fixed up itemsfx() and renamed it to itemSound(), now better handles Gold sfx and where an item was dropped (ie in a pack or on the ground)
+		-Cleaned up goldsfx() and renamed it to goldSound()
+		-Many fixes to get/drop/wear/packItem functions
+		-Minor fixes/cleanups in movement.cpp
+		-Fixed a worldsave crash with tamed creatures
+		-Pressing 0 in console reloads items as well as everything else
+		-Made dagger usable for carve again
+		-Fixed a horse mounting distance check
+		-Noted (and in some cases fixed) unrefrenced variables throughout the code
+	Removed:
+		-Removed calcLastContainerFromSer(), as the Get/SetCont() changes made it superfluous
+
+
+18 Feb 2003 - giwo
+	Overhauls/Additions/Major Changes
+	Added:
+		-Added cItems::menuAddItem() to handle adding items from the add menu
+		-Added handleCooking() in place of cSkills CookMeat(), MakeDough(), and MakePizza()
+		-Added PlayInstrument() in place of PlayInstrumentWell() / PlayInstrumentPoor()
+		-Added cSkills::doStealing() to take place of repetitious code in RandomSteal() and StealingTarget()
+		-Added objInRange() functions in place of charInRange()/itemInRange() funcs
+	
+	Changed:
+		-Converted inscribe.gmp to inscribe.dfn and used NewMakeMenu() in favor of the old make menu system
+		-Updated GetMagic() == 3 calls to IsLockedDown() calls (as that is all it should be used for)
+		-Fixed up all IsLockedDown() calls, resources that are LockedDown can NOT be used, even by GM, until released
+			-Also note, items that should be usable if locked: Skill items (looms, training dummies, etc, Recall runes)
+		-Moved the two functions from newbie.cpp to pcmanage.cpp and removed newbie.cpp from the project
+		-Moved action() and impaction() to effects.cpp
+		-Moved isHuman() to npcs.cpp
+		-Where possible made functions that were part of classes private
+		-Made use of cCombat::getWeaponType() in doubleClick() to centralize searching for weapon ID's
+		-Updated CDictionary to make use of IsValid and added wrapper functions for it
+		-Moved keyInPack() to doors.cpp and made better use of it
+		-Added support to NpcTalk for variable arguments
+		-Added support to NpcTalkAll for variable arguments
+		-Changed itemmessage() to objMessage() and added dictionary support to it
+		-Went through and added language support to Dictionary->GetEntry() calls anywhere possible (note, should NOT use socket-based languages for: Console, Broadcasts, Item/Region/Char Names, Anything else?)
+		-Broke doubleClick() into 3 functions, doubleClick(), handleDoubleClickTypes(), and handleDoubleClickIDs() to allow quicker viewing / editing
+		-Cleaned up unneeded variables in the three aforementioned functions
+	Removed:
+		-Trashed im.cpp/.h, MakeMenuTarget() and the rest of the old make menu system
+		-Removed Gumps directory (as it is now unnecesarry)
+		-Removed getCharDist() and getItemDist()
+		-Removed make_st and cSkills::CalcRank()
+
+	Tweaks/Object Conversions/Misc Small Changes
+	Changed:
+		-Removed iSGM() checks from all Dist functions, as it would cause wierdness in many areas of the code (Combat, for example)
+		-NPC Movement issues addressed
+			-Creatures following move faster (not just tamed)
+			-Wander direction changes randomly
+			-NPC movement slowed down alltogether
+		-Attack flagging issues addressed/worked on
+		-Combat bug causing you swing but never hit when diagonal from enemy fixed
+		-Decay timer reset upon dropping an item on the ground
+		-Cleanup of cItem::DecayItem()
+		-Fixed an issue causing creatures to get stuck turning around when nearly dead
+		-Fixed up amount functions to allow for UI32, should allow statwindow to properly display up to 4billion+ gold on a character, as well as allow high-cost item buy/sells
+		-Changed CChar tailitem, GetTailItem() and SetTailItem() to an object pointer
+		-Now can only mount a creature if it is tamed and owned by you
+		-Changed GetAdvObj to a UI16, shouldn't need more than 65535 Advance.dfn entries
+		-Get/SetSpawn() now check for INVALIDSERIAL instead of 0
+		-Updated CChar::Get/SetSmeltItem() to an Object pointer
+		-Changed UI32 ItemPtr() in tempeffects to cBaseObject *ObjPtr()
+		-Changed cSocket::AddMItem() to a CItem
+		-Used GetItemObj(), GetOwnerObj(), GetSpawnObj(), and GetMultiObj() where possible
+		-Cleaned up CurrcharObj() usage
+		-Changed CSkills::Snooping() to use an Object pointer rather than a Serial
+		-Changed tempeffect() to use a CItem call instead of ITEM (and removed it alltogether from its CChar overload)
+		-Changed nVialID in necro.cpp to now make use of cSocket::AddMItem() to allow an object pointer
+		-Changed cTownRegion::DisplayTownMenu() to use an item pointer
+		-Minor tweaks to Rank system
+		-Fixed House Lockdowns, Items are now added to the Multi's LockDown list
+		-Fixed a WorldSave crash caused by tempeffects, by adding teffect_st constructor
+		-Possibly fixed MultiCaching bug, where container should have been UI32
+		-Updated StoreItemRandomValue(), fixing some possible signed/unsigned issues
+		-Updated calcLastContainerFromSer() to return a cBaseObject pointer
+		-Fixed issue in checktempeffects() causing ITEM timers not to function
+		-Changed CItem *Get/SetTailItem() to SERIAL Get/SetSkillItem()
+		-Ensured SkillItem was being set back to INVALIDSERIAL after use
+		-Fixed up cGumps::choice()
+		-Fixed bug when npc attacked causing the emote to display incorrectly, also added "creature" is attacking you! emote for target only
+		-Same fixes for players attacking
+		-Updated npcEmoteAll() to handle variable arguments and updated calls to match
+		-Used Socket-based language calls in Dictionary-GetEntry() wherever possible
+		-Caught some missed text and put them in the dictionary.
+		-Documented functions in speech.cpp
+		-Made use of objInRange() wherever possible
+		-Many signed/unsigned mismatch fixes
+		-Minor optimizations and code cleanups
+
+	Removed:
+		-Commented out old Alchemy stuff (alchemy.dfn in /create/ still needs work)
+		-Removed unused respawntime global
+		-Removed some unneeded typedefs
+		-Removed many unnecesarry uses of char temp[]; sprintf( temp, Dict ); function( temp ); in favor of function( dict )
+		-Removed unnecesarry overloads for the following functions:
+			SpawnItem()
+			GetItem()
+			CItem::SetSpawn()
+			CChar::SetSpawn()
+			GetMulti()
+			GetOwner()
+			SetOwner()
+			openPack()
+			decItemAmount()
+			CItem::ReleaseItem()
