@@ -61,13 +61,14 @@ void Script::reload( bool disp )
     
 	deleteMap();
 	FILE *fp = fopen( filename.c_str(), "r" );
-    if( fp == NULL ) 
+  if( fp == NULL ) 
 	{
-        fprintf(stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
-        errorState = true;
-    }
+		fprintf(stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+    errorState = true;
+  }
 	if( disp )
 		Console.Print( "Reloading %-15s: ", filename.c_str() );
+	
 	fflush( stdout );
 
 	lastModTime = 0;
