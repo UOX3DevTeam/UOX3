@@ -23,7 +23,7 @@
 #endif
 
 
-#if __LINUX__
+#ifdef __LINUX__
 
 #include <dirent.h>
 #include <glob.h>
