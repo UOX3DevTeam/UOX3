@@ -661,8 +661,8 @@ struct spawnregion_st//Regionspawns
 #define MAX_ACCT_LOCK 5
 struct acct_st
 {
-	char name[512];
-	char pass[512];
+	char name[20];      // Client doesn't allow accounts with more than 16 chars.
+	char pass[20];      // Client doesn't allow password with more than 16 chars.
 	int banTime;
 	int ban;
 	int banSerial;
@@ -684,8 +684,8 @@ struct acct_st
 
 struct wiped_st
 {
-	char name[512];
-	char pass[512];
+	char name[20];
+	char pass[20];
 	int wipeSerial;
 	char contact[512];
 };

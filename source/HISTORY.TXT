@@ -29,6 +29,23 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
+03.02.2001               Thiago A. Corrêa
+
+  uox3.cpp               When a GM tries to mount a horse, it's automagically
+                         tammed by him, also changed to switch structure in
+                         mounthorse() and unmounthorse()
+                         Changed createchar() to use switch instead of ifs.
+  targeting.cpp          Can't use makegm on NPCs
+  walking.cpp            deny() is only used by cMovement, moved the function
+                         to inside the class as a private member.
+  globals.cpp            Removed unused global variables, changed some global
+  uox3.h                 constants local to functions who require it, such as
+                         nopass[3].
+  dbl_sinlge_click.cpp   Message when eating poisoned food is now random. 
+                         (Thanks for Tom's and punt's suggestions.)
+
+
+-------------------------------------------------------------------------------
 01.02.2001
    uox3.cpp              Changed inrange1(), inrange1p(), chardist(), itemdist(),
                          inrange2(), iteminrange() and npcinrange() to use less 

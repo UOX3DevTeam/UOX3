@@ -262,7 +262,6 @@ extern char login04c[18];
 extern char login04d[64];
 extern char login03[12];
 extern char noaccount[3];
-extern char nopass[3];
 extern char acctblock[3];
 extern char pausex[3];			// Tseramed, pause reserved in lunux
 
@@ -479,8 +478,6 @@ extern int boutlength[MAXIMUM+1];
 extern char tempflag;
 extern char xoutbuffer[MAXBUFFER*2];
 extern char cryptclient[MAXCLIENT];
-extern char usedfree[MAXCLIENT];
-extern int freelogins;
 extern int resendweathertime;
 extern int weathertime;
 extern int shopTime;
@@ -558,7 +555,6 @@ void doubleclick(int s);
 void singleclick(int s);
 char *RealTime(char *time_str);
 
-void deny(int k, int s, int sequence);
 void teleporters(int s);
 void bolteffect2(int player,char a1, char a2);
 void all_items(int s);

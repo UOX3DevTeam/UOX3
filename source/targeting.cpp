@@ -1167,6 +1167,13 @@ void cTargets::GMTarget(int s)
 	
 	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
 	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
+
+	if (chars[i].npc)
+	{
+		sysmessage(s, "You can't promote a NPC to GM.");
+		return;
+	}
+
 	if(i!=-1)
 	{
 		sprintf(temp, "%s.log",chars[currchar[s]].name);

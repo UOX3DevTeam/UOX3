@@ -67,7 +67,6 @@ char login04c[18]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\
 char login04d[64]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 char login03[12]="\x8C\x00\x00\x00\x00\x13\x88\x7B\x7B\x7B\x01";
 char noaccount[3]="\x82\x00";
-char nopass[3]="\x82\x03";
 char acctblock[3]="\x82\x02";
 char pausex[3]="\x33\x01";
 char restart[3]="\x33\x00";
@@ -243,8 +242,8 @@ int gRespawnItem=0; //Last item that was checked for respawn Tauriel 3/7/99
 cItemHandle items;
 cCharacterHandle chars;
 
-int *a,*b,*c,*d,*e;
-char *f;
+/*int *a,*b,*c,*d,*e*/;
+//char *f;
 
 location_st location[4000];
 region_st region[256];
@@ -300,14 +299,14 @@ int showlayer;
 int ph1, ph2, ph3, ph4;
 int binlength[MAXIMUM+1];
 int boutlength[MAXIMUM+1];
-char tempflag;
+#ifdef UNRELEASED
+	char tempflag;
+#endif
 char xoutbuffer[MAXBUFFER*2];
 char cryptclient[MAXCLIENT];
 unsigned int fly_p = 18; // flying probability = 1/fly_p each step (if it doesnt fly)
 unsigned char fly_steps_max = 27;
 
-char usedfree[MAXCLIENT];
-int freelogins;
 int resendweathertime=0;
 int weathertime=0;
 int shopTime=0;

@@ -1622,9 +1622,18 @@ void cCombat::doMissedSoundEffect(CHARACTER p)
 {
 	int a=rand()%3;
 
-	if (a==0) soundeffect2(p, 0x02, 0x38);
-	else if (a==1) soundeffect2(p, 0x02, 0x39);
-	else soundeffect2(p, 0x02, 0x3A);
+	switch(rand()%3)
+	{
+	case 0:
+		soundeffect2(p, 0x02, 0x38);
+		break;
+	case 1:
+		soundeffect2(p, 0x02, 0x39);
+		break;
+	case 2:
+		soundeffect2(p, 0x02, 0x3A);
+		break;
+	}
 }
 
 void Kill( CHARACTER attack, CHARACTER defend )

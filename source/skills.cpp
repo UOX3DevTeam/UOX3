@@ -4744,25 +4744,6 @@ void cSkills::Track(int i)
 	}
 	else sprintf(temp,"%s is right next to you",chars[chars[i].trackingtarget].name);
 	
-#if CLIENTVERSION_M == 25 // only "spam" if clientversion == 26
-	tl=44+strlen(temp)+1;
-	talk[1]=tl>>8;
-	talk[2]=tl%256;
-	talk[3]=chars[i].ser1;
-	talk[4]=chars[i].ser2;
-	talk[5]=chars[i].ser3;
-	talk[6]=chars[i].ser4;
-	talk[7]=chars[i].id1;
-	talk[8]=chars[i].id2;
-	talk[9]=2; // Type
-	talk[10]=chars[i].emotecolor1;
-	talk[11]=chars[i].emotecolor2;
-	talk[12]=0;
-	talk[13]=chars[i].fonttype;
-	Network->xSend(s, talk, 14, 0);
-	Network->xSend(s, chars[i].name, 30, 0);
-	Network->xSend(s, temp, strlen(temp)+1, 0);
-#endif
 #if CLIENTVERSION_M==26
 	unsigned char arrow[7];
 	arrow[0]=0xBA;

@@ -219,8 +219,7 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 		xGM[s]->isClient = 0;
 	} else
 		printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
-	if( usedfree[s] ) 
-		freelogins++;
+
 	FlushBuffer( s );
 	closesocket( client[s] );
 	
@@ -270,6 +269,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 	int i;
 	unsigned long int j, tlen, t;
 	unsigned long int ip;
+	char nopass[3]="\x82\x03";
 	char acctused[3]="\x82\x01";
 	char newlist1[7]="\xA8\x01\x23\xFF\x00\x01";
 	char newlist2[41]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
@@ -559,6 +559,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 	char verify2[63]="\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 #endif
 #endif
+	char nopass[3]="\x82\x03";
 	
 	acctno[s]=-1;
 	for (i=0;i<acctcount;i++)
@@ -929,7 +930,6 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			binlength[now]=0;
 			boutlength[now]=0;
 			cryptclient[now]=0;
-			usedfree[now]=0;
 			walksequence[now]=-1;
 			idleTimeout[now] = -1;
 #ifdef __NT__

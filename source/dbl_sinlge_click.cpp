@@ -529,7 +529,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		    return;//book
 		case 12: //door(unlocked)
 			dooruse(s, x);
-                        chars[currchar[s]].objectdelay = (unsigned int) (( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2);
+            chars[currchar[s]].objectdelay = (unsigned int) (( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2);
 			return; //doors
 		case 13: //locked door
 			p=packitem(currchar[s]);
@@ -563,7 +563,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						{
 							npctalk(s,currchar[s],"You quickly unlock, use, and then relock the door.", 0);
 							dooruse(s, x);
-							chars[currchar[s]].objectdelay = (unsigned int)( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2;
+							chars[currchar[s]].objectdelay = (unsigned int) (( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2);
 							return;
 						}//if
 					}
@@ -615,7 +615,20 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				
 				if( ( items[x].poisoned ) && ( chars[currchar[s]].poisoned < items[x].poisoned ) )
 				{
-					sysmessage( s, "Thou ain't feeling well" );
+
+					switch(rand()%3)
+					{
+					case 0:
+						sysmessage( s, "You feel disoriented and nauseous");
+						break;
+					case 1:
+						sysmessage( s, "That tasted funny");
+						break;
+					case 2:
+						sysmessage( s, "Your stomach turns over");
+						break;
+					}
+
 					soundeffect2( currchar[s], 0x02, 0x46 ); //poison sound - SpaceDog
 					chars[currchar[s]].poisoned = items[x].poisoned;
 					chars[currchar[s]].poisonwearofftime = ( uiCurrentTime + ( CLOCKS_PER_SEC * server_data.poisontimer ) );

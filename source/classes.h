@@ -659,11 +659,9 @@ public:
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
 private:
+
 	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);
-#if CLIENTVERSION_M==25
-	char Crypt(int s, char c);
-#endif 
 	int xRecv(int s);
 	void Processed(int s, int i);
 	void Login1(int s);
@@ -835,6 +833,7 @@ private:
 	signed char CheckWalkable( CHARACTER c, unitile_st *xyblock, int xycount );
 	bool CrazyXYBlockStuff(CHARACTER c, UOXSOCKET socket, short int oldx, short int oldy, int sequence);
 	void FillXYBlockStuff(CHARACTER c, unitile_st *xyblock, int &xycount, unsigned short oldx, unsigned short oldy );
+	void deny(int k, int s, int sequence);
 };
 
 // This class is designed as a replacement for the teffect array (which is nasty, and too big)

@@ -1135,7 +1135,7 @@ void loadchar(int x) // Load a character from WSC
 				chars[x].own2 = (unsigned char)(i>>16);
 				chars[x].own3 = (unsigned char)(i>>8);
 				chars[x].own4 = (unsigned char)(i%256);
-				dummy.ownserial = chars[x].ownserial=i;
+				chars[x].ownserial = i;
 				if (chars[x].ownserial!=-1) 
 				{
 					setptr(&cownsp[i%HASHMAX], x); //Load into charsp array
@@ -9109,7 +9109,6 @@ int __cdecl main(int argc, char *argv[])
 		keeprun=Network->kr; //LB. for some technical reasons global varaibles CANT be changed in constructors in c++.
 		error=Network->faul;  // i hope i can find a cleaner solution for that, but this works !!!
 		// has to here and not at the cal cause it would get overriten later
-		freelogins=4;
 		
 		printf("Loading teleport..."); fflush(stdout);
 		read_in_teleport();
