@@ -351,7 +351,6 @@ void unicodetalking( UOXSOCKET s ) // PC speech
 				responsevendor(s);
 				found--;
 				for (i=0;i<strlen(&nonuni[0]);i++) nonuni[i]=toupper(nonuni[i]);
-//				talkingto[found]=currchar[s];
 				openscript("speech.scp");
 				sprintf(sect, "SPEECH %i", chars[found].speech);
 				if (!i_scripts[speech_script]->find(sect))
@@ -457,7 +456,6 @@ void talking( UOXSOCKET s ) // PC speech
 			talk[10]=buffer[s][4];
 			talk[11]=buffer[s][5];
 			talk[12]=buffer[s][6];
-			//   talk[13]=buffer[s][7]; // Font
 			talk[13]=chars[currchar[s]].fonttype;
 			Network->xSend(s, talk, 14, 0);
 			Network->xSend(s, chars[currchar[s]].name, 30, 0);
@@ -589,7 +587,6 @@ void talking( UOXSOCKET s ) // PC speech
 				responsevendor(s);
 				found--;
 				for (i=0;i<strlen((char *)&buffer[s][8]);i++) buffer[s][i+8]=toupper(buffer[s][i+8]);
-//				talkingto[found]=currchar[s];
 				openscript("speech.scp");
 				sprintf(sect, "SPEECH %i", chars[found].speech);
 				if (!i_scripts[speech_script]->find(sect))

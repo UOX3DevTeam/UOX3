@@ -588,7 +588,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					switch( RandomNum( 0, 2 ) )
 					{
-					case 0:	sysmessage( s, "You feel disoirented and nauseous" );	break;
+					case 0:	sysmessage( s, "You feel disoriented and nauseous" );	break;
 					case 1:	sysmessage( s, "That tasted funny" );					break;
 					case 2:	sysmessage( s, "Your stomach turns over" );				break;
 					}

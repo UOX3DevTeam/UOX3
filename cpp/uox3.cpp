@@ -8101,7 +8101,6 @@ int __cdecl main(int argc, char *argv[])
 		offlinehtml();//HTML  // lb, the if prevents a crash on shutdown if html deactivated ...
 		printf(" Done.\n");
 	}
-	//Writeslot("shutdown");
 	printf("Clearing IM Menus...");
 	im_clearmenus();
 	printf(" Done.\nClosing sockets...");
@@ -8195,7 +8194,8 @@ void Shutdown( int retCode )
 		} while ( cwmWorldState->Saving() );
 	}
 	
-	offlinehtml();//display server shutdown page
+	if( server_data.html)
+		offlinehtml();//display server shutdown page
 	
 	// delete any objects that were created (delete takes care of NULL check =)
 	delete cwmWorldState;
@@ -8901,7 +8901,7 @@ void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
 }
 
 
-void movingeffect(int source, int dest, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode)
+void movingeffect(CHARACTER source, CHARACTER dest, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode)
 {
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
@@ -10799,10 +10799,7 @@ void gettokennum(char * s, int num)
 {
 	int i, j;
 	
-	for (i=0;i<255;i++)
-	{
-		gettokenstr[i]=0;
-	}
+	memset(&gettokenstr[0], 0, 255);
 	
 	i=0;
 	
@@ -10810,13 +10807,13 @@ void gettokennum(char * s, int num)
 	{
 		if (s[i]==0)
 		{
-			num=num-1;
+			num--;
 		}
 		else
 		{
 			if (s[i]==' ' && i!=0 && s[i-1]!=' ')
 			{
-				num=num-1;
+				num--;
 			}
 			i++;
 		}
@@ -10826,13 +10823,13 @@ void gettokennum(char * s, int num)
 	{
 		if (s[i]==0)
 		{
-			num=num-1;
+			num--;
 		}
 		else
 		{
 			if (s[i]==' ' && i!=0 && s[i-1]!=' ')
 			{
-				num=num-1;
+				num--;
 			}
 			else
 			{
@@ -14307,6 +14304,7 @@ void saveserverscript(char x)
 	fprintf( file, "CUT_SCROLL_REQUIREMENTS %i\n", server_data.cutscrollreq ); // AntiChrist
 	fprintf( file, "PERSECUTION %i\n", server_data.persecute ); // AntiChrist
 	fprintf( file, "AUTO_CREATE_ACCTS %i\n", server_data.auto_a_create);
+	fprintf( file, "AUTO_ACCT %i\n", server_data.auto_acct );
 	fprintf( file, "MSGBOARDPATH %s\n",server_data.msgboardpath);              // Dupois - Added Dec 20, 1999 for msgboard.cpp
 	fprintf( file, "MSGPOSTACCESS %i\n",server_data.msgpostaccess);            // Dupois - Added Dec 20, 1999 for msgboard.cpp
 	fprintf( file, "MSGPOSTREMOVE %i\n",server_data.msgpostremove);            // Dupois - Added Dec 20, 1999 for msgboard.cpp
@@ -14319,7 +14317,6 @@ void saveserverscript(char x)
 		fprintf( file, "FOOTSTEPS 1\n" );
 	else
 		fprintf( file, "FOOTSTEPS 0\n" );
-	fprintf( file, "AUTO_ACCT %i", server_data.auto_acct );
 	fprintf( file, "COMMANDPREFIX %c\n", server_data.commandPrefix ); 
 	fprintf( file, "STATADVANCE %i\n", server_data.stat_advance ); // Gunther stat advance tweak	
 	fprintf( file, "PORT %i\n", UOX_PORT );

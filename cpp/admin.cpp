@@ -31,7 +31,6 @@
 
 #define DBGFILE "admin.cpp"
 
-//void account(FILE *infile)
 
 void cAdmin::GumpAMenu(int s, int j)//Revana*
 {

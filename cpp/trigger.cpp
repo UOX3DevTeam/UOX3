@@ -210,7 +210,7 @@ void triggerwitem(int ts, int ti, int ttype)
 			}
 			if (!(strcmp("MSG",script1)))  //Display a message when trigger is activated
 			{
-				strcpy(sect, script2);
+				strncpy(sect, script2, 256);
 				sysmessage(ts,sect);
 			}
 			// Start Tauriel's new trigger Tokens
@@ -721,51 +721,42 @@ void triggerwitem(int ts, int ti, int ttype)
 				unsigned int InBackpack = makenumber( 1 );
 				switch (chars[currchar[ts]].dir)
 				{
-				case 0: {
+				case 0: 
 					triggerx=chars[currchar[ts]].x;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				case 1: {
+				case 1: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				case 2: {
+				case 2: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y;
 					break;
-						}
-				case 3: {
+				case 3: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 4: {
+				case 4: 
 					triggerx=chars[currchar[ts]].x;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 5: {
+				case 5: 
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 6: {
+				case 6: 
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y;
 					break;
-						}
-				case 7: {
+				case 7: 
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				default: {
+				default: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						 }
 				}
 				triggerz=chars[currchar[ts]].z;
 				pos=ftell(scpfile);
@@ -1250,7 +1241,6 @@ void triggerwitem(int ts, int ti, int ttype)
 void triggernpc(int ts,int ti)
 {
 	char sect[512];
-	char effect[29];
 	signed int j;
 	int p;
 	int c;
@@ -1261,7 +1251,7 @@ void triggernpc(int ts,int ti)
 	long int pos;
 	char fmsg[512];
 	
-	*fmsg='\0'; // was sprintf(fmsg,"");
+	fmsg[0] = 0;
 	
 	openscript("ntrigrs.scp");
 	sprintf(sect, "TRG %i", chars[ti].trigger);
@@ -1304,20 +1294,13 @@ void triggernpc(int ts,int ti)
 				if( chars[currchar[ts]].hunger < 1 ) chars[currchar[ts]].hunger = 1;
 				switch( chars[currchar[ts]].hunger )
 				{
-				case 0:	sysmessage( ts, "You eat the food, but are still extremely hungry." );
-					break;
-				case 1:	sysmessage( ts, "You eat the food, but are still extremely hungry." );
-					break;
-				case 2:	sysmessage( ts, "After eating the food, you feel much less hungry." );
-					break;
-				case 3:	sysmessage( ts, "You eat the food, and begin to feel more satiated." );
-					break;
-				case 4:	sysmessage( ts, "You feel quite full after consuming the food." );
-					break;
-				case 5:	sysmessage( ts, "You are nearly stuffed, but manage to eat the food." );
-					break;
-				case 6:	sysmessage( ts, "You are simply too full to eat any more!" );
-					break;
+				case 0:	sysmessage( ts, "You eat the food, but are still extremely hungry." );	break;
+				case 1:	sysmessage( ts, "You eat the food, but are still extremely hungry." );	break;
+				case 2:	sysmessage( ts, "After eating the food, you feel much less hungry." );	break;
+				case 3:	sysmessage( ts, "You eat the food, and begin to feel more satiated." );	break;
+				case 4:	sysmessage( ts, "You feel quite full after consuming the food." );		break;
+				case 5:	sysmessage( ts, "You are nearly stuffed, but manage to eat the food." );break;
+				case 6:	sysmessage( ts, "You are simply too full to eat any more!" );			break;
 				}
 			}
 			if(!(strcmp("IFKARMA", script1 ))) // If karma meets a certain criteria - Magius(CHE)
@@ -1486,7 +1469,6 @@ void triggernpc(int ts,int ti)
 			{
 				cline = &script2[0];
 				splitline();
-				//c=memitemfree();
 				p=packitem(currchar[ts]);
 				if (p==-1) p=0;
 				c=Items->SpawnItem(ts,1,"#",1,hexnumber(0),hexnumber(1),0,0,1,1);
@@ -1495,51 +1477,42 @@ void triggernpc(int ts,int ti)
 			{
 				switch (chars[currchar[ts]].dir)
 				{
-				case 0: {
+				case 0: 
 					triggerx=chars[currchar[ts]].x;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				case 1: {
+				case 1:
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				case 2: {
+				case 2: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y;
 					break;
-						}
-				case 3: {
+				case 3: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 4: {
+				case 4: 
 					triggerx=chars[currchar[ts]].x;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 5: {
+				case 5: 
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						}
-				case 6: {
+				case 6: 
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y;
 					break;
-						}
-				case 7: {
+				case 7:
 					triggerx=chars[currchar[ts]].x-1;
 					triggery=chars[currchar[ts]].y-1;
 					break;
-						}
-				default: {
+				default: 
 					triggerx=chars[currchar[ts]].x+1;
 					triggery=chars[currchar[ts]].y+1;
 					break;
-						 }
 				}
 				triggerz=chars[currchar[ts]].z;
 				pos=ftell(scpfile);
@@ -1828,48 +1801,9 @@ void triggernpc(int ts,int ti)
 			}
 			if (!(strcmp("IDFX",script1)))  //Makes an effect at players by ID
 			{
-				for (i=0;i<29;i++)
-				{
-					effect[i]=0;
-				}
 				cline = &script2[0];
 				splitline();
-				effect[0]=0x70; // Effect message
-				effect[1]=0x00; // Moving effect
-				effect[2]=chars[ti].ser1;
-				effect[3]=chars[ti].ser2;
-				effect[4]=chars[ti].ser3;
-				effect[5]=chars[ti].ser4;
-				effect[6]=chars[currchar[ts]].ser1;
-				effect[7]=chars[currchar[ts]].ser2;
-				effect[8]=chars[currchar[ts]].ser3;
-				effect[9]=chars[currchar[ts]].ser4;
-				effect[10] = (char)hexnumber(0);// Object id of the effect
-				effect[11] = (char)hexnumber(1);
-				effect[12] = (char)chars[ti].x>>8;
-				effect[13] = (char)chars[ti].x%256;
-				effect[14] = (char)chars[ti].y>>8;
-				effect[15] = (char)chars[ti].y%256;
-				effect[16] = chars[ti].z;
-				effect[17] = (char)chars[currchar[ts]].x>>8;
-				effect[18] = (char)chars[currchar[ts]].x%256;
-				effect[19] = (char)chars[currchar[ts]].y>>8;
-				effect[20] = (char)chars[currchar[ts]].y%256;
-				effect[21] = chars[currchar[ts]].z;
-				effect[22]=0x09;
-				effect[23]=0x06; // 0 is really long.  1 is the shortest.
-				effect[24]=0; // This value is unknown
-				effect[25]=0; // This value is unknown
-				effect[26]=0; // This value is unknown
-				effect[27]=0x00; // This value is used for moving effects that explode on impact.
-				for( j = 0; j < now; j++ )
-				{
-					if( perm[j] && inrange1p( currchar[j], currchar[ts] ) )
-					{
-						Network->xSend(j, effect, 28, 0);
-					}
-				}
-				
+				movingeffect(ti, currchar[ts], hexnumber(0), hexnumber(1), 0x09, 0x06, 0x00);
 			}
 			if (!(strcmp("NEWNAME",script1)))  //Give the new item/npc a name
 			{
