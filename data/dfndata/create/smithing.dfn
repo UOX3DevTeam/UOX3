@@ -1,0 +1,687 @@
+// smithing.dfn
+// v1.0; 08/05/01; initial release / total overhaul; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.1; 17/06/01; added candles menu 67 to tinkering; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.2; 12/01/02; fixed the damn carpentry bug that had the wrong ids; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// (add new version comments here, use format of above line please!)
+// For use with the UOX emulator or any with permission from the author
+//
+//======= credits of original version =========
+// Created by: Cironian and Drax
+// Cestle - cestle@uoxdev.com
+// Sephiroth - seanhogberg@hotmail.com
+// RevalutionShadow - Emac@Mindspring.com
+// Infinity
+// Folci - wezzer@nauticom.net
+// Honorable Mention:
+// Calvin - rolynyk@hotmail.com
+// Pug - Jcpirate@bsc.net
+// Concerned Watcher - lee.brown@virgin.net
+// Cruoris - cruoris@msn.com
+// Dante - dante@the-egg.net
+// HellRaider - dmais@urbi.com.br
+// Danath - matt994@multipro.com
+// Blacksmithing originally adapted by Traker
+// Rank System Added by Magius(CHE) 08/25/1999
+//=============================================
+
+
+//*****************************************
+// start of blacksmithing section
+
+[SUBMENU 1]
+{ Blacksmithing
+MENU=1		// armor
+MENU=2		// shields
+MENU=3		// weapons
+}
+[MENUENTRY 1]
+{
+NAME=Armor
+ID=0x1415
+SUBMENU=2
+}
+[MENUENTRY 2]
+{
+NAME=Shields
+ID=0x1b74
+SUBMENU=3
+}
+[MENUENTRY 3]
+{
+NAME=Weapons
+ID=0x13b9
+SUBMENU=4
+}
+[SUBMENU 2]
+{ Armor
+MENU=4		// ringmail
+MENU=5		// chainmail
+MENU=6		// platemail
+MENU=11		// helmets
+}
+[SUBMENU 3]
+{ Shields
+ITEM=1
+ITEM=2
+ITEM=3
+ITEM=4
+ITEM=5
+ITEM=6
+}
+[SUBMENU 4]
+{ Weapons
+MENU=7		// bladed
+MENU=8		// axes
+MENU=9		// polearms
+MENU=10		// bashing
+}
+[MENUENTRY 4]
+{
+NAME=Ringmail
+ID=0x13ec
+SUBMENU=5
+}
+[MENUENTRY 5]
+{
+NAME=Chainmail
+ID=0x13bf
+SUBMENU=6
+}
+[MENUENTRY 6]
+{
+NAME=Platemail
+ID=0x1415
+SUBMENU=7
+}
+[MENUENTRY 7]
+{
+NAME=Bladed
+ID=0x13b9
+SUBMENU=8
+}
+[MENUENTRY 8]
+{
+NAME=Axes
+ID=0x13fb
+SUBMENU=9
+}
+[MENUENTRY 9]
+{
+NAME=Polearms
+ID=0x0f4d
+SUBMENU=10
+}
+[MENUENTRY 10]
+{
+NAME=Bashing
+ID=0x0f5c
+SUBMENU=11
+}
+[MENUENTRY 11]
+{
+NAME=Helmets
+ID=0x140e
+SUBMENU=12
+}
+[SUBMENU 5]
+{ Ringmail
+ITEM=7
+ITEM=8
+ITEM=9
+ITEM=10
+}
+[SUBMENU 6]
+{ Chainmail
+ITEM=11
+ITEM=12
+ITEM=13
+}
+[SUBMENU 7]
+{ Platemail
+ITEM=14
+ITEM=15
+ITEM=16
+ITEM=17
+ITEM=18
+ITEM=19
+}
+[SUBMENU 8]
+{ Bladed
+ITEM=20
+ITEM=21
+ITEM=22
+ITEM=23
+ITEM=24
+ITEM=25
+ITEM=26
+ITEM=27
+}
+[SUBMENU 9]
+{ Axes
+ITEM=28
+ITEM=29
+ITEM=30
+ITEM=31
+ITEM=32
+ITEM=33
+ITEM=34
+}
+[SUBMENU 10]
+{ Polearms
+ITEM=35
+ITEM=36
+ITEM=37
+ITEM=38
+ITEM=39
+}
+[SUBMENU 11]
+{ Bashing
+ITEM=40
+ITEM=41
+ITEM=42
+ITEM=43
+ITEM=44
+}
+[SUBMENU 12]
+{ Helmets
+ITEM=45
+ITEM=46
+ITEM=47
+ITEM=48
+ITEM=49
+}
+
+[ITEM 1]
+{
+NAME=buckler
+ID=0x1b73
+RESOURCE=0x1bf2 10
+SKILL=7 0 100
+ADDITEM=0x1b73
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 2]
+{
+NAME=bronze
+ID=0x1b72
+RESOURCE=0x1bf2 12
+SKILL=7 0 150
+ADDITEM=0x1b72
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 3]
+{
+NAME=metal
+ID=0x1b7b
+RESOURCE=0x1bf2 14
+SKILL=7 0 200
+ADDITEM=0x1b7b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 4]
+{
+NAME=small kite
+ID=0x1b78
+RESOURCE=0x1bf2 8
+SKILL=7 0 250
+ADDITEM=0x1b78
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 5]
+{
+NAME=kite
+ID=0x1b74
+RESOURCE=0x1bf2 16
+SKILL=7 46 350
+ADDITEM=0x1b74
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 6]
+{
+NAME=heater
+ID=0x1b76
+RESOURCE=0x1bf2 18
+SKILL=7 243 750
+ADDITEM=0x1b76
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 7]
+{
+NAME=gloves
+ID=0x13f2
+RESOURCE=0x1bf2 10
+SKILL=7 120 620
+ADDITEM=0x13f2
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 8]
+{
+NAME=sleeves
+ID=0x13ee
+RESOURCE=0x1bf2 14
+SKILL=7 169 670
+ADDITEM=0x13ee
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 9]
+{
+NAME=leggings
+ID=0x13f0
+RESOURCE=0x1bf2 16
+SKILL=7 194 700
+ADDITEM=0x13f0
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 10]
+{
+NAME=tunic
+ID=0x13ec
+RESOURCE=0x1bf2 18
+SKILL=7 219 720
+ADDITEM=0x13ec
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 11]
+{
+NAME=coif
+ID=0x13bb
+RESOURCE=0x1bf2 10
+SKILL=7 145 650
+ADDITEM=0x13bb
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 12]
+{
+NAME=leggings
+ID=0x13be
+RESOURCE=0x1bf2 18
+SKILL=7 367 870
+ADDITEM=0x13be
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 13]
+{
+NAME=tunic
+ID=0x13bf
+RESOURCE=0x1bf2 20
+SKILL=7 391 900
+ADDITEM=0x13bf
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 14]
+{
+NAME=gorget
+ID=0x1413
+RESOURCE=0x1bf2 10
+SKILL=7 564 1100
+ADDITEM=0x1413
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 15]
+{
+NAME=gloves
+ID=0x1414
+RESOURCE=0x1bf2 12
+SKILL=7 589 1100
+ADDITEM=0x1414
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 16]
+{
+NAME=arms
+ID=0x1410
+RESOURCE=0x1bf2 18
+SKILL=7 663 1160
+ADDITEM=0x1410
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 17]
+{
+NAME=legs
+ID=0x1411
+RESOURCE=0x1bf2 20
+SKILL=7 688 1190
+ADDITEM=0x1411
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 18]
+{
+NAME=tunic
+ID=0x1415
+RESOURCE=0x1bf2 25
+SKILL=7 750 1250
+ADDITEM=0x1415
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 19]
+{
+NAME=female plate
+ID=0x1c04
+RESOURCE=0x1bf2 20
+SKILL=7 441 940
+ADDITEM=0x1c04
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 20]
+{
+NAME=dagger
+ID=0x0f51
+RESOURCE=0x1bf2 3
+SKILL=7 0 500
+ADDITEM=0x0f51
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 21]
+{
+NAME=cutlass
+ID=0x1441
+RESOURCE=0x1bf2 8
+SKILL=7 243 740
+ADDITEM=0x1441
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 22]
+{
+NAME=katana
+ID=0x13ff
+RESOURCE=0x1bf2 8
+SKILL=7 441 940
+ADDITEM=0x13ff
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 23]
+{
+NAME=kryss
+ID=0x1401
+RESOURCE=0x1bf2 8
+SKILL=7 367 870
+ADDITEM=0x1401
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 24]
+{
+NAME=scimitar
+ID=0x13b6
+RESOURCE=0x1bf2 10
+SKILL=7 317 820
+ADDITEM=0x13b6
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 25]
+{
+NAME=broadsword
+ID=0x0f61
+RESOURCE=0x1bf2 10
+SKILL=7 354 850
+ADDITEM=0x0f61
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 26]
+{
+NAME=longsword
+ID=0x0f61
+RESOURCE=0x1bf2 12
+SKILL=7 280 780
+ADDITEM=0x0f61
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 27]
+{
+NAME=viking sword
+ID=0x13b9
+RESOURCE=0x1bf2 14
+SKILL=7 243 750
+ADDITEM=0x13b9
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 28]
+{
+NAME=battle axe
+ID=0x0f47
+RESOURCE=0x1bf2 14
+SKILL=7 305 800
+ADDITEM=0x0f47
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 29]
+{
+NAME=axe
+ID=0x0f49
+RESOURCE=0x1bf2 14
+SKILL=7 342 840
+ADDITEM=0x0f49
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 30]
+{
+NAME=executioners axe
+ID=0x0f45
+RESOURCE=0x1bf2 16
+SKILL=7 342 840
+ADDITEM=0x0f45
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 31]
+{
+NAME=two handed axe
+ID=0x1443
+RESOURCE=0x1bf2 16
+SKILL=7 330 830
+ADDITEM=0x1443
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 32]
+{
+NAME=double axe
+ID=0x0f4b
+RESOURCE=0x1bf2 12
+SKILL=7 293 800
+ADDITEM=0x0f4b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 33]
+{
+NAME=large battle axe
+ID=0x13fb
+RESOURCE=0x1bf2 14
+SKILL=7 280 780
+ADDITEM=0x13fb
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 34]
+{
+NAME=war axe
+ID=0x13b0
+RESOURCE=0x1bf2 16
+SKILL=7 391 890
+ADDITEM=0x13b0
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 35]
+{
+NAME=shortspear
+ID=0x1403
+RESOURCE=0x1bf2 6
+SKILL=7 453 950
+ADDITEM=0x1403
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 36]
+{
+NAME=spear
+ID=0x0f62
+RESOURCE=0x1bf2 12
+SKILL=7 490 990
+ADDITEM=0x0f62
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 37]
+{
+NAME=warfork
+ID=0x1405
+RESOURCE=0x1bf2 12
+SKILL=7 379 880
+ADDITEM=0x1405
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 38]
+{
+NAME=bardiche
+ID=0x0f4d
+RESOURCE=0x1bf2 18
+SKILL=7 453 950
+ADDITEM=0x0f4d
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 39]
+{
+NAME=halberd
+ID=0x143f
+RESOURCE=0x1bf2 20
+SKILL=7 490 990
+ADDITEM=0x143f
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 40]
+{
+NAME=mace
+ID=0x0f5c
+RESOURCE=0x1bf2 6
+SKILL=7 145 640
+ADDITEM=0x0f5c
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 41]
+{
+NAME=maul
+ID=0x143b
+RESOURCE=0x1bf2 10
+SKILL=7 194 700
+ADDITEM=0x143b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 42]
+{
+NAME=war mace
+ID=0x1407
+RESOURCE=0x1bf2 14
+SKILL=7 280 780
+ADDITEM=0x1407
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 43]
+{
+NAME=war hammer
+ID=0x1439
+RESOURCE=0x1bf2 16
+SKILL=7 342 840
+ADDITEM=0x1439
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 44]
+{
+NAME=hammer pick
+ID=0x143d
+RESOURCE=0x1bf2 18
+SKILL=7 256 760
+ADDITEM=0x143d
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 45]
+{
+NAME=helm
+ID=0x140a
+RESOURCE=0x1bf2 15
+SKILL=7 379 880
+ADDITEM=0x140a
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 46]
+{
+NAME=bascinet
+ID=0x140c
+RESOURCE=0x1bf2 15
+SKILL=7 83 580
+ADDITEM=0x140c
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 47]
+{
+NAME=nose helm
+ID=0x140e
+RESOURCE=0x1bf2 15
+SKILL=7 379 880
+ADDITEM=0x140e
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 48]
+{
+NAME=close helm
+ID=0x1408
+RESOURCE=0x1bf2 15
+SKILL=7 379 880
+ADDITEM=0x1408
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 49]
+{
+NAME=plate helm
+ID=0x1419
+RESOURCE=0x1bf2 15
+SKILL=7 626 1120
+ADDITEM=0x1419
+MINRANK=1
+MAXRANK=10
+}
+
+// end of blacksmithing section
+//*****************************************
+
