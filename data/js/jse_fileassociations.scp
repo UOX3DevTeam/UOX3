@@ -193,6 +193,7 @@
 446=commands/targeting/x.js
 447=commands/targeting/areacommand.js
 448=commands/targeting/wipe.js
+449=commands/targeting/showdetail.js
 }
 
 //-------------------------------------------
