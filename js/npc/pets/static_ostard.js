@@ -10,15 +10,15 @@ function onUse( pUser, iUsed )
 	var look = RollDice( 1, 3, 0 ); 
 	if( look == 1 ) 
 	{
-		var nSpawned = SpawnNPC( null, "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( look == 2 ) 
 	{
-		var nSpawned = SpawnNPC( null, "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( look == 3 ) 
 	{
-		var nSpawned = SpawnNPC( null, "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+		var nSpawned = SpawnNPC( "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	}
 	if( nSpawned == null )
 	{

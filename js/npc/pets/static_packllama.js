@@ -6,7 +6,7 @@
 
 function onUse( pUser, iUsed ) 
 { 
-	var nSpawned = SpawnNPC( null, "packllama", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+	var nSpawned = SpawnNPC( "packllama", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	if( nSpawned == null )
 	{
 		pUser.SysMessage( "Creature couldn't be created." );
