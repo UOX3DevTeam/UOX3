@@ -81,9 +81,14 @@
 
 #ifdef __LINUX__
 	#define OS_STR "Linux"
+	#define WORD UI16
+	#define DWORD UI32
+	#define BOOL bool
+	#define VOID void
 #else
 	#define OS_STR "Win32"
 #endif
+
 
 //o---------------------------------------------------------------------------o
 // remove PACKED for unix/linux because it going to cause bus errors - fur
