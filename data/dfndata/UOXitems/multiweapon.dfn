@@ -1,0 +1,360 @@
+Created by: Skywise
+EMail: TheSkywise@AOL.com		ICQ: 14622022
+UOX Shardname: Gateworld		May 7, 2000
+
+		SKYWISE'S MAGICAL MULTIWEAPON
+
+The following magic item can give a player a whole array of weapons
+at his disposal without having to carry them with him.  Skywise's
+Multiweapon Item changes into a different weapon/armor each time
+you click on it.  All weapons are a little better than their normal
+non-magical counterparts, so you might want to adjust them back to
+normal if you feel there too powerful.
+
+Feel free to EMail or ICQ me if you have any questions regarding
+these scripts.
+
+Feel free to change the Ownerstone to your own weapon of choice if
+you wish...  just be sure to add the correct trigger number.
+
+***********************************************************************
+To use the Multiweapon in your shard, you need to copy the items 
+into your ITEMS.scp and copy the triggers into your TRIGGER.SCP
+
+The Triggers are listed AFTER the items on this page...
+
+Cut and paste the following items into your ITEMS.SCP file:
+
+//Begining of Skywise's Multiweapon
+
+//OWNERSTONE
+
+SECTION ITEM 86076
+{
+NAME Skywise's Multiweapon (Ownerstone)
+ID 1F14
+COLOR 0006
+TRIGGER 2116
+VALUE 1500
+WEIGHT 50
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86077
+{
+NAME Skywise's Multiweapon (Long Sword)
+ID 13B8
+COLOR 0006
+TRIGGER 2117
+LAYER 1
+DEF 5
+LODAMAGE 10
+HIDAMAGE 43
+HP 80
+SKILL 40
+DECAY
+VALUE 1500
+RESTOCK 0
+STR 25
+SPD 35
+WEIGHT 50
+GOOD 27
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86078
+{
+NAME Skywise's Multiweapon (Halberd)
+ID 143E
+COLOR 0006
+TRIGGER 2118
+LAYER 2
+LODAMAGE 10
+HIDAMAGE 59
+HP 70
+DEF 5
+DECAY
+VALUE 1500
+RESTOCK 0
+STR 35
+SPD 25
+WEIGHT 50
+GOOD 27
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86079
+{
+NAME Skywise's Multiweapon (Deadly Dagger)
+ID 0F51
+COLOR 0006
+TRIGGER 2119
+LAYER 1
+LODAMAGE 10
+HIDAMAGE 20
+HP 30
+DECAY
+VALUE 1500
+RESTOCK 0
+STR 1
+SPD 55
+WEIGHT 50
+GOOD 27
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86080
+{
+NAME Skywise's Multiweapon (Metal Shield)
+ID 1B7B
+COLOR 0006
+TRIGGER 2120
+DEF 6
+HP 40
+STR 20
+LAYER 2
+DECAY
+VALUE 1500
+RESTOCK 0
+WEIGHT 50
+GOOD 10
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86081
+{
+NAME Skywise's Multiweapon (Bow)
+ID 13B2
+COLOR 0006
+TRIGGER 2121
+LAYER 2
+ITEMHAND 2
+DECAY
+VALUE 1500
+RESTOCK 0
+LODAMAGE 25
+HIDAMAGE 46
+HP 50
+STR 20
+SPD 20
+WEIGHT 50
+GOOD 12
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86082
+{
+NAME Skywise's Multiweapon (Crossbow)
+ID 0F4F
+COLOR 0006
+TRIGGER 2122
+LAYER 2
+ITEMHAND 2
+DECAY
+VALUE 1500
+RESTOCK 0
+LODAMAGE 16
+HIDAMAGE 46
+HP 70
+STR 30
+SPD 18
+WEIGHT 50
+GOOD 12
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86083
+{
+NAME Skywise's Multiweapon (Quarterstaff)
+ID 0DF0
+COLOR 0006
+TRIGGER 2123
+LAYER 2
+LODAMAGE 15
+HIDAMAGE 40
+HP 60
+DEF 8
+DECAY
+VALUE 1500
+RESTOCK 0
+STR 35
+SPD 35
+WEIGHT 50
+GOOD 27
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86084
+{
+NAME Skywise's Multiweapon (Platemail)
+ID 1416
+TRIGGER 2124
+COLOR 0006
+LAYER 13
+DEF 13
+DEXADD -2
+HP 65
+STR 20
+DECAY
+VALUE 1500
+RESTOCK 10
+WEIGHT 50
+GOOD 10
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+//**********************************END OF ITEMS**********************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+
+
+Next, the following should be added to your TRIGGER.SCP file:
+
+SECTION TRG 2116
+{ Skywise's Multiweapon (Ownerstone)
+EMT Korrip Alzo 
+REMOVE
+IADD 86077 1
+MSG Your magical ownerstone morphs into...
+SND 02 01
+MSG Magical longsword!
+}
+
+SECTION TRG 2117
+{ Skywise's Multiweapon (Longsword)
+EMT Korrip Brokko 
+REMOVE
+IADD 86078 1
+MSG Your magical longsword morphs into...
+SND 02 01
+MSG Magical halberd!
+}
+
+SECTION TRG 2118
+{ Skywise's Multiweapon (Halberd)
+EMT Korrip Caztir
+REMOVE
+IADD 86079 1
+MSG Your magical halberd morphs into...
+SND 02 01
+MSG Magical deadly dagger!
+}
+
+SECTION TRG 2119
+{ Skywise's Multiweapon (Dagger)
+EMT Korrip Dolo 
+REMOVE
+IADD 86080 1
+MSG Your magical deadly dagger morphs into...
+SND 02 01
+MSG Magical Shield!
+}
+
+SECTION TRG 2120
+{ Skywise's Multiweapon (Shield)
+EMT Korrip Echzim
+REMOVE
+IADD 86081 1
+MSG Your magical shield morphs into...
+SND 02 01
+MSG Magical Bow!
+}
+
+SECTION TRG 2121
+{ Skywise's Multiweapon (Bow)
+EMT Korrip Frammy
+REMOVE
+IADD 86082 1
+MSG Your magical bow morphs into...
+SND 02 01
+MSG Magical crossbow!
+}
+
+SECTION TRG 2122
+{ Skywise's Multiweapon (Crossbow)
+EMT Korrip Giro
+REMOVE
+IADD 86083 1
+MSG Your magical crossbow morphs into...
+SND 02 01
+MSG Magical quarterstaff!
+}
+
+SECTION TRG 2123
+{ Skywise's Multiweapon (Quarterstaff)
+EMT Korrip Helkar
+REMOVE
+IADD 86084 1
+MSG Your magical quarterstaff morphs into...
+SND 02 01
+MSG Magical platemail armor!
+}
+
+SECTION TRG 2124
+{ Skywise's Multiweapon (Platemail)
+EMT Korrip Intono
+REMOVE
+IADD 86076 1
+MSG Your magical platemail morphs into...
+SND 02 01
+MSG A Ownerstone!
+}
+
+
+//***** BE SURE TO HAVE EOF AT THE END OF FILE!!! *******

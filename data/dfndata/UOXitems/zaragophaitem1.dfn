@@ -1,0 +1,176 @@
+Here are some new items.  P.S. The Fire Spirit bottle is based upon the code 
+of
+the Efreet bottle.  The original creator (Jerelith i think) should have the 
+credit.
+
+Pop these into the items script
+
+SECTION ITEM 99999
+{
+NAME Hurtloam
+ID 0f81
+COLOR 0973
+TRIGGER 99999
+DECAY
+VALUE 150
+RESTOCK 10
+GOOD 5
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 80806
+{
+NAME Potty-Mouth Soap
+ID 0E17
+TRIGGER 80806
+DECAY
+VALUE 10
+RESTOCK 10
+GOOD 5
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 556677
+{
+NAME a strange looking bottle
+NAME2 a Fire Spirit Bottle
+ID 0EFB
+TRIGGER 556677
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+Now for the triggers...put them into the triggers script.
+
+SECTION TRG 99999
+{Hurtloam
+EMT That feels better...
+MSG You apply the healing mud to your wounds
+HEA 20
+REMOVE
+}
+
+
+SECTION TRG 80806
+{Potty mouth soap
+FMSG There is nothing evil in your mouth to wash out!!!
+IFKARMA < -10
+EMT Yeuch!!!
+MSG You wash all of the evil words from your mouth
+KARMA 10
+REMOVE
+}
+
+SECTION TRG 556677
+{ Fire Spirit Bottle
+SND 01 9C
+NADD 556001
+NEWOWNER
+DISABLE 7200
+}
+
+Now this goes into the NPC script.
+
+SECTION NPC 556003
+{
+NAME a Fire Spirit
+ID 000f
+SKIN 0000
+DIRECTION N
+BACKPACK
+STR 155 175
+DEX 175 195
+INT 91 105
+KARMA -7000
+FAME 6000
+MAGICRESISTANCE 600 750
+TACTICS 800 1000
+WRESTLING 700 1000
+DAMAGE 4 12
+DEF 20
+SPATTACK 6176
+SPADELAY 10
+MAGERY 600 750
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+TOTAME 1100
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+SECTION NPC 556004
+{
+NAME an angry Fire Spirit
+ID 000f
+SKIN 0000
+DIRECTION N
+BACKPACK
+STR 155 175
+DEX 175 195
+INT 91 105
+KARMA -7000
+FAME 6000
+MAGICRESISTANCE 600 750
+TACTICS 800 1000
+WRESTLING 700 1000
+DAMAGE 4 12
+DEF 20
+NPCWANDER 4
+NPCAI 2
+SPATTACK 6176
+SPADELAY 10
+MAGERY 600 750
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+TOTAME 1100
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+SECTION NPC 556001
+{
+NPCLIST 556001
+}
+
+SECTION NPCLIST 556001
+{
+556003
+556003
+556003
+556003
+556004
+}
+
+Now, these lines of code give the bottle some danger....  There is a one in 
+five chance
+of summoning an angry spirit!  Mehehahaha!
