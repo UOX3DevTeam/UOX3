@@ -1,4 +1,4 @@
-SECTION DICTIONARY CLIENTMSG
+[DICTIONARY CLIENTMSG]
 {
 0=This item is out of charges.
 1=You board the boat.
@@ -1701,5 +1701,4 @@ SECTION DICTIONARY CLIENTMSG
 }
 
 EOF
-
 

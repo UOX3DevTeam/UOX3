@@ -44,7 +44,7 @@
 //
 //---------------------------------------------------------
 
-SECTION DICTIONARY CLIENTMSG
+[DICTIONARY CLIENTMSG]
 {
 0=Cet objet n'a plus de charges.
 1=Vous levez l'ancre.
