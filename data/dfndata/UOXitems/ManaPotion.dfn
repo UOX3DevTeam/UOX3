@@ -1,0 +1,52 @@
+Hi,
+
+
+I made a mana potion for your pleasures and to fix the meditation skill:
+
+
+Add these lines in your item.scp
+
+
+//Mana potion
+SECTION ITEM 80008
+{
+NAME A mana potion
+ID 0e2c
+TRIGGER 170
+DECAY
+VALUE 200
+RESTOCK 10
+GOOD 25
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+Then you need to add teh following lines to the trigger.scp.....
+
+
+//************NEW MANA POTION TEST****************
+
+
+SECTION TRG 170
+{ Using mana potion
+ACT 22
+EMT Ahhh...replenishing my mana pool.
+MAN +20
+REMOVE
+}
+
+
+now to add the mana potion in game use the command:
+.additem 50008 and you made urself a mana potion !
+
+
+Greetings,
+
+
+oMeN

@@ -1,0 +1,2574 @@
+Created by: Skywise
+EMail: TheSkywise@AOL.com		ICQ: 14622022
+UOX Shardname: Gateworld
+
+Here are the completed Skills and Training books.  I have about a dozen more special magic
+books in mind, but they havent been scripted yet.  
+
+All of the guide books can be used to replace NPC training (NPC Training doesnt work as of
+Build 17).  They cover all skills EXCEPT: Begging, Camping, Enticement and Herding.  If you
+really want training books for any of those exceptions, just create your own based on this
+script.
+
+The first four manuals will raise abilities and should be used with caution so the players
+dont get too powerful.  Feel free to up the price if in doubt.
+
+The only real magical book (which should be used as treasure) is the Book of War, since
+there are no requirements and it would be possible to become a GM just by reading.  I 
+suggest making it a rare item players might come across.
+
+Books can be used only one time (they disappear after succesfull use)
+
+Books can be used instead of NPC training (NPC training doesnt work)
+
+Feel free to EMail or ICQ me if you have any questions regarding these scripts.
+
+
+TABLE OF BOOKS:
+
+BOOK					PLAYER CHANGE	PLAYER REQUIREMENTS
+Manual of Bodily Health:	+2 STR  +2 DEX 		None
+Manual of Gainful Exercise	+6 STR			None
+Manual of Quickness		+4 DEX			None
+Manual of Free Thinking		+3 INT			None
+Book of War				+10 to Tactics		None
+Basic Guides (skill)		+20 to Skill	Skill must be below 20
+								in order to use book
+Advanced Guides (skill)		+10 to Skill	Skill must be below 55
+								and higher than 20 in
+								order to use book.
+
+***********************************************************************
+To use these books in your shard, you need to copy the items into your ITEMS.scp and copy the triggers into your TRIGGER.SCP
+
+The Triggers are listed AFTER the items on this page...
+
+Cut and paste the following items into your ITEMS.SCP file:
+
+//Begining of Books
+SECTION ITEM 86072
+{
+NAME Manual of Bodily Health
+ID xe3b
+COLOR 0125
+TRIGGER 2012
+VALUE 800
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86073
+{
+NAME Manual of Gainful Exercise
+ID xe3b
+COLOR 0125
+TRIGGER 2013
+VALUE 1200
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86074
+{
+NAME Manual of Quickness
+ID xe3b
+COLOR 0125
+TRIGGER 2014
+VALUE 950
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86075
+{
+NAME Manual of Free Thinking
+ID xe3b
+COLOR 0125
+TRIGGER 2015
+VALUE 950
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86076
+{
+NAME Magical Book
+NAME2 Book of War
+ID xe3b
+COLOR 0021
+TRIGGER 2016
+VALUE 2500
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86077
+{
+NAME Guide to Basic Alchemy
+ID xe3b
+COLOR 0035
+TRIGGER 2017
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86078
+{
+NAME Guide to Advanced Alchemy
+ID xe3b
+COLOR 008b
+TRIGGER 2018
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86079
+{
+NAME Guide to Basic Anatomy
+ID xe3b
+COLOR 0035
+TRIGGER 2019
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86080
+{
+NAME Guide to Advanced Anatomy
+ID xe3b
+COLOR 008b
+TRIGGER 2020
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86081
+{
+NAME Guide to Basic Animal Lore
+ID xe3b
+COLOR 0035
+TRIGGER 2021
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86082
+{
+NAME Guide to Advanced Animal Lore
+ID xe3b
+COLOR 008b
+TRIGGER 2022
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86083
+{
+NAME Guide to Basic Item Evaluation
+ID xe3b
+COLOR 0035
+TRIGGER 2023
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86084
+{
+NAME Guide to Advanced Item Evaluation
+ID xe3b
+COLOR 008b
+TRIGGER 2024 
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86085
+{
+NAME Guide to Basic Arms Lore
+ID xe3b
+COLOR 0035
+TRIGGER 2025
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86086
+{
+NAME Guide to Advanced Arms Lore
+ID xe3b
+COLOR 008b
+TRIGGER 2026
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86087
+{
+NAME Guide to Basic Parrying
+ID xe3b
+COLOR 0035
+TRIGGER 2027
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86088
+{
+
+NAME Guide to Advanced Parrying
+ID xe3b
+COLOR 008b
+TRIGGER 2028
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86089
+{
+NAME Guide to Basic Blacksmithing
+ID xe3b
+COLOR 0035
+TRIGGER 2029
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86090
+{
+NAME Guide to Advanced Blacksmithing
+ID xe3b
+COLOR 008b
+TRIGGER 2030
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86091
+{
+NAME Guide to Basic Bowcraft
+ID xe3b
+COLOR 0035
+TRIGGER 2031
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86092
+{
+NAME Guide to Advanced Bowcraft
+ID xe3b
+COLOR 008b
+TRIGGER 2032
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86093
+{
+NAME Guide to Basic Peacemaking
+ID xe3b
+COLOR 0035
+TRIGGER 2033
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86094
+{
+NAME Guide to Advanced Peacemaking
+ID xe3b
+COLOR 008b
+TRIGGER 2034
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86095
+{
+NAME Guide to Basic Carpentry
+ID xe3b
+COLOR 0035
+TRIGGER 2035
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86096
+{
+NAME Guide to Advanced Carpentry
+ID xe3b
+COLOR 008b
+TRIGGER 2036
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86097
+{
+NAME Guide to Basic Cooking
+ID xe3b
+COLOR 0035
+TRIGGER 2037
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86098
+{
+NAME Guide to Advanced Cooking
+ID xe3b
+COLOR 008b
+TRIGGER 2038
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86099
+{
+NAME Basic Guide to Detecting the Hidden
+ID xe3b
+COLOR 0035
+TRIGGER 2039
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86100
+{
+
+NAME Advanced Guide to Detecting the Hidden
+ID xe3b
+COLOR 008b
+TRIGGER 2040
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86101
+{
+NAME Guide to Basic Intelligence Evaluation
+ID xe3b
+COLOR 0035
+TRIGGER 2041
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86102
+{
+NAME Guide to Advanced Intelligence Evaluation
+ID xe3b
+COLOR 008b
+TRIGGER 2042
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86103
+{
+NAME Guide to Basic Healing
+ID xe3b
+COLOR 0035
+TRIGGER 2043
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86104
+{
+NAME Guide to Advanced Healing
+ID xe3b
+COLOR 008b
+TRIGGER 2044
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86105
+{
+NAME Guide to Basic Fishing
+ID xe3b
+COLOR 0035
+TRIGGER 2045
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86106
+{
+NAME Guide to Advanced Fishing
+ID xe3b
+COLOR 008b
+TRIGGER 2046
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86107
+{
+NAME Guide to Basic Forensics
+ID xe3b
+COLOR 0035
+TRIGGER 2047
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86108
+{
+NAME Guide to Advanced Forenics
+ID xe3b
+COLOR 008b
+TRIGGER 2048
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86109
+{
+NAME Guide to Basic Hiding
+ID xe3b
+COLOR 0035
+TRIGGER 2049
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86110
+{
+NAME Guide to Advanced Hiding
+ID xe3b
+COLOR 008b
+TRIGGER 2050
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86111
+{
+NAME Guide to Basic Provocation
+ID xe3b
+COLOR 0035
+TRIGGER 2051
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86112
+{
+NAME Guide to Advanced Provocation
+ID xe3b
+COLOR 008b
+TRIGGER 2052
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86113
+{
+NAME Guide to Basic Inscription
+ID xe3b
+COLOR 0035
+TRIGGER 2053
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86114
+{
+NAME Guide to Advanced Inscription
+ID xe3b
+COLOR 008b
+TRIGGER 2054
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86115
+{
+NAME Guide to Basic Lockpicking
+ID xe3b
+COLOR 0035
+TRIGGER 2055
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86116
+{
+NAME Guide to Advanced Lockpicking
+ID xe3b
+COLOR 008b
+TRIGGER 2056
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86117
+{
+NAME Guide to Basic Magery
+ID xe3b
+COLOR 0035
+TRIGGER 2057
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86118
+{
+NAME Guide to Advanced Magery
+ID xe3b
+COLOR 008b
+TRIGGER 2058
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86119
+{
+NAME Basic Guide to Resisting Magic 
+ID xe3b
+COLOR 0035
+TRIGGER 2059
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86120
+{
+NAME Advanced Guide to Resisting Magic
+ID xe3b
+COLOR 008b
+TRIGGER 2060
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86121
+{
+NAME Guide to Basic Tactics
+ID xe3b
+COLOR 0035
+TRIGGER 2061
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86122
+{
+NAME Guide to Advanced Tactics
+ID xe3b
+COLOR 008b
+TRIGGER 2062
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86123
+{
+NAME Guide to Basic Snooping
+ID xe3b
+COLOR 0035
+TRIGGER 2063
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86124
+{
+NAME Guide to Advanced Snooping
+ID xe3b
+COLOR 008b
+TRIGGER 2064
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86125
+{
+NAME Guide to Basic Musicianship
+ID xe3b
+COLOR 0035
+TRIGGER 2065
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86126
+{
+NAME Guide to Advanced Musicianship
+ID xe3b
+COLOR 008b
+TRIGGER 2066
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86127
+{
+NAME Guide to Basic Poisoning
+ID xe3b
+COLOR 0035
+TRIGGER 2067
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86128
+{
+NAME Guide to Advanced Poisoning
+ID xe3b
+COLOR 008b
+TRIGGER 2068
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86129
+{
+NAME Guide to Basic Archery
+ID xe3b
+COLOR 0035
+TRIGGER 2069
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86130
+{
+NAME Guide to Advanced Archery
+ID xe3b
+COLOR 008b
+TRIGGER 2070
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86131
+{
+NAME Guide to Basic Spiritspeak
+ID xe3b
+COLOR 0035
+TRIGGER 2071
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86132
+{
+NAME Guide to Advanced Spiritspeak
+ID xe3b
+COLOR 008b
+TRIGGER 2072
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86133
+{
+NAME Guide to Basic Stealing
+ID xe3b
+COLOR 0035
+TRIGGER 2073
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86134
+{
+NAME Guide to Advanced Stealing
+ID xe3b
+COLOR 008b
+TRIGGER 2074
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86135
+{
+NAME Guide to Basic Tailoring
+ID xe3b
+COLOR 0035
+TRIGGER 2075
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86136
+{
+NAME Guide to Advanced Tailoring
+ID xe3b
+COLOR 008b
+TRIGGER 2076
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86137
+{
+NAME Guide to Basic Taming
+ID xe3b
+COLOR 0035
+TRIGGER 2077
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86138
+{
+NAME Guide to Advanced Taming
+ID xe3b
+COLOR 008b
+TRIGGER 2078
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86139
+{
+NAME Guide to Basic Taste Identification
+ID xe3b
+COLOR 0035
+TRIGGER 2079
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86140
+{
+NAME Guide to Advanced Taste Identification
+ID xe3b
+COLOR 008b
+TRIGGER 2080
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86141
+{
+NAME Guide to Basic Tinkering
+ID xe3b
+COLOR 0035
+TRIGGER 2081
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86142
+{
+NAME Guide to Advanced Tinkering
+ID xe3b
+COLOR 008b
+TRIGGER 2082
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86143
+{
+NAME Guide to Basic Tracking
+ID xe3b
+COLOR 0035
+TRIGGER 2083
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86144
+{
+NAME Guide to Advanced Tracking
+ID xe3b
+COLOR 008b
+TRIGGER 2084
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86145
+{
+NAME Guide to Basic Veterinary
+ID xe3b
+COLOR 0035
+TRIGGER 2085
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86146
+{
+NAME Guide to Advanced Veterinary
+ID xe3b
+COLOR 008b
+TRIGGER 2086
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86147
+{
+NAME Guide to Basic Swordsmanship
+ID xe3b
+COLOR 0035
+TRIGGER 2087
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86148
+{
+NAME Guide to Advanced Swordsmanship
+ID xe3b
+COLOR 008b
+TRIGGER 2088
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86149
+{
+NAME Guide to Basic Macefighting
+ID xe3b
+COLOR 0035
+TRIGGER 2089
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86150
+{
+NAME Guide to Advanced Macefighting
+ID xe3b
+COLOR 008b
+TRIGGER 2090
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86151
+{
+NAME Guide to Basic Fencing
+ID xe3b
+COLOR 0035
+TRIGGER 2091
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86152
+{
+NAME Guide to Advanced Fencing
+ID xe3b
+COLOR 008b
+TRIGGER 2092
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86153
+{
+NAME Guide to Basic Wrestling
+ID xe3b
+COLOR 0035
+TRIGGER 2093
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86154
+{
+NAME Guide to Advanced Wrestling
+ID xe3b
+COLOR 008b
+TRIGGER 2094
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86155
+{
+NAME Guide to Basic Lumberjacking
+ID xe3b
+COLOR 0035
+TRIGGER 2095
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86156
+{
+NAME Guide to Advanced Lumberjacking
+ID xe3b
+COLOR 008b
+TRIGGER 2096
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86157
+{
+NAME Guide to Basic Mining
+ID xe3b
+COLOR 0035
+TRIGGER 2097
+VALUE 300
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+SECTION ITEM 86158
+{
+NAME Guide to Advanced Mining
+ID xe3b
+COLOR 008b
+TRIGGER 2098
+VALUE 700
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+
+
+//**********************************END OF BOOKS**********************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+//********************************************************************
+
+
+Next, the following should be added to your TRIGGER.SCP file:
+
+SECTION TRG 2012
+{Manual of Bodily Health (+2 STR and +2 DEX)
+SND 00 55
+EMT *Studying*
+MSG You learn alot about Bodily Health!
+DEX 2
+STR 2
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2013
+{Manual of Gainful Exercise (+6 STR)
+SND 00 55
+EMT *Studying*
+MSG You learn alot about Gainful Exercise!
+STR 6
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2014
+{Manual of Quickness (+4 DEX)
+SND 00 55
+EMT *Studying*
+MSG You learn alot about Quickness!
+DEX 4
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2015
+{Manual of Free Thinking (+3 INT)
+SND 00 55
+EMT *Studying*
+MSG You learn alot about Free Thinking!
+INT 3
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2016
+{Book of War (+10 to Tactics)
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your comprehension!
+IFSKIL 27 600
+MSG You learn alot about Tactics!!
+SKL 27 100
+SND 01 9c
+REMOVE
+}
+
+SECTION TRG 2017
+{Guide to Basic Alchemy
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 0 -200
+SKL 0 200
+MSG You learn alot about alchemy!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2018
+{Guide to Advanced Alchemy
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 0 200
+FMSG This book teaches you nothing new...
+IFSKL 0 -550
+SKL 0 100
+MSG You increase your knowledge about Alchemy!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2019
+{Guide to Basic Anatomy
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 1 -200
+SKL 1 200
+MSG You learn alot about Anatomy!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2020
+{Guide to Advanced Anatomy
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 1 200
+FMSG This book teaches you nothing new...
+IFSKL 1 -550
+SKL 1 100
+MSG You increase your knowledge about Anatomy!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2021
+{Guide to Basic Animal Lore
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 2 -200
+SKL 2 200
+MSG You learn alot about Animal Lore!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2022
+{Guide to Advanced Animal Lore
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 2 200
+FMSG This book teaches you nothing new...
+IFSKL 2 -550
+SKL 2 100
+MSG You increase your knowledge about Animal Lore!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2023
+{Guide to Basic Item Evaluation
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 3 -200
+SKL 3 200
+MSG You learn alot about Item Evaluation!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2024
+{Guide to Advanced Item Evaluation
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 3 200
+FMSG This book teaches you nothing new...
+IFSKL 3 -550
+SKL 3 100
+MSG You increase your knowledge about Item Evaluation!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2025
+{Guide to Basic Arms Lore
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 4 -200
+SKL 4 200
+MSG You learn alot about Arms Lore!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2026
+{Guide to Advanced Arms Lore
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 4 200
+FMSG This book teaches you nothing new...
+IFSKL 4 -550
+SKL 4 100
+MSG You increase your knowledge about Arms Lore!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2027
+{Guide to Basic Parrying
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 5 -200
+SKL 5 200
+MSG You learn alot about Parrying!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2028
+{Guide to Advanced Parrying
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 5 200
+FMSG This book teaches you nothing new...
+IFSKL 5 -550
+SKL 5 100
+MSG You increase your knowledge about Parrying!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2029
+{Guide to Basic Blacksmithing
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 7 -200
+SKL 7 200
+MSG You learn alot about Blacksmithing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2030
+{Guide to Advanced Blacksmithing
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 7 200
+FMSG This book teaches you nothing new...
+IFSKL 7 -550
+SKL 7 100
+MSG You increase your knowledge about Blacksmithing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2031
+{Guide to Basic Bowcraft
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 8 -200
+SKL 8 200
+MSG You learn alot about Bowcraft!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2032
+{Guide to Advanced Bowcraft
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 8 200
+FMSG This book teaches you nothing new...
+IFSKL 8 -550
+SKL 8 100
+MSG You increase your knowledge about Bowcraft!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2033
+{Guide to Basic Peacemaking
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 9 -200
+SKL 9 200
+MSG You learn alot about Peacemaking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2034
+{Guide to Advanced Peacemaking
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 9 200
+FMSG This book teaches you nothing new...
+IFSKL 9 -550
+SKL 9 100
+MSG You increase your knowledge about Peacemaking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2035
+{Guide to Basic Carpentry
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 11 -200
+SKL 11 200
+MSG You learn alot about Carpentry!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2036
+{Guide to Advanced Carpentry
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 11 200
+FMSG This book teaches you nothing new...
+IFSKL 11 -550
+SKL 11 100
+MSG You increase your knowledge about Carpentry!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2037
+{Guide to Basic Cooking
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 13 -200
+SKL 13 200
+MSG You learn alot about Cooking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2038
+{Guide to Advanced Cooking
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 13 200
+FMSG This book teaches you nothing new...
+IFSKL 13 -550
+SKL 13 100
+MSG You increase your knowledge about Cooking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2039
+{Guide to Basic Detect Hidden
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 14 -200
+SKL 14 200
+MSG You learn alot about Detecting the Hidden!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2040
+{Guide to Advanced Detect Hidden
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 14 200
+FMSG This book teaches you nothing new...
+IFSKL 14 -550
+SKL 14 100
+MSG You increase your knowledge about Detecting the Hidden!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2041
+{Guide to Basic Intelligence Eval
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 16 -200
+SKL 16 200
+MSG You learn alot about Evaluating Intelligence!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2042
+{Guide to Advanced Intel Eval
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 16 200
+FMSG This book teaches you nothing new...
+IFSKL 16 -550
+SKL 16 100
+MSG You increase your knowledge about Intelligence Evaluation!
+SND 02 15
+REMOVE
+}
+
+
+SECTION TRG 2043
+{Guide to Basic Healing
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 17 -200
+SKL 17 200
+MSG You learn alot about the art of Healing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2044
+{Guide to Advanced Healing
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 17 200
+FMSG This book teaches you nothing new...
+IFSKL 17 -550
+SKL 17 100
+MSG You increase your knowledge about the art of Healing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2045
+{Guide to Basic Fishing
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 18 -200
+SKL 18 200
+MSG You learn alot about Fishing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2046
+{Guide to Advanced Fishing
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 18 200
+FMSG This book teaches you nothing new...
+IFSKL 18 -550
+SKL 18 100
+MSG You increase your knowledge about Fishing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2047
+{Guide to Basic Forensics
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 19 -200
+SKL 19 200
+MSG You learn alot about Forensics!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2048
+{Guide to Advanced Forensics
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 19 200
+FMSG This book teaches you nothing new...
+IFSKL 19 -550
+SKL 19 100
+MSG You increase your knowledge about Forensics!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2049
+{Guide to Basic Hiding
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 21 -200
+SKL 21 200
+MSG You learn alot about Hiding!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2050
+{Guide to Advanced Hiding
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 21 200
+FMSG This book teaches you nothing new...
+IFSKL 21 -550
+SKL 21 100
+MSG You increase your knowledge about Hiding!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2051
+{Guide to Basic Provocation
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 22 -200
+SKL 22 200
+MSG You learn alot about Provocation!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2052
+{Guide to Advanced Provocation
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 22 200
+FMSG This book teaches you nothing new...
+IFSKL 22 -550
+SKL 22 100
+MSG You increase your knowledge about Provocation!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2053
+{Guide to Basic Inscription
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 23 -200
+SKL 23 200
+MSG You learn alot about Inscription!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2054
+{Guide to Advanced Inscription
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 23 200
+FMSG This book teaches you nothing new...
+IFSKL 23 -550
+SKL 23 100
+MSG You increase your knowledge about Inscription!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2055
+{Guide to Basic Lockpicking
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 24 -200
+SKL 24 200
+MSG You learn alot about Lockpicking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2056
+{Guide to Advanced Lockpicking
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 24 200
+FMSG This book teaches you nothing new...
+IFSKL 24 -550
+SKL 24 100
+MSG You increase your knowledge about Lockpicking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2057
+{Guide to Basic Magery
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 25 -200
+SKL 25 200
+MSG You learn alot about Magery!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2058
+{Guide to Advanced Magery
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 25 200
+FMSG This book teaches you nothing new...
+IFSKL 25 -550
+SKL 25 100
+MSG You increase your knowledge about Magery!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2059
+{Guide to Basic Magic Resistance
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 26 -200
+SKL 26 200
+MSG You learn alot about Resisting Magic!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2060
+{Guide to Advanced Magic Resistance
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 26 200
+FMSG This book teaches you nothing new...
+IFSKL 26 -550
+SKL 26 100
+MSG You increase your knowledge about Resisting Magic!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2061
+{Guide to Basic Tactics
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 27 -200
+SKL 27 200
+MSG You learn alot about Tactics!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2062
+{Guide to Advanced Tactics
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 27 200
+FMSG This book teaches you nothing new...
+IFSKL 27 -550
+SKL 27 100
+MSG You increase your knowledge about Tactics!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2063
+{Guide to Basic Snooping
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 28 -200
+SKL 28 200
+MSG You learn alot about Snooping!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2064
+{Guide to Advanced Snooping
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 28 200
+FMSG This book teaches you nothing new...
+IFSKL 28 -550
+SKL 28 100
+MSG You increase your knowledge about Snooping!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2065
+{Guide to Basic Musicianship
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 29 -200
+SKL 29 200
+MSG You learn alot about Musicianship!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2066
+{Guide to Advanced Musicianship
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 29 200
+FMSG This book teaches you nothing new...
+IFSKL 29 -550
+SKL 29 100
+MSG You increase your knowledge about Musicianship!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2067
+{Guide to Basic Poisoning
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 30 -200
+SKL 30 200
+MSG You learn alot about Poisoning!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2068
+{Guide to Advanced Poisoning
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 30 200
+FMSG This book teaches you nothing new...
+IFSKL 30 -550
+SKL 30 100
+MSG You increase your knowledge about Poisoning!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2069
+{Guide to Basic Archery
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 31 -200
+SKL 31 200
+MSG You learn alot about Archery!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2070
+{Guide to Advanced Archery
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 31 200
+FMSG This book teaches you nothing new...
+IFSKL 31 -550
+SKL 31 100
+MSG You increase your knowledge about Archery!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2071
+{Guide to Basic Spiritspeak
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 32 -200
+SKL 32 200
+MSG You learn alot about Spiritspeak!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2072
+{Guide to Advanced Spiritspeak
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 32 200
+FMSG This book teaches you nothing new...
+IFSKL 32 -550
+SKL 32 100
+MSG You increase your knowledge about Spiritspeak!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2073
+{Guide to Basic Stealing
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 33 -200
+SKL 33 200
+MSG You learn alot about Stealing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2074
+{Guide to Advanced Stealing
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 33 200
+FMSG This book teaches you nothing new...
+IFSKL 33 -550
+SKL 33 100
+MSG You increase your knowledge about Stealing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2075
+{Guide to Basic Tailoring
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 34 -200
+SKL 34 200
+MSG You learn alot about Tailoring!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2076
+{Guide to Advanced Tailoring
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 34 200
+FMSG This book teaches you nothing new...
+IFSKL 34 -550
+SKL 34 100
+MSG You increase your knowledge about Tailoring!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2077
+{Guide to Basic Taming
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 35 -200
+SKL 35 200
+MSG You learn alot about Taming!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2078
+{Guide to Advanced Taming
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 35 200
+FMSG This book teaches you nothing new...
+IFSKL 35 -550
+SKL 35 100
+MSG You increase your knowledge about Taming!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2079
+{Guide to Basic Taste Identification
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 36 -200
+SKL 36 200
+MSG You learn alot about Taste Identification!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2080
+{Guide to Advanced Taste Identification
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 36 200
+FMSG This book teaches you nothing new...
+IFSKL 36 -550
+SKL 36 100
+MSG You increase your knowledge about Taste Identification!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2081
+{Guide to Basic Tinkering
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 37 -200
+SKL 37 200
+MSG You learn alot about Tinkering!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2082
+{Guide to Advanced Tinkering
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 37 200
+FMSG This book teaches you nothing new...
+IFSKL 37 -550
+SKL 37 100
+MSG You increase your knowledge about Tinkering!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2083
+{Guide to Basic Tracking
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 38 -200
+SKL 38 200
+MSG You learn alot about Tracking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2084
+{Guide to Advanced Tracking
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 38 200
+FMSG This book teaches you nothing new...
+IFSKL 38 -550
+SKL 38 100
+MSG You increase your knowledge about Tracking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2085
+{Guide to Basic Veterinary
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 39 -200
+SKL 39 200
+MSG You learn alot about Veterinary!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2086
+{Guide to Advanced Veterinary
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 39 200
+FMSG This book teaches you nothing new...
+IFSKL 39 -550
+SKL 39 100
+MSG You increase your knowledge about Veterinary!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2087
+{Guide to Basic Swordsmanship
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 40 -200
+SKL 40 200
+MSG You learn alot about Swordsmanship!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2088
+{Guide to Advanced Swordsmanship
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 40 200
+FMSG This book teaches you nothing new...
+IFSKL 40 -550
+SKL 40 100
+MSG You increase your knowledge about Swordsmanship!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2089
+{Guide to Basic Macefighting
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 41 -200
+SKL 41 200
+MSG You learn alot about Macefighting!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2090
+{Guide to Advanced Macefighting
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 41 200
+FMSG This book teaches you nothing new...
+IFSKL 41 -550
+SKL 41 100
+MSG You increase your knowledge about Macefighting!
+SND 02 15
+REMOVE
+}
+
+
+SECTION TRG 2091
+{Guide to Basic Fencing
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 42 -200
+SKL 42 200
+MSG You learn alot about Fencing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2092
+{Guide to Advanced Fencing
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 42 +200
+FMSG This book teaches you nothing new...
+IFSKL 42 -550
+SKL 42 100
+MSG You increase your knowledge about Fencing!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2093
+{Guide to Basic Wrestling
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 43 -200
+SKL 43 200
+MSG You learn alot about Wrestling!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2094
+{Guide to Advanced Wrestling
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 43 +200
+FMSG This book teaches you nothing new...
+IFSKL 43 -550
+SKL 43 100
+MSG You increase your knowledge about Wrestling!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2095
+{Guide to Basic Lumberjacking
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 44 -200
+SKL 44 200
+MSG You learn alot about Lumberjacking!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2096
+{Guide to Advanced Lumberjacking
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 44 +200
+FMSG This book teaches you nothing new...
+IFSKL 44 -550
+SKL 44 100
+MSG You increase your knowledge about Lumberjacking!
+SND 02 15
+REMOVE
+}
+
+
+SECTION TRG 2097
+{Guide to Basic Mining
+SND 00 55
+EMT *Studying*
+FMSG This book teaches you nothing new...
+IFSKL 45 -200
+SKL 45 200
+MSG You learn alot about Mining!
+SND 02 15
+REMOVE
+}
+
+SECTION TRG 2098
+{Guide to Advanced Mining
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 45 +200
+FMSG This book teaches you nothing new...
+IFSKL 45 -550
+SKL 45 100
+MSG You increase your knowledge about Mining!
+SND 02 15
+REMOVE
+}

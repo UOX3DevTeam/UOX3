@@ -1,0 +1,67 @@
+Open NPC.scp and add this:
+
+
+SECTION NPC 20000
+{
+NAMELIST 112
+ID 0x0004
+SKINLIST 1
+MAGERY 700 850
+SPATTACK 8191
+SPADELAY 10
+DIRECTION N
+BACKPACK
+NPCWANDER 4
+FX1 -1
+FY1 -1
+FZ1 -1
+FX2 20
+LOOT 1
+LOOT 5
+LOOT 5
+LOOT 10
+LOOT 83
+LOOT 80
+LOOT 81
+GOLD 200 300
+STR 245 325
+DEX 100 125
+INT 150 200
+KARMA -9000
+FAME 9000
+PARRYING 650 850
+MAGICRESISTANCE 800 950
+TACTICS 600 850
+WRESTLING 700 800
+DAMAGE 5 25
+DEF 25
+NPCAI 2
+TOTAME 1100
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+}
+
+
+At the end of the file, you'll find the namelists.  Add this
+to the end:
+
+
+//  Fire Gargoyle Names
+SECTION RANDOMNAME 112
+{
+a blistering gargoyle
+a burning gargoyle
+a flaming gargoyle
+a scalding gargoyle
+a searing gargoyle
+a smoldering gargoyle
+a sweltering gargoyle
+a fiery gargoyle
+a scorching gargoyle
+}
+
+
