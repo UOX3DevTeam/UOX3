@@ -3229,6 +3229,7 @@ void cMagic::Polymorph( cSocket *s, int gmindex, int creaturenumber)
 	char sect[512];
 	const char *tag = NULL;
 	const char *data = NULL;
+	sprintf( sect, "POLYMORPHMENU %i", gmindex );
 	ScriptSection *polyStuff = FileLookup->FindEntry( sect, polymorph_def );
 	if( polyStuff == NULL )
 		return;
@@ -3248,6 +3249,10 @@ void cMagic::Polymorph( cSocket *s, int gmindex, int creaturenumber)
 	soundeffect( mChar, 0x020F );
 	tempeffect( mChar, mChar, 18, id1, id2, 0 );
 	
+	mChar->SetOrgID(k);
+	mChar->SetID(k);
+	mChar->SetxID(k);
+
 	mChar->Teleport();
 	mChar->IsPolymorphed( true );
 }

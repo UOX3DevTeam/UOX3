@@ -720,10 +720,9 @@ void command_poly( cSocket *s )
 		mChar->SetxID( targBody );
 		mChar->SetOrgID( targBody );
 
-		UI16 c1 = mChar->GetSkin();
 		// if polymorphing from monster to player we have to switch from transparent to semi-transparent
 		// or we have that sit-down-client crash
-		
+		UI16 c1 = mChar->GetSkin();
 		UI16 b = c1&0x4000; 
 		if( b == 16384 && targBody >= 0x0190 && targBody <= 0x03E1 )
 		{

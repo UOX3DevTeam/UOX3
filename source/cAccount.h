@@ -31,8 +31,8 @@ typedef map< string, AAREC *> AARECMAP;
 typedef vector< ACTREC* > ACTRECVEC;
 typedef vector< CChar * > CCHARVEC;
 //
-
 enum ActFlags 
+
 {
 	ALLOWED		= 0x00000000,
 	BANNED		= 0x00000001,
@@ -47,10 +47,10 @@ public:
 	cAccounts( const char *accountsfile );
 	~cAccounts();
 
-	virtual bool 	CheckAccountsStamp( void );
-	virtual long	LoadAccessList( void );
-	virtual long	LoadAccounts( void );
-	virtual long	SaveAccounts( void );
+	virtual bool 	CheckAccountsStamp(void);
+	virtual long	LoadAccessList(void);
+	virtual long	LoadAccounts(void);
+	virtual long	SaveAccounts(void);
 	virtual long	SaveAccounts( string AccessPath, string AccountsPath );
 	virtual bool	UnloadAccounts( void );
 

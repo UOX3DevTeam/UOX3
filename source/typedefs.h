@@ -104,7 +104,7 @@ typedef struct __ACCESSITEMDATA__
 //o--------------------------------------------------------------------------o
 typedef struct __ACCESSDATABLOCK__
 {
-	__ACCESSDATABLOCK__() { memset( this, 0x00, sizeof( __ACCESSDATABLOCK__ ) ); }
+	//__ACCESSDATABLOCK__() { memset( this, 0x00, sizeof( __ACCESSDATABLOCK__ ) ); }
 	SI32		id;
 	UI16		bFlags;		// Bit 0) Account Banned 1) XGM Account 2) Public List 3) Account InUse4) 5) 6) 7) 8) 9) 10) 11) 12) 13) 14) 15) Compressed
 	union
@@ -125,7 +125,7 @@ typedef struct __ACCESSDATABLOCK__
 //
 typedef struct __ACCOUNTDATABLOCK__
 {
-	__ACCOUNTDATABLOCK__() { memset( this, 0x00, sizeof( __ACCOUNTDATABLOCK__ ) ); }
+	//__ACCOUNTDATABLOCK__() { memset( this, 0x00, sizeof( __ACCOUNTDATABLOCK__ ) ); }
 	LPAAREC lpaarHolding;
 	UI32		ipaddress[2];			//	last ip used[0], [1] is a scratch pad address
 	UI32		ban_date;				//	date that this ban is made
