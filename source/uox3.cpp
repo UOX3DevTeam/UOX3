@@ -41,7 +41,12 @@
 #include "stream.h"
 #include <queue>
 #include <set>
+
+#include "cVersionClass.h"
+
 using namespace std;
+
+extern cVersionClass CVC;
 
 void Bounce( cSocket *bouncer, CItem *bouncing );
 void LoadCreatures( void );
@@ -2959,7 +2964,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 			guiInfo.AddData( "Items", items.Count() );
 			guiInfo.AddData( "Chars", chars.Count() );
 			guiInfo.AddData( "Players in world", now );
-			sprintf( idname, "%s %s(Build:%s) [%s] Compiled by %s ", PRODUCT, VER, BUILD, OS_STR, NAME );
+			sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 			guiInfo.AddData( idname, idname, 7 );
 			guiInfo.Send( 0, false, INVALIDSERIAL );
 		}
@@ -3019,7 +3024,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 	case 'V':
 		if( !strcmp( "VERSION", cmd ) )
 		{
-			sprintf( idname, "%s %s(Build:%s) [%s] Compiled by %s ", PRODUCT, VER, BUILD, OS_STR, NAME );
+			sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 			sysmessage( s, idname );
 		}
 		break;
@@ -3140,6 +3145,9 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	UOX startup stuff
 //| Moved that here because we need it in processkey now
+//|									
+//|	Modification	-	10/21/2002	-	EviLDeD - Xuri found the bug in one spot, just
+//|									happened upon this quick fix. for BackUp operation.
 //o---------------------------------------------------------------------------o
 void DisplaySettings( void )
 {
@@ -3151,7 +3159,7 @@ void DisplaySettings( void )
 	Console << "Server Settings:" << myendl;
 	
 	Console << "   -Archiving[";
-	if( strlen( cwmWorldState->ServerData()->GetBackupDirectory() ) > 1 )
+	if(cwmWorldState->ServerData()->GetServerBackupStatus() )
 		Console << "Enabled]. (" << cwmWorldState->ServerData()->GetBackupDirectory() << ")" << myendl;
 	else 
 		Console << "Disabled]" << myendl;
@@ -4641,8 +4649,15 @@ void ParseArgs( int argc, char *argv[] )
 				// there is an error with the command line so we don't want to do anything
 				break;
 			}
-			Accounts->AddAccount( username, password, email );
-			Console << "|    Username: " << username << " Email: " << email << "\n";
+			if(!Accounts->GetAccount(username.c_str()))
+			{
+				Accounts->AddAccount( username, password, email );
+				Console << "| AccountImport: Added: " << username << " @ " << email << "\n";
+			}
+			else
+			{
+				Console << "| AccountImport: Failure\n";
+			}
 		}
 		else if( !strncmp( argv[i], "+import:", sizeof(char)*8 ) )
 		{
@@ -4675,8 +4690,15 @@ void ParseArgs( int argc, char *argv[] )
 						inFile.getline(szBuffer,127);
 						continue;
 					}
-					Accounts->AddAccount(username, password, email );
-					Console << "|    Username: " << username << " Email: " << email << "\n";
+					if(!Accounts->GetAccount(username.c_str()))
+					{
+						Accounts->AddAccount(username, password, email );
+						Console << "| AccountImport: Added: " << username << " @ " << email << "\n";
+					}
+					else
+					{
+						Console << "| AccountImport: Failure\n";
+					}
 					inFile.getline( szBuffer,127);
 				};
 			}
@@ -4822,7 +4844,7 @@ void DisplayBanner( void )
 {
 	Console.PrintSectionBegin();
 		
-	sprintf( idname, "%s v%s [%s]\n| Compiled by %s\n| Programmed by: %s", PRODUCT, VER, OS_STR, NAME, PROGRAMMERS );
+	sprintf( idname, "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName(), CVC.GetProgrammers() );
  
 	/*Console << myendl;
 	Console << "Configured for connections with Ignition support and 2.x compatability" << myendl;
@@ -4841,12 +4863,12 @@ void DisplayBanner( void )
 	Console.TurnYellow();
 	Console << "Compiled by ";
 	Console.TurnNormal();
-	Console << NAME << myendl;
+	Console << CVC.GetName() << myendl;
 
 	Console.TurnYellow();
 	Console << "Contact: ";
 	Console.TurnNormal();
-	Console << EMAIL << myendl;
+	Console << CVC.GetEmail() << myendl;
 	
 	Console.PrintSectionBegin();
 }
@@ -4923,7 +4945,7 @@ int main( int argc, char *argv[] )
 		uiCurrentTime = getclock();
 		
 #ifdef __NT__
-		sprintf( temp, "%s v%s(%s)", PRODUCT, VER, BUILD );
+		sprintf( temp, "%s v%s(%s)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
 		Console.Start( temp );
 #else
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
@@ -4936,7 +4958,7 @@ int main( int argc, char *argv[] )
 #endif
 		
 		Console.PrintSectionBegin();
-		Console << "UOX Server start up!" << myendl << "Welcome to " << PRODUCT << " v" << VER << myendl;
+		Console << "UOX Server start up!" << myendl << "Welcome to " << CVC.GetProductName() << " v" << CVC.GetVersion() << "(" << CVC.GetBuild() << ")" << myendl;
 		Console.PrintSectionBegin();
 
 		LoadJSEngine();
@@ -5359,7 +5381,7 @@ void Shutdown( SI32 retCode )
 
 	Console.TurnGreen();
 	Console << "Server shutdown complete!" << myendl;
-	Console << "Thank you for supporting " << NAME << myendl;
+	Console << "Thank you for supporting " << CVC.GetName() << myendl;
 	Console.TurnNormal();
 	Console.PrintSectionBegin();
 	
