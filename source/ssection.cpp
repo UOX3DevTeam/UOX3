@@ -417,7 +417,8 @@ DFNTAGS FindDFNTagFromStr( const char *strToFind )
 //|	Purpose			-	Default constructor, initializing all variables
 //o--------------------------------------------------------------------------
 ScriptSection::ScriptSection( void ) : fileOpened( false ), arrayFilled( false ), dataFile( NULL ), 
-currentPos( -1 ), fileType( -1 ), dfnCat( NUM_DEFS ), currentPos2( -1 )
+currentPos( -1 ), fileType( -1 ), dfnCat( NUM_DEFS ), currentPos2( -1 ), npcListData( NULL ), itemListData( NULL ),
+npcList( false ), itemList( false )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );
@@ -433,7 +434,8 @@ currentPos( -1 ), fileType( -1 ), dfnCat( NUM_DEFS ), currentPos2( -1 )
 //|						and grabbing a section from the file passed in
 //o--------------------------------------------------------------------------
 ScriptSection::ScriptSection( FILE *targFile, DefinitionCategories d ) : fileOpened( true ), arrayFilled( false ), 
-dataFile( targFile ), currentPos( -1 ), fileType( -1 ), dfnCat( d ), currentPos2( -1 )
+dataFile( targFile ), currentPos( -1 ), fileType( -1 ), dfnCat( d ), currentPos2( -1 ), npcListData( NULL ), itemListData( NULL ),
+npcList( false ), itemList( false )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );
@@ -644,6 +646,30 @@ bool ScriptSection::GrabFromFile( void )
 		currentPos = -1;
 		return false;
 	}
+	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+	UI32 tValue, uValue;
+	if( dfnCat == items_def )
+	{
+		for( tag = FirstTag(); !AtEndTags(); tag = NextTag() )
+		{
+			if( tag == DFNTAG_ITEMLIST )
+			{
+				itemList = true;
+				itemListData = GrabData( tValue, uValue );
+			}
+		}
+	}
+	if( dfnCat == npc_def )
+	{
+		for( tag = FirstTag(); !AtEndTags(); tag = NextTag() )
+		{
+			if( tag == DFNTAG_NPCLIST )
+			{
+				npcList = true;
+				npcListData = GrabData( tValue, uValue );
+			}
+		}
+	}
 	return true;
 }
 
@@ -802,7 +828,7 @@ void ScriptSection::GrabLine( char *temp )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	int NumEntries( void )
+//|	Function		-	SI32 NumEntries( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
@@ -916,4 +942,56 @@ DFNTAGS ScriptSection::FirstTag( void )
 	if( AtEndTags() )
 		return DFNTAG_COUNTOFTAGS;
 	return dataV2[currentPos2]->tag;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool ItemListExist( void ) const
+//|	Date			-	12 January, 2003
+//|	Programmer		-	Maarc
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if an item list tag exists in section
+//o--------------------------------------------------------------------------
+bool ScriptSection::ItemListExist( void ) const
+{
+	return itemList;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool NpcListExist( void ) const
+//|	Date			-	12 January, 2003
+//|	Programmer		-	Maarc
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if an npc list tag exists in section
+//o--------------------------------------------------------------------------
+bool ScriptSection::NpcListExist( void ) const
+{
+	return npcList;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	const char *ItemListData( void ) const
+//|	Date			-	12 January, 2003
+//|	Programmer		-	Maarc
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the itemlist data
+//o--------------------------------------------------------------------------
+const char * ScriptSection::ItemListData( void ) const
+{
+	return itemListData;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	const char *NpcListData( void ) const
+//|	Date			-	12 January, 2003
+//|	Programmer		-	Maarc
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns the npclist data
+//o--------------------------------------------------------------------------
+const char * ScriptSection::NpcListData( void ) const
+{
+	return npcListData;
 }

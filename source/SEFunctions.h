@@ -39,9 +39,6 @@ SEngineFunc SE_Gump_Delete;			// Deletes a gump once done					***
 // Character and Item common functions (7)
 SEngineFunc SE_GetName2;			//	Retrieve item's second name				***
 SEngineFunc SE_SetName2;			//	Sets item's second name					***
-SEngineFunc SE_SetTag;				//	Sets a string tag						***
-SEngineFunc SE_GetTag;				//	Retrieves a string tag					***
-SEngineFunc SE_GetNumTags;			//											**
 SEngineFunc SE_DoDamage;			// Do damage to a char/item					***
 SEngineFunc SE_SetSerial;			//											***
 
@@ -56,7 +53,6 @@ SEngineFunc SE_SpawnNPC;			// Create NPC								*
 SEngineFunc SE_GetCharPack;			//											***
 SEngineFunc SE_CalcDefense;			//											***
 SEngineFunc SE_CalcAttack;			//											***
-SEngineFunc SE_OpenBank;			//											***
 
 SEngineFunc SE_GetTown;				//											**
 SEngineFunc SE_SetTown;				//											**
@@ -89,8 +85,6 @@ SEngineFunc SE_GetDecayTime;		//											***
 
 SEngineFunc SE_BroadcastMessage;	//											***
 SEngineFunc SE_ConsoleMessage;		//											***
-SEngineFunc SE_YellMessage;			//											**+*
-SEngineFunc SE_WhisperMessage;		//											**+*
 
 // Attack related functions (7)
 SEngineFunc SE_AttackTarget;		// A attacks B								***
@@ -115,14 +109,11 @@ SEngineFunc SE_RandomNumber;		// Calculates a random number				***
 SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
 SEngineFunc SE_DistanceTo;			// Distance between things					***
-SEngineFunc SE_PopUpTarget;			// target cursor ( 0, 1, 0, x )				*
 
 // Other functions
 SEngineFunc	SE_GetCommand; 
 SEngineFunc	SE_GetCommandSize; 
 SEngineFunc SE_GetString;			//											***
-SEngineFunc SE_GetByte;				//											***
-SEngineFunc SE_GetWord;				//											***
 SEngineFunc SE_GetDWord;			//											***
 SEngineFunc SE_CreateBuffer;		//											*
 SEngineFunc SE_DestroyBuffer;		//											*
@@ -179,7 +170,6 @@ SEngineFunc SE_GetMurderThreshold;		//										***
 SEngineFunc SE_GetGender;				//										***
 SEngineFunc SE_SetGender;				//										***
 SEngineFunc SE_RollDice;				//										***
-SEngineFunc SE_StartTimer;				//										***
 SEngineFunc SE_TurnToward;				//										***
 SEngineFunc SE_DirectionTo;				//										***
 SEngineFunc SE_RaceCompare;				//										***
@@ -274,6 +264,7 @@ SEngineFunc SE_StringToNum;
 SEngineFunc SE_NumToString;
 
 SEngineFunc SE_GetRaceCount;
+SEngineFunc SE_AreaCharacterFunction;
 
 #else
 
@@ -291,9 +282,6 @@ JSBool SE_Gump_AddCheckbox(		JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 JSBool SE_Gump_Delete(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// Deletes a gump once done					***
 
 // Character and Item common functions (7)
-JSBool SE_SetTag(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool SE_GetNumTags(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-JSBool SE_GetTag(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool SE_GetName2(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											***
 JSBool SE_SetName2(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											***
 JSBool SE_DoDamage(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// Do damage to a char/item					***
@@ -310,7 +298,6 @@ JSBool SE_SpawnNPC(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rv
 JSBool SE_GetCharPack(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
 JSBool SE_CalcDefense(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
 JSBool SE_CalcAttack(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
-JSBool SE_OpenBank(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
 
 JSBool SE_GetTown(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											**
 JSBool SE_SetTown(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											**
@@ -343,8 +330,6 @@ JSBool SE_GetDecayTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 JSBool SE_BroadcastMessage(	JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											***
 JSBool SE_ConsoleMessage(	JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											***
-JSBool SE_YellMessage(		JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											**+*
-JSBool SE_WhisperMessage(	JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	//											**+*
 
 // Attack related functions (7)
 JSBool SE_AttackTarget(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	// A attacks B								***
@@ -369,14 +354,11 @@ JSBool SE_RandomNumber(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval
 JSBool SE_CalcCharFromSer(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);		//											***
 JSBool SE_CalcItemFromSer(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);		//											***
 JSBool SE_DistanceTo(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			// Distance between things					***
-JSBool SE_PopUpTarget(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			// target cursor ( 0, 1, 0, x )				*
 
 // Other functions
 JSBool SE_GetCommand (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ); 
 JSBool SE_GetCommandSize (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ); 
 JSBool SE_GetString(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
-JSBool SE_GetByte(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											***
-JSBool SE_GetWord(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											***
 JSBool SE_GetDWord(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
 JSBool SE_CreateBuffer(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);		//											*
 JSBool SE_DestroyBuffer(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);		//											*
@@ -433,7 +415,6 @@ JSBool SE_GetMurderThreshold(JSContext *cx, JSObject *obj,uintN argc,jsval *argv
 JSBool SE_GetGender(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
 JSBool SE_SetGender(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
 JSBool SE_RollDice(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
-JSBool SE_StartTimer(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
 JSBool SE_TurnToward(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
 JSBool SE_DirectionTo(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
 JSBool SE_RaceCompare(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//										***
@@ -527,7 +508,8 @@ JSBool SE_EndOfFile(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 JSBool SE_StringToNum(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	
 JSBool SE_NumToString(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );	
 
-JSBool SE_GetRaceCount(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);
+JSBool SE_GetRaceCount(			JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool SE_AreaCharacterFunction(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 #endif
 

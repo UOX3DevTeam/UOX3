@@ -1,5 +1,7 @@
 #include "uox3.h"
 #include "cVersionClass.h"
+#include "cSkillClass.h"
+#include "ssection.h"
 
 extern cVersionClass CVC;
 
@@ -87,9 +89,7 @@ void playChar( cSocket *mSock )
 	if( mSock == NULL )
 		return;
 
-	UOXSOCKET sock = calcSocketFromSockObj( mSock );
-
-	if( mSock->AcctNo() != -1 )
+	if( mSock->AcctNo() != AB_INVALID_ID )
 	{
 		ACCOUNTSBLOCK actbRec;
 		actbRec.wAccountIndex=AB_INVALID_ID;
@@ -97,7 +97,7 @@ void playChar( cSocket *mSock )
 		CChar *kChar = NULL, *ourChar = NULL;
 		if(actbRec.wAccountIndex==AB_INVALID_ID)
 		{
-			Network->Disconnect( sock );
+			Network->Disconnect( mSock );
 			return;
 		}
 		else
@@ -110,7 +110,7 @@ void playChar( cSocket *mSock )
 			}
 			else
 			{
-				Network->Disconnect( sock );
+				Network->Disconnect( mSock );
 				return;
 			}
 		}
@@ -125,14 +125,18 @@ void playChar( cSocket *mSock )
 				{
 					CPKAccept Disconnected( 0x00 );
 					mSock->Send( &Disconnected );
-					Network->Disconnect( sock );
+					Network->Disconnect( mSock );
 					Console.Warning( 1, "Disconnected a Krrios client\n" );
 					return;
-				} else if( kChar->IsGM() ) {					
+				} 
+				else if( kChar->IsGM() ) 
+				{					
 					CPKAccept AckGM( 0x02 );
 					mSock->Send( &AckGM );
 					Console.Print( "Accepted a Krrios client with GM Privs\n" );
-				} else {
+				} 
+				else 
+				{
 					CPKAccept AckNoGM( 0x01 );
 					mSock->Send( &AckNoGM );
 					Console.Print( "Accepted a Krrios client without GM Privs\n" );
@@ -172,7 +176,7 @@ void playChar( cSocket *mSock )
 		}
 	}
 	else
-		Network->Disconnect( sock );
+		Network->Disconnect( mSock );
 }
 
 //o--------------------------------------------------------------------------o
@@ -191,7 +195,7 @@ void deleteChar( cSocket *s )
 {
 	if( s == NULL )
 		return;
-	if( s->AcctNo() != -1 )
+	if( s->AcctNo() != AB_INVALID_ID )
 	{
 		UI08 slot = s->GetByte( 0x22 );
 		ACCOUNTSBLOCK actbTemp;
@@ -206,16 +210,20 @@ void deleteChar( cSocket *s )
 			}
 
 		}
-
+		// Support for accounts. The current copy of the account isn't correct. So get a new copy to work with.
+		ACCOUNTSBLOCK actbScratch;
+		Accounts->Load();
+		Accounts->GetAccountByID(actbTemp.wAccountIndex,actbScratch);
 		UI08 charCount = 0;
 		for( UI08 i = 0; i < 5; i++ )
 		{
-			if(actbTemp.lpCharacters[i] != NULL )
+			if(actbScratch.lpCharacters[i] != NULL )
 				charCount++;
 		}
 		cServerData *sd = cwmWorldState->ServerData();
-		UI08 serverCount = sd->GetNumServerLocations();
-		CPCharAndStartLoc toSend(actbTemp, charCount, serverCount );
+		UI08 serverCount = static_cast<UI08>(sd->GetNumServerLocations());
+		CPCharAndStartLoc toSend(actbScratch, charCount, serverCount );
+		s->SetAccount(actbScratch);
 		for( UI08 j = 0; j < serverCount; j++ )
 		{
 			toSend.AddStartLocation( sd->GetServerLocation( j ), j );
@@ -260,6 +268,67 @@ UI16 CapColour( UI16 value )
 		return value;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	void addNewbieItem( cSocket *socket, CChar *c, char* str)
+//|	Date					-	
+//|	Developers		-	Thyme
+//|	Organization	-	
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void addNewbieItem( cSocket *socket, CChar *c, char* str)
+{
+	ScriptSection *newbieData = FileLookup->FindEntry(str,newbie_def);
+	if(newbieData == NULL )
+		return;
+	for( const char *tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
+	{
+		const char *data = newbieData->GrabData();
+		if( !strcmp( "PACKITEM", tag ) )
+		{
+			CItem *n = Items->SpawnItemToPack( socket, c, data, false );
+			if( n != NULL )
+				n->SetNewbie( true );
+		}
+	}
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	void newbieItems( CChar *c )
+//|	Date					-	
+//|	Developers		-	thyme
+//|	Organization	-	
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void newbieItems( CChar *c )
+{
+	std::vector< cSkillClass > vecSkills;
+	char whichsect[15];
+	for( UI08 sCtr = 0, sCtr < TRUESKILLS; sCtr++ )
+		vecSkills.push_back( cSkillClass( sCtr, c->GetBaseSkill( sCtr ) ) );
+
+	std::sort( vecSkills.rbegin(), vecSkills.rend() );
+
+	cSocket *s = calcSocketobjFromChar( c );
+	for( UI08 i = 0; i < 3 ; i++ )
+	{
+		if( vecSkills[i].value > 0 )
+		{
+			sprintf( whichsect, "BESTSKILL %i", vecSkills[i].skill );
+			addNewbieItem( s, c, whichsect );
+		}
+		else
+			continue;
+	}
+	addNewbieItem( s, c, "DEFAULT" );
+}
 //o---------------------------------------------------------------------------o
 //|	Function	-	void createChar( cSocket *mSock )
 //|	Programmer	-	Unknown
@@ -275,8 +344,6 @@ void createChar( cSocket *mSock )
 	CChar *mChar = Npcs->MemCharFree( mCharOff );
 	if( mChar == NULL )
 		return;
-
-	UOXSOCKET sock = calcSocketFromSockObj( mSock );
 
 	int totalstats, totalskills;
 	UI08 i;
@@ -313,7 +380,11 @@ void createChar( cSocket *mSock )
 	mChar->SetPriv( cwmWorldState->ServerData()->GetServerStartPrivs( 0 ) );
 	mChar->SetPriv2( cwmWorldState->ServerData()->GetServerStartPrivs( 1 ) );
 	
-	if( mSock->AcctNo() == 0 )
+	//ACCOUNTSBLOCK actbTemp;
+	ACCOUNTSBLOCK actbTemp2;
+	//actbTemp=mSock->GetAccount();
+	actbTemp2=mChar->GetAccount();
+	if(actbTemp2.wAccountIndex!=AB_INVALID_ID&&((actbTemp2.wFlags&AB_FLAGS_GM)==AB_FLAGS_GM))
 	{ 
 		mChar->SetPriv( 0xFF );
 		mChar->SetCommandLevel( GMCMDLEVEL );
@@ -322,7 +393,7 @@ void createChar( cSocket *mSock )
 	if( toGo == NULL )
 		mChar->SetLocation( 1000, 1000, 0 );
 	else
-		mChar->SetLocation( toGo->x, toGo->y, toGo->z );
+		mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
 	mChar->SetDir( 4 );
 
 	//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
@@ -336,11 +407,11 @@ void createChar( cSocket *mSock )
 	if( totalstats != 80 )
 	{
 		percheck = ( mChar->GetStrength() / (R32)totalstats );
-		mChar->SetStrength( CapIt( (SI32)( percheck * 80 ) ) );
+		mChar->SetStrength( CapIt( static_cast<UI08>( percheck * 80 ) ) );
 		percheck = ( mChar->GetDexterity() / (R32)totalstats );
-		mChar->SetDexterity( CapIt( (SI32)( percheck * 80 ) ) );
+		mChar->SetDexterity( CapIt( static_cast<UI08>( percheck * 80 ) ) );
 		percheck = ( mChar->GetIntelligence() / (R32)totalstats );
-		mChar->SetIntelligence( CapIt( (SI32)( percheck * 80 ) ) );
+		mChar->SetIntelligence( CapIt( static_cast<UI08>( percheck * 80 ) ) );
 	}
 
 	mChar->SetHP( mChar->GetMaxHP() );
@@ -392,7 +463,7 @@ void createChar( cSocket *mSock )
 	{
 		ItemID = mSock->GetWord( 0x52 );
 		ItemColour = CapColour( mSock->GetWord( 0x54 ) );
-		CreatedItems[HAIR] = Items->SpawnItem( mSock, mChar, 1, "#", false, ItemID, ItemColour, false, false );
+		CreatedItems[HAIR] = Items->SpawnItem( NULL, mChar, 1, "#", false, ItemID, ItemColour, false, false );
 		if( CreatedItems[HAIR] != NULL )
 			CreatedItems[HAIR]->SetLayer( 0x0B );
 	}
@@ -400,23 +471,23 @@ void createChar( cSocket *mSock )
 	{
 		ItemID = mSock->GetWord( 0x56 );
 		ItemColour = CapColour( mSock->GetWord( 0x58 ) );
-		CreatedItems[BEARD] = Items->SpawnItem( mSock, mChar, 1, "#", false, ItemID, ItemColour, false, false );
+		CreatedItems[BEARD] = Items->SpawnItem( NULL, mChar, 1, "#", false, ItemID, ItemColour, false, false );
 		if( CreatedItems[BEARD] != NULL )
 			CreatedItems[BEARD]->SetLayer( 0x10 );
 	}
-	CreatedItems[PACK] = Items->SpawnItem( mSock, mChar, 1, "#", false, 0x0E75, 0, false, false );
+	CreatedItems[PACK] = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x0E75, 0, false, false );
 	if( CreatedItems[PACK] != NULL )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
 		CreatedItems[PACK]->SetLayer( 0x15 );
-		CreatedItems[PACK]->SetCont( mChar->GetSerial() );
+		CreatedItems[PACK]->SetCont( mChar );
 		CreatedItems[PACK]->SetType( 1 );
 		CreatedItems[PACK]->SetDye( true );
 	}
-	CreatedItems[LOWERGARMENT] = Items->SpawnItem( mSock, mChar, 1, "#", false, 0x0915, 0, false, false );
+	CreatedItems[LOWERGARMENT] = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x0915, 0, false, false );
 	if( CreatedItems[LOWERGARMENT] != NULL )
 	{
-		UI16 newID;
+		UI16 newID = INVALIDID;
 		UI08 newLayer;
 		if( mChar->GetID() == 0x0190 )
 		{
@@ -442,7 +513,7 @@ void createChar( cSocket *mSock )
 		CreatedItems[LOWERGARMENT]->SetType( 0 );
 		CreatedItems[LOWERGARMENT]->SetDye( true );
 	}	
-	CreatedItems[EXTRA1] = Items->SpawnItem( mSock, mChar, 1, "#", false, 0x0915, 0, false, false ); // spawn pants
+	CreatedItems[EXTRA1] = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x0915, 0, false, false ); // spawn pants
 	if( CreatedItems[EXTRA1] != NULL )
 	{
 		if( RandomNum( 0, 1 ) )
@@ -454,14 +525,14 @@ void createChar( cSocket *mSock )
 		CreatedItems[EXTRA1]->SetDye( true );
 		CreatedItems[EXTRA1]->SetDef( 1 );
 	}	
-	CreatedItems[EXTRA2] = Items->SpawnItem( mSock, mChar, 1, "#", false, 0x170F, 0x0287, false, false);
+	CreatedItems[EXTRA2] = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x170F, 0x0287, false, false);
 	if( CreatedItems[EXTRA2] != NULL )
 	{
 		CreatedItems[EXTRA2]->SetLayer( 0x03 );
 		CreatedItems[EXTRA2]->SetDye( true );
 		CreatedItems[EXTRA2]->SetDef( 1 );
 	}	
-	CreatedItems[EXTRA3] = Items->SpawnItem( mSock, mChar, 1, "#", false, 0x0F51, 0, false, false );
+	CreatedItems[EXTRA3] = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x0F51, 0, false, false );
 	if( CreatedItems[EXTRA3] == NULL ) 
 	{
 		return;
@@ -470,19 +541,16 @@ void createChar( cSocket *mSock )
 	CreatedItems[EXTRA3]->SetLoDamage( 5 );
 	CreatedItems[EXTRA3]->SetHiDamage( 5 );
 
-	SERIAL mSerial = mChar->GetSerial();
-	for( SI32 ctr = 0; ctr < GOLD; ctr++ )
+	for( UI08 ctr = 0; ctr < GOLD; ctr++ )
 	{
 		if( CreatedItems[ctr] != NULL )
-			CreatedItems[ctr]->SetCont( mSerial );
+			CreatedItems[ctr]->SetCont( mChar );
 	}
 	
 	// Give the character some gold
-	CreatedItems[GOLD] = Items->SpawnItem( mSock, mChar, cwmWorldState->ServerData()->GetServerStartGold() , "#", true, 0x0EED, 0, true, false );
+	CreatedItems[GOLD] = Items->SpawnItem( NULL, mChar, cwmWorldState->ServerData()->GetServerStartGold() , "#", true, 0x0EED, 0, true, false );
 	if( CreatedItems[GOLD] == NULL ) 
-	{
 		return;
-	}
 	CreatedItems[GOLD]->SetLayer( 0x01 );
 	newbieItems( mChar );
 
@@ -493,7 +561,7 @@ void createChar( cSocket *mSock )
 		{
 			CPKAccept Disconnected( 0x00 );
 			mSock->Send( &Disconnected );
-			Network->Disconnect( sock );
+			Network->Disconnect( mSock );
 			Console.Warning( 1, "Disconnected a Krrios client\n" );
 			return;
 		}
@@ -556,14 +624,14 @@ void startChar( cSocket *mSock, bool onCreate )
 	UI08 currentSecs = cwmWorldState->ServerData()->GetServerTimeSeconds();
 
 	CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
-	Weight->calcWeight( mChar );
+	//Weight->calcWeight( mChar );
 
 	sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 	sysmessage( mSock, idname );
 	sprintf( idname, "Programmed by: %s", CVC.GetProgrammers() );
 	sysmessage( mSock, idname );
 
-	CItem *nItem = FindItemOnLayer( mChar, 0x15 );
+	CItem *nItem = mChar->GetItemAtLayer( 0x15 );
 	mChar->SetPackItem( nItem );
 
 	mChar->SetRegion( 255 );

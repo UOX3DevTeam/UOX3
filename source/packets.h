@@ -1,6 +1,15 @@
 #ifndef __PACKETS_H__
 #define __PACKETS_H__
 
+void PackString( UI08 *toPack, int offset, std::string value, int maxLen );
+void UnpackString( UI08 *toPack, int offset, std::string &value, int maxLen );
+void PackLong( UI08 *toPack, int offset, SI32 value );
+SI32 UnpackSLong( UI08 *toPack, int offset );
+UI32 UnpackULong( UI08 *toPack, int offset );
+UI16 UnpackUShort( UI08 *toPack, int offset );
+SI16 UnpackSShort( UI08 *toPack, int offset );
+void PackLong( UI08 *toPack, int offset, UI32 value );
+
 class CSpeechEntry;		// It's around somewhere
 
 class cPCharLocBody : public cPBuffer
@@ -138,15 +147,15 @@ public:
 	virtual void	Lock( UI08 lockVal );
 };
 
-class CPClearMsg : public cPBuffer
+class CPBuyItem : public cPBuffer
 {
 protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( cBaseObject &i );
 public:
-					CPClearMsg();
-					CPClearMsg( cBaseObject &i );
-	CPClearMsg		&operator=( cBaseObject &toCopy );
+					CPBuyItem();
+					CPBuyItem( cBaseObject &i );
+	CPBuyItem		&operator=( cBaseObject &toCopy );
 	void			Serial( SERIAL toSet );
 };
 
@@ -381,7 +390,7 @@ public:
 	virtual void	MaxStamina( SI16 nValue );
 	virtual void	Mana( SI16 nValue );
 	virtual void	MaxMana( SI16 nValue );
-	virtual void	Gold( long gValue );
+	virtual void	Gold( UI32 gValue );
 	virtual void	AC( SI16 nValue );
 	virtual void	Weight( SI16 nValue );
 	CPStatWindow &	operator=( CChar &toCopy );
@@ -601,6 +610,16 @@ public:
 	virtual void	KeyUsed( long key );
 };
 
+class CPMapRelated : public cPBuffer
+{
+public:
+					CPMapRelated();
+	virtual void	PlotState( UI08 pState );
+	virtual void	Location( SI16 x, SI16 y );
+	virtual void	Command( UI08 cmd );
+	virtual void	ID( SERIAL key );
+};
+
 class CPBookTitlePage : public cPBuffer
 {
 public:
@@ -702,19 +721,48 @@ public:
 	CPCharAndStartLoc& operator=(ACCOUNTSBLOCK& actbBlock);
 };
 
-class CPIFirstLogin : public cPInputBuffer
+class CPUpdScroll : public cPBuffer
+{
+protected:
+	char			tipData[2048];
+	virtual void	InternalReset( void );
+	void			SetLength( UI16 len );
+public:
+					CPUpdScroll();
+					CPUpdScroll( UI08 tType );
+					CPUpdScroll( UI08 tType, UI08 tNum );
+	virtual			~CPUpdScroll();
+	void			AddString( const char *toAdd );
+	void			AddStrings( const char *tag, const char *data );
+	void			Finalize( void );
+	void			TipNumber( UI08 tipNum );
+	void			TipType( UI08 tType );
+};
+
+class CPGraphicalEffect2 : public CPGraphicalEffect
 {
 protected:
 	virtual void	InternalReset( void );
 public:
-					CPIFirstLogin();
-					CPIFirstLogin( cSocket *s );
-	virtual void	Receive( cSocket *s );
-	CPIFirstLogin &operator=( cSocket &s );
+					CPGraphicalEffect2( UI08 effectType );
+					CPGraphicalEffect2( UI08 effectType, cBaseObject &src, cBaseObject &trg );
+					CPGraphicalEffect2( UI08 effectType, cBaseObject &src );
+	virtual void	Hue( UI32 hue );
+	virtual void	RenderMode( UI32 mode );
+};
+
+class CPIFirstLogin : public cPInputBuffer
+{
+protected:
+	virtual void		InternalReset( void );
+public:
+						CPIFirstLogin();
+						CPIFirstLogin( cSocket *s );
+	virtual void		Receive( void );
 	virtual const char *Name( void );
 	virtual const char *Pass( void );
-	virtual UI08	Unknown( void );
-	virtual bool	Handle( void );
+	virtual UI08		Unknown( void );
+	virtual bool		Handle( void );
 };
 
 class CPIServerSelect : public cPInputBuffer
@@ -724,8 +772,7 @@ protected:
 public:
 					CPIServerSelect();
 					CPIServerSelect( cSocket *s );
-	virtual void	Receive( cSocket *s );
-	CPIServerSelect &operator=( cSocket &s );
+	virtual void	Receive( void );
 	virtual SI16	ServerNum( void );
 	virtual bool	Handle( void );
 };
@@ -733,16 +780,15 @@ public:
 class CPISecondLogin : public cPInputBuffer
 {
 protected:
-	virtual void	InternalReset( void );
+	virtual void		InternalReset( void );
 public:
-					CPISecondLogin();
-					CPISecondLogin( cSocket *s );
-	virtual void	Receive( cSocket *s );
-	CPISecondLogin &operator=( cSocket &s );
-	virtual long	Account( void );
+						CPISecondLogin();
+						CPISecondLogin( cSocket *s );
+	virtual void		Receive( void );
+	virtual long		Account( void );
 	virtual const char *Name( void );
 	virtual const char *Pass( void );
-	virtual bool	Handle( void );
+	virtual bool		Handle( void );
 };
 
 class CPGodModeToggle : public cPBuffer
@@ -775,8 +821,7 @@ protected:
 public:
 					CPIClientVersion();
 					CPIClientVersion( cSocket *s );
-	virtual void	Receive( cSocket *s );
-	CPIClientVersion &operator=( cSocket *s );
+	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
 
@@ -787,8 +832,7 @@ protected:
 public:
 					CPIUpdateRangeChange();
 					CPIUpdateRangeChange( cSocket *s );
-	virtual void	Receive( cSocket *s );
-	CPIUpdateRangeChange &operator=( cSocket *s );
+	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
 
@@ -797,6 +841,184 @@ class CPKAccept : public cPBuffer
 {
 public:
 					CPKAccept( UI08 Response );
+};
+
+class CPITips : public cPInputBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPITips();
+					CPITips( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIRename : public cPInputBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPIRename();
+					CPIRename( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIKeepAlive : public cPInputBuffer
+{
+public:
+					CPIKeepAlive();
+					CPIKeepAlive( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIStatusRequest : public cPInputBuffer
+{
+public:
+					CPIStatusRequest();
+					CPIStatusRequest( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPISpy : public cPInputBuffer
+{
+public:
+					CPISpy();
+					CPISpy( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIGodModeToggle : public cPInputBuffer
+{
+public:
+					CPIGodModeToggle();
+					CPIGodModeToggle( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIDblClick : public cPInputBuffer
+{
+public:
+					CPIDblClick();
+					CPIDblClick( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPISingleClick : public cPInputBuffer
+{
+public:
+					CPISingleClick();
+					CPISingleClick( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIMoveRequest : public cPInputBuffer
+{
+public:
+					CPIMoveRequest();
+					CPIMoveRequest( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIResyncReq : public cPInputBuffer
+{
+public:
+					CPIResyncReq();
+					CPIResyncReq( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIResMenuChoice : public cPInputBuffer
+{
+public:
+					CPIResMenuChoice();
+					CPIResMenuChoice( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIAttack : public cPInputBuffer
+{
+public:
+					CPIAttack();
+					CPIAttack( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPITargetCursor : public cPInputBuffer
+{
+public:
+					CPITargetCursor();
+					CPITargetCursor( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIEquipItem : public cPInputBuffer
+{
+public:
+					CPIEquipItem();
+					CPIEquipItem( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIGetItem : public cPInputBuffer
+{
+public:
+					CPIGetItem();
+					CPIGetItem( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIDropItem : public cPInputBuffer
+{
+public:
+					CPIDropItem();
+					CPIDropItem( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIGumpMenuSelect : public cPInputBuffer
+{
+public:
+					CPIGumpMenuSelect();
+					CPIGumpMenuSelect( cSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+
+	SERIAL			ButtonID( void ) const;
+	SERIAL			GumpID( void ) const;
+	SERIAL			ID( void ) const;
+	UI32			SwitchCount( void ) const;
+	UI32			TextCount( void ) const;
+	UI32			SwitchValue( UI32 index ) const;
+
+	UI16			GetTextID( UI08 number ) const;
+	UI16			GetTextLength( UI08 number ) const;
+	std::string		GetTextString( UI08 number ) const;
+	std::string		GetTextUString( UI08 number ) const;
+
+protected:
+	SERIAL				id, buttonID, gumpID;
+	UI32				switchCount, textCount;
+	UI32				textOffset;
+
+	std::vector< UI16 >	textLocationOffsets;
+
+	void				BuildTextLocations( void );
 };
 
 #endif

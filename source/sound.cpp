@@ -17,7 +17,7 @@ void soundeffect( cSocket *s, UI16 effect, bool allHear ) // Play sound effect f
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			if( charInRange( s, tSock ) )
+			if( charInRange( mChar, tSock->CurrcharObj() ) )
 				tSock->Send( &toSend );
 		}
 		Network->PopConn();
@@ -81,7 +81,7 @@ void doorsfx( CItem *item, UI16 id, bool isOpen )
 	const UI16 CLOSESTEEL	= 0x00F3;
 	const UI16 CLOSESECRET	= 0x00F4;
 	
-	if( isOpen == 0 ) // Request open door sfx
+	if( !isOpen ) // Request open door sfx
 	{
 		if( ( id >= 0x0695 && id < 0x06C5 ) || // Open wooden / ratan door
 			( id >= 0x06D5 && id <= 0x06F4 ) )
@@ -99,7 +99,7 @@ void doorsfx( CItem *item, UI16 id, bool isOpen )
 		if( id >= 0x0314 && id <= 0x0365 ) // Open secret
 			soundeffect( item, OPENSECRET );
 	}
-	else if( isOpen == 1 ) // Request close door sfx
+	else // Request close door sfx
 	{
 		if( ( id >= 0x0695 && id < 0x06C5 ) || // close wooden / ratan door
 			( id >= 0x06D5 && id <= 0x06F4 ) )
@@ -159,7 +159,7 @@ void scpSoundEffect( cSocket *mSock, UI16 soundID, bool bAllHear )
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			if( charInRange( mSock, tSock ) )
+			if( charInRange( baseObj, tSock->CurrcharObj() ) )
 				tSock->Send( &toSend );
 		}
 		Network->PopConn();
@@ -168,36 +168,61 @@ void scpSoundEffect( cSocket *mSock, UI16 soundID, bool bAllHear )
 		mSock->Send( &toSend );
 }
 
-// Dupois - added to do easy item sound effects based on an 
-//          items id1 and id2 fields in struct items. Then just define the CASE statement
-//          with the proper sound function to play for a certain item as shown.
-//          Use the DEFAULT case for ranges of  items (like all ingots make the same thump).
-// Sounds - coins dropping (all the same no matter what amount because all id's equal 0x0EED
-//          ingot dropping (makes a big thump - used the heavy gem sound)
-//          gems dropping (two type broke them in half to make some sound different then others)
-// NOTE   - I wasn't sure what the different soundeffect() func's did so I just used 
-//          soundeffect() and it seemed to work fairly well.
-// Added Oct 09, 1998
-
-void itemsfx( cSocket *s, UI16 effect, bool bAllHear )
+//o---------------------------------------------------------------------------o
+//|	Function	-	void itemSound( cSocket *s, CItem *item, bool allHear )
+//|	Programmer	-	Dupois
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
+//o---------------------------------------------------------------------------o
+void itemSound( cSocket *s, CItem *item, bool allHear )
 {
-	if( effect >= 0x0F0F && effect <= 0x0F20 )  // Any gem stone (typically large)
-		soundeffect( s, 0x0032, bAllHear );
-	else if( effect >= 0x0F21 && effect <= 0x0F30 )  // Any gem stone (typically small)
-		soundeffect( s, 0x0034, bAllHear );
+	UI16 itemID = item->GetID();
+	if( itemID >= 0x0F0F && itemID <= 0x0F20 )		// Large Gem Stones
+		soundeffect( s, 0x0034, allHear );
+	else if( itemID >= 0x0F21 && itemID <= 0x0F30 )	// Small Gem Stones
+		soundeffect( s, 0x0033, allHear );
+	else if( itemID >= 0x0EEA && itemID <= 0x0EF2 )	// Gold
+		goldSound( s, item->GetAmount(), allHear );
 	else
-		soundeffect( s, 0x0042, bAllHear );
+	{
+		UI16 effectID = 0x0042;
+		cBaseObject *getCont = item->GetCont();
+		if( getCont != NULL )
+		{
+			if( getCont->GetObjType() == OT_ITEM )
+			{
+				CItem *iCont = (CItem *)getCont;
+				switch( iCont->GetID() )
+				{
+				case 0x0E75:	// backpack
+				case 0x0E76:	// leather bag
+				case 0x0E79:	// pouch
+				case 0x09B0:	// pouch
+				case 0x2AF8:	// Shopkeeper buy, sell and sold layers
+					effectID = 0x0048;
+				}
+			}
+			else
+				effectID = 0x0048;
+		}
+		soundeffect( s, effectID, allHear );
+	}
 }
 
-void goldsfx( cSocket *s, int goldtotal, bool bAllHear )
+//o---------------------------------------------------------------------------o
+//|	Function	-	void goldSound( cSocket *s, UI32 goldtotal, bool allHear )
+//|	Programmer	-	Dupois
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Play gold drop sound based on Amount
+//o---------------------------------------------------------------------------o
+void goldSound( cSocket *s, UI32 goldtotal, bool allHear )
 {
-	if( goldtotal == 1 ) 
-		soundeffect( s, 0x0035, bAllHear );
-	if( goldtotal > 1 && goldtotal < 6 ) 
-		soundeffect( s, 0x0036, bAllHear );
+	if( goldtotal <= 1 ) 
+		soundeffect( s, 0x0035, allHear );
+	else if( goldtotal < 6 ) 
+		soundeffect( s, 0x0036, allHear );
 	else 
-		soundeffect( s, 0x0037, bAllHear );
-	return;
+		soundeffect( s, 0x0037, allHear );
 }
 
 //o---------------------------------------------------------------------------o
@@ -223,7 +248,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
 			switch( sfx )
 			{
 			case 1:
-			case 3:	offset = 0xff;	break;	// idle, defend
+			case 3:	offset = 0xFF;	break;	// idle, defend
 			case 2:	offset = 1;		break; // correct offset
 			case 4:	offset = 2;		break;
 			}
@@ -231,7 +256,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
         case 3: // only start-attack, attack, defense & dying
 			switch( sfx )
 			{
-			case 1:	offset = 0xff;	break;
+			case 1:	offset = 0xFF;	break;
 			case 2:
 			case 3:
 			case 4:	offset = sfx - 1;	break;
@@ -239,7 +264,7 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
             break;
 		case 4: // only a single sound
 			if( sfx != 0 ) 
-				offset = 0xff; 
+				offset = 0xFF; 
 			else 
 				offset = 0;
 			break;
@@ -247,8 +272,8 @@ void playMonsterSound( CChar *monster, UI16 id, UI08 sfx )
 		
 		basesound += offset;
 		
-		if( offset != 0xff ) 
-			soundeffect( monster, basesound );
+		if( offset != 0xFF ) 
+			soundeffect( monster, static_cast<UI16>(basesound) );
 	}
 }
 
@@ -271,7 +296,7 @@ void playDeathSound( CChar *i )
 		default:	soundeffect( i, 0x0150 );	break;
 		}
 	}
-	if( i->GetxID() == 0x0190 )	// Male Death
+	else if( i->GetxID() == 0x0190 )	// Male Death
 	{
 		switch( RandomNum( 0, 3 ) )
 		{

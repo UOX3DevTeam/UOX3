@@ -82,7 +82,7 @@ void showcname( cSocket *s, CChar *i, char b ) // Singleclick text for a charact
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
     if( i->GetSquelched() ) 
-		itemmessage( s, " [squelched]", (*i) );
+		objMessage( s, " [squelched]", i );
 	CChar *mChar = s->CurrcharObj();
 	char temp[1024];
 	if( mChar->GetSingClickSer() || b )
@@ -94,7 +94,7 @@ void showcname( cSocket *s, CChar *i, char b ) // Singleclick text for a charact
 			if( mChar->IsGM() )
 			{
 				sprintf( temp, "[%x %x %x %x]", a1, a2, a3, a4 );
-				itemmessage( s, temp, (*mChar) );
+				objMessage( s, temp, mChar );
 			}
 			if( !isOnline( i ) ) 
 				sprintf( temp, "%s (OFF)", i->GetName() );
@@ -134,7 +134,7 @@ void textflags( cSocket *s, CChar *i, const char *name )
 		strcat( name2, " (frozen) ");
 	if( i->IsGuarded() ) 
 		strcat( name2, " (guarded)" );
-	if( i->IsTamed() && i->IsNpc() && i->GetOwner() != INVALIDSERIAL && i->GetNPCAiType() != 17 ) 
+	if( i->IsTamed() && i->IsNpc() && i->GetOwnerObj() != NULL && i->GetNPCAiType() != 17 ) 
 		strcat( name2, " (tame) ");
 	if( i->GetTownPriv() == 2 ) 
 	{
@@ -214,27 +214,39 @@ void sysmessage( cSocket *s, SI32 dictEntry, ... )	// System message (based on d
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 }
 
-void itemmessage( cSocket *s, const char *txt, CChar& mChar, R32 secsFromNow, UI16 Colour )
+//o---------------------------------------------------------------------------o
+//|		Function    :	void objMessage( cSocket *s, SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
+//|		Date        :	2/11/2003
+//|		Programmer  :	Zane
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
+//o---------------------------------------------------------------------------o
+void objMessage( cSocket *s, SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
 {
+	if( s == NULL || getObj == NULL )
+		return;
+
+	const char *txt = Dictionary->GetEntry( dictEntry, s->Language() );
 	if( txt == NULL )
 		return;
 
-	CChar *sChar = s->CurrcharObj();
-	if( sChar == NULL )
-		return;
+	va_list argptr;
 
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( txt );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( mChar.GetSerial() );
-	toAdd->SpokenTo( sChar->GetSerial() );
-	toAdd->Type( SYSTEM );
-	toAdd->At( BuildTimeValue( secsFromNow ) );
-	toAdd->TargType( SPTRG_INDIVIDUAL );
-	toAdd->Colour( Colour );
+	char msg[512];
+	va_start( argptr, Colour );
+	vsprintf( msg, txt, argptr );
+	va_end( argptr );
+	objMessage( s, msg, getObj, secsFromNow, Colour );
 }
 
-void itemmessage( cSocket *s, const char *txt, CItem& item, R32 secsFromNow, UI16 Colour ) // The message when an item is clicked
+//o---------------------------------------------------------------------------o
+//|		Function    :	void objMessage( cSocket *s, const char *txt, cBaseObject *getObj, R32 secsFromNow, UI16 Colour )
+//|		Date        :	2/11/2003
+//|		Programmer  :	Zane
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
+//o---------------------------------------------------------------------------o
+void objMessage( cSocket *s, const char *txt, cBaseObject *getObj, R32 secsFromNow, UI16 Colour )
 {
 	if( txt == NULL )
 		return;
@@ -243,40 +255,44 @@ void itemmessage( cSocket *s, const char *txt, CItem& item, R32 secsFromNow, UI1
 	CSpeechEntry *toAdd = SpeechSys->Add();
 	toAdd->Speech( txt );
 	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( item.GetSerial() );
+	toAdd->Speaker( getObj->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( SYSTEM );
 	toAdd->At( BuildTimeValue( secsFromNow ) );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 
-	if( item.isCorpse() )
+	if( getObj->GetObjType() == OT_ITEM )
 	{
-		UI16 targColour;
-		CChar *targChar = calcCharObjFromSer( item.GetOwner() );
-		if( targChar != NULL )
-			targColour = GetFlagColour( mChar, targChar );
-		else
+		CItem *getItem = static_cast< CItem *>(getObj);
+		if( getItem->isCorpse() )
 		{
-			switch( item.GetMoreZ() )
+			UI16 targColour;
+			CChar *targChar = (CChar *)getItem->GetOwnerObj();
+			if( targChar != NULL )
+				targColour = GetFlagColour( mChar, targChar );
+			else
 			{
-			case 0x01:	targColour = 0x0026;	break;	//red
-			case 0x02:	targColour = 0x03B2;	break;	// gray
-			case 0x08:	targColour = 0x0049;	break;	// green
-			case 0x10:	targColour = 0x0030;	break;	// orange
-			default:
-			case 0x04:	targColour = 0x005A;	break;	// blue
+				switch( getItem->GetMoreZ() )
+				{
+				case 0x01:	targColour = 0x0026;	break;	//red
+				case 0x02:	targColour = 0x03B2;	break;	// gray
+				case 0x08:	targColour = 0x0049;	break;	// green
+				case 0x10:	targColour = 0x0030;	break;	// orange
+				default:
+				case 0x04:	targColour = 0x005A;	break;	// blue
+				}
 			}
+			toAdd->Colour( targColour );
 		}
-		toAdd->Colour( targColour );
 	}
 	else
 		toAdd->Colour( Colour );
 }
 
 //o-------------------------------------------------------------------------
-//|	Function		-	void consolebroadcast(char *txt);
-//|	Date				-	Unknown
-//|	Programmer	-	Unknown
+//|	Function	-	consolebroadcast( const char *txt )
+//|	Date		-	Unknown
+//|	Programmer	-	UOX DevTeam
 //|	Modification-	EviLDeD(February 27, 2000)
 //o-------------------------------------------------------------------------
 //|	Purpose			-	This function was adapted to be used with the new code
@@ -322,13 +338,13 @@ void sysbroadcast( const char *txt ) // System broadcast in bold text
 
 void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 {
-	int i,tl;
+	int tl;
 	char nonuni[512]; 
 
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar->isUnicode() )
 	{
-		for( i = 13; i < mSock->GetWord( 1 ); i += 2 )
+		for( SI16 i = 13; i < mSock->GetWord( 1 ); i += 2 )
 			nonuni[(i-13)/2] = mSock->GetByte( i );
 	}
 		
@@ -386,7 +402,14 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 	}
 }
 
-void itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow, UI16 Colour ) // Item "speech"
+//o---------------------------------------------------------------------------o
+//|		Function    :	void itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Item "speech"
+//o---------------------------------------------------------------------------o
+void itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 {
 	if( item == NULL || s == NULL ) 
 		return;
@@ -406,7 +429,14 @@ void itemTalk( cSocket *s, CItem *item, SI32 dictEntry, R32 secsFromNow, UI16 Co
 	toAdd->Colour( Colour );
 }
 
-void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam ) // NPC speech
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Npc speech
+//o---------------------------------------------------------------------------o
+void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam )
 {
 	if( npc == NULL || s == NULL || txt == NULL ) 
 		return;
@@ -435,7 +465,14 @@ void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam ) // NPC sp
 		toAdd->Colour( npc->GetSayColour() );
 }
 
-void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam ) // NPC speech
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Npc speech
+//o---------------------------------------------------------------------------o
+void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 {
 	if( npc == NULL || s == NULL ) 
 		return;
@@ -452,11 +489,17 @@ void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam ) // NPC spe
 	if( txt == NULL )
 		return;
 
+	va_list argptr;
+	char msg[512];
+	va_start( argptr, antispam );
+	vsprintf( msg, txt, argptr );
+	va_end( argptr );
+
 	CChar *mChar = s->CurrcharObj();
 	CSpeechEntry *toAdd = SpeechSys->Add();
 
 	toAdd->Font( (FontType)npc->GetFontType() );
-	toAdd->Speech( txt );
+	toAdd->Speech( msg );
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( TALK );
@@ -473,7 +516,14 @@ void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam ) // NPC spe
 		toAdd->Colour( npc->GetSayColour() );
 }
 
-void npcTalkAll( CChar *npc, const char *txt, bool antispam ) // NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcTalkAll( CChar *npc, const char *txt, bool antispam )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+void npcTalkAll( CChar *npc, const char *txt, bool antispam )
 {
 	if( npc == NULL ) 
 		return;
@@ -487,21 +537,46 @@ void npcTalkAll( CChar *npc, const char *txt, bool antispam ) // NPC speech to a
 	Network->PopConn();
 }
 
-void npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam ) // NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam, ... )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+void npcTalkAll( CChar *npc, SI32 dictEntry, bool antispam, ... )
 {
 	if( npc == NULL ) 
 		return;
-
+	const char *txt = NULL;
+	char msg[512];
+	va_list argptr;
 	Network->PushConn();
 	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( charInRange( npc, tSock->CurrcharObj() ) )
-			npcTalk( tSock, npc, dictEntry, antispam );
+		{
+			txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
+			if( txt == NULL )
+				continue;
+
+			va_start( argptr, antispam );
+			vsprintf( msg, txt, argptr );
+			va_end( argptr );
+			npcTalk( tSock, npc, msg, antispam );
+		}
 	}
 	Network->PopConn();
 }
 
-void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam ) // NPC speech
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC emotes
+//o---------------------------------------------------------------------------o
+void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam )
 {
 	if( s == NULL || npc == NULL || txt == NULL ) 
 		return;
@@ -528,7 +603,14 @@ void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam ) // NPC s
 	toAdd->Colour( npc->GetEmoteColour() );
 }
 
-void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... ) // NPC speech
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC emotes
+//o---------------------------------------------------------------------------o
+void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 {
 	if( s == NULL || npc == NULL ) 
 		return;
@@ -558,7 +640,7 @@ void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... ) // N
 
 	toAdd->Font( (FontType)npc->GetFontType() );
 
-	toAdd->Speech( txt );
+	toAdd->Speech( msg );
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( EMOTE );
@@ -567,7 +649,14 @@ void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... ) // N
 	toAdd->Colour( npc->GetEmoteColour() );
 }
 
-void npcEmoteAll( CChar *npc, const char *txt, bool antispam ) // NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcEmoteAll( CChar *npc, const char *txt, bool antispam )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC emotes to all in range.
+//o---------------------------------------------------------------------------o
+void npcEmoteAll( CChar *npc, const char *txt, bool antispam )
 {
 	if( npc == NULL || txt == NULL ) 
 		return;
@@ -580,15 +669,34 @@ void npcEmoteAll( CChar *npc, const char *txt, bool antispam ) // NPC speech to 
 	Network->PopConn();
 }
 
-void npcEmoteAll( CChar *npc, SI32 dictEntry, bool antispam ) // NPC speech to all in range.
+//o---------------------------------------------------------------------------o
+//|		Function    :	void npcEmoteAll( CChar *npc, SI32 dictEntry, bool antispam, ... )
+//|		Date        :	Unknown
+//|		Programmer  :	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	NPC emotes to all in range.
+//o---------------------------------------------------------------------------o
+void npcEmoteAll( CChar *npc, SI32 dictEntry, bool antispam, ... )
 {
 	if( npc == NULL ) 
 		return;
+	const char *txt = NULL;
+	char msg[512];
+	va_list argptr;
 	Network->PushConn();
 	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( charInRange( npc, tSock->CurrcharObj() ) )
-			npcEmote( tSock, npc, dictEntry, antispam );
+		{
+			txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
+			if( txt == NULL )
+				continue;
+
+			va_start( argptr, antispam );
+			vsprintf( msg, txt, argptr );
+			va_end( argptr );
+			npcEmote( tSock, npc, msg, antispam );
+		}
 	}
 	Network->PopConn();
 }
@@ -648,8 +756,9 @@ void unicodetalking( cSocket *mSock ) // PC speech
 		if( mChar->GetHidden() && !mChar->IsPermHidden() )
 			mChar->ExposeToView();
 		
-		int resp = response( mSock );
-		
+		bool resp = response( mSock );
+		if( resp )
+			return;  //Vendor responded already
 		if( mSock->GetByte( 3 ) == 0x09 && mChar->CanBroadcast() )
 			broadcast( mSock );
 		else
@@ -693,9 +802,9 @@ void unicodetalking( cSocket *mSock ) // PC speech
 			if( cwmWorldState->ServerData()->GetServerConsoleLogStatus() == 2 ) //Logging -- Zippy
 			{
 				char temp2[512];
-				sprintf( temp2, "%s/logs/%s.log", cwmWorldState->ServerData()->GetRootDirectory(), mChar->GetName() );
+				sprintf( temp2, "%s.log", mChar->GetName() );
 				sprintf( temp, "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, &(mSock->Buffer()[8]) );
-				savelog(temp,temp2);
+				Console.Log( temp, temp2 );
 			}
 			
 			char search1[10];
@@ -714,7 +823,7 @@ void unicodetalking( cSocket *mSock ) // PC speech
 			for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
 				CChar *tChar = tSock->CurrcharObj();
-				if( charInRange( tSock, mSock ) )
+				if( charInRange( tChar, mChar ) )
 				{
 					tSock->Send( talk2, 18 );
 					tSock->Send( mChar->GetName(), 30 );
@@ -807,7 +916,8 @@ void unicodetalking( cSocket *mSock ) // PC speech
 void talking( cSocket *mSock ) // PC speech
 {
 	char temp[1024];
-	int tl, i, j, resp=0, found, x1, x2, y1, y2, grrr;
+	int tl, i, j, found, x1, x2, y1, y2, grrr;
+	bool resp = false;
 	CChar *mChar = mSock->CurrcharObj();
 	char *mBuff = (char*)mSock->Buffer();
 
@@ -828,7 +938,7 @@ void talking( cSocket *mSock ) // PC speech
 		if( mChar->GetHidden() && !mChar->IsPermHidden() )
 			mChar->ExposeToView();
 		resp = response( mSock );
-		if( resp != 0 )
+		if( resp )
 			return;  //Vendor responded already
 		if( mSock->GetByte( 3 ) == 0x09 && mChar->CanBroadcast() )
 			broadcast( mSock );
@@ -863,9 +973,9 @@ void talking( cSocket *mSock ) // PC speech
 			if( cwmWorldState->ServerData()->GetServerConsoleLogStatus() == 2 )
 			{
 				char temp2[512];
-				sprintf( temp2, "%s/logs/%s.log", cwmWorldState->ServerData()->GetRootDirectory(), mChar->GetName() );
+				sprintf( temp2, "%s.log", mChar->GetName() );
 				sprintf( temp,"%s [%x %x %x %x] [%i]: %s\n", mChar->GetName(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, &(mSock->Buffer()[8]) );
-				savelog( temp, temp2 );
+				Console.Log( temp, temp2 );
 			}
 			
 			char search1[10];
@@ -883,7 +993,7 @@ void talking( cSocket *mSock ) // PC speech
 			for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
 				CChar *tChar = tSock->CurrcharObj();
-				if( charInRange( tSock, mSock ) )
+				if( charInRange( tChar, mChar ) )
 				{
 					tSock->Send( talk, 14 );
 					tSock->Send( mChar->GetName(), 30 );
@@ -998,7 +1108,19 @@ CSpeechQueue::~CSpeechQueue()
 void CSpeechQueue::SayIt( SPEECHITERATOR toSay )
 {
 	CPacketSpeech toSend = (*toSay);
-	CChar *thisChar = calcCharObjFromSer( toSay->Speaker() );
+	CChar *thisChar = NULL;
+	CItem *thisItem = NULL;
+	cBaseObject *thisObj = NULL;
+	if( toSay->Speaker() > BASEITEMSERIAL )
+	{
+		thisItem = calcItemObjFromSer( toSay->Speaker() );
+		thisObj = thisItem;
+	}
+	else
+	{
+		thisChar = calcCharObjFromSer( toSay->Speaker() );
+		thisObj = thisChar;
+	}
 	CChar *sChar = NULL;
 	cSocket *mSock = NULL;
 	switch( toSay->TargType() )
@@ -1014,7 +1136,9 @@ void CSpeechQueue::SayIt( SPEECHITERATOR toSay )
 		break;
 	case SPTRG_PCNPC:				// all NPCs and PCs in range
 	case SPTRG_PCS:					// all PCs in range
-		if( thisChar == NULL )
+		if( thisChar == NULL && thisItem == NULL )
+			break;
+		if( thisItem != NULL && thisItem->GetCont() != NULL )	// not on ground, can't guarantee speech
 			break;
 		Network->PushConn();
 		for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -1022,7 +1146,7 @@ void CSpeechQueue::SayIt( SPEECHITERATOR toSay )
 			if( mSock != NULL )
 			{
 				CChar *mChar = mSock->CurrcharObj();
-				if( mChar != NULL && getCharDist( mChar, thisChar ) <= mSock->Range() ) 
+				if( mChar != NULL && objInRange( mChar, thisChar, mSock->Range() ) )
 				{
 					if( mChar->GetCommandLevel() >= toSay->CmdLevel() )
 						mSock->Send( &toSend );
@@ -1059,9 +1183,9 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 	std::vector<int> rem;
 
 	//go through as an array
-	for( i = 0; i < speechList.size(); i++ )
+	for( i = 0; static_cast<unsigned int>(i) < speechList.size(); i++ )
 	{
-		if( speechList[i].At() == -1 || speechList[i].At() <= uiCurrentTime )
+		if( speechList[i].At() == -1 || static_cast<UI32>(speechList[i].At()) <= uiCurrentTime )
 		{
 			retVal = true;
 			// 1/13/2003 - Maarc - Quick fix for more strict gcc 3.2 compliance.
@@ -1074,9 +1198,11 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 	if ( rem.size() == speechList.size() )
 	{
 		speechList.clear();//we need to delete everything
-	} else {
+	} 
+	else 
+	{
 		//start at the back so our numbers don't change, work to the front of the vector.
-		for (i=rem.size()-1;i>=0;i--)
+		for( i = rem.size() - 1; i >= 0; i-- )
 			speechList.erase( speechList.begin()+i );
 	}
 
@@ -1243,446 +1369,435 @@ bool response( cSocket *mSock )
 	CHARACTER FTarg = 0;
 
 	UI08 worldNumber = mChar->WorldNumber();
-	SI32 xOffset = MapRegion->GetGridX( x );
-	SI32 yOffset = MapRegion->GetGridY( y );
-	SI32 dx, dy;
+	int xOffset = MapRegion->GetGridX( x );
+	int yOffset = MapRegion->GetGridY( y );
+	SI08 dx, dy;
 	
 	for( dx = -1; dx <= 1; dx++ )
+	{
 		for( dy = -1; dy <= 1; dy++ )
 		{
-
-	SubRegion *CellResponse = MapRegion->GetGrid( xOffset+dx, yOffset+dy, worldNumber );
-	if( CellResponse == NULL )
-		return false;
-
-	CellResponse->PushChar();
-	for( CChar *Npc = CellResponse->FirstChar(); !CellResponse->FinishedChars(); Npc = CellResponse->GetNextChar() )
-	{
-		SI16 diffX = mChar->GetX() - Npc->GetX();
-		SI16 diffY = mChar->GetY() - Npc->GetY();
-		SI08 diffZ = mChar->GetZ() - Npc->GetZ();
-		if( Npc == NULL || Npc == mChar )
-			continue;
-		if( abs( diffX ) > 30 || abs( diffY ) > 30 || abs( diffZ ) > 30 )
-			continue;
-		if( abs( diffX ) <= 5 && abs( diffY ) <= 5 && abs( diffZ ) <= 9 )	// originally 2, 2, 5
-		{
-			UI16 speechTrig = Npc->GetScriptTrigger();
-			cScript *toExecute = Trigger->GetScript( speechTrig );
-			if( toExecute != NULL )
-			{
-				if( Npc->IsDisabled() )
-					npcTalkAll( Npc, 1291, false );
-				else if( !mChar->IsDead() )
-					toExecute->OnSpeech( comm, mChar, Npc );
-				CellResponse->PopChar();
-				return true;	// only return if handled
-			}
-		}
-
-		// Dupois - Added Dec 20, 1999
-		// Escort text matches
-		sprintf( search1, Dictionary->GetEntry( 1292 ) );
-		sprintf( search2, Dictionary->GetEntry( 1293 ) );
-		response1 = ( strstr( comm, search1 ) );
-		response2 = ( strstr( comm, search2 ) );
-		
-		// If either of the above responses match, then find the NPC we are talking to
-		if( response1 || response2 )
-		{
-			// If the PC is dead then break out, The dead cannot accept quests
-			if( mChar->IsDead() ) 
-			{
-				CellResponse->PopChar();
+			SubRegion *CellResponse = MapRegion->GetGrid( xOffset+dx, yOffset+dy, worldNumber );
+			if( CellResponse == NULL )
 				return false;
-			}
-			if( Npc->IsNpc() )	// If this is an NPC then check it 
+
+			CellResponse->PushChar();
+			for( CChar *Npc = CellResponse->FirstChar(); !CellResponse->FinishedChars(); Npc = CellResponse->GetNextChar() )
 			{
-				// I WILL TAKE THEE
-				// If this is a request for hire and the PC is within range of the NPC and the NPC is waiting for an ESCORT
-				if( getCharDist( Npc, mChar ) <= 1 )
+				SI16 diffX = mChar->GetX() - Npc->GetX();
+				SI16 diffY = mChar->GetY() - Npc->GetY();
+				SI08 diffZ = mChar->GetZ() - Npc->GetZ();
+				if( Npc == NULL || Npc == mChar )
+					continue;
+				if( abs( diffX ) > 30 || abs( diffY ) > 30 || abs( diffZ ) > 30 )
+					continue;
+				if( abs( diffX ) <= 5 && abs( diffY ) <= 5 && abs( diffZ ) <= 9 )	// originally 2, 2, 5
 				{
-					if( response1 && Npc->GetQuestType() == ESCORTQUEST  && Npc->GetFTarg() == INVALIDSERIAL )
+					UI16 speechTrig = Npc->GetScriptTrigger();
+					cScript *toExecute = Trigger->GetScript( speechTrig );
+					if( toExecute != NULL )
 					{
-						Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );			// Set the NPC to follow the PC
-						Npc->SetNpcWander( 1 );			// Set the NPC to wander freely
-						Npc->SetSummonTimer( BuildTimeValue( cwmWorldState->ServerData()->GetEscortActiveExpire() ) );			// Set the expire time if nobody excepts the quest
-						
-						// Send out the rant about accepting the escort
-						sprintf( temp, Dictionary->GetEntry( 1294 ), region[Npc->GetQuestDestRegion()]->GetName() );
-						npcTalkAll( Npc, temp, false );
-						
-						// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
-						MsgBoardQuestEscortRemovePost( Npc );
-						// Return 1 so that we indicate that we handled the message
+						if( Npc->IsDisabled() )
+							npcTalkAll( Npc, 1291, false );
+						else if( !mChar->IsDead() )
+							toExecute->OnSpeech( comm, mChar, Npc );
 						CellResponse->PopChar();
-						return true;
-					}
-					if( response1 && Npc->GetQuestType() == ESCORTQUEST )
-						response2 = response1;	// If the current NPC already has an ftarg then respond to query for quest
-					
-					// DESTINATION
-					// If this is a request to find out where a NPC wants to go and the PC is within range of the NPC and the NPC is waiting for an ESCORT
-					if( response2 && Npc->GetQuestType() == ESCORTQUEST )
-					{
-						if( Npc->GetFTarg() == calcCharFromSer( mChar->GetSerial() ) )
-						{	// Send out the rant about accepting the escort
-							sprintf(temp, Dictionary->GetEntry( 1295 ), region[Npc->GetQuestDestRegion()]->GetName() );
-							npcTalkAll( Npc, temp, false );
-						}
-						else if( Npc->GetFTarg() == INVALIDSERIAL )  // If nobody has been accepted for the quest yet
-						{	// Send out the rant about accepting the escort
-							sprintf(temp, Dictionary->GetEntry( 1296 ), region[Npc->GetQuestDestRegion()]->GetName() );
-							npcTalkAll( Npc, temp, false );
-						}
-						else // The must be enroute
-						{	// Send out a message saying we are already being escorted
-							sprintf(temp, Dictionary->GetEntry( 1297 ), region[Npc->GetQuestDestRegion()]->GetName(), chars[Npc->GetFTarg()].GetName());
-							npcTalkAll( Npc, temp, false );
-						}
-						// Return success ( we handled the message )
-						CellResponse->PopChar();
-						return true;
+						return true;	// only return if handled
 					}
 				}
-			}
-		}
-		
-		if( ( Npc->GetNPCAiType()&0x08) == 0x08 && !mChar->IsDead() && getCharDist( Npc, mChar ) <= 6 )	// if he's a banker and we're close!
-		{
-			strcpy( search1, "BANK" );
-			strcpy( search2, "BALANCE" );
-			strcpy( search3, cwmWorldState->ServerData()->GetWildernessBankTriggerString() );
-			response1 = strstr( comm, search1 );
-			response2 = strstr( comm, search2 );
-			if( response1 )
-				openBank( mSock, mChar );
-			// this only if special bank is enabled - AntiChrist
-			if( cwmWorldState->ServerData()->GetWildernessBankStatus() )
-			{
-				response1 = strstr( comm, search3 );
-				if( response1 )
-					openSpecialBank( mSock, mChar );
-			}
-			if( response2 )	
-			{
-				long int goldCount = getBankCount( mChar, 0x0EED );
-				sprintf( temp, Dictionary->GetEntry( 1298 ), mChar->GetName(), goldCount );
-				npcTalk( mSock, Npc, temp, true );
-			}
-		}
-		
-		// This training code is by Anthracks (fred1117@tiac.net) and really psychotic
-		// if it doesn't work or you can't decipher it, you know who to blame
-		strcpy( search1, Dictionary->GetEntry( 1299 ) );
-		strcpy( search2, Dictionary->GetEntry( 1300 ) );
-		strcpy( search3, Dictionary->GetEntry( 1301 ) );
-		response1 = strstr( comm, search1 );
-		response2 = strstr( comm, search2 );
-		response3 = strstr( comm, search3 );
-		if( cwmWorldState->ServerData()->GetNPCTrainingStatus() && (response1 || response2 || response3) ) //if the player wants to train
-		{
-			// Stop the NPC from moving for a minute while talking with the player
-			Npc->SetNpcMoveTime( BuildTimeValue( 60 ) );
-			mChar->SetTrainer( INVALIDSERIAL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
-			skill = -1;
-			for( i = 0; i < ALLSKILLS; i++ )
-			{
-				if( strstr( comm, skillname[i] ) )
+
+				// Dupois - Added Dec 20, 1999
+				// Escort text matches
+				sprintf( search1, Dictionary->GetEntry( 1292 ) );
+				sprintf( search2, Dictionary->GetEntry( 1293 ) );
+				response1 = ( strstr( comm, search1 ) );
+				response2 = ( strstr( comm, search2 ) );
+
+				// If either of the above responses match, then find the NPC we are talking to
+				if( response1 || response2 )
 				{
-					skill = i;  //Leviathan fix
-					break;
-				}
-			}
-			if( skill == -1 ) // Didn't ask to be trained in a specific skill - Leviathan fix
-			{
-				if( mChar->GetTrainer() == INVALIDSERIAL ) //not being trained, asking what skills they can train in
-				{
-					if( Npc->IsNpc() )
+					// If the PC is dead then break out, The dead cannot accept quests
+					if( mChar->IsDead() ) 
 					{
-						if( getCharDist( Npc, mChar ) <= 3 && (Npc->GetID() == 0x0190 || Npc->GetID() == 0x0191) )
+						CellResponse->PopChar();
+						return false;
+					}
+					if( Npc->IsNpc() )	// If this is an NPC then check it 
+					{
+						// I WILL TAKE THEE
+						// If this is a request for hire and the PC is within range of the NPC and the NPC is waiting for an ESCORT
+						if( objInRange( Npc, mChar, 1 ) )
 						{
-							if( !Npc->CanTrain() )
+							if( response1 && Npc->GetQuestType() == ESCORTQUEST  && Npc->GetFTarg() == INVALIDSERIAL )
 							{
-								npcTalk( mSock, Npc, 1302, false );
+								Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );			// Set the NPC to follow the PC
+								Npc->SetNpcWander( 1 );			// Set the NPC to wander freely
+								Npc->SetSummonTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetEscortActiveExpire() )) );			// Set the expire time if nobody excepts the quest
+
+								// Send out the rant about accepting the escort
+								npcTalkAll( Npc, 1294, false, region[Npc->GetQuestDestRegion()]->GetName() );
+
+								// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
+								MsgBoardQuestEscortRemovePost( Npc );
+								// Return 1 so that we indicate that we handled the message
 								CellResponse->PopChar();
 								return true;
 							}
-							Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
-							strcpy( temp, Dictionary->GetEntry( 1303 ) );
-							for( j = 0; j < ALLSKILLS; j++ )
+							if( response1 && Npc->GetQuestType() == ESCORTQUEST )
+								response2 = response1;	// If the current NPC already has an ftarg then respond to query for quest
+
+							// DESTINATION
+							// If this is a request to find out where a NPC wants to go and the PC is within range of the NPC and the NPC is waiting for an ESCORT
+							if( response2 && Npc->GetQuestType() == ESCORTQUEST )
 							{
-								if( Npc->GetBaseSkill( j ) > 10 )
+								if( Npc->GetFTarg() == calcCharFromSer( mChar->GetSerial() ) )
+									npcTalkAll( Npc, 1295, false, region[Npc->GetQuestDestRegion()]->GetName() );	// Send out the rant about accepting the escort
+								else if( Npc->GetFTarg() == INVALIDSERIAL )  // If nobody has been accepted for the quest yet
+									npcTalkAll( Npc, 1296, false, region[Npc->GetQuestDestRegion()]->GetName() );	// Send out the rant about accepting the escort
+								else // The must be enroute
+									npcTalkAll( Npc, 1297, false, region[Npc->GetQuestDestRegion()]->GetName(), chars[Npc->GetFTarg()].GetName() );	// Send out a message saying we are already being escorted
+								// Return success ( we handled the message )
+								CellResponse->PopChar();
+								return true;
+							}
+						}
+					}
+				}
+
+			if( ( Npc->GetNPCAiType()&0x08) == 0x08 && !mChar->IsDead() && objInRange( Npc, mChar, 6 ) )	// if he's a banker and we're close!
+			{
+				strcpy( search1, "BANK" );
+				strcpy( search2, "BALANCE" );
+				strcpy( search3, cwmWorldState->ServerData()->GetWildernessBankTriggerString() );
+				response1 = strstr( comm, search1 );
+				response2 = strstr( comm, search2 );
+				if( response1 )
+					openBank( mSock, mChar );
+				// this only if special bank is enabled - AntiChrist
+				if( cwmWorldState->ServerData()->GetWildernessBankStatus() )
+				{
+					response1 = strstr( comm, search3 );
+					if( response1 )
+						openSpecialBank( mSock, mChar );
+				}
+					if( response2 )	
+					{
+						UI32 goldCount = getBankCount( mChar, 0x0EED );
+						npcTalk( mSock, Npc, 1298, true, mChar->GetName(), goldCount );
+					}
+				}
+
+				// This training code is by Anthracks (fred1117@tiac.net) and really psychotic
+				// if it doesn't work or you can't decipher it, you know who to blame
+				strcpy( search1, Dictionary->GetEntry( 1299 ) );
+				strcpy( search2, Dictionary->GetEntry( 1300 ) );
+				strcpy( search3, Dictionary->GetEntry( 1301 ) );
+				response1 = strstr( comm, search1 );
+				response2 = strstr( comm, search2 );
+				response3 = strstr( comm, search3 );
+				if( cwmWorldState->ServerData()->GetNPCTrainingStatus() && (response1 || response2 || response3) ) //if the player wants to train
+				{
+					// Stop the NPC from moving for a minute while talking with the player
+					Npc->SetNpcMoveTime( BuildTimeValue( 60 ) );
+					mChar->SetTrainer( INVALIDSERIAL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
+					skill = -1;
+					for( i = 0; i < ALLSKILLS; i++ )
+					{
+						if( strstr( comm, skillname[i] ) )
+						{
+							skill = i;  //Leviathan fix
+							break;
+						}
+					}
+					if( skill == -1 ) // Didn't ask to be trained in a specific skill - Leviathan fix
+					{
+						if( mChar->GetTrainer() == INVALIDSERIAL ) //not being trained, asking what skills they can train in
+						{
+							if( Npc->IsNpc() )
+							{
+								if( objInRange( Npc, mChar, 3 ) && isHuman( Npc ) )
 								{
-									sprintf( temp2, "%s, ", strlwr( skillname[j] ) );
-									strupr( skillname[j] ); // I found out strlwr changes the actual  string permanently, so this undoes that
-									if( !y ) 
-										temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it.
-									strcat( temp, temp2 );
-									y++;
+									if( !Npc->CanTrain() )
+									{
+										npcTalk( mSock, Npc, 1302, false );
+										CellResponse->PopChar();
+										return true;
+									}
+									Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
+									strcpy( temp, Dictionary->GetEntry( 1303 ) );
+									for( j = 0; j < ALLSKILLS; j++ )
+									{
+										if( Npc->GetBaseSkill( j ) > 10 )
+										{
+											sprintf( temp2, "%s, ", strlwr( skillname[j] ) );
+											strupr( skillname[j] ); // I found out strlwr changes the actual  string permanently, so this undoes that
+											if( !y ) 
+												temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it.
+											strcat( temp, temp2 );
+											y++;
+										}
+									}
+									if( y )
+									{
+										temp[strlen( temp ) - 2] = '.'; // Make last character a . not a ,  just to look nicer
+										npcTalk( mSock, Npc, temp, false );
+									}
+									else
+										npcTalk( mSock, Npc, 1302, false );
+
+									CellResponse->PopChar();
+									return true;
 								}
 							}
-							if( y )
-							{
-								temp[strlen( temp ) - 2] = '.'; // Make last character a . not a ,  just to look nicer
-								npcTalk( mSock, Npc, temp, false );
-							}
-							else
-								npcTalk( mSock, Npc, 1302, false );
-
-							CellResponse->PopChar();
-							return true;
-						}
+						} 
 					}
-				} 
-			}
-			else // They do want to learn a specific skill
-			{
-				if( Npc->IsNpc() )
-				{
-					if( getCharDist( Npc, mChar ) <= 3 && ( Npc->GetID() == 0x0190 || Npc->GetID() == 0x0191 ) )
+					else // They do want to learn a specific skill
 					{
-						if( !Npc->CanTrain() )
+						if( Npc->IsNpc() )
 						{
-							npcTalk( mSock, Npc, 1302, false );
-							CellResponse->PopChar();
-							return true;
-						}
-						if( Npc->GetBaseSkill( skill ) > 10 )
-						{
-							sprintf( temp, Dictionary->GetEntry( 1304 ), strlwr( skillname[skill] ) );
-							strupr( skillname[skill] ); // I found out strlwr changes the actual string permanently, so this undoes that
-							if( mChar->GetBaseSkill( skill ) >= 250 )
-								strcat( temp, Dictionary->GetEntry( 1305 ) );
-							else
+							if( objInRange( Npc, mChar, 3 ) && ( Npc->GetID() == 0x0190 || Npc->GetID() == 0x0191 ) )
 							{
-								if( Npc->GetBaseSkill( skill ) <= 250)
-									sprintf( temp2, Dictionary->GetEntry( 1306 ),(int)( Npc->GetBaseSkill( skill ) / 2 / 10 ),(int)( Npc->GetBaseSkill( skill ) / 2 ) - mChar->GetBaseSkill( skill ) );
+								if( !Npc->CanTrain() )
+								{
+									npcTalk( mSock, Npc, 1302, false );
+									CellResponse->PopChar();
+									return true;
+								}
+								if( Npc->GetBaseSkill( skill ) > 10 )
+								{
+									sprintf( temp, Dictionary->GetEntry( 1304 ), strlwr( skillname[skill] ) );
+									strupr( skillname[skill] ); // I found out strlwr changes the actual string permanently, so this undoes that
+									if( mChar->GetBaseSkill( skill ) >= 250 )
+										strcat( temp, Dictionary->GetEntry( 1305 ) );
+									else
+									{
+										if( Npc->GetBaseSkill( skill ) <= 250)
+											sprintf( temp2, Dictionary->GetEntry( 1306 ),(int)( Npc->GetBaseSkill( skill ) / 2 / 10 ),(int)( Npc->GetBaseSkill( skill ) / 2 ) - mChar->GetBaseSkill( skill ) );
+										else
+											sprintf( temp2, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( skill ) );
+										strcat( temp, temp2 );
+										mChar->SetTrainer( Npc->GetSerial() );
+										Npc->SetTrainingPlayerIn( skill );
+									}
+									npcTalk( mSock, Npc, temp, false );
+									CellResponse->PopChar();
+									return true;
+								}
 								else
-									sprintf( temp2, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( skill ) );
-								strcat( temp, temp2 );
-								mChar->SetTrainer( Npc->GetSerial() );
-								Npc->SetTrainingPlayerIn( skill );
+								{
+									npcTalk( mSock, Npc, 1307, false ); 
+									CellResponse->PopChar();
+									return true; 
+								}
 							}
-							npcTalk( mSock, Npc, temp, false );
-							CellResponse->PopChar();
-							return true;
-						}
-						else
-						{
-							npcTalk( mSock, Npc, 1307, false ); 
-							CellResponse->PopChar();
-							return true; 
 						}
 					}
 				}
-			}
-		}
 
-		if( ( Npc->GetOwnerObj() != NULL ) && ( Npc->GetNPCAiType() != 17 ) && 
-			( ( abs( diffX ) <= 7 ) && ( abs( diffY ) <= 7 ) && ( abs( diffZ ) <= 20 ) ) )
-		{
-			bool isFriend = Npcs->checkPetFriend( mChar, Npc );
-			if( Npc->GetOwner() == mChar->GetSerial() || isFriend || mChar->IsGM() )
-			{
-				char search4[50];
-				char *response4;
-				strcpy( search4, "ALL" );
-				strcpy( search3, Npc->GetName() );
-				strupr( search3 );
-				response3 = strstr( comm, search3);
-				response4 = strstr( comm, search4 );
-				if( response3 || response4 ) // If petname or ALL is in the line
+				if( ( Npc->GetOwnerObj() != NULL ) && ( Npc->GetNPCAiType() != 17 ) && 
+				( ( abs( diffX ) <= 7 ) && ( abs( diffY ) <= 7 ) && ( abs( diffZ ) <= 20 ) ) )
 				{
-					strcpy(search1, Dictionary->GetEntry( 1308 ) ); // Follow
-					strcpy(search2, Dictionary->GetEntry( 1309 ) ); // Me
-					response1 = strstr( comm, search1 );
-					response2 = strstr( comm, search2 );
-					if( response1 )
+					bool isFriend = Npcs->checkPetFriend( mChar, Npc );
+					if( Npc->GetOwnerObj() == mChar || isFriend || mChar->IsGM() )
 					{
-						Npcs->stopPetGuarding( Npc );
-						mChar->SetGuarded( false );
-						if( response2 ) //if me is in
+						char search4[50];
+						char *response4;
+						strcpy( search4, "ALL" );
+						strcpy( search3, Npc->GetName() );
+						strupr( search3 );
+						response3 = strstr( comm, search3);
+						response4 = strstr( comm, search4 );
+						if( response3 || response4 ) // If petname or ALL is in the line
 						{
-							Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
-							Npc->SetNpcWander( 1 );
-							playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
-							retval = true;
-						}
-						else
-						{	// add pet follow code here, look for "all" command
-							if( ( FTarg == 0 ) || ( FTarg == INVALIDSERIAL ) )
+							strcpy(search1, Dictionary->GetEntry( 1308 ) ); // Follow
+							strcpy(search2, Dictionary->GetEntry( 1309 ) ); // Me
+							response1 = strstr( comm, search1 );
+							response2 = strstr( comm, search2 );
+							if( response1 )
 							{
+								Npcs->stopPetGuarding( Npc );
+								mChar->SetGuarded( false );
+								if( response2 ) //if me is in
+								{
+									Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
+									Npc->SetNpcWander( 1 );
+									playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
+									retval = true;
+								}
+								else
+								{	// add pet follow code here, look for "all" command
+									if( ( FTarg == 0 ) || ( FTarg == INVALIDSERIAL ) )
+									{
+										mSock->AddID( Npc->GetSerial() );
+										target( mSock, 0, 1, 0, 117, 1310 );
+										FTarg = Npc->GetFTarg();
+									}
+									else 
+									{
+										Npc->SetFTarg( FTarg );
+										Npc->SetNpcWander( 1 );
+										playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
+									}
+									retval = true;
+								}
+								// check if "all" was said... if not => return
+								if( !response4 )
+								{
+									CellResponse->PopChar();
+									return true;
+								}
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1311 ) ); // Kill
+							strcpy( search2, Dictionary->GetEntry( 1312 ) ); // Attack
+							response1 = strstr( comm, search1 );
+							response2 = strstr( comm, search2 );
+							if( response1 || response2 )
+							{
+								Npcs->stopPetGuarding( Npc );
+								if( !isFriend )
+								{
+									mSock->AddID( Npc->GetSerial() );
+									//pet kill code here
+									target( mSock, 0, 1, 0, 118, 1313 );
+									CellResponse->PopChar();
+									return true;
+								}
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1314 ) ); // Fetch
+							strcpy( search2, Dictionary->GetEntry( 1315 ) ); // Get
+							response1 = strstr( comm, search1 );
+							response2 = strstr( comm, search2 );
+							if( response1 || response2 )
+							{
+								Npcs->stopPetGuarding( Npc );
 								mSock->AddID( Npc->GetSerial() );
-								target( mSock, 0, 1, 0, 117, 1310 );
-								FTarg = Npc->GetFTarg();
+								//pet fetch code here
+								target( mSock, 0, 1, 0, 120, 1316 );
+								CellResponse->PopChar();
+								return true;
 							}
-							else 
+
+							strcpy( search1, Dictionary->GetEntry( 1317 ) ); // Come
+							response1 = strstr( comm, search1 );
+							if( response1 )
 							{
-								Npc->SetFTarg( FTarg );
-								Npc->SetNpcWander( 1 );
-								playMonsterSound( Npc, Npc->GetID(), SND_STARTATTACK );
-							}
-							retval = true;
-						}
-						// check if "all" was said... if not => return
-						if( !response4 )
-						{
-							CellResponse->PopChar();
-							return true;
-						}
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1311 ) ); // Kill
-					strcpy( search2, Dictionary->GetEntry( 1312 ) ); // Attack
-					response1 = strstr( comm, search1 );
-					response2 = strstr( comm, search2 );
-					if( response1 || response2 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						if( !isFriend )
-						{
-							mSock->AddID( Npc->GetSerial() );
-							//pet kill code here
-							target( mSock, 0, 1, 0, 118, 1313 );
-							CellResponse->PopChar();
-							return true;
-						}
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1314 ) ); // Fetch
-					strcpy( search2, Dictionary->GetEntry( 1315 ) ); // Get
-					response1 = strstr( comm, search1 );
-					response2 = strstr( comm, search2 );
-					if( response1 || response2 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						mSock->AddID( Npc->GetSerial() );
-						//pet fetch code here
-						target( mSock, 0, 1, 0, 120, 1316 );
-						CellResponse->PopChar();
-						return true;
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1317 ) ); // Come
-					response1 = strstr( comm, search1 );
-					if( response1 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
-						Npc->SetNpcWander( 1 );
-						sysmessage( mSock, 1318 );
-						retval = true;
-						if( !response4 )
-						{
-							CellResponse->PopChar();
-							return true;
-						}
-					}
-				
-					strcpy( search1, Dictionary->GetEntry( 1319 ) ); // Guard
-					strcpy( search2, Dictionary->GetEntry( 1320 ) ); // Me
-					response1 = strstr( comm, search1 );
-					response2 = strstr( comm, search2 );
-					if( response1 )
-					{
-						if( !isFriend )
-						{
-							Npcs->stopPetGuarding( Npc );
-							if( response2 ) //if me is in
-							{
-								sysmessage( mSock, 1321 );
-								Npc->SetNPCAiType( 32 );									// 32 is guard mode
-								mChar->SetGuarded( true );
+								Npcs->stopPetGuarding( Npc );
 								Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
 								Npc->SetNpcWander( 1 );
-								//add pet guard me code here
-								CellResponse->PopChar();
-								return true;
+								sysmessage( mSock, 1318 );
+								retval = true;
+								if( !response4 )
+								{
+									CellResponse->PopChar();
+									return true;
+								}
 							}
-							else
+
+							strcpy( search1, Dictionary->GetEntry( 1319 ) ); // Guard
+							strcpy( search2, Dictionary->GetEntry( 1320 ) ); // Me
+							response1 = strstr( comm, search1 );
+							response2 = strstr( comm, search2 );
+							if( response1 )
 							{
+								if( !isFriend )
+								{
+									Npcs->stopPetGuarding( Npc );
+									if( response2 ) //if me is in
+									{
+										sysmessage( mSock, 1321 );
+										Npc->SetNPCAiType( 32 );									// 32 is guard mode
+										mChar->SetGuarded( true );
+										Npc->SetFTarg( calcCharFromSer( mChar->GetSerial() ) );
+										Npc->SetNpcWander( 1 );
+										//add pet guard me code here
+										CellResponse->PopChar();
+										return true;
+									}
+									else
+									{
+										mSock->AddID( Npc->GetSerial() );
+										// Guard target
+										target( mSock, 0, 1, 0, 120, 1104 );
+										CellResponse->PopChar();
+										return true;
+									}
+								}
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1619 ) ); // Friend
+							response1 = strstr( comm, search1 );
+							if( response1 )
+							{
+								if( !isFriend )
+								{
+									mSock->AddID( Npc->GetSerial() );
+									// Friend target
+									target( mSock, 0, 1, 0, 124, 1620 );
+									CellResponse->PopChar();
+									return true;
+								}
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1626 ) ); // Stop
+							strcpy( search2, Dictionary->GetEntry( 1627 ) ); // Stay
+							response1 = strstr( comm, search1 );
+							response2 = strstr( comm, search2 );
+							if( response1 || response2 )
+							{
+								Npcs->stopPetGuarding( Npc );
+								//pet stop code here
+								Npc->SetFTarg( INVALIDSERIAL );
+								Npc->SetTarg( INVALIDSERIAL );
+								if( Npc->IsAtWar() ) 
+									npcToggleCombat( Npc );
+								Npc->SetNpcWander( 0 );
+								retval = true;
+								if( !response4 )
+								{
+									CellResponse->PopChar();
+									return true;
+								}
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1322 ) ); // Transfer
+							response1 = strstr( comm, search1 );
+							if( response1 && !response4 )
+							{
+								Npcs->stopPetGuarding( Npc );
+								//pet transfer code here
 								mSock->AddID( Npc->GetSerial() );
-								// Guard target
-								target( mSock, 0, 1, 0, 120, 1104 );
+								target( mSock, 0, 1, 0, 119, 1323 );
+								CellResponse->PopChar();
+								return true;
+							}
+
+							strcpy( search1, Dictionary->GetEntry( 1324 ) ); // Release
+							response1 = strstr( comm, search1 );
+							if( response1 && !response4 )
+							{
+								Npcs->stopPetGuarding( Npc );
+								//pet release code here
+								Npc->SetFTarg( INVALIDSERIAL );
+								Npc->SetNpcWander( 2 );
+								Npc->SetOwner( NULL );
+								npcTalkAll( Npc, 1325, false, Npc->GetName() );
+								if( Npc->GetSummonTimer() )
+								{
+									soundeffect( &chars[i], 0x01FE );
+									Npcs->DeleteChar( Npc );
+								}
 								CellResponse->PopChar();
 								return true;
 							}
 						}
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1619 ) ); // Friend
-					response1 = strstr( comm, search1 );
-					if( response1 )
-					{
-						if( !isFriend )
-						{
-							mSock->AddID( Npc->GetSerial() );
-							// Friend target
-							target( mSock, 0, 1, 0, 124, 1620 );
-							CellResponse->PopChar();
-							return true;
-						}
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1626 ) ); // Stop
-					strcpy( search2, Dictionary->GetEntry( 1627 ) ); // Stay
-					response1 = strstr( comm, search1 );
-					response2 = strstr( comm, search2 );
-					if( response1 || response2 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						//pet stop code here
-						Npc->SetFTarg( INVALIDSERIAL );
-						Npc->SetTarg( INVALIDSERIAL );
-						if( Npc->IsAtWar() ) 
-							npcToggleCombat( Npc );
-						Npc->SetNpcWander( 0 );
-						retval = true;
-						if( !response4 )
-						{
-							CellResponse->PopChar();
-							return true;
-						}
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1322 ) ); // Transfer
-					response1 = strstr( comm, search1 );
-					if( response1 && !response4 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						//pet transfer code here
-						mSock->AddID( Npc->GetSerial() );
-						target( mSock, 0, 1, 0, 119, 1323 );
-						CellResponse->PopChar();
-						return true;
-					}
-
-					strcpy( search1, Dictionary->GetEntry( 1324 ) ); // Release
-					response1 = strstr( comm, search1 );
-					if( response1 && !response4 )
-					{
-						Npcs->stopPetGuarding( Npc );
-						//pet release code here
-						Npc->SetFTarg( INVALIDSERIAL );
-						Npc->SetNpcWander( 2 );
-						Npc->SetOwner( INVALIDSERIAL );
-						sprintf(temp, Dictionary->GetEntry( 1325 ), Npc->GetName() );
-						npcTalkAll( Npc, temp, false );
-						if( Npc->GetSummonTimer() )
-						{
-							soundeffect( &chars[i], 0x01FE );
-							Npcs->DeleteChar( Npc );
-						}
-						CellResponse->PopChar();
-						return true;
 					}
 				}
 			}
+			CellResponse->PopChar();
 		}
 	}
-	CellResponse->PopChar();
-	} // end of for loops
 	return retval;
 }
 

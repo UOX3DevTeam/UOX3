@@ -520,14 +520,11 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 	JSObject *myitemptr = NULL;
 	CItem *myItemPtr = NULL;
-	ITEM itemPtr = INVALIDSERIAL;
 
 	if( argc == 8 )
 	{
 		myitemptr = JSVAL_TO_OBJECT( argv[7] );
 		myItemPtr = (CItem *)JS_GetPrivate( cx, myitemptr );
-		if( myItemPtr != NULL )
-			itemPtr = calcItemFromSer( myItemPtr->GetSerial() );
 	}
 
 	JSObject *mysrc = JSVAL_TO_OBJECT( argv[1] );
@@ -550,9 +547,9 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			return JS_FALSE;
 		}
 		if( argc == 8 )
-			tempeffect( mysrcChar, mydestChar, targNum, more1, more2, more3, itemPtr );
+			tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3, myItemPtr );
 		else
-			tempeffect( mysrcChar, mydestChar, targNum, more1, more2, more3 );
+			tempeffect( mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	else
 	{
@@ -565,9 +562,9 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			return JS_FALSE;
 		}
 		if( argc == 8 )
-			tempeffect( mysrcChar, mydestItem, targNum, more1, more2, more3, itemPtr );
+			tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 		else
-			tempeffect( mysrcChar, mydestItem, targNum, more1, more2, more3 );
+			tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	return JS_TRUE;
 }
@@ -600,27 +597,6 @@ JSBool SE_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
-void JSSpeech( cBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC )
-{
-	//Reactivate when a better way of doing this is found... Atm you cannot speak more than one line in TEN seconds" )
-	/*if( speaker.GetObjType() == OT_CHAR )
-	{
-		if( static_cast< CChar & >(speaker).GetAntiSpamTimer() < uiCurrentTime )
-			static_cast< CChar & >(speaker).SetAntiSpamTimer( BuildTimeValue( 10.0f ) ); 
-		else
-			return;
-	}*/
-
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Font( fType );
-	toAdd->Speech( message );
-	toAdd->Speaker( speaker.GetSerial() );
-	toAdd->Type( sType );
-	toAdd->At( uiCurrentTime );
-	toAdd->TargType( spTrg );
-	toAdd->Colour( sColour );
-}
-
 // Speech related functions
 JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -637,42 +613,6 @@ JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 	sysbroadcast( trgMessage );
-	return JS_TRUE;
-}
-JSBool SE_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "YellMessage: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	JSString *targMessage = JS_ValueToString( cx, argv[1] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
-	if( targChar == INVALIDSERIAL || targChar >= cmem || trgMessage == NULL )
-	{
-		DoSEErrorMessage( "YellMessage: Invalid character (%i) or speech (%s)", targChar, trgMessage );
-		return JS_FALSE;
-	}
-	JSSpeech( chars[targChar], trgMessage, YELL, chars[targChar].GetSayColour(), (FontType)chars[targChar].GetFontType() );
-	return JS_TRUE;
-}
-JSBool SE_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "WhisperMessage: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	JSString *targMessage = JS_ValueToString( cx, argv[1] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
-	if( targChar == INVALIDSERIAL || targChar >= cmem || trgMessage == NULL )
-	{
-		DoSEErrorMessage( "WhisperMessage: Invalid character (%i) or speech (%s)", targChar, trgMessage );
-		return JS_FALSE;
-	}
-	JSSpeech( chars[targChar], trgMessage, WHISPER, chars[targChar].GetSayColour(), (FontType)chars[targChar].GetFontType() );
 	return JS_TRUE;
 }
 
@@ -747,11 +687,11 @@ JSBool SE_FindNearestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 				if( nearest == NULL && tempChar != src )
 				{
 					nearest = tempChar;
-					distance = fabs( (tempChar->GetLocation() - src->GetLocation()).MagSquared() );
+					distance = static_cast<R32>(fabs( (tempChar->GetLocation() - src->GetLocation()).MagSquared() ));
 				}
 				else if( tempChar != src )
 				{
-					R32 nextDistance = fabs( (tempChar->GetLocation() - src->GetLocation()).MagSquared() );
+					R32 nextDistance = static_cast<R32>(fabs( (tempChar->GetLocation() - src->GetLocation()).MagSquared() ));
 					if( nextDistance < distance )
 					{
 						distance = nextDistance;
@@ -1241,93 +1181,6 @@ JSBool SE_SetName2( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
-JSBool SE_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "GetTag: Invalid number of arguments (takes 3, object, object type, and tag name)" );
-		return JS_FALSE;
-	}
-	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	UI08 targType = (UI08)JSVAL_TO_INT( argv[1] );
-	char *tagname = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cmem ) || ( targType && targChar > imem ) )
-	{
-		DoSEErrorMessage( "GetTag: Invalid object (%i) or object type (%i)", targChar, targType );
-		return JS_FALSE;
-	}
-
-	jsval strSpeech;
-	if( targType ) 
-	{
-		strSpeech = items[targChar].GetTag( tagname );
-	} 
-	else 
-	{
-		strSpeech = chars[targChar].GetTag( tagname );
-	}
-	*rval = strSpeech;
-	return JS_TRUE;
-}
-
-JSBool SE_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 4 )
-	{
-		DoSEErrorMessage( "SetTag: Invalid number of arguments (takes 4, object, object type, tag name, and new tag value.)" );
-		return JS_FALSE;
-	}
-	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	UI08 targType = (UI08)JSVAL_TO_INT( argv[1] );
-	char *tagname = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	jsval tagval = argv[3];
-	if( tagname == NULL )
-	{
-		DoSEErrorMessage( "SetTag: No tag name!" );
-		return JS_FALSE;
-	}
-	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cmem ) || ( targType && targChar > imem ) )
-	{
-		DoSEErrorMessage( "SetTag: Invalid object (%i) or object type (%i)", targChar, targType );
-		return JS_FALSE;
-	}
-	if( targType ) 
-	{
-		items[targChar].SetTag( tagname, tagval );
-	} 
-	else 
-	{
-		chars[targChar].SetTag( tagname, tagval );
-	}
-	return JS_TRUE;
-}
-
-JSBool SE_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "GetNumTags: Invalid number of arguments (takes 2, object and object type, and tag name)" );
-		return JS_FALSE;
-	}
-	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	UI08 targType = (UI08)JSVAL_TO_INT( argv[1] );
-	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cmem ) || ( targType && targChar > imem ) )
-	{
-		DoSEErrorMessage( "GetNumTags: Invalid object (%i) or object type (%i)", targChar, targType );
-		return JS_FALSE;
-	}
-	jsval strSpeech = 0;
-	if( targType ) 
-	{
-		strSpeech = INT_TO_JSVAL( items[targChar].GetNumTags() );
-	} 
-	else 
-	{
-		strSpeech = INT_TO_JSVAL( chars[targChar].GetNumTags() );
-	}
-	*rval = strSpeech;
-	return JS_TRUE;
-}
 
 JSBool SE_GetCharPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -1434,12 +1287,18 @@ JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		DoSEErrorMessage( "CalcCharFromSer: Invalid number of arguments (takes 1 or 4)" );
 		return JS_FALSE;
 	}
-	SERIAL targSerial;
+	SERIAL targSerial = INVALIDSERIAL;
 	if( argc == 1 )
 		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
 	else
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
-	*rval = INT_TO_JSVAL( calcCharFromSer( targSerial ) );
+
+	CChar *newChar = calcCharObjFromSer( targSerial );
+	UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
+	cScript *myScript = Trigger->GetScript( myScpTrig );
+	JSObject *myObj = myScript->AcquireObject( IUE_CHAR );
+	JS_SetPrivate( cx, myObj, newChar );
+	*rval = OBJECT_TO_JSVAL( myObj );
 	return JS_TRUE;
 }
 
@@ -1569,90 +1428,57 @@ JSBool SE_CalcAttack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
-JSBool SE_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "OpenBank: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	UOXSOCKET targSock = (UOXSOCKET)JSVAL_TO_INT( argv[1] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
-	{
-		DoSEErrorMessage( "OpenBank: Invalid character (%i)", targChar );
-		return JS_FALSE;
-	}
-	openBank( calcSocketObjFromSock( targSock ), &chars[targChar] );
-	return JS_TRUE;
-}
-
 JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 8 )
+	if( argc < 6 )
 	{
-		DoSEErrorMessage( "DoMovingEffect: Invalid number of arguments (takes 8 or 9)" );
+		DoSEErrorMessage( "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10)" );
 		return JS_FALSE;
 	}
-	UI08 speed, loop;
-	UI16 effect;
-	bool explode;
-	UI32 srcObj;
-	long objType;
-	if( argc == 9 )
+	JSObject *srcObj	= JSVAL_TO_OBJECT( argv[0] );
+	cBaseObject *src	= (cBaseObject *)JS_GetPrivate( cx, srcObj );
+	if( src == NULL )
+	{
+		DoSEErrorMessage( "DoMovingEffect: Invalid source object" );
+		return JS_FALSE;
+	}
+	bool targLocation = false;
+	UI08 offset = 0;
+	UI16 targX = 0, targY = 0;
+	SI08 targZ = 0;
+	cBaseObject *trg = NULL;
+	if( JSVAL_IS_INT( argv[1] ) )
 	{	// Location moving effect
-		UI16 targX, targY;
-		SI08 targZ;
-		srcObj = JSVAL_TO_INT( argv[0] );
-		objType = JSVAL_TO_INT( argv[1] );
-		if( srcObj == INVALIDSERIAL || ( objType == 1 && srcObj > imem ) || ( objType == 0 && srcObj > cmem ) )
-		{
-			DoSEErrorMessage( "DoMovingEffect: Invalid source object (%i) of type (%i)", srcObj, objType );
-			return JS_FALSE;
-		}
-		targX = (UI16)JSVAL_TO_INT( argv[2] );
-		targY = (UI16)JSVAL_TO_INT( argv[3] );
-		targZ = (SI08)JSVAL_TO_INT( argv[4] );
-		effect = (UI16)JSVAL_TO_INT( argv[5] );
-		speed = (UI08)JSVAL_TO_INT( argv[6] );
-		loop = (UI08)JSVAL_TO_INT( argv[7] );
-		explode = ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
-		if( objType )
-			movingeffect( &items[srcObj], targX, targY, targZ, effect, speed, loop, explode );
-		else
-			movingeffect( &chars[srcObj], targX, targY, targZ, effect, speed, loop, explode );
+		targLocation = true;
+		offset = true;
+		targX = (UI16)JSVAL_TO_INT( argv[1] );
+		targY = (UI16)JSVAL_TO_INT( argv[2] );
+		targZ = (SI08)JSVAL_TO_INT( argv[3] );
 	}
 	else
 	{
-		srcObj = JSVAL_TO_INT( argv[0] );
-		objType = JSVAL_TO_INT( argv[1] );
-		if( srcObj == INVALIDSERIAL || ( objType == 1 && srcObj > imem ) || ( objType == 0 && srcObj > cmem ) )
+		JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
+		trg					= (cBaseObject *)JS_GetPrivate( cx, trgObj );
+		if( trg == NULL )
 		{
-			DoSEErrorMessage( "DoMovingEffect: Invalid source object (%i) of type (%i)", srcObj, objType );
+			DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
 			return JS_FALSE;
 		}
-		UI32 trgObj = JSVAL_TO_INT( argv[2] );
-		long trgObjType = JSVAL_TO_INT( argv[3] );
-		if( trgObj == INVALIDSERIAL || ( trgObjType == 1 && trgObj > imem ) || ( trgObjType == 0 && trgObj > cmem ) )
-		{
-			DoSEErrorMessage( "DoMovingEffect: Invalid target object (%i) of type (%i)", trgObj, trgObjType );
-			return JS_FALSE;
-		}
-		effect = (UI16)JSVAL_TO_INT( argv[4] );
-		speed = (UI08)JSVAL_TO_INT( argv[5] );
-		loop = (UI08)JSVAL_TO_INT( argv[6] );
-		explode = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
-		cBaseObject *src, *trg;
-		if( objType )
-			src = &items[srcObj];
-		else
-			src = &chars[srcObj];
-		if( trgObjType )
-			trg = &items[trgObj];
-		else
-			trg = &chars[trgObj];
-		movingeffect( src, trg, effect, speed, loop, explode );
 	}
+	UI16 effect = (UI16)JSVAL_TO_INT( argv[2+offset] );
+	UI08 speed = (UI08)JSVAL_TO_INT( argv[3+offset] );
+	UI08 loop = (UI08)JSVAL_TO_INT( argv[4+offset] );
+	bool explode = ( JSVAL_TO_BOOLEAN( argv[5+offset] ) == JS_TRUE );
+	UI32 hue = 0, renderMode = 0;
+	if( argc - offset >= 7 ) // there's at least 7/9 parameters
+		hue = (UI32)JSVAL_TO_INT( argv[6+offset] );
+	if( argc - offset >= 8 ) // there's at least 8/10 parameters
+		renderMode = (UI32)JSVAL_TO_INT( argv[7+offset] );
+
+	if( targLocation )
+		movingeffect( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+	else
+		movingeffect( src, trg, effect, speed, loop, explode, hue, renderMode );
 	return JS_TRUE;
 }
 
@@ -1738,45 +1564,6 @@ JSBool SE_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
 	*rval = STRING_TO_JSVAL( strSpeech );
 
-	return JS_TRUE;
-}
-
-JSBool SE_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "GetByte: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
-	{
-		DoSEErrorMessage( "GetByte: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	cSocket *mSock = calcSocketObjFromSock( sock );
-	int offset = JSVAL_TO_INT( argv[1] );
-	*rval = INT_TO_JSVAL( mSock->GetByte( offset ) );
-	return JS_TRUE;
-}
-
-JSBool SE_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "GetWord: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
-	{
-		DoSEErrorMessage( "GetWord: invalid socket (%i)", sock );
-		return JS_FALSE;
-	}
-	int offset = JSVAL_TO_INT( argv[1] );
-	cSocket *mSock = calcSocketObjFromSock( sock );
-	int retVal = mSock->GetWord( offset );
-	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;
 }
 
@@ -1957,7 +1744,7 @@ JSBool SE_UseReagant( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 	if( realID != 0 )
 	{
-		int foundAmount = getAmount( &chars[player], realID );
+		UI32 foundAmount = getAmount( &chars[player], realID );
 		if( foundAmount >= amount )
 		{
 			deleQuan( &chars[player], realID, amount );
@@ -2410,6 +2197,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 4 or 6)" );
 		return JS_FALSE;
 	}
+	cSocket *s = NULL;
 	CChar *cMade = NULL;
 	if( argc == 4 )
 	{
@@ -2418,34 +2206,32 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		cSpawnRegion *spawnReg = NULL;
 		if( region != -1 )
 			spawnReg = spawnregion[region];
-		char *npcNum = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );;
-		cSocket *s = calcSocketObjFromSock( bpSocket );
+		char *npcNum = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
+		s = calcSocketObjFromSock( bpSocket );
 		UI08 worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
 		cMade = Npcs->AddNPC(s,spawnReg,npcNum,worldNumber);
-		//*rval = INT_TO_JSVAL( Npcs->AddNPC( s, spawnReg, npcNum, worldNumber ) );
 	}
 	else
 	{
 		UOXSOCKET Socket = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
-		char *nnpcNum=JS_GetStringBytes(JS_ValueToString(cx,argv[1]));
-		//int nnpcNum = (int)JSVAL_TO_INT( argv[1] );
+		char *nnpcNum = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 		UI16 x = (UI16)JSVAL_TO_INT( argv[2] );
 		UI16 y = (UI16)JSVAL_TO_INT( argv[3] );
 		SI08 z = (SI08)JSVAL_TO_INT( argv[4] );
 		UI08 wrld = (UI08)JSVAL_TO_INT( argv[5] );
-		cSocket *s = calcSocketObjFromSock( Socket );
-#pragma note( "DEPENDENT ON NUMERIC NPC SECTION" )
-		cMade = Npcs->AddNPCxyz(s,nnpcNum,x,y,z,wrld);
-		//*rval = INT_TO_JSVAL( Npcs->AddNPCxyz( s, nnpcNum, x, y, z, wrld ) );
+		s = calcSocketObjFromSock( Socket );
+		cMade = Npcs->AddNPCxyz( s, nnpcNum, x, y, z, wrld );
 	}
-	if(cMade!=NULL)
+	if( cMade != NULL )
 	{
-		UI16 myScpTrig = Trigger->FindObject(JS_GetGlobalObject(cx));
-		cScript *myScript = Trigger->GetScript(myScpTrig);
-		JSObject *myobj = myScript->AcquireObject(IUE_CHAR);
-		JS_SetPrivate(cx,myobj,cMade);
-		*rval = OBJECT_TO_JSVAL(myobj);
+		UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
+		cScript *myScript = Trigger->GetScript( myScpTrig );
+		JSObject *myobj = myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myobj, cMade );
+		*rval = OBJECT_TO_JSVAL( myobj );
 	}
+	else
+		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
 
@@ -2489,25 +2275,6 @@ JSBool SE_SpawnItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	else
 		*rval = JSVAL_NULL;
-	return JS_TRUE;
-}
-
-JSBool SE_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )	// 3 parameters
-	{
-		DoSEErrorMessage( "PopUpTarget: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	UOXSOCKET tSock = JSVAL_TO_INT( argv[0] );
-	if( tSock >= now || tSock == -1 )
-	{
-		DoSEErrorMessage( "PopUpTarget: Invalid socket (%i)", tSock );
-		return JS_FALSE;
-	}
-	UI08 tNum = (UI08)JSVAL_TO_INT( argv[1] );
- 	char *toSay = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	target( calcSocketObjFromSock( tSock ), 0, 1, 0, tNum, toSay );
 	return JS_TRUE;
 }
 
@@ -2723,22 +2490,6 @@ JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
-JSBool SE_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 4 )
-	{
-		DoSEErrorMessage( "StartTimer: Invalid number of arguments (takes 4)" );
-		return JS_FALSE;
-	}
-	CHARACTER tChar = JSVAL_TO_INT( argv[0] );
-	char numSecs = (char)JSVAL_TO_INT( argv[1] );
-	char numHundredthsOfSec = (char)JSVAL_TO_INT( argv[2] );
-	char timerID = (char)JSVAL_TO_INT( argv[3] );
-
-	tempeffect( &chars[tChar], &chars[tChar], 40, numSecs, numHundredthsOfSec, timerID, INVALIDSERIAL );
-	return JS_TRUE;
-}
-
 JSBool SE_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )
@@ -2810,7 +2561,7 @@ JSBool SE_FindItemOnLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	{
 		return JS_FALSE;
 	}
-	CItem *tItem = FindItemOnLayer( calcCharObjFromSer( chars[player].GetSerial() ), layerNum );
+	CItem *tItem = chars[player].GetItemAtLayer( layerNum );
 	*rval = INT_TO_JSVAL( calcItemFromSer( tItem->GetSerial() ) );
 
 	return JS_TRUE;
@@ -4352,6 +4103,81 @@ JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o--------------------------------------------------------------------------
+//|	Function	-	JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	January 27, 2003
+//|	Programmer	-	Maarc
+//|	Modified	-
+//o--------------------------------------------------------------------------
+//|	Purpose		-	Using a passed in function name, executes a JS function
+//|				-	on an area of characters
+//o--------------------------------------------------------------------------
+JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 && argc != 4 )
+	{
+		// function name, source character, range
+		DoSEErrorMessage( "AreaCharacterFunction: Invalid number of arguments (takes 3/4, function name, source character, range, optional socket)" );
+		return JS_FALSE;
+	}
+
+	// Do parameter validation here
+	JSObject *srcCharacterObj = NULL;
+	CChar *srcChar = NULL;
+
+	JSObject *srcSocketObj = NULL;
+	cSocket *srcSocket = NULL;
+
+ 	char *trgFunc = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( trgFunc == NULL )
+	{
+		DoSEErrorMessage( "AreaCharacterFunction: Argument 0 not a valid string" );
+		return JS_FALSE;
+	}
+
+	srcCharacterObj	= JSVAL_TO_OBJECT( argv[1] );
+	srcChar			= (CChar *)JS_GetPrivate( cx, srcCharacterObj );
+
+	if( srcChar == NULL )
+	{
+		DoSEErrorMessage( "AreaCharacterFunction: Argument 1 not a valid character" );
+		return JS_FALSE;
+	}
+	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
+	if( argc == 4 )
+	{
+		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
+		srcSocket		= (cSocket *)JS_GetPrivate( cx, srcCharacterObj );
+	}
+	
+	int xOffset = MapRegion->GetGridX( srcChar->GetX() );
+	int yOffset = MapRegion->GetGridY( srcChar->GetY() );
+
+	UI08 worldNumber = srcChar->WorldNumber();
+
+	UI16 myScpTrig = Trigger->FindObject( JS_GetGlobalObject( cx ) );
+	cScript *myScript = Trigger->GetScript( myScpTrig );
+
+	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
+	{
+		for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
+		{
+			SubRegion *MapArea = MapRegion->GetGrid( xOffset + counter1, yOffset+counter2, worldNumber );	// check 3 cols... do we really NEED to?
+			if( MapArea == NULL )	// no valid region
+				continue;
+			MapArea->PushChar();
+			for( CChar *tempChar = MapArea->FirstChar(); !MapArea->FinishedChars(); tempChar = MapArea->GetNextChar() )
+			{
+				if( tempChar == NULL )
+					continue;
+				if( objInRange( srcChar, tempChar, distance ) )
+					myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket );
+			}
+			MapArea->PopChar();
+		}
+	}
+	return JS_TRUE;
+}
 //o--------------------------------------------------------------------------o
 //|	Function			-	JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date					-	1/13/2003 11:09:39 PM
@@ -4372,7 +4198,7 @@ JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		DoSEErrorMessage( "GetCommand: needs an argument" );
 		return JS_FALSE; 	
 	} 	
-	short idx = (JSVAL_TO_INT( argv[0] ));
+	short idx = static_cast<short>((JSVAL_TO_INT( argv[0] )));
  	if (idx>=tnum) 
 	{ 		
 		DoSEErrorMessage( "GetCommand: Index exeeds the commando-array!" ); 		

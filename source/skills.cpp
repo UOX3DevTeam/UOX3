@@ -1,6 +1,5 @@
 
 #include "uox3.h"
-#include "debug.h"
 #include "magic.h"
 #include "cdice.h"
 #include "ssection.h"
@@ -8,7 +7,7 @@
 #undef DBGFILE
 #define DBGFILE "skills.cpp"
 
-int carptype = 0;
+UI08 carptype = 0;
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::Tailoring( cSocket *s )
@@ -41,7 +40,7 @@ void cSkills::Tailoring( cSocket *s )
 	UI16 realID = i->GetID();
 	if( ( realID >= 0x0F95 && realID <= 0x0F9C ) || ( realID >= 0x175D && realID <= 0x1764 ) || realID == 0x1078 )
 	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
+		if( i->IsLockedDown() )
 		{
 			sysmessage( s, 774 );
 			return;
@@ -50,23 +49,14 @@ void cSkills::Tailoring( cSocket *s )
 			sysmessage( s, 775 );
 		else
 		{
-			make_st mMake = s->ItemMake();
-			int getAmt = getAmount( mChar, i->GetID() );
+			UI32 getAmt = getAmount( mChar, i->GetID() );
 			if( getAmt < 1 )
 			{ 
 				sysmessage( s, 776 );
 				return;
 			}
-			mMake.has = getAmt;
-			mMake.material1 = i->GetID();
-			s->ItemMake( mMake );
 			if( realID == 0x1078 )
-			{
-				if( i->GetColour() == 0x00EF )
-					mChar->SetTailItem( (unsigned long)-17 );	// this is better
-				else
-					mChar->SetTailItem( INVALIDSERIAL );
-			}
+				mChar->SetSkillItem( NULL );
 			NewMakeMenu( s, 39, TAILORING );
 		}
 	}
@@ -95,29 +85,24 @@ void cSkills::Fletching( cSocket *s )
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	make_st mMake = s->ItemMake();
+	CItem *skillItem = mChar->GetSkillItem();
+	mChar->SetSkillItem( NULL );
 	if( i != NULL )
 	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
+		if( i->IsLockedDown() )
 		{
 			sysmessage( s, 774 );
 			return;
 		}
 		UI16 realID = i->GetID();
-		UI08 matID2 = (UI08)(mMake.material1%256);
+		UI08 matID2 = (UI08)(skillItem->GetID( 2 ));
 		if( ( matID2 >= 0xD4 && matID2 <= 0xD6 && realID >= 0x1BD1 && realID <= 0x1BD3 ) ||
 			( matID2 >= 0xD1 && matID2 <= 0xD3 && realID >= 0x1BD4 && realID <=0x1BD6 ) )
 		{
 			if( getPackOwner( i ) != mChar )
 				sysmessage( s, 778 );
 			else
-			{
-				mMake.material2 = i->GetID();
-				mMake.has  = getAmount( mChar, mMake.material1 ); 
-				mMake.has2 = getAmount( mChar, mMake.material2 );
-				s->ItemMake( mMake );
 				NewMakeMenu( s, 51, BOWCRAFT );
-			}
 			return;
 		}
 	}
@@ -149,7 +134,7 @@ void cSkills::BowCraft( cSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i == NULL )
 		return;
-	if( !mChar->IsGM() && i->IsLockedDown() )
+	if( i->IsLockedDown() )
 	{
 		sysmessage( s, 774 );
 		return;
@@ -161,8 +146,7 @@ void cSkills::BowCraft( cSocket *s )
 			sysmessage( s, 780 );
 			return;
 		}           
-		make_st mMake = s->ItemMake();
-		UI16 getAmt = getAmount( mChar, i->GetID() );
+		UI32 getAmt = getAmount( mChar, i->GetID() );
 		if( getAmt < 2 )
 		{
 			sysmessage( s, 776 );
@@ -173,9 +157,6 @@ void cSkills::BowCraft( cSocket *s )
 		else 
 			action( s, 0x0D );	// so that we don't make a motion if invalid target!
 
-		mMake.has = getAmt;
-		mMake.material1 = i->GetID();
-		s->ItemMake( mMake );
 		NewMakeMenu( s, 49, BOWCRAFT );
 	} 
 }
@@ -209,12 +190,12 @@ void cSkills::Carpentry( cSocket *s )
 		sysmessage( s, 783 );
 		return;
 	}
-	if( !mChar->IsGM() && i->IsLockedDown() )
+	if( i->IsLockedDown() )
 	{
 		sysmessage( s, 774 );
 		return;
 	}
-	int realID = i->GetID();
+	UI16 realID = i->GetID();
 	if( realID >= 0x1BD7 && realID <= 0x1BE2 )
 	{
 		if( getPackOwner( i ) != mChar )
@@ -222,8 +203,7 @@ void cSkills::Carpentry( cSocket *s )
 			sysmessage( s, 781 );
 			return;
 		}         
-		make_st mMake = s->ItemMake();
-		UI16 getAmt = getAmount( mChar, i->GetID() );
+		UI32 getAmt = getAmount( mChar, i->GetID() );
 		if( getAmt < 9 )
 		{	 
 			sysmessage( s, 782 );
@@ -235,9 +215,6 @@ void cSkills::Carpentry( cSocket *s )
 		case 0x1BE0:	
 		default:		carptype = 1;	break;
 		}           
-		mMake.has = getAmt;
-		mMake.material1 = i->GetID();
-		s->ItemMake( mMake );
 		NewMakeMenu( s, 19, CARPENTRY );
 	}
 }
@@ -259,15 +236,15 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 	int rk_range, rank;
 	R32 sk_range, randnum, randnum1;
 	
-	for( int i = 0; i < skillMake.skillReqs.size(); i++ )
+	for( unsigned int i = 0; i < skillMake.skillReqs.size(); i++ )
 	{
 		rk_range = skillMake.maxRank - skillMake.minRank;
-		sk_range = 50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill;
+		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 ) 
 			rank = skillMake.minRank;
 		else if( sk_range >= 1000 ) 
 			rank = skillMake.maxRank;
-		randnum = RandomNum( 0, 999 );
+		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range ) 
 			rank = skillMake.maxRank;
 		else
@@ -282,57 +259,18 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		}
 		rankSum += rank;
 	}
-	return (int)(rankSum / skillMake.skillReqs.size());
+	return (SI32)(rankSum / skillMake.skillReqs.size());
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SI32 cSkills::CalcRank( cSocket *s, int skill )
-//|   Date        :  24 August 1999
-//|   Programmer  :  Magius(CHE)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Calculate item rank based on player' skill.
-//o---------------------------------------------------------------------------o
-SI32 cSkills::CalcRank( cSocket *s, int skill )
-{
-	if( s == 0 )
-		return 5;
-	int rk_range, rank;
-	R32 sk_range, randnum, randnum1;
-	make_st mMake = s->ItemMake();
-	CChar *mChar = s->CurrcharObj();
-	rk_range = mMake.maxrank - mMake.minrank;
-	sk_range = (R32) 50.00 + mChar->GetSkill( skill ) - mMake.minskill;
-	if( sk_range <= 0 ) 
-		rank = mMake.minrank;
-	else if( sk_range >= 1000 ) 
-		rank = mMake.maxrank;
-	randnum = RandomNum( 0, 999 );
-	//randnum = sk_range + 1.0; // for debug
-	if( randnum <= sk_range ) 
-		rank = mMake.maxrank;
-	else
-	{
-		randnum1 = (R32)( RandomNum( 0, 999 ) ) - (( randnum - sk_range ) / ( 11 - cwmWorldState->ServerData()->GetSkillLevel() ) );
-		rank = (int)( randnum1*rk_range)/1000;
-		rank += mMake.minrank - 1;
-		if( rank > mMake.maxrank ) 
-			rank = mMake.maxrank;
-		if( rank < mMake.minrank ) 
-			rank = mMake.minrank;
-	}
-	s->ItemMake( mMake );
-	return rank;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ApplyRank( cSocket *s, CItem *c, int rank )
+//|   Function    :  void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
 //|   Date        :  24 August 1999
 //|   Programmer  :  Magius(CHE)
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Modify variables based on item's rank.
 //o---------------------------------------------------------------------------o
 
-void cSkills::ApplyRank( cSocket *s, CItem *c, int rank )
+void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
 {
 	char tmpmsg[512];
 	*tmpmsg='\0';
@@ -341,17 +279,17 @@ void cSkills::ApplyRank( cSocket *s, CItem *c, int rank )
 	{
 		c->SetRank( rank );
 		if( c->GetLoDamage() > 0 ) 
-			c->SetLoDamage( (int)( ( rank * c->GetLoDamage() ) / 10 ) );
+			c->SetLoDamage( (SI16)( ( rank * c->GetLoDamage() ) / 10 ) );
 		if( c->GetHiDamage() > 0 ) 
-			c->SetHiDamage( (int)( ( rank * c->GetHiDamage() ) / 10 ) );
+			c->SetHiDamage( (SI16)( ( rank * c->GetHiDamage() ) / 10 ) );
 		if( c->GetDef() > 0 )      
-			c->SetDef( (int)( ( rank * c->GetDef() ) / 10 ) );
+			c->SetDef( (UI16)( ( rank * c->GetDef() ) / 10 ) );
 		if( c->GetHP() > 0 )      
-			c->SetHP( (int)( ( rank * c->GetHP() ) / 10 ) );
+			c->SetHP( (SI16)( ( rank * c->GetHP() ) / 10 ) );
 		if( c->GetMaxHP() > 0 )   
-			c->SetMaxHP( (int)( ( rank * c->GetMaxHP() ) / 10 ) );
+			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetValue() > 0 )
-			c->SetValue( (int)( ( rank * c->GetValue() ) / 10 ) );
+			c->SetValue( (SI32)( ( rank * c->GetValue() ) / 10 ) );
 		
 		if( rank >= 0 && rank <= 10 )
 			sysmessage( s, 783 + rank );
@@ -361,222 +299,6 @@ void cSkills::ApplyRank( cSocket *s, CItem *c, int rank )
 	
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Zero_Itemmake( cSocket *s )
-//|   Date        :  24 August 1999
-//|   Programmer  :  Magius(CHE)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Resets all values into itemmake[s].
-//o---------------------------------------------------------------------------o
-
-void cSkills::Zero_Itemmake( cSocket *s )
-{
-	make_st mMake = s->ItemMake();
-	memset( &mMake, 0, sizeof( make_st ) );
-	mMake.minrank = mMake.maxrank = 10;
-	s->ItemMake( mMake );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void MakeMenuTarget( cSocket *s, string x, int skill )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  create a specified menuitem target.(Can someone elaborate 
-//|                  here please (EviLDeD)
-//o---------------------------------------------------------------------------o
-void cSkills::MakeMenuTarget( cSocket *s, std::string x, int skill )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "MakeMenuTarget: Invalid socket making item %s and using skill %i", x.c_str(), skill );
-		return;
-	}
-	CItem *c = NULL;
-	int rank = 10, tmpneed = 0;
-	UI16 getAmt = 0;
-	signed oreType = -1;
-	CChar *mChar = s->CurrcharObj();
-	make_st mMake = s->ItemMake();
-
-	UI16 madeMaterial1 = mMake.material1;
-	UI16 madeMaterial2 = mMake.material2;
-	
-	if( mChar->GetMaking() != 999 )	// when using /add and a door, skill was 1755
-	{
-		if( !CheckSkill( mChar, skill, mMake.minskill, mMake.maxskill ) && !mChar->IsGM() ) 
-		{
-			if( skill != BLACKSMITHING )
-				getAmt = getAmount( mChar, madeMaterial1 );
-			else
-			{
-				oreType = mChar->GetAddPart();
-				getAmt = mMake.has = getItemAmt( mChar, 0x1BF2, ores[oreType].colour );
-
-			}
-			if( getAmt < mMake.needs )
-			{
-				sysmessage( s, 794 );
-				return;
-			}
-			tmpneed = mMake.needs / 2;
-			if( tmpneed == 0 ) 
-				mMake.needs++;
-			switch( skill ) 
-			{
-			case BLACKSMITHING: 
-				deleItemAmt( mChar, 0x1BF2, ores[oreType].colour, mMake.needs / 2 );
-				
-				soundeffect( s, 0x002A, true );
-				sysmessage( s, 795 );
-				break;
-			case CARPENTRY:     
-				if( carptype == 1 ) 
-					deleQuan( mChar, 0x1BE0, mMake.needs / 2 );
-				if( carptype == 2 ) 
-					deleQuan( mChar, 0x1BD7, mMake.needs / 2 );
-				soundeffect( s, 0x023D, true );
-				sysmessage( s, 795 );
-				break;
-			case INSCRIPTION:
-				deleQuan( mChar, 0x0E34, 1 );
-				sysmessage( s, 796 );
-				break;
-			case TAILORING:     
-				if( mChar->GetTailItem() != INVALIDSERIAL )	// corrupting for our purposes, better than runenumb!
-					deleItemAmt( mChar, madeMaterial1, 0x00EF, mMake.needs / 2 );
-				else
-					deleQuan( mChar, madeMaterial1, mMake.needs / 2 );  
-				soundeffect( s, 0x0248, true );
-				sysmessage( s, 795 );
-				mChar->SetTailItem( INVALIDSERIAL );
-				break;
-			case COOKING:     
-				deleQuan( mChar, 0x175D, mMake.needs / 2 );  
-				soundeffect( s, 0x0225, true );
-				sysmessage( s, 795 );
-				break;
-			case BOWCRAFT:      
-				if( mMake.has < 2 ) 
-					deleQuan( mChar, madeMaterial1, 1 );
-				else 
-					deleQuan( mChar, madeMaterial1, mMake.needs / 2 );
-				if( mMake.has2 < 2 ) 
-					deleQuan( mChar, madeMaterial2, 1 );
-				else 
-					deleQuan( mChar, madeMaterial2, mMake.needs / 2 );
-				soundeffect( s, 0x004A, true );
-				sysmessage( s, 795 );
-				mMake.has = 0;
-				mMake.has2 = 0;
-				break;
-			case TINKERING:
-				deleQuan( mChar, madeMaterial1, mMake.needs / 2 );
-				soundeffect( s, 0x002A, true );
-				sysmessage( s, 795 );
-				break;
-			default:
-				deleQuan( mChar, madeMaterial1, mMake.needs / 2 );
-				sysmessage( s, 795 );
-			}
-			s->ItemMake( mMake );
-			return;
-		}
-		if( skill != BLACKSMITHING )
-			getAmt = getAmount( mChar, madeMaterial1 );
-		else
-		{
-			oreType = mChar->GetAddPart();
-			getAmt = mMake.has = getItemAmt( mChar, 0x1BF2, ores[oreType].colour );
-		}
-		if( getAmt < mMake.needs && !mChar->IsGM() )
-		{
-			sysmessage( s, 794 );
-			return;
-		}
-		switch( skill )
-		{
-			
-		case BLACKSMITHING:
-			deleItemAmt( mChar, 0x1BF2, ores[oreType].colour, mMake.needs );
-			break;
-		case CARPENTRY:
-			if( carptype == 1 ) 
-				deleQuan( mChar, 0x1BE0, mMake.needs );
-			if( carptype == 2 ) 
-				deleQuan( mChar, 0x1BD7, mMake.needs );
-			break;
-		case INSCRIPTION:	deleQuan( mChar, madeMaterial1, 1 ); break; // don't use default, cauz we delete 1 scroll // use materialid
-		case BOWCRAFT:
-			deleQuan( mChar, madeMaterial1, mMake.needs );
-			deleQuan( mChar, madeMaterial2, mMake.needs );
-			break;		
-		case TAILORING:
-			if( mChar->GetTailItem() != INVALIDSERIAL )
-				deleItemAmt( mChar, madeMaterial1, 0x00EF, mMake.needs / 2 );
-			else
-				deleQuan( mChar, madeMaterial1, mMake.needs/2 );
-			mChar->SetTailItem( INVALIDSERIAL );
-			break;
-		default:	
-			deleQuan( mChar, madeMaterial1, mMake.needs );
-		}
-		
-		mMake.material1 = 0;
-		c = Items->SpawnItemToPack( s, mChar, x, false );
-		if( c == NULL )
-		{
-			Console.Error( 2, "MakeMenuTarget bad script item # %s(Item Not found).\n", x.c_str() );
-			return;
-		}
-		else
-		{
-			c->SetName2( c->GetName() );
-			if( cwmWorldState->ServerData()->GetRankSystemStatus() ) 
-				rank = CalcRank( s, skill );
-			else
-				rank = 10;
-			ApplyRank( s, c, rank );
-			
-			if( !mChar->IsGM() )
-			{
-				c->SetCreator( mChar->GetSerial() );
-				if( mChar->GetSkill( skill ) > 950 ) 
-					c->SetMadeWith( skill + 1 );
-				else 
-					c->SetMadeWith( 0 - skill - 1 );
-			}
-			else
-			{
-				c->SetCreator( INVALIDSERIAL );
-				c->SetMadeWith( 0 );
-			}
-		}
-		
-		c->SetMagic( 1 );
-		if( mChar->GetMaking() == 999 ) 
-			mChar->SetMaking( c->GetSerial() );
-		else 
-			mChar->SetMaking( 0 );
-		switch( skill )
-		{
-		case MINING:		soundeffect( s, 0x0054, true ); break;
-		case BLACKSMITHING:	soundeffect( s, 0x002A, true ); break;
-		case CARPENTRY:		soundeffect( s, 0x023D, true ); break;
-		case INSCRIPTION:	soundeffect( s, 0x0249, true ); break;
-		case TAILORING:		soundeffect( s, 0x0248, true ); break;
-		case TINKERING:		soundeffect( s, 0x002A, true ); break;
-		case COOKING:		soundeffect( s, 0x0225, true ); break;
-		}
-
-		if( !mChar->GetMaking() ) 
-			sysmessage( s, 797 );
-		mMake.has = 0;
-		mMake.has2 = 0;
-		statwindow( s, mChar );
-		s->ItemMake( mMake );
-	}
-}
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::RegenerateOre( long grX, long grY )
 //|   Date        :  Unknown
@@ -589,19 +311,19 @@ void cSkills::RegenerateOre( long grX, long grY )
 	resourceEntry *orePart = &resources[grX][grY];
 	UI32 oreCeiling = cwmWorldState->ServerData()->GetResOre();
 	UI32 oreTimer = cwmWorldState->ServerData()->GetResOreTime();
-	if( orePart->oreTime <= uiCurrentTime )	// regenerate some more?
+	if( static_cast<UI32>(orePart->oreTime) <= uiCurrentTime )	// regenerate some more?
 	{
 		for( UI32 counter = 0; counter < oreCeiling; counter++ )	// keep regenerating ore
 		{
-			if( orePart->oreAmt < oreCeiling && ( orePart->oreAmt + counter * oreTimer * CLOCKS_PER_SEC ) < uiCurrentTime )
+			if( orePart->oreAmt < static_cast<SI16>(oreCeiling) && ( orePart->oreAmt + counter * oreTimer * CLOCKS_PER_SEC ) < uiCurrentTime )
 				orePart->oreAmt++;
 			else
 				break;
 		}
-		orePart->oreTime = BuildTimeValue( oreTimer );
+		orePart->oreTime = BuildTimeValue( static_cast<R32>(oreTimer) );
 	}
-	if( orePart->oreAmt > oreCeiling )
-		orePart->oreAmt = oreCeiling;
+	if( orePart->oreAmt > static_cast<SI16>(oreCeiling ))
+		orePart->oreAmt = static_cast<SI16>(oreCeiling);
 }
 
 //o--------------------------------------------------------------------------
@@ -644,7 +366,7 @@ void cSkills::Mine( cSocket *s )
 		return;
 	}
 	
-	mChar->SetSkillDelay( BuildTimeValue( cwmWorldState->ServerData()->GetServerSkillDelayStatus() ) );
+	mChar->SetSkillDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetServerSkillDelayStatus() )) );
 
 	UI08 targetID1 = s->GetByte( 0x11 );							// store ids of what we targeted
 	UI08 targetID2 = s->GetByte( 0x12 );
@@ -714,8 +436,8 @@ void cSkills::Mine( cSocket *s )
 		return;
 	}
 
-	oreX = targetX / cwmWorldState->ServerData()->GetResOreArea();	// we want the area where we targetted, not where we are
-	oreY = targetY / cwmWorldState->ServerData()->GetResOreArea();
+	oreX = static_cast<SI16>(targetX / cwmWorldState->ServerData()->GetResOreArea());	// we want the area where we targetted, not where we are
+	oreY = static_cast<SI16>(targetY / cwmWorldState->ServerData()->GetResOreArea());
 	if( (!floor && !mountain) || (oreX >= 610 || oreY >= 410) )		// if we can't mine here or if for some reason it's invalid, clear out
 	{
 		sysmessage( s, 801 );
@@ -756,9 +478,9 @@ void cSkills::Mine( cSocket *s )
 		else  //  We didn't find any colored ore, so grab some iron ore
 		{
 			if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
-				Items->SpawnItem( s, 5, "Iron Ore", true, 0x19BA, 0, true, true );
+				Items->SpawnItem( s, mChar, 5, "Iron Ore", true, 0x19BA, 0, true, true );
 			else
-				Items->SpawnItem( s, 1, "Iron Ore", true, 0x19B9, 0, true, true );
+				Items->SpawnItem( s, mChar, 1, "Iron Ore", true, 0x19B9, 0, true, true );
 			sysmessage( s, 804 );
 		}
 	}
@@ -779,9 +501,9 @@ void cSkills::GraveDig( cSocket *s )
 		Console.Error( 0, "cSkills::GraveDig() Invalid socket" );
 		return;
 	}
-	int		nAmount, nFame;
+	SI16	nFame;
 	char	iID = 0;
-	CItem *nItemID = NULL;
+	CItem *	nItemID = NULL;
 	
 	CChar *nCharID = s->CurrcharObj();
 	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
@@ -806,11 +528,11 @@ void cSkills::GraveDig( cSocket *s )
 	switch( RandomNum( 0, 12 ) )
 	{
 	case 2:
-		SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1000" ); // Low level Undead - Random
+		SpawnRandomMonster( s, true, "UNDEADLIST", "1000" ); // Low level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 4:
-		nItemID = SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "1001" ); // Armor and shields - Random
+		nItemID = SpawnRandomItem( s, true, "ITEMLIST", "1001" ); // Armor and shields - Random
 		if( nItemID == NULL )
 			break;
 		if( nItemID->GetID() >= 7026 && nItemID->GetID() <= 7035 )
@@ -822,14 +544,14 @@ void cSkills::GraveDig( cSocket *s )
 		//Random treasure between gems and gold
 		if( RandomNum( 0, 1 ) )
 		{  // randomly create a gem and place in backpack
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "999" );
+			SpawnRandomItem( s, true, "ITEMLIST", "999" );
 			sysmessage( s, 809 );
 		}
 		else
 		{  // Create between 1 and 15 goldpieces and place directly in backpack
-			nAmount = RandomNum( 1, 15 );
+			UI08 nAmount = RandomNum( 1, 15 );
 			addgold( s, nAmount );
-			goldsfx( s, nAmount );
+			goldSound( s, nAmount );
 			if( nAmount == 1 )
 				sysmessage( s, 810, nAmount );
 			else
@@ -838,34 +560,34 @@ void cSkills::GraveDig( cSocket *s )
 		break;
 	case 6:
 		if( nFame < 500 )
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1000" ); // Low level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1000" ); // Low level Undead - Random
 		else
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1001" ); // Med level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 8:
-		SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "1000" );
+		SpawnRandomItem( s, true, "ITEMLIST", "1000" );
 		sysmessage( s, 811 );
 		break;
 	case 10:
 		if( nFame < 1000 )
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1001" ); // Med level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		else
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1002" ); // High level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1002" ); // High level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 12:
 		if( nFame > 1000 )
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1002" ); // High level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1002" ); // High level Undead - Random
 		else
-			SpawnRandomMonster( s, "necro.scp", "UNDEADLIST", "1001" ); // Med level Undead - Random
+			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	default:
 		if( RandomNum( 0, 1 ) )
 		{
 			iID = RandomNum( 0, 11 ) + 0x11;
-			Items->SpawnItem( s, 1, NULL, false, 0x1B00 + iID, 0, true, true );
+			Items->SpawnItem( s, nCharID, 1, NULL, false, 0x1B00 + iID, 0, true, true );
 			sysmessage( s, 812 );
 		}
 		else	// found an empty grave
@@ -894,7 +616,7 @@ void cSkills::SmeltOre( cSocket *s )
 	}
 
 	CChar *chr = s->CurrcharObj();
-	ITEM smeltedItem = chr->GetSmeltItem();
+	CItem *smeltedItem = chr->GetSmeltItem();
 	CItem *anvil = calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our anvil
 	
 	if( anvil != NULL )					// if we have an anvil
@@ -915,10 +637,10 @@ void cSkills::SmeltOre( cSocket *s )
 		case 0x19A6:
 		case 0x19A2:
 		case 0x199E:
-			if( itemInRange( chr, anvil, 3 ) ) //Check if the forge is in range  
+			if( objInRange( chr, anvil, 3 ) ) //Check if the forge is in range  
 			{
 				int oreType = -1;
-				UI16 targColour = items[smeltedItem].GetColour();
+				UI16 targColour = smeltedItem->GetColour();
 				oreType = FindOreType( targColour );
 				if( oreType == -1 )
 				{
@@ -936,24 +658,24 @@ void cSkills::SmeltOre( cSocket *s )
 				}
 				if( !CheckSkill( chr, MINING, ores[oreType].minSkill, 1000 ) )	// if we do not have minimum skill to use it
 				{
-					if( items[smeltedItem].GetAmount() > 1 )	// If more than 1 ore, half it
+					if( smeltedItem->GetAmount() > 1 )	// If more than 1 ore, half it
 					{
 						sysmessage( s, 817 );
-						items[smeltedItem].SetAmount( items[smeltedItem].GetAmount() / 2 );
+						smeltedItem->SetAmount( smeltedItem->GetAmount() / 2 );
 					}
 					else
 					{
 						sysmessage( s, 816 );
-						Items->DeleItem( &items[smeltedItem] );
+						Items->DeleItem( smeltedItem );
 					}
 					return;
 				}
-				UI16 ingotNum = items[smeltedItem].GetAmount() * 2;	// 2 Ingots per ore pile.... shouldn't this be variable based on quality of ore?
+				UI16 ingotNum = smeltedItem->GetAmount() * 2;	// 2 Ingots per ore pile.... shouldn't this be variable based on quality of ore?
 				sprintf( ingotString, "%s Ingot", ores[oreType].name.c_str() );
-				Items->SpawnItem( s, ingotNum, ingotString, true, 0x1BF2, ores[oreType].colour, true, true );
+				Items->SpawnItem( s, chr, ingotNum, ingotString, true, 0x1BF2, ores[oreType].colour, true, true );
 				sysmessage( s, 818 );
 				sysmessage( s, 819, ores[oreType].name.c_str() );
-				Items->DeleItem( &items[chr->GetSmeltItem()] );	// delete the ore
+				Items->DeleItem( smeltedItem );	// delete the ore
 			}
 			break;
 		default:
@@ -962,8 +684,7 @@ void cSkills::SmeltOre( cSocket *s )
 		}     
 	} 
 
-	chr->SetSmeltItem( INVALIDSERIAL );
-	Weight->calcWeight( chr );
+	chr->SetSmeltItem( NULL );
 	statwindow( s, chr );
 }
 
@@ -979,20 +700,18 @@ void cSkills::Wheel( cSocket *s )
 	if( s == NULL )
 		return;
 	
-	bool canTailor = false;
-
 	CChar *mChar = s->CurrcharObj();
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
+		if( i->IsLockedDown() )
 		{
 			sysmessage( s, 774 );
 			return;
 		}
 		if( i->GetID() >= 0x10A4 && i->GetID() <= 0x10A6 )
 		{
-			if( itemInRange( mChar, i,3 ) )  
+			if( objInRange( mChar, i,3 ) )  
 			{
 				if( !CheckSkill( mChar, TAILORING, 0, 1000 ) ) 
 				{
@@ -1001,23 +720,25 @@ void cSkills::Wheel( cSocket *s )
 				}   
 				sysmessage( s, 822 );
 
-				ITEM tailItem = mChar->GetTailItem();
-				items[tailItem].SetName( "#" );
-				if( items[tailItem].GetID() == 0x0DF8 ) // Wool
-					items[tailItem].SetID( 0x0E1D );
-				else if( items[tailItem].GetID() == 0x0DF9 ) // Cotton
-					items[tailItem].SetID( 0x0FA0 );
-				items[tailItem].SetAmount( items[tailItem].GetAmount() * 4 );
-				
-				items[mChar->GetTailItem()].SetDecayable( true );
-				RefreshItem( &items[mChar->GetTailItem()] );
-				canTailor = true;
+				CItem *skillItem = mChar->GetSkillItem();
+				mChar->SetSkillItem( NULL );
+				if( skillItem != NULL )
+				{
+					skillItem->SetName( "#" );
+					if( skillItem->GetID() == 0x0DF8 ) // Wool
+						skillItem->SetID( 0x0E1D );
+					else if( skillItem->GetID() == 0x0DF9 ) // Cotton
+						skillItem->SetID( 0x0FA0 );
+					skillItem->SetAmount( skillItem->GetAmount() * 4 );
+					
+					skillItem->SetDecayable( true );
+					RefreshItem( skillItem );
+					return;
+				}
 			}
 		}     
 	}   
-	mChar->SetTailItem( INVALIDSERIAL );        
-	if( !canTailor ) 
-		sysmessage( s, 823 );
+	sysmessage( s, 823 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1034,20 +755,18 @@ void cSkills::Loom( cSocket *s )
 		Console.Error( 0, "cSkills::Loom() Invalid socket" );
 		return;
 	}
-	bool canTailor = false;
-
 	CChar *mChar = s->CurrcharObj();
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
+		if( i->IsLockedDown() )
 		{
 			sysmessage( s, 774 );
 			return;
 		}
 		if( i->GetID() >= 0x105F && i->GetID() <= 0x1061 )
 		{
-			if( itemInRange( mChar, i, 3 ) )  
+			if( objInRange( mChar, i, 3 ) )  
 			{
 				if( !CheckSkill( mChar, TAILORING, 0, 1000 ) ) 
 				{
@@ -1055,194 +774,108 @@ void cSkills::Loom( cSocket *s )
 					return;
 				}   
 				sysmessage( s, 825 );
-				ITEM tailItem = mChar->GetTailItem();
-				items[tailItem].SetName( "#");
-				items[tailItem].SetID( 0x175D );
-				items[tailItem].SetDecayable( true );
-				items[tailItem].SetAmount( items[tailItem].GetAmount() * 2 );
-				
-				RefreshItem( &items[mChar->GetTailItem()] );
-				canTailor = true;
-			}
-		}     
-	}   
-	mChar->SetTailItem( INVALIDSERIAL );
-	if( !canTailor ) 
-		sysmessage( s, 823 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CookMeat( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Used by the cooking skill to cook meat.
-//o---------------------------------------------------------------------------o
-void cSkills::CookMeat( cSocket *s )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::CookMeat() Invalid socket" );
-		return;
-	}
-	bool canCook = false;
-
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
-	ITEM tailItem;
-	if( i != NULL )
-	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
-		{
-			sysmessage( s, 774 );
-			return;
-		}
-		UI16 realItem = i->GetID();
-		if( realItem >= 0x0DE3 && realItem <= 0x0DE9 ||	realItem == 0x0FAC ||
-			realItem == 0x0FB1 || realItem >= 0x197A && realItem <= 0x19B6 ||
-			realItem >= 0x0461 && realItem <= 0x0480 ||	realItem >= 0x0E31 && realItem <= 0x0E33 ||
-			realItem == 0x19BB || realItem == 0x1F2B || realItem >= 0x092B && realItem <= 0x0934 ||
-			realItem >= 0x0937 && realItem <= 0x0942 ||	realItem >= 0x0945 && realItem <= 0x0950 ||
-			realItem >= 0x0953 && realItem <= 0x095E ||	realItem >= 0x0961 && realItem <= 0x096C )
-		{
-			if( itemInRange( mChar, i, 3 ) )  
-			{
-				tailItem = mChar->GetTailItem();
-				if( !CheckSkill( mChar, COOKING, 0, 1000 ) ) 
+				CItem *skillItem = mChar->GetSkillItem();
+				mChar->SetSkillItem( NULL );
+				if( skillItem != NULL )
 				{
-					char burntName[50];
-					int amntDiff = RandomNum( 1, items[mChar->GetTailItem()].GetAmount() );
-					sprintf( burntName, Dictionary->GetEntry( 1430 ), amntDiff );
-					sysmessage( s, 1431 );
-					tailItem = decItemAmount( tailItem, amntDiff );
-					Items->SpawnItem( s, amntDiff, burntName, false, 0x1EB0, 0, true, true );
+					skillItem->SetName( "#");
+					skillItem->SetID( 0x175D );
+					skillItem->SetDecayable( true );
+					skillItem->SetAmount( skillItem->GetAmount() * 2 );
+					
+					RefreshItem( skillItem );
 					return;
-				}   
-				sysmessage( s, 1432 );
-				
-				items[tailItem].SetName( "#");
-				
-				items[tailItem].SetID( 0x09F2 );
-				items[tailItem].SetType( 14 );
-				items[tailItem].SetDecayable( true ); 
-				
-				RefreshItem( &items[tailItem] );
-				canCook = true;
+				}
 			}
 		}     
 	}   
-	mChar->SetTailItem( INVALIDSERIAL );
-	if( !canCook ) 
-		sysmessage( s, 1433 );
+	sysmessage( s, 823 );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeDough( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Function    :  cSkills::handleCooking( cSocket *s )
+//|   Date        :  January 30, 2003
+//|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Make Dough by using flour and water in a mixer
+//|   Purpose     :  Handle baking/cooking in a single function
 //o---------------------------------------------------------------------------o
-void cSkills::MakeDough( cSocket *s )
+void cSkills::handleCooking( cSocket *s )
 {
 	if( s == NULL )
 	{
-		Console.Error( 0, "cSkills::MakeDuugh() Invalid socket" );
+		Console.Error( 0, "cSkills::handleCooking() Passed an Invalid Socket" );
 		return;
 	}
-	bool canMix = false;
-	ITEM tailItem;
 
 	CChar *mChar = s->CurrcharObj();
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
-		{
+		if( i->IsLockedDown() )
 			sysmessage( s, 774 );
-			return;
-		}
-		if( i->GetID() == 0x103A )
+		else if( objInRange( mChar, i, 3 ) )
 		{
-			if( itemInRange( mChar, i, 3 ) )
+			CItem *skillItem = mChar->GetSkillItem();
+			mChar->SetSkillItem( NULL );
+			if( skillItem != NULL )
 			{
+				UI16 realItem = i->GetID();
+				bool isMeat = ( realItem >= 0x0DE3 && realItem <= 0x0DE9 ||	realItem == 0x0FAC ||
+					realItem == 0x0FB1 || realItem >= 0x197A && realItem <= 0x19B6 ||
+					realItem >= 0x0461 && realItem <= 0x0480 ||	realItem >= 0x0E31 && realItem <= 0x0E33 ||
+					realItem == 0x19BB || realItem == 0x1F2B || realItem >= 0x092B && realItem <= 0x0934 ||
+					realItem >= 0x0937 && realItem <= 0x0942 ||	realItem >= 0x0945 && realItem <= 0x0950 ||
+					realItem >= 0x0953 && realItem <= 0x095E ||	realItem >= 0x0961 && realItem <= 0x096C );
 				if( !CheckSkill( mChar, COOKING, 0, 1000 ) ) 
 				{
+					if( isMeat )
+					{
+						char burntName[50];
+						UI16 amntDiff = RandomNum( 1, skillItem->GetAmount() );
+						sprintf( burntName, Dictionary->GetEntry( 1430 ), amntDiff );
+						sysmessage( s, 1431 );
+						skillItem = decItemAmount( skillItem, amntDiff );
+						Items->SpawnItem( s, mChar, amntDiff, burntName, false, 0x1EB0, 0, true, true );
+						return;
+					}
 					sysmessage( s, 826 );
-					return;
-				}   
-				sysmessage( s, 827 );
-				tailItem = mChar->GetTailItem();	
-				items[tailItem].SetName( "#" );
-				
-				items[tailItem].SetID( 0x103D );
-				items[tailItem].SetDecayable( true );
-				items[tailItem].SetAmount( items[tailItem].GetAmount() * 2 );
-				
-				RefreshItem( &items[tailItem] );
-				canMix = true;
-			}
-		}     
-	}   
-	mChar->SetTailItem( INVALIDSERIAL );
-	if( !canMix ) 
-		sysmessage( s, 830 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakePizza( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Used to Make Pizza (Perhaps we should combine this cooking stuff?)
-//o---------------------------------------------------------------------------o
-void cSkills::MakePizza( cSocket *s )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::MakePizza() Invalid socket" );
-		return;
-	}
-	bool canMix = false;
-	ITEM tailItem;	
-
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
-	if( i != NULL )
-	{
-		if( !mChar->IsGM() && i->IsLockedDown() )
-		{
-			sysmessage( s, 774 );
-			return;
-		}
-		if( i->GetID() == 0x103D )
-		{
-			if( itemInRange( mChar, i, 3 ) )  
-			{
-				if( !CheckSkill( mChar, COOKING, 0, 1000 ) ) 
-				{
-					sysmessage( s, 828 );
 					Items->DeleItem( i );
-					return;
 				}   
-				sysmessage( s, 829 );
-				tailItem = mChar->GetTailItem();
-				items[tailItem].SetName( "#" );
-				
-				items[tailItem].SetID( 0x1083 );
-				items[tailItem].SetDecayable( true );
-				items[tailItem].SetAmount( items[tailItem].GetAmount() * 2 );
-				
-				RefreshItem( &items[tailItem] );
-				canMix = true;
+				else
+				{
+					skillItem->SetName( "#" );
+					skillItem->SetDecayable( true );
+					switch( i->GetID() )
+					{
+					case 0x103A:	// Dough
+						sysmessage( s, 827 );
+						skillItem->SetID( 0x103D );
+						skillItem->SetAmount( skillItem->GetAmount() * 2 );
+						break;
+					case 0x103D:	// Pizza
+						sysmessage( s, 828 );
+						skillItem->SetID( 0x1083 );
+						skillItem->SetAmount( skillItem->GetAmount() * 2 );
+						break;
+					default:
+						if( isMeat )
+						{
+							sysmessage( s, 1432 );
+							skillItem->SetID( 0x09F2 );
+							skillItem->SetType( 14 );
+						}
+						else
+							sysmessage( s, 829 );
+						break;
+					}
+					RefreshItem( skillItem );
+				}
 			}
-		}     
-	}   
-	mChar->SetTailItem( INVALIDSERIAL );
-	if( !canMix ) 
-		sysmessage( s, 830 );
+		}
+		else
+			sysmessage( s, 830 );
+	}
 }
-
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::Hide( cSocket *s )
 //|   Date        :  Unknown
@@ -1359,10 +992,10 @@ void cSkills::TreeTarget( cSocket *s )
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 	
-	int px = s->GetWord( 0x0B );
-	int py = s->GetWord( 0x0D );
-	int cx = abs( mChar->GetX() - px );
-	int cy = abs( mChar->GetY() - py );
+	SI16 px = s->GetWord( 0x0B );
+	SI16 py = s->GetWord( 0x0D );
+	SI16 cx = abs( mChar->GetX() - px );
+	SI16 cy = abs( mChar->GetY() - py );
 
 	UI08 dir = getCharDir( mChar, px, py );
 	if( dir != 0xFF && mChar->GetDir() != dir )
@@ -1376,8 +1009,8 @@ void cSkills::TreeTarget( cSocket *s )
 		return;
 	}
 
-	SI16 a = mChar->GetX() / cwmWorldState->ServerData()->GetResLogArea();
-	SI16 b = mChar->GetY() / cwmWorldState->ServerData()->GetResLogArea();
+	SI16 a = static_cast<SI16>(mChar->GetX() / cwmWorldState->ServerData()->GetResLogArea());
+	SI16 b = static_cast<SI16>(mChar->GetY() / cwmWorldState->ServerData()->GetResLogArea());
 
 	if( a >= 610 || b >= 410 ) 
 		return; // wih the previous a < 20 || b < 20, wind may not have worked right, as well as some dungeons
@@ -1415,7 +1048,7 @@ void cSkills::TreeTarget( cSocket *s )
 		logPart->logAmt--;
 	
 
-		CItem *c = Items->SpawnItem( s, 10, "#", true, 0x1BE0, 0, true, true );
+		CItem *c = Items->SpawnItem( s, mChar, 10, "#", true, 0x1BE0, 0, true, true );
 		if( c == NULL )
 			return;
 		if( c->GetAmount() > 10 ) 
@@ -1433,23 +1066,23 @@ void cSkills::TreeTarget( cSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::RegenerateLog( long grX, long grY )
 {
-	SI16 logCeiling = cwmWorldState->ServerData()->GetResLogs();
+	UI32 logCeiling = cwmWorldState->ServerData()->GetResLogs();
 	long logTimer = cwmWorldState->ServerData()->GetResLogTime();
 	resourceEntry *logPart = &resources[grX][grY];
-	if( logPart->logTime <= uiCurrentTime )
+	if( static_cast<UI32>(logPart->logTime) <= uiCurrentTime )
 	{
-		for( int c = 0; c < logCeiling; c++ )
+		for( UI32 c = 0; c < logCeiling; c++ )
 		{
-			if( ( logPart->logTime + ( c * logTimer * CLOCKS_PER_SEC ) ) <= uiCurrentTime && logPart->logAmt < logCeiling )
+			if( static_cast<UI32>(( logPart->logTime + ( c * logTimer * CLOCKS_PER_SEC ) )) <= uiCurrentTime && logPart->logAmt < static_cast<SI16>(logCeiling) )
 				logPart->logAmt++;
 			else 
 				break;
 		}
-		logPart->logTime = BuildTimeValue( logTimer );//10 more mins
+		logPart->logTime = BuildTimeValue( static_cast<R32>(logTimer ));//10 more mins
 	}
 	
-	if( logPart->logAmt > logCeiling ) 
-		logPart->logAmt = logCeiling;
+	if( logPart->logAmt > static_cast<SI16>(logCeiling) ) 
+		logPart->logAmt = static_cast<SI16>(logCeiling);
 	
 }
 
@@ -1475,7 +1108,7 @@ void cSkills::DetectHidden( cSocket *s )
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 	
-	int j, getSkill;
+	UI16 j, getSkill;
 	SI16 dx, dy;
 	R64 c,range;         //int is too restricting
 	
@@ -1490,7 +1123,7 @@ void cSkills::DetectHidden( cSocket *s )
 	
 	int xOffset = MapRegion->GetGridX( mChar->GetX() );
 	int yOffset = MapRegion->GetGridY( mChar->GetY() );
-	UI08 worldNumber = s->CurrcharObj()->WorldNumber();
+	UI08 worldNumber = mChar->WorldNumber();
 	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 	{
 		for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
@@ -1509,7 +1142,7 @@ void cSkills::DetectHidden( cSocket *s )
 					dx = abs( tempChar->GetX() - x );
 					dy = abs( tempChar->GetY() - y );
 					c = hypot( dx, dy );
-					getSkill = (int)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAXVISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
+					getSkill = (UI16)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAXVISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
 					if( getSkill < 0 ) 
 						getSkill = 0;
 					if( getSkill > 1000 ) 
@@ -1557,7 +1190,7 @@ void cSkills::PeaceMaking( cSocket *s )
 	bool cs2 = CheckSkill( mChar, PEACEMAKING, 0, 1000 );
 	if( cs1 && cs2 )
 	{
-		PlayInstrumentWell( s, getInst );
+		PlayInstrument( s, getInst, true );
 		sysmessage( s, 1439 );
 
 		int xOffset = MapRegion->GetGridX( mChar->GetX() );
@@ -1575,7 +1208,7 @@ void cSkills::PeaceMaking( cSocket *s )
 				{
 					if( tempChar == NULL )
 						continue;
-					if( charInRange( tempChar, s->CurrcharObj() ) && tempChar->IsAtWar() )
+					if( charInRange( tempChar, mChar ) && tempChar->IsAtWar() )
 					{
 						cSocket *jSock = calcSocketObjFromChar( tempChar );
 						if( jSock != NULL )
@@ -1593,65 +1226,52 @@ void cSkills::PeaceMaking( cSocket *s )
 	} 
 	else 
 	{
-		PlayInstrumentPoor( s, getInst );
+		PlayInstrument( s, getInst, false );
 		sysmessage( s, 1441 );
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PlayInstrumentWell( cSocket *s, CItem *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|		Function    :	void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
+//|		Date        :	2/10/2003
+//|		Programmer  :	Zane
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Play "PlayedWell" soundfx based on instrument used
+//|		Purpose     :	Play an Instrument (plays "played well" sfx if wellPlayed == true
+//|						Otherwise plays "played poorly" sfx
 //o---------------------------------------------------------------------------o
-void cSkills::PlayInstrumentWell( cSocket *s, CItem *i )
+void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
 {
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::PlayInstrumentWell() Invalid socket using item %i ", i->GetSerial() );
-		return;
-	}
 	switch( i->GetID( 2 ) )
 	{
-	case 0x9C:	soundeffect( s, 0x0038, true );	break;
+	case 0x9C:
+		if( wellPlayed )
+			soundeffect( s, 0x0038, true );	
+		else
+			soundeffect( s, 0x0039, true );	
+		break;
 	case 0x9D:
-	case 0x9E:	soundeffect( s, 0x0052, true );	break;
+	case 0x9E:	
+		if( wellPlayed )
+			soundeffect( s, 0x0052, true );	
+		else
+			soundeffect( s, 0x0053, true );	
+		break;
 	case 0xB1:
-	case 0xB2:	soundeffect( s, 0x0043, true );	break;
+	case 0xB2:	
+		if( wellPlayed )
+			soundeffect( s, 0x0043, true );	
+		else
+			soundeffect( s, 0x0044, true );	
+		break;
 	case 0xB3:
-	case 0xB4:	soundeffect( s, 0x004C, true );	break;
+	case 0xB4:	
+		if( wellPlayed )
+			soundeffect( s, 0x004C, true );	
+		else
+			soundeffect( s, 0x004D, true );	
+		break;
 	default:
-		Console.Error( 2, " Fallout of switch statement without default. skills.cpp, cSkills::PlayInstrumentWell()" );
-		return;
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PlayInstrumentPoor( cSocket *s, CItem *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Play "PlayPoorly" soundfx based on instrument used
-//o---------------------------------------------------------------------------o
-void cSkills::PlayInstrumentPoor( cSocket *s, CItem *i )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::PlayInstrumentPoor() Invalid socket using item %i", i->GetSerial() );
-		return;
-	}
-	switch( i->GetID( 2 ) )
-	{
-	case 0x9C:	soundeffect( s, 0x0039, true );	break;
-	case 0x9D:
-	case 0x9E:	soundeffect( s, 0x0053, true );	break;
-	case 0xB1:
-	case 0xB2:	soundeffect( s, 0x0044, true );	break;
-	case 0xB3:
-	case 0xB4:	soundeffect( s, 0x004D, true );	break;
-	default:
-		Console.Error( 2, " Fallout of switch statement without default. skills.cpp, cSkills::PlayInstrumentPoor()" );
+		Console.Error( 2, " Fallout of switch statement without default. skills.cpp, cSkills::PlayInstrument()" );
 		return;
 	}
 }
@@ -1713,29 +1333,25 @@ void cSkills::ProvocationTarget1( cSocket *s )
 		Console.Error( 0, "cSkills::ProvocationTarget1() Invalid socket" );
 		return;
 	}
-	CChar *trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	SERIAL getSer = s->GetDWord( 7 );
+	CChar *trgChar = calcCharObjFromSer( getSer );
 	if( trgChar == NULL )
 		return;
-	CItem *getInst = GetInstrument( s );
-	if( getInst == NULL ) 
-	{
-		sysmessage( s, 1438 );
-		return;
-	}
-	
-	if( trgChar->IsInvulnerable() || trgChar->GetNPCAiType() == 17 || trgChar->GetNPCAiType() == 4 ) // not invul, a player vendor, or a guard
-	{
-		sysmessage( s, "You cannot provoke such a person!" );
-		return;
-	}
-	
-	if( !trgChar->IsNpc() )
+	else if( !trgChar->IsNpc() )
 		sysmessage( s, 1442 );
+	else if( trgChar->IsInvulnerable() || trgChar->GetNPCAiType() == 17 || trgChar->GetNPCAiType() == 4 ) // not invul, a player vendor, or a guard
+		sysmessage( s, 830 );
 	else
 	{
-		s->AddID( s->GetDWord( 7 ) );
+		CItem *getInst = GetInstrument( s );
+		if( getInst == NULL ) 
+		{
+			sysmessage( s, 1438 );
+			return;
+		}
+		s->AddID( getSer );
 		target( s, 0, 1, 0, 80, 1443 );
-		PlayInstrumentWell( s, getInst );
+		PlayInstrument( s, getInst, true );
 	}
 }
 
@@ -1755,25 +1371,25 @@ void cSkills::EnticementTarget1( cSocket *s )
 		Console.Error( 0, "cSkills::EnticementTarget1() Invalid socket" );
 		return;
 	}
-	SERIAL serial = s->GetDWord( 7 );
-	CChar *trgChar = calcCharObjFromSer( serial );
+	SERIAL getSer = s->GetDWord( 7 );
+	CChar *trgChar = calcCharObjFromSer( getSer );
 	if( trgChar == NULL )
 		return;
-	CItem *getInst = GetInstrument( s );
-	if( getInst == NULL ) 
-	{
-		sysmessage( s, 1444 );
-		return;
-	}
-	if( !trgChar->IsNpc() )
+	else if( !trgChar->IsNpc() )
 		sysmessage( s, 1445 );
 	else if( trgChar->GetNPCAiType() == 17 || trgChar->IsInvulnerable() || trgChar->GetNPCAiType() == 4 )	// no PV, guard, or invul person
 		sysmessage( s, 1642 );
 	else
 	{
-		s->AddID( serial );
+		CItem *getInst = GetInstrument( s );
+		if( getInst == NULL ) 
+		{
+			sysmessage( s, 1444 );
+			return;
+		}
+		s->AddID( getSer );
 		target( s, 0, 1, 0, 82, 1446 );
-		PlayInstrumentWell( s, getInst );
+		PlayInstrument( s, getInst, true );
 	}
 }
 
@@ -1816,12 +1432,12 @@ void cSkills::EnticementTarget2( cSocket *s )
 		target->SetFTarg( calcCharFromSer( trgChar->GetSerial() ) );
 		target->SetNpcWander( 1 );
 		sysmessage( s, 1447 );
-		PlayInstrumentWell( s, getInst );
+		PlayInstrument( s, getInst, true );
 	}
 	else 
 	{
 		sysmessage( s, 1448 );
-		PlayInstrumentPoor( s, getInst );
+		PlayInstrument( s, getInst, false );
 	}
 }
 
@@ -1835,7 +1451,6 @@ void cSkills::EnticementTarget2( cSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::ProvocationTarget2( cSocket *s )
 {
-	char temp[1024];
 	if( s == NULL )
 	{
 		Console.Error( 0, "cSkills::ProvocationTarget2() Invalid socket" );
@@ -1854,7 +1469,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 
 	if( trgChar->IsInvulnerable() || trgChar->GetNPCAiType() == 17 || trgChar->GetNPCAiType() == 4 ) // not invul, a player vendor, or a guard
 	{
-		sysmessage( s, "You cannot provoke such a person!" );
+		sysmessage( s, 1730 );
 		return;
 	}
 
@@ -1869,7 +1484,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 	if( checkMusic )
 	{
 		bool checkProvoc = CheckSkill( mChar, PROVOCATION, 0, 1000 );
-		PlayInstrumentWell( s, getInst );
+		PlayInstrument( s, getInst, true );
 		if( checkProvoc )
 		{
 			if( trgChar->IsInnocent() )
@@ -1900,26 +1515,25 @@ void cSkills::ProvocationTarget2( cSocket *s )
 		{
 			if( !target->IsAtWar() ) 
 				npcToggleCombat( target );
-			target->SetNpcMoveTime( BuildTimeValue( cwmWorldState->ServerData()->GetNPCSpeed() ) );
+			target->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
 		}
 		if( trgChar->IsNpc() )
 		{
 			if( !trgChar->IsAtWar() ) 
 				npcToggleCombat( trgChar );
-			trgChar->SetNpcMoveTime( BuildTimeValue( cwmWorldState->ServerData()->GetNPCSpeed() ) );
+			trgChar->SetNpcMoveTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetNPCSpeed() )) );
 		}
-		sprintf( temp, "* You see %s attacking %s *", target->GetName(), trgChar->GetName() );
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
 			if( charInRange( tSock->CurrcharObj(), target ) )
-				itemmessage( tSock, temp, (*target) );
+				objMessage( tSock, 343, target, 0.0f, 0x03B2, target->GetName(), trgChar->GetName() );
 		}
 		Network->PopConn();
 	}
 	else
 	{
-		PlayInstrumentPoor(s, getInst );
+		PlayInstrument(s, getInst, false );
 		sysmessage( s, 1452 );
 	}
 }
@@ -1967,347 +1581,8 @@ void cSkills::AlchemyTarget( cSocket *s )
 		}
 	}
 }
-
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::DoPotion( cSocket *s, int type, int sub, CItem *mortar )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Start *Name starts grinding reag in the mortar* emote based
-//|					 on which potion was selected, and delete proper amount of reags
-//o---------------------------------------------------------------------------o
-void cSkills::DoPotion( cSocket *s, int type, int sub, CItem *mortar )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::DoPotion() Invalid socket making type %i with sub %i and mortar %i", type, sub, mortar->GetSerial() );
-		return;
-	}
-	CChar *mChar = s->CurrcharObj();
-	char temp[1024], temp2[1024];
-	switch( ( type<<8 ) + sub )
-	{
-	case 0x0101://agility
-		if( getAmount( mChar, 0x0F7B) >= 1 )
-		{
-			strcpy( temp, "blood moss" );
-			deleQuan( mChar, 0x0F7B, 1 );
-		}
-		break;
-	case 0x0102://greater agility
-		if( getAmount( mChar, 0x0F7B ) >= 3 )
-		{
-			strcpy( temp, "blood moss" );
-			deleQuan( mChar, 0x0F7B, 3);
-		}
-		break;
-	case 0x0201://lesser cure
-		if( getAmount( mChar, 0x0F84) >= 1 )
-		{
-			strcpy( temp, "garlic" );
-			deleQuan( mChar, 0x0F84, 1);
-		}
-		break;
-	case 0x0202://cure
-		if( getAmount( mChar, 0x0F84 ) >= 3 )
-		{
-			strcpy( temp, "garlic" );
-			deleQuan( mChar, 0x0F84, 3 );
-		}
-		break;
-	case 0x0203://greater cure
-		if( getAmount( mChar, 0x0F84 ) >= 6 )
-		{
-			strcpy( temp, "garlic" );
-			deleQuan( mChar, 0x0F84, 6 );
-		}
-		break;
-	case 0x0301://lesser explosion
-		if( getAmount( mChar, 0x0F8C ) >= 3 )
-		{
-			strcpy( temp, "sulfurous ash" );
-			deleQuan( mChar, 0x0F8C, 3 );
-		}
-		break;
-	case 0x0302://explosion
-		if( getAmount( mChar, 0x0F8C ) >= 5 )
-		{
-			strcpy( temp, "sulfurous ash" );
-			deleQuan( mChar, 0x0F8C, 5 );
-		}
-		break;
-	case 0x0303://greater explosion
-		if( getAmount( mChar, 0x0F8C ) >= 10 )
-		{
-			strcpy( temp, "sulfurous ash" );
-			deleQuan( mChar, 0x0F8C, 10 );
-		}
-		break;
-	case 0x0401://lesser heal
-		if( getAmount( mChar, 0x0F85 ) >= 1 )
-		{
-			strcpy( temp, "ginseng" );
-			deleQuan( mChar, 0x0F85, 1 );
-		}
-		break;
-	case 0x0402://heal
-		if( getAmount( mChar, 0x0F85 ) >= 3 )
-		{
-			strcpy( temp, "ginseng" );
-			deleQuan( mChar, 0x0F85, 3 );
-		}
-		break;
-	case 0x0403://greater heal
-		if( getAmount( mChar, 0x0F85 ) >= 7 )
-		{
-			strcpy( temp, "ginseng" );
-			deleQuan( mChar, 0x0F85, 7 );
-		}
-		break;
-	case 0x0501://night sight
-		if( getAmount( mChar, 0x0F8D ) >= 1 )
-		{
-			strcpy( temp, "spider's silk" );
-			deleQuan( mChar, 0x0F8D, 1 );
-		}
-		break;
-	case 0x0601://lesser poison
-		if( getAmount( mChar, 0x0F88 ) >= 1 )
-		{
-			strcpy( temp, "nightshade" );
-			deleQuan( mChar, 0x0F88, 1 );
-		}
-		break;
-	case 0x0602://poison
-		if( getAmount( mChar, 0x0F88 ) >= 2 )
-		{
-			strcpy( temp, "nightshade" );
-			deleQuan( mChar, 0x0F88, 2 );
-		}
-		break;
-	case 0x0603://greater poison
-		if( getAmount( mChar, 0x0F88 ) >= 4 )
-		{
-			strcpy( temp, "nightshade" );
-			deleQuan( mChar, 0x0F88, 4 );
-		}
-		break;
-	case 0x0604://deadly poison
-		if( getAmount( mChar, 0x0F88 ) >= 8 )
-		{
-			strcpy( temp, "nightshade" );
-			deleQuan(mChar, 0x0F88, 8);
-		}
-		break;
-	case 0x0701://refresh
-		if( getAmount(mChar, 0x0F7A) >= 1 )
-		{
-			strcpy( temp, "black pearl" );
-			deleQuan(mChar, 0x0F7A, 1);
-		}
-		break;
-	case 0x0702://total refreshment
-		if( getAmount(mChar, 0x0F7A) >= 5 )
-		{
-			strcpy( temp, "black pearl" );
-			deleQuan(mChar, 0x0F7A, 5);
-		}
-		break;
-	case 0x0801://strength
-		if( getAmount(mChar, 0x0F86) >= 2 )
-		{
-			strcpy( temp, "mandrake" );
-			deleQuan(mChar, 0x0F86, 2);
-		}
-		break;
-	case 0x0802://greater strength
-		if( getAmount(mChar, 0x0F86) >= 5 )
-		{
-			strcpy( temp, "mandrake" );
-			deleQuan(mChar, 0x0F86, 5);
-		}
-		break;
-	default:
-		return;
-	}
-	if( strlen( temp ) != 0 )
-	{
-		sprintf( temp2, Dictionary->GetEntry( 1455 ), mChar->GetName(), temp );
-		npcEmoteAll( mChar, temp2, true );
-		tempeffect( mChar, mChar, 9, 0, 0, 0 );
-		tempeffect( mChar, mChar, 9, 0, 3, 0 );
-		tempeffect( mChar, mChar, 9, 0, 6, 0 );
-		tempeffect( mChar, mChar, 9, 0, 9, 0 );
-		tempeffect( mChar, mortar, 10, type, sub, 0 );
-	}
-	else
-		sysmessage( s, 1463 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CreatePotion( CChar *s, char type, char sub, CItem *mortar )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Create potion based on the type of potion selected
-//o---------------------------------------------------------------------------o
-void cSkills::CreatePotion( CChar *s, char type, char sub, CItem *mortar )
-{
-	bool canMake = false;
-	cSocket *mSock = calcSocketObjFromChar( s );
-	char temp[1024];
-
-	switch( (type<<8) + sub )
-	{
-	case 0x0101:	canMake = CheckSkill( s, ALCHEMY, 151, 651 );	break;	// agility
-	case 0x0102:	canMake = CheckSkill( s, ALCHEMY, 351, 851 );	break;	// greater agility
-	case 0x0201:	canMake = CheckSkill( s, ALCHEMY, 0, 500 );		break;	// lesser cure
-	case 0x0202:	canMake = CheckSkill( s, ALCHEMY, 251, 751 );	break;	// cure
-	case 0x0203:	canMake = CheckSkill( s, ALCHEMY, 651, 1151 );	break;	// greater cure
-	case 0x0301:	canMake = CheckSkill( s, ALCHEMY, 51, 551 );	break;	// lesser explosion
-	case 0x0302:	canMake = CheckSkill( s, ALCHEMY, 351, 851 );	break;	// explosion
-	case 0x0303:	canMake = CheckSkill( s, ALCHEMY, 651, 1151 );	break;	// greater explosion
-	case 0x0401:	canMake = CheckSkill( s, ALCHEMY, 0, 500 );		break;	// lesser heal
-	case 0x0402:	canMake = CheckSkill( s, ALCHEMY, 151, 651 );	break;	// heal
-	case 0x0403:	canMake = CheckSkill( s, ALCHEMY, 551, 1051 );	break;	// greater heal
-	case 0x0501:	canMake = CheckSkill( s, ALCHEMY, 0, 500 );		break;	// night sight
-	case 0x0601:	canMake = CheckSkill( s, ALCHEMY, 0, 500 );		break;	// lesser poison
-	case 0x0602:	canMake = CheckSkill( s, ALCHEMY, 151, 651 );	break;	// poison
-	case 0x0603:	canMake = CheckSkill( s, ALCHEMY, 551, 1051 );	break;	// greater poison
-	case 0x0604:	canMake = CheckSkill( s, ALCHEMY, 901, 1401 );	break;	// deadly poison
-	case 0x0701:	canMake = CheckSkill( s, ALCHEMY, 0, 500 );		break;	// refresh
-	case 0x0702:	canMake = CheckSkill( s, ALCHEMY, 251, 751 );	break;	// total refreshment
-	case 0x0801:	canMake = CheckSkill( s, ALCHEMY, 251, 751 );	break;	// strength
-	case 0x0802:	canMake = CheckSkill( s, ALCHEMY, 451, 951 );	break;	// greater strength
-	default:		
-		Console.Error( 2, " cSkills::CreatePotion -> Fallout of switch statement without default" );
-		return;
-	}
-	if( !canMake && !s->IsGM() )
-	{
-		sprintf( temp, Dictionary->GetEntry( 1464 ), s->GetName());
-		npcEmoteAll( s, temp, false );
-		return;
-	}
-	mortar->SetType( 17 );
-	mortar->SetMore( type, sub, mortar->GetMore( 3 ), mortar->GetMore( 4 ) );
-	mortar->SetMoreX( s->GetSkill( ALCHEMY ) );
-	
-	if( !( getAmount( s, 0x0F0E ) >= 1 ) )
-		target( mSock, 0, 1, 0, 109, 1465 );
-	else
-	{
-		soundeffect( mSock, 0x0240, true );  // Pour potion sfx
-		sprintf( temp, Dictionary->GetEntry( 1466 ), s->GetName() );
-		npcEmoteAll( s, temp, false );
-		deleQuan( s, 0x0F0E, 1 );
-		PotionToBottle( s, mortar );
-	} 
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::BottleTarget( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when UOX can't find a bottle in players pack or
-//|					 player uses a full mortar,
-//o---------------------------------------------------------------------------o
-void cSkills::BottleTarget( cSocket *s )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::BottleTarget() Invalid socket" );
-		return;
-	}
-
-	char temp[1024];
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->GetID() == 0x0F0E )
-		{
-			decItemAmount( i );
-			CItem *mortar = calcItemObjFromSer( s->AddID() );
-			if( mortar == NULL ) 
-				return;
-			CChar *mChar = s->CurrcharObj();
-			if( mortar->GetType() == 17 ) 
-			{
-				sprintf( temp, Dictionary->GetEntry( 1466 ), mChar->GetName() );
-				npcEmoteAll( mChar, temp, false );
-				PotionToBottle( mChar, mortar );
-			}
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PotionToBottle( CChar *s, CItem *mortar )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Create the potion and use up a bottle in players pack
-//o---------------------------------------------------------------------------o
-void cSkills::PotionToBottle( CChar *s, CItem *mortar )
-{
-	CItem *c = Items->SpawnItem( calcSocketObjFromChar( s ), s, 1, "#", false, 0x0915, 0, true, false );
-	if( c == NULL ) 
-		return;
-	c->SetType( 19 );
-	c->SetMoreX( mortar->GetMoreX() );
-	c->SetMoreY( mortar->GetMore( 1 ) );
-	c->SetMoreZ( mortar->GetMore( 2 ) );
-	c->SetWeight( 100 );
-	
-	switch( (mortar->GetMore( 1 )<<8) + mortar->GetMore( 2 ) )
-	{
-	case 0x0101:	c->SetName( Dictionary->GetEntry( 1467 ) );	c->SetID( 0x0F08 );	break;
-	case 0x0102:	c->SetName( Dictionary->GetEntry( 1468 ) );	c->SetID( 0x0F08 );	break;
-	case 0x0201:	c->SetName( Dictionary->GetEntry( 1469 ) );	c->SetID( 0x0F07 );	break;
-	case 0x0202:	c->SetName( Dictionary->GetEntry( 1470 ) );	c->SetID( 0x0F07 );	break;
-	case 0x0203:	c->SetName( Dictionary->GetEntry( 1471 ) );	c->SetID( 0x0F07 );	break;
-	case 0x0301:	c->SetName( Dictionary->GetEntry( 1472 ) );	c->SetID( 0x0F0D );	break;
-	case 0x0302:	c->SetName( Dictionary->GetEntry( 1473 ) );	c->SetID( 0x0F0D );	break;
-	case 0x0303:	c->SetName( Dictionary->GetEntry( 1474 ) );	c->SetID( 0x0F0D );	break;
-	case 0x0401:	c->SetName( Dictionary->GetEntry( 1475 ) );	c->SetID( 0x0F0C );	break;
-	case 0x0402:	c->SetName( Dictionary->GetEntry( 1476 ) );	c->SetID( 0x0F0C );	break;
-	case 0x0403:	c->SetName( Dictionary->GetEntry( 1477 ) );	c->SetID( 0x0F0C );	break;
-	case 0x0501:	c->SetName( Dictionary->GetEntry( 1478 ) );	c->SetID( 0x0F06 );	break;
-	case 0x0601:	c->SetName( Dictionary->GetEntry( 1479 ) );	c->SetID( 0x0F0A );	break;
-	case 0x0602:	c->SetName( Dictionary->GetEntry( 1480 ) );	c->SetID( 0x0F0A );	break;
-	case 0x0603:	c->SetName( Dictionary->GetEntry( 1481 ) );	c->SetID( 0x0F0A );	break;
-	case 0x0604:	c->SetName( Dictionary->GetEntry( 1482 ) );	c->SetID( 0x0F0A );	break;
-	case 0x0701:	c->SetName( Dictionary->GetEntry( 1483 ) );	c->SetID( 0x0F0B );	break;
-	case 0x0702:	c->SetName( Dictionary->GetEntry( 1484 ) );	c->SetID( 0x0F0B );	break;
-	case 0x0801:	c->SetName( Dictionary->GetEntry( 1485 ) );	c->SetID( 0x0F09 );	break;
-	case 0x0802:	c->SetName( Dictionary->GetEntry( 1486 ) );	c->SetID( 0x0F09 );	break;
-	default:		
-		Console.Error( 2, " cSkills::PotionToBottle -> Fallout of switch statement without default" );
-		return;
-	}
- 
-	Items->GetScriptItemSetting( c );
-	if( !s->IsGM() )
-	{
-		c->SetCreator( s->GetSerial() );
-		if( s->GetSkill( ALCHEMY ) > 950 ) 
-			c->SetMadeWith( ALCHEMY+1 );
-		else 
-			c->SetMadeWith( 0-ALCHEMY-1 );
-	}
-	else
-	{
-		c->SetCreator( INVALIDSERIAL );
-		c->SetMadeWith( 0 );
-	}
-	RefreshItem( c );
-	mortar->SetType( 0 );
-	return;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::CheckSkill( CChar *s, int sk, int lowSkill, int highSkill )
+//|   Function    :  bool cSkills::CheckSkill( CChar *s, int sk, SI16 lowSkill, SI16 highSkill )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -2316,7 +1591,7 @@ void cSkills::PotionToBottle( CChar *s, CItem *mortar )
 //|					 check will fail, but player will gain in the skill, if
 //|					 the players skill is > than highskill player will not gain
 //o---------------------------------------------------------------------------o
-bool cSkills::CheckSkill( CChar *s, UI08 sk, int lowSkill, int highSkill )
+bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 {
 	bool skillCheck = false;
 
@@ -2447,10 +1722,10 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	
 	for( a = TRUESKILLS; a > 0; a-- )
 	{//add up skills and find the one being increased
-		if( c->GetBaseSkill( c->GetAtrophy( a-1 ) )>0 && c->GetSkillLock( c->GetAtrophy( a-1) ) == 1 && c->GetAtrophy( a-1 ) != sk)
-			toDec = c->GetAtrophy(a-1);//we found a skill that can be decreased, save it for later.
+		if( c->GetBaseSkill( static_cast<UI08>(c->GetAtrophy( static_cast<UI08>(a-1) ) ))>0 && c->GetSkillLock( static_cast<UI08>(c->GetAtrophy( static_cast<UI08>(a-1)) )) == 1 && c->GetAtrophy( static_cast<UI08>(a-1) ) != sk)
+			toDec = c->GetAtrophy(static_cast<UI08>(a-1));//we found a skill that can be decreased, save it for later.
 
-		ttl += c->GetBaseSkill( a-1 );
+		ttl += c->GetBaseSkill( static_cast<UI08>(a-1) );
 		atrop[a]=atrop[a-1];
 		if( atrop[a] == sk )
 			rem = a;//remember this number
@@ -2468,25 +1743,25 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	{
 		for( counter = 0; counter < rem; counter++ )
 			c->SetAtrophy( atrop[counter], counter );
-		for( counter = rem + 1; counter <= ALLSKILLS; counter++ )
+		for( counter = static_cast<UI08>(rem + 1); counter <= ALLSKILLS; counter++ )
 			c->SetAtrophy( atrop[counter], counter );
 	}
 
-	if( RandomNum( 0, cwmWorldState->ServerData()->GetServerSkillCapStatus() ) <= ttl )
+	if( RandomNum( 0, cwmWorldState->ServerData()->GetServerSkillCapStatus() ) <= static_cast<int>(ttl ))
 	{//if the rand is less than their total skills, they loose one.
 		if( toDec != -1 )
 		{
-			c->SetBaseSkill( c->GetBaseSkill( toDec ) - 1, toDec );
+			c->SetBaseSkill( c->GetBaseSkill( static_cast<UI08>(toDec) ) - 1, static_cast<UI08>(toDec ));
 			c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
 			if( scpSkill != NULL )
 			{
 				if( !scpSkill->OnSkillGain( c, sk ) )
 					scpSkill->OnSkillChange( c, sk );
-				if( !scpSkill->OnSkillLoss( c, toDec ) )
-					scpSkill->OnSkillChange( c, toDec );
+				if( !scpSkill->OnSkillLoss( c, static_cast<UI08>(toDec) ) )
+					scpSkill->OnSkillChange( c, static_cast<UI08>(toDec) );
 			}
 			updateskill( mSock, sk );
-			updateskill( mSock, toDec );
+			updateskill( mSock, static_cast<UI08>(toDec ));
 		}
 		return;
 	} 
@@ -2521,59 +1796,49 @@ void cSkills::CreateBandageTarget( cSocket *s )
 		sysmessage( s, 1491 );
 		return;
 	}
+	CChar *myChar = myChar = s->CurrcharObj();
+	if( myChar == NULL )
+		return;
+
 
 	CItem *c;
 
-	// Gain 50 Folded cloth
-	// And dont create bandages
-	// automatically !?!?
 	UI16 myID = i->GetID();
 
-	if( myID >= 0x0F95 && myID <= 0x0F9C )
+	if( myID >= 0x0F95 && myID <= 0x0F9C )	// Bold of Cloth
 	{
-		c = Items->SpawnItem( s, 50, Dictionary->GetEntry( 1490 ), true, 0x175F, 0, true, true );
-		if( c == NULL ) 
-			return;
-
-		decItemAmount( i );
-
+		c = Items->SpawnItem( s, myChar, 50, Dictionary->GetEntry( 1490 ), true, 0x175F, 0, true, true );
+		if( c != NULL ) 
+			decItemAmount( i );
 		return;
 	}
 	
 	// Create RollDice 1d4 Bandages per cutted cloth
 	if( ( myID >= 0x1515 && myID <= 1518 ) || ( myID >= 0x152E && myID <= 0x1531 ) || ( myID >= 0x1537 && myID <= 0x1544 ) || ( myID >= 0x1914 && myID <= 0x1915 ) || ( myID >= 0x1EFD && myID <= 0x1F04 ) )
 	{
-		cDice *myDice = new cDice( "1d4+1" );
-		UI32 Amount = (UI32)( myDice->roll() );
-		delete myDice;
+		cDice myDice( 1, 4, 1 );
+		UI32 Amount = (UI32)( myDice.roll() );
 
-		CChar *myChar = myChar = s->CurrcharObj();
-
-		if( myChar == NULL )
-			return;
-
-		if( i->GetCont() == myChar->GetSerial() )
+		if( i->GetCont() == myChar )
 		{
-			sysmessage( s, "You cannot cut equipped cloth" );
+			sysmessage( s, 1491 );
 			return;
 		}
 
-		c = Items->SpawnItem( s, Amount, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
+		c = Items->SpawnItem( s, myChar, Amount, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
 
-		if( c == NULL ) 
-			return;
-
-		decItemAmount( i );
+		if( c != NULL ) 
+			decItemAmount( i );
 
 		return;
 	}
 
 	// Gain 2 bandages per Folded Cloth
-	if( i->GetID() >= 0x175D && i->GetID() <= 0x1764 )
+	if( myID >= 0x175D && myID <= 0x1764 )
 	{
 		soundeffect( s, 0x0248, true );
 		sysmessage( s, 1488 );
-		c = Items->SpawnItem( s, 2, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
+		c = Items->SpawnItem( s, myChar, 2, Dictionary->GetEntry( 1489 ), true, 0x0E21, 0, true, true );
 		if( c == NULL ) 
 			return;
 		decItemAmount( i );
@@ -2602,10 +1867,10 @@ void cSkills::HealingSkillTarget( cSocket *s )
 	}
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
 	CChar *mChar = s->CurrcharObj();
-	ITEM mItem = s->AddMItem();
+	CItem *mItem = s->AddMItem();
 	if( i != NULL )
 	{
-		if( !charInRange( s, i, 1 ) )
+		if( !objInRange( s, i, 1 ) )
 		{
 			sysmessage( s, 1498 );
 			return;
@@ -2709,7 +1974,7 @@ void cSkills::SpiritSpeak( cSocket *s )
 	soundeffect( s, 0x024A, true );
 	sysmessage( s, 1502 );
 	
-	mChar->SetSpiritSpeakTimer( BuildTimeValue( cwmWorldState->ServerData()->GetSpiritSpeakTimer() + mChar->GetSkill( SPIRITSPEAK ) / 10 + mChar->GetIntelligence() ) ); // spirit speak duration
+	mChar->SetSpiritSpeakTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSpiritSpeakTimer() + mChar->GetSkill( SPIRITSPEAK ) / 10 + mChar->GetIntelligence() )) ); // spirit speak duration
 }
 
 //o---------------------------------------------------------------------------o
@@ -2727,7 +1992,7 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 		Console.Error( 0, "cSkills::ArmsLoreTarget() Invalid socket" );
 		return;
 	}
-
+	UnicodeTypes sLang = s->Language();
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i == NULL )
 		return;
@@ -2742,23 +2007,22 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 	}
 	if( mChar->IsGM() )
 	{
-		sprintf( temp, "Defense [%i] LoDamage [%i] HiDamage [%i], Poison [%i], Rank [%i]", i->GetDef(), i->GetLoDamage(), i->GetHiDamage(), i->GetPoisoned(), i->GetRank() );
-		sysmessage( s, temp );
+		sysmessage( s, 1731, i->GetDef(), i->GetLoDamage(), i->GetHiDamage(), i->GetPoisoned(), i->GetRank() );
 		return;
 	}
 	if( CheckSkill( mChar, ARMSLORE, 0, 1000 ) )
 	{
 		if( i->GetMaxHP() )
 		{
-			strcpy( temp, "This item " );
+			strcpy( temp, Dictionary->GetEntry( 1731, sLang ) );
 			// Items HP's - 1 / by items total HP * 10 (0-3 = 0, 4 - 5 = 1, ect)
 			offset = static_cast<SI32>(((R32)(( i->GetHP() - 1) / i->GetMaxHP() ) * 10 ));
 			if( offset >= 0 && offset <= 8 )
-				strcpy( temp2, Dictionary->GetEntry( 1515 - offset ) );
+				strcpy( temp2, Dictionary->GetEntry( 1515 - offset, sLang ) );
 			else
-				strcpy( temp2, Dictionary->GetEntry( 1506 ) );
+				strcpy( temp2, Dictionary->GetEntry( 1506, sLang ) );
 
-			strcat(temp,temp2);
+			strcat( temp, temp2 );
 		}
 		else
 			sysmessage( s, 1505 );
@@ -2768,17 +2032,17 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 			{
 				offset = i->GetPoisoned();
 				if( offset > 0 && offset < 5 )
-					strcpy( temp2, Dictionary->GetEntry( 1455 + offset ) );
+					strcpy( temp2, Dictionary->GetEntry( 1455 + offset, sLang ) );
 				else
-					strcpy( temp2, Dictionary->GetEntry( 1459 ) );
+					strcpy( temp2, Dictionary->GetEntry( 1459, sLang ) );
 				strcat( temp, temp2 );
 			}
 			// HiDamage + LoDamage / 10 ( 0-9 = 0, 10-19 = 1, ect )
 			offset = (i->GetHiDamage() + i->GetLoDamage() ) / 10;
 			if( offset <= 5 )
-				strcpy( temp2, Dictionary->GetEntry( 1522 - offset ) );
+				strcpy( temp2, Dictionary->GetEntry( 1522 - offset, sLang ) );
 			else
-				strcpy( temp2, Dictionary->GetEntry( 1516 ) );
+				strcpy( temp2, Dictionary->GetEntry( 1516, sLang ) );
 			strcat( temp, temp2 );
 			
 			if( mChar->GetSkill( ARMSLORE ) > 250 )
@@ -2786,9 +2050,9 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 				// Items Speed - 5 / 10 ( 0-14 = 0, 15-25 = 1, ect)
 				offset = ((i->GetSpeed() - 5) / 10);
 				if( offset <= 2 )
-					strcpy( temp2, Dictionary->GetEntry( 1526 - offset ) );
+					strcpy( temp2, Dictionary->GetEntry( 1526 - offset, sLang ) );
 				else
-					strcpy( temp2, Dictionary->GetEntry( 1523 ) );
+					strcpy( temp2, Dictionary->GetEntry( 1523, sLang ) );
 				strcat( temp, temp2 );
 			}
 		}
@@ -2798,9 +2062,9 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 			offset = ((i->GetDef() + 1) / 2);
 
 			if( offset <= 6 )
-				strcpy( temp2, Dictionary->GetEntry( 1534 - offset ) );
+				strcpy( temp2, Dictionary->GetEntry( 1534 - offset, sLang ) );
 			else
-				strcpy( temp2, Dictionary->GetEntry( 1527 ) );
+				strcpy( temp2, Dictionary->GetEntry( 1527, sLang ) );
 
 			strcat( temp, temp2 );
 		}
@@ -2841,6 +2105,7 @@ void cSkills::ItemIDTarget( cSocket *s )
 		return;
 	}
 
+	UnicodeTypes sLang = s->Language();
 	char temp[1024];
 
 	CChar *mChar = s->CurrcharObj();
@@ -2860,17 +2125,17 @@ void cSkills::ItemIDTarget( cSocket *s )
 			if( mCreater != NULL )
 			{
 				if( i->GetMadeWith() > 0 ) 
-					sprintf( temp, Dictionary->GetEntry( 1548 ), skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), skill[i->GetMadeWith()-1].madeword, mCreater->GetName() );
 				else if( i->GetMadeWith() < 0 )
-					sprintf( temp, Dictionary->GetEntry( 1548 ), skill[0-i->GetMadeWith() - 1].madeword, mCreater->GetName() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ), skill[0-i->GetMadeWith() - 1].madeword, mCreater->GetName() );
 				else
-					sprintf( temp, Dictionary->GetEntry( 1549 ), mCreater->GetName() );
+					sprintf( temp, Dictionary->GetEntry( 1549, sLang ), mCreater->GetName() );
 		}
 		else
-			strcpy( temp, Dictionary->GetEntry( 1550 ) );
+			strcpy( temp, Dictionary->GetEntry( 1550, sLang ) );
 		}
 		else
-			strcpy( temp, Dictionary->GetEntry( 1550 ) );
+			strcpy( temp, Dictionary->GetEntry( 1550, sLang ) );
 		sysmessage( s, temp );
 		
 		if( mChar->GetSkill( ITEMID ) > 350 )
@@ -2882,11 +2147,11 @@ void cSkills::ItemIDTarget( cSocket *s )
 			}
 			if( CheckSkill( mChar, ITEMID, 500, 750 ) )
 			{
-				UI16 spellToScan = ( 8 * ( i->GetMoreX() - 1 ) ) + i->GetMoreY() - 1;
+				UI16 spellToScan = static_cast<UI16>(( 8 * ( i->GetMoreX() - 1 ) ) + i->GetMoreY() - 1);
 				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
-					sysmessage( s, 1555, Dictionary->GetEntry( magic_table[spellToScan].spell_name ) );
+					sysmessage( s, 1555, magic_table[spellToScan].spell_name );
 				else
-					sysmessage( s, 1556, Dictionary->GetEntry( magic_table[spellToScan].spell_name ), i->GetMoreZ() );
+					sysmessage( s, 1556, magic_table[spellToScan].spell_name, i->GetMoreZ() );
 			}
 			else
 				sysmessage( s, 1554 );
@@ -2928,9 +2193,9 @@ void cSkills::EvaluateIntTarget( cSocket *s )
 			int offset = ((i->GetIntelligence() - 1 ) / 10);
 
 			if( offset >= 0 && offset <= 8 )
-				strcpy( buf, Dictionary->GetEntry( 1558 + offset ) );
+				strcpy( buf, Dictionary->GetEntry( 1558 + offset, s->Language() ) );
 			else
-				strcpy( buf, Dictionary->GetEntry( 1567 ) );
+				strcpy( buf, Dictionary->GetEntry( 1567, s->Language() ) );
 
 			sysmessage( s, 1568, buf );
 		}
@@ -2963,7 +2228,7 @@ void cSkills::AnatomyTarget( cSocket *s )
 	char buf[125];
 	char buf2[125];
 	CChar *mChar = s->CurrcharObj();
-	if( getDist( i, mChar ) >= cwmWorldState->ServerData()->GetCombatMaxRange() )
+	if( !objInRange( i, mChar, cwmWorldState->ServerData()->GetCombatMaxRange() ) )
 	{
 		sysmessage( s, 1570 );
 		return;
@@ -2976,24 +2241,25 @@ void cSkills::AnatomyTarget( cSocket *s )
 	}
 	if( CheckSkill( mChar, ANATOMY, 0, 1000 ) ) 
 	{
-		int offset;
+		UnicodeTypes sLang = s->Language();
+		SI16 offset;
 
 		// Strength - 1 / 10 (0-10 = 0, 11-20 = 1, ect)
 		offset = ((i->GetStrength() - 1 )/ 10);
 
 		if( offset >= 0 && offset <= 8 )
-			strcpy( buf, Dictionary->GetEntry( 1572 + offset ) );
+			strcpy( buf, Dictionary->GetEntry( 1572 + offset, sLang ) );
 		else
-			strcpy( buf, Dictionary->GetEntry( 1581 ) );
+			strcpy( buf, Dictionary->GetEntry( 1581, sLang ) );
 
 
 		// Dexterity - 1 /10 (0-10 = 0, 11-20 = 1, ect)
 		offset = ((i->GetDexterity() - 1 )/ 10);
 
 		if( offset >= 0 && offset <= 8 )
-			strcpy( buf2, Dictionary->GetEntry( 1582 + offset ) );
+			strcpy( buf2, Dictionary->GetEntry( 1582 + offset, sLang ) );
 		else
-			strcpy( buf2, Dictionary->GetEntry( 1591 ) );
+			strcpy( buf2, Dictionary->GetEntry( 1591, sLang ) );
 
 		sysmessage( s, 1592, buf, buf2 );
 	}
@@ -3027,15 +2293,14 @@ void cSkills::TameTarget( cSocket *s )
 	if( i == NULL )
 		return;
 	CChar *mChar = s->CurrcharObj();
-	char temp[1024];
-	if( i->IsNpc() && getDist( mChar, i ) <= 3 )
+	if( i->IsNpc() && objInRange( mChar, i, 3 ) )
 	{
 		if( i->GetTaming()>1000 || i->GetTaming() == 0 )
 		{
 			sysmessage( s, 1593 );
 			return;
 		}
-		if( i->IsTamed() && i->GetOwner() == mChar->GetSerial() )
+		if( i->IsTamed() && i->GetOwnerObj() == mChar )
 		{
 			sysmessage( s, 1594 );
 			return;
@@ -3045,7 +2310,6 @@ void cSkills::TameTarget( cSocket *s )
 			sysmessage( s, 1595 );
 			return;
 		}
-		sprintf( temp, Dictionary->GetEntry( 1596 ), mChar->GetName(), i->GetName() );
 		for( UI08 a = 0; a < 3; a++ )
 		{
 			switch( RandomNum( 0, 3 ) )
@@ -3053,12 +2317,10 @@ void cSkills::TameTarget( cSocket *s )
 			case 0: npcTalkAll( mChar, 1597, false );	break;
 			case 1: npcTalkAll( mChar, 1598, false );	break;
 			case 2: 
-				sprintf( temp, Dictionary->GetEntry( 1599 ), i->GetName() ); 
-				npcTalkAll( mChar, temp, false ); 
+				npcTalkAll( mChar, 1599, false, i->GetName()); 
 				break;
 			case 3: 
-				sprintf( temp, Dictionary->GetEntry( 1600 ), i->GetName() ); 
-				npcTalkAll( mChar, temp, false ); 
+				npcTalkAll( mChar, 1600, false, i->GetName()); 
 				break;
 			}
 		}
@@ -3068,19 +2330,27 @@ void cSkills::TameTarget( cSocket *s )
 			return;
 		}   
 		npcTalk( s, mChar, 1602, false );
-		i->SetOwner( mChar->GetSerial() );
+		i->SetOwner( (cBaseObject *)mChar );
 		i->SetNpcWander( 0 );
 		i->SetNPCAiType( 0 );
 		i->SetTamed( true );
 		if( i->IsAtWar() && &chars[i->GetTarg()] == mChar )
-			npcToggleCombat( i );
+		{
+			i->SetTarg( INVALIDSERIAL );
+			i->SetAttacker( INVALIDSERIAL );
+			if( i->IsAtWar() )
+				npcToggleCombat( i );
+			if( mChar->IsAtWar() && &chars[mChar->GetTarg()] == i )
+			{
+				mChar->SetTarg( INVALIDSERIAL );
+				mChar->SetAttacker( INVALIDSERIAL );
+				if( mChar->IsAtWar() )
+					npcToggleCombat( mChar );
+			}
+		}
 	}
-	else
-	{
-		// Sept 22, 2002 - Xuri
+	else // Sept 22, 2002 - Xuri
 		sysmessage( s, 400 );
-		//
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -3156,7 +2426,7 @@ void cSkills::FishTarget( cSocket *s )
 		mChar->SetStamina( mChar->GetStamina() - 2 );
 		action( s, 0x0b );
 		R32 baseTime;
-		baseTime = cwmWorldState->ServerData()->GetFishingBaseTime() / 25;
+		baseTime = static_cast<R32>(cwmWorldState->ServerData()->GetFishingBaseTime() / 25);
 		baseTime += RandomNum( 0, cwmWorldState->ServerData()->GetFishingRandomTime() / 15 );
 		mChar->SetFishingTimer( BuildTimeValue( baseTime ) ); //2x faster at war and can run
 		soundeffect( s, 0x023F, true );
@@ -3187,53 +2457,53 @@ void cSkills::Fish( CChar *i )
 	case 1:
 		if( getSkill > 920 )
 		{
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "1" );	// random paintings
+			SpawnRandomItem( s, true, "ITEMLIST", "1" );	// random paintings
 			sysmessage( s, 848 );
 		}
 		break;
 	case 2:
 		if( getSkill > 970 )
 		{
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "2" );	// Some new weapons
+			SpawnRandomItem( s, true, "ITEMLIST", "2" );	// Some new weapons
 			sysmessage( s, 849 );
 		}
 		break;
 	case 3:	// Random gold and gems
 		if( RandomNum( 0, 12 ) )
 		{
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "3" ); 
+			SpawnRandomItem( s, true, "ITEMLIST", "3" ); 
 			sysmessage( s, 850 );
 		}
 		else
 		{	// Create between 200 and 1300 gold
-			int nAmount = RandomNum( 200, 1300 );
+			UI16 nAmount = RandomNum( 200, 1300 );
 			addgold( s, nAmount );
-			goldsfx( s, nAmount );
+			goldSound( s, nAmount );
 			sysmessage( s, 851, nAmount );
 		}
 		break;
 	case 4:
 		if( getSkill > 850 )
 		{
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "4" );	// Random bones and crap
+			SpawnRandomItem( s, true, "ITEMLIST", "4" );	// Random bones and crap
 			sysmessage( s, 852 );
 		}
 		break;
 	default:
-		SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "5" );	// User defined fish
+		SpawnRandomItem( s, true, "ITEMLIST", "5" );	// User defined fish
 		sysmessage( s, 853 );
 		break;
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SkillUse( cSocket *s, int x )
+//|   Function    :  void cSkills::SkillUse( cSocket *s, UI08 x )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses a skill from the skill list
 //o---------------------------------------------------------------------------o
-void cSkills::SkillUse( cSocket *s, int x )
+void cSkills::SkillUse( cSocket *s, UI08 x )
 {
 	if( s == NULL )
 	{
@@ -3264,40 +2534,40 @@ void cSkills::SkillUse( cSocket *s, int x )
 		{
 			switch( x )
 			{
-			case ARMSLORE:			target( s, 0, 1, 0, 29, 855 );		break;
-			case ANATOMY:			target( s, 0, 1, 0, 37, 856 );		break;
-			case ITEMID:			target( s, 0, 1, 0, 40, 857 );		break;
-			case EVALUATINGINTEL:	target( s, 0, 1, 0, 41, 858 );		break;
-			case TAMING:			target( s, 0, 1, 0, 42, 859 );		break;
-			case HIDING:			Hide( s );	break;
-			case STEALTH:			Stealth( s );														break;
-			case DETECTINGHIDDEN:	target( s, 0, 1, 0, 77, 860 );		break;
-			case PEACEMAKING:		PeaceMaking(s);														break;
-			case PROVOCATION:		target(s, 0, 1, 0, 79, 861 );		break;
-			case ENTICEMENT:		target(s, 0, 1, 0, 81, 862 );		break;
-			case SPIRITSPEAK:		SpiritSpeak(s);														break;
+			case ARMSLORE:			target( s, 0, 1, 0, 29, 855 );			break;
+			case ANATOMY:			target( s, 0, 1, 0, 37, 856 );			break;
+			case ITEMID:			target( s, 0, 1, 0, 40, 857 );			break;
+			case EVALUATINGINTEL:	target( s, 0, 1, 0, 41, 858 );			break;
+			case TAMING:			target( s, 0, 1, 0, 42, 859 );			break;
+			case HIDING:			Hide( s );								break;
+			case STEALTH:			Stealth( s );							break;
+			case DETECTINGHIDDEN:	target( s, 0, 1, 0, 77, 860 );			break;
+			case PEACEMAKING:		PeaceMaking(s);							break;
+			case PROVOCATION:		target(s, 0, 1, 0, 79, 861 );			break;
+			case ENTICEMENT:		target(s, 0, 1, 0, 81, 862 );			break;
+			case SPIRITSPEAK:		SpiritSpeak(s);							break;
 			case STEALING:
 				if( cwmWorldState->ServerData()->GetRogueStatus() )
 					target( s, 0, 1, 0, 205, 863 );
 				else
 					sysmessage( s, 864 );
 				break;
-			case INSCRIPTION:		target( s, 0, 1, 0, 160, 865 );		break;
-			case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );								break;
-			case BEGGING:			target( s, 0, 1, 0, 152, 866 );		break;
-			case ANIMALLORE:		target( s, 0, 1, 0, 153, 867 );		break;
-			case FORENSICS:			target( s, 0, 1, 0, 154, 868 );		break;
-			case POISONING:			target( s, 0, 1, 0, 155, 869 );		break;
+			case INSCRIPTION:		target( s, 0, 1, 0, 160, 865 );			break;
+			case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );	break;
+			case BEGGING:			target( s, 0, 1, 0, 152, 866 );			break;
+			case ANIMALLORE:		target( s, 0, 1, 0, 153, 867 );			break;
+			case FORENSICS:			target( s, 0, 1, 0, 154, 868 );			break;
+			case POISONING:			target( s, 0, 1, 0, 155, 869 );			break;
 			case MEDITATION:
 				if( cwmWorldState->ServerData()->GetServerArmorAffectManaRegen() )
 					Meditation( s );
 				else 
 					sysmessage( s, 870 );
 				break;
-			default:				sysmessage( s, 871 );				break;
+			default:				sysmessage( s, 871 );					break;
 			}
 		}
-		mChar->SetSkillDelay( BuildTimeValue( cwmWorldState->ServerData()->GetServerSkillDelayStatus() ) );
+		mChar->SetSkillDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetServerSkillDelayStatus() )) );
 		return;
 	}
 	else
@@ -3319,23 +2589,10 @@ void cSkills::RandomSteal( cSocket *s )
 		Console.Error( 0, "cSkills::RandomSteal() Invalid socket" );
 		return;
 	}
-	char temp2[512], temp[512];
-
 	CChar *mChar = s->CurrcharObj();
 	CChar *npc = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( npc == NULL ) 
 		return;
-
-	if( npc == mChar ) 
-	{
-		sysmessage( s, 873 );
-		return;
-	}
-	if( npc->GetNPCAiType() == 17 )
-	{
-		sysmessage( s, 874 );
-		return;
-	}
 
 	CItem *p = getPack( npc );
 	if( p == NULL ) 
@@ -3356,14 +2613,74 @@ void cSkills::RandomSteal( cSocket *s )
 		sysmessage( s, 876 );
 		return;
 	}
-	CItem *itemCont = calcItemObjFromSer( item->GetCont() ); 
+	doStealing( s, mChar, npc, item );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void cSkills::StealingTarget( cSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Called when player targets an item with stealing skill
+//o---------------------------------------------------------------------------o
+void cSkills::StealingTarget( cSocket *s )
+{
+	if( s == NULL )
+	{
+		Console.Error( 0, "cSkills::StealingTarget() Invalid socket" );
+		return;
+	}
+
+	CChar *mChar = s->CurrcharObj();
+	if( s->GetByte( 7 ) < 0x40 )
+	{
+		RandomSteal( s );
+		return;
+	}
+	CItem *item = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( item == NULL )
+		return;
+
+	CChar *npc = getPackOwner( item );
+	if( npc == NULL )
+		return;
+
+	if( item->GetCont() == npc || item->GetCont() == NULL || item->isNewbie() )
+	{
+		sysmessage( s, 874 );
+		return;
+	}
+	doStealing( s, mChar, npc, item );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
+//|   Date        :  2/13/2003
+//|   Programmer  :  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Do the bulk of stealing stuff rather than having the same
+//|						code twice in RandomSteal() and StealingTarget()
+//o---------------------------------------------------------------------------o
+void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
+{
+	if( npc == mChar ) 
+	{
+		sysmessage( s, 873 );
+		return;
+	}
+	if( npc->GetNPCAiType() == 17 )
+	{
+		sysmessage( s, 874 );
+		return;
+	}
+	CItem *itemCont = (CItem *)item->GetCont(); 
 	if( itemCont != NULL && itemCont->GetLayer() >= 0x1A && itemCont->GetLayer() <= 0x1C ) // is it in the buy or sell layer of a vendor?
 	{
 		sysmessage( s, 874 );
 		return;
 	}
 	sysmessage( s, 877, npc->GetName(), item->GetName() );
-	if( charInRange( s, npc, 1 ) )
+	if( objInRange( mChar, npc, 1 ) )
 	{
 		if( Combat->calcDef( mChar, 0, false ) > 40 )
 		{
@@ -3393,11 +2710,11 @@ void cSkills::RandomSteal( cSocket *s )
 		if( canSteal )
 		{
 			CItem *pack = getPack( mChar );
-			item->SetCont( pack->GetSerial() );
+			item->SetCont( pack );
 			sysmessage( s, 880 );
 			RefreshItem( item );
 
-			sendItemsInRange( s );
+//			sendItemsInRange( s );
 
 			UI16 targTrig = item->GetScriptTrigger();
 			cScript *toExecute = Trigger->GetScript( targTrig );
@@ -3412,16 +2729,16 @@ void cSkills::RandomSteal( cSocket *s )
 		else 
 			sysmessage( s, 881 );
 		
-		if( ( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1000 ) )
+		if( ( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ) )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
 			sysmessage( s, 882 );
 			if( npc->IsNpc() ) 
 				npcTalkAll( npc, 883, false );
 			
 			if( npc->IsInnocent() && &chars[mChar->GetAttacker()] != npc && GuildSys->ResultInCriminal( mChar, npc ) && Races->Compare( mChar, npc ) == 0 )
-			{
 				criminal( mChar );
-			}
+			char temp2[512], temp[512];
+
 			if( item->GetName()[0] != '#' )
 			{
 				sprintf( temp, Dictionary->GetEntry( 884 ), mChar->GetName(), item->GetName() );
@@ -3429,10 +2746,10 @@ void cSkills::RandomSteal( cSocket *s )
 			} 
 			else 
 			{
-				CTile tile;
-				Map->SeekTile( item->GetID(), &tile );
-				sprintf( temp, Dictionary->GetEntry( 884 ), mChar->GetName(), tile.Name() );
-				sprintf( temp2, Dictionary->GetEntry( 885 ), mChar->GetName(), tile.Name(), npc->GetName() );
+				char tileName[128];
+				getTileName( item, tileName );
+				sprintf( temp, Dictionary->GetEntry( 884 ), mChar->GetName(), tileName );
+				sprintf( temp2, Dictionary->GetEntry( 885 ), mChar->GetName(), tileName, npc->GetName() );
 			}
 
 			cSocket *npcSock = calcSocketObjFromChar( npc );
@@ -3452,148 +2769,10 @@ void cSkills::RandomSteal( cSocket *s )
 	else 
 		sysmessage( s, 886 );
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::StealingTarget( cSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets an item with stealing skill
-//o---------------------------------------------------------------------------o
-void cSkills::StealingTarget( cSocket *s )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::StealingTarget() Invalid socket" );
-		return;
-	}
-	ITEM b;
-	CItem *x;
-	bool canSteal;
-	char temp2[512], temp[512];
-
-	CChar *mChar = s->CurrcharObj();
-	if( s->GetByte( 7 ) < 0x40 )
-	{
-		RandomSteal( s );
-		return;
-	}
-	CItem *item = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( item == NULL )
-		return;
-
-	for( UI08 z = 0; z < 255; z++ )
-	{
-		x = calcItemObjFromSer( x->GetCont() );
-		if( x == NULL )
-			break;
-		b = x->GetCont( 1 );
-		if( b < 0x40 )
-			break;
-	}
-	if( x == NULL )
-		return;
-
-	CChar *npc = calcCharObjFromSer( x->GetCont() );
-	if( npc == NULL )
-		return;
-
-	x = item;
-	if( item->GetCont() == npc->GetSerial() || item->GetCont() == INVALIDSERIAL || item->isNewbie() )
-	{
-		sysmessage( s, 874 );
-		return;
-	}
-
-	if( npc == mChar )
-	{
-		sysmessage( s, 873 );
-		return;
-	}
-	if( npc->GetNPCAiType() == 17 )
-	{
-		sysmessage( s, 874 );
-		return;
-	}
-
-	CItem *itemCont = calcItemObjFromSer( item->GetCont() ); 
-	if( itemCont != NULL && itemCont->GetLayer() >= 0x1A && itemCont->GetLayer() <= 0x1C ) // is it in the buy or sell layer of a vendor?
-	{
-		sysmessage( s, 874 );
-		return;
-	}
-
-	if( charInRange( s, npc, 1 ) )
-	{
-		if( Combat->calcDef( mChar, 0, false ) > 40 )
-		{
-			sysmessage( s, 1643 );
-			return;
-		}
-		SI16 stealCheck = calcStealDiff( mChar, item );
-		if( stealCheck == -1 )
-		{
-			sysmessage( s, 1551 );
-			return;
-		}
-		int getDefOffset = min( stealCheck + ( (int)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
-		canSteal = CheckSkill( mChar, STEALING, getDefOffset, 1000 );
-		if( canSteal )
-		{
-			cScript *toExecute;
-			CItem *pack = getPack( mChar );
-			item->SetCont( pack->GetSerial() );
-			sysmessage( s, 880 );
-			RefreshItem( item );	// let's reuse some code that will cope with visibility
-			UI16 targTrig = item->GetScriptTrigger();
-			toExecute = Trigger->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnSteal( mChar, item );
-
-			targTrig = npc->GetScriptTrigger();
-			toExecute = Trigger->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnStolenFrom( mChar, npc, item );
-		} 
-		else 
-			sysmessage( s, 881 );
-
-		if( ( !canSteal && RandomNum( 0, 15 ) == 7 ) || ( mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ) ) ) //	0 to 1001, so ever a gm has a SMALL chance of being caught
-		{
-			sysmessage( s, 882 );
-
-			if( npc->IsNpc() ) 
-				npcTalkAll( npc, 883, false );
-
-			if( npc->IsInnocent() && &chars[mChar->GetAttacker()] != npc && GuildSys->ResultInCriminal( mChar, npc ) == 0 && Races->Compare( mChar, npc ) == 0 )
-			{
-				criminal( mChar );//Blue and not attacker and not guild
-			}
-			char tileName[128];
-			getTileName( item, tileName );
-			sprintf( temp, Dictionary->GetEntry( 884 ), mChar->GetName(), tileName );
-			sprintf( temp2, Dictionary->GetEntry( 885 ), mChar->GetName(), tileName, npc->GetName() );
-			if( !npc->IsNpc() )
-				sysmessage( calcSocketObjFromChar( npc ), temp );	// presuming that just perhaps you might be able to have a pc here
-		}
-	
-		Network->PushConn();
-		for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-		{
-			CChar *iChar = iSock->CurrcharObj();
-			if( iSock != s && charInRange( mChar, iChar ) && ( RandomNum( 10, 20 ) == 17 || ( RandomNum( 0, 1 ) == 1 && iChar->GetIntelligence() >= mChar->GetIntelligence() - RandomNum( 0, 14 ) ) ) )
-				sysmessage( iSock, temp2 );
-		}
-		Network->PopConn();
-	} 
-	else 
-		sysmessage( s, 886 );
-}
-
 //o---------------------------------------------------------------------------o
 //|   Function    :  SI16 calcStealDiff( CChar *c, CItem *i )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Check if item is able to be stolen based on item type and
 //|					 weight vs stealing skill, then return the min skill needed to
@@ -3608,10 +2787,10 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 	switch( i->GetType() )
 	{
 	case 1: // Backpack
-		itemWeight = static_cast<SI32>(Weight->calcPackWeight( i ));
+		itemWeight = i->GetWeight();
 		calcDiff = (10 + c->GetSkill( STEALING ) / 4 );
 		if( calcDiff > itemWeight )
-			return max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+			return (SI16)max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 		break;
 	case 9:		// Spellbook
 	case 63:	// Item spawn container
@@ -3624,12 +2803,12 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 			return -1;
 
 		if( i->GetWeight() <= 0 )
-			i->SetWeight( Weight->calcItemWeight( i ) );
+			i->SetWeight( Weight->calcWeight( i ) );
 
 		itemWeight = i->GetWeight();
 		calcDiff = (int)( 100 + c->GetSkill( STEALING ) * 2 );
 		if( calcDiff > itemWeight ) // make it 2 times the base stealing skill... GM thieves can steal up to 21 stones, newbie only 1 stone
-			return max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+			return (SI16)max( min( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 		break;
 	}
 	return -1;
@@ -3651,8 +2830,8 @@ void cSkills::Tracking( cSocket *s, int selection )
 	}
 	CChar *i = s->CurrcharObj();
 	i->SetTrackingTarget( i->GetTrackingTargets( selection ) ); // sets trackingtarget that was selected in the gump
-	i->SetTrackingTimer( BuildTimeValue( cwmWorldState->ServerData()->GetTrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 ) ); // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
-	i->SetTrackingDisplayTimer( BuildTimeValue( cwmWorldState->ServerData()->GetTrackingRedisplayTime() ) );
+	i->SetTrackingTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetTrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )) ); // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
+	i->SetTrackingDisplayTimer( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetTrackingRedisplayTime() ) ));
 	sysmessage( s, 1644, chars[i->GetTrackingTarget()].GetName() );
 	Track( i );
 }
@@ -3672,7 +2851,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, int m )
 		return;
 	}
 	UI32 i;
-	int total, d;
+	int total;
 	char lentext;
 	char sect[512];
 	char gmtext[MAXTRACKINGTARGETS][257];
@@ -3723,13 +2902,12 @@ void cSkills::CreateTrackingMenu( cSocket *s, int m )
 			{
 				if( tempChar == NULL )
 					continue;
-				d = getDist( tempChar, c );
 				id = tempChar->GetID();
 				cSocket *tSock = calcSocketObjFromChar( tempChar );
 				bool cmdLevelCheck = isOnline( tempChar ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
-				if( d <= distance && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
+				if( objInRange( tempChar, c, static_cast<int>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
-					c->SetTrackingTargets( calcCharFromSer( tempChar->GetSerial() ), MaxTrackingTargets );
+					c->SetTrackingTargets( calcCharFromSer( tempChar->GetSerial() ), static_cast<UI08>(MaxTrackingTargets) );
 					MaxTrackingTargets++;
 					if( MaxTrackingTargets >= MAXTRACKINGTARGETS ) 
 						break;
@@ -3934,12 +3112,6 @@ void cSkills::BeggingTarget( cSocket *s )
 		return;
 	}
 	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( calcSocketFromChar( targChar ) != -1 )
-	{
-		sysmessage( s, 899 );
-		return;
-	}
-	CChar *mChar = s->CurrcharObj();
 	if( targChar == NULL )
 		return;
 
@@ -3953,21 +3125,22 @@ void cSkills::BeggingTarget( cSocket *s )
 		sysmessage( s, 900 );
 		return;
 	}
-	if( getDist( targChar, mChar ) >= cwmWorldState->ServerData()->GetBeggingRange() )
+	CChar *mChar = s->CurrcharObj();
+	if( !objInRange( targChar, mChar, cwmWorldState->ServerData()->GetBeggingRange() ) )
 	{
 		sysmessage( s, 901 );
 		return;
 	}
 	if( targChar->GetID() == 0x0190 || targChar->GetID() == 0x0191 )
 	{
-		SI32 bankGold = getBankCount( mChar, 0x0EED, 0 );
-		SI32 currentGold = getItemAmt( mChar, 0x0EED, 0 );
-		SI32 petGold = 0;
+		UI32 bankGold = getBankCount( mChar, 0x0EED, 0 );
+		UI32 currentGold = getItemAmt( mChar, 0x0EED, 0 );
+		UI32 petGold = 0;
 		CHARLIST *myPets = mChar->GetPetList();
 		// Find all the gold that will be on any pets we own
 		if( myPets != NULL )
 		{
-			for( int a = 0; a < myPets->size(); a++ )	// All pet/hirelings
+			for( unsigned int a = 0; a < myPets->size(); a++ )	// All pet/hirelings
 			{
 				CChar *pet = (*myPets)[a];
 				if( pet != NULL )
@@ -4021,12 +3194,8 @@ void cSkills::AnimalLoreTarget( cSocket *s )
 		sysmessage( s, 907 );
 		return;
 	}
-	char temp[1024];
 	if( CheckSkill( mChar, ANIMALLORE, 0, 1000 ) )
-	{
-		sprintf( temp, "Attack [%i %i], Defense [%i] Taming [%i] Hit Points [%i]", i->GetLoDamage(), i->GetHiDamage(), i->GetDef(), i->GetTaming()/10, i->GetHP() );
-		npcEmote( s, i, temp, false );
-	}
+		npcEmote( s, i, 1729, false, i->GetLoDamage(), i->GetHiDamage(), i->GetDef(), i->GetTaming()/10, i->GetHP() );
 	else
 		sysmessage( s, 908 );
 }
@@ -4060,7 +3229,7 @@ void cSkills::ForensicsTarget( cSocket *s )
 		return;
 	}
 
-	if( !itemInRange( mChar, i, 6 ) )
+	if( !objInRange( mChar, i, 6 ) )
 	{
 		sysmessage( s, 393 );
 		return;
@@ -4090,11 +3259,11 @@ void cSkills::ForensicsTarget( cSocket *s )
 		{
 			int duration = ( getTime - i->GetMurderTime() ) / CLOCKS_PER_SEC;
 			if(		 duration > 180 ) 
-				strcpy( temp, Dictionary->GetEntry( 912 ) );
+				strcpy( temp, Dictionary->GetEntry( 912, s->Language() ) );
 			else if( duration >  60 ) 
-				strcpy( temp, Dictionary->GetEntry( 913 ) );
+				strcpy( temp, Dictionary->GetEntry( 913, s->Language() ) );
 			else					  
-				strcpy( temp, Dictionary->GetEntry( 914 ) );
+				strcpy( temp, Dictionary->GetEntry( 914, s->Language() ) );
 
 			sysmessage( s, 915, &i->GetName()[2], temp );
 			if( !CheckSkill( mChar, FORENSICS, 500, 1000 ) || cMurderer == NULL ) 
@@ -4163,7 +3332,7 @@ void cSkills::PoisoningTarget( cSocket *s )
 	{
 		soundeffect( mChar, 0x0247 );	// poisoning effect
 		if( toPoison->GetPoisoned() < poison->GetMoreZ() ) 
-			toPoison->SetPoisoned( poison->GetMoreZ() );
+			toPoison->SetPoisoned( static_cast<UI08>(poison->GetMoreZ() ));
 		sysmessage( s, 919 );
 	} 
 	else 
@@ -4173,7 +3342,7 @@ void cSkills::PoisoningTarget( cSocket *s )
 	}
 
 	decItemAmount( poison );
-	CItem *bPotion = Items->SpawnItem( s, mChar, 1, "#", true, 0x0F0E, 0, true, false );
+	CItem *bPotion = Items->SpawnItem( NULL, mChar, 1, "#", true, 0x0F0E, 0, true, false );
 	if( bPotion != NULL )
 	{
 		bPotion->SetDecayable( true );
@@ -4182,17 +3351,60 @@ void cSkills::PoisoningTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void TellScroll( char *menu_name, cSocket *player, long item_param )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Function    :  void cSkills::Inscribe( cSocket *s )
+//|   Date        :  January 31, 2003
+//|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Used for inscribe itemmenu
+//|   Purpose     :  Called when a player attempts to inscribe a blank scroll
+//|					 Based upon inscribe.dfn
 //o---------------------------------------------------------------------------o
-void TellScroll( const char *menu_name, cSocket *player, long item_param )
+void cSkills::Inscribe( cSocket *s )
 {
-	Skills->Inscribe( player, item_param );
+	if( s == NULL )
+	{
+		Console.Error( 0, "cSkills::Inscribe() Invalid socket" );
+		return;
+	}
+	CChar *mChar = s->CurrcharObj();
+	CItem *packnum = getPack( mChar );
+	if( packnum == NULL )
+	{
+		sysmessage( s, 773 );
+		return;
+	}
+	
+	CItem *spellBook = FindItemOfType( mChar, 9 );
+	if( spellBook == NULL && !mChar->IsGM() )
+	{
+		sysmessage( s, 921 );
+		return;
+	}
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i == NULL )
+		return;
+	if( i->IsLockedDown() )
+	{
+		sysmessage( s, 774 );
+		return;
+	}
+	if( i->GetID() == 0x0E34 )
+	{
+		if( getPackOwner( i ) != mChar )
+		{
+			sysmessage( s, 778 );
+			return;
+		}
+		UI32 getAmt = getAmount( mChar, i->GetID() );
+		if( getAmt < 1 )
+		{
+			sysmessage( s, 776 );
+			return;
+		}
+		NewMakeMenu( s, 99, INSCRIPTION );
+	 }
 }
 
+/*
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::Inscribe( cSocket *s, long snum )
 //|   Date        :  Unknown
@@ -4324,15 +3536,13 @@ void cSkills::Inscribe( cSocket *s, long snum )
 	 inscChar->SetMaking( i->GetSerial() );  //we gotta remember what they clicked on!
 	 if( i->GetID() == 0x0E34 || ( cwmWorldState->ServerData()->GetEngraveStatus() && ( i->GetDef() || i->GetHiDamage() ) ) )
 	 {
-/* 
-		select spell gump menu system here, must return control to UOX so we dont
-		freeze the game. when returning to this routine, use snum to determine where to go
-		and snum is also the value of what they selected. 
-*/
+//		select spell gump menu system here, must return control to UOX so we dont
+//		freeze the game. when returning to this routine, use snum to determine where to go
+//		and snum is also the value of what they selected. 
 		 im_sendmenu( "InscribeMenu", s );  //this is in im.cpp file using inscribe.gmp
 	 }
 }
-
+*/
 //o---------------------------------------------------------------------------o
 //|   Function    :  bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
 //|   Date        :  Unknown
@@ -4576,7 +3786,8 @@ void cSkills::LockPick( cSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	if( i == NULL )
 		return;
-	if( i->GetType()==1 || i->GetType()==12 || i->GetType() == 63 ) 
+	UI08 iType = i->GetType();
+	if( iType == 1 || iType == 12 || iType == 63 ) 
 	{
 		sysmessage( s, 932 );
 		return;
@@ -4591,22 +3802,21 @@ void cSkills::LockPick( cSocket *s )
 		}
 		else
 		{
-			if( RandomNum( 0, 99 ) > 50 )		// chance it could break the pick
+			if( RandomNum( 0, 1 ) == 0 )		// chance it could break the pick
 			{
 				sysmessage( s, 933 );
-				ITEM mItem = s->AddMItem();
-				decItemAmount( mItem );
+				decItemAmount( s->AddMItem() );
 			}
 			else
 				sysmessage( s, 934 );
 		}
 	}
-	if(i->GetType()==8 || i->GetType()==13 || i->GetType()==64)
+	if( iType == 8 || iType == 13 || iType == 64 )
 	{
 		if( i->GetMore() == 0 ) //Make sure it isn't an item that has a key (i.e. player house, chest..etc)
 		{
 			bool canPick = false;
-			if( s->AddMItem() == INVALIDSERIAL ) 
+			if( s->AddMItem() == NULL ) 
 			{
 				if( s->CurrentSpellType() != 2 )              // not a wand cast
 				{
@@ -4625,17 +3835,17 @@ void cSkills::LockPick( cSocket *s )
 				canPick = true;
 			else
 			{
-				if( RandomNum( 0, 99 ) > 50 ) 
+				if( RandomNum( 0, 1 ) == 0 ) 
 				{
 					sysmessage( s, 933 );
-					Items->DeleItem( &items[s->AddMItem()] );
+					Items->DeleItem( s->AddMItem() );
 				} 
 				else
 					sysmessage( s, 936 );
 			}
 			if( canPick )
 			{
-				switch( i->GetType() )
+				switch( iType )
 				{
 				case 8:		i->SetType( 1 );	break;
 				case 13:	i->SetType( 12 ); break;
@@ -4685,8 +3895,7 @@ void cSkills::TDummy( cSocket *s )
 	case 2: soundeffect( s, 0x013D, true );	break;
 	default:	Console.Error( 2, " cSkills::TDummy -> Fallout of switch statement without default" );	return;
 	}            
-	SERIAL serial = (s->GetDWord( 1 ))&0x7FFFFFFF;
-	CItem *j = calcItemObjFromSer( serial );
+	CItem *j = calcItemObjFromSer( (s->GetDWord( 1 ))&0x7FFFFFFF );
 	if( j != NULL )
 	{
 		if( j->GetID( 2 ) == 0x70 ) 
@@ -4697,9 +3906,9 @@ void cSkills::TDummy( cSocket *s )
 		RefreshItem( j );
 	}
 	UI16 skillused = Combat->getCombatSkill( mChar );
-	if( mChar->GetSkill( skillused ) < 300 )
+	if( mChar->GetSkill( static_cast<UI08>(skillused )) < 300 )
 	{
-		CheckSkill( mChar, skillused, 0, 1000 );
+		CheckSkill( mChar, static_cast<UI08>(skillused), 0, 1000 );
 		if( mChar->GetSkill( TACTICS ) < 300 )
 			CheckSkill( mChar, TACTICS, 0, 250 );  //Dupois - Increase tactics but only by a fraction of the normal rate
 	}
@@ -4732,7 +3941,6 @@ void cSkills::Tinkering( cSocket *s )
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	make_st mMake = s->ItemMake();
 	if( i == NULL )
 	{
 		sysmessage( s, 942 );
@@ -4745,15 +3953,12 @@ void cSkills::Tinkering( cSocket *s )
 			sysmessage( s, 775 );
 		else
 		{
-			int getAmt = getAmount( mChar, realID );
+			UI32 getAmt = getAmount( mChar, realID );
 			if( getAmt < 2 )
 			{ 
 				sysmessage( s, 940 );
 				return;
 			}
-			mMake.has = getAmt;
-			mMake.material1 = i->GetID();
-			s->ItemMake( mMake );
 			if( realID == 0x1BDD || realID == 0x1BE0 )
 			{
 				if( getAmt < 4 )
@@ -4781,39 +3986,36 @@ void cSkills::AButte( cSocket *s, CItem *x )
 		Console.Error( 0, "cSkills::AButte() Invalid socket" );
 		return;
 	}
-	int getDist, i = 0;
-	int arrowsquant=0;
 	CChar *mChar = s->CurrcharObj();
-	UI08 type = Combat->getBowType( mChar );
+	if( mChar == NULL )
+		return;
 	
+	SI16 getDist = -1;
 	if( x->GetID( 2 ) == 0x0a )
 	{ // East Facing Butte
-		if( x->GetX() > mChar->GetX() || x->GetY() != mChar->GetY() )
-			getDist = -1;
-		else 
+		if( x->GetX() <= mChar->GetX() && x->GetY() == mChar->GetY() )
 			getDist = mChar->GetX() - x->GetX();
 	}
 	else
 	{ // South Facing Butte
-		if( x->GetY() > mChar->GetY() || x->GetX() != mChar->GetX() )
-			getDist = -1;
-		else 
+		if( x->GetY() <= mChar->GetY() && x->GetX() == mChar->GetX() )
 			getDist = mChar->GetY() - x->GetY();
 	}
 	
 	if( getDist == 1 )
 	{
+		UI08 i = 0;
 		CItem *c;
 		if( x->GetMore( 1 ) > 0 )
 		{
-			c = Items->SpawnItem( s, x->GetMore( 1 ), "#", true, 0x0F3F, 0, true, false );
+			c = Items->SpawnItem( NULL, mChar, x->GetMore( 1 ), "#", true, 0x0F3F, 0, true, false );
 			if( c == NULL ) 
 				return;
 			RefreshItem( c );
 		}
 		if( x->GetMore( 2 ) > 0 )
 		{
-			c = Items->SpawnItem( s, x->GetMore( 2 ),"#", true, 0x1BFB, 0, true, false );
+			c = Items->SpawnItem( NULL, mChar, x->GetMore( 2 ),"#", true, 0x1BFB, 0, true, false );
 			if( c == NULL ) 
 				return;
 			RefreshItem( c );
@@ -4839,7 +4041,8 @@ void cSkills::AButte( cSocket *s, CItem *x )
 	
 	if( getDist >= 5 && getDist <= 8 )
 	{
-		if( type == 0 )
+		UI08 bowType = Combat->getBowType( mChar );
+		if( bowType == 0 )
 		{
 			sysmessage( s, 947 );
 			return;
@@ -4849,16 +4052,17 @@ void cSkills::AButte( cSocket *s, CItem *x )
 			sysmessage( s, 948 );
 			return;
 		}
-		if( type == BOWS ) 
-			arrowsquant = getAmount( mChar, 0x0F3F );
+		UI32 getArrows = 0;
+		if( bowType == BOWS ) 
+			getArrows = getAmount( mChar, 0x0F3F );
 		else 
-			arrowsquant = getAmount( mChar, 0x1BFB );
-		if( arrowsquant == 0 ) 
+			getArrows = getAmount( mChar, 0x1BFB );
+		if( getArrows == 0 ) 
 		{
 			sysmessage( s, 949 );
 			return;
 		}
-		if( type == BOWS )
+		if( bowType == BOWS )
 		{
 			deleQuan( mChar, 0x0F3F, 1 );
 			x->SetMore( x->GetMore( 1 ) + 1, 1 );
@@ -4931,26 +4135,26 @@ void cSkills::TinkerAxel( cSocket *s )
 		Console.Error( 0, "cSkills::TinkerAxel() Invalid socket" );
 		return;
 	}
-	CItem *origPart = calcItemObjFromSer( s->AddID() );
-	if( origPart == NULL )
+	CChar *mChar = s->CurrcharObj();
+	CItem *skillItem = mChar->GetSkillItem();
+	mChar->SetSkillItem( NULL );
+	if( skillItem == NULL )
 	{
 		sysmessage( s, 957 );
 		return;
 	}
-
 	bool canCombine = false;
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
 	if( i != NULL )
 	{
-		if( i == origPart )
+		if( i == skillItem )
 		{
 			sysmessage( s, 958 );
 			return;
 		}
 
 		UI16 p2id = i->GetID();
-		switch( origPart->GetID() )
+		switch( skillItem->GetID() )
 		{
 		case 0x1053:
 		case 0x1054:	// gears
@@ -4963,25 +4167,24 @@ void cSkills::TinkerAxel( cSocket *s )
 				canCombine = true;
 			break;
 		default:	// shouldn't get here
-			sysmessage( s, "You shouldn't have got here cSkills::TinkerAxel()" );
+			Console.Error( 2, " cSkills::TinkerAxel -> Fallout of switch statement without default!" );
 			return;
 		}
-		if( canCombine && itemInRange( mChar, i, 3 ) )
+		if( canCombine && objInRange( mChar, i, 3 ) )
 		{
 			if( !CheckSkill( mChar, TINKERING, 0, 1000 ) )
 				sysmessage( s, 959 );
 			else
 			{
 				sysmessage( s, 960 );
-				decItemAmount( origPart );
+				decItemAmount( skillItem );
 				decItemAmount( i );
-				CItem *c = Items->SpawnItem( s, 1, Dictionary->GetEntry( 961 ), true, 0x1051, 0, true, true );
+				CItem *c = Items->SpawnItem( NULL, mChar, 1, Dictionary->GetEntry( 961 ), true, 0x1051, 0, true, true );
 				if( c == NULL ) 
 					return;
 			}
 		}
 	} 
-	mChar->SetTailItem( INVALIDSERIAL );
 	if( !canCombine ) 
 		sysmessage( s, 962 );
 }
@@ -5013,15 +4216,18 @@ void cSkills::TinkerAwg( cSocket *s )
 	if( i == NULL )
 		return;
 
-	make_st mMake = s->ItemMake();
+	CItem *skillItem = mChar->GetSkillItem();
+	mChar->SetSkillItem( NULL );
+	if( skillItem == NULL )
+		return;
 	char id2;
 	UI16 realID = i->GetID();
-	UI16 matID1 = mMake.material1;
-	if( ( realID == 0x1051 || realID == 0x1052 ) && ( matID1 == 0x105D || matID1 == 0x105E ) ||
-		( realID == 0x105D || realID == 0x105E ) && ( matID1 == 0x1051 || matID1 == 0x1052 ) )
+	UI16 matID = skillItem->GetID();
+	if( ( realID == 0x1051 || realID == 0x1052 ) && ( matID == 0x105D || matID == 0x105E ) ||
+		( realID == 0x105D || realID == 0x105E ) && ( matID == 0x1051 || matID == 0x1052 ) )
 		id2 = 0x4F;
-	else if( ( realID == 0x1051 || realID == 0x1052 ) && ( matID1 == 0x1055 || matID1 == 0x1056 ) ||
-		( realID == 0x1055 || realID == 0x1056 ) && ( matID1 == 0x1051 || matID1 == 0x1052 ) )
+	else if( ( realID == 0x1051 || realID == 0x1052 ) && ( matID == 0x1055 || matID == 0x1056 ) ||
+		( realID == 0x1055 || realID == 0x1056 ) && ( matID == 0x1051 || matID == 0x1052 ) )
 		id2 = 0x59;
 	else
 	{
@@ -5036,7 +4242,7 @@ void cSkills::TinkerAwg( cSocket *s )
 	else if( !CheckSkill( mChar, TINKERING, 0, 1000 ) )
 	{
 		sysmessage( s, 964 );
-		deleQuan( mChar, i->GetID(), 1 );
+		deleQuan( mChar, realID, 1 );
 		return;
 	}
 	else
@@ -5046,13 +4252,13 @@ void cSkills::TinkerAwg( cSocket *s )
 			strcpy( temp, Dictionary->GetEntry( 965 ) );
 		else if( id2 == 0x59 ) 
 			strcpy( temp, Dictionary->GetEntry( 966 ) );
-		CItem *c = Items->SpawnItem( s, 1, temp, false, 4096 + id2, 0, true, true );
+		CItem *c = Items->SpawnItem( s, mChar, 1, temp, false, 4096 + id2, 0, true, true );
 		if( c == NULL ) 
 			return;
 		sysmessage( s, 960 );
 	}
-	deleQuan( mChar, mMake.material1, 1 );
-	deleQuan( mChar, i->GetID(), 1 );
+	deleQuan( mChar, matID, 1 );
+	deleQuan( mChar, realID, 1 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5069,8 +4275,6 @@ void cSkills::TinkerClock( cSocket *s )
 		Console.Error( 0, "cSkills::TinkerClock() Invalid socket" );
 		return;
 	}
-	bool canCombine = false;
-
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	CChar *mChar = s->CurrcharObj();
 	if( i != NULL )
@@ -5078,7 +4282,7 @@ void cSkills::TinkerClock( cSocket *s )
 		UI16 realID = i->GetID();
 		if( realID >= 0x104D && realID <= 0x1050 )
 		{
-			if( itemInRange( mChar, i, 3 ) )
+			if( objInRange( mChar, i, 3 ) )
 			{
 				if( !CheckSkill( mChar, TINKERING, 0, 1000 ) ) 
 					sysmessage( s, 959 );
@@ -5086,18 +4290,16 @@ void cSkills::TinkerClock( cSocket *s )
 				{
 					sysmessage( s, 960 );
 					
-					CItem *c = Items->SpawnItem( s, 1, "clock", 0, 0x104B, 0, true, true );
+					CItem *c = Items->SpawnItem( s, mChar, 1, "clock", 0, 0x104B, 0, true, true );
 					if( c == NULL ) 
 						return;
 				}
 				decItemAmount( i );
-				canCombine = true;
+				return;
 			}
 		} 
 	}   
-	mChar->SetTailItem( INVALIDSERIAL );
-	if( !canCombine ) 
-		sysmessage( s, 962 );
+	sysmessage( s, 962 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5178,14 +4380,8 @@ void cSkills::Persecute( cSocket *s )
 			updateStats( targChar, 1 ); // update
 			sysmessage( s, 972 );
 			sysmessage( calcSocketObjFromChar( targChar ), 973 );
-			c->SetSkillDelay( BuildTimeValue( cwmWorldState->ServerData()->GetServerSkillDelayStatus() ) );
-			Network->PushConn();
-			for( cSocket *jSock = Network->FirstSocket(); !Network->FinishedSockets(); jSock = Network->NextSocket() )
-			{
-				if( s != jSock && charInRange( s, jSock ) )
-					npcEmote( jSock, targChar, 974, true, targChar->GetName() );
-			}
-			Network->PopConn();
+			c->SetSkillDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetServerSkillDelayStatus() )) );
+			npcEmoteAll( targChar, 974, true, targChar->GetName() );
 		}
 		else
 			sysmessage( s, 975 );
@@ -5203,10 +4399,10 @@ void cSkills::Persecute( cSocket *s )
 //o---------------------------------------------------------------------------o
 SI16 cSkills::FindOreType( UI16 colour )
 {
-	for( SI16 i = 0; i < ores.size(); i++ )
+	for( UI16 i = 0; i < ores.size(); i++ )
 	{
 		if( ores[i].colour == colour )
-			return i;
+			return static_cast<SI16>(i);
 	}
 	return -1;
 }
@@ -5235,31 +4431,23 @@ void cSkills::Smith( cSocket *s )
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	make_st mMake = s->ItemMake();
 	if( i != NULL )
 	{
 		if( i->GetID() >= 0x1BE3 && i->GetID() <= 0x1BF9 )	// is it an ingot?
 		{
 			SI16 oreType = FindOreType( i->GetColour() );
-		if( oreType == -1 )
-		{
-			mMake.material1 = 0x00;
-			sysmessage( s, 977 );
-			return;
-		}
-		mMake.material1 = i->GetID();
-		s->ItemMake( mMake );
-		if( getPackOwner( i ) != mChar )
-			sysmessage( s, 978, ores[oreType].name.c_str() );
-		else
-			AnvilTarget( s, (*i), oreType );
-		mMake.material1 = 0x00;
-		s->ItemMake( mMake );
+			if( oreType == -1 )
+			{
+				sysmessage( s, 977 );
+				return;
+			}
+			if( getPackOwner( i ) != mChar )
+				sysmessage( s, 978, ores[oreType].name.c_str() );
+			else
+				AnvilTarget( s, (*i), oreType );
 		}
 		else	// something we might repair?
-		{
 			RepairMetal( s );
-		}
 		return;
 	}
 	sysmessage( s, 979 );
@@ -5284,7 +4472,6 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, SI16 oreType )
 	int xOffset = MapRegion->GetGridX( mChar->GetX() );
 	int yOffset = MapRegion->GetGridY( mChar->GetY() );
 
-	make_st mMake = s->ItemMake();
 	UI08 worldNumber = mChar->WorldNumber();
 	for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 	{
@@ -5301,17 +4488,15 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, SI16 oreType )
 					continue;
 				if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 )
 				{
-					if( itemInRange( mChar, tempItem, 3 ) )
+					if( objInRange( mChar, tempItem, 3 ) )
 					{
-						int getAmt = getItemAmt( mChar, item.GetID(), item.GetColour() );     
+						UI32 getAmt = getItemAmt( mChar, item.GetID(), item.GetColour() );     
 						if( getAmt < ores[oreType].minAmount )
 						{ 
 							sysmessage( s, 980, ores[oreType].name.c_str() );
 							MapArea->PopItem();
 							return;
 						}
-						mMake.has = getAmt;
-						s->ItemMake( mMake );
 						NewMakeMenu( s, ores[oreType].makemenu, BLACKSMITHING );
 						mChar->SetAddPart( oreType );
 						MapArea->PopItem();
@@ -5358,7 +4543,7 @@ bool cSkills::LoadMiningData( void )
 
 	if( oreList == NULL )
 		return false;
-	std::vector< std::string > oreNameList;
+	stringList oreNameList;
 	const char *tag = NULL;
 	const char *data = NULL;
 	for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
@@ -5367,7 +4552,7 @@ bool cSkills::LoadMiningData( void )
 		return false;
 
 	ScriptSection *individualOre = NULL;
-	for( int counter = 0; counter < oreNameList.size(); counter++ )
+	for( unsigned int counter = 0; counter < oreNameList.size(); counter++ )
 	{
 		individualOre = FileLookup->FindEntry( oreNameList[counter].c_str(), skills_def );
 		if( individualOre == NULL )
@@ -5387,7 +4572,7 @@ bool cSkills::LoadMiningData( void )
 			case 'c':
 			case 'C':	
 				if( !stricmp( tag, "COLOUR" ) )
-					toAdd.colour = makeNum( data );
+					toAdd.colour = static_cast<UI16>(makeNum( data ));
 				break;
 			case 'f':
 			case 'F':
@@ -5399,9 +4584,9 @@ bool cSkills::LoadMiningData( void )
 				if( !stricmp( tag, "MAKEMENU" ) )
 					toAdd.makemenu = makeNum( data );
 				else if( !stricmp( tag, "MINAMOUNT" ) )
-					toAdd.minAmount = makeNum( data );
+					toAdd.minAmount = static_cast<UI08>(makeNum( data ));
 				else if( !stricmp( tag, "MINSKILL" ) )
-					toAdd.minSkill = makeNum( data );
+					toAdd.minSkill = static_cast<UI16>(makeNum( data ));
 				break;
 			case 'n':
 			case 'N':
@@ -5491,11 +4676,8 @@ void cSkills::SaveResources( void )
 		}
 		fclose( toWrite );
 	}
-	else
-	{
-		// Can't save resources
+	else // Can't save resources
 		Console.Error( 1, "Failed to open resource.bin for writing" );
-	}
 } 
 
 //o---------------------------------------------------------------------------o
@@ -5509,8 +4691,8 @@ void cSkills::LoadResourceData( void )
 {
 	UI32 resOre = cwmWorldState->ServerData()->GetResOre();
 	UI32 resLog = cwmWorldState->ServerData()->GetResLogs();
-	UI32 oreTime = BuildTimeValue( cwmWorldState->ServerData()->GetResOreTime() );
-	UI32 logTime = BuildTimeValue( cwmWorldState->ServerData()->GetResLogTime() );
+	UI32 oreTime = BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetResOreTime() ));
+	UI32 logTime = BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetResLogTime()) );
 	char resourceFile[MAX_PATH];
 
 	sprintf(resourceFile, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), "resource.bin");
@@ -5532,8 +4714,8 @@ void cSkills::LoadResourceData( void )
 			}
 			else
 			{
-				resources[gridX][gridY].oreAmt  = resOre;
-				resources[gridX][gridY].logAmt  = resLog;
+				resources[gridX][gridY].oreAmt  = static_cast<SI16>(resOre);
+				resources[gridX][gridY].logAmt  = static_cast<SI16>(resLog);
 			}
 			// No need to preserve time.  Do a refresh automatically
 			resources[gridX][gridY].oreTime = oreTime;
@@ -5565,7 +4747,7 @@ int cSkills::GetNumberOfOres( void )
 //o---------------------------------------------------------------------------o
 miningData *cSkills::GetOre( int number )
 {
-	if( number < 0 || number >= ores.size() )
+	if( number < 0 || number >= static_cast<int>(ores.size()) )
 		return NULL;
 	return &ores[number];
 }
@@ -5579,7 +4761,7 @@ miningData *cSkills::GetOre( int number )
 //o---------------------------------------------------------------------------o
 miningData *cSkills::GetOre( std::string name )
 {
-	for( int i = 0; i < ores.size(); i++ )
+	for( unsigned int i = 0; i < ores.size(); i++ )
 	{
 		if( ores[i].name == name )
 			return &ores[i];
@@ -5596,22 +4778,22 @@ miningData *cSkills::GetOre( std::string name )
 //o---------------------------------------------------------------------------o
 int cSkills::GetOreIndex( std::string name )
 {
-	for( int i = 0; i < ores.size(); i++ )
+	for( unsigned int i = 0; i < ores.size(); i++ )
 	{
 		if( ores[i].name == name )
-			return i;
+			return static_cast<int>(i);
 	}
 	return -1;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
+//|   Function    :  void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Spawn Ore in players pack when he successfully mines
 //o---------------------------------------------------------------------------o
-void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
+void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
 {
 	cTownRegion *targRegion = region[Region];
 	if( targRegion == NULL || actor == NULL )
@@ -5641,7 +4823,7 @@ void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
 				{
 					char temp[32];
 					sprintf( temp, "%s ore", found->name.c_str() );
-					Items->SpawnItem( s, 1, temp, true, 0x19B9, found->colour, true, true );
+					Items->SpawnItem( s, actor, 1, temp, true, 0x19B9, found->colour, true, true );
 					sysmessage( s, 982, temp );
 					oreFound = true;
 				}
@@ -5656,7 +4838,7 @@ void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
 				{
 					char temp[32];
 					sprintf( temp, "%s ore", found->name.c_str() );
-					Items->SpawnItem( s, 1, temp, true, 0x19B9, found->colour, true, true );
+					Items->SpawnItem( s, actor, 1, temp, true, 0x19B9, found->colour, true, true );
 					sysmessage( s, 982, temp );
 					oreFound = true;
 				}
@@ -5670,7 +4852,7 @@ void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
 	{
 		if( getSkill >= 850 )
 		{
-			SpawnRandomItem( s, true, "necro.scp", "ITEMLIST", "999" ); 
+			SpawnRandomItem( s, true, "ITEMLIST", "999" ); 
 			sysmessage( s, 983 );
 		}
 	}
@@ -5681,7 +4863,7 @@ void cSkills::MakeOre( int Region, CChar *actor, cSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Load Create menus from create.scp
+//|   Purpose     :  Load Create menus from the create DFNs
 //o---------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
@@ -5695,7 +4877,7 @@ void cSkills::LoadCreateMenus( void )
 	char *numStart = NULL;					// pointer to our entry number
 	UI16 ourEntry;							// our actual entry number
 	char tempID[12];
-	for( SI32 mc = 0; mc < toScan->size(); mc++ )
+	for( UI32 mc = 0; mc < toScan->size(); mc++ )
 	{
 		if( (*toScan)[mc] == NULL )
 			continue;
@@ -5707,21 +4889,21 @@ void cSkills::LoadCreateMenus( void )
 			{
 				toSearch = createScpMenu;
 				numStart = strchr( eName, ' ' );
-				ourEntry = makeNum( numStart );
+				ourEntry = static_cast<UI16>(makeNum( numStart ));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
 					data = toSearch->GrabData();
 					if( !stricmp( tag, "MENU" ) )
-						actualMenus[ourEntry].menuEntries.push_back( makeNum( data ) );
+						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(makeNum( data )) );
 					else if( !stricmp( tag, "ITEM" ) )
-						actualMenus[ourEntry].itemEntries.push_back( makeNum( data ) );
+						actualMenus[ourEntry].itemEntries.push_back(static_cast<UI16>( makeNum( data ) ));
 				}
 			}
 			else if( strstr( eName, "ITEM" ) )	// is it an item?
 			{
 				toSearch = createScpMenu;
 				numStart = strchr( eName, ' ' );
-				ourEntry = makeNum( numStart );
+				ourEntry = static_cast<UI16>(makeNum( numStart ));
 				createEntry tmpEntry;
 				tmpEntry.minRank = 0;
 				tmpEntry.maxRank = 10;
@@ -5733,21 +4915,21 @@ void cSkills::LoadCreateMenus( void )
 				{
 					data = toSearch->GrabData();
 					if( !stricmp( tag, "COLOUR" ) )
-						tmpEntry.colour = makeNum( data );
+						tmpEntry.colour = static_cast<UI16>(makeNum( data ));
 					else if( !stricmp( tag, "ID" ) )
-						tmpEntry.targID = makeNum( data );
+						tmpEntry.targID = static_cast<UI16>(makeNum( data ));
 					else if( !stricmp( tag, "MINRANK" ) )
-						tmpEntry.minRank = makeNum( data );
+						tmpEntry.minRank = static_cast<UI08>(makeNum( data ));
 					else if( !stricmp( tag, "MAXRANK" ) )
-						tmpEntry.maxRank = makeNum( data );
+						tmpEntry.maxRank = static_cast<UI08>(makeNum( data ));
 					else if( !stricmp( tag, "NAME" ) )
 						tmpEntry.name = data;
 					else if( !stricmp( tag, "SOUND" ) )
-						tmpEntry.soundPlayed = makeNum( data );
+						tmpEntry.soundPlayed = static_cast<UI16>(makeNum( data) );
 					else if( !stricmp( tag, "ADDITEM" ) )
 						tmpEntry.addItem = data;
 					else if( !stricmp( tag, "DELAY" ) )
-						tmpEntry.delay = makeNum( data );
+						tmpEntry.delay = static_cast<SI16>(makeNum( data) );
 					else if( !stricmp( tag, "RESOURCE" ) )
 					{
 						resAmountPair tmpResource;
@@ -5756,7 +4938,7 @@ void cSkills::LoadCreateMenus( void )
 						{
 							tmpResource.amountNeeded = 1;
 							tmpResource.colour = 0;
-							tmpResource.itemID = makeNum( data );
+							tmpResource.itemID = static_cast<UI16>(makeNum( data ));
 						}
 						else
 						{
@@ -5764,19 +4946,19 @@ void cSkills::LoadCreateMenus( void )
 							sndSpace = strchr( numStart + 1, ' ' );
 							if( sndSpace == NULL )
 							{
-								tmpResource.amountNeeded = makeNum( numStart );
+								tmpResource.amountNeeded = static_cast<UI08>(makeNum( numStart) );
 								tmpResource.colour = 0;
 							}
 							else
 							{
 								strncpy( tempID, numStart, (sndSpace - numStart) );
 								tempID[sndSpace-numStart] = 0;
-								tmpResource.colour = makeNum( tempID );
-								tmpResource.amountNeeded = makeNum( sndSpace );
+								tmpResource.colour = static_cast<UI16>(makeNum( tempID ));
+								tmpResource.amountNeeded = static_cast<UI08>(makeNum( sndSpace) );
 							}
 							strncpy( tempID, data, (numStart - data) );
 							tempID[numStart-data] = 0;
-							tmpResource.itemID = makeNum( tempID );
+							tmpResource.itemID = static_cast<UI16>(makeNum( tempID) );
 						}
 						tmpEntry.resourceNeeded.push_back( tmpResource );
 					}
@@ -5796,14 +4978,14 @@ void cSkills::LoadCreateMenus( void )
 							if( secondSpace == NULL )
 								tmpResource.maxSkill = 1000;
 							else
-								tmpResource.maxSkill = makeNum( secondSpace );
+								tmpResource.maxSkill = static_cast<UI16>(makeNum( secondSpace) );
 							if( secondSpace == NULL )
-								tmpResource.minSkill = makeNum( data );
+								tmpResource.minSkill = static_cast<UI16>(makeNum( data ));
 							else
 							{
 								strncpy( tempID, numStart, (secondSpace - numStart) );
 								tempID[secondSpace-numStart] = 0;
-								tmpResource.minSkill = makeNum( tempID );
+								tmpResource.minSkill = static_cast<UI16>(makeNum( tempID ));
 							}
 
 						}
@@ -5817,6 +4999,8 @@ void cSkills::LoadCreateMenus( void )
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
+					else if( !stricmp( tag, "SPELL" ) )
+						tmpEntry.spell = static_cast<UI16>(makeNum( data ));
 					itemsForMenus[ourEntry] = tmpEntry;
 				}
 			}
@@ -5824,18 +5008,18 @@ void cSkills::LoadCreateMenus( void )
 			{
 				toSearch = createScpMenu;
 				numStart = strchr( eName, ' ' );
-				ourEntry = makeNum( numStart );
+				ourEntry = static_cast<UI16>(makeNum( numStart ));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
 					data = toSearch->GrabData();
 					if( !stricmp( "ID", tag ) )
-						skillMenus[ourEntry].targID = makeNum( data );
+						skillMenus[ourEntry].targID = static_cast<UI16>(makeNum( data ));
 					else if( !stricmp( "COLOUR", tag ) )
-						skillMenus[ourEntry].colour = makeNum( data );
+						skillMenus[ourEntry].colour = static_cast<UI16>(makeNum( data ));
 					else if( !stricmp( "NAME", tag ) )
 						skillMenus[ourEntry].name = data;
 					else if( !stricmp( "SUBMENU", tag ) )
-						skillMenus[ourEntry].subMenu = makeNum( data );
+						skillMenus[ourEntry].subMenu = static_cast<UI16>(makeNum( data ));
 				}
 			}
 		}
@@ -5843,13 +5027,13 @@ void cSkills::LoadCreateMenus( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::AdvanceSkill( CChar *s, int sk, bool skillUsed )
+//|   Function    :  bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Advance players skill based on success or failure in CheckSkill()
 //o---------------------------------------------------------------------------o
-bool cSkills::AdvanceSkill( CChar *s, int sk, bool skillUsed )
+bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 {
 	bool advSkill = false;
 	SI16 skillGain;
@@ -5879,16 +5063,16 @@ bool cSkills::AdvanceSkill( CChar *s, int sk, bool skillUsed )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SI08 cSkills::FindSkillPoint( int sk, int value )
+//|   Function    :  SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Unknown
 //o---------------------------------------------------------------------------o
-SI08 cSkills::FindSkillPoint( int sk, int value )
+SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 {
 	SI08 retVal = -1;
-	for( int iCounter = 0; iCounter < skill[sk].advancement.size() - 1; iCounter++ )
+	for( unsigned int iCounter = 0; iCounter < skill[sk].advancement.size() - 1; iCounter++ )
 	{
 		if( skill[sk].advancement[iCounter].base <= value && value < skill[sk].advancement[iCounter+1].base )
 		{
@@ -5917,7 +5101,8 @@ void cSkills::AdvanceStats( CChar *s, int sk, bool skillsuccess )
 		pRace = Races->Race( 0 );
 	
     bool IsPlayer = ( !s->IsNpc() && s->GetCommandLevel() < CNSCMDLEVEL ); 
-	if ( !IsPlayer ) return;
+	if( !IsPlayer ) 
+		return;
 	
     //make sure socket is no npc nor counsi/gm
     bool update = false;
@@ -5926,7 +5111,6 @@ void cSkills::AdvanceStats( CChar *s, int sk, bool skillsuccess )
     UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence(); 
     SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100 
     int StatCount, nCount; 
-    int u = 0;
 	int maxChance = 1000;
     SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() }; 
     UI16 StatModifier[3] = { skill[sk].strength , skill[sk].dexterity , skill[sk].intelligence }; 
@@ -6003,7 +5187,7 @@ void cSkills::AdvanceStats( CChar *s, int sk, bool skillsuccess )
 	ALSO this prevents char's stats from FREEZEING when they reach the cap*/
 	
 	//k will only take away from other stats if within 10 of the server stat cap
-	if( ttlStats >= RandomNum( ServStatCap-10, ServStatCap ) )
+	if( static_cast<int>(ttlStats) >= RandomNum( ServStatCap-10, ServStatCap ) )
 	{
 		UI08 skillDrop = 0;
 		
@@ -6116,25 +5300,81 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 	std::map< UI16, createMenu >::iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
 		return;
+#pragma note( "Param Warning: in cSkills::NewMakeMenu(), background is unrefrenced" )
+	UI16 background = cwmWorldState->ServerData()->GetBackgroundPic();
+	UI16 btnCancel	= cwmWorldState->ServerData()->GetButtonCancel();
+	UI16 btnLeft	= cwmWorldState->ServerData()->GetButtonLeft();
+	UI16 btnRight	= cwmWorldState->ServerData()->GetButtonRight();
+
+	SEGump *toAdd	= new SEGump;
+	toAdd->one		= new stringList;
+	toAdd->two		= new stringList;
+	toAdd->TextID	= 0;
+	char tempString[128];
 
 	createMenu ourMenu = p->second;
+
+	ScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
+	if( GumpHeader == NULL )
+	{
+		toAdd->one->push_back( "noclose" );
+		sprintf( tempString, "resizepic 0 0 %i 400 320", cwmWorldState->ServerData()->GetBackgroundPic() );
+		toAdd->one->push_back( tempString );
+		toAdd->one->push_back( "page 0" );
+		toAdd->one->push_back( "text 200 20 0 0" );
+		toAdd->two->push_back( "Create menu" );
+		toAdd->TextID++;
+		sprintf( tempString, "button 40 300 %i %i 1 0 1", btnCancel, btnCancel + 1 );
+		toAdd->one->push_back( tempString );
+	}
+	else
+	{
+		const char *tag, *data;
+		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
+		{
+			data = GumpHeader->GrabData();
+			if( !strcmp( tag, "BUTTONLEFT" ) )
+				btnLeft = static_cast<UI16>(makeNum( data) );
+			else if( !strcmp( tag, "BUTTONRIGHT" ) )
+				btnRight = static_cast<UI16>(makeNum( data ));
+			else if( !strcmp( tag, "BUTTONCANCEL" ) )
+				btnCancel = static_cast<UI16>(makeNum( data ));
+			else
+			{
+				std::string built = tag;
+				if( data != NULL && data[0] != 0 )
+				{
+					built += " ";
+					built += data;
+				}
+				toAdd->one->push_back( built.c_str() );
+			}
+		}
+		ScriptSection *GumpText = FileLookup->FindEntry( "ADDMENU TEXT", misc_def );
+		if( GumpText != NULL )
+		{
+			for( tag = GumpText->First(); !GumpText->AtEnd(); tag = GumpText->Next() )
+			{
+				data = GumpText->GrabData();
+				std::string built = tag;
+				if( data != NULL && data[0] != 0 )
+				{
+					built += " ";
+					built += data;
+				}
+				toAdd->two->push_back( built.c_str() );
+				toAdd->TextID++;
+			}
+		}
+	}
+
 	int iCounter;
-	stringList one, two;	
-	char tempString[128];
-	one.push_back( "noclose" );
-	sprintf( tempString, "resizepic 0 0 %i 400 320", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( tempString );
-	one.push_back( "page 0" );
-	one.push_back( "text 200 20 0 0" );
-	two.push_back( "Create menu" );
-	sprintf( tempString, "button 40 300 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1 );
-	one.push_back( tempString );
 	UI16 xLoc = 60, yLoc = 40;
 	std::map< UI16, createEntry >::iterator iIter;
 	std::map< UI16, createMenuEntry >::iterator iMenuIter;
 	int actualItems = 0;
-	int textCounter = 1;
-	for( iCounter = 0; iCounter < ourMenu.itemEntries.size(); iCounter++ )
+	int textCounter = toAdd->TextID;
+	for( iCounter = 0; static_cast<unsigned int>(iCounter )< ourMenu.itemEntries.size(); iCounter++ )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
 		{
@@ -6146,32 +5386,46 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 		{
 			createEntry iItem = iIter->second;
 			bool canMake = true;
-			for( int sCounter = 0; sCounter < iItem.skillReqs.size() && canMake; sCounter++ )
+			for( unsigned int sCounter = 0; sCounter < iItem.skillReqs.size() && canMake; sCounter++ )
 			{
 				UI08 skillNum = iItem.skillReqs[sCounter].skillNumber;
 				int ourSkill = ourChar->GetSkill( skillNum );
 				int minSkill = iItem.skillReqs[sCounter].minSkill;
+				#pragma note( "Param Warning: in cSkills::NewMakeMenu(), maxSkill is unrefrenced" )
 				int maxSkill = iItem.skillReqs[sCounter].maxSkill;
 				//canMake = ( ourSkill >= minSkill && ourSkill <= maxSkill * 1.5 );
 				canMake = ( ourSkill >= minSkill );
 				// it was not thought that way, its not logical, maxSkill should say, that you can get maxRank with maxSkill and higher
 			}
+			if( iItem.spell ) // Should only display the spell if character has a spellbook and the spell in his book - Zane
+			{
+				CItem *spellBook = FindItemOfType( ourChar, 9 );
+				if( spellBook == NULL )
+					canMake = false;
+				else
+				{
+					unsigned getCir = (int)( iItem.spell * .1 );
+					unsigned getSpell = iItem.spell - ( getCir * 10 ) + 1;
+					if( !Magic->CheckBook( getCir, getSpell - 1, spellBook ) )
+						canMake = false;
+				}
+			}
 			if( canMake )
 			{
-				sprintf( tempString, "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, 10 + iCounter );
-				one.push_back( tempString );
+				sprintf( tempString, "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 10 + iCounter );
+				toAdd->one->push_back( tempString );
 				sprintf( tempString, "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID );
-				one.push_back( tempString );
+				toAdd->one->push_back( tempString );
 				sprintf( tempString, "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
-				one.push_back( tempString );
-				two.push_back( iItem.name );
+				toAdd->one->push_back( tempString );
+				toAdd->two->push_back( iItem.name );
 				yLoc += 40;
 				actualItems++;
 			}
 		}
 	}
 
-	for( iCounter = 0; iCounter < ourMenu.menuEntries.size(); iCounter++ )
+	for( iCounter = 0; static_cast<unsigned int>(iCounter )< ourMenu.menuEntries.size(); iCounter++ )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
 		{
@@ -6182,18 +5436,21 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 		if( iMenuIter != skillMenus.end() )
 		{
 			createMenuEntry iMenu = iMenuIter->second;
-			sprintf( tempString, "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, 100 + iCounter );
-			one.push_back( tempString );
+			sprintf( tempString, "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 100 + iCounter );
+			toAdd->one->push_back( tempString );
 			sprintf( tempString, "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID );
-			one.push_back( tempString );
+			toAdd->one->push_back( tempString );
 			sprintf( tempString, "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
-			one.push_back( tempString );
-			two.push_back( iMenu.name );
+			toAdd->one->push_back( tempString );
+			toAdd->two->push_back( iMenu.name );
 			yLoc += 40;
 			actualItems++;
 		}
 	}
-	SendVecsAsGump( s, one, two, 12, INVALIDSERIAL );
+	SendVecsAsGump( s, *(toAdd->one), *(toAdd->two), 12, INVALIDSERIAL );
+	delete toAdd->one;
+	delete toAdd->two;
+	delete toAdd;
 }
 
 //o---------------------------------------------------------------------------o
@@ -6265,7 +5522,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 	// we need to check ALL skills, even if the first one fails
 	if( player->GetCommandLevel() < CNSCMDLEVEL )
 	{
-		for( int sCounter = 0; sCounter < toMake.skillReqs.size(); sCounter++ )
+		for( unsigned int sCounter = 0; sCounter < toMake.skillReqs.size(); sCounter++ )
 		{
 			if( !CheckSkill( player, toMake.skillReqs[sCounter].skillNumber, toMake.skillReqs[sCounter].minSkill, toMake.skillReqs[sCounter].maxSkill ) )
 				canMake = false;
@@ -6278,7 +5535,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 	if( !canMake )
 	{
 		// delete anywhere up to half of the resources needed
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); resCounter++ )
+		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.resourceNeeded.size(); resCounter++ )
 		{
 			toDelete = RandomNum( 0, toMake.resourceNeeded[resCounter].amountNeeded / 2 );
 			targColour = toMake.resourceNeeded[resCounter].colour;
@@ -6291,7 +5548,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 	else
 	{
 		bool canDelete = true;
-		for( resCounter = 0; resCounter < toMake.skillReqs.size(); resCounter++ )
+		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.skillReqs.size(); resCounter++ )
 		{
 			if( player->SkillUsed( toMake.skillReqs[resCounter].skillNumber ) )
 			{
@@ -6299,7 +5556,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 				return;
 			}
 		}
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); resCounter++ )
+		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.resourceNeeded.size(); resCounter++ )
 		{
 			toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
 			targColour = toMake.resourceNeeded[resCounter].colour;
@@ -6313,14 +5570,14 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 			return;
 		}
 		// Delete our resources up front
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); resCounter++ )
+		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.resourceNeeded.size(); resCounter++ )
 		{
 			toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
 			targColour = toMake.resourceNeeded[resCounter].colour;
 			targID = toMake.resourceNeeded[resCounter].itemID;
 			deleItemAmt( player, targID, targColour, toDelete );
 		}
-		for( resCounter = 0; resCounter < toMake.skillReqs.size(); resCounter++ )
+		for( resCounter = 0; static_cast<unsigned int>(resCounter) < toMake.skillReqs.size(); resCounter++ )
 			player->SkillUsed( true, toMake.skillReqs[resCounter].skillNumber );
 		tempeffect( player, player, 41, toMake.delay, itemEntry, 0 );
 		if( toMake.delay > 300 )
@@ -6530,16 +5787,15 @@ void cSkills::RepairBow( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Snooping( cSocket *s, CChar *target, SERIAL serial )
+//|   Function    :  void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player snoops another PC/NPC's or a tamed animals pack
 //o---------------------------------------------------------------------------o
-void cSkills::Snooping( cSocket *s, CChar *target, SERIAL serial ) 
+void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack ) 
 {
 	CChar *mChar = s->CurrcharObj();
-	char temp[64];
 
 	cSocket *tSock = calcSocketObjFromChar( target );
 
@@ -6552,7 +5808,7 @@ void cSkills::Snooping( cSocket *s, CChar *target, SERIAL serial )
 	
 	if( CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
-		openPack( s, serial );
+		openPack( s, pack );
 		sysmessage( s, 993 );
 		cScript *successSnoop = Trigger->GetScript( target->GetScriptTrigger() );
 		if( successSnoop != NULL )
@@ -6572,11 +5828,10 @@ void cSkills::Snooping( cSocket *s, CChar *target, SERIAL serial )
 			{
 				if( isHuman( target ) )
 				{
-					strcpy( temp, Dictionary->GetEntry( 994 + RandomNum( 0, 2 ) ) );
-					npcTalk( s, target, temp, false );
+					npcTalk( s, target, 994 + RandomNum( 0, 2 ), false );
 					if( cwmWorldState->ServerData()->GetSnoopIsCrime() )
 					{
-						if( RandomNum( 0, 100 ) < 50 && mChar->IsCriminal() )	//	50% chance of calling guards, on second time
+						if( RandomNum( 0, 1 ) == 1 && mChar->IsCriminal() )	//	50% chance of calling guards, on second time
 							callGuards( target, mChar );
 					}
 				}

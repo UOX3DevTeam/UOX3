@@ -15,8 +15,8 @@ typedef UI32 vIterator;
 class SubRegion
 {
 protected:
-	std::vector< CChar *> charData;
-	std::vector< CItem *> itemData;
+	CHARLIST charData;
+	ITEMLIST itemData;
 	std::vector< vIterator > charIteratorBackup;
 	std::vector< vIterator > itemIteratorBackup;
 

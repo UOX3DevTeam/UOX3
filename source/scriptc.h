@@ -10,7 +10,7 @@ class Script
 {
 public:
 	long lastModTime;
-	Script( const std::string _filename, DefinitionCategories d, bool disp = true );
+	Script( const std::string _filename, DEFINITIONCATEGORIES d, bool disp = true );
 	virtual	~Script();
 
 	ScriptSection * FindEntry( const std::string section );
@@ -32,5 +32,5 @@ private:
   time_t last_modification;
   std::string filename;
 	bool errorState;
-	DefinitionCategories	dfnCat;
+	DEFINITIONCATEGORIES	dfnCat;
 };

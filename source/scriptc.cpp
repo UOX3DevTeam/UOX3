@@ -14,7 +14,6 @@
 #include <string>
 #include <errno.h>
 #include "uox3.h"
-#include "debug.h"
 #include <assert.h>
 #include "ssection.h"
 
@@ -103,7 +102,7 @@ void Script::reload( bool disp )
 //|	Purpose			-	Builds the script, reading in the information from
 //|						the script file.
 //o--------------------------------------------------------------------------
-Script::Script( const std::string _filename, DefinitionCategories d, bool disp ) : errorState( false ), dfnCat( d )
+Script::Script( const std::string _filename, DEFINITIONCATEGORIES d, bool disp ) : errorState( false ), dfnCat( d )
 {
 	filename = _filename;
   if( !get_modification_date( filename.c_str(), &last_modification ) ) 

@@ -5,10 +5,6 @@
 //| Script Section class implementation
 //o---------------------------------------------------------------------------o
 
-#pragma warning( disable : 4097 )
-#pragma warning( disable : 4100 )	// unreferenced formal parameter
-#pragma warning( disable : 4201 )	// nameless struct/union
-#pragma warning( disable : 4503 )
 #pragma warning( disable : 4511 )	// copy constructor could not be generated
 #pragma warning( disable : 4512 )	// assignment operator could not be generated
 #pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
@@ -225,14 +221,20 @@ private:
 	SI08					fileType;
 	FILE *					dataFile;
 	SI16					currentPos, currentPos2;
-	DefinitionCategories	dfnCat;
+	DEFINITIONCATEGORIES	dfnCat;
 
 	void					GrabLine( char *temp ); 
 	void					ParseLine( char *scp1, char *scp2 ); 
+	
+	bool					npcList;
+	bool					itemList;
+
+	const char		*npcListData;
+	const char		*itemListData;
 
 public:
 							ScriptSection( void );
-							ScriptSection( FILE *targFile, DefinitionCategories d );
+							ScriptSection( FILE *targFile, DEFINITIONCATEGORIES d );
 	bool					GrabFromFile( void );
 	virtual					~ScriptSection();
 	const char *			First( void );
@@ -251,6 +253,11 @@ public:
 	bool					CloseFile( void );
 	void					Remove( UI16 position );
 	void					Append( const char *tag, const char *data );
+	//
+	bool					ItemListExist(void) const;
+	bool					NpcListExist(void) const;
+	const char *	ItemListData(void) const;
+	const char *	NpcListData(void) const;
 };
 
 #endif

@@ -347,7 +347,7 @@ public:
 	{
 		if( speaker == INVALIDSERIAL )
 			return SPK_SYSTEM;
-		else if( speaker < 0x40000000 )
+		else if( speaker < BASEITEMSERIAL )
 			return SPK_CHARACTER;
 		else
 			return SPK_ITEM;

@@ -1,17 +1,17 @@
 #include "uox3.h"
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI16 getAmount( CChar *s, UI16 realID )
+//|	Function	-	UI32 getAmount( CChar *s, UI16 realID )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item on a character
 //o---------------------------------------------------------------------------o
-UI16 getAmount( CChar *s, UI16 realID )
+UI32 GetAmount( CChar *s, UI16 realID )
 {
 	CItem *p = getPack( s );
 	if( p == NULL ) 
 		return 0;
-	SI32 total = 0;
+	UI32 total = 0;
 	
 	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
@@ -20,21 +20,21 @@ UI16 getAmount( CChar *s, UI16 realID )
 			if( i->GetID() == realID )
 				total += i->GetAmount();
 			if( i->GetType() == 1 || i->GetType() == 8 ) 
-				total += getSubAmount( i, realID );
+				total += GetSubAmount( i, realID );
 		}
 	}
 	return total;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 getSubAmount( CItem *p, UI16 realID )
+//|	Function	-	UI32 getSubAmount( CItem *p, UI16 realID )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o---------------------------------------------------------------------------o
-SI32 getSubAmount( CItem *p, UI16 realID )
+UI32 GetSubAmount( CItem *p, UI16 realID )
 {
-	SI32 total = 0;
+	UI32 total = 0;
 	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
 		if( i != NULL )
@@ -42,19 +42,19 @@ SI32 getSubAmount( CItem *p, UI16 realID )
 			if( i->GetID() == realID )
 				total += i->GetAmount();
 			if( i->GetType() == 1 || i->GetType() == 8 ) 
-				total += getSubAmount(i, realID );
+				total += GetSubAmount(i, realID );
 		}
 	}
 	return total;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 deleQuan( CChar *s, UI16 realID, SI32 amount )
+//|	Function	-	UI32 deleQuan( CChar *s, UI16 realID, UI32 amount )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Delete specified amount of a certain item on a character
 //o---------------------------------------------------------------------------o
-SI32 deleQuan( CChar *s, UI16 realID, SI32 amount )
+UI32 DeleteQuantity( CChar *s, UI16 realID, UI32 amount )
 {
 	if( s == NULL )
 		return 0;
@@ -66,7 +66,7 @@ SI32 deleQuan( CChar *s, UI16 realID, SI32 amount )
 		if( i != NULL )
 		{
 			if( i->GetType() == 1 )
-				amount -= deleSubQuan( i, realID, amount );
+				amount -= DeleteSubQuantity( i, realID, amount );
 			if( i->GetID() == realID )
 			{
 				if( i->GetAmount() <= amount )
@@ -76,7 +76,7 @@ SI32 deleQuan( CChar *s, UI16 realID, SI32 amount )
 				}
 				else
 				{
-					decItemAmount( i, amount );
+					DecreaseItemAmount( i, amount );
 					amount = 0;
 				}
 			}
@@ -88,21 +88,21 @@ SI32 deleQuan( CChar *s, UI16 realID, SI32 amount )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 deleSubQuan( CItem *p, UI16 realID, SI32 amount )
+//|	Function	-	UI32 deleSubQuan( CItem *p, UI16 realID, UI32 amount )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Delete specified amount of a certain item in a pack
 //o---------------------------------------------------------------------------o
-SI32 deleSubQuan( CItem *p, UI16 realID, SI32 amount )
+UI32 DeleteSubQuantity( CItem *p, UI16 realID, UI32 amount )
 {
-	SI32 k, totaldel = 0;
+	UI32 k, totaldel = 0;
 	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
 		if( i != NULL )
 		{
 			if( i->GetType() == 1 )
 			{
-				k = deleSubQuan( i, realID, amount );
+				k = DeleteSubQuantity( i, realID, amount );
 				amount -= k;
 				totaldel += k;
 			}
@@ -116,7 +116,7 @@ SI32 deleSubQuan( CItem *p, UI16 realID, SI32 amount )
 				}
 				else
 				{
-					decItemAmount( i, amount );
+					DecreaseItemAmount( i, amount );
 					totaldel += amount;
 					amount = 0;
 				}
@@ -129,7 +129,7 @@ SI32 deleSubQuan( CItem *p, UI16 realID, SI32 amount )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          SI32 getBankCount( CHARACTER p, UI16 itemID, UI16 colour = 0x0000 )
+//|     Class         :          UI32 getBankCount( CHARACTER p, UI16 itemID, UI16 colour = 0x0000 )
 //|     Date          :          October 23rd, 2000
 //|     Programmer    :          Abaddon
 //o---------------------------------------------------------------------------o
@@ -137,12 +137,12 @@ SI32 deleSubQuan( CItem *p, UI16 realID, SI32 amount )
 //|                              of items with a specific ID and colour
 //|                              
 //o---------------------------------------------------------------------------o
-SI32 getBankCount( CChar *p, UI16 itemID, UI16 colour )
+UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 {
 	// colour not used yet
 	if( p == NULL )
 		return 0;
-	SI32 goldCount = 0;
+	UI32 goldCount = 0;
 	ITEMLIST *ownedItems = p->GetOwnedItems();
 	for( ITEM ci = 0; ci < ownedItems->size(); ci++ )
 	{
@@ -150,14 +150,14 @@ SI32 getBankCount( CChar *p, UI16 itemID, UI16 colour )
 		if( oItem != NULL )
 		{
 			if( oItem->GetType() == 1 && oItem->GetMoreX() == 1 )
-				goldCount += getSubAmount( oItem, itemID );
+				goldCount += GetSubAmount( oItem, itemID );
 		}
 	}
 	return goldCount;
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :         SI32 deleBankItem( CHARACTER p, UI16 itemID, UI16 colour, SI32 amt )
+//|     Class         :         UI32 delBankItem( CHARACTER p, UI16 itemID, UI16 colour, UI32 amt )
 //|     Date          :         October 23rd, 2000
 //|     Programmer    :         Abaddon
 //o---------------------------------------------------------------------------o
@@ -165,7 +165,7 @@ SI32 getBankCount( CChar *p, UI16 itemID, UI16 colour )
 //|                             certain amount of a certain item
 //|								Returns how many left over
 //o---------------------------------------------------------------------------o
-SI32 deleBankItem( CChar *p, UI16 itemID, UI16 colour, SI32 amt )
+UI32 DeleteBankItem( CChar *p, UI16 itemID, UI16 colour, UI32 amt )
 {
 	if( p == NULL )
 		return amt;
@@ -177,7 +177,7 @@ SI32 deleBankItem( CChar *p, UI16 itemID, UI16 colour, SI32 amt )
 		{
 			if( oItem->GetType() == 1 && oItem->GetMoreX() == 1 )
 			{
-				amt -= deleSubItemAmt( oItem, itemID, colour, amt );
+				amt -= DeleteSubItemAmount( oItem, itemID, colour, amt );
 				if( amt == 0 )
 					return 0;
 			}
@@ -192,7 +192,7 @@ SI32 deleBankItem( CChar *p, UI16 itemID, UI16 colour, SI32 amt )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remove all items of specific ID from player
 //o---------------------------------------------------------------------------o
-SI16 deleteItemsFromChar( CChar *toFind, UI16 itemID )
+SI16 DeleteItemsFromChar( CChar *toFind, UI16 itemID )
 {
 	if( toFind == NULL )
 		return 0;
@@ -208,7 +208,7 @@ SI16 deleteItemsFromChar( CChar *toFind, UI16 itemID )
 			}
 			else if( item->GetLayer() == 0x15 )
 			{
-				SI16 tempDelete = deleteItemsFromPack( item, itemID );
+				SI16 tempDelete = DeleteItemsFromPack( item, itemID );
 				deleteCount += tempDelete;
 			}
 		}
@@ -222,7 +222,7 @@ SI16 deleteItemsFromChar( CChar *toFind, UI16 itemID )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remove all items of specific ID from pack
 //o---------------------------------------------------------------------------o
-SI16 deleteItemsFromPack( CItem *item, UI16 itemID )
+SI16 DeleteItemsFromPack( CItem *item, UI16 itemID )
 {
 	if( item == NULL )
 		return 0;
@@ -238,7 +238,7 @@ SI16 deleteItemsFromPack( CItem *item, UI16 itemID )
 			}
 			else if( itemToFind->GetType() == 1 || itemToFind->GetType() == 8 )	// search any subpacks, specifically pack and locked containers
 			{
-				SI16 tempDelete = deleteItemsFromPack( itemToFind, itemID );
+				SI16 tempDelete = DeleteItemsFromPack( itemToFind, itemID );
 				deleteCount += tempDelete;
 			}
 		}
@@ -247,20 +247,20 @@ SI16 deleteItemsFromPack( CItem *item, UI16 itemID )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SI32 getItemAmt( CChar *s, UI16 realID, UI16 realColour )
+//|   Function    :  UI32 getItemAmt( CChar *s, UI16 realID, UI16 realColour )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Get the amount of an item of specified color on a character
 //o---------------------------------------------------------------------------o
-SI32 getItemAmt( CChar *s, UI16 realID, UI16 realColour )
+UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
 {
 	if( s == NULL )
 		return 0;
 	CItem *p = getPack( s );
 	if( p == NULL ) 
 		return 0;
-	SI32 total = 0;
+	UI32 total = 0;
 	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
 		if( i != NULL )
@@ -268,26 +268,26 @@ SI32 getItemAmt( CChar *s, UI16 realID, UI16 realColour )
 			if( i->GetID() == realID && i->GetColour() == realColour )
 				total += i->GetAmount();
 			if( i->GetType() == 1 )	// more types than this around!
-				total += getSubItemAmt( i, realID, realColour );
+				total += GetSubItemAmount( i, realID, realColour );
 		}
 	}
 	return total;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
+//|   Function    :  UI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Get the amount of an item of specified color in a pack
 //o---------------------------------------------------------------------------o
-SI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
+UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 {
 	if( p == NULL )
 		return 0;
 
 	CItem *i;
-	SI32 total = 0;
+	UI32 total = 0;
 	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
 		if( i != NULL )
@@ -295,14 +295,14 @@ SI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
 			if( i->GetID() == realID && i->GetColour() == realColour )
 				total += i->GetAmount();
 			if( i->GetType() == 1 ) 
-				total += getSubItemAmt( i, realID, realColour );
+				total += GetSubItemAmount( i, realID, realColour );
 		}
 	}
 	return total;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void DeleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
+//|   Function    :  UI32 DeleItemAmt( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -313,7 +313,7 @@ SI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
 //|									
 //|	Modification	-	09/25/2002	-	Brakhtus - Weight Fixes
 //o---------------------------------------------------------------------------o
-SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
+UI32 DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
 {
 	if( s == NULL )
 		return 0;
@@ -321,8 +321,8 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 	if( p == NULL ) 
 		return 0;
 
-	SI32 total = amount;
-	SI32 amtDeleted = 0;
+	UI32 total = amount;
+	UI32 amtDeleted = 0, deld;
 	CItem *i;
 	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
 	{
@@ -331,8 +331,7 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 			if( i->GetType() == 1 )	// Is item an pack or contaier ?
 			{
 				Weight->SubtractItemWeight(i,s);
-				SI32 deld;
-				deld = deleSubItemAmt( i, realID, realColour, amount );
+				deld = DeleteSubItemAmount( i, realID, realColour, amount );
 				if(i)
 					Weight->AddItemWeight(i,s);
 				total -= deld;
@@ -350,7 +349,7 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 				else
 				{
 					Weight->SubtractItemWeight(i,s);
-					decItemAmount( i, total );
+					DecreaseItemAmount( i, total );
 					if(i)
 						Weight->AddItemWeight(i,s);
 					total = 0;
@@ -365,17 +364,17 @@ SI32 deleItemAmt( CChar *s, UI16 realID, UI16 realColour, SI32 amount )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount )
+//|   Function    :  UI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, UI32 amount )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Remove a certain amount of an item of specified color in a pack
 //o---------------------------------------------------------------------------o
-SI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount )
+UI32 DeleteSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 amount )
 {
 	if( p == NULL )
 		return 0;
-	SI32 totaldel = 0, k;
+	UI32 totaldel = 0, k;
 	SI32 total = amount;
 	CItem *i;
 	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
@@ -384,7 +383,7 @@ SI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount )
 		{
 			if( i->GetType() == 1 )
 			{
-				k = deleSubItemAmt( i, realID, realColour, total );
+				k = DeleteSubItemAmount( i, realID, realColour, total );
 				total -= k;
 				totaldel += k;
 			}
@@ -398,7 +397,7 @@ SI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount )
 				}
 				else
 				{
-					decItemAmount( i, total );
+					DecreaseItemAmount( i, total );
 					totaldel += total;
 					total = 0;
 				}
@@ -410,7 +409,7 @@ SI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, SI32 amount )
 	return totaldel;
 }
 
-ITEM decItemAmount( ITEM toDelete, SI32 amt )
+ITEM DecreaseItemAmount( ITEM toDelete, UI16 amt )
 {
 	if( items[toDelete].GetAmount() > 1 )
 	{
@@ -431,7 +430,7 @@ ITEM decItemAmount( ITEM toDelete, SI32 amt )
 	return toDelete;
 }
 
-CItem *decItemAmount( CItem *toDelete, SI32 amt )
+CItem *DecreaseItemAmount( CItem *toDelete, UI16 amt )
 {
 	if( toDelete == NULL )
 		return NULL;

@@ -281,10 +281,10 @@ bool SubRegion::RemoveItem( CItem *toRemove )
 	{
 		if( itemData[p] == toRemove )
 		{
-			for( int r = p; r < itemData.size() - 1; r++ )
+			for( unsigned int r = p; r < itemData.size() - 1; r++ )
 				itemData[r] = itemData[r+1];
 			itemData.resize( itemData.size() - 1 );
-			for( int q = 0; q < itemIteratorBackup.size(); q++ )
+			for( unsigned int q = 0; q < itemIteratorBackup.size(); q++ )
 			{
 				if( itemIteratorBackup[q] >= p )
 					itemIteratorBackup[q]--;
@@ -309,10 +309,10 @@ bool SubRegion::RemoveChar( CChar *toRemove )
 	{
 		if( charData[p] == toRemove )
 		{
-			for( int r = p; r < charData.size() - 1; r++ )
+			for( unsigned int r = p; r < charData.size() - 1; r++ )
 				charData[r] = charData[r+1];
 			charData.resize( charData.size() - 1 );
-			for( int q = 0; q < charIteratorBackup.size(); q++ )
+			for( unsigned int q = 0; q < charIteratorBackup.size(); q++ )
 			{
 				if( charIteratorBackup[q] >= p )
 					charIteratorBackup[q]--;
@@ -350,17 +350,14 @@ void SubRegion::SaveToDisk( std::ofstream& writeDestination, SI32 mode, std::ofs
 	// Let's start by writing out our characters
 	for( CChar *charToWrite = FirstChar(); !FinishedChars(); charToWrite = GetNextChar() )
 	{
-
-		   //if( !charToWrite->IsNpc() && charToWrite->GetAccount() != -1 ) {
-           #pragma note( "PlayerHTML Dumping needs to be reimplemented" )
-			//DumpPlayerHTML( charToWrite );
-
-  	       if ( charToWrite->ShouldSave() ) {
-		      //Console << "Saving char " << charToWrite->GetName() << myendl;
-			  charToWrite->Save( writeDestination, mode );
-		   }
-
-		//}
+		//if( !charToWrite->IsNpc() && charToWrite->GetAccount() != -1 ) {
+    #pragma note( "PlayerHTML Dumping needs to be reimplemented" )
+		//DumpPlayerHTML( charToWrite );
+    if ( charToWrite->ShouldSave() ) 
+		{
+			//Console << "Saving char " << charToWrite->GetName() << myendl;
+			charToWrite->Save( writeDestination, mode );
+		}
 	}
 	
 	for( CItem *itemToWrite = FirstItem(); !FinishedItems(); itemToWrite = GetNextItem() )
@@ -468,7 +465,7 @@ cMapRegion::~cMapRegion()
 SubRegion *cMapRegion::GetCell( SI16 x, SI16 y, UI08 worldNumber )
 {
 	UI32 targX = GetGridX( x ), targY = GetGridY( y );
-	if( worldNumber >= NumberOfWorlds || targX < 0 || targY < 0 || targX >= upperArrayX[worldNumber] || targY >= upperArrayY[worldNumber] )
+	if( static_cast<SI16>(worldNumber) >= NumberOfWorlds || targX < 0 || targY < 0 || static_cast<SI16>(targX) >= upperArrayX[worldNumber] || static_cast<SI16>(targY) >= upperArrayY[worldNumber] )
 		return &overFlow;
 	return &internalRegions[targX][targY][worldNumber];
 }
