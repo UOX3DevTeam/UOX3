@@ -166,7 +166,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib js32.lib"
 				OutputFile="Debug/UOX3.exe"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="JavaScript/,JavaScript"
 				GenerateDebugInformation="TRUE"
@@ -2362,7 +2362,7 @@
 			Name="Header Files"
 			Filter="*.h*">
 			<File
-				RelativePath=".\CDataList.h">
+				RelativePath="CDataList.h">
 			</File>
 			<File
 				RelativePath="Config.h">

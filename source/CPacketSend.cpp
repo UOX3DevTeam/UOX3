@@ -3062,7 +3062,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 			{
 				internalBuffer.resize( internalBuffer.size() + 19 );
 				AddItem( ctr, itemCount );
-				if( !isVendor )
+				if( !isVendor && mSock != NULL )
 				{
 					CPQueryToolTip pSend( (*ctr) );
 					mSock->Send( &pSend );

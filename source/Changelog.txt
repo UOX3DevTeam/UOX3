@@ -1,3 +1,8 @@
+1/1/2005 - giwo
+	Fixed an issue causing corpses to not display to their "owner".
+	Changed how we play the Death Animation to stop corpses from "moving".
+	Altered corpses update to send a few less unneeded QueryToolTip packets.
+
 12/31/2004 - giwo
 	More cleanups in CPacketSend.cpp
 	Renamed doDeathStuff() to HandleDeath() and moved it into pcmanage.cpp.

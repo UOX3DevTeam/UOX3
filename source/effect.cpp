@@ -25,11 +25,12 @@ bool isDoorBlocked( CItem *door );
 void cEffects::deathAction( CChar *s, CItem *x )
 {
 	CPDeathAction toSend( (*s), (*x) );
-	toSend.FallDirection( (UI08)RandomNum( 0, 1 ) );
+	toSend.FallDirection( 0 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( s );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		(*cIter)->Send( &toSend );
+		if( (*cIter)->CurrcharObj() != s )	// Death action screws up corpse display for the person who died.
+			(*cIter)->Send( &toSend );
 	}
 }
 
