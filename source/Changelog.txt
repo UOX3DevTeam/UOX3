@@ -1,3 +1,9 @@
+11/24/2004 - giwo
+	Removed unnecesarry Constructors/Destructors and did some minor updates.
+
+11/21/2004 - giwo
+	Fixed an issue causing the first item in a list not to be deleted when the list was cleared.
+
 8/22/2004 - giwo
 	Began enforcing stricter class naming rules in an effort to standardize the code (IE CSocket not cSocket).
 	Removed some unneeded global variables.
