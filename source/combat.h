@@ -19,6 +19,9 @@ enum WeaponTypes
 	XBOWS,
 	DEF_FENCING,
 	TWOHND_FENCING,
+	DUAL_SWORD,
+	DUAL_FENCING_STAB,
+	DUAL_FENCING_SLASH,
 };
 
 class CHandleCombat

@@ -341,6 +341,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2575: //magic sword - LBR
 		case 0x2576: //magic sword - LBR
 		case 0x257E: //short sword - LBR
+		case 0x27A4: //wakizashi - SE
+		case 0x27EF: //wakizashi - SE
 			return DEF_SWORDS;
 		// Default Swords
 		case 0x13F6: //butcher knife
@@ -370,6 +372,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26C1: //crescent blade - AoS
 		case 0x26CB: //crescent blade - AoS
 		case 0x2578: //no-dachi - LBR
+		case 0x27A2: //no-dachi - SE
+		case 0x27ED: //no-dachi - SE
+		case 0x27A8: //bokuto - SE
+		case 0x27F3: //bokuto - SE
 			return TWOHND_LG_SWORDS;
 		// Bardiche
 		case 0x0F4D: //bardiche
@@ -457,6 +463,12 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x256C: //magic staff - LBR
 		case 0x256D: //magic staff - LBR
 		case 0x256E: //magic staff - LBR
+		case 0x27A3: //tessen - SE
+		case 0x27EE: //tessen - SE
+		case 0x27A6: //tetsubo - SE
+		case 0x27F1: //tetsubo - SE
+		case 0x27AE: //nunchako - SE
+		case 0x27F9: //nunchako - SE
 			return LG_MACES;
 		// Bows
 		case 0x13B1: //bow
@@ -472,6 +484,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13FD: //heavy crossbow
 		case 0x26C3: //repeating crossbow - AoS
 		case 0x26CD: //repeating crossbow - AoS
+		case 0x27A5: //yumi - SE
+		case 0x27F0: //yumi - SE
+		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
+		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 			return XBOWS;
 		// Normal Fencing Weapons
 		case 0x0F51: //dagger
@@ -495,12 +511,25 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26C9: //double bladed staff - AoS
 		case 0x26C0: //lance - AoS
 		case 0x26CA: //lance - AoS
-		case 0x2558: //Lizardman's spear - LBR
+		case 0x2558: //lizardman's spear - LBR
 		case 0x2562: //terathan spear - LBR
 		case 0x2572: //horseman's javelin - LBR
 		case 0x257A: //spear - LBR
 		case 0x257B: //spear - LBR
+		case 0x27A7: //lajatang - SE
+		case 0x27F2: //lajatang - SE
 			return TWOHND_FENCING;
+		case 0x27AF: //sai - SE
+		case 0x27FA: //sai - SE
+			return DUAL_FENCING_STAB;
+		case 0x27AB: //tekagi - SE
+		case 0x27F6: //tekagi - SE
+		case 0x27AD: //kama - SE
+		case 0x27F8: //kama - SE
+			return DUAL_FENCING_SLASH;
+		case 0x27A9: //daisho - SE
+		case 0x27F4: //daisho - SE
+			return DUAL_SWORD;
 		default: // Wrestling
 			return WRESTLING;
 	}
@@ -549,12 +578,15 @@ UI08 CHandleCombat::getCombatSkill( CItem *wItem )
 		case ONEHND_AXES:
 		case TWOHND_AXES:
 		case BARDICHE:
+		case DUAL_SWORD:
 			return SWORDSMANSHIP;
 		case DEF_MACES:
 		case LG_MACES:
 			return MACEFIGHTING;
 		case DEF_FENCING:
 		case TWOHND_FENCING:
+		case DUAL_FENCING_SLASH:
+		case DUAL_FENCING_STAB:
 			return FENCING;
 		case BOWS:
 		case XBOWS:
@@ -817,9 +849,12 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 		case XBOWS:				animToPlay = 0x1C;	break;
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
+		case DUAL_SWORD:
 		case ONEHND_LG_SWORDS:
 		case ONEHND_AXES:
 		case DEF_MACES:
+		case DUAL_FENCING_SLASH:
+		case DUAL_FENCING_STAB:
 		case DEF_FENCING:		animToPlay = 0x1A;	break;
 		case TWOHND_FENCING:
 		case TWOHND_LG_SWORDS:
@@ -852,14 +887,17 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
 		case ONEHND_LG_SWORDS:
+		case DUAL_SWORD:
 		case ONEHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0A );	break;
 		case DEF_MACES:			animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0B );	break;
 		case LG_MACES:
 		case TWOHND_LG_SWORDS:
 		case BARDICHE:
 		case TWOHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? 0x0C : 0x0D );	break;
+		case DUAL_FENCING_STAB:
 		case DEF_FENCING:		animToPlay = 0x0A;									break;
 		case TWOHND_FENCING:	animToPlay = 0x0E;									break;
+		case DUAL_FENCING_SLASH:animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0A );	break;
 		case WRESTLING:
 		default:
 			switch( RandomNum( 0, 2 ) )
@@ -943,12 +981,15 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 		case DEF_SWORDS:
 		case DEF_FENCING:
 		case TWOHND_FENCING:
+		case DUAL_FENCING_STAB:
 			Effects->PlaySound( p, 0x023C ); // Stabbing Weapons
 			break;
 		case BARDICHE:
 			Effects->PlaySound( p, 0x0236 ); // Bardiche
 			break;
 		case SLASH_SWORDS:
+		case DUAL_SWORD:
+		case DUAL_FENCING_SLASH:
 			Effects->PlaySound( p, 0x023B ); // Slashing Weapons
 			break;
 		case ONEHND_LG_SWORDS:
