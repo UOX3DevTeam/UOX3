@@ -1684,9 +1684,9 @@ int MsgBoardPostQuest( int serial, int questType )
 	
 	// Since quest posts can only be regional or global, can use the BullBoard SN fields as CHAR or ITEM fields
 	msg2Post[4]   = (unsigned char)(serial>>24);   // Normally Bulletin Board SN1 but used for quests as CHAR or ITEM SN1
-	msg2Post[5]   = (unsigned char)(serial>>16);      // Normally Bulletin Board SN2 but used for quests as CHAR or ITEM SN2
-	msg2Post[6]   = (unsigned char)(serial>>8);        // Normally Bulletin Board SN3 but used for quests as CHAR or ITEM SN3
-	msg2Post[7]   = (unsigned char)(serial%256);        // Normally Bulletin Board SN4 but used for quests as CHAR or ITEM SN4
+	msg2Post[5]   = (unsigned char)(serial>>16);   // Normally Bulletin Board SN2 but used for quests as CHAR or ITEM SN2
+	msg2Post[6]   = (unsigned char)(serial>>8 );   // Normally Bulletin Board SN3 but used for quests as CHAR or ITEM SN3
+	msg2Post[7]   = (unsigned char)(serial%256);   // Normally Bulletin Board SN4 but used for quests as CHAR or ITEM SN4
 	msg2Post[8]   = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
 	msg2Post[9]   = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
 	msg2Post[10]  = 0x00;              // Reply to message serial number ( 00 00 00 00 for base post )
@@ -2114,10 +2114,10 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 				if ( feof(file) ) break;
 			}
 			
-			if ( (msg[13] == s/16777216) &&
-				(msg[14] == s/65536   ) &&
-				(msg[15] == s/256     ) &&
-				(msg[16] == s%256     ) )
+			if ( (msg[13] == s>>24 ) &&
+				 (msg[14] == s>>16 ) &&
+				 (msg[15] == s>>8  ) &&
+				 (msg[16] == s%256 ) )
 			{
 				// Jump back to the DEL segment in order to mark the post for deletion
 				fseek( file, -13, SEEK_CUR );

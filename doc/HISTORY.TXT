@@ -27,6 +27,10 @@ DATE                     AUTHOR                     ARRANGER
    
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
+-------------------------------------------------------------------------------
+27.02.2001               Thiago A. Corrêa
+  uox3.cpp               Moved loading char/items functions from uox3.cpp to 
+  worldfile.cpp          worldfile.cpp.
 
 -------------------------------------------------------------------------------
 27.02.2001               Thiago A. Corrêa

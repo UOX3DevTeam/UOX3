@@ -166,7 +166,6 @@ typedef vector< string *>	stringList;
 #define MAXFILESPEC 2048
 #define NONWHITESPACE "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+{}|?/><'.,"
 #define RANGEINDICATOR "#"
-#define WHITESPACE " "
 #define VALID "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*+_,(){}[]<>?|"
 #define GOLD_WEIGHT 0.005 //what a goldpiece weighs this is in hundreths of a stone!
 
@@ -180,8 +179,6 @@ typedef vector< string *>	stringList;
 //#define VISRANGE 18 // Visibility for normal items
 #define BUILDRANGE 31 // Visibility for castles and keeps
 
-//#define MAXCHARS 131072 // Maximum characters
-//#define MAXITEMS 393216 // Maximum items
 #define XYMAX 256 // Maximum items UOX can handle on one X/Y square
 //#define MAXEFFECTS MAXCHARS/10
 #define MAXLAYERS 50 // Maximum number of Layers in paperdolls (still not sure how many)
@@ -373,16 +370,6 @@ enum Skills
 #define SOUTHWEST 6
 #define WEST 7
 #define NORTHWEST 8
-/* Old directions
-#define NORTH 1
-#define NORTHWEST 2
-#define NORTHEAST 3
-#define SOUTH 4
-#define SOUTHWEST 5
-#define SOUTHEAST 6
-#define WEST 7
-#define EAST 8
-*/
 #define BEGGINGRANGE 3                  // begging range
 #define FISHINGTIMEBASE 10              // it takes at least FISHINGTIMEBASE sec to fish
 #define FISHINGTIMER 5
@@ -391,8 +378,6 @@ enum Skills
 #define THREAD 1
 // Structure Definitions
 #define MAX_TELE_LOCATIONS 400
-// Dupois - for fileArchive()
-// Added Oct 20, 1998
 #define MAXARCHID 14
 
 // Line Of Sight
@@ -461,7 +446,7 @@ const char NUM_SCRIPTS		=	33; // always # of last script + 1
 #define	MAXGUILDRECRUITS 10
 #define	MAXGUILDWARS 10
 #define DEFAULTCHARTER "UOX3 Guildstone"
-#define DEFAULTWEBPAGE "http://uox.stratics.com/"
+#define DEFAULTWEBPAGE "http://www.uoxdev.com/"
 #define PATHNUM 2
 
 // Item types when collided with

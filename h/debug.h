@@ -48,7 +48,7 @@ void MessageReady(char *OutputMessage);
 //---------------------------------------------------------------------------
 //     Translator macros for functions
 //---------------------------------------------------------------------------
-  #define LogMessage(Message)	LogMessageF('M', __LINE__, DBGFILE, Message)
+#define LogMessage(Message)	LogMessageF('M', __LINE__, DBGFILE, Message)
 #define LogWarning(WarningMessage)	LogMessageF('W', __LINE__, DBGFILE, WarningMessage)
 #define LogError(ErrorMessage)	LogMessageF('E', __LINE__, DBGFILE, ErrorMessage)
 #define LogCritical(CriticalMessage)	LogMessageF('C', __LINE__, DBGFILE, CriticalMessage)

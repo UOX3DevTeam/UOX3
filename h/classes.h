@@ -751,12 +751,11 @@ public:
 	char CheckMana( int s, int num );
 	bool CheckStamina( CHARACTER s, int num );
 	bool CheckHealth( CHARACTER s, int num );
-//	void DeleReagents(int s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk);
 	void Recall( UOXSOCKET s); // we need these four for the commands (separately) !!!
 	void Mark( UOXSOCKET s);
 	void Gate( UOXSOCKET s);
 	void Heal( UOXSOCKET s);
-	char CheckMagicReflect(int i);
+	bool CheckMagicReflect( CHARACTER &src, CHARACTER &target );
 	void MagicDamage(int p, int amount, CHARACTER attacker = -1 );
 	void SpellFail( UOXSOCKET s );
 	char SubtractMana(int s, int mana);

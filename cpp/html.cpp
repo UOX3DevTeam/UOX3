@@ -305,9 +305,8 @@ void guildhtml(void)
 
 void guildpage(int i, char *gdir)
 {
-	char sect[512],time_str[80],gfile[512];//sh[3],sm[3],ss[3];
+	char sect[32],time_str[80],gfile[512];
 	int a;
-	//unsigned long int ip;
 	unsigned int nxtmem=1,nxtwar=0;
 	FILE *ghtml;
 
