@@ -160,17 +160,14 @@ Locksmith
 
 [PROWESS]
 {
-Idiot
-Neophyte
-Novice
-Apprentice
-Journeyman
-Expert
-Specialist
-Adept
-Master
-Highmaster
-Grandmaster
+0=Neophyte
+201=Novice
+501=Apprentice
+601=Journeyman
+701=Expert
+801=Adept
+901=Master
+1000=Grandmaster
 }
 
 //Goes in order of BEST fame title to WORST fame title
