@@ -1465,7 +1465,8 @@ JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		itemColour = (UI16)JSVAL_TO_INT( argv[2] );
 	}
-
+	printf("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmmount: %i\n*****\n",
+		myChar->GetName(), realID, itemColour, amount);
 	deleItemAmt( myChar, realID, itemColour, amount );
 	return JS_TRUE;
 }

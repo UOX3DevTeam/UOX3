@@ -186,6 +186,21 @@ CItem *FindItemInPack( const char *itemType, CChar *toSearch )
 	return NULL;
 }
 
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class-	
+//|	Date					-	09/24/2002
+//|	Developer(s)	-	Unknown
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status				-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	Parse a JSE Script
+//|									
+//|	Modification	-	09/24/2002	-	Avtotar - Fixed JSE path usage, to get the 
+//|									path to JS file from the uox.ini file
+//o--------------------------------------------------------------------------o
+//|	Returns				-	NA
+//o--------------------------------------------------------------------------o	
 void Triggers::ParseScript( void )
 {
 	char scpFileName[MAX_PATH];
@@ -197,7 +212,7 @@ void Triggers::ParseScript( void )
 		return;
 	}
 	map< UI16, cScript *>::iterator p;
-	char script1[1024], script2[1024], temp[1024];
+	char script1[MAX_PATH], script2[MAX_PATH], temp[MAX_PATH], fullpath[MAX_PATH];
 	while( !feof( data ) )
 	{
 		readscript( data, temp );
@@ -216,8 +231,10 @@ void Triggers::ParseScript( void )
 					p = scriptTriggers.find( triggerNumber );
 					if( p != scriptTriggers.end() )
 						scriptTriggers.erase( p );
+					// Sept 24, 2002 - Avtotar - Fixed path up so that path from uox.ini to the JS dir is not used.
+					sprintf( fullpath, "%s%s", cwmWorldState->ServerData()->GetScriptsDirectory(), script2);
 					// let's add a verification of the file existing, shall we?
-					FILE *toTest = fopen( script2, "r" );
+					FILE *toTest = fopen( fullpath, "r" );
 					if( toTest == NULL )
 					{	// doesn't exist
 						Console.Error( 3, "SE mapping of %i to %s failed, %s does not exist!", triggerNumber, script2, script2 );
@@ -225,7 +242,7 @@ void Triggers::ParseScript( void )
 					else
 					{
 						fclose( toTest );	// exists
-						cScript *toAdd = new cScript( script2 );
+						cScript *toAdd = new cScript( fullpath );
 						scriptTriggers[triggerNumber] = toAdd;
 						if( toAdd != NULL )
 							RegisterObject( toAdd->Object(), triggerNumber );
@@ -236,6 +253,7 @@ void Triggers::ParseScript( void )
 	}
 	fclose( data );
 }
+
 
 cScript *Triggers::GetScript( UI16 triggerNumber )
 {

@@ -1261,10 +1261,14 @@ void cSkills::Hide( cSocket *s )
 		return;
 	}
 	CChar *mChar = s->CurrcharObj();
-	if( mChar->IsOnHorse() )
+	
+	if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
 	{
-		sysmessage( s, 831 );
-		return;
+		if( mChar->IsOnHorse() )
+		{
+			sysmessage( s, 831 );
+			return;
+		}
 	}
 	if( mChar->GetAttacker() != INVALIDSERIAL && charInRange( mChar, &chars[mChar->GetAttacker()] ) )
 	{
@@ -3265,7 +3269,7 @@ void cSkills::SkillUse( cSocket *s, int x )
 			case ITEMID:			target( s, 0, 1, 0, 40, 857 );		break;
 			case EVALUATINGINTEL:	target( s, 0, 1, 0, 41, 858 );		break;
 			case TAMING:			target( s, 0, 1, 0, 42, 859 );		break;
-			case HIDING:			Hide( s );															break;
+			case HIDING:			Hide( s );	break;
 			case STEALTH:			Stealth( s );														break;
 			case DETECTINGHIDDEN:	target( s, 0, 1, 0, 77, 860 );		break;
 			case PEACEMAKING:		PeaceMaking(s);														break;

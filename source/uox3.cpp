@@ -2677,16 +2677,21 @@ void MountCreature( CChar *s, CChar *x )
 	char temp[1024];
 	if( x->GetOwner() == s->GetSerial() || s->IsGM() )
 	{
-		if( s->IsOnHorse() )
-		{
-			sysmessage( sockPtr, 1213 );
-			return;
-		}
+		//if( s->IsOnHorse() )
+		//{
+		//	sysmessage( sockPtr, 1213 );
+		//	return;
+		//}
 		// Sept 22, 2002 - Xuri
 		if(s->IsOnHorse() )
 		{
 			if(!cwmWorldState->ServerData()->GetCharHideWhileMounted())
 				s->ExposeToView();
+			//else
+			//{
+			//	sysmessage( sockPtr, 1213 );
+			//	return;
+			//}
 		}
 		//
 		strcpy( temp, x->GetName() );
@@ -5240,7 +5245,7 @@ void Shutdown( SI32 retCode )
 	if (HTMLTemplates)
 	{
 		Console << "HTMLTemplates object detected. Writing Offline HTML Now..." << myendl;
-	  HTMLTemplates->Poll( TRUE /*ETT_OFFLINE */);
+	  HTMLTemplates->Poll( true /*ETT_OFFLINE */);
 	}
 	else
 		Console << "HTMLTemplates object not found." << myendl;

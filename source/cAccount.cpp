@@ -380,19 +380,19 @@ long cAccounts::LoadAccessList( void )
 //o--------------------------------------------------------------------------o
 //|	Returns				- [TRUE] if accounts.adm need to be read [FALSE] otherwise
 //o--------------------------------------------------------------------------o	
-BOOL cAccounts::CheckAccountsStamp( void )
+bool cAccounts::CheckAccountsStamp( void )
 {
 	char szLine[128];
 	FILE *fpFile=NULL;
 #ifdef __LINUX__
-	return FALSE;
+	return false;
 #else
 	// open the accounts.adm and grab the first line
 	if((fpFile=fopen(PathToFile.c_str(),"r"))==NULL)
 	{
 		ErrNum = 0x00000100;	// [00]-Unknown [00]-Memory [00]-i/o [00]-syntax =0x[00][00][00][00]
 		ErrDesc = "Unable to open the specified file";
-		return FALSE;
+		return false;
 	}
 	// Need an open file handle to use this funtion	
 	FILETIME ftFileTime;
@@ -401,7 +401,7 @@ BOOL cAccounts::CheckAccountsStamp( void )
 	{
 		// Ok there are an error getting the last written date. Assume default operation.
 		fclose(fpFile);
-		return FALSE;
+		return false;
 	}
 	// Get the first line and close
 	fgets( szLine, 127, fpFile );
@@ -413,16 +413,16 @@ BOOL cAccounts::CheckAccountsStamp( void )
 	if(strcmp("DS",strupr(c))!=0)
 	{
 		// ok this is not a datestamp
-		return FALSE;
+		return false;
 	}
 	l=strtok(NULL,"-");
 	r=strtok(NULL,"\n");
 	ftStampTime.dwHighDateTime=atoi(l);
 	ftStampTime.dwLowDateTime =atoi(r);
 	if(CompareFileTime(&ftFileTime,&ftStampTime)!=0)
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 #endif
 }
 
@@ -460,7 +460,7 @@ long cAccounts::LoadAccounts( void )
 	// Ok the first thing in that we have to do is check for the new system first.
 	// So we will look for the access.adm file. If it exists we know that its new format
 	// otherwise its the old format so we will have to adapt.
-	if(LoadAccessList()<0 && CheckAccountsStamp()==FALSE)
+	if(LoadAccessList()<0 || cwmWorldState->ServerData()->GetExternalAccountStatus())
 	{	
 		// There was no access.adm file so we should read in old format
 

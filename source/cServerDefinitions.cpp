@@ -260,7 +260,7 @@ void cServerDefinitions::BuildFileList( DefinitionCategories category )
 
 	WIN32_FIND_DATA toFind;
 	HANDLE findHandle = FindFirstFile( defExt.c_str(), &toFind );		// grab first file that meets spec
-	BOOL retVal = 0;
+	bool retVal = 0;
 	if( findHandle != INVALID_HANDLE_VALUE )	// there is a file
 	{
 		filenameListings.push_back( toFind.cFileName );
