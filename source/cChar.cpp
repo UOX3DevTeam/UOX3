@@ -50,7 +50,7 @@ SERIAL CChar::GetGuarding( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the weight of the CHARACTER
 //o---------------------------------------------------------------------------o
-SI16 CChar::GetWeight( void ) const
+SI32 CChar::GetWeight( void ) const
 {
 	return weight;
 }
@@ -219,11 +219,11 @@ UI32 CChar::GetHoldG( void ) const
 //o--------------------------------------------------------------------------o
 void CChar::SetAccount(SI16 wAccountID)
 {
-	if(!Accounts->GetAccountByID(wAccountID,(ACCOUNTSBLOCK&)ourAccount))
+	if(!Accounts->GetAccountByID(wAccountID,/*(ACCOUNTSBLOCK&)*/ourAccount))
 	{
 		// Ok there was an error setting an account to this character.
-		account=0xffff;
-		ourAccount.wAccountIndex=0xffff;
+		account = AB_INVALID_ID;
+		ourAccount.wAccountIndex = AB_INVALID_ID;
 		return;
 	}
 	account = ourAccount.wAccountIndex;
@@ -231,11 +231,11 @@ void CChar::SetAccount(SI16 wAccountID)
 //
 void CChar::SetAccount(std::string sUsername)
 {
-	if(!Accounts->GetAccountByName(sUsername,(ACCOUNTSBLOCK&)ourAccount))
+	if(!Accounts->GetAccountByName(sUsername,/*(ACCOUNTSBLOCK&)*/ourAccount))
 	{
 		// Ok there was an error setting an account to this character.
-		account=0xffff;
-		ourAccount.wAccountIndex=0xffff;
+		account = AB_INVALID_ID;
+		ourAccount.wAccountIndex = AB_INVALID_ID;
 		return;
 	}
 	account = ourAccount.wAccountIndex;
@@ -243,9 +243,9 @@ void CChar::SetAccount(std::string sUsername)
 //
 void CChar::SetAccount(ACCOUNTSBLOCK &actbAccount)
 {
-	if(actbAccount.wAccountIndex==0xffff)
+	if(actbAccount.wAccountIndex == AB_INVALID_ID )
 	{
-		account=0xffff;
+		account =AB_INVALID_ID;
 		return;
 	}
 	ourAccount = actbAccount;
@@ -260,7 +260,7 @@ void CChar::SetAccount(ACCOUNTSBLOCK &actbAccount)
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the weight of the CHARACTER
 //o---------------------------------------------------------------------------o
-void CChar::SetWeight( SI16 newVal )
+void CChar::SetWeight( SI32 newVal )
 {
 	weight = newVal;
 }
@@ -944,28 +944,19 @@ void CChar::AddSelfToOwner( void )
 	}
 }
 
-void CChar::SetOwner( UI32 newValue )
+void CChar::SetOwner( cBaseObject *newValue )
 {
 	RemoveSelfFromOwner();
 	cBaseObject::SetOwner( newValue );
 	AddSelfToOwner();
 }
 
-void CChar::SetSpawn( UI08 newVal, UI08 part, CHARACTER c )
+void CChar::SetSpawn( SERIAL newValue, CHARACTER c)
 {
-	if( GetSpawn() != 0 )
-		ncspawnsp.Remove( GetSpawn(), c );
-	cBaseObject::SetSpawn( newVal, part );
-	if( GetSpawn() != 0 ) 
-		ncspawnsp.AddSerial( GetSpawn(), c );
-}
-
-void CChar::SetSpawn( UI32 newValue, CHARACTER c )
-{
-	if( GetSpawn() != 0 )
+	if( GetSpawn() != INVALIDSERIAL )
 		ncspawnsp.Remove( GetSpawn(), c );
 	cBaseObject::SetSpawn( newValue );
-	if( GetSpawn() != 0 ) 
+	if( GetSpawn() != INVALIDSERIAL ) 
 		ncspawnsp.AddSerial( GetSpawn(), c );
 }
 void CChar::SetTownVote( UI08 newValue, UI08 part )
@@ -1332,6 +1323,7 @@ UI08 CChar::GetBeardStyle( UI08 part ) const
 	}
 	return (UI08)(beardstyle%256);
 }
+/*
 UI08 CChar::GetEnvokeID( UI08 part ) const
 {
 	switch( part )
@@ -1343,10 +1335,13 @@ UI08 CChar::GetEnvokeID( UI08 part ) const
 	return (UI08)(envokeid%256);
 }
 
+
 UI16 CChar::GetEnvokeID( void ) const
 {
 	return envokeid;
 }
+*/
+
 UI16 CChar::GetID( void ) const
 {
 	return id;
@@ -1665,6 +1660,8 @@ void CChar::SetBeardStyle( UI16 value )
 {
 	beardstyle = value;
 }
+
+/*
 void CChar::SetEnvokeID( UI08 value, UI08 part )
 {
 	UI08 part1 = (UI08)(envokeid>>8);
@@ -1680,6 +1677,7 @@ void CChar::SetEnvokeID( UI16 newValue )
 {
 	envokeid = newValue;
 }
+*/
 
 UI08 CChar::GetSkin( UI08 part ) const
 {
@@ -2057,22 +2055,31 @@ CHARACTER CChar::GetFTarg( void ) const
 {
 	return ftarg;
 }
-ITEM CChar::GetSmeltItem( void ) const
+CItem *CChar::GetSmeltItem( void ) const
 {
 	return smeltitem;
 }
-ITEM CChar::GetTailItem( void ) const
+CItem *CChar::GetSkillItem( void ) const
 {
-	return tailitem;
+	if( skillitem == INVALIDSERIAL )
+		return NULL;
+	return calcItemObjFromSer( skillitem );
 }
-ITEM CChar::GetAdvObj( void ) const
+
+SERIAL CChar::GetSkillItemSerial( void ) const
+{
+	return skillitem;
+}
+UI16 CChar::GetAdvObj( void ) const
 {
 	return advobj;
 }
+/*
 ITEM CChar::GetEnvokeItem( void ) const
 {
 	return envokeitem;
 }
+*/
 CHARACTER CChar::GetSwingTarg( void ) const
 {
 	return swingtarg;
@@ -2105,22 +2112,32 @@ void CChar::SetFTarg( CHARACTER newTarg )
 {
 	ftarg = newTarg;
 }
-void CChar::SetTailItem( ITEM newValue )
+void CChar::SetSkillItem( CItem *newValue )
 {
-	tailitem = newValue;
+	 if(newValue == NULL )
+		 skillitem = INVALIDSERIAL;
+	 else
+		 skillitem = newValue->GetSerial();
 }
-void CChar::SetSmeltItem( ITEM newValue )
+
+void CChar::SetSkillItemSerial( SERIAL newValue )
+{
+		skillitem = newValue;
+}
+void CChar::SetSmeltItem( CItem *newValue )
 {
 	smeltitem = newValue;
 }
-void CChar::SetAdvObj( ITEM newValue )
+void CChar::SetAdvObj( UI16 newValue )
 {
 	advobj = newValue;
 }
+/*
 void CChar::SetEnvokeItem( ITEM newValue )
 {
 	envokeitem = newValue;
 }
+*/
 void CChar::SetSwingTarg( CHARACTER newValue )
 {
 	swingtarg = newValue;
@@ -2435,11 +2452,11 @@ account( -1 ), dispz( 0 ), xskin( colour ), fonttype( 3 ), maxHP( 0 ), maxHP_old
 maxStam( 0 ), maxStam_olddex( 0 ), maxStam_oldrace( 0 ),
 saycolor( 0x0058 ), emotecolor( 0x0023 ), mn2( 0 ), cell( -1 ), deaths( 0 ), packitem( NULL ), fixedlight( 255 ), weight( 0 ), 
 targ( INVALIDSERIAL ), timeout( 0 ), attacker( INVALIDSERIAL ), npcmovetime( 0 ), npcWander( 0 ), oldnpcWander( 0 ), ftarg( INVALIDSERIAL ), fx1( -1 ),
-fx2( -1 ), fy1( -1 ), fy2( -1 ), fz1( -1 ), invistimeout( 0 ), hunger( 6 ), hungertime( 0 ), smeltitem( INVALIDSERIAL ), tailitem( INVALIDSERIAL ),
+fx2( -1 ), fy1( -1 ), fy2( -1 ), fz1( -1 ), invistimeout( 0 ), hunger( 6 ), hungertime( 0 ), smeltitem( NULL ), skillitem( INVALIDSERIAL ),
 npcaitype( 0 ), callnum( -1 ), playercallnum( -1 ), pagegm( 0 ), region( 255 ), skilldelay( 0 ), objectdelay( 0 ), making( INVALIDSERIAL ),
 blocked( 0 ), dir2( 0 ), spiritspeaktimer( 0 ), spattack( 0 ), spadelay( 0 ), spatimer( 0 ), taming( 0 ), summontimer( 0 ),
 trackingtimer( 0 ), trackingtarget( 0 ), fishingtimer( 0 ), town( 255 ), townpriv( 0 ), advobj( 0 ), poison( 0 ), poisoned( 0 ),
-poisontime( 0 ), poisontxt( 0 ), poisonwearofftime( 0 ), fleeat( 0 ), reattackat( 0 ), envokeid( 0 ), envokeitem( INVALIDSERIAL ), split( 0 ),
+poisontime( 0 ), poisontxt( 0 ), poisonwearofftime( 0 ), fleeat( 0 ), reattackat( 0 ), split( 0 ),
 splitchnc( 0 ), trainer( 0 ), trainingplayerin( 0 ), guildfealty( INVALIDSERIAL ), guildnumber( -1 ), flag( 0x04 ), murderrate( 0 ),
 crimflag( -1 ), casting( 0 ), spelltime( 0 ), spellCast( -1 ), spellaction( 0 ), nextact( 0 ), poisonserial( INVALIDSERIAL ),
 squelched( 0 ), mutetime( 0 ), med( 0 ), stealth( -1 ), running( 0 ), logout( 0 ), swingtarg( INVALIDSERIAL ), holdg( 0 ), raceGate( 65535 ),
@@ -2467,11 +2484,11 @@ trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 
 	orgname[0] = 0x00;
 	SetPriv( 0 );	
 	SetPriv2( 0 );	
-	for( SI32 k = 0; k <= ALLSKILLS; k++ )
+	for( UI08 k = 0; k <= ALLSKILLS; k++ )
 		baseskill[k] = 10;
 	memset( skill, 0, sizeof( skill[0] ) * (ALLSKILLS+1) );
 	memset( lockState, 0, sizeof( lockState[0] ) * (ALLSKILLS+1) );
-	for( UI16 j = 0; j <= ALLSKILLS; j++ )
+	for( UI08 j = 0; j <= ALLSKILLS; j++ )
 		atrophy[j] = j;
 	memset( trackingtargets, 0, sizeof( trackingtargets[0] ) * MAXTRACKINGTARGETS );
 	SetCanTrain( true );
@@ -2481,6 +2498,7 @@ trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
 	memset( regen, 0, sizeof( UI32 ) * 3 );
+	ourAccount.wAccountIndex=AB_INVALID_ID;
 }
 
 CChar::~CChar()
@@ -2504,10 +2522,15 @@ CChar::~CChar()
 		for( UI32 j = 0; j < tPets.size(); j++ )
 		{
 			if( tPets[j] != NULL )
-				tPets[j]->SetOwner( INVALIDSERIAL );
+				tPets[j]->SetOwner( NULL );
+		}
+		for(CItem *item = FirstItem();!FinishedItems(); item=NextItem() )
+		{
+				if( item != NULL )
+						item->SetCont(NULL);
 		}
 		MapRegion->RemoveChar( this );	// Let's remove it from a mapregion (if any)
-		SetOwner( INVALIDSERIAL );	// Let's remove it from our owner (if any)
+		SetOwner( NULL );	// Let's remove it from our owner (if any)
 	}
 }
 
@@ -2699,7 +2722,7 @@ CChar *CChar::Dupe( void )
 		return NULL;
 
 	target->SetMulti( GetMultiObj() );
-	target->SetOwner( GetOwner() );
+	target->SetOwner( GetOwnerObj() );
 	target->SetRobe( robe );
 	target->SetSpawn( GetSpawn(), targetOff );
 	target->SetTownVote( townvote );
@@ -2709,7 +2732,7 @@ CChar *CChar::Dupe( void )
 	target->SetTitle( title );
 	target->SetOrgName( orgname );
 	target->SetAntiSpamTimer( antispamtimer );
-	target->SetAccount( account );
+	target->SetAccount( static_cast<UI16>(account ));
 	target->SetLocation( this );
 	target->SetDispZ( dispz );
 	target->SetDir( dir );
@@ -2774,7 +2797,7 @@ CChar *CChar::Dupe( void )
 	target->SetHunger( hunger );
 	target->SetHungerTime( hungertime );
 	target->SetSmeltItem( smeltitem );
-	target->SetTailItem( tailitem );
+	target->SetSkillItemSerial( skillitem );
 	target->SetNPCAiType( npcaitype );
 	target->SetGuarding( petguarding );
 	target->SetCallNum( callnum );
@@ -2810,8 +2833,8 @@ CChar *CChar::Dupe( void )
 	target->SetFleeAt( fleeat );
 	target->SetReattackAt( reattackat );
 	target->SetDisabled( disabled );
-	target->SetEnvokeID( envokeid );
-	target->SetEnvokeItem( envokeitem );
+	//target->SetEnvokeID( envokeid );
+	//target->SetEnvokeItem( envokeitem );
 	target->SetSplit( split );
 	target->SetSplitChance( splitchnc );
 	target->SetTrainer( trainer );
@@ -2936,7 +2959,7 @@ void CChar::SendToSocket( cSocket *s, bool sendDispZ, CChar *c )
 		oc[17] |= 0x04; //AntiChrist -- thnx to SpaceDog 
 	k = 19;
 	GuildRelation guild = GuildSys->Compare( mCharObj, c );
-	SI32 raceCmp = Races->Compare( mCharObj, c );
+	SI08 raceCmp = Races->Compare( mCharObj, c );
 	if( GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
 		oc[18] = 6;
 	else if( guild == GR_ALLY || guild == GR_SAME || raceCmp > 0 ) // Same guild (Green), racial ally, allied guild
@@ -2953,7 +2976,7 @@ void CChar::SendToSocket( cSocket *s, bool sendDispZ, CChar *c )
 			oc[18] = 1;
 	}
 	
-	for( SI32 counter = 0; counter < MAXLAYERS; counter++ )
+	for( UI08 counter = 0; counter < MAXLAYERS; counter++ )
 	{
 		if( itemLayers[counter] != NULL )
 		{
@@ -3013,8 +3036,8 @@ void CChar::Teleport( void )
 	Network->PopConn();
 	if( mSock != NULL )
 	{
-		SI32 xOffset = MapRegion->GetGridX( GetX() );
-		SI32 yOffset = MapRegion->GetGridY( GetY() );
+		int xOffset = MapRegion->GetGridX( GetX() );
+		int yOffset = MapRegion->GetGridY( GetY() );
 		for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
 		{
 			for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
@@ -3033,7 +3056,7 @@ void CChar::Teleport( void )
 				}
 				for( CItem *tempItem = MapArea->FirstItem(); !MapArea->FinishedItems(); tempItem = MapArea->GetNextItem() )
 				{
-					if( itemInRange( this, tempItem, visrange ) )
+					if( objInRange( this, tempItem, visrange ) )
 					{
 						if( !tempItem->GetVisible() || ( tempItem->GetVisible() && IsGM() ) )
 							sendItem( mSock, tempItem );
@@ -3265,9 +3288,7 @@ bool CChar::TakeOffItem( UI08 Layer )
 		return false;
 	
 	if( Layer == 0x15 )	// It's our pack!
-	{
 		SetPackItem( NULL );
-	}
 	IncStrength2( -itemLayers[Layer]->Strength2() );
 	IncDexterity2( -itemLayers[Layer]->Dexterity2() );
 	IncIntelligence2( -itemLayers[Layer]->Intelligence2() );
@@ -3350,73 +3371,26 @@ bool CChar::IsValidMount( void ) const
 {
 	switch( id )
 	{
-	//case 0xC8:    // horse 
-	//case 0xE2:    // horse 
-	//case 0xE4:    // horse 
-	//case 0xCC:    // horse 
-	//case 0xD2:    // Desert Ostard 
-	//case 0xDA:    // Frenzied Ostard 
-	//case 0xDB:    // Forest Ostard 
-	//case 0xDC:    // llama 
-	//case 0x72: // Dark Steed 
-	//case 0x73: // Etheral Horse 
-	//case 0x74: // Nightmare 
-	//case 0x75: // Silver Steed 
-	//case 0x76: // Faction Horse 
-	//case 0x77: // Faction Horse 
-	//case 0x78: // Faction Horse 
-	//case 0x79: // Faction Horse 
-	//case 0x84: // Dragon Horse 
-	//case 0x90: // Sea Horse 
-	//case 0x7A: // Unicournaybe 
-	//case 0xAA: // Etheral Llama 
-	//case 0xAB: // Etheral Ostard 
-	//case 0xBB: // Ridgeback 
-    
-    
-                   // New LBR ridables added 
-                   case 0x347: //ridgeback ridgeback 
-                   case 0xBB: //ridgeback ridgeback 
-                   case 0xC8: //equines horse dappled brown 
-                   case 0x334: //equines horse dappled brown 
-                   //case 0x123: //equines horse dappled brown pack 
-                   case 0xE2: //equines horse dappled grey 
-                   case 0x34: //eequines horse dappled grey 
-                   case 0xCC: //equines_horse dark brown 
-                   case 0x338: //equines horse dark brown 
-                   case 0xE4: //equines horse tan 
-                   case 0x350: //equines horse_tan 
-                   case 0x72: //equines horse dark steed 
-                   case 0x73: //equines horse ethereal 
-                   case 0x74: //equines horse nightmare 
-                   case 0xB1: //equines horse nightmare 
-                   case 0xB2: //equines horse nightmare 
-                   case 0xB3: //equines horse nightmare 
-                   case 0x75: //equines horse silver steed 
-                   case 0x76: //equines horse war brittanian 
-                   case 0x77: //equines horse war mage_council 
-                   case 0x78: //equines horse war minax 
-                   case 0x79: //equines horse war shadowlord 
-                   case 0x7A: //equines unicorn 
-                   case 0x84: //kirin kirin 
-                   case 0xE6: //kirin kirin 
-                   case 0xDC: //llamas llama 
-                   case 0x3C: //llamas llama 
-                   case 0xAA: //llamas llama ethereal 
-                   case 0xD2: //ostards ostard desert 
-                   case 0x39: //ostards ostard desert 
-                   case 0xDA: //ostards ostard forest 
-                   case 0x3A: //ostards ostard forest 
-                   case 0xDB: //ostards ostard frenzied 
-                   case 0x3B: //ostards ostard frenzied 
-                   case 0xAB: //ostards ostard ethereal 
-                   case 0x90: //sea horse sea horse 
-                   case 0x319: //skeletal mount 
-                   case 0x31A: //swamp dragon 
-                   case 0x31F: //swamp dragon_armor 
-                   case 0x317: //giant beetle 
-
-			return true;
+		// Basic Ridables
+			case 0xC8:    // horse (Light brown)
+			case 0xCC:    // horse (Dark Brown)
+			case 0xE2:    // horse (Light Gray)
+			case 0xE4:    // horse (Gray Brown)
+		// T2A Ridables
+			case 0xD2:    // Desert Ostard 
+			case 0xDA:    // Frenzied Ostard 
+			case 0xDB:    // Forest Ostard 
+			case 0xDC:    // llama 
+		// LBR Ridables
+			case 0x0:			// Kirin
+			case 0x84:		// Unicorn
+			case 0x85:		// Ridgeback
+			case 0x86:		// Savage Ridgeback
+			case 0x87:		// Giant Beetle
+			case 0x88:		// Skeletal Mount
+			case 0x89:		// Swap Dragon
+			case 0x8A:		// Armored Swamp Dragon
+				return true;
 		default:
 			return false;
 	}		
@@ -3782,7 +3756,7 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	case 0:
 	default:
 		cBaseObject::DumpBody( outStream, mode );	// Make the default save of BaseObject members now
-		dumping << "Account=" << GetAccount() << std::endl;
+		dumping << "Account=" << GetConstAccount().wAccountIndex << std::endl;
 		dumping << "LastOn=" << GetLastOn() << std::endl;
 		dumping << "OrgName=" << GetOrgName() << std::endl;
 		dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
@@ -3907,7 +3881,7 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 
 		DumpFooter( outStream, mode );
 
-		for( SI32 tempCounter = 0; tempCounter < MAXLAYERS; tempCounter++ )
+		for( UI08 tempCounter = 0; tempCounter < MAXLAYERS; tempCounter++ )
 		{
 			if( itemLayers[tempCounter] != NULL && itemLayers[tempCounter]->ShouldSave() )
 				itemLayers[tempCounter]->Save( outStream, mode );
@@ -3960,6 +3934,11 @@ ACCOUNTSBLOCK &CChar::GetAccount(void)
 	}
 	//
 	return ourAccount;
+}
+//
+const ACCOUNTSBLOCK &CChar::GetConstAccount( void ) const
+{
+		return ourAccount;
 }
 
 //o---------------------------------------------------------------------------o
@@ -4469,7 +4448,7 @@ bool CChar::IsInnocent( void ) const
 //o---------------------------------------------------------------------------o
 void CChar::DecHunger( const SI08 amt )
 {
-	SetHunger( (SI08)(GetHunger() - 1) );
+	SetHunger( (SI08)(GetHunger() - amt) );
 }
 
 void CChar::StopSpell( void )
@@ -4505,7 +4484,8 @@ bool CChar::HandleLine( char *tag, char *data )
 	case 'A':
 		if( !strcmp( tag, "Account" ) )
 		{
-			SetAccount( makeNum( data ) );
+			//SetAccount( makeNum( data ) );
+			account = makeNum( data );
 			return true;
 		}
 		else if( !strcmp( tag, "Atrophy" ) )
@@ -4523,12 +4503,12 @@ bool CChar::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "AdvanceObject" ) )
 		{
-			SetAdvObj( makeNum( data ) );
+			SetAdvObj( static_cast<UI16>(makeNum( data ) ));
 			return true;
 		}
 		else if( !strcmp( tag, "AdvRaceObject" ) )
 		{
-			SetRaceGate( makeNum( data ) );
+			SetRaceGate( static_cast<RACEID>(makeNum( data )) );
 			return true;
 		}
 		else if( !strcmp( tag, "AllMove" ) )
@@ -4794,12 +4774,12 @@ bool CChar::HandleLine( char *tag, char *data )
 		}
 		else if( !strcmp( tag, "Poison" ) )
 		{
-			SetPoison( makeNum( data ) );
+			SetPoison( static_cast<SI08>(makeNum( data ) ));
 			return true;
 		}
 		else if( !strcmp( tag, "Poisoned" ) )
 		{
-			SetPoisoned( makeNum( data ) );
+			SetPoisoned( static_cast<SI08>(makeNum( data ) ));
 			return true;
 		}
 		else if( !strcmp( tag, "PackItem" ) )
@@ -4951,7 +4931,7 @@ bool CChar::HandleLine( char *tag, char *data )
 	case 'W':
 		if( !strcmp( tag, "Weight" ) )
 		{
-			SetWeight( (SI16)makeNum( data ) );
+			weight = makeNum( data );
 			return true;
 		}
 		break;
@@ -5008,7 +4988,7 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 	switch ( tag )
 	{
 	case CHARTAG_ACCOUNT:
-		SetAccount( buff.GetLong() );
+		SetAccount( static_cast<UI16>(buff.GetLong()) );
 		break;
 
 	case CHARTAG_TXTCOLOR:
@@ -5041,7 +5021,7 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case CHARTAG_WEIGHT:
-		SetWeight( buff.GetShort() );
+			weight= buff.GetShort();
 		break;
 
 	case CHARTAG_HUNGER:
@@ -5157,7 +5137,7 @@ bool CChar::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case CHARTAG_GATE:
-		SetAdvObj( buff.GetLong() );
+		SetAdvObj( static_cast<UI16>(buff.GetLong()) );
 		SetRaceGate( buff.GetShort() );
 		break;
 
@@ -5324,7 +5304,7 @@ bool CChar::LoadRemnants( int arrayOffset )
 	UI16 k = GetID();
 	if( k > 0x3E1 )
 	{ 
-		if(GetAccount().wAccountIndex==0xffff) 
+		if(GetAccount().wAccountIndex==AB_INVALID_ID) 
 		{ 
 			Console << "npc: " << GetSerial() << "[" << GetName() << "] with bugged body value detected, deleted for stability reasons" << myendl;
 			return false;
@@ -5429,20 +5409,14 @@ void CChar::PostLoadProcessing( UI32 index )
 	cBaseObject::PostLoadProcessing( index );
 	if( packitem != NULL )
 		SetPackItem( packitem );		// we stored the serial in packitem
-// Thyme - no longer required
-// This is done within the cSpawnRegion class now.
-//	
-//	if( GetSpawn( 1 ) <= 0x40 && GetSpawn() != 0  )		// Not an item (region spawn)
-//	{
-//		cSpawnRegion *spawnReg = spawnregion[GetSpawn( 3 )];
-//		if( spawnReg != NULL )
-//			spawnReg->SetCurrent( spawnReg->GetCurrent() + 1 );
-//	}
-//	
-	if( GetWeight() <= 0 )
-		Weight->calcWeight( this );
+	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT)
+			SetWeight( Weight->calcCharWeight( this ) );
+	//
 	for( UI08 i = 0; i < TRUESKILLS; i++ )
 		Skills->updateSkillLevel( this, i );
+	// Need to add things to petlists, so can can clean up properly
+	cBaseObject *newOwner = GetOwnerObj();
+	SetOwner( newOwner );
 }
 
 //o---------------------------------------------------------------------------o
@@ -5567,8 +5541,8 @@ bool CChar::IsInBank( CItem* i )
 {
 	if( i->GetMoreX() == 1 )
 		return true;
-	else if( i->GetCont() != INVALIDSERIAL && i->GetCont() >= 0x40000000 )
-		return this->IsInBank( calcItemObjFromSer( i->GetCont() ) );
+	else if( i->GetCont() != NULL && i->GetContSerial() >= BASEITEMSERIAL )
+		return this->IsInBank( calcItemObjFromSer( i->GetContSerial() ) );
 	else
 		return false;
 }
