@@ -2014,7 +2014,7 @@ void cSkills::TreeTarget(int s)
 	cx = abs( chars[currchar[s]].x - px );
 	cy = abs( chars[currchar[s]].y - py );
 
-	char dir = chardirxyz( currchar[s], px, py, 0 );
+	signed char dir = static_cast<signed char> (chardirxyz( currchar[s], px, py, 0 ));
 	if( dir != -1 && chars[currchar[s]].dir != dir )
 	{
 		chars[currchar[s]].dir = dir;

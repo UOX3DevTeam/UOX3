@@ -652,7 +652,7 @@ void cBooks::delete_bokfile(int id)
 // "Formats" a newly created book-file
 // This NEEDS to be done with ANY new book file.
 // 
-char cBooks::make_new_book_file(char *fileName, int id)
+signed char cBooks::make_new_book_file(char *fileName, int id)
 {
   FILE *file;
 

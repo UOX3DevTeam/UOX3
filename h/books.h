@@ -52,7 +52,7 @@ class cBooks
 		int  read_number_of_pages(int id);
 		void read_line(int id, int page,int linenumber, char line[33]);
 
-		char make_new_book_file(char *fileName, int id); // "formats and creates a new bok file"
+		signed char make_new_book_file(char *fileName, int id); // "formats and creates a new bok file"
 					
 	public:
 		char a_t; // flag -> set if author and title changed		
