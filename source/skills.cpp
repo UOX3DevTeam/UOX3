@@ -530,102 +530,6 @@ void cSkills::SmeltOre( CSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Wheel( CSocket *s, int mat )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when using Yarn or Thread on a Spinning Wheel
-//o---------------------------------------------------------------------------o
-void cSkills::Wheel( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-	{
-		if( i->IsLockedDown() )
-		{
-			s->sysmessage( 774 );
-			return;
-		}
-		if( i->GetID() >= 0x10A4 && i->GetID() <= 0x10A6 )
-		{
-			if( objInRange( mChar, i, DIST_NEARBY ) )  
-			{
-				if( !CheckSkill( mChar, TAILORING, 0, 1000 ) ) 
-				{
-					s->sysmessage( 821 );
-					return;
-				}   
-				s->sysmessage( 822 );
-
-				CItem *skillItem = static_cast<CItem *>(s->TempObj());
-				s->TempObj( NULL );
-				if( ValidateObject( skillItem ) )
-				{
-					skillItem->SetName( "#" );
-					if( skillItem->GetID() == 0x0DF8 ) // Wool
-						skillItem->SetID( 0x0E1D );
-					else if( skillItem->GetID() == 0x0DF9 ) // Cotton
-						skillItem->SetID( 0x0FA0 );
-					skillItem->SetAmount( skillItem->GetAmount() * 4 );
-					
-					skillItem->SetDecayable( true );
-					return;
-				}
-			}
-		}     
-	}   
-	s->sysmessage( 823 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Loom( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when using a loom to make cloth
-//o---------------------------------------------------------------------------o
-void cSkills::Loom( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar	= s->CurrcharObj();
-	CItem *i		= calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		if( i->IsLockedDown() )
-		{
-			s->sysmessage( 774 );
-			return;
-		}
-		if( i->GetID() >= 0x105F && i->GetID() <= 0x1061 )
-		{
-			if( objInRange( mChar, i, DIST_NEARBY ) )  
-			{
-				if( !CheckSkill( mChar, TAILORING, 0, 1000 ) ) 
-				{
-					s->sysmessage( 824 );
-					return;
-				}   
-				s->sysmessage( 825 );
-				CItem *skillItem = static_cast<CItem *>(s->TempObj());
-				s->TempObj( NULL );
-				if( ValidateObject( skillItem ) )
-				{
-					skillItem->SetName( "#");
-					skillItem->SetID( 0x175D );
-					skillItem->SetDecayable( true );
-					skillItem->SetAmount( skillItem->GetAmount() * 2 );
-					
-					return;
-				}
-			}
-		}     
-	}   
-	s->sysmessage( 823 );
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  cSkills::handleCooking( CSocket *s )
 //|   Date        :  January 30, 2003
 //|   Programmer  :  Zane
@@ -648,12 +552,12 @@ void cSkills::handleCooking( CSocket *s )
 			if( ValidateObject( skillItem ) )
 			{
 				UI16 realItem = i->GetID();
-				bool isMeat = ( realItem >= 0x0DE3 && realItem <= 0x0DE9 ||	realItem == 0x0FAC ||
-					realItem == 0x0FB1 || realItem >= 0x197A && realItem <= 0x19B6 ||
-					realItem >= 0x0461 && realItem <= 0x0480 ||	realItem >= 0x0E31 && realItem <= 0x0E33 ||
-					realItem == 0x19BB || realItem == 0x1F2B || realItem >= 0x092B && realItem <= 0x0934 ||
-					realItem >= 0x0937 && realItem <= 0x0942 ||	realItem >= 0x0945 && realItem <= 0x0950 ||
-					realItem >= 0x0953 && realItem <= 0x095E ||	realItem >= 0x0961 && realItem <= 0x096C );
+				bool isMeat = ( ( realItem >= 0x0DE3 && realItem <= 0x0DE9 ) ||	realItem == 0x0FAC ||
+					realItem == 0x0FB1 || ( realItem >= 0x197A && realItem <= 0x19B6 ) ||
+					( realItem >= 0x0461 && realItem <= 0x0480 ) ||	( realItem >= 0x0E31 && realItem <= 0x0E33 ) ||
+					realItem == 0x19BB || realItem == 0x1F2B || ( realItem >= 0x092B && realItem <= 0x0934 ) ||
+					( realItem >= 0x0937 && realItem <= 0x0942 ) ||	( realItem >= 0x0945 && realItem <= 0x0950 ) ||
+					( realItem >= 0x0953 && realItem <= 0x095E ) ||	( realItem >= 0x0961 && realItem <= 0x096C ) );
 				if( !CheckSkill( mChar, COOKING, 0, 1000 ) ) 
 				{
 					if( isMeat )
@@ -1317,44 +1221,6 @@ void cSkills::ProvocationTarget2( CSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AlchemyTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets a reagent with a mortar, then
-//|					 brings up a MakeMenu for player to select which potion
-//|					 to make
-//o---------------------------------------------------------------------------o
-void cSkills::AlchemyTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		switch( i->GetID() )
-		{
-			case 0x0F7B:	NewMakeMenu( s, 90, ALCHEMY );	break;	// Agility,
-			case 0x0F84:	NewMakeMenu( s, 91, ALCHEMY );	break;	// Cure, Garlic
-			case 0x0F8C:	NewMakeMenu( s, 92, ALCHEMY );	break;	// Explosion, Sulfurous Ash
-			case 0x0F85:	NewMakeMenu( s, 93, ALCHEMY );	break;	// Heal, Ginseng
-			case 0x0F88:	NewMakeMenu( s, 94, ALCHEMY );	break;	// Poison, Nightshade
-			case 0x0F7A:	NewMakeMenu( s, 95, ALCHEMY );	break;	// Refresh,
-			case 0x0F86:	NewMakeMenu( s, 96, ALCHEMY );	break;	// Strength,
-			case 0x0F8D:	NewMakeMenu( s, 97, ALCHEMY );	break;	// Night sight
-			case 0x0E9B:									break; // Mortar
-			default:
-				if( i->GetID() >= 0x1B11 && i->GetID() <= 0x1B1C )
-				{
-					MakeNecroReg( s, i, i->GetID() );
-					s->sysmessage( 1453 );
-					return;
-				}
-				s->sysmessage( 1454 );
-				return;
-		}
-	}
-}
-//o---------------------------------------------------------------------------o
 //|   Function    :  bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
@@ -1540,71 +1406,6 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 			scpSkill->OnSkillChange( c, sk );
 	}
 	mSock->updateskill( sk );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CreateBandageTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player cuts cloth into bandages
-//o---------------------------------------------------------------------------o
-void cSkills::CreateBandageTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-	{
-		s->sysmessage( 1491 );
-		return;
-	}
-	CChar *myChar = myChar = s->CurrcharObj();
-	if( !ValidateObject( myChar ) )
-		return;
-
-	CItem *c	= NULL;
-	UI16 myID	= i->GetID();
-
-	if( myID >= 0x0F95 && myID <= 0x0F9C )	// Bold of Cloth
-	{
-		c = Items->CreateItem( s, myChar, 0x175F, 50, 0, OT_ITEM, true );
-		if( c != NULL ) 
-		{
-			c->SetName( Dictionary->GetEntry( 1490 ) );
-			i->IncAmount( -1 );
-		}
-	}
-	// Create RollDice 1d4 Bandages per cutted cloth
-	else if( ( myID >= 0x1515 && myID <= 1518 ) || ( myID >= 0x152E && myID <= 0x1531 ) || ( myID >= 0x1537 && myID <= 0x1544 ) || ( myID >= 0x1914 && myID <= 0x1915 ) || ( myID >= 0x1EFD && myID <= 0x1F04 ) )
-	{
-		cDice myDice( 1, 4, 1 );
-		UI32 Amount = (UI32)( myDice.roll() );
-
-		if( i->GetCont() == myChar )
-		{
-			s->sysmessage( 1491 );
-			return;
-		}
-
-		c = Items->CreateItem( s, myChar, 0x0E21, Amount, 0, OT_ITEM, true );
-		if( c != NULL ) 
-		{
-			c->SetName( Dictionary->GetEntry( 1489 ) );
-			i->IncAmount( -1 );
-		}
-	}
-	// Gain 2 bandages per Folded Cloth
-	else if( myID >= 0x175D && myID <= 0x1764 )
-	{
-		Effects->PlaySound( s, 0x0248, true );
-		s->sysmessage( 1488 );
-		c = Items->CreateItem( s, myChar, 0x0E21, 2, 0, OT_ITEM, true );
-		if( c != NULL ) 
-		{
-			c->SetName( Dictionary->GetEntry( 1489 ) );
-            i->IncAmount( -1 );
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o

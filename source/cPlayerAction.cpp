@@ -1326,216 +1326,6 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	usePotion( CChar *p, CItem *i )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Character uses a potion
-//o---------------------------------------------------------------------------o
-void usePotion( CSocket *mSock, CChar *p, CItem *i )
-{
-	if( !ValidateObject( p ) || !ValidateObject( i ) )
-		return;
-
-	if( cwmWorldState->ServerData()->PotionDelay() != 0 )
-		Effects->tempeffect( p, p, 26, 0, 0, 0 );
-	switch( i->GetTempVar( CITV_MOREY ) )
-	{
-		case 1: // Agility Potion
-			Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
-			switch( i->GetTempVar( CITV_MOREZ ) )
-			{
-				case 1:
-					Effects->tempeffect( p, p, 6, (UI16)RandomNum( 6, 15 ), 0, 0 );
-					mSock->sysmessage( 1608 );
-					break;
-				case 2:
-					Effects->tempeffect( p, p, 6, (UI16)RandomNum( 11, 30 ), 0, 0 );
-					mSock->sysmessage( 1609 );
-					break;
-				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-					return;
-			}
-			Effects->PlaySound( p, 0x01E7 );
-			break;
-		case 2: // Cure Potion
-			if( p->GetPoisoned() < 1 )
-				mSock->sysmessage( 1344 );
-			else
-			{
-				UI08 x;
-				switch( i->GetTempVar( CITV_MOREZ ) )
-				{
-					case 1:
-						x = (UI08)RandomNum( 1, 100 );
-						if( p->GetPoisoned() == 1 && x < 81 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 2 && x < 41 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 3 && x < 21 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 4 && x < 6 )
-							p->SetPoisoned( 0 );
-						break;
-					case 2:
-						x = (UI08)RandomNum( 1, 100 );
-						if( p->GetPoisoned() == 1 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 2 && x < 81 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 3 && x < 41 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 4 && x < 21 )
-							p->SetPoisoned( 0 );
-						break;
-					case 3:
-						x = (UI08)RandomNum( 1, 100 );
-						if( p->GetPoisoned() == 1 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 2 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 3 && x < 81 )
-							p->SetPoisoned( 0 );
-						else if( p->GetPoisoned() == 4 && x < 61 )
-							p->SetPoisoned( 0 );
-						break;
-					default:
-						Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-						return;
-				}
-				
-				if( p->GetPoisoned() )
-					mSock->sysmessage( 1345 ); 
-				else
-				{
-					Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
-					Effects->PlaySound( p, 0x01E0 ); 
-					mSock->sysmessage( 1346 );
-				} 
-			}
-			break;
-		case 3: // Explosion Potion
-			if( p->GetRegion()->IsGuarded() )
-			{
-				mSock->sysmessage( 1347 );
-				return;
-			}
-			mSock->TempObj( i );
-			mSock->sysmessage( 1348 );
-			Effects->tempeffect( p, p, 16, 0, 1, 3 );
-			Effects->tempeffect( p, p, 16, 0, 2, 2 );
-			Effects->tempeffect( p, p, 16, 0, 3, 1 );
-			Effects->tempeffect( p, i, 17, 0, 4, 0 );
-			mSock->target( 0, 207, "" );
-			return;
-		case 4: // Heal Potion
-			switch( i->GetTempVar( CITV_MOREZ ) )
-			{
-				case 1:
-					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 5 + RandomNum( 1, 5 ) + p->GetSkill( 17 ) / 100 ), static_cast<SI16>(p->GetMaxHP()) ) );
-					mSock->sysmessage( 1349 );
-					break;
-				case 2:
-					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 15 + RandomNum( 1, 10 ) + p->GetSkill( 17 ) / 50 ), static_cast<SI16>(p->GetMaxHP()) ) );
-					mSock->sysmessage( 1350 );
-					break;
-				case 3:
-					p->SetHP( UOX_MIN( (SI16)(p->GetHP() + 20 + RandomNum( 1, 20 ) + p->GetSkill( 17 ) / 40 ), static_cast<SI16>(p->GetMaxHP()) ) );
-					mSock->sysmessage( 1351 );
-					break;
-				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-					return;
-			}
-			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
-			Effects->PlaySound( p, 0x01F2 ); //Healing Sound - SpaceDog
-			break;
-		case 5: // Night Sight Potion
-			//{
-			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06 );
-			Effects->tempeffect( p, p, 2, 0, 0, 0 );
-			Effects->PlaySound( p, 0x01E3 );
-			break;
-			//}
-		case 6: // Poison Potion
-			if( p->GetPoisoned() < (SI08)i->GetTempVar( CITV_MOREZ ) )
-				p->SetPoisoned( (SI08)i->GetTempVar( CITV_MOREZ ) );
-			if( i->GetTempVar( CITV_MOREZ ) > 4 )
-				i->SetTempVar( CITV_MOREZ, 4 );
-			p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( POISON ) ) );
-			Effects->PlaySound( p, 0x0246 );
-			mSock->sysmessage( 1352 );
-			break;
-		case 7: // Refresh Potion
-			switch( i->GetTempVar( CITV_MOREZ ) )
-			{
-				case 1:
-					p->SetStamina( UOX_MIN( (SI16)(p->GetStamina() + 20 + RandomNum( 1, 10 )), p->GetMaxStam() ) );
-					mSock->sysmessage( 1353 );
-					break;
-				case 2:
-					p->SetStamina( UOX_MIN( (SI16)(p->GetStamina() + 40 + RandomNum( 1, 30 )), p->GetMaxStam() ) );
-					mSock->sysmessage( 1354 );
-					break;
-				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-					return;
-			}
-			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
-			Effects->PlaySound( p, 0x01F2 ); //Healing Sound
-			break;
-		case 8: // Strength Potion
-			Effects->PlayStaticAnimation( p, 0x373A, 0, 15 );
-			switch( i->GetTempVar( CITV_MOREZ ) )
-			{
-				case 1:
-					Effects->tempeffect( p, p, 8, (UI16)( 5 + RandomNum( 1, 10 ) ), 0, 0);
-					mSock->sysmessage( 1355 );
-					break;
-				case 2:
-					Effects->tempeffect( p, p, 8, (UI16)( 10 + RandomNum( 1, 20 ) ), 0, 0);
-					mSock->sysmessage( 1356 );
-					break;
-				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-					return;
-			}
-			Effects->PlaySound( p, 0x01EE );     
-			break;
-		case 9: // Mana Potion
-			switch( i->GetTempVar( CITV_MOREZ ) )
-			{
-				case 1:
-					p->SetMana( UOX_MIN( (SI16)(p->GetMana() + 10 + i->GetTempVar( CITV_MOREX )/100), p->GetMaxMana() ) );
-					break;
-				case 2:
-					p->SetMana( UOX_MIN( (SI16)(p->GetMana() + 20 + i->GetTempVar( CITV_MOREX )/50), p->GetMaxMana() ) );
-					break;
-				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-					return;
-			}
-			Effects->PlayStaticAnimation( p, 0x376A, 0x09, 0x06); // Sparkle effect
-			Effects->PlaySound( p, 0x01E7); //agility sound - SpaceDog
-			break;
-		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, usepotion()" );
-			return;
-	}
-	Effects->PlaySound( p, 0x0030 );
-	if( p->GetID( 1 ) >= 1 && p->GetID( 2 )>90 && !p->IsOnHorse() )
-		Effects->PlayCharacterAnimation( p, 0x22);
-	i->IncAmount( -1 );
-	CItem *bPotion = Items->CreateItem( mSock, p, 0x0F0E, 1, 0, OT_ITEM, true );
-	if( bPotion != NULL )
-	{
-		if( bPotion->GetCont() == NULL )
-			bPotion->SetLocation( p );
-		bPotion->SetDecayable( true );
-	}
-}
-
 void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 //o---------------------------------------------------------------------------o
 //|   Function    :  handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
@@ -1755,16 +1545,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				}
 			}
 			return true;
-		case IT_CRYSTALBALL: // Crystal Ball
-			mSock->objMessage( 419 + RandomNum( 0, 9 ), x );
-			Effects->PlaySound( mSock, 0x01EC, true );
-			return true;
-		case IT_POTION: // Potions
-			if( mChar->IsUsingPotion() )
-				mSock->sysmessage( 430 );
-			else
-				usePotion( mSock, mChar, x );
-			return true;
 		case IT_TOWNSTONE: // Townstone and Townstone Deed
 			if( itemID == 0x14F0 )		// Check for Deed
 			{
@@ -1786,15 +1566,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				mSock->sysmessage( 432 );
 				mChar->SetSpeechItem( x );
 				mChar->SetSpeechMode( 7 );
-			}
-			return true;
-		case IT_GATE:		// Moongate
-		case IT_ENDGATE:	// Ending Moongate
-			if( objInRange( mChar, x, DIST_NEARBY ) )
-			{
-				CItem *otherGate = calcItemObjFromSer( x->GetTempVar( CITV_MOREX ) );
-				if( ValidateObject( otherGate ) )
-					mChar->SetLocation( otherGate );
 			}
 			return true;
 		case IT_OBJTELEPORTER:	// Object Teleporter
@@ -2047,10 +1818,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 					mSock->sysmessage( 448 );
 			}
 			return true;
-		case IT_UNSPUNFABRIC:	// wool to yarn/cotton to thread
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_WHEEL, 449 );
-			return true;
 		case IT_UNCOOKEDFISH:	// cooking fish
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_COOKING, 450 );
@@ -2058,10 +1825,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_UNCOOKEDMEAT:	//
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_COOKING, 451 );
-			return true;
-		case IT_SPUNFABRIC:	// yarn/thread to cloth
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_LOOM, 452 );
 			return true;
 		case IT_CANNONBALL:	// cannon ball
 			mSock->target( 0, TARGET_LOADCANNON, 455 );
@@ -2157,15 +1920,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_CLOCK:	// clocks
 			telltime( mSock );
 			return true;
-		case IT_MORTAR:	// Mortar for Alchemy
-			if( !mChar->SkillUsed( ALCHEMY ) )
-				mSock->target( 0, TARGET_ALCHEMY, 470 );
-			else
-				mSock->sysmessage( 1631 );
-			return true;
-		case IT_SCISSORS:	// scissors
-			mSock->target( 0, TARGET_CREATEBANDAGE, 471 );
-			return true;
 		case IT_SEXTANT:	// sextants
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
 			return true;
@@ -2177,24 +1931,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_LOCKPICK, 475 );
 			return true;
-		case IT_COTTONPLANT:	// cotton plants
-			if( !mChar->IsOnHorse() )
-				Effects->PlayCharacterAnimation( mChar, 0x0D );
-			else
-				Effects->PlayCharacterAnimation( mChar, 0x1D );
-			Effects->PlaySound( mSock, 0x013E, true );
-			i = Items->CreateItem( mSock, mChar, 0x0DF9, 1, 0, OT_ITEM, true );
-			if( i == NULL )
-				return true;
-			CItem *skillItem;
-			skillItem = static_cast<CItem *>(mSock->TempObj());
-			if( ValidateObject( skillItem ) )
-			{
-				skillItem->SetDecayable( true );
-				mSock->sysmessage( 476 );
-				mSock->TempObj( NULL );
-			}
-			return true; // cotton
 		case IT_TINKERAXLE:	// tinker axle
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_TINKERAXEL, 477 );
@@ -2646,7 +2382,6 @@ const char *AppendData( CItem *i, std::string currentName )
 			break;
 		case IT_RECALLRUNE:
 		case IT_GATE:
-		case IT_ENDGATE:
 		case IT_OBJTELEPORTER:
 			{
 			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );

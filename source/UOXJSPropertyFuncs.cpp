@@ -614,6 +614,7 @@ namespace UOX
 				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
 				case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
+				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
 				default:
 					break;
 			}
@@ -816,6 +817,7 @@ namespace UOX
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
+				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 			}
 		}
 		return JS_TRUE;

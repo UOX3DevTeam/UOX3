@@ -80,14 +80,12 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-	TargetFunc AlchemyTarget;
 	TargetFunc AnatomyTarget;
 	TargetFunc AnimalLoreTarget;
 	TargetFunc ArmsLoreTarget;
 	TargetFunc BeggingTarget;
 	TargetFunc BottleTarget;
 	TargetFunc BowCraft;
-	TargetFunc CreateBandageTarget;
 	TargetFunc DetectHidden;
 	TargetFunc EnticementTarget1;
 	TargetFunc EnticementTarget2;
@@ -97,7 +95,6 @@ public:
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
 	TargetFunc LockPick;
-	TargetFunc Loom;
 	TargetFunc handleCooking;
 	TargetFunc Mine;
 	TargetFunc Persecute;
@@ -133,7 +130,6 @@ public:
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
 	void Fish( CChar *i );
 
-	void Wheel( CSocket *s );
 	bool EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell );
 	void AButte( CSocket *s, CItem *x );
 	void Snooping( CSocket *s, CChar *target, CItem *pack );

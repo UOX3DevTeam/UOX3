@@ -1,3 +1,30 @@
+1/12/2005 - giwo
+	Moved Alchemy functionality out to JS.
+	Moved the following use functionality out to JS.
+		Scissors
+		Potions
+		Moongates
+		Spun Fabric
+		Unspun Fabric
+		Cotton Plant
+	Removed unused XGM code from the source.
+
+1/9/2005 - giwo
+	Moved the following Skill Functions to JS.
+		RepairBow
+		RepairLeather
+		Tinkering
+		Tailoring
+		Fletching
+		Carpentry
+	Moved Food consumption functionality out to JS
+	Moved teleport rune functionality out to JS.
+	JS Changes
+		Changed CChar_MakeMenu to CMisc_MakeMenu to allow access to sockets.
+		Modified CMisc_MakeMenu to allow passing the skill number.
+		Removed old style MakeMenu() function.
+		Added CChar_FindItemType( itemType ) to allow searching for items by type.
+
 1/8/2005 - giwo
 	Fixed some minor issues with the new jse_typeassociations.scp handling.
 	Included skills/healing.js in a first step toward putting skills in JS.

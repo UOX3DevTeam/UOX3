@@ -114,7 +114,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		DoSEErrorMessage( "DoTempEffect: Invalid number of arguments (takes 7 or 8)" );
 		return JS_FALSE;
 	}
-	long iType			= JSVAL_TO_INT( argv[0] );
+	UI08 iType			= static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
 	long targNum		= JSVAL_TO_INT( argv[3] );
 	UI08 more1			= (UI08)JSVAL_TO_INT( argv[4] );
 	UI08 more2			= (UI08)JSVAL_TO_INT( argv[5] );

@@ -1644,34 +1644,6 @@
 							BrowseInformation="1"/>
 					</FileConfiguration>
 				</File>
-				<File
-					RelativePath="xgm.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="DebugProfile|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
 			</Filter>
 			<Filter
 				Name="Other"
@@ -2515,9 +2487,6 @@
 				</File>
 				<File
 					RelativePath="worldmain.h">
-				</File>
-				<File
-					RelativePath="xgm.h">
 				</File>
 			</Filter>
 			<Filter

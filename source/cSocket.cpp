@@ -1406,34 +1406,6 @@ UI32 cPUOXBuffer::Pack( void )
 }
 
 
-cPXGMBuffer::cPXGMBuffer() : cPBaseBuffer()
-{
-}
-cPXGMBuffer::cPXGMBuffer( char *initBuffer, size_t len ) : cPBaseBuffer( initBuffer, len )
-{
-}
-cPXGMBuffer::~cPXGMBuffer()
-{
-}
-cPXGMBuffer::cPXGMBuffer( cPBaseBuffer *initBuffer ) : cPBaseBuffer( initBuffer )
-{
-}
-UI32 cPXGMBuffer::Pack( void )
-{
-	return Length();
-}
-UI32 cPXGMBuffer::PackedLength( void ) const
-{
-	return Length();
-}
-const UI08 *cPXGMBuffer::PackedPointer( void ) const
-{
-	// we don't pack with xGM
-	return Pointer();
-}
-
-
-
 cPInputBuffer::cPInputBuffer() : tSock( NULL )
 {
 }

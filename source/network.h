@@ -62,18 +62,6 @@ public:
 	virtual bool			ClientCanReceive( CSocket *mSock );
 };
 
-class cPXGMBuffer : public cPBaseBuffer
-{
-public:
-							cPXGMBuffer();
-							cPXGMBuffer( char *initBuffer, size_t len );
-	virtual					~cPXGMBuffer();
-							cPXGMBuffer( cPBaseBuffer *initBuffer );
-	virtual UI32			Pack( void );
-	virtual const UI08 *	PackedPointer( void ) const;
-	virtual UI32			PackedLength( void ) const;
-};
-
 class cPInputBuffer
 {
 protected:
@@ -108,7 +96,6 @@ public:
 	void		ClearBuffers( void );
 	void		CheckLoginMessage( void );
 	void		CheckMessage( void );
-	void		CheckXGM( void );
 	void		SockClose( void );
 	void		setLastOn( CSocket *s );
 	CSocket *	GetSockPtr( UOXSOCKET s );
@@ -140,9 +127,6 @@ public:
 
 	void		PushLogg( void );
 	void		PopLogg( void );
-
-	void		PushXGM( void );
-	void		PopXGM( void );
 	
 	// Login Specific
 	void		LoginDisconnect(UOXSOCKET s);
@@ -159,17 +143,16 @@ private:
 	};
 
 	std::vector< FirewallEntry >	slEntries;
-	int						a_socket, xgmSocket;
-	SOCKLIST				connClients, loggedInClients, xgmClients;
+	int						a_socket;
+	SOCKLIST				connClients, loggedInClients;
 
-	bool					xgmRunning;
 	struct sockaddr_in		client_addr;
 
 	ThreadSafeObject		InternalControl;
 	size_t					peakConnectionCount;
 
-	std::vector< SOCKLIST_ITERATOR >	connIteratorBackup, loggIteratorBackup, xgmIteratorBackup;
-	SOCKLIST_ITERATOR					currConnIter, currLoggIter, currXGMIter;
+	std::vector< SOCKLIST_ITERATOR >	connIteratorBackup, loggIteratorBackup;
+	SOCKLIST_ITERATOR					currConnIter, currLoggIter;
 
 	void		LoadFirewallEntries( void );
 	void		GetMsg( UOXSOCKET s );
@@ -180,13 +163,6 @@ private:
 	void		CheckConn( void );
 	void		LogOut( CSocket *s );
 
-	void		StartupXGM( int nPortArg );
-	void		ShutdownXGM( void );
-	void		XGMDisconnect( UOXSOCKET s );
-	void		XGMDisconnect( CSocket *s );
-	UOXSOCKET	FindXGMPtr( CSocket *s );
-	void		GetXGMMsg( UOXSOCKET s );
-	void		CheckXGMConn( void );
 	bool		IsFirewallBlocked( UI08 part[4] );
 
 };

@@ -49,8 +49,6 @@ void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 		(*toClear)->FlushBuffer();
 	for( toClear = loggedInClients.begin(); toClear != loggedInClients.end(); ++toClear )
 		(*toClear)->FlushBuffer();
-	for( toClear = xgmClients.begin(); toClear != xgmClients.end(); ++toClear )
-		(*toClear)->FlushBuffer();
 }
 
 // set the laston character member value to the current date/time
@@ -389,7 +387,6 @@ cNetworkStuff::~cNetworkStuff()
 		delete connClients[i];
 	}
 	closesocket( s );
-	ShutdownXGM();
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();
 #endif
@@ -447,12 +444,11 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 }
 
 
-cNetworkStuff::cNetworkStuff() : xgmRunning( false ), peakConnectionCount( 0 ) // Initialize sockets
+cNetworkStuff::cNetworkStuff() : peakConnectionCount( 0 ) // Initialize sockets
 {
 	FD_ZERO( &conn );
 	sockInit();
 	LoadFirewallEntries();
-	StartupXGM(32621);
 }
 
 CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
@@ -1429,255 +1425,15 @@ void cNetworkStuff::LoadFirewallEntries( void )
 	}
 }
 
-void cNetworkStuff::StartupXGM( int nPortArg )
-{
-	xgmSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
-	if( xgmSocket < 0 )
-	{
-		Console.Error( 0, "Unable to create XGM socket" );
-#if UOX_PLATFORM == PLATFORM_WIN32
-		Console.Error( 0, "Code %i", WSAGetLastError() );
-#endif
-		return;
-	}
-#if UOX_PLATFORM != PLATFORM_WIN32
-	int on;
-	setsockopt( xgmSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
-#endif
-	
-	UI32 len_connection_addr = sizeof( struct sockaddr_in );
-	sockaddr_in connection;
-	memset( (char *) &connection, 0, len_connection_addr );
-	connection.sin_family = AF_INET;
-	connection.sin_addr.s_addr = htonl( INADDR_ANY );
-	connection.sin_port = htons( nPortArg );
-	int bcode = bind( xgmSocket, (struct sockaddr *)&connection, len_connection_addr );
-	
-	if( bcode < 0 )
-	{
-		Console.Error( 0, " Unable to bind socket for XGM - Error code: %i", bcode );
-		return;
-	}
-	listen( xgmSocket, 42 );
-	xgmRunning = true;
-}
-
-void cNetworkStuff::CheckXGM( void )
-{
-	fd_set all;
-	fd_set errsock;
-	FD_ZERO( &all );
-	FD_ZERO( &errsock );
-	int nfds = 0;
-
-	for( SOCKLIST_CITERATOR toCheck = xgmClients.begin(); toCheck != xgmClients.end(); ++toCheck )
-	{
-		size_t clientSock = (*toCheck)->CliSocket();
-		FD_SET( clientSock, &all );
-		FD_SET( clientSock, &errsock );
-		if( clientSock + 1 > nfds )
-			nfds = clientSock + 1;
-	}
-	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
-	if( s > 0 )
-	{
-		size_t oldnow = xgmClients.size();
-		for( size_t i = 0; i < xgmClients.size(); ++i )
-		{
-			CSocket *mXGMSock = xgmClients[i];
-			if( mXGMSock == NULL )
-			{
-				Console << "Lost XGM socket " << static_cast< UI32 >(i) << " is NULL!" << myendl;
-				continue;
-			}
-			if( FD_ISSET( mXGMSock->CliSocket(), &errsock ) )
-			{
-				XGMDisconnect( i );
-				continue;
-			}
-			if( ( FD_ISSET( mXGMSock->CliSocket(), &all ) ) && ( oldnow == xgmClients.size() ) )
-			{
-				try
-				{
-					GetXGMMsg( i );
-				}
-				catch( socket_error& blah )
-				{
-#if UOX_PLATFORM != PLATFORM_WIN32
-					Console << "Client disconnected" << myendl;
-#else
-					if( blah.ErrorNumber() == WSAECONNRESET )
-						Console << "Client disconnected" << myendl;
-					else if( blah.ErrorNumber() != -1 )
-						Console << "Socket error: " << (SI32)blah.ErrorNumber() << myendl;
-#endif
-					XGMDisconnect( i );	// abnormal error
-				}
-			}
-		}
-	}
-	else if( s == SOCKET_ERROR )
-	{
-//		Console << WSAGetLastError() << myendl;
-//		Console << WSANOTINITIALISED << myendl;
-	}
-}
-void cNetworkStuff::ShutdownXGM( void )
-{
-	closesocket( xgmSocket );
-	for( size_t i = 0; i < xgmClients.size(); ++i )
-	{
-		xgmClients[i]->CloseSocket();
-		delete xgmClients[i];
-		xgmClients[i] = NULL;
-	}
-
-}
-
-void cNetworkStuff::XGMDisconnect( UOXSOCKET s )
-{
-	Console << "XGMClient " << s << " disconnected. [Total:" << (SI32)(xgmClients.size()-1) << "]" << myendl;
-
-	xgmClients[s]->FlushBuffer();
-	xgmClients[s]->CloseSocket();
-
-	for( size_t q = 0; q < xgmIteratorBackup.size(); ++q )
-	{
-		if( xgmIteratorBackup[q] != xgmClients.begin() && xgmIteratorBackup[q] >= ( xgmClients.begin() + s ) )
-			--xgmIteratorBackup[q];
-	}
-	delete xgmClients[s];
-	xgmClients.erase( xgmClients.begin() + s );
-}
-
-void cNetworkStuff::XGMDisconnect( CSocket *s )
-{
-	UOXSOCKET i = FindXGMPtr( s );
-	XGMDisconnect( i );
-}
-
-UOXSOCKET cNetworkStuff::FindXGMPtr( CSocket *s )
-{
-	for( UOXSOCKET i = 0; i < xgmClients.size(); ++i )
-	{
-		if( xgmClients[i] == s )
-			return i;
-	}
-	return INVALID_SOCKET;
-}
-
-cPInputBuffer *WhichXGMPacket( UI08 packetID, CSocket *s );
-
-void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
-{
-	CSocket *mSock = xgmClients[s];
-	if( mSock == NULL )
-		return;
-	mSock->InLength( 0 );
-	UI08 *buffer = mSock->Buffer();
-	char temp[1024];
-	if( mSock->Receive( 1 ) > 0 )
-	{
-		UI08 packetID = buffer[0];
-		if( mSock->FirstPacket() && packetID != 0x00 )
-		{
-			sprintf( temp, "Invalid XGM client attempting to connect, disconnecting them: IP %i.%i.%i.%i", mSock->ClientIP1(), mSock->ClientIP2(), mSock->ClientIP3(), mSock->ClientIP4() );
-			messageLoop << temp;
-			XGMDisconnect( s );
-			return;
-		}
-		cPInputBuffer *test = WhichXGMPacket( packetID, mSock );
-		if( test != NULL )
-		{
-			test->Handle();
-			delete test;
-		}
-		else
-		{
-			fd_set all;
-			FD_ZERO( &all );
-			FD_SET( mSock->CliSocket(), &all );
-			int nfds = mSock->CliSocket() + 1;
-			if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
-				mSock->Receive( 2560 );
-			sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
-			Console << temp << myendl;
-		}
-	}
-	else	// Sortta error type thing, they disconnected already
-		XGMDisconnect( s );
-}
-
 void cNetworkStuff::CheckConnections( void )
 {
 	CheckConn();
-	CheckXGMConn();
-}
-
-void cNetworkStuff::CheckXGMConn( void )
-{
-	fd_set xgmConn;
-	FD_ZERO( &xgmConn );
-	FD_SET( xgmSocket, &xgmConn );
-	int nfds	= xgmSocket + 1;
-	int s		= select( nfds, &xgmConn, NULL, NULL, &cwmWorldState->uoxtimeout );
-	if( s > 0 )
-	{
-		sockaddr_in client_addr;
-		int len = sizeof( struct sockaddr_in );
-#if UOX_PLATFORM == PLATFORM_WIN32
-		size_t newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, &len );
-#else
-		size_t newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
-#endif
-		CSocket *toMake = new CSocket( newClient );
-		if( newClient < 0 )
-		{
-			Console.Error( 0, "Error at client xGM connection!" );
-			cwmWorldState->SetKeepRun( true );
-			cwmWorldState->SetError( true );
-			delete toMake;
-			return;
-		}
-		toMake->ClientType( CV_XGM );
-		//	EviLDeD	-	April 5, 2000
-		//	Due to an attack on the shard, and the true inability to determine who did what 
-		//	I am implementing a firewall entry system, any IP on this list will be immediatly dropped.
-		//	This is a light weight firewall attempt to stop some people that are attacking
-		//	a shard that they can easily create new accounts automatically on.
-		//	ListFormat: x.x.x.x --> * means any for that domain class
-		//   _  _  _ 
-		UI08 part[4];
-		part[0] = (UI08)(client_addr.sin_addr.s_addr&0xFF);
-		part[1] = (UI08)((client_addr.sin_addr.s_addr&0xFF00)>>8);
-		part[2] = (UI08)((client_addr.sin_addr.s_addr&0xFF0000)>>16);
-		part[3] = (UI08)((client_addr.sin_addr.s_addr&0xFF000000)>>24);
-		if( IsFirewallBlocked( part ) )
-		{
-			Console << "FIREWALL: Blocking address " << part[0] << "." << part[1] << "." << part[2] << "." << part[3] << "--> Blocked!" << myendl;
-			closesocket( newClient );
-			delete toMake;
-			return;
-		}
-		Console << "FIREWALL: Forwarding address " << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << " --> Access Granted" << myendl;
-		Console << "XGMClient " << (SI32)cwmWorldState->GetPlayersOnline() << " [" << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << "] connected [Total:" << (SI32)(cwmWorldState->GetPlayersOnline()+1) << "]" << myendl;
-		xgmClients.push_back( toMake );
-		return;
-	}
-	if( s < 0 )
-	{
-		Console.Error( 0, " Select (Conn) failed!" );
-		cwmWorldState->SetKeepRun( false );
-		cwmWorldState->SetError( true );
-		return;
-	}
 }
 
 void cNetworkStuff::CheckMessages( void )
 {
 	CheckLoginMessage();
 	CheckMessage();
-	CheckXGM();
 }
 
 size_t cNetworkStuff::PeakConnectionCount( void ) const
@@ -1706,18 +1462,6 @@ void cNetworkStuff::PopLogg( void )
 {
 	currLoggIter = loggIteratorBackup.back();
 	loggIteratorBackup.pop_back();
-	Off();
-}
-
-void cNetworkStuff::PushXGM( void )
-{
-	On();
-	xgmIteratorBackup.push_back( currXGMIter );
-}
-void cNetworkStuff::PopXGM( void )
-{
-	currXGMIter = xgmIteratorBackup.back();
-	xgmIteratorBackup.pop_back();
 	Off();
 }
 

@@ -456,20 +456,6 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			std::getline( fs2, sLine );
 			continue;
 		}
-		else if( l == "XGMCLIENT" )
-		{
-			if( !r.empty() && r.length() != 0 )
-			{
-				// Ok strip the name and store it. We need to make it all the same case for comparisons
-				if( r == "ON" )
-				{
-					// Set the Public Flag on. Public implies that a users conatact information can be published on the web.
-					actb.wFlags |= 0x0002;
-				}
-			}
-			std::getline( fs2, sLine );
-			continue;
-		}
 		else if( l.substr( 0, 10 ) == "CHARACTER-" )
 		{
 			int charNum = UString( l.substr( 10 ) ).toInt();
@@ -2303,7 +2289,7 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 	fsOut << "//      Bit:  1) Banned            2) Suspended          4) Public             8) Currently Logged In" << std::endl;
 	fsOut << "//           16) Char-1 Blocked   32) Char-2 Blocked    64) Char-3 Blocked   128) Char-4 Blocked" << std::endl;
 	fsOut << "//          256) Char-5 Blocked  512) Char-6 Blocked  1024) Unused          2048) Unused" << std::endl;
-	fsOut << "//         4096) XGM            8192) Seer           16384) GM Counselor   32768) GM Account" << std::endl;
+	fsOut << "//         4096) Unused          8192) Seer           16384) GM Counselor   32768) GM Account" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   TIMEBAN: " << std::endl;
 	fsOut << "//      This would be the end date of a timed ban." << std::endl;
@@ -2336,7 +2322,7 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 	fsOut << "//      Bit:  1) Banned       2) Suspended     4) Public            8) Currently Logged In" << std::endl;
 	fsOut << "//           16) Char-1      32) Char-2       64) Char-3          128) Char-4" << std::endl;
 	fsOut << "//          256) Char-5     512) Char-6     1024)                2048)" << std::endl;
-	fsOut << "//         4096) XGM       8192) Seer      16384) GM Counselor  32768) GM Account" << std::endl;
+	fsOut << "//         4096) Unused     8192) Seer      16384) GM Counselor  32768) GM Account" << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
 //o--------------------------------------------------------------------------o

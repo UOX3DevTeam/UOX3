@@ -128,7 +128,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	CItem *g2 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( g2 != NULL )
 	{
-		g2->SetType( IT_ENDGATE );
+		g2->SetType( IT_GATE );
 		g2->SetLocation( trgX, trgY, trgZ, trgWorld );
 		g2->SetGateTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( GATE ) )) );
 		g2->SetDir( 1 );
@@ -1515,7 +1515,7 @@ void cMagic::SpellBook( CSocket *mSock )
 
 void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
 {
-	if( type == IT_GATE || type == IT_ENDGATE )
+	if( type == IT_GATE )
 	{
 		CItem *otherGate = calcItemObjFromSer( itemCheck->GetTempVar( CITV_MOREX ) );
 		if( !ValidateObject( otherGate ) )

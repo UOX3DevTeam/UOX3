@@ -60,7 +60,6 @@ const size_t		DEFWORLD_PLAYERSONLINE		= 0;
 const UI32			DEFWORLD_NEWTIME			= 0;
 const UI32			DEFWORLD_OLDTIME			= 0;
 const bool			DEFWORLD_AUTOSAVED			= false;
-const bool			DEFWORLD_XGMENABLED			= false;
 const SaveStatus	DEFWORLD_SAVEPROGRESS		= SS_NOTSAVING;
 const bool			DEFWORLD_RELOADINGSCRIPTS	= false;
 
@@ -70,7 +69,7 @@ keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ), ErrorCount( DEFWORLD_ERR
 uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ), 
 overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ), 
 autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ), 
-xgm( DEFWORLD_XGMENABLED ), reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
+reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
 {
 	for( int mTID = (int)tWORLD_NEXTFIELDEFFECT; mTID < (int)tWORLD_COUNT; ++mTID )
 		worldTimers[mTID] = 0;
@@ -481,23 +480,6 @@ void CWorldMain::DecPlayersOnline( void )
 	if( playersOnline == 0 )
 		throw std::runtime_error( "Decrementing a 0 count which will rollover" );
 	--playersOnline;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool XGMEnabled()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	XGM Enabled or Disabled
-//o--------------------------------------------------------------------------o
-bool CWorldMain::GetXGMEnabled( void ) const
-{
-	return xgm;
-}
-void CWorldMain::SetXGMEnabled( bool newVal )
-{
-	xgm = newVal;
 }
 
 //o--------------------------------------------------------------------------o

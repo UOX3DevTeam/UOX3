@@ -109,7 +109,6 @@ private:
 
 	// Misc
 	size_t		playersOnline;					// Players online
-	bool		xgm;
 	bool		reloadingScripts;
 
 public:
@@ -171,8 +170,6 @@ public:
 	void		SetPlayersOnline( size_t newVal );
 	size_t		GetPlayersOnline( void ) const;
 	void		DecPlayersOnline( void );
-	void		SetXGMEnabled( bool newVal );
-	bool		GetXGMEnabled( void ) const;
 	bool		GetReloadingScripts( void ) const;
 	void		SetReloadingScripts( bool newVal );
 

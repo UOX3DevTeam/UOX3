@@ -644,9 +644,6 @@ void DisplaySettings( void )
 		Console << "Save & Restart Server" << myendl;
 #endif
 
-	Console << "   -xGM Remote: ";
-	Console << activeMap[cwmWorldState->GetXGMEnabled()] << myendl;
-
 	Console << "   -Races: " << static_cast< UI32 >(Races->Count()) << myendl;
 	Console << "   -Guilds: " << static_cast< UI32 >(GuildSys->NumGuilds()) << myendl;
 	Console << "   -Char count: " << ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ) << myendl;
@@ -1684,7 +1681,6 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			switch( itemCheck->GetType() )
 			{
 			case IT_GATE:
-			case IT_ENDGATE:
 				if( itemCheck->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
 					itemCheck->Delete();
@@ -2187,14 +2183,7 @@ void ParseArgs( int argc, char *argv[] )
 {
 	for( int i = 1; i < argc; ++i )
 	{
-		if( !strcmp( argv[i], "-xgm" ) )
-		{
-			Console.PrintSectionBegin();
-			Console << "XGM Enabled! Initializing... ";
-			cwmWorldState->SetXGMEnabled( true );
-			Console << "Done!" << myendl;
-		}
-		else if( !strcmp( argv[i], "-ERROR" ) )
+		if( !strcmp( argv[i], "-ERROR" ) )
 		{
 			cwmWorldState->SetErrorCount( UString( argv[i+1] ).toULong() );
 			++i;
@@ -2322,9 +2311,6 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 			Console << temp << myendl;
 			
 			sprintf(temp, "uox.exe -ERROR %u", cwmWorldState->GetErrorCount() );
-			
-			if( cwmWorldState->GetXGMEnabled() )
-				strcat( temp, " -xgm" );
 			
 			delete cwmWorldState;
 			system( temp );
@@ -3419,7 +3405,6 @@ int main( int argc, char *argv[] )
 			Network->CheckMessages();
 #else
 			Network->CheckMessage();
-			Network->CheckXGM();
 #endif
 			
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
