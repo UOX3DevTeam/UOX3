@@ -153,7 +153,7 @@ size_t	getTileName( CItem *i, std::string& itemname );
 bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor );
 void	Shutdown( SI32 retCode );
 void	useDoor( CSocket *s, CItem *item );
-void	doDeathStuff( CChar *i );
+void	HandleDeath( CChar *mChar );
 void	NpcResurrectTarget( CChar *s );
 
 inline bool ValidateObject( CBaseObject *toValidate )

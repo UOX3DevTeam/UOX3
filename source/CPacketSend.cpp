@@ -151,10 +151,6 @@ void CPCharLocBody::CopyData( CChar &toCopy )
 	internalBuffer[17] = toCopy.GetDir();
 }
 
-CPCharLocBody::~CPCharLocBody()
-{
-}
-
 CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
 {
 	CopyData( toCopy );
@@ -247,10 +243,6 @@ CPacketSpeech &CPacketSpeech::operator=( CPacketSpeech &toCopy )
 	for( size_t i = 0; i < internalBuffer.size(); ++i )
 		internalBuffer[i] = toCopy[i];
 	return (*this);
-}
-
-CPacketSpeech::~CPacketSpeech()
-{
 }
 
 CPacketSpeech::CPacketSpeech() : isUnicode( false )
@@ -897,6 +889,11 @@ void CPCharacterAnimation::InternalReset( void )
 //	BYTE direction 
 //	BYTE zLoc 
 //Note: Only used with the character being played by the client.
+CPDrawGamePlayer::CPDrawGamePlayer( CChar &toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
 
 void CPDrawGamePlayer::CopyData( CChar &toCopy )
 {
@@ -931,17 +928,6 @@ void CPDrawGamePlayer::InternalReset( void )
 CPDrawGamePlayer::CPDrawGamePlayer()
 {
 	InternalReset();
-}
-CPDrawGamePlayer::CPDrawGamePlayer( CChar &toCopy )
-{
-	InternalReset();
-	CopyData( toCopy );
-}
-
-CPDrawGamePlayer &CPDrawGamePlayer::operator=( CChar &toCopy )
-{
-	CopyData( toCopy );
-	return (*this);
 }
 
 //0x4E Packet
@@ -2968,9 +2954,7 @@ CPMapChange::CPMapChange( CBaseObject *moving )
 	if( ValidateObject( moving ) )
 		SetMap( moving->WorldNumber() );
 }
-CPMapChange::~CPMapChange()
-{
-}
+
 void CPMapChange::SetMap( UI08 newMap )
 {
 	internalBuffer[5] = newMap;
@@ -3477,9 +3461,7 @@ CPUpdScroll::CPUpdScroll( UI08 tType, UI08 tNum )
 	TipType( tType );
 	TipNumber( tNum );
 }
-CPUpdScroll::~CPUpdScroll()
-{
-}
+
 void CPUpdScroll::AddString( const char *toAdd )
 {
 	strcat( tipData, toAdd );
@@ -3634,39 +3616,40 @@ void CPMapRelated::ID( SERIAL key )
 //		if (model & 0x8000) 
 //			BYTE[2] hue 
 //
-void CPDrawObject::InternalReset( void )
-{
-	SetLength( 19 );
-	internalBuffer[0] = 0x78;
-}
-void CPDrawObject::SetLength( UI16 len )
-{
-	internalBuffer.resize( len );
-	internalBuffer[1] = (UI08)(len>>8);
-	internalBuffer[2] = (UI08)(len%256);
-	curLen = len;
-}
 CPDrawObject::CPDrawObject()
 {
 	InternalReset();
 }
+
 CPDrawObject::CPDrawObject( CChar &mChar )
 {
 	InternalReset();
 	CopyData( mChar );
 }
-CPDrawObject::~CPDrawObject()
+
+void CPDrawObject::InternalReset( void )
 {
+	SetLength( 19 );
+	internalBuffer[0] = 0x78;
 }
+
+void CPDrawObject::SetLength( UI16 len )
+{
+	internalBuffer.resize( len );
+	PackShort( &internalBuffer[0], 1, len );
+	curLen = len;
+}
+
 void CPDrawObject::Finalize( void )
 {
-	int cPos = curLen;
+	UI16 cPos = curLen;
 	SetLength( curLen + 4 );
-	PackLong( &internalBuffer[0], cPos, (UI32)0 );
+	PackLong( &internalBuffer[0], cPos, static_cast<UI32>(0) );
 }
+
 void CPDrawObject::AddItem( CItem *toAdd )
 {
-	int cPos = curLen;
+	UI16 cPos = curLen;
 	bool bColour = ( toAdd->GetColour() != 0 );
 	if( bColour )
 		SetLength( curLen + 9 );
@@ -3674,40 +3657,39 @@ void CPDrawObject::AddItem( CItem *toAdd )
 		SetLength( curLen + 7 );
 
 	PackLong(  &internalBuffer[0], cPos, toAdd->GetSerial() );
-	PackShort( &internalBuffer[0], cPos + 4, toAdd->GetID() );
-	internalBuffer[cPos + 6] = toAdd->GetLayer();
+	PackShort( &internalBuffer[0], cPos+=4, toAdd->GetID() );
+	internalBuffer[cPos+=2] = toAdd->GetLayer();
 
 	if( bColour )
 	{
-		cPos += 7;
-		internalBuffer[cPos - 3] |= 0x80;
-		PackShort( &internalBuffer[0], cPos, toAdd->GetColour() );
+		internalBuffer[cPos-2] |= 0x80;
+		PackShort( &internalBuffer[0], ++cPos, toAdd->GetColour() );
 	}
 }
+
 void CPDrawObject::SetRepFlag( UI08 value )
 {
 	internalBuffer[18] = value;
 }
-void CPDrawObject::SetCharFlag( UI08 value )
-{
-	internalBuffer[17] = value;
-}
-CPDrawObject& CPDrawObject::operator=( CChar& mChar )
-{
-	CopyData( mChar );
-	return (*this);
-}
+
 void CPDrawObject::CopyData( CChar& mChar )
 {
 	PackLong(  &internalBuffer[0],  3, mChar.GetSerial() );
-	
 	PackShort( &internalBuffer[0],  7, mChar.GetID() );
 	PackShort( &internalBuffer[0],  9, mChar.GetX() );
 	PackShort( &internalBuffer[0], 11, mChar.GetY() );
-	PackShort( &internalBuffer[0], 15, mChar.GetSkin() );
-
 	internalBuffer[13] = mChar.GetZ();
 	internalBuffer[14] = mChar.GetDir();
+	PackShort( &internalBuffer[0], 15, mChar.GetSkin() );
+
+	UI08 cFlag = 0;
+	if( mChar.GetPoisoned() )
+		cFlag |= 0x04;
+	if( ( !mChar.IsNpc() && !isOnline( &mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) )
+		cFlag |= 0x80;
+	if( mChar.IsAtWar() )
+		cFlag |= 0x40;
+	internalBuffer[17] = cFlag;
 }
 
 //0x89 Packet
@@ -3799,10 +3781,9 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 //		BYTE flag byte (See top)
 void CPObjectInfo::InternalReset( void )
 {
-	internalBuffer.resize( 17 );
+	internalBuffer.resize( 16 );
 	internalBuffer[0] = 0x1A;
-	internalBuffer[1] = 0;
-	internalBuffer[2] = 17;
+	internalBuffer[2] = 16;
 }
 void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 {
@@ -3818,11 +3799,13 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 {
 	if( mItem.isPileable() || mItem.isCorpse() )
 	{
-		internalBuffer.resize( 19 );
-		internalBuffer[2] = 19;
-		internalBuffer[3] += 0x80;	// Enable piles
+		internalBuffer.resize( 18 );
+		internalBuffer[2] = 18;
+		internalBuffer[3] |= 0x80;	// Enable piles
 	}
 
+	bool isInvisible	= (mItem.GetVisible() != VT_VISIBLE);
+	bool isMovable		= (mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ));
 	// if player is a gm, this item
 	// is shown like a candle (so that he can move it),
 	// ....if not, the item is a normal
@@ -3835,12 +3818,20 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 	UI08 byteNum = 7;
 	if( mItem.isPileable() || mItem.isCorpse() )
 		PackShort( &internalBuffer[0],  byteNum+=2, mItem.GetAmount() );
+
 	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
-	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );	// Enable Dye and Move
+	if( isInvisible || isMovable )
+	{
+		PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );
+		internalBuffer.resize( internalBuffer.size()+1 );
+		++internalBuffer[2];
+	}
+	else
+		PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0x4000 );
 	if( mItem.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[byteNum-2]	+= 0x80;	// Enable direction
+		internalBuffer[byteNum-2]	|= 0x80;	// Enable direction
 		internalBuffer[byteNum+=2]	= mItem.GetDir();
 		internalBuffer[++byteNum]	= mItem.GetZ();
 		++internalBuffer[2];
@@ -3852,40 +3843,57 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 		PackShort( &internalBuffer[0], ++byteNum, 0x00C6 );
 	else
 		PackShort( &internalBuffer[0], ++byteNum, mItem.GetColour() );
-	internalBuffer[byteNum+=2] = 0;
-	if( mItem.GetVisible() != VT_VISIBLE )
-		internalBuffer[byteNum] |= 0x80;
 
-	if( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ) ) 
-		internalBuffer[byteNum] += 0x20;
+	if( isInvisible || isMovable )
+	{
+		internalBuffer[byteNum+=2] = 0;
+		if( isInvisible )
+			internalBuffer[byteNum] |= 0x80;
+
+		if( isMovable ) 
+			internalBuffer[byteNum] |= 0x20;
+	}
 }
 
 void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 {
+	bool isInvisible	= (mMulti.GetVisible() != VT_VISIBLE);
+	bool isMovable		= (mChar.AllMove());
+
 	if( mChar.ViewHouseAsIcon() && mMulti.GetID() >= 0x4000 )
 		PackShort( &internalBuffer[0], 7, 0x14F0 );
 	else
 		PackShort( &internalBuffer[0], 7, mMulti.GetID() );
-	PackShort( &internalBuffer[0], 9, mMulti.GetX() );
-	PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0xC000 );	// Enable Dye and Move
-	internalBuffer[13] = mMulti.GetZ();
 
-	UI08 byteNum = 13;
+	PackShort( &internalBuffer[0], 9, mMulti.GetX() );
+	if( isInvisible || isMovable )
+	{
+		PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0xC000 );
+		internalBuffer.resize( internalBuffer.size()+1 );
+		++internalBuffer[2];
+	}
+	else
+		PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0x4000 );
+	UI08 byteNum = 12;
 	if( mMulti.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[11]			+= 0x80;	// Enable direction
+		internalBuffer[9]			|= 0x80;	// Enable direction
 		internalBuffer[++byteNum]	= mMulti.GetDir();
 		++internalBuffer[2];
 	}
+	internalBuffer[++byteNum] = mMulti.GetZ();
 
 	PackShort( &internalBuffer[0], ++byteNum, mMulti.GetColour() );
-	internalBuffer[byteNum+=2] = 0;
-	if( mMulti.GetVisible() != VT_VISIBLE )
-		internalBuffer[byteNum] |= 0x80;
+	if( isInvisible || isMovable )
+	{
+		internalBuffer[++byteNum] = 0;
+		if( isInvisible )
+			internalBuffer[byteNum] |= 0x80;
 
-	if( mChar.AllMove() )
-		internalBuffer[byteNum] += 0x20;
+		if( isMovable ) 
+			internalBuffer[byteNum] |= 0x20;
+	}
 }
 
 CPObjectInfo::CPObjectInfo()
@@ -3897,9 +3905,7 @@ CPObjectInfo::CPObjectInfo( CItem& mItem, CChar& mChar )
 	InternalReset();
 	CopyData( mItem, mChar );
 }
-CPObjectInfo::~CPObjectInfo()
-{
-}
+
 void CPObjectInfo::Objects( CItem& mItem, CChar& mChar )
 {
 	CopyData( mItem, mChar );
@@ -4282,9 +4288,7 @@ CPSecureTrading::CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mIte
 	InternalReset();
 	CopyData( mItem, mItem2, mItem3 );
 }
-CPSecureTrading::~CPSecureTrading()
-{
-}
+
 void CPSecureTrading::Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
 	CopyData( mItem, mItem2, mItem3 );

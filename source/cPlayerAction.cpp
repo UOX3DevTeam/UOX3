@@ -1315,6 +1315,15 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	pd.Text( tempstr );
 	s->Send( &pd );
+
+	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
+	{
+		if( ValidateObject( wearItem ) )
+		{
+			CPQueryToolTip pSend( (*wearItem) );
+			s->Send( &pSend );
+		}
+	}
 }
 
 //o---------------------------------------------------------------------------o

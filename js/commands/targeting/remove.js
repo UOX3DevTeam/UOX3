@@ -30,7 +30,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-function commmand_DELETECHAR( socket, cmdString )
+function command_DELETECHAR( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1618, socket.Language );
 	socket.CustomTarget( 1, targMsg );

@@ -1,6 +1,28 @@
+12/31/2004 - giwo
+	More cleanups in CPacketSend.cpp
+	Renamed doDeathStuff() to HandleDeath() and moved it into pcmanage.cpp.
+	Cleaned up the code a bit in HandleDeath() and its sub-functions.
+	Fixed an issue causing starting skin color to disregard the players selection.
+	Brought down the range at which items in containers were sent to other players.
+	Added a GM check before updating a buy, sell, or bought layer to a character.
+	Fixed an issue causing GOLD tag on NPC's not to be read in properly.
+	JS Fixes
+		Fixed an issue causing 'deletechar not to function (thanks Xuri).
+		Fixed an issue causing 'wholist off not to function properly.
+
+12/31/2004 - EviLDeD
+	Updated the version to 0.98-2.5b
+	Added, and fixed all the doors. Now they all should work properly including the new expansion
+	Added all door ID's to harditems.dfn to ensure that all doors get type=12 including the new doors.
+
+12/30/2004 - EviLDeD
+	Updated the version to 0.98-2.5a this includes the changes that Giwo has commited. Remember to increment the version please.
+	Fixed a small bug with accounts allowing more than one client to log in under a single account and manipulate the character.
+	Fixed some logistics with the new doors, they all should work now, as long as they are set to type 12.
+
 12/30/2004 - Xuri
 	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
-
+		
 12/29/2004 - giwo
 	Removed CChar::dispz as it served no purpose.
 	Fixed an issue causing the Buy Window to not display prices and display items only after scrolling.

@@ -717,7 +717,7 @@ bool splDispel( CChar *caster, CChar *target, CChar *src )
 			target->Delete();
 		}
 		else 
-			doDeathStuff(target);
+			HandleDeath( target );
 	}
 	return true;
 }
@@ -955,7 +955,7 @@ void MassDispelStub( CChar *caster, CChar *target )
 				tScript->OnDispel( target );
 			Effects->PlaySound( target, 0x0204 );
 			Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );
-			doDeathStuff( target );
+			HandleDeath( target );
 		}
 	}
 }
@@ -1079,7 +1079,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 			Console.Log( Dictionary->GetEntry( 691 ).c_str(), "PvP.log", target->GetName().c_str(), caster->GetName().c_str() );
 			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
 			Fame( caster, target->GetFame() );
-			doDeathStuff( target );                              
+			HandleDeath( target );                              
 		}
 	} 
 	else 
@@ -1088,7 +1088,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 		{
 			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
 			Fame( caster, target->GetFame() );
-			doDeathStuff(target); 
+			HandleDeath( target ); 
 		}
 		else if( target->IsNpc() ) 
 		{ 
@@ -1995,7 +1995,7 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
 				Fame( attacker, p->GetFame() );
 			}
-			doDeathStuff( p );
+			HandleDeath( p );
 		}
 	}
 }

@@ -1868,45 +1868,37 @@ void CChar::SendToSocket( CSocket *s )
 		CChar *mCharObj = s->CurrcharObj();
 		if( mCharObj == this )
 		{
-			CPDrawGamePlayer gpToSend = (*this);
+			CPDrawGamePlayer gpToSend( (*this) );
 			s->Send( &gpToSend );
 		}
 		else if( GetVisible() == VT_PERMHIDDEN && GetCommandLevel() > mCharObj->GetCommandLevel() )
 			return;
 
-		UI08 cFlag = 0;
-		CPDrawObject toSend = (*this);
-		if( ( !IsNpc() && !isOnline( this ) ) || ( GetVisible() != VT_VISIBLE )  || ( IsDead() && !IsAtWar() ) )
-			cFlag |= 0x80;
-		if( GetPoisoned() )
-			cFlag |= 0x04;
-		toSend.SetCharFlag( cFlag );
+		CPDrawObject toSend( (*this) );
+
+		UI08 rFlag = 1;
 		GUILDRELATION guild = GuildSys->Compare( mCharObj, this );
 		SI08 raceCmp		= Races->Compare( mCharObj, this );
 		if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-			toSend.SetRepFlag( 6 );
+			rFlag = 6;
 		else if( guild == GR_ALLY || guild == GR_SAME || raceCmp > 0 ) // Same guild (Green), racial ally, allied guild
-			toSend.SetRepFlag( 2 );
+			rFlag = 2;
 		else if( guild == GR_WAR || raceCmp < 0 ) // Enemy guild.. set to orange
-			toSend.SetRepFlag( 5 );
+			rFlag = 5;
 		else
 		{
 			if( IsMurderer() )		// Murderer
-				toSend.SetRepFlag( 6 );
+				rFlag = 6;
 			else if( IsCriminal() )	// Criminal
-				toSend.SetRepFlag( 3 );
-			else					// Other
-				toSend.SetRepFlag( 1 );
+				rFlag = 3;
 		}
+		toSend.SetRepFlag( rFlag );
+		
 
 		for( UI08 counter = 0; counter < MAXLAYERS; ++counter )
 		{
 			if( ValidateObject( itemLayers[counter] ) )
-			{
 				toSend.AddItem( itemLayers[counter] );
-				CPQueryToolTip pSend( (*itemLayers[counter]) );
-				s->Send( &pSend );
-			}
 		}
 
 		toSend.Finalize();

@@ -105,7 +105,6 @@ void		LoadPlaces( void );
 void		checkkey( void );
 void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
-void		killTrades( CChar& i );
 void		sysBroadcast( const std::string txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, UI32 nextDecayItems );
@@ -1411,7 +1410,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 				}
 				if( mChar.GetHP() < 1 )
 				{
-					doDeathStuff( (&mChar) );
+					HandleDeath( (&mChar) );
 					if( mSock != NULL )
 						mSock->sysmessage( 1244 );
 				} 
@@ -1444,7 +1443,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		return true;
 	else if( mChar.GetHP() <= 0 )
 	{
-		doDeathStuff( (&mChar) );
+		HandleDeath( (&mChar) );
 		return true;
 	}
 	return false;
@@ -2045,12 +2044,6 @@ void CWorldMain::CheckAutoTimers( void )
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / statwindow() queue here
-
-	// Currently this causes issues with walking, I would assume it's due to updating (actually teleporting, currently)
-	// the character after we change it's x and y in movement.cpp, perhaps we need a toggle of when to do this update
-	// rather than simply relying on Dirty() every time the x, y, z, etc change.
-	// Maarc : Another possible solution is a WalkXY() function for a character, which updates x/y without doing the dirty
-	// Queue now handles both items and chars in one queue, rather than needlessly splitting them up.
 	QUEUEMAP_CITERATOR rqIter			= refreshQueue.begin();
 	QUEUEMAP_CITERATOR rqIterEnd		= refreshQueue.end();
 	while( rqIter != rqIterEnd )
@@ -2069,6 +2062,11 @@ void CWorldMain::CheckAutoTimers( void )
 					updateStats( uChar, 2 );
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
+				else if( uChar->GetUpdate( UT_HIDE ) )
+				{
+					uChar->RemoveFromSight();
+					uChar->Update();
+				}
 				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
 			}
@@ -3050,205 +3048,6 @@ void setcharflag( CChar *c )
 		if( toExecute != NULL )
 			toExecute->OnFlagChange( c, newFlag, oldFlag );
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *GenerateCorpse( CChar *mChar )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Generates a corpse based on skin of the character killed
-//o---------------------------------------------------------------------------o
-void GenerateCorpse( CChar *mChar )
-{
-	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
-	CItem *iCorpse = NULL;
-	if( !createPack )
-	{
-		iCorpse = Items->CreateItem( NULL, mChar, 0x2006, 1, mChar->GetSkin(), OT_ITEM );
-		if( iCorpse == NULL )
-			return;
-		char temp[512];
-		sprintf( temp, Dictionary->GetEntry( 1612 ).c_str(), mChar->GetName().c_str() );
-		iCorpse->SetName( temp );
-		iCorpse->SetCorpse( true );
-		iCorpse->SetCarve( mChar->GetCarve() );
-		iCorpse->SetMovable( 2 );//non-movable
-		iCorpse->SetDir( mChar->GetDir() );
-		iCorpse->SetAmount( mChar->GetID() );
-	} 
-	else
-	{
-		iCorpse = Items->CreateItem( NULL, mChar, 0x09B2, 1, 0x0000, OT_ITEM );
-		if( iCorpse== NULL )
-			return;
-		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
-		iCorpse->SetCorpse( false );
-	}
-
-	UI08 canCarve = 0;
-	if( mChar->GetID( 1 ) == 0x00 && ( mChar->GetID( 2 ) == 0x0C || ( mChar->GetID( 2 ) >= 0x3B && mChar->GetID( 2 ) <= 0x3D ) ) ) // If it's a dragon, 50/50 chance you can carve it
-		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
-
-	iCorpse->SetName2( mChar->GetName().c_str() );
-	iCorpse->SetType( IT_CONTAINER );
-	iCorpse->SetLocation( mChar );
-	iCorpse->SetTempVar( CITV_MOREY, canCarve, 1 );
-	iCorpse->SetTempVar( CITV_MOREY, mChar->isHuman(), 2 );
-	iCorpse->SetTempVar( CITV_MOREZ, mChar->GetFlag() );
-	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
-	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ));
-	if( !mChar->IsNpc() )
-	{
-		UI08 decayMultiplier = static_cast<UI08>(cwmWorldState->ServerData()->SystemTimer( PLAYER_CORPSE )&0xff);
-		iCorpse->SetOwner( mChar );
-		iCorpse->SetDecayTime( BuildTimeValue( static_cast<R32>(decayTime*decayMultiplier) ) );
-	}
-	else
-		iCorpse->SetDecayTime( BuildTimeValue( decayTime ) );
-
-	CMultiObj *iMulti = findMulti( iCorpse );
-	if( ValidateObject( iMulti ) )
-		iCorpse->SetMulti( iMulti );
-
-	if( !ValidateObject( mChar->GetAttacker() ) )
-		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );
-	else
-		iCorpse->SetTempVar( CITV_MOREX, mChar->GetAttacker()->GetSerial() );
-
-	if( cwmWorldState->ServerData()->DeathAnimationStatus() )
-		Effects->deathAction( mChar, iCorpse );
-
-	CItem *k			= NULL;
-	CItem *packItem		= mChar->GetPackItem();
-	bool packIsValid	= ValidateObject( packItem );
-	for( CItem *j = mChar->FirstItem(); !mChar->FinishedItems(); j = mChar->NextItem() )
-	{
-		if( !ValidateObject( j ) )
-			continue;
-
-		UI08 iLayer = j->GetLayer();
-
-		switch( iLayer )
-		{
-		case IL_NONE:
-		case IL_BUYCONTAINER:
-		case IL_BOUGHTCONTAINER:
-		case IL_SELLCONTAINER:
-		case IL_BANKBOX:
-			continue;
-		case IL_HAIR:
-		case IL_FACIALHAIR:
-			j->SetName( "Hair/Beard" );
-			j->SetX( 0x47 );
-			j->SetY( 0x93 );
-			j->SetZ( 0 );
-			break;
-		case IL_PACKITEM:
-			CDataList< CItem * > *jCont;
-			jCont = j->GetContainsList();
-			for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
-			{
-				if( !ValidateObject( k ) )
-					continue;
-
-				if( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )
-				{
-					k->SetCont( iCorpse );
-					k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
-					k->SetY( static_cast<SI16>(85 + ( RandomNum( 0, 75 ) )) );
-					k->SetZ( 9 );
-				}
-			}
-			if( !mChar->IsShop() && !createPack )
-				j->SetLayer( IL_BUYCONTAINER );
-			break;
-		default:
-			if( packIsValid && j->isNewbie() )
-				j->SetCont( packItem );
-			else
-			{
-				j->SetCont( iCorpse );
-				j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ) ) ) );
-				j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ) ) ) );
-				j->SetZ( 9 );
-			}
-			break;
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void doDeathStuff( CChar *i )
-//|   Date        -  UnKnown
-//|   Programmer  -  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Performs death stuff. I.E.- creates a corpse, moves items
-//|                  to it, take out of war mode, does animation and sound, etc.
-//o---------------------------------------------------------------------------o
-void doDeathStuff( CChar *i )
-{
-	if( !ValidateObject( i ) || i->IsDead() || i->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
-		return;
-
-	CSocket *pSock = NULL;
-	if( !i->IsNpc() )
-		pSock = calcSocketObjFromChar( i );
-
-	if( i->GetID() != i->GetOrgID() )
-		i->SetID( i->GetOrgID() );
-
-	if( pSock != NULL )
-	{
-		DismountCreature( i );
-		killTrades( (*i) );
-	}
-
-	Effects->playDeathSound( i );
-
-	GenerateCorpse( i );
-
-	i->SetSkin( 0x83EA );
-	i->SetDead( true );
-	i->SetWar( false );
-	i->StopSpell();
-	i->SetHP( 0 );
-	i->SetPoisoned( 0 );
-	i->SetPoisonStrength( 0 );
-	if( !i->IsNpc() )
-	{ 
-		if( i->GetOrgID() == 0x0190 )
-			i->SetID( 0x0192 );  // Male or Female
-		else
-			i->SetID( 0x0193 );
-
-		CItem *c = Items->CreateItem( NULL, i, 0x204E, 1, 0, OT_ITEM );
-		if( c == NULL )
-			return;
-		c->SetName( Dictionary->GetEntry( 1610 ) );
-		i->SetRobe( c->GetSerial() );
-		c->SetLayer( IL_ROBE );
-		if( c->SetCont( i ) )
-			c->SetDef( 1 );
-
-		if( i->GetAccount().wAccountIndex != AB_INVALID_ID )
-		{
-			if( pSock != NULL )
-			{
-				CPResurrectMenu toSend( 0 );
-				pSock->Send( &toSend );
-			}
-			// The fade to gray is done by the CPResurrectMenu packet
-			i->Update();
-		}
-	}
-	
-	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= Trigger->GetScript( targTrig );
-	if( toExecute != NULL )
-		toExecute->OnDeath( i );
-
-	if( i->IsNpc() )
-		i->Delete();
 }
 
 void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )

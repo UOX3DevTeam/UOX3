@@ -106,7 +106,7 @@ typedef struct __STARTLOCATIONDATA__
 #define MAX_NAME			60		// We have the space. Character packet comes with unuess password space that is never used. So why dont we use it?
 #define MAX_TITLE			60
 #define MAX_STACK			0xFFFF
-#define MAX_VISRANGE		20
+#define MAX_VISRANGE		18
 #define MAX_Z_STEP			9
 #define MAXBUFFER			2560	// Buffer Size (For socket operations)
 #define MAXPOSTS			128

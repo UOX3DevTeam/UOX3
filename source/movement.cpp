@@ -985,7 +985,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 				if( mChar->GetHP() < 1 )
 					mChar->SetHP( 0 );
 				if( mChar->GetHP() <= 0 )
-					doDeathStuff( mChar );
+					HandleDeath( mChar );
 			}
 			break;
 		case IT_SOUNDOBJECT:														// sound objects
@@ -1015,7 +1015,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI16 oldy )
 {
 	// lets cache these vars in advance
-	UI16 visibleRange	= static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ) );
+	UI16 visibleRange	= static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
 	if( mSock != NULL )
 		visibleRange	= static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
 	const SI16 newx		= mChar->GetX();

@@ -15,7 +15,9 @@ protected:
 public:
 					CPCharLocBody();
 					CPCharLocBody( CChar &toCopy );
-	virtual			~CPCharLocBody();
+	virtual			~CPCharLocBody()
+					{
+					}
 	virtual void	Flag( UI08 toPut );
 	virtual void	HighlightColour( UI08 color );
 	CPCharLocBody &	operator=( CChar &toCopy );
@@ -40,7 +42,9 @@ public:
 	virtual void	Type( SpeechType toPut );
 	virtual void	Speech( const std::string toPut );
 	virtual void	SpeakerName( const std::string toPut );
-	virtual			~CPacketSpeech();
+	virtual			~CPacketSpeech()
+					{
+					}
 	CPacketSpeech	&operator=( CSpeechEntry &toCopy );
 	CPacketSpeech	&operator=( CPacketSpeech &toCopy );
 };
@@ -234,7 +238,6 @@ public:
 		{
 		}
 					CPDrawGamePlayer( CChar &toCopy );
-	CPDrawGamePlayer &operator=( CChar &toCopy );
 };
 
 class CPPersonalLightLevel : public cPUOXBuffer
@@ -832,7 +835,9 @@ public:
 					CPMapChange();
 					CPMapChange( UI08 newMap );
 					CPMapChange( CBaseObject *moving );
-	virtual			~CPMapChange();
+	virtual			~CPMapChange()
+					{
+					}
 	virtual	void	SetMap( UI08 newMap );
 	CPMapChange&	operator=( CBaseObject& moving );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -921,7 +926,9 @@ public:
 					CPUpdScroll();
 					CPUpdScroll( UI08 tType );
 					CPUpdScroll( UI08 tType, UI08 tNum );
-	virtual			~CPUpdScroll();
+	virtual			~CPUpdScroll()
+					{
+					}
 	void			AddString( const char *toAdd );
 	void			AddStrings( const char *tag, const char *data );
 	void			Finalize( void );
@@ -954,12 +961,12 @@ protected:
 public:
 					CPDrawObject();
 					CPDrawObject( CChar &mChar );
-	virtual			~CPDrawObject();
+	virtual			~CPDrawObject()
+					{
+					}
 	void			Finalize( void );
 	void			AddItem( CItem *toAdd );
 	void			SetRepFlag( UI08 value );
-	void			SetCharFlag( UI08 value );
-	CPDrawObject&	operator=( CChar& mChar );
 };
 
 class CPObjectInfo : public cPUOXBuffer
@@ -972,7 +979,9 @@ protected:
 public:
 					CPObjectInfo();
 					CPObjectInfo( CItem& mItem, CChar& mChar );
-	virtual			~CPObjectInfo();
+	virtual			~CPObjectInfo()
+					{
+					}
 	void			Objects( CItem& mItem, CChar& mChar );
 };
 
@@ -1000,7 +1009,9 @@ public:
 					CPSecureTrading();
 					CPSecureTrading( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
 					CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
-	virtual			~CPSecureTrading();
+	virtual			~CPSecureTrading()
+					{
+					}
 	void			Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
 	void			Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 	void			Action( UI08 value );

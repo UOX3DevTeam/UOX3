@@ -1679,7 +1679,7 @@ void CItem::Update( CSocket *mSock )
 		if( itemCont != NULL )
 		{
 			ObjectType oType = OT_CBO;
-			SOCKLIST nearbyChars = FindPlayersInVisrange( FindItemOwner( this, oType ) );
+			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				SendPackItemToSocket( (*cIter) );
@@ -1733,8 +1733,13 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != NULL )
 	{
+		bool isGM = mChar->IsGM();
+		UI08 iLayer = GetLayer();
+		if( !isGM && ( iLayer == IL_BUYCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_SELLCONTAINER ) )
+			return;
+
 		CPAddItemToCont itemSend = (*this);
-		if( mChar->IsGM() && GetID() == 0x1647 )
+		if( isGM && GetID() == 0x1647 )
 		{
 			itemSend.Model( 0x0A0F );
 			itemSend.Colour( 0x00C6 );

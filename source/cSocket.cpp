@@ -918,6 +918,8 @@ ACCOUNTSBLOCK &CSocket::GetAccount( void )
 //o--------------------------------------------------------------------------o
 void CSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
 {
+	ACCOUNTSBLOCK &tBlock = actbBlock;
+
 	if( actbBlock.wAccountIndex == AB_INVALID_ID )
 	{
 		actbAccount.wAccountIndex = AB_INVALID_ID;

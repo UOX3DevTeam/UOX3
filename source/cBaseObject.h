@@ -26,7 +26,8 @@ enum UpdateTypes
 	UT_LOCATION,
 	UT_HITPOINTS,
 	UT_STAMINA,
-	UT_MANA
+	UT_MANA,
+	UT_HIDE
 };
 
 //o--------------------------------------------------------------------------o

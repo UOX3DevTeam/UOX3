@@ -250,6 +250,24 @@ void useDoor( CSocket *s, CItem *item )
 			// Last of the doors. But still not a sliding door.
 			if ( x == ( db + 0 ) )
 			{
+				item->IncID( 2 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 2 ) )
+			{
+				item->IncID( -2 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+		}
+		else if( db == doorbase[24] || db == doorbase[25] )
+		{
+			// the sliding doors
+			if ( x == ( db + 0 ) )
+			{
 				item->IncID( 1 );
 				changed = true;
 				Effects->doorSound( item, x, false );
@@ -263,9 +281,9 @@ void useDoor( CSocket *s, CItem *item )
 				item->SetDoorOpen( false );
 			}
 		}
-		else if( db >= doorbase[24] && db <= doorbase[DOORTYPES] )
+		else if( db >= doorbase[26] && db <= doorbase[DOORTYPES-1] )
 		{
-			// the sliding doors
+			//1 the sliding doors
 			if ( x == ( db + 0 ) )
 			{
 				item->IncID( 1 );
@@ -274,6 +292,51 @@ void useDoor( CSocket *s, CItem *item )
 				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
 			}
 			else if( x == ( db + 1 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			//2
+			if ( x == ( db + 2 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 3 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			//3
+			if ( x == ( db + 4 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 5 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			//4
+			if ( x == ( db + 6 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 7 ) )
 			{
 				item->IncID( -1 );
 				changed =true;

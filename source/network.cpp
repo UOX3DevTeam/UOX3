@@ -204,8 +204,11 @@ void cNetworkStuff::LogOut( CSocket *s )
 			actbAccount.dwInGame = p->GetSerial();
 		p->SetTimer( tPC_LOGOUT, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( LOGIN_TIMEOUT ) )) );
 	}
+	actbAccount.wFlags &= 0xFFF7;
 	p->SetAccount( actbAccount );
 	s->SetAccount( actbAccount );
+	// We have to make sure to update the Account map
+	Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
 	p->Teleport();
 }
 

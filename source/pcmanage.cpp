@@ -11,6 +11,7 @@
 #include "classes.h"
 #include "townregion.h"
 #include "Dictionary.h"
+#include "cEffects.h"
 
 #include "ObjectFactory.h"
 
@@ -453,9 +454,9 @@ bool CPICreateCharacter::Handle( void )
 			mChar->SetID( pGenderID );
 			mChar->SetOrgID( pGenderID );
 
-			mChar->SetSkin( skinColour );
-			if( mChar->GetSkin() < 0x83EA || mChar->GetSkin() > 0x8422 )
-				mChar->SetSkin( 0x83EA );
+			mChar->SetSkin( Capped( skinColour, static_cast<UI16>(0x03ea), static_cast<UI16>(0x0422) ) );
+//			if( mChar->GetSkin() < 0x83EA || mChar->GetSkin() > 0x8422 )
+//				mChar->SetSkin( 0x83EA );
 			mChar->SetOrgSkin( mChar->GetSkin() );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
@@ -626,8 +627,8 @@ void startChar( CSocket *mSock, bool onCreate )
 			CPWorldChange wrldChange( mChar->GetRegion()->GetAppearance(), 1 );
 			mSock->Send( &wrldChange );	// need to add this?
 
-			CPDrawGamePlayer gpToSend = (*mChar);		// need to add this?
-			mSock->Send( &gpToSend );
+//			CPDrawGamePlayer gpToSend = (*mChar);		// need to add this?
+//			mSock->Send( &gpToSend );
 
 			CPPersonalLightLevel pllToSend = (*mChar);		// need to add this?
 			pllToSend.Level( 0 );
@@ -690,6 +691,216 @@ void startChar( CSocket *mSock, bool onCreate )
 			}
 		}
 	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateCorpseItem( CChar &mChar )
+//|	Programmer	-	giwo
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Generates a corpse or backpack based on the character killed.
+//o---------------------------------------------------------------------------o
+CItem *CreateCorpseItem( CChar &mChar, bool createPack )
+{
+	CItem *iCorpse = NULL;
+	if( !createPack )
+	{
+		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
+		if( iCorpse == NULL )
+			return NULL;
+
+		char temp[512];
+		sprintf( temp, Dictionary->GetEntry( 1612 ).c_str(), mChar.GetName().c_str() );
+		iCorpse->SetName( temp );
+		iCorpse->SetCarve( mChar.GetCarve() );
+		iCorpse->SetMovable( 2 );//non-movable
+		iCorpse->SetDir( mChar.GetDir() );
+		iCorpse->SetAmount( mChar.GetID() );
+		iCorpse->SetCorpse( true );
+	}
+	else
+	{
+		iCorpse = Items->CreateItem( NULL, &mChar, 0x09B2, 1, 0x0000, OT_ITEM );
+		if( iCorpse== NULL )
+			return NULL;
+
+		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
+	}
+
+	UI08 canCarve = 0;
+	if( mChar.GetID( 1 ) == 0x00 && ( mChar.GetID( 2 ) == 0x0C || ( mChar.GetID( 2 ) >= 0x3B && mChar.GetID( 2 ) <= 0x3D ) ) ) // If it's a dragon, 50/50 chance you can carve it
+		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
+
+	iCorpse->SetName2( mChar.GetName().c_str() );
+	iCorpse->SetType( IT_CONTAINER );
+	iCorpse->SetTempVar( CITV_MOREY, canCarve, 1 );
+	iCorpse->SetTempVar( CITV_MOREY, mChar.isHuman(), 2 );
+	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
+	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
+	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ));
+	if( !mChar.IsNpc() )
+	{
+		UI08 decayMultiplier = static_cast<UI08>(cwmWorldState->ServerData()->SystemTimer( PLAYER_CORPSE )&0xff);
+		iCorpse->SetOwner( &mChar );
+		iCorpse->SetDecayTime( BuildTimeValue( static_cast<R32>(decayTime*decayMultiplier) ) );
+	}
+	else
+		iCorpse->SetDecayTime( BuildTimeValue( decayTime ) );
+
+	if( !ValidateObject( mChar.GetAttacker() ) )
+		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );
+	else
+		iCorpse->SetTempVar( CITV_MOREX, mChar.GetAttacker()->GetSerial() );
+
+	return iCorpse;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void MoveItemsToCorpse( CChar *mChar, CItem *iCorpse )
+//|	Programmer	-	giwo
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Moves Items from Character to Corpse
+//o---------------------------------------------------------------------------o
+void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
+{
+	CItem *k			= NULL;
+	CItem *packItem		= mChar.GetPackItem();
+	bool packIsValid	= ValidateObject( packItem );
+	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() )
+	{
+		if( !ValidateObject( j ) )
+			continue;
+
+		UI08 iLayer = j->GetLayer();
+
+		switch( iLayer )
+		{
+		case IL_NONE:
+		case IL_BUYCONTAINER:
+		case IL_BOUGHTCONTAINER:
+		case IL_SELLCONTAINER:
+		case IL_BANKBOX:
+			continue;
+		case IL_HAIR:
+		case IL_FACIALHAIR:
+			j->SetName( "Hair/Beard" );
+			j->SetX( 0x47 );
+			j->SetY( 0x93 );
+			j->SetZ( 0 );
+			break;
+		case IL_PACKITEM:
+			CDataList< CItem * > *jCont;
+			jCont = j->GetContainsList();
+			for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
+			{
+				if( !ValidateObject( k ) )
+					continue;
+
+				if( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )
+				{
+					k->SetCont( iCorpse );
+					k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
+					k->SetY( static_cast<SI16>(85 + ( RandomNum( 0, 75 ) )) );
+					k->SetZ( 9 );
+				}
+			}
+			if( !mChar.IsShop() && !createPack )
+				j->SetLayer( IL_BUYCONTAINER );
+			break;
+		default:
+			if( packIsValid && j->isNewbie() )
+				j->SetCont( packItem );
+			else
+			{
+				j->SetCont( iCorpse );
+				j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ) ) ) );
+				j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ) ) ) );
+				j->SetZ( 9 );
+			}
+			break;
+		}
+	}
+}
+
+void killTrades( CChar& i );
+//o---------------------------------------------------------------------------o
+//|   Function    -  void HandleDeath( CChar *mChar )
+//|   Date        -  UnKnown
+//|   Programmer  -  UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Performs death stuff. I.E.- creates a corpse, moves items
+//|                  to it, take out of war mode, does animation and sound, etc.
+//o---------------------------------------------------------------------------o
+void HandleDeath( CChar *mChar )
+{
+	if( !ValidateObject( mChar ) || mChar->IsDead() || mChar->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
+		return;
+
+	CSocket *pSock = NULL;
+	if( !mChar->IsNpc() )
+		pSock = calcSocketObjFromChar( mChar );
+
+	if( pSock != NULL )
+	{
+		DismountCreature( mChar );
+		killTrades( (*mChar) );
+	}
+
+	if( mChar->GetID() != mChar->GetOrgID() )
+		mChar->SetID( mChar->GetOrgID() );
+
+	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
+
+	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack );
+	if( iCorpse != NULL )
+	{
+		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
+		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
+			Effects->deathAction( mChar, iCorpse );
+	}
+	Effects->playDeathSound( mChar );
+
+	mChar->SetDead( true );
+	mChar->SetWar( false );
+	mChar->StopSpell();
+	mChar->SetHP( 0 );
+	mChar->SetPoisoned( 0 );
+	mChar->SetPoisonStrength( 0 );
+
+	if( !mChar->IsNpc() )
+	{
+		if( mChar->GetOrgID() == 0x0190 )
+			mChar->SetID( 0x0192 );  // Male or Female
+		else
+			mChar->SetID( 0x0193 );
+
+		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );
+		if( c == NULL )
+			return;
+		c->SetName( Dictionary->GetEntry( 1610 ) );
+		mChar->SetRobe( c->GetSerial() );
+		c->SetLayer( IL_ROBE );
+		if( c->SetCont( mChar ) )
+			c->SetDef( 1 );
+
+		if( mChar->GetAccount().wAccountIndex != AB_INVALID_ID )
+		{
+			if( pSock != NULL )
+			{
+				CPResurrectMenu toSend( 0 );
+				pSock->Send( &toSend );
+			}
+			// The fade to gray is done by the CPResurrectMenu packet
+			//mChar->Teleport();
+		}
+	}
+	
+	UI16 targTrig		= mChar->GetScriptTrigger();
+	cScript *toExecute	= Trigger->GetScript( targTrig );
+	if( toExecute != NULL )
+		toExecute->OnDeath( mChar );
+
+	if( mChar->IsNpc() )
+		mChar->Delete();
 }
 
 }

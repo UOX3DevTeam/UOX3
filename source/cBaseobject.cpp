@@ -350,7 +350,7 @@ UI08 CBaseObject::GetColour( UI08 part ) const
 void CBaseObject::SetID( UI16 newValue )
 {
 	id = newValue;
-	Dirty( UT_LOCATION );
+	Dirty( UT_HIDE );
 }
 
 //o--------------------------------------------------------------------------
@@ -869,7 +869,7 @@ UI08 CBaseObject::GetDir( void ) const
 void CBaseObject::SetVisible( VisibleTypes newValue )
 {
 	visible = newValue;
-	Dirty( UT_UPDATE );
+	Dirty( UT_HIDE );
 }
 
 //o--------------------------------------------------------------------------
@@ -2216,6 +2216,7 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 	case UT_HITPOINTS:		updateTypes |= 0x04;	break;
 	case UT_STAMINA:		updateTypes |= 0x08;	break;
 	case UT_MANA:			updateTypes |= 0x10;	break;
+	case UT_HIDE:			updateTypes |= 0x20;	break;
 	default:										break;
 	}
 	if( isPostLoaded() )
@@ -2239,6 +2240,7 @@ bool CBaseObject::GetUpdate( UpdateTypes updateType )
 	case UT_HITPOINTS:		modifier = 0x04;		break;
 	case UT_STAMINA:		modifier = 0x08;		break;
 	case UT_MANA:			modifier = 0x10;		break;
+	case UT_HIDE:			modifier = 0x20;		break;
 	default:										return false;
 	}
 	bool update = ( (updateTypes&modifier) == modifier );

@@ -171,6 +171,7 @@ bool CPIFirstLogin::Handle( void )
 		messageLoop << temp;
 
 		actbTemp.wFlags |= AB_FLAGS_ONLINE;
+		Accounts->ModAccount(actbTemp.sUsername,AB_FLAGS,actbTemp);
 
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );

@@ -1699,7 +1699,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		Console.Log( Dictionary->GetEntry( 1617 ).c_str(), "PvP.log", ourTarg->GetName().c_str(), mChar->GetName().c_str() );
 	}
 	InvalidateAttacker( mChar );
-	doDeathStuff( ourTarg );
+	HandleDeath( ourTarg );
 }
 
 void CHandleCombat::CombatLoop( CSocket *mSock, CChar *mChar )

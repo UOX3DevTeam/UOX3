@@ -1423,6 +1423,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 //|							AB_CHARACTER3
 //|							AB_CHARACTER4
 //|							AB_CHARACTER5
+//|							AB_CHARACTER6
 //|									
 //|							The values can be OR'd together to specify multiple valid
 //|							fields. 
@@ -2301,7 +2302,7 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 	fsOut << "//   FLAGS: " << std::endl;
 	fsOut << "//      Bit:  1) Banned            2) Suspended          4) Public             8) Currently Logged In" << std::endl;
 	fsOut << "//           16) Char-1 Blocked   32) Char-2 Blocked    64) Char-3 Blocked   128) Char-4 Blocked" << std::endl;
-	fsOut << "//          256) Char-5 Blocked  512) Unused          1024) Unused          2048) Unused" << std::endl;
+	fsOut << "//          256) Char-5 Blocked  512) Char-6 Blocked  1024) Unused          2048) Unused" << std::endl;
 	fsOut << "//         4096) XGM            8192) Seer           16384) GM Counselor   32768) GM Account" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   TIMEBAN: " << std::endl;

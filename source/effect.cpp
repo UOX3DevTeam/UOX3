@@ -229,7 +229,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 						criminal( c );
 					tempChar->IncHP( -(SI16)( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ) );
 					if( tempChar->GetHP() <= 0 )
-						doDeathStuff( tempChar );
+						HandleDeath( tempChar );
 					else
 						Combat->AttackTarget( c, tempChar );
 				}
