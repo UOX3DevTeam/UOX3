@@ -205,7 +205,7 @@ void HandleTeleporters( CChar *s )
 	if( !ValidateObject( s ) )
 		return;
 	UI08 charWorld						= s->WorldNumber();
-	const CTeleLocationEntry *getTeleLoc = NULL;
+	CTeleLocationEntry *getTeleLoc = NULL;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
 	{
@@ -231,7 +231,7 @@ void HandleTeleporters( CChar *s )
 					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z );
 				break;
 			}
-			else if( s->GetY() < getTeleLoc->SourceLocation().y || s->GetX() < getTeleLoc->SourceLocation().x )
+			else if( s->GetX() < getTeleLoc->SourceLocation().x )
 				break;
 		}
 	}
@@ -436,7 +436,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 		if( mSock != NULL )
 		{
 			if( Weight->isOverloaded( c ) )
-				c->SetStamina( (UI16)(((c->GetWeight() / 100) - ((c->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30)) * 2) );
+				c->IncStamina( -2 );
 			if( c->GetStamina() <= 0 )
 			{
 				c->SetStamina( 0 );

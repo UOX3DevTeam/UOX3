@@ -4177,6 +4177,7 @@ void cSkills::RepairMetal( CSocket *s )
 		s->sysmessage( 990 );
 }
 
+void callGuards( CChar *mChar, CChar *targChar );
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 //|   Date        :  Unknown

@@ -39,6 +39,7 @@ namespace UOX
 {
 
 bool BuyShop( CSocket *s, CChar *c );
+void callGuards( CChar *mChar );
 
 inline bool findString( std::string toCheck, std::string toFind )
 {

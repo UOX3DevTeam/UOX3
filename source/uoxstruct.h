@@ -374,12 +374,10 @@ private:
 	point3	trg;
 	UI08	trgWorld;
 public:
-	CTeleLocationEntry()
+	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 )
 	{
 		src.Assign( 0, 0, ILLEGAL_Z );
 		trg.Assign( 0, 0, ILLEGAL_Z );
-		srcWorld = 0xFF;	// 0xFF indicates all worlds
-		trgWorld = 0;
 	}
 	point3 SourceLocation( void ) const
 	{

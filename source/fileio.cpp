@@ -588,22 +588,23 @@ void LoadTeleportLocations( void )
 					{
 						tempX = 0, tempY = 0;
 						tempZ = ILLEGAL_Z;
-						data = teleportSect->GrabData();
-						data = data.simplifyWhiteSpace();
+						data = teleportSect->GrabData().simplifyWhiteSpace();
 						int sectCount = data.sectionCount( "," );
 						if( sectCount >= 5 )
 						{
 							tempX	= data.section( ",", 0, 0 ).toUShort();
 							tempY	= data.section( ",", 1, 1 ).toUShort();
 							temp	= data.section( ",", 2, 2 ).upper();
-							temp	= temp.stripWhiteSpace();
+							temp	= temp.stripWhiteSpace().upper();
 							if( temp != "ALL" && temp != "A" )
-								tempZ = temp.toUByte();
+								tempZ = temp.toByte();
 							toAdd.SourceLocation( tempX, tempY, tempZ );
+
 							tempX	= data.section( ",", 3, 3 ).toUShort();
 							tempY	= data.section( ",", 4, 4 ).toUShort();
-							tempZ	= data.section( ",", 5, 5 ).toUByte();
+							tempZ	= data.section( ",", 5, 5 ).toByte();
 							toAdd.TargetLocation( tempX, tempY, tempZ );
+
 							if( sectCount >= 6 )
 							{
 								toAdd.SourceWorld( data.section( ",", 6, 6 ).toUByte() );

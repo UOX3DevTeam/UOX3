@@ -23,6 +23,9 @@ CJSMapping *JSMapping = NULL;
 //|
 //|						1.1			giwo		Feb 8, 2005
 //|						Added the ability to reload JS files on a per-script basis
+//|
+//|						1.2			giwo		Feb 28, 2005
+//|						Added the ability to reload JS files on a per-section basis
 //o--------------------------------------------------------------------------o
 
 //o--------------------------------------------------------------------------o
@@ -90,8 +93,7 @@ void CJSMapping::Cleanup( void )
 //|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
-//|	Description		-	Reloads the JS Engine
-//|						Todo: Allow reloading individual scripts
+//|	Description		-	Reloads the JS Scripts
 //o--------------------------------------------------------------------------o
 void CJSMapping::Reload( UI16 scriptID )
 {
@@ -117,6 +119,26 @@ void CJSMapping::Reload( UI16 scriptID )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	CJSMapping::Reload( SCRIPTTYPE sectionID )
+//|	Date			-	2/28/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Reloads a specific section of the JS Scripts
+//o--------------------------------------------------------------------------o
+void CJSMapping::Reload( SCRIPTTYPE sectionID )
+{
+	Console.Print( "CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<int>(sectionID) );
+	if( mapSection[sectionID] != NULL )
+	{
+		delete mapSection[sectionID];
+		mapSection[sectionID] =  new CJSMappingSection( sectionID );
+
+		Parse( sectionID );
+	}
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	CJSMapping::Parse()
 //|	Date			-	2/7/2005
 //|	Developers		-	giwo / EviLDeD
@@ -125,7 +147,7 @@ void CJSMapping::Reload( UI16 scriptID )
 //|	Description		-	Parses through jse_fileassociations.scp doling out the work
 //|						to each CJSMappingSection Parse() routine.
 //o--------------------------------------------------------------------------o
-void CJSMapping::Parse( void )
+void CJSMapping::Parse( SCRIPTTYPE toParse )
 {
 	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
 	if( !FileExists( scpFileName ) )
@@ -137,10 +159,18 @@ void CJSMapping::Parse( void )
 	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
 	if( fileAssocData != NULL )
 	{
-		for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
+		if( toParse != SCPT_COUNT )
 		{
-			if( mapSection[i] != NULL )
-				mapSection[i]->Parse( fileAssocData );
+			if( mapSection[toParse] != NULL )
+				mapSection[toParse]->Parse( fileAssocData );
+		}
+		else
+		{
+			for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
+			{
+				if( mapSection[i] != NULL )
+					mapSection[i]->Parse( fileAssocData );
+			}
 		}
 
 		delete fileAssocData;

@@ -1,3 +1,13 @@
+2/28/2005 - giwo (0.98-2.8b)
+	Removed some duplication in the callGuards() routine.
+	Fixed a possible issue that could cause Timer events to crash after reloading the JS engine.
+	Fixed a possible issue that could cause Magic scripts to crash after reloading the JS engine.
+	Fixed an issue causing some newbie clothing to be destroyed in combat.
+	Fixed an issue on loading teleport.scp causing some locations to not function properly.
+	Added the ability to reload entire sections of the JS Scripts.
+	JS Commands will now properly reload when reloading the Commands.
+	JS Commands will now properly register when reloading the JS Scripts.
+
 2/27/2005 - giwo (0.98-2.8a)
 	Fixed an issue causing 'GO PLACE to reach an invalid location after about 140.
 	Fixed an issue causing teleport locations to not function properly.

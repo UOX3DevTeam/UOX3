@@ -90,8 +90,6 @@ void	setcharflag( CChar *c );
 // Combat Stuff
 //o---------------------------------------------------------------------------o
 void	criminal( CChar *c );
-void	callGuards( CChar *mChar );
-void	callGuards( CChar *mChar, CChar *targChar );
 
 //o---------------------------------------------------------------------------o
 // Time Functions

@@ -2239,7 +2239,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( JSVAL_IS_BOOLEAN( argv[2] ) )	// Is it a boolean?  If so, might be calling back into here
 		{
 			if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
-				Effect->AssocScript( JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
+				Effect->AssocScript( JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) );
 			else
 				Effect->More2( 0xFFFF );
 		}

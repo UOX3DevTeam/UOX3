@@ -204,7 +204,7 @@ void DoMessageLoop( void )
 			case MSG_COUNT:															break; 
 			case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
 			case MSG_PRINT:			Console << tVal.data << myendl;					break;
-			case MSG_RELOADJS:		JSMapping->Reload();	Console.PrintDone();	break;
+			case MSG_RELOADJS:		JSMapping->Reload();	Console.PrintDone(); 	Commands->Load();	break;
 			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data );						break;
 			case MSG_PRINTDONE:		Console.PrintDone();							break;
 			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
@@ -546,7 +546,7 @@ void callGuards( CChar *mChar )
 		{
 			if( charInRange( mChar, attacker ) )
 			{
-				callGuards( mChar, attacker );
+				Combat->SpawnGuard( mChar, attacker, attacker->GetX(), attacker->GetY(), attacker->GetZ() );
 				return;
 			}
 		}
@@ -564,10 +564,14 @@ void callGuards( CChar *mChar )
 
 		if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 		{
-			if( charInRange( tempChar, mChar ) )
+			SI16 aiType = tempChar->GetNPCAiType();
+			if( !tempChar->IsNpc() || ( aiType == aiEVIL || aiType == aiCHAOTIC || aiType == aiHEALER_E ) )
 			{
-				callGuards( mChar, tempChar );
-				break;
+				if( charInRange( tempChar, mChar ) )
+				{
+					Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
+					break;
+				}
 			}
 		}
 	}
@@ -903,6 +907,7 @@ void processkey( int c )
 				{
 					messageLoop << "CMD: Loading commands... ";
 					cwmWorldState->SetReloadingScripts( true );
+					JSMapping->Reload( SCPT_COMMAND );
 					Commands->Load();
 					cwmWorldState->SetReloadingScripts( false );
 					messageLoop << MSG_PRINTDONE;
@@ -2537,8 +2542,10 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 												if( retitem != NULL )
 												{
 													if( !retitem->SetCont( applyTo ) )
+													{
 														retitem->SetCont( applyTo->GetPackItem() );
-													retitem->PlaceInPack();
+														retitem->PlaceInPack();
+													}
 												}
 												break;
 				case DFNTAG_FAME:				applyTo->SetFame( static_cast<SI16>(ndata) );	break;

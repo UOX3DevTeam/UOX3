@@ -10,6 +10,7 @@
 #include "classes.h"
 #include "regions.h"
 #include "combat.h"
+#include "CJSMapping.h"
 
 namespace UOX
 {
@@ -576,7 +577,7 @@ void cEffects::checktempeffects( void )
 			case 40:
 			{
 				UI16 scpNum			= 0xFFFF;
-				cScript *tScript	= Effect->AssocScript();
+				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
 
 				if( Effect->Source() >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 				{

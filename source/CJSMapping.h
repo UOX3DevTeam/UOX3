@@ -52,7 +52,7 @@ namespace UOX
 		CEnvoke *						envokeByType;
 
 		void				ResetDefaults( void );
-		void				Parse( void );
+		void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 	public:
 							CJSMapping( void );
@@ -60,6 +60,7 @@ namespace UOX
 
 		void				Cleanup( void );
 		void				Reload( UI16 scriptID = 0xFFFF );
+		void				Reload( SCRIPTTYPE sectionID );
 
 		CJSMappingSection *	GetSection( SCRIPTTYPE toGet );
 

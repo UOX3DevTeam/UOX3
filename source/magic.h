@@ -140,9 +140,9 @@ private:
 	SI16		loskill;
 	SI16		sclo;
 	SI16		schi;
-	cScript *	jsScript;
+	UI16	jsScript;
 public:
-	SpellInfo() : enabled( false ), mana( 0 ), stamina( 0 ), health( 0 ), action( 0 ), delay( 0 ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( NULL )
+	SpellInfo() : enabled( false ), mana( 0 ), stamina( 0 ), health( 0 ), action( 0 ), delay( 0 ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 )
 	{
 	}
 
@@ -304,11 +304,11 @@ public:
 	{
 		flags = (UI16)((val1<<8) + val2);
 	}
-	cScript *JSScript( void )
+	UI16 JSScript( void )
 	{
 		return jsScript;
 	}
-	void JSScript( cScript *scpAssign )
+	void JSScript( UI16 scpAssign )
 	{
 		jsScript = scpAssign;
 	}

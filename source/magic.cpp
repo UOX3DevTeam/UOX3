@@ -2358,7 +2358,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	SI16 lowSkill = 0, highSkill = 0;
 	CChar *mChar = mSock->CurrcharObj();
 
-	cScript *jsScript	= spells[num].JSScript();
+	cScript *jsScript	= JSMapping->GetScript( spells[num].JSScript() );
 
 	if( jsScript != NULL )
 	{
@@ -2640,7 +2640,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	SI08 z;
 
 	curSpell			= caster->GetSpellCast();
-	cScript *jsScript	= spells[curSpell].JSScript();
+	cScript *jsScript	= JSMapping->GetScript( spells[curSpell].JSScript() );
 	if( jsScript != NULL )
 	{
 		jsScript->MagicSpellCast( s, caster, true, curSpell );
@@ -3254,7 +3254,7 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 #endif
 	if( spellNumber < 0 || spellNumber >= spells.size() )
 		return;
-	spells[spellNumber].JSScript( toRegister );
+	spells[spellNumber].JSScript( JSMapping->GetScriptID( toRegister->Object() ) );
 	spells[spellNumber].Enabled( isEnabled );
 }
 

@@ -16,10 +16,10 @@ private:
 	UI16			more3;
 	bool			dispellable;
 	CBaseObject *	objptr;
-	cScript *		assocScript;
+	UI16		assocScript;
 
 public:
-	cScript *AssocScript( void ) const
+	UI16 AssocScript( void ) const
 	{
 		return assocScript;
 	}
@@ -96,13 +96,13 @@ public:
 	{
 		objptr = value;
 	}
-	void	AssocScript( cScript *value )
+	void	AssocScript( UI16 value )
 	{
 		assocScript = value;
 	}
 
 	bool	Save( std::ofstream &effectDestination ) const; // saves the current effect
-	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( NULL ), assocScript( NULL )
+	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( NULL ), assocScript( 0 )
 	{
 	}
 };

@@ -383,14 +383,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[UPPERGARMENT]->SetColour( shirtColour );
 		CreatedItems[UPPERGARMENT]->SetLayer( IL_INNERSHIRT );
 		CreatedItems[UPPERGARMENT]->SetDye( true );
-		CreatedItems[UPPERGARMENT]->SetDef( 1 );
 	}	
 	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM );
 	if( CreatedItems[SHOES] != NULL )
 	{
 		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );
 		CreatedItems[SHOES]->SetDye( true );
-		CreatedItems[SHOES]->SetDef( 1 );
 	}	
 
 	for( UI08 ctr = 0; ctr < GOLD; ++ctr )
