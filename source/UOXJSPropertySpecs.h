@@ -215,6 +215,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM },
 	{ "isUsingPotion",	CCP_USINGPOTION,	JSPROP_ENUMANDPERM },
 	{ "stealth",		CCP_STEALTH,		JSPROP_ENUMANDPERM },
+	{ "skillToTame",	CCP_SKILLTOTAME,	JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
@@ -270,6 +271,7 @@ static JSPropertySpec CItemProps[] =
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
+	{ "murdertime",		CIP_MURDERTIME,		JSPROP_ENUMANDPERM },
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM },
 	{ "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM },

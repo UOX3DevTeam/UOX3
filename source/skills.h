@@ -95,8 +95,6 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-	TargetFunc AnatomyTarget;
-	TargetFunc ArmsLoreTarget;
 	TargetFunc BeggingTarget;
 	TargetFunc BottleTarget;
 	TargetFunc BowCraft;
@@ -104,7 +102,6 @@ public:
 	TargetFunc EnticementTarget1;
 	TargetFunc EnticementTarget2;
 	TargetFunc FishTarget;
-	TargetFunc ForensicsTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
 	TargetFunc LockPick;
@@ -118,7 +115,6 @@ public:
 	TargetFunc SmeltOre;
 	TargetFunc Smith;
 	TargetFunc StealingTarget;
-	TargetFunc TameTarget;
 	TargetFunc TDummy;
 	TargetFunc TinkerAwg;
 	TargetFunc TinkerAxel;

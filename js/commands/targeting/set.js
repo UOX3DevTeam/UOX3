@@ -39,6 +39,7 @@ function onCallback0( socket, ourObj )
 	case "STR":
 	case "STRENGTH":
 		ourObj.strength = StringToNum( splitString[1] );
+		okMsg( socket );
 		break;
 	case "DEX":
 	case "DEXTERITY":

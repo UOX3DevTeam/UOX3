@@ -1850,10 +1850,7 @@ bool CPITargetCursor::Handle( void )
 					// Magic
 					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;					
 					// Skills Functions
-					case TARGET_ARMSLORE:		Skills->ArmsLoreTarget( tSock );		break;
-					case TARGET_ANATOMY:		Skills->AnatomyTarget( tSock );			break;
 					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
-					case TARGET_TAME:			Skills->TameTarget( tSock );			break;
 					case TARGET_FISH:			Skills->FishTarget( tSock );			break;
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;
 					case TARGET_MINE:			Skills->Mine( tSock );					break;
@@ -1866,7 +1863,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ENTICEMENT:		Skills->EnticementTarget1( tSock );		break;
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_BEGGING:		Skills->BeggingTarget( tSock );			break;
-					case TARGET_FORENSICS:		Skills->ForensicsTarget( tSock );		break;
 					case TARGET_APPLYPOISON: 
 												tSock->TempObj( calcItemObjFromSer( tSock->GetDWord( 7 ) ) );
 												tSock->target( 0, TARGET_POISONITEM, 1613 );

@@ -202,6 +202,7 @@ enum CC_Properties
 	CCP_TAMED,
 	CCP_USINGPOTION,
 	CCP_STEALTH,
+	CCP_SKILLTOTAME,
 	CCP_COUNT
 };
 
@@ -256,6 +257,7 @@ enum CI_Properties
 	CIP_STRENGTH,
 	CIP_CORPSE,
 	CIP_DESC,
+	CIP_MURDERTIME,
 	// The following entries are specifically for CSpawnItem objects
 	CIP_SPAWNSECTION,
 	CIP_SECTIONALIST,

@@ -11,7 +11,7 @@ CJSMapping *JSMapping = NULL;
 //o--------------------------------------------------------------------------o
 //|	File			-	CJSMapping.cpp
 //|	Date			-	Feb 7, 2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
@@ -28,7 +28,7 @@ CJSMapping *JSMapping = NULL;
 //o--------------------------------------------------------------------------o
 //|	Class			-	CJSMapping
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Base global class that holds within it an array of JS Mapping Sections
@@ -46,7 +46,7 @@ CJSMapping::~CJSMapping()
 //o--------------------------------------------------------------------------o
 //|	Function		-	CJSMapping::ResetDefaults()
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Resets all parameters of the CJSMapping class to default
@@ -67,7 +67,7 @@ void CJSMapping::ResetDefaults( void )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CJSMapping::Cleanup()
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Frees all memory used by CJSMapping
@@ -87,7 +87,7 @@ void CJSMapping::Cleanup( void )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CJSMapping::Reload( UI16 scriptID )
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Reloads the JS Engine
@@ -119,7 +119,7 @@ void CJSMapping::Reload( UI16 scriptID )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CJSMapping::Parse()
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Parses through jse_fileassociations.scp doling out the work
@@ -150,7 +150,7 @@ void CJSMapping::Parse( void )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns a pointer to the specified JSMappingSection
@@ -166,7 +166,7 @@ CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 //o--------------------------------------------------------------------------o
 //|	Function		-	UI16 CJSMapping::GetScriptID( JSObject *toFind )
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns the scriptID relating to the specified JSObject
@@ -191,7 +191,7 @@ UI16 CJSMapping::GetScriptID( JSObject *toFind )
 //o--------------------------------------------------------------------------o
 //|	Function		-	cScript * CJSMapping::GetScript( JSObject *toFind )
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns the cScript relating to the specified JSObject
@@ -216,7 +216,7 @@ cScript * CJSMapping::GetScript( JSObject *toFind )
 //o--------------------------------------------------------------------------o
 //|	Function		-	cScript * CJSMapping::GetScript( UI16 toFind )
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns the cScript relating to the specified scriptID
@@ -241,7 +241,7 @@ cScript * CJSMapping::GetScript( UI16 toFind )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CEnvoke * CJSMapping::GetEnvokeByID()
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns a pointer to the CEnvoke class handling EnvokeByID
@@ -253,7 +253,7 @@ CEnvoke * CJSMapping::GetEnvokeByID( void )
 //o--------------------------------------------------------------------------o
 //|	Function		-	CEnvoke * CJSMapping::GetEnvokeByType()
 //|	Date			-	2/7/2005
-//|	Developers		-	giwo
+//|	Developers		-	giwo / EviLDeD
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns a pointer to the CEnvoke class handling EnvokeByType

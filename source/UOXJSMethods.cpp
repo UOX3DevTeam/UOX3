@@ -973,7 +973,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	JSClass *myClass		= JS_GetClass( obj );
 	CBaseObject *myObj		= (CBaseObject*)JS_GetPrivate( cx, obj );
 
-	JSString *targMessage	= JSVAL_TO_STRING( argv[0] );
+	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	char *trgMessage		= JS_GetStringBytes( targMessage );
 
 	if( trgMessage == NULL )
@@ -1156,7 +1156,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	}
 	
 	CChar *myChar = static_cast<CChar*>(JS_GetPrivate(cx, obj));
-	JSString *targMessage = JSVAL_TO_STRING( argv[0] );
+	JSString *targMessage = JS_ValueToString( cx, argv[0] );
 	char *trgMessage = JS_GetStringBytes( targMessage );
 	
 	if( !ValidateObject( myChar ) || trgMessage == NULL )
@@ -2921,7 +2921,7 @@ JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         MethodError( "OpenURL: Invalid socket!" );
         return JS_FALSE;
     }
-	std::string url = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+	std::string url = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
     mySock->OpenURL( url );
     return JS_TRUE;
 }
@@ -3185,7 +3185,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	//JSClass *myClass = JS_GetClass( obj );
 	CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
 
-	JSString *targMessage	= JSVAL_TO_STRING( argv[0] );
+	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	char *trgMessage		= JS_GetStringBytes( targMessage );
 
 	if( trgMessage == NULL )
@@ -3230,7 +3230,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	//JSClass *myClass = JS_GetClass( obj );
 	CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
 
-	JSString *targMessage = JSVAL_TO_STRING( argv[0] );
+	JSString *targMessage = JS_ValueToString( cx, argv[0] );
 	char *trgMessage = JS_GetStringBytes( targMessage );
 
 	if( trgMessage == NULL )
@@ -3394,7 +3394,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	JSClass *myClass		= JS_GetClass( obj );
 	CBaseObject *myObj		= (CBaseObject*)JS_GetPrivate( cx, obj );
-	std::string trgSection	= JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+	std::string trgSection	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 
 	if( trgSection.empty() || trgSection.length() == 0)
 	{
@@ -3573,15 +3573,15 @@ JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		MethodError( "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
 		return JS_FALSE;
 	}
-	std::string lpszUsername	= JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
-	std::string lpszPassword	= JS_GetStringBytes( JSVAL_TO_STRING( argv[1] ) );
-	std::string lpszComment		= JS_GetStringBytes( JSVAL_TO_STRING( argv[2] ) );
+	std::string lpszUsername	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	std::string lpszPassword	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	std::string lpszComment		= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
 	UI16 u16Flags		= 0;
 	
 	if( JSVAL_IS_INT( argv[3] ) )
 		u16Flags = (UI16)JSVAL_TO_INT( argv[3] );
 	else
-		u16Flags = UString( JS_GetStringBytes( JSVAL_TO_STRING( argv[3] ) ) ).toUShort();
+		u16Flags = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) ) ).toUShort();
 
 	if( lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0 )
 		return JS_FALSE;
@@ -3622,7 +3622,7 @@ JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	// Ok get out object from the global context
 	if( JSVAL_IS_STRING(argv[0]) )
 	{
-		lpszUsername = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+		lpszUsername = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 		if( !Accounts->DelAccount( lpszUsername ) )
 		{
 			MethodError(" Account.DelAccount(username): Unable to remove account specified.");
@@ -3711,8 +3711,8 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
 
-	char *filename	= JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
-	char *mode		= JS_GetStringBytes( JSVAL_TO_STRING( argv[1] ) );
+	char *filename	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	char *mode		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	strlwr( mode );
 	if( mode[0] != 'r' && mode[0] != 'w' && mode[0] != 'a' )
 	{
@@ -3821,7 +3821,7 @@ JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		MethodError( "ReadUntil: Error reading file, is not opened or has reached EOF" );
 		return JS_FALSE;
 	}
-	char *until = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+	char *until = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	char line[512];
 	int c;
 
@@ -3881,7 +3881,7 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 
-	char *str = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+	char *str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( str != NULL )
 		fprintf( mFile->mWrap, str );
 	

@@ -1,4 +1,14 @@
-2/18/2004 - giwo (0.98-2.7d)
+2/20/2005 - giwo (0.98-2.8)
+	Added support for "EQUIPITEM" tag in newbie.dfn.
+	Added JS Character Prop skillToTame.
+	Added JS Item Prop murdertime.
+	Moved the following skill functionality out to JavaScript:
+		Animal Taming
+		Anatomy
+		Arms Lore
+		Forensics
+
+2/18/2005 - giwo (0.98-2.7d)
 	Changed all the miscellaneous #ifdef DEBUG statements to #if defined( UOX_DEBUG_MODE ) for uniformity.
 	Fixed a few minor issues in cScript.cpp.
 	Removed cScript::RemoveFromRoot().

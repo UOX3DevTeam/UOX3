@@ -235,6 +235,10 @@
 802=skill/evaluateintel.js
 803=skill/spiritspeak.js
 804=skill/animallore.js
+805=skill/anatomy.js
+806=skill/armslore.js
+807=skill/taming.js
+808=skill/forensics.js
 }
 
 

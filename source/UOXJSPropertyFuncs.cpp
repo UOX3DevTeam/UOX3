@@ -289,6 +289,7 @@ namespace UOX
 					tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 					break;
+				case CIP_MURDERTIME:	*vp = INT_TO_JSVAL( gPriv->GetMurderTime() );		break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -620,6 +621,7 @@ namespace UOX
 				case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
 				case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
+				case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
 				default:
 					break;
 			}
@@ -824,6 +826,7 @@ namespace UOX
 				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
+				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
 			}
 		}
 		return JS_TRUE;
@@ -1130,6 +1133,7 @@ namespace UOX
 				case CIP_STRENGTH:	gPriv->SetStrength( (SI16)encaps.toInt() );						break;
 				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
 				case CIP_DESC:		gPriv->SetDesc( encaps.toString() );							break;
+				case CIP_MURDERTIME:gPriv->SetMurderTime( encaps.toInt() );							break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )

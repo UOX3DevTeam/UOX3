@@ -19,7 +19,7 @@ function onCallback0( pSock, ourObj )
 	{
 		if( !ourObj.InRange( pUser, 3 ) )
 			pSock.SysMessage( "That is too far away." )
-		else if( ourObj.id == 0x0190 || ourObj.id == 0x0191 )
+		else if( !ourObj.npc || ( ourObj.id == 0x0190 || ourObj.id == 0x0191 ) )
 			pSock.SysMessage( "That doesn't look much like an animal." );
 		else if( ourObj.tamed || pUser.skills.animallore >= 700 )
 		{

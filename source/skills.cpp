@@ -1329,105 +1329,6 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ArmsLoreTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses ArmsLore on an item (Only works for
-//|					 weapons and armor (Items with Defense or HiDamage/LoDamage
-//o---------------------------------------------------------------------------o
-void cSkills::ArmsLoreTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	UnicodeTypes sLang = s->Language();
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	SI32 offset;
-	char temp2[60], temp[1024];
-	CChar *mChar = s->CurrcharObj();
-	if( i->isPileable() || ( i->GetDef() == 0 && ( i->GetLoDamage() == 0 && 
-		i->GetHiDamage() == 0 ) && ( i->GetRank() < 1 || i->GetRank() > 9 ) ) )
-	{
-		s->sysmessage( 1503 );
-		return;
-	}
-	if( mChar->IsGM() )
-	{
-		s->sysmessage( 1731, i->GetDef(), i->GetLoDamage(), i->GetHiDamage(), i->GetPoisoned(), i->GetRank() );
-		return;
-	}
-	if( CheckSkill( mChar, ARMSLORE, 0, 1000 ) )
-	{
-		if( i->GetMaxHP() )
-		{
-			strcpy( temp, Dictionary->GetEntry( 1731, sLang ).c_str() );
-			// Items HP's - 1 / by items total HP * 10 (0-3 = 0, 4 - 5 = 1, ect)
-			offset = static_cast<SI32>(((R32)(( i->GetHP() - 1) / i->GetMaxHP() ) * 10 ));
-			if( offset >= 0 && offset <= 8 )
-				strcpy( temp2, Dictionary->GetEntry( 1515 - offset, sLang ).c_str() );
-			else
-				strcpy( temp2, Dictionary->GetEntry( 1506, sLang ).c_str() );
-
-			strcat( temp, temp2 );
-		}
-		else
-			s->sysmessage( 1505 );
-		if( i->GetHiDamage() )
-		{
-			if( mChar->GetSkill( ARMSLORE ) > 750 && i->GetPoisoned() > 0 )
-			{
-				offset = i->GetPoisoned();
-				if( offset > 0 && offset < 5 )
-					strcpy( temp2, Dictionary->GetEntry( 1455 + offset, sLang ).c_str() );
-				else
-					strcpy( temp2, Dictionary->GetEntry( 1459, sLang ).c_str() );
-				strcat( temp, temp2 );
-			}
-			// HiDamage + LoDamage / 10 ( 0-9 = 0, 10-19 = 1, ect )
-			offset = (i->GetHiDamage() + i->GetLoDamage() ) / 10;
-			if( offset <= 5 )
-				strcpy( temp2, Dictionary->GetEntry( 1522 - offset, sLang ).c_str() );
-			else
-				strcpy( temp2, Dictionary->GetEntry( 1516, sLang ).c_str() );
-			strcat( temp, temp2 );
-			
-			if( mChar->GetSkill( ARMSLORE ) > 250 )
-			{
-				// Items Speed - 5 / 10 ( 0-14 = 0, 15-25 = 1, ect)
-				offset = ((i->GetSpeed() - 5) / 10);
-				if( offset <= 2 )
-					strcpy( temp2, Dictionary->GetEntry( 1526 - offset, sLang ).c_str() );
-				else
-					strcpy( temp2, Dictionary->GetEntry( 1523, sLang ).c_str() );
-				strcat( temp, temp2 );
-			}
-		}
-		else if( i->GetDef() )
-		{
-			// Items Defense + 1 / 2 ( 0 = 0, 1-2 = 1, 3-4 = 2, ect)
-			offset = ((i->GetDef() + 1) / 2);
-
-			if( offset <= 6 )
-				strcpy( temp2, Dictionary->GetEntry( 1534 - offset, sLang ).c_str() );
-			else
-				strcpy( temp2, Dictionary->GetEntry( 1527, sLang ).c_str() );
-
-			strcat( temp, temp2 );
-		}
-		s->sysmessage( temp );
-		if( mChar->GetSkill( ARMSLORE ) > 250 && cwmWorldState->ServerData()->RankSystemStatus() )
-		{
-			offset = i->GetRank();
-			if( offset >= 0 && offset <= 10 )
-				s->sysmessage( 1534 + offset );
-		}
-	}
-	else
-		s->sysmessage( 1504 );
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::ItemIDTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
@@ -1506,147 +1407,6 @@ void cSkills::ItemIDTarget( CSocket *s )
 	}
 	else
 		s->sysmessage( 1545 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnatomyTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses Anatomy skill on a PC/NPC, gives
-//|					 a text message based on their Strength and Dexterity
-//o---------------------------------------------------------------------------o
-void cSkills::AnatomyTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-	{
-		s->sysmessage( 1569 );
-		return;
-	}
-	char buf[125];
-	char buf2[125];
-	CChar *mChar = s->CurrcharObj();
-	if( !objInRange( i, mChar, cwmWorldState->ServerData()->CombatMaxRange() ) )
-	{
-		s->sysmessage( 1570 );
-		return;
-	}
-	
-	if( i->IsDead() )
-	{
-		s->sysmessage( 1571 );
-		return;
-	}
-	if( CheckSkill( mChar, ANATOMY, 0, 1000 ) ) 
-	{
-		UnicodeTypes sLang = s->Language();
-		SI16 offset;
-
-		// Strength - 1 / 10 (0-10 = 0, 11-20 = 1, ect)
-		offset = ((i->GetStrength() - 1 )/ 10);
-
-		if( offset >= 0 && offset <= 8 )
-			strcpy( buf, Dictionary->GetEntry( 1572 + offset, sLang ).c_str() );
-		else
-			strcpy( buf, Dictionary->GetEntry( 1581, sLang ).c_str() );
-
-
-		// Dexterity - 1 /10 (0-10 = 0, 11-20 = 1, ect)
-		offset = ((i->GetDexterity() - 1 )/ 10);
-
-		if( offset >= 0 && offset <= 8 )
-			strcpy( buf2, Dictionary->GetEntry( 1582 + offset, sLang ).c_str() );
-		else
-			strcpy( buf2, Dictionary->GetEntry( 1591, sLang ).c_str() );
-
-		s->sysmessage( 1592, buf, buf2 );
-	}
-	else
-		s->sysmessage( 1504 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TameTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Changed sysmessage at end of taming 
-//|									function to say "You are too far away" instead of 
-//|									"You can't tame that!" Easier for the users to understand 
-//|									what's wrong when they can't tame due to being too far away...
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player attempts to tame an NPC
-//o---------------------------------------------------------------------------o
-void cSkills::TameTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( s->GetByte( 7 ) == 0xFF ) 
-		return;
-	
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	CChar *mChar = s->CurrcharObj();
-	if( i->IsNpc() && objInRange( mChar, i, DIST_NEARBY ) )
-	{
-		if( i->GetTaming() > 1000 || i->GetTaming() == 0 )
-		{
-			s->sysmessage( 1593 );
-			return;
-		}
-		if( i->IsTamed() && i->GetOwnerObj() == mChar )
-		{
-			s->sysmessage( 1594 );
-			return;
-		}
-		if( i->IsTamed() )
-		{
-			s->sysmessage( 1595 );
-			return;
-		}
-		for( UI08 a = 0; a < 3; ++a )
-		{
-			switch( RandomNum( 0, 3 ) )
-			{
-				case 0: mChar->talkAll( 1597, false );	break;
-				case 1: mChar->talkAll( 1598, false );	break;
-				case 2: 
-					mChar->talkAll( 1599, false, i->GetName().c_str() ); 
-					break;
-				case 3: 
-					mChar->talkAll( 1600, false, i->GetName().c_str() ); 
-					break;
-			}
-		}
-		if( i->GetHunger() < 0 || mChar->GetSkill( TAMING ) < i->GetTaming() || !CheckSkill( mChar, TAMING, 0, 1000 ) ) 
-		{
-			s->sysmessage( 1601 );
-			return;
-		}   
-		mChar->talk( s, 1602, false );
-		i->SetOwner( mChar );
-		i->SetNpcWander( aiNOAI );
-		i->SetNPCAiType( 0 );
-		i->SetTamed( true );
-		if( i->IsAtWar() && i->GetTarg() == mChar )
-		{
-			i->SetTarg( NULL );
-			i->SetAttacker( NULL );
-			if( i->IsAtWar() )
-				i->ToggleCombat();
-			if( mChar->IsAtWar() && mChar->GetTarg() == i )
-			{
-				mChar->SetTarg( NULL );
-				mChar->SetAttacker( NULL );
-				if( mChar->IsAtWar() )
-					mChar->ToggleCombat();
-			}
-		}
-	}
-	else // Sept 22, 2002 - Xuri
-		s->sysmessage( 400 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1830,14 +1590,11 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		{
 			switch( x )
 			{
-				case ARMSLORE:			s->target( 0, TARGET_ARMSLORE, 855 );		break;
-				case ANATOMY:			s->target( 0, TARGET_ANATOMY, 856 );		break;
 				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
-				case TAMING:			s->target( 0, TARGET_TAME, 859 );			break;
 				case DETECTINGHIDDEN:	s->target( 0, TARGET_DETECTHIDDEN, 860 );	break;
 				case PEACEMAKING:		PeaceMaking(s);								break;
 				case PROVOCATION:		s->target( 0, TARGET_PROVOCATION, 861 );	break;
-				case ENTICEMENT:		s->target( 0, TARGET_ENTICEMENT, 862 );		break;							break;
+				case ENTICEMENT:		s->target( 0, TARGET_ENTICEMENT, 862 );		break;
 				case STEALING:
 					if( cwmWorldState->ServerData()->RogueStatus() )
 						s->target( 0, TARGET_STEALING, 863 );
@@ -1847,7 +1604,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				case INSCRIPTION:		s->target( 0, TARGET_INSCRIBE, 865 );		break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
 				case BEGGING:			s->target( 0, TARGET_BEGGING, 866 );		break;
-				case FORENSICS:			s->target( 0, TARGET_FORENSICS, 868 );		break;
 				case POISONING:			s->target( 0, TARGET_APPLYPOISON, 869 );	break;
 				case MEDITATION:
 					if( cwmWorldState->ServerData()->SystemTimer( ARMORAFFECTMANA_REGEN ) )
@@ -2347,78 +2103,6 @@ void cSkills::BeggingTarget( CSocket *s )
 	}
 	else
 		s->sysmessage( 905 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ForensicsTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets corpse with forensics skill
-//|					 (needs to be given more functionality so players can get
-//|					 more use out of the skill)
-//o---------------------------------------------------------------------------o
-void cSkills::ForensicsTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( i ) )
-	{
-		s->sysmessage( 909 );
-		return;
-	}
-	if( !i->isCorpse() )
-	{
-		s->sysmessage( 909 );
-		return;
-	}
-
-	if( !objInRange( mChar, i, DIST_INRANGE ) )
-	{
-		s->sysmessage( 393 );
-		return;
-	}
-
-	if( !LineOfSight( s, mChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
-	{
-		s->sysmessage( 1646 );
-		return;
-	}
-
-	CChar *cMurderer = calcCharObjFromSer( i->GetTempVar( CITV_MOREX ) );
-	char temp[1024];
-	UI32 getTime = cwmWorldState->GetUICurrentTime();
-	if( mChar->IsGM() )
-	{
-		if( ValidateObject( cMurderer ) )
-			s->sysmessage( 910, i->GetName().c_str(), (getTime - i->GetMurderTime() ) / 1000, cMurderer->GetName().c_str() );
-		else
-			s->sysmessage( 910, i->GetName().c_str(), (getTime - i->GetMurderTime() ) / 1000, "" );
-	}
-	else 
-	{
-		if( !CheckSkill( mChar, FORENSICS, 0, 500 ) ) 
-			s->sysmessage( 911 ); 
-		else
-		{
-			int duration = ( getTime - i->GetMurderTime() ) / 1000;
-			if(		 duration > 180 ) 
-				strcpy( temp, Dictionary->GetEntry( 912, s->Language() ).c_str() );
-			else if( duration >  60 ) 
-				strcpy( temp, Dictionary->GetEntry( 913, s->Language() ).c_str() );
-			else					  
-				strcpy( temp, Dictionary->GetEntry( 914, s->Language() ).c_str() );
-
-			s->sysmessage( 915, &i->GetName().c_str()[2], temp );
-			if( !CheckSkill( mChar, FORENSICS, 500, 1000 ) || !ValidateObject( cMurderer ) ) 
-				s->sysmessage( 916 ); 
-			else if( ValidateObject( cMurderer ) )
-				s->sysmessage( 917, cMurderer->GetName().c_str() );
-			else
-				s->sysmessage( 917, "" );
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o

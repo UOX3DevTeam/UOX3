@@ -4479,7 +4479,9 @@ void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
 	if( strlen( msg ) == 0 )
 		throw new std::runtime_error( "Blank command field added!" );
 
-	printf("%s\n",msg);
+#if defined( UOX_DEBUG_MODE )
+	Console << msg << myendl;;
+#endif
 
 	commands.push_back( msg );
 }
@@ -4500,7 +4502,9 @@ void CPSendGumpMenu::AddCommand( const std::string actualCommand, ... )
 	if( strlen( msg ) == 0 )
 		throw new std::runtime_error( "Blank command field added!" );
 
-	printf("%s\n",msg);
+#if defined( UOX_DEBUG_MODE )
+	Console << msg << myendl;;
+#endif
 
 	commands.push_back( msg );
 }
@@ -4520,7 +4524,9 @@ void CPSendGumpMenu::AddText( const char *actualText, ... )
 	if( strlen( msg ) == 0 )
 		throw new std::runtime_error( "Blank text field added!" );
 
-	printf("%s\n",msg);
+#if defined( UOX_DEBUG_MODE )
+	Console << msg << myendl;;
+#endif
 
 	text.push_back( msg );
 }
@@ -4541,7 +4547,9 @@ void CPSendGumpMenu::AddText( const std::string actualText, ... )
 	if( strlen( msg ) == 0 )
 		throw new std::runtime_error( "Blank text field added!" );
 
-	printf("%s\n",msg);
+#if defined( UOX_DEBUG_MODE )
+	Console << msg << myendl;;
+#endif
 
 	text.push_back( msg );
 }

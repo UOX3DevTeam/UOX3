@@ -998,7 +998,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddText( szBuffer );
 	toSend.AddCommand( "button %u %u %u %u %u %u %u",104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++ );
 
-	printf("==============================\n");
+#if defined( UOX_DEBUG_MODE )
+	Console << "==============================" << myendl;
+#endif
 	// Finish up and send the gump to the client socket.	
 	toSend.Finalize();
 	s->Send( &toSend );

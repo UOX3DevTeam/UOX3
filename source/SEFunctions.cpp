@@ -202,10 +202,15 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
 
 	CItem *newItem		= calcItemObjFromSer( targSerial );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-	JS_SetPrivate( cx, myObj, newItem );
-	*rval = OBJECT_TO_JSVAL( myObj );
+	if( newItem != NULL )
+	{
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
+		JS_SetPrivate( cx, myObj, newItem );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
 
@@ -223,10 +228,15 @@ JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
 
 	CChar *newChar		= calcCharObjFromSer( targSerial );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-	JS_SetPrivate( cx, myObj, newChar );
-	*rval = OBJECT_TO_JSVAL( myObj );
+	if( newChar != NULL )
+	{
+		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myObj, newChar );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
 
@@ -1258,7 +1268,7 @@ JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	UString str = JS_GetStringBytes( JSVAL_TO_STRING( argv[0] ) );
+	UString str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 
 	*rval = INT_TO_JSVAL( str.toLong() );
 	return JS_TRUE;

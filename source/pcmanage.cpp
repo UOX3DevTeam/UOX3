@@ -239,12 +239,9 @@ bool CPIDeleteCharacter::Handle( void )
 }
 
 template< class T >
-	T Capped( T value, T min, T max )
+T Capped( T value, T min, T max )
 {
-	T rvalue = value;
-	rvalue = UOX_MIN( value, max );
-	rvalue = UOX_MAX( value, min );
-	return rvalue;
+	return UOX_MAX( UOX_MIN( value, max ), min );
 }
 
 //o--------------------------------------------------------------------------o
@@ -266,9 +263,10 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 		for( UString tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
 			UString data = newbieData->GrabData();
-			if( tag.upper() == "PACKITEM" )
+			if( !data.empty() )
 			{
-				if( !data.empty() )
+				UString UTag = tag.upper();
+				if( UTag == "PACKITEM" )
 				{
 					if( data.sectionCount( "," ) != 0 )
 					{
@@ -279,9 +277,15 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 					else
 						n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
 				}
+				else if( UTag == "EQUIPITEM" )
+				{
+					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
+					if( n != NULL && n->GetLayer() != IL_NONE )
+						n->SetCont( c );
+				}
+				if( n != NULL )
+					n->SetNewbie( true );
 			}
-			if( n != NULL )
-				n->SetNewbie( true );
 		}
 	}
 }
@@ -296,17 +300,19 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 //o--------------------------------------------------------------------------o
 void CPICreateCharacter::newbieItems( CChar *mChar )
 {
-	const UI08 HAIR = 0;
-	const UI08 BEARD = 1;
-	const UI08 PACK = 2;
-	const UI08 LOWERGARMENT = 3;
-	const UI08 EXTRA1 = 4;
-	const UI08 EXTRA2 = 5;
-	const UI08 EXTRA3 = 6;
-	const UI08 GOLD =	7;
-	const UI08 ITOTAL = 8;
+	const enum NewbieItems
+	{
+		HAIR = 0,
+		BEARD,
+		PACK,
+		LOWERGARMENT,
+		UPPERGARMENT,
+		SHOES,
+		GOLD,
+		ITOTAL
+	};
 
-	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	UI16 ItemID, ItemColour;
 	if( validHair( hairStyle ) )
@@ -338,10 +344,10 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	if( CreatedItems[LOWERGARMENT] != NULL )
 	{
 		UI16 newID = INVALIDID;
-		UI08 newLayer;
+		ItemLayers newLayer = IL_NONE;
 		if( mChar->GetID() == 0x0190 )
 		{
-			newLayer = 4;
+			newLayer = IL_PANTS;
 			switch( RandomNum( 0, 1 ) )
 			{
 				case 0:	newID = 0x152E;	break;
@@ -350,7 +356,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		}
 		else
 		{
-			newLayer = 23;
+			newLayer = IL_OUTERLEGGINGS;
 			switch( RandomNum( 0, 1 ) )
 			{
 				case 0:	newID = 0x1537;	break;
@@ -362,24 +368,24 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[LOWERGARMENT]->SetColour( pantsColour );
 		CreatedItems[LOWERGARMENT]->SetDye( true );
 	}	
-	CreatedItems[EXTRA1] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM ); // spawn pants
-	if( CreatedItems[EXTRA1] != NULL )
+	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM );
+	if( CreatedItems[UPPERGARMENT] != NULL )
 	{
 		if( RandomNum( 0, 1 ) )
-			CreatedItems[EXTRA1]->SetID( 0x1EFD );
+			CreatedItems[UPPERGARMENT]->SetID( 0x1EFD );
 		else
-			CreatedItems[EXTRA1]->SetID( 0x1517 );
-		CreatedItems[EXTRA1]->SetColour( shirtColour );
-		CreatedItems[EXTRA1]->SetLayer( IL_INNERSHIRT );
-		CreatedItems[EXTRA1]->SetDye( true );
-		CreatedItems[EXTRA1]->SetDef( 1 );
+			CreatedItems[UPPERGARMENT]->SetID( 0x1517 );
+		CreatedItems[UPPERGARMENT]->SetColour( shirtColour );
+		CreatedItems[UPPERGARMENT]->SetLayer( IL_INNERSHIRT );
+		CreatedItems[UPPERGARMENT]->SetDye( true );
+		CreatedItems[UPPERGARMENT]->SetDef( 1 );
 	}	
-	CreatedItems[EXTRA2] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM );
-	if( CreatedItems[EXTRA2] != NULL )
+	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM );
+	if( CreatedItems[SHOES] != NULL )
 	{
-		CreatedItems[EXTRA2]->SetLayer( IL_FOOTWEAR );
-		CreatedItems[EXTRA2]->SetDye( true );
-		CreatedItems[EXTRA2]->SetDef( 1 );
+		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );
+		CreatedItems[SHOES]->SetDye( true );
+		CreatedItems[SHOES]->SetDef( 1 );
 	}	
 
 	for( UI08 ctr = 0; ctr < GOLD; ++ctr )
