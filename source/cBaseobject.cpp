@@ -83,14 +83,14 @@ const UI08			DEFBASE_POISONED	= 0;
 const SI16			DEFBASE_CARVE		= -1;
 const UI08			DEFBASE_UPDATETYPES	= 0;
 const UI08			DEFBASE_OBJSETTINGS	= 0;
-//o--------------------------------------------------------------------------
+//o--------------------------------------------------------------------------o
 //|	Function		-	cBaseObject constructor
 //|	Date			-	26 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
-//o--------------------------------------------------------------------------
+//o--------------------------------------------------------------------------o
 //|	Purpose			-	This function is does basically what the name implies
-//o--------------------------------------------------------------------------
+//o--------------------------------------------------------------------------o
 cBaseObject::cBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RACE ), x( DEFBASE_X ), y( DEFBASE_Y ), 
 z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), serial( DEFBASE_SERIAL ), 
 multis( DEFBASE_MULTIS ), spawnserial( DEFBASE_SPAWNSER ), owner( DEFBASE_OWNER ),

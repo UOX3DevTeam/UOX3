@@ -121,9 +121,7 @@ UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 		return 0;
 	UI32 goldCount = 0;
 	ITEMLIST *ownedItems = p->GetOwnedItems();
-	// DO STL here
-	ITEMLIST_ITERATOR I;
-	for( I = ownedItems->begin(); I != ownedItems->end(); ++I )
+	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
 	{
 		CItem *oItem = (*I);
 		if( ValidateObject( oItem ) || I == ownedItems->end() )
@@ -149,9 +147,7 @@ UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
 	if( !ValidateObject( p ) )
 		return amt;
 	ITEMLIST *ownedItems = p->GetOwnedItems();
-	// DO stl here.... no wonder were crashing, you cant test a container for NULL :)
-	ITEMLIST_ITERATOR I;
-	for( I = ownedItems->begin(); I != ownedItems->end() && amt > 0; ++I )
+	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end() && amt > 0; ++I )
 	{
 		CItem *oItem = (*I);
 		if( ValidateObject( oItem ) || I == ownedItems->end() )

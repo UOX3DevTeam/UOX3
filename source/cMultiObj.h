@@ -16,10 +16,10 @@ protected:
 
 	virtual bool		LoadRemnants( void );
 
-public:
 	CDataList< CItem * >	itemInMulti;
 	CDataList< CChar * >	charInMulti;
 
+public:
 						CMultiObj();
 	virtual				~CMultiObj();
 
@@ -55,6 +55,9 @@ public:
 	virtual void		Cleanup( void );
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+
+	CDataList< CChar * > *	GetCharsInMultiList( void );
+	CDataList< CItem * > *	GetItemsInMultiList( void );
 };
 
 class CBoatObj : public CMultiObj

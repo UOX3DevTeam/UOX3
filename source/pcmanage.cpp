@@ -90,9 +90,7 @@ bool CPIPlayCharacter::Handle( void )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
-			ACCOUNTSBLOCK actbRec;
-			actbRec.wAccountIndex	= AB_INVALID_ID;
-			actbRec					= tSock->GetAccount();
+			ACCOUNTSBLOCK& actbRec	= tSock->GetAccount();
 			CChar *kChar			= NULL;
 			CChar *ourChar			= NULL;
 			if( actbRec.wAccountIndex == AB_INVALID_ID )
@@ -147,16 +145,16 @@ bool CPIPlayCharacter::Handle( void )
 					WhoList->FlagUpdate();
 					OffList->FlagUpdate();	// offline list changes too
 					if( actbRec.dwInGame != INVALIDSERIAL )
-						actbRec.dwInGame = ourChar->GetSerial();
+						actbRec.dwInGame = kChar->GetSerial();
 					else
 						actbRec.dwInGame = INVALIDSERIAL;
 
-					if( actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == ourChar->GetSerial() )
+					if( actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == kChar->GetSerial() )
 					{
-						actbRec.dwInGame = ourChar->GetSerial();
-						ourChar->SetTimer( tPC_LOGOUT, 0 );
+						actbRec.dwInGame = kChar->GetSerial();
+						kChar->SetTimer( tPC_LOGOUT, 0 );
 						tSock->SetAccount( actbRec );
-						ourChar->SetAccount( actbRec );
+						kChar->SetAccount( actbRec );
 						tSock->CurrcharObj( kChar );
 						startChar( tSock );
 					} 
@@ -204,7 +202,7 @@ bool CPIDeleteCharacter::Handle( void )
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
 			UI08 slot = tSock->GetByte( 0x22 );
-			ACCOUNTSBLOCK actbTemp = tSock->GetAccount();
+			ACCOUNTSBLOCK& actbTemp = tSock->GetAccount();
 			if( actbTemp.wAccountIndex!=AB_INVALID_ID )
 			{
 				CChar *ourObj = actbTemp.lpCharacters[slot];
@@ -218,7 +216,7 @@ bool CPIDeleteCharacter::Handle( void )
 			// Support for accounts. The current copy of the account isn't correct. So get a new copy to work with.
 			ACCOUNTSBLOCK actbScratch;
 			Accounts->Load();
-			Accounts->GetAccountByID(actbTemp.wAccountIndex,actbScratch);
+			Accounts->GetAccountByID( actbTemp.wAccountIndex, actbScratch );
 			UI08 charCount = 0;
 			for( UI08 i = 0; i < 6; ++i )
 			{
@@ -227,7 +225,7 @@ bool CPIDeleteCharacter::Handle( void )
 			}
 			CServerData *sd		= cwmWorldState->ServerData();
 			UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
-			CPCharAndStartLoc toSend(actbScratch, charCount, serverCount );
+			CPCharAndStartLoc toSend( actbScratch, charCount, serverCount );
 			tSock->SetAccount( actbScratch );
 			for( UI08 j = 0; j < serverCount; ++j )
 			{
@@ -438,9 +436,7 @@ bool CPICreateCharacter::Handle( void )
 			tSock->CurrcharObj( mChar );
 			mChar->SetName( charName );
 			Accounts->AddCharacter( tSock->AcctNo(), mChar );
-			ACCOUNTSBLOCK actbRec;
-			actbRec.wAccountIndex	= AB_INVALID_ID;
-			actbRec					= tSock->GetAccount();
+			ACCOUNTSBLOCK &actbRec	= tSock->GetAccount();
 			if( actbRec.dwInGame != INVALIDSERIAL )
 				actbRec.dwInGame = mChar->GetSerial();
 
@@ -464,8 +460,8 @@ bool CPICreateCharacter::Handle( void )
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 			
-			ACCOUNTSBLOCK actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex!=AB_INVALID_ID&&((actbTemp2.wFlags&AB_FLAGS_GM)==AB_FLAGS_GM) )
+			ACCOUNTSBLOCK& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.wAccountIndex != AB_INVALID_ID && ( (actbTemp2.wFlags&AB_FLAGS_GM) == AB_FLAGS_GM ) )
 			{ 
 				mChar->SetPriv( 0xFF );
 				mChar->SetCommandLevel( GM_CMDLEVEL );
@@ -580,7 +576,7 @@ void updates( cSocket *s )
 	s->Send( &toSend );
 }
 
-void sysBroadcast( std::string txt );
+void sysBroadcast( const std::string txt );
 //o---------------------------------------------------------------------------o
 //|   Function    :  void startChar( cSocket *mSock, bool onCreate )
 //|   Date        :  Unknown

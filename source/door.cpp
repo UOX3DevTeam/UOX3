@@ -233,8 +233,7 @@ void DoorMacro( cSocket *s )
 	}
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region

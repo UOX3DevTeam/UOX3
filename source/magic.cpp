@@ -267,7 +267,7 @@ bool splMagicTrap( cSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() && target->GetID() != 0x0E75 )  
 	{
-		target->SetTempVar( CITV_MOREB, calcserial( 1, caster->GetSkill( MAGERY ) / 20, caster->GetSkill( MAGERY ) / 10, 0 ) );
+		target->SetTempVar( CITV_MORE, calcserial( 1, caster->GetSkill( MAGERY ) / 20, caster->GetSkill( MAGERY ) / 10, 0 ) );
 		Effects->PlaySound( target, 0x01F0 );
 	} 
 	else 
@@ -278,11 +278,11 @@ bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() )
 	{
-		if( target->GetTempVar( CITV_MOREB, 1 ) == 1 )
+		if( target->GetTempVar( CITV_MORE, 1 ) == 1 )
 		{
-			if( RandomNum( 1, 100 ) <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetTempVar( CITV_MOREB, 3 ) )
+			if( RandomNum( 1, 100 ) <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetTempVar( CITV_MORE, 3 ) )
 			{
-				target->SetTempVar( CITV_MOREB, 0 );
+				target->SetTempVar( CITV_MORE, 0 );
 				Effects->PlaySound(target, 0x01F1 );
 				sock->sysmessage( 664 );
 			}
@@ -360,9 +360,9 @@ bool splTelekinesis( cSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() )
 	{
-		if( target->GetTempVar( CITV_MOREB, 1 ) == 1 )
+		if( target->GetTempVar( CITV_MORE, 1 ) == 1 )
 		{
-			target->SetTempVar( CITV_MOREB, 0 );
+			target->SetTempVar( CITV_MORE, 0 );
 			Effects->PlaySound( target, 0x01FA, true);
 		}
 		else
@@ -829,8 +829,7 @@ bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 		//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
 		
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
@@ -993,8 +992,7 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	Magic->BoxSpell( sock, caster, x1, x2, y1, y2, z1, z2 );
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
@@ -1522,12 +1520,9 @@ void cMagic::GateCollision( cSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			dirOffset = -1;
 		if( !mChar->IsNpc() )
 		{
-			CChar *myPet		= NULL;
-			CHARLIST *ourPets	= mChar->GetPetList();
-			CHARLIST_ITERATOR pIter;
-			for( pIter = ourPets->begin(); pIter != ourPets->end(); ++pIter )
+			CDataList< CChar * > *myPets = mChar->GetPetList();
+			for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 			{
-				myPet = (*pIter);
 				if( !ValidateObject( myPet ) )
 					continue;
 				if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
@@ -2052,9 +2047,9 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 // LB October 99
 //o---------------------------------------------------------------------------o
 
-void cMagic::CheckFieldEffects( CChar *c )
+void cMagic::CheckFieldEffects( CChar& mChar )
 {
-	SubRegion *toCheck = MapRegion->GetCell( c->GetX(), c->GetY(), c->WorldNumber() );
+	SubRegion *toCheck = MapRegion->GetCell( mChar.GetX(), mChar.GetY(), mChar.WorldNumber() );
 	if( toCheck == NULL )	// no valid region
 		return;
 	CDataList< CItem * > *regItems = toCheck->GetItemList();
@@ -2063,9 +2058,9 @@ void cMagic::CheckFieldEffects( CChar *c )
 	{
 		if( !ValidateObject( inItemList ) )
 			continue;
-		if( inItemList->GetX() == c->GetX() && inItemList->GetY() == c->GetY() )
+		if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() )
 		{
-			if( HandleFieldEffects( c, inItemList, inItemList->GetID() ) )
+			if( HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() ) )
 				break;
 		}
 	}
@@ -2186,10 +2181,10 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
     Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
     Effects->PlaySound( s, 0x0207 );
 	if( CheckResist( NULL, s, 4 ) ) 
-		MagicDamage( s, i->GetTempVar( CITV_MOREB, 2 ) / 2 );
+		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2 );
 	else 
-		MagicDamage( s, i->GetTempVar( CITV_MOREB, 2 ) / 2 );
-	i->SetTempVar( CITV_MOREB, 0 );
+		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2 );
+	i->SetTempVar( CITV_MORE, 0 );
 }
 
 //o---------------------------------------------------------------------------o

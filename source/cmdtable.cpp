@@ -37,7 +37,7 @@ void CollectGarbage( void );
 void endmessage( int x );
 void HandleGumpCommand( cSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
-void sysBroadcast( std::string txt );
+void sysBroadcast( const std::string txt );
 void HandleHowTo( cSocket *sock, int cmdNumber );
 void telltime( cSocket *s );
 void Wiping( cSocket *s );
@@ -194,7 +194,7 @@ void command_addaccount( cSocket *s)
 		if( szPrivs!=NULL )
 			nFlags=atoi(szPrivs);
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		if( Accounts->GetAccountByName(szUsername,actbTemp) )
+		if( Accounts->GetAccountByName( szUsername, actbTemp ) )
 		{
 			Accounts->AddAccount(szUsername,szPassword,"NA",nFlags);
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
@@ -1084,6 +1084,7 @@ void command_temp( cSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
+
 	cTownRegion *reg	= mChar->GetRegion();
 	weathID toGrab		= reg->GetWeather();
 	if( toGrab != 0xFF )

@@ -378,7 +378,7 @@ bool CPISecondLogin::Handle( void )
 		if( actbTemp.wFlags&AB_FLAGS_BANNED )
 			t = LDR_ACCOUNTDISABLED;
 		else if( pass1 != actbTemp.sPassword )
-			t = LDR_UNKNOWNUSER;
+			t = LDR_BADPASSWORD;
 	}
 	else
 		t = LDR_UNKNOWNUSER;

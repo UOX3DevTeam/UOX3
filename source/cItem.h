@@ -6,7 +6,6 @@ namespace UOX
 	enum CITempVars
 	{
 		CITV_MORE	= 0,
-		CITV_MOREB,
 		CITV_MOREX,
 		CITV_MOREY,
 		CITV_MOREZ,

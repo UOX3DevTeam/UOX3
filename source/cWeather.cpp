@@ -1342,13 +1342,13 @@ bool cWeatherAb::DoPlayerStuff( cSocket *s, CChar *p )
 	{
 		DoPlayerWeather( s, 2, (SI08)Temp( currval ) );
 		if( p->GetWeathDamage( SNOW ) == 0 )
-			p->SetWeathDamage( BuildTimeValue( Races->SnowSecs( p->GetRace() ) ), SNOW );
+			p->SetWeathDamage( BuildTimeValue( Races->Secs( p->GetRace(), SNOW ) ), SNOW );
 	} 
 	else if( isRaining )
 	{
 		DoPlayerWeather( s, 1, (SI08)Temp( currval ) );
 		if( p->GetWeathDamage( RAIN ) == 0 )
-			p->SetWeathDamage( BuildTimeValue( Races->RainSecs( p->GetRace() ) ), RAIN );
+			p->SetWeathDamage( BuildTimeValue( Races->Secs( p->GetRace(), RAIN ) ), RAIN );
 	}
 	else
 	{
@@ -1428,226 +1428,143 @@ CWeather *cWeatherAb::Weather( weathID toCheck )
 }
 
 // FUNCTION NEEDS REWORKING
-bool doLightEffect( cSocket *mSock, CChar *i )
+bool doLightEffect( cSocket& mSock, CChar& mChar )
 {
 	bool didDamage = false;
-	
-	if( !ValidateObject( i ) || mSock == NULL )
-		return false;
-	if( i->IsNpc() || i->IsGM() || !Races->LightAffect( i->GetRace() ) )
+
+	if( mChar.IsNpc() || mChar.IsGM() || !Races->Affect( mChar.GetRace(), LIGHT ) )
 		return false;
 
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 
-	if( i->GetFixedLight() != 255 )
+	if( mChar.GetFixedLight() != 255 )
 	{
 		if( hour < 5 && ampm || hour >= 5 && !ampm )	// time of day we can be burnt
 		{
-			if( i->GetWeathDamage( LIGHT ) != 0 )
+			if( mChar.GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
-					mSock->sysmessage( 1216 );
-					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
-					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-					Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( i, 0x0208 );     
+					mSock.sysmessage( 1216 );
+					mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) );
+					mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
+					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+					Effects->PlaySound( (&mChar), 0x0208 );     
 					didDamage = true;
 				}
 			}
 			else
-				i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
+				mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
 			
 		}
 		else if( hour < 6 && ampm || hour >= 4 && !ampm )	// slightly burnt at this time of day
 		{
-			if( i->GetWeathDamage( LIGHT ) != 0 )
+			if( mChar.GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
-					mSock->sysmessage( 1217 );
-					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-					i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-					Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( i, 0x0208 );     
+					mSock.sysmessage( 1217 );
+					mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
+					mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
+					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+					Effects->PlaySound( (&mChar), 0x0208 );     
 					didDamage = true;
 				}
 			}
 		}
 		else
 		{
-			i->SetWeathDamage( 0, LIGHT );
+			mChar.SetWeathDamage( 0, LIGHT );
 			if( hour > 3 && hour < 4 && !ampm )
-				mSock->sysmessage( 1215 );
+				mSock.sysmessage( 1215 );
 		}
 	}
 	else
 	{
-		if( !i->inDungeon() )
+		if( !mChar.inDungeon() )
 		{
 			if( hour < 5 && ampm || hour >= 5 && !ampm )
 			{
-				if( i->GetWeathDamage( LIGHT ) != 0 )
+				if( mChar.GetWeathDamage( LIGHT ) != 0 )
 				{
-					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
-						mSock->sysmessage( 1216 );
-						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
-						i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-						Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( i, 0x0208 );     
+						mSock.sysmessage( 1216 );
+						mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) );
+						mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
+						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+						Effects->PlaySound( (&mChar), 0x0208 );     
 						didDamage = true;
 					}
 				}
 				else
-					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
+					mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
 				
 			}
 			else if( hour < 6 && ampm || hour >= 4 && !ampm )
 			{
-				if( i->GetWeathDamage( LIGHT ) != 0 )
+				if( mChar.GetWeathDamage( LIGHT ) != 0 )
 				{
-					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
-						mSock->sysmessage( 1217 );
-						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-						i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-						Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( i, 0x0208 );     
+						mSock.sysmessage( 1217 );
+						mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
+						mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
+						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+						Effects->PlaySound( (&mChar), 0x0208 );     
 						didDamage = true;
 					}
 				}
 			}
 			else
 			{
-				i->SetWeathDamage( 0, LIGHT );
+				mChar.SetWeathDamage( 0, LIGHT );
 				if( hour > 3 && hour < 4 && !ampm )
-					mSock->sysmessage( 1215 );
+					mSock.sysmessage( 1215 );
 			}
 		}
 		else
 		{
-			if( hour >= 5 && hour <= 6 && ampm && i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+			if( hour >= 5 && hour <= 6 && ampm && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 			{
-				mSock->sysmessage( 1218 );
-				i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
+				mSock.sysmessage( 1218 );
+				mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
 			}
 		}
 	}
 	return didDamage;
 }
 
-bool doRainEffect( cSocket *mSock, CChar *i )
+bool doWeatherEffect( cSocket& mSock, CChar& mChar, WeatherType element )
 {
-	if( !ValidateObject( i ) || mSock == NULL )
+	if( element == LIGHT || element == WEATHNUM )
 		return false;
-	if( i->IsNpc() || !Races->RainAffect( i->GetRace() ) )
-		return false;
-	bool didDamage = false;
-	if( !i->inDungeon() && Weather->RainActive( i->GetRegion()->GetWeather() ) )
-	{
-		if( i->GetWeathDamage( RAIN ) != 0 && i->GetWeathDamage( RAIN ) <= cwmWorldState->GetUICurrentTime() )
-		{
-			mSock->sysmessage( 1219 );
-			i->SetHP( i->GetHP() - Races->RainDamage( i->GetRace() ) );
-			i->SetWeathDamage( BuildTimeValue( Races->RainSecs( i->GetRace() ) ), RAIN );
-			Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-			Effects->PlaySound( i, 0x0208 );     
-			didDamage = true;
-		}
-		else
-			i->SetWeathDamage( BuildTimeValue( Races->RainSecs( i->GetRace() ) ), RAIN );
-	}
-	else
-		i->SetWeathDamage( 0, RAIN );
-	return didDamage;
-}
 
-bool doSnowEffect( cSocket *mSock, CChar *i )
-{
-	if( !ValidateObject( i ) || mSock == NULL )
+	if( mChar.IsNpc() || !Races->Affect( mChar.GetRace(), element ) )
 		return false;
-	if( i->IsNpc() || !Races->SnowAffect( i->GetRace() ) )
-		return false;
-	bool didDamage = false;
-	if( !i->inDungeon() && Weather->SnowActive( i->GetRegion()->GetWeather() ) )
-	{
-		if( i->GetWeathDamage( SNOW ) != 0 && i->GetWeathDamage( SNOW ) <= cwmWorldState->GetUICurrentTime() )
-		{
-			mSock->sysmessage( 1220 );
-			i->SetHP( i->GetHP() - Races->SnowDamage( i->GetRace() ) );
-			i->SetWeathDamage( BuildTimeValue( Races->SnowSecs( i->GetRace() ) ), SNOW );
-			Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-			Effects->PlaySound( i, 0x0208 );     
-			didDamage = true;
-		}
-		else
-			i->SetWeathDamage( BuildTimeValue( Races->SnowSecs( i->GetRace() ) ), SNOW );
-	}
-	else
-		i->SetWeathDamage( 0, SNOW );
-	return didDamage;
-}
 
-bool doHeatEffect( cSocket *mSock, CChar *i )
-{
-	if( !ValidateObject( i ) || mSock == NULL )
-		return false;
-	if( i->IsNpc() || !Races->HeatAffect( i->GetRace () ) )
-		return false;
 	bool didDamage			= false;
-	cTownRegion *charRegion	= i->GetRegion();
-	UI08 weatherSys			= charRegion->GetWeather();
-	if( weatherSys != 255 )
+	cTownRegion *charRegion	= mChar.GetRegion();
+	const UI08 weatherSys	= charRegion->GetWeather();
+	if( weatherSys != 0xFF )
 	{
-		R32 tempCurrent = Weather->Temp( weatherSys );
-		R32 tempMax		= Weather->MaxTemp( weatherSys );
-		R32 tempMin		= Weather->MinTemp( weatherSys );
+		const R32 tempCurrent	= Weather->Temp( weatherSys );
+		const R32 tempMax		= Weather->MaxTemp( weatherSys );
+		const R32 tempMin		= Weather->MinTemp( weatherSys );
 		if( tempCurrent > ( tempMax - tempMin ) / 4 * 3 )	// 3/4 of the temp is done
 		{
-			if( i->GetWeathDamage( HEAT ) != 0 && i->GetWeathDamage( HEAT ) <= cwmWorldState->GetUICurrentTime() )
+			if( mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime() )
 			{
-				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
-				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->HeatDamage( i->GetRace() ) * damageModifier )) );
-				i->SetStamina( i->GetStamina() - 2 );
-				mSock->sysmessage( 1221 );
-				Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-				Effects->PlaySound( i, 0x0208 );     
+				const R32 damageModifier = ( tempMax - tempCurrent ) / 5;
+				mChar.SetHP((SI16)( mChar.GetHP() - ( (R32)Races->Damage( mChar.GetRace(), element ) * damageModifier )) );
+				mChar.SetStamina( mChar.GetStamina() - 2 );
+				mSock.sysmessage( (1218 + (int)element) );
+				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+				Effects->PlaySound( (&mChar), 0x0208 );     
 				didDamage = true;
 			}
-			i->SetWeathDamage( BuildTimeValue( Races->HeatSecs( i->GetRace() ) ), HEAT );
-		}
-	}
-	return didDamage;
-}
-
-bool doColdEffect( cSocket *mSock, CChar *i )
-{
-	if( !ValidateObject( i ) || mSock == NULL )
-		return false;
-	if( i->IsNpc() || !Races->HeatAffect( i->GetRace () ) )
-		return false;
-	bool didDamage			= false;
-	cTownRegion *charRegion = i->GetRegion();
-	UI08 weatherSys			= charRegion->GetWeather();
-	if( weatherSys != 255 )
-	{
-		R32 tempCurrent = Weather->Temp( weatherSys );
-		R32 tempMax		= Weather->MaxTemp( weatherSys );
-		R32 tempMin		= Weather->MinTemp( weatherSys );
-		if( tempCurrent < ( tempMax - tempMin ) / 4 * 1 )	// 3/4 of the temp is done
-		{
-			if( i->GetWeathDamage( COLD ) != 0 && i->GetWeathDamage( COLD ) <= cwmWorldState->GetUICurrentTime() )
-			{
-				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
-				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->ColdDamage( i->GetRace() ) * damageModifier ) ));
-				mSock->sysmessage( 1606 );
-				Effects->PlayStaticAnimation( i, 0x3709, 0x09, 0x19 );
-				Effects->PlaySound( i, 0x0208 );     
-				didDamage = true;
-			}
-			i->SetWeathDamage( BuildTimeValue( Races->ColdSecs( i->GetRace() ) ), COLD );
+			mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), element ) ), element );
 		}
 	}
 	return didDamage;

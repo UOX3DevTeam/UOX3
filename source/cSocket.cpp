@@ -463,43 +463,9 @@ UI16 cSocket::TriggerWord( void ) const
 {
 	return triggerWord;
 }
-//o---------------------------------------------------------------------------o
-//|		Function    -	UI16 cSocket::AcctNo( void )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Returns the ID of the account number socket belongs to
-//o---------------------------------------------------------------------------o
-UI16 cSocket::AcctNo( void ) const
-{
-	return wAccountID;
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    -	void cSocket::AcctNo( UI16 newValue )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Sets the ID of the account number the socket belongs to
-//o---------------------------------------------------------------------------o
-void cSocket::AcctNo( UI16 newValue )
-{
-	if( !Accounts->GetAccountByID( newValue, (ACCOUNTSBLOCK&)actbAccount ) )
-	{
-		wAccountID = AB_INVALID_ID;
-		actbAccount.wAccountIndex = AB_INVALID_ID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
 
 CChar *					DEFSOCK_CURRCHAROBJ				= NULL;
 const SI32				DEFSOCK_IDLETIMEOUT				= -1;
-const UI16				DEFSOCK_ACCOUNTID				= AB_INVALID_ID;
 const SI32				DEFSOCK_TEMPINT					= 0;
 const UI08				DEFSOCK_DYEALL					= 0;
 const SI08				DEFSOCK_CLICKZ					= -1;
@@ -530,7 +496,7 @@ const bool				DEFSOCK_RECEIVEDVERSION			= false;
 cBaseObject *			DEFSOCK_TMPOBJ					= NULL;
 const UI16				DEFSOCK_TRIGGERWORD				= 0xFFFF;
 
-cSocket::cSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), wAccountID( DEFSOCK_ACCOUNTID ),
+cSocket::cSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
@@ -950,42 +916,51 @@ ACCOUNTSBLOCK &cSocket::GetAccount(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
+void cSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
 {
-	if( actbBlock.wAccountIndex==AB_INVALID_ID )
+	if( actbBlock.wAccountIndex == AB_INVALID_ID )
 	{
-		actbAccount.wAccountIndex=AB_INVALID_ID;
+		actbAccount.wAccountIndex = AB_INVALID_ID;
 		return;
 	}
-	actbAccount = actbBlock;
-	wAccountID = actbAccount.wAccountIndex;
+	actbAccount	= actbBlock;
+	Accounts->ModAccount( actbAccount.wAccountIndex, AB_ALL, actbBlock );
 }
-//
-void cSocket::SetAccount(std::string sUsername)
-{
-	if( !Accounts->GetAccountByName(sUsername,(ACCOUNTSBLOCK&)actbAccount) )
-	{
-		// Ok there was an error setting an account to this character.
-		wAccountID=AB_INVALID_ID;
-		actbAccount.wAccountIndex=wAccountID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
-//
-void cSocket::SetAccount(UI16 wNewAccountID)
-{
-	if( !Accounts->GetAccountByID(wNewAccountID,(ACCOUNTSBLOCK&)actbAccount) )
-	{
-		// Ok there was an error setting an account to this character.
-		wAccountID=AB_INVALID_ID;
-		actbAccount.wAccountIndex=wAccountID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
-//
 
+//o---------------------------------------------------------------------------o
+//|		Function    -	UI16 cSocket::AcctNo( void )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Returns the ID of the account number socket belongs to
+//o---------------------------------------------------------------------------o
+UI16 cSocket::AcctNo( void ) const
+{
+	return actbAccount.wAccountIndex;
+}
+
+//o---------------------------------------------------------------------------o
+//|		Function    -	void cSocket::AcctNo( UI16 newValue )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Sets the ID of the account number the socket belongs to
+//o---------------------------------------------------------------------------o
+void cSocket::AcctNo( UI16 newValue )
+{
+	ACCOUNTSBLOCK actbBlock;
+	if( !Accounts->GetAccountByID( newValue, actbBlock ) )
+	{
+		actbAccount.wAccountIndex	= AB_INVALID_ID;
+		return;
+	}
+	actbAccount	= actbBlock;
+	Accounts->ModAccount( actbAccount.wAccountIndex, AB_ALL, actbBlock );
+}
 
 UI08 cSocket::ClientIP1( void ) const
 {

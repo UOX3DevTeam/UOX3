@@ -238,7 +238,7 @@ function HandleSetChar( socket, ourChar, uKey, value )
 	}
 }
 
-function onCallBack1( socket, ourObj )
+function onCallback1( socket, ourObj )
 {
 	var toOwn = socket.tempObj;
 	if( !socket.GetWord( 1 ) && ourObj.isChar && toOwn )

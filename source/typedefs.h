@@ -60,9 +60,11 @@ const SERIAL BASEITEMSERIAL		= 0x40000000;
 
 typedef std::vector< SubRegion * >						REGIONLIST;
 typedef std::vector< SubRegion * >::iterator			REGIONLIST_ITERATOR;
+typedef std::vector< SubRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
 typedef std::vector< cSocket * >						SOCKLIST;
 typedef std::vector< cSocket * >::iterator				SOCKLIST_ITERATOR;
+typedef std::vector< cSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
 typedef std::vector< std::string >						STRINGLIST;
 typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;

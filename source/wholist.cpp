@@ -424,16 +424,14 @@ void cWhoList::Update( void )
 	}
 	else
 	{
-		ACCOUNTSBLOCK actbSearch;
-		actbSearch.wAccountIndex=AB_INVALID_ID;
 		MAPUSERNAMEID_ITERATOR I;
 		//
 		CChar *ourChar = NULL;
-		for(I=Accounts->begin();I!=Accounts->end();++I)
+		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
-			actbSearch = I->second;
+			ACCOUNTSBLOCK& actbSearch = I->second;
 			//
-			for( i = 0; i < 5; ++i )
+			for( i = 0; i < 6; ++i )
 			{
 				ourChar = actbSearch.lpCharacters[i];
 				if( ValidateObject( ourChar ) )

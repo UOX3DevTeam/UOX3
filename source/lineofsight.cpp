@@ -342,8 +342,7 @@ Look at uox3.h to see options. Works like npc magic.
 	}
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( kox1, koy1, worldNumber );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
@@ -453,8 +452,7 @@ Look at uox3.h to see options. Works like npc magic.
 			
 		// Items
 		CItem *dyncount;
-		ITEMLIST_ITERATOR losIter;
-		for( losIter = loscache.begin(); losIter != loscache.end(); ++losIter ) 
+		for( ITEMLIST_CITERATOR losIter = loscache.begin(); losIter != loscache.end(); ++losIter ) 
 		{
 			dyncount = (*losIter);
 			if( dyncount == NULL )

@@ -16,7 +16,7 @@ public:
 	SI32	calcCharWeight( CChar *mChar );
 	SI32	calcWeight( CItem *pack );
 
-	bool	isOverloaded( CChar *mChar );
+	bool	isOverloaded( CChar *mChar ) const;
 	bool	checkPackWeight( CChar *ourChar, CItem *pack, CItem *item );
 	bool	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item );
 

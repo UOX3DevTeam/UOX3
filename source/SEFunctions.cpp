@@ -169,7 +169,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 // Speech related functions
-void sysBroadcast( std::string txt );
+void sysBroadcast( const std::string txt );
 JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -972,7 +972,16 @@ JSBool SE_GetTownMayor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	*rval		= INT_TO_JSVAL( regions[town]->GetMayor() );
+	CChar *mayor		= regions[town]->GetMayor();
+	if( ValidateObject( mayor ) )
+	{
+		cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
+		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+		JS_SetPrivate( cx, myObj, mayor );
+		*rval				= OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval				= JSVAL_NULL;
 	return JS_TRUE;
 }
 
@@ -1344,8 +1353,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	
 	cScript *myScript			= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region

@@ -66,7 +66,7 @@ void UpdateLanguage( cSocket *s )
 //|						in the console thread that allows text to be entered on
 //|						the console and it be shipped out to all logged in players.
 //o-------------------------------------------------------------------------
-void sysBroadcast( std::string txt )
+void sysBroadcast( const std::string txt )
 {
 	if( !txt.empty() )
 	{
@@ -114,8 +114,7 @@ bool response( cSocket *mSock, CChar *mChar, std::string text )
 {
 	bool retVal					= false;
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *CellResponse = (*rIter);
 		if( CellResponse == NULL )
@@ -286,8 +285,7 @@ bool CPITalkRequest::Handle( void )
 			tSock->Send( txtToSend );
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			SOCKLIST_ITERATOR cIter;
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				cSocket *tSock	= (*cIter);
 				CChar *tChar	= tSock->CurrcharObj();
@@ -369,8 +367,7 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 			if( ValidateObject( thisItem ) && thisItem->GetCont() != NULL )	// not on ground, can't guarantee speech
 				break;
 			SOCKLIST nearbyChars = FindPlayersInVisrange( thisObj );
-			SOCKLIST_ITERATOR cIter;
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				mSock = (*cIter);
 				CChar *mChar = mSock->CurrcharObj();

@@ -35,8 +35,7 @@ void cEffects::deathAction( CChar *s, CItem *x )
 	CPDeathAction toSend( (*s), (*x) );
 	toSend.FallDirection( (UI08)RandomNum( 0, 1 ) );
 	SOCKLIST nearbyChars = FindNearbyPlayers( s );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 	}
@@ -82,8 +81,7 @@ void cEffects::PlayMovingAnimation( cBaseObject *source, SI16 x, SI16 y, SI08 z,
 	toSend.RenderMode( renderMode );
 
 	SOCKLIST nearbyChars = FindNearbyPlayers( source, DIST_SAMESCREEN );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 	}
@@ -100,8 +98,7 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID )
 	CPCharacterAnimation toSend = (*mChar);
 	toSend.Action( actionID );
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 	}
@@ -146,8 +143,7 @@ void cEffects::PlayStaticAnimation( cBaseObject *target, UI16 effect, UI08 speed
 	toSend.ExplodeOnImpact( explode );
 
 	SOCKLIST nearbyChars = FindNearbyPlayers( target, DIST_SAMESCREEN );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 	}
@@ -182,8 +178,7 @@ void cEffects::bolteffect( CChar *player )
 	toSend.ExplodeOnImpact( false );
 	toSend.AdjustDir( false );
 	SOCKLIST nearbyChars = FindNearbyPlayers( player );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 	}
@@ -222,8 +217,7 @@ void explodeItem( cSocket *mSock, CItem *nItem )
 		len = 2;  // 2 square min damage range
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *Cell = (*rIter);
 		bool chain = false;

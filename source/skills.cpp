@@ -1068,8 +1068,7 @@ void cSkills::DetectHidden( cSocket *s )
 	range = (j*j/1.0E6) * ( MAX_VISRANGE + Races->VisRange( mChar->GetRace() ) );     // this seems like an ok formula
 	
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
@@ -1132,8 +1131,7 @@ void cSkills::PeaceMaking( cSocket *s )
 		s->sysmessage( 1439 );
 
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
@@ -1446,8 +1444,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 			trgChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
 		}
 		SOCKLIST nearbyChars = FindNearbyPlayers( target );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			(*cIter)->objMessage( 334, target, 0.0f, 0x03B2 );
 		}
@@ -2618,8 +2615,7 @@ void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
 				npcSock->sysmessage( temp );
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			SOCKLIST_ITERATOR cIter;
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				cSocket *iSock = (*cIter);
 				CChar *iChar = iSock->CurrcharObj();
@@ -2741,8 +2737,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 	toSend.Question( line );
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( c );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
@@ -2906,12 +2901,9 @@ void cSkills::BeggingTarget( cSocket *s )
 		UI32 bankGold		= GetBankCount( mChar, 0x0EED, 0 );
 		UI32 currentGold	= GetItemAmount( mChar, 0x0EED );
 		UI32 petGold		= 0;
-		CHARLIST *myPets	= mChar->GetPetList();
-		// Do the STL
-		CHARLIST_ITERATOR I;
-		for( I = myPets->begin(); I != myPets->end(); ++I )
+		CDataList< CChar * > *myPets = mChar->GetPetList();
+		for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 		{
-			CChar *pet = (*I);
 			if( ValidateObject( pet ) )
 				petGold += GetItemAmount( pet, 0x0EED );
 		}
@@ -4020,8 +4012,7 @@ void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
 	CChar *mChar = s->CurrcharObj();
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region

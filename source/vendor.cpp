@@ -363,12 +363,12 @@ bool CPISellItem::Handle( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Restock NPC Vendors
 //o---------------------------------------------------------------------------o
-void restockNPC( CChar *i, bool stockAll )
+void restockNPC( CChar& i, bool stockAll )
 {
-	if( !ValidateObject( i ) || !i->IsShop() )
+	if( !i.IsShop() )
 		return;	// if we aren't a shopkeeper, why bother?
 
-	CItem *ci = i->GetItemAtLayer( IL_BUYCONTAINER );
+	CItem *ci = i.GetItemAtLayer( IL_BUYCONTAINER );
 	if( ValidateObject( ci ) )
 	{
 		CDataList< CItem * > *ciCont = ci->GetContainsList();
@@ -389,7 +389,7 @@ void restockNPC( CChar *i, bool stockAll )
 				}
 				if( cwmWorldState->ServerData()->TradeSystemStatus() ) 
 				{
-					cTownRegion *tReg = calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() );
+					cTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber() );
 					Items->StoreItemRandomValue( c, tReg );
 				}
 			}
@@ -403,8 +403,7 @@ bool restockFunctor( cBaseObject *a, UI32 &b, void *extraData )
 	if( ValidateObject( a ) )
 	{
 		CChar *c = static_cast< CChar * >(a);
-		if( c->IsShop() )
-			restockNPC( c, (b == 1) );
+		restockNPC( (*c), (b == 1) );
 	}
 	return retVal;
 }

@@ -249,8 +249,8 @@ void cTownRegion::CalcNewMayor( void )
 		newMayor->SetTownpriv( 2 );	// set mayor priv last
 	if( newMayor != oldMayor )
 	{
-		bool oldMayorExists = ValidateObject( oldMayor );
-		bool newMayorExists = ValidateObject( newMayor );
+		const bool oldMayorExists = ValidateObject( oldMayor );
+		const bool newMayorExists = ValidateObject( newMayor );
 		if( !oldMayorExists && newMayorExists )
 			TellMembers( 1120, newMayor->GetName().c_str() );
 		else if( oldMayorExists && !newMayorExists )

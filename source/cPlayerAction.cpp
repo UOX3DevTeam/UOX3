@@ -225,7 +225,7 @@ bool CPIGetItem::Handle( void )
 			}
 			else if( x->GetLayer() == IL_NONE && x->GetID() == 0x1E5E ) // Trade Window
 			{
-				serial = x->GetTempVar( CITV_MOREB );
+				serial = x->GetTempVar( CITV_MOREX );
 				if( serial == INVALIDSERIAL )
 					return true;
 				CItem *z = calcItemObjFromSer( serial );
@@ -787,7 +787,7 @@ void DropOnItem( cSocket *mSock )
 			mSock->statwindow( mChar );
 		}
 		nItem->SetCont( mChar );
-		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREB ) );
+		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREX ) );
 		if( ValidateObject( z ) )
 		{
 			if( z->GetTempVar( CITV_MOREZ ) || nCont->GetTempVar( CITV_MOREZ ) )
@@ -1640,7 +1640,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return false;
 		case IT_CONTAINER:	// Container, Backpack
 		case IT_SPAWNCONT: // Item spawn container
-			if( x->GetTempVar( CITV_MOREB, 1 ) )// Is trapped
+			if( x->GetTempVar( CITV_MORE, 1 ) )// Is trapped
 				Magic->MagicTrap( mChar, x );
 		case IT_UNLOCKABLESPAWNCONT:	// Unlockable item spawn container
 		case IT_TRASHCONT:	// Trash container

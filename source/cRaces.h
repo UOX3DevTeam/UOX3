@@ -151,13 +151,10 @@ class cRaces
 		void			DefaultInitCombat( void );
 
 		// functions - accessors
-		SECONDS			Secs( RACEID race, WeatherType element ) const;
-		SI08			Damage( RACEID race, WeatherType element ) const;
+
 
 		// Mutators
 		void			RacialInfo( RACEID race, RACEID toSet, RACEREL value );
-		void			Secs( RACEID race, WeatherType element, SECONDS value );
-		void			Damage( RACEID race, WeatherType element, SI08 value );
 
 		bool			InvalidRace( RACEID x ) const;
 
@@ -179,34 +176,19 @@ class cRaces
 		CRace *			Race( RACEID x );
 
 		// Accessors
+		SECONDS			Secs( RACEID race, WeatherType element ) const;
+		SI08			Damage( RACEID race, WeatherType element ) const;
+		bool			Affect( RACEID race, WeatherType element ) const;
 		const std::string Name( RACEID race ) const;	// Returns race name of player
 		SKILLVAL		Skill( int skill, RACEID race ) const; 
 		GENDER			GenderRestrict( RACEID race ) const; 
-		bool			LightAffect( RACEID race ) const; 
-		bool			RainAffect( RACEID race ) const; 
-		bool			HeatAffect( RACEID race ) const; 
-		bool			ColdAffect( RACEID race ) const; 
-		bool			LightningAffect( RACEID race ) const; 
-		bool			SnowAffect( RACEID race ) const; 
 		bool			RequireBeard( RACEID race ) const;
 		bool			IsPlayerRace( RACEID race ) const;
 		LIGHTLEVEL		LightLevel( RACEID race ) const; 
-		SECONDS			LightSecs( RACEID race ) const; 
-		SECONDS			RainSecs( RACEID race ) const; 
-		SECONDS			HeatSecs( RACEID race ) const; 
-		SECONDS			ColdSecs( RACEID race ) const; 
-		SECONDS			SnowSecs( RACEID race ) const; 
-		SECONDS			LightningSecs( RACEID race ) const; // this is probably not going to be worthi it
 		ARMORCLASS		ArmorRestrict( RACEID race ) const; 
 		COLOUR			RandomSkin( RACEID x ) const; 
 		COLOUR			RandomHair( RACEID x ) const; 
 		COLOUR			RandomBeard( RACEID x ) const;
-		SI08			LightDamage( RACEID x ) const;
-		SI08			LightningDamage( RACEID x ) const;
-		SI08			RainDamage( RACEID x ) const;
-		SI08			SnowDamage( RACEID x ) const;
-		SI08			HeatDamage( RACEID x ) const;
-		SI08			ColdDamage( RACEID x ) const;
 		SI32			DamageFromSkill( int skill, RACEID x ) const;
 		SI32			FightPercent( int skill, RACEID x ) const;
 		SKILLVAL		LanguageMin( RACEID x ) const;
@@ -215,36 +197,20 @@ class cRaces
 		bool			NoBeard( RACEID x ) const;
 
 		// Mutators
+		void			Secs( RACEID race, WeatherType element, SECONDS value );
+		void			Damage( RACEID race, WeatherType element, SI08 value );
+		void			Affect( RACEID race, WeatherType element, bool value );
 		void			Skill( int skill, int value, RACEID race );
 		void			GenderRestrict( GENDER gender, RACEID race ); 
-		void			LightAffect( bool value, RACEID race ); 
-		void			RainAffect( bool value, RACEID race ); 
-		void			HeatAffect( bool value, RACEID race ); 
-		void			ColdAffect( bool value, RACEID race ); 
-		void			LightningAffect( bool value, RACEID race ); 
-		void			SnowAffect( bool value, RACEID race ); 
 		void			RequireBeard( bool value, RACEID race ); 
 		void			NoBeard( bool value, RACEID race );
 		void			LightLevel( RACEID race, LIGHTLEVEL value ); 
-		void			LightSecs( RACEID race, SECONDS value ); 
 		void			ArmorRestrict( RACEID race, ARMORCLASS value ); 
 		void			RacialEnemy( RACEID race, RACEID enemy );
 		void			RacialAlly( RACEID race, RACEID ally );
 		void			RacialNeutral( RACEID race, RACEID neutral );
 		void			LanguageMin( SKILLVAL toSetTo, RACEID race );
 
-		void			LightDamage( RACEID race, SI08 value );
-		void			LightningDamage( RACEID race, SI08 value );
-		void			HeatDamage( RACEID race, SI08 value );
-		void			ColdDamage( RACEID race, SI08 value );
-		void			SnowDamage( RACEID race, SI08 value );
-		void			RainDamage( RACEID race, SI08 value );
-
-		void			LightningSecs( RACEID race, SECONDS value ); 
-		void			HeatSecs( RACEID race, SECONDS value ); 
-		void			ColdSecs( RACEID race, SECONDS value ); 
-		void			SnowSecs( RACEID race, SECONDS value ); 
-		void			RainSecs( RACEID race, SECONDS value ); 
 		void			VisLevel( RACEID x, LIGHTLEVEL bonus );
 		void			VisRange( RACEID x, RANGE range );
 		void			IsPlayerRace( RACEID x, bool value );

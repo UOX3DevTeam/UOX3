@@ -32,12 +32,9 @@ class cSocket
 {
 public:
 	// Account Related Member(s)
-	UI16			wAccountID;
 	ACCOUNTSBLOCK	actbAccount;
 	ACCOUNTSBLOCK&	GetAccount( void );
-	void			SetAccount( ACCOUNTSBLOCK &actbBlock );
-	void			SetAccount( UI16 wNewAccountID );
-	void			SetAccount( std::string sUsername );
+	void			SetAccount( ACCOUNTSBLOCK& actbBlock );
 	//
 
 	void			InternalReset( void );

@@ -267,7 +267,7 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 {
 	if( jails.size() == 0 || toJail == NULL )
 		return false;
-	int minCell = 0;
+	size_t minCell = 0;
 	for( size_t i = 0; i < jails.size(); ++i )
 	{
 		if( jails[i].IsEmpty() )

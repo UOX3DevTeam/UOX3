@@ -97,7 +97,7 @@ const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const UI08			DEFCHAR_LAYERCTR			= 0;
-const UI16			DEFPLAYER_ACCOUNT 			= AB_INVALID_ID;
+
 const SI16			DEFPLAYER_CALLNUM 			= -1;
 const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
 const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
@@ -134,7 +134,7 @@ cBaseObject *		DEFNPC_PETGUARDING 			= NULL;
 
 CChar::CChar() : cBaseObject(),
 robe( DEFCHAR_ROBE ), townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
-account( DEFPLAYER_ACCOUNT ), dispz( DEFCHAR_DISPZ ), fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
+dispz( DEFCHAR_DISPZ ), fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), deaths( DEFCHAR_DEATHS ), packitem( DEFCHAR_PACKITEM ), fixedlight( DEFCHAR_FIXEDLIGHT ), 
@@ -157,7 +157,6 @@ oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
 	origID	= id;
 	objType = OT_CHAR;
 	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
-	petsControlled.resize( 0 );
 	petFriends.resize( 0 );
 	name		= "Mr. noname";
 	for( UI08 k = 0; k <= ALLSKILLS; ++k )
@@ -327,43 +326,14 @@ void CChar::SetHoldG( UI32 newValue )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void CChar::SetAccount( UI16 wAccountID )
-{
-	ACCOUNTSBLOCK actbAccount;
-	if( !Accounts->GetAccountByID( wAccountID, (ACCOUNTSBLOCK&)actbAccount) )
-	{
-		// Ok there was an error setting an account to this character.
-		account = AB_INVALID_ID;
-		ourAccount.wAccountIndex = AB_INVALID_ID;
-	}
-	else
-	{
-		SetAccount( actbAccount );
-		account = ourAccount.wAccountIndex;
-	}
-}
-void CChar::SetAccount( ACCOUNTSBLOCK actbAccount )
+void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
 {
 	if( actbAccount.wAccountIndex == AB_INVALID_ID )
-	{
-		account =AB_INVALID_ID;
-	}
+		ourAccount.wAccountIndex = AB_INVALID_ID;
 	else
 	{
-		ourAccount.dwInGame      = actbAccount.dwInGame;
-		ourAccount.wAccountIndex = actbAccount.wAccountIndex;
-		ourAccount.dwLastIP      = actbAccount.wAccountIndex;
-		ourAccount.sContact      = actbAccount.sContact;
-		ourAccount.sPassword     = actbAccount.sPassword;
-		ourAccount.sPath         = actbAccount.sPath;
-		ourAccount.wFlags        = actbAccount.wFlags;
-		ourAccount.wTimeBan      = actbAccount.wTimeBan;
-		for( UI08 ii = 0; ii < 5; ++ii )
-		{
-			ourAccount.dwCharacters[ii] = actbAccount.dwCharacters[ii];
-			ourAccount.lpCharacters[ii] = actbAccount.lpCharacters[ii];
-		}
-		account = ourAccount.wAccountIndex;
+		ourAccount = actbAccount;
+		Accounts->ModAccount( ourAccount.wAccountIndex, AB_ALL, actbAccount );
 	}
 }
 //
@@ -921,7 +891,7 @@ void CChar::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( ValidateObject( oldOwner ) )
-		oldOwner->RemovePet( this );
+		oldOwner->GetPetList()->Remove( this );
 }
 
 //o---------------------------------------------------------------------------o
@@ -938,7 +908,7 @@ void CChar::AddSelfToOwner( void )
 		SetTamed( false );
 	else
 	{
-		newOwner->AddPet( this );
+		newOwner->GetPetList()->Add( this );
 		SetTamed( true );
 	}
 }
@@ -1761,7 +1731,7 @@ void CChar::CopyData( CChar *target )
 		target->SetName( name );
 		target->SetTitle( title );
 		target->SetOrgName( origName );
-		target->SetAccount( account );
+		target->SetAccount( GetAccount() );
 		target->SetLocation( this );
 		target->SetDispZ( dispz );
 		target->SetDir( dir );
@@ -1890,8 +1860,7 @@ void CChar::RemoveFromSight( cSocket *mSock )
 	else
 	{
 		SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			(*cIter)->Send( &toSend );
 		}
@@ -1979,8 +1948,7 @@ void CChar::Teleport( void )
 		mSock->WalkSequence( -1 );
 
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
@@ -2097,8 +2065,7 @@ void CChar::Update( cSocket *mSock )
 	else
 	{
 		SOCKLIST nearbyChars = FindNearbyPlayers( this );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			SendToSocket( (*cIter) );
 		}
@@ -2476,7 +2443,7 @@ bool CChar::Save( std::ofstream &outStream )
 //o--------------------------------------------------------------------------o
 ACCOUNTSBLOCK &CChar::GetAccount(void) 
 {
-	if( IsNpc()||ourAccount.wAccountIndex==AB_INVALID_ID )
+	if( IsNpc() || ourAccount.wAccountIndex == AB_INVALID_ID )
 	{
 		// Set this just in case that this is an NPC.
 		ourAccount.wAccountIndex=AB_INVALID_ID;
@@ -2492,7 +2459,7 @@ const ACCOUNTSBLOCK &CChar::GetConstAccount( void ) const
 
 UI16 CChar::GetAccountNum( void ) const
 {
-	return account;
+	return ourAccount.wAccountIndex;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2520,7 +2487,7 @@ void CChar::BreakConcentration( cSocket *sock )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the list of pets the character owns
 //o---------------------------------------------------------------------------o
-CHARLIST *CChar::GetPetList( void )
+CDataList< CChar * > *CChar::GetPetList( void )
 {
 	return &petsControlled;
 }
@@ -2550,49 +2517,6 @@ ITEMLIST *CChar::GetOwnedItems( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void AddPet( CChar *toAdd ) const
-//|   Date        -  13 March 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Adds the pet toAdd to the player's pet list
-//|					 ensuring it is already not on it
-//o---------------------------------------------------------------------------o
-void CChar::AddPet( CChar *toAdd )
-{
-	// Handle this right too STL
-	CHARLIST_ITERATOR I;
-	for( I = petsControlled.begin(); I != petsControlled.end(); ++I )
-	{
-		// Checking to see if pet is all ready in the list
-		if( (*I)== toAdd )
-			break;
-	}
-	if( I == petsControlled.end() )
-		petsControlled.push_back( toAdd );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void RemovePet( CChar *toRemove )
-//|   Date        -  13 March 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Removes the pet toRemove from the player's pet list
-//o---------------------------------------------------------------------------o
-void CChar::RemovePet( CChar *toRemove )
-{
-	// Handle the STL here correctly too
-	CHARLIST_ITERATOR I;
-	for( I = petsControlled.begin(); I != petsControlled.end(); ++I )
-	{
-		if( (*I) == toRemove )
-		{
-			petsControlled.erase(I);
-			break;
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  void AddFriend( CChar *toAdd ) const
 //|   Date        -  20 July 2001
 //|   Programmer  -  Zane
@@ -2602,7 +2526,7 @@ void CChar::RemovePet( CChar *toRemove )
 //o---------------------------------------------------------------------------o
 void CChar::AddFriend( CChar *toAdd )
 {
-	CHARLIST_ITERATOR i;
+	CHARLIST_CITERATOR i;
 	for( i = petFriends.begin(); i != petFriends.end(); ++i )
 	{
 		if( (*i) == toAdd )
@@ -2621,8 +2545,7 @@ void CChar::AddFriend( CChar *toAdd )
 //o---------------------------------------------------------------------------o
 void CChar::RemoveFriend( CChar *toRemove )
 {
-	CHARLIST_ITERATOR rIter;
-	for( rIter = petFriends.begin(); rIter != petFriends.end(); ++rIter )
+	for( CHARLIST_ITERATOR rIter = petFriends.begin(); rIter != petFriends.end(); ++rIter )
 	{
 		if( (*rIter) == toRemove )
 		{
@@ -2642,7 +2565,7 @@ void CChar::RemoveFriend( CChar *toRemove )
 //o---------------------------------------------------------------------------o
 void CChar::AddOwnedItem( CItem *toAdd )
 {
-	ITEMLIST_ITERATOR i;
+	ITEMLIST_CITERATOR i;
 	for( i = ownedItems.begin(); i != ownedItems.end(); ++i )
 	{
 		if( (*i) == toAdd )		// We already have it
@@ -2661,8 +2584,7 @@ void CChar::AddOwnedItem( CItem *toAdd )
 //o---------------------------------------------------------------------------o
 void CChar::RemoveOwnedItem( CItem *toRemove )
 {
-	ITEMLIST_ITERATOR rIter;
-	for( rIter = ownedItems.begin(); rIter != ownedItems.end(); ++rIter )
+	for( ITEMLIST_ITERATOR rIter = ownedItems.begin(); rIter != ownedItems.end(); ++rIter )
 	{
 		if( (*rIter) == toRemove )
 		{
@@ -2953,7 +2875,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				if( UTag == "ACCOUNT" )
 				{
 					//SetAccount( makeNum( data ) );
-					account = data.toUShort();
+					ourAccount.wAccountIndex = data.toUShort();
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
@@ -3455,7 +3377,7 @@ bool CChar::LoadRemnants( void )
 		if( rvalue )
 		{
 			if( !IsNpc() )
-				Accounts->AddCharacter(GetAccount().wAccountIndex, this );	// account ID, and account object.
+				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
 		}
 	}
 	return rvalue;
@@ -3811,8 +3733,7 @@ void CChar::talkAll( std::string txt, bool antispam )
 void CChar::talkAll( SI32 dictEntry, bool antispam, ... )
 {
 	SOCKLIST nearbyChars = FindNearbyPlayers( this );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		cSocket *tSock = (*cIter);
 		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
@@ -3901,8 +3822,7 @@ void CChar::emote( cSocket *s, SI32 dictEntry, bool antispam, ... )
 void CChar::emoteAll( SI32 dictEntry, bool antispam, ... )
 {
 	SOCKLIST nearbyChars = FindNearbyPlayers( this );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		cSocket *tSock = (*cIter);
 		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
@@ -4020,7 +3940,7 @@ void CChar::Cleanup( void )
 			ACCOUNTSBLOCK mAcct = GetAccount();
 			if( mAcct.wAccountIndex != AB_INVALID_ID )
 			{
-				for( UI08 actr = 0; actr < 5; ++actr )
+				for( UI08 actr = 0; actr < 6; ++actr )
 				{
 					if( mAcct.lpCharacters[actr] != NULL && mAcct.lpCharacters[actr]->GetSerial() == GetSerial() )
 					{
@@ -4043,10 +3963,8 @@ void CChar::Cleanup( void )
 		}
 		Npcs->stopPetGuarding( this );
 
-		CHARLIST_ITERATOR I;
-		for( I = petsControlled.begin(); I != petsControlled.end(); ++I )
+		for( tempChar = petsControlled.First(); !petsControlled.Finished(); tempChar = petsControlled.Next() )
 		{
-			tempChar = (*I);
 			if( ValidateObject( tempChar ) )
 				tempChar->SetOwner( NULL );
 		}

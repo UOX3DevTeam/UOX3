@@ -554,7 +554,7 @@ void CWorldMain::doWorldLight( void )
 
 void fileArchive( void );
 void CollectGarbage( void );
-void sysBroadcast( std::string txt );
+void sysBroadcast( const std::string txt );
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	SaveNewWorld( bool x )
 //|	Date			-	1997

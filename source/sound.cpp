@@ -32,8 +32,7 @@ void cEffects::PlaySound( cSocket *mSock, UI16 soundID, bool allHear )
 	if( allHear )
 	{
 		SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			(*cIter)->Send( &toSend );
 		}
@@ -58,8 +57,7 @@ void cEffects::PlaySound( cBaseObject *baseObj, UI16 soundID, bool allHear )
 	if( allHear )
 	{
 		SOCKLIST nearbyChars = FindPlayersInVisrange( baseObj );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			(*cIter)->Send( &toSend );
 		}
@@ -302,8 +300,7 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 	CChar *inrange[15];
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region

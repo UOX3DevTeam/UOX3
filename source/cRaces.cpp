@@ -364,24 +364,6 @@ void cRaces::GenderRestrict( GENDER gender, RACEID race )
 	races[race]->GenderRestriction( gender );
 }
 
-bool cRaces::LightAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{ 
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByLight();
-}
-
-void cRaces::LightAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByLight( value );
-}
-
 bool cRaces::RequireBeard( RACEID race ) const
 // PRE:	race is valid
 // POST:	returns whether race must have beard
@@ -557,172 +539,6 @@ void cRaces::LanguageMin( SKILLVAL toSetTo, RACEID race )
 	races[race]->LanguageMin( toSetTo );
 }
 
-
-// SNOW SECTION
-
-void cRaces::SnowDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, SNOW, value );
-}
-
-bool cRaces::SnowAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedBySnow();
-}
-
-void cRaces::SnowAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedBySnow( value );
-}
-
-
-// RAIN SECTION
-
-void cRaces::RainDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, RAIN, value );
-}
-
-bool cRaces::RainAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{ 
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByRain();
-}
-
-void cRaces::RainAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by rain
-{
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByRain( value );
-}
-
-// COLD SECTION
-
-void cRaces::ColdDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets how much race is affected by cold
-{
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, COLD, value ); 
-}
-
-bool cRaces::ColdAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by cold
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByCold();
-}
-
-void cRaces::ColdAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by cold
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByCold( value );
-}
-
-
-// HEAT SECTION
-
-void cRaces::HeatDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets how much race is affected by heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, HEAT, value );
-}
-
-bool cRaces::HeatAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by heat
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByHeat();
-}
-
-void cRaces::HeatAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByHeat( value );
-}
-
-
-// LIGHT SECTION
-
-void cRaces::LightDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is valid UI08
-// POST:	sets how much race is affected by light
-{
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, LIGHT, value ); 
-}
-
-SI08 cRaces::LightDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, LIGHT );
-}
-
-SI08 cRaces::RainDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, RAIN );
-}
-
-SI08 cRaces::SnowDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, SNOW );
-}
-
-SI08 cRaces::HeatDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, HEAT );
-}
-
-SI08 cRaces::ColdDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, COLD );
-}
-
 void cRaces::LightLevel( RACEID race, LIGHTLEVEL value )
 // PRE:	Race is valid, value is a valid light level
 // POST:	the light level that race burns at is set to value
@@ -741,141 +557,40 @@ LIGHTLEVEL cRaces::LightLevel( RACEID race ) const
 	return races[race]->LightLevel(); 
 }
 
-void cRaces::LightSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, LIGHT, value );
+bool cRaces::Affect( RACEID race, WeatherType element ) const
+{
+	bool rValue = false;
+	if( !InvalidRace( race ) )
+	{
+		switch( element )
+		{
+		case LIGHT:		rValue = races[race]->AffectedByLight();		break;
+		case RAIN:		rValue = races[race]->AffectedByRain();			break;
+		case COLD:		rValue = races[race]->AffectedByCold();			break;
+		case HEAT:		rValue = races[race]->AffectedByHeat();			break;
+		case LIGHTNING: rValue = races[race]->AffectedByLightning();	break;
+		case SNOW:		rValue = races[race]->AffectedBySnow();			break;
+		default:														break;
+		}
+	}
+	return rValue;
 }
 
-SECONDS cRaces::LightSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from light
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, LIGHT ); 
-}
-
-// LIGHTNING SECTION
-
-void cRaces::LightningDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is valid UI08
-// POST:	sets how much race is affected by lightning
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, LIGHTNING, value );
-}
-
-bool cRaces::LightningAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by lightning
-{ 
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByLightning();
-}
-
-void cRaces::LightningAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by lightning
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByLightning( value );
-}
-
-void cRaces::RainSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from rain
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, RAIN, value ); 
-}
-
-SECONDS cRaces::RainSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from rain
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, RAIN ); 
-}
-
-void cRaces::SnowSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from snow
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, SNOW, value ); 
-}
-
-SECONDS cRaces::SnowSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from snow
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, SNOW ); 
-}
-
-void cRaces::HeatSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, HEAT, value ); 
-}
-
-SECONDS cRaces::HeatSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from heat
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, HEAT ); 
-}
-
-void cRaces::ColdSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from cold
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, COLD, value ); 
-}
-
-SECONDS cRaces::ColdSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from cold
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, COLD ); 
-}
-
-void cRaces::LightningSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from lightning
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, LIGHTNING, value );
-}
-
-SECONDS cRaces::LightningSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from lightning
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, LIGHTNING ); 
+void cRaces::Affect( RACEID race, WeatherType element, bool value )
+{
+	if( !InvalidRace( race ) )
+	{
+		switch( element )
+		{
+		case LIGHT:		races[race]->AffectedByLight( value );			break;
+		case RAIN:		races[race]->AffectedByRain( value );			break;
+		case COLD:		races[race]->AffectedByCold( value );			break;
+		case HEAT:		races[race]->AffectedByHeat( value );			break;
+		case LIGHTNING: races[race]->AffectedByLightning( value );		break;
+		case SNOW:		races[race]->AffectedBySnow( value );			break;
+		default:														break;
+		}
+	}
 }
 
 SECONDS cRaces::Secs( RACEID race, WeatherType element ) const

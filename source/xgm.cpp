@@ -219,12 +219,11 @@ inline UI32 GhostCount( void )
 	MAPUSERNAMEID_ITERATOR I;
 	for(I=Accounts->begin();I!=Accounts->end();++I)
 	{
-		ACCOUNTSBLOCK actbTemp;
-		actbTemp=I->second;
+		ACCOUNTSBLOCK& actbTemp = I->second;
 		//
-		if( actbTemp.wAccountIndex==AB_INVALID_ID )
+		if( actbTemp.wAccountIndex == AB_INVALID_ID )
 			break;
-		for( UI08 iCtr = 0; iCtr < 5; ++iCtr )
+		for( UI08 iCtr = 0; iCtr < 6; ++iCtr )
 		{
 			if( actbTemp.lpCharacters[iCtr] != NULL )
 			{
@@ -251,15 +250,14 @@ inline UI32 MurdererCount( void )
 {
 	UI32 sumMurderer = 0;
 	MAPUSERNAMEID_ITERATOR I;
-	ACCOUNTSBLOCK actbBlock;
-	for(I=Accounts->begin();I!=Accounts->end();++I)
+	for( I = Accounts->begin(); I != Accounts->end(); ++I )
 	{
-		actbBlock=I->second;
+		ACCOUNTSBLOCK& actbBlock = I->second;
 		//
-		if( actbBlock.wAccountIndex==AB_INVALID_ID )
+		if( actbBlock.wAccountIndex == AB_INVALID_ID )
 			continue;
 		//
-		for( UI08 iCtr = 0; iCtr < 5; ++iCtr )
+		for( UI08 iCtr = 0; iCtr < 6; ++iCtr )
 		{
 			if( actbBlock.lpCharacters[iCtr] != NULL )
 			{
@@ -287,14 +285,14 @@ inline UI32 BlueCount( void )
 {
 	UI32 sumBlue = 0;
 	MAPUSERNAMEID_ITERATOR I;
-	ACCOUNTSBLOCK actbBlock;
 	//
-	for(I=Accounts->begin();I!=Accounts->end();++I)
+	for( I = Accounts->begin(); I != Accounts->end(); ++I )
 	{
-		actbBlock=I->second;
+		ACCOUNTSBLOCK& actbBlock = I->second;
+
 		if( actbBlock.wAccountIndex == AB_INVALID_ID )
 			continue;
-		for( UI08 iCtr = 0; iCtr < 5; ++iCtr )
+		for( UI08 iCtr = 0; iCtr < 6; ++iCtr )
 		{
 			if( actbBlock.lpCharacters[iCtr] != NULL )
 			{
@@ -458,7 +456,6 @@ bool cPIXGMWhoOnline::Handle( void )
 	CHARLIST charListing;
 	size_t i = 0;
 	//
-	ACCOUNTSBLOCK actbBlock;
 	MAPUSERNAMEID_ITERATOR I;
 
 	cSocket *trgSock = NULL;
@@ -484,14 +481,14 @@ bool cPIXGMWhoOnline::Handle( void )
 			break;
 		case 1:	// offline
 		{
-				for(I=Accounts->begin();I!=Accounts->end();++I)
+			for( I = Accounts->begin(); I != Accounts->end(); ++I )
 			{
-				actbBlock=I->second;
+				ACCOUNTSBLOCK& actbBlock = I->second;
 				//
 				if( actbBlock.wAccountIndex==AB_INVALID_ID )
 					continue;
 				//
-				for( UI08 iCtr = 0; iCtr < 5; ++iCtr )
+				for( UI08 iCtr = 0; iCtr < 6; ++iCtr )
 				{
 					if( actbBlock.lpCharacters[iCtr] != NULL && actbBlock.lpCharacters[iCtr]->GetSerial() != actbBlock.dwInGame )	// no players logging out
 					{
@@ -509,26 +506,24 @@ bool cPIXGMWhoOnline::Handle( void )
 						}
 						Network->PopConn();
 						if( loopCont )
-							charListing.push_back(actbBlock.lpCharacters[iCtr] );
+							charListing.push_back( actbBlock.lpCharacters[iCtr] );
 					}
 				}
 			}
 			toSend.NumEntries( charListing.size() );
-			// STL'ify man - how can you tell im getting bored :)
-			CHARLIST_ITERATOR I;
-			for( I = charListing.begin(); I != charListing.end(); ++I )
+			for( CHARLIST_CITERATOR I = charListing.begin(); I != charListing.end(); ++I )
 				toSend.AddPlayer( (*I)->GetSerial(), (*I)->GetName().c_str() );
 			break;
 		}
 		case 2:	// logging
-			for(I=Accounts->begin();I!=Accounts->end();++I)
+			for( I = Accounts->begin(); I != Accounts->end(); ++I )
 			{
-				actbBlock=I->second;
+				ACCOUNTSBLOCK& actbBlock = I->second;
 				//
-				if( actbBlock.wAccountIndex==AB_INVALID_ID )
+				if( actbBlock.wAccountIndex == AB_INVALID_ID )
 					continue;
 				//
-				for( UI08 iCtr = 0; iCtr < 5; ++iCtr )
+				for( UI08 iCtr = 0; iCtr < 6; ++iCtr )
 				{
 					if( actbBlock.lpCharacters[iCtr] != NULL && actbBlock.lpCharacters[iCtr]->GetSerial() == actbBlock.dwInGame )	// no players logging out
 					{
@@ -546,7 +541,7 @@ bool cPIXGMWhoOnline::Handle( void )
 						}
 						Network->PopConn();
 						if( loopCont2 )
-							charListing.push_back(actbBlock.lpCharacters[iCtr] );
+							charListing.push_back( actbBlock.lpCharacters[iCtr] );
 					}
 				}
 			}

@@ -117,7 +117,7 @@ void HandleAccountButton( cSocket *s, long button, CChar *j )
 		return;
 	CChar *mChar = s->CurrcharObj();
 	ACCOUNTSBLOCK actbTemp;
-	if( !Accounts->GetAccountByID(j->GetAccount().wAccountIndex,actbTemp) )
+	if( !Accounts->GetAccountByID( j->GetAccount().wAccountIndex, actbTemp ) )
 		return;
 	//
 	cSocket *targSocket = calcSocketObjFromChar( j );
@@ -357,8 +357,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 						s->sysmessage( 549, targetRegion->GetName().c_str() );
 						targetRegion->DoDamage( targetRegion->GetHealth() / 2 );	// we reduce the region's health by half
 						REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-						REGIONLIST_ITERATOR rIter;
-						for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+						for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 						{
 							SubRegion *toCheck = (*rIter);
 							if( toCheck == NULL )	// no valid region
@@ -1571,7 +1570,6 @@ void tweakItemMenu( cSocket *s, CItem *i )
 	tweakItem.AddData( "More X", i->GetTempVar( CITV_MOREX ) );
 	tweakItem.AddData( "More Y", i->GetTempVar( CITV_MOREY ) );
 	tweakItem.AddData( "More Z", i->GetTempVar( CITV_MOREZ ) );
-	tweakItem.AddData( "More B", i->GetTempVar( CITV_MOREB ) ); 
 	tweakItem.AddData( "Poisoned", i->GetPoisoned() );
 	tweakItem.AddData( "Weight", i->GetWeight() );
 	tweakItem.AddData( "Decay", i->isDecayable()?1:0 );
@@ -1641,20 +1639,19 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 21:	j->SetTempVar( CITV_MOREX, reply.toULong() );				break;	// More X
 			case 22:	j->SetTempVar( CITV_MOREY, reply.toULong() );				break;	// More Y
 			case 23:	j->SetTempVar( CITV_MOREZ, reply.toULong() );				break;	// More Z
-			case 24: 	j->SetTempVar( CITV_MOREB, reply.toULong() );				break;	// More B
-			case 25:	j->SetPoisoned( reply.toUByte() );			break;	// Poisoned
-			case 26:	j->SetWeight( reply.toLong() );				break;	// Weight
-			case 27:	j->SetDecayable( reply.toUByte() != 0 );	break;	// Decay
-			case 28:	j->SetGood( reply.toShort() );				break;	// Good
-			case 29:	j->SetBuyValue( reply.toULong() );			break;	// Buy Value
-			case 30:	j->SetSellValue( reply.toULong() );			break;	// Sell Value - Not implimented yet
-			case 31:	j->SetCarve( reply.toShort() );				break;	// Carve
-			case 32: 	j->SetPileable( reply.toUByte() != 0 );		break;	// Stackable
-			case 33:	j->SetDye( reply.toUByte() != 0 );			break;	// Dyable
-			case 34:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
-			case 35:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
-			case 36:	j->SetCreator( reply.toULong() );			break;	// Creator
-			case 37:
+			case 24:	j->SetPoisoned( reply.toUByte() );			break;	// Poisoned
+			case 25:	j->SetWeight( reply.toLong() );				break;	// Weight
+			case 26:	j->SetDecayable( reply.toUByte() != 0 );	break;	// Decay
+			case 27:	j->SetGood( reply.toShort() );				break;	// Good
+			case 28:	j->SetBuyValue( reply.toULong() );			break;	// Buy Value
+			case 29:	j->SetSellValue( reply.toULong() );			break;	// Sell Value - Not implimented yet
+			case 30:	j->SetCarve( reply.toShort() );				break;	// Carve
+			case 31: 	j->SetPileable( reply.toUByte() != 0 );		break;	// Stackable
+			case 32:	j->SetDye( reply.toUByte() != 0 );			break;	// Dyable
+			case 33:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
+			case 34:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
+			case 35:	j->SetCreator( reply.toULong() );			break;	// Creator
+			case 36:
 						if( j->GetObjType() == OT_SPAWNER )
 							((CSpawnItem *)j)->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}

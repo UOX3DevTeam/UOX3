@@ -322,7 +322,8 @@ void deedHouse( cSocket *s, CMultiObj *i )
 		s->sysmessage( 578, i->GetName().c_str() );
 		s->sysmessage( 579, ii->GetName().c_str() );
 
-		for( CChar *tChar = i->charInMulti.First(); !i->charInMulti.Finished(); tChar = i->charInMulti.Next() )
+		CDataList< CChar * > *charList = i->GetCharsInMultiList();
+		for( CChar *tChar = charList->First(); !charList->Finished(); tChar = charList->Next() )
 		{
 			if( !ValidateObject( tChar ) )
 				continue;

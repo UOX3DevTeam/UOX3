@@ -598,7 +598,7 @@ namespace UOX
 					break;
 				case CCP_DEATHS:		*vp = INT_TO_JSVAL( gPriv->GetDeaths() );					break;
 				case CCP_NEXTACT:		*vp = INT_TO_JSVAL( gPriv->GetNextAct() );					break;
-				case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( gPriv->GetPetList()->size() );			break;
+				case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( gPriv->GetPetList()->Num() );			break;
 				case CCP_OWNEDITEMSCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetOwnedItems()->size() );	break;
 				case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
 				case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;

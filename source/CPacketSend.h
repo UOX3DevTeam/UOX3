@@ -993,6 +993,8 @@ class CPObjectInfo : public cPUOXBuffer
 protected:
 	virtual void	InternalReset( void );
 	void			CopyData( CItem& mItem, CChar& mChar );
+	void			CopyItemData( CItem& mItem, CChar& mChar );
+	void			CopyMultiData( CMultiObj& mObj, CChar& mChar );
 public:
 					CPObjectInfo();
 					CPObjectInfo( CItem& mItem, CChar& mChar );

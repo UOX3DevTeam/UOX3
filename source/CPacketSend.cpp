@@ -1810,7 +1810,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, cSocket &target )
 	if( extended3 )
 	{
 		StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
-		CurrentPets( toCopy.GetPetList()->size() );
+		CurrentPets( toCopy.GetPetList()->Num() );
 		MaxPets( 0xFF );
 	}
 	if( extended4 )
@@ -3319,14 +3319,14 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "# Chars		 : " << internalBuffer[3] << std::endl;
+	outStream << "# Chars		 : " << (UI16)internalBuffer[3] << std::endl;
 	outStream << "Characters --" << std::endl;
-	for( UI32 i = 0; i < 5; ++i )
+	for( UI08 i = 0; i < 6; ++i )
 	{
 		UI32 baseOffset = 4 + i * 60;
-		outStream << "    Character " << i << std::endl;
+		outStream << "    Character " << (UI16)i << std::endl;
 		outStream << "      Name: ";
-		for( UI32 j = 0; j < 30; ++j )
+		for( UI08 j = 0; j < 30; ++j )
 		{
 			if( internalBuffer[baseOffset+j] != 0 )
 				outStream << internalBuffer[baseOffset+j];
@@ -3334,7 +3334,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 				break;
 		}
 		outStream << std::endl << "      Pass: ";
-		for( UI32 k = 0; k < 30; ++k )
+		for( UI08 k = 0; k < 30; ++k )
 		{
 			if( internalBuffer[baseOffset+k+30] != 0 )
 				outStream << internalBuffer[baseOffset+k+30];
@@ -3343,16 +3343,16 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		}
 		outStream << std::endl;
 	}
-	outStream << "# Starts       : " << internalBuffer[304] << std::endl;
+	outStream << "# Starts       : " << (UI16)internalBuffer[364] << std::endl;
 	outStream << "Starting locations --" << std::endl;
-	for( UI32 l = 0; l < internalBuffer[304]; ++l )
+	for( UI32 l = 0; l < internalBuffer[364]; ++l )
 	{
-		UI32 baseOffset = 305 + l * 63;
+		UI32 baseOffset = 365 + l * 63;
 		outStream << "    Start " << l << std::endl;
 		outStream << "      Index : " << (int)internalBuffer[baseOffset] << std::endl;
 		outStream << "      General Name: ";
 		++baseOffset;
-		for( UI32 m = 0; m < 31; ++m )
+		for( UI08 m = 0; m < 31; ++m )
 		{
 			if( internalBuffer[baseOffset+m] != 0 )
 				outStream << internalBuffer[baseOffset+m];
@@ -3361,7 +3361,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		}
 		outStream << std::endl << "      Exact Name  : ";
 		baseOffset += 31;
-		for( UI32 n = 0; n < 31; ++n )
+		for( UI08 n = 0; n < 31; ++n )
 		{
 			if( internalBuffer[baseOffset+n] != 0 )
 				outStream << internalBuffer[baseOffset+n];
@@ -3416,21 +3416,21 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 {
 	// was 305 +, now 309 +
 	UI16 packetSize;
-	if(internalBuffer[3]>5)
-		packetSize = (UI16)(369 + 63 * numLocations);
-	else
-		packetSize = (UI16)(309 + 63 * numLocations);
+//	if(internalBuffer[3]>5)
+		packetSize = (UI16)(366 + 63 * numLocations);
+//	else
+//		packetSize = (UI16)(305 + 63 * numLocations);
 	internalBuffer.resize( packetSize );
 	internalBuffer[1] = (UI08)(packetSize>>8);
 	internalBuffer[2] = (UI08)(packetSize%256);
 	// If we are going to support the 6char client flag then we need to make sure we push this offset furtner down.
-	if(internalBuffer[3]>5)
+//	if(internalBuffer[3]>5)
 		internalBuffer[364] = numLocations;
-	else
-		internalBuffer[304] = numLocations;
+//	else
+//		internalBuffer[304] = numLocations;
 	// turn on /*send config,*/ npcpopup menus and common AOS features
 //	internalBuffer[packetSize - 1] = ( 0x20 | 0x08 /*| 0x02*/ );
-	internalBuffer[packetSize - 1] = 0x08 | 0x20 | 0x40; //0x08;
+	internalBuffer[packetSize - 1] = ( 0x08 | 0x20 | 0x40 );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
 {
@@ -3451,17 +3451,17 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 	if( sLoc == NULL )
 		return;
 	UI16 baseOffset;
-	if(internalBuffer[3]>5)
+//	if(internalBuffer[3]>5)
 			baseOffset = (UI16)(365 + locOffset * 63);
-	else
-			baseOffset = (UI16)(305 + locOffset * 63);
+//	else
+//			baseOffset = (UI16)(305 + locOffset * 63);
 	internalBuffer[baseOffset]	= locOffset;
 	size_t townLen				= strlen( sLoc->town );
 	size_t descLen				= strlen( sLoc->description );
-	for( UI32 i = 0; i < townLen; ++i )
+	for( size_t i = 0; i < townLen; ++i )
 		internalBuffer[baseOffset+i+1] = sLoc->town[i];
-	for( UI32 j = 0; j < descLen; ++j )
-		internalBuffer[baseOffset+j+31] = sLoc->town[j];
+	for( size_t j = 0; j < descLen; ++j )
+		internalBuffer[baseOffset+j+32] = sLoc->description[j];
 }
 
 CPCharAndStartLoc& CPCharAndStartLoc::operator=(ACCOUNTSBLOCK& actbBlock )
@@ -3866,15 +3866,29 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 //		BYTE flag byte (See top)
 void CPObjectInfo::InternalReset( void )
 {
-	internalBuffer.resize( 19 );
+	internalBuffer.resize( 17 );
 	internalBuffer[0] = 0x1A;
 	internalBuffer[1] = 0;
-	internalBuffer[2] = 19;
+	internalBuffer[2] = 17;
 }
 void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 {
 	PackLong( &internalBuffer[0], 3, mItem.GetSerial() );
-	internalBuffer[3] += 0x80;	// Enable piles
+
+	if( mItem.CanBeObjType( OT_MULTI ) )
+		CopyMultiData( static_cast<CMultiObj&>(mItem), mChar );
+	else if( mItem.CanBeObjType( OT_ITEM ) )
+		CopyItemData( mItem, mChar );
+}
+
+void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
+{
+	if( mItem.isPileable() || mItem.isCorpse() )
+	{
+		internalBuffer.resize( 19 );
+		internalBuffer[2] = 19;
+		internalBuffer[3] += 0x80;	// Enable piles
+	}
 
 	// if player is a gm, this item
 	// is shown like a candle (so that he can move it),
@@ -3885,35 +3899,59 @@ void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 	else
 		PackShort( &internalBuffer[0], 7, mItem.GetID() );
 
-	PackShort( &internalBuffer[0],  9, mItem.GetAmount() );
-	PackShort( &internalBuffer[0], 11, mItem.GetX() );
-	PackShort( &internalBuffer[0], 13, mItem.GetY() + 0xC000 );	// Enable Dye and Move
-	internalBuffer[15] = mItem.GetZ();
-
-	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
-		PackShort( &internalBuffer[0], 16, 0x00C6 );
-	else
-		PackShort( &internalBuffer[0], 16, mItem.GetColour() );
-	internalBuffer[18] = 0;
-	if( mItem.GetVisible() != VT_VISIBLE )
-		internalBuffer[18] |= 0x80;
-
-	if( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ) ) 
-		internalBuffer[18] += 0x20;
-	if( mChar.ViewHouseAsIcon() && mItem.GetID() >= 0x4000 )
-		PackShort( &internalBuffer[0], 7, 0x14F0 );
-
+	UI08 byteNum = 7;
+	if( mItem.isPileable() || mItem.isCorpse() )
+		PackShort( &internalBuffer[0],  byteNum+=2, mItem.GetAmount() );
+	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
 	if( mItem.GetDir() )
 	{
-		internalBuffer.resize( 20 );
-		for( int i = 19; i > 15; --i )
-			internalBuffer[i] = internalBuffer[i-1];
-		
-		internalBuffer[15]	= mItem.GetDir();
+		internalBuffer.resize( internalBuffer.size()+1 );
+		internalBuffer[byteNum]		+= 0x80;	// Enable direction
+		internalBuffer[byteNum+4]	= mItem.GetDir();
 		++internalBuffer[2];
-		internalBuffer[11]	+= 0x80;	// Enable direction
 	}
+	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );	// Enable Dye and Move
+	internalBuffer[byteNum+=2] = mItem.GetZ();
+
+	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
+		PackShort( &internalBuffer[0], ++byteNum, 0x00C6 );
+	else
+		PackShort( &internalBuffer[0], ++byteNum, mItem.GetColour() );
+	internalBuffer[byteNum+=2] = 0;
+	if( mItem.GetVisible() != VT_VISIBLE )
+		internalBuffer[byteNum] |= 0x80;
+
+	if( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ) ) 
+		internalBuffer[byteNum] += 0x20;
 }
+
+void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
+{
+	UI08 byteNum = 7;
+	if( mChar.ViewHouseAsIcon() && mMulti.GetID() >= 0x4000 )
+		PackShort( &internalBuffer[0], byteNum, 0x14F0 );
+	else
+		PackShort( &internalBuffer[0], byteNum, mMulti.GetID() );
+	PackShort( &internalBuffer[0], byteNum+=2, mMulti.GetX() );
+	if( mMulti.GetDir() )
+	{
+		internalBuffer.resize( internalBuffer.size()+1 );
+		internalBuffer[byteNum]		+= 0x80;	// Enable direction
+		internalBuffer[byteNum+4]	= mMulti.GetDir();
+		++internalBuffer[2];
+	}
+	PackShort( &internalBuffer[0], byteNum+=2, mMulti.GetY() + 0xC000 );	// Enable Dye and Move
+	internalBuffer[byteNum+=2] = mMulti.GetZ();
+
+	PackShort( &internalBuffer[0], ++byteNum, mMulti.GetColour() );
+	internalBuffer[byteNum+=2] = 0;
+	if( mMulti.GetVisible() != VT_VISIBLE )
+		internalBuffer[byteNum] |= 0x80;
+
+	if( mChar.AllMove() )
+		internalBuffer[byteNum] += 0x20;
+}
+
 CPObjectInfo::CPObjectInfo()
 {
 	InternalReset();

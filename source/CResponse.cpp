@@ -124,8 +124,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 {
 	CHARLIST ourNpcs;
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *CellResponse = (*rIter);
 		if( CellResponse == NULL )
@@ -155,8 +154,7 @@ void CEscortResponse::Handle( cSocket *mSock, CChar *mChar )
 	if( mChar->IsDead() ) 
 		return;
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	CHARLIST_ITERATOR npcCtr;
-	for( npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
 		if( Npc->GetQuestType() == ESCORTQUEST )
@@ -209,8 +207,7 @@ void CBankResponse::Handle( cSocket *mSock, CChar *mChar )
 	if( !mChar->IsDead() )
 	{
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		CHARLIST_ITERATOR npcCtr;
-		for( npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
 			if( Npc->GetNPCAiType() == aiBANKER )// if he's a banker and we're close!
@@ -256,8 +253,7 @@ void CTrainingResponse::Handle( cSocket *mSock, CChar *mChar )
 		char temp[512];
 		char temp2[512];
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		CHARLIST_ITERATOR npcCtr;
-		for( npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
 			if( Npc->isHuman() )
@@ -345,8 +341,7 @@ CBasePetResponse::CBasePetResponse( std::string text )
 void CBasePetResponse::Handle( cSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	CHARLIST_ITERATOR npcCtr;
-	for( npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
 		if( !Handle( mSock, mChar, Npc ) )
@@ -508,8 +503,7 @@ CBaseVendorResponse::CBaseVendorResponse( bool vendVal, std::string text )
 void CBaseVendorResponse::Handle( cSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	CHARLIST_ITERATOR npcCtr;
-	for( npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
 		if( Npc->IsShop() || Npc->GetNPCAiType() == aiPLAYERVENDOR )

@@ -60,8 +60,8 @@ CItem *startTrade( cSocket *mSock, CChar *i )
 	pi->SendPackItemToSocket( mSock );
 	pi->SendPackItemToSocket( nSock );
 	
-	pi->SetTempVar( CITV_MOREB, ps->GetSerial() );
-	ps->SetTempVar( CITV_MOREB, pi->GetSerial() );
+	pi->SetTempVar( CITV_MOREX, ps->GetSerial() );
+	ps->SetTempVar( CITV_MOREX, pi->GetSerial() );
 	pi->SetTempVar( CITV_MOREZ, 0 );
 	ps->SetTempVar( CITV_MOREZ, 0 );
 	
@@ -115,7 +115,7 @@ void endTrade( SERIAL targSerial )
 	if( !ValidateObject( cont1 ) )
 		return;
 
-	CItem *cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREB ) );
+	CItem *cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREX ) );
 	if( !ValidateObject( cont2 ) )
 		return;
 
@@ -285,7 +285,7 @@ bool CPITradeMessage::Handle( void )
 		case 2://Change check marks.  Possibly conclude trade
 			cont1 = calcItemObjFromSer( tSock->GetDWord( 4 ) );
 			if( ValidateObject( cont1 ) )
-				cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREB ) );
+				cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREX ) );
 			if( ValidateObject( cont2 ) )
 			{
 				cont1->SetTempVar( CITV_MOREZ, tSock->GetByte( 11 ) );
@@ -307,9 +307,9 @@ bool CPITradeMessage::Handle( void )
 	return true;
 }
 
-void killTrades( CChar *i )
+void killTrades( CChar& i )
 {
-	for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
+	for( CItem *j = i.FirstItem(); !i.FinishedItems(); j = i.NextItem() )
 	{
 		if( ValidateObject( j ) )
 		{

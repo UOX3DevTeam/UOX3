@@ -139,11 +139,11 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
-			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );								break;
-			case DFNTAG_MORE2:			applyTo->SetTempVar( CITV_MOREB, ndata );								break;
-			case DFNTAG_MOREX:			applyTo->SetTempVar( CITV_MOREX, ndata );								break;
-			case DFNTAG_MOREY:			applyTo->SetTempVar( CITV_MOREY, ndata );								break;
-			case DFNTAG_MOREZ:			applyTo->SetTempVar( CITV_MOREZ, ndata );								break;
+			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );				break;
+			case DFNTAG_MORE2:																	break;
+			case DFNTAG_MOREX:			applyTo->SetTempVar( CITV_MOREX, ndata );				break;
+			case DFNTAG_MOREY:			applyTo->SetTempVar( CITV_MOREY, ndata );				break;
+			case DFNTAG_MOREZ:			applyTo->SetTempVar( CITV_MOREZ, ndata );				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata.c_str() );						break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
@@ -474,42 +474,42 @@ CItem * cItem::PlaceItem( cSocket *mSock, CChar *mChar, CItem *iCreated, bool in
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o---------------------------------------------------------------------------o
-bool DecayItem( CItem *i, UI32 nextDecayItems ) 
+bool DecayItem( CItem& toDecay, UI32 nextDecayItems ) 
 {
-	if( i->GetDecayTime() == 0 ) 
+	if( toDecay.GetDecayTime() == 0 ) 
 	{
-		i->SetDecayTime( nextDecayItems );
+		toDecay.SetDecayTime( nextDecayItems );
 		return false;
 	}
-	bool isCorpse = i->isCorpse();
+	bool isCorpse = toDecay.isCorpse();
 		
 	// Multis
-	if( !i->IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
+	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
 	{
-		if( ValidateObject( i->GetMultiObj() ) )
+		if( ValidateObject( toDecay.GetMultiObj() ) )
 		{				
-			i->SetDecayTime( nextDecayItems );
+			toDecay.SetDecayTime( nextDecayItems );
 			return false;
 		}
 	}
 
-	if( i->IsContType() )
+	if( toDecay.IsContType() )
 	{
-		if( !isCorpse || ( isCorpse && ( ValidateObject( i->GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() ) ) )
+		if( !isCorpse || ( isCorpse && ( ValidateObject( toDecay.GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() ) ) )
 		{
-			CDataList< CItem * > *iCont = i->GetContainsList();
+			CDataList< CItem * > *iCont = toDecay.GetContainsList();
 			for( CItem *io = iCont->First(); !iCont->Finished(); io = iCont->Next() )
 			{
 				if( ValidateObject( io ) )
 				{
 					io->SetCont( NULL );
-					io->SetLocation( i );
+					io->SetLocation( (&toDecay) );
 					io->SetDecayTime( nextDecayItems );
 				}
 			}
 		}
 	}
-	i->Delete();
+	toDecay.Delete();
 	return true;
 }
 
@@ -780,8 +780,7 @@ void cItem::CheckEquipment( CChar *p )
 					i->SetLocation( p );
 					
 					SOCKLIST nearbyChars = FindNearbyPlayers( p );
-					SOCKLIST_ITERATOR cIter;
-					for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 					{
 						p->SendWornItems( (*cIter) );
 					}

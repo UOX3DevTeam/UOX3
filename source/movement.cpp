@@ -79,7 +79,7 @@ cMovement *Movement;
 #define DEBUG_PATHFIND		0
 
 #undef DBGFILE
-#define DBGFILE "walking.cpp"
+#define DBGFILE "movement.cpp"
 
 #define XYMAX					256		// Maximum items UOX can handle on one X/Y square
 #define MAX_ITEM_Z_INFLUENCE	10		// Any item above this height is discarded as being too far away to effect the char
@@ -960,7 +960,7 @@ bool UpdateCharsOnPlane( cSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 	return false;
 }
 
-void MonsterGate( CChar *s, SI32 x );
+void MonsterGate( CChar *s, std::string scriptEntry );
 void advanceObj( CChar *s, UI16 x, bool multiUse );
 void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate );
 void HandleObjectCollisions( cSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
@@ -976,7 +976,7 @@ void HandleObjectCollisions( cSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 			if( !mChar->IsNpc() )
 				advanceObj( mChar, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), ( itemCheck->GetType() == IT_MULTIADVANCEGATE ) );
 			break;
-		case IT_MONSTERGATE:	MonsterGate( mChar, itemCheck->GetTempVar( CITV_MOREX ) );	break;	// monster gates
+		case IT_MONSTERGATE:	MonsterGate( mChar, itemCheck->GetDesc() );	break;	// monster gates
 		case IT_RACEGATE:														// race gates
 			Races->gate( mChar, static_cast<RACEID>(itemCheck->GetTempVar( CITV_MOREX )), itemCheck->GetTempVar( CITV_MOREY ) != 0 );
 			break;
@@ -992,7 +992,7 @@ void HandleObjectCollisions( cSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 			break;
 		case IT_SOUNDOBJECT:														// sound objects
 			if( static_cast<UI32>(RandomNum( 1, 100 )) <= itemCheck->GetTempVar( CITV_MOREZ ) )
-				Effects->PlaySound( itemCheck, static_cast<UI16>( (itemCheck->GetTempVar( CITV_MOREX )<<8) + itemCheck->GetTempVar( CITV_MOREY ) ) );
+				Effects->PlaySound( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )) );
 			break;
 		case IT_MAPCHANGEOBJECT:
 			SocketMapChange( mSock, mChar, itemCheck );
@@ -1045,8 +1045,7 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI
 	*/
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( newx, newy, mChar->WorldNumber() );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
@@ -1154,8 +1153,7 @@ void cMovement::CombatWalk( CChar *i ) // Only for switching to combat mode
 		i->SetTarg( NULL );
     
 	SOCKLIST nearbyChars = FindNearbyPlayers( i );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
     {
 		CChar *mChar = (*cIter)->CurrcharObj();
 		if( mChar != i )

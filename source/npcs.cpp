@@ -1026,13 +1026,9 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, cBaseObject *guarded )
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
 		return NULL;
 
-	CChar *pet			= NULL;
-	CHARLIST *myPets	= mChar->GetPetList();
-	// DO the STL
-	CHARLIST_ITERATOR I;
-	for( I = myPets->begin(); I != myPets->end(); ++I )
+	CDataList< CChar * > *myPets = mChar->GetPetList();
+	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 	{
-		pet = (*I);
 		if( ValidateObject( pet ) )
 		{
 			if( !pet->IsMounted() && pet->GetNPCAiType() == aiPET_GUARD && 
@@ -1053,9 +1049,7 @@ bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
 	CChar *getFriend		= NULL;
 	CHARLIST *petFriends	= pet->GetFriendList();
-	// DO the stl
-	CHARLIST_ITERATOR I;
-	for( I = petFriends->begin(); I != petFriends->end(); ++I )
+	for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
 	{
 		getFriend = (*I);
 		if( ValidateObject( getFriend ) && getFriend == mChar )
@@ -1097,14 +1091,13 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle monster gates (polymorphs players into monster bodies)
 //o---------------------------------------------------------------------------o
-void MonsterGate( CChar *s, SI32 x )
+void MonsterGate( CChar *s, std::string scriptEntry )
 {
 	CItem *mypack = NULL, *retitem = NULL;
 	if( s->IsNpc() ) 
 		return;
 
-	UString sect = UString::number( x );
-	ScriptSection *Monster = FileLookup->FindEntry( sect, npc_def );
+	ScriptSection *Monster = FileLookup->FindEntry( UString( scriptEntry ).stripWhiteSpace(), npc_def );
 	if( Monster == NULL )
 		return;
 	

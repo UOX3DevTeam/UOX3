@@ -745,18 +745,18 @@ void AreaCommand( cSocket *s )
 
 	const std::string areaCommandStrings[ACT_CMDCOUNT] =
 	{
-		"dye",
-		"wipe",
-		"incx",
-		"incy",
-		"incz",
-		"setx",
-		"sety",
-		"setz",
-		"settype",
-		"newbie",
-		"setscptrig",
-		"movable",
+		"DYE",
+		"WIPE",
+		"INCX",
+		"INCY",
+		"INCZ",
+		"SETX",
+		"SETY",
+		"SETZ",
+		"SETTYPE",
+		"NEWBIE",
+		"SETSCPTRIG",
+		"MOVABLE",
 		""
 	};
 
@@ -902,7 +902,7 @@ void newCarveTarget( cSocket *s, CItem *i )
 	char temp[1024];
 	// if it's a human corpse
 	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
-	if( i->GetTempVar( CITV_MOREY ) )
+	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
 		// create the Head
 		sprintf( temp, Dictionary->GetEntry( 1058 ).c_str(), i->GetName2() );
@@ -1017,10 +1017,10 @@ void CorpseTarget( cSocket *s )
 	if( objInRange( mChar, i, DIST_NEARBY ) ) 
 	{
 		Effects->PlayCharacterAnimation( mChar, 0x20 );
-		if( i->GetTempVar( CITV_MORE, 1 ) == 0 )
+		if( i->GetTempVar( CITV_MOREY, 1 ) == 0 )
 		{
-			i->SetTempVar( CITV_MORE, 1, 1 );
-			if( i->GetTempVar( CITV_MOREY ) || i->GetCarve() != -1 )
+			i->SetTempVar( CITV_MOREY, 1, 1 );
+			if( i->GetTempVar( CITV_MOREY, 2 ) || i->GetCarve() != -1 )
 				newCarveTarget( s, i );
 		} 
 		else 

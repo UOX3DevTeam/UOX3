@@ -1,3 +1,17 @@
+8/13/2004 - giwo
+	Converted a few areas of code to using refrences rather than pointers.
+	Consolidated some code in cWeather.cpp and cRaces.cpp.
+	Fixed a couple areas where an ACCOUNTSBLOCK was being copied and altered, but not set back on the object it was copied from.
+	Implemented a temporary fix for multiple users on one account and other related issues.
+	Modified CChar::petsControlled to make use of CDataList.
+	Made use of const_iterators in place of iterators in many places.
+	Modified a few more instances of CDataList to be handled by an accessor that would return a pointer.
+	Removed MOREB (MORE2) from CItem.
+	Modified Monster Gates (polymorph gates) to make use of items description tag in order to use string-type script entries.
+	Minor fixes and updates.
+	JS Changes:
+		commands/targeting/set.js:  Fixed an issue causing 'set owner to not function properly.
+
 8/6/2004 - giwo
 	Fixed an issue causing extra invalid servers to appear in the server list.
 	Added CPSellList to handle sending the vendor "sell" gump.

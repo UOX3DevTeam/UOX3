@@ -121,10 +121,10 @@ SERIAL CItem::GetContSerial( void ) const
 //o--------------------------------------------------------------------------
 //|	Function		-	UI32 TempVar( CITempVars whichVar  )
 //|	Date			-	7/6/2004
-//|	Programmer	-	giwo
+//|	Programmer		-	giwo
 //|	Modified		-
 //o--------------------------------------------------------------------------
-//|	Purpose		-	Returns the temp value of the object
+//|	Purpose			-	Returns the temp value of the object
 //o--------------------------------------------------------------------------
 UI32 CItem::GetTempVar( CITempVars whichVar ) const
 {
@@ -144,12 +144,12 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 //o--------------------------------------------------------------------------
 //|	Function		-	UI08 GetTempVarPart( CITempVars whichVar, UI08 part )
 //|	Date			-	7/6/2004
-//|	Programmer	-	giwo
+//|	Programmer		-	giwo
 //|	Modified		-
 //o--------------------------------------------------------------------------
-//|	Purpose		-	One of the words of the temp value
-//|						Valid values for part are 1->4.  If outside that, behaves
-//|						as if it were 1
+//|	Purpose			-	One of the words of the temp value
+//|							Valid values for part are 1->4.  If outside that, behaves
+//|							as if it were 1
 //o--------------------------------------------------------------------------
 UI08 CItem::GetTempVar( CITempVars whichVar, UI08 part ) const
 {
@@ -1041,7 +1041,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	cBaseObject::DumpBody( outStream );
 	dumping << "Layer=" << "0x" << std::hex << (SI16)GetLayer() << std::endl;
 	dumping << "Cont=" << "0x" << GetContSerial() << std::endl;
-	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << "," << "0x" << GetTempVar( CITV_MOREB ) << std::endl;
+	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << std::endl;
 	dumping << "Name2=" << std::dec << GetName2() << std::endl;
 	dumping << "Creator=" << "0x" << std::hex << GetCreator() << std::endl;
 	dumping << "Desc=" << std::dec << GetDesc() << std::endl;
@@ -1189,19 +1189,13 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				if( UTag == "MORE" )
 				{
 					if( data.sectionCount( "," ) != 0 )
-					{
 						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
-						SetTempVar( CITV_MOREB, data.section( ",", 1, 1 ).stripWhiteSpace().toULong() );
-					}
 					else
 						SetTempVar( CITV_MORE, data.toULong() );
 					rvalue = true;
 				}
-				else if( UTag == "MORE2" )
-				{
-					SetTempVar( CITV_MOREB, data.toULong() );
+				else if( UTag == "MORE2" )	// Depreciated
 					rvalue = true;
-				}
 				else if( UTag == "MURDERER" )
 					rvalue = true;
 				else if( UTag == "MOREXYZ" )
@@ -1657,8 +1651,7 @@ void CItem::Update( cSocket *mSock )
 			nearbyChars = FindNearbyPlayers( this, DIST_BUILDRANGE );
 		else
 			nearbyChars = FindPlayersInVisrange( this );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			SendToSocket( (*cIter) );
 		}
@@ -1672,8 +1665,7 @@ void CItem::Update( cSocket *mSock )
 			CPWornItem toWear = (*this);
 			CPQueryToolTip pSend( (*this) );
 			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
-			SOCKLIST_ITERATOR cIter;
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				(*cIter)->Send( &toWear );
 				(*cIter)->Send( &pSend );
@@ -1688,8 +1680,7 @@ void CItem::Update( cSocket *mSock )
 		{
 			ObjectType oType = OT_CBO;
 			SOCKLIST nearbyChars = FindPlayersInVisrange( FindItemOwner( this, oType ) );
-			SOCKLIST_ITERATOR cIter;
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				SendPackItemToSocket( (*cIter) );
 			}
@@ -1783,8 +1774,7 @@ void CItem::RemoveFromSight( cSocket *mSock )
 			else
 			{
 				SOCKLIST nearbyChars = FindPlayersInVisrange( this );
-				SOCKLIST_ITERATOR cIter;
-				for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
 					(*cIter)->Send( &toRemove );
 				}
@@ -1805,8 +1795,7 @@ void CItem::RemoveFromSight( cSocket *mSock )
 			else
 			{
 				SOCKLIST nearbyChars = FindNearbyPlayers( rChar );
-				SOCKLIST_ITERATOR cIter;
-				for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
 					(*cIter)->Send( &toRemove );
 				}

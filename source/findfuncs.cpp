@@ -6,20 +6,6 @@
 namespace UOX
 {
 
-SOCKLIST FindPlayersInVisrange( CChar *myObj )
-{
-	SOCKLIST nearbyChars;
-	Network->PushConn();
-	for( cSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
-			nearbyChars.push_back( mSock );
-	}
-	Network->PopConn();
-	return nearbyChars;
-}
-
 SOCKLIST FindPlayersInOldVisrange( cBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
@@ -262,8 +248,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	SI32 ret, dx, dy;
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	REGIONLIST_ITERATOR rIter;
-	for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region

@@ -84,11 +84,8 @@ ObjectFactory *objFactory;
 //o---------------------------------------------------------------------------o
 // Weather Pre-Declarations
 //o---------------------------------------------------------------------------o
-bool		doHeatEffect( cSocket *mSock, CChar *i );
-bool		doLightEffect( cSocket *mSock, CChar *i );
-bool		doColdEffect( cSocket *mSock, CChar *i );
-bool		doRainEffect( cSocket *mSock, CChar *i );
-bool		doSnowEffect( cSocket *mSock, CChar *i );
+bool		doWeatherEffect( cSocket& mSock, CChar& mChar, WeatherType element );
+bool		doLightEffect( cSocket& mSock, CChar& mChar );
 
 //o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -106,12 +103,12 @@ void		LoadPlaces( void );
 // Misc Pre-Declarations
 //o---------------------------------------------------------------------------o
 void		checkkey( void );
-void		restockNPC( CChar *i, bool stockAll );
+void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
-void		killTrades( CChar *i );
-void		sysBroadcast( std::string txt );
+void		killTrades( CChar& i );
+void		sysBroadcast( const std::string txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
-bool		DecayItem( CItem *i, UI32 nextDecayItems );
+bool		DecayItem( CItem& toDecay, UI32 nextDecayItems );
 void		CheckAI( CChar *i );
 
 bool cluox_io          = false;   // is cluox-IO enabled?
@@ -302,7 +299,7 @@ bool isOnline( CChar *c )
 		return false;
 	if( c->IsNpc() )
 		return false;
-	ACCOUNTSBLOCK actbTemp = c->GetAccount();
+	ACCOUNTSBLOCK& actbTemp = c->GetAccount();
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 	{
 		if( actbTemp.dwInGame == c->GetSerial() )
@@ -331,8 +328,7 @@ void updateStats( CChar *mChar, UI08 x )
 {
 	CPUpdateStat toSend( (*mChar), x );
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &toSend );
 		if( (*cIter)->CurrcharObj() == mChar )
@@ -446,8 +442,7 @@ void MountCreature( cSocket *sockPtr, CChar *s, CChar *x )
 		}
 		//s->WearItem( c );
 		SOCKLIST nearbyChars = FindNearbyPlayers( s );
-		SOCKLIST_ITERATOR cIter;
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			s->SendWornItems( (*cIter) );
 		}
@@ -1216,36 +1211,36 @@ void checkkey( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o---------------------------------------------------------------------------o
-bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool checkHunger )
+bool genericCheck( cSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger )
 {
-	if( mChar->IsDead() )
+	if( mChar.IsDead() )
 		return false;
 
 	UI16 c;
-	if( mChar->GetHP() > mChar->GetMaxHP() )
-		mChar->SetHP( mChar->GetMaxHP() );
-	if( mChar->GetStamina() > mChar->GetMaxStam() )
-		mChar->SetStamina( mChar->GetMaxStam() );
-	if( mChar->GetMana() > mChar->GetMaxMana() )
-		mChar->SetMana( mChar->GetMaxMana() );
+	if( mChar.GetHP() > mChar.GetMaxHP() )
+		mChar.SetHP( mChar.GetMaxHP() );
+	if( mChar.GetStamina() > mChar.GetMaxStam() )
+		mChar.SetStamina( mChar.GetMaxStam() );
+	if( mChar.GetMana() > mChar.GetMaxMana() )
+		mChar.SetMana( mChar.GetMaxMana() );
 
-	if( mChar->GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar->GetHP() < mChar->GetMaxHP() && ( mChar->GetHunger() > (SI16)cwmWorldState->ServerData()->HungerThreshold() || cwmWorldState->ServerData()->HungerRate() == 0 ) )
+		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > (SI16)cwmWorldState->ServerData()->HungerThreshold() || cwmWorldState->ServerData()->HungerRate() == 0 ) )
 		{
-			for( c = 0; c < mChar->GetMaxHP() + 1; ++c )
+			for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 			{
-				if( mChar->GetHP() <= mChar->GetMaxHP() && ( mChar->GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
+				if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
 				{
-					if( mChar->GetSkill( HEALING ) < 500 )
-						mChar->IncHP( 1 );
-					else if( mChar->GetSkill( HEALING ) < 800 )
-						mChar->IncHP( 2 );
+					if( mChar.GetSkill( HEALING ) < 500 )
+						mChar.IncHP( 1 );
+					else if( mChar.GetSkill( HEALING ) < 800 )
+						mChar.IncHP( 2 );
 					else 
-						mChar->IncHP( 3 );
-					if( mChar->GetHP() >= mChar->GetMaxHP() )
+						mChar.IncHP( 3 );
+					if( mChar.GetHP() >= mChar.GetMaxHP() )
 					{
-						mChar->SetHP( mChar->GetMaxHP() ); 
+						mChar.SetHP( mChar.GetMaxHP() ); 
 						break;
 					}
 				}
@@ -1253,20 +1248,20 @@ bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool ch
 					break;
 			}
 		}
-		mChar->SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) ), 0 );
+		mChar.SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( HITPOINT_REGEN ) ), 0 );
 	}
-	if( mChar->GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar->GetStamina() < mChar->GetMaxStam() )
+		if( mChar.GetStamina() < mChar.GetMaxStam() )
 		{
-			for( c = 0; c < mChar->GetMaxStam() + 1; ++c )
+			for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
 			{
-				if( ( mChar->GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() && mChar->GetStamina() <= mChar->GetMaxStam() )
+				if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
 				{
-					mChar->IncStamina( 1 );
-					if( mChar->GetStamina() >= mChar->GetMaxStam() )
+					mChar.IncStamina( 1 );
+					if( mChar.GetStamina() >= mChar.GetMaxStam() )
 					{
-						mChar->SetStamina( mChar->GetMaxStam() );
+						mChar.SetStamina( mChar.GetMaxStam() );
 						break;
 					}
 				}
@@ -1274,64 +1269,64 @@ bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool ch
 					break;
 			}
 		}
-		mChar->SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) ), 1 );
+		mChar.SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->SystemTimer( STAMINA_REGEN ) ), 1 );
 	}
 
 	// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
-	if( mChar->GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar->GetMana() < mChar->GetMaxMana() )
+		if( mChar.GetMana() < mChar.GetMaxMana() )
 		{
-			for( c = 0; c < mChar->GetMaxMana() + 1; ++c )
+			for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
 			{
-				if( mChar->GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( MANA_REGEN ) * 1000) <= cwmWorldState->GetUICurrentTime() && mChar->GetMana() <= mChar->GetMaxMana() )
+				if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( MANA_REGEN ) * 1000) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
 				{
-					Skills->CheckSkill( mChar, MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
-					mChar->IncMana( 1 );	// Gain a mana point
-					if( mChar->GetMana() == mChar->GetMaxMana() )
+					Skills->CheckSkill( (&mChar), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
+					mChar.IncMana( 1 );	// Gain a mana point
+					if( mChar.GetMana() == mChar.GetMaxMana() )
 					{
-						if( mChar->IsMeditating() ) // Morrolan = Meditation
+						if( mChar.IsMeditating() ) // Morrolan = Meditation
 						{
 							if( mSock != NULL )
 								mSock->sysmessage( 969 );
-							mChar->SetMeditating( false );
+							mChar.SetMeditating( false );
 						}
 						break;
 					}
 				}
 			}
 		}
-		R32 MeditationBonus = ( .00075f * mChar->GetSkill( MEDITATION ) );	// Bonus for Meditation
+		R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
 		int NextManaRegen = static_cast<int>(cwmWorldState->ServerData()->SystemTimer( MANA_REGEN ) * ( 1 - MeditationBonus ) * 1000);
 		if( cwmWorldState->ServerData()->SystemTimer( ARMORAFFECTMANA_REGEN ) )	// If armor effects mana regeneration...
 		{
-			R32 ArmorPenalty = Combat->calcDef( mChar, 0, false );	// Penalty taken due to high def
+			R32 ArmorPenalty = Combat->calcDef( (&mChar), 0, false );	// Penalty taken due to high def
 			if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
 				ArmorPenalty = 100;
 			ArmorPenalty = 1 + (ArmorPenalty / 25);
 			NextManaRegen = static_cast<int>(NextManaRegen * ArmorPenalty);
 		}
-		if( mChar->IsMeditating() )	// If player is meditation...
-			mChar->SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
+		if( mChar.IsMeditating() )	// If player is meditation...
+			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
 		else
-			mChar->SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
+			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
 	}
 	// CUSTOM END
-	if( mChar->GetVisible() == VT_INVISIBLE && ( mChar->GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
-		mChar->ExposeToView();
-	if( mChar->WillHunger() && cwmWorldState->ServerData()->HungerRate() > 1 && ( mChar->GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+		mChar.ExposeToView();
+	if( mChar.WillHunger() && cwmWorldState->ServerData()->HungerRate() > 1 && ( mChar.GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
-		if( mChar->GetHunger() > 0 && ( !mChar->IsCounselor() && !mChar->IsGM() ) )
-			mChar->DecHunger(); //Morrolan GMs and Counselors don't get hungry
+		if( mChar.GetHunger() > 0 && ( !mChar.IsCounselor() && !mChar.IsGM() ) )
+			mChar.DecHunger(); //Morrolan GMs and Counselors don't get hungry
 		
-		UI16 HungerTrig = mChar->GetScriptTrigger();
+		UI16 HungerTrig = mChar.GetScriptTrigger();
 		cScript *toExecute = Trigger->GetScript( HungerTrig );
 		bool doHunger = true;
 		if( toExecute != NULL )
-			doHunger = !toExecute->OnHungerChange( mChar, mChar->GetHunger() );
+			doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
 		if( doHunger && mSock != NULL )
 		{
-			switch( mChar->GetHunger() )
+			switch( mChar.GetHunger() )
 			{
 				case 6: break;
 				case 5:	mSock->sysmessage( 1222 );	break;
@@ -1340,83 +1335,83 @@ bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool ch
 				case 2:	mSock->sysmessage( 1225 );	break;
 				case 1:	mSock->sysmessage( 1226 );	break;
 				case 0:
-					if( !mChar->IsCounselor() && !mChar->IsGM() )
+					if( !mChar.IsCounselor() && !mChar.IsGM() )
 						mSock->sysmessage( 1227 );
 					break;	
 			}
 		}
-		mChar->SetTimer( tCHAR_HUNGER, BuildTimeValue( (R32)cwmWorldState->ServerData()->HungerRate() ) );
+		mChar.SetTimer( tCHAR_HUNGER, BuildTimeValue( (R32)cwmWorldState->ServerData()->HungerRate() ) );
 	}
 	if( checkHunger )
 	{
-		if( mChar->WillHunger() && mChar->GetHP() > 0 && mChar->GetHunger() < 2 && ( !mChar->IsCounselor() && !mChar->IsGM() ) && !mChar->IsDead() )
+		if( mChar.WillHunger() && mChar.GetHP() > 0 && mChar.GetHunger() < 2 && ( !mChar.IsCounselor() && !mChar.IsGM() ) && !mChar.IsDead() )
 		{   
 			if( mSock != NULL )
 				mSock->sysmessage( 1228 );
-			mChar->IncHP( (SI16)( -cwmWorldState->ServerData()->HungerDamage() ) );
-			if( mChar->GetHP() <= 0 )
+			mChar.IncHP( (SI16)( -cwmWorldState->ServerData()->HungerDamage() ) );
+			if( mChar.GetHP() <= 0 )
 			{ 
 				if( mSock != NULL )
 					mSock->sysmessage( 1229 );
 			}
 		}
 	}
-	if( !mChar->IsInvulnerable() && mChar->GetPoisoned() )
+	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() )
 	{
-		if( mChar->GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar->GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
+			if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 			{
 				SI16 pcalc = 0;
-				switch( mChar->GetPoisoned() )
+				switch( mChar.GetPoisoned() )
 				{
 					case 1:
-						mChar->SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
-						if( mChar->GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
+						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 						{
-							mChar->SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar->emoteAll( 1240, true, mChar->GetName().c_str() );
+							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+							mChar.emoteAll( 1240, true, mChar.GetName().c_str() );
 						}
-						mChar->IncHP( (SI16)( -RandomNum( 1, 2 ) ) );
+						mChar.IncHP( (SI16)( -RandomNum( 1, 2 ) ) );
 						break;
 					case 2:
-						mChar->SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
-						if( mChar->GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
+						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 						{
-							mChar->SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar->emoteAll( 1241, true, mChar->GetName().c_str() );
+							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+							mChar.emoteAll( 1241, true, mChar.GetName().c_str() );
 						}
-						pcalc = (SI16)( ( mChar->GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
-						mChar->IncHP( (SI16)( -pcalc ) );
+						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
+						mChar.IncHP( (SI16)( -pcalc ) );
 						break;
 					case 3:
-						mChar->SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
-						if( mChar->GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 						{
-							mChar->SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar->emoteAll( 1242, true, mChar->GetName().c_str() );
+							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+							mChar.emoteAll( 1242, true, mChar.GetName().c_str() );
 						}
-						pcalc = (SI16)( ( mChar->GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
-						mChar->IncHP( (SI16)( -pcalc ) );
+						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
+						mChar.IncHP( (SI16)( -pcalc ) );
 						break;
 					case 4:
-						mChar->SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
-						if( mChar->GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 						{
-							mChar->SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar->emoteAll( 1243, true, mChar->GetName().c_str() );
+							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+							mChar.emoteAll( 1243, true, mChar.GetName().c_str() );
 						}
-						pcalc = (SI16)( mChar->GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-						mChar->IncHP( (SI16)( -pcalc ) );
+						pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
+						mChar.IncHP( (SI16)( -pcalc ) );
 						break;
 					default:
 						Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, genericCheck()" );
-						mChar->SetPoisoned( 0 );
+						mChar.SetPoisoned( 0 );
 						break;
 				}
-				if( mChar->GetHP() < 1 )
+				if( mChar.GetHP() < 1 )
 				{
-					doDeathStuff( mChar );
+					doDeathStuff( (&mChar) );
 					if( mSock != NULL )
 						mSock->sysmessage( 1244 );
 				} 
@@ -1424,32 +1419,32 @@ bool genericCheck( cSocket *mSock, CChar *mChar, bool checkFieldEffects, bool ch
 		}
 	}
 
-	if( mChar->GetTimer( tCHAR_POISONWEAROFF ) <= cwmWorldState->GetUICurrentTime() )
+	if( mChar.GetTimer( tCHAR_POISONWEAROFF ) <= cwmWorldState->GetUICurrentTime() )
 	{
-		if( mChar->GetPoisoned() )
+		if( mChar.GetPoisoned() )
 		{
-            mChar->SetPoisoned( 0 );
+            mChar.SetPoisoned( 0 );
 			if( mSock != NULL )
 				mSock->sysmessage( 1245 );
 		}
 	}
 
-	if( !mChar->IsNpc() )
+	if( !mChar.IsNpc() && mSock != NULL )
 	{
-		doLightEffect( mSock, mChar );
-		doRainEffect( mSock, mChar );
-		doSnowEffect( mSock, mChar );
-		doHeatEffect( mSock, mChar );
-		doColdEffect( mSock, mChar );
+		doLightEffect( (*mSock), mChar );
+		doWeatherEffect( (*mSock), mChar, RAIN );
+		doWeatherEffect( (*mSock), mChar, SNOW );
+		doWeatherEffect( (*mSock), mChar, HEAT );
+		doWeatherEffect( (*mSock), mChar, COLD );
 	}
 
 	if( checkFieldEffects )
 		Magic->CheckFieldEffects( mChar );
-	if( mChar->IsDead() )
+	if( mChar.IsDead() )
 		return true;
-	else if( mChar->GetHP() <= 0 )
+	else if( mChar.GetHP() <= 0 )
 	{
-		doDeathStuff( mChar );
+		doDeathStuff( (&mChar) );
 		return true;
 	}
 	return false;
@@ -1616,7 +1611,7 @@ void checkNPC( CChar *i, bool checkAI, bool doRestock )
 	Movement->NpcMovement( i );
 
 	if( doRestock )
-		restockNPC( i, false );
+		restockNPC( (*i), false );
 
 	if( ValidateObject( i->GetOwnerObj() ) && i->GetHunger() == 0 && i->GetNPCAiType() != aiPLAYERVENDOR ) // tamed animals but not player vendors ;)=
 	{
@@ -1687,7 +1682,7 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			{
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
-					if( DecayItem( itemCheck, nextDecayItems ) )
+					if( DecayItem( (*itemCheck), nextDecayItems ) )
 						continue;
 				}
 			}
@@ -1727,8 +1722,7 @@ void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 					if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
 					{
 						SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
-						SOCKLIST_ITERATOR cIter;
-						for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+						for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 						{
 							Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
 						}
@@ -1776,7 +1770,6 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 nextSetNPCFlagTime		= 0;
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
-	ACCOUNTSBLOCK actbTemp;
 	MAPUSERNAMEID_ITERATOR I;
 
 	// modify this stuff to take into account more variables
@@ -1787,8 +1780,8 @@ void CWorldMain::CheckAutoTimers( void )
 		//for( ourAccount = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourAccount = Accounts->NextAccount() )
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
-			ACCOUNTSBLOCK actbBlock = I->second;
-			if( actbBlock.wAccountIndex==AB_INVALID_ID)
+			ACCOUNTSBLOCK& actbTemp = I->second;
+			if( actbTemp.wAccountIndex==AB_INVALID_ID)
 				continue;
 
 			if( actbTemp.wFlags&AB_FLAGS_ONLINE )
@@ -1959,7 +1952,7 @@ void CWorldMain::CheckAutoTimers( void )
 		UI08 worldNumber	= mChar->WorldNumber();
 		if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 		{
-			genericCheck( iSock, mChar, checkFieldEffects, checkHunger );
+			genericCheck( iSock, (*mChar), checkFieldEffects, checkHunger );
 			checkPC( iSock, mChar, doWeather );
 
 			SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
@@ -2014,7 +2007,7 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
-				if( !genericCheck( NULL, charCheck, checkFieldEffects, checkHunger ) )
+				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, checkHunger ) )
 				{
 					if( setNPCFlags )
 						setcharflag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
@@ -2023,7 +2016,7 @@ void CWorldMain::CheckAutoTimers( void )
 			}
 			else if( charCheck->GetTimer( tPC_LOGOUT ) )
 			{
-				actbTemp = charCheck->GetAccount();
+				ACCOUNTSBLOCK& actbTemp = charCheck->GetAccount();
 				if( actbTemp.wAccountIndex != AB_INVALID_ID )
 				{
 					SERIAL oaiw = actbTemp.dwInGame;
@@ -2035,6 +2028,7 @@ void CWorldMain::CheckAutoTimers( void )
 					else if( oaiw == charCheck->GetSerial() && ( charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() || GetOverflow() ) )
 					{
 						actbTemp.dwInGame = INVALIDSERIAL;
+						charCheck->SetAccount( actbTemp );
 						charCheck->SetTimer( tPC_LOGOUT, 0 );
 						charCheck->Update();
 					}
@@ -3099,8 +3093,8 @@ void GenerateCorpse( CChar *mChar )
 	iCorpse->SetName2( mChar->GetName().c_str() );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetLocation( mChar );
-	iCorpse->SetTempVar( CITV_MORE, canCarve, 1 );
-	iCorpse->SetTempVar( CITV_MOREY, mChar->isHuman() );
+	iCorpse->SetTempVar( CITV_MOREY, canCarve, 1 );
+	iCorpse->SetTempVar( CITV_MOREY, mChar->isHuman(), 2 );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar->GetFlag() );
 	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
 	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( DECAY ));
@@ -3207,7 +3201,7 @@ void doDeathStuff( CChar *i )
 	if( pSock != NULL )
 	{
 		DismountCreature( i );
-		killTrades( i );
+		killTrades( (*i) );
 	}
 
 	Effects->playDeathSound( i );

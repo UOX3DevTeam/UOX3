@@ -773,7 +773,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 {
 	char tmpMsg[512];
 
-	SERLIST_ITERATOR cIter;
+	SERLIST_CITERATOR cIter;
 	for( cIter = members.begin(); cIter != members.end(); ++cIter )
 	{
 		CChar *targetChar	= calcCharObjFromSer( (*cIter) );

@@ -40,7 +40,7 @@ fd_set errsock;
 
 void DoorMacro( cSocket *s );
 UnicodeTypes FindLanguage( char *lang );
-void sysBroadcast( std::string txt );
+void sysBroadcast( const std::string txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 {
@@ -93,11 +93,14 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	}
 	if( connClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK actbAccount = connClients[s]->GetAccount();
+		ACCOUNTSBLOCK &actbAccount = connClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{
 			if( actbAccount.wAccountIndex != AB_INVALID_ID )
+			{
 				actbAccount.wFlags &= 0xFFFFFFF7;
+				connClients[s]->SetAccount( actbAccount );
+			}
 		}
 	}
 	//Instalog
@@ -187,7 +190,7 @@ void cNetworkStuff::LogOut( cSocket *s )
 			valid = true;
 	}
 	
-	ACCOUNTSBLOCK actbAccount=p->GetAccount();
+	ACCOUNTSBLOCK& actbAccount = p->GetAccount();
 	if( valid )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
@@ -201,6 +204,8 @@ void cNetworkStuff::LogOut( cSocket *s )
 			actbAccount.dwInGame = p->GetSerial();
 		p->SetTimer( tPC_LOGOUT, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( LOGIN_TIMEOUT ) )) );
 	}
+	p->SetAccount( actbAccount );
+	s->SetAccount( actbAccount );
 	p->Teleport();
 }
 
@@ -266,8 +271,7 @@ void cNetworkStuff::sockInit( void )
 void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 {
 	closesocket( a_socket );
-	SOCKLIST_ITERATOR toClose;
-	for( toClose = connClients.begin(); toClose != connClients.end(); ++toClose )
+	for( SOCKLIST_CITERATOR toClose = connClients.begin(); toClose != connClients.end(); ++toClose )
 	{
 		(*toClose)->CloseSocket();
 	}
@@ -393,8 +397,7 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
 	int nfds = 0;
-	SOCKLIST_ITERATOR toCheck;
-	for( toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
+	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
 	{
 		int clientSock = (*toCheck)->CliSocket();
 		FD_SET( clientSock, &all );
@@ -1126,9 +1129,12 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	//Zippy 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
 	if( loggedInClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK actbAccount = loggedInClients[s]->GetAccount();
+		ACCOUNTSBLOCK& actbAccount = loggedInClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+		{
 			actbAccount.wFlags&=0xFFFFFFF7;
+			loggedInClients[s]->SetAccount( actbAccount );
+		}
 	}
 
 	for( size_t q = 0; q < loggIteratorBackup.size(); ++q )
@@ -1461,8 +1467,7 @@ void cNetworkStuff::CheckXGM( void )
 	FD_ZERO( &errsock );
 	int nfds = 0;
 
-	SOCKLIST_ITERATOR toCheck;
-	for( toCheck = xgmClients.begin(); toCheck != xgmClients.end(); ++toCheck )
+	for( SOCKLIST_CITERATOR toCheck = xgmClients.begin(); toCheck != xgmClients.end(); ++toCheck )
 	{
 		size_t clientSock = (*toCheck)->CliSocket();
 		FD_SET( clientSock, &all );

@@ -80,8 +80,7 @@ void HandleGuardAI( CChar *mChar )
 	if( !mChar->IsAtWar() )
 	{
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
@@ -118,8 +117,7 @@ void HandleGuardAI( CChar *mChar )
 void HandleHealerAI( CChar *mChar )
 {
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar, DIST_NEARBY );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		cSocket *mSock	= (*cIter);
 		CChar *realChar = mSock->CurrcharObj();
@@ -151,8 +149,7 @@ void HandleHealerAI( CChar *mChar )
 void HandleEvilHealerAI( CChar *mChar )
 {
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar, DIST_NEARBY );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		cSocket *mSock	= (*cIter);
 		CChar *realChar	= mSock->CurrcharObj();
@@ -181,8 +178,7 @@ void HandleEvilAI( CChar *mChar )
 	if( !mChar->IsAtWar() )
 	{
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
@@ -227,8 +223,7 @@ void HandleChaoticAI( CChar *mChar )
 	if( !mChar->IsAtWar() )
 	{
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-		REGIONLIST_ITERATOR rIter;
-		for( rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			SubRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region

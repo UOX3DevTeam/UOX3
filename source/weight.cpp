@@ -361,7 +361,7 @@ void cWeight::subtractItemWeight( CItem *pack, CItem *item )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns true if the character is overloaded based upon his strength
 //o--------------------------------------------------------------------------o
-bool cWeight::isOverloaded( CChar *mChar )
+bool cWeight::isOverloaded( CChar *mChar ) const
 {
 	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30) )
 		return true;
@@ -385,7 +385,7 @@ bool cWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 	if( pack->GetContSerial() < BASEITEMSERIAL )		// If the pack's container is a character, (it's his root pack), we don't have a container weight limit
 		return checkCharWeight( ourChar, (CChar *)pack->GetCont(), item );
 
-	SI32 packWeight = pack->GetWeight();
+	const SI32 packWeight = pack->GetWeight();
 	SI32 itemWeight = item->GetWeight();
 	if( item->GetAmount() > 1 )
 		itemWeight *= item->GetAmount();
@@ -419,7 +419,7 @@ bool cWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
 	else
 		MAX_CHARWEIGHT = 200000;	// Normal characters have hardcap of 2,000 stones
 
-	SI32 charWeight = mChar->GetWeight();
+	const SI32 charWeight = mChar->GetWeight();
 	SI32 itemWeight = 0;
 	if( ourChar != mChar )	// Item weight has already been added to the character if we picked it up
 		itemWeight = item->GetWeight();

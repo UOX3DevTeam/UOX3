@@ -28,8 +28,8 @@ enum cC_TID
 
 class CChar : public cBaseObject
 {
+// Base Characters
 protected:
-	// Base Characters
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	UI08		fixedlight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 	UI08		town;       // Matches Region number in regions.scp
@@ -82,7 +82,7 @@ protected:
 
 	CItem *		itemLayers[MAXLAYERS];
 	UI08		layerCtr;
-	CHARLIST	petsControlled;
+	CDataList< CChar * >	petsControlled;
 	ITEMLIST	ownedItems;
 	UI32		skillUsed[2];	// no more than 64 skills
 
@@ -115,11 +115,8 @@ public:
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 
-	CHARLIST *	GetPetList( void );
+	CDataList< CChar * > *	GetPetList( void );
 	ITEMLIST *	GetOwnedItems( void );
-
-	void		AddPet( CChar *toAdd );
-	void		RemovePet( CChar *toRemove );
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
@@ -498,7 +495,6 @@ protected:
 	CHARLIST	trackingtargets;
 
 	ACCOUNTSBLOCK ourAccount;
-	UI16		account;
 
 	UI16		origID; // Backup of body type for polymorph
 	UI16		origSkin;
@@ -534,11 +530,10 @@ protected:
 	// 8 Sign renaming
 	// 9 JavaScript speech
 public:
-	void		SetAccount(UI16 wAccountID);
-	void		SetAccount(ACCOUNTSBLOCK actbAccount);
-	ACCOUNTSBLOCK &GetAccount(void);
-	const ACCOUNTSBLOCK &GetConstAccount( void ) const;
-	UI16		GetAccountNum( void ) const;
+	void					SetAccount( ACCOUNTSBLOCK& actbAccount );
+	ACCOUNTSBLOCK &			GetAccount(void);
+	const ACCOUNTSBLOCK &	GetConstAccount( void ) const;
+	UI16					GetAccountNum( void ) const;
 
 	void		SetRobe( SERIAL newValue );
 	SERIAL		GetRobe( void ) const;

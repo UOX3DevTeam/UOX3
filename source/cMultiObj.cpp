@@ -68,8 +68,7 @@ void CMultiObj::AddToBanList( CChar *toBan )
 //o--------------------------------------------------------------------------o
 void CMultiObj::RemoveFromBanList( CChar *toRemove )
 {
-	CHARLIST_ITERATOR rIter;
-	for( rIter = banList.begin(); rIter != banList.end(); ++rIter )
+	for( CHARLIST_ITERATOR rIter = banList.begin(); rIter != banList.end(); ++rIter )
 	{
 		if( toRemove == (*rIter) )
 			banList.erase( rIter );
@@ -101,8 +100,7 @@ void CMultiObj::AddAsOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------o
 void CMultiObj::RemoveAsOwner( CChar *toRemove )
 {
-	CHARLIST_ITERATOR rIter;
-	for( rIter = owners.begin(); rIter != owners.end(); ++rIter )
+	for( CHARLIST_ITERATOR rIter = owners.begin(); rIter != owners.end(); ++rIter )
 	{
 		if( toRemove == (*rIter) )
 			owners.erase( rIter );
@@ -230,8 +228,7 @@ void CMultiObj::LockDownItem( CItem *toLock )
 {
 	if( lockedList.size() < maxLockedDown )
 	{
-		ITEMLIST_ITERATOR lIter;
-		for( lIter = lockedList.begin(); lIter != lockedList.end(); ++lIter )
+		for( ITEMLIST_CITERATOR lIter = lockedList.begin(); lIter != lockedList.end(); ++lIter )
 		{
 			if( (*lIter) == toLock )
 				return;
@@ -251,8 +248,7 @@ void CMultiObj::LockDownItem( CItem *toLock )
 //o--------------------------------------------------------------------------o
 void CMultiObj::RemoveLockDown( CItem *toRemove )
 {
-	ITEMLIST_ITERATOR rIter;
-	for( rIter = lockedList.begin(); rIter != lockedList.end(); ++rIter )
+	for( ITEMLIST_ITERATOR rIter = lockedList.begin(); rIter != lockedList.end(); ++rIter )
 	{
 		if( (*rIter) == toRemove )
 		{
@@ -517,6 +513,16 @@ bool CMultiObj::CanBeObjType( ObjectType toCompare ) const
 			rvalue = true;
 	}
 	return rvalue;
+}
+
+CDataList< CChar * > * CMultiObj::GetCharsInMultiList( void )
+{
+	return &charInMulti;
+}
+
+CDataList< CItem * > * CMultiObj::GetItemsInMultiList( void )
+{
+	return &itemInMulti;
 }
 
 //o--------------------------------------------------------------------------o

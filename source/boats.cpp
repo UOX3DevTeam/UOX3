@@ -118,12 +118,9 @@ void LeaveBoat( cSocket *s, CItem *p )
 
 			if( ( typ == 0 && mz != 5) || ( typ == 1 && sz != -5 ) )// everthing the blocks a boat is ok to leave the boat ... LB
 			{
-				CHARLIST *myPets = mChar->GetPetList();
-				// Handle this via STL
-				CHARLIST_ITERATOR I;
-				for( I = myPets->begin(); I != myPets->end(); ++I )
+				CDataList< CChar * > *myPets = mChar->GetPetList();
+				for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 				{
-					CChar *pet = (*I);
 					if( ValidateObject( pet ) )
 					{
 						if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
@@ -171,12 +168,9 @@ void PlankStuff( cSocket *s, CItem *p )
 		CMultiObj *boat2	= calcMultiFromSer( mser );
 		if( ValidateObject( boat2 ) )
 		{
-			CHARLIST *myPets = mChar->GetPetList();
-			// Handle the STL
-			CHARLIST_ITERATOR I;
-			for( I = myPets->begin(); I != myPets->end(); ++I )
+			CDataList< CChar * > *myPets = mChar->GetPetList();
+			for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 			{
-				CChar *pet = (*I);
 				if( ValidateObject( pet ) )
 				{
 					if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
@@ -493,8 +487,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	CPPauseResume prSend( 1 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( boat, DIST_BUILDRANGE );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &prSend );
 	}
@@ -532,15 +525,16 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	//p2->IncLocation( tx, ty );
 	hold->IncLocation( tx, ty );
 
-	CBoatObj *realBoat = static_cast< CBoatObj *>(boat);
-	for( CItem *bItem = realBoat->itemInMulti.First(); !realBoat->itemInMulti.Finished(); bItem = realBoat->itemInMulti.Next() )
+	CDataList< CItem * > *itemList = boat->GetItemsInMultiList();
+	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
 	{
 		if( !ValidateObject( bItem ) )
 			continue;
 		bItem->IncLocation( tx, ty );
 	}
 
-	for( CChar *bChar = realBoat->charInMulti.First(); !realBoat->charInMulti.Finished(); bChar = realBoat->charInMulti.Next() )
+	CDataList< CChar * > *charList = boat->GetCharsInMultiList();
+	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
 	{
 		if( !ValidateObject( bChar ) )
 			continue;
@@ -588,8 +582,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 
 	CPPauseResume prSend( 1 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( b, DIST_BUILDRANGE );
-	SOCKLIST_ITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
 	{
 		(*cIter)->Send( &prSend );
 	}
@@ -642,15 +635,15 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		b->SetDir( WEST );
 
 
-	CBoatObj *realBoat = static_cast< CBoatObj * >(b);
-
-	for( CItem *bItem = realBoat->itemInMulti.First(); !realBoat->itemInMulti.Finished(); bItem = realBoat->itemInMulti.Next() )
+	CDataList< CItem * > *itemList = b->GetItemsInMultiList();
+	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
 	{
 		if( !ValidateObject( bItem ) )
 			continue;
 		TurnStuff( b, bItem, rightTurn );
 	}
-	for( CChar *bChar = realBoat->charInMulti.First(); !realBoat->charInMulti.Finished(); bChar = realBoat->charInMulti.Next() )
+	CDataList< CChar * > *charList = b->GetCharsInMultiList();
+	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
 	{
 		if( !ValidateObject( bChar ) )
 			continue;
@@ -821,7 +814,7 @@ void ModelBoat( cSocket *s, CBoatObj *i )
 	SERIAL serial = p1->GetTempVar( CITV_MORE );
 	if( i->GetOwnerObj() == mChar )
 	{
-		if( i->itemInMulti.Num() > 4 || i->charInMulti.Num() > 0 )
+		if( i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0 )
 		{
 			s->sysmessage( "This boat must be empty before it can be converted to a model!" );
 			return;

@@ -28,7 +28,7 @@ public:
 	void CastSpell( cSocket *s, CChar *caster );	// changed for NPC casting - Hanse
 	bool CheckResist( CChar *attacker, CChar *defender, int circle );
 	void PoisonDamage( CChar *p, int posion );
-	void CheckFieldEffects( CChar *c );
+	void CheckFieldEffects( CChar& mChar );
 	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id );
 	bool CheckBook( int circle, int spell, CItem *i );
 	bool CheckReagents( CChar *s, const reag_st *reagents );
