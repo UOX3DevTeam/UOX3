@@ -2647,7 +2647,7 @@ void MsgBoardMaintenance( void )
 #ifdef __linux__
   } while ((vecFiles.size() < index)  );
 #else
-  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) 	&& (++loopexit < MAXLOOPS)  );
+  } while ( (_findnext( hBBIFile, &BBIFile ) == 0) );
   
   // Close the _findfirst handle
   _findclose( hBBIFile );

@@ -148,7 +148,7 @@ SOURCE=..\h\cweather.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\cpp\dbl_sinlge_click.cpp
+SOURCE=..\cpp\dbl_single_click.cpp
 # End Source File
 # Begin Source File
 
