@@ -1,16 +1,29 @@
+//o--------------------------------------------------------------------------o
+//|	File					-	cBaseobject.cpp
+//|	Date					-	7/26/200
+//|	Developers		-	Abaddon/EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Version History
+//|									
+//|									1.0		Abaddon		26th July, 2000
+//|									Initial implementation.  Most, if not all, common between
+//|									items and chars is now implemented here	Functions declared
+//|									as const where possible
+//|									
+//|									1.1		EviLDeD		Unknown
+//|									Significant fraction of things moved to CBO to support 
+//|									future functionality
+//|									
+//|									1.2		Abaddon		August 27th, 2000
+//|									Addition of basic script trigger stuff. Function documentation 
+//|									finished for all functions
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "power.h"
-
-// Version History
-// 1.0		Abaddon		26th July, 2000
-//			Initial implementation.  Most, if not all, common between
-//			items and chars is now implemented here
-//			Functions declared as const where possible
-// 1.1		EviLDeD		Unknown
-//			Significant fraction of things moved to CBO to support future functionality
-// 1.2		Abaddon		August 27th, 2000
-//			Addition of basic script trigger stuff
-//			Function documentation finished for all functions
 
 //o--------------------------------------------------------------------------
 //|	Function		-	cBaseObject destructor
@@ -25,11 +38,7 @@ cBaseObject::~cBaseObject()
 	if( multis != NULL )
 		RemoveFromMulti( false );
 	// Delete all tags.
-	for( TAG *tag = firstTag; tag != NULL; tag = firstTag ) 
-	{
-		firstTag = tag->nextTag;
-		delete tag;
-	}
+	tags.erase(tags.begin(),tags.end());
 }
 
 //o--------------------------------------------------------------------------
@@ -44,7 +53,7 @@ cBaseObject::cBaseObject( void ) : objType( OT_CBO ), race( 0 ), x( 100 ), y( 10
 dir( 0 ), serial( INVALIDSERIAL ), multis( NULL ), spawnserial( NULL ), owner( NULL ), iCounter( 0 ), worldNumber( 0 ),
 strength( 1 ), dexterity( 1 ), intelligence( 1 ), hitpoints( 1 ), visible( 0 ), disabled( false ), def( 0 ), hidamage( 0 ),
 lodamage( 0 ), kills( 0 ), karma( 0 ), fame( 0 ), mana( 1 ), stamina( 1 ), scriptTrig( 0xFFFF ), st2( 0 ), dx2( 0 ), in2( 0 ),
-firstTag( NULL ), shouldSave( true ), isDirty( 1 ), FilePosition( -1 ), spawned( false )
+shouldSave( true ), isDirty( 1 ), FilePosition( -1 ), spawned( false )
 {
 	name[0] = 0x00;
 	title[0] = 0;
@@ -52,85 +61,93 @@ firstTag( NULL ), shouldSave( true ), isDirty( 1 ), FilePosition( -1 ), spawned(
 }
 
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	SI32 cBaseObject::GetNumTags( void ) const
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 SI32 cBaseObject::GetNumTags( void ) const 
 {
-	SI32 a = 0;
-	for( TAG *tag = firstTag; tag != NULL; tag = tag->nextTag )
-	{
-		a++;
-	}
-	return a;
+	return tags.size();
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	jsval cBaseObject::GetTag( char* tagname ) const 
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 jsval cBaseObject::GetTag( char* tagname ) const 
 {
-	for( TAG *tag = firstTag; tag != NULL; tag = tag->nextTag )
+	TAGMAP_CITERATOR CI;
+	CI = tags.find(tagname);
+	if(CI!=tags.end())
 	{
-		if( !strcmp( tagname, tag->name ) ) 
-		{
-			return tag->val;
-		}
+		return CI->second;
 	}
 	return (jsval)0;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cBaseObject::SetTag( char* tagname, jsval tagval ) 
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void cBaseObject::SetTag( char* tagname, jsval tagval ) 
 {
-	TAG *tag = NULL;
-	for( tag = firstTag; tag != NULL; tag = tag->nextTag ) 
+	TAGMAP_ITERATOR I;
+	I=tags.find(tagname);
+	if(I!=tags.end())
 	{
-		if( !strcmp( tagname, tag->name ) ) 
+		// This tag exists so process it(Do something)
+		if( JSVAL_IS_NULL(tagval) )
+			tags.erase(I);
+		else 
 		{
-			if( JSVAL_IS_NULL(tagval) ) 
+			//Change the tag's value.
+			if( JSVAL_IS_STRING( tagval ) ) 
 			{
-				//Delete the tag if they set it to "".
-				if( tag->prevTag != NULL )
-					tag->prevTag->nextTag = tag->nextTag;
-				else
-					firstTag = tag->nextTag;
-
-				if( tag->nextTag != NULL )
-					tag->nextTag->prevTag = tag->prevTag;
-				//delete tag->val;
-				delete tag->name;
-				delete tag;
+				char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tagval ) );
+				JSString *s_string = JS_NewStringCopyZ( jsContext, s_tagval);
+				I->second = STRING_TO_JSVAL(s_string);
 			} 
 			else 
 			{
-				//Change the tag's value.
-				if( JSVAL_IS_STRING( tagval ) ) 
-				{
-					char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tagval ) );
-					JSString *s_string = JS_NewStringCopyZ( jsContext, s_tagval);
-					tag->val = STRING_TO_JSVAL( s_string );
-				} 
-				else 
-				{
-					tag->val = tagval;
-				}
-				
+				I->second = tagval;
 			}
-			return;
 		}
+		return;
 	}
-	//make new tag
-	tag = new TAG;
-	tag->prevTag = NULL;
-	tag->nextTag = firstTag;
-	tag->name = new char[strlen(tagname)+1];
-	strcpy( tag->name, tagname );
-	if( JSVAL_IS_STRING( tagval ) ) 
+	// We dont want to create an entry if the valie is NULL
+	if(JSVAL_IS_NULL(tagval))
+		return;
+	if(JSVAL_IS_STRING( tagval ) ) 
 	{
 		char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tagval ) );
 		JSString *s_string = JS_NewStringCopyZ( jsContext, s_tagval);
-		tag->val = STRING_TO_JSVAL( s_string );
-	} 
-	else 
-	{
-		tag->val = tagval;
+		tags[tagname]=STRING_TO_JSVAL(s_string);
 	}
-	firstTag = tag;
-	return;
+	else
+	{
+		tags[tagname]=tagval;
+	}
 }	
 //o--------------------------------------------------------------------------
 //|	Function		-	SI16 GetX()
@@ -402,7 +419,7 @@ SERIAL cBaseObject::GetSerial( void ) const
 SERIAL cBaseObject::GetSpawn( void ) const
 {
 	if( spawnserial == NULL )
-		return 0;
+		return INVALIDSERIAL;
 	return spawnserial->GetSerial();
 }
 
@@ -429,7 +446,7 @@ cBaseObject *cBaseObject::GetSpawnObj( void ) const
 //o--------------------------------------------------------------------------
 SERIAL cBaseObject::GetOwner( void ) const
 {
-	if( owner == NULL )
+	if( owner == NULL)
 		return INVALIDSERIAL;
 	return owner->GetSerial();
 }
@@ -478,6 +495,7 @@ void cBaseObject::SetSerial( SERIAL newSerial )
 	serial = newSerial;
 }
 
+
 //o--------------------------------------------------------------------------
 //|	Function		-	SetSpawn( SERIAL newSerial )
 //|	Date			-	26 July, 2000
@@ -494,6 +512,7 @@ void cBaseObject::SetSpawn( SERIAL newSerial )
 		spawnserial = (cBaseObject *)calcCharObjFromSer( newSerial );
 }
 
+/*
 //o--------------------------------------------------------------------------
 //|	Function		-	SetMulti( UI08 newSerial, UI08 newPart )
 //|	Date			-	26 July, 2000
@@ -543,6 +562,7 @@ void cBaseObject::SetSpawn(  UI08 newSerial, UI08 newPart )
 	else
 		spawnserial = (cBaseObject *)calcCharObjFromSer( calcserial( parts[0], parts[1], parts[2], parts[3] ) );
 }
+*/
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void IsSpawned( bool setting )
@@ -678,7 +698,6 @@ bool cBaseObject::DumpBody( BinBuffer &buff ) const
 	}
 
 	//In future, we'll want to clear the dirty flag here, once it's saved" )
-	TAG *tag = NULL;
 	SI16 temp_st2, temp_dx2, temp_in2;
 	buff.PutByte( 0 );	// We put something here to say it's CLEAN for next reload
 	buff.PutLong( serial );
@@ -737,7 +756,7 @@ bool cBaseObject::DumpBody( BinBuffer &buff ) const
 		buff.PutShort( hitpoints );
 	}
 	
-	
+	//CChar *myChar=NULL;
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	if( DefBase->in2 != in2 || DefBase->dx2 != dx2 || DefBase->st2 != st2 )
 	{
@@ -829,33 +848,42 @@ bool cBaseObject::DumpBody( BinBuffer &buff ) const
 		buff.Put( genericDWords, 4*4 );
 	}
 	
-	for( tag = firstTag; tag != NULL; tag = tag->nextTag ) 
+	// Spin the tags
+	TAGMAP_CITERATOR CI;
+	for( CI = tags.begin(); CI!=tags.end();CI++) 
 	{
-		if( !( JSVAL_IS_NULL( tag->val ) ) )
+		if( !( JSVAL_IS_NULL( CI->second ) ) )
 		{
 			try
 			{	
-				if( JSVAL_IS_STRING( tag->val ) ) 
+				if( JSVAL_IS_STRING( CI->second ) ) 
 				{	
-					if( tag->val != JSVAL_NULL )
+					if( CI->second != JSVAL_NULL )
 					{
 						buff.PutByte( BASETAG_JS_STR_TAG );
-						buff.PutStr( tag->name );
-						char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tag->val ) );
+						buff.PutStr( CI->first.c_str() );
+						char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, CI->second ) );
 						buff.PutStr( s_tagval );
 					}
 				}
 				else 
 				{
 					buff.PutByte( BASETAG_JS_INT_TAG );
-					buff.PutStr( tag->name );
-					buff.PutLong( ((UI32)tag->val) );
+					buff.PutStr( CI->first.c_str() );
+					buff.PutLong( ((UI32)CI->second) );
 				}
 			}
 			catch (...)
 			{
 				Console << "| Char/Item consistency not guaranteed, JS-tag value invalid! Crash averted. " << myendl;
 			}
+		}
+		else
+		{
+			Console.Error( 1, "Somehow character %s[%i] has a NULL tag!",GetName(),serial);
+			//ACCOUNTSBLOCK actbTemp;
+			//actbTemp=myChar->GetAccount();
+			//Console.Error(1,"INFO: Character block has NULL tag. (AccountID:%i Character:%s[0x%8X]",actbTemp.wAccountIndex,myChar->GetName(),myChar->GetSerial());
 		}
 	}
 	return true;
@@ -874,7 +902,6 @@ bool cBaseObject::DumpBody( std::ofstream &outStream, int mode ) const
 {
 	std::string destination;
 	std::ostringstream dumping( destination );
-	TAG *tag = NULL;
 	SI16 temp_st2, temp_dx2, temp_in2;
 	
 	
@@ -947,17 +974,19 @@ bool cBaseObject::DumpBody( std::ofstream &outStream, int mode ) const
 	dumping << "DWord3=" << genericDWords[3] << std::endl;
 	// Ab, does this need to be written to the file? I am going to make it write it but comment or remove it if its not(remember to remove it from the Load routine as well)
 	dumping << "iCounter=" << iCounter << std::endl;
-	for( tag = firstTag; tag != NULL; tag = tag->nextTag ) 
+	// Spin the character tags to save make sure to dump them too
+	TAGMAP_CITERATOR CI;
+	for(CI=tags.begin();CI!=tags.end();CI++) 
 	{
-		dumping << "TAGNAME=" << tag->name << std::endl;
-		if( JSVAL_IS_STRING( tag->val ) ) 
+		dumping << "TAGNAME=" << CI->first << std::endl;
+		if( JSVAL_IS_STRING(CI->second) ) 
 		{
-			char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, tag->val ) );
+			char *s_tagval = JS_GetStringBytes( JS_ValueToString( jsContext, CI->second ) );
 			dumping << "TAGVALS=" << (s_tagval) << std::endl;
 		} 
 		else 
 		{
-			dumping << "TAGVAL=" << ((SI32)tag->val) << std::endl;
+			dumping << "TAGVAL=" << ((SI32)CI->second) << std::endl;
 		}
 	}
 	//====================================================================================
@@ -1435,6 +1464,7 @@ UI08 cBaseObject::GetSerial( UI08 part ) const
 	return 0;
 }
 
+/*
 //o--------------------------------------------------------------------------
 //|	Function		-	UI08 GetMulti( UI08 part )
 //|	Date			-	28 July, 2000
@@ -1449,6 +1479,7 @@ UI08 cBaseObject::GetMulti( UI08 part ) const
 		return 0xFF;
 	return multis->GetSerial( part );
 }
+*/
 
 //o--------------------------------------------------------------------------
 //|	Function		-	UCHAR GetSpawn( UCHAR part )
@@ -1465,6 +1496,7 @@ UI08 cBaseObject::GetSpawn( UI08 part ) const
 	return spawnserial->GetSerial( part );
 }
 
+/*
 //o--------------------------------------------------------------------------
 //|	Function		-	UI08 GetOwner( UI08 part )
 //|	Date			-	28 July, 2000
@@ -1479,6 +1511,7 @@ UI08 cBaseObject::GetOwner( UI08 part ) const
 		return 0;
 	return owner->GetSerial( part );
 }
+*/ 
 
 //o--------------------------------------------------------------------------
 //|	Function		-	SetOwner( SERIAL newSerial )
@@ -1492,7 +1525,7 @@ void cBaseObject::SetOwner( SERIAL newSerial )
 {
 	if( newSerial == INVALIDSERIAL )
 		owner = NULL;
-	if( newSerial >= 0x40000000 )
+	if( newSerial >= BASEITEMSERIAL )
 		owner = (cBaseObject *)calcItemObjFromSer( newSerial );
 	else
 		owner = (cBaseObject *)calcCharObjFromSer( newSerial );
@@ -1810,7 +1843,7 @@ point3 cBaseObject::GetLocation( void ) const
 //o--------------------------------------------------------------------------
 void cBaseObject::SetLocation( point3 &toSet )
 {
-	SetLocation( (short)toSet.x, (short)toSet.y, (short)toSet.z );
+	SetLocation( (short)toSet.x, (short)toSet.y, (SI08)toSet.z );
 }
 
 
@@ -2365,7 +2398,7 @@ bool cBaseObject::HandleLine( char *tag, char *data )
 	case 'R':
 		if( !strcmp( tag, "Race" ) )
 		{
-			race = makeNum( data );
+			race = static_cast<RACEID>(makeNum( data ));
 			return true;
 		}
 		break;
@@ -2601,7 +2634,7 @@ void cBaseObject::SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 val
 //o--------------------------------------------------------------------------
 void cBaseObject::PostLoadProcessing( UI32 index )
 {
-	SERIAL tmpSerial = 0xFFFFFFFF;
+	SERIAL tmpSerial = INVALIDSERIAL;
 	if( multis != NULL )
 	{
 		tmpSerial = (SERIAL)multis;

@@ -69,7 +69,7 @@ bool cDice::convStringToDice( std::string dieString )
 	pLoc = dieString.find( "+" );
 	if( pLoc <= 0 )
 	{	// no +
-		for( tmpCounter = dLoc+1; tmpCounter < dieString.length(); tmpCounter++ )
+		for( tmpCounter = dLoc+1; static_cast<unsigned int>(tmpCounter) < dieString.length(); tmpCounter++ )
 			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
 		tmpString[tmpCounter-dLoc-1] = 0;
 		sides = atoi( tmpString );
@@ -80,7 +80,7 @@ bool cDice::convStringToDice( std::string dieString )
 			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
 		tmpString[tmpCounter-dLoc-1] = 0;
 		sides = atoi( tmpString );
-		for( tmpCounter = pLoc + 1; tmpCounter < dieString.length(); tmpCounter++ )
+		for( tmpCounter = pLoc + 1; static_cast<unsigned int>(tmpCounter) < dieString.length(); tmpCounter++ )
 			tmpString[tmpCounter-pLoc-1] = tmpString[tmpCounter];
 		tmpString[tmpCounter-pLoc-1] = 0;
 		addition = atoi( tmpString );

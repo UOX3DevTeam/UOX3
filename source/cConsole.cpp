@@ -20,12 +20,14 @@ const UI08 WARNINGMODE = 1;
 const UI08 ERRORMODE = 2;
 const UI08 COLOURMODE = 3;
 
+/*
 const UI08 CNORMAL	= 0;
 const UI08 CBLUE	= 1;
 const UI08 CRED		= 2;
 const UI08 CGREEN	= 3;
 const UI08 CYELLOW	= 4;
 const UI08 CBWHITE	= 5;
+*/ 
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  CConsole()
@@ -810,3 +812,100 @@ void CConsole::MoveTo( int x, int y )
   cout << "\033[" << x << "C";
 }
 #endif
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	bool CConsole::LogEcho( void )
+//|	Date					-	2/03/2003
+//|	Developers		-	Maarc
+//|	Organization	-	UOX3DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+bool CConsole::LogEcho( void )
+{
+	return logEcho;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	void CConsole::LogEcho( bool value )
+//|	Date					-	2/03/2003
+//|	Developers		-	Maarc
+//|	Organization	-	UOX3DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void CConsole::LogEcho( bool value )
+{
+	logEcho = value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	void CConsole::StartOfLineCheck( void )
+//|	Date					-	2/3/2003
+//|	Developers		-	Maarc
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Reduces excess work in overloaded functions by checking
+//|									to see if the start of line has to be done here
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void CConsole::StartOfLineCheck( void )
+{
+	if( curLeft == 0 )
+	{
+		PrintStartOfLine();
+		curLeft = 1;
+	}
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
+//|	Date					-	2/7/2003
+//|	Developers		-	Maarc
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	This is much like PrintFailed, PrintDone and so on except 
+//|									we specify the text and the colour
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
+{
+	va_list argptr;
+	char msg[MAX_CONSOLE_BUFF];
+
+	va_start( argptr, toPrint );
+	vsnprintf( msg, MAX_CONSOLE_BUFF, toPrint, argptr );
+	va_end( argptr );
+
+	if( CanPrint( currentMode, currentLevel ) )
+	{
+		StartOfLineCheck();
+		int stringLength = strlen( msg ) + 3;
+		MoveTo( 80 - stringLength );
+		TurnNormal();
+		(*this) << "[";
+		switch( colour )
+		{
+		default:
+		case CNORMAL:						break;
+		case CBLUE:		TurnBlue();			break;
+		case CRED:		TurnRed();			break;
+		case CGREEN:	TurnGreen();		break;
+		case CYELLOW:	TurnYellow();		break;
+		case CBWHITE:	TurnBrightWhite();	break;
+		}
+		(*this) << msg;
+		TurnNormal();
+		(*this) << "]" << myendl;
+	}
+}
