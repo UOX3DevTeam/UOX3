@@ -31,7 +31,7 @@
 
 #ifdef __LINUX__
 	#include <dirent.h>
-	#define strnicmp(a,b,c) strnbasecmp(a,b,c)
+	#define strnicmp(a,b,c) strncasecmp(a,b,c)
 	#define _stat stat
 	#define _mkdir mkdir
 	#define _rmdir rmdir
