@@ -436,7 +436,7 @@ void command_resend(int s)
 // Resends server data to client.
 {
 	all_items(s); 
-	printf("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!" );
+	printf("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!\n" );
 	teleport(currchar[s]);
 	return;
 }

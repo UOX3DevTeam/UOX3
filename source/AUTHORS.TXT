@@ -34,8 +34,9 @@ DATE                     AUTHOR                     ARRANGER
   skills.cpp            Fixed some Level 4 Warnings.
   items.cpp             If char_st.x and item_st.x are both short int, why 
   globals.cpp           gatex must be int? Fixed that.
-  magic.cpp             If Item_st.color? are unsigned chars, why beardcolor                           
+  magic.cpp             If Item_st.color? are unsigned chars, why beardcolor
   dbl_sinlge_click.cpp    isn't? Fixed.
+  walking.cpp
   uox3.h
   townstones.cpp
   worldmain.cpp

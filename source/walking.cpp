@@ -992,10 +992,10 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 				extmove[4] = chars[c].ser4;
 				extmove[5] = chars[c].id1;
 				extmove[6] = chars[c].id2;
-				extmove[7] = (char) chars[c].x>>8;
-				extmove[8] = (char) chars[c].x%256;
-				extmove[9] = (char) chars[c].y>>8;
-				extmove[10]= (char) chars[c].y%256;
+				extmove[7] = chars[c].x>>8;
+				extmove[8] = chars[c].x%256;
+				extmove[9] = chars[c].y>>8;
+				extmove[10]= chars[c].y%256;
 				extmove[11]=chars[c].dispz;
 				extmove[12]=dir;
 				extmove[13]=chars[c].skin1; //ripper, skin problems bugfix
