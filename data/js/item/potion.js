@@ -5,7 +5,7 @@ function onUse( pUser, iUsed )
 	{
 		if( pUser.isUsingPotion )
 		{
-			socket.SysMessage( GetDictionaryEntry( 430, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 430, socket.Language ) ); //You must wait a while before using another potion.
 			return false;
 		}
 
@@ -18,11 +18,11 @@ function onUse( pUser, iUsed )
 				{
 					case 1:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 6, 15 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1608, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1608, socket.Language ) ); //You feel more agile!
 						break;
 					case 2:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 11, 30 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1609, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1609, socket.Language ) ); //You feel much more agile!
 						break;
 					default:
 						break;
@@ -55,22 +55,22 @@ function onUse( pUser, iUsed )
 					}
 
 					if( pUser.poison )
-						socket.SysMessage( GetDictionaryEntry( 1345, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1345, socket.Language ) ); //The potion was not able to cure this poison.
 					else
 					{
 						pUser.StaticEffect( 0x373A, 0, 15 );
 						pUser.SoundEffect( 0x01E0, true );
-						socket.SysMessage( GetDictionaryEntry( 1346, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1346, socket.Language ) ); //The poison was cured!
 					}
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1344, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 1344, socket.Language ) ); //The potion had no effect.
 				break;
 			case 3:		// Explosion Potion
 				var pRegion = pUser.region;
 				if( pRegion.isGuarded )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1347, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 1347, socket.Language ) ); //You can't use that in town!
 					return false;
 				}
 				else
@@ -80,7 +80,7 @@ function onUse( pUser, iUsed )
 					DoTempEffect( 0, pUser, pUser, 16, 0, 2, 2 );
 					DoTempEffect( 0, pUser, pUser, 16, 0, 3, 1 );
 					DoTempEffect( 0, pUser, iUsed, 17, 0, 4, 0 );
-					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.Language ) );
+					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.Language ) ); //Now would be a good time to throw it!
 				}
 				break;
 			case 4:		// Heal Potion
@@ -88,15 +88,15 @@ function onUse( pUser, iUsed )
 				{
 					case 1:
 						pUser.hitpoints = (pUser.hitpoints + 5 + RandomNumber( 1, 5 ));
-						pUser.SysMessage( GetDictionaryEntry( 1349, socket.Language ) );
+						pUser.SysMessage( GetDictionaryEntry( 1349, socket.Language ) ); //You feel a little better!
 						break;
 					case 2:
 						pUser.hitpoints = (pUser.hitpoints + 15 + RandomNumber( 1, 10 ));
-						pUser.SysMessage( GetDictionaryEntry( 1350, socket.Language ) );
+						pUser.SysMessage( GetDictionaryEntry( 1350, socket.Language ) ); //You feel better!
 						break;
 					case 3:
 						pUser.hitpoints = (pUser.hitpoints + 20 + RandomNumber( 1, 20 ));
-						pUser.SysMessage( GetDictionaryEntry( 1351, socket.Language ) );
+						pUser.SysMessage( GetDictionaryEntry( 1351, socket.Language ) ); //You feel much better!
 						break;
 					default:
 						break;
@@ -116,18 +116,18 @@ function onUse( pUser, iUsed )
 				
 				pUser.SetTimer( 5, (180*1000) );	// Poison Wearoff Timer
 				pUser.SoundEffect( 0x0246, true );
-				socket.SysMessage( GetDictionaryEntry( 1352, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1352, socket.Language ) ); //You poisoned yourself! *sigh*
 				break;
 			case 7:		// Refresh Potion
 				switch( iUsed.morez )
 				{
 					case 1:
 						pUser.stamina = (pUser.stamina + 20 + RandomNumber( 1, 10 ));
-						socket.SysMessage( GetDictionaryEntry( 1353, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1353, socket.Language ) ); //You feel more energetic!
 						break;
 					case 2:
 						pUser.stamina = (pUser.stamina + 40 + RandomNumber( 1, 30 ));
-						socket.SysMessage( GetDictionaryEntry( 1354, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1354, socket.Language ) ); //You feel much more energetic!
 						break;
 					default:
 						break;
@@ -140,11 +140,11 @@ function onUse( pUser, iUsed )
 				{
 					case 1:
 						DoTempEffect( 0, pUser, pUser, 8, (5 + RandomNumber( 1, 10 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1355, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1355, socket.Language ) ); //You feel stronger!
 						break;
 					case 2:
 						DoTempEffect( 0, pUser, pUser, 8, (10 + RandomNumber( 1, 20 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1356, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1356, socket.Language ) ); //You feel much stronger!
 						break;
 					default:
 						break;

@@ -5,7 +5,7 @@ function CommandRegistration()
 
 function command_SHOWDETAIL( socket, cmdString )
 {
-	socket.CustomTarget( 0, "Select Item to get Type Info" );
+	socket.CustomTarget( 0, "Select Item to get Type Info from:" );
 }
 
 function onCallback0( socket, ourObj )

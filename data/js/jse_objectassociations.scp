@@ -263,6 +263,7 @@
 0x0d22=2007
 0x0d23=2007
 0x0d24=2007
+
 // Pick wheat
 0x0c55=2008
 0x0c56=2008
@@ -271,6 +272,7 @@
 0x0c59=2008
 0x0c5a=2008
 0x0c5b=2008
+
 // pick cotton
 0x0c4f=2009
 0x0c50=2009
@@ -278,25 +280,30 @@
 0x0c52=2009
 0x0c53=2009
 0x0c54=2009
+
 // pick flax
 0x1a99=2010
 0x1a9a=2010
 0x1a9b=2010
+
 // harvesting and picking fruits end
 // ----------------------------------
 
 // ----------------------------
+
 // tailoring and spinning start
 // scissors : unshorn sheep : shorn sheep & unspun wool
 0x0f9e=131
 0x0f9f=131
 // bale of cotton : spinning wheel : six spools of thread
+0x0def=132
 0x0df9=132
 // flax bundle : spinning wheel : six spools of thread
 0x1a9c=133
 0x1a9d=133
 // unspun wool : spinning wheel : three balls of yarn
 0x0df8=134
+0x101f=134
 // five balls of yarn : loom : bolt of cloth
 0x0e1d=135
 0x0e1e=135
@@ -309,6 +316,7 @@
 
 // -----------------------
 // turn furniture start
+
 // Straw Chair 0b5a
 // 0x0b5a 6001
 // 0x0b5b 6001
@@ -356,8 +364,3 @@
 // pets from pet static end
 // ------------------------
 }
-
-
-
-
-
