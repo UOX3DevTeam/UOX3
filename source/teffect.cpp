@@ -103,6 +103,8 @@ bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 	std::ostringstream dumping( destination ); 
 	BinBuffer buff;
 
+	cBaseObject *getPtr = NULL;
+
 	switch( mode )
 	{
 	case 1:	
@@ -124,7 +126,11 @@ bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 
 		buff.PutByte( Dispellable() );
 
-		buff.PutLong( ItemPtr() );
+		getPtr = ObjPtr();
+		if( getPtr != NULL )
+			buff.PutLong( getPtr->GetSerial() );
+		else
+			buff.PutLong( INVALIDSERIAL );
 
 		buff.Write( effectDestination );
 		break;
@@ -140,7 +146,12 @@ bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 		dumping << "More2=" << More2() << std::endl;
 		dumping << "More3=" << More3() << std::endl;
 		dumping << "Dispel=" << Dispellable() << std::endl;
-		dumping << "ItemPtr=" << ItemPtr() << std::endl;
+
+		getPtr = ObjPtr();
+		if( getPtr != NULL )
+			dumping << "ObjPtr=" << getPtr->GetSerial() << std::endl;
+		else
+			dumping << "ObjPtr=" << INVALIDSERIAL << std::endl;
 
 		effectDestination << dumping.str();
 
