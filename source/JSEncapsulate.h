@@ -16,6 +16,8 @@ namespace UOX
 		};
 
 		JSEncapsulate( JSContext *jsCX, jsval *jsVP );
+		JSEncapsulate();
+		void		SetContext( JSContext *jsCX, jsval *jsVP );
 		bool isType( JSObjectType toCheck );
 		int			toInt( void );
 		bool		toBool( void );
@@ -25,6 +27,8 @@ namespace UOX
 //		operator const char *()
 	protected:
 
+		void			InternalReset( void );
+		void			Init( void );
 		bool			beenParsed[JSOT_COUNT];
 		JSObjectType	nativeType;
 

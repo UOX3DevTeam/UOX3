@@ -1,3 +1,40 @@
+July 31 2004
+	Increased JS context stack size from 0x2000 to 0x4000 (we may need the extra space)
+	Updated JSEncapsulate for delayed initialisation (useful for optional parameters to methods)
+	Implemented Console object in JS
+		Methods
+			Print			1 (text to print, include \n at the end unless you're sending multiple mesesages)
+			Log			1 (text to print, same as above.  Optional second parameter is the name of the file to log it into)
+			Error			2 (error level, text to print)
+			Warning			2 (warning level, text to print)
+			PrintSectionBegin	0
+			TurnYellow		0
+			TurnRed			0
+			TurnGreen		0
+			TurnBlue		0 
+			TurnNormal		0
+			TurnBrightWhite		0
+			PrintDone		0
+			PrintFailed		0
+			PrintPassed		0
+			ClearScreen		0
+			PrintBasedOnVal		1 (pass true or false, it will say pass/fail based on this)
+			MoveTo			2 (x coord, y coord - if you want the same line, y == -1)
+			PrintSpecial		2 (colour of text, text to print)
+		Properties	(most of these can be ignored, as they do very little eg boundaries)
+			left			left (always 0)
+			top			top (always 0)
+			height			height (always 0)
+			width			width (always 0)
+			filter			filter setting
+			mode			filter mode
+			level			filter level, integer
+			logEcho			boolean - determines if log calls get echo'd to screen
+		
+	Wrote a console test driver script (command consoletest)
+	Posix compliance fix from xir
+	Added MSVC7.1 project files
+
 July 29 2004
 	Note: We need to change references to __unix__ to something more like UOX_PLATFORM != PLATFORM_WINDOWS or UOX_PLATFORM == PLATFORM_LINUX
 	Some of che's fixes were not fixes (ie commenting out the throws) or improperly done (platform specific decls don't go in uox3.h)

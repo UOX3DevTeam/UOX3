@@ -148,6 +148,7 @@ private:
 
 	//|	Modification	-	08162003 - EviLDeD - Expose the CAccountClass to the JSE.
 	JSObject	*CAccountProto;
+	JSObject	*CConsoleProto;
 
 	bool		isFiring;
 	UI32		eventPresence[2];

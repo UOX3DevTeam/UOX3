@@ -4473,5 +4473,224 @@ JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
+//	{ "Print",				CConsole_Print,				1, 0, 0 },
+JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Print: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	Console.Print( arg0.toString().c_str() );
+	return JS_TRUE;
+}
+//	{ "Log",				CConsole_Log,				1, 0, 0 },
+JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 2 )
+	{
+		MethodError( "Log: Invalid number of arguments (takes 1 or 2)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	JSEncapsulate arg1;
+	if( argc == 1 )
+	{
+		Console.Log( arg0.toString().c_str() );
+	}
+	else
+	{
+		arg1.SetContext( cx, &(argv[1]) );
+		Console.Log( arg0.toString().c_str(), arg1.toString().c_str() );
+	}
+	return JS_TRUE;
+}
+//	{ "Error",				CConsole_Error,				2, 0, 0 },
+JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "Error: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	JSEncapsulate arg1( cx, &(argv[1]) );
+	Console.Error( arg0.toInt(), arg1.toString().c_str() );
+	return JS_TRUE;
+}
+//	{ "Warning",			CConsole_Warning,			2, 0, 0 },
+JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "Warning: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	JSEncapsulate arg1( cx, &(argv[1]) );
+	Console.Warning( arg0.toInt(), arg1.toString().c_str() );
+	return JS_TRUE;
+}
+//	{ "PrintSectionBegin",	CConsole_PrintSectionBegin,	0, 0, 0 },
+JSBool CConsole_PrintSectionBegin( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "PrintSectionBegin: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.PrintSectionBegin();
+	return JS_TRUE;
+}
+//	{ "TurnYellow",			CConsole_TurnYellow,		0, 0, 0 },
+JSBool CConsole_TurnYellow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnYellow: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnYellow();
+	return JS_TRUE;
+}
+//	{ "TurnRed",			CConsole_TurnRed,			0, 0, 0 },
+JSBool CConsole_TurnRed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnRed: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnRed();
+	return JS_TRUE;
+}
+//	{ "TurnGreen",			CConsole_TurnGreen,			0, 0, 0 },
+JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnGreen: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnGreen();
+	return JS_TRUE;
+}
+//	{ "TurnBlue",			CConsole_TurnBlue,			0, 0, 0 },
+JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnBlue: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnBlue();
+	return JS_TRUE;
+}
+//	{ "TurnNormal",			CConsole_TurnNormal,		0, 0, 0 },
+JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnNormal: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnNormal();
+	return JS_TRUE;
+}
+//	{ "TurnBrightWhite",	CConsole_TurnBrightWhite,	0, 0, 0 },
+JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "TurnBrightWhite: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.TurnBrightWhite();
+	return JS_TRUE;
+}
+//	{ "PrintDone",			CConsole_PrintDone,			0, 0, 0 },
+JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "PrintDone: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.PrintDone();
+	return JS_TRUE;
+}
+//	{ "PrintFailed",		CConsole_PrintFailed,		0, 0, 0 },
+JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "PrintFailed: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.PrintFailed();
+	return JS_TRUE;
+}
+//	{ "PrintPassed",		CConsole_PrintPassed,		0, 0, 0 },
+JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "PrintPassed: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.PrintPassed();
+	return JS_TRUE;
+}
+//	{ "ClearScreen",		CConsole_ClearScreen,		0, 0, 0 },
+JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "ClearScreen: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	Console.ClearScreen();
+	return JS_TRUE;
+}
+//	{ "PrintBasedOnVal",	CConsole_PrintBasedOnVal,	1, 0, 0 },
+JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	Console.PrintBasedOnVal( arg0.toBool() );
+	return JS_TRUE;
+}
+//	{ "MoveTo",				CConsole_MoveTo,			2, 0, 0 },
+JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "MoveTo: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	JSEncapsulate arg1( cx, &(argv[1]) );
+	Console.MoveTo( arg0.toInt(), arg1.toInt() );
+	return JS_TRUE;
+}
+//	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
+JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "PrintSpecial: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	JSEncapsulate arg1( cx, &(argv[1]) );
+	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
+	return JS_TRUE;
+}
+
 }
 

@@ -478,24 +478,29 @@ void cDirectoryListing::InternalRetrieve( void )
 {
 	char filePath[512];
 
-#if defined(__unix__)
-	DIR *dir = opendir(".");
-	struct dirent *dirp = NULL;
+#if defined(__unix__) 
+	DIR *dir = opendir("."); 
+	struct dirent *dirp = NULL; 
+	struct stat dirstat; 
 
-	while( ( dirp = readdir( dir ) ) )	
-	{
-		if( dirp->d_type == DT_DIR && doRecursion )
-		{
-			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) )
-				subdirectories.push_back( cDirectoryListing( currentDir + "/" + dirp->d_name, extension, doRecursion ) );
-			continue;
-		}
-		shortList.push_back( dirp->d_name );
-		sprintf( filePath, "%s/%s", currentDir.c_str(), dirp->d_name );
-		filenameList.push_back( filePath );
-	}
+	while( ( dirp = readdir( dir ) ) ) 
+	{ 
+		stat( dirp->d_name, &dirstat ); 
+		if( S_ISDIR( dirstat.st_mode ) && doRecursion ) 
+		{ 
+			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) ) 
+			{ 
+				subdirectories.push_back( cDirectoryListing( currentDir + "/" + dirp->d_name, extension, doRecursion ) ); 
+				Console.Print( "%s/%s/n", currentDir, dirp->d_name ); 
+				continue; 
+			} 
+		} 
+		shortList.push_back( dirp->d_name ); 
+		sprintf( filePath, "%s/%s", currentDir.c_str(), dirp->d_name ); 
+		filenameList.push_back( filePath ); 
+	} 
 
-#else
+#else 
 
 	WIN32_FIND_DATA toFind;
 	HANDLE findHandle = FindFirstFile( extension.c_str(), &toFind );		// grab first file that meets spec

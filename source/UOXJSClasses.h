@@ -288,6 +288,21 @@ static JSClass UOXAccount_class =
 	JS_FinalizeStub
 };
 
+static JSClass UOXConsole_class = 
+{
+	"CConsoleClass",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CConsoleProps_getProperty,
+	CConsoleProps_setProperty,
+	//JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 }
 
 #endif

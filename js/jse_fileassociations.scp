@@ -144,6 +144,7 @@ FILE=commands/delid.js
 FILE=commands/killall.js
 FILE=commands/gumpmenu.js
 FILE=commands/secondsperuominute.js
+FILE=commands/consoletest.js
 FILE=commands/targeting/effects.js
 FILE=commands/targeting/vendor.js
 FILE=commands/targeting/stats.js

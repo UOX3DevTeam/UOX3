@@ -42,6 +42,8 @@ JSBool CFileProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 JSBool CFileProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
 }
 

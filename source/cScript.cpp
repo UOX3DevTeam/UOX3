@@ -137,7 +137,7 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 {
 	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
 	needsChecking[0] = needsChecking[1] = 0xFFFFFFFF;
-	targContext = JS_NewContext( jsRuntime, 0x2000 );
+	targContext = JS_NewContext( jsRuntime, 0x4000 );
 	if( targContext == NULL )
 		return;
 	targObject = JS_NewObject( targContext, &uox_class, NULL, NULL ); 
@@ -188,9 +188,11 @@ cScript::cScript( std::string targFile, SCRIPTTYPE sType ) : isFiring( false ), 
 	SocketProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
 	UOXCFileProto		=	JS_InitClass( targContext, targObject, targObject, &UOXFile_class, UOXCFile, 0, CFileProperties, CFile_Methods, CFileProperties, CFile_Methods );
 	CAccountProto		=	JS_InitClass( targContext, targObject, targObject, &UOXAccount_class, NULL, 0, CAccountProperties, CAccount_Methods, CAccountProperties, CAccount_Methods );
+	CConsoleProto		=	JS_InitClass( targContext, targObject, targObject, &UOXConsole_class, NULL, 0, CConsoleProperties, CConsole_Methods, CConsoleProperties, CConsole_Methods );
 	// Init the global Spells[] object
 	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 	JS_DefineObject( targContext, targObject, "Accounts", &UOXAccount_class, CAccountProto, 0 );
+	JS_DefineObject( targContext, targObject, "Console", &UOXConsole_class, CConsoleProto, 0 );
 
 	// let's acquire items 0 and 1, and chars 0 and 1, by default, so that
 	// we can reuse these for parameter stuff

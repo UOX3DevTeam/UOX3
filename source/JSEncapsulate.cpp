@@ -3,15 +3,27 @@
 
 namespace UOX
 {
-	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), intVal( 0 ), floatVal( 0 ), boolVal( false ), objectVal( NULL ), stringVal( "" )
+	void JSEncapsulate::InternalReset( void )
 	{
 		beenParsed[JSOT_INT]	= false;
 		beenParsed[JSOT_DOUBLE] = false;
 		beenParsed[JSOT_BOOL]	= false;
 		beenParsed[JSOT_STRING] = false;
 		beenParsed[JSOT_OBJECT] = false;
-
 		nativeType = JSOT_COUNT;
+	}
+	JSEncapsulate::JSEncapsulate() : cx( NULL ), vp( NULL )
+	{
+		InternalReset();
+	}
+	void JSEncapsulate::SetContext( JSContext *jsCX, jsval *jsVP )
+	{
+		cx = jsCX;
+		vp = jsVP;
+		Init();
+	}
+	void JSEncapsulate::Init( void )
+	{
 		if( JSVAL_IS_PRIMITIVE( *vp ) )
 		{
 			if( JSVAL_IS_DOUBLE( (*vp) ) )
@@ -25,6 +37,11 @@ namespace UOX
 		}
 		else if( JSVAL_IS_OBJECT( (*vp) ) )
 			nativeType	= JSOT_OBJECT;
+	}
+	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), intVal( 0 ), floatVal( 0 ), boolVal( false ), objectVal( NULL ), stringVal( "" )
+	{
+		InternalReset();
+		Init();
 	}
 
 	bool JSEncapsulate::isType( JSObjectType toCheck )

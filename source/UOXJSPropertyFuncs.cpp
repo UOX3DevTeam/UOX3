@@ -1534,4 +1534,48 @@ namespace UOX
 		return JS_FALSE;
 	}
 
+	JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		JSString *tString = NULL;
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CCONSOLE_LEFT:		*vp = INT_TO_JSVAL( Console.Left() );			break;
+			case CCONSOLE_TOP:		*vp = INT_TO_JSVAL( Console.Top() );			break;
+			case CCONSOLE_HEIGHT:	*vp = INT_TO_JSVAL( Console.Height() );			break;
+			case CCONSOLE_WIDTH:	*vp = INT_TO_JSVAL( Console.Width() );			break;
+			case CCONSOLE_FILTER:	*vp = INT_TO_JSVAL( Console.FilterSetting() );	break;
+			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
+			case CCONSOLE_LEVEL:	*vp = INT_TO_JSVAL( Console.CurrentLevel() );	break;
+			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
+			default:
+				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CCONSOLE_LEFT:		Console.Left( encaps.toInt() );				break;
+			case CCONSOLE_TOP:		Console.Top( encaps.toInt() );				break;
+			case CCONSOLE_HEIGHT:	Console.Height( encaps.toInt() );			break;
+			case CCONSOLE_WIDTH:	Console.Width( encaps.toInt() );			break;
+			case CCONSOLE_FILTER:	Console.FilterSetting( encaps.toInt() );	break;
+			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
+			case CCONSOLE_LEVEL:	Console.CurrentLevel( encaps.toInt() );		break;
+			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
+			default:
+				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
 }

@@ -194,6 +194,24 @@ JSMethodFunc CAccount_DelAccount;
 //JSMethodFunc CAccount_ModAccount;
 //JSMethodFunc CAccount_SaveAccounts;
 
+JSMethodFunc CConsole_Print;
+JSMethodFunc CConsole_Log;
+JSMethodFunc CConsole_Error;
+JSMethodFunc CConsole_Warning;
+JSMethodFunc CConsole_PrintSectionBegin;
+JSMethodFunc CConsole_TurnYellow;
+JSMethodFunc CConsole_TurnRed;
+JSMethodFunc CConsole_TurnGreen;
+JSMethodFunc CConsole_TurnBlue;
+JSMethodFunc CConsole_TurnNormal;
+JSMethodFunc CConsole_TurnBrightWhite;
+JSMethodFunc CConsole_PrintDone;
+JSMethodFunc CConsole_PrintFailed;
+JSMethodFunc CConsole_PrintPassed;
+JSMethodFunc CConsole_ClearScreen;
+JSMethodFunc CConsole_PrintBasedOnVal;
+JSMethodFunc CConsole_MoveTo;
+JSMethodFunc CConsole_PrintSpecial;
 
 static JSFunctionSpec CGump_Methods[] =  
 { 	
@@ -410,6 +428,29 @@ static JSFunctionSpec CAccount_Methods[] =
 	{ "DelAccount",		CAccount_DelAccount,		1, 0, 0 },
 	//{ "ModAccount",		CAccount_ModAccount,		1, 0, 0 },
 	//{	"SaveAccounts",	CAccount_SaveAccounts,	1, 0, 0 },
+	{ NULL,			NULL,					0, 0, 0 }
+};
+
+static JSFunctionSpec CConsole_Methods[] =
+{
+	{ "Print",				CConsole_Print,				1, 0, 0 },
+	{ "Log",				CConsole_Log,				1, 0, 0 },
+	{ "Error",				CConsole_Error,				2, 0, 0 },
+	{ "Warning",			CConsole_Warning,			2, 0, 0 },
+	{ "PrintSectionBegin",	CConsole_PrintSectionBegin,	0, 0, 0 },
+	{ "TurnYellow",			CConsole_TurnYellow,		0, 0, 0 },
+	{ "TurnRed",			CConsole_TurnRed,			0, 0, 0 },
+	{ "TurnGreen",			CConsole_TurnGreen,			0, 0, 0 },
+	{ "TurnBlue",			CConsole_TurnBlue,			0, 0, 0 },
+	{ "TurnNormal",			CConsole_TurnNormal,		0, 0, 0 },
+	{ "TurnBrightWhite",	CConsole_TurnBrightWhite,	0, 0, 0 },
+	{ "PrintDone",			CConsole_PrintDone,			0, 0, 0 },
+	{ "PrintFailed",		CConsole_PrintFailed,		0, 0, 0 },
+	{ "PrintPassed",		CConsole_PrintPassed,		0, 0, 0 },
+	{ "ClearScreen",		CConsole_ClearScreen,		0, 0, 0 },
+	{ "PrintBasedOnVal",	CConsole_PrintBasedOnVal,	1, 0, 0 },
+	{ "MoveTo",				CConsole_MoveTo,			2, 0, 0 },
+	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
 	{ NULL,			NULL,					0, 0, 0 }
 };
 
