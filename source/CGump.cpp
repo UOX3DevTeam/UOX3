@@ -25,7 +25,7 @@ CGump::~CGump()
 }
 
 // Procedure for "raw" adding new tags/texts
-void CGump::Add( std::string Tag, std::string Text )
+void CGump::Add( const std::string Tag, const std::string Text )
 {
 	if( Tag.size() > 0 )
 		TagList.push_back( Tag );
@@ -34,7 +34,7 @@ void CGump::Add( std::string Tag, std::string Text )
 		TextList.push_back( Text );
 }
 
-void CGump::Send( cSocket *target )
+void CGump::Send( CSocket *target )
 {
 	if( target == NULL )
 		return;
@@ -43,7 +43,7 @@ void CGump::Send( cSocket *target )
 	toSend.GumpID( Type );
 	toSend.UserID( Serial );
 
-	STRINGLIST_ITERATOR tIter;
+	STRINGLIST_CITERATOR tIter;
 	for( tIter = TagList.begin(); tIter != TagList.end(); ++tIter )
 		toSend.AddCommand( (*tIter) );
 
@@ -149,7 +149,7 @@ UI16 CGump::StartPage( void )
 }
 
 // Callback for gumps.cpp
-void MultiGumpCallback( cSocket *mySocket, SERIAL GumpSerial, UI32 Button )
+void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button )
 {
 	if( GumpSerial == 0 ) // Do nothing on close gump
 		return;

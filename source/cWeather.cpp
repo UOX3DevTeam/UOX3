@@ -1321,12 +1321,12 @@ bool cWeatherAb::SnowActive( weathID toCheck )
 	return weather[toCheck].SnowActive();
 }
 
-bool cWeatherAb::DoPlayerStuff( cSocket *s, CChar *p )
+bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 {
 	if( !ValidateObject( p ) || p->IsNpc() )
 		return true;
 	weathID currval = p->GetRegion()->GetWeather();
-	if( currval > weather.size() || weather.size() == 0 )
+	if( currval > weather.size() || weather.empty() )
 	{
 		if( s != NULL )
 		{
@@ -1361,7 +1361,7 @@ bool cWeatherAb::DoPlayerStuff( cSocket *s, CChar *p )
 	return true;
 }
 
-void cWeatherAb::DoPlayerWeather( cSocket *s, UI08 weathType, SI08 currentTemp )
+void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp )
 // Weather Types 
 // 0 - dry
 // 1 - rain
@@ -1428,7 +1428,7 @@ CWeather *cWeatherAb::Weather( weathID toCheck )
 }
 
 // FUNCTION NEEDS REWORKING
-bool doLightEffect( cSocket& mSock, CChar& mChar )
+bool doLightEffect( CSocket& mSock, CChar& mChar )
 {
 	bool didDamage = false;
 
@@ -1536,7 +1536,7 @@ bool doLightEffect( cSocket& mSock, CChar& mChar )
 	return didDamage;
 }
 
-bool doWeatherEffect( cSocket& mSock, CChar& mChar, WeatherType element )
+bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 {
 	if( element == LIGHT || element == WEATHNUM )
 		return false;
@@ -1545,7 +1545,7 @@ bool doWeatherEffect( cSocket& mSock, CChar& mChar, WeatherType element )
 		return false;
 
 	bool didDamage			= false;
-	cTownRegion *charRegion	= mChar.GetRegion();
+	CTownRegion *charRegion	= mChar.GetRegion();
 	const UI08 weatherSys	= charRegion->GetWeather();
 	if( weatherSys != 0xFF )
 	{

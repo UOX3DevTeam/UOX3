@@ -149,21 +149,23 @@ cServerDefinitions::~cServerDefinitions()
 
 ScriptSection *cServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
+	UString tUFind( toFind );
+	tUFind = tUFind.upper();
+
 	ScriptSection *rvalue = NULL;
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
 		VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-		VECSCRIPTLIST_ITERATOR dIter;
 		if( toDel != NULL )
 		{
-			for( dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
+			for( VECSCRIPTLIST_CITERATOR dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
 			{
 				if( (*dIter) != NULL )
 				{
 					Script *toCheck = (*dIter);
 					if( toCheck != NULL )
 					{
-						rvalue = toCheck->FindEntry( toFind );
+						rvalue = toCheck->FindEntry( tUFind );
 						if( rvalue != NULL )
 							break;
 					}
@@ -180,10 +182,9 @@ ScriptSection *cServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITI
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
 		VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-		VECSCRIPTLIST_ITERATOR dIter;
 		if( toDel != NULL )
 		{
-			for( dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
+			for( VECSCRIPTLIST_CITERATOR dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
 			{
 				if( (*dIter) != NULL )
 				{
@@ -249,7 +250,7 @@ void cServerDefinitions::ReloadScriptObjects( void )
 		{
 			mSort.push_back( new PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
 		}
-		if( mSort.size() > 0 )
+		if( !mSort.empty() )
 		{
 			std::sort( mSort.begin(), mSort.end() );
 			Console.Print( "Section %20s : %6i", dirnames[sCtr].c_str(), 0 );
@@ -291,8 +292,8 @@ size_t cServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
 	if( toScan == NULL )
 		return 0;
-	VECSCRIPTLIST_ITERATOR cIter;
-	for( cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
+
+	for( VECSCRIPTLIST_CITERATOR cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
 		sumEntries += (*cIter)->NumEntries();
 	return sumEntries;
 }
@@ -360,7 +361,7 @@ void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 void cServerDefinitions::DisplayPriorityMap( void )
 {
 	Console << "Dumping map... " << myendl;
-	std::map< std::string, SI16 >::iterator p = priorityMap.begin();
+	std::map< std::string, SI16 >::const_iterator p = priorityMap.begin();
 	while( p != priorityMap.end() )
 	{
 		Console << p->first << " : " << p->second << myendl;

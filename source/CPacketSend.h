@@ -91,10 +91,10 @@ public:
 	virtual void	X( SI16 newValue );
 	virtual void	Y( SI16 newValue );
 	virtual void	Z( SI08 newValue );
-	virtual void	Direction( char newValue );
+	virtual void	Direction( UI08 newValue );
 	virtual void	Colour( UI16 colourID );
-	virtual void	FlagColour( char newValue );
-	virtual void	Flag( char newValue );
+	virtual void	FlagColour( UI08 newValue );
+	virtual void	Flag( UI08 newValue );
 	CPExtMove		&operator=( CChar &toCopy );
 };
 
@@ -115,15 +115,15 @@ public:
 class CPRemoveItem : public cPUOXBuffer
 {
 protected:
-	void			CopyData( cBaseObject &toCopy );
+	void			CopyData( CBaseObject &toCopy );
 public:
 					CPRemoveItem();
 		virtual ~	CPRemoveItem()
 		{
 		}
-					CPRemoveItem( cBaseObject &toCopy );
+					CPRemoveItem( CBaseObject &toCopy );
 	virtual void	Serial( SERIAL newSerial );
-	CPRemoveItem	&operator=( cBaseObject &toCopy );
+	CPRemoveItem	&operator=( CBaseObject &toCopy );
 };
 
 class CPWorldChange : public cPUOXBuffer
@@ -171,14 +171,14 @@ class CPBuyItem : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cBaseObject &i );
+	virtual void	CopyData( CBaseObject &i );
 public:
 					CPBuyItem();
 	virtual			~CPBuyItem()
 	{
 	}
-					CPBuyItem( cBaseObject &i );
-	CPBuyItem		&operator=( cBaseObject &toCopy );
+					CPBuyItem( CBaseObject &i );
+	CPBuyItem		&operator=( CBaseObject &toCopy );
 	void			Serial( SERIAL toSet );
 };
 
@@ -278,20 +278,20 @@ public:
 class CPPlaySoundEffect : public cPUOXBuffer
 {
 protected:
-	virtual void	CopyData( cBaseObject &toCopy );
+	virtual void	CopyData( CBaseObject &toCopy );
 	virtual void	InternalReset( void );
 public:
 					CPPlaySoundEffect();
 		virtual		~CPPlaySoundEffect()
 		{
 		}
-					CPPlaySoundEffect( cBaseObject &toCopy );
+					CPPlaySoundEffect( CBaseObject &toCopy );
 	virtual void	Mode( UI08 mode );
 	virtual void	Model( UI16 newModel );
 	virtual void	X( SI16 xLoc );
 	virtual void	Y( SI16 yLoc );
 	virtual void	Z( SI16 zLoc );
-	CPPlaySoundEffect &operator=( cBaseObject &toCopy );
+	CPPlaySoundEffect &operator=( CBaseObject &toCopy );
 };
 
 class CPPaperdoll : public cPUOXBuffer
@@ -337,12 +337,12 @@ public:
 	{
 	}
 					CPGraphicalEffect( UI08 effectType );
-					CPGraphicalEffect( UI08 effectType, cBaseObject &src, cBaseObject &trg );
-					CPGraphicalEffect( UI08 effectType, cBaseObject &src );
+					CPGraphicalEffect( UI08 effectType, CBaseObject &src, CBaseObject &trg );
+					CPGraphicalEffect( UI08 effectType, CBaseObject &src );
 	virtual void	Effect( UI08 effectType );
-	virtual void	SourceSerial( cBaseObject &toSet );
+	virtual void	SourceSerial( CBaseObject &toSet );
 	virtual void	SourceSerial( SERIAL toSet );
-	virtual void	TargetSerial( cBaseObject &toSet );
+	virtual void	TargetSerial( CBaseObject &toSet );
 	virtual void	TargetSerial( SERIAL toSet );
 	virtual void	Model( SI16 nModel );
 	virtual void	X( SI16 nX );
@@ -355,9 +355,9 @@ public:
 	virtual void	Duration( UI08 nDuration );
 	virtual void	AdjustDir( bool nValue );
 	virtual void	ExplodeOnImpact( bool nValue );
-	virtual void	SourceLocation( cBaseObject &toSet );
+	virtual void	SourceLocation( CBaseObject &toSet );
 	virtual void	SourceLocation( SI16 x, SI16 y, SI08 z );
-	virtual void	TargetLocation( cBaseObject &toSet );
+	virtual void	TargetLocation( CBaseObject &toSet );
 	virtual void	TargetLocation( SI16 x, SI16 y, SI08 z );
 };
 
@@ -483,7 +483,7 @@ public:
 	virtual			~CPStatWindow()
 	{
 	}
-					CPStatWindow( CChar &toCopy, cSocket &target );
+					CPStatWindow( CChar &toCopy, CSocket &target );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Name( const std::string nName );
 	virtual void	CurrentHP( SI16 nValue );
@@ -501,7 +501,7 @@ public:
 	virtual void	Gold( UI32 gValue );
 	virtual void	AC( UI16 nValue );
 	virtual void	Weight( UI16 nValue );
-	virtual void	SetCharacter( CChar &toCopy, cSocket &target );
+	virtual void	SetCharacter( CChar &toCopy, CSocket &target );
 	virtual void	StatCap( UI16 value );
 	virtual void	CurrentPets( UI08 value );
 	virtual void	MaxPets( UI08 value );
@@ -595,7 +595,7 @@ public:
 					CPPauseResume();
 					CPPauseResume( UI08 mode );
 	virtual void	Mode( UI08 mode );
-	virtual bool	ClientCanReceive( cSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock );
 };
 
 class CPWebLaunch : public cPUOXBuffer
@@ -622,10 +622,10 @@ public:
 	}
 					CPTrackingArrow();
 					CPTrackingArrow( SI16 x, SI16 y );
-					CPTrackingArrow( cBaseObject &toCopy );
+					CPTrackingArrow( CBaseObject &toCopy );
 	virtual void	Location( SI16 x, SI16 y );
 	virtual void	Active( UI08 value );
-	CPTrackingArrow &operator=( cBaseObject &toCopy );
+	CPTrackingArrow &operator=( CBaseObject &toCopy );
 };
 
 class CPBounce : public cPUOXBuffer
@@ -645,16 +645,16 @@ class CPDyeVat : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cBaseObject &target );
+	virtual void	CopyData( CBaseObject &target );
 public:
 	virtual			~CPDyeVat()
 	{
 	}
 					CPDyeVat();
-					CPDyeVat( cBaseObject &target );
+					CPDyeVat( CBaseObject &target );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Model( SI16 toSet );
-	CPDyeVat &		operator=( cBaseObject &target );
+	CPDyeVat &		operator=( CBaseObject &target );
 };
 
 class CPMultiPlacementView : public cPUOXBuffer
@@ -853,10 +853,10 @@ protected:
 public:
 					CPMapChange();
 					CPMapChange( UI08 newMap );
-					CPMapChange( cBaseObject *moving );
+					CPMapChange( CBaseObject *moving );
 	virtual			~CPMapChange();
 	virtual	void	SetMap( UI08 newMap );
-	CPMapChange&	operator=( cBaseObject& moving );
+	CPMapChange&	operator=( CBaseObject& moving );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
@@ -864,7 +864,7 @@ class CPItemsInContainer : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cSocket *mSock, CItem& toCopy );
+	virtual void	CopyData( CSocket *mSock, CItem& toCopy );
 	bool			isVendor;
 	bool			isCorpse;
 	SERIAL			vendorSerial;
@@ -873,9 +873,9 @@ public:
 	{
 	}
 					CPItemsInContainer();
-					CPItemsInContainer( cSocket *mSock, CItem *container );
-					CPItemsInContainer( cSocket *mSock, CItem *container, CChar *vendor );
-					CPItemsInContainer( cSocket *mSock, CItem *container, bool corpseVal );
+					CPItemsInContainer( CSocket *mSock, CItem *container );
+					CPItemsInContainer( CSocket *mSock, CItem *container, CChar *vendor );
+					CPItemsInContainer( CSocket *mSock, CItem *container, bool corpseVal );
 	virtual void	NumberOfItems( UI16 numItems );
 	virtual UI16	NumberOfItems( void ) const;
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum );
@@ -963,8 +963,8 @@ public:
 	{
 	}
 					CPGraphicalEffect2( UI08 effectType );
-					CPGraphicalEffect2( UI08 effectType, cBaseObject &src, cBaseObject &trg );
-					CPGraphicalEffect2( UI08 effectType, cBaseObject &src );
+					CPGraphicalEffect2( UI08 effectType, CBaseObject &src, CBaseObject &trg );
+					CPGraphicalEffect2( UI08 effectType, CBaseObject &src );
 	virtual void	Hue( UI32 hue );
 	virtual void	RenderMode( UI32 mode );
 };
@@ -1020,15 +1020,15 @@ class CPSecureTrading : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	void			CopyData( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 );
-	void			CopyData( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
+	void			CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
+	void			CopyData( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 public:
 					CPSecureTrading();
-					CPSecureTrading( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 );
-					CPSecureTrading( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
+					CPSecureTrading( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
+					CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 	virtual			~CPSecureTrading();
-	void			Objects( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 );
-	void			Objects( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
+	void			Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
+	void			Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 	void			Action( UI08 value );
 	void			Name( const std::string nameFollowing );
 };
@@ -1037,14 +1037,14 @@ class CPGodModeToggle : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cSocket *s );
+	virtual void	CopyData( CSocket *s );
 public:
 	virtual			~CPGodModeToggle()
 	{
 	}
 					CPGodModeToggle();
-					CPGodModeToggle( cSocket *s );
-	CPGodModeToggle& operator=( cSocket *s );
+					CPGodModeToggle( CSocket *s );
+	CPGodModeToggle& operator=( CSocket *s );
 	virtual void	ToggleStatus( bool toSet );
 };
 
@@ -1088,7 +1088,7 @@ public:
 class CPSpeech : public cPUOXBuffer
 {
 protected:
-	void			CopyData( cBaseObject &toCopy );
+	void			CopyData( CBaseObject &toCopy );
 	void			CopyData( CPITalkRequest &talking );
 	void			InternalReset( void );
 	void			SetLength( UI16 value );
@@ -1097,13 +1097,13 @@ public:
 	virtual			~CPSpeech()
 	{
 	}
-					CPSpeech( cBaseObject &toCopy );
+					CPSpeech( CBaseObject &toCopy );
 					CPSpeech( CPITalkRequest &talking );
 	void			ID( UI16 toSet );
-	void			GrabSpeech( cSocket *mSock, CChar *mChar );
+	void			GrabSpeech( CSocket *mSock, CChar *mChar );
 	void			Serial( SERIAL toSet );
 	void			Object( CPITalkRequest &tSaid );
-	void			Object( cBaseObject &toCopy );
+	void			Object( CBaseObject &toCopy );
 	void			Type( UI08 value );
 	void			Colour( COLOUR value );
 	void			Font( UI16 value );
@@ -1111,14 +1111,14 @@ public:
 	void			Message( char *value );
 	void			GhostIt( UI08 method );
 	CPSpeech &operator=( CPSpeech &copyFrom );
-	CPSpeech &operator=( cBaseObject &toCopy );
+	CPSpeech &operator=( CBaseObject &toCopy );
 	CPSpeech &operator=( CPITalkRequest &talking );
 };
 
 class CPUnicodeSpeech : public cPUOXBuffer
 {
 protected:
-	void			CopyData( cBaseObject &toCopy );
+	void			CopyData( CBaseObject &toCopy );
 	void			CopyData( CPITalkRequestAscii &talking );
 	void			CopyData( CPITalkRequestUnicode &talking );
 	void			InternalReset( void );
@@ -1128,15 +1128,15 @@ public:
 	virtual			~CPUnicodeSpeech()
 	{
 	}
-					CPUnicodeSpeech( cBaseObject &toCopy );
+					CPUnicodeSpeech( CBaseObject &toCopy );
 					CPUnicodeSpeech( CPITalkRequestAscii &talking );
 					CPUnicodeSpeech( CPITalkRequestUnicode &talking );
 	void			ID( UI16 toSet );
-	void			GrabSpeech( cSocket *mSock, CChar *mChar );
+	void			GrabSpeech( CSocket *mSock, CChar *mChar );
 	void			Serial( SERIAL toSet );
 	void			Object( CPITalkRequestAscii &tSaid );
 	void			Object( CPITalkRequestUnicode &tSaid );
-	void			Object( cBaseObject &toCopy );
+	void			Object( CBaseObject &toCopy );
 	void			Language( char *value );
 	void			Type( UI08 value );
 	void			Colour( COLOUR value );
@@ -1145,7 +1145,7 @@ public:
 	void			Message( char *value );
 	void			GhostIt( UI08 method );
 	CPUnicodeSpeech &operator=( CPUnicodeSpeech &copyFrom );
-	CPUnicodeSpeech &operator=( cBaseObject &toCopy );
+	CPUnicodeSpeech &operator=( CBaseObject &toCopy );
 	CPUnicodeSpeech &operator=( CPITalkRequestAscii &talking );
 	CPUnicodeSpeech &operator=( CPITalkRequestUnicode &talking );
 };
@@ -1154,14 +1154,14 @@ class CPAllNames3D : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cBaseObject& obj );
+	virtual void	CopyData( CBaseObject& obj );
 public:
 	virtual			~CPAllNames3D()
 	{
 	}
 					CPAllNames3D();
-					CPAllNames3D( cBaseObject& obj );
-	void			Object( cBaseObject& obj );
+					CPAllNames3D( CBaseObject& obj );
+	void			Object( CBaseObject& obj );
 };
 
 class CPBookPage : public cPUOXBuffer
@@ -1217,7 +1217,7 @@ public:
 	}
 					CPNewSpellBook();
 					CPNewSpellBook( CItem& obj );
-	virtual bool	ClientCanReceive( cSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock );
 };
 
 class CPDisplayDamage : public cPUOXBuffer
@@ -1231,21 +1231,21 @@ public:
 	}
 					CPDisplayDamage();
 					CPDisplayDamage( CChar& ourTarg, UI16 ourDamage );
-	virtual bool	ClientCanReceive( cSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock );
 };
 
 class CPQueryToolTip : public cPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( cBaseObject& mObj );
+	virtual void	CopyData( CBaseObject& mObj );
 public:
 	virtual			~CPQueryToolTip()
 	{
 	}
 					CPQueryToolTip();
-					CPQueryToolTip( cBaseObject& mObj );
-	virtual bool	ClientCanReceive( cSocket *mSock );
+					CPQueryToolTip( CBaseObject& mObj );
+	virtual bool	ClientCanReceive( CSocket *mSock );
 };
 
 class CPToolTip : public cPUOXBuffer

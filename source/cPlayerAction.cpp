@@ -25,26 +25,26 @@
 namespace UOX
 {
 
-void		telltime( cSocket *s );
+void		telltime( CSocket *s );
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
-CItem *		startTrade( cSocket *mSock, CChar *i );
+CItem *		startTrade( CSocket *mSock, CChar *i );
 bool		checkItemRange( CChar *mChar, CItem *i );
 bool		isDoorBlocked( CItem *door );
-void		DoHouseTarget( cSocket *mSock, UI08 houseEntry );
-bool		keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x );
-void		SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate );
-void		BuildGumpFromScripts( cSocket *s, UI16 m );
-void		PlankStuff( cSocket *s, CItem *p );
-CBoatObj *	GetBoat( cSocket *s );
-void		ModelBoat( cSocket *s, CBoatObj *i );
+void		DoHouseTarget( CSocket *mSock, UI08 houseEntry );
+bool		keyInPack( CSocket *mSock, CChar *mChar, CItem *pack, CItem *x );
+void		SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
+void		BuildGumpFromScripts( CSocket *s, UI16 m );
+void		PlankStuff( CSocket *s, CItem *p );
+CBoatObj *	GetBoat( CSocket *s );
+void		ModelBoat( CSocket *s, CBoatObj *i );
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	Bounce( cSocket *bouncer, CItem *bouncing )
+//|	Function	-	Bounce( CSocket *bouncer, CItem *bouncing )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back from where they came
 //o---------------------------------------------------------------------------o
-void Bounce( cSocket *bouncer, CItem *bouncing )
+void Bounce( CSocket *bouncer, CItem *bouncing )
 {
 	if( bouncer == NULL || !ValidateObject( bouncing ) )
 		return;
@@ -75,7 +75,7 @@ void Bounce( cSocket *bouncer, CItem *bouncing )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  CItem *autoStack( cSocket *mSock, CItem *i, CItem *pack )
+//|   Function    :  CItem *autoStack( CSocket *mSock, CItem *i, CItem *pack )
 //|   Date        :  8/14/01
 //|   Programmer  :  Zane
 //|	  Modified	  :	 Abaddon, 9th September, 2001, returns true if item deleted
@@ -89,7 +89,7 @@ void Bounce( cSocket *bouncer, CItem *bouncing )
 //|									
 //|	Modification	-	09/25/2002	-	Brakthus - Weight fixes
 //o---------------------------------------------------------------------------o
-CItem *doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
+CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 {
 	UI32 newAmt = stack->GetAmount() + i->GetAmount();
 	if( newAmt > MAX_STACK )
@@ -112,7 +112,7 @@ CItem *doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function	-	bool autoStack( cSocket *mSock, CItem *i, CItem *pack )
+//|	Function	-	bool autoStack( CSocket *mSock, CItem *i, CItem *pack )
 //|	Date		-	
 //|	Developers	-	UOX3 DevTeam
 //|	Organization-	UOX3 DevTeam
@@ -124,7 +124,7 @@ CItem *doStacking( cSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 //|					stacking them automatically
 //|
 //o--------------------------------------------------------------------------o
-CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack )
+CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 {
 	CChar *mChar = NULL;
 	if( mSock != NULL )
@@ -164,7 +164,7 @@ CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  Grab( cSocket *mSock )
+//|   Function    :  Grab( CSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -185,9 +185,9 @@ bool CPIGetItem::Handle( void )
 	CPBounce bounce( 0 );
 
 	ObjectType oType	= OT_CBO;
-	cBaseObject *iOwner	= NULL;
+	CBaseObject *iOwner	= NULL;
 	CItem *x			= i;
-	cBaseObject *iCont	= i->GetCont();
+	CBaseObject *iCont	= i->GetCont();
 	if( iCont != NULL )  //Find character owning item
 	{
 		iOwner = FindItemOwner( i, oType );
@@ -238,7 +238,7 @@ bool CPIGetItem::Handle( void )
 						sendTradeStatus( z, x );
 					}
 					// Default item pick up sound sent to other player involved in trade
-					cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+					CSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 					if( zSock != NULL )
 						Effects->PlaySound( zSock, 0x0057, false );
 				}
@@ -349,7 +349,7 @@ bool CPIGetItem::Handle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  Equip( cSocket *mSock )
+//|   Function    :  Equip( CSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -465,7 +465,7 @@ bool CPIEquipItem::Handle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function		:	DropOnChar( cSocket *mSock, CChar *targChar, CItem *i )
+//|   Function		:	DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 //|   Date			:	Unknown
 //|   Programmer	:	UOX3 DevTeam
 //|	  Modified		:	Abaddon, September 14th, 2001, returns true if item deleted
@@ -476,7 +476,7 @@ bool CPIEquipItem::Handle( void )
 //|									
 //|	Modification	-	09/25/2002	-	Xuri/Brakthus - Weight fixes
 //o---------------------------------------------------------------------------o
-bool DropOnPC( cSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
+bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 {
 	bool stackDeleted = false;
 	if( targPlayer == mChar )
@@ -524,7 +524,7 @@ bool DropOnPC( cSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 	}
 	return stackDeleted;
 }
-bool DropOnNPC( cSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
+bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 {
 	bool stackDeleted	= false;
 	bool executeNpc		= true;
@@ -654,7 +654,7 @@ bool DropOnNPC( cSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	}
 	return stackDeleted;
 }
-bool DropOnChar( cSocket *mSock, CChar *targChar, CItem *i )
+bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -679,13 +679,13 @@ bool DropOnChar( cSocket *mSock, CChar *targChar, CItem *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  Drop( cSocket *s )
+//|   Function    :  Drop( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Item is dropped on the ground or on a character
 //o---------------------------------------------------------------------------o
-void Drop( cSocket *mSock ) // Item is dropped on ground
+void Drop( CSocket *mSock ) // Item is dropped on ground
 {
 	CChar *nChar	= mSock->CurrcharObj();
 	SERIAL serial	= mSock->GetDWord( 1 );
@@ -756,13 +756,13 @@ void Drop( cSocket *mSock ) // Item is dropped on ground
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  DropOnItem( cSocket *s )
+//|   Function    :  DropOnItem( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when an item is dropped in a container or on another item
 //o---------------------------------------------------------------------------o
-void DropOnItem( cSocket *mSock )
+void DropOnItem( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	CItem *nCont = calcItemObjFromSer( mSock->GetDWord( 10 ) );
@@ -796,7 +796,7 @@ void DropOnItem( cSocket *mSock )
 				nCont->SetTempVar( CITV_MOREZ, 0 );
 				sendTradeStatus( z, nCont );
 			}
-			cSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+			CSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
 			if( zSock != NULL )
 				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 		}
@@ -1053,7 +1053,7 @@ UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
 //o---------------------------------------------------------------------------o
 void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 {
-	if( cwmWorldState->prowessTitles.size() < 1 )
+	if( cwmWorldState->prowessTitles.empty() )
 		return;
 	SKILLVAL skillLevel = 0;
 	UI08 bestSkill = BestSkill( mChar, skillLevel );
@@ -1244,14 +1244,14 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  PaperDoll( cSocket *s, CChar *pdoll )
+//|   Function    :  PaperDoll( CSocket *s, CChar *pdoll )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Open a characters paperdoll and show titles based on skill,
 //|					 reputation, murder counts, race, ect.
 //o---------------------------------------------------------------------------o
-void PaperDoll( cSocket *s, CChar *pdoll )
+void PaperDoll( CSocket *s, CChar *pdoll )
 {
 	UString tempstr;
 	CPPaperdoll pd		= (*pdoll);
@@ -1272,7 +1272,7 @@ void PaperDoll( cSocket *s, CChar *pdoll )
 	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
-		if( cwmWorldState->murdererTags.size() < 1 )
+		if( cwmWorldState->murdererTags.empty() )
 			tempstr = UString::sprintf( Dictionary->GetEntry( 374, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].loBound )	// not a real murderer
 			bContinue = true;
@@ -1323,7 +1323,7 @@ void PaperDoll( cSocket *s, CChar *pdoll )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Character uses a potion
 //o---------------------------------------------------------------------------o
-void usePotion( cSocket *mSock, CChar *p, CItem *i )
+void usePotion( CSocket *mSock, CChar *p, CItem *i )
 {
 	if( !ValidateObject( p ) || !ValidateObject( i ) )
 		return;
@@ -1527,15 +1527,15 @@ void usePotion( cSocket *mSock, CChar *p, CItem *i )
 	}
 }
 
-void MountCreature( cSocket *mSock, CChar *s, CChar *x );
+void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 //o---------------------------------------------------------------------------o
-//|   Function    :  handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
+//|   Function    :  handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 //|   Date        :  Unknown
 //|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles double-clicks on a character
 //o---------------------------------------------------------------------------o
-void handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
+void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 {
 	CChar *mChar	= mSock->CurrcharObj();
 	CItem *pack		= NULL;
@@ -1620,13 +1620,13 @@ void handleCharDoubleClick( cSocket *mSock, SERIAL serial, bool keyboard )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
+//|   Function    :  bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
 //|   Date        :  2/11/2003
 //|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Runs a switch to match an item type to a function
 //o---------------------------------------------------------------------------o
-bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
+bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
 {
 	CChar *iChar	= NULL;
 	CItem *i		= NULL;
@@ -1793,7 +1793,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			else	// Display Townstone gump
 			{
-				cTownRegion *useRegion = calcRegionFromXY( x->GetX(), x->GetY(), mChar->WorldNumber() );
+				CTownRegion *useRegion = calcRegionFromXY( x->GetX(), x->GetY(), mChar->WorldNumber() );
 				if( useRegion != NULL )
 					useRegion->DisplayTownMenu( x, mSock );
 			}
@@ -2400,9 +2400,9 @@ void InitTagToItemType( void )
 
 ItemTypes FindItemTypeFromTag( UString strToFind )
 {
-	if( tagToItemType.size() == 0 )	// if we haven't built our array yet
+	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::iterator toFind = tagToItemType.find( strToFind.upper() );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strToFind.upper() );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
@@ -2441,9 +2441,9 @@ void InitIDToItemType( void )
 
 ItemTypes FindItemTypeFromID( UI16 idToFind )
 {
-	if( idToItemType.size() == 0 )	// if we haven't built our array yet
+	if( idToItemType.empty() )	// if we haven't built our array yet
 		InitIDToItemType();
-	std::map< UI16, ItemTypes >::iterator toFind = idToItemType.find( idToFind );
+	std::map< UI16, ItemTypes >::const_iterator toFind = idToItemType.find( idToFind );
 	if( toFind != idToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
@@ -2463,7 +2463,7 @@ ItemTypes findItemType( CItem *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	:  DoubleClick( cSocket *mSock )
+//|	Function	:  DoubleClick( CSocket *mSock )
 //|	Date		:  Unknown
 //|	Programmer	:  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -2690,7 +2690,7 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_ENDGATE:
 		case IT_OBJTELEPORTER:
 			{
-			cTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );
+			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );
 			dataToAdd = " (" + newRegion->GetName() + ")";
 			}
 	}
@@ -2700,7 +2700,7 @@ const char *AppendData( CItem *i, std::string currentName )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  SingleClick( cSocket *mSock )
+//|   Function    :  SingleClick( CSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o

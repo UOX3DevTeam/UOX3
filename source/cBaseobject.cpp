@@ -31,14 +31,14 @@ namespace UOX
 {
 
 //o--------------------------------------------------------------------------
-//|	Function		-	cBaseObject destructor
+//|	Function		-	CBaseObject destructor
 //|	Date			-	26 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	This function is does basically what the name implies
 //o--------------------------------------------------------------------------
-cBaseObject::~cBaseObject()
+CBaseObject::~CBaseObject()
 {
 	if( multis != NULL )
 		RemoveFromMulti( false );
@@ -84,14 +84,14 @@ const SI16			DEFBASE_CARVE		= -1;
 const UI08			DEFBASE_UPDATETYPES	= 0;
 const UI08			DEFBASE_OBJSETTINGS	= 0;
 //o--------------------------------------------------------------------------o
-//|	Function		-	cBaseObject constructor
+//|	Function		-	CBaseObject constructor
 //|	Date			-	26 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	This function is does basically what the name implies
 //o--------------------------------------------------------------------------o
-cBaseObject::cBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RACE ), x( DEFBASE_X ), y( DEFBASE_Y ), 
+CBaseObject::CBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RACE ), x( DEFBASE_X ), y( DEFBASE_Y ), 
 z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), serial( DEFBASE_SERIAL ), 
 multis( DEFBASE_MULTIS ), spawnserial( DEFBASE_SPAWNSER ), owner( DEFBASE_OWNER ),
 worldNumber( DEFBASE_WORLD ), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ), intelligence( DEFBASE_INT ), 
@@ -111,7 +111,7 @@ poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDAT
 
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	SI32 cBaseObject::GetNumTags( void ) const
+//|	Function			-	SI32 CBaseObject::GetNumTags( void ) const
 //|	Date				-	
 //|	Developers			-	
 //|	Organization		-	UOX3 DevTeam
@@ -121,13 +121,13 @@ poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDAT
 //o--------------------------------------------------------------------------o
 //| Modifications		-	
 //o--------------------------------------------------------------------------o
-size_t cBaseObject::GetNumTags( void ) const 
+size_t CBaseObject::GetNumTags( void ) const 
 {
 	return tags.size();
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	jsval cBaseObject::GetTag( std::string tagname ) const 
+//|	Function			-	jsval CBaseObject::GetTag( std::string tagname ) const 
 //|	Date				-	
 //|	Developers			-	
 //|	Organization		-	UOX3 DevTeam
@@ -137,7 +137,7 @@ size_t cBaseObject::GetNumTags( void ) const
 //o--------------------------------------------------------------------------o
 //| Modifications		-	
 //o--------------------------------------------------------------------------o
-jsval cBaseObject::GetTag( std::string tagname ) const 
+jsval CBaseObject::GetTag( std::string tagname ) const 
 {
 	jsval rvalue		= 0;
 	TAGMAP_CITERATOR CI = tags.find( tagname );
@@ -149,7 +149,7 @@ jsval cBaseObject::GetTag( std::string tagname ) const
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void cBaseObject::SetTag( std::string tagname, jsval tagval ) 
+//|	Function			-	void CBaseObject::SetTag( std::string tagname, jsval tagval ) 
 //|	Date				-	
 //|	Developers			-	
 //|	Organization		-	UOX3 DevTeam
@@ -159,7 +159,7 @@ jsval cBaseObject::GetTag( std::string tagname ) const
 //o--------------------------------------------------------------------------o
 //| Modifications		-	
 //o--------------------------------------------------------------------------o
-void cBaseObject::SetTag( std::string tagname, jsval tagval ) 
+void CBaseObject::SetTag( std::string tagname, jsval tagval ) 
 {
 	TAGMAP_ITERATOR I = tags.find( tagname );
 	if( I != tags.end() )
@@ -208,7 +208,7 @@ void cBaseObject::SetTag( std::string tagname, jsval tagval )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns X location of object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetX( void ) const
+SI16 CBaseObject::GetX( void ) const
 {
 	return x;
 }
@@ -221,7 +221,7 @@ SI16 cBaseObject::GetX( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns Y location of object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetY( void ) const
+SI16 CBaseObject::GetY( void ) const
 {
 	return y;
 }
@@ -234,7 +234,7 @@ SI16 cBaseObject::GetY( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns Z location of object
 //o--------------------------------------------------------------------------
-SI08 cBaseObject::GetZ( void ) const
+SI08 CBaseObject::GetZ( void ) const
 {
 	return z;
 }
@@ -247,7 +247,7 @@ SI08 cBaseObject::GetZ( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the new X value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetX( SI16 newValue )
+void CBaseObject::SetX( SI16 newValue )
 {
 	x = newValue;
 	Dirty( UT_LOCATION );
@@ -261,7 +261,7 @@ void cBaseObject::SetX( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the new Y value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetY( SI16 newValue )
+void CBaseObject::SetY( SI16 newValue )
 {
 	y = newValue;
 	Dirty( UT_LOCATION );
@@ -275,7 +275,7 @@ void cBaseObject::SetY( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the new Z value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetZ( SI08 newValue )
+void CBaseObject::SetZ( SI08 newValue )
 {
 	z = newValue;
 	Dirty( UT_LOCATION );
@@ -289,7 +289,7 @@ void cBaseObject::SetZ( SI08 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the ID of the object
 //o--------------------------------------------------------------------------
-UI16 cBaseObject::GetID( void ) const
+UI16 CBaseObject::GetID( void ) const
 {
 	return id;
 }
@@ -302,7 +302,7 @@ UI16 cBaseObject::GetID( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the colour of the object
 //o--------------------------------------------------------------------------
-UI16 cBaseObject::GetColour( void ) const
+UI16 CBaseObject::GetColour( void ) const
 {
 	return colour;
 }
@@ -315,7 +315,7 @@ UI16 cBaseObject::GetColour( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns part of the ID
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::GetID( UI08 part ) const
+UI08 CBaseObject::GetID( UI08 part ) const
 {
 	UI08 rvalue = static_cast<UI08>(id>>8);
 	if( part == 2 )
@@ -331,7 +331,7 @@ UI08 cBaseObject::GetID( UI08 part ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns part of the colour
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::GetColour( UI08 part ) const
+UI08 CBaseObject::GetColour( UI08 part ) const
 {
 	UI08 rvalue = static_cast<UI08>(colour>>8);
 	if( part == 2 )
@@ -347,7 +347,7 @@ UI08 cBaseObject::GetColour( UI08 part ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the ID
 //o--------------------------------------------------------------------------
-void cBaseObject::SetID( UI16 newValue )
+void CBaseObject::SetID( UI16 newValue )
 {
 	id = newValue;
 	Dirty( UT_LOCATION );
@@ -361,7 +361,7 @@ void cBaseObject::SetID( UI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the colour to newValue
 //o--------------------------------------------------------------------------
-void cBaseObject::SetColour( UI16 newValue )
+void CBaseObject::SetColour( UI16 newValue )
 {
 	colour = newValue;
 	Dirty( UT_UPDATE );
@@ -375,7 +375,7 @@ void cBaseObject::SetColour( UI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets part of the ID
 //o--------------------------------------------------------------------------
-void cBaseObject::SetID( UI08 newValue, UI08 part )
+void CBaseObject::SetID( UI08 newValue, UI08 part )
 {
 	if( part <= 2 && part > 0 )
 	{
@@ -396,29 +396,29 @@ void cBaseObject::SetID( UI08 newValue, UI08 part )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Weight of the CHARACTER
 //o---------------------------------------------------------------------------o
-SI32 cBaseObject::GetWeight( void ) const
+SI32 CBaseObject::GetWeight( void ) const
 {
 	return weight;
 }
-void cBaseObject::SetWeight( SI32 newVal )
+void CBaseObject::SetWeight( SI32 newVal )
 {
 	weight = newVal;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	cBaseObject *GetMultiObj()
+//|	Function		-	CBaseObject *GetMultiObj()
 //|	Date			-	26 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns multi object we're within
 //o--------------------------------------------------------------------------
-CMultiObj *cBaseObject::GetMultiObj( void ) const
+CMultiObj *CBaseObject::GetMultiObj( void ) const
 {
 	return multis;
 }
 
-SERIAL cBaseObject::GetMulti( void ) const
+SERIAL CBaseObject::GetMulti( void ) const
 {
 	SERIAL multiSer = INVALIDSERIAL;
 	if( ValidateObject( multis ) )
@@ -435,7 +435,7 @@ SERIAL cBaseObject::GetMulti( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns serial of the item
 //o--------------------------------------------------------------------------
-SERIAL cBaseObject::GetSerial( void ) const
+SERIAL CBaseObject::GetSerial( void ) const
 {
 	return serial;
 }
@@ -448,7 +448,7 @@ SERIAL cBaseObject::GetSerial( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns SERIAL of thing that spawned it
 //o--------------------------------------------------------------------------
-SERIAL cBaseObject::GetSpawn( void ) const
+SERIAL CBaseObject::GetSpawn( void ) const
 {
 	return spawnserial;
 }
@@ -461,7 +461,7 @@ SERIAL cBaseObject::GetSpawn( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns thing that spawned us - cannot be a character!
 //o--------------------------------------------------------------------------;
-CSpawnItem *cBaseObject::GetSpawnObj( void ) const
+CSpawnItem *CBaseObject::GetSpawnObj( void ) const
 {
 	CSpawnItem *ourSpawner = static_cast<CSpawnItem *>(calcItemObjFromSer( spawnserial ));
 	if( ValidateObject( ourSpawner ) && ourSpawner->GetObjType() == OT_SPAWNER )
@@ -477,7 +477,7 @@ CSpawnItem *cBaseObject::GetSpawnObj( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns SERIAL of thing that owns us
 //o--------------------------------------------------------------------------
-SERIAL cBaseObject::GetOwner( void ) const
+SERIAL CBaseObject::GetOwner( void ) const
 {
 	SERIAL rvalue = INVALIDSERIAL;
 	if( ValidateObject( owner ) )
@@ -486,14 +486,14 @@ SERIAL cBaseObject::GetOwner( void ) const
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	cBaseObject *GetOwnerObj()
+//|	Function		-	CBaseObject *GetOwnerObj()
 //|	Date			-	26 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns thing that owns us
 //o--------------------------------------------------------------------------
-CChar *cBaseObject::GetOwnerObj( void ) const
+CChar *CBaseObject::GetOwnerObj( void ) const
 {
 	return owner;
 }
@@ -506,7 +506,7 @@ CChar *cBaseObject::GetOwnerObj( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets serial of item we're within
 //o--------------------------------------------------------------------------
-void cBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
+void CBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 {
 	RemoveFromMulti( fireTrigger );
 	if( newSerial >= BASEITEMSERIAL )
@@ -530,7 +530,7 @@ void cBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets serial of item we are
 //o--------------------------------------------------------------------------
-void cBaseObject::SetSerial( SERIAL newSerial )
+void CBaseObject::SetSerial( SERIAL newSerial )
 {
 	if( GetSerial() != INVALIDSERIAL )
 		ObjectFactory::getSingleton().UnregisterObject( this );
@@ -549,7 +549,7 @@ void cBaseObject::SetSerial( SERIAL newSerial )
 //|	Purpose			-	Dumps out body information of the object
 //|						This is tag/data pairing information
 //o--------------------------------------------------------------------------
-bool cBaseObject::DumpBody( std::ofstream &outStream ) const
+bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 {
 	std::string destination;
 	std::ostringstream dumping( destination );
@@ -605,7 +605,7 @@ bool cBaseObject::DumpBody( std::ofstream &outStream ) const
 		catch( ... )
 		{
 			dumping << "FFFFFFFF" << std::endl;
-			Console << "EXCEPTION: cBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
+			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
 		}
 	}
 	dumping << "SpawnerID=" << "0x" << std::hex << spawnserial << std::endl;
@@ -619,7 +619,7 @@ bool cBaseObject::DumpBody( std::ofstream &outStream ) const
 		catch( ... )
 		{
 			dumping << "FFFFFFFF" << std::endl;
-			Console << "EXCEPTION: cBaseObject::DumpBody(" << name << "[" << serial << "]) - 'Owner' points to invalid memory." << myendl;
+			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'Owner' points to invalid memory." << myendl;
 		}
 	}
 	dumping << "Race=" << std::dec << race << std::endl;
@@ -662,7 +662,7 @@ bool cBaseObject::DumpBody( std::ofstream &outStream ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the associated race of the object
 //o--------------------------------------------------------------------------
-RACEID cBaseObject::GetRace( void ) const
+RACEID CBaseObject::GetRace( void ) const
 {
 	return race;
 }
@@ -675,7 +675,7 @@ RACEID cBaseObject::GetRace( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the objects Race property
 //o--------------------------------------------------------------------------
-void cBaseObject::SetRace( RACEID newValue )
+void CBaseObject::SetRace( RACEID newValue )
 {
 	race = newValue;
 }
@@ -688,7 +688,7 @@ void cBaseObject::SetRace( RACEID newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the name of the object
 //o--------------------------------------------------------------------------
-std::string cBaseObject::GetName( void ) const
+std::string CBaseObject::GetName( void ) const
 {
 	return name;
 }
@@ -701,7 +701,7 @@ std::string cBaseObject::GetName( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the name of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::SetName( std::string newName )
+void CBaseObject::SetName( std::string newName )
 {
 	name = newName.substr( 0, MAX_NAME - 1 );
 }
@@ -714,7 +714,7 @@ void cBaseObject::SetName( std::string newName )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the strength of the object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetStrength( void ) const
+SI16 CBaseObject::GetStrength( void ) const
 {
 	return strength;
 }
@@ -727,7 +727,7 @@ SI16 cBaseObject::GetStrength( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the dexterity of the object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetDexterity( void ) const
+SI16 CBaseObject::GetDexterity( void ) const
 {
 	return dexterity;
 }
@@ -740,7 +740,7 @@ SI16 cBaseObject::GetDexterity( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the intelligence of the object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetIntelligence( void ) const
+SI16 CBaseObject::GetIntelligence( void ) const
 {
 	return intelligence;
 }
@@ -753,7 +753,7 @@ SI16 cBaseObject::GetIntelligence( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the hitpoints of the object
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetHP( void ) const
+SI16 CBaseObject::GetHP( void ) const
 {
 	return hitpoints;
 }
@@ -766,7 +766,7 @@ SI16 cBaseObject::GetHP( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the strength of the obhect
 //o--------------------------------------------------------------------------
-void cBaseObject::SetStrength( SI16 newValue )
+void CBaseObject::SetStrength( SI16 newValue )
 {
 //	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	strength = newValue;
@@ -780,7 +780,7 @@ void cBaseObject::SetStrength( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the dexterity of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::SetDexterity( SI16 newValue )
+void CBaseObject::SetDexterity( SI16 newValue )
 {
 //	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	dexterity = newValue;
@@ -794,7 +794,7 @@ void cBaseObject::SetDexterity( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the intelligence of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::SetIntelligence( SI16 newValue )
+void CBaseObject::SetIntelligence( SI16 newValue )
 {
 //	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	intelligence = newValue;
@@ -808,7 +808,7 @@ void cBaseObject::SetIntelligence( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the hitpoints of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::SetHP( SI16 newValue )
+void CBaseObject::SetHP( SI16 newValue )
 {
 	hitpoints = newValue;
 }
@@ -821,7 +821,7 @@ void cBaseObject::SetHP( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Increments the hitpoints of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::IncHP( SI16 amtToChange )
+void CBaseObject::IncHP( SI16 amtToChange )
 {
 	SetHP( hitpoints + amtToChange );
 }
@@ -834,7 +834,7 @@ void cBaseObject::IncHP( SI16 amtToChange )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the direction of the object
 //o--------------------------------------------------------------------------
-void cBaseObject::SetDir( UI08 newDir )
+void CBaseObject::SetDir( UI08 newDir )
 {
 	dir = newDir;
 	Dirty( UT_UPDATE );
@@ -848,7 +848,7 @@ void cBaseObject::SetDir( UI08 newDir )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the direction of the object
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::GetDir( void ) const
+UI08 CBaseObject::GetDir( void ) const
 {
 	return dir;
 }
@@ -866,7 +866,7 @@ UI08 cBaseObject::GetDir( void ) const
 //|							2 = Invisible (Magic Invis)
 //|							3 = Permanent Hidden (GM Hide)
 //o--------------------------------------------------------------------------
-void cBaseObject::SetVisible( VisibleTypes newValue )
+void CBaseObject::SetVisible( VisibleTypes newValue )
 {
 	visible = newValue;
 	Dirty( UT_UPDATE );
@@ -880,7 +880,7 @@ void cBaseObject::SetVisible( VisibleTypes newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the visibility property of the object
 //o--------------------------------------------------------------------------
-VisibleTypes cBaseObject::GetVisible( void ) const
+VisibleTypes CBaseObject::GetVisible( void ) const
 {
 	return visible;
 }
@@ -893,7 +893,7 @@ VisibleTypes cBaseObject::GetVisible( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns a string that indicates the item's type
 //o--------------------------------------------------------------------------
-ObjectType cBaseObject::GetObjType( void ) const
+ObjectType CBaseObject::GetObjType( void ) const
 {
 	return objType;
 }
@@ -907,7 +907,7 @@ ObjectType cBaseObject::GetObjType( void ) const
 //|	Purpose			-	Indicates whether an object can behave as a
 //|						particular type
 //o--------------------------------------------------------------------------
-bool cBaseObject::CanBeObjType( ObjectType toCompare ) const
+bool CBaseObject::CanBeObjType( ObjectType toCompare ) const
 {
 	if( toCompare == OT_CBO )
 		return true;
@@ -922,7 +922,7 @@ bool cBaseObject::CanBeObjType( ObjectType toCompare ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Removes object from a multi, selectively firing the trigger
 //o--------------------------------------------------------------------------
-void cBaseObject::RemoveFromMulti( bool fireTrigger )
+void CBaseObject::RemoveFromMulti( bool fireTrigger )
 {
 	if( ValidateObject( multis ) )
 	{
@@ -949,7 +949,7 @@ void cBaseObject::RemoveFromMulti( bool fireTrigger )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Adds object to multi
 //o--------------------------------------------------------------------------
-void cBaseObject::AddToMulti( bool fireTrigger )
+void CBaseObject::AddToMulti( bool fireTrigger )
 {
 	if( ValidateObject( multis ) )
 	{
@@ -969,14 +969,14 @@ void cBaseObject::AddToMulti( bool fireTrigger )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SetMulti( cBaseObject *newMulti )
+//|	Function		-	SetMulti( CBaseObject *newMulti )
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's multi to newMulti
 //o--------------------------------------------------------------------------
-void cBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
+void CBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
 {
 	RemoveFromMulti( fireTrigger );
 	multis = newMulti;
@@ -984,14 +984,14 @@ void cBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SetSpawn( cBaseObject *newSpawn )
+//|	Function		-	SetSpawn( CBaseObject *newSpawn )
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's spawner to newSpawn
 //o--------------------------------------------------------------------------
-void cBaseObject::SetSpawn( SERIAL newSpawn )
+void CBaseObject::SetSpawn( SERIAL newSpawn )
 {
 	CSpawnItem *ourSpawner = GetSpawnObj();
 	if( ourSpawner != NULL )
@@ -1006,14 +1006,14 @@ void cBaseObject::SetSpawn( SERIAL newSpawn )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SetOwner( cBaseObject *newOwner )
+//|	Function		-	SetOwner( CBaseObject *newOwner )
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's owner to newOwner
 //o--------------------------------------------------------------------------
-void cBaseObject::SetOwner( CChar *newOwner )
+void CBaseObject::SetOwner( CChar *newOwner )
 {
 	RemoveSelfFromOwner();
 	owner = newOwner;
@@ -1028,7 +1028,7 @@ void cBaseObject::SetOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns part of a serial #
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::GetSerial( UI08 part ) const
+UI08 CBaseObject::GetSerial( UI08 part ) const
 {
 	switch( part )
 	{
@@ -1048,7 +1048,7 @@ UI08 cBaseObject::GetSerial( UI08 part ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns part of the item's spawner serial
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::GetSpawn( UI08 part ) const
+UI08 CBaseObject::GetSpawn( UI08 part ) const
 {
 	UI08 rvalue = 0;
 	switch( part )
@@ -1069,7 +1069,7 @@ UI08 cBaseObject::GetSpawn( UI08 part ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the high amount of damage that it can do
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetHiDamage( void ) const
+SI16 CBaseObject::GetHiDamage( void ) const
 {
 	return hidamage;
 }
@@ -1082,7 +1082,7 @@ SI16 cBaseObject::GetHiDamage( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the low amount of damage that it can do
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetLoDamage( void ) const
+SI16 CBaseObject::GetLoDamage( void ) const
 {
 	return lodamage;
 }
@@ -1095,7 +1095,7 @@ SI16 cBaseObject::GetLoDamage( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's multi to newMulti
 //o--------------------------------------------------------------------------
-UI16 cBaseObject::GetDef( void ) const
+UI16 CBaseObject::GetDef( void ) const
 {
 	return def;
 }
@@ -1108,7 +1108,7 @@ UI16 cBaseObject::GetDef( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's high damage value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetHiDamage( SI16 newValue )
+void CBaseObject::SetHiDamage( SI16 newValue )
 {
 	hidamage = newValue;
 }
@@ -1121,7 +1121,7 @@ void cBaseObject::SetHiDamage( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's multi to newMulti
 //o--------------------------------------------------------------------------
-void cBaseObject::SetLoDamage( SI16 newValue )
+void CBaseObject::SetLoDamage( SI16 newValue )
 {
 	lodamage = newValue;
 }
@@ -1134,7 +1134,7 @@ void cBaseObject::SetLoDamage( SI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's defense value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetDef( UI16 newValue )
+void CBaseObject::SetDef( UI16 newValue )
 {
 	def = newValue;
 }
@@ -1148,7 +1148,7 @@ void cBaseObject::SetDef( UI16 newValue )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's file position
 //o--------------------------------------------------------------------------
-SI32 cBaseObject::SetFilePosition( SI32 filepos )
+SI32 CBaseObject::SetFilePosition( SI32 filepos )
 {
 	FilePosition = filepos;
 	return FilePosition;
@@ -1162,7 +1162,7 @@ SI32 cBaseObject::SetFilePosition( SI32 filepos )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's file position
 //o--------------------------------------------------------------------------
-SI32 cBaseObject::GetFilePosition( void ) const
+SI32 CBaseObject::GetFilePosition( void ) const
 {
 	return FilePosition;
 }
@@ -1175,7 +1175,7 @@ SI32 cBaseObject::GetFilePosition( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's stamina
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetStamina( void ) const
+SI16 CBaseObject::GetStamina( void ) const
 {
 	return stamina;
 }
@@ -1188,7 +1188,7 @@ SI16 cBaseObject::GetStamina( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's stamina
 //o--------------------------------------------------------------------------
-void cBaseObject::SetStamina( SI16 stam )
+void CBaseObject::SetStamina( SI16 stam )
 {
 	stamina = stam;
 }
@@ -1201,7 +1201,7 @@ void cBaseObject::SetStamina( SI16 stam )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's mana
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetMana( void ) const 
+SI16 CBaseObject::GetMana( void ) const 
 {
 	return mana;
 }
@@ -1214,7 +1214,7 @@ SI16 cBaseObject::GetMana( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's mana
 //o--------------------------------------------------------------------------
-void cBaseObject::SetMana( SI16 mn )
+void CBaseObject::SetMana( SI16 mn )
 {
 	mana = UOX_MIN( UOX_MAX( static_cast<SI16>(0), mn ), intelligence );
 }
@@ -1227,7 +1227,7 @@ void cBaseObject::SetMana( SI16 mn )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's karma
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetKarma( void ) const
+SI16 CBaseObject::GetKarma( void ) const
 {
 	return karma;
 }
@@ -1240,7 +1240,7 @@ SI16 cBaseObject::GetKarma( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's karma
 //o--------------------------------------------------------------------------
-void cBaseObject::SetKarma( SI16 value )
+void CBaseObject::SetKarma( SI16 value )
 {
 	karma = value;
 }
@@ -1253,7 +1253,7 @@ void cBaseObject::SetKarma( SI16 value )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's fame
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetFame( void ) const
+SI16 CBaseObject::GetFame( void ) const
 {
 	return fame;
 }
@@ -1266,7 +1266,7 @@ SI16 cBaseObject::GetFame( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's fame
 //o--------------------------------------------------------------------------
-void cBaseObject::SetFame( SI16 value )
+void CBaseObject::SetFame( SI16 value )
 {
 	fame = value;
 }
@@ -1279,7 +1279,7 @@ void cBaseObject::SetFame( SI16 value )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's kills
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetKills( void ) const
+SI16 CBaseObject::GetKills( void ) const
 {
 	return kills;
 }
@@ -1292,7 +1292,7 @@ SI16 cBaseObject::GetKills( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's kills
 //o--------------------------------------------------------------------------
-void cBaseObject::SetKills( SI16 value )
+void CBaseObject::SetKills( SI16 value )
 {
 	kills = value;
 }
@@ -1305,7 +1305,7 @@ void cBaseObject::SetKills( SI16 value )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's title
 //o--------------------------------------------------------------------------
-std::string cBaseObject::GetTitle( void ) const
+std::string CBaseObject::GetTitle( void ) const
 {
 	return title;
 }
@@ -1318,7 +1318,7 @@ std::string cBaseObject::GetTitle( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's title
 //o--------------------------------------------------------------------------
-void cBaseObject::SetTitle( std::string newtitle )
+void CBaseObject::SetTitle( std::string newtitle )
 {
 	title = newtitle.substr( 0, MAX_TITLE - 1 );
 }
@@ -1331,7 +1331,7 @@ void cBaseObject::SetTitle( std::string newtitle )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the object's script trigger value
 //o--------------------------------------------------------------------------
-UI16 cBaseObject::GetScriptTrigger( void ) const
+UI16 CBaseObject::GetScriptTrigger( void ) const
 {
 	return scriptTrig;
 }
@@ -1344,7 +1344,7 @@ UI16 cBaseObject::GetScriptTrigger( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the object's script trigger value
 //o--------------------------------------------------------------------------
-void cBaseObject::SetScriptTrigger( UI16 newValue )
+void CBaseObject::SetScriptTrigger( UI16 newValue )
 {
 	scriptTrig = newValue;
 }
@@ -1358,7 +1358,7 @@ void cBaseObject::SetScriptTrigger( UI16 newValue )
 //|	Purpose			-	Returns a point3 structure pointing to the object's 
 //|						current location
 //o--------------------------------------------------------------------------
-point3 cBaseObject::GetLocation( void ) const
+point3 CBaseObject::GetLocation( void ) const
 {
 	return point3( x, y, z );
 }
@@ -1373,7 +1373,7 @@ point3 cBaseObject::GetLocation( void ) const
 //|						object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetStrength2( void ) const
+SI16 CBaseObject::GetStrength2( void ) const
 {
 	return st2;
 }
@@ -1388,7 +1388,7 @@ SI16 cBaseObject::GetStrength2( void ) const
 //|						object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetDexterity2( void ) const
+SI16 CBaseObject::GetDexterity2( void ) const
 {
 	return dx2;
 }
@@ -1403,7 +1403,7 @@ SI16 cBaseObject::GetDexterity2( void ) const
 //|						the object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-SI16 cBaseObject::GetIntelligence2( void ) const
+SI16 CBaseObject::GetIntelligence2( void ) const
 {
 	return in2;
 }
@@ -1418,7 +1418,7 @@ SI16 cBaseObject::GetIntelligence2( void ) const
 //|						object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-void cBaseObject::SetStrength2( SI16 nVal )
+void CBaseObject::SetStrength2( SI16 nVal )
 {
 	st2 = nVal;
 }
@@ -1433,7 +1433,7 @@ void cBaseObject::SetStrength2( SI16 nVal )
 //|						object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-void cBaseObject::SetDexterity2( SI16 nVal )
+void CBaseObject::SetDexterity2( SI16 nVal )
 {
 	dx2 = nVal;
 }
@@ -1448,7 +1448,7 @@ void cBaseObject::SetDexterity2( SI16 nVal )
 //|						the object.  For chars, it's the bonuses 
 //|						(via armour and such)
 //o--------------------------------------------------------------------------
-void cBaseObject::SetIntelligence2( SI16 nVal )
+void CBaseObject::SetIntelligence2( SI16 nVal )
 {
 	in2 = nVal;
 }
@@ -1461,7 +1461,7 @@ void cBaseObject::SetIntelligence2( SI16 nVal )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Increments the object's strength value
 //o--------------------------------------------------------------------------
-void cBaseObject::IncStrength( SI16 toInc )
+void CBaseObject::IncStrength( SI16 toInc )
 {
 	SetStrength( GetStrength() + toInc );
 }
@@ -1474,7 +1474,7 @@ void cBaseObject::IncStrength( SI16 toInc )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Decrements the object's strength value by 1
 //o--------------------------------------------------------------------------
-void cBaseObject::DecStrength( void )
+void CBaseObject::DecStrength( void )
 {
 	if( GetStrength() > 0 )
 		SetStrength( GetStrength() - 1 );
@@ -1488,7 +1488,7 @@ void cBaseObject::DecStrength( void )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Increments the object's dexterity value
 //o--------------------------------------------------------------------------
-void cBaseObject::IncDexterity( SI16 toInc )
+void CBaseObject::IncDexterity( SI16 toInc )
 {
 	SetDexterity( GetDexterity() + toInc );
 }
@@ -1501,7 +1501,7 @@ void cBaseObject::IncDexterity( SI16 toInc )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Decrements the object's dexterity value
 //o--------------------------------------------------------------------------
-void cBaseObject::DecDexterity( void )
+void CBaseObject::DecDexterity( void )
 {
 	if( GetDexterity() > 0 )
 		SetDexterity( GetDexterity() - 1 );
@@ -1515,7 +1515,7 @@ void cBaseObject::DecDexterity( void )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Increments the object's intelligence value
 //o--------------------------------------------------------------------------
-void cBaseObject::IncIntelligence( SI16 toInc )
+void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( GetIntelligence() + toInc );
 }
@@ -1528,7 +1528,7 @@ void cBaseObject::IncIntelligence( SI16 toInc )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Decrements the object's intelligence value
 //o--------------------------------------------------------------------------
-void cBaseObject::DecIntelligence( void )
+void CBaseObject::DecIntelligence( void )
 {
 	if( GetIntelligence() > 0 )
 		SetIntelligence( GetIntelligence() - 1 );
@@ -1546,7 +1546,7 @@ void cBaseObject::DecIntelligence( void )
 //|						Mode 0 - Text
 //|						Mode 1 - Binary
 //o--------------------------------------------------------------------------
-bool cBaseObject::DumpFooter( std::ofstream &outStream ) const
+bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 {
 	outStream << std::endl << "o---o" << std::endl << std::endl;
 	return true;
@@ -1561,7 +1561,7 @@ bool cBaseObject::DumpFooter( std::ofstream &outStream ) const
 //|	Purpose			-	Loads object from disk based on mode
 //o--------------------------------------------------------------------------
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
-bool cBaseObject::Load( std::ifstream &inStream )
+bool CBaseObject::Load( std::ifstream &inStream )
 {
 	UString tag = "", data = "", UTag = "";
 	while( tag != "o---o" )
@@ -1590,7 +1590,7 @@ bool cBaseObject::Load( std::ifstream &inStream )
 //|						and load routine continues to next tag.  Otherwise,
 //|						passed up inheritance tree (if any)
 //o--------------------------------------------------------------------------
-bool cBaseObject::HandleLine( UString &UTag, UString &data )
+bool CBaseObject::HandleLine( UString &UTag, UString &data )
 {
 	static std::string staticTagName = "";
 	bool rvalue = false;
@@ -1886,7 +1886,7 @@ bool cBaseObject::HandleLine( UString &UTag, UString &data )
 //|	Purpose			-	Returns one of the generic words of the object
 //|						There are 4 words.  wordNum must be between 0 and 3
 //o--------------------------------------------------------------------------
-UI32 cBaseObject::GetWord( UI08 wordNum ) const
+UI32 CBaseObject::GetWord( UI08 wordNum ) const
 {
 	UI32 rvalue = 0;
 	if( wordNum <= 3 )
@@ -1902,7 +1902,7 @@ UI32 cBaseObject::GetWord( UI08 wordNum ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if the bit bitNum in word wordNum is on
 //o--------------------------------------------------------------------------
-bool cBaseObject::GetBit( UI08 wordNum, UI08 bitNum ) const
+bool CBaseObject::GetBit( UI08 wordNum, UI08 bitNum ) const
 {
 	bool rvalue = false;
 	if( wordNum <= 3 && bitNum <= 31 )
@@ -1923,7 +1923,7 @@ bool cBaseObject::GetBit( UI08 wordNum, UI08 bitNum ) const
 //|						in word wordNum.  Note that if lowBit is NOT 0, it's
 //|						right shifted by lowBit bits.
 //o--------------------------------------------------------------------------
-UI32 cBaseObject::GetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit ) const
+UI32 CBaseObject::GetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit ) const
 {
 	UI32 rvalue = 0;
 	if( wordNum <= 3 && lowBit <= 31 && highBit <= 31 )
@@ -1948,7 +1948,7 @@ UI32 cBaseObject::GetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets word wordNum to value.  wordNum must be 0->3
 //o--------------------------------------------------------------------------
-void cBaseObject::SetWord( UI08 wordNum, UI32 value )
+void CBaseObject::SetWord( UI08 wordNum, UI32 value )
 {
 	if( wordNum <= 3 )
 		genericDWords[wordNum] = value;
@@ -1963,7 +1963,7 @@ void cBaseObject::SetWord( UI08 wordNum, UI32 value )
 //|	Purpose			-	Turns on (value==true) or off (value==false) bit bitNum
 //|						in word wordNum
 //o--------------------------------------------------------------------------
-void cBaseObject::SetBit( UI08 wordNum, UI08 bitNum, bool value )
+void CBaseObject::SetBit( UI08 wordNum, UI08 bitNum, bool value )
 {
 	if( wordNum <= 3 && bitNum <= 31 )
 	{
@@ -1989,7 +1989,7 @@ void cBaseObject::SetBit( UI08 wordNum, UI08 bitNum, bool value )
 //|						wordNum.  Note it does no range checking to ensure
 //|						that value will fit in that bit range
 //o--------------------------------------------------------------------------
-void cBaseObject::SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 value )
+void CBaseObject::SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 value )
 {
 	if( wordNum <= 3 && lowBit <= 31 && highBit <= 31 )
 	{
@@ -2015,7 +2015,7 @@ void cBaseObject::SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 val
 //|	Purpose			-	Used to setup any pointers that may need adjustment
 //|						following the loading of the world
 //o--------------------------------------------------------------------------
-void cBaseObject::PostLoadProcessing( void )
+void CBaseObject::PostLoadProcessing( void )
 {
 	SERIAL tmpSerial = INVALIDSERIAL;
 	if( multis != NULL )
@@ -2046,7 +2046,7 @@ void cBaseObject::PostLoadProcessing( void )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the world number that the object belongs in
 //o--------------------------------------------------------------------------
-UI08 cBaseObject::WorldNumber( void ) const
+UI08 CBaseObject::WorldNumber( void ) const
 {
 	return worldNumber;
 }
@@ -2059,7 +2059,7 @@ UI08 cBaseObject::WorldNumber( void ) const
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Sets the world number that the object belongs in
 //o--------------------------------------------------------------------------
-void cBaseObject::WorldNumber( UI08 value )
+void CBaseObject::WorldNumber( UI08 value )
 {
 //	MapRegion->Remove( this );
 	worldNumber = value;
@@ -2074,12 +2074,12 @@ void cBaseObject::WorldNumber( UI08 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Object is poisoned
 //o---------------------------------------------------------------------------o
-UI08 cBaseObject::GetPoisoned( void ) const
+UI08 CBaseObject::GetPoisoned( void ) const
 {
 	return poisoned;
 }
 
-void cBaseObject::SetPoisoned( UI08 newValue )
+void CBaseObject::SetPoisoned( UI08 newValue )
 {
 	poisoned = newValue;
 }
@@ -2091,77 +2091,77 @@ void cBaseObject::SetPoisoned( UI08 newValue )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Characters carve value for carve.dfn
 //o---------------------------------------------------------------------------o
-SI16 cBaseObject::GetCarve( void ) const
+SI16 CBaseObject::GetCarve( void ) const
 {
 	return carve;
 }
-void cBaseObject::SetCarve( SI16 newValue )
+void CBaseObject::SetCarve( SI16 newValue )
 {
 	carve = newValue;
 }
 
 
-bool cBaseObject::isFree( void ) const
+bool CBaseObject::isFree( void ) const
 {
 	return ( (objSettings&0x01) == 0x01 );
 }
-bool cBaseObject::isDeleted( void ) const
+bool CBaseObject::isDeleted( void ) const
 {
 	return ( (objSettings&0x02) == 0x02 );
 }
-bool cBaseObject::isPostLoaded( void ) const
+bool CBaseObject::isPostLoaded( void ) const
 {
 	return ( (objSettings&0x04) == 0x04 );
 }
-bool cBaseObject::isSpawned( void ) const
+bool CBaseObject::isSpawned( void ) const
 {
 	return ( (objSettings&0x08) == 0x08 );
 }
-bool cBaseObject::ShouldSave( void ) const
+bool CBaseObject::ShouldSave( void ) const
 {
 	return ( (objSettings&0x10) == 0x10 );
 }
-bool cBaseObject::isDisabled( void ) const
+bool CBaseObject::isDisabled( void ) const
 {
 	return ( (objSettings&0x20) == 0x20 );
 }
 
-void cBaseObject::SetFree( bool newVal )
+void CBaseObject::SetFree( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x01;
 	else
 		objSettings &= ~0x01;
 }
-void cBaseObject::SetDeleted( bool newVal )
+void CBaseObject::SetDeleted( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x02;
 	else
 		objSettings &= ~0x02;
 }
-void cBaseObject::SetPostLoaded( bool newVal )
+void CBaseObject::SetPostLoaded( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x04;
 	else
 		objSettings &= ~0x04;
 }
-void cBaseObject::SetSpawned( bool newVal )
+void CBaseObject::SetSpawned( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x08;
 	else
 		objSettings &= ~0x08;
 }
-void cBaseObject::ShouldSave( bool newVal )
+void CBaseObject::ShouldSave( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x10;
 	else
 		objSettings &= ~0x10;
 }
-void cBaseObject::SetDisabled( bool newVal )
+void CBaseObject::SetDisabled( bool newVal )
 {
 	if( newVal )
 		objSettings |= 0x20;
@@ -2176,7 +2176,7 @@ void cBaseObject::SetDisabled( bool newVal )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Cleans up after the object
 //o---------------------------------------------------------------------------o
-void cBaseObject::Cleanup( void )
+void CBaseObject::Cleanup( void )
 {
 	UI16 scpNum			= GetScriptTrigger();
 	cScript *tScript	= Trigger->GetScript( scpNum );
@@ -2190,7 +2190,7 @@ void cBaseObject::Cleanup( void )
 	if( ValidateObject( multis ) )
 		SetMulti( INVALIDSERIAL, false );
 
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
 		if( iSock != NULL )
 		{
@@ -2207,7 +2207,7 @@ void cBaseObject::Cleanup( void )
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Forces the object onto the global refresh queue
 //o---------------------------------------------------------------------------o
-void cBaseObject::Dirty( UpdateTypes updateType )
+void CBaseObject::Dirty( UpdateTypes updateType )
 {
 	switch( updateType )
 	{
@@ -2229,7 +2229,7 @@ void cBaseObject::Dirty( UpdateTypes updateType )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Toggle UpdateTypes
 //o---------------------------------------------------------------------------o
-bool cBaseObject::GetUpdate( UpdateTypes updateType )
+bool CBaseObject::GetUpdate( UpdateTypes updateType )
 {
 	UI08 modifier;
 	switch( updateType )
@@ -2246,7 +2246,7 @@ bool cBaseObject::GetUpdate( UpdateTypes updateType )
 	return update;
 }
 
-void cBaseObject::CopyData( cBaseObject *target )
+void CBaseObject::CopyData( CBaseObject *target )
 {
 	target->SetTitle( GetTitle() );
 	target->SetKills( GetKills() );

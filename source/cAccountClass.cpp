@@ -776,11 +776,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	// were using the ID due to its numbering, it will always show the account blocks in ID order least to greatest.
 	actbTemp.wAccountIndex = m_wHighestAccount + 1;
 	// Ok we have to write the new username.uad file in the directory
-#ifdef cVersionClass
-	fsAccountsUAD << "//AI3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << "\n";
-#else
-	fsAccountsUAD << "//AI3.0" << "-UV0.0-BD0-DS" << time(NULL) << "-ED0\n";
-#endif
+	fsAccountsUAD << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << "\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------" << std::endl;
 	fsAccountsUAD << "// UAD Path: " << actbTemp.sPath << std::endl;//"\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------" << std::endl;
@@ -1562,7 +1558,7 @@ bool cAccountClass::clear(void)
 	// First we should check to make sure that we can even use the objects, or they are not already cleared
 	try
 	{
-		if( !m_mapUsernameMap.size()||!m_mapUsernameIDMap.size() )
+		if( m_mapUsernameMap.empty() || m_mapUsernameIDMap.empty() )
 		{
 			return false;
 		}
@@ -2281,7 +2277,7 @@ cAccountClass& cAccountClass::operator--(int)
 //o--------------------------------------------------------------------------o
 void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 {
-	fsOut << "//AV3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AV3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "//accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers" << std::endl;
 	fsOut << "//" << std::endl;
@@ -2321,7 +2317,7 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 //o--------------------------------------------------------------------------o
 void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 {
-	fsOut << "//SA3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//SA3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "//access.adm[TEXT] : UOX3 uses this file for shared accounts access between servers" << std::endl;
 	fsOut << "// " << std::endl;
@@ -2348,7 +2344,7 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 //o--------------------------------------------------------------------------o
 void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 {
-	fsOut << "//OI3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << "\n";
+	fsOut << "//OI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << "\n";
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// Orphans.Adm " << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2371,7 +2367,7 @@ void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 //o--------------------------------------------------------------------------o
 void cAccountClass::WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp)
 {
-	fsOut << "//AI3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// UAD Path: " << actbTemp.sPath << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2391,7 +2387,7 @@ void cAccountClass::WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp)
 //o--------------------------------------------------------------------------o
 void cAccountClass::WriteImportHeader(std::fstream &fsOut)
 {
-	fsOut << "//AIMP3.0" << "-UV" << cVersionClass::GetVersion() << "-BD" << cVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << cVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AIMP3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// UOX3 uses this file to store new accounts that are to be imported on the next" << std::endl;
 	fsOut << "// time the server does a world save, or world load." << std::endl;

@@ -24,7 +24,7 @@ cBooks::~cBooks()//Destructor
 }
 
 // opens old (readonly) books == old, bugfixed readbook function
-void cBooks::OpenPreDefBook( cSocket *mSock, CItem *i )
+void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
 	if( mSock != NULL )
 	{
@@ -69,7 +69,7 @@ void cBooks::OpenPreDefBook( cSocket *mSock, CItem *i )
 }
 
 // opens new books
-void cBooks::OpenBook( cSocket *mSock, CItem *i, bool isWriteable )
+void cBooks::OpenBook( CSocket *mSock, CItem *i, bool isWriteable )
 {
 	if( mSock != NULL )
 	{
@@ -139,7 +139,7 @@ void cBooks::OpenBook( cSocket *mSock, CItem *i, bool isWriteable )
 }
 
 // sends a page of new readonly book to the client
-void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, UI16 p )
+void cBooks::ReadNonWritableBook( CSocket *s, CItem *i, UI16 p )
 {
 	if( s != NULL )
 	{
@@ -170,7 +170,7 @@ void cBooks::ReadNonWritableBook( cSocket *s, CItem *i, UI16 p )
 }
 
 // old readbook function
-void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, UI16 p )
+void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
 	if( mSock != NULL )
 	{
@@ -213,7 +213,7 @@ void cBooks::ReadPreDefBook( cSocket *mSock, CItem *i, UI16 p )
 }
 
 // writes changes to a writable book to the bok file.		
-void cBooks::ReadWritableBook( cSocket *s, CItem *i, UI16 p, UI16 l )
+void cBooks::ReadWritableBook( CSocket *s, CItem *i, UI16 p, UI16 l )
 {
 	char line[34], ch;
 
@@ -255,7 +255,7 @@ void cBooks::ReadWritableBook( cSocket *s, CItem *i, UI16 p, UI16 l )
 // PRE: packets 0x93 needs to be send by client BEFORE its called. 
 // (and its data copied to the authorbuffer)
 
-void cBooks::WriteAuthor( CItem *id, cSocket *s )
+void cBooks::WriteAuthor( CItem *id, CSocket *s )
 {
 	if( s != NULL )
 	{
@@ -292,7 +292,7 @@ void cBooks::WriteAuthor( CItem *id, cSocket *s )
 }
 
 
-void cBooks::WriteTitle( CItem *id, cSocket *s )
+void cBooks::WriteTitle( CItem *id, CSocket *s )
 {
 	if( s != NULL )
 	{

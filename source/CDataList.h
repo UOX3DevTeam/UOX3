@@ -33,7 +33,7 @@ namespace UOX
 	{
 	protected:
 		typedef std::deque< T >						DATALIST;
-		typedef typename std::deque< T >::iterator	DATALIST_ITERATOR;
+		typedef typename std::deque< T >::iterator			DATALIST_ITERATOR;
 
 		DATALIST					objData;
 		DATALIST_ITERATOR			objIterator;

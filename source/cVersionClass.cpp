@@ -21,7 +21,7 @@ namespace UOX
 // product info
 //o---------------------------------------------------------------------------o
 const std::string VER				= "0.98-2";
-const std::string BUILD				= "1";
+const std::string BUILD				= "3";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
@@ -34,61 +34,61 @@ const std::string PROGRAMMERS		= "UOX3 DevTeam";
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-cVersionClass::cVersionClass()
+CVersionClass::CVersionClass()
 {
 }
 //o---------------------------------------------------------------------------o
-cVersionClass::~cVersionClass()
+CVersionClass::~CVersionClass()
 {
 
 }
 
-std::string cVersionClass::GetVersion( void )
+std::string CVersionClass::GetVersion( void )
 {
 	return VER;
 }
 
-std::string cVersionClass::GetBuild( void )
+std::string CVersionClass::GetBuild( void )
 {
 	return BUILD;
 }
 
-std::string cVersionClass::GetRealBuild( void )
+std::string CVersionClass::GetRealBuild( void )
 {
 	return REALBUILD;
 }
 
-std::string cVersionClass::GetScriptVersion( void )
+std::string CVersionClass::GetScriptVersion( void )
 {
 	return SVER;
 }
 
-std::string cVersionClass::GetCharacterVersion( void )
+std::string CVersionClass::GetCharacterVersion( void )
 {
 	return CVER;
 }
 
-std::string cVersionClass::GetItemVersion( void )
+std::string CVersionClass::GetItemVersion( void )
 {
 	return IVER;
 }
 
-std::string cVersionClass::GetProductName( void )
+std::string CVersionClass::GetProductName( void )
 {
 	return PRODUCT;
 }
 
-std::string cVersionClass::GetName( void )
+std::string CVersionClass::GetName( void )
 {
 	return NAME;
 }
 
-std::string cVersionClass::GetEmail( void )
+std::string CVersionClass::GetEmail( void )
 {
 	return EMAIL;
 }
 
-std::string cVersionClass::GetProgrammers( void )
+std::string CVersionClass::GetProgrammers( void )
 {
 	return PROGRAMMERS;
 }

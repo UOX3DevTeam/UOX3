@@ -18,7 +18,7 @@ public:
 	{
 	}
 						CPIFirstLogin();
-						CPIFirstLogin( cSocket *s );
+						CPIFirstLogin( CSocket *s );
 	virtual void		Receive( void );
 	virtual const std::string Name( void );
 	virtual const std::string Pass( void );
@@ -36,7 +36,7 @@ public:
 	{
 	}
 					CPIServerSelect();
-					CPIServerSelect( cSocket *s );
+					CPIServerSelect( CSocket *s );
 	virtual void	Receive( void );
 	virtual SI16	ServerNum( void );
 	virtual bool	Handle( void );
@@ -55,7 +55,7 @@ public:
 	{
 	}
 						CPISecondLogin();
-						CPISecondLogin( cSocket *s );
+						CPISecondLogin( CSocket *s );
 	virtual void		Receive( void );
 	virtual UI32		Account( void );
 	virtual const std::string Name( void );
@@ -75,7 +75,7 @@ public:
 	{
 	}
 					CPIClientVersion();
-					CPIClientVersion( cSocket *s );
+					CPIClientVersion( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -90,7 +90,7 @@ public:
 	{
 	}
 					CPIUpdateRangeChange();
-					CPIUpdateRangeChange( cSocket *s );
+					CPIUpdateRangeChange( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -105,7 +105,7 @@ public:
 	{
 	}
 					CPITips();
-					CPITips( cSocket *s );
+					CPITips( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -119,7 +119,7 @@ public:
 	{
 	}
 					CPIRename();
-					CPIRename( cSocket *s );
+					CPIRename( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -131,7 +131,7 @@ public:
 	{
 	}
 					CPIKeepAlive();
-					CPIKeepAlive( cSocket *s );
+					CPIKeepAlive( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -146,7 +146,7 @@ public:
 	{
 	}
 					CPIStatusRequest();
-					CPIStatusRequest( cSocket *s );
+					CPIStatusRequest( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -159,7 +159,7 @@ public:
 	{
 	}
 					CPISpy();
-					CPISpy( cSocket *s );
+					CPISpy( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -171,7 +171,7 @@ public:
 	{
 	}
 					CPIGodModeToggle();
-					CPIGodModeToggle( cSocket *s );
+					CPIGodModeToggle( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -185,7 +185,7 @@ public:
 	{
 	}
 					CPIDblClick();
-					CPIDblClick( cSocket *s );
+					CPIDblClick( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -200,7 +200,7 @@ public:
 	{
 	}
 					CPISingleClick();
-					CPISingleClick( cSocket *s );
+					CPISingleClick( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -213,7 +213,7 @@ public:
 	{
 	}
 					CPIMoveRequest();
-					CPIMoveRequest( cSocket *s );
+					CPIMoveRequest( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -225,7 +225,7 @@ public:
 	{
 	}
 					CPIResyncReq();
-					CPIResyncReq( cSocket *s );
+					CPIResyncReq( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -237,7 +237,7 @@ public:
 	{
 	}
 					CPIResMenuChoice();
-					CPIResMenuChoice( cSocket *s );
+					CPIResMenuChoice( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -249,7 +249,7 @@ public:
 	{
 	}
 					CPIAttack();
-					CPIAttack( cSocket *s );
+					CPIAttack( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -261,7 +261,7 @@ public:
 	{
 	}
 					CPITargetCursor();
-					CPITargetCursor( cSocket *s );
+					CPITargetCursor( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -273,7 +273,7 @@ public:
 	{
 	}
 					CPIEquipItem();
-					CPIEquipItem( cSocket *s );
+					CPIEquipItem( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -285,7 +285,7 @@ public:
 	{
 	}
 					CPIGetItem();
-					CPIGetItem( cSocket *s );
+					CPIGetItem( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -297,7 +297,7 @@ public:
 	{
 	}
 					CPIDropItem();
-					CPIDropItem( cSocket *s );
+					CPIDropItem( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -306,7 +306,7 @@ class CPIGumpMenuSelect : public cPInputBuffer
 {
 public:
 					CPIGumpMenuSelect();
-					CPIGumpMenuSelect( cSocket *s );
+					CPIGumpMenuSelect( CSocket *s );
 	virtual			~CPIGumpMenuSelect()
 	{
 	}
@@ -349,7 +349,7 @@ protected:
 	bool				HandleCommon( void );
 public:
 						CPITalkRequest();
-						CPITalkRequest( cSocket *s );
+						CPITalkRequest( CSocket *s );
 	virtual				~CPITalkRequest()
 	{
 	}
@@ -370,7 +370,7 @@ class CPITalkRequestAscii : public CPITalkRequest
 {
 public:
 						CPITalkRequestAscii();
-						CPITalkRequestAscii( cSocket *s );
+						CPITalkRequestAscii( CSocket *s );
 	virtual				~CPITalkRequestAscii()
 	{
 	}
@@ -384,7 +384,7 @@ protected:
 	char langCode[4];
 public:
 						CPITalkRequestUnicode();
-						CPITalkRequestUnicode( cSocket *s );
+						CPITalkRequestUnicode( CSocket *s );
 	virtual				~CPITalkRequestUnicode()
 	{
 	}
@@ -403,7 +403,7 @@ public:
 	{
 	}
 					CPIAllNames3D();
-					CPIAllNames3D( cSocket *s );
+					CPIAllNames3D( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -415,7 +415,7 @@ public:
 	{
 	}
 					CPIGumpChoice();
-					CPIGumpChoice( cSocket *s );
+					CPIGumpChoice( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -427,7 +427,7 @@ public:
 	{
 	}
 					CPIBuyItem();
-					CPIBuyItem( cSocket *s );
+					CPIBuyItem( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -439,7 +439,7 @@ public:
 	{
 	}
 					CPISellItem();
-					CPISellItem( cSocket *s );
+					CPISellItem( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -451,7 +451,7 @@ public:
 	{
 	}
 					CPIDeleteCharacter();
-					CPIDeleteCharacter( cSocket *s );
+					CPIDeleteCharacter( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -488,7 +488,7 @@ public:
 	{
 	}
 					CPICreateCharacter();
-					CPICreateCharacter( cSocket *s );
+					CPICreateCharacter( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -507,7 +507,7 @@ public:
 	{
 	}
 					CPIPlayCharacter();
-					CPIPlayCharacter( cSocket *s );
+					CPIPlayCharacter( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
@@ -530,7 +530,7 @@ public:
 	{
 	}
 					CPIGumpInput();
-					CPIGumpInput( cSocket *s );
+					CPIGumpInput( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 
@@ -550,8 +550,8 @@ public:
 	virtual			~CPIHelpRequest()
 	{
 	}
-					CPIHelpRequest( cSocket *s, UI16 menuVal );
-					CPIHelpRequest( cSocket *s );
+					CPIHelpRequest( CSocket *s, UI16 menuVal );
+					CPIHelpRequest( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -563,7 +563,7 @@ public:
 	{
 	}
 					CPITradeMessage();
-					CPITradeMessage( cSocket *s );
+					CPITradeMessage( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 };
@@ -579,7 +579,7 @@ public:
 	{
 	}
 					CPIDyeWindow();
-					CPIDyeWindow( cSocket *s );
+					CPIDyeWindow( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );

@@ -38,14 +38,14 @@
 namespace UOX
 {
 
-bool BuyShop( cSocket *s, CChar *c );
+bool BuyShop( CSocket *s, CChar *c );
 
 inline bool findString( std::string toCheck, std::string toFind )
 {
 	return ( toCheck.find( toFind ) != std::string::npos );
 }
 
-void WhichResponse( cSocket *mSock, CChar *mChar, std::string text )
+void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 {
 	CBaseResponse *tResp	= NULL;
 
@@ -148,7 +148,7 @@ CEscortResponse::CEscortResponse( bool newVal )
 {
 	findDest = newVal;
 }
-void CEscortResponse::Handle( cSocket *mSock, CChar *mChar )
+void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() ) 
@@ -202,7 +202,7 @@ CBankResponse::CBankResponse( bool newVal )
 {
 	checkBalance = newVal;
 }
-void CBankResponse::Handle( cSocket *mSock, CChar *mChar )
+void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( !mChar->IsDead() )
 	{
@@ -228,7 +228,7 @@ void CBankResponse::Handle( cSocket *mSock, CChar *mChar )
 CKillsResponse::CKillsResponse( void )
 {
 }
-void CKillsResponse::Handle( cSocket *mSock, CChar *mChar )
+void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( !mChar->IsDead() && mSock != NULL )
 	{
@@ -246,7 +246,7 @@ CTrainingResponse::CTrainingResponse( std::string text )
 {
 	ourText = text;
 }
-void CTrainingResponse::Handle( cSocket *mSock, CChar *mChar )
+void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( cwmWorldState->ServerData()->NPCTrainingStatus() ) //if the player wants to train
 	{
@@ -284,8 +284,7 @@ void CTrainingResponse::Handle( cSocket *mSock, CChar *mChar )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							sprintf( temp2, "%s, ", strlwr( skillname[j] ) );
-							strupr( skillname[j] ); // I found out strlwr changes the actual  string permanently, so this undoes that
+							sprintf( temp2, "%s, ", UString( skillname[j] ).lower().c_str() );
 							if( !skillsToTrainIn ) 
 								temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it.
 							strcat( temp, temp2 );
@@ -309,8 +308,7 @@ void CTrainingResponse::Handle( cSocket *mSock, CChar *mChar )
 					}
 					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
 					{
-						sprintf( temp, Dictionary->GetEntry( 1304 ).c_str(), strlwr( skillname[skill] ) );
-						strupr( skillname[skill] ); // I found out strlwr changes the actual string permanently, so this undoes that
+						sprintf( temp, Dictionary->GetEntry( 1304 ).c_str(), UString( skillname[skill] ).lower().c_str() );
 						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 )
 							strcat( temp, Dictionary->GetEntry( 1305 ).c_str() );
 						else
@@ -338,7 +336,7 @@ CBasePetResponse::CBasePetResponse( std::string text )
 {
 	ourText = text;
 }
-void CBasePetResponse::Handle( cSocket *mSock, CChar *mChar )
+void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
@@ -367,7 +365,7 @@ CPetMultiResponse::CPetMultiResponse( std::string text, bool restrictVal, Target
 	targID			= targVal;
 	dictEntry		= dictVal;
 }
-bool CPetMultiResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, isRestricted ) )
 	{
@@ -384,7 +382,7 @@ bool CPetMultiResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CPetReleaseResponse::CPetReleaseResponse( std::string text ) : CBasePetResponse( text )
 {
 }
-bool CPetReleaseResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
 	{
@@ -414,7 +412,7 @@ CPetAllResponse::CPetAllResponse( bool allVal, std::string text ) : CBasePetResp
 CPetGuardResponse::CPetGuardResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
 {
 }
-bool CPetGuardResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
 	{
@@ -437,7 +435,7 @@ bool CPetGuardResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CPetAttackResponse::CPetAttackResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
 {
 }
-bool CPetAttackResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
 	{
@@ -456,7 +454,7 @@ bool CPetAttackResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CPetComeResponse::CPetComeResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
 {
 }
-bool CPetComeResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ) )
 	{
@@ -476,7 +474,7 @@ bool CPetComeResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CPetStayResponse::CPetStayResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
 {
 }
-bool CPetStayResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ) )
 	{
@@ -500,7 +498,7 @@ CBaseVendorResponse::CBaseVendorResponse( bool vendVal, std::string text )
 	saidVendor	= vendVal;
 	ourText		= text;
 }
-void CBaseVendorResponse::Handle( cSocket *mSock, CChar *mChar )
+void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
@@ -520,7 +518,7 @@ void CBaseVendorResponse::Handle( cSocket *mSock, CChar *mChar )
 CVendorBuyResponse::CVendorBuyResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
 {
 }
-bool CVendorBuyResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 	if( Npc->GetNPCAiType() == aiPLAYERVENDOR )
@@ -538,7 +536,7 @@ bool CVendorBuyResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorSellResponse::CVendorSellResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
 {
 }
-bool CVendorSellResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 	CPSellList toSend( (*mChar), (*Npc) );
@@ -549,7 +547,7 @@ bool CVendorSellResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorGoldResponse::CVendorGoldResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
 {
 }
-bool CVendorGoldResponse::Handle( cSocket *mSock, CChar *mChar, CChar *Npc )
+bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == aiPLAYERVENDOR )
 	{
@@ -603,7 +601,7 @@ CHouseMultiResponse::CHouseMultiResponse( TargetIDs targVal, SI32 dictVal )
 	targID			= targVal;
 	dictEntry		= dictVal;
 }
-void CHouseMultiResponse::Handle( cSocket *mSock, CChar *mChar )
+void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CMultiObj *realHouse = findMulti( mChar );
 	if( ValidateObject( realHouse ) ) 
@@ -620,14 +618,14 @@ CBoatResponse::CBoatResponse( std::string text )
 {
 	ourText = text;
 }
-// void CBoatResponse::Handle( cSocket *mSock, CChar *mChar ) in Boats.cpp
+// void CBoatResponse::Handle( CSocket *mSock, CChar *mChar ) in Boats.cpp
 
 CBoatMultiResponse::CBoatMultiResponse( UI08 mType )
 {
 	moveType = mType;
 }
-CBoatObj * GetBoat( cSocket *s );
-void CBoatMultiResponse::Handle( cSocket *mSock, CChar *mChar )
+CBoatObj * GetBoat( CSocket *s );
+void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CBoatObj *boat = GetBoat( mSock );
 	if( !ValidateObject( boat ) )

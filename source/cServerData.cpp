@@ -74,7 +74,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 
 void CServerData::ServerName( std::string setname )
 {
-	if( serverList.size() == 0 )
+	if( serverList.empty() )
 		serverList.resize( 1 );
 	serverList[0].setName( setname );
 	if( setname.empty() )
@@ -95,12 +95,12 @@ std::string CServerData::ServerName( void ) const
 
 void CServerData::ServerDomain( std::string setdomain )
 {
-	if( serverList.size() == 0 )
+	if( serverList.empty() )
 		serverList.resize( 1 );
 	if( setdomain.empty() )
-		serverList[0].setDomain("");
+		serverList[0].setDomain( "" );
 	else
-		serverList[0].setDomain(setdomain);
+		serverList[0].setDomain( setdomain );
 }
 
 std::string CServerData::ServerDomain( void ) const
@@ -110,7 +110,7 @@ std::string CServerData::ServerDomain( void ) const
 
 void CServerData::ServerIP( std::string setip )
 {
-	if( serverList.size() == 0 )
+	if( serverList.empty() )
 		serverList.resize( 1 );
 	if( setip.empty() )
 		serverList[0].setIP("127.0.0.1");
@@ -1419,7 +1419,7 @@ bool CServerData::save( std::string filename )
 		for( size_t cnt = 0; cnt < serverList.size(); ++cnt )
 		{
 			ofsOutput << "SERVERLIST=" << serverList[cnt].getName() << ",";
-			if( serverList[cnt].getDomain().size() > 0 )
+			if( !serverList[cnt].getDomain().empty() )
 				ofsOutput << serverList[cnt].getDomain() << ",";
 			else
 				ofsOutput << serverList[cnt].getIP() << ",";
@@ -2387,7 +2387,7 @@ LIGHTLEVEL CServerData::WorldLightDarkLevel( void ) const
 
 void CServerData::PostLoadDefaults( void )
 {
-	if( startlocations.size() == 0 )
+	if( startlocations.empty() )
 	{
 		ServerLocation( "Yew,Center,545,982,0" );
 		ServerLocation( "Minoc,Tavern,2477,411,15" );

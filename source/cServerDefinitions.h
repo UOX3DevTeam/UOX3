@@ -8,6 +8,7 @@ namespace UOX
 
 typedef std::vector< Script * > VECSCRIPTLIST;
 typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;
+typedef std::vector< Script * >::const_iterator VECSCRIPTLIST_CITERATOR;
 typedef	std::stack< std::string > dirList;
 
 class cDirectoryListing

@@ -183,7 +183,7 @@ public:
 	size_t		NewGumpList( void );
 	SEGump *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, cSocket *toSendTo );
+	void		SendGumpList( SI32 index, CSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
@@ -199,17 +199,17 @@ public:
 	bool		OnStart( void );
 	bool		OnStop( void );
 	//
-	bool		OnIterate( cBaseObject *a, UI32 &b );
-	bool		OnCreate( cBaseObject *thingCreated );
-	bool		OnCommand( cSocket *mSock ); 
-	bool		OnDelete( cBaseObject *thingDestroyed );
+	bool		OnIterate( CBaseObject *a, UI32 &b );
+	bool		OnCreate( CBaseObject *thingCreated );
+	bool		OnCommand( CSocket *mSock ); 
+	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );
 	bool		InRange( CChar *person, CChar *targPlayer );
 	bool		InRange( CChar *person, CItem *targItem   );
-	bool		OnCollide( cSocket *targSock, CChar *objColliding, cBaseObject *objCollideWith );
+	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
-	bool		OnDispel( cBaseObject *dispelled );
-	bool		OnSkill( cBaseObject *skillUse, SI08 skillUsed );
+	bool		OnDispel( CBaseObject *dispelled );
+	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
@@ -225,15 +225,15 @@ public:
 	bool		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	bool		OnDecay( CItem *decaying );
 	bool		OnTransfer( CItem *transferred, CChar *source, CChar *target );
-	bool		OnLeaving( CMultiObj *left, cBaseObject *leaving );
-	bool		OnEntrance( CMultiObj *left, cBaseObject *leaving );
+	bool		OnLeaving( CMultiObj *left, CBaseObject *leaving );
+	bool		OnEntrance( CMultiObj *left, CBaseObject *leaving );
 	bool		OnEquip( CChar *equipper, CItem *equipping );
 	bool		OnUnequip( CChar *equipper, CItem *equipping );
 	SI08		OnUse( CChar *user, CItem *iUsing );
-	bool		OutOfRange( CChar *person, cBaseObject *objVanish );
-	bool		OnLogin( cSocket *sockPlayer, CChar *pPlayer );
-	bool		OnLogout( cSocket *sockPlayer, CChar *pPlayer );
-	bool		OnClick( cSocket *sockPlayer, CItem *iClicked );
+	bool		OutOfRange( CChar *person, CBaseObject *objVanish );
+	bool		OnLogin( CSocket *sockPlayer, CChar *pPlayer );
+	bool		OnLogout( CSocket *sockPlayer, CChar *pPlayer );
+	bool		OnClick( CSocket *sockPlayer, CItem *iClicked );
 	bool		OnFall( CChar *pFall, SI08 fallDistance );
 	bool		OnSell( void );
 	bool		OnBuy( void );
@@ -243,7 +243,7 @@ public:
 	bool		OnLightChange( void );
 	bool		OnXYZEvent( void );
 	bool		OnPortal( void );
-	bool		OnTimer( cBaseObject *tObject, UI08 timerID );
+	bool		OnTimer( CBaseObject *tObject, UI08 timerID );
 	bool		OnDeath( CChar *pDead );
 	bool		OnResurrect( CChar *pAlive );
 	bool		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
@@ -254,7 +254,7 @@ public:
 	bool		OnLeaveRegion( CChar *entering, SI16 region );
 	bool		OnSpellTarget( CChar *target, CChar *caster, UI08 spellNum );
 	bool		OnSpellTarget( CItem *target, CChar *caster, UI08 spellNum );
-	bool		DoCallback( cSocket *tSock, SERIAL targeted, UI08 callNum );
+	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellID );
 	SI16		OnScrollCast( CChar *tChar, UI08 SpellID );
 	bool		OnSpellSuccess( CChar *tChar, UI08 SpellID );
@@ -265,14 +265,14 @@ public:
 	bool		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill );
 	// MACTEP: 041802: Support for new event
 	UI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i);
-	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSocket *s );
+	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s );
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 
 	bool		commandRegistration( void );
 	bool		spellRegistration( void );
-	bool		executeCommand( cSocket *s, std::string funcName, std::string executedString );
+	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	
-	bool		MagicSpellCast( cSocket *mSock, CChar *tChar, bool directCast, int spellNum );
+	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

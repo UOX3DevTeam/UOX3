@@ -36,7 +36,7 @@ enum ShipItems
 //[4]=direction of ship
 //[4]=Which Item (PT Plank, SB Plank, Hatch, TMan)
 //[2]=Coord (x,y) offsets
-SI16 iSmallShipOffsets[4][4][2] =
+const SI16 iSmallShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
 	{ {-2,0},	{2,0},	{0,-4},	{1,4} },//Dir
@@ -45,7 +45,7 @@ SI16 iSmallShipOffsets[4][4][2] =
 	{ {0,2},	{0,-2},	{-4,0},	{4,0} } 
 };
 //  P1    P2   Hold  Tiller
-SI16 iMediumShipOffsets[4][4][2] =
+const SI16 iMediumShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
     { {-2,0},	{2,0},	{0,-4},	{1,5} },
@@ -53,7 +53,7 @@ SI16 iMediumShipOffsets[4][4][2] =
     { {2,0},	{-2,0},	{0,4},	{0,-5}},
     { {0,2},	{0,-2},	{-4,0},	{5,0} } 
 };
-SI16 iLargeShipOffsets[4][4][2] =
+const SI16 iLargeShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
 { 
     { {-2,-1},	{2,-1},	{0,-5},	{1,5} },
@@ -64,7 +64,7 @@ SI16 iLargeShipOffsets[4][4][2] =
 //Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
-UI08 cShipItems[4][6]=
+const UI08 cShipItems[4][6]=
 {
     {0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
     {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
@@ -74,12 +74,12 @@ UI08 cShipItems[4][6]=
 //============================================================================================
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem * GetBoat( cSocket *s )
+//|	Function	-	CItem * GetBoat( CSocket *s )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the boat a character is on
 //o---------------------------------------------------------------------------o
-CBoatObj * GetBoat( cSocket *s )
+CBoatObj * GetBoat( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
 
@@ -89,12 +89,12 @@ CBoatObj * GetBoat( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void LeaveBoat( cSocket *s, CItem *p )
+//|	Function	-	void LeaveBoat( CSocket *s, CItem *p )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Leave a boat
 //o---------------------------------------------------------------------------o
-void LeaveBoat( cSocket *s, CItem *p )
+void LeaveBoat( CSocket *s, CItem *p )
 {
 	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
@@ -151,13 +151,13 @@ void LeaveBoat( cSocket *s, CItem *p )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void PlankStuff( cSocket *s, CItem *p )
+//|	Function	-	void PlankStuff( CSocket *s, CItem *p )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	If not on a boat, will send character to the plank, other
 //|					wise will call OpenPlank to open/close the plank
 //o---------------------------------------------------------------------------o
-void PlankStuff( cSocket *s, CItem *p )
+void PlankStuff( CSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
 	CBoatObj *boat = GetBoat( s );
@@ -348,12 +348,12 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool CreateBoat( cSocket *s, CItem *b, char id2, UI08 boattype )
+//|	Function	-	bool CreateBoat( CSocket *s, CItem *b, char id2, UI08 boattype )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Create a boat
 //o---------------------------------------------------------------------------o
-bool CreateBoat( cSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
+bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 {
 	if( !ValidateObject( b ) )
 	{
@@ -467,7 +467,7 @@ void CheckDirection( UI08 dir, SI16& tx, SI16& ty )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void MoveBoat( cSocket *s, UI08 dir, CItem *boat )
+//|	Function	-	void MoveBoat( CSocket *s, UI08 dir, CItem *boat )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Move the boat and everything on it 1 tile
@@ -487,7 +487,8 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	CPPauseResume prSend( 1 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( boat, DIST_BUILDRANGE );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	SOCKLIST_CITERATOR cIter;
+	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		(*cIter)->Send( &prSend );
 	}
@@ -552,7 +553,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Turn an item on a boat
 //o---------------------------------------------------------------------------o
-void TurnStuff( CBoatObj *b, cBaseObject *i, bool rightTurn )
+void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 {
 	if( !ValidateObject( b ) )
 		return;
@@ -694,7 +695,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		(*cIter)->Send( &prSend );
 }
 
-void TurnBoat( cSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn )
+void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn )
 {
 	SI16 tx = 0, ty = 0;
 	CheckDirection( dir&0x0F, tx, ty );
@@ -711,12 +712,12 @@ void TurnBoat( cSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 	}
 }
 //o---------------------------------------------------------------------------o
-//|	Function	-	void Speech( cSocket *mSock, CChar *mChar )
+//|	Function	-	void Speech( CSocket *mSock, CChar *mChar )
 //|	Programmer	-	Zippy
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check for boat commands
 //o---------------------------------------------------------------------------o
-void CBoatResponse::Handle( cSocket *mSock, CChar *mChar )
+void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( mSock == NULL )
 		return;
@@ -797,12 +798,12 @@ void CBoatResponse::Handle( cSocket *mSock, CChar *mChar )
 
 void killKeys( SERIAL targSerial );
 //o---------------------------------------------------------------------------o
-//|	Function	-	void ModelBoat( cSocket *s, CItem *i )
+//|	Function	-	void ModelBoat( CSocket *s, CItem *i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Turn a boat into a boat model that can be re-placed
 //o---------------------------------------------------------------------------o
-void ModelBoat( cSocket *s, CBoatObj *i )
+void ModelBoat( CSocket *s, CBoatObj *i )
 {
 	CItem *tiller	= calcItemObjFromSer( i->GetTiller() );
 	CItem *p1		= calcItemObjFromSer( i->GetPlank( 0 ) );

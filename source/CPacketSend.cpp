@@ -462,7 +462,7 @@ void CPExtMove::Z( SI08 newValue )
 {
 	internalBuffer[11] = newValue;
 }
-void CPExtMove::Direction( char newValue )
+void CPExtMove::Direction( UI08 newValue )
 {
 	internalBuffer[12] = newValue;
 }
@@ -470,11 +470,11 @@ void CPExtMove::Colour( UI16 colourID )
 {
 	PackShort( &internalBuffer[0], 13, colourID );
 }
-void CPExtMove::FlagColour( char newValue )
+void CPExtMove::FlagColour( UI08 newValue )
 {
 	internalBuffer[16] = newValue;
 }
-void CPExtMove::Flag( char newValue )
+void CPExtMove::Flag( UI08 newValue )
 {
 	internalBuffer[15] = newValue;
 }
@@ -546,7 +546,7 @@ CPAttackOK &CPAttackOK::operator=( CChar &toCopy )
 //Delete object (5 bytes) 
 //	BYTE cmd 
 //	BYTE[4] item/char id 
-void CPRemoveItem::CopyData( cBaseObject &toCopy )
+void CPRemoveItem::CopyData( CBaseObject &toCopy )
 {
 	Serial( toCopy.GetSerial() );
 }
@@ -555,7 +555,7 @@ CPRemoveItem::CPRemoveItem()
 	internalBuffer.resize( 5 );
 	internalBuffer[0] = 0x1D;
 }
-CPRemoveItem::CPRemoveItem( cBaseObject &toCopy )
+CPRemoveItem::CPRemoveItem( CBaseObject &toCopy )
 {
 	internalBuffer.resize( 5 );
 	internalBuffer[0] = 0x1D;
@@ -565,7 +565,7 @@ void CPRemoveItem::Serial( SERIAL newSerial )
 {
 	PackLong( &internalBuffer[0], 1, newSerial );
 }
-CPRemoveItem &CPRemoveItem::operator=( cBaseObject &toCopy )
+CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
@@ -689,7 +689,7 @@ void CPUpdIndSkill::Lock( UI08 lockVal )
 //		BYTE[4] itemID (from 3C packet) 
 //		BYTE[2] # bought 
 
-void CPBuyItem::CopyData( cBaseObject &i )
+void CPBuyItem::CopyData( CBaseObject &i )
 {
 	Serial( i.GetSerial() );
 }
@@ -697,12 +697,12 @@ CPBuyItem::CPBuyItem()
 {
 	InternalReset();
 }
-CPBuyItem::CPBuyItem( cBaseObject &i )
+CPBuyItem::CPBuyItem( CBaseObject &i )
 {
 	InternalReset();
 	CopyData( i );
 }
-CPBuyItem &CPBuyItem::operator=( cBaseObject &toCopy )
+CPBuyItem &CPBuyItem::operator=( CBaseObject &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
@@ -1103,20 +1103,20 @@ void CPPlaySoundEffect::InternalReset( void )
 	internalBuffer[4] = 0;
 	internalBuffer[5] = 0;
 }
-CPPlaySoundEffect &CPPlaySoundEffect::operator=( cBaseObject &toCopy )
+CPPlaySoundEffect &CPPlaySoundEffect::operator=( CBaseObject &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
 }
 
-void CPPlaySoundEffect::CopyData( cBaseObject &toCopy )
+void CPPlaySoundEffect::CopyData( CBaseObject &toCopy )
 {
 	X( toCopy.GetX() );
 	Y( toCopy.GetY() );
 	Z( toCopy.GetZ() );
 }
 
-CPPlaySoundEffect::CPPlaySoundEffect( cBaseObject &toCopy )
+CPPlaySoundEffect::CPPlaySoundEffect( CBaseObject &toCopy )
 {
 	InternalReset();
 	CopyData( toCopy );
@@ -1267,7 +1267,7 @@ void CPGraphicalEffect::Effect( UI08 effectType )
 {
 	internalBuffer[1] = effectType;
 }
-void CPGraphicalEffect::SourceSerial( cBaseObject &toSet )
+void CPGraphicalEffect::SourceSerial( CBaseObject &toSet )
 {
 	SourceSerial( toSet.GetSerial() );
 }
@@ -1275,7 +1275,7 @@ void CPGraphicalEffect::SourceSerial( SERIAL toSet )
 {
 	PackLong( &internalBuffer[0], 2, toSet );
 }
-void CPGraphicalEffect::TargetSerial( cBaseObject &toSet )
+void CPGraphicalEffect::TargetSerial( CBaseObject &toSet )
 {
 	TargetSerial( toSet.GetSerial() );
 }
@@ -1328,25 +1328,25 @@ void CPGraphicalEffect::ExplodeOnImpact( bool nValue )
 	internalBuffer[27] = (UI08)((nValue?1:0));
 }
 
-CPGraphicalEffect::CPGraphicalEffect( UI08 effectType, cBaseObject &src, cBaseObject &trg )
+CPGraphicalEffect::CPGraphicalEffect( UI08 effectType, CBaseObject &src, CBaseObject &trg )
 {
 	InternalReset();
 	Effect( effectType );
 	SourceSerial( src );
 	TargetSerial( trg );
 }
-CPGraphicalEffect::CPGraphicalEffect( UI08 effectType, cBaseObject &src )
+CPGraphicalEffect::CPGraphicalEffect( UI08 effectType, CBaseObject &src )
 {
 	InternalReset();
 	Effect( effectType );
 	SourceSerial( src );
 }
 
-void CPGraphicalEffect::SourceLocation( cBaseObject& toSet )
+void CPGraphicalEffect::SourceLocation( CBaseObject& toSet )
 {
 	SourceLocation( toSet.GetX(), toSet.GetY(), toSet.GetZ() );
 }
-void CPGraphicalEffect::TargetLocation( cBaseObject& toSet )
+void CPGraphicalEffect::TargetLocation( CBaseObject& toSet )
 {
 	TargetLocation( toSet.GetX(), toSet.GetY(), toSet.GetZ() );
 }
@@ -1747,7 +1747,7 @@ void CPTargetCursor::CursorType( UI08 nType )
 
 //Note: Server Message
 //Note: For characters other than the player, currentHitpoints and maxHitpoints are not the actual values.  MaxHitpoints is a fixed value, and currentHitpoints works like a percentage.
-void CPStatWindow::SetCharacter( CChar &toCopy, cSocket &target )
+void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 {
 	if( target.ReceivedVersion() )
 	{
@@ -1839,7 +1839,7 @@ CPStatWindow::CPStatWindow()
 {
 	InternalReset();
 }
-CPStatWindow::CPStatWindow( CChar &toCopy, cSocket &target )
+CPStatWindow::CPStatWindow( CChar &toCopy, CSocket &target )
 {
 	InternalReset();
 	SetCharacter( toCopy, target );
@@ -2183,7 +2183,7 @@ void CPPauseResume::Mode( UI08 mode )
 	internalBuffer[1] = mode;
 }
 
-bool CPPauseResume::ClientCanReceive( cSocket *mSock )
+bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 {
 	if( mSock == NULL )
 		return false;
@@ -2262,7 +2262,7 @@ void CPTrackingArrow::Location( SI16 x, SI16 y )
 	internalBuffer[4] = (UI08)(y>>8);
 	internalBuffer[5] = (UI08)(y%256);
 }
-CPTrackingArrow &CPTrackingArrow::operator=( cBaseObject &toCopy )
+CPTrackingArrow &CPTrackingArrow::operator=( CBaseObject &toCopy )
 {
 	Location( toCopy.GetX(), toCopy.GetY() );
 	return (*this);
@@ -2272,7 +2272,7 @@ void CPTrackingArrow::Active( UI08 value )
 	internalBuffer[1] = value;
 }
 
-CPTrackingArrow::CPTrackingArrow( cBaseObject &toCopy )
+CPTrackingArrow::CPTrackingArrow( CBaseObject &toCopy )
 {
 	InternalReset();
 	Location( toCopy.GetX(), toCopy.GetY() );
@@ -2318,7 +2318,7 @@ void CPDyeVat::InternalReset( void )
 	internalBuffer[5] = 0;
 	internalBuffer[6] = 0;
 }
-void CPDyeVat::CopyData( cBaseObject &target )
+void CPDyeVat::CopyData( CBaseObject &target )
 {
 	Serial( target.GetSerial() );
 	Model( target.GetID() );
@@ -2327,7 +2327,7 @@ CPDyeVat::CPDyeVat()
 {
 	InternalReset();
 }
-CPDyeVat::CPDyeVat( cBaseObject &target )
+CPDyeVat::CPDyeVat( CBaseObject &target )
 {
 	InternalReset();
 	CopyData( target );
@@ -2344,7 +2344,7 @@ void CPDyeVat::Model( SI16 toSet )
 	internalBuffer[7] = (UI08)(toSet>>8);
 	internalBuffer[8] = (UI08)(toSet%256);
 }
-CPDyeVat &CPDyeVat::operator=( cBaseObject &target )
+CPDyeVat &CPDyeVat::operator=( CBaseObject &target )
 {
 	CopyData( target );
 	return (*this);
@@ -2960,18 +2960,18 @@ void CPGodModeToggle::InternalReset( void )
 	internalBuffer[0] = 0x2B;
 }
 
-void CPGodModeToggle::CopyData( cSocket *s )
+void CPGodModeToggle::CopyData( CSocket *s )
 {
 	internalBuffer[1] = s->GetByte( 1 );
 }
 
-CPGodModeToggle::CPGodModeToggle( cSocket *s )
+CPGodModeToggle::CPGodModeToggle( CSocket *s )
 {
 	InternalReset();
 	CopyData( s );
 }
 
-CPGodModeToggle& CPGodModeToggle::operator=( cSocket *s )
+CPGodModeToggle& CPGodModeToggle::operator=( CSocket *s )
 {
 	CopyData( s );
 	return (*this);
@@ -3042,7 +3042,7 @@ CPMapChange::CPMapChange( UI08 newMap )
 	InternalReset();
 	SetMap( newMap );
 }
-CPMapChange::CPMapChange( cBaseObject *moving )
+CPMapChange::CPMapChange( CBaseObject *moving )
 {
 	InternalReset();
 	if( ValidateObject( moving ) )
@@ -3055,7 +3055,7 @@ void CPMapChange::SetMap( UI08 newMap )
 {
 	internalBuffer[5] = newMap;
 }
-CPMapChange& CPMapChange::operator=( cBaseObject& moving )
+CPMapChange& CPMapChange::operator=( CBaseObject& moving )
 {
 	SetMap( moving.WorldNumber() );
 	return (*this);
@@ -3073,7 +3073,7 @@ CPItemsInContainer::CPItemsInContainer()
 {
 	InternalReset();
 }
-CPItemsInContainer::CPItemsInContainer( cSocket *mSock, CItem *container, CChar *vendor )
+CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, CChar *vendor )
 {
 	InternalReset();
 	if( ValidateObject( vendor ) )
@@ -3084,14 +3084,14 @@ CPItemsInContainer::CPItemsInContainer( cSocket *mSock, CItem *container, CChar 
 	if( ValidateObject( container ) )
 		CopyData( mSock, (*container ) );
 }
-CPItemsInContainer::CPItemsInContainer( cSocket *mSock, CItem *container )
+CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container )
 {
 	InternalReset();
 	if( ValidateObject( container ) )
 		CopyData( mSock, (*container) );
 }
 
-CPItemsInContainer::CPItemsInContainer( cSocket *mSock, CItem *container, bool corpseVal )
+CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, bool corpseVal )
 {
 	InternalReset();
 	isCorpse = corpseVal;
@@ -3143,7 +3143,7 @@ void CPItemsInContainer::Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amou
 	PackLong(  &internalBuffer[0], baseOffset + 13, cont );
 }
 
-void CPItemsInContainer::CopyData( cSocket *mSock, CItem& toCopy )
+void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 {
 	UI16 itemCount		= 0;
 	bool itemIsCorpse	= toCopy.isCorpse();
@@ -3309,7 +3309,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //		BYTE locationIndex (0-based) 
 //		BYTE[31] town (general name) 
 //		BYTE[31] exact name 
-//	BYTE Flags 
+//	BYTE[4] Flags 
 //		0x02 = send config/req logout (IGR?)
 //		0x04 = single character (siege)
 //		0x08 = enable npcpopup menus
@@ -3347,7 +3347,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Starting locations --" << std::endl;
 	for( UI32 l = 0; l < internalBuffer[364]; ++l )
 	{
-		UI32 baseOffset = 365 + l * 63;
+		UI32 baseOffset = 366 + l * 63;
 		outStream << "    Start " << l << std::endl;
 		outStream << "      Index : " << (int)internalBuffer[baseOffset] << std::endl;
 		outStream << "      General Name: ";
@@ -3416,20 +3416,19 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 {
 	// was 305 +, now 309 +
 	UI16 packetSize;
-//	if(internalBuffer[3]>5)
-		packetSize = (UI16)(366 + 63 * numLocations);
-//	else
-//		packetSize = (UI16)(305 + 63 * numLocations);
+	if( internalBuffer[3] > 5 )
+		packetSize = (UI16)(369 + 63 * numLocations);
+	else
+		packetSize = (UI16)(309 + 63 * numLocations);
 	internalBuffer.resize( packetSize );
 	internalBuffer[1] = (UI08)(packetSize>>8);
 	internalBuffer[2] = (UI08)(packetSize%256);
 	// If we are going to support the 6char client flag then we need to make sure we push this offset furtner down.
-//	if(internalBuffer[3]>5)
+	if( internalBuffer[3] > 5 )
 		internalBuffer[364] = numLocations;
-//	else
-//		internalBuffer[304] = numLocations;
+	else
+		internalBuffer[304] = numLocations;
 	// turn on /*send config,*/ npcpopup menus and common AOS features
-//	internalBuffer[packetSize - 1] = ( 0x20 | 0x08 /*| 0x02*/ );
 	internalBuffer[packetSize - 1] = ( 0x08 | 0x20 | 0x40 );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
@@ -3451,10 +3450,10 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 	if( sLoc == NULL )
 		return;
 	UI16 baseOffset;
-//	if(internalBuffer[3]>5)
+	if( internalBuffer[3] > 5 )
 			baseOffset = (UI16)(365 + locOffset * 63);
-//	else
-//			baseOffset = (UI16)(305 + locOffset * 63);
+	else
+			baseOffset = (UI16)(305 + locOffset * 63);
 	internalBuffer[baseOffset]	= locOffset;
 	size_t townLen				= strlen( sLoc->town );
 	size_t descLen				= strlen( sLoc->description );
@@ -3608,14 +3607,14 @@ CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType ) : CPGraphicalEffect( e
 {
 	InternalReset();
 }
-CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType, cBaseObject &src, cBaseObject &trg ) : CPGraphicalEffect( effectType, src, trg )
+CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType, CBaseObject &src, CBaseObject &trg ) : CPGraphicalEffect( effectType, src, trg )
 {
 	InternalReset();
 	Effect( effectType );
 	SourceSerial( src );
 	TargetSerial( trg );
 }
-CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType, cBaseObject &src ) : CPGraphicalEffect( effectType, src )
+CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType, CBaseObject &src ) : CPGraphicalEffect( effectType, src )
 {
 	InternalReset();
 	Effect( effectType );
@@ -3903,15 +3902,15 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 	if( mItem.isPileable() || mItem.isCorpse() )
 		PackShort( &internalBuffer[0],  byteNum+=2, mItem.GetAmount() );
 	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
+	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );	// Enable Dye and Move
+	internalBuffer[byteNum+=2] = mItem.GetZ();
 	if( mItem.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[byteNum]		+= 0x80;	// Enable direction
-		internalBuffer[byteNum+4]	= mItem.GetDir();
+		internalBuffer[byteNum-4]	+= 0x80;	// Enable direction
+		internalBuffer[++byteNum]	= mItem.GetDir();
 		++internalBuffer[2];
 	}
-	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );	// Enable Dye and Move
-	internalBuffer[byteNum+=2] = mItem.GetZ();
 
 	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
 		PackShort( &internalBuffer[0], ++byteNum, 0x00C6 );
@@ -3927,21 +3926,22 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 
 void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 {
-	UI08 byteNum = 7;
 	if( mChar.ViewHouseAsIcon() && mMulti.GetID() >= 0x4000 )
-		PackShort( &internalBuffer[0], byteNum, 0x14F0 );
+		PackShort( &internalBuffer[0], 7, 0x14F0 );
 	else
-		PackShort( &internalBuffer[0], byteNum, mMulti.GetID() );
-	PackShort( &internalBuffer[0], byteNum+=2, mMulti.GetX() );
+		PackShort( &internalBuffer[0], 7, mMulti.GetID() );
+	PackShort( &internalBuffer[0], 9, mMulti.GetX() );
+	PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0xC000 );	// Enable Dye and Move
+	internalBuffer[13] = mMulti.GetZ();
+
+	UI08 byteNum = 13;
 	if( mMulti.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[byteNum]		+= 0x80;	// Enable direction
-		internalBuffer[byteNum+4]	= mMulti.GetDir();
+		internalBuffer[11]			+= 0x80;	// Enable direction
+		internalBuffer[++byteNum]	= mMulti.GetDir();
 		++internalBuffer[2];
 	}
-	PackShort( &internalBuffer[0], byteNum+=2, mMulti.GetY() + 0xC000 );	// Enable Dye and Move
-	internalBuffer[byteNum+=2] = mMulti.GetZ();
 
 	PackShort( &internalBuffer[0], ++byteNum, mMulti.GetColour() );
 	internalBuffer[byteNum+=2] = 0;
@@ -3982,7 +3982,7 @@ void CPObjectInfo::Objects( CItem& mItem, CChar& mChar )
 //	BYTE[2] Font									12
 //	BYTE[30] Name									14
 //	BYTE[?] Null-Terminated Message (? = blockSize - 44) 
-void CPSpeech::Object( cBaseObject &talking )
+void CPSpeech::Object( CBaseObject &talking )
 {
 	CopyData( talking );
 }
@@ -4035,7 +4035,7 @@ CPSpeech::CPSpeech()
 {
 	InternalReset();
 }
-CPSpeech::CPSpeech( cBaseObject &toCopy )
+CPSpeech::CPSpeech( CBaseObject &toCopy )
 {
 	InternalReset();
 	CopyData( toCopy );
@@ -4045,12 +4045,12 @@ CPSpeech::CPSpeech( CPITalkRequest &toCopy )
 	InternalReset();
 	CopyData( toCopy );
 }
-CPSpeech &CPSpeech::operator=( cBaseObject &toCopy )
+CPSpeech &CPSpeech::operator=( CBaseObject &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
 }
-void CPSpeech::CopyData( cBaseObject &toCopy )
+void CPSpeech::CopyData( CBaseObject &toCopy )
 {
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
@@ -4072,7 +4072,7 @@ void CPSpeech::ID( UI16 toSet )
 {
 	PackShort( &internalBuffer[0], 7, toSet );
 }
-void CPSpeech::GrabSpeech( cSocket *mSock, CChar *mChar )
+void CPSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
 {
 	internalBuffer[10] = mSock->GetByte( 4 );
 	internalBuffer[11] = mSock->GetByte( 5 );
@@ -4113,7 +4113,7 @@ CPSpeech &CPSpeech::operator=( CPSpeech &copyFrom )
 //	BYTE[4] Language
 //	BYTE[30] Name
 //	BYTE[?][2] Msg – Null Terminated (blockSize - 48)
-void CPUnicodeSpeech::Object( cBaseObject &talking )
+void CPUnicodeSpeech::Object( CBaseObject &talking )
 {
 	CopyData( talking );
 }
@@ -4169,7 +4169,7 @@ CPUnicodeSpeech::CPUnicodeSpeech()
 {
 	InternalReset();
 }
-CPUnicodeSpeech::CPUnicodeSpeech( cBaseObject &toCopy )
+CPUnicodeSpeech::CPUnicodeSpeech( CBaseObject &toCopy )
 {
 	InternalReset();
 	CopyData( toCopy );
@@ -4184,12 +4184,12 @@ CPUnicodeSpeech::CPUnicodeSpeech( CPITalkRequestUnicode &toCopy )
 	InternalReset();
 	CopyData( toCopy );
 }
-CPUnicodeSpeech &CPUnicodeSpeech::operator=( cBaseObject &toCopy )
+CPUnicodeSpeech &CPUnicodeSpeech::operator=( CBaseObject &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
 }
-void CPUnicodeSpeech::CopyData( cBaseObject &toCopy )
+void CPUnicodeSpeech::CopyData( CBaseObject &toCopy )
 {
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
@@ -4227,7 +4227,7 @@ void CPUnicodeSpeech::ID( UI16 toSet )
 {
 	PackShort( &internalBuffer[0], 7, toSet );
 }
-void CPUnicodeSpeech::GrabSpeech( cSocket *mSock, CChar *mChar )
+void CPUnicodeSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
 {
 	internalBuffer[10] = mSock->GetByte( 4 );
 	internalBuffer[11] = mSock->GetByte( 5 );
@@ -4320,13 +4320,13 @@ void CPSecureTrading::InternalReset( void )
 	internalBuffer[0] = 0x6F;
 	internalBuffer[2] = 17;
 }
-void CPSecureTrading::CopyData( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 )
+void CPSecureTrading::CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
 	PackLong( &internalBuffer[0], 4,  mItem.GetSerial()  );
 	PackLong( &internalBuffer[0], 8,  mItem2.GetSerial() );
 	PackLong( &internalBuffer[0], 12, mItem3.GetSerial() );
 }
-void CPSecureTrading::CopyData( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
+void CPSecureTrading::CopyData( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
 	PackLong( &internalBuffer[0], 4,  mItem.GetSerial() );
 	PackLong( &internalBuffer[0], 8,  mItem2			);
@@ -4336,12 +4336,12 @@ CPSecureTrading::CPSecureTrading()
 {
 	InternalReset();
 }
-CPSecureTrading::CPSecureTrading( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 )
+CPSecureTrading::CPSecureTrading( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
 	InternalReset();
 	CopyData( mItem, mItem2, mItem3 );
 }
-CPSecureTrading::CPSecureTrading( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
+CPSecureTrading::CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
 	InternalReset();
 	CopyData( mItem, mItem2, mItem3 );
@@ -4349,11 +4349,11 @@ CPSecureTrading::CPSecureTrading( cBaseObject& mItem, SERIAL mItem2, SERIAL mIte
 CPSecureTrading::~CPSecureTrading()
 {
 }
-void CPSecureTrading::Objects( cBaseObject& mItem, cBaseObject& mItem2, cBaseObject& mItem3 )
+void CPSecureTrading::Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
 	CopyData( mItem, mItem2, mItem3 );
 }
-void CPSecureTrading::Objects( cBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
+void CPSecureTrading::Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
 	CopyData( mItem, mItem2, mItem3 );
 }
@@ -4392,7 +4392,7 @@ void CPAllNames3D::InternalReset( void )
 	internalBuffer[0] = 0x98;
 	internalBuffer[2] = 37;
 }
-void CPAllNames3D::CopyData( cBaseObject& obj )
+void CPAllNames3D::CopyData( CBaseObject& obj )
 {
 	PackLong( &internalBuffer[0], 3, obj.GetSerial() );
 	strcpy( (char *)&internalBuffer[7], obj.GetName().c_str() );
@@ -4401,12 +4401,12 @@ CPAllNames3D::CPAllNames3D()
 {
 	InternalReset();
 }
-CPAllNames3D::CPAllNames3D( cBaseObject& obj )
+CPAllNames3D::CPAllNames3D( CBaseObject& obj )
 {
 	InternalReset();
 	CopyData( obj );
 }
-void CPAllNames3D::Object( cBaseObject& obj )
+void CPAllNames3D::Object( CBaseObject& obj )
 {
 	CopyData( obj );
 }
@@ -4731,7 +4731,7 @@ CPNewSpellBook::CPNewSpellBook( CItem& obj )
 	CopyData( obj );
 }
 
-bool CPNewSpellBook::ClientCanReceive( cSocket *mSock )
+bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 {
 	if( mSock == NULL )
 		return false;
@@ -4779,7 +4779,7 @@ CPDisplayDamage::CPDisplayDamage( CChar& ourTarg, UI16 ourDamage )
 	InternalReset();
 	CopyData( ourTarg, ourDamage );
 }
-bool CPDisplayDamage::ClientCanReceive( cSocket *mSock )
+bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 {
 	if( mSock == NULL )
 		return false;
@@ -4815,7 +4815,7 @@ void CPQueryToolTip::InternalReset( void )
 	internalBuffer[11] = 0xBA;
 	internalBuffer[12] = 0x2B;
 }
-void CPQueryToolTip::CopyData( cBaseObject& mObj )
+void CPQueryToolTip::CopyData( CBaseObject& mObj )
 {
 	PackLong( &internalBuffer[0], 5, mObj.GetSerial() );
 }
@@ -4823,13 +4823,13 @@ CPQueryToolTip::CPQueryToolTip()
 {
 	InternalReset();
 }
-CPQueryToolTip::CPQueryToolTip( cBaseObject& mObj )
+CPQueryToolTip::CPQueryToolTip( CBaseObject& mObj )
 {
 	InternalReset();
 	CopyData( mObj );
 }
 
-bool CPQueryToolTip::ClientCanReceive( cSocket *mSock )
+bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 {
 	if( mSock == NULL )
 		return false;

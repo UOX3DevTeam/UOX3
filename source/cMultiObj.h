@@ -33,8 +33,8 @@ public:
 	bool				IsOnBanList( CChar *toBan ) const;
 	bool				IsOwner( CChar *toFind ) const;
 
-	void				AddToMulti( cBaseObject *toAdd );
-	void				RemoveFromMulti( cBaseObject *toRemove );
+	void				AddToMulti( CBaseObject *toAdd );
+	void				RemoveFromMulti( CBaseObject *toRemove );
 
 	size_t				GetLockDownCount( void ) const;
 	UI32				GetMaxLockDowns( void ) const;

@@ -37,7 +37,7 @@ public:
 	commandLevel_st *GetClearance( UString clearName );			// return by command name
 	commandLevel_st *GetClearance( UI08 commandLevel );	// return by command level
 	UI16			GetColourByLevel( UI08 commandLevel );
-	void			Command( cSocket *s, CChar *c, UString text );
+	void			Command( CSocket *s, CChar *c, UString text );
 	void			Load( void );
 	void			Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo );
 

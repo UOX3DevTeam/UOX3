@@ -26,7 +26,7 @@ enum cC_TID
 	tCHAR_COUNT
 };
 
-class CChar : public cBaseObject
+class CChar : public CBaseObject
 {
 // Base Characters
 protected:
@@ -205,7 +205,7 @@ public:
 	SI08		GetCell( void ) const;
 	UI08		GetRunning( void ) const;
 	UI08		GetStep( void ) const;
-	cTownRegion *GetRegion( void ) const;
+	CTownRegion *GetRegion( void ) const;
 	UI08		GetRegionNum( void ) const;
 
 	void			SetDispZ( SI08 newZ );
@@ -216,7 +216,7 @@ public:
 	void			SetRegion( UI08 newValue );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
-	virtual void	SetLocation( const cBaseObject *toSet );
+	virtual void	SetLocation( const CBaseObject *toSet );
 	void			WalkXY( SI16 newX, SI16 newY );
 	void			WalkZ( SI08 newZ );
 	void			WalkDir( SI08 newDir );
@@ -301,12 +301,12 @@ public:
 	virtual		~CChar();
 
 	CChar *			Dupe( void );
-	virtual void	RemoveFromSight( cSocket *mSock = NULL );
-	void			SendWornItems( cSocket *s );
+	virtual void	RemoveFromSight( CSocket *mSock = NULL );
+	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( cSocket *mSock = NULL );
-	virtual void	SendToSocket( cSocket *s );
+	virtual void	Update( CSocket *mSock = NULL );
+	virtual void	SendToSocket( CSocket *s );
 
 	CItem *			GetItemAtLayer( UI08 Layer ) const;
 	bool			WearItem( CItem *toWear );
@@ -316,7 +316,7 @@ public:
 	CItem *			NextItem( void );
 	bool			FinishedItems( void );
 
-	void			BreakConcentration( cSocket *sock = NULL );
+	void			BreakConcentration( CSocket *sock = NULL );
 
 	virtual bool	Save( std::ofstream &outStream );
 	virtual void	PostLoadProcessing( void );
@@ -373,13 +373,13 @@ public:
 	bool			isHuman( void );
 	bool			inDungeon( void );
 
-	void			talk( cSocket *s, SI32 dictEntry, bool antispam, ... );
-	void			talk( cSocket *s, std::string txt, bool antispam );
+	void			talk( CSocket *s, SI32 dictEntry, bool antispam, ... );
+	void			talk( CSocket *s, std::string txt, bool antispam );
 	void			talkAll( std::string txt, bool antispam );
 	void			talkAll( SI32 dictEntry, bool antispam, ... );
 
-	void			emote( cSocket *s, std::string txt, bool antispam );
-	void			emote( cSocket *s, SI32 dictEntry, bool antispam, ... );
+	void			emote( CSocket *s, std::string txt, bool antispam );
+	void			emote( CSocket *s, SI32 dictEntry, bool antispam, ... );
 	void			emoteAll( SI32 dictEntry, bool antispam, ... );
 
 	virtual void	Cleanup( void );
@@ -388,7 +388,7 @@ public:
 // NPC Characters
 protected:
 	SI16			npcaitype;
-	cBaseObject *	petguarding;
+	CBaseObject *	petguarding;
 	SI16			taming;
 	UI08			trainingplayerin;
 	UI32			holdg;
@@ -440,9 +440,9 @@ public:
 	void		SetSplit( UI08 newValue );
 	void		SetSplitChance( UI08 newValue );
 
-	void			SetGuarding( cBaseObject *newValue );
+	void			SetGuarding( CBaseObject *newValue );
 
-	cBaseObject *	GetGuarding( void ) const;
+	CBaseObject *	GetGuarding( void ) const;
 
 	SI16		GetFx( UI08 part ) const;
 	SI16		GetFy( UI08 part ) const;

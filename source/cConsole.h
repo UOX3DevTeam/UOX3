@@ -38,14 +38,14 @@ public:
 	CConsole& operator<<( const UI32 &outPut );
 	CConsole& operator<<( const SI08 &outPut );
 	CConsole& operator<<( const UI08 &outPut );
-	CConsole& operator<<( const cBaseObject *outPut );
+	CConsole& operator<<( const CBaseObject *outPut );
 	CConsole& operator<<( const SI16 &outPut );
 	CConsole& operator<<( const UI16 &outPut );
 	CConsole& operator<<( const std::string &outPut );
 	CConsole& operator<<( const std::ostream& outPut );
 	CConsole& operator<<( const size_t &outPut );
 
-	CConsole& operator<<( cBaseObject *outPut );
+	CConsole& operator<<( CBaseObject *outPut );
 	CConsole& operator<<( std::ostream& outPut );
 	CConsole& operator<<( CEndL& myObj );
 

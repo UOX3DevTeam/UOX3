@@ -75,7 +75,7 @@ public:
 	virtual			~CBaseResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar ) = 0;
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) = 0;
 };
 
 class CKillsResponse : public CBaseResponse
@@ -85,7 +85,7 @@ public:
 	virtual			~CKillsResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CEscortResponse : public CBaseResponse
@@ -97,7 +97,7 @@ public:
 	virtual			~CEscortResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CBankResponse : public CBaseResponse
@@ -109,7 +109,7 @@ public:
 	virtual			~CBankResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CTrainingResponse : public CBaseResponse
@@ -121,7 +121,7 @@ public:
 	virtual			~CTrainingResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CBasePetResponse : public CBaseResponse
@@ -133,8 +133,8 @@ public:
 	virtual			~CBasePetResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 	bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false );
 };
 
@@ -149,7 +149,7 @@ public:
 	virtual			~CPetMultiResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CPetReleaseResponse : public CBasePetResponse
@@ -159,7 +159,7 @@ public:
 	virtual			~CPetReleaseResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CPetAllResponse : public CBasePetResponse
@@ -180,7 +180,7 @@ public:
 	virtual			~CPetGuardResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CPetAttackResponse : public CPetAllResponse
@@ -190,7 +190,7 @@ public:
 	virtual			~CPetAttackResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CPetComeResponse : public CPetAllResponse
@@ -200,7 +200,7 @@ public:
 	virtual			~CPetComeResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CPetStayResponse : public CPetAllResponse
@@ -210,7 +210,7 @@ public:
 	virtual			~CPetStayResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CBaseVendorResponse : public CBaseResponse
@@ -223,8 +223,8 @@ public:
 	virtual			~CBaseVendorResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 };
 
 class CVendorBuyResponse : public CBaseVendorResponse
@@ -234,7 +234,7 @@ public:
 	virtual			~CVendorBuyResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CVendorSellResponse : public CBaseVendorResponse
@@ -244,7 +244,7 @@ public:
 	virtual			~CVendorSellResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CVendorGoldResponse : public CBaseVendorResponse
@@ -254,7 +254,7 @@ public:
 	virtual			~CVendorGoldResponse()
 					{
 					}
-	virtual bool	Handle( cSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
 class CHouseMultiResponse : public CBaseResponse
@@ -267,7 +267,7 @@ public:
 	virtual			~CHouseMultiResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CBoatResponse : public CBaseResponse
@@ -279,7 +279,7 @@ public:
 	virtual			~CBoatResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 class CBoatMultiResponse : public CBaseResponse
@@ -291,7 +291,7 @@ public:
 	virtual			~CBoatMultiResponse()
 					{
 					}
-	virtual void	Handle( cSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar );
 };
 
 }

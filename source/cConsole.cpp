@@ -131,7 +131,7 @@ CConsole& CConsole::operator<<( const UI08 &outPut )
 	}
 	return (*this);
 }
-CConsole& CConsole::operator<<( const cBaseObject *outPut )
+CConsole& CConsole::operator<<( const CBaseObject *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
@@ -158,7 +158,7 @@ CConsole& CConsole::operator<<( const std::ostream& outPut )
 	}
 	return (*this);
 }
-CConsole& CConsole::operator<<( cBaseObject *outPut )
+CConsole& CConsole::operator<<( CBaseObject *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{

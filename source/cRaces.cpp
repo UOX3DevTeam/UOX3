@@ -179,7 +179,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	if( pRace == NULL )
 		return;
 
-	cSocket *mSock = calcSocketObjFromChar( s );
+	CSocket *mSock = calcSocketObjFromChar( s );
 	if( !pRace->IsPlayerRace() )
 	{
 		mSock->sysmessage( 369 );
@@ -990,15 +990,15 @@ COLOUR CRace::RandomBeard( void ) const
 
 bool CRace::IsSkinRestricted( void ) const
 {
-	return ( skinColours.size() != 0 );
+	return ( !skinColours.empty() );
 }
 bool CRace::IsHairRestricted( void ) const
 {
-	return ( hairColours.size() != 0 );
+	return ( !hairColours.empty() );
 }
 bool CRace::IsBeardRestricted( void ) const
 {
-	return ( beardColours.size() != 0 );
+	return ( !beardColours.empty() );
 }
 
 bool CRace::IsValidSkin( COLOUR val ) const

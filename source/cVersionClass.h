@@ -24,11 +24,11 @@ namespace UOX
 #endif // _MSC_VER > 1000
 #endif
 
-class cVersionClass  
+class CVersionClass  
 {
 public:
-						cVersionClass();
-						~cVersionClass();
+						CVersionClass();
+						~CVersionClass();
 	static std::string	GetVersion( void );
 	static std::string	GetBuild( void );
 	static std::string	GetRealBuild( void );

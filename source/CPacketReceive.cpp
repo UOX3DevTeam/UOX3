@@ -16,7 +16,7 @@ namespace UOX
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 );
 void PackShort( UI08 *toPack, int offset, UI16 value );
 
-cPInputBuffer *WhichLoginPacket( UI08 packetID, cSocket *s )
+cPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
 	{
@@ -40,7 +40,7 @@ cPInputBuffer *WhichLoginPacket( UI08 packetID, cSocket *s )
 	return NULL;
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID, cSocket *s )
+cPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
 	{
@@ -190,7 +190,7 @@ CPIFirstLogin::CPIFirstLogin()
 {
 	InternalReset();
 }
-CPIFirstLogin::CPIFirstLogin( cSocket *s ) : cPInputBuffer( s )
+CPIFirstLogin::CPIFirstLogin( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -260,7 +260,7 @@ CPIServerSelect::CPIServerSelect()
 {
 	InternalReset();
 }
-CPIServerSelect::CPIServerSelect( cSocket *s ) : cPInputBuffer( s )
+CPIServerSelect::CPIServerSelect( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -321,7 +321,7 @@ CPISecondLogin::CPISecondLogin()
 {
 	InternalReset();
 }
-CPISecondLogin::CPISecondLogin( cSocket *s ) : cPInputBuffer( s )
+CPISecondLogin::CPISecondLogin( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -441,7 +441,7 @@ CPIClientVersion::CPIClientVersion()
 {
 	InternalReset();
 }
-CPIClientVersion::CPIClientVersion( cSocket *s ) : cPInputBuffer( s )
+CPIClientVersion::CPIClientVersion( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -538,7 +538,7 @@ CPIUpdateRangeChange::CPIUpdateRangeChange()
 {
 	InternalReset();
 }
-CPIUpdateRangeChange::CPIUpdateRangeChange( cSocket *s ) : cPInputBuffer( s )
+CPIUpdateRangeChange::CPIUpdateRangeChange( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -590,7 +590,7 @@ CPITips::CPITips()
 {
 	InternalReset();
 }
-CPITips::CPITips( cSocket *s ) : cPInputBuffer( s )
+CPITips::CPITips( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -660,7 +660,7 @@ CPIRename::CPIRename()
 {
 	InternalReset();
 }
-CPIRename::CPIRename( cSocket *s ) : cPInputBuffer( s )
+CPIRename::CPIRename( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -688,7 +688,7 @@ bool CPIRename::Handle( void )
 CPIKeepAlive::CPIKeepAlive()
 {
 }
-CPIKeepAlive::CPIKeepAlive( cSocket *s ) : cPInputBuffer( s )
+CPIKeepAlive::CPIKeepAlive( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -718,7 +718,7 @@ bool CPIKeepAlive::Handle( void )
 CPIStatusRequest::CPIStatusRequest()
 {
 }
-CPIStatusRequest::CPIStatusRequest( cSocket *s ) : cPInputBuffer( s )
+CPIStatusRequest::CPIStatusRequest( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -774,7 +774,7 @@ bool CPIStatusRequest::Handle( void )
 CPISpy::CPISpy()
 {
 }
-CPISpy::CPISpy( cSocket *s ) : cPInputBuffer( s )
+CPISpy::CPISpy( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -796,7 +796,7 @@ bool CPISpy::Handle( void )
 CPIGodModeToggle::CPIGodModeToggle()
 {
 }
-CPIGodModeToggle::CPIGodModeToggle( cSocket *s ) : cPInputBuffer( s )
+CPIGodModeToggle::CPIGodModeToggle( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -830,7 +830,7 @@ bool CPIGodModeToggle::Handle( void )
 CPIDblClick::CPIDblClick()
 {
 }
-CPIDblClick::CPIDblClick( cSocket *s ) : cPInputBuffer( s )
+CPIDblClick::CPIDblClick( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -865,7 +865,7 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 CPISingleClick::CPISingleClick()
 {
 }
-CPISingleClick::CPISingleClick( cSocket *s ) : cPInputBuffer( s )
+CPISingleClick::CPISingleClick( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -910,7 +910,7 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 CPIMoveRequest::CPIMoveRequest()
 {
 }
-CPIMoveRequest::CPIMoveRequest( cSocket *s ) : cPInputBuffer( s )
+CPIMoveRequest::CPIMoveRequest( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -935,7 +935,7 @@ bool CPIMoveRequest::Handle( void )
 CPIResyncReq::CPIResyncReq()
 {
 }
-CPIResyncReq::CPIResyncReq( cSocket *s ) : cPInputBuffer( s )
+CPIResyncReq::CPIResyncReq( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -958,7 +958,7 @@ bool CPIResyncReq::Handle( void )
 CPIResMenuChoice::CPIResMenuChoice()
 {
 }
-CPIResMenuChoice::CPIResMenuChoice( cSocket *s ) : cPInputBuffer( s )
+CPIResMenuChoice::CPIResMenuChoice( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -985,7 +985,7 @@ bool CPIResMenuChoice::Handle( void )
 CPIAttack::CPIAttack()
 {
 }
-CPIAttack::CPIAttack( cSocket *s ) : cPInputBuffer( s )
+CPIAttack::CPIAttack( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1022,7 +1022,7 @@ bool CPIAttack::Handle( void )
 CPITargetCursor::CPITargetCursor()
 {
 }
-CPITargetCursor::CPITargetCursor( cSocket *s ) : cPInputBuffer( s )
+CPITargetCursor::CPITargetCursor( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1043,7 +1043,7 @@ void CPITargetCursor::Receive( void )
 CPIEquipItem::CPIEquipItem()
 {
 }
-CPIEquipItem::CPIEquipItem( cSocket *s ) : cPInputBuffer( s )
+CPIEquipItem::CPIEquipItem( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1064,7 +1064,7 @@ void CPIEquipItem::Receive( void )
 CPIGetItem::CPIGetItem()
 {
 }
-CPIGetItem::CPIGetItem( cSocket *s ) : cPInputBuffer( s )
+CPIGetItem::CPIGetItem( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1091,7 +1091,7 @@ void CPIGetItem::Receive( void )
 CPIDropItem::CPIDropItem()
 {
 }
-CPIDropItem::CPIDropItem( cSocket *s ) : cPInputBuffer( s )
+CPIDropItem::CPIDropItem( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1121,7 +1121,7 @@ void CPIDropItem::Receive( void )
 CPIGumpMenuSelect::CPIGumpMenuSelect()
 {
 }
-CPIGumpMenuSelect::CPIGumpMenuSelect( cSocket *s ) : cPInputBuffer( s )
+CPIGumpMenuSelect::CPIGumpMenuSelect( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1218,7 +1218,7 @@ CPITalkRequest::CPITalkRequest()
 {
 	InternalReset();
 }
-CPITalkRequest::CPITalkRequest( cSocket *s ) : cPInputBuffer( s )
+CPITalkRequest::CPITalkRequest( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 }
@@ -1274,7 +1274,7 @@ bool CPITalkRequest::HandleCommon( void )
 	UI32 j = 0;
 	char temp[1024];
 
-	cSocket *tmpSock = NULL;
+	CSocket *tmpSock = NULL;
 
 	switch( ourChar->GetSpeechMode() )
 	{
@@ -1419,7 +1419,7 @@ bool CPITalkRequest::HandleCommon( void )
 CPITalkRequestAscii::CPITalkRequestAscii() : CPITalkRequest()
 {
 }
-CPITalkRequestAscii::CPITalkRequestAscii( cSocket *s ) : CPITalkRequest( s )
+CPITalkRequestAscii::CPITalkRequestAscii( CSocket *s ) : CPITalkRequest( s )
 {
 	Receive();
 }
@@ -1475,14 +1475,14 @@ void CPITalkRequestAscii::Receive( void )
 //	The first 12 bits = the number of keywords present. The keywords are included right after this, each one is 12 bits also. 
 //	The keywords are padded to the closest byte. For example, if there are 2 keywords, it will take up 5 bytes. 12bits for the number, and 12 bits for each keyword. 12+12+12=36. Which will be padded 4 bits to 40 bits or 5 bytes.
 
-void UpdateLanguage( cSocket *s );
+void UpdateLanguage( CSocket *s );
 
 CPITalkRequestUnicode::CPITalkRequestUnicode()
 {
 	isUnicode = true;
 	memset( unicodeTxt, 0, 8192 );
 }
-CPITalkRequestUnicode::CPITalkRequestUnicode( cSocket *s ) : CPITalkRequest( s )
+CPITalkRequestUnicode::CPITalkRequestUnicode( CSocket *s ) : CPITalkRequest( s )
 {
 	isUnicode = true;
 	memset( unicodeTxt, 0, 8192 );
@@ -1591,7 +1591,7 @@ char * CPITalkRequestUnicode::Language( void ) const
 CPIAllNames3D::CPIAllNames3D() : cPInputBuffer()
 {
 }
-CPIAllNames3D::CPIAllNames3D( cSocket *s ) : cPInputBuffer( s )
+CPIAllNames3D::CPIAllNames3D( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1603,7 +1603,7 @@ void CPIAllNames3D::Receive( void )
 bool CPIAllNames3D::Handle( void )
 {
 	SERIAL objSer		= tSock->GetDWord( 3 );
-	cBaseObject *toName = NULL;
+	CBaseObject *toName = NULL;
 	
 	if( objSer < BASEITEMSERIAL )
 		toName = calcItemObjFromSer( objSer );
@@ -1631,7 +1631,7 @@ bool CPIAllNames3D::Handle( void )
 CPIGumpChoice::CPIGumpChoice()
 {
 }
-CPIGumpChoice::CPIGumpChoice( cSocket *s ) : cPInputBuffer( s )
+CPIGumpChoice::CPIGumpChoice( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1658,7 +1658,7 @@ void CPIGumpChoice::Receive( void )
 CPIBuyItem::CPIBuyItem()
 {
 }
-CPIBuyItem::CPIBuyItem( cSocket *s ) : cPInputBuffer( s )
+CPIBuyItem::CPIBuyItem( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1684,7 +1684,7 @@ void CPIBuyItem::Receive( void )
 CPISellItem::CPISellItem()
 {
 }
-CPISellItem::CPISellItem( cSocket *s ) : cPInputBuffer( s )
+CPISellItem::CPISellItem( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1706,7 +1706,7 @@ void CPISellItem::Receive( void )
 CPIDeleteCharacter::CPIDeleteCharacter()
 {
 }
-CPIDeleteCharacter::CPIDeleteCharacter( cSocket *s ) : cPInputBuffer( s )
+CPIDeleteCharacter::CPIDeleteCharacter( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1750,7 +1750,7 @@ void CPIDeleteCharacter::Receive( void )
 CPICreateCharacter::CPICreateCharacter()
 {
 }
-CPICreateCharacter::CPICreateCharacter( cSocket *s ) : cPInputBuffer( s )
+CPICreateCharacter::CPICreateCharacter( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1837,7 +1837,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 CPIPlayCharacter::CPIPlayCharacter()
 {
 }
-CPIPlayCharacter::CPIPlayCharacter( cSocket *s ) : cPInputBuffer( s )
+CPIPlayCharacter::CPIPlayCharacter( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1889,7 +1889,7 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 CPIGumpInput::CPIGumpInput()
 {
 }
-CPIGumpInput::CPIGumpInput( cSocket *s ) : cPInputBuffer( s )
+CPIGumpInput::CPIGumpInput( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1955,11 +1955,11 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 //	BYTE cmd 
 //	BYTE[257] (0x00)
 
-CPIHelpRequest::CPIHelpRequest( cSocket *s, UI16 menuVal ) : cPInputBuffer( s )
+CPIHelpRequest::CPIHelpRequest( CSocket *s, UI16 menuVal ) : cPInputBuffer( s )
 {
 	menuNum = menuVal;
 }
-CPIHelpRequest::CPIHelpRequest( cSocket *s ) : cPInputBuffer( s )
+CPIHelpRequest::CPIHelpRequest( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -1987,7 +1987,7 @@ void CPIHelpRequest::Receive( void )
 CPITradeMessage::CPITradeMessage()
 {
 }
-CPITradeMessage::CPITradeMessage( cSocket *s ) : cPInputBuffer( s )
+CPITradeMessage::CPITradeMessage( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -2010,7 +2010,7 @@ void CPITradeMessage::Receive( void )
 CPIDyeWindow::CPIDyeWindow()
 {
 }
-CPIDyeWindow::CPIDyeWindow( cSocket *s ) : cPInputBuffer( s )
+CPIDyeWindow::CPIDyeWindow( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }

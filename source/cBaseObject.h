@@ -30,7 +30,7 @@ enum UpdateTypes
 };
 
 //o--------------------------------------------------------------------------o
-//|	Class/Struct	-	class cBaseObject
+//|	Class/Struct	-	class CBaseObject
 //|	Date					-	
 //|	Developers		-	Abaddon/EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -40,7 +40,7 @@ enum UpdateTypes
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-class cBaseObject
+class CBaseObject
 {
 protected:
 	TAGMAP			tags;
@@ -91,7 +91,7 @@ protected:
 	UI08			updateTypes;
 	UI08			objSettings;
 
-	void			CopyData( cBaseObject *target );
+	void			CopyData( CBaseObject *target );
 
 public:
 
@@ -114,8 +114,8 @@ public:
 	SI32					GetFilePosition( void ) const;
 	SI32					SetFilePosition( SI32 filepos );
 
-	virtual					~cBaseObject();
-							cBaseObject( void );
+	virtual					~CBaseObject();
+							CBaseObject( void );
 
 	SI16					GetX( void ) const;
 	SI16					GetY( void ) const;
@@ -127,7 +127,7 @@ public:
 	void					SetZ( SI08 newValue );
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) = 0;
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
-	virtual void			SetLocation( const cBaseObject *toSet ) = 0;
+	virtual void			SetLocation( const CBaseObject *toSet ) = 0;
 
 	UI16					GetID(     void ) const;
 	UI16					GetColour( void ) const;
@@ -239,8 +239,8 @@ public:
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual void			Update( cSocket *mSock = NULL ) = 0;
-	virtual void			SendToSocket( cSocket *mSock ) = 0;
+	virtual void			Update( CSocket *mSock = NULL ) = 0;
+	virtual void			SendToSocket( CSocket *mSock ) = 0;
 	void					Dirty( UpdateTypes updateType );
 
 	bool					GetUpdate( UpdateTypes updateType );

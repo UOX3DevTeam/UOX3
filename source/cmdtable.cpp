@@ -35,20 +35,20 @@ namespace UOX
 
 void CollectGarbage( void );
 void endmessage( int x );
-void HandleGumpCommand( cSocket *s, UString cmd, UString data );
+void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string txt );
-void HandleHowTo( cSocket *sock, int cmdNumber );
-void telltime( cSocket *s );
-void Wiping( cSocket *s );
+void HandleHowTo( CSocket *sock, int cmdNumber );
+void telltime( CSocket *s );
+void Wiping( CSocket *s );
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::closeCall( cSocket *s, bool isGM )
+//|	Function	-	void cCommands::closeCall( CSocket *s, bool isGM )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Closes an open call in the Que
 //o---------------------------------------------------------------------------o
-void closeCall( cSocket *s, bool isGM )
+void closeCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
@@ -74,7 +74,7 @@ void closeCall( cSocket *s, bool isGM )
 		s->sysmessage( 1287 );
 }
 
-void currentCall( cSocket *s, bool isGM )
+void currentCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
@@ -105,12 +105,12 @@ void currentCall( cSocket *s, bool isGM )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::nextCall( cSocket *s, bool isGM )
+//|	Function	-	void cCommands::nextCall( CSocket *s, bool isGM )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Send GM/Counsellor to next call in the que
 //o---------------------------------------------------------------------------o
-void nextCall( cSocket *s, bool isGM )
+void nextCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
@@ -127,7 +127,7 @@ void nextCall( cSocket *s, bool isGM )
 	}
 }
 
-bool FixSpawnFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) )
@@ -162,7 +162,7 @@ void command_fixspawn( void )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	void command_addaccount( cSocket *s)
+//|	Function/Class	-	void command_addaccount( CSocket *s)
 //|	Date			-	10/17/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
@@ -174,7 +174,7 @@ void command_fixspawn( void )
 //o--------------------------------------------------------------------------o
 //|	Notes			-	
 //o--------------------------------------------------------------------------o	
-void command_addaccount( cSocket *s)
+void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
 	char szBuffer[128];
@@ -209,14 +209,14 @@ void command_addaccount( cSocket *s)
 	}
 }
 
-void command_getlight( cSocket *s )
+void command_getlight( CSocket *s )
 // needs redoing to support new lighting system
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
-	cTownRegion *tRegion	= mChar->GetRegion();
+	CTownRegion *tRegion	= mChar->GetRegion();
 	UI08 wID				= tRegion->GetWeather();
 	CWeather *sys			= Weather->Weather( wID );
 	if( sys != NULL )
@@ -225,7 +225,7 @@ void command_getlight( cSocket *s )
 		s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 }
 
-void command_setpost( cSocket *s )
+void command_setpost( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
@@ -241,7 +241,7 @@ void command_setpost( cSocket *s )
 	MsgBoardSetPostType( s, type );
 }
 
-void command_showids( cSocket *s )
+void command_showids( CSocket *s )
 // Display the serial number of every item on your screen.
 {
 	VALIDATESOCKET( s );
@@ -261,7 +261,7 @@ void command_showids( cSocket *s )
 	regChars->Pop();
 }
 
-void command_tile( cSocket *s )
+void command_tile( CSocket *s )
 // (h) Tiles the item specified over a square area.
 // To find the hexidecimal ID code for an item to tile,
 // either create the item with /add or find it in the
@@ -303,124 +303,6 @@ void command_tile( cSocket *s )
 	}
 }
 
-bool WipeObjFunctor( cBaseObject *a, UI32 &b, void *extraData )
-{
-	bool retVal = true;
-	if( ValidateObject( a ) )
-	{
-		if( (*((bool *)extraData)) )
-		{
-			CItem *i = static_cast< CItem * >(a);
-			if( i->GetCont() == NULL && i->isWipeable() && i->GetType() != IT_GUILDSTONE )
-			{
-				i->Delete();
-				++b;
-			}
-		}
-		else
-		{
-			CChar *j = static_cast< CChar * >(a);
-			if( j->IsNpc() && j->GetNPCAiType() != aiPLAYERVENDOR && !j->IsTamed() ) // PV and pets don't wipe
-			{
-				j->Delete();
-				++b;
-			}
-		}
-	}
-	return retVal;
-}
-
-void command_wipe( cSocket *s )
-// (d d d d / nothing) Deletes ALL NPC's and items inside a specified square.
-// <UL><LI>With no arguments, /WIPE will ask you to click in opposing corners of
-// the square.</LI>
-// <LI>You may also specify coordinates - X1, Y1, X2, Y2.</LI>
-// </UL>
-{
-	VALIDATESOCKET( s );
-	s->AddID1( 0 );
-	if( Commands->NumArguments() == 1 )
-	{
-		s->ClickX( -1 );
-		s->ClickY( -1 );
-		s->target( 0, TARGET_WIPING, 25 );	// 199 didn't seem taken...
-	}
-	else if( Commands->NumArguments() == 2 )
-	{
-		UString upperCommand	= Commands->CommandString( 2, 2 ).upper();
-		bool saidAll			= ( upperCommand == "ALL" );
-        CChar *mChar			= s->CurrcharObj();
-		UI32 b					= 0;
-		bool isItem				= true;
-		if( saidAll || upperCommand == "ITEMS" ) // Really should warn that this will wipe ALL objects...
-		{
-			Console << mChar->GetName() << " has initiated an Item wipe";
-			isItem = true;
-			ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, &isItem, &WipeObjFunctor );
-			Console.Print ("'WIPE' Deleted %i items\n", b );
-			sysBroadcast( Dictionary->GetEntry( 365 ) );
-		}
-		if( saidAll || upperCommand == "NPCS" )
-		{
-			Console.Print( Dictionary->GetEntry( 81 ).c_str(), mChar->GetName().c_str() );
-			isItem = false;
-			ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, &isItem, &WipeObjFunctor );
-			Console.Print( "'WIPE' Deleted: %i npcs\n", b );
-			sysBroadcast( Dictionary->GetEntry( 82 ) );
-		}
-	}
-	else if( Commands->NumArguments() == 5 )
-	{ // Wipe according to world coordinates
-		s->ClickX( (SI16)Commands->Argument( 1 ) );
-		s->ClickY( (SI16)Commands->Argument( 2 ) );
-		s->SetWord( 11, static_cast<UI16>(Commands->Argument( 3 )) );
-		s->SetWord( 13, static_cast<UI16>(Commands->Argument( 4 )) );
-		Wiping( s );
-	}
-}
-
-void command_areaCommand( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( !Commands->CommandString( 2 ).empty() )
-	{
-		s->XText( Commands->CommandString( 2 ).upper() );
-		s->ClickX( -1 );
-		s->ClickY( -1 );
-		s->target( 0, TARGET_AREACOMMAND, 25 );
-	}
-	else
-	{
-		s->sysmessage( "Area command requires a subcommand!" );
-	}
-}
-
-
-void command_iwipe( cSocket *s )
-// (d d d d / nothing) Deletes ALL NPC's and items NOT inside a specified square.
-// <UL><LI>With no arguments, /IWIPE will ask you to click in opposing corners of
-// the square.</LI>
-// <LI>You may also specify coordinates - X1, Y1, X2, Y2.</LI>
-// </UL>
-{
-	VALIDATESOCKET( s );
-	s->AddID1( 1 );
-	if( Commands->NumArguments() == 1 )
-	{
-		s->ClickX( -1 );
-		s->ClickY( -1 );
-		s->target( 0, TARGET_WIPING, 26 );
-	}
-	else if( Commands->NumArguments() == 5 )
-	{ // Wipe according to world coordinates
-		s->ClickX( (SI16)Commands->Argument( 1 ) );
-		s->ClickY( (SI16)Commands->Argument( 2 ) );
-		s->SetWord( 11, static_cast<UI16>(Commands->Argument( 3 )));
-		s->SetWord( 13, static_cast<UI16>(Commands->Argument( 4 )));
-		Wiping( s );
-	}
-}
-
 void command_save( void )
 // Saves the current world data into ITEMS.WSC and CHARS.WSC.
 {
@@ -428,7 +310,7 @@ void command_save( void )
 		cwmWorldState->SaveNewWorld( true );
 }
 
-void command_dye( cSocket *s )
+void command_dye( CSocket *s )
 // (h h/nothing) Dyes an item a specific color, or brings up a dyeing menu if no color is specified.
 {
 	VALIDATESOCKET( s );
@@ -487,13 +369,13 @@ void command_shutdown( void )
 	}
 }
 
-void command_tell( cSocket *s )
+void command_tell( CSocket *s )
 // (d text) Sends an anonymous message to the user logged in under the specified slot.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 2 )
 	{
-		cSocket *i = Network->GetSockPtr( Commands->Argument( 1 ) );
+		CSocket *i = Network->GetSockPtr( Commands->Argument( 1 ) );
 		std::string txt = Commands->CommandString( 3 );
 		if( i == NULL || txt.empty() )
 			return;
@@ -513,7 +395,7 @@ void command_tell( cSocket *s )
 	}
 }
 
-void command_gmmenu( cSocket *s )
+void command_gmmenu( CSocket *s )
 // (d) Opens the specified GM Menu.
 {
 	VALIDATESOCKET( s );
@@ -524,7 +406,7 @@ void command_gmmenu( cSocket *s )
 	}
 }
 
-void command_command( cSocket *s )
+void command_command( CSocket *s )
 // Executes a trigger scripting command.
 {
 	VALIDATESOCKET( s );
@@ -532,7 +414,7 @@ void command_command( cSocket *s )
 		HandleGumpCommand( s, Commands->CommandString( 2, 2 ).upper(), Commands->CommandString( 3 ).upper() );
 }
 
-void command_memstats( cSocket *s )
+void command_memstats( CSocket *s )
 // Display some information about the cache.
 {
 	VALIDATESOCKET( s );
@@ -541,8 +423,8 @@ void command_memstats( cSocket *s )
 	size_t itemsSize		= ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) * 4;
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
 	size_t teffectsSize		= sizeof( CTEffect ) * TEffects->Count();
-	size_t regionsSize		= sizeof( cTownRegion ) * regions.size();
-	size_t spawnregionsSize = sizeof( cSpawnRegion ) * spawnregions.size();
+	size_t regionsSize		= sizeof( CTownRegion ) * regions.size();
+	size_t spawnregionsSize = sizeof( CSpawnRegion ) * spawnregions.size();
 	size_t total			= charsSize + itemsSize + spellsSize + cacheSize + regionsSize + spawnregionsSize + teffectsSize;
 	GumpDisplay cacheStats( s, 350, 345 );
 	cacheStats.SetTitle( "UOX Memory Information" );
@@ -568,15 +450,15 @@ void command_memstats( cSocket *s )
 	cacheStats.AddData( "  TEffect: ", sizeof( CTEffect ) );
 	cacheStats.AddData( " Regions Size: ", regionsSize );
 	cacheStats.AddData( "  Regions: ", regions.size() );
-	cacheStats.AddData( "  CTownRegion: ", sizeof( cTownRegion ) );
+	cacheStats.AddData( "  CTownRegion: ", sizeof( CTownRegion ) );
 	cacheStats.AddData( " SpawnRegions Size ", spawnregionsSize );
 	cacheStats.AddData( "  SpawnRegions: ", spawnregions.size() );
-	cacheStats.AddData( "  CSpawnRegion: ", sizeof( cSpawnRegion ) );
+	cacheStats.AddData( "  CSpawnRegion: ", sizeof( CSpawnRegion ) );
 	cacheStats.Send( 0, false, INVALIDSERIAL );
 
 }
 
-void command_restock( cSocket *s )
+void command_restock( CSocket *s )
 // Forces a manual vendor restock.
 {
 	VALIDATESOCKET( s );
@@ -592,7 +474,7 @@ void command_restock( cSocket *s )
 	}
 }
 
-void command_setshoprestockrate( cSocket *s )
+void command_setshoprestockrate( CSocket *s )
 // (d) Sets the universe's shop restock rate.
 {
 	VALIDATESOCKET( s );
@@ -605,7 +487,7 @@ void command_setshoprestockrate( cSocket *s )
 		s->sysmessage( 57 );
 }
 
-bool RespawnFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) )
@@ -634,10 +516,10 @@ void command_respawn( void )
 {
 	UI16 spawnedItems	= 0;
 	UI16 spawnedNpcs	= 0;
-	std::vector< cSpawnRegion * >::iterator spawnCounter;
+	std::vector< CSpawnRegion * >::const_iterator spawnCounter;
 	for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
 	{
-		cSpawnRegion *spawnReg = (*spawnCounter);
+		CSpawnRegion *spawnReg = (*spawnCounter);
 		if( spawnReg != NULL )
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
 	}
@@ -647,7 +529,7 @@ void command_respawn( void )
 }
 
 // (s/d) Forces a region spawn, First argument is region number or "ALL"
-void command_regspawn( cSocket *s )
+void command_regspawn( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
@@ -658,10 +540,10 @@ void command_regspawn( cSocket *s )
 
 		if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
 		{
-			std::vector< cSpawnRegion * >::iterator spawnCounter;
+			std::vector< CSpawnRegion * >::const_iterator spawnCounter;
 			for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++ spawnCounter )
 			{
-				cSpawnRegion *spawnReg = (*spawnCounter);
+				CSpawnRegion *spawnReg = (*spawnCounter);
 				if( spawnReg != NULL )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 			}
@@ -675,7 +557,7 @@ void command_regspawn( cSocket *s )
 			UI16 spawnRegNum = static_cast<UI16>(Commands->Argument( 1 ));
 			if( spawnRegNum < spawnregions.size() )
 			{
-				cSpawnRegion *spawnReg = spawnregions[spawnRegNum];
+				CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
 				if( spawnReg != NULL )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
@@ -697,7 +579,7 @@ void command_loaddefaults( void )
 	cwmWorldState->ServerData()->ResetDefaults();
 }
 
-void command_cq( cSocket *s )
+void command_cq( CSocket *s )
 // Display the counselor queue.
 {
 	VALIDATESOCKET( s );
@@ -739,7 +621,7 @@ void command_cq( cSocket *s )
 		CounselorQueue->SendAsGump( s );	// Show the Counselor queue, not GM queue
 }
 
-void command_gq( cSocket *s )
+void command_gq( CSocket *s )
 // Display the GM queue.
 {
 	VALIDATESOCKET( s );
@@ -794,7 +676,7 @@ void command_announce( void )
 	}
 }
 
-void command_pdump( cSocket *s )
+void command_pdump( CSocket *s )
 // Display some performance information.
 {
 	VALIDATESOCKET( s );
@@ -811,7 +693,7 @@ void command_pdump( cSocket *s )
 	s->sysmessage( "Simulation Cycles/Sec: %f", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount ) ) ) );
 }
 
-void command_spawnkill( cSocket *s )
+void command_spawnkill( CSocket *s )
 // (d) Kills spawns from the specified spawn region in SPAWN.SCP.
 {
 	VALIDATESOCKET( s );
@@ -820,7 +702,7 @@ void command_spawnkill( cSocket *s )
 		UI16 regNum = static_cast<UI16>(Commands->Argument( 1 ));
 		if( regNum >= spawnregions.size() )
 			return;
-		cSpawnRegion *spawnReg = spawnregions[regNum];
+		CSpawnRegion *spawnReg = spawnregions[regNum];
 		if( spawnReg == NULL )
 			return;
 		int killed	= 0;
@@ -844,7 +726,7 @@ void command_spawnkill( cSocket *s )
 	}
 }
 
-void BuildWhoGump( cSocket *s, UI08 commandLevel, std::string title )
+void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 {
 	size_t j = 0;
 	char temp[512];
@@ -853,7 +735,7 @@ void BuildWhoGump( cSocket *s, UI08 commandLevel, std::string title )
 	Who.SetTitle( title );
 
 	Network->PushConn();
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
 		CChar *iChar = iSock->CurrcharObj();
 		if( iChar->GetCommandLevel() >= commandLevel )
@@ -866,20 +748,20 @@ void BuildWhoGump( cSocket *s, UI08 commandLevel, std::string title )
 	Network->PopConn();
 	Who.Send( 4, false, INVALIDSERIAL );
 }
-void command_who( cSocket *s )
+void command_who( CSocket *s )
 // Displays a list of users currently online.
 {
 	VALIDATESOCKET( s );
 	BuildWhoGump( s, 0, "Who's Online" );
 }
 
-void command_gms( cSocket *s )
+void command_gms( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	BuildWhoGump( s, CNS_CMDLEVEL, Dictionary->GetEntry( 77, s->Language() ) );
 }
 
-void command_reportbug( cSocket *s )
+void command_reportbug( CSocket *s )
 // DESC:	Writes out a bug to the bug file
 // DATE:	9th February, 2000
 // CODER:	Abaddon
@@ -907,7 +789,7 @@ void command_reportbug( cSocket *s )
 	s->sysmessage( 87 );
 	bool x = false;
 	Network->PushConn();
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
 		CChar *iChar = iSock->CurrcharObj();
 		if( !ValidateObject( iChar ) )
@@ -925,7 +807,7 @@ void command_reportbug( cSocket *s )
 		s->sysmessage( 89 );
 }
 
-void command_forcewho( cSocket *s )
+void command_forcewho( CSocket *s )
 // Brings up an interactive listing of online users.
 {
 	VALIDATESOCKET( s );
@@ -933,7 +815,7 @@ void command_forcewho( cSocket *s )
 	WhoList->SendSocket( s );
 }
 
-void command_validcmd( cSocket *s )
+void command_validcmd( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -955,7 +837,7 @@ void command_validcmd( cSocket *s )
 	targetCmds.Send( 4, false, INVALIDSERIAL );
 }
 
-void command_howto( cSocket *s )
+void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	UString commandStart = Commands->CommandString( 2 ).upper();
@@ -1078,14 +960,14 @@ void command_howto( cSocket *s )
 }
 
 
-void command_temp( cSocket *s )
+void command_temp( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
 
-	cTownRegion *reg	= mChar->GetRegion();
+	CTownRegion *reg	= mChar->GetRegion();
 	weathID toGrab		= reg->GetWeather();
 	if( toGrab != 0xFF )
 	{
@@ -1094,7 +976,7 @@ void command_temp( cSocket *s )
 	}
 }
 
-void command_status( cSocket *s )
+void command_status( CSocket *s )
 // Opens the HTML status information gump
 {
 	VALIDATESOCKET( s );
@@ -1146,7 +1028,6 @@ void cCommands::CommandReset( void )
 	//A
 	CommandMap["ADDACCOUNT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
 	CommandMap["ANNOUNCE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
-	CommandMap["AREACOMMAND"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_areaCommand);
 	//B
 	//C
 	CommandMap["CQ"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_cq);
@@ -1167,7 +1048,6 @@ void cCommands::CommandReset( void )
 	//H
 	CommandMap["HOWTO"]				= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
 	//I
-	CommandMap["IWIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_iwipe);
 	//J
 	//K
 	//L
@@ -1205,7 +1085,6 @@ void cCommands::CommandReset( void )
 	CommandMap["VALIDCMD"]			= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_validcmd );
 	//W
 	CommandMap["WHO"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_who);
-	CommandMap["WIPE"]				= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_wipe);
 	//X
 	//Y
 	//Z

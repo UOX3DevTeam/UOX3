@@ -118,7 +118,7 @@ GUILDID CGuild::NextAlly( void )
 {
 	while( allyPtr != relationList.end() )
 	{
-		if( allyPtr->second == GR_WAR )
+		if( allyPtr->second == GR_ALLY )
 			return allyPtr->first;
 
 		++allyPtr;
@@ -654,7 +654,7 @@ void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
 		toSave << "MEMBER=" << (*counter) << std::endl;
 		++counter;
 	}
-	GUILDREL::iterator relly = relationList.begin();
+	GUILDREL::const_iterator relly = relationList.begin();
 	while( relly != relationList.end() )
 	{
 		toSave << GRelationNames[relly->second] << " " << relly->first <<std::endl;
@@ -744,7 +744,7 @@ size_t CGuild::NumRecruits( void ) const
 
 void CGuild::CalcMaster( void )
 {
-	if( members.size() == 0 )
+	if( members.empty() )
 	{
 		Master( INVALIDSERIAL );
 		return;
@@ -777,7 +777,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 	for( cIter = members.begin(); cIter != members.end(); ++cIter )
 	{
 		CChar *targetChar	= calcCharObjFromSer( (*cIter) );
-		cSocket *targetSock	= calcSocketObjFromChar( targetChar );
+		CSocket *targetSock	= calcSocketObjFromChar( targetChar );
 		if( targetSock != NULL )
 		{
 			std::string txt = "GUILD: ";
@@ -817,7 +817,7 @@ size_t CGuildCollection::NumGuilds( void ) const
 GUILDID CGuildCollection::MaximumGuild( void )
 {
 	GUILDID maxVal = -1;
-	GUILDLIST::iterator pFind = gList.begin();
+	GUILDLIST::const_iterator pFind = gList.begin();
 	while( pFind != gList.end() )
 	{
 		if( pFind->first > maxVal )
@@ -849,7 +849,7 @@ void CGuildCollection::Save( void )
 	Console << "Saving guild data.... ";
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc";
 	std::ofstream toSave( filename.c_str() );
-	GUILDLIST::iterator pMove = gList.begin();
+	GUILDLIST::const_iterator pMove = gList.begin();
 	while( pMove != gList.end() )
 	{
 		(pMove->second)->Save( toSave, pMove->first );
@@ -902,7 +902,7 @@ GUILDRELATION CGuildCollection::Compare( CChar *src, CChar *trg ) const
 	return Compare( src->GetGuildNumber(), trg->GetGuildNumber() );
 }
 
-void CGuildCollection::Menu( cSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plID )
+void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plID )
 {
 	if( s == NULL )
 		return;
@@ -1219,7 +1219,7 @@ void CGuildCollection::GumpInput( CPIGumpInput *gi )
 	UI08 type		= gi->Type();
 	UI08 index		= gi->Index();
 	UString text	= gi->Reply();
-	cSocket *s		= gi->GetSocket();
+	CSocket *s		= gi->GetSocket();
 
 	if( type != 100 )
 		return;
@@ -1235,7 +1235,7 @@ void CGuildCollection::GumpInput( CPIGumpInput *gi )
 	}
 }
 
-void CGuildCollection::ToggleAbbreviation( cSocket *s )
+void CGuildCollection::ToggleAbbreviation( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
 	GUILDID guildnumber = mChar->GetGuildNumber();
@@ -1254,9 +1254,9 @@ void CGuildCollection::ToggleAbbreviation( cSocket *s )
 	}
 }
 
-void TextEntryGump( cSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry );
+void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry );
 
-void CGuildCollection::GumpChoice( cSocket *s )
+void CGuildCollection::GumpChoice( CSocket *s )
 {
 	UI32 realType		= s->GetDWord( 7 );
 	UI32 button			= s->GetDWord( 11 );
@@ -1471,7 +1471,7 @@ void CGuildCollection::GumpChoice( cSocket *s )
 			break;
 	}
 }
-void CGuildCollection::Resign( cSocket *s )
+void CGuildCollection::Resign( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
 	SI16 guildnumber = mChar->GetGuildNumber();
@@ -1533,7 +1533,7 @@ void CGuildCollection::Erase( GUILDID toErase )
 
 CGuildCollection::~CGuildCollection()
 {
-	GUILDLIST::iterator i = gList.begin();
+	GUILDLIST::const_iterator i = gList.begin();
 	while( i != gList.end() )
 	{
 		if( i->second != NULL )
@@ -1545,7 +1545,7 @@ CGuildCollection::~CGuildCollection()
 }
 
 
-void CGuildCollection::PlaceStone( cSocket *s, CItem *deed )
+void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 {
 	if( s == NULL || !ValidateObject( deed ) )
 		return;
@@ -1622,7 +1622,7 @@ bool CGuildCollection::ResultInCriminal( CChar *src, CChar *trg ) const
 	return ResultInCriminal( src->GetGuildNumber(), trg->GetGuildNumber() );
 }
 
-void CGuildCollection::DisplayTitle( cSocket *s, CChar *src ) const
+void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 {
 	if( !ValidateObject( src ) || s == NULL )
 		return;

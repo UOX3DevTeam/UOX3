@@ -96,12 +96,12 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	PlayerAttack( cSocket *s )
+//|	Function	-	PlayerAttack( CSocket *s )
 //|	Programmer	-	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle player attacking (Double-clicking whilst in war mode)
 //o---------------------------------------------------------------------------o
-void CHandleCombat::PlayerAttack( cSocket *s )
+void CHandleCombat::PlayerAttack( CSocket *s )
 {
 	if( s == NULL )
 		return;
@@ -218,7 +218,7 @@ void CHandleCombat::PlayerAttack( cSocket *s )
 
 		if( !i->IsNpc() )
 		{
-			cSocket *iSock = calcSocketObjFromChar( i );
+			CSocket *iSock = calcSocketObjFromChar( i );
 			if( iSock != NULL )
 				i->emote( iSock, 1281, true, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
 		}
@@ -263,7 +263,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		cAttack->emoteAll( 334, true, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby - Zane
 		if( !cTarget->IsNpc() )
 		{
-			cSocket *iSock = calcSocketObjFromChar( cTarget );
+			CSocket *iSock = calcSocketObjFromChar( cTarget );
 			if( iSock != NULL )
 				cTarget->emote( iSock, 1281, true, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
 		}
@@ -594,7 +594,7 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 				weapon->IncHP( -1 );
 				if( weapon->GetHP() <= 0 )
 				{
-					cSocket *mSock = calcSocketObjFromChar( p );
+					CSocket *mSock = calcSocketObjFromChar( p );
 					if( mSock != NULL )
 					{
 						std::string name;
@@ -780,7 +780,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 
 			if( defendItem->GetHP() <= 0 )
 			{
-				cSocket *mSock = calcSocketObjFromChar( mChar );
+				CSocket *mSock = calcSocketObjFromChar( mChar );
 				if( mSock != NULL )
 				{
 					std::string name;
@@ -1006,7 +1006,7 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SI08 DoHitMessage( CChar *defend, CChar *mChar, cSocket *mSock, SI16 damage )
+//|	Function		-	SI08 DoHitMessage( CChar *defend, CChar *mChar, CSocket *mSock, SI16 damage )
 //|	Date			-	3rd July, 2001
 //|	Programmer		-	Abaddon
 //|	Modified		-
@@ -1014,7 +1014,7 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 //|	Purpose			-	Prints out the hit message (if enabled) and calculates
 //|						where on the body the person was hit and returns that
 //o--------------------------------------------------------------------------
-SI08 CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, cSocket *targSock, SI16 damage )
+SI08 CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSock, SI16 damage )
 {
 	SI08 hitPos = RandomNum( 0, 99 ); // Determine area of Body Hit
 	for( UI08 t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t )
@@ -1112,7 +1112,7 @@ SI08 CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, cSocket *targSoc
 	return hitPos;
 }
 
-SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, cSocket *targSock, CItem *mWeapon, UI08 getFightSkill )
+SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock, CItem *mWeapon, UI08 getFightSkill )
 {
 	SI16 BaseDamage = calcAtt( mChar, true );
 	if( BaseDamage == -1 )  // No damage if weapon breaks
@@ -1216,12 +1216,27 @@ void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 				splitnum = RandomNum( static_cast< UI08 >(1), toSplit->GetSplit() );
 
 			for( UI08 splitcount = 0; splitcount < splitnum; ++splitcount )
-				Npcs->Split( toSplit );
+			{
+				CChar *c = toSplit->Dupe();
+				if( c == NULL )
+					continue;
+
+				c->SetFTarg( NULL );
+				c->SetLocation( toSplit->GetX() + 1, toSplit->GetY(), toSplit->GetZ() );
+				c->SetKills( 0 );
+				c->SetHP( toSplit->GetMaxHP() );
+				c->SetStamina( toSplit->GetMaxStam() );
+				c->SetMana( toSplit->GetMaxMana() );
+				if( RandomNum( 0, 34 ) == 5 )
+					c->SetSplit( 1 );
+				else
+					c->SetSplit( 0 );
+			}
 		}
 	}
 }
 
-void CHandleCombat::HandleCombat( cSocket *mSock, CChar *mChar, CChar *ourTarg )
+void CHandleCombat::HandleCombat( CSocket *mSock, CChar *mChar, CChar *ourTarg )
 {
 	const UI16 ourDist			= getDist( mChar, ourTarg );
 	CItem *mWeapon		= getWeapon( mChar );
@@ -1280,7 +1295,7 @@ void CHandleCombat::HandleCombat( cSocket *mSock, CChar *mChar, CChar *ourTarg )
 		}
 		else
 		{
-			cSocket *targSock = calcSocketObjFromChar( ourTarg );
+			CSocket *targSock = calcSocketObjFromChar( ourTarg );
 
 			Skills->CheckSkill( mChar, TACTICS, 0, 1000 );
 
@@ -1632,7 +1647,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		if( mChar->DidAttackFirst() && WillResultInCriminal( mChar, ourTarg ) )
 		{
 			mChar->SetKills( mChar->GetKills() + 1 );
-			cSocket *aSock = calcSocketObjFromChar( mChar );
+			CSocket *aSock = calcSocketObjFromChar( mChar );
 			if( aSock != NULL )
 			{
 				aSock->sysmessage( 314, mChar->GetKills() );
@@ -1646,7 +1661,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	doDeathStuff( ourTarg );
 }
 
-void CHandleCombat::CombatLoop( cSocket *mSock, CChar *mChar )
+void CHandleCombat::CombatLoop( CSocket *mSock, CChar *mChar )
 {
 	CChar *ourTarg = mChar->GetTarg();
 	if( ourTarg == NULL )
@@ -1713,7 +1728,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 	if( targChar->IsDead() || targChar->IsInvulnerable() )
 		return;
 
-	cTownRegion *targRegion = mChar->GetRegion(); 
+	CTownRegion *targRegion = mChar->GetRegion(); 
 
 	if( !targRegion->IsGuarded() || !cwmWorldState->ServerData()->GuardsStatus() )
 		return;
@@ -1809,7 +1824,7 @@ bool CHandleCombat::WillResultInCriminal( CChar *mChar, CChar *targ )
 //|	Purpose		-	Get the pet guarding an item / character and have him attack
 //|					the person using / attacking the item / character
 //o---------------------------------------------------------------------------o
-void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, cBaseObject *guarded )
+void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( owner ) || !ValidateObject( guarded ) )
 		return;
@@ -1824,7 +1839,7 @@ void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, cBaseObject *gua
 			AttackTarget( petGuard, mChar );
 		else
 		{
-			cSocket *oSock = calcSocketObjFromChar( owner );
+			CSocket *oSock = calcSocketObjFromChar( owner );
 			if( oSock != NULL )
 				oSock->sysmessage( 1629 );
 		}

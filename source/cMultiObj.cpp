@@ -159,14 +159,14 @@ bool CMultiObj::IsOwner( CChar *toFind ) const
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	AddToMulti( cBaseObject *toAdd )
+//|	Function		-	AddToMulti( CBaseObject *toAdd )
 //|	Date			-	28th July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Adds an item or character to the multi
 //o--------------------------------------------------------------------------o
-void CMultiObj::AddToMulti( cBaseObject *toAdd )
+void CMultiObj::AddToMulti( CBaseObject *toAdd )
 {
 	if( toAdd->GetObjType() == OT_CHAR )
 		charInMulti.Add( static_cast< CChar * >(toAdd) );
@@ -175,14 +175,14 @@ void CMultiObj::AddToMulti( cBaseObject *toAdd )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	RemoveFromMulti( cBaseObject *toRemove )
+//|	Function		-	RemoveFromMulti( CBaseObject *toRemove )
 //|	Date			-	28th July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Removes an item or character from the multi, if possible
 //o--------------------------------------------------------------------------o
-void CMultiObj::RemoveFromMulti( cBaseObject *toRemove )
+void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 {
 	if( toRemove->GetObjType() == OT_CHAR )
 		charInMulti.Remove( static_cast< CChar * >(toRemove) );

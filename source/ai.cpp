@@ -119,7 +119,7 @@ void HandleHealerAI( CChar *mChar )
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar, DIST_NEARBY );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		cSocket *mSock	= (*cIter);
+		CSocket *mSock	= (*cIter);
 		CChar *realChar = mSock->CurrcharObj();
 		if( LineOfSight( mSock, realChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 		{
@@ -151,7 +151,7 @@ void HandleEvilHealerAI( CChar *mChar )
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar, DIST_NEARBY );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		cSocket *mSock	= (*cIter);
+		CSocket *mSock	= (*cIter);
 		CChar *realChar	= mSock->CurrcharObj();
 		if( realChar->IsDead() && realChar->IsMurderer() )
 		{

@@ -18,7 +18,7 @@ namespace UOX
 {
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	cSocket *calcSocketObjFromChar( CChar *i )
+//|	Function	-	CSocket *calcSocketObjFromChar( CChar *i )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the socket object based on the calling character
@@ -26,14 +26,14 @@ namespace UOX
 //|					store the socket on the char temporarily to remove the need of
 //|					looping through all online sockets to find it.
 //o---------------------------------------------------------------------------o
-cSocket *calcSocketObjFromChar( CChar *i )
+CSocket *calcSocketObjFromChar( CChar *i )
 {
 	if( !ValidateObject( i ) )
 		return NULL;
 	if( i->IsNpc() )
 		return NULL;
 	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( tSock->CurrcharObj() == i )
 		{
@@ -53,7 +53,7 @@ cSocket *calcSocketObjFromChar( CChar *i )
 //o---------------------------------------------------------------------------o
 CChar *calcCharObjFromSer( SERIAL targSerial )
 {
-	cBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
 	CChar *toRet = NULL;
 	if( findItem != NULL )
 	{
@@ -71,7 +71,7 @@ CChar *calcCharObjFromSer( SERIAL targSerial )
 //o---------------------------------------------------------------------------o
 CItem *calcItemObjFromSer( SERIAL targSerial )
 {
-	cBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
 	CItem *toRet = NULL;
 	if( findItem != NULL )
 	{
@@ -83,7 +83,7 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 
 CMultiObj *calcMultiFromSer( SERIAL targSerial )
 {
-	cBaseObject *findMulti = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findMulti = ObjectFactory::getSingleton().FindObject( targSerial );
 	CMultiObj *toRet = NULL;
 	if( findMulti != NULL )
 	{
@@ -101,11 +101,11 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Find what region x and y are in
 //o--------------------------------------------------------------------------
-cTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 {
-	cTownRegion *tReg		= NULL;
-	std::vector< cTownRegion * >::iterator i;
+	CTownRegion *tReg		= NULL;
 	const regLocs *getLoc	= NULL;
+	std::vector< CTownRegion * >::const_iterator i;
 	for( i = regions.begin(); i != regions.end(); ++i )
 	{
 		tReg = (*i);

@@ -9,22 +9,22 @@
 namespace UOX
 {
 
-const SI32		DEFSPAWN_NEXTTIME		= 0;
-const SI16		DEFSPAWN_CALL			= 1;
+const TIMERVAL	DEFSPAWN_NEXTTIME		= 0;
+const UI16		DEFSPAWN_CALL			= 1;
 const SI16		DEFSPAWN_X1				= 0;
 const SI16		DEFSPAWN_X2				= 0;
 const SI16		DEFSPAWN_Y1				= 0;
 const SI16		DEFSPAWN_Y2				= 0;
 const SI08		DEFSPAWN_Z				= 0;
-const SI32		DEFSPAWN_MAXCSPAWN		= 0;
-const SI32		DEFSPAWN_MAXISPAWN		= 0;
+const size_t	DEFSPAWN_MAXCSPAWN		= 0;
+const size_t	DEFSPAWN_MAXISPAWN		= 0;
 const UI08		DEFSPAWN_MAXTIME		= 0;
 const UI08		DEFSPAWN_MINTIME		= 0;
 const SI32		DEFSPAWN_CURCSPAWN		= 0;
 const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 
-cSpawnRegion::cSpawnRegion( UI16 spawnregion ) : nexttime( DEFSPAWN_NEXTTIME ), call( DEFSPAWN_CALL ), x1( DEFSPAWN_X1 ), 
+CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : nexttime( DEFSPAWN_NEXTTIME ), call( DEFSPAWN_CALL ), x1( DEFSPAWN_X1 ), 
 x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), z( DEFSPAWN_Z ), maxcspawn( DEFSPAWN_MAXCSPAWN ), 
 maxispawn( DEFSPAWN_MAXISPAWN ), maxtime( DEFSPAWN_MAXTIME ), mintime( DEFSPAWN_MINTIME ), regionnum( spawnregion ), 
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), worldNumber( DEFSPAWN_WORLDNUM )
@@ -36,7 +36,7 @@ curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), worldNumber( D
 // spawn setting.  If not, then when people pick up spawned items, they will disappear (on region spawns)
 }
 
-cSpawnRegion::~cSpawnRegion()
+CSpawnRegion::~CSpawnRegion()
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -49,12 +49,12 @@ cSpawnRegion::~cSpawnRegion()
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn Region's name
 //o---------------------------------------------------------------------------o
-std::string cSpawnRegion::GetName( void ) const
+const std::string CSpawnRegion::GetName( void ) const
 {
 	return name;
 }
 
-void cSpawnRegion::SetName( std::string newName )
+void CSpawnRegion::SetName( const std::string newName )
 {
 	name = newName;
 }
@@ -65,7 +65,7 @@ void cSpawnRegion::SetName( std::string newName )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Maximum amount of objects a region can spawn
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxSpawn( void ) const
+size_t CSpawnRegion::GetMaxSpawn( void ) const
 {
 	return ( maxcspawn + maxispawn );
 }
@@ -76,11 +76,11 @@ SI32 cSpawnRegion::GetMaxSpawn( void ) const
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Maximum amount of characters to spawn
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxCharSpawn( void ) const
+size_t CSpawnRegion::GetMaxCharSpawn( void ) const
 {
 	return maxcspawn;
 }
-void cSpawnRegion::SetMaxCharSpawn( SI32 newVal )
+void CSpawnRegion::SetMaxCharSpawn( size_t newVal )
 {
 	maxcspawn = newVal;
 }
@@ -92,12 +92,12 @@ void cSpawnRegion::SetMaxCharSpawn( SI32 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Maximum amount of items to spawn
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxItemSpawn( void ) const
+size_t CSpawnRegion::GetMaxItemSpawn( void ) const
 {
 	return maxispawn;
 }
 
-void cSpawnRegion::SetMaxItemSpawn( SI32 newVal )
+void CSpawnRegion::SetMaxItemSpawn( size_t newVal )
 {
 	maxispawn = newVal;
 }
@@ -108,7 +108,7 @@ void cSpawnRegion::SetMaxItemSpawn( SI32 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Current amount of objects spawned
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrent( void ) const
+SI32 CSpawnRegion::GetCurrent( void ) const
 {
 	return ( curcspawn + curispawn );
 }
@@ -119,12 +119,12 @@ SI32 cSpawnRegion::GetCurrent( void ) const
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Current amount of characters spawned
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrentCharAmt( void ) const
+SI32 CSpawnRegion::GetCurrentCharAmt( void ) const
 {
 	return curcspawn;
 }
 
-void cSpawnRegion::IncCurrentCharAmt( SI16 incAmt )
+void CSpawnRegion::IncCurrentCharAmt( SI16 incAmt )
 {
 	curcspawn += incAmt;
 }
@@ -135,11 +135,11 @@ void cSpawnRegion::IncCurrentCharAmt( SI16 incAmt )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Current amount of items spawned
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrentItemAmt( void ) const
+SI32 CSpawnRegion::GetCurrentItemAmt( void ) const
 {
 	return curispawn;
 }
-void cSpawnRegion::IncCurrentItemAmt( SI16 incAmt )
+void CSpawnRegion::IncCurrentItemAmt( SI16 incAmt )
 {
 	curispawn += incAmt;
 }
@@ -150,12 +150,12 @@ void cSpawnRegion::IncCurrentItemAmt( SI16 incAmt )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Spawn region number
 //o---------------------------------------------------------------------------o
-UI16 cSpawnRegion::GetRegionNum( void ) const
+UI16 CSpawnRegion::GetRegionNum( void ) const
 {
 	return regionnum;
 }
 
-void cSpawnRegion::SetRegionNum( UI16 newVal )
+void CSpawnRegion::SetRegionNum( UI16 newVal )
 {
 	regionnum = newVal;
 }
@@ -167,12 +167,12 @@ void cSpawnRegion::SetRegionNum( UI16 newVal )
 //|	Purpose		-	Minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-UI08 cSpawnRegion::GetMinTime( void ) const
+UI08 CSpawnRegion::GetMinTime( void ) const
 {
 	return mintime;
 }
 
-void cSpawnRegion::SetMinTime( UI08 newVal )
+void CSpawnRegion::SetMinTime( UI08 newVal )
 {
 	mintime = newVal;
 }
@@ -184,11 +184,11 @@ void cSpawnRegion::SetMinTime( UI08 newVal )
 //|	Purpose		-	Maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-UI08 cSpawnRegion::GetMaxTime( void ) const
+UI08 CSpawnRegion::GetMaxTime( void ) const
 {
 	return maxtime;
 }
-void cSpawnRegion::SetMaxTime( UI08 newVal )
+void CSpawnRegion::SetMaxTime( UI08 newVal )
 {
 	maxtime = newVal;
 }
@@ -199,11 +199,11 @@ void cSpawnRegion::SetMaxTime( UI08 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	When a spawnregion will next spawn a new object
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetNextTime( void ) const
+TIMERVAL CSpawnRegion::GetNextTime( void ) const
 {
 	return nexttime;
 }
-void cSpawnRegion::SetNextTime( SI32 newVal )
+void CSpawnRegion::SetNextTime( TIMERVAL newVal )
 {
 	nexttime = newVal;
 }
@@ -217,11 +217,11 @@ void cSpawnRegion::SetNextTime( SI32 newVal )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Z Level of the Spawn Region
 //o--------------------------------------------------------------------------o
-void cSpawnRegion::SetZ( SI08 newVal )
+void CSpawnRegion::SetZ( SI08 newVal )
 {
 	z = newVal;
 }
-SI08 cSpawnRegion::GetZ( void ) const
+SI08 CSpawnRegion::GetZ( void ) const
 {
 	return z;
 }
@@ -232,11 +232,11 @@ SI08 cSpawnRegion::GetZ( void ) const
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	The y pos of the top corner of the spawnregion
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetY1( void ) const
+SI16 CSpawnRegion::GetY1( void ) const
 {
 	return y1;
 }
-void cSpawnRegion::SetY1( SI16 newVal )
+void CSpawnRegion::SetY1( SI16 newVal )
 {
 	y1 = newVal;
 }
@@ -247,11 +247,11 @@ void cSpawnRegion::SetY1( SI16 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	The x pos of the top corner of the spawnregion
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetX1( void ) const
+SI16 CSpawnRegion::GetX1( void ) const
 {
 	return x1;
 }
-void cSpawnRegion::SetX1( SI16 newVal )
+void CSpawnRegion::SetX1( SI16 newVal )
 {
 	x1 = newVal;
 }
@@ -262,11 +262,11 @@ void cSpawnRegion::SetX1( SI16 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	The y pos of the bottom corner of the spawn region
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetY2( void ) const
+SI16 CSpawnRegion::GetY2( void ) const
 {
 	return y2;
 }
-void cSpawnRegion::SetY2( SI16 newVal )
+void CSpawnRegion::SetY2( SI16 newVal )
 {
 	y2 = newVal;
 }
@@ -277,11 +277,11 @@ void cSpawnRegion::SetY2( SI16 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	The x pos of the bottom corner of the spawn region
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetX2( void ) const
+SI16 CSpawnRegion::GetX2( void ) const
 {
 	return x2;
 }
-void cSpawnRegion::SetX2( SI16 newVal )
+void CSpawnRegion::SetX2( SI16 newVal )
 {
 	x2 = newVal;
 }
@@ -292,16 +292,16 @@ void cSpawnRegion::SetX2( SI16 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	The world number of the spawnregion
 //o---------------------------------------------------------------------------o
-UI08 cSpawnRegion::WorldNumber( void ) const
+UI08 CSpawnRegion::WorldNumber( void ) const
 {
 	return worldNumber;
 }
-void cSpawnRegion::WorldNumber( UI08 newVal )
+void CSpawnRegion::WorldNumber( UI08 newVal )
 {
 	worldNumber = newVal;
 }
 
-void cSpawnRegion::LoadNPCList( std::string npcList )
+void CSpawnRegion::LoadNPCList( std::string npcList )
 {
 	UString sect = "NPCLIST " + npcList;
 	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
@@ -317,7 +317,7 @@ void cSpawnRegion::LoadNPCList( std::string npcList )
 	}
 }
 
-void cSpawnRegion::LoadItemList( std::string itemList )
+void CSpawnRegion::LoadItemList( std::string itemList )
 {
 	UString sect = "ITEMLIST " + itemList;
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
@@ -339,7 +339,7 @@ void cSpawnRegion::LoadItemList( std::string itemList )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Loads the spawnregion from spawn.scp script entry
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::Load( ScriptSection *toScan )
+void CSpawnRegion::Load( ScriptSection *toScan )
 {
 	UString sect;
 	UString data;
@@ -361,9 +361,9 @@ void cSpawnRegion::Load( ScriptSection *toScan )
 			else if( UTag == "ITEM" )
 				sItems.push_back( data );
 			else if( UTag == "MAXITEMS" )
-				maxispawn = data.toLong();
+				maxispawn = data.toUInt();
 			else if( UTag == "MAXNPCS" )
-				maxcspawn = data.toLong();
+				maxcspawn = data.toUInt();
 			else if( UTag == "X1" )
 				x1 = data.toShort();
 			else if( UTag == "X2" )
@@ -379,7 +379,7 @@ void cSpawnRegion::Load( ScriptSection *toScan )
 			else if( UTag == "NAME" )
 				name = data;
 			else if( UTag == "CALL" )
-				call = data.toShort();
+				call = data.toUShort();
 			else if( UTag == "WORLD" )
 				worldNumber = data.toUByte();
 		}
@@ -392,21 +392,21 @@ void cSpawnRegion::Load( ScriptSection *toScan )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do spawn stuff for spawnregion
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
+void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 {
-	if( sNpcs.size() == 0 )
+	if( sNpcs.empty() )
 		maxcspawn = 0;
-	if( sItems.size() == 0 )
+	if( sItems.empty() )
 		maxispawn = 0;
 
-	bool shouldSpawnChars	= ( !sNpcs.empty() && maxcspawn >= static_cast<SI32>(spawnedChars.Num()) );
-	bool shouldSpawnItems	= ( !sItems.empty() && maxispawn >= static_cast<SI32>(spawnedItems.Num()) );
+	bool shouldSpawnChars	= ( !sNpcs.empty() && maxcspawn >= spawnedChars.Num() );
+	bool shouldSpawnItems	= ( !sItems.empty() && maxispawn >= spawnedItems.Num() );
 	CChar *spawnChar		= NULL;
 	CItem *spawnItem		= NULL;
 
-	UI08 spawnChars = (shouldSpawnChars?0:1);
-	UI08 spawnItems = (shouldSpawnItems?1:0);
-	for( SI16 i = 0 ; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
+	const UI08 spawnChars = (shouldSpawnChars?0:1);
+	const UI08 spawnItems = (shouldSpawnItems?1:0);
+	for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
 	{
 		if( RandomNum( spawnChars, spawnItems ) )
 		{
@@ -417,7 +417,7 @@ void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 				{
 					spawnedItems.Add( spawnItem );
 					++itemsSpawned;
-					shouldSpawnItems = ((SI32)spawnedItems.Num() < maxispawn);
+					shouldSpawnItems = (spawnedItems.Num() < maxispawn);
 				}
 			}
 		}
@@ -430,7 +430,7 @@ void cSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 				{
 					spawnedChars.Add( spawnChar );
 					++npcsSpawned;
-					shouldSpawnChars = ((SI32)spawnedChars.Num() < maxcspawn);
+					shouldSpawnChars = (spawnedChars.Num() < maxcspawn);
 				}
 			}
 		}
@@ -445,7 +445,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do a char spawn
 //o---------------------------------------------------------------------------o
-CChar *cSpawnRegion::RegionSpawnChar( void )
+CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	CChar *CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
 	if( CSpawn != NULL )
@@ -474,7 +474,7 @@ CChar *cSpawnRegion::RegionSpawnChar( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do a item spawn
 //o---------------------------------------------------------------------------o
-CItem *cSpawnRegion::RegionSpawnItem( void )
+CItem *CSpawnRegion::RegionSpawnItem( void )
 {
 	CItem *ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber );
 	if( ISpawn != NULL )
@@ -501,7 +501,7 @@ CItem *cSpawnRegion::RegionSpawnItem( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o---------------------------------------------------------------------------o
-bool cSpawnRegion::FindSpotToSpawn( cBaseObject *mObj )
+bool CSpawnRegion::FindSpotToSpawn( CBaseObject *mObj )
 {
 	SI16 x, y, z;
 	bool rvalue = false;
@@ -511,9 +511,9 @@ bool cSpawnRegion::FindSpotToSpawn( cBaseObject *mObj )
 		y = static_cast<SI16>(RandomNum( y1, y2 ));
 		z = Map->MapElevation( x, y, worldNumber );
 		
-		if( Map->CanMonsterMoveHere( x, y, (UI08)z, worldNumber ) )
+		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
 		{
-			mObj->SetLocation( x, y, (UI08)z );
+			mObj->SetLocation( x, y, z );
 			rvalue = true;
 			break;
 		}
@@ -529,7 +529,7 @@ bool cSpawnRegion::FindSpotToSpawn( cBaseObject *mObj )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an item/npc should be removed from spawnlist and saved
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::checkSpawned( void )
+void CSpawnRegion::checkSpawned( void )
 {
 	for( CChar *cCheck = spawnedChars.First(); !spawnedChars.Finished(); cCheck = spawnedChars.Next() )
 	{
@@ -562,7 +562,7 @@ void cSpawnRegion::checkSpawned( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	delete a npc from spawnlist
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
+void CSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 {
 	if( spawnedChars.Remove( toDelete ) )
 		IncCurrentCharAmt( -1 );
@@ -574,18 +574,18 @@ void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	delete an item from spawnlist
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
+void CSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 {
 	if( spawnedItems.Remove( toDelete ) )
 		IncCurrentItemAmt( -1 );
 }
 
-CDataList< CItem * > * cSpawnRegion::GetSpawnedItemsList( void )
+CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
 {
 	return &spawnedItems;
 }
 
-CDataList< CChar * > * cSpawnRegion::GetSpawnedCharsList( void )
+CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
 {
 	return &spawnedChars;
 }

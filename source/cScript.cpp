@@ -324,7 +324,7 @@ bool cScript::OnStop( void )
 	return false;
 }
 
-bool cScript::OnCreate( cBaseObject *thingCreated )
+bool cScript::OnCreate( CBaseObject *thingCreated )
 {
 	if( !ValidateObject( thingCreated ) )
 		return false;
@@ -356,7 +356,7 @@ bool cScript::OnCreate( cBaseObject *thingCreated )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnDelete( cBaseObject *thingDestroyed )
+bool cScript::OnDelete( CBaseObject *thingDestroyed )
 {
 	if( !ValidateObject( thingDestroyed ) )
 		return false;
@@ -507,7 +507,7 @@ bool cScript::InRange( CChar *person, CItem *targItem )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnCollide( cSocket *tSock, CChar *objColliding, cBaseObject *objCollideWith )
+bool cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith )
 {
 	if( !ValidateObject( objColliding ) || !ValidateObject( objCollideWith ) || tSock == NULL )
 		return false;
@@ -563,7 +563,7 @@ bool cScript::OnSteal( CChar *thief, CItem *theft )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnDispel( cBaseObject *dispelled )
+bool cScript::OnDispel( CBaseObject *dispelled )
 {
 	if( !ValidateObject( dispelled ) )
 		return false;
@@ -594,7 +594,7 @@ bool cScript::OnDispel( cBaseObject *dispelled )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnSkill( cBaseObject *skillUse, SI08 skillUsed )
+bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 {
 	if( !ValidateObject( skillUse ) )
 		return false;
@@ -841,7 +841,7 @@ bool cScript::OnTransfer( CItem *transferred, CChar *source, CChar *target )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnLeaving( CMultiObj *left, cBaseObject *leaving )
+bool cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 {
 	if( !ValidateObject( left ) || !ValidateObject( leaving ) )
 		return false;
@@ -1041,7 +1041,7 @@ UI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item)
 	return funcRetVal;
 }
 
-bool cScript::OnEntrance( CMultiObj *left, cBaseObject *leaving )
+bool cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 {
 	if( !ValidateObject( left ) || !ValidateObject( leaving ) )
 		return false;
@@ -1077,7 +1077,7 @@ bool cScript::OnEntrance( CMultiObj *left, cBaseObject *leaving )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OutOfRange( CChar *person, cBaseObject *objVanish )
+bool cScript::OutOfRange( CChar *person, CBaseObject *objVanish )
 {
 	if( !ValidateObject( person ) || !ValidateObject( objVanish ) )
 		return false;
@@ -1110,7 +1110,7 @@ bool cScript::OutOfRange( CChar *person, cBaseObject *objVanish )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnLogin( cSocket *sockPlayer, CChar *pPlayer )
+bool cScript::OnLogin( CSocket *sockPlayer, CChar *pPlayer )
 {
 	if( !ValidateObject( pPlayer ) )
 		return false;
@@ -1145,7 +1145,7 @@ bool cScript::OnLogin( cSocket *sockPlayer, CChar *pPlayer )
 //o--------------------------------------------------------------------------o
 //|	Notes			-	
 //o--------------------------------------------------------------------------o	
-bool cScript::OnLogout( cSocket *sockPlayer, CChar *pPlayer ) 
+bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer ) 
 { 
 	if( !ValidateObject( pPlayer ) ) 
 		return false; 
@@ -1181,7 +1181,7 @@ bool cScript::OnLogout( cSocket *sockPlayer, CChar *pPlayer )
 //o--------------------------------------------------------------------------o
 //|	Notes			-	
 //o--------------------------------------------------------------------------o	
-bool cScript::OnClick(cSocket *sockPlayer, CItem *iClicked)
+bool cScript::OnClick(CSocket *sockPlayer, CItem *iClicked)
 {
 	if( !ExistAndVerify( seOnClick, "onClick" ) )
 		return false;
@@ -1293,7 +1293,7 @@ bool cScript::OnPortal( void )
 	return false;
 }
 
-bool cScript::OnTimer( cBaseObject *tObject, UI08 timerID )
+bool cScript::OnTimer( CBaseObject *tObject, UI08 timerID )
 {
 	if( !ValidateObject( tObject ) )
 		return false;
@@ -1493,14 +1493,14 @@ bool cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::DoCallback( cSocket *tSock, SERIAL targeted, UI08 callNum )
+bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 {
 	if( tSock == NULL )
 		return false;
 	jsval params[2], rval;
 	JS_SetPrivate( targContext, sockObjects[0].toUse, tSock );
 	int objType			= 2;	// 2 == null, 1 == char, 0 == item
-	cBaseObject *mObj	= NULL;
+	CBaseObject *mObj	= NULL;
 	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
 	if( targeted >= BASEITEMSERIAL )
 	{
@@ -1644,7 +1644,7 @@ void cScript::RemoveGumpList( SI32 index )
 
 	gumpDisplays.erase( gumpDisplays.begin() + index );
 }
-void cScript::SendGumpList( SI32 index, cSocket *toSendTo )
+void cScript::SendGumpList( SI32 index, CSocket *toSendTo )
 {
 	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return;
@@ -1654,7 +1654,7 @@ void cScript::SendGumpList( SI32 index, cSocket *toSendTo )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cScript::HandleGumpPress( cSocket *pressing, long button )
+//|	Function		-	void cScript::HandleGumpPress( CSocket *pressing, long button )
 //|	Date			-	
 //|	Developers		-	Unknown / Punt
 //|	Organization	-	UOX3 DevTeam
@@ -1671,7 +1671,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 {
 	if( packet == NULL )
 		return;
-	cSocket *pressing = packet->GetSocket();
+	CSocket *pressing = packet->GetSocket();
 	if( pressing == NULL )
 		return;
 
@@ -2401,7 +2401,7 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //|	Purpose		-	Calls the function represented in funcName for the script
 //|				-	passing in two character parameters
 //o--------------------------------------------------------------------------
-bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSocket *s )
+bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s )
 {
 	if( !ValidateObject( srcChar ) || !ValidateObject( tmpChar ) || funcName == NULL )
 		return false;
@@ -2431,7 +2431,7 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSoc
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cScript::OnCommand( cSocket *cSocket )
+//|	Function		-	bool cScript::OnCommand( CSocket *CSocket )
 //|	Date			-	1/13/2003 11:17:48 PM
 //|	Developers		-	Brakhtus
 //|	Organization	-	Forum Submission
@@ -2441,7 +2441,7 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, cSoc
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-bool cScript::OnCommand( cSocket *mSock ) 
+bool cScript::OnCommand( CSocket *mSock ) 
 { 	
 	if( mSock  == NULL ) 		
 		return false;
@@ -2503,7 +2503,7 @@ bool cScript::spellRegistration( void )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::executeCommand( cSocket *s, std::string funcName, std::string executedString )
+bool cScript::executeCommand( CSocket *s, std::string funcName, std::string executedString )
 {
 	jsval params[2], rval; 	
 	JSString *execString = JS_NewStringCopyZ( targContext, executedString.c_str() );
@@ -2515,7 +2515,7 @@ bool cScript::executeCommand( cSocket *s, std::string funcName, std::string exec
 	return ( retVal == JS_TRUE ); 
 }
 
-bool cScript::MagicSpellCast( cSocket *mSock, CChar *tChar, bool directCast, int spellNum )
+bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum )
 {
 	if( !ValidateObject( tChar ) )
 		return false;
@@ -2546,7 +2546,7 @@ bool cScript::MagicSpellCast( cSocket *mSock, CChar *tChar, bool directCast, int
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }
 
-bool cScript::OnIterate( cBaseObject *a, UI32 &b ) 
+bool cScript::OnIterate( CBaseObject *a, UI32 &b ) 
 { 	
 	if( !ValidateObject( a ) ) 		
 		return true;

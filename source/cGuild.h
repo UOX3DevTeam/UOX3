@@ -132,11 +132,11 @@ class CGuildCollection
 protected:
 	GUILDLIST		gList;
 
-	void			ToggleAbbreviation( cSocket *s );
+	void			ToggleAbbreviation( CSocket *s );
 	void			Erase( GUILDID toErase );
 	GUILDID			MaximumGuild( void );
 public:
-	void			Resign( cSocket *s );
+	void			Resign( CSocket *s );
 					CGuildCollection();
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );
@@ -146,13 +146,13 @@ public:
 	void			Load( void );
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
-	void			Menu( cSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
+	void			Menu( CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
 	void			GumpInput( CPIGumpInput *gi );
-	void			GumpChoice( cSocket *s );
-	void			PlaceStone( cSocket *s, CItem *deed );
+	void			GumpChoice( CSocket *s );
+	void			PlaceStone( CSocket *s, CItem *deed );
 	bool			ResultInCriminal( GUILDID srcGuild, GUILDID trgGuild ) const;
 	bool			ResultInCriminal( CChar *src, CChar *trg ) const;
-	void			DisplayTitle( cSocket *s, CChar *src ) const;
+	void			DisplayTitle( CSocket *s, CChar *src ) const;
 					~CGuildCollection();
 };
 

@@ -24,8 +24,8 @@ cHTMLTemplate::cHTMLTemplate() : Loaded( false ), ScheduledUpdate( 0 ), Type( ET
 {
 	Name			= "";
 	Content			= "";
-	memset( OutputFile, 0x00, MAX_PATH );
-	memset( InputFile, 0x00, MAX_PATH );
+	OutputFile.reserve( MAX_PATH );
+	InputFile.reserve( MAX_PATH );
 }
 
 cHTMLTemplate::~cHTMLTemplate()
@@ -55,7 +55,7 @@ UString GetUptime( void )
 	return builtString;
 }
 
-bool CountNPCFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool CountNPCFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) )
@@ -110,9 +110,9 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Version
-	std::string Version = cVersionClass::GetVersion();
+	std::string Version = CVersionClass::GetVersion();
 	Version += ".";
-	Version += cVersionClass::GetBuild();
+	Version += CVersionClass::GetBuild();
 	Version += " [";
 	Version += OS_STR;
 	Version += "]";
@@ -146,7 +146,7 @@ void cHTMLTemplate::Process( void )
 
 	// Get all Network Connections
 	Network->PushConn();
-	cSocket *tSock	= NULL;
+	CSocket *tSock	= NULL;
 	CChar *tChar	= NULL;
 	for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
@@ -311,7 +311,7 @@ void cHTMLTemplate::Process( void )
 						sPos = parsedInline.find( "%playerip" ); 
 						while( sPos != std::string::npos )
 						{
-							cSocket *mySock = calcSocketObjFromChar( tChar );
+							CSocket *mySock = calcSocketObjFromChar( tChar );
 							char ClientIP[32];
 							sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
 							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
@@ -547,14 +547,14 @@ void cHTMLTemplate::Process( void )
 
 	// Print the Content out to the new file...
 	std::ofstream Output;
-	Output.open( OutputFile, std::ios::out );
+	Output.open( OutputFile.c_str(), std::ios::out );
 	if( Output.is_open() )
 	{
 		Output << ParsedContent;
 		Output.close();
 	}
 	else
-		Console.Error( 1, " Couldn't open the template file %s for writing", OutputFile );
+		Console.Error( 1, " Couldn't open the template file %s for writing", OutputFile.c_str() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -585,11 +585,11 @@ void cHTMLTemplate::LoadTemplate( void )
 {
 	Content = "";
 
-	std::ifstream InputFile1( InputFile );
+	std::ifstream InputFile1( InputFile.c_str() );
 
 	if( !InputFile1.is_open() )
 	{
-		Console.Error( 1, "Couldn't open HTML Template File %s", InputFile );
+		Console.Error( 1, "Couldn't open HTML Template File %s", InputFile.c_str() );
 		return;
 	}
 
@@ -653,9 +653,9 @@ void cHTMLTemplate::Load( ScriptSection *found )
 				Type = ETT_GMSTATUS;
 		}
 		else if( UTag == "INPUT" )
-			strcpy( InputFile, data.c_str() );
+			InputFile = data.substr( 0, MAX_PATH - 1 );
 		else if( UTag == "OUTPUT" )
-			strcpy( OutputFile, data.c_str() );
+			OutputFile = data.substr( 0, MAX_PATH - 1 );
 		else if( UTag == "NAME" )
 			Name = data;
 	}
@@ -683,7 +683,7 @@ cHTMLTemplates::~cHTMLTemplates()
 void cHTMLTemplates::Load( void )
 {
 	VECSCRIPTLIST *toWalk = FileLookup->GetFiles( html_def );
-	VECSCRIPTLIST_ITERATOR tIter;
+	VECSCRIPTLIST_CITERATOR tIter;
 	if( toWalk == NULL )
 		return;
 
@@ -714,7 +714,7 @@ void cHTMLTemplates::Load( void )
 //o---------------------------------------------------------------------------o
 void cHTMLTemplates::Unload( void )
 {
-	if( Templates.size() < 1 )
+	if( Templates.empty() )
 		return;
 
 	for( size_t i = 0; i < Templates.size(); ++i )
@@ -733,13 +733,14 @@ void cHTMLTemplates::Unload( void )
 //o---------------------------------------------------------------------------o
 void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 {
-	std::vector< cHTMLTemplate* >::iterator tIter;
+	std::vector< cHTMLTemplate* >::const_iterator tIter;
 	for( tIter = Templates.begin(); tIter != Templates.end(); ++tIter )
 	{
-		if( (*tIter) != NULL )
+		cHTMLTemplate *toPoll = (*tIter);
+		if( toPoll != NULL )
 		{
-			if( nTemplateID == -1 || (*tIter)->GetTemplateType() == nTemplateID )
-				(*tIter)->Poll();
+			if( nTemplateID == -1 || toPoll->GetTemplateType() == nTemplateID )
+				toPoll->Poll();
 		}
 	}
 }
@@ -750,7 +751,7 @@ void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Shows an information gump about current templates
 //o---------------------------------------------------------------------------o
-void cHTMLTemplates::TemplateInfoGump( cSocket *mySocket )
+void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 {
 	CGump InfoGump = CGump( false, false );
 

@@ -12,12 +12,12 @@ namespace UOX
 		CITV_COUNT
 	};
 
-class CItem : public cBaseObject
+class CItem : public CBaseObject
 {
 protected:
 	CDataList< CItem * >	Contains;
 
-	cBaseObject	*	contObj;
+	CBaseObject	*	contObj;
 
 	UI08			bools;
 	UI08			priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
@@ -88,10 +88,10 @@ public:
 
 	CItem *			Dupe( ObjectType itemType = OT_ITEM );
 
-	cBaseObject *	GetCont(   void ) const;
+	CBaseObject *	GetCont(   void ) const;
 	SERIAL			GetContSerial( void ) const;
 
-	bool			SetCont(   cBaseObject *newCont );
+	bool			SetCont(   CBaseObject *newCont );
 	bool			SetContSerial( SERIAL newSerial );
 
 	bool			isDoorOpen( void ) const;
@@ -129,7 +129,7 @@ public:
 	void			SetDesc( const char *newValue );
 
 	void			PlaceInPack( void );
-	virtual void	SetLocation( const cBaseObject *toSet );
+	virtual void	SetLocation( const CBaseObject *toSet );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
 	void			IncZ( SI16 newValue );
@@ -232,11 +232,11 @@ public:
 	void			LockDown( void );
 	bool			IsContType( void ) const;
 
-	void			itemTalk( cSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0 );
-	virtual void	Update( cSocket *mSock = NULL );
-	virtual void	SendToSocket( cSocket *mSock );
-	void			SendPackItemToSocket( cSocket *mSock );
-	virtual void	RemoveFromSight( cSocket *mSock = NULL );
+	void			itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0 );
+	virtual void	Update( CSocket *mSock = NULL );
+	virtual void	SendToSocket( CSocket *mSock );
+	void			SendPackItemToSocket( CSocket *mSock );
+	virtual void	RemoveFromSight( CSocket *mSock = NULL );
 
 	virtual bool	Save( std::ofstream &outStream );
 	virtual bool	DumpBody( std::ofstream &outStream ) const;
@@ -260,7 +260,7 @@ protected:
 
 	void				CopyData( CSpawnItem *target );
 public:
-	CDataList< cBaseObject * >		spawnedList;
+	CDataList< CBaseObject * >		spawnedList;
 
 						CSpawnItem();
 	virtual				~CSpawnItem()

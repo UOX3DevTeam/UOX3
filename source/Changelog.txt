@@ -1,3 +1,22 @@
+8/22/2004 - giwo
+	Began enforcing stricter class naming rules in an effort to standardize the code (IE CSocket not cSocket).
+	Removed some unneeded global variables.
+	Rewrote ShowSkillTarget().
+	Sized down CTownRegion::midilist to a UI16.
+	Sized down some variables in the CSpawnRegion class.
+	Fixed an issue causing all characters to be created with at least 1.0 base skill level.
+	Minor cleanups.
+	Moved 'wipe' and 'iwipe' out to JS.
+	JS Changes:
+		Fixed an issue with CChar_SetSkillByName().
+		Added Character prop .tamed.
+
+8/20/2004 - giwo
+	More use of const_iterators where applicable.
+	Changed some vector.size() comparisons to vector.empty().
+	Minor fixes with a couple packets.
+	Moved 'areacommand' out to JS.
+	
 8/13/2004 - giwo
 	Converted a few areas of code to using refrences rather than pointers.
 	Consolidated some code in cWeather.cpp and cRaces.cpp.

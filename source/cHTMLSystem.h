@@ -29,11 +29,11 @@ class cHTMLTemplate
 {
 protected:
 	UI32			UpdateTimer;
-	char			InputFile[MAX_PATH];
+	std::string		InputFile;
 	bool			Loaded;
 	ETemplateType	Type;
 	std::string		Content;
-	char			OutputFile[MAX_PATH];
+	std::string		OutputFile;
 	std::string		Name;
 	UI32			ScheduledUpdate;
 
@@ -67,7 +67,7 @@ public:
 	void Load( void );
 	void Unload( void );
 	void Poll( ETemplateType nTemplateID = ETT_ALLTEMPLATES );
-	void TemplateInfoGump( cSocket *mySocket );
+	void TemplateInfoGump( CSocket *mySocket );
 };
 
 extern cHTMLTemplates	*HTMLTemplates;

@@ -82,7 +82,7 @@ void cCommands::CommandString( UString newValue )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cCommands::Command( cSocket *s )
+//|	Function		-	void cCommands::Command( CSocket *s )
 //|	Date			-	
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -94,7 +94,7 @@ void cCommands::CommandString( UString newValue )
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
 //o--------------------------------------------------------------------------o
-void cCommands::Command( cSocket *s, CChar *mChar, UString text )
+void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 {
 	CommandString( text.simplifyWhiteSpace() );
 	if( NumArguments() < 1 )
@@ -229,7 +229,6 @@ void cCommands::Command( cSocket *s, CChar *mChar, UString text )
 //o---------------------------------------------------------------------------o
 void cCommands::Load( void )
 {
-	size_t tablePos;
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
 	if( commands == NULL )
@@ -262,11 +261,15 @@ void cCommands::Load( void )
 		}
 		// check for commands here
 	}
-	if( badCommands.size() > 0 )
+	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		for( tablePos = 0; tablePos < badCommands.size(); ++tablePos )
-			Console << "Invalid command '" << badCommands[tablePos].c_str() << "' found in commands.dfn!" << myendl;
+		STRINGLIST_CITERATOR tablePos = badCommands.begin();
+		while( tablePos != badCommands.end() )
+		{
+			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
+			++tablePos;
+		}
 	}
 
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
@@ -283,7 +286,7 @@ void cCommands::Load( void )
 			clearance[currentWorking]->name			= tag;
 			clearance[currentWorking]->commandLevel = data.toUByte();
 		}
-		std::vector< commandLevel_st * >::iterator cIter;
+		std::vector< commandLevel_st * >::const_iterator cIter;
 		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
 		{
 			commandLevel_st *ourClear = (*cIter);
@@ -362,10 +365,10 @@ void cCommands::Log( std::string command, CChar *player1, CChar *player2, std::s
 //o---------------------------------------------------------------------------o
 commandLevel_st *cCommands::GetClearance( UString clearName )
 {
-	if( clearance.size() == 0 )
+	if( clearance.empty() )
 		return NULL;
 	commandLevel_st *clearPointer;
-	std::vector< commandLevel_st * >::iterator clearIter;
+	std::vector< commandLevel_st * >::const_iterator clearIter;
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = (*clearIter);

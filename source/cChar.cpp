@@ -25,10 +25,10 @@
 //| 					1.2		Abaddon		25 July, 2000
 //|						All Accessor funcs plus a few others are now flagged as const functions, meaning that
 //|						those functions GUARENTEE never to alter data, at compile time
-//|						Thoughts about cBaseObject and prelim plans made
+//|						Thoughts about CBaseObject and prelim plans made
 //|
 //| 					1.3		Abaddon		28 July, 2000
-//|						Initial cBaseObject implementation put in.  CChar reworked to deal with only things it has to
+//|						Initial CBaseObject implementation put in.  CChar reworked to deal with only things it has to
 //|						Proper constructor written
 //|						Plans for CChar derived objects thought upon (notably CPC and CNPC)
 //o--------------------------------------------------------------------------o
@@ -130,9 +130,9 @@ const UI32			DEFNPC_HOLDG 				= 0;
 const UI08			DEFNPC_QUESTTYPE			= 0;
 const UI08			DEFNPC_QUESTDESTREGION 		= 0;
 const UI08			DEFNPC_QUESTORIGREGION		= 0;
-cBaseObject *		DEFNPC_PETGUARDING 			= NULL;
+CBaseObject *		DEFNPC_PETGUARDING 			= NULL;
 
-CChar::CChar() : cBaseObject(),
+CChar::CChar() : CBaseObject(),
 robe( DEFCHAR_ROBE ), townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
 dispz( DEFCHAR_DISPZ ), fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
@@ -152,15 +152,14 @@ petguarding( DEFNPC_PETGUARDING ), speechItem( DEFPLAYER_SPEECHITEM ), speechMod
 speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLBACK ), PoisonStrength( DEFCHAR_POISONSTRENGTH ),
 oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
 {
-	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
 	id		= 0x0190;
 	origID	= id;
 	objType = OT_CHAR;
-	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
-	petFriends.resize( 0 );
 	name		= "Mr. noname";
-	for( UI08 k = 0; k <= ALLSKILLS; ++k )
-		baseskill[k] = 10;
+	petFriends.resize( 0 );
+	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
+	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
+	memset( baseskill, 0, sizeof( baseskill[0] ) * (ALLSKILLS+1) );
 	memset( skill, 0, sizeof( skill[0] ) * (ALLSKILLS+1) );
 	memset( lockState, 0, sizeof( lockState[0] ) * (ALLSKILLS+1) );
 	for( UI08 j = 0; j <= ALLSKILLS; ++j )
@@ -206,11 +205,11 @@ void CChar::SetNPCAiType( SI16 newValue )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  SERIAL of the object the character is guarding
 //o---------------------------------------------------------------------------o
-cBaseObject *CChar::GetGuarding( void ) const
+CBaseObject *CChar::GetGuarding( void ) const
 {
 	return petguarding;
 }
-void CChar::SetGuarding( cBaseObject *newValue )
+void CChar::SetGuarding( CBaseObject *newValue )
 {
 	petguarding = newValue;
 }
@@ -1204,7 +1203,7 @@ void CChar::SetStep( UI08 newValue )
 	step = newValue;
 }
 
-cTownRegion *CChar::GetRegion( void ) const
+CTownRegion *CChar::GetRegion( void ) const
 {
 	if( regionNum >= regions.size() )
 		return regions.back();
@@ -1219,7 +1218,7 @@ UI08 CChar::GetRegionNum( void ) const
 	return regionNum;
 }
 
-void CChar::SetLocation( const cBaseObject *toSet )
+void CChar::SetLocation( const CBaseObject *toSet )
 {
 	if( toSet != NULL )
 	{
@@ -1294,7 +1293,7 @@ void CChar::SetPackItem( CItem *newVal )
 	packitem = newVal;
 }
 
-SERIAL calcSerFromObj( cBaseObject *mObj )
+SERIAL calcSerFromObj( CBaseObject *mObj )
 {
 	SERIAL toReturn = INVALIDSERIAL;
 	if( ValidateObject( mObj ) )
@@ -1714,7 +1713,7 @@ CChar *CChar::Dupe( void )
 	if( target == NULL )
 		return NULL;
 
-	cBaseObject::CopyData( target );
+	CBaseObject::CopyData( target );
 	CopyData( target );
 
 	return target;
@@ -1852,7 +1851,7 @@ void CChar::CopyData( CChar *target )
 //|   Purpose     -  Loops through all online chars and removes the character
 //|                  from their sight
 //o---------------------------------------------------------------------------o
-void CChar::RemoveFromSight( cSocket *mSock )
+void CChar::RemoveFromSight( CSocket *mSock )
 {
 	CPRemoveItem toSend = (*this);
 	if( mSock != NULL )
@@ -1867,7 +1866,7 @@ void CChar::RemoveFromSight( cSocket *mSock )
 	}
 }
 //o---------------------------------------------------------------------------o
-//|	Function	-	void SendToSocket( cSocket *s, bool sendDispZ )
+//|	Function	-	void SendToSocket( CSocket *s, bool sendDispZ )
 //|	Date		-	April 7th, 2000
 //|	Programmer	-	Abaddon
 //|	Modified	-	Maarc (June 16, 2003)
@@ -1878,7 +1877,7 @@ void CChar::RemoveFromSight( cSocket *mSock )
 //|                  IF in range.  Essentially a replacement for impowncreate
 //o---------------------------------------------------------------------------o
 
-void CChar::SendToSocket( cSocket *s )
+void CChar::SendToSocket( CSocket *s )
 {
 	if( s != NULL )
 	{
@@ -1935,10 +1934,10 @@ void CChar::SendToSocket( cSocket *s )
 	}
 }
 
-void checkRegion( cSocket *mSock, CChar *i );
+void checkRegion( CSocket *mSock, CChar *i );
 void CChar::Teleport( void )
 {
-	cSocket *mSock = calcSocketObjFromChar( this );
+	CSocket *mSock = calcSocketObjFromChar( this );
 	RemoveFromSight();
 	Update();
 	if( mSock != NULL )
@@ -2058,7 +2057,7 @@ void CChar::SetSpeechMode( UI08 newValue )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sends update to all those in range
 //o---------------------------------------------------------------------------o
-void CChar::Update( cSocket *mSock )
+void CChar::Update( CSocket *mSock )
 {
 	if( mSock != NULL )
 		SendToSocket( mSock );
@@ -2283,7 +2282,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::string destination; 
 	std::ostringstream dumping( destination ); 
 
-	cBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
+	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "Account=" << GetConstAccount().wAccountIndex << std::endl;
 	dumping << "LastOn=" << GetLastOn() << std::endl;
 	dumping << "OrgName=" << GetOrgName() << std::endl;
@@ -2463,14 +2462,14 @@ UI16 CChar::GetAccountNum( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void BreakConcentration( cSocket *sock = NULL )
+//|   Function    -  void BreakConcentration( CSocket *sock = NULL )
 //|   Date        -  13 March 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Breaks the concentration of the character
 //|					 sending a message is a socket exists
 //o---------------------------------------------------------------------------o
-void CChar::BreakConcentration( cSocket *sock )
+void CChar::BreakConcentration( CSocket *sock )
 {
 	if( IsMeditating() )
 	{
@@ -2708,7 +2707,7 @@ void CChar::SetMaxStam( SI16 newmaxstam, SI16 newolddex, RACEID newoldrace )
 //o---------------------------------------------------------------------------o
 SI16 CChar::ActualStrength( void ) const
 {
-	return cBaseObject::GetStrength();
+	return CBaseObject::GetStrength();
 }
 
 //o---------------------------------------------------------------------------o
@@ -2720,7 +2719,7 @@ SI16 CChar::ActualStrength( void ) const
 //o---------------------------------------------------------------------------o
 SI16 CChar::GetStrength( void ) const
 {
-	return (SI16)(cBaseObject::GetStrength() + GetStrength2());
+	return (SI16)(CBaseObject::GetStrength() + GetStrength2());
 }
 
 //o---------------------------------------------------------------------------o
@@ -2732,7 +2731,7 @@ SI16 CChar::GetStrength( void ) const
 //o---------------------------------------------------------------------------o
 SI16 CChar::ActualIntelligence( void ) const
 {
-	return cBaseObject::GetIntelligence();
+	return CBaseObject::GetIntelligence();
 }
 
 //o---------------------------------------------------------------------------o
@@ -2744,7 +2743,7 @@ SI16 CChar::ActualIntelligence( void ) const
 //o---------------------------------------------------------------------------o
 SI16 CChar::GetIntelligence( void ) const
 {
-	return (SI16)(cBaseObject::GetIntelligence() + GetIntelligence2());
+	return (SI16)(CBaseObject::GetIntelligence() + GetIntelligence2());
 }
 
 //o---------------------------------------------------------------------------o
@@ -2756,7 +2755,7 @@ SI16 CChar::GetIntelligence( void ) const
 //o---------------------------------------------------------------------------o
 SI16 CChar::ActualDexterity( void ) const
 {
-	return cBaseObject::GetDexterity();
+	return CBaseObject::GetDexterity();
 }
 
 //o---------------------------------------------------------------------------o
@@ -2769,7 +2768,7 @@ SI16 CChar::ActualDexterity( void ) const
 //o---------------------------------------------------------------------------o
 SI16 CChar::GetDexterity( void ) const
 {
-	return (SI16)(cBaseObject::GetDexterity() + GetDexterity2());
+	return (SI16)(CBaseObject::GetDexterity() + GetDexterity2());
 }
 
 //o---------------------------------------------------------------------------o
@@ -2866,7 +2865,7 @@ void CChar::StopSpell( void )
 
 bool CChar::HandleLine( UString &UTag, UString& data )
 {
-	bool rvalue = cBaseObject::HandleLine( UTag, data );
+	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
@@ -3339,7 +3338,7 @@ bool CChar::LoadRemnants( void )
 	//	SetCommandLevel( GM_CMDLEVEL );
 	////////////////////////////////////////////////////////////////////
 
-	cTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber );
+	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber );
 	SetRegion( (tRegion != NULL ? tRegion->GetRegionNum() : 0xFF) );
 	SetTimer( tCHAR_ANTISPAM, 0 );
 	if( GetID() != GetOrgID() )
@@ -3458,7 +3457,7 @@ void CChar::FlushPath( void )
 
 void CChar::PostLoadProcessing( void )
 {
-	cBaseObject::PostLoadProcessing();
+	CBaseObject::PostLoadProcessing();
 	SERIAL tempSerial = (SERIAL)packitem;		// we stored the serial in packitem
 	if( tempSerial != INVALIDSERIAL )
 		SetPackItem( calcItemObjFromSer( tempSerial ) );
@@ -3616,13 +3615,13 @@ bool CChar::inDungeon( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void talk( cSocket *s, SI32 dictEntry, bool antispam, ... )
+//|		Function    :	void talk( CSocket *s, SI32 dictEntry, bool antispam, ... )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Npc speech
 //o---------------------------------------------------------------------------o
-void CChar::talk( cSocket *s, SI32 dictEntry, bool antispam, ... )
+void CChar::talk( CSocket *s, SI32 dictEntry, bool antispam, ... )
 {
     if( s != NULL )
 	{
@@ -3641,13 +3640,13 @@ void CChar::talk( cSocket *s, SI32 dictEntry, bool antispam, ... )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void talk( cSocket *s, std::string txt, bool antispam )
+//|		Function    :	void talk( CSocket *s, std::string txt, bool antispam )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Npc speech
 //o---------------------------------------------------------------------------o
-void CChar::talk( cSocket *s, std::string txt, bool antispam )
+void CChar::talk( CSocket *s, std::string txt, bool antispam )
 {
 	bool cont = !antispam;
 	if( s != NULL && !txt.empty() )
@@ -3735,7 +3734,7 @@ void CChar::talkAll( SI32 dictEntry, bool antispam, ... )
 	SOCKLIST nearbyChars = FindNearbyPlayers( this );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		cSocket *tSock = (*cIter);
+		CSocket *tSock = (*cIter);
 		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
 		if( !txt.empty() )
 		{
@@ -3750,13 +3749,13 @@ void CChar::talkAll( SI32 dictEntry, bool antispam, ... )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void emote( cSocket *s, std::string txt, bool antispam )
+//|		Function    :	void emote( CSocket *s, std::string txt, bool antispam )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	NPC emotes
 //o---------------------------------------------------------------------------o
-void CChar::emote( cSocket *s, std::string txt, bool antispam )
+void CChar::emote( CSocket *s, std::string txt, bool antispam )
 {
 	bool cont = !antispam;
 	if( s != NULL && !txt.empty() )
@@ -3788,13 +3787,13 @@ void CChar::emote( cSocket *s, std::string txt, bool antispam )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void emote( cSocket *s, SI32 dictEntry, bool antispam, ... )
+//|		Function    :	void emote( CSocket *s, SI32 dictEntry, bool antispam, ... )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	NPC emotes
 //o---------------------------------------------------------------------------o
-void CChar::emote( cSocket *s, SI32 dictEntry, bool antispam, ... )
+void CChar::emote( CSocket *s, SI32 dictEntry, bool antispam, ... )
 {
 	if( s != NULL )
 	{
@@ -3824,7 +3823,7 @@ void CChar::emoteAll( SI32 dictEntry, bool antispam, ... )
 	SOCKLIST nearbyChars = FindNearbyPlayers( this );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		cSocket *tSock = (*cIter);
+		CSocket *tSock = (*cIter);
 		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
 		if( !txt.empty() )
 		{
@@ -3838,7 +3837,7 @@ void CChar::emoteAll( SI32 dictEntry, bool antispam, ... )
 	}
 }
 
-void CChar::SendWornItems( cSocket *mSock )
+void CChar::SendWornItems( CSocket *mSock )
 {
 	SetOnHorse( false );
 	CPWornItem toSend;
@@ -3886,7 +3885,7 @@ void CChar::Cleanup( void )
 	if( !isFree() )	// We're not the default item in the handler
 	{
 		RemoveFromSight();
-		cBaseObject::Cleanup();
+		CBaseObject::Cleanup();
 
 		for( CItem *tItem = FirstItem(); !FinishedItems(); tItem = NextItem() )
 		{
@@ -3929,7 +3928,7 @@ void CChar::Cleanup( void )
 				UI16 spawnRegNum = (UI16)((GetSpawn()>>16) + (GetSpawn()>>8));
 				if( spawnRegNum < spawnregions.size() )
 				{
-					cSpawnRegion *spawnReg = spawnregions[spawnRegNum];
+					CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
 					spawnReg->deleteSpawnedChar( this );
 				}
 			}
@@ -3974,61 +3973,61 @@ void CChar::Cleanup( void )
 
 void CChar::SetStrength( SI16 newValue )
 {
-	cBaseObject::SetStrength( newValue );
+	CBaseObject::SetStrength( newValue );
 	Dirty( UT_HITPOINTS );
 }
 
 void CChar::SetDexterity( SI16 newValue )
 {
-	cBaseObject::SetDexterity( newValue );
+	CBaseObject::SetDexterity( newValue );
 	Dirty( UT_STAMINA );
 }
 
 void CChar::SetIntelligence( SI16 newValue )
 {
-	cBaseObject::SetIntelligence( newValue );
+	CBaseObject::SetIntelligence( newValue );
 	Dirty( UT_MANA );
 }
 
 void CChar::SetHP( SI16 newValue )
 {
-	cBaseObject::SetHP( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), static_cast<SI16>(GetMaxHP()) ) );
+	CBaseObject::SetHP( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), static_cast<SI16>(GetMaxHP()) ) );
 	Dirty( UT_HITPOINTS );
 }
 
 void CChar::SetMana( SI16 newValue )
 {
-	cBaseObject::SetMana( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), GetMaxMana() ) );
+	CBaseObject::SetMana( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), GetMaxMana() ) );
 	Dirty( UT_MANA );
 }
 
 void CChar::SetStamina( SI16 newValue )
 {
-	cBaseObject::SetStamina( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), GetMaxStam() ) );
+	CBaseObject::SetStamina( UOX_MIN( UOX_MAX( static_cast<SI16>(0), newValue ), GetMaxStam() ) );
 	Dirty( UT_STAMINA );
 }
 
 void CChar::SetPoisoned( UI08 newValue )
 {
-	cBaseObject::SetPoisoned( newValue );
+	CBaseObject::SetPoisoned( newValue );
 	Dirty( UT_UPDATE );
 }
 
 void CChar::SetStrength2( SI16 nVal )
 {
-	cBaseObject::SetStrength2( nVal );
+	CBaseObject::SetStrength2( nVal );
 	Dirty( UT_HITPOINTS );
 }
 
 void CChar::SetDexterity2( SI16 nVal )
 {
-	cBaseObject::SetDexterity2( nVal );
+	CBaseObject::SetDexterity2( nVal );
 	Dirty( UT_STAMINA );
 }
 
 void CChar::SetIntelligence2( SI16 nVal )
 {
-	cBaseObject::SetIntelligence2( nVal );
+	CBaseObject::SetIntelligence2( nVal );
 	Dirty( UT_MANA );
 }
 
@@ -4065,7 +4064,7 @@ void CChar::ToggleCombat( void )
 //o--------------------------------------------------------------------------
 bool CChar::CanBeObjType( ObjectType toCompare ) const
 {
-	bool rvalue = cBaseObject::CanBeObjType( toCompare );
+	bool rvalue = CBaseObject::CanBeObjType( toCompare );
 	if( !rvalue )
 	{
 		if( toCompare == OT_CHAR )

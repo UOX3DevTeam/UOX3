@@ -28,11 +28,10 @@ enum cS_TID
 	tPC_COUNT
 };
 
-class cSocket
+class CSocket
 {
 public:
 	// Account Related Member(s)
-	ACCOUNTSBLOCK	actbAccount;
 	ACCOUNTSBLOCK&	GetAccount( void );
 	void			SetAccount( ACCOUNTSBLOCK& actbBlock );
 	//
@@ -40,6 +39,7 @@ public:
 	void			InternalReset( void );
 
 protected:
+	ACCOUNTSBLOCK	actbAccount;
 
 	CChar *			currCharObj;
 	SI32			idleTimeout;
@@ -51,7 +51,7 @@ protected:
 	UI16			triggerWord;
 
 	//	Temporary variables (For targeting commands, etc)
-	cBaseObject *	tmpObj;
+	CBaseObject *	tmpObj;
 	SI08			clickz;
 	UI08			addid[4];
 	SI32			tempint;
@@ -106,8 +106,8 @@ protected:
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];
 public:
-					cSocket( size_t sockNum );
-					~cSocket();
+					CSocket( size_t sockNum );
+					~CSocket();
 
 	UI32			ClientVersion( void ) const;
 	void			ClientVersion( UI32 newVer );
@@ -165,7 +165,7 @@ public:
 	UI16			TriggerWord( void ) const;
 
 	// Temporary Variables
-	cBaseObject *	TempObj( void ) const;
+	CBaseObject *	TempObj( void ) const;
 	SI32			TempInt( void ) const;
 	UI32			AddID( void ) const;
 	UI08			AddID1( void ) const;
@@ -213,7 +213,7 @@ public:
 	void			Range( UI08 value );
 
 	//	Temporary Variables
-	void			TempObj( cBaseObject *newValue );
+	void			TempObj( CBaseObject *newValue );
 	void			TempInt( SI32 newValue );
 	void			AddID( UI32 newValue );
 	void			AddID1( UI08 newValue );
@@ -257,8 +257,8 @@ public:
 
 	void			sysmessage( const char *txt, ... );
 	void			sysmessage( SI32 dictEntry, ... );
-	void			objMessage( const char *txt, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
-	void			objMessage( SI32 dictEntry, cBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2, ... );
+	void			objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
+	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2, ... );
 
 	void			ShowCharName( CChar *i, bool showSer  );
 

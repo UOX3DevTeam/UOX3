@@ -172,6 +172,8 @@ FILE=commands/targeting/squelch.js
 FILE=commands/targeting/hide.js
 FILE=commands/targeting/jail.js
 FILE=commands/targeting/x.js
+FILE=commands/targeting/areacommand.js
+FILE=commands/targeting/wipe.js
 }
 
 [MAGIC_SCRIPTS]

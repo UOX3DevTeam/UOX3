@@ -23,10 +23,10 @@
 //|						1.2		Abaddon		25th July, 2000
 //|						All Accessor funcs plus a few others are now flagged as const functions, meaning that
 //|						those functions GUARENTEE never to alter data, at compile time
-//|						Thoughts about cBaseObject and prelim plans made
+//|						Thoughts about CBaseObject and prelim plans made
 //|
 //|						1.3		Abaddon		28th July, 2000
-//|						cBaseObject initial implementation plus rework of CItem to deal with only what it needs to
+//|						CBaseObject initial implementation plus rework of CItem to deal with only what it needs to
 //|						Proper constructor written
 //|						Plans for CItem derived classes thought upon
 //|
@@ -49,7 +49,7 @@
 namespace UOX
 {
 
-cBaseObject *		DEFITEM_CONTOBJ			= NULL;
+CBaseObject *		DEFITEM_CONTOBJ			= NULL;
 const SI32			DEFITEM_RANDVALUE		= 0;
 const SI16			DEFITEM_GOOD			= -1;
 const SI08			DEFITEM_RANK			= 0;
@@ -76,7 +76,7 @@ const SI08			DEFITEM_OFFSPELL		= 0;
 
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 
-CItem::CItem() : cBaseObject(),
+CItem::CItem() : CBaseObject(),
 contObj( DEFITEM_CONTOBJ ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ), 
 restock( DEFITEM_RESTOCK ), priv( DEFITEM_PRIV ), movable( DEFITEM_MOVEABLE ), gatetime( DEFITEM_GATETIME ), decaytime( DEFITEM_DECAYTIME ), 
@@ -106,7 +106,7 @@ CItem::~CItem()	// Destructor to clean things up when deleted
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the container's serial
 //o--------------------------------------------------------------------------
-cBaseObject * CItem::GetCont( void ) const
+CBaseObject * CItem::GetCont( void ) const
 {
 	return contObj;
 }
@@ -187,7 +187,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	bool CItem::SetCont( cBaseObject *newCont )
+//|	Function		-	bool CItem::SetCont( CBaseObject *newCont )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
@@ -210,7 +210,7 @@ bool CItem::SetContSerial( SERIAL newSerial )
 	return SetCont( NULL );
 }
 
-bool CItem::SetCont( cBaseObject *newCont )
+bool CItem::SetCont( CBaseObject *newCont )
 {
 	if( isPostLoaded() )
 	{
@@ -455,7 +455,7 @@ void CItem::IncLocation( SI16 xInc, SI16 yInc )
 	SetLocation( (GetX() + xInc), (GetY() + yInc), GetZ(), WorldNumber() );
 }
 
-void CItem::SetLocation( const cBaseObject *toSet )
+void CItem::SetLocation( const CBaseObject *toSet )
 {
 	if( toSet == NULL )
 		return;
@@ -532,7 +532,7 @@ UI16 CItem::GetAmount( void ) const
 }
 void CItem::SetAmount( UI32 newValue )
 {
-	cBaseObject *getCont = GetCont();
+	CBaseObject *getCont = GetCont();
 	if( getCont != NULL )
 		Weight->subtractItemWeight( getCont, this );
 
@@ -899,7 +899,7 @@ CItem * CItem::Dupe( ObjectType itemType )
 
 void CItem::CopyData( CItem *target )
 {
-	cBaseObject::CopyData( target );
+	CBaseObject::CopyData( target );
 
 	target->SetPostLoaded( isPostLoaded() );
 	target->SetAmount( GetAmount() );
@@ -1038,7 +1038,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	std::string destination; 
 	std::ostringstream dumping( destination ); 
 
-	cBaseObject::DumpBody( outStream );
+	CBaseObject::DumpBody( outStream );
 	dumping << "Layer=" << "0x" << std::hex << (SI16)GetLayer() << std::endl;
 	dumping << "Cont=" << "0x" << GetContSerial() << std::endl;
 	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << std::endl;
@@ -1081,7 +1081,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 
 bool CItem::HandleLine( UString &UTag, UString &data )
 {
-	bool rvalue = cBaseObject::HandleLine( UTag, data );
+	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
@@ -1101,7 +1101,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					contObj = (cBaseObject *)data.toULong();
+					contObj = (CBaseObject *)data.toULong();
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
@@ -1391,7 +1391,7 @@ bool CItem::IsContType( void ) const
 
 void CItem::PostLoadProcessing( void )
 {
-	cBaseObject::PostLoadProcessing();
+	CBaseObject::PostLoadProcessing();
 	// Add item weight if item doesn't have it yet
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
@@ -1601,13 +1601,13 @@ void CItem::Sort( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void itemTalk( cSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+//|		Function    :	void itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Item "speech"
 //o---------------------------------------------------------------------------o
-void CItem::itemTalk( cSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 {
 	if( s == NULL )
 		return;
@@ -1629,12 +1629,12 @@ void CItem::itemTalk( cSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void Update( cSocket *mSock )
+//|	Function	-	void Update( CSocket *mSock )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o---------------------------------------------------------------------------o
-void CItem::Update( cSocket *mSock )
+void CItem::Update( CSocket *mSock )
 {
 	RemoveFromSight( mSock );
 	if( GetCont() == this )
@@ -1643,7 +1643,7 @@ void CItem::Update( cSocket *mSock )
 		SetCont( NULL );
 	}
 
-	cBaseObject *iCont = GetCont();
+	CBaseObject *iCont = GetCont();
 	if( iCont == NULL )
 	{
 		SOCKLIST nearbyChars;
@@ -1691,13 +1691,13 @@ void CItem::Update( cSocket *mSock )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    -	void SendToSocket( cSocket *mSock )
+//|		Function    -	void SendToSocket( CSocket *mSock )
 //|		Programmer  -	giwo
 //|		Date        -	July 27, 2003
 //o---------------------------------------------------------------------------o
 //|		Purpose     -	Updates an item on the ground to specified socket
 //o---------------------------------------------------------------------------o
-void CItem::SendToSocket( cSocket *mSock )
+void CItem::SendToSocket( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != NULL )
@@ -1722,13 +1722,13 @@ void CItem::SendToSocket( cSocket *mSock )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    -	void SendPackItemToSocket( cSocket *mSock )
+//|		Function    -	void SendPackItemToSocket( CSocket *mSock )
 //|		Programmer  -	giwo
 //|		Date        -	July 27, 2003
 //o---------------------------------------------------------------------------o
 //|		Purpose     -	Updates an item contained in a pack to specified socket
 //o---------------------------------------------------------------------------o
-void CItem::SendPackItemToSocket( cSocket *mSock )
+void CItem::SendPackItemToSocket( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != NULL )
@@ -1752,13 +1752,13 @@ void CItem::SendPackItemToSocket( cSocket *mSock )
 //o---------------------------------------------------------------------------o
 //|		Purpose     -	Loops through all online chars and removes the item from their sight
 //o---------------------------------------------------------------------------o
-void CItem::RemoveFromSight( cSocket *mSock )
+void CItem::RemoveFromSight( CSocket *mSock )
 {
 	CPRemoveItem toRemove	= (*this);
-	cBaseObject *iCont		= GetCont();
+	CBaseObject *iCont		= GetCont();
 
 	ObjectType oType	= OT_CBO;
-	cBaseObject *iOwner	= FindItemOwner( this, oType );
+	CBaseObject *iOwner	= FindItemOwner( this, oType );
 
 	if( iCont == NULL || oType == OT_ITEM )
 	{
@@ -1809,7 +1809,7 @@ void CItem::RemoveFromSight( cSocket *mSock )
 		else
 		{
 			Network->PushConn();
-			for( cSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+			for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 				mSock->Send( &toRemove );
 			Network->PopConn();
 		}
@@ -1855,7 +1855,7 @@ void CItem::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
-		cBaseObject::Cleanup();
+		CBaseObject::Cleanup();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
 		{
@@ -1871,7 +1871,7 @@ void CItem::Cleanup( void )
 				UI16 spawnRegNum = (UI16)((GetSpawn()>>16) + (GetSpawn()>>8));
 				if( spawnRegNum < spawnregions.size() )
 				{
-					cSpawnRegion *spawnReg = spawnregions[spawnRegNum];
+					CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
 					spawnReg->deleteSpawnedItem( this );
 				}
 			}
@@ -1920,7 +1920,7 @@ void CItem::Cleanup( void )
 //o--------------------------------------------------------------------------
 bool CItem::CanBeObjType( ObjectType toCompare ) const
 {
-	bool rvalue = cBaseObject::CanBeObjType( toCompare );
+	bool rvalue = CBaseObject::CanBeObjType( toCompare );
 	if( !rvalue )
 	{
 		if( toCompare == OT_ITEM )
@@ -2124,7 +2124,7 @@ bool CSpawnItem::DoRespawn( void )
 bool CSpawnItem::HandleItemSpawner( void )
 {
 	bool shouldSpawn = true;
-	for( cBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
+	for( CBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
 	{
 		if( ValidateObject( mObj ) && !mObj->isFree() )
 		{
@@ -2206,7 +2206,7 @@ void CSpawnItem::Cleanup( void )
 {
 	CItem::Cleanup();
 
-	for( cBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
+	for( CBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
 	{
 		if( mObj->GetSpawnObj() == this )
 			mObj->SetSpawn( INVALIDSERIAL );
