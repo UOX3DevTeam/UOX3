@@ -808,7 +808,7 @@ void cTargets::IDtarget(int s)
 
 void cTargets::XTeleport(int s, int x)
 {
-	int i, serial;
+	int i, serial = -1;
 	// Abaddon 17th February 2000 Converted if to switch (easier to read)
 	// Also made it so that it calls teleport, not updatechar, else you don't get the items in range
 	switch( x )
@@ -2930,7 +2930,6 @@ void cTargets::JailTarget(int s, int c)
 {
 	int i,tmpnum=0,serial;
 	
-	int x=0;
 	if (c==-1)
 	{
 		serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
@@ -3751,9 +3750,11 @@ void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to
 	serial=calcserial(addid1[s],addid2[s],addid3[s],addid4[s]);
 	h=findbyserial(&itemsp[serial%HASHMAX],serial,0);
 	if((c!=-1)&&(h!=-1)) {
-		int r;
+		unsigned int r;
 		r=add_hlist(c, h, H_FRIEND);
-		if(r==1) {
+		switch(r) {
+		
+		case 1:
 			sprintf(temp, "%s has been made a friend of the house.", chars[c].name);
 			for( r = 0; r < now; r++ )
 			{
@@ -3763,10 +3764,13 @@ void cTargets::HouseFriendTarget(int s) // crackerjack 8/12/99 - add somebody to
 				}
 			}
 			sysmessage(s, temp);
-		} else if(r==2) {
+			break; 
+		case 2:
 			sysmessage(s, "That player is already on a house register.");
-		} else {
+			break;
+		case 3:
 			sysmessage(s, "That player is not on the property.");
+			break;
 		}
 	}
 }
@@ -3866,7 +3870,7 @@ void cTargets::GlowTarget( UOXSOCKET s ) // LB 4/9/99 makes items glow
 	{ 
 		items[c].x=chars[currchar[s]].x;
 		items[c].y=chars[currchar[s]].y;
-		items[c].z=chars[currchar[s]].z+4;
+		items[c].z = (signed char) chars[currchar[s]].z+4;
 	}
 
 	//mapRegions->AddItem(c);

@@ -40,7 +40,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 	char map1[20]="\x90\x40\x01\x02\x03\x13\x9D\x00\x00\x00\x00\x13\xFF\x0F\xA0\x01\x90\x01\x90";
 //	char map2[12]="\x56\x40\x01\x02\x03\x05\x00\x00\x00\x00\x00";
 	char map2[12] = {"\x56\x40\x01\x02\x03\x05", };
-	int p;
+	int p = -1;
 	unsigned long int itemids;
 	unsigned int itype;
 	

@@ -47,7 +47,7 @@ void newcalcweight(int);
 void cWeight::NewCalc(int p)
 {
 	int bp, ci,serhash,serial;
-	unsigned int i;
+	int i;
 	double totalweight=0.0;
 
 	bp=packitem(p);

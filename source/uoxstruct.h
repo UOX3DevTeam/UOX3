@@ -111,12 +111,12 @@ struct char_st
 	unsigned char	xid2; // Backup of body type for ghosts
 	unsigned char	orgid1; // Backup of body type for polymorph
 	unsigned char	orgid2; // backup of .....
-	int				haircolor1;		// backup of hair/beard for incognito spell
-	int				haircolor2;
+	unsigned char	haircolor1;		// backup of hair/beard for incognito spell
+	unsigned char	haircolor2;
 	int				hairstyle1;
 	int				hairstyle2;
-	int				beardcolor1;
-	int				beardcolor2;
+	unsigned char	beardcolor1; //Color stuff can be unsigned char.
+	unsigned char	beardcolor2;
 	int				beardstyle1;
 	int				beardstyle2;
 	unsigned char	skin1; // Skin color

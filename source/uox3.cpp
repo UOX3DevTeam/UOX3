@@ -585,11 +585,9 @@ void safeCopy(char *dest, const char *src, unsigned int maxLen)
 
 int online(CHARACTER c) // Is the player owning the character c online
 {
-	int i;
+	unsigned int i;
 
-	//for (i=0;i<now;i++) if ((currchar[i]==c)&&(perm[i])) x=1;
-	if( c == -1 ) return 0;		// invalid subscript stuff
-	else if (chars[c].npc) return 0;
+	if( c == -1 || chars[c].npc ) return 0;		// invalid subscript stuff
 	else if (inworld[chars[c].account]==c) return 1;//Instalog
 	else 
 	{
@@ -845,8 +843,9 @@ void gcollect () // Remove items which were in deleted containers
 {
 //	int a,b,c,d,i,j, removed, rtotal=0, serial;
 	unsigned char a, b, c, d;
-	int i, j, removed, rtotal = 0, serial;
+	int j, removed, rtotal = 0, serial;
 	int idelete;
+	unsigned int i;
 	uiCurrentTime = 0;
 	
 	printf("Preforming Garbage Collection...");
@@ -10882,10 +10881,7 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
 	int j;
-	/*for (i=0;i<29;i++)
-	{
-	effect[i]=0;
-}*/
+
 	memset (&effect, 0, 29);
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
@@ -10893,10 +10889,6 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	effect[3]=chars[source].ser2;
 	effect[4]=chars[source].ser3;
 	effect[5]=chars[source].ser4;
-	effect[6]=0;
-	effect[7]=0;
-	effect[8]=0;
-	effect[9]=0;
 	effect[10]=eff1;// Object id of the effect
 	effect[11]=eff2;
 	effect[12]=chars[source].x>>8;
@@ -10904,16 +10896,13 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	effect[14]=chars[source].y>>8;
 	effect[15]=chars[source].y%256;
 	effect[16]=chars[source].z;
-	effect[17]=x>>8;
-	effect[18]=x%256;
-	effect[19]=y>>8;
-	effect[20]=y%256;
+	effect[17]= (char) x>>8;
+	effect[18]= (char) x%256;
+	effect[19]= (char) y>>8;
+	effect[20]= (char) y%256;
 	effect[21]=z;
 	effect[22]=speed;
 	effect[23]=loop; // 0 is really long.  1 is the shortest.
-	effect[24]=0; // This value is unknown
-	effect[25]=0; // This value is unknown
-	effect[26]=0; // This value is unknown
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{   // - If in range of source person or destination position and online send effect
@@ -14555,11 +14544,11 @@ int sellstuff( UOXSOCKET s, int i)
 
 void sellaction( UOXSOCKET s )
 {
-	int n, npa = -1, npb = -1, npc = -1, i, j, k, amt, value=0, join, totgold=0, z;
+	int n, npa = -1, npb = -1, npc = -1, i, j, k, value=0, join, totgold=0, z;
 	int serial,serhash,ci;
 	char clearmsg[9];
 	
-	int maxsell; // by Magius(CHE)
+	unsigned int maxsell, amt; // by Magius(CHE)
 	char tmpmsg[256]; // by Magius(CHE)
 	*tmpmsg = '\0'; // by Magius(CHE)
 
@@ -14674,7 +14663,7 @@ void sellaction( UOXSOCKET s )
 				{
 					if( npb != -1 )
 					{
-						totgold = totgold + ( amt * value );
+						totgold += ( amt * value );
 						unsetserial( j, 1 );
 						setserial( j, npb, 1 );
 						removeitem[1] = items[j].ser1;
@@ -15255,7 +15244,7 @@ void clearalltrades()
 
 void trademsg(int s)
 {
-	int cont1, cont2;
+	int cont1 = -1, cont2 = -1;
 	//printf("%x %x %x %x %x\n", buffer[s][3], buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
 	switch(buffer[s][3])
 	{
@@ -15685,32 +15674,32 @@ void loadregions()//New -- Zippy spawn regions
 				else if (!(strcmp("GUARDED",script1)))
 				{
 					if( str2num(script2) ) 
-						region[i].priv=region[i].priv|0x01;   
+						region[i].priv = (char) region[i].priv|0x01;   
 				}
 				else if (!(strcmp("MAGICDAMAGE",script1)))
 				{
 					if( str2num(script2) ) 
-						region[i].priv=region[i].priv|0x40;
+						region[i].priv = (char) region[i].priv|0x40;
 				}
 				else if (!(strcmp("MARK",script1)))
 				{
-					if (str2num(script2)) region[i].priv=region[i].priv|0x02;
+					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x02;
 				}
 				else if (!(strcmp("GATE",script1)))
 				{
-					if (str2num(script2)) region[i].priv=region[i].priv|0x04;
+					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x04;
 				}
 				else if (!(strcmp("RECALL",script1)))
 				{
-					if (str2num(script2)) region[i].priv=region[i].priv|0x08;
+					if (str2num(script2)) region[i].priv = (char) region[i].priv|0x08;
 				}
 				else if (!(strcmp("SNOWCHANCE", script1)))
 				{
-					region[i].snowchance=str2num(script2);
+					region[i].snowchance = (char) str2num(script2);
 				}
 				else if (!(strcmp("RAINCHANCE", script1)))
 				{
-					region[i].rainchance=str2num(script2);
+					region[i].rainchance = (char) str2num(script2);
 				}
 				else if(!(strcmp( "GOOD", script1 ) ) ) // Magius(CHE)
 				{
@@ -15762,7 +15751,7 @@ void loadregions()//New -- Zippy spawn regions
 				else if (!(strcmp("Y2", script1)))
 				{
 					location[l].y2=str2num(script2);
-					location[l].region=i;
+					location[l].region = (char) i;
 					l++;
 				}
 				else if (!(strcmp("SPAWN", script1)))
@@ -15888,7 +15877,7 @@ void checkregion(int i)
 				}
 			}
 		}
-		chars[i].region=calcreg;
+		chars[i].region = (unsigned char) calcreg;
 		if( s != -1 )
 		{
 			dosocketmidi( s );
@@ -16510,10 +16499,10 @@ void loadserver( void )
 		else if(!(strcmp(script1,"OBJECTDELAY"))) server_data.objectdelay=str2num(script2);
 		else if(!(strcmp(script1,"GATETIMER"))) server_data.gatetimer=str2num(script2);
 		else if(!(strcmp(script1,"SHOWDEATHANIM"))) server_data.showdeathanim=str2num(script2);
-		else if(!(strcmp(script1,"GUARDSACTIVE"))) server_data.guardsactive=str2num(script2);
+		else if(!(strcmp(script1,"GUARDSACTIVE"))) server_data.guardsactive = (unsigned char) str2num(script2);
 		//  EviLDeD  -  Server information token for toggling world save announcements on or off
 		//  December 27, 1998
-		else if(!(strcmp(script1,"ANNOUNCE_WORLDSAVES"))) server_data.announceworldsaves=str2num(script2);
+		else if(!(strcmp(script1,"ANNOUNCE_WORLDSAVES"))) server_data.announceworldsaves = (char) str2num(script2);
 		//	February 10, 2000
 		else if(!(strcmp(script1,"WWWACCOUNTS"))) server_data.wwwaccounts=(strcmp(script2,"1")==0)?true:false;
 		//  EviLDeD  -  End
@@ -16650,13 +16639,13 @@ void loadtime_light()
 		else if(!(strcmp(script1,"AMPM"))) ampm=str2num(script2);
 		else if(!(strcmp(script1,"MOON1UPDATE"))) moon1update=str2num(script2);
 		else if(!(strcmp(script1,"MOON2UPDATE"))) moon2update=str2num(script2);
-		else if(!(strcmp(script1,"MOON1"))) moon1=str2num(script2);
-		else if(!(strcmp(script1,"MOON2"))) moon2=str2num(script2);
-		else if(!(strcmp(script1,"DUNGEONLIGHTLEVEL"))) dungeonlightlevel=str2num(script2);
-		else if(!(strcmp(script1,"WORLDFIXEDLEVEL"))) worldfixedlevel=str2num(script2);
-		else if(!(strcmp(script1,"WORLDCURLEVEL"))) worldcurlevel=str2num(script2);
-		else if(!(strcmp(script1,"WORLDBRIGHTLEVEL"))) worldbrightlevel=str2num(script2);
-		else if(!(strcmp(script1,"WORLDDARKLEVEL"))) worlddarklevel=str2num(script2);
+		else if(!(strcmp(script1,"MOON1"))) moon1 = (char) str2num(script2);
+		else if(!(strcmp(script1,"MOON2"))) moon2 = (char) str2num(script2);
+		else if(!(strcmp(script1,"DUNGEONLIGHTLEVEL"))) dungeonlightlevel = (char) str2num(script2);
+		else if(!(strcmp(script1,"WORLDFIXEDLEVEL"))) worldfixedlevel = (char) str2num(script2);
+		else if(!(strcmp(script1,"WORLDCURLEVEL"))) worldcurlevel = (char) str2num(script2);
+		else if(!(strcmp(script1,"WORLDBRIGHTLEVEL"))) worldbrightlevel = (char) str2num(script2);
+		else if(!(strcmp(script1,"WORLDDARKLEVEL"))) worlddarklevel = (char) str2num(script2);
 		else if(!(strcmp(script1,"SECONDSPERUOMINUTE"))) secondsperuominute=str2num(script2);
 	}
 	while (strcmp(script1, "}"));
@@ -16827,18 +16816,18 @@ int whichbit( int number, int bit )
 // Takes a string, gets the tokens.
 // If its one value - It returns that value.
 // If its two values - It gets a random number between the values
-int getstatskillvalue(char *stringguy) {
+unsigned short int getstatskillvalue(char *stringguy) {
 	char values[512];
-	int lovalue,hivalue,retcode;
+	unsigned short int lovalue,hivalue,retcode;
 	
 	strcpy(values, stringguy);
 	gettokennum(values, 0);
-	lovalue=str2num(gettokenstr);
+	lovalue = (unsigned short int) str2num(gettokenstr);
 	gettokennum(values, 1);
-	hivalue=str2num(gettokenstr);
+	hivalue = (unsigned short int) str2num(gettokenstr);
 	
 	if (hivalue) {
-		retcode = RandomNum(lovalue, hivalue);
+		retcode = (unsigned short int) RandomNum(lovalue, hivalue);
 	} else {
 		retcode = lovalue;
 	}
@@ -18046,8 +18035,8 @@ void monstergate(int s, int x)
 					if (retitem >-1)
 					{
 						setserial(retitem,mypack,1);
-						items[retitem].x=50+(rand()%80);
-						items[retitem].y=50+(rand()%80);
+						items[retitem].x = (short int) 50+(rand()%80);
+						items[retitem].y = (short int) 50+(rand()%80);
 						items[retitem].z=9;
 					}
 					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
@@ -18091,12 +18080,12 @@ void monstergate(int s, int x)
 					gettokennum(script2, 0);
 					z=str2num(gettokenstr);
 					gettokennum(script2, 1);
-					chars[s].baseskill[z]=str2num(gettokenstr);
+					chars[s].baseskill[z] = (unsigned short int) str2num(gettokenstr);
 				}
 				else if(!(strncmp(script1, "SKILL", 5)))
 				{
 					z = str2num( &script1[5] );
-					chars[s].baseskill[z] = str2num( script2 );
+					chars[s].baseskill[z] = (unsigned short int) str2num( script2 );
 				}
 				else if ((!(strcmp("SNOOPING",script1)))||(!(strcmp("SKILL28",script1))))
 					chars[s].baseskill[SNOOPING] = getstatskillvalue(script2);
@@ -18363,7 +18352,7 @@ void checkdumpdata(unsigned int currenttime) // This dumps data for Ridcully's U
 		return;
 	}
 	FILE *datafile;
-	int i;
+	unsigned int i;
 	
 	//printf("UOX3: Dumping data!\n");
 	
@@ -18855,7 +18844,7 @@ Look at uox3.h to see options. Works like npc magic.
 int addrandomcolor(int s, char *colorlist)
 {
 	char sect[512];
-	int i,j,storeval;
+	int i,j,storeval = 0;
 	i=0; j=0;
 	openscript("colors.scp");
 	sprintf(sect, "RANDOMCOLOR %s", colorlist);
@@ -18907,7 +18896,7 @@ int addrandomcolor(int s, char *colorlist)
 int addrandomhaircolor(int s, char *colorlist)
 {
 	char sect[512];
-	int i,j,haircolor;
+	int i,j,haircolor = 0;
 	i=0; j=0;
 	openscript("colors.scp");
 	sprintf(sect, "RANDOMCOLOR %s", colorlist);
@@ -19221,7 +19210,7 @@ void reverse_effect(int i)  // i = teffect[i] from checktempeffects()  // Morrol
 		impowncreate( calcSocketFromChar( s ), s, 0 );
 		break;
 	case 21:
-		int toDrop;
+		unsigned short toDrop;
 		toDrop = Effect->more1;
 		if( ( chars[s].baseskill[PARRYING] - toDrop ) < 0 )
 			chars[s].baseskill[PARRYING] = 0;
@@ -19617,7 +19606,7 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 	char clearmsg[8];
 	// Make the corpse
 
-	int l;
+	unsigned int l;
 	int p = packitem( i );
 	sprintf( temp, "corpse of %s", chars[i].name );
 	
@@ -19635,7 +19624,7 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 	items[c].y = chars[i].y;
 	items[c].z = chars[i].z;
 	
-	items[c].more1 = nType;
+	items[c].more1 = (unsigned char) nType;
 	items[c].dir = chars[i].dir;
 	items[c].corpse = 1;
 	items[c].decaytime = (unsigned int)( uiCurrentTime + ( server_data.decaytimer * CLOCKS_PER_SEC ) );
@@ -19690,8 +19679,8 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 									// I think the lack of this line below is the source of some of the vendor sell issues
 									contsp[serhash1].pointer[ci1] = -1;	// it's no longer in this container, it's now on the corpse!
 									setserial( k, c, 1 );
-									items[k].x = 20 + ( rand()%50 );
-									items[k].y = 85 + ( rand()%75 );
+									items[k].x = (short int) (20 + ( rand()%50 ));
+									items[k].y = (short int) (85 + ( rand()%75 ));
 									items[k].z = 9;
 									RefreshItem( k );
 								}

@@ -970,8 +970,9 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 	const int visibleRange = Races->getVisRange( chars[c].race );
 	const int newx = chars[c].x;
 	const int newy = chars[c].y;
+	unsigned int i;
 
-	for( int i = 0; i < now; i++ )
+	for( i = 0; i < now; i++ )
 	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this
 		if ((perm[i]) && (inrange1p(c, currchar[i])))
 		{
@@ -991,10 +992,10 @@ void cMovement::SendWalkToOtherPlayers(CHARACTER c, int dir, short int oldx, sho
 				extmove[4] = chars[c].ser4;
 				extmove[5] = chars[c].id1;
 				extmove[6] = chars[c].id2;
-				extmove[7] = chars[c].x>>8;
-				extmove[8] = chars[c].x%256;
-				extmove[9] = chars[c].y>>8;
-				extmove[10]=chars[c].y%256;
+				extmove[7] = (char) chars[c].x>>8;
+				extmove[8] = (char) chars[c].x%256;
+				extmove[9] = (char) chars[c].y>>8;
+				extmove[10]= (char) chars[c].y%256;
 				extmove[11]=chars[c].dispz;
 				extmove[12]=dir;
 				extmove[13]=chars[c].skin1; //ripper, skin problems bugfix
@@ -1367,8 +1368,8 @@ void cMovement::CombatWalk(int s) // Only for switching to combat mode
             
             
             if (chars[s].war) extmove[15]=0x40; else extmove[15]=0x00;
-            if (chars[s].hidden) extmove[15]=extmove[15]|0x80;
-            if (chars[s].poisoned) extmove[15]=extmove[15]|0x04; //AntiChrist -- thnx to SpaceDog
+            if (chars[s].hidden) extmove[15] = (char) extmove[15]|0x80;
+            if (chars[s].poisoned) extmove[15] = (char) extmove[15]|0x04; //AntiChrist -- thnx to SpaceDog
             const int guild = Guilds->Compare( s, currchar[i] );
             const int race=Races->Compare( s, currchar[i] );
             if (chars[s].kills > repsys.maxkills ) extmove[16]=6; // ripper
@@ -1667,8 +1668,8 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
 						else
 							yfactor = 1;
 
-					myx += ( xfactor * mydist );
-					myy += ( yfactor * mydist );
+					myx += (short int) ( xfactor * mydist );
+					myy += (short int) ( yfactor * mydist );
 
 					// now, got myx, myy... lets go.
 
@@ -1734,7 +1735,7 @@ short int cMovement::Distance(short int sx, short int sy, short int dx, short in
 
 short int cMovement::Direction(short int sx, short int sy, short int dx, short int dy)
 {
-	int dir, xdif, ydif;
+	short int dir, xdif, ydif;
 	
 	xdif = dx - sx;
 	ydif = dy - sy;
@@ -1797,7 +1798,7 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 	signed int newz = illegal_z;
 	short int MoveType = CheckMovementType( c );
 	bool blocked = false;
-	int ontype;
+	int ontype = 0;
 
 	int xycount = 0;
 	unitile_st xyblock[XYMAX];

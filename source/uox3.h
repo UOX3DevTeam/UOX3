@@ -303,7 +303,7 @@ extern int save_counter; // LB, world backup rate
 extern unsigned int fly_p; // flying probability = 1/fly_p each step ( if it doesn't fly )
 extern unsigned char fly_steps_max;
 
-extern int gatex[MAXGATES][2],gatey[MAXGATES][2];
+extern short int gatex[MAXGATES][2],gatey[MAXGATES][2];
 extern signed char gatez[MAXGATES][2];
 extern int gatecount;
 extern int totalspawnregions; //Zippy
@@ -842,7 +842,7 @@ void Writeslot(LPSTR lpszMessage);
 void Writeslot(char *lpszMessage);
 #endif
 
-int getstatskillvalue(char *stringguy);
+unsigned short int getstatskillvalue(char *stringguy);
 // for newbie stuff
 int bestskill( CHARACTER p );
 int secndbstskll(int m, int bstskll);

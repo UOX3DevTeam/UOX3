@@ -732,7 +732,7 @@ void cSkills::Repair( UOXSOCKET s )
 // ----- Changed by Magius(CHE)
 void cSkills::MakeMenuTarget(int s, int x, int skill)
 {
-	int c, chkskill;
+	int c, chkskill = 0;
 	int rank = 10;
 	int tmpneed = 0;
 	int amt = 0;
@@ -1122,7 +1122,7 @@ void cSkills::Mine(int s)
 {
 	bool floor = false;
 	bool mountain = false;
-	static int oretime[610][410];//610 and 410 were 1000 in LB release
+	static unsigned int oretime[610][410];//610 and 410 were 1000 in LB release //times can be unsigned
 	static short int oreamount[610][410];//for now i'll put zippy values
 	unsigned char targetID1, targetID2;
 	short int targetX, targetY;
@@ -1289,7 +1289,7 @@ void cSkills::Mine(int s)
 		unsigned char chanceFindBigOre = RandomNum( 0, 20 );	// pick random num from 0-20
 		chanceFindingColoured = RandomNum( 0, 100 );			// chance of finding coloured ore
 		unsigned short int playersSkill = chars[currchar[s]].skill[MINING];
-		playersSkill += Races->getDamageFromSkill( MINING, chars[currchar[s]].race );	// remember we could be exceptional miners!
+		playersSkill += (unsigned short int) Races->getDamageFromSkill( MINING, chars[currchar[s]].race );	// remember we could be exceptional miners!
 		
 		//  Cork  - Unknown
 		//  If mining skill is lower than 65 can only mine iron ore
@@ -1660,7 +1660,7 @@ void cSkills::SmeltOre( UOXSOCKET s )
 				if( miningstuff.foreign )	// if not iron, generally
 				{
 					short int playersSkill = chars[chr].skill[MINING];
-					playersSkill += Races->getDamageFromSkill( MINING, chars[chr].race );	// apply racial skill bonus
+					playersSkill += (short int) Races->getDamageFromSkill( MINING, chars[chr].race );	// apply racial skill bonus
 					if( playersSkill < miningstuff.minSkill )
 					{
 						sysmessage( s, "You have no idea what to do with this strange ore" );
@@ -4331,7 +4331,7 @@ void cSkills::RandomSteal(int s)
 
 void cSkills::StealingTarget(int s)
 {
-	int item, i, serial, pack, skill, npc, x, cont,b, z, w;
+	int item, i, serial, pack, skill, npc = -1, x, cont,b, z, w = 0;
 	char temp2[512];
 	tile_st tile;
 	
@@ -4745,10 +4745,10 @@ void cSkills::Track(int i)
 	unsigned char arrow[7];
 	arrow[0]=0xBA;
 	arrow[1]=1;
-	arrow[2]=(chars[chars[i].trackingtarget].x-1)>>8;
-	arrow[3]=(chars[chars[i].trackingtarget].x-1)%256;
-	arrow[4]=chars[chars[i].trackingtarget].y>>8;
-	arrow[5]=chars[chars[i].trackingtarget].y%256;
+	arrow[2]=(unsigned char) (chars[chars[i].trackingtarget].x-1)>>8;
+	arrow[3]=(unsigned char) (chars[chars[i].trackingtarget].x-1)%256;
+	arrow[4]=(unsigned char) chars[chars[i].trackingtarget].y>>8;
+	arrow[5]=(unsigned char) chars[chars[i].trackingtarget].y%256;
 	Network->xSend(s, arrow, 6, 0);
 #endif
 }

@@ -104,7 +104,7 @@ bool firstpacket[MAXCLIENT];
 long idleTimeout[MAXCLIENT];
 
 unsigned int polyduration=90;
-int gatex[MAXGATES][2],gatey[MAXGATES][2];
+short int gatex[MAXGATES][2], gatey[MAXGATES][2];
 signed char gatez[MAXGATES][2];
 int gatecount=0;
 int totalspawnregions=0;

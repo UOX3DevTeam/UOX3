@@ -133,10 +133,10 @@ void cTownStones::CalcNewMayor(int j)
 		}
 	}
 	//Set the Town privledges of the new mayor to '2'.
-	s1=(e>>24);
-	s2=(e>>16);
-	s3=(e>>8);
-	s4=(e%256);
+	s1 = (unsigned char) (e>>24);
+	s2 = (unsigned char) (e>>16);
+	s3 = (unsigned char) (e>>8);
+	s4 = (unsigned char) (e%256);
 	
     long int serial = calcserial( s1, s2, s3, s4 );
 	a = findbyserial(&charsp[serial%HASHMAX],serial,1); // lets find the new position of the old_serial in newly ordered array
@@ -181,10 +181,10 @@ char *cTownStones::TownMayor(int j)
 	if(items[j].morex==0) {
 		s="unruled region";
 	} else {
-		s1=((items[j].morex)>>24);
-		s2=((items[j].morex)>>16);
-		s3=((items[j].morex)>>8);
-		s4=((items[j].morex)%256);
+		s1 = (unsigned char) ((items[j].morex)>>24);
+		s2 = (unsigned char) ((items[j].morex)>>16);
+		s3 = (unsigned char) ((items[j].morex)>>8);
+		s4 = (unsigned char) ((items[j].morex)%256);
 		long int serial = calcserial( s1, s2, s3, s4 );
 		a = findbyserial(&charsp[serial%HASHMAX],serial,1); // lets find the new position of the old_serial in newly ordered array
 /*		for (a=0;a<charcount;a++) {
@@ -232,7 +232,8 @@ char *cTownStones::MayorVote(int s)
 
 int cTownStones::Population(int j)
 {
-	int a=0, b=0;
+	int b=0;
+	unsigned int a;
 	for (a=0;a<charcount;a++) {
 		if(chars[a].town==j) b++;
 	}
@@ -395,8 +396,8 @@ void cTownStones::Menu(int s, int j, int type)
 		Towns->Line(line, j, townpriv, s);
 		if (script1[0]!='}')
 		{
-			length+=strlen(script1)+4;
-			length2+=strlen(script1)+4;
+			length += (short int) strlen(script1)+4;
+			length2 += (short int) strlen(script1)+4;
 		}
 	}
 	while (script1[0]!='}');
@@ -425,9 +426,9 @@ void cTownStones::Menu(int s, int j, int type)
 	gump1[7]=0;
 	gump1[8]=0;
 	gump1[9]=0;
-	gump1[10]=type; // Gump Number
-	gump1[19]=length2>>8;
-	gump1[20]=length2%256;
+	gump1[10]= (char) type; // Gump Number
+	gump1[19]= (char) length2>>8;
+	gump1[20]= (char) length2%256;
 	Network->xSend(s, gump1, 21, 0);
 	line=0;
 	do

@@ -213,9 +213,9 @@ void cBoat::PlankStuff(int s, int p)//double click Will send them here
 					if (chars[b].npc && chars[b].ownserial==chars[currchar[s]].serial && inrange1p(currchar[s], b)<=15)
 					{
 						mapRegions->RemoveItem(b+1000000);
-						chars[b].x=items[boat2].x+1;
-						chars[b].y=items[boat2].y+1;
-						chars[b].z=chars[b].dispz=items[boat2].z+4;
+						chars[b].x = (short int) items[boat2].x+1;
+						chars[b].y = (short int) items[boat2].y+1;
+						chars[b].z = chars[b].dispz=items[boat2].z+4;
 						mapRegions->AddItem(b+1000000);
 						setserial(b,boat2,8);
 						
@@ -914,14 +914,14 @@ void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/i
 		break;
 	case 0x10:
 	case 0x14:
-		items[p1].x+=iLargeShipOffsets[dir][PORT_PLANK][XP];
-		items[p1].y+=iLargeShipOffsets[dir][PORT_PLANK][YP];
-		items[p2].x+=iLargeShipOffsets[dir][STARB_PLANK][XP];
-		items[p2].y+=iLargeShipOffsets[dir][STARB_PLANK][YP];
-		items[tiller].x+=iLargeShipOffsets[dir][TILLER][XP];
-		items[tiller].y+=iLargeShipOffsets[dir][TILLER][YP];
-		items[hold].x+=iLargeShipOffsets[dir][HOLD][XP];
-		items[hold].y+=iLargeShipOffsets[dir][HOLD][YP];
+		items[p1].x += (short int) iLargeShipOffsets[dir][PORT_PLANK][XP];
+		items[p1].y += (short int) iLargeShipOffsets[dir][PORT_PLANK][YP];
+		items[p2].x += (short int) iLargeShipOffsets[dir][STARB_PLANK][XP];
+		items[p2].y += (short int) iLargeShipOffsets[dir][STARB_PLANK][YP];
+		items[tiller].x += (short int) iLargeShipOffsets[dir][TILLER][XP];
+		items[tiller].y += (short int) iLargeShipOffsets[dir][TILLER][YP];
+		items[hold].x += (short int) iLargeShipOffsets[dir][HOLD][XP];
+		items[hold].y += (short int) iLargeShipOffsets[dir][HOLD][YP];
 		
 		break;
 	default: printf("DEBUG: Turnboatstuff() more1 error! more1 = %c not found!\n",items[b].more1);

@@ -62,7 +62,8 @@ CWorldMain::~CWorldMain()
 //o---------------------------------------------------------------------------o
 void CWorldMain::saveAccount()//Revana*
 {
-	int i,a;
+	unsigned int i;
+	int a;
 	
 	//	EviLDeD	-	February 10, 2000
 	//	If we are using the WWWAccount systen then we have to load the accounts first
@@ -575,7 +576,8 @@ void CWorldMain::SaveChar( long i )
 void CWorldMain::SaveItem( long i )
 {
 	long serial, serhash, j, multi;
-	int k, ci;
+	int ci;
+	unsigned int k;
 
 
 	if (items[i].priv&0x01 && items[i].contserial == -1 && items[i].free==0)

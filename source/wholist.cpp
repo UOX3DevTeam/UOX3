@@ -123,8 +123,8 @@ void cWhoList::Delete( void )
 // CODER:	Abaddon
 // DATE:	12th February, 2000
 {
-	int i = 0;
-	int minSize;
+	unsigned int i = 0;
+	unsigned int minSize;
 	minSize = min( one.size(), two.size() );
 	for( i = 0; i < minSize; i++ )
 	{
@@ -171,7 +171,7 @@ void cWhoList::ButtonSelect( UOXSOCKET toSendTo, unsigned short int buttonPresse
 	}
 
 	GMLeave();
-	short int i = chars[sourceChar].making;
+	short int i = (short int) chars[sourceChar].making;
 
 	if( i < 0 )
 	{
@@ -390,10 +390,11 @@ void cWhoList::Command( UOXSOCKET toSendTo, unsigned char type, unsigned short i
 	two.push_back( new string( temp ) );
 
 	SendVecsAsGump( toSendTo, one, two, type );
-	for( int i = 0; i < one.size(); i++ )
+	unsigned int i;
+	for( i = 0; i < one.size(); i++ )
 		delete one[i];
-	for( int j = 0; j < two.size(); j++ )
-		delete two[j];
+	for( i = 0; i < two.size(); i++ )
+		delete two[i];
 }
 
 void cWhoList::ZeroWho( void )

@@ -37,7 +37,7 @@ void cAdmin::GumpAMenu(int s, int j)//Revana*
 {
 	char sect[512];
 	short int length, length2, textlines;
-	int i;
+	unsigned int i;
 	int line;
 	int account = chars[j].account;
 	
@@ -104,8 +104,8 @@ void cAdmin::GumpAMenu(int s, int j)//Revana*
 		GumpAText(line, account);
 		if (script1[0]!='}')
 		{
-			gump3[0]=strlen(script1)>>8;
-			gump3[1]=strlen(script1)%256;
+			gump3[0] = (char) strlen(script1)>>8;
+			gump3[1] = (char) strlen(script1)%256;
 			Network->xSend(s, gump3, 2, 0);
 			gump3[0]=0;
 			for (i=0;i<strlen(script1);i++)
@@ -236,7 +236,8 @@ void cAdmin::LoadWipe()//Revana*
 void cAdmin::CheckLocks(int nAcct)//Revana*
 {
 	bool found = false;
-	int i = 0, curLock = 0, killed = 0;
+	int curLock = 0, killed = 0;
+	unsigned int i;
 
 	for(curLock=0;curLock< MAX_ACCT_LOCK;curLock++)
 	{

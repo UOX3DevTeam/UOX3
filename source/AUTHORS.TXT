@@ -29,7 +29,26 @@ DATE                     AUTHOR                     ARRANGER
   [INSERT NEW ENTRIES HERE]
 
 -------------------------------------------------------------------------------
-27.01.0001              Axel Kittenberger            Axel Kittenberger
+27.01.2001              Thiago A. Correa                Thiago, Axel 
+
+  skills.cpp            Fixed some Level 4 Warnings.
+  items.cpp             If char_st.x and item_st.x are both short int, why 
+  globals.cpp           gatex must be int? Fixed that.
+  magic.cpp             If Item_st.color? are unsigned chars, why beardcolor                           
+  dbl_sinlge_click.cpp    isn't? Fixed.
+  uox3.h
+  townstones.cpp
+  worldmain.cpp
+  targeting.cpp         Changed from if..else structure to switch() in                                              cTarges::HouseFriendTarget()
+  wholist.cpp           Removed unnecessary local variable from 
+                          cWhoList::Command()
+  
+                        Those changes reduced the number of warnings from:
+                        UOX.exe - 0 error(s), 2946 warning(s)             
+                        to:
+                        UOX.exe - 0 error(s), 2714 warning(s)
+-------------------------------------------------------------------------------
+27.01.2001              Axel Kittenberger            Axel Kittenberger
   
   cmdtable.cpp          On the crusade of GCC warnings....
   commands.cpp          Removed unnecessary allocs of temp buffers.

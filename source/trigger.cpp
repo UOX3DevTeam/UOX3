@@ -197,8 +197,8 @@ void triggerwitem(int ts, int ti, int ttype)
 					if (inrange1p(currchar[ts], currchar[i])&&perm[i])
 					{
 						tl=44+strlen(sect)+1;
-						talk[1]=tl>>8;
-						talk[2]=tl%256;
+						talk[1]= (unsigned char) tl>>8;
+						talk[2]= (unsigned char) tl%256;
 						talk[3]=chars[currchar[ts]].ser1;
 						talk[4]=chars[currchar[ts]].ser2;
 						talk[5]=chars[currchar[ts]].ser3;
@@ -727,7 +727,7 @@ void triggerwitem(int ts, int ti, int ttype)
 			{
 				cline = &script2[0];
 				splitline();
-				unsigned int ItemNum = makenumber( 0 );
+				makenumber( 0 ); //Unreferenced var, you don't need it just to store 0.
 				unsigned int InBackpack = makenumber( 1 );
 				switch (chars[currchar[ts]].dir)
 				{
@@ -839,10 +839,10 @@ void triggerwitem(int ts, int ti, int ttype)
 							{
 								unsetserial( i, 1 );
 								setserial( i, pack, 1 );       // no autostacking -> add it to container hash !
-								items[i].x = 20 + ( rand()%100 ); // and set new random pack coords
-								items[i].y = 40 + ( rand()%80 ); 
+								items[i].x = (short int) 20 + ( rand()%100 ); // and set new random pack coords
+								items[i].y = (short int) 40 + ( rand()%80 ); 
 								items[i].z = 9;
-								int k;
+								unsigned int k;
 								for( k = 0; k < now; k++ )
 								{
 									if( perm[k] )
@@ -990,7 +990,7 @@ void triggerwitem(int ts, int ti, int ttype)
 				{
 					if (chars[currchar[ts]].baseskill[p]<1000)
 					{
-						chars[currchar[ts]].baseskill[p]+=j;
+						chars[currchar[ts]].baseskill[p] += (unsigned short int) j;
 						if (chars[currchar[ts]].baseskill[p]>1000) chars[currchar[ts]].baseskill[p]=1000;
 						Skills->AdvanceStats(currchar[ts], p);
 						Skills->updateSkillLevel(currchar[ts], p);
@@ -1176,15 +1176,15 @@ void triggerwitem(int ts, int ti, int ttype)
 				//        effect[9]=chars[currchar[ts]].ser4;
 				effect[10]=hexnumber(0);// Object id of the effect
 				effect[11]=hexnumber(1);
-				effect[12]=chars[currchar[ts]].x>>8;
-				effect[13]=chars[currchar[ts]].x%256;
-				effect[14]=chars[currchar[ts]].y>>8;
-				effect[15]=chars[currchar[ts]].y%256;
-				effect[16]=chars[currchar[ts]].z;
-				effect[17]=triggerx>>8;
-				effect[18]=triggerx%256;
-				effect[19]=triggery>>8;
-				effect[20]=triggery%256;
+				effect[12]= (char) chars[currchar[ts]].x>>8;
+				effect[13]= (char) chars[currchar[ts]].x%256;
+				effect[14]= (char) chars[currchar[ts]].y>>8;
+				effect[15]= (char) chars[currchar[ts]].y%256;
+				effect[16]= (char) chars[currchar[ts]].z;
+				effect[17]= (char) triggerx>>8;
+				effect[18]= (char) triggerx%256;
+				effect[19]= (char) triggery>>8;
+				effect[20]= (char) triggery%256;
 				effect[21]=triggerz;
 				effect[22]=0x09;
 				effect[23]=0x06; // 0 is really long.  1 is the shortest.
@@ -1470,12 +1470,12 @@ void triggernpc(int ts,int ti)
 			{
 				cline = &script2[0];
 				splitline();
-				chars[ti].id1=hexnumber(0);
-				chars[ti].id2=hexnumber(1);
-				chars[ti].xid1=hexnumber(0);
-				chars[ti].xid2=hexnumber(1);
-				chars[ti].orgid1=hexnumber(0);
-				chars[ti].orgid2=hexnumber(1);
+				chars[ti].id1    = (unsigned char) hexnumber(0);
+				chars[ti].id2    = (unsigned char) hexnumber(1);
+				chars[ti].xid1   = (unsigned char) hexnumber(0);
+				chars[ti].xid2   = (unsigned char) hexnumber(1);
+				chars[ti].orgid1 = (unsigned char) hexnumber(0);
+				chars[ti].orgid2 = (unsigned char) hexnumber(1);
 				for (j=0;j<now;j++) if (perm[j] && inrange1p( currchar[j], ti )) updatechar(ti);
 			}
 			if (!(strcmp("NADD",script1)))  //Add NPC at given location
@@ -1688,7 +1688,7 @@ void triggernpc(int ts,int ti)
 				{
 					if (chars[currchar[ts]].baseskill[p]<1000)
 					{
-						chars[currchar[ts]].baseskill[p]+=j;
+						chars[currchar[ts]].baseskill[p] += (unsigned short int) j;
 						if (chars[currchar[ts]].baseskill[p]>1000) chars[currchar[ts]].baseskill[p]=1000;
 					}
 				} else {
@@ -1807,8 +1807,8 @@ void triggernpc(int ts,int ti)
 			{
 				cline = &script2[0];
 				splitline();
-				itemmake[ts].materialid1=hexnumber(2);
-				itemmake[ts].materialid2=hexnumber(3);
+				itemmake[ts].materialid1 = (unsigned char) hexnumber(2);
+				itemmake[ts].materialid2 = (unsigned char) hexnumber(3);
 				itemmake[ts].has=getamount(currchar[ts], itemmake[ts].materialid1, itemmake[ts].materialid2); 
 				itemmake[ts].has2=getamount(currchar[ts], itemmake[ts].materialid1b, itemmake[ts].materialid2b);
 				pos=ftell(scpfile);
@@ -1857,17 +1857,17 @@ void triggernpc(int ts,int ti)
 				effect[7]=chars[currchar[ts]].ser2;
 				effect[8]=chars[currchar[ts]].ser3;
 				effect[9]=chars[currchar[ts]].ser4;
-				effect[10]=hexnumber(0);// Object id of the effect
-				effect[11]=hexnumber(1);
-				effect[12]=chars[ti].x>>8;
-				effect[13]=chars[ti].x%256;
-				effect[14]=chars[ti].y>>8;
-				effect[15]=chars[ti].y%256;
+				effect[10]= (char) hexnumber(0);// Object id of the effect
+				effect[11]= (char) hexnumber(1);
+				effect[12]= (char) chars[ti].x>>8;
+				effect[13]= (char) chars[ti].x%256;
+				effect[14]= (char) chars[ti].y>>8;
+				effect[15]= (char) chars[ti].y%256;
 				effect[16]=chars[ti].z;
-				effect[17]=chars[currchar[ts]].x>>8;
-				effect[18]=chars[currchar[ts]].x%256;
-				effect[19]=chars[currchar[ts]].y>>8;
-				effect[20]=chars[currchar[ts]].y%256;
+				effect[17]= (char) chars[currchar[ts]].x>>8;
+				effect[18]= (char) chars[currchar[ts]].x%256;
+				effect[19]= (char) chars[currchar[ts]].y>>8;
+				effect[20]= (char) chars[currchar[ts]].y%256;
 				effect[21]=chars[currchar[ts]].z;
 				effect[22]=0x09;
 				effect[23]=0x06; // 0 is really long.  1 is the shortest.

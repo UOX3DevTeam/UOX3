@@ -210,10 +210,10 @@ void cMagic::SpellBook( UOXSOCKET s )
 	{
 		if (spellsList[i]) scount++;
 	}
-	sbookinit[1]=((scount*19)+5)>>8;
-	sbookinit[2]=((scount*19)+5)%256;
-	sbookinit[3]=scount>>8;
-	sbookinit[4]=scount%256;
+	sbookinit[1]= (char) ((scount*19)+5)>>8;
+	sbookinit[2]= (char) ((scount*19)+5)%256;
+	sbookinit[3]= (char) scount>>8;
+	sbookinit[4]= (char) scount%256;
 	if (scount>0) Network->xSend(s, sbookinit, 5, 0);
 	for (i=0;i<70;i++) 
 	{
@@ -222,8 +222,8 @@ void cMagic::SpellBook( UOXSOCKET s )
 			sbookspell[0]=0x41;
 			sbookspell[1]=0x00;
 			sbookspell[2]=0x00;
-			sbookspell[3]=i+1;
-			sbookspell[8]=i+1;
+			sbookspell[3]= (char) i+1;
+			sbookspell[8]= (char) i+1;
 			sbookspell[13]=items[item].ser1;
 			sbookspell[14]=items[item].ser2;
 			sbookspell[15]=items[item].ser3;
@@ -538,8 +538,8 @@ void cMagic::SummonMonster(UOXSOCKET s, unsigned char id1, unsigned char id2, ch
 	
 	if (x==0)
 	{
-		chars[c].x=chars[currchar[s]].x-1;
-		chars[c].y=chars[currchar[s]].y;
+		chars[c].x = (short int) chars[currchar[s]].x-1;
+		chars[c].y = (short int) chars[currchar[s]].y;
 		chars[c].dispz=chars[c].z=chars[currchar[s]].z;
 	}
 	else
@@ -1067,15 +1067,11 @@ void cMagic::DeleReagents( CHARACTER s, int ash, int drake, int garlic, int gins
 
 char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
 {
-	//	int i;
 	reag_st failmsg;
+
 	if (chars[s].priv2&0x80) return 1;
 	memset( &failmsg, 0, sizeof( reag_st ) ); // set all members to 0
-											  /*int reg[8];
-											  for (i=0;i<8;i++)
-											  {
-											  reg[i]=0;
-}*/
+
 	if (reagents.ash!=0 && getamount(s, 0x0F, 0x8C)<reagents.ash) //{RegMsg(s); return 0;}
 		failmsg.ash = 1;
 	if (reagents.drake!=0 && getamount(s, 0x0F, 0x86)<reagents.drake) //{RegMsg(s); return 0;}
@@ -1093,7 +1089,7 @@ char cMagic::CheckReagents(CHARACTER s,  reag_st reagents )
 	if (reagents.silk!=0 && getamount(s, 0x0F, 0x8D)<reagents.silk) //{RegMsg(s); return 0;}
 		failmsg.silk = 1;
 	
-	int fail = RegMsg( s, failmsg );
+	char fail = (char) RegMsg( s, failmsg );
 	
 	return fail;
 	
@@ -1154,7 +1150,7 @@ void cMagic::DirectDamage( CHARACTER p, int amount)
 		return;
 	if (chars[p].priv2&0x02)
 	{
-		chars[p].priv2=chars[p].priv2&0xFD;
+		chars[p].priv2 = (unsigned char) chars[p].priv2&0xFD;
 		s=calcSocketFromChar(p);
 		if (s!=-1) sysmessage(s, "You are no longer frozen.");
 	}           
@@ -2219,8 +2215,8 @@ bool cMagic::newSelectSpell2Cast( UOXSOCKET s, int num )
 	chars[currchar[s]].nextact = 75;		// why 75?
 	if( type==0 && (!(chars[currchar[s]].priv&1 ))) // if they are a gm they don't have a delay :-)
 	{
-		chars[currchar[s]].spelltime=((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
-		chars[currchar[s]].priv2 = chars[currchar[s]].priv2|2;//freeze
+		chars[currchar[s]].spelltime = ((curSpellCasting.delay/10)*CLOCKS_PER_SEC) + uiCurrentTime;
+		chars[currchar[s]].priv2 = (unsigned char) chars[currchar[s]].priv2|2; //freeze
 	}
 	else
 	{
@@ -2329,8 +2325,8 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							else
 							{
 								mapRegions->RemoveItem(currchar[s]+1000000); //LB
-								chars[currchar[s]].x=items[i].morex;
-								chars[currchar[s]].y=items[i].morey;
+								chars[currchar[s]].x = (short int) items[i].morex;
+								chars[currchar[s]].y = (short int) items[i].morey;
 								chars[currchar[s]].dispz=chars[currchar[s]].z=items[i].morez;
 								mapRegions->AddItem(currchar[s]+1000000); //LB
 								teleport(currchar[s]);

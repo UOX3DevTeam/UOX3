@@ -1574,12 +1574,13 @@ void cItem::AddRespawnItem(int s, int x, int y)
 			items[c].z = 9;
 			switch( k )
 			{
-			case 1:	items[c].y = ( rand()%50 ) + 50; break;
-			case 2:	items[c].y = ( rand()%50 ) + 30; break;
-			case 3:	items[c].y = ( rand()%40 ) + 100; break;
-			case 4:	items[c].y = ( rand()%80 ) + 60; // bugfix
-					items[c].x = ( rand()%80 ) + 60; break;
-			default:	items[c].y = ( rand()%50 ) + 30;
+			case 1:	items[c].y = (short int) ( rand()%50 ) + 50; break;
+			case 2:	items[c].y = (short int) ( rand()%50 ) + 30; break;
+			case 3:	items[c].y = (short int) ( rand()%40 ) + 100; break;
+			case 4:	items[c].y = (short int) ( rand()%80 ) + 60; // bugfix
+					items[c].x = (short int) ( rand()%80 ) + 60; break;
+			default:	
+				    items[c].y = (short int) ( rand()%50 ) + 30;
 			}
 		}
 	}
@@ -1697,16 +1698,16 @@ void cItem::GlowItem( int s, int i )
 		} else if (items[j].layer==0 && items[i].contserial!=-1) // euqipped -> light source coords = players coords
 		{
 			//printf("gi in pack\n");
-			items[j].x=chars[s].x;
-			items[j].y=chars[s].y;
-			items[j].z=chars[s].z+4;
+			items[j].x = chars[s].x;
+			items[j].y = chars[s].y;
+			items[j].z = (signed char) chars[s].z+4;
 			items[j].dir=99; // gives no light in backpacks
 			//if (rand()%4==2) items[j].dir=2; else items[j].dir=1;
 		} else
 		{
-			items[j].x=chars[s].x;
-			items[j].y=chars[s].y;
-			items[j].z=chars[s].z+4;
+			items[j].x = chars[s].x;
+			items[j].y = chars[s].y;
+			items[j].z = (signed char) chars[s].z+4;
 			items[j].dir=29;
 
 		}
@@ -1716,7 +1717,8 @@ void cItem::GlowItem( int s, int i )
 
 void cItem::CheckEquipment(CHARACTER p) // check equipment of character p
 {
-	int i=-1, j=-1, serial,serhash,ci;
+	int i=-1, serial,serhash,ci;
+	unsigned int j;
 
 	if (p<0) return; // LB crashfix
 
@@ -1852,15 +1854,15 @@ void cItem::BounceInBackpack(CHARACTER p, ITEM i)
 		else // no autostacking
 		{ 
 			setserial(i, newpack,1);      // no autostacking -> add it to container hash ! 
-			items[i].x=20+(rand()%100);// and set new random pack coords
-			items[i].y=40+(rand()%80);
+			items[i].x = (short int) 20+(rand()%100);// and set new random pack coords
+			items[i].y = (short int) 40+(rand()%80);
 			items[i].z=9;
 
 			//LB GLOWING STUFF
 			setptr(&glowsp[chars[newp].serial%HASHMAX],i);//add in new char
 			GlowItem(newp,i);
 
-			int k;
+			unsigned int k;
 			for (k=0;k<now;k++) 
 			{
 				if (perm[k])
@@ -1921,7 +1923,7 @@ void cItem::BounceItemOnGround(CHARACTER p, ITEM i)
 
 bool cItem::isShieldType( ITEM i )
 {
-	unsigned short itemID = (items[i].id1<<8) + items[i].id2;
+	unsigned short itemID = (unsigned short) (items[i].id1<<8) + items[i].id2;
 	if( itemID >= 0x1B72 && itemID <= 0x1B7B ) return true;
 	if( itemID >= 0x1BC3 && itemID <= 0x1BC5 ) return true;
 	tile_st toCheck;
