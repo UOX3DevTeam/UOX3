@@ -25,11 +25,12 @@
 
 #ifdef __LINUX__
 
-#include <dirent.h>
+/*#include <dirent.h>
 #include <glob.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <unistd.h>
+*/
 #define strnicmp(a,b,c) strnbasecmp(a,b,c)
 #define _stat stat
 #define _mkdir mkdir
@@ -37,12 +38,13 @@
 
 #else
 
-#include <winsock2.h>
+/*#include <winsock2.h>
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
 #include <time.h>
 #include <sys/timeb.h>
+*/
 #define _mkdir(s1,s2) _mkdir(s1)
 
 #endif
@@ -53,12 +55,12 @@
 #include <fstream>
 #include <vector>
 #include <cstdio>
-#ifndef __LINUX__
+//#ifndef __LINUX__
 #include <ios>
-#else
-#include <iomanip.h>
+//#else
+//#include <iomanip.h>
 //#include <strstream.h>
-#endif
+//#endif
 #include <map>
 
 #include <sys/types.h>
