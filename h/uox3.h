@@ -50,7 +50,7 @@
 #define IVER "1.0"
 #define PRODUCT "Ultima Offline eXperiment 3"
 #define TIMEZONE "GMT+10"
-#define NAME "The Official DevTeam"
+#define NAME "Freelancers Group"
 #define EMAIL "http://www.uox3.net/"
 #define PROGRAMMERS "Freelancers"
 //#ifdef _WIN32
