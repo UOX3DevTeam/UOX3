@@ -5,11 +5,11 @@
 //|	Description		-	Class that handles the accounts portion of server
 //|									operation.
 //o--------------------------------------------------------------------------o
+#ifndef __CACCOUNT_H__
+#define __CACCOUNT_H__
+
 #include <map>
 #include <string>
-
-#if !defined(AFX_CACCOUNT_H__6FD26C86_F155_11D3_9002_00104B73C455__INCLUDED_)
-#define AFX_CACCOUNT_H__6FD26C86_F155_11D3_9002_00104B73C455__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -58,7 +58,10 @@ public:
 	bool RemoveCharacterFromAccount( SI32 accountid, UI08 slot );
 	bool RemoveCharacterFromAccount( ACTREC *toRemove, UI08 slot );
 	bool ConvertAccounts( const char *filename );
+
 	void AddAccount( string username, string password, string contact );
+	void AddAccount( string username, string password, string contact, UI16 privs );
+	
 	void DeleteAccount( string username );
 	const char *CheckAccountsVersion( const char *filename );
 	long GetAccountCount( void );
