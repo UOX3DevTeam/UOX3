@@ -508,7 +508,7 @@ void CConsole::TurnYellow( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
-	cout << "\033[1;33m";
+	std::cout << "\033[1;33m";
 #endif
 	previousColour = CYELLOW;
 }
@@ -525,7 +525,7 @@ void CConsole::TurnRed( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
-	cout << "\033[1;31m";
+	std::cout << "\033[1;31m";
 #endif
 	previousColour = CRED;
 }
@@ -542,7 +542,7 @@ void CConsole::TurnGreen( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
-	cout << "\033[1;32m";
+	std::cout << "\033[1;32m";
 #endif
 	previousColour = CGREEN;
 }
@@ -559,7 +559,7 @@ void CConsole::TurnBlue( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
-	cout << "\033[1;34m";
+	std::cout << "\033[1;34m";
 #endif
 	previousColour = CBLUE;
 }
@@ -576,7 +576,7 @@ void CConsole::TurnNormal( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
-	cout << "\033[0;37m";
+	std::cout << "\033[0;37m";
 #endif
 	previousColour = CNORMAL;
 }
@@ -593,7 +593,7 @@ void CConsole::TurnBrightWhite( void )
 #ifdef __NT__
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
-	cout << "\033[1;37m";
+	std::cout << "\033[1;37m";
 #endif
 }
 
@@ -808,8 +808,8 @@ void CConsole::MoveTo( int x, int y )
 #else
 void CConsole::MoveTo( int x, int y )
 {
-  cout << "\033[255D";
-  cout << "\033[" << x << "C";
+	std::cout << "\033[255D";
+	std::cout << "\033[" << x << "C";
 }
 #endif
 
