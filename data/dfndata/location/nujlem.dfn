@@ -1,0 +1,61 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: nujlem.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 90]
+{
+// Docks
+X=3803
+Y=1279
+Z=5
+}
+
+[LOCATION 91]
+{
+// Palace
+X=3698
+Y=1279
+Z=20
+}
+
+[LOCATION 92]
+{
+// North
+X=3668
+Y=1116
+Z=0
+}
+
+[LOCATION 93]
+{
+// East
+X=3755
+Y=1227
+Z=0
+}
+
+[LOCATION 94]
+{
+// West
+X=3572
+Y=1211
+Z=0
+}
+
+[LOCATION 95]
+{
+// Chess board
+X=3728
+Y=1360
+Z=5
+}
+
+[LOCATION 96]
+{
+// Cemetary
+X=3536
+Y=1156
+Z=20
+}

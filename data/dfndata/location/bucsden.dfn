@@ -1,0 +1,37 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: bucsden.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 23rd 2002
+
+[LOCATION 30]
+{
+// Docks
+X=2736
+Y=2166
+Z=0
+}
+
+[LOCATION 31]
+{
+// Bathhouse
+X=2667
+Y=2084
+Z=5
+}
+
+[LOCATION 32]
+{
+// Pirates Plunder Tavern
+X=2691
+Y=2233
+Z=2
+}
+
+[LOCATION 33]
+{
+// Hidden Caves
+X=2667
+Y=2069
+Z=236
+}

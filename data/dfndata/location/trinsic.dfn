@@ -1,0 +1,62 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: trinsic.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 130]
+{
+// Center
+X=1927
+Y=2779
+Z=0
+}
+
+[LOCATION 131]
+{
+// West Gate
+X=1832
+Y=2779
+Z=0
+}
+
+[LOCATION 132]
+{
+// South Gate
+X=2000
+Y=2930
+Z=0
+}
+
+[LOCATION 133]
+{
+// North
+X=1894
+Y=2666
+Z=0
+}
+
+[LOCATION 134]
+{
+// South
+X=1891
+Y=2850
+Z=20
+}
+
+
+[LOCATION 135]
+{
+// East Docks
+X=2071
+Y=2855
+Z=253
+}
+
+[LOCATION 136]
+{
+// Island Park
+X=2108
+Y=2793
+Z=2
+}

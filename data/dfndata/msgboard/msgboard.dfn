@@ -1,10 +1,10 @@
 //*****************************************************************
-//*                         UOX3 Scripts v.35                     *
+//*                         UOX3 DFNs v0.98                       *
 //*                                                               *
-//*                   http://www.uoxdev.com/scripts/              *
+//*                   http://www.uox3dev.net                      *
 //*                                                               *
-//* Last Update : 1/16/2000                                       *
-//* Script : msgboard.scp                                           *
+//* Last Update : 1/4/2003                                        *
+//* Script : msgboard.dfn                                         *
 //*****************************************************************
 //   Purpose:
 //      To be used as a template for certain default quest

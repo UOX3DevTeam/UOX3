@@ -1,5 +1,12 @@
-// menus.dfn
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 1/4/2003	                	          *
+//* Script : menus.dfn                                            *
+//*****************************************************************
 // v1.0; 12/01/02; rewrote file for UOX3 1.0; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// v1.1; 01/4/03; Version info updated, and links; Xuri
 // (add new version comments here, use format of above line please!)
 // For use with the UOX3 emulator or any with permission from the author
 //***************************************************************************
@@ -25,15 +32,11 @@ Web=Links
 SHARD=HOMEPAGE: Redirects you to this Shard's homepage.
 WEBLINK=http://www.yourshard.com
 UOX3=HOMEPAGE: Redirects you to the official UOX3 homepage.
-WEBLINK=http://uox3.sourceforge.net
-THE=UOX3 FORUMS: Commmunity forums hosted at uox3.sourceforge.net.
-WEBLINK=http://www.uox3.sourceforge.net/board/index.php
+WEBLINK=http://http://www.uox3dev.net
+DMBDEV=UOX3 SITE: A resource site for UOX3.
+WEBLINK=http://www.uox3.org
 UO=HOMEPAGE: The official Ultima Online homepage.
 WEBLINK=http://www.uo.com
-DMBDEV=UOX3 SITE: A community site for UOX3.
-WEBLINK=http://www.dmbdev.com/uoxdev/
-PAIGELORE:=A community site for player-run Shards.
-WEBLINK=http://www.paigelore.com
 }
 
 [GMMENU 3]

@@ -1,0 +1,85 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: jails.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 22nd 2002
+
+[LOCATION 1]
+{
+// Jail Cell 1
+X=5276
+Y=1164
+Z=0
+}
+
+[LOCATION 2]
+{
+// Jail Cell 2
+X=5286
+Y=1164
+Z=0
+}
+
+[LOCATION 3]
+{
+// Jail Cell 3
+X=5296
+Y=1164
+Z=0
+}
+
+[LOCATION 4]
+{
+// Jail Cell 4
+X=5306
+Y=1164
+Z=0
+}
+
+[LOCATION 5]
+{
+// Jail Cell 5
+X=5276
+Y=1174
+Z=0
+}
+
+[LOCATION 6]
+{
+// Jail Cell 6
+X=5286
+Y=1174
+Z=0
+}
+
+[LOCATION 7]
+{
+// Jail Cell 7
+X=5296
+Y=1174
+Z=0
+}
+
+[LOCATION 8]
+{
+// Jail Cell 8
+X=5306
+Y=1174
+Z=0
+}
+
+[LOCATION 9]
+{
+// Jail Cell 9
+X=5283
+Y=1184
+Z=0
+}
+
+[LOCATION 10]
+{
+// Jail Cell 10
+X=5304
+Y=1184
+Z=0
+}

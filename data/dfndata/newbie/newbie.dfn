@@ -1,318 +1,339 @@
-Newbie.dfn
-Written by cooter
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 1/4/2003	                	          *
+//* Script : newbie.dfn                                           *
+//*****************************************************************
+// v1.0; 12/10/02; initial release; §ymbiotic; confound@iprimus.com.au
+// v1.1; 1/4/03; Updated Version & contents; Xuri
+// (add new version comments here, use format of above line please.)
+// for use with the uox3 emulator, or any, with permission from the author.
 
-[BESTSKILL 0] 
-{ // ALCHEMY 
-PACKITEM=0x0e9b 
-PACKITEM=0x0f0e 
-PACKITEM=0x0f0e 
-PACKITEM=0x0f0e 
-PACKITEM=0x0f0e 
-PACKITEM=0x0f84 
-PACKITEM=0x0f85 
-PACKITEM=0x0f88 
-} 
+// Alchemy.
+[BESTSKILL 0]
+{
+PACKITEM=0x0f7a,3
+PACKITEM=0x0f84,3
+PACKITEM=0x0f85,3
+PACKITEM=0x0f8d,3
+PACKITEM=0x0f0e,4
+PACKITEM=0x0e9b
+EQUIPITEM=0x1F03
+}
 
-[BESTSKILL 1] 
-{ // ANATOMY 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-} 
+// Anatomy.
+[BESTSKILL 1]
+{
+EQUIPITEM=0x1F03
+PACKITEM=0x0E21,3
+}
 
-[BESTSKILL 2] 
-{ // ANIMAL LORE 
-PACKITEM=0x0e81 
-} 
+// Animal Lore.
+[BESTSKILL 2]
+{
+EQUIPITEM=0x13f5
+EQUIPITEM=0x1F03
+}
 
-[BESTSKILL 3] 
-{ // ITEM IDENTFICATION 
-PACKITEM=0x13f9 
-} 
+// Item Identification.
+[BESTSKILL 3]
+{
+EQUIPITEM=0x13f8
+}
 
-[BESTSKILL 4] 
-{ // ARMS LORE 
-PACKITEM=0x13b6 
-} 
+// Arms Lore.
+[BESTSKILL 4]
+{
+PACKITEM=0x0f5c
+}
 
-[BESTSKILL 5] 
-{ // PARRYING 
-PACKITEM=0x1b7a 
-} 
+// Parrying.
+[BESTSKILL 5]
+{
+PACKITEM=0x1b7A
+}
 
-[BESTSKILL 6] 
-{ // BEGGING 
-PACKITEM=0x13f9 
-} 
+// Begging.
+[BESTSKILL 6]
+{
+EQUIPITEM=0x13f8
+}
 
-[BESTSKILL 7] 
-{ // BLACKSMITHING 
-PACKITEM=0x13e4 
-PACKITEM=0x1bf2 
-PACKITEM=0x1bf2 
-PACKITEM=0x1bf2 
-PACKITEM=0x1bf2 
-} 
+// Blacksmithing.
+[BESTSKILL 7]
+{
+EQUIPITEM=0x153b
+EQUIPITEM=0x13c6
+PACKITEM=0x1bef,50
+PACKITEM=0x13e3,2
+}
 
-[BESTSKILL 8] 
-{ // BOWCRAFT 
-PACKITEM=0x1bd4 
-PACKITEM=0x1bd4 
-PACKITEM=0x1bd4 
-PACKITEM=0x1bd1 
-PACKITEM=0x1bd1 
-PACKITEM=0x1bd1 
-PACKITEM=0x1be0 
-} 
+// Bowcraft/Fletching.
+[BESTSKILL 8]
+{
+PACKITEM=0x1022
+PACKITEM=0x1bd1,5
+PACKITEM=0x1BD4,5
+PACKITEM=0x1bd7,14
+}
 
-[BESTSKILL 9] 
-{ // PEACEMAKING 
-PACKITEM=0x0eb2 
-} 
+// Peacemaking.
+[BESTSKILL 9]
+{
+PACKITEM=listobject6
+}
 
-[BESTSKILL 10] 
-{ // CAMPING 
-PACKITEM=0x0a58 
-PACKITEM=0x0de1 
-PACKITEM=0x0de1 
-PACKITEM=0x0de1 
-} 
+// Camping.
+[BESTSKILL 10]
+{
+PACKITEM=0x0a58
+PACKITEM=0x0DE1,5
+}
 
-[BESTSKILL 11] 
-{ // CARPENTRY 
-PACKITEM=0x1bd7 
-PACKITEM=0x1034 
-PACKITEM=0x102e 
-} 
+// Carpentry.
+[BESTSKILL 11]
+{
+PACKITEM=0x1bd7,10
+PACKITEM=0x1034
+PACKITEM=0x153b
+}
 
-[BESTSKILL 12] 
-{ // CARTOGRAPHY 
-PACKITEM=0x14eb 
-PACKITEM=0x14eb 
-PACKITEM=0x1057 
-} 
+// Cartography.
+[BESTSKILL 12]
+{
+PACKITEM=0x14EB,4
+PACKITEM=0x1057
+}
 
-[BESTSKILL 13] 
-{ // COOKING 
-PACKITEM=0x0ff9 
-PACKITEM=0x09f1 
-PACKITEM=0x09f1 
-PACKITEM=0x09f1 
-PACKITEM=0x1039 
-PACKITEM=0x0de1 
-PACKITEM=0x0de1 
-} 
+// Cooking.
+[BESTSKILL 13]
+{
+PACKITEM=0x1043
+PACKITEM=0x09b9
+PACKITEM=0x09f1
+PACKITEM=0x1f9e
+PACKITEM=0x1045
+PACKITEM=0x0DE1,2
+PACKITEM=0x103f
+}
 
-[BESTSKILL 14] 
-{ // DETECTING HIDDEN 
-} 
+// Detecting Hidden.
+[BESTSKILL 14]
+{
+EQUIPITEM=0x1515
+}
 
-[BESTSKILL 15] 
-{ // ENTICEMENT 
-PACKITEM=0x0e9e 
-} 
+// Discordance.
+[BESTSKILL 15]
+{
+PACKITEM=listobject6
+}
 
-[BESTSKILL 16] 
-{ // EVALUATING INTELIGENCE 
-} 
+// Evaluating Intelligence.
+[BESTSKILL 16]
+{
+}
 
-[BESTSKILL 17] 
-{ // HEALING 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0f9e 
-} 
+// Healing.
+[BESTSKILL 17]
+{
+PACKITEM=0x0E21,50
+}
 
-[BESTSKILL 18] 
-{ // FISHING 
-PACKITEM=0x0dbf 
-} 
+// Fishing.
+[BESTSKILL 18]
+{
+EQUIPITEM=0x0dbf
+}
 
-[BESTSKILL 19] 
-{ // FORENSICS 
-} 
+// Forensic Evaluation.
+[BESTSKILL 19]
+{
+}
 
-[BESTSKILL 20] 
-{ // HERDING 
-PACKITEM=0x0e81 
-} 
+// Herding.
+[BESTSKILL 20]
+{
+EQUIPITEM=0x13f5
+}
 
-[BESTSKILL 21] 
-{ // HIDING 
-} 
+// Hiding.
+[BESTSKILL 21]
+{
+EQUIPITEM=0x1515
+}
 
-[BESTSKILL 22] 
-{ // PROVOCATION 
-PACKITEM=0x0eb3 
-} 
+// Provocation.
+[BESTSKILL 22]
+{
+PACKITEM=listobject6
+}
 
-[BESTSKILL 23] 
-{ // INSCRIPTION 
-PACKITEM=0x0e34 
-PACKITEM=0x0e34 
-PACKITEM=0x0e34 
-} 
+// Inscription.
+[BESTSKILL 23]
+{
+PACKITEM=0x0E34,2
+PACKITEM=0x0fc0
+}
 
-[BESTSKILL 24] 
-{ // LOCKPICKING 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-} 
+// Lockpicking.
+[BESTSKILL 24]
+{
+PACKITEM=0x14FB,20
+}
 
-[BESTSKILL 25] 
-{ // MAGERY 
-PACKITEM=0x0efa 
-PACKITEM=0x0f7a 
-PACKITEM=0x0f7b 
-PACKITEM=0x0f84 
-PACKITEM=0x0f85 
-PACKITEM=0x0f86 
-PACKITEM=0x0f88 
-PACKITEM=0x0f8c 
-PACKITEM=0x0f8d 
-PACKITEM=0x1f2e 
-PACKITEM=0x1f2f 
-PACKITEM=0x1f31 
-} 
+// Magery.
+[BESTSKILL 25]
+{
+EQUIPITEM=0x1F03
+EQUIPITEM=0x1718
+EQUIPITEM=0x0efa
+PACKITEM=0x0f7a,30
+PACKITEM=0x0f7b,30
+PACKITEM=0x0f84,30
+PACKITEM=0x0f85,30
+PACKITEM=0x0f86,30
+PACKITEM=0x0f88,30
+PACKITEM=0x0f8c,30
+PACKITEM=0x0f8d,30
+PACKITEM=0x0e76
+PACKITEM=listobject9,3
+}
 
-[BESTSKILL 26] 
-{ // MAGIC RESISTANCE 
-} 
+// Resisting Spells.
+[BESTSKILL 26]
+{
+}
 
-[BESTSKILL 27] 
-{ // TACTICS 
-} 
+// Tactics.
+[BESTSKILL 27]
+{
+}
 
-[BESTSKILL 28] 
-{ // SNOOPING 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-} 
+// Snooping.
+[BESTSKILL 28]
+{
+PACKITEM=0x14FB,20
+}
 
-[BESTSKILL 29] 
-{ // MUSICIANSHIP 
-PACKITEM=0x0e9d 
-} 
+// Musicianship.
+[BESTSKILL 29]
+{
+PACKITEM=listobject6
+}
 
-[BESTSKILL 30] 
-{ // POISONING 
-PACKITEM=0x0f0a 
-PACKITEM=0x0f0a 
-} 
+// Poisoning.
+[BESTSKILL 30]
+{
+PACKITEM=0x0F0A,2
+}
 
-[BESTSKILL 31] 
-{ // ARCHERY 
-PACKITEM=0x13b2 
-PACKITEM=0x0f3f 
-} 
+// Archery.
+[BESTSKILL 31]
+{
+EQUIPITEM=0x13b1
+PACKITEM=0x0f3f,25
+}
 
-[BESTSKILL 32] 
-{ // SPIRIT SPEAK 
-} 
+// Spirit Speak.
+[BESTSKILL 32]
+{
+EQUIPITEM=0x1515
+}
 
-[BESTSKILL 33] 
-{ // STEALING 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-PACKITEM=0x14fb 
-} 
+// Stealing.
+[BESTSKILL 33]
+{
+PACKITEM=0x14FB,20
+}
 
-[BESTSKILL 34] 
-{ // TAILORING 
-PACKITEM=0x0f9d 
-PACKITEM=0x175d 
-PACKITEM=0x175d 
-PACKITEM=0x175d 
-PACKITEM=0x175d 
-} 
+// Tailoring.
+[BESTSKILL 34]
+{
+PACKITEM=0x0F95
+PACKITEM=0x0f9d
+PACKITEM=0x0f9e
+}
 
-[BESTSKILL 35] 
-{ // TAMING 
-PACKITEM=0x0e81 
-} 
+// Animal Taming.
+[BESTSKILL 35]
+{
+EQUIPITEM=0x13f5
+}
 
-[BESTSKILL 36] 
-{ // TASTE IDENTFICATION 
-PACKITEM=0x0f06 
-PACKITEM=0x0f07 
-PACKITEM=0x0f09 
-} 
+// Taste Identification.
+[BESTSKILL 36]
+{
+PACKITEM=0x0F0D,3
+}
 
-[BESTSKILL 37] 
-{ // TINKERING 
-PACKITEM=0x1055 
-PACKITEM=0x1059 
-PACKITEM=0x1ebc 
-} 
+// Tinkering.
+[BESTSKILL 37]
+{
+PACKITEM=0x1eb8
+PACKITEM=0x1051
+}
 
-[BESTSKILL 38] 
-{ // TRACKING 
-PACKITEM=0x0ec4 
-} 
+// Tracking.
+[BESTSKILL 38]
+{
+EQUIPITEM=0x170b
+EQUIPITEM=0x0ec4
+}
 
-[BESTSKILL 39] 
-{ // VETERINARY 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0e21 
-PACKITEM=0x0f9e 
-} 
+// Veterinary.
+[BESTSKILL 39]
+{
+PACKITEM=0x0E21,5
+PACKITEM=0x0f9e
+}
 
-[BESTSKILL 40] 
-{ // SWORDSMANSHIP 
-PACKITEM=0x13b8 
-} 
+// Swordsmanship.
+[BESTSKILL 40]
+{
+EQUIPITEM=0x13fe
+}
 
-[BESTSKILL 41] 
-{ // MACEFIGHTING 
-PACKITEM=0x0f5c 
-} 
+// Macefighting.
+[BESTSKILL 41]
+{
+PACKITEM=0x13b3
+}
 
-[BESTSKILL 42] 
-{ // FENCING 
-PACKITEM=0x0f62 
-} 
+// Fencing.
+[BESTSKILL 42]
+{
+PACKITEM=0x1400
+}
 
-[BESTSKILL 43] 
-{ // WRESTLING 
-PACKITEM=0x13ce 
-} 
+// Wrestling.
+[BESTSKILL 43]
+{
+EQUIPITEM=0x13c6
+}
 
-[BESTSKILL 44] 
-{ // LUMBERJACKING 
-PACKITEM=0x0f43 
-PACKITEM=0x1be0 
-PACKITEM=0x1be0 
-} 
+// Lumberjacking.
+[BESTSKILL 44]
+{
+PACKITEM=0x0f43
+}
 
-[BESTSKILL 45] 
-{ // MINING 
-PACKITEM=0x0e85 
-PACKITEM=0x0f39 
-} 
+// Mining.
+[BESTSKILL 45]
+{
+PACKITEM=0x0e85
+}
 
-[BESTSKILL 46] 
-{ // LEAVE BLANK 
-} 
+// Leave Empty
+[BESTSKILL 46]
+{
+}
 
-[DEFAULT] 
-{ // THIS GOES TO ALL NEWBIES DESPITE SKILL 
-PACKITEM=0x13d3 
-PACKITEM=0x1f0b 
-PACKITEM=0x103c 
-PACKITEM=0x103c 
-PACKITEM=0x0ff1 
-PACKITEM=0x0a0f 
-} 
-EOF 
+// Is granted to all players, despite skill.
+[DEFAULT]
+{
+PACKITEM=0x0fef
+PACKITEM=0x0a0f
+EQUIPITEM=0x0f51
+}
