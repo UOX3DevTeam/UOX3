@@ -91,8 +91,11 @@ void HandleGuardAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) )
 				{
-					if( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC ||
-						tempChar->IsCriminal() || tempChar->IsMurderer() )
+//					if( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC ||
+	//					tempChar->IsCriminal() || tempChar->IsMurderer() )
+					if( ( tempChar->IsCriminal() || tempChar->IsMurderer() ) && ( !tempChar->IsNpc() || 
+						( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC || 
+						tempChar->GetNPCAiType() == aiHEALER_E ) ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
 						mChar.talkAll( 313, true );
