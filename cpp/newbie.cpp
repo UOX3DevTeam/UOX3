@@ -41,7 +41,9 @@ public:
 	int value;
 
 	cSkillClass(int nskill, int nvalue) : skill(nskill), value(nvalue) {}
+
 };
+
 
 bool operator==(const cSkillClass& x, const cSkillClass& y)
 {

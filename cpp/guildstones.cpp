@@ -44,7 +44,6 @@
 void cGuilds::StonePlacement(int s)
 {
 	int stone,guildnumber;
-//	unsigned int k; // lb, msvc++ 5.0 didnt like the guild(int x,inty) ...
 	char stonename[60];
 
 	//Commented out for now -- AntiChrist --
@@ -136,338 +135,349 @@ void cGuilds::StonePlacement(int s)
 // Ofcourse checks for membership before opening any gump ;)
 void cGuilds::Menu(int s, int page)
 {
-	int total,i,stone,guildmaster,counter,guild,recruit,war,member;
+	int total, i, stone, guildmaster, counter, guild, recruit, war, member;
 	int lentext;
 	int gumpnum;
-	char guildfealty[30],guildt[10],toggle[4];
+	char guildfealty[30], guildt[10], toggle[4];
 	char mygump[30][257];
-
-	stone=chars[currchar[s]].fx1;
-	int guildnumber=SearchByStone(s);
-	if ((guilds[guildnumber].stone!=items[stone].serial)&&
+	
+	stone = chars[currchar[s]].fx1;
+	int guildnumber = SearchByStone(s);
+	if ((guilds[guildnumber].stone != items[stone].serial)&&
 		(!(chars[currchar[s]].priv&1)))
 	{
-		itemmessage(s,"You are not a member of this guild. Ask an existing guildmember to invite you into this guild.",items[stone].ser1,items[stone].ser2,items[stone].ser3,items[stone].ser4);
+		itemmessage(s, "You are not a member of this guild. Ask an existing guildmember to invite you into this guild.", items[stone].ser1, items[stone].ser2, items[stone].ser3, items[stone].ser4);
 		return;
 	}
-
-	strcpy(guildfealty,"yourself");
-	if ((chars[currchar[s]].guildfealty!=chars[currchar[s]].serial)&&(chars[currchar[s]].guildfealty!=0))
+	
+	strcpy(guildfealty, "yourself");
+	if ((chars[currchar[s]].guildfealty != chars[currchar[s]].serial) && (chars[currchar[s]].guildfealty != 0))
 	{
-		for (member=1;member<MAXGUILDMEMBERS;member++)
+		for (member = 1; member < MAXGUILDMEMBERS; member++)
 		{
-			if (chars[currchar[s]].guildfealty==guilds[guildnumber].member[member])
+			if (chars[currchar[s]].guildfealty == guilds[guildnumber].member[member])
 			{
 				strcpy(guildfealty, chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
 				break;
 			}
 		}
 	}
-	else chars[currchar[s]].guildfealty=chars[currchar[s]].serial;	
+	else 
+		chars[currchar[s]].guildfealty = chars[currchar[s]].serial;	
 	if (guilds[guildnumber].master == 0) 
 		CalcMaster(guildnumber);
 	guildmaster = calcCharFromSer(guilds[guildnumber].master);
 	switch (guilds[guildnumber].type) 
 	{
-	case 0:		strcpy (guildt, " Standard");	break;
-	case 1:		strcpy (guildt, "n Order");		break;
-	case 2:		strcpy (guildt, " Chaos");		break;
+		case 0:		strcpy(guildt, " Standard");	break;
+		case 1:		strcpy(guildt, "n Order");		break;
+		case 2:		strcpy(guildt, " Chaos");		break;
 	}
 	
 	if (chars[currchar[s]].guildtoggle) 
-		strcpy(toggle,"On");
+		strcpy(toggle, "On");
 	else
-		strcpy(toggle,"Off");
-
+		strcpy(toggle, "Off");
+	
 	switch (page)
 	{
-	case 1:												// This is the 1st page of the stonemenu
-		gumpnum=9;
-		gmprefix[7]=8001>>8;
-		gmprefix[8]=8001%256;
-		if( guildmaster < 0 ) return;   
-		lentext=sprintf(mygump[0], "%s (%s %s)",guilds[guildnumber].name,chars[guildmaster].guildtitle,chars[guildmaster].name);
-		strcpy(mygump[1],"Recruit someone into the guild.");
-		strcpy(mygump[2],"View the current roster.");
-		strcpy(mygump[3],"View the guild's charter.");
-		sprintf(mygump[4],"Declare your fealty. You are currently loyal to %s.",guildfealty);
-		sprintf(mygump[5],"Toggle showing the guild's abbreviation in your name to unguilded people. Currently %s.",toggle);
-		strcpy(mygump[6],"Resign from the guild.");
-		strcpy(mygump[7],"View list of candidates who have been sponsored to the guild.");
-	    if ((chars[currchar[s]].serial==guilds[guildnumber].master)||
-			(chars[currchar[s]].priv&1))							// Guildmaster Access?
-		{															
-			gumpnum=10;
-			gmprefix[7]=8000>>8;
-			gmprefix[8]=8000%256;
-			sprintf(mygump[8],"Access %s functions.",chars[guildmaster].guildtitle);
-			sprintf(mygump[9],"View list of guild that %s has declared war on.",guilds[guildnumber].name);
-			sprintf(mygump[10],"View list of guilds that have declared war on %s.",guilds[guildnumber].name);
-		} else {													// Normal Members access!
-			sprintf(mygump[8],"View list of guilds that %s have declared war on.",guilds[guildnumber].name);
-			sprintf(mygump[9],"View list of guilds that have declared war on %s.",guilds[guildnumber].name);
-		}
-		break;
-	case 2:														// guildmaster menu
-		gumpnum=14;
-		lentext=sprintf(mygump[0], "%s, %s functions",guilds[guildnumber].name,chars[guildmaster].guildtitle);
-		strcpy(mygump[1], "Set the guild name.");
-		strcpy(mygump[2], "Set the guild's abbreviation.");
-		sprintf(mygump[3], "Change the type of the guild. (Currently a%s guild.)",guildt);
-		strcpy(mygump[4], "Set the guild's charter.");
-		strcpy(mygump[5], "Dismiss a member.");
-		strcpy(mygump[6], "Declare war from menu.");
-		strcpy(mygump[7], "Declare war from targeting enemy.");
-		strcpy(mygump[8], "Declare peace.");
-		strcpy(mygump[9], "Accept a candidate seeking membership.");
-		strcpy(mygump[10],"Refuse a candidate seeking membership.");
-		strcpy(mygump[11],"Set the guildmaster's title.");
-		strcpy(mygump[12],"Grant a title to another member.");
-		strcpy(mygump[13],"Move this guildstone.");
-		strcpy(mygump[14],"Return to the main menu.");
-		gmprefix[7]=8002>>8;
-		gmprefix[8]=8002%256;
-		break;
-	case 3:														// guild type
-		gumpnum=4;
-		lentext=sprintf(mygump[0], "Please select the type you want your guild to be related to.");
-		strcpy(mygump[1], "Select this to return to main menu.");
-		strcpy(mygump[2], "Set to Standard.");
-		strcpy(mygump[3], "Set to Order.");
-		strcpy(mygump[4], "Set to Chaos.");
-		gmprefix[7]=8003>>8;
-		gmprefix[8]=8003%256;
-		break;
-	case 4:														// edit charter
-		gumpnum=3;
-		lentext=sprintf(mygump[0], "Set %s charter.",guilds[guildnumber].name);
-		strcpy(mygump[1], "Select this to return to main menu.");
-		strcpy(mygump[2], "Set the charter.");
-		strcpy(mygump[3], "Set the webpage.");
-		gmprefix[7]=8004>>8;
-		gmprefix[8]=8004%256;
-		break;
-	case 5:														// view charter
-		gumpnum=2;
-		lentext=sprintf(mygump[0], "%s charter.",guilds[guildnumber].name);
-		sprintf(mygump[1], "%s. Select this to return to the main menu.",guilds[guildnumber].charter);
-		sprintf(mygump[2], "Visit the guild website at %s",guilds[guildnumber].webpage);
-		gmprefix[7]=8005>>8;
-		gmprefix[8]=8005%256;
-		break;
-	case 6:														// Candidates list
-		gumpnum=guilds[guildnumber].recruits+1;
-		lentext=sprintf(mygump[0], "%s list of candidates.",guilds[guildnumber].name);
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (recruit=1;recruit<MAXGUILDRECRUITS;recruit++)
-		{
-			if (guilds[guildnumber].recruit[recruit]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
+		case 1:												// This is the 1st page of the stonemenu
+			gumpnum = 9;
+			gmprefix[7] = 8001 >> 8;
+			gmprefix[8] = 8001%256;
+			if (guildmaster < 0)
+				return;   
+			lentext = sprintf(mygump[0], "%s (%s %s)", guilds[guildnumber].name, chars[guildmaster].guildtitle, chars[guildmaster].name);
+			strcpy(mygump[1], "Recruit someone into the guild.");
+			strcpy(mygump[2], "View the current roster.");
+			strcpy(mygump[3], "View the guild's charter.");
+			sprintf(mygump[4], "Declare your fealty. You are currently loyal to %s.", guildfealty);
+			sprintf(mygump[5], "Toggle showing the guild's abbreviation in your name to unguilded people. Currently %s.", toggle);
+			strcpy(mygump[6], "Resign from the guild.");
+			strcpy(mygump[7], "View list of candidates who have been sponsored to the guild.");
+			if ((chars[currchar[s]].serial == guilds[guildnumber].master)||
+				(chars[currchar[s]].priv&1))							// Guildmaster Access?
+			{															
+				gumpnum = 10;
+				gmprefix[7] = 8000 >> 8;
+				gmprefix[8] = 8000%256;
+				sprintf(mygump[8], "Access %s functions.", chars[guildmaster].guildtitle);
+				sprintf(mygump[9], "View list of guild that %s has declared war on.", guilds[guildnumber].name);
+				sprintf(mygump[10], "View list of guilds that have declared war on %s.", guilds[guildnumber].name);
 			}
-		}
-		gmprefix[7]=8006>>8;
-		gmprefix[8]=8006%256;
-		break;
-	case 7:														// roster
-		gumpnum=guilds[guildnumber].members+1;
-		lentext=sprintf(mygump[0], "%s members roster.",guilds[guildnumber].name);
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (member=1;member<MAXGUILDMEMBERS;member++)
-		{
-			if (guilds[guildnumber].member[member]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter],chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
+			else 
+			{													// Normal Members access!
+				sprintf(mygump[8], "View list of guilds that %s have declared war on.", guilds[guildnumber].name);
+				sprintf(mygump[9], "View list of guilds that have declared war on %s.", guilds[guildnumber].name);
 			}
-		}
-		gmprefix[7]=8007>>8;
-		gmprefix[8]=8007%256;
-		break;
-	case 8:														// member dismiss
-		gumpnum=guilds[guildnumber].members+1;
-		lentext=sprintf(mygump[0], "Dismiss what member?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (member=1;member<MAXGUILDMEMBERS;member++)
-		{
-			if (guilds[guildnumber].member[member]!=0)
+			break;
+		case 2:														// guildmaster menu
+			gumpnum = 14;
+			lentext = sprintf(mygump[0], "%s, %s functions", guilds[guildnumber].name, chars[guildmaster].guildtitle);
+			strcpy(mygump[1], "Set the guild name.");
+			strcpy(mygump[2], "Set the guild's abbreviation.");
+			sprintf(mygump[3], "Change the type of the guild. (Currently a%s guild.)", guildt);
+			strcpy(mygump[4], "Set the guild's charter.");
+			strcpy(mygump[5], "Dismiss a member.");
+			strcpy(mygump[6], "Declare war from menu.");
+			strcpy(mygump[7], "Declare war from targeting enemy.");
+			strcpy(mygump[8], "Declare peace.");
+			strcpy(mygump[9], "Accept a candidate seeking membership.");
+			strcpy(mygump[10], "Refuse a candidate seeking membership.");
+			strcpy(mygump[11], "Set the guildmaster's title.");
+			strcpy(mygump[12], "Grant a title to another member.");
+			strcpy(mygump[13], "Move this guildstone.");
+			strcpy(mygump[14], "Return to the main menu.");
+			gmprefix[7] = 8002 >> 8;
+			gmprefix[8] = 8002%256;
+			break;
+		case 3:														// guild type
+			gumpnum = 4;
+			lentext = sprintf(mygump[0], "Please select the type you want your guild to be related to.");
+			strcpy(mygump[1], "Select this to return to main menu.");
+			strcpy(mygump[2], "Set to Standard.");
+			strcpy(mygump[3], "Set to Order.");
+			strcpy(mygump[4], "Set to Chaos.");
+			gmprefix[7] = 8003 >> 8;
+			gmprefix[8] = 8003%256;
+			break;
+		case 4:														// edit charter
+			gumpnum = 3;
+			lentext = sprintf(mygump[0], "Set %s charter.", guilds[guildnumber].name);
+			strcpy(mygump[1], "Select this to return to main menu.");
+			strcpy(mygump[2], "Set the charter.");
+			strcpy(mygump[3], "Set the webpage.");
+			gmprefix[7] = 8004 >> 8;
+			gmprefix[8] = 8004%256;
+			break;
+		case 5:														// view charter
+			gumpnum = 2;
+			lentext = sprintf(mygump[0], "%s charter.", guilds[guildnumber].name);
+			sprintf(mygump[1], "%s. Select this to return to the main menu.", guilds[guildnumber].charter);
+			sprintf(mygump[2], "Visit the guild website at %s", guilds[guildnumber].webpage);
+			gmprefix[7] = 8005 >> 8;
+			gmprefix[8] = 8005%256;
+			break;
+		case 6:														// Candidates list
+			gumpnum = guilds[guildnumber].recruits + 1;
+			lentext = sprintf(mygump[0], "%s list of candidates.", guilds[guildnumber].name);
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (recruit = 1; recruit < MAXGUILDRECRUITS; recruit++)
 			{
-				counter++;
-				strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
-			}
-		}
-		gmprefix[7]=8008>>8;
-		gmprefix[8]=8008%256;
-		break;
-	case 9:														// Refuse Candidates
-		gumpnum=guilds[guildnumber].recruits+1;
-		lentext=sprintf(mygump[0], "Refuse what candidate?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (recruit=1;recruit<MAXGUILDRECRUITS;recruit++)
-		{
-			if (guilds[guildnumber].recruit[recruit]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter],chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
-			}
-		}
-		gmprefix[7]=8009>>8;
-		gmprefix[8]=8009%256;
-		break;
-	case 10:														// Accept Candidates
-		gumpnum=guilds[guildnumber].recruits+1;
-		lentext=sprintf(mygump[0], "Accept what candidate?.");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (recruit=1;recruit<MAXGUILDRECRUITS;recruit++)
-		{
-			if (guilds[guildnumber].recruit[recruit]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
-			}
-		}
-		gmprefix[7]=8010>>8;
-		gmprefix[8]=8010%256;
-		break;
-	case 11:														// War list
-		gumpnum=guilds[guildnumber].wars+1;
-		lentext=sprintf(mygump[0], "Guild that %s has declared war on.",guilds[guildnumber].name);
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (war=1;war<MAXGUILDWARS;war++)
-		{
-			if (guilds[guildnumber].war[war]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter], guilds[guilds[guildnumber].war[war]].name);
-			}
-		}
-		gmprefix[7]=8011>>8;
-		gmprefix[8]=8011%256;
-		break;
-	case 12:														// grant title
-		gumpnum=guilds[guildnumber].members+1;
-		lentext=sprintf(mygump[0], "Grant a title to whom?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (member=1;member<MAXGUILDMEMBERS;member++)
-		{
-			if (guilds[guildnumber].member[member]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
-			}
-		}
-		gmprefix[7]=8012>>8;
-		gmprefix[8]=8012%256;
-		break;
-	case 13:														// fealty
-		gumpnum=guilds[guildnumber].members+1;
-		lentext=sprintf(mygump[0], "Whom do you wish to be loyal to?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (member=1;member<MAXGUILDMEMBERS;member++)
-		{
-			if (guilds[guildnumber].member[member]!=0)
-			{
-				counter++;
-				strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
-			}
-		}
-		gmprefix[7]=8013>>8;
-		gmprefix[8]=8013%256;
-		break;
-	case 14:														// declare War list
-		int dummy;
-		gumpnum=1;
-		lentext=sprintf(mygump[0], "What guilds do you with to declare war?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (guild=1;guild<MAXGUILDS;guild++)
-		{
-			if ((guilds[guild].free==0)&&(guildnumber!=guild))
-			{
-				dummy=0;
-				for (war=1;war<MAXGUILDWARS;war++)
+				if (guilds[guildnumber].recruit[recruit] != 0)
 				{
-					if (guilds[guildnumber].war[war]==guild) dummy=1;
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
 				}
-				if (dummy!=1) {counter++;gumpnum++;strcpy(mygump[counter], guilds[guild].name);}
 			}
-		}
-		gmprefix[7]=8014>>8;
-		gmprefix[8]=8014%256;
-		break;
-	case 15:														// declare peace list
-		gumpnum=guilds[guildnumber].wars+1;
-		lentext=sprintf(mygump[0], "What guilds do you with to declare peace?");
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (war=1;war<MAXGUILDWARS;war++)
-		{
-			if (guilds[guildnumber].war[war]!=0)
+			gmprefix[7] = 8006 >> 8;
+			gmprefix[8] = 8006%256;
+			break;
+		case 7:														// roster
+			gumpnum = guilds[guildnumber].members + 1;
+			lentext = sprintf(mygump[0], "%s members roster.", guilds[guildnumber].name);
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (member = 1; member < MAXGUILDMEMBERS; member++)
 			{
-				counter++;
-				strcpy(mygump[counter], guilds[guilds[guildnumber].war[war]].name);
-			}
-		}
-		gmprefix[7]=8015>>8;
-		gmprefix[8]=8015%256;
-		break;
-	case 16:														// War list 2
-		gumpnum=1;
-		lentext=sprintf(mygump[0], "Guilds that have decalred war on %s.",guilds[guildnumber].name);
-		strcpy(mygump[1], "Select this to return to the menu.");
-		counter=1;
-		for (guild=1;guild<MAXGUILDS;guild++)
-		{
-			if (guilds[guild].free==0)
-			{
-				for (war=1;war<MAXGUILDWARS;war++)
+				if (guilds[guildnumber].member[member] != 0)
 				{
-					if (guilds[guild].war[war]==guildnumber)
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
+				}
+			}
+			gmprefix[7] = 8007 >> 8;
+			gmprefix[8] = 8007%256;
+			break;
+		case 8:														// member dismiss
+			gumpnum = guilds[guildnumber].members + 1;
+			lentext = sprintf(mygump[0], "Dismiss what member?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (member = 1; member < MAXGUILDMEMBERS; member++)
+			{
+				if (guilds[guildnumber].member[member] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
+				}
+			}
+			gmprefix[7] = 8008 >> 8;
+			gmprefix[8] = 8008%256;
+			break;
+		case 9:														// Refuse Candidates
+			gumpnum = guilds[guildnumber].recruits + 1;
+			lentext = sprintf(mygump[0], "Refuse what candidate?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (recruit = 1; recruit < MAXGUILDRECRUITS; recruit++)
+			{
+				if (guilds[guildnumber].recruit[recruit] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
+				}
+			}
+			gmprefix[7] = 8009 >> 8;
+			gmprefix[8] = 8009%256;
+			break;
+		case 10:														// Accept Candidates
+			gumpnum = guilds[guildnumber].recruits + 1;
+			lentext = sprintf(mygump[0], "Accept what candidate?.");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (recruit = 1; recruit < MAXGUILDRECRUITS; recruit++)
+			{
+				if (guilds[guildnumber].recruit[recruit] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].recruit[recruit])].name);
+				}
+			}
+			gmprefix[7] = 8010 >> 8;
+			gmprefix[8] = 8010%256;
+			break;
+		case 11:														// War list
+			gumpnum = guilds[guildnumber].wars + 1;
+			lentext = sprintf(mygump[0], "Guild that %s has declared war on.", guilds[guildnumber].name);
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (war = 1; war < MAXGUILDWARS; war++)
+			{
+				if (guilds[guildnumber].war[war] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], guilds[guilds[guildnumber].war[war]].name);
+				}
+			}
+			gmprefix[7] = 8011 >> 8;
+			gmprefix[8] = 8011%256;
+			break;
+		case 12:														// grant title
+			gumpnum = guilds[guildnumber].members + 1;
+			lentext = sprintf(mygump[0], "Grant a title to whom?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (member = 1; member < MAXGUILDMEMBERS; member++)
+			{
+				if (guilds[guildnumber].member[member] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
+				}
+			}
+			gmprefix[7] = 8012 >> 8;
+			gmprefix[8] = 8012%256;
+			break;
+		case 13:														// fealty
+			gumpnum = guilds[guildnumber].members + 1;
+			lentext = sprintf(mygump[0], "Whom do you wish to be loyal to?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (member = 1; member < MAXGUILDMEMBERS; member++)
+			{
+				if (guilds[guildnumber].member[member] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], chars[calcCharFromSer(guilds[guildnumber].member[member])].name);
+				}
+			}
+			gmprefix[7] = 8013 >> 8;
+			gmprefix[8] = 8013%256;
+			break;
+		case 14:														// declare War list
+			int dummy;
+			gumpnum = 1;
+			lentext = sprintf(mygump[0], "What guilds do you with to declare war?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (guild = 1; guild < MAXGUILDS; guild++)
+			{
+				if ((guilds[guild].free == 0) && (guildnumber != guild))
+				{
+					dummy = 0;
+					for (war = 1; war < MAXGUILDWARS; war++)
 					{
-						counter++; gumpnum++;
+						if (guilds[guildnumber].war[war] == guild)
+							dummy = 1;
+					}
+					if (dummy != 1)
+					{
+						counter++;
+						gumpnum++;
 						strcpy(mygump[counter], guilds[guild].name);
 					}
 				}
 			}
-		}
-		gmprefix[7]=8016>>8;
-		gmprefix[8]=8016%256;
-		break;
+			gmprefix[7] = 8014 >> 8;
+			gmprefix[8] = 8014%256;
+			break;
+		case 15:														// declare peace list
+			gumpnum = guilds[guildnumber].wars + 1;
+			lentext = sprintf(mygump[0], "What guilds do you with to declare peace?");
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (war = 1; war < MAXGUILDWARS; war++)
+			{
+				if (guilds[guildnumber].war[war] != 0)
+				{
+					counter++;
+					strcpy(mygump[counter], guilds[guilds[guildnumber].war[war]].name);
+				}
+			}
+			gmprefix[7] = 8015 >> 8;
+			gmprefix[8] = 8015%256;
+			break;
+		case 16:														// War list 2
+			gumpnum = 1;
+			lentext = sprintf(mygump[0], "Guilds that have decalred war on %s.", guilds[guildnumber].name);
+			strcpy(mygump[1], "Select this to return to the menu.");
+			counter = 1;
+			for (guild = 1; guild < MAXGUILDS; guild++)
+			{
+				if (guilds[guild].free == 0)
+				{
+					for (war = 1; war < MAXGUILDWARS; war++)
+					{
+						if (guilds[guild].war[war] == guildnumber)
+						{
+							counter++;
+							gumpnum++;
+							strcpy(mygump[counter], guilds[guild].name);
+						}
+					}
+				}
+			}
+			gmprefix[7] = 8016 >> 8;
+			gmprefix[8] = 8016%256;
+			break;
 	}
 	
-	total=9+1+lentext+1;
-	for (i=1;i<=gumpnum;i++)
+	total = 9 + 1 + lentext + 1;
+	for (i = 1; i <= gumpnum; i++)
 	{
-		total+=4+1+strlen(mygump[i]);
+		total += 4 + 1 + strlen(mygump[i]);
 	}
-	gmprefix[1]=total>>8;
-	gmprefix[2]=total%256;
-	gmprefix[3]=chars[currchar[s]].ser1;
-	gmprefix[4]=chars[currchar[s]].ser2;
-	gmprefix[5]=chars[currchar[s]].ser3;
-	gmprefix[6]=chars[currchar[s]].ser4;
-	Network->xSend(s,gmprefix,9,0);
-	Network->xSend(s,&lentext,1,0);
-	Network->xSend(s,mygump[0],lentext,0);
-	lentext=gumpnum;
-	Network->xSend(s,&lentext,1,0);
-	for (i=1;i<=gumpnum;i++)
+	gmprefix[1] = total >> 8;
+	gmprefix[2] = total%256;
+	gmprefix[3] = chars[currchar[s]].ser1;
+	gmprefix[4] = chars[currchar[s]].ser2;
+	gmprefix[5] = chars[currchar[s]].ser3;
+	gmprefix[6] = chars[currchar[s]].ser4;
+	Network->xSend(s, gmprefix, 9, 0);
+	Network->xSend(s, &lentext, 1, 0);
+	Network->xSend(s, mygump[0], lentext, 0);
+	lentext = gumpnum;
+	Network->xSend(s, &lentext, 1, 0);
+	for (i = 1; i <= gumpnum; i++)
 	{
-		gmmiddle[0]=0;
-		gmmiddle[1]=0;
-		Network->xSend(s,gmmiddle,4,0);
-		lentext=strlen(mygump[i]);
-		Network->xSend(s,&lentext,1,0);
-		Network->xSend(s,mygump[i],lentext,0);
+		gmmiddle[0] = 0;
+		gmmiddle[1] = 0;
+		Network->xSend(s, gmmiddle, 4, 0);
+		lentext = strlen(mygump[i]);
+		Network->xSend(s, &lentext, 1, 0);
+		Network->xSend(s, mygump[i], lentext, 0);
 	}
 	return;
 }
@@ -482,19 +492,19 @@ void cGuilds::Menu(int s, int page)
 // a new guildmaster, if there is a draw then we'll have no master until they change their minds ;)
 void cGuilds::Resign(int s)
 {
-	int guildnumber=chars[currchar[s]].guildnumber;
-
+	int guildnumber = chars[currchar[s]].guildnumber;
+	
 	EraseMember(currchar[s]);
-	sysmessage(s,"You are no longer in that guild.");
-	if ((guilds[guildnumber].master==chars[currchar[s]].serial)&&(guilds[guildnumber].members!=0))
+	sysmessage(s, "You are no longer in that guild.");
+	if ((guilds[guildnumber].master == chars[currchar[s]].serial) && (guilds[guildnumber].members != 0))
 	{
-		guilds[guildnumber].master=0;
+		guilds[guildnumber].master = 0;
 		CalcMaster(guildnumber);
 	}
-	if (guilds[guildnumber].members==0)
+	if (guilds[guildnumber].members == 0)
 	{
 		EraseGuild(guildnumber);
-		sysmessage(s,"You have been the last member of that guild so the stone vanishes.");
+		sysmessage(s, "You have been the last member of that guild so the stone vanishes.");
 	}
 	return;
 }
@@ -507,45 +517,46 @@ void cGuilds::Resign(int s)
 // guilderaseguild() Wipes all information about a guild and removes the guildstone
 void cGuilds::EraseGuild(int guildnumber)
 {
-	int stone=findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX],guilds[guildnumber].stone,0);
-	if (stone==-1) return;
+	int stone = findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX], guilds[guildnumber].stone, 0);
+	if (stone==-1)
+		return;
 	int member, recruit, war;
 	int counter;
-
-	guilds[guildnumber].free=1;
-	strcpy(guilds[guildnumber].name,"");
-	strcpy(guilds[guildnumber].abbreviation,"");
-	guilds[guildnumber].type=0;
-	strcpy(guilds[guildnumber].charter,"");
-	strcpy(guilds[guildnumber].webpage,"");
-	guilds[guildnumber].stone=0;
-	guilds[guildnumber].master=0;
-	guilds[guildnumber].members=0;
-	for (member=1;member<MAXGUILDMEMBERS;member++)
+	
+	guilds[guildnumber].free = 1;
+	guilds[guildnumber].name[0] = 0;
+	guilds[guildnumber].abbreviation[0] = 0;
+	guilds[guildnumber].type = 0;
+	guilds[guildnumber].charter[0] = 0;
+	guilds[guildnumber].webpage[0] = 0;
+	guilds[guildnumber].stone = 0;
+	guilds[guildnumber].master = 0;
+	guilds[guildnumber].members = 0;
+	for (member = 1; member < MAXGUILDMEMBERS; member++)
 	{
-		guilds[guildnumber].member[member]=0;
+		guilds[guildnumber].member[member] = 0;
 	}
-	guilds[guildnumber].recruits=0;
-	for (recruit=1;recruit<MAXGUILDRECRUITS;recruit++)
+	guilds[guildnumber].recruits = 0;
+	for (recruit = 1; recruit < MAXGUILDRECRUITS; recruit++)
 	{
-		guilds[guildnumber].recruit[recruit]=0;
+		guilds[guildnumber].recruit[recruit] = 0;
 	}
-	guilds[guildnumber].wars=0;
-	for (war=1;war<MAXGUILDWARS;war++)
+	guilds[guildnumber].wars = 0;
+	for (war = 1; war < MAXGUILDWARS; war++)
 	{
-		guilds[guildnumber].war[war]=0;
+		guilds[guildnumber].war[war] = 0;
 	}
-	guilds[guildnumber].priv=0;
+	guilds[guildnumber].priv = 0;
 	Items->DeleItem(stone);
-	for (counter=1;counter<MAXGUILDS;counter++)
+	for (counter = 1; counter < MAXGUILDS; counter++)
 	{
-		if (guilds[counter].free==0)
+		if (guilds[counter].free == 0)
 		{
-			for (war=1;war<MAXGUILDWARS;war++)
+			for (war = 1; war < MAXGUILDWARS; war++)
 			{
-				if (guilds[counter].war[war]==guildnumber)
+				if (guilds[counter].war[war] == guildnumber)
 				{
-					guilds[counter].war[war]=0;
+					guilds[counter].war[war] = 0;
 					guilds[counter].wars--;
 				}
 			}
@@ -557,20 +568,20 @@ void cGuilds::EraseGuild(int guildnumber)
 // guilderasemember() Wipes all guild related data from a player
 void cGuilds::EraseMember(int c)
 {
-	int guildnumber=chars[c].guildnumber;
+	int guildnumber = chars[c].guildnumber;
 	int member;
-
-	if (guildnumber!=0)
+	
+	if (guildnumber != 0)
 	{
-		for (member=1;member<MAXGUILDMEMBERS;member++)
+		for (member = 1; member < MAXGUILDMEMBERS; member++)
 		{
-			if (guilds[guildnumber].member[member]==chars[c].serial)
+			if (guilds[guildnumber].member[member] == chars[c].serial)
 			{
-				guilds[guildnumber].member[member]=0;
+				guilds[guildnumber].member[member] = 0;
 				guilds[guildnumber].members--;
-				chars[c].guildnumber=0;
-				chars[c].guildtoggle=0;
-				chars[c].guildfealty=0;
+				chars[c].guildnumber = 0;
+				chars[c].guildtoggle = 0;
+				chars[c].guildfealty = 0;
 				chars[c].guildtitle[0] = '\0';
 				return;
 			}
@@ -586,27 +597,27 @@ void cGuilds::EraseMember(int c)
 // Informs player about his change
 void cGuilds::ToggleAbbreviation(int s)
 {
-	int guildnumber=chars[currchar[s]].guildnumber;
-
-	if (guilds[guildnumber].type!=0)							// Check for Order/Chaos
+	int guildnumber = chars[currchar[s]].guildnumber;
+	
+	if (guilds[guildnumber].type != 0)							// Check for Order/Chaos
 	{
-		sysmessage(s,"You are in an Order/Chaos guild, you cannot toggle your title.");
-																// They may not toggle it off!
+		sysmessage(s, "You are in an Order/Chaos guild, you cannot toggle your title.");
+		// They may not toggle it off!
 	}
 	else
 	{
-		if (chars[currchar[s]].guildtoggle==0)					// If set to Off then
+		if (chars[currchar[s]].guildtoggle == 0)					// If set to Off then
 		{
-			chars[currchar[s]].guildtoggle=1;					// Turn it On
-			sysmessage(s,"You toggled your abbreviation on.");	// Tell player about the change
+			chars[currchar[s]].guildtoggle = 1;					// Turn it On
+			sysmessage(s, "You toggled your abbreviation on.");	// Tell player about the change
 		}
 		else													// Otherwise
 		{
-			chars[currchar[s]].guildtoggle=0;					// Turn if Off
-			sysmessage(s,"You toggled your abbreviation off.");	// And tell him also
+			chars[currchar[s]].guildtoggle = 0;					// Turn if Off
+			sysmessage(s, "You toggled your abbreviation off.");	// And tell him also
 		}
 	}
-	Menu(s,1);										// Send him back to the menu
+	Menu(s, 1);										// Send him back to the menu
 	return;
 }
 
@@ -620,39 +631,45 @@ void cGuilds::ToggleAbbreviation(int s)
 void cGuilds::Recruit(int s)
 {
 	int i, slot, dummy;
-	int guildnumber=SearchByStone(s);
-
-	if(buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return; // check if user canceled operation - Morrolan
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if(i!=-1)
+	int guildnumber = SearchByStone(s);
+	
+	if (buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF)
+		return; // check if user canceled operation - Morrolan
+	int serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	if (i!=-1)
 	{
-			if (chars[i].guildnumber!=0) sysmessage(s,"This person is allready in a guild.");
-			else 
+		if (chars[i].guildnumber != 0)
+			sysmessage(s, "This person is allready in a guild.");
+		else 
+		{
+			if (!(chars[i].npc))
 			{
-				if (!(chars[i].npc))
+				slot = SearchSlot(guildnumber, 3);
+				for (dummy = 1; dummy < MAXGUILDRECRUITS; dummy++)
 				{
-					slot=SearchSlot(guildnumber,3);
-					for (dummy=1;dummy<MAXGUILDRECRUITS;dummy++)
-					{
-						if (guilds[guildnumber].recruit[dummy]==chars[i].serial) slot=0;
-					}
-					if ((slot!=-1)&&(slot!=0))
-					{
-						guilds[guildnumber].recruits++;
-						guilds[guildnumber].recruit[slot]=chars[i].serial;
-					}
-					else
-					{
-						if (slot==-1) sysmessage(s,"No more recruit slots free.");
-						if (slot==0) sysmessage(s,"This being is allready a candidate.");
-					}
-				} else sysmessage(s,"This is not a player.");
-			}
-			//break;
+					if (guilds[guildnumber].recruit[dummy] == chars[i].serial)
+						slot = 0;
+				}
+				if ((slot!=-1) && (slot != 0))
+				{
+					guilds[guildnumber].recruits++;
+					guilds[guildnumber].recruit[slot] = chars[i].serial;
+				}
+				else
+				{
+					if (slot==-1)
+						sysmessage(s, "No more recruit slots free.");
+					if (slot == 0)
+						sysmessage(s, "This being is allready a candidate.");
+				}
+			} else 
+				sysmessage(s, "This is not a player.");
+		}
+		// break;
 		//} for
 	}
-	Menu(s,1);
+	Menu(s, 1);
 	return;
 }
 
@@ -665,44 +682,51 @@ void cGuilds::Recruit(int s)
 void cGuilds::TargetWar(int s)
 {
 	int i, slot, dummy;
-	int guildnumber=SearchByStone(s);
-	char text [200];
-
-	if(buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) return; // check if user canceled operation - Morrolan
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&charsp[serial%HASHMAX],serial,1);
-	if(i!=-1)
+	int guildnumber = SearchByStone(s);
+	char text[200];
+	
+	if (buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF)
+		return; // check if user canceled operation - Morrolan
+	int serial = calcserial(buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10]);
+	i = findbyserial(&charsp[serial%HASHMAX], serial, 1);
+	if (i!=-1)
 	{
-			if (chars[i].guildnumber==0) sysmessage(s,"This person is not in a guild.");
-			else if (chars[i].guildnumber==guildnumber) sysmessage(s,"War yourself? Nah.");
-			else 
+		if (chars[i].guildnumber == 0)
+			sysmessage(s, "This person is not in a guild.");
+		else if (chars[i].guildnumber == guildnumber)
+			sysmessage(s, "War yourself? Nah.");
+		else 
+		{
+			if (!(chars[i].npc))
 			{
-				if (!(chars[i].npc))
+				slot = SearchSlot(guildnumber, 4);
+				for (dummy = 1; dummy < MAXGUILDWARS; dummy++)
 				{
-					slot=SearchSlot(guildnumber,4);
-					for (dummy=1;dummy<MAXGUILDWARS;dummy++)
-					{
-						if (guilds[guildnumber].war[dummy]==chars[i].guildnumber) slot=0;
-					}
-					if ((slot!=-1)&&(slot!=0))
-					{
-						guilds[guildnumber].wars++;
-						guilds[guildnumber].war[slot]=chars[i].guildnumber;
-						sprintf(text,"%s declared war to %s",guilds[guildnumber].name,guilds[chars[i].guildnumber].name);
-						Broadcast(guildnumber,text);
-					}
-					else
-					{
-						if (slot==-1) sysmessage(s,"No more war slots free.");
-						if (slot==0) sysmessage(s,"This guild is allready in our warlist.");
-					}
+					if (guilds[guildnumber].war[dummy] == chars[i].guildnumber)
+						slot = 0;
 				}
-				else sysmessage(s,"This is not a player.");
+				if ((slot!=-1) && (slot != 0))
+				{
+					guilds[guildnumber].wars++;
+					guilds[guildnumber].war[slot] = chars[i].guildnumber;
+					sprintf(text, "%s declared war to %s", guilds[guildnumber].name, guilds[chars[i].guildnumber].name);
+					Broadcast(guildnumber, text);
+				}
+				else
+				{
+					if (slot==-1)
+						sysmessage(s, "No more war slots free.");
+					if (slot == 0)
+						sysmessage(s, "This guild is allready in our warlist.");
+				}
 			}
-			//break;
+			else 
+				sysmessage(s, "This is not a player.");
+		}
+		// break;
 		//} for
 	}
-	Menu(s,2);
+	Menu(s, 2);
 	return;
 }
 
@@ -716,21 +740,23 @@ void cGuilds::TargetWar(int s)
 // teleporterstone id 0x1869
 void cGuilds::StoneMove(int s)
 {
-	int guildnumber=SearchByStone(s);
-	int stone=findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX],guilds[guildnumber].stone,0);
-	if (stone==-1) return;
-															// Get stone
+	int guildnumber = SearchByStone(s);
+	int stone = findbyserial(&itemsp[guilds[guildnumber].stone%HASHMAX], guilds[guildnumber].stone, 0);
+	if (stone==-1)
+		return;
+	// Get stone
 	int newstone;											// For the new stone
 	char stonename[80];										// And for its name
-
-	sprintf(stonename,"a guildstone teleporter for %s",guilds[guildnumber].name);
-															// Give it a name
-	newstone=Items->SpawnItem(s,1,stonename,0,0x18,0x69,0,0,1,1);	// Spawn the stone in the masters backpack
-	if( newstone == -1 ) return;
-	items[newstone].type=202;								// Set Guildstone to Type 'Guild Related'
-	guilds[guildnumber].stone=items[newstone].serial;		// Remember its serial number
+	
+	sprintf(stonename, "a guildstone teleporter for %s", guilds[guildnumber].name); // Give it a name
+	
+	newstone = Items->SpawnItem(s, 1, stonename, 0, 0x18, 0x69, 0, 0, 1, 1);	// Spawn the stone in the masters backpack
+	if (newstone == -1)
+		return;
+	items[newstone].type = 202;								// Set Guildstone to Type 'Guild Related'
+	guilds[guildnumber].stone = items[newstone].serial;		// Remember its serial number
 	Items->DeleItem(stone);										// Remove the guildstone
-	sysmessage(s,"Take care of that stone!");				// And tell him also
+	sysmessage(s, "Take care of that stone!");				// And tell him also
 	return;													// Bye bye
 }
 
@@ -747,23 +773,26 @@ void cGuilds::StoneMove(int s)
 int cGuilds::Compare(int player1, int player2)
 {
 	int counter;
-	if (player1<0 || player2<0)
+	if (player1<0 || player2 < 0)
 		return 0;
-	int guildnumber=chars[player1].guildnumber;
-
-	if ((chars[player2].guildnumber!=0)&&(chars[player1].guildnumber!=0))
+	int guildnumber = chars[player1].guildnumber;
+	
+	if (chars[player2].guildnumber != 0 && chars[player1].guildnumber != 0)
 	{
-		if (guildnumber==chars[player2].guildnumber) {return 1;}
-		if (((guilds[guildnumber].type==1)&&(guilds[chars[player2].guildnumber].type==2))||
-			((guilds[guildnumber].type==2)&&(guilds[chars[player2].guildnumber].type==1)))
-		{return 2;}
-		for (counter=1;counter<MAXGUILDWARS;counter++)
+		if (guildnumber == chars[player2].guildnumber)
 		{
-			if (guilds[guildnumber].war[counter]==chars[player2].guildnumber)
+			return 1;
+		}
+		if ((guilds[guildnumber].type == 1 && guilds[chars[player2].guildnumber].type == 2)||
+			(guilds[guildnumber].type == 2 && guilds[chars[player2].guildnumber].type == 1))
+			return 2;
+		for (counter = 1; counter < MAXGUILDWARS; counter++)
+		{
+			if (guilds[guildnumber].war[counter] == chars[player2].guildnumber)
 			{
-				for (counter=1;counter<MAXGUILDWARS;counter++)
+				for (counter = 1; counter < MAXGUILDWARS; counter++)
 				{
-					if (guilds[chars[player2].guildnumber].war[counter]==guildnumber)
+					if (guilds[chars[player2].guildnumber].war[counter] == guildnumber)
 					{return 2;}
 				}
 			}
@@ -1056,7 +1085,7 @@ void cGuilds::ChangeName(int s, char *text)
 	{
 		if (!strcmp(text,guilds[guild].name)) exists=1;
 	}
-	if (exists==0)
+	if (exists == 0)
 	{
 		strcpy(guilds[guildnumber].name,text);
 		sprintf(items[stone].name,"Guildstone for %s",guilds[guildnumber].name);
@@ -1083,13 +1112,14 @@ void cGuilds::ChangeAbbreviation(int s, char *text)
 	{
 		if (!(strcmp(text,guilds[guild].abbreviation))) exists=1;
 	}
-	if (exists==0)
+	if (exists == 0)
 	{
 		strcpy(guilds[guildnumber].abbreviation,text);
 		sprintf(txt,"Your guild has now the abbreviation: %s",guilds[guildnumber].abbreviation);
 		Broadcast(guildnumber,txt);
 	}
-	else sysmessage(s,"This abbreviation is allready taken by another guild.");
+	else 
+		sysmessage(s,"This abbreviation is allready taken by another guild.");
 	Menu(s,2);
 }
 
@@ -1188,13 +1218,14 @@ void cGuilds::Broadcast(int guildnumber, char *text)
 {
 	int member, c, s;
 
-	for (member=1;member<MAXGUILDMEMBERS;member++)
+	for (member = 1; member < MAXGUILDMEMBERS; member++)
 	{
-		if (guilds[guildnumber].member[member]!=0)
+		if (guilds[guildnumber].member[member] != 0)
 		{
-			c=calcCharFromSer(guilds[guildnumber].member[member]);
-			s=calcSocketFromChar(c);
-			if (online(c)) sysmessage(s,text);
+			c = calcCharFromSer(guilds[guildnumber].member[member]);
+			s = calcSocketFromChar(c);
+			if (online(c)) 
+				sysmessage(s,text);
 		}
 	}
 }
@@ -1208,13 +1239,13 @@ void cGuilds::Broadcast(int guildnumber, char *text)
 int cGuilds::SearchByStone(int s)
 {
 	int guildnumber;
-	int stone=items[chars[currchar[s]].fx1].serial;
+	int stone = items[chars[currchar[s]].fx1].serial;
 
 	if (chars[currchar[s]].priv&1)
 	{
-		for (guildnumber=1;guildnumber<MAXGUILDS;guildnumber++)
+		for (guildnumber = 1; guildnumber < MAXGUILDS; guildnumber++)
 		{
-			if (guilds[guildnumber].stone==stone) 
+			if (guilds[guildnumber].stone == stone) 
 			{
 				return guildnumber;
 			}
@@ -1279,20 +1310,25 @@ void cGuilds::CalcMaster(int guildnumber)
 	int guildmember[MAXGUILDMEMBERS]={0};
 	int currentmember, currentfealty, currenthighest=0, draw=0;
 
-	for (member=1;member<MAXGUILDMEMBERS;member++)
+	for (member = 1;member < MAXGUILDMEMBERS; member++)
 	{
 		currentmember=calcCharFromSer(guilds[guildnumber].member[member]);
 		currentfealty=chars[currentmember].guildfealty;
-		for (member2=1;member2<MAXGUILDMEMBERS;member2++)
+		for (member2 = 1; member2 < MAXGUILDMEMBERS; member2++)
 		{
-			if ((guilds[guildnumber].member[member2]==currentfealty)&&(currentfealty!=0))
+			if (guilds[guildnumber].member[member2] == currentfealty && currentfealty != 0)
 				guildmember[member2]++;
 		}
 	}
-	for (member=1;member<MAXGUILDMEMBERS;member++)
+	for (member = 1; member < MAXGUILDMEMBERS; member++)
 	{
-		if (guildmember[member]>guildmember[currenthighest]) {draw=0;currenthighest=member;}
-		else if (guildmember[member]==guildmember[currenthighest]) draw=1;
+		if (guildmember[member] > guildmember[currenthighest]) 
+		{
+			draw = 0;
+			currenthighest = member;
+		}
+		else if (guildmember[member] == guildmember[currenthighest]) 
+			draw=1;
 	}
 	if (draw==0) guilds[guildnumber].master=guilds[guildnumber].member[currenthighest];
 	return;
@@ -1310,33 +1346,33 @@ cGuilds::~cGuilds()
 cGuilds::cGuilds(void)
 {
 	int guildnumber, member, recruit, war;
-
-	for (guildnumber=1;guildnumber<MAXGUILDS;guildnumber++)
+	
+	for (guildnumber = 1; guildnumber < MAXGUILDS; guildnumber++)
 	{
-		guilds[guildnumber].free=1;
-		strcpy(guilds[guildnumber].name,"");
-		strcpy(guilds[guildnumber].abbreviation,"");
-		guilds[guildnumber].type=0;
-		strcpy(guilds[guildnumber].charter,"");
-		strcpy(guilds[guildnumber].webpage,"");
-		guilds[guildnumber].stone=0;
-		guilds[guildnumber].master=0;
-		guilds[guildnumber].members=0;
-		for (member=1;member<MAXGUILDMEMBERS;member++)
+		guilds[guildnumber].free = 1;
+		guilds[guildnumber].name[0] = 0;
+		guilds[guildnumber].abbreviation[0] = 0;
+		guilds[guildnumber].type = 0;
+		guilds[guildnumber].charter[0] = 0;
+		guilds[guildnumber].webpage[0] = 0;
+		guilds[guildnumber].stone = 0;
+		guilds[guildnumber].master = 0;
+		guilds[guildnumber].members = 0;
+		for (member = 1; member < MAXGUILDMEMBERS; member++)
 		{
-			guilds[guildnumber].member[member]=0;
+			guilds[guildnumber].member[member] = 0;
 		}
-		guilds[guildnumber].recruits=0;
-		for (recruit=1;recruit<MAXGUILDRECRUITS;recruit++)
+		guilds[guildnumber].recruits = 0;
+		for (recruit = 1; recruit < MAXGUILDRECRUITS; recruit++)
 		{
-			guilds[guildnumber].recruit[recruit]=0;
+			guilds[guildnumber].recruit[recruit] = 0;
 		}
-		guilds[guildnumber].wars=0;
-		for (war=1;war<MAXGUILDWARS;war++)
+		guilds[guildnumber].wars = 0;
+		for (war = 1; war < MAXGUILDWARS; war++)
 		{
-			guilds[guildnumber].war[war]=0;
+			guilds[guildnumber].war[war] = 0;
 		}
-		guilds[guildnumber].priv=0;
+		guilds[guildnumber].priv = 0;
 	}
 }
 
@@ -1354,32 +1390,33 @@ void cGuilds::Title(int s,int player2)
 
 	if ((chars[player2].guildnumber!=0)&&(chars[player2].guildtoggle==1))
 	{
-		strcpy(abbreviation,guilds[chars[player2].guildnumber].abbreviation);
+		strcpy(abbreviation, guilds[chars[player2].guildnumber].abbreviation);
 		if (!(strcmp(abbreviation,""))) strcpy(abbreviation,"none");
 		if (guilds[chars[player2].guildnumber].type!=0)
 		{
-			if (guilds[chars[player2].guildnumber].type==1) strcpy(guildtype,"Order");
-			if (guilds[chars[player2].guildnumber].type==2) strcpy(guildtype,"Chaos");
+			if (guilds[chars[player2].guildnumber].type == 1) strcpy(guildtype,"Order");
+			else if (guilds[chars[player2].guildnumber].type == 2) strcpy(guildtype,"Chaos");
 			if (strcmp(chars[player2].guildtitle,"")) 
-				sprintf(title,"[%s, %s] [%s]",chars[player2].guildtitle,abbreviation,guildtype);
-			else sprintf(title,"[%s] [%s]",abbreviation,guildtype);
+				sprintf(title,"[%s, %s] [%s]",chars[player2].guildtitle, abbreviation,guildtype);
+			else sprintf(title,"[%s] [%s]", abbreviation, guildtype);
 		}
 		else
 		{
 			if (strcmp(chars[player2].guildtitle,""))
 				sprintf(title,"[%s, %s]",chars[player2].guildtitle,abbreviation);
-			else sprintf(title,"[%s]",abbreviation);
+			else 
+				sprintf(title,"[%s]", abbreviation);
 		}
-		tl=44+strlen(title)+1;
-		talk[1]=tl>>8;
-		talk[2]=tl%256;
-		talk[3]=chars[player2].ser1;
-		talk[4]=chars[player2].ser2;
-		talk[5]=chars[player2].ser3;
-		talk[6]=chars[player2].ser4;
-		talk[7]=1;
-		talk[8]=1;
-		talk[9]=0;
+		tl = 44 + strlen(title) + 1;
+		talk[1] = tl>>8;
+		talk[2] = tl%256;
+		talk[3] = chars[player2].ser1;
+		talk[4] = chars[player2].ser2;
+		talk[5] = chars[player2].ser3;
+		talk[6] = chars[player2].ser4;
+		talk[7] = 1;
+		talk[8] = 1;
+		talk[9] = 0;
 		talk[10]=chars[player2].emotecolor1;
 		talk[11]=chars[player2].emotecolor2;
 		talk[12]=0;
@@ -1399,7 +1436,7 @@ void cGuilds::Title(int s,int player2)
 // Called by: loadnewworld()
 void cGuilds::Read(int guildnumber)
 {
-	int war=1, member=1, recruit=1;
+	int war = 1, member = 1, recruit = 1;
 	do
 	{
 		readw2();
@@ -1460,9 +1497,9 @@ void cGuilds::Write( FILE *wscfile )
 				}
 			}
 			fprintf(wscfile,"WARS %i\n", guilds[guildnumber].wars);
-			for (war=1;war<MAXGUILDWARS;war++)
+			for (war = 1; war < MAXGUILDWARS; war++)
 			{
-				if (guilds[guildnumber].war[war]!=0)
+				if (guilds[guildnumber].war[war] != 0)
 				{
 					fprintf(wscfile,"WAR %i\n", guilds[guildnumber].war[war]);
 				}

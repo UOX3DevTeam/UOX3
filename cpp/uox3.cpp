@@ -9000,7 +9000,6 @@ int __cdecl main(int argc, char *argv[])
 			default: usleep(10000); break;
 			}
 #endif
-#endif
 			
 			if(loopTimeCount >= 1000)       {
 				loopTimeCount = 0;
