@@ -10012,7 +10012,6 @@ int main(int argc, char *argv[])
 		printf("Starting UOX3...\n");
 		
 		openings=0;
-		//	Network->UDPInit();		// shouldn't go here Tseramed... Network still null.. and not currently used either
 #ifdef __NT__
 		constart();
 		sprintf(temp, "%s v%s Build %s", PRODUCT, VER, BUILD );
@@ -10620,7 +10619,6 @@ int main(int argc, char *argv[])
 			if( uiNextCheckConn<=uiCurrentTime || overflow) // Cut lag on CheckConn by not doing it EVERY loop.
 			{
 				Network->CheckConn();
-				Network->UDPCheckConn();
 				uiNextCheckConn = (unsigned int)( uiCurrentTime + ( double )( 3 * CLOCKS_PER_SEC ) );
 			}
 			Network->CheckMessage();

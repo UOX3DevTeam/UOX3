@@ -945,7 +945,7 @@ void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
 	if(boat==-1) return;//if they aren't on a boat, then we don't care what they said
 	int dir=items[boat].dir&0x0F;
 	int serial, tiller;
-	char /*msg2[512],*/msg[512];
+	char /*msg2[512],*/msg[128]; //No one can type more than 80 chars in UO Client
 	
 	strcpy( msg, (char *)talk );
 	if (s<0 || s>=MAXCLIENT) return;

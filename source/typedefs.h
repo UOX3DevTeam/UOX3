@@ -208,7 +208,6 @@ typedef vector< string *>	stringList;
 #define VERFILE_ANIMDATA 0x1F
 #define TILEDATA_TILES 0x68800
 //#define UOX_PORT 2593
-#define UDP_PORT 1234
 #define REGENRATE1 8 // Seconds to heal ONE hp
 #define REGENRATE2 3 // Seconds to heal ONE stm
 #define REGENRATE3 5 // Seconds to heal ONE mn

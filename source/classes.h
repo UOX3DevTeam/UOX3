@@ -659,8 +659,6 @@ public:
 	void SockClose();
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
-	void UDPInit( void );
-	void UDPCheckConn( void ); // Check for connection requests
 private:
 	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);

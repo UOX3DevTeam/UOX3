@@ -370,10 +370,6 @@ extern fd_set conn;
 extern fd_set all;
 extern fd_set errsock;
 extern int nfds;
-extern fd_set UDPconn;
-extern fd_set UDPall;
-extern fd_set UDPerrsock;
-extern int UDPnfds;
 
 extern timeval uoxtimeout;
 extern unsigned int now;
@@ -1002,9 +998,7 @@ extern int *clickx;
 extern int *clicky;
 extern int *currentSpellType; // 0=spellcast, 1=scrollcast, 2=wand cast
 extern char *targetok;
-extern int UDPsock;
 extern int lenConnAddr;
-extern sockaddr_in connUDP;
 
 extern int escortRegions;
 extern int validEscortRegion[256];

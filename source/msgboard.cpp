@@ -221,7 +221,7 @@ void MsgBoardOpen(int s)
 	
 	
 	// GLOBAL post file
-	sprintf( fileName1, "global.bbi" );
+	strcpy( fileName1, "global.bbi" );
 	
 	// REGIONAL post file
 	//sprintf( fileName2, "region%s.bbi", region[calcRegionFromXY(items[msgBoardSerial].x, items[msgBoardSerial].y)].name );
@@ -389,7 +389,7 @@ void MsgBoardList( int s )
 	boardSN = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
 	
 	// GLOBAL post file
-	sprintf( fileName1, "global.bbp" );
+	strcpy( fileName1, "global.bbp" );
 	
 	// REGIONAL post file
 	// sprintf( fileName2, "%s.bbp", region[calcRegionFromXY(items[boardSN].x, items[boardSN].y)].name );
@@ -620,7 +620,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		// GLOBAL POST
 	case GLOBALPOST:
-		sprintf( temp, "global.bbi" );
+		strcpy ( temp, "global.bbi" );
 		break;
 		
 		// Invalid post type
@@ -970,7 +970,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 		
 		// GLOBAL POST
 	case GLOBALPOST:
-		sprintf( temp, "global.bbp" );
+		strcpy ( temp, "global.bbp" );
 		break;
 		
 		// Invalid post type
@@ -1433,7 +1433,7 @@ void MsgBoardRemovePost( int s )
 	case 0x01:
 		{
 			// GLOBAL post file
-			sprintf( temp, "global.bbi" );
+			strcpy ( temp, "global.bbi" );
 			break;
 		}
 		

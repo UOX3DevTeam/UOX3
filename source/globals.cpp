@@ -158,14 +158,9 @@ int server[MAXCLIENT];
 fd_set conn;
 fd_set all;
 fd_set errsock;
-fd_set UDPconn;
-fd_set UDPall;
-fd_set UDPerrsock;
 int nfds;
-int UDPnfds;
 timeval uoxtimeout;
 unsigned int now;
-unsigned int UDPnow;
 int newclient[MAXCLIENT];
 unsigned char buffer[MAXCLIENT][MAXBUFFER];
 unsigned char outbuffer[MAXCLIENT][MAXBUFFER];
@@ -386,9 +381,7 @@ char *strupr(char *str) {
 }
 #endif
 char da;
-int UDPsock;
 int lenConnAddr;
-sockaddr_in connUDP;
 unsigned int showloggedoutpcs;
 
 //-=-=-=-=-=-=-Classes Definitions=-=-=-=-=-=//
