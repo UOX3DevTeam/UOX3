@@ -9,8 +9,12 @@ private:
 	std::vector< commandLevel_st *> clearance;
 	void InitClearance( void );
 	CmdTableIterator	cmdPointer;
+	SI32				tnum;			// Amount of arguments in a command
 
 public:
+	SI32			GetNumArguments( void );
+	void			SetNumArguments( SI32 newVal );
+
 	commandLevel_st *GetClearance( const char *clearName );			// return by command name
 	commandLevel_st *GetClearance( UI08 commandLevel );	// return by command level
 	UI16			GetColourByLevel( UI08 commandLevel );

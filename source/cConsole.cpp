@@ -20,15 +20,6 @@ const UI08 WARNINGMODE = 1;
 const UI08 ERRORMODE = 2;
 const UI08 COLOURMODE = 3;
 
-/*
-const UI08 CNORMAL	= 0;
-const UI08 CBLUE	= 1;
-const UI08 CRED		= 2;
-const UI08 CGREEN	= 3;
-const UI08 CYELLOW	= 4;
-const UI08 CBWHITE	= 5;
-*/ 
-
 //o---------------------------------------------------------------------------o
 //|   Function    -  CConsole()
 //|   Date        -  Unknown
@@ -37,7 +28,7 @@ const UI08 CBWHITE	= 5;
 //|   Purpose     -  Class Constructor and deconstructor
 //o---------------------------------------------------------------------------o
 CConsole::CConsole() : left( 0 ), top( 0 ), height( 25 ), width( 80 ), filterSettings( 0xFFFF ), 
-currentLevel( 0 ), currentMode( NORMALMODE ), previousColour( CNORMAL )
+ currentMode( NORMALMODE ),currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false )
 {
 }
 
@@ -57,11 +48,7 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		(*this) << (const char *)outPut;
 	}
 	return (*this);
@@ -70,11 +57,7 @@ CConsole& CConsole::operator<<( const char *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -83,11 +66,7 @@ CConsole& CConsole::operator<<( const UI08 *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		(*this) << (const char *)outPut;
 	}
 	return (*this);
@@ -96,11 +75,7 @@ CConsole& CConsole::operator<<( const SI32 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -109,11 +84,7 @@ CConsole& CConsole::operator<<( const UI32 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -122,11 +93,7 @@ CConsole& CConsole::operator<<( const SI16 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -135,11 +102,7 @@ CConsole& CConsole::operator<<( const UI16 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -148,11 +111,7 @@ CConsole& CConsole::operator<<( const SI08 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -161,11 +120,7 @@ CConsole& CConsole::operator<<( const UI08 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -174,11 +129,7 @@ CConsole& CConsole::operator<<( const cBaseObject *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		(*this) << outPut->GetSerial();
 	}
 	return (*this);
@@ -187,11 +138,7 @@ CConsole& CConsole::operator<<( const std::string &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut.c_str();
 	}
 	return (*this);
@@ -200,11 +147,7 @@ CConsole& CConsole::operator<<( const std::ostream& outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -213,11 +156,7 @@ CConsole& CConsole::operator<<( cBaseObject *outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		(*this) << outPut->GetSerial();
 	}
 	return (*this);
@@ -226,11 +165,7 @@ CConsole& CConsole::operator<<( std::ostream& outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -251,11 +186,7 @@ CConsole& CConsole::operator<<( const R32 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -264,11 +195,7 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 {
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << outPut;
 	}
 	return (*this);
@@ -292,11 +219,7 @@ void CConsole::Print( const char *toPrint, ... )
 
 	if( CanPrint( currentMode, currentLevel ) )
 	{
-		if( curLeft == 0 )
-		{
-			PrintStartOfLine();
-			curLeft = 1;
-		}
+		StartOfLineCheck();
 		std::cout << msg;
 		UI32 i = strlen( msg );
 		if( msg[i-1] == '\n' )
@@ -331,39 +254,31 @@ void CConsole::Log( const char *toLog, const char *filename, ... )
 		if( '\\' != realFileName[strlen(realFileName)-1] && '/' != realFileName[strlen(realFileName)-1] )
 		{
 			sprintf( realFileName, "%s/%s", cwmWorldState->ServerData()->GetLogsDirectory(), filename );
-			//sprintf( realFileName, "%s/logs/%s", cwmWorldState->ServerData()->GetRootDirectory(), filename );
 		}
 		else
 		{
 			sprintf( realFileName, "%s%s", cwmWorldState->ServerData()->GetLogsDirectory(), filename );
-			//sprintf( realFileName, "%slogs/%s", cwmWorldState->ServerData()->GetRootDirectory(), filename );
 		} 
 	else
 		strcpy( realFileName, filename );
 
 	char timeStr[128];
-	#ifdef WIN32
-	//SYSTEMTIME currentTime;
-	//GetSystemTime(&currentTime);
-	//sprintf( time, "[%2d:%02d:%02d] ", currentTime.wHour, currentTime.wMinute, currentTime.wSecond );
 	struct tm *curtime;
 	time_t bintime;
 	time(&bintime);
 	curtime = localtime(&bintime);
 	strftime( timeStr, 256, "[%b %d %I:%M:%S %p] ", curtime );
-	#else
-	struct tm *curtime;
-	time_t bintime;
-	time(&bintime);
-	curtime = localtime(&bintime);
-	strftime( timeStr, 256, "[%b %d %I:%M:%S %p] ", curtime );
-	//return timeStr;
-	#endif
 
 	toWrite.open( realFileName, std::ios::out | std::ios::app );
 	if( toWrite.is_open() )
 		toWrite << timeStr << msg << std::endl;
 	toWrite.close();
+	if( LogEcho() )
+	{
+		char mtemp[256];
+		sprintf( mtemp, "%s%s\n", timeStr, msg );
+		Print( mtemp );
+	}
 }
 
 
@@ -489,7 +404,7 @@ void CConsole::PrintSectionBegin( void )
 //o---------------------------------------------------------------------------o
 void CConsole::Start( char *temp )
 {
-#ifndef __LINUX__
+#if !defined(__unix__)
 	hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &csbi );
 	SetConsoleTitle( temp );
@@ -505,7 +420,7 @@ void CConsole::Start( char *temp )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;33m";
@@ -522,7 +437,7 @@ void CConsole::TurnYellow( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;31m";
@@ -539,7 +454,7 @@ void CConsole::TurnRed( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;32m";
@@ -556,7 +471,7 @@ void CConsole::TurnGreen( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;34m";
@@ -573,7 +488,7 @@ void CConsole::TurnBlue( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
 	std::cout << "\033[0;37m";
@@ -590,7 +505,7 @@ void CConsole::TurnNormal( void )
 //o---------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;37m";
@@ -598,55 +513,42 @@ void CConsole::TurnBrightWhite( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  PrintDone( void )
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
+//|		Function	-	PrintDone( void )
+//|		Date		-	24th December, 2001
+//|		Programmer	-	DarkStorm
+//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Prints colored "[done]" message
 //o---------------------------------------------------------------------------o
 void CConsole::PrintDone( void )
 {
-	MoveTo( 70 );
-	TurnNormal();
-	(*this) << "[";
-	TurnGreen();
-	(*this) << "done";
-	TurnNormal();
-	(*this) << "]" << myendl;
+	PrintSpecial( CGREEN, "done" );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  PrintFailed( void )
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
+//|		Function    -	PrintFailed( void )
+//|		Date        -	24th December, 2001
+//|		Programmer  -	DarkStorm
+//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Prints colored "[failed]" message
 //o---------------------------------------------------------------------------o
 void CConsole::PrintFailed( void )
 {
-	MoveTo( 70 );
-	(*this) << "[";
-	TurnRed();
-	(*this) << "Failed";
-	TurnNormal();
-	(*this) << "]" << myendl;
+	PrintSpecial( CRED, "Failed" );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  PrintPassed( void )
-//|   Date        -  17th February, 2002
-//|   Programmer  -  DarkStorm
+//|		Function    -	PrintPassed( void )
+//|		Date        -	17th February, 2002
+//|		Programmer  -	DarkStorm
+//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Prints colored "[passed]" message
 //o---------------------------------------------------------------------------o
 void CConsole::PrintPassed( void )
 {
-	MoveTo( 70 );
-	(*this) << "[";
-	TurnYellow();
-	(*this) << "Skipped";
-	TurnNormal();
-	(*this) << "]" << myendl;
+	PrintSpecial( CYELLOW, "Skipped" );
 }
 
 //o---------------------------------------------------------------------------o
@@ -658,7 +560,7 @@ void CConsole::PrintPassed( void )
 //o---------------------------------------------------------------------------o
 void CConsole::ClearScreen( void )
 {
-#ifdef __NT__
+#if !defined(__unix__)
 	UI32 y;
 	COORD xy;
 	
@@ -787,7 +689,7 @@ void CConsole::PrintStartOfLine( void )
 	}
 }
 
-#ifdef __NT__
+#if !defined(__unix__)
 void CConsole::MoveTo( int x, int y )
 {
 	COORD Pos;
@@ -799,7 +701,9 @@ void CConsole::MoveTo( int x, int y )
 		Pos.Y = ScrBuffInfo.dwCursorPosition.Y;
 		Pos.X = (UI16)x;
 		SetConsoleCursorPosition( hco, Pos );
-	} else {
+	} 
+	else 
+	{
 		Pos.X = (UI16)x;
 		Pos.Y = (UI16)y;
 		SetConsoleCursorPosition( hco, Pos );

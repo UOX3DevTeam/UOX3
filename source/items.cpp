@@ -24,23 +24,23 @@ CItem *cItem::MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType )
 					// free() calls DON'T help !!!, btw
 					// so we have to make that number real big
 					// under nt and unix this limit doesn't exist
-	if( itemcount >= imem ) //theres no more free sluts.. er slots, so get more memory
+	if( cwmWorldState->GetItemCount() >= cwmWorldState->GetIMem() ) //theres no more free sluts.. er slots, so get more memory
 	{
 		int *Copy_loscache = NULL;
 		int *Copy_itemids = NULL;
 
 		// create new objects to copy original data to
-		if( ( Copy_loscache = new int[imem] ) == NULL )
+		if( ( Copy_loscache = new int[cwmWorldState->GetIMem()] ) == NULL )
 			memerr = 1;
-		else if( ( Copy_itemids = new int[imem] ) == NULL )
+		else if( ( Copy_itemids = new int[cwmWorldState->GetIMem()] ) == NULL )
 			memerr = 1;
 
 		// make sure nothing bad happened
 		if( !memerr )
 		{
 			// make a copy - I prefer memcpy although a copy constructor wouldn't hurt =)
-			memcpy( Copy_loscache, loscache, sizeof( int ) * imem );
-			memcpy( Copy_itemids, itemids, sizeof( int ) * imem );
+			memcpy( Copy_loscache, loscache, sizeof( int ) * cwmWorldState->GetIMem() );
+			memcpy( Copy_itemids, itemids, sizeof( int ) * cwmWorldState->GetIMem() );
 
 			// delete the old objects
 			delete [] itemids;
@@ -52,16 +52,16 @@ CItem *cItem::MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType )
 			itemids = NULL;
 
 			// create new objects with more room for more items, etc.
-			if( ( loscache = new int[imem + slots] ) == NULL )
+			if( ( loscache = new int[cwmWorldState->GetIMem() + slots] ) == NULL )
 				memerr = 2;
-			else if( ( itemids = new int[imem + slots] ) == NULL )
+			else if( ( itemids = new int[cwmWorldState->GetIMem() + slots] ) == NULL )
 				memerr = 2;
 
 			if( !memerr )
 			{
 				// restore copy to new objects
-				memcpy( loscache, Copy_loscache, sizeof( int ) * imem );
-				memcpy( itemids, Copy_itemids, sizeof( int ) * imem );
+				memcpy( loscache, Copy_loscache, sizeof( int ) * cwmWorldState->GetIMem() );
+				memcpy( itemids, Copy_itemids, sizeof( int ) * cwmWorldState->GetIMem() );
 
 				// delete copies
 				delete [] Copy_itemids;
@@ -87,11 +87,11 @@ CItem *cItem::MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType )
 						delete [] Copy_loscache;
 				}
 			}
-			Console.Error( 3, "Could not reallocate item memory after %i. No more items will be created.", imem );
+			Console.Error( 3, "Could not reallocate item memory after %i. No more items will be created.", cwmWorldState->GetIMem() );
 			Console.Warning( 3, " UOX may become unstable." );
 		} 
 		else 
-			imem += slots;
+			cwmWorldState->SetIMem( cwmWorldState->GetIMem() + slots );
 	}
 	if( offset == INVALIDSERIAL )
 		return NULL;
@@ -118,7 +118,7 @@ void cItem::DeleItem( CItem *i )
 	{
 		cSpawnRegion *spawnReg = NULL;
 
-		for( UI16 k = 1; k < totalspawnregions; k++ )
+		for( UI16 k = 1; k < cwmWorldState->GetTotalSpawnRegions(); k++ )
 		{
 			spawnReg = spawnregion[k];
 			if( spawnReg == NULL )
@@ -340,7 +340,23 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		case DFNTAG_TYPE:			applyTo->SetType( (UI08)ndata );			break;
 		case DFNTAG_TYPE2:			applyTo->SetType2( (UI08)ndata );			break;
 		case DFNTAG_VISIBLE:		applyTo->SetVisible( (SI08)ndata );			break;
-		case DFNTAG_VALUE:			applyTo->SetValue( ndata );					break;
+		case DFNTAG_VALUE:
+									char *sellValueOff;
+									sellValueOff = strstr( cdata, "," );
+									if( sellValueOff != NULL )
+									{
+										char tmp[32];
+										strncpy( tmp, cdata, sellValueOff - cdata );
+										tmp[sellValueOff - cdata] = 0;
+										applyTo->SetBuyValue( (UI08)makeNum( tmp ) );
+										applyTo->SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+									}
+									else
+									{
+										applyTo->SetBuyValue( ndata );
+										applyTo->SetSellValue( (ndata / 2) );
+									}
+									break;
 		case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
 		case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 		case DFNTAG_NOTES:
@@ -632,8 +648,8 @@ CItem * cItem::SpawnItemToPack( cSocket *s, CChar *mChar, std::string name, bool
 
 	if( nDigging ) 
 	{
-		if( c->GetValue() != 0 ) 
-			c->SetValue( RandomNum( 1, c->GetValue() ) );
+		if( c->GetBuyValue() != 0 )
+			c->SetBuyValue( RandomNum( 1, c->GetBuyValue() ) );
 		if( c->GetHP() != 0 ) 
 			c->SetHP( RandomNum( 1, c->GetHP() ) );
 	}
@@ -670,7 +686,7 @@ bool cItem::DecayItem( CItem *i )
 	if( !i->WillDecay() )
 		return false;
 
-	if( i->GetDecayTime() > uiCurrentTime && !overflow )
+	if( i->GetDecayTime() > cwmWorldState->GetUICurrentTime() && !cwmWorldState->GetOverflow() )
 		return false;
 
 	bool retVal = false;
@@ -773,7 +789,7 @@ void cItem::RespawnItem( CItem *i )
 	HashBucketMulti< CHARACTER > * hashBucketC = NULL;
 	for( int c = 0; c < i->GetAmount(); c++ )
 	{
-		if( i->GetGateTime() + ( c*i->GetMoreZ() * CLOCKS_PER_SEC) <= uiCurrentTime )
+		if( i->GetGateTime() + ( c*i->GetMoreZ() * CLOCKS_PER_SEC) <= cwmWorldState->GetUICurrentTime() )
 		{
 			m = 0;
 			switch( i->GetType() )
@@ -805,7 +821,7 @@ void cItem::RespawnItem( CItem *i )
 					{
 						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 ) )) );
 					}
-					if( i->GetGateTime() <= uiCurrentTime || overflow )
+					if( i->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						const char *lDesc = i->GetDesc();
 						if( lDesc[0] != 0 )	// not NULL terminated, so we can do something!
@@ -846,7 +862,7 @@ void cItem::RespawnItem( CItem *i )
 					{
 						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 )) ) );
 					}
-					if( i->GetGateTime() <= uiCurrentTime || overflow )
+					if( i->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						const char *mDesc = i->GetDesc();
 						if( mDesc[0] != 0 )	// not NULL terminated, so we can do something!
@@ -883,7 +899,7 @@ void cItem::RespawnItem( CItem *i )
 					{
 						i->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( i->GetMoreY() * 60, i->GetMoreZ() * 60 )) ) );
 					}
-					if( i->GetGateTime() <= uiCurrentTime || overflow )
+					if( i->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						const char *nDesc = i->GetDesc();
 						if( i->GetType() == 63 )
@@ -1137,12 +1153,12 @@ void cItem::CheckEquipment( CChar *p )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void StoreItemRandomValue( CItem *i, UI08 tmpreg )
+//|	Function	-	void cItem::StoreItemRandomValue( CItem *i, UI08 tmpreg )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remember an items value
 //o---------------------------------------------------------------------------o
-void StoreItemRandomValue( CItem *i, UI08 tmpreg )
+void cItem::StoreItemRandomValue( CItem *i, UI08 tmpreg )
 {
 	if( i->GetGood() < 0 ) 
 		return;

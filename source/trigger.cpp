@@ -285,7 +285,7 @@ void Triggers::PeriodicTriggerCheck( void )
 {
 	for( UI32 i = 0; i < periodicTriggers.size(); i++ )
 	{
-		if( uiCurrentTime >= (UI32)periodicTriggers[i].nextRun )
+		if( cwmWorldState->GetUICurrentTime() >= (UI32)periodicTriggers[i].nextRun )
 		{
 			if( periodicTriggers[i].trigScript != NULL )
 				periodicTriggers[i].trigScript->OnSystemSlice();

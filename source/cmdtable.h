@@ -14,25 +14,20 @@
 
 #include "uox3.h"
 // Types of commands
-const UI08 CMD_ITEMMENU		= 1;	// Open item menu specified in cmd_extra
-const UI08 CMD_TARGET		= 2;	// Call target struct specified in cmd_extra
-const UI08 CMD_FUNC			= 3;	// Call function specified in cmd_extra must be of type GMFUNC
-const UI08 CMD_TARGETX		= 4;	// target with addx[] argument
-const UI08 CMD_TARGETXY		= 5;	// target with addx & y [] arguments
-const UI08 CMD_TARGETXYZ	= 6;	// target with addx & y & z [] arguments
-const UI08 CMD_TARGETHX		= 7;	// target with hex addx[] argument
-const UI08 CMD_TARGETHXY	= 8;	// target with hex addx & y arguments
-const UI08 CMD_TARGETHXYZ	= 9;	// target with hex addx & y & z arguments
-const UI08 CMD_TARGETID1	= 10;	// target with 1 addid #
-const UI08 CMD_TARGETID2	= 11;	// target with 2 addid #s
-const UI08 CMD_TARGETID3	= 12;	// target with 3 addid #s
-const UI08 CMD_TARGETID4	= 13;	// target with 4 addid #s
-const UI08 CMD_TARGETHID1	= 14;	// target with 1 hex addid #
-const UI08 CMD_TARGETHID2	= 15;	// target with 2 hex addid #s
-const UI08 CMD_TARGETHID3	= 16;	// target with 3 hex addid #s
-const UI08 CMD_TARGETHID4	= 17;	// target with 4 hexaddid #s
-const UI08 CMD_TARGETTMP	= 18;	// target with tempint
-const UI08 CMD_TARGETHTMP	= 19;	// target with hex tempint
+enum commandTypes
+{
+	CMD_ITEMMENU = 1,	// Open item menu specified in cmd_extra
+	CMD_TARGET,			// Call target struct specified in cmd_extra
+	CMD_FUNC,			// Call function specified in cmd_extra must be of type GMFUNC
+	CMD_TARGETX,		// target with addx[] argument
+	CMD_TARGETXY,		// target with addx & y [] arguments
+	CMD_TARGETXYZ,		// target with addx & y & z [] arguments
+	CMD_TARGETID1,		// target with 1 addid #
+	CMD_TARGETID2,		// target with 2 addid #s
+	CMD_TARGETID3,		// target with 3 addid #s
+	CMD_TARGETID4,		// target with 4 addid #s
+	CMD_TARGETTMP,		// target with tempint
+};
 
 struct cmdtable_entry
 {
@@ -59,9 +54,8 @@ extern	CmdTableDataType					cmd_table;
 typedef struct target_s TARGET_S;
 struct target_s 
 {	// arguments to the target() function
-	UI08 a1, a2, a3;
-	int a4;	// Leave this like this for a bit abaddon -EviLDeD
-	int		dictEntry;
+	UI08	targType, targID;
+	SI32	dictEntry;
 };
 
 // Defined commands that are just being mapped to internal functions
@@ -69,8 +63,8 @@ struct target_s
 
 
 // All command_ functions take an int value of the player that triggered the command.
-#define CMD_HANDLER( name ) extern void name ( cSocket * )
-#define TAR_HANDLER( name ) extern TARGET_S name
+#define CMD_HANDLER( name ) void name ( cSocket * )
+#define TAR_HANDLER( name ) extern target_s name
 
 
 // All defined commands
@@ -172,7 +166,6 @@ CMD_HANDLER( command_regspawnmax );
 CMD_HANDLER( command_regspawn );
 CMD_HANDLER( command_reloadserver );
 CMD_HANDLER( command_reloadaccounts );
-CMD_HANDLER( command_rename );
 CMD_HANDLER( command_readspawnregions );
 CMD_HANDLER( command_reportbug );
 CMD_HANDLER( command_readini );
@@ -190,7 +183,6 @@ CMD_HANDLER( command_shutdown );
 CMD_HANDLER( command_setshoprestockrate );
 CMD_HANDLER( command_showhs );
 CMD_HANDLER( command_set );
-CMD_HANDLER( command_squelch );
 CMD_HANDLER( command_squelch );
 CMD_HANDLER( command_spawnkill );
 CMD_HANDLER( command_setrace );

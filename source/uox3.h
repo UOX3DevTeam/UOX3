@@ -63,6 +63,7 @@
 //o---------------------------------------------------------------------------o
 // Set what OS UOX is compiled under
 //o---------------------------------------------------------------------------o
+
 /*
 #ifdef _WIN32
 	#define __NT__
@@ -76,22 +77,14 @@
 	#endif
 #endif
 */
-
 #if defined(__unix__)
 	#define OS_STR "Linux"
-	typedef WORD unsigned short int
-	typedef DWORD unsigned int
-	typedef BOOL bool
-	typedef VOID void
+	#define BOOL bool
+	#define VOID void
 #else
 	#define OS_STR "Win32"
 #endif
 
-
-//o---------------------------------------------------------------------------o
-// remove PACKED for unix/linux because it going to cause bus errors - fur
-//o---------------------------------------------------------------------------o
-#define PACK_NEEDED
 
 //o---------------------------------------------------------------------------o
 // Skip some errors
@@ -112,7 +105,7 @@
 #elif defined _WIN32
 	#define XP_PC
 #else
-# error "Failed to define either __LINUX__ or _WIN32"
+# error "Failed to define either __unix__ or _WIN32"
 #endif
 
 
@@ -157,7 +150,7 @@
 	#include <netdb.h>
 	#include <sys/signal.h>
 	#include <sstream>
-	#if defined(__unix__)
+	#if defined(__unix__)				// Tseramed's stuff
 		#include <unistd.h>
 		#include <arpa/inet.h>
 	#endif
@@ -181,7 +174,6 @@
 //o---------------------------------------------------------------------------o
 //using namespace std;
 
-
 //o---------------------------------------------------------------------------o
 // The UOX project includes
 //o---------------------------------------------------------------------------o
@@ -192,7 +184,6 @@ class UOXFile;
 #include "fileio.h"
 #include "scriptc.h"
 #include "classes.h"
-//#include "im.h"
 #include "cConsole.h"
 #include "msgboard.h"
 #include "books.h"
@@ -207,7 +198,6 @@ class UOXFile;
 #include "cAccountClass.h"
 #include "funcdecl.h"
 #include "hash.h"
-//#include "packets.h"
 #include "cGuild.h"
 #include "cServerDefinitions.h"
 
@@ -231,76 +221,54 @@ char *strupr(char *);
 //o---------------------------------------------------------------------------o
 
 //o---------------------------------------------------------------------------o
-// Public variables, structures, classes and objects
+//Time variables
 //o---------------------------------------------------------------------------o
-extern UI08 GMCMDLEVEL;
-extern UI08 CNSCMDLEVEL;
+extern timeval uoxtimeout;
+
+//o---------------------------------------------------------------------------o
+// Socket Stuff
+//o---------------------------------------------------------------------------o
+extern fd_set conn;
+extern fd_set all;
+extern fd_set errsock;
+
+//o---------------------------------------------------------------------------o
+// JS Stuff
+//o---------------------------------------------------------------------------o
+extern JSRuntime *jsRuntime;
+extern JSContext *jsContext;
+extern JSObject *jsGlobal;
+extern JSClass global_class;
+extern JSClass uox_class;
+
+//o---------------------------------------------------------------------------o
+// Item / Character Variables
+//o---------------------------------------------------------------------------o
 extern creat_st creatures[2048]; // stores the base-sound+sound flags of monsters, animals
-extern std::vector< SpellInfo > spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
-extern UI32 uiCurrentTime, ErrorCount;
-extern char Loaded;
-extern UI16 doorbase[DOORTYPES];
+extern skill_st skill[SKILLS+1];
+extern title_st title[ALLSKILLS+1];
 extern char skillname[SKILLS+1][20];
-extern UI08 talk[15];
-extern char gmprefix[10];
-extern char gmmiddle[5];
-extern char bpitem[20];
-extern char gump1[22];
-extern char gump2[4];
-extern char gump3[3];
-extern char spc[2];
-extern UI32 polyduration;
+extern UI16 doorbase[DOORTYPES];
+
+//o---------------------------------------------------------------------------o
+// Misc Variables
+//o---------------------------------------------------------------------------o
+extern std::vector< TeleLocationEntry > teleLocs;
+extern location_st location[4000];
+extern logout_st logout[1024];			// Instalog
+extern cTownRegion *region[256];
+extern cSpawnRegion *spawnregion[4098];	// Zippy
+extern std::vector< JailCell > jails;
+extern char *comm[CMAX];
+extern int *loscache;
+extern int *itemids;
+extern CEndL myendl;
+extern std::vector< MurderPair > murdererTags;
+extern std::vector< SpellInfo > spells; //:Terrin: adding variable for spell system "cache" had to make global for skills.cpp as a quick fix
 #if !defined(__unix__)
   extern WSADATA wsaData;
   extern WORD wVersionRequested;
 #endif
-extern UI16 totalspawnregions;
-const UI08 MAXVISRANGE = 20;
-
-//o---------------------------------------------------------------------------o
-//Time variables
-//o---------------------------------------------------------------------------o
-extern UI16 secondsperuominute;		// Number of seconds for a UOX minute.
-extern UI32 uotickcount;			// Changed from int to UI16 (Mr. Fixit)
-
-
-//o---------------------------------------------------------------------------o
-// More declerations
-//o---------------------------------------------------------------------------o
-extern UI32 nextfieldeffecttime;
-extern UI32 nextnpcaitime;
-extern std::vector< TeleLocationEntry > teleLocs;
-
-
-//o---------------------------------------------------------------------------o
-// MSVC fails to compile UOX if this is unsigned, change it then
-//o---------------------------------------------------------------------------o
-#ifdef _MSVC
-extern long int oldtime, newtime;
-#else
-extern UI32 oldtime, newtime;		// for autosaving
-#endif
-extern bool autosaved;
-extern int heartbeat;
-
-
-//o---------------------------------------------------------------------------o
-// More variables
-//o---------------------------------------------------------------------------o
-//extern struct hostent *he;
-extern SI32 err;						// Changed from int to SI32 (Mr. Fixit)
-extern bool error;
-extern bool keeprun;
-extern fd_set conn;
-extern fd_set all;
-extern fd_set errsock;
-extern SI32 nfds;						// Changed from int to SI32 (Mr. Fixit)
-extern timeval uoxtimeout;
-extern SI32 now;
-extern bool secure; // Secure mode
-extern char fametitle[128];
-extern char skilltitle[50];
-extern char prowesstitle[50];
 
 
 //o---------------------------------------------------------------------------o
@@ -319,35 +287,6 @@ extern cBaseObject *DefBase;
 extern CChar *DefChar;
 extern CItem *DefItem;
 
-//o---------------------------------------------------------------------------o
-// More
-//o---------------------------------------------------------------------------o
-extern location_st location[4000];
-extern logout_st logout[1024];			// Instalog
-extern cTownRegion *region[256];
-extern cSpawnRegion *spawnregion[4098];	// Zippy
-extern skill_st skill[SKILLS+1];
-extern UI16 locationcount;				// Changed from int to UI08 (Mr. Fixit)
-extern UI32 logoutcount;				// Instalog
-extern std::vector< JailCell > jails;
-extern UI32 charcount, itemcount;
-extern SERIAL charcount2, itemcount2;
-extern UI32 imem, cmem;
-extern char *comm[CMAX];
-extern SI32 tnum;						// Changed from int to SI32 (Mr. Fixit)
-extern UI32 npcshape[5];				// Stores the coords of the bouding shape for the NPC. DOES NOT NEED TO BE AN ARRAY. Changed from int to UI32 (Mr. Fixit)
-extern UI32 starttime, endtime, lclock;
-extern bool overflow;
-extern char idname[256];
-extern SI32 executebatch;				// Changed from int to SI32 (Mr. Fixit)
-extern bool showlayer;
-//extern SI32 ph1, ph2, ph3, ph4;			// Not used for anything (Mr. Fixit)
-extern UI32 shoprestocktime;			// Changed from int to UI32 (Mr. Fixit)
-extern SI32 shoprestockrate;			// Changed from int to SI32 (Mr. Fixit)
-extern title_st title[ALLSKILLS+1];
-extern UI32 hungerdamagetimer; // Used for hunger damage
-extern char xgm;
-
 
 //o---------------------------------------------------------------------------o
 // Profiling
@@ -360,6 +299,8 @@ extern UI32 networkTimeCount;			// Changed from int to UI32 (Mr. Fixit)
 extern UI32 timerTimeCount;				// Changed from int to UI32 (Mr. Fixit)
 extern UI32 autoTimeCount;				// Changed from int to UI32 (Mr. Fixit)
 extern UI32 loopTimeCount;				// Changed from int to UI32 (Mr. Fixit)
+extern SI32 globalRecv;					// Changed from long int to SI32 (Mr. Fixit)
+extern SI32 globalSent;					// Changed from long int to SI32 (Mr. Fixit)
 
 
 //o---------------------------------------------------------------------------o
@@ -384,8 +325,6 @@ extern UI32 loopTimeCount;				// Changed from int to UI32 (Mr. Fixit)
 	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeb t; ftime( &t ); return( 1000 * ( t.time - Seconds ) + ( t.millitm - Milliseconds ) ); };
 	inline void UOXSleep( int toSleep ) { Sleep( toSleep ); }
 #endif
-inline UI32 BuildTimeValue( R32 timeFromNow ) { return (UI32)( uiCurrentTime + ( (R32)(CLOCKS_PER_SEC) * timeFromNow ) );	}
-
 
 //o---------------------------------------------------------------------------o
 // Classes Definitions
@@ -414,7 +353,7 @@ extern cBooks					*Books;
 extern PageVector				*GMQueue;
 extern PageVector				*CounselorQueue;
 extern CDictionaryContainer		*Dictionary;
-extern cAccountClass		*Accounts;
+extern cAccountClass			*Accounts;
 extern Triggers					*Trigger;
 extern CConsole					Console;
 extern cMapRegion				*MapRegion;
@@ -424,28 +363,10 @@ extern cServerDefinitions		*FileLookup;
 extern JailSystem				*JailSys;
 #include "cThreadQueue.h"
 extern CThreadQueue				messageLoop;
-extern UI32 lighttime;
 extern cItemHandle items;
 extern cCharacterHandle chars;
 
+inline UI32 BuildTimeValue( R32 timeFromNow ) { return (UI32)( cwmWorldState->GetUICurrentTime() + ( (R32)(CLOCKS_PER_SEC) * timeFromNow ) );	}
 
-//o---------------------------------------------------------------------------o
-// More variable refrence
-//o---------------------------------------------------------------------------o
-extern int *loscache;
-extern int *itemids;
-//extern int lenConnAddr;					// Not used anywhere (Mr. Fixit)
-extern SI32 globalRecv;						// Changed from long int to SI32 (Mr. Fixit)
-extern SI32 globalSent;						// Changed from long int to SI32 (Mr. Fixit)
-extern UI08 escortRegions;					// Changed from long int to UI08 (Mr. Fixit)
-extern UI08 validEscortRegion[256];			// Changed from long int to UI08 (Mr. Fixit)
-extern SI32 erroredLayers[MAXLAYERS];		// Changed from long int to SI32 (Mr. Fixit)
-extern JSRuntime *jsRuntime;
-extern JSContext *jsContext;
-extern JSObject *jsGlobal;
-extern JSClass global_class;
-extern JSClass uox_class;
-extern CEndL myendl;
-extern std::vector< MurderPair > murdererTags;
 
 #endif // __UOX3_H

@@ -340,7 +340,7 @@ void checktempeffects( void )
 	cSocket *tSock = NULL;
 	cBaseObject *myObj = NULL;
 
-	UI32 j = uiCurrentTime;
+	UI32 j = cwmWorldState->GetUICurrentTime();
 	char temp[1024];
 	for( teffect_st *Effect = Effects->First(); !Effects->AtEnd(); Effect = Effects->Next() )
 	{
@@ -477,7 +477,7 @@ void checktempeffects( void )
 			break;
 		case 16: //Explosion potion messages
 			src = calcCharObjFromSer( Effect->Source() );
-			if( src->GetAntiSpamTimer() < uiCurrentTime )
+			if( src->GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			{
 				src->SetAntiSpamTimer( BuildTimeValue( 1 ) );
 				sprintf( temp, "%i", Effect->More3() );
@@ -818,12 +818,12 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 		toAdd.Dispellable( false );
 		break;
 	case 18:	// Polymorph
-		toAdd.ExpireTime( BuildTimeValue( (R32)polyduration ) );
+		toAdd.ExpireTime( BuildTimeValue( (R32)cwmWorldState->GetPolyDuration() ) );
 		toAdd.Dispellable( false );
 		
 		UI16 k;
 		// Grey flag when polymorphed
-		dest->SetCrimFlag( BuildTimeValue( (R32)polyduration ) );
+		dest->SetCrimFlag( BuildTimeValue( (R32)cwmWorldState->GetPolyDuration() ) );
 		if( dest->IsOnHorse() ) 
 			DismountCreature( tSock->CurrcharObj() );
 		k = ( more1<<8 ) + more2;
@@ -1197,7 +1197,7 @@ void LoadEffects( void )
 			case 1:		
 				toLoad.Source( buff.GetLong() );
 				toLoad.Destination( buff.GetLong() );
-				toLoad.ExpireTime( buff.GetLong() + uiCurrentTime );
+				toLoad.ExpireTime( buff.GetLong() + cwmWorldState->GetUICurrentTime() );
 				toLoad.Number( buff.GetByte() );
 				toLoad.More1( buff.GetShort() );
 				toLoad.More2( buff.GetShort() );
@@ -1273,7 +1273,7 @@ void LoadEffects( void )
 							break;
 						case 'E':
 							if( !strcmp( tag, "Expire" ) )
-								toLoad.ExpireTime( atoi( data ) + uiCurrentTime );
+								toLoad.ExpireTime( atoi( data ) + cwmWorldState->GetUICurrentTime() );
 							break;
 						case 'I':
 							if( !strcmp( tag, "ItemPtr" ) )

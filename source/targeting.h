@@ -88,7 +88,8 @@ private:
 	TargetFunc SetSpAttackTarget;
 	TargetFunc SetSplitChanceTarget;
 	TargetFunc SetSplitTarget;
-	TargetFunc SetValueTarget;
+	TargetFunc SetBuyValueTarget;
+	TargetFunc SetSellValueTarget;
 	TargetFunc SetWipeTarget;
 	TargetFunc ShowDetail;
 	TargetFunc ShowSkillTarget;
@@ -195,7 +196,8 @@ private:
 	void SetSpAttackTarget(cSocket *s);
 	void SetSplitChanceTarget(cSocket *s);
 	void SetSplitTarget(cSocket *s);
-	void SetValueTarget(cSocket *s);
+	void SetBuyValueTarget(cSocket *s);
+	void SetSellValueTarget(cSocket *s);
 	void SetWipeTarget(cSocket *s);
 	void ShowDetail(cSocket *s);
 	void ShowSkillTarget(cSocket *s);

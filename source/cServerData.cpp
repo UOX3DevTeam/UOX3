@@ -1344,7 +1344,7 @@ void cServerData::ResetDefaults( void )
 	SetWildernessBankStatus( false );
 	
 	// load defaults values
-	SetSystemTimer( SHOP_SPAWN, 60 );
+	SetSystemTimer( SHOP_SPAWN, 300 );
 	SetSystemTimer( POISON, POISONTIMER );
 	SetPotionDelay( POTIONDELAY );
 	SetSystemTimer( DECAY, DECAYTIMER );

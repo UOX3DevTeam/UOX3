@@ -1,5 +1,4 @@
 
-#include "uox3.h"
 #include "magic.h"
 #include "cdice.h"
 #include "ssection.h"
@@ -288,8 +287,8 @@ void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
 			c->SetHP( (SI16)( ( rank * c->GetHP() ) / 10 ) );
 		if( c->GetMaxHP() > 0 )   
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
-		if( c->GetValue() > 0 )
-			c->SetValue( (SI32)( ( rank * c->GetValue() ) / 10 ) );
+		if( c->GetBuyValue() > 0 )
+			c->SetBuyValue( (SI32)( ( rank * c->GetBuyValue() ) / 10 ) );
 		
 		if( rank <= 10 )
 			sysmessage( s, 783 + rank );
@@ -311,11 +310,11 @@ void cSkills::RegenerateOre( long grX, long grY )
 	resourceEntry *orePart = &resources[grX][grY];
 	UI32 oreCeiling = cwmWorldState->ServerData()->GetResOre();
 	UI32 oreTimer = cwmWorldState->ServerData()->GetResOreTime();
-	if( static_cast<UI32>(orePart->oreTime) <= uiCurrentTime )	// regenerate some more?
+	if( static_cast<UI32>(orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
 	{
 		for( UI32 counter = 0; counter < oreCeiling; counter++ )	// keep regenerating ore
 		{
-			if( orePart->oreAmt < static_cast<SI16>(oreCeiling) && ( orePart->oreAmt + counter * oreTimer * CLOCKS_PER_SEC ) < uiCurrentTime )
+			if( orePart->oreAmt < static_cast<SI16>(oreCeiling) && ( orePart->oreAmt + counter * oreTimer * CLOCKS_PER_SEC ) < cwmWorldState->GetUICurrentTime() )
 				orePart->oreAmt++;
 			else
 				break;
@@ -528,11 +527,11 @@ void cSkills::GraveDig( cSocket *s )
 	switch( RandomNum( 0, 12 ) )
 	{
 	case 2:
-		SpawnRandomMonster( s, true, "UNDEADLIST", "1000" ); // Low level Undead - Random
+		Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1000" ); // Low level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 4:
-		nItemID = SpawnRandomItem( s, true, "ITEMLIST", "1001" ); // Armor and shields - Random
+		nItemID = Items->SpawnRandomItem( s, digging_def, "ITEMLIST", "1001" ); // Armor and shields - Random
 		if( nItemID == NULL )
 			break;
 		if( nItemID->GetID() >= 7026 && nItemID->GetID() <= 7035 )
@@ -544,7 +543,7 @@ void cSkills::GraveDig( cSocket *s )
 		//Random treasure between gems and gold
 		if( RandomNum( 0, 1 ) )
 		{  // randomly create a gem and place in backpack
-			SpawnRandomItem( s, true, "ITEMLIST", "999" );
+			Items->SpawnRandomItem( s, digging_def, "ITEMLIST", "999" );
 			sysmessage( s, 809 );
 		}
 		else
@@ -560,27 +559,27 @@ void cSkills::GraveDig( cSocket *s )
 		break;
 	case 6:
 		if( nFame < 500 )
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1000" ); // Low level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1000" ); // Low level Undead - Random
 		else
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 8:
-		SpawnRandomItem( s, true, "ITEMLIST", "1000" );
+		Items->SpawnRandomItem( s, digging_def, "ITEMLIST", "1000" );
 		sysmessage( s, 811 );
 		break;
 	case 10:
 		if( nFame < 1000 )
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		else
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1002" ); // High level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1002" ); // High level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	case 12:
 		if( nFame > 1000 )
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1002" ); // High level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1002" ); // High level Undead - Random
 		else
-			SpawnRandomMonster( s, true, "UNDEADLIST", "1001" ); // Med level Undead - Random
+			Npcs->SpawnRandomMonster( s, digging_def, "UNDEADLIST", "1001" ); // Med level Undead - Random
 		sysmessage( s, 806 );
 		break;
 	default:
@@ -1069,11 +1068,11 @@ void cSkills::RegenerateLog( long grX, long grY )
 	UI32 logCeiling = cwmWorldState->ServerData()->GetResLogs();
 	long logTimer = cwmWorldState->ServerData()->GetResLogTime();
 	resourceEntry *logPart = &resources[grX][grY];
-	if( static_cast<UI32>(logPart->logTime) <= uiCurrentTime )
+	if( static_cast<UI32>(logPart->logTime) <= cwmWorldState->GetUICurrentTime() )
 	{
 		for( UI32 c = 0; c < logCeiling; c++ )
 		{
-			if( static_cast<UI32>(( logPart->logTime + ( c * logTimer * CLOCKS_PER_SEC ) )) <= uiCurrentTime && logPart->logAmt < static_cast<SI16>(logCeiling) )
+			if( static_cast<UI32>(( logPart->logTime + ( c * logTimer * CLOCKS_PER_SEC ) )) <= cwmWorldState->GetUICurrentTime() && logPart->logAmt < static_cast<SI16>(logCeiling) )
 				logPart->logAmt++;
 			else 
 				break;
@@ -1119,7 +1118,7 @@ void cSkills::DetectHidden( cSocket *s )
 
 	j = mChar->GetSkill( DETECTINGHIDDEN );
 	
-	range = (j*j/1.0E6) * ( MAXVISRANGE + Races->VisRange( mChar->GetRace() ) );     // this seems like an ok formula
+	range = (j*j/1.0E6) * ( MAX_VISRANGE + Races->VisRange( mChar->GetRace() ) );     // this seems like an ok formula
 	
 	int xOffset = MapRegion->GetGridX( mChar->GetX() );
 	int yOffset = MapRegion->GetGridY( mChar->GetY() );
@@ -1142,8 +1141,8 @@ void cSkills::DetectHidden( cSocket *s )
 					dx = abs( tempChar->GetX() - x );
 					dy = abs( tempChar->GetY() - y );
 					c = hypot( dx, dy );
-					getSkill = (UI16)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAXVISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
-					//if( getSkill < 0 ) 
+					getSkill = (UI16)( tempChar->GetSkill( HIDING ) * tempChar->GetSkill( HIDING ) / 1E3 - (range*50/(MAX_VISRANGE + Races->VisRange( mChar->GetRace() )) )*(range-c)/range);
+					//if( getSkill < 0 )  // Can't happen, getSkill is unsigned
 						//getSkill = 0;
 					if( getSkill > 1000 ) 
 						getSkill = 1000;
@@ -1350,7 +1349,7 @@ void cSkills::ProvocationTarget1( cSocket *s )
 			return;
 		}
 		s->AddID( getSer );
-		target( s, 0, 1, 0, 80, 1443 );
+		target( s, 0, 80, 1443 );
 		PlayInstrument( s, getInst, true );
 	}
 }
@@ -1388,7 +1387,7 @@ void cSkills::EnticementTarget1( cSocket *s )
 			return;
 		}
 		s->AddID( getSer );
-		target( s, 0, 1, 0, 82, 1446 );
+		target( s, 0, 82, 1446 );
 		PlayInstrument( s, getInst, true );
 	}
 }
@@ -2458,21 +2457,21 @@ void cSkills::Fish( CChar *i )
 	case 1:
 		if( getSkill > 920 )
 		{
-			SpawnRandomItem( s, true, "ITEMLIST", "1" );	// random paintings
+			Items->SpawnRandomItem( s, fishing_def, "ITEMLIST", "1" );	// random paintings
 			sysmessage( s, 848 );
 		}
 		break;
 	case 2:
 		if( getSkill > 970 )
 		{
-			SpawnRandomItem( s, true, "ITEMLIST", "2" );	// Some new weapons
+			Items->SpawnRandomItem( s, fishing_def, "ITEMLIST", "2" );	// Some new weapons
 			sysmessage( s, 849 );
 		}
 		break;
 	case 3:	// Random gold and gems
 		if( RandomNum( 0, 12 ) )
 		{
-			SpawnRandomItem( s, true, "ITEMLIST", "3" ); 
+			Items->SpawnRandomItem( s, fishing_def, "ITEMLIST", "3" ); 
 			sysmessage( s, 850 );
 		}
 		else
@@ -2486,12 +2485,12 @@ void cSkills::Fish( CChar *i )
 	case 4:
 		if( getSkill > 850 )
 		{
-			SpawnRandomItem( s, true, "ITEMLIST", "4" );	// Random bones and crap
+			Items->SpawnRandomItem( s, fishing_def, "ITEMLIST", "4" );	// Random bones and crap
 			sysmessage( s, 852 );
 		}
 		break;
 	default:
-		SpawnRandomItem( s, true, "ITEMLIST", "5" );	// User defined fish
+		Items->SpawnRandomItem( s, fishing_def, "ITEMLIST", "5" );	// User defined fish
 		sysmessage( s, 853 );
 		break;
 	}
@@ -2525,7 +2524,7 @@ void cSkills::SkillUse( cSocket *s, UI08 x )
 		sysmessage( s, 854 );
 		return;
 	}
-	if( mChar->GetSkillDelay() <= uiCurrentTime || mChar->IsGM() )
+	if( mChar->GetSkillDelay() <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
 	{
 		cScript *skScript = Trigger->GetScript( mChar->GetScriptTrigger() );
 		bool doSwitch = true;
@@ -2535,30 +2534,30 @@ void cSkills::SkillUse( cSocket *s, UI08 x )
 		{
 			switch( x )
 			{
-			case ARMSLORE:			target( s, 0, 1, 0, 29, 855 );			break;
-			case ANATOMY:			target( s, 0, 1, 0, 37, 856 );			break;
-			case ITEMID:			target( s, 0, 1, 0, 40, 857 );			break;
-			case EVALUATINGINTEL:	target( s, 0, 1, 0, 41, 858 );			break;
-			case TAMING:			target( s, 0, 1, 0, 42, 859 );			break;
+			case ARMSLORE:			target( s, 0, 29, 855 );			break;
+			case ANATOMY:			target( s, 0, 37, 856 );			break;
+			case ITEMID:			target( s, 0, 40, 857 );			break;
+			case EVALUATINGINTEL:	target( s, 0, 41, 858 );			break;
+			case TAMING:			target( s, 0, 42, 859 );			break;
 			case HIDING:			Hide( s );								break;
 			case STEALTH:			Stealth( s );							break;
-			case DETECTINGHIDDEN:	target( s, 0, 1, 0, 77, 860 );			break;
+			case DETECTINGHIDDEN:	target( s, 0, 77, 860 );			break;
 			case PEACEMAKING:		PeaceMaking(s);							break;
-			case PROVOCATION:		target(s, 0, 1, 0, 79, 861 );			break;
-			case ENTICEMENT:		target(s, 0, 1, 0, 81, 862 );			break;
+			case PROVOCATION:		target( s, 0, 79, 861 );			break;
+			case ENTICEMENT:		target( s, 0, 81, 862 );			break;
 			case SPIRITSPEAK:		SpiritSpeak(s);							break;
 			case STEALING:
 				if( cwmWorldState->ServerData()->GetRogueStatus() )
-					target( s, 0, 1, 0, 205, 863 );
+					target( s, 0, 205, 863 );
 				else
 					sysmessage( s, 864 );
 				break;
-			case INSCRIPTION:		target( s, 0, 1, 0, 160, 865 );			break;
+			case INSCRIPTION:		target( s, 0, 160, 865 );			break;
 			case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );	break;
-			case BEGGING:			target( s, 0, 1, 0, 152, 866 );			break;
-			case ANIMALLORE:		target( s, 0, 1, 0, 153, 867 );			break;
-			case FORENSICS:			target( s, 0, 1, 0, 154, 868 );			break;
-			case POISONING:			target( s, 0, 1, 0, 155, 869 );			break;
+			case BEGGING:			target( s, 0, 152, 866 );			break;
+			case ANIMALLORE:		target( s, 0, 153, 867 );			break;
+			case FORENSICS:			target( s, 0, 154, 868 );			break;
+			case POISONING:			target( s, 0, 155, 869 );			break;
 			case MEDITATION:
 				if( cwmWorldState->ServerData()->GetServerArmorAffectManaRegen() )
 					Meditation( s );
@@ -2850,6 +2849,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, int m )
 	char sect[512];
 	char gmtext[MAXTRACKINGTARGETS][257];
 	int gmid[MAXTRACKINGTARGETS];
+	char gmmiddle[5]="\x00\x00\x00\x00";
 	int id, id1 = 62, id2 = 399;
 	int icon=8404; 
 	CChar *c = s->CurrcharObj();
@@ -2935,17 +2935,12 @@ void cSkills::CreateTrackingMenu( cSocket *s, int m )
 	total = 9 + 1 + lentext + 1;
 	for( i = 1; i <= MaxTrackingTargets; i++ ) 
 		total += 4 + 1 + strlen( gmtext[i] );
-	gmprefix[1] = total>>8;
-	gmprefix[2] = total%256;
-	gmprefix[3] = c->GetSerial( 1 );
-	gmprefix[4] = c->GetSerial( 2 );
-	gmprefix[5] = c->GetSerial( 3 );
-	gmprefix[6] = c->GetSerial( 4 );
+	CPOpenGump toSend = (*c);
+	toSend.Length( total );
 	if( m >= TRACKINGMENUOFFSET )
 		m -= TRACKINGMENUOFFSET;
-	gmprefix[7] = ( m + TRACKINGMENUOFFSET )>>8;
-	gmprefix[8] = ( m + TRACKINGMENUOFFSET )%256;
-	s->Send( gmprefix, 9 );
+	toSend.GumpIndex( (m + TRACKINGMENUOFFSET) );
+	s->Send( &toSend );
 	s->Send( &lentext, 1 );
 	s->Send( gmtext[0], lentext );
 	s->Send( &MaxTrackingTargets, 1 );
@@ -2979,6 +2974,7 @@ void cSkills::TrackingMenu( cSocket *s, int gmindex )
 	char sect[512];
 	char gmtext[MAXTRACKINGTARGETS][257];
 	int gmid[MAXTRACKINGTARGETS];
+	char gmmiddle[5]="\x00\x00\x00\x00";
 	int gmnumber=0;
 	if( gmindex < 1000 )
 	{
@@ -3007,15 +3003,10 @@ void cSkills::TrackingMenu( cSocket *s, int gmindex )
 	for( i = 1; i <= gmnumber; i++ ) 
 		total += 4 + 1 + strlen( gmtext[i] );
 	CChar *mChar = s->CurrcharObj();
-	gmprefix[1] = total>>8;
-	gmprefix[2] = total%256;
-	gmprefix[3] = mChar->GetSerial( 1 );
-	gmprefix[4] = mChar->GetSerial( 2 );
-	gmprefix[5] = mChar->GetSerial( 3 );
-	gmprefix[6] = mChar->GetSerial( 4 );
-	gmprefix[7] = ( gmindex + TRACKINGMENUOFFSET )>>8;
-	gmprefix[8] = ( gmindex + TRACKINGMENUOFFSET )%256;
-	s->Send( gmprefix, 9 );
+	CPOpenGump toSend = (*mChar);
+	toSend.Length( total );
+	toSend.GumpIndex( (gmindex + TRACKINGMENUOFFSET) );
+	s->Send( &toSend );
 	s->Send( &lentext, 1 );
 	s->Send( gmtext[0], lentext );
 	lentext = gmnumber;
@@ -3237,7 +3228,7 @@ void cSkills::ForensicsTarget( cSocket *s )
 
 	CChar *cMurderer = calcCharObjFromSer( i->GetMurderer() );
 	char temp[1024];
-	int getTime = uiCurrentTime;
+	int getTime = cwmWorldState->GetUICurrentTime();
 	if( mChar->IsGM() )
 	{
 		if( cMurderer != NULL )
@@ -4366,7 +4357,7 @@ void cSkills::Persecute( cSocket *s )
 
 	int decrease = (int)( c->GetIntelligence() / 10 ) + 3;
 	
-	if( c->GetSkillDelay() <= uiCurrentTime || c->IsGM() )
+	if( c->GetSkillDelay() <= cwmWorldState->GetUICurrentTime() || c->IsGM() )
 	{
 		if( ( RandomNum( 0, 19 ) + c->GetIntelligence() ) > 45 ) // not always
 		{
@@ -4846,7 +4837,7 @@ void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
 	{
 		if( getSkill >= 850 )
 		{
-			SpawnRandomItem( s, true, "ITEMLIST", "999" ); 
+			Items->SpawnRandomItem( s, digging_def, "ITEMLIST", "999" ); 
 			sysmessage( s, 983 );
 		}
 	}

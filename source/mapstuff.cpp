@@ -385,14 +385,14 @@ SI08 cMapStuff::TileHeight( UI16 tilenum )
 //o-------------------------------------------------------------o
 SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
-	SI08 top = illegal_z;
+	SI08 top = ILLEGAL_Z;
 
 	MapStaticIterator msi( x, y, worldNumber );
 	staticrecord *stat = NULL;
 	while( stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
-		if( ( tempTop <= oldz + MaxZstep ) && ( tempTop > top ) )
+		if( ( tempTop <= oldz + MAX_Z_STEP ) && ( tempTop > top ) )
 			top = tempTop;
 	}
 	return top;
@@ -466,11 +466,11 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		if( multi->visible && ( i->GetX() + multi->x == x) && ( i->GetY() + multi->y == y ) )
 		{
 			int tmpTop = i->GetZ() + multi->z;
-			if( ( tmpTop <= oldz + MaxZstep ) && ( tmpTop >= oldz - 1 ) )
+			if( ( tmpTop <= oldz + MAX_Z_STEP ) && ( tmpTop >= oldz - 1 ) )
 			{
 				return multi->z;
 			}
-			else if( ( tmpTop >= oldz - MaxZstep ) && ( tmpTop < oldz - 1 ) )
+			else if( ( tmpTop >= oldz - MAX_Z_STEP ) && ( tmpTop < oldz - 1 ) )
 			{
 				return multi->z;
 			}
@@ -483,7 +483,7 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
 // This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
 SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
-	SI08 z = illegal_z;
+	SI08 z = ILLEGAL_Z;
 	
 	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
 	if( MapArea == NULL )	// no valid region
@@ -501,7 +501,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 		if( tempItem->GetX() == x && tempItem->GetY() == y && tempItem->GetID( 1 ) < 0x40 )
 		{
 			SI08 ztemp = (SI08)(tempItem->GetZ() + TileHeight( tempItem->GetID() ));
-			if( ( ztemp <= oldz + MaxZstep ) && ztemp > z )
+			if( ( ztemp <= oldz + MAX_Z_STEP ) && ztemp > z )
 				z = ztemp;
 		}
 	}
@@ -567,7 +567,7 @@ SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 	// make sure nothing can move into black areas
 	if( 430 == map.id || 475 == map.id || 580 == map.id || 610 == map.id ||
 		611 == map.id || 612 == map.id || 613 == map.id)
-		return illegal_z;
+		return ILLEGAL_Z;
 	return map.z;
 }
 
@@ -578,7 +578,7 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 	map_st map1 = Map->SeekMap0( x, y, worldNumber );
 	id = map1.id;
 	// if this appears to be a valid land id, <= 2 is invalid
-	if( map1.id > 2 && illegal_z != MapElevation( x, y, worldNumber ) )
+	if( map1.id > 2 && ILLEGAL_Z != MapElevation( x, y, worldNumber ) )
 	{
 		// get three other nearby maps to decide on an average z?
 		SI08 map2z = MapElevation( x + 1, y, worldNumber );
@@ -588,7 +588,7 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 		SI08 testz = 0;
 		if( abs( map1.z - map4z ) <= abs( map2z - map3z ) )
 		{
-			if( illegal_z == map4z )
+			if( ILLEGAL_Z == map4z )
 				testz = map1.z;
 			else
 			{
@@ -600,7 +600,7 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 		}
 		else
 		{
-			if( illegal_z == map2z || illegal_z == map3z )
+			if( ILLEGAL_Z == map2z || ILLEGAL_Z == map3z )
 				testz = map1.z;
 			else
 			{
@@ -612,7 +612,7 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 		}
 		return testz;
 	}
-	return illegal_z;
+	return ILLEGAL_Z;
 }
 
 // since the version data will potentiall affect every map related operation
@@ -1243,11 +1243,11 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	// let's check in this order.. dynamic, static, then the map
 	SI08 dynz = DynamicElevation( x, y, oldz, worldNumber );
-	if( illegal_z != dynz )
+	if( ILLEGAL_Z != dynz )
 		return dynz;
 
 	SI08 staticz = StaticTop( x, y, oldz, worldNumber );
-	if( illegal_z != staticz )
+	if( ILLEGAL_Z != staticz )
 		return staticz;
 
 	return MapElevation( x, y, worldNumber );
@@ -1261,14 +1261,14 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber 
 	if( x < 0 || y < 0 || x >= MapWidths[gMap] || y >= MapHeights[gMap]  )
 		return false;
     const SI08 elev = Height( x, y, oldz, worldNumber );
-	if( illegal_z == elev )
+	if( ILLEGAL_Z == elev )
 		return false;
 
 	// is it too great of a difference z-value wise?
-	if( oldz != illegal_z )
+	if( oldz != ILLEGAL_Z )
 	{
 		// you can climb MaxZstep, but fall up to 15
-		if( elev - oldz > MaxZstep )
+		if( elev - oldz > MAX_Z_STEP )
 			return false;
 		else if( oldz - elev > 15 )
 			return false;

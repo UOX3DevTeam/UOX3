@@ -44,11 +44,10 @@ SI32 CDictionary::LoadDictionary( void )
 	char szTxtBfr[DICT_MAX_TEXTBUFFERSIZE];
 	long count = 0;
 
+	IsValid = false;
 	ifsFile.open( PathToDictionary, std::ios::in );
 	if( !ifsFile.is_open() )
 	{
-		Console.Warning( 2, "Failed to open dictionary.%s", Language );
-		IsValid = false;
 		return dictCANTOPEN;
 	}
 	bool isSection[3] = { false, false, false };
@@ -64,16 +63,19 @@ SI32 CDictionary::LoadDictionary( void )
 		else if( isSection[0] == true && !strnicmp( szTxtBfr, "SECTION DICTIONARY", 18 ) )
 		{	//	This is a serious error condition seeing as there should never encounter another SECTION header
 			isSection[0] = isSection[1] = isSection[2] = false;
+			Console.Warning( 2, "Dictionary.%s has a bad section header", Language );
 			return dictDUPESECTION;
 		}
 		else if( szTxtBfr[0] == '{' && isSection[1] )
 		{	//	Not a good idea either if there is more than one start { encountered
 			isSection[0] = isSection[1] = isSection[2] = false;
+			Console.Warning( 2, "Dictionary.%s has multiple opening braces", Language );
 			return dictDUPEOPENBRACE;
 		}
 		else if( szTxtBfr[0] == '}' && !isSection[1] )
 		{	//	Not a good idea either if there is a } found before a {
 			isSection[0] = isSection[1] = isSection[2] = false;
+			Console.Warning( 2, "Dictionary.%s has no opening brace", Language );
 			return dictNOOPENBRACE;
 		}
 		else if( szTxtBfr[0] == '{' && isSection[0] )
@@ -104,6 +106,7 @@ SI32 CDictionary::LoadDictionary( void )
 	}
 	ifsFile.close();
 	IsValid = true;
+	Console << "Dictionary." << Language << " Loaded" << myendl;
 	return count;
 }
 
@@ -178,22 +181,17 @@ CDictionaryContainer::~CDictionaryContainer()
 
 SI32 CDictionaryContainer::LoadDictionary( void )
 {
-	UI32 j = 0, k = 0;
-	bool oneValid = false;
 	for( int i = (int)DL_UNKNOWN; i < (int)DL_COUNT; i++ )
 	{
-		k = dictList[i]->LoadDictionary();
-		if( k == 0 )
-			oneValid = true;
-		else
-			j += k;
+		dictList[i]->LoadDictionary();
 	}
-	if( j > 0 )
-		Console << "Loading dictionaries...        ";
-	if( oneValid )
-		return 0;
-	else
-		return j;
+	if( !dictList[LanguageCodesLang[ZERO]]->GetValid() )
+	{
+		Console.Error( 1, "Dictionary.ZRO is bad or nonexistant" );
+		Shutdown( FATAL_UOX3_BAD_DEF_DICT );
+		return -1;
+	}
+	return 0;
 }
 
 const char *CDictionaryContainer::operator[]( SI32 Num )

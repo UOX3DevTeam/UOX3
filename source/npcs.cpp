@@ -35,7 +35,7 @@ void cCharStuff::DeleteChar( CChar *k )
 	{
 		cSpawnRegion *spawnReg = NULL;
 
-		for( UI16 i = 1; i < totalspawnregions; i++ )
+		for( UI16 i = 1; i < cwmWorldState->GetTotalSpawnRegions(); i++ )
 		{
 			spawnReg = spawnregion[i];
 
@@ -100,8 +100,8 @@ void cCharStuff::DeleteChar( CChar *k )
 CChar * cCharStuff::MemCharFree( CHARACTER& offset, bool zeroSer )
 {
 	offset = chars.New( zeroSer );
-	if( charcount >= cmem ) //Lets ASSUME theres no more memory left instead of acctually checking all the items to find a free one.
-		cmem++;
+	if( cwmWorldState->GetCharCount() >= cwmWorldState->GetCMem() ) //Lets ASSUME theres no more memory left instead of acctually checking all the items to find a free one.
+		cwmWorldState->IncCMem();
 	if( offset == INVALIDSERIAL )
 		return NULL;
 	return &chars[offset];
@@ -246,7 +246,7 @@ CChar *cCharStuff::SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 wo
 
 			yAway = 10;
 		}
-		FindSpotForNPC( c, originX, originY, xAway, yAway, illegal_z );
+		FindSpotForNPC( c, originX, originY, xAway, yAway, ILLEGAL_Z );
 	}
 	PostSpawnUpdate( c );
 	return c;
@@ -436,7 +436,7 @@ void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAwa
 	
 	// should we not add and remove from mapregions here????
 	SI08 targZ = 0;
-	if( illegal_z == z )
+	if( ILLEGAL_Z == z )
 		targZ = Map->Height( xos, yos, 0, worldNumber );
 	else
 		targZ = z;
@@ -538,7 +538,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 		cdata = ShoppingList->GrabData( ndata, odata );
 		switch( tag )
 		{
-			case DFNTAG_RSHOPITEM:
+		case DFNTAG_RSHOPITEM:
 				if( buyLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
@@ -555,14 +555,14 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Buy Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-			case DFNTAG_SELLITEM:
+		case DFNTAG_SELLITEM:
 				if( sellLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
 					if( retitem != NULL )
 					{
 						retitem->SetCont( sellLayer );
-						retitem->SetValue( retitem->GetValue() / 2 );
+						retitem->SetSellValue( retitem->GetBuyValue() / 2 );
 						retitem->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 						retitem->SetZ( 9 );
@@ -573,7 +573,7 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Sell Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-			case DFNTAG_SHOPITEM:
+		case DFNTAG_SHOPITEM:
 				if( boughtLayer != NULL )
 				{
 					retitem = Items->CreateScriptItem( NULL, cdata, false, c->WorldNumber() );
@@ -590,11 +590,26 @@ void cCharStuff::LoadShopList( const char *list, CChar *c )
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Bought Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
-			case DFNTAG_VALUE:
+		case DFNTAG_VALUE:
 				if( retitem != NULL )
-					retitem->SetValue( ndata );
+				{
+					char *sellValueOff = strstr( cdata, "," );
+					if( sellValueOff != NULL )
+					{
+						char tmp[32];
+						strncpy( tmp, cdata, sellValueOff - cdata );
+						tmp[sellValueOff - cdata] = 0;
+						retitem->SetBuyValue( (UI08)makeNum( tmp ) );
+						retitem->SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+					}
+					else
+					{
+						retitem->SetBuyValue( ndata );
+						retitem->SetSellValue( (ndata / 2) );
+					}
+				}
 				break;
-			default:
+		default:
 				break;
 		}
 	}
@@ -988,7 +1003,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		      if( retitem != NULL )
 			{
 			  retitem->SetCont( sellPack );
-			  retitem->SetValue( retitem->GetValue() / 2 );
+			  //retitem->SetValue( retitem->GetValue() / 2 );
 			  retitem->SetX( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetY( 50 + RandomNum( 0, 79 ) );
 			  retitem->SetZ( 9 );
@@ -1094,8 +1109,23 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		  applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), TRACKING );
 		  break;
 		case DFNTAG_VALUE:
-		  if( retitem != NULL )
-		    retitem->SetValue( ndata );
+			if( retitem != NULL )
+			{
+				char *sellValueOff = strstr( cdata, "," );
+				if( sellValueOff != NULL )
+				{
+					char tmp[32];
+					strncpy( tmp, cdata, sellValueOff - cdata );
+					tmp[sellValueOff - cdata] = 0;
+					retitem->SetBuyValue( (UI08)makeNum( tmp ) );
+					retitem->SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+				}
+				else
+				{
+					retitem->SetBuyValue( ndata );
+					retitem->SetSellValue( (ndata / 2) );
+				}
+			}
 		  break;
 		case DFNTAG_VETERINARY:
 		  applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), VETERINARY );

@@ -2381,8 +2381,8 @@ trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 
 		SetSerial( INVALIDSERIAL, c );
 	else
 	{
-		SetSerial( charcount2, c );
-		charcount2++;
+		SetSerial( cwmWorldState->GetCharCount2(), c );
+		cwmWorldState->IncCharCount2();
 	}
 	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
 	petsControlled.resize( 0 );
@@ -2913,7 +2913,7 @@ void CChar::SendToSocket( cSocket *s, bool sendDispZ, CChar *c )
 
 void CChar::Teleport( void )
 {
-	SI16 visrange = MAXVISRANGE + Races->VisRange( GetRace() );
+	SI16 visrange = MAX_VISRANGE + Races->VisRange( GetRace() );
 	cSocket *mSock = calcSocketObjFromChar( this ), *tSock = NULL;
 
 	RemoveFromSight();
@@ -3152,7 +3152,7 @@ bool CChar::WearItem( CItem *toWear )
 	if( itemLayers[tLayer] != NULL )
 	{
 		// Console << "Doubled up item (" << toWear->GetSerial() << ") at layer " << toWear->GetLayer() << " on SI08 " << GetName() << "(" << GetSerial() << ")" << endl;
-		erroredLayers[tLayer]++;
+		cwmWorldState->IncErroredLayer( tLayer );
 		return false;
 	}
 	itemLayers[tLayer] = toWear;
@@ -5163,8 +5163,8 @@ bool CChar::Load( std::ifstream &inStream, CHARACTER arrayOffset )
 //o--------------------------------------------------------------------------
 bool CChar::LoadRemnants( int arrayOffset )
 {
-	if( charcount2 <= serial ) 
-		charcount2 = serial + 1;
+	if( cwmWorldState->GetCharCount2() <= serial ) 
+		cwmWorldState->SetCharCount2( serial + 1 );
 	SetSerial( serial, arrayOffset );
 
 	if( IsNpc() && IsAtWar() ) 
@@ -5291,7 +5291,7 @@ void CChar::PostLoadProcessing( UI32 index )
 	cBaseObject::PostLoadProcessing( index );
 	SERIAL tempSerial = (SERIAL)packitem;
 	if(tempSerial != INVALIDSERIAL )
-		SetPackItem( calcItemObjFromSer( tempSerial );
+		SetPackItem( calcItemObjFromSer( tempSerial ) );
 	else
 		SetPackItem( NULL );
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT)

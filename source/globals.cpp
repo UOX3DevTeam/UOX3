@@ -14,13 +14,6 @@
 
 #include "uox3.h"
 
-creat_st creatures[2048];
-
-UI08 GMCMDLEVEL = 2;
-UI08 CNSCMDLEVEL = 1;
-
-UI32 uiCurrentTime, ErrorCount;
-char Loaded;
 UI16 doorbase[DOORTYPES] = {
 0x0675, 0x0685, 0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0839, 0x084C, 
 0x0866, 0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0824, 0x190E
@@ -35,54 +28,17 @@ char skillname[SKILLS+1][20]={
 "WRESTLING", "LUMBERJACKING", "MINING", "MEDITATION", "STEALTH", "REMOVETRAPS", "ALLSKILLS", "STR", "DEX", "INT", "FAME", "KARMA"
 };
 
-//combat_st combat;
-UI08 talk[15]="\x1C\x00\x00\x01\x02\x03\x04\x01\x90\x00\x00\x38\x00\x03";
-char gmprefix[10]="\x7C\x00\x00\x01\x02\x03\x04\x00\x64";
-char gmmiddle[5]="\x00\x00\x00\x00";
-char bpitem[20]="\x40\x0D\x98\xF7\x0F\x4F\x00\x00\x09\x00\x30\x00\x52\x40\x0B\x00\x1A\x00\x00";
-char gump1[22]="\xB0\x04\x0A\x40\x91\x51\xE7\x00\x00\x00\x03\x00\x00\x00\x6E\x00\x00\x00\x46\x02\x3B";
-char gump2[4]="\x00\x00\x00";
-char gump3[3]="\x00\x00";
-char spc[2]="\x20";
-char xgm;
 #if !defined(__unix__)
 WSADATA wsaData;
 WORD wVersionRequested;
 #endif
 
-UI32 polyduration = 90;
-UI16 totalspawnregions = 0;
-//Time variables
-UI16 secondsperuominute = 5;					// Number of seconds for a UOX minute. Changed from int to UI16 (Mr. Fixit)
-UI32 uotickcount = 1;							// Changed from int to UI16 (Mr. Fixit)
-UI32 nextfieldeffecttime = 0;
-UI32 nextnpcaitime = 0;
-std::vector< TeleLocationEntry > teleLocs;
-
-
-// MSVC fails to compile UOX if this is unsigned, change it then
-#if !defined(__UNIX__)
-long int oldtime, newtime;
-#else
-UI32 oldtime, newtime;						//for autosaving
-#endif
-bool autosaved;
-int heartbeat;
-//struct hostent *he;
-SI32 err;									// Changed from int to SI32 (Mr. Fixit)
-bool error;
-bool keeprun;
 fd_set conn;
 fd_set all;
 fd_set errsock;
-SI32 nfds;									// Changed from int to SI32 (Mr. Fixit)
 timeval uoxtimeout;
-SI32 now;
 
-bool secure;								// Secure mode
-char fametitle[128];
-char skilltitle[50];
-char prowesstitle[50];
+std::vector< TeleLocationEntry > teleLocs;
 
 std::vector< MurderPair > murdererTags;
 
@@ -93,45 +49,26 @@ HashTableMulti< ITEM >		nspawnsp;
 HashTable< CHARACTER >		ncharsp;
 HashTableMulti< CHARACTER >	ncspawnsp;
 
-int *loscache;								
-int *itemids;								
-
-UI32 lighttime = 0;
-
 cItemHandle items;
 cCharacterHandle chars;
 
-location_st location[4000];
-UI16 locationcount;					// Changed from int to UI08 (Mr. Fixit)
+creat_st creatures[2048];
 
+int *loscache;								
+int *itemids;								
+
+location_st location[4000];
 cTownRegion *region[256];
 
 logout_st logout[1024];					// Instalog
-UI32 logoutcount;					// Instalog
-
 cSpawnRegion *spawnregion[4098];				//Regionspawns
 
 skill_st skill[SKILLS+1];
 title_st title[ALLSKILLS+1];				// For custom titles reads titles.scp
 std::vector< JailCell > jails;
 
-UI32 charcount, itemcount;
-SERIAL charcount2, itemcount2;
-UI32 imem, cmem;
-
 char *comm[CMAX];
-SI32 tnum;									// Changed from int to SI32 (Mr. Fixit)
 
-UI32 npcshape[5];							// Stores the coords of the bouding shape for the NPC. DOES NOT NEED TO BE AN ARRAY. Changed from int to UI32 (Mr. Fixit)
-UI32 starttime, endtime, lclock;
-bool overflow;
-char idname[256];
-SI32 executebatch;							// Changed from int to SI32 (Mr. Fixit)
-bool showlayer;
-//SI32 ph1, ph2, ph3, ph4;					// Not used for anything (Mr. Fixit)
-
-UI32 shoprestocktime = 0;					// Changed from int to UI32 (Mr. Fixit)
-SI32 shoprestockrate = 5;					// Changed from int to SI32 (Mr. Fixit)
 // Profiling
 UI32 networkTime = 0;						// Changed from int to UI32 (Mr. Fixit)
 UI32 timerTime = 0;							// Changed from int to UI32 (Mr. Fixit)
@@ -142,12 +79,9 @@ UI32 timerTimeCount = 1000;					// Changed from int to UI32 (Mr. Fixit)
 UI32 autoTimeCount = 1000;					// Changed from int to UI32 (Mr. Fixit)
 UI32 loopTimeCount = 1000;					// Changed from int to UI32 (Mr. Fixit)
 
-UI08 worldSaveProgress = 0;
+SI32 globalRecv;
+SI32 globalSent;
 
-UI08 escortRegions = 0;							// Changed from int to UI08 (Mr. Fixit)
-UI08 validEscortRegion[256];					// Changed from int to UI08 (Mr. Fixit)
-
-UI32 hungerdamagetimer = 0;						// For hunger damage
 #if defined(__unix__)
 char *strlwr( char *str ) 
 {
@@ -204,10 +138,6 @@ cBaseObject *DefBase = NULL;
 CChar *DefChar = NULL;
 CItem *DefItem = NULL;
 
-
-SI32 erroredLayers[MAXLAYERS];						// Changed from long to SI32 (Mr. Fixit)
-SI32 globalRecv;									// Changed from long int to SI32 (Mr. Fixit)
-SI32 globalSent;									// Changed from long int to SI32 (Mr. Fixit)
 
 JSRuntime *jsRuntime; 
 JSContext *jsContext; 

@@ -227,7 +227,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 		mChar->SetTownTitle( !mChar->GetTownTitle() );
 		region[mChar->GetTown()]->DisplayTownMenu( NULL, s );
 		break;
-	case 5:		target( s, 0, 1, 0, 161, 542 );								break;		// vote for town mayor
+	case 5:		target( s, 0, 161, 542 );								break;		// vote for town mayor
 	case 6:		entrygump(  s, ser, static_cast<char>(type), static_cast<char>(button), 6, 543 );	break;		// gold donation
 	case 7:		region[mChar->GetTown()]->ViewBudget( s );			break;		// View Budget
 	case 8:		region[mChar->GetTown()]->SendAlliedTowns( s );		break;		// View allied towns
@@ -241,7 +241,7 @@ void HandleTownstoneButton( cSocket *s, long button, SERIAL ser, long type )
 	case 23:	region[mChar->GetTown()]->ForceEarlyElection();		break;	// force early election
 	case 24:	sysmessage( s, 545 );	break;	// purchase more guards
 	case 25:	sysmessage( s, 546 );	break;	// fire a guard
-	case 26:	target( s, 0, 1, 0, 49, 547 );								break;	// make a town an ally
+	case 26:	target( s, 0, 49, 547 );								break;	// make a town an ally
 	case 40:	region[mChar->GetTown()]->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
 	case 41:	// join town!
 		if( !(region[calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() )]->AddAsTownMember( (*mChar) ) ) )
@@ -396,13 +396,13 @@ void HandleHouseButton( cSocket *s, long button, CItem *j )
 		}
 		return;
 	case 0:		return;
-	case 2:	target( s, 0, 1, 0, 227, 557 );	return;  // Bestow ownership upon someone else
+	case 2:	target( s, 0, 227, 557 );	return;  // Bestow ownership upon someone else
 	case 3:	deedHouse( s, j );				return;  // Turn house into a deed
-	case 4:	target( s, 0, 1, 0, 228, 558 );	return;  // Kick someone out of house
-	case 5:	target( s, 0, 1, 0, 229, 559 );	return;  // Ban somebody
+	case 4:	target( s, 0, 228, 558 );	return;  // Kick someone out of house
+	case 5:	target( s, 0, 229, 559 );	return;  // Ban somebody
 	case 6:
-	case 8:	target( s, 0, 1, 0, 231, 560 );	return; // Remove someone from house list
-	case 7:	target( s, 0, 1, 0, 230, 561 );	return; // Make someone a friend
+	case 8:	target( s, 0, 231, 560 );	return; // Remove someone from house list
+	case 7:	target( s, 0, 230, 561 );	return; // Make someone a friend
 	default:
 		char temp[1024];
 		sprintf( temp, "HouseGump Called - Button=%i", button );
@@ -630,7 +630,8 @@ void HandleTweakItemText( cSocket *s, long index )
 		case 26:	j->SetWeight( makeNum( text ) );			break;	// Weight
 		case 27:	j->SetDecayable( makeNum( text ) != 0 );	break;	// Decay
 		case 28:	j->SetGood( makeNum( text ) );				break;	// Good
-		case 29:	j->SetValue( makeNum( text ) );				break;	// Value
+		case 29:	j->SetBuyValue( makeNum( text ) );			break;	// Buy Value
+		//case ??:	j->SetSellValue( makeNum( text ) );			break;	// Sell Value - Not implimented yet
 		case 30:	j->SetCarve( makeNum( text ) );				break;	// Carve
 		case 31: 	j->SetPileable( makeNum( text ) != 0 );		break;	// Stackable
 		case 32:	j->SetDye( makeNum( text ) != 0 );			break;	// Dyable
@@ -854,33 +855,33 @@ std::string ReplaceObj( TXTREPLACEMENT toReplace )
 
 	switch( toReplace )
 	{
-		case TXT_ACCOUNTCOUNT:
-			sprintf( temp, "%i", Accounts->size() );
-			return temp;
-		//case TXT_NUMBERPCS:
-			//sprintf( temp, "%i", GPCL.count() );
-			//return temp;
-		case TXT_NUMCHARACTERS:
-			sprintf( temp, "%i", charcount );
-			return temp;
-		//case TXT_NUMBERNPCS:
-			//sprintf( temp, "%i", charcount - GPCL.count() );
-			//return temp;
-		case TXT_NUMBERITEMS:
-			sprintf( temp, "%i", itemcount );
-			return temp;
-		case TXT_SERVERTIME:
-			sprintf( temp, " %i:%i %s", hour, minute, ((ampm!=0)?"pm":"am") );
-			return temp;
-		case TXT_SERVERVERSION:
-			sprintf( temp, " %s v%i(%i)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
-			return temp;
-		case TXT_PLAYERSONLINE:
-			sprintf( temp, "%i", now );
-			return temp;
-		default:
-			sprintf(temp," ");
-			break;
+	case TXT_ACCOUNTCOUNT:
+		sprintf( temp, "%i", Accounts->size() );
+		return temp;
+	//case TXT_NUMBERPCS:
+		//sprintf( temp, "%i", GPCL.count() );
+		//return temp;
+	case TXT_NUMCHARACTERS:
+		sprintf( temp, "%i", cwmWorldState->GetCharCount() );
+		return temp;
+	//case TXT_NUMBERNPCS:
+		//sprintf( temp, "%i", charcount - GPCL.count() );
+		//return temp;
+	case TXT_NUMBERITEMS:
+		sprintf( temp, "%i", cwmWorldState->GetItemCount() );
+		return temp;
+	case TXT_SERVERTIME:
+		sprintf( temp, " %i:%i %s", hour, minute, ((ampm!=0)?"pm":"am") );
+		return temp;
+	case TXT_SERVERVERSION:
+		sprintf( temp, " %s v%i(%i)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
+		return temp;
+	case TXT_PLAYERSONLINE:
+		sprintf( temp, "%i", cwmWorldState->GetPlayersOnline() );
+		return temp;
+	default:
+		sprintf(temp," ") ;
+		break;
 	}
 	return "";
 }
@@ -1031,7 +1032,8 @@ void tweakItemMenu( cSocket *s, CItem *i )
 	tweakItem.AddData( "Weight", i->GetWeight() );
 	tweakItem.AddData( "Decay", i->isDecayable()?1:0 );
 	tweakItem.AddData( "Good", i->GetGood() );
-	tweakItem.AddData( "Value", i->GetValue() );
+	tweakItem.AddData( "Value", i->GetBuyValue() );
+	//tweakItem.AddData( "SellValue", i->GetSellValue() );
 	tweakItem.AddData( "Carve", i->GetCarve() );
 	tweakItem.AddData( "Stackable", i->isPileable()?1:0 );
 	tweakItem.AddData( "Dyeable", i->isDyeable()?1:0 );
@@ -1166,6 +1168,7 @@ void gmmenu( cSocket *s, int m )
 	int lentext;
 	char sect[512];
 	char gmtext[11][257];
+	char gmmiddle[5]="\x00\x00\x00\x00";
 	int gmnumber=0;
 	int gmindex;
 
@@ -1194,15 +1197,10 @@ void gmmenu( cSocket *s, int m )
 	{
 		total += 4 + 1 + strlen( gmtext[i] );
 	}
-	gmprefix[1] = (UI08)(total>>8);
-	gmprefix[2] = (UI08)(total%256);
-	gmprefix[3] = mChar->GetSerial( 1 );
-	gmprefix[4] = mChar->GetSerial( 2 );
-	gmprefix[5] = mChar->GetSerial( 3 );
-	gmprefix[6] = mChar->GetSerial( 4 );
-	gmprefix[7] = (UI08)(gmindex>>8);
-	gmprefix[8] = (UI08)(gmindex%256);
-	s->Send( gmprefix, 9 );
+	CPOpenGump toSend = (*mChar);
+	toSend.Length( total );
+	toSend.GumpIndex( gmindex );
+	s->Send( &toSend );
 	s->Send( &lentext, 1 );
 	s->Send( gmtext[0], lentext );
 	lentext = gmnumber;
@@ -1231,6 +1229,7 @@ void itemmenu( cSocket *s, int m)
 	int lentext;
 	char sect[512];
 	char gmtext[30][257];
+	char gmmiddle[5]="\x00\x00\x00\x00";
 	int gmid[30];
 	int gmnumber=0;
 	int gmindex;
@@ -1271,15 +1270,10 @@ void itemmenu( cSocket *s, int m)
 	{
 		total += 4 + 1 + strlen( gmtext[i] );
 	}
-	gmprefix[1] = (UI08)(total>>8);
-	gmprefix[2] = (UI08)(total%256);
-	gmprefix[3] = mChar->GetSerial( 1 );
-	gmprefix[4] = mChar->GetSerial( 2 );
-	gmprefix[5] = mChar->GetSerial( 3 );
-	gmprefix[6] = mChar->GetSerial( 4 );
-	gmprefix[7] = (UI08)( ( gmindex + ITEMMENUOFFSET )>>8 );
-	gmprefix[8] = (UI08)( ( gmindex + ITEMMENUOFFSET )%256 );
-	s->Send( gmprefix, 9 );
+	CPOpenGump toSend = (*mChar);
+	toSend.Length( total );
+	toSend.GumpIndex( (gmindex + ITEMMENUOFFSET) );
+	s->Send( &toSend );
 	s->Send( &lentext, 1 );
 	s->Send( gmtext[0], lentext );
 	lentext = gmnumber;
@@ -1457,6 +1451,10 @@ void SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type,
 	UI32 linecount = one.size();
 	UI32 linecount1 = two.size();
 	UI32 line, textlines;
+
+	char gump1[22]="\xB0\x04\x0A\x40\x91\x51\xE7\x00\x00\x00\x03\x00\x00\x00\x6E\x00\x00\x00\x46\x02\x3B";
+	char gump2[4]="\x00\x00\x00";
+	char gump3[3]="\x00\x00";
 
 	for( line = 0; line < linecount; line++ )
 	{

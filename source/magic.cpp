@@ -247,7 +247,7 @@ bool splCunning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 bool splCure( cSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	target->SetPoisoned( 0 );
-	target->SetPoisonWearOffTime( uiCurrentTime );
+	target->SetPoisonWearOffTime( cwmWorldState->GetUICurrentTime() );
 	target->SendToSocket( sock, true, target );
 	if( target->IsMurderer() )
 		criminal( caster );
@@ -2137,7 +2137,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 
 void cMagic::CheckFieldEffects2( CChar *c, char timecheck )
 {
-	if( timecheck && nextfieldeffecttime > uiCurrentTime )
+	if( timecheck && cwmWorldState->GetNextFieldEffectTime() > cwmWorldState->GetUICurrentTime() )
 		return;
 
 	CChar *caster = NULL;
@@ -2433,7 +2433,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 			sysmessage( mSock, 762 );
 			return false;
 		}
-		else if( static_cast<UI32>(mChar->GetSpellTime()) > uiCurrentTime )
+		else if( static_cast<UI32>(mChar->GetSpellTime()) > cwmWorldState->GetUICurrentTime() )
 		{
 			sysmessage( mSock, 1638 );
 			return false;
@@ -3174,6 +3174,7 @@ void cMagic::PolymorphMenu( cSocket *s, int gmindex )
 	char lentext;
 	char sect[512];
 	char gmtext[30][257];
+	char gmmiddle[5]="\x00\x00\x00\x00";
 	int gmid[30];
 	int gmnumber=0,dummy=0;
 	
@@ -3209,22 +3210,17 @@ void cMagic::PolymorphMenu( cSocket *s, int gmindex )
 	for( tag = polyStuff->First(); !polyStuff->AtEnd(); data = polyStuff->Next() )
 	{
 		data = polyStuff->GrabData();
-		polyduration = makeNum( tag );
+		cwmWorldState->SetPolyDuration( makeNum( tag ) );
 		tag = polyStuff->Next(); data = polyStuff->GrabData();
 	}
 	
 	total=9+1+lentext+1;
 	for( i = 1; i <= gmnumber; i++ ) 
 		total += 4 + 1 + strlen( gmtext[i] );
-	gmprefix[1] = (UI08)(total>>8);
-	gmprefix[2] = (UI08)(total%256);
-	gmprefix[3] = mChar->GetSerial( 1 );
-	gmprefix[4] = mChar->GetSerial( 2 );
-	gmprefix[5] = mChar->GetSerial( 3 );
-	gmprefix[6] = mChar->GetSerial( 4 );
-	gmprefix[7] = (UI08)(gmindex>>8);
-	gmprefix[8] = (UI08)(gmindex%256);
-	s->Send( gmprefix, 9 );
+	CPOpenGump toSend = (*mChar);
+	toSend.Length( total );
+	toSend.GumpIndex( gmindex );
+	s->Send( &toSend );
 	s->Send( &lentext, 1 );
 	s->Send( gmtext[0], lentext );
 	lentext = gmnumber;

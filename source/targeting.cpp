@@ -13,7 +13,7 @@ void cTargets::PlVBuy( cSocket *s )//PlayerVendors
 		return;
 
 	CHARACTER v = s->AddX();
-	if( v == INVALIDSERIAL || v > cmem ) 
+	if( v == INVALIDSERIAL || v > cwmWorldState->GetCMem() ) 
 		return;
 	if( chars[v].isFree() ) 
 		return;
@@ -45,20 +45,20 @@ void cTargets::PlVBuy( cSocket *s )//PlayerVendors
 		return;
 	}
 
-	if( gleft < static_cast<UI32>(i->GetValue()) ) 
+	if( gleft < static_cast<UI32>(i->GetBuyValue()) ) 
 	{
 		npcTalk( s, &chars[v], 1000, false );
 		return;
 	} 
 	else 
 	{
-		UI32 tAmount = DeleteQuantity( mChar, 0x0EED, (UI32)i->GetValue() );
+		UI32 tAmount = DeleteQuantity( mChar, 0x0EED, (UI32)i->GetBuyValue() );
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
 	
 	npcTalk( s, &chars[v], 1001, false );
-	chars[v].SetHoldG( chars[v].GetHoldG() + i->GetValue() );
+	chars[v].SetHoldG( chars[v].GetHoldG() + i->GetBuyValue() );
 
 	i->SetCont( p );	// move containers
 	RefreshItem( i );
@@ -364,9 +364,10 @@ void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with t
 			case 119: TransferTarget( s );				break;
 			case 120: GuardTarget( s );					break;
 			case 121: BuyShopTarget( s );				break;
-			case 122: SetValueTarget( s );				break;
+			case 122: SetBuyValueTarget( s );			break;
 			case 123: SetRestockTarget( s );			break;
 			case 124: FriendTarget( s );				break;
+			case 125: SetSellValueTarget( s );			break;
 	// FREE		case 125: break;
 			case 126: JailTarget( s, INVALIDSERIAL );	break;
 			case 127: ReleaseTarget( s, INVALIDSERIAL );	break;
@@ -400,7 +401,7 @@ void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with t
 			case 155: 
 				{
 					mChar->SetPoisonSerial( s->GetDWord( 7 ) );
-					target( s, 0, 1, 0, 156, 1613 );
+					target( s, 0, 156, 1613 );
 					return;
 				}
 			case 156: Skills->PoisoningTarget( s );		break;
@@ -1067,7 +1068,7 @@ void cTargets::IstatsTarget( cSocket *s )
 		UI16 itemColour = i->GetColour();
 		int hpStuff = ((i->GetHP())<<8) + i->GetMaxHP();
 		int itemDamage = ((i->GetLoDamage())<<8) + i->GetHiDamage();
-		long int decayTime = int(R64(int(i->GetDecayTime()-uiCurrentTime)/CLOCKS_PER_SEC));
+		long int decayTime = int(R64(int(i->GetDecayTime()-cwmWorldState->GetUICurrentTime())/CLOCKS_PER_SEC));
 
 		dynamicStat.AddData( "Serial", itemSerial, 3 );
 		dynamicStat.AddData( "ID", itemID, 5 );
@@ -1101,7 +1102,8 @@ void cTargets::IstatsTarget( cSocket *s )
 		dynamicStat.AddData( "Decay", i->isDecayable()?1:0 );
 		dynamicStat.AddData( "Good", i->GetGood() );
 		dynamicStat.AddData( "RandomValueRate", i->GetRndValueRate() );
-		dynamicStat.AddData( "Value", i->GetValue() );
+		dynamicStat.AddData( "Value", i->GetBuyValue() );
+		//dynamicStat.AddData( "SellValue", i->GetSellValue() );
 		dynamicStat.AddData( "Carve", i->GetCarve() );
 		dynamicStat.Send( 4, false, INVALIDSERIAL );
 	}
@@ -1423,8 +1425,6 @@ void cTargets::AllSetTarget( cSocket *s )
 	SERIAL Serial = s->GetDWord( 7 );
 
 	cBaseObject *myObject = NULL;
-
-	// We're dealing with both, items and characters
 	if( Serial >= BASEITEMSERIAL )
 		myObject = calcItemObjFromSer( Serial );
 	else
@@ -1527,7 +1527,7 @@ void cTargets::AllSetTarget( cSocket *s )
 	// 2: Dexterity
 
 	// Set the Strength
-	else if( ( Key.compare( "STR" ) ) || ( Key.compare( "STENGTH" ) ) )
+	else if( ( Key.compare( "STR" ) ) || ( Key.compare( "STRENGTH" ) ) )
 	{
 		myObject->SetStrength( Value.toSI16() );
 	
@@ -1794,7 +1794,7 @@ void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls thi
 	{
 		s->ClickX( s->GetWord( 11 ) );
 		s->ClickY( s->GetWord( 13 ) );
-		target( s, 0, 1, 0, 198, 1038 );
+		target( s, 0, 198, 1038 );
 		return;
 	}
 
@@ -1875,7 +1875,7 @@ void cTargets::AreaCommand( cSocket *s )
 	{
 		s->ClickX( s->GetWord( 11 ) );
 		s->ClickY( s->GetWord( 13 ) );
-		target( s, 0, 1, 0, 90, 1040 );
+		target( s, 0, 90, 1040 );
 		return;
 	}
 	
@@ -1980,7 +1980,7 @@ void cTargets::AreaCommand( cSocket *s )
 		return;
 	}
 
-	for( ITEM i = 0; i < itemcount; i++ )
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( items[i].isFree() )
 			continue;
@@ -2057,9 +2057,9 @@ void cTargets::Wiping( cSocket *s )  // Clicking the corners of wiping calls thi
 		s->ClickX( s->GetWord( 11 ) );
 		s->ClickY( s->GetWord( 13 ) );
 		if( s->AddID1() ) 
-			target( s, 0, 1, 0, 199, 1039 );
+			target( s, 0, 199, 1039 );
 		else 
-			target( s, 0, 1, 0, 199, 1040 );
+			target( s, 0, 199, 1040 );
 		return;
 	}
 	
@@ -2087,7 +2087,7 @@ void cTargets::Wiping( cSocket *s )  // Clicking the corners of wiping calls thi
 	ITEM i;
 	if( s->AddID1() == 1  )
 	{  // addid1[s]==1 means to inverse wipe
-		for( i = 0; i < itemcount; i++ )
+		for( i = 0; i < cwmWorldState->GetItemCount(); i++ )
 		{
 			if(!(items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 ) 
 				&& items[i].GetCont() == NULL && !items[i].isWipeable() )
@@ -2096,7 +2096,7 @@ void cTargets::Wiping( cSocket *s )  // Clicking the corners of wiping calls thi
 	}
 	else 
 	{
-		for( i = 0; i < itemcount; i++ )
+		for( i = 0; i < cwmWorldState->GetItemCount(); i++ )
 		{
 			if( items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 
 				&& items[i].GetCont() == NULL && !items[i].isWipeable() )
@@ -2177,13 +2177,13 @@ void cTargets::TeleStuff( cSocket *s )
 		if( targ != INVALIDSERIAL )
 		{
 			targ += 1000000;
-			target( s, 0, 1, 0, 222, 1045 );
+			target( s, 0, 222, 1045 );
 		} 
 		else 
 		{
 			targ = calcItemFromSer( serial );
 			if( targ != INVALIDSERIAL )
-				target( s, 0, 1, 0, 222, 1046 );
+				target( s, 0, 222, 1046 );
 		}
 		return;
 	} 
@@ -2536,7 +2536,7 @@ void cTargets::NpcTarget( cSocket *s )
 	if( i != NULL )
 	{
 		s->AddID( i->GetSerial() );
-		target( s, 0, 1, 0, 57, "Select NPC to follow this player." );
+		target( s, 0, 57, "Select NPC to follow this player." );
 	}
 }
 
@@ -2592,7 +2592,7 @@ void cTargets::NpcWanderTarget( cSocket *s )
 	if( i != NULL )
 	{
 		if( i->IsNpc() )
-			i->SetNpcWander( static_cast<SI08>(npcshape[0]) );
+			i->SetNpcWander( static_cast<SI08>(s->TempInt()) );
 	}
 }
 
@@ -2860,12 +2860,23 @@ bool cTargets::BuyShop( cSocket *s, CChar *c )
 	return true;
 }
 
-void cTargets::SetValueTarget( cSocket *s )
+void cTargets::SetBuyValueTarget( cSocket *s )
 {
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( i != NULL )
 	{
-		i->SetValue( s->AddX() );
+		i->SetBuyValue( s->AddX() );
+		return;
+	}
+	sysmessage( s, 1076 );
+}
+
+void cTargets::SetSellValueTarget( cSocket *s )
+{
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
+	if( i != NULL )
+	{
+		i->SetSellValue( s->AddX() );
 		return;
 	}
 	sysmessage( s, 1076 );
@@ -3462,6 +3473,7 @@ void cTargets::ShowSkillTarget( cSocket *s )
 		sysmessage( s, 1103 );
 		return;
 	}
+	char spc[2]="\x20";
 	char temp[1024];
 	int j, k, zz, ges = 0;
 	char skill_info[(ALLSKILLS+1)*40];

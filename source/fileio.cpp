@@ -305,14 +305,14 @@ r2Data readline( std::ifstream& toRead ) // Read line from script
 // Load character and item data from load chars.wsc and items.wsc
 void loadnewworld( void )
 {
-	cmem = 0;
-	imem = 0;
+	cwmWorldState->SetCMem( 0 );
+	cwmWorldState->SetIMem( 0 );
 	//Console.PrintSectionBegin();
 	//Console << "Loading the world..." << myendl;// World and Guilds, Building Map Regions..." << myendl;
-	charcount = 0;
-	itemcount = 0;
-	charcount2 = 1;
-	itemcount2 = BASEITEMSERIAL;
+	cwmWorldState->SetCharCount( 0 );
+	cwmWorldState->SetItemCount( 0 );
+	cwmWorldState->SetItemCount2( 1 );
+	cwmWorldState->SetItemCount2( BASEITEMSERIAL );
 	//Reticulate();
 	MapRegion->Load();
 

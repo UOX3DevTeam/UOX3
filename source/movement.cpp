@@ -236,10 +236,10 @@ void cMovement::Walking( CChar *c, UI08 dir, SI16 sequence )
 		// Thyme: Already reset in NPCMovement (which calls this function, and NPCWalk)
 		//if( chars[c].npc ) 
 		//{
-		//	chars[c].npcmovetime=(UI32)(uiCurrentTime+(R64)(NPCSPEED*CLOCKS_PER_SEC)); //reset move timer
+		//	chars[c].npcmovetime=(UI32)(cwmWorldState->GetUICurrentTime()+(R64)(NPCSPEED*CLOCKS_PER_SEC)); //reset move timer
 		//}
 
-		SI08 myz = illegal_z;
+		SI08 myz = ILLEGAL_Z;
 		SI16 myx = GetXfromDir( dir, c->GetX() );
 		SI16 myy = GetYfromDir( dir, c->GetY() );
 		if( !calc_move( c, c->GetX(), c->GetY(), myz, dir ) )
@@ -409,7 +409,7 @@ bool cMovement::isOverloaded( CChar *c, cSocket *mSock, SI16 sequence )
 		if( mSock != NULL )
 		{
 			if( Weight->isOverloaded( c ) )
-				c->SetStamina( (UI16)(((c->GetWeight() / 100) - ((c->GetStrength() * WEIGHT_PER_STR) + 30)) * 2) );
+				c->SetStamina( (UI16)(((c->GetWeight() / 100) - ((c->GetStrength() * cwmWorldState->GetWeightPerStr()) + 30)) * 2) );
 			if( c->GetStamina() <= 0 )
 			{
 				c->SetStamina( 0 );
@@ -636,7 +636,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	if( dir&0x80 )
 	{
 		if( !c->IsNpc() )
-			c->SetNpcMoveTime( uiCurrentTime + ( ( cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC ) / 2 ) );
+			c->SetNpcMoveTime( cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC ) / 2 ) );
 
 		// if we are using stealth
 		if( c->GetStealth() != -1 )	// Stealth - stop hiding if player runs
@@ -665,7 +665,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	{
 		c->SetRunning( 0 );
 		if( !c->IsNpc() )
-			c->SetNpcMoveTime( uiCurrentTime + ( ( cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC ) / 4 ) );
+			c->SetNpcMoveTime( cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC ) / 4 ) );
 	}
 	return true;
 }
@@ -764,9 +764,9 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, int &xycount,
 	UI16 mapid_old = 0;
 	SI08 mapz = Map->AverageMapElevation( x, y, mapid, worldNumber );
 	SI08 mapz_old = Map->AverageMapElevation( oldx, oldy, mapid_old, worldNumber );
-	if( mapz_old <= illegal_z )	
+	if( mapz_old <= ILLEGAL_Z )	
 		mapz_old = mapz;
-	if( mapz != illegal_z )
+	if( mapz != ILLEGAL_Z )
 	{
 		CLand land;
 		Map->SeekLand( mapid, &land );
@@ -1468,7 +1468,7 @@ void cMovement::NpcMovement( CChar *i )
     CHARACTER k;
 	UI08 j;
 	const R32 npcSpeed = static_cast< R32 >(cwmWorldState->ServerData()->GetNPCSpeed());
-    if( i->IsNpc() && ( i->GetNpcMoveTime() <= uiCurrentTime || overflow ) )
+    if( i->IsNpc() && ( i->GetNpcMoveTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
     {
 #if DEBUG_NPCWALK
 		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", chars[i].GetName(), chars[i].GetNpcWander(), chars[i].IsAtWar(), j );
@@ -1511,7 +1511,7 @@ void cMovement::NpcMovement( CChar *i )
                 break;
             case 1: // Follow the follow target
                 k = i->GetFTarg();
-                if( k == INVALIDSERIAL || k >= cmem ) 
+                if( k == INVALIDSERIAL || k >= cwmWorldState->GetCMem() ) 
 					return;
                 if( isOnline( &chars[k] ) || chars[k].IsNpc() )
                 {
@@ -1543,7 +1543,7 @@ void cMovement::NpcMovement( CChar *i )
                 break;
             case 5: //FLEE!!!!!!
                 k = i->GetTarg();
-                if( k == INVALIDSERIAL || k >= cmem ) 
+                if( k == INVALIDSERIAL || k >= cwmWorldState->GetCMem() ) 
 					return;
 				if( getDist( i, &chars[k] ) < P_PF_MFD )
 				{	// calculate a x,y to flee towards
@@ -1688,11 +1688,11 @@ UI08 cMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
 {
 	if( c == NULL )
-		return illegal_z;
+		return ILLEGAL_Z;
 	const SI08 oldz = c->GetZ();
 	bool may_levitate = c->MayLevitate();
 	bool on_ladder = false;
-	SI08 newz = illegal_z;
+	SI08 newz = ILLEGAL_Z;
 	bool blocked = false;
 	char ontype = 0;
 
@@ -1769,7 +1769,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 		{                                                                    // blocking
 			if( nItemTop > newz && tb->BaseZ() <= item_influence || ( nItemTop == newz && ontype == 0 ) )
 			{ // in effact radius?
-				newz = illegal_z;
+				newz = ILLEGAL_Z;
 #if DEBUG_WALKING
 				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[ii].ID(), xyblock[ii].BaseZ() );
 #endif
@@ -1789,7 +1789,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 #if DEBUG_WALK
 	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, z );
 #endif
-	if( (newz > illegal_z) && (!justask) ) // save information if we have climbed on last move.
+	if( (newz > ILLEGAL_Z) && (!justask) ) // save information if we have climbed on last move.
 		c->MayLevitate( on_ladder );
 	return newz;
 }
@@ -1805,14 +1805,14 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 	if( ( dir & 0x07 ) % 2 )
 	{ // check three ways.
 		UI08 ndir = turn_counter_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == illegal_z )
+		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
 			return false;
 		ndir = turn_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == illegal_z )
+		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
 			return false;
 	}
 	z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
-	return z > illegal_z;
+	return (z > ILLEGAL_Z);
 }
 
 #pragma note( "cMovement::MoveHeightAdjustment() is currently unrefrenced, are we planning on making use of it in the future?" )
@@ -1867,7 +1867,7 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 			continue;
 		CTile tile;
 		Map->SeekTile( tItem->GetID(), &tile );
-		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MaxZstep )
+		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MAX_Z_STEP )
 		{
 			UI16 id = tItem->GetID();
 			if( id == 0x3946 || id == 0x3956 )

@@ -92,7 +92,7 @@ bool itemInRange( CChar *mChar, CItem *i )
 	if( i->GetID( 1 ) >= 0x40 ) 
 		vr = BUILDRANGE;
 	else
-		vr = MAXVISRANGE + Races->VisRange( mChar->GetRace() );
+		vr = MAX_VISRANGE + Races->VisRange( mChar->GetRace() );
 	point3 difference = mChar->GetLocation() - i->GetLocation();
 	if( abs( difference.x ) > vr )
 		return false;
@@ -115,7 +115,7 @@ bool charInRange( CChar *a, CChar *b )
 		return true;
 	if( a->WorldNumber() != b->WorldNumber() )
 		return false;
-	SI16 visRange = MAXVISRANGE + Races->VisRange( a->GetRace() );
+	SI16 visRange = MAX_VISRANGE + Races->VisRange( a->GetRace() );
 	point3 difference = a->GetLocation() - b->GetLocation();
 	return ( difference.MagSquared() <= ( visRange * visRange ) );
 }

@@ -21,7 +21,7 @@ void cNetworkStuff::FlushBuffer( UOXSOCKET s ) // Sends buffered data at once
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 {
-	for( int i = 0; i < now; i++ )
+	for( int i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
 		FlushBuffer( i );
 	for( UI32 j = 0; j < loggedInClients.size(); j++ )
 		loggedInClients[j]->FlushBuffer();
@@ -54,7 +54,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 {
 	setLastOn( connClients[s] );
 	CChar *currChar = connClients[s]->CurrcharObj();
-	Console << "Client " << (UI32)s << " disconnected. [Total:" << (SI32)(now-1) << "]" << myendl;
+	Console << "Client " << (UI32)s << " disconnected. [Total:" << (SI32)(cwmWorldState->GetPlayersOnline()-1) << "]" << myendl;
 
 	char temp[1024];
 
@@ -112,7 +112,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	{
 		Console << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
 	}
-	now--;
+	cwmWorldState->DecPlayersOnline();
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
 }
@@ -142,7 +142,7 @@ void cNetworkStuff::LogOut( UOXSOCKET s )
 		valid = true;
 	else 
 	{
-		for( a = 0; static_cast<UI32>(a) < logoutcount; a++ )
+		for( a = 0; static_cast<UI32>(a) < cwmWorldState->GetLogoutCount(); a++ )
 		{
 			if( logout[a].x1 <= x && logout[a].y1 <= y && logout[a].x2 >= x && logout[a].y2 >= y )
 			{
@@ -217,8 +217,8 @@ void cNetworkStuff::sockInit( void )
 #else
 		Console << myendl;
 #endif
-		keeprun = false;
-		error = true;
+		cwmWorldState->SetKeepRun( false );
+		cwmWorldState->SetError( true );
 		kr = false;
 		faul = true;
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
@@ -239,8 +239,8 @@ void cNetworkStuff::sockInit( void )
 	if( bcode < 0 )
 	{
 		Console.Error( 0, " Unable to bind socket 1 - Error code: %i", bcode );
-		keeprun = false;
-		error = true;
+		cwmWorldState->SetKeepRun( false );
+		cwmWorldState->SetError( true );
 		kr = false;
 		faul = true;
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
@@ -263,7 +263,7 @@ void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 {
 	int i;
 	closesocket( a_socket );
-	for( i = 0; i < now; i++ )
+	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
 		connClients[i]->CloseSocket();
 }
 
@@ -298,8 +298,8 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 
 			}
 			Console.Error( 0, "Error at client connection!" );
-			error = true;
-			keeprun = true;
+			cwmWorldState->SetKeepRun( true );
+			cwmWorldState->SetError( true );
 			delete toMake;
 			return;
 		}
@@ -326,7 +326,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 		}
 		sprintf( temp, "FIREWALL: Forwarding address %i.%i.%i.%i --> Access Granted!", part[0], part[1], part[2], part[3] );
 		messageLoop << temp;
-		sprintf( temp, "Client %i [%i.%i.%i.%i] connected [Total:%i]", now, part[0], part[1], part[2], part[3], now + 1 );
+		sprintf( temp, "Client %i [%i.%i.%i.%i] connected [Total:%i]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
 		messageLoop << temp;
 		loggedInClients.push_back( toMake );
 		toMake->ClientIP( client_addr.sin_addr.s_addr );
@@ -335,8 +335,8 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	if( s < 0 )
 	{
 		Console.Error( 0, " Select (Conn) failed!" );
-		keeprun = false;
-		error = true;
+		cwmWorldState->SetKeepRun( false );
+		cwmWorldState->SetError( true );
 		return;
 	}
 }
@@ -367,7 +367,7 @@ cNetworkStuff::~cNetworkStuff()
 		loggedInClients[i]->CloseSocket();
 		delete loggedInClients[i];
 	}
-	for( i = 0; i < now; i++ )
+	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
 	{
 		FlushBuffer( i );
 		connClients[i]->CloseSocket();
@@ -387,8 +387,8 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
-	nfds = 0;
-	for( i = 0; i < now; i++ )
+	int nfds = 0;
+	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
 	{
 		int clientSock = connClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
@@ -399,15 +399,15 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	int s = select( nfds, &all, NULL, &errsock, &uoxtimeout );
 	if( s > 0 )
 	{
-		int oldnow = now;
-		for( i = 0; i < now; i++ )
+		int oldnow = cwmWorldState->GetPlayersOnline();
+		for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
 		{
 			if( FD_ISSET( connClients[i]->CliSocket(), &errsock ) )
 			{
 				Disconnect( i );
 				//Disconnect( connClients[i]->CliSocket() );
 			}
-			if( ( FD_ISSET( connClients[i]->CliSocket(), &all ) ) && ( oldnow == now ) )
+			if( ( FD_ISSET( connClients[i]->CliSocket(), &all ) ) && ( oldnow == cwmWorldState->GetPlayersOnline() ) )
 			{
 				try
 				{
@@ -426,7 +426,7 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 #endif
 					Disconnect( i );	// abnormal error
 				}
-				if( executebatch ) 
+				if( cwmWorldState->GetExecuteBatch() ) 
 					batchcheck( GetSockPtr( i ) );
 			}
 		}
@@ -485,7 +485,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 		count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			total = ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC;
+			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
 			ho = total / 3600;
 			total -= ho * 3600;
 			mi = total / 60;
@@ -553,11 +553,11 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						j = makeNum( (char *)&buffer[8] );
 						if( j > 0 )
 						{
-							speechItem->SetValue( j );
+							speechItem->SetBuyValue( j );
 							sysmessage( mSock, 753, j );
 						} 
 						else 
-							sysmessage( mSock, 754, speechItem->GetValue() );
+							sysmessage( mSock, 754, speechItem->GetBuyValue() );
 						sysmessage( mSock, 755 );
 						ourChar->SetSpeechMode( 4 );
 						return;
@@ -737,13 +737,13 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						j = makeNum( nonuni );
 						if( j > 0 )
 						{
-							speechItem->SetValue( j );
+							speechItem->SetBuyValue( j );
 							sysmessage( mSock, 753, j );
 							sysmessage( mSock, 755 );
 						} 
 						else 
 						{
-							sysmessage( mSock, 754, speechItem->GetValue() );
+							sysmessage( mSock, 754, speechItem->GetBuyValue() );
 							sysmessage( mSock, 755 );
 						}
 						ourChar->SetSpeechMode( 4 );
@@ -866,7 +866,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 					mSock->Receive( 5 );
 					ourChar->SetWar( buffer[1] != 0 );
 					ourChar->SetTarg( INVALIDSERIAL );
-					if( static_cast<UI32>(ourChar->GetTimeout()) <= uiCurrentTime )
+					if( static_cast<UI32>(ourChar->GetTimeout()) <= cwmWorldState->GetUICurrentTime() )
 						ourChar->SetTimeout( BuildTimeValue( 1 ) );
 					else
 						ourChar->SetTimeout( ourChar->GetTimeout() + CLOCKS_PER_SEC );
@@ -1181,6 +1181,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				default:
 					FD_ZERO( &all );
 					FD_SET( mSock->CliSocket(), &all );
+					int nfds;
 					nfds = mSock->CliSocket() + 1;
 					if( select( nfds, &all, NULL, NULL, &uoxtimeout ) > 0 ) 
 						mSock->Receive( 2560 );
@@ -1324,11 +1325,11 @@ UOXSOCKET cNetworkStuff::Transfer( UOXSOCKET s )
 	InternalControl.On();
 	connClients.push_back( loggedInClients[s] );
 	loggedInClients.erase( loggedInClients.begin() + s );
-	now = connClients.size();
-	if( now > peakConnectionCount )
-		peakConnectionCount = now;
+	cwmWorldState->SetPlayersOnline( connClients.size() );
+	if( cwmWorldState->GetPlayersOnline() > peakConnectionCount )
+		peakConnectionCount = cwmWorldState->GetPlayersOnline();
 	InternalControl.Off();
-	return now-1;
+	return cwmWorldState->GetPlayersOnline()-1;
 }
 
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
@@ -1343,7 +1344,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			total = ( uiCurrentTime - starttime ) / CLOCKS_PER_SEC;
+			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
 			ho = total / 3600;
 			total -= ho * 3600;
 			mi = total / 60;
@@ -1759,8 +1760,8 @@ void cNetworkStuff::CheckXGMConn( void )
 		if( newClient < 0 )
 		{
 			Console.Error( 0, "Error at client xGM connection!" );
-			error = true;
-			keeprun = true;
+			cwmWorldState->SetKeepRun( true );
+			cwmWorldState->SetError( true );
 			delete toMake;
 			return;
 		}
@@ -1785,15 +1786,15 @@ void cNetworkStuff::CheckXGMConn( void )
 			return;
 		}
 		Console << "FIREWALL: Forwarding address " << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << " --> Access Granted" << myendl;
-		Console << "XGMClient " << (SI32)now << " [" << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << "] connected [Total:" << (SI32)(now+1) << "]" << myendl;
+		Console << "XGMClient " << (SI32)cwmWorldState->GetPlayersOnline() << " [" << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << "] connected [Total:" << (SI32)(cwmWorldState->GetPlayersOnline()+1) << "]" << myendl;
 		xgmClients.push_back( toMake );
 		return;
 	}
 	if( s < 0 )
 	{
 		Console.Error( 0, " Select (Conn) failed!" );
-		keeprun = false;
-		error = true;
+		cwmWorldState->SetKeepRun( false );
+		cwmWorldState->SetError( true );
 		return;
 	}
 }

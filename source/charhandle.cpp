@@ -64,8 +64,8 @@ UI32 cCharacterHandle::New( bool zeroSer = false )
 		Chars.push_back( new CChar( i, zeroSer ) );
 	}
 
-	if( i == charcount )
-		charcount++;
+	if( i == cwmWorldState->GetCharCount() )
+		cwmWorldState->IncCharCount();
 	Actual++;
 	return i;
 }

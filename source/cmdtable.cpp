@@ -14,124 +14,120 @@
 #include "mstring.h"
 #include "cAccountClass.h"
 
-TARGET_S target_bolt =				{ 0, 1, 0, 22, 195 };
-// This fires a harmless bolt at the user.
-// This disconnects the player targeted from the game. They
-// can still log back in.
-
 //A
 //B
-TARGET_S target_ban =					{ 0, 1, 0, 235, 253 };
-TARGET_S target_buy =					{ 0, 1, 0, 121, 233 };
+target_s target_ban =				{ 0, 235, 253 };
+target_s target_bolt =				{ 0, 22, 195 };
+target_s target_buy =				{ 0, 121, 233 };
 //C
-TARGET_S target_cstats =			{ 0, 1, 0, 13, 183 };
-TARGET_S target_ctrig =				{ 0, 1, 0, 201, 208 };
-TARGET_S target_commandlevel=	{ 0, 1, 0, 104, 264 };
+target_s target_cstats =			{ 0, 13, 183 };
+target_s target_ctrig =				{ 0, 201, 208 };
+target_s target_commandlevel=		{ 0, 104, 264 };
 //D
-TARGET_S target_devinelock =	{ 0, 1, 0, 68, 265 };
-TARGET_S target_devineunlock=	{ 0, 1, 0, 69, 266 };
-TARGET_S target_deletechar =	{ 0, 1, 0, 72, 1618 };
+target_s target_devinelock =		{ 0, 68, 265 };
+target_s target_devineunlock=		{ 0, 69, 266 };
+target_s target_deletechar =		{ 0, 72, 1618 };
 //E
 //F
-TARGET_S target_freeze =			{ 0, 1, 0, 34, 221 };
-TARGET_S target_fullstats =		{ 0, 1, 0, 151, 243 };
+target_s target_freeze =			{ 0, 34, 221 };
+target_s target_fullstats =			{ 0, 151, 243 };
 //G
-TARGET_S target_gate =				{ 0, 1, 0, 43, 226 };
-TARGET_S target_glow =				{ 0, 1, 0, 255, 258 };
+target_s target_gate =				{ 0, 43, 226 };
+target_s target_glow =				{ 0, 255, 258 };
 //H
-TARGET_S target_heal =				{ 0, 1, 0, 44, 227 };
-TARGET_S target_hide =				{ 0, 1, 0, 131, 244 };
+target_s target_heal =				{ 0, 44, 227 };
+target_s target_hide =				{ 0, 131, 244 };
 //I
-TARGET_S target_istats=				{ 0, 1, 0, 12, 182 };
-TARGET_S target_itrig=				{ 0, 1, 0, 200, 207 };
-TARGET_S target_incx =				{ 0, 1, 0, 253, 254 };
-TARGET_S target_incy =				{ 0, 1, 0, 254, 254 };
-TARGET_S target_incz =				{ 0, 1, 0, 250, 268 };
+target_s target_istats=				{ 0, 12, 182 };
+target_s target_itrig=				{ 0, 200, 207 };
+target_s target_incx =				{ 0, 253, 254 };
+target_s target_incy =				{ 0, 254, 254 };
+target_s target_incz =				{ 0, 250, 268 };
 //J
-TARGET_S target_jail =				{ 0, 1, 0, 126, 180 };
+target_s target_jail =				{ 0, 126, 180 };
 //K
-TARGET_S target_killhair =		{ 0, 1, 0, 16, 191 };
-TARGET_S target_killbeard =		{ 0, 1, 0, 17, 192 };
-TARGET_S target_kill =				{ 0, 1, 0, 20, 193 };
-TARGET_S target_kick =				{ 0, 1, 0, 25, 196 };
-TARGET_S target_killpack =		{ 0, 1, 0, 18, 251 };
+target_s target_killhair =			{ 0, 16, 191 };
+target_s target_killbeard =			{ 0, 17, 192 };
+target_s target_kill =				{ 0, 20, 193 };
+target_s target_kick =				{ 0, 25, 196 };
+target_s target_killpack =			{ 0, 18, 251 };
 //L
 //M
-TARGET_S target_movetobag =		{ 0, 1, 0, 111, 197 };
-TARGET_S target_mark =				{ 0, 1, 0, 39, 225 };
-TARGET_S target_mana =				{ 0, 1, 0, 113, 230 };
-TARGET_S target_makeshop =		{ 0, 1, 0, 116, 232 };
+target_s target_movetobag =			{ 0, 111, 197 };
+target_s target_mark =				{ 0, 39, 225 };
+target_s target_mana =				{ 0, 113, 230 };
+target_s target_makeshop =			{ 0, 116, 232 };
 //N
-TARGET_S target_newz =				{ 0, 1, 0, 5, 205 };
-TARGET_S target_npcaction =		{ 0, 1, 0, 53, 213 };
-TARGET_S target_newx =				{ 0, 1, 0, 251, 254 };
-TARGET_S target_newy =				{ 0, 1, 0, 252, 254 };
-TARGET_S target_npctarget =		{ 0, 1, 0, 56, 228 };
+target_s target_newz =				{ 0, 5, 205 };
+target_s target_npcaction =			{ 0, 53, 213 };
+target_s target_newx =				{ 0, 251, 254 };
+target_s target_newy =				{ 0, 252, 254 };
+target_s target_npctarget =			{ 0, 56, 228 };
 //O
 //P
-TARGET_S target_possess =			{ 0, 1, 0, 212, 249 };
+target_s target_possess =			{ 0, 212, 249 };
 //Q
 //R
-TARGET_S target_release =			{ 0, 1, 0, 127, 181 };
-TARGET_S target_remove =			{ 0, 1, 0, 3, 188 };
-TARGET_S target_resurrect =		{ 0, 1, 0, 21, 194 };
-TARGET_S target_recall =			{ 0, 1, 0, 38, 224 };
-TARGET_S target_removeshop =	{ 0, 1, 0, 105, 262 };
+target_s target_release =			{ 0, 127, 181 };
+target_s target_remove =			{ 0, 3, 188 };
+target_s target_resurrect =			{ 0, 21, 194 };
+target_s target_recall =			{ 0, 38, 224 };
+target_s target_removeshop =		{ 0, 105, 262 };
 //S
-TARGET_S target_setmorex =		{ 0, 1, 0, 63, 199 };
-TARGET_S target_setmorey =		{ 0, 1, 0, 64, 200 };
-TARGET_S target_setmorez =		{ 0, 1, 0, 65, 201 };
-TARGET_S target_setmorexyz =	{ 0, 1, 0, 66, 202 };
-TARGET_S target_sethexmorexyz={ 0, 1, 0, 66, 203 };
-TARGET_S target_setnpcai =		{ 0, 1, 0, 106, 204 };
-TARGET_S target_settype =			{ 0, 1, 0, 6, 206 };
-TARGET_S target_setid =				{ 0, 1, 0, 7, 210 };
-TARGET_S target_setmore =			{ 0, 1, 0, 10, 211 };
-TARGET_S target_setfont =			{ 0, 1, 0, 19, 212 };
-TARGET_S target_setamount =		{ 0, 1, 0, 23, 214 };
-TARGET_S target_setmovable =	{ 0, 1, 0, 28, 216 };
-TARGET_S target_setvisible =	{ 0, 1, 0, 61, 217 };
-TARGET_S target_setdir =			{ 0, 1, 0, 88, 218 };
-TARGET_S target_setspeech =		{ 0, 1, 0, 135, 219 };
-TARGET_S target_setowner =		{ 0, 1, 0, 30, 220 };
-TARGET_S target_stamina =			{ 0, 1, 0, 114, 231 };
-TARGET_S target_setvalue =		{ 0, 1, 0, 122, 234 };
-TARGET_S target_setrestock =	{ 0, 1, 0, 123, 235 };
-TARGET_S target_sell =				{ 0, 1, 0, 112, 236 };
-TARGET_S target_setspattack = { 0, 1, 0, 150, 237 };
-TARGET_S target_setspadelay = { 0, 1, 0, 177, 238 };
-TARGET_S target_setpoison =		{ 0, 1, 0, 175, 239 };
-TARGET_S target_setpoisoned = { 0, 1, 0, 176, 240 };
-TARGET_S target_setadvobj =		{ 0, 1, 0, 178, 241 };
-TARGET_S target_setwipe =			{ 0, 1, 0, 133, 242 };
-TARGET_S target_split =				{ 0, 1, 0, 209, 247 };
-TARGET_S target_splitchance = { 0, 1, 0, 210, 248 };
-TARGET_S target_showskills =	{ 0, 1, 0, 247, 260 };
-TARGET_S target_showdetail =	{ 0, 1, 0, 48, 261 };
-TARGET_S target_setscripttrigger = { 0, 1, 0, 71, 267 };
+target_s target_setmorex =			{ 0, 63, 199 };
+target_s target_setmorey =			{ 0, 64, 200 };
+target_s target_setmorez =			{ 0, 65, 201 };
+target_s target_setmorexyz =		{ 0, 66, 202 };
+target_s target_sethexmorexyz=		{ 0, 66, 203 };
+target_s target_setnpcai =			{ 0, 106, 204 };
+target_s target_settype =			{ 0, 6, 206 };
+target_s target_setid =				{ 0, 7, 210 };
+target_s target_setmore =			{ 0, 10, 211 };
+target_s target_setfont =			{ 0, 19, 212 };
+target_s target_setamount =			{ 0, 23, 214 };
+target_s target_setmovable =		{ 0, 28, 216 };
+target_s target_setvisible =		{ 0, 61, 217 };
+target_s target_setdir =			{ 0, 88, 218 };
+target_s target_setspeech =			{ 0, 135, 219 };
+target_s target_setowner =			{ 0, 30, 220 };
+target_s target_stamina =			{ 0, 114, 231 };
+target_s target_setvalue =			{ 0, 122, 234 };
+target_s target_setrestock =		{ 0, 123, 235 };
+target_s target_sell =				{ 0, 112, 236 };
+target_s target_setspattack =		{ 0, 150, 237 };
+target_s target_setspadelay =		{ 0, 177, 238 };
+target_s target_setpoison =			{ 0, 175, 239 };
+target_s target_setpoisoned =		{ 0, 176, 240 };
+target_s target_setadvobj =			{ 0, 178, 241 };
+target_s target_setwipe =			{ 0, 133, 242 };
+target_s target_split =				{ 0, 209, 247 };
+target_s target_splitchance =		{ 0, 210, 248 };
+target_s target_showskills =		{ 0, 247, 260 };
+target_s target_showdetail =		{ 0, 48, 261 };
+target_s target_setscripttrigger =	{ 0, 71, 267 };
 //T
-TARGET_S target_tele =				{ 0, 1, 0, 2, 185 };
-TARGET_S target_ttrig =				{ 0, 1, 0, 202, 209 };
-TARGET_S target_tiledata =		{ 0, 1, 0, 46, 223 };
-TARGET_S target_tweak =				{ 0, 1, 0, 62, 229 };
-TARGET_S target_telestuff =		{ 0, 1, 0, 222, 250 };
-TARGET_S target_trainer =			{ 0, 1, 0, 206, 252 };
+target_s target_tele =				{ 0, 2, 185 };
+target_s target_ttrig =				{ 0, 202, 209 };
+target_s target_tiledata =			{ 0, 46, 223 };
+target_s target_tweak =				{ 0, 62, 229 };
+target_s target_telestuff =			{ 0, 222, 250 };
+target_s target_trainer =			{ 0, 206, 252 };
 //U
-TARGET_S target_use =					{ 0, 1, 0, 24, 179 };
-TARGET_S target_unfreeze =		{ 0, 1, 0, 35, 222 };
-TARGET_S target_unhide =			{ 0, 1, 0, 132, 245 };
-TARGET_S target_unglow =			{ 0, 1, 0, 249, 259 };
+target_s target_use =				{ 0, 24, 179 };
+target_s target_unfreeze =			{ 0, 35, 222 };
+target_s target_unhide =			{ 0, 132, 245 };
+target_s target_unglow =			{ 0, 249, 259 };
 //V
 //W
-TARGET_S target_wstats =			{ 0, 1, 0, 55, 183 };
+target_s target_wstats =			{ 0, 55, 183 };
 //X
-TARGET_S target_xbank =				{ 0, 1, 0, 107, 186 };
-TARGET_S target_xsbank =			{ 0, 1, 0, 107, 187 }; // AntiChrist
-TARGET_S target_xgo =					{ 0, 1, 0, 8, 198 };
+target_s target_xbank =				{ 0, 107, 186 };
+target_s target_xsbank =			{ 0, 107, 187 }; // AntiChrist
+target_s target_xgo =				{ 0, 8, 198 };
 //Y
 //Z
 
-std::map< std::string, cmdtable_mapentry > cmd_table;
+map< string, cmdtable_mapentry > cmd_table;
 
 void CommandReset( void )
 {
@@ -140,7 +136,7 @@ void CommandReset( void )
 		//A
 		{"ADDU",				2,	CMD_ITEMMENU,	(CMD_DEFINE)1}, // Opens the GM add menu.
 		{"AREACOMMAND",			2,	CMD_FUNC,		(CMD_DEFINE)&command_areaCommand},
-		{"ADDACCOUNT",	2,	CMD_FUNC,		(CMD_DEFINE)&command_addaccount},
+		{"ADDACCOUNT",			2,	CMD_FUNC,		(CMD_DEFINE)&command_addaccount},
 		{"ACTION",				2,	CMD_FUNC,		(CMD_DEFINE)&command_action},
 		{"ADD",					2,	CMD_FUNC,		(CMD_DEFINE)&command_add},
 		{"ADDX",				2,	CMD_FUNC,		(CMD_DEFINE)&command_addx},
@@ -248,7 +244,7 @@ void CommandReset( void )
 		{"NPCRECT",				2,	CMD_FUNC,		(CMD_DEFINE)&command_npcrect},
 		{"NPCCIRCLE",			2,	CMD_FUNC,		(CMD_DEFINE)&command_npccircle},
 		{"NPCWANDER",			2,	CMD_FUNC,		(CMD_DEFINE)&command_npcwander},
-		{"NPCACTION",			2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_npcaction},
+		{"NPCACTION",			2,	CMD_TARGETID1,	(CMD_DEFINE)&target_npcaction},
 		{"NODECAY",				2,	CMD_FUNC,		(CMD_DEFINE)&command_nodecay},
 		{"NEWZ",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_newz},
 		{"NEXT",				1,	CMD_FUNC,		(CMD_DEFINE)&command_next},
@@ -291,13 +287,13 @@ void CommandReset( void )
 		{"SETRACE",				2,  CMD_FUNC,		(CMD_DEFINE)&command_setrace},
 		{"SPAWNKILL",			2,	CMD_FUNC,		(CMD_DEFINE)&command_spawnkill},
 		{"SQUELCH",				2,	CMD_FUNC,		(CMD_DEFINE)&command_squelch},
-		{"SPLIT",				2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_split},
-		{"SPLITCHANCE",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_splitchance},
-		{"SETSPATTACK",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setspattack},
-		{"SETSPADELAY",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setspadelay},
-		{"SETPOISON",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setpoison},
-		{"SETPOISONED",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setpoisoned},
-		{"SETADVOBJ",			2,	CMD_TARGETHTMP,	(CMD_DEFINE)&target_setadvobj},
+		{"SPLIT",				2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_split},
+		{"SPLITCHANCE",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_splitchance},
+		{"SETSPATTACK",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_setspattack},
+		{"SETSPADELAY",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_setspadelay},
+		{"SETPOISON",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_setpoison},
+		{"SETPOISONED",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_setpoisoned},
+		{"SETADVOBJ",			2,	CMD_TARGETTMP,	(CMD_DEFINE)&target_setadvobj},
 		{"SETWIPE",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_setwipe},
 		{"SELL",				2,	CMD_TARGET,		(CMD_DEFINE)&target_sell},
 		{"SETVALUE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvalue},
@@ -310,21 +306,21 @@ void CommandReset( void )
 		{"SETVISIBLE",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setvisible},
 		{"SETDIR",				2,	CMD_TARGETX,	(CMD_DEFINE)&target_setdir},
 		{"SETSPEECH",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setspeech},
-		{"SETOWNER",			2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setowner},
+		{"SETOWNER",			2,	CMD_TARGETID4,	(CMD_DEFINE)&target_setowner},
 		{"SHOWHS",				2,	CMD_FUNC,		(CMD_DEFINE)&command_showhs},
 		{"SETAMOUNT",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setamount},
 		{"SFX",					2,	CMD_FUNC,		(CMD_DEFINE)&command_sfx},
-		{"SETFONT",				2,	CMD_TARGETHID1,	(CMD_DEFINE)&target_setfont},
+		{"SETFONT",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_setfont},
 		{"SHOWTIME",			1,	CMD_FUNC,		(CMD_DEFINE)&command_showtime},
 		{"SETTIME",				2,	CMD_FUNC,		(CMD_DEFINE)&command_settime},
-		{"SETMORE",				2,	CMD_TARGETHID4,	(CMD_DEFINE)&target_setmore},
+		{"SETMORE",				2,	CMD_TARGETID4,	(CMD_DEFINE)&target_setmore},
 		{"SHUTDOWN",			2,	CMD_FUNC,		(CMD_DEFINE)&command_shutdown},
-		{"SETID",				2,	CMD_TARGETHID2,	(CMD_DEFINE)&target_setid},
+		{"SETID",				2,	CMD_TARGETID2,	(CMD_DEFINE)&target_setid},
 		{"SETPRIV",				2,	CMD_FUNC,		(CMD_DEFINE)&command_setpriv},
 		{"SETTYPE",				2,	CMD_TARGETID1,	(CMD_DEFINE)&target_settype},
 		{"SAVE",				2,	CMD_FUNC,		(CMD_DEFINE)&command_save},
 		{"SETMOREXYZ",			2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_setmorexyz},
-		{"SETHEXMOREXYZ",		2,	CMD_TARGETHXYZ,	(CMD_DEFINE)&target_sethexmorexyz},
+		{"SETHEXMOREXYZ",		2,	CMD_TARGETXYZ,	(CMD_DEFINE)&target_sethexmorexyz},
 		{"SETNPCAI",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setnpcai},
 		{"SETMOREX",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorex},
 		{"SETMOREY",			2,	CMD_TARGETX,	(CMD_DEFINE)&target_setmorey},
@@ -383,6 +379,7 @@ void CommandReset( void )
 	};
 }
 
+
 //o--------------------------------------------------------------------------o
 //|	Function/Class-	void command_addaccount( cSocket *s)
 //|	Date					-	10/17/2002
@@ -403,7 +400,7 @@ void command_addaccount( cSocket *s)
 	ACCOUNTSBLOCK actbTemp;
 	UI16 nFlags=0x0000;
 	szPassword=szUsername=szCommand=szCommandLine=NULL;
-	if( tnum > 1 )
+	if( Commands->GetNumArguments() > 1 )
 	{
 		szCommandLine=(char *)&(s->TBuffer()[Commands->cmd_offset+0]);
 		szCommand =strtok(szCommandLine," ");
@@ -432,7 +429,7 @@ void command_addaccount( cSocket *s)
 
 void command_setrace( cSocket *s )
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		RACEID race = makenumber( 1 );
 		if( race <= 65535 )
@@ -575,7 +572,7 @@ void command_goplace( cSocket *s )
 // (d) Teleports you to a location from the LOCATIONS.SCP file.
 {
 	CChar *mChar = s->CurrcharObj();
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		Commands->MakePlace( s, makenumber( 1 ) );
 		if( s->AddX() != 0 )
@@ -590,7 +587,7 @@ void command_gochar( cSocket *s )
 // (h h h h) Teleports you to another character.
 {
 	CChar *mChar = s->CurrcharObj();
-	if( tnum == 5 )
+	if( Commands->GetNumArguments() == 5 )
 	{
 		SERIAL serial = calcserial( (UI08)makenumber( 1 ), (UI08)makenumber( 2 ), (UI08)makenumber( 3 ), (UI08)makenumber( 4 ) );
 		CChar *iTo = calcCharObjFromSer( serial );
@@ -613,7 +610,7 @@ void command_gochar( cSocket *s )
 		else
 			sysmessage( s, "No such character exists" );
 	} 
-	else if( tnum == 2 )
+	else if( Commands->GetNumArguments() == 2 )
 	{
 		cSocket *tSock = calcSocketObjFromSock( makenumber( 1 ) );
 		if( tSock != NULL )
@@ -647,7 +644,7 @@ void command_fix( cSocket *s )
 // Try to compensate for messed up Z coordinates. Use this if you find yourself half-embedded in the ground.
 { // Rewrite to do it properly
 	CChar *mChar = s->CurrcharObj();
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		if( validTelePos( s ) == -1 )
 		{
@@ -666,11 +663,11 @@ void command_fix( cSocket *s )
 void command_xgoplace( cSocket *s )
 // (d) Send another character to a location in your LOCATIONS.SCP file.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		Commands->MakePlace( s, makenumber( 1 ) );
 		if( s->AddX() != 0 )
-			target( s, 0, 1, 0, 8, 20 );
+			target( s, 0, 8, 20 );
 	}
 }
 
@@ -699,12 +696,12 @@ void command_poly( cSocket *s )
 // (h h) Polymorph yourself into any other creature.
 {
 	CChar *mChar = s->CurrcharObj();
-	if( tnum < 2 || tnum > 3 || !mChar )
+	if( Commands->GetNumArguments() < 2 || Commands->GetNumArguments() > 3 || !mChar )
 		return;
 	UI16 targBody = INVALIDID;
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 		targBody = (UI16)makenumber( 1 );
-	else if( tnum == 3 )
+	else if( Commands->GetNumArguments() == 3 )
 		targBody = (UI16)((makenumber( 1 ) << 8 ) + makenumber( 2 ));
 
 	if( targBody <= 0x2FF ) // body-values > 0x3E crash the client
@@ -734,7 +731,7 @@ void command_skin( cSocket *s )
 // (h h) Change the hue of your skin.
 {
 	CChar *mChar = s->CurrcharObj();
-	if( tnum == 2 && mChar != NULL )
+	if( Commands->GetNumArguments() == 2 && mChar != NULL )
 	{
 		int body = mChar->GetID();
 		COLOUR k = (COLOUR)makenumber( 1 );
@@ -756,7 +753,7 @@ void command_skin( cSocket *s )
 void command_action( cSocket *s )
 // (h) Preform an animated action sequence.
 {
-	if( tnum == 2 ) 
+	if( Commands->GetNumArguments() == 2 ) 
 		action( s, makenumber( 1 ) );
 }
 
@@ -768,17 +765,17 @@ void command_xtele( cSocket *s )
 // under that slot to you.</LI>
 // </UL>
 {
-	if( tnum == 5 || tnum == 2 ) 
-		Targ->XTeleport( s, static_cast<UI08>(tnum ));
+	if( Commands->GetNumArguments() == 5 || Commands->GetNumArguments() == 2 ) 
+		Targ->XTeleport( s, static_cast<UI08>(Commands->GetNumArguments() ));
 	else
-		target( s, 0, 1, 0, 136, 21 );
+		target( s, 0, 136, 21 );
 }
 
 void command_go( cSocket *s )
 // (d d d) Go to the specified X/Y/Z coordinates
 {
 	CChar *mChar = s->CurrcharObj();
-	if( tnum == 4 )
+	if( Commands->GetNumArguments() == 4 )
 	{
 		SI16 x = (SI16)makenumber( 1 ); 
 		SI16 y = (SI16)makenumber( 2 ); 
@@ -795,7 +792,7 @@ void command_zerokills( cSocket *s )
 // Sets all PK counters to 0.
 {
 	sysmessage( s, 22 );
-	for( UI32 a=0; a < charcount; a++ )
+	for( UI32 a=0; a < cwmWorldState->GetCharCount(); a++ )
 	{
 		chars[a].SetKills( 0 );
 		setcharflag( &chars[a] );
@@ -812,9 +809,9 @@ void command_tile( cSocket *s )
 {
 	s->ClickX( -1 );
 	s->ClickY( -1 );
-	if( tnum != 2 && tnum != 3 )
+	if( Commands->GetNumArguments() != 2 && Commands->GetNumArguments() != 3 )
 		return;
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		UI16 targID = (UI16)makenumber( 1 );
 		s->AddID1( (UI08)(targID>>8) );
@@ -825,7 +822,7 @@ void command_tile( cSocket *s )
 		s->AddID1( (UI08)(makenumber( 1 )) );
 		s->AddID2( (UI08)(makenumber( 2 )) );
 	}
-	target( s, 0, 1, 0, 198, 24 );  // 198 didn't seem taken...
+	target( s, 0, 198, 24 );  // 198 didn't seem taken...
 }
 
 void command_wipe( cSocket *s )
@@ -836,18 +833,18 @@ void command_wipe( cSocket *s )
 // </UL>
 {
 	s->AddID1( 0 );
-	if( tnum == 1 ) 
+	if( Commands->GetNumArguments() == 1 ) 
 	{
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		target( s, 0, 1, 0, 199, 25 );  // 199 didn't seem taken...
+		target( s, 0, 199, 25 );  // 199 didn't seem taken...
 	} 
-	else if( tnum == 2 ) 
+	else if( Commands->GetNumArguments() == 2 ) 
 	{
 		if( !strcmp( "ALL", (char*)&(s->TBuffer()[Commands->cmd_offset+5]) ) )  // Really should warn that this will wipe ALL objects...
 			Commands->Wipe( s );
 	}
-	else if( tnum == 5 ) 
+	else if( Commands->GetNumArguments() == 5 ) 
 	{ // Wipe according to world coordinates
 		s->ClickX( makenumber( 1 ) );
 		s->ClickY( makenumber( 2 ) );
@@ -864,7 +861,7 @@ void command_areaCommand( cSocket *s )
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset + 12]) );
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		target( s, 0, 1, 0, 90, 25 );
+		target( s, 0, 90, 25 );
 	}
 	else
 	{
@@ -881,20 +878,20 @@ void command_iwipe( cSocket *s )
 // </UL>
 {
 	s->AddID1( 1 );
-	if( tnum == 1 ) 
+	if( Commands->GetNumArguments() == 1 ) 
 	{
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		target( s, 0, 1, 0, 199, 26 );  // 199 didn't seem taken...
+		target( s, 0, 199, 26 );  // 199 didn't seem taken...
 	} 
-	else if( tnum == 2 ) 
+	else if( Commands->GetNumArguments() == 2 ) 
 	{
 		if( !strcmp( "ALL", (char *)&(s->TBuffer()[Commands->cmd_offset+6]) ) ) 
 		{
 			sysmessage( s, 90 );
 		}
 	}
-	else if( tnum == 5 ) 
+	else if( Commands->GetNumArguments() == 5 ) 
 	{ // Wipe according to world coordinates
 		s->ClickX( makenumber( 1 ) );
 		s->ClickY( makenumber( 2 ) );
@@ -907,24 +904,24 @@ void command_iwipe( cSocket *s )
 void command_add( cSocket *s )
 // (h h) Adds a new item, or opens the GM menu if no hex codes are specified.
 {
-	if( tnum > 3 )
+	if( Commands->GetNumArguments() > 3 )
 	{
 		sysmessage( s, 27 );
 		return;
 	} 
-	else if( tnum == 3 || tnum == 2 )
+	else if( Commands->GetNumArguments() == 3 || Commands->GetNumArguments() == 2 )
 	{
 		UI16 targID = INVALIDID;
-		if( tnum == 3 )
+		if( Commands->GetNumArguments() == 3 )
 			targID = (UI16)( ( makenumber( 1 ) << 8 ) + makenumber( 2 ) );
 		else
 			targID = (UI16)makenumber( 1 );
 		s->AddID1( (UI08)(targID>>8) );
 		s->AddID2( (UI08)(targID%256) );
 		if( s->AddID1() < 0x40 )
-			target( s, 0, 1, 0, 0, 28 );
+			target( s, 0, 0, 28 );
 	} 
-	else if( tnum == 1 )
+	else if( Commands->GetNumArguments() == 1 )
 	{
 		NewAddMenu( s, 1 );
 	}
@@ -939,7 +936,7 @@ void command_addx( cSocket *s )
 
 	UI16 addID = INVALIDID;
 	SI08 targZ = mChar->GetZ();
-	switch( tnum )
+	switch( Commands->GetNumArguments() )
 	{
 	case 2:	addID = (UI16)makenumber( 1 );	break;
 	case 4:	targZ = (SI08)makenumber( 3 );
@@ -954,20 +951,20 @@ void command_addx( cSocket *s )
 void command_rename( cSocket *s )
 // (text) Renames any dynamic item in the game.
 {
-	if( tnum > 1 )
+	if( Commands->GetNumArguments() > 1 )
 	{
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+7]) );
-		target( s, 0, 1, 0, 1, 29 );
+		target( s, 0, 1, 29 );
 	}
 }
 
 void command_title( cSocket *s )
 // (text) Changes the title of any player or NPC.
 {
-	if( tnum > 1 )
+	if( Commands->GetNumArguments() > 1 )
 	{
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+6]) );
-		target( s, 0, 1, 0, 47, 30 );
+		target( s, 0, 47, 30 );
 	}
 }
 
@@ -985,13 +982,13 @@ void command_dye( cSocket *s )
 // (h h/nothing) Dyes an item a specific color, or brings up a dyeing menu if no color is specified.
 {
 	s->DyeAll( 1 );
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		UI16 tNum = makenumber( 1 );
 		s->AddID1( (UI08)(tNum>>8) );
 		s->AddID2( (UI08)(tNum%256) );
 	} 
-	else if( tnum == 3 )
+	else if( Commands->GetNumArguments() == 3 )
 	{
 		s->AddID1( (UI08)makenumber( 1 ) );
 		s->AddID2( (UI08)makenumber( 2 ) );
@@ -1001,23 +998,23 @@ void command_dye( cSocket *s )
 		s->AddID1( 0xFF );
 		s->AddID2( 0xFF );
 	}
-	target( s, 0, 1, 0, 4, 31 );
+	target( s, 0, 4, 31 );
 }
 
 void command_setpriv( cSocket *s )
 // (Chars/NPCs: h h, Objects: h) Sets priviliges on a Character or object.
 {
-	if( tnum == 3 )
+	if( Commands->GetNumArguments() == 3 )
 	{
 		s->AddID1( (UI08)makenumber( 1 ) );
 		s->AddID2( (UI08)makenumber( 2 ) );
-		target( s, 0, 1, 0, 9, 33 );
+		target( s, 0, 9, 33 );
 	}
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		s->AddID1( 3 );
 		s->AddID2( (UI08)makenumber( 1 ) );
-		target( s, 0, 1, 0, 89, 34 );
+		target( s, 0, 89, 34 );
 	}
 }
 
@@ -1025,7 +1022,7 @@ void command_nodecay( cSocket *s )
 // Prevents an object from ever decaying.
 {
 	s->AddID1( 0 );
-	target( s, 0, 1, 0, 89, 35 );
+	target( s, 0, 89, 35 );
 }
 
 
@@ -1046,7 +1043,7 @@ void command_settime( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d d) Sets the current UO time in hours and minutes.
 {
-	if( tnum == 3 )
+	if( Commands->GetNumArguments() == 3 )
 	{
 		int newhours = makenumber( 1 );
 		int newminutes = makenumber( 2 );
@@ -1067,12 +1064,12 @@ void command_shutdown( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Shuts down the server. Argument is how many minutes until shutdown.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
-		endtime = BuildTimeValue( static_cast<R32>(makenumber( 1 )) );
+		cwmWorldState->SetEndTime( BuildTimeValue( static_cast<R32>(makenumber( 1 )) ) );
 		if( makenumber( 1 ) == 0 )
 		{
-			endtime = 0;
+			cwmWorldState->SetEndTime( 0 );
 			sysbroadcast( Dictionary->GetEntry( 36 ) );
 		}
 		else 
@@ -1092,7 +1089,7 @@ void command_wholist( cSocket *s )
 void command_sfx( cSocket *s )
 // (h h) Plays the specified sound effect.
 {
-	switch( tnum )
+	switch( Commands->GetNumArguments() )
 	{
 	case 2:		soundeffect( s, makenumber( 1 ), true );							break;
 	case 3:		soundeffect( s, (makenumber( 1 ) << 8 ) + makenumber( 2 ), true );	break;
@@ -1104,7 +1101,7 @@ void command_light( cSocket *s)
 // PARAM WARNING: s is unreferenced
 // (h) Sets the light level. 0=brightest, 15=darkest, -1=enable day/night cycles.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		SI16 tLevel = (SI16)makenumber( 1 );
 		cwmWorldState->ServerData()->SetWorldFixedLightLevel( tLevel );
@@ -1116,14 +1113,14 @@ void command_disconnect( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Disconnects the user logged in under the specified slot.
 {
-	if( tnum == 2 ) 
+	if( Commands->GetNumArguments() == 2 ) 
 		Network->Disconnect( makenumber( 1 ) );
 }
 
 void command_tell( cSocket *s )
 // (d text) Sends an anonymous message to the user logged in under the specified slot.
 {
-	if( tnum > 2 ) 
+	if( Commands->GetNumArguments() > 2 ) 
 	{
 		int sockNum = makenumber( 1 );
 		if ( sockNum < 10 )
@@ -1138,7 +1135,7 @@ void command_tell( cSocket *s )
 void command_gmmenu( cSocket *s )
 // (d) Opens the specified GM Menu.
 {
-	if( tnum == 2 ) 
+	if( Commands->GetNumArguments() == 2 ) 
 		gmmenu( s, makenumber( 1 ) );
 }
 
@@ -1146,7 +1143,7 @@ void command_itemmenu( cSocket *s )
 // (d) Opens the specified Item Menu from ITEMS.SCP.
 {
 	int i;
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		i = makenumber( 1 );
 		NewAddMenu( s, i );
@@ -1157,26 +1154,26 @@ void command_additem( cSocket *s )
 // (d) Adds the specified item from ITEMS.SCP.
 {
 	char temp[1024];
-	if( tnum >= 2 )	// might be quite long
+	if( Commands->GetNumArguments() >= 2 )	// might be quite long
 	{
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+8]) );	// let's store what we really want to add
 		sprintf( temp, Dictionary->GetEntry( 37, s->Language() ), s->XText() );
-		target( s, 0, 1, 0, 26, temp );
+		target( s, 0, 26, temp );
 	}
 }
 
 void command_dupe( cSocket *s )
 // (d / nothing) Duplicates an item. If a parameter is specified, it's how many copies to make.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		s->AddID1( makenumber( 1 ) );
-		target( s, 0, 1, 0, 110, 38 );
+		target( s, 0, 110, 38 );
 	}
 	else
 	{
 		s->AddID1( 1 );
-		target( s, 0, 1, 0, 110, 38 );
+		target( s, 0, 110, 38 );
 	}
 }
 
@@ -1184,7 +1181,7 @@ void command_dupe( cSocket *s )
 void command_command( cSocket *s )
 // Executes a trigger scripting command.
 {
-	if( tnum > 1 )
+	if( Commands->GetNumArguments() > 1 )
 	{
 		char scp1[1024], scp2[1024];
 		char c = 0;
@@ -1283,9 +1280,9 @@ void command_set( cSocket *s )
 
 	// Dont remove the char* or else it'll complain about 
 	// the overloaded function
-	target( s, 0, 1, 0, 36 , (char *)NULL );
+	target( s, 0, 36 , (char *)NULL );
 
-	/*if( tnum == 3 )
+	/*if( Commands->GetNumArguments() == 3 )
 	{
 		char toSet[1024];
 		int i = 0;
@@ -1327,16 +1324,16 @@ void command_set( cSocket *s )
 void command_addnpc( cSocket *s )
 // (d or h h) Add the specified NPC from NPC.SCP or by hex ID code.
 {
-	if( tnum == 3 )
+	if( Commands->GetNumArguments() == 3 )
 	{
 		s->AddID1( makenumber( 1 ) );
 		s->AddID2( makenumber( 2 ) );
-		target( s, 0, 1, 0, 33, 44 );
+		target( s, 0, 33, 44 );
 	}
-	else if( tnum == 2 )
+	else if( Commands->GetNumArguments() == 2 )
 	{
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+7]) );
-		target( s, 0, 1, 0, 27, 44 );
+		target( s, 0, 27, 44 );
 	}
 }
 
@@ -1350,7 +1347,7 @@ void command_readini( cSocket *s )
 void command_gumpmenu( cSocket *s )
 // (d) Opens the specified GUMP menu.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 		Gumps->Menu( s, makenumber( 1 ) );
 }
 
@@ -1363,25 +1360,25 @@ void command_cachestats( cSocket *s )
 void command_npcrect( cSocket *s )
 // (d d d d) Set bounding box for a NPC with a NPCWANDER of 3.
 {
-	if( tnum == 5 )
+	if( Commands->GetNumArguments() == 5 )
 	{
 		s->AddX( makenumber( 1 ) );
 		s->AddY( makenumber( 2 ) );
 		s->AddX2( makenumber( 3 ) );
 		s->AddY2( makenumber( 4 ) );
-		target( s, 0, 1, 0, 67, 46 );
+		target( s, 0, 67, 46 );
 	}
 }
 
 void command_npccircle( cSocket *s )
 // (d d d) Set bounding circle for a NPC with a NPCWANDER of 2.
 {
-	if( tnum == 4 )
+	if( Commands->GetNumArguments() == 4 )
 	{
 		s->AddX( makenumber( 1 ) );
 		s->AddY( makenumber( 2 ) );
 		s->AddX2( makenumber( 3 ) );
-		target( s, 0, 1, 0, 59, 47 );
+		target( s, 0, 59, 47 );
 	}
 }
 
@@ -1394,19 +1391,19 @@ void command_npcwander( cSocket *s )
 // <LI>3 = NPC stays in box specified by <A HREF="npcrect.html">NPCRECT</A>.</LI>
 // <LI>4 = NPC stays in circle specified by <A HREF="npccircle.html">NPCCIRCLE</A>.</LI></UL>
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
-		npcshape[0] = makenumber( 1 );
-		target( s, 0, 1, 0, 60, 48 );
+		s->TempInt( makenumber( 1 ) );
+		target( s, 0, 60, 48 );
 	}
 }
 
 void command_secondsperuominute( cSocket *s )
 // (d) Sets the number of real-world seconds that pass for each UO minute.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
-		secondsperuominute = (UI16)makenumber( 1 );
+		cwmWorldState->SetSecondsPerUOMinute( (UI16)makenumber( 1 ) );
 		sysmessage( s, 49 );
 	}
 }
@@ -1414,7 +1411,7 @@ void command_secondsperuominute( cSocket *s )
 void command_brightlight( cSocket *s )
 // (h) Sets default daylight level.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		cwmWorldState->ServerData()->SetWorldLightBrightLevel( (SI16)makenumber( 1 ) );
 		sysmessage( s, 50 );
@@ -1424,7 +1421,7 @@ void command_brightlight( cSocket *s )
 void command_darklight( cSocket *s )
 // (h) Sets default nighttime light level.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		cwmWorldState->ServerData()->SetWorldLightDarkLevel( (SI16)makenumber( 1 ) );
 		sysmessage( s, 50 );
@@ -1434,7 +1431,7 @@ void command_darklight( cSocket *s )
 void command_dungeonlight( cSocket *s )
 // (h) Sets default dungeon light level.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		cwmWorldState->ServerData()->SetDungeonLightLevel( (SI16)makenumber( 1 ) );
 		sysmessage( s, 52 );
@@ -1452,11 +1449,11 @@ void command_gmopen( cSocket *s )
 // <TR><TD><B>1D</B></TD><TD>Bank Box</TD></TR>
 // </TABLE>
 {
-	if( tnum == 2 ) 
+	if( Commands->GetNumArguments() == 2 ) 
 		s->TempInt( makenumber( 1 ) );
 	else 
 		s->TempInt( 0x15 );
-	target(s, 0, 1, 0, 115, 53 );
+	target( s, 0, 115, 53 );
 }
 
 void command_restock( cSocket *s )
@@ -1476,9 +1473,9 @@ void command_restockall( cSocket *s )
 void command_setshoprestockrate( cSocket *s )
 // (d) Sets the universe's shop restock rate.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
-		shoprestockrate = makenumber( 1 );
+		cwmWorldState->ServerData()->SetSystemTimer( SHOP_SPAWN, makenumber( 1 ) );
 		sysmessage( s, 56 );
 	}
 	else 
@@ -1488,16 +1485,16 @@ void command_setshoprestockrate( cSocket *s )
 void command_midi( cSocket *s )
 // (d d) Plays the specified MIDI file.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 		playMidi( s, (UI16)makenumber( 1 ) );
-	else if( tnum == 3 ) 
+	else if( Commands->GetNumArguments() == 3 ) 
 		playMidi( s, (UI16)( ( makenumber( 1 ) << 8 ) + makenumber( 2 ) ) );
 }
 
 void command_gumpopen( cSocket *s )
 // (h h) Opens the specified GUMP menu.
 {
-	switch( tnum )
+	switch( Commands->GetNumArguments() )
 	{
 	case 2:		Gumps->Open( s, s->CurrcharObj(), (UI16)( makenumber( 1 ) ) );							break;
 	case 3:		Gumps->Open( s, s->CurrcharObj(), (UI16)( (makenumber( 1 )<<8) + makenumber( 2 ) ) );	break;
@@ -1515,7 +1512,7 @@ void command_respawn( cSocket *s )
 void command_regspawnmax( cSocket *s )
 // (d) Spawns in all regions up to the specified maximum number of NPCs/Items.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		Console << "Regspawnmax called" << myendl;
 		Commands->RegSpawnMax( s, spawnregion[makenumber( 1 )] );
@@ -1525,7 +1522,7 @@ void command_regspawnmax( cSocket *s )
 void command_regspawn( cSocket *s )
 // (d d) Preforms a region spawn. First argument is region, second argument is max # of items/NPCs to spawn in that region.
 {
-	if( tnum == 3 )
+	if( Commands->GetNumArguments() == 3 )
 	{
 		Console << "Regspawn called" << myendl;
 		Commands->RegSpawnNum( s, spawnregion[makenumber( 1 )], makenumber( 2 ) );
@@ -1571,7 +1568,7 @@ void command_minecheck( cSocket *s )
 // PARAM WARNING: s is unreferenced
 // (d) Set the server mine check interval in minutes.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 		cwmWorldState->ServerData()->SetMineCheck( makenumber( 1 ) );
 	return;
 }
@@ -1580,7 +1577,7 @@ void command_invul( cSocket *s )
 // Makes the targeted character immortal.
 {
 	s->AddX( 1 );
-	target( s, 0, 1, 0, 179, 59 );
+	target( s, 0, 179, 59 );
 	
 }
 
@@ -1588,7 +1585,7 @@ void command_noinvul( cSocket *s )
 // Makes the targeted character mortal.
 {
 	s->AddX( 0 );
-	target( s, 0, 1, 0, 179, 60 );
+	target( s, 0, 179, 60 );
 	
 }
 
@@ -1637,10 +1634,10 @@ void command_announceoff( cSocket *s )
 void command_wf( cSocket *s )
 // Make the specified item worldforge compatible.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		s->AddID1( 0xFF );
-		target( s, 0, 1, 0, 6, 65 );
+		target( s, 0, 6, 65 );
 	}
 	return;
 	
@@ -1650,7 +1647,7 @@ void command_decay( cSocket *s )
 // Enables decay on an object.
 {
 	s->AddID( 1 );
-	target( s, 0, 1, 0, 89, 66 );
+	target( s, 0, 89, 66 );
 	return;
 	
 }
@@ -1658,7 +1655,7 @@ void command_decay( cSocket *s )
 void command_killall( cSocket *s )
 // (d text) Kills all of a specified item.
 {
-	if( tnum > 2 )
+	if( Commands->GetNumArguments() > 2 )
 	{
 		if( makenumber( 1 ) < 10 )
 			Commands->KillAll( s, makenumber(1), (char *)&(s->TBuffer()[Commands->cmd_offset+9]) );
@@ -1686,11 +1683,11 @@ void command_pdump( cSocket *s )
 void command_rename2( cSocket *s )
 // (text) Rename an item or character.
 {
-	if( tnum > 1 )
+	if( Commands->GetNumArguments() > 1 )
 	{
 		s->AddX( 1 );
 		s->XText( (char *)&(s->TBuffer()[Commands->cmd_offset+8]) );
-		target( s, 0, 1, 0, 1, 67 );
+		target( s, 0, 1, 67 );
 	} 
 	return;
 }
@@ -1710,7 +1707,7 @@ void command_gy( cSocket *s )
 	if( s == NULL ) 
 		return;
 
-	if( now == 1 )
+	if( cwmWorldState->GetPlayersOnline() == 1 )
 	{
 		sysmessage( s, 69 );
 		return;
@@ -1728,7 +1725,7 @@ void command_gy( cSocket *s )
 	toAdd->Speaker( INVALIDSERIAL );
 	toAdd->Colour( s->GetWord( 4 ) );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_BROADCASTALL );
 	toAdd->CmdLevel( 2 );
 }
@@ -1747,7 +1744,7 @@ void command_tilew( cSocket *s )
 	UI16 targID = INVALIDID;
 	SI16 x1, x2, y1, y2;
 	SI08 z;
-	if( tnum == 7 )
+	if( Commands->GetNumArguments() == 7 )
 	{
 		targID = (UI16)makenumber( 1 );
 		x1 = (SI16)makenumber( 2 );
@@ -1756,7 +1753,7 @@ void command_tilew( cSocket *s )
 		y2 = (SI16)makenumber( 5 );
 		z  = (SI08)makenumber( 6 );
 	}
-	else if( tnum == 8 )
+	else if( Commands->GetNumArguments() == 8 )
 	{
 		targID = (UI16)(( (makenumber( 1 ))<< 8 ) + makenumber( 2 ));
 		x1 = (SI16)makenumber( 3 );
@@ -1796,7 +1793,7 @@ void command_squelch( cSocket *s )
 // (d / nothing) Squelchs specified player. (Makes them unnable to speak.)
 {
 	
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		if( makenumber( 1 ) != 0 || makenumber( 1 ) != -1 )
 		{
@@ -1804,7 +1801,7 @@ void command_squelch( cSocket *s )
 			s->AddID2( (UI08)( makenumber( 1 ) ) );
 		}
 	}
-	target( s, 0, 1, 0, 223, 71 );
+	target( s, 0, 223, 71 );
 	return;
 	
 }
@@ -1812,7 +1809,7 @@ void command_squelch( cSocket *s )
 void command_spawnkill( cSocket *s )
 // (d) Kills spawns from the specified spawn region in SPAWN.SCP.
 {
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		Commands->KillSpawn( s, makenumber( 1 ) );
 	}
@@ -1893,7 +1890,7 @@ void command_gmtransfer( cSocket *s )
 void command_who( cSocket *s )
 // Displays a list of users currently online.
 {
-	if( now == 1 )
+	if( cwmWorldState->GetPlayersOnline() == 1 )
 	{
 		sysmessage( s, 69 );
 		return;
@@ -1938,7 +1935,7 @@ void command_regspawnall( cSocket *s )
 	SI32 spawn = 0;
 	UI16 i;
 	cSpawnRegion *spawnReg = NULL;
-	for( i = 1; i < totalspawnregions; i++ )
+	for( i = 1; i < cwmWorldState->GetTotalSpawnRegions(); i++ )
 	{
 		spawnReg = spawnregion[i];
 		if( spawnReg != NULL )
@@ -1951,7 +1948,7 @@ void command_regspawnall( cSocket *s )
 	}
 	sysbroadcast( Dictionary->GetEntry( 79 ) );
 	
-	for( i = 1; i < totalspawnregions; i++ )
+	for( i = 1; i < cwmWorldState->GetTotalSpawnRegions(); i++ )
 	{
 		spawnReg = spawnregion[i];
 		if( spawnReg != NULL )
@@ -1962,7 +1959,7 @@ void command_regspawnall( cSocket *s )
 			spawnReg->SetNextTime( BuildTimeValue(static_cast<R32>( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) )) );
 		}
 	}
-	sysmessage( s, 80, spawn, totalspawnregions );
+	sysmessage( s, 80, spawn, cwmWorldState->GetTotalSpawnRegions() );
 }
 
 void command_wipenpcs( cSocket *s )
@@ -1974,7 +1971,7 @@ void command_wipenpcs( cSocket *s )
 	int deleted = 0;
 	Console.Print( Dictionary->GetEntry( 81 ), mChar->GetName() );
 	
-	for( CHARACTER j = 0; j < charcount; j++ )
+	for( CHARACTER j = 0; j < cwmWorldState->GetCharCount(); j++ )
 	{
 		if( chars[j].isFree() )
 			continue;
@@ -1996,7 +1993,7 @@ void command_cleanup( cSocket *s )
 {
 	int corpses = 0;
 	sysmessage( s, 83 );
-	for( UI32 i = 0; i < itemcount; i++ )
+	for( UI32 i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( items[i].isCorpse() || items[i].GetType() == 51 || items[i].GetType() == 52 )
 		{
@@ -2086,14 +2083,14 @@ void command_delid( cSocket *s )
 // (h h) Deletes all items in the world with a particular id
 {
 	UI16 tID = INVALIDID;
-	switch( tnum )
+	switch( Commands->GetNumArguments() )
 	{
 	case 3:		tID = (UI16)( (makenumber( 1 )<<8) + makenumber( 2 ) );	break;
 	case 2:		tID = (UI16)( makenumber( 1 ) );						break;
 	default:	sysmessage( s, 1634 );									return;
 	}
 
-	for( UI32 i = 0; i < itemcount; i++ )
+	for( UI32 i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( items[i].GetID() == tID )
 			Items->DeleItem( &items[i] );
@@ -2111,7 +2108,7 @@ void command_forcewho( cSocket *s )
 void command_cy( cSocket *s )
 // (text) Counselor Yell - Announce a message to all online counselors and above.
 {
-	if( now == 1 )
+	if( cwmWorldState->GetPlayersOnline() == 1 )
 	{
 		sysmessage( s, 69 );
 		return;
@@ -2126,14 +2123,14 @@ void command_cy( cSocket *s )
 	toAdd->Speaker( me->GetSerial() );
 	toAdd->Colour( s->GetWord( 4 ) );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_BROADCASTPC );
 	toAdd->CmdLevel( 1 );
 }
 void command_sgy( cSocket *s )
 // (text) GM Yell - Announce a message to all online GMs.
 {
-	if( now == 1 )
+	if( cwmWorldState->GetPlayersOnline() == 1 )
 	{
 		sysmessage( s, 69 );
 		return;
@@ -2148,7 +2145,7 @@ void command_sgy( cSocket *s )
 	toAdd->Speaker( me->GetSerial() );
 	toAdd->Colour( s->GetWord( 4 ) );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_BROADCASTPC );
 	toAdd->CmdLevel( 3 );
 }
@@ -2160,7 +2157,7 @@ void command_validcmd( cSocket *s )
 	GumpDisplay targetCmds( s, 300, 300 );
 	targetCmds.SetTitle( "Valid Commands" );
 
-	std::map< std::string, cmdtable_mapentry >::iterator myCounter;
+	map< string, cmdtable_mapentry >::iterator myCounter;
 
 	myCounter = cmd_table.begin();
 	while( myCounter != cmd_table.end() )
@@ -2187,7 +2184,7 @@ void command_nacct( cSocket *s )
 	strupr( commandExecuted );
 	sysmessage( s, commandExecuted );
 	if( !strcmp( commandExecuted, "PLAYER" ) )
-		target( s, 0, 1, 0, 54, 278 );
+		target( s, 0, 54, 278 );
 	else if( !strcmp( commandExecuted, "ADD" ) )
 		Gumps->Menu( s, 8 );
 	else if( !strcmp( commandExecuted, "BAN" ) )
@@ -2208,7 +2205,7 @@ void command_nacct( cSocket *s )
 void command_make( cSocket *sock )
 {
 	sock->XText( (char *)&(sock->TBuffer()[Commands->cmd_offset + 5]) );
-	target( sock, 0, 1, 0, 70, 279 );
+	target( sock, 0, 70, 279 );
 }
 
 void command_howto( cSocket *sock )
@@ -2330,25 +2327,17 @@ void HandleHowTo( cSocket *sock, int cmdNumber )
 		CommandInfo.AddData( "Minimum Command Level", toFind->second.cmdLevelReq );
 		switch( toFind->second.cmdType )
 		{
-		case CMD_ITEMMENU:		CommandInfo.AddData( "Syntax", "None (opens item menu)" );			break;
-		case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );			break;
-		case CMD_FUNC:			CommandInfo.AddData( "Syntax", "None (generic command)" );			break;
+		case CMD_ITEMMENU:		CommandInfo.AddData( "Syntax", "None (opens item menu)" );				break;
+		case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );				break;
+		case CMD_FUNC:			CommandInfo.AddData( "Syntax", "None (generic command)" );				break;
 		case CMD_TARGETX:
 		case CMD_TARGETID1:
-		case CMD_TARGETTMP:		CommandInfo.AddData( "Syntax", "arg1" );							break;
+		case CMD_TARGETTMP:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );				break;
 		case CMD_TARGETXY:
-		case CMD_TARGETID2:		CommandInfo.AddData( "Syntax", "arg1 arg2" );						break;
+		case CMD_TARGETID2:		CommandInfo.AddData( "Syntax", "arg1 arg2 (hex or decimal)" );				break;
 		case CMD_TARGETXYZ:
-		case CMD_TARGETID3:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3" );					break;
-		case CMD_TARGETHX:
-		case CMD_TARGETHID1:
-		case CMD_TARGETHTMP:	CommandInfo.AddData( "Syntax", "arg1 (in hex)" );					break;
-		case CMD_TARGETHXY:
-		case CMD_TARGETHID2:	CommandInfo.AddData( "Syntax", "arg1 arg2 (all hex)" );				break;
-		case CMD_TARGETHXYZ:
-		case CMD_TARGETHID3:	CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (all hex)" );		break;
-		case CMD_TARGETID4:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 arg4" );				break;
-		case CMD_TARGETHID4:	CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 arg4 (all hex)" );	break;
+		case CMD_TARGETID3:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
+		case CMD_TARGETID4:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 arg4 (hex or decimal)" );	break;
 		}
 
 		char filename[256];
@@ -2381,7 +2370,7 @@ void command_xgate( cSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar == NULL )
 		return;
-	if( tnum == 2 )
+	if( Commands->GetNumArguments() == 2 )
 	{
 		Commands->MakePlace( s, makenumber( 1 ) );
 		if( s->AddX() != 0 )

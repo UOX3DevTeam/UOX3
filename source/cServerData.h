@@ -359,8 +359,8 @@ public:
 	bool		GetServerMulCachingStatus( void );
 	void		SetServerBackups( bool setting );
 	bool		GetServerBackupStatus( void );
-	void		SetServerAntiLagSavesPerLoop(SI16 value);
-	SI16		GetServerAntiLagSavesPerLoop( void );
+	void		SetServerAntiLagSavesPerLoop(SI16 value);		// Unused
+	SI16		GetServerAntiLagSavesPerLoop( void );			// Unused
 	void		SetServerSavesTimer( UI32 timer );
 	UI32		GetServerSavesTimerStatus( void );
 	void		SetServerMainThreadTimer( UI32 threadtimer );
@@ -448,14 +448,14 @@ public:
 	void		SetEngraveStatus( bool value );
 	bool		GetEngraveStatus( void );
 
-	void		SetUoxBotStatus( bool value );
-	bool		GetUoxBotStatus( void );
+	void		SetUoxBotStatus( bool value );		// Unused
+	bool		GetUoxBotStatus( void );			// Unused
 
 	void		SetPlayerPersecutionStatus( bool value );
 	bool		GetPlayerPersecutionStatus( void );
 
-	void		SetLagFixStatus( bool value );
-	bool		GetLagFixStatus( void );
+	void		SetLagFixStatus( bool value );		// Unused
+	bool		GetLagFixStatus( void );			// Unused
 
 	void		SetHtmlStatsStatus( SI16 value );
 	SI16		GetHtmlStatsStatus( void );
@@ -475,8 +475,8 @@ public:
 	void		SetCutScrollRequirementStatus( SI16 value );
 	SI16		GetCutScrollRequirementStatus( void );
 
-	SI16		GetNpcTileCheckStatus( void );
-	void		SetNpcTileCheckStatus( SI16 value );
+	SI16		GetNpcTileCheckStatus( void );		// Unused
+	void		SetNpcTileCheckStatus( SI16 value );// Unused
 
 	void		SetNPCTrainingStatus( bool setting );
 	bool		GetNPCTrainingStatus( void );
@@ -607,8 +607,8 @@ public:
 	void		SetCombatMaxSpellDamage( SI16 value );
 	SI16		GetCombatMaxSpellDamage( void ) const;
 
-	void		SetCombatCriticalsEnabled( bool value );
-	bool		GetCombatCriticalsEnabled( void );
+	void		SetCombatCriticalsEnabled( bool value );	// Unused
+	bool		GetCombatCriticalsEnabled( void );			// Unused
 
 	void		SetCombatExplodeDelay( R32 value );
 	R32			GetCombatExplodeDelay( void );
@@ -719,8 +719,8 @@ public:
 	UI32		GetSpiritSpeakTimer( void );
 
 	// Sept 22, 2002 - EviLDeD - Support for Xuri's HideWhileMounted fix.
-	void SetCharHideWhileMounted( SI16 value );
-	SI16 GetCharHideWhileMounted( void );
+	void		SetCharHideWhileMounted( SI16 value );
+	SI16		GetCharHideWhileMounted( void );
 
 //protected:
 	void DumpLookup(int lookupid);

@@ -1732,17 +1732,16 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 	// Choose a random region as a destination for the escort quest (except for the same region as the NPC was spawned in)
 	do 
 	{
-		if( escortRegions )
+		if( cwmWorldState->GetEscortRegions() )
 		{
 			// If the number of escort regions is 1, check to make sure that the only 
 			// valid escort region is not the NPC's current location - if it is Abort
-			if( escortRegions == 1 && validEscortRegion[0] == npcIndex->GetRegion() )
+			if( cwmWorldState->GetEscortRegions() == 1 && cwmWorldState->GetValidEscortRegion( 0 ) == npcIndex->GetRegion() )
 			{
 				npcIndex->SetQuestDestRegion( 0 );
 				break;
 			}
-			
-			npcIndex->SetQuestDestRegion( validEscortRegion[RandomNum(0, (escortRegions-1))] );
+			npcIndex->SetQuestDestRegion( cwmWorldState->GetValidEscortRegion( RandomNum(0, (cwmWorldState->GetEscortRegions()-1)) ) );
 		}
 		else
 		{

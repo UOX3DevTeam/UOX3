@@ -381,6 +381,37 @@ public:
 	CPDrawContainer &operator=( CItem &toCopy );
 };
 
+class CPOpenGump : public cPBuffer
+{
+protected:
+	virtual void	CopyData( CChar &toCopy );
+	virtual void	InternalReset( void );
+public:
+					CPOpenGump();
+	virtual			~CPOpenGump(){}
+					CPOpenGump( CChar &toCopy );
+	virtual void	Length( int TotalLines );
+	virtual void	GumpIndex( int index );
+	virtual void	Serial( SERIAL toSet );
+	CPOpenGump &operator=( CChar &toCopy );
+};
+
+class CPSpeech : public cPBuffer
+{
+protected:
+	virtual void	CopyData( CChar &toCopy );
+	virtual void	InternalReset( void );
+public:
+					CPSpeech();
+	virtual			~CPSpeech(){}
+					CPSpeech( CChar &toCopy );
+	virtual void	Length( int len );
+	virtual void	ID( UI16 toSet );
+	virtual void	GrabSpeech( cSocket *mSock, CChar *mChar );
+	virtual void	Serial( SERIAL toSet );
+	CPSpeech &operator=( CChar &toCopy );
+};
+
 class CPTargetCursor : public cPBuffer
 {
 public:

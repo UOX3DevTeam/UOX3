@@ -84,7 +84,7 @@ const std::string dirnames[NUM_DEFS] =
 	"newbie",
 	"titles",
 	"advance",
-	"necro",
+	"digging",
 	"house",
 	"colors",
 	"spawn",
@@ -95,7 +95,8 @@ const std::string dirnames[NUM_DEFS] =
 	"harditems",
 	"command",
 	"msgboard",
-	"carve"
+	"carve",
+	"fishing"
 };
 
 cServerDefinitions::cServerDefinitions() : defaultPriority( 0 )

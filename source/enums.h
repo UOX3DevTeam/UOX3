@@ -322,6 +322,7 @@ enum ErrorCodes
 	FATAL_UOX3_MULTI_INDEX_NOT_FOUND,
 
 	FATAL_UOX3_DIR_NOT_FOUND = 400,
+	FATAL_UOX3_BAD_DEF_DICT
 };
 
 // List of skill numbers (For later implementation)
@@ -595,7 +596,7 @@ enum DEFINITIONCATEGORIES
 	newbie_def,
 	titles_def,
 	advance_def,
-	necro_def,
+	digging_def,
 	house_def,
 	colors_def,
 	spawn_def,
@@ -607,7 +608,24 @@ enum DEFINITIONCATEGORIES
 	command_def,
 	msgboard_def,
 	carve_def,
+	fishing_def,
 	NUM_DEFS
+};
+
+enum monsterSound
+{
+	SND_STARTATTACK = 0,
+	SND_IDLE,
+	SND_ATTACK,
+	SND_DEFEND,
+	SND_DIE
+};
+
+enum CommandLevels
+{
+	PLAYERCMDLEVEL = 0,
+	CNSCMDLEVEL,
+	GMCMDLEVEL
 };
 
 #endif

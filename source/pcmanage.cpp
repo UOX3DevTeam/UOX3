@@ -624,8 +624,8 @@ void startChar( cSocket *mSock, bool onCreate )
 	UI08 currentSecs = cwmWorldState->ServerData()->GetServerTimeSeconds();
 
 	CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
-	//Weight->calcWeight( mChar );
 
+	char idname[256];
 	sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 	sysmessage( mSock, idname );
 	sprintf( idname, "Programmed by: %s", CVC.GetProgrammers() );

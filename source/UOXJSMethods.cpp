@@ -56,7 +56,7 @@ void MethodSpeech( cBaseObject &speaker, char *message, SpeechType sType, COLOUR
 	else
 		toAdd->Colour( 0x0058 );
 
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 }
 
 // JSGump constructor !
@@ -1570,7 +1570,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		{
 			mySock->AddX( calcCharFromSer( myNPC->GetSerial() ) );
 			npcTalk( mySock, myNPC, 772, false );
-			target( mySock, 0, 1, 0, 224, " ");
+			target( mySock, 0, 224, " ");
 		} 
 		else
 			Targ->BuyShop( mySock, myNPC );
@@ -1590,7 +1590,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		{
 			mySock->AddX( calcCharFromSer( myNPC->GetSerial() ) );
 			npcTalk( mySock, myNPC, 772, false );
-			target( mySock, 0, 1, 0, 224, " ");
+			target( mySock, 0, 224, " ");
 		} 
 		else
 			Targ->BuyShop( mySock, myNPC );
@@ -2034,7 +2034,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		sprintf( toSay, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) );
 	}
 
-	target( mySock, 0, 1, 1, tNum, toSay );
+	target( mySock, 1, tNum, toSay );
 	return JS_TRUE;
 }
 
@@ -2086,7 +2086,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		sprintf( toSay, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) );
 	}
 
-	target( mySock, 0, 1, 0, tNum, toSay );
+	target( mySock, 0, tNum, toSay );
 	return JS_TRUE;
 }
 

@@ -120,7 +120,7 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char *cList, char *cNpcID )
+//|	Function		-	CChar *cCharStuff::SpawnRandomMonster( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char *cList, char *cNpcID )
 //|	Date			-	Unknown
 //|	Programmer		-	Unknown
 //|	Modified		-	Changed to FileLookup based and return CChar * 
@@ -129,23 +129,14 @@ void VialTargetItem( cSocket *nSocket, CItem *nItemID )
 //|	Purpose			-	Gets the random monster number from the script and list specified
 //|						Creates the creature and returns it
 //o--------------------------------------------------------------------------
-CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* cNpcID )
+CChar *cCharStuff::SpawnRandomMonster( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cNpcID )
 {
 	char sect[512];
  	sprintf( sect, "%s %s", cList, cNpcID );
 	ScriptSection *targData = NULL;
-	if( useNecro )
-	{
-		targData = FileLookup->FindEntry( sect, necro_def );
-		if( targData == NULL )
-			return NULL;
-	}
-	else
-	{
-		targData = FileLookup->FindEntry( sect, npc_def );
-		if( targData == NULL )
-			return NULL;
-	}
+	targData = FileLookup->FindEntry( sect, sourceDFN );
+	if( targData == NULL )
+		return NULL;
 	SI32 i = targData->NumEntries();
 	CChar *tChar = nCharID->CurrcharObj();
 	if( i > 0 )
@@ -153,13 +144,13 @@ CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* c
 		i = rand()%(i);
 		const char *targID = targData->MoveTo( i );
 		if( targID != NULL )
-			return Npcs->AddNPC( nCharID, NULL, targID, tChar->WorldNumber() );
+			return AddNPC( nCharID, NULL, targID, tChar->WorldNumber() );
 	}
 	return NULL;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	CItem *SpawnRandomItem( cSocket *nCharID, bool useNecro, char *cList, char *cItemID )
+//|	Function		-	CItem *cItem::SpawnRandomItem( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char *cList, char *cItemID )
 //|	Date			-	Unknown
 //|	Programmer		-	Unknown
 //|	Modified		-	Changed to FileLookup based and return CItem * 
@@ -168,30 +159,22 @@ CChar *SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* c
 //|	Purpose			-	Gets the random item number from the script and list specified
 //|						Creates the item and returns it
 //o--------------------------------------------------------------------------
-CItem *SpawnRandomItem( cSocket *nCharID, bool useNecro, char* cList, char* cItemID )
+CItem *cItem::SpawnRandomItem( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cItemID )
 {
 	char sect[512];
 	sprintf( sect, "%s %s", cList, cItemID );
 	ScriptSection *randData = NULL;
-	if( useNecro )
-	{
-		randData = FileLookup->FindEntry( sect, necro_def );
+	randData = FileLookup->FindEntry( sect, sourceDFN );
 		if( randData == NULL )
 			return NULL;
-	}
-	else
-	{
-		randData = FileLookup->FindEntry( sect, items_def );
-		if( randData == NULL )
-			return NULL;
-	}
+
 	SI32 numEntries = randData->NumEntries();
 	if( numEntries > 0 )
 	{
 		SI32 i = rand()%(numEntries);
 		const char *targID = randData->MoveTo( i );
 		if( targID != NULL )
-			return Items->SpawnItemToPack( nCharID, nCharID->CurrcharObj(), targID, true );
+			return SpawnItemToPack( nCharID, nCharID->CurrcharObj(), targID, true );
 	}
 	return NULL;
 }
@@ -222,7 +205,7 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 			iItem = Items->SpawnItem( nSocket, iCharID, 1, "#", true, 0x0F82, 0, true, true );
 			if( iItem == NULL ) 
 				return;
-			iItem->SetValue( 15 );
+			iItem->SetBuyValue( 15 );
 			iItem->SetMoreX( 666 );
 		}
 		else
@@ -230,7 +213,7 @@ void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
 			iItem = Items->SpawnItem( nSocket, iCharID, 1, "#", true, 0x0F7D, 0, true, true );
 			if( iItem == NULL ) 
 				return;
-			iItem->SetValue( 10 );
+			iItem->SetBuyValue( 10 );
 			iItem->SetMoreX( 666 );
 		}
 		DecreaseItemAmount( nItem );

@@ -812,12 +812,12 @@ void cMapRegion::Load( void )
 	sprintf( filename, "%shouse.wsc", cwmWorldState->ServerData()->GetSharedDirectory() );
 	std::ifstream houseDestination( filename );
 	LoadHouseMulti( houseDestination, mode );
-	for( UI32 cCounter = 0; cCounter < charcount; cCounter++ )
+	for( UI32 cCounter = 0; cCounter < cwmWorldState->GetCharCount(); cCounter++ )
 	{
 		if( !chars[cCounter].isFree() )
 			chars[cCounter].PostLoadProcessing( cCounter );
 	}
-	for( UI32 iCounter = 0; iCounter < itemcount; iCounter++ )
+	for( UI32 iCounter = 0; iCounter < cwmWorldState->GetItemCount(); iCounter++ )
 	{
 		if( !items[iCounter].isFree() )
 			items[iCounter].PostLoadProcessing( iCounter );

@@ -4,13 +4,13 @@
 #define DBGFILE "combat.cpp"
 #define SWINGAT (UI32)1.75 * CLOCKS_PER_SEC
 
-const UI08	BODYPERCENT = 0;
-const UI08	ARMSPERCENT = 1;
-const UI08	HEADPERCENT = 2;
-const UI08	LEGSPERCENT = 3;
-const UI08	NECKPERCENT = 4;
-const UI08	OTHERPERCENT = 5;
-const UI08	TOTALTARGETSPOTS = 6;
+const UI08 BODYPERCENT = 0;
+const UI08 ARMSPERCENT = 1;
+const UI08 HEADPERCENT = 2;
+const UI08 LEGSPERCENT = 3;
+const UI08 NECKPERCENT = 4;
+const UI08 OTHERPERCENT = 5;
+const UI08 TOTALTARGETSPOTS = 6;
 
 const UI08 LOCPERCENTAGES[TOTALTARGETSPOTS] = { 44, 14, 14, 14, 7, 7 };
 
@@ -111,7 +111,7 @@ void InvalidateAttacker( CChar *attack )
 	}
 	attack->SetTarg( INVALIDSERIAL );
 	CHARACTER attAttacker = attack->GetAttacker();
-	if( attAttacker != INVALIDSERIAL && attAttacker < cmem )
+	if( attAttacker != INVALIDSERIAL && attAttacker < cwmWorldState->GetCMem() )
 	{
 		chars[attAttacker].SetAttackFirst( false );
 		chars[attAttacker].SetAttacker( INVALIDSERIAL );
@@ -274,7 +274,6 @@ SI08 DoHitMessage( CChar *defend, CChar *attack, cSocket *mSock, SI16 damage )
 //|					PARAM WARNING: weaponType is an unreferenced parameters
 //|					Weapontype was meant for race and other weapon weaknesses
 //o---------------------------------------------------------------------------o
-#pragma note( "Param Warning: in cCombat::CombatHit, weaponType is unrefrenced" )
 void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 {
 	if( defend == NULL || attack == NULL || defend == attack ) 
@@ -329,7 +328,7 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 		if( defend->GetTarg() == INVALIDSERIAL )
 		{//if the defender is swung at, and they don't have a target already, set this as their target
 			npcSimpleAttackTarget( attack, defend );
-			attack->SetTimeout( uiCurrentTime + ((( 100 - min( attack->GetDexterity(), 100 ) ) * CLOCKS_PER_SEC ) /25 ) + ( 1 * CLOCKS_PER_SEC ) );
+			attack->SetTimeout( cwmWorldState->GetUICurrentTime() + ((( 100 - min( attack->GetDexterity(), 100 ) ) * CLOCKS_PER_SEC ) /25 ) + ( 1 * CLOCKS_PER_SEC ) );
 		}
 	} 
 	else 
@@ -402,7 +401,7 @@ void cCombat::CombatHit( CChar *attack, CChar *defend, SI32 weaponType )
 		if( defend->GetTarg() == INVALIDSERIAL )
 		{//if the defender is swung at, and they don't have a target already, set this as their target
 			npcSimpleAttackTarget( attack, defend );
-			attack->SetTimeout( uiCurrentTime + ((( 100 - min( attack->GetDexterity(), 100 ) ) * CLOCKS_PER_SEC ) /25 ) + ( 1 * CLOCKS_PER_SEC ) );
+			attack->SetTimeout( cwmWorldState->GetUICurrentTime() + ((( 100 - min( attack->GetDexterity(), 100 ) ) * CLOCKS_PER_SEC ) /25 ) + ( 1 * CLOCKS_PER_SEC ) );
 		}
 
 
@@ -531,7 +530,7 @@ void cCombat::DoCombat( CChar *attack )
 		return;
 
 	CHARACTER dfnd = attack->GetTarg();
-	if( dfnd == INVALIDSERIAL || dfnd >= cmem )
+	if( dfnd == INVALIDSERIAL || dfnd >= cwmWorldState->GetCMem() )
 	{
 		if( attack->IsAtWar() )
 		{
@@ -555,7 +554,7 @@ void cCombat::DoCombat( CChar *attack )
 	UI16 playerDistance = getDist( attack, defend );
 
 	bool LoS = false;
-	if( playerDistance <= 1 && abs( attack->GetZ() - defend->GetZ() ) <= MaxZstep )
+	if( playerDistance <= 1 && abs( attack->GetZ() - defend->GetZ() ) <= MAX_Z_STEP )
 		LoS = true;
 	else
 		LoS = LineOfSight( NULL, attack, defend->GetX(), defend->GetY(), defend->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
@@ -583,7 +582,7 @@ void cCombat::DoCombat( CChar *attack )
 	}
 	else
 	{
-		if( TimerOk( attack ) && ( attack->IsNpc() || attack->GetNpcMoveTime() < uiCurrentTime ) )
+		if( TimerOk( attack ) && ( attack->IsNpc() || attack->GetNpcMoveTime() < cwmWorldState->GetUICurrentTime() ) )
 		{
 			UI08 bowType = 0;
 			UI08 getFightSkill = getCombatSkill( attack );
@@ -701,7 +700,7 @@ void cCombat::DoCombat( CChar *attack )
 					getOffset = 50;
 				getDelay = (15000 / ((min( attack->GetDexterity(), 100 ) + 100) * getOffset)*CLOCKS_PER_SEC);
 			}
-			attack->SetTimeout( uiCurrentTime + getDelay );
+			attack->SetTimeout( cwmWorldState->GetUICurrentTime() + getDelay );
 			if( getFightSkill != ARCHERY ) 
 				CombatHit( attack, defend );
 		}
@@ -713,7 +712,7 @@ void cCombat::DoCombat( CChar *attack )
 		return;
 	}
 
-	if( attack->IsNpc() && attack->GetMana() > 0 && attack->GetSpaTimer() <= uiCurrentTime )
+	if( attack->IsNpc() && attack->GetMana() > 0 && attack->GetSpaTimer() <= cwmWorldState->GetUICurrentTime() )
 	{
 		if( !defend->IsDead() && playerDistance < cwmWorldState->ServerData()->GetCombatMaxSpellRange() )
 		{
@@ -969,7 +968,7 @@ SI16 cCombat::calcAtt( CChar *p )
 	CItem *weapon = getWeapon( p );
 	if( weapon != NULL )
 	{
-		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0)
+		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
 		{
 			if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) 
 				getDamage += weapon->GetLoDamage();
@@ -1195,9 +1194,9 @@ bool cCombat::TimerOk( CChar *c )
 		return false;
 
 	bool retVal = false;
-	if( static_cast<UI32>(c->GetTimeout()) < uiCurrentTime ) 
+	if( static_cast<UI32>(c->GetTimeout()) < cwmWorldState->GetUICurrentTime() ) 
 		retVal = true;
-	if( overflow ) 
+	if( cwmWorldState->GetOverflow() ) 
 		retVal = true;
 	return retVal;
 }

@@ -1430,7 +1430,7 @@ bool doLightEffect( CChar *i )
 		{
 			if( i->GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
+				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					sysmessage( mSock, 1216 );
 					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
@@ -1448,7 +1448,7 @@ bool doLightEffect( CChar *i )
 		{
 			if( i->GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
+				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					sysmessage( mSock, 1217 );
 					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
@@ -1474,7 +1474,7 @@ bool doLightEffect( CChar *i )
 			{
 				if( i->GetWeathDamage( LIGHT ) != 0 )
 				{
-					if( i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
+					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
 						sysmessage( mSock, 1216 );
 						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
@@ -1492,7 +1492,7 @@ bool doLightEffect( CChar *i )
 			{
 				if( i->GetWeathDamage( LIGHT ) != 0 )
 				{
-					if( i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
+					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
 						sysmessage( mSock, 1217 );
 						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
@@ -1512,7 +1512,7 @@ bool doLightEffect( CChar *i )
 		}
 		else
 		{
-			if( hour >= 5 && hour <= 6 && ampm && i->GetWeathDamage( LIGHT ) <= uiCurrentTime )
+			if( hour >= 5 && hour <= 6 && ampm && i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				sysmessage( mSock, 1218 );
 				i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
@@ -1531,7 +1531,7 @@ bool doRainEffect( CChar *i )
 	bool didDamage = false;
 	if( !inDungeon( i ) && Weather->RainActive( region[i->GetRegion()]->GetWeather() ) )
 	{
-		if( i->GetWeathDamage( RAIN ) != 0 && i->GetWeathDamage( RAIN ) <= uiCurrentTime )
+		if( i->GetWeathDamage( RAIN ) != 0 && i->GetWeathDamage( RAIN ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			sysmessage( calcSocketObjFromChar( i ), 1219 );
 			i->SetHP( i->GetHP() - Races->RainDamage( i->GetRace() ) );
@@ -1557,7 +1557,7 @@ bool doSnowEffect( CChar *i )
 	bool didDamage = false;
 	if( !inDungeon( i ) && Weather->SnowActive( region[i->GetRegion()]->GetWeather() ) )
 	{
-		if( i->GetWeathDamage( SNOW ) != 0 && i->GetWeathDamage( SNOW ) <= uiCurrentTime )
+		if( i->GetWeathDamage( SNOW ) != 0 && i->GetWeathDamage( SNOW ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			sysmessage( calcSocketObjFromChar( i ), 1220 );
 			i->SetHP( i->GetHP() - Races->SnowDamage( i->GetRace() ) );
@@ -1590,7 +1590,7 @@ bool doHeatEffect( CChar *i )
 		R32 tempMin = Weather->MinTemp( weatherSys );
 		if( tempCurrent > ( tempMax - tempMin ) / 4 * 3 )	// 3/4 of the temp is done
 		{
-			if( i->GetWeathDamage( HEAT ) != 0 && i->GetWeathDamage( HEAT ) <= uiCurrentTime )
+			if( i->GetWeathDamage( HEAT ) != 0 && i->GetWeathDamage( HEAT ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
 				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->HeatDamage( i->GetRace() ) * damageModifier )) );
@@ -1622,7 +1622,7 @@ bool doColdEffect( CChar *i )
 		R32 tempMin = Weather->MinTemp( weatherSys );
 		if( tempCurrent < ( tempMax - tempMin ) / 4 * 1 )	// 3/4 of the temp is done
 		{
-			if( i->GetWeathDamage( COLD ) != 0 && i->GetWeathDamage( COLD ) <= uiCurrentTime )
+			if( i->GetWeathDamage( COLD ) != 0 && i->GetWeathDamage( COLD ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
 				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->ColdDamage( i->GetRace() ) * damageModifier ) ));

@@ -82,8 +82,8 @@ UI32 cItemHandle::New( bool zeroSer, UI08 itemType )
 
 	Actual++;
 
-	if( i == itemcount ) 
-		itemcount++;
+	if( i == cwmWorldState->GetItemCount() ) 
+		cwmWorldState->IncItemCount();
 
 	return i;
 }

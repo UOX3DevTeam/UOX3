@@ -207,7 +207,7 @@ static JSFunctionSpec my_functions[] =
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
 	// If we're loading the world then do NOT print out anything!
-//	if( Loaded != 1 ) 
+//	if( cwmWorldState->GetLoaded() != true ) 
 //		return;
 
 	Console.Error( 2, "JS script failure: Message (%s), detailed data is", message );

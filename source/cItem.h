@@ -43,7 +43,8 @@ private:
 	UI32			murdertime; //AntiChrist -- for corpse -- when the people has been killed	// used to be long, don't need THAT long
 
 	UI08			priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
-	SI32			value; // Price shopkeeper sells item at.
+	SI32			buyValue;	// Price a shopkeep buys items for
+	SI32			sellValue;	// Price a shopkeep sells items for.
 	UI16			restock; // Number up to which shopkeeper should restock this item
 	SI08			poisoned; //AntiChrist -- for poisoning skill
 	ARMORCLASS		armorClass;
@@ -216,8 +217,10 @@ public:
 	virtual UI08	GetPriv( void ) const;
 	virtual void	SetPriv( UI08 newValue );
 
-	virtual SI32	GetValue( void ) const;
-	virtual void	SetValue( SI32 newValue );
+	virtual SI32	GetBuyValue( void ) const;
+	virtual void	SetBuyValue( SI32 newValue );
+	virtual SI32	GetSellValue( void ) const;
+	virtual void	SetSellValue( SI32 newValue );
 
 	virtual UI16	GetRestock( void ) const;
 	virtual void	SetRestock( UI16 newValue );

@@ -842,13 +842,22 @@ void CItem::SetPriv( UI08 newValue )
 	priv = newValue;
 }
 
-SI32 CItem::GetValue( void ) const
+SI32 CItem::GetSellValue( void ) const
 {
-	return value;
+	return sellValue;
 }
-void	CItem::SetValue( SI32 newValue )
+void CItem::SetSellValue( SI32 newValue )
 {
-	value = newValue;
+	sellValue = newValue;
+}
+
+SI32 CItem::GetBuyValue( void ) const
+{
+	return buyValue;
+}
+void CItem::SetBuyValue( SI32 newValue )
+{
+	buyValue = newValue;
 }
 
 UI16 CItem::GetRestock( void ) const
@@ -993,15 +1002,15 @@ void CItem::IncID( SI16 incAmount )
 
 CItem::CItem( ITEM nItem, bool zeroSer ) : 
 	contObj( NULL ), remove( false ), carve( -1 ), 	glow_effect( 0 ), glow( -1 ), glowColour( 0 ), madewith( 0 ), 
-	rndvaluerate( 0 ), good( -1 ), rank( 0 ), armorClass( 0 ), 	poisoned( 0 ), restock( 0 ), value( 0 ), priv( 0 ), movable( 0 ), 
+	rndvaluerate( 0 ), good( -1 ), rank( 0 ), armorClass( 0 ), 	poisoned( 0 ), restock( 0 ), sellValue( 0 ), buyValue( 0 ), priv( 0 ), movable( 0 ), 
 	gatetime( 0 ), decaytime( 0 ), murdertime( 0 ), spd( 0 ), 	maxhp( 0 ), doordir( 0 ), amount( 1 ), morex( 0 ),
 	morey( 0 ), enhanced( 0 ), weatherBools( 0 ), morez( 0 ), 	more( 0 ), moreb( 0 ), bools( 0 ), layer( 0 ), type( 0 ), 
 	type2( 0 ), offspell( 0 ), weight( 0 ), entryMadeFrom( -1 )
 {
 	if( zeroSer )
 	{
-		SetSerial( itemcount2, nItem );
-		itemcount2++;
+		SetSerial( cwmWorldState->GetItemCount2(), nItem );
+		cwmWorldState->IncItemCount2();
 	} 
 	else 
 		SetSerial( INVALIDSERIAL, nItem );
@@ -1179,7 +1188,7 @@ bool CItem::Save( std::ofstream &outStream, SI32 mode )
 	{
 		if( GetDecayTime() == 0 )
 			SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY )) ) );
-		else if( GetDecayTime() < uiCurrentTime )
+		else if( GetDecayTime() < cwmWorldState->GetUICurrentTime() )
 		{
 			if( isCorpse() )
 			{	// Adjust this to work with the native pointer array
@@ -1367,7 +1376,8 @@ CItem * CItem::Dupe( void )
 	target->SetTitle( GetTitle() );
 	target->SetType( GetType() );
 	target->SetType2( GetType2() );
-	target->SetValue( GetValue() );
+	target->SetBuyValue( GetBuyValue() );
+	target->SetSellValue( GetSellValue() );
 	target->SetVisible( GetVisible() );
 	target->SetWeight( GetWeight() );
 	target->SetWipeable( isWipeable() );
@@ -1578,10 +1588,11 @@ bool CItem::DumpBody( BinBuffer &buff ) const
 		buff.PutByte( GetPriv() );
 	}
 	
-	if( DefItem->GetValue() != GetValue() || DefItem->GetRestock() != GetRestock() )
+	if( DefItem->GetBuyValue() != GetBuyValue() || DefItem->GetSellValue() != GetSellValue() || DefItem->GetRestock() != GetRestock() )
 	{
 		buff.PutByte( ITEMTAG_VALUE );
-		buff.PutLong( GetValue() );
+		buff.PutLong( GetBuyValue() );
+		buff.PutLong( GetSellValue() );
 		buff.PutLong( GetRestock() );
 	}
 	
@@ -1673,7 +1684,7 @@ bool CItem::DumpBody( std::ofstream &outStream, SI32 mode ) const
 	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
 	dumping << "Movable=" << (SI16)GetMovable() << std::endl;
 	dumping << "Priv=" << (SI16)GetPriv() << std::endl;
-	dumping << "Value=" << GetValue() << std::endl;
+	dumping << "Value=" << GetBuyValue() << "," << GetSellValue() << std::endl;
 	dumping << "Restock=" << GetRestock() << std::endl;
 	dumping << "Poisoned=" << (SI16)GetPoisoned() << std::endl;
 	dumping << "AC=" << (SI16)GetArmourClass() << std::endl;
@@ -2019,7 +2030,20 @@ bool CItem::HandleLine( char *tag, char *data )
 	case 'V':
 		if( !strcmp( tag, "Value" ) )
 		{
-			SetValue( makeNum( data ) );
+			char *sellValueOff = strstr( data, "," );
+			if( sellValueOff != NULL )
+			{
+				char tmp[32];
+				strncpy( tmp, data, sellValueOff - data );
+				tmp[sellValueOff - data] = 0;
+				SetBuyValue( (UI08)makeNum( tmp ) );
+				SetSellValue( (UI08)makeNum( sellValueOff + 1 ) );
+			}
+			else
+			{
+				SetBuyValue( makeNum( data ) );
+				SetSellValue( (makeNum( data ) / 2) );
+			}
 			return true;
 		}
 		break;
@@ -2110,7 +2134,8 @@ bool CItem::HandleBinTag( UI08 tag, BinBuffer &buff )
 		break;
 
 	case ITEMTAG_VALUE:
-		SetValue( buff.GetLong() );
+		SetSellValue( buff.GetLong() );
+		SetBuyValue( buff.GetLong() );
 		SetRestock( static_cast<UI16>(buff.GetLong()) );
 		break;
 
@@ -2229,8 +2254,8 @@ bool CItem::Load( std::ifstream &inStream, ITEM arrayOffset )
 //o--------------------------------------------------------------------------
 bool CItem::LoadRemnants( int arrayOffset )
 {
-	if( itemcount2 <= serial ) 
-		itemcount2 = serial + 1;
+	if( cwmWorldState->GetItemCount2() <= serial ) 
+		cwmWorldState->SetItemCount2( serial + 1 );
 	SetSerial( serial, arrayOffset );
 	
 	// Tauriel adding region pointers
@@ -2239,7 +2264,7 @@ bool CItem::LoadRemnants( int arrayOffset )
 		MapRegion->AddItem( this );
 		if( GetX() < 0 || GetY() < 0 || GetX() > 6144 || GetY() > 4096 )
 			return false;
-	}          
+	}
 	return true;
 }
 
@@ -2277,7 +2302,7 @@ void CItem::PostLoadProcessing( UI32 index )
 	}
 	SetCont( contObj );
 	SetAmount( amount );
-	StoreItemRandomValue( this, 0xFF );
+	Items->StoreItemRandomValue( this, 0xFF );
 }
 
 bool CItem::isDecayable( void ) const

@@ -147,9 +147,9 @@ void DoMessageLoop( void )
 		MessagePassed tVal = messageLoop.GrabMessage();
 		switch( tVal.actualMessage )
 		{
-		case MSG_SHUTDOWN:		keeprun = false;								break;
+		case MSG_SHUTDOWN:		cwmWorldState->SetKeepRun( false );				break;
 		case MSG_COUNT:															break; 
-		case MSG_WORLDSAVE:		oldtime = 0;									break;
+		case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
 		case MSG_PRINT:			Console << tVal.data << myendl;					break;
 		case MSG_RELOADJS:		Trigger->ReloadJS();	Console.PrintDone();	break;
 		case MSG_CONSOLEBCAST:	consolebroadcast( tVal.data );					break;
@@ -377,214 +377,6 @@ void loadcustomtitle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	char *title1( CChar *p )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Fetches characters "prowess" title based on his skill and
-//|                 entries in titles.scp
-//|	Modified	-	Modified to match OSI's prowess titles by Zane
-//o---------------------------------------------------------------------------o
-char *title1( CChar *p )
-{
-	if( p == NULL )
-		return NULL;
-	UI16 titlenum = 0;
-	UI16 x = p->GetBaseSkill( bestskill( p ) );
-  
-	if( x < 1000 ) 
-		titlenum = (UI16)((x - 10) / 100 - 2);
-	else
-		titlenum = 8;
-	strcpy( prowesstitle, title[titlenum].prowess );
-	return prowesstitle;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	char *title2( CChar *p )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Returns players bestskill for prowess title
-//o---------------------------------------------------------------------------o
-char *title2( CChar *p )
-{
-	UI08 titlenum = (UI08)( bestskill( p ) + 1 );
-	strcpy( skilltitle, title[titlenum].skill );
-	return skilltitle;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	char *title3( CChar *p )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Returns players reputation title based on their Fame and Karma
-//o---------------------------------------------------------------------------o
-char *title3( CChar *p )
-{
-	if( p == NULL )
-		return NULL;
-	char thetitle[50];
-	UI08 titlenum = 0;
-	
-	SI16 k = p->GetKarma();
-	SI16 f = p->GetFame();
-	thetitle[0] = 0;
-	
-	if( k >= 10000 )
-	{
-		if( f >= 5000 )
-			titlenum = 0;
-		else if( f >= 2500 )
-			titlenum = 1;
-		else if( f >= 1250 )
-			titlenum = 2;
-		else
-			titlenum = 3;
-	}
-	else if( k >= 5000 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 4;
-		else if( f >= 2500 ) 
-			titlenum = 5;
-		else if( f >= 1250 ) 
-			titlenum = 6;
-		else
-			titlenum = 7;
-	}
-	else if( k >= 2500 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 8;
-		else if( f >= 2500 ) 
-			titlenum = 9;
-		else if( f >= 1250 ) 
-			titlenum = 10;
-		else
-			titlenum = 11;
-	}
-	else if( k >= 1250)
-	{
-		if( f >= 5000 ) 
-			titlenum = 12;
-		else if( f >= 2500 ) 
-			titlenum = 13;
-		else if( f >= 1250 ) 
-			titlenum = 14;
-		else
-			titlenum = 15;
-	}
-	else if( k >= 625 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 16;
-		else if( f >= 1000 ) 
-			titlenum = 17;
-		else if( f >= 500 )
-			titlenum = 18;
-		else
-			titlenum = 19;
-	}
-	else if( k > -625 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 20;
-		else if( f >= 2500 ) 
-			titlenum = 21;
-		else if( f >= 1250 ) 
-			titlenum = 22;
-		else
-			titlenum = 23;
-	}
-	else if( k > -1250 )
-	{
-		if( f >= 10000 ) 
-			titlenum = 28;
-		else if( f >= 5000 ) 
-			titlenum = 27;
-		else if( f >= 2500 ) 
-			titlenum = 26;
-		else if( f >= 1250 ) 
-			titlenum = 25;
-		else
-			titlenum = 24;
-	}
-	else if( k > -2500 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 32;
-		else if( f >= 2500 ) 
-			titlenum = 31;
-		else if( f >= 1250 ) 
-			titlenum = 30;
-		else
-			titlenum = 29;
-	}
-	else if( k > -5000 )
-	{
-		if( f >= 10000 ) 
-			titlenum = 37;
-		else if( f >= 5000 ) 
-			titlenum = 36;
-		else if( f >= 2500 ) 
-			titlenum = 35;
-		else if( f >= 1250 ) 
-			titlenum = 34;
-		else
-			titlenum = 33;
-	}
-	else if( k > -10000 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 41;
-		else if( f >= 2500 ) 
-			titlenum = 40;
-		else if( f >= 1250 ) 
-			titlenum = 39;
-		else
-			titlenum = 38;
-	}
-	else if( k <= -10000 )
-	{
-		if( f >= 5000 ) 
-			titlenum = 45;
-		else if( f >= 2500 ) 
-			titlenum = 44;
-		else if( f >= 1250 ) 
-			titlenum = 43;
-		else
-			titlenum = 42;
-	}
-	if( p->GetRace() != 0 && p->GetRace() != 65535 )
-		sprintf( thetitle, "%s %s ", title[titlenum].fame, Races->Name( p->GetRace() ) );
-	else
-		sprintf( thetitle, "%s ", title[titlenum].fame );
-	if( f >= 10000 ) // Morollans bugfix for repsys
-	{
-		if( p->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
-        {
-			if( p->GetID( 2 ) == 0x91 ) 
-				sprintf( fametitle, Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ) );
-			else 
-				sprintf( fametitle, Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ) );
-        }
-		else if( p->GetID( 2 ) == 0x91 ) 
-			sprintf( fametitle, Dictionary->GetEntry( 1179 ), thetitle );
-		else 
-			sprintf( fametitle, Dictionary->GetEntry( 1180 ), thetitle );
-	}
-	else
-	{
-		if( p->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
-			strcpy( fametitle, Dictionary->GetEntry( 1181 ) );
-		else if( strcmp( thetitle, " " ) ) 
-			sprintf( fametitle, Dictionary->GetEntry( 1182 ), thetitle );
-		else 
-			fametitle[0] = 0;
-	}
-	return fametitle;
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void gcollect( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -598,13 +390,13 @@ void gcollect( void )
 	cBaseObject *iCont;
 	UI32 rtotal = 0, removed = 0;
 	bool idelete = false;
-	uiCurrentTime = 0;
+	cwmWorldState->SetUICurrentTime( 0 );
 	
 	Console << "Performing Garbage Collection...";
 	do
 	{
 		removed = 0;
-		for( ITEM i = 0; i < itemcount; i++ )
+		for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
 		{
 			if( !items[i].isFree() )
 			{
@@ -643,7 +435,7 @@ void gcollect( void )
 	} while( removed > 0 );
 	
 	
-	uiCurrentTime = getclock();
+	cwmWorldState->SetUICurrentTime( getclock() );
     Console << " Removed " << rtotal << " items." << myendl;
 }
 
@@ -656,10 +448,10 @@ void gcollect( void )
 void item_test( void )
 {
 	SERIAL serial;
-	uiCurrentTime = 0;
+	cwmWorldState->SetUICurrentTime( 0 );
 	
 	Console << "Starting item-consistency check...";
-	for( ITEM a = 0; a < itemcount; a++ )
+	for( ITEM a = 0; a < cwmWorldState->GetItemCount(); a++ )
 	{
 		if( !items[a].isFree() )
 		{
@@ -688,7 +480,7 @@ void item_test( void )
 			}
 		}
 	}
-	uiCurrentTime = getclock();
+	cwmWorldState->SetUICurrentTime( getclock() );
 	Console.PrintDone();
 }
 
@@ -1008,31 +800,32 @@ void openCorpse( cSocket *s, SERIAL serial )
 	bpopen2[1] = (UI08)(count2>>8);
 	bpopen2[2] = (UI08)(count2%256);
 	s->Send( bpopen2, 5 );
+	char bpitem[20]="\x40\x0D\x98\xF7\x0F\x4F\x00\x00\x09\x00\x30\x00\x52\x40\x0B\x00\x1A\x00\x00";
 	for( ci = i->FirstItemObj(); !i->FinishedItems(); ci = i->NextItemObj() )
 	{
 		if( ci != NULL )
 		{
 			if( ci->GetLayer() != 0 && !ci->isFree() )
 			{
-			   bpitem[0] = ci->GetSerial( 1 );
-			   bpitem[1] = ci->GetSerial( 2 );
-			   bpitem[2] = ci->GetSerial( 3 );
-			   bpitem[3] = ci->GetSerial( 4 );
-			   bpitem[4] = ci->GetID( 1 );
-			   bpitem[5] = ci->GetID( 2 );
-			   bpitem[7] = (UI08)(ci->GetAmount()>>8);
-			   bpitem[8] = (UI08)(ci->GetAmount()%256);
-			   bpitem[9] = (UI08)(ci->GetX()>>8);
-			   bpitem[10] = (UI08)(ci->GetX()%256);
-			   bpitem[11] = (UI08)(ci->GetY()>>8);
-			   bpitem[12] = (UI08)(ci->GetY()%256);
-			   bpitem[13] = (UI08)(serial>>24);
-			   bpitem[14] = (UI08)(serial>>16);
-			   bpitem[15] = (UI08)(serial>>8);
-			   bpitem[16] = (UI08)(serial%256);
-			   bpitem[17] = ci->GetColour( 1 );
-			   bpitem[18] = ci->GetColour( 2 );
-			   bpitem[19] = 0;
+				bpitem[0] = ci->GetSerial( 1 );
+				bpitem[1] = ci->GetSerial( 2 );
+				bpitem[2] = ci->GetSerial( 3 );
+				bpitem[3] = ci->GetSerial( 4 );
+				bpitem[4] = ci->GetID( 1 );
+				bpitem[5] = ci->GetID( 2 );
+				bpitem[7] = (UI08)(ci->GetAmount()>>8);
+				bpitem[8] = (UI08)(ci->GetAmount()%256);
+				bpitem[9] = (UI08)(ci->GetX()>>8);
+				bpitem[10] = (UI08)(ci->GetX()%256);
+				bpitem[11] = (UI08)(ci->GetY()>>8);
+				bpitem[12] = (UI08)(ci->GetY()%256);
+				bpitem[13] = (UI08)(serial>>24);
+				bpitem[14] = (UI08)(serial>>16);
+				bpitem[15] = (UI08)(serial>>8);
+				bpitem[16] = (UI08)(serial%256);
+				bpitem[17] = ci->GetColour( 1 );
+				bpitem[18] = ci->GetColour( 2 );
+				bpitem[19] = 0;
 				ci->SetDecayTime( 0 );// reseting the decaytimer in the backpack  //moroallan
 				s->Send( bpitem, 19 );
 			}
@@ -1253,9 +1046,22 @@ void sendItemsInRange( cSocket *mSock )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client
 //o---------------------------------------------------------------------------o
-void target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, const char *txt )
+void target( cSocket *s, UI08 targType, UI08 targID, const char *txt )
 {
-	target( s, calcserial( a1, a2, a3, a4 ), txt );
+	target( s, calcserial( 0, 1, targType, targID ), txt );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, SI32 dictEntry )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Send targeting cursor to client
+//o---------------------------------------------------------------------------o
+void target( cSocket *s, UI08 targType, UI08 targID, SI32 dictEntry )
+{
+	if( s == NULL )
+		return;
+	target( s, calcserial( 0, 1, targType, targID ), Dictionary->GetEntry( dictEntry, s->Language() ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1272,30 +1078,6 @@ void target( cSocket *s, SERIAL ser, const char *txt )
 	s->TargetOK( true );
 	sysmessage( s, txt );
 	s->Send( &toSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, SI32 dictEntry )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send targeting cursor to client
-//o---------------------------------------------------------------------------o
-void target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, SI32 dictEntry )
-{
-	target( s, calcserial( a1, a2, a3, a4 ), dictEntry );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void target( cSocket *s, SERIAL ser, SI32 dictEntry )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send targeting cursor to client
-//o---------------------------------------------------------------------------o
-void target( cSocket *s, SERIAL ser, SI32 dictEntry )
-{
-	if( s == NULL )
-		return;
-	target( s, ser, Dictionary->GetEntry( dictEntry, s->Language() ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1361,8 +1143,8 @@ void read_in_teleport( void )
 		Console << myendl;
 		Console.Error( 1, " Failed to open teleport data script %s", filename );
 		Console.Error( 1, " Teleport Data not found" );
-		error = true;
-		keeprun = false;
+		cwmWorldState->SetKeepRun( false );
+		cwmWorldState->SetError( true );
 		return;
 	}
 	
@@ -1988,7 +1770,7 @@ void wearItem( cSocket *mSock )
 		Weight->subtractItemWeight( mChar, i ); // SetCont() adds the weight for us (But we also had to add the weight in grabItem() since it sets cont as INVALIDSERIAL
 	i->SetCont( k );
 
-	if( showlayer ) 
+	if( cwmWorldState->GetDisplayLayers() ) 
 		Console << "Item equipped on layer " << i->GetLayer() << myendl;
 
 	CPRemoveItem toRemove = (*i);
@@ -2632,7 +2414,7 @@ void MountCreature( CChar *s, CChar *x )
 			x->SetTarg( INVALIDSERIAL );
 			x->SetWar( false );
 		}
-		if( x->GetAttacker() != INVALIDSERIAL && x->GetAttacker() < cmem )
+		if( x->GetAttacker() != INVALIDSERIAL && x->GetAttacker() < cwmWorldState->GetCMem() )
 			chars[x->GetAttacker()].SetTarg( INVALIDSERIAL );
 		x->SetLocation( 7000, 7000, 0 );
 		x->SetFrozen( true );
@@ -2683,15 +2465,15 @@ void DismountCreature( CChar *s )
 void endmessage( int x )
 {
 	x = 0;
-	UI32 igetclock = uiCurrentTime;
-	if( endtime < igetclock )
-		endtime = igetclock;
+	UI32 igetclock = cwmWorldState->GetUICurrentTime();
+	if( cwmWorldState->GetEndTime() < igetclock )
+		cwmWorldState->SetEndTime( igetclock );
 	char temp[1024];
-	sprintf( temp, Dictionary->GetEntry( 1209 ), ((endtime-igetclock)/CLOCKS_PER_SEC) / 60 );
+	sprintf( temp, Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/CLOCKS_PER_SEC) / 60 );
 	sysbroadcast( temp );
 }
 
-#ifdef __LINUX__
+#if defined(__unix__)
 void illinst( int x = 0 ) //Thunderstorm linux fix
 {
 	sysbroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
@@ -2731,6 +2513,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 	int total, ho, mi, se, tmp;
 	CChar *mChar =s->CurrcharObj();
 	char cmd[512], data[512];
+	char idname[256];
 	if ( !s || !cmd2 || !data2 )
 		return;
 
@@ -2747,7 +2530,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 		break;
 	case 'B':
 		if( !strcmp( "BATCH", cmd ) )
-			executebatch = makeNum( data );
+			cwmWorldState->SetExecuteBatch( makeNum( data ) );
 		break;
 	case 'C':
 		if( !strcmp( "CPAGE", cmd ) )
@@ -2777,7 +2560,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 			GumpDisplay guiInfo( s, 400, 300 );
 			guiInfo.SetTitle( "Server status" );
 
-			total = (uiCurrentTime - starttime ) / CLOCKS_PER_SEC;
+			total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
 			ho = total / 3600;
 			total -= ho * 3600;
 			mi = total / 60;
@@ -2804,7 +2587,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 			guiInfo.AddData( "Accounts", Accounts->size() );
 			guiInfo.AddData( "Items", items.Count() );
 			guiInfo.AddData( "Chars", chars.Count() );
-			guiInfo.AddData( "Players in world", now );
+			guiInfo.AddData( "Players in world", cwmWorldState->GetPlayersOnline() );
 			sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName() );
 			guiInfo.AddData( idname, idname, 7 );
 			guiInfo.Send( 0, false, INVALIDSERIAL );
@@ -2815,14 +2598,14 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 			NewAddMenu( s, makeNum( data ) );
 		else if( !strcmp( "INFORMATION", cmd ) )
 		{
-			total = (uiCurrentTime - starttime ) / CLOCKS_PER_SEC;
+			total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
 			ho = total / 3600;
 			total -= ho * 3600;
 			mi = total / 60;
 			total -= mi * 60;
 			se = total;
 			total = 0;
-			sysmessage( s, 1211, ho, mi, se, now, Accounts->size(), items.Count(), chars.Count() );
+			sysmessage( s, 1211, ho, mi, se, cwmWorldState->GetPlayersOnline(), Accounts->size(), items.Count(), chars.Count() );
 		}
 		break;
 	case 'M':
@@ -2834,7 +2617,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 		{
 			s->XText( data );
 			sprintf( tstring, Dictionary->GetEntry( 1212, s->Language() ), s->XText() );
-			target( s, 0, 1, 0, 27, tstring );
+			target( s, 0, 27, tstring );
 		}
 		break;
 	case 'P':
@@ -2885,7 +2668,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 void batchcheck( cSocket *s )
 {
 	char temp[1024];
-	sprintf( temp, "BATCH %si", executebatch );
+	sprintf( temp, "BATCH %i", cwmWorldState->GetExecuteBatch() );
 	ScriptSection *Batch = FileLookup->FindEntry( temp, menus_def );
 	if( Batch == NULL )
 		return;
@@ -2896,7 +2679,7 @@ void batchcheck( cSocket *s )
 		data = Batch->GrabData();
 		scriptcommand( s, tag, data );
 	}
-	executebatch = 0;
+	cwmWorldState->SetExecuteBatch( 0 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -3031,12 +2814,12 @@ void DisplaySettings( void )
 #endif
 
 	Console << "   -xGM Remote: ";
-	Console << activeMap[xgm != 0].c_str() << myendl;
+	Console << activeMap[cwmWorldState->GetXGMEnabled()].c_str() << myendl;
 
 	Console << "   -Races: " << Races->Count() << myendl;
 	Console << "   -Guilds: " << GuildSys->NumGuilds() << myendl;
-	Console << "   -Char count: " << cmem << myendl;
-	Console << "   -Item count: " << imem << myendl;
+	Console << "   -Char count: " << cwmWorldState->GetCMem() << myendl;
+	Console << "   -Item count: " << cwmWorldState->GetIMem() << myendl;
 	Console << "   -Num Accounts: " << Accounts->size() << myendl;
 	Console << "   Directories: " << myendl;
 	Console << "   -Shared:          " << cwmWorldState->ServerData()->GetSharedDirectory() << myendl;
@@ -3065,16 +2848,16 @@ void processkey( int c )
 
 	if( c == '*' )
 	{
-		if( secure )
+		if( cwmWorldState->GetSecure() )
 			messageLoop << "Secure mode disabled. Press ? for a commands list";
 		else
 			messageLoop << "Secure mode re-enabled";
-		secure = !secure;
+		cwmWorldState->SetSecure( !cwmWorldState->GetSecure() );
 		return;
 	} 
 	else 
 	{
-		if( secure )
+		if( cwmWorldState->GetSecure() )
 		{
 			messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
 			return;
@@ -3239,16 +3022,16 @@ void processkey( int c )
 		case 'T':
 			// Timed shut down(10 minutes)
 			messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-			endtime = BuildTimeValue( 600 );
+			cwmWorldState->SetEndTime( BuildTimeValue( 600 ) );
 			endmessage(0);
 			break;
 		case 'L':
 			// Show Layer info
-			if( showlayer )
+			if( cwmWorldState->GetDisplayLayers() )
 				messageLoop << "CMD: Show Layer Disabled";
 			else
 				messageLoop << "CMD: Show Layer Enabled";
-			showlayer = !showlayer;
+			cwmWorldState->SetDisplayLayers( !cwmWorldState->GetDisplayLayers() );
 			break;
 		case  'D':    
 			// Disconnect account 0 (useful when client crashes)
@@ -3262,17 +3045,17 @@ void processkey( int c )
 			break;
 		case 'K':		
 			// mass disconnect
-			for( i = now - 1; i >= 0; i-- )
+			for( i = cwmWorldState->GetPlayersOnline() - 1; i >= 0; i-- )
 				Network->Disconnect( i );
 			messageLoop << "CMD: All Connections Closed.";
 			break;
 		case 'H':                
 			// Enable/Disable heartbeat
-			if( heartbeat == 1 ) 
+			if( !cwmWorldState->ServerData()->GetSystemHeartBeatStatus() ) 
 				messageLoop << "CMD: Heartbeat Disabled";
 			else 
 				messageLoop << "CMD: Heartbeat Enabled";
-			heartbeat = !heartbeat;
+			cwmWorldState->ServerData()->SetSystemHeartBeatStatus( !cwmWorldState->ServerData()->GetSystemHeartBeatStatus() );
 			break;
 		case 'P':                
 			// 1/13/2003 - Dreoth - Log Performance Information enhancements
@@ -3283,7 +3066,7 @@ void processkey( int c )
 			Console.Log( "Timer code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)timerTime/(R32)timerTimeCount), timerTimeCount);
 			Console.Log( "Auto code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)autoTime/(R32)autoTimeCount), autoTimeCount);
 			Console.Log( "Loop Time: %.2fmsec [%i samples]", "performance.log", (R32)((R32)loopTime/(R32)loopTimeCount), loopTimeCount);
-			Console.Log( "Characters: %i/%i - Items: %i/%i (Dynamic)", "performance.log", chars.Count(), cmem, items.Count(), imem);
+			Console.Log( "Characters: %i/%i - Items: %i/%i (Dynamic)", "performance.log", chars.Count(), cwmWorldState->GetCMem(), items.Count(), cwmWorldState->GetIMem());
 			Console.Log( "Simulation Cycles: %f per sec", "performance.log", (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
 			Console.Log( "Bytes sent: %i", "performance.log", globalSent);
 			Console.Log( "Bytes Received: %i", "performance.log", globalRecv);
@@ -3321,13 +3104,13 @@ void processkey( int c )
 			messageLoop << temp;
 			sprintf( temp, "        Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
 			messageLoop << temp;
-			total += tmp = chars.Size() + cmem*sizeof( teffect_st ) + cmem*sizeof(char) + cmem*sizeof(int)*5;
-			sprintf( temp, "     Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cmem );
+			total += tmp = chars.Size() + cwmWorldState->GetCMem()*sizeof( teffect_st ) + cwmWorldState->GetCMem()*sizeof(char) + cwmWorldState->GetCMem()*sizeof(int)*5;
+			sprintf( temp, "     Characters: %i bytes [%i chars ( %i allocated )]", tmp, chars.Count(), cwmWorldState->GetCMem() );
 			messageLoop << temp;
-			total += tmp = items.Size() + imem*sizeof(int)*4;
-			sprintf( temp, "     Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), imem );
+			total += tmp = items.Size() + cwmWorldState->GetIMem()*sizeof(int)*4;
+			sprintf( temp, "     Items: %i bytes [%i items ( %i allocated )]", tmp, items.Count(), cwmWorldState->GetIMem() );
 			messageLoop << temp;
-			sprintf( temp, "        You save I: %i & C: %i bytes!", imem * sizeof(CItem) - items.Size(), cmem * sizeof( CChar ) - chars.Size() );
+			sprintf( temp, "        You save I: %i & C: %i bytes!", cwmWorldState->GetIMem() * sizeof(CItem) - items.Size(), cwmWorldState->GetCMem() * sizeof( CChar ) - chars.Size() );
 			total += tmp = 69 * sizeof( SpellInfo );
 			sprintf( temp, "     Spells: %i bytes", tmp );
 			messageLoop << "     Sizes:";
@@ -3347,13 +3130,13 @@ void processkey( int c )
 			j = 0;
 			for( i = 0; i < MAXLAYERS; i++ )
 			{
-				if( erroredLayers[i] != 0 )
+				if( cwmWorldState->GetErroredLayer( i ) != 0 )
 				{
 					j ++;
 					if( i < 10 )
-						sprintf( temp, "| ERROR: Layer 0%i -> %i errors", i, erroredLayers[i] );
+						sprintf( temp, "| ERROR: Layer 0%i -> %i errors", i, cwmWorldState->GetErroredLayer( i ) );
 					else
-						sprintf( temp, "| ERROR: Layer %i -> %i errors", i, erroredLayers[i] );
+						sprintf( temp, "| ERROR: Layer %i -> %i errors", i, cwmWorldState->GetErroredLayer( i ) );
 					messageLoop << temp;
 				}
 			}
@@ -3453,33 +3236,16 @@ void checkkey( void )
 		if( (cluox_io) && ( c == 250 ) )
 		{  // knox force unsecure mode, need this since cluox can't know
 			//      how the toggle status is.
-			if( secure )
+			if( cwmWorldState->GetSecure() )
 			{
 				Console << "Secure mode disabled. Press ? for a commands list." << myendl;
-				secure = false;
+				cwmWorldState->SetSecure( false );
 				return;
 			}
 		}
 		c = toupper(c);
 		processkey( c );
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void checktimers( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Check shutdown timers
-//o---------------------------------------------------------------------------o
-void checktimers( void )
-{
-	overflow = ( lclock > uiCurrentTime );
-	if( endtime )
-	{
-		if( endtime <= uiCurrentTime ) 
-			keeprun = false;
-	}
-	lclock = uiCurrentTime;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3516,13 +3282,13 @@ bool genericCheck( CChar *i )
 		intUpdate = true;
 	}
 
-	if( i->GetRegen( 0 ) <= uiCurrentTime || overflow )
+	if( i->GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		if( i->GetHP() < i->GetMaxHP() && ( i->GetHunger() > (SI16)cwmWorldState->ServerData()->GetHungerThreshold() || cwmWorldState->ServerData()->GetHungerRate() == 0 ) )
 		{
 			for( c = 0; c < i->GetMaxHP() + 1; c++ )
 			{
-				if( i->GetHP() <= i->GetMaxHP() && ( i->GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( HITPOINT_REGEN ) * CLOCKS_PER_SEC) ) <= uiCurrentTime )
+				if( i->GetHP() <= i->GetMaxHP() && ( i->GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( HITPOINT_REGEN ) * CLOCKS_PER_SEC) ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( i->GetSkill( HEALING ) < 500 ) 
 						i->IncHP( 1 );
@@ -3543,13 +3309,13 @@ bool genericCheck( CChar *i )
 		}
 		i->SetRegen( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( HITPOINT_REGEN ) ), 0 );
 	}
-	if( i->GetRegen( 1 ) <= uiCurrentTime || overflow )
+	if( i->GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		if( i->GetStamina() < i->GetMaxStam() )
 		{
 			for( c = 0; c < i->GetMaxStam() + 1; c++ )
 			{
-				if( ( i->GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC) ) <= uiCurrentTime && i->GetStamina() <= i->GetMaxStam() )
+				if( ( i->GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( STAMINA_REGEN ) * CLOCKS_PER_SEC) ) <= cwmWorldState->GetUICurrentTime() && i->GetStamina() <= i->GetMaxStam() )
 				{
 					i->SetStamina( (SI16)( i->GetStamina() + 1 ) );
 					if( i->GetStamina() > i->GetMaxStam() ) 
@@ -3567,13 +3333,13 @@ bool genericCheck( CChar *i )
 	}
 
 	// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
-	if( i->GetRegen( 2 ) <= uiCurrentTime || overflow )
+	if( i->GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		if( i->GetMana() < i->GetMaxMana() )
 		{
 			for( c = 0; c < i->GetMaxMana() + 1; c++ )
 			{
-				if( i->GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( MANA_REGEN ) * CLOCKS_PER_SEC) <= uiCurrentTime && i->GetMana() <= i->GetMaxMana() )
+				if( i->GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->GetSystemTimerStatus( MANA_REGEN ) * CLOCKS_PER_SEC) <= cwmWorldState->GetUICurrentTime() && i->GetMana() <= i->GetMaxMana() )
 				{
 					Skills->CheckSkill( i, MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
 					i->SetMana( (SI16)( i->GetMana() + 1 ) );	// Gain a mana point
@@ -3602,19 +3368,19 @@ bool genericCheck( CChar *i )
 			NextManaRegen = static_cast<int>(NextManaRegen * ArmorPenalty);
 		}
 		if( i->GetMed() )	// If player is meditation...
-			i->SetRegen( ( uiCurrentTime + ( NextManaRegen / 2 ) ), 2 );
+			i->SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
 		else
-			i->SetRegen( ( uiCurrentTime + NextManaRegen ), 2 );
+			i->SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
 	}
 	// CUSTOM END
-	if( i->GetHidden() == 2 && ( i->GetInvisTimeout() <= uiCurrentTime || overflow ) && !i->IsPermHidden() )
+	if( i->GetHidden() == 2 && ( i->GetInvisTimeout() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && !i->IsPermHidden() )
 		i->ExposeToView();
 	cSocket *s = NULL;
 	if( !isNPC )
 		s = calcSocketObjFromChar( i );
 	if( isOn || isNPC )
 	{
-		if( cwmWorldState->ServerData()->GetHungerRate() > 1 && ( i->GetHungerTime() <= uiCurrentTime || overflow ) )
+		if( cwmWorldState->ServerData()->GetHungerRate() > 1 && ( i->GetHungerTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
 			if( i->GetHunger() > 0 && !i->IsCounselor() && !i->IsGM() )
 				i->DecHunger(); //Morrolan GMs and Counselors don't get hungry
@@ -3642,9 +3408,9 @@ bool genericCheck( CChar *i )
 			}
 			i->SetHungerTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetHungerRate() ) );
 		}
-		if( ( hungerdamagetimer <= uiCurrentTime || overflow ) && cwmWorldState->ServerData()->GetHungerDamage() > 0 ) // Damage them if they are very hungry
+		if( ( cwmWorldState->GetHungerDamageTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && cwmWorldState->ServerData()->GetHungerDamage() > 0 ) // Damage them if they are very hungry
 		{
-			hungerdamagetimer = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetHungerDamageRateTimer() ); // set new hungertime
+			cwmWorldState->SetHungerDamageTimer( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetHungerDamageRateTimer() ) ); // set new hungertime
 			if( i->GetHP() > 0 && i->GetHunger() < 2 && !i->IsCounselor() && !i->IsDead() )
 			{     
 				sysmessage( s, 1228 );
@@ -3660,16 +3426,16 @@ bool genericCheck( CChar *i )
 	}
 	if( !i->IsInvulnerable() && i->GetPoisoned() && ( isNPC || isOn ) )
 	{
-		if( i->GetPoisonTime() <= uiCurrentTime || overflow )
+		if( i->GetPoisonTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( i->GetPoisonWearOffTime() > uiCurrentTime )
+			if( i->GetPoisonWearOffTime() > cwmWorldState->GetUICurrentTime() )
 			{
 				SI16 pcalc = 0;
 				switch( i->GetPoisoned() )
 				{
 				case 1:
 					i->SetPoisonTime( BuildTimeValue( 5 ) );
-					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
+					if( i->GetPoisonTextTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
 						npcEmoteAll( i, 1240, true, i->GetName() );
@@ -3679,7 +3445,7 @@ bool genericCheck( CChar *i )
 					break;
 				case 2:
 					i->SetPoisonTime( BuildTimeValue( 4 ) );
-					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
+					if( i->GetPoisonTextTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
 						npcEmoteAll( i, 1241, true, i->GetName() );
@@ -3690,7 +3456,7 @@ bool genericCheck( CChar *i )
 					break;
 				case 3:
 					i->SetPoisonTime( BuildTimeValue( 3 ) );
-					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow )
+					if( i->GetPoisonTextTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
 						npcEmoteAll( i, 1242, true, i->GetName() );
@@ -3701,7 +3467,7 @@ bool genericCheck( CChar *i )
 					break;
 				case 4:
 					i->SetPoisonTime( BuildTimeValue( 3 ) );
-					if( i->GetPoisonTextTime() <= uiCurrentTime || overflow ) 
+					if( i->GetPoisonTextTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) 
 					{
 						i->SetPoisonTextTime( BuildTimeValue( 10 ) );
 						npcEmoteAll( i, 1243, true, i->GetName() );
@@ -3724,7 +3490,7 @@ bool genericCheck( CChar *i )
 		}
 	}
 
-	if( i->GetPoisonWearOffTime() <= uiCurrentTime )
+	if( i->GetPoisonWearOffTime() <= cwmWorldState->GetUICurrentTime() )
 	{
 		if( i->GetPoisoned() )
 		{
@@ -3796,7 +3562,7 @@ void checkPC( CChar *i, bool doWeather )
 	{
 		if( i->GetMuteTime() !=-1)
 		{
-			if( (UI32)i->GetMuteTime() <= uiCurrentTime || overflow )
+			if( (UI32)i->GetMuteTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
 				i->SetSquelched( 0 );
 				i->SetMuteTime( -1 );
@@ -3807,7 +3573,7 @@ void checkPC( CChar *i, bool doWeather )
 	
 	if( isOn )
 	{
-		if( (i->GetCrimFlag() > 0 ) && ( (UI32)i->GetCrimFlag() <= uiCurrentTime || overflow ) && i->IsCriminal() )
+		if( (i->GetCrimFlag() > 0 ) && ( (UI32)i->GetCrimFlag() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && i->IsCriminal() )
 		{
 			sysmessage( mSock, 1238 );
 			i->SetCrimFlag( -1 );
@@ -3815,7 +3581,7 @@ void checkPC( CChar *i, bool doWeather )
 		}
 		i->SetMurderRate( i->GetMurderRate() - 1 );
 		
-		if( (UI32)i->GetMurderRate() <= uiCurrentTime )
+		if( (UI32)i->GetMurderRate() <= cwmWorldState->GetUICurrentTime() )
 		{
 			if( i->GetKills() > 0 )
 				i->SetKills( (SI16)( i->GetKills() - 1 ) );
@@ -3829,10 +3595,10 @@ void checkPC( CChar *i, bool doWeather )
 	if( i->GetCasting() == 1 )	// Casting a spell
 	{
 		i->SetNextAct( i->GetNextAct() - 1 );
-		if( (UI32)i->GetSpellTime() <= uiCurrentTime || overflow )//Spell is complete target it.
+		if( (UI32)i->GetSpellTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )//Spell is complete target it.
 		{
 			if( spells[i->GetSpellCast()].RequireTarget() )
-				target( mSock, 0, 1, 0, 100, spells[i->GetSpellCast()].StringToSay() );
+				target( mSock, 0, 100, spells[i->GetSpellCast()].StringToSay() );
 			else
 				Magic->CastSpell( mSock, i );
 			i->SetCasting( -1 );
@@ -3856,12 +3622,12 @@ void checkPC( CChar *i, bool doWeather )
 			bgsound( i ); // bgsound uses array positions not sockets!
 	}
 	
-	if( i->GetSpiritSpeakTimer() > 0 && i->GetSpiritSpeakTimer() < uiCurrentTime )
+	if( i->GetSpiritSpeakTimer() > 0 && i->GetSpiritSpeakTimer() < cwmWorldState->GetUICurrentTime() )
 		i->SetSpiritSpeakTimer( 0 );
 	
-	if( i->GetTrackingTimer() > uiCurrentTime && isOn )
+	if( i->GetTrackingTimer() > cwmWorldState->GetUICurrentTime() && isOn )
 	{
-		if( i->GetTrackingDisplayTimer() <= uiCurrentTime )
+		if( i->GetTrackingDisplayTimer() <= cwmWorldState->GetUICurrentTime() )
 		{
 			i->SetTrackingDisplayTimer( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetTrackingRedisplayTime() ) );
 			Skills->Track( i );
@@ -3869,7 +3635,7 @@ void checkPC( CChar *i, bool doWeather )
 	}
 	else
 	{
-		if( i->GetTrackingTimer() > ( uiCurrentTime / 10 ) ) // dont send arrow-away packet all the time
+		if( i->GetTrackingTimer() > ( cwmWorldState->GetUICurrentTime() / 10 ) ) // dont send arrow-away packet all the time
 		{
 			i->SetTrackingTimer( 0 );
 			CPTrackingArrow tSend = chars[i->GetTrackingTarget()];
@@ -3880,7 +3646,7 @@ void checkPC( CChar *i, bool doWeather )
 	
 	if( i->GetFishingTimer() )
 	{
-		if( i->GetFishingTimer() <= uiCurrentTime )
+		if( i->GetFishingTimer() <= cwmWorldState->GetUICurrentTime() )
 		{
 			Skills->Fish( i );
 			i->SetFishingTimer( 0 );
@@ -3892,7 +3658,7 @@ void checkPC( CChar *i, bool doWeather )
 		CItem *horseItem = i->GetItemAtLayer( 0x19 );
 		if( horseItem == NULL )
 			i->SetOnHorse( false );	// turn it off, we aren't on one because there's no item!
-		else if( horseItem->GetDecayTime() != 0 && ( horseItem->GetDecayTime() <= uiCurrentTime || overflow ) )
+		else if( horseItem->GetDecayTime() != 0 && ( horseItem->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
 			i->SetOnHorse( false );
 			Items->DeleItem( horseItem );
@@ -3936,7 +3702,7 @@ void checkNPC( CChar *i )
 		i->SetHunger( -1 );
 	}
 	
-	if( i->GetSummonTimer() <= uiCurrentTime || overflow )
+	if( i->GetSummonTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		if( i->GetSummonTimer() > 0 )
 		{
@@ -3966,9 +3732,9 @@ void checkNPC( CChar *i )
 	}
 	
 	if( i->GetFleeAt() == 0 ) 
-		i->SetFleeAt( NPC_BASE_FLEEAT );
+		i->SetFleeAt( cwmWorldState->ServerData()->GetCombatNPCBaseFleeAt() );
 	if( i->GetReattackAt() == 0 ) 
-		i->SetReattackAt( NPC_BASE_REATTACKAT );
+		i->SetReattackAt( cwmWorldState->ServerData()->GetCombatNPCBaseReattackAt() );
 	
 	if( i->GetNpcWander() != 5 && ( i->GetHP() < i->GetStrength() * i->GetFleeAt() / 100 ) )
 	{
@@ -4001,12 +3767,12 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 	{
 		if( itemCheck == NULL )
 			break;
-		if( checkitemstime <= uiCurrentTime || overflow )
+		if( checkitemstime <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
 			Items->RespawnItem( itemCheck );
 			if( itemCheck->GetType() == 51 || itemCheck->GetType() == 52 )
 			{
-				if( itemCheck->GetGateTime() <= uiCurrentTime )
+				if( itemCheck->GetGateTime() <= cwmWorldState->GetUICurrentTime() )
 				{
 					Items->DeleItem( itemCheck );
 					continue;
@@ -4030,7 +3796,7 @@ void checkItem( SubRegion *toCheck, UI32 checkitemstime )
 			}
 		} 
 		if( itemCheck->GetType() == 117 && ( itemCheck->GetType2() == 1 || itemCheck->GetType2() == 2 ) && 
-			( itemCheck->GetGateTime() <= uiCurrentTime || overflow ) )
+			( itemCheck->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
 			Network->PushConn();
 			for( cSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
@@ -4075,7 +3841,7 @@ void checkauto( void )
 	//
 	Trigger->PeriodicTriggerCheck();
 	// modify this stuff to take into account more variables
-	if( /*cwmWorldState->ServerData()->GetAccountFlushTimer() != 0 &&*/ accountFlush <= uiCurrentTime || overflow )
+	if( /*cwmWorldState->ServerData()->GetAccountFlushTimer() != 0 &&*/ accountFlush <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
@@ -4108,24 +3874,24 @@ void checkauto( void )
 	}
 	Network->On();
 
-	if( worldSaveProgress == 0 )
+	if( cwmWorldState->GetWorldSaveProgress() == 0 )
 	{
-		for( SI32 ij = now - 1; ij >= 0; ij-- )
+		for( SI32 ij = cwmWorldState->GetPlayersOnline() - 1; ij >= 0; ij-- )
 		{
 			cSocket *tSock = calcSocketObjFromSock( ij );
-			if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= uiCurrentTime )
+			if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= cwmWorldState->GetUICurrentTime() )
 			{
-			CChar *tChar = tSock->CurrcharObj();
-			if( tChar == NULL )
-				continue;
-			if( !tChar->IsGM() )
-			{
-				tSock->IdleTimeout( -1 );
-				sysmessage( tSock, 1246 );
-				Network->Disconnect( ij );
+				CChar *tChar = tSock->CurrcharObj();
+				if( tChar == NULL )
+					continue;
+				if( !tChar->IsGM() )
+				{
+					tSock->IdleTimeout( -1 );
+					sysmessage( tSock, 1246 );
+					Network->Disconnect( ij );
+				}
 			}
-		}
-			else if( ( ( (UI32)( tSock->IdleTimeout()+300*CLOCKS_PER_SEC ) <= uiCurrentTime && (UI32)( tSock->IdleTimeout()+200*CLOCKS_PER_SEC ) >= uiCurrentTime ) || overflow ) && !tSock->WasIdleWarned()  )
+			else if( ( ( (UI32)( tSock->IdleTimeout()+300*CLOCKS_PER_SEC ) <= cwmWorldState->GetUICurrentTime() && (UI32)( tSock->IdleTimeout()+200*CLOCKS_PER_SEC ) >= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() ) && !tSock->WasIdleWarned()  )
 			{//is their idle time between 3 and 5 minutes, and they haven't been warned already?
 				CPIdleWarning warn( 0x07 );
 				tSock->Send( &warn );
@@ -4133,14 +3899,14 @@ void checkauto( void )
 			}
 		}
 	}
-	else if( worldSaveProgress == 2 )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
+	else if( cwmWorldState->GetWorldSaveProgress() == 2 )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
 		Network->PushConn();
 		for( cSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 		{
 			if( wsSocket != NULL )
 			{
-				if( (UI32)wsSocket->IdleTimeout() < uiCurrentTime )
+				if( (UI32)wsSocket->IdleTimeout() < cwmWorldState->GetUICurrentTime() )
 				{
 					wsSocket->IdleTimeout( BuildTimeValue( 60.0f ) );
 					wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
@@ -4148,10 +3914,10 @@ void checkauto( void )
 			}
 		}
 		Network->PopConn();
-		worldSaveProgress = 0;
+		cwmWorldState->SetWorldSaveProgress( 0 );
 	}
 	Network->Off();
-	if( regionCheck <= uiCurrentTime || overflow )
+	if( regionCheck <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		for( UI16 regionCounter = 0; regionCounter < 256; regionCounter++ )
 			region[regionCounter]->PeriodicCheck();
@@ -4159,12 +3925,12 @@ void checkauto( void )
 		JailSys->PeriodicCheck();
 	}
 
-	if( checkspawnregions <= uiCurrentTime && cwmWorldState->ServerData()->GetCheckSpawnRegionSpeed() != -1 )//Regionspawns
+	if( checkspawnregions <= cwmWorldState->GetUICurrentTime() && cwmWorldState->ServerData()->GetCheckSpawnRegionSpeed() != -1 )//Regionspawns
 	{
-		for( UI16 i = 1; i < totalspawnregions; i++ )
+		for( UI16 i = 1; i < cwmWorldState->GetTotalSpawnRegions(); i++ )
 		{
 			cSpawnRegion *spawnReg = spawnregion[i];
-			if( spawnReg != NULL && (UI32)spawnReg->GetNextTime() <= uiCurrentTime )
+			if( spawnReg != NULL && (UI32)spawnReg->GetNextTime() <= cwmWorldState->GetUICurrentTime() )
 			{
 				spawnReg->doRegionSpawn();
 				spawnReg->SetNextTime( BuildTimeValue( (R32)( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) ) ) );
@@ -4175,48 +3941,52 @@ void checkauto( void )
 	
 	HTMLTemplates->Poll( ETT_PERIODIC );
 
-	int saveinterval = cwmWorldState->ServerData()->GetServerSavesTimerStatus();
+	UI32 saveinterval = cwmWorldState->ServerData()->GetServerSavesTimerStatus();
 	if( saveinterval != 0 )
 	{
-		if( !autosaved )
+		UI32 oldTime = cwmWorldState->GetOldTime();
+		if( !cwmWorldState->GetAutoSaved() )
 		{
-			autosaved = true;
-			time((time_t *)&oldtime);
+			cwmWorldState->SetAutoSaved( true );
+			time((time_t *)&oldTime);
+			cwmWorldState->SetOldTime( oldTime );
 		}
-		time((time_t *)&newtime);
+		UI32 newTime = cwmWorldState->GetNewTime();
+		time((time_t *)&newTime);
+		cwmWorldState->SetNewTime( newTime );
 
-		if( difftime( newtime, oldtime ) >= saveinterval || cwmWorldState->Saving() )
+		if( difftime( cwmWorldState->GetNewTime(), cwmWorldState->GetOldTime() ) >= saveinterval || cwmWorldState->Saving() )
 		{
 			// Dupois - Added Dec 20, 1999
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
-			if( !now && !cwmWorldState->Saving() )
+			if( !cwmWorldState->GetPlayersOnline() && !cwmWorldState->Saving() )
 			{
 				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
 				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
 			}
 
-			autosaved = false;
+			cwmWorldState->SetAutoSaved( false );
 			cwmWorldState->savenewworld( false );
 		}
 	}
 	
 	//Time functions
-	if( uotickcount <= uiCurrentTime || ( overflow ) )
+	if( cwmWorldState->GetUOTickCount() <= cwmWorldState->GetUICurrentTime() || ( cwmWorldState->GetOverflow() ) )
 	{
 		if( cwmWorldState->ServerData()->IncMinute() )
 			Weather->NewDay();
-		uotickcount = BuildTimeValue( secondsperuominute );
+		cwmWorldState->SetUOTickCount( BuildTimeValue( cwmWorldState->GetSecondsPerUOMinute() ) );
 	}
 	
-	if( lighttime <= uiCurrentTime || ( overflow ) )
+	if( cwmWorldState->GetLightTime() <= cwmWorldState->GetUICurrentTime() || ( cwmWorldState->GetOverflow() ) )
 	{
 		counter = 0;		
-		doWorldLight();  //Changes lighting, if it is currently time to.
+		cwmWorldState->doWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
-		lighttime = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( WEATHER ) );	// for testing purposes
+		cwmWorldState->SetLightTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetSystemTimerStatus( WEATHER ) ) );	// for testing purposes
 		doWeather = true;
 	}
 	else
@@ -4232,7 +4002,7 @@ void checkauto( void )
 		UI08 worldNumber = mChar->WorldNumber();
 		if( isOnline( mChar ) && mChar->GetAccount().wAccountIndex == iSock->AcctNo() )
 		{
-			if( uiSetFlagTime <= uiCurrentTime || overflow )
+			if( uiSetFlagTime <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				setcharflag( mChar ); // only set flag on npcs every 60 seconds (save a little extra lag)
 			genericCheck( mChar );
 			checkPC( mChar, doWeather );
@@ -4264,7 +4034,7 @@ void checkauto( void )
 				continue;
 			if( charCheck->isFree() ) 
 				continue;
-			if( uiSetFlagTime <= uiCurrentTime || overflow )
+			if( uiSetFlagTime <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				setcharflag( charCheck ); // only set flag on npcs every 60 seconds (save a little extra lag)
 			if( charCheck->IsNpc() ) 
 			{
@@ -4283,7 +4053,7 @@ void checkauto( void )
 						charCheck->SetLogout( -1 );
 						charCheck->Update();
 					}
-					else if( oaiw == charCheck->GetSerial() && ( (UI32)charCheck->GetLogout() <= uiCurrentTime || overflow ) )
+					else if( oaiw == charCheck->GetSerial() && ( (UI32)charCheck->GetLogout() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 					{
 						actbTemp.dwInGame = INVALIDSERIAL;
 						charCheck->SetLogout( -1 );
@@ -4301,18 +4071,18 @@ void checkauto( void )
 	}
 	checktempeffects();
 	SpeechSys->Poll();
-	if( uiSetFlagTime <= uiCurrentTime ) 
+	if( uiSetFlagTime <= cwmWorldState->GetUICurrentTime() )
 		uiSetFlagTime = BuildTimeValue( 30 ); // Slow down lag "needed" for setting flags, they are set often enough ;-)
-	if( checknpcs <= uiCurrentTime ) 
+	if( checknpcs <= cwmWorldState->GetUICurrentTime() ) 
 		checknpcs = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetCheckNpcSpeed() );
-	if( checkitemstime <= uiCurrentTime ) 
+	if( checkitemstime <= cwmWorldState->GetUICurrentTime() ) 
 		checkitemstime = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetCheckItemsSpeed() );
-	if( shoprestocktime <= uiCurrentTime ) 
-		shoprestocktime = BuildTimeValue( (R32)( shoprestockrate * 60 ) );
-	if( nextnpcaitime <= uiCurrentTime ) 
-		nextnpcaitime = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetCheckNpcAISpeed() );
-	if( nextfieldeffecttime <= uiCurrentTime ) 
-		nextfieldeffecttime = BuildTimeValue( 0.5f );
+	if( cwmWorldState->GetShopRestockTime() <= cwmWorldState->GetUICurrentTime() ) 
+		cwmWorldState->SetShopRestockTime( BuildTimeValue( (R32)( cwmWorldState->ServerData()->GetSystemTimerStatus( SHOP_SPAWN ) ) ) );
+	if( cwmWorldState->GetNextNPCAITime() <= cwmWorldState->GetUICurrentTime() ) 
+		cwmWorldState->SetNextNPCAITime( BuildTimeValue( (R32)cwmWorldState->ServerData()->GetCheckNpcAISpeed() ) );
+	if( cwmWorldState->GetNextFieldEffectTime() <= cwmWorldState->GetUICurrentTime() ) 
+		cwmWorldState->SetNextFieldEffectTime( BuildTimeValue( 0.5f ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -4444,12 +4214,12 @@ void ParseArgs( int argc, char *argv[] )
 		{
 			Console.PrintSectionBegin();
 			Console << "XGM Enabled! Initializing... ";
-			xgm = 1;
+			cwmWorldState->SetXGMEnabled( true );
 			Console << "Done!" << myendl;
 		}
 		else if( !strcmp( argv[i], "-ERROR" ) )
 		{
-			ErrorCount = makeNum( argv[i+1] );
+			cwmWorldState->SetErrorCount( makeNum( argv[i+1] ) );
 			i++;
 		}
 		else if( !strcmp( argv[i], "-cluox100" ) )
@@ -4538,37 +4308,22 @@ void ParseArgs( int argc, char *argv[] )
 			}
 		}
 	}
-	
 }
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	void ResetVars( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Reset global variables
+//|	Purpose		-	Reset global variables	(Many are now set in CWorldMain())
 //o---------------------------------------------------------------------------o
 void ResetVars( void )
 {
 	Console.PrintSectionBegin();
 	Console << "Initializing global variables  ";
-	memset( erroredLayers, 0, sizeof( erroredLayers[0] ) * MAXLAYERS );
 	globalSent = 0;
 	globalRecv = 0;
-	imem = 0;
-	cmem = 0;
 	uoxtimeout.tv_sec = 0;
 	uoxtimeout.tv_usec = 0;
-	keeprun = true;
-	error = false;
-	now = 0;
-	secure = true;
-	charcount = 0;
-	itemcount = 0;
-	charcount2 = 1;
-	itemcount2 = BASEITEMSERIAL;
-	executebatch = 0;
-	showlayer = false;
-	autosaved = false;
 	
 	strcpy( skill[ALCHEMY].madeword,		"mixed" );
 	strcpy( skill[ANATOMY].madeword,		"made" );
@@ -4634,7 +4389,7 @@ void InitMultis( void )
 	Console << "Initializing multis            ";
 
 	CMultiObj *multi = NULL;
-	for( CHARACTER c = 0; c < charcount; c++ )
+	for( CHARACTER c = 0; c < cwmWorldState->GetCharCount(); c++ )
 	{
 		if( !chars[c].isFree() )
 		{
@@ -4645,10 +4400,10 @@ void InitMultis( void )
 				chars[c].SetMulti( INVALIDSERIAL );
 		}
 	}
-	int fiveCount = itemcount / 22;
+	int fiveCount = cwmWorldState->GetItemCount() / 22;
 	if( fiveCount == 0 )
 		fiveCount = 1;
-	for( ITEM i = 0; i < itemcount; i++ )
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( !items[i].isFree() && items[i].GetCont() == NULL )
 		{
@@ -4664,7 +4419,6 @@ void InitMultis( void )
 				items[i].SetMulti( INVALIDSERIAL );
 		}
 	}
-
 	Console.PrintDone();
 }
 
@@ -4677,7 +4431,8 @@ void InitMultis( void )
 void DisplayBanner( void )
 {
 	Console.PrintSectionBegin();
-		
+
+	char idname[256];
 	sprintf( idname, "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild(), OS_STR, CVC.GetName(), CVC.GetProgrammers() );
  
 	/*Console << myendl;
@@ -4719,7 +4474,7 @@ void SleepNiceness( void )
 	{
 	case 0:						break;  // very unnice - hog all cpu time
 	case 1:
-		if( now != 0 ) 
+		if( cwmWorldState->GetPlayersOnline() != 0 ) 
 			UOXSleep( 10 );
 		else 
 			UOXSleep( 90 );
@@ -4741,7 +4496,7 @@ void StartupClearTrades( void )
 {
 	Console.PrintSectionBegin();
 	Console << "Clearing all trades            ";
-	Loaded = 1;
+	cwmWorldState->SetLoaded( true );
 	clearTrades();
 	Console.PrintDone();
 }
@@ -4757,14 +4512,11 @@ int main( int argc, char *argv[] )
 	UI32 uiNextCheckConn=0;
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
-	
-	Loaded=0;
-	ErrorCount=0;
 
 	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
 #if !defined(__unix__)
 	wVersionRequested = MAKEWORD( 2, 0 );
-	err = WSAStartup( wVersionRequested, &wsaData );
+	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
 	{
 		Console.Error( 0, "Winsock 2.0 not found on your system..." );
@@ -4776,7 +4528,7 @@ int main( int argc, char *argv[] )
 #ifdef _CRASH_PROTECT_
 	try {//Crappy error trapping....
 #endif
-		uiCurrentTime = getclock();
+		UI32 currentTime = getclock();
 		
 #if !defined(__unix__)
 		sprintf( temp, "%s v%s(%s)", CVC.GetProductName(), CVC.GetVersion(), CVC.GetBuild() );
@@ -4801,6 +4553,7 @@ int main( int argc, char *argv[] )
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
 		LoadINIFile();
 		InitClasses();
+		cwmWorldState->SetUICurrentTime( currentTime );
 
 		ParseArgs( argc, argv );
 		ResetVars();
@@ -4809,19 +4562,19 @@ int main( int argc, char *argv[] )
 		loadskills();
 		Console.PrintDone();
 		
-		keeprun = Network->kr; // for some technical reasons global varaibles CANT be changed in constructors in c++.
-		error = Network->faul;  // i hope i can find a cleaner solution for that, but this works !!!
+		cwmWorldState->SetKeepRun( Network->kr ); // for some technical reasons global varaibles CANT be changed in constructors in c++.
+		cwmWorldState->SetError( Network->faul );  // i hope i can find a cleaner solution for that, but this works !!!
 		// has to here and not at the cal cause it would get overriten later
 
 		// Moved BulkStartup here, dunno why that function was there...
-		Console << "Loading dictionaries...        ";
+		Console << "Loading dictionaries...        " << myendl ;
 		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
 
 		Console << "Loading teleport               ";
 		read_in_teleport();
 		Console.PrintDone();
 		
-		srand( uiCurrentTime ); // initial randomization call
+		srand( cwmWorldState->GetUICurrentTime() ); // initial randomization call
 		
 		// moved all the map loading into cMapStuff - fur
 		Map->Load();
@@ -4858,12 +4611,12 @@ int main( int argc, char *argv[] )
 		StartupClearTrades();
 		InitMultis();
 		
-		starttime = uiCurrentTime;
+		cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
 		gcollect();
 
 		FD_ZERO( &conn );
-		endtime = 0;
-		lclock = 0;
+		cwmWorldState->SetEndTime( 0 );
+		cwmWorldState->SetLClock( 0 );
 
 		// no longer Que, because that's taken care of by PageVector
 		Console << "Initializing Jail system       ";	
@@ -4900,7 +4653,7 @@ int main( int argc, char *argv[] )
 		//Console.PrintDone(); 
 
 		Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
-		uiCurrentTime = getclock();
+		cwmWorldState->SetUICurrentTime( getclock() );
 
 		Console << myendl << "Initialize Console Thread      ";
 #if defined(__unix__)
@@ -4909,7 +4662,7 @@ int main( int argc, char *argv[] )
 		int conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
 #endif
 #ifdef __LOGIN_THREAD__
-#if defined(__unix__)
+ #if defined(__unix__)
 		pthread_create(&netw,NULL, NetworkPollConnectionThread,  NULL );
  #else
 		_beginthread( NetworkPollConnectionThread, 0, NULL );
@@ -4922,7 +4675,7 @@ int main( int argc, char *argv[] )
 		Console.PrintSectionBegin();
 		
 		// MAIN SYSTEM LOOP
-		while( keeprun )
+		while( cwmWorldState->GetKeepRun() )
 		{
 			//	EviLDeD	-	February 27, 2000
 			//	Just in case the thread doesn't start then use the main threaded copy
@@ -4947,7 +4700,7 @@ int main( int argc, char *argv[] )
 			
 			StartMilliTimer( tempSecs, tempMilli );
 #ifndef __LOGIN_THREAD__
-			if( uiNextCheckConn <= uiCurrentTime || overflow ) // Cut lag on CheckConn by not doing it EVERY loop.
+			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
 			{
 				Network->CheckConnections();
 				uiNextCheckConn = BuildTimeValue( 1.0f );
@@ -4970,8 +4723,8 @@ int main( int argc, char *argv[] )
 			
 			StartMilliTimer( tempSecs, tempMilli );
 			
-			checktimers();
-			uiCurrentTime = getclock(); // getclock() only once
+			cwmWorldState->CheckTimers();
+			cwmWorldState->SetUICurrentTime( getclock() );
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			timerTime += tempTime;
 			timerTimeCount++;
@@ -5081,19 +4834,20 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 	char temp[1024];
 	if( cwmWorldState->ServerData()->GetServerCrashProtectionStatus() > 1 )
 	{		
-		if( ErrorCount < 10 )
+		if( cwmWorldState->GetErrorCount() < 10 )
 		{
-			ErrorCount++;
+			cwmWorldState->IncErrorCount();
 			
-			sprintf( temp, "Server crash #%i from unknown error, restarting.", ErrorCount );
+			sprintf( temp, "Server crash #%i from unknown error, restarting.", cwmWorldState->GetErrorCount() );
 			Console.Log( temp, "server.log" );
 			Console << temp << myendl;
 			
-			sprintf(temp, "uox.exe -ERROR %i", ErrorCount);
+			sprintf(temp, "uox.exe -ERROR %i", cwmWorldState->GetErrorCount() );
 			
-			if( xgm )
+			if( cwmWorldState->GetXGMEnabled() )
 				strcat( temp, " -xgm" );
 			
+			delete cwmWorldState;
 			system( temp );
 			exit(ErrorCode); // Restart successful Don't give them key presses or anything, just go out.
 		} 
@@ -5131,7 +4885,7 @@ void Shutdown( SI32 retCode )
 		Console << "HTMLTemplates object not found." << myendl;
 
 
-	if( cwmWorldState->ServerData()->GetServerCrashProtectionStatus() >= 1 && retCode && Loaded && cwmWorldState && !cwmWorldState->Saving() )
+	if( cwmWorldState->ServerData()->GetServerCrashProtectionStatus() >= 1 && retCode && cwmWorldState->GetLoaded() && cwmWorldState && !cwmWorldState->Saving() )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 		do
 		{
@@ -5150,7 +4904,6 @@ void Shutdown( SI32 retCode )
 	delete DefChar;
 	delete DefItem;
 
-	delete cwmWorldState;
 	delete Boats;
 	delete Combat;
 	delete Commands;
@@ -5204,8 +4957,10 @@ void Shutdown( SI32 retCode )
 	Console.PrintDone();
 
 	Console.PrintSectionBegin();
-	if( retCode && Loaded )//do restart unless we have crashed with some error.
+	if( retCode && cwmWorldState->GetLoaded() )//do restart unless we have crashed with some error.
 		Restart( (UI16)retCode );
+	else
+		delete cwmWorldState;
 
 	Console.TurnGreen();
 	Console << "Server shutdown complete!" << myendl;
@@ -5432,26 +5187,6 @@ void doLight( cSocket *s, char level )
 		}
 	}
 	s->Send( &toSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void doWorldLight( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Set world light level based on time of day and script settings
-//o---------------------------------------------------------------------------o
-void doWorldLight( void )
-{
-	SI16 worlddarklevel = cwmWorldState->ServerData()->GetWorldLightDarkLevel();
-	SI16 worldbrightlevel = cwmWorldState->ServerData()->GetWorldLightBrightLevel();
-
-	bool ampm = cwmWorldState->ServerData()->GetServerTimeAMPM();
-
-	R32 hourIncrement = R32( fabs( ( worlddarklevel - worldbrightlevel ) / 12.0f ) );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
-	if( ampm )
-		cwmWorldState->ServerData()->SetWorldLightCurrentLevel( (UI16)( worldbrightlevel + hourIncrement ) );
-	else
-		cwmWorldState->ServerData()->SetWorldLightCurrentLevel( (UI16)( worlddarklevel - hourIncrement ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -6066,7 +5801,7 @@ void usePotion( CChar *p, CItem *i )
 		tempeffect( p, p, 16, 0, 2, 2 );
 		tempeffect( p, p, 16, 0, 3, 1 );
 		tempeffect( p, i, 17, 0, 4, 0 );
-		target( mSock, 0, 1, 0, 207, "" );
+		target( mSock, 0, 207, "" );
 		return;
 	case 4: // Heal Potion
 		switch( i->GetMoreZ() )
@@ -6196,7 +5931,7 @@ void loadSpawnRegions( void )
 	spawnregion[i] = new cSpawnRegion( i );
 	
 	i++;
-	totalspawnregions = 0;
+	cwmWorldState->SetTotalSpawnRegions( 0 );
 	
 	ScriptSection *toScan = NULL;
 	VECSCRIPTLIST *tScn = FileLookup->GetFiles( spawn_def );
@@ -6219,7 +5954,7 @@ void loadSpawnRegions( void )
 			}
 		}
 	}
-	totalspawnregions = i;
+	cwmWorldState->SetTotalSpawnRegions( i );
 }
 
 //o---------------------------------------------------------------------------o
@@ -6397,7 +6132,7 @@ void dosocketmidi( cSocket *s )
 //o---------------------------------------------------------------------------o
 void respawnnow( void )
 {
-	for( UI16 region = 1; region < totalspawnregions; region++ )
+	for( UI16 region = 1; region < cwmWorldState->GetTotalSpawnRegions(); region++ )
 	{
 		if( spawnregion[region] != NULL )
 			spawnregion[region]->doRegionSpawn();
@@ -6406,7 +6141,7 @@ void respawnnow( void )
 	bool k = false;
 	UI32 ci;
 	ITEM j;
-	for( ITEM i = 0; i < itemcount; i++ )  // Item Spawner
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )  // Item Spawner
 	{
 		if( items[i].GetType() == 61 )
 		{
@@ -7941,13 +7676,12 @@ void loadregions( void )
 			region[i]->Load( ourRegions );
 	}
 	if( performLoad )
-	  {
+	{
 		delete ourRegions;
 		ourRegions = NULL;
-	  }
-	locationcount = (UI16)l;
-	logoutcount = 0;
-	//Instalog
+	}
+	cwmWorldState->SetLocationCount( (UI16)l );
+	cwmWorldState->SetLogoutCount( 0 );	//Instalog
 	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
 	if( InstaLog == NULL ) 
 		return;
@@ -7955,15 +7689,15 @@ void loadregions( void )
 	{
 		data = InstaLog->GrabData();
 		if( !strcmp( tag,"X1" ) ) 
-			logout[logoutcount].x1 = (SI16)makeNum( data );
+			logout[cwmWorldState->GetLogoutCount()].x1 = (SI16)makeNum( data );
 		else if( !strcmp( tag, "Y1" ) ) 
-			logout[logoutcount].y1 = (SI16)makeNum( data );
+			logout[cwmWorldState->GetLogoutCount()].y1 = (SI16)makeNum( data );
 		else if( !strcmp( tag, "X2" ) ) 
-			logout[logoutcount].x2 = (SI16)makeNum( data );
+			logout[cwmWorldState->GetLogoutCount()].x2 = (SI16)makeNum( data );
 		else if( !strcmp( tag, "Y2" ) )
 		{
-			logout[logoutcount].y2 = (SI16)makeNum( data );
-			logoutcount++;
+			logout[cwmWorldState->GetLogoutCount()].y2 = (SI16)makeNum( data );
+			cwmWorldState->IncLogoutCount();
 		}
 	}
 }
@@ -8106,7 +7840,7 @@ CItem *GenerateCorpse( CChar *i, UI08 nType, CChar *murderer )
 		c->SetMurderer( INVALIDSERIAL );
 	else
 		c->SetMurderer( murderer->GetSerial() );
-	c->SetMurderTime( uiCurrentTime );
+	c->SetMurderTime( cwmWorldState->GetUICurrentTime() );
 	
 	for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
 	{

@@ -371,7 +371,7 @@ void cWhoList::Update( void )
 	int numPerPage = 13;
 	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 	
-	k = now;
+	k = cwmWorldState->GetPlayersOnline();
 	int realCount = 1;
 	//--static pages
 	one.push_back( "noclose" );

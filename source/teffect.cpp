@@ -114,7 +114,7 @@ bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 
 		buff.PutLong( Destination() );
 
-		buff.PutLong( ( ExpireTime() - uiCurrentTime ) );
+		buff.PutLong( ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) );
 
 		buff.PutByte( Number() );
 		
@@ -140,7 +140,7 @@ bool teffect_st::Save( std::ofstream &effectDestination, SI32 mode ) const
 
 		dumping << "Source=" << Source() << std::endl;
 		dumping << "Dest=" << Destination() << std::endl;
-		dumping << "Expire=" << ( ExpireTime() - uiCurrentTime ) << std::endl;
+		dumping << "Expire=" << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << std::endl;
 		dumping << "Number=" << Number() << std::endl;  
 		dumping << "More1=" << More1() << std::endl;
 		dumping << "More2=" << More2() << std::endl;

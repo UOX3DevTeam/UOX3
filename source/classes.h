@@ -1,7 +1,6 @@
 #ifndef __Classes_h
 #define __Classes_h
 
-#define MAXPOSTS 128
 #include <queue>
 //using namespace std;
 #include "threadsafeobject.h"
@@ -44,6 +43,8 @@ public:
 	void		AddRespawnItem( CItem *s, UI32 x, bool inCont );
 	void		AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomItem );
 	void		CheckEquipment( CChar *p );
+	void		StoreItemRandomValue( CItem *i, UI08 tmpreg );
+	CItem *		SpawnRandomItem( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cItemID);
 
 private:
 	CItem *		CreateItem( cSocket *s, std::string name, UI08 worldNumber );
@@ -51,9 +52,6 @@ private:
 	void		GetScriptItemSetting( CItem *c );
 	UI08		PackType( UI16 id );
 };
-
-// use this value whereever you need to return an illegal z value
-const SI08 illegal_z = -128;
 
 class cCharStuff
 {
@@ -79,6 +77,7 @@ public:
 	CChar *		getGuardingPet( CChar *mChar, SERIAL guarded );
 	bool		checkPetFriend( CChar *mChar, CChar *pet );
 	void		stopPetGuarding( CChar *pet );
+	CChar *		SpawnRandomMonster( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cNpcID);
 };
 
 #include "skills.h"

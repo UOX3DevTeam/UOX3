@@ -19,7 +19,7 @@
 //o---------------------------------------------------------------------------o
 UOXSOCKET calcSocketFromChar( CHARACTER i )
 {
-	if( i == INVALIDSERIAL || i >= cmem )
+	if( i == INVALIDSERIAL || i >= cwmWorldState->GetCMem() )
 		return -1;
 	if( chars[i].IsNpc() )
 		return -1;
@@ -44,7 +44,7 @@ UOXSOCKET calcSocketFromChar( CHARACTER i )
 //o---------------------------------------------------------------------------o
 cSocket *calcSocketObjFromChar( CHARACTER i )
 {
-	if( i == INVALIDSERIAL || i >= cmem )
+	if( i == INVALIDSERIAL || i >= cwmWorldState->GetCMem() )
 		return NULL;
 	return calcSocketObjFromChar( &chars[i] );
 }
@@ -220,7 +220,7 @@ UOXSOCKET calcSocketFromSockObj( cSocket *s )
 //o--------------------------------------------------------------------------
 UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 {
-	for( int i = 0; i < locationcount; i++ )
+	for( int i = 0; i < cwmWorldState->GetLocationCount(); i++ )
 	{
 		if( location[i].x1 <= x && location[i].y1 <= y && location[i].x2 >= x && location[i].y2 >= y )
 		{
@@ -237,7 +237,7 @@ UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of an item
 //o---------------------------------------------------------------------------o
-UI32 calcValue( CItem *i, UI32 value)
+UI32 calcValue( CItem *i, UI32 value )
 {
 	UI32 mod = 10;
 	
@@ -274,7 +274,7 @@ UI32 calcValue( CItem *i, UI32 value)
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
 //o---------------------------------------------------------------------------o
-UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling)
+UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
 {
 	UI08 actreg = calcRegionFromXY( npcnum2->GetX(), npcnum2->GetY(), npcnum2->WorldNumber() );
 	SI32 good = i->GetGood();

@@ -63,8 +63,8 @@ JSBool SetShowLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		DoSEErrorMessage( "SetShowLayer: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	showlayer = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
-	if( showlayer )
+	cwmWorldState->SetDisplayLayers( ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE ) );
+	if( cwmWorldState->GetDisplayLayers() )
 		Console << "Layer display enabled" << myendl;
 	else
 		Console << "Layer display disabled" << myendl;
@@ -73,7 +73,7 @@ JSBool SetShowLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 }
 JSBool GetShowLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	*rval = BOOLEAN_TO_JSVAL( showlayer );
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->GetDisplayLayers() );
 	return JS_TRUE;
 }
 JSBool SE_CalcSockFromChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -84,7 +84,7 @@ JSBool SE_CalcSockFromChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "CalcSockFromChar: Invalid argument, invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -413,7 +413,7 @@ JSBool SE_Gump_SendToSocket( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 	SI32 index = (SI32)JSVAL_TO_INT( argv[0] );
 	UOXSOCKET s = (UOXSOCKET)JSVAL_TO_INT( argv[1] );
-	if( s == -1 || s >= now )
+	if( s == -1 || s >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "Gump_SendToSock: Invalid socket (%i)", s );
 		return JS_FALSE;
@@ -435,7 +435,7 @@ JSBool SE_GetTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "GetTarget: Invalid argument, invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -451,7 +451,7 @@ JSBool SE_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *r
 		return JS_FALSE;
 	}
 	CHARACTER cMove = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( cMove == INVALIDSERIAL || cMove >= cmem )
+	if( cMove == INVALIDSERIAL || cMove >= cwmWorldState->GetCMem() )
 	{
 		return JS_FALSE;
 	}
@@ -480,12 +480,12 @@ JSBool SE_DoStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 	UI32 targThing = JSVAL_TO_INT( argv[0] );
 	
-	if( targType == 0 && ( targThing == INVALIDSERIAL || targThing > cmem ) )
+	if( targType == 0 && ( targThing == INVALIDSERIAL || targThing > cwmWorldState->GetCMem() ) )
 	{
 		DoSEErrorMessage( "DoStaticEffect: Invalid object (character %i)", targThing );
 		return JS_FALSE;
 	}
-	if( targType == 1 && ( targThing == INVALIDSERIAL || targThing > imem ) )
+	if( targType == 1 && ( targThing == INVALIDSERIAL || targThing > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "DoStaticEffect: Invalid object (item %i)", targThing );
 		return JS_FALSE;
@@ -578,7 +578,7 @@ JSBool SE_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	UI32 iObject = JSVAL_TO_INT( argv[0] );
-	if( iObject == INVALIDSERIAL || iObject > cmem )
+	if( iObject == INVALIDSERIAL || iObject > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "CastSpell: Invalid character (%i)", iObject );
 		return JS_FALSE;
@@ -625,7 +625,7 @@ JSBool SE_AttackTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	CHARACTER attacking = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( attacking == INVALIDSERIAL || attacking >= cmem )
+	if( attacking == INVALIDSERIAL || attacking >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "AttackTarget: Invalid character (%i)", attacking );
 		return JS_FALSE;
@@ -642,7 +642,7 @@ JSBool SE_Attack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	}
 	CHARACTER attacking = (CHARACTER)JSVAL_TO_INT( argv[0] );
 	CHARACTER toAttack  = (CHARACTER)JSVAL_TO_INT( argv[1] );
-	if( attacking == INVALIDSERIAL || attacking >= cmem || toAttack == INVALIDSERIAL || toAttack >= cmem )
+	if( attacking == INVALIDSERIAL || attacking >= cwmWorldState->GetCMem() || toAttack == INVALIDSERIAL || toAttack >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "Attack: Invalid attacker (%i) or target (%i)", attacking, toAttack );
 		return JS_FALSE;
@@ -661,7 +661,7 @@ JSBool SE_FindNearestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindNearestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -717,7 +717,7 @@ JSBool SE_FindStrongestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindStrongestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -774,7 +774,7 @@ JSBool SE_FindWeakestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindWeakestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -831,7 +831,7 @@ JSBool SE_FindFirstTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindFirstTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -874,7 +874,7 @@ JSBool SE_FindLastTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindLastTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -916,7 +916,7 @@ JSBool SE_FindSmartestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindSmartestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -972,7 +972,7 @@ JSBool SE_FindDumbestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindDumbestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -1028,7 +1028,7 @@ JSBool SE_FindQuickestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindQuickestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -1084,7 +1084,7 @@ JSBool SE_FindSlowestTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "FindSlowestTarget: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -1141,7 +1141,7 @@ JSBool SE_GetName2( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > imem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "GetName2: Invalid object (%i)", targChar );
 		return JS_FALSE;
@@ -1168,7 +1168,7 @@ JSBool SE_SetName2( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( "SetName2: No name!" );
 		return JS_FALSE;
 	}
-	if( targChar == INVALIDSERIAL || targChar > imem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "SetName2: Invalid object (%i)", targChar );
 		return JS_FALSE;
@@ -1186,7 +1186,7 @@ JSBool SE_GetCharPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > cmem ) 
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() ) 
 	{
 		DoSEErrorMessage( "GetCharPack: Invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -1204,7 +1204,7 @@ JSBool SE_GetLowDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	UI32 targItem = (UI32)JSVAL_TO_INT( argv[0] );
 	UI08 targType = (UI08)JSVAL_TO_INT( argv[1] );
-	if( targItem == INVALIDSERIAL || ( targType && targItem > imem ) || ( !targType && targItem > cmem ) )
+	if( targItem == INVALIDSERIAL || ( targType && targItem > cwmWorldState->GetIMem() ) || ( !targType && targItem > cwmWorldState->GetCMem() ) )
 	{
 		DoSEErrorMessage( "GetLowDamage: Invalid object (%i) or type ", targItem, targType );
 		return JS_FALSE;
@@ -1225,7 +1225,7 @@ JSBool SE_GetHiDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	UI32 targItem = (UI32)JSVAL_TO_INT( argv[0] );
 	UI08 targType = (UI08)JSVAL_TO_INT( argv[1] );
-	if( targItem == INVALIDSERIAL || ( targType && targItem > imem ) || ( !targType && targItem > cmem ) )
+	if( targItem == INVALIDSERIAL || ( targType && targItem > cwmWorldState->GetIMem() ) || ( !targType && targItem > cwmWorldState->GetCMem() ) )
 	{
 		DoSEErrorMessage( "GetHiDamage: Invalid object (%i) or type ", targItem, targType );
 		return JS_FALSE;
@@ -1245,7 +1245,7 @@ JSBool SE_GetDef( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 		return JS_FALSE;
 	}
 	ITEM targItem = (ITEM)JSVAL_TO_INT( argv[0] );
-	if( targItem == INVALIDSERIAL || targItem > imem ) 
+	if( targItem == INVALIDSERIAL || targItem > cwmWorldState->GetIMem() ) 
 	{
 		DoSEErrorMessage( "GetDef: Invalid item (%i)", targItem );
 		return JS_FALSE;
@@ -1312,7 +1312,7 @@ JSBool SE_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	objTypes[0] = JSVAL_TO_INT( argv[2] );
 	objTypes[1] = JSVAL_TO_INT( argv[3] );
 	for( UI08 iCounter = 0; iCounter <= 1; iCounter++ )
-		if( objects[iCounter] == INVALIDSERIAL || ( objTypes[iCounter] == 0 && objects[iCounter]> cmem ) || ( objTypes[iCounter] && objects[iCounter]> imem ) )
+		if( objects[iCounter] == INVALIDSERIAL || ( objTypes[iCounter] == 0 && objects[iCounter]> cwmWorldState->GetCMem() ) || ( objTypes[iCounter] && objects[iCounter]> cwmWorldState->GetIMem() ) )
 		{
 			DoSEErrorMessage( "DistanceTo: Invalid object (%i) or object type (%i)", objects[iCounter], objTypes[iCounter] );
 			return JS_FALSE;
@@ -1337,7 +1337,7 @@ JSBool SE_DoDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
 	UI08 targType = (UI08)JSVAL_TO_INT( argv[2] );
-	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cmem ) || ( targType && targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cwmWorldState->GetCMem() ) || ( targType && targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "DoDamage: Invalid object (%i) or object type (%i)", targChar, targType );
 		return JS_FALSE;
@@ -1360,7 +1360,7 @@ JSBool SE_SetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
 	SERIAL targSerial = (SERIAL)JSVAL_TO_INT( argv[1] );
 	UI08 targType = (UI08)JSVAL_TO_INT( argv[2] );
-	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cmem ) || ( targType && targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targType == 0 && targChar > cwmWorldState->GetCMem() ) || ( targType && targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "SetSerial: Invalid object (%i) or object type (%i)", targChar, targType );
 		return JS_FALSE;
@@ -1381,7 +1381,7 @@ JSBool SE_SetTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
 	CHARACTER target = (CHARACTER)JSVAL_TO_INT( argv[1] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "SetTarget: Invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -1398,7 +1398,7 @@ JSBool SE_CalcDefense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "CalcDefense: Invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -1415,7 +1415,7 @@ JSBool SE_CalcAttack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	CHARACTER targChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || targChar > cmem )
+	if( targChar == INVALIDSERIAL || targChar > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "CalcAttack: Invalid character (%i)", targChar );
 		return JS_FALSE;
@@ -1488,7 +1488,7 @@ JSBool SE_SetAtt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	ITEM targItem = (ITEM)JSVAL_TO_INT( argv[0] );
 	SI16 minAtt = (SI16)JSVAL_TO_INT( argv[1] );
 	SI16 maxAtt = (SI16)JSVAL_TO_INT( argv[2] );
-	if( targItem == INVALIDSERIAL || targItem > imem )
+	if( targItem == INVALIDSERIAL || targItem > cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "SetAtt: Invalid item (%i)", targItem );
 		return JS_FALSE;
@@ -1507,7 +1507,7 @@ JSBool SE_SetDef( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	}
 	ITEM targItem = (ITEM)JSVAL_TO_INT( argv[0] );
 	UI16 targDef = (UI16)JSVAL_TO_INT( argv[1] );
-	if( targItem == INVALIDSERIAL || targItem > imem )
+	if( targItem == INVALIDSERIAL || targItem > cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "SetDef: Invalid item (%i)", targItem );
 		return JS_FALSE;
@@ -1541,7 +1541,7 @@ JSBool SE_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	int offset = JSVAL_TO_INT( argv[1] );
 	if( argc == 3 )
 		length = JSVAL_TO_INT( argv[2] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "GetString: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1571,7 +1571,7 @@ JSBool SE_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "GetDWord: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1605,7 +1605,7 @@ JSBool SE_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "SetByte: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1625,7 +1625,7 @@ JSBool SE_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "SetWord: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1645,7 +1645,7 @@ JSBool SE_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "SetDWord: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1665,7 +1665,7 @@ JSBool SE_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "SetString: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1690,7 +1690,7 @@ JSBool SE_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "ReadBytes: invalid socket (%i)", sock );
 		return JS_FALSE;
@@ -1721,7 +1721,7 @@ JSBool SE_UseReagant( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
 	UI08 reagID = (UI08)JSVAL_TO_INT( argv[1] );
 	UI16 amount = (UI16)JSVAL_TO_INT( argv[2] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "UseReagant: invalid character (%i)", player );
 		return JS_FALSE;
@@ -1762,7 +1762,7 @@ JSBool SE_UseReagants( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "UseReagants: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -1804,7 +1804,7 @@ JSBool SE_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "AddSpell: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -1824,7 +1824,7 @@ JSBool SE_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "RemoveSpell: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -1845,7 +1845,7 @@ JSBool SE_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	UOXSOCKET socket = JSVAL_TO_INT( argv[0] );
 	CHARACTER player = JSVAL_TO_INT( argv[1] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "SpellFail: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -1917,7 +1917,7 @@ JSBool SE_CalcRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[4] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "CalcRank: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -1961,7 +1961,7 @@ JSBool SE_CalcCharFromSock( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 	UOXSOCKET sock = JSVAL_TO_INT( argv[0] );
-	if( sock == -1 || sock > now )
+	if( sock == -1 || sock > cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "CalcCharFromSock: invalid socket (%i)", sock );
 		*rval = INT_TO_JSVAL( INVALIDSERIAL );
@@ -1980,7 +1980,7 @@ JSBool SE_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	ITEM i = JSVAL_TO_INT( argv[0] );
-	if( i == INVALIDSERIAL || i > imem )
+	if( i == INVALIDSERIAL || i > cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "ApplyRank: Invalid item (%i)", i );
 		return JS_FALSE;
@@ -2122,7 +2122,7 @@ JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 
 JSBool SE_GetSecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	*rval = INT_TO_JSVAL( secondsperuominute );
+	*rval = INT_TO_JSVAL( cwmWorldState->GetSecondsPerUOMinute() );
 	return JS_TRUE;
 }
 
@@ -2134,7 +2134,7 @@ JSBool SE_GetLightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "GetLightLevel: Invalid character (%i)", toCheck );
 		return JS_FALSE;
@@ -2161,7 +2161,7 @@ JSBool SE_GetLightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	*rval = INT_TO_JSVAL( uiCurrentTime );
+	*rval = INT_TO_JSVAL( cwmWorldState->GetUICurrentTime() );
 	return JS_TRUE;
 }
 
@@ -2173,7 +2173,7 @@ JSBool SE_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 		return JS_FALSE;
 	}
 	CHARACTER cMove = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( cMove == INVALIDSERIAL || cMove >= cmem )
+	if( cMove == INVALIDSERIAL || cMove >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "WalkTo: Invalid character (%i)", cMove );
 		return JS_FALSE;
@@ -2309,7 +2309,7 @@ JSBool SE_IsCriminal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "IsCriminal: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2325,7 +2325,7 @@ JSBool SE_IsMurderer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "IsMurderer: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2341,7 +2341,7 @@ JSBool SE_IsInnocent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "IsInnocent: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2357,7 +2357,7 @@ JSBool SE_GetFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "GetFlag: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2373,7 +2373,7 @@ JSBool SE_MakeCriminal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "MakeCriminal: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2389,7 +2389,7 @@ JSBool SE_MakeInnocent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "MakeInnocent: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2411,7 +2411,7 @@ JSBool SE_GetGender( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "GetGender: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2442,7 +2442,7 @@ JSBool SE_SetGender( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
 	UI08 gender = (UI08)JSVAL_TO_INT( argv[1] );
-	if( player == INVALIDSERIAL || player > cmem )
+	if( player == INVALIDSERIAL || player > cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "SetGender: Invalid character (%i)", player );
 		return JS_FALSE;
@@ -2524,7 +2524,7 @@ JSBool SE_RaceCompare( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	CHARACTER char0 = JSVAL_TO_INT( argv[0] );
 	CHARACTER char1 = JSVAL_TO_INT( argv[1] );
-	if( char0 == INVALIDSERIAL || char1 == INVALIDSERIAL || char0 >= cmem || char1 >= cmem )
+	if( char0 == INVALIDSERIAL || char1 == INVALIDSERIAL || char0 >= cwmWorldState->GetCMem() || char1 >= cwmWorldState->GetCMem() )
 	{
 		return JS_FALSE;
 	}
@@ -2553,7 +2553,7 @@ JSBool SE_FindItemOnLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	}
 	CHARACTER player = JSVAL_TO_INT( argv[0] );
 	UI08 layerNum = (UI08)JSVAL_TO_INT( argv[1] );
-	if( player == INVALIDSERIAL || player >= cmem )
+	if( player == INVALIDSERIAL || player >= cwmWorldState->GetCMem() )
 	{
 		return JS_FALSE;
 	}
@@ -2617,7 +2617,7 @@ JSBool SE_GetTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( argc != 1 )
 		return JS_FALSE;
 	CHARACTER toCheck = JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 		return JS_FALSE;
 	*rval = INT_TO_JSVAL( chars[toCheck].GetTown() );
 	return JS_TRUE;
@@ -2628,7 +2628,7 @@ JSBool SE_SetTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( argc != 2 )
 		return JS_FALSE;
 	CHARACTER toCheck = JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 		return JS_FALSE;
 	UI08 tRegion = (UI08)JSVAL_TO_INT( argv[1] );
 	UI08 cRegion = chars[toCheck].GetTown();
@@ -2642,7 +2642,7 @@ JSBool SE_GetRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( argc != 1 )
 		return JS_FALSE;
 	CHARACTER toCheck = JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 		return JS_FALSE;
 	*rval = INT_TO_JSVAL( chars[toCheck].GetRegion() );
 	return JS_TRUE;
@@ -2653,7 +2653,7 @@ JSBool SE_SetRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( argc != 2 )
 		return JS_FALSE;
 	CHARACTER toCheck = JSVAL_TO_INT( argv[0] );
-	if( toCheck == INVALIDSERIAL || toCheck >= cmem )
+	if( toCheck == INVALIDSERIAL || toCheck >= cwmWorldState->GetCMem() )
 		return JS_FALSE;
 	UI08 tRegion = (UI08)JSVAL_TO_INT( argv[1] );
 	chars[toCheck].SetRegion( tRegion );
@@ -2842,7 +2842,7 @@ JSBool SE_AddToGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	GuildID toCheck = (GuildID)JSVAL_TO_INT( argv[0] );
 	CHARACTER toAdd = (CHARACTER)JSVAL_TO_INT( argv[1] );
 	SI08 nType = (SI08)JSVAL_TO_INT( argv[2] );
-	if( toAdd == INVALIDSERIAL || toAdd > cmem || toCheck == -1 || ( nType != 0 && nType != 1 ) )
+	if( toAdd == INVALIDSERIAL || toAdd > cwmWorldState->GetCMem() || toCheck == -1 || ( nType != 0 && nType != 1 ) )
 	{
 		return JS_FALSE;
 	}
@@ -2870,7 +2870,7 @@ JSBool SE_RemoveFromGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	GuildID toCheck = (GuildID)JSVAL_TO_INT( argv[0] );
 	CHARACTER toAdd = (CHARACTER)JSVAL_TO_INT( argv[1] );
 	SI08 nType = (SI08)JSVAL_TO_INT( argv[2] );
-	if( toAdd == INVALIDSERIAL || toAdd > cmem || toCheck == -1 || ( nType != 0 && nType != 1 ) )
+	if( toAdd == INVALIDSERIAL || toAdd > cwmWorldState->GetCMem() || toCheck == -1 || ( nType != 0 && nType != 1 ) )
 	{
 		return JS_FALSE;
 	}
@@ -2897,7 +2897,7 @@ JSBool SE_CompareGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	CHARACTER toCheck = (CHARACTER)JSVAL_TO_INT( argv[0] );
 	CHARACTER toCheck2 = (CHARACTER)JSVAL_TO_INT( argv[1] );
-	if( toCheck == INVALIDSERIAL || toCheck2 == INVALIDSERIAL || toCheck > cmem || toCheck2 > cmem )
+	if( toCheck == INVALIDSERIAL || toCheck2 == INVALIDSERIAL || toCheck > cwmWorldState->GetCMem() || toCheck2 > cwmWorldState->GetCMem() )
 		*rval = INT_TO_JSVAL( GR_UNKNOWN );
 	else
 		*rval = INT_TO_JSVAL( GuildSys->Compare( &chars[toCheck], &chars[toCheck2] ) );
@@ -2939,7 +2939,7 @@ JSBool SE_IsMemberOfTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 	*rval = JS_FALSE;
 	CHARACTER mChar = JSVAL_TO_INT( argv[0] );
-	if( mChar == INVALIDSERIAL || mChar >= cmem )
+	if( mChar == INVALIDSERIAL || mChar >= cwmWorldState->GetCMem() )
 		return JS_TRUE;
 	UI08 town = (UI08)JSVAL_TO_INT( argv[1] );
 	*rval = BOOLEAN_TO_JSVAL( region[town]->IsMemberOfTown( &chars[mChar] ) );
@@ -3146,7 +3146,7 @@ JSBool SE_CanRaceWearArmour( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 	RACEID race = (RACEID)JSVAL_TO_INT( argv[0] );
 	ITEM tItem = (ITEM)JSVAL_TO_INT( argv[1] );
-	if( tItem == INVALIDSERIAL || tItem >= cmem )
+	if( tItem == INVALIDSERIAL || tItem >= cwmWorldState->GetCMem() )
 	{
 		return JS_FALSE;
 	}
@@ -3306,7 +3306,7 @@ JSBool SE_FirstItemInCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	UI32 item = JSVAL_TO_INT( argv[0] );
-	if( item == INVALIDSERIAL || item >= imem )
+	if( item == INVALIDSERIAL || item >= cwmWorldState->GetIMem() )
 	{
 		return JS_FALSE;
 	}
@@ -3321,7 +3321,7 @@ JSBool SE_NextItemInCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 	UI32 item = JSVAL_TO_INT( argv[0] );
-	if( item == INVALIDSERIAL || item >= imem )
+	if( item == INVALIDSERIAL || item >= cwmWorldState->GetIMem() )
 	{
 		return JS_FALSE;
 	}
@@ -3336,7 +3336,7 @@ JSBool SE_FinishedItemInCont( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 	UI32 item = JSVAL_TO_INT( argv[0] );
-	if( item == INVALIDSERIAL || item >= imem )
+	if( item == INVALIDSERIAL || item >= cwmWorldState->GetIMem() )
 	{
 		return JS_FALSE;
 	}
@@ -3353,7 +3353,7 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 	UOXSOCKET iSock = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
 	ITEM iDoor = (ITEM)JSVAL_TO_INT( argv[1] );
-	if( iDoor == INVALIDSERIAL || iDoor >= imem )
+	if( iDoor == INVALIDSERIAL || iDoor >= cwmWorldState->GetIMem() )
 	{
 		DoSEErrorMessage( "UseDoor: Invalid door (%i)", iDoor );
 		return JS_FALSE;
@@ -3374,12 +3374,12 @@ JSBool SE_VendorSell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	UOXSOCKET sock = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
 	CHARACTER npc = (CHARACTER)JSVAL_TO_INT( argv[1] );
 
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "VendorSell: Invalid socket (%i)", sock );
 		return JS_FALSE;
 	}
-	if( npc == INVALIDSERIAL || npc >= cmem )
+	if( npc == INVALIDSERIAL || npc >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "VendorSell: Invalid character (%i)", npc );
 		return JS_FALSE;
@@ -3401,12 +3401,12 @@ JSBool SE_VendorBuy( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	UOXSOCKET sock = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
 	CHARACTER npc = (CHARACTER)JSVAL_TO_INT( argv[1] );
 
-	if( sock == -1 || sock >= now )
+	if( sock == -1 || sock >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "VendorBuy: Invalid socket (%i)", sock );
 		return JS_FALSE;
 	}
-	if( npc == INVALIDSERIAL || npc >= cmem )
+	if( npc == INVALIDSERIAL || npc >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "VendorBuy: Invalid character (%i)", npc );
 		return JS_FALSE;
@@ -3423,7 +3423,7 @@ JSBool SE_VendorBuy( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	{
 		mSock->AddX( npc );
 		npcTalk( calcSocketObjFromSock( sock ), &chars[npc], 772, false );
-		target( mSock, 0, 1, 0, 224, " ");
+		target( mSock, 0, 224, " ");
 	} 
 	else
 		Targ->BuyShop( mSock, &chars[npc] );
@@ -3461,7 +3461,7 @@ JSBool SE_GetGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 
 	CHARACTER mChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( mChar == INVALIDSERIAL || mChar >= cmem )
+	if( mChar == INVALIDSERIAL || mChar >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "GetGuild: Invalid character (%i)", mChar );
 		return JS_FALSE;
@@ -3479,7 +3479,7 @@ JSBool SE_SkillBeingUsed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	CHARACTER mChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( mChar == INVALIDSERIAL || mChar >= cmem )
+	if( mChar == INVALIDSERIAL || mChar >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "SkillBeingUsed: Invalid character (%i)", mChar );
 		return JS_FALSE;
@@ -3498,7 +3498,7 @@ JSBool SE_SetSkillUse( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	CHARACTER mChar = (CHARACTER)JSVAL_TO_INT( argv[0] );
-	if( mChar == INVALIDSERIAL || mChar >= cmem )
+	if( mChar == INVALIDSERIAL || mChar >= cwmWorldState->GetCMem() )
 	{
 		DoSEErrorMessage( "SetSkillUse: Invalid character (%i)", mChar );
 		return JS_FALSE;
@@ -3520,7 +3520,7 @@ JSBool SE_GetPrivateBit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "GetPrivateBit: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3547,7 +3547,7 @@ JSBool SE_SetPrivateBit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "SetPrivateBit: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3576,7 +3576,7 @@ JSBool SE_GetPrivateWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "GetPrivateWord: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3602,7 +3602,7 @@ JSBool SE_SetPrivateWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "SetPrivateWord: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3629,7 +3629,7 @@ JSBool SE_GetPrivateBitRange( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "GetPrivateBitRange: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3657,7 +3657,7 @@ JSBool SE_SetPrivateBitRange( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	UI32 mCheck = JSVAL_TO_INT( argv[0] );
 	int mType = JSVAL_TO_INT( argv[1] );
 
-	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cmem) || (mType == 1 && mCheck > imem) )
+	if( mCheck == INVALIDSERIAL || (mType == 0 && mCheck > cwmWorldState->GetCMem()) || (mType == 1 && mCheck > cwmWorldState->GetIMem()) )
 	{
 		DoSEErrorMessage( "SetPrivateBitRange: Invalid object (%i) of type (%i)", mCheck, mType );
 		return JS_FALSE;
@@ -3753,7 +3753,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	UOXSOCKET sChar = (UOXSOCKET)JSVAL_TO_INT( argv[0] );
-	if( sChar == -1 || sChar >= now )
+	if( sChar == -1 || sChar >= cwmWorldState->GetPlayersOnline() )
 	{
 		DoSEErrorMessage( "CalcTargetedChar: Invalid socket (%i)", sChar );
 		return JS_FALSE;
@@ -4018,7 +4018,7 @@ JSBool SE_SetDecayTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || ( targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "SetDecayTime: Invalid object (%i)", targChar );
 		return JS_FALSE;
@@ -4035,7 +4035,7 @@ JSBool SE_GetDecayTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || ( targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "GetDecayTime: Invalid type (%i) ", targChar); 
 		return JS_FALSE;
@@ -4053,7 +4053,7 @@ JSBool SE_SetDecayable( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || ( targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "SetDecayTime: Invalid object (%i)", targChar );
 		return JS_FALSE;
@@ -4070,7 +4070,7 @@ JSBool SE_IsDecayable( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	UI32 targChar = JSVAL_TO_INT( argv[0] );
-	if( targChar == INVALIDSERIAL || ( targChar > imem ) )
+	if( targChar == INVALIDSERIAL || ( targChar > cwmWorldState->GetIMem() ) )
 	{
 		DoSEErrorMessage( "IsDecayable: Invalid type (%i) ", targChar); 
 		return JS_FALSE;
@@ -4195,7 +4195,7 @@ JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE; 	
 	} 	
 	short idx = static_cast<short>((JSVAL_TO_INT( argv[0] )));
- 	if (idx>=tnum) 
+ 	if (idx>=Commands->GetNumArguments()) 
 	{ 		
 		DoSEErrorMessage( "GetCommand: Index exeeds the commando-array!" ); 		
 		return JS_FALSE; 	
@@ -4222,7 +4222,7 @@ JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		DoSEErrorMessage( "GetCommandSize: doesnt need any argument!" ); 		
 		return JS_FALSE; 	
 	} 	
-	*rval = INT_TO_JSVAL( tnum ); 	
+	*rval = INT_TO_JSVAL( Commands->GetNumArguments() ); 	
 	return JS_TRUE; 
 } 
 

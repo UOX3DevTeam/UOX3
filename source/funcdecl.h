@@ -144,10 +144,9 @@ UI08	bestskill( CChar *p );
 // Target functions
 void	vialtarget( cSocket *nSocket );
 
-void	target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, const char *txt );
-void	target( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, SI32 dictEntry );
+void	target( cSocket *s, UI08 targType, UI08 targID, const char *txt );
+void	target( cSocket *s, UI08 targType, UI08 targID,  SI32 dictEntry );
 void	target( cSocket *s, SERIAL ser, const char *txt );
-void	target( cSocket *s, SERIAL ser, SI32 dictEntry );
 
 void	mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, const char *txt );
 void	mtarget( cSocket *s, SERIAL ser, UI16 itemID, const char *txt );
@@ -160,9 +159,6 @@ void	endmessage( int x );
 void	consolebroadcast( const char *txt );
 void	gettokennum( const char * s, int num, char *gettokenstr );
 void	setRandomName( CChar *s, const char *namelist );
-char *	title1( CChar *p );
-char *	title2( CChar *p );
-char *	title3( CChar *p );
 void	numtostr( int i, char *string );
 SI32	makeNum( const char *s );
 SI32	makeNum( const std::string *s );
@@ -170,7 +166,6 @@ char *	RealTime( char *time_str );
 int		getStringValue( const char *string );
 
 // Light related functions
-void	doWorldLight( void );
 void	doLight( cSocket *s, char level );
 bool	inDungeon( CChar *s );
 //void	weather(int s, char bolt);
@@ -208,7 +203,6 @@ void	buyItem( cSocket *mSock );
 void	sellItem( cSocket *mSock );
 UI32		calcValue( CItem *i, UI32 value);
 UI32		calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling );
-void	StoreItemRandomValue( CItem *i, UI08 region );
 void	PlVGetgold( cSocket *mSock, CChar *v );
 
 // Region related
@@ -288,8 +282,6 @@ void	explodeItem( cSocket *mSock, CItem *nItem );
 void	MonsterGate( CChar *s, SI32 x );
 void	init_creatures( void );
 void	teleporters( CChar *s );
-CChar	*SpawnRandomMonster( cSocket *nCharID, bool useNecro, char* cList, char* cNpcID);
-CItem	*SpawnRandomItem( cSocket *nCharID, bool useNecro, char* cList, char* cItemID);
 void	MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID );
 void	objTeleporters( CChar *s );
 bool	checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2, UI08 worldNumber );
@@ -330,14 +322,13 @@ void	setcharflag( CChar *c );
 void	UseHairDye( cSocket *s, UI16 colour, CItem *x );	// s for socket, colour to dye, x is the item
 void	SpawnGate( cSocket *sock, CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ );
 
+bool FileExists( const char *filepath );
+
 #if defined(__unix__)
 void	*CheckConsoleKeyThread( void *params );
 #else
 void	CheckConsoleKeyThread( void *params );
 #endif
-
-void	loadCombat( void );			// Load Combat
-bool	FileExists( const char *filepath );
 
 #endif
 

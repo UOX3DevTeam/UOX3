@@ -127,7 +127,7 @@ void scpSoundEffect( cBaseObject *baseObj, UI16 soundID, bool bAllHear )
 	toSend.Model( soundID );
 	if( bAllHear )
 	{
-		UI16 distance = MAXVISRANGE + Races->VisRange( baseObj->GetRace() );
+		UI16 distance = MAX_VISRANGE + Races->VisRange( baseObj->GetRace() );
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
@@ -337,7 +337,7 @@ void bgsound( CChar *s )
 	CHARACTER inrange[15];
 	int y = 0, basesound = 0, xx;
 	char sf;
-	int distance = MAXVISRANGE + Races->VisRange( s->GetRace() );
+	int distance = MAX_VISRANGE + Races->VisRange( s->GetRace() );
 	
 	int xOffset = MapRegion->GetGridX( s->GetX() );
 	int yOffset = MapRegion->GetGridY( s->GetY() );

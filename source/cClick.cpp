@@ -6,6 +6,212 @@
 #define DBGFILE "cClick.cpp"
 
 //o---------------------------------------------------------------------------o
+//|	Function	-	char *prowessTitle( CChar *p )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Fetches characters "prowess" title based on his skill and
+//|                 entries in titles.scp
+//|	Modified	-	Modified to match OSI's prowess titles by Zane
+//o---------------------------------------------------------------------------o
+void prowessTitle( CChar *p, char *prowesstitle )
+{
+	if( p == NULL )
+		return;
+	UI16 titlenum = 0;
+	UI16 x = p->GetBaseSkill( bestskill( p ) );
+  
+	if( x < 1000 ) 
+		titlenum = (UI16)((x - 10) / 100 - 2);
+	else
+		titlenum = 8;
+	strncpy( prowesstitle, title[titlenum].prowess, MAX_TITLE );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	char *skillTitle( CChar *p )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Returns players bestskill for prowess title
+//o---------------------------------------------------------------------------o
+void skillTitle( CChar *p, char *skilltitle )
+{
+	UI08 titlenum = (UI08)( bestskill( p ) + 1 );
+	strncpy( skilltitle, title[titlenum].skill, MAX_TITLE );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	char *fameTitle( CChar *p )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Returns players reputation title based on their Fame and Karma
+//o---------------------------------------------------------------------------o
+void fameTitle( CChar *p, char *fametitle )
+{
+	if( p == NULL )
+		return;
+	char thetitle[50];
+	UI08 titlenum = 0;
+	
+	SI16 k = p->GetKarma();
+	SI16 f = p->GetFame();
+	thetitle[0] = 0;
+	
+	if( k >= 10000 )
+	{
+		if( f >= 5000 )
+			titlenum = 0;
+		else if( f >= 2500 )
+			titlenum = 1;
+		else if( f >= 1250 )
+			titlenum = 2;
+		else
+			titlenum = 3;
+	}
+	else if( k >= 5000 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 4;
+		else if( f >= 2500 ) 
+			titlenum = 5;
+		else if( f >= 1250 ) 
+			titlenum = 6;
+		else
+			titlenum = 7;
+	}
+	else if( k >= 2500 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 8;
+		else if( f >= 2500 ) 
+			titlenum = 9;
+		else if( f >= 1250 ) 
+			titlenum = 10;
+		else
+			titlenum = 11;
+	}
+	else if( k >= 1250)
+	{
+		if( f >= 5000 ) 
+			titlenum = 12;
+		else if( f >= 2500 ) 
+			titlenum = 13;
+		else if( f >= 1250 ) 
+			titlenum = 14;
+		else
+			titlenum = 15;
+	}
+	else if( k >= 625 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 16;
+		else if( f >= 1000 ) 
+			titlenum = 17;
+		else if( f >= 500 )
+			titlenum = 18;
+		else
+			titlenum = 19;
+	}
+	else if( k > -625 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 20;
+		else if( f >= 2500 ) 
+			titlenum = 21;
+		else if( f >= 1250 ) 
+			titlenum = 22;
+		else
+			titlenum = 23;
+	}
+	else if( k > -1250 )
+	{
+		if( f >= 10000 ) 
+			titlenum = 28;
+		else if( f >= 5000 ) 
+			titlenum = 27;
+		else if( f >= 2500 ) 
+			titlenum = 26;
+		else if( f >= 1250 ) 
+			titlenum = 25;
+		else
+			titlenum = 24;
+	}
+	else if( k > -2500 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 32;
+		else if( f >= 2500 ) 
+			titlenum = 31;
+		else if( f >= 1250 ) 
+			titlenum = 30;
+		else
+			titlenum = 29;
+	}
+	else if( k > -5000 )
+	{
+		if( f >= 10000 ) 
+			titlenum = 37;
+		else if( f >= 5000 ) 
+			titlenum = 36;
+		else if( f >= 2500 ) 
+			titlenum = 35;
+		else if( f >= 1250 ) 
+			titlenum = 34;
+		else
+			titlenum = 33;
+	}
+	else if( k > -10000 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 41;
+		else if( f >= 2500 ) 
+			titlenum = 40;
+		else if( f >= 1250 ) 
+			titlenum = 39;
+		else
+			titlenum = 38;
+	}
+	else if( k <= -10000 )
+	{
+		if( f >= 5000 ) 
+			titlenum = 45;
+		else if( f >= 2500 ) 
+			titlenum = 44;
+		else if( f >= 1250 ) 
+			titlenum = 43;
+		else
+			titlenum = 42;
+	}
+	if( p->GetRace() != 0 && p->GetRace() != 65535 )
+		sprintf( thetitle, "%s %s ", title[titlenum].fame, Races->Name( p->GetRace() ) );
+	else
+		sprintf( thetitle, "%s ", title[titlenum].fame );
+	if( f >= 10000 ) // Morollans bugfix for repsys
+	{
+		if( p->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
+        {
+			if( p->GetID( 2 ) == 0x91 ) 
+				sprintf( fametitle, Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ) );
+			else 
+				sprintf( fametitle, Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ) );
+        }
+		else if( p->GetID( 2 ) == 0x91 ) 
+			sprintf( fametitle, Dictionary->GetEntry( 1179 ), thetitle );
+		else 
+			sprintf( fametitle, Dictionary->GetEntry( 1180 ), thetitle );
+	}
+	else
+	{
+		if( p->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
+			strncpy( fametitle, Dictionary->GetEntry( 1181 ), MAX_FAMETITLE );
+		else if( strcmp( thetitle, " " ) ) 
+			sprintf( fametitle, Dictionary->GetEntry( 1182 ), thetitle );
+		else 
+			fametitle[0] = 0;
+	}
+	return;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    :  void paperdoll( cSocket *s, CChar *pdoll )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
@@ -19,18 +225,25 @@ void paperdoll( cSocket *s, CChar *pdoll )
 	CPPaperdoll pd		= (*pdoll);
 	UnicodeTypes sLang	= s->Language();
 
+	char prowesstitle[MAX_TITLE];
+	char fametitle[MAX_FAMETITLE];
+	char skilltitle[MAX_TITLE];
+	prowessTitle( pdoll, prowesstitle );
+	fameTitle( pdoll, fametitle );
+	skillTitle( pdoll, skilltitle );
+
 	bool bContinue = false;
 	if( pdoll->IsGM() )
 		sprintf( tempstr, "%s %s", pdoll->GetName(), pdoll->GetTitle() );
 	else if( pdoll->IsNpc() )
-		sprintf( tempstr, "%s %s %s", title3( pdoll ), pdoll->GetName(), pdoll->GetTitle() );
+		sprintf( tempstr, "%s %s %s", fametitle, pdoll->GetName(), pdoll->GetTitle() );
 	else if( pdoll->IsDead() )
 		strcpy( tempstr, pdoll->GetName() );
 	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->GetRepMaxKills() )
 	{
 		if( murdererTags.size() < 1 )
-			sprintf( tempstr, Dictionary->GetEntry( 374, sLang ), pdoll->GetName(), pdoll->GetTitle(), title1( pdoll ), title2( pdoll ) );
+			sprintf( tempstr, Dictionary->GetEntry( 374, sLang ), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
 		else if( pdoll->GetKills() < murdererTags[0].loBound )	// not a real murderer
 			bContinue = true;
 		else
@@ -45,31 +258,31 @@ void paperdoll( cSocket *s, CChar *pdoll )
 			if( kCtr >= murdererTags.size() )
 				bContinue = true;
 			else
-				sprintf( tempstr, "%s %s, %s%s %s", murdererTags[kCtr].toDisplay.c_str(), pdoll->GetName(), pdoll->GetTitle(), title1( pdoll ), title2( pdoll ) );
+				sprintf( tempstr, "%s %s, %s%s %s", murdererTags[kCtr].toDisplay.c_str(), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
 		}
 	}
 	else if( pdoll->IsCriminal() )
-		sprintf( tempstr, Dictionary->GetEntry( 373, sLang ), pdoll->GetName(), pdoll->GetTitle(), title1( pdoll ), title2( pdoll ) );
+		sprintf( tempstr, Dictionary->GetEntry( 373, sLang ), pdoll->GetName(), pdoll->GetTitle(), prowesstitle, skilltitle );
 	else
 		bContinue = true;
 	if( bContinue )
 	{
-		sprintf( tempstr, "%s%s", title3( pdoll ), pdoll->GetName() );      //Repuation + Name
+		sprintf( tempstr, "%s%s", fametitle, pdoll->GetName() );      //Repuation + Name
 		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
-				sprintf( tempstr, Dictionary->GetEntry( 379, sLang ), pdoll->GetName(), region[pdoll->GetTown()]->GetName(), title1( pdoll ), title2( pdoll ) );
+				sprintf( tempstr, Dictionary->GetEntry( 379, sLang ), pdoll->GetName(), region[pdoll->GetTown()]->GetName(), prowesstitle, skilltitle );
 			else	// is Resident
-				sprintf( tempstr, "%s of %s, %s %s", pdoll->GetName(), region[pdoll->GetTown()]->GetName(), title1( pdoll ), title2( pdoll ) );
+				sprintf( tempstr, "%s of %s, %s %s", pdoll->GetName(), region[pdoll->GetTown()]->GetName(), prowesstitle, skilltitle );
 		}
 		else	// No Town Title
 		{
 			char temp[128];
 			strcpy( temp, tempstr );
 			if( !pdoll->IsIncognito() && strlen( pdoll->GetTitle() ) > 0 )	// Titled & Skill
-				sprintf( tempstr, "%s %s, %s %s", temp, pdoll->GetTitle(), title1( pdoll ), title2( pdoll ) );
+				sprintf( tempstr, "%s %s, %s %s", temp, pdoll->GetTitle(), prowesstitle, skilltitle );
 			else	// Just skilled
-				sprintf( tempstr, "%s, %s %s", temp, title1( pdoll ), title2( pdoll ) );
+				sprintf( tempstr, "%s, %s %s", temp, prowesstitle, skilltitle );
 		}
 	}
 	pd.Text( tempstr );
@@ -229,7 +442,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 
 	//Order and Chaos gate "openers" Item types 2 and 4 could cause alot of lag" )
 	case 2: // Order gates opener
-		for( j = 0; j < itemcount; j++ ) 
+		for( j = 0; j < cwmWorldState->GetItemCount(); j++ ) 
 			if( items[j].GetType() == 3 )
 			{
 				if( items[j].GetMoreZ() == 1 )
@@ -247,7 +460,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			}
 		return true;
 	case 4: // Chaos gate opener
-		for( j = 0; j < itemcount; j++ ) 
+		for( j = 0; j < cwmWorldState->GetItemCount(); j++ ) 
 			if( items[j].GetType() == 5 )
 			{
 				if( items[j].GetMoreZ() == 3 )
@@ -267,11 +480,11 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 
 	//Item type 6 in doubleclick() is yet another teleport item, should we remove?" )
 	case 6: // Teleport rune
-		target( mSock, 0, 1, 0, 2, 401 );
+		target( mSock, 0, 2, 401 );
 		return true;
 	case 7: // Key
 		mSock->AddID( x->GetMore() );
-		target( mSock, 0, 1, 0, 11, 402 );
+		target( mSock, 0, 11, 402 );
 		return true;
 	case 8:	// Locked container
 	case 64: // locked spawn container
@@ -513,7 +726,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			sysmessage( mSock, 399 );
 		return true;
 	case 181: //Fireworks wands
-		srand( uiCurrentTime );
+		srand( cwmWorldState->GetUICurrentTime() );
 		if( x->GetMoreX() == 0 )
 		{
 			sysmessage( mSock, 396 );
@@ -543,10 +756,10 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		sysmessage( mSock, 434 );
 		return true;
 	case 190:	// Leather repair tool
-		target( mSock, 0, 1, 0, 14, 485 );	// What do we wish to repair?
+		target( mSock, 0, 14, 485 );	// What do we wish to repair?
 		return true;
 	case 191:	// Bow repair tool
-		target( mSock, 0, 1, 0, 15, 485 );	// What do we wish to repair?
+		target( mSock, 0, 15, 485 );	// What do we wish to repair?
 		return true;
 	case 200:	// Tillerman
 		if( Boats->GetBoat( mSock ) == NULL )
@@ -589,22 +802,22 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			Gumps->Menu( mSock, x->GetMoreX() );
 		return true;
 	case 204:	// tinker's tools
-		target( mSock, 0, 1, 0, 180, 484 );
+		target( mSock, 0, 180, 484 );
 		return true;
 	case 205:
-		target( mSock, 0, 1, 0, 24, 485 );	// What do we wish to repair?
+		target( mSock, 0, 24, 485 );	// What do we wish to repair?
 		return true;
 	case 207:	// Forges
-		target( mSock, 0, 1, 0, 237, 440 );
+		target( mSock, 0, 237, 440 );
 		return true;
 	case 208:	// Dye
 		mSock->DyeAll( 0 );
-		target( mSock, 0, 1, 0, 31, 441 );
+		target( mSock, 0, 31, 441 );
 		return true;
 	case 209:	// Dye vat
 		mSock->AddID1( x->GetColour( 1 ) );
 		mSock->AddID2( x->GetColour( 2 ) );
-		target( mSock, 0, 1, 0, 32, 442 );
+		target( mSock, 0, 32, 442 );
 		return true;
 	case 210:	// Model boat/Houses
 		if( iType != 103 && iType != 202 )
@@ -645,7 +858,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			soundeffect( mChar, 0x004D );
 		return true;
 	case 216:	// Axes
-		target( mSock, 0, 1, 0, 76, 443 );
+		target( mSock, 0, 76, 443 );
 		return true;
 	case 217:	//Player Vendor Deeds
 		CChar *m;
@@ -664,13 +877,13 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		npcTalk( mSock, m, 388, false, m->GetName() );
 		return true;
 	case 218:	// Smithy
-		target( mSock, 0, 1, 0, 50, 444 );
+		target( mSock, 0, 50, 444 );
 		return true; 
 	case 219:	// Carpentry
-		target( mSock, 0, 1, 0, 134, 445 );
+		target( mSock, 0, 134, 445 );
 		return true;
 	case 220:	// Mining
-		target( mSock, 0, 1, 0, 51, 446 );
+		target( mSock, 0, 51, 446 );
 		return true; 
 	case 221:	// empty vial
 		i = getPack( mChar );
@@ -679,7 +892,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			if( x->GetCont() == i )
 			{
 				mSock->AddMItem( x );
-				target( mSock, 0, 1, 0, 186, 447 );
+				target( mSock, 0, 186, 447 );
 			}
 			else 
 				sysmessage( mSock, 448 );
@@ -687,42 +900,42 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 222:	// wool to yarn/cotton to thread
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 164, 449 );
+		target( mSock, 0, 164, 449 );
 		return true;
 	case 223:	// cooking fish
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 168, 450 );
+		target( mSock, 0, 168, 450 );
 		return true;
 	case 224:	//
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 168, 451 );
+		target( mSock, 0, 168, 451 );
 		return true;
 	case 225:	// yarn/thread to cloth
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 165, 452 );
+		target( mSock, 0, 165, 452 );
 		return true;
 	case 226:	// make shafts
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 172, 454 );
+		target( mSock, 0, 172, 454 );
 		return true;
 	case 227:	// cannon ball
-		target( mSock, 0, 1, 0, 170, 455 );
+		target( mSock, 0, 170, 455 );
 		Items->DeleItem( x );
 		return true;
 	case 228:	// pitcher of water to flour
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 173, 456 );
+		target( mSock, 0, 173, 456 );
 		return true;
 	case 229:	// sausages to dough
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 174, 457 );
+		target( mSock, 0, 174, 457 );
 		return true;
 	case 230:	// sewing kit for tailoring
-		target( mSock, 0, 1, 0, 167, 459 );
+		target( mSock, 0, 167, 459 );
 		return true;
 	case 231:	// smelt ore
 		mChar->SetSmeltItem( x );
-		target( mSock, 0, 1, 0, 52, 460 );
+		target( mSock, 0, 52, 460 );
 		return true;
 	case 232:	// Message board opening
 		if( objInRange( mChar, x, 2 ) )
@@ -731,7 +944,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 			sysmessage( mSock, 461 );
 		return true;
 	case 233:	// skinning
-		target( mSock, 0, 1, 0, 86, 462 );
+		target( mSock, 0, 86, 462 );
 		return true;
 	case 234:	// camping
 		if( objInRange( mChar, x, 6 ) )
@@ -813,25 +1026,25 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		if( mChar->GetFishingTimer() )
 			sysmessage( mSock, 467 );
 		else
-			target( mSock, 0, 1, 0, 45, 468 );
+			target( mSock, 0, 45, 468 );
 		return true;
 	case 241:	// clocks
 		telltime( mSock );
 		return true;
 	case 242:	// Mortar for Alchemy
 		if( !mChar->SkillUsed( ALCHEMY ) )
-			target( mSock, 0, 1, 0, 108, 470 );
+			target( mSock, 0, 108, 470 );
 		else
 			sysmessage( mSock, 1631 );
 		return true;
 	case 243:	// scissors
-		target( mSock, 0, 1, 0, 128, 471 );
+		target( mSock, 0, 128, 471 );
 		return true;
 	case 244:	// healing
-		if( mChar->GetSkillDelay() <= uiCurrentTime )
+		if( mChar->GetSkillDelay() <= cwmWorldState->GetUICurrentTime() )
 		{
 			mSock->AddMItem( x );
-			target( mSock, 0, 1, 0, 130, 472 );
+			target( mSock, 0, 130, 472 );
 			mChar->SetSkillDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetServerSkillDelayStatus() )) );
 		}
 		else
@@ -846,7 +1059,7 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true;
 	case 247:	// lockpicks
 		mSock->AddMItem( x );
-		target( mSock, 0, 1, 0, 162, 475 );
+		target( mSock, 0, 162, 475 );
 		return true;
 	case 248:	// cotton plants
 		if( !mChar->IsOnHorse() ) 
@@ -872,14 +1085,14 @@ bool handleDoubleClickTypes( cSocket *mSock, CChar *mChar, CItem *x, UI08 iType 
 		return true; // cotton
 	case 249:	// tinker axle
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 183, 477 );
+		target( mSock, 0, 183, 477 );
 		return true;
 	case 250:
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 184, 478 );
+		target( mSock, 0, 184, 478 );
 		return true;
 	case 251:	// tinker clock
-		target( mSock, 0, 1, 0, 185, 479 );
+		target( mSock, 0, 185, 479 );
 		Items->DeleItem( x );
 		return true;
 	case 252:	//tinker sextant
@@ -937,16 +1150,16 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x1982: // partial lg forge
 	case 0x197A: // partial lg forge
 	case 0x197E: // partial lg forge
-		target( mSock, 0, 1, 0, 237, 440 );
+		target( mSock, 0, 237, 440 );
 		return true; 
 	case 0x0FA9:// Dye
 		mSock->DyeAll( 0 );
-		target( mSock, 0, 1, 0, 31, 441 );
+		target( mSock, 0, 31, 441 );
 		return true;
 	case 0x0FAB:	// Dye vat
 		mSock->AddID1( x->GetColour( 1 ) );
 		mSock->AddID2( x->GetColour( 2 ) );
-		target( mSock, 0, 1, 0, 32, 442 );
+		target( mSock, 0, 32, 442 );
 		return true;
 	case 0x14F4:	// Model boat
 	case 0x14F0:	// Houses
@@ -1000,7 +1213,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x0FBC:// tongs
 	case 0x13E3:// smith's hammer
 	case 0x13E4:// smith's hammer
-		target( mSock, 0, 1, 0, 50, 444 );
+		target( mSock, 0, 50, 444 );
 		return true; 
 	// CARPENTRY
 	case 0x1026: // chisels
@@ -1021,14 +1234,14 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x10E5: // froe - carp. tool but not sure if this works here?
 	case 0x10E6: // inshave - carp. tool but not sure if this works here?
 //		case 0x10E7: // scorp - carp. tool but not sure if this works here?
-		target( mSock, 0, 1, 0, 134, 445 );
+		target( mSock, 0, 134, 445 );
 		return true;
 	// MINING
 	case 0x0E85:// pickaxe
 	case 0x0E86:// pickaxe
 	case 0x0F39:// shovel
 	case 0x0F3A:// shovel
-		target( mSock, 0, 1, 0, 51, 446 );
+		target( mSock, 0, 51, 446 );
 		return true; 
 	case 0x0E24: // empty vial
 		i = getPack( mChar );
@@ -1037,7 +1250,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 			if( x->GetCont() == i )
 			{
 				mSock->AddMItem( x );
-				target( mSock, 0, 1, 0, 186, 447 );
+				target( mSock, 0, 186, 447 );
 			}
 			else 
 				sysmessage( mSock, 448 );
@@ -1046,7 +1259,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x0DF8: // wool to yarn 
 	case 0x0DF9: // cotton to thread
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 164, 449 );
+		target( mSock, 0, 164, 449 );
 		return true;
 	// Sept 22, 2002 - Xuri 
 	//case 0x09CC: // raw fish       -- krazyglue: added support for cooking raw fish
@@ -1054,12 +1267,12 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	//case 0x09CE: // raw fish          cook the fillet pieces?  or is this good enough?
 	//case 0x09CF: // raw fish
 	//	mChar->SetSkillItem( x );
-	//	target( mSock, 0, 1, 0, 168, 450 );
+	//	target( mSock, 0, 168, 450 );
 	//	return true;
 	//
 	case 0x09F1: // 
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 168, 451 );
+		target( mSock, 0, 168, 451 );
 		return true;
 	case 0x0FA0:
 	case 0x0FA1: // thread to cloth
@@ -1067,7 +1280,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x0E1F:
 	case 0xE11E:  // yarn to cloth
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 165, 452 );
+		target( mSock, 0, 165, 452 );
 		return true;
 	case 0x1BD1:
 	case 0x1BD2:
@@ -1076,31 +1289,31 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x1BD5:
 	case 0x1BD6:	// make shafts
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 172, 454 );
+		target( mSock, 0, 172, 454 );
 		return true;
 	case 0x0E73: // cannon ball
-		target( mSock, 0, 1, 0, 170, 455 );
+		target( mSock, 0, 170, 455 );
 		Items->DeleItem( x );
 		return true;
 	case 0x0FF8:
 	case 0x0FF9: // pitcher of water to flour
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 173, 456 );
+		target( mSock, 0, 173, 456 );
 		return true;
 	case 0x09C0:
 	case 0x09C1: // sausages to dough
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 174, 457 );
+		target( mSock, 0, 174, 457 );
 		return true;
 	case 0x0F9D: // sewing kit for tailoring
-		target( mSock, 0, 1, 0, 167, 459 );
+		target( mSock, 0, 167, 459 );
 		return true;
 	case 0x19B7:
 	case 0x19B9:
 	case 0x19BA:
 	case 0x19B8: // smelt ore
 		mChar->SetSmeltItem( x );
-		target( mSock, 0, 1, 0, 52, 460 );
+		target( mSock, 0, 52, 460 );
 		return true;
 	case 0x1E5E:
 	case 0x1E5F: // Message board opening
@@ -1216,7 +1429,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 		if( mChar->GetFishingTimer() )
 			sysmessage( mSock, 467 );
 		else
-			target( mSock, 0, 1, 0, 45, 468 );
+			target( mSock, 0, 45, 468 );
 		return true;
 	case 0x104B: // clock
 	case 0x104C: // clock
@@ -1225,19 +1438,19 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 		return true;
 	case 0x0E9B: // Mortar for Alchemy
 		if( !mChar->SkillUsed( ALCHEMY ) )
-			target( mSock, 0, 1, 0, 108, 470 );
+			target( mSock, 0, 108, 470 );
 		else
 			sysmessage( mSock, 1631 );
 		return true;
 	case 0x0F9E:
 	case 0x0F9F: // scissors
-		target( mSock, 0, 1, 0, 128, 471 );
+		target( mSock, 0, 128, 471 );
 		return true;
 	case 0x0E21: // healing
-		if( mChar->GetSkillDelay() <= uiCurrentTime )
+		if( mChar->GetSkillDelay() <= cwmWorldState->GetUICurrentTime() )
 		{
 			mSock->AddMItem( x );
-			target( mSock, 0, 1, 0, 130, 472 );
+			target( mSock, 0, 130, 472 );
 			mChar->SetSkillDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetServerSkillDelayStatus() )) );
 		}
 		else
@@ -1257,7 +1470,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x14FD:
 	case 0x14FE: // lockpicks
 		mSock->AddMItem( x );
-		target( mSock, 0, 1, 0, 162, 475 );
+		target( mSock, 0, 162, 475 );
 		return true;
 	case 0x0C4F:
 	case 0x0C50:
@@ -1291,7 +1504,7 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x1053:
 	case 0x1054: // tinker axle
 		mSock->AddID( x->GetSerial() );
-		target( mSock, 0, 1, 0, 183, 477 );
+		target( mSock, 0, 183, 477 );
 		return true;
 	case 0x1051:
 	case 0x1052:
@@ -1300,13 +1513,13 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 	case 0x105D:
 	case 0x105E:
 		mChar->SetSkillItem( x );
-		target( mSock, 0, 1, 0, 184, 478 );
+		target( mSock, 0, 184, 478 );
 		return true;
 	case 0x104F:
 	case 0x1050:
 	case 0x104D:
 	case 0x104E:// tinker clock
-		target( mSock, 0, 1, 0, 185, 479 );
+		target( mSock, 0, 185, 479 );
 		Items->DeleItem( x );
 		return true;
 	case 0x1059:
@@ -1347,17 +1560,17 @@ bool handleDoubleClickIDs( cSocket *mSock, CChar *mChar, CItem *x, UI16 itemID )
 		sysmessage( mSock, 483 );
 		return true;
 	case 0x1EBC: // tinker's tools
-		target( mSock, 0, 1, 0, 180, 484 );
+		target( mSock, 0, 180, 484 );
 		return true;
 	case 0x0FAF:
 	case 0x0FB0:
-		target( mSock, 0, 1, 0, 24, 485 );	// What do we wish to repair?
+		target( mSock, 0, 24, 485 );	// What do we wish to repair?
 		return true;
 	case 0x0EC1:	// Leather repair tool
-		target( mSock, 0, 1, 0, 14, 485 );	// What do we wish to repair?
+		target( mSock, 0, 14, 485 );	// What do we wish to repair?
 		return true;
 	case 0x10E7:	// Bow repair tool
-		target( mSock, 0, 1, 0, 15, 485 );	// What do we wish to repair?
+		target( mSock, 0, 15, 485 );	// What do we wish to repair?
 		return true;
 	default:
 		break;
@@ -1399,7 +1612,7 @@ void doubleClick( cSocket *mSock )
 	CChar *mChar = mSock->CurrcharObj(), *iChar = NULL;
 
 	// Check for Object Delay
-	if( ( static_cast<UI32>(mChar->GetObjectDelay()) >= uiCurrentTime || overflow ) && !mChar->IsGM() )
+	if( ( static_cast<UI32>(mChar->GetObjectDelay()) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && !mChar->IsGM() )
 	{
 		sysmessage( mSock, 386 );
 		return;
@@ -1540,16 +1753,16 @@ void doubleClick( cSocket *mSock )
 	case SLASH_SWORDS:
 	case ONEHND_LG_SWORDS:
 	case ONEHND_AXES:
-		target( mSock, 0, 1, 0, 86, 462 );
+		target( mSock, 0, 86, 462 );
 		return;
 	case DEF_FENCING:
 		if( itemID == 0x0F51 || itemID == 0x0F52 ) //dagger
-			target( mSock, 0, 1, 0, 86, 462 );
+			target( mSock, 0, 86, 462 );
 		return;
 	case TWOHND_LG_SWORDS:
 	case BARDICHE:
 	case TWOHND_AXES:
-		target( mSock, 0, 1, 0, 76, 443 );
+		target( mSock, 0, 76, 443 );
 		return;
 	}
 
@@ -1674,7 +1887,7 @@ void singleClick( cSocket *mSock )
 				}
 				else
 					strcpy( temp2, i->GetDesc() );
-				sprintf( temp, "%s at %igp", temp2, i->GetValue() );
+				sprintf( temp, "%s at %igp", temp2, i->GetBuyValue() );
 				objMessage( mSock, AppendData( i, temp ), i );
 				return;
 			}

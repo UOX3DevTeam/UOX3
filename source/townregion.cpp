@@ -366,8 +366,8 @@ bool cTownRegion::InitFromScript( int& l )
 					if( makeNum( data ) == 1 )
 					{
 						// Store the region index into the valid escort region array
-						validEscortRegion[escortRegions] = regionNum;
-						escortRegions++;
+						cwmWorldState->SetValidEscortRegion( cwmWorldState->GetEscortRegions(), regionNum );
+						cwmWorldState->IncEscortRegions();
 					}
 				} // End - Dupois
 				break;
@@ -491,16 +491,16 @@ bool cTownRegion::InitFromScript( int& l )
 				}
 				else if( !strcmp( "SPAWN", tag ) )
 				{
-					cSpawnRegion *spawnReg = spawnregion[totalspawnregions];
+					cSpawnRegion *spawnReg = spawnregion[cwmWorldState->GetTotalSpawnRegions()];
 					if( spawnReg != NULL )
 					{
 						spawnReg->SetX1( location[l-1].x1 );
 						spawnReg->SetY1( location[l-1].y1 );
 						spawnReg->SetX2( location[l-1].x2 );
 						spawnReg->SetY2( location[l-1].y2 );
-						loadPreDefSpawnRegion( totalspawnregions, data );
+						loadPreDefSpawnRegion( cwmWorldState->GetTotalSpawnRegions(), data );
 					}
-					totalspawnregions++;
+					cwmWorldState->IncTotalSpawnRegions();
 				}
 				break;
 
@@ -1240,7 +1240,7 @@ void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 			toAdd->SpokenTo( townMember[memberCounter].townMember );
 			toAdd->Colour( 0x000B );
 			toAdd->Type( SYSTEM );
-			toAdd->At( uiCurrentTime );
+			toAdd->At( cwmWorldState->GetUICurrentTime() );
 			toAdd->TargType( SPTRG_INDIVIDUAL );
 		}
 	}

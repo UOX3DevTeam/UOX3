@@ -40,8 +40,8 @@ SI16 iLargeShipOffsets[4][4][2] =
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
 UI08 cShipItems[4][6]=
 {
-  {0xB1,0xD5,0xB2,0xD4,0xAE,0x4E},
-  {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
+    {0xB1,0xD5,0xB2,0xD4,0xAE,0x4E},
+    {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
 	{0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
 	{0x85, 0x84, 0x8A, 0x89, 0x93, 0x50} 
 };
@@ -129,7 +129,7 @@ void cBoat::LeaveBoat( cSocket *s, CItem *p )
 		{
 			SI08 sz = (SI08)Map->StaticTop( x, y, z, worldNumber );
 			SI08 mz = (SI08) Map->MapElevation( x, y, worldNumber );
-			if( sz == illegal_z) 
+			if( sz == ILLEGAL_Z ) 
 				typ = 0;
 			else
 				typ = 1;
@@ -364,7 +364,6 @@ CItem * cBoat::GetBoat( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
 //o---------------------------------------------------------------------------o
-#pragma note( "Param Warning: in cBoat::BlockBoat(). Parameter dir is not referanced(used)." )
 bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	MapStaticIterator *msi;
@@ -427,35 +426,35 @@ bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 	//large = 5, 15
 	switch( dir )	
 	{
-		case 1: // U
-		case 5: // D
-		case 0: // N
-		case 4: // S
-			x1 = cx - 2;
-			x2 = cx + 2;
-			switch( type )
-			{
-				case 1:	y1 = cy - 6; y2 = cy + 6; break;
-				case 2:	y1 = cy - 6; y2 = cy + 7; break;
-				case 3: y1 = cy - 8; y2 = cy + 8; break;
-				default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
-			}
-			break;
-		case 3: // R
-		case 7: // L
-		case 2: // E
-		case 6: // W
-			y1 = cy - 2;
-			y2 = cy + 2;
-			switch( type )
-			{
-				case 1:	x1 = cx - 6; x2 = cx + 6; break;
-				case 2:	x1 = cx - 7; x2 = cx + 7; break;
-				case 3: x1 = cx - 8; x2 = cx + 8; break;
-				default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
-			}
-			break;
-		default: return true;
+	case NORTHEAST: // U
+	case SOUTHWEST: // D
+	case NORTH: // N
+	case SOUTH: // S
+		x1 = cx - 2;
+		x2 = cx + 2;
+		switch( type )
+		{
+		case 1:	y1 = cy - 6; y2 = cy + 6; break;
+		case 2:	y1 = cy - 6; y2 = cy + 7; break;
+		case 3: y1 = cy - 8; y2 = cy + 8; break;
+		default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+		}
+		break;
+	case EAST: // E
+	case WEST: // W
+	case SOUTHEAST: // E
+	case NORTHWEST: // W
+		y1 = cy - 2;
+		y2 = cy + 2;
+		switch( type )
+		{
+		case 1:	x1 = cx - 6; x2 = cx + 6; break;
+		case 2:	x1 = cx - 7; x2 = cx + 7; break;
+		case 3: x1 = cx - 8; x2 = cx + 8; break;
+		default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+		}
+		break;
+	default: return true;
 	}
 
 	UI08 worldNumber = b->WorldNumber();
@@ -465,7 +464,7 @@ bool cBoat::BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
 		{
 			SI08 sz = Map->StaticTop( x, y, b->GetZ(), worldNumber );
 
-			if( sz == illegal_z ) //map tile
+			if( sz == ILLEGAL_Z ) //map tile
 			{
 				map = Map->SeekMap0( x, y, worldNumber );
 				Map->SeekLand( map.id, &land );
@@ -518,15 +517,15 @@ void cBoat::MoveBoat( cSocket *s, UI08 dir, CItem *boat )
 	
 	switch( dir&0x0F )
 	{
-		case 0:	ty--;			break;
-		case 1:	tx++;	ty--;	break;
-		case 2:	tx++;			break;
-		case 3:	tx++;	ty++;	break;
-		case 4:	ty++;			break;
-		case 5:	tx--;	ty++;	break;
-		case 6:	tx--;			break;
-		case 7:	tx--;	ty--;	break;
-		default: Console.Error( 2, "Boat direction error: %i in boat %i", dir&0x0F, boat->GetSerial() ); break;	
+	case 0:	ty--;			break;
+	case 1:	tx++;	ty--;	break;
+	case 2:	tx++;			break;
+	case 3:	tx++;	ty++;	break;
+	case 4:	ty++;			break;
+	case 5:	tx--;	ty++;	break;
+	case 6:	tx--;			break;
+	case 7:	tx--;	ty--;	break;
+	default: Console.Error( 2, "Boat direction error: %i in boat %i", dir&0x0F, boat->GetSerial() ); break;
 	}
 
 	SI16 x = boat->GetX(), y = boat->GetY();
@@ -1017,7 +1016,7 @@ void cBoat::ModelBoat( cSocket *s, CItem *i )
 		Items->DeleItem( p2 );
 		Items->DeleItem( hold );
 		Items->DeleItem( i );
-		for( ITEM aa = 0; aa < itemcount; aa++ )
+		for( ITEM aa = 0; aa < cwmWorldState->GetItemCount(); aa++ )
 		{
 			if( items[aa].GetMore() == serial )
 				Items->DeleItem( &items[aa] );

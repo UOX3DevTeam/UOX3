@@ -3,17 +3,6 @@
 #include "uox3.h"
 #include "cmath"
 
-
-// these are the fixed record lengths as determined by the .mul files from OSI
-// i made them longs because they are used to calculate offsets into the files
-const UI32 VersionRecordSize = 20L;
-const UI32 MultiRecordSize = 12L;
-const UI32 LandRecordSize = 26L;
-const UI32 TileRecordSize = 37L;
-const UI32 MapRecordSize = 3L;
-const UI32 MultiIndexRecordSize = 12L;
-const UI32 StaticRecordSize = 7L;
-
 struct r2Data
 {
 	std::string tag;
@@ -177,8 +166,6 @@ struct logout_st//Instalog
 	SI16 x2;
 	SI16 y2;
 };
-
-#define MAX_ACCT_LOCK 5
 
 struct advance_st
 {

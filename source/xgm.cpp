@@ -333,7 +333,7 @@ bool cPIXGMServerStat::Handle( void )
 	//HOUSECOUNT, TOTALGOLD, and LASTPLAYERLOGGEDIN need implementation" )
 	switch( Stat() )
 	{
-	case XSS_ONLINECOUNT:			toSend.GenericData( now );					break;
+	case XSS_ONLINECOUNT:			toSend.GenericData( cwmWorldState->GetPlayersOnline() );	break;
 	case XSS_CHARACTERCOUNT:		toSend.GenericData( chars.Count() );		break;
 	case XSS_ITEMCOUNT:				toSend.GenericData( items.Count() );		break;
 	case XSS_ACCOUNTCOUNT:			toSend.GenericData( Accounts->size() );	break;
@@ -347,7 +347,7 @@ bool cPIXGMServerStat::Handle( void )
 	case XSS_REGIONCOUNT:			toSend.GenericData( 256 );					break;
 	case XSS_WEATHERCOUNT:			toSend.GenericData( Weather->Count() );		break;
 	case XSS_TIMESINCERESTART:
-	case XSS_TIMESINCEWORLDSAVE:	toSend.GenericData( (unsigned long)(difftime( time( NULL ), oldtime )) );	break;
+	case XSS_TIMESINCEWORLDSAVE:	toSend.GenericData( (unsigned long)(difftime( time( NULL ), cwmWorldState->GetOldTime() )) );	break;
 	case XSS_GMPAGECOUNT:			toSend.GenericData( GMQueue->NumEntries() );				break;
 	case XSS_CNSPAGECOUNT:			toSend.GenericData( CounselorQueue->NumEntries() );			break;
 	case XSS_GHOSTCOUNT:			toSend.GenericData( GhostCount() );			break;
@@ -455,7 +455,7 @@ bool cPIXGMWhoOnline::Handle( void )
 	switch( tSock->GetByte( 0 ) - 2 )
 	{
 	case 0:	// online
-		toSend.NumEntries( static_cast<UI16>(now) );
+		toSend.NumEntries( static_cast<UI16>(cwmWorldState->GetPlayersOnline()) );
 		Network->PushConn();
 		for( toGet = Network->FirstSocket(); !Network->FinishedSockets(); toGet = Network->NextSocket() )
 		{

@@ -23,7 +23,7 @@ void cCharStuff::CheckAI( CChar *i )
 	UI08 worldNumber = i->WorldNumber();
 	cSocket *mSock = NULL;
 	CChar *realChar = NULL;
-	if( nextnpcaitime <= uiCurrentTime || overflow ) 
+	if( cwmWorldState->GetNextNPCAITime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) 
 	{
 		switch( i->GetNPCAiType() )
 		{

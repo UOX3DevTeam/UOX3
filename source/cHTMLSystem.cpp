@@ -100,7 +100,7 @@ void cHTMLTemplate::Process( void )
 		try
 		{
 			if( tChar == NULL )
-					continue;
+				continue;
 		
 			if( tChar->IsGM() )
 				gm++;
@@ -121,7 +121,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( GMCount, "%d", gm );
 	for( Pos = ParsedContent.find( "%online_gms" ); Pos >= 0; Pos = ParsedContent.find( "%online_gms" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 11, GMCount ):ParsedContent.replace( Pos, 11, "0" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, GMCount ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	// Counselor
@@ -129,7 +129,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( CounsiCount, "%d", cns );
 	for( Pos = ParsedContent.find( "%online_couns" ); Pos >= 0; Pos = ParsedContent.find( "%online_couns" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 13, CounsiCount ):ParsedContent.replace( Pos, 13, "0");
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 13, CounsiCount ):ParsedContent.replace( Pos, 13, "0");
 	}
 
 	// Player
@@ -137,7 +137,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( PlayerCount, "%d", ccount );
 	for( Pos = ParsedContent.find( "%online_player" ); Pos >= 0; Pos = ParsedContent.find( "%online_player" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 14, PlayerCount ):ParsedContent.replace( Pos, 14, "0" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 14, PlayerCount ):ParsedContent.replace( Pos, 14, "0" );
 	}
 
 	// Total
@@ -145,7 +145,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( AllCount, "%d", (ccount + gm + cns) );
 	for( Pos = ParsedContent.find( "%online_all" ); Pos >= 0; Pos = ParsedContent.find( "%online_all" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 11, AllCount ):ParsedContent.replace( Pos, 11, "0" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, AllCount ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	//RealTime( time_str )
@@ -153,7 +153,7 @@ void cHTMLTemplate::Process( void )
 	RealTime( time_str );
 	for( Pos = ParsedContent.find( "%time" ); Pos >= 0; Pos = ParsedContent.find( "%time" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 5, time_str ):ParsedContent.replace( Pos, 5, "Down" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 5, time_str ):ParsedContent.replace( Pos, 5, "Down" );
 	}
 
 	// IP(s) + PORT(s)
@@ -170,7 +170,7 @@ void cHTMLTemplate::Process( void )
 			{
 				for( Pos = ParsedContent.find( ipToken ); Pos >= 0; Pos = ParsedContent.find( ipToken ) )
 				{
-					(keeprun)?ParsedContent.replace( Pos, strlen(ipToken), mServ->getIP().c_str()):ParsedContent.replace( Pos, strlen(ipToken), "Down" );
+					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen(ipToken), mServ->getIP().c_str()):ParsedContent.replace( Pos, strlen(ipToken), "Down" );
 				}
 			}
 			
@@ -183,7 +183,7 @@ void cHTMLTemplate::Process( void )
 				{
 					char myPort[5];
 					sprintf( myPort, "%i", mServ->getPort() );
-					(keeprun)?ParsedContent.replace( Pos, strlen( portToken ), myPort ):ParsedContent.replace( Pos, strlen( portToken ), "NA" );
+					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen( portToken ), myPort ):ParsedContent.replace( Pos, strlen( portToken ), "NA" );
 				}
 			}
 			char serverToken[10]; // i think we'll never get higher than 2 digits, anyway...
@@ -193,7 +193,7 @@ void cHTMLTemplate::Process( void )
 			{
 				for( Pos = ParsedContent.find( serverToken ); Pos >= 0; Pos = ParsedContent.find( serverToken ) )
 				{
-					(keeprun)?ParsedContent.replace( Pos, strlen( serverToken ), mServ->getName().c_str() ):ParsedContent.replace( Pos, strlen( serverToken ), "Down" );
+					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen( serverToken ), mServ->getName().c_str() ):ParsedContent.replace( Pos, strlen( serverToken ), "Down" );
 				}
 			}
 		}
@@ -234,13 +234,13 @@ void cHTMLTemplate::Process( void )
 						SI32 sPos;
 						for( sPos = parsedInline.find( "%playername" ); sPos >= 0; sPos = parsedInline.find( "%playername" ) )
 						{
-							(keeprun)?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
 						}
 
 						// PlayerTitle
 						for( sPos = parsedInline.find( "%playertitle" ); sPos >= 0; sPos = parsedInline.find( "%playertitle" ) )
 						{
-							(keeprun)?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
 						}
 
 						// PlayerIP
@@ -249,7 +249,7 @@ void cHTMLTemplate::Process( void )
 							cSocket *mySock = calcSocketObjFromChar( tChar );
 							char ClientIP[32];
 							sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
-							(keeprun)?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
 						}
 
 						// PlayerAccount
@@ -258,7 +258,7 @@ void cHTMLTemplate::Process( void )
 							ACCOUNTSBLOCK toScan;
 							toScan=tChar->GetAccount();
 							if( toScan.wAccountIndex!=AB_INVALID_ID)
-								(keeprun)?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
 						}
 
 						// PlayerX
@@ -266,7 +266,7 @@ void cHTMLTemplate::Process( void )
 						{
 							char myX[5];
 							sprintf( myX, "%i", tChar->GetX() );
-							(keeprun)?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 						}
 
 						// PlayerY
@@ -274,7 +274,7 @@ void cHTMLTemplate::Process( void )
 						{
 							char myY[5];
 							sprintf( myY, "%i", tChar->GetY() );
-							(keeprun)?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
 						}
 
 						// PlayerZ
@@ -282,7 +282,7 @@ void cHTMLTemplate::Process( void )
 						{
 							char myZ[3];
 							sprintf( myZ, "%i", tChar->GetZ() );
-							(keeprun)?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 						}
 
 						// PlayerRace -- needs testing
@@ -295,14 +295,14 @@ void cHTMLTemplate::Process( void )
 							strcpy( myRaceName, rName );
 
 							if( myRaceName != NULL ) 
-								(keeprun)?parsedInline.replace( sPos, 11, myRaceName ):parsedInline.replace( sPos, 11, "");
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, myRaceName ):parsedInline.replace( sPos, 11, "");
 							delete [] myRaceName;
 						}
 
 						// PlayerRegion
 						for( sPos = parsedInline.find( "%playerregion" ); sPos >= 0; sPos = parsedInline.find( "%playerregion" ) )
 						{
-							(keeprun)?parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() ):parsedInline.replace( sPos, 13, "");
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 13, region[tChar->GetRegion()]->GetName() ):parsedInline.replace( sPos, 13, "");
 						}
 
 						PlayerList += parsedInline;
@@ -316,7 +316,7 @@ void cHTMLTemplate::Process( void )
 		}
 		Network->PopConn();	
 
-		(keeprun)?ParsedContent.replace( Pos, myInline.length(), PlayerList ):ParsedContent.replace( Pos, myInline.length(), "");
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, myInline.length(), PlayerList ):ParsedContent.replace( Pos, myInline.length(), "");
 	}
 
 	// GuildCount
@@ -324,7 +324,7 @@ void cHTMLTemplate::Process( void )
 	sprintf( GuildCount, "%d", GuildSys->NumGuilds() );
 	for( Pos = ParsedContent.find( "%guildcount" ); Pos >= 0; Pos = ParsedContent.find( "%guildcount" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 11, PlayerCount ):ParsedContent.replace( Pos, 11, "" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, PlayerCount ):ParsedContent.replace( Pos, 11, "" );
 	}
 
 	// GUILDLIST
@@ -355,19 +355,19 @@ void cHTMLTemplate::Process( void )
 			sprintf( GuildID, "%d", i );
 			for( sPos = parsedInline.find( "%guildid" ); sPos >= 0; sPos = parsedInline.find( "%guildid" ) )
 			{
-				(keeprun)?parsedInline.replace( sPos, 8, GuildID ):parsedInline.replace( sPos, 8, "" );
+				(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, GuildID ):parsedInline.replace( sPos, 8, "" );
 			}
 
 			// GuildName
 			for( sPos = parsedInline.find( "%guildname" ); sPos >= 0; sPos = parsedInline.find( "%guildname" ) )
 			{
-				(keeprun)?parsedInline.replace( sPos, 10, myGuild->Name() ):parsedInline.replace( sPos, 10, "" );
+				(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 10, myGuild->Name() ):parsedInline.replace( sPos, 10, "" );
 			}
 
 			GuildList += parsedInline;
 		}
 
-		(keeprun)?ParsedContent.replace( Pos, myInline.length(), GuildList ):ParsedContent.replace( Pos, myInline.length(), "" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, myInline.length(), GuildList ):ParsedContent.replace( Pos, myInline.length(), "" );
 	}
 
 	//NPCCount
@@ -389,7 +389,7 @@ void cHTMLTemplate::Process( void )
 
 	for( Pos = ParsedContent.find( "%npcs" ); Pos >= 0; Pos = ParsedContent.find( "%npcs" ) )
 	{
-		(keeprun)?ParsedContent.replace( Pos, 5, npcs ):ParsedContent.replace( Pos, 5, "0" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 5, npcs ):ParsedContent.replace( Pos, 5, "0" );
 	}
 
 	// Performance Dump
@@ -398,7 +398,7 @@ void cHTMLTemplate::Process( void )
 	{
 		std::string performance;
 		std::ostringstream myStream( performance );
-		if(keeprun)
+		if(cwmWorldState->GetKeepRun())
 		{
 			myStream << "Network code: " << (R32)((R32)networkTime/(R32)networkTimeCount) << "msec [" << networkTimeCount << " samples] <BR>";
 			myStream << "Timer code: " << (R32)((R32)timerTime/(R32)timerTimeCount) << "msec [" << timerTimeCount << " samples] <BR>";
@@ -430,7 +430,7 @@ void cHTMLTemplate::Process( void )
 
 		UI32 total, hr, min, sec;
 
-		total = (uiCurrentTime - starttime ) / CLOCKS_PER_SEC;
+		total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
 		hr = total / 3600;
 		if( hr < 10 && hr <= 60 ) 
 			sprintf( sh,"0%i",hr );
@@ -459,7 +459,7 @@ void cHTMLTemplate::Process( void )
 		std::string simcycles;
 		std::ostringstream myStream( simcycles );
 
-		if(keeprun)
+		if(cwmWorldState->GetKeepRun())
 		{
 			if( !( loopTime < eps ||  loopTimeCount < eps ) )
 				myStream << "Simulation Cycles: " << (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) << " per sec <BR>";
@@ -479,7 +479,7 @@ void cHTMLTemplate::Process( void )
 		char strUpdateTimer[32]; // Could be a big value...
 		sprintf( strUpdateTimer, "%i", UpdateTimer );
 
-		(keeprun)?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
 	}
 
 	//***************************************/
@@ -507,7 +507,7 @@ void cHTMLTemplate::Process( void )
 //o---------------------------------------------------------------------------o
 void cHTMLTemplate::Poll( bool Force )
 {
-	if( ( Force ) || ( ScheduledUpdate < uiCurrentTime ) )
+	if( ( Force ) || ( ScheduledUpdate < cwmWorldState->GetUICurrentTime() ) )
 	{
 		Process();
 		ScheduledUpdate = BuildTimeValue( (R32)UpdateTimer );

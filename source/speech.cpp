@@ -155,7 +155,7 @@ void textflags( cSocket *s, CChar *i, const char *name )
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Colour( GetFlagColour( mChar, i ) );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 }
 
@@ -181,7 +181,7 @@ void sysmessage( cSocket *s, const char *txt, ...) // System message (In lower l
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Colour( 0x0040 );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 }
 
@@ -210,7 +210,7 @@ void sysmessage( cSocket *s, SI32 dictEntry, ... )	// System message (based on d
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Colour( 0x0040 );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 }
 
@@ -312,7 +312,7 @@ void consolebroadcast( const char *txt )
 	toAdd->Speaker( INVALIDSERIAL );
 	toAdd->SpokenTo( INVALIDSERIAL );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_BROADCASTPC );
 	toAdd->Colour( 0x084D );
 	toAdd->Font( FNT_BOLD );
@@ -329,7 +329,7 @@ void sysbroadcast( const char *txt ) // System broadcast in bold text
 	toAdd->Speaker( INVALIDSERIAL );
 	toAdd->SpokenTo( INVALIDSERIAL );
 	toAdd->Type( SYSTEM );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_BROADCASTPC );
 	toAdd->Colour( 0x084D );
 	toAdd->Font( FNT_BOLD );
@@ -340,6 +340,7 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 {
 	int tl;
 	char nonuni[512]; 
+	UI08 talk[15]="\x1C\x00\x00\x01\x02\x03\x04\x01\x90\x00\x00\x38\x00\x03";
 
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar->isUnicode() )
@@ -351,23 +352,14 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 	if( !mChar->isUnicode() )
 	{
 		tl = 44 + strlen( (char *)&(mSock->Buffer()[8]) ) + 1;
-		talk[1] = (UI08)(tl>>8);
-		talk[2] = (UI08)(tl%256);
-		talk[3] = mChar->GetSerial( 1 );
-		talk[4] = mChar->GetSerial( 2 );
-		talk[5] = mChar->GetSerial( 3 );
-		talk[6] = mChar->GetSerial( 4 );
-		talk[7] = mChar->GetID( 1 );
-		talk[8] = mChar->GetID( 2 );
-		talk[9] = 1;
-		talk[10] = mSock->GetByte( 4 );
-		talk[11] = mSock->GetByte( 5 );
-		talk[12] = mSock->GetByte( 6 );
-		talk[13] = mChar->GetFontType();
+		CPSpeech toSend = (*mChar);
+		toSend.Length( tl );
+		toSend.GrabSpeech( mSock, mChar );
+
 		Network->PushConn();
 		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			tSock->Send( talk, 14 );
+			tSock->Send( &toSend );
 			tSock->Send( mChar->GetName(), 30 );
 			tSock->Send( &(mSock->Buffer()[8]), strlen( (char *)&(mSock->Buffer()[8]) ) + 1 );
 		}
@@ -376,25 +368,14 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 	else
 	{
 		tl = 44 + strlen( &nonuni[0] ) + 1;
-		
-		talk[1] = (UI08)(tl>>8);
-		talk[2] = (UI08)(tl%256);
-		talk[3] = mChar->GetSerial( 1 );
-		talk[4] = mChar->GetSerial( 2 );
-		talk[5] = mChar->GetSerial( 3 );
-		talk[6] = mChar->GetSerial( 4 );
-		talk[7] = mChar->GetID( 1 );
-		talk[8] = mChar->GetID( 2 );
-		talk[9] = 1;
-		talk[10] = mSock->GetByte( 4 );
-		talk[11] = mSock->GetByte( 5 );
-		talk[12] = mSock->GetByte( 6 );
-		talk[13] = mChar->GetFontType();
-		
+		CPSpeech toSend = (*mChar);
+		toSend.Length( tl );
+		toSend.GrabSpeech( mSock, mChar );
+
 		Network->PushConn();
 		for( cSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
 		{
-			bSock->Send( talk, 14 );
+			bSock->Send( &toSend );
 			bSock->Send( mChar->GetName(), 30 );
 			bSock->Send( &nonuni[0], strlen( &nonuni[0] ) + 1 );
 		}
@@ -443,7 +424,7 @@ void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam )
 	
 	if( antispam )
 	{
-		if( npc->GetAntiSpamTimer() < uiCurrentTime )
+		if( npc->GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			npc->SetAntiSpamTimer( BuildTimeValue( 10 ) ); 
 		else
 			return;
@@ -457,7 +438,7 @@ void npcTalk( cSocket *s, CChar *npc, const char *txt, bool antispam )
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( TALK );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 	if( npc->GetNPCAiType() == 0x02 )
 		toAdd->Colour( 0x0026 );
@@ -479,7 +460,7 @@ void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 	
 	if( antispam )
 	{
-		if( npc->GetAntiSpamTimer() < uiCurrentTime )
+		if( npc->GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			npc->SetAntiSpamTimer( BuildTimeValue( 10 ) ); 
 		else
 			return;
@@ -503,7 +484,7 @@ void npcTalk( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( TALK );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 	
 	// Transparent text is REALLY confusing
@@ -583,7 +564,7 @@ void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam )
 	
 	if( antispam )
 	{
-		if( npc->GetAntiSpamTimer() < uiCurrentTime )
+		if( npc->GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			npc->SetAntiSpamTimer( BuildTimeValue( 10 ) );
 		else
 			return;
@@ -598,7 +579,7 @@ void npcEmote( cSocket *s, CChar *npc, const char *txt, bool antispam )
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( EMOTE );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 	toAdd->Colour( npc->GetEmoteColour() );
 }
@@ -617,7 +598,7 @@ void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 	
 	if( antispam )
 	{
-		if( npc->GetAntiSpamTimer() < uiCurrentTime )
+		if( npc->GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			npc->SetAntiSpamTimer( BuildTimeValue( 10 ) );
 		else
 			return;
@@ -644,7 +625,7 @@ void npcEmote( cSocket *s, CChar *npc, SI32 dictEntry, bool antispam, ... )
 	toAdd->Speaker( npc->GetSerial() );
 	toAdd->SpokenTo( mChar->GetSerial() );
 	toAdd->Type( EMOTE );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 	toAdd->Colour( npc->GetEmoteColour() );
 }
@@ -916,6 +897,7 @@ void unicodetalking( cSocket *mSock ) // PC speech
 void talking( cSocket *mSock ) // PC speech
 {
 	char temp[1024];
+	UI08 talk[15]="\x1C\x00\x00\x01\x02\x03\x04\x01\x90\x00\x00\x38\x00\x03";
 	int tl, i, j, found, x1, x2, y1, y2, grrr;
 	bool resp = false;
 	CChar *mChar = mSock->CurrcharObj();
@@ -993,7 +975,7 @@ void talking( cSocket *mSock ) // PC speech
 			for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
 				CChar *tChar = tSock->CurrcharObj();
-				if( charInRange( tChar, mChar ) )
+				if( tChar != mChar && charInRange( tChar, mChar ) )
 				{
 					tSock->Send( talk, 14 );
 					tSock->Send( mChar->GetName(), 30 );
@@ -1091,7 +1073,7 @@ void tellmessage( cSocket *i, cSocket *s, const char *txt )
 	toAdd->Speaker( mChar->GetSerial() );
 	toAdd->SpokenTo( tChar->GetSerial() );
 	toAdd->Type( TALK );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( SPTRG_INDIVIDUAL );
 	toAdd->Colour( mChar->GetSayColour() );
 }
@@ -1185,7 +1167,7 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 	//go through as an array
 	for( i = 0; static_cast<unsigned int>(i) < speechList.size(); i++ )
 	{
-		if( speechList[i].At() == -1 || static_cast<UI32>(speechList[i].At()) <= uiCurrentTime )
+		if( speechList[i].At() == -1 || static_cast<UI32>(speechList[i].At()) <= cwmWorldState->GetUICurrentTime() )
 		{
 			retVal = true;
 			// 1/13/2003 - Maarc - Quick fix for more strict gcc 3.2 compliance.
@@ -1272,7 +1254,7 @@ void DictionarySpeech( cBaseObject &speaker, cBaseObject *spokenTo, SI32 spEntry
 {
 	if( antiSpam && speaker.GetObjType() == OT_CHAR )
 	{
-		if( static_cast< CChar & >(speaker).GetAntiSpamTimer() < uiCurrentTime )
+		if( static_cast< CChar & >(speaker).GetAntiSpamTimer() < cwmWorldState->GetUICurrentTime() )
 			static_cast< CChar & >(speaker).SetAntiSpamTimer( BuildTimeValue( 10 ) ); 
 		else
 			return;
@@ -1295,7 +1277,7 @@ void DictionarySpeech( cBaseObject &speaker, cBaseObject *spokenTo, SI32 spEntry
 	toAdd->Speech( Dictionary->GetEntry( spEntry ) );
 	toAdd->Speaker( speaker.GetSerial() );
 	toAdd->Type( sType );
-	toAdd->At( uiCurrentTime );
+	toAdd->At( cwmWorldState->GetUICurrentTime() );
 	toAdd->TargType( spTrg );
 	toAdd->Colour( sColour );
 }
@@ -1629,7 +1611,7 @@ bool response( cSocket *mSock )
 									if( ( FTarg == 0 ) || ( FTarg == INVALIDSERIAL ) )
 									{
 										mSock->AddID( Npc->GetSerial() );
-										target( mSock, 0, 1, 0, 117, 1310 );
+										target( mSock, 0, 117, 1310 );
 										FTarg = Npc->GetFTarg();
 									}
 									else 
@@ -1659,7 +1641,7 @@ bool response( cSocket *mSock )
 								{
 									mSock->AddID( Npc->GetSerial() );
 									//pet kill code here
-									target( mSock, 0, 1, 0, 118, 1313 );
+									target( mSock, 0, 118, 1313 );
 									CellResponse->PopChar();
 									return true;
 								}
@@ -1674,7 +1656,7 @@ bool response( cSocket *mSock )
 								Npcs->stopPetGuarding( Npc );
 								mSock->AddID( Npc->GetSerial() );
 								//pet fetch code here
-								target( mSock, 0, 1, 0, 120, 1316 );
+								target( mSock, 0, 120, 1316 );
 								CellResponse->PopChar();
 								return true;
 							}
@@ -1719,7 +1701,7 @@ bool response( cSocket *mSock )
 									{
 										mSock->AddID( Npc->GetSerial() );
 										// Guard target
-										target( mSock, 0, 1, 0, 120, 1104 );
+										target( mSock, 0, 120, 1104 );
 										CellResponse->PopChar();
 										return true;
 									}
@@ -1734,7 +1716,7 @@ bool response( cSocket *mSock )
 								{
 									mSock->AddID( Npc->GetSerial() );
 									// Friend target
-									target( mSock, 0, 1, 0, 124, 1620 );
+									target( mSock, 0, 124, 1620 );
 									CellResponse->PopChar();
 									return true;
 								}
@@ -1768,7 +1750,7 @@ bool response( cSocket *mSock )
 								Npcs->stopPetGuarding( Npc );
 								//pet transfer code here
 								mSock->AddID( Npc->GetSerial() );
-								target( mSock, 0, 1, 0, 119, 1323 );
+								target( mSock, 0, 119, 1323 );
 								CellResponse->PopChar();
 								return true;
 							}
@@ -1882,7 +1864,7 @@ void responsevendor( cSocket *mSock )
 					{
 						mSock->AddX( calcCharFromSer( NpcSearch->GetSerial() ) );
 						npcTalk( mSock, NpcSearch, 1333, false );
-						target( mSock, 0, 1, 0, 224, " ");
+						target( mSock, 0, 224, " ");
 						break;
 					} 
 					else if( Targ->BuyShop( mSock, NpcSearch ) ) 

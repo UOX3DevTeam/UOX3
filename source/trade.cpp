@@ -107,7 +107,7 @@ CItem *startTrade( cSocket *mSock, CChar *i )
 
 void clearTrades( void )
 {
-	for( ITEM i = 0; i < itemcount; i++ )
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( items[i].GetType() == 1 && items[i].GetX() == 26 && items[i].GetY() == 0 && items[i].GetZ() == 0 && items[i].GetID() == 0x1E5E )
 		{

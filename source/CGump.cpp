@@ -44,6 +44,10 @@ void CGump::Send( cSocket *target )
 	UI32 TextCount = TextList.size();
 	UI32 Line, TextLines;
 
+	char gump1[22]="\xB0\x04\x0A\x40\x91\x51\xE7\x00\x00\x00\x03\x00\x00\x00\x6E\x00\x00\x00\x46\x02\x3B";
+	char gump2[4]="\x00\x00\x00";
+	char gump3[3]="\x00\x00";
+
 	for( Line = 0; Line < TagCount; Line++ )
 	{
 		if( TagList[Line].length() == 0 )

@@ -24,7 +24,7 @@ void splitline( char *toSplit )
 		i++;
 		s = strtok( NULL, d );
 	}
-	tnum = i;
+	Commands->SetNumArguments( i );
 }
 
 cCommands::cCommands()
@@ -33,22 +33,39 @@ cCommands::cCommands()
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	static inline void doTarget( cSocket *s, TARGET_S *ts )
+//|	Function	-	static inline void doTarget( cSocket *s, target_s *ts )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do targeting stuff
 //o---------------------------------------------------------------------------o
-static inline void doTarget( cSocket *s, TARGET_S *ts )
+static inline void doTarget( cSocket *s, target_s *ts )
 {
-	target( s, ts->a1, ts->a2, ts->a3, ts->a4, ts->dictEntry );
+	target( s, ts->targType, ts->targID, ts->dictEntry );
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	SI32 NumArguments( void )
+//|	Date			-	3/12/2003
+//|	Programmer		-	Zane
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Number of arguments in a command
+//o--------------------------------------------------------------------------
+SI32 cCommands::GetNumArguments( void )
+{
+	return tnum;
+}
+void cCommands::SetNumArguments( SI32 newVal )
+{
+	tnum = newVal;
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void cCommands::Command( cSocket *s )
-//|	Date					-	
+//|	Function		-	void cCommands::Command( cSocket *s )
+//|	Date			-	
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	Handles commands sent from client
 //o--------------------------------------------------------------------------o
@@ -73,7 +90,7 @@ void cCommands::Command( cSocket *s )
 		}
 		tbuffer[i] = 0;
 		splitline( (char *)&(s->Buffer()[8]) );
-		if( tnum < 1 ) 
+		if( GetNumArguments() < 1 ) 
 			return;
 		comm = (char *)&(s->Buffer()[9]); 
 	}
@@ -92,7 +109,7 @@ void cCommands::Command( cSocket *s )
 		} 
 		tbuffer[i] = 0; 
 		splitline( &nonuni[1] );
-		if( tnum < 1 ) 
+		if( GetNumArguments() < 1 ) 
 			return; 
 		comm = &nonuni[1];
 	} 
@@ -126,169 +143,89 @@ void cCommands::Command( cSocket *s )
 			NewAddMenu( s, (int)toFind->second.cmd_extra );
 			break;
 		case CMD_TARGET:
-			doTarget(s, (TARGET_S *)toFind->second.cmd_extra );
+			doTarget(s, (target_s *)toFind->second.cmd_extra );
 			break;
 		case CMD_TARGETX:
-			if( tnum == 2 ) 
+			if( GetNumArguments() == 2 ) 
 			{
 				s->AddX( makenumber( 1 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 338 );
 			break;
 		case CMD_TARGETXY:
-			if( tnum == 3 ) 
+			if( GetNumArguments() == 3 ) 
 			{
 				s->AddX( makenumber( 1 ) );
 				s->AddY( makenumber( 2 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 339 );
 			break;
 		case CMD_TARGETXYZ:
-			if( tnum == 4 ) 
+			if( GetNumArguments() == 4 ) 
 			{
 				s->AddX( makenumber( 1 ) );
 				s->AddY( makenumber( 2 ) );
 				s->AddZ( makenumber( 3 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 340 );
 			break;
-		case CMD_TARGETHX:
-			if( tnum == 2 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 341 );
-			break;
-		case CMD_TARGETHXY:
-			if( tnum == 3 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				s->AddY( makenumber( 2 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 342 );
-			break;
-		case CMD_TARGETHXYZ:
-			if( tnum == 4 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				s->AddY( makenumber( 2 ) );
-				s->AddZ( makenumber( 3 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 343 );
 			break;
 		case CMD_TARGETID1:
-			if( tnum == 2 ) 
+			if( GetNumArguments() == 2 ) 
 			{
 				s->AddID1( makenumber( 1 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 338 );
 			break;
 		case CMD_TARGETID2:
-			if( tnum == 3 ) 
+			if( GetNumArguments() == 3 ) 
 			{
 				s->AddID1( makenumber( 1 ) );
 				s->AddID2( makenumber( 2 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 339 );
 			break;
 		case CMD_TARGETID3:
-			if( tnum == 4 ) 
+			if( GetNumArguments() == 4 ) 
 			{
 				s->AddID1( makenumber( 1 ) );
 				s->AddID2( makenumber( 2 ) );
 				s->AddID3( makenumber( 3 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 340 );
 			break;
 		case CMD_TARGETID4:
-			if( tnum == 5 ) 
+			if( GetNumArguments() == 5 ) 
 			{
 				s->AddID1( makenumber( 1 ) );
 				s->AddID2( makenumber( 2 ) );
 				s->AddID3( makenumber( 3 ) );
 				s->AddID4( makenumber( 4 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 344 );
 			break;
-		case CMD_TARGETHID1:
-			if( tnum == 2 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 341 );
-			break;
-		case CMD_TARGETHID2:
-			if( tnum == 3 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 342 );
-			break;
-		case CMD_TARGETHID3:
-			if( tnum == 4 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				s->AddID3( makenumber( 3 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 343 );
-			break;
-		case CMD_TARGETHID4:
-			if( tnum == 5 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				s->AddID3( makenumber( 3 ) );
-				s->AddID4( makenumber( 4 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 345 );
-			break;
 		case CMD_TARGETTMP:
-			if( tnum == 2 ) 
+			if( GetNumArguments() == 2 ) 
 			{
 				s->TempInt( makenumber( 1 ) );
-				doTarget( s, (TARGET_S *)toFind->second.cmd_extra );
+				doTarget( s, (target_s *)toFind->second.cmd_extra );
 			} 
 			else 
 				sysmessage( s, 338 );
-			break;
-		case CMD_TARGETHTMP:
-			if( tnum == 2 ) 
-			{
-				s->TempInt( makenumber( 1 ) );
-				doTarget(s, (TARGET_S *)toFind->second.cmd_extra );
-			} 
-			else 
-				sysmessage( s, 341 );
 			break;
 		default:
 			sysmessage( s, 346 );
@@ -356,7 +293,6 @@ void cCommands::MakeShop( CChar *c )
 			}
 		}
 	}
-
 	c->Teleport();
 }
 
@@ -493,7 +429,7 @@ void cCommands::KillSpawn( cSocket *s, int r )
 	int killed = 0;
 
 	sysmessage( s, 349 );
-	for( CHARACTER i = 0; i < charcount; i++ )
+	for( CHARACTER i = 0; i < cwmWorldState->GetCharCount(); i++ )
 	{
 		if( chars[i].GetSpawn( 1 ) < 0x40 && chars[i].GetSpawn( 3 ) == r && chars[i].GetSpawn( 2 ) == 1 ) // spawn2 == 1 if spawned by region
 		{
@@ -575,7 +511,7 @@ void cCommands::KillAll( cSocket *s, int percent, const char* sysmsg )
 {
 	sysmessage( s, 358 );
 	sysbroadcast( sysmsg );
-	for( CHARACTER i = 0; i < charcount; i++ )
+	for( CHARACTER i = 0; i < cwmWorldState->GetCharCount(); i++ )
 	{
 		if( chars[i].IsNpc() )
 		{
@@ -862,7 +798,7 @@ void cCommands::Wipe( cSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	Console << mChar->GetName() << " has initiated an item wipe" << myendl;
 	
-	for( ITEM k = 0; k <= itemcount; k++ )
+	for( ITEM k = 0; k <= cwmWorldState->GetItemCount(); k++ )
 	{
 		if( items[k].GetCont() == NULL && !items[k].isWipeable() )
 			Items->DeleItem( &items[k] );

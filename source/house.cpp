@@ -98,7 +98,7 @@ void buildHouse( cSocket *s, UI32 i )
 			if( houseID >= 0x4000 )
 				mtarget( s, calcserial( 0, 1, 0, 0 ), houseID - 0x4000, Dictionary->GetEntry( 576, s->Language() ) );
 			else
-				target( s, 0, 1, 0, 0, 576 );
+				target( s, 0, 0, 576 );
 		}
 		else
 			mtarget( s, 0, 1, 0, 0, s->AddID1() - 0x40, s->AddID2(), Dictionary->GetEntry( 576, s->Language() ) );
@@ -344,7 +344,7 @@ void deedHouse( cSocket *s, CItem *i )
 							if( pvDeed != NULL )
 							{
 								pvDeed->SetType( 217 );
-								pvDeed->SetValue( 2000 );
+								pvDeed->SetBuyValue( 2000 );
 								RefreshItem( pvDeed );
 							}
 							sysmessage( s, 581, charCheck->GetName() );
@@ -358,7 +358,7 @@ void deedHouse( cSocket *s, CItem *i )
 		}
 		SERIAL serialToMatch = calcserial( ser1, ser2, ser3, ser4 );
 		sysmessage( s, 582 );
-		for( ITEM a = 0; a < itemcount; a++ )		// we HAVE to have an itemcount, because when you replace the house, the serial will be different
+		for( ITEM a = 0; a < cwmWorldState->GetItemCount(); a++ )		// we HAVE to have an itemcount, because when you replace the house, the serial will be different
 		{										// so we have to remove all keys that used that serial
 			if( items[a].GetMore() == serialToMatch && items[a].GetType() == 7 )
 			{
@@ -375,7 +375,7 @@ void killKeys( SERIAL targSerial )
 // This function is rather CPU-expensive, but AFAIK there is no
 // better way to find all keys than to do it this way.. :/
 {
-	for( ITEM i = 0; i < itemcount; i++ ) 
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ ) 
 	{
 		if( items[i].GetType() == 7 && items[i].GetMore() == targSerial ) // make key uselss
 			items[i].SetMore( 0 );
@@ -450,13 +450,13 @@ void house_speech( cSocket *mSock, const char *talk )
 	if( strstr( msg, Dictionary->GetEntry( 584, sLang ) ) ) 
 	{ // realHouse ban
 		mSock->AddID( realHouse->GetSerial() );
-		target( mSock, 0, 1, 0, 229, 585 );
+		target( mSock, 0, 229, 585 );
 		return;
 	}
 	if( strstr( msg, Dictionary->GetEntry( 586, sLang ) ) ) 
 	{ // kick out of realHouse
 		mSock->AddID( realHouse->GetSerial() );
-		target( mSock, 0, 1, 0, 228, 587 );
+		target( mSock, 0, 228, 587 );
 		return;
 	}
 	if( strstr( msg, Dictionary->GetEntry( 588, sLang ) ) )
@@ -464,7 +464,7 @@ void house_speech( cSocket *mSock, const char *talk )
 		if( realHouse->GetLockDownCount() < realHouse->GetMaxLockDowns() )
 		{
 			mSock->AddID( realHouse->GetSerial() );
-			target( mSock, 0, 1, 0, 232, 589 );
+			target( mSock, 0, 232, 589 );
 		}
 		return;
 	}
@@ -473,7 +473,7 @@ void house_speech( cSocket *mSock, const char *talk )
 		if( realHouse->GetLockDownCount() > 0 )
 		{
 			mSock->AddID( realHouse->GetSerial() );
-			target( mSock, 0, 1, 0, 233, 591 );
+			target( mSock, 0, 233, 591 );
 		}
 		return;
 	}

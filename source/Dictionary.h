@@ -59,4 +59,4 @@ public:
 	void			SetDefaultLang( UnicodeTypes newType );
 };
 
-#endif // !defined(AFX_DICTIONARY_H__61EDE933_2045_11D4_9032_00104B73C455__INCLUDED_)
+#endif 

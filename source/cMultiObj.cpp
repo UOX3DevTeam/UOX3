@@ -384,10 +384,10 @@ bool CMultiObj::Load( std::ifstream &inStream, int arrayOffset )
 //o--------------------------------------------------------------------------
 bool CMultiObj::LoadRemnants( int arrayOffset )
 {
-	if( itemcount2 <= serial ) 
-		itemcount2 = serial + 1;
+	if( cwmWorldState->GetItemCount2() <= serial ) 
+		cwmWorldState->SetItemCount2( serial + 1 );
 	SetSerial( serial, arrayOffset );
-	StoreItemRandomValue( &items[arrayOffset], 0xFF ); // Magius(CHE) (2)
+	Items->StoreItemRandomValue( &items[arrayOffset], 0xFF ); // Magius(CHE) (2)
 	
 
 	// Add item weight if item doesn't have it yet

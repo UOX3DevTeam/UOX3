@@ -1488,6 +1488,112 @@ void CPDrawContainer::Serial( SERIAL toSet )
 	internalBuffer[4] = (UI08)(toSet%256);
 }
 
+void CPOpenGump::InternalReset( void )
+{
+	internalBuffer.resize( 9 );
+	internalBuffer[0] = 0x7C;
+	internalBuffer[1] = 0x00;
+	internalBuffer[2] = 0x00;
+	internalBuffer[3] = 0x01;
+	internalBuffer[4] = 0x02;
+	internalBuffer[5] = 0x03;
+	internalBuffer[6] = 0x04;
+	internalBuffer[7] = 0x00;
+	internalBuffer[8] = 0x64;
+}
+CPOpenGump::CPOpenGump()
+{
+	InternalReset();
+}
+CPOpenGump::CPOpenGump( CChar &toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+void CPOpenGump::Length( int totalLines )
+{
+	PackShort( &internalBuffer[0], 1, totalLines );
+}
+void CPOpenGump::GumpIndex( int index )
+{
+	PackShort( &internalBuffer[0], 7, index );
+}
+CPOpenGump &CPOpenGump::operator=( CChar &toCopy )
+{
+	CopyData( toCopy );
+	return (*this);
+}
+void CPOpenGump::CopyData( CChar &toCopy )
+{
+	Serial( toCopy.GetSerial() );
+}
+void CPOpenGump::Serial( SERIAL toSet )
+{
+	PackLong( &internalBuffer[0], 3, toSet );
+}
+
+
+
+
+void CPSpeech::InternalReset( void )
+{
+	internalBuffer.resize( 14 );
+	internalBuffer[0] = 0x1C;
+	internalBuffer[1] = 0x00;
+	internalBuffer[2] = 0x00;
+	internalBuffer[3] = 0x01;
+	internalBuffer[4] = 0x02;
+	internalBuffer[5] = 0x03;
+	internalBuffer[6] = 0x04;
+	internalBuffer[7] = 0x01;
+	internalBuffer[8] = 0x90;
+	internalBuffer[9] = 0x00;
+	internalBuffer[10] = 0x00;
+	internalBuffer[11] = 0x38;
+	internalBuffer[12] = 0x00;
+	internalBuffer[13] = 0x03;
+}
+CPSpeech::CPSpeech()
+{
+	InternalReset();
+}
+CPSpeech::CPSpeech( CChar &toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+void CPSpeech::Length( int len )
+{
+	PackShort( &internalBuffer[0], 1, len );
+}
+CPSpeech &CPSpeech::operator=( CChar &toCopy )
+{
+	CopyData( toCopy );
+	return (*this);
+}
+void CPSpeech::CopyData( CChar &toCopy )
+{
+	Serial( toCopy.GetSerial() );
+	ID( toCopy.GetID() );
+	internalBuffer[9] = 1;
+}
+void CPSpeech::Serial( SERIAL toSet )
+{
+	PackLong( &internalBuffer[0], 3, toSet );
+}
+void CPSpeech::ID( UI16 toSet )
+{
+	PackShort( &internalBuffer[0], 7, toSet );
+}
+void CPSpeech::GrabSpeech( cSocket *mSock, CChar *mChar )
+{
+	internalBuffer[10] = mSock->GetByte( 4 );
+	internalBuffer[11] = mSock->GetByte( 5 );
+	internalBuffer[12] = mSock->GetByte( 6 );
+	internalBuffer[13] = mChar->GetFontType();
+}
+
+
 //0x6C Packet
 //Last Modified on Sunday, 13-Feb-2000 
 //Targeting Cursor Commands (19 bytes) 
@@ -3216,16 +3322,16 @@ void CPOpenBuyWindow::VendorID( CItem *i )
 }
 SI16 CPOpenBuyWindow::AddItem( CItem *toAdd, CChar *p, UI16 baseOffset )
 {
-	UI32 value = calcValue( toAdd, (UI32)toAdd->GetValue() );
+	UI32 value = calcValue( toAdd, (UI32)toAdd->GetBuyValue() );
 	if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
 		value = calcGoodValue( p, toAdd, value, false );
 	char itemname[MAX_NAME];
 	UI08 sLen = getTileName( toAdd, itemname ); // Item name length
 
-	internalBuffer[baseOffset +  0] = (UI08)((toAdd->GetValue())>>24);
-	internalBuffer[baseOffset +  1] = (UI08)((toAdd->GetValue())>>16);
-	internalBuffer[baseOffset +  2] = (UI08)((toAdd->GetValue())>>8);
-	internalBuffer[baseOffset +  3] = (UI08)((toAdd->GetValue())%256);
+	internalBuffer[baseOffset +  0] = (UI08)((toAdd->GetBuyValue())>>24);
+	internalBuffer[baseOffset +  1] = (UI08)((toAdd->GetBuyValue())>>16);
+	internalBuffer[baseOffset +  2] = (UI08)((toAdd->GetBuyValue())>>8);
+	internalBuffer[baseOffset +  3] = (UI08)((toAdd->GetBuyValue())%256);
 	internalBuffer[baseOffset +  4] = sLen;
 
 	for( UI08 k = 0; k < sLen; k++ )

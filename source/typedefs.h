@@ -20,18 +20,6 @@
 	#define HIBYTE(w)           ((UI08)(((UI16)(w) >> 8) & 0xFF))
 #endif
 
-#define MaxZstep 9
-
-#define MAX_LASTON			30
-#define MAX_NAME			30
-#define MAX_PASSWORD		30
-#define MAX_COMMENT			128
-#define MAX_TITLE			50
-#define MAX_TRIGWORD		31
-#define MAX_GUILDTITLE		21
-#define MAX_STACK			0xFFFF
-#define MAX_ARCHID			14
-#define MAX_REGIONNAME	128
 
 typedef double				R64;
 typedef float				R32;
@@ -67,9 +55,6 @@ typedef UI16		SKILLVAL;
 typedef SI08		RANGE;
 typedef UI08		weathID;
 
-const UI08 WEIGHT_PER_STR = 4;
-const SI32 MAX_WEIGHT = (SI32)(0xFFFF*100);
-
 const UI32 INVALIDSERIAL	= 0xFFFFFFFF;
 const UI16 INVALIDID		= 0xFFFF;
 const UI16 INVALIDCOLOUR	= 0xFFFF;
@@ -103,6 +88,25 @@ typedef struct __STARTLOCATIONDATA__
 } STARTLOCATION, *LPSTARTLOCATION;
 //	EviLDeD	-	End
 
+#define PACK_NEEDED
+
+#define MAX_LASTON			30
+#define MAX_NAME			30
+#define MAX_PASSWORD		30
+#define MAX_COMMENT			128
+#define MAX_TITLE			50
+#define MAX_TRIGWORD		31
+#define MAX_GUILDTITLE		21
+#define MAX_STACK			0xFFFF
+#define MAX_ARCHID			14
+#define MAX_REGIONNAME		128
+#define MAX_FAMETITLE		128
+#define MAX_VISRANGE		20
+#define MAX_Z_STEP			9
+
+const SI08 ILLEGAL_Z = -128;
+const SI32 MAX_WEIGHT = static_cast<SI32>(0xFFFF*100);
+
 const UI08 MAXVAL = 0;
 const UI08 MINVAL = 1;
 const UI08 CURRVAL = 2;
@@ -120,11 +124,22 @@ const UI08 FEMALE = 2;
 #define MAXCLIENT MAXIMUM+1
 #define MAXBUFFER 2560 // Buffer Size (For socket operations)
 #define MAXPAGES 20 // Maximum number of pages in the GM queue
+#define MAXPOSTS 128
 const SI08 BUILDRANGE = 31; // Visibility for castles and keeps
 
 #define XYMAX 256 // Maximum items UOX can handle on one X/Y square
 const UI08 MAXLAYERS = 40; // Maximum number of Layers in paperdolls (still not sure how many)
 #define CMAX 40 // Maximum parameters in one line (Only for memory reasons)
+
+// these are the fixed record lengths as determined by the .mul files from OSI
+// i made them longs because they are used to calculate offsets into the files
+const UI32 VersionRecordSize = 20L;
+const UI32 MultiRecordSize = 12L;
+const UI32 LandRecordSize = 26L;
+const UI32 TileRecordSize = 37L;
+const UI32 MapRecordSize = 3L;
+const UI32 MultiIndexRecordSize = 12L;
+const UI32 StaticRecordSize = 7L;
 
 /*
 const SI32 VERFILE_MAP = 0x00;
@@ -150,34 +165,13 @@ const SI32 VERFILE_ANIMDATA = 0x1F;
 const SI32 TILEDATA_TILES = 0x68800;
 */
 
-#define SHOWLOGGEDOUTPCS 1 // Melen 9/7/99
-
 #define NODEBUG
-
-//////////////////
-// List of monster sounds
-const UI08 SND_STARTATTACK = 0;
-const UI08 SND_IDLE = 1;
-const UI08 SND_ATTACK = 2;
-const UI08 SND_DEFEND = 3;
-const UI08 SND_DIE = 4;
-
-//////////////////
-// Skill & Stat cap
-#define STATCAP 999
-#define SKILLCAP 999999
 
 typedef __TIMERID__ TID;
 
 #define TRUESKILLS ALLSKILLS //#skills+1
 
 #define DOORTYPES 19
-
-#define NPC_BASE_FLEEAT 20
-#define NPC_BASE_REATTACKAT 40
-#define SELLBYNAME 1 // Values = 0(Disabled) or 1(Enabled) - The NPC Vendors buy from you if your item has the same name of his item!
-#define SKILLLEVEL 5 // Range from 1 to 10 - This value if the difficult to create an item using a make command: 1 is easy, 5 is normal (default), 10 is difficult!
-#define SELLMAXITEM 5 // Set maximum amount of items that one player can sell at a time ( 5 is standard OSI )
 
 #define MAP0CACHE 300
 
@@ -207,10 +201,6 @@ const UI08 RUNSOUTH		= SOUTH|0x80;
 const UI08 RUNSOUTHWEST = SOUTHWEST|0x80;
 const UI08 RUNWEST		= WEST|0x80;
 const UI08 RUNNORTHWEST	= NORTHWEST|0x80;
-
-#define BEGGINGRANGE 3                  // begging range
-#define FISHINGTIMEBASE 10              // it takes at least FISHINGTIMEBASE sec to fish
-#define FISHINGTIMER 5
 
 // Line Of Sight
 #define ITEM_TYPE_CHOICES 6

@@ -89,7 +89,7 @@ void buyItem( cSocket *mSock )
 		layer[i]	= mSock->GetByte( 8 + baseOffset );
 		bitems[i]	= calcItemFromSer( mSock->GetDWord( 9 + baseOffset ) );
 		amount[i]	= mSock->GetWord( 13 + baseOffset );
-		goldtotal	+= ( amount[i] * ( items[bitems[i]].GetValue() ) );
+		goldtotal	+= ( amount[i] * ( items[bitems[i]].GetBuyValue() ) );
 	}
 	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->GetBuyThreshold() ));
 	if( useBank )
@@ -264,7 +264,7 @@ void restock( bool stockAll )
 	CItem *ci;
 	int a;
 
-	for( ITEM i = 0; i < itemcount; i++ )
+	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
 	{
 		if( items[i].GetRestock() && items[i].GetCont( 1 ) >= 0x40 )
 		{
@@ -294,7 +294,7 @@ void restock( bool stockAll )
 				}
 			}
 			if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-				StoreItemRandomValue( &items[i], 0xFF );
+				Items->StoreItemRandomValue( &items[i], 0xFF );
 		}
 	}
 }
@@ -339,7 +339,7 @@ void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
 				m1[m1t+7] = i->GetColour( 2 );
 				m1[m1t+8] = (UI08)(i->GetAmount()>>8);
 				m1[m1t+9] = (UI08)(i->GetAmount()%256);
-				value = calcValue( i, (UI32)q->GetValue() );
+				value = calcValue( i, (UI32)q->GetBuyValue() );
 				if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
 					value = calcGoodValue( npc, q, value, true );
 				m1[m1t+10] = (UI08)(value>>8);
@@ -425,7 +425,7 @@ bool sendSellStuff( cSocket *s, CChar *i )
 						m1[m1t+7] = j->GetColour( 2 );
 						m1[m1t+8] = (UI08)(j->GetAmount()>>8);
 						m1[m1t+9] = (UI08)(j->GetAmount()%256);
-						value = calcValue( j, (UI32)q->GetValue() );
+						value = calcValue( j, (UI32)q->GetBuyValue() );
 						if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
 							value = calcGoodValue( i, j, value, true );
 						m1[m1t+10] = (UI08)(value>>8);
@@ -515,7 +515,7 @@ void sellItem( cSocket *mSock )
 					if( k != NULL )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							value = calcValue( j, (UI32)k->GetValue() );
+							value = calcValue( j, (UI32)k->GetBuyValue() );
 					}
 				}
 				if( join != NULL )
@@ -568,7 +568,7 @@ void restockNPC( CChar *i )
 {
 	if( i == NULL || !i->IsShop() )
 		return;	// if we aren't a shopkeeper, why bother?
-	if( shoprestocktime <= uiCurrentTime || overflow )
+	if( cwmWorldState->GetShopRestockTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		CItem *ci = i->GetItemAtLayer( 0x1A );
 		if( ci != NULL )
@@ -584,7 +584,7 @@ void restockNPC( CChar *i )
 						c->SetRestock( c->GetRestock() - stockAmt );
 					}
 					if( cwmWorldState->ServerData()->GetTradeSystemStatus() ) 
-						StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
+						Items->StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
 				}
 			}
 		}
