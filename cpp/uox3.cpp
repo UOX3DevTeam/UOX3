@@ -8538,17 +8538,19 @@ void respawn(unsigned int currenttime)
 
 unsigned long int getclock( void )
 {
-	#ifdef __linux__
-	timeval tv;
-	gettimeofday(&tv, NULL);
-	#else
+	//#ifdef __linux__
+	//timeval tv;
+	//gettimeofday(&tv, NULL);
+	//#else
 	time_t tv ;
 	time(&tv) ;
-	#endif
+	//#endif
 	// We want to keep the value within 32 bits; we could also substract
 	// startup time I suppose
-	return ((tv.tv_sec - 900000000) * MY_CLOCKS_PER_SEC) +
-		tv.tv_usec / (1000000 / MY_CLOCKS_PER_SEC);
+	//return ((tv.tv_sec - 900000000) * MY_CLOCKS_PER_SEC) +
+	//	tv.tv_usec / (1000000 / MY_CLOCKS_PER_SEC);
+	// We have the time in number of seconds since 1970.  Now do the same
+	return (tv-900000000) * MY_CLOCKS_PER_SEC ;
 }
 
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)
