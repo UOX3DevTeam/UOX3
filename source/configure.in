@@ -6,7 +6,14 @@ AC_PROG_CXX
 
 AC_C_CONST
 
-CXXFLAGS="-I./mozilla/js/src"
+CXXFLAGS="-O2 -I./mozilla/js/src"
+
+AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+
+if test "$enable_debug" = yes ; then
+	CXXFLAGS="$CXXFLAGS -g3"
+	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+fi
 
 dnl To enable debugger support, remove the "dnl" from the line 3 lines down
 dnl and recompile the entire application
@@ -14,3 +21,4 @@ dnl and recompile the entire application
 dnl CXXFLAGS="$CXXFLAGS -g"
 
 AC_OUTPUT(Makefile)
+
