@@ -1,8 +1,8 @@
 [ONLINE_PAGE]
 { 
 UPDATE=10
-INPUT=../data/dfndata/html/online.html
-OUTPUT=../data/logs/serverstatus.html
+INPUT=dfndata/html/online.html
+OUTPUT=html/serverstatus.html
 } 
 
 EOF

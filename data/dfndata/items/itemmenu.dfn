@@ -1,8577 +1,947 @@
-//*****************************************************************
-//*                                                               *
-//* ITEMS 11000 - 12000 are RESERVED for shard based ITEMS!       *
-//* Do NOT release to public with these numbers used!             *
-//* End of RESERVED ITEMS (11000 - 12000)                         *
-//* Do NOT release to public with these numbers used!             *
-//* END of ITEMMENU 1 and ITEM entries                            *
-//*                                                               *
-//*****************************************************************
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: Itemmenu.dfn
+//	Writen by: Weazel[weazel@wideopenwest.com]
+//	Date: February 22nd 2002
 
 [ITEMMENU 1]
-{
-GM=Add Item Menu
+Shard Admin Panel
 <=GM Menu
 ITEMMENU=2
-0x0EFA=Magic Menu
-ITEMMENU=50
-0x0x1416=Equipment Items
-ITEMMENU=100
-0x14F0=Deeds Menu
-ITEMMENU=200
-0x2106=NPC Menu
-ITEMMENU=210
-0x1397=Spawner Menu
-ITEMMENU=250
-0x0034=Building Menu
-ITEMMENU=300
-0x0F6C=Gate Menu
-ITEMMENU=400
-0x0E75=Supplies Menu
-ITEMMENU=410
-0x0FAF=Skill-Items Menu
-ITEMMENU=450
+<=Weapons and Armor
+ITEMMENU=37
 }
 
 [ITEMMENU 2]
-{
-GM=Menu
-<=Travel Menu
+GM Menu
+<=Chars and Costumes
 ITEMMENU=3
-<=Hairs/Beards
-ITEMMENU=33
-<=Polymorph Menu
-ITEMMENU=36
-<=Characters/Robes
-ITEMMENU=39
-<=Game Master Special Items
-ITEMMENU=40
-<=Previous Menu
-ITEMMENU=1
+<=Hair and Beards
+ITEMMENU=4
+<=Travel Menu
+ITEMMENU=5
 }
 
 [ITEMMENU 3]
-{
-Travel=Menu
-0x2085=Towns
-ITEMMENU=4
-0x2093=Dungeons
-ITEMMENU=22
-0x20BA=Shrines
-ITEMMENU=30
-0x20A2=GM Locations
-ITEMMENU=31
-<=Previous Menu
-ITEMMENU=2
+Chars and Costumes
+0x2042=Lord British
+ADDITEM=0x2042
+0x2043=Lord Blackthorne
+ADDITEM=0x2043
+0x2050=Dupre the Fighter
+ADDITEM=0x2050
+0x204E=Death Shroud
+ADDITEM=0x204e
+0x204F=GM Robe(Undyed)
+ADDITEM=0x204F
+<=Counselor Robe
+ADDITEM=counsrobe
+<=GM Robe
+ADDITEM=gmrobe
+<=Seer Robe
+ADDITEM=seerrobe
+<=Admin Robe
+ADDITEM=adminrobe
 }
 
 [ITEMMENU 4]
-{
-Towns
-0x0BD1=Britain
-ITEMMENU=5
-0x0BD1=Buccaneer's Den
-ITEMMENU=6
-0x0BD1=Cove
-ITEMMENU=7
-0x0BD1=Jhelom
-ITEMMENU=8
-0x0BD1=Magincia
-ITEMMENU=9
-0x0BD1=Minoc
-ITEMMENU=10
-0x0BD1=Moonglow
-ITEMMENU=11
-0x0BD1=Nujelm
-ITEMMENU=12
-0x0BD1=Ocllo
-ITEMMENU=13
-0x0BD1=Serpents Hold
-ITEMMENU=14
-0x0BD1=Skara Brae
-ITEMMENU=15
-0x0BD1=Trinsic
-ITEMMENU=16
-0x0BD1=Vesper
-ITEMMENU=17
-0x0BD1=Wind
-ITEMMENU=18
-0x0BD1=Yew
-ITEMMENU=19
-<=Papua - T2A
-ITEMMENU=20
-<=Delucia - T2A
-ITEMMENU=21
-<=Previous Menu
-ITEMMENU=3
+Hair and Beards
+<=Hair
+ITEMMENU=35
+<=Beards
+ITEMMENU=36
 }
 
 [ITEMMENU 5]
-{
-Britain
-<=Blackthorn Castle
-GOPLACE=16
-<=Blackthorn Castle Entrance
-GOPLACE=22
-<=British Castle Entrance
-GOPLACE=21
-<=British Throne
+Travel Menu
+<=Jails
+ITEMMENU=6
+<=GM Locations
+ITEMMENU=7
+<=Citys
+ITEMMENU=8
+<=Shrines
+ITEMMENU=25
+<=Dungeons
+ITEMMENU=26
+<=The Lost Lands
+ITEMMENU=34
+}
+
+[ITEMMENU 6]
+Jail Menu
+<=Cell 1
+GOPLACE=1
+<=Cell 2
+GOPLACE=2
+<=Cell 3
+GOPLACE=3
+<=Cell 4
+GOPLACE=4
+<=Cell 5
+GOPLACE=5
+<=Cell 6
+GOPLACE=6
+<=Cell 7
+GOPLACE=7
+<=Cell 8
+GOPLACE=8
+<=Cell 9
+GOPLACE=9
+<=Cell 10
+GOPLACE=10
+}
+
+[ITEMMENU 7]
+GM Locations
+<=Help Desk of Hell
+GOPLACE=11
+<=Helproom Back Door
+GOPLACE=12
+<=Green Acres
+GOPLACE=13
+<=Error Spawn Location
+GOPLACE=14
+}
+
+[ITEMMENU 8]
+Citys
+<=Britian
+ITEMMENU=9
+<=Bucs Den
+ITEMMENU=10
+<=Cove
+ITEMMENU=11
+<=Jhelom
+ITEMMENU=12
+<=Magincia
+ITEMMENU=13
+<=Minoc
+ITEMMENU=14
+<=Moonglow
+ITEMMENU=15
+<=Nujlem
+ITEMMENU=16
+<=Ocollo
+ITEMMENU=17
+<=Serpents Hold
+ITEMMENU=18
+<=Skara Brae
+ITEMMENU=19
+<=Next Page
+ITEMMENU=20
+}
+
+
+[ITEMMENU 9]
+Britian
+<=Lord Britishs Throne
 GOPLACE=15
+<=Blackthornes Castle
+GOPLACE=16
 <=Center
 GOPLACE=20
+<=Lord British Castle Entrance
+GOPLACE=21
+<=Blackthorn Castle Entrance
+GOPLACE=22
+<=East Britian
+GOPLACE=23
+<=Park
+GOPLACE=24
 <=Farmlands
 GOPLACE=25
 <=Graveyard
 GOPLACE=26
-<=Park
-GOPLACE=24
-<=Sewers - T2A
-GOPLACE=303
-<=Suburbs
-GOPLACE=23
-<=Previous Menu
-ITEMMENU=4
-}
-
-[ITEMMENU 6]
-{
-Buccaneer's=Den
-0x0BD1=Bathhouse
-GOPLACE=31
-0x0BD1=Docks
-GOPLACE=30
-0x0BD1=Hidden Caves
-GOPLACE=33
-0x0BD1=Pirates Plunder Tavern
-GOPLACE=32
-<=Previous Menu
-ITEMMENU=4
-}
-
-[ITEMMENU 7]
-{
-Cove
-0x0BD1=Cemetary
-GOPLACE=43
-0x0BD1=Gates
-GOPLACE=40
-0x0BD1=Guard Post
-GOPLACE=41
-0x0BD1=Orc Fort
-GOPLACE=42
-<=Previous Menu
-ITEMMENU=4
-}
-
-[ITEMMENU 8]
-{
-Jhelom
-0x0BD1=Cemetary
-GOPLACE=53
-0x0BD1=East Docks
-GOPLACE=52
-0x0BD1=Fighting Pit
-GOPLACE=51
-0x0BD1=Main Island
-GOPLACE=50
-0x0BD1=Medium Island
-GOPLACE=54
-0x0BD1=Small Island
-GOPLACE=55
-<=Previous Menu
-ITEMMENU=4
-}
-
-[ITEMMENU 9]
-{
-Magincia
-0x0BD1=Docks
-GOPLACE=60
-0x0BD1=Park
-GOPLACE=62
-0x0BD1=Parliament
-GOPLACE=61
-<=Previous Menu
-ITEMMENU=4
 }
 
 [ITEMMENU 10]
-{
-Minoc
-0x0BD1=Bridge
-GOPLACE=73
-0x0BD1=Gypsy Camp
-GOPLACE=72
-0x0BD1=Mining Camp
-GOPLACE=74
-0x0BD1=North
-GOPLACE=70
-0x0BD1=South
-GOPLACE=71
-<=Previous Menu
-ITEMMENU=4
+Bucs Den
+<=Docks
+GOPLACE=30
+<=Bathhouse
+GOPLACE=31
+<=Pirates Plunder Tavern
+GOPLACE=32
+<=Hidden Caves
+GOPLACE=33
 }
 
 [ITEMMENU 11]
-{
-Moonglow
-0x0BD1=Cemetary
-GOPLACE=84
-0x0BD1=Center
-GOPLACE=80
-0x0BD1=Docks
-GOPLACE=81
-0x0BD1=Telescope
-GOPLACE=82
-0x0BD1=Zoo
-GOPLACE=83
-<=Previous Menu
-ITEMMENU=4
+Cove
+<=Gates
+GOPLACE=40
+<=Guard Post
+GOPLACE=41
+<=Orc Fort
+GOPLACE=42
+<=Cemetary
+GOPLACE=43
 }
 
 [ITEMMENU 12]
-{
-Nujelm
-0x0BD1=Cemetary
-GOPLACE=96
-0x0BD1=Chess Board
-GOPLACE=95
-0x0BD1=Docks
-GOPLACE=90
-0x0BD1=East
-GOPLACE=93
-0x0BD1=North
-GOPLACE=92
-0x0BD1=Palace
-GOPLACE=91
-0x0BD1=West
-GOPLACE=94
-<=Previous Menu
-ITEMMENU=4
+Jhelom
+<=Main Island
+GOPLACE=50
+<=Fighting Pit
+GOPLACE=51
+<=East Docks
+GOPLACE=52
+<=Cemetary
+GOPLACE=53
+<=Medium Island
+GOPLACE=54
+<=Small Island
+GOPLACE=55
 }
 
 [ITEMMENU 13]
-{
-Ocllo
-0x0BD1=Docks
-GOPLACE=100
-0x0BD1=Farmlands
-GOPLACE=102
-0x0BD1=North
-GOPLACE=101
-<=Previous Menu
-ITEMMENU=4
+Magincia
+<=Docks
+GOPLACE=60
+<=Parliament
+GOPLACE=61
+<=Park
+GOPLACE=62
 }
 
 [ITEMMENU 14]
-{
-Serpents=Hold
-0x0BD1=North
-GOPLACE=110
-0x0BD1=South
-GOPLACE=112
-0x0BD1=South Guardpost
-GOPLACE=113
-0x0BD1=West Docks
-GOPLACE=111
-<=Previous Menu
-ITEMMENU=4
+Minoc
+<=North Minoc
+GOPLACE=70
+<=South Minoc
+GOPLACE=71
+<=Gypsy Camp
+GOPLACE=72
+<=Bridge
+GOPLACE=73
+<=Mining Camp
+GOPLACE=74
 }
 
 [ITEMMENU 15]
-{
-Skara=Brae
-0x0BD1=East
-GOPLACE=125
-0x0BD1=East Docks
-GOPLACE=122
-0x0BD1=North
-GOPLACE=124
-0x0BD1=South
-GOPLACE=123
-0x0BD1=West
-GOPLACE=121
-0x0BD1=West Docks
-GOPLACE=120
-<=Previous Menu
-ITEMMENU=4
+Moonglow
+<=Center
+GOPLACE=80
+<=Docks
+GOPLACE=81
+<=Telescope
+GOPLACE=82
+<=Zoo
+GOPLACE=83
+<=Cemetary
+GOPLACE=84
 }
 
 [ITEMMENU 16]
-{
-Trinsic
-0x0BD1=Center
-GOPLACE=130
-0x0BD1=East Docks
-GOPLACE=135
-0x0BD1=Island Park
-GOPLACE=136
-0x0BD1=North
-GOPLACE=133
-0x0BD1=South
-GOPLACE=134
-0x0BD1=South Gate
-GOPLACE=132
-0x0BD1=West Gate
-GOPLACE=131
-<=Previous Menu
-ITEMMENU=4
+Nujlem
+<=Docks
+GOPLACE=90
+<=Palace
+GOPLACE=91
+<=North
+GOPLACE=92
+<=East
+GOPLACE=93
+<=West
+GOPLACE=94
+<=Chess Board
+GOPLACE=95
+<=Cemetary
+GOPLACE=96
 }
 
 [ITEMMENU 17]
-{
-Vesper
-0x0BD1=Center
-GOPLACE=140
-0x0BD1=Docks
-GOPLACE=141
-0x0BD1=East
-GOPLACE=143
-0x0BD1=Grave Yard
-GOPLACE=144
-0x0BD1=North
-GOPLACE=142
-<=Previous Menu
-ITEMMENU=4
+Ocollo
+<=Docks
+GOPLACE=100
+<=North
+GOPLACE=101
+<=Farmlands
+<=GOPLACE=102
 }
 
 [ITEMMENU 18]
-{
-Wind
-0x0BD1=Caves
-GOPLACE=151
-0x0BD1=East
-GOPLACE=153
-0x0BD1=Outside Entrance
-GOPLACE=150
-0x0BD1=Park
-GOPLACE=155
-0x0BD1=South
-GOPLACE=152
-0x0BD1=West
-GOPLACE=154
-<=Previous Menu
-ITEMMENU=4
+Serpents Hold
+<=North
+GOPLACE=110
+<=West Docks
+GOPLACE=111
+<=South
+GOPLACE=112
+<=South Guardpost
+GOPLACE=113
 }
 
 [ITEMMENU 19]
-{
-Yew
-0x0BD1=Cemetary
-GOPLACE=164
-0x0BD1=Center
-GOPLACE=160
-0x0BD1=Courts & Prisons
-GOPLACE=162
-0x0BD1=Empath Abbey
-GOPLACE=161
-0x0BD1=Hidden Cave
-GOPLACE=163
-0x0BD1=Orc Fort
-GOPLACE=165
-<=Previous Menu
-ITEMMENU=4
+Skara Brae
+<=West Docks
+GOPLACE=120
+<=West
+GOPLACE=121
+<=East Docks
+<GOPLACE=122
+<=South
+GOPLACE=123
+<=North
+GOPLACE=124
+<=East
+GOPLACE=125
 }
 
 [ITEMMENU 20]
-{
-Papua
-<=Mage Shop
-GOPLACE=304
-<=Previous Menu
-ITEMMENU=4
+Citys Page Two
+<=Trinsic
+ITEMMENU=21
+<=Vesper
+ITEMMENU=22
+<=Wind
+ITEMMENU=23
+<=Yew
+ITEMMENU=24
 }
 
 [ITEMMENU 21]
-{
-Delucia
+Trinsic
 <=Center
-GOPLACE=305
-<=Previous Menu
-ITEMMENU=4
+GOPLACE=130
+<=West Gate
+GOPLACE=131
+<=South Gate
+GOPLACE=132
+<=North
+GOPLACE=133
+<=South
+GOPLACE=134
+<=East Docks
+GOPLACE=135
+<=Island Park
+<=GOPLACE 136
 }
 
 [ITEMMENU 22]
-{
-Dungeons
-<=Covetous
-ITEMMENU=23
-<=Deceit
-ITEMMENU=24
-<=Despise
-ITEMMENU=25
-<=Destard
-ITEMMENU=26
-<=Hyloth
-ITEMMENU=27
-<=Shame
-ITEMMENU=28
-<=Wrong
-ITEMMENU=29
-<=Hythloth Firepit
-GOPLACE=300
-<=Yew/Britain Brigand Camp
-GOPLACE=301
-<=Yew Fort of the Damned
-GOPLACE=302
-<=Previous Menu
-ITEMMENU=3
+Vesper
+<=Center
+GOPLACE=140
+<=Docks
+GOPLACE=141
+<=North
+GOPLACE=142
+<=East
+GOPLACE=143
+<=Grave Yard
+GOPLACE=144
 }
 
 [ITEMMENU 23]
-{
-Covetous
-<=Covetous Outside
-GOPLACE=200
-<=Covetous Level 1
-GOPLACE=201
-<=Covetous Level 2
-GOPLACE=202
-<=Covetous Level 3
-GOPLACE=203
-<=Covetous Lake
-GOPLACE=204
-<=Covetous Torture
-GOPLACE=205
-<=Previous Menu
-ITEMMENU=22
+Wind
+<=Outside Entrance
+GOPLACE=150
+<=Caves
+GOPLACE=151
+<=South
+GOPLACE=152
+<=East
+GOPLACE=153
+<=West
+GOPLACE=154
+<=Park
+GOPLACE=155
 }
 
 [ITEMMENU 24]
-{
-Deciet
-<=Deceit Outside
-GOPLACE=210
-<=Deceit Level 1
-GOPLACE=211
-<=Deceit Level 2
-GOPLACE=212
-<=Deceit Level 3
-GOPLACE=213
-<=Deceit Level 4
-GOPLACE=214
-<=Previous Menu
-ITEMMENU=22
+Yew
+<=Center
+GOPLACE=160
+<=Empath Abbey
+GOPLACE=161
+<=Courts and Prisons
+GOPLACE=162
+<=Hidden Cave
+GOPLACE=163
+<=Cemetary
+GOPLACE=164
+<=Orc Fort
+GOPLACE=165
 }
 
 [ITEMMENU 25]
-{
-Despise
-<=Despise Outside
-GOPLACE=220
-<=Despise Entryway
-GOPLACE=221
-<=Despise Level 1 Up
-GOPLACE=222
-<=Despise Level 2 Down
-GOPLACE=223
-<=Despise Level 3
-GOPLACE=224
-<=Previous Menu
-ITEMMENU=22
+Shrines
+<=Chaos
+GOPLACE=170
+<=Compassion
+GOPLACE=171
+<=Honesty
+GOPLACE=172
+<=Honor
+GOPLACE=173
+<=Humility
+GOPLACE=174
+<=Justice
+GOPLACE=175
+<=Sacrafice
+GOPLACE=176
+<=Sprituality
+GOPLACE=177
+<=Valor
+GOPLACE=178
 }
 
 [ITEMMENU 26]
-{
-Destard
-<=Destard Outside
-GOPLACE=230
-<=Destard Level 1
-GOPLACE=231
-<=Destard Level 2
-GOPLACE=232
-<=Destard Level 3
-GOPLACE=233
-<=Previous Menu
-ITEMMENU=22
+Dungeons
+<=Covetous
+ITEMMENU=27
+<=Deceit
+ITEMMENU=28
+<=Despise
+ITEMMENU=29
+<=Destard
+ITEMMENU=30
+<=Hyloth
+ITEMMENU=31
+<=Shame
+ITEMMENU=32
+<=Wrong
+ITEMMENU=33
+<=Hyloth Firepit
+GOPLACE=300
+<=Brigand Camp
+GOPLACE=301
+<=Fort of the Damned
+GOPLACE=302
+}
 }
 
 [ITEMMENU 27]
-{
-Hyloth
-<=Hythloth Outside
-GOPLACE=240
-<=Hythloth Level 1
-GOPLACE=241
-<=Hythloth Level 2
-GOPLACE=242
-<=Hythloth Level 3
-GOPLACE=243
-<=Hythloth Level 4
-GOPLACE=244
-<=Previous Menu
-ITEMMENU=22
+Covetous
+<=Outside Entrance
+GOPLACE=200
+<=Level 1
+GOPLACE=201
+<=Level 2
+GOPLACE=202
+<=Level 3
+GOPLACE=203
+<=Lake Room
+GOPLACE=204
+<=Torture Rooms
+GOPLACE=205
 }
 
 [ITEMMENU 28]
-{
-Shame
-<=Shame Outside
-GOPLACE=250
-<=Shame Level 1
-GOPLACE=251
-<=Shame Level 2
-GOPLACE=252
-<=Shame Level 3
-GOPLACE=253
-<=Shame Level 4
-GOPLACE=254
-<=Previous Menu
-ITEMMENU=22
+Deceit
+<=Outside Entrance
+GOPLACE=210
+<=Level 1
+GOPLACE=211
+<=Level 2
+GOPLACE=212
+<=Level 3
+GOPLACE=213
+<=Level 4
+GOPLACE=214
 }
 
 [ITEMMENU 29]
-{
-Wrong
-<=Wrong Outside
-GOPLACE=260
-<=Wrong Level 1
-GOPLACE=261
-<=Wrong Level 2
-GOPLACE=262
-<=Wrong Level 3
-GOPLACE=263
-<=Previous Menu
-ITEMMENU=22
+Despise
+<=Outside Entrance
+GOPLACE=220
+<=Foyer
+GOPLACE=221
+<=Level 1(Upstairs)
+GOPLACE=222
+<=Level 2
+GOPLACE=223
+<=Level 3
+GOPLACE=224
 }
 
 [ITEMMENU 30]
-{
-Go=To Shrines
-<=Chaos Shrine
-GOPLACE=170
-<=Compassion Shrine
-GOPLACE=171
-<=Honesty Shrine
-GOPLACE=172
-<=Honor Shrine
-GOPLACE=173
-<=Humility Shrine
-GOPLACE=174
-<=Justice Shrine
-GOPLACE=175
-<=Sacrifice Shrine
-GOPLACE=176
-<=Spirituality Shrine
-GOPLACE=177
-<=Valor Shrine
-GOPLACE=178
-<=Previous Menu
-ITEMMENU=3
+Destard
+<=Outside Entrance
+GOPLACE=230
+<=Level 1
+GOPLACE=231
+<=Level 2
+GOPLACE=232
+<=Level 3
+GOPLACE=233
 }
 
 [ITEMMENU 31]
-{
-GM=Locations
-<=Error Spawn Location
-GOPLACE=14
-<=Green Acres
-GOPLACE=13
-<=Help Desk of Popella
-GOPLACE=11
-<=Help Room Backdoor
-GOPLACE=12
-<=Jail Cells
-ITEMMENU=32
-<=Previous Menu
-ITEMMENU=3
+Hyloth
+<=Outside Entrance
+GOPLACE=240
+<=Level 1
+GOPLACE=241
+<=Level 2
+GOPLACE=242
+<=Level 3
+GOPLACE=243
+<=Level 4
+GOPLACE=244
 }
 
 [ITEMMENU 32]
-{
-Jail=Cells
-<=Jail Cell 1
-GOPLACE=1
-<=Jail Cell 2
-GOPLACE=2
-<=Jail Cell 3
-GOPLACE=3
-<=Jail Cell 4
-GOPLACE=4
-<=Jail Cell 5
-GOPLACE=5
-<=Jail Cell 6
-GOPLACE=6
-<=Jail Cell 7
-GOPLACE=7
-<=Jail Cell 8
-GOPLACE=8
-<=Jail Cell 9
-GOPLACE=9
-<=Jail Cell 10
-GOPLACE=10
-<=Previous Menu
-ITEMMENU=31
+Shame
+<=Outside Entrance
+GOPLACE=250
+<=Level 1
+GOPLACE=251
+<=Level 2
+GOPLACE=252
+<=Level 3
+GOPLACE=253
+<=Level 4
+GOPLACE=254
 }
 
 [ITEMMENU 33]
-{
-Hairs/Beards
-<=Beards
-ITEMMENU=34
-0x203C=Hairs
-ITEMMENU=35
-<=Previous Menu
-ITEMMENU=2
+Wrong
+<=Outside Entrance
+GOPLACE=260
+<=Level 1
+GOPLACE=261
+<=Level 2
+GOPLACE=262
+<=Level 3
+GOPLACE=263
 }
 
 [ITEMMENU 34]
-{
-Beards
-<=Goatee
-ADDITEM=0x2040
-0x204D=Goatee/Moustace
-ADDITEM=0x204d
-0x2041=Moustache
-ADDITEM=0x2041
-0x203E=Long Beard
-ADDITEM=0x203e
-0x204C=Long/Moustace
-ADDITEM=0x204c
-0x203F=Short Beard
-ADDITEM=0x203f
-0x204B=Short/Moustache
-ADDITEM=0x204b
-<=Previous Menu
-ITEMMENU=33
+The Lost Lands
+<=Britian Sewers
+GOPLACE=303
+<=Papua
+GOPLACE=304
+<=Delucia Center
+GOPLACE=305
+<=Ice Dungeon
+GOPLACE=306
 }
 
 [ITEMMENU 35]
-{
-Hairs
-<=Curly
-ADDITEM=0x2046
-0x203C=Long Hair
-ADDITEM=0x203c
-0x2044=Mohawk
+Hair
+<=Short Hair
+ADDITEM=0x203B
+<=Long Hair
+ADDITEM=0x203C
+<=Pony Tail
+ADDITEM=0x203D
+<=Mohawk
 ADDITEM=0x2044
-0x2045=Pageboy
+<=Pageboy
 ADDITEM=0x2045
-0x203D=Pony Tail
-ADDITEM=0x203d
-0x2048=Receding
+<=Buns
+ADDITEM=0x2046
+<=Afro
+ADDITEM=0x2047
+<=Receding Hair
 ADDITEM=0x2048
-0x203B=Short Hair
-ADDITEM=0x203b
-0x2049=2 Tails
+<=Pig Tails
 ADDITEM=0x2049
-0x204A=Topknot
-ADDITEM=0x204a
-<=Previous Menu
-ITEMMENU=33
+<=Krisina Hair
+ADDITEM=0x204A
 }
 
 [ITEMMENU 36]
-{
-Polymorph=Menu
-0x20CD=Male
-POLY=0x0190
-0x20CE=Female
-POLY=0x0191
-0x20CF=Animals
-ITEMMENU=37
-0x20D3=Monsters
-ITEMMENU=38
-0x20CD=Game Master
-POLY=0x03db
-<=Previous Menu
-ITEMMENU=2
+Beards
+<=Long Beard
+ADDITEM=0x203E
+<=Short Beard
+ADDITEM=0x203F
+<=Goatee
+ADDITEM=0x2040
+<=Mustache
+ADDITEM=0x204A
+<=Medium Short Beard
+ADDITEM=0x204B
+<=Long Short Beard
+ADDITEM=0x204C
+<=Vandyke
+ADDITEM=0x204D
 }
 
 [ITEMMENU 37]
-{
-Animals
-0x20CF=Brown Bear
-POLY=0x00d3
-0x20D0=Large Rat
-POLY=0x00d7
-0x20D1=Chicken
-POLY=0x00d0
-0x20D4=Large Deer
-POLY=0x00ea
-0x20D4=Deer
-POLY=0x00ed
-0x20D5=Dog
-POLY=0x00d9
-0x20DA=Alligator
-POLY=0x00ca
-0x20DB=Grizzly Bear
-POLY=0x00d4
-0x20DD=Horse (Brown)
-POLY=0x00cc
-0x20DD=Horse (White)
-POLY=0x00c8
-0x20E1=Polar Bear
-POLY=0x00d5
-0x20E2=Rabbit
-POLY=0x00cd
-0x20E5=Serpent
-POLY=0x0034
-0x20E6=Sheep
-POLY=0x00cf
-<=Previous Menu
-ITEMMENU=36
+Weapons and Armor
+<=Weapons
+ITEMMENU=38
+<=Armor
+ITEMMENU=46
 }
 
 [ITEMMENU 38]
-{
-Monsters
-0x20D3=Daemon
-POLY=0x000a
-0x20D3=Demon With out Sword
-POLY=0x0009
-0x20EC=Zombie
-POLY=0x0003
-0x20DF=Ogre
-POLY=0x0001
-0x20D8=Ettin
-POLY=0x0002
-0x20D9=Gargoyle
-POLY=0x0004
-0x20D2=Corpser
-POLY=0x0008
-0x20D6=Green Dragon
-POLY=0x000c
-0x20ED=Air Elemental
-POLY=0x000d
-0x20D7=Earth Elemental
-POLY=0x000e
-0x20F3=Fire Elemental
-POLY=0x000f
-0x210B=Water Elemental
-POLY=0x0010
-0x20F4=Gazer
-POLY=0x0016
-0x20F8=Lich
-POLY=0x0018
-0x2109=Spectre
-POLY=0x001a
-0x20FD=Giant Spider
-POLY=0x001c
-0x20DC=Harpy
-POLY=0x001e
-0x210A=Headless One
-POLY=0x001f
-0x20DE=Lizardman
-POLY=0x0021
-0x20E3=Ratman
-POLY=0x002a
-0x20FA=Reaper
-POLY=0x002f
-0x20E4=Giant Scorpian
-POLY=0x0030
-<=Previous Menu
-ITEMMENU=36
+Weapons
+<=Knives and Daggers
+ITEMMENU=39
+<=Staves and Polearms
+ITEMMENU=40
+<=Axes
+ITEMMENU=41
+<=Bows
+ITEMMENU=42
+<=Spears
+ITEMMENU=43
+<=Swords and Blades
+ITEMMENU=44
+<=Maces
+ITEMMENU=45
 }
 
 [ITEMMENU 39]
-{
-Characters=and Robes
-<=Lord British Armor
-ADDITEM=0x2042
-0x2043=Blackthorne Robe
-ADDITEM=0x2043
-<=Dupre the fighter
-ADDITEM=0x2050
-0x204E=Death Shroud
-ADDITEM=0x204e
-0x204F=GM Robe (undyed)
-ADDITEM=0x204f
-0x204F=GM Robe (red)
-ADDITEM=0x204f
-0x204F=GM Robe (green)
-ADDITEM=0x204f
-0x204F=GM Robe (blue)
-ADDITEM=0x204f
-<=Previous Menu
-ITEMMENU=2
+Knives and Daggers
+0x0ec2=Cleaver
+ADDITEM=0x0ec2
+0x0ec5=Skinning Knife
+ADDITEM=0x0ec5
+0x0f52=Dagger
+ADDITEM=0x0f52
+0x13f7=Butcher Knife
+ADDITEM=0x13f7
 }
 
 [ITEMMENU 40]
-{
-Game=Master Special Items
-0x1F14=Teleport Rune
-ADDITEM=0x1f14
-0x1012=Master Shard Key
-ADDITEM=0x1012
-<=Previous Menu
-ITEMMENU=2
+Staves and Polearms
+0x13f4=Crook
+ADDITEM=0x13f4
+0x13f9=Gnarled Staff
+ADDITEM=0x13f9
+0x0df0=Black Staff
+ADDITEM=0xdf0
+0x0e82=Shepherds Crook
+ADDITEM=0x0e82
+0x0e88=Pitchfork
+ADDITEM=0x0e88
+0x0e8a=Quarter Staff
+ADDITEM=0x0e8a
+0x143e=Halbred
+ADDITEM=0x143e
+0x0f4e=Bardiche
+ADDITEM=0x0f4e
+}
+
+[ITEMMENU 41]
+Axes
+0x13fa=Large Battle Axe
+ADDITEM=0x13fa
+0x1442=Two Handed Axe
+ADDITEM=0x1442
+0x0e85=Pickaxe
+ADDITEM=0x0e85
+0x0f44=Hatchet
+ADDITEM=0x0f44
+0x0f46=Executioners Axe
+ADDITEM=0x0f46
+0x0f48=Battle Axe
+ADDITEM=0x0f48
+0x0f4a=Axe
+ADDITEM=0x0f4a
+0x0f4c=Double Axe
+ADDITEM=0x0f4c
+0x13AF=War Axe
+ADDITEM=0x13af
+}
+
+[ITEMMENU 42]
+Bows
+0x0f50=Crossbow
+ADDITEM=0x0f50
+0x13b1=Bow
+ADDITEM=0x13b1
+0x13fc=Heavy Crossbow
+ADDITEM=0x13fc
+}
+
+[ITEMMENU 43]
+Spears
+0x0f63=Spear
+ADDITEM=0x0f63
+0x1402=Short Spear
+ADDITEM=0x1402
+}
+
+[ITEMMENU 44]
+Swords and Blades
+0x1400=Kryss
+ADDITEM=0x1400
+0x1404=War Fork
+ADDITEM=0x1404
+0x1440=Cutlass
+ADDITEM=0x1440
+0x13fe=Katana
+ADDITEM=0x13fe
+0x0f5f=Broadsword
+ADDITEM=0xf5f
+0x0f60=Longsword
+ADDITEM=0xf60
+0x13b5=Scimitar
+ADDITEM=0x13b5
+0x13b7=Long Sword
+ADDITEM=0x13b7
+0x13ba=Viking Sword
+ADDITEM=0x13b7
+}
+
+[ITEMMENU 45]
+Maces
+0x13e3=Smiths Hammer
+ADDITEM=0x13e3
+0x13b3=Club
+ADDITEM=0x13b3
+0x0fb4=Sledge Hammer
+ADDITEM=0x0fb4
+0x0f5d=Mace
+ADDITEM=0f5d
+0x1406=War Mace
+ADDITEM=0x1406
+0x1438=War Hammer
+ADDITEM=0x1438
+0x143A=Maul
+ADDITEM=0x143a
+0x143c=Hammer Pick
+ADDITEM=0x143c
+}
+
+[ITEMMENU 46]
+Armor
+<=Leather Armor
+ITEMMENU=47
+<=Studded Leather Armor
+ITEMMENU=48
+<=Ringmail Armor
+ITEMMENU=49
+<=Chainmail Armor
+ITEMMENU=50
+<=Platemail Armor
+ITEMMENU=51
+<=Bone Armor
+ITEMMENU=52
+<=Female Armor
+ITEMMENU=53
+<=Shields
+ITEMMENU=54
+<=Colored Armor
+ITEMMENU=55
+}
+
+[ITEMMENU 47]
+Leather Armor
+0x13c5=Leather Sleeves
+ADDITEM=0x13c5
+0x13c6=Leather Gloves
+ADDITEM=0x13c6
+0x13c7=Leather Gorget
+ADDITEM=0x13c7
+0x13cb=Leather Leggings
+ADDITEM=0x13cb
+0x13cc=Leather Tunic
+ADDITEM=0x13cc
+0x1dba=Leather Cap
+ADDITEM=0x1dba
+}
+
+[ITEMMENU 48]
+Studded Leather Armor
+0x13d4=Studded Sleeves
+ADDITEM=0x13d4
+0x13d5=Studded Gloves
+ADDITEM=0x13d5
+0x13d6=Studded Gorget
+ADDITEM=0x13d6
+0x13da=Studded Leggings
+ADDITEM=0x13da
+0x13db=Studded Tunic
+ADDITEM=0x13db
+}
+
+[ITEMMENU 49]
+Ringmail Armor
+0x13eb=Ringmail Gloves
+ADDITEM=0x13eb
+0x13ec=Ringmail Tunic
+ADDITEM=0x13ec
+0x13ee=Ringmail Sleeves
+ADDITEM=0x13ee
+0x13f0=Ringmail Leggings
+ADDITEM=0x13f0
 }
 
 [ITEMMENU 50]
-{
-Magic
-0x0F85=Reagents
-ITEMMENU=51
-0x0E24=Bottles
-ITEMMENU=54
-0x0F0A=Potions
-ITEMMENU=55
-0x0DF2=Wands
-ITEMMENU=56
-0x0EFA=Spellbook
-ADDITEM=0x0efa
-0x1F14=Recall Rune
-ADDITEM=0x1f14
-0x0F6C=Gates
-ITEMMENU=57
-0x0E34=Blank Scroll
-ADDITEM=0x0e34
-0x1F6D=All-Spell Scroll
-ADDITEM=0x1f6d
-0x20C0=First Circle Scrolls
-ITEMMENU=58
-0x20C1=Second Circle Scrolls
-ITEMMENU=59
-0x20C2=Third Circle Scrolls
-ITEMMENU=60
-0x20C3=Fourth Circle Scrolls
-ITEMMENU=61
-0x20C4=Fifth Circle Scrolls
-ITEMMENU=62
-0x20C5=Sixth Circle Scrolls
-ITEMMENU=63
-0x20C6=Seventh Circle Scrolls
-ITEMMENU=64
-0x20C7=Eighth Circle Scrolls
-ITEMMENU=65
-0x20A6=Necromantic Scrolls
-ITEMMENU=66
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 54]
-{
-Bottles=& Alchemy
-0x0E9B=Mortar And Pestal
-ADDITEM=0x0e9b
-0x0F0E=Bottle
-ADDITEM=0x0f0e
-0x0E24=a empty vial
-ADDITEM=0x0e24
-0x0E25=Bottle
-ADDITEM=0x0e25
-0x0E26=Bottle
-ADDITEM=0x0e26
-0x0E27=Bottle
-ADDITEM=0x0e27
-0x0E28=Bottle
-ADDITEM=0x0e28
-0x0E29=Bottle
-ADDITEM=0x0e29
-0x0E2A=Bottle
-ADDITEM=0x0e2a
-0x0E2B=Bottle
-ADDITEM=0x0e2b
-0x0E2C=Bottle
-ADDITEM=0x0e2c
-0x0EFB=Bottle
-ADDITEM=0x0efb
-0x0EFC=Bottle
-ADDITEM=0x0efc
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 55]
-{
-Potions
-<=Mortar And Pestal
-ADDITEM=0x0e9b
-0x0F06=Night Sight Potion
-ADDITEM=0x0f06
-0x0F07=Cure Potion
-ADDITEM=0x0f07
-0x0F08=Agility Potion
-ADDITEM=0x0f08
-0x0F09=Strength Potion
-ADDITEM=0x0f09
-0x0F0A=Poison Potion
-ADDITEM=0x0f0a
-0x0F0B=Ressurection Potion
-ADDITEM=0x0f0b
-0x0F0C=Lesser Heal Potion
-ADDITEM=0x0f0c
-0x0F0C=Greater Heal Potion
-ADDITEM=0x0f0c
-0x0F0D=Lesser Explosion Potion
-ADDITEM=0x0f0d
-0x0F0D=Explosion Potion
-ADDITEM=0x0f0d
-0x0F0D=Greater Explosion Potion
-ADDITEM=0x0f0d
-<=Previous Menu
-ITEMMENU=50
+Chainmail Armor
+0x13BB=Chain Coif
+ADDITEM=0x13BB
+0x13be=Chain Leggings
+ADDITEM=0x13be
+0x13bf=Chain Tunuc
+ADDITEM=0x13bf
 }
 
 [ITEMMENU 51]
-{
-Reagents
-0x0F85=Common Reagents
-ITEMMENU=52
-0x0F82=Pagan reagents
-ITEMMENU=53
-<=Previous Menu
-ITEMMENU=50
+Platemail Armor
+0x1408=Close Helm
+ADDITEM=0x1408
+0x140A=Helmet
+ADDITEM=0x140a
+0x140c=Bascinet
+ADDITEM=0x140c
+0x140e=A Nose Helm
+ADDITEM=0x140e
+0x1410=Platemail Arms
+ADDITEM=0x1410
+0x1411=Platemail Leggings
+ADDITEM=0x1411
+0x1412=Plate Helm
+ADDITEM=0x1412
+0x1413=Platemail Gorget
+ADDITEM=0x1413
+0x1414=Platemail Gloves
+ADDITEM=0x1414
+0x1415=Platemail Chest
+ADDITEM=0x1415
 }
 
 [ITEMMENU 52]
-{
-Common=Reagents
-0x0F7A=Black Pearl
-ADDITEM=0x0f7a
-0x0F7B=Blood Moss
-ADDITEM=0x0f7b
-0x0F84=Garlic
-ADDITEM=0x0f84
-0x0F85=Ginseng
-ADDITEM=0x0f85
-0x0F86=Mandrake Root
-ADDITEM=0x0f86
-0x0F88=Nightshade
-ADDITEM=0x0f88
-0x0F8C=Sulfurous Ash
-ADDITEM=0x0f8c
-0x0F8D=Spiders Silk
-ADDITEM=0x0f8d
-<=Previous Menu
-ITEMMENU=51
-}
-
-[ITEMMENU 53]
-{
-Pagan=Reagents
-0x0F78=Bat Wing
-ADDITEM=0x0f78
-0x0F79=Blackmoor
-ADDITEM=0x0f79
-0x0F7C=Bloodspawn
-ADDITEM=0x0f7c
-0x0F7D=Vial of Blood
-ADDITEM=0x0f7d
-0x0F7E=Bone
-ADDITEM=0x0f7e
-0x0F7F=Brimstone
-ADDITEM=0x0f7f
-0x0F80=Daemon Bone
-ADDITEM=0x0f80
-0x0F81=Fertile Dirt
-ADDITEM=0x0f81
-0x0F82=Dragon Blood
-ADDITEM=0x0f82
-0x0F83=Executioner's Cap
-ADDITEM=0x0f83
-0x0F87=Eye of Newt
-ADDITEM=0x0f87
-0x0F89=Obsidian
-ADDITEM=0x0f89
-0x0F8A=Pig Iron
-ADDITEM=0x0f8a
-0x0F8B=Pumice
-ADDITEM=0x0f8b
-0x0F8E=Serpent Scales
-ADDITEM=0x0f8e
-0x0F8F=Volcanic Ash
-ADDITEM=0x0f8f
-0x0F90=Dead Wood
-ADDITEM=0x0f90
-0x0F91=Wyrms Heart
-ADDITEM=0x0f91
-<=Previous Menu
-ITEMMENU=51
-}
-
-[ITEMMENU 56]
-{
-Wands
-0x0DF2=Greater Heal Wand, 20 charges
-ADDITEM=0x0df2
-0x0DF3=Summon Daemon Wand, 5 charges
-ADDITEM=0x0df3
-0x0DF4=Magic Arrow Wand, 100 charges
-ADDITEM=0x0df4
-0x0DF5=Resurrect Wand, 1 charge
-ADDITEM=0x0df5
-0x0F5C=Fireball Mace, 5000 charges
-ADDITEM=0x0f5c
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 57]
-{
-Gates
-0x0F6C=A Blue Moongate
-ADDITEM=0x0f6c
-0x0DDA=A Red Moongate
-ADDITEM=0x0dda
-0x1FD4=A Black Moongate
-ADDITEM=0x1fd4
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 58]
-{
-First=Circle Scrolls
-0x1F2D=Reactive Armor Scroll
-ADDITEM=0x1f2d
-0x1F2E=Clumsy Scroll
-ADDITEM=0x1f2e
-0x1F2F=Create Food Scroll
-ADDITEM=0x1f2f
-0x1F30=Feeblemind Scroll
-ADDITEM=0x1f30
-0x1F31=Heal Scroll
-ADDITEM=0x1f31
-0x1F32=Magic Arrow Scroll
-ADDITEM=0x1f32
-0x1F33=Night Sight Scroll
-ADDITEM=0x1f33
-0x1F34=Weaken Scroll
-ADDITEM=0x1f34
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 59]
-{
-Second=Circle Scrolls
-0x1F35=Agility Scroll
-ADDITEM=0x1f35
-0x1F36=Cunning Scroll
-ADDITEM=0x1f36
-0x1F37=Cure Scroll
-ADDITEM=0x1f37
-0x1F38=Harm Scroll
-ADDITEM=0x1f38
-0x1F39=Magic Trap Scroll
-ADDITEM=0x1f39
-0x1F3A=Magic Untrap Scroll
-ADDITEM=0x1f3a
-0x1F3B=Protection Scroll
-ADDITEM=0x1f3b
-0x1F3C=Strength Scroll
-ADDITEM=0x1f3c
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 60]
-{
-Third=Circle Scrolls
-0x1F3D=Bless Scroll
-ADDITEM=0x1f3d
-0x1F3E=Fireball Scroll
-ADDITEM=0x1f3e
-0x1F3F=Magic Lock Scroll
-ADDITEM=0x1f3f
-0x1F40=Poison Scroll
-ADDITEM=0x1f40
-0x1F41=Telekenisis Scroll
-ADDITEM=0x1f41
-0x1F42=Teleport Scroll
-ADDITEM=0x1f42
-0x1F43=Unlock Scroll
-ADDITEM=0x1f43
-0x1F44=Wall of Stone Scroll
-ADDITEM=0x1f44
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 61]
-{
-Fourth=Circle Scrolls
-0x1F45=Archcure Scroll
-ADDITEM=0x1f45
-0x1F46=Arch Protection Scroll
-ADDITEM=0x1f46
-0x1F47=Curse Scroll
-ADDITEM=0x1f47
-0x1F48=Fire Field Scroll
-ADDITEM=0x1f48
-0x1F49=Greater Heal Scroll
-ADDITEM=0x1f49
-0x1F4A=Lightning Scroll
-ADDITEM=0x1f4a
-0x1F4B=ManaDrain Scroll
-ADDITEM=0x1f4b
-0x1F4C=Recall Scroll
-ADDITEM=0x1f4c
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 62]
-{
-Fifth=Circle Scrolls
-0x1F4D=Blade Spirits Scroll
-ADDITEM=0x1f4d
-0x1F4E=Dispel Field Scroll
-ADDITEM=0x1f4e
-0x1F4F=Incognito Scroll
-ADDITEM=0x1f4f
-0x1F50=Magic Reflection Scroll
-ADDITEM=0x1f50
-0x1F51=Mind Blast Scroll
-ADDITEM=0x1f51
-0x1F52=Paralyze Scroll
-ADDITEM=0x1f52
-0x1F53=Poison Field Scroll
-ADDITEM=0x1f53
-0x1F54=Summon Creature Scroll
-ADDITEM=0x1f54
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 63]
-{
-Sixth=Circle Scrolls
-0x1F55=Dispel Scroll
-ADDITEM=0x1f55
-0x1F56=Energy Bolt Scroll
-ADDITEM=0x1f56
-0x1F57=Explosion Scroll
-ADDITEM=0x1f57
-0x1F58=Invisibility Scroll
-ADDITEM=0x1f58
-0x1F59=Mark Scroll
-ADDITEM=0x1f59
-0x1F5A=Mass Curse Scroll
-ADDITEM=0x1f5a
-0x1F5B=Paralyze Field Scroll
-ADDITEM=0x1f5b
-0x1F5C=Reveal Scroll
-ADDITEM=0x1f5c
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 64]
-{
-Seventh=Circle Scrolls
-0x1F5D=Chain Lightning Scroll
-ADDITEM=0x1f5d
-0x1F5E=Energy Field Scroll
-ADDITEM=0x1f5e
-0x1F5F=Flamestrike Scroll
-ADDITEM=0x1f5f
-0x1F60=Gate Travel Scroll
-ADDITEM=0x1f60
-0x1F61=Mana Vampire Scroll
-ADDITEM=0x1f61
-0x1F62=Mass Dispel Scroll
-ADDITEM=0x1f62
-0x1F63=Meteor Storm Scroll
-ADDITEM=0x1f63
-0x1F64=Polymorph Scroll
-ADDITEM=0x1f64
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 65]
-{
-Eighth=Circle Scrolls
-0x1F65=Earthquake Scroll
-ADDITEM=0x1f65
-0x1F66=Energy Vortex Scroll
-ADDITEM=0x1f66
-0x1F67=Resurrection Scroll
-ADDITEM=0x1f67
-0x1F68=Summon Air Elemental Scroll
-ADDITEM=0x1f68
-0x1F69=Summon Daemon Scroll
-ADDITEM=0x1f69
-0x1F6A=Summon Earth Elemental Scroll
-ADDITEM=0x1f6a
-0x1F6B=Summon Fire Elemental Scroll
-ADDITEM=0x1f6b
-0x1F6C=Summon Water Elemental Scroll
-ADDITEM=0x1f6c
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 66]
-{
-Necromantic=Scrolls
-0x1F6E=Necromantic Speak Scroll
-ADDITEM=0x1f6e
-0x1F6F=Necromantic Raise Scroll
-ADDITEM=0x1f6f
-0x1F70=Necromantic Ingest Poison Scroll
-ADDITEM=0x1f70
-0x1F71=Necromantic Summon Scroll
-ADDITEM=0x1f71
-0x1F72=Necromantic EVIL Scroll
-ADDITEM=0x1f72
-<=Previous Menu
-ITEMMENU=50
-}
-
-[ITEMMENU 100]
-{
-Combat=Menu
-<=Armor & Shields
-ITEMMENU=101
-<=Weapons
-ITEMMENU=140
-<=Clothes
-ITEMMENU=192
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 101]
-{
-Armor=& Shields
-<=Colored Plate Mail
-ITEMMENU=102
-0x13C4=Colored Chain Mail
-ITEMMENU=110
-0x1416=Plate Mail
-ITEMMENU=118
-0x1454=Bone Armor
-ITEMMENU=119
-0x13C4=Chain Mail
-ITEMMENU=120
-0x13ED=Ring Mail
-ITEMMENU=121
-0x13E2=Studded Leather Armor
-ITEMMENU=122
-0x13D3=Leather Armor
-ITEMMENU=123
-0x140C=Miscellaneous Helms
-ITEMMENU=124
-0x1C00=Female Armor
-ITEMMENU=125
-0x13d9=Magical Armor
-ITEMMENU=127
-0x1BC3=Shields
-ITEMMENU=126
-<=Previous Menu
-ITEMMENU=100
-}
-
-[ITEMMENU 102]
-{
-Colored=Plate
-<=Black Plate
-ITEMMENU=103
-0x1416=Gold Plate
-ITEMMENU=104
-0x1416=Merkite Plate
-ITEMMENU=105
-0x1416=Verite Plate
-ITEMMENU=106
-0x1416=Mythril Plate
-ITEMMENU=107
-0x1416=Bronze Plate
-ITEMMENU=108
-0x1416=Agapite Plate
-ITEMMENU=109
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 103]
-{
-Black=Plate Menu
-0x1416=Black Plate Tunic
-ADDITEM=0x1416-S
-0x1413=Black Plate Gorget
-ADDITEM=0x1413-S
-0x1414=Black Plate Gloves
-ADDITEM=0x1414-S
-0x1412=Black Plate Helm
-ADDITEM=0x1412-S
-0x140F=Black Nose Helm
-ADDITEM=0x140f-S
-0x141A=Black Plate Legs
-ADDITEM=0x141a-S
-0x1410=Black Plate Sleeves
-ADDITEM=0x1410-S
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 104]
-{
-Golden=Plate Menu
-0x1416=Golden Plate Tunic
-ADDITEM=0x1416-G
-0x1413=Golden Plate Gorget
-ADDITEM=0x1413-G
-0x1414=Golden Plate Gloves
-ADDITEM=0x1414-G
-0x1412=Golden Plate Helm
-ADDITEM=0x1412-G
-0x140F=Golden Nose Helm
-ADDITEM=0x140f-G
-0x141A=Golden Plate Legs
-ADDITEM=0x141a-G
-0x1410=Golden Plate Sleeves
-ADDITEM=0x1410-G
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 105]
-{
-Merkite=Plate Menu
-0x1416=Merkite Plate Tunic
-ADDITEM=0x1416
-0x1413=Merkite Plate Gorget
-ADDITEM=0x1413
-0x1414=Merkite Plate Gloves
-ADDITEM=0x1414
-0x141A=Merkite Plate Legs
-ADDITEM=0x141a
-0x1410=Merkite Plate Sleeves
-ADDITEM=0x1410
-0x1412=Merkite Plate Helm
-ADDITEM=0x1412
-0x140F=Merkite Nose Helm
-ADDITEM=0x140f
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 106]
-{
-Verite=Plate Menu
-0x1416=Verite Plate Tunic
-ADDITEM=0x1416-V
-0x1413=Verite Plate Gorget
-ADDITEM=0x1413-V
-0x1414=Verite Plate Gloves
-ADDITEM=0x1414-V
-0x141A=Verite Plate Legs
-ADDITEM=0x141a-V
-0x1410=Verite Plate Sleeves
-ADDITEM=0x1410-V
-0x1412=Verite Plate Helm
-ADDITEM=0x1412-V
-0x140F=Verite Nose Helm
-ADDITEM=0x140f-V
-0x1409=Verite Close Helm
-ADDITEM=0x1409-V
-0x140B=Verite Helm
-ADDITEM=0x140b-V
-0x140D=Verite Bascinet
-ADDITEM=0x140d-V
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 107]
-{
-Mythril=Plate Menu
-0x1416=Mythril Plate Tunic
-ADDITEM=0x1416-M
-0x1413=Mythril Plate Gorget
-ADDITEM=0x1413-M
-0x1414=Mythril Plate Gloves
-ADDITEM=0x1414-M
-0x141A=Mythril Plate Legs
-ADDITEM=0x141a-M
-0x1410=Mythril Plate Sleeves
-ADDITEM=0x1410-M
-0x1412=Mythril Plate Helm
-ADDITEM=0x1412-M
-0x140F=Mythril Nose Helm
-ADDITEM=0x140f-M
-0x1409=Mythril Close Helm
-ADDITEM=0x1409-M
-0x140B=Mythril Helm
-ADDITEM=0x140b-M
-0x140D=Mythril Bascinet
-ADDITEM=0x140d-M
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 108]
-{
-Bronze=Plate Menu
-0x1416=Bronze Plate Tunic
-ADDITEM=0x1416-B
-0x1413=Bronze Plate Gorget
-ADDITEM=0x1413-B
-0x1414=Bronze Plate Gloves
-ADDITEM=0x1414-B
-0x141A=Bronze Plate Legs
-ADDITEM=0x141a-B
-0x1410=Bronze Plate Sleeves
-ADDITEM=0x1410-B
-0x1412=Bronze Plate Helm
-ADDITEM=0x1412-B
-0x140F=Bronze Nose Helm
-ADDITEM=0x140f-B
-0x1409=Bronze Close Helm
-ADDITEM=0x1409-B
-0x140B=Bronze Helm
-ADDITEM=0x140b-B
-0x140D=Bronze Bascinet
-ADDITEM=0x140d-B
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 109]
-{
-Agapite=Plate Menu
-0x1416=Agapite Plate Tunic
-ADDITEM=0x1416-A
-0x1413=Agapite Plate Gorget
-ADDITEM=0x1413-A
-0x1414=Agapite Plate Gloves
-ADDITEM=0x1414-A
-0x141A=Agapite Plate Legs
-ADDITEM=0x141a-A
-0x1410=Agapite Plate Sleeves
-ADDITEM=0x1410-A
-0x1412=Agapite Plate Helm
-ADDITEM=0x1412-A
-0x140F=Agapite Nose Helm
-ADDITEM=0x140f-A
-0x1409=Agapite Close Helm
-ADDITEM=0x1409-A
-0x140B=Agapite Helm
-ADDITEM=0x140b-A
-0x140D=Agapite Bascinet
-ADDITEM=0x140d-A
-<=Previous Menu
-ITEMMENU=102
-}
-
-[ITEMMENU 110]
-{
-Colored=Chain Mail
-<=Black Chain
-ITEMMENU=111
-0x13C4=Gold Chain
-ITEMMENU=112
-0x13C4=Merkite Chain
-ITEMMENU=113
-0x13C4=Verite Chain
-ITEMMENU=114
-0x13C4=Mythril Chain
-ITEMMENU=115
-0x13C4=Bronze Chain
-ITEMMENU=116
-0x13C4=Agapite Chain
-ITEMMENU=117
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 111]
-{
-Black=Chain
-0x13C4=Black Chain Tunic
-ADDITEM=0x13c4-S
-0x13C3=Black Chain Legs
-ADDITEM=0x13c3-S
-0x13BB=Black Chain Coif
-ADDITEM=0x13bb-S
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 112]
-{
-Gold=Chain
-0x13C4=Gold Chain Tunic
-ADDITEM=0x13c4-G
-0x13C3=Gold Chain Legs
-ADDITEM=0x13c3-G
-0x13BB=Gold Chain Coif
-ADDITEM=0x13bb-G
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 113]
-{
-Merkite=Chain
-0x13C4=Merkite Chain Tunic
-ADDITEM=0x13c4
-0x13C3=Merkite Chain Legs
-ADDITEM=0x13c3
-0x13BB=Merkite Chain Coif
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 114]
-{
-Verite=Chain
-0x13C4=Verite Chain Tunic
-ADDITEM=0x13c4-V
-0x13C3=Verite Chain Legs
-ADDITEM=0x13c3-V
-0x13BB=Verite Chain Coif
-ADDITEM=0x13bb-V
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 115]
-{
-Mythril=Chain
-0x13C4=Mythril Chain Tunic
-ADDITEM=0x13c4-M
-0x13C3=Mythril Chain Legs
-ADDITEM=0x13c3-M
-0x13BB=Mythril Chain Coif
-ADDITEM=0x13bb-M
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 116]
-{
-Bronze=Chain
-0x13C4=Bronze Chain Tunic
-ADDITEM=0x13c4-B
-0x13C3=Bronze Chain Legs
-ADDITEM=0x13c3-B
-0x13BB=Bronze Chain Coif
-ADDITEM=0x13bb-B
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 117]
-{
-Agapite=Chain
-0x13C4=Agapite Chain Tunic
-ADDITEM=0x13c4
-0x13C3=Agapite Chain Legs
-ADDITEM=0x13c3
-0x13BB=Agapite Chain Coif
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=110
-}
-
-[ITEMMENU 118]
-{
-Plate=Mail
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 119]
-{
-Bone=Armor
-0x144F=Bone Chestplate
-ADDITEM=0x144f
-0x144E=Bone Sleeves
+Bone Armor
+0x144e=Bone Arms
 ADDITEM=0x144e
+0x144f=Bone Chest
+ADDITEM=0x144f
 0x1450=Bone Gloves
 ADDITEM=0x1450
 0x1451=Bone Helmet
 ADDITEM=0x1451
 0x1452=Bone Legs
 ADDITEM=0x1452
-<=Previous Menu
-ITEMMENU=101
 }
 
-[ITEMMENU 120]
-{
-Chain=Mail
-0x13C4=Chain Tunic
-ADDITEM=0x13c4
-0x13C3=Chain Legs
-ADDITEM=0x13c3
-0x13BB=Chain Coif
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 121]
-{
-Ring=Mail
-0x13ED=Ring Chest
-ADDITEM=0x13ed
-0x13EF=Ring Arms
-ADDITEM=0x13ef
-0x13F1=Ring Legs
-ADDITEM=0x13f1
-0x13F2=Ring Gloves
-ADDITEM=0x13f2
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 122]
-{
-Armor
-0x13D6=Studded Leather Gorget
-ADDITEM=0x13d6
-0x13DD=Studded Leather Gloves
-ADDITEM=0x13dd
-0x13D4=Studded Leather Arms
-ADDITEM=0x13d4
-0x13E1=Studded Leather Legs
-ADDITEM=0x13e1
-0x13E2=Studded Leather Chest
-ADDITEM=0x13e2
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 123]
-{
-Leather=Armor
-0x13CD=Leather Arms
-ADDITEM=0x13cd
-0x13D2=Leather Legs
-ADDITEM=0x13d2
-0x13D3=Leather Chest
-ADDITEM=0x13d3
-0x1DBA=Leather Cap
-ADDITEM=0x1dba
-0x13CE=Leather Gloves
-ADDITEM=0x13ce
-0x13C7=Leather Gorget
-ADDITEM=0x13c7
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 124]
-{
-Miscellaneous=Helms
-0x1408=Closed Helmet
-ADDITEM=0x1408
-0x140A=Helmet
-ADDITEM=0x140a
-0x140C=Bascinet
-ADDITEM=0x140c
-0x140E=Nose Helm
-ADDITEM=0x140e
-0x141C=Orc Helm
-ADDITEM=0x141c
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 125]
-{
-Female=Armor
-0x1C00=Female Spiked Underwear
+[ITEMMENU 53]
+Female Armor
+0x1c00=Leather Shorts
 ADDITEM=0x1c00
-0x1C02=Female Plate
+0x1c02=Studded Chestpiece
 ADDITEM=0x1c02
-0x1C04=Female Leather
+0x1c04=Platemail Chestpiece
 ADDITEM=0x1c04
-0x1C06=Female Studded Leather
+0x1c06=Leather Chestpiece
 ADDITEM=0x1c06
-0x1C08=Leather Skirt
+0x1c08=Leather Skirt
 ADDITEM=0x1c08
-0x1C0A=Leather Bustier
+0x1c0a=Leather Bustier
 ADDITEM=0x1c0a
-0x1C0C=Studded Bustier
-ADDITEM=0x1c0c
-<=Previous Menu
-ITEMMENU=101
+0x1c0c=Studded Bustier
+ADDITEM=0x1c0a
 }
 
-[ITEMMENU 126]
-{
+[ITEMMENU 54]
 Shields
-0x1B72=Bronze Shield
+0x1b72=Gladiator Shield
 ADDITEM=0x1b72
-0x1B73=Buckler
-ADDITEM=0x1b73
-0x1BC3=Chaos Shield
-ADDITEM=0x1bc3
-0x1B76=Heater
-ADDITEM=0x1b76
-0x1B74=Kite Shield (Metal)
+0x1b73=Buckler
+ADDITEM=buckler
+0x1b74=Kite Shield
 ADDITEM=0x1b74
-0x1B7B=Metal Shield
-ADDITEM=0x1b7b
-0x1BC4=Order Shield
-ADDITEM=0x1bc4
-0x1B78=Kite Shield (Wooden)
-ADDITEM=0x1b78
-0x1B7A=Wooden Shield
-ADDITEM=0x1b7a
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 127]
-{
-Magic=Armor
-<=Magic Plate Mail
-ITEMMENU=128
-0x13C4=Magic Chain Mail
-ITEMMENU=134
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 128]
-{
-Magic=Plate Mail
-<=Plate of Defence
-ITEMMENU=129
-0x1416=Plate of Guarding
-ITEMMENU=130
-0x1416=Plate of Hardening
-ITEMMENU=131
-0x1416=Plate of Fortification
-ITEMMENU=132
-0x1416=Plate of Invulnerability
-ITEMMENU=133
-<=Previous Menu
-ITEMMENU=127
-}
-
-[ITEMMENU 129]
-{
-Plate=Mail of Defence
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=128
-}
-
-[ITEMMENU 130]
-{
-Plate=Mail of Guarding
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=128
-}
-
-[ITEMMENU 131]
-{
-Plate=Mail of Hardening
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=128
-}
-
-[ITEMMENU 132]
-{
-Plate=Mail of Fortification
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=128
-}
-
-[ITEMMENU 133]
-{
-Plate=Mail of Invulnerability
-0x1416=Breastplate
-ADDITEM=0x1416
-0x1413=Plate Gorget
-ADDITEM=0x1413
-0x1414=Plate Gloves
-ADDITEM=0x1414
-0x1412=Plate Helm
-ADDITEM=0x1412
-0x141A=Plate Legs
-ADDITEM=0x141a
-0x1410=Plate Sleeves
-ADDITEM=0x1410
-<=Previous Menu
-ITEMMENU=128
-}
-
-[ITEMMENU 134]
-{
-Magic=Chain Mail
-<=Chain of Defence
-ITEMMENU=135
-0x13C4=Chain of Guarding
-ITEMMENU=136
-0x13C4=Chain of Hardening
-ITEMMENU=137
-0x13C4=Chain of Fortification
-ITEMMENU=138
-0x13C4=Chain of Invulnerability
-ITEMMENU=139
-<=Previous Menu
-ITEMMENU=127
-}
-
-[ITEMMENU 135]
-{
-Chain=of Defence
-0x13C4=Magic Chain Tunic
-ADDITEM=0x13c4
-0x13C3=Magic Chain Legs
-ADDITEM=0x13c3
-0x13BB=Magic Chain Coif
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=134
-}
-
-[ITEMMENU 136]
-{
-Chain=of Guarding
-0x13C4=Magic Chain Tunic of Guarding
-ADDITEM=0x13c4
-0x13C3=Magic Chain Legs of Guarding
-ADDITEM=0x13c3
-0x13BB=Magic Chain Coif of Guarding
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=134
-}
-
-[ITEMMENU 137]
-{
-Chain=of Hardening
-0x13C4=Magic Chain Tunic of Hardening
-ADDITEM=0x13c4
-0x13C3=Magic Chain Legs of Hardening
-ADDITEM=0x13c3
-0x13BB=Magic Chain Coif of Hardening
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=134
-}
-
-[ITEMMENU 138]
-{
-Chain=of Fortification
-0x13C4=Magic Chain Tunic of Fortification
-ADDITEM=0x13c4
-0x13C3=Magic Chain Legs of Fortification
-ADDITEM=0x13c3
-0x13BB=Magic Chain Coif of Fortification
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=134
-}
-
-[ITEMMENU 139]
-{
-Chain=of Invulnerability
-0x13C4=Magic Chain Tunic of Invulnerability
-ADDITEM=0x13c4
-0x13C3=Magic Chain Legs of Invulnerability
-ADDITEM=0x13c3
-0x13BB=Magic Chain Coif of Invulnerability
-ADDITEM=0x13bb
-<=Previous Menu
-ITEMMENU=134
-}
-
-[ITEMMENU 140]
-{
-Weapons
-<=Normal Weapons
-ITEMMENU=141
-0x13B8=Magical Weapons
-ITEMMENU=150
-0x13B8=Enchanted Weapons
-ITEMMENU=190
-0x13B8=Enchanted Weapons 2
-ITEMMENU=191
-<=Previous Menu
-ITEMMENU=101
-}
-
-[ITEMMENU 141]
-{
-Normal=Weapons
-0x13B2=Bows
-ITEMMENU=142
-0x13BA=Swords
-ITEMMENU=143
-0x0F47=Axes
-ITEMMENU=144
-0x0EC4=Knives & Daggers
-ITEMMENU=145
-0x0F5C=Maces & Hammers
-ITEMMENU=146
-0x1563=Pole Arms
-ITEMMENU=147
-0x0E8A=Staves
-ITEMMENU=148
-0x1405=Spears & Forks
-ITEMMENU=149
-<=Previous Menu
-ITEMMENU=140
-}
-
-[ITEMMENU 142]
-{
-Bows
-0x13B2=Bow
-ADDITEM=0x13b2
-0x0F4F=Crossbow
-ADDITEM=0x0f4f
-0x13FD=Heavy Crossbow
-ADDITEM=0x13fd
-0x0F3F=Arrow
-ADDITEM=0x0f3f
-0x1BFB=Bolt
-ADDITEM=0x1bfb
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 143]
-{
-Swords
-0x13B6=Scimitar
-ADDITEM=0x13b6
-0x13B8=Long Sword
-ADDITEM=0x13b8
-0x13BA=Viking Sword
-ADDITEM=0x13ba
-0x0F5E=Broad Sword
-ADDITEM=0x0f5e
-0x1440=Cutlass
-ADDITEM=0x1440
-0x13FF=Katana
-ADDITEM=0x13ff
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 144]
-{
-Axes
-0x0F43=Hatchet
-ADDITEM=0x0f43
-0x0F45=Executioner's Axe
-ADDITEM=0x0f45
-0x0F49=Axe
-ADDITEM=0x0f49
-0x0F4B=Double Axe
-ADDITEM=0x0f4b
-0x0F47=Battle Axe
-ADDITEM=0x0f47
-0x13FB=Large Battle Axe
-ADDITEM=0x13fb
-0x0E85=Pick Axe
-ADDITEM=0x0e85
-0x13B0=War Axe
-ADDITEM=0x13b0
-0x1442=Two-handed Axe
-ADDITEM=0x1442
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 145]
-{
-Knives=and Daggers
-0x13F7=Butcher's Knife
-ADDITEM=0x13f7
-0x0EC4=Skinning Knife
-ADDITEM=0x0ec4
-0x0EC2=Cleaver
-ADDITEM=0x0ec2
-0x0F51=Dagger
-ADDITEM=0x0f51
-0x1400=Kryss
-ADDITEM=0x1400
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 146]
-{
-Maces=& Hammers
-0x13B4=Club
-ADDITEM=0x13b4
-0x143C=Hammer Pick
-ADDITEM=0x143c
-0x0F5C=Mace
-ADDITEM=0x0f5c
-0x143A=Maul
-ADDITEM=0x143a
-0x13E4=Smithy Hammer
-ADDITEM=0x13e4
-0x1438=War Hammer
-ADDITEM=0x1438
-0x1406=War Mace
-ADDITEM=0x1406
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 147]
-{
-Pole=Arms
-0x0F4D=Bardiche
-ADDITEM=0x0f4d
-0x143E=Halberd
-ADDITEM=0x143e
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 148]
-{
-Staffs
-0x0DF0=Black Staff
-ADDITEM=0x0df0
-0x13F9=Gnarled Staff
-ADDITEM=0x13f9
-0x0E8A=Quarterstaff
-ADDITEM=0x0e8a
-0x0E81=Shepherd's Crook
-ADDITEM=0x0e81
-0x0DF2=Sceptre
-ADDITEM=0x0df2
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 149]
-{
-Spears=& Forks
-0x0E87=Pitchfork
-ADDITEM=0x0e87
-0x0F62=Spear
-ADDITEM=0x0f62
-0x1403=Short Spear
-ADDITEM=0x1403
-0x1405=War Fork
-ADDITEM=0x1405
-<=Previous Menu
-ITEMMENU=141
-}
-
-[ITEMMENU 150]
-{
-Magical=Weapons
-<=Magical Bows
-ITEMMENU=151
-0x13BA=Magical Swords
-ITEMMENU=155
-0x0F47=Magical Axes
-ITEMMENU=162
-0x0EC4=Magical Knives & Daggers
-ITEMMENU=170
-0x1405=Magical Spears & Forks
-ITEMMENU=176
-0x0F5C=Magical Maces & Hammers
-ITEMMENU=180
-0x1563=Magical Pole Arms
-ITEMMENU=187
-<=Previous Menu
-ITEMMENU=140
-}
-
-[ITEMMENU 151]
-{
-Magic=Bows and Crossbows
-0x13B2=magic bows
-ITEMMENU=152
-0x0F4F=magic crossbows
-ITEMMENU=153
-0x13FD=magic heavy crossbows
-ITEMMENU=154
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 152]
-{
-Magic=Bows
-0x13B2=magic bow of ruin
-ADDITEM=0x13b2
-0x13B2=magic bow of might
-ADDITEM=0x13b2
-0x13B2=magic bow of force
-ADDITEM=0x13b2
-0x13B2=magic bow of power
-ADDITEM=0x13b2
-0x13B2=magic bow of vanquishing
-ADDITEM=0x13b2
-0x13B2=Dante Deluxe
-ADDITEM=0x13b2
-<=Previous Menu
-ITEMMENU=151
-}
-
-[ITEMMENU 153]
-{
-Magic=Crossbows
-0x0F4F=magic crossbow of ruin
-ADDITEM=0x0f50
-0x0F4F=magic crossbow of might
-ADDITEM=0x0f4f
-0x0F4F=magic crossbow of force
-ADDITEM=0x0f4f
-0x0F4F=magic crossbow of power
-ADDITEM=0x0f4f
-0x0F4F=magic crossbow of vanquishing
-ADDITEM=0x0f4f
-<=Previous Menu
-ITEMMENU=151
-}
-
-[ITEMMENU 154]
-{
-Magic=Heavy Crossbows
-0x13FD=magic heavy crossbow of ruin
-ADDITEM=0x13fd
-0x13FD=magic heavy crossbow of might
-ADDITEM=0x13fd
-0x13FD=magic heavy crossbow of force
-ADDITEM=0x13fd
-0x13FD=magic heavy crossbow of power
-ADDITEM=0x13fd
-0x13FD=magic heavy crossbow of vanquishing
-ADDITEM=0x13fd
-<=Previous Menu
-ITEMMENU=151
-}
-
-[ITEMMENU 155]
-{
-Magic=Swords
-0x13B8=magic longswords
-ITEMMENU=156
-0x13BA=magic viking swords
-ITEMMENU=157
-0x0F5E=magic broad swords
-ITEMMENU=158
-0x13B6=magic scimitar
-ITEMMENU=159
-0x1440=magic cutlasses
-ITEMMENU=160
-0x13FF=magic katana
-ITEMMENU=161
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 156]
-{
-Magic=Longswords
-0x13b8=magic longsword of ruin
-ADDITEM=0x13b8
-0x13b8=magic longsword of might
-ADDITEM=0x13b8
-0x13b8=magic longsword of force
-ADDITEM=0x13b8
-0x13b8=magic longsword of power
-ADDITEM=0x13b8
-0x13b8=magic longsword of vanquishing
-ADDITEM=0x13b8
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 157]
-{
-Magic=Viking Swords
-0x13BA=magic viking sword of ruin
-ADDITEM=0x13ba
-0x13BA=magic viking sword of might
-ADDITEM=0x13ba
-0x13BA=magic viking sword of force
-ADDITEM=0x13ba
-0x13BA=magic viking sword of power
-ADDITEM=0x13ba
-0x13BA=magic viking sword of vanquishing
-ADDITEM=0x13ba
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 158]
-{
-Magic=Broad Swords
-0x0F5E=magic broad sword of ruin
-ADDITEM=0x0f5e
-0x0F5E=magic broad sword of might
-ADDITEM=0x0f5e
-0x0F5E=magic broad sword of force
-ADDITEM=0x0f5e
-0x0F5E=magic broad sword of power
-ADDITEM=0x0f5e
-0x0F5E=magic broad sword of vanquishing
-ADDITEM=0x0f5e
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 159]
-{
-Magic=Scimitars
-0x13B6=magic scimitar of ruin
-ADDITEM=0x13b6
-0x13B6=magic scimitar of might
-ADDITEM=0x13b6
-0x13B6=magic scimitar of force
-ADDITEM=0x13b6
-0x13B6=magic scimitar of power
-ADDITEM=0x13b6
-0x13B6=magic scimitar of vanquishing
-ADDITEM=0x13b6
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 160]
-{
-Magic=Cutlass
-0x1440=magic cutlass of ruin
-ADDITEM=0x1440
-0x1440=magic cutlass of might
-ADDITEM=0x1440
-0x1440=magic cutlass of force
-ADDITEM=0x1440
-0x1440=magic cutlass of power
-ADDITEM=0x1440
-0x1440=magic cutlass of vanquishing
-ADDITEM=0x1440
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 161]
-{
-Magic=Katanas
-0x13FF=magic katana of ruin
-ADDITEM=0x13ff
-0x13FF=magic katana of might
-ADDITEM=0x13ff
-0x13FF=magic katana of force
-ADDITEM=0x13ff
-0x13FF=magic katana of power
-ADDITEM=0x13ff
-0x13FF=magic katana of vanquishing
-ADDITEM=0x13ff
-<=Previous Menu
-ITEMMENU=155
-}
-
-[ITEMMENU 162]
-{
-Magic=Axes
-0x0F47=magic hatchets
-ITEMMENU=163
-0x0F45=magic executioner's axes
-ITEMMENU=164
-0x0F49=magic axes
-ITEMMENU=165
-0x0F4B=magic double axes
-ITEMMENU=166
-0x13FB=magic large battle axes
-ITEMMENU=167
-0x0E85=magic pick axes
-ITEMMENU=168
-0x13B0=magic war axes
-ITEMMENU=169
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 163]
-{
-Magic=Hatchets
-0x0F47=magic hatchets of ruin
-ADDITEM=0x0f47
-0x0F47=magic hatchets of might
-ADDITEM=0x0f47
-0x0F47=magic hatchets of force
-ADDITEM=0x0f47
-0x0F47=magic hatchets of power
-ADDITEM=0x0f47
-0x0F47=magic hatchets of vanquishing
-ADDITEM=0x0f47
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 164]
-{
-Magic=Executioner's Axes
-0x0F45=magic executioner's axe of ruin
-ADDITEM=0x0f45
-0x0F45=magic executioner's axe of might
-ADDITEM=0x0f45
-0x0F45=magic executioner's axe of force
-ADDITEM=0x0f45
-0x0F45=magic executioner's axe of power
-ADDITEM=0x0f45
-0x0F45=magic executioner's axe of vanquishing
-ADDITEM=0x0f45
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 165]
-{
-Magic=Axes
-0x0F49=magic axe of ruin
-ADDITEM=0x0f49
-0x0F49=magic axe of might
-ADDITEM=0x0f49
-0x0F49=magic axe of force
-ADDITEM=0x0f49
-0x0F49=magic axe of power
-ADDITEM=0x0f49
-0x0F49=magic axe of vanquishing
-ADDITEM=0x0f49
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 166]
-{
-Magic=Double Axes
-0x0F4B=magic double axe of ruin
-ADDITEM=0x0f4b
-0x0F4B=magic double axe of might
-ADDITEM=0x0f4b
-0x0F4B=magic double axe of force
-ADDITEM=0x0f4b
-0x0F4B=magic double axe of power
-ADDITEM=0x0f4b
-0x0F4B=magic double axe of vanquishing
-ADDITEM=0x0f4b
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 167]
-{
-Magic=Large Battle Axes
-0x13FB=magic large battle axe of ruin
-ADDITEM=0x13fb
-0x13FB=magic large battle axe of might
-ADDITEM=0x13fb
-0x13FB=magic large battle axe of force
-ADDITEM=0x13fb
-0x13FB=magic large battle axe of power
-ADDITEM=0x13fb
-0x13FB=magic large battle axe of vanquishing
-ADDITEM=0x13fb
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 168]
-{
-Magic=Pick Axes
-0x0E85=magic pick axe of ruin
-ADDITEM=0x0e85
-0x0E85=magic pick axe of might
-ADDITEM=0x0e85
-0x0E85=magic pick axe of force
-ADDITEM=0x0e85
-0x0E85=magic pick axe of power
-ADDITEM=0x0e85
-0x0E85=magic pick axe of vanquishing
-ADDITEM=0x0e85
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 169]
-{
-Magic=War Axes
-0x13B0=magic war axe of ruin
-ADDITEM=0x13b0
-0x13B0=magic war axe of might
-ADDITEM=0x13b0
-0x13B0=magic war axe of force
-ADDITEM=0x13b0
-0x13B0=magic war axe of power
-ADDITEM=0x13b0
-0x13B0=magic war axe of vanquishing
-ADDITEM=0x13b0
-<=Previous Menu
-ITEMMENU=162
-}
-
-[ITEMMENU 170]
-{
-Magic=Knives & Daggers
-0x13F7=magic butcher's knives
-ITEMMENU=171
-0x0EC4=magic skinning knives
-ITEMMENU=172
-0x0EC2=magic cleavers
-ITEMMENU=173
-0x0F51=magic daggers
-ITEMMENU=174
-0x1400=magic kryss
-ITEMMENU=175
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 171]
-{
-Magic=Butcher's Knives
-0x13F7=magic butcher knife of ruin
-ADDITEM=0x13f7
-0x13F7=magic butcher knife of might
-ADDITEM=0x13f7
-0x13F7=magic butcher knife of force
-ADDITEM=0x13f7
-0x13F7=magic butcher knife of power
-ADDITEM=0x13f7
-0x13F7=magic butcher knife of vanquishing
-ADDITEM=0x13f7
-<=Previous Menu
-ITEMMENU=170
-}
-
-[ITEMMENU 172]
-{
-Magic=Skinning Knives
-0x0EC4=magic skinning knife of ruin
-ADDITEM=0x0ec4
-0x0EC4=magic skinning knife of might
-ADDITEM=0x0ec4
-0x0EC4=magic skinning knife of force
-ADDITEM=0x0ec4
-0x0EC4=magic skinning knife of power
-ADDITEM=0x0ec4
-0x0EC4=magic skinning knife of vanquishing
-ADDITEM=0x0ec4
-<=Previous Menu
-ITEMMENU=170
-}
-
-[ITEMMENU 173]
-{
-Magic=Cleavers
-0x0EC2=magic cleaver of ruin
-ADDITEM=0x0ec2
-0x0EC2=magic cleaver of might
-ADDITEM=0x0ec2
-0x0EC2=magic cleaver of force
-ADDITEM=0x0ec2
-0x0EC2=magic cleaver of power
-ADDITEM=0x0ec2
-0x0EC2=magic cleaver of vanquishing
-ADDITEM=0x0ec2
-<=Previous Menu
-ITEMMENU=170
-}
-
-[ITEMMENU 174]
-{
-Magic=Daggers
-0x0F51=magic dagger of ruin
-ADDITEM=0x0f51
-0x0F51=magic dagger of might
-ADDITEM=0x0f51
-0x0F51=magic dagger of force
-ADDITEM=0x0f51
-0x0F51=magic dagger of power
-ADDITEM=0x0f51
-0x0F51=magic dagger of vanquishing
-ADDITEM=0x0f51
-<=Previous Menu
-ITEMMENU=170
-}
-
-[ITEMMENU 175]
-{
-Magic=Kryss
-0x1400=magic kryss of ruin
-ADDITEM=0x1400
-0x1400=magic kryss of might
-ADDITEM=0x1400
-0x1400=magic kryss of force
-ADDITEM=0x1400
-0x1400=magic kryss of power
-ADDITEM=0x1400
-0x1400=magic kryss of vanquishing
-ADDITEM=0x1400
-<=Previous Menu
-ITEMMENU=170
-}
-
-[ITEMMENU 176]
-{
-Magic=Spears & Forks
-0x0E87=magic pitch forks
-ITEMMENU=177
-0x0F62=magic spears
-ITEMMENU=178
-0x1405=magic war forks
-ITEMMENU=179
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 177]
-{
-Magic=Pitch Forks
-0x0E87=magic pitch fork of ruin
-ADDITEM=0x0e87
-0x0E87=magic pitch fork of might
-ADDITEM=0x0e87
-0x0E87=magic pitch fork of force
-ADDITEM=0x0e87
-0x0E87=magic pitch fork of power
-ADDITEM=0x0e87
-0x0E87=magic pitch fork of vanquishing
-ADDITEM=0x0e87
-<=Previous Menu
-ITEMMENU=176
-}
-
-[ITEMMENU 178]
-{
-Magic=Spears
-0x0F62=magic spear of ruin
-ADDITEM=0x0f62
-0x0F62=magic spear of might
-ADDITEM=0x0f62
-0x0F62=magic spear of force
-ADDITEM=0x0f62
-0x0F62=magic spear of power
-ADDITEM=0x0f62
-0x0F62=magic spear of vanquishing
-ADDITEM=0x0f62
-<=Previous Menu
-ITEMMENU=176
-}
-
-[ITEMMENU 179]
-{
-Magic=War Forks
-0x1405=magic war fork of ruin
-ADDITEM=0x1405
-0x1405=magic war fork of might
-ADDITEM=0x1405
-0x1405=magic war fork of force
-ADDITEM=0x1405
-0x1405=magic war fork of power
-ADDITEM=0x1405
-0x1405=magic war fork of vanquishing
-ADDITEM=0x1405
-<=Previous Menu
-ITEMMENU=176
-}
-
-[ITEMMENU 180]
-{
-Magic=Maces and Hammers
-0x13B4=magic clubs
-ITEMMENU=181
-0x143C=magic hammer picks
-ITEMMENU=182
-0x0F5C=magic maces
-ITEMMENU=183
-0x143A=magic mauls
-ITEMMENU=184
-0x1438=magic war hammers
-ITEMMENU=185
-0x1406=magic war maces
-ITEMMENU=186
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 181]
-{
-Magic=Clubs
-0x13B4=magic club of ruin
-ADDITEM=0x13b4
-0x13B4=magic club of might
-ADDITEM=0x13b4
-0x13B4=magic club of force
-ADDITEM=0x13b4
-0x13B4=magic club of power
-ADDITEM=0x13b4
-0x13B4=magic club of vanquishing
-ADDITEM=0x13b4
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 182]
-{
-Magic=Hammer Picks
-0x143C=magic hammer pick of ruin
-ADDITEM=0x143c
-0x143C=magic hammer pick of might
-ADDITEM=0x143c
-0x143C=magic hammer pick of force
-ADDITEM=0x143c
-0x143C=magic hammer pick of power
-ADDITEM=0x143c
-0x143C=magic hammer pick of vanquishing
-ADDITEM=0x143c
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 183]
-{
-Magic=Maces
-0x0F5C=magic mace of ruin
-ADDITEM=0x0f5c
-0x0F5C=magic mace of might
-ADDITEM=0x0f5c
-0x0F5C=magic mace of force
-ADDITEM=0x0f5c
-0x0F5C=magic mace of power
-ADDITEM=0x0f5c
-0x0F5C=magic mace of vanquishing
-ADDITEM=0x0f5c
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 184]
-{
-Magic=Mauls
-0x143A=magic maul of ruin
-ADDITEM=0x143a
-0x143A=magic maul of might
-ADDITEM=0x143a
-0x143A=magic maul of force
-ADDITEM=0x143a
-0x143A=magic maul of power
-ADDITEM=0x143a
-0x143A=magic maul of vanquishing
-ADDITEM=0x143a
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 185]
-{
-Magic=War Hammers
-0x1438=magic war hammer of ruin
-ADDITEM=0x1438
-0x1438=magic war hammer of might
-ADDITEM=0x1438
-0x1438=magic war hammer of force
-ADDITEM=0x1438
-0x1438=magic war hammer of power
-ADDITEM=0x1438
-0x1438=magic war hammer of vanquishing
-ADDITEM=0x1438
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 186]
-{
-Magic=War Maces
-0x1406=magic war mace of ruin
-ADDITEM=0x1406
-0x1406=magic war mace of might
-ADDITEM=0x1406
-0x1406=magic war mace of force
-ADDITEM=0x1406
-0x1406=magic war mace of power
-ADDITEM=0x1406
-0x1406=magic war mace of vanquishing
-ADDITEM=0x1406
-<=Previous Menu
-ITEMMENU=180
-}
-
-[ITEMMENU 187]
-{
-Magic=Pole Arms
-0x0F4D=magic bardiches
-ITEMMENU=308
-0x143E=magic halberds
-ITEMMENU=189
-<=Previous Menu
-ITEMMENU=150
-}
-
-[ITEMMENU 188]
-{
-Magic=Bardiches
-0x0F4D=magic bardiche of ruin
-ADDITEM=0x0f4d
-0x0F4D=magic bardiche of might
-ADDITEM=0x0f4d
-0x0F4D=magic bardiche of force
-ADDITEM=0x0f4d
-0x0F4D=magic bardiche of power
-ADDITEM=0x0f4d
-0x0F4D=magic bardiche of vanquishing
-ADDITEM=0x0f4d
-<=Previous Menu
-ITEMMENU=187
-}
-
-[ITEMMENU 189]
-{
-Magic=Halberds
-0x143E=magic halberd of ruin
-ADDITEM=0x143e
-0x143E=magic halberd of might
-ADDITEM=0x143e
-0x143E=magic halberd of force
-ADDITEM=0x143e
-0x143E=magic halberd of power
-ADDITEM=0x143e
-0x143E=magic halberd of vanquishing
-ADDITEM=0x143e
-<=Previous Menu
-ITEMMENU=187
-}
-
-[ITEMMENU 190]
-{
-Enchanted=Weapons
-<=Staff Of Summoning Demon
-ADDITEM=0x0df0
-<=Staff Of Summoning Hero
-ADDITEM=0x0df2
-<=Viking Of Flamestrike
-ADDITEM=0x13ba
-<=Viking Of Feeblemind
-ADDITEM=0x13ba
-<=Viking Of Mana Drain
-ADDITEM=0x13ba
-<=Viking Of Lightning
-ADDITEM=0x13ba
-<=Viking Of Energy Bolt
-ADDITEM=0x13ba
-<=Viking Of Invisibility
-ADDITEM=0x13ba
-<=Viking Of Resurrection
-ADDITEM=0x13ba
-<=Long Sword Of Flamestrike
-ADDITEM=0x13b8
-<=Long Sword Of Feeblemind
-ADDITEM=0x13b8
-<=Long Sword Of Mana Drain
-ADDITEM=0x13b8
-<=Long Sword Of Lightning
-ADDITEM=0x13b8
-<=Long Sword Of Energy Bolt
-ADDITEM=0x13b8
-<=Long Sword Of Invisibility
-ADDITEM=0x13b8
-<=Long Sword Of Resurrection
-ADDITEM=0x13b8
-<=Previous Menu
-ITEMMENU=140
-}
-
-[ITEMMENU 191]
-{
-Enchanted=Weapons 2
-<=Scimitar Of Flamestrike
-ADDITEM=0x13b6
-<=Scimitar Of Feeblemind
-ADDITEM=0x13b6
-<=Scimitar Of Mana Drain
-ADDITEM=0x13b6
-<=Scimitar Of Lightning
-ADDITEM=0x13b6
-<=Scimitar Of Energy Bolt
-ADDITEM=0x13b6
-<=Scimitar Of Invisibility
-ADDITEM=0x13b6
-<=Scimitar Of Resurrection
-ADDITEM=0x13b6
-<=Broad Sword Of Flamestrike
-ADDITEM=0x0f5e
-<=Broad Sword Of Feeblemind
-ADDITEM=0x0f5e
-<=Broad Sword Of Mana Drain
-ADDITEM=0x0f5e
-<=Broad Sword Of Lightning
-ADDITEM=0x0f5e
-<=Broad Sword Of Energy Bolt
-ADDITEM=0x0f5e
-<=Broad Sword Of Invisibility
-ADDITEM=0x0f5e
-<=Broad Sword Of Resurrection
-ADDITEM=0x0f5e
-<=Previous Menu
-ITEMMENU=140
-}
-
-[ITEMMENU 192]
-{
-Clothes=& Footwear
-0x0FA9=Dyes
-ADDITEM=0x0fa9
-0x0FAB=Dye Vat
-ADDITEM=0x0fab
-0x170B=Boots
-ITEMMENU=193
-0x1713=Hats
-ITEMMENU=194
-0x1515=Shirts & Robes
-ITEMMENU=195
-0x152E=Pants
-ITEMMENU=196
-0x153B=Misc.
-ITEMMENU=197
-0x1547=Masks
-ITEMMENU=198
-<=Previous Menu
-ITEMMENU=100
-}
-
-[ITEMMENU 193]
-{
-Boots
-0x170B=Boots
-ADDITEM=0x170B
-0x170C=Boots
-ADDITEM=0x170C
-0x170D=Sandals
-ADDITEM=0x170D
-0x170E=Sandals
-ADDITEM=0x170E
-0x170F=Shoes
-ADDITEM=0x170F
-0x1710=Shoes
-ADDITEM=0x1710
-0x1711=Thigh boots
-ADDITEM=0x1711
-0x1712=Thigh boots
-ADDITEM=0x1712
-0x2655=Jester Shoes
-ADDITEM=0x2655
-0x2656=Jester Shoes
-ADDITEM=0x2656
-0x26AF=Arcane Thigh Boots
-ADDITEM=0x26AF
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 194]
-{
-Hats
-0x1713=Floppy hat
-ADDITEM=0x1713
-0x1714=Wide-brim hat
-ADDITEM=0x1714
-0x1715=Cap
-ADDITEM=0x1715
-0x1716=Tall straw hat
-ADDITEM=0x1716
-0x1717=Straw hat
-ADDITEM=0x1717
-0x1718=Wizard's hat
-ADDITEM=0x1718
-0x1719=Bonnet
-ADDITEM=0x1719
-0x171A=Feathered hat
-ADDITEM=0x171a
-0x171B=Tricorne hat
-ADDITEM=0x171b
-0x171C=Jester hat
-ADDITEM=0x171c
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 195]
-{
-Shirts=& Robes
-0x1515=Cape
-ADDITEM=0x1515
-0x1EFD=Fancy shirt
-ADDITEM=0x1efd
-0x1517=Plain shirt
-ADDITEM=0x1517
-0x1FFD=Surcoat
-ADDITEM=0x1ffd
-0x1FA1=Tunic
-ADDITEM=0x1fa1
-0x1F03=Robe
-ADDITEM=0x1f03
-0x1F9F=Fancy suit
-ADDITEM=0x1f9f
-0x1F7B=Doublet
-ADDITEM=0x1f7b
-0x1EFF=Fancy Dress
-ADDITEM=0x1eff
-0x1F01=Plain Dress
-ADDITEM=0x1f01
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 196]
-{
-Pants
-0x1516=Skirt
-ADDITEM=0x1516
-0x152E=Short pants
-ADDITEM=0x152e
-0x1537=Kilt
-ADDITEM=0x1537
-0x1539=Long pants
-ADDITEM=0x1539
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 197]
-{
-Misc.
-0x153B=Half apron
-ADDITEM=0x153b
-0x153D=Full apron
-ADDITEM=0x153d
-0x1540=Bandana
-ADDITEM=0x1540
-0x1541=Body sash
-ADDITEM=0x1541
-0x1544=Skullcap
-ADDITEM=0x1544
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 198]
-{
-Masks
-0x1547=Deer mask
-ADDITEM=0x1547
-0x1545=Bear mask
-ADDITEM=0x1545
-0x1F0B=Orc helm
-ADDITEM=0x1f0b
-0x141C=Orc mask
-ADDITEM=0x141c
-0x1549=Tribal mask
-ADDITEM=0x1549
-0x154B=Voodoo mask
-ADDITEM=0x154b
-0x1546=Polar bear mask
-ADDITEM=0x1546
-<=Previous Menu
-ITEMMENU=192
-}
-
-[ITEMMENU 200]
-{
-Deeds=Menu
-<=Old House Deeds
-ITEMMENU=201
-<=New House Deeds
-ITEMMENU=202
-<=Misc Deeds
-ITEMMENU=203
-<=Boat Deeds
-ITEMMENU=204
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 201]
-{
-Old=House Deeds
-<=Small Stone & Plaster House
-ADDITEM=smallsnphousedeed
-0x14F0=Small Stone House
-ADDITEM=smallstonehousedeed
-0x14F0=Small Brick House
-ADDITEM=smallbrickhousedeed
-0x14F0=Small Wood House
-ADDITEM=smallwoodhousedeed
-0x14F0=Small Wood & Plaster House
-ADDITEM=smallwnphousedeed
-0x14F0=Small Wood House (Straw Roof)
-ADDITEM=smallwoodstrawhousedeed
-0x14F0=Blue Tent
-ADDITEM=bluetentdeed
-0x14F0=Green Tent
-ADDITEM=greententdeed
-0x14F0=3 Room Brick House
-ADDITEM=3roombrickhousedeed
-0x14F0=2 Story Wood & Plaster House
-ADDITEM=2storywnphousedeed
-0x14F0=2 Story Stone & Plaster House
-ADDITEM=2storysnphousedeed
-0x14F0=Stone Tower
-ADDITEM=towerdeed
-0x14F0=Stone Keep
-ADDITEM=keepdeed
-0x14F0=Castle
-ADDITEM=castledeed
-0x14F0=Large Smithy
-ADDITEM=largesmithydeed
-<=Previous Menu
-ITEMMENU=200
-}
-
-[ITEMMENU 202]
-{
-New=House Deeds
-<=Small Tower
-ADDITEM=smalltowerdeed
-0x14F0=Small Marble Shop
-ADDITEM=smallmarbleshopdeed
-0x14F0=Small Stone Shop
-ADDITEM=smallstoneshopdeed
-0x14F0=2 Story Villa
-ADDITEM=2storyvilladeed
-0x14F0=Sandstone Patio House
-ADDITEM=sandstonepatiohousedeed
-0x14F0=2 Story Log Cabin
-ADDITEM=2storylogcabindeed
-0x14F0=Large Marble Patio House
-ADDITEM=largemarblepatiohousedeed
-<=Previous Menu
-ITEMMENU=200
-}
-
-[ITEMMENU 203]
-{
-Misc=Deeds
-<=Townstone Deed
-ADDITEM=townstonedeed
-0x14f0=Guild Deed
-ADDITEM=guildstonedeed
-0x14f0=Rename Deed
-ADDITEM=0x14f0
-0x14f0=Pentagram Deed
-ADDITEM=pentagramdeed
-0x14f0=Skull Candle Deed
-ADDITEM=0x14f0
-<=Previous Menu
-ITEMMENU=200
-}
-
-[ITEMMENU 204]
-{
-Boat=Deeds
-<=Small Boat
-ADDITEM=smallshipdeed
-0x14f0=Small Dragon Ship
-ADDITEM=smalldragonshipdeed
-0x14f0=Medium Boat
-ADDITEM=mediumshipdeed
-0x14f0=Medium Dragon Ship
-ADDITEM=mediumdragonshipdeed
-0x14f0=Large Boat
-ADDITEM=largeshipdeed
-0x14f0=Large Dragon Ship
-ADDITEM=largedragonshipdeed
-<=Previous Menu
-ITEMMENU=200
-}
-
-[ITEMMENU 210]
-{
-NPC=Menu
-<=Monsters
-ITEMMENU=211
-<=Animals
-ITEMMENU=223
-<=Merchants
-ITEMMENU=226
-<=People
-ITEMMENU=231
-<=Racial Merchants
-ITEMMENU=666
-<=Racial Creatures
-ITEMMENU=671
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 211]
-{
-Monsters
-<=T2A Monsters
-ITEMMENU=212
-20D3=Deamon/Elementals
-ITEMMENU=216
-0x20D6=Dragon-Kin
-ITEMMENU=217
-0x20E0=Orc Kin
-ITEMMENU=218
-0x20F8=Undead Creatures
-ITEMMENU=219
-0x20E4=Other Monsters A-L
-ITEMMENU=220
-0x20E4=Other Monsters M-Z
-ITEMMENU=221
-<=New Monsters
-ITEMMENU=222
-<=Previous Menu
-ITEMMENU=210
-}
-
-[ITEMMENU 212]
-{
-T2A=Monster Menu
-<=T2A List 1
-ITEMMENU=213
-0x20DF=T2A List 2
-ITEMMENU=214
-0x20DF=T2A List 3
-ITEMMENU=215
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 213]
-{
-T2A=Monster List 1
-<=Kraken
-NPC=kraken
-0x004B=Titan
-NPC=titan
-0x0050=Giant Toad
-NPC=bigtoad
-0x0051=Bullfrog
-NPC=bullfrog
-0x004C=Cyclopedian Warrior
-NPC=cyclops
-0x0003=Mummy
-NPC=mummy
-0x000D=Snow Elemental
-NPC=snowele
-0x0034=Ice Snake
-NPC=icesnake
-0x004B=Ice Titan
-NPC=icetitan
-0x0035=Frost Troll
-NPC=frosttroll
-0x0008=Swamp Tentacle
-NPC=swamptentacle
-0x0047=Terathen Drone
-NPC=teradrone
-0x0048=Terathen Warrior
-NPC=terawarrior
-0x0048=Terathen Avenger
-NPC=teraavenger
-0x0046=Terathen Matriarche
-NPC=teramatriarch
-0x001E=Stone Harpy
-NPC=stoneharpy
-0x0004=Stone Gargoyle
-NPC=stonegargoyle
-<=Previous Menu
-ITEMMENU=212
-}
-
-[ITEMMENU 214]
-{
-T2A=Monster List 2
-<=Imp
-NPC=imp
-0x0009=Ice Fiend
-NPC=icefiend
-0x0056=Ophidian Warrior
-NPC=ophwarrior
-0x0056=Ophidian Enforcer
-NPC=ophenforcer
-0x0056=Ophidian Avenger
-NPC=ophavenger
-0x0055=Ophidian Apprentice
-NPC=ophapprentice
-0x0055=Ophidian Shaman
-NPC=ophshaman
-0x0057=Ophidian Matriarche
-NPC=ophmatriarch
-0x00CE=Lava Lizard
-NPC=lavalizard
-0x00DA=Frenzied Ostard
-NPC=frenziedostard
-0x00DB=Forest Ostard
-NPC=forestostard
-0x00D2=Desert Ostard
-NPC=desertostard
-0x00C8=Nightmare
-NPC=nightmare
-0x000D=Efreet
-NPC=efreet
-0x0033=Frost Ooze
-NPC=frostooze
-<=Previous Menu
-ITEMMENU=212
-}
-
-[ITEMMENU 215]
-{
-T2A=Monster List 3
-<=Elder Gazer
-NPC=eldergazer
-0x00C9=Hellcat
-NPC=hellcat
-0x000E=Ice Elemental
-NPC=iceele
-0x0056=Ophidian Knight
-NPC=ophknight
-0x0005=Phoenix
-NPC=phoenix
-0x0015=Ice Serpent
-NPC=iceserpent
-0x0015=Lava Serpent
-NPC=lavaserpent
-0x001C=Frost Spider
-NPC=frostspider
-<=Previous Menu
-ITEMMENU=212
-}
-
-[ITEMMENU 216]
-{
-Deamon/Elementals
-<=an air elemental
-NPC=airele
-0x210B=a blood elemental
-NPC=bloodele
-0x20D3=the Collector of Souls
-NPC=cos
-0x20D3=a daemon
-NPC=daemon
-0x20D3=a daemon W/Sword
-NPC=daemon
-0x20D7=an earth elemental
-NPC=earthele
-0x20F3=a fire elemental
-NPC=firele
-0x20D3=the Lord of the Abyss
-NPC=lordofabyss
-0x20ED=a poison elemental
-NPC=poisonele
-0x20D3=the Slayer
-NPC=slayer
-0x210B=a water elemental
-NPC=waterele
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 217]
-{
-Dragon-Kin
-<=a Wyvern (brown)
-NPC=wyvern
-<=a Drake (red)
-NPC=reddrake
-<=a Drake (brown)
-NPC=graydrake
-<=a Dragon (brown)
-NPC=graydragon
-<=a Dragon (red)
-NPC=reddragon
-<=an ancient Wyrm (brown)
-NPC=ancientwyrm
-<=an ancient Wyrm (brown)
-NPC=ancientwyrm
-<=an ancient Wyrm (red)
-NPC=ancientwyrm
-<=a Dragon (brown)
-NPC=graydragon
-<=a Drake (brown)
-NPC=graydrake
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 218]
-{
-Orc=Kin
-<=an ettin
-NPC=ettin
-0x20D8=an ettin with axe
-NPC=hammerettin
-0x20E0=an orc
-NPC=orc
-0x20E0=an orc with club
-NPC=cluborc
-0x20E0=an orcish mage
-NPC=orcmage
-0x20E0=an orcish captian
-NPC=orccaptain
-0x20E0=an orcish lord
-NPC=orclord
-0x20DF=an ogre
-NPC=ogre
-0x20DF=an ogre lord
-NPC=ogrelord
-0x20E9=a troll
-NPC=axetroll
-0x20E9=a troll 2
-NPC=troll
-0x20E9=a troll 3
-NPC=hammertroll
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 219]
-{
-Undead=Creatures
-<=a burning skeleton
-NPC=burning-skeleton
-<=a dracula
-NPC=dracula
-<=a frankenstien
-NPC=m-frankenstien
-0x210A=a headless
-NPC=headless
-0x210A=a headless mage
-NPC=zombie-elder
-0x20F8=a lich
-NPC=lich
-0x20F8=a lich lord
-NPC=lichlord
-0x20EC=a rotting corpse
-NPC=rotting-corpse
-0x20E7=a skeletal knight
-NPC=boneknight
-0x20E7=a skeletal mage
-NPC=bonemage
-0x20E7=a skeleton
-NPC=skeleton
-0x20E7=a skeleton with axe
-NPC=boneaxeman
-0x2109=a spectre
-NPC=spectre
-<=a vampire (he)
-NPC=m-vampire
-<=a vampire (she)
-NPC=f-vampire
-0x20F8=a warlock
-NPC=warlock
-0x2109=a wraith
-NPC=wraith
-0x20EC=a zombie
-NPC=zombie
-0x20EC=a zombie elder
-NPC=headless-mage
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 220]
-{
-Other=Monsters A-L
-<=a corpser
-NPC=corpser
-0x20D9=a gargoyle
-NPC=gargoyle
-0x20F4=a gazer
-NPC=gazer
-0x20d0=a giant rat
-NPC=bigrat
-0x20E4=a giant scorpion
-NPC=scorpion
-0x20FE=a giant serpent
-NPC=bigsnake
-0x20FD=a giant spider
-NPC=spider
-0x20FD=a dark spider
-NPC=spider
-0x20DC=a harpy
-NPC=harpy
-0x20DC=a harpy hen
-NPC=harpyhen
-<=ice giant
-NPC=ice-giant
-0x20DE=a lizardman
-NPC=lizardman
-0x20DE=a lizardman with spear
-NPC=spearlizardman
-0x20DE=a lizardman with hammer
-NPC=macelizardman
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 221]
-{
-Other=Monsters M-Z
-<=a mongbat
-NPC=mongbat
-0x20E3=a ratman
-NPC=ratman
-0x20E3=a ratman with club
-NPC=axeratman
-0x20E3=a ratman with sword
-NPC=swordratman
-0x20E3=a ratman mage
-NPC=ratman-mage
-0x20FA=a reaper
-NPC=reaper
-0x2123=a sewer rat
-NPC=sewerrat
-0x20E8=a slime
-NPC=slime
-0x20FC=a snake
-NPC=snake
-0x2100=a wisp
-NPC=wisp
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 222]
-{
-New=Monsters
-<=a Fire Bat
-NPC=fire-bat
-<=a Demon Dog
-NPC=demon-dog
-<=a Poldergueist
-NPC=poltergeist
-<=a Poldergueist Lord
-NPC=poltergeist-lord
-<=a Savage
-NPC=m-savage
-<=a Savage
-NPC=f-savage
-<=a Savage Shaman
-NPC=m-savage-shaman
-<=a Savage Chief
-NPC=m-savage-chief
-<=a Bloodknight
-NPC=m-bloodknight
-<=Previous Menu
-ITEMMENU=211
-}
-
-[ITEMMENU 223]
-{
-Animals
-<=Animals I
-ITEMMENU=224
-0x20D1=Animals II
-ITEMMENU=225
-<=Previous Menu
-ITEMMENU=210
-}
-
-[ITEMMENU 224]
-{
-Animals=I
-<=Horse 1
-NPC=brownhorse
-0x211F=Horse 2
-NPC=grayhorse
-0x2124=Horse 3
-NPC=horse
-0x2121=Horse 4
-NPC=darkhorse
-0x20DB=a grizzly bear
-NPC=grizbear
-0x20F5=a gorilla
-NPC=gorilla
-0x20CF=a brown bear
-NPC=bear
-0x20D1=a chicken
-NPC=chicken
-0x20D4=a deer
-NPC=hind
-0x20D5=a dog
-NPC=dog
-0x20DA=an alligator
-NPC=alligator
-0x20E1=a polar bear
-NPC=polarbear
-<=Previous Menu
-ITEMMENU=223
-}
-
-[ITEMMENU 225]
-{
-Animals=II
-<=a rabbit
-NPC=rabbit
-0x20EB=a sheep
-NPC=sheep
-0x20EE=a bird
-NPC=bird
-0x211D=an eagle
-NPC=eagle
-0x20F6=a llama
-NPC=llama
-0x2101=a pig
-NPC=pig
-0x2102=a panther
-NPC=panther
-0x2103=a cow
-NPC=cow
-0x2108=a goat
-NPC=goat
-0x211B=a cat
-NPC=cat
-0x2126=a pack horse
-NPC=packhorse
-0x2127=a pack llama
-NPC=packllama
-0x2128=a mountain goat
-NPC=goat
-0x2129=a black sheep
-NPC=sheep
-<=Previous Menu
-ITEMMENU=223
-}
-
-[ITEMMENU 226]
-{
-Shopkeepers
-<=Merchants - Males - A-G
-ITEMMENU=227
-0x2106=Merchants - Males - H-Z
-ITEMMENU=228
-0x2107=Merchants - Females - A-G
-ITEMMENU=229
-0x2107=Merchants - Females - H-Z
-ITEMMENU=230
-<=Previous Menu
-ITEMMENU=210
-}
-
-[ITEMMENU 227]
-{
-Merchants=- Males - A-G
-<=Alchemist
-NPC=m-alchemist
-0x2035=Animal Trainer
-NPC=m-animaltrainer
-0x2031=Architect
-NPC=m-architect
-0x200A=Armorer
-NPC=m-armorer
-0x200B=Baker
-NPC=m-baker
-0x0C0B=Banker
-NPC=m-banker
-0x2106=Bard
-NPC=m-bard
-<=The BeeKeeper
-NPC=m-beekeeper
-0x2106=Blacksmith
-NPC=m-blacksmith
-0x200C=Bowyer
-NPC=m-bowyer
-0x200D=Butcher
-NPC=m-butcher
-0x2020=Carpenter
-NPC=m-carpenter
-0x202A=Cobbler
-NPC=m-cobbler
-0x0190=Cook
-NPC=m-cook
-0x2022=Farmer
-NPC=m-farmer
-8414=Fisherman
-NPC=m-fisher
-<=Previous Menu
-ITEMMENU=226
-}
-
-[ITEMMENU 228]
-{
-Merchants=- Males - H-Z
-<=Healer (wandering)
-NPC=m-whealer
-0x200F=Healer
-NPC=m-healer
-0x2034=Herbalist
-NPC=m-herbalist
-0x2010=Innkeeper
-NPC=m-innkeeper
-0x2012=Jeweler
-NPC=m-jeweler
-0x2013=Leather Worker
-NPC=m-leatherworker
-0x2014=Mage
-NPC=m-mage
-0x202D=Miner
-NPC=m-miner
-0x2016=Provisioner
-NPC=m-provisioner
-0x201A=Shipwright
-NPC=m-shipwright
-0x201A=Spinner
-NPC=m-spinner
-0x2019=Tailor
-NPC=m-tailor
-0x2021=Tinker
-NPC=m-tinker
-0x201F=Weaponsmith
-NPC=m-weaponsmith
-<=Previous Menu
-ITEMMENU=226
-}
-
-[ITEMMENU 229]
-{
-Merchants=- Females - A-G
-<=Alchemist
-NPC=f-alchemist
-0x2036=Animal Trainer
-NPC=f-animaltrainer
-0x2031=Architect
-NPC=f-architect
-0x200A=Armorer
-NPC=f-armorer
-0x200B=Baker
-NPC=f-baker
-0x2107=Banker
-NPC=f-banker
-0x2107=Bard
-NPC=f-bard
-<=The Beekeeper
-NPC=f-beekeeper
-0x2107=Blacksmith
-NPC=f-blacksmith
-0x200C=Bowyer
-NPC=f-bowyer
-0x200D=Butcher
-NPC=f-butcher
-0x2020=Carpenter
-NPC=f-carpenter
-0x202A=Cobbler
-NPC=f-cobbler
-0x0191=Cook
-NPC=f-cook
-0x2024=Farmer
-NPC=f-farmer
-8415=Fisherlady
-NPC=f-fisher
-<=Previous Menu
-ITEMMENU=226
-}
-
-[ITEMMENU 230]
-{
-Merchants=- Females - H-Z
-<=Healer (wandering)
-NPC=f-whealer
-0x200F=Healer
-NPC=f-healer
-0x2034=Herbalist
-NPC=f-herbalist
-0x2010=Innkeeper
-NPC=f-innkeeper
-0x2012=Jeweler
-NPC=f-jeweler
-0x2013=Leather Worker
-NPC=f-leatherworker
-0x2014=Mage
-NPC=f-mage
-0x202D=Miner
-NPC=f-miner
-0x2016=Provisoner
-NPC=f-provisioner
-0x201A=shipwright
-NPC=f-shipwright
-0x201A=Spinner
-NPC=f-spinner
-0x2019=Tailor
-NPC=f-tailor
-0x2021=Tinker
-NPC=f-tinker
-0x201F=Weaponsmith
-NPC=f-weaponsmith
-<=Previous Menu
-ITEMMENU=226
-}
-
-[ITEMMENU 231]
-{
-People
-<=People - Males - A-G
-ITEMMENU=232
-0x2106=People - Males - H-Z
-ITEMMENU=233
-0x2107=People - Female - A-G
-ITEMMENU=234
-0x2107=People - Female - H-Z
-ITEMMENU=235
-<=Elves
-ITEMMENU=236
-<=Deacon Jones
-NPC=deaconjones
-<=Previous Menu
-ITEMMENU=210
-}
-
-[ITEMMENU 232]
-{
-People=- Males - A-G
-<=Artist
-NPC=m-artist
-0x20CD=Basic Male
-NPC=male
-0x202B=Beggar
-NPC=m-beggar
-0x2030=Brigand
-NPC=m-brigand
-<=Cobbler
-NPC=235
-0x2106=Cultist
-NPC=m-cultist
-0x2106=Fighter
-NPC=m-fighter
-<=Game Master
-NPC=34
-0x200E=Guard
-NPC=m-guard
-0x2033=Gypsy
-NPC=m-gypsy
-<=Previous Menu
-ITEMMENU=231
-}
-
-[ITEMMENU 233]
-{
-People=- Male - H-Z
-<=Jailor
-NPC=m-jailer
-<=The Murderer
-NPC=m-murderer
-<=Murderous Mage
-NPC=m-murderer-archmage
-<=Murderous Archer
-NPC=m-murderer-archer
-0x2009=Noble
-NPC=m-noble
-<=a Necromancer Mage
-NPC=m-necromancer
-0x2008=Peasant
-NPC=m-peasant
-0x2015=Pirate
-NPC=m-pirate
-0x2017=Sailor
-NPC=m-sailor
-0x2106=Seeker of Adventure
-NPC=m-seeker
-0x2018=Shipwright
-NPC=262
-0x201C=Thief
-NPC=m-thief
-0x2026=Town Crier
-NPC=m-towncrier
-<=Previous Menu
-ITEMMENU=231
-}
-
-[ITEMMENU 234]
-{
-People=- Female - A-G
-<=Artist
-NPC=f-artist
-0x20CE=Basic Female
-NPC=female
-0x202B=Beggar
-NPC=f-beggar
-0x2030=Brigand
-NPC=f-brigand
-0x2107=Cultist
-NPC=f-cultist
-0x2107=Fighter
-NPC=f-fighter
-0x200E=Guard
-NPC=f-guard
-0x2033=Gypsy
-NPC=f-gypsy
-<=Previous Menu
-ITEMMENU=231
-}
-
-[ITEMMENU 235]
-{
-People=- Female - H-Z
-<=Jailor
-NPC=f-jailer
-0x2009=Noble
-NPC=f-noble
-0x2008=Peasant
-NPC=f-peasant
-0x2015=Pirate
-NPC=f-pirate
-0x2107=Murderer
-NPC=f-murderer
-0x2017=Sailor
-NPC=f-sailor
-0x2107=Seeker of Adventure
-NPC=f-seeker
-0x2018=Shipwright
-NPC=263
-0x201C=Thief
-NPC=f-thief
-0x2027=Town Crier
-NPC=f-towncrier
-<=Previous Menu
-ITEMMENU=231
-}
-
-[ITEMMENU 236]
-{
-Elves
-<=The Elven Female
-NPC=f-elf
-<=The Elven Male
-NPC=m-elf
-<=The High Elf
-NPC=m-elf-high
-<=High Elves
-ITEMMENU=237
-<=Wood Elves
-ITEMMENU=238
-<=Drow Elves
-ITEMMENU=239
-<=Previous Menu
-ITEMMENU=231
-}
-
-[ITEMMENU 237]
-{
-The=High Elves
-<=High Elven King
-NPC=m-elf-high-king
-<=High Elven Prince
-NPC=m-elf-high-prince
-<=High Elven Mage
-NPC=m-elf-high-mage
-<=High Elven Enchantress
-NPC=f-elf-high-enchantress
-<=Previous Menu
-ITEMMENU=236
-}
-
-[ITEMMENU 238]
-{
-The=Wood Elves
-<=Basic Elven Male
-NPC=m-elf-wood
-<=Basic Elven Female
-NPC=f-elf-wood
-<=Wood Elf King
-NPC=m-elf-wood-king
-<=Wood Elf Queen
-NPC=f-elf-wood-queen
-<=Wood Elf Archer (Male)
-NPC=m-elf-wood-archer
-<=Wood Elf Archer (Female)
-NPC=f-elf-wood-archer
-<=Wood Elf Wizard
-NPC=m-elf-wood-wizard
-<=Wood Elf Enchantress
-NPC=f-elf-wood-enchantress
-<=Wood Elf Priest
-NPC=m-elf-wood-priest
-<=Wood Elf Priestess
-NPC=f-elf-wood-priestess
-<=Previous Menu
-ITEMMENU=236
-}
-
-[ITEMMENU 239]
-{
-The=Drow Elves
-<=The Drow Weapon Lord
-NPC=m-drow-lord
-<=The Dark Elf Assassin
-NPC=m-drow-assassin
-<=The Matron Mistress
-NPC=f-matron-mistress
-<=The Drow Warrior
-NPC=m-drow-warrior
-<=The Drow Priestess
-NPC=f-drow-priestess
-<=The Drow High Priestess
-NPC=f-drow-high-priestess
-<=The Dark Elf Archer
-NPC=m-drow-archer
-<=The Drow Wizard
-NPC=m-drow-wizard
-<=The Drow ArchMage
-NPC=m-drow-archmage
-<=Previous Menu
-ITEMMENU=236
-}
-
-[ITEMMENU 250]
-{
-Spawner=Menu
-<=Male Shopkeeper Spawners
-ITEMMENU=251
-<=Female Shopkeeper Spawners
-ITEMMENU=255
-<=Monster Spawners 1
-ITEMMENU=259
-<=Monster Spawners 2
-ITEMMENU=260
-<=Monster Spawners 3
-ITEMMENU=261
-<=Area Spawners 1
-ITEMMENU=262
-<=Area Spawners 2
-ITEMMENU=263
-<=Random Spawners 1
-ITEMMENU=264
-<=Random Spawners 2
-ITEMMENU=265
-<=Animal Spawners
-ITEMMENU=266
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 251]
-{
-Male=Shopkeeper Spawners
-<=Shopkeeper Spawners A-B
-ITEMMENU=252
-<=Shopkeeper Spawners C-L
-ITEMMENU=253
-<=Shopkeeper Spawners M-Z
-ITEMMENU=254
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 252]
-{
-Male=Shopkeeper Spawners A-B
-<=Alchemist
-ADDITEM=m-alch-spawn
-<=Animal Trainer
-ADDITEM=m-anim-spawn
-<=Armorer
-ADDITEM=m-armor-spawn
-<=Architect
-ADDITEM=m-architect-spawn
-<=Baker
-ADDITEM=m-baker-spawn
-<=Banker
-ADDITEM=m-banker-spawn
-<=Bard
-ADDITEM=m-bard-spawn
-<=Blacksmith
-ADDITEM=m-smith-spawn
-<=Beekeeper
-ADDITEM=m-bee-spawn
-<=Bowyer
-ADDITEM=m-bowyer-spawn
-<=Butcher
-ADDITEM=m-butcher-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-[ITEMMENU 253]
-{
-Male=Shopkeeper Spawners C-L
-<=Carpenter
-ADDITEM=m-carptenter-spawn
-<=Cobbler
-ADDITEM=m-cobbler-spawn
-<=Cook
-ADDITEM=m-cook-spawn
-<=Farmer
-ADDITEM=m-farmer-spawn
-<=Fisherman
-ADDITEM=m-fisher-spawn
-<=Healer
-ADDITEM=m-healer-spawn
-<=Healer(Wandering)
-ADDITEM=m-whealer-spawn
-<=Herbalist
-ADDITEM=m-herbal-spawn
-<=Innkeeper
-ADDITEM=m-innkeep-spawn
-<=Jewler
-ADDITEM=m-jewler-spawn
-<=Leather Worker
-ADDITEM=m-leather-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-[ITEMMENU 254]
-{
-Male=Shopkeeper Spawners M-Z
-<=Mage
-ADDITEM=m-mage-spawn
-<=Miner
-ADDITEM=m-miner-spawn
-<=Provisioner
-ADDITEM=m-provision-spawn
-<=Shipwright
-ADDITEM=m-shipwright-spawn
-<=Spinner
-ADDITEM=m-spinner-spawn
-<=Tailor
-ADDITEM=m-tailor-spawn
-<=Tinker
-ADDITEM=m-tinker-spawn
-<=Weaponsmith
-ADDITEM=m-weaponsmith-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-[ITEMMENU 255]
-{
-Feale=Shopkeeper Spawners
-<=Shopkeeper Spawners A-B
-ITEMMENU=256
-<=Shopkeeper Spawners C-L
-ITEMMENU=257
-<=Shopkeeper Spawners M-Z
-ITEMMENU=258
-<=Previous Menu
-ITEMMENU=250
-}
-
-
-[ITEMMENU 256]
-{
-Female=Shopkeeper Spawners A-B
-<=Alchemist
-ADDITEM=f-alch-spawn
-<=Animal Trainer
-ADDITEM=f-anim-spawn
-<=Armorer
-ADDITEM=f-armor-spawn
-<=Architect
-ADDITEM=f-architect-spawn
-<=Baker
-ADDITEM=f-baker-spawn
-<=Banker
-ADDITEM=f-banker-spawn
-<=Bard
-ADDITEM=f-bard-spawn
-<=Blacksmith
-ADDITEM=f-smith-spawn
-<=Beekeeper
-ADDITEM=f-bee-spawn
-<=Bowyer
-ADDITEM=f-bowyer-spawn
-<=Butcher
-ADDITEM=f-butcher-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-[ITEMMENU 257]
-{
-Female=Shopkeeper Spawners C-L
-<=Carpenter
-ADDITEM=f-carptenter-spawn
-<=Cobbler
-ADDITEM=f-cobbler-spawn
-<=Cook
-ADDITEM=f-cook-spawn
-<=Farmer
-ADDITEM=f-farmer-spawn
-<=Fisherman
-ADDITEM=f-fisher-spawn
-<=Healer
-ADDITEM=f-healer-spawn
-<=Healer(Wandering)
-ADDITEM=f-whealer-spawn
-<=Herbalist
-ADDITEM=f-herbal-spawn
-<=Innkeeper
-ADDITEM=f-innkeep-spawn
-<=Jewler
-ADDITEM=f-jewler-spawn
-<=Leather Worker
-ADDITEM=f-leather-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-[ITEMMENU 258]
-{
-Feale=Shopkeeper Spawners M-Z
-<=Mage
-ADDITEM=f-mage-spawn
-<=Miner
-ADDITEM=f-miner-spawn
-<=Provisioner
-ADDITEM=f-provision-spawn
-<=Shipwright
-ADDITEM=f-shipwright-spawn
-<=Spinner
-ADDITEM=f-spinner-spawn
-<=Tailor
-ADDITEM=f-tailor-spawn
-<=Tinker
-ADDITEM=f-tinker-spawn
-<=Weaponsmith
-ADDITEM=f-weaponsmith-spawn
-<=Previous Menu
-ITEMMENU=251
-}
-
-
-[ITEMMENU 259]
-{
-Monster=Spawners 1
-<=Giant Serpent Spawn
-ADDITEM=gserpentspawn
-<=Giant Spider Spawn
-ADDITEM=gspiderspawn
-<=Giant scorpion Spawn
-ADDITEM=gscorpspawn
-<=Previous Menu
-ITEMMENU=250
-}
-
-// Elven chars in npc.dfn are not fixed yet
-//<=Wood Elves Spawns
-//ADDITEM=woodelfspawn
-//<=High Elves Spawns
-//ADDITEM=highelfspawn
-
-[ITEMMENU 260]
-{
-Monster=Spawners 2
-<=Orc Lord Spawn
-ADDITEM=orclordspawn
-0x1F14=Orc Spawner
-ADDITEM=orcspawn
-0x1F14=Orc Mage Spawn
-ADDITEM=orcmagespawn
-0x1F14=Orc Capt Spawn
-ADDITEM=orccaptspawn
-0x1F14=Ettin Spawn
-ADDITEM=ettinspawn
-<=Harpy Spawn
-ADDITEM=harpyspawn
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 261]
-{
-Monster=Spawners 3
-<=Air Elemental Spawner
-ADDITEM=airelemspawn
-<=Earth Elemental Spawner
-ADDITEM=earthelemspawn
-<=Fire Elemental Spawner
-ADDITEM=fireelemspawn
-<=Water Elemental Spawner
-ADDITEM=waterelemspawn
-<=Poision Elemental Spawner
-ADDITEM=poiselemspawn
-<=Lich Spawner
-ADDITEM=lichspawn
-<=Lich Lord Spawner
-ADDITEM=lichlordspawn
-<=Bone Knight Spawner
-ADDITEM=boneknightspawn
-<=Bone Mage Spawner
-ADDITEM=bonemagespawn
-<=Bone Axeman Spawner
-ADDITEM=boneaxespawn
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 262]
-{
-Area=Spawners 1
-<=Arctic Spawns
-ADDITEM=arcticspawn
-<=Cave Spawns
-ADDITEM=cavespawn
-<=Desert Spawns
-ADDITEM=desertspawn
-<=Dungeon Spawns
-ADDITEM=dungeonspawn
-<=Eerie Spawns
-ADDITEM=eeriespawn
-<=Farm Spawns
-ADDITEM=farmspawn
-<=Forest Spawns
-ADDITEM=forestspawn
-<=Jungle Spawns
-ADDITEM=junglespawn
-<=Mountain Spawns
-ADDITEM=mountainspawn
-<=Ocean Spawns
-ADDITEM=oceanspawn
-<=Swamp Spawns
-ADDITEM=swampspawn
-<=Town Spawns
-ADDITEM=townspawn
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 263]
-{
-Area=Spawners 2
-<=Volcanic Spawns
-ADDITEM=volcanicspawn
-<=Drow Spawns
-ADDITEM=drowspawn
-<=Diablo Spawns
-ADDITEM=diablospawn
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 264]
-{
-Random=Spawners 1
-<=Random Strong Undead
-ADDITEM=strongundead
-<=Random Weak Undead
-ADDITEM=weakundead
-<=Random All Undead
-ADDITEM=allundead
-<=Random Orc Spawn
-ADDITEM=randorcspawn
-<=Random Lizardmen Spawn
-ADDITEM=randlizardspawn
-<=Random Ratmen Spawn
-ADDITEM=randratmanspawn
-<=Dragon and Drake Spawn
-ADDITEM=randdragon
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 265]
-{
-Random=Spawners 2
-<=Ettins,Ogres and Trolls
-ADDITEM=ettinsogres
-<=Weak Orcs Spawn
-ADDITEM=weakorcs
-<=Strong Orcs Spawn
-ADDITEM=strongorcs
-<=All Orc Kin Spawn
-ADDITEM=orckin
-<=All Daemons Spawn
-ADDITEM=daemons
-<=All Elementals Spawn
-ADDITEM=elementals
-<=All Elementals and Daemons
-ADDITEM=elemsdaemons
-<=Overworld Monster Spawn
-ADDITEM=overworld
-<=Previous Menu
-ITEMMENU=250
-}
-
-[ITEMMENU 266]
-{
-Animal=Spawners
-<=Goat Spawn
-ADDITEM=goatspawn
-<=Random Barn Animals
-ADDITEM=randbarn
-<=Dogs and Cats
-ADDITEM=dogandcat
-<=Swamp Creatures
-ADDITEM=swampcreatures
-<=Jungle Creatures
-ADDITEM=junglecreatures
-<=Cows,Horses & Livestock
-ADDITEM=livestock
-<=All Birds
-ADDITEM=allbirds
-<=All Animals
-ADDITEM=allanimals
-<=Small Animals
-ADDITEM=smallanimals
-<=Productive Animals
-ADDITEM=prodanimals
-<=All Bears
-ADDITEM=allbears
-<=Previous Menu
-ITEMMENU=250
-
-}
-
-[ITEMMENU 300]
-{
-GM=Add Item Menu
-<=Floor Tiles
-ITEMMENU=301
-<=Walls & Blocks
-ITEMMENU=314
-<=Rugs
-ITEMMENU=328
-<=Doors
-ITEMMENU=337
-<=Furniture
-ITEMMENU=349
-<=Statues & Trophies
-ITEMMENU=384
-<=Misc
-ITEMMENU=387
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 301]
-{
-Floor=Tiles
-<=Marble 1
-ITEMMENU=302
-0x049B=Marble 2
-ITEMMENU=303
-0x049D=Sandstone Pavers
-ITEMMENU=304
-0x04A1=Wooden Planks
-ITEMMENU=305
-0x04A5=Wooden Boards 1
-ITEMMENU=306
-0x04A5=Wooden Boards 2
-ITEMMENU=307
-0x04E2=Bricks
-ITEMMENU=308
-0x04FC=Cobblestones & Flagstones
-ITEMMENU=309
-0x04C5=Wooden Logs
-ITEMMENU=310
-0x0519=Stone Pavers
-ITEMMENU=311
-0x04EA=Blue & Red Tiles
-ITEMMENU=312
-0x0525=Sandstone Floor
-ITEMMENU=313
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 302]
-{
-Marble=1
-0x0491=Marble
-ADDITEM=0x0491
-0x0492=Marble
-ADDITEM=0x0492
-0x0493=Marble
-ADDITEM=0x0493
-0x0494=Marble
-ADDITEM=0x0494
-0x0495=Marble
-ADDITEM=0x0495
-0x0496=Marble
-ADDITEM=0x0496
-0x0497=Marble
-ADDITEM=0x0497
-0x0498=Marble
-ADDITEM=0x0498
-0x0499=Marble
-ADDITEM=0x0499
-0x049A=Marble
-ADDITEM=0x049a
-0x049B=Marble
-ADDITEM=0x049b
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 303]
-{
-Marble=2
-0x049C=Marble
-ADDITEM=0x049c
-0x050D=Marble
-ADDITEM=0x050d
-0x050E=Marble
-ADDITEM=0x050e
-0x050F=Marble
-ADDITEM=0x050f
-0x0510=Marble
-ADDITEM=0x0510
-0x0511=Marble
-ADDITEM=0x0511
-0x0512=Marble
-ADDITEM=0x0512
-0x0513=Marble
-ADDITEM=0x0513
-0x0514=Marble
-ADDITEM=0x0514
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 304]
-{
-Sandstone=Pavers
-0x049D=Sandstone Pavers
-ADDITEM=0x049d
-0x049E=Sandstone Pavers
-ADDITEM=0x049e
-0x049F=Sandstone Pavers
-ADDITEM=0x049f
-0x04A0=Sandstone Pavers
-ADDITEM=0x04a0
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 305]
-{
-Wooden=Planks
-0x04A1=Wooden Planks
-ADDITEM=0x04a1
-0x04A2=Wooden Planks
-ADDITEM=0x04a2
-0x04A3=Wooden Planks
-ADDITEM=0x04a3
-0x04A4=Wooden Planks
-ADDITEM=0x04a4
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 306]
-{
-Wooden=Boards 1
-0x04A5=Wooden Boards
-ADDITEM=0x04a5
-0x04A6=Wooden Boards
-ADDITEM=0x04a6
-0x04A7=Wooden Boards
-ADDITEM=0x04a7
-0x04A8=Wooden Boards
-ADDITEM=0x04a8
-0x04A9=Wooden Boards
-ADDITEM=0x04a9
-0x04AA=Wooden Boards
-ADDITEM=0x04aa
-0x04AB=Wooden Boards
-ADDITEM=0x04ab
-0x04AC=Wooden Boards
-ADDITEM=0x04ac
-0x04AD=Wooden Boards
-ADDITEM=0x04ad
-0x04AE=Wooden Boards
-ADDITEM=0x04ae
-0x04AF=Wooden Boards
-ADDITEM=0x04af
-0x04B0=Wooden Boards
-ADDITEM=0x04b0
-0x04B1=Wooden Boards
-ADDITEM=0x04b1
-0x04B2=Wooden Boards
-ADDITEM=0x04b2
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 307]
-{
-Wooden=Boards 2
-0x04B3=Wooden Boards
-ADDITEM=0x04b3
-0x04B4=Wooden Boards
-ADDITEM=0x04b4
-0x04B5=Wooden Boards
-ADDITEM=0x04b5
-0x04B6=Wooden Boards
-ADDITEM=0x04b6
-0x04B7=Wooden Boards
-ADDITEM=0x04b7
-0x04B8=Wooden Boards
-ADDITEM=0x04b8
-0x04B9=Wooden Boards
-ADDITEM=0x04b9
-0x04BA=Wooden Boards
-ADDITEM=0x04ba
-0x04BB=Wooden Boards
-ADDITEM=0x04bb
-0x04BC=Wooden Boards
-ADDITEM=0x04bc
-0x04BD=Wooden Boards
-ADDITEM=0x04bd
-0x04BE=Wooden Boards
-ADDITEM=0x04be
-0x04BF=Wooden Boards
-ADDITEM=0x04bf
-0x04C0=Wooden Boards
-ADDITEM=0x04c0
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 308]
-{
-Bricks
-0x04E2=Bricks
-ADDITEM=0x04e2
-0x04E3=Bricks
-ADDITEM=0x04e3
-0x04E4=Bricks
-ADDITEM=0x04e4
-0x04E5=Bricks
-ADDITEM=0x04e5
-0x04E6=Bricks
-ADDITEM=0x04e6
-0x04E7=Bricks
-ADDITEM=0x04e7
-0x04E8=Bricks
-ADDITEM=0x04e8
-0x04E9=Bricks
-ADDITEM=0x04e9
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 309]
-{
-Cobble=& Flagstones
-0x04FC=Flagstones
-ADDITEM=0x04fc
-0x04FD=Flagstones
-ADDITEM=0x04fd
-0x04FE=Flagstones
-ADDITEM=0x04fe
-0x04FF=Flagstones
-ADDITEM=0x04ff
-0x0515=Cobblestones
-ADDITEM=0x0515
-0x0516=Cobblestones
-ADDITEM=0x0516
-0x0517=Cobblestones
-ADDITEM=0x0517
-0x0518=Cobblestones
-ADDITEM=0x0518
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 310]
-{
-Wooden=Logs
-0x04C1=Wooden Logs
-ADDITEM=0x04c1
-0x04C2=Wooden Logs
-ADDITEM=0x04c2
-0x04C3=Wooden Logs
-ADDITEM=0x04c3
-0x04C4=Wooden Logs
-ADDITEM=0x04c4
-0x04C5=Wooden Logs
-ADDITEM=0x04c5
-0x0504=Wooden Logs
-ADDITEM=0x0504
-0x0505=Wooden Logs
-ADDITEM=0x0505
-0x0506=Wooden Logs
-ADDITEM=0x0506
-0x0507=Wooden Logs
-ADDITEM=0x0507
-0x0508=Wooden Logs
-ADDITEM=0x0508
-0x0509=Wooden Logs
-ADDITEM=0x0509
-0x050A=Wooden Logs
-ADDITEM=0x050a
-0x050B=Wooden Logs
-ADDITEM=0x050b
-0x050C=Wooden Logs
-ADDITEM=0x050c
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 311]
-{
-Stone=Pavers
-0x0519=Stone Pavers
-ADDITEM=0x0519
-0x051A=Stone Pavers
-ADDITEM=0x051a
-0x051B=Stone Pavers
-ADDITEM=0x051b
-0x051C=Stone Pavers
-ADDITEM=0x051c
-0x051D=Stone Pavers
-ADDITEM=0x051d
-0x051E=Stone Pavers
-ADDITEM=0x051e
-0x051F=Stone Pavers
-ADDITEM=0x051f
-0x0520=Stone Pavers
-ADDITEM=0x0520
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 312]
-{
-Red=& Blue Tiles
-0x04EA=Blue Tile
-ADDITEM=0x04ea
-0x04EB=Blue Tile
-ADDITEM=0x04eb
-0x04EC=Blue Tile
-ADDITEM=0x04ec
-0x04ED=Blue Tile
-ADDITEM=0x04ee
-0x04EE=Blue Tile
-ADDITEM=0x04ef
-0x04EF=Blue Tile
-ADDITEM=0x04f0
-0x04F0=Blue Tile
-ADDITEM=0x04f1
-0x04F1=Blue Tile
-ADDITEM=0x04f2
-0x04F2=Blue Tile
-ADDITEM=0x04f3
-0x04F3=Blue Tile
-ADDITEM=0x04f4
-0x04F4=Red Tile
-ADDITEM=0x04f5
-0x04F5=Red Tile
-ADDITEM=0x04f6
-0x04F6=Red Tile
-ADDITEM=0x04f7
-0x04F7=Red Tile
-ADDITEM=0x04f8
-0x04F8=Red Tile
-ADDITEM=0x04f9
-0x04F9=Red Tile
-ADDITEM=0x04fa
-0x04FA=Red Tile
-ADDITEM=0x04fb
-0x04FB=Red Tile
-ADDITEM=0x04fc
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 313]
-{
-Sandstone=Floors
-0x0525=Sandstone Floor
-ADDITEM=234
-0x0526=Sandstone Floor
-ADDITEM=0x0525
-0x0527=Sandstone Floor
-ADDITEM=0x0526
-0x0528=Sandstone Floor
-ADDITEM=0x0527
-0x0529=Sandstone Floor
-ADDITEM=0x0528
-0x052A=Sandstone Floor
-ADDITEM=0x0529
-0x052B=Sandstone Floor
-ADDITEM=0x052a
-0x052C=Sandstone Floor
-ADDITEM=0x052b
-0x052F=Sandstone Floor
-ADDITEM=0x052e
-0x0530=Sandstone Floor
-ADDITEM=0x052f
-0x0531=Sandstone Floor
-ADDITEM=0x0530
-0x0532=Sandstone Floor
-ADDITEM=0x0531
-0x0533=Sandstone Floor
-ADDITEM=0x0532
-0x0534=Sandstone Floor
-ADDITEM=0x0533
-<=Previous Menu
-ITEMMENU=301
-}
-
-[ITEMMENU 314]
-{
-Walls=and Blocks
-0x0034=Brick Walls
-ITEMMENU=315
-0x0423=Palisade Walls
-ITEMMENU=319
-0x001C=Stone Walls
-ITEMMENU=322
-0x0007=Wooden Walls
-ITEMMENU=325
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 315]
-{
-Brick=Walls
-0x0041=Brick Walls I
-ITEMMENU=316
-0x003B=Brick Walls II
-ITEMMENU=317
-0x0046=Brick Walls III
-ITEMMENU=318
-<=Previous Menu
-ITEMMENU=314
-}
-
-[ITEMMENU 316]
-{
-Brick=Walls I
-0x0033=SE Corner
-ADDITEM=0x0033
-0x0034=E-W Wall
-ADDITEM=0x0034
-0x0035=N-S Wall
-ADDITEM=0x0035
-0x0036=Brick Post
-ADDITEM=0x0036
-0x0037=E-W Wall with Wood
-ADDITEM=0x0037
-0x0038=N-S Wall with Wood
-ADDITEM=0x0038
-0x0039=E-W Wall with Wood
-ADDITEM=0x0039
-0x003A=N-S Wall with Wood
-ADDITEM=0x003a
-0x003B=E-W Wall with Window
-ADDITEM=0x003b
-0x003C=N-S Wall with Window
-ADDITEM=0x003c
-0x003D=SE Corner Small
-ADDITEM=0x003d
-0x003E=E-W Wall Small
-ADDITEM=0x003e
-0x003F=N-S Wall Small
-ADDITEM=0x003f
-<=Previous Menu
-ITEMMENU=315
-}
-
-[ITEMMENU 317]
-{
-Brick=Walls II
-0x0040=Small Brick Post
-ADDITEM=0x0040
-0x0041=SE Corner
-ADDITEM=0x0041
-0x0042=E-W Wall Really Small
-ADDITEM=0x0042
-0x0043=N-S Wall Really Small
-ADDITEM=0x0043
-0x0044=Really Small Post
-ADDITEM=0x0045
-0x0045=SE Corner Arch
-ADDITEM=0x0eed
-0x0046=N-S Arch
-ADDITEM=0x0046
-0x0047=E-W Arch
-ADDITEM=0x0047
-0x0048=E-W Arch
-ADDITEM=0x0048
-0x0049=N-S Arch
-ADDITEM=0x0049
-0x004A=E-W Arched Top Wall
-ADDITEM=0x004a
-0x004B=N-S Arched Top Wall
-ADDITEM=0x004b
-0x004C=N-S Arched Top Wall
-ADDITEM=0x004c
-0x004D=E-W Arched Top Wall
-ADDITEM=0x004d
-0x004E=E-W Top Arch End
-ADDITEM=0x004e
-<=Previous Menu
-ITEMMENU=315
-}
-
-[ITEMMENU 318]
-{
-Brick=Walls III
-0x004F=N-S Top Arch End
-ADDITEM=0x004f
-0x0050=E-W Top Arch Middle
-ADDITEM=0x0050
-0x0051=N-S Top Arch Middle
-ADDITEM=0x0051
-0x0052=SE Corner Blocks
-ADDITEM=0x0052
-0x0053=E-W Blocks
-ADDITEM=0x0053
-0x0054=N-S Blocks
-ADDITEM=0x0054
-0x0055=E-W Blocks
-ADDITEM=0x0055
-0x0056=N-S Blocks
-ADDITEM=0x0056
-<=Previous Menu
-ITEMMENU=315
-}
-
-[ITEMMENU 319]
-{
-Palisade=Walls / Blocks
-0x042A=Banners/Curtains/Standards
-ITEMMENU=320
-0x0432=Walls
-ITEMMENU=321
-<=Previous Menu
-ITEMMENU=314
-}
-
-[ITEMMENU 320]
-{
-Banners/Curtains/Standards
-0x042A=Banner, Tattered N-S 1
-ADDITEM=0x042a
-0x042B=Banner, Tattered N-S 2
-ADDITEM=0x042b
-0x042E=Banner, Tattered N-S 3
-ADDITEM=0x042e
-0x042F=Banner, Tattered N-S 4
-ADDITEM=0x042f
-0x0426=Banner, Tattered E-W 1
-ADDITEM=0x0426
-0x0427=Banner, Tattered E-W 2
-ADDITEM=0x0427
-0x042C=Banner, Tattered E-W 3
-ADDITEM=0x042c
-0x042D=Banner, Tattered E-W 4
-ADDITEM=0x042d
-0x0432=Curtain N-S 1
-ADDITEM=0x0432
-0x022F=Curtain N-S 2
-ADDITEM=0x022f
-0x022E=Curtain S-N
-ADDITEM=0x022e
-0x0433=Curtain, Rod N-S
-ADDITEM=0x0433
-0x0435=Curtain E-W 1
-ADDITEM=0x0435
-0x022C=Curtain E-W 2
-ADDITEM=0x022c
-0x022D=Curtain W-E
-ADDITEM=0x022d
-0x0434=Curtain, Rod E-W
-ADDITEM=0x0434
-0x0420=Standard, Shield N-S
-ADDITEM=0x0420
-0x0429=Standard, Shield E-W
-ADDITEM=0x0429
-0x041F=Standard, Skull N-S
-ADDITEM=0x041f
-0x0428=Standard, Skull E-W
-ADDITEM=0x0428
-<=Previous Menu
-ITEMMENU=319
-}
-
-[ITEMMENU 321]
-{
-Walls
-0x0229=Corner Pole
-ADDITEM=0x0229
-0x0223=Palisade, Corner
-ADDITEM=0x0223
-0x0221=Palisade, N-S
-ADDITEM=0x0223
-0x0222=Palisade, E-W
-ADDITEM=0x0223
-0x0421=Palisade, Skull N-S
-ADDITEM=0x0421
-0x0422=Palisade, Skull E-W 1
-ADDITEM=0x0422
-0x0431=Palisade, Skull E-W 2
-ADDITEM=0x0431
-0x0430=Palisade, Skull E-W 3
-ADDITEM=0x0430
-0x0425=Small Palisade, Corner
-ADDITEM=0x0425
-0x0424=Small Palisade, N-S
-ADDITEM=0x0424
-0x0423=Small Palisade, E-W
-ADDITEM=0x0423
-0x021E=Small Palisade, Slant N-S 1
-ADDITEM=0x021e
-0x0220=Small Palisade, Slant N-S 2
-ADDITEM=0x0220
-0x021D=Small Palisade, Slant E-W 1
-ADDITEM=0x021d
-0x021F=Small Palisade, Slant E-W 2
-ADDITEM=0x021f
-0x0226=Un-spiked Palisade, Corner
-ADDITEM=0x0226
-0x0227=Un-spiked Palisade, N-S
-ADDITEM=0x0227
-0x022B=Un-spiked Palisade, N-S
-ADDITEM=0x022b
-0x0228=Un-spiked Palisade, E-W
-ADDITEM=0x0228
-0x022A=Un-spiked Palisade, E-W
-ADDITEM=0x022a
-<=Previous Menu
-ITEMMENU=319
-}
-
-[ITEMMENU 322]
-{
-Stone=Walls
-0x001D=Stone Walls I
-ITEMMENU=323
-0x0021=Stone Walls II
-ITEMMENU=324
-<=Previous Menu
-ITEMMENU=314
-}
-
-[ITEMMENU 323]
-{
-Stone=Walls I
-0x001A=SE Corner
-ADDITEM=0x001a
-0x0024=SE Small Corner
-ADDITEM=0x0024
-0x002D=Really Small SE Corner
-ADDITEM=0x002d
-0x001C=E-W Wall
-ADDITEM=0x001c
-0x001E=E-W Wall with Wood
-ADDITEM=0x001e
-0x0021=E-W Wall with Wood
-ADDITEM=0x0021
-0x0022=E-W Wall with Window
-ADDITEM=0x0022
-0x002F=Really Small E-W Wall
-ADDITEM=0x002f
-0x0031=Really Small E-W Wall 2
-ADDITEM=0x0031
-0x0025=E-W Small Wall
-ADDITEM=0x0025
-0x001B=N-S Wall
-ADDITEM=0x001b
-<=Previous Menu
-ITEMMENU=322
-}
-
-[ITEMMENU 324]
-{
-Stone=Walls II
-0x001F=N-S Wall with Wood
-ADDITEM=0x001f
-0x0020=N-S Wall with Wood
-ADDITEM=0x0020
-0x0023=N-S Wall with Window
-ADDITEM=0x0023
-0x0026=N-S Small Wall
-ADDITEM=0x0026
-0x002E=Really Small N-S Wall
-ADDITEM=0x002e
-0x0032=Really Small N-S Wall 2
-ADDITEM=0x0032
-0x0030=Really Small Stone Post
-ADDITEM=0x0030
-0x001D=Stone Post
-ADDITEM=0x001d
-0x0027=Small Stone Post
-ADDITEM=0x0027
-0x0028=SE Arch
-ADDITEM=0x0028
-0x0029=E-W Arch
-ADDITEM=0x0029
-0x002A=N-S Arch
-ADDITEM=0x002a
-0x002B=N-S Arch
-ADDITEM=0x002b
-0x002C=E-W Arch
-ADDITEM=0x002c
-<=Previous Menu
-ITEMMENU=322
-}
-
-[ITEMMENU 325]
-{
-Wooden=Walls
-0x000f=Wooden Walls I
-ITEMMENU=326
-0x0016=Wooden Walls II
-ITEMMENU=327
-<=Previous Menu
-ITEMMENU=314
-}
-
-[ITEMMENU 326]
-{
-Wooden=Walls I
-0x0006=SE Corner
-ADDITEM=0x0006
-0x0010=SE Corner Small
-ADDITEM=0x0010
-0x0014=SE Corner Really Small
-ADDITEM=0x0014
-0x0007=E-W Wall
-ADDITEM=0x0007
-0x000a=E-W Wall
-ADDITEM=0x000a
-0x000c=E-W Wall
-ADDITEM=0x000c
-0x000e=E-W Wall with Window
-ADDITEM=0x000e
-0x0012=E-W Small Wall
-ADDITEM=0x0012
-0x0016=E-W Really Small Wall
-ADDITEM=0x0016
-<=Previous Menu
-ITEMMENU=325
-}
-
-[ITEMMENU 327]
-{
-Wooden=Walls II
-0x0018=E-W Really Small Wall
-ADDITEM=0x0018
-0x0008=N-S Wall
-ADDITEM=0x0008
-0x000b=N-S Wall
-ADDITEM=0x000b
-0x000d=N-S Wall
-ADDITEM=0x000d
-0x000f=N-S Wall with Window
-ADDITEM=0x000f
-0x0011=N-S Small Wall
-ADDITEM=0x0011
-0x0015=N-S Really Small Wall
-ADDITEM=0x0015
-0x0019=N-S Really Small Wall
-ADDITEM=0x0019
-0x0009=Wooden Post
-ADDITEM=0x0009
-0x0013=Wooden Post
-ADDITEM=0x0013
-0x0017=Small Corner Post
-ADDITEM=0x0017
-<=Previous Menu
-ITEMMENU=325
-}
-
-[ITEMMENU 328]
-{
-Rugs
-0x0AA9=Red Rug
-ITEMMENU=329
-0x0AB3=Greenish Rug
-ITEMMENU=330
-0x0ABD=Fancy Blue Rug
-ITEMMENU=331
-0x0AC6=Fancy Red Rug
-ITEMMENU=332
-0x0AD1=Fancy Blue/Gold Rug
-ITEMMENU=333
-0x0ADA=Fancy Gold Rug
-ITEMMENU=334
-0x0AEB=Fancy Pink Rug
-ITEMMENU=335
-0x0AEC=Fancy Pink/Blue Rug
-ITEMMENU=336
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 329]
-{
-Red=Rug
-0x0AA9=Red Rug
-ADDITEM=0x0aa9
-0x0AAA=Red Rug
-ADDITEM=0x0aaa
-0x0AAB=Red Rug
-ADDITEM=0x0aab
-0x0AAC=Red Rug
-ADDITEM=0x0aac
-0x0AAD=Red Rug
-ADDITEM=0x0aad
-0x0AAE=Red Rug
-ADDITEM=0x0aae
-0x0AAF=Red Rug
-ADDITEM=0x0aaf
-0x0AB0=Red Rug
-ADDITEM=0x0ab0
-0x0AB1=Red Rug
-ADDITEM=0x0ab1
-0x0AB2=Red Rug
-ADDITEM=0x0ab2
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 330]
-{
-Greenish=Rug
-0x0AB3=Greenish Rug
-ADDITEM=0x0ab3
-0x0AB4=Greenish Rug
-ADDITEM=0x0ab4
-0x0AB5=Greenish Rug
-ADDITEM=0x0ab5
-0x0AB6=Greenish Rug
-ADDITEM=0x0ab6
-0x0AB7=Greenish Rug
-ADDITEM=0x0ab7
-0x0AB8=Greenish Rug
-ADDITEM=0x0ab8
-0x0AB9=Greenish Rug
-ADDITEM=0x0ab9
-0x0ABA=Greenish Rug
-ADDITEM=0x0aba
-0x0ABB=Greenish Rug
-ADDITEM=0x0abb
-0x0ABC=Greenish Rug
-ADDITEM=0x0abc
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 331]
-{
-Fancy=Blue Rug
-0x0ABD=Fancy Blue Rug
-ADDITEM=0x0abd
-0x0ABE=Fancy Blue Rug
-ADDITEM=0x0abe
-0x0ABF=Fancy Blue Rug
-ADDITEM=0x0abf
-0x0AC0=Fancy Blue Rug
-ADDITEM=0x0ac0
-0x0AC1=Fancy Blue Rug
-ADDITEM=0x0ac1
-0x0AC2=Fancy Blue Rug
-ADDITEM=0x0ac2
-0x0AC3=Fancy Blue Rug
-ADDITEM=0x0ac3
-0x0AC4=Fancy Blue Rug
-ADDITEM=0x0ac4
-0x0AC5=Fancy Blue Rug
-ADDITEM=0x0ac5
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 332]
-{
-Fancy=Red Rug
-0x0AC6=Fancy Red Rug
-ADDITEM=0x0ac6
-0x0AC7=Fancy Red Rug
-ADDITEM=0x0ac7
-0x0AC8=Fancy Red Rug
-ADDITEM=0x0ac8
-0x0AC9=Fancy Red Rug
-ADDITEM=0x0ac9
-0x0ACA=Fancy Red Rug
-ADDITEM=0x0aca
-0x0ACB=Fancy Red Rug
-ADDITEM=0x0acb
-0x0ACC=Fancy Red Rug
-ADDITEM=0x0acc
-0x0ACD=Fancy Red Rug
-ADDITEM=0x0acd
-0x0ACE=Fancy Red Rug
-ADDITEM=0x0ace
-0x0ACF=Fancy Red Rug
-ADDITEM=0x0acf
-0x0AD0=Fancy Red Rug
-ADDITEM=0x0ad0
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 333]
-{
-Fancy=Blue/Gold Rug
-0x0AD1=Fancy Blue/Gold Rug
-ADDITEM=0x0ad1
-0x0AD2=Fancy Blue/Gold Rug
-ADDITEM=0x0ad2
-0x0AD3=Fancy Blue/Gold Rug
-ADDITEM=0x0ad3
-0x0AD4=Fancy Blue/Gold Rug
-ADDITEM=0x0ad4
-0x0AD5=Fancy Blue/Gold Rug
-ADDITEM=0x0ad5
-0x0AD6=Fancy Blue/Gold Rug
-ADDITEM=0x0ad6
-0x0AD7=Fancy Blue/Gold Rug
-ADDITEM=0x0ad7
-0x0AD8=Fancy Blue/Gold Rug
-ADDITEM=0x0ad8
-0x0AD9=Fancy Blue/Gold Rug
-ADDITEM=0x0ad9
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 334]
-{
-Fancy=Golden Rug
-0x0ADA=Fancy Golden Rug
-ADDITEM=0x0ada
-0x0ADB=Fancy Golden Rug
-ADDITEM=0x0adb
-0x0ADC=Fancy Golden Rug
-ADDITEM=0x0adc
-0x0ADD=Fancy Golden Rug
-ADDITEM=0x0add
-0x0ADE=Fancy Golden Rug
-ADDITEM=0x0ade
-0x0ADF=Fancy Golden Rug
-ADDITEM=0x0adf
-0x0AE0=Fancy Golden Rug
-ADDITEM=0x0ae0
-0x0AE1=Fancy Golden Rug
-ADDITEM=0x0ae1
-0x0AE2=Fancy Golden Rug
-ADDITEM=0x0ae2
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 335]
-{
-Fancy=Pink Rug
-0x0AE3=Fancy Pink Rug
-ADDITEM=0x0ae3
-0x0AE4=Fancy Pink Rug
-ADDITEM=0x0ae4
-0x0AE5=Fancy Pink Rug
-ADDITEM=0x0ae5
-0x0AE6=Fancy Pink Rug
-ADDITEM=0x0ae6
-0x0AE7=Fancy Pink Rug
-ADDITEM=0x0ae7
-0x0AE8=Fancy Pink Rug
-ADDITEM=0x0ae8
-0x0AE9=Fancy Pink Rug
-ADDITEM=0x0ae9
-0x0AEA=Fancy Pink Rug
-ADDITEM=0x0aea
-0x0AEB=Fancy Pink Rug
-ADDITEM=0x0aeb
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 336]
-{
-Fancy=Pink & Blue Rug
-0x0AEC=Fancy Pink & Blue Rug
-ADDITEM=0x0aec
-0x0AED=Fancy Pink & Blue Rug
-ADDITEM=0x0aed
-0x0AEE=Fancy Pink & Blue Rug
-ADDITEM=0x0aee
-0x0AEF=Fancy Pink & Blue Rug
-ADDITEM=0x0aef
-0x0AF0=Fancy Pink & Blue Rug
-ADDITEM=0x0af0
-0x0AF1=Fancy Pink & Blue Rug
-ADDITEM=0x0af1
-0x0AF2=Fancy Pink & Blue Rug
-ADDITEM=0x0af2
-0x0AF3=Fancy Pink & Blue Rug
-ADDITEM=0x0af3
-0x0AF4=Fancy Pink & Blue Rug
-ADDITEM=0x0af4
-0x0AF5=Fancy Pink & Blue Rug
-ADDITEM=0x0af5
-0x0AFA=Fancy Pink & Blue Rug
-ADDITEM=0x0afa
-<=Previous Menu
-ITEMMENU=328
-}
-
-[ITEMMENU 337]
-{
-Doors
-0x0675=Metal Door 1
-ITEMMENU=338
-0x06C5=Metal Door 2
-ITEMMENU=339
-0x0685=Barred Metal Door
-ITEMMENU=340
-0x084C=Iron Gate
-ITEMMENU=341
-0x0695=Rattan Door
-ITEMMENU=342
-0x06A5=Wooden Door 1
-ITEMMENU=343
-0x06B5=Wooden Door 2
-ITEMMENU=344
-0x06D5=Wooden Door 3
-ITEMMENU=345
-0x06E5=Wooden Door 4
-ITEMMENU=346
-0x0839=Wooden Gate 1
-ITEMMENU=347
-0x0866=Wooden Gate 2
-ITEMMENU=348
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 338]
-{
-Metal=Door 1
-0x0675=West Door
-ADDITEM=0x0675
-0x0677=East Door
-ADDITEM=0x0677
-0x067D=South Door
-ADDITEM=0x067d
-0x067F=North Door
-ADDITEM=0x067f
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 339]
-{
-Metal=Door 2
-0x06C5=West Door
-ADDITEM=0x06c5
-0x06C7=East Door
-ADDITEM=0x06c7
-0x06CD=South Door
-ADDITEM=0x06cd
-0x06CF=North Door
-ADDITEM=0x06cf
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 340]
-{
-Barred=Metal Door
-0x0685=West Door
-ADDITEM=0x0685
-0x0687=East Door
-ADDITEM=0x0687
-0x068D=South Door
-ADDITEM=0x068d
-0x068F=North Door
-ADDITEM=0x068f
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 341]
-{
-Iron=Gate
-0x084C=West Door
-ADDITEM=0x084c
-0x084E=East Door
-ADDITEM=0x084e
-0x0854=South Door
-ADDITEM=0x0854
-0x0856=North Door
-ADDITEM=0x0856
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 342]
-{
-Rattan=Door
-0x0695=West Door
-ADDITEM=0x0695
-0x0697=East Door
-ADDITEM=0x0697
-0x069D=South Door
-ADDITEM=0x069d
-0x069F=North Door
-ADDITEM=0x069f
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 343]
-{
-Wooden=Door 1
-0x06A5=West Door
-ADDITEM=0x06a5
-0x06A7=East Door
-ADDITEM=0x06a7
-0x06AD=South Door
-ADDITEM=0x06ad
-0x06AF=North Door
-ADDITEM=0x06af
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 344]
-{
-Wooden=Door 2
-0x06B5=West Door
-ADDITEM=0x06b5
-0x06B7=East Door
-ADDITEM=0x06b7
-0x06BD=South Door
-ADDITEM=0x06bd
-0x06BF=North Door
-ADDITEM=0x06bf
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 345]
-{
-Wooden=Door 3
-0x06D5=West Door
-ADDITEM=0x06d5
-0x06D7=East Door
-ADDITEM=0x06d7
-0x06DD=South Door
-ADDITEM=0x06dd
-0x06DF=North Door
-ADDITEM=0x06df
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 346]
-{
-Wooden=Door 4
-0x06E5=West Door
-ADDITEM=0x06e5
-0x06E7=East Door
-ADDITEM=0x06e7
-0x06ED=South Door
-ADDITEM=0x06ed
-0x06EF=North Door
-ADDITEM=0x06ef
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 347]
-{
-Wooden=Gate 1
-0x0839=West Door
-ADDITEM=0x0839
-0x083B=East Door
-ADDITEM=0x083b
-0x0841=South Door
-ADDITEM=0x0841
-0x0843=North Door
-ADDITEM=0x0843
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 348]
-{
-Wooden=Gate 2
-0x0866=West Door
-ADDITEM=0x0866
-0x0868=East Door
-ADDITEM=0x0868
-0x086E=South Door
-ADDITEM=0x086e
-0x0870=North Door
-ADDITEM=0x0870
-<=Previous Menu
-ITEMMENU=337
-}
-
-[ITEMMENU 349]
-{
-Furniture
-<=Benches & Chairs
-ITEMMENU=350
-0x0B0A=Display Cases
-ITEMMENU=368
-0x0A2C=Cabinets
-ITEMMENU=371
-0x1DAB=Tables
-ITEMMENU=375
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 350]
-{
-Benches=& Chairs
-0x0459=Benches
-ITEMMENU=351
-0x0B32=Chairs
-ITEMMENU=360
-<=Previous Menu
-ITEMMENU=349
-}
-
-[ITEMMENU 351]
-{
-Benches
-0x0459=Marble Bench
-ADDITEM=0x0459
-0x045A=Marble Bench 2
-ADDITEM=0x045a
-0x1DCF=Other Marble Benches
-ITEMMENU=352
-0x045B=Stone Bench
-ADDITEM=0x045b
-0x045C=Stone Bench 2
-ADDITEM=0x045c
-0x1DC9=Other Sandstone Benches
-ITEMMENU=353
-0x0B2C=Wooden Bench
-ADDITEM=0x0b2c
-0x0B2D=Wooden Bench 2
-ADDITEM=0x0b2d
-0x0B67=Other Wooden Benches
-ITEMMENU=354
-<=Previous Menu
-ITEMMENU=350
-}
-
-[ITEMMENU 352]
-{
-Marble=Bench 3
-0x1DCD=Marble Bench
-ADDITEM=0x1dcd
-0x1DCF=Marble Bench
-ADDITEM=0x1dcf
-0x1DCE=Marble Bench
-ADDITEM=0x1dce
-<=Previous Menu
-ITEMMENU=351
-}
-
-[ITEMMENU 353]
-{
-Sandstone=Bench
-0x1DC7=Sandstone Bench
-ADDITEM=0x1dc7
-0x1DC9=Sandstone Bench
-ADDITEM=0x1dc9
-0x1DC8=Sandstone Bench
-ADDITEM=0x1dc8
-<=Previous Menu
-ITEMMENU=351
-}
-
-[ITEMMENU 354]
-{
-Other=wooden benches
-0x0B67=Wooden Bench 1
-ITEMMENU=355
-0x0B60=Wooden Bench 2
-ITEMMENU=356
-0x0B64=Wooden Bench 3
-ITEMMENU=357
-0x0B6A=Wooden Bench 4
-ITEMMENU=358
-0x0B92=Wooden Bench 5
-ITEMMENU=359
-<=Previous Menu
-ITEMMENU=351
-}
-
-[ITEMMENU 355]
-{
-Wooden=Bench 1
-0x0B66=Wooden Bench
-ADDITEM=0x0b66
-0x0B68=Wooden Bench
-ADDITEM=0x0b68
-0x0B67=Wooden Bench
-ADDITEM=0x0b69
-<=Previous Menu
-ITEMMENU=354
-}
-
-[ITEMMENU 356]
-{
-Wooden=Bench 2
-0x0B5F=Wooden Bench 2
-ADDITEM=0x0b5f
-0x0B61=Wooden Bench 2
-ADDITEM=0x0b61
-0x0B60=Wooden Bench 2
-ADDITEM=0x0b60
-<=Previous Menu
-ITEMMENU=354
-}
-
-[ITEMMENU 357]
-{
-Wooden=Bench 3
-0x0B62=Wooden Bench 3
-ADDITEM=0x0b62
-0x0B64=Wooden Bench 3
-ADDITEM=0x0b64
-0x0B63=Wooden Bench 3
-ADDITEM=0x0b63
-<=Previous Menu
-ITEMMENU=354
-}
-
-[ITEMMENU 358]
-{
-Wooden=Bench 4
-0x0B69=Wooden Bench 4
-ADDITEM=0x0b69
-0x0B68=Wooden Bench 4
-ADDITEM=0x0b6a
-0x0B6A=Wooden Bench 4
-ADDITEM=0x0b68
-<=Previous Menu
-ITEMMENU=354
-}
-
-[ITEMMENU 359]
-{
-Wooden=Bench 5
-0x0B92=Wooden Bench
-ADDITEM=0x0b92
-0x0B91=Wooden Bench
-ADDITEM=0x0b91
-0x0B93=Wooden Bench
-ADDITEM=0x0b93
-0x0B94=Wooden Bench
-ADDITEM=0x0b94
-<=Previous Menu
-ITEMMENU=354
-}
-
-[ITEMMENU 360]
-{
-Chairs
-0x0B32=Throne
-ITEMMENU=361
-0x0B2E=Wooden Chair
-ITEMMENU=362
-0x0B4E=Chair 1
-ITEMMENU=363
-0x0B52=Chair 2
-ITEMMENU=364
-0x0B56=Chair 3
-ITEMMENU=365
-0x0B5A=Chair 4
-ITEMMENU=366
-0x1218=Stone Throne
-ITEMMENU=367
-0x0A2A=Stool
-ADDITEM=0x0a2a
-0x0A2B=Stool
-ADDITEM=0x0a2b
-<=Previous Menu
-ITEMMENU=350
-}
-
-[ITEMMENU 361]
-{
-Throne
-0x0B32=Throne
-ADDITEM=0x0b32
-0x0B33=Throne
-ADDITEM=0x0b33
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 362]
-{
-Wooden=Chair
-0x0B2E=Wooden Chair
-ADDITEM=0x0b2e
-0x0B2F=Wooden Chair
-ADDITEM=0x0b2f
-0x0B30=Wooden Chair
-ADDITEM=0x0b30
-0x0B31=Wooden Chair
-ADDITEM=0x0b31
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 363]
-{
-Chair=1
-0x0B4E=Chair 1
-ADDITEM=0x0b4e
-0x0B4F=Chair 1
-ADDITEM=0x0b4f
-0x0B50=Chair 1
-ADDITEM=0x0b50
-0x0B51=Chair 1
-ADDITEM=0x0b51
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 364]
-{
-Chair=2
-0x0B52=Chair 2
-ADDITEM=0x0b52
-0x0B53=Chair 2
-ADDITEM=0x0b53
-0x0B54=Chair 2
-ADDITEM=0x0b54
-0x0B55=Chair 2
-ADDITEM=0x0b55
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 365]
-{
-Chair=3
-0x0B56=Chair 3
-ADDITEM=0x0b56
-0x0B57=Chair 3
-ADDITEM=0x0b57
-0x0B58=Chair 3
-ADDITEM=0x0b58
-0x0B59=Chair 3
-ADDITEM=0x0b59
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 366]
-{
-Chair=4
-0x0B5A=Chair 4
-ADDITEM=0x0b5a
-0x0B5B=Chair 4
-ADDITEM=0x0b5b
-0x0B5C=Chair 4
-ADDITEM=0x0b5c
-0x0B5D=Chair 4
-ADDITEM=0x0b5d
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 367]
-{
-Stone=Throne
-0x1218=Stone Throne
-ADDITEM=0x1218
-0x1219=Stone Throne
-ADDITEM=0x1219
-0x121A=Stone Throne
-ADDITEM=0x121a
-0x121B=Stone Throne
-ADDITEM=0x121b
-<=Previous Menu
-ITEMMENU=360
-}
-
-[ITEMMENU 368]
-{
-Display=Cases
-0x0B11=Display Case Bottom
-ITEMMENU=369
-0x0B18=Display Case Top
-ITEMMENU=370
-<=Previous Menu
-ITEMMENU=349
-}
-
-[ITEMMENU 369]
-{
-Display=Case Bottom
-0x0B0F=Center
-ADDITEM=0x0b0f
-0x0B17=North
-ADDITEM=0x0b17
-0x0B13=Northeast
-ADDITEM=0x0b13
-0x0B14=East
-ADDITEM=0x0b14
-0x0B11=Southeast
-ADDITEM=0x0b11
-0x0B15=South
-ADDITEM=0x0b15
-0x0B12=Southwest
-ADDITEM=0x0b12
-0x0B16=West
-ADDITEM=0x0b16
-0x0B10=Northwest
-ADDITEM=0x0b10
-<=Previous Menu
-ITEMMENU=368
-}
-
-[ITEMMENU 370]
-{
-Display=Case Top
-0x0AA2=North
-ADDITEM=0x0aa2
-0x0AA4=Northeast
-ADDITEM=0x0aa4
-0x0A9F=East
-ADDITEM=0x0a9f
-0x0B18=Southeast
-ADDITEM=0x0b18
-0x0AA0=South
-ADDITEM=0x0aa0
-0x0AA5=Southwest
-ADDITEM=0x0aa5
-0x0AA1=West
-ADDITEM=0x0aa1
-0x0AA3=Northwest
-ADDITEM=0x0aa3
-<=Previous Menu
-ITEMMENU=368
-}
-
-[ITEMMENU 371]
-{
-Cabinets
-0x0A2C=Type I
-ITEMMENU=372
-0x0A30=Type II
-ITEMMENU=373
-0x0A97=Book Shelfs
-ITEMMENU=374
-<=Previous Menu
-ITEMMENU=349
-}
-
-[ITEMMENU 372]
-{
-Cabinets=- Type I
-0x0A2C=Cabinet 1
-ADDITEM=0x0a2c
-0x0A34=Cabinet 2
-ADDITEM=0x0a34
-0x0A4F=Cabinet 3
-ADDITEM=0x0a4f
-0x0A53=Cabinet 4
-ADDITEM=0x0a53
-<=Previous Menu
-ITEMMENU=371
-}
-
-[ITEMMENU 373]
-{
-Cabinets=- Type II
-0x0A30=Cabinet 1
-ADDITEM=0x0a30
-0x0A38=Cabinet 2
-ADDITEM=0x0a38
-0x0A4D=Cabinet 3
-ADDITEM=0x0a4d
-0x0A51=Cabinet 4
-ADDITEM=0x0a51
-<=Previous Menu
-ITEMMENU=371
-}
-
-[ITEMMENU 374]
-{
-Book=Shelfs
-0x0A97=Book Shelf 1
-ADDITEM=0x0a97
-0x0A98=Book Shelf 2
-ADDITEM=0x0a98
-0x0A99=Book Shelf 3
-ADDITEM=0x0a99
-0x0A9A=Book Shelf 4
-ADDITEM=0x0a9a
-0x0A9B=Book Shelf 5
-ADDITEM=0x0a9b
-0x0A9C=Book Shelf 6
-ADDITEM=0x0a9c
-0x0A9D=Empty Shelf 1
-ADDITEM=0x0a9d
-0x0A9E=Empty Shelf 2
-ADDITEM=0x0a9e
-<=Previous Menu
-ITEMMENU=371
-}
-
-[ITEMMENU 375]
-{
-Tables
-0x0B34=Tables Type 1
-ITEMMENU=376
-0x0B3F=Tables Type 2
-ITEMMENU=377
-0x0B6B=Tables Type 3
-ITEMMENU=378
-0x0B6E=Tables Type 4
-ITEMMENU=379
-0x0B70=Tables Type 5
-ITEMMENU=380
-0x0B75=Tables Type 6
-ITEMMENU=381
-0x0B77=Tables Type 7
-ITEMMENU=382
-0x0B8F=Other Tables
-ITEMMENU=383
-<=Previous Menu
-ITEMMENU=349
-}
-
-[ITEMMENU 376]
-{
-Tables=Type 1
-0x0B34=Table 1
-ADDITEM=0x0b34
-0x0B37=Table 2
-ADDITEM=0x0b37
-0x0B35=Table 3
-ADDITEM=0x0b35
-0x0B38=Table 4
-ADDITEM=0x0b38
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 377]
-{
-Tables=Type 2
-0x0B3F=Table 1
-ADDITEM=0x0b3f
-0x0B3D=Table 2
-ADDITEM=0x0b3d
-0x0B3C=Table 3
-ADDITEM=0x0b4c
-0x0B3E=Table 4
-ADDITEM=0x0b3e
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 378]
-{
-Tables=Type 3
-0x0B6B=Table 1
-ADDITEM=0x0b6b
-0x0B6D=Table 2
-ADDITEM=0x0b6d
-0x0B6C=Table 3
-ADDITEM=0x0b6c
-0x0B7F=Table 4
-ADDITEM=0x0b7f
-0x0B80=Table 5
-ADDITEM=0x0b80
-0x0B7E=Table 6
-ADDITEM=0x0b7e
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 379]
-{
-Tables=Type 4
-0x0B6E=Table 1
-ADDITEM=0x0b6e
-0x0B6F=Table 2
-ADDITEM=0x0b6f
-0x0B82=Table 3
-ADDITEM=0x0b82
-0x0B81=Table 4
-ADDITEM=0x0b81
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 380]
-{
-Tables=Type 5
-0x0B70=Table 1
-ADDITEM=0x0b70
-0x0B71=Table 2
-ADDITEM=0x0b71
-0x0B72=Table 3
-ADDITEM=0x0b72
-0x0B73=Table 4
-ADDITEM=0x0b73
-0x0B74=Table 5
-ADDITEM=0x0b74
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 381]
-{
-Tables=Type 6
-0x0B75=Table 1
-ADDITEM=0x0b75
-0x0B76=Table 2
-ADDITEM=0x0b76
-0x0B89=Table 3
-ADDITEM=0x0b89
-0x0B88=Table 4
-ADDITEM=0x0b88
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 382]
-{
-Tables=Type 7
-0x0B77=Table 1
-ADDITEM=0x0b77
-0x0B78=Table 2
-ADDITEM=0x0b78
-0x0B79=Table 3
-ADDITEM=0x0b79
-0x0B7A=Table 4
-ADDITEM=0x0b7a
-0x0B7B=Table 5
-ADDITEM=0x0b7b
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 383]
-{
-Other=Tables
-0x0B8F=Table 1
-ADDITEM=0x0b34
-0x0B7C=Table 2
-ADDITEM=0x0b7c
-0x0B90=Table 3
-ADDITEM=0x0b90
-0x0B7D=Table 4
-ADDITEM=0x0b7d
-<=Previous Menu
-ITEMMENU=375
-}
-
-[ITEMMENU 384]
-{
-Statues=& Trophies
-<=Statues
-ITEMMENU=385
-<=Trophies
-ITEMMENU=386
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 385]
-{
-Statues
-0x12A1=Statue 1 Left
-ADDITEM=0x12a1
-0x129F=Statue 1 Center
-ADDITEM=0x129f
-0x12A0=Statue 1 Right
-ADDITEM=0x12a0
-0x12A4=Statue 2 Left
-ADDITEM=0x12a4
-0x12A2=Statue 2 Center
-ADDITEM=0x12a2
-0x12A3=Statue 2 Right
-ADDITEM=0x12a3
-0x12D7=Statue 3 Left
-ADDITEM=0x12d7
-0x12D5=Statue 3 Center
-ADDITEM=0x12d5
-0x12D6=Statue 3 Right
-ADDITEM=0x12d6
-0x12A3=Unfinished Statue
-ADDITEM=0x12ae
-0x1224=Statue
-ADDITEM=0x1224
-0x1225=Statue
-ADDITEM=0x1225
-0x1226=Statue
-ADDITEM=0x1226
-0x1227=Statue
-ADDITEM=0x1227
-0x1228=Statue
-ADDITEM=0x1228
-<=Previous Menu
-ITEMMENU=384
-}
-
-[ITEMMENU 386]
-{
-Trophies
-0x1E60=Grizzly Bear Trophy, Back Wall
-ADDITEM=0x1e60
-0x1E61=Deer Trophy, Back Wall
-ADDITEM=0x1e61
-0x1E62=Fish Trophy, Back Wall
-ADDITEM=0x1e62
-0x1E63=Gorilla Trophy, Back Wall
-ADDITEM=0x1e63
-0x1E64=Orc Trophy, Back Wall
-ADDITEM=0x1e64
-0x1E65=Polar Bear Trophy, Back Wall
-ADDITEM=0x1e65
-0x1E66=Troll Trophy, Back Wall
-ADDITEM=0x1e66
-0x1E67=Grizzly Bear Trophy, West Wall
-ADDITEM=0x1e67
-0x1E68=Deer Trophy, West Wall
-ADDITEM=0x1e68
-0x1E69=Fish Trophy, West Wall
-ADDITEM=0x1e69
-0x1E6A=Gorilla Trophy, West Wall
-ADDITEM=0x1e6a
-0x1E6B=Orc Trophy, West Wall
-ADDITEM=0x1e6b
-0x1E6C=Polar Bear Trophy, West Wall
-ADDITEM=0x1e6c
-0x1E6D=Troll Trophy, West Wall
-ADDITEM=0x1e6d
-<=Previous Menu
-ITEMMENU=384
-}
-
-[ITEMMENU 387]
-{
-Misc
-0x181D=Alchemical Symbols
-ITEMMENU=388
-0x1E0F=Plants
-ITEMMENU=389
-0x0BB9=Signs
-ITEMMENU=390
-0x0002=Ankh Left
-ADDITEM=0x0002
-0x0003=Ankh Right
-ADDITEM=0x0003
-0x1D97=Blood Ankh Left
-ADDITEM=0x1d97
-0x1D98=Blood Ankh Right
-ADDITEM=0x1d98
-<=Previous Menu
-ITEMMENU=300
-}
-
-[ITEMMENU 388]
-{
-Alchemical=Symbols
-0x181D=Alchemical Symbol
-ADDITEM=0x181d
-0x181E=Alchemical Symbol
-ADDITEM=0x181e
-0x181F=Alchemical Symbol
-ADDITEM=0x181f
-0x1820=Alchemical Symbol
-ADDITEM=0x1820
-0x1821=Alchemical Symbol
-ADDITEM=0x1821
-0x1822=Alchemical Symbol
-ADDITEM=0x1822
-0x1823=Alchemical Symbol
-ADDITEM=0x1823
-0x1824=Alchemical Symbol
-ADDITEM=0x1824
-0x1825=Alchemical Symbol
-ADDITEM=0x1825
-0x1826=Alchemical Symbol
-ADDITEM=0x1826
-0x1827=Alchemical Symbol
-ADDITEM=0x1827
-0x1828=Alchemical Symbol
-ADDITEM=0x1828
-<=Previous Menu
-ITEMMENU=387
-}
-
-[ITEMMENU 389]
-{
-Plants=Menu
-0x1E0F=Potted Cactus w/flowers
-ADDITEM=0x1e0f
-0x1E10=Potted Cactus
-ADDITEM=0x1e10
-0x1E11=Potted Cactus w/bush
-ADDITEM=0x1e11
-0x1E12=Potted Branched Cactus
-ADDITEM=0x1e12
-0x0C83=Campion Flowers
-ADDITEM=0x0c83
-0x0C84=Foxglove Flowers
-ADDITEM=0x0c84
-0x0C85=Orfluer Flowers
-ADDITEM=0x0c85
-0x0C86=Red Poppies
-ADDITEM=0x0c86
-0x0C88=Snow Drops
-ADDITEM=0x0c88
-0x0C8F=Hedge
-ADDITEM=0x0c8f
-0x0C93=Blade Plant
-ADDITEM=0x0c93
-0x0CA1=Large Fern
-ADDITEM=0x0ca1
-0x0CA5=Pampas Grass
-ADDITEM=0x0ca5
-0x0CC9=Spider Tree
-ADDITEM=0x0cc9
-0x0CC8=Juniper Bush
-ADDITEM=0x0cc8
-0x0CC7=Weed
-ADDITEM=0x0cc7
-0x0D38=Yucca
-ADDITEM=0x0d38
-<=Previous Menu
-ITEMMENU=387
-}
-
-[ITEMMENU 390]
-{
-Signs
-0x0BBF=Shop Signs 1
-ITEMMENU=391
-0x0BBF=Shop Signs 2
-ITEMMENU=392
-0x0BBF=Shop Signs 3
-ITEMMENU=393
-0x0BBF=Shop Signs 4
-ITEMMENU=394
-0x0BD3=Guild Signs 1
-ITEMMENU=395
-0x0BD3=Guild Signs 2
-ITEMMENU=396
-0x0BD3=Guild Signs 3
-ITEMMENU=397
-0x0BD3=Guild Signs 4
-ITEMMENU=398
-0x0BCF=Misc Signs
-ITEMMENU=399
-<=Previous Menu
-ITEMMENU=387
-}
-
-
-[ITEMMENU 391]
-{
-Shop=Signs 1
-0x0B95=Library
-ADDITEM=0x0b95
-0x0B96=Library
-ADDITEM=0x0b96
-0x0BA3=Bakery
-ADDITEM=0x0ba3
-0x0BA4=Bakery
-ADDITEM=0x0ba4
-0x0BA5=Tailor
-ADDITEM=0x0ba5
-0x0BA6=Tailor
-ADDITEM=0x0ba6
-0x0BA7=Tinker
-ADDITEM=0x0ba7
-0x0BA8=Tinker
-ADDITEM=0x0ba8
-0x0BA9=Butcher
-ADDITEM=0x0ba9
-0x0BAA=Butcher
-ADDITEM=0x0baa
-0x0BAB=Healer
-ADDITEM=0x0bab
-0x0BAC=Healer
-ADDITEM=0x0bac
-<=Previous Menu
-ITEMMENU=390
-}
-
-[ITEMMENU 392]
-{
-Shop=Signs 2
-0x0BAD=Magic
-ADDITEM=0x0bad
-0x0BAE=Magic
-ADDITEM=0x0bae
-0x0BAF=Carpenter
-ADDITEM=0x0baf
-0x0BB0=Carpenter
-ADDITEM=0x0bb0
-0x0BB1=Shipwright
-ADDITEM=0x0bb1
-0x0BB2=Shipwright
-ADDITEM=0x0bb2
-0x0BB3=Inn
-ADDITEM=0x0bb3
-0x0BB4=Inn
-ADDITEM=0x0bb4
-0x0BB5=Harbor Master
-ADDITEM=0x0bb5
-0x0BB6=Harbor Master
-ADDITEM=0x0bb6
-0x0BB7=Stables
-ADDITEM=0x0bb7
-0x0BB8=Stables
-ADDITEM=0x0bb8
-0x0BB9=Barber
-ADDITEM=0x0bb9
-0x0BBA=Barber
-ADDITEM=0x0bba
-0x0BD1=Plain
-ADDITEM=0x0bd1
-0x0BD2=Plain
-ADDITEM=0x0bd2
-<=Previous Menu
-ITEMMENU=711
-}
-
-[ITEMMENU 393]
-{
-Shop=Signs 3
-0x0BBB=Mucician
-ADDITEM=0x0bbb
-0x0BBC=Mucician
-ADDITEM=0x0bbc
-0x0BBD=Archery
-ADDITEM=0x0bbd
-0x0BBE=Archery
-ADDITEM=0x0bbe
-0x0BBF=Blacksmith
-ADDITEM=0x0bbf
-0x0BC0=Blacksmith
-ADDITEM=0x0bc0
-0x0BC1=Jewler
-ADDITEM=0x0bc1
-0x0BC2=Jewler
-ADDITEM=0x0bc2
-0x0BC3=Tavern
-ADDITEM=0x0bc3
-0x0BC4=Tavern
-ADDITEM=0x0bc4
-0x0BC5=Alchemist
-ADDITEM=0x0bc5
-0x0BC6=Alchemist
-ADDITEM=0x0bc6
-0x0BC7=Armorer
-ADDITEM=0x0bc7
-0x0BC8=Armorer
-ADDITEM=0x0bc8
-<=Previous Menu
-ITEMMENU=390
-}
-
-[ITEMMENU 394]
-{
-Shop=Signs 4
-0x0BC9=Artist
-ADDITEM=0x0bc9
-0x0BCA=Artist
-ADDITEM=0x0bca
-0x0BCB=Provisioner
-ADDITEM=0x0bcb
-0x0BCC=Provisioner
-ADDITEM=0x0bcc
-0x0BCD=Bowyer
-ADDITEM=0x0bcd
-0x0BCE=Bowyer
-ADDITEM=0x0bce
-0x0C0B=Bank
-ADDITEM=0x0c0b
-0x0C0C=Bank
-ADDITEM=0x0c0c
-0x0C0D=Theater
-ADDITEM=0x0c0d
-0x0C0E=Theater
-ADDITEM=0x0c0e
-0x0C43=Beekeeper
-ADDITEM=0x0c43
-0x0C44=Beekeeper
-ADDITEM=0x0c44
-<=Previous Menu
-ITEMMENU=711
-}
-
-[ITEMMENU 395]
-{
-Guild=Signs 1
-0x0BD3=Armaments Guild
-ADDITEM=0x0bd3
-0x0BD4=Armaments Guild
-ADDITEM=0x0bd4
-0x0BD5=Armourers Guild
-ADDITEM=0x0bd5
-0x0BD6=Armourers Guild
-ADDITEM=0x0bd6
-0x0BD7=Blacksmiths Guild
-ADDITEM=0x0bd7
-0x0BD8=Blacksmiths Guild
-ADDITEM=0x0bd8
-0x0BD9=Weapons Guild
-ADDITEM=0x0bd9
-0x0BDA=Weapons Guild
-ADDITEM=0x0bda
-0x0BDB=Bardic Guild
-ADDITEM=0x0bdb
-0x0BDC=Bardic Guild
-ADDITEM=0x0bdc
-0x0BDD=Barders Guild
-ADDITEM=0x0bdd
-0x0BDE=Barders Guild
-ADDITEM=0x0bde
-0x0BDF=Provisioners Guild
-ADDITEM=0x0bdf
-0x0BE0=Provisioners Guild
-ADDITEM=0x0be0
-<=Previous Menu
-ITEMMENU=390
-}
-
-[ITEMMENU 396]
-{
-Guild=Signs 2
-0x0BE1=Traders Guild
-ADDITEM=0x0be1
-0x0BE2=Traders Guild
-ADDITEM=0x0be2
-0x0BE3=Cooks Guild
-ADDITEM=0x0be3
-0x0BE4=Cooks Guild
-ADDITEM=0x0be4
-0x0BE5=Healers Guild
-ADDITEM=0x0be5
-0x0BE6=Healers Guild
-ADDITEM=0x0be6
-0x0BE7=Mages Guild
-ADDITEM=0x0be7
-0x0BE8=Mages Guild
-ADDITEM=0x0be8
-0x0BE9=Sorcerers Guild
-ADDITEM=0x0be9
-0x0BEA=Sorcerers Guild
-ADDITEM=0x0bea
-0x0BEB=Illusionists Guild
-ADDITEM=0x0beb
-0x0BEC=Illusionists Guild
-ADDITEM=0x0bec
-0x0BED=Miners Guild
-ADDITEM=0x0bed
-0x0BEE=Miners Guild
-ADDITEM=0x0bee
-<=Previous Menu
-ITEMMENU=711
-}
-
-[ITEMMENU 397]
-{
-Guild=Signs 3
-0x0BEF=Archers Guild
-ADDITEM=0x0bef
-0x0BF0=Archers Guild
-ADDITEM=0x0bf0
-0x0BF1=Seamans Guild
-ADDITEM=0x0bf1
-0x0BF2=Seamans Guild
-ADDITEM=0x0bf2
-0x0BF3=Fishermans Guild
-ADDITEM=0x0bf3
-0x0BF4=Fishermans Guild
-ADDITEM=0x0bf4
-0x0BF5=Sailors Guild
-ADDITEM=0x0bf5
-0x0BF6=Sailors Guild
-ADDITEM=0x0bf6
-0x0BF7=Shipwrights Guild
-ADDITEM=0x0bf7
-0x0BF8=Shipwrights Guild
-ADDITEM=0x0bf8
-0x0BF9=Tailors Guild
-ADDITEM=0x0bf9
-0x0BFA=Tailors Guild
-ADDITEM=0x0bfa
-0x0BFB=Thieves Guild
-ADDITEM=0x0bfb
-0x0BFC=Thieves Guild
-ADDITEM=0x0bfc
-<=Previous Menu
-ITEMMENU=390
-}
-
-[ITEMMENU 398]
-{
-Guild=Signs 4
-0x0BFD=Rouges Guild
-ADDITEM=0x0bfd
-0x0BFE=Rouges Guild
-ADDITEM=0x0bfe
-0x0BFF=Assassins Guild
-ADDITEM=0x0bff
-0x0C00=Assassins Guild
-ADDITEM=0x0c00
-0x0C01=Tinkers Guild
-ADDITEM=0x0c01
-0x0C02=Tinkers Guild
-ADDITEM=0x0c02
-0x0C03=Warriors Guild
-ADDITEM=0x0c03
-0x0C04=Warriors Guild
-ADDITEM=0x0c04
-0x0C05=Cavalry Guild
-ADDITEM=0x0c05
-0x0C06=Cavalry Guild
-ADDITEM=0x0c06
-0x0C07=Fighters Guild
-ADDITEM=0x0c07
-0x0C08=Fighters Guild
-ADDITEM=0x0c08
-0x0C09=Merchants Guild
-ADDITEM=0x0c09
-0x0C0A=Merchants Guild
-ADDITEM=0x0c0a
-<=Previous Menu
-ITEMMENU=711
-}
-
-[ITEMMENU 399]
-{
-Misc=Signs
-0x1297=Roadsign
-ADDITEM=0x1297
-0x1298=Roadsign
-ADDITEM=0x1298
-0x1299=Roadsign
-ADDITEM=0x1299
-0x129A=Roadsign
-ADDITEM=0x129a
-0x129B=Roadsign
-ADDITEM=0x129b
-0x129C=Roadsign
-ADDITEM=0x129c
-0x129D=Roadsign
-ADDITEM=0x129d
-0x129E=Roadsign
-ADDITEM=0x129e
-0x1296=Signpost
-ADDITEM=0x1296
-0x0BCF=Wooden Sign
-ADDITEM=0x0bcf
-0x0BD0=Wooden Sign
-ADDITEM=0x0bd0
-0x0BD1=Brass Sign
-ADDITEM=0x0bd1
-0x0BD2=Brass Sign
-ADDITEM=0x0bd2
-0x1F29=Sign
-ADDITEM=0x1f29
-0x1F28=Sign
-ADDITEM=0x1f28
-<=Previous Menu
-ITEMMENU=390
-}
-
-[ITEMMENU 400]
-{
-Gate=Menu
-<=Single-Use Adv. Gates
-ITEMMENU=401
-<=Multi-Use Adv. Gates
-ITEMMENU=402
-<=Monster Gates
-ITEMMENU=403
-<=Race Gates
-ITEMMENU=404
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 401]
-{
-Single-Use=Adv. Gates
-<=Black Smith
-ADDITEM=0x0dda
-<=Swordsman
-ADDITEM=0x0dda
-<=Archer
-ADDITEM=0x0dda
-<=Mage
-ADDITEM=0x0dda
-<=Armsman
-ADDITEM=0x0dda
-<=Fencer
-ADDITEM=0x0dda
-<=Thief
-ADDITEM=0x0dda
-<=Bard
-ADDITEM=0x0dda
-<=Ranger
-ADDITEM=0x0dda
-<=Assassin
-ADDITEM=0x0dda
-<=Previous Menu
-ITEMMENU=400
-}
-
-[ITEMMENU 402]
-{
-Multi-Use=Adv. Gates
-<=Black Smith
-ADDITEM=0x0dda
-<=Swordsman
-ADDITEM=0x0dda
-<=Archer
-ADDITEM=0x0dda
-<=Mage
-ADDITEM=0x0dda
-<=Armsman
-ADDITEM=0x0dda
-<=Fencer
-ADDITEM=0x0dda
-<=Thief
-ADDITEM=0x0dda
-<=Bard
-ADDITEM=0x0dda
-<=Ranger
-ADDITEM=0x0dda
-<=Assassin
-ADDITEM=0x0dda
-<=Previous Menu
-ITEMMENU=400
-}
-
-[ITEMMENU 403]
-{
-Monster=Gates
-<=Orc
-ADDITEM=0x0dda
-<=Ettin
-ADDITEM=0x0dda
-<=Troll
-ADDITEM=0x0dda
-<=Skeleton
-ADDITEM=0x0dda
-<=Lich
-ADDITEM=0x0dda
-<=Daemon
-ADDITEM=0x0dda
-<=Dragon
-ADDITEM=0x0dda
-<=Drake
-ADDITEM=0x0dda
-<=Male Human
-ADDITEM=0x0dda
-<=Female Human
-ADDITEM=0x0dda
-<=Previous Menu
-ITEMMENU=400
-}
-
-[ITEMMENU 404]
-{
-Race=Gates
-<=Human
-ADDITEM=0x0dda
-<=Elf
-ADDITEM=0x0dda
-<=Half-Elf
-ADDITEM=0x0dda
-<=Dwarf
-ADDITEM=0x0dda
-<=Goblin
-ADDITEM=0x0dda
-<=Gnome
-ADDITEM=0x0dda
-<=Halfling
-ADDITEM=0x0dda
-<=Dryad
-ADDITEM=0x0dda
-<=Orc
-ADDITEM=0x0dda
-<=Pixie
-ADDITEM=0x0dda
-<=Valheru
-ADDITEM=0x0dda
-<=Previous Menu
-ITEMMENU=400
-}
-
-[ITEMMENU 410]
-{
-Supplies=Menu
-<=Food Items
-ITEMMENU=411
-0x0E75=Containers
-ITEMMENU=419
-0x0B1D=Light Sources
-ITEMMENU=420
-0x0EEF=Coins, Gems, Jewelry
-ITEMMENU=423
-0x1012=Keys
-ITEMMENU=429
-<=Decorative Items
-ITEMMENU=422
-0x1BC4=Unique Items
-ITEMMENU=430
-0x1870=Quest Items
-ITEMMENU=431
-<=Misc Items
-ITEMMENU=432
-<=Creature Statues
-ITEMMENU=500
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 411]
-{
-Food=Items
-<=Bottled Beverages
-ITEMMENU=412
-0x09EE=Non-Bottled Beverages
-ITEMMENU=413
-0x09E9=Baked and Veggys
-ITEMMENU=414
-0x099E=Baked and Veggys 2
-ITEMMENU=415
-0x1606=Bowls
-ITEMMENU=416
-0x09C9=Meat
-ITEMMENU=417
-0x0993=Fruit
-ITEMMENU=418
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 412]
-{
-Bottled=Beverages
-0x099F=Bottle of Ale
-ADDITEM=0x099f
-0x09A0=Bottles of Ale
-ADDITEM=0x09a0
-0x09A1=Bottles of Ale
-ADDITEM=0x09a1
-0x09A2=Bottles of Ale
-ADDITEM=0x09a2
-0x099B=Bottle of Liquor
-ADDITEM=0x099b
-0x099C=Bottles of Liqour
-ADDITEM=0x099c
-0x099D=Bottles of Liqour
-ADDITEM=0x099d
-0x099E=Bottles of Liqour
-ADDITEM=0x099e
-0x09C7=Bottle of Wine
-ADDITEM=0x09c7
-0x09C6=Bottles of Wine
-ADDITEM=0x09c6
-0x09C5=Bottles of Wine
-ADDITEM=0x09c5
-0x09C4=Bottles of Wine
-ADDITEM=0x09c4
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 413]
-{
-Non-Bottled=Beverages
-0x0FFA=Bucket of Water
-ADDITEM=0x0ffa
-0x09EE=Glass of Ale
-ADDITEM=0x09ee
-0x1F7D=Glass of Cider
-ADDITEM=0x1f7d
-0x1F85=Glass of Liqour
-ADDITEM=0x1f85
-0x1F89=Glass of Milk
-ADDITEM=0x1f89
-0x1F91=Glass of Water
-ADDITEM=0x1f91
-0x1F8D=Glass of Wine
-ADDITEM=0x1f8d
-0x098E=Jugs of Cider
-ADDITEM=0x098e
-0x098D=Jugs of Cider
-ADDITEM=0x098d
-0x1F95=Pitcher of Ale
-ADDITEM=0x1f95
-0x1F97=Pitcher of Cider
-ADDITEM=0x1f97
-0x1F99=Pitcher of Liqour
-ADDITEM=0x1f99
-0x09AD=Pitcher of Milk
-ADDITEM=0x09ad
-0x0FF9=Pitcher of Water
-ADDITEM=0x0ff9
-0x1F9B=Pitcher of Wine
-ADDITEM=0x1f9b
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 414]
-{
-Baked=and Veggys
-0x1041=Baked Pie
-ADDITEM=0x1041
-0x1042=Unbaked Pie
-ADDITEM=0x1042
-0x09E9=Cake
-ADDITEM=0x09e9
-0x097C=Wedge of Cheese
-ADDITEM=0x097c
-0x097D=Cut Cheese
-ADDITEM=0x097d
-0x097E=Wheel of Cheese
-ADDITEM=0x097e
-0x098C=French Bread
-ADDITEM=0x098c
-0x09EA=Muffin
-ADDITEM=0x09ea
-0x09FA=Muffins
-ADDITEM=0x09fa
-0x09EB=Muffins
-ADDITEM=0x09eb
-0x103C=Loaf of Bread
-ADDITEM=0x103c
-0x1040=Pizza
-ADDITEM=0x1040
-0x1083=Unbaked Pizza
-ADDITEM=0x1083
-0x160B=Pan of Cookies
-ADDITEM=0x160b
-0x160C=Plate of Cookies
-ADDITEM=0x160c
-0x09B4=Eggshells
-ADDITEM=0x09b4
-0x09B5=Eggs
-ADDITEM=0x09b5
-0x09B6=Fried Eggs
-ADDITEM=0x09b6
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 415]
-{
-Baked=and Veggys 2
-0x103F=Cookie Mix
-ADDITEM=0x103f
-0x0C70=Lettuce
-ADDITEM=0x0c70
-0x0C72=Squash
-ADDITEM=0x0c72
-0x0C76=Carrots
-ADDITEM=0x0c76
-0x0C7B=Cabbage
-ADDITEM=0x0c7b
-0x0C7F=Ear of Corn
-ADDITEM=0x0c7f
-0x1AD3=Donuts
-ADDITEM=0x1ad3
-0x09EC=Jar of Honey
-ADDITEM=0x09ec
-0x0C61=Turnip
-ADDITEM=0x0c61
-0x0C68=Sprouts
-ADDITEM=0x0c68
-0x0C6A=Pumpkin
-ADDITEM=0x0c6a
-0x0C6D=Onion
-ADDITEM=0x0c6d
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 416]
-{
-Bowls
-0x10E3=Dough
-ADDITEM=0x10e3
-0x15FE=Carrots
-ADDITEM=0x15fe
-0x15FF=Corn
-ADDITEM=0x15ff
-0x1600=Lettuce
-ADDITEM=0x1600
-0x1601=Peas
-ADDITEM=0x1601
-0x1602=Potatoes
-ADDITEM=0x1602
-0x1604=Stew
-ADDITEM=0x1604
-0x1606=Tomato Soup
-ADDITEM=0x1606
-0x15FD=Pewter
-ADDITEM=0x15fd
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 417]
-{
-Meat
-0x09B7=Cooked Bird
-ADDITEM=0x09b7
-0x09BB=Roast Pig
-ADDITEM=0x09bb
-0x09C0=Sausages
-ADDITEM=0x09c0
-0x09C9=Ham
-ADDITEM=0x09c9
-0x09F2=Ribs
-ADDITEM=0x09f2
-0x097B=Fish Steak
-ADDITEM=0x097b
-0x0976=Slabs of Bacon
-ADDITEM=0x0976
-0x0978=Slice of Bacon
-ADDITEM=0x0978
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 418]
-{
-Fruit
-0x0994=Pear
-ADDITEM=0x0994
-0x09D0=Apple
-ADDITEM=0x09d0
-0x09D1=Grape Bunch
-ADDITEM=0x09d1
-0x09D2=Peach
-ADDITEM=0x09d2
-0x0993=Fruit Basket
-ADDITEM=0x0993
-0x1726=Coconut
-ADDITEM=0x1726
-0x1720=Banana
-ADDITEM=0x1720
-0x1721=Bananas
-ADDITEM=0x1721
-0x1727=Dates
-ADDITEM=0x1727
-0x1728=Lemon
-ADDITEM=0x1728
-0x1729=Lemons
-ADDITEM=0x1729
-0x172A=Lime
-ADDITEM=0x172a
-0x172B=Limes
-ADDITEM=0x172b
-0x0C74=Honeydew Melon
-ADDITEM=0x0c74
-0x0C79=Canteloupe
-ADDITEM=0x0c79
-0x0C5D=Water Melon
-ADDITEM=0x0c5d
-0x0F36=Sheaf of Hay
-ADDITEM=0x0f36
-<=Previous Menu
-ITEMMENU=411
-}
-
-[ITEMMENU 419]
-{
-Containers
-0x0E75=Backpack
-ADDITEM=0x0e75
-0x0E76=Leather Bag
-ADDITEM=0x0e76
-0x0E78=Round Basket
-ADDITEM=0x0e78
-0x0E79=Pouch
-ADDITEM=0x0e79
-0x0E7A=Square Basket
-ADDITEM=0x0e7a
-0x0E42=Wooden Chest
-ADDITEM=0x0e43
-0x0E7C=Silver Chest
-ADDITEM=0x0e7c
-0x0E40=Metal Chest
-ADDITEM=0x0e40
-0x0E7D=Wooden Box
-ADDITEM=0x0e7d
-0x0E7E=Small Wooden Crate
-ADDITEM=0x0e7e
-0x0E3E=Medium Wooden Crate
-ADDITEM=0x0e3e
-0x0E3C=Large Wooden Crate
-ADDITEM=0x0e3c
-0x0E7F=Wooden Keg
-ADDITEM=0x0e7f
-0x0E83=Tub
-ADDITEM=0x0e83
-0x0E77=Barrel
-ADDITEM=0x0e77
-0x0E80=Brass Box
-ADDITEM=0x0e80
-0x0A4D=Armorie, Cherry
-ADDITEM=0x0a4d
-0x0A4F=Armorie, Brown
-ADDITEM=0x0a4f
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 420]
-{
-Light Sources
-<=Hand Light Sorces Menu
-ITEMMENU=421
-0x0A08=N/S Wall Torch ID
-ADDITEM=0x0a08
-0x0A0E=E/W Wall Torch ID
-ADDITEM=0x0a0e
-0x0E31=Brazier
-ADDITEM=0x0e31
-0x0B1A=Candle
-ADDITEM=0x0b1a
-0x0B1D=Candelabra
-ADDITEM=0x0b1d
-0x0B25=Dark Lamp post
-ADDITEM=0x0b25
-0x0B23=Fancy Dim Post
-ADDITEM=0x0b23
-0x0B22=Fancy Lit Post
-ADDITEM=0x0b22
-0x0B24=Lit Lamp Post
-ADDITEM=0x0b24
-0x0B20=Standard Lit Post
-ADDITEM=0x0b20
-0x0B21=Standard Off Post
-ADDITEM=0x0b21
-0x0B26=Tall Candelabra
-ADDITEM=0x0b26
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 421]
-{
-Hand=Lights Sources
-0x0A15=Lantern
-ADDITEM=0x0a15
-0x0A12=Torch
-ADDITEM=0x0a12
-0x0A0F=Candle
-ADDITEM=0x0a0f
-0x1854=Skull candle
-ADDITEM=0x1854
-0x09FF=Wall Candle
-ADDITEM=0x09ff
-0x0A00=Wall Candle
-ADDITEM=0x0a00
-<=Previous Menu
-ITEMMENU=420
-}
-
-[ITEMMENU 422]
-{
-Decorative=Items
-<=A Goblet
-ADDITEM=0x099a
-<=A Golden Goblet
-ADDITEM=0x09b3
-<=A Pewter Mug
-ADDITEM=0x1000
-<=A Vase
-ADDITEM=0x0b45
-<=Jars
-ADDITEM=0x0e4b
-<=A Boat Model
-ADDITEM=0x14f4
-<=A Set of Vials
-ADDITEM=0x185b
-<=A skull
-ADDITEM=0x1ae0
-0x0f3c=Horse Dung
-ADDITEM=0x0f3c
-0x0e12=Chessmen-N(Black)
-ADDITEM=0x0e12
-0x0e13=Chessmen-W(Black)
-ADDITEM=0x0e13
-0x0e14=Chessmen-W(White)
-ADDITEM=0x0e14
-0x0fa8=Chessmen-N(White)
-ADDITEM=0x0fa8
-0x0fa7=Dice & Cup
-ADDITEM=0x0fa7
-0x0fa6=Game Board
-ADDITEM=0x0fa6
-0x0fad=Backgammon
-ADDITEM=0x0fad
-0x0fa2=Playing Cards
-ADDITEM=0x0fa2
-0x0fa3=Playing Cards
-ADDITEM=0x0fa3
-0x0fb6=HorseShoes
-ADDITEM=0x0fb6
-0x1e34=Scarecrow
-ADDITEM=0x1e34
-0x1e2e=DartBoard
-ADDITEM=0x1e2e
-0x1cde=Dead Body
-ADDITEM=0x1cde
-0x1da3=Left Leg
-ADDITEM=0x1da3
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 423]
-{
-Coins,=Gems, Jewelry
-0x0EEF=Coins
-ITEMMENU=424
-0x0F28=Gems
-ITEMMENU=425
-0x1089=Jewelry
-ITEMMENU=428
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 424]
-{
-Coins
-0x0EED=Gold, Single
-ADDITEM=onegoldcoin
-0x0EEE=Gold, Few
-ADDITEM=fewgoldcoin
-0x0EEF=Gold, Pile
-ADDITEM=pilegoldcoin
-0x0EF0=Silver, Single
-ADDITEM=onesilvercoin
-0x0EF1=Silver, Few
-ADDITEM=fewsilvercoin
-0x0EF2=Silver, Pile
-ADDITEM=pilesilvercoin
-0x0EEA=Copper, Single
-ADDITEM=onecoppercoin
-0x0EEB=Copper, Few
-ADDITEM=fewcoppercoin
-0x0EEC=Copper, Pile
-ADDITEM=pilecoppercoin
-<=Previous Menu
-ITEMMENU=423
-}
-
-[ITEMMENU 425]
-{
-Gems
-0x0F26=Cut Gems
-ITEMMENU=426
-0x0F29=Un-Cut Gems
-ITEMMENU=427
-<=Previous Menu
-ITEMMENU=423
-}
-
-[ITEMMENU 426]
-{
-Cut=Gems
-0x0F16=Amethyst
-ADDITEM=0x0f16
-0x0F17=Amethyst
-ADDITEM=0x0f17
-0x0F15=Citrine
-ADDITEM=0x0f15
-0x0F26=Diamond
-ADDITEM=0x0f26
-0x0F10=Emerald
-ADDITEM=0x0f10
-0x0F13=Ruby
-ADDITEM=0x0f13
-0x0F14=Ruby
-ADDITEM=0x0f14
-0x0F1A=Ruby
-ADDITEM=0x0f1a
-0x0F1C=Ruby
-ADDITEM=0x0f1c
-0x0F1D=Ruby
-ADDITEM=0x0f1d
-0x0F11=Sapphire
-ADDITEM=0x0f11
-0x0F12=Sapphire
-ADDITEM=0x0f12
-0x0F19=Sapphire
-ADDITEM=0x0f19
-0x0F1F=Sapphire
-ADDITEM=0x0f1f
-0x0F0F=Sapphire, Star
-ADDITEM=0x0f0f
-0x0F1B=Sapphire, Star
-ADDITEM=0x0f1b
-0x0F18=Tourmaline
-ADDITEM=0x0f18
-0x0F1E=Tourmaline
-ADDITEM=0x0f1e
-0x0F20=Tourmaline
-ADDITEM=0x0f20
-<=Previous Menu
-ITEMMENU=425
-}
-
-[ITEMMENU 427]
-{
-UnCut=Gems
-0x0F25=Amber
-ADDITEM=0x0f25
-0x0F22=Amethyst
-ADDITEM=0x0f22
-0x0F2E=Amethyst
-ADDITEM=0x0f2e
-0x0F23=Citrine
-ADDITEM=0x0f23
-0x0F24=Citrine
-ADDITEM=0x0f24
-0x0F2C=Citrine
-ADDITEM=0x0f2c
-0x0F27=Diamond
-ADDITEM=0x0f27
-0x0F28=Diamond
-ADDITEM=0x0f28
-0x0F29=Diamond
-ADDITEM=0x0f29
-0x0F30=Diamond
-ADDITEM=0x0f30
-0x0F2F=Emerald
-ADDITEM=0x0f2f
-0x0F2A=Ruby
-ADDITEM=0x0f2a
-0x0F2B=Ruby
-ADDITEM=0x0f2b
-0x0F21=Sapphire, Star
-ADDITEM=0x0f21
-0x0F2D=Tourmaline
-ADDITEM=0x0f2d
-<=Previous Menu
-ITEMMENU=425
-}
-
-[ITEMMENU 428]
-{
-Jewelry
-0x108B=Beads
-ADDITEM=0x108b
-0x1086=Bracelet
-ADDITEM=0x1086
-0x1087=Earings
-ADDITEM=0x1087
-0x1085=Necklace
-ADDITEM=0x1085
-0x1088=Necklace
-ADDITEM=0x1088
-0x1089=Necklace
-ADDITEM=0x1089
-0x108A=Ring
-ADDITEM=0x108a
-<=Previous Menu
-ITEMMENU=423
-}
-
-[ITEMMENU 429]
-{
-Keys
-0x100F=Gold Key
-ADDITEM=0x100f
-0x1010=Iron Key
-ADDITEM=0x1010
-0x1012=Magic Key
-ADDITEM=0x1012
-0x1013=Bronze Key
-ADDITEM=0x1013
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 430]
-{
-Unique=Items
-0x1086=Bracelet of Crom
-ADDITEM=0x1086
-0x1B76=Dragon's Shield
+0x1b76=Heater Shield
 ADDITEM=0x1b76
-0x140E=Falcon's Helmet
-ADDITEM=0x140e
-0x143E=Lizard Killer
-ADDITEM=0x143e
-0x0E78=Mitra's Basin
-ADDITEM=0x0e78
-0x1B7B=Orcish Shield
+0x1b78=Wooden Tear Shield
+ADDITEM=0x1b78
+0x1b7a=Wooden Shield
+ADDITEM=0x1b7a
+0x1b7b=Metal Shield
 ADDITEM=0x1b7b
-0x13B2=Shiva's Bow
-ADDITEM=0x13b2
-0x0F2B=Shiva's Rubi
-ADDITEM=0x0f2b
-0x13B8=Sword of Heavens
-ADDITEM=0x13b8
-0x1F03=Undead's Robe
-ADDITEM=0x1f03
-<=Previous Menu
-ITEMMENU=410
+0x1bc3=Chaos Shield
+ADDITEM=0x1bc3
+0x1bc4=Order Shield
+ADDITEM=0x1bc4
 }
 
-[ITEMMENU 431]
-{
-Quest=Items
-0x1870=Compassion
-ADDITEM=0x1870
-0x1C12=Courage
-ADDITEM=0x1c12
-0x186A=Honesty
-ADDITEM=0x186a
-0x186D=Honor
-ADDITEM=0x186d
-0x1869=Humility
-ADDITEM=0x1869
-0x186B=Justice
-ADDITEM=0x186b
-0x1C14=Love
-ADDITEM=0x1c14
-0x186C=Sacrifice
-ADDITEM=0x186c
-0x186F=Spirituality
-ADDITEM=0x186f
-0x186E=Valor
-ADDITEM=0x186e
-0x1C13=Truth
-ADDITEM=0x1c13
-0x1870=Gem of Immortality
-ADDITEM=0x1870
-<=Previous Menu
-ITEMMENU=410
+[ITEMMENU 55]
+Colored Armor
+<=Dull Copper
+ITEMMENU=56
 }
 
-[ITEMMENU 432]
-{
-Misc=Items
-0x0FF1=Books
-ITEMMENU=433
-0x1E5E=Bulletin Board
-ADDITEM=0x1e5e
-0x0DC0=Fishing Pole
-ADDITEM=0x0dbf
-0x14EB=Map
-ADDITEM=0x14eb
-<=Previous Menu
-ITEMMENU=410
+[ITEMMENU 56]
+Dull Copper
+<=Dull Copper Ringmail
+ITEMMENU=57
+<=Dull Copper Chainmail
+ITEMMENU=58
+<=Dull Copper Platemail
+ITEMMENU=59
+<=Dull Copper Female Armor
+ITEMMENU=60
+<=Dull Copper Shields
+ITEMMENU=61
 }
 
-[ITEMMENU 433]
-{
-Books
-0x0FF1=Books 1-8
-ITEMMENU=434
-0x0FF1=Books 9-16
-ITEMMENU=435
-0x0FF1=Books 17-24
-ITEMMENU=436
-0x0FF1=Books 25-32
-ITEMMENU=437
-0x0FF1=Empty Book
-ADDITEM=0x0ff1
-<=Previous Menu
-ITEMMENU=432
+[ITEMMENU 57]
+Dull Copper Ringmail
+0x13eb=Ringmail Gloves
+ADDITEM=0x13eb-d
+0x13ec=Ringmail Tunic
+ADDITEM=0x13ec-d
+0x13ee=Ringmail Sleeves
+ADDITEM=0x13ee-d
+0x13f0=Ringmail Leggings
+ADDITEM=0x13f0-d
 }
 
-[ITEMMENU 434]
-{
-Books=1-8
-0x0FF1=The first UOX book
-ADDITEM=0x0ff1
-0x0FF1=A Grammer of Orchish
-ADDITEM=0x0ff1
-0x0FF1=The bold stranger
-ADDITEM=0x0ff1
-0x0FF1=Birds of Brittannia
-ADDITEM=0x0ff1
-0x0FF1=Reguarding Llamas
-ADDITEM=0x0ff1
-0x0FF1=Talking to Wisps
-ADDITEM=0x0ff1
-0x0FF1=Taming Dragons
-ADDITEM=0x0ff1
-0x0FF1=A politic call to anarchy
-ADDITEM=0x0ff1
-<=Previous Menu
-ITEMMENU=433
+[ITEMMENU 58]
+Dull Copper Chainmail
+0x13bb=Chainmail Coif
+ADDITEM=0x13bb-d
+0x13be=Chainmail Leggings
+ADDITEM=0x13be-d
+0x13bf=Chainmail Tunic
+ADDITEM=0x13bf-d
 }
 
-[ITEMMENU 435]
-{
-Books=9-16
-0x0FF1=Ethical Hedonism: An introduction
-ADDITEM=0x0ff1
-0x0FF1=On the diversity of our lands
-ADDITEM=0x0ff1
-0x0FF1=Virtue
-ADDITEM=0x0ff1
-0x0FF1=My story
-ADDITEM=0x0ff1
-0x0FF1=The burning of Trinsic
-ADDITEM=0x0ff1
-0x0FF1=The fight
-ADDITEM=0x0ff1
-0x0FF1=A song of Samlethe
-ADDITEM=0x0ff1
-0x0FF1=Classic childrens tales vol.2
-ADDITEM=0x0ff1
-<=Previous Menu
-ITEMMENU=433
+[ITEMMENU 59]
+Dull Copper Platemail
+0x1408=Close Helm
+ADDITEM=0x1408-d
+0x140a=Helmet
+ADDITEM=0x140a-d
+0x140c=Bascinet
+ADDITEM=0x140c-d
+0x140e=Nose Helm
+ADDITEM=0x140e-d
+0x1410=Platemail Arms
+ADDITEM=0x1410-d
+0x1411=Platemail Leggings
+ADDITEM=0x1411-d
+0x1412=Plate Helm
+ADDITEM=0x1412-d
+0x1413=Platemail Gorget
+ADDITEM=0x1413-d
+0x1414=Platemail Gloves
+ADDITEM=0x1414-d
+0x1415=Platemail Chest
+ADDITEM=0x1415-d
 }
 
-[ITEMMENU 436]
-{
-Books=17-24
-0x0FF1=Classic tales of Vesper vol.1
-ADDITEM=0x0ff1
-0x0FF1=A tale of three tribes
-ADDITEM=0x0ff1
-0x0FF1=Deceit: A Dungeon of horrors
-ADDITEM=0x0ff1
-0x0FF1=The life of a travelling minstrel
-ADDITEM=0x0ff1
-0x0FF1=The wild girl in the forest
-ADDITEM=0x0ff1
-0x0FF1=A primer on arms and weopons
-ADDITEM=0x0ff1
-0x0FF1=Beltrans guide to guilds
-ADDITEM=0x0ff1
-0x0FF1=Brittannian flora
-ADDITEM=0x0ff1
-<=Previous menu
-ITEMMENU=433
+[ITEMMENU 60]
+Dull Copper Female Armor
+0x1c04=Female Plate
+ADDITEM-0x1c04-d
 }
 
-[ITEMMENU 437]
-{
-Books=25-32
-0x0FF1=Demensional travel: a monagraph
-ADDITEM=0x0ff1
-0x0FF1=The major trade associations
-ADDITEM=0x0ff1
-0x0FF1=The rankings of trades
-ADDITEM=0x0ff1
-0x0FF1=Treatise on alchemy
-ADDITEM=0x0ff1
-0x0FF1=UOX3 Story: Chapter 1 - Death
-ADDITEM=0x0ff1
-0x0FF1=UOX3 Story: Chapter 2 - End of the World
-ADDITEM=0x0ff1
-0x0FF1=UOX3 Story: Chapter 3- Th22e lost Splinter
-ADDITEM=0x0ff1
-0x0FF1=My personal book
-ADDITEM=0x0ff1
-<=Previous Menu
-ITEMMENU=433
+[ITEMMENU 61]
+Dull Copper Shields
+0x1b72=Glaciator Shield
+ADDITEM=0x1b72-d
+0x1b73=Buckler
+ADDITEM=0x1b73-d
+0x1b74-d=Kite Shield
+ADDITEM=0x1b74-d
+0x1b76=Heater Shield
+ADDITEM=0x1b76-d
+0x1b7b=Metal Shield
+ADDITEM=0x1b7b-d
+0x1bc3=Chaos Shield
+ADDITEM=0x1bc3-d
+0x1bc4-d=Order Shield
+ADDITEM=0x1bc4-d
 }
 
-[ITEMMENU 450]
-{
-Skill-Related=Menu
-<=Blacksmithing Items
-ITEMMENU=451
-<=Carpentry Items
-ITEMMENU=452
-<=Tailoring Items
-ITEMMENU=453
-<=Archery Items
-ITEMMENU=454
-<=Fishing Items
-ITEMMENU=455
-<=Musical Items
-ITEMMENU=456
-<=Previous Menu
-ITEMMENU=1
-}
-
-[ITEMMENU 451]
-{
-Blacksmith=Items
-<=5 Iron Ingots
-ADDITEM=0x1bf2
-0x0FB1=Forge
-ADDITEM=0x0fb1
-0x197A=Partial Forge
-ADDITEM=0x197a
-0x197E=Partial Forge
-ADDITEM=0x197e
-0x1982=Partial Forge
-ADDITEM=0x1982
-0x0E85=Pick Axe
-ADDITEM=0x0e85
-0x0FAF=Anvil
-ADDITEM=0x0faf
-0x0FB0=Anvil
-ADDITEM=0x0fb0
-0x0FBC=Tongs
-ADDITEM=0x0fbc
-0x0F39=Shovel
-ADDITEM=0x0f39
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 452]
-{
-Carpentry Items
-0x10E4<=Draw Knife
-ADDITEM=0x10e4
-0x1028=Dovetail Saw
-ADDITEM=0x1028
-0x1034=Saw
-ADDITEM=0x1034
-0x102A=Carpenter's Hammer
-ADDITEM=0x102a
-0x1030=Jointing Plane
-ADDITEM=0x1030
-0x1032=Smoothing Plane
-ADDITEM=0x1032
-0x10E7=Scorp
-ADDITEM=0x10e7
-0x10E6=Inshave
-ADDITEM=0x10e6
-0x102C=Moulding Plane
-ADDITEM=0x102c
-0x102E=Nails
-ADDITEM=0x102e
-0x10E5=Froe
-ADDITEM=0x10e5
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 453]
-{
-Tailoring Menu
-0x10A4=Spinning Wheel - not animated
-ADDITEM=0x10a4
-0x10A5=Spinning Wheel - animated
-ADDITEM=0x10a5
-0x1061=Upright Loom - 1st part South
-ADDITEM=0x1061
-0x1062=Upright Loom - 2nd part South
-ADDITEM=0x1062
-0x105F=Upright Loom - 1st part East
-ADDITEM=0x105f
-0x1060=Upright Loom - 2nd part East
-ADDITEM=0x1060
-0x0DF8=Unspun Wool
-ADDITEM=0x0df8
-0x0E1D=Ball of Yarn
-ADDITEM=0x0e1d
-0x175D=Folded Cloth
-ADDITEM=0x175d
-0x0F9D=Sewing Kit
-ADDITEM=0x0f9d
-0x0F9E=Scissors
-ADDITEM=0x0f9e
-0x0F95=Bolt of Cloth
-ADDITEM=0x0f95
-0x0F96=Bolt of Cloth
-ADDITEM=0x0f96
-0x0F97=Bolt of Cloth
-ADDITEM=0x0f97
-0x0F98=Bolt of Cloth
-ADDITEM=0x0f98
-0x0F99=Bolt of Cloth
-ADDITEM=0x0f99
-0x0F9A=Bolt of Cloth
-ADDITEM=0x0f9a
-0x0F9B=Bolt of Cloth
-ADDITEM=0x0f9b
-0x0F9C=Bolt of Cloth
-ADDITEM=0x0f9c
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 454]
-{
-Archery Items Menu
-0x100A=Archery Butte - East
-ADDITEM=0x100a
-0x100B=Archery Butte - South
-ADDITEM=0x100b
-0x1BD1=5 Feathers
-ADDITEM=0x1bd1
-0x1BD4=5 Shafts
-ADDITEM=0x1bd4
-0x1020=Decorative Feathers
-ADDITEM=0x1020
-0x1021=Decorative Feathers
-ADDITEM=0x1021
-0x1022=Decorative Arrow Fletching
-ADDITEM=0x1022
-0x1023=Decorative Arrow Fletching
-ADDITEM=0x1023
-0x1024=Decorative Arrow Shafts
-ADDITEM=0x1024
-0x1025=Decorative Arrow Shafts
-ADDITEM=0x1025
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 455]
-{
-Fishing Items
-0x0DBF=Fishing Pole
-ADDITEM=0x0dbf
-0x097B=Fish Steak
-ADDITEM=0x097b
-0x1E1A=Fish Head
-ADDITEM=0x1e1a
-0x09CC=A fish
-ADDITEM=0x09cc
-0x1E17=Raw Fish
-ADDITEM=0x1e17
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 456]
-{
-Musical Items
-<=Drum
-ADDITEM=0x0e9c
-<=Tamberine
-ADDITEM=0x0e9d
-<=Tamberine with ribbon
-ADDITEM=0x0e9e
-<=Standing Harp
-ADDITEM=0x0eb1
-<=Harp
-ADDITEM=0x0eb2
-<=Lute
-ADDITEM=0x0eb3
-<=Lute
-ADDITEM=0x0eb4
-<=Previous Menu
-ITEMMENU=450
-}
-
-[ITEMMENU 500]
-{
-Creature=Items
-0x20D7=Elementals
-ITEMMENU=501
-0x20D6=Dragon and Daemon Kin
-ITEMMENU=502
-0x20C9=Animals
-ITEMMENU=503
-0x20CD=Other
-ITEMMENU=504
-<=Previous Menu
-ITEMMENU=410
-}
-
-[ITEMMENU 501]
-{
-Elemental=Statues
-0x20D7=Earth Elemental
-ADDITEM=0x20D7
-0x20ED=Air Elemental
-ADDITEM=0x20ED
-0x20F3=Fire Elemental
-ADDITEM=0x20F3
-0x210B=Water Elemental
-ADDITEM=0x210B
-0x25D6=Acid Elemental
-ADDITEM=0x25D6
-0x25D7=Air Elemental
-ADDITEM=0x25D7
-0x25D8=Blood Elemental
-ADDITEM=0x25D8
-0x25D9=Fire Elemental
-ADDITEM=0x25D9
-0x25DA=Ice Elemental
-ADDITEM=0x25DA
-0x25DB=Poison Elemental
-ADDITEM=0x25DB
-0x25DC=Snow Elemental
-ADDITEM=0x25DC
-0x25DD=Water Elemental
-ADDITEM=0x25DD
-<=Previous Menu
-ITEMMENU=500
-}
-
-[ITEMMENU 502]
-{
-Dragon=and Daemon Kin Statues
-0x20D6=Dragon
-ADDITEM=0x20D6
-0x25A1=Komodo Dragon
-ADDITEM=0x25A1
-0x25D4=Wyvern
-ADDITEM=0x25D4
-0x2104=Daemon
-ADDITEM=0x2104
-0x2105=Daemon
-ADDITEM=0x2105
-0x2584=Daemon
-ADDITEM=0x2584
-0x2585=Black Gate Daemon
-ADDITEM=0x2585
-0x2586=Elder Daemon
-ADDITEM=0x2586
-0x2587=Ice Fiend
-ADDITEM=0x2587
-<=Previous Menu
-ITEMMENU=500
-}
-
-[ITEMMENU 503]
-{
-Animals
-0x20CF=Bears
-ITEMMENU=505
-0x20EE=Birds
-ITEMMENU=506
-0x20F7=Cats
-ITEMMENU=507
-0x20D5=Dogs
-ITEMMENU=508
-0x20DD=Horses
-ITEMMENU=509
-0x2135=Ostards
-ITEMMENU=510
-<=Other
-ITEMMENU=511
-0x20E5=Snakes
-ITEMMENU=512
-<=Spiders (UOTD)
-ITEMMENU=513
-<=Previous Menu
-ITEMMENU=500
-}
-
-[ITEMMENU 505]
-{
-Bears
-0x20CF=Bear
-ADDITEM=0x20CF
-0x20DB=Grizzly Bear
-ADDITEM=0x20DB
-0x20E1=Polar Bear
-ADDITEM=0x20E1
-0x2118=Black Bear
-ADDITEM=0x2118
-0x211E=Grizzly Bear
-ADDITEM=0x211E
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 506]
-{
-Birds
-0x20D1=Chicken
-ADDITEM=0x20D1
-0x20EE=Bird
-ADDITEM=0x20EE
-0x20F2=Eagle
-ADDITEM=0x20F2
-0x211A=Bird
-ADDITEM=0x211A
-0x211D=Eagle
-ADDITEM=0x211D
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 507]
-{
-Cats
-0x20F7=Cougar
-ADDITEM=0x20F7
-0x2102=Panther
-ADDITEM=0x2102
-0x2119=Big Cat
-ADDITEM=0x2119
-0x211B=Cat
-ADDITEM=0x211B
-0x2583=Cougar
-ADDITEM=0x2583
-0x2597=Hellcat
-ADDITEM=0x2597
-0x25A3=Snow Leopard
-ADDITEM=0x25A3
-0x25B5=Panther
-ADDITEM=0x25B5
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 508]
-{
-Dogs
-0x20D5=Dog
-ADDITEM=0x20D5
-0x20EA=Wolf
-ADDITEM=0x20EA
-0x211C=Dog
-ADDITEM=0x211C
-0x2122=Wolf
-ADDITEM=0x2122
-0x2588=Dog Hound
-ADDITEM=0x2588
-0x2596=Hell Hound
-ADDITEM=0x2596
-0x25CF=Wolf
-ADDITEM=0x25CF
-0x25D0=Dire Wolf
-ADDITEM=0x25D0
-0x25D1=Gray Wolf
-ADDITEM=0x25D1
-0x25D2=Silver Wolf
-ADDITEM=0x25D2
-0x25D3=Timber Wolf
-ADDITEM=0x25D3
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 509]
-{
-Horses
-0x20DD=Horse
-ADDITEM=0x20DD
-0x211F=Horse
-ADDITEM=0x211F
-0x2120=Horse
-ADDITEM=0x2120
-0x2121=Horse
-ADDITEM=0x2121
-0x2124=Horse
-ADDITEM=0x2124
-0x2126=Pack Horse
-ADDITEM=0x2126
-0x2598=Dappled Brown Horse
-ADDITEM=0x2598
-0x2599=Dappled Gray Horse
-ADDITEM=0x2599
-0x259A=Dark Brown Horse
-ADDITEM=0x259A
-0x259B=Dark Steed
-ADDITEM=0x259B
-0x259C=Nightmare
-ADDITEM=0x259C
-0x259D=Silver Steed
-ADDITEM=0x259D
-0x259E=Tan Horse
-ADDITEM=0x259E
-0x25BA=Sea Horse
-ADDITEM=0x25BA
-0x25CE=Unicorn
-ADDITEM=0x25CE
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 510]
-{
-Ostards
-0x2135=Ostard (Desert)
-ADDITEM=0x2135
-0x25B2=Ostard (Desert)
-ADDITEM=0x25B2
-0x2136=Ostard (Frenzied)
-ADDITEM=0x2136
-0x25B4=Ostard (Frenzied)
-ADDITEM=0x25B4
-0x2137=Ostard (Forest)
-ADDITEM=0x2137
-0x25B3=Ostard (Forest)
-ADDITEM=0x25B3
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 511]
-{
-Other
-0x20EF=Bull
-ADDITEM=0x20EF
-0x20F0=Bull
-ADDITEM=0x20F0
-0x2130=Bullfrog
-ADDITEM=0x2130
-0x2103=Cow
-ADDITEM=0x2103
-0x20DA=Crocodile
-ADDITEM=0x20DA
-0x20D4=Deer
-ADDITEM=0x20D4
-0x20F1=Dolphin
-ADDITEM=0x20F1
-0x258C=Giant Frog
-ADDITEM=0x258C
-0x212F=Giant Toad
-ADDITEM=0x212F
-0x2580=Goat (Billy)
-ADDITEM=0x2580
-0x2108=Goat (Mountain)
-ADDITEM=0x2108
-0x20C9=Gorilla
-ADDITEM=0x20C9
-0x20F5=Gorilla
-ADDITEM=0x20F5
-0x2593=Great Worm
-ADDITEM=0x2593
-0x2131=Lizard
-ADDITEM=0x2131
-0x20F6=Llama
-ADDITEM=0x20F6
-0x2127=Pack Llama
-ADDITEM=0x2127
-0x2101=Pig
-ADDITEM=0x2101
-0x20E2=Rabbit
-ADDITEM=0x20E2
-0x2125=Rabbit
-ADDITEM=0x2125
-0x20D0=Rat
-ADDITEM=0x20D0
-0x2123=Rat
-ADDITEM=0x2123
-0x20E4=Scorpion
-ADDITEM=0x20E4
-0x25B9=Scorpion (Giant)
-ADDITEM=0x25B9
-0x20E6=Sheep
-ADDITEM=0x20E6
-0x2592=Silverback Gorilla
-ADDITEM=0x2592
-0x20FF=Walrus
-ADDITEM=0x20FF
-0x2100=Wisp
-ADDITEM=0x2100
-0x20EB=Wooly Sheep
-ADDITEM=0x20EB
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 512]
-{
-Snakes
-0x20E5=Serpent
-ADDITEM=0x20E5
-0x20FC=Snake
-ADDITEM=0x20FC
-0x20FE=Snake
-ADDITEM=0x20FE
-0x25BF=Giant Snake
-ADDITEM=0x25BF
-0x25C0=Giant Ice Snake
-ADDITEM=0x25C0
-0x25C1=Giant Lava Snake
-ADDITEM=0x25C1
-0x25C2=Silver Serpent
-ADDITEM=0x25C2
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 513]
-{
-Spiders
-0x25C3=Black Widow Spider
-ADDITEM=0x25C3
-0x25C4=Dread Spider
-ADDITEM=0x25C4
-0x25C5=Frost Spider
-ADDITEM=0x25C5
-0x25C6=Giant Spider
-ADDITEM=0x25C6
-<=Previous Menu
-ITEMMENU=503
-}
-
-[ITEMMENU 504]
-{
-Monster=Statues
-<=Ettin kin
-ITEMMENU=515
-<=Flying Creatures
-ITEMMENU=516
-<=Gargoyle Kin
-ITEMMENU=517
-<=Lizard / Rat men
-ITEMMENU=518
-<=Male / Female / Mage / Liche
-ITEMMENU=519
-<=Ogres / Trolls
-ITEMMENU=520
-<=Ophidian
-ITEMMENU=521
-<=Orc kin
-ITEMMENU=522
-<=Other Statues
-ITEMMENU=514
-<=Skeletons
-ITEMMENU=523
-<=Terathan
-ITEMMENU=524
-<=Undead
-ITEMMENU=525
-<=Previous Menu
-ITEMMENU=500
-}
-
-[ITEMMENU 514]
-{
-Other=Monster Statues
-0x2581=Centaur
-ADDITEM=0x2581
-0x20D2=Corpser
-ADDITEM=0x20D2
-0x2582=Corpser
-ADDITEM=0x2582
-0x2590=Efreet
-ADDITEM=0x2590
-0x2589=Ethereal Warriors
-ADDITEM=0x2589
-0x20F4=Gazer
-ADDITEM=0x20F4
-0x258F=Gazer
-ADDITEM=0x258F
-0x210A=Headless
-ADDITEM=0x210A
-0x2595=Headless
-ADDITEM=0x2595
-0x25A0=Kirin
-ADDITEM=0x25A0
-0x25A2=Kraken
-ADDITEM=0x25A2
-0x25BB=Nameless One
-ADDITEM=0x25BB
-0x25B6=Pixie
-ADDITEM=0x25B6
-0x20FA=Reaper
-ADDITEM=0x20FA
-0x25B8=Rotting Corpse
-ADDITEM=0x25B8
-0x20E8=Slime
-ADDITEM=0x20E8
-0x25C8=Swamp Tentacles
-ADDITEM=0x25C8
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 515]
-{
-Ettin=kin
-0x20C8=Ettin
-ADDITEM=0x20C8
-0x20D8=Ettin
-ADDITEM=0x20D8
-0x212D=Cyclops
-ADDITEM=0x212D
-0x212E=Titan
-ADDITEM=0x212E
-0x25CD=Titan
-ADDITEM=0x25CD
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 516]
-{
-Flying=creatures
-0x20DC=Harpy
-ADDITEM=0x20DC
-0x20F9=Mongbat
-ADDITEM=0x20F9
-0x2594=Stone Harpy
-ADDITEM=0x2594
-0x259F=Imp
-ADDITEM=0x259F
-0x25A6=Mongbat
-ADDITEM=0x25A6
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 517]
-{
-Gargoyle=Kin
-0x20D9=Gargoyle
-ADDITEM=0x20D9
-0x258D=Gargoyle
-ADDITEM=0x258D
-0x258E=Stone Gargoyle
-ADDITEM=0x258E
-<=Previous Menu
-ITEMMENU=504
-}
-
-
-[ITEMMENU 518]
-{
-Lizard=/ Rat men
-0x20CA=Lizardman
-ADDITEM=0x20CA
-0x20DE=Lizard Man
-ADDITEM=0x20DE
-0x20E3=Rat Man
-ADDITEM=0x20E3
-0x25B7=Rat Man
-ADDITEM=0x25B7
-<=Previous Menu
-ITEMMENU=504
-}
-
-
-[ITEMMENU 519]
-{
-Male=/ female / mage / liche
-0x20CD=Male
-ADDITEM=0x20CD
-0x2106=Male
-ADDITEM=0x2106
-0x20CE=Female
-ADDITEM=0x20CE
-0x2107=Female
-ADDITEM=0x2107
-0x258A=Evil Mage
-ADDITEM=0x258A
-0x258B=Evil Mage Boss
-ADDITEM=0x258B
-0x20F8=Liche
-ADDITEM=0x20F8
-0x25A4=Liche
-ADDITEM=0x25A4
-0x25A5=Liche Lord
-ADDITEM=0x25A5
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 520]
-{
-Ogres=/ Trolls
-0x20CB=Ogre
-ADDITEM=0x20CB
-0x20DF=Ogre
-ADDITEM=0x20DF
-0x25A8=Ogre Lord
-ADDITEM=0x25A8
-0x20CC=Troll
-ADDITEM=0x20CC
-0x20E9=Troll
-ADDITEM=0x20E9
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 521]
-{
-Ophidian
-0x2132=Ophidian Mage
-ADDITEM=0x2132
-0x2133=Ophidian Warrior
-ADDITEM=0x2133
-0x2134=Ophidian Queen
-ADDITEM=0x2134
-0x25A9=Ophidian Archmage
-ADDITEM=0x25A9
-0x25AA=Ophidian Knight
-ADDITEM=0x25AA
-0x25AB=Ophidian Mage
-ADDITEM=0x25AB
-0x25AC=Ophidian Queen
-ADDITEM=0x25AC
-0x25AD=Ophidian Warrior
-ADDITEM=0x25AD
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 522]
-{
-Orc=kin
-0x20E0=Orc
-ADDITEM=0x20E0
-0x25AE=Orc
-ADDITEM=0x25AE
-0x25AF=Orc Captain
-ADDITEM=0x25AF
-0x25B0=Orc Lord
-ADDITEM=0x25B0
-0x25B1=Orc Shaman
-ADDITEM=0x25B1
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 523]
-{
-Skeleton
-0x20E7=Skeleton
-ADDITEM=0x20E7
-0x25BC=Skeleton
-ADDITEM=0x25BC
-0x25BD=Skeleton Knight
-ADDITEM=0x25BD
-0x25BE=Skeleton Mage
-ADDITEM=0x25BE
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 524]
-{
-Terathan
-0x212A=Terathan Warrior
-ADDITEM=0x212A
-0x212B=Terathan Drone
-ADDITEM=0x212B
-0x212C=Terathan Matriarch
-ADDITEM=0x212C
-0x25C9=Terathan Drone
-ADDITEM=0x25C9
-0x25CA=Terathan Avenger
-ADDITEM=0x25CA
-0x25CB=Terathan Queen
-ADDITEM=0x25CB
-0x25CC=Terathan Warrior
-ADDITEM=0x25CC
-<=Previous Menu
-ITEMMENU=504
-}
-
-[ITEMMENU 525]
-{
-Undead
-0x25C7=Ghost
-ADDITEM=0x25C7
-0x2109=Ghoul
-ADDITEM=0x2109
-0x2591=Ghoul
-ADDITEM=0x2591
-0x25A7=Mummy
-ADDITEM=0x25A7
-0x20EC=Zombie
-ADDITEM=0x20EC
-0x25D5=Zombie
-ADDITEM=0x25D5
-<=Previous Menu
-ITEMMENU=504
-}
-
-
-[ITEMMENU 991]
-{
-Choose=a magic formula.
-0x0F08=a agility potion
-ITEMMENU=9999
-0x0F08=a greater agility potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 992]
-{
-Choose=a magic formula.
-0x0F07=a  lesser cure potion
-ITEMMENU=9999
-0x0F07=a cure potion
-ITEMMENU=9999
-0x0F07=a greater cure potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 993]
-{
-Choose=a magic formula.
-0x0F0D=a lesser explosion potion
-ITEMMENU=9999
-0x0F0D=a explosion potion
-ITEMMENU=9999
-0x0F0D=a greater explosion potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 994]
-{
-Choose=a magic formula.
-0x0F0C=a lesser heal potion
-ITEMMENU=9999
-0x0F0C=a heal potion
-ITEMMENU=9999
-0x0F0C=a greater heal potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 995]
-{
-Choose=a magic formula.
-0x0F06=a nightsight potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 996]
-{
-Choose=a magic formula.
-0x0F0A=a lesser poison potion
-ITEMMENU=9999
-0x0F0A=a poison potion
-ITEMMENU=9999
-0x0F0A=a greater poison potion
-ITEMMENU=9999
-0x0F0A=a deadly poison potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 997]
-{
-Choose=a magic formula.
-0x0F0B=a refresh potion
-ITEMMENU=9999
-0x0F0B=a greater refresh potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 998]
-{
-Choose=a magic formula.
-0x0F09=a strengh potion
-ITEMMENU=9999
-0x0F09=a greater strengh potion
-ITEMMENU=9999
-}
-
-[ITEMMENU 666]
-{
-Racial=Merchants
-0x20CE=Vampiric Females A->H
-ITEMMENU=667
-0x20CE=Vampiric Females H->
-ITEMMENU=670
-0x20CD=Vampiric Males A->H
-ITEMMENU=668
-0x20CD=Vampiric Males H->
-ITEMMENU=669
-<=Previous Menu
-ITEMMENU=210
-}
-
-[ITEMMENU 668]
-{
-Vampiric=Male Merchants A->H
-<=Alchemist
-NPC=m-alchemist
-0x2035=Animal Trainer
-NPC=m-animaltrainer
-0x2031=Architect
-NPC=m-architect
-0x200A=Armorer
-NPC=m-armorer
-0x200B=Baker
-NPC=m-baker
-0x0C0B=Banker
-NPC=m-banker
-0x2106=Bard
-NPC=m-bard
-<=The BeeKeeper
-NPC=m-beekeeper
-0x2106=Blacksmith
-NPC=m-blacksmith
-0x200C=Bowyer
-NPC=m-bowyer
-0x200D=Butcher
-NPC=m-butcher
-0x2020=Carpenter
-NPC=m-carpenter
-0x202A=Cobbler
-NPC=m-cobbler
-0x0190=Cook
-NPC=m-cook
-0x2022=Farmer
-NPC=m-farmer
-0x8414=Fisherman
-NPC=m-fisher
-<=Previous Menu
-ITEMMENU=666
-}
-
-[ITEMMENU 669]
-{
-Vampiric=Male Merchants H->
-<=Healer (wandering)
-NPC=m-whealer
-0x200F=Healer
-NPC=m-healer
-0x2034=Herbalist
-NPC=m-herbalist
-0x2010=Innkeeper
-NPC=m-innkeeper
-0x2012=Jeweler
-NPC=m-jeweler
-0x2013=Leather Worker
-NPC=m-leatherworker
-0x2014=Mage
-NPC=m-mage
-0x202D=Miner
-NPC=m-miner
-0x2016=Provisioner
-NPC=m-provisioner
-0x201A=Spinner
-NPC=m-spinner
-0x2019=Tailor
-NPC=m-tailor
-0x2021=Tinker
-NPC=m-tinker
-0x201F=Weaponsmith
-NPC=m-weaponsmith
-<=Previous Menu
-ITEMMENU=666
-}
-
-[ITEMMENU 667]
-{
-Vampiric=Female Merchants A->H
-<=Alchemist
-NPC=f-alchemist
-0x2036=Animal Trainer
-NPC=f-animaltrainer
-0x2031=Architect
-NPC=f-architect
-0x200A=Armorer
-NPC=f-armorer
-0x200B=Baker
-NPC=f-baker
-0x2107=Banker
-NPC=f-banker
-0x2107=Bard
-NPC=f-bard
-<=The Beekeeper
-NPC=f-beekeeper
-0x2107=Blacksmith
-NPC=f-blacksmith
-0x200C=Bowyer
-NPC=f-bowyer
-0x200D=Butcher
-NPC=f-butcher
-0x2020=Carpenter
-NPC=f-carpenter
-0x202A=Cobbler
-NPC=f-cobbler
-0x0191=Cook
-NPC=f-cook
-0x2024=Farmer
-NPC=f-farmer
-0x8415=Fisherlady
-NPC=f-fisher
-<=Previous Menu
-ITEMMENU=666
-}
-
-[ITEMMENU 670]
-{
-Vampiric=Female Merchants H->
-<=Healer (wandering)
-NPC=f-whealer
-0x200F=Healer
-NPC=f-healer
-0x2034=Herbalist
-NPC=f-herbalist
-0x2010=Innkeeper
-NPC=f-innkeeper
-0x2012=Jeweler
-NPC=f-jeweler
-0x2013=Leather Worker
-NPC=f-leatherworker
-0x2014=Mage
-NPC=f-mage
-0x202D=Miner
-NPC=f-miner
-0x2016=Provisoner
-NPC=f-provisioner
-0x201A=Spinner
-NPC=f-spinner
-0x2019=Tailor
-NPC=f-tailor
-0x2021=Tinker
-NPC=f-tinker
-0x201F=Weaponsmith
-NPC=f-weaponsmith
-<=Previous Menu
-ITEMMENU=666
-}
-
-[ITEMMENU 671]
-{
-Racial=Creatures
-0x20CE=Female Fairy
-NPC=f-pixie
-0x20CD=Male Fairy
-NPC=m-pixie
-0x20CE=Female Dwarf
-NPC=female
-0x20CD=Male Dwarf
-NPC=male
-<=Previous Menu
-ITEMMENU=210
-}
-
+EOF

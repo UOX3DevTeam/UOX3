@@ -1,17 +1,14 @@
-// UOX3 Spells Scriptfile
-// #~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#
-// ~#                       UOX3 Scriptfile                             #~
-// #~                   Created 1998 by Tauriel                         ~#
-// ~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: dullcopper_armor.dfn
+//	Writen by: Magius(Che) [cheghe@geocities.com]
+//		   Sir Pedro   [ciccio@netandday.it]
+//                 Bug [bug@protec.it]
+//                 Mark [mpsdo@tin.it]
+//	Date: May 25th 1999
+//	Modified by: Weazel [weazel@ameritech.net]
+//	Date: March 11th 2002
 
-// ***********************************************************************
-// * J Scripts v1.5     25 May 1999                                      *
-// *  by Magius(CHE) - cheghe@geocities.com                              *
-// *   Sir Pedro     - ciccio@netanday.it                                *
-// *     Bug         - bug@protec.it    				 *
-// *      Mark       - mpsdo@tin.it                                      *
-// *  based on Mediterraneo scripts v2.1                                 *
-// ***********************************************************************
 
 // ENABLE: 0 - No, 1 - Yes           MANTRA: Words of Power
 // CIRCLE: Spell Circle              ACTION: Animation
@@ -239,7 +236,7 @@ MOSS=0
 PEARL=0
 SHADE=1
 SILK=0
-TARG=Select target for weaken.
+TARG=Select target to weaken.
 FLAGS=00 49
 STATFX=37 4A 00 0F
 SOUNDFX=01 E6
@@ -347,7 +344,7 @@ MOSS=0
 PEARL=0
 SHADE=1
 SILK=1
-TARG=Select target for harm.
+TARG=Select target to harm.
 FLAGS=00 49
 STATFX=37 4A 09 07
 SOUNDFX=01 F1
@@ -426,7 +423,7 @@ MOSS=0
 PEARL=0
 SHADE=0
 SILK=0
-TARG=Select person for protection.
+TARG=Select target to protect.
 FLAGS=00 09
 STATFX=37 6A 09 06
 SOUNDFX=01 F8

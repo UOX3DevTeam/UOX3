@@ -1,0 +1,53 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: yew.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 160]
+{
+// Center
+X=535
+Y=992
+Z=0
+}
+
+[LOCATION 161]
+{
+// Empath Abbey
+X=635
+Y=860
+Z=0
+}
+
+[LOCATION 162]
+{
+// Courts & Prisons
+X=354
+Y=836
+Z=20
+}
+
+[LOCATION 163]
+{
+// Hidden Cave
+X=313
+Y=787
+Z=230
+}
+
+[LOCATION 164]
+{
+// Cemetary
+X=724
+Y=1138
+Z=0
+}
+
+[LOCATION 165]
+{
+// Orc Fort
+X=633
+Y=1499
+Z=0
+}

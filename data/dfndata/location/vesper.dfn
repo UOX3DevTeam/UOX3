@@ -1,0 +1,45 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: vesper.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 140]
+{
+// Center
+X=2882
+Y=788
+Z=0
+}
+
+[LOCATION 141]
+{
+// Docks
+X=3013
+Y=828
+Z=253
+}
+
+[LOCATION 142]
+{
+// North
+X=2907
+Y=603
+Z=0
+}
+
+[LOCATION 143]
+{
+// East
+X=276
+Y=981
+Z=0
+}
+
+[LOCATION 144]
+{
+// Grave Yard
+X=2786
+Y=867
+Z=0
+}

@@ -1,8 +1,8 @@
 [ophwarrior]
 {
-NAME=Ophidian warrior
+NAME=ophidian warrior
 ID=0x0056
-SKIN=0x0000
+SKIN=
 DIRECTION=E
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
@@ -33,11 +33,11 @@ TOTAME=1100
 CARVE=6
 }
 
-[ophenforcer]
+[ophenknight]
 {
-NAME Ophidian Enforcer
-ID=0x0056
-SKIN=0x0000
+NAME ophidian knight
+ID=0x0089
+SKIN=
 DIRECTION=E
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
@@ -51,8 +51,7 @@ MAGICRESISTANCE=600 700
 TACTICS=750 800
 SWORDSMANSHIP=600 750
 // DAMAGE=per Weapon
-LODAMAGE=5
-HIDAMAGE=17
+ATT=5 17
 POISON=2
 DEF=19
 NPCWANDER=4
@@ -88,8 +87,7 @@ MAGICRESISTANCE=800 1000
 TACTICS=900 1000
 SWORDSMANSHIP=900 1000
 // DAMAGE=per Weapon
-LODAMAGE=9
-HIDAMAGE=30
+ATT=9 30
 POISON=3
 DEF=19
 NPCWANDER=4
@@ -127,11 +125,11 @@ TOTAME=1100
 CARVE=6
 }
 
-[ophapprentice]
+[ophamage]
 {
-NAME Ophidian Apprentice
+NAME Ophidian mage
 ID=0x0055
-SKIN=0x0000
+SKIN=
 DIRECTION=E
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
@@ -146,8 +144,7 @@ TACTICS=400
 PARRYING 400
 MACEFIGHTING 400
 // DAMAGE=per Weapon
-LODAMAGE=5
-HIDAMAGE=25
+ATT 5 25
 // POISON=2
 DEF=15
 NPCWANDER=4
@@ -186,10 +183,10 @@ CARVE=6
 
 }
 
-[ophshaman]
+[opharchmage]
 {
-NAME Ophidian Shaman
-ID=0x0055
+NAME Ophidian archmage
+ID=0x0088
 SKIN=0x0000
 DIRECTION=E
 SAYCOLOR=0x0026
@@ -205,8 +202,7 @@ TACTICS=600
 PARRYING 600
 MACEFIGHTING 600
 // DAMAGE=per Weapon
-LODAMAGE=6
-HIDAMAGE=30
+ATT 6 30
 // POISON=2
 DEF=19
 NPCWANDER=4
@@ -246,8 +242,7 @@ SPEECH=00
 MAGICRESISTANCE=900 1000
 TACTICS=500 700
 WRESTLING 600 800
-LODAMAGE=6
-HIDAMAGE=18
+ATT=6 18
 POISON=3
 DEF=19
 NPCWANDER=4
@@ -272,32 +267,5 @@ LOOT=6
 LOOT=6
 TOTAME=1100
 CARVE=6
-}
-
-
-[NPCLIST allophidians]
-{
-ophwarrior
-ophenforcer
-ophavenger
-ophapprentice
-ophshaman
-ophknight
-ophmatriarch
-}
-
-[NPCLIST weakophidians]
-{
-ophapprentice
-ophwarrior
-ophenforcer
-}
-
-[NPCLIST strongophidians]
-{
-ophshaman
-ophknight
-ophmatriarch
-ophavenger
 }
 

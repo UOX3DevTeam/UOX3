@@ -1,10 +1,14 @@
-// Created by Thyme
-// This is all of the hair items
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: hair.dfn
+//	Writen by: Weazel[weazel@wideopenwest.com]
+//	Date: February 24th 2002
 
-[0x203b]
+
+[0x203B]
 {
 name=Short Hair
-id=0x203b
+id=0x203B
 weight=1
 value=
 layer=11
@@ -29,7 +33,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -38,10 +42,10 @@ more=
 defaultcolor=
 }
 
-[0x203c]
+[0x203C]
 {
 name=Long Hair
-id=0x203c
+id=0x203C
 weight=1
 value=
 layer=11
@@ -66,7 +70,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -75,10 +79,10 @@ more=
 defaultcolor=
 }
 
-[0x203d]
+[0x203D]
 {
 name=Pony Tail
-id=0x203d
+id=0x203D
 weight=1
 value=
 layer=11
@@ -103,7 +107,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -115,7 +119,7 @@ defaultcolor=
 [0x2044]
 {
 name=Mohawk
-id=0x2044
+id=0x203B
 weight=1
 value=
 layer=11
@@ -140,7 +144,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -177,7 +181,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -214,7 +218,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -251,7 +255,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -288,7 +292,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -299,7 +303,7 @@ defaultcolor=
 
 [0x2049]
 {
-name=2 Pigtails
+name=Pig Tails
 id=0x2049
 weight=1
 value=
@@ -325,7 +329,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -334,10 +338,10 @@ more=
 defaultcolor=
 }
 
-[0x204a]
+[0x204A]
 {
 name=Krisna Hair
-id=0x204a
+id=0x204A
 weight=1
 value=
 layer=11
@@ -362,7 +366,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -371,10 +375,10 @@ more=
 defaultcolor=
 }
 
-[0x203e]
+[0x203E]
 {
 name=Long Beard
-id=0x203e
+id=0x203E
 weight=1
 value=
 layer=16
@@ -399,7 +403,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -408,10 +412,10 @@ more=
 defaultcolor=
 }
 
-[0x203f]
+[0x203F]
 {
 name=Short Beard
-id=0x203f
+id=0x203B
 weight=1
 value=
 layer=16
@@ -436,7 +440,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -473,7 +477,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -510,7 +514,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -519,10 +523,10 @@ more=
 defaultcolor=
 }
 
-[0x204b]
+[0x204B]
 {
 name=Medium Short Beard
-id=0x204b
+id=0x204B
 weight=1
 value=
 layer=16
@@ -547,7 +551,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -556,10 +560,10 @@ more=
 defaultcolor=
 }
 
-[0x204c]
+[0x204C]
 {
 name=Long Short Beard
-id=0x204c
+id=0x204C
 weight=1
 value=
 layer=16
@@ -584,7 +588,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -593,10 +597,10 @@ more=
 defaultcolor=
 }
 
-[0x204d]
+[0x204D]
 {
 name=Vandyke
-id=0x204d
+id=0x204D
 weight=1
 value=
 layer=16
@@ -621,7 +625,7 @@ movable=2
 pile=0
 amount=
 dyeable=0
-decay=0
+decay=
 trigger=
 morex=
 morey=
@@ -629,4 +633,3 @@ morez=
 more=
 defaultcolor=
 }
-

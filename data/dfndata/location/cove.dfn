@@ -1,0 +1,37 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: cove.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 23rd 2002
+
+[LOCATION 40]
+{
+// Gates
+X=2285
+Y=1209
+Z=0
+}
+
+[LOCATION 41]
+{
+// Guard Post
+X=2218
+Y=1116
+Z=19
+}
+
+[LOCATION 42]
+{
+// Orc Fort
+X=2171
+Y=1332
+Z=0
+}
+
+[LOCATION 43]
+{
+// Cemetary
+X=2443
+Y=1123
+Z=5
+}

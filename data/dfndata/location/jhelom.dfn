@@ -1,0 +1,54 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: jhelom.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 23rd 2002
+
+[LOCATION 50]
+{
+// Main Island
+X=1414
+Y=3816
+Z=0
+}
+
+[LOCATION 51]
+{
+// Fighting Pit
+X=1398
+Y=3742
+Z=235
+}
+
+[LOCATION 52]
+{
+// East Docks
+X=1492
+Y=3696
+Z=0
+}
+
+
+[LOCATION 53]
+{
+// Cemetary
+X=1296
+Y=3719
+Z=0
+}
+
+[LOCATION 54]
+{
+// Medium Island
+X=1124
+Y=3623
+Z=5
+}
+
+[LOCATION 55]
+{
+// Small Island
+X=1466
+Y=4015
+Z=5
+}

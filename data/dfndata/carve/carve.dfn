@@ -1,108 +1,108 @@
-// Large (Non-Hide) Creatures
-[CARVE 1]
-{
-ADDITEM=0x09f1
-}
-
-// Small (Non-Hide) Creatures
-[CARVE 2]
-{
-ADDITEM=0x09f1
-}
-
-// Small (Furry) Creatures
-[CARVE 3]
-{
-ADDITEM=0x11fa
-ADDITEM=0x09f1
-}
-
-// Lizardmen / Serpents / Alligators / Walrus
-[CARVE 4]
-{
-ADDITEM=0x1078
-ADDITEM=0x09f1
-}
-
-// Dragons
-[CARVE 5]
-{
-ADDITEM=0x0df8
-ADDITEM=0x09f1
-}
-
-// Terathans / Ophidians
-[CARVE 6]
-{
-ADDITEM=0x1078
-ADDITEM=0x09f1
-}
-
-// Small Birds
-[CARVE 7]
-{
-ADDITEM=0x09f1
-ADDITEM=0x1bd1
-}
-
-// Large Birds
-[CARVE 8]
-{
-ADDITEM=0x09f1
-ADDITEM=0x1bd1
-}
-
-// Wooly Creatures
-[CARVE 9]
-{
-ADDITEM=0x0df8
-ADDITEM=0x09f1
-}
-
-// Large (Furry) Creatures
-[CARVE 10]
-{
-ADDITEM=0x11fa
-ADDITEM=0x09f1
-}
-
-// Cows / Bulls
-[CARVE 11]
-{
-ADDITEM=0x1078
-ADDITEM=0x09f1
-}
-
-// Toads / Frogs
-[CARVE 12]
-{
-ADDITEM=0x1078
-ADDITEM=0x09f1
-}
-
-// Horses
-[CARVE 13]
-{
-ADDITEM=0x09f1
-ADDITEM=0x1078
-}
-
-// Ostards
-[CARVE 14]
-{
-ADDITEM=0x09f1
-}
-
-// Kraken
-[CARVE 15]
-{
-ADDITEM=0x09f1
-ADDITEM=0x1078
-}
-
-// Chicken
-[CARVE 16]
-{
-ADDITEM=0x1607
-ADDITEM=0x1bd1
-}
+// Large (Non-Hide) Creatures
+[CARVE 1]
+{
+ADDITEM=0x09f1
+}
+
+// Small (Non-Hide) Creatures
+[CARVE 2]
+{
+ADDITEM=0x09f1
+}
+
+// Small (Furry) Creatures
+[CARVE 3]
+{
+ADDITEM=0x11fa
+ADDITEM=0x09f1
+}
+
+// Lizardmen / Serpents / Alligators / Walrus
+[CARVE 4]
+{
+ADDITEM=0x1078
+ADDITEM=0x09f1
+}
+
+// Dragons
+[CARVE 5]
+{
+ADDITEM=0x0df8
+ADDITEM=0x09f1
+}
+
+// Terathans / Ophidians
+[CARVE 6]
+{
+ADDITEM=0x1078
+ADDITEM=0x09f1
+}
+
+// Small Birds
+[CARVE 7]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1bd1
+}
+
+// Large Birds
+[CARVE 8]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1bd1
+}
+
+// Wooly Creatures
+[CARVE 9]
+{
+ADDITEM=0x0df8
+ADDITEM=0x09f1
+}
+
+// Large (Furry) Creatures
+[CARVE 10]
+{
+ADDITEM=0x11fa
+ADDITEM=0x09f1
+}
+
+// Cows / Bulls
+[CARVE 11]
+{
+ADDITEM=0x1078
+ADDITEM=0x09f1
+}
+
+// Toads / Frogs
+[CARVE 12]
+{
+ADDITEM=0x1078
+ADDITEM=0x09f1
+}
+
+// Horses
+[CARVE 13]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078
+}
+
+// Ostards
+[CARVE 14]
+{
+ADDITEM=0x09f1
+}
+
+// Kraken
+[CARVE 15]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078
+}
+
+// Chicken
+[CARVE 16]
+{
+ADDITEM=0x1607
+ADDITEM=0x1bd1
+}

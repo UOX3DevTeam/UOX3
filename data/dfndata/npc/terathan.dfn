@@ -65,8 +65,8 @@ TOTAME=1100
 [teraavenger]
 {
 NAME=Terathan Avenger
-ID=0x0046
-SKIN=0x066d
+ID=0x0098
+SKIN=
 DIRECTION=E
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
@@ -140,26 +140,3 @@ LOOT=6
 LOOT=6
 TOTAME=1100
 }
-
-// Start of NPCLISTS -xand11235
-
-[NPCLIST allterathans]
-{
-teradrone
-terawarrior
-teraavenger
-teramatriarch
-}
-
-[NPCLIST strongterathans]
-{
-teraavenger
-teramatriarch
-}
-
-[NPCLIST weakterathans]
-{
-teradrone
-terawarrior
-}
-

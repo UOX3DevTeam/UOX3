@@ -1,0 +1,53 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: wind.dfn
+//	Writen by: Weazel[weazel@ameritech.net]
+//	Date: February 24th 2002
+
+[LOCATION 150]
+{
+// Outside Entrance
+X=1362
+Y=896
+Z=0
+}
+
+[LOCATION 151]
+{
+// Caves
+X=5166
+Y=244
+Z=15
+}
+
+[LOCATION 152]
+{
+// South
+X=5223
+Y=189
+Z=5
+}
+
+[LOCATION 153]
+{
+// East
+X=5336
+Y=88
+Z=25
+}
+
+[LOCATION 154]
+{
+// West
+X=5180
+Y=90
+Z=26
+}
+
+[LOCATION 155]
+{
+// Park
+X=5211
+Y=22
+Z=15
+}

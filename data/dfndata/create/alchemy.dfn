@@ -2,6 +2,7 @@
 // v1.0; 08/05/01; initial release / total overhaul; Carsten Germer / Yeshe; yeshe@manofmystery.org
 // v1.1; 17/06/01; added candles menu 67 to tinkering; Carsten Germer / Yeshe; yeshe@manofmystery.org
 // v1.2; 12/01/02; fixed the damn carpentry bug that had the wrong ids; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// v1.3; 17/03/02; total overhaul, sorted the bug where bottles weren't being used up or checked; Ben Bellert / §ymb!ot!c; tsurani@iprimus.com.au
 // (add new version comments here, use format of above line please!)
 // For use with the UOX emulator or any with permission from the author
 //
@@ -29,305 +30,356 @@
 // item:290 menu:90 submenu:90
 
 [SUBMENU 89]
-{
-MENU=90
-MENU=91
-MENU=92
-MENU=93
-MENU=94
-MENU=95
-MENU=96
-MENU=97
+{ alchemy
+MENU=90		// agility potions
+MENU=91		// cure potions
+MENU=92		// explosion potions
+MENU=93		// healing potions
+MENU=94		// poison potions
+MENU=95		// refresh potions
+MENU=96		// strength potions
+MENU=97		// night sight potions
 }
+
 [MENUENTRY 90]
 {
-NAME=Agility Potions
+NAME=agility potions
 ID=0x0f08
 SUBMENU=90
 }
+
 [MENUENTRY 91]
 {
-NAME=Cure Potions
+NAME=cure potions
 ID=0x0f07
 SUBMENU=91
 }
+
 [MENUENTRY 92]
 {
-NAME=Explosion Potions
+NAME=explosion potions
 ID=0x0f0d
 SUBMENU=92
 }
+
 [MENUENTRY 93]
 {
-NAME=Healing Potions
+NAME=healing potions
 ID=0x0f0c
 SUBMENU=93
 }
+
 [MENUENTRY 94]
 {
-NAME=Poison
+NAME=poison potions
 ID=0x0f0a
 SUBMENU=94
 }
+
 [MENUENTRY 95]
 {
-NAME=Refresh Potions
+NAME=refresh potions
 ID=0x0f0b
 SUBMENU=95
 }
+
 [MENUENTRY 96]
 {
-NAME=Strength Potions
+NAME=strength potions
 ID=0x0f09
 SUBMENU=96
 }
+
 [MENUENTRY 97]
 {
-NAME=Nightsight Potions
+NAME=nightsight potion
 ID=0x0f06
 SUBMENU=97
 }
+
+// submenu's, which in turn leads to item creation.
+
 [SUBMENU 90]
-{
+{ agility potions
 ITEM=290
 ITEM=291
 }
+
 [SUBMENU 91]
-{
+{ cure potions
 ITEM=292
 ITEM=293
 ITEM=294
 }
+
 [SUBMENU 92]
-{
+{ explosion potions
 ITEM=295
+}
+
+[SUBMENU 93]
+{ healing potions
 ITEM=296
 ITEM=297
-}
-[SUBMENU 93]
-{
 ITEM=298
+}
+
+[SUBMENU 94]
+{ poison potions
 ITEM=299
 ITEM=300
-}
-[SUBMENU 94]
-{
 ITEM=301
 ITEM=302
+}
+
+[SUBMENU 95]
+{ refresh potions
 ITEM=303
 ITEM=304
 }
-[SUBMENU 95]
-{
+
+[SUBMENU 96]
+{ strength potions
 ITEM=305
 ITEM=306
 }
-[SUBMENU 96]
-{
-ITEM=307
-ITEM=308
-}
+
 [SUBMENU 97]
-{
-ITEM=309
+{ nightsight potion
+ITEM=307
 }
+
+// item creation; in turn calls up the items as specified within the .dfn's.
 
 [ITEM 290]
 {
-NAME=Agility
+NAME=agility potion
 ID=0x0f08
 RESOURCE=0x0f7b 1
-SKILL=0 151 650
+RESOURCE=0x0f0e 1
+SKILL=0 151 451
+SOUND=0x0240
 ADDITEM=0x0f08
 MINRANK=1
 MAXRANK=10
 }
+
 [ITEM 291]
 {
-NAME=Greater Agility
+NAME=greater agility potion
 ID=0x0f08
 RESOURCE=0x0f7b 3
-SKILL=0 351 850
+RESOURCE=0x0f0e 1
+SKILL=0 351 651
+SOUND=0x0240
 ADDITEM=0x0f08-a
 MINRANK=1
 MAXRANK=10
 }
+
 [ITEM 292]
 {
-NAME=Lesser Cure
+NAME=lesser cure potion
 ID=0x0f07
 RESOURCE=0x0f84 1
-SKILL=0 0 500
+RESOURCE=0x0f0e 1
+SKILL=0 000 311
+SOUND=0x0240
 ADDITEM=0x0f07-a
 MINRANK=1
 MAXRANK=10
 }
+
 [ITEM 293]
 {
-NAME=Cure
+NAME=cure potion
 ID=0x0f07
 RESOURCE=0x0f84 3
-SKILL=0 251 750
+RESOURCE=0x0f0e 1
+SKILL=0 381 801
+SOUND=0x0240
 ADDITEM=0x0f07
 MINRANK=1
 MAXRANK=10
 }
+
 [ITEM 294]
 {
-NAME=Greater Cure
+NAME=greater cure potion
 ID=0x0f07
 RESOURCE=0x0f84 6
-SKILL=0 651 1150
+RESOURCE=0x0f0e 1
+SKILL=0 651 951
+SOUND=0x0240
 ADDITEM=0x0f07-b
 MINRANK=1
 MAXRANK=10
 }
+
 [ITEM 295]
 {
-NAME=Lesser Explosion
+NAME=explosion potion
 ID=0x0f0d
-RESOURCE=0x0f8c 3
-SKILL=0 51 550
-ADDITEM=0x0f0d-a
-MINRANK=1
-MAXRANK=10
-}
-[ITEM 296]
-{
-NAME=Explosion
-ID=0x0f0d
-RESOURCE=0x0f8c 5
-SKILL=0 351 850
+RESOURCE=0x0f8c 6
+RESOURCE=0x0f0e 1
+SKILL=0 561 861
+SOUND=0x0240
 ADDITEM=0x0f0d
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 297]
+
+[ITEM 296]
 {
-NAME=Greater Explosion
-ID=0x0f0d
-RESOURCE=0x0f8c 10
-SKILL=0 651 1150
-ADDITEM=0x0f0d-b
-MINRANK=1
-MAXRANK=10
-}
-[ITEM 298]
-{
-NAME=Lesser Heal
+NAME=lesser healing potion
 ID=0x0f0c
 RESOURCE=0x0f85 1
-SKILL=0 0 500
+RESOURCE=0x0f0e 1
+SKILL=0 381 581
+SOUND=0x0240
 ADDITEM=0x0f0c-1
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 299]
+
+[ITEM 297]
 {
-NAME=Heal
+NAME=healing potion
 ID=0x0f0c
 RESOURCE=0x0f85 3
-SKILL=0 151 650
+RESOURCE=0x0f0e 1
+SKILL=0 501 801
+SOUND=0x0240
 ADDITEM=0x0f0c
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 300]
+
+[ITEM 298]
 {
-NAME=Greater Heal
+NAME=greater healing potion
 ID=0x0f0c
 RESOURCE=0x0f85 7
-SKILL=0 551 1050
+RESOURCE=0x0f0e 1
+SKILL=0 731 1031
+SOUND=0x0240
 ADDITEM=0x0f0c-B
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 301]
+
+[ITEM 299]
 {
-NAME=Lesser Poison
+NAME=lesser poison potion
 ID=0x0f0a
 RESOURCE=0x0f88 1
-SKILL=0 0 500
+RESOURCE=0x0f0e 1
+SKILL=0 301 601
+SOUND=0x0240
 ADDITEM=0x0f0a-a
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 302]
+
+[ITEM 300]
 {
-NAME=Poison
+NAME=poison potion
 ID=0x0f0a
 RESOURCE=0x0f88 2
-SKILL=0 151 650
+RESOURCE=0x0f0e 1
+SKILL=0 501 801
+SOUND=0x0240
 ADDITEM=0x0f0a
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 303]
+
+[ITEM 301]
 {
-NAME=Greater Poison
+NAME=greater poison potion
 ID=0x0f0a
 RESOURCE=0x0f88 4
-SKILL=0 551 1050
+RESOURCE=0x0f0e 1
+SKILL=0 751 1051
+SOUND=0x0240
 ADDITEM=0x0f0a-b
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 304]
+
+[ITEM 302]
 {
-NAME=Deadly Poison
+NAME=deadly poison potion
 ID=0x0f0a
 RESOURCE=0x0f88 8
-SKILL=0 901 1400
+RESOURCE=0x0f0e 1
+SKILL=0 921 1201
+SOUND=0x0240
 ADDITEM=0x0f0a-c
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 305]
+
+[ITEM 303]
 {
-NAME=Refresh
+NAME=lesser refresh potion
 ID=0x0f0b
 RESOURCE=0x0f7a 1
-SKILL=0 151 650
-ADDITEM=0x0f0b
-MINRANK=1
-MAXRANK=10
-}
-[ITEM 306]
-{
-NAME=Total Refresh
-ID=0x0f0b
-RESOURCE=0x0f7a 5
-SKILL=0 251 750
+RESOURCE=0x0f0e 1
+SKILL=0 201 521
+SOUND=0x0240
 ADDITEM=0x0f0b-a
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 307]
+
+[ITEM 304]
 {
-NAME=Strength
+NAME=refresh potion
+ID=0x0f0b
+RESOURCE=0x0f7a 5
+RESOURCE=0x0f0e 1
+SKILL=0 351 651
+SOUND=0x0240
+ADDITEM=0x0f0b
+MINRANK=1
+MAXRANK=10
+}
+
+[ITEM 305]
+{
+NAME=lesser strength potion
 ID=0x0f09
 RESOURCE=0x0f86 2
-SKILL=0 251 750
+RESOURCE=0x0f0e 1
+SKILL=0 281 581
+SOUND=0x0240
 ADDITEM=0x0f09-a
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 308]
+
+[ITEM 306]
 {
-NAME=Greater Strength
+NAME=strength potion
 ID=0x0f09
 RESOURCE=0x0f86 5
-SKILL=0 451 950
-ADDITEM=0x0f09
+RESOURCE=0x0f0e 1
+SKILL=0 481 781
+SOUND=0x0240
+ADDITEM=0xf09
 MINRANK=1
 MAXRANK=10
 }
-[ITEM 309]
+
+[ITEM 307]
 {
-NAME=Nightsight
+NAME=nightsight potion
 ID=0x0f06
-RESOURCE=0x0f8d 5
-SKILL=0 0 500
+RESOURCE=0x0f8d 1
+RESOURCE=0x0f0e 1
+SKILL=0 000 381
+SOUND=0x0240
 ADDITEM=0x0f06
 MINRANK=1
 MAXRANK=10
@@ -335,5 +387,4 @@ MAXRANK=10
 
 // end of alchemy section
 //*****************************************
-
 

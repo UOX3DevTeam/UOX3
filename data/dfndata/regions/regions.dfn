@@ -1,10 +1,10 @@
-//*****************************************************************
-//*                         UOX3 Scripts                          *
-//*                                                               *
-//*                   http://uox3.sourceforge.net/                *
-//*                                                               *
-//* Last Update : 29th Jan, 2002 - SwamiHajjiJoe                  *
-//* Script : regions.scp                                          *
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: regions.dfn
+//	Writen by: SwamiHajjiJoe
+//	Date: January 29th 2002
+
+
 //*****************************************************************
 //* Switches GUARDED,MARK,GATE,RECALL: 0=off/no; 1=on/yes         *
 //* Set weather with ABWEATH from weather.dfn file.               *

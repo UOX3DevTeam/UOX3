@@ -1,18 +1,9 @@
-//*****************************************************************
-//*                         UOX3 Scripts v.35                     *
-//*                                                               *
-//*                   http://www.uoxdev.com/scripts/              *
-//*                                                               *
-//* Last Update : 1/16/2000                                       *
-//* Script : skills.scp                                           *
-//*****************************************************************
-//*                        How to use this script                 *
-//*                                                               *
-//* fill in comments instructions here                            *
-//*                                                               *
-//*                                                               *
-//*                                                               *
-//*****************************************************************
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: skill.dfn
+//	Writen by: ????
+//	Date: 1/16/2000
+
 
 // Alchemy
 [SKILL 0]
