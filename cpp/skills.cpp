@@ -5978,7 +5978,10 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 	{
 		if((( rand()%20 ) + chars[c].in ) > 45 ) // not always
 		{
-			chars[target].mn -= decrease; // decrease mana
+			if (chars[target].mn < decrease)
+				chars[target].mn = 0;
+			else
+				chars[target].mn -= decrease; // decrease mana
 			updatestats( target, 1 ); // update
 			sysmessage( s, "Your spiritual forces disturb the enemy!" );
 			sysmessage( calcSocketFromChar( target ), "A damned soul is disturbing your mind!" );
