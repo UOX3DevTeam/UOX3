@@ -17,7 +17,7 @@
 // product info
 //o---------------------------------------------------------------------------o
 #define VER "0.97.01"
-#define BUILD "16a"
+#define BUILD "16b"
 #define REALBUILD "0"
 #define SVER "2.0"
 #define CVER "2.0"
