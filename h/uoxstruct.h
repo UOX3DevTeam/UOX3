@@ -249,11 +249,11 @@ struct char_st
  int targtrig; //Stores the number of the trigger the character for targeting
  char ra;  // Reactive Armor spell
  int trainer; // Serial of the NPC training the char, -1 if none.
-#ifdef __linux__
+//#ifdef __linux__
  short trainingplayerin;
-#else
- unsigned char trainingplayerin; // Index in skillname of the skill the NPC is training the player in
-#endif
+//#else
+// unsigned char trainingplayerin; // Index in skillname of the skill the NPC is training the player in
+//#endif
  char cantrain;
  char laston[MAX_LASTON]; //Last time a character was on
 // Begin of Guild Related Character information (DasRaetsel)
@@ -406,11 +406,11 @@ struct item_st
  unsigned char spawn3;
  unsigned char spawn4;
  long spawnserial;
-#ifndef __linux__
- char dir; // Direction, or light source type.
-#else
+//#ifndef __linux__
+ //char dir; // Direction, or light source type.
+//#else
  short dir;
-#endif
+//#endif
  char priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
  int value; // Price shopkeeper sells item at.
  int restock; // Number up to which shopkeeper should restock this item

@@ -2932,11 +2932,11 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 												dx=abs(chars[ii].x-x);
 												dy=abs(chars[ii].y-y);
 												dz=abs(chars[ii].z-z);  // new--difference in z coords
-#ifndef __linux__
+//#ifndef __linux__
 												d=sqrt(dx*dx+dy*dy);
-#else
-												d=hypot(dx, dy);
-#endif
+//#else
+//												d=hypot(dx, dy);
+//#endif
 												if ((d<=range)&&(dz<=15)) //char to reveal is within radius or range and no more than 15 z coords away
 												{
 													if( chars[ii].hidden && !(chars[ii].priv2&8 ) )

@@ -12422,11 +12422,11 @@ void playmonstersound( CHARACTER monster, int id1, int id2, MonsterSoundType sfx
 // Slightly revised by Leafbeach in November-December 2000 (fixed combat sounds for soundflag 2 and 3)
 {
 	int basesound=0,x;
-#ifdef __linux__
+//#ifdef __linux__
 	char sf; short offset;
-#else
-	char sf,offset;
-#endif
+//#else
+//	char sf,offset;
+//#endif
 	
 	x = ( id1<<8 ) + id2;
 	basesound = creatures[x].basesound;
@@ -13944,11 +13944,11 @@ void loadregions()//New -- Zippy spawn regions
 	closescript();//AntiChrist
 }
 
-#ifdef __linux__
+//#ifdef __linux__
 short calcRegionFromXY( int x, int y )
-#else
-char calcRegionFromXY(int x, int y)
-#endif
+//#else
+//char calcRegionFromXY(int x, int y)
+//#endif
 {
 	int i;
 	for (i=0;i<locationcount;i++)

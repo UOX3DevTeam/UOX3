@@ -768,11 +768,11 @@ void dotrade(int cont1, int cont2);
 void loadspawnregions();//Zippy
 void loadregions();
 void checkregion(int i);
-#ifndef __linux__
-char calcRegionFromXY(int x, int y);
-#else
+//#ifndef __linux__
+//char calcRegionFromXY(int x, int y);
+//#else
 short calcRegionFromXY( int x, int y );
-#endif
+//#endif
 void dosocketmidi(int s);
 void wipe(int s);
 void respawnnow();
