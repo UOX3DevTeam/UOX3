@@ -3889,7 +3889,6 @@ void statwindow(int s, int i) // Opens the status window
 	else
 	{
 		memset(statstring+44, 0, 14);
-		//for (int a=44;a<=57;a++) statstring[a]=0;
 	}
 	
 	x=calcgold(i);
@@ -4028,8 +4027,6 @@ void doorsfx(int item, int x, int y)
 	const int CLOSESTEEL = 0xF3;
 	const int CLOSESECRET = 0xF4;
 	
-	// printf(" value of door being used is: %x, sfx is set to %d (0=open, 1=close)\n", x, y);
-	
 	if (y==0) // Request open door sfx
 	{
 		if (((x>=0x0695)&&(x<0x06C5))|| // Open wooden / ratan door
@@ -4069,7 +4066,7 @@ void doorsfx(int item, int x, int y)
 } // doorsfx() END
 
 
-void dooruse(int s, int item)
+void dooruse( UOXSOCKET s, int item)
 {
 	int i, db, x;
 	char changed = 0;
@@ -4085,6 +4082,7 @@ void dooruse(int s, int item)
 		db = doorbase[i];
 		
 		x=((items[item].id1<<8)+items[item].id2);
+
 		if (x==(db+0))
 		{
 			items[item].id2++;
@@ -4093,7 +4091,6 @@ void dooruse(int s, int item)
 				items[item].x--;
 				items[item].y++;
 			}
-			//			for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4107,7 +4104,6 @@ void dooruse(int s, int item)
 				items[item].x++;
 				items[item].y--;
 			}
-			//			for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4118,7 +4114,6 @@ void dooruse(int s, int item)
 			items[item].id2++;
 			items[item].x++;
 			items[item].y++;
-			//			for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4129,7 +4124,6 @@ void dooruse(int s, int item)
 			items[item].id2--;
 			items[item].x--;
 			items[item].y--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4139,7 +4133,6 @@ void dooruse(int s, int item)
 		{
 			items[item].id2++;
 			items[item].x--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4149,7 +4142,6 @@ void dooruse(int s, int item)
 		{
 			items[item].id2--;
 			items[item].x++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4160,7 +4152,6 @@ void dooruse(int s, int item)
 			items[item].id2++;
 			items[item].x++;
 			items[item].y--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4171,7 +4162,6 @@ void dooruse(int s, int item)
 			items[item].id2--;
 			items[item].x--;
 			items[item].y++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4182,7 +4172,6 @@ void dooruse(int s, int item)
 			items[item].id2++;
 			items[item].x++;
 			items[item].y++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4193,7 +4182,6 @@ void dooruse(int s, int item)
 			items[item].id2--;
 			items[item].x--;
 			items[item].y--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4204,7 +4192,6 @@ void dooruse(int s, int item)
 			items[item].id2++;
 			items[item].x++;
 			items[item].y--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4215,7 +4202,6 @@ void dooruse(int s, int item)
 			items[item].id2--;
 			items[item].x--;
 			items[item].y++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4225,7 +4211,6 @@ void dooruse(int s, int item)
 		else if (x==(db+12))
 		{
 			items[item].id2++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4234,7 +4219,6 @@ void dooruse(int s, int item)
 		} else if (x==(db+13))
 		{
 			items[item].id2--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4244,7 +4228,6 @@ void dooruse(int s, int item)
 		{
 			items[item].id2++;
 			items[item].y--;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xEA);
@@ -4254,7 +4237,6 @@ void dooruse(int s, int item)
 		{
 			items[item].id2--;
 			items[item].y++;
-			//				for (z=0;z<now;z++) if (perm[z] && inrange2(z, item)) senditem(z, item);
 			RefreshItem( item ); // AntiChrist
 			changed=1;
 			//   soundeffect3(item, 0x00, 0xF1);
@@ -4581,7 +4563,7 @@ void wear_item(int s) // Item is dropped on paperdoll
 			if (items[i].id1>=0x40) senditem(s, i);
 			return;
 		}
-		if ( (!(Combat->GetWeapon(currchar[s])==-1)) && ( (buffer[s][5]==1) || ( buffer[s][5] == 2 && !Items->isShieldType( i ) ) ) )//Morrolan test
+		if ( Combat->GetWeapon(currchar[s]) !=-1  && ( (buffer[s][5]==1) || ( buffer[s][5] == 2 && !Items->isShieldType( i ) ) ) )//Morrolan test
 		{
 			bounce[1]=5;
 			Network->xSend(s, bounce, 2, 0);
@@ -5505,9 +5487,9 @@ void charcreate(int s) // All the character creation stuff
 	
 	chars[c].dir=4;
 	// EviLDeD - January 29, 2000
-  // Fix for Eagles NameDeed Stuff. Kinda Q & D but here ya go Eagle.
-  chars[c].namedeed=5;
-  // EviLDeD - End
+    // Fix for Eagles NameDeed Stuff. Kinda Q & D but here ya go Eagle.
+    chars[c].namedeed=5;
+    // EviLDeD - End
 	chars[c].hp=chars[c].st=buffer[s][0x47];
 	if (chars[c].st>45) chars[c].st=45;          // fix for hack exploit
 	if (chars[c].st<10) chars[c].st=10;
@@ -5786,22 +5768,6 @@ void charplay (int s) // After hitting "Play Character" button //Instalog
 	}
 }
 
-void deny(int k, int s, int sequence)
-{
-	char walkdeny[9]="\x21\x00\x01\x02\x01\x02\x00\x01";
-	
-	walkdeny[1]=sequence;
-	walkdeny[2]=chars[s].x>>8;
-	walkdeny[3]=chars[s].x%256;
-	walkdeny[4]=chars[s].y>>8;
-	walkdeny[5]=chars[s].y%256;
-	walkdeny[6]=chars[s].dir;
-	walkdeny[7]=chars[s].dispz;
-	Network->xSend(k, walkdeny, 8, 0);
-	walksequence[k]=-1;
-}
-
-
 int validtelepos(int s)
 {
 	int z;
@@ -6018,7 +5984,6 @@ void scriptcommand (int s, char *script1, char *script2) // Execute command from
 	}
 	if (!(strcmp("INFORMATION", script1)))
 	{
-		//		printf("info\n");
 		total=(uiCurrentTime-starttime)/CLOCKS_PER_SEC;
 		ho=total/3600;
 		total-=ho*3600;
@@ -6294,7 +6259,8 @@ void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse
 	int j,c;
 	static int count = 1;
 	
-	if(npcinrange(s,x,2) == 0) return;
+	if(npcinrange(s,x,2) == 0) 
+		return;
 
 	if (chars[currchar[s]].priv&0x01)
 	{
@@ -6305,10 +6271,6 @@ void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse
 	}
 	
 	if (chars[x].ownserial==chars[currchar[s]].serial)
-		//    (chars[x].own1==chars[currchar[s]].ser1)&&
-		//    (chars[x].own2==chars[currchar[s]].ser2)&&
-		//    (chars[x].own3==chars[currchar[s]].ser3)&&
-		//    (chars[x].own4==chars[currchar[s]].ser4))
 	{
 		if (chars[currchar[s]].onhorse)
 		{
@@ -6462,15 +6424,16 @@ void processkey( int c )
 			break;
 		case 'I':
 			Admin->ReadIni();
-			//  for (i=0;i<servcount;i++)
-			//  if (serv[i][1][0]=='*') sprintf(serv[i][1],"%i.%i.%i.%i",ph1,ph2,ph3,ph4);
 			printf("UOX3: INI file reloaded.\n");
 			break;
 		case  'D':    // Disconnect account 0 (useful when client crashes)
 			for( i = 0; i < now; i++ )
-				if( acctno[i] == 0 ) 
+				if( acctno[i] == 0 )
+				{
 					Network->Disconnect( i );
-				printf( "Account 0 disconnected" );
+					printf( "Account 0 disconnected\n" );
+					break;
+				}
 			break;
 		case 'H':                // Enable/Disable heartbeat
 			if (heartbeat==1) printf("UOX3: Heartbeat Disabled\n");
@@ -6493,8 +6456,8 @@ void processkey( int c )
 			{
 				if(perm[i]) //Keeps NPC's from appearing on the list
 				{
+					printf("%i) %s [%x %x %x %x]\n", j, chars[currchar[i]].name, chars[currchar[i]].ser1, chars[currchar[i]].ser2, chars[currchar[i]].ser3, chars[currchar[i]].ser4);
 					j++;
-					printf("%i) %s [%x %x %x %x]\n", (j-1), chars[currchar[i]].name, chars[currchar[i]].ser1, chars[currchar[i]].ser2, chars[currchar[i]].ser3, chars[currchar[i]].ser4);
 				}
 			}
 			printf("Total Users Online: %d\n", j);
@@ -9413,8 +9376,8 @@ void Shutdown( int retCode )
 
 char iteminrange( UOXSOCKET s, ITEM i, int distance )
 {
-	if( s > now || i < 0 || i > imem )
-		return 0;
+//	if( s > now || i < 0 || i > imem )
+//		return 0;
 	if( chars[currchar[s]].priv&0x01 )	// GM
 		return 1;
 	short dx = abs( chars[currchar[s]].x - items[i].x );
@@ -9441,12 +9404,13 @@ char npcinrange( UOXSOCKET s, int i, int distance )
 	return 1;
 }
 
-int ishuman( int p )
+int ishuman( CHARACTER p )
 {
 	// Check if the player or Npc is human! -- by Magius(CHE_
-	if(( chars[p].xid1 == 0x01 ) && ( chars[p].xid2 == 0x90 || chars[p].xid2 == 0x91 ) ) return 1;
-	else return 0;
-	// end check
+	if(( chars[p].xid1 == 0x01 ) && ( chars[p].xid2 == 0x90 || chars[p].xid2 == 0x91 ) ) 
+		return 1;
+	else 
+		return 0;
 }
 
 void npcact(int s)
@@ -9809,11 +9773,9 @@ unsigned long int getclock( void )
 void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed, char loop)
 {
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x03; // Static effect
 	effect[2]=chars[player].ser1;
@@ -9850,11 +9812,9 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 void staticeffect3(UI16 x, UI16 y, SI08 z, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode)
 {
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x02; // Static effect
 	//[6] to [9] are the target ser, not applicable here.
@@ -9890,11 +9850,9 @@ void staticeffect3(UI16 x, UI16 y, SI08 z, unsigned char eff1, unsigned char eff
 void staticeffect2(int nItem, unsigned char eff1, unsigned char eff2, char speed, char loop, char explode)
 {
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x02; // Static effect
 	effect[2]=items[nItem].ser1;
@@ -9937,11 +9895,9 @@ void staticeffect2(int nItem, unsigned char eff1, unsigned char eff2, char speed
 void bolteffect(int player)
 {
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x01; // Bolt effect
 	effect[2]=chars[player].ser1;
@@ -9971,11 +9927,9 @@ void bolteffect(int player)
 void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
 {
 	char effect[29];
-	int i, j,x2,x,y2,y;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j,x2,x,y2,y;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // effect from source to dest
 	effect[2]=chars[player].ser1;
@@ -10031,11 +9985,9 @@ void movingeffect(int source, int dest, unsigned char eff1, unsigned char eff2, 
 {
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
 	effect[2]=chars[source].ser1;
@@ -10079,11 +10031,9 @@ void movingeffect2(int source, int dest, char eff1, char eff2, char speed, char 
 {
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
-	int i, j;
-	for (i=0;i<29;i++)
-	{
-		effect[i]=0;
-	}
+	int j;
+	memset (&effect, 0, 29);
+
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
 	effect[2]=chars[source].ser1;
@@ -10341,7 +10291,7 @@ void impaction(int s, int act)
 	action(s, act);
 }
 
-int chardirxyz(int a, int x, int y, int z)   // direction from character a to char b
+int chardirxyz(CHARACTER a, int x, int y, int z)   // direction from character a to char b
 // PARAM WARNING: z is never referenced
 {
 	int dir,xdif,ydif;
@@ -11234,39 +11184,44 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 
 char indungeon(int s)
 {
-	int x1, y1;
+	int x1;
 	if (chars[s].x<5119) return 0;
-	x1=(chars[s].x-5119)>>8;
-	y1=(chars[s].y>>8);
-	if (y1==0) return 1;
-	if (y1==1)
+	x1 = (chars[s].x-5119)>>8;
+
+	switch((chars[s].y>>8))
 	{
-		if (x1!=0) return 1;
-		return 0;
-	}
-	if (y1==2 || y1==3)
-	{
-		if (x1<3) return 1;
-		return 0;
-	}
-	if (y1==4)
-	{
-		if (x1==0) return 1;
-		return 0;
-	}
-	if (y1==5)
-	{
+	case 0:
 		return 1;
-	}
-	if (y1==6)
-	{
+		break;
+	case 1:
+		if (x1 != 0) 
+			return 1;
+		else
+			return 0;
+		break;
+	case 2:
+	case 3:
+		if (x1 < 3) 
+			return 1;
+		else
+			return 0;
+		break;
+	case 4:
 		if (x1==0) return 1;
 		return 0;
-	}
-	if (y1==7)
-	{
+		break;
+	case 5:
+		return 1;
+		break;
+	case 6:
+		if ( x1 == 0 )
+			return 1;
+		else
+			return 0;
+	case 7:
 		if (x1<2) return 1;
 		return 0;
+		break;
 	}
 	return 0;
 }
@@ -11381,7 +11336,6 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 	{
 		if( inrange1p( currchar[i], source ) && perm[i] )
 		{
-//			npcemote(i, source, temp, 1 );
 			npcemote( i, currchar[i], temp, 1 );
 		}
 	}
@@ -11766,41 +11720,41 @@ int delequan(int s, int id1, int id2, int amount )
 
 int delesubquan(int p, int id1, int id2, int amount)
 {
-	int i/*, j*/, k, serial, serhash, ci;
-	int total, totaldel=0;
-	total=amount;
-	serial=items[p].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	int i, k, serial, serhash, ci;
+	int total, totaldel = 0;
+	total = amount;
+	serial = items[p].serial;
+	serhash = serial%HASHMAX;
+	for (ci = 0; ci < contsp[serhash].max; ci++)
 	{
-		i=contsp[serhash].pointer[ci];
+		i = contsp[serhash].pointer[ci];
 		if (i>-1)
-			if (items[i].contserial==serial)
+			if (items[i].contserial == serial)
 			{
-				if (items[i].type==1)
+				if (items[i].type == 1)
 				{
-					k=delesubquan(i, id1, id2, total);
-					total=total-k;
-					totaldel=totaldel+k;
+					k = delesubquan(i, id1, id2, total);
+					total = total - k;
+					totaldel = totaldel + k;
 				}
-				if (items[i].id1==id1 && items[i].id2==id2)
+				if (items[i].id1 == id1 && items[i].id2 == id2)
 				{
-					if (items[i].amount<=total)
+					if (items[i].amount <= total)
 					{
-						total=total-items[i].amount;
-						totaldel=totaldel+items[i].amount;
+						total = total - items[i].amount;
+						totaldel = totaldel + items[i].amount;
 						Items->DeleItem(i);
 					}
 					else
 					{
-						items[i].amount=items[i].amount-total;
-						totaldel=totaldel+total;
-						total=0;
-						//					for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
-						RefreshItem( i ); // AntiChrist
+						items[i].amount = items[i].amount - total;
+						totaldel = totaldel + total;
+						total = 0;
+						RefreshItem(i); // AntiChrist
 					}
 				}
-				if (total==0) return totaldel;
+				if (total == 0)
+					return totaldel;
 			}
 	}
 	return totaldel;
@@ -11985,11 +11939,7 @@ void setrandomname(int s, char * namelist)
 	int i=0,j=0;
 	openscript("npc.scp");
 	
-	// int x=str2num(namelist);
-	
 	sprintf(sect, "RANDOMNAME %s", namelist);
-	
-	// printf("x: %i sect: %s\n",x,sect);
 	
 	if (!i_scripts[npc_script]->find(sect))
 	{
@@ -12060,8 +12010,8 @@ void initque( void ) // Initilizes the gmpages[] and counspages[] arrays and als
 	int i;
 	for( i = 1; i < MAXPAGES; i++ )
 	{
-		*(gmpages[i].name)='\0'; // was sprintf(gmpages[i].name,"");
-		*(gmpages[i].reason)='\0'; // was sprintf(gmpages[i].reason,"");
+		gmpages[i].name[0] = 0;
+		gmpages[i].reason[0] = 0;
 		gmpages[i].ser1 = 0x00;
 		gmpages[i].ser2 = 0x00;
 		gmpages[i].ser3 = 0x00;
@@ -12071,8 +12021,8 @@ void initque( void ) // Initilizes the gmpages[] and counspages[] arrays and als
 	}
 	for(i=1;i<MAXPAGES;i++)
 	{
-		*(counspages[i].name)='\0'; // was sprintf(counspages[i].name,"");
-		*(counspages[i].reason)='\0'; // was sprintf(counspages[i].reason,"");
+		counspages[i].name[0] = 0;
+		counspages[i].reason[0] = 0;
 		counspages[i].ser1 = 0x00;
 		counspages[i].ser2 = 0x00;
 		counspages[i].ser3 = 0x00;
@@ -12139,8 +12089,8 @@ void donewithcall(int s, int type)
 		if(type==1) //Player is a GM
 		{
 			gmpages[chars[currchar[s]].callnum].handled=1;
-			*(gmpages[chars[currchar[s]].callnum].name)='\0'; // was sprintf(gmpages[chars[currchar[s]].callnum].name,"");
-			*(gmpages[chars[currchar[s]].callnum].reason)='\0'; // was sprintf(gmpages[chars[currchar[s]].callnum].reason,"");
+			gmpages[chars[currchar[s]].callnum].name[0] = 0;
+			gmpages[chars[currchar[s]].callnum].reason[0] = 0;
 			gmpages[chars[currchar[s]].callnum].ser1=0;
 			gmpages[chars[currchar[s]].callnum].ser2=0;
 			gmpages[chars[currchar[s]].callnum].ser3=0;
@@ -12151,8 +12101,8 @@ void donewithcall(int s, int type)
 		else //Player is a counselor
 		{
 			counspages[chars[currchar[s]].callnum].handled=1;
-			*(counspages[chars[currchar[s]].callnum].name)='\0'; // was sprintf(counspages[chars[currchar[s]].callnum].name,"");
-			*(counspages[chars[currchar[s]].callnum].reason)='\0'; // was sprintf(counspages[chars[currchar[s]].callnum].reason,"");
+			counspages[chars[currchar[s]].callnum].name[0] = 0; 
+			counspages[chars[currchar[s]].callnum].reason[0] = 0; 
 			counspages[chars[currchar[s]].callnum].ser1=0;
 			counspages[chars[currchar[s]].callnum].ser2=0;
 			counspages[chars[currchar[s]].callnum].ser3=0;
@@ -12904,7 +12854,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -13002,8 +12951,6 @@ void PlVGetgold(int s, int v)//PlayerVendors
 		if( give ) 
 			Items->SpawnItem( s, give, "#", 1, 0x0E, 0xED, 0, 0, 1, 1 );
 		
-		//else if(give<=5) SpawnItem(s,give,"#",1,0x0E,0xEE,0,0,1,1);
-		//else SpawnItem(s,give,"#",1,0x0E,0xEF,NULL,NULL,1,1);
 		sprintf(temp, "Today's purchases total %i gold. I am keeping %i gold for my self. Here is the remaining %i gold. Have a nice day.",chars[v].holdg,pay,give);
 		npctalk(s,v,temp, 0);
 		chars[v].holdg=t;
@@ -13438,7 +13385,6 @@ void buyaction(int s)
 						{
 							if( items[bitems[i]].contserial != -1 )
 								unsetserial( bitems[i], 1 );
-//								removefromptr( &contsp[items[bitems[i]].contserial%HASHMAX], bitems[i] );
 							setserial( bitems[i], p, 1 );
 							RefreshItem( bitems[i] ); // AntiChrist
 						}
@@ -13448,7 +13394,6 @@ void buyaction(int s)
 								Commands->DupeItem( s, bitems[i], 1 );
 							if( items[bitems[i]].contserial != -1 )
 								unsetserial( bitems[i], 1 );
-//								removefromptr(&contsp[items[bitems[i]].contserial%HASHMAX], bitems[i]);
 							setserial( bitems[i], p, 1 );
 							items[bitems[i]].amount = 1;
 							RefreshItem( bitems[i] ); // AntiChrist
@@ -13805,7 +13750,7 @@ void sellaction( UOXSOCKET s )
 	
 	unsigned int maxsell, amt; // by Magius(CHE)
 	char tmpmsg[256]; // by Magius(CHE)
-	*tmpmsg = '\0'; // by Magius(CHE)
+	tmpmsg[0] = 0;
 
 	if( buffer[s][8] != 0 )
 	{
@@ -14359,135 +14304,140 @@ void StoreItemRandomValue( int i, int tmpreg )
 		items[i].rndvaluerate = (int) RandomNum( min, max );
 	}
 }
+
 int tradestart(int s, int i)
 {
-	int ps, pi, bps, bpi, s2,c;
+	int ps, pi, bps, bpi, s2, c;
 	char msg[90];
 	
-	bps=packitem(currchar[s]);
-	bpi=packitem(i);
-	s2=calcSocketFromChar(i);
+	bps = packitem(currchar[s]);
+	bpi = packitem(i);
+	s2 = calcSocketFromChar(i);
 	
-	if (bps==-1) //LB
+	if (bps==-1) // LB
 	{
-		sysmessage(s,"Time to buy a backpack!");
-		sprintf(temp,"%s doesnt have a backpack!",chars[currchar[s]].name);
-		sysmessage(s2,temp);
+		sysmessage(s, "Time to buy a backpack!");
+		sprintf(temp, "%s doesnt have a backpack!", chars[currchar[s]].name);
+		sysmessage(s2, temp);
 		return 0;
 	}
 	
 	if (bpi==-1)
 	{
-		sysmessage(s2,"Time to buy a backpack!");
-		sprintf(temp,"%s doesnt have a backpack!",chars[currchar[s2]].name);
-		sysmessage(s,temp);
+		sysmessage(s2, "Time to buy a backpack!");
+		sprintf(temp, "%s doesnt have a backpack!", chars[currchar[s2]].name);
+		sysmessage(s, temp);
 		return 0;
 	}
 	
 	
-	c=Items->SpawnItem(s2,1,"#",0,0x1E,0x5E,0,0,0,0);
-	if( c == -1 ) return 0;
-	items[c].x=26;
-	items[c].y=0;
-	items[c].z=0;
-	setserial(c,currchar[s],4);
-	items[c].layer=0;
-	items[c].type=1;
-	items[c].dye=0;
-	ps=c;
+	c = Items->SpawnItem(s2, 1, "#", 0, 0x1E, 0x5E, 0, 0, 0, 0);
+	if (c == -1)
+		return 0;
+	items[c].x = 26;
+	items[c].y = 0;
+	items[c].z = 0;
+	setserial(c, currchar[s], 4);
+	items[c].layer = 0;
+	items[c].type = 1;
+	items[c].dye = 0;
+	ps = c;
 	sendbpitem(s, ps);
-	if (s2!=-1) sendbpitem(s2, ps);
+	if (s2!=-1)
+		sendbpitem(s2, ps);
 	
-	c=Items->SpawnItem(s2,1,"#",0,0x1E,0x5E,0,0,0,0);
-	if( c == -1 ) return 0;
-	items[c].x=26;
-	items[c].y=0;
-	items[c].z=0;
-	setserial(c,i,4);
-	items[c].layer=0;
-	items[c].type=1;
-	items[c].dye=0;
-	pi=c;
+	c = Items->SpawnItem(s2, 1, "#", 0, 0x1E, 0x5E, 0, 0, 0, 0);
+	if (c == -1)
+		return 0;
+	items[c].x = 26;
+	items[c].y = 0;
+	items[c].z = 0;
+	setserial(c, i, 4);
+	items[c].layer = 0;
+	items[c].type = 1;
+	items[c].dye = 0;
+	pi = c;
 	sendbpitem(s, pi);
-	if (s2!=-1) sendbpitem(s2, pi);
+	if (s2!=-1)
+		sendbpitem(s2, pi);
 	
-	items[pi].moreb1=items[ps].ser1;
-	items[pi].moreb2=items[ps].ser2;
-	items[pi].moreb3=items[ps].ser3;
-	items[pi].moreb4=items[ps].ser4;
-	items[ps].moreb1=items[pi].ser1;
-	items[ps].moreb2=items[pi].ser2;
-	items[ps].moreb3=items[pi].ser3;
-	items[ps].moreb4=items[pi].ser4;
-	items[pi].morez=0;
-	items[ps].morez=0;
+	items[pi].moreb1 = items[ps].ser1;
+	items[pi].moreb2 = items[ps].ser2;
+	items[pi].moreb3 = items[ps].ser3;
+	items[pi].moreb4 = items[ps].ser4;
+	items[ps].moreb1 = items[pi].ser1;
+	items[ps].moreb2 = items[pi].ser2;
+	items[ps].moreb3 = items[pi].ser3;
+	items[ps].moreb4 = items[pi].ser4;
+	items[pi].morez = 0;
+	items[ps].morez = 0;
 	
-	msg[0]=0x6F; // Header Byte
-	msg[1]=0; // Size
-	msg[2]=47; // Size
-	msg[3]=0; // Initiate
-	msg[4]=chars[i].ser1;
-	msg[5]=chars[i].ser2;
-	msg[6]=chars[i].ser3;
-	msg[7]=chars[i].ser4;
-	msg[8]=items[ps].ser1;
-	msg[9]=items[ps].ser2;
-	msg[10]=items[ps].ser3;
-	msg[11]=items[ps].ser4;
-	msg[12]=items[pi].ser1;
-	msg[13]=items[pi].ser2;
-	msg[14]=items[pi].ser3;
-	msg[15]=items[pi].ser4;
-	msg[16]=1;
+	msg[0] = 0x6F; // Header Byte
+	msg[1] = 0; // Size
+	msg[2] = 47; // Size
+	msg[3] = 0; // Initiate
+	msg[4] = chars[i].ser1;
+	msg[5] = chars[i].ser2;
+	msg[6] = chars[i].ser3;
+	msg[7] = chars[i].ser4;
+	msg[8] = items[ps].ser1;
+	msg[9] = items[ps].ser2;
+	msg[10] = items[ps].ser3;
+	msg[11] = items[ps].ser4;
+	msg[12] = items[pi].ser1;
+	msg[13] = items[pi].ser2;
+	msg[14] = items[pi].ser3;
+	msg[15] = items[pi].ser4;
+	msg[16] = 1;
 	strcpy(&(msg[17]), chars[i].name);
 	Network->xSend(s, msg, 47, 0);
 	
-	msg[0]=0x6F; // Header Byte
-	msg[1]=0; // Size
-	msg[2]=47; // Size
-	msg[3]=0; // Initiate
-	msg[4]=chars[currchar[s]].ser1;
-	msg[5]=chars[currchar[s]].ser2;
-	msg[6]=chars[currchar[s]].ser3;
-	msg[7]=chars[currchar[s]].ser4;
-	msg[8]=items[pi].ser1;
-	msg[9]=items[pi].ser2;
-	msg[10]=items[pi].ser3;
-	msg[11]=items[pi].ser4;
-	msg[12]=items[ps].ser1;
-	msg[13]=items[ps].ser2;
-	msg[14]=items[ps].ser3;
-	msg[15]=items[ps].ser4;
-	msg[16]=1;
+	msg[0] = 0x6F; // Header Byte
+	msg[1] = 0; // Size
+	msg[2] = 47; // Size
+	msg[3] = 0; // Initiate
+	msg[4] = chars[currchar[s]].ser1;
+	msg[5] = chars[currchar[s]].ser2;
+	msg[6] = chars[currchar[s]].ser3;
+	msg[7] = chars[currchar[s]].ser4;
+	msg[8] = items[pi].ser1;
+	msg[9] = items[pi].ser2;
+	msg[10] = items[pi].ser3;
+	msg[11] = items[pi].ser4;
+	msg[12] = items[ps].ser1;
+	msg[13] = items[ps].ser2;
+	msg[14] = items[ps].ser3;
+	msg[15] = items[ps].ser4;
+	msg[16] = 1;
 	strcpy(&(msg[17]), chars[currchar[s]].name);
-	if (s2!=-1) Network->xSend(s2, msg, 47, 0);
+	if (s2!=-1)
+		Network->xSend(s2, msg, 47, 0);
 	
 	return ps;
 }
 
 void clearalltrades()
 {
-	int i, j, k, p,serial,serhash,ci;
-	for (i=0;i<itemcount;i++)
+	int i, j, k, p, serial, serhash, ci;
+	for (i = 0; i < itemcount; i++)
 	{
-		if (items[i].type==1 && items[i].x==26 && items[i].y==0 && items[i].z==0 &&
-			items[i].id1==0x1E && items[i].id2==0x5E)
+		if (items[i].type == 1 && items[i].x == 26 && items[i].y == 0 && items[i].z == 0 &&
+			items[i].id1 == 0x1E && items[i].id2 == 0x5E)
 		{
-			k=calcCharFromSer(items[i].cont1, items[i].cont2, items[i].cont3, items[i].cont4);
-			p=packitem(k);
-			serial=items[i].serial;
-			serhash=serial%HASHMAX;
-			for (ci=0;ci<contsp[serhash].max;ci++)
+			k = calcCharFromSer(items[i].contserial);
+			p = packitem(k);
+			serial = items[i].serial;
+			serhash = serial%HASHMAX;
+			for (ci = 0; ci < contsp[serhash].max; ci++)
 			{
-				j=contsp[serhash].pointer[ci];
-				if (j!=-1)
-					if ((items[j].contserial==serial))
+				j = contsp[serhash].pointer[ci];
+				if (j != -1)
+					if ((items[j].contserial == serial))
 					{
-						if( p > -1 )
+						if (p > -1)
 						{
-//							removefromptr(&contsp[items[j].contserial%HASHMAX], j);
-							unsetserial( j, 1 );
-							setserial(j,p,1);
+							unsetserial(j, 1);
+							setserial(j, p, 1);
 						}
 					}
 			}
@@ -14500,30 +14450,30 @@ void clearalltrades()
 void trademsg(int s)
 {
 	int cont1 = -1, cont2 = -1;
-	switch(buffer[s][3])
+	switch (buffer[s][3])
 	{
-	case 0://Start trade - Never happens, sent out by the server only.
-		break;
-	case 2://Change check marks.  Possibly conclude trade
-		cont1=calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-		if( cont1 > -1 )
-			cont2=calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
-		if( cont2 > -1 ) // lb crashfix
-		{
-			items[cont1].morez=buffer[s][11];
-			sendtradestatus(cont1, cont2);
-			if (items[cont1].morez && items[cont2].morez)
+		case 0:// Start trade - Never happens, sent out by the server only.
+			break;
+		case 1:// Cancel trade.  Send each person cancel messages, move items.
+			endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+			break;
+		case 2:// Change check marks.  Possibly conclude trade
+			cont1 = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+			if (cont1 > -1)
+				cont2 = calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
+			if (cont2 > -1) // lb crashfix
 			{
-				dotrade(cont1, cont2);
-				endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+				items[cont1].morez = buffer[s][11];
+				sendtradestatus(cont1, cont2);
+				if (items[cont1].morez && items[cont2].morez)
+				{
+					dotrade(cont1, cont2);
+					endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+				}
 			}
-		}
-		break;
-	case 1://Cancel trade.  Send each person cancel messages, move items.
-		endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-		break;
-	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); //Morrolan
+			break;
+		default:
+			printf("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); // Morrolan
 	}
 }
 
@@ -14532,15 +14482,15 @@ void sendtradestatus(int cont1, int cont2)
 	char msg[30];
 	int p1, p2, s1, s2;
 	
-	p1=calcCharFromSer(items[cont1].cont1, items[cont1].cont2, items[cont1].cont3, items[cont1].cont4);
-	p2=calcCharFromSer(items[cont2].cont1, items[cont2].cont2, items[cont2].cont3, items[cont2].cont4);
-	s1=calcSocketFromChar(p1);
-	s2=calcSocketFromChar(p2);
+	p1 = calcCharFromSer(items[cont1].contserial);
+	p2 = calcCharFromSer(items[cont2].contserial);
+	s1 = calcSocketFromChar(p1);
+	s2 = calcSocketFromChar(p2);
 	
-	msg[0] = 0x6F;//Header
-	msg[1] = 0x00;//Size
-	msg[2] = 0x11;//Size
-	msg[3] = 0x02;//State
+	msg[0] = 0x6F;// Header
+	msg[1] = 0x00;// Size
+	msg[2] = 0x11;// Size
+	msg[3] = 0x02;// State
 	msg[4] = items[cont1].ser1;
 	msg[5] = items[cont1].ser2;
 	msg[6] = items[cont1].ser3;
@@ -14554,7 +14504,8 @@ void sendtradestatus(int cont1, int cont2)
 	msg[14] = 0;
 	msg[15] = (unsigned char)(items[cont2].morez%256);
 	msg[16] = 0; // No name in this message
-	if (s1!=-1) Network->xSend(s1, msg, 17, 0);
+	if (s1!=-1)
+		Network->xSend(s1, msg, 17, 0);
 	
 	msg[4] = items[cont2].ser1;
 	msg[5] = items[cont2].ser2;
@@ -14562,178 +14513,189 @@ void sendtradestatus(int cont1, int cont2)
 	msg[7] = items[cont2].ser4;
 	msg[11] = (unsigned char)(items[cont2].morez%256);
 	msg[15] = (unsigned char)(items[cont1].morez%256);
-	if (s2!=-1) Network->xSend(s2, msg, 17, 0);
+	if (s2!=-1)
+		Network->xSend(s2, msg, 17, 0);
 }
 
 void endtrade(int b1, int b2, int b3, int b4)
 {
 	int cont1, cont2, p1, p2, bp1, bp2, s1, s2, i;
-	int serial,serhash,ci;
+	int serial, serhash, ci;
 	char msg[30];
 	
-	cont1=calcItemFromSer(b1, b2, b3, b4);
-	if( cont1 < 0 )
+	cont1 = calcItemFromSer(b1, b2, b3, b4);
+	if (cont1 < 0)
 		return; // LB, crashfix
-	cont2=calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
-	if( cont2 < 0 )
+	cont2 = calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
+	if (cont2 < 0)
 		return; // LB, crashfix
-	p1=calcCharFromSer(items[cont1].cont1, items[cont1].cont2, items[cont1].cont3, items[cont1].cont4);
-	p2=calcCharFromSer(items[cont2].cont1, items[cont2].cont2, items[cont2].cont3, items[cont2].cont4);
-	bp1=packitem(p1);
-	if( bp1 < 0 ) return;
-	bp2=packitem(p2);
-	if( bp2 < 0 ) return;
-	s1=calcSocketFromChar(p1);
-	s2=calcSocketFromChar(p2);
+	p1 = calcCharFromSer(items[cont1].cont1, items[cont1].cont2, items[cont1].cont3, items[cont1].cont4);
+	p2 = calcCharFromSer(items[cont2].cont1, items[cont2].cont2, items[cont2].cont3, items[cont2].cont4);
+	bp1 = packitem(p1);
+	if (bp1 < 0)
+		return;
+	bp2 = packitem(p2);
+	if (bp2 < 0)
+		return;
+	s1 = calcSocketFromChar(p1);
+	s2 = calcSocketFromChar(p2);
 	
-	msg[0]=0x6F;//Header Byte
-	msg[1]=0x00;//Size
-	msg[2]=0x11;//Size
-	msg[3]=0x01;//State byte
-	msg[4]=items[cont1].ser1;
-	msg[5]=items[cont1].ser2;
-	msg[6]=items[cont1].ser3;
-	msg[7]=items[cont1].ser4;
-	msg[8]=0;
-	msg[9]=0;
-	msg[10]=0;
-	msg[11]=0;
-	msg[12]=0;
-	msg[13]=0;
-	msg[14]=0;
-	msg[15]=0;
-	msg[16]=0;
-	if (s1!=-1) Network->xSend(s1, msg, 17, 0);
+	msg[0] = 0x6F;// Header Byte
+	msg[1] = 0x00;// Size
+	msg[2] = 0x11;// Size
+	msg[3] = 0x01;// State byte
+	msg[4] = items[cont1].ser1;
+	msg[5] = items[cont1].ser2;
+	msg[6] = items[cont1].ser3;
+	msg[7] = items[cont1].ser4;
+	msg[8] = 0;
+	msg[9] = 0;
+	msg[10] = 0;
+	msg[11] = 0;
+	msg[12] = 0;
+	msg[13] = 0;
+	msg[14] = 0;
+	msg[15] = 0;
+	msg[16] = 0;
+	if (s1!=-1)
+		Network->xSend(s1, msg, 17, 0);
 	
-	msg[0]=0x6F;//Header Byte
-	msg[1]=0x00;//Size
-	msg[2]=0x11;//Size
-	msg[3]=0x01;//State byte
-	msg[4]=items[cont2].ser1;
-	msg[5]=items[cont2].ser2;
-	msg[6]=items[cont2].ser3;
-	msg[7]=items[cont2].ser4;
-	msg[8]=0;
-	msg[9]=0;
-	msg[10]=0;
-	msg[11]=0;
-	msg[12]=0;
-	msg[13]=0;
-	msg[14]=0;
-	msg[15]=0;
-	msg[16]=0;
-	if (s2!=-1) Network->xSend(s2, msg, 17, 0);
+	msg[0] = 0x6F;// Header Byte
+	msg[1] = 0x00;// Size
+	msg[2] = 0x11;// Size
+	msg[3] = 0x01;// State byte
+	msg[4] = items[cont2].ser1;
+	msg[5] = items[cont2].ser2;
+	msg[6] = items[cont2].ser3;
+	msg[7] = items[cont2].ser4;
+	msg[8] = 0;
+	msg[9] = 0;
+	msg[10] = 0;
+	msg[11] = 0;
+	msg[12] = 0;
+	msg[13] = 0;
+	msg[14] = 0;
+	msg[15] = 0;
+	msg[16] = 0;
+	if (s2!=-1)
+		Network->xSend(s2, msg, 17, 0);
 	
-	serial=items[cont1].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	serial = items[cont1].serial;
+	serhash = serial%HASHMAX;
+	for (ci = 0; ci < contsp[serhash].max; ci++)
 	{
-		i=contsp[serhash].pointer[ci];
+		i = contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial==serial))
+			if ((items[i].contserial == serial))
 			{
-				if( items[i].glow > 0 ) removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB, glowing stuff
-//				removefromptr(&contsp[serhash], i);
-				unsetserial( i, 1 );
-				setserial(i,bp1,1);
-				if( items[i].glow > 0 ) setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
-				items[i].x=50+(rand()%80);
-				items[i].y=50+(rand()%80);
-				items[i].z=9;
+				if (items[i].glow > 0)
+					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB, glowing stuff
+				unsetserial(i, 1);
+				setserial(i, bp1, 1);
+				if (items[i].glow > 0)
+					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
+				items[i].x = 50 + (rand()%80);
+				items[i].y = 50 + (rand()%80);
+				items[i].z = 9;
 				if (s1!=-1) 
-					RefreshItem( i ); // AntiChrist
+					RefreshItem(i); // AntiChrist
 			}
 	}
-	serial=items[cont2].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	serial = items[cont2].serial;
+	serhash = serial%HASHMAX;
+	for (ci = 0; ci < contsp[serhash].max; ci++)
 	{
-		i=contsp[serhash].pointer[ci];
+		i = contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial==serial))
+			if ((items[i].contserial == serial))
 			{
-				if( items[i].glow > 0 ) removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB, glowing stuff
-//				removefromptr(&contsp[serhash], i);
-				unsetserial( i, 1 );
-				setserial(i,bp2,1);  
-				if( items[i].glow > 0 ) setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
-				items[i].x=50+(rand()%80);
-				items[i].y=50+(rand()%80);
-				items[i].z=9;
+				if (items[i].glow > 0)
+					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB, glowing stuff
+				unsetserial(i, 1);
+				setserial(i, bp2, 1);  
+				if (items[i].glow > 0)
+					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
+				items[i].x = 50 + (rand()%80);
+				items[i].y = 50 + (rand()%80);
+				items[i].z = 9;
 				if (s2!=-1) 
-					RefreshItem( i ); // AntiChrist
+					RefreshItem(i); // AntiChrist
 			}
 	}
 	Items->DeleItem(cont1);
 	Items->DeleItem(cont2);
-	Weight->NewCalc( p1 );
-	Weight->NewCalc( p2 );
+	Weight->NewCalc(p1);
+	Weight->NewCalc(p2);
 }
 
 void dotrade(int cont1, int cont2)
 {
 	int p1, p2, bp1, bp2, s1, s2, i;
-	int serial,serhash,ci;
+	int serial, serhash, ci;
 	
-	p1=calcCharFromSer(items[cont1].cont1, items[cont1].cont2, items[cont1].cont3, items[cont1].cont4);
-	if( p1 < 0 ) return;
-	p2=calcCharFromSer(items[cont2].cont1, items[cont2].cont2, items[cont2].cont3, items[cont2].cont4);
-	if( p2 < 0 ) return;
-	bp1=packitem(p1);
-	if( bp1 < 0 ) return;
-	bp2=packitem(p2);
-	if( bp2 < 0 ) return;
-	s1=calcSocketFromChar(p1);
-	s2=calcSocketFromChar(p2);
+	p1 = calcCharFromSer(items[cont1].contserial);
+	if (p1 < 0)
+		return;
+	p2 = calcCharFromSer(items[cont2].contserial);
+	if (p2 < 0)
+		return;
+	bp1 = packitem(p1);
+	if (bp1 < 0)
+		return;
+	bp2 = packitem(p2);
+	if (bp2 < 0)
+		return;
+	s1 = calcSocketFromChar(p1);
+	s2 = calcSocketFromChar(p2);
 	
-	serial=items[cont1].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	serial = items[cont1].serial;
+	serhash = serial%HASHMAX;
+	for (ci = 0; ci < contsp[serhash].max; ci++)
 	{
-		i=contsp[serhash].pointer[ci];
+		i = contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial==serial))
+			if ((items[i].contserial == serial))
 			{
-//				removefromptr(&contsp[serhash], i);
-				unsetserial( i, 1 );
-				if( items[i].glow > 0 ) removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB glowing stuff
-				setserial(i,bp2,1);
-				if( items[i].glow > 0 ) setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
-				items[i].x=50+(rand()%80);
-				items[i].y=50+(rand()%80);
-				items[i].z=9;
+				unsetserial(i, 1);
+				if (items[i].glow > 0)
+					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB glowing stuff
+				setserial(i, bp2, 1);
+				if (items[i].glow > 0)
+					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
+				items[i].x = 50 + (rand()%80);
+				items[i].y = 50 + (rand()%80);
+				items[i].z = 9;
 				if (s1!=-1) 
-					RefreshItem( i ); // AntiChrist
+					RefreshItem(i); // AntiChrist
 				if (s2!=-1) 
-					RefreshItem( i ); // AntiChrist
-				
+					RefreshItem(i); // AntiChrist
 			}
 	}
-	serial=items[cont2].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	serial = items[cont2].serial;
+	serhash = serial%HASHMAX;
+	for (ci = 0; ci < contsp[serhash].max; ci++)
 	{
-		i=contsp[serhash].pointer[ci];
-		if (i!=-1)
-			if ((items[i].contserial==serial))
+		i = contsp[serhash].pointer[ci];
+		if (i != -1)
+			if ((items[i].contserial == serial))
 			{
-//				removefromptr(&contsp[serhash], i);
-				unsetserial( i, 1 );
-				if( items[i].glow > 0 ) removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB glowing stuff
-				setserial( i, bp1, 1 );
-				if( items[i].glow > 0 ) setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
-				items[i].x=50+(rand()%80);
-				items[i].y=50+(rand()%80);
-				items[i].z=9;
+				unsetserial(i, 1);
+				if (items[i].glow > 0)
+					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB glowing stuff
+				setserial(i, bp1, 1);
+				if (items[i].glow > 0)
+					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
+				items[i].x = 50 + (rand()%80);
+				items[i].y = 50 + (rand()%80);
+				items[i].z = 9;
 				if (s2!=-1)
-					RefreshItem( i ); // AntiChrist
+					RefreshItem(i); // AntiChrist
 				if (s1!=-1)
-					RefreshItem( i ); // AntiChrist
-				
+					RefreshItem(i); // AntiChrist
 			}
 	}
-	Weight->NewCalc( p1 );
-	Weight->NewCalc( p2 );
+	Weight->NewCalc(p1);
+	Weight->NewCalc(p2);
 }
 
 //NEW RESPAWNREGIONS ZIPPY CODE STARTS HERE -- AntiChrist merging codes -- (26/4/99)

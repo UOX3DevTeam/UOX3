@@ -80,7 +80,6 @@ static unsigned int bit_table[257][2] =
 void cNetworkStuff::DoStreamCode( int s )
 {
 	if( s==-1 ) return;
-//	int len = pCrypt[s]->Pack( outbuffer[s], xoutbuffer, boutlength[s] );
 	int len = Pack( outbuffer[s], xoutbuffer, boutlength[s] );
 	send( client[s], xoutbuffer, len, 0 );
 }
@@ -101,7 +100,6 @@ int cNetworkStuff::xRecv(int s) // Better Receive routine than the one currently
 	x=0;
 #endif
 	i=binlength[s]+count;
-//	pCrypt[s]->Decrypt( &buffer[s][i], &buffer[s][i], count );
 	binlength[s]+=count;
 #ifdef DEBUG_NETWORK
 	if ((y)!=15)
@@ -269,6 +267,45 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 	OffList->FlagUpdate();
 }
 
+#define LOGIN_NOT_FOUND -3
+#define BAD_PASSWORD -4
+#define ACCOUNT_BANNED -5
+#define ACCOUNT_WIPE -6
+
+int cNetworkStuff::Authenticate (const char *username, const char *pass)
+{
+	int i = 0;
+	char login[40], password[40];
+
+	strcpy(login, username );
+	strcpy(password, pass );
+	strupr(login);
+	strupr(password);
+
+	bool loginfound = false;
+	int loginlength = strlen(login);          // pre-calculate login length
+	while (!loginfound && i < acctcount)
+	{
+	    if ( ( strlen(acctx[i].name) == loginlength ) /*&& ( acctx[i].name[0] == login[0] )*/ ) //strcmp is slow, lets do cheaper tests first
+			if (!strcmp(acctx[i].name, login))
+				loginfound = true;
+		if (!loginfound)
+			i++;
+	}
+    if ( !loginfound ) 
+		return LOGIN_NOT_FOUND;
+	if (!strcmp(acctx[i].pass, password))
+	{
+		if( acctx[i].ban == 1 ) // They are banned
+			return ACCOUNT_BANNED;
+		else if ( acctx[i].wipe == 1 )
+			return ACCOUNT_WIPE;
+		else
+			return i;
+	} else
+		return BAD_PASSWORD;
+}
+
 
 void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new format) // Revana*
 {
@@ -281,22 +318,44 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 	char newlist2[41]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
 	
 	acctno[s]=-1;
-	for (i=0;i<acctcount;i++)
+
+	pSplit( (char *)&buffer[s][31]);
+	i = Authenticate ( (char *) &buffer[s][1], pass1);
+	
+	if (i >= 0)
+		acctno[s] = i;
+	else
 	{
-		t=0;
-		if( strlen((char *)&buffer[s][1]) == strlen(acctx[i].name))
+
+		//check for a error
+		switch (i)
 		{
-			printf("Searching under account %i (%s) for (%s)\n", i, acctx[i].name, &buffer[s][1] );
-			t=1;
-			for (j=0;j<strlen((char *)&buffer[s][1]);j++)
-				if (toupper(buffer[s][j+1])!=toupper(acctx[i].name[j])) t=0;
-				if (strlen((char *)&buffer[s][1])==0) t=0;
+		case BAD_PASSWORD:
+			acctno[s]=-1;
+			xSend(s, nopass, 2, 0);
+			Disconnect( s );
+			break;
+		case ACCOUNT_BANNED:
+			acctno[s]=-1;
+			xSend(s, acctblock, 2, 0);
+			Disconnect( s );
+			break;
+		case ACCOUNT_WIPE:
+			acctno[s] = -1;
+			xSend( s, noaccount, 2, 0 );
+			Disconnect( s );
+			break;
+		case LOGIN_NOT_FOUND:
+			if (!server_data.auto_a_create)
+			{
+				acctno[s] = -1;
+				xSend( s, noaccount, 2, 0 );
+				Disconnect( s );
+			}
+			break;
 		}
-		if (t==1) acctno[s]=i;
-	}
-	if (acctno[s]==-1)
-	{
-		if ( server_data.auto_a_create )
+
+		if ( server_data.auto_a_create && i == LOGIN_NOT_FOUND )
 		{
 			t=1;
 			sprintf(temp, "%x.%x.%x.%x",clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
@@ -334,7 +393,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 			t=0;
 		}
 	}
-	
+/*	
 	if (acctno[s]!=-1)
 	{
 		printf("Password Sent: %s\n", &buffer[s][31] );
@@ -382,7 +441,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 	{
 		xSend(s, noaccount, 2, 0);
 		Disconnect( s );
-	}
+	}*/
 	if( acctinuse[acctno[s]] )
 	{
 		for( int tmpJ = 0; tmpJ < now; tmpJ++ )
@@ -556,85 +615,61 @@ void cNetworkStuff::AuthTest(int s)
 
 void cNetworkStuff::CharList(int s) // Gameserver login and character listing // Revana*
 {
-	int i, j, t;
+	int i;
 #ifdef LSERVCHECK
 #ifdef NOSINGLEONLY
 	int ls, ls2, auth;
 	int lcode, positive;
 	char verify1[5]="\x12\x34\x56\x78";
-	// char verify1[5]="\xC2\xC3\xCA\x6C";
 	char verify2[63]="\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 #endif
 #endif
 	char nopass[3]="\x82\x03";
 	
 	acctno[s]=-1;
-	for (i=0;i<acctcount;i++)
-	{
-		t=0;
-		if (strlen((char *)&buffer[s][5])==strlen(acctx[i].name))
+
+	pSplit( (char *)&buffer[s][35]);
+	i = Authenticate ( (char *) &buffer[s][5], pass1);
+	
+	if (i >= 0)
+		acctno[s] = i;
+	else {
+		switch( i )
 		{
-			t=1;
-			for (j=0;j<strlen((char *)&buffer[s][5]);j++)
-				if (toupper(buffer[s][j+5])!=toupper(acctx[i].name[j])) t=0;
-				if (strlen((char *)&buffer[s][5])==0) t=0;
-		}
-		if (t==1) acctno[s]=i;
-	}
-	if (acctno[s]!=-1)
-	{
-		pSplit((char *)&buffer[s][35]);
-		t=0;
-		if (strlen(pass1)==strlen(acctx[acctno[s]].pass))
-		{
-			t=1;
-			for (j=0;j<strlen(pass1);j++)
-				if (toupper(pass1[j])!=toupper(acctx[acctno[s]].pass[j])) t=0;
-				if (strlen(pass1)==0) t=0;
-				if( acctx[acctno[s]].ban == 1 )
-					t=2;
-				if( acctx[acctno[s]].wipe == 1 )
-					t = 3;
-		}
-		if( t == 3 )
-		{
-#ifdef DEBUG_NETWORK
-			printf("No account!\n");
-#endif
+		case ACCOUNT_WIPE:
+			#ifdef DEBUG_NETWORK
+				printf("No account!\n");
+			#endif
 			acctno[s] = -1;
 			xSend( s, noaccount, 2, 0 );
 			Disconnect( s );
-		}
-		
-		if (t==0)
-		{
-#ifdef DEBUG_NETWORK
-			printf("No password!\n");
-#endif
+			break;
+		case BAD_PASSWORD:
+			#ifdef DEBUG_NETWORK
+				printf("No password!\n");
+			#endif
 			acctno[s]=-1;
 			xSend(s, nopass, 2, 0);
 			Disconnect(s);
 			return;
-		}
-		if (t==2)
-		{
-#ifdef DEBUG_NETWORK
-			printf("Player blocked!\n");
-#endif
+			break;
+		case ACCOUNT_BANNED:
+			#ifdef DEBUG_NETWORK
+				printf("Player blocked!\n"); //banned
+			#endif
 			acctno[s]=-1;
 			xSend(s, acctblock, 2, 0);
 			Disconnect(s);
 			return;
+			break;
+		default:
+			#ifdef DEBUG_NETWORK
+				printf("No account!\n");
+			#endif
+			xSend(s, noaccount, 2, 0);
+			Disconnect(s);
+			return;
 		}
-	}
-	else
-	{
-#ifdef DEBUG_NETWORK
-		printf("No account!\n");
-#endif
-		xSend(s, noaccount, 2, 0);
-		Disconnect(s);
-		return;
 	}
 	GoodAuth( s );
 }
@@ -772,9 +807,6 @@ int cNetworkStuff::Receive(int s, int x, int a) // Old socket receive function (
 		count=recv(client[s], (char *)&buffer[s][recvcount], x-recvcount, 0);
 		if (count>0)
 		{
-#if CLIENTVERSION_M==26
-//			pCrypt[s]->Decrypt( &buffer[s][recvcount], &buffer[s][recvcount], count );
-#endif
 			recvcount+=count;
 #ifdef DEBUG_NETWORK
 			buf2c=0;

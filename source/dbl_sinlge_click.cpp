@@ -34,7 +34,7 @@
 void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 {
 	unsigned char a1, a2, a3, a4;
-	int x, i, j, c, w = 0, k, keyboard, serial, z, y;
+	int x, i, j, c, w = 0, k, keyboard, serial, y;
 	char pdoll[67]= {"\x88\x00\x05\xA8\x90", };	// knox: comma at end tells compiler to fill the rest with NULLs
 	char map1[20]="\x90\x40\x01\x02\x03\x13\x9D\x00\x00\x00\x00\x13\xFF\x0F\xA0\x01\x90\x01\x90";
 	char map2[12] = {"\x56\x40\x01\x02\x03\x05", };
@@ -75,9 +75,9 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		{//if monster
 			if (chars[x].id1==0x01&&(chars[x].id2==0x23||chars[x].id2==0x24))
 			{//if packhorse or packlhama added by JustMichael 8/31/99
+				y = packitem(x);
 				if (chars[x].ownserial==chars[currchar[s]].serial)
 				{
-					y=packitem(x);
 					if( y != -1 )
 					{
 						backpack(s,items[y].ser1,items[y].ser2,items[y].ser3,items[y].ser4);
@@ -87,9 +87,9 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						printf( "Pack animal %i has no backpack!\n", chars[x].serial );
 					}
 				}
-				else
+				else // Snooping
 				{
-					sysmessage(s, "That is not your beast of burden!");
+					Skills->Snooping(s, x, calcserial(items[y].ser1,items[y].ser2,items[y].ser3,items[y].ser4) );
 				}
 				return;
 			}
@@ -388,7 +388,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 
 			int packOwner;
 			packOwner = GetPackOwner( x );
-			
+		
 			npc = calcCharFromSer( items[x].contserial );
 			if ( packOwner == currchar[s] || npcinrange(s,npc,2) || (chars[currchar[s]].priv&0x01) || iteminrange(s,x,2) )
 			{	
@@ -398,63 +398,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					if( packOwner != currchar[s] && !( chars[currchar[s]].priv&0x01 ) )	// SNOOPING
 					{
-						if ((chars[npc].priv&0x80) || (chars[npc].priv&0x01))//Counselor or GM
-						{
-							sysmessage(s,"You failed to peek into that container.");
-							sprintf(temp, "%s is snooping you!",chars[currchar[s]].name);
-							sysmessage(calcSocketFromChar(npc), temp);
-							return;
-						}
-						else if (Skills->CheckSkill(currchar[s],SNOOPING,0,1000))
-						{
-							backpack(s, a1, a2, a3, a4);
-							sysmessage(s,"You successfully peek into that container.");
-						}
-						else
-						{
-							sysmessage(s,"You failed to peek into that container.");
-							if (chars[npc].npc)
-							{
-
-								switch(rand()%3)
-								{
-								case 0:
-									strcpy(temp, "Art thou attempting to disturb my privacy?");
-									break;
-								case 1:
-									strcpy(temp, "Stop that!");
-									break;
-								case 2:
-									strcpy(temp, "Be aware I am going to call the guards!");
-									break;
-								}
-								npctalk(s, npc, temp, 0);
-								if (server_data.snoopiscrime)
-								{
-											if (rand()%2 && chars[currchar[s]].crimflag > 0) // 50% chance of calling guards, on second time
-												callguards( currchar[s] );
-								}
-
-
-							} else {
-								sprintf(temp,"You notice %s trying to peek into your pack!",chars[currchar[s]].name);
-								z = calcSocketFromChar(npc);
-								if (z!=-1) 
-									sysmessage(z,temp);
-							}
-							if (server_data.snoopiscrime)
-							{
-								chars[currchar[s]].crimflag = (int)((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
-								sysmessage( s, "You are now a criminal!" );
-								setcharflag( currchar[s] );
-							}
-							if (chars[currchar[s]].karma<=1000) 
-							{
-								chars[currchar[s]].karma-=10;
-								sysmessage(s, "You've lost a small bit of karma");
-							}
-
-						}
+						Skills->Snooping(s, npc, serial);
 					}
 				} 
 				

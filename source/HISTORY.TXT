@@ -28,6 +28,17 @@ DATE                     AUTHOR                     ARRANGER
 -------------------------------------------------------------------------------
   [INSERT NEW ENTRIES HERE]
 -------------------------------------------------------------------------------
+09.02.2001               Thiago A. Corrêa
+  skills.cpp             Moved Snooping code from doubleclick() to a new 
+  dbl_sinlge_click.cpp   cSkill::Snooping() function.
+                         Snooping is now possible in pack animals.
+                         When lumberjacking, char turns to tree direction
+  network.cpp            Rewritten Authentication stuff, it's now separated in
+                         cNetworkStuff::Authenticate, and uses a silly better
+                         algorithm (binary search planned in future)
+  uox3.cpp               Some clean-ups.
+                         Changed indungeon() to use switch structure
+-------------------------------------------------------------------------------
 06.02.2001               Thiago A. Corrêa
   uox3.cpp               Bug fix for Title not showing in paperdoll
                          Few clean-ups and beautifications.

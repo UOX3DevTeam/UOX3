@@ -480,6 +480,7 @@ public:
 	void Tinkering(int s);
 	void AButte(int s1, int x);
 	void Persecute( UOXSOCKET s ); // AntiChrist persecute stuff
+    void Snooping( UOXSOCKET s, CHARACTER target, long serial);
 };
 
 class cTownStones
@@ -659,6 +660,8 @@ public:
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
 private:
+
+	int cNetworkStuff::Authenticate (const char *login, const char *password);
 
 	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);

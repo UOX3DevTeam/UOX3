@@ -2008,12 +2008,23 @@ void cSkills::TreeTarget(int s)
 	py = ((buffer[s][0x0d]<<8) + (buffer[s][0x0e]%256 ));
 	cx = abs( chars[currchar[s]].x - px );
 	cy = abs( chars[currchar[s]].y - py );
+
+	char dir = chardirxyz(currchar[s], px, py, 0);
+
+	if (dir != -1 && chars[currchar[s]].dir != dir)
+	{
+		chars[currchar[s]].dir = dir;
+		teleport(s);
+	}
+
 	if( cx >= 3 || cy >= 3 )
 	{
 		sysmessage( s, "You are too far away to reach that" );
 		return;
 	}
-	
+
+
+
 	a = chars[currchar[s]].x / resource.logarea; //Zippy
 	b = chars[currchar[s]].y / resource.logarea;
 	
@@ -5999,3 +6010,67 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 	}
 }
 
+//Snooping skill
+// s -> Char's socket using the skill
+// target -> Char's beeing snooped on
+// serial -> container's serial
+void cSkills::Snooping( UOXSOCKET s, CHARACTER target, long serial) 
+{
+	char temp[40];
+
+	if ((chars[target].priv&0x80) || (chars[target].priv&0x01)) // Snooping Staff, not a good idea.
+	{
+		sysmessage(s, "You failed to peek into that container.");
+		sprintf(temp, "%s is snooping you!", chars[currchar[s]].name);
+		sysmessage(calcSocketFromChar(target), temp);
+		return;
+	}
+	
+	if (Skills->CheckSkill(currchar[s], SNOOPING, 0, 1000))
+	{
+		backpack(s , (serial>>24), (serial>>16), (serial>>8), (serial%256));
+		sysmessage(s, "You successfully peek into that container.");
+	}
+	else 
+	{
+		sysmessage(s, "You failed to peek into that container.");
+		if (chars[target].npc)
+		{
+			switch (RandomNum(0, 2))
+			{
+				case 0:
+					strcpy(temp, "Art thou attempting to disturb my privacy?");
+					break;
+				case 1:
+					strcpy(temp, "Stop that!");
+					break;
+				case 2:
+					strcpy(temp, "Be aware I am going to call the guards!");
+					break;
+			}
+
+			npctalk(s, target, temp, 0);
+			if (server_data.snoopiscrime)
+			{
+				if (rand()%2 && chars[currchar[s]].crimflag > 0) // 50% chance of calling guards, on second time
+					callguards(currchar[s]);
+			}
+		}
+		else 
+		{
+			sprintf(temp, "You notice %s trying to peek into your pack!", chars[currchar[s]].name);
+			sysmessage(calcSocketFromChar(target), temp);
+		}
+		if (server_data.snoopiscrime)
+		{
+			chars[currchar[s]].crimflag = (int) ((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
+			sysmessage(s, "You are now a criminal!");
+			setcharflag(currchar[s]);
+		}
+		if (chars[currchar[s]].karma <= 1000) 
+		{
+			chars[currchar[s]].karma -= 10;
+			sysmessage(s, "You've lost a small bit of karma");
+		}
+	}
+}

@@ -735,7 +735,7 @@ void restockitem(int, unsigned int);//Lag Fix -- Zippy
 void restock(int s);
 void setrestocktarget(int s);
 void setvaluetarget(int s);
-void dooruse(int s, int item);
+void dooruse(UOXSOCKET s, int item);
 
 int response(int s);
 void responsevendor(int s);

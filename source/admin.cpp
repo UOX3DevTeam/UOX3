@@ -295,12 +295,12 @@ void cAdmin::Account()//Revana*
 		
 		else if (!(strcmp(script1, "NAME")))
 		{
-			strcpy(acctx[acctcount].name, script2);
+			strcpy(acctx[acctcount].name, strupr( script2 ) );
 		}
 
 		else if (!(strcmp(script1, "PASS")))
 		{
-			strcpy(acctx[acctcount].pass, script2);
+			strcpy(acctx[acctcount].pass, strupr( script2 ) );
 		}
 
 		else if (!(strcmp(script1, "BAN"))) acctx[acctcount].ban = 1;
@@ -366,8 +366,8 @@ void cAdmin::LoadAccounts()//Revana*
 			//printf("DEBUG: %i guest accounts\n",guestnum);
 			for (i=1;i<guestnum+1;i++)
 			{
-				sprintf(acctx[acctcount].name, "guest%i", i);
-				sprintf(acctx[acctcount].pass, "guest%i", i);
+				sprintf(acctx[acctcount].name, "GUEST%i", i);
+				sprintf(acctx[acctcount].pass, "GUEST%i", i);
 				//printf("DEBUG: Guest Account %i [L: %s] [P: %s]\n", i,acctx[acctcount][0],acctx[acctcount][1]);
 				acctcount++;
 			}
