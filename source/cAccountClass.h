@@ -25,8 +25,6 @@
 #include <cstdio>
 #include <iosfwd>
 #include <algorithm>
-//#include <cctype>
-//#include <vector>
 #include <map>
 
 #include "uox3.h"
@@ -196,5 +194,6 @@ private:
 	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
 };
 
-#endif
+#endif // __CACCOUNTCLASS_H__
+
 
