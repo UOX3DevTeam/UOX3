@@ -278,6 +278,10 @@ void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 	}
 }
 
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#define FD_SETSIZE 256 
+#endif
+
 void cNetworkStuff::CheckConn( void ) // Check for connection requests
 {
 	FD_ZERO( &conn );
@@ -292,6 +296,11 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, &len );
 #else
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
+		if( newClient >= FD_SETSIZE )
+		{
+			Console.Error( 0, "accept() returning unselectable fd!" );
+			return;
+		}
 #endif
 		CSocket *toMake = new CSocket( newClient );
 		if( newClient < 0 )
@@ -549,9 +558,9 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						else
 							ourChar->SetTimer( tCHAR_TIMEOUT, ourChar->GetTimer( tCHAR_TIMEOUT ) + 1000 );
 						mSock->Send( buffer, 5 );
-	#if defined( _MSC_VER )
+#if defined( _MSC_VER )
 	#pragma note( "Flush location" )
-	#endif
+#endif
 						mSock->FlushBuffer();
 						Movement->CombatWalk( ourChar );
 						Effects->dosocketmidi( mSock );
@@ -1062,7 +1071,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
 	
-	int nfds = 0;
+	size_t nfds = 0;
 	for( i = 0; i < loggedInClients.size(); ++i )
 	{
 		size_t clientSock = loggedInClients[i]->CliSocket();
@@ -1100,7 +1109,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 					else if( blah.ErrorNumber() != -1 )
 					{
 						char temp[128];
-						sprintf( temp, "Socket error: %i", blah.ErrorNumber() );
+						sprintf( temp, "Socket error: %li", blah.ErrorNumber() );
 						messageLoop << temp;
 					}
 #endif
@@ -1122,7 +1131,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
 {
 	char temp[128];
-	sprintf( temp, "LoginClient %i disconnected.", s );
+	sprintf( temp, "LoginClient %lu disconnected.", s );
 	messageLoop << temp;
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();
@@ -1211,7 +1220,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			total	-= mi * 60;
 			se		= total;
 			// April 5, 2004 - EviLDeD - Please leave the place holders incode. They are not read in from the ini as of yet but will be as I get time and solidify the exact values needed
-			sprintf((char*)szTBuf,"UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn:%i][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]\x0",cwmWorldState->ServerData()->ServerName().c_str(),cwmWorldState->ServerData()->ServerClientSupport(),ho,mi,se,cwmWorldState->GetPlayersOnline()+1,ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ),ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ),0xDEADFEED,0x000D,"Felucia","Trammel","Ilshenar","Malas");
+			sprintf( (char*)szTBuf, "UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn:%i][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]\x0", cwmWorldState->ServerData()->ServerName().c_str(), cwmWorldState->ServerData()->ServerClientSupport(), ho, mi, se, cwmWorldState->GetPlayersOnline()+1, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), 0xDEADFEED, 0x000D, "Felucia", "Trammel", "Ilshenar", "Malas" );
 			mSock->Send( (char*)szTBuf,strlen((char*)szTBuf)+1);
 			//messageLoop << (char*)szTBuf;
 			mSock->NewClient( false );

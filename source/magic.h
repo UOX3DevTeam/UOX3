@@ -142,7 +142,7 @@ private:
 	SI16		schi;
 	UI16	jsScript;
 public:
-	SpellInfo() : enabled( false ), mana( 0 ), stamina( 0 ), health( 0 ), action( 0 ), delay( 0 ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 )
+	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 )
 	{
 	}
 

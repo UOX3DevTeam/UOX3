@@ -15,6 +15,13 @@
 #include "uox3.h"
 #include "cConsole.h"
 
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <termios.h>
+	#include <sys/ioctl.h>
+#endif 
+
 namespace UOX
 {
 
@@ -34,7 +41,11 @@ const UI08 COLOURMODE = 3;
 //|   Purpose     -  Class Constructor and deconstructor
 //o---------------------------------------------------------------------------o
 CConsole::CConsole() : left( 0 ), top( 0 ), height( 25 ), width( 80 ), filterSettings( 0xFFFF ), 
+#if UOX_PLATFORM == PLATFORM_WIN32
 currentMode( NORMALMODE ),currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false )
+#else
+currentMode( NORMALMODE ),currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
+#endif
 {
 }
 
@@ -397,6 +408,12 @@ void CConsole::PrintSectionBegin( void )
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
+#if UOX_PLATFORM != PLATFORM_WIN32
+	if( forceNL )
+	{
+		(*this) << myendl;
+	} 
+#endif
 }
 
 //o---------------------------------------------------------------------------o
@@ -408,12 +425,42 @@ void CConsole::PrintSectionBegin( void )
 //o---------------------------------------------------------------------------o
 void CConsole::Start( char *temp )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == WIN32
 	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &csbi );
 	width	= csbi.dwSize.X;
 	height	= csbi.dwSize.Y;
 	SetConsoleTitle( temp );
+#else
+	// TODO: unix console handling should really be replaced by (n)curses or
+	// something
+
+	if (isatty (0))
+	{
+		struct termios tio;
+		struct winsize winsz;
+
+		// switch to raw mode
+		tcgetattr (0, &tio);
+
+		tio.c_lflag &= ~ICANON & ~ECHO;
+
+		tcsetattr (0, TCSAFLUSH, &tio); //ignore errors
+
+		// get window size
+		ioctl (0, TIOCGWINSZ, &winsz);
+
+		width = winsz.ws_col;
+		height = winsz.ws_row;
+
+		// disable stdout buffering
+		setvbuf (stdout, NULL, _IONBF, 0);
+	}
+	else
+	{
+		// produce readable log
+		forceNL = true;
+	} 
 #endif
 }
 

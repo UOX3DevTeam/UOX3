@@ -316,8 +316,6 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			default:					verboseDirectory = "Unknown directory";			break;
 		};
 		// First, let's normalize the path name and fix common errors
-		const char dirSep = '/';
-
 		UString sText( value );
 		// remove all trailing and leading spaces...
 		sText = sText.stripWhiteSpace();

@@ -122,7 +122,7 @@ void CGump::AddGump( UI16 x, UI16 y, UI16 GumpID )
 void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueID  )
 {
 	char temp[128];
-	sprintf( temp, "button %u %u %u %u %u %u %u", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID );
+	sprintf( temp, "button %u %u %u %u %u %u %lu", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID );
 	TagList.push_back( temp );
 }
 
@@ -131,7 +131,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 {
 	char temp[128];
 	size_t TextID = TextList.size();
-	sprintf( temp, "text %u %u %u %u", x, y, hue, static_cast< UI32 >(TextID) );
+	sprintf( temp, "text %u %u %u %u", x, y, hue, TextID );
 
 	TextList.push_back( Text );
 	TagList.push_back( temp );

@@ -4,7 +4,9 @@
 namespace UOX
 {
 
+#if defined( _MSC_VER )
 #pragma warning( disable : 4786 )
+#endif
 
 typedef std::map< std::string, ScriptSection * >	SSMAP;
 

@@ -492,13 +492,13 @@ void cDirectoryListing::InternalRetrieve( void )
 		{ 
 			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) ) 
 			{ 
-				subdirectories.push_back( cDirectoryListing( currentDir + "/" + dirp->d_name, extension, doRecursion ) ); 
+				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) ); 
 				Console.Print( "%s/%s/n", currentDir.c_str(), dirp->d_name ); 
 				continue; 
 			} 
 		} 
 		shortList.push_back( dirp->d_name ); 
-		sprintf( filePath, "%s/%s", currentDir.c_str(), dirp->d_name ); 
+		sprintf( filePath, "%s/%s", CurrentWorkingDir().c_str(), dirp->d_name ); 
 		filenameList.push_back( filePath ); 
 	} 
 

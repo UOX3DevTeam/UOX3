@@ -319,7 +319,6 @@ namespace UOX
 
 	JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		SERIAL TempSerial		= INVALIDSERIAL;
 		CItem *TempItem			= NULL;
 		CRace *TempRace			= NULL;
 		JSObject *TempObject	= NULL;
@@ -1386,7 +1385,6 @@ namespace UOX
 		
 		UI08 SkillID		= (UI08)JSVAL_TO_INT( id );
 		JSClass *myClass	= JS_GetClass( obj );
-		SI16 SkillValue		= JSVAL_NULL;
 
 		if( !strcmp( myClass->name, "UOXSkills" ) )
 			*vp = INT_TO_JSVAL( myChar->GetSkill( SkillID ) );
@@ -1515,7 +1513,6 @@ namespace UOX
 		UOXFileWrapper *gPriv = (UOXFileWrapper *)JS_GetPrivate( cx, obj );
 		if( gPriv == NULL || gPriv->mWrap == NULL )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
 			switch( JSVAL_TO_INT( id ) )
@@ -1557,7 +1554,6 @@ namespace UOX
 
 	JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
 	/*		switch( JSVAL_TO_INT( id ) )
@@ -1576,7 +1572,6 @@ namespace UOX
 
 	JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
 			switch( JSVAL_TO_INT( id ) )

@@ -102,7 +102,7 @@ void LeaveBoat( CSocket *s, CItem *p )
 
 	SI16 x2 = p->GetX();
 	SI16 y2 = p->GetY();
-	SI08 z = p->GetZ(), typ;
+	SI08 z = p->GetZ(), typ = 0;
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
 	for( SI16 x = x2 - 2; x < x2 + 3; ++x )
@@ -582,7 +582,8 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 
 	CPPauseResume prSend( 1 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( b, DIST_BUILDRANGE );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
+	SOCKLIST_CITERATOR cIter;
+	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
 	{
 		(*cIter)->Send( &prSend );
 	}

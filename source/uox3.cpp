@@ -146,7 +146,7 @@ int cl_getch( void )
 	if( s < 0 )
 	{
 		Console.Error( 1, "Error scanning key press" );
-		Shutdown( 10 );
+		messageLoop << MSG_SHUTDOWN;
 	}
 	if( s > 0 )
 	{
@@ -173,7 +173,7 @@ int cl_getch( void )
 	if( bytes_written != 1 || asw == 0 )
 	{
 		Console.Warning( 1, "Using cluox-io" );
-		Shutdown( 10 );
+		messageLoop << MSG_SHUTDOWN;
 	}
 	c = (UI08)fgetc( stdin );
 	if( c == 0 )
@@ -258,7 +258,7 @@ void CheckConsoleKeyThread( void *params )
 #endif
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
 #if UOX_PLATFORM != PLATFORM_WIN32
-	return NULL;
+	pthread_exit( NULL );
 #endif
 }
 //	EviLDeD	-	End
@@ -779,7 +779,7 @@ void processkey( int c )
 						messageLoop << temp;
 						break;
 					default:
-						if( indexcount < sizeof( outputline ) )
+						if( static_cast<size_t>(indexcount) < sizeof( outputline ) )
 						{
 							outputline[indexcount++] = (UI08)(keyresp);
 							std::cout << (char)keyresp;
@@ -806,7 +806,7 @@ void processkey( int c )
 					{
 						localMap.insert(std::make_pair(CJ->first,0));
 						memset(szBuffer,0x00,sizeof(szBuffer));
-						sprintf(szBuffer,"AddMenuGroup %i:",CJ->first);
+						sprintf( szBuffer, "AddMenuGroup %lu:", CJ->first );
 						messageLoop << szBuffer;
 						std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
 						int count=0;
@@ -1077,13 +1077,13 @@ void processkey( int c )
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
 				messageLoop << "     Cache:";
-				sprintf( temp, "        Tiles: %i bytes", Map->TileMem );
+				sprintf( temp, "        Tiles: %lu bytes", Map->TileMem );
 				messageLoop << temp;
-				sprintf( temp, "        Statics: %i bytes", Map->StaMem );
+				sprintf( temp, "        Statics: %lu bytes", Map->StaMem );
 				messageLoop << temp;
-				sprintf( temp, "        Version: %i bytes", Map->versionMemory );
+				sprintf( temp, "        Version: %lu bytes", Map->versionMemory );
 				messageLoop << temp;
-				sprintf( temp, "        Map0: %i bytes [%i Hits - %i Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
+				sprintf( temp, "        Map0: %i bytes [%lu Hits - %lu Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
 				messageLoop << temp;
 				size_t m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
@@ -2318,11 +2318,11 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 		{
 			cwmWorldState->IncErrorCount();
 			
-			sprintf( temp, "Server crash #%u from unknown error, restarting.", cwmWorldState->GetErrorCount() );
+			sprintf( temp, "Server crash #%lu from unknown error, restarting.", cwmWorldState->GetErrorCount() );
 			Console.Log( temp, "server.log" );
 			Console << temp << myendl;
 			
-			sprintf(temp, "uox.exe -ERROR %u", cwmWorldState->GetErrorCount() );
+			sprintf(temp, "uox.exe -ERROR %lu", cwmWorldState->GetErrorCount() );
 			
 			delete cwmWorldState;
 			system( temp );
@@ -3217,18 +3217,17 @@ int main( int argc, char *argv[] )
 		current.tv_usec = local.millitm * 1000;
 #endif
 		const UI32 currentTime = 0;
-		
-#if UOX_PLATFORM == PLATFORM_WIN32
+
 		sprintf( temp, "%s v%s.%s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str() );
 		Console.Start( temp );
-#else
+
+#if UOX_PLATFORM != PLATFORM_WIN32
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
 		signal( SIGTERM, &endmessage );
 		signal( SIGQUIT, &endmessage );
 		signal( SIGINT, &endmessage ); 
 		signal( SIGILL, &illinst );
 		signal( SIGFPE, &aus );
-		
 #endif
 		
 		Console.PrintSectionBegin();

@@ -1,12 +1,12 @@
+#ifndef __UOXLINUX_H__
+#define __UOXLINUX_H__
+
 #include <malloc.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
 #include <string.h>
-
-#ifndef __UOXLINUX_H__
-#define __UOXLINUX_H__
 
 //	  This header is kind of a patch for all the windows-specific things in
 //	 uox3. --Sean

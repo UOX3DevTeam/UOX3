@@ -244,7 +244,9 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
+#if defined( _MSC_VER )
 #pragma note( "Need to link this to the JS CStats Gump" )
+#endif
 			//CstatsTarget( toSendTo );
 			break;
 		case 207:	// remote tweak
@@ -364,7 +366,7 @@ void cWhoList::Update( void )
 	sprintf( temp, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() );
 	one.push_back( temp );
 
-	sprintf( temp, "page %u", pagenum );
+	sprintf( temp, "page %lu", pagenum );
 	one.push_back( temp );
 
 	sprintf( temp, "Wholist" );
@@ -383,12 +385,12 @@ void cWhoList::Update( void )
 			{
 				position = 40;
 				++pagenum;
-				sprintf(temp, "page %u", pagenum );
+				sprintf(temp, "page %lu", pagenum );
 				one.push_back( temp );
 			}
-			sprintf( temp, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
+			sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 			one.push_back( temp );
-			sprintf( temp, "button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
+			sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
 			one.push_back( temp );
 			sprintf( temp, " %s", tChar->GetName().c_str() );
 			two.push_back( temp );
@@ -407,16 +409,16 @@ void cWhoList::Update( void )
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %u", pagenum );
+			sprintf( temp, "page %lu", pagenum );
 			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
+				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
 				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
+				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
 				one.push_back( temp );
 			}
 			++pagenum;
@@ -442,12 +444,12 @@ void cWhoList::Update( void )
 						{
 							position = 40;
 							++pagenum;
-							sprintf(temp, "page %u", pagenum );
+							sprintf(temp, "page %lu", pagenum );
 							one.push_back( temp );
 						}
-						sprintf( temp, "text 50 %u %u %i", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
+						sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 						one.push_back( temp );
-						sprintf( temp, "button 20 %u %u %i %i 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
+						sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
 						one.push_back( temp );
 
 						sprintf( temp, " %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() );
@@ -469,16 +471,16 @@ void cWhoList::Update( void )
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %u", pagenum );
+			sprintf( temp, "page %lu", pagenum );
 			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
+				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
 				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
+				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
 				one.push_back( temp );
 			}
 			++pagenum;

@@ -327,7 +327,7 @@ struct createEntry
 	std::vector< resAmountPair > resourceNeeded;
 	std::vector< resSkillReq > skillReqs;
 	std::string name;
-	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), name( "" ), spell( 0 )
+	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), spell( 0 ), name( "" )
 	{
 		resourceNeeded.resize( 0 );
 		skillReqs.resize( 0 );

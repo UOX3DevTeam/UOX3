@@ -229,7 +229,7 @@ void command_setpost( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
-	UI08 type;
+	UI08 type = LOCALPOST;
 	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
 	if( upperCommand == "GLOBAL" )
 		type = GLOBALPOST;

@@ -38,7 +38,7 @@ void		UnloadSpawnRegions( void );
 #define __EXTREMELY_VERBOSE__
 
 #ifdef __EXTREMELY_VERBOSE__
-void DoSEErrorMessage( char *txt, ... )
+void DoSEErrorMessage( const char *txt, ... )
 {
 	va_list argptr;
 	char msg[512];

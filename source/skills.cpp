@@ -3733,7 +3733,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 	ALSO this prevents char's stats from FREEZEING when they reach the cap*/
 	
 	//k will only take away from other stats if within 10 of the server stat cap
-	if( static_cast<int>(ttlStats) >= RandomNum( ServStatCap-10, ServStatCap ) )
+	if( ttlStats >= RandomNum( ServStatCap-10, ServStatCap ) )
 	{
 		UI08 skillDrop = 0;
 		

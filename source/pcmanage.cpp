@@ -305,7 +305,7 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 //o--------------------------------------------------------------------------o
 void CPICreateCharacter::newbieItems( CChar *mChar )
 {
-	const enum NewbieItems
+	enum NewbieItems
 	{
 		HAIR = 0,
 		BEARD,

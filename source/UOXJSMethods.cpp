@@ -54,7 +54,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
 bool BuyShop( CSocket *s, CChar *c );
 
-void MethodError( char *txt, ... )
+void MethodError( const char *txt, ... )
 {
 	va_list argptr;
 	char msg[512];
@@ -519,7 +519,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	++gList->TextID;
 	
 	char temp[256];
-	sprintf( temp, "croppedtext %i %i %i %i %i %i", TextX, TextY, TextWidth, TextHeight, TextHue, TextID );
+	sprintf( temp, "croppedtext %i %i %i %i %i %lu", TextX, TextY, TextWidth, TextHeight, TextHue, TextID );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -552,7 +552,7 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "group %i", JSVAL_TO_INT( argv[0] ) );
+	sprintf( temp, "group %li", JSVAL_TO_INT( argv[0] ) );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -630,7 +630,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "htmlgump %i %i %i %i %i %i %i", x, y, width, height, TextID, iBrd, iScrl );
+	sprintf( temp, "htmlgump %i %i %i %i %lu %li %li", x, y, width, height, TextID, iBrd, iScrl );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -652,7 +652,7 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "page %i", JSVAL_TO_INT( argv[0] ) );
+	sprintf( temp, "page %li", JSVAL_TO_INT( argv[0] ) );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -740,7 +740,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	++gList->TextID;
 	
 	char temp[256];
-	sprintf( temp, "text %i %i %i %i", TextX, TextY, TextHue, TextID );
+	sprintf( temp, "text %i %i %i %lu", TextX, TextY, TextHue, TextID );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -859,7 +859,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl );
+	sprintf( temp, "xmfhtmlgump %i %i %i %i %li %li %li", x, y, width, height, number, iBrd, iScrl );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -903,7 +903,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour );
+	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %li %li %li %li", x, y, width, height, number, iBrd, iScrl, rgbColour );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -2285,7 +2285,7 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	CItem *myItem;
+	CItem *myItem = NULL;
 	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
 
 	if( !ValidateObject( myChar ) )

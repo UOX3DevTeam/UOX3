@@ -26,7 +26,7 @@ const UI08		DEFSPAWN_WORLDNUM		= 0;
 
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : nexttime( DEFSPAWN_NEXTTIME ), call( DEFSPAWN_CALL ), x1( DEFSPAWN_X1 ), 
 x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), z( DEFSPAWN_Z ), maxcspawn( DEFSPAWN_MAXCSPAWN ), 
-maxispawn( DEFSPAWN_MAXISPAWN ), maxtime( DEFSPAWN_MAXTIME ), mintime( DEFSPAWN_MINTIME ), regionnum( spawnregion ), 
+maxispawn( DEFSPAWN_MAXISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), regionnum( spawnregion ), 
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), worldNumber( DEFSPAWN_WORLDNUM )
 {
 	sItems.resize( 0 );

@@ -3,7 +3,6 @@
 //									So forgive any newbie mistakes :)
 //									-- Side note, I wanted regions to be more generic, but
 //									now that I have to do this, time doesn't allow for it yet.
-
 #ifndef __Region_h
 #define __Region_h
 
@@ -24,10 +23,10 @@ public:
 
 			SubRegion()
 			{
-			}
+			};
 			~SubRegion()
 			{
-			}
+			};
 
 	void	SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
 	void	LoadFromDisk( std::ifstream& readDestination );
@@ -36,8 +35,8 @@ public:
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
 
-const SI16 UpperX = (SI16)(6144 / MapColSize);
-const SI16 UpperY = (SI16)(4096 / MapRowSize);
+const SI16 UpperX = static_cast<SI16>(6144 / MapColSize);
+const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
 class cMapRegion
 {
@@ -49,8 +48,8 @@ private:
 	void			LoadHouseMulti( std::ifstream &houseDestination );
 
 public:
-						cMapRegion(); //constructor
-						~cMapRegion(); //destructor
+				cMapRegion(); //constructor
+				~cMapRegion(); //destructor
 
 	SubRegion *	GetCell( SI16 x, SI16 y, UI08 worldNumber );
 

@@ -1,3 +1,8 @@
+3/11/2005 - giwo (0.98-2.8d)
+	Included jr's fixes for cygwin compatability.
+	Began work on allowing UOX to compile under MinGW.
+	Many minor gcc warning fixes.
+	
 3/5/2005 - giwo (0.98-2.8c)
 	Fixed a couple memory leaks.
 	Fixed a couple areas where we were attempting to free memory that had already been freed.

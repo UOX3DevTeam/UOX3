@@ -509,7 +509,7 @@ void HandleHouseButton( CSocket *s, long button, CItem *j )
 		case 7:	s->target( 0, TARGET_HOUSEFRIEND, 561 );		return; // Make someone a friend
 		default:
 			char temp[1024];
-			sprintf( temp, "HouseGump Called - Button=%i", button );
+			sprintf( temp, "HouseGump Called - Button=%li", button );
 			s->sysmessage( temp );
 			return;
 	}
@@ -648,7 +648,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddText( szBuffer );
 		// Do the server tab
 		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1); 
-		UI32 myLinenum = linenum;
+//		UI32 myLinenum = linenum;
 		toSend.AddCommand( "text %u %u %u %u",132,yStart+46, 47, linenum++);
 		toSend.AddText( "Server" );
 	}
@@ -1442,8 +1442,6 @@ bool CPIGumpMenuSelect::Handle( void )
 	if( tSock == NULL )
 		return true;
 
-	CChar *mChar = tSock->CurrcharObj();
-
 	if( buttonID > 10000 ) 
 	{
 		BuildGumpFromScripts( tSock, (UI16)(buttonID - 10000) );
@@ -2163,7 +2161,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 	sprintf( temp, "text 45 15 %i 0", cwmWorldState->ServerData()->TitleColour() );
 	one.push_back( temp );
 
-	sprintf( temp, "page %i", pagenum );
+	sprintf( temp, "page %lu", pagenum );
 	one.push_back( temp );
 
 	if( title.length() == 0 )
@@ -2181,25 +2179,25 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 		{
 			position = 40;
 			++pagenum;
-			sprintf( temp, "page %i", pagenum );
+			sprintf( temp, "page %lu", pagenum );
 			one.push_back( temp );
 		}
 		if( gumpData[i]->type != 7 )
 		{
-			sprintf( temp, "text 50 %i %i %i",position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ ); 
+			sprintf( temp, "text 50 %lu %i %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ ); 
 			one.push_back( temp );
 			if( isMenu )
 			{
-				sprintf( temp, "button 20 %i %i %i 1 0 %i",position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, buttonnum);
+				sprintf( temp, "button 20 %lu %i %i 1 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, buttonnum );
 				one.push_back( temp );
 			}
-			sprintf( temp, "text %i %i %i %i", (width / 2) + 10, position, cwmWorldState->ServerData()->RightTextColour(), linenum++);
+			sprintf( temp, "text %i %lu %i %lu", (width / 2) + 10, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
 			one.push_back( temp );
 			two.push_back( gumpData[i]->name );
 		}
 		else
 		{
-			sprintf( temp, "text 30 %i %i %i",position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ ); 
+			sprintf( temp, "text 30 %lu %i %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ ); 
 			one.push_back( temp );
 		}
 
@@ -2242,7 +2240,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 					{
 						position += 20;
 						++lineForButton;
-						sprintf( temp3, "text %i %i %i %i", 30, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
+						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->RightTextColour(), ++linenum );
 						one.push_back( temp3 );
 						strncpy( temp2, &temp[stringWidth + tempCounter * stringWidth * 2], stringWidth * 2 );
 						temp2[stringWidth * 2] = 0;
@@ -2281,7 +2279,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 					{
 						position += 20;
 						++lineForButton;
-						sprintf( temp3, "text %i %i %i %i", 30, position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
+						sprintf( temp3, "text %i %lu %i %lu", 30, position, cwmWorldState->ServerData()->LeftTextColour(), ++linenum );
 						one.push_back( temp3 );
 						strncpy( temp2, &temp[(tempCounter + 1) * sWidth], sWidth );
 						temp2[sWidth] = 0;
@@ -2311,16 +2309,16 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 	pagenum = 1; 
 	for( i = 0; static_cast<UI32>(i) <= lineForButton; i += numToPage )
 	{
-		sprintf( temp, "page %i", pagenum );
+		sprintf( temp, "page %lu", pagenum );
 		one.push_back( temp );
 		if( i >= 10 )
 		{
-			sprintf( temp, "button 10 %i %i %i 0 %i", height - 40, cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum-1); //back button
+			sprintf( temp, "button 10 %i %i %i 0 %lu", height - 40, cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum-1 ); //back button
 			one.push_back( temp );
 		}
 		if( lineForButton > numToPage && static_cast<UI32>(( i + numToPage )) < lineForButton )
 		{
-			sprintf( temp, "button %i %i %i %i 0 %i", width - 40, height - 40, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum+1); //forward button
+			sprintf( temp, "button %i %i %i %i 0 %lu", width - 40, height - 40, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum+1 ); //forward button
 			one.push_back( temp );
 		}
 		++pagenum;

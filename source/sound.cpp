@@ -206,23 +206,23 @@ void cEffects::playMonsterSound( CChar *monster, UI16 id, monsterSound sfx )
 			case 2:  // only start-attack, attack & dýing sounds available
 				switch( sfx )
 				{
-					case 1:
-					case 3:	offset = 0xFF;	break;	// idle, defend
-					case 2:	offset = 1;		break; // correct offset
-					case 4:	offset = 2;		break;
+					case SND_IDLE:
+					case SND_DEFEND:	offset = 0xFF;		break;	// idle, defend
+					case SND_ATTACK:	offset = 1;			break; // correct offset
+					case SND_DIE:		offset = 2;			break;
 				}
 				break;
 			case 3: // only start-attack, attack, defense & dying
 				switch( sfx )
 				{
-					case 1:	offset = 0xFF;		break;
-					case 2:
-					case 3:
-					case 4:	offset = sfx - 1;	break;
+					case SND_IDLE:		offset = 0xFF;		break;
+					case SND_ATTACK:
+					case SND_DEFEND:
+					case SND_DIE:		offset = sfx - 1;	break;
 				}
 				break;
 			case 4: // only a single sound
-				if( sfx != 0 ) 
+				if( sfx != SND_STARTATTACK ) 
 					offset = 0xFF; 
 				else 
 					offset = 0;

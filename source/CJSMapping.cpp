@@ -668,7 +668,7 @@ void CEnvoke::Parse( void )
 					if( verify != NULL )
 						envokeList[envokeID] = scriptID;
 					else
-						Console.Error( 2,"(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag, scriptID ); //,myendl;
+						Console.Error( 2, "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID ); //,myendl;
 				}
 			}
 		}

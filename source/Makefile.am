@@ -9,7 +9,7 @@ uox3_SOURCES = \
 	books.cpp \
 	cAccountClass.cpp \
 	calcfuncs.cpp \
-	cBaseObject.cpp \
+	cBaseobject.cpp \
 	cChar.cpp \
 	cConsole.cpp \
 	cDice.cpp \
@@ -17,6 +17,7 @@ uox3_SOURCES = \
 	CGump.cpp \
 	cHTMLSystem.cpp \
 	cItem.cpp \
+	CJSMapping.cpp \
 	cmdtable.cpp \
 	cMultiObj.cpp \
 	combat.cpp \
@@ -51,7 +52,6 @@ uox3_SOURCES = \
 	mapstuff.cpp \
 	movement.cpp \
 	msgboard.cpp \
-	necro.cpp \
 	network.cpp \
 	npcs.cpp \
 	ObjectFactory.cpp \
@@ -70,7 +70,6 @@ uox3_SOURCES = \
 	threadsafeobject.cpp \
 	townregion.cpp \
 	trade.cpp \
-	trigger.cpp \
 	uox3.cpp \
 	UOXJSMethods.cpp \
 	UOXJSPropertyFuncs.cpp \
@@ -78,7 +77,6 @@ uox3_SOURCES = \
 	vendor.cpp \
 	weight.cpp \
 	wholist.cpp \
-	worldmain.cpp \
-	xgm.cpp \
+	worldmain.cpp
 
 uox3_LDADD = js32.a -lpthread

@@ -33,6 +33,8 @@ suit our own purposes
 #elif defined( __GNUC__ )
 #   define UOX_COMPILER COMPILER_GNUC
 #   define UOX_COMP_VER __VERSION__
+#	define FALSE 0L
+#	define TRUE  1L 
 
 #elif defined( __BORLANDC__ )
 #   define UOX_COMPILER COMPILER_BORL
@@ -98,8 +100,10 @@ suit our own purposes
 	#define OS_STR "Win32"
 
 // A quick define to overcome different names for the same function
-#	define snprintf _snprintf
-#   define vsnprintf _vsnprintf
+#	if UOX_COMPILER != COMPILER_GNUC
+#		define snprintf _snprintf
+#		define vsnprintf _vsnprintf
+#	endif
 
 #endif
 //----------------------------------------------------------------------------

@@ -1710,7 +1710,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			else if( itemID == 0x0ED5 )			// Check for Guildstone + Guild Type
 			{
 				mSock->TempInt( x->GetTempVar( CITV_MORE ) );	// track things properly
-				if( mChar->GetGuildNumber() == -1 || mChar->GetGuildNumber() == x->GetTempVar( CITV_MORE ) )
+				if( mChar->GetGuildNumber() == -1 || mChar->GetGuildNumber() == static_cast<SI16>(x->GetTempVar( CITV_MORE )) )
 					GuildSys->Menu( mSock, BasePage + 1, static_cast<GUILDID>(x->GetTempVar( CITV_MORE )) );	// more of the stone is the guild number
 				else
 					mSock->sysmessage( 438 );
@@ -1957,8 +1957,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				if( i == NULL )
 					return true;
 				i->SetName( Dictionary->GetEntry( 1429 ) );
-				CItem *skillItem;
-				skillItem = static_cast<CItem *>(mSock->TempObj());
+				CItem *skillItem = static_cast<CItem *>(mSock->TempObj());
 				if( ValidateObject( skillItem ) )
 				{
 					skillItem->SetDecayable( true );
@@ -2455,13 +2454,13 @@ bool CPISingleClick::Handle( void )
 				{
 					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 					if( ValidateObject( mCreater ) )
-						sprintf( temp2, "%s %s by %s", i->GetDesc(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+						sprintf( temp2, "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 					else
 						strcpy( temp2, i->GetDesc().c_str() );
 				}
 				else
 					strcpy( temp2, i->GetDesc().c_str() );
-				sprintf( temp, "%s at %igp", temp2, i->GetBuyValue() );
+				sprintf( temp, "%s at %lugp", temp2, i->GetBuyValue() );
 				tSock->objMessage( AppendData( i, temp ), i );
 				return true;
 			}

@@ -240,12 +240,12 @@ class CTile : public BaseTile
 {
 private:
 	SI32 unknown1;  // longs must go at top to avoid bus errors - fur
-	SI32 animation;
-	UI08 weight;
-	SI08 layer;
 	SI08 unknown2;
 	SI08 unknown3;
+	UI08 weight;
 	SI08 height;
+	SI08 layer;
+	SI32 animation;
 	SI08 name[23];	// manually padded to long to avoid bus errors - fur
 
 public:

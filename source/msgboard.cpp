@@ -1066,7 +1066,7 @@ void MsgBoardOpenPost( CSocket *s )
 	std::string fileName;
 	FILE *file = NULL;
 	
-	int		msgSN           = 0;
+	UI32	msgSN           = 0;
 	int		msgBytes        = 0;
 	int		dateBytes       = 0;
 	int		authorBytes     = 0;
@@ -1110,7 +1110,7 @@ void MsgBoardOpenPost( CSocket *s )
 		file		= fopen( fileName.c_str(), "rb" );
 	}
 	// Is msgSN within the LOCAL post range
-	else if( (msgSN>=0x03000000) && (msgSN<=0xFFFFFFFF) )
+	else if( msgSN >= 0x03000000 && msgSN <= 0xFFFFFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
 		s->sysmessage( "Opening LOCAL.bbp posting" );

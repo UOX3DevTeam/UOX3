@@ -106,6 +106,8 @@ private:
 #if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
+#else
+	bool	forceNL;
 #endif
 	void	PrintStartOfLine( void );
 	void	StartOfLineCheck(void);

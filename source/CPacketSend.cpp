@@ -2101,6 +2101,8 @@ bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 		if( mSock->ClientVersionMajor() >= 4 )
 			return false;
 		break;
+	default:
+		break;
 	}
 	return true;
 }
@@ -2338,9 +2340,9 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 
 	internalBuffer.resize( 3 );
 	internalBuffer[0] = 0xB9;
-
+#if defined( _MSC_VER )
 #pragma todo( "Currently all client support is hardcoded. Move this into the ini when possible." )
-
+#endif
 	internalBuffer[1] = 0x80;		// 0x00
 	internalBuffer[2] = 0x3F;		// New chars enabled(shh they prolly wont work) and Enable 6th slot
 }
@@ -4699,6 +4701,8 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 		if( mSock->ClientVersionMajor() < 4 )
 			return false;
 		break;
+	default:
+		break;
 	}
 	return true;
 }
@@ -4746,6 +4750,8 @@ bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 	case CV_UO3D:
 		if( mSock->ClientVersionMajor() < 4 )
 			return false;
+		break;
+	default:
 		break;
 	}
 	return true;
@@ -4796,6 +4802,8 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 	case CV_UO3D:
 		if( mSock->ClientVersionMajor() < 4 )
 			return false;
+		break;
+	default:
 		break;
 	}
 	return true;

@@ -872,7 +872,6 @@ void ChainLightningStub( CChar *caster, CChar *target )
 		Combat->AttackTarget( target, caster );
 	Effects->PlaySound( caster, 0x0029 );
 	CChar *def = NULL;
-	CChar *att = NULL;
 	if( Magic->CheckMagicReflect( target ) )
 		def = caster;
 	else
@@ -2685,7 +2684,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	cScript *tScriptExec = NULL;
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
-		CItem *i;
+		CItem *i = NULL;
 		if( validSocket && spells[curSpell].TravelSpell() )				// travel spells.... mark, recall and gate
 		{
 			// (Abaddon) Region checks
@@ -2738,7 +2737,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		if( spells[curSpell].RequireCharTarget() )
 		{
 			// TARGET CALC HERE
-			CChar *c;
+			CChar *c = NULL;
 			if( !caster->IsNpc() )
 				c = calcCharObjFromSer( s->GetDWord( 7 ) );
 			else
@@ -3252,7 +3251,7 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( "Registering spell number %i\n", spellNumber );
 #endif
-	if( spellNumber < 0 || spellNumber >= spells.size() )
+	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;
 	spells[spellNumber].JSScript( JSMapping->GetScriptID( toRegister->Object() ) );
 	spells[spellNumber].Enabled( isEnabled );
@@ -3260,7 +3259,7 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 
 void cMagic::SetSpellStatus( int spellNumber, bool isEnabled )
 {
-	if( spellNumber < 0 || spellNumber >= spells.size() )
+	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;
 	spells[spellNumber].Enabled( isEnabled );
 }

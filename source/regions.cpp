@@ -182,7 +182,7 @@ cMapRegion::cMapRegion()
 		upperArrayX[i] = MapWidths[i] / MapColSize;
 		upperArrayY[i] = MapHeights[i] / MapRowSize;
 	}
-}; //constructor
+} //constructor
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	cMapRegion constructor
@@ -195,7 +195,7 @@ cMapRegion::cMapRegion()
 cMapRegion::~cMapRegion()
 {
 	
-}; //destructor
+} //destructor
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	SubRegion *GetCell( SI16 x, SI16 y )
@@ -337,9 +337,9 @@ void cMapRegion::Save( void )
 	std::ofstream writeDestination, houseDestination;
 	const int onePercent			= (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
-	const char binBlockDisc			= (char)0xFF;
+//	const char binBlockDisc			= (char)0xFF;
 	int count						= 0;
-	const UI08 Version				= 3;
+//	const UI08 Version				= 3;
 	int s_t							= getclock();
 
 	Console << "Saving Character and Item Map Region data...   ";
@@ -437,7 +437,7 @@ void cMapRegion::Load( void )
 	const int onePercent	= (int)((float)(AreaX*AreaY*8*8*NumberOfWorlds)/100.0f);
 	int count				= 0;
 	std::ifstream readDestination;
-	UI08 Version			= 0;
+//	UI08 Version			= 0;
 
 	Console.TurnYellow();
 	Console << "0%";

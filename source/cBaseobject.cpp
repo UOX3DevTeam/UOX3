@@ -171,7 +171,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 	if( I != tags.end() )
 	{
 		// Check to see if this object needs to be destroyed
-		bool reAdd = FALSE;
+//		bool reAdd = FALSE;
 		if( I->second.m_Destroy )
 		{
 			tags.erase( I );

@@ -1270,7 +1270,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 	UI16 tCtr = 0;
 	GUILDREL::iterator toCheck;
 	GUILDREL *ourList;
-	int offCounter;
+	size_t offCounter;
 
 	CChar *tChar = NULL;
 
@@ -1399,7 +1399,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			{
 				if( toCheck->second != GR_WAR )
 				{
-					if( offCounter == button - 2 )
+					if( offCounter == (button - 2) )
 					{
 						gList[trgGuild]->SetGuildRelation( tCtr, GR_ALLY );
 						gList[trgGuild]->TellMembers( 165, gList[tCtr]->Name().c_str() );
@@ -1421,7 +1421,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			{
 				if( toCheck->second == GR_WAR )
 				{
-					if( offCounter == button - 2 )
+					if( offCounter == (button - 2) )
 					{
 						gList[trgGuild]->SetGuildRelation( tCtr, GR_NEUTRAL );
 						gList[trgGuild]->TellMembers( 167, gList[tCtr]->Name().c_str() );
@@ -1455,7 +1455,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			{
 				if( toCheck->second != GR_ALLY )
 				{
-					if( offCounter == button - 2 )
+					if( offCounter == (button - 2) )
 					{
 						gList[trgGuild]->SetGuildRelation( tCtr, GR_ALLY );
 						gList[trgGuild]->TellMembers( 169, gList[tCtr]->Name().c_str() );

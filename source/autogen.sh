@@ -7,7 +7,7 @@ echo "touch AUTHORS"
 touch AUTHORS || exit;
 echo "aclocal"
 aclocal || exit;
-echo "automake --ad-missing --copy"
+echo "automake --add-missing --copy"
 automake --add-missing --copy;
 echo "autoconf"
 autoconf || exit;
@@ -18,7 +18,7 @@ echo "Building required linux file js32.a"
 
 cd ./mozilla/js/src;
 gcc -o jscpucfg jscpucfg.c ; ./jscpucfg >  jsautocfg.h
-gcc -c -DXP_UNIX *.c ; ar -r js32.a *.o
+gcc -g -c -DXP_UNIX *.c ; ar -r js32.a *.o
 cp js32.a ../../../;
 cd ../../../;
 

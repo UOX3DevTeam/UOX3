@@ -1403,7 +1403,7 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 //o--------------------------------------------------------------------------o	
 void cMovement::NpcMovement( CChar& mChar )
 {
-    CChar *kChar;
+    CChar *kChar = NULL;
 	UI08 j;
 	const R32 npcSpeed	= static_cast< R32 >(cwmWorldState->ServerData()->NPCSpeed());
 	bool shouldRun		= false;

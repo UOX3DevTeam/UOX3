@@ -848,7 +848,7 @@ void ScriptSection::createSection( std::fstream& input )
 										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toULong();
 										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toULong();
 										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toULong();
-										if(amiLocalCopy.tileID==-1) 
+										if( amiLocalCopy.tileID == INVALIDSERIAL ) 
 											amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
 										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));

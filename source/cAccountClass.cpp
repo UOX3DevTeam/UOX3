@@ -880,8 +880,8 @@ size_t cAccountClass::size()
 //o--------------------------------------------------------------------------o
 UI16 cAccountClass::Load(void)
 {
-	UI16 wAccountsCount		= 0;
-	UI16 wHighestAccount	= 0;
+//	UI16 wAccountsCount		= 0;
+//	UI16 wHighestAccount	= 0;
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
@@ -928,7 +928,7 @@ UI16 cAccountClass::Load(void)
 	bool bBraces2[3]				= { false, false, false };
 	ACCOUNTSBLOCK actb;
 	UI16 wAccountID					= 0x0000;
-	UI16 wAccessID					= 0x0000;
+//	UI16 wAccessID					= 0x0000;
 	UI16 wAccountCount				= 0x0000;
 	UI32 dwChars[CHARACTERCOUNT]	= {INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL};
 	Reset( &actb );
@@ -1237,7 +1237,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbName = J->second;
+//	ACCOUNTSBLOCK& actbName = J->second;
 	// ok we will check to see if there is a valid char in source slot, if not we will return
 	if( actbID.dwCharacters[wSSlot]==INVALIDSERIAL )
 		return false;
@@ -1258,7 +1258,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbJName = JJ->second;
+//	ACCOUNTSBLOCK& actbJName = JJ->second;
 	// ok at this point I/II = SourceID, and DestID and J/JJ SourceName/DestName
 	if( AddCharacter( wDAccountID, actbID.dwCharacters[wSSlot], actbID.lpCharacters[wSSlot] ) )
 	{
@@ -1598,7 +1598,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbName=J->second;
+//	ACCOUNTSBLOCK& actbName=J->second;
 	// Before we delete this account we need to spin the characters, and list them in the orphan.adm file
 	std::string sTempPath(m_sAccountsDirectory);
 	if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
@@ -1624,7 +1624,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	for( int jj = 0; jj < CHARACTERCOUNT; ++jj )
 	{
 		// If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
-		if( actbID.dwCharacters[jj]!=INVALIDSERIAL&&actbID.dwCharacters[jj]!=(long)(-1) )
+		if( actbID.dwCharacters[jj] != INVALIDSERIAL /*&& actbID.dwCharacters[jj] != (long)(-1)*/ )
 		{
 			// Ok build then write what we need to the file
 			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (int)actbID.lpCharacters[jj]->GetZ() << std::endl;

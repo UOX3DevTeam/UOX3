@@ -23,7 +23,7 @@
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
-	#define strnicmp(a,b,c) strncasecmp(a,b,c)
+	//#define strnicmp(a,b,c) strncasecmp(a,b,c)
 	#define _stat stat
 	#define _mkdir mkdir
 	#define _rmdir rmdir
@@ -145,12 +145,12 @@ public:
 	std::string sPassword;
 	std::string sPath;
 	std::string sContact;
-	bool bChanged;
 	UI16 wAccountIndex;
 	UI16 wFlags;
 	UI16 wTimeBan;
 	UI32 dwInGame;
 	UI32 dwLastIP;
+	bool bChanged;
 	UI32 dwCharacters[6];
 	CChar	*lpCharacters[6];
 } ACCOUNTSBLOCK,*LPACCOUNTSBLOCK;
