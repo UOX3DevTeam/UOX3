@@ -1,3 +1,9 @@
+2/15/2005 - giwo (0.98-2.7c)
+	Made some structures private members of their only calling class.
+	Removed unused InUseEntry2()
+	Moved Spirit Speak skill out to JS.
+	Moved Animal Lore skill out to JS, and re-wrote it to use a gump interface.
+
 2/10/2005 - giwo (0.98-2.7b)
 	Moved Hiding Skill out to JS.
 	Moved Stealth Skill out to JS.

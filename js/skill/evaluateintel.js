@@ -23,24 +23,8 @@ function onCallback0( pSock, ourObj )
 		else
 		{
 			var intString;
-			if( ourInt < 10 )
-				intString = GetDictionaryEntry( 1558, pSock.Language );
-			else if( ourInt < 20 )
-				intString = GetDictionaryEntry( 1559, pSock.Language );
-			else if( ourInt < 30 )
-				intString = GetDictionaryEntry( 1560, pSock.Language );
-			else if( ourInt < 40 )
-				intString = GetDictionaryEntry( 1561, pSock.Language );
-			else if( ourInt < 50 )
-				intString = GetDictionaryEntry( 1562, pSock.Language );
-			else if( ourInt < 60 )
-				intString = GetDictionaryEntry( 1563, pSock.Language );
-			else if( ourInt < 70 )
-				intString = GetDictionaryEntry( 1564, pSock.Language );
-			else if( ourInt < 80 )
-				intString = GetDictionaryEntry( 1565, pSock.Language );
-			else if( ourInt < 90 )
-				intString = GetDictionaryEntry( 1566, pSock.Language );
+			if( ourInt < 100 )
+				intString = GetDictionaryEntry( (parseInt( ourInt/10 )+1558), pSock.Language );
 			else
 				intString = GetDictionaryEntry( 1567, pSock.Language );
 			pSock.SysMessage( GetDictionaryEntry( 1568, pSock.Language ) + " " + intString );

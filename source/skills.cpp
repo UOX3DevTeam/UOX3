@@ -1329,33 +1329,6 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SpiritSpeak( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses spirit speak skill.. Translates a
-//|					 ghosts normal oOoOooo text into readable text (what he
-//|					 is actually saying), Operates on a timer based on settings
-//|					 in server.scp
-//o---------------------------------------------------------------------------o
-void cSkills::SpiritSpeak( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( !CheckSkill( mChar, SPIRITSPEAK, 0, 1000 ) )
-	{
-		s->sysmessage( 1501 );
-		return;
-	}
-	
-	Effects->PlaySpellCastingAnimation( mChar, 0x11 );
-	Effects->PlaySound( s, 0x024A, true );
-	s->sysmessage( 1502 );
-	
-	s->SetTimer( tPC_SPIRITSPEAK, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( SPIRIT_SPEAK ) + mChar->GetSkill( SPIRITSPEAK ) / 10 + mChar->GetIntelligence() )) ); // spirit speak duration
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::ArmsLoreTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
@@ -1864,8 +1837,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				case DETECTINGHIDDEN:	s->target( 0, TARGET_DETECTHIDDEN, 860 );	break;
 				case PEACEMAKING:		PeaceMaking(s);								break;
 				case PROVOCATION:		s->target( 0, TARGET_PROVOCATION, 861 );	break;
-				case ENTICEMENT:		s->target( 0, TARGET_ENTICEMENT, 862 );		break;
-				case SPIRITSPEAK:		SpiritSpeak(s);								break;
+				case ENTICEMENT:		s->target( 0, TARGET_ENTICEMENT, 862 );		break;							break;
 				case STEALING:
 					if( cwmWorldState->ServerData()->RogueStatus() )
 						s->target( 0, TARGET_STEALING, 863 );
@@ -1875,7 +1847,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				case INSCRIPTION:		s->target( 0, TARGET_INSCRIBE, 865 );		break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
 				case BEGGING:			s->target( 0, TARGET_BEGGING, 866 );		break;
-				case ANIMALLORE:		s->target( 0, TARGET_ANIMALLORE, 867 );		break;
 				case FORENSICS:			s->target( 0, TARGET_FORENSICS, 868 );		break;
 				case POISONING:			s->target( 0, TARGET_APPLYPOISON, 869 );	break;
 				case MEDITATION:
@@ -2376,36 +2347,6 @@ void cSkills::BeggingTarget( CSocket *s )
 	}
 	else
 		s->sysmessage( 905 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnimalLoreTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets animal with Animal Lore skill
-//o---------------------------------------------------------------------------o
-void cSkills::AnimalLoreTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar	= s->CurrcharObj();
-	if( !ValidateObject( i ) )
-		return;
-	if( i->GetCommandLevel() > 0 )
-	{
-		s->sysmessage( 906 );
-		return;
-	}
-	if( i->GetID() == 0x0190 || i->GetID() == 0x0191 )
-	{
-		s->sysmessage( 907 );
-		return;
-	}
-	if( CheckSkill( mChar, ANIMALLORE, 0, 1000 ) )
-		i->emote( s, 1729, false, i->GetLoDamage(), i->GetHiDamage(), i->GetDef(), i->GetTaming()/10, i->GetHP() );
-	else
-		s->sysmessage( 908 );
 }
 
 //o---------------------------------------------------------------------------o

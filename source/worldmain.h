@@ -82,6 +82,28 @@ public:
 class CWorldMain  
 {
 private:
+	struct skill_st
+	{
+		UI16 strength;
+		UI16 dexterity;
+		UI16 intelligence;
+		std::string madeword;
+		std::vector< advance_st > advancement;
+		UI16 jsScript;
+		skill_st() : strength( 0 ), dexterity( 0 ), intelligence( 0 ), jsScript( 0xFFFF )
+		{
+			madeword = "";
+			advancement.resize( 0 );
+		}
+	};
+
+	// Custom Titles
+	struct title_st
+	{
+		std::string fame;
+		std::string skill;
+	};
+
 	// Timers
 	TIMERVAL	worldTimers[tWORLD_COUNT];
 

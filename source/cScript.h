@@ -127,14 +127,6 @@ private:
 		}
 	};
 
-	struct InUseEntry2
-	{
-		bool inUse;
-		UI16 toUseID;
-		InUseEntry2() : inUse( false ), toUseID( INVALIDID ) {}
-		InUseEntry2( bool iU, UI16 iUID ) : inUse( iU ), toUseID( iUID ) {}
-	};
-
 	JSScript *	targScript;
 	JSContext *	targContext;
 	JSObject *	targObject;

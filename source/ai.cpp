@@ -276,7 +276,7 @@ void CheckAI( CChar& mChar )
 	case aiCHAOTIC:			HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
 	case aiHEALER_E:		HandleEvilHealerAI( mChar );	break;	//Evil Healers
 	default:
-		Console.Error( 2, " cCharStuff::CheckAI-> Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() );	//Morrolan
+		Console.Error( 2, " CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() );	//Morrolan
 		return;
 	}
 }

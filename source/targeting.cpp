@@ -1866,7 +1866,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ENTICEMENT:		Skills->EnticementTarget1( tSock );		break;
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_BEGGING:		Skills->BeggingTarget( tSock );			break;
-					case TARGET_ANIMALLORE:		Skills->AnimalLoreTarget( tSock );		break;
 					case TARGET_FORENSICS:		Skills->ForensicsTarget( tSock );		break;
 					case TARGET_APPLYPOISON: 
 												tSock->TempObj( calcItemObjFromSer( tSock->GetDWord( 7 ) ) );

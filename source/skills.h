@@ -79,7 +79,6 @@ public:
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
 	TargetFunc AnatomyTarget;
-	TargetFunc AnimalLoreTarget;
 	TargetFunc ArmsLoreTarget;
 	TargetFunc BeggingTarget;
 	TargetFunc BottleTarget;
@@ -101,7 +100,6 @@ public:
 	TargetFunc RepairMetal;
 	TargetFunc SmeltOre;
 	TargetFunc Smith;
-	TargetFunc SpiritSpeak;
 	TargetFunc StealingTarget;
 	TargetFunc TameTarget;
 	TargetFunc TDummy;
