@@ -85,7 +85,7 @@ cAccountClass::~cAccountClass()
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-WORD cAccountClass::CreateAccountSystem(void)
+UI16 cAccountClass::CreateAccountSystem(void)
 {
 	// Get the system account path. Should have been set at construction.
 	std::string sActPath = m_sAccountsDirectory;
@@ -125,9 +125,9 @@ WORD cAccountClass::CreateAccountSystem(void)
 	bool bBraces[3]={false,false,false};
 	bool bBraces2[3]={false,false,false};
 	ACCOUNTSBLOCK actb;
-	WORD wAccountID=0x0000;
-	WORD wAccessID=0x0000;
-	WORD wAccountCount=0x0000;
+	UI16 wAccountID=0x0000;
+	UI16 wAccessID=0x0000;
+	UI16 wAccountCount=0x0000;
 	memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
 	while(!fs2.eof())
 	{
@@ -523,7 +523,7 @@ WORD cAccountClass::CreateAccountSystem(void)
 	fs2.close();
 	fs1.close();
 	// Ok the next thing were going to have to do is check paths, make new paths and write the UAD file back into the respective directory
-	for(std::map<WORD,ACCOUNTSBLOCK>::iterator I = m_mapUsernameIDMap.begin();I!=m_mapUsernameIDMap.end();I++)
+	for(std::map<UI16,ACCOUNTSBLOCK>::iterator I = m_mapUsernameIDMap.begin();I!=m_mapUsernameIDMap.end();I++)
 	{
 		// Pull the data into a usable form
 		ACCOUNTSBLOCK actbTemp = I->second;
@@ -635,7 +635,7 @@ WORD cAccountClass::CreateAccountSystem(void)
 		return 0L;
 	}
 	cAccountClass::WriteAccountsHeader(fsOut);
-	for(std::map<WORD,ACCOUNTSBLOCK>::const_iterator CI = m_mapUsernameIDMap.begin();CI!=m_mapUsernameIDMap.end();CI++)
+	for(std::map<UI16,ACCOUNTSBLOCK>::const_iterator CI = m_mapUsernameIDMap.begin();CI!=m_mapUsernameIDMap.end();CI++)
 	{
 		ACCOUNTSBLOCK actbTemp = CI->second;
 		fsOut << "SECTION ACCOUNT " << std::dec << actbTemp.wAccountIndex << std::endl;
@@ -774,7 +774,7 @@ std::string& cAccountClass::PathFix(std::string& sPath)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-WORD cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact,WORD wAttributes)
+UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact,UI16 wAttributes)
 {
 	// First were going to make sure that the needed fields are sent in with at least data
 	if(sUsername.length()<4||sUsername.length()<4||sPassword.length()<4||sPassword.length()<4)
@@ -924,7 +924,7 @@ WORD cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
 	m_wHighestAccount=actbTemp.wAccountIndex;
 	// Return to the calling function
-	return (WORD)m_mapUsernameIDMap.size();
+	return (UI16)m_mapUsernameIDMap.size();
 }
 
 
@@ -966,13 +966,13 @@ BOOL cAccountClass::isUser(std::string sUsername)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-WORD cAccountClass::size()
+UI16 cAccountClass::size()
 {
 	return m_mapUsernameMap.size();
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	WORD cAccountClass::Load()
+//|	Function			-	UI16 cAccountClass::Load()
 //|	Date					-	12/17/2002 4:00:47 PM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -994,10 +994,10 @@ WORD cAccountClass::size()
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-WORD cAccountClass::Load(void)
+UI16 cAccountClass::Load(void)
 {
-	WORD wAccountsCount=0;
-	WORD wHighestAccount=0;
+	UI16 wAccountsCount=0;
+	UI16 wHighestAccount=0;
 	// Clear out the previous map contents before we start
 	m_mapUsernameMap.clear();
 	m_mapUsernameIDMap.clear();
@@ -1036,9 +1036,9 @@ WORD cAccountClass::Load(void)
 	bool bBraces[3]={false,false,false};
 	bool bBraces2[3]={false,false,false};
 	ACCOUNTSBLOCK actb;
-	WORD wAccountID=0x0000;
-	WORD wAccessID=0x0000;
-	WORD wAccountCount=0x0000;
+	UI16 wAccountID=0x0000;
+	UI16 wAccessID=0x0000;
+	UI16 wAccountCount=0x0000;
 	memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
 	m_wHighestAccount=0x0000;
 	while(!fsAccountsADM.eof())
@@ -1340,11 +1340,11 @@ WORD cAccountClass::Load(void)
 		actbTemp.sPassword=J->sPassword;
 		actbTemp.sPath=J->sPath;
 		actbTemp.sContact=J->sComment;
-		actbTemp.wAccountIndex=(WORD)J->dwAccountID;
+		actbTemp.wAccountIndex=(UI16)J->dwAccountID;
 		// Uncomment this when support has been implemented
 		// actbTemp.dwCommenetID=J->dwCommentID;
 		//
-		actbTemp.wFlags=(WORD)J->dwFlags;
+		actbTemp.wFlags=(UI16)J->dwFlags;
 		actbTemp.dwInGame=J->dwInGame;
 		actbTemp.dwLastIP=J->dwLaspIP;
 		actbTemp.dwCharacters[0]=J->dwCharacter1;
@@ -1372,7 +1372,7 @@ WORD cAccountClass::Load(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::TransCharacter(WORD wSAccountID,WORD wSSlot,WORD wDAccountID)
+BOOL cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID)
 {
 	MAPUSERNAMEID_ITERATOR I;
 	I = m_mapUsernameIDMap.find(wSAccountID);
@@ -1443,7 +1443,7 @@ BOOL cAccountClass::TransCharacter(WORD wSAccountID,WORD wSSlot,WORD wDAccountID
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::AddCharacter(WORD wAccountID, CChar *lpObject)
+BOOL cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 {
 	// Make sure that the lpObject pointer is valid
 	if(lpObject==NULL)
@@ -1498,7 +1498,7 @@ BOOL cAccountClass::AddCharacter(WORD wAccountID, CChar *lpObject)
 	return false;
 }
 //
-BOOL cAccountClass::AddCharacter(WORD wAccountID,DWORD dwCharacterID, CChar *lpObject)
+BOOL cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject)
 {
 	// Make sure that the lpObject pointer is valid
 	if(lpObject==NULL)
@@ -1589,7 +1589,7 @@ BOOL cAccountClass::AddCharacter(WORD wAccountID,DWORD dwCharacterID, CChar *lpO
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
+BOOL cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
 {
 	// Ok we need to get the name block to get the accounts id
 	MAPUSERNAME_ITERATOR J;
@@ -1602,7 +1602,7 @@ BOOL cAccountClass::ModAccount(std::string sUsername,DWORD dwFlags,ACCOUNTSBLOCK
 	return cAccountClass::ModAccount(actbName.wAccountIndex,dwFlags,actbBlock);
 }
 //
-BOOL cAccountClass::ModAccount(WORD wAccountID,DWORD dwFlags,ACCOUNTSBLOCK &actbBlock)
+BOOL cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
 {
 	// Ok we need to get the ID block again as it wasn't passed in
 	MAPUSERNAMEID_ITERATOR I;
@@ -1755,7 +1755,7 @@ BOOL cAccountClass::DelAccount(std::string sUsername)
 	return cAccountClass::DelAccount(actbTemp.wAccountIndex);
 }
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::DelAccount(WORD wAccountID)
+BOOL cAccountClass::DelAccount(UI16 wAccountID)
 {
 	// Ok we need to get the ID block again as it wasn't passed in
 	MAPUSERNAMEID_ITERATOR I;
@@ -1890,7 +1890,7 @@ std::string cAccountClass::GetPath(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::DelCharacter(WORD wAccountID, int nSlot)
+BOOL cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 {
 	// Do the simple here, save us some work
 	if(nSlot<0||nSlot>4)
@@ -2011,7 +2011,7 @@ BOOL cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBl
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-BOOL cAccountClass::GetAccountByID(WORD wAccountID,ACCOUNTSBLOCK& actbBlock)
+BOOL cAccountClass::GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock)
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAMEID_ITERATOR I;
@@ -2058,7 +2058,7 @@ BOOL cAccountClass::GetAccountByID(WORD wAccountID,ACCOUNTSBLOCK& actbBlock)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-WORD cAccountClass::Save(void)
+UI16 cAccountClass::Save(void)
 {
 #ifdef __uox__
 	// Ok the first thing we are going to want to do it flush the maps so that 

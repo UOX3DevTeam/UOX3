@@ -196,10 +196,10 @@ public:
 	DWORD dwCharacter5;
 	// Constructor
 	cDBAccountClass(std::string &sUUsername,std::string &sUPassword,std::string &sUPath,
-									std::string &sUContact,DWORD dwUCommentID, DWORD dwUAccountIndex,
-									DWORD dwUFlags,WORD dwUTimeBan,DDWORD dwUInGame,DWORD dwULastIP,
-									DWORD dwUChar1,DWORD dwUChar2,DWORD dwUChar3,DWORD dwUChar4,
-									DWORD dwUChar5) :
+									std::string &sUContact,UI32 dwUCommentID, UI32 dwUAccountIndex,
+									UI32 dwUFlags,UI32 dwUTimeBan,UI32 dwUInGame,UI32 dwULastIP,
+									UI32 dwUChar1,UI32 dwUChar2,UI32 dwUChar3,UI32 dwUChar4,
+									UI32 dwUChar5) :
 									sUsername(sUUsername),sPassword(sUPassword),sPath(sUPath),
 									sContact(sUContact),dwCommentID(dwUCommendID),wAccountID(dwUAccountIndex),
 									dwFlags(dwUFlags),dwTimeBan(dwUTimeBan),dwInGame(dwUInGame),
