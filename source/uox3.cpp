@@ -7565,6 +7565,27 @@ void MonsterGate( CChar *s, SI32 x )
 		case DFNTAG_TACTICS:			s->SetBaseSkill( RandomNum( ndata, odata ), TACTICS );			break;
 		case DFNTAG_VETERINARY:			s->SetBaseSkill( RandomNum( ndata, odata ), VETERINARY );		break;
 		case DFNTAG_WRESTLING:			s->SetBaseSkill( RandomNum( ndata, odata ), WRESTLING );		break;
+		case DFNTAG_ID2:
+			s->SetID2(ndata);
+			break;
+		case DFNTAG_SKIN2:
+			s->SetSkin2(ndata);
+			break;
+		case DFNTAG_STAMINA:
+			s->SetStamina(ndata);
+			break;
+		case DFNTAG_MANA:
+			s->SetMana(ndata);
+			break;
+		case DFNTAG_NOMOVE:
+			s->SetNoMove(ndata);
+			break;
+		case DFNTAG_POISONCHANCE:
+			s->SetPoisonChance(ndata);
+			break;
+		case DFNTAG_POISONSTRENGTH:
+			s->SetPoisonStrength(ndata);
+			break;
 		default:						break;
 		}
 	}

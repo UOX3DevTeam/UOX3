@@ -1106,6 +1106,32 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation )
 		case DFNTAG_WRESTLING:
 		  applyTo->SetBaseSkill( (UI16)RandomNum( ndata, odata ), WRESTLING );
 		  break;
+		case DFNTAG_ID2:
+			applyTo->SetID2( (UI16)ndata );
+			break;
+		case DFNTAG_SKIN2:
+			applyTo->SetSkin2( (UI16)ndata );
+			break;
+		case DFNTAG_STAMINA:
+			applyTo->SetStamina( (UI16)ndata );
+			break;
+		case DFNTAG_MANA:
+			applyTo->SetMana( (UI16)ndata );
+			break;
+		case DFNTAG_NOMOVE:
+			applyTo->SetNoMove( (UI16)ndata );
+			break;
+		case DFNTAG_POISONCHANCE:
+			applyTo->SetPoisonChance( (UI16)ndata );
+			break;
+		case DFNTAG_POISONSTRENGTH:
+			applyTo->SetPoisonStrength( (UI16)ndata );
+			break;
+		case DFNTAG_ALIGNMENT:
+		case DFNTAG_MOD1:
+		case DFNTAG_MOD2:
+		case DFNTAG_MOD3:
+			break;
 		case DFNTAG_NOTES:
 		case DFNTAG_CATEGORY:
 		  break;

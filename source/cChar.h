@@ -194,7 +194,31 @@ class CChar : public cBaseObject
 		void		RemoveSelfFromOwner( void );
 		void		AddSelfToOwner( void );
 
+		UI16 ID2;
+		UI16 Skin2;
+		UI16 Stamina;
+		UI16 Mana;
+		UI16 Nomove;
+		UI16 PoisonChance;
+		UI16 PoisonStrength;
+
 	public:
+
+		void SetPoisonStrength( UI16 value );
+		void SetPoisonChance( UI16 value );
+		void SetNoMove( UI16 value );
+		//void SetMana( UI16 value);
+		void SetStamina( UI16 value );
+		void SetSkin2( UI16 value );
+		void SetID2( UI16 value );
+		UI16 GetPoisonStrength( void ) const;
+		UI16 GetPoisonChance( void ) const;
+		UI16 GetNoMove( void ) const;
+		//UI16 GetMana( void );
+		UI16 GetStamina( void ) const;
+		UI16 GetSkin2( void ) const;
+		UI16 GetID2( void ) const;
+
 
 		CHARLIST *	GetPetList( void );
 		CHARLIST *	GetFriendList( void );
