@@ -12,10 +12,10 @@ private:
 	UI16	more2;
 	UI16	more3;
 	bool	dispellable;
-	ITEM	itemptr;
+	cBaseObject * objptr;
 
 public:
-	ITEM	ItemPtr( void ) const		{	return itemptr;				}
+	cBaseObject *ObjPtr( void ) const		{	return objptr;				}
 	bool	Dispellable( void ) const	{	return (dispellable == 1);	}
 	UI32	ExpireTime( void ) const	{	return expiretime;			}
 	SERIAL	Source( void ) const		{	return source;				}
@@ -33,9 +33,12 @@ public:
 	void	More2( UI16 value )			{	more2 = value;				}
 	void	More3( UI16 value )			{	more3 = value;				}
 	void	Dispellable( bool value )	{	dispellable = value;		}
-	void	ItemPtr( ITEM value )		{	itemptr = value;			}
+	void	ObjPtr( cBaseObj *value )		{	objptr = value;			}
 
 	bool	Save( std::ofstream &effectDestination, SI32 mode ) const; // saves the current effect
+	teffect_st() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( -1 ), more1( 0 ), more2( 0 ), more3( 0 ), disspellable( false ), objport( NULL )
+	{
+	}
 };
 
 // This class is designed as a replacement for the teffect array (which is nasty, and too big)

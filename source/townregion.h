@@ -47,7 +47,7 @@ private:
 	SI16				guardsPurchased;
 	long				resourceCollected;		// how much we have gotten from taxes
 	UI16				taxedResource;			// item # of the taxed resource
-	SI16				taxedAmount;			// how much to tax
+	UI16				taxedAmount;			// how much to tax
 	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
 
 	SI16				health;					// health of the town
@@ -60,7 +60,7 @@ private:
 	void				SendPotentialMember( cSocket *sock );
 	void				SendMayorGump( cSocket *sock );
 	void				SendDefaultGump( cSocket *sock );
-	int					FindPositionOf( CChar& toAdd );
+	SERIAL				FindPositionOf( CChar& toAdd );
 
 	bool				RemoveCharacter( int position );
 
@@ -69,7 +69,7 @@ public:
 						cTownRegion( UI08 region );
 	virtual				~cTownRegion();
 
-	bool				DisplayTownMenu( ITEM used, cSocket *sock, SI08 flag = -1 );
+	bool				DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag = -1 );
 	bool				VoteForMayor( cSocket *sock );
 	bool				DonateResource( cSocket *s, SI32 amount );
 	bool				PurchaseGuard( cSocket *sock, UI08 number );
@@ -109,7 +109,7 @@ public:
 	void				DisplayTownMembers( cSocket *sock );
 	void				ViewTaxes( cSocket *s );
 	void				DoDamage( SI16 reduction );
-	void				TaxedAmount( SI16 amount );
+	void				TaxedAmount( UI16 amount );
 	void				SetResourceID( UI16 resID );
 	void				SetHealth( SI16 newValue );
 	void				SetChanceBigOre( UI08 newValue );
@@ -140,7 +140,7 @@ public:
 	long				GetTaxes( void ) const;
 	weathID				GetWeather( void ) const;
 	UI32				NumGuards( void ) const;
-	SI16				TaxedAmount( void ) const;
+	UI16				TaxedAmount( void ) const;
 	UI08				WorldNumber( void ) const;
 };
 

@@ -27,28 +27,28 @@ CItem *startTrade( cSocket *mSock, CChar *i )
 		return NULL;
 	}
 
-	CItem *ps = Items->SpawnItem( nSock, 1, "#", false, 0x1E5E, 0, false, false );
+	CItem *ps = Items->SpawnItem( NULL, i, 1, "#", false, 0x1E5E, 0, false, false );
 	if( ps == NULL ) 
 		return NULL;
 	ps->SetX( 26 );
 	ps->SetY( 0 );
 	ps->SetZ( 0 );
 	ps->SetLayer( 0 );
-	if( !ps->SetCont( mChar->GetSerial() ) )
+	if( !ps->SetCont( mChar ) )
 		return NULL;
 	ps->SetType( 1 );
 	ps->SetDye( false );
 	sendPackItem( mSock, ps );
 	if( nSock != NULL ) 
 		sendPackItem( nSock, ps );
-	CItem *pi = Items->SpawnItem( nSock, 1, "#", false, 0x1E5E, 0, false, false );
+	CItem *pi = Items->SpawnItem( NULL, i, 1, "#", false, 0x1E5E, 0, false, false );
 	if( pi == NULL ) 
 		return NULL;
 	pi->SetX( 26 );
 	pi->SetY( 0 );
 	pi->SetZ( 0 );
 	pi->SetLayer( 0 );
-	if( !pi->SetCont( i->GetSerial() ) )
+	if( !pi->SetCont( i ) )
 		return NULL;
 	pi->SetType( 1 );
 	pi->SetDye( false );
@@ -111,14 +111,14 @@ void clearTrades( void )
 	{
 		if( items[i].GetType() == 1 && items[i].GetX() == 26 && items[i].GetY() == 0 && items[i].GetZ() == 0 && items[i].GetID() == 0x1E5E )
 		{
-			CChar *k = calcCharObjFromSer( items[i].GetCont() );
+			CChar *k = (CChar *)items[i].GetCont();
 			CItem *p = getPack( k );
 			if( p != NULL )	// can we move this check to outside the for loop?? I should think so!
 			{
 				for( CItem *j = items[i].FirstItemObj(); !items[i].FinishedItems(); j = items[i].NextItemObj() )
 				{
 					if( j != NULL )
-						j->SetCont( p->GetSerial() );
+						j->SetCont( p );
 				}
 			}
 			Items->DeleItem( &items[i] );
@@ -160,8 +160,8 @@ void sendTradeStatus( CItem *cont1, CItem *cont2 )
 {
 	char msg[30];
 	
-	CChar *p1 = calcCharObjFromSer( cont1->GetCont() );
-	CChar *p2 = calcCharObjFromSer( cont2->GetCont() );
+	CChar *p1 = (CChar *)cont1->GetCont();
+	CChar *p2 = (CChar *)cont2->GetCont();
 	cSocket *s1 = calcSocketObjFromChar( p1 );
 	cSocket *s2 = calcSocketObjFromChar( p2 );
 	
@@ -207,8 +207,8 @@ void endTrade( SERIAL targSerial )
 	if( cont2 == NULL )
 		return;
 
-	CChar *p1 = calcCharObjFromSer( cont1->GetCont() );
-	CChar *p2 = calcCharObjFromSer( cont2->GetCont() );
+	CChar *p1 = (CChar *)cont1->GetCont();
+	CChar *p2 = (CChar *)cont2->GetCont();
 
 	CItem *bp1 = getPack( p1 );
 	if( bp1 == NULL ) 
@@ -266,7 +266,7 @@ void endTrade( SERIAL targSerial )
 	{
 		if( i != NULL )
 		{
-			i->SetCont( bp1->GetSerial() );
+			i->SetCont( bp1 );
 			i->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetZ( 9 );
@@ -275,7 +275,7 @@ void endTrade( SERIAL targSerial )
 				j = calcItemObjFromSer( i->GetGlow() );
 				if( j != NULL )
 				{
-					j->SetCont( bp1->GetSerial() );
+					j->SetCont( bp1 );
 					j->SetX( i->GetX() );
 					j->SetY( i->GetY() );
 					j->SetZ( i->GetZ() );
@@ -290,7 +290,7 @@ void endTrade( SERIAL targSerial )
 	{
 		if( i != NULL )
 		{
-			i->SetCont( bp2->GetSerial() );  
+			i->SetCont( bp2 );  
 			i->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetZ( 9 );
@@ -299,7 +299,7 @@ void endTrade( SERIAL targSerial )
 				j = calcItemObjFromSer( i->GetGlow() );
 				if( j != NULL )
 				{
-					j->SetCont( bp2->GetSerial() );
+					j->SetCont( bp2 );
 					j->SetX( i->GetX() );
 					j->SetY( i->GetY() );
 					j->SetZ( i->GetZ() );
@@ -312,17 +312,15 @@ void endTrade( SERIAL targSerial )
 	}
 	Items->DeleItem( cont1 );
 	Items->DeleItem( cont2 );
-	Weight->calcWeight( p1 );
-	Weight->calcWeight( p2 );
 }
 
 void doTrade( CItem *cont1, CItem *cont2 )
 {
-	CChar *p1 = calcCharObjFromSer( cont1->GetCont() );
+	CChar *p1 = (CChar *)cont1->GetCont();
 	if( p1 == NULL ) 
 		return;
 
-	CChar *p2 = calcCharObjFromSer( cont2->GetCont() );
+	CChar *p2 = (CChar *)cont2->GetCont();
 	if( p2 == NULL ) 
 		return;
 
@@ -342,7 +340,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 	{
 		if( i != NULL )
 		{
-			i->SetCont( bp2->GetSerial() );
+			i->SetCont( bp2 );
 			i->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetZ( 9 );
@@ -351,7 +349,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 				j = calcItemObjFromSer( i->GetGlow() );
 				if( j != NULL )
 				{
-					j->SetCont( bp2->GetSerial() );
+					j->SetCont( bp2 );
 					j->SetX( i->GetX() );
 					j->SetY( i->GetY() );
 					j->SetZ( i->GetZ() );
@@ -367,7 +365,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 	{
 		if( i != NULL )
 		{
-			i->SetCont( bp1->GetSerial() );
+			i->SetCont( bp1 );
 			i->SetX( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetY( 50 + ( RandomNum( 0, 79 ) ) );
 			i->SetZ( 9 );
@@ -376,7 +374,7 @@ void doTrade( CItem *cont1, CItem *cont2 )
 				j = calcItemObjFromSer( i->GetGlow() );
 				if( j != NULL )
 				{
-					j->SetCont( bp1->GetSerial() );
+					j->SetCont( bp1 );
 					j->SetX( i->GetX() );
 					j->SetY( i->GetY() );
 					j->SetZ( i->GetZ() );
@@ -387,8 +385,6 @@ void doTrade( CItem *cont1, CItem *cont2 )
 				RefreshItem( i );
 		}
 	}
-	Weight->calcWeight( p1 );
-	Weight->calcWeight( p2 );
 }
 
 void killTrades( CChar *i )
