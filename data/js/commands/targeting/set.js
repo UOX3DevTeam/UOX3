@@ -91,6 +91,8 @@ function onCallback0( socket, ourObj )
 
 function HandleSetItem( socket, ourItem, uKey, value )
 {
+	var splitString = socket.xText.split( " ", 2 );
+	uKey = splitString[0].toUpperCase();
 	switch( uKey )
 	{
 	case "ID":
@@ -163,6 +165,10 @@ function HandleSetItem( socket, ourItem, uKey, value )
 		break;
 	case "VISIBLE":
 		ourItem.visible = StringToNum( value );
+		okMsg( socket );
+		break;
+	case "DESC":
+		ourItem.desc = StringToNum( value );
 		okMsg( socket );
 		break;
 	default:
