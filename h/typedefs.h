@@ -35,7 +35,7 @@
 #define MAX_TRIGWORD		31
 #define MAX_GUILDTITLE		21
 
-#ifndef __LINUX__			// changed from __64BIT__, Tseramed
+#ifndef __linux__			// changed from __64BIT__, Tseramed
 
 typedef double				R64;
 typedef float				R32;

@@ -418,7 +418,7 @@ void cTargets::MultiTarget(int s) // If player clicks on something with the targ
 		case 255: GlowTarget( s );	break; // glow
 			
 		default:
-			printf("ERROR: Fallout of switch statement (%i) without default. targeting.cpp, multitarget()\n", a4); //Morrolan 
+			ConOut("ERROR: Fallout of switch statement (%i) without default. targeting.cpp, multitarget()\n", a4); //Morrolan 
 		}
 	}
 }
@@ -1630,7 +1630,7 @@ void cTargets::DvatTarget (int s)
 				}
 				count++;
 			} while( ( x1 != 255 && change == 1 ) && count < 9999 );
-			if( count >= 9999 ) printf("inf-loop avoided\n" );
+			if( count >= 9999 ) ConOut("inf-loop avoided\n" );
 			if( c == currchar[s] || items[i].contserial == -1 )
 			{
 				items[i].color1=addid1[s];
@@ -1795,15 +1795,15 @@ void cTargets::InfoTarget(int s) // rewritten to work also with map-tiles, not o
 		{  // manually calculating the ID's if it's a maptype
 			map1 = Map->SeekMap0( x, y );						
 			Map->SeekLand(map1.id, &land);
-			printf("type: map-tile\n");
-	        printf("tilenum: %i\n",map1.id);
-	        printf("Flag1:%x\n", land.flag1);
-	        printf("Flag2:%x\n", land.flag2);
-	        printf("Flag3:%x\n", land.flag3);
-	        printf("Flag4:%x\n", land.flag4);
-	        printf("Unknown1:%lx\n", land.unknown1);
-	        printf("Unknown2:%x\n", land.unknown2);
-	        printf("Name:%s\n", land.name);
+			ConOut("type: map-tile\n");
+	        ConOut("tilenum: %i\n",map1.id);
+	        ConOut("Flag1:%x\n", land.flag1);
+	        ConOut("Flag2:%x\n", land.flag2);
+	        ConOut("Flag3:%x\n", land.flag3);
+	        ConOut("Flag4:%x\n", land.flag4);
+	        ConOut("Unknown1:%lx\n", land.unknown1);
+	        ConOut("Unknown2:%x\n", land.unknown2);
+	        ConOut("Name:%s\n", land.name);
 
 		} else
 
@@ -1812,24 +1812,24 @@ void cTargets::InfoTarget(int s) // rewritten to work also with map-tiles, not o
 	      tilenum=((buffer[s][0x11])<<8)+buffer[s][0x12]; // lb, bugfix
 	      Map->SeekTile(tilenum, &tile);
 
-		  printf("type: static-tile\n");
-	      printf("tilenum: %i\n",tilenum);
-	      printf("Flag1:%x\n", tile.flag1);
-	      printf("Flag2:%x\n", tile.flag2);
-	      printf("Flag3:%x\n", tile.flag3);
-	      printf("Flag4:%x\n", tile.flag4);
-	      printf("Weight:%x\n", tile.weight);
-	      printf("Layer:%x\n", tile.layer);
-	      printf("Anim:%lx\n", tile.animation);
-	      printf("Unknown1:%lx\n", tile.unknown1);
-	      printf("Unknown2:%x\n", tile.unknown2);
-	      printf("Unknown3:%x\n", tile.unknown3);
-	      printf("Height:%x\n", tile.height);
-	      printf("Name:%s\n", tile.name);
+		  ConOut("type: static-tile\n");
+	      ConOut("tilenum: %i\n",tilenum);
+	      ConOut("Flag1:%x\n", tile.flag1);
+	      ConOut("Flag2:%x\n", tile.flag2);
+	      ConOut("Flag3:%x\n", tile.flag3);
+	      ConOut("Flag4:%x\n", tile.flag4);
+	      ConOut("Weight:%x\n", tile.weight);
+	      ConOut("Layer:%x\n", tile.layer);
+	      ConOut("Anim:%lx\n", tile.animation);
+	      ConOut("Unknown1:%lx\n", tile.unknown1);
+	      ConOut("Unknown2:%x\n", tile.unknown2);
+	      ConOut("Unknown3:%x\n", tile.unknown3);
+	      ConOut("Height:%x\n", tile.height);
+	      ConOut("Name:%s\n", tile.name);
 	     
 		}
 		sysmessage(s, "Item info has been dumped to the console.");
-		printf("\n");
+		ConOut("\n");
 }
 
 void cTargets::TweakTarget( UOXSOCKET s )//Lag fix -- Zippy
@@ -2299,7 +2299,7 @@ void cTargets::CorpseTarget(int s)
 					case 0xEE: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Rat
 						//case 0xEF-case 0xFF: break;                     //-NULL-   
 					default:
-						printf("ERROR: Fallout of switch statement without default. uox3.cpp, corpsetarget()\n"); //Morrolan
+						ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, corpsetarget()\n"); //Morrolan
 					}// switch
 				 }
 			} 
@@ -3372,7 +3372,7 @@ void cTargets::NpcResurrectTarget( CHARACTER i )
 	int j,c, ptr;
 	if( chars[i].npc )
 	{
-		printf( "Resurrect attempted on character %i", i );
+		ConOut( "Resurrect attempted on character %i", i );
 		return;
 	}
 	if (chars[i].dead==1)

@@ -57,7 +57,7 @@ void offlinehtml()//HTML
 	if (html==NULL) 
 	{
 		closescript();	// don't leave this open! - fur
-		printf("Could not create HTML file '%s', please check the path in htmlstrm.scp or the file permissions.\n", hfile );
+		ConOut("Could not create HTML file '%s', please check the path in htmlstrm.scp or the file permissions.\n", hfile );
 		return;
 	}
 	do {
@@ -102,7 +102,7 @@ void updatehtml()//HTML
 	if (html==NULL) // LB
 	{
 		closescript();
-		printf("Could not create HTML file '%s', please check the path in htmlstrm.scp or the file permissions.\n", hfile );
+		ConOut("Could not create HTML file '%s', please check the path in htmlstrm.scp or the file permissions.\n", hfile );
 		return;
 	}
 	do {
@@ -222,12 +222,12 @@ void updatehtml()//HTML
 		}
 		else if(!(strcmp(script1,"UDTIME")))	fprintf(html,"%f",(float)(server_data.html/60));
 		else if(!(strcmp(script1,"LINEFEED"))) fprintf(html,"\n");
-#ifdef __NT__
+#ifndef __linux__
 		else if(!(strcmp(script1,"VER"))) fprintf(html,"%s [WIN32]",VER);
 	#else
 		else if(!(strcmp(script1,"VER"))) fprintf(html,"%s [LINUX]",VER);
 #endif
-		else printf("HTML: WARNING: Unknown tag \"%s\" in \"%s\", ignored.\n", script1, hfile);
+		else ConOut("HTML: WARNING: Unknown tag \"%s\" in \"%s\", ignored.\n", script1, hfile);
 	} while(script1[0]!='}');
 	fclose(html);
 	closescript();

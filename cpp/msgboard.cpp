@@ -260,7 +260,7 @@ void MsgBoardOpen(int s)
 			break;
 			
 		default:
-			printf("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
+			ConOut("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
 			return;
 		}
 		
@@ -271,7 +271,7 @@ void MsgBoardOpen(int s)
 			
 			if ( fseek( file, 4, SEEK_SET ) )
 			{
-				printf("UOX3: MsgBoardOpen() failed to seek to first message segment in bbi file\n");
+				ConOut("UOX3: MsgBoardOpen() failed to seek to first message segment in bbi file\n");
 				return;
 			}
 			
@@ -434,7 +434,7 @@ void MsgBoardList( int s )
 			break;
 			
 		default:
-			printf("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
+			ConOut("UOX3: MsgBoardOpen() Unhandle case value: %d", currentFile);
 			return;
 		}
 		msgOffset = 0;
@@ -500,7 +500,7 @@ void MsgBoardList( int s )
 							if ( segmentSize != fread( &msg[msgBytes], sizeof(char), segmentSize, file ) )
 							{
 								// If we are unable to read in the number of bytes specified by the segmentSize, ABORT!
-								printf("UOX3: MsgBoardList() couldn't read in entire segment(%i)\n", x);
+								ConOut("UOX3: MsgBoardList() couldn't read in entire segment(%i)\n", x);
 								fclose( file );
 								return;
 							}
@@ -513,7 +513,7 @@ void MsgBoardList( int s )
 						
 						// Jump to next message
 						if ( fseek(file, msgOffset, SEEK_SET) )
-							printf("UOX3: MsgBoardEvent() case 4 : failed to seek start of next message\n");
+							ConOut("UOX3: MsgBoardEvent() case 4 : failed to seek start of next message\n");
 						
 						// Calculate new message size
 						msg[1] = (unsigned char)(msgBytes>>8);
@@ -533,7 +533,7 @@ void MsgBoardList( int s )
 						// Jump to next message
 						if ( fseek(file, msgOffset, SEEK_SET) )
 						{
-							printf("UOX3: MsgBoardEvent() case 4 : failed to seek next message\n");
+							ConOut("UOX3: MsgBoardEvent() case 4 : failed to seek next message\n");
 							break;
 						}
 					}
@@ -624,7 +624,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+		ConOut("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
 		return 0;
 	}
 	
@@ -635,7 +635,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	pFile = fopen( fileName, "rb" );
 	if ( pFile == NULL )
 	{
-		printf("UOX3: MsgBoardGetMaxMsgSN() bbi not found. Creating file %s\n", fileName );
+		ConOut("UOX3: MsgBoardGetMaxMsgSN() bbi not found. Creating file %s\n", fileName );
 		
 		// Default to serial number 0
 		maxSN = 0;
@@ -645,7 +645,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		// Get the first 4 bytes from each message index segment in the bbi file
 		if ( fread(maxMsgSN, sizeof(char), 4, pFile) != 4 )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Could not get MaxSN from %s\n", fileName );
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Could not get MaxSN from %s\n", fileName );
 			
 			fclose( pFile );
 			return 0;
@@ -668,7 +668,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		if ( pFile == NULL )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Error creating bbi file, aborting post\n");
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Error creating bbi file, aborting post\n");
 			return 0;
 		}
 		else
@@ -684,7 +684,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Write 03 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
 				if ( fwrite("\x03\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					ConOut("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
 					fclose( pFile );
 					return 0;
 				}
@@ -697,7 +697,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Write 02 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
 				if ( fwrite("\x02\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					ConOut("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
 					fclose( pFile );
 					return 0;
 				}
@@ -710,7 +710,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Write 01 00 00 00 to bbi file (can't start at 00 00 00 00 because client crashes if this is true)
 				if ( fwrite("\x01\x00\x00\x00", sizeof(char), 4, pFile) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					ConOut("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
 					fclose( pFile );
 					return 0;
 				}
@@ -721,7 +721,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				
 				// Invalid post type
 			default:
-				printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+				ConOut("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
 				fclose( pFile );
 				return 0;
 			}
@@ -734,7 +734,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		if ( pFile == NULL )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Failed to create bbi file, aborting post\n");
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Failed to create bbi file, aborting post\n");
 			return 0;
 		}
 		else
@@ -742,7 +742,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 			// Set file pointer to BOF
 			if ( fseek(pFile, 0, SEEK_SET) )
 			{
-				printf("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to BOF in bbi file\n");
+				ConOut("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to BOF in bbi file\n");
 				fclose( pFile );
 				return 0;
 			}
@@ -757,7 +757,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Write out new maxSN for this post
 				if ( fwrite( maxMsgSN, sizeof(char), 4, pFile) != 4 )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+					ConOut("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
 					fclose( pFile );
 					return 0;
 				}
@@ -765,7 +765,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 				// Now jump to EOF to write next msgbbiSegment info
 				if ( fseek(pFile, 0, SEEK_END) )
 				{
-					printf("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to EOF in bbi file\n");
+					ConOut("UOX3: MsgBoardGetMaxMsgSN() Failed to set pFile to EOF in bbi file\n");
 					fclose( pFile );
 					return 0;
 				}
@@ -808,7 +808,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		//if ( ((maxSN-0x03000000) >= MAXPOSTS) || (maxSN >= 0xFFFFFFFF) )
 		if ( maxSN >= 0x03FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
 			fclose( pFile );
 			return 0;
 		}
@@ -820,7 +820,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		//if ( ((maxSN-0x02000000) >= MAXPOSTS) || (maxSN >= 0x02FFFFFF) )
 		if ( maxSN >= 0x02FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
 			fclose( pFile );
 			return 0;
 		}
@@ -832,7 +832,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		//if ( ((maxSN-0x01000000) >= MAXPOSTS) || (maxSN >= 0x01FFFFFF) )
 		if ( maxSN >= 0x01FFFFFF )
 		{
-			printf("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
+			ConOut("UOX3: MsgBoardGetMaxMsgSN() Max posts reached in %s\n", fileName );
 			fclose( pFile );
 			return 0;
 		}
@@ -840,7 +840,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 		
 		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
+		ConOut("UOX3: MsgBoardGetMaxMsgSN() Invalid post type, aborting post\n");
 		fclose( pFile );
 		return 0;
 	}
@@ -848,7 +848,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost=0 )
 	// Write out bbi message array to file
 	if ( fwrite(msgbbiSegment, sizeof(char), (sizeof(msgbbiSegment)-1), pFile) != (sizeof(msgbbiSegment)-1) )
 	{
-		printf("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
+		ConOut("UOX3: MsgBoardGetMaxMsgSN() Error writing to bbi file, aborting post\n");
 		fclose( pFile );
 		return 0;
 	}
@@ -921,7 +921,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 		if ( (isReply>0) && (isReply<0x03000000) )
 		{
 #ifdef DEBUG
-			printf("UOX3: MsgBoardPost() Attempted reply to a global or regional post\n");
+			ConOut("UOX3: MsgBoardPost() Attempted reply to a global or regional post\n");
 #endif
 			sysmessage( s, "You can not reply to global or regional posts" );
 			return 0;
@@ -935,7 +935,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	// If the value returned is zero, then abort the posting
 	if ( maxMsgSN == 0 )
 	{
-		printf("UOX3: MsgBoardPost() Could not retrieve a valid message serial number\n");
+		ConOut("UOX3: MsgBoardPost() Could not retrieve a valid message serial number\n");
 		sysmessage( s, "Post failed!" );
 		return 0;
 	}
@@ -974,7 +974,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 		
 		// Invalid post type
 	default:
-		printf("UOX3: MsgBoardPost() Invalid post type, aborting post\n");
+		ConOut("UOX3: MsgBoardPost() Invalid post type, aborting post\n");
 		sysmessage( s, "Invalid post type!" );
 		return 0;
 	}
@@ -988,7 +988,7 @@ int MsgBoardPost( int s, int msgType, int autoPost )
 	// If we couldn't open the file, send an error message to client
 	if ( pFile == NULL )
 	{
-		printf("UOX3: MsgBoardPost() Unable to open bbp file, aborting post\n");
+		ConOut("UOX3: MsgBoardPost() Unable to open bbp file, aborting post\n");
 		return 0;
 	}
 	
@@ -1231,7 +1231,7 @@ void MsgBoardOpenPost( int s )
 	// This msgSN does not fall within a valid range
 	else
 	{
-		printf("UOX3: MsgBoardOpenPost() Invalid message SN: %02x%02x%02x%02x", buffer[s][8], buffer[s][9], buffer[s][10], buffer[s][11] );
+		ConOut("UOX3: MsgBoardOpenPost() Invalid message SN: %02x%02x%02x%02x", buffer[s][8], buffer[s][9], buffer[s][10], buffer[s][11] );
 		sysmessage( s, "Post not valid, please notify GM");
 		return;
 	}
@@ -1250,7 +1250,7 @@ void MsgBoardOpenPost( int s )
 		// If we have reached the EOF then stop searching
 		if ( feof(file) )
 		{
-			printf("UOX3: MsgBoardEvent() case 3: message not found \n");
+			ConOut("UOX3: MsgBoardEvent() case 3: message not found \n");
 			break;
 		}
 		
@@ -1266,7 +1266,7 @@ void MsgBoardOpenPost( int s )
 			// Jump ahead 4 bytes in bbp file to skip 
 			// the parent message serial number section as it is not required
 			if ( fseek(file, 4, SEEK_CUR) )
-				printf("UOX3: MsgBoardEvent() case 3 : failed to seek Author segment\n");
+				ConOut("UOX3: MsgBoardEvent() case 3 : failed to seek Author segment\n");
 			
 			// Read in  author, subject and date info to pass back to client (DO NOT SEND BODY of msg)
 			// Count the total number of bytes in posting (not including body as it isn't sent to client)
@@ -1373,7 +1373,7 @@ void MsgBoardOpenPost( int s )
 	   
 	   // Jump to next message
 	   if ( fseek(file, msgBytes, SEEK_SET) )
-		   printf("UOX3: MsgBoardEvent() case 3 : failed to seek next message\n");
+		   ConOut("UOX3: MsgBoardEvent() case 3 : failed to seek next message\n");
    }
    
   }// End of while loop
@@ -1465,7 +1465,7 @@ void MsgBoardRemovePost( int s )
 		// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
 		if ( fseek( file, 4, SEEK_SET ) )
 		{
-			printf("UOX3: MsgBoardRemovePost() failed to seek first message seg in bbi\n");
+			ConOut("UOX3: MsgBoardRemovePost() failed to seek first message seg in bbi\n");
 			sysmessage( s, "Failed to find post to be removed." );
 			return;
 		}
@@ -1480,7 +1480,7 @@ void MsgBoardRemovePost( int s )
 			// Fill up the msg with data from the bbi file
 			if ( fread( msg, sizeof(char), 19, file ) != 19 )
 			{
-				printf("UOX3: MsgBoardRemovePost() Could not find message to mark deleted\n");
+				ConOut("UOX3: MsgBoardRemovePost() Could not find message to mark deleted\n");
 				if ( feof(file) ) break;
 			}
 			
@@ -1573,7 +1573,7 @@ void MsgBoardEvent(int s)
 		{
 			// Check to see whether client has ACK'd all of our message ID's before proceeding
 			postAckCount[s]++;
-			//printf(" pstAckCont=%d        postCount=%d\n", postAckCount[s], postCount[s]);
+			//ConOut(" pstAckCont=%d        postCount=%d\n", postAckCount[s], postCount[s]);
 			if ( postAckCount[s] != postCount[s] )
 				return;
 			
@@ -1606,7 +1606,7 @@ void MsgBoardEvent(int s)
 		
 	default:
 		{
-			printf("UOX3: MsgBoardEvent() Unknown msgType:%x for message: %x\n", buffer[s][3], buffer[s][0]);
+			ConOut("UOX3: MsgBoardEvent() Unknown msgType:%x for message: %x\n", buffer[s][3], buffer[s][0]);
 			break;
 		}
 	}
@@ -1678,7 +1678,7 @@ int MsgBoardPostQuest( int serial, int questType )
 		break;
 		
 	default:
-		printf("UOX3: MsgBoardPostQuest() undefined questType, aborting quest!\n");
+		ConOut("UOX3: MsgBoardPostQuest() undefined questType, aborting quest!\n");
 		return 0;
 	}
 	
@@ -1713,7 +1713,7 @@ int MsgBoardPostQuest( int serial, int questType )
 				{
 					if ( listCount >= MAXENTRIES )
 					{
-						printf("UOX3: MsgBoardPostQuest() Too many entries in ESCORTS list [MAXENTRIES=%d]\n", MAXENTRIES );
+						ConOut("UOX3: MsgBoardPostQuest() Too many entries in ESCORTS list [MAXENTRIES=%d]\n", MAXENTRIES );
 						break;
 					}
 					
@@ -1727,14 +1727,14 @@ int MsgBoardPostQuest( int serial, int questType )
 			// If no entries are found in the list, then there must be no entries at all.
 			if ( listCount == 0 )
 			{
-				printf( "UOX3: MsgBoardPostQuest() No msgboard.scp entries found\n" );
+				ConOut( "UOX3: MsgBoardPostQuest() No msgboard.scp entries found\n" );
 				return 0;
 			}
 			
 			// Choose a random number between 1 and listCount to use as a message
 			entryToUse = RandomNum( 1, listCount );
 #ifdef DEBUG
-			printf("UOX3: MsgBoardPostQuest() listCount=%d  entryToUse=%d\n", listCount, entryToUse );
+			ConOut("UOX3: MsgBoardPostQuest() listCount=%d  entryToUse=%d\n", listCount, entryToUse );
 #endif
 			// Open the script again and find the section choosen by the randomizer
 			openscript( "msgboard.scp" );
@@ -1743,7 +1743,7 @@ int MsgBoardPostQuest( int serial, int questType )
 			
 			if (!(i_scripts[msgboard_script]->find(temp)))
 			{
-				printf( "UOX3: MsgBoardPostQuest() Couldn't find entry %s\n", temp );
+				ConOut( "UOX3: MsgBoardPostQuest() Couldn't find entry %s\n", temp );
 				closescript();
 				return 0;
 			}
@@ -1752,7 +1752,7 @@ int MsgBoardPostQuest( int serial, int questType )
 		
 	default:
 		{
-			printf( "UOX3: MsgBoardPostQuest() Invalid questType %d\n", questType );
+			ConOut( "UOX3: MsgBoardPostQuest() Invalid questType %d\n", questType );
 			closescript();
 			return 0;
 		}
@@ -1788,7 +1788,7 @@ int MsgBoardPostQuest( int serial, int questType )
 		break;
 		
 	default:
-		printf("UOX3: MsgBoardPostQuest() invalid quest type\n");
+		ConOut("UOX3: MsgBoardPostQuest() invalid quest type\n");
 		return 0;
 	}
 	
@@ -1957,7 +1957,7 @@ void MsgBoardQuestEscortCreate( int npcIndex )
 	// Make sure the questDest is valid otherwise don't post and delete the NPC
 	if ( !chars[npcIndex].questDestRegion )
 	{
-		printf("UOX3: MsgBoardQuestEscortCreate() No valid regions defined for escort quests\n");
+		ConOut("UOX3: MsgBoardQuestEscortCreate() No valid regions defined for escort quests\n");
 		Npcs->DeleteChar( npcIndex );
 		//deletechar( npcIndex );
 		return;
@@ -1966,8 +1966,8 @@ void MsgBoardQuestEscortCreate( int npcIndex )
 	// Post the message to the message board in the same REGION as the NPC
 	if ( !MsgBoardPostQuest(chars[npcIndex].serial, ESCORTQUEST) )
 	{
-		printf( "UOX3: MsgBoardQuestEscortCreate() Failed to add quest post for %s\n", chars[npcIndex].name );
-		printf( "UOX3: MsgBoardQuestEscortCreate() Deleting NPC %s\n", chars[npcIndex].name );
+		ConOut( "UOX3: MsgBoardQuestEscortCreate() Failed to add quest post for %s\n", chars[npcIndex].name );
+		ConOut( "UOX3: MsgBoardQuestEscortCreate() Deleting NPC %s\n", chars[npcIndex].name );
 		Npcs->DeleteChar( npcIndex );
 		//deletechar( npcIndex );
 		return;
@@ -1975,7 +1975,7 @@ void MsgBoardQuestEscortCreate( int npcIndex )
 	
 	// Debugging messages
 #ifdef DEBUG
-	printf("UOX3: MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s\n", chars[npcIndex].name, region[chars[npcIndex].questDestRegion].name );
+	ConOut("UOX3: MsgBoardQuestEscortCreate() Escort quest for:\n       %s to be escorted to %s\n", chars[npcIndex].name, region[chars[npcIndex].questDestRegion].name );
 #endif
 }
 
@@ -2096,7 +2096,7 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 		// Ignore first 4 bytes of bbi file as this is reserverd for the current max message serial number being used
 		if ( fseek( file, 4, SEEK_SET ) )
 		{
-			printf("UOX3: MsgBoardQuestEscortRemovePost() failed to seek first message seg in bbi\n");
+			ConOut("UOX3: MsgBoardQuestEscortRemovePost() failed to seek first message seg in bbi\n");
 			return;
 		}
 		
@@ -2110,7 +2110,7 @@ void MsgBoardQuestEscortRemovePost( int npcIndex )
 			// Fill up the msg with data from the bbi file
 			if ( fread( msg, sizeof(char), 19, file ) != 19 )
 			{
-				printf("UOX3: MsgBoardQuestEscortRemovePost() Could not find message to mark deleted\n");
+				ConOut("UOX3: MsgBoardQuestEscortRemovePost() Could not find message to mark deleted\n");
 				if ( feof(file) ) break;
 			}
 			

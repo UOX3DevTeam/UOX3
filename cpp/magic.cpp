@@ -2358,7 +2358,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							}
 							break;
 						default:
-							printf("MAGIC-ERROR: Unknown Travel spell %i, magic.cpp\n", curSpell );
+							ConOut("MAGIC-ERROR: Unknown Travel spell %i, magic.cpp\n", curSpell );
 							break;
 						}
 					}
@@ -2608,7 +2608,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							MagicDamage(i, chars[currchar[s]].skill[TACTICS]/25, src );
 						break; 
 					default:
-						printf("MAGIC-ERROR: Unknown CharacterTarget spell %i, magic.cpp\n", curSpell );
+						ConOut("MAGIC-ERROR: Unknown CharacterTarget spell %i, magic.cpp\n", curSpell );
 						break;
 					}
 				}
@@ -2933,7 +2933,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 												dx=abs(chars[ii].x-x);
 												dy=abs(chars[ii].y-y);
 												dz=abs(chars[ii].z-z);  // new--difference in z coords
-#ifdef __NT__
+#ifndef __linux__
 												d=sqrt(dx*dx+dy*dy);
 #else
 												d=hypot(dx, dy);
@@ -3153,7 +3153,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						SummonMonster( s, 0x00, 0x0d, "an energy vortex", 0x00, 0x75, x, y, z );
 						break;
 					default:
-						printf("MAGIC-ERROR: Unknown LocationTarget spell %i\n", curSpell );
+						ConOut("MAGIC-ERROR: Unknown LocationTarget spell %i\n", curSpell );
 						break;
 					}
 					
@@ -3246,7 +3246,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							case 12: items[i].type=13; break;
 							case 63: items[i].type=64; break;
 							default:
-								printf("ERROR: Fallout of switch statement without default. magic.cpp, magiclocktarget()/n"); //Morrolan
+								ConOut("ERROR: Fallout of switch statement without default. magic.cpp, magiclocktarget()/n"); //Morrolan
 								break;
 							}
 							soundeffect3(i, 0x02, 0x00);
@@ -3272,7 +3272,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 						//						case 41:
 						//							if (items[i].priv&0x04) Items->DeleItem(i);	break;
 					default:
-						printf("MAGIC-ERROR: Unknown ItemTarget spell %i, magic.cpp\n", curSpell );
+						ConOut("MAGIC-ERROR: Unknown ItemTarget spell %i, magic.cpp\n", curSpell );
 						break;
 					}
 				}
@@ -3308,7 +3308,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 			SummonMonster( s, 0, 0, "#", 0, 0, chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 			break;
 		case 35:
-			printf("INCOGNITO SPELL START!!\n");
+			ConOut("INCOGNITO SPELL START!!\n");
 			int serhash,ci;
 			i=currchar[s];
 			
@@ -3340,7 +3340,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 					
 					// ------ HAIR -----
 					if(items[j].layer==0x0B) { //change hair style/color
-						printf("HAIR FOUND!!\n");
+						ConOut("HAIR FOUND!!\n");
 						//stores old hair values
 						chars[i].haircolor1=items[j].color1;
 						chars[i].haircolor2=items[j].color2;
@@ -3380,7 +3380,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 					// only if a men :D
 					if(chars[i].id2==0x90)
 						if(items[j].layer==0x10) { //change beard style/color
-							printf("BEARD FOUND!!\n");
+							ConOut("BEARD FOUND!!\n");
 							//stores old beard values
 							chars[i].beardcolor1=items[j].color1;
 							chars[i].beardcolor2=items[j].color2;
@@ -3434,7 +3434,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 				dmg=(chars[currchar[s]].skill[MAGERY]/40)+(rand()%20-10);
 
 #ifdef _DEBUG
-				printf( "DEBUG: [NewCastSpell()] %s is being set to criminal\n", chars[currchar[s]].name );
+				ConOut( "DEBUG: [NewCastSpell()] %s is being set to criminal\n", chars[currchar[s]].name );
 #endif
 				criminal( currchar[s] );
 				
@@ -3528,7 +3528,7 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 				SummonMonster( s, 0x00, 0x0A, "a black knight", (unsigned char)(5000>>8), (unsigned char)(5000%256), chars[currchar[s]].x+1, chars[currchar[s]].y+1, chars[currchar[s]].z );
 				break;
 			default:	
-				printf("MAGIC-ERROR: Unknown NonTarget spell %i, magic.cpp\n", curSpell );
+				ConOut("MAGIC-ERROR: Unknown NonTarget spell %i, magic.cpp\n", curSpell );
 				break;
 		}
 		chars[currchar[s]].spellCast = 0;
@@ -3547,7 +3547,7 @@ void cMagic::LoadScript( void )
 	{
 		delete[] spells;
 	}	
-	printf("\nLoading spells"); fflush(stdout);
+	ConOut("\nLoading spells"); fflush(stdout);
 	
 	   
     // for some strange reason, spells go from index 1 to SPELL_MAX and 
@@ -3581,14 +3581,14 @@ void cMagic::LoadScript( void )
     
 	if (spellCount > SPELL_MAX) 
 	{ 
-		printf("ERROR: Too many spells (%d) in spells.scp, ones after %d will be ignored.\n", spellCount, SPELL_MAX); 
+		ConOut("ERROR: Too many spells (%d) in spells.scp, ones after %d will be ignored.\n", spellCount, SPELL_MAX); 
 		spellCount = SPELL_MAX; 
 	} 
 	
 	for( i=1; i <= spellCount; i++ )
 	{
 		sprintf(sect, "SPELL %d", i);
-		printf("."); fflush(stdout);
+		ConOut("."); fflush(stdout);
 		i_scripts[spells_script]->find(sect);
 		spells[i].enabled = false;
 		spells[i].soundEffect[0] = spells[i].soundEffect[1] = -1;
@@ -3672,7 +3672,7 @@ void cMagic::LoadScript( void )
 		} while(script1[0]!='}' && strcmp( script1, "EOF" ) );
 	}
 	closescript();
-	printf("\n");
+	ConOut("\n");
 }
 
 
@@ -3982,7 +3982,7 @@ bool cMagic::fieldSpell( int num )
 // added by AntiChrist (9/99)
 void cMagic::PolymorphMenu(int s,int gmindex)
 {
-	//printf("polymorphmenu\n");
+	//ConOut("polymorphmenu\n");
 	int total, i;
 	char lentext;
 	char sect[512];
@@ -4024,11 +4024,11 @@ void cMagic::PolymorphMenu(int s,int gmindex)
 	do
 	{
 		read2();
-		//printf("yaba: %s daba: %s\n",script1,script2);
+		//ConOut("yaba: %s daba: %s\n",script1,script2);
 		if (script1[0]!='}')
 		{
 			server_data.polyduration=str2num(script1);
-			printf("polydur: %i\n",server_data.polyduration);
+			ConOut("polydur: %i\n",server_data.polyduration);
 			read1();
 		}
 		
@@ -4066,8 +4066,8 @@ void cMagic::PolymorphMenu(int s,int gmindex)
 // added by AntiChrist (9/99)
 void cMagic::Polymorph(int s, int gmindex, int creaturenumber)
 {
-	//printf("polymorph\n");
-	//printf("creaturenumber %i\n",creaturenumber);
+	//ConOut("polymorph\n");
+	//ConOut("creaturenumber %i\n",creaturenumber);
 	int i,k;
 	int id1,id2;
 	
@@ -4087,7 +4087,7 @@ void cMagic::Polymorph(int s, int gmindex, int creaturenumber)
 	{
 		//read1();
 		read2();
-		printf("%s %s\n",script1,script2);
+		ConOut("%s %s\n",script1,script2);
 		if (script1[0]!='}' && strcmp("POLYMORPHID",script1))
 		{
 			i++;
@@ -4096,12 +4096,12 @@ void cMagic::Polymorph(int s, int gmindex, int creaturenumber)
 	while (script1[0]!='}' && i<creaturenumber);
 	
 	read2();
-	//printf("%s %s\n",script1,script2);
+	//ConOut("%s %s\n",script1,script2);
 	k=hstr2num(script2);
 	
 	closescript();
 	
-	//printf("K: %x\n",k);
+	//ConOut("K: %x\n",k);
 	
 	id1=k>>8;
 	id2=k%256;

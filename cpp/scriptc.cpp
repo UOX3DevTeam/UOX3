@@ -71,7 +71,7 @@ void Script::reload() {
         fprintf(stderr, "Cannot open %s: %s", filename, strerror(errno));
         exit(1);
     }
-    printf ("Reloading %-15s: ", filename); fflush (stdout);
+    ConOut ("Reloading %-15s: ", filename); fflush (stdout);
 
     // Snarf the part of SECTION... until EOL
     while(fgets(buf, sizeof(buf), fp))
@@ -80,7 +80,7 @@ void Script::reload() {
             count++;
         }
 
-    printf ("%6d sections found.\n", count);
+    ConOut ("%6d sections found.\n", count);
     
     fclose(fp);
 }
@@ -93,6 +93,7 @@ Script::Script(const char *_filename) {
     
     if (!(get_modification_date(filename, &last_modification))) {
         fprintf(stderr, "Cannot stat %s: %s", filename, strerror(errno));
+	endScrn() ;
         exit(1);
     }
 
@@ -121,7 +122,7 @@ char Script::find(const char *section) {
         last_modification = current;
     }
 
-#ifndef __LINUX__
+#ifndef __linux__
     for (sc = entries->rewind(); sc; sc = entries->next())
 	{
 		if( strlen( sc->name ) == strlen( section ) )

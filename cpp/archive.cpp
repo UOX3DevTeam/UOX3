@@ -111,24 +111,24 @@ void fileArchive(char *pFile2Archive_chars, char *pFile2Archive_items, char *pAr
 	strcat(destfile2,timenow);
 	strcat(destfile2,ext2);
 
-    // printf("File2Archive_chars:%s\n%s\n",pFile2Archive_chars,destfile);
-	// printf("File2Archive_items:%s\n%s\n",pFile2Archive_items,destfile2);
+    // ConOut("File2Archive_chars:%s\n%s\n",pFile2Archive_chars,destfile);
+	// ConOut("File2Archive_items:%s\n%s\n",pFile2Archive_items,destfile2);
 
 	// Rename/Move the pFile2Archive to destfile
 
 	if( rename( pFile2Archive_chars, destfile ) != 0 )
-		printf( "UOX3: Err-Could not rename/move file.\nFile '%s' or directory '%s' may not exist.\n", pFile2Archive_chars, pArchiveDir );
+		ConOut( "UOX3: Err-Could not rename/move file.\nFile '%s' or directory '%s' may not exist.\n", pFile2Archive_chars, pArchiveDir );
 	else
-		printf( "UOX3: '%s' renamed/moved to '%s'\n", pFile2Archive_chars, destfile );
+		ConOut( "UOX3: '%s' renamed/moved to '%s'\n", pFile2Archive_chars, destfile );
 
 
     if( rename( pFile2Archive_items, destfile2 ) != 0 )
-		printf( "UOX3: Err-Could not rename/move file.\nFile '%s' or directory '%s' may not exist.\n", pFile2Archive_items, pArchiveDir );
+		ConOut( "UOX3: Err-Could not rename/move file.\nFile '%s' or directory '%s' may not exist.\n", pFile2Archive_items, pArchiveDir );
 	else
-		printf( "UOX3: '%s' renamed/moved to '%s'\n", pFile2Archive_items, destfile2 );
+		ConOut( "UOX3: '%s' renamed/moved to '%s'\n", pFile2Archive_items, destfile2 );
 
 
-	printf("finished backup\n");
+	ConOut("finished backup\n");
 //	delete timenow;
 	return;
 }

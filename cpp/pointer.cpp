@@ -49,7 +49,7 @@ void setptr(lookuptr_st *ptr, int item) //set item in pointer array
 		if (ptr->pointer == NULL) 
 			return;
 		memset(ptr->pointer, 0xFF, 25*sizeof(int));
-		//printf("%i!!", ptr->max );
+		//ConOut("%i!!", ptr->max );
 		ptr->max = 25;
 	}
 
@@ -83,7 +83,7 @@ void setptr(lookuptr_st *ptr, int item) //set item in pointer array
 // - Find a specific item/char by serial number.
 //   Usage: item=findbyserial(&itemsp[serial%256], serial, 0);
 //          char=findbyserial(&charsp[serial%256], serial, 1);
-//          if (item==-1) printf("Couldn't find by serial: %d\n", serial);
+//          if (item==-1) ConOut("Couldn't find by serial: %d\n", serial);
 int findbyserial(lookuptr_st *ptr, int nSerial, int nType)
 { 
 	if (nSerial<0) return-1;  //prevent errors from some clients being slower than the server clicking on nolonger valid items
@@ -95,13 +95,13 @@ int findbyserial(lookuptr_st *ptr, int nSerial, int nType)
 		if ((nType==0) && (ptr->pointer[i]>-1 && ptr->pointer[i]<imem) && 
 			(items[ptr->pointer[i]].serial==nSerial))
 		{
-			//printf("Found item %d out of %d in %d hits.\n",ptr->pointer[i],itemcount,cnt);
+			//ConOut("Found item %d out of %d in %d hits.\n",ptr->pointer[i],itemcount,cnt);
 			return ptr->pointer[i];
 		}
 		if ((nType==1) && (ptr->pointer[i]>-1 && ptr->pointer[i]<cmem) && 
 			(chars[ptr->pointer[i]].serial==nSerial))
 		{
-			// printf("Found char %d out of %d in %d hits.\n",ptr->pointer[i],charcount,cnt);
+			// ConOut("Found char %d out of %d in %d hits.\n",ptr->pointer[i],charcount,cnt);
 			return ptr->pointer[i];
 		}
 	}
@@ -111,7 +111,7 @@ int findbyserial(lookuptr_st *ptr, int nSerial, int nType)
 // - Remove an item/char from a pointer array
 //   (Ok, just mark it as a free slot ;P )
 //   Usage: if (!removefromptr(&itemsp[serial%256], item))
-//            printf "Error removing item/char %d from pointer array\n",item);
+//            ConOut "Error removing item/char %d from pointer array\n",item);
 int removefromptr(lookuptr_st *ptr, int nItem)
 {
 	int i;

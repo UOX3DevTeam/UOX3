@@ -42,7 +42,7 @@ bool cWeatherAb::load( void )
 	weathID wthCount = 0;
 	bool done = false;
 	openscript("weatherab.scp");
-	printf("Loading weather system now!\n");
+	ConOut("Loading weather system now!\n");
 	char sect[512];
 	while ( !done )
 	{
@@ -376,7 +376,7 @@ bool cWeatherAb::doStuff( void )
 		effTempMax = getEffectiveMaxTemp( currval );
 		effTempMin = getEffectiveMinTemp( currval );
 		chanceForWeath = RandomNum( 0, 100 );
-//		printf("chanceForWeath %i\n", chanceForWeath );
+//		ConOut("chanceForWeath %i\n", chanceForWeath );
 		isSnowing = getSnowActive( currval );
 		isRaining = getRainActive( currval );
 		if( ampm )
@@ -386,12 +386,12 @@ bool cWeatherAb::doStuff( void )
 		setTemp( currval, currTemp );
 		if( isSnowing && getSnowThreshold( currval ) > currTemp )
 		{
-//			printf("It's snowing in weather type %i with current temperature %i", currval, (int)currTemp );
+//			ConOut("It's snowing in weather type %i with current temperature %i", currval, (int)currTemp );
 			setSnowIntensity( currval, RandomNum( 1, 4 ) );
 		} 
 		else if( isRaining )
 		{
-//			printf("It's raining in weather type %i with current temperature %i", currval, (int)currTemp );
+//			ConOut("It's raining in weather type %i with current temperature %i", currval, (int)currTemp );
 			setRainIntensity( currval, RandomNum( 1, 4 ) );
 		}
 	}

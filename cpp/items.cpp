@@ -215,7 +215,7 @@ item_st& cItemHandle::operator[] ( long int Num )
 	}
   else
   {
-    printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
+    ConOut("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
   }
 	//Make sure these props are always this way, they may have been chaged by other functions, so put them back
 	DefaultItem->free = 1;
@@ -317,7 +317,7 @@ int cItem::MemItemFree()
 					if( loscache ) delete [] Copy_loscache;
 				}
 			}
-			printf("ERROR: Could not reallocate item memory after %i. No more items will be created.\nWARNING: UOX may become unstable.\n",imem);
+			ConOut("ERROR: Could not reallocate item memory after %i. No more items will be created.\nWARNING: UOX may become unstable.\n",imem);
 //			cwmWorldState->savenewworld(1);           // Commented out because it wipes your items =)
 		} 
 		else 
@@ -847,7 +847,7 @@ int cItem::SpawnItem(UOXSOCKET nSocket, int nAmount, char* cName, int nStackable
 //	assert(nSocket >= 0);
 	if( nSocket < 0 )
 	{
-		printf( "ERROR: Crash being avoided, valid socket needs to be passed to SpawnItem" );
+		ConOut( "ERROR: Crash being avoided, valid socket needs to be passed to SpawnItem" );
 		return -1;
 	}
 	CHARACTER ch = currchar[nSocket];
@@ -1535,7 +1535,7 @@ void cItem::AddRespawnItem(int s, int x, int y)
 			k = PackType( items[z].id1, items[z].id2 );
 			if( k == -1 )
 			{
-				printf( "Warning: A non-container item was set as container spawner \n" );
+				ConOut( "Warning: A non-container item was set as container spawner \n" );
 				k = 1;
 			}
 			items[c].x = (rand()%100) + 18;
@@ -1644,13 +1644,13 @@ void cItem::GlowItem( UOXSOCKET s, int i )
 {
 	int j,c;
 
-	//printf("glow check called, char#: %i\n",s);
+	//ConOut("glow check called, char#: %i\n",s);
 	if (items[i].glow>0)
 	{
 		c=items[i].glow;
 		j=findbyserial(&itemsp[c%HASHMAX],c,0);
 
-		//printf("contser: %i layer: %i serial: %i\n",items[i].contserial,items[i].layer,items[i].serial);
+		//ConOut("contser: %i layer: %i serial: %i\n",items[i].contserial,items[i].layer,items[i].serial);
 
 		if (j==-1) return;
 
@@ -1787,7 +1787,7 @@ void cItem::BounceInBackpack(CHARACTER p, ITEM i)
 			(items[stack].id1==items[i].id1 && items[stack].id2==items[i].id2) && 
 			( items[stack].color1 == items[i].color1 && items[stack].color2 == items[i].color2 ) )
 			{//Time to stack.
-				//printf("stacking %s %x %x\n",items[stack].name,items[stack].id1,items[stack].id2);
+				//ConOut("stacking %s %x %x\n",items[stack].name,items[stack].id1,items[stack].id2);
 				if (items[stack].amount+items[i].amount>65535)
 				{
 					items[i].x=items[stack].x;
@@ -1935,7 +1935,7 @@ void RefreshItem( ITEM i ) //  Send this item to all online people in range
 	
 	if( items[i].contserial == items[i].serial )
 	{
-		printf( "\nALERT ! item %s [serial: %i] has dangerous container value, autocorrecting\n", items[i].name, items[i].serial );
+		ConOut( "\nALERT ! item %s [serial: %i] has dangerous container value, autocorrecting\n", items[i].name, items[i].serial );
 		items[i].contserial = -1;
 	}
 	
@@ -1966,7 +1966,7 @@ void RefreshItem( ITEM i ) //  Send this item to all online people in range
 		itemcont = findbyserial( &itemsp[iserial%HASHMAX], iserial, 0 );
 	//		EviLDeD -		February 29, 2000
 #ifdef DEBUG
-	printf("DEBUG:Item=%i(%s) charcont=%i itemcont=%i\n", i, items[i].name, charcont, itemcont );
+	ConOut("DEBUG:Item=%i(%s) charcont=%i itemcont=%i\n", i, items[i].name, charcont, itemcont );
 #endif
 	//		EviLDeD -		End
 	
@@ -2007,5 +2007,5 @@ void RefreshItem( ITEM i ) //  Send this item to all online people in range
 		return;
 	}
 	
-	printf("Error in RefreshItem(%i): cannot determine container type!", i );
+	ConOut("Error in RefreshItem(%i): cannot determine container type!", i );
 }

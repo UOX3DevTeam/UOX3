@@ -84,7 +84,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					}
 					else
 					{
-						printf( "Pack animal %i has no backpack!\n", chars[x].serial );
+						ConOut( "Pack animal %i has no backpack!\n", chars[x].serial );
 					}
 				}
 				else	// Snooping
@@ -402,7 +402,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					rootContainer = GetRootPack( x );	// oh dear, not on an npc and not on the ground.  In a pack on the ground!
 					if( rootContainer == -1 )
-						printf( "ERROR: Pack with serial %li has an invalid container chain!\n", items[x].serial );
+						ConOut( "ERROR: Pack with serial %li has an invalid container chain!\n", items[x].serial );
 					else
 					{
 						packInRange = ( iteminrange( s, rootContainer, 2 ) == 1 );
@@ -869,7 +869,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 						Guilds->Menu(s,1);
 						return;
 					}
-					else printf("Unhandled guild item type named: %s with ID of: %X\n", items[x].name, itemids);
+					else ConOut("Unhandled guild item type named: %s with ID of: %X\n", items[x].name, itemids);
 					return;
 					// End of guild stuff
 				case 203: // Open a gumpmenu - Crackerjack 8/9/99
@@ -922,7 +922,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					}
 					return;
 				default:
-					if (itype) printf("Unhandled item type for item: %s of type: %d\n",items[x].name,items[x].type);
+					if (itype) ConOut("Unhandled item type for item: %s of type: %d\n",items[x].name,items[x].type);
 					break; // case (itype!) 
 				}// switch (itype)
 				// END Check items by type
@@ -1415,7 +1415,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 					return;
 
 				default:
-					//	printf("Unhandled item id for item: %s with id: %X.\n",items[x].name, itemids); //check for unused items - Morrolan
+					//	ConOut("Unhandled item id for item: %s with id: %X.\n",items[x].name, itemids); //check for unused items - Morrolan
 					break;
 				}//switch (itemids)
 				// END Check items by ID
@@ -1482,7 +1482,7 @@ void singleclick(int s)
 	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
 	if (i==-1)
 	{
-		printf("UOX3.CPP: singleclick couldn't find item serial: %d\n", serial);
+		ConOut("UOX3.CPP: singleclick couldn't find item serial: %d\n", serial);
 		return;
 	}
 	else if (chars[currchar[s]].priv&8)

@@ -28,7 +28,7 @@
 			  
 */
 
-#ifdef __LINUX__
+#ifdef __linux__
 #include <errno.h>
 #include <signal.h>
 typedef void *HANDLE;
@@ -93,10 +93,10 @@ void PlayerAttack( UOXSOCKET s );
 void aus(int signal)
 // PARAM WARNING: signal never used
 {
-	printf("Server crash averted! Floating point exception caught.\n");
+	ConOut("Server crash averted! Floating point exception caught.\n");
 } 
 
-#ifdef __NT__
+#ifndef __linux__
 ///////////////////
 
 HANDLE hco;
@@ -158,7 +158,7 @@ HANDLE cluox_stdin_writeback = 0; // the write-end of the stdin-pipe
 // 
 int cl_getch( void )
 {
-#ifdef __LINUX__
+#ifdef __linux__
 	// first the linux style, don't change it's behavoir
 	int s;
 	unsigned char c = 0;
@@ -168,7 +168,7 @@ int cl_getch( void )
 	s = select( 1, &KEYBOARD, NULL, NULL, &uoxtimeout );
 	if( s < 0 )
 	{
-		printf("Error scanning key press\n" );
+		ConOut("Error scanning key press\n" );
 		Shutdown( 10 );
 	}
 	if( s > 0 )
@@ -179,7 +179,7 @@ int cl_getch( void )
 			return -1;
 		}
 	}
-#elif defined(__NT__)
+#elif !defined(__linux__)
 	// now the windows one
 	if( !cluox_io ) 
 	{
@@ -203,7 +203,7 @@ int cl_getch( void )
 	}
 	if ((bytes_written != 1) || (asw == 0)) 
 	{
-		printf("Error using cluox-io\n" );
+		ConOut("Error using cluox-io\n" );
 		Shutdown( 10 );
 	}
 	c = fgetc( stdin );
@@ -221,7 +221,7 @@ int cl_getch( void )
 }
 #endif
 
-#ifndef __NT__
+#ifdef __linux__
 void closesocket( UOXSOCKET s )
 {
 	shutdown(s, 2);
@@ -271,7 +271,7 @@ int hstr2num(char *s) // Convert hex string to integer
 // LB, wrapping of the stdlib num-2-str functions
 void numtostr( int i, char *string )
 {
-#ifdef __NT__
+#ifndef __linux__
 	itoa( i, string, 10 );
 #else
 	sprintf(string, "%d", i);
@@ -280,7 +280,7 @@ void numtostr( int i, char *string )
 
 void hextostr( int i, char *string )
 {
-#ifdef __NT__
+#ifndef __linux__
 	itoa( i, string, 16 );
 #else
 	sprintf(string, "%x", i);
@@ -391,10 +391,10 @@ unsigned char openscript( char *name ) // Open script file
 	scpfile=fopen(name,"r");
 	if (scpfile==NULL)
 	{
-#ifdef __LINUX__
-		printf("ERROR: Unable to open file '%s':\n", name );
+#ifdef __linux__
+		ConOut("ERROR: Unable to open file '%s':\n", name );
 #else
-		printf("ERROR: Unable to open file '%s': %s\n", name, strerror(errno));
+		ConOut("ERROR: Unable to open file '%s': %s\n", name, strerror(errno));
 #endif
 		error=1;
 		keeprun=0;
@@ -411,10 +411,10 @@ FILE *openscript( char *name, FILE *toOpen ) // Open script file with file point
 	toOpen = fopen( name, "r" );
 	if (toOpen == NULL)
 	{
-#ifdef __LINUX__
-		printf("ERROR: Unable to open file '%s':\n", name );
+#ifdef __linux__
+		ConOut("ERROR: Unable to open file '%s':\n", name );
 #else
-		printf("ERROR: Unable to open file '%s': %s\n", name, strerror(errno));
+		ConOut("ERROR: Unable to open file '%s': %s\n", name, strerror(errno));
 #endif
 		error = 1;
 		keeprun = 0;
@@ -883,7 +883,7 @@ void gcollect( void ) // Remove items which were in deleted containers
 	unsigned int i;
 	uiCurrentTime = 0;
 	
-	printf( "Performing Garbage Collection...");
+	ConOut( "Performing Garbage Collection...");
 	do
 	{
 		removed=0;
@@ -929,7 +929,7 @@ void gcollect( void ) // Remove items which were in deleted containers
 	
 	
 	uiCurrentTime = getclock();
-    printf(" Removed %i items.\n",rtotal);
+    ConOut(" Removed %i items.\n",rtotal);
 }
 
 //o---------------------------------------------------------------------------o
@@ -1383,7 +1383,7 @@ void loadchar(int x) // Load a character from WSC
 	 {	 // we dont want to delete that char, dont we ?
 		 if (chars[x].account==-1) 
 		 { 
-			 printf("npc: %i[%s] with bugged body value detected, deleted for stability reasons\n",chars[x].serial,chars[x].name);
+			 ConOut("npc: %i[%s] with bugged body value detected, deleted for stability reasons\n",chars[x].serial,chars[x].name);
 			 Npcs->DeleteChar(x); 
 		 } 
 		 else 
@@ -1705,14 +1705,14 @@ void item_test( void )
 	int a, serial;
 	uiCurrentTime = 0;
 	
-	printf("Starting item-consistency check..." );
+	ConOut("Starting item-consistency check..." );
 	for( a = 0; a < itemcount; a++ )
 	{
 		serial = items[a].serial;
 		
 		if( serial == items[a].contserial )
 		{
-			printf("\nALERT ! item %s [%i] [serial: %i] has dangerous container value, autocorrecting\n", items[a].name, a, items[a].serial );
+			ConOut("\nALERT ! item %s [%i] [serial: %i] has dangerous container value, autocorrecting\n", items[a].name, a, items[a].serial );
 			items[a].contserial = -1;
 			removefromptr( &contsp[serial%HASHMAX], a );
 			items[a].cont1 = 255;
@@ -1722,7 +1722,7 @@ void item_test( void )
 		}
 		if( serial == items[a].ownserial )
 		{
-			printf("\nALERT ! item %s [%i] [serial: %i] has dangerous owner value\n", items[a].name, a, items[a].serial );
+			ConOut("\nALERT ! item %s [%i] [serial: %i] has dangerous owner value\n", items[a].name, a, items[a].serial );
 			items[a].ownserial = -1;
 			removefromptr( &ownsp[serial%HASHMAX], a );
 			items[a].owner1 = 255;
@@ -1732,7 +1732,7 @@ void item_test( void )
 		}
 		if( serial == items[a].spawnserial )
 		{
-			printf("\nALERT ! item %s [%i] [serial: %i] has dangerous spawner value\n", items[a].name, a, items[a].serial );
+			ConOut("\nALERT ! item %s [%i] [serial: %i] has dangerous spawner value\n", items[a].name, a, items[a].serial );
 			items[a].spawnserial = 0;
 			removefromptr( &spawnsp[serial%HASHMAX], a );
 			items[a].spawn1 = 255;
@@ -1742,7 +1742,7 @@ void item_test( void )
 		}
 	}
 	uiCurrentTime = getclock();
-	printf(" Done!\n" );
+	ConOut(" Done!\n" );
 }
 
 char *RealTime(char *time_str)
@@ -1768,7 +1768,7 @@ void savelog(const char *msg, char *logfile)
 			fprintf(file,"[%s] %s",RealTime(time_str),msg);
 			
 #ifdef DEBUG
-			printf("DEBUG: Logging to %s\n", logfile);
+			ConOut("DEBUG: Logging to %s\n", logfile);
 #endif
 			
 			fclose(file);
@@ -1783,7 +1783,7 @@ void loadnewworld ( void )
 	unsigned int percent = 0, a = 0, pred = 0, maxm = 0; // Magius(CHE) (1)
 	cmem=0;
 	imem=0;
-	printf("Loading World, Building map Regions, checking Item weight...\n");
+	ConOut("Loading World, Building map Regions, checking Item weight...\n");
 	charcount=0;
 	itemcount=0;
 	charcount2=1;
@@ -1792,10 +1792,10 @@ void loadnewworld ( void )
 	wscfile=fopen("chars.wsc","r");
 	if (wscfile==NULL)
 	{
-		printf("WARNING: Chars.wsc not found. Defaulting to uox3.wsc\n");
+		ConOut("WARNING: Chars.wsc not found. Defaulting to uox3.wsc\n");
 		cmem=100;
 		
-		printf(" Allocating inital dynamic Character memory of %i... ",cmem);
+		ConOut(" Allocating inital dynamic Character memory of %i... ",cmem);
 		
 		chars.Reserve( cmem );
 		
@@ -1804,7 +1804,7 @@ void loadnewworld ( void )
 		if(( currentSpellType = new int[cmem] )== NULL ) Shutdown( FATAL_UOX3_CURRENTSPELLTYPE );
 		if(( targetok = new char[cmem] ) == NULL ) Shutdown( FATAL_UOX3_TARGETOK );   // shouldn't it be sizeof( char )
 		
-		printf("Done\n");
+		ConOut("Done\n");
 	} 
 	else 
 	{
@@ -1814,7 +1814,7 @@ void loadnewworld ( void )
 		maxm = cmem; // Magius(CHE) (1)
 		if (cmem<100) cmem=100;
 		
-		printf("Allocating inital dynamic Character memory of %i... ",cmem);
+		ConOut("Allocating inital dynamic Character memory of %i... ",cmem);
 		
 		chars.Reserve( cmem );
 		
@@ -1822,9 +1822,9 @@ void loadnewworld ( void )
 		if(( clicky = new int[cmem] ) == NULL ) Shutdown( FATAL_UOX3_CLICKY );
 		if(( currentSpellType = new int[cmem] ) == NULL ) Shutdown( FATAL_UOX3_CURRENTSPELLTYPE );
 		if(( targetok = new char[cmem] ) == NULL ) Shutdown( FATAL_UOX3_TARGETOK );   // shouldn't it be sizeof( char )
-		printf("Done\n");
+		ConOut("Done\n");
 		
-		printf("  Loading characters ");
+		ConOut("  Loading characters ");
 		do
 		{
 			readw3();
@@ -1840,7 +1840,7 @@ void loadnewworld ( void )
 					else
 						percent = (int)(a*100)/(maxm-1); // Magius(CHE) (1)
 					if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
-						for( i = 1; i <= strlen( outper ) + 1; i++ ) printf("\b" );
+						for( i = 1; i <= strlen( outper ) + 1; i++ ) ConOut("\b" );
 						outper[0] = 0;
 					}
 				}
@@ -1848,7 +1848,7 @@ void loadnewworld ( void )
 			if (percent> pred ) // Changed by MAgius(CHE) (1)
 			{
 				numtostr( percent, outper );
-				printf("%s%%", outper );
+				ConOut("%s%%", outper );
 				pred = percent;
 				// a=0; MAgius(CHE) (1)
 			}
@@ -1857,24 +1857,24 @@ void loadnewworld ( void )
 		wscfile = NULL;
 		if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 			for( i = 1; i <= strlen( outper ) + 1; i++ )
-				printf( "\b" );
+				ConOut( "\b" );
 			outper[0] = 0;
 		}
-		printf("Done.\n");
+		ConOut("Done.\n");
 		wscfile=fopen("items.wsc", "r");
 		if (wscfile==NULL)
 		{
-			printf("ERROR: Items.wsc not found. No items will be loaded.\n");
+			ConOut("ERROR: Items.wsc not found. No items will be loaded.\n");
 			imem=100;
 			
 			// 10th October, 1999 removed * sizeof( int ) by Abaddon
-			printf("Allocating inital dynamic Item memory of %i... ",imem);
+			ConOut("Allocating inital dynamic Item memory of %i... ",imem);
 			
 			items.Reserve( imem );
 			
 			if(( loscache = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_LOSCACHE );
 			if(( itemids = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_ITEMIDS );
-			printf("Done\n");
+			ConOut("Done\n");
 		} 
 		else 
 		{
@@ -1884,16 +1884,16 @@ void loadnewworld ( void )
 			maxm = imem; 
 			if (imem<100) imem=100;
 			
-			printf("Allocating inital dynamic Item memory of %i... ",imem);
+			ConOut("Allocating inital dynamic Item memory of %i... ",imem);
 			
 			items.Reserve( imem );
 			
 			if(( loscache = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_LOSCACHE );
 			if(( itemids = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_ITEMIDS );
-			printf("Done\n");
+			ConOut("Done\n");
 			
 			a = 0; // Magius(CHE) (2)
-			printf("  Loading items ");
+			ConOut("  Loading items ");
 			do {
 				readw3();
 				if (!(strcmp(script1, "SECTION")))
@@ -1912,14 +1912,14 @@ void loadnewworld ( void )
 						percent = (int)(a*100)/(maxm - 1); // Magius(CHE) (1)
 					if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 						for( i = 1; i <= strlen( outper ) + 1; i++ ) 
-							printf("\b" );
+							ConOut("\b" );
 						outper[0] = 0;
 					}
 				}
 				if( percent > pred ) // Changed by MAgius(CHE) (1)
 				{
 					numtostr( percent, outper );
-					printf("%s%%", outper );
+					ConOut("%s%%", outper );
 					pred = percent;
 				}
 				
@@ -1929,26 +1929,26 @@ void loadnewworld ( void )
 		}
 		if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 			for( i = 1; i <= strlen( outper ) + 1; i++ ) 
-				printf( "\b" );
+				ConOut( "\b" );
 			outper[0] = 0;
 		}
-		printf("Done.\n" ); // Magius(CHE)
-		printf("World Loaded.\n");
+		ConOut("Done.\n" ); // Magius(CHE)
+		ConOut("World Loaded.\n");
 		return;
 	}
 	imem=100;
 	// 10th October, 1999 removed * sizeof( int ) by Abaddon
-	printf("Allocating inital dynamic Item memory of %i... ",imem);
+	ConOut("Allocating inital dynamic Item memory of %i... ",imem);
 	
 	items.Reserve( imem );
 	
 	if(( loscache = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_LOSCACHE );
 	if(( itemids = new int[imem] ) == NULL ) Shutdown( FATAL_UOX3_ITEMIDS );
-	printf("Done\n");
+	ConOut("Done\n");
 	
 	wscfile=fopen("uox3.wsc", "r");
 	if(wscfile==NULL) 
-		printf("ERROR: World data not found, using blank world instead.\n");
+		ConOut("ERROR: World data not found, using blank world instead.\n");
 	else {
 		do
 		{
@@ -1965,15 +1965,15 @@ void loadnewworld ( void )
 		}
 		while (strcmp(script1, "EOF") && !feof(wscfile));
 
-		printf("Saving world in new format.");
+		ConOut("Saving world in new format.");
 		do {
 			cwmWorldState->savenewworld(1);
 		} while ( cwmWorldState->Saving() );
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 
 		fclose(wscfile);
 		wscfile = NULL;
-		printf("Done.\n");
+		ConOut("Done.\n");
 	}
 }
 
@@ -2065,7 +2065,7 @@ int packitem(int p) // Find packitem
 	int serial, j, ci;
 	if( p == -1 ) return -1;
 	int i=chars[p].packitem;
-	//printf("%i %i %i %i %i %i %i\n",imem,cmem,i,items[i].contserial,chars[p].serial,items[i].layer,p);
+	//ConOut("%i %i %i %i %i %i %i\n",imem,cmem,i,items[i].contserial,chars[p].serial,items[i].layer,p);
 	
 	if (i>-1 && i<imem && p>-1 && p<cmem)
 	{
@@ -5313,7 +5313,7 @@ void startchar(int s) // Send character startup stuff to player
 	impowncreate(s, currchar[s], 0);
 	Network->xSend(s, techstuff, 20, 0);
 	Weight->NewCalc(currchar[s]);  // Ison 2-20-99
-#ifdef __NT__
+#ifndef __linux__
 	sprintf(idname, "%s %s(Build:%s) [WIN32] Compiled by %s ", PRODUCT, VER, BUILD, NAME);
 #else
 	sprintf(idname, "%s %s(Build:%s) [LINUX] Compiled by %s", PRODUCT, VER, BUILD, NAME);
@@ -6469,13 +6469,13 @@ void checkkey( void )
 	int j=0;	
 	int indexcount=0, kill=0;
 	
-#ifdef __NT__
+#ifndef __linux__
 	
 	if (kbhit())
 	{
 		c=toupper(getch());
 #endif
-#ifdef __LINUX__
+#ifdef __linux__
 		int s;
 		fd_set  KEYBOARD;
 		FD_ZERO( &KEYBOARD );
@@ -6493,13 +6493,19 @@ void checkkey( void )
 			{
 #endif
 			processkey( c );
-#ifdef __LINUX__
+#ifdef __linux__
 		}
 #endif
 		}
 	}
 }
 #endif
+#ifdef __linux__
+void endScrn(void)
+{
+}
+#endif 
+
 inline void checktimers( void ) // Check shutdown timers
 {
 	overflow = ( lclock > uiCurrentTime );	// Small optimization
@@ -7254,13 +7260,13 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 		if (autosaved == 0)
 		{
 			autosaved = 1;
-#ifdef __LINUX__
+#ifdef __linux__
 			time((time_t *)&oldtime);
 #else
 			time(&oldtime);
 #endif
 		}
-#ifdef __LINUX__
+#ifdef __linux__
 		time((time_t *)&newtime);
 #else
 		time(&newtime);
@@ -7900,10 +7906,10 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 
 						if ((num_words %2) == 1)  // odd number ?
 						{
-                          num_unknown = ( num_words / 2 )  * 3;
+                          				num_unknown = ( num_words / 2 )  * 3;
 						} else
 						{
-                          num_unknown = ( ( num_words / 2 ) * 3 ) -1 ;
+                          				num_unknown = ( ( num_words / 2 ) * 3 ) -1 ;
 						}
 
 						myoffset = 15 + num_unknown;					
@@ -8432,7 +8438,7 @@ int __cdecl main(int argc, char *argv[])
 		printf("Starting UOX3...\n");
 		
 		openings=0;
-#ifdef __NT__
+#ifndef __linux__
 		constart();
 		sprintf(temp, "%s v%s Build %s", PRODUCT, VER, BUILD );
 		SetConsoleTitle(temp);
@@ -8862,7 +8868,7 @@ int __cdecl main(int argc, char *argv[])
 		
 		Admin->LoadWipe();
 		
-#ifdef __NT__
+#ifndef __linux__
 		//	EviLDeD	-	February 10, 2000
 		//	I am taking this out for good
 		//clearscreen(); // Moved by Magius(CHE (1) and again by fur for linux
@@ -8874,7 +8880,7 @@ int __cdecl main(int argc, char *argv[])
 		sprintf( idname, "%s %s(Build:%s) [LINUX] compiled by %s\nProgrammed by: %s", PRODUCT, VER, BUILD, NAME, PROGRAMMERS );
 #endif
 		//	printf("\n%s V%s Alpha", PRODUCT, VER);
-#ifdef __NT__
+#ifndef __linux__
 		printf(" for Win32");
 		//clearscreen();
 #else
@@ -8963,7 +8969,7 @@ int __cdecl main(int argc, char *argv[])
 			default: Sleep(10); break;
 			}
 #else
-#ifdef __NT__
+#ifndef __linux__
 			switch(speed.nice)
 			{
 			case 0: break;  // very unnice - hog all cpu time
@@ -9243,7 +9249,7 @@ void Shutdown( int retCode )
 		printf("\nExiting UOX3 with no errors...\n");
 	
 	// let windows users see what happened during shutdown
-#ifdef __NT__
+#ifndef __linux__
 	if( retCode )
 	{
 		printf("\nPress any key to continue.");
@@ -9641,7 +9647,7 @@ void respawn(unsigned int currenttime)
 // clock() is supposed to return CPU time used - it doesn't on Windows, but
 // does on Linux. Thus it doesn't go up on Linux, and time seems to stand
 // still. This function emulates clock()
-#ifndef __NT__
+#ifdef __linux__
 unsigned long int getclock( void )
 {
 	struct timeval tv;
@@ -13389,7 +13395,7 @@ void playmonstersound( CHARACTER monster, int id1, int id2, MonsterSoundType sfx
 // Slightly revised by Leafbeach in November-December 2000 (fixed combat sounds for soundflag 2 and 3)
 {
 	int basesound=0,x;
-#ifdef __LINUX__
+#ifdef __linux__
 	char sf; short offset;
 #else
 	char sf,offset;
@@ -14911,7 +14917,7 @@ void loadregions()//New -- Zippy spawn regions
 	closescript();//AntiChrist
 }
 
-#ifdef __LINUX__
+#ifdef __linux__
 short calcRegionFromXY( int x, int y )
 #else
 char calcRegionFromXY(int x, int y)
@@ -15178,7 +15184,7 @@ void tellmessage(int i, int s, unsigned char *txt)
 }
 
 
-#ifdef __NT__
+#ifndef __linux__
 void Writeslot(LPSTR lpszMessage)
 {
 	BOOL fResult;

@@ -72,7 +72,7 @@ void CWorldMain::saveAccount()//Revana*
 	//	If we are using the WWWAccount systen then we have to load the accounts first
 	if(server_data.wwwaccounts)
 	{
-		printf("WWWAccounts: Reloading before update\n");
+		ConOut("WWWAccounts: Reloading before update\n");
 		Admin->LoadAccounts();
 	}
 	//	EviLDeD	-	End
@@ -115,7 +115,7 @@ void CWorldMain::saveAccount()//Revana*
 	}
 	else
 	{
-		printf("Error, could not open accounts.adm for writing. Check file permissions.\n");
+		ConOut("Error, could not open accounts.adm for writing. Check file permissions.\n");
 	}
 
 	scpfile=fopen("wiped-acct.adm","w");
@@ -155,7 +155,7 @@ void CWorldMain::saveAccount()//Revana*
 	}
 	else
 	{
-		printf("Error, could not open wiped-acct.adm for writing. Check file permissions.\n");
+		ConOut("Error, could not open wiped-acct.adm for writing. Check file permissions.\n");
 	}
 }
 
@@ -193,14 +193,14 @@ void CWorldMain::savenewworld(char x)
 			if ( PerLoop > 0 )
 			{
 				if (x)
-					printf("SAVE: Starting manual world data save, saving %d items & chars every loop.\n", PerLoop );
+					ConOut("SAVE: Starting manual world data save, saving %d items & chars every loop.\n", PerLoop );
 				else
-					printf("SAVE: Starting automatic world data save, saving %d items & chars every loop.\n", PerLoop );
+					ConOut("SAVE: Starting automatic world data save, saving %d items & chars every loop.\n", PerLoop );
 			} else {
 				if (x)
-					printf("SAVE: Starting manual world data save, saving all items & chars now!\n" );
+					ConOut("SAVE: Starting manual world data save, saving all items & chars now!\n" );
 				else
-					printf("SAVE: Starting automatic world data save, saving all items & chars now!\n" );
+					ConOut("SAVE: Starting automatic world data save, saving all items & chars now!\n" );
 			}
 		}
 
@@ -220,7 +220,7 @@ void CWorldMain::savenewworld(char x)
 			fprintf( cWsc, "//o--------------------------------------------------------------------\n");
 			fprintf(cWsc, "INITMEM %i //Do NOT edit this line!\n\n",chars.Count()+1);	// Was: +100 (EviLDeD-Feb10,2000)
 		} else {
-			printf("Error, couldn't open chars.wsc for writing. Check file permissions.\n");
+			ConOut("Error, couldn't open chars.wsc for writing. Check file permissions.\n");
 			return;
 		}
 
@@ -235,7 +235,7 @@ void CWorldMain::savenewworld(char x)
 			fprintf(iWsc, "//o------------------------------------------------------------------------------\n");
 			fprintf(iWsc, "INITMEM %i //Do NOT edit this line!\n\n",items.Count()+1);	// Was: +100 (EviLDeD-Feb10,2000)
 		} else {
-			printf("Error, couldn't open items.wsc for writing. Check file permissions.\n");
+			ConOut("Error, couldn't open items.wsc for writing. Check file permissions.\n");
 			return;
 		}
 
@@ -268,7 +268,7 @@ void CWorldMain::savenewworld(char x)
 		if ( announce() )
 		{
 			sysbroadcast("World Save Complete.");
-			printf("SAVE: World save complete.\n");
+			ConOut("SAVE: World save complete.\n");
 		}
 
 		fprintf(cWsc,"\nEOF\n\n");

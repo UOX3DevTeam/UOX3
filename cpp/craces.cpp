@@ -70,7 +70,7 @@ void cRaces::load( void )
 	unsigned int raceCount = 0;
 	bool done = false;
 	openscript("races.scp");
-	printf("Loading races now!\n");
+	ConOut("Loading races now!\n");
 	char sect[512];
 	char skillthing[512];
 	while ( !done )
@@ -83,7 +83,7 @@ void cRaces::load( void )
 		else
 			raceCount++;
 	}
-	printf("Found right number of races! (%i)\n", raceCount );
+	ConOut("Found right number of races! (%i)\n", raceCount );
 	iCount = raceCount;
 	races = new Races_st[iCount];
 	modifierCount = 0;
@@ -102,7 +102,7 @@ void cRaces::load( void )
 		read2();
 		if( strcmp( script1, "MODCOUNT" ) )
 		{
-			printf("MODCOUNT must come before any entries!\n" );
+			ConOut("MODCOUNT must come before any entries!\n" );
 			modifierCount = 4;
 			combat = new combatModifiers[modifierCount];
 			combat[0].value = 0;
@@ -115,7 +115,7 @@ void cRaces::load( void )
 			modifierCount = str2num( script2 );
 			if( modifierCount < 4 )
 			{
-				printf("MODCOUNT must be more >= 4, or it uses the defaults!\n" );
+				ConOut("MODCOUNT must be more >= 4, or it uses the defaults!\n" );
 				modifierCount = 4;
 				combat = new combatModifiers[modifierCount];
 				combat[0].value = 0;
@@ -136,11 +136,11 @@ void cRaces::load( void )
 		}
 	}
 
-//	printf("Dynamically created right number\n");
+//	ConOut("Dynamically created right number\n");
 	for( i=0; i < raceCount; i++ )
 	{
 		sprintf(sect, "RACE %d", i);
-//		printf("Finding race %i", i );
+//		ConOut("Finding race %i", i );
 		races[i].racialEnemies = new RACEID[raceCount];
 		memset(races[i].racialEnemies, 0, raceCount * sizeof(RACEID));
 		setSkill( STRENGTH, 100, i );
@@ -274,7 +274,7 @@ void cRaces::load( void )
 			{
 				raceDiff = str2num(script2);
 				if( raceDiff > raceCount )
-					printf("Error in race %i, invalid enemy race %i", i, raceDiff );
+					ConOut("Error in race %i, invalid enemy race %i", i, raceDiff );
 				else
 					setRacialEnemy( i, raceDiff );
 			}
@@ -282,7 +282,7 @@ void cRaces::load( void )
 			{
 				raceDiff = str2num(script2);
 				if( raceDiff > raceCount )
-					printf("Error in race %i, invalid ally race %i", i, raceDiff );
+					ConOut("Error in race %i, invalid ally race %i", i, raceDiff );
 				else
 					setRacialAlly( i, raceDiff );
 			}
@@ -315,12 +315,12 @@ int cRaces::Compare(PLAYER player1, PLAYER player2)
 {
 	if( chars[player1].race >= iCount ) // invalid race?
 	{
-		printf("ERROR: Player has bad race attribute! Player %i Race %i", player1, chars[player1].race );
+		ConOut("ERROR: Player has bad race attribute! Player %i Race %i", player1, chars[player1].race );
 		return 0;
 	}
 	else if( chars[player2].race >= iCount ) // invalid race?
 	{
-		printf("ERROR: Player has bad race attribute! Player %i Race %i", player2, chars[player2].race );
+		ConOut("ERROR: Player has bad race attribute! Player %i Race %i", player2, chars[player2].race );
 		return 0;
 	}
 	else
@@ -1196,17 +1196,17 @@ void cRaces::setNoBeard( bool value, RACEID race )
 
 void cRaces::debugPrint( RACEID x )
 {
-	printf("Race ID: %d\n", (int) x); fflush(stdout);
-	printf("Race: %s\n", races[x].raceName);
-	if (races[x].reqBeard) printf("Req Beard: Yes\n"); else printf("Req Beard: No\n");
-	if (races[x].noBeard) printf("No Beard: Yes\n"); else printf("No Beard: No\n");
-	if (races[x].playerRace) printf("Player Race: Yes\n"); else printf("Player Race: No\n");
-	printf("Restrict Gender: %d\n", (int) races[x].restrictGender);
-	printf("LightLevel: %d\n", (int) races[x].lightLevel);
-	printf("NightVistion: %d\n", (int) races[x].nightVision);
-	printf("ArmorRestrict: %d\n", (int) races[x].armorRestrict);
-	printf("LangMin: %d\n", (int) races[x].languageMin);
-	printf("Vis Distance: %d\n\n", (int) races[x].visDistance);
+	ConOut("Race ID: %d\n", (int) x); fflush(stdout);
+	ConOut("Race: %s\n", races[x].raceName);
+	if (races[x].reqBeard) ConOut("Req Beard: Yes\n"); else ConOut("Req Beard: No\n");
+	if (races[x].noBeard) ConOut("No Beard: Yes\n"); else ConOut("No Beard: No\n");
+	if (races[x].playerRace) ConOut("Player Race: Yes\n"); else ConOut("Player Race: No\n");
+	ConOut("Restrict Gender: %d\n", (int) races[x].restrictGender);
+	ConOut("LightLevel: %d\n", (int) races[x].lightLevel);
+	ConOut("NightVistion: %d\n", (int) races[x].nightVision);
+	ConOut("ArmorRestrict: %d\n", (int) races[x].armorRestrict);
+	ConOut("LangMin: %d\n", (int) races[x].languageMin);
+	ConOut("Vis Distance: %d\n\n", (int) races[x].visDistance);
 }
 
 void cRaces::debugPrintAll( void )

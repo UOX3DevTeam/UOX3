@@ -433,7 +433,7 @@ void command_resend( UOXSOCKET s )
 // Resends server data to client.
 {
 	all_items(s); 
-	printf("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!\n" );
+	ConOut("ALERT: all_items() called in command_resend().  This function could cause a lot of lag!\n" );
 	teleport(currchar[s]);
 	return;
 }
@@ -653,7 +653,7 @@ void command_showids( UOXSOCKET s )
 	//for (i=0;i<charcount;i++)
 	int x=chars[currchar[s]].x, y=chars[currchar[s]].y; // bugfix lb
 	
-	// printf("x:%i y:%i\n",x,y);
+	// ConOut("x:%i y:%i\n",x,y);
 	
 	//Char mapRegions
 	int getcell=mapRegions->GetCell(x,y);
@@ -1037,7 +1037,7 @@ void command_send( UOXSOCKET s )
 	int i;
 	for (i=1;i<tnum;i++) temp[i-1]=hexnumber(i);
 	//   sysmessage(s, "Sending...");
-	printf("Sending to client %i.\n",s);
+	ConOut("Sending to client %i.\n",s);
 	Network->xSend(s, temp, tnum-1, 0);
 	return;
 	
@@ -1190,7 +1190,7 @@ for (j=0;j<charcount;j++)
 {
 if (chars[j].account==-1) i++;
 }
-printf("Total# of npcs: %i\n",i);
+ConOut("Total# of npcs: %i\n",i);
 }
 
   void command_npcsd( UOXSOCKET s )
@@ -1200,7 +1200,7 @@ printf("Total# of npcs: %i\n",i);
 		{
 		if (chars[j].account==-1 && chars[j].free==1) i++;
 		}
-		printf("Total# of npcs: %i\n",i);
+		ConOut("Total# of npcs: %i\n",i);
 		}
 		
 		  void command_pcs( UOXSOCKET s )
@@ -1210,7 +1210,7 @@ printf("Total# of npcs: %i\n",i);
 		  {
 		  if (chars[j].account!=-1) i++;
 		  }
-		  printf("Total# of players: %i\n",i);
+		  ConOut("Total# of players: %i\n",i);
 		  }
 		  
 			void command_charc( UOXSOCKET s ) { }
@@ -1354,11 +1354,11 @@ void command_set( UOXSOCKET s )
 		strupr(script1);
 		addx[s]=-1;
 		
-		//				printf("callet %s\n",script1);
+		//				ConOut("callet %s\n",script1);
 		
 		for (i=0;i<SKILLS;i++)
 		{
-			if (!(strcmp(skillname[i], script1))) { /*printf("%s\n",skillname[i]);*/addx[s]=i;}
+			if (!(strcmp(skillname[i], script1))) { /*ConOut("%s\n",skillname[i]);*/addx[s]=i;}
 		}
 		if (addx[s]!=-1)
 		{
@@ -1593,7 +1593,7 @@ void command_regspawnmax( UOXSOCKET s )
 {
 	if (tnum==2)
 	{
-		printf("regspawnall called\n");
+		ConOut("regspawnall called\n");
 		Commands->RegSpawnMax(s, makenumber(1));
 		return;
 	}
@@ -1605,7 +1605,7 @@ void command_regspawn( UOXSOCKET s )
 {
 	if (tnum==3)
 	{
-		printf("regspawnnum called\n");
+		ConOut("regspawnnum called\n");
 		Commands->RegSpawnNum(s, makenumber(1), makenumber(2));
 		return;
 	}
@@ -1846,7 +1846,7 @@ void command_tilew( UOXSOCKET s )
 				int a=Items->SpawnItem(s, 1, "#", pile, addid1[s], addid2[s], 0, 0, 0,0);
 				if( a > -1 )	// Antichrist crash prevention
 				{
-					// printf("ids: %i %i  ",addid1[s],addid2[s]);
+					// ConOut("ids: %i %i  ",addid1[s],addid2[s]);
 					items[a].priv=0; //Make them not decay
 					items[a].x=x;
 					items[a].y=y;
@@ -1902,7 +1902,7 @@ void command_wanim( UOXSOCKET s )
 	{
 		w_anim[0]=(signed char) hexnumber(1);
 		w_anim[1]=(signed char) hexnumber(2);
-		//printf("%i %i\n",w_anim[0],w_anim[1]);
+		//ConOut("%i %i\n",w_anim[0],w_anim[1]);
 		sysmessage(s,"new lightening animation set!");
 	}
 }
@@ -2076,7 +2076,7 @@ void command_wipenpcs( UOXSOCKET s )
 {
 	int deleted=0;
 	
-	printf("UOX3: %s has initiated an NPC wipe\n",chars[currchar[s]].name);
+	ConOut("UOX3: %s has initiated an NPC wipe\n",chars[currchar[s]].name);
 	
 	for (int j=0;j<charcount;j++)
 	{
@@ -2098,7 +2098,7 @@ void command_wipenpcs( UOXSOCKET s )
 		spawnregion[w].current = 0;
 	}
 	
-	printf("deleted: %i npcs\n",deleted);
+	ConOut("deleted: %i npcs\n",deleted);
 	gcollect();
 	
 	// charcount=charcount-deleted;  deadly, lord binary !!!!
@@ -2144,7 +2144,7 @@ void command_reportbug( UOXSOCKET s )
 	bugs = fopen( "bugs.lst", "a+" );
 	if( bugs == NULL )
 	{
-		printf( "ERROR: Unable to open bug list!\n" );
+		ConOut( "ERROR: Unable to open bug list!\n" );
 		return;
 	}
 	char dateTime[1024];

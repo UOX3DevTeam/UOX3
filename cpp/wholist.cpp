@@ -297,7 +297,7 @@ void cWhoList::ButtonSelect( UOXSOCKET toSendTo, unsigned short int buttonPresse
 		Targ->TweakTarget( toSendTo );
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. wholist.cpp, ButtonSelect()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. wholist.cpp, ButtonSelect()\n"); //Morrolan
 	}
 }
 

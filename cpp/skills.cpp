@@ -916,7 +916,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					c = Items->SpawnItem( s, ((btmp*50) - (itemmake[s].needs)), "Cut Cloth", 1, 0x17, 0x5F, 0, 0, 1, 1 );
 					if( c == -1 )
 					{
-						printf( "SKILLS.cpp: Tailoring spawn bolts to cloth failure.\n" );
+						ConOut( "SKILLS.cpp: Tailoring spawn bolts to cloth failure.\n" );
 						return;
 					}
 					delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, btmp );  
@@ -936,7 +936,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 		c=Items->SpawnItemBackpack2(s, currchar[s], x, 0);
 		if (c==-1)
 		{
-			printf("[1]SKILLS.CPP: Skills->MakeMenutarget() bad script item # %d(Item Not found).\n", x);
+			ConOut("[1]SKILLS.CPP: Skills->MakeMenutarget() bad script item # %d(Item Not found).\n", x);
 			return;  //invalid script item
 		}
 		else
@@ -979,7 +979,7 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 		//c=SpawnItemBackpack2(s, x, 0);
 		//if (c==-1)
 		//{
-		// printf("[2]SKILLS.CPP:Skills->MakeMenutarget() bad script item # %d.\n", x);
+		// ConOut("[2]SKILLS.CPP:Skills->MakeMenutarget() bad script item # %d.\n", x);
 		// return;  //invalid script item
 		//}
 		if(!chars[currchar[s]].making) sysmessage(s,"You create the item and place it in your backpack.");
@@ -1026,7 +1026,7 @@ void cSkills::MakeMenu(int s, int m, int skill) // Menus for playermade objects
 			// Magius(CHE) - Alert Script Error
 			if( strcmp( script1, "RESOURCE" ))			
 			{
-				printf("SKILLS.CPP: MakeMenu(). Expected 'RESOURCE <num>' after '%s'!\n", gmtext[gmnumber] );
+				ConOut("SKILLS.CPP: MakeMenu(). Expected 'RESOURCE <num>' after '%s'!\n", gmtext[gmnumber] );
 				return;
 			}
 			itemmake[s].needs=str2num(script2);
@@ -1036,7 +1036,7 @@ void cSkills::MakeMenu(int s, int m, int skill) // Menus for playermade objects
 			// Magius(CHE) - Alert Script Error
 			if( strcmp( script1, "SKILL" ))			
 			{
-				printf("SKILLS.CPP: MakeMenu(). Expected 'SKILL <num>' after 'RESOURCE %i'!\n", itemmake[s].needs );
+				ConOut("SKILLS.CPP: MakeMenu(). Expected 'SKILL <num>' after 'RESOURCE %i'!\n", itemmake[s].needs );
 				return;
 			}
 			if (itemmake[s].maxskill<200) itemmake[s].maxskill=200;
@@ -1051,7 +1051,7 @@ void cSkills::MakeMenu(int s, int m, int skill) // Menus for playermade objects
 			// Magius(CHE) - Alert Script Error
 			if( strcmp( script1, "ADDITEM" ) && strcmp( script1, "MAKEMENU" ))			
 			{
-				printf("SKILLS.CPP: MakeMenu(). Expected 'ADDITEM/MAKEMENU <num>' after 'SKILL %i'!\n", itemmake[s].minskill );
+				ConOut("SKILLS.CPP: MakeMenu(). Expected 'ADDITEM/MAKEMENU <num>' after 'SKILL %i'!\n", itemmake[s].minskill );
 				return;
 			}
 			// Item Rank System - by Magius(CHE)
@@ -1998,7 +1998,7 @@ void cSkills::TreeTarget(int s)
 	{
 		logtime[0][0]=17;//lucky number ;-)
 		logamount[0][0]=resource.logs;
-		printf("UOX3: Lumberjacking startup, setting tree values and times...");
+		ConOut("UOX3: Lumberjacking startup, setting tree values and times...");
 		
 		//for(a=1;a<410;a++)
 		for(a=1;a<610;a++)//AntiChrist bug fix
@@ -2009,7 +2009,7 @@ void cSkills::TreeTarget(int s)
 				logtime[a][b] = (unsigned int)( curtime + resource.logtime * CLOCKS_PER_SEC );
 			}
 		}
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 	}
 	
 	if( buffer[s][11] == 0xFF && buffer[s][12] == 0xFF && buffer[s][13] == 0xFF && buffer[s][14] == 0xFF )
@@ -2037,7 +2037,7 @@ void cSkills::TreeTarget(int s)
 	
 	
 	if(a>=610 || b>=410 ) return; // wih the previous a < 20 || b < 20, wind may not have worked right, as well as some dungeons
-	//printf("DEBUG: Cell (%i,%i)  %i logs left [%i/%i logtime]\n",a,b,logamount[a][b],logtime[a][b],curtime);
+	//ConOut("DEBUG: Cell (%i,%i)  %i logs left [%i/%i logtime]\n",a,b,logamount[a][b],logtime[a][b],curtime);
 	
 	if(logtime[a][b]<=curtime)
 	{
@@ -2143,7 +2143,7 @@ void cSkills::DetectHidden(int s)
 					{
 						dx=abs(chars[i].x-x);
 						dy=abs(chars[i].y-y);
-#ifdef __NT__
+#ifndef __linux__
 						c=sqrt(dx*dx+dy*dy);
 #else
 						c=hypot(dx, dy);
@@ -2243,7 +2243,7 @@ void cSkills::PlayInstrumentWell( UOXSOCKET s, ITEM i )
 	case 0xB3:
 	case 0xB4:	soundeffect2( currchar[s], 0x00, 0x4C );		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentWell()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentWell()/n"); //Morrolan
 		return;
 		
 	}
@@ -2261,7 +2261,7 @@ void cSkills::PlayInstrumentPoor( UOXSOCKET s, int i)
 	case 0xB3:
 	case 0xB4:	soundeffect2( currchar[s], 0x00, 0x4D );		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentPoor()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, Skills->PlayInstrumentPoor()/n"); //Morrolan
 		return;
 	}
 }
@@ -2816,7 +2816,7 @@ void cSkills::CreatePotion(int s, char type, char sub, int mortar)
 		success=Skills->CheckSkill(s, ALCHEMY, 451, 951);
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. skills.cpp, createpotion()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, createpotion()/n"); //Morrolan
 	}
 	if (success==0 && !(chars[s].priv&0x01))
 	{
@@ -2997,7 +2997,7 @@ void cSkills::PotionToBottle(int s, int mortar)
 		items[c].id2=0x09;
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. skills.cpp, portiontobottle()/n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. skills.cpp, portiontobottle()/n"); //Morrolan
  }
  // for(i=0;i<now;i++) if (perm[i]) senditem(i, c);
 	Items->GetScriptItemSetting( c );
@@ -3212,7 +3212,7 @@ void cSkills::AdvanceStats(int s, int sk)
 				if( chars[s].st > Races->getSkill( STRENGTH, chars[s].race )	)// I believe that this will fix stat caps for races
 				{
 					chars[s].st = Races->getSkill( STRENGTH, chars[s].race );
-					printf("Char %i is at stat limit for str[%i]\n", s, chars[s].st );
+					ConOut("Char %i is at stat limit for str[%i]\n", s, chars[s].st );
 					update=0;
 				}
 			}
@@ -3238,7 +3238,7 @@ void cSkills::AdvanceStats(int s, int sk)
 				{
 					update=0;
 					chars[s].dx = Races->getSkill( DEXTERITY, chars[s].race );
-					printf("Char %i is at stat limit for dex[%i]\n", s, chars[s].dx );
+					ConOut("Char %i is at stat limit for dex[%i]\n", s, chars[s].dx );
 				}
 			}
 			u = DEXTERITY;
@@ -3262,7 +3262,7 @@ void cSkills::AdvanceStats(int s, int sk)
 				{
 					update=0;
 					chars[s].in = Races->getSkill( INTELLECT, chars[s].race );
-					printf("Char %i is at stat limit for int[%i]\n", s, chars[s].in );
+					ConOut("Char %i is at stat limit for int[%i]\n", s, chars[s].in );
 				}
 			}
 			u = INTELLECT;
@@ -3334,7 +3334,7 @@ void cSkills::AdvanceStats(int s, int sk)
 					}
 					break;
 				default:
-					printf("STAT Atrophy error in char %i!\n", s);
+					ConOut("STAT Atrophy error in char %i!\n", s);
 				}
 			}
 		}
@@ -4330,7 +4330,7 @@ void cSkills::RandomSteal(int s)
 			setserial( item, packitem(currchar[s]), 1 );
 			sysmessage( s, "You successfully steal that item." );
 			all_items(s);
-			printf("ALERT: all_items() called in RandomSteal().  This function could cause a lot of lag!" );
+			ConOut("ALERT: all_items() called in RandomSteal().  This function could cause a lot of lag!" );
 		} else sysmessage(s, "You failed to steal that item.");
 		
 		if ((!skill && rand()%5+15==17) || (chars[currchar[s]].skill[STEALING]<rand()%1001))
@@ -4343,7 +4343,7 @@ void cSkills::RandomSteal(int s)
 			{
 				//		EviLDeD -		March 1, 2000
 				//		Some extra console spam
-				printf("DEBUG: [RandomSteal()] %s is being set to criminal\n", chars[currchar[s]].name );
+				ConOut("DEBUG: [RandomSteal()] %s is being set to criminal\n", chars[currchar[s]].name );
 				//		EviLDeD -		End
 				criminal( currchar[s] ); //Blue and not attacker and not guild
 			}
@@ -4475,7 +4475,7 @@ void cSkills::StealingTarget(int s)
 				{
 					//		EviLDeD -		March 1, 2000
 					//		Some extra console spam
-					printf("DEBUG: [StealingTarget()] %s is being set to criminal\n", chars[currchar[s]].name );
+					ConOut("DEBUG: [StealingTarget()] %s is being set to criminal\n", chars[currchar[s]].name );
 					//		EviLDeD -		End
 					criminal(currchar[s]);//Blue and not attacker and not guild
 				}
@@ -4900,7 +4900,7 @@ void cSkills::ForensicsTarget(int s) //AntiChrist
 					sprintf(temp,"The killer was %s.",items[i].murderer);
 					sysmessage(s,temp);
 				}
-				//printf("MURDERER %i\n",items[i].murderer);
+				//ConOut("MURDERER %i\n",items[i].murderer);
 			}
 		}
 	} else {
@@ -4954,7 +4954,7 @@ void cSkills::PoisoningTarget( UOXSOCKET s )
 			success = Skills->CheckSkill( mChar, POISONING, 901, 1401 );
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. skills.cpp, poisoningtarget()/n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. skills.cpp, poisoningtarget()/n"); //Morrolan
 			return;
 		}
 		if( success ) 
@@ -5122,7 +5122,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 				part += Skills->CheckSkill(currchar[s], TINKERING, 761, 1201);
 				break;
 			default:
-				printf("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
+				ConOut("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
 				if( items[i].amount < 1 )
 					Items->DeleItem( i );
 				return 0;
@@ -5180,7 +5180,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 					sysmessage( s, "You fail to engrave the spell!" );
 				break;
 			default:
-				printf("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
+				ConOut("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
 				if( items[i].amount < 1 )
 					Items->DeleItem( i );
 				return(0);
@@ -5194,7 +5194,7 @@ int cSkills::Inscribe(UOXSOCKET s, long snum)
 	 // - Find what they clicked on
 	 if(buffer[s][11]==0xFF && buffer[s][12]==0xFF && buffer[s][13]==0xFF && buffer[s][14]==0xFF) 
 	 {
-		 printf("Morrolan - Inscribing click on invalid object?");
+		 ConOut("Morrolan - Inscribing click on invalid object?");
 		 return 0; // don't do this if the buffer got flushed - Morrolan prevents CRASH!
 	 }
 	 serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
@@ -5255,7 +5255,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 2:											// Create Food
 		case 4:											// Heal
 		case 6:							break;			// Night Sight
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}//switch spl
 		break; //case 1 (cir)
 	case 2:
@@ -5270,7 +5270,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 7:			// Protection
 				sysmessage(s, "Sorry this spell is not implemented!");	return 0;
 		case 4:	items[i].offspell = 5;	break; // Harm
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break;
 	case 3:
@@ -5286,7 +5286,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 7:	// Unlock
 		case 8:	// Wall of Stone
 				break;
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break;
 	case 4:
@@ -5302,7 +5302,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 8:// Recall
 				break;
 		case 6:	items[i].offspell = 9;	break;	// Lightning
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break;
 	case 5:
@@ -5319,7 +5319,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 				return 0;
 		case 5:	items[i].offspell = 11;		break;	//Mind Blast
 		case 6:	items[i].offspell = 12;		break;	//Paralyse
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break;
 	case 6:
@@ -5335,7 +5335,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 3:	items[i].offspell = 14;		break;	//Explosion
 		case 6://Mass Curse
 				sysmessage(s, "Sorry this spell is not implemented!");	return 0;
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break ;
 	case 7:
@@ -5351,7 +5351,7 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 4://Gate Travel
 				break;
 		case 3:	items[i].offspell = 15;	break;	// FlameStrike
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break ;
 	case 8:
@@ -5367,11 +5367,11 @@ int cSkills::EngraveAction(int s, int i, int cir, int spl)
 		case 7:// Summon Fire Elemental
 		case 8:// Summon Water Elemental
 				break;
-		default:	printf( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
+		default:	ConOut( "ERROR: cSkills::Inscribe -> Fallout of switch statement without default\n"); return( 0 );
 		}
 		break;
 	default:
-		printf( "ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
+		ConOut( "ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
 		return(0);
   }
   return 1;
@@ -5429,7 +5429,7 @@ void cSkills::LockPick( UOXSOCKET s )
 					case 13: items[i].type=12; break;
 					case 64: items[i].type=63; break;
 					default:
-						printf("ERROR: Fallout of switch statement without default. skills.cpp, lockpick()/n"); //Morrolan
+						ConOut("ERROR: Fallout of switch statement without default. skills.cpp, lockpick()/n"); //Morrolan
 						return;
 					}
 					soundeffect3(i, 0x01, 0xFF);
@@ -5443,7 +5443,7 @@ void cSkills::LockPick( UOXSOCKET s )
 						case 13: items[i].type=12; break;
 						case 64: items[i].type=63; break;
 						default:
-							printf("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
+							ConOut("ERROR: Fallout of switch statement without default. skills.cpp, inscribe()/n"); //Morrolan
 							return;
 						}
 						soundeffect3(i, 0x01, 0xFF);
@@ -5656,7 +5656,7 @@ void cSkills::AButte(int s1, int x)
 			sprintf(temp,"You pull %d arrows and %d bolts from the target",items[x].more1,items[x].more2);
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. skills.cpp, AButte()/n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. skills.cpp, AButte()/n"); //Morrolan
 			return;
 		}
 		sysmessage(s1,temp);

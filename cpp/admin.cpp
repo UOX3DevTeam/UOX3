@@ -233,7 +233,7 @@ void cAdmin::LoadWipe()//Revana*
 	}
 	while (strcmp(script1, "EOF"));
 	
-	printf("UOX3: %i wiped accounts stored\n",wipecount);
+	ConOut("UOX3: %i wiped accounts stored\n",wipecount);
 	closescript();
 }
 
@@ -260,7 +260,7 @@ void cAdmin::CheckLocks(int nAcct)//Revana*
 			killed++;
 		}
 	}
-	printf("Deleted %i lock serials..\n",killed);
+	ConOut("Deleted %i lock serials..\n",killed);
 }
 		
 
@@ -385,7 +385,7 @@ void cAdmin::LoadAccounts()//Revana*
 		//end Guest changes.....	
 	}
 	while (strcmp(script1, "EOF"));
-	printf("UOX3: %i accounts loaded from accounts.adm [Including %i guest accounts]\n",acctcount,guestnum);
+	ConOut("UOX3: %i accounts loaded from accounts.adm [Including %i guest accounts]\n",acctcount,guestnum);
 	closescript();
 }
 
@@ -403,8 +403,11 @@ void cAdmin::ReadString()
 		}
 		if (feof(infile))
 		{
-			printf("ERROR: readstring() unexpectedly reached EOF.\n");
-			printf("There is an error at the end of you uox3.ini file.\n");
+			ConOut("ERROR: readstring() unexpectedly reached EOF.\n");
+			ConOut("There is an error at the end of you uox3.ini file.\n");
+			
+			endScrn() ;
+			
 			exit(1);
 		}
 	}
@@ -420,7 +423,7 @@ void cAdmin::ReadIni()
 	infile=fopen("uox3.ini","r");
 	if (infile==NULL)
 	{
-		printf("ERROR: UOX3.INI not found...\n");
+		ConOut("ERROR: UOX3.INI not found...\n");
 		error=1;
 		keeprun=0;
 		return;
@@ -509,7 +512,7 @@ void cAdmin::ReadIni()
 	ReadString();
 	strcpy(defaultpriv2str, temp);
 	defaultpriv2=hstr2num(defaultpriv2str);
-	//printf("%s\n%s\n",defaultpriv1str,defaultpriv2str);
+	//ConOut("%s\n%s\n",defaultpriv1str,defaultpriv2str);
 	fclose(infile);
 	infile = NULL;	// Dodger
 }

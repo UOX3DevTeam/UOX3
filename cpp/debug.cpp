@@ -36,7 +36,7 @@
  ********************************************************/
 void MessageReady(char *OutputMessage)
 {
-	printf(OutputMessage);
+	ConOut(OutputMessage);
 }
 
 /********************************************************
@@ -44,7 +44,7 @@ void MessageReady(char *OutputMessage)
  *  Rountine to process and stamp a message.            *
  *                                                      *
  ********************************************************/
-#ifdef WIN32
+#ifndef __linux__
 void __cdecl LogMessageF(unsigned char Type, long Line, char *File, char *Message, ...)
 {
 	char fullMessage[512];

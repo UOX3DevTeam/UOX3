@@ -26,7 +26,7 @@
 #include <uox3.h>
 #include <debug.h>
 
-#ifdef __LINUX__
+#ifdef __linux__
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -72,7 +72,7 @@ static unsigned int bit_table[257][2] =
 	0x04, 0x0D
 };
 
-#ifndef __NT__
+#ifdef __linux__
 #define closesocket(s)	close(s)
 #endif
 
@@ -96,7 +96,7 @@ int cNetworkStuff::xRecv(int s) // Better Receive routine than the one currently
 	
 	count = recv(client[s], (char *)&buffer[s][binlength[s]], MAXBUFFER-binlength[s], 0);
 #ifdef DEBUG_NETWORK
-	printf("REC:\n");
+	ConOut("REC:\n");
 	x=0;
 #endif
 	i = binlength[s] + count;
@@ -105,8 +105,8 @@ int cNetworkStuff::xRecv(int s) // Better Receive routine than the one currently
 	if ((y)!=15)
 	{
 		txt[y+1]=0;
-		for (j=15-y;j>0;j--) printf("   ");
-		printf("%s\n",txt);
+		for (j=15-y;j>0;j--) ConOut("   ");
+		ConOut("%s\n",txt);
 	}
 #endif
 	return count;
@@ -123,7 +123,7 @@ void cNetworkStuff::FlushBuffer(int s) // Sends buffered data at once
 {
 	if (boutlength[s]>0)
 	{
-		//  printf("S = %i, bout = %i, cc = %i\n", s, boutlength[s], cryptclient[s]);
+		//  ConOut("S = %i, bout = %i, cc = %i\n", s, boutlength[s], cryptclient[s]);
 		if (cryptclient[s])
 		{
 			DoStreamCode(s);
@@ -133,7 +133,7 @@ void cNetworkStuff::FlushBuffer(int s) // Sends buffered data at once
 			send( client[s], (char *)outbuffer[s], boutlength[s], 0);
 		}
 		boutlength[s]=0;
-		//  printf("Done\n");
+		//  ConOut("Done\n");
 	}
 }
 
@@ -155,7 +155,7 @@ void cNetworkStuff::xSend(int s, void *point, int length, int test) // Buffering
 	int buf2c, i, j;
 	char buf2[32];
 	
-	printf("*** xSend\n"); fflush(stdout);
+	ConOut("*** xSend\n"); fflush(stdout);
 	
 	buf2c=0;
 	for(i=0;i<length;i++)
@@ -164,19 +164,19 @@ void cNetworkStuff::xSend(int s, void *point, int length, int test) // Buffering
 		buf2c++;
 		if ((buf2c==16)||(i==length-1))
 		{
-			printf("C%02x %02x : ",s,((i%256)/16)*16);
+			ConOut("C%02x %02x : ",s,((i%256)/16)*16);
 			for (j=0;j<buf2c;j++)
 			{
-				printf("%2x ",buf2[j]);
+				ConOut("%2x ",buf2[j]);
 			}
 			
 			for (j=0;j<buf2c;j++)
 			{
-				if ((isalnum(buf2[j]))||(isprint(buf2[j]))) printf("%c",buf2[j]); else printf(".");
+				if ((isalnum(buf2[j]))||(isprint(buf2[j]))) ConOut("%c",buf2[j]); else ConOut(".");
 			}
-			for(;j<16;j++) printf(".");
+			for(;j<16;j++) ConOut(".");
 			buf2c=0;
-			printf("]\n");
+			ConOut("]\n");
 		}
 	}
 	fflush(stdout);
@@ -214,14 +214,14 @@ void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instal
 	{
 		if( xGM[s]->isClient )
 		{
-			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
+			ConOut("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
 			xGM[s]->isClient = 0;
 		} 
 		else
-			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
+			ConOut("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
 	}
 	else
-		printf("UOX3: Client %i disconnected. [Total:%i]\n",s,now-1);
+		ConOut("UOX3: Client %i disconnected. [Total:%i]\n",s,now-1);
 
 	FlushBuffer( s );
 	closesocket( client[s] );
@@ -358,7 +358,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 				
 				if( t )
 				{
-					printf("AUTOACCT: New account \"%s\":\"%s\" created for %x.%x.%x.%x\n",&buffer[s][1],&buffer[s][31],clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
+					ConOut("AUTOACCT: New account \"%s\":\"%s\" created for %x.%x.%x.%x\n",&buffer[s][1],&buffer[s][31],clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
 					memset(acctx + acctcount,0,sizeof(acct_st));
 					strcpy(acctx[acctcount].name, (char *)&buffer[s][1]);
 					strcpy(acctx[acctcount].pass, (char *)&buffer[s][31]);
@@ -394,7 +394,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 	}
 	if( acctno[s] != -1 )
 	{
-#ifndef __NT__
+#ifdef __linux__
 		acctx[acctno[s]].ip1 = (char) clientip[s][0];
 		acctx[acctno[s]].ip2 = (char) clientip[s][1];
 		acctx[acctno[s]].ip3 = (char) clientip[s][2];
@@ -408,7 +408,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 		sprintf(temp,"Client [%i.%i.%i.%i] connected using Account '%s'.\n",
 			acctx[acctno[s]].ip1, acctx[acctno[s]].ip2, acctx[acctno[s]].ip3, acctx[acctno[s]].ip4, &buffer[s][1]);
 		savelog(temp,"server.log");
-		printf( temp );
+		ConOut( temp );
 		
 		acctinuse[acctno[s]]=1;
 		tlen=6+(servcount*40);
@@ -437,7 +437,7 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 void cNetworkStuff::Relay(int s) // Relay player to a certain IP
 {
 #ifdef DEBUG_NETWORK
-	printf("Going to relay...\n");
+	ConOut("Going to relay...\n");
 #endif
 	
 	unsigned long int ip;
@@ -514,7 +514,7 @@ void cNetworkStuff::FailAuth(int s)
 {
 	char noauth[3]="\x53\x01";
 #ifdef DEBUG_NETWORK
-	printf("Character doesn't exist!\n");
+	ConOut("Character doesn't exist!\n");
 #endif
 	xSend(s, noauth, 2, 0); // Say "Character doesnt exist" and close client
 	Disconnect(s);
@@ -533,12 +533,12 @@ void cNetworkStuff::AuthTest(int s)
 	server[s]=-1;
 	if (auth)
 	{
-		printf("AUTH: Authentication successful\n");
+		ConOut("AUTH: Authentication successful\n");
 		GoodAuth(s);
 	}
 	else
 	{
-		printf("AUTH: Authentication failed\n");
+		ConOut("AUTH: Authentication failed\n");
 		FailAuth(s);
 	}
 	// sysbroadcast("Normal server operation resumed.");
@@ -568,7 +568,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 		{
 		case ACCOUNT_WIPE:
 #ifdef DEBUG_NETWORK
-			printf("No account!\n");
+			ConOut("No account!\n");
 #endif
 			acctno[s] = -1;
 			xSend( s, noaccount, 2, 0 );
@@ -576,7 +576,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			return;
 		case BAD_PASSWORD:
 #ifdef DEBUG_NETWORK
-			printf("No password!\n");
+			ConOut("No password!\n");
 #endif
 			acctno[s]=-1;
 			xSend(s, nopass, 2, 0);
@@ -584,7 +584,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			return;
 		case ACCOUNT_BANNED:
 #ifdef DEBUG_NETWORK
-			printf( "Player blocked!\n" );	// banned
+			ConOut( "Player blocked!\n" );	// banned
 #endif
 			acctno[s]=-1;
 			xSend(s, acctblock, 2, 0);
@@ -592,7 +592,7 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 			return;
 		default:
 #ifdef DEBUG_NETWORK
-			printf("No account!\n");
+			ConOut("No account!\n");
 #endif
 			xSend(s, noaccount, 2, 0);
 			Disconnect(s);
@@ -742,25 +742,25 @@ int cNetworkStuff::Receive(int s, int x, int a) // Old socket receive function (
 			buf2c=0;
 			if (((recvcount==x)||(x==2560))&&(a))
 			{
-				printf("*** xRecv\n");
+				ConOut("*** xRecv\n");
 				for (int i=0;i<recvcount;i++)
 				{
 					buf2[buf2c]=buffer[s][i];
 					buf2c++;
 					if ((buf2c==16)||(i==recvcount-1))
 					{
-						printf("C%i %2x : ",s,((i%256)/16)*16);
+						ConOut("C%i %2x : ",s,((i%256)/16)*16);
 						for (j=0;j<buf2c;j++)
 						{
-							printf("%2x ",buf2[j]);
+							ConOut("%2x ",buf2[j]);
 						}
-						printf("[");
+						ConOut("[");
 						for (j=0;j<buf2c;j++)
 						{
-							if ((isalnum(buf2[j]))||(isprint(buf2[j]))) printf("%c",buf2[j]); else printf(".");
+							if ((isalnum(buf2[j]))||(isprint(buf2[j]))) ConOut("%c",buf2[j]); else ConOut(".");
 						}
 						buf2c=0;
-						printf("]\n");
+						ConOut("]\n");
 					}
 				}
 			}
@@ -780,12 +780,12 @@ void cNetworkStuff::sockInit( void )
 	kr=1;
 	faul=0;
 	
-#ifdef __NT__
+#ifndef __linux__
 	wVersionRequested=MAKEWORD(2, 0);
 	err=WSAStartup(wVersionRequested, &wsaData);
 	if (err)
 	{
-		printf("\nERROR: Winsock 2.0 not found...\n");
+		ConOut("\nERROR: Winsock 2.0 not found...\n");
 		keeprun=0;
 		error=1;
 		kr=0;
@@ -798,11 +798,11 @@ void cNetworkStuff::sockInit( void )
 	a_socket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (a_socket<0)
 	{
-		printf("\nERROR: Unable to create socket ");
-#ifdef __NT__
-		printf("error code %i\n", WSAGetLastError());
+		ConOut("\nERROR: Unable to create socket ");
+#ifndef __linux__
+		ConOut("error code %i\n", WSAGetLastError());
 #else
-		printf("\n");
+		ConOut("\n");
 #endif
 		keeprun=0;
 		error=1;
@@ -811,16 +811,16 @@ void cNetworkStuff::sockInit( void )
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 		return;
 	}
-#ifndef __NT__
+#ifdef __linux__
 	int on = 1;
 	bcode = setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 	if (bcode != 0)
 	{
-		printf("\nERROR: Unable to init. socket - Error code: %i\n", bcode);
+		ConOut("\nERROR: Unable to init. socket - Error code: %i\n", bcode);
 		keeprun = 0;
 		error = 1;
 		kr = 0;
-		fault = 1;
+		faul = 1;
 		return;
 	}
 #endif
@@ -834,7 +834,7 @@ void cNetworkStuff::sockInit( void )
 	
 	if (bcode<0)
 	{
-		printf("\nERROR: Unable to bind socket 1 - Error code: %i\n",bcode);
+		ConOut("\nERROR: Unable to bind socket 1 - Error code: %i\n",bcode);
 		keeprun=0;
 		error=1;
 		kr=0;
@@ -883,16 +883,16 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 		if (s>0)
 		{
 			len=sizeof (struct sockaddr_in);
-			//   printf("Waiting at accept()\n");
-#ifndef __LINUX__
+			//   ConOut("Waiting at accept()\n");
+#ifndef __linux__
 			client[now]=accept(a_socket, (struct sockaddr *)&client_addr, &len);
 #else
 			client[now]=accept(a_socket, (struct sockaddr *)&client_addr, (unsigned int *)&len );
 #endif
-			//   printf("Done! :)\n");
+			//   ConOut("Done! :)\n");
 			if (client[now]<0)
 			{
-				printf("ERROR: Error at client connection!\n");
+				ConOut("ERROR: Error at client connection!\n");
 				error=1;
 				keeprun=1;			// Leviathan suggested, Abaddon put in... old clients shut the server down
 				return;
@@ -910,17 +910,17 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			cryptclient[now]=0;
 			walksequence[now]=-1;
 			idleTimeout[now] = -1;
-#ifdef __NT__
-			printf("UOX3: Client %i [%i.%i.%i.%i] connected [Total:%i].\n",now,client_addr.sin_addr.S_un.S_un_b.s_b1 _ client_addr.sin_addr.S_un.S_un_b.s_b2 _ client_addr.sin_addr.S_un.S_un_b.s_b3 _ client_addr.sin_addr.S_un.S_un_b.s_b4,now+1);
+#ifndef __linux__
+			ConOut("UOX3: Client %i [%i.%i.%i.%i] connected [Total:%i].\n",now,client_addr.sin_addr.S_un.S_un_b.s_b1 _ client_addr.sin_addr.S_un.S_un_b.s_b2 _ client_addr.sin_addr.S_un.S_un_b.s_b3 _ client_addr.sin_addr.S_un.S_un_b.s_b4,now+1);
 #else
-			printf("UOX3: Client %i connected [Total:%i].\n",now,now+1);
+			ConOut("UOX3: Client %i connected [Total:%i].\n",now,now+1);
 #endif
 			now++;
 			return;
 		}
 		if (s<0)
 		{
-			printf("ERROR: Select (Conn) failed!\n");
+			ConOut("ERROR: Select (Conn) failed!\n");
 			keeprun=0;
 			error=1;
 			return;
@@ -938,7 +938,7 @@ cNetworkStuff::~cNetworkStuff()
 		s = max(s, client[i]+1);
 	}
 	closesocket(s);
-#ifdef _WIN32
+#ifndef __linux__
 	WSACleanup();
 #endif
 }

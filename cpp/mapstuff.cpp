@@ -194,57 +194,57 @@ cMapStuff::~cMapStuff()
 
 void cMapStuff::Load()
 {
-	printf("Preparing to open *.mul files...\n(If they don't open, fix your paths in the uox3.ini)\n");
+	ConOut("Preparing to open *.mul files...\n(If they don't open, fix your paths in the uox3.ini)\n");
 	mapfile= new UOXFile(mapname,"rb");
-	printf("	%s\n", mapname);
+	ConOut("	%s\n", mapname);
 	if (mapfile==NULL || !mapfile->ready())
     {
-		printf("ERROR: Map %s not found...\n",mapname);
+		ConOut("ERROR: Map %s not found...\n",mapname);
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
     }
-	printf("	%s\n", sidxname);
+	ConOut("	%s\n", sidxname);
 	sidxfile= new UOXFile(sidxname,"rb");
 	if (sidxfile==NULL || !sidxfile->ready())
     {
-		printf("ERROR: Statics Index %s not found...\n",sidxname);
+		ConOut("ERROR: Statics Index %s not found...\n",sidxname);
 		Shutdown( FATAL_UOX3_STATICS_INDEX_NOT_FOUND );
     }
-	printf("	%s\n", statname);
+	ConOut("	%s\n", statname);
 	statfile= new UOXFile(statname,"rb");
 	if (statfile==NULL || !statfile->ready())
     {
-		printf("ERROR: Statics File %s not found...\n",statname);
+		ConOut("ERROR: Statics File %s not found...\n",statname);
 		Shutdown( FATAL_UOX3_STATICS_NOT_FOUND );
 	}
-	printf("	%s\n", vername);
+	ConOut("	%s\n", vername);
 	verfile= new UOXFile(vername,"rb");
 	if (verfile==NULL || !verfile->ready())
     {
-		printf("ERROR: Version File %s not found...\n",vername);
+		ConOut("ERROR: Version File %s not found...\n",vername);
 		Shutdown( FATAL_UOX3_VERSION_NOT_FOUND );
     }
-	printf("	%s\n", tilename);
+	ConOut("	%s\n", tilename);
 	tilefile= new UOXFile(tilename,"rb");
 	if (tilefile==NULL || !tilefile->ready())
     {
-		printf("ERROR: Tiledata File %s not found...\n",tilename);
+		ConOut("ERROR: Tiledata File %s not found...\n",tilename);
 		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
     }
-	printf("	%s\n", multiname);
+	ConOut("	%s\n", multiname);
 	multifile= new UOXFile(multiname,"rb");
 	if (multifile==NULL || !multifile->ready())
     {
-		printf("ERROR: Multi data file %s not found...\n",multiname);
+		ConOut("ERROR: Multi data file %s not found...\n",multiname);
 		Shutdown( FATAL_UOX3_MULTI_DATA_NOT_FOUND );
     }
-	printf("	%s\n", midxname);
+	ConOut("	%s\n", midxname);
 	midxfile=new UOXFile(midxname,"rb");
 	if (midxfile==NULL || !midxfile->ready())
     {
-		printf("ERROR: Multi index file %s not found...\n",midxname);
+		ConOut("ERROR: Multi index file %s not found...\n",midxname);
 		Shutdown( FATAL_UOX3_MULTI_INDEX_NOT_FOUND );
     }
-	printf("Mul files successfully opened (but not yet loaded.)\n");
+	ConOut("Mul files successfully opened (but not yet loaded.)\n");
 	
 	CacheVersion();
 	if( Cache )
@@ -415,7 +415,7 @@ signed char cMapStuff::MultiHeight(int i, short int x, short int y, signed char 
 	{                                                                                                                             
 		length = 0;                                                                                                           
 	}
-	//printf("Doing multitile for #%x\n", items[i].serial);                                                                                                                             
+	//ConOut("Doing multitile for #%x\n", items[i].serial);                                                                                                                             
 	//Check for height at and above
 	
 	for (int j=0;j<length;j++)
@@ -426,12 +426,12 @@ signed char cMapStuff::MultiHeight(int i, short int x, short int y, signed char 
 			int tmpTop = items[i].z + multi.z;
 			if ((tmpTop<=oldz+MaxZstep)&& (tmpTop>=oldz-1))
 			{
-				//printf("At or above=%i\n",multi.z);
+				//ConOut("At or above=%i\n",multi.z);
 				return multi.z;
 			}
 			else if ((tmpTop>=oldz-MaxZstep)&& (tmpTop<oldz-1))
 			{
-				//printf("Below=%i\n",multi.z);
+				//ConOut("Below=%i\n",multi.z);
 				return multi.z;
 			}
 		}                                                                                                                 
@@ -516,7 +516,7 @@ int cMapStuff::MultiTile(int i, short int x, short int y, signed char oldz)
 	length=length/MultiRecordSize;
 	if (length == -1 || length>=17000000)//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 	{
-		printf("cMapStuff::MultiTile->Bad length in multi file. (Item serial %i) Avoiding stall.\n", items[i].serial );
+		ConOut("cMapStuff::MultiTile->Bad length in multi file. (Item serial %i) Avoiding stall.\n", items[i].serial );
 		length = 0;
 	}
 	
@@ -573,7 +573,7 @@ int cMapStuff::DynTile(short int x, short int y, signed char oldz)
             {
 				
 				int tile = MultiTile(mapitem, x ,y, oldz);
-				// printf("DynTile multi-tile:  %i\n",tile);
+				// ConOut("DynTile multi-tile:  %i\n",tile);
 				return tile;
             }
         }    
@@ -656,7 +656,7 @@ signed char cMapStuff::AverageMapElevation(short int x, short int y, int &id)
 		}
 		return testz;
 	}
-//	printf("Uhh.. Someone's walking on something funny..\n");
+//	ConOut("Uhh.. Someone's walking on something funny..\n");
 	return illegal_z;
 }
 
@@ -691,13 +691,13 @@ void cMapStuff::CacheVersion()
 	if (NULL == (versionCache = new versionrecord[maxRecordCount]))
 		return;
 	
-	printf("Caching version data..."); fflush(stdout);
+	ConOut("Caching version data..."); fflush(stdout);
 	versionMemory = maxRecordCount * sizeof(versionrecord);
 	for (UI32 i = 0; i < maxRecordCount; ++i)
     {
 		if (verfile->eof())
 		{
-			printf("Error: Avoiding bad read crash with verdata.mul.\n");
+			ConOut("Error: Avoiding bad read crash with verdata.mul.\n");
 			return;
 		}
 		versionrecord *ver = versionCache + versionRecordCount;
@@ -717,14 +717,14 @@ void cMapStuff::CacheVersion()
 		case VERFILE_STATICS:
 			// at some point we may need to handle these cases, but OSI hasn't patched them as of
 			// yet, so no need slowing things down processing them
-			printf("Eeek! OSI has patched the static data and I don't know what to do!\n");
+			ConOut("Eeek! OSI has patched the static data and I don't know what to do!\n");
 			break;
 		default:
 			// otherwise its for a file we don't care about
 			break;
 		}
     }
-	printf("Done\n(Cached %ld patches out of %ld possible).\n", versionRecordCount, maxRecordCount);
+	ConOut("Done\n(Cached %ld patches out of %ld possible).\n", versionRecordCount, maxRecordCount);
 }
 
 
@@ -748,12 +748,12 @@ char cMapStuff::VerTile(int tilenum, tile_st *tile)
 	const SI32 block=(tilenum/32);
 	if (VerSeek(VERFILE_TILEDATA, block+0x200)==0)
 	{
-		//  printf("No Ver\n");
+		//  ConOut("No Ver\n");
 		return 0;
 	}
 	else
 	{
-		//  printf("Ver\n");
+		//  ConOut("Ver\n");
 		const SI32 pos=4+(TileRecordSize*(tilenum%32)); // correct
 		verfile->seek(pos, SEEK_CUR);
 		verfile->get_tile_st(tile);
@@ -782,7 +782,7 @@ void cMapStuff::SeekTile(int tilenum, tile_st *tile)
 		// fill it up straight from the cache
 		memcpy(tile, tilecache + tilenum, sizeof(tile_st));
 #ifdef DEBUG_MAP_STUFF
-		printf("SeekTile - cache hit!\n");
+		ConOut("SeekTile - cache hit!\n");
 #endif
 	}
 	else
@@ -790,7 +790,7 @@ void cMapStuff::SeekTile(int tilenum, tile_st *tile)
 		if (VerTile(tilenum, tile))
 		{
 #ifdef DEBUG_MAP_STUFF
-			printf("Loaded tile %d from verdata.mul\n", tilenum);
+			ConOut("Loaded tile %d from verdata.mul\n", tilenum);
 #endif
 		}
 		else
@@ -804,12 +804,12 @@ void cMapStuff::SeekTile(int tilenum, tile_st *tile)
 		}
 		
 #ifdef DEBUG_MAP_STUFF
-		printf("Tile #%d is '%s' ", tilenum, tile->name);
-		printf("flag1: "); bitprint(stdout, tile->flag1);
-		printf("flag2: "); bitprint(stdout, tile->flag2);
-		printf("flag3: "); bitprint(stdout, tile->flag3);
-		printf("flag4: "); bitprint(stdout, tile->flag4);
-		printf("\n");
+		ConOut("Tile #%d is '%s' ", tilenum, tile->name);
+		ConOut("flag1: "); bitprint(stdout, tile->flag1);
+		ConOut("flag2: "); bitprint(stdout, tile->flag2);
+		ConOut("flag3: "); bitprint(stdout, tile->flag3);
+		ConOut("flag4: "); bitprint(stdout, tile->flag4);
+		ConOut("\n");
 #endif
 	}
 }
@@ -818,7 +818,7 @@ void cMapStuff::CacheTiles()
 {
 	// temp disable caching so we can fill the cache
 	Cache = 0;
-	printf("Caching tiledata"); fflush(stdout);
+	ConOut("Caching tiledata"); fflush(stdout);
 	TileMem = 0x4000 * sizeof( tile_st );
 	memset(tilecache, 0, TileMem);
 	
@@ -829,10 +829,10 @@ void cMapStuff::CacheTiles()
 		
 		if (i % tenPercent == 0)
 		{
-			printf("...%d0%%", 1 + (i / tenPercent)); fflush(stdout);
+			ConOut("...%d0%%", 1 + (i / tenPercent)); fflush(stdout);
 		}
     }
-	printf(" Done.\n");
+	ConOut(" Done.\n");
 	Cache = 1;
 	
 #ifdef DEBUG_TILE_BITS
@@ -915,7 +915,7 @@ char cMapStuff::VerLand(int landnum, land_st *land)
 		//  printf("No Ver\n");
 		return 0;
 	}
-	//  printf("Ver\n");
+	//  ConOut("Ver\n");
 	const SI32 pos=4+(LandRecordSize*(landnum%32)); // correct
 	//fseek(verfile, pos, SEEK_CUR);
 	//fread(land, sizeof(land_st), 1, verfile);
@@ -997,7 +997,7 @@ pos(0), exactCoords(exact), tileid(0)
 			{
 				Map->sidxfile->getULong(&length);
 				length /= StaticRecordSize;
-				//printf("MSI indexpos: %ld, pos at %lx, length: %lu\n", indexPos, pos, length); 
+				//ConOut("MSI indexpos: %ld, pos at %lx, length: %lu\n", indexPos, pos, length); 
 			}
 		}
 	}
@@ -1023,8 +1023,8 @@ staticrecord *MapStaticIterator::Next()
 		// cell have static tiles defined.
 		if (index == 0)
 		{
-			printf("baseX: %lu, baseY: %lu, remX: %d, remY: %d\n", baseX, baseY, (int) remainX, (int) remainY);
-			printf(" 01234567\n");
+			ConOut("baseX: %lu, baseY: %lu, remX: %d, remY: %d\n", baseX, baseY, (int) remainX, (int) remainY);
+			ConOut(" 01234567\n");
 			char testmap[9][9];
 			memset(testmap, ' ', 9*9);
 			for (int tmp = 0; tmp < length; ++tmp)
@@ -1036,7 +1036,7 @@ staticrecord *MapStaticIterator::Next()
 			for (int foo = 0; foo < 8; ++foo)
 			{
 				testmap[foo][8] = '\0';
-				printf("%d%s\n", foo, testmap[foo]);
+				ConOut("%d%s\n", foo, testmap[foo]);
 			}
 		}
 #endif
@@ -1067,8 +1067,8 @@ staticrecord *MapStaticIterator::Next()
 		if (!exactCoords || (staticArray.xoff == remainX && staticArray.yoff == remainY))
 		{
 #ifdef DEBUG_MAP_STUFF
-			printf("Found static at index: %lu, Length: %lu, indepos: %ld\n", index, length, pos2);
-			printf("item is %d, x: %d, y: %d\n", staticArray.itemid, (int) staticArray.xoff, (int) staticArray.yoff);
+			ConOut("Found static at index: %lu, Length: %lu, indepos: %ld\n", index, length, pos2);
+			ConOut("item is %d, x: %d, y: %d\n", staticArray.itemid, (int) staticArray.xoff, (int) staticArray.yoff);
 #endif
 			tileid = staticArray.itemid;
 			return &staticArray;
@@ -1096,13 +1096,13 @@ void cMapStuff::CacheStatics( void )
 	const UI32 tableMemory = StaticBlocks * sizeof(staticrecord);
 	const UI32 indexMemory = StaticBlocks * sizeof(StaCache_st);
 	StaMem = tableMemory + indexMemory;
-	/*printf("Blocks: %ld, Index: %ld, Table: %ld, Static File Size: %ld\n",
+	/*ConOut("Blocks: %ld, Index: %ld, Table: %ld, Static File Size: %ld\n",
 	(long) StaticBlocks, (long)sizeof(StaCache_st), (long) sizeof(staticrecord),
 	(long) StaticBlocks * StaticRecordSize);*/
-	printf("Going to need %ld table bytes + %ld index bytes = %ld total bytes to cache statics...\n",
+	ConOut("Going to need %ld table bytes + %ld index bytes = %ld total bytes to cache statics...\n",
 		tableMemory, indexMemory, StaMem);
 	
-	printf( "Caching Statics0"); fflush(stdout);
+	ConOut( "Caching Statics0"); fflush(stdout);
 	
 	// we must be in caching mode, only turn it off for now because we are
 	// trying to fill the cache.
@@ -1130,14 +1130,14 @@ void cMapStuff::CacheStatics( void )
 			}
 			if (currentBlock++ % tenPercent == 0)
 			{
-				printf("...%d0%%", 1 + (currentBlock / tenPercent)); fflush(stdout);
+				ConOut("...%d0%%", 1 + (currentBlock / tenPercent)); fflush(stdout);
 			}
 		}
     } 
 	
 	// reenable the caching now that its filled
 	Cache = 1;
-	printf("Done.\n");
+	ConOut("Done.\n");
 }
 
 map_st cMapStuff::SeekMap0( unsigned short x, unsigned short y )

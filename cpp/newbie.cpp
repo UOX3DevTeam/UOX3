@@ -66,7 +66,7 @@ void addnewbieitem( UOXSOCKET s, CHARACTER c, char* str)
 	UOXSOCKET socket = s;
 
 #if DEBUG
-	printf("addnewbieitem: %s %s\n", chars[c].name, str);
+	ConOut("addnewbieitem: %s %s\n", chars[c].name, str);
 #endif
 
 	openscript("newbie.scp");

@@ -56,22 +56,22 @@ int cCombat::GetSwingRate( int iNPC, int weapon )
 
 	int stamina = chars[iNPC].stm;
 #ifdef __COMBATDEBUG__
-	printf("Stamina is %i...", stamina );
+	ConOut("Stamina is %i...", stamina );
 #endif
 	if( weapon != -1 )
 	{
 		speed = items[weapon].spd;
 #ifdef __COMBATDEBUG__
-		printf("Item %s [%i]...", items[weapon].name, weapon );
+		ConOut("Item %s [%i]...", items[weapon].name, weapon );
 #endif
 	}
 	else speed = combat.wrestleSpeed;
 #ifdef __COMBATDEBUG__
-	printf("Speed is %i...", speed );
+	ConOut("Speed is %i...", speed );
 #endif
 	sRate = 16000 / ( ( ( stamina + 65 ) * speed ) + 1 );		// Abaddon, was 15000, increased because of slightly slow swing speed
 #ifdef __COMBATDEBUG__
-	printf("sRate is %i\n", sRate );
+	ConOut("sRate is %i\n", sRate );
 #endif
 	if( sRate <= 0 ) 
 		sRate = 1;
@@ -362,20 +362,20 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 			/////////////////////////////////
 			//Adds a BONUS DAMAGE for ANATOMY
 			//Anatomy=100 -> Bonus +20% Damage - AntiChrist (11/10/99)
-			//printf("NORMAL DAMAGE: %d\n",damage);
+			//ConOut("NORMAL DAMAGE: %d\n",damage);
 			float multiplier = ( ( ( chars[attack].skill[ANATOMY] * 20 ) / 1000.0 ) / 100 ) + 1;
-			//printf("MULTIPLIER: %f\n",multiplier);
+			//ConOut("MULTIPLIER: %f\n",multiplier);
 			damage = (int)( damage * multiplier );
-			//printf("DAMAGE WITH ANAT: %d\n",damage);
+			//ConOut("DAMAGE WITH ANAT: %d\n",damage);
 		
 			//////////////////////////////////
 			//Adds a BONUS DEFENCE for TACTICS
 			//Tactics=100 -> Bonus -20% Damage - AntiChrist (11/10/99)
-			//printf("NORMAL DAMAGE: %d\n",damage);
+			//ConOut("NORMAL DAMAGE: %d\n",damage);
 			multiplier = 1 - ( ( ( chars[defend].skill[TACTICS] * 20 ) / 1000.0 ) / 100 );
-			//printf("MULTIPLIER: %f\n",multiplier);
+			//ConOut("MULTIPLIER: %f\n",multiplier);
 			damage=(int)( damage * multiplier );
-			//printf("DAMAGE WITH TAC: %d\n",damage);
+			//ConOut("DAMAGE WITH TAC: %d\n",damage);
 	
 			//
 			// this 3 lines commented out by LB
@@ -525,24 +525,24 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				maxabs = server_data.maxabsorbtion;
 			else 
 			{
-				printf( "SERVER.SCP:CombatHit() Error in MAX_ABSORBTION. Reset to Deafult (20).\n" );
+				ConOut( "SERVER.SCP:CombatHit() Error in MAX_ABSORBTION. Reset to Deafult (20).\n" );
 				server_data.maxabsorbtion = maxabs;
 			}
 			if( server_data.maxnohabsorbtion > 0 ) 
 				maxnohabs = server_data.maxnohabsorbtion;
 			else 
 			{
-				printf( "SERVER.SCP:CombatHit() Error in MAX_NON_HUMAN_ABSORBTION. Reset to Deafult (100).\n" );
+				ConOut( "SERVER.SCP:CombatHit() Error in MAX_NON_HUMAN_ABSORBTION. Reset to Deafult (100).\n" );
 				server_data.maxnohabsorbtion = maxnohabs;
 			}
 			if( !ishuman( defend ) ) 
 				maxabs = maxnohabs;
-			//printf("Damage Before Abs: %i\n",damage);
+			//ConOut("Damage Before Abs: %i\n",damage);
 			tmpj = (int)( ( damage * x ) / maxabs ); // Absorbtion by Magius(CHE)
 			damage -= tmpj;
 			if( damage < 0 ) 
 				damage = 0;
-			//printf("MaxAbs: %i\nArmour: %i\nDamage: %i\nSubstract: %i\n",maxabs,x,damage,tmpj);
+			//ConOut("MaxAbs: %i\nArmour: %i\nDamage: %i\nSubstract: %i\n",maxabs,x,damage,tmpj);
 			if( chars[defend].npc == 0 ) 
 				damage /= server_data.npcdamage; // Rate damage against other players
 
@@ -772,7 +772,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 							if( chars[attack].stm < 0 ) 
 								chars[attack].stm = 0;
         					updatestats( attack, 2 );
-							//printf("ATTACKSTAMINA %i\n",server_data.attackstamina);
+							//ConOut("ATTACKSTAMINA %i\n",server_data.attackstamina);
 							// --------ATTACK STAMINA END ------
 						}
 
@@ -1368,7 +1368,7 @@ void cCombat::SpawnGuard( CHARACTER s, CHARACTER i, int x, int y, signed char z)
 {
 	int t,c, j;
 	char b;
-	//printf("spawnguard called !!\n");
+	//ConOut("spawnguard called !!\n");
 
 	if( i < 0 || i >= cmem || s < 0 || s >= cmem ) return;
 	j = i;

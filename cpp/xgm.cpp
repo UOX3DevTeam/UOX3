@@ -212,7 +212,7 @@ void cRemote::CheckMsg(UOXSOCKET s)
 	{
 		recv(client[s], (char *)&buffer[s][1], 1, 0);
 		unsigned char len = 2, numPoint = 2;
-		printf("Received a message from xgm client %i! (Message %x)\n", s, buffer[s][1] );
+		ConOut("Received a message from xgm client %i! (Message %x)\n", s, buffer[s][1] );
 
 		// this could be sped up by passing the string length
 		while( buffer[s][len] != '\0' )
@@ -229,12 +229,12 @@ void cRemote::CheckMsg(UOXSOCKET s)
 		case 0x01:			// Save new world
 			cwmWorldState->savenewworld(1);
 			Send(s, "World data saved.");
-			printf("World data saved. ");
+			ConOut("World data saved. ");
 			break;
 		case 0x02:			// Save accounts
 			cwmWorldState->saveAccount();
 			Send(s, "Accounts Updated.");
-			printf("Acounts Updated. ");
+			ConOut("Acounts Updated. ");
 			break;
 		case 0x03:			// Add item
 			addmitem[ClientSock] = grabNumber( 2, numPoint, ClientSock ); // Anthracks' fix
@@ -269,7 +269,7 @@ void cRemote::CheckMsg(UOXSOCKET s)
 			break;
 		default:
 			Send(s, "Sever did not recognize message %c", buffer[s][1]);
-			printf("XGM: Unknown message %c\n",buffer[s][1]);
+			ConOut("XGM: Unknown message %c\n",buffer[s][1]);
 			return;
 		}
 	}

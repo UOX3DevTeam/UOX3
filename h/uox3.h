@@ -53,21 +53,21 @@
 #define NAME "The Official DevTeam"
 #define EMAIL "http://www.uox3.net/"
 #define PROGRAMMERS "Freelancers"
-#ifdef _WIN32
-#define __NT__
-#define _MSVC
-#endif
-#ifdef __NT__
-#ifndef _WIN32
-#define _WIN32
-#endif
-#endif
+//#ifdef _WIN32
+//#define __NT__
+//#define _MSVC
+//#endif
+//#ifdef __NT__
+//#ifndef _WIN32
+//#define _WIN32
+//#endif
+//#endif
 // remove PACKED for unix/linux because it going to cause bus errors - fur
-#if defined _WIN32 && (!defined(__MINGW32__))
+//#if defined _WIN32 && (!defined(__MINGW32__))
 #define PACK_NEEDED
-#else
-#define PACK_NEEDED
-#endif
+//#else
+//#define PACK_NEEDED
+//#endif
 
 
 #ifdef _MSVC
@@ -91,10 +91,10 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
   int max;
   int *pointer;
 };
-#if (defined( __LINUX__ ) || defined( __MINGW32__ )) && (!defined(__cdecl)) 
+#if (defined( __linux__ ) || defined( __MINGW32__ )) && (!defined(__cdecl)) 
 	#define __cdecl
 #endif
-#ifdef __LINUX__
+#ifdef __linux__
 	#define XP_UNIX
 	typedef unsigned char BYTE;
 #else
@@ -118,7 +118,7 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 #  define CLOCKS_PER_SEC 1000
 #endif
 
-#ifdef __NT__
+#ifndef __linux__
 	#ifdef _BORLAND_
 		#include <condefs.h>
 	#endif
@@ -139,10 +139,16 @@ struct lookuptr_st //Tauriel  used to create pointers to the items dynamically a
 	#include <sys/time.h>
 	#include <netdb.h>
 	#include <sys/signal.h>
-	#ifdef __LINUX__				// Tseramed's stuff
+	#ifdef __linux__				// Tseramed's stuff
 		#include <unistd.h>
 		#include <arpa/inet.h>
+		#include <curses.h>
 	#endif
+#endif
+#ifdef __linux__
+#define ConOut printf
+#else
+#define ConOut printf 
 #endif
 
 using namespace std;
@@ -216,7 +222,7 @@ typedef unsigned char		weathID;
 
 #endif
 // LINUX Definitions
-#ifndef __NT__
+#ifdef __linux__
 inline int min(int a, int b) { if (a < b) return a; return b; }
 inline int max(int a, int b) { if (a > b) return a; return b; }
 extern "C" {
@@ -310,7 +316,7 @@ extern long idleTimeout[MAXCLIENT];
 extern unsigned int raindroptime;
 extern unsigned int polyduration;
 
-#ifdef __NT__
+#ifndef __linux__
 extern WSADATA wsaData;
 extern WORD wVersionRequested;
 #endif
@@ -600,10 +606,10 @@ int SpawnRandomItem(UOXSOCKET nCharID,int nInPack, char* cScript, char* cList, c
 void vialtarget( UOXSOCKET nSocket);
 void MakeNecroReg( UOXSOCKET nSocket, ITEM nItem, unsigned char cItemID1, unsigned char cItemID2 );
 
-#ifndef __NT__
+#ifdef __linux__
 unsigned long int getclock();
 #endif
-#ifdef __NT__
+#ifndef __linux__
 #define getclock() clock()
 #else
 #undef CLOCKS_PER_SEC
@@ -681,6 +687,9 @@ void gcollect();
 void consolebroadcast(char *txt);
 void CheckConsoleKeyThread(void *params);
 void checkkey();
+#ifdef __linux__
+void endScrn(void) ;
+#endif
 //	EviLDeD	-	End
 
 int compare_charst (const char_st *a, const char_st *b);
@@ -760,7 +769,7 @@ void dotrade(int cont1, int cont2);
 void loadspawnregions();//Zippy
 void loadregions();
 void checkregion(int i);
-#ifndef __LINUX__
+#ifndef __linux__
 char calcRegionFromXY(int x, int y);
 #else
 short calcRegionFromXY( int x, int y );
@@ -851,7 +860,7 @@ void mtarget(int s, unsigned char a1, unsigned char a2, unsigned char a3, unsign
 
 void lockpick(int s);
 
-#ifdef  __NT__
+#ifndef  __linux__
 void Writeslot(LPSTR lpszMessage);
 #else
 void Writeslot(char *lpszMessage);
@@ -875,7 +884,7 @@ void loadcustomtitle();
 // Profiling
 //void StartMilliTimer(unsigned long &Seconds, unsigned long &Milliseconds);
 //unsigned long CheckMilliTimer(unsigned long &Seconds, unsigned long &Milliseconds);
-#ifdef __NT__
+#ifndef __linux__
 	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeb t; ftime( &t ); Seconds = t.time; Milliseconds = t.millitm; };
 	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) { struct timeb t; ftime( &t ); return( 1000 * ( t.time - Seconds ) + ( t.millitm - Milliseconds ) ); };
 #else

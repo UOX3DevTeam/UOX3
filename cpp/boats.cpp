@@ -149,13 +149,13 @@ int inmulti(int x, int y, signed char z, int m)//see if they are in the multi at
 	length=length/sizeof(st_multi);
 	if (length == -1 || length>=17000000)//Too big...
 	{
-		printf("inmulti() - Bad length in multi file. Avoiding stall. (Item Name: %s %i) (Length: %d)\n", items[m].name, items[m].serial, length );
+		ConOut("inmulti() - Bad length in multi file. Avoiding stall. (Item Name: %s %i) (Length: %d)\n", items[m].name, items[m].serial, length );
 		length = 0;
 	}
 	for (j=0;j<length;j++)
 	{
 	        mfile->get_st_multi(&multi);
-		/*printf("DEBUG: Multi { vis=%i - (%i,%i) } check(%i,%i,%i)   -   total(%i,%i)\n",
+		/*ConOut("DEBUG: Multi { vis=%i - (%i,%i) } check(%i,%i,%i)   -   total(%i,%i)\n",
 		multi.visible,multi.x,multi.y,x,y,z,multi.x+items[m].x,items[m].y+multi.y);*/
 		if ((multi.visible)&&(items[m].x+multi.x == x) && (items[m].y+multi.y == y))
 		{
@@ -309,7 +309,7 @@ void cBoat::OpenPlank(int p)//Open, or close the plank (called from keytarget() 
 	case 0xD5: items[p].id2=0xB1; break;
 	case 0xD4: items[p].id2=0xB2; break;
 	case 0x89: items[p].id2=0x8A; break;
-	default: printf("WARNING: Invalid plank ID called! Plank %i '%s' [%x %x]\n",p,items[p].name,items[p].id1,items[p].id2); break;
+	default: ConOut("WARNING: Invalid plank ID called! Plank %i '%s' [%x %x]\n",p,items[p].name,items[p].id1,items[p].id2); break;
 	}
 }
 
@@ -471,7 +471,7 @@ int cBoat::GetBoat(int s)//get the closest boat to the player and check to make 
 							if (dist(currchar[s],mapitem,1)<=mindist)//they are closer to this than 30, or the last Multi they were near.
 							{
 								mindist=dist(currchar[s],mapitem,1);//Store closest multi
-								//printf("%s\n",items[mapitem].name);
+								//ConOut("%s\n",items[mapitem].name);
 								if (items[mapitem].type==117)//Boat type
 									boat=mapitem;
 							}
@@ -629,7 +629,7 @@ void cBoat::Move(int s, int dir, int boat)
 	case '\x06' : 		tx--;		break;
 	case '\x07' : 		tx--; 		ty--;		break;
 	default:
-		printf("ERROR: Boat direction error: %i int boat %i\n",items[boat].dir&0x0F,items[boat].serial);
+		ConOut("ERROR: Boat direction error: %i int boat %i\n",items[boat].dir&0x0F,items[boat].serial);
 		break;
 	}
 	
@@ -643,7 +643,7 @@ void cBoat::Move(int s, int dir, int boat)
 	//if(!validNPCMove(items[boat].x+tx,items[boat].y+ty,items[boat].z,currchar[s]))
 	if(Block(boat,tx,ty,dir))
 	{
-		// printf("boat: %i dir: %i b-x: %i b-y: %i b-z: %i tx: %i ty: %i\n",boat,dir,items[boat].x,items[boat].y,items[boat].z,tx,ty);
+		// ConOut("boat: %i dir: %i b-x: %i b-y: %i b-z: %i tx: %i ty: %i\n",boat,dir,items[boat].x,items[boat].y,items[boat].z,tx,ty);
 		items[boat].type2=0;
 		itemtalk(s, tiller, "Arr, somethings in the way!");
 		Network->xSend(s,restart,2,0);
@@ -717,7 +717,7 @@ void cBoat::TurnStuff(int b, int i, int dir, int type)//Turn an item that was on
 	
     if (i<0 || i>=imem || b<0 || b>=imem) return;
 	
-    //printf("ts2\n");
+    //ConOut("ts2\n");
 	
 	if(type)//item
 	{
@@ -746,7 +746,7 @@ void cBoat::TurnStuff(int b, int i, int dir, int type)//Turn an item that was on
 	} else {//Character
 		dx=chars[i].x-items[b].x;
 		dy=chars[i].y-items[b].y;
-		//printf("name: %s\n",chars[i].name);
+		//ConOut("name: %s\n",chars[i].name);
 		
 		mapRegions->RemoveItem(i+1000000);
         
@@ -908,7 +908,7 @@ void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/i
 		items[hold].y += (short int)iLargeShipOffsets[dir][HOLD][YP];
 		
 		break;
-	default: printf("DEBUG: Turnboatstuff() more1 error! more1 = %c not found!\n",items[b].more1);
+	default: ConOut("DEBUG: Turnboatstuff() more1 error! more1 = %c not found!\n",items[b].more1);
 	}
 	mapRegions->AddItem( p1 );
 	mapRegions->AddItem( p2 );
@@ -1043,7 +1043,7 @@ void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
 	}
 	else if(strstr(msg,"SET NAME"))
 	{
-		//:Terrin: not only fix sprintf problem but cannot assume that the
+		//:Terrin: not only fix sConOut problem but cannot assume that the
 		//         "SET NAME" was the first thing on the line
 		// do some checking on what they typed
 		char *cmd = strstr( msg, "SET NAME "); // note: also checking for space

@@ -196,7 +196,7 @@ int im_send( item_menu *menu, int player )
 	menu->gump_message[8] = (unsigned char)( waiting_firstfree & WAIT_MAX );
 	if( waiting_firstfree == WAIT_MAX )
 	{
-		printf( "[IM]im_send: Uh-oh. All waiting slots are busy.\n" );
+		ConOut( "[IM]im_send: Uh-oh. All waiting slots are busy.\n" );
 		return -5;
 	}	
 	/* Add this menu to the wait list. */

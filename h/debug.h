@@ -25,10 +25,10 @@
 //------------------------------------------------------------------------
 #ifndef DEBUG_H
 #define DEBUG_H
-
+#include <uox3.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef _WIN32
+#ifndef __linux__
  #include <stdarg.h>
  #include <windows.h>
 #else

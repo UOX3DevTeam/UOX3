@@ -145,7 +145,7 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 					}
 				}
 #ifdef DEBUG
-				printf( "ERROR: Unable to find a target to kill: character %i at (%i, %i, %i)\n", chars[i].serial, chars[i].x, chars[i].y, chars[i].z );
+				ConOut( "ERROR: Unable to find a target to kill: character %i at (%i, %i, %i)\n", chars[i].serial, chars[i].x, chars[i].y, chars[i].z );
 #endif
 			}
 			break;
@@ -290,7 +290,7 @@ void cCharStuff::CheckAI(unsigned int currenttime, int i) //Lag Fix -- Zippy
 		case 17: break; //Zippy Player Vendors.
 		case 32: break;	// Guard AI
 		default:
-			printf("ERROR: cCharStuff::CheckAI-> Error npc %i (%x %x %x %x) has invalid AI type %i\n",i,chars[i].ser1,chars[i].ser2,chars[i].ser3,chars[i].ser4,chars[i].npcaitype); //Morrolan
+			ConOut("ERROR: cCharStuff::CheckAI-> Error npc %i (%x %x %x %x) has invalid AI type %i\n",i,chars[i].ser1,chars[i].ser2,chars[i].ser3,chars[i].ser4,chars[i].npcaitype); //Morrolan
 			return;
 		}// switch
 	}// if (nextnpcaitime<=currenttime||(overflow))

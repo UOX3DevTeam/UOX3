@@ -208,7 +208,7 @@ char_st& cCharacterHandle::operator[] ( long int Num )
 	} 
   else
   {
-		printf("WARNING: Chars[%i] referenced is invalid. Crash averted!\n", Num);
+		ConOut("WARNING: Chars[%i] referenced is invalid. Crash averted!\n", Num);
   }  
   //Make sure these props are always this way, they may have been chaged by other functions, so put them back
 	DefaultChar->free = 1;
@@ -489,7 +489,7 @@ int cCharStuff::MemCharFree()
 				}
 			}
 
-			printf("ERROR: Could not reallocate character memory after %i. No more characters will be created.\nWARNING: UOX may become unstable.\n", cmem);
+			ConOut("ERROR: Could not reallocate character memory after %i. No more characters will be created.\nWARNING: UOX may become unstable.\n", cmem);
 		} else {
 			// make sure everything has been cleared out
 			memset(clickx + cmem, 0x00, sizeof(int) * slots);
@@ -989,7 +989,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 							setserial(n,mypack,1);
 						}
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
 					}
 				}
 
@@ -1042,7 +1042,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 					{
 						setserial(retitem,c,4);
 						if (items[retitem].layer==0) {
-							printf("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
+							ConOut("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
 						}
 					}
 					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
@@ -1088,7 +1088,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 						fseek(scpfile, pos, SEEK_SET);
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
 					}
 				}
 				else if ((!(strcmp("LOCKPICKING",script1)))||(!(strcmp("SKILL24",script1)))) chars[c].baseskill[LOCKPICKING] = getstatskillvalue(script2);
@@ -1160,7 +1160,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("PRIV1",script1))) chars[c].priv=str2num(script2);
@@ -1209,7 +1209,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("REATTACKAT",script1))) chars[c].reattackat=str2num(script2);
@@ -1271,7 +1271,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("SHOPITEM",script1))) 
@@ -1308,7 +1308,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("SAYCOLOR",script1))) 
@@ -1383,7 +1383,7 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 				if ((!(strcmp("WRESTLING",script1)))||(!(strcmp("SKILL43",script1)))) chars[c].baseskill[WRESTLING] = getstatskillvalue(script2);
 				break;
 			default:
-				printf( "Unknown tag in AddRespawnNPC\n" );
+				ConOut( "Unknown tag in AddRespawnNPC\n" );
 				break;
 			}
 		}
@@ -1428,12 +1428,12 @@ int cCharStuff::AddRespawnNPC( int s, int region, int npcNum, int type )
 				int originY = spawnregion[region].y1 + yAway;
 				if (xAway <= 0)
 				{
-					printf("Error with spawn region %d, x1 >= x2\n", region - 1);
+					ConOut("Error with spawn region %d, x1 >= x2\n", region - 1);
 					xAway = 10;
 				}
 				else if (yAway <= 0)
 				{
-					printf("Error with spawn region %d, y1 >= y2\n", region - 1);
+					ConOut("Error with spawn region %d, y1 >= y2\n", region - 1);
 					yAway = 10;
 				}
 				FindSpotForNPC( c, originX, originY, xAway, yAway, illegal_z );
@@ -1558,7 +1558,7 @@ void InitializeWanderArea(int c, int originX, int originY, int xAway, int yAway)
 	//chars[c].fz1 = chars[c].z;
 	
 #ifdef DEBUG_SPAWN
-	printf("Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", chars[c].fx1, chars[c].fx2, chars[c].fy1, chars[c].fy2);		   
+	ConOut("Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", chars[c].fx1, chars[c].fx2, chars[c].fy1, chars[c].fy2);		   
 #endif
 }
 
@@ -1573,7 +1573,7 @@ void cCharStuff::FindSpotForNPC(int c, int originX, int originY, int xAway, int 
     the NPC will be placed directly on the spawner and the server op will be warned. */
 
 #ifdef DEBUG_SPAWN
-	printf("Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway);
+	ConOut("Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway);
 #endif
 	
 	int k = xAway * yAway / 2;
@@ -1587,7 +1587,7 @@ void cCharStuff::FindSpotForNPC(int c, int originX, int originY, int xAway, int 
 		if( --k < 0 ) //this CAN be a bit laggy. adjust as nessicary
 		{
 			if( xAway > 0 && yAway > 0 )
-				printf("UOX3: Problem area spawner found, NPC placed at default location.\n");
+				ConOut("UOX3: Problem area spawner found, NPC placed at default location.\n");
 			xos=originX;
 			yos=originY;
 			foundSpot = true;
@@ -1919,7 +1919,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 							setserial(n,mypack,1);
 						}
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for gold.\n", npcNum);
 					}
 				}
 
@@ -1972,7 +1972,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 					{
 						setserial(retitem,c,4);
 						if (items[retitem].layer==0) {
-							printf("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
+							ConOut("Warning: Bad NPC Script %d with problem item %d executed!\n", npcNum, storeval);
 						}
 					}
 					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
@@ -2021,7 +2021,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 						fseek(scpfile, pos, SEEK_SET);
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for loot.\n", npcNum);
 					}
 				}
 				else if ((!(strcmp("LOCKPICKING",script1)))||(!(strcmp("SKILL24",script1)))) chars[c].baseskill[LOCKPICKING] = getstatskillvalue(script2);
@@ -2093,7 +2093,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no backpack for packitem.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("PRIV1",script1))) chars[c].priv=str2num(script2);
@@ -2142,7 +2142,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else 
 					{
-						printf("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack1 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("REATTACKAT",script1))) chars[c].reattackat=str2num(script2);
@@ -2196,7 +2196,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack3 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("SHOPITEM",script1))) 
@@ -2231,7 +2231,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 						}
 						strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
 					} else {
-						printf("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
+						ConOut("Warning: Bad NPC Script %d with problem no shoppack2 for item.\n", npcNum);
 					}
 				}
 				else if (!(strcmp("SAYCOLOR",script1))) {
@@ -2341,7 +2341,7 @@ int cCharStuff::AddNPCxyz(int s, int npcNum, int type, int x1, int y1, signed ch
 			   {
 				   if (k>=50) //this CAN be a bit laggy. adjust as nessicary
 				   {
-					   printf("UOX3: Problem area spawner found at [%i,%i,%i]. NPC placed at default location.\n",items[s].x,items[s].y,items[s].z);
+					   ConOut("UOX3: Problem area spawner found at [%i,%i,%i]. NPC placed at default location.\n",items[s].x,items[s].y,items[s].z);
 					   xos=0;
 					   yos=0;
 					   break;
@@ -2770,7 +2770,7 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					default:
-						printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkNPC()\n"); // Morrolan
+						ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, checkNPC()\n"); // Morrolan
 						chars[i].poisoned = 0;
 						return;
 				}

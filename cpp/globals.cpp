@@ -90,7 +90,7 @@ char bounce[3]="\x27\x00";
 char extmove[18]="\x77\x01\x02\x03\x04\x01\x90\x01\x02\x01\x02\x0A\x00\xED\x00\x00\x00";
 char xgm;
 unsigned char attackok[6] = "\xAA\x00\x00\x00\x00"; // AntiChrist! 26/10/99 (make it unsigned in future, stops warnings
-#ifdef __NT__
+#ifndef __linux__
 WSADATA wsaData;
 WORD wVersionRequested;
 #endif
@@ -356,7 +356,7 @@ int escortRegions = 0;
 int validEscortRegion[256];
 
 unsigned int hungerdamagetimer=0; // For hunger damage
-#ifndef __NT__
+#ifdef __linux__
 char *strlwr(char *str) {
   for (unsigned int i=0;i<strlen(str);i++)
     str[i]=tolower(str[i]);

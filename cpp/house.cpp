@@ -134,7 +134,7 @@ void buildhouse(int s, int i)
 		closescript();
 		if (!id1)
 		{
-			printf("ERROR: Bad house script # %i!\n",i);
+			ConOut("ERROR: Bad house script # %i!\n",i);
 			return;
 		}
 	}
@@ -183,8 +183,8 @@ void buildhouse(int s, int i)
 					{
 						sysmessage(s, "You cannot build your house there.");
 						return;
-						//printf("Invalid %i,%i [%i,%i]\n",k,l,x+k,y+l);
-					} //else printf("DEBUG: Valid at %i,%i [%i,%i]\n",k,l,x+k,y+l);
+						//ConOut("Invalid %i,%i [%i,%i]\n",k,l,x+k,y+l);
+					} //else ConOut("DEBUG: Valid at %i,%i [%i,%i]\n",k,l,x+k,y+l);
 				}
 			}
 		}
@@ -282,7 +282,7 @@ void buildhouse(int s, int i)
 							items[l].owner3=chars[currchar[s]].ser3;
 							items[l].owner4=chars[currchar[s]].ser4;
 							setserial( l, house, 7 );
-							//printf("[%i,%i,%i] Item %i\n",items[l].x,items[l].y,items[l].z,l);
+							//ConOut("[%i,%i,%i] Item %i\n",items[l].x,items[l].y,items[l].z,l);
 						}
 						if (!(strcmp(script1,"DECAY")))
 						{
@@ -441,7 +441,7 @@ void deedhouse(int s, int i) // Ripper & AB
 void addthere(int s, int xx, int yy, int zz, int t)
 {
 	int c;
-	//printf("addthere!x=%d y=%d z=%d\n",xx,yy,zz);
+	//ConOut("addthere!x=%d y=%d z=%d\n",xx,yy,zz);
 	tile_st tile;
 
 	assert(s != -1);

@@ -540,7 +540,7 @@ void triggerwitem(int ts, int ti, int ttype)
 						closescript();
 						return;
 					}
-				} else printf("TRIGGER.SCP:Triggerwitem() Syntax Error in IFKARMA token.\n   IFKARMA <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
+				} else ConOut("TRIGGER.SCP:Triggerwitem() Syntax Error in IFKARMA token.\n   IFKARMA <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
 			}
 			if (!(strcmp("KARMA",script1)))  //Do math on the players karma - Magius(CHE)
 			{
@@ -592,7 +592,7 @@ void triggerwitem(int ts, int ti, int ttype)
 						closescript();
 						return;
 					}
-				} else printf("TRIGGER.SCP:Triggerwitem() Syntax Error in IFFAME token.\n   IFFAME <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
+				} else ConOut("TRIGGER.SCP:Triggerwitem() Syntax Error in IFFAME token.\n   IFFAME <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
 			}
 			if (!(strcmp("FAME",script1)))  //Do math on the players fame - Magius(CHE)
 			{
@@ -1349,7 +1349,7 @@ void triggernpc(int ts,int ti)
 						closescript();
 						return;
 					}
-				} else printf("TRIGGER.SCP: Triggerwitem() Syntax Error in IFKARMA token.\n    IFKARMA <opt> <value> \n    <opt> = '<' or '>' \n    <value> range from '-10000' to '10000'.\n" );
+				} else ConOut("TRIGGER.SCP: Triggerwitem() Syntax Error in IFKARMA token.\n    IFKARMA <opt> <value> \n    <opt> = '<' or '>' \n    <value> range from '-10000' to '10000'.\n" );
 			}
 			
 			if (!(strcmp("KARMA",script1)))  //Do math on the players karma - Magius(CHE)
@@ -1402,7 +1402,7 @@ void triggernpc(int ts,int ti)
 						closescript();
 						return;
 					}
-				} else printf("TRIGGER.SCP:Triggerwitem() Syntax Error in IFFAME token.\n   IFFAME <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
+				} else ConOut("TRIGGER.SCP:Triggerwitem() Syntax Error in IFFAME token.\n   IFFAME <opt> <value>\n    <opt>= '<' or '>'\n    <value> range from '-10000' to '10000'.\n");
 			}
 			if (!(strcmp("FAME",script1)))  //Do math on the players fame - Magius(CHE)
 			{

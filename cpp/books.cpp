@@ -171,7 +171,7 @@ void cBooks::openbook_new(UOXSOCKET s, ITEM i, char writeable)
 	 {
         read_line(i, a,b, line);
 		c=strlen(line)+1;
-        //printf("%s l: %i\n",line,c);
+        //ConOut("%s l: %i\n",line,c);
 		strcpy(buch[a-1][b-1],line);
 		bytes+=c; // plus the stringlength+null terminator per(!) row
 	 }
@@ -336,11 +336,11 @@ void cBooks::readbook_writeable(UOXSOCKET s, ITEM i, int p, int l)
 	   lines_processed++;
 	   lin=0;
 
-	   //printf("page: %i\n",p);
+	   //ConOut("page: %i\n",p);
 
        write_line(i, p, lines_processed, line,s);       
 
-	   //printf("author: %s title: %s line: %i :%s\n",authorbuffer[s],titlebuffer[s],lines_processed,line);
+	   //ConOut("author: %s title: %s line: %i :%s\n",authorbuffer[s],titlebuffer[s],lines_processed,line);
    }
    
  }
@@ -361,7 +361,7 @@ void cBooks::write_author(int id,UOXSOCKET s)
   char fileName[13];  // Standard 8.3 file name
   int newbook=0,Offset;
 
-  //printf("write-auth called\n");
+  //ConOut("write-auth called\n");
 
   sprintf( fileName, "%02x%02x%02x%02x.bok", id>>24, id>>16, id>>8, id%256);
   file = fopen( fileName, "r+b"); // open existing file for read/write
@@ -379,19 +379,19 @@ void cBooks::write_author(int id,UOXSOCKET s)
       file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
 	  if (file==NULL)                 
 	  {
-		  printf("couldnt write to bok file\n");
+		  ConOut("couldnt write to bok file\n");
 		  return;
 	  }
   }
  
   Offset=62; // position filepointer to the author-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
      
   authorbuffer[s][31]='\n';
 
   if ( fwrite(authorbuffer[s], sizeof(char), 32, file) != 32 ) 
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }			
 
@@ -422,19 +422,19 @@ void cBooks::write_title(int id,UOXSOCKET s)
       file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
 	  if (file==NULL)                 
 	  {
-		  printf("couldnt write to bok file\n");
+		  ConOut("couldnt write to bok file\n");
 		  return;
 	  }
   }
  
   Offset=0; // position filepointer to the title-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
      
   titlebuffer[s][61]='\n';
 
   if ( fwrite(titlebuffer[s], sizeof(char), 62, file) != 62 ) 
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }			
 
@@ -445,7 +445,7 @@ void cBooks::write_title(int id,UOXSOCKET s)
 void cBooks::write_line(int id, int page, int line, char linestr[34], UOXSOCKET s)
 {
 
-  //printf("id: %i page: %i line: %i linestr: %s sock: %i\n",id,page,line,linestr,s);
+  //ConOut("id: %i page: %i line: %i linestr: %s sock: %i\n",id,page,line,linestr,s);
 
   FILE *file;
   char fileName[13];  // Standard 8.3 file name
@@ -466,20 +466,20 @@ void cBooks::write_line(int id, int page, int line, char linestr[34], UOXSOCKET 
       file = fopen( fileName, "r+b"); // open existing file for read/write (now it should exist)
 	  if (file==NULL)                 
 	  {
-		  printf("couldnt write to bok file\n");
+		  ConOut("couldnt write to bok file\n");
 		  return;
 	  }
   }
  
   Offset=273*page+34*line-207; // wohoooo, what a neat geeky formula :)
 
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
      
   linestr[33]='\n';
 
   if ( fwrite(linestr, sizeof(char), 34, file) != 34 ) 
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }			
 
@@ -499,16 +499,16 @@ void cBooks::read_author(int id,char auth[31])
   
   if (file == NULL) 
   {
-	  printf("couldnt read bok file\n");
+	  ConOut("couldnt read bok file\n");
 	  return;
   }
 	        
   Offset=62; // position filepointer to the author-place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
        
   if ( fread(auth, sizeof(char), 31, file) != 31 )  // read it
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }
 	
@@ -537,16 +537,16 @@ void cBooks::read_title(int id,char title[61])
   
   if (file == NULL) 
   {
-	  printf("couldnt read bok file\n");
+	  ConOut("couldnt read bok file\n");
 	  return;
   }
 	        
   Offset=0; // position filepointer to the title place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
        
   if ( fread(title, sizeof(char), 61, file) != 61 )  // read it
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }
 	
@@ -574,16 +574,16 @@ int cBooks::read_number_of_pages(int id)
   
   if (file == NULL) 
   {
-	  printf("couldnt read bok file\n");
+	  ConOut("couldnt read bok file\n");
 	  return 1;
   }
 	        
   Offset=94; // position filepointer to the number of pages place
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
        
   if ( fread(num, sizeof(char), 5, file) != 5 )  // read it
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return 1;
   }
 	
@@ -616,17 +616,17 @@ void cBooks::read_line(int id, int page,int linenumber, char line[33])
   
   if (file == NULL) 
   {
-	  printf("couldnt read bok file\n");
+	  ConOut("couldnt read bok file\n");
 	  return;
   }
 	        
 
   Offset=273*page+34*linenumber-207; // wohoooo, what a neat geeky formula :)
-  if ( fseek(file, Offset, SEEK_SET) ) printf("failed to seek to bok file\n");
+  if ( fseek(file, Offset, SEEK_SET) ) ConOut("failed to seek to bok file\n");
        
   if ( fread(line, sizeof(char), 33, file) != 33 )  // read it
   {
-	 printf("coudnt write to book file\n");
+	 ConOut("coudnt write to book file\n");
 	 return;
   }
 	
@@ -666,7 +666,7 @@ char cBooks::make_new_book_file(char *fileName, int id)
 
   if (file == NULL) 
   {
-	printf("cant create new book file\n");
+	ConOut("cant create new book file\n");
 	return -1;
   }
 
@@ -680,13 +680,13 @@ char cBooks::make_new_book_file(char *fileName, int id)
  
   if ( fwrite(&title, sizeof(char), 62, file) != 62 ) 
   {
-	printf("coudnt write to book file\n");
+	ConOut("coudnt write to book file\n");
 	return -1;
   }
 
   if ( fwrite(&author, sizeof(char), 32, file) != 32 ) 
   {
-	printf("coudnt write to book file\n");
+	ConOut("coudnt write to book file\n");
 	return -1;
   }
   
@@ -701,7 +701,7 @@ char cBooks::make_new_book_file(char *fileName, int id)
 
   if ( fwrite(num, sizeof(char), 5, file) != 5 )  // writens number
   {
-	printf("coudnt write to book file\n");
+	ConOut("coudnt write to book file\n");
 	return -1;
   }
 
@@ -710,7 +710,7 @@ char cBooks::make_new_book_file(char *fileName, int id)
 	ch='\n'; // each page gets a cr
     if ( fwrite(&ch, sizeof(char), 1, file) != 1 ) 
 	{
-	  printf("coudnt write to book file\n");
+	  ConOut("coudnt write to book file\n");
 	  return -1;
 	}
 	
@@ -719,7 +719,7 @@ char cBooks::make_new_book_file(char *fileName, int id)
 		line[0]=0;
         if ( fwrite(&line, sizeof(char), 34, file) != 34 ) 
 		{
-	       printf("coudnt write to book file\n");
+	       ConOut("coudnt write to book file\n");
 	       return -1;
 		}			
 	}

@@ -76,7 +76,7 @@ void UOXFile::seek(long offset, int whence)
   }
 }
 
-int UOXFile::getch(void)
+int UOXFile::wpgetch(void)
 {
   if(qRefill()) refill();
 
@@ -140,21 +140,21 @@ int UOXFile::puts(char *lnBuff)
 void UOXFile::getUChar(unsigned char *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
-    buff[i] = this->getch();
+    buff[i] = this->wpgetch();
 }
 
 void UOXFile::getChar(signed char *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
-    buff[i] = this->getch();
+    buff[i] = this->wpgetch();
 }
 
 void UOXFile::getUShort(unsigned short *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
   {
-    buff[i] = this->getch();
-    buff[i] |= this->getch() << 8;
+    buff[i] = this->wpgetch();
+    buff[i] |= this->wpgetch() << 8;
   }
 }
 
@@ -162,8 +162,8 @@ void UOXFile::getShort(short *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
   {
-    buff[i] = this->getch();
-    buff[i] |= this->getch() << 8;
+    buff[i] = this->wpgetch();
+    buff[i] |= this->wpgetch() << 8;
   }
 }
 
@@ -171,10 +171,10 @@ void UOXFile::getULong(UI32 *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
   {
-    buff[i] = this->getch();
-    buff[i] |= this->getch() << 8;
-    buff[i] |= this->getch() << 16;
-    buff[i] |= this->getch() << 24;
+    buff[i] = this->wpgetch();
+    buff[i] |= this->wpgetch() << 8;
+    buff[i] |= this->wpgetch() << 16;
+    buff[i] |= this->wpgetch() << 24;
   }
 }
 
@@ -182,10 +182,10 @@ void UOXFile::getLong(SI32 *buff, unsigned int number)
 {
   for(unsigned int i = 0; i < number; i++)
   {
-    buff[i] = this->getch();
-    buff[i] |= this->getch() << 8;
-    buff[i] |= this->getch() << 16;
-    buff[i] |= this->getch() << 24;
+    buff[i] = this->wpgetch();
+    buff[i] |= this->wpgetch() << 8;
+    buff[i] |= this->wpgetch() << 16;
+    buff[i] |= this->wpgetch() << 24;
   }
 }
 

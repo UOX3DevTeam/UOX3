@@ -852,7 +852,7 @@ void cCommands::DyeItem(int s) // Rehue an item
 			{
 				items[i].color1 = c1;
 				items[i].color2 = c2;
-//				printf("spectral\n");
+//				ConOut("spectral\n");
 			}
 
 //			for (j=0;j<now;j++) if (perm[j]) senditem(j,i);
@@ -1125,7 +1125,7 @@ void cCommands::Wipe(int s)
 {
 	int k;
 	
-	printf("UOX3: %s has initiated an item wipe\n",chars[currchar[s]].name);
+	ConOut("UOX3: %s has initiated an item wipe\n",chars[currchar[s]].name);
 	
 	for(k=0;k<=itemcount;k++)
 	{
@@ -1212,7 +1212,7 @@ void cCommands::Load( void )
 		closescript();
 		return;
 	}
-	printf("Loading commands now");
+	ConOut("Loading commands now");
 	do 
 	{
 		read2();
@@ -1221,17 +1221,17 @@ void cCommands::Load( void )
 		{
 		  // make sure we don't index into array at -1
 		  if ( (strcmp( script1, "EOF" )))
-		    printf("Invalid command '%s' found in commands.scp!", script1 );
+		    ConOut("Invalid command '%s' found in commands.scp!", script1 );
 		}
 		else
 		{
 			command_table[tablePos].cmd_priv_m = str2num( script2 );	// loading priv for command!
-			printf(".");
+			ConOut(".");
 		}
 		// check for commands here
 	} while(script1[0]!='}'	&& (strcmp(script1, "EOF")) );
 	closescript();
-	printf( "Done! \n" );
+	ConOut( "Done! \n" );
 }
 
 signed int cCommands::FindIndex( char *toFind )

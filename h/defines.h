@@ -73,21 +73,21 @@
 #define NAME "The Freelancers Team"
 #define EMAIL "http://uox3.sourceforge.net/"
 #define PROGRAMMERS "Freelancers"
-#ifdef _WIN32
-#define __NT__
-#define _MSVC
-#endif
-#ifdef __NT__
-#ifndef _WIN32
-#define _WIN32
-#endif
+//#ifdef _WIN32
+//#define __NT__
+//#define _MSVC
+//#endif
+//#ifdef __NT__
+//#ifndef _WIN32
+//#define _WIN32
+//#endif
 #endif
 // remove PACKED for unix/linux because it going to cause bus errors - fur
-#if defined _WIN32 && (!defined(__MINGW32__))
+//#if defined _WIN32 && (!defined(__MINGW32__))
 #define PACK_NEEDED
-#else
-#define PACK_NEEDED
-#endif
+//#else
+//#define PACK_NEEDED
+//#endif
 
 
 #ifdef _MSVC

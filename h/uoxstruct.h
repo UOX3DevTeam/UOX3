@@ -252,7 +252,7 @@ struct char_st
  int targtrig; //Stores the number of the trigger the character for targeting
  char ra;  // Reactive Armor spell
  int trainer; // Serial of the NPC training the char, -1 if none.
-#ifdef __LINUX__
+#ifdef __linux__
  short trainingplayerin;
 #else
  unsigned char trainingplayerin; // Index in skillname of the skill the NPC is training the player in
@@ -409,7 +409,7 @@ struct item_st
  unsigned char spawn3;
  unsigned char spawn4;
  long spawnserial;
-#ifndef __LINUX__
+#ifndef __linux__
  char dir; // Direction, or light source type.
 #else
  short dir;

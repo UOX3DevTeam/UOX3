@@ -90,7 +90,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 			break;
 	}
 #ifdef DEBUG
-	printf("Type is... %i button is %i\n", type, button );
+	ConOut("Type is... %i button is %i\n", type, button );
 #endif
 
 	if( button == 1 )
@@ -163,7 +163,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 						curLock++;
 					}
 				}
-				printf("Locked %i characters from %i\n", curLock, acctno[b] );
+				ConOut("Locked %i characters from %i\n", curLock, acctno[b] );
 
 				if( online( j ) ) 
 					Network->Disconnect( j );
@@ -244,7 +244,7 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 		case 28:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 5, "Enter the new Made Skill value for the item in decimal." );	break;
 		case 29:	entrygump( s, tser1, tser2, tser3, tser4, type, button, 50, "Enter the new Creator name for the item." );				break;
 		//end addons by Xuri
-		default:	printf( "Unknown button pressed %i", button );																		break;
+		default:	ConOut( "Unknown button pressed %i", button );																		break;
 		}
 	}
 	if( type == 2 ) // Char
@@ -614,7 +614,7 @@ void cGump::Menu(int s, int m)
 	closescript();
 //	sprintf(temp, "Type set to %i", gump1[10]);
 //	sysmessage(s, temp);
-//	printf("%s\n", temp);
+//	ConOut("%s\n", temp);
 }
 
 void whomenu(int s, int type) //WhoList--By Homey-- Thx Zip and Taur helping me on this
@@ -1165,7 +1165,7 @@ void choice(int s) // Choice from GMMenu, Itemmenu or Makemenu received
 	sub=(buffer[s][7]<<8)+buffer[s][8];
 	
     //printf("main:%i sub:%i \n",main,sub);
-	// if ((main!=0) && (sub==0)) printf("add menu (gm menu) closed- including its submenus\n");
+	// if ((main!=0) && (sub==0)) ConOut("add menu (gm menu) closed- including its submenus\n");
 
 	if ((main>=8000)&&(main<=8100)) Guilds->GumpChoice(s,main,sub);
 	
@@ -1291,7 +1291,7 @@ void choice(int s) // Choice from GMMenu, Itemmenu or Makemenu received
 				itemmake[s].maxrank = 10;
 			}
 
-			//   printf("%s %i\n",script1,str2num(script2));
+			//   ConOut("%s %i\n",script1,str2num(script2));
 			if (i==sub)
 			{
 				closescript();

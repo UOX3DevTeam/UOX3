@@ -59,7 +59,7 @@ class UOXFile
   void rewind(void);
   void seek(long, int);
   inline int eof(void) { return (feof(theFile)); };
-  int getch(void);
+  int wpgetch(void);
   void refill(void);
   char *gets(char *, int);
   int puts(char *);

@@ -182,7 +182,7 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 
 	if( !isValidDirection( dir ) )
 	{
-		printf( "%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, chars[c].name, dir, dir );
+		ConOut( "%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, chars[c].name, dir, dir );
 		// If I don't do this, the NPC will keep trying to walk on the same step, which is
 		// where he's already at. Can cause an infinite loop. (Trust me, was one of the things
 		// that locked up NW Alpha 2)
@@ -250,9 +250,9 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 		if( !calc_move( c, chars[c].x, chars[c].y, myz, dir ) )
 		{
 #if DEBUG_WALK
-			printf("%s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, chars[c].name);
-			printf("%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].x, chars[c].y, chars[c].z);
-			printf("%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz);
+			ConOut("%s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, chars[c].name);
+			ConOut("%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].x, chars[c].y, chars[c].z);
+			ConOut("%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz);
 #endif
 			if( socket != -1 )
 				deny( socket, c, sequence );
@@ -262,9 +262,9 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 		}
 		dispz = z = myz;
 #if DEBUG_WALK
-		printf("%s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, chars[c].name);
-		printf("%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].x, chars[c].y, chars[c].z);
-		printf("%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz);
+		ConOut("%s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, chars[c].name);
+		ConOut("%s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, chars[c].x, chars[c].y, chars[c].z);
+		ConOut("%s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz);
 #endif
 
 		if( chars[c].npc && CheckForCharacterAtXYZ( c, myx, myy, myz ) )
@@ -295,7 +295,7 @@ void cMovement::Walking(CHARACTER c, int dir, int sequence)
 	}
 	else
 	{
-		//printf("Player is turning in the same spot.\n");
+		//ConOut("Player is turning in the same spot.\n");
 	}
 	
 	// do all of the following regardless of whether turning or moving i guess
@@ -378,7 +378,7 @@ bool cMovement::isFrozen(CHARACTER c, UOXSOCKET socket, int sequence)
 			deny( socket, c, sequence );
 		}
 #if DEBUG_WALK
-		printf( "%s (cMovement::isFrozen) casting char %s\n", DBGFILE, chars[c].name );
+		ConOut( "%s (cMovement::isFrozen) casting char %s\n", DBGFILE, chars[c].name );
 #endif
 		return true;
 	}
@@ -390,7 +390,7 @@ bool cMovement::isFrozen(CHARACTER c, UOXSOCKET socket, int sequence)
 			deny( socket, c, sequence );
 		}
 #if DEBUG_WALK
-		printf( "%s (cMovement::isFrozen) frozen char %s\n", DBGFILE, chars[c].name );
+		ConOut( "%s (cMovement::isFrozen) frozen char %s\n", DBGFILE, chars[c].name );
 #endif
 		return true;
 	} 
@@ -428,7 +428,7 @@ bool cMovement::isOverloaded(CHARACTER c, UOXSOCKET socket, int sequence)
 				sysmessage( socket, "You are too fatigued to move" );
 				deny( socket, c, sequence );
 #if DEBUG_WALK
-				printf( "%s (cMovement::Walking) overloaded char %s\n", DBGFILE, chars[c].name );
+				ConOut( "%s (cMovement::Walking) overloaded char %s\n", DBGFILE, chars[c].name );
 #endif
 				return true;
 			}
@@ -809,7 +809,7 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, unitile_st *xyblock, int &xy
 	staticrecord *stat;
  	while( stat = msi.Next() )
 	{
-		//printf("staticr[X] type=%d, id=%d\n", 2, stat->itemid);
+		//ConOut("staticr[X] type=%d, id=%d\n", 2, stat->itemid);
 		tile_st tile;
 		msi.GetTile(&tile);
 		xyblock[xycount].type = 2;
@@ -850,7 +850,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, unitile_st *xyblock, int &x
 					if( items[mapitem].id1 < 0x40 )
 					{
 #if DEBUG_WALKING
-						printf( "Item X: %i\nItem Y: %i\n", items[mapitem].x, items[mapitem].y );
+						ConOut( "Item X: %i\nItem Y: %i\n", items[mapitem].x, items[mapitem].y );
 #endif
 						if( ( items[mapitem].x == x ) && ( items[mapitem].y == y ) )
 						{
@@ -880,7 +880,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, unitile_st *xyblock, int &x
 						length = length / MultiRecordSize;
 						if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 						{
-							printf( "walking() - Bad length in multi file. Avoiding stall (Item Serial: %i)\n", items[mapitem].serial );
+							ConOut( "walking() - Bad length in multi file. Avoiding stall (Item Serial: %i)\n", items[mapitem].serial );
 							length = 0;
 						}
 						for( int j = 0; j < length; j++ )
@@ -942,7 +942,7 @@ void cMovement::HandleRegionStuffAfterMove(CHARACTER c, short int oldx, short in
 #if DEBUG_WALKING
 	else
 	{
-		//printf("Guess what? I didn't change regions.\n");
+		//ConOut("Guess what? I didn't change regions.\n");
 	}
 #endif
 
@@ -1079,7 +1079,7 @@ void cMovement::OutputShoveMessage(CHARACTER c, UOXSOCKET socket, short int oldx
 					{
 						int i=mapchar;
 #if DEBUG
-						printf("DEBUG: Mapchar %i [%i]\n",mapchar,mapitem);
+						ConOut("DEBUG: Mapchar %i [%i]\n",mapchar,mapitem);
 #endif
 						if (!(
 							((chars[c].id1==0x03)&&(chars[c].id2==0xDB)) ||
@@ -1301,7 +1301,7 @@ void cMovement::HandleWeatherChanges(CHARACTER c, UOXSOCKET socket)
 			if (x==1)
 				x=  illegal_z; // 1 seems to be the multi-borders
 			
-			//printf("x: %i\n",x);
+			//ConOut("x: %i\n",x);
 			// ah hah! this was a bug waiting to happen if not already, we have overloaded the use of the
 			// variable k, which used to hold the socket
 			int k = noweather[c];    
@@ -1443,7 +1443,7 @@ void cMovement::NpcWalk(CHARACTER i, int j, int type)   //type is npcwalk mode (
 			Walking( i, (j & 0x87), 256 );
 		break;
 	default:
-		printf( "ERROR: Unknown NpcWalk %i\n", type );
+		ConOut( "ERROR: Unknown NpcWalk %i\n", type );
 		break;
 	};
 }
@@ -1564,7 +1564,7 @@ void cMovement::PathFind(CHARACTER c, unsigned short gx, unsigned short gy)
 			chars[c].pathnum = P_PF_MRV;
 			break;
 #if DEBUG_PATHFIND
-			printf("Character stuck!\n");
+			ConOut("Character stuck!\n");
 #endif
 		}
 	}
@@ -1574,7 +1574,7 @@ void cMovement::PathFind(CHARACTER c, unsigned short gx, unsigned short gy)
 		chars[c].path[i].x = newpath[i].x;
 		chars[c].path[i].y = newpath[i].y;
 #if DEBUG_PATHFIND
-		printf("PFDump: %s - %i) %ix, %iy\n",chars[c].name, i+1, chars[c].path[i].x, chars[c].path[i].y);
+		ConOut("PFDump: %s - %i) %ix, %iy\n",chars[c].name, i+1, chars[c].path[i].x, chars[c].path[i].y);
 #endif
 	}
 
@@ -1591,7 +1591,7 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
     if( chars[i].npc && ( chars[i].npcmovetime <= currenttime || ( overflow ) ) )
     {
 #if DEBUG_NPCWALK
-		printf( "ENTER (%s): %d AI %d WAR %d J\n", chars[i].name, chars[i].npcWander, chars[i].war, j );
+		ConOut( "ENTER (%s): %d AI %d WAR %d J\n", chars[i].name, chars[i].npcWander, chars[i].war, j );
 #endif
 		if( chars[i].war && chars[i].npcWander != 5 )
         {
@@ -1901,7 +1901,7 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 	}
 
 #if DEBUG_WALKING
-		printf( "CheckWalkable calculate Z=%d\n", newz );
+		ConOut( "CheckWalkable calculate Z=%d\n", newz );
 #endif
         int item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
 		// also take care to look on all tiles the creature has fallen through
@@ -1929,7 +1929,7 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 					{ // in effact radius?
                         newz = illegal_z;
 #if DEBUG_WALKING
-						printf( "CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[i].id, xyblock[i].basez );
+						ConOut( "CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[i].id, xyblock[i].basez );
 #endif
 						blocked = true;
                         break;
@@ -1947,7 +1947,7 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 // end knoxos code
 
 #if DEBUG_WALK
-	printf("CanCharWalk: %dx %dy %dz\n", x, y, z);
+	ConOut("CanCharWalk: %dx %dy %dz\n", x, y, z);
 #endif
 	if( (newz > illegal_z) && (!justask)) {
 		// save information if we have climbed on last move.

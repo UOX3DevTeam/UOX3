@@ -51,7 +51,7 @@ cRegion::cRegion() //constructor
 			//for (a=0;a<25;a++) MapCells[i].pointer[a]=-1; // this is way slow - fur
 			memset(MapCells[i].pointer, 0xFF, 25 * sizeof(int));
 		} else {
-			printf("Error allocating mapRegion memory!\n");
+			ConOut("Error allocating mapRegion memory!\n");
 			return;
 		}
 	}
@@ -79,7 +79,7 @@ SI16 cRegion::AddItem(unsigned long nItem) //Char mapRegions		// was unsigned in
 	   uiCell = GetCell(chars[z].x,chars[z].y); //
 	}
 
-    //	printf("item# %i added to mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
+    //	ConOut("item# %i added to mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
 	
     if (uiCell<=32999) 
 	{
@@ -105,7 +105,7 @@ SI16 cRegion::RemoveItem(unsigned long nItem)//Char mapRegions	// was unsigned i
 
 	if(uiCell<=32999)
 	{
-		// printf("item# %i removed from mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
+		// ConOut("item# %i removed from mapcell %i [%i,%i,%i]\n", nItem, uiCell, items[nItem].x, items[nItem].y, items[nItem].z);
 		removefromptr(&MapCells[uiCell], nItem);
 	} else return -1;
 	
@@ -136,11 +136,11 @@ long cRegion::GetNextItem(unsigned int cell, unsigned int Last)
 long cRegion::GetItem(unsigned int cell, unsigned int item)
 {
 	if (cell>32999 || cell<0) return -1;
-	/*printf("Map region %i dump.\n", cell);
+	/*ConOut("Map region %i dump.\n", cell);
 	UI16 i;
 	for (i=0;i<MapCells[cell].max;i++)
-		printf("   %i: %i\n", i, MapCells[cell].pointer[i]);
-	printf("Done.\n");*/
+		ConOut("   %i: %i\n", i, MapCells[cell].pointer[i]);
+	ConOut("Done.\n");*/
 	if (item>MapCells[cell].max || item<0) return -1;
 	return MapCells[cell].pointer[item];
 }
