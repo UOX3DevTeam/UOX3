@@ -70,7 +70,7 @@
 //#endif
 
 
-#ifdef _MSVC
+#ifndef __linux__
 #pragma warning(disable: 4786) //Gets rid of BAD stl warnings
 #pragma warning(disable: 4503)
 #endif
@@ -371,7 +371,7 @@ extern short int max_tele_locations;
 extern short int tele_locations[MAX_TELE_LOCATIONS][6];
 
 // MSVC fails to compile UOX if this is unsigned, change it then
-#ifdef _MSVC
+#ifndef __linux__
 extern long int oldtime, newtime;
 #else
 extern unsigned long int oldtime, newtime;      //for autosaving
@@ -687,9 +687,9 @@ void gcollect();
 void consolebroadcast(char *txt);
 void CheckConsoleKeyThread(void *params);
 void checkkey();
-#ifdef __linux__
+// Well be used for linux curses clean up
 void endScrn(void) ;
-#endif
+
 //	EviLDeD	-	End
 
 int compare_charst (const char_st *a, const char_st *b);

@@ -6500,11 +6500,12 @@ void checkkey( void )
 	}
 }
 #endif
-#ifdef __linux__
+// this wil be for linux curses later
 void endScrn(void)
 {
+	
 }
-#endif 
+ 
 
 inline void checktimers( void ) // Check shutdown timers
 {
@@ -8955,7 +8956,7 @@ int __cdecl main(int argc, char *argv[])
 		while (keeprun)
 		{
 			checkkey();
-#ifdef _MSVC
+#ifndef __linux__
 			switch(speed.nice)
 			{
 			case 0: break;  // very unnice - hog all cpu time
@@ -8969,22 +8970,23 @@ int __cdecl main(int argc, char *argv[])
 			default: Sleep(10); break;
 			}
 #else
-#ifndef __linux__
-			switch(speed.nice)
-			{
-			case 0: break;  // very unnice - hog all cpu time
-			case 1:
-				if (now!=0) delay(10);
-				else delay(90); 
-				break;
-			case 2: delay(10); break;
-			case 3: delay(40); break;// very nice
-				// feel free to define more ,lb
-				
-			default: delay(10); break;
-			}
-			
-#else
+//
+//#ifndef __linux__
+//			switch(speed.nice)
+//			{
+//			case 0: break;  // very unnice - hog all cpu time
+//			case 1:
+//				if (now!=0) delay(10);
+//				else delay(90); 
+//				break;
+//			case 2: delay(10); break;
+//			case 3: delay(40); break;// very nice
+//				// feel free to define more ,lb
+//				
+//			default: delay(10); break;
+//			}
+//			
+//#else
 			switch(speed.nice)
 			{
 			case 0: break;;  // very unnice - hog all cpu time

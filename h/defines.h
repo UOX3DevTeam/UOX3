@@ -90,7 +90,7 @@
 //#endif
 
 
-#ifdef _MSVC
+#ifndef __linux__
 #pragma warning(disable: 4786) //Gets rid of BAD stl warnings
 #pragma warning(disable: 4503)
 #endif

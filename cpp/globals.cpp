@@ -134,7 +134,7 @@ short int max_tele_locations;
 short int tele_locations[MAX_TELE_LOCATIONS][6];
 char noweather[MAXCLIENT+1];
 // MSVC fails to compile UOX if this is unsigned, change it then
-#ifdef _MSVC
+#ifndef __linux__
 long int oldtime, newtime;
 #else
 unsigned long int oldtime, newtime;      //for autosaving
