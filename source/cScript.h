@@ -73,6 +73,24 @@ struct SEGump
 	UI32 TextID;
 };
 
+//o--------------------------------------------------------------------------o
+//|	Class/Struct	-	struct SEGumpData
+//|	Date					-	1/21/2003 7:05:06 AM
+//|	Developers		-	Punt
+//|	Organization	-	UOXe Project
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+struct SEGumpData
+{
+	std::vector<std::string> sEdits;
+	std::vector<int> nButtons;
+	std::vector<short> nIDs;
+};
+
 struct InUseEntry
 {
 	bool		inUse;
@@ -102,6 +120,7 @@ private:
 
 	JSObject	*ItemProto;
 	JSObject	*GumpProto;
+	JSObject	*GumpDataProto;
 	JSObject	*CharProto;
 	JSObject	*SpellProto;
 	JSObject	*SpellsProto;

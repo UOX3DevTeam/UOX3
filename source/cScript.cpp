@@ -265,6 +265,7 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 	// Expose Classes to the JS Engine
 	// We may NOT define Constructors here6
 	GumpProto   =	JS_InitClass( targContext, targObject, targObject, &UOXGump_class, Gump, 0, NULL, CGump_Methods, NULL, CGump_Methods );
+	GumpDataProto=JS_InitClass( targContext, targObject, targObject, &UOXGumpData_class, NULL, 0, NULL, CGumpData_Methods, NULL,CGumpData_Methods);
 	CharProto   =	JS_InitClass( targContext, targObject, targObject, &UOXChar_class, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
 	ItemProto   =	JS_InitClass( targContext, targObject, targObject, &UOXItem_class, NULL, 0, CItemProps, CItem_Methods, CItemProps, CItem_Methods );
 	SpellProto  =	JS_InitClass( targContext, targObject, targObject, &UOXSpell_class, NULL, 0, CSpellProperties, NULL, CSpellProperties, NULL );
@@ -1928,17 +1929,64 @@ void cScript::SendGumpList( SI32 index, UOXSOCKET toSendTo )
 	SendVecsAsGump( mSock, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), 20, INVALIDSERIAL );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cScript::HandleGumpPress( cSocket *pressing, long button )
+//|	Date					-	
+//|	Developers		-	Unknown / Punt
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Process a gump button press
+//|									
+//|	Modification	-	1/21/2003 - Implemented the code needed to support enhanced
+//|									gump response processing
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void cScript::HandleGumpPress( cSocket *pressing, long button )
 {
 	if( pressing == NULL )
 		return;
-	jsval params[2], rval;
-	JS_SetPrivate( targContext, sockObjects[0].toUse, pressing );
-	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
-	params[1] = INT_TO_JSVAL( button );
-	JS_CallFunctionName( targContext, targObject, "onGumpPress", 2, params, &rval );
-	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
+
+	int nButtons, nText;
+	SEGumpData *segdGumpData = new SEGumpData;
+	nButtons = pressing->GetDWord(15);
+	JSObject *jsoObject=JS_NewObject(targContext, &UOXGumpData_class,GumpDataProto,NULL);
+	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
+	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties);
+	JS_SetPrivate(targContext, jsoObject, segdGumpData);
+	// Loop through Buttons
+	for(int i=0;i<nButtons,i++)
+		segdGumpData->nButtons.push_back(pressing->GetDWord(19+(i*4));
+	// Process text for the buttons?
+	nText = pressing->GetDWord(19+(4*nButtons));
+	int nOffset = 23+(nButtons*4);
+	// Loop grabbing text
+	for(i=0;i<nText;i++)
+	{
+		segdGumpData->nIDs.push_back(pressing->GetWord(nOffset));
+		short nLength = pressing->GetWord(nOffset+2);
+		char szTextEntry[2];
+		szTextEntry[1]=0x00;
+		std::string sInput;
+		nOffset+=4;
+		for(int j=0;j<nLength;j++)
+		{
+			szTextEntry[0]=pressing->GetByte(nOffset+(j*2)+1);
+			sInput+=szTextEntry;
+		}
+		nOffset+=(nLength*2);
+		segdGumpData->sEdits.push_back(sInput);
+	}
+	jsval jsvParams[3], jsvRVal;
+	JS_SetPrivate(targContext, sockObjects[0].toUse, pressing);
+	jsvParams[0]=OBJECT_TO_JSVAL(sockObjects[0].toUse);
+	jsvParams[1]=INT_TO_JSVAL(button);
+	jsvParams[2]=OBJECT_TO_JSVAL(jsoObject);
+	JS_CallFunctionName(targContext,targObject,"onGumpPress",7,jsvParams,&jsvRVal);
+	JS_SetPrivate(targContext,sockObjects[0].toUse,NULL);
 }
+
 void cScript::HandleGumpInput( cSocket *pressing )
 {
 	if( pressing == NULL )

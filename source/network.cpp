@@ -1284,7 +1284,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				case 0xB1:// Gumpmenu choice
 					mSock->Receive( 3 );
 					mSock->Receive( mSock->GetWord( 1 ) );
-					Gumps->Button( mSock, mSock->GetWord( 13 ), buffer[3], buffer[4], buffer[5], buffer[6], mSock->GetDWord( 7 ) );
+					Gumps->Button( mSock, mSock->GetDWord( 11 ), buffer[3], buffer[4], buffer[5], buffer[6], mSock->GetDWord( 7 ) );
 					break;
 				case 0xAC:// Textentry input
 					mSock->Receive( 3 );

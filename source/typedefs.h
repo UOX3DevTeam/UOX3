@@ -82,13 +82,12 @@ typedef std::vector< CChar * > VCCHAR;
 //	Thyme - 	December 24, 2001
 typedef std::vector< CItem * > VCITEM;
 //	EviLDeD	-	February 7, 2002 : This will eventually be used. so dont remove please.
+/* Depreciated 
 typedef struct __ACCESSITEMDATA__
 {
 	CChar *object;
 	UI32 FilePosition;
 } AIDATA, *LPAIDATA;
-//
-
 //
 //o--------------------------------------------------------------------------o
 //|	TYPEDEF				-	typedef struct __ACCESEDATABLOCK__
@@ -125,6 +124,7 @@ typedef struct __ACCOUNTDATABLOCK__
 	UI08		charactercount;			// Will contain the number of characters currently assigned to this account
 	SERIAL		inworld;			// inworld.  INVALDSERIAL indicates no, else it's the serial of the char still in the world
 } ACTREC, *LPACTREC;
+*/
 //
 struct FirewallEntry
 {

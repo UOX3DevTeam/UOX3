@@ -66,6 +66,11 @@
 #include "CChar.h"
 #include "cVersionClass.h"
 
+#include "DTL.h"
+#include "variant_cc.h"
+
+//#define __UOX3_DTL__
+
 // Enums
 enum __ACCOUNTBBLOCK_FLAGS__
 {
@@ -150,6 +155,80 @@ typedef struct __ACCOUNTSADM_BLOCK__
 	CChar	*lpCharacters[5];	
 } ACCOUNTSBLOCK,*LPACCOUNTSBLOCK;
 
+//o--------------------------------------------------------------------------o
+//|	Class/Struct	-	class cDBAccountClass
+//|	Date					-	1/20/2003 12:52:32 PM
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	For use with the DTL libraries for DB connections, it 
+//|									seemed easier to just make a duplicate so to speak ok the
+//|									cAccountClass without the member functions. This is basically
+//|									a copy of the __ACCOUNTSADM_BLOCK__ structure. As the DTL
+//|									is streamed, and seemed to required a transfer class for
+//|									record col storage, this class was created to interface
+//|									with the DTL
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+#ifdef __UOX3_DTL__
+class cDBAccountClass
+{
+public:
+	std::string sUsername;
+	std::string sPassword;
+	std::string sPath;
+	std::string sContact;
+	DWORD dwCommentID;
+	DWORD dwAccountID;
+	DWORD dwFlags;
+	DWORD dwTimeBan;
+	DWORD dwInGame;
+	DWORD dwLastIP;
+	DWORD dwCharacter1;
+	DWORD dwCharacter2;
+	DWORD dwCharacter3;
+	DWORD dwCharacter4;
+	DWORD dwCharacter5;
+	// Constructor
+	cDBAccountClass(std::string &sUUsername,std::string &sUPassword,std::string &sUPath,
+									std::string &sUContact,DWORD dwUCommentID, DWORD dwUAccountIndex,
+									DWORD dwUFlags,WORD dwUTimeBan,DDWORD dwUInGame,DWORD dwULastIP,
+									DWORD dwUChar1,DWORD dwUChar2,DWORD dwUChar3,DWORD dwUChar4,
+									DWORD dwUChar5) :
+									sUsername(sUUsername),sPassword(sUPassword),sPath(sUPath),
+									sContact(sUContact),dwCommentID(dwUCommendID),wAccountID(dwUAccountIndex),
+									dwFlags(dwUFlags),dwTimeBan(dwUTimeBan),dwInGame(dwUInGame),
+									dwLastIP(dwULastIP),dwCharacter1(dwUChar1),dwCharacter2(dwUChar2),
+									dwCharacter3(dwUChar3),dwCharacter4(dwUChar4),dwCharacter5(dwUChar5) { }
+
+};
+//
+template<> class dtl::DefaultBCA<cDBAccountClass>
+{
+public:
+	void operator() (BoundIOs &cols,cDBAccountClass &rowbuf)
+	{
+		cols["fAccountID"] == rowbuf.dwAccountID;
+		cols["fCommentID"] == rowbuf.dwCommentID;
+		cols["fUsername"] == rowbuf.sUsername;
+		cols["fPassword"] == rowbuf.sPassword;
+		cols["fPath"] == rowbuf.sPath;
+		cols["fFlags"] == rowbuf.dwFlags;
+		cols["fTimeBan"] == rowbuf.dwTimeBan;
+		cols["fInGame"] == rowbuf.ddwInGame;
+		cols["fCharacter1"] == rowbuf.dwCharacter1;
+		cols["fCharacter2"] == rowbuf.dwCharacter2;
+		cols["fCharacter3"] == rowbuf.dwCharacter3;
+		cols["fCharacter4"] == rowbuf.dwCharacter4;
+		cols["fCharacter5"] == rowbuf.dwCharacter5;
+		cols["fContact"] == rowbuf.sContact;
+	}
+};*/
+//
+#endif
+
 // Class typdefs to help simplify the use of map STL
 typedef std::map<std::string,ACCOUNTSBLOCK> MAPUSERNAME;
 typedef std::map<WORD,ACCOUNTSBLOCK> MAPUSERNAMEID;
@@ -202,9 +281,9 @@ public:
 	BOOL GetAccountByID(WORD wAccountID,ACCOUNTSBLOCK& actbBlock);
 	long atol(const char * lpszValue);
 	long atol(std::string sValue);
-	MAPUSERNAMEID_ITERATOR& Begin(void);
-	MAPUSERNAMEID_ITERATOR& End(void);
-	MAPUSERNAMEID_ITERATOR& Last(void);
+	MAPUSERNAMEID_ITERATOR& begin(void);
+	MAPUSERNAMEID_ITERATOR& end(void);
+	MAPUSERNAMEID_ITERATOR& last(void);
 	// Member variables
 	WORD m_wHighestAccount;
 	std::string m_sAccountsDirectory;
@@ -212,6 +291,9 @@ public:
 	MAPUSERNAME m_mapUsernameMap;
 	MAPUSERNAMEID m_mapUsernameIDMap;
 	MAPUSERNAMEID_ITERATOR I;
+#ifdef __UOX3_DTL__
+	std::vector<cDBAccountClass> m_vecDTLAccountVector;
+#endif
 private:
 	// Member Functions
 	VOID WriteAccountsHeader(std::fstream &fsOut);

@@ -446,7 +446,7 @@ void cWhoList::Update( void )
 		MAPUSERNAMEID_ITERATOR I;
 		//
 		CChar *ourChar = NULL;
-		for(I=Accounts->Begin();I!=Accounts->End();I++)
+		for(I=Accounts->begin();I!=Accounts->end();I++)
 		{
 			actbSearch = I->second;
 			//

@@ -1,8 +1,16 @@
-// Version History
-// 1.0		Abaddon		14th December, 2001
-//			Initial implementation
-//			Includes property getters for CItem and CChar, and property setters for CChar
-
+//o--------------------------------------------------------------------------o
+//|	File					-	UOXJSPropertyFuncts.cpp
+//|	Date					-	12/14/2001
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|									Includes property getters for CItem and CChar, and property
+//|									setters for CChar
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
@@ -1228,3 +1236,28 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
+JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	SEGumpData *gPriv = (SEGumpData *)JS_GetPrivate( cx, obj );
+	//SEGump *toDelete = (SEGump*)JS_GetPrivate( cx, obj );
+	
+	if( gPriv == NULL )
+		return JS_FALSE;
+	
+	//if( JSVAL_IS_INT( id ) ) 
+	{
+		int temp = JSVAL_TO_INT(id)  ;
+		switch( JSVAL_TO_INT( id ) )
+		{
+			case CGumpData_ID:
+				*vp = INT_TO_JSVAL( gPriv->nIDs.size()) ;
+				break ;
+			case CGumpData_Button:
+				*vp = INT_TO_JSVAL( gPriv->nButtons.size()) ;
+				break ;
+			default:
+				break;
+		}
+	}
+	return JS_TRUE;
+}

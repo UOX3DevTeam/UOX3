@@ -208,7 +208,7 @@ inline UI32 GhostCount( void )
 {
 	UI32 sumDead = 0;
 	MAPUSERNAMEID_ITERATOR I;
-	for(I=Accounts->Begin();I!=Accounts->End();I++)
+	for(I=Accounts->begin();I!=Accounts->end();I++)
 	{
 		ACCOUNTSBLOCK actbTemp;
 		actbTemp=I->second;
@@ -243,7 +243,7 @@ inline UI32 MurdererCount( void )
 	UI32 sumMurderer = 0;
 	MAPUSERNAMEID_ITERATOR I;
 	ACCOUNTSBLOCK actbBlock;
-	for(I=Accounts->Begin();I!=Accounts->End();I++)
+	for(I=Accounts->begin();I!=Accounts->end();I++)
 	{
 		actbBlock=I->second;
 		//
@@ -280,7 +280,7 @@ inline UI32 BlueCount( void )
 	MAPUSERNAMEID_ITERATOR I;
 	ACCOUNTSBLOCK actbBlock;
 	//
-	for(I=Accounts->Begin();I!=Accounts->End();I++)
+	for(I=Accounts->begin();I!=Accounts->end();I++)
 	{
 		actbBlock=I->second;
 		if(actbBlock.wAccountIndex == AB_INVALID_ID)
@@ -474,7 +474,7 @@ bool cPIXGMWhoOnline::Handle( void )
 		Network->PopConn();
 		break;
 	case 1:	// offline
-		for(I=Accounts->Begin();I!=Accounts->End();I++)
+		for(I=Accounts->begin();I!=Accounts->end();I++)
 		{
 			actbBlock=I->second;
 			//
@@ -508,7 +508,7 @@ bool cPIXGMWhoOnline::Handle( void )
 			toSend.AddPlayer( charListing[i]->GetSerial(), charListing[i]->GetName() );
 		break;
 	case 2:	// logging
-		for(I=Accounts->Begin();I!=Accounts->End();I++)
+		for(I=Accounts->begin();I!=Accounts->end();I++)
 		{
 			actbBlock=I->second;
 			//

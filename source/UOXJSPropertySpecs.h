@@ -1,8 +1,16 @@
-// Version History
-// 1.0		Abaddon		14th December, 2001
-//			Initial implementation
-//			Defines the property specifications for race, region, guild, item and chars
-
+//o--------------------------------------------------------------------------o
+//|	File					-	UOXJSPropertyFuncts.cpp
+//|	Date					-	12/14/2001
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|									Defines the property specifications for race, region, guild,
+//|									item and chars
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 
@@ -306,5 +314,14 @@ static JSPropertySpec CSkillsProps[] =
 	{ "removetraps",	REMOVETRAPS,		JSPROP_ENUMANDPERM },
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
+
+static JSPropertySpec CGumpDataProperties[] =
+{
+	{	"buttons",	CGumpData_Button,	JSPROP_ENUMANDPERM },
+	{	"IDs",			CGumpData_ID ,		JSPROP_ENUMANDPERM} ,
+	{ NULL,				(SI08)NULL,				(UI08)0}
+
+};
+
 
 #endif

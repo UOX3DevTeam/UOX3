@@ -203,4 +203,29 @@ static JSClass UOXGump_class =
 	JS_FinalizeStub 
 }; 
 
+//o--------------------------------------------------------------------------o
+//|	Class/Struct	-	static JSClass UOXGumpData_class =
+//|	Date					-	1/21/2003 7:35:37 AM
+//|	Developers		-	Punt
+//|	Organization	-	UOXe Project
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+static JSClass UOXGumpData_class =
+{
+	"GumpData",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CGumpDataProps_getProperty,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 #endif

@@ -15,6 +15,10 @@
 
 extern cVersionClass CVC;
 
+//#ifndef __UOX3_DTL__
+//#define __UOX3_DTL__
+//#endif
+
 //o--------------------------------------------------------------------------o
 //|	Function			-	Class Construction and Desctruction
 //|	Date					-	12/6/2002 4:18:58 AM
@@ -26,10 +30,18 @@ extern cVersionClass CVC;
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
+#ifndef __UOX3_DTL__
 cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
+#else
+cAccountClass::cAccountClass():m_sAccountsDirectory("dsn:uox3db")
+#endif
 {
 	m_wHighestAccount=0x0000;
 	I = m_mapUsernameIDMap.end();
+#ifdef __UOX3_DTL__
+	// We need to open this DB Connection
+	dtl::DBConnection::GetDefaultConnection().Connect(m_sAccountsDirectory/*"uid=example;pwd=example;dsn=exampleA;"*/);
+#endif
 }
 //
 cAccountClass::cAccountClass(std::string sAccountsPath)
@@ -976,6 +988,9 @@ WORD cAccountClass::size()
 //|									NOTE: Do not remove this line if you wish to convert 
 //|									properly. Without the first line this function will assume
 //|									that the accounts file is a v2 format file(UOX3 v0.97.0).
+//|									
+//|	Modification	-	1/20/2003 - Added support for the DTL libs, and create a
+//|									general SQL query for MSAccess, MSSQL, and mySQL
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
@@ -986,6 +1001,7 @@ WORD cAccountClass::Load(void)
 	// Clear out the previous map contents before we start
 	m_mapUsernameMap.clear();
 	m_mapUsernameIDMap.clear();
+#ifndef __UOX3_DTL__
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM(m_sAccountsDirectory);
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
@@ -1303,6 +1319,44 @@ WORD cAccountClass::Load(void)
 		fsAccountsADM.getline(sLine,128);
 		memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
 	}
+#else
+	// Clear out the vector before using it
+	m_vecDTLAccountVector.clear();
+	// Make sure to implement a configurable entery for this table name later
+	dtl::DBView<cDBAccountClass> dbvView("T_ACCOUNTS");
+	dtl::DBView::select_iterator I = dbvView.begin();
+	for(;I!=dbvView.end();I++)
+	{
+		// Push every valid iterator into the internal vector for transfer to the accounts maps.
+		m_vecDTLAccountVector	.push_back(*I);
+	}
+	// Crawl over the vector, inserting records from the DBView and put them into the maps
+	std::vector<cDBAccountClass>::iterator J=m_vecDTLAccountVector.begin();
+	for(;J!=m_vecDTLAccountVector.end();J++)
+	{
+		// Ok push each record into the maps
+		ACCOUNTSBLOCK actbTemp;
+		actbTemp.sUsername=J->sUsername;
+		actbTemp.sPassword=J->sPassword;
+		actbTemp.sPath=J->sPath;
+		actbTemp.sContact=J->sComment;
+		actbTemp.wAccountIndex=(WORD)J->dwAccountID;
+		// Uncomment this when support has been implemented
+		// actbTemp.dwCommenetID=J->dwCommentID;
+		//
+		actbTemp.wFlags=(WORD)J->dwFlags;
+		actbTemp.dwInGame=J->dwInGame;
+		actbTemp.dwLastIP=J->dwLaspIP;
+		actbTemp.dwCharacters[0]=J->dwCharacter1;
+		actbTemp.dwCharacters[1]=J->dwCharacter2;
+		actbTemp.dwCharacters[2]=J->dwCharacter3;
+		actbTemp.dwCharacters[3]=J->dwCharacter4;
+		actbTemp.dwCharacters[4]=J->dwCharacter5;
+		// Ok this should be complete as supported, so push it into the maps
+		m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
+		m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
+	}
+#endif
 	// Return the number of accounts loaded
 	return m_mapUsernameMap.size();
 }
@@ -2111,7 +2165,7 @@ WORD cAccountClass::Save(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR& cAccountClass::Begin(void)
+MAPUSERNAMEID_ITERATOR& cAccountClass::begin(void)
 {
 	I = m_mapUsernameIDMap.begin();
 	return I;
@@ -2130,7 +2184,7 @@ MAPUSERNAMEID_ITERATOR& cAccountClass::Begin(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR& cAccountClass::End(void)
+MAPUSERNAMEID_ITERATOR& cAccountClass::end(void)
 {
 	I = m_mapUsernameIDMap.end();
 	return I;
@@ -2153,7 +2207,7 @@ MAPUSERNAMEID_ITERATOR& cAccountClass::End(void)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR& cAccountClass::Last(void)
+MAPUSERNAMEID_ITERATOR& cAccountClass::last(void)
 {
 	I = m_mapUsernameIDMap.end();
 	I--;

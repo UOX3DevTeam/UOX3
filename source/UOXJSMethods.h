@@ -1,13 +1,28 @@
-// Version History
-// 1.0		Dark-Storm	20th December, 2001
-//			Initial implementation
-//			Methods for the javascript objects
-
+//o--------------------------------------------------------------------------o
+//|	File					-	UOXJSMethods.cpp
+//|	Date					-	
+//|	Developers		-	DarkStorm
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Version History
+//|									1.0		Dark-Storm	20th December, 2001 Initial implementation
+//|									Methods for the javascript objects
+//|									
+//|									List of supported Classes:
+//|										- Gumps
+//|										- Char
+//|										- Item
+//|										- Socket
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 
 // Object Constructors
 JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool GumpData( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,jsval *rval );
 
 // Gump Methods
 JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -22,6 +37,12 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+
+// GumpData Methods
+JSBool CGumpData_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CGumpData_getID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+JSBool CGumpData_getButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Character Methods
 JSBool CChar_Action( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
@@ -211,6 +232,15 @@ static JSFunctionSpec CGuild_Methods[] =
 static JSFunctionSpec CRace_Methods[] =  
 { 	
 	{ NULL,					NULL,				0, 0, 0 },
+};
+
+static JSFunctionSpec CGumpData_Methods[] =  
+{ 	
+	{ "Free",				CGumpData_Free,				0, 0, 0 },
+	{ "getButton",	CGumpData_getButton,	1, 0, 0 },
+	{ "getID",			CGumpData_getID,			1, 0, 0 },
+	{ "getEdit",		CGumpData_getEdit,		1, 0, 0 },
+	{ NULL,					NULL,									0, 0, 0 },
 };
 
 #endif

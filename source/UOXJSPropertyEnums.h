@@ -252,4 +252,10 @@ enum CSocket_Properties
 	CSOCKP_COUNT,
 };
 
+enum CGumpData_Properties
+{
+	CGumpData_ID = 0 ,
+	CGumpData_Button
+};
+
 #endif

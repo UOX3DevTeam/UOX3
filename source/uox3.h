@@ -18,6 +18,7 @@
 #ifndef __UOX3_H
 #define __UOX3_H
 
+#define ___UOX3_DTL__
 
 //o---------------------------------------------------------------------------o
 // FIXMEs / TODOs / NOTE macros

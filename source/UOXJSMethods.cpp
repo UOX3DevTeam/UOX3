@@ -1,17 +1,22 @@
-// Version History
-// 1.0		Dark-Storm	20th December, 2001
-//			Initial implementation
-//			Methods for the javascript objects
-
-//
-// List of supported Classes:
-// - Gumps
-// - Char
-// - Item
-// - Socket
-//
-
-
+//o--------------------------------------------------------------------------o
+//|	File					-	UOXJSMethods.cpp
+//|	Date					-	
+//|	Developers		-	DarkStorm
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Version History
+//|									1.0		Dark-Storm	20th December, 2001 Initial implementation
+//|									Methods for the javascript objects
+//|									
+//|									List of supported Classes:
+//|										- Gumps
+//|										- Char
+//|										- Item
+//|										- Socket
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "UOXJSPropertySpecs.h"
 #include "SEFunctions.h"
@@ -20,7 +25,6 @@
 
 #ifndef va_start
 	#include <cstdarg>
-	//using namespace std;
 #endif
 
 void MethodError( char *txt, ... )
@@ -86,6 +90,98 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 	return JS_TRUE;
 }
+//
+JSBool CGumpData_Free(JSContext *cx, JSObject *obj,uintN argc, jsval *argv, jsval *rval)
+{
+	SEGumpData *toDelete = (SEGumpData*)JS_GetPrivate( cx, obj );
+
+	if( toDelete == NULL )  
+		return JS_FALSE;
+	JS_SetPrivate(cx,obj,NULL) ;
+	delete toDelete;
+	return JS_TRUE;
+}
+//
+JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc,jsval *argv, jsval *rval )
+{
+	if( argc == 0 )
+	{
+		MethodError( "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
+		*rval = STRING_TO_JSVAL("");
+		return JS_TRUE;
+	}
+	
+	SEGumpData *myItem = (SEGumpData *)JS_GetPrivate( cx, obj );
+	
+	if( myItem == NULL  )
+	{
+		MethodError( "(DataGump-getID) Invalid object assigned");
+		*rval = STRING_TO_JSVAL("") ;
+		return JS_TRUE;
+	}
+	;
+	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+	
+	if (index < myItem->sEdits.size() )
+		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ( cx,myItem->sEdits[index].c_str()));
+	else
+		*rval = STRING_TO_JSVAL("") ;
+	return JS_TRUE;
+}
+//
+JSBool CGumpData_getID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc == 0 )
+	{
+		MethodError( "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
+		*rval = INT_TO_JSVAL(-1);
+		return JS_TRUE;
+	}
+	
+	SEGumpData *myItem = (SEGumpData *)JS_GetPrivate( cx, obj );
+	
+	if( myItem == NULL  )
+	{
+		MethodError( "(DataGump-getID) Invalid object assigned");
+		*rval = INT_TO_JSVAL(-1);
+		return JS_TRUE;
+	}
+	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+	
+	if (index < myItem->nIDs.size() )
+		*rval = INT_TO_JSVAL(myItem->nIDs[index]);
+	else
+		*rval = INT_TO_JSVAL(-1) ;
+	
+	return JS_TRUE;
+}
+//
+JSBool CGumpData_getButton( JSContext *cx, JSObject *obj, uintN argc,jsval *argv, jsval *rval )
+{
+	if( argc == 0 )
+	{
+		MethodError( "(GumpData_getbutton) Invalid Number of Arguments %d, needs: 1 ", argc );
+		*rval = INT_TO_JSVAL(-1);
+		return JS_TRUE;
+	}
+	
+	SEGumpData *myItem = (SEGumpData *)JS_GetPrivate( cx, obj );
+	
+	if( myItem == NULL  )
+	{
+		MethodError( "(DataGump-getID) Invalid object assigned");
+		*rval = INT_TO_JSVAL(-1);
+		return JS_TRUE;
+	}
+	unsigned int index = JSVAL_TO_INT(argv[0]) ; 
+	if (index < myItem->nButtons.size())
+		*rval = INT_TO_JSVAL(myItem->nButtons[index]);
+	else
+		*rval = INT_TO_JSVAL(-1) ;
+	
+	return JS_TRUE;
+}
+//
 
 JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -2235,7 +2331,7 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 	return JS_TRUE;
 }
 
-/*JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
     if( argc != 1 ) // 3 parameters
     {
@@ -2253,4 +2349,3 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
     weblaunch(mySock,url);
     return JS_TRUE;
 }
-*/
