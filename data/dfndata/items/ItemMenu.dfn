@@ -1,0 +1,471 @@
+// ItemMenu built from the DFN files
+
+[ITEMMENU 1]
+{
+GM=Add Item Menu
+<=GM Menu
+ITEMMENU=0
+<=Building
+ITEMMENU=2
+<=Containers
+ITEMMENU=3
+<=Deeds
+ITEMMENU=4
+<=Gear
+ITEMMENU=5
+<=Houseaddons
+ITEMMENU=7
+<=Magic
+ITEMMENU=8
+<=Misc
+ITEMMENU=9
+<=Skills
+ITEMMENU=10
+<=NPCs
+ITEMMENU=5000
+}
+
+[ITEMMENU 0]
+{
+GM Menu=Menu
+<=GM Skins
+ITEMMENU=110
+<=Hairs & Beards
+ITEMMENU=149
+<=Moongates
+ITEMMENU=17
+<=Polymorphing
+ITEMMENU=1000
+<=Quest-Items
+ITEMMENU=108
+<=Spawners
+ITEMMENU=109
+<=Travel Menu
+ITEMMENU=6000
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 2]
+{
+building=Menu
+<=Decs
+ITEMMENU=17
+<=Doors
+ITEMMENU=13
+<=Fences
+ITEMMENU=15
+<=Floors
+ITEMMENU=19
+<=Furniture
+ITEMMENU=16
+<=Lighting
+ITEMMENU=11
+<=Roof tiles
+ITEMMENU=14
+<=Signs
+ITEMMENU=12
+<=Walls
+ITEMMENU=18
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 16]
+{
+furniture=Menu
+<=Beds
+ITEMMENU=20
+<=Carpentry Furniture
+ITEMMENU=25
+<=Chairs
+ITEMMENU=21
+<=Coffins
+ITEMMENU=22
+<=Garbled Furniture
+ITEMMENU=23
+<=Sarcophaguses
+ITEMMENU=26
+<=Tables
+ITEMMENU=24
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 17]
+{
+decs=Menu
+<=Altar Parts
+ITEMMENU=33
+<=Banners
+ITEMMENU=27
+<=Bedding
+ITEMMENU=29
+<=Blood
+ITEMMENU=34
+<=Corpses
+ITEMMENU=35
+<=Curtains
+ITEMMENU=28
+<=Dartboards
+ITEMMENU=36
+<=Decorative Shields
+ITEMMENU=37
+<=Decorative Weapons
+ITEMMENU=38
+<=Dirt & Mud
+ITEMMENU=50
+<=Dungeon Decs
+ITEMMENU=48
+<=Dungeon Gear
+ITEMMENU=39
+<=Kitchen
+ITEMMENU=44
+<=Misc
+ITEMMENU=45
+<=Multi-Objects
+ITEMMENU=49
+<=Music Decorations
+ITEMMENU=30
+<=Pentagram
+ITEMMENU=40
+<=Plants
+ITEMMENU=51
+<=Rugs & Carpets
+ITEMMENU=31
+<=Siege
+ITEMMENU=41
+<=Siege2
+ITEMMENU=47
+<=Skeletons
+ITEMMENU=42
+<=Stoneart
+ITEMMENU=43
+<=Trophies
+ITEMMENU=32
+<=Tapestries & Paintings
+ITEMMENU=46
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 51]
+{
+plants=Menu
+<=Flowers
+ITEMMENU=53
+<=Plants
+ITEMMENU=52
+<=Trees
+ITEMMENU=54
+<=Previous Menu
+ITEMMENU=07
+}
+
+[ITEMMENU 18]
+{
+walls=Menu
+<=Other Walls
+ITEMMENU=60
+<=Plaster Walls
+ITEMMENU=57
+<=Rattan Hide Walls
+ITEMMENU=58
+<=Stone Walls
+ITEMMENU=56
+<=Tent Walls
+ITEMMENU=59
+<=Wooden Walls
+ITEMMENU=55
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 19]
+{
+floors=Menu
+<=Cave Tiles
+ITEMMENU=62
+<=Stone Tiles
+ITEMMENU=61
+<=Wooden Tiles
+ITEMMENU=63
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 3]
+{
+containers=Menu
+<=Leather
+ITEMMENU=65
+<=Metal
+ITEMMENU=66
+<=Misc
+ITEMMENU=67
+<=Wood
+ITEMMENU=64
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 4]
+{
+deeds=Menu
+<=Boat Deeds
+ITEMMENU=68
+<=House Deeds
+ITEMMENU=69
+<=Houseaddon Deeds
+ITEMMENU=71
+<=Misc Deeds
+ITEMMENU=70
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 5]
+{
+gear=Menu
+<=Armor
+ITEMMENU=75
+<=Clothing
+ITEMMENU=73
+<=Provisions
+ITEMMENU=72
+<=Weapons
+ITEMMENU=74
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 73]
+{
+clothing=Menu
+<=Clothing
+ITEMMENU=79
+<=Footwear
+ITEMMENU=80
+<=Headwear
+ITEMMENU=81
+<=TD Clothing
+ITEMMENU=78
+<=TD Footwear
+ITEMMENU=76
+<=TD Headwear
+ITEMMENU=77
+<=Previous Menu
+ITEMMENU=5
+}
+
+[ITEMMENU 74]
+{
+weapons=Menu
+<=AoS Weapons
+ITEMMENU=85
+<=Archery
+ITEMMENU=86
+<=Axes
+ITEMMENU=87
+<=Fencing
+ITEMMENU=88
+<=Knives & Daggers
+ITEMMENU=82
+<=Maces & Hammers
+ITEMMENU=83
+<=Staves & Polearms
+ITEMMENU=84
+<=Swords
+ITEMMENU=89
+<=Wands
+ITEMMENU=90
+<=Previous Menu
+ITEMMENU=5
+}
+
+[ITEMMENU 75]
+{
+Armor=Menu
+<=Leather Armor
+ITEMMENU=93
+<=Metal Armor
+ITEMMENU=92
+<=Other Armor
+ITEMMENU=91
+<=Previous Menu
+ITEMMENU=5
+}
+
+[ITEMMENU 91]
+{
+other Armor=Menu
+<=Bone
+ITEMMENU=95
+<=Hanging Armor
+ITEMMENU=94
+<=Previous Menu
+ITEMMENU=75
+}
+
+[ITEMMENU 92]
+{
+metal Armor=Menu
+<=Agapite Armor
+ITEMMENU=96
+<=Bronze Armor
+ITEMMENU=97
+<=Copper Armor
+ITEMMENU=98
+<=Dullcopper Armor
+ITEMMENU=99
+<=Gold Armor
+ITEMMENU=100
+<=Iron Armor
+ITEMMENU=101
+<=Shadow Armor
+ITEMMENU=102
+<=Valorite Armor
+ITEMMENU=103
+<=Verite Armor
+ITEMMENU=104
+<=Previous Menu
+ITEMMENU=75
+}
+
+[ITEMMENU 93]
+{
+leather Armor=Menu
+<=Leather
+ITEMMENU=106
+<=Studded Leather
+ITEMMENU=105
+<=Previous Menu
+ITEMMENU=75
+}
+
+[ITEMMENU 7]
+{
+houseaddons=Menu
+<=House Addons
+ITEMMENU=112
+<=Monsterstatues
+ITEMMENU=111
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 8]
+{
+magic=Menu
+<=Misc Magic
+ITEMMENU=113
+<=Potions
+ITEMMENU=114
+<=Reagents
+ITEMMENU=115
+<=Scrolls
+ITEMMENU=116
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 9]
+{
+misc=Menu
+<=Books
+ITEMMENU=119
+<=Drinks
+ITEMMENU=121
+<=Foods
+ITEMMENU=117
+<=Foods2
+ITEMMENU=200
+<=Games
+ITEMMENU=120
+<=Gems
+ITEMMENU=123
+<=Keys
+ITEMMENU=118
+<=Money
+ITEMMENU=124
+<=Rawfoods
+ITEMMENU=122
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 10]
+{
+skills=Menu
+<=Misc
+ITEMMENU=126
+<=Resources
+ITEMMENU=125
+<=Tools
+ITEMMENU=127
+<=Previous Menu
+ITEMMENU=1
+}
+
+[ITEMMENU 125]
+{
+resources=Menu
+<=Carpentry
+ITEMMENU=133
+<=Fletching
+ITEMMENU=129
+<=Leatherworking
+ITEMMENU=134
+<=Lumberjacking
+ITEMMENU=132
+<=Mining
+ITEMMENU=135
+<=Misc Resources
+ITEMMENU=131
+<=Smithing
+ITEMMENU=136
+<=Tailoring
+ITEMMENU=128
+<=Tinkering
+ITEMMENU=130
+<=Previous Menu
+ITEMMENU=10
+}
+
+[ITEMMENU 126]
+{
+misc=Menu
+<=Misc
+ITEMMENU=138
+<=Music Intruments
+ITEMMENU=137
+<=Previous Menu
+ITEMMENU=10
+}
+
+[ITEMMENU 127]
+{
+tools=Menu
+<=Alchemy
+ITEMMENU=143
+<=Blacksmithy
+ITEMMENU=140
+<=Carpenty
+ITEMMENU=144
+<=Fishing
+ITEMMENU=147
+<=Healing
+ITEMMENU=146
+<=Inscription
+ITEMMENU=141
+<=Mining
+ITEMMENU=145
+<=Tailoring
+ITEMMENU=139
+<=Tinkering
+ITEMMENU=142
+<=Thieving
+ITEMMENU=148
+<=Previous Menu
+ITEMMENU=10
+}

@@ -1,0 +1,1063 @@
+//ItemLists.dfn
+// v0.1; 13/10/02; initial release;
+//-================================-
+// NewbieLists.dfn
+// v1.0; 13/10/02; initial release; §ymbiotic; confound@iprimus.com.au
+// (add new version comments here, use format of above line please.)
+// For use with the uox emulator, or any, with permission from the author.
+// In some cases,random items are given when a character selects a skill.  
+// These Items are listed here.
+//*****************************************************************
+//* There are two kinds of entries in this file. The first ones,  *
+//* the [ITEMLIST #] entries, are the actual lists of items that  *
+//* uox3 will randomly select from when the itemlists are refered *
+//* by another UOX3 script.                                       *
+//*                                                               *
+//* The second entry-types are the [listobject#] ones. These are  *
+//* (add-able)objects which refer to the itemlists. By using for  *
+//* instance 'ADDITEM listobject1 you would add a random item from*
+//* [ITEMLIST 1] to your world.                                   *
+//*                                                               *
+//*****************************************************************
+
+//All the scrolls
+[ITEMLIST 1]
+{
+0x1f2d
+0x1f2e
+0x1f2f
+0x1f30
+0x1f31
+0x1f32
+0x1f33
+0x1f34
+0x1f35
+0x1f36
+0x1f37
+0x1f38
+0x1f39
+0x1f3a
+0x1f3b
+0x1f3c
+0x1f3d
+0x1f3e
+0x1f3f
+0x1f40
+0x1f41
+0x1f42
+0x1f43
+0x1f44
+0x1f45
+0x1f46
+0x1f47
+0x1f48
+0x1f49
+0x1f4a
+0x1f4b
+0x1f4c
+0x1f4d
+0x1f4e
+0x1f4f
+0x1f50
+0x1f51
+0x1f52
+0x1f53
+0x1f54
+0x1f55
+0x1f56
+0x1f57
+0x1f58
+0x1f59
+0x1f5a
+0x1f5b
+0x1f5c
+0x1f5d
+0x1f5e
+0x1f5f
+0x1f60
+0x1f61
+0x1f62
+0x1f63
+0x1f64
+0x1f65
+0x1f66
+0x1f67
+0x1f68
+0x1f69
+0x1f6a
+0x1f6b
+0x1f6c
+}
+
+//Varios Weapons and Armor
+[ITEMLIST 2]
+{
+0x0f43
+0x0f45
+0x0f49
+0x0f4b
+0x0f51
+0x144f
+0x144e
+0x1450
+0x13b8
+}
+
+//More Weapons and Armor
+[ITEMLIST 3]
+{
+0x0f4d
+0x143e
+0x13b6
+0x13b8
+0x13ba
+0x0f5e
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+}
+
+// Potions
+[ITEMLIST 4]
+{
+0x0f06
+0x0f07
+0x0f08
+0x0f09
+0x0f0a
+0x0f0b
+0x0f0c
+0x0f0c
+0x0f0d
+}
+
+//Instruments
+[ITEMLIST 6]
+{
+0x0e9c
+0x0e9d
+0x0e9e
+0x0eb1
+0x0eb2
+0x0eb3
+0x0eb4
+}
+
+// Blacksmith Tools
+[ITEMLIST 7]
+{
+0x0fbc
+0x13e4
+}
+
+// Weapons
+[ITEMLIST 8]
+{
+0x13b6
+0x13b8
+0x13ba
+0x0f5e
+0x1440
+0x13ff
+0x0f43
+0x0f45
+0x0f49
+0x0f4b
+0x0f47
+0x13fb
+0x0e85
+0x13b0
+0x1442
+0x0f51
+0x1400
+0x13b4
+0x143c
+0x0f5c
+0x143a
+0x13e4
+0x1438
+0x1406
+0x1405
+}
+
+// 1st circle scrolls
+[ITEMLIST 9]
+{
+0x1f2d
+0x1f2e
+0x1f2f
+0x1f30
+0x1f31
+0x1f32
+0x1f33
+0x1f34
+}
+
+// Carpentry Tool
+[ITEMLIST 10]
+{
+0x10e4
+0x1028
+0x1034
+0x102a
+0x1030
+0x1032
+0x10e7
+0x10e6
+0x102c
+0x102e
+0x10e5
+}
+
+// TINKERPARTS
+[ITEMLIST 11]
+{
+0x1bf2
+0x104f
+0x1051
+0x1053
+0x1055
+0x1059
+0x105b
+0x105d
+0x1ebc
+}
+
+//Regs
+[ITEMLIST 12]
+{
+0x0f7a
+0x0f7b
+0x0f84
+0x0f85
+0x0f86
+0x0f88
+0x0f8c
+0x0f8d
+}
+
+[ITEMLIST 13]
+{ Random Hair
+0x2046
+0x203c
+0x2044
+0x2045
+0x203d
+0x2048
+0x203b
+0x2049
+0x204a
+}
+
+[ITEMLIST 14]
+{ Random Beard
+0x2040
+0x204d
+0x2041
+0x203e
+0x204c
+0x203f
+0x204b
+}
+
+[ITEMLIST 15]
+{ Random Female Hair
+0x2046
+0x203c
+0x2045
+0x203d
+0x203b
+0x2049
+}
+
+// Male Plain Hats
+[ITEMLIST 20]
+{
+0x1713
+0x1716
+0x1717
+0x1540
+0x1544
+}
+
+// Male Plain Shirts
+[ITEMLIST 21]
+{
+0x1517
+}
+
+// Male Plain Pants
+[ITEMLIST 22]
+{
+0x152e
+0x1539
+}
+
+// Male Plain Sandal, Shoe & Boots
+[ITEMLIST 23]
+{
+0x170b
+0x170d
+0x170f
+0x1711
+}
+
+// Male Plain Tunic & Aprons
+[ITEMLIST 24]
+{
+0x1fa1
+//0x153b
+0x153d
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Male Plain Tunic & Robe
+[ITEMLIST 25]
+{
+0x1fa1
+0x1f03
+//0x0e75
+//0x0e75
+}
+
+// Male Plain Cape
+[ITEMLIST 26]
+{
+0x1515
+//0x0e75
+}
+
+// Male Fancy Hats
+[ITEMLIST 30]
+{
+0x1714
+0x1715
+0x171a
+0x171b
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Male Fancy Shirts
+[ITEMLIST 31]
+{
+0x1efd
+}
+
+// Male Fancy Pants
+[ITEMLIST 32]
+{
+0x152e
+0x1539
+}
+
+// Male Fancy Shoes & Boots
+[ITEMLIST 33]
+{
+0x170b
+0x170f
+0x1711
+}
+
+// Male Fancy Surcoat, Tunic, Doublet & Sash 
+[ITEMLIST 34]
+{
+0x1ffd
+0x1f9f
+0x1f7b
+0x1541
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Male Fancy Robe
+[ITEMLIST 35]
+{
+0x1f03
+//0x0e75
+}
+
+// Male Fancy Cape
+[ITEMLIST 36]
+{
+0x1515
+//0x0e75
+}
+
+// Female Plain Hats
+[ITEMLIST 40]
+{
+0x1713
+0x1716
+0x1717
+0x1540
+0x1544
+}
+
+// Female Plain Shirts
+[ITEMLIST 41]
+{
+0x1517
+}
+
+// Female Plain Skirt, Pants & Kilt
+[ITEMLIST 42]
+{
+0x1516
+0x152e
+0x1537
+0x1539
+}
+
+// Female Plain Sandal, Shoe & Boots
+[ITEMLIST 43]
+{
+0x170b
+0x170d
+0x170f
+0x1711
+}
+
+// Female Plain Tunic, Dress & Aprons
+[ITEMLIST 44]
+{
+0x1fa1
+0x1f01
+0x153b
+0x153d
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Female Plain Tunic, Robe & Dress
+[ITEMLIST 45]
+{
+0x1fa1
+0x1f03
+0x1f01
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Female Plain Cape
+[ITEMLIST 46]
+{
+0x1515
+//0x0e75
+}
+
+// Female Fancy Hats
+[ITEMLIST 50]
+{
+0x1714
+0x1719
+0x171a
+0x171b
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Female Fancy Shirts
+[ITEMLIST 51]
+{
+0x1efd
+}
+
+// Female Fancy Skirt, Pants & Kilt
+[ITEMLIST 52]
+{
+0x1516
+0x152e
+0x1537
+0x1539
+}
+
+// Female Fancy Shoes & Boots
+[ITEMLIST 53]
+{
+0x170b
+0x170f
+0x1711
+}
+
+// Female Fancy Surcoat, Tunic, Doublet, Dress & Sash
+[ITEMLIST 54]
+{
+0x1ffd
+0x1f9f
+0x1f7b
+0x1eff
+0x1541
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+//0x0e75
+}
+
+// Female Fancy Robe & Dress
+[ITEMLIST 55]
+{
+0x1f03
+0x1eff
+//0x0e75
+//0x0e75
+}
+
+// Female Fancy Cape
+[ITEMLIST 56]
+{
+0x1515
+//0x0e75
+}
+
+// Types of Fish
+[ITEMLIST 57]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+// Treasure hunt list
+[ITEMLIST 69]
+{
+0x13b8
+0x13b8
+0x13b8
+0x13b8
+0x13b8
+0x13ba
+0x13ba
+0x13ba
+0x13ba
+0x13ba
+0x0f5e
+0x0f5e
+0x0f5e
+0x0f5e
+0x0f5e
+0x13b6
+0x13b6
+0x13b6
+0x13b6
+0x13b6
+0x1440
+0x1440
+0x1440
+0x1440
+0x1440
+0x13ff
+0x13ff
+0x13ff
+0x13ff
+0x13ff
+0x0f47
+0x0f47
+0x0f47
+0x0f47
+0x0f47
+0x0f45
+0x0f45
+0x0f45
+0x0f45
+0x0f45
+0x0f49
+0x0f49
+0x0f49
+0x0f49
+0x0f49
+0x0f4b
+0x0f4b
+0x0f4b
+0x0f4b
+0x0f4b
+0x13fb
+0x13fb
+0x13fb
+0x13fb
+0x13fb
+0x0e85
+0x0e85
+0x0e85
+0x0e85
+0x0e85
+0x13b0
+0x13b0
+0x13b0
+0x13b0
+0x13b0
+0x13f7
+0x13f7
+0x13f7
+0x13f7
+0x13f7
+0x0ec4
+0x0ec4
+0x0ec4
+0x0ec4
+0x0ec4
+0x0ec2
+0x0ec2
+0x0ec2
+0x0ec2
+0x0ec2
+0x0f51
+0x0f51
+0x0f51
+0x0f51
+0x0f51
+0x1400
+0x1400
+0x1400
+0x1400
+0x1400
+0x13b4
+0x13b4
+0x13b4
+0x13b4
+0x13b4
+0x143c
+0x143c
+0x143c
+0x143c
+0x143c
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+0x1416
+0x1413
+0x1414
+0x1412
+0x141a
+0x1410
+0x13c4
+0x13c3
+0x13bb
+0x13c4
+0x13c3
+0x13bb
+0x13c4
+0x13c3
+0x13bb
+0x13c4
+0x13c3
+0x13bb
+0x13c4
+0x13c3
+0x13bb
+0x0f5c
+0x0f5c
+0x0f5c
+0x0f5c
+0x0f5c
+0x143a
+0x143a
+0x143a
+0x143a
+0x143a
+0x1438
+0x1438
+0x1438
+0x1438
+0x1438
+0x1406
+0x1406
+0x1406
+0x1406
+0x1406
+0x0e87
+0x0e87
+0x0e87
+0x0e87
+0x0e87
+0x0f62
+0x0f62
+0x0f62
+0x0f62
+0x0f62
+0x1405
+0x1405
+0x1405
+0x1405
+0x1405
+0x0f4d
+0x0f4d
+0x0f4d
+0x0f4d
+0x0f4d
+0x143e
+0x143e
+0x143e
+0x143e
+0x143e
+0x13b2
+0x13b2
+0x13b2
+0x13b2
+0x13b2
+0x0f50
+0x0f4f
+0x0f4f
+0x0f4f
+0x0f4f
+0x13fd
+0x13fd
+0x13fd
+0x13fd
+0x13fd
+}
+
+// Colored Scales from carve_items.dfn (except blue)
+[ITEMLIST 70]
+{
+0xC005
+0xC006
+0xC008
+}
+
+// Black/White Scales from carve_items.dfn
+[ITEMLIST 71]
+{
+0xC003
+0xC007
+}
+
+// Vegetables!
+[ITEMLIST 72]
+{
+0x0c5c
+0x0c62
+0x0c66
+0x0c6b
+0x0c6d
+0x0c70
+0x0c72
+0x0c74
+0x0c77
+0x0c79
+0x0c7b
+0x0c82
+}
+
+//**************************
+//* LISTOBJECTS START HERE *
+//**************************
+
+// All the scrolls
+[listobject1]
+{
+itemlist=1
+}
+
+// Various weapons and armor
+[listobject2]
+{
+itemlist=2
+}
+
+// More Weapons and Armor
+[listobject3]
+{
+itemlist=3
+}
+
+// Potions
+[listobject4]
+{
+itemlist=4
+}
+
+// Instruments
+[listobject6]
+{
+itemlist=6
+}
+
+// Blacksmith Tools
+[listobject7]
+{
+itemlist=7
+}
+
+// Weapons
+[listobject8]
+{
+itemlist=8
+}
+
+// 1st circle scrolls
+[listobject9]
+{
+itemlist=9
+}
+
+// Carpentry Tools
+[listobject10]
+{
+itemlist=10
+}
+
+// Tinkering Parts
+[listobject11]
+{
+itemlist=11
+}
+
+// Reagents
+[listobject12]
+{
+itemlist=12
+}
+
+// Random Hair
+[listobject13]
+{
+itemlist=13
+}
+
+// Random Beard
+[listobject14]
+{
+itemlist=14
+}
+
+// Random Female Hair
+[listobject15]
+{
+itemlist=15
+}
+
+// Male plain hats
+[listobject20]
+{
+itemlist=20
+}
+
+// Male plain shirts
+[listobject21]
+{
+itemlist=21
+}
+
+// Male plain pants
+[listobject22]
+{
+itemlist=22
+}
+
+// Male Plain Sandal, Shoe & Boots
+[listobject23]
+{
+itemlist=23
+}
+
+// Male Plain Tunic & Aprons
+[listobject24]
+{
+itemlist=24
+}
+
+// Male Plain Tunic & Robe
+[listobject25]
+{
+itemlist=25
+}
+
+// Male Plain Cape
+[listobject26]
+{
+itemlist=26
+}
+
+// Male Fancy Hats
+[listobject30]
+{
+itemlist=30
+}
+
+// Male Fancy Shirts
+[listobject31]
+{
+itemlist=31
+}
+
+// Male Fancy Pants
+[listobject32]
+{
+itemlist=32
+}
+
+// Male Fancy Shoes & Boots
+[listobject33]
+{
+itemlist=33
+}
+
+// Male Fancy Surcoat, Tunic, Doublet & Sash 
+[listobject34]
+{
+itemlist=34
+}
+
+// Male Fancy Robe
+[listobject35]
+{
+itemlist=35
+}
+
+// Male Fancy Cape
+[listobject36]
+{
+itemlist=36
+}
+
+// Female Plain Hats
+[listobject40]
+{
+itemlist=40
+}
+
+// Female Plain Shirts
+[listobject41]
+{
+itemlist=41
+}
+
+// Female Plain Skirt, Pants & Kilt
+[listobject42]
+{
+itemlist=42
+}
+
+// Female Plain Sandal, Shoe & Boots
+[listobject43]
+{
+itemlist=43
+}
+
+// Female Plain Tunic, Dress & Aprons
+[listobject44]
+{
+itemlist=44
+}
+
+// Female Plain Tunic, Robe & Dress
+[listobject45]
+{
+itemlist=45
+}
+
+// Female Plain Cape
+[listobject46]
+{
+itemlist=46
+}
+
+// Female Fancy Hats
+[listobject50]
+{
+itemlist=50
+}
+
+// Female Fancy Shirts
+[listobject51]
+{
+itemlist=51
+}
+
+// Female Fancy Skirt, Pants & Kilt
+[listobject52]
+{
+itemlist=52
+}
+
+// Female Fancy Shoes & Boots
+[listobject53]
+{
+itemlist=53
+}
+
+// Female Fancy Surcoat, Tunic, Doublet, Dress & Sash
+[listobject54]
+{
+itemlist=54
+}
+
+// Female Fancy Robe & Dress
+[listobject55]
+{
+itemlist=55
+}
+
+// Female Fancy Cape
+[listobject56]
+{
+itemlist=56
+}
+
+// Types of Fish
+[listobject57]
+{
+itemlist=57
+}
+
+// // Treasure hunt list
+[listobject69]
+{
+itemlist=69
+}
+
+// Colored Scales from carve_items.dfn
+[listobject70]
+{
+itemlist=70
+}
+
+// Black/White Scales from carve_items.dfn
+[listobject71]
+{
+itemlist=71
+}
+
+// Vegetables!
+[listobject72]
+{
+itemlist=72
+}
