@@ -1085,7 +1085,7 @@ UI16 cAccountClass::Load(void)
 	cAccountClass::PathFix(sAccountsADM);
 	// Check to see what version the current accounts.adm file is.
 	char sLine[129];
-	std::fstream fsAccountsADMTest(sAccountsADM.c_str());
+	std::fstream fsAccountsADMTest(sAccountsADM.c_str(),std::ios::in);
 	if(!fsAccountsADMTest.is_open())
 	{
 		// we were unable to load any accounts
@@ -1107,7 +1107,7 @@ UI16 cAccountClass::Load(void)
 	if(fsAccountsADMTest.is_open())
 		fsAccountsADMTest.close();
 	// OK now we can open the file.
-	std::fstream fsAccountsADM(sAccountsADM.c_str());
+	std::fstream fsAccountsADM(sAccountsADM.c_str(),std::ios::in);
 	if(!fsAccountsADM.is_open())
 	{
 		// we were unable to load any accounts
