@@ -1702,7 +1702,7 @@ bool CItem::DumpBody( ofstream &outStream, SI32 mode ) const
 	dumping << "More2=" << GetMoreB() << endl;
 	dumping << "Name2=" << GetName2() << endl;
 	dumping << "Murderer=" << GetMurderer() << endl;
-	dumping << "Creater=" << GetCreator() << endl;
+	dumping << "Creator=" << GetCreator() << endl;
 	dumping << "Desc=" << GetDesc() << endl;
 	dumping << "Type=" << (SI16)GetType() << endl;
 	dumping << "Type2=" << (SI16)GetType2() << endl;
@@ -1788,7 +1788,7 @@ bool CItem::HandleLine( char *tag, char *data )
 			SetCont( makeNum( data ) );
 			return true;
 		}
-		else if( !strcmp( tag, "Creater" ) )
+		else if( !strcmp( tag, "Creator" ) )
 		{
 			SetCreator( makeNum( data ) );
 			return true;
