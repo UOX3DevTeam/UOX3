@@ -1,11 +1,17 @@
 TEMPLATE	= app
-DEFINES	        = __linux__
-unix:LIBS	+= -lncurses
-unix:TMAKE_CXXFLAGS = -funsigned-char
+win32-msvc:LIBS = ws2_32.lib
+win32-msvc:DEFINES =  WIN32 NDEBUG _CONSOLE _MBCS
+win32-msvc:LIBS      = ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comdlg32.lib
+win32-msvc:TMAKE_CXXFLAGS = /J /nologo /ML /W3 /GX /O2 /YX /FD /c
+linux-g++:DEFINES    = __linux__
+linux-g++:LIBS	+= -lncurses
+linux-g++:TMAKE_CXXFLAGS = -funsigned-char
+win32-g++:TMAKE_CXXFLAGS   = -funsigned-char
+win32-g++:LIBS = wsock32.lib  
 INCLUDEPATH     = h/
 DESTDIR         = bin/
 OBJECTS_DIR      = obj/
-CONFIG		= release
+CONFIG		= console release
 HEADERS		= h/admin.h \
 		  h/basetype.h \
 		  h/boats.h \
