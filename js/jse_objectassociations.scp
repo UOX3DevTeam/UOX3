@@ -280,6 +280,7 @@
 0x0c52=2009
 0x0c53=2009
 0x0c54=2009
+
 // pick flax
 0x1a99=2010
 0x1a9a=2010
@@ -289,8 +290,8 @@
 // ----------------------------------
 
 // ----------------------------
-// tailoring and spinning start
 
+// tailoring and spinning start
 // scissors : unshorn sheep : shorn sheep & unspun wool
 0x0f9e=131
 0x0f9f=131
@@ -310,11 +311,8 @@
 // five spools of thread : loom : bolt of cloth
 0x0fa0=136
 0x0fa1=136
-
 // tailoring and spinning end
 // --------------------------
-
-
 
 // -----------------------
 // turn furniture start
@@ -366,8 +364,3 @@
 // pets from pet static end
 // ------------------------
 }
-
-
-
-
-

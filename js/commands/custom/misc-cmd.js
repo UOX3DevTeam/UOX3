@@ -248,7 +248,7 @@ function onCallback5( pSock, myTarget )
 		var tempObj = myTarget.FindItemLayer(21);
 		if( tempObj == null )
 		{
-			var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", false, 1, false );
+			var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
 			newPack.container = pUser;
 			newPack.layer = 21;
 			newPack.weight = 0;
@@ -259,7 +259,7 @@ function onCallback5( pSock, myTarget )
 	}
 	else
 	{
-		var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", false, 1, false );
+		var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
 		newPack.x = targX;
 		newPack.y = targY;
 		newPack.z = targZ;
