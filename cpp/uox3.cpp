@@ -404,7 +404,7 @@ unsigned char openscript( char *name ) // Open script file
 	}
 	openings++;
 	//assert(openings == 1);
-	// printf("Openings: %i\n",openings);
+	// ConOut("Openings: %i\n",openings);
 	return 0;
 }
 
@@ -1458,7 +1458,7 @@ void backpack(UOXSOCKET s, SERIAL serial) // Send Backpack (with items)
 	i = calcItemFromSer( serial );
 	if (i==-1)
 	{
-		printf("UOX3.CPP: backpack() couldn't find backpack: %d.\n",serial);
+		ConOut("UOX3.CPP: backpack() couldn't find backpack: %d.\n",serial);
 		return;
 	}
 	
@@ -1699,7 +1699,7 @@ void backpack2(UOXSOCKET s, SERIAL serial) // Send corpse stuff
 	char nul = 0;
 	Network->xSend(s, &nul, 1, 0);
 	
-	// printf("Items: %i\n",count);
+	// ConOut("Items: %i\n",count);
 	bpopen2[3]=count>>8;
 	bpopen2[4]=count%256;
 	count2=(count*19)+5;
@@ -1830,10 +1830,10 @@ void sendbpitem(int s, int i) // Update single item in backpack
 	
 	if (!change)
 	{
-		// printf("UOX3: Sendbpitem bug. Item %i not in container.\n",serial); // commented out by LB, myrdaal lag-bugfix generates a lot of harmless msendbp essages
+		// ConOut("UOX3: Sendbpitem bug. Item %i not in container.\n",serial); // commented out by LB, myrdaal lag-bugfix generates a lot of harmless msendbp essages
 		return;
 	}
-	if (count>=999) printf("sendbpitem: inf-loop avoid\n");
+	if (count>=999) ConOut("sendbpitem: inf-loop avoid\n");
 	if (((c!=-1)&&(inrange1p(currchar[s],c)))|| // if item is in a character's
 		//pack (or subcontainer) and player is in range
 		((c==-1)&&(inrange2(s,x))))  // or item is in container on ground and
@@ -2325,7 +2325,7 @@ void teleport2(int s) // used for /RESEND only - Morrolan, so people can find th
 			goxyz[18]=chars[s].dispz;
 			Network->xSend(k, goxyz, 19, 0);
 			all_items(k);
-			printf("ALERT: all_items() called in teleport2(). This function could cause a lot of lag!" );
+			ConOut("ALERT: all_items() called in teleport2(). This function could cause a lot of lag!" );
 			Weight->NewCalc(s);  // Ison 2-20-99
 			statwindow(k, s);  // Ison 2-20-99
 			walksequence[k]=-1;
@@ -2455,7 +2455,7 @@ void read_in_teleport(void)
 	
 	if(fp==NULL)
 	{
-		printf("ERROR: Teleport Data not found\n");
+		ConOut("ERROR: Teleport Data not found\n");
 		error=1;
 		keeprun=0;
 		return;
@@ -2571,7 +2571,7 @@ void explodeitem(int s, unsigned int nItem)
 	case 2:	dmg = RandomNum( 10, 20 );	break;
 	case 3:	dmg = RandomNum( 20, 40 );	break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, explodeitem()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, explodeitem()\n"); //Morrolan
 		dmg = RandomNum(5,10);
 		break;
 	}
@@ -3220,7 +3220,7 @@ void get_item(int s) // Client grabs an item
 		} while (npc==-1 && b < 100);
 	}
 	
-	if (npc > -1) // 0=corpse, hence >0 ..
+	if( npc > -1 ) // 0=corpse, hence >0 ..
 	{
 		if (!(chars[currchar[s]].priv&0x01) && npc!=currchar[s] && chars[npc].ownserial!=chars[currchar[s]].serial)
 		{//Own serial stuff by Zippy -^ Pack aniamls and vendors.
@@ -3232,7 +3232,7 @@ void get_item(int s) // Client grabs an item
 	//End Zippy's change
 	
 	//Boats->
-	if ( x != -1 && npc != -1 )
+	if ( x != -1 && npc > -1 )
 	{
 		if( items[x].multis != -1 )
 			unsetserial( x, 7 );
@@ -3512,7 +3512,7 @@ void wear_item(int s) // Item is dropped on paperdoll
 			if(chars[currchar[s]].poison<items[i].poisoned)
 				chars[currchar[s]].poison=items[i].poisoned;
 		}
-		if (showlayer) printf("Item equipped on layer %i.\n",items[i].layer);
+		if (showlayer) ConOut("Item equipped on layer %i.\n",items[i].layer);
 		removeitem[1]=items[i].ser1;
 		removeitem[2]=items[i].ser2;
 		removeitem[3]=items[i].ser3;
@@ -3575,7 +3575,7 @@ void dump_item(int s) // Item is dropped on ground
 	if (i==-1) 
 	{ 
 		all_items(s);
-		printf("ALERT: all_items() called in dump_item().  This function could cause a lot of lag!" ); // AntiChrist
+		ConOut("ALERT: all_items() called in dump_item().  This function could cause a lot of lag!" ); // AntiChrist
 	}
 	else
 	{
@@ -4631,7 +4631,7 @@ void charplay (int s) // After hitting "Play Character" button //Instalog
 				startchar(s);
 			} else {
 #ifdef DEBUG
-				printf("DEBUG: Attempted %i, %i from this account (%i) is in world.\n",k,inworld[acctno[s]],acctno[s]);
+				ConOut("DEBUG: Attempted %i, %i from this account (%i) is in world.\n",k,inworld[acctno[s]],acctno[s]);
 #endif
 				char msg[3];
 				msg[0]=0x53;
@@ -4717,7 +4717,7 @@ void endmessage(int x) // If shutdown is initialized
 void illinst(int x=0) //Thunderstorm linux fix
 {
 	sysbroadcast("Fatal Server Error! Bailing out - Have a nice day!");
-	printf("Illegal Instruction Signal caught - attempting shutdown");
+	ConOut("Illegal Instruction Signal caught - attempting shutdown");
 	endmessage(x);
 }
 
@@ -5159,13 +5159,13 @@ void processkey( int c )
 	{
 		if (secure)
 		{
-			printf("UOX3: Secure mode disabled. Press ? for a commands list.\n");
+			ConOut("UOX3: Secure mode disabled. Press ? for a commands list.\n");
 			secure=0;
 			return;
 		}
 		else
 		{
-			printf("UOX3: Secure mode re-enabled.\n");
+			ConOut("UOX3: Secure mode re-enabled.\n");
 			secure=1;
 			return;
 		}
@@ -5175,7 +5175,7 @@ void processkey( int c )
 		int i, j;
 		if( secure == 1 && c != '?' )
 		{
-			printf("UOX3: Secure mode prevents keyboard commands! Press 'S' to disable.\n");
+			ConOut("UOX3: Secure mode prevents keyboard commands! Press 'S' to disable.\n");
 			return;
 		}
 		
@@ -5183,13 +5183,13 @@ void processkey( int c )
 		{
 		case 0x1B:
 		case 'Q':
-			printf("UOX3: Immediate Shutdown initialized!\n");
+			ConOut("UOX3: Immediate Shutdown initialized!\n");
 			keeprun=0;
 			break;
 		case 'T':
 			endtime = uiCurrentTime + ( CLOCKS_PER_SEC * 600 );
 			endmessage( 0 );
-			printf( "UOX3: Server going down in %i minutes.\n", ( ( endtime - uiCurrentTime ) / CLOCKS_PER_SEC ) / 60 );
+			ConOut( "UOX3: Server going down in %i minutes.\n", ( ( endtime - uiCurrentTime ) / CLOCKS_PER_SEC ) / 60 );
 			break;
 		case '#':
 			if ( !cwmWorldState->Saving() )
@@ -5201,32 +5201,32 @@ void processkey( int c )
 		case 'L':
 			if (showlayer)
 			{
-				printf("UOX3: Layer display disabled.\n");
+				ConOut("UOX3: Layer display disabled.\n");
 				showlayer=0;
 			}
 			else
 			{
-				printf("UOX3: Layer display enabled.\n");
+				ConOut("UOX3: Layer display enabled.\n");
 				showlayer=1;
 			}
 			break;
 		case 'I':
 			Admin->ReadIni();
-			printf("UOX3: INI file reloaded.\n");
+			ConOut("UOX3: INI file reloaded.\n");
 			break;
 		case  'D':    // Disconnect account 0 (useful when client crashes)
 			for( i = 0; i < now; i++ )
 				if( acctno[i] == 0 )
 				{
 					Network->Disconnect( i );
-					printf( "Account 0 disconnected\n" );
+					ConOut( "Account 0 disconnected\n" );
 					break;
 				}
-				printf( "Account 0 was not connected\n" );
+				ConOut( "Account 0 was not connected\n" );
 			break;
 		case 'H':                // Enable/Disable heartbeat
-			if (heartbeat==1) printf("UOX3: Heartbeat Disabled\n");
-			else printf("UOX3: Heartbeat Enabled\n");
+			if (heartbeat==1) ConOut("UOX3: Heartbeat Disabled\n");
+			else ConOut("UOX3: Heartbeat Enabled\n");
 			heartbeat = !heartbeat;
 			break;
 		case 'P':                // Display profiling information
@@ -5239,98 +5239,98 @@ void processkey( int c )
 			LogMessage("Simulation Cycles: %f per sec\n" _ (1000.0*(1.0/(float)((float)loopTime/(float)loopTimeCount))));
 			break;
 		case 'W':                // Display logged in chars
-			printf("Current Users in the World:\n");
+			ConOut("Current Users in the World:\n");
 			j = 0;
 			for (i=0;i<now;i++)
 			{
 				if(perm[i]) //Keeps NPC's from appearing on the list
 				{
-					printf("%i) %s [%x %x %x %x]\n", j, chars[currchar[i]].name, chars[currchar[i]].ser1, chars[currchar[i]].ser2, chars[currchar[i]].ser3, chars[currchar[i]].ser4);
+					ConOut("%i) %s [%x %x %x %x]\n", j, chars[currchar[i]].name, chars[currchar[i]].ser1, chars[currchar[i]].ser2, chars[currchar[i]].ser3, chars[currchar[i]].ser4);
 					j++;
 				}
 			}
-			printf("Total Users Online: %d\n", j);
+			ConOut("Total Users Online: %d\n", j);
 			break;
 		case 'A': //reload the accounts file
-			printf( "UOX3: Reloading Accounts file..." );
+			ConOut( "UOX3: Reloading Accounts file..." );
 			Admin->LoadAccounts();
-			printf( "Done!" );
+			ConOut( "Done!" );
 			break;
 		case 'R':
-			printf("UOX3: Reloading Server/Spawn/Regions/Spells Script files:\n");
-			printf( "Loading spawn regions..." );
+			ConOut("UOX3: Reloading Server/Spawn/Regions/Spells Script files:\n");
+			ConOut( "Loading spawn regions..." );
 			loadspawnregions();
-			printf( "Done!\nLoading regions..." );
+			ConOut( "Done!\nLoading regions..." );
 			loadregions();
-			printf( "Done!\nLoading server.scp..." );
+			ConOut( "Done!\nLoading server.scp..." );
 			loadserverscript();
-			printf( "Done!\nLoading Spells.scp...");
+			ConOut( "Done!\nLoading Spells.scp...");
 			Magic->LoadScript();
-			printf( "Done!\n" );
+			ConOut( "Done!\n" );
 			Commands->Load();
-			printf( "Reloading races.scp..." );
+			ConOut( "Reloading races.scp..." );
 			delete Races;
 			if(( Races = new cRaces )             == NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
 			Races->load();
-			printf( "Done!\n" );
+			ConOut( "Done!\n" );
 			
 			break;
 		case 'M':
 			unsigned long int tmp, total;
 			total = 0;
 			tmp = 0;
-			printf("UOX3 Memory Information:\n" );
-			printf("        Cache:\n");
-			printf("                Tiles: %li bytes\n", Map->TileMem );
-			printf("                Statics: %li bytes\n", Map->StaMem );
-			printf("                Version: %li bytes\n", Map->versionMemory );
-			printf("                Map0: %i bytes [%i Hits - %i Misses]\n", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
+			ConOut("UOX3 Memory Information:\n" );
+			ConOut("        Cache:\n");
+			ConOut("                Tiles: %li bytes\n", Map->TileMem );
+			ConOut("                Statics: %li bytes\n", Map->StaMem );
+			ConOut("                Version: %li bytes\n", Map->versionMemory );
+			ConOut("                Map0: %i bytes [%i Hits - %i Misses]\n", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
 			total += tmp = chars.Size() + cmem*sizeof( teffect_st ) + cmem*sizeof(char) + cmem*sizeof(int)*5;
-			printf("        Characters: %li bytes [%i chars (%i allocated)]\n", tmp, chars.Count(), cmem );
+			ConOut("        Characters: %li bytes [%i chars (%i allocated)]\n", tmp, chars.Count(), cmem );
 			total += tmp = items.Size() + imem*sizeof(int)*4;
-			printf("        Items: %li bytes [%i items (%i allocated)]\n", tmp, items.Count(), imem );
-			printf("                You save I:%li & C:%li bytes!\n", ((imem*sizeof(item_st))-items.Size()), (((cmem*sizeof(char_st))-chars.Size())+((sizeof(teffect_st)*5*cmem)-(sizeof(teffect_st)*cmem))));
+			ConOut("        Items: %li bytes [%i items (%i allocated)]\n", tmp, items.Count(), imem );
+			ConOut("                You save I:%li & C:%li bytes!\n", ((imem*sizeof(item_st))-items.Size()), (((cmem*sizeof(char_st))-chars.Size())+((sizeof(teffect_st)*5*cmem)-(sizeof(teffect_st)*cmem))));
 			total+= tmp = 69 * sizeof( splInfo_st );
-			printf("        Spells: %i bytes\n", tmp );
-			printf("        Sizes:\n" );
-			printf("                Item_st: %i bytes\n", sizeof( item_st ) );
-			printf("                Char_st: %i bytes\n", sizeof( char_st ) );
-			printf("                TEffect: %i bytes (%i total)\n", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
-			printf("                Int    : %i bytes\n", sizeof( int ) );
-			printf("                Short  : %i bytes\n", sizeof( short int ) );
+			ConOut("        Spells: %i bytes\n", tmp );
+			ConOut("        Sizes:\n" );
+			ConOut("                Item_st: %i bytes\n", sizeof( item_st ) );
+			ConOut("                Char_st: %i bytes\n", sizeof( char_st ) );
+			ConOut("                TEffect: %i bytes (%i total)\n", sizeof( teffect_st ), sizeof( teffect_st ) * Effects->Count() );
+			ConOut("                Int    : %i bytes\n", sizeof( int ) );
+			ConOut("                Short  : %i bytes\n", sizeof( short int ) );
 			total+= tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
-			printf("Approximate Total: %i bytes\n", total );
-			//printf("End of Memory Information.\n" );
+			ConOut("Approximate Total: %i bytes\n", total );
+			//ConOut("End of Memory Information.\n" );
 			break;
 			
 		case '?':
-			printf("Console commands:\n");
-			printf("	<Esc> or Q: Shutdown the server.\n");
-			printf("	# - Save world\n");
-			printf("	A - Reload accounts file\n");
-			printf("	C - Dump Items.scp menu into a file.\n" );
-			printf("	D - Disconnect Account 0\n");
-			printf("	H - Toggle hearbeat\n");
-			printf("	I - Reload INI file.\n");
-			printf("	L - Toggle layer Display\n");
-			printf("	M - Display Memory Information\n" );
-			printf("	P - Performance Dump\n");
-			printf("	R - Reload server, spawn, commands, regions and races scripts.\n");
-			printf("	S - Toggle console secure mode ");	// This key was missing
+			ConOut("Console commands:\n");
+			ConOut("	<Esc> or Q: Shutdown the server.\n");
+			ConOut("	# - Save world\n");
+			ConOut("	A - Reload accounts file\n");
+			ConOut("	C - Dump Items.scp menu into a file.\n" );
+			ConOut("	D - Disconnect Account 0\n");
+			ConOut("	H - Toggle hearbeat\n");
+			ConOut("	I - Reload INI file.\n");
+			ConOut("	L - Toggle layer Display\n");
+			ConOut("	M - Display Memory Information\n" );
+			ConOut("	P - Performance Dump\n");
+			ConOut("	R - Reload server, spawn, commands, regions and races scripts.\n");
+			ConOut("	S - Toggle console secure mode ");	// This key was missing
 			if( secure )
-				printf( "[Enabled]\n" );
+				ConOut( "[Enabled]\n" );
 			else
-				printf( "[Disabled]\n" );
-			printf("	T - System Message: The server is shutting down in 10 minutes.\n");
-			printf("	W - Display logged in characters\n");
-			printf("	X - Mass Disconnect\n" );
-			printf("	? - Commands list (this)\n");
-			printf("End of commands list.\n");
+				ConOut( "[Disabled]\n" );
+			ConOut("	T - System Message: The server is shutting down in 10 minutes.\n");
+			ConOut("	W - Display logged in characters\n");
+			ConOut("	X - Mass Disconnect\n" );
+			ConOut("	? - Commands list (this)\n");
+			ConOut("End of commands list.\n");
 			break;
 
 		case 'b':
 		case 'B':
-				printf( "Item_st: %i\nTile_st: %i\nChar_st: %i\nmulti_st: %i\nland_st: %i\n", sizeof( item_st ), sizeof( tile_st ), sizeof( char_st ), sizeof( st_multi ), sizeof( land_st ) );
+				ConOut( "Item_st: %i\nTile_st: %i\nChar_st: %i\nmulti_st: %i\nland_st: %i\n", sizeof( item_st ), sizeof( tile_st ), sizeof( char_st ), sizeof( st_multi ), sizeof( land_st ) );
 			break;
 
 		case 'X':
@@ -5340,7 +5340,7 @@ void processkey( int c )
 		case 0x0D:	// User hit [Enter]
 			break;
 		default:
-			printf("UOX3: Key %c [%x] does not perform a function. Press ? for help\n",c,c);	// Looks Better
+			ConOut("UOX3: Key %c [%x] does not perform a function. Press ? for help\n",c,c);	// Looks Better
 			break;
 		}
 	}
@@ -5356,7 +5356,7 @@ void checkkey( void )
 			//      how the toggle status is.
 			if( secure )
 			{
-				printf("UOX3: Secure mode disabled. Press ? for a commands list.\n");
+				ConOut("UOX3: Secure mode disabled. Press ? for a commands list.\n");
 				secure=0;
 				return;
 			}
@@ -5387,7 +5387,7 @@ void checkkey( void )
 		s = select( 1, &KEYBOARD, NULL, NULL, &uoxtimeout );
 		if( s < 0 )
 		{
-			printf("Error scanning key press\n" );
+			ConOut("Error scanning key press\n" );
 			exit( 10 );
 		}
 		if( s > 0 )
@@ -5434,7 +5434,7 @@ bool FindSpotForItem(int r, int &x, int &y, int &z)
 		if (Map->CanMonsterMoveHere(x, y, z))
 			return true;
 	} while (++a < 100);
-	printf("UOX3: Problem regionspawn [%i] found. Nothing will be spawned.\n",r);
+	ConOut("UOX3: Problem regionspawn [%i] found. Nothing will be spawned.\n",r);
 	return false;
 }
 
@@ -5487,7 +5487,7 @@ void doregionspawn(int r)//Regionspawns
 	if (npc==-1 && item==-1)
 	{
 #ifdef DEBUG_SPAWN
-		printf("Warning: Region spawn %i [%s] couldn't find anything to spawn, check scripts.\n",r-1,spawnregion[r].name);
+		ConOut("Warning: Region spawn %i [%s] couldn't find anything to spawn, check scripts.\n",r-1,spawnregion[r].name);
 #endif
 		return;
 	}
@@ -5815,7 +5815,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 				chars[i].kills--;
 			if ((chars[i].kills == repsys.maxkills) && (repsys.maxkills>0))
 				sysmessage(s, "You are no longer a murderer.");
-			// printf("%i Murderrate (Decay %i) (%i kills)",chars[i].murderrate,repsys.murderdecay,chars[i].kills);
+			// ConOut("%i Murderrate (Decay %i) (%i kills)",chars[i].murderrate,repsys.murderdecay,chars[i].kills);
 			chars[i].murderrate = (repsys.murderdecay*CLOCKS_PER_SEC) + currenttime;// Murder rate (in mins) to seconds. (checkauto is done about 25 times per second)
 		}
 		setcharflag(i);
@@ -6016,7 +6016,7 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 						updatestats(i, 0);
 						break;
 					default:
-						printf("ERROR: Fallout of switch statement without default. uox3.cpp, checkPC()\n"); // Morrolan
+						ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, checkPC()\n"); // Morrolan
 						chars[i].poisoned = 0;
 						return;
 				}
@@ -6171,7 +6171,7 @@ void checkauto(void) // Check automatic/timer controlled stuff (Like fighting an
 			// Lets do some maintenance on the bulletin boards.
 			if (!now && !cwmWorldState->Saving())
 			{
-				printf("UOX3: No players currently online. Starting bulletin board maintenance.\n");
+				ConOut("UOX3: No players currently online. Starting bulletin board maintenance.\n");
 				savelog("Bulletin Board Maintenance routine running (AUTO)\n", "server.log");
 				MsgBoardMaintenance();
 			}
@@ -6416,7 +6416,7 @@ void scriptmax(char *txt)
 	highest=-1;
 	bool ok = true;
 
-	printf( "Doing %s.....", txt );
+	ConOut( "Doing %s.....", txt );
 	if( !( strcmp( "ITEM", txt ) ) || !( strcmp( "ITEMMENU", txt ) ) )
 		openscript( "items.scp" );
 	else if( !( strcmp( "NPC", txt ) ) )
@@ -6455,7 +6455,7 @@ void scriptmax(char *txt)
 		{
 			current = str2num( &temp[x] );
 			if (current==highest) 
-				printf("WARNING: Duplicate section %s %i\n",txt,highest);
+				ConOut("WARNING: Duplicate section %s %i\n",txt,highest);
 			if (current>highest) 
 				highest=current;
 		}
@@ -6463,13 +6463,13 @@ void scriptmax(char *txt)
 	while( strcmp( "EOF", temp ) );
 	closescript();
 	fprintf(lstfile, " %s: %i\n", txt, highest);
-	printf( "Done!\n" );
+	ConOut( "Done!\n" );
 }
 
 void DoorMacro( UOXSOCKET s)
 { //Zippy 11/10/99 For Door Macro use :o)
 	unsigned short int xc = chars[currchar[s]].x, yc = chars[currchar[s]].y;
-	//printf("DoorMacro executed!\n" );
+	//ConOut("DoorMacro executed!\n" );
 	switch (chars[currchar[s]].dir)
 	{
 	case 0 : yc--;				break;
@@ -6568,7 +6568,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 			if( xgm && (buffer[s][0] == 0xFF ) && ( buffer[s][1] == 0xFF ) && ( buffer[s][2] == 0xFF ) && ( buffer[s][3] == 0xFF ) )
 			{
 				xGM[s]->isClient = 1;
-				printf("Client %i is an xgm client, logging in...\n", s );
+				ConOut("Client %i is an xgm client, logging in...\n", s );
 				xGM[s]->Verify(s);
 				newclient[s] = 0;
 				return;
@@ -6601,7 +6601,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 		{
 			if( firstpacket[s] && buffer[s][0] != 0x80 && buffer[s][0] != 0x91 )
 			{
-				printf( "Non-ignition client attempting to cut in, disconnecting them: IP %i.%i.%i.%i\n", clientip[s][0], clientip[s][1], clientip[s][2], clientip[s][3] );
+				ConOut( "Non-ignition client attempting to cut in, disconnecting them: IP %i.%i.%i.%i\n", clientip[s][0], clientip[s][1], clientip[s][2], clientip[s][3] );
 				Network->Disconnect( s );
 				return;
 			}
@@ -7010,12 +7010,12 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				else if( buffer[s][3]== 0x24 ) // Skill
 				{
 					i=4;
-                    // printf("skill selected ???\n");
+                    // ConOut("skill selected ???\n");
 					while (buffer[s][i]!=' ') i++;
 					buffer[s][i]=0;
-					// printf("before skilluse\n");
+					// ConOut("before skilluse\n");
 					Skills->SkillUse(s, str2num((char *)&buffer[s][4]));
-					// printf("after skilluse\n");
+					// ConOut("after skilluse\n");
 					break;
 				} 
 				else if( buffer[s][3] == 0x27 || buffer[s][3] == 0x56 )  // Spell
@@ -7118,7 +7118,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				i = calcItemFromSer( serial );
 				if (i!=-1)
 				{		
-					//printf("b7: %i b8: %i b9: %i b10: %i b11: %i b12: %i\n",buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10],buffer[s][11],buffer[s][12]);
+					//ConOut("b7: %i b8: %i b9: %i b10: %i b11: %i b12: %i\n",buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10],buffer[s][11],buffer[s][12]);
 					if (items[i].morex!=666 && items[i].morex!=999) 
 						Books->readbook_readonly_old(s, i, (buffer[s][9]<<8)+buffer[s][10]);  // call old books read-method
 					if (items[i].morex==666) // writeable book -> copy page data send by client to the class-page buffer
@@ -7236,12 +7236,12 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 #if CLIENTVERSION_M==26
 			case 0xbb: // No idea
                 Network->Receive(s, 9, 1);
-				//printf("New packet [0xbb] ignored\n");
+				//ConOut("New packet [0xbb] ignored\n");
                 break;
             case 0xbd: // No idea
                 Network->Receive(s, 3, 0);
                 Network->Receive(s, (buffer[s][1]<<8)+buffer[s][2], 1);
-				//printf("New packet [0xbd] ignored\n");
+				//ConOut("New packet [0xbd] ignored\n");
                 break;
 			case 0x3A:	// skills management packet
 						/*				struct // size = ??? = Get a skill lock (or multiple)
@@ -7275,7 +7275,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				{
 					Network->Receive(s, 2560, 1);
 				}
-				printf("Swallowing unknown message: %x [%c]\n", buffer[s][0], buffer[s][0] );
+				ConOut("Swallowing unknown message: %x [%c]\n", buffer[s][0], buffer[s][0] );
 				break;
     }
   }
@@ -7298,7 +7298,7 @@ void start_glow( void )	// better to make an extra function cause in loaditem it
 			{
 				j = calcItemFromSer( items[i].contserial ); // find glowing item in backpack
 				l = calcCharFromSer( items[i].contserial ); // find equipped glowing items
-				//printf("j: %i l: %i\n", j, l );
+				//ConOut("j: %i l: %i\n", j, l );
 				if( l == -1 ) 
 					k = GetPackOwner( j );
 				else
@@ -7333,7 +7333,7 @@ int __cdecl main(int argc, char *argv[])
 #endif
 		uiCurrentTime = getclock();
 		
-		printf("Starting UOX3...\n");
+		ConOut("Starting UOX3...\n");
 		
 		openings=0;
 #ifndef __linux__
@@ -7355,7 +7355,7 @@ int __cdecl main(int argc, char *argv[])
 		// crackerjack jul 31/99 - gives more control over
 		// what order the compiler calls all the constructors
 		// in :)
-		printf("Initializing classes...");
+		ConOut("Initializing classes...");
 		
 		cwmWorldState = NULL;
 		mapRegions = NULL;
@@ -7407,17 +7407,17 @@ int __cdecl main(int argc, char *argv[])
 		if(( OffList = new cWhoList( false ) )== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
 		if(( Books = new cBooks )             == NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );	// writeable books
 		Map->Cache = 0;	
-		printf(" Done\n");
+		ConOut(" Done\n");
 
-		printf("Done.\n");
+		ConOut("Done.\n");
 		
-		printf("Initalizing script pointers...\n");
+		ConOut("Initalizing script pointers...\n");
 		for(i=0;i<NUM_SCRIPTS;i++) 
 		{
 			if (i!=custom_npc_script && i!=custom_item_script)//Don't iniatlize these till we know the file names ;-)
 				i_scripts[i]=new Script(n_scripts[i]);
 		}
-		printf("Done.\n");
+		ConOut("Done.\n");
 		
 		//Now lets load the custom scripts, if they have them defined...
 		i=0;
@@ -7449,12 +7449,12 @@ int __cdecl main(int argc, char *argv[])
 		{
 			if (!(strcmp(argv[i],"#")))
 			{
-				printf("\nUOX3 Menu List Generator Module\n\n");
-				printf("Creating UOXMENUS.LST...\n");
+				ConOut("\nUOX3 Menu List Generator Module\n\n");
+				ConOut("Creating UOXMENUS.LST...\n");
 				lstfile=fopen("UOXMENUS.LST","w");
 				if (lstfile==NULL)
 				{
-					printf("ERROR: UOXMENUS.LST could not be created.\n");
+					ConOut("ERROR: UOXMENUS.LST could not be created.\n");
 					//				error=1;
 					//				keeprun=0;
 					Shutdown( FATAL_UOX3_CREATE_UOXMENUS );
@@ -7472,31 +7472,31 @@ int __cdecl main(int argc, char *argv[])
 				scriptmax("LOCATION");
 				fprintf(lstfile, "\nShort List: (Menus only)\n");
 				fprintf(lstfile, "GM Master Item Menu (ITEMMENU 1)\n");
-				printf( "Generating Short Item List......");
+				ConOut( "Generating Short Item List......");
 				scriptlist(1, 1, 0);
-				printf( "Done!\n" );
+				ConOut( "Done!\n" );
 				menuList.resize( 0 );
 				fprintf(lstfile, "\nLong List: (Menus and Items)\n");
 				fprintf(lstfile, "GM Master Item Menu (ITEMMENU 1)\n");
-				printf( "Generating Long Item List......");
+				ConOut( "Generating Long Item List......");
 				scriptlist(1, 1, 1);
-				printf( "Done!\n" );
+				ConOut( "Done!\n" );
 				fprintf(lstfile, "\nUOX3 Copyright 1999 by UOX Team\n");
 				fclose(lstfile);
 				lstfile = NULL;
-				printf("List creation complete!\n");
+				ConOut("List creation complete!\n");
 				Shutdown( 0 );
 			} 
 			else if (!(strcmp( argv[i], "-xgm" ))) 
 			{
-				printf("XGM Enabled! Initializing... ");
+				ConOut("XGM Enabled! Initializing... ");
 				xgm = 1;
 				for( i=0; i < MAXCLIENT; i++ )
 				{
 					xGM[i] = new cRemote;
 					xGM[i]->isClient = 0;
 				}
-				printf("Done.\n" );
+				ConOut("Done.\n" );
 			}
 			else if (!(strcmp(argv[i], "-ERROR")))
 			{
@@ -7506,7 +7506,7 @@ int __cdecl main(int argc, char *argv[])
 #ifdef __CLUOX__
 			else if( !strcmp( argv[i], "-cluox100" ) )
 			{
-				printf( "Using CLUOX Streaming-IO\n" );
+				ConOut( "Using CLUOX Streaming-IO\n" );
 				setvbuf( stdout, NULL, _IONBF, 0 );
 				setvbuf( stderr, NULL, _IONBF, 0 );
 				cluox_io = true;
@@ -7522,7 +7522,7 @@ int __cdecl main(int argc, char *argv[])
 #endif
 		}
 		
-		printf("Initializing global variables...");
+		ConOut("Initializing global variables...");
 		save_counter = 0;
 		for( i = 0; i < (MAXCLIENT); i++ )
 		{
@@ -7607,7 +7607,7 @@ int __cdecl main(int argc, char *argv[])
 		strcpy( skill[STEALTH].madeword, "made" );
 		strcpy( skill[REMOVETRAPS].madeword, "made" );
 		// ------------ End Variable Creator by Magius(CHE) -----------
-		printf(" Done.\nLoading skills...");
+		ConOut(" Done.\nLoading skills...");
 		loadskills(); // moved by LB, important bugfix ...
 		// chars skills got loaded before the skills script was loaded
 		// thus baseskills were initially equal to skills with stat modifiers on startup till skills were used
@@ -7620,11 +7620,11 @@ int __cdecl main(int argc, char *argv[])
 		for (i=0;i<STABLOCKCACHESIZE;i++) stablockcachex[i]=-1;
 		for (i=0;i<MAXLAYERS;i++) layers[i]=0;
 		for (i=0;i<MAXCLIENT;i++) noweather[i]=1; // players dont see any rain or snow till they move
-		printf(" Done\n");
+		ConOut(" Done\n");
 		// Tauriel item pointer lookups 12-3-09
 		// This allocates arrays like itemsp[].pointer[] for setting = items[] #
 		// itemsp[].max is current maximum for this serial%256 block
-		printf("Building pointer arrays...");
+		ConOut("Building pointer arrays...");
 		for (i=0;i<HASHMAX;i++)
 		{
 			// intialize to NULL so in case of error we can delete them safely
@@ -7658,19 +7658,19 @@ int __cdecl main(int argc, char *argv[])
 		}
 		
 		
-		printf(" Done. \n");
+		ConOut(" Done. \n");
 		Admin->ReadIni();
 		
 		keeprun=Network->kr; //LB. for some technical reasons global varaibles CANT be changed in constructors in c++.
 		error=Network->faul;  // i hope i can find a cleaner solution for that, but this works !!!
 		// has to here and not at the cal cause it would get overriten later
 		
-		printf("Loading teleport..."); fflush(stdout);
+		ConOut("Loading teleport..."); fflush(stdout);
 		read_in_teleport();
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 		
 		srand(uiCurrentTime); // initial randomization call
-		printf("Loading vital scripts...\n");
+		ConOut("Loading vital scripts...\n");
 		loadserverdefaults();
 		loadserverscript();	// attempt to reload for the caching
 		
@@ -7681,7 +7681,7 @@ int __cdecl main(int argc, char *argv[])
 		//Guilds->Init();
 		loadspawnregions();
 		loadregions();
-		printf("Initializing new Sosaria Magery System... ");
+		ConOut("Initializing new Sosaria Magery System... ");
 		Magic->LoadScript();
 		Races->load();
 		Weather->load();
@@ -7690,14 +7690,14 @@ int __cdecl main(int argc, char *argv[])
 		cwmWorldState->LoadWorld();
 		
 		// sectioning(); // For sectioning Items and chars arrays
-		printf("Clearing all trades...");
+		ConOut("Clearing all trades...");
 		Loaded = 1;
 		
 		clearalltrades();
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 		
 		//Boats --Check the multi status of every item character at start up to get them set!
-		printf("Initializing multis...");
+		ConOut("Initializing multis...");
 		int multi;
 		
 		for (i=0;i<charcount;i++)
@@ -7728,34 +7728,34 @@ int __cdecl main(int argc, char *argv[])
 					items[i].multis = -1;
 			}
 		}
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 		//End Boats --^
 		
-		printf("Loading IM Menus...");
+		ConOut("Loading IM Menus...");
 		im_loadmenus( "inscribe.gmp", TellScroll ); //loading gump for inscribe()
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 		
 		starttime=uiCurrentTime;
 		gcollect();
-		printf( "Initializing glowing-items..." );
+		ConOut( "Initializing glowing-items..." );
 		start_glow();
 		FD_ZERO(&conn);
 		endtime=0;
 		lclock=0;
-		printf("Initializing Que System...");
+		ConOut("Initializing Que System...");
 		initque(); // Initialize gmpages[] array
-		printf(" Done.\nLoading custom titles...");
+		ConOut(" Done.\nLoading custom titles...");
 		loadcustomtitle();
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 		//   EviLDeD  -  Make sure to set the WorldSave announce value here
 		//   December 27, 1998
 		cwmWorldState->announce(server_data.announceworldsaves);
 		//   EviLDeD  -  End
 		//AntiChrist merging codes
 		
-		printf("Initialising sounds... ");
+		ConOut("Initialising sounds... ");
 		init_creatures(); //lb, initilises the creatures array (with soudfiles and other creatures infos)
-		printf("Done.\n");
+		ConOut("Done.\n");
 		
 		Admin->LoadWipe();
 		
@@ -7770,75 +7770,75 @@ int __cdecl main(int argc, char *argv[])
 		//	sprintf(idname, "Ultima Offline eXperiment 3 Server Version %s Alpha [LINUX] by %s <%s>", VER, NAME, EMAIL);
 		sprintf( idname, "%s %s(Build:%s) [LINUX] compiled by %s\nProgrammed by: %s", PRODUCT, VER, BUILD, NAME, PROGRAMMERS );
 #endif
-		//	printf("\n%s V%s Alpha", PRODUCT, VER);
+		//	ConOut("\n%s V%s Alpha", PRODUCT, VER);
 #ifndef __linux__
-		printf(" for Win32");
+		ConOut(" for Win32");
 		//clearscreen();
 #else
-		printf(" for Linux");
+		ConOut(" for Linux");
 #endif
-		printf("\n");
-		printf("(Configured for connections by UO Client version 1.%i.%i%s)\n\n", CLIENTVERSION_M, CLIENTVERSION, CLIENT_SUB);
-		printf("Copyright (C) 1997, 98 Marcus Rating (Cironian)\n\n");
-		printf("This program is free software; you can redistribute it and/or modify\n");
-		printf("it under the terms of the GNU General Public License as published by\n");
-		printf("the Free Software Foundation; either version 2 of the License, or\n");
-		printf("(at your option) any later version.\n\n");
-		//printf("%s version %s\n", PRODUCT, VER);
-		printf("%s version %s(Build:%s)\n", PRODUCT, VER, BUILD);
-		printf("Compiled on %s (%s %s)\n",__DATE__,__TIME__,TIMEZONE);
-		printf("Compiled by %s\n",NAME);
-		printf("Contact: %s\n", EMAIL);
+		ConOut("\n");
+		ConOut("(Configured for connections by UO Client version 1.%i.%i%s)\n\n", CLIENTVERSION_M, CLIENTVERSION, CLIENT_SUB);
+		ConOut("Copyright (C) 1997, 98 Marcus Rating (Cironian)\n\n");
+		ConOut("This program is free software; you can redistribute it and/or modify\n");
+		ConOut("it under the terms of the GNU General Public License as published by\n");
+		ConOut("the Free Software Foundation; either version 2 of the License, or\n");
+		ConOut("(at your option) any later version.\n\n");
+		//ConOut("%s version %s\n", PRODUCT, VER);
+		ConOut("%s version %s(Build:%s)\n", PRODUCT, VER, BUILD);
+		ConOut("Compiled on %s (%s %s)\n",__DATE__,__TIME__,TIMEZONE);
+		ConOut("Compiled by %s\n",NAME);
+		ConOut("Contact: %s\n", EMAIL);
 		//if (sizeof(tile_st)!=37)
-		//printf("This version of UOX3 was complied incorrectly. sizeof(tile_st) = %d \n", sizeof(tile_st));
+		//ConOut("This version of UOX3 was complied incorrectly. sizeof(tile_st) = %d \n", sizeof(tile_st));
 		
-		printf("\n");
+		ConOut("\n");
 		
 		// Server.scp status --- By Magius(CHE)
-		printf( "Server Settings:\n" );
+		ConOut( "Server Settings:\n" );
 		
-		printf( " -Archiving " );
+		ConOut( " -Archiving " );
 		if( strlen( server_data.archivepath ) > 1 ) // Moved by Magius(CHE (1)
-			printf( "Enabled. (%s)\n", server_data.archivepath );
-		else printf( "Disabled!\n" );
+			ConOut( "Enabled. (%s)\n", server_data.archivepath );
+		else ConOut( "Disabled!\n" );
 		
-		printf(" -Weapons & Armour Rank System: " );
-		if( server_data.rank_system == 1 ) printf( "Activated!\n" );
-		else printf( "Disabled!\n" );
+		ConOut(" -Weapons & Armour Rank System: " );
+		if( server_data.rank_system == 1 ) ConOut( "Activated!\n" );
+		else ConOut( "Disabled!\n" );
 		
-		printf(" -Vendors buy by item name: " );
-		if( server_data.sellbyname == 1 ) printf( "Activated!\n" );
-		else printf( "Disabled!\n" );
+		ConOut(" -Vendors buy by item name: " );
+		if( server_data.sellbyname == 1 ) ConOut( "Activated!\n" );
+		else ConOut( "Disabled!\n" );
 		
-		printf( " -Adv. Trade System: " ); // Magiuc(CHE)
-		if( server_data.trade_system == 1 ) printf( "Activated!\n" ); // Magius(CHE)
-		else printf( "Disabled!\n" ); // Magius(CHE)
+		ConOut( " -Adv. Trade System: " ); // Magiuc(CHE)
+		if( server_data.trade_system == 1 ) ConOut( "Activated!\n" ); // Magius(CHE)
+		else ConOut( "Disabled!\n" ); // Magius(CHE)
 		
-		printf( " -Special Bank stuff: " ); // AntiChrist
-		if( server_data.usespecialbank == 1 ) printf( "Activated!\n" ); // AntiChrist - Special Bank
-		else printf( "Disabled!\n" ); // AntiChrist - Special Bank
+		ConOut( " -Special Bank stuff: " ); // AntiChrist
+		if( server_data.usespecialbank == 1 ) ConOut( "Activated!\n" ); // AntiChrist - Special Bank
+		else ConOut( "Disabled!\n" ); // AntiChrist - Special Bank
 		
-		printf( " -Crash Protection: " );//Zippy
-		if (server_data.crashprotect < 1) printf( "Disabled!\n" );
+		ConOut( " -Crash Protection: " );//Zippy
+		if (server_data.crashprotect < 1) ConOut( "Disabled!\n" );
 #ifndef _CRASH_PROTECT_
-		else printf("Unavailable in this version.\n");
+		else ConOut("Unavailable in this version.\n");
 #else
-		else if ( server_data.crashprotect == 1) printf( "Save on crash.\n");
-		else printf( "Save & Restart Server.\n" );
+		else if ( server_data.crashprotect == 1) ConOut( "Save on crash.\n");
+		else ConOut( "Save & Restart Server.\n" );
 #endif
 
-		printf(" -AntiLag Server Save: ");
-		if ( cwmWorldState->LoopSaveAmt() > 0 )	printf("%li items & chars per cycle.\n", cwmWorldState->LoopSaveAmt());
-		else printf("Disabled!\n");
+		ConOut(" -AntiLag Server Save: ");
+		if ( cwmWorldState->LoopSaveAmt() > 0 )	ConOut("%li items & chars per cycle.\n", cwmWorldState->LoopSaveAmt());
+		else ConOut("Disabled!\n");
 
-		printf( " -xGM Remote: " ); // Eagle --- xGM
-		if ( !xgm ) printf ( "Disabled!\n" ); // Eagle -- xGM
-		else printf( "Activated!\n" );// Eagle -- xGM
+		ConOut( " -xGM Remote: " ); // Eagle --- xGM
+		if ( !xgm ) ConOut ( "Disabled!\n" ); // Eagle -- xGM
+		else ConOut( "Activated!\n" );// Eagle -- xGM
 		
 		item_test(); // LB
 		
 		
-		printf("UOX3: Startup Complete.\n\n");
+		ConOut("UOX3: Startup Complete.\n\n");
 		savelog("-=Server Startup=-\n=======================================================================\n","server.log");
 		uiCurrentTime=getclock();
 
@@ -7955,15 +7955,15 @@ int __cdecl main(int argc, char *argv[])
 	sysbroadcast("The server is shutting down.");
 	if (server_data.html>0) 
 	{
-		printf("Writing offline HTML page...");
+		ConOut("Writing offline HTML page...");
 		offlinehtml();//HTML  // lb, the if prevents a crash on shutdown if html deactivated ...
-		printf(" Done.\n");
+		ConOut(" Done.\n");
 	}
-	printf("Clearing IM Menus...");
+	ConOut("Clearing IM Menus...");
 	im_clearmenus();
-	printf(" Done.\nClosing sockets...");
+	ConOut(" Done.\nClosing sockets...");
 	Network->SockClose();
-	printf(" Done.\n");
+	ConOut(" Done.\n");
 
 	if ( !cwmWorldState->Saving() )
 	{
@@ -7972,11 +7972,11 @@ int __cdecl main(int argc, char *argv[])
 		} while ( cwmWorldState->Saving() );
 	}
 
-	printf("Saving Server.scp...\n");
+	ConOut("Saving Server.scp...\n");
 	saveserverscript(1);
-	printf("\n");
+	ConOut("\n");
 	
-	printf("UOX3: Server shutdown complete!\n");
+	ConOut("UOX3: Server shutdown complete!\n");
 	savelog("Server Shutdown!\n=======================================================================\n\n\n","server.log");
 	
 	Shutdown( 0 );
@@ -7984,7 +7984,7 @@ int __cdecl main(int argc, char *argv[])
 #ifdef _CRASH_PROTECT_
 	} catch ( ... ) 
 	{//Crappy error handling...
-		printf("Unknown exception caught, hard crash avioded!\n");
+		ConOut("Unknown exception caught, hard crash avioded!\n");
 		Shutdown( UNKNOWN_ERROR );
 	}
 #endif
@@ -8015,8 +8015,8 @@ void Restart( unsigned short ErrorCode = UNKNOWN_ERROR )
 			
 			sprintf(temp, "Server crash #%i from unknown error, restarting.", ErrorCount);
 			savelog(temp,"server.log");
-			printf(temp);
-			printf("\n");
+			ConOut(temp);
+			ConOut("\n");
 			
 			sprintf(temp, "uox3.exe -ERROR %i", ErrorCount);
 			
@@ -8027,7 +8027,7 @@ void Restart( unsigned short ErrorCode = UNKNOWN_ERROR )
 			exit(ErrorCode); // Restart successful Don't give them key presses or anything, just go out.
 		} else {
 			savelog("10th Server crash, server shutting down.", "server.log");
-			printf("10th Server crash, server shutting down.\n");
+			ConOut("10th Server crash, server shutting down.\n");
 		}
 	} else 
 		savelog("Server crash!","server.log");
@@ -8137,15 +8137,15 @@ void Shutdown( int retCode )
 	// dispay what error code we had
 	// don't report errorlevel for no errors, this is confusing ppl - fur
 	if (retCode)
-		printf("\nExiting UOX3 with errorlevel %d...\n", retCode);
+		ConOut("\nExiting UOX3 with errorlevel %d...\n", retCode);
 	else
-		printf("\nExiting UOX3 with no errors...\n");
+		ConOut("\nExiting UOX3 with no errors...\n");
 	
 	// let windows users see what happened during shutdown
 #ifndef __linux__
 	if( retCode )
 	{
-		printf("\nPress any key to continue.");
+		ConOut("\nPress any key to continue.");
 		getch();
 	}
 #endif
@@ -8585,7 +8585,7 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 			Network->xSend(j, effect, 28, 0);
 		}
 	}
-	// printf("CRASH3??\n");
+	// ConOut("CRASH3??\n");
 }
 
 // staticeffect3 is for effects on items
@@ -8920,7 +8920,7 @@ void dolight(int s, char level)
 				else
 					toShow = dungeonlightlevel - Races->getVisLevel( chars[currchar[s]].race );
 				light[1]=toShow;
-//				printf("Light level %i", toShow );
+//				ConOut("Light level %i", toShow );
 			}
 			else
 			{
@@ -8951,7 +8951,7 @@ void doworldlight(void)
 		lightValue = realhour * hourIncrement + (60-minute) * minuteIncrement;
 	}
 	i = worlddarklevel - (int)lightValue;
-	//printf( "Light level: %f\n", lightValue );
+	//ConOut( "Light level: %f\n", lightValue );
 	//	i = ( ( (12-realhour)*60 ) + minute ) / 720 * ( worlddarklevel - worldbrightlevel );
 	//	if (wtype) i=i+2;
 	//	if (moon1+moon2<4) i=i+1;
@@ -9042,7 +9042,7 @@ void updateskill(int s, int skillnum)
 	update[9]=chars[currchar[s]].baseskill[skillnum]%256;
 	update[10]=chars[currchar[s]].lockState[skillnum];
 	
-	// if (skillnum>45) printf("skill:%i\n",skillnum);
+	// if (skillnum>45) ConOut("skill:%i\n",skillnum);
 	if (s!=-1) Network->xSend(s, update, 11, 0);
 }
 
@@ -9119,11 +9119,11 @@ int fielddir(CHARACTER s, int x, int y, int z)
 		case 7:
 			return 1;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, fielddir()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, fielddir()\n"); //Morrolan
 			return 0;
 		}
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, fielddir()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, fielddir()\n"); //Morrolan
 			return 0;
 	}
 	return 1;
@@ -9211,7 +9211,7 @@ void tempeffectsoff(void)
 				chars[s].usepotion = 0;
 				break;
 			default:
-				//printf("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffectsoff()\n"); //Morrolan
+				//ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffectsoff()\n"); //Morrolan
 				break;
 			}
 		}
@@ -9264,7 +9264,7 @@ void tempeffectson()
 				chars[s].in=chars[s].in - Effect->more3;
 				break;
 			default:
-				//printf("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffectson()\n"); //Morrolan
+				//ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffectson()\n"); //Morrolan
 				break;
 			}
 		}
@@ -9423,13 +9423,13 @@ void checktempeffects( void )
 			  explodeitem(calcSocketFromChar(s), Effect->itemptr); //explode this item
 				break;
 			case 18: //Polymorph spell by AntiChrist
-				//printf("polymorph effect finished\n");
+				//ConOut("polymorph effect finished\n");
 				chars[s].id1=chars[s].orgid1;
 				chars[s].id2=chars[s].orgid2;
 				teleport(s);
 				break;
 			case 19: //Incognito spell by AntiChrist
-//				printf("INCOGNITO SPELL FINISHED!!\n");
+//				ConOut("INCOGNITO SPELL FINISHED!!\n");
 				int serhash,ci,serial;
 				
 				// ------ SEX ------
@@ -9447,7 +9447,7 @@ void checktempeffects( void )
 					if (j!=-1) {
 						// ------ HAIR -----
 						if(items[j].layer==0x0B) { //change hair style/color
-							//printf("HAIR FOUND!!\n");
+							//ConOut("HAIR FOUND!!\n");
 							//stores old hair values
 							items[j].color1=chars[s].haircolor1;
 							items[j].color2=chars[s].haircolor2;
@@ -9462,7 +9462,7 @@ void checktempeffects( void )
 						// only if a men :D
 						if(chars[s].id2==0x90)
 							if(items[j].layer==0x10) { //change beard style/color
-								//printf("BEARD FOUND!!\n");
+								//ConOut("BEARD FOUND!!\n");
 								//stores old beard values
 								items[j].color1=chars[s].beardcolor1;
 								items[j].color2=chars[s].beardcolor2;
@@ -9544,7 +9544,7 @@ void checktempeffects( void )
 				Magic->MagicDamage( targ, Effect->more1, src );				
 				break;
 			default:
-				printf("ERROR: Fallout of switch statement without default. uox3.cpp, checktempeffects()\n"); //Morrolan
+				ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, checktempeffects()\n"); //Morrolan
 				return;
 			}
    
@@ -9869,7 +9869,7 @@ char tempeffect(int source, int dest, int num, char more1, char more2, char more
 		toAdd.more1 = more1;
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()\n", num ); //Morrolan
+		ConOut("ERROR: Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()\n", num ); //Morrolan
 		return 0;
 	}
 	Effects->Add( toAdd );
@@ -9924,7 +9924,7 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 		toAdd.dispellable=0;
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffect2()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, tempeffect2()\n"); //Morrolan
 		return 0;
 	}
 	Effects->Add( toAdd );
@@ -10072,7 +10072,7 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 #ifdef DEBUG
 			//	EviLDeD -	March 1, 2000
 			//	Debugging messages
-			printf( "DEBUG: [npcattacktarget)] %s is being set to criminal\n", chars[source].name );
+			ConOut( "DEBUG: [npcattacktarget)] %s is being set to criminal\n", chars[source].name );
 			//	EviLDeD -	End
 #endif
 		}
@@ -10530,7 +10530,7 @@ void impowncreate(int s, int i, int z) //socket, player to send
 	if ( (i < 0) || (i > cmem))
 	{
 #ifdef DEBUG
-		printf("impowncreate -> i overflow. (%i)", i);
+		ConOut("impowncreate -> i overflow. (%i)", i);
 #endif
 		i = 0;
 	}
@@ -10620,7 +10620,7 @@ void impowncreate(int s, int i, int z) //socket, player to send
 				else
 				{
 #ifdef DEBUG
-					printf("Double layer (%i) on Item (%i) on Char (%i)\n", items[j].layer , j , i);
+					ConOut("Double layer (%i) on Item (%i) on Char (%i)\n", items[j].layer , j , i);
 					sprintf(temp, "Double layer (%i) on Item (%2x %2x %2x %2x) on Char (%2x %2x %2x %2x)\n",
 						items[j].layer, items[j].ser1, items[j].ser2, items[j].ser3, items[j].ser4,
 						chars[i].ser1, chars[i].ser2, chars[i].ser3, chars[i].ser4);
@@ -11703,36 +11703,46 @@ int GetPackOwner( int p )
 
 void PlVGetgold(int s, int v)//PlayerVendors
 {
-	unsigned int pay=0, give=chars[v].holdg, t=0;
-	if (chars[currchar[s]].serial==chars[v].ownserial)
+	unsigned int pay = 0, give = chars[v].holdg, t = 0;
+	if( chars[currchar[s]].serial == chars[v].ownserial )
 	{
-		if (chars[v].holdg<1)
+		if( chars[v].holdg <= 0 )
 		{
-			npctalk(s,v,"I have no gold waiting for you.",0);
-			chars[v].holdg=0;
+			npctalk( s, v, "I have no gold waiting for you.", 0 );
+			chars[v].holdg = 0;
 			return;
-		} else if(chars[v].holdg<=65535)
+		} 
+		else if( chars[v].holdg > 0 && chars[v].holdg <= 65535 )
 		{
-			if (chars[v].holdg>9)
+			if( chars[v].holdg > 9 )
 			{
-				pay=(int)(chars[v].holdg*.1);
-				give-=pay;
-			} else {
-				pay=chars[v].holdg;
-				give=0;
+				pay = (int)( chars[v].holdg * .1 );
+				give = chars[v].holdg - pay;
+			} 
+			else 
+			{
+				pay = chars[v].holdg;
+				give = 0;
 			}
-			chars[v].holdg=0;
-		} else {
-			t=chars[v].holdg-65535;
-			chars[v].holdg=65535;
-			pay=6554;
-			give=58981;
+			chars[v].holdg = 0;
 		}
-		if (give) Items->SpawnItem(s,give,"#",1,0x0E,0xED,0,0,1,1);
-		sprintf((char*)temp, "Today's purchases total %i gold. I am keeping %i gold for my self. Here is the remaining %i gold. Have a nice day.",chars[v].holdg,pay,give);
-		npctalk(s,v,(char*)temp,0);
-		chars[v].holdg=t;
-	} else npctalk(s,v,"I don't work for you!",0);
+		else 
+		{
+			t = chars[v].holdg - 65535;	// yank of 65 grand, then do calculations
+			chars[v].holdg = t;
+			pay = 6554;
+			give = 58981;
+			if( t > 0 )
+				npctalk( s, v, "You still have money left to claim", 0 );
+		}
+		if( give ) 
+			Items->SpawnItem( s, give, "#", 1, 0x0E, 0xED, 0, 0, 1, 1 );
+		
+		sprintf( temp, "Today's purchases total %i gold. I am keeping %i gold for my self. Here is the remaining %i gold. Have a nice day.", chars[v].holdg, pay, give );
+		npctalk( s, v, temp, 0 );
+	} 
+	else 
+		npctalk( s, v, "I don't work for you!", 0 );
 }
 
 void responsevendor(int s) //Modified by AntiChrist
@@ -12177,7 +12187,7 @@ void buyaction(int s)
 						}
 						break;
 					default:
-						printf("ERROR: Fallout of switch statement without default. uox3.cpp, buyaction()\n"); //Morrolan
+						ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, buyaction()\n"); //Morrolan
 					}
 				}
 			}
@@ -12264,7 +12274,7 @@ void restock(int s)
 			if (server_data.trade_system == 1)
 				StoreItemRandomValue(i, -1); // Magius(CHE) (2)
 		}
-	}// printf(UOX3:  restock() - time to execute =%d\n", (uiCurrentTime-tt));
+	}// ConOut(UOX3:  restock() - time to execute =%d\n", (uiCurrentTime-tt));
 }
 
 
@@ -12693,7 +12703,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 	s=calcSocketFromChar(p);
 	if( server_data.potiondelay != 0 )
 		tempeffect( p, p, 25, 0, 0, 0 );
-	//printf("Used potion %i!\n",items[i].morey);	
+	//ConOut("Used potion %i!\n",items[i].morey);	
 	switch(items[i].morey)
 	{
 	case 1: // Agility Potion
@@ -12709,7 +12719,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			sysmessage(s, "You feel much more agile!");
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 			return;
 		}
 		soundeffect2(p, 0x01, 0xE7);
@@ -12743,7 +12753,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 				if (chars[p].poisoned==4 && x<61)  chars[p].poisoned=0;
 				break;
 			default:
-				printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+				ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 				return;
 			}
 			
@@ -12793,7 +12803,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			sysmessage(s, "You feel much better!");
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 			return;
 		}
 		if (s!=-1) updatestats(p, 0);
@@ -12805,7 +12815,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		staticeffect(p, 0x37, 0x6A, 0x09, 0x06);
 		tempeffect(currchar[s], p, 2, 0, 0, 0);
 		soundeffect2(p, 0x01, 0xE3);
-		//printf("POTN: Nightsight used by %s\n",chars[p].name);
+		//ConOut("POTN: Nightsight used by %s\n",chars[p].name);
 		break;
 		//}
 	case 6: // Poison Potion
@@ -12828,7 +12838,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			sysmessage(s, "You feel much more energetic!");
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 			return;
 		}
 		if (s!=-1) updatestats(p, 2);
@@ -12848,7 +12858,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			sysmessage(s, "You feel much stronger!");
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 			return;
 		}
 		soundeffect2(p, 0x01, 0xEE);     
@@ -12863,7 +12873,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			chars[p].mn=min(chars[p].mn+20+items[i].morex/50, (unsigned int)chars[p].in);
 			break;
 		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+			ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 			return;
 		}
 		if (s!=-1) updatestats(p, 1);
@@ -12871,7 +12881,7 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 		soundeffect2(p, 0x01, 0xE7); //agility sound - SpaceDog
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, usepotion()\n"); //Morrolan
 		return;
 	}
 	soundeffect2(p, 0x00, 0x30);
@@ -13014,7 +13024,7 @@ int calcLastContainerFromSer( int ser )
 				newser = items[a].contserial;
 				if( newser == items[a].serial )
 				{
-					printf( "UOX3.CPP: Loop error in calcLastContainerFromSer().\n   Item [%i] [ID: %x%x] %s has contained in itself.\n   Check CONT variables into WSC!\n", a, items[a].id1, items[a].id2, items[a].name );
+					ConOut( "UOX3.CPP: Loop error in calcLastContainerFromSer().\n   Item [%i] [ID: %x%x] %s has contained in itself.\n   Check CONT variables into WSC!\n", a, items[a].id1, items[a].id2, items[a].name );
 					exi = 3;
 				}
 			}
@@ -13199,7 +13209,7 @@ void clearalltrades()
 					}
 			}
 			Items->DeleItem(i);
-			printf("Trade cleared\n");
+			ConOut("Trade cleared\n");
 		}
 	}
 }
@@ -13230,7 +13240,7 @@ void trademsg(int s)
 		}
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); //Morrolan
 	}
 }
 
@@ -13528,7 +13538,7 @@ void loadspawnregions()//Regionspawns
 	}while(strcmp(script1, "EOF"));
 	closescript();
 	totalspawnregions=i;
-	printf("UOX3: %i spawn regions loaded from script.\n",i-1);
+	ConOut("UOX3: %i spawn regions loaded from script.\n",i-1);
 }
 
 void loadpredefspawnregion(int r, char *name)//Load predefined spawnregion //Regionspawns
@@ -13538,7 +13548,7 @@ void loadpredefspawnregion(int r, char *name)//Load predefined spawnregion //Reg
 	openscript("spawn.scp");
 	if(! i_scripts[spawn_script]->find(sect))
 	{
-		printf("WARNING: Undefined region spawn %s, check your regions.scp and spawn.scp files.\n",name);
+		ConOut("WARNING: Undefined region spawn %s, check your regions.scp and spawn.scp files.\n",name);
 		return;
 	}
 	spawnregion[r].totalnpclists=0;
@@ -13567,7 +13577,7 @@ void loadpredefspawnregion(int r, char *name)//Load predefined spawnregion //Reg
 	} while(script1[0]!='}');
 	//spawnregion[r].nexttime=uiCurrentTime+(60*CLOCKS_PER_SEC*((rand()%(spawnregion[r].maxtime-spawnregion[r].mintime+1))+spawnregion[r].mintime));
 	closescript();
-	printf("UOX3: %s loaded into spawn region #%i.\n",sect,r);
+	ConOut("UOX3: %s loaded into spawn region #%i.\n",sect,r);
 }
 //NEW RESPAWNREGIONS ZIPPY CODE ENDS HERE -- AntiChrist merging codes
 
@@ -13616,12 +13626,12 @@ void loadregions()//New -- Zippy spawn regions
 					if (a<10)
 					{
 						region[i].guardnum[a]=str2num(script2);
-						//printf("DEBUG: Guardnum %i for Region %i\n",region[i].guardnum[a],i);
+						//ConOut("DEBUG: Guardnum %i for Region %i\n",region[i].guardnum[a],i);
 						a++;
 					}
 					else
 					{
-						printf("ERROR: Region %i has more than 10 'GUARDNUM', The ones after 10 will not be used\n",i);
+						ConOut("ERROR: Region %i has more than 10 'GUARDNUM', The ones after 10 will not be used\n",i);
 					}
 				}
 				if (!(strcmp("NAME",script1)))
@@ -13690,14 +13700,14 @@ void loadregions()//New -- Zippy spawn regions
 					if( actgood >-1 )
 						region[i].goodbuy[actgood] = str2num( script2 );
 					else
-						printf("Uox3.cpp: ERROR in regions.scp. You must write BUYABLE after GOOD <num>!\n" );
+						ConOut("Uox3.cpp: ERROR in regions.scp. You must write BUYABLE after GOOD <num>!\n" );
 				}
 				else if(!(strcmp( "SELLABLE", script1 ) ) ) // Magius(CHE)
 				{
 					if( actgood > -1 )
 						region[i].goodsell[actgood] = str2num( script2 );
 					else
-						printf("Uox3.cpp: ERROR in regions.scp. You must write SELLABLE after GOOD <num>!\n" );
+						ConOut("Uox3.cpp: ERROR in regions.scp. You must write SELLABLE after GOOD <num>!\n" );
 				}
 				else if(!(strcmp( "RANDOMVALUE", script1 ) ) ) // Magius(CHE) (2)
 				{
@@ -13709,12 +13719,12 @@ void loadregions()//New -- Zippy spawn regions
 						region[i].goodrnd2[actgood] = str2num( gettokenstr );
 						if( region[i].goodrnd2[actgood] < region[i].goodrnd1[actgood] )
 						{
-							printf( "Uox3.cpp: ERROR in regions.scp. You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].\n", region[i].goodrnd2[actgood], region[i].goodrnd1[actgood] );
+							ConOut( "Uox3.cpp: ERROR in regions.scp. You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].\n", region[i].goodrnd2[actgood], region[i].goodrnd1[actgood] );
 							region[i].goodrnd2[actgood] = region[i].goodrnd1[actgood] = 0;
 						}
 					}
 					else
-						printf( "Uox3.cpp: ERROR in regions.scp. You must write RANDOMVALUE after GOOD <num>!\n" );
+						ConOut( "Uox3.cpp: ERROR in regions.scp. You must write RANDOMVALUE after GOOD <num>!\n" );
 				}
 				else if (!(strcmp("X1", script1)))
 				{
@@ -14062,7 +14072,7 @@ void Writeslot(LPSTR lpszMessage)
 	fResult = WriteFile(hFile,lpszMessage,(DWORD) lstrlen(lpszMessage) + 1,
 		&cbWritten,(LPOVERLAPPED) NULL);
 	fResult = CloseHandle(hFile);
-	if(!atoi(lpszMessage)) printf("UOX3: %s\n",lpszMessage);
+	if(!atoi(lpszMessage)) ConOut("UOX3: %s\n",lpszMessage);
 }
 #else
 void Writeslot(char * lpszMessage)
@@ -14072,7 +14082,7 @@ void Writeslot(char * lpszMessage)
 	f=fopen("UOX3.log","a");
 	if(f==NULL) return;
 	fprintf(f,"%s\n",lpszMessage);
-	if(!atoi(lpszMessage)) printf("UOX3: %s\n",lpszMessage);
+	if(!atoi(lpszMessage)) ConOut("UOX3: %s\n",lpszMessage);
 	fclose(f);
 	return;
 }
@@ -14086,7 +14096,7 @@ void saveserverscript(char x)
 	file=fopen("server.scp", "w");
 	if (!file)
 	{
-		printf("Error, could not open server.scp for writing. Check file permissions.\n");
+		ConOut("Error, could not open server.scp for writing. Check file permissions.\n");
 		return;
 	}
 	
@@ -14289,8 +14299,8 @@ void saveserverscript(char x)
 	fprintf(file,"EOF\n\n");
 	fclose(file);
 	file = NULL;
-	//if (x) printf("UOX3: Server data saved.(Manual)\n");
-	//else printf("UOX3: Server data saved.(AUTO)\n");
+	//if (x) ConOut("UOX3: Server data saved.(Manual)\n");
+	//else ConOut("UOX3: Server data saved.(AUTO)\n");
 }
 
 void loadspeed( void )//Lag Fix -- Zippy -- NEW FUNCTION
@@ -14318,7 +14328,7 @@ void loadserverscript( void ) // Load server script
 	wscfile = fopen( "server.scp", "r" );
 	if( wscfile == NULL )
 	{
-		printf( "server.scp not found...defaults are loaded\n" );
+		ConOut( "server.scp not found...defaults are loaded\n" );
 		return;
 	}
 	do
@@ -14864,7 +14874,7 @@ void advancementobjects(int s, int x, int allways)
 		if (!i_scripts[advance_script]->find(sect))
 		{
 			closescript();
-			printf("ADVANCEMENT OBJECT: Script section not found. Aborting.\n");
+			ConOut("ADVANCEMENT OBJECT: Script section not found. Aborting.\n");
 			chars[s].advobj=0;
 			return;
 		}
@@ -15616,7 +15626,7 @@ void bgsound( CHARACTER s ) // Plays background sounds of the game
 				if (mapitem!=-1 && mapitem>=1000000)
 				{
 					i=mapchar;
-					//printf("DEBUG: Mapchar %i [%i]\n",mapchar,mapitem);
+					//ConOut("DEBUG: Mapchar %i [%i]\n",mapchar,mapitem);
 					if((chars[i].npc)&&(!(chars[i].dead))&&(!(chars[i].war))&&(y<=10))
 					{ 
 						if (!chars[i].free) // lb, bugfix !
@@ -15955,7 +15965,7 @@ void monstergate(int s, int x)
 						setserial(retitem,s,4);
 						if (items[retitem].layer==0)
 						{
-							printf("Warning: Bad NPC Script %d with problem item %d executed!\n", x, storeval);
+							ConOut("Warning: Bad NPC Script %d with problem item %d executed!\n", x, storeval);
 						}
 					}
 					strcpy(script1, "DUMMY"); // Prevents unexpected matchups...
@@ -16311,12 +16321,12 @@ void enlist(int s, int listnum) // listnum is stored in items morex
 			openscript(n_scripts[custom_item_script]);
 			if (!i_scripts[custom_item_script]->find(sect))
 			{
-				printf("UOX3: ITEMLIST not found, aborting.\n");
+				ConOut("UOX3: ITEMLIST not found, aborting.\n");
 				closescript();
 				return;
 			} else strcpy(sect, n_scripts[custom_item_script]);
 		} else {
-			printf("UOX3: ITEMLIST not found, aborting.\n");
+			ConOut("UOX3: ITEMLIST not found, aborting.\n");
 			return;
 		}
 	} else strcpy(sect, "items.scp");
@@ -16362,7 +16372,7 @@ void checkdumpdata(unsigned int currenttime) // This dumps data for Ridcully's U
 	datafile=fopen("botdata.txt","w");
 	if (datafile==NULL)
 	{
-		printf("ERROR: botdata.txt could not be created.\n");
+		ConOut("ERROR: botdata.txt could not be created.\n");
 		return;
 	}
 	
@@ -16708,7 +16718,7 @@ Look at uox3.h to see options. Works like npc magic.
 							if (length == -1 || length>=17000000)//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 								//							if (length == -1)
 							{
-								printf("LoS - Bad length in multi file. (Item serial %i) Avoiding stall.\n", items[dyncount].serial );
+								ConOut("LoS - Bad length in multi file. (Item serial %i) Avoiding stall.\n", items[dyncount].serial );
 								length = 0;
 							}
 							for (j=0;j<length;j++)
@@ -16823,7 +16833,7 @@ Look at uox3.h to see options. Works like npc magic.
 			 }
 			 break;
 		 default:
-			 //printf("ERROR: Fallout of switch statement without default. uox3.cpp, line_of_sight()"); //Morrolan
+			 //ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, line_of_sight()"); //Morrolan
 			 return not_blocked;
 		 } // switch
 	 } //for
@@ -17162,7 +17172,7 @@ void reverse_effect(int i)  // i = teffect[i] from checktempeffects()  // Morrol
 		teleport( s );
 		break;
 	case 19: // Incognito spell by AntiChrist
-		printf("INCOGNITO SPELL REVERSED!!\n" );
+		ConOut("INCOGNITO SPELL REVERSED!!\n" );
 		int serhash, ci, j, serial;
 		
 		// ------ SEX ------
@@ -17179,7 +17189,7 @@ void reverse_effect(int i)  // i = teffect[i] from checktempeffects()  // Morrol
 				// ------ HAIR -----
 				if( items[j].layer == 0x0B )
 				{ // change hair style/color
-					printf("HAIR FOUND!!\n" );
+					ConOut("HAIR FOUND!!\n" );
 					// stores old hair values
 					items[j].color1 = chars[s].haircolor1;
 					items[j].color2 = chars[s].haircolor2;
@@ -17191,7 +17201,7 @@ void reverse_effect(int i)  // i = teffect[i] from checktempeffects()  // Morrol
 				if( chars[s].id2 == 0x90 )
 					if( items[j].layer == 0x10 ) 
 					{ // change beard style/color
-						printf("BEARD FOUND!!\n" );
+						ConOut("BEARD FOUND!!\n" );
 						// stores old beard values
 						items[j].color1 = chars[s].beardcolor1;
 						items[j].color2 = chars[s].beardcolor2;
@@ -17217,7 +17227,7 @@ void reverse_effect(int i)  // i = teffect[i] from checktempeffects()  // Morrol
 		chars[s].usepotion = 0;
 		break;
 	default:
-		printf("ERROR: Fallout of switch statement without default. uox3.cpp, reverse_effect()\n"); //Morrolan
+		ConOut("ERROR: Fallout of switch statement without default. uox3.cpp, reverse_effect()\n"); //Morrolan
 		return;
 	}//switch
 	Effects->DelCurrent();

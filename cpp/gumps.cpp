@@ -482,7 +482,7 @@ void cGump::Input( UOXSOCKET s )
 		case 4:		k = str2num( text );	chars[j].x = k;	break;	// X
 		case 5:		k = str2num( text );	chars[j].y = k;	break;	// Y
 		case 6:		k = str2num( text ); 	chars[j].z = k;	chars[j].dispz = k;	break;	// Z
-		case 7:		k = str2num( text );	chars[j].dir = k&0x0F;	// make sure the high-bits are clear // Dir
+		case 7:		k = str2num( text );	chars[j].dir = k&0x0F;	break;	// make sure the high-bits are clear // Dir
 		case 8: // Body
 			k = hstr2num( text );
 			if( k >= 0x000 && k <= 0x3e1 ) // body-values >0x3e crash the client
@@ -498,9 +498,9 @@ void cGump::Input( UOXSOCKET s )
 		case 10:	k = str2num( text );	chars[j].def = k;	break;	// Defence
 		case 11:	k = str2num( text );	chars[j].race = k;	break;	// Race
 		case 12:	k = str2num( text );	chars[j].hunger = k;break;	// Hunger
-		case 13:	k = str2num( text );	chars[j].st = k;	break;	// Strength
-		case 14:	k = str2num( text );	chars[j].dx = k;	break;	// Dexterity
-		case 15:	k = str2num( text );	chars[j].in = k;	break;	// Intelligence
+		case 13:	k = str2num( text );	if( k > 0 ) { chars[j].st = k; }	break;	// Strength
+		case 14:	k = str2num( text );	if( k > 0 ) { chars[j].dx = k; }	break;	// Dexterity
+		case 15:	k = str2num( text );	if( k > 0 ) { chars[j].in = k; }	break;	// Intelligence
 		}
 		teleport( j );
 		tweakmenu( s, j, type );
