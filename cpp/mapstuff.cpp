@@ -29,6 +29,7 @@
 #define DBGFILE "mapstuff.cpp"
 
 //#define DEBUG_MAP_STUFF	1
+//#define DEBUG_TILE_BITS 1
 #define USE_REGION_ITERATOR 1
 
 /*
@@ -51,7 +52,7 @@
 ** Tile Flags Bit Definitions - Please fill in if you know what something does!!
 ** I updated some of these with what LB knew 11/17/1999
 **
-** (tile.flag1&0x01)		1 = At Fl22222oor Level(?)
+** (tile.flag1&0x01)		1 = At Floor Level(?)
 ** (tile.flag1&0x02)		1 = Wearable/Holdable(?)
 ** (tile.flag1&0x04)		1 = Signs, Guilds, banners, (?)
 ** (tile.flag1&0x08)		1 = Web, dirt, blood, footsteps(?)
@@ -805,10 +806,10 @@ void cMapStuff::SeekTile(int tilenum, tile_st *tile)
 		
 #ifdef DEBUG_MAP_STUFF
 		ConOut("Tile #%d is '%s' ", tilenum, tile->name);
-		ConOut("flag1: "); bitprint(stdout, tile->flag1);
-		ConOut("flag2: "); bitprint(stdout, tile->flag2);
-		ConOut("flag3: "); bitprint(stdout, tile->flag3);
-		ConOut("flag4: "); bitprint(stdout, tile->flag4);
+		ConOut("\nflag1: "); bitprint(stdout, tile->flag1);
+		ConOut("\nflag2: "); bitprint(stdout, tile->flag2);
+		ConOut("\nflag3: "); bitprint(stdout, tile->flag3);
+		ConOut("\nflag4: "); bitprint(stdout, tile->flag4);
 		ConOut("\n");
 #endif
 	}
@@ -839,9 +840,10 @@ void cMapStuff::CacheTiles()
 	for (int bit = 0x01; bit <= 0x0080; bit = bit << 1)
 	{
 		char buf[30];
+		int i;
 		sprintf(buf, "static1-%d.txt", bit);
 		FILE *fp = fopen(buf, "w");
-		for (int i = 0; i < 0x4000; ++i)
+		for ( i = 0; i < 0x4000; ++i)
 		{
 			tile_st *tile = tilecache + i;
 			if ((tile->flag1 & bit) == bit)
@@ -857,7 +859,7 @@ void cMapStuff::CacheTiles()
 		fclose(fp);
 		sprintf(buf, "static2-%d.txt", bit);
 		fp = fopen(buf, "w");
-		for (int i = 0; i < 0x4000; ++i)
+		for ( i = 0; i < 0x4000; ++i)
 		{
 			tile_st *tile = tilecache + i;
 			if ((tile->flag2 & bit) == bit)
@@ -873,7 +875,7 @@ void cMapStuff::CacheTiles()
 		fclose(fp);
 		sprintf(buf, "static3-%d.txt", bit);
 		fp = fopen(buf, "w");
-		for (int i = 0; i < 0x4000; ++i)
+		for ( i = 0; i < 0x4000; ++i)
 		{
 			tile_st *tile = tilecache + i;
 			if ((tile->flag3 & bit) == bit)
@@ -889,7 +891,7 @@ void cMapStuff::CacheTiles()
 		fclose(fp);
 		sprintf(buf, "static4-%d.txt", bit);
 		fp = fopen(buf, "w");
-		for (int i = 0; i < 0x4000; ++i)
+		for ( i = 0; i < 0x4000; ++i)
 		{
 			tile_st *tile = tilecache + i;
 			if ((tile->flag4 & bit) == bit)
