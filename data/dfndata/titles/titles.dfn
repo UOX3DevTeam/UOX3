@@ -1,8 +1,9 @@
-//	Ultima Offline eXperiment 3
-//	
-//	Script name: titles.dfn
-//	Writen by: ????
-//	Date: ????
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : Titles.dfn                                           *
+//*****************************************************************
 
 [SKILL]
 {
@@ -220,4 +221,11 @@ Outcast
 Wretched
 Nefarious
 Dread
+}
+
+[MURDERER]
+{
+5=The Murderer
+10=The Serial Killer
+50=The Mass Murderer
 }

@@ -1,14 +1,10 @@
-//	Ultima Offline eXperiment 3
-//	
-//	Script name: dullcopper_armor.dfn
-//	Writen by: Magius(Che) [cheghe@geocities.com]
-//		   Sir Pedro   [ciccio@netandday.it]
-//                 Bug [bug@protec.it]
-//                 Mark [mpsdo@tin.it]
-//	Date: May 25th 1999
-//	Modified by: Weazel [weazel@ameritech.net]
-//	Date: March 11th 2002
-
+// #~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#
+// ~#                       UOX3 DFNs v0.98                             #~
+// #~               Originally Created in 1998 by Tauriel               ~#
+// ~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~
+// ***********************************************************************
+// * Last Updated:    	14 May 2003                                     *
+// ***********************************************************************
 
 // ENABLE: 0 - No, 1 - Yes           MANTRA: Words of Power
 // CIRCLE: Spell Circle              ACTION: Animation
@@ -77,8 +73,7 @@ PEARL=0
 SHADE=0
 SILK=0
 FLAGS=00 00
-STATFX=37 4A 00 0F
-SOUNDFX=01 DF
+SOUNDFX=01 E3
 }
 
 // Feeblemind
@@ -236,7 +231,7 @@ MOSS=0
 PEARL=0
 SHADE=1
 SILK=0
-TARG=Select target to weaken.
+TARG=Select target for weaken.
 FLAGS=00 49
 STATFX=37 4A 00 0F
 SOUNDFX=01 E6
@@ -344,7 +339,7 @@ MOSS=0
 PEARL=0
 SHADE=1
 SILK=1
-TARG=Select target to harm.
+TARG=Select target for harm.
 FLAGS=00 49
 STATFX=37 4A 09 07
 SOUNDFX=01 F1
@@ -423,7 +418,7 @@ MOSS=0
 PEARL=0
 SHADE=0
 SILK=0
-TARG=Select target to protect.
+TARG=Select person for protection.
 FLAGS=00 09
 STATFX=37 6A 09 06
 SOUNDFX=01 F8
@@ -566,7 +561,7 @@ SOUNDFX=01 E1
 // Telekinesis
 [SPELL 21]
 {
-ENABLE=0
+ENABLE=1
 CIRCLE=3
 MANA=9
 LOSKILL=161
@@ -584,8 +579,8 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=0
-TARG=This SPELL isn't available! (yet)
-FLAGS=00 00
+FLAGS=00 03
+SOUNDFX=01 F6
 }
 
 // Teleport
@@ -689,7 +684,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select location for Arch Cure.
-FLAGS=00 05
+FLAGS=00 09
 STATFX=37 6A 09 06
 SOUNDFX=01 E9
 }
@@ -715,7 +710,7 @@ MOSS=0
 PEARL=0
 SHADE=0
 SILK=0
-FLAGS=00 04
+FLAGS=00 09
 STATFX=37 6A 09 06
 SOUNDFX=01 F8
 }
@@ -1084,7 +1079,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=00 00
+FLAGS=00 05
 }
 
 // Dispel
@@ -1242,7 +1237,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select location for Mass Curse.
-FLAGS=00 05
+FLAGS=00 09
 STATFX=37 4A 00 0F
 SOUNDFX=01 FC
 }
@@ -1321,7 +1316,7 @@ PEARL=1
 SHADE=0
 SILK=0
 TARG=Select location for Chain Lightning.
-FLAGS=00 05
+FLAGS=00 09
 SOUNDFX=00 29
 }
 
@@ -1373,7 +1368,7 @@ PEARL=0
 SHADE=0
 SILK=1
 TARG=Select player to flamestrike.
-FLAGS=00 49
+FLAGS=00 09
 STATFX=37 09 09 19
 SOUNDFX=02 08
 }
@@ -1453,7 +1448,7 @@ PEARL=1
 SHADE=0
 SILK=0
 TARG=Select location for Mass Dispel.
-FLAGS=00 05
+FLAGS=00 09
 STATFX=37 2A 09 06
 SOUNDFX=02 04
 }
@@ -1480,7 +1475,7 @@ PEARL=0
 SHADE=0
 SILK=1
 TARG=Select location for Meteor Swarm.
-FLAGS=00 05
+FLAGS=00 09
 MOVEFX=36 D5 07 00 01
 SOUNDFX=01 60
 }
@@ -1506,7 +1501,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=00 08
+FLAGS=00 00
 SOUNDFX=02 0F
 }
 
@@ -1698,7 +1693,7 @@ HISKILL=1201
 SCLO=561
 SCHI=1001
 MANTRA=Kal Vas Xen An Flam
-ACTION=17
+ACTION=16
 DELAY=40
 ASH=0
 DRAKE=1
@@ -1712,79 +1707,4 @@ FLAGS=00 00
 SOUNDFX=02 17
 }
 
-// Summon Hero (Dupre The Hero)
-[SPELL 65]
-{
-ENABLE=1
-CIRCLE=8
-MANA=4
-LOSKILL=11
-HISKILL=401
-SCLO=561
-SCHI=1001
-MANTRA=Uus Jux
-ACTION=0X10
-DElAY=40
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSING=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
-FLAGS=0000
-}
-
-// Cannon Firing (why this is in SPELLs, I have NO idea)
-[SPELL 66]
-{
-ENABLE=1
-CIRCLE=8
-MANA=4
-LOSKILL=11
-HISKILL=401
-SCLO=561
-SCHI=1001
-MANTRA=Uus Jux
-ACTION=0x10
-DELAY=0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSING=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
-TARG=Aye Aye Sir cannon is loaded, please select your target.
-FLAGS=0008
-}
-
-// Summon Demon Beast
-[SPELL 67]
-{
-ENABLE=1
-CIRCLE=8
-MANA=4
-LOSKILL=11
-HISKILL=401
-SCLO=561
-SCHI=1001
-MANTRA=Kal Vas Xen Corp
-ACTION=17
-DELAY=0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSING=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
-FLAGS=0000
-}
-
 EOF
-
-

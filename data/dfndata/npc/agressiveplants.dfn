@@ -1,107 +1,97 @@
-[swamptentacle]
-{
-NAME=a Swamp Tentacle
-ID=0x0042
-SKIN=
-DIRECTION=N
-BACKPACK
-GOLD=25 50
-STR=96
-DEX=66
-INT=66
-KARMA=-1000
-FAME=1000
-PARRYING=150
-MAGICRESISTANCE=150
-TACTICS=650
-WRESTLING=650
-DAMAGE=3 15
-DEF=15
-NPCAI=2
-NPCWANDER=4
-FX1=-1
-FY1=-1
-FZ1=-1
-FX2=20
-TOTAME=1100
+//-==========================================================-
+//-=                                                        =-
+//-=             Ultima Offline eXperiment 3                =-
+//-=          Script name: AgressivePlants.dfn              =-
+//-= Re-Writen by: kirre / Tyr Drakul [chaos.smurf@shaw.ca] =-
+//-=                Date: June 21st 2002                    =-
+//-=                Updated: April 14th 2003 by Xuri        =-
+//-=                                                        =-
+//-==========================================================-
+
+[corpser]
+{
+NAME=a corpser
+ID=0x0008
+DIRECTION=N
+BACKPACK
+GOLD=100 150
+PACKITEM=0x0f83
+STR=156 180
+DEX=26 45
+INT=26 40
+HP=94 108
+KARMA=-1000
+FAME=1000
+MAGICRESISTANCE=151 200
+TACTICS=451 600
+WRESTLING=451 600
+DAMAGE=10 23
+DEF=9
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOTAME=1100
+RACE=18
 }
 
-[swamptentacle-1]
-{
-NAME=a Swamp Tentacle
-ID=0x0081
-SKIN=
-DIRECTION=N
-BACKPACK
-GOLD=25 50
-STR=96
-DEX=66
-INT=66
-KARMA=-1000
-FAME=1000
-PARRYING=150
-MAGICRESISTANCE=150
-TACTICS=650
-WRESTLING=650
-DAMAGE=3 15
-DEF=15
-NPCAI=2
-NPCWANDER=4
-FX1=-1
-FY1=-1
-FZ1=-1
-FX2=20
-TOTAME=1100
+[reaper]
+{
+NAME=a reaper
+ID=0x002f
+DIRECTION=N
+BACKPACK
+PACKITEM=0x0f90
+GOLD=100 200
+LOOT=5
+STR=66 215
+DEX=66 75
+INT=101 250
+HP=40 129
+KARMA=-3500
+FAME=3500
+MAGERY=901 1000
+EVALUATINGINTEL=901 1000
+MAGICRESISTANCE=1001 1250
+TACTICS=451 600
+WRESTLING=501 600
+SPATTACK=7692
+SPADELAY=7
+DAMAGE=9 11
+DEF=20
+NPCAI=2
+TOTAME=1100
+NOMOVE
+RACE=18
 }
 
-[corpser]
-{
-NAME=a corpser
-ID=0x0008
-SKIN=
-DIRECTION=N
-BACKPACK
-GOLD=100 150
-PACKITEM=0x0f83
-STR=155
-DEX=26
-INT=26
-KARMA=-500
-FAME=500
-PARRYING=150
-MAGICRESISTANCE=150
-TACTICS=450
-WRESTLING=450
-DAMAGE=3 30
-DEF=9
-NPCAI=2
-TOTAME=1100
+[swamptentacle]
+{
+NAME=a swamp tentacle
+ID=0x0042
+DIRECTION=N
+BACKPACK
+GOLD=25 50
+STR=96 120
+DEX=66 85
+INT=16 30
+HP=58 72
+KARMA=-3000
+FAME=3000
+MAGICRESISTANCE=151 200
+TACTICS=651 800
+WRESTLING=651 800
+DAMAGE=6 12
+DEF=15
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOTAME=1100
+RACE=18
 }
 
-[reaper]
-{
-NAME=a reaper
-ID=0x002f
-SKIN=
-DIRECTION=N
-BACKPACK
-PACKITEM=0x0f90
-GOLD=100 200
-LOOT=5
-STR=66 215
-DEX=66 75
-INT=86 235
-KARMA=-2500
-FAME=2500
-PARRYING=550
-MAGERY=750 850
-MAGICRESISTANCE=350
-TACTICS=450 600
-WRESTLING=500
-SPATTACK=7692
-SPADELAY=10
-DAMAGE=5 15
-DEF=20
-NPCAI=2
-TOTAME=1100
-}

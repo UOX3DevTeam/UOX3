@@ -1,10 +1,10 @@
-//	Ultima Offline eXperiment 3
-//	
-//	Script name: tracking.dfn
-//	Writen by: ????
-//	Date: ????
-//      Modified by: Weazel [weazel@ameritech.net]
-//      Date: March 11th 2002
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://www.uox3dev.net	                  *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : tracking.dfn                                         *
+//*****************************************************************
 
 [TRACKINGMENU 4096]
 {
@@ -31,17 +31,6 @@ Which=creature do you wish to track?
 {
 Whom=do you wish to track?
 }
-
-[TRACKINGMENU 4100]
-{
-Which=PK will you hunt today?
-}
-
-[TRACKINGMENU 4101]
-{
-Which=GM will you hunt today?
-}
-
 
 EOF
 

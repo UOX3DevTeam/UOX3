@@ -1,0 +1,280 @@
+// Gargoyles.dfn - UOX3 v0.98
+// Ilshernar gargoyles by §ymbiotic
+
+//Gargoyles
+
+[gargoyle]
+{
+NAME=a gargoyle
+ID=0x0004
+DIRECTION=N
+STR=146 175
+DEX=76 95
+INT=81 105
+HP=88 105
+KARMA=-3500
+FAME=3500
+MAGICRESISTANCE=701 850
+TACTICS=501 850
+WRESTLING=401 800
+MAGERY=701 850
+EVALUATINGINTEL=701 850
+DAMAGE=7 14
+DEF=16
+SPATTACK=6
+SPADELAY=7
+NPCAI=2
+TOTAME=1100
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+BACKPACK
+LOOT=1
+LOOT=5
+LOOT=5
+LOOT=10
+GOLD=175 250
+RACE=3
+TOPROV=675
+TOPEACE=625
+TOTAME=1200
+RUNS
+}
+
+[stonegargoyle]
+{
+NAME=a stone gargoyle
+ID=0x0043
+SKINLIST=7
+DIRECTION=N
+BACKPACK
+LOOT=5
+LOOT=5
+LOOT=10
+GOLD=200 325
+STR=246 275
+DEX=76 95
+INT=81 105
+HP=148 165
+KARMA=-4000
+FAME=4000
+MAGICRESISTANCE=851 1000
+TACTICS=801 1000
+WRESTLING=601 1000
+DAMAGE=11 17
+DEF=25
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=664
+TOPEACE=614
+TOTAME=1100
+RACE=3
+RUNS
+}
+
+[enslavedgargoyle]
+name=an enslaved gargoyle
+title=the enslaved gargoyle
+id=0x02f1
+backpack
+gold=100
+str=302 360
+dex=76 95
+int=81 105
+hp=186 212
+fame=3500
+magicresistance=701 850
+tactics=501 700
+wrestling=401 800
+damage=7 14
+def=32
+npcwander=4
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=658
+topeace=650
+totame=1200
+runs
+}
+
+[firegargoyle]
+name=a fire gargoyle
+namelist=12
+id=0x0082
+backpack
+gold=190 230
+str=351 400
+dex=126 145
+int=226 250
+hp=211 240
+karma=-3500
+fame=3500
+parrying=686 819
+anatomy=751 850
+magery=901 1050
+evaluatingintel=901 1050
+magicresistance=901 1050
+meditation=901 1050
+tactics=801 1000
+wrestling=401 800
+damage=7 14
+spattack=6
+spadelay=7
+def=32
+npcwander=4
+npcai=2
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=910 
+topeace=860
+totame=1200
+runs
+}
+
+[gargoyledestroyer]
+name=a gargoyle destroyer
+title=the gargoyle destroyer
+id=0x02f3
+backpack
+gold=180 240
+str=760 850
+dex=102 150
+int=152 200
+hp=482 485
+karma=-10000
+fame=10000
+anatomy=505 1000
+magery=910 1000
+macefighing=901 1000
+magicresistance=901 1000
+fencing=901 1000
+tactics=901 1000
+wrestling=901 1000
+swordsmanship=901 1000
+meditation=910 1000
+evaluatingintel=910 1000
+damage=7 14
+def=64
+npcai=2
+npcwander=4
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=1200
+topeace=1200
+totame=1200
+runs
+}
+
+[gargoyleenforcer]
+name=a gargoyle enforcer
+title=the gargoyle enforcer
+id=0x02f2
+backpack
+gold=50 150
+str=260 350
+dex=76 95
+int=101 125
+hp=182 185
+karma=-5000
+fame=5000
+anatomy=701 800
+magery=801 900
+meditation=703 1000
+evaluatingintel=703 1000
+magicresistance=1201 1300
+tactics=749 769
+wrestling=801 900
+swordsmanship=801 900
+damage=7 13
+def=59
+npcai=2
+npcwander=4
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=830
+topeace=780
+totame=1200
+runs
+}
+
+// gargoyle names need to be included for shopkeepers.
+
+[gargoylealchemist]
+name=a gargoyle alchemist
+title=the gargoyle alchemist
+id=0x02f6
+backpack
+gold=50 150
+str=159 180
+dex=76 94
+int=82 100
+hp=80 100
+karma=1000
+parrying=686 819
+alchemy=968 1021
+magery=752 864
+magicresistance=710 841
+tactics=506 699
+wrestling=534 798
+damage=7 10
+def=32
+npcwander=4
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=600
+topeace=600
+totame=1200
+runs
+}
+
+[gargoylemason]
+name=a gargoyle stone worker
+title=the gargoyle stone worker
+id=0x02f6
+backpack
+gold=50 150
+str=159 180
+dex=76 94
+int=82 100
+hp=70 100
+karma=1000
+parrying=686 819
+alchemy=968 1021
+magery=752 864
+magicresistance=710 841
+tactics=506 699
+wrestling=534 798
+damage=7 12
+def=32
+npcwander=4
+fx1=-1
+fy1=-1
+fz1=-1
+fx2=20
+race=3
+toprov=600
+topeace=600
+totame=1200
+runs
+}

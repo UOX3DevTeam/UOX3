@@ -1,21 +1,62 @@
-//-----------------------------------------------------------------------------
-//Accounts.adm[TEXT]: UOX3 uses this file for accounts storage for shard access
-//-----------------------------------------------------------------------------
+//AV3.0-UV0.97.03-BD1-DS1047069577-ED0
+//------------------------------------------------------------------------------
+//accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers
+//
+//   Format: 
+//      SECTION ACCOUNT 0
+//      {
+//         NAME username
+//         PASS password
+//         FLAGS 0x0000
+//         PATH c:/uox3/Accounts/path2userdata/
+//         TIMEBAN 0
+//         CONTACT NONE
+//         CHARACTER-1 0xffffffff
+//         CHARACTER-2 0xffffffff
+//         CHARACTER-3 0xffffffff
+//         CHARACTER-4 0xffffffff
+//         CHARACTER-5 0xffffffff
+//      }
+//
+//   FLAGS: 
+//      Bit:  1) Banned            2) Suspended          4) Public             8) Currently Logged In
+//           16) Char-1 Blocked   32) Char-2 Blocked    64) Char-3 Blocked   128) Char-4 Blocked
+//          256) Char-5 Blocked  512) Unused          1024) Unused          2048) Unused
+//         4096) XGM            8192) Seer           16384) GM Counselor   32768) GM Account
+//
+//   TIMEBAN: 
+//      This would be the end date of a timed ban.
+//
+//   CONTACT: 
+//      Usually this is the email address, but can be used as a comment or ICQ
+//------------------------------------------------------------------------------
 SECTION ACCOUNT 0
 {
 NAME admin
 PASS admin
-TIMEBAN 0
-LASTIP 0.0.0.1
-PUBLIC OFF
-CONTACT 
-XGMCLIENT OFF
-CHARACTER-1 -1
-CHARACTER-2 -1
-CHARACTER-3 -1
-CHARACTER-4 -1
-CHARACTER-5 -1
+FLAGS 0x8000
+PATH /uox3/accounts/admin/
+TIMEBAN 0x0
+CONTACT unknown
+CHARACTER-1 0xffffffff [UNKNOWN]
+CHARACTER-2 0xffffffff [UNKNOWN]
+CHARACTER-3 0xffffffff [UNKNOWN]
+CHARACTER-4 0xffffffff [UNKNOWN]
+CHARACTER-5 0xffffffff [UNKNOWN]
 }
 
-EOF
+SECTION ACCOUNT 1
+{
+NAME guest1
+PASS guest1
+FLAGS 0x0
+PATH /uox3/accounts/guest1/
+TIMEBAN 0x0
+CONTACT unknown
+CHARACTER-1 0xffffffff [UNKNOWN]
+CHARACTER-2 0xffffffff [UNKNOWN]
+CHARACTER-3 0xffffffff [UNKNOWN]
+CHARACTER-4 0xffffffff [UNKNOWN]
+CHARACTER-5 0xffffffff [UNKNOWN]
+}
 

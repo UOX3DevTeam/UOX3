@@ -1,9 +1,17 @@
-//	Ultima Offline eXperiment 3
-//	
-//	Script name: skill.dfn
-//	Writen by: ????
-//	Date: 1/16/2000
-
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://www.uox3dev.net	 	          *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : skills.dfn                                           *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* fill in comments instructions here                            *
+//*                                                               *
+//*                                                               *
+//*                                                               *
+//*****************************************************************
 
 // Alchemy
 [SKILL 0]
