@@ -91,17 +91,18 @@ void playChar( cSocket *mSock )
 
 	if( mSock->AcctNo() != -1 )
 	{
-		ACTREC *ourRec = NULL;
-		ourRec = mSock->AcctObj();
+		ACCOUNTSBLOCK actbRec;
+		actbRec.wAccountIndex=AB_INVALID_ID;
+		actbRec = mSock->GetAccount();
 		CChar *kChar = NULL, *ourChar = NULL;
-		if( ourRec == NULL )
+		if(actbRec.wAccountIndex==AB_INVALID_ID)
 		{
 			Network->Disconnect( sock );
 			return;
 		}
 		else
 		{
-			ourChar = ourRec->characters[mSock->GetByte( 0x44 )];
+			ourChar = actbRec.lpCharacters[mSock->GetByte( 0x44 )];
 			if( ourChar != NULL )
 			{
 				if( !ourChar->IsNpc() && !ourChar->isFree() )
@@ -140,14 +141,14 @@ void playChar( cSocket *mSock )
 
 			WhoList->FlagUpdate();
 			OffList->FlagUpdate();	// offline list changes too
-			if( ourRec->inworld != INVALIDSERIAL )
-				ourRec->inworld = ourChar->GetSerial();
+			if(actbRec.dwInGame != INVALIDSERIAL)
+				actbRec.dwInGame=ourChar->GetSerial();
 			else
-				ourRec->inworld = INVALIDSERIAL;
+				actbRec.dwInGame=INVALIDSERIAL;
 
-			if( ourRec->inworld == INVALIDSERIAL || ourRec->inworld == ourChar->GetSerial() )
+			if(actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == ourChar->GetSerial() )
 			{
-				ourRec->inworld = ourChar->GetSerial();
+				actbRec.dwInGame = ourChar->GetSerial();
 				ourChar->SetLogout( -1 );
 				mSock->CurrcharObj( kChar );
 				startChar( mSock );
@@ -174,12 +175,18 @@ void playChar( cSocket *mSock )
 		Network->Disconnect( sock );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void deleteChar( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Delete character
-//o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	void deleteChar( cSocket *s )
+//|	Date					-	
+//|	Developers		-	Unknown / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Remove a character from the accounts system, due to 
+//|									an account gump button press
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void deleteChar( cSocket *s )
 {
 	if( s == NULL )
@@ -187,13 +194,14 @@ void deleteChar( cSocket *s )
 	if( s->AcctNo() != -1 )
 	{
 		UI08 slot = s->GetByte( 0x22 );
-		ACTREC *ourAccount = s->AcctObj();
-		if( ourAccount != NULL )
+		ACCOUNTSBLOCK actbTemp;
+		actbTemp= s->GetAccount();
+		if(actbTemp.wAccountIndex!=AB_INVALID_ID)
 		{
-			CChar *ourObj = ourAccount->characters[slot];
+			CChar *ourObj = actbTemp.lpCharacters[slot];
 			if( ourObj != NULL )	// we have a char
 			{
-				Accounts->RemoveCharacterFromAccount( ourAccount, slot );
+				Accounts->DelCharacter(actbTemp.wAccountIndex , slot );
 				Npcs->DeleteChar( ourObj );
 			}
 
@@ -202,12 +210,12 @@ void deleteChar( cSocket *s )
 		UI08 charCount = 0;
 		for( UI08 i = 0; i < 5; i++ )
 		{
-			if( ourAccount->characters[i] != NULL )
+			if(actbTemp.lpCharacters[i] != NULL )
 				charCount++;
 		}
 		cServerData *sd = cwmWorldState->ServerData();
 		UI08 serverCount = sd->GetNumServerLocations();
-		CPCharAndStartLoc toSend( ourAccount, charCount, serverCount );
+		CPCharAndStartLoc toSend(actbTemp, charCount, serverCount );
 		for( UI08 j = 0; j < serverCount; j++ )
 		{
 			toSend.AddStartLocation( sd->GetServerLocation( j ), j );
@@ -285,7 +293,7 @@ void createChar( cSocket *mSock )
 	}
 	mChar->SetName( tempName );
 	mChar->SetAccount( mSock->AcctNo() );
-	Accounts->AddCharacterToAccount( mSock->AcctNo(), mChar );
+	Accounts->AddCharacter(mSock->AcctNo(), mChar );
 	if( Buffer[0x46] != 0 )
 	{
 		mChar->SetID( 0x191 );
@@ -317,9 +325,7 @@ void createChar( cSocket *mSock )
 		mChar->SetLocation( toGo->x, toGo->y, toGo->z );
 	mChar->SetDir( 4 );
 
-//	Thyme
-//	Modified to fit in with new client, and 80 total starting stats.
-//	The highest any one stat can be is 60, and the lowest is 10.
+	//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
 	mChar->SetStrength( CapIt( Buffer[0x47] ) );
 	mChar->SetDexterity( CapIt( Buffer[0x48] ) );
 	mChar->SetIntelligence( CapIt( Buffer[0x49] ) );

@@ -61,7 +61,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 
 	if( currChar != NULL )
 	{
-		if( currChar->GetAccount() == connClients[s]->AcctNo() && cwmWorldState->ServerData()->GetServerJoinPartAnnouncementsStatus() ) 
+		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->GetServerJoinPartAnnouncementsStatus() ) 
 		{
 			sprintf( temp, Dictionary->GetEntry( 752 ), currChar->GetName() );
 			sysbroadcast( temp );//message upon leaving a server 
@@ -69,19 +69,12 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	}
 	if( connClients[s]->AcctNo() != -1 ) 
 	{
-		ACTREC *ourAccount = connClients[s]->AcctObj();
-		if( ourAccount != NULL )
+		ACCOUNTSBLOCK actbAccount;
+		actbAccount=connClients[s]->GetAccount();
+		if(actbAccount.wAccountIndex!=AB_INVALID_ID)
 		{
-			// EviLDeD:	022502: This is kind of just a band aid, if anyone can tell why this is comming in NULL(lpaarHolding)
-			try
-			{
-				if(ourAccount->lpaarHolding!=NULL || ourAccount->lpaarHolding!=(AAREC*)0xDDDDDDDD) // Not sure why, but this wont work out to null
-					ourAccount->lpaarHolding->bFlags&=0xFFFFFFF7; // acctinuse = false;
-			}
-			catch(...)
-			{
-				Console << "| CATCH: Invalid AccountAccessRecord(AAR) encountered. Ignoring assignment." << myendl;
-			}
+			if(actbAccount.wAccountIndex!=AB_INVALID_ID)
+				actbAccount.wFlags&=0xFFFFFFF7;
 		}
 	}
 	//Instalog
@@ -126,41 +119,41 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 }
 
 
-void cNetworkStuff::Login1( cSocket *s ) // Initial login (Login on "loginserver", new format)
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cNetworkStuff::Login1( cSocket *s )
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Process phase one of the login server process.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void cNetworkStuff::Login1( cSocket *s )
 {	
 	s->AcctNo( -1 );
 	LoginDenyReason t = LDR_NODENY;
-	ACTREC *ourAccount = Accounts->GetAccount( (char *)&s->Buffer()[1] );
-	if( ourAccount != NULL )
-		s->AcctObj( ourAccount );
+	ACCOUNTSBLOCK actbTemp;
+	if(Accounts->GetAccountByName((char *)&s->Buffer()[1],actbTemp))
+		s->SetAccount(actbTemp);
 	// Need auto account creation code here
-	if( s->AcctNo() == -1 )
+	if( s->AcctNo() == -1 || s->AcctNo()==0xffff)
 	{
 		if( cwmWorldState->ServerData()->GetInternalAccountStatus() )
 		{
-/*			if( Accounts->IPExists( s->ClientIP1(), s->ClientIP2(), s->ClientIP3(), s->ClientIP4() ) )
-			{
-				CPLoginDeny badAutoAdd( LDR_UNKNOWNUSER );
-				s->Send( &badAutoAdd );
-				LoginDisconnect( s );
-				return;
-			}
-			else
-			{*/
-				pSplit( (char *)&s->Buffer()[31] );
-				Accounts->AddAccount( (char *)&s->Buffer()[1], pass1, "" );
-				ourAccount = Accounts->GetAccount( (char *)&s->Buffer()[1] );	// grab our account number
-				if( ourAccount != NULL )
-					s->AcctObj( ourAccount );
-//			}
+			pSplit( (char *)&s->Buffer()[31] );
+			Accounts->AddAccount( (char *)&s->Buffer()[1], pass1, "" );
+			if(Accounts->GetAccountByName( (char *)&s->Buffer()[1],actbTemp))	// grab our account number
+				s->SetAccount(actbTemp);
 		}
 	}
 	if( s->AcctNo() != -1 )
 	{
 		pSplit( (char *)&s->Buffer()[31] );
-		if( ourAccount->lpaarHolding->bFlags&0x01 )
+		if(actbTemp.wFlags&AB_FLAGS_BANNED)
 			t = LDR_ACCOUNTDISABLED;
-		else if( strcmp( ourAccount->lpaarHolding->password, pass1 ) )
+		else if( strcmp(actbTemp.sPassword.c_str(), pass1 ) )
 			t = LDR_BADPASSWORD;
 		if( t != LDR_NODENY )
 		{
@@ -178,7 +171,7 @@ void cNetworkStuff::Login1( cSocket *s ) // Initial login (Login on "loginserver
 		LoginDisconnect( s );
 		return;
 	}
-	if( ourAccount->lpaarHolding->bFlags&0x08 )
+	if(actbTemp.wFlags&AB_FLAGS_ONLINE)
 	{
 		CPLoginDeny inUse( LDR_ACCOUNTINUSE );
 		s->Send( &inUse );
@@ -186,22 +179,36 @@ void cNetworkStuff::Login1( cSocket *s ) // Initial login (Login on "loginserver
 		return;
 	}
 	if( s->AcctNo() != -1 )
-		Login2( s, ourAccount );
+		Login2( s, actbTemp );
 
 }
 
-void cNetworkStuff::Login2( cSocket *s, ACTREC *ourAccount )
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cNetworkStuff::Login2(cSocket *s, ACCOUNTSBLOCK &actbBlock)
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Process the second phase of a standard login procedure.
+//|									Usualy the only time this function will be called is when
+//|									a successfull phase one login, and correct server selection
+//|									has been made, and submitted by the client
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void cNetworkStuff::Login2(cSocket *s, ACCOUNTSBLOCK &actbBlock)
 {
 	char temp[1024];
 	char newlist1[7] = "\xA8\x01\x23\xFF\x00\x01";
 	cPBuffer bufNewlist1( newlist1, 6 );
 	char newlist2[41] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
-	ourAccount->ipaddress[0] = calcserial( s->ClientIP4(), s->ClientIP3(), s->ClientIP2(), s->ClientIP1() );
+	actbBlock.dwLastIP=calcserial( s->ClientIP4(), s->ClientIP3(), s->ClientIP2(), s->ClientIP1() );
 	sprintf( temp, "Client [%i.%i.%i.%i] connected using Account '%s'.", s->ClientIP4(), s->ClientIP3(), s->ClientIP2(), s->ClientIP1() , &s->Buffer()[1]);
 	savelog( temp, "server.log" );
 	messageLoop << temp;
 
-	ourAccount->lpaarHolding->bFlags|=0x08;	//acctinuse = true;
+	actbBlock.wFlags|=AB_FLAGS_ONLINE;
 
 	UI32 servcount = cwmWorldState->ServerData()->GetServerCount();
 	UI32 tlen = 6 + ( servcount * 40 );
@@ -226,17 +233,29 @@ void cNetworkStuff::Login2( cSocket *s, ACTREC *ourAccount )
 	}
 }
 
-void cNetworkStuff::GoodAuth( cSocket *s, ACTREC *ourAccount )
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cNetworkStuff::GoodAuth( cSocket *s, ACCOUNTSBLOCK& actbBlock)
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Send this connectiona successful authentication packet
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void cNetworkStuff::GoodAuth( cSocket *s, ACCOUNTSBLOCK& actbBlock)
 {
 	UI08 charCount = 0;
 	for( UI32 i = 0; i < 5; i++ )
 	{
-		if( ourAccount->characters[i] != NULL )
+		if(actbBlock.dwCharacters[i] != 0xffffffff )
 			charCount++;
 	}
 	cServerData *sd = cwmWorldState->ServerData();
 	UI32 serverCount = sd->GetNumServerLocations();
-	CPCharAndStartLoc toSend( ourAccount, charCount, serverCount );
+	CPCharAndStartLoc toSend(actbBlock, charCount, serverCount );
 	for( UI32 j = 0; j < serverCount; j++ )
 	{
 		toSend.AddStartLocation( sd->GetServerLocation( j ), j );
@@ -256,8 +275,18 @@ void cNetworkStuff::pSplit( char *pass0 ) // Split login password into UOX passw
 		strcpy( pass2, pass0 + i + 1 );
 }
 
-//Boats->added multi checking to instalog.
-void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cNetworkStuff::LogOut( UOXSOCKET s )
+//|	Date					-	
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Process client logout, and process instalog settings
+//|
+//|	Modification	-	Date Unknown - Added multi checked to instalog processing
+//o--------------------------------------------------------------------------o
+void cNetworkStuff::LogOut( UOXSOCKET s )
 {
 	// This would probably be a good place to do the disconnect
 	CChar *p = connClients[s]->CurrcharObj();
@@ -266,7 +295,7 @@ void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
 	SI16 x = p->GetX(), y = p->GetY();
 	CMultiObj *multi = NULL;
 
-	if( p->GetCommandLevel() >= CNSCMDLEVEL || p->GetAccount() == 0 ) 
+	if( p->GetCommandLevel() >= CNSCMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
 		valid = true;
 	else 
 	{
@@ -307,17 +336,18 @@ void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
 		}
 	}
 	
-	ACTREC *ourAccount = p->GetAccountObj();
+	ACCOUNTSBLOCK actbAccount;
+	actbAccount=p->GetAccount();
 	if( valid )
 	{
-		if( ourAccount != NULL )
-			ourAccount->inworld = INVALIDSERIAL;
+		if(actbAccount.wAccountIndex!=0xffff)
+			actbAccount.dwInGame=INVALIDSERIAL;
 		p->SetLogout( -1 );
 	}
 	else
 	{
-		if( ourAccount != NULL )
-			ourAccount->inworld = p->GetSerial();
+		if(actbAccount.wAccountIndex!=0xffff)
+			actbAccount.dwInGame = p->GetSerial();
 		p->SetLogout( BuildTimeValue( cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) ) );
 	}
 	p->Teleport();
@@ -331,22 +361,7 @@ void cNetworkStuff::sockInit( void )
 	kr = true;
 	faul = false;
 	
-#ifdef __NT__
-	// EviLDeD: 042102: Moved this into its own, at the start of ther server run.
-	//---------------
-	//wVersionRequested = MAKEWORD( 2, 0 );
-	//err = WSAStartup( wVersionRequested, &wsaData );
-	//if( err )
-	//{
-	//	Console.Error( 0, " Winsock 2.0 not found..." );
-	//	keeprun = false;
-	//	error = true;
-	//	kr = false;
-	//	faul = true;
-	//	Shutdown( FATAL_UOX3_ALLOC_NETWORK );
-	//	return;
-	//}
-#else
+#ifndef __NT__
 	int on = 1;
 #endif
 	
@@ -698,7 +713,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 					else
 					{
 						sysmessage( mSock, 1641 );
-						Console << "Godclient detected on account " << ourChar->GetAccount() << ". Client disconnected!" << myendl;
+						Console << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Usename[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
 						Disconnect( s );
 					}
 					break;
@@ -1520,9 +1535,10 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	//Zippy 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
 	if( loggedInClients[s]->AcctNo() != -1 ) 
 	{
-		ACTREC *ourAccount = loggedInClients[s]->AcctObj();
-		if( ourAccount != NULL )
-			ourAccount->lpaarHolding->bFlags&=0xFFFFFFF7; //accountin use = false;
+		ACCOUNTSBLOCK actbAccount;
+		actbAccount=loggedInClients[s]->GetAccount();
+		if(actbAccount.wAccountIndex!=0xffff)
+			actbAccount.wFlags&=0xFFFFFFF7;
 	}
 
 	delete loggedInClients[s];

@@ -118,7 +118,8 @@ SEngineFunc SE_DistanceTo;			// Distance between things					***
 SEngineFunc SE_PopUpTarget;			// target cursor ( 0, 1, 0, x )				*
 
 // Other functions
-
+SEngineFunc	SE_GetCommand; 
+SEngineFunc	SE_GetCommandSize; 
 SEngineFunc SE_GetString;			//											***
 SEngineFunc SE_GetByte;				//											***
 SEngineFunc SE_GetWord;				//											***
@@ -371,7 +372,8 @@ JSBool SE_DistanceTo(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *
 JSBool SE_PopUpTarget(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			// target cursor ( 0, 1, 0, x )				*
 
 // Other functions
-
+JSBool SE_GetCommand (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ); 
+JSBool SE_GetCommandSize (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ); 
 JSBool SE_GetString(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);			//											***
 JSBool SE_GetByte(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											***
 JSBool SE_GetWord(JSContext *cx, JSObject *obj,uintN argc,jsval *argv,jsval *rval);				//											***

@@ -1510,18 +1510,20 @@ void cCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z 
 					return;
 			}
 		}
-
+		// 1/13/2003 - Maarc - Fix for JSE NocSpawner
 		if( !reUseGuard )
 		{
 			int t = region[targRegion]->GetRandomGuard();
 #pragma note( "DEPENDENT ON NUMERIC NPC SECTION" )
-			getGuard = Npcs->AddNPCxyz( NULL, t, x, y, z, mChar->WorldNumber() ); 
+			char tempStuff[128];
+			sprintf( tempStuff, "%i", t );
+			getGuard = Npcs->AddNPCxyz( NULL, tempStuff, x, y, z, mChar->WorldNumber() ); 
 			if( getGuard == NULL )
 				return;
 
 			getGuard->SetNPCAiType( 4 );
 		}
-
+		//
 		if( getGuard != NULL )
 		{
 			getGuard->SetAttackFirst( true );

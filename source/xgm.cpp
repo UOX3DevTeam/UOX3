@@ -191,54 +191,105 @@ XGMServerStat cPIXGMServerStat::Stat( void )
 {
 	return (XGMServerStat)tSock->Buffer()[1];
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	inline UI32 GhostCount( void )
+//|	Date					-	
+//|	Developers		-	Unknown / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Create the ghost count(?), and return this count to the
+//|									calling function.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 inline UI32 GhostCount( void )
 {
 	UI32 sumDead = 0;
-	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+	MAPUSERNAMEID_ITERATOR I;
+	for(I=Accounts->Begin();I!=Accounts->End();I++)
 	{
-		if( acct == NULL) 
+		ACCOUNTSBLOCK actbTemp;
+		actbTemp=I->second;
+		//
+		if(actbTemp.wAccountIndex==AB_INVALID_ID) 
 			break;
 		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
 		{
-			if( acct->characters[iCtr] != NULL )
+			if(actbTemp.lpCharacters[iCtr] != NULL )
 			{
-				if( acct->characters[iCtr]->IsDead() )
+				if( actbTemp.lpCharacters[iCtr]->IsDead() )
 					sumDead++;
 			}
 		}
 	}
 	return sumDead;
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	inline UI32 MurdererCount( void )
+//|	Date					-	
+//|	Developers		-	Unknown / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Return the current character/npc murder count
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 inline UI32 MurdererCount( void )
 {
 	UI32 sumMurderer = 0;
-	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+	MAPUSERNAMEID_ITERATOR I;
+	ACCOUNTSBLOCK actbBlock;
+	for(I=Accounts->Begin();I!=Accounts->End();I++)
 	{
-		if( acct == NULL )
+		actbBlock=I->second;
+		//
+		if(actbBlock.wAccountIndex==AB_INVALID_ID)
 			continue;
+		//
 		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
 		{
-			if( acct->characters[iCtr] != NULL )
+			if(actbBlock.lpCharacters[iCtr] != NULL )
 			{
-				if( acct->characters[iCtr]->IsMurderer() )
+				if(actbBlock.lpCharacters[iCtr]->IsMurderer() )
 					sumMurderer++;
 			}
 		}
 	}
 	return sumMurderer;
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	inline UI32 BlueCount( void )
+//|	Date					-	
+//|	Developers		-	Unknown / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Return the current total count of all innocent character
+//|									that are currently assigned to an account.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 inline UI32 BlueCount( void )
 {
 	UI32 sumBlue = 0;
-	for( ACTREC *acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+	MAPUSERNAMEID_ITERATOR I;
+	ACCOUNTSBLOCK actbBlock;
+	//
+	for(I=Accounts->Begin();I!=Accounts->End();I++)
 	{
-		if( acct == NULL )
+		actbBlock=I->second;
+		if(actbBlock.wAccountIndex == AB_INVALID_ID)
 			continue;
 		for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
 		{
-			if( acct->characters[iCtr] != NULL )
+			if(actbBlock.lpCharacters[iCtr] != NULL )
 			{
-				if( acct->characters[iCtr]->IsInnocent() )
+				if(actbBlock.lpCharacters[iCtr]->IsInnocent() )
 					sumBlue++;
 			}
 		}
@@ -286,7 +337,7 @@ bool cPIXGMServerStat::Handle( void )
 	case XSS_ONLINECOUNT:			toSend.GenericData( now );					break;
 	case XSS_CHARACTERCOUNT:		toSend.GenericData( chars.Count() );		break;
 	case XSS_ITEMCOUNT:				toSend.GenericData( items.Count() );		break;
-	case XSS_ACCOUNTCOUNT:			toSend.GenericData( Accounts->Count() );	break;
+	case XSS_ACCOUNTCOUNT:			toSend.GenericData( Accounts->size() );	break;
 	case XSS_SIMULATIONCYCLES:
 				if( !( loopTime < 0.00000000001f || loopTimeCount < 0.00000000001f ) )
 					toSend.GenericData( (unsigned long)(1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))) );
@@ -394,10 +445,12 @@ bool cPIXGMWhoOnline::Handle( void )
 	cPXGMWhoResponse toSend;
 	toSend.StatusType( tSock->GetByte( 0 ) - 2 );
 	cSocket *toGet = NULL;
-
+	//
 	std::vector< CChar * > charListing;
-	ACTREC *acct = NULL;
 	UI32 i = 0;
+	//
+	ACCOUNTSBLOCK actbBlock;
+	MAPUSERNAMEID_ITERATOR I;
 
 	cSocket *trgSock = NULL;
 	switch( tSock->GetByte( 0 ) - 2 )
@@ -421,13 +474,16 @@ bool cPIXGMWhoOnline::Handle( void )
 		Network->PopConn();
 		break;
 	case 1:	// offline
-		for( acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+		for(I=Accounts->Begin();I!=Accounts->End();I++)
 		{
-			if( acct == NULL )
+			actbBlock=I->second;
+			//
+			if(actbBlock.wAccountIndex==AB_INVALID_ID)
 				continue;
+			//
 			for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
 			{
-				if( acct->characters[iCtr] != NULL && acct->characters[iCtr]->GetSerial() != acct->inworld )	// no players logging out
+				if(actbBlock.lpCharacters[iCtr] != NULL && actbBlock.lpCharacters[iCtr]->GetSerial() != actbBlock.dwInGame)	// no players logging out
 				{
 					bool loopCont = true;
 					Network->PushConn();
@@ -435,7 +491,7 @@ bool cPIXGMWhoOnline::Handle( void )
 					{
 						if( trgSock == NULL )
 							continue;
-						if( trgSock->CurrcharObj() == acct->characters[iCtr] )
+						if( trgSock->CurrcharObj() == actbBlock.lpCharacters[iCtr] )
 						{
 							loopCont = false;
 							break;
@@ -443,7 +499,7 @@ bool cPIXGMWhoOnline::Handle( void )
 					}
 					Network->PopConn();
 					if( loopCont )
-						charListing.push_back( acct->characters[iCtr] );
+						charListing.push_back(actbBlock.lpCharacters[iCtr] );
 				}
 			}
 		}
@@ -452,13 +508,16 @@ bool cPIXGMWhoOnline::Handle( void )
 			toSend.AddPlayer( charListing[i]->GetSerial(), charListing[i]->GetName() );
 		break;
 	case 2:	// logging
-		for( acct = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); acct = Accounts->NextAccount() )
+		for(I=Accounts->Begin();I!=Accounts->End();I++)
 		{
-			if( acct == NULL )
+			actbBlock=I->second;
+			//
+			if(actbBlock.wAccountIndex==AB_INVALID_ID)
 				continue;
+			//
 			for( UI08 iCtr = 0; iCtr < 5; iCtr++ )
 			{
-				if( acct->characters[iCtr] != NULL && acct->characters[iCtr]->GetSerial() == acct->inworld )	// no players logging out
+				if(actbBlock.lpCharacters[iCtr] != NULL && actbBlock.lpCharacters[iCtr]->GetSerial() == actbBlock.dwInGame)	// no players logging out
 				{
 					bool loopCont2 = true;
 					Network->PushConn();
@@ -466,7 +525,7 @@ bool cPIXGMWhoOnline::Handle( void )
 					{
 						if( trgSock == NULL )
 							continue;
-						if( trgSock->CurrcharObj() == acct->characters[iCtr] )
+						if( trgSock->CurrcharObj() == actbBlock.lpCharacters[iCtr] )
 						{
 							loopCont2 = false;
 							break;
@@ -474,7 +533,7 @@ bool cPIXGMWhoOnline::Handle( void )
 					}
 					Network->PopConn();
 					if( loopCont2 )
-						charListing.push_back( acct->characters[iCtr] );
+						charListing.push_back(actbBlock.lpCharacters[iCtr] );
 				}
 			}
 		}

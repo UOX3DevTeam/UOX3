@@ -543,7 +543,7 @@ void cSocket::WalkSequence( SI16 newValue )
 //o---------------------------------------------------------------------------o
 SI32 cSocket::AcctNo( void ) const
 {
-	return acctno;
+	return wAccountID;
 }
 
 //o---------------------------------------------------------------------------o
@@ -555,11 +555,13 @@ SI32 cSocket::AcctNo( void ) const
 //o---------------------------------------------------------------------------o
 void cSocket::AcctNo( SI32 newValue )
 {
-	acctno = newValue;
-	if( acctno != -1 )
-		acct = Accounts->GetAccountByID( acctno );
-	else
-		acct = NULL;
+	if(!Accounts->GetAccountByID(newValue,(ACCOUNTSBLOCK&)actbAccount))
+	{
+		wAccountID = AB_INVALID_ID;
+		actbAccount.wAccountIndex=AB_INVALID_ID;
+		return;
+	}
+	wAccountID = actbAccount.wAccountIndex;
 }
 
 //o---------------------------------------------------------------------------o
@@ -634,13 +636,14 @@ void cSocket::ItemMake( make_st& newValue )
 	itemmake = newValue;
 }
 
-cSocket::cSocket() : currCharObj( NULL ), acct( NULL ), idleTimeout( -1 ), currchar( INVALIDSERIAL ), acctno( -1 ),
+cSocket::cSocket() : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
 tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( INVALIDSERIAL ), newClient( true ), firstPacket( true ), range( 15 ),
 cryptclient( false ), cliSocket( INVALID_SOCKET ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
 outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postAckCount( 0 ), postCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
 pX( 0 ), pY( 0 ), pZ( 0 ), lang( UT_ENU ), cliType( DefaultClientType ), clientVersion( DefaultClientVersion ), bytesReceived( 0 ), bytesSent( 0 )
 {
 	InternalReset();
+	actbAccount.wAccountIndex=AB_INVALID_ID;
 }
 
 cSocket::~cSocket()
@@ -917,7 +920,7 @@ void cSocket::InternalReset( void )
 	UI32 mode = 1;
 	ioctlsocket( cliSocket, FIONBIO, &mode );
 }
-cSocket::cSocket( int sockNum ) : currCharObj( NULL ), acct( NULL ), idleTimeout( -1 ), currchar( INVALIDSERIAL ), acctno( -1 ),
+cSocket::cSocket( int sockNum ) : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
 tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( INVALIDSERIAL ), newClient( true ), firstPacket( true ), range( 15 ),
 cryptclient( false ), cliSocket( sockNum ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
 outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postCount( 0 ), postAckCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
@@ -980,17 +983,70 @@ void cSocket::CurrcharObj( CChar *newValue )
 		currchar = INVALIDSERIAL;	// NULL character is invalidserial, for comparisons
 }
 
-ACTREC *cSocket::AcctObj( void ) const
+//o--------------------------------------------------------------------------o
+//|	Function			-	ACCOUNTSBLOCK &cSocket::GetAccount(void)
+//|	Date					-	1/17/2003 6:21:59 AM
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Return to the calling function this objects accounts 
+//|									referance.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+ACCOUNTSBLOCK &cSocket::GetAccount(void)
 {
-	return acct;
+	return actbAccount;
 }
 
-void cSocket::AcctObj( ACTREC *newValue )
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
+//|	Date					-	1/17/2003 7:01:23 AM
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
 {
-	acct = newValue;
-	if( acct != NULL )
-		acctno = acct->lpaarHolding->id;
+	if(actbBlock.wAccountIndex==AB_INVALID_ID)
+	{
+		actbAccount.wAccountIndex=AB_INVALID_ID;
+		return;
+	}
+	actbAccount=actbBlock;
+	wAccountID=actbAccount.wAccountIndex;
 }
+//
+void cSocket::SetAccount(std::string sUsername)
+{
+	if(!Accounts->GetAccountByName(sUsername,(ACCOUNTSBLOCK&)actbAccount))
+	{
+		// Ok there was an error setting an account to this character.
+		wAccountID=AB_INVALID_ID;
+		actbAccount.wAccountIndex=wAccountID;
+		return;
+	}
+	wAccountID = actbAccount.wAccountIndex;
+}
+//
+void cSocket::SetAccount(SI16 wNewAccountID)
+{
+	if(!Accounts->GetAccountByID(wNewAccountID,(ACCOUNTSBLOCK&)actbAccount))
+	{
+		// Ok there was an error setting an account to this character.
+		wAccountID=AB_INVALID_ID;
+		actbAccount.wAccountIndex=wAccountID;
+		return;
+	}
+	wAccountID = actbAccount.wAccountIndex;
+}
+//
+
 
 UI08 cSocket::ClientIP1( void ) const
 {

@@ -8,22 +8,26 @@
 std::string GetStrFromSock( cSocket *sock, UI16 offset, UI16 length );
 std::string GetUniStrFromSock( cSocket *sock, UI16 offset, UI16 length );
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleAccountButton( cSocket *s, long button, CChar *j )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in Account gump
-//o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	void HandleAccountButton( cSocket *s, long button, CChar *j )
+//|	Date					-	
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Handles the accounts gump button
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void HandleAccountButton( cSocket *s, long button, CChar *j )
 {
 	if( j == NULL )
 		return;
-
 	CChar *mChar = s->CurrcharObj();
-	ACTREC *ourAccount = Accounts->GetAccountByID( j->GetAccount() );
-	if( ourAccount == NULL )
+	ACCOUNTSBLOCK actbTemp;
+	if(!Accounts->GetAccountByID(j->GetAccount().wAccountIndex,actbTemp))
 		return;
+	//
 	cSocket *targSocket = calcSocketObjFromChar( j );
 	switch( button )
 	{
@@ -32,7 +36,7 @@ void HandleAccountButton( cSocket *s, long button, CChar *j )
 		{
 			sysmessage( s, 487 );
 			sysmessage( targSocket, 488 );
-			ourAccount->lpaarHolding->bFlags|=0x01;	// Banned
+			actbTemp.wFlags|=AB_FLAGS_BANNED;	// Banned
 			if( isOnline( j ) ) 
 				Network->Disconnect( calcCharFromSer( j->GetSerial() ) );
 		}
@@ -44,8 +48,8 @@ void HandleAccountButton( cSocket *s, long button, CChar *j )
 		{
 			sysmessage( s, 490 );
 			sysmessage( targSocket, 491 );
-			ourAccount->lpaarHolding->bFlags|=0x01;
-			ourAccount->ban_duration = BuildTimeValue( 60 * 60 * 24 );
+			actbTemp.wFlags|=AB_FLAGS_BANNED;
+			actbTemp.wTimeBan=BuildTimeValue( 60 * 60 * 24 );
 
 			if( isOnline( j ) ) 
 				Network->Disconnect( calcCharFromSer( j->GetSerial() ) );
@@ -351,9 +355,8 @@ void HandleAccountModButton( cSocket *s, long button )
 	offset = s->GetWord( 29 );
 	tmpOffset = 31;
 	username = GetUniStrFromSock( s, tmpOffset, offset );
-	ACTREC *AccountFind;
-	AccountFind = Accounts->GetAccount( username.c_str() );
-	if( AccountFind != NULL )
+	ACCOUNTSBLOCK actbAccountFind;
+	if(!Accounts->GetAccountByName(username,actbAccountFind))
 	{
 		sysmessage( s, 555 );
 		return;

@@ -236,15 +236,19 @@ void numtostr( int i, char *string )
 #endif
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void safeCopy( char *dest, const char *src, UI32 maxLen )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Safely copy a string that might be longer than the destination
-//|					 Will truncate if needed, but will never copy over too much
-//|					 to avoid possible crashes.
-//o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	void safeCopy(char *dest, const char *src, UI32 maxLen )
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Safely copy a string that might be longer than the 
+//|									destination Will truncate if needed, but will never copy 
+//|									over too much to avoid possible crashes.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void safeCopy(char *dest, const char *src, UI32 maxLen )
 {
 	assert( src );
@@ -255,23 +259,27 @@ void safeCopy(char *dest, const char *src, UI32 maxLen )
 	dest[maxLen - 1] = '\0';
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool online( CChar *c )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check if the socket owning character c is still connected
-//o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	bool isOnline( CChar *c )
+//|	Date					-	
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Check if the socket owning character c is still connected
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 bool isOnline( CChar *c )
 {
 	if( c == NULL )
 		return false;
 	if( c->IsNpc() )
 		return false;
-	ACTREC *ourAccount = c->GetAccountObj();
-	if( ourAccount != NULL )
+	ACCOUNTSBLOCK actbTemp = c->GetAccount();
+	if(actbTemp.wAccountIndex != AB_INVALID_ID)
 	{
-		if( ourAccount->inworld == c->GetSerial() )
+		if(actbTemp.dwInGame == c->GetSerial() )
 			return true;
 	}
 	Network->PushConn();
@@ -2087,7 +2095,24 @@ void wearItem( cSocket *mSock )
 		i->SetLayer( mSock->GetByte( 5 ) );
 
 	CItem *j = NULL;
-	if( i->GetLayer() == 1 )
+
+  int layer = i->GetLayer();
+	// 1/13/2003 - Xuri - Fix for equiping an item to more than one hand, or multiple equiping.
+  j = FindItemOnLayer( k, layer );
+  if( j != NULL )
+  {
+		sysmessage( mSock, "You can't equip two items in the same slot." );
+    if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->SubtractItemWeight( i, mChar );
+    statwindow( mSock, mChar );
+    Bounce( mSock, i );
+    RefreshItem( i );
+    if( i->GetID( 1 ) >= 0x40 )
+			sendItem( mSock, i );
+    return;
+  }
+
+/*	if( i->GetLayer() == 1 )
 	{
 		j = Combat->getWeapon( k );
 		if( j != NULL )
@@ -2113,7 +2138,7 @@ void wearItem( cSocket *mSock )
 			return;
 		}
 	}
-
+*/
 	i->SetCont( cserial );
 
 	// Add item weight if pickupspot is not ownpack or paperdoll
@@ -2381,11 +2406,23 @@ void dropItem( cSocket *mSock ) // Item is dropped on ground
 		RefreshItem( i );
 		Weight->SubtractItemWeight( i, nChar );
 	}
-	else
-	{
-	CChar *t = calcCharObjFromSer( mSock->GetDWord( 10 ) );
-	if( t != NULL )
-		stackDeleted = dropItemOnChar( mSock, t, i );
+  else
+  {
+		CChar *t = calcCharObjFromSer( mSock->GetDWord( 10 ) );
+    if( t != NULL )
+			stackDeleted = dropItemOnChar( mSock, t, i );
+    else
+    {
+			//Bounces items dropped in illegal locations in 3D UO client!!!
+      if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->SubtractItemWeight( i, nChar );
+      statwindow( mSock, nChar );
+      Bounce( mSock, i );
+      RefreshItem( i );
+      if( i->GetID( 1 ) >= 0x40 )
+				sendItem( mSock, i );
+      return;
+    }
 	}
 	
 	statwindow( mSock, nChar );
@@ -2960,7 +2997,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 				sprintf( seStr, "%i", se );
 			sprintf( tstring, "%s:%s:%s", hoStr, miStr, seStr );
 			guiInfo.AddData( "Uptime", tstring );
-			guiInfo.AddData( "Accounts", Accounts->GetAccountCount() );
+			guiInfo.AddData( "Accounts", Accounts->size() );
 			guiInfo.AddData( "Items", items.Count() );
 			guiInfo.AddData( "Chars", chars.Count() );
 			guiInfo.AddData( "Players in world", now );
@@ -2981,7 +3018,7 @@ void scriptcommand( cSocket *s, const char *cmd2, const char *data2 )
 			total -= mi * 60;
 			se = total;
 			total = 0;
-			sysmessage( s, 1211, ho, mi, se, now, Accounts->GetAccountCount(), items.Count(), chars.Count() );
+			sysmessage( s, 1211, ho, mi, se, now, Accounts->size(), items.Count(), chars.Count() );
 		}
 		break;
 	case 'M':
@@ -3196,7 +3233,7 @@ void DisplaySettings( void )
 	Console << "   -Guilds: " << GuildSys->NumGuilds() << myendl;
 	Console << "   -Char count: " << cmem << myendl;
 	Console << "   -Item count: " << imem << myendl;
-	Console << "   -Num Accounts: " << Accounts->Count() << myendl;
+	Console << "   -Num Accounts: " << Accounts->size() << myendl;
 	Console << "   Directories: " << myendl;
 	Console << "   -Shared:          " << cwmWorldState->ServerData()->GetSharedDirectory() << myendl;
 	Console << "   -Archive:         " << cwmWorldState->ServerData()->GetBackupDirectory() << myendl;
@@ -3308,7 +3345,7 @@ void processkey( int c )
 			case '2':
 				// Reload accounts, and update Access.adm if new accounts available.
 				messageLoop << "| CMD: Loading Accounts... ";
-				Accounts->LoadAccounts();
+				Accounts->Load();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '3':
@@ -3359,7 +3396,7 @@ void processkey( int c )
 				messageLoop << "|      Server INI... ";
 				// Reload accounts, and update Access.adm if new accounts available.
 				messageLoop << "|      Loading Accounts... ";
-				Accounts->LoadAccounts();
+				Accounts->Load();
 				messageLoop << MSG_PRINTDONE;
 				// Reload Region Files
 				messageLoop << "|      Loading Regions... ";
@@ -3424,16 +3461,31 @@ void processkey( int c )
 			heartbeat = !heartbeat;
 			break;
 		case 'P':                
-			// Display profiling information
-			LogMessage("| CMD: Performace Dump:\n");
-			LogMessage("|      Network code: %fmsec [%i samples]\n" _ (R32)((R32)networkTime/(R32)networkTimeCount) _ networkTimeCount);
-			LogMessage("|      Timer code: %fmsec [%i samples]\n" _ (R32)((R32)timerTime/(R32)timerTimeCount) _ timerTimeCount);
-			LogMessage("|      Auto code: %fmsec [%i samples]\n" _ (R32)((R32)autoTime/(R32)autoTimeCount) _ autoTimeCount);
-			LogMessage("|      Loop Time: %fmsec [%i samples]\n" _ (R32)((R32)loopTime/(R32)loopTimeCount) _ loopTimeCount);
-			LogMessage("|      Characters: %i/%i - Items: %i/%i (Dynamic)\n" _ chars.Count() _ cmem _ items.Count() _ imem);
-			LogMessage("|      Simulation Cycles: %f per sec\n" _ (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
-			sprintf( temp, "|      Bytes sent: %i\n| Bytes Received: %i", globalSent, globalRecv );
-			messageLoop << temp;
+			// 1/13/2003 - Dreoth - Log Performance Information enhancements
+			messageLoop << "CMD: Performance Dump ";
+			Console.Log( "--- Starting Performance Dump ---", "performance.log");
+			Console.Log( "Performace Dump:", "performance.log");
+			Console.Log( "Network code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)networkTime/(R32)networkTimeCount), networkTimeCount);
+			Console.Log( "Timer code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)timerTime/(R32)timerTimeCount), timerTimeCount);
+			Console.Log( "Auto code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)autoTime/(R32)autoTimeCount), autoTimeCount);
+			Console.Log( "Loop Time: %.2fmsec [%i samples]", "performance.log", (R32)((R32)loopTime/(R32)loopTimeCount), loopTimeCount);
+			Console.Log( "Characters: %i/%i - Items: %i/%i (Dynamic)", "performance.log", chars.Count(), cmem, items.Count(), imem);
+			Console.Log( "Simulation Cycles: %f per sec", "performance.log", (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
+			Console.Log( "Bytes sent: %i", "performance.log", globalSent);
+			Console.Log( "Bytes Received: %i", "performance.log", globalRecv);
+			Console.Log( "--- Performance Dump Complete ---", "performance.log");
+			messageLoop << "Performance Dump Complete ";
+			// Echo output to console as well.
+			printf("| Performance Dump:\n");
+			printf("|   Network code: %.2fmsec [%i samples]\n", (R32)((R32)networkTime/(R32)networkTimeCount), networkTimeCount);
+			printf("|   Timer code: %.2fmsec [%i samples]\n", (R32)((R32)timerTime/(R32)timerTimeCount), timerTimeCount);
+			printf("|   Auto code: %.2fmsec [%i samples]\n", (R32)((R32)autoTime/(R32)autoTimeCount), autoTimeCount);
+			printf("|   Loop Time: %.2fmsec [%i samples]\n", (R32)((R32)loopTime/(R32)loopTimeCount), loopTimeCount);
+			printf("|   Characters: %i/%i - Items: %i/%i (Dynamic)\n", chars.Count(), cmem, items.Count(), imem);
+			printf("|   Simulation Cycles: %f per sec\n", (1000.0*(1.0/(R32)((R32)loopTime/(R32)loopTimeCount))));
+			printf("|   Bytes sent: %i\n", globalSent);
+			printf("|   Bytes Received: %i\n", globalRecv);
+			printf("| Performance Dump Complete.\n");
 			break;
 		case 'W':                
 			// Display logged in chars
@@ -4234,20 +4286,24 @@ void checkauto( void )
 	static UI32 regionCheck = 0;
 	static UI32 counter = 0;
 	bool doWeather = false;
-	ACTREC *ourAccount = NULL;
-	
+	ACCOUNTSBLOCK actbTemp;
+	MAPUSERNAMEID_ITERATOR I;
+	//
 	Trigger->PeriodicTriggerCheck();
 	// modify this stuff to take into account more variables
 	if( /*cwmWorldState->ServerData()->GetAccountFlushTimer() != 0 &&*/ accountFlush <= uiCurrentTime || overflow )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
-		for( ourAccount = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourAccount = Accounts->NextAccount() )
+		//for( ourAccount = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourAccount = Accounts->NextAccount() )
+		for(I=Accounts->Begin();I!=Accounts->End();I++)
 		{
-			if( ourAccount == NULL )
+			ACCOUNTSBLOCK actbBlock;
+			actbBlock=I->second;
+			if( actbBlock.wAccountIndex==AB_INVALID_ID)
 				continue;
 
-			if( ourAccount->lpaarHolding->bFlags&0x0008 )
+			if(actbTemp.wFlags&AB_FLAGS_ONLINE)
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				Network->PushConn();
@@ -4256,12 +4312,12 @@ void checkauto( void )
 					CChar *tChar = tSock->CurrcharObj();
 					if( tChar == NULL )
 						continue;
-					if( tChar->GetAccount() == ourAccount->lpaarHolding->id )
+					if( tChar->GetAccount().wAccountIndex == actbTemp.wAccountIndex)
 						reallyOn = true;
 				}
 				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
-					ourAccount->lpaarHolding->bFlags&=0xFFF7;
+					actbTemp.wFlags&=0xFFF7;
 			}
 		}
 		accountFlush = BuildTimeValue( (R32)cwmWorldState->ServerData()->GetAccountFlushTimer() * 60 );
@@ -4398,7 +4454,7 @@ void checkauto( void )
 			continue;
 		CChar *mChar = iSock->CurrcharObj();
 		UI08 worldNumber = mChar->WorldNumber();
-		if( isOnline( mChar ) && mChar->GetAccount() == iSock->AcctNo() )
+		if( isOnline( mChar ) && mChar->GetAccount().wAccountIndex == iSock->AcctNo() )
 		{
 			if( uiSetFlagTime <= uiCurrentTime || overflow )
 				setcharflag( mChar ); // only set flag on npcs every 60 seconds (save a little extra lag)
@@ -4442,10 +4498,10 @@ void checkauto( void )
 			}
 			else if( charCheck->GetLogout() != -1 )
 			{
-				ourAccount = charCheck->GetAccountObj();
-				if( ourAccount != NULL )
+				actbTemp = charCheck->GetAccount();
+				if(actbTemp.wAccountIndex != AB_INVALID_ID)
 				{
-					SERIAL oaiw = ourAccount->inworld;
+					SERIAL oaiw = actbTemp.dwInGame;
 					if( oaiw == INVALIDSERIAL )
 					{
 						charCheck->SetLogout( -1 );
@@ -4453,7 +4509,7 @@ void checkauto( void )
 					}
 					else if( oaiw == charCheck->GetSerial() && ( (UI32)charCheck->GetLogout() <= uiCurrentTime || overflow ) )
 					{
-						ourAccount->inworld = INVALIDSERIAL;
+						actbTemp.dwInGame = INVALIDSERIAL;
 						charCheck->SetLogout( -1 );
 						charCheck->Update();
 					}
@@ -4578,15 +4634,15 @@ void InitClasses( void )
 	
 	HTMLTemplates = new cHTMLTemplates;
 
-	const char *path = cwmWorldState->ServerData()->GetAccountsDirectory();
-	char tbuffer[512];
-	UI32 slen = strlen( path );
-	if( path[slen-1] == '\\' || path[slen-1] == '/' )
-		sprintf( tbuffer, "%saccounts.adm", path );
-	else
-		sprintf( tbuffer, "%s/accounts.adm", path );
+	//const char *path = cwmWorldState->ServerData()->GetAccountsDirectory();
+	//char tbuffer[512];
+	//UI32 slen = strlen( path );
+	//if( path[slen-1] == '\\' || path[slen-1] == '/' )
+	//	sprintf( tbuffer, "%saccounts.adm", path );
+	//else
+	//	sprintf( tbuffer, "%s/accounts.adm", path );
 	
-	if(( Accounts = new cAccounts( tbuffer ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
+	if(( Accounts = new cAccountClass( cwmWorldState->ServerData()->GetAccountsDirectory()/*tbuffer*/ ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
 	if(( SpeechSys = new CSpeechQueue()	)  == NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECH );
 	if(( GuildSys = new CGuildCollection() ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
 	if(( FileLookup = new cServerDefinitions() ) == NULL )	Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
@@ -4649,7 +4705,8 @@ void ParseArgs( int argc, char *argv[] )
 				// there is an error with the command line so we don't want to do anything
 				break;
 			}
-			if(!Accounts->GetAccount(username.c_str()))
+			ACCOUNTSBLOCK actbTemp;
+			if(!Accounts->GetAccountByName(username.c_str(),actbTemp))
 			{
 				Accounts->AddAccount( username, password, email );
 				Console << "| AccountImport: Added: " << username << " @ " << email << "\n";
@@ -4690,7 +4747,8 @@ void ParseArgs( int argc, char *argv[] )
 						inFile.getline(szBuffer,127);
 						continue;
 					}
-					if(!Accounts->GetAccount(username.c_str()))
+					ACCOUNTSBLOCK actbTemp;
+					if(!Accounts->GetAccountByName(username.c_str(),actbTemp))
 					{
 						Accounts->AddAccount(username, password, email );
 						Console << "| AccountImport: Added: " << username << " @ " << email << "\n";
@@ -5066,7 +5124,7 @@ int main( int argc, char *argv[] )
 		item_test();
 
 		Console << "Loading Accounts               ";
-		Accounts->LoadAccounts();	// text load by default
+		Accounts->Load();
 		Console.PrintDone(); 
 
 		savelog( "-=Server Startup=-\n=======================================================================\n", "server.log" );
@@ -8256,7 +8314,7 @@ void doDeathStuff( CChar *i )
 	}
 	if( cwmWorldState->ServerData()->GetDeathAnimationStatus() )
 		deathAction( i, corpsenum );
-	if( i->GetAccount() != -1 )
+	if( i->GetAccount().wAccountIndex != -1 )
 	{
 		i->Teleport();
 		if( pSock != NULL ) 

@@ -820,8 +820,7 @@ void doubleClick( cSocket *mSock )
 		case 217:	//Player Vendor Deeds
 			CChar *m;
 #pragma note( "DEPENDENT ON NUMERIC NPC SECTION" )
-			m = Npcs->AddNPCxyz( NULL, 2117, mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
-			
+			m = Npcs->AddNPCxyz(NULL, "2117", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
 			m->SetNPCAiType( 17 );
 			m->SetInvulnerable( true );
 			m->SetHidden( 0 );

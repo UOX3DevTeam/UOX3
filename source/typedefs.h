@@ -12,13 +12,14 @@
 #endif
 
 #ifdef __LINUX__
-
 	#define MAKEWORD(a, b)      ((UI16)(((UI08)(a)) | ((UI16)((UI08)(b))) << 8))
 	#define MAKELONG(a, b)      ((UI32)(((UI16)(a)) | ((UI32)((UI16)(b))) << 16))
 	#define LOWORD(l)           ((UI16)(l))
 	#define HIWORD(l)           ((UI16)(((UI32)(l) >> 16) & 0xFFFF))
 	#define LOBYTE(w)           ((UI08)(w))
 	#define HIBYTE(w)           ((UI08)(((UI16)(w) >> 8) & 0xFF))
+	#define WORD								unsigned short int;
+	#define DWORD								unsigned long int;
 #endif
 
 #define MaxZstep 9
@@ -43,7 +44,7 @@ typedef unsigned char		UI08;
 typedef signed char			SI08;
 
 #ifdef __LINUX__
-	#define MAX_PATH		512
+	#define MAX_PATH		268
 	#define INVALID_SOCKET  (~0)
 	#define SOCKET_ERROR	(-1)
 	#include "uoxlinux.h" //linux wrappers for windows-specific api calls

@@ -62,8 +62,6 @@ public:
 				cNetworkStuff();
 	virtual		~cNetworkStuff();
 	void		Disconnect( UOXSOCKET s );
-	void		LoginDisconnect( UOXSOCKET s );
-	void		LoginDisconnect( cSocket *s );
 	void		ClearBuffers( void );
 	void		CheckConn( void );
 	void		CheckMessage( void );
@@ -89,10 +87,8 @@ public:
 
 	void		On( void ) { InternalControl.On(); }
 	void		Off( void ) { InternalControl.Off(); }
-	void		Login1( cSocket *s );
 	UOXSOCKET	Transfer( UOXSOCKET s );
 	void		pSplit( char *pass0 );
-	void		GoodAuth( cSocket *s, ACTREC *ourAccount );
 
 	SI32		PeakConnectionCount( void ) const;
 
@@ -104,11 +100,17 @@ public:
 
 	void		PushXGM( void );
 	void		PopXGM( void );
-
-private:
-	void		Login2( cSocket *s, ACTREC *ourAccount );
+	
+	// Login Specific
+	void		Login1(cSocket *s);
+	void		Login2(cSocket *s, ACCOUNTSBLOCK& actbAccount);
+	void		LoginDisconnect(UOXSOCKET s);
+	void		LoginDisconnect(cSocket *s);
+	void		LogOut(UOXSOCKET s);
+	void		GoodAuth(cSocket *s, ACCOUNTSBLOCK& actbBlock);
+	//
+	
 	void		GetMsg( UOXSOCKET s );
-	void		LogOut( UOXSOCKET s);
 	void		sockInit( void );
 	void		GetLoginMsg( UOXSOCKET s );
 	UOXSOCKET	FindLoginPtr( cSocket *s );

@@ -441,13 +441,18 @@ void cWhoList::Update( void )
 	}
 	else
 	{
-		ACTREC *ourSearch = NULL;
+		ACCOUNTSBLOCK actbSearch;
+		actbSearch.wAccountIndex=AB_INVALID_ID;
+		MAPUSERNAMEID_ITERATOR I;
+		//
 		CChar *ourChar = NULL;
-		for( ourSearch = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourSearch = Accounts->NextAccount() )
+		for(I=Accounts->Begin();I!=Accounts->End();I++)
 		{
+			actbSearch = I->second;
+			//
 			for( i = 0; i < 5; i++ )
 			{
-				ourChar = ourSearch->characters[i];
+				ourChar = actbSearch.lpCharacters[i];
 				if( ourChar != NULL )
 				{
 					if( !::isOnline( ourChar ) )

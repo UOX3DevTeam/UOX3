@@ -13,7 +13,7 @@
 #include "cmdtable.h"
 #include "debug.h"
 #include "mstring.h"
-#include "cAccount.h"
+#include "cAccountClass.h"
 
 TARGET_S target_bolt =				{ 0, 1, 0, 22, 195 };
 // This fires a harmless bolt at the user.
@@ -389,7 +389,7 @@ static char *ch="abcdefg";
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	
+//|	Function/Class-	void command_addaccount( cSocket *s)
 //|	Date					-	10/17/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
@@ -405,7 +405,7 @@ void command_addaccount( cSocket *s)
 {
 	char szBuffer[128];
 	char *szCommandLine, *szCommand, *szUsername, *szPassword, *szPrivs;
-	ACTREC *actrecTemp=NULL;
+	ACCOUNTSBLOCK actbTemp;
 	UI16 nFlags=0x0000;
 	szPassword=szUsername=szCommand=szCommandLine=NULL;
 	if( tnum > 1 )
@@ -420,8 +420,7 @@ void command_addaccount( cSocket *s)
 		if(szPrivs!=NULL)
 			nFlags=atoi(szPrivs);
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		actrecTemp=Accounts->GetAccount(szUsername);
-		if(!actrecTemp)
+		if(Accounts->GetAccountByName(szUsername,actbTemp))
 		{
 			Accounts->AddAccount(szUsername,szPassword,"NA",nFlags);
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
@@ -2005,11 +2004,21 @@ void command_cleanup( cSocket *s )
 	sysmessage( s, 85, corpses );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function			-	void command_reloadaccounts( cSocket *s )
+//|	Date					-	
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Reload accounts from the console interface.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void command_reloadaccounts( cSocket *s )
-// Reloads the ACCOUNTS.ADM file.
 {
-	Accounts->LoadAccounts();
-	sysmessage( s, 86 );
+	if(Accounts->Load())
+		sysmessage(s, 86);
 	return;
 }
 

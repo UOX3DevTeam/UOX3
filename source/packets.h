@@ -691,15 +691,15 @@ class CPCharAndStartLoc : public cPBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( ACTREC& toCopy );
+	virtual void	CopyData(ACCOUNTSBLOCK& toCopy );
 public:
 					CPCharAndStartLoc();
-					CPCharAndStartLoc( ACTREC *account, UI08 numCharacters, UI08 numLocations );
+					CPCharAndStartLoc(ACCOUNTSBLOCK& account, UI08 numCharacters, UI08 numLocations );
 	virtual void	NumberOfLocations( UI08 numLocations );
 	virtual void	NumberOfCharacters( UI08 numCharacters );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
 	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
-	CPCharAndStartLoc& operator=( ACTREC& account );
+	CPCharAndStartLoc& operator=(ACCOUNTSBLOCK& actbBlock);
 };
 
 class CPIFirstLogin : public cPInputBuffer

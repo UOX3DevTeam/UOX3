@@ -1,11 +1,11 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
 
+#include "cAccountClass.h"
+
 class CChar : public cBaseObject
 {
-	protected:
-
-		ACTREC *	ourAccount;
+		ACCOUNTSBLOCK ourAccount;
 		SI16		npcaitype;
 		SERIAL		petguarding; // Get what a pet is guarding
 		SERIAL		making; // skill number of skill using to make item, 0 if not making anything, used for house building, reduce at later date, for changeover
@@ -235,8 +235,6 @@ class CChar : public cBaseObject
 		void		AddOwnedItem( CItem *toAdd );
 		void		RemoveOwnedItem( CItem *toRemove );
 
-		ACTREC *	GetAccountObj( void );
-
 		bool		IsInUse( void ) const;
 		bool		IsSaved( void ) const;
 		SI32		GetSavedAt( void ) const;
@@ -259,9 +257,12 @@ class CChar : public cBaseObject
 		SI32		GetAccount( void ) const;
 		SI32		GetCarve( void ) const;
 		UI32		GetHoldG( void ) const;
-
-		void		SetAccount( SI32 newVal );
-		void		SetAccountObj( ACTREC *tObj );
+		//
+		void		SetAccount(SI16 wAccountID);
+		void		SetAccount(ACCOUNTSBLOCK &actbAccount);
+		void		SetAccount(std::string sUsername);
+		ACCOUNTSBLOCK &GetAccount(void);
+		//
 		void		SetWeight( SI16 newVal );		// Character c is a reference to our place in the chars[]
 		void		SetFixedLight( UI08 newVal );
 		void		SetHidden( SI08 newValue );		// same as weight

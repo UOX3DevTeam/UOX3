@@ -103,9 +103,9 @@ void CWorldMain::savenewworld( bool x )
 		//	all the time if using the web interface
 		if( ServerData()->GetExternalAccountStatus()  )
 		{
-			Accounts->LoadAccounts();
+			Accounts->Load();
 		}
-		Accounts->SaveAccounts();
+		Accounts->Save();
 		worldSaveProgress = 2;
 		Console << "World save complete." << myendl;
 		Console.PrintSectionBegin();

@@ -65,7 +65,7 @@ VERSION = @VERSION@
 EXTRA_DIST = autogen.sh
 
 bin_PROGRAMS = uox3
-uox3_SOURCES = cVersionClass.cpp mstring.cpp ai.cpp archive.cpp boats.cpp books.cpp cAccount.cpp calcfuncs.cpp cBaseobject.cpp cChar.cpp cClick.cpp cConsole.cpp cDice.cpp cGuild.cpp charhandle.cpp cItem.cpp cmdtable.cpp cMultiObj.cpp combat.cpp commands.cpp cRaces.cpp cScript.cpp cServerData.cpp cServerDefinitions.cpp cSocket.cpp cThreadQueue.cpp cWeather.cpp debug.cpp Dictionary.cpp dist.cpp door.cpp effect.cpp fileio.cpp globals.cpp gumps.cpp hash.cpp house.cpp im.cpp itemhandler.cpp items.cpp lineofsight.cpp magic.cpp mapstuff.cpp movement.cpp msgboard.cpp necro.cpp network.cpp newbie.cpp npcs.cpp packets.cpp quantityfuncs.cpp queue.cpp regions.cpp scriptc.cpp SEFunctions.cpp skills.cpp sound.cpp speech.cpp ssection.cpp targeting.cpp teffect.cpp threadsafeobject.cpp townregion.cpp trade.cpp trigger.cpp uox3.cpp vendor.cpp weight.cpp wholist.cpp worldmain.cpp xgm.cpp pcmanage.cpp findfuncs.cpp jail.cpp cSpawnRegion.cpp UOXJSPropertyFuncs.cpp UOXJSMethods.cpp cHTMLSystem.cpp CGump.cpp utilsys.cpp
+uox3_SOURCES = cVersionClass.cpp mstring.cpp ai.cpp archive.cpp boats.cpp books.cpp cAccountClass.cpp calcfuncs.cpp cBaseobject.cpp cChar.cpp cClick.cpp cConsole.cpp cDice.cpp cGuild.cpp charhandle.cpp cItem.cpp cmdtable.cpp cMultiObj.cpp combat.cpp commands.cpp cRaces.cpp cScript.cpp cServerData.cpp cServerDefinitions.cpp cSocket.cpp cThreadQueue.cpp cWeather.cpp debug.cpp Dictionary.cpp dist.cpp door.cpp effect.cpp fileio.cpp globals.cpp gumps.cpp hash.cpp house.cpp im.cpp itemhandler.cpp items.cpp lineofsight.cpp magic.cpp mapstuff.cpp movement.cpp msgboard.cpp necro.cpp network.cpp newbie.cpp npcs.cpp packets.cpp quantityfuncs.cpp queue.cpp regions.cpp scriptc.cpp SEFunctions.cpp skills.cpp sound.cpp speech.cpp ssection.cpp targeting.cpp teffect.cpp threadsafeobject.cpp townregion.cpp trade.cpp trigger.cpp uox3.cpp vendor.cpp weight.cpp wholist.cpp worldmain.cpp xgm.cpp pcmanage.cpp findfuncs.cpp jail.cpp cSpawnRegion.cpp UOXJSPropertyFuncs.cpp UOXJSMethods.cpp cHTMLSystem.cpp CGump.cpp utilsys.cpp
 
 uox3_LDADD = js32.a -lpthread
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -78,7 +78,7 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-uox3_OBJECTS =  cVersionClass.o mstring.o ai.o archive.o boats.o books.o cAccount.o \
+uox3_OBJECTS =  cVersionClass.o mstring.o ai.o archive.o boats.o books.o cAccountClass.o \
 calcfuncs.o cBaseobject.o cChar.o cClick.o cConsole.o cDice.o cGuild.o \
 charhandle.o cItem.o cmdtable.o cMultiObj.o combat.o commands.o \
 cRaces.o cScript.o cServerData.o cServerDefinitions.o cSocket.o \
@@ -108,7 +108,7 @@ TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/cVersionClass.P .deps/CGump.P .deps/Dictionary.P .deps/SEFunctions.P \
 .deps/UOXJSMethods.P .deps/UOXJSPropertyFuncs.P .deps/ai.P \
-.deps/archive.P .deps/boats.P .deps/books.P .deps/cAccount.P \
+.deps/archive.P .deps/boats.P .deps/books.P .deps/cAccountClass.P \
 .deps/cBaseobject.P .deps/cChar.P .deps/cClick.P .deps/cConsole.P \
 .deps/cDice.P .deps/cGuild.P .deps/cHTMLSystem.P .deps/cItem.P \
 .deps/cMultiObj.P .deps/cRaces.P .deps/cScript.P .deps/cServerData.P \

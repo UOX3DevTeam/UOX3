@@ -57,14 +57,14 @@ void cCharStuff::DeleteChar( CChar *k )
 	
 	if( !k->IsNpc() )
 	{
-		ACTREC *mAcct = k->GetAccountObj();
-		if( mAcct != NULL )
+		ACCOUNTSBLOCK mAcct = k->GetAccount();
+		if(mAcct.wAccountIndex!=AB_INVALID_ID)
 		{
 			for( UI08 actr = 0; actr < 5; actr++ )
 			{
-				if( mAcct->characters[actr] != NULL && mAcct->characters[actr]->GetSerial() == k->GetSerial() )
+				if( mAcct.lpCharacters[actr] != NULL && mAcct.lpCharacters[actr]->GetSerial() == k->GetSerial() )
 				{
-					Accounts->RemoveCharacterFromAccount( mAcct, actr );
+					Accounts->DelCharacter(mAcct.wAccountIndex, actr);
 					break;
 				}
 			}
@@ -456,7 +456,7 @@ void cCharStuff::FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAwa
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Add NPC at a given location
 //o---------------------------------------------------------------------------o
-CChar * cCharStuff::AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
+CChar * cCharStuff::AddNPCxyz( cSocket *s, std::string npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber )
 {
 	CChar *c = CreateScriptNpc( s, npcNum, worldNumber );
 	if( c == NULL )

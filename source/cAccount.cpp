@@ -561,8 +561,17 @@ long cAccounts::LoadAccounts( void )
 					// information into each character object. 
 					actPointer->lpaarHolding = aarPointer;
 					for(int jj=0;jj<5;jj++)
+					{
 						if(actPointer->characters[jj]!=NULL)
-							actPointer->characters[jj]->SetAccountObj( actPointer );
+							try
+							{
+								actPointer->characters[jj]->SetAccountObj( actPointer );
+							}	
+							catch(...)
+							{
+								actPointer->characters[jj]=NULL;
+							}
+					}
 				}
 				if(alreadyExists)
 					delete alreadyExists;

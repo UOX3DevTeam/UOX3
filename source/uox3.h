@@ -209,7 +209,7 @@ class UOXFile;
 #include "townregion.h"
 #include "speech.h"
 #include "Dictionary.h"
-#include "cAccount.h"
+#include "cAccountClass.h"
 #include "funcdecl.h"
 #include "hash.h"
 #include "packets.h"
@@ -423,7 +423,7 @@ extern cBooks					*Books;
 extern PageVector				*GMQueue;
 extern PageVector				*CounselorQueue;
 extern CDictionaryContainer		*Dictionary;
-extern cAccounts				*Accounts;
+extern cAccountClass		*Accounts;
 extern Triggers					*Trigger;
 extern CConsole					Console;
 extern cMapRegion				*MapRegion;

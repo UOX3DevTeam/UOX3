@@ -4,6 +4,7 @@
 enum ScriptEvent
 {
 	seOnCreate = 0,			//	*	Done for PCs on global script
+	seOnCommand,
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
@@ -151,6 +152,7 @@ public:
 	JSObject *	Object( void ) const;	// returns object pointer
 
 	bool		OnCreate( cBaseObject *thingCreated );
+	bool		OnCommand( cSocket *cS); 
 	bool		OnDelete( cBaseObject *thingDestroyed );
 	bool		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );
 	bool		InRange( CChar *person, CChar *targPlayer );

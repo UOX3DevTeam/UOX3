@@ -2164,18 +2164,19 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( -1 );
-	ACTREC *ourAccount = Accounts->GetAccount( (char *)&tSock->Buffer()[5] );	// oops, my fault, it SHOULD be 5
-	if( ourAccount != NULL )
-		tSock->AcctObj( ourAccount );
+	ACCOUNTSBLOCK actbTemp;
+	if(Accounts->GetAccountByName((char *)&tSock->Buffer()[5],actbTemp))
+		tSock->SetAccount(actbTemp);
+	//
 	if( tSock->AcctNo() != -1 )
 	{
 		Network->pSplit( (char *)&tSock->Buffer()[35] );
-		if( ourAccount->lpaarHolding->bFlags&0x01 )	// no point verifying if we're banned
+		if( actbTemp.wFlags&AB_FLAGS_BANNED)
 			t = LDR_ACCOUNTDISABLED;
-		else if( strcmp( pass1, ourAccount->lpaarHolding->password ) )	// non matching password
+		else if( strcmp( pass1, actbTemp.sPassword.c_str()))
 			t = LDR_UNKNOWNUSER;
 		if( t == LDR_NODENY )
-			Network->GoodAuth( tSock, ourAccount );
+			Network->GoodAuth(tSock, actbTemp);
 		else
 		{
 			tSock->AcctNo( -1 );
@@ -2702,24 +2703,25 @@ void CPCharAndStartLoc::InternalReset( void )
 	internalBuffer.resize( 4 );
 	internalBuffer[0] = 0xA9;
 }
-void CPCharAndStartLoc::CopyData( ACTREC& toCopy )
+void CPCharAndStartLoc::CopyData(ACCOUNTSBLOCK& toCopy )
 {
 	for( UI08 i = 0; i < 5; i++ )
 	{
-		if( toCopy.characters[i] != NULL )
-			AddCharacter( toCopy.characters[i], i );
+		if( toCopy.lpCharacters[i] != NULL )
+			AddCharacter( toCopy.lpCharacters[i], i );
 	}
 }
+
 CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc( ACTREC *account, UI08 numCharacters, UI08 numLocations )
+CPCharAndStartLoc::CPCharAndStartLoc(ACCOUNTSBLOCK& actbBlock, UI08 numCharacters, UI08 numLocations )
 {
 	InternalReset();
 	NumberOfCharacters( numCharacters );
 	NumberOfLocations( numLocations );
-	CopyData( *account );
+	CopyData(actbBlock);
 }
 void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 {
@@ -2755,9 +2757,9 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 		internalBuffer[baseOffset+j+31] = sLoc->town[j];
 }
 
-CPCharAndStartLoc& CPCharAndStartLoc::operator=( ACTREC& account )
+CPCharAndStartLoc& CPCharAndStartLoc::operator=(ACCOUNTSBLOCK& actbBlock )
 {
-	CopyData( account );
+	CopyData(actbBlock);
 	return (*this);
 }
 

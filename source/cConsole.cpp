@@ -335,12 +335,32 @@ void CConsole::Log( const char *toLog, const char *filename, ... )
 		{
 			sprintf( realFileName, "%s%s", cwmWorldState->ServerData()->GetLogsDirectory(), filename );
 			//sprintf( realFileName, "%slogs/%s", cwmWorldState->ServerData()->GetRootDirectory(), filename );
-		}
+		} 
 	else
 		strcpy( realFileName, filename );
+
+	char timeStr[128];
+	#ifdef WIN32
+	//SYSTEMTIME currentTime;
+	//GetSystemTime(&currentTime);
+	//sprintf( time, "[%2d:%02d:%02d] ", currentTime.wHour, currentTime.wMinute, currentTime.wSecond );
+	struct tm *curtime;
+	time_t bintime;
+	time(&bintime);
+	curtime = localtime(&bintime);
+	strftime( timeStr, 256, "[%b %d %I:%M:%S %p] ", curtime );
+	#else
+	struct tm *curtime;
+	time_t bintime;
+	time(&bintime);
+	curtime = localtime(&bintime);
+	strftime( timeStr, 256, "[%b %d %I:%M:%S %p] ", curtime );
+	//return timeStr;
+	#endif
+
 	toWrite.open( realFileName, std::ios::out | std::ios::app );
 	if( toWrite.is_open() )
-		toWrite << msg << std::endl;
+		toWrite << timeStr << msg << std::endl;
 	toWrite.close();
 }
 
@@ -605,7 +625,7 @@ void CConsole::PrintFailed( void )
 	MoveTo( 70 );
 	(*this) << "[";
 	TurnRed();
-	(*this) << "failed";
+	(*this) << "Failed";
 	TurnNormal();
 	(*this) << "]" << myendl;
 }
@@ -621,8 +641,8 @@ void CConsole::PrintPassed( void )
 {
 	MoveTo( 70 );
 	(*this) << "[";
-	TurnBlue();
-	(*this) << "passed";
+	TurnYellow();
+	(*this) << "Skipped";
 	TurnNormal();
 	(*this) << "]" << myendl;
 }

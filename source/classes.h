@@ -76,7 +76,7 @@ public:
 	CChar *		SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
 	CChar *		SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, bool randomNPC );
 	CChar *		AddNPC( cSocket *s, cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
-	CChar *		AddNPCxyz( cSocket *s, int npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber );
+	CChar *		AddNPCxyz( cSocket *s, std::string npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber );
 	void		Split( CChar *k );
 	void		CheckAI( CChar *i );
 	void		LoadShopList( const char *list, CChar *c );

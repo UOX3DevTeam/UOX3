@@ -24,6 +24,8 @@
 
 static JSFunctionSpec my_functions[] =  
 { 	// ScriptName, Func Ptr, num args, ?, ? 
+	{ "GetCommand",					SE_GetCommand,				1, 0, 0 }, 
+	{ "GetCommandSize",				SE_GetCommandSize,			0, 0, 0 }, 	
 	{ "IsDecayable",				SE_IsDecayable,				1, 0, 0 },
 	{ "SetDecayable",				SE_SetDecayable,			2, 0, 0 },
 	{ "GetDecayTime",				SE_GetDecayTime,			1, 0, 0 },
@@ -205,7 +207,8 @@ static JSFunctionSpec my_functions[] =
 	{ "CharbySerial",				JS_CharbySerial,			1, 0, 0 },
 
 	{ "GetWorldBrightLevel",		JS_GetWorldBrightLevel,		0, 0, 0 },
-	
+	{ "TriggerEvent",           SE_TriggerEvent,  3, 0, 0 },
+ 	
 	{ NULL,							NULL,						0, 0, 0 }, 
 };
 
@@ -2733,3 +2736,37 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
 	return ( retVal == JS_TRUE );
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function			-	bool cScript::OnCommand( cSocket *cS)
+//|	Date					-	1/13/2003 11:17:48 PM
+//|	Developers		-	Brakhtus
+//|	Organization	-	Forum Submission
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+bool cScript::OnCommand( cSocket *cS) 
+{ 	
+	if(cS == NULL) 		
+		return false; 	
+	if( !EventExists( seOnCommand ) ) 		
+		return false; 	
+	jsval Func = JSVAL_NULL; 	
+	JS_GetProperty( targContext, targObject, "onCommand", &Func ); 	 	
+	if( Func == JSVAL_VOID ) 	
+	{ 		
+		SetEventExists( seOnCommand, false ); 		
+		return false; 	
+	} 	
+	jsval params[1], rval; 	
+	JS_SetPrivate( targContext, sockObjects[0].toUse, cS); 	
+	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse ); 	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCommand", 1, params, &rval ); 	
+	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL ); 	
+	if( retVal == JS_FALSE ) 		
+		SetEventExists( seOnSpeech, false ); 	
+	return ( retVal == JS_TRUE ); 
+} 

@@ -165,7 +165,7 @@ void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with t
 	UI08 a3 = s->GetByte( 4 );
 	UI08 a4 = s->GetByte( 5 );
 	s->TargetOK( false );
-	if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount() != 0 )
+	if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().wAccountIndex != 0 )
 	{
 		sysmessage( s, 1008 );
 		if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
@@ -328,7 +328,7 @@ void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with t
 	// FREE		case 102: break;
 	// FREE		case 103: break;
 			case 104: 			
-				if( mChar->GetAccount() == 0 )
+				if( mChar->GetAccount().wAccountIndex == 0 )
 					 CommandLevel( s ); 
 				else
 					sysmessage( s, 1009 );
@@ -661,7 +661,7 @@ void cTargets::RemoveTarget( cSocket *s )
 		CChar *c = calcCharObjFromSer( serial );
 		if( c == NULL )
 			return;
-		if( c->GetAccount() != -1 && !c->IsNpc() )
+		if( c->GetAccount().wAccountIndex != -1 && !c->IsNpc() )
 		{ 
 			sysmessage( s, 1014 );
 			return;
@@ -1104,11 +1104,14 @@ void cTargets::CstatsTarget( cSocket *s )
 	int charPrivs = (i->GetPriv()<<8) + i->GetPriv2();
 	SERIAL charSerial = i->GetSerial();
 
+	ACCOUNTSBLOCK actbTemp;
+	actbTemp=i->GetAccount();
+
 	charStat.AddData( "Serial", charSerial, 3 );
 	charStat.AddData( "Body Type", charID, 5 );
 	charStat.AddData( "Name", i->GetName() );
 	charStat.AddData( "Skin", charSkin, 5 );
-	charStat.AddData( "Account", i->GetAccount() );
+	charStat.AddData( "Account", actbTemp.wAccountIndex );
 	charStat.AddData( "Privs", charPrivs, 5 );
 	charStat.AddData( "Strength", i->GetStrength() );
 	charStat.AddData( "Dexterity", i->GetDexterity() );
@@ -1136,8 +1139,10 @@ void cTargets::CstatsTarget( cSocket *s )
 	charStat.AddData( "Race", i->GetRace() );
 	charStat.AddData( "RaceGate", i->GetRaceGate() );
 	charStat.AddData( "CommandLevel", i->GetCommandLevel() );
-	if( i->GetAccount() != -1 )
+	// 
+	if( actbTemp.wAccountIndex != -1 )
 		charStat.AddData( "Last On", i->GetLastOn() );
+	//
 	charStat.Send( 4, false, INVALIDSERIAL );
 	
 	Gumps->Open( s, i, 8 );

@@ -24,6 +24,17 @@ cHTMLTemplate::~cHTMLTemplate()
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Parses a template
 //o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cHTMLTemplate::Process( void )
+//|	Date					-	1/18/2003 4:43:17 AM
+//|	Developers		-	DarkStorm / EviLDeD
+//|	Organization	-UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void cHTMLTemplate::Process( void )
 {
 	// Only read the Status Page if it's not already loaded
@@ -41,7 +52,7 @@ void cHTMLTemplate::Process( void )
 
 	// Account-Count
 	char AccountCount[32];
-	sprintf( AccountCount, "%d", Accounts->GetAccountCount() );
+	sprintf(AccountCount, "%d", Accounts->size());
 	for( Pos = ParsedContent.find("%accounts"); Pos >= 0; Pos = ParsedContent.find( "%accounts" ) )
 	{
 		ParsedContent.replace( Pos, 9, AccountCount );
@@ -246,9 +257,10 @@ void cHTMLTemplate::Process( void )
 						// PlayerAccount
 						for( sPos = parsedInline.find( "%playeraccount" ); sPos >= 0; sPos = parsedInline.find( "%playeraccount" ) )
 						{
-							ACTREC *toScan = tChar->GetAccountObj();
-							if( toScan != NULL )
-								(keeprun)?parsedInline.replace( sPos, 14, toScan->lpaarHolding->username ):parsedInline.replace( sPos, 14, "" );
+							ACCOUNTSBLOCK toScan;
+							toScan=tChar->GetAccount();
+							if( toScan.wAccountIndex!=AB_INVALID_ID)
+								(keeprun)?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
 						}
 
 						// PlayerX

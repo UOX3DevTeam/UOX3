@@ -44,12 +44,17 @@ static inline void doTarget( cSocket *s, TARGET_S *ts )
 	target( s, ts->a1, ts->a2, ts->a3, ts->a4, ts->dictEntry );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Command( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handles commands sent from client
-//o---------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
+//|	Function			-	void cCommands::Command( cSocket *s )
+//|	Date					-	
+//|	Developers		-	EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Handles commands sent from client
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 void cCommands::Command( cSocket *s )
 {
 	char *comm;
@@ -94,14 +99,16 @@ void cCommands::Command( cSocket *s )
 	} 
 
 	CmdTableIterator toFind = cmd_table.find( comm );
-	if( toFind == cmd_table.end() )
-	{
-		sysmessage( s, 336 );
-		return;
-	}
+	if( toFind == cmd_table.end() ) 
+	{ 	
+		cScript *toGrab=Trigger->GetScript( s->CurrcharObj()->GetScriptTrigger() ); 	
+		if( toGrab == NULL || !toGrab->OnCommand(s)) 		
+			sysmessage( s, 336 ); 	
+		return; 
+	} 	
 	else
 	{
-		bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount() == 0 );
+		bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		// from now on, account 0 ALWAYS has admin access, regardless of command level
 		if( !plClearance )
 		{

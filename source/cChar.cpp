@@ -204,24 +204,54 @@ UI32 CChar::GetHoldG( void ) const
 	return holdg;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetAccount( SI32 newAccount )
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the account associated with the CHARACTER
-//o---------------------------------------------------------------------------o
-void CChar::SetAccount( SI32 newVal )
+//o--------------------------------------------------------------------------o
+//|	Function			-	void CChar::SetAccount( SI32 newVal )
+//|	Date					-	1/14/2003 6:17:45 AM
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Set the account object for this character to the specified
+//|									account block. This functuo uses the accounts ID to link
+//|									the character to the account.
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+void CChar::SetAccount(SI16 wAccountID)
 {
-	account = newVal;
-	ourAccount = Accounts->GetAccountByID( account );
+	if(!Accounts->GetAccountByID(wAccountID,(ACCOUNTSBLOCK&)ourAccount))
+	{
+		// Ok there was an error setting an account to this character.
+		account=0xffff;
+		ourAccount.wAccountIndex=0xffff;
+		return;
+	}
+	account = ourAccount.wAccountIndex;
 }
-
-void CChar::SetAccountObj( ACTREC *tObj )
+//
+void CChar::SetAccount(std::string sUsername)
 {
-	account = tObj->lpaarHolding->id;
-	ourAccount = tObj;
+	if(!Accounts->GetAccountByName(sUsername,(ACCOUNTSBLOCK&)ourAccount))
+	{
+		// Ok there was an error setting an account to this character.
+		account=0xffff;
+		ourAccount.wAccountIndex=0xffff;
+		return;
+	}
+	account = ourAccount.wAccountIndex;
 }
+//
+void CChar::SetAccount(ACCOUNTSBLOCK &actbAccount)
+{
+	if(actbAccount.wAccountIndex==0xffff)
+	{
+		account=0xffff;
+		return;
+	}
+	ourAccount = actbAccount;
+	account=ourAccount.wAccountIndex;
+}
+//
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetWeight( SI08 newVal )
@@ -2414,7 +2444,7 @@ splitchnc( 0 ), trainer( 0 ), trainingplayerin( 0 ), guildfealty( INVALIDSERIAL 
 crimflag( -1 ), casting( 0 ), spelltime( 0 ), spellCast( -1 ), spellaction( 0 ), nextact( 0 ), poisonserial( INVALIDSERIAL ),
 squelched( 0 ), mutetime( 0 ), med( 0 ), stealth( -1 ), running( 0 ), logout( 0 ), swingtarg( INVALIDSERIAL ), holdg( 0 ), raceGate( 65535 ),
 fly_steps( 0 ), smoketimer( 0 ), smokedisplaytimer( 0 ), carve( -1 ), commandLevel( 0 ), postType( LOCALPOST ),
-questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount( NULL ), fame2( 0 ), karma2( 0 ), step( 0 ),
+questType( 0 ), questDestRegion( 0 ), questOrigRegion( 0 ), ourAccount(), fame2( 0 ), karma2( 0 ), step( 0 ),
 stm2( 0 ), hairstyle( INVALIDID ), beardstyle( INVALIDID ), haircolor( INVALIDCOLOUR ), beardcolour( INVALIDCOLOUR ), orgSkin( colour ), petguarding( INVALIDSERIAL ),
 trackingdisplaytimer( 0 ), may_levitate( false ), oldx( 0 ), oldy( 0 ), oldz( 0 ), speechItem( INVALIDSERIAL ), SavedAt( 0 ), addMenuLoc( INVALIDSERIAL ), remove( 0 )
 {
@@ -3423,7 +3453,7 @@ bool CChar::DumpBody( std::ofstream &outStream, SI32 mode ) const
 		}
 		buff.SetType( 1 );
 
-		if( DefChar->GetAccount() != GetAccount() )
+		if( DefChar->GetAccount().wAccountIndex != GetAccount() )
 		{
 			buff.PutByte( CHARTAG_ACCOUNT );
 			buff.PutLong( GetAccount() );
@@ -3910,24 +3940,25 @@ bool CChar::Save( std::ofstream &outStream, SI32 mode ) const
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  ACTREC *GetAccountObj( void )
-//|   Date        -  13 March 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the account, if any, associated with the CHARACTER
-//o---------------------------------------------------------------------------o
-ACTREC *CChar::GetAccountObj( void )
+//o--------------------------------------------------------------------------o
+//|	Function			-	ACCOUNTSBLOCK &CChar::GetAccount( void )
+//|	Date					-	3/13/2003
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns the account, if any, associated with the CHARACTER
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
+ACCOUNTSBLOCK &CChar::GetAccount(void) 
 {
-	if( account == -1 || IsNpc() )
-		return NULL;
-	if( ourAccount == NULL )
-		ourAccount = Accounts->GetAccountByID( account );
-	if( ourAccount == NULL )
+	if(ourAccount.wAccountIndex==-1||IsNpc()||ourAccount.wAccountIndex==AB_INVALID_ID)
 	{
-		account = -1;		// account no SI32er exists
-		return NULL;
+		// Set this just in case that this is an NPC.
+		ourAccount.wAccountIndex=AB_INVALID_ID;
 	}
+	//
 	return ourAccount;
 }
 
@@ -5293,7 +5324,7 @@ bool CChar::LoadRemnants( int arrayOffset )
 	UI16 k = GetID();
 	if( k > 0x3E1 )
 	{ 
-		if( GetAccount() == -1 ) 
+		if(GetAccount().wAccountIndex == -1||GetAccount().wAccountIndex==0xffff) 
 		{ 
 			Console << "npc: " << GetSerial() << "[" << GetName() << "] with bugged body value detected, deleted for stability reasons" << myendl;
 			return false;
@@ -5306,7 +5337,7 @@ bool CChar::LoadRemnants( int arrayOffset )
 
 	SI16 mx = GetX();
 	SI16 my = GetY();
-	SI32 acct = GetAccount();
+	SI32 acct = GetAccount().wAccountIndex;
 
 	bool overRight = ( mx > MapWidths[worldNumber] );
 	bool overBottom = ( my > MapHeights[worldNumber] );
@@ -5320,7 +5351,7 @@ bool CChar::LoadRemnants( int arrayOffset )
 	}
 
 	if( !IsNpc() )
-		Accounts->AddCharacterToAccount( GetAccount(), this );	// account ID, and account object.
+		Accounts->AddCharacter(GetAccount().wAccountIndex, this );	// account ID, and account object.
  	return true;
 }
 

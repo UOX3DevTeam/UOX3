@@ -3,16 +3,20 @@
 
 class cSocket
 {
-private:
+public:
+	// Account Related Member(s)
+	SI32			wAccountID;
+	ACCOUNTSBLOCK actbAccount;
+	ACCOUNTSBLOCK& GetAccount(void);
+	void SetAccount(ACCOUNTSBLOCK &actbBlock);
+	void SetAccount(SI16 wNewAccountID);
+	void SetAccount(std::string sUsername);
+	//
 
 	void			InternalReset( void );
 
 	CChar *			currCharObj;
-	ACTREC *		acct;
-
 	CHARACTER		currchar;
-	SI32			acctno;
-
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
 	SI32			tempint;
@@ -142,7 +146,6 @@ public:
 	int				InLength( void ) const;
 	bool			Logging( void ) const;
 	CChar *			CurrcharObj( void ) const;
-	ACTREC *		AcctObj( void ) const;
 	UI08			ClientIP1( void ) const;
 	UI08			ClientIP2( void ) const;
 	UI08			ClientIP3( void ) const;
@@ -196,7 +199,6 @@ public:
 	void			InLength( int newValue );
 	void			Logging( bool newValue );
 	void			CurrcharObj( CChar *newValue );
-	void			AcctObj( ACTREC *newValue );
 	void			ClientIP1( UI08 );
 	void			ClientIP2( UI08 newValue );
 	void			ClientIP3( UI08 newValue );

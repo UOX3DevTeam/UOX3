@@ -1064,7 +1064,9 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 		if( speechList[i].At() == -1 || speechList[i].At() <= uiCurrentTime )
 		{
 			retVal = true;
-			SayIt( &speechList[i] );
+			// 1/13/2003 - Maarc - Quick fix for more strict gcc 3.2 compliance.
+			SayIt((SPEECHITERATOR)(&speechList[i]));
+			//
 			rem.push_back(i);//add to our list of to be deleted
 		}
 	}

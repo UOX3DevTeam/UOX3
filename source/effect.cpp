@@ -630,8 +630,7 @@ void checktempeffects( void )
 			}
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default. checktempeffects()"); //Morrolan
-			return;
+			Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			return;
 		}
 		Effects->DelCurrent();
 		if( s != NULL && equipCheckNeeded )

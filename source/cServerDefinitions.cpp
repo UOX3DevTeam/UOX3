@@ -268,7 +268,7 @@ void cServerDefinitions::BuildFileList( DefinitionCategories category )
 	}
 	while( retVal != 0 )	// while there are still files
 	{
-		retVal = FindNextFile( findHandle, &toFind );	// grab the next file
+		retVal =(bool)FindNextFile( findHandle, &toFind );	// grab the next file
 		if( retVal != 0 )
 			filenameListings.push_back( toFind.cFileName );
 	}
