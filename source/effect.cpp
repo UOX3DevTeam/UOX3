@@ -810,7 +810,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 			DismountCreature( tSock->CurrcharObj() );
 		k = ( more1<<8 ) + more2;
 		
-		if( k >= 0x000 && k <= 0x3e1 ) // lord binary, body-values >0x3e1 crash the client
+		if( k >= 0x0000 && k <= 0x03e1 ) // lord binary, body-values >0x3e1 crash the client
 		{ 
 			dest->SetID( k );
 			dest->SetxID( k );

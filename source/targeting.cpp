@@ -4090,7 +4090,7 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 			if( !strnicmp( origLevel->name, playerName, strlen( origLevel->name ) ) )
 				playerName += ( strlen( origLevel->name ) + 1 );
 		}
-		strcpy( temp, playerName );
+		strcpy( temp, (const char*)playerName );
 		targetChar->SetName( temp );
 	}
 	CItem *retitem = NULL;
