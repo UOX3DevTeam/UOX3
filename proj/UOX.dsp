@@ -296,11 +296,11 @@ SOURCE=..\h\uox3.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\source\uox3.ico
+SOURCE=..\obj\uox3.ico
 # End Source File
 # Begin Source File
 
-SOURCE=..\source\uox3.rc
+SOURCE=..\obj\uox3.rc
 # End Source File
 # Begin Source File
 
