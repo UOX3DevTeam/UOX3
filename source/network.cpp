@@ -99,7 +99,7 @@ int cNetworkStuff::xRecv(int s) // Better Receive routine than the one currently
 	printf("REC:\n");
 	x=0;
 #endif
-	i=binlength[s]+count;
+	i = binlength[s] + count;
 	binlength[s]+=count;
 #ifdef DEBUG_NETWORK
 	if ((y)!=15)
@@ -206,131 +206,130 @@ void setLastOn(UOXSOCKET s)
 	safeCopy(chars[currchar[s]].laston, t, MAX_LASTON);
 }
 
-void cNetworkStuff::Disconnect(int s) // Force disconnection of player //Instalog
+void cNetworkStuff::Disconnect (int s) // Force disconnection of player //Instalog
 {
+	int j;
 	
-	setLastOn(s);
-	if (xgm)
+	setLastOn( s );
+	if( xgm )
 	{
-		if (xGM[s]->isClient)
+		if( xGM[s]->isClient )
 		{
-			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now - 1);
+			printf("UOX3: Client %i (XGM) disconnected. [Total:%i]\n", s, now-1 );
 			xGM[s]->isClient = 0;
-		}
+		} 
 		else
-			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1);
+			printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1 );
 	}
 	else
-		printf("UOX3: Client %i disconnected. [Total: %i]\n", s, now - 1);
-	
-	FlushBuffer(s);
-	closesocket(client[s]);
-	
-	if ((chars[currchar[s]].account == acctno[s]) && (server_data.partmsg)) 
-	{
-		sprintf(temp, "%s has left the realm", chars[currchar[s]].name);
-		sysbroadcast(temp);// message upon leaving a server 
-	} 
+		printf("UOX3: Client %i disconnected. [Total:%i]\n",s,now-1);
 
+	FlushBuffer( s );
+	closesocket( client[s] );
+	
+	if ((chars[currchar[s]].account==acctno[s])&&(server_data.partmsg)) 
+	{
+		sprintf(temp,"%s has left the realm",chars[currchar[s]].name);
+		sysbroadcast(temp);//message upon leaving a server 
+	} 
 	if (acctno[s]!=-1) 
-		acctinuse[acctno[s]] = 0; // Bug clearing logged in accounts!
-	
-	// Moving everything up
-	memmove(&client[s], &client[s + 1], (now - s - 1) * sizeof(int));
-	memmove(&newclient[s], &newclient[s + 1], (now - s - 1) * sizeof(int));
-	memmove(&clientip[s], &clientip[s + 1], (now - s - 1) * 4 * sizeof(char));
-	memmove(&acctno[s], &acctno[s + 1], (now - s - 1) * sizeof(int));
-	memmove(&perm[s], &perm[s + 1], (now - s - 1) * sizeof(char));
-	memmove(&addid1[s], &addid1[s + 1], (now - s - 1) * sizeof(char));
-	memmove(&addid2[s], &addid2[s + 1], (now - s - 1) * sizeof(char));
-    memmove(&addid3[s], &addid3[s + 1], (now - s - 1) * sizeof(char));	
-    memmove(&addid4[s], &addid4[s + 1], (now - s - 1) * sizeof(char));
-	memmove(&addx[s], &addx[s + 1], (now - s - 1) * sizeof(int));
-	memmove(&addy[s], &addy[s + 1], (now - s - 1) * sizeof(int));
-	memmove(&addz[s], &addz[s + 1], (now - s - 1) * sizeof(int));
-    memmove(&cryptclient[s], &cryptclient[s + 1], (now - s - 1) * sizeof(char));
-	memmove(&idleTimeout[s], &idleTimeout[s + 1], (now - s - 1) * sizeof(long));
-	memmove(&firstpacket[s], &firstpacket[s + 1], (now - s - 1) * sizeof(bool));
-	
-	// Instalog
+		acctinuse[acctno[s]]=0; //Bug clearing logged in accounts!
+	acctno[s]=-1;
+	idleTimeout[s] = -1;
+	for( j = s; j < now - 1; j++ )
+	{
+		client[j] = client[j+1];
+		newclient[j] = newclient[j+1];
+		currchar[j] = currchar[j+1];
+		clientip[j][0] = clientip[j+1][0];
+		clientip[j][1] = clientip[j+1][1];
+		clientip[j][2] = clientip[j+1][2];
+		clientip[j][3] = clientip[j+1][3];
+		acctno[j] = acctno[j+1];
+		//  war[j]=war[j+1];
+		perm[j] = perm[j+1];
+		addid1[j] = addid1[j+1];
+		addid2[j] = addid2[j+1];
+		addid3[j] = addid3[j+1];
+		addid4[j] = addid4[j+1];
+		addx[j] = addx[j+1];
+		addy[j] = addy[j+1];
+		addz[j] = addz[j+1];
+		cryptclient[j] = cryptclient[j+1];
+		idleTimeout[j] = idleTimeout[j+1];
+		firstpacket[j] = firstpacket[j+1];
+	}
+	//Instalog
 	LogOut(s);
-	currchar[now] = 0;
+	currchar[now]=0;
 	now--;
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
 }
 
-#define LOGIN_NOT_FOUND -3
-#define BAD_PASSWORD -4
-#define ACCOUNT_BANNED -5
-#define ACCOUNT_WIPE -6
+const signed long LOGIN_NOT_FOUND = -3;
+const signed long BAD_PASSWORD = -4;
+const signed long ACCOUNT_BANNED = -5;
+const signed long ACCOUNT_WIPE = -6;
 
-int cNetworkStuff::Authenticate (const char *username, const char *pass)
+signed long cNetworkStuff::Authenticate( const char *username, const char *pass )
 {
 	int i = 0;
-	char login[40], password[40];
 
-	strcpy(login, username );
-	strcpy(password, pass );
-	strupr(login);
-	strupr(password);
-
+	// We want case sensitive password/usernames
 	bool loginfound = false;
-	int loginlength = strlen(login);          // pre-calculate login length
-	while (!loginfound && i < acctcount)
+	int loginlength = strlen( username );	// pre calc login length
+	while( !loginfound && i < acctcount )
 	{
-	    if ( ( strlen(acctx[i].name) == loginlength ) /*&& ( acctx[i].name[0] == login[0] )*/ ) //strcmp is slow, lets do cheaper tests first
-			if (!strcmp(acctx[i].name, login))
-				loginfound = true;
-		if (!loginfound)
+		if( strlen( acctx[i].name ) == loginlength )
+			loginfound = ( strcmp( acctx[i].name, username ) == 0 );
+		if( !loginfound )
 			i++;
 	}
-    if ( !loginfound ) 
+	if( !loginfound )
 		return LOGIN_NOT_FOUND;
-	if (!strcmp(acctx[i].pass, password))
+	if( !strcmp( acctx[i].pass, pass ) )
 	{
-		if( acctx[i].ban == 1 ) // They are banned
+		if( acctx[i].ban == 1 )
 			return ACCOUNT_BANNED;
-		else if ( acctx[i].wipe == 1 )
+		else if( acctx[i].wipe == 1 )
 			return ACCOUNT_WIPE;
-		else
+		else 
 			return i;
-	} else
+	}
+	else
 		return BAD_PASSWORD;
 }
-
 
 void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new format) // Revana*
 {
 	int i;
 	unsigned long int j, tlen, t;
 	unsigned long int ip;
-	char nopass[3]="\x82\x03";
+	char nopass[3] = "\x82\x03";
 	char acctused[3]="\x82\x01";
 	char newlist1[7]="\xA8\x01\x23\xFF\x00\x01";
 	char newlist2[41]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x12\x01\x7F\x00\x00\x01";
 	
 	acctno[s]=-1;
 
-	pSplit( (char *)&buffer[s][31]);
-	i = Authenticate ( (char *) &buffer[s][1], pass1);
-	
-	if (i >= 0)
+	pSplit( (char *)&buffer[s][31] );
+	i = Authenticate( (char *)&buffer[s][1], pass1 );
+	if( i >= 0 )
 		acctno[s] = i;
 	else
 	{
-
-		//check for a error
-		switch (i)
+		// Check for error
+		switch( i )
 		{
 		case BAD_PASSWORD:
-			acctno[s]=-1;
-			xSend(s, nopass, 2, 0);
+			acctno[s] = -1;
+			xSend( s, nopass, 2, 0 );
 			Disconnect( s );
 			break;
 		case ACCOUNT_BANNED:
-			acctno[s]=-1;
-			xSend(s, acctblock, 2, 0);
+			acctno[s] = -1;
+			xSend( s, acctblock, 2, 0 );
 			Disconnect( s );
 			break;
 		case ACCOUNT_WIPE:
@@ -339,54 +338,51 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 			Disconnect( s );
 			break;
 		case LOGIN_NOT_FOUND:
-			if (!server_data.auto_a_create)
+			if( !server_data.auto_a_create )
 			{
 				acctno[s] = -1;
 				xSend( s, noaccount, 2, 0 );
 				Disconnect( s );
 			}
+			else
+			{
+				t = 1;
+				sprintf( temp, "%x.%x.%x.%x", clientip[s][0], clientip[s][1], clientip[s][2], clientip[s][3] );
+				for( j = 0; j < acctcount; j++ )
+				{
+					if ( (!(strcmp(temp,acctx[j].tempIP))) || ( acctx[j].ip1 == clientip[s][0] && acctx[j].ip2 == clientip[s][1] && acctx[j].ip3 == clientip[s][2] && acctx[j].ip4 == clientip[s][3] ) )
+					{
+						t = 0;
+						break;
+					}
+				}
+				
+				if( t )
+				{
+					printf("AUTOACCT: New account \"%s\":\"%s\" created for %x.%x.%x.%x\n",&buffer[s][1],&buffer[s][31],clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
+					memset(acctx + acctcount,0,sizeof(acct_st));
+					strcpy(acctx[acctcount].name, (char *)&buffer[s][1]);
+					strcpy(acctx[acctcount].pass, (char *)&buffer[s][31]);
+					acctno[s] = acctcount;
+					acctx[acctcount].ip1 = clientip[s][0];
+					acctx[acctcount].ip2 = clientip[s][1];
+					acctx[acctcount].ip3 = clientip[s][2];
+					acctx[acctcount].ip4 = clientip[s][3];
+					acctx[acctcount].listpublic = true;
+					cwmWorldState->saveAccount();
+					acctcount++;
+				} 
+				else 
+				{
+					xSend(s, acctused, 2, 0);
+					Disconnect( s );	// Should kick them once it fails
+					return;
+				}
+				t = 0;
+			}
 			break;
 		}
-
-		if ( server_data.auto_a_create && i == LOGIN_NOT_FOUND )
-		{
-			t=1;
-			sprintf(temp, "%x.%x.%x.%x",clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
-			for (j=0;j<acctcount;j++)
-			{
-				if ( (!(strcmp(temp,acctx[j].tempIP))) || ( acctx[j].ip1 == clientip[s][0] && acctx[j].ip2 == clientip[s][1] && acctx[j].ip3 == clientip[s][2] && acctx[j].ip4 == clientip[s][3] ) )
-				{
-					t=0;
-					break;
-				}
-			}
-			
-			if (t)
-			{
-				printf("AUTOACCT: New account \"%s\":\"%s\" created for %x.%x.%x.%x\n",&buffer[s][1],&buffer[s][31],clientip[s][0],clientip[s][1],clientip[s][2],clientip[s][3]);
-				memset(acctx + acctcount,0,sizeof(acct_st));
-				strcpy(acctx[acctcount].name, (char *)&buffer[s][1]);
-				strcpy(acctx[acctcount].pass, (char *)&buffer[s][31]);
-				acctno[s] = acctcount;
-				acctx[acctcount].ip1 = clientip[s][0];
-				acctx[acctcount].ip2 = clientip[s][1];
-				acctx[acctcount].ip3 = clientip[s][2];
-				acctx[acctcount].ip4 = clientip[s][3];
-				//	EviLDeD	-	February 10, 2000
-				//	Default runtime additions are set as public on the webpage
-				acctx[acctcount].listpublic=true;
-				//	EviLDeD	-	End
-				cwmWorldState->saveAccount();
-				acctcount++;
-			} else {
-				xSend(s, acctused, 2, 0);
-				Disconnect( s );    //Should kick them once it fails
-				return;
-			}
-			t=0;
-		}
 	}
-
 	if( acctinuse[acctno[s]] )
 	{
 		for( int tmpJ = 0; tmpJ < now; tmpJ++ )
@@ -397,15 +393,9 @@ void cNetworkStuff::Login1(int s) // Initial login (Login on "loginserver", new 
 			}
 		}
 	}
-	if (acctno[s]!=-1)
+	if( acctno[s] != -1 )
 	{
 #ifndef __NT__
-/*		getpeername(s, (struct sockaddr*) &client_addr, &len_connection_addr);
-		//UI32 tmpip = htonl(client_addr.sin_addr.s_addr);
-		UI32 tmpip = ntohl(client_addr.sin_addr.s_addr);		// Tseramed, already in network byte order
-#ifdef DEBUG_NETWORK
-		printf("Client connected from %lu\n", tmpip);
-#endif*/
 		acctx[acctno[s]].ip1 = (char) clientip[s][0];
 		acctx[acctno[s]].ip2 = (char) clientip[s][1];
 		acctx[acctno[s]].ip3 = (char) clientip[s][2];
@@ -494,16 +484,13 @@ void cNetworkStuff::GoodAuth(int s) // Revana*
 			}
 		}
 	}
-
-	memset(&login04b, 0, sizeof(login04b));
-
+	for (i=0;i<60;i++) login04b[i]=0;
 	for (i=j;i<5;i++)
 	{
 		xSend(s, login04b, 60, 0);
 	}
 	buffer[s][0]=startcount;
 	xSend(s, buffer[s], 1, 0);
-
 	for (i=0;i<startcount;i++)
 	{
 		login04d[0]=i;
@@ -569,48 +556,45 @@ void cNetworkStuff::CharList(int s) // Gameserver login and character listing //
 	char verify2[63]="\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 #endif
 #endif
-	char nopass[3]="\x82\x03";
+	char nopass[3] = "\x82\x03";
 	
-	acctno[s]=-1;
-
-	pSplit( (char *)&buffer[s][35]);
-	i = Authenticate ( (char *) &buffer[s][5], pass1);
-	
-	if (i >= 0)
+	acctno[s] = -1;
+	pSplit((char *)&buffer[s][35]);
+	i = Authenticate( (char *)&buffer[s][5], pass1 );
+	if( i >= 0 )
 		acctno[s] = i;
-	else {
+	else
+	{
 		switch( i )
 		{
 		case ACCOUNT_WIPE:
-			#ifdef DEBUG_NETWORK
-				printf("No account!\n");
-			#endif
+#ifdef DEBUG_NETWORK
+			printf("No account!\n");
+#endif
 			acctno[s] = -1;
 			xSend( s, noaccount, 2, 0 );
 			Disconnect( s );
-			break;
+			return;
 		case BAD_PASSWORD:
-			#ifdef DEBUG_NETWORK
-				printf("No password!\n");
-			#endif
+#ifdef DEBUG_NETWORK
+			printf("No password!\n");
+#endif
 			acctno[s]=-1;
 			xSend(s, nopass, 2, 0);
 			Disconnect(s);
 			return;
-			break;
 		case ACCOUNT_BANNED:
-			#ifdef DEBUG_NETWORK
-				printf("Player blocked!\n"); //banned
-			#endif
+#ifdef DEBUG_NETWORK
+			printf( "Player blocked!\n" );	// banned
+#endif
 			acctno[s]=-1;
 			xSend(s, acctblock, 2, 0);
 			Disconnect(s);
 			return;
-			break;
 		default:
-			#ifdef DEBUG_NETWORK
-				printf("No account!\n");
-			#endif
+#ifdef DEBUG_NETWORK
+			printf("No account!\n");
+#endif
 			xSend(s, noaccount, 2, 0);
 			Disconnect(s);
 			return;
@@ -729,7 +713,9 @@ void cNetworkStuff::LogOut( UOXSOCKET s )//Instalog
 	{
 		inworld[chars[p].account]=-1;
 		chars[p].logout=-1;
-	} else {
+	} 
+	else 
+	{
 		inworld[chars[p].account]=p;
 		chars[p].logout = (SI32)(uiCurrentTime+server_data.quittime*CLOCKS_PER_SEC);
 	}

@@ -242,6 +242,7 @@ public:
 	void InitItem(int nItem, char ser=1);
 	char isFieldSpellItem(int i);
 	bool isShieldType( int i );
+	bool isLeftHandType( int i );
 	ARMORCLASS ArmorClass( ITEM i );
 	unsigned char PackType( unsigned char id1, unsigned char id2 );
 	void CheckEquipment( CHARACTER p );  // AntiChrist
@@ -474,30 +475,30 @@ public:
 	int Inscribe( UOXSOCKET s, long snum);
 	int EngraveAction(int s, int i, int cir, int spl);
 	void updateSkillLevel(int c, int s);
-	void LockPick(UOXSOCKET s);
+	void LockPick( UOXSOCKET s );
 	void TDummy(int s);
 	void NewDummy(unsigned int currenttime);
 	void Tinkering(int s);
 	void AButte(int s1, int x);
 	void Persecute( UOXSOCKET s ); // AntiChrist persecute stuff
-    void Snooping( UOXSOCKET s, CHARACTER target, long serial);
+	void Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial );
 };
 
 class cTownStones
 {
 private:
-	void Line(int line, int j, char type, int s);
-	void Text(int line, int j, char type, int s);
-	const char *TownMayor(int j);
-	const char *MayorVote(int s);
+	void Line( int line, int j, char type, int s );
+	void Text( int line, int j, char type, int s );
+	const char *TownMayor( int j );
+	const char *MayorVote( int s );
 	int Population(int j);
 public:
 	cTownStones(); // LB might not work, but I dont care because nobody uses that unfished thing anymore
 	virtual ~cTownStones();
-	void Menu(int s, int j, int type);
-	const char *TownName(int s, int type);
-	void CalcNewMayor(int j);
-	void VoteForMayorTarget(int s);
+	void Menu( int s, int j, int type );
+	const char *TownName( int s, int type );
+	void CalcNewMayor( int j );
+	void VoteForMayorTarget( int s );
 };
 
 class cWeight
@@ -660,11 +661,9 @@ public:
 	void FlushBuffer(int s);
 	int kr,faul; // needed because global varaibles cant be changes in constructores LB
 private:
-
-	int cNetworkStuff::Authenticate (const char *login, const char *password);
-
 	void GenTable(int s, char a1, char a2, char a3, char a4);
 	void DoStreamCode(int s);
+
 	int xRecv(int s);
 	void Processed(int s, int i);
 	void Login1(int s);
@@ -679,7 +678,7 @@ private:
 	void pSplit(char *pass0);
 	void sockInit( void );
 	int Pack(void *pvIn, void *pvOut, int len);
-	
+	signed long Authenticate( const char *username, const char *pass );
 };
 
 class cMagic
@@ -747,11 +746,12 @@ public:
 	void ParalyzeSpellItem(int attacker, int defender);
 	void ExplosionSpellItem(int attacker, int defender);
 	void FlameStrikeSpellItem(int attacker, int defender);
-	int  CheckBook(int circle, int spell, int i);
+	int CheckBook(int circle, int spell, int i);
 	char CheckReagents( int s, reag_st reagents );
 	char CheckMana( int s, int num );
 	bool CheckStamina( CHARACTER s, int num );
 	bool CheckHealth( CHARACTER s, int num );
+//	void DeleReagents(int s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk);
 	void Recall( UOXSOCKET s); // we need these four for the commands (separately) !!!
 	void Mark( UOXSOCKET s);
 	void Gate( UOXSOCKET s);
@@ -770,7 +770,7 @@ private:
 	void SummonMonster( UOXSOCKET s, unsigned char d1, unsigned char id2, char *monstername, unsigned char color1, unsigned char color2, int x, int y, int z);
 	void MagicReflect(int s);
 	void BoxSpell( UOXSOCKET s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2);
-	int  RegMsg( CHARACTER s, reag_st failmsg );
+	int RegMsg( CHARACTER s, reag_st failmsg );
 	void DirectDamage(int p, int amount);
 	void PolymorphMenu( int s, int gmindex ); // added by AntiChrist (9/99)
 
@@ -835,7 +835,8 @@ private:
 	signed char CheckWalkable( CHARACTER c, unitile_st *xyblock, int xycount );
 	bool CrazyXYBlockStuff(CHARACTER c, UOXSOCKET socket, short int oldx, short int oldy, int sequence);
 	void FillXYBlockStuff(CHARACTER c, unitile_st *xyblock, int &xycount, unsigned short oldx, unsigned short oldy );
-	void deny(int k, int s, int sequence);
+
+	void deny( int k, int s, int sequence );
 };
 
 // This class is designed as a replacement for the teffect array (which is nasty, and too big)

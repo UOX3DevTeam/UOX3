@@ -31,56 +31,51 @@
 
 cBooks::cBooks()//Constructor
 {
-	return;
 }
 
 cBooks::~cBooks()//Destructor
 {
-
 }
 
 // opens old (readonly) books == old, bugfixed readbook function
 void cBooks::openbook_old(UOXSOCKET s, ITEM i)
 {
 	char bookopen[10]="\x93\x40\x01\x02\x03\x00\x00\x00\x02"; //LB 7'th dec 1999, making it client 1.26 complaint
-//	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char booktitle[61]={"\x00",};
-//	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]={"\x00",};
+	char booktitle[61] = { "\x00", };
+	char bookauthor[31] = { "\x00", };
 	
 	openscript("misc.scp");
-	sprintf(temp, "BOOK %i",
-		(items[i].more1<<24)+(items[i].more2<<16)+(items[i].more3<<8)+items[i].more4);
-	if (!i_scripts[misc_script]->find(temp))
+	sprintf(temp, "BOOK %i", calcserial( items[i].more1, items[i].more2, items[i].more3, items[i].more4 ) );
+	if( !i_scripts[misc_script]->find( temp ) )
 	{
 		closescript();
 		return;
 	}
-	bookopen[1]=items[i].ser1;
-	bookopen[2]=items[i].ser2;
-	bookopen[3]=items[i].ser3;
-	bookopen[4]=items[i].ser4;
+	bookopen[1] = items[i].ser1;
+	bookopen[2] = items[i].ser2;
+	bookopen[3] = items[i].ser3;
+	bookopen[4] = items[i].ser4;
 	do
 	{
 		read2();
 	}
-	while (strcmp(script1, "PAGES"));
-	bookopen[8]=str2num(script2); // LB, bugfixing old code
+	while( strcmp( script1, "PAGES" ) );
+	bookopen[8] = str2num( script2 ); // LB, bugfixing old code
 	do
 	{
 		read2();
 	}
-	while (strcmp(script1, "TITLE"));
-	sprintf(booktitle, "%s", script2);
+	while( strcmp( script1, "TITLE" ) );
+	strcpy( booktitle, script2 );
 	do
 	{
 		read2();
 	}
-	while (strcmp(script1, "AUTHOR"));
-	sprintf(bookauthor, "%s", script2);
-	Network->xSend(s, bookopen, 9, 0); // LB, bugfixing of old code
-	Network->xSend(s, booktitle, 60, 0);
-	Network->xSend(s, bookauthor, 30, 0);
+	while( strcmp( script1, "AUTHOR" ) );
+	strcpy( bookauthor, script2 );
+	Network->xSend( s, bookopen, 9, 0 ); // LB, bugfixing of old code
+	Network->xSend( s, booktitle, 60, 0 );
+	Network->xSend( s, bookauthor, 30, 0 );
 	closescript();
 }
 
@@ -96,46 +91,42 @@ void cBooks::openbook_new(UOXSOCKET s, ITEM i, char writeable)
 	int a,b,c,pages,bytes;
 	char line[33];
 	char buch[256][8][33];
-	char fileName[13],bookexists;
+	char fileName[13];
+
+	bool bookexists = false;
 
 	FILE *file;
 
 	// I dont know what that new client 1.26 byte does, but it needs to be set to 1 or 2 or writing doesnt work
     // wild guess: rune books ...
 
-//	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char booktitle[61]={"\x00",};
-//	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]={"\x00",};
+	char booktitle[61] = { "\x00", }; 
+	char bookauthor[31] = { "\x00", };
 
 	sprintf( fileName, "%02x%02x%02x%02x.bok", i>>24, i>>16, i>>8, i%256);
     file = fopen( fileName, "r+b"); // open existing file for read/write
 
-    if (file==NULL) bookexists=0;  else bookexists=1;
+	bookexists = ( file != NULL );
 	
-	if (bookexists)
+	if( bookexists )
 	{
-	  fclose(file);
-	  read_author ( i, bookauthor ); // fetch author if existing
-	  read_title  ( i, booktitle  ); // fetch title if existing
+		fclose( file );
+		read_author ( i, bookauthor ); // fetch author if existing
+		read_title  ( i, booktitle  ); // fetch title if existing
+		pages = read_number_of_pages(i); 
 	}
-
-	if (bookexists) pages=read_number_of_pages(i); else 
+	else 
 	{ 
-		pages=items[i].morey;              // if new book get number of maxpages ...
-		if (pages<1 || pages>255) pages=16;
+		pages = items[i].morey;              // if new book get number of maxpages ...
+		if( pages < 1 || pages > 255 ) 
+			pages = 16;
 	}
 
 	int q = 0;
 	// clear all buffers from previous book openings
-/*	for( q = 0; q < 32; q++ ) authorbuffer[s][q]='~';
-	for( q = 0; q < 62; q++ )     titlebuffer[s][q]='~';
-	for( q = 0; q < 511; q++ )    pagebuffer[s][q]='~';
-*/
 	memset( &authorbuffer[s], '~', 32 );
-	memset( &titlebuffer[s],  '~', 62 );
-	memset( &pagebuffer[s],   '~', 511);
-
+	memset( &titlebuffer[s], '~', 62 );
+	memset( &pagebuffer[s], '~', 511 );
 
 	bookopen[1] = bookopen_ro[1] = items[i].ser1;
 	bookopen[2] = bookopen_ro[2] = items[i].ser2;
@@ -807,10 +798,8 @@ void readbook(int s, int i, int p) // Book window
 void openbook(int s, int i)
 {
 	char bookopen[9]="\x93\x40\x01\x02\x03\x00\x00\x02";
-//	char booktitle[61]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char booktitle[61]={"\x00",};
-//	char bookauthor[31]="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-	char bookauthor[31]={"\x00",};
+	char booktitle[61] = { "\x00", };
+	char bookauthor[31] = { "\x00", };
 	
 	openscript("misc.scp");
 	sprintf(temp, "BOOK %i",

@@ -40,7 +40,7 @@ all:
 	@echo make cross              - Cross compile Win32 binary on Linux
 	@echo make linux              - Compile Linux/UNIX binary
 	@echo make egcs               - As above, but using egcs - for Redhat!
-
+	@echo make linuxmgpp          - Compile Linux/UNIX binary minus -lg++
 mingw32:
 	$(MAKE) $(EXE)
 
@@ -49,6 +49,9 @@ cross:
 
 linux:
 	$(MAKE) uox3_dep "EXE=uox3" "LIBS=-lm -lg++"
+
+linuxmgpp:
+	$(MAKE) uox3_dep "EXE=uox3" "LIBS=-lm"
 
 egcs:
 	$(MAKE) uox3_dep "EXE=uox3" "LIBS=-lm -lg++" "CC=egcs"

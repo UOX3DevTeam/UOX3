@@ -781,7 +781,7 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, unitile_st *xyblock, int &xycoun
 	int mapid_old = 0;
 	signed int mapz = Map->AverageMapElevation( x, y, mapid );
 	signed int mapz_old = Map->AverageMapElevation( oldx, oldy, mapid_old );
-	if( mapz_old <= -128 )	{
+	if( mapz_old <= illegal_z )	{
 		mapz_old = mapz;
 	}
 	if( mapz != illegal_z )
@@ -942,7 +942,7 @@ void cMovement::HandleRegionStuffAfterMove(CHARACTER c, short int oldx, short in
 #if DEBUG_WALKING
 	else
 	{
-//		printf("Guess what? I didn't change regions.\n");
+		//printf("Guess what? I didn't change regions.\n");
 	}
 #endif
 
@@ -1734,6 +1734,8 @@ void cMovement::NpcMovement(unsigned int currenttime, int i)//Lag fix
 		{
 			if( chars[i].tamed )
 				chars[i].npcmovetime = (unsigned int)(currenttime+double((NPCSPEED/4)*CLOCKS_PER_SEC)); //reset move timer
+			else if( chars[i].shop && !chars[i].war )	// Stop the hyperactive Shopkeeper, unless they are out to pack a punch :) (Thunderstorm)
+				chars[i].npcmovetime = (unsigned int)(currenttime + double(NPCSPEED*CLOCKS_PER_SEC*4));	// reset move timer
 			else
 				chars[i].npcmovetime = (unsigned int)(currenttime+double(NPCSPEED*CLOCKS_PER_SEC)); //reset move timer
 		}
@@ -1848,6 +1850,7 @@ int cMovement::calc_walk(CHARACTER c, unsigned int x, unsigned int y, unsigned i
 		                                 // since the [i] is calclated several times below
 			                             // if it doesn't help, it doesn't hurt either.
 		signed int nItemTop = thisblock->basez + ((xyblock[i].type == 0) ? xyblock[i].height : calcTileHeight(xyblock[i].height)); // Calculate the items total height
+
 		// check if the creature is floating on a static (keeping Z or falling)
 		if( ( nItemTop >= newz ) && ( nItemTop <= oldz ) )
 		{
@@ -2058,18 +2061,18 @@ int cMovement::validNPCMove(short int x, short int y, signed char z, CHARACTER s
     return 0;
 }
 
-void cMovement::deny(int k, int s, int sequence)
+void cMovement::deny( int k, int s, int sequence )
 {
-	char walkdeny[9]="\x21\x00\x01\x02\x01\x02\x00\x01";
+	char walkdeny[9] = "\x21\x00\x01\x02\x01\x02\x00\x01";
 	
-	walkdeny[1]=sequence;
-	walkdeny[2]=chars[s].x>>8;
-	walkdeny[3]=chars[s].x%256;
-	walkdeny[4]=chars[s].y>>8;
-	walkdeny[5]=chars[s].y%256;
-	walkdeny[6]=chars[s].dir;
-	walkdeny[7]=chars[s].dispz;
-	Network->xSend(k, walkdeny, 8, 0);
-	walksequence[k]=-1;
+	walkdeny[1] = sequence;
+	walkdeny[2] = chars[s].x>>8;
+	walkdeny[3] = chars[s].x%256;
+	walkdeny[4] = chars[s].y>>8;
+	walkdeny[5] = chars[s].y%256;
+	walkdeny[6] = chars[s].dir;
+	walkdeny[7] = chars[s].dispz;
+	Network->xSend( k, walkdeny, 8, 0 );
+	walksequence[k] = -1;
 }
 

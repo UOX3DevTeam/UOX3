@@ -291,26 +291,34 @@ void cAdmin::Account()//Revana*
 	{
 		read2();
 
-		if (!(strcmp(script1, "LASTIP"))) strncpy(acctx[acctcount].tempIP, script2, 15);
+		if( !strcmp( script1, "LASTIP" ) ) 
+		{
+			strncpy( acctx[acctcount].tempIP, script2, 15 );	// Doesn't NULL terminate always under Windows
+			acctx[acctcount].tempIP[15] = 0;
+		}
 		
-		else if (!(strcmp(script1, "NAME")))
+		else if( !strcmp( script1, "NAME" ) )
 		{
-			strncpy(acctx[acctcount].name, strupr( script2 ), 20 );
+			strncpy( acctx[acctcount].name, script2, 20 );
+			acctx[acctcount].name[20] = 0;
 		}
 
-		else if (!(strcmp(script1, "PASS")))
+		else if( !strcmp( script1, "PASS" ) )
 		{
-			strncpy(acctx[acctcount].pass, strupr( script2 ), 20 );
+			strncpy( acctx[acctcount].pass, script2, 20 );
+			acctx[acctcount].pass[20] = 0;
 		}
 
-		else if (!(strcmp(script1, "BAN"))) acctx[acctcount].ban = 1;
-		else if (!(strcmp(script1, "NOSAVECHAR"))) acctx[acctcount].saveChar = 1;
+		else if( !strcmp( script1, "BAN" ) ) 
+			acctx[acctcount].ban = 1;
+		else if( !strcmp( script1, "NOSAVECHAR" ) ) 
+			acctx[acctcount].saveChar = 1;
 
-		else if (!(strcmp(script1, "LOCK")))
+		else if( !strcmp( script1, "LOCK" ) )
 		{
-			if (curLock < MAX_ACCT_LOCK)
+			if( curLock < MAX_ACCT_LOCK )
 			{
-				acctx[acctcount].lock[curLock] = str2num(script2);
+				acctx[acctcount].lock[curLock] = str2num( script2 );
 				curLock++;
 			}
 		}
@@ -359,19 +367,16 @@ void cAdmin::LoadAccounts()//Revana*
 			acctcount++;
 		}
 		// Guest accounts chages = "GUEST X" X=Number of accounts... anywhere in accounts.adm(Zippy)
-		if (!(strcmp(script1, "GUEST")))
+		if( !strcmp( script1, "GUEST" ) )
 		{
 			int i = 0;
 			guestnum=str2num(script2);
-			//printf("DEBUG: %i guest accounts\n",guestnum);
 			for (i=1;i<guestnum+1;i++)
 			{
 				sprintf(acctx[acctcount].name, "GUEST%i", i);
 				sprintf(acctx[acctcount].pass, "GUEST%i", i);
-				//printf("DEBUG: Guest Account %i [L: %s] [P: %s]\n", i,acctx[acctcount][0],acctx[acctcount][1]);
 				acctcount++;
 			}
-			//printf("UOX3: %i guest accounts loaded.\n", guestnum);
 		}
 		//end Guest changes.....	
 	}

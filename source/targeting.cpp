@@ -1161,40 +1161,36 @@ void cTargets::GMTarget(int s)
 	int j;
 	int  n, z, mypack, retitem;
 	
-	
 	mypack=-1; 
 	retitem=-1;
-	
-	int serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	int i=findbyserial(&charsp[serial%HASHMAX],serial,1);
 
-	if (chars[i].npc)
+	int i = calcCharFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( i != -1 )
 	{
-		sysmessage(s, "You can't promote a NPC to GM.");
-		return;
-	}
-
-	if(i!=-1)
-	{
-		sprintf(temp, "%s.log",chars[currchar[s]].name);
-		sprintf(temp2, "%s as made %s a GM.\n",chars[currchar[s]].name,chars[i].name);
-		savelog(temp2, temp);
+		if( chars[i].npc )
+		{
+			sysmessage( s, "You can't promote an NPC to GM." );
+			return;
+		}
+		sprintf( temp, "%s.log", chars[currchar[s]].name );
+		sprintf( temp2, "%s as made %s a GM.\n", chars[currchar[s]].name, chars[i].name );
+		savelog( temp2, temp );
 		
 		//AntiChrist bugfix
 		unmounthorse( calcSocketFromChar( i ) );
-		chars[i].id1=0x03;
-		chars[i].id2=0xDB;
-		chars[i].skin1=0x80;
-		chars[i].skin2=0x21;
-		chars[i].xid1=0x03;
-		chars[i].xid2=0xDB;
-		chars[i].orgid1=0x03;
-		chars[i].orgid2=0xDB;
-		chars[i].xskin1=0x80;
-		chars[i].xskin2=0x21;
-		chars[i].priv=0xF7;			// may want to look at this, CGMT says it's really 7F, and the closest way to get F7
+		chars[i].id1 = 0x03;
+		chars[i].id2 = 0xDB;
+		chars[i].skin1 = 0x80;
+		chars[i].skin2 = 0x21;
+		chars[i].xid1 = 0x03;
+		chars[i].xid2 = 0xDB;
+		chars[i].orgid1 = 0x03;
+		chars[i].orgid2 = 0xDB;
+		chars[i].xskin1 = 0x80;
+		chars[i].xskin2 = 0x21;
+		chars[i].priv = 0xF7;			// may want to look at this, CGMT says it's really 7F, and the closest way to get F7
 									// required me to have counselor clearance set as well (which it wouldn't allow)
-		chars[i].priv2=0xD9;		// no longer viewing house icons by default (request from Xuri)
+		chars[i].priv2 = 0xD9;		// no longer viewing house icons by default (request from Xuri)
 		chars[i].commandLevel = 2;
 		
 	
@@ -2199,7 +2195,7 @@ void cTargets::CorpseTarget(int s)
 				}
 				else
 				{
-					switch( items[i].amount ) {
+					switch( items[i].amount ) {	// Fur amount -1 triggers Dragonskin instead of leather (Thunderstorm)
 					case 0x01: CarveTarget(s, 0, 2, 0, 0, 0); break;  //Ogre
 					case 0x02: CarveTarget(s, 0, 5, 0, 0, 0); break;  //Ettin
 					case 0x03: break;                                 //Zombie
@@ -2211,7 +2207,7 @@ void cTargets::CorpseTarget(int s)
 					case 0x09: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Deamon
 					case 0x0A: CarveTarget(s, 0, 1, 0, 0, 0); break;  //Deamon w/sword
 					case 0x0B: break;                                 //-NULL-
-					case 0x0C: CarveTarget(s, 0, 19, 20, 0, 0); break;//Dragon (green)
+					case 0x0C: CarveTarget(s, 0, 19, 20, -1, 0); break;//Dragon (green)
 					case 0x0D: break;                                 //Air Elemental
 					case 0x0E: break;                                 //Earth Elemental
 					case 0x0F: break;                                 //Fire Elemental
@@ -2258,9 +2254,9 @@ void cTargets::CorpseTarget(int s)
 					case 0x38: break;                                 //Skeleton w/axe
 					case 0x39: break;                                 //Skeleton w/sword
 					case 0x3A: break;                                 //Wisp
-					case 0x3B: CarveTarget(s, 0, 19, 20, -17, 0); break;//Dragon (red)
-					case 0x3C: CarveTarget(s, 0, 10, 20, 0, 0); break;//Drake (green)
-					case 0x3D: CarveTarget(s, 0, 10, 20, 0, 0); break;//Drake (red)
+					case 0x3B: CarveTarget(s, 0, 19, 20, -1, 0); break;//Dragon (red)
+					case 0x3C: CarveTarget(s, 0, 10, 20, -1, 0); break;//Drake (green)
+					case 0x3D: CarveTarget(s, 0, 10, 20, -1, 0); break;//Drake (red)
 					case 0x46: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen Matriarche - t2a
 					case 0x47: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen drone - t2a
 					case 0x48: CarveTarget(s, 0, 5, 7, 0, 0); break;//Terathen warrior, Terathen Avenger - t2a
@@ -2341,11 +2337,11 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 	
 	c = Items->SpawnItem( s, 1, "#", 0, 0x12, 0x2A, 0, 0, 0, 0 );  //add the blood puddle
 	if( c == -1 ) return;
-	if( fur == -1 )
-	{
-		items[c].color1 = 0x00;
-		items[c].color2 = 0xEF;
-	}
+//	if( fur == -1 )
+//	{
+//		items[c].color1 = 0x00;
+//		items[c].color2 = 0xEF;
+//	}
 
 	items[c].x = items[npcshape[0]].x;
 	items[c].y = items[npcshape[0]].y;
@@ -2383,6 +2379,14 @@ void cTargets::CarveTarget( UOXSOCKET s, int feat, int ribs, int hides, int fur,
 		c = Items->SpawnItem( s, currchar[s], hides, "hides", 1, 0x10, 0x78, 0, 0, 1, 1 );
 		if( c == -1 ) 
 			return;
+		if( fur == -1 )
+		{
+			items[c].color1 = 0x00;
+			items[c].color2 = 0xEF;
+			strcpy( items[c].name, "Dragonskin" );
+			sendbpitem( s, c );	// update Display after tweaking item.
+			fur = 0;
+		}
 		items[c].layer=0x01;
 		items[c].att=5;
 		leath=1;

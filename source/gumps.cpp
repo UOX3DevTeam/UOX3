@@ -113,9 +113,11 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				sysmessage( j, "You have been banned!" );
 				acctx[chars[j].account].ban = 1;
 				acctx[chars[j].account].banSerial = chars[currchar[s]].serial;
-				if( online( j ) ) Network->Disconnect( j );
+				if( online( j ) ) 
+					Network->Disconnect( j );
 			}
-			else sysmessage( s, "That player cannot be banned!" );
+			else 
+				sysmessage( s, "That player cannot be banned!" );
 		}
 		if( button == 3 )
 		{
@@ -126,9 +128,11 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				acctx[chars[j].account].ban = 1;
 				acctx[chars[j].account].banTime = (int)(uiCurrentTime + (60 * 60 * 24 * CLOCKS_PER_SEC ));
 
-				if( online( j ) ) Network->Disconnect( j );
+				if( online( j ) ) 
+					Network->Disconnect( j );
 			}
-			else sysmessage( s, "That player cannot be banned!" );
+			else 
+				sysmessage( s, "That player cannot be banned!" );
 		}
 		if( button == 4 )
 		{
@@ -142,7 +146,8 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				if( online( j ) ) 
 					Network->Disconnect( j );
 			}
-			else sysmessage( s, "That player's account cannot be banned!" );
+			else 
+				sysmessage( s, "That player's account cannot be banned!" );
 		}
 		if( button == 5 )
 		{
@@ -160,9 +165,11 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 				}
 				printf("Locked %i characters from %i\n", curLock, acctno[b] );
 
-				if( online( j ) ) Network->Disconnect( j );
+				if( online( j ) ) 
+					Network->Disconnect( j );
 			}
-			else sysmessage( s, "That is not a player!" );
+			else 
+				sysmessage( s, "That is not a player!" );
 		}
 		if( button == 6 )
 		{
@@ -183,7 +190,8 @@ void cGump::Button(int s, int button, unsigned char tser1, unsigned char tser2, 
 					sysmessage( s, "Error in locking! Too many locked!" );
 				}
 
-				if( online( j ) ) Network->Disconnect( j );
+				if( online( j ) ) 
+					Network->Disconnect( j );
 			}
 		}
 		if( button == 7 )

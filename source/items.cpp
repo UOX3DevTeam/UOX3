@@ -30,7 +30,6 @@
 #include "uox3.h"
 #include "debug.h"
 
-
 #define DBGFILE "items.cpp"
 
 //Instance of cItemHandle class to handle item memory//
@@ -209,16 +208,16 @@ const bool EVILDED=false;
 //o---------------------------------------------------------------------------o
 item_st& cItemHandle::operator[] ( long int Num )
 {
-	if (Num >= 0 && Num < Items.size())
+	if ( Num >= 0 && Num < Items.size())
 	{
-		if (Items[Num] != NULL)//&& !isFree( Num ) ) //isFree isSlow
+		if ( Items[Num] != NULL )//&& !isFree( Num ) ) //isFree isSlow
 			return *Items[Num];	
 	}
-    else
-	{
-		printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
-	}
-	// Make sure these props are always this way, they may have been chaged by other functions, so put them back
+  else
+  {
+    printf("WARNING: Items[%i] referenced in invalid. Crash averted!\n", Num);
+  }
+	//Make sure these props are always this way, they may have been chaged by other functions, so put them back
 	DefaultItem->free = 1;
 	DefaultItem->ser1 = DefaultItem->ser2 = DefaultItem->ser3 = DefaultItem->ser4 = 0xFF;
 	DefaultItem->serial = 0;
@@ -361,8 +360,6 @@ void cItem::InitItem(int nItem, char ser)
 	}
 	if (nItem==itemcount) itemcount++;
 
-//	strcpy(items[nItem].name,"#");
-//	strcpy( items[nItem].name2, "#" );	// abaddon
 	items[nItem].name[0] = '#';
 	items[nItem].name2[0] = '#';
 	items[nItem].creator[0] = 0;
@@ -1901,11 +1898,25 @@ bool cItem::isShieldType( ITEM i )
 		return true;
 	if( itemID >= 0x1BC3 && itemID <= 0x1BC5 ) 
 		return true;
+//	tile_st toCheck;
+//	Map->SeekTile( itemID, &toCheck );
+//	if( toCheck.layer == 2 )
+//	{
+//		if( (toCheck.flag3 & 0xC0 ) )	// if equipable, and on layer 2
+//			return true;
+//	}
+	return false;
+}
+
+bool cItem::isLeftHandType( ITEM i ) // Need to seperate this from ShieldType - Thunderstorm
+{
+	unsigned short itemID = (items[i].id1<<8) + items[i].id2;
 	tile_st toCheck;
 	Map->SeekTile( itemID, &toCheck );
 	if( toCheck.layer == 2 )
 	{
-		if( (toCheck.flag3 & 0xC0 ) )	// if equipable, and on layer 2	// can't use wearable/holdable, as not all lanterns have that
+		// Need to seperate from two handed Weapons, so I am checking if the item has a hidamage value. Any better solutions here would be greatly appreciated :) - Thunderstorm
+		if( (toCheck.flag3 & 0xC0) && items[i].hidamage == 0 )	// if equipable, and on layer 2, and doesn't deal damage
 			return true;
 	}
 	return false;

@@ -72,7 +72,7 @@ struct sound_st
 struct char_st
 {
 	unsigned char	usepotion;
-	int				locked;
+	int locked;
 	unsigned char	ser1; // Character serial number		(Abaddon converted to unsigned char)
 	unsigned char	ser2;
 	unsigned char	ser3;
@@ -96,10 +96,11 @@ struct char_st
 	signed char		z;
 
 	signed char	dispz; // Z that the char is SHOWN at. Server needs other coordinates for real movement calculations.
-	                   // changed from unsigned to signed, LB
+	           // changed from unsigned to signed, LB
 	          
 	unsigned int	oldx; // fix for jail bug
 	unsigned int	oldy; // fix for jail bug
+
 	signed char 	oldz;
 
 	char			dir; //&0F=Direction
@@ -135,16 +136,16 @@ struct char_st
 	unsigned char	emotecolor2; // Color for emote messages
 	int				st; // Strength
 	int				st2; // Reserved for calculation
-	int				dx; // Dexterity
-	int				dx2; // Reserved for calculation
-	int				in; // Intelligence
-	int				in2; // Reserved for calculation
-	int				hp; // Hitpoints
-	int				stm; // Stamina
-	int				mn; // Mana
-	int				mn2; // Reserved for calculation
-	int				hidamage; //NPC Damage
-	int				lodamage; //NPC Damage
+	int dx; // Dexterity
+	int dx2; // Reserved for calculation
+	int in; // Intelligence
+	int in2; // Reserved for calculation
+	int hp; // Hitpoints
+	int stm; // Stamina
+	int mn; // Mana
+	int mn2; // Reserved for calculation
+	int hidamage; //NPC Damage
+	int lodamage; //NPC Damage
 	unsigned short int baseskill[ALLSKILLS+1]; // Base skills without stat modifiers
 	unsigned short int skill[ALLSKILLS+1]; // List of skills (with stat modifiers)
 	unsigned short atrophy[ALLSKILLS];
@@ -180,93 +181,91 @@ struct char_st
 	int namedeed; /// for name deeds
 	int attacker; // Character who attacked this character
 	unsigned int npcmovetime; // Next time npc will walk
-	char npcWander; // NPC Wander Mode
-	char oldnpcWander; // Used for fleeing npcs
-	int ftarg; // NPC Follow Target
-	int fx1; //NPC Wander Point 1 x
-	int fx2; //NPC Wander Point 2 x
-	int fy1; //NPC Wander Point 1 y
-	int fy2; //NPC Wander Point 2 y
-	signed char fz1; //NPC Wander Point 1 z
-	unsigned char spawn1; // Spawned by
-	unsigned char spawn2; // Spawned by
-	unsigned char spawn3; // Spawned by
-	unsigned char spawn4; // Spawned by
-	long spawnserial; // Spawned by
-	int shopSpawn;		// Revana
-	char hidden; // 0 = not hidden, 1 = hidden, 2 = invisible spell
-	unsigned int invistimeout;
-	char attackfirst; // 0 = defending, 1 = attacked first
-	char onhorse; // On a horse?
-	int hunger;  // Level of hungerness, 6 = full, 0 = "empty"
-	unsigned int hungertime; // Timer used for hunger, one point is dropped every 20 min
-	int smeltitem;
-	int tailitem;
-	short npcaitype;
-	int callnum; //GM Paging
-	int playercallnum; //GM Paging
-	int pagegm; //GM Paging
-	unsigned char region;
-	unsigned int skilldelay;
-	unsigned int objectdelay;
-	int combathitmessage;
-	int making; // skill number of skill using to make item, 0 if not making anything.
-	char blocked;
-	char dir2;
-	unsigned int spiritspeaktimer; // Timer used for duration of spirit speak
-	int spattack;
-	int spadelay;
-	unsigned int spatimer;
-	int taming; //Skill level required for taming
-	unsigned int summontimer; //Timer for summoned creatures.
-	unsigned int trackingtimer; // Timer used for the duration of tracking
-	unsigned int trackingtarget; // Tracking target ID
-	unsigned int trackingtargets[MAXTRACKINGTARGETS];
-	unsigned int fishingtimer; // Timer used to delay the catching of fish
-	int town;       //Matches Region number in regions.scp
-	unsigned char townvote1; //Serial Number of who they want to be mayor.
-	unsigned char townvote2; //Serial Number of who they want to be mayor.
-	unsigned char townvote3; //Serial Number of who they want to be mayor.
-	unsigned char townvote4; //Serial Number of who they want to be mayor.
-	int towntitle;  //0=off (default), 1=on. (i.e. - The Honorable Joe of Moonglow, Expert Swordsman)
-	char townpriv;  //0=non resident (Other privledges added as more functionality added)
-	int advobj; //Has used advance gate?
+ char npcWander; // NPC Wander Mode
+ char oldnpcWander; // Used for fleeing npcs
+ int ftarg; // NPC Follow Target
+ int fx1; //NPC Wander Point 1 x
+ int fx2; //NPC Wander Point 2 x
+ int fy1; //NPC Wander Point 1 y
+ int fy2; //NPC Wander Point 2 y
+ signed char fz1; //NPC Wander Point 1 z
+ unsigned char spawn1; // Spawned by
+ unsigned char spawn2; // Spawned by
+ unsigned char spawn3; // Spawned by
+ unsigned char spawn4; // Spawned by
+ long spawnserial; // Spawned by
+ int shopSpawn;		// Revana
+ char hidden; // 0 = not hidden, 1 = hidden, 2 = invisible spell
+ unsigned int invistimeout;
+ char attackfirst; // 0 = defending, 1 = attacked first
+ char onhorse; // On a horse?
+ int hunger;  // Level of hungerness, 6 = full, 0 = "empty"
+ unsigned int hungertime; // Timer used for hunger, one point is dropped every 20 min
+ int smeltitem;
+ int tailitem;
+ short npcaitype;
+ int callnum; //GM Paging
+ int playercallnum; //GM Paging
+ int pagegm; //GM Paging
+ unsigned char region;
+ unsigned int skilldelay;
+ unsigned int objectdelay;
+ int combathitmessage;
+ int making; // skill number of skill using to make item, 0 if not making anything.
+ char blocked;
+ char dir2;
+ unsigned int spiritspeaktimer; // Timer used for duration of spirit speak
+ int spattack;
+ int spadelay;
+ unsigned int spatimer;
+ int taming; //Skill level required for taming
+ unsigned int summontimer; //Timer for summoned creatures.
+ unsigned int trackingtimer; // Timer used for the duration of tracking
+ unsigned int trackingtarget; // Tracking target ID
+ unsigned int trackingtargets[MAXTRACKINGTARGETS];
+ unsigned int fishingtimer; // Timer used to delay the catching of fish
+ int town;       //Matches Region number in regions.scp
+ unsigned char townvote1; //Serial Number of who they want to be mayor.
+ unsigned char townvote2; //Serial Number of who they want to be mayor.
+ unsigned char townvote3; //Serial Number of who they want to be mayor.
+ unsigned char townvote4; //Serial Number of who they want to be mayor.
+ int towntitle;  //0=off (default), 1=on. (i.e. - The Honorable Joe of Moonglow, Expert Swordsman)
+ char townpriv;  //0=non resident (Other privledges added as more functionality added)
+ int advobj; //Has used advance gate?
 
-	int poison; // used for poison skill 
-	int poisoned; // type of poison
-	unsigned int poisontime; // poison damage timer
-	unsigned int poisontxt; // poision text timer
-	unsigned int poisonwearofftime; // LB, makes poision wear off ...
+ int poison; // used for poison skill 
+ int poisoned; // type of poison
+ unsigned int poisontime; // poison damage timer
+ unsigned int poisontxt; // poision text timer
+ unsigned int poisonwearofftime; // LB, makes poision wear off ...
 
-	int fleeat;
-	int reattackat;
-	int trigger; //Trigger number that character activates
-	char trigword[MAX_TRIGWORD]; //Word that character triggers on.
-	unsigned int disabled; //Character is disabled, cant trigger.
-	char envokeid1; //ID1 of item user envoked
-	char envokeid2; //ID2 of item user envoked
-	int envokeitem;
-	int split;
-	int splitchnc;
-	int targtrig; //Stores the number of the trigger the character for targeting
-	char ra;  // Reactive Armor spell
-	int trainer; // Serial of the NPC training the char, -1 if none.
+ int fleeat;
+ int reattackat;
+ int trigger; //Trigger number that character activates
+ char trigword[MAX_TRIGWORD]; //Word that character triggers on.
+ unsigned int disabled; //Character is disabled, cant trigger.
+ char envokeid1; //ID1 of item user envoked
+ char envokeid2; //ID2 of item user envoked
+ int envokeitem;
+ int split;
+ int splitchnc;
+ int targtrig; //Stores the number of the trigger the character for targeting
+ char ra;  // Reactive Armor spell
+ int trainer; // Serial of the NPC training the char, -1 if none.
 #ifdef __LINUX__
-	short trainingplayerin;
+ short trainingplayerin;
 #else
-	unsigned char trainingplayerin; // Index in skillname of the skill the NPC is training the player in
+ unsigned char trainingplayerin; // Index in skillname of the skill the NPC is training the player in
 #endif
-	char cantrain;
-	char laston[MAX_LASTON]; //Last time a character was on
+ char cantrain;
+ char laston[MAX_LASTON]; //Last time a character was on
 // Begin of Guild Related Character information (DasRaetsel)
 	int guildtoggle;		// Toggle for Guildtitle								(DasRaetsel)
 	char guildtitle[MAX_GUILDTITLE];	// Title Guildmaster granted player						(DasRaetsel)
 	int	guildfealty;		// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
 	int	guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-	char flag; //1=red 2=grey 4=Blue 8=green 10=Orange
-	//char tempflag; //Zippy -- Not Used
-	//unsigned int tempflagtime;
-	// End of Guild Related Character information
+ char flag; //1=red 2=grey 4=Blue 8=green 10=Orange
+ // End of Guild Related Character information
 	long int murderrate; //#of ticks until one murder decays //REPSYS 
 	int crimflag; //Time when No longer criminal -1=Not Criminal
 	int casting; // 0/1 is the cast casting a spell?
@@ -587,13 +586,7 @@ struct Shops			// Revana
 
 	int *restrict;
 };
-/*
-struct classnpc			// Revana
-{
-	char *name;
-	int *npc;
-};
-*/
+
 struct logout_st//Instalog
 {
 	unsigned int x1;
@@ -643,8 +636,8 @@ struct spawnregion_st//Regionspawns
 #define MAX_ACCT_LOCK 5
 struct acct_st
 {
-	char name[20];      // Client doesn't allow accounts with more than 16 chars.
-	char pass[20];      // Client doesn't allow password with more than 16 chars.
+	char name[32];
+	char pass[32];
 	int banTime;
 	int ban;
 	int banSerial;
@@ -655,7 +648,7 @@ struct acct_st
 	int ChgPass;
 	int lock[MAX_ACCT_LOCK];
 	char contact[512];
-	char tempIP[16];   // Should never be longer than 15 chars xxx.yyy.www.zzz
+	char tempIP[16];
 	unsigned long int ip1;
 	unsigned long int ip2;
 	unsigned long int ip3;
@@ -666,8 +659,8 @@ struct acct_st
 
 struct wiped_st
 {
-	char name[20];
-	char pass[20];
+	char name[32];
+	char pass[32];
 	int wipeSerial;
 	char contact[512];
 };
@@ -821,8 +814,8 @@ struct server_st
 	int showloggedoutpcs;
 	int attackstamina;		// AntiChrist (6) - for ATTACKSTAMINA
 
-	unsigned int skillcap;
-	unsigned int statcap;
+	unsigned int skillcap; // LB skill cap
+	unsigned int statcap; // AntiChrist stat cap
 	char specialbanktrigger[50]; // special bank trigger - AntiChrist
 	int usespecialbank; // special bank - AntiChrist
 
@@ -871,8 +864,8 @@ struct guild_st
 };
 // extern	guild_st guilds[MAXGUILDS];
 // End of new structure for guilds
-
-/*struct statcap_st
+/*
+struct statcap_st
 {
 	int statmax; //250 stat points (100 str, 100 int, 50 dex?)
 	int skillmax; //900 BASE skill points

@@ -244,11 +244,11 @@ void cSkills::Tailoring( UOXSOCKET s )
 					if( items[i].color1 == 0x00 && items[i].color2 == 0xEF )
 					{
 						chars[currchar[s]].runenumb = -17;
-						Skills->MakeMenu( s, 2117, TAILORING );
+						Skills->MakeMenu( s, 1600, TAILORING );
 					}
 					else
 					{
-						chars[currchar[s]].runenumb = 0;
+						chars[currchar[s]].runenumb = -1;
 						Skills->MakeMenu( s, 40, TAILORING );
 					}
 				}
@@ -489,16 +489,16 @@ void cSkills::Smith( UOXSOCKET s )
 			case 8:		AnvilTarget( s, items[i], name, 804 );	return;
 			case 9:		AnvilTarget( s, items[i], name, 814 );	return;
 			case 10:	AnvilTarget( s, items[i], name, 813 );	return;
-			case 12:	AnvilTarget( s, items[i], name, 2020);	return;
-			case 13:	AnvilTarget( s, items[i], name, 2025);	return;
-			case 14:	AnvilTarget( s, items[i], name, 2000);	return;
-			case 15:	AnvilTarget( s, items[i], name, 2000);	return;
-			case 16:	AnvilTarget( s, items[i], name, 2000);	return;
-			case 17:	AnvilTarget( s, items[i], name, 2010);	return;
-			case 18:	AnvilTarget( s, items[i], name, 2005);	return;
-			case 19:	AnvilTarget( s, items[i], name, 2005);	return;
-			case 20:	AnvilTarget( s, items[i], name, 2015);	return;
-			case 21:	AnvilTarget( s, items[i], name, 2015);	return;
+			case 12:	AnvilTarget( s, items[i], name, 1520);	return;
+			case 13:	AnvilTarget( s, items[i], name, 1525);	return;
+			case 14:	AnvilTarget( s, items[i], name, 1500);	return;
+			case 15:	AnvilTarget( s, items[i], name, 1500);	return;
+			case 16:	AnvilTarget( s, items[i], name, 1500);	return;
+			case 17:	AnvilTarget( s, items[i], name, 1510);	return;
+			case 18:	AnvilTarget( s, items[i], name, 1505);	return;
+			case 19:	AnvilTarget( s, items[i], name, 1505);	return;
+			case 20:	AnvilTarget( s, items[i], name, 1515);	return;
+			case 21:	AnvilTarget( s, items[i], name, 1515);	return;
 			default:	break;
 			}
 		}
@@ -799,7 +799,10 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					break;
 				case TAILORING:     
 					if( chars[currchar[s]].runenumb == -17 )
+					{
 						DeleIngot( s, itemmake[s].materialid1, itemmake[s].materialid2, 0x00, 0xEF, itemmake[s].needs/2 );
+						chars[currchar[s]].runenumb = -1;
+					}
 					else if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
 					{
 						btmp = ((itemmake[s].needs / 2) / 50) + 1;
@@ -811,7 +814,11 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 						}
 						delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, btmp );  
 					}
-					else
+					else if( itemmake[s].materialid1 == 0x10 && itemmake[s].materialid2 == 0x78 )
+					{
+						DeleIngot( s, itemmake[s].materialid1, itemmake[s].materialid2, 0x00, 0x00, itemmake[s].needs / 2 );
+					}
+					else 
 						delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs / 2);  
 
 					soundeffect(s,0x02,0x48);
@@ -899,7 +906,10 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 				break;		
 			case TAILORING:
 				if( chars[currchar[s]].runenumb == -17 )
+				{
 					DeleIngot( s, itemmake[s].materialid1, itemmake[s].materialid2, 0x00, 0xEF, itemmake[s].needs/2 );
+					chars[currchar[s]].runenumb = -1;
+				}
 				else if( itemmake[s].materialid1 == 0x0F && ( itemmake[s].materialid2 >= 0x95 && itemmake[s].materialid2 <= 0x9C ) )
 				{
 					btmp = ((itemmake[s].needs / 2) / 50) + 1;
@@ -911,9 +921,10 @@ void cSkills::MakeMenuTarget(int s, int x, int skill)
 					}
 					delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, btmp );  
 				}
-				else
+				else if( itemmake[s].materialid1 == 0x10 && itemmake[s].materialid2 == 0x78 )
+					DeleIngot( s, itemmake[s].materialid1, itemmake[s].materialid2, 0x00, 0x00, itemmake[s].needs );
+				else 
 					delequan(currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs);  
-				chars[currchar[s]].runenumb = -1;
 				break;
 			default:	
 				delequan( currchar[s], itemmake[s].materialid1, itemmake[s].materialid2, itemmake[s].needs );
@@ -2009,22 +2020,18 @@ void cSkills::TreeTarget(int s)
 	cx = abs( chars[currchar[s]].x - px );
 	cy = abs( chars[currchar[s]].y - py );
 
-	char dir = chardirxyz(currchar[s], px, py, 0);
-
-	if (dir != -1 && chars[currchar[s]].dir != dir)
+	char dir = chardirxyz( currchar[s], px, py, 0 );
+	if( dir != -1 && chars[currchar[s]].dir != dir )
 	{
 		chars[currchar[s]].dir = dir;
-		teleport(s);
+		teleport( s );
 	}
-
 	if( cx >= 3 || cy >= 3 )
 	{
 		sysmessage( s, "You are too far away to reach that" );
 		return;
 	}
-
-
-
+	
 	a = chars[currchar[s]].x / resource.logarea; //Zippy
 	b = chars[currchar[s]].y / resource.logarea;
 	
@@ -2442,7 +2449,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
 			for (i=0;i<now;i++)
 			{
-				if ( perm[i] && inrange1p(currchar[i], target ) )
+				if( perm[i] && inrange1p( currchar[i], target ) )
 				{
 					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
 						chars[target].ser3, chars[target].ser4);
@@ -2492,7 +2499,7 @@ void cSkills::ProvocationTarget2( UOXSOCKET s )
 			sprintf(temp, "* You see %s attacking %s *", chars[target].name, chars[target2].name);
 			for (i=0;i<now;i++)
 			{
-				if (perm[i] && inrange1p(currchar[i], target))
+				if( perm[i] && inrange1p( currchar[i], target ) )
 				{
 					itemmessage(i, temp, chars[target].ser1, chars[target].ser2,
 						chars[target].ser3, chars[target].ser4);
@@ -3265,11 +3272,7 @@ void cSkills::AdvanceStats(int s, int sk)
 	{
 		if( rand()%(server_data.statcap) <= ttl && !(chars[s].npc || chars[s].priv&1 || chars[s].priv&80))
 		{
-			/* Let's not take away stats until we reach the stat cap. The reasoning for the -1 in
-			   the line below is to avoid introducing a new bug. If we use just >=, then we will 
-			   atrophy at stat_cap - 1. If we use a simple = comparison, then someone with an odd 
-			   situation that jumpstheir strength over 100 (as an example) would no longer atrophy
-			   in any stat. Hence, the total stats -1 -Gunther		*/
+			/* Let's not take away stats until we reach the stat cap. The reasoning for the -1 in the line below is to avoid introducing a new bug. If we use just >=, then we will atrophy at stat_cap - 1. If we use a simple = comparison, then someone with an odd situation that jumpstheir strength over 100 (as an example) would no longer atrophy in any stat. Hence, the total stats -1 -Gunther			*/
 			if( (chars[s].in + chars[s].dx + chars[s].st - 1) >= server_data.statcap) 
 			{
 				switch( u )
@@ -4089,12 +4092,7 @@ int cSkills::GetShield( CHARACTER i )
 			if( items[j].contserial == serial && items[j].layer == 2 )
 			{
 				if( Items->isShieldType( j ) ) 
-				{
-					tile_st toCheck;
-					Map->SeekTile( (items[j].id1<<8) + items[j].id2, &toCheck );
-					if( !(toCheck.flag3 & 0xC0) )
-						return( j );
-				}
+					return( j );
 			}
 		}
 	}
@@ -4113,7 +4111,7 @@ int cSkills::GetSecondHand( CHARACTER i )
 		{
 			if( items[j].contserial == serial && items[j].layer == 2 )
 			{
-				if( Items->isShieldType( j ) ) 
+				if( Items->isLeftHandType( j ) ) 
 				{
 						return( j );
 				}
@@ -4322,7 +4320,6 @@ void cSkills::RandomSteal(int s)
 		{
 			//pack=packitem(currchar[s]);
 			unsetserial( item, 1 );
-//			if( items[item].contserial != -1 ) removefromptr(&contsp[items[item].contserial%HASHMAX], item); //remove from old container pointer
 			setserial( item, packitem(currchar[s]), 1 );
 			sysmessage( s, "You successfully steal that item." );
 			all_items(s);
@@ -4754,7 +4751,6 @@ void cSkills::Track(int i)
 	}
 	else sprintf(temp,"%s is right next to you",chars[chars[i].trackingtarget].name);
 	
-#if CLIENTVERSION_M==26
 	unsigned char arrow[7];
 	arrow[0]=0xBA;
 	arrow[1]=1;
@@ -4763,7 +4759,6 @@ void cSkills::Track(int i)
 	arrow[4] = (unsigned char)chars[chars[i].trackingtarget].y>>8;
 	arrow[5] = (unsigned char)chars[chars[i].trackingtarget].y%256;
 	Network->xSend(s, arrow, 6, 0);
-#endif
 }
 
 int cSkills::TrackingDirection(int s,int i)
@@ -5390,15 +5385,12 @@ void cSkills::updateSkillLevel(int c, int s)
 #endif
 }
 
-void cSkills::LockPick(UOXSOCKET s)
+void cSkills::LockPick( UOXSOCKET s )
 {
-	int i, success,serial;
-	
-	
-	serial=calcserial(buffer[s][7],buffer[s][8],buffer[s][9],buffer[s][10]);
-	i=findbyserial(&itemsp[serial%HASHMAX],serial,0);
-	
-	if (i!=-1) //lb
+	int i, success;
+
+	i = calcItemFromSer( buffer[s][7], buffer[s][8], buffer[s][9], buffer[s][10] );
+	if( i != -1 )
 	{
 		if(items[i].type==1 || items[i].type==12 || items[i].type==63) 
 		{
@@ -5470,8 +5462,8 @@ void cSkills::LockPick(UOXSOCKET s)
 
 void cSkills::TDummy(int s)
 {
-	int j,serial;
-	int type=Combat->GetBowType(currchar[s]);
+	int j, serial;
+	int type = Combat->GetBowType( currchar[s] );
 	
 	if (type > 0)
 	{
@@ -5485,14 +5477,14 @@ void cSkills::TDummy(int s)
 	else
 		Combat->CombatOnFoot(currchar[s]);
 	
-	switch(RandomNum(0, 2))
+	switch( RandomNum( 0, 2 ) )
 	{
-	case 0: soundeffect(s, 0x01, 0x3B);		break;
-	case 1: soundeffect(s, 0x01, 0x3C);		break;        
-	case 2: soundeffect(s, 0x01, 0x3D);		break;
+	case 0: soundeffect( s, 0x01, 0x3B );		break;
+	case 1: soundeffect( s, 0x01, 0x3C );		break;        
+	case 2: soundeffect( s, 0x01, 0x3D );		break;
 	}            
 	serial = calcserial((buffer[s][1]&0x7F),buffer[s][2],buffer[s][3],buffer[s][4]);
-	j=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
+	j = calcItemFromSer( serial );
 	if (j!=-1)
 	{
 		if (items[j].id2==0x70) items[j].id2=0x71;
@@ -5521,7 +5513,9 @@ void cSkills::NewDummy(unsigned int currenttime)
 			items[i].id2=0x70;
 			items[i].gatetime=0;
 			RefreshItem( i ); // AntiChrist
-		} else {
+		} 
+		else 
+		{
 			if(((items[i].id1==0x10) && (items[i].id2==0x75)) && (items[i].gatetime<=currenttime)) 
 			{
 				items[i].id2=0x74;
@@ -5985,7 +5979,7 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 			sprintf( temp, "%s is persecuted by a ghost!!", chars[target].name );
 			for( int j = 0; j < now; j++ )
 			{
-				if(( perm[j] && inrange1( s, j ) ) && ( s != j ))
+				if( perm[j] && s != j && inrange1( s, j ) )
 				{
 					chars[currchar[s]].emotecolor1 = 0x00;
 					chars[currchar[s]].emotecolor2 = 0x26;
@@ -6008,63 +6002,62 @@ void cSkills::Persecute( UOXSOCKET s ) // AntiChrist - persecute stuff
 // s -> Char's socket using the skill
 // target -> Char's beeing snooped on
 // serial -> container's serial
-void cSkills::Snooping( UOXSOCKET s, CHARACTER target, long serial) 
+void cSkills::Snooping( UOXSOCKET s, CHARACTER target, SERIAL serial ) 
 {
-	char temp[40];
+	char mChar = currchar[s];
+	char temp[64];
 
-	if ((chars[target].priv&0x80) || (chars[target].priv&0x01)) // Snooping Staff, not a good idea.
+	UOXSOCKET tSock = calcSocketFromChar( target );
+
+	if( (chars[target].priv&0x80) || (chars[target].priv&0x01) ) // Snooping Staff, not a good idea.
 	{
-		sysmessage(s, "You failed to peek into that container.");
-		sprintf(temp, "%s is snooping you!", chars[currchar[s]].name);
-		sysmessage(calcSocketFromChar(target), temp);
+		sysmessage( s, "You failed to peek into that container." );
+		sprintf( temp, "%s is snooping you!", chars[mChar].name );
+		sysmessage( tSock, temp );
 		return;
 	}
 	
-	if (Skills->CheckSkill(currchar[s], SNOOPING, 0, 1000))
+	if( Skills->CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
-		backpack(s , (serial>>24), (serial>>16), (serial>>8), (serial%256));
-		sysmessage(s, "You successfully peek into that container.");
+		backpack( s , (serial>>24), (serial>>16), (serial>>8), (serial%256) );
+		sysmessage( s, "You successfully peek into that container." );
 	}
 	else 
 	{
-		sysmessage(s, "You failed to peek into that container.");
-		if (chars[target].npc && ishuman(target))
+		sysmessage( s, "You failed to peek into that container." );
+		if( chars[target].npc )
 		{
-			switch (RandomNum(0, 2))
+			if( ishuman( target ) )	// Human shaped NPC?
 			{
-				case 0:
-					strcpy(temp, "Art thou attempting to disturb my privacy?");
-					break;
-				case 1:
-					strcpy(temp, "Stop that!");
-					break;
-				case 2:
-					strcpy(temp, "Be aware I am going to call the guards!");
-					break;
+				switch( RandomNum( 0, 2 ) )
+				{
+					case 0:	strcpy( temp, "Art thou attempting to disturb my privacy?" );	break;
+					case 1:	strcpy( temp, "Stop that!" );									break;
+					case 2:	strcpy( temp, "Be aware I am going to call the guards!" );		break;
+				}
+				npctalk( s, target, temp, 0 );
+				if( server_data.snoopiscrime )
+				{
+					if( RandomNum( 0, 100 ) < 50 && chars[mChar].crimflag > 0 )	//	50% chance of calling guards, on second time
+						callguards( mChar );
+				}
 			}
-
-			npctalk(s, target, temp, 0);
-			if (server_data.snoopiscrime)
-			{
-				if (rand()%2 && chars[currchar[s]].crimflag > 0) // 50% chance of calling guards, on second time
-					callguards(currchar[s]);
-			}
+			else
+				playmonstersound( target, chars[target].id1, chars[target].id2, SND_IDLE );	// Play idle sound, if not human
 		}
-		else 
+		else	// Must be a PC
 		{
-			sprintf(temp, "You notice %s trying to peek into your pack!", chars[currchar[s]].name);
-			sysmessage(calcSocketFromChar(target), temp);
+			sprintf( temp, "You notice %s trying to peek into your pack!", chars[mChar].name );
+			sysmessage( tSock, temp );
 		}
-		if (server_data.snoopiscrime)
+		if( server_data.snoopiscrime )
 		{
-			chars[currchar[s]].crimflag = (int) ((repsys.crimtime*CLOCKS_PER_SEC) + uiCurrentTime);
-			sysmessage(s, "You are now a criminal!");
-			setcharflag(currchar[s]);
+			criminal( mChar );
 		}
-		if (chars[currchar[s]].karma <= 1000) 
+		if( chars[mChar].karma <= 1000 )
 		{
-			chars[currchar[s]].karma -= 10;
-			sysmessage(s, "You've lost a small bit of karma");
+			chars[mChar].karma -= 10;
+			sysmessage( s, "You've lost a small bit of karma" );
 		}
 	}
 }

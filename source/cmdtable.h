@@ -104,8 +104,6 @@ CMD_HANDLER(command_where);
 CMD_HANDLER(command_q);
 CMD_HANDLER(command_next);
 CMD_HANDLER(command_clear);
-/* CMD_HANDLER(command_gotocur); */
-/* CMD_HANDLER(command_gmtransfer); */
 CMD_HANDLER(command_goplace);
 CMD_HANDLER(command_gochar);
 CMD_HANDLER(command_fix);
@@ -159,7 +157,6 @@ CMD_HANDLER(command_allmoveoff);
 CMD_HANDLER(command_showhs);
 CMD_HANDLER(command_hidehs);
 CMD_HANDLER(command_set);
-CMD_HANDLER(command_temp);
 CMD_HANDLER(command_addnpc);
 CMD_HANDLER(command_readini);
 CMD_HANDLER(command_gumpmenu);
@@ -176,19 +173,15 @@ CMD_HANDLER(command_gmopen);
 CMD_HANDLER(command_restock);
 CMD_HANDLER(command_restockall);
 CMD_HANDLER(command_setshoprestockrate);
-/* CMD_HANDLER(command_who);
-CMD_HANDLER(command_gms); */
 CMD_HANDLER(command_midi);
 CMD_HANDLER(command_gumpopen);
 CMD_HANDLER(command_respawn);
-/* CMD_HANDLER(command_regspawnall); */
 CMD_HANDLER(command_regspawnmax);
 CMD_HANDLER(command_regspawn);
 CMD_HANDLER(command_reloadserver);
 CMD_HANDLER(command_reloadaccounts);
 CMD_HANDLER(command_loaddefaults);
 CMD_HANDLER(command_cq);
-/* CMD_HANDLER(command_wipenpcs); */
 CMD_HANDLER(command_cnext);
 CMD_HANDLER(command_cclear);
 CMD_HANDLER(command_minecheck);
@@ -205,7 +198,6 @@ CMD_HANDLER(command_killall);
 CMD_HANDLER(command_pdump);
 CMD_HANDLER(command_rename);
 CMD_HANDLER(command_readspawnregions);
-/* CMD_HANDLER(command_cleanup); */
 CMD_HANDLER(command_gy);
 CMD_HANDLER(command_tilew);
 CMD_HANDLER(command_squelch);

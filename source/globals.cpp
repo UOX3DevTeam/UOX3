@@ -242,9 +242,6 @@ int gRespawnItem=0; //Last item that was checked for respawn Tauriel 3/7/99
 cItemHandle items;
 cCharacterHandle chars;
 
-/*int *a,*b,*c,*d,*e*/;
-//char *f;
-
 location_st location[4000];
 region_st region[256];
 logout_st logout[1024];//Instalog
@@ -299,9 +296,6 @@ int showlayer;
 int ph1, ph2, ph3, ph4;
 int binlength[MAXIMUM+1];
 int boutlength[MAXIMUM+1];
-#ifdef UNRELEASED
-	char tempflag;
-#endif
 char xoutbuffer[MAXBUFFER*2];
 char cryptclient[MAXCLIENT];
 unsigned int fly_p = 18; // flying probability = 1/fly_p each step (if it doesnt fly)

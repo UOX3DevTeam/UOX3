@@ -38,21 +38,13 @@
 
 #define TODO( x )  message( __FILE__LINE__"\n""+------------------------------------------------\n""|  TODO :   " #x "\n""+-------------------------------------------------\n" )
 #define FIXME( x )  message(  __FILE__LINE__"\n""+------------------------------------------------\n""|  FIXME :  " #x "\n""+-------------------------------------------------\n" )
-/*#define TODO( x )  message( __FILE__LINE__"\n"           \
-        "+------------------------------------------------\n" \
-        "|  TODO :   " #x "\n" \
-        "+-------------------------------------------------\n" )
-#define FIXME( x )  message(  __FILE__LINE__"\n"           \
-        "+------------------------------------------------\n" \
-        "|  FIXME :  " #x "\n" \
-        "+-------------------------------------------------\n" )*/
 #define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" ) 
 #define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" ) 
 #define note( x )  message( __FILE__LINE__" NOTE :   " #x "\n" ) 
 
 // product info
 #define VER " 0.70.03"
-#define BUILD "21c2"
+#define BUILD "21d"
 #define SVER "1.0"
 #define CVER "1.0"
 #define IVER "1.0"
@@ -560,8 +552,8 @@ void start_glow( void );
 void setLastOn( UOXSOCKET s );
 void safeCopy( char *dest, const char *src, unsigned int maxLen );
 
-int GetPackOwner(int p);
-
+int GetPackOwner( int p );
+ITEM GetRootPack( ITEM p );
 
 //Boats --Fucntions in Boats.cpp
 void sendinrange(int);
@@ -746,7 +738,7 @@ void fetchtarget(int s);
 void who(int s);
 void gms(int s);
 void soundeffect3(int p, unsigned char a, unsigned char b);
-void playmonstersound(int monster, int id1, int id2, int sfx);
+void playmonstersound( CHARACTER monster, int id1, int id2, MonsterSoundType sfx);
 void playTileSound( UOXSOCKET s );
 void getsellsubitem( int npc, int p, int q, unsigned char *m1, int &m1t );
 void sellstufftarget(int s);

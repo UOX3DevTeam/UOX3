@@ -154,36 +154,40 @@ void buildhouse(int s, int i)
 	}
 	if(looptimes)
 	{
-		looptimes=0;
-		x=(buffer[s][11]<<8)+buffer[s][12];//where they targeted
-		y=(buffer[s][13]<<8)+buffer[s][14];
-		z=buffer[s][16]+Map->TileHeight((buffer[s][17]<<8)+buffer[s][18]);
-		if (( x<200 && y <200 ) || ( x>6200 || y >4200 ))
-		{
-			sysmessage(s, "You cannot build your house there!");
-			return;
-		}
+		looptimes = 0;
+		x = (buffer[s][11]<<8) + buffer[s][12];//where they targeted
+		y = (buffer[s][13]<<8) + buffer[s][14];
+		z = buffer[s][16] + Map->TileHeight( (buffer[s][17]<<8) + buffer[s][18] );
 
-		for (k=-sx;k<sx;k++)//check the SPACEX and SPACEY to make sure they are valid locations....
+		if( !(chars[currchar[s]].priv&0x01 ) )
 		{
-			for (l=-sy;l<sy;l++)
+			if( ( x < 200 && y < 200 ) || ( x > 6144 || y > 4096 ) )
 			{
-//				if ((!validNPCMove(x+k,y+l,z,currchar[s]))&&
-				if(( !Movement->validNPCMove( x+k, y+l, z, currchar[s] ) ) &&
-//				signed char myz;
-//				if( ( !Movement->CanCharWalk( currchar[s], x+k, y+l, myz ) ) &&
-					((chars[currchar[s]].x!=x+k)&&(chars[currchar[s]].y!=y+l)))
-				/*This will take the char making the house out of the space check, be careful 
-				you don't build a house on top of your self..... this had to be done So you 
-				could extra space around houses, (12+) and they would still be buildable.*/
+				sysmessage(s, "You cannot build your house there!");
+				return;
+			}
+
+
+			for (k=-sx;k<sx;k++)//check the SPACEX and SPACEY to make sure they are valid locations....
+			{
+				for (l=-sy;l<sy;l++)
 				{
-					sysmessage(s, "You cannot build your house there.");
-					return;
-					//printf("Invalid %i,%i [%i,%i]\n",k,l,x+k,y+l);
-				} //else printf("DEBUG: Valid at %i,%i [%i,%i]\n",k,l,x+k,y+l);
+	//				if ((!validNPCMove(x+k,y+l,z,currchar[s]))&&
+					if(( !Movement->validNPCMove( x+k, y+l, z, currchar[s] ) ) &&
+	//				signed char myz;
+	//				if( ( !Movement->CanCharWalk( currchar[s], x+k, y+l, myz ) ) &&
+						((chars[currchar[s]].x!=x+k)&&(chars[currchar[s]].y!=y+l)))
+					/*This will take the char making the house out of the space check, be careful 
+					you don't build a house on top of your self..... this had to be done So you 
+					could extra space around houses, (12+) and they would still be buildable.*/
+					{
+						sysmessage(s, "You cannot build your house there.");
+						return;
+						//printf("Invalid %i,%i [%i,%i]\n",k,l,x+k,y+l);
+					} //else printf("DEBUG: Valid at %i,%i [%i,%i]\n",k,l,x+k,y+l);
+				}
 			}
 		}
-
 		//Boats ->
 		if(id2>=18) sprintf(temp,"%s's house",chars[currchar[s]].name);//This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 		else strcpy(temp, "a mast");
@@ -333,7 +337,6 @@ void buildhouse(int s, int i)
 		chars[currchar[s]].x=x+cx; //move char inside house
 		chars[currchar[s]].y=y+cy;
 		chars[currchar[s]].dispz=chars[currchar[s]].z=z+cz;
-		//printf("Z: %i Offset: %i Char: %i Total: %i\n",z,cz,chars[currchar[s]].z,z+cz);
 		teleport(currchar[s]);
 	}
 }

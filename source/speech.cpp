@@ -76,14 +76,11 @@ void npctalk(int s, int npc, char *txt, char antispam) // NPC speech
 
 void npctalkall(int npc, char *txt, char antispam ) // NPC speech to all in range.
 {
-	
-	if (npc==-1) return;
-	
-	int i;
-	
-	for (i=0;i<now;i++)
-		if (perm[i] && inrange1p(npc, currchar[i]))
-			npctalk(i, npc, txt, antispam );
+	if( npc == -1 ) 
+		return;
+	for( int i = 0; i < now; i++ )
+		if( perm[i] && inrange1p( npc, currchar[i] ) )
+			npctalk( i, npc, txt, antispam );
 }
 
 void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
@@ -133,15 +130,12 @@ void npcemote(int s, int npc, char *txt, char antispam ) // NPC speech
 
 void npcemoteall(int npc, char *txt, char antispam ) // NPC speech to all in range.
 {
-	int i;
-	
-	if (npc==-1) return;
-	
-	for (i=0;i<now;i++)
-		if (perm[i] && inrange1p(npc, currchar[i]))
-			npcemote(i, npc, txt, antispam );
+	if( npc == -1 ) 
+		return;
+	for( int i = 0; i < now; i++ )
+		if( perm[i] && inrange1p( npc, currchar[i] ) )
+			npcemote( i, npc, txt, antispam );
 }
-
 
 /*
 Unicode speech format
@@ -171,7 +165,7 @@ byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
 	WCHAR[?] text (null terminated, ?=(msgsize-48)/2
 */
 
-void unicodetalking( UOXSOCKET s) // PC speech
+void unicodetalking( UOXSOCKET s ) // PC speech
 {
 	int mapitemptr,mapitem,mapchar,a,checkgrid,increment,StartGrid,getcell,ab;
 	int tl, i, j,resp, found, x1, x2, y1, y2, match, m2, sml;
@@ -180,7 +174,7 @@ void unicodetalking( UOXSOCKET s) // PC speech
 	unsigned char talk2[19];
 	
 	tl=48+(buffer[s][1]<<8)+buffer[s][2];
-	
+
 	for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+2)
 	{
 		nonuni[(i-13)/2]=buffer[s][i];
@@ -263,7 +257,7 @@ void unicodetalking( UOXSOCKET s) // PC speech
 			house_speech(s, (unsigned char *)nonuni); //houses crackerjack 8/12/99			
 			for (i=0;i<now;i++)
 			{
-				if ( perm[i] && i!= s && inrange1(i, s) )
+				if( perm[i] && i != s && inrange1( i, s ) )
 				{
 					Network->xSend(i, talk2, 18, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);          
@@ -428,7 +422,6 @@ void talking( UOXSOCKET s ) // PC speech
 	int tl, i, j, resp=0, found, x1, x2, y1, y2, match, m2, sml, grrr;
 	char sect[512];
 	
-	
 	if( ( buffer[s][8] == server_data.commandPrefix ) || ( ( buffer[s][8] == '.' ) && ( buffer[s][9] != '.' ) ) )
 		Commands->Command( s );
 	else
@@ -505,7 +498,7 @@ void talking( UOXSOCKET s ) // PC speech
 			
 			for (i=0;i<now;i++)
 			{
-				if ( i != s && perm[i] && inrange1(i, s) )
+				if( i != s && perm[i] && inrange1( i, s ) )
 				{
 					Network->xSend(i, talk, 14, 0);
 					Network->xSend(i, chars[currchar[s]].name, 30, 0);
@@ -659,3 +652,4 @@ void talking( UOXSOCKET s ) // PC speech
   }
  }
 }
+

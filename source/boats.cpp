@@ -75,22 +75,23 @@ void sendinrange(int i)//Send this item to all online people in range
 	}
 }
 
-int dist(int a, int b, int type)// Distance from A to B (type = 1 (a is a char) type=0 (a is an item))
+int dist( int a, int b, int type )//Distance from A to B (type = 1 (a is a char) type=0 (a is an item))
 {
-	int xa, ya, dx, dy;
-	if (type)
+	short xa, ya;
+	if( type )
 	{
 		xa = chars[a].x;
 		ya = chars[a].y;
-	}
+	} 
 	else 
 	{
 		xa = items[a].x;
 		ya = items[a].y;
 	}
-	dx = abs(xa - items[b].x);
-	dy = abs(ya - items[b].y);
-	return (int)(hypot(dx, dy));
+	short dx = abs( xa - items[b].x );
+	short dy = abs( ya - items[b].y );
+
+	return (int)( hypot( dx, dy ) );
 }
 
 int findmulti(int x, int y, signed char z)//Sortta like getboat() only more general... use this for other multi stuff!
@@ -99,7 +100,7 @@ int findmulti(int x, int y, signed char z)//Sortta like getboat() only more gene
 	int multi=-1;
 	int ret,dx,dy;
 	
-	int	StartGrid=mapRegions->StartGrid(x,y);
+	int	StartGrid = mapRegions->StartGrid( x, y );
 	
 	unsigned int increment=0;
 	for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
@@ -120,9 +121,9 @@ int findmulti(int x, int y, signed char z)//Sortta like getboat() only more gene
 				{
 					if (items[mapitem].id1>=0x40)
 					{
-						dx=abs(x-items[mapitem].x);
-						dy=abs(y-items[mapitem].y);
-						ret=(int)(hypot(dx, dy));
+						dx = abs( x - items[mapitem].x );
+						dy = abs( y - items[mapitem].y );
+						ret = (int)( hypot( dx, dy ) );
 						if (ret<=lastdist)
 						{
 							lastdist=ret;
@@ -226,11 +227,11 @@ void cBoat::PlankStuff(int s, int p)//double click Will send them here
 
 void cBoat::LeaveBoat(int s, int p)//Get off a boat (dbl clicked an open plank while on the boat.
 {
-	int x,x2=items[p].x;
-	int y,y2=items[p].y;
-	signed char z=items[p].z,mz,sz,typ;
-	int boat=GetBoat(s);
-	int a,b,serhash=chars[currchar[s]].serial%HASHMAX;
+	int x, x2 = items[p].x;
+	int y, y2 = items[p].y;
+	signed char z = items[p].z, mz, sz, typ;
+	int boat = GetBoat( s );
+	int a, b, serhash = chars[currchar[s]].serial%HASHMAX;
 	
 	if (boat==-1) return;
 	
@@ -238,11 +239,12 @@ void cBoat::LeaveBoat(int s, int p)//Get off a boat (dbl clicked an open plank w
 	{
 		for(y=y2-2;y<y2+3;y++)
 		{
-			sz=(signed char) Map->StaticTop(x,y,z); // MapElevation() doesnt work cauz we are in a multi !!
-			
-			mz=(signed char) Map->MapElevation(x,y);
-			if (sz==illegal_z) typ=0;
-			else typ=1;
+			sz = (signed char) Map->StaticTop( x, y, z ); // MapElevation() doesnt work cauz we are in a multi !!
+			mz = (signed char) Map->MapElevation( x, y );
+			if( sz == illegal_z ) 
+				typ = 0;
+			else 
+				typ = 1;
 			
 			if((typ==0 && mz!=5) || (typ==1 && sz!=-5))// everthing the blocks a boat is ok to leave the boat ... LB
 			{
@@ -769,19 +771,18 @@ void cBoat::TurnStuff(int b, int i, int dir, int type)//Turn an item that was on
 
 void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/items on the boat to turnboatstuff()
 {
-	int id2=items[b].id2, olddir = items[b].dir;
-	//static unsigned short int cChecked[MAXCHARS], iChecked[imem]; //lb !!!
-	//int it=0, ct=0;//, a;
+	int id2 = items[b].id2, olddir = items[b].dir;
 	unsigned short int Send[MAXCLIENT];
 	int serial;
 	int tiller, p1, p2, hold;
 	int a,c,dir, d=0;
 	
-	if (b<0 || b>=imem) return; 
+	if( b < 0 || b >= imem ) 
+		return; 
 	
-	for (a=0;a<now;a++)
+	for( a = 0; a < now; a++ )
 	{
-		if (perm[a] && iteminrange(a,b,BUILDRANGE))
+		if( perm[a] && iteminrange( a, b, BUILDRANGE ) )
 		{
 			Send[d]=a;
 			Network->xSend(a,pausex,2,0);
@@ -924,9 +925,10 @@ void cBoat::Turn(int b, int turn)//Turn the boat item, and send all the people/i
 
 void cBoat::Speech(int s, unsigned char *talk)//See if they said a command.
 {
-	int boat=GetBoat(s);
-	if(boat==-1) return;//if they aren't on a boat, then we don't care what they said
-	int dir=items[boat].dir&0x0F;
+	int boat = GetBoat( s );
+	if( boat == -1 ) 
+		return;//if they aren't on a boat, then we don't care what they said
+	int dir = items[boat].dir&0x0F;
 	int serial, tiller;
 	char msg[128];	// No one can type more than 80 chars in UO Client
 	

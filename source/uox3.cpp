@@ -593,7 +593,7 @@ int bestskill(CHARACTER p) // Which skill is the highest for character p
 	return a;
 }
 
-void loadcustomtitle() // for custom titles
+void loadcustomtitle( void ) // for custom titles
 { 
 	int titlecount=0;
 	char sect[512]; 
@@ -653,7 +653,7 @@ void loadcustomtitle() // for custom titles
 			strcpy(title[titlecount].fame, script1);
 			if (titlecount == 23)
 			{
-				title[titlecount].fame[0] = 0; // was sprintf(title[titlecount].fame,"");
+				title[titlecount].fame[0] = 0;
 				strcpy(title[++titlecount].fame, script1);
 			}
 			titlecount++;
@@ -665,7 +665,7 @@ void loadcustomtitle() // for custom titles
 
 char *title1(CHARACTER p) // Paperdoll title for character p (1)
 {
-	int titlenum = 0;
+	int titlenum;
     int x = chars[p].baseskill[bestskill(p)];
 
 	if( x >= 1000 )
@@ -1027,13 +1027,15 @@ void loadatrophy( CHARACTER c, char *astr )
 
 void loadchar(int x) // Load a character from WSC
 {
-	unsigned long int i,k,b,c1;
-	int j,a = 0, loops = 0;
-	char newpoly = 0;
+	unsigned long int i,k;
+	int j,a=0, loops=0;
+	char newpoly=0;
 
-	x=Npcs->MemCharFree();
-	if (x==-1) return;
-	Npcs->InitChar(x,0);
+	x = Npcs->MemCharFree();
+	if( x == -1 ) 
+		return;
+	Npcs->InitChar( x, 0 );
+
 	chars[x].dir = 4;
 	chars[x].hp = chars[x].st = 10;
 	chars[x].stm = chars[x].dx = 10;
@@ -1052,7 +1054,7 @@ void loadchar(int x) // Load a character from WSC
 		chars[x].baseskill[i]=1;
 		chars[x].skill[i]=1;
 	}
-	chars[x].namedeed=5;
+	chars[x].namedeed = 5;
 	do
 	{
 		readw2();
@@ -1060,304 +1062,290 @@ void loadchar(int x) // Load a character from WSC
 		{
 		case 'a':
 		case 'A':
-			if (!(strcmp(script1, "ACCOUNT")))  chars[x].account=str2num(script2);
-			else if (!(strcmp(script1, "ADVOBJ")))  chars[x].advobj=str2num(script2);
-			else if (!(strcmp(script1, "ALLMOVE")))  chars[x].priv2=str2num(script2);
-			else if (!(strcmp(script1, "ATT")))  chars[x].att=str2num(script2);
-			else if (!(strcmp(script1, "ATROPHY"))) loadatrophy(x, script2);
+			if( !strcmp( script1, "ACCOUNT" ) ) chars[x].account = str2num( script2 ); 
+			else if( !strcmp( script1, "ADVOBJ" ) ) chars[x].advobj = str2num( script2 ); 
+			else if( !strcmp( script1, "ALLMOVE" ) ) chars[x].priv2 = str2num( script2 );
+			else if( !strcmp( script1, "ATT" ) ) chars[x].att = str2num( script2 );
+			else if( !strcmp( script1, "ATROPHY" ) ) loadatrophy( x, script2 );
 			break;
 		case 'b':
 		case 'B':
-			if (!(strcmp(script1, "BODY")))
+			if( !strcmp( script1, "BODY" ) )
 			{
-				
-				i = str2num(script2);
+				i = str2num( script2 );
 				chars[x].id1 = (unsigned char)(i>>8);
 				chars[x].id2 = (unsigned char)(i%256);
 				chars[x].orgid1 = (unsigned char)(i>>8);
 				chars[x].orgid2 = (unsigned char)(i%256);
-				
 			}
 			break;
 		case 'c':
 		case 'C':
-			if(!(strcmp(script1, "COMMANDLEVEL" ))) chars[x].commandLevel = str2num( script2 );
+			if( !strcmp( script1, "COMMANDLEVEL" ) )
+				chars[x].commandLevel = str2num( script2 );
 			break;
 		case 'd':
 		case 'D':
-			if (!(strcmp(script1, "DEAD"))) chars[x].dead=str2num(script2);
-			else if (!(strcmp(script1, "DEATHS"))) chars[x].deaths=str2num(script2);
-			else if (!(strcmp(script1, "DEF")))  chars[x].def=str2num(script2);
-			else if (!(strcmp(script1, "DEXTERITY")))  chars[x].dx=str2num(script2);
-			else if (!(strcmp(script1, "DEXTERITY2")))  chars[x].dx2=str2num(script2);
-			else if (!(strcmp(script1, "DIR")))  chars[x].dir = str2num(script2) & 0x0F;	
-			else if (!(strcmp(script1, "DISABLED")))  chars[x].disabled=str2num(script2);
-			else if (!(strcmp(script1, "DISPZ")))  chars[x].dispz=str2num(script2); 
+			if( !strcmp( script1, "DEAD" ) ) chars[x].dead = str2num( script2 );
+			else if( !strcmp( script1, "DEATHS" ) ) chars[x].deaths = str2num( script2 );
+			else if( !strcmp( script1, "DEF" ) ) chars[x].def = str2num(script2);
+			else if( !strcmp( script1, "DEXTERITY" ) ) chars[x].dx = str2num( script2 );
+			else if( !strcmp( script1, "DEXTERITY2" ) ) chars[x].dx2 = str2num( script2 );
+			else if( !strcmp( script1, "DIR" ) ) chars[x].dir = str2num( script2 ) & 0x0F;
+			else if( !strcmp( script1, "DISABLED" ) ) chars[x].disabled = str2num( script2 );
+			else if( !strcmp( script1, "DISPZ" ) ) chars[x].dispz = str2num( script2 );
 			break;
 		case 'e':
 		case 'E':
-			if (!(strcmp(script1, "EMOTE")))
+			if( !strcmp( script1, "EMOTE" ) )
 			{
 				i = str2num(script2);
 				chars[x].emotecolor1 = (unsigned char)(i>>8);
 				chars[x].emotecolor2 = (unsigned char)(i%256);
 			}
-			
 			break;
 		case 'f':
 		case 'F':
-			if (!(strcmp(script1, "FAME")))  chars[x].fame=str2num(script2); 
-			else if (!(strcmp(script1, "FIXEDLIGHT")))  chars[x].fixedlight=str2num(script2); 
-			else if (!(strcmp(script1, "FLEEAT")))  chars[x].fleeat=str2num(script2); 
-			else if (!(strcmp(script1, "FONT")))  chars[x].fonttype=str2num(script2); 
-			else if (!(strcmp(script1, "FX1")))   chars[x].fx1=str2num(script2); 
-			else if (!(strcmp(script1, "FY1")))   chars[x].fy1=str2num(script2); 
-			else if (!(strcmp(script1, "FZ1")))   chars[x].fz1=str2num(script2); 
-			else if (!(strcmp(script1, "FX2")))   chars[x].fx2=str2num(script2); 
-			else if (!(strcmp(script1, "FY2")))   chars[x].fy2=str2num(script2); 
+			if( !strcmp( script1, "FAME" ) ) chars[x].fame=str2num(script2);
+			else if( !strcmp( script1, "FIXEDLIGHT" ) ) chars[x].fixedlight = str2num( script2 ); 
+			else if( !strcmp( script1, "FLEEAT" ) ) chars[x].fleeat = str2num( script2 );
+			else if( !strcmp( script1, "FONT" ) ) chars[x].fonttype = str2num( script2 );
+			else if( !strcmp( script1, "FX1" ) ) chars[x].fx1 = str2num( script2 );
+			else if( !strcmp( script1, "FY1" ) ) chars[x].fy1 = str2num( script2 );
+			else if( !strcmp( script1, "FZ1" ) ) chars[x].fz1 = str2num( script2 );
+			else if( !strcmp( script1, "FX2" ) ) chars[x].fx2 = str2num( script2 );
+			else if( !strcmp( script1, "FY2" ) ) chars[x].fy2 = str2num( script2 );
 			break;
 		case 'g':
 		case 'G':
 			// Begin of Guild related character stuff
-			if (!(strcmp(script1, "GUILDTOGGLE")))   chars[x].guildtoggle=str2num(script2); 
-			else if (!(strcmp(script1, "GUILDNUMBER")))   chars[x].guildnumber=str2num(script2); 
-			else if (!(strcmp(script1, "GUILDTITLE")))   safeCopy(chars[x].guildtitle,script2,MAX_GUILDTITLE); 
-			else if (!(strcmp(script1, "GUILDFEALTY")))  chars[x].guildfealty=str2num(script2); 
+			if( !strcmp( script1, "GUILDTOGGLE" ) ) chars[x].guildtoggle = str2num( script2 ); 
+			else if( !strcmp( script1, "GUILDNUMBER" ) ) chars[x].guildnumber = str2num( script2 ); 
+			else if( !strcmp( script1, "GUILDTITLE" ) ) safeCopy( chars[x].guildtitle, script2, MAX_GUILDTITLE ); 
+			else if( !strcmp( script1, "GUILDFEALTY" ) ) chars[x].guildfealty = str2num( script2 ); 
 			// End of guild stuff
 			break;
 		case 'h':
 		case 'H':
-			if (!(strcmp(script1, "HIDAMAGE")))  chars[x].hidamage=str2num(script2);
-			else if (!(strcmp(script1, "HIDDEN")))  chars[x].hidden=str2num(script2);
-			else if (!(strcmp(script1, "HITPOINTS")))  chars[x].hp=str2num(script2); 
-			else if (!(strcmp(script1, "HUNGER")))  chars[x].hunger=str2num(script2);
+			if( !strcmp( script1, "HIDAMAGE" ) ) chars[x].hidamage = str2num( script2 );
+			else if( !strcmp( script1, "HIDDEN" ) ) chars[x].hidden = str2num( script2 );
+			else if( !strcmp( script1, "HITPOINTS" ) ) chars[x].hp = str2num( script2 );
+			else if( !strcmp( script1, "HUNGER" ) ) chars[x].hunger = str2num( script2 );
 			break;
 		case 'i':
 		case 'I':
-			if (!(strcmp(script1, "INTELLIGENCE")))  chars[x].in=str2num(script2); 
-			else if (!(strcmp(script1, "INTELLIGENCE2")))  chars[x].in2=str2num(script2);
+			if( !strcmp( script1, "INTELLIGENCE" ) ) chars[x].in = str2num( script2 );
+			else if( !strcmp( script1, "INTELLIGENCE2" ) ) chars[x].in2 = str2num( script2 );
 			break;
 		case 'k':
 		case 'K':
-			if (!(strcmp(script1, "KARMA")))  chars[x].karma=str2num(script2); 
-			else if (!(strcmp(script1, "KILLS")))  chars[x].kills=str2num(script2);
+			if( !strcmp( script1, "KARMA" ) ) chars[x].karma = str2num( script2 );
+			else if( !strcmp( script1, "KILLS" ) ) chars[x].kills = str2num( script2 );
 			break;
 			
 		case 'l':
 		case 'L':
-			if (!(strcmp(script1, "LASTON"))) {
-				safeCopy(chars[x].laston, script2, MAX_LASTON); //load last time character was on
+			if( !strcmp( script1, "LASTON" ) ) 
+			{
+				safeCopy( chars[x].laston, script2, MAX_LASTON ); //load last time character was on
 			}
-			else if (!(strcmp(script1, "LODAMAGE")))  chars[x].lodamage=str2num(script2);
+			else if( !strcmp( script1, "LODAMAGE" ) ) chars[x].lodamage = str2num( script2 ); 
 			break;
 			
 		case 'm':
 		case 'M':
-			if (!(strcmp(script1, "MANA")))  chars[x].mn = str2num(script2);
-			else if (!(strcmp(script1, "MURDERRATE")))  chars[x].murderrate = str2num(script2);//REPSYS
+			if( !strcmp( script1, "MANA" ) ) chars[x].mn = str2num( script2 );
+			else if( !strcmp( script1, "MURDERRATE" ) ) chars[x].murderrate = str2num( script2 );
 			break;
 			
 		case 'n':
 		case 'N':
-			if (!(strcmp(script1, "NAME"))) strcpy(chars[x].name, script2); 
-			else if (!(strcmp(script1, "NOTRAIN")))  chars[x].cantrain=0; 
-			else if (!(strcmp(script1, "NPC")))  chars[x].npc=str2num(script2);
-			else if (!(strcmp(script1, "NPCAITYPE")))  chars[x].npcaitype=str2num(script2);
-			else if (!(strcmp(script1, "NPCWANDER")))  chars[x].npcWander=str2num(script2);
+			if( !strcmp( script1, "NAME" ) ) strcpy( chars[x].name, script2 );
+			else if( !strcmp( script1, "NOTRAIN" ) ) chars[x].cantrain = 0;
+			else if( !strcmp( script1, "NPC" ) ) chars[x].npc = str2num( script2 );
+			else if( !strcmp( script1, "NPCAITYPE" ) ) chars[x].npcaitype = str2num( script2 );
+			else if( !strcmp( script1, "NPCWANDER" ) ) chars[x].npcWander = str2num( script2 );
 			break;
 		case 'o':
 		case 'O':
-			if (!(strcmp(script1, "OLDNPCWANDER")))  chars[x].oldnpcWander=str2num(script2);
-			else if (!(strcmp(script1, "OLDX")))   chars[x].oldx=str2num(script2);
-			else if (!(strcmp(script1, "OLDY")))   chars[x].oldy=str2num(script2);
-			else if (!(strcmp(script1, "OLDZ")))   chars[x].oldz=str2num(script2);
-			else if( !(strcmp( script1, "ORGBODY" )))
+			if( !strcmp( script1, "OLDNPCWANDER" ) ) chars[x].oldnpcWander = str2num( script2 );
+			else if( !strcmp( script1, "OLDX" ) ) chars[x].oldx = str2num( script2 );
+			else if( !strcmp( script1, "OLDY" ) ) chars[x].oldy = str2num( script2 );
+			else if( !strcmp( script1, "OLDZ" ) ) chars[x].oldz = str2num( script2 );
+			else if( !strcmp( script1, "ORGBODY" ) )
 			{
 				i = str2num( script2 );
 				chars[x].orgid1 = (unsigned char)(i>>8);
 				chars[x].orgid2 = (unsigned char)(i%256);
-				newpoly=1;
+				newpoly = 1;
 			}
-			else if (!(strcmp(script1, "OWN")))
+			else if( !strcmp( script1, "OWN" ) )
 			{
-				i = str2num(script2);
+				i = str2num( script2 );
 				chars[x].own1 = (unsigned char)(i>>24);
 				chars[x].own2 = (unsigned char)(i>>16);
 				chars[x].own3 = (unsigned char)(i>>8);
 				chars[x].own4 = (unsigned char)(i%256);
 				chars[x].ownserial = i;
-				if (chars[x].ownserial!=-1) 
+				if( chars[x].ownserial != -1 ) 
 				{
-					setptr(&cownsp[i%HASHMAX], x); //Load into charsp array
-					chars[x].tamed = true;				// Abaddon
-					// bugfix JM/LB
+					setptr( &cownsp[i%HASHMAX], x ); //Load into charsp array
+					chars[x].tamed = true;			// Abaddon
 				}
 			}
 			break;
 		case 'p':
 		case 'P':
-			if (!(strcmp(script1, "PACKITEM")))  chars[x].packitem=str2num(script2);
-			else if (!(strcmp(script1, "POISON")))  chars[x].poison=str2num(script2);
-			else if (!(strcmp(script1, "POISONED")))  chars[x].poisoned=str2num(script2);
-			else if (!(strcmp(script1, "PRIV")))  chars[x].priv=str2num(script2); 
+			if( !strcmp( script1, "PACKITEM" ) ) chars[x].packitem = str2num( script2 );
+			else if( !strcmp( script1, "POISON" ) ) chars[x].poison = str2num( script2 );
+			else if( !strcmp( script1, "POISONED" ) ) chars[x].poisoned = str2num( script2 );
+			else if( !strcmp( script1, "PRIV" ) ) chars[x].priv = str2num( script2 );
 			break;
 		case 'q':
 		case 'Q':
-			if (!(strcmp(script1,"QUESTTYPE"))) chars[x].questType = str2num( script2 );
-			else if (!(strcmp(script1,"QUESTDESTREGION"))) chars[x].questDestRegion = str2num( script2 );
-			else if (!(strcmp(script1,"QUESTORIGREGION"))) chars[x].questOrigRegion = str2num( script2 );
+			if( !strcmp( script1,"QUESTTYPE" ) ) chars[x].questType = str2num( script2 );
+			else if( !strcmp( script1,"QUESTDESTREGION" ) ) chars[x].questDestRegion = str2num( script2 );
+			else if( !strcmp( script1,"QUESTORIGREGION" ) ) chars[x].questOrigRegion = str2num( script2 );
 			break;						
 		case 'r':
 		case 'R':
-			if (!(strcmp( script1, "RACE")))  chars[x].race = str2num( script2 ); 
-			else if (!(strcmp( script1, "RACEGATE")))  chars[x].raceGate = str2num( script2 ); 
-			else if (!(strcmp(script1, "REATTACKAT")))  chars[x].reattackat=str2num(script2); 
-			else if (!(strcmp(script1, "RESERVED1")))  chars[x].cell=str2num(script2); 
-			else if (chars[x].cell==255)  chars[x].cell=0;// LB workaround for a bug that has been in for a while
+			if( !strcmp( script1, "RACE" ) ) chars[x].race = str2num( script2 );
+			else if( !strcmp( script1, "RACEGATE" ) ) chars[x].raceGate = str2num( script2 );
+			else if( !strcmp( script1, "REATTACKAT" ) ) chars[x].reattackat = str2num( script2 );
+			else if( !strcmp( script1, "RESERVED1" ) ) chars[x].cell = str2num( script2 );
+			else if( chars[x].cell == 255 ) chars[x].cell = 0;
 			// no cells have been marked as -1, but no cell=0
 			// with that line its not necassairy to take it manually out. 
-			else if (!(strcmp(script1, "ROBE")))
+			else if( !strcmp( script1, "ROBE" ) )
 			{
-				i=str2num(script2);
-				chars[x].robe1 = (unsigned char)(i>>24);
+				i = str2num( script2 );
+				chars[x].robe1 = (unsigned char)i>>24;
 				chars[x].robe2 = (unsigned char)(i>>16);
 				chars[x].robe3 = (unsigned char)(i>>8);
 				chars[x].robe4 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "RUNS"))) chars[x].runs = true;
+			else if( !strcmp( script1, "RUNS" ) ) chars[x].runs = true;
 			break;
 		case 's':
 		case 'S':
-			if (!(strcmp(script1, "SAY")))
+			if( !strcmp( script1, "SAY" ) )
 			{
-				i = str2num(script2);
+				i = str2num( script2 );
 				chars[x].saycolor1 = (unsigned char)(i>>8);
 				chars[x].saycolor2 = (unsigned char)(i%256);
 			}
-			else if ( !(strcmp( script1, "SERIAL" )))
+			else if( !strcmp( script1, "SERIAL" ) )
 			{
-				i = str2num(script2);
-				if (charcount2<=i) charcount2=i+1;
+				i = str2num( script2 );
+				if( charcount2 <= i ) 
+					charcount2 = i + 1;
 				chars[x].ser1 = (unsigned char)(i>>24);
 				chars[x].ser2 = (unsigned char)(i>>16);
 				chars[x].ser3 = (unsigned char)(i>>8);
 				chars[x].ser4 = (unsigned char)(i%256);
 				chars[x].serial = i;
-				setptr(&charsp[i%HASHMAX], x); //Load into charsp array
+				setptr( &charsp[i%HASHMAX], x ); //Load into charsp array
 			}
-			else if (!(strcmp(script1, "SHOPSPAWN"))) chars[x].shopSpawn=str2num( script2 );
-			else if(!(strncmp(script1, "SKILL", 5)))
+			else if( !strcmp( script1, "SHOPSPAWN" ) ) chars[x].shopSpawn = str2num( script2 );
+			else if( !strncmp( script1, "SKILL", 5 ) )
 			{
-				chars[x].baseskill[j=str2num(&script1[5])]=str2num(script2);
-				Skills->updateSkillLevel(x, j);
+				chars[x].baseskill[ j = str2num( &script1[5] ) ] = str2num( script2 );
+				Skills->updateSkillLevel( x, j );
 			}
-			else if(!(strncmp(script1, "SKL", 3 )))		// for skill locking
+			else if( !strncmp( script1, "SKL", 3 ) )		// for skill locking
 			{
 				skl = str2num( &script1[3] );
 				lockstate = str2num( script2 );
-				// Ok, since chars are all unsigned then a check < 0 is really
-				// checking if > then 127   (punt)
-				
-				//if( lockstate < 0 || lockstate > 2 )
-				if (lockstate > 2 )	//punt
+				if( lockstate > 2 )	//punt
 					lockstate = 0;
 				chars[x].lockState[skl] = lockstate;
 			}
-			else if (!(strcmp(script1, "SKIN")))
+			else if( !strcmp( script1, "SKIN" ) )
 			{
-				i = str2num(script2);
+				i = str2num( script2 );
 				chars[x].skin1 = (unsigned char)(i>>8);
 				chars[x].skin2 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "SPAWN")))
+			else if( !strcmp( script1, "SPAWN" ) )
 			{
-				i = str2num(script2);
-				chars[x].spawn1 = (unsigned char)(i>>24);
-				chars[x].spawn2 = (unsigned char)(i>>16);
-				chars[x].spawn3 = (unsigned char)(i>>8);
-				chars[x].spawn4 = (unsigned char)(i%256);
-				chars[x].spawnserial = i;
-				if(chars[x].spawn1 < 0x40) //Not an item (region spawn) //New -- Zippy respawn area (in reality, it's < 0x40, all item serials START at 0x40
+				i = str2num( script2 );
+				chars[x].spawn1=(unsigned char)(i>>24);
+				chars[x].spawn2=(unsigned char)(i>>16);
+				chars[x].spawn3=(unsigned char)(i>>8);
+				chars[x].spawn4=(unsigned char)(i%256);
+				chars[x].spawnserial=i;
+				if( chars[x].spawn1 < 0x40 ) //Not an item (region spawn) //New -- Zippy respawn area (in reality, it's < 0x40, all item serials START at 0x40
 					spawnregion[chars[x].spawn3].current++;                                                       
-//				if (chars[x].spawnserial!=-1) 
 				if( chars[x].spawnserial != 0 && chars[x].spawnserial != -1 )	// redefined to be 0, not -1	// legacy support until next build
-					setptr(&cspawnsp[i%HASHMAX], x); //Load into charsp array
+					setptr( &cspawnsp[i%HASHMAX], x ); //Load into charsp array
 				
 			}
-			else if (!(strcmp(script1, "SPATTACK")))  chars[x].spattack=str2num(script2);
-			else if (!(strcmp(script1, "SPADELAY")))  chars[x].spadelay=str2num(script2);
-			else if (!(strcmp(script1, "SHOP")))  chars[x].shop=str2num(script2);
-			else if (!(strcmp(script1, "SPEECH")))  chars[x].speech=str2num(script2); 
-			else if (!(strcmp(script1, "SPLIT")))  chars[x].split=str2num(script2); 
-			else if (!(strcmp(script1, "SPLITCHANCE")))  chars[x].splitchnc=str2num(script2);
-			else if (!(strcmp(script1, "STAMINA")))  chars[x].stm=str2num(script2);
-			else if (!(strcmp(script1, "STRENGTH")))  chars[x].st=str2num(script2);
-			else if (!(strcmp(script1, "STRENGTH2")))  chars[x].st2=str2num(script2);
-			else if (!(strcmp(script1, "SUMMONTIMER")))  chars[x].summontimer=str2num(script2);
+			else if( !strcmp( script1, "SPATTACK" ) ) chars[x].spattack = str2num( script2 ); 
+			else if( !strcmp( script1, "SPADELAY" ) ) chars[x].spadelay = str2num( script2 ); 
+			else if( !strcmp( script1, "SHOP" ) ) chars[x].shop = str2num( script2 ); 
+			else if( !strcmp( script1, "SPEECH" ) ) chars[x].speech = str2num( script2 ); 
+			else if( !strcmp( script1, "SPLIT" ) ) chars[x].split = str2num( script2 ); 
+			else if( !strcmp( script1, "SPLITCHANCE" ) ) chars[x].splitchnc = str2num( script2 ); 
+			else if( !strcmp( script1, "STAMINA" ) ) chars[x].stm = str2num( script2 ); 
+			else if( !strcmp( script1, "STRENGTH" ) ) chars[x].st = str2num( script2 ); 
+			else if( !strcmp( script1, "STRENGTH2" ) ) chars[x].st2 = str2num( script2 ); 
+			else if( !strcmp( script1, "SUMMONTIMER" ) ) chars[x].summontimer = str2num( script2 ); 
 			break;
 		case 't':
 		case 'T':
-			if (!(strcmp(script1, "TAMING")))  chars[x].taming=str2num(script2);
-			else if (!(strcmp(script1, "TITLE")))  strcpy(chars[x].title, script2);
-			else if (!(strcmp(script1, "TOWN")))  chars[x].town=str2num(script2);
-			else if (!(strcmp(script1, "TOWNPRIV")))  chars[x].townpriv=str2num(script2);
-			else if (!(strcmp(script1, "TOWNTITLE")))  chars[x].towntitle=str2num(script2);
-			else if (!(strcmp(script1, "TOWNVOTE")))
+			if( !strcmp( script1, "TAMING" ) ) chars[x].taming = str2num( script2 ); 
+			else if( !strcmp( script1, "TITLE" ) ) strcpy(chars[x].title, script2); 
+			else if( !strcmp( script1, "TOWN" ) ) chars[x].town = str2num( script2 );
+			else if( !strcmp( script1, "TOWNPRIV" ) ) chars[x].townpriv = str2num( script2 );
+			else if( !strcmp( script1, "TOWNTITLE" ) ) chars[x].towntitle = str2num( script2 );
+			else if( !strcmp( script1, "TOWNVOTE" ) )
 			{
-				i = str2num(script2);
-				//   if (charcount2<=i) charcount2=i+1;
+				i = str2num( script2 );
 				chars[x].townvote1 = (unsigned char)(i>>24);
 				chars[x].townvote2 = (unsigned char)(i>>16);
 				chars[x].townvote3 = (unsigned char)(i>>8);
 				chars[x].townvote4 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "TRIGGER")))  chars[x].trigger=str2num(script2);
-			else if (!(strcmp(script1, "TRIGWORD")))  strcpy(chars[x].trigword, script2);
+			else if( !strcmp( script1, "TRIGGER" ) ) chars[x].trigger = str2num( script2 );
+			else if( !strcmp( script1, "TRIGWORD" ) ) strcpy( chars[x].trigword, script2 ); 
 			break;
 			
 		case 'w':
 		case 'W':
-			if (!(strcmp(script1, "WAR")))  chars[x].war=str2num(script2); 
+			if( !strcmp( script1, "WAR" ) ) chars[x].war = str2num( script2 ); 
 			break;
 		case 'x':
 		case 'X':
-			if (!(strcmp(script1, "X")))  chars[x].x=str2num(script2);
-			else if (!(strcmp(script1, "XBODY")))
+			if( !strcmp( script1, "X" ) ) chars[x].x = str2num( script2 ); 
+			else if( !strcmp( script1, "XBODY" ) )
 			{
-				i=str2num(script2);
+				i = str2num( script2 );
 				chars[x].xid1 = (unsigned char)(i>>8);
 				chars[x].xid2 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "XSKIN")))
+			else if( !strcmp( script1, "XSKIN" ) )
 			{
-				i = str2num(script2);
+				i = str2num( script2 );
 				chars[x].xskin1 = (unsigned char)(i>>8);
 				chars[x].xskin2 = (unsigned char)(i%256);
 			}
 			break;
 		case 'y':
 		case 'Y':
-			if (!(strcmp(script1, "Y")))  chars[x].y=str2num(script2);
+			if( !strcmp( script1, "Y" ) ) chars[x].y = str2num( script2 );
 			break;
 		case 'z':
 		case 'Z':
-			if (!(strcmp(script1, "Z")))  chars[x].dispz=chars[x].z=str2num(script2); 
+			if( !strcmp( script1, "Z" ) ) chars[x].dispz=chars[x].z = str2num( script2 );
 			break;
-			
 		}
 		loops++;
- }
- while (strcmp(script1, "}") && loops<=200);
- if (chars[x].npc && chars[x].war) chars[x].war=0;
+	}
+	while( strcmp( script1, "}" ) && loops <= 200 );
+	if( chars[x].npc && chars[x].war ) 
+		chars[x].war = 0;
  
- setcharflag( x );
- 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- // LB's bugfix for values changed TO 0 on worldsaves not being restored correctly if their default values arnt 0//
- // If a value was 0 on worldsaves it didnt get saved and hence not loaded                                       //
- // This detects those and set them to 0, overwriting the default values                                         //
- // Members that arnt saved should not be here or well have more troubles than before                                                                
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	setcharflag( x );
  
 	 if( chars[x].priv&0x80 && chars[x].commandLevel < 1 && chars[x].priv&0x01 != 0x01 ) // interim line to retain compatibility, MUST BE TAKEN out in the long term!
 		 chars[x].commandLevel = 1;
@@ -1365,8 +1353,6 @@ void loadchar(int x) // Load a character from WSC
 		 chars[x].commandLevel = 2;
 	 
 	 ////////////////////////////////////////////////////////////////////
-	 
-	 
 	 
 	 chars[x].region=calcRegionFromXY(chars[x].x,chars[x].y); //LB bugfix
 	 chars[x].antispamtimer = 0; // LB - AntiSpam -
@@ -1378,11 +1364,11 @@ void loadchar(int x) // Load a character from WSC
 	 }
 	 
 	 // lord binarys body/skin autocorrection code
-	 
+
 	 k=(chars[x].id1<<8)+chars[x].id2;
 	 if (k>=0x000 && k<=0x3e1) 
 	 { 
-		 c1=(chars[x].skin1<<8)+chars[x].skin2; 
+/*		 c1=(chars[x].skin1<<8)+chars[x].skin2; 
 		 b=c1&0x4000; 
 		 if ((b==16384 && (k >=0x0190 && k<=0x03e1)) || c1==0x8000)
 		 {
@@ -1392,7 +1378,7 @@ void loadchar(int x) // Load a character from WSC
 				 chars[x].skin2=chars[x].xskin2=0;
 				 printf("char/player: %s : %i correted problematic skin hue\n",chars[x].name,chars[x].serial);
 			 }
-		 }
+		 }*/
 	 } 
 	 else  // client crashing body --> delete if non player esle put onl”x a warning on server screen
 	 {	 // we dont want to delete that char, dont we ?
@@ -1405,29 +1391,22 @@ void loadchar(int x) // Load a character from WSC
 		 { 
 			 chars[x].id1=0x01;
 			 chars[x].id2=0x90;
-			 //printf("player: %s with bugged body-value detected, restored to male shape\n",chars[x].name);
 		 }
-		 
-		 
 	 }
 	 
-	 a=mapRegions->AddItem(x+1000000);
-	 
+	 a = mapRegions->AddItem( x + 1000000 );
 	 
 	 if ((chars[x].x < 150 && chars[x].y < 150 && chars[x].account ==-1) || ((chars[x].x>6144 || chars[x].y>4096 || chars[x].x<0 || chars[x].y<0) && chars[x].account==-1)) 
 	 { 
-		 //printf("npc: %i on invalid location detected, deleted for performance reasons\n",chars[x].serial);
 		 Npcs->DeleteChar(x); //character in an invalid location
 	 }
 	 if ((chars[x].x < 100 && chars[x].y < 100 && chars[x].account !=-1) || ((chars[x].x>6144 || chars[x].y>4096 || chars[x].x<0 || chars[x].y<0) && chars[x].account!=-1))  
 	 { 
-		 //printf("player: %s on invalid location detected, teleported to save location\n",chars[x].name);
-		 mapRegions->RemoveItem(x+1000000);
-		 chars[x].x=1000; //player in an invalid location
-		 chars[x].y=1000;
-		 chars[x].z=0;
-		 mapRegions->AddItem(x+1000000);
-		 
+		 mapRegions->RemoveItem( x + 1000000 );
+		 chars[x].x = 1000; //player in an invalid location
+		 chars[x].y = 1000;
+		 chars[x].z = 0;
+		 mapRegions->AddItem( x + 1000000 );
 	 }
 }
 
@@ -1437,177 +1416,178 @@ void loaditem (int x) // Load an item from WSC
 	int loops=0;
 	
 	x = Items->MemItemFree();
-	if (x == -1) 
+	if( x == -1 ) 
 		return;
 	Items->InitItem( x, 0 );
-	items[x].ser1=0x40;
-	items[x].id1=0x0F;
-	items[x].id2=0xA6;
+	items[x].ser1 = 0x40;
+	items[x].id1 = 0x0F;
+	items[x].id2 = 0xA6;
 	do
 	{
 		readw2();
 		// krazyglue [10/10/99]
 		// strcmp's can be pretty slow when you call a lot of them, and switch
 		// is very fast check on the first byte to sort out the possibilities.
-		switch(script1[0])
+		switch( script1[0] )
 		{
 		case 'a':
 		case 'A':
-			if (!(strcmp(script1, "AMOUNT"))) items[x].amount=str2num(script2);
-			else if (!(strcmp(script1, "ATT"))) items[x].att=str2num(script2); 
-			else if( !(strcmp(script1, "AC" ))) items[x].armorClass = str2num( script2 ); 
+			if( !strcmp( script1, "AMOUNT" ) ) items[x].amount=str2num(script2);
+			else if( !strcmp( script1, "ATT" ) ) items[x].att=str2num(script2); 
+			else if( !strcmp( script1, "AC" ) ) items[x].armorClass = str2num( script2 ); 
 			break;
 			
 		case 'c':
 		case 'C':
-			if (!(strcmp(script1, "COLOR")))
+			if( !strcmp( script1, "COLOR" ) )
 			{
-				i = str2num(script2);
-				
-					items[x].color1 = (unsigned char)(i>>8);
-					items[x].color2 = (unsigned char)(i%256);
+				i = str2num( script2 );
+				items[x].color1 = (unsigned char)(i>>8);
+				items[x].color2 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "CONT")))
+			else if( !strcmp( script1, "CONT" ) )
 			{
-				i=str2num(script2);
+				i = str2num( script2 );
 				items[x].cont1 = (unsigned char)(i>>24);
 				items[x].cont2 = (unsigned char)(i>>16);
-			    items[x].cont3 = (unsigned char)(i>>8);
+				items[x].cont3 = (unsigned char)(i>>8);
 				items[x].cont4 = (unsigned char)(i%256);
-				items[x].contserial=i;
-				if (i!=-1) setptr(&contsp[i%HASHMAX], x); //set item in pointer array
+				items[x].contserial = i;
+				if( i != -1 ) 
+					setptr( &contsp[i%HASHMAX], x ); //set item in pointer array
 			}
-			else if (!(strcmp(script1, "CORPSE")))  items[x].corpse=str2num(script2); 
-			else if (!(strcmp(script1, "CREATOR" )))  strcpy( items[x].creator, script2 );
+			else if( !strcmp( script1, "CORPSE" ) ) items[x].corpse = str2num( script2 );
+			else if( !strcmp( script1, "CREATOR" ) ) strcpy( items[x].creator, script2 );
 			break;
 			
 		case 'd':
 		case 'D':
-			if (!(strcmp(script1, "DEF")))  items[x].def=str2num(script2);
-			else if (!(strcmp("DEX", script1))) items[x].dx=str2num(script2);
-			else if (!(strcmp("DEXADD", script1))) items[x].dx2=str2num(script2);
-			else if (!(strcmp(script1, "DIR")))  items[x].dir=str2num(script2);
-			else if (!(strcmp(script1, "DISABLED")))  items[x].disabled=str2num(script2);
-			else if (!(strcmp(script1, "DOORFLAG")))  items[x].doordir=str2num(script2);
-			else if (!(strcmp("DYE",script1))) items[x].dye=str2num(script2);
-			else if (!(strcmp("DECAY",script1))) items[x].priv=items[x].priv|0x01;
-			else if (!(strcmp("DISPELLABLE",script1))) items[x].priv=items[x].priv|0x04;
-			else if (!(strcmp(script1, "DX")))  items[x].dx=str2num(script2); 
-			else if (!(strcmp(script1, "DX2"))) items[x].dx2=str2num(script2);
-			else if (!(strcmp(script1, "DYEABLE")))  items[x].dye=str2num(script2);
-			else if (!(strcmp(script1, "DESC"))) strcpy( items[x].desc, script2 );
+			if( !strcmp( script1, "DEF" ) ) items[x].def = str2num( script2 );
+			else if( !strcmp( "DEX", script1 ) ) items[x].dx = str2num( script2 );
+			else if( !strcmp( "DEXADD", script1 ) ) items[x].dx2 = str2num( script2 );
+			else if( !strcmp( script1, "DIR" ) ) items[x].dir = str2num( script2 );
+			else if( !strcmp( script1, "DISABLED" ) ) items[x].disabled = str2num( script2 );
+			else if( !strcmp( script1, "DOORFLAG" ) ) items[x].doordir = str2num( script2 );
+			else if( !strcmp( "DYE", script1 ) ) items[x].dye = str2num( script2 );
+			else if( !strcmp( "DECAY", script1 ) ) items[x].priv |= 0x01;
+			else if( !strcmp( "DISPELLABLE", script1 ) ) items[x].priv |= 0x04;
+			else if( !strcmp( script1, "DX" ) ) items[x].dx = str2num( script2 );
+			else if( !strcmp( script1, "DX2" ) ) items[x].dx2 = str2num( script2 );
+			else if( !strcmp( script1, "DYEABLE" ) ) items[x].dye = str2num( script2 );
+			else if( !strcmp( script1, "DESC" ) ) strcpy( items[x].desc, script2 );
 			break;
 			
 		case 'g':
 		case 'G':
-			if( !(strcmp(script1, "GLOW"))) items[x].glow = str2num( script2 );
-			else if( !(strcmp(script1, "GLOWBC")))
+			if( !strcmp( script1, "GLOW" ) ) items[x].glow = str2num( script2 );
+			else if( !strcmp( script1, "GLOWBC" ) )
 			{
 				i = str2num( script2 );
 				items[x].glow_c1 = (unsigned char)(i>>8);
 				items[x].glow_c2 = (unsigned char)(i%256);
 			}
-			else if( !(strcmp(script1, "GLOWTYPE")))  items[x].glow_effect = str2num( script2 ); 
-			else if( !(strcmp(script1, "GOOD" )))  items[x].good = str2num( script2 ); // Added by Magius(CHE)
+			else if( !strcmp( script1, "GLOWTYPE" ) ) items[x].glow_effect = str2num( script2 );
+			else if( !strcmp( script1, "GOOD" ) ) items[x].good = str2num( script2 );
 			break;
 			
 		case 'h':
 		case 'H':
-			if (!(strcmp(script1, "HIDAMAGE")))  items[x].hidamage=str2num(script2);
-			else if (!(strcmp(script1, "HP")))   items[x].hp=str2num(script2);
+			if( !strcmp( script1, "HIDAMAGE" ) ) items[x].hidamage = str2num( script2 );
+			else if( !strcmp( script1, "HP" ) ) items[x].hp = str2num( script2 ); 
 			break;
 			
 		case 'i':
 		case 'I':
-			if (!(strcmp(script1, "ID")))
+			if( !strcmp( script1, "ID" ) )
 			{
-				i=str2num(script2);
-				items[x].id1=(unsigned char)(i>>8);
-				items[x].id2=(unsigned char)(i%256);
+				i = str2num( script2 );
+				items[x].id1 = (unsigned char)(i>>8);
+				items[x].id2 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "IN")))  items[x].in=str2num(script2); 
-			else if (!(strcmp(script1, "IN2")))  items[x].in2=str2num(script2); 
-			else if (!(strcmp(script1, "INT")))  items[x].in=str2num(script2); 
-			else if (!(strcmp(script1, "INTADD")))  items[x].in2=str2num(script2);
-			else if (!(strcmp("ITEMHAND", script1 ))) items[x].itmhand = str2num( script2 );
+			else if( !strcmp( script1, "IN" ) ) items[x].in = str2num( script2 );
+			else if( !strcmp( script1, "IN2" ) ) items[x].in2 = str2num( script2 );
+			else if( !strcmp( script1, "INT" ) ) items[x].in = str2num( script2 );
+			else if( !strcmp( script1, "INTADD" ) ) items[x].in2 = str2num( script2 );
+			else if( !strcmp("ITEMHAND", script1 ) ) items[x].itmhand = str2num( script2 );
 			break;
 			
 		case 'l':
 		case 'L':
-			if (!(strcmp(script1, "LAYER")))  items[x].layer=str2num(script2); 
-			if (!(strcmp(script1, "LODAMAGE")))  items[x].lodamage=str2num(script2); 
+			if( !strcmp( script1, "LAYER" ) ) items[x].layer = str2num( script2 );
+			if( !strcmp( script1, "LODAMAGE" ) ) items[x].lodamage = str2num( script2 );
 			break;
 			
 		case 'm':
 		case 'M':
-			if (!(strcmp(script1, "MAXHP"))) items[x].maxhp=str2num(script2);
-			else if (!(strcmp(script1, "MORE")))
+			if( !strcmp( script1, "MAXHP" ) ) items[x].maxhp = str2num( script2 );
+			else if( !strcmp( script1, "MORE" ) )
 			{
-				i=str2num(script2);
-				items[x].more1=(unsigned char)(i>>24);
-				items[x].more2=(unsigned char)(i>>16);
-				items[x].more3=(unsigned char)(i>>8);
-				items[x].more4=(unsigned char)(i%256);
+				i = str2num( script2 );
+				items[x].more1 = (unsigned char)(i>>24);
+				items[x].more2 = (unsigned char)(i>>16);
+				items[x].more3 = (unsigned char)(i>>8);
+				items[x].more4 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "MORE2")))
+			else if( !strcmp( script1, "MORE2" ) )
 			{
-				i=str2num(script2);
-				items[x].moreb1=(unsigned char)(i>>24);
-				items[x].moreb2=(unsigned char)(i>>16);
-				items[x].moreb3=(unsigned char)(i>>8);
-				items[x].moreb4=(unsigned char)(i%256);
+				i = str2num( script2 );
+				items[x].moreb1 = (unsigned char)(i>>24);
+				items[x].moreb2 = (unsigned char)(i>>16);
+				items[x].moreb3 = (unsigned char)(i>>8);
+				items[x].moreb4 = (unsigned char)(i%256);
 			}
-			else if (!(strcmp(script1, "MOREX")))  items[x].morex=str2num(script2);
-			else if (!(strcmp(script1, "MOREY")))  items[x].morey=str2num(script2); 
-			else if (!(strcmp(script1, "MOREZ")))  items[x].morez=str2num(script2); 
-			else if (!(strcmp(script1, "MOVABLE")))  items[x].magic=str2num(script2); 
+			else if( !strcmp( script1, "MOREX" ) ) items[x].morex = str2num( script2 );
+			else if( !strcmp( script1, "MOREY" ) ) items[x].morey = str2num( script2 );
+			else if( !strcmp( script1, "MOREZ" ) ) items[x].morez = str2num( script2 );
+			else if( !strcmp( script1, "MOVABLE" ) ) items[x].magic = str2num( script2 );
 			break;
 			
 		case 'n':
 		case 'N':
-			if (!(strcmp(script1, "NAME"))) 
+			if( !strcmp( script1, "NAME" ) ) 
 			{ 
 				if( !strlen( script2 ) )
 					strcpy( items[x].name, "#" );
 				else
-					strcpy(items[x].name, script2); 
+					strcpy( items[x].name, script2 );
 			}
-			else if (!(strcmp(script1, "NAME2"))) 
+			else if( !strcmp( script1, "NAME2" ) ) 
 			{ 
 				if( !strlen( script2 ) )
 					strcpy( items[x].name, "#" );
 				else
-					strcpy(items[x].name2, script2); 
+					strcpy( items[x].name2, script2 ); 
 			}
 			break;
 			
 		case 'o':
 		case 'O':
-			if (!(strcmp(script1, "OFFSPELL")))  items[x].offspell=str2num(script2); 
-			else if (!(strcmp(script1, "OWNER")))
+			if( !strcmp( script1, "OFFSPELL" ) ) items[x].offspell = str2num( script2 );
+			else if( !strcmp( script1, "OWNER" ) )
 			{
-				i=str2num(script2);
+				i = str2num( script2 );
 				items[x].owner1 = (unsigned char)(i>>24);
 				items[x].owner2 = (unsigned char)(i>>16);
 				items[x].owner3 = (unsigned char)(i>>8);
 				items[x].owner4 = (unsigned char)(i%256);
-				items[x].ownserial=i;
-				setptr(&ownsp[i%HASHMAX], x); //set item in pointer array
+				items[x].ownserial = i;
+				setptr( &ownsp[i%HASHMAX], x ); //set item in pointer array
 			}
 			break;
 			
 		case 'p':
 		case 'P':
-			if (!(strcmp(script1, "PILEABLE")))  items[x].pileable=str2num(script2); 
-			else if (!(strcmp(script1, "POISONED")))  items[x].poisoned=str2num(script2); 
-			else if (!(strcmp(script1, "PRIV")))  items[x].priv=str2num(script2);
+			if( !strcmp( script1, "PILEABLE" ) ) items[x].pileable = str2num( script2 );
+			else if( !strcmp( script1, "POISONED" ) ) items[x].poisoned = str2num( script2 );
+			else if( !strcmp( script1, "PRIV" ) ) items[x].priv = str2num( script2 );
 			break;
 			
 		case 'r':
 		case 'R':
-			if (!(strcmp(script1, "RESTOCK")))  items[x].restock=str2num(script2);
-			else if (!(strcmp("RACE",script1))) items[x].racialEffect = str2num( script2 );
-			else if(!(strcmp( script1, "RANK" ))) {
+			if( !strcmp( script1, "RESTOCK" ) ) items[x].restock = str2num( script2 );
+			else if( !strcmp( "RACE", script1 ) ) items[x].racialEffect = str2num( script2 );
+			else if( !strcmp( script1, "RANK" ) ) 
+			{
 				items[x].rank = str2num( script2 ); // By Magius(CHE)
 				if( items[x].rank <= 0 ) 
 					items[x].rank = 10;
@@ -1616,107 +1596,108 @@ void loaditem (int x) // Load an item from WSC
 			
 		case 's':
 		case 'S':
-			if (!(strcmp(script1, "SERIAL")))
+			if( !strcmp( script1, "SERIAL" ) )
 			{
-				i = str2num(script2);
-				if (itemcount2<=i) itemcount2=i+1;
+				i = str2num( script2 );
+				if( itemcount2 <= i ) 
+					itemcount2 = i + 1;
 				items[x].ser1 = (unsigned char)(i>>24);
 				items[x].ser2 = (unsigned char)(i>>16);
 				items[x].ser3 = (unsigned char)(i>>8);
 				items[x].ser4 = (unsigned char)(i%256);
-				items[x].serial=i; //Tauriel
-				setptr(&itemsp[i%HASHMAX], x); //set item in pointer array
+				items[x].serial = i; //Tauriel
+				setptr( &itemsp[i%HASHMAX], x ); //set item in pointer array
 			}
-			else if (!(strcmp(script1, "SPAWN")))
+			else if( !strcmp( script1, "SPAWN" ) )
 			{
-				i = str2num(script2);
+				i = str2num( script2 );
 				items[x].spawn1 = (unsigned char)(i>>24);
 				items[x].spawn2 = (unsigned char)(i>>16);
 				items[x].spawn3 = (unsigned char)(i>>8);
 				items[x].spawn4 = (unsigned char)(i%256);
-				items[x].spawnserial=i;
-				setptr(&spawnsp[i%HASHMAX], x); //set item in pointer array
+				items[x].spawnserial = i;
+				setptr( &spawnsp[i%HASHMAX], x ); //set item in pointer array
 			}
-			else if (!(strcmp(script1, "SPD")))  items[x].spd=str2num(script2); 
-			else if (!(strcmp(script1, "ST")))  items[x].st=str2num(script2); 
-			else if (!(strcmp(script1, "ST2")))  items[x].st2=str2num(script2);
-			else if (!(strcmp(script1, "SK_MADE" )))  items[x].madewith = str2num( script2 );
-			else if (!(strcmp(script1, "STR")))  items[x].st=str2num(script2); 
-			else if (!(strcmp(script1, "STRADD")))  items[x].st2=str2num(script2);
+			else if( !strcmp( script1, "SPD" ) ) items[x].spd = str2num( script2 );
+			else if( !strcmp( script1, "ST" ) ) items[x].st = str2num( script2 );
+			else if( !strcmp( script1, "ST2" ) ) items[x].st2 = str2num( script2 );
+			else if( !strcmp( script1, "SK_MADE" ) ) items[x].madewith = str2num( script2 );
+			else if( !strcmp( script1, "STR" ) ) items[x].st = str2num( script2 );
+			else if( !strcmp( script1, "STRADD" ) ) items[x].st2 = str2num( script2 );
 			break;
 			
 		case 't':
 		case 'T':
-			if (!(strcmp(script1, "TRIGGER")))  items[x].trigger=str2num(script2); 
-			else if (!(strcmp(script1, "TRIGTYPE")))  items[x].trigtype=str2num(script2); 
-			else if (!(strcmp(script1, "TYPE")))  items[x].type=str2num(script2);
-			else if (!(strcmp(script1, "TYPE2")))  items[x].type2=str2num(script2);
+			if( !strcmp( script1, "TRIGGER" ) ) items[x].trigger = str2num( script2 );
+			else if( !strcmp( script1, "TRIGTYPE" ) ) items[x].trigtype = str2num( script2 );
+			else if( !strcmp( script1, "TYPE" ) ) items[x].type = str2num( script2 );
+			else if( !strcmp( script1, "TYPE2" ) ) items[x].type2 = str2num( script2 );
 			break;
 			
 		case 'u':
 		case 'U':
-			if (!(strcmp(script1, "USES")))  items[x].tuses=str2num(script2); 
+			if( !strcmp( script1, "USES" ) ) items[x].tuses = str2num( script2 );
 			break;
 			
 		case 'v':
 		case 'V':
-			if (!(strcmp(script1, "VISIBLE")))  items[x].visible=str2num(script2); 
-			else if (!(strcmp(script1, "VALUE")))  items[x].value=str2num(script2);
+			if( !strcmp( script1, "VISIBLE" ) ) items[x].visible = str2num( script2 );
+			else if( !strcmp( script1, "VALUE" ) ) items[x].value = str2num( script2 );
 			break;
 			
 		case 'w':
 		case 'W':
-			if (!(strcmp(script1, "WEIGHT"))) 
+			if( !strcmp( script1, "WEIGHT" ) ) 
 			{
-				i = str2num(script2);			
-				items[x].weight = i; // Ison 2-20-99
+				i = str2num( script2 );			
+				items[x].weight = i;
 			} 
-			else items[x].weight = 0;
+			else 
+				items[x].weight = 0;
 			
-			if (!(strcmp(script1, "WIPE"))) items[x].wipe=str2num(script2);
+			if( !strcmp( script1, "WIPE" ) ) items[x].wipe = str2num( script2 );
 			break;
 			
 		case 'x':
 		case 'X':
-			if (!(strcmp(script1, "X")))  items[x].x=str2num(script2);
+			if( !strcmp( script1, "X" ) ) items[x].x = str2num( script2 );
 			break;
 			
 		case 'y':
 		case 'Y':
-			if (!(strcmp(script1, "Y"))) items[x].y=str2num(script2);
+			if( !strcmp( script1, "Y" ) ) items[x].y = str2num( script2 );
 			break;
 		case 'z':
 		case 'Z':
-			if (!(strcmp(script1, "Z"))) items[x].z=str2num(script2);
+			if( !strcmp( script1, "Z" ) ) items[x].z = str2num( script2 );
 			break;
 		}
 		
 		loops++;
- }
- while (strcmp(script1, "}") && loops<=200);
+	}
+	while( strcmp( script1, "}" ) && loops <= 200 );
  
- StoreItemRandomValue( x, -1 ); // Magius(CHE) (2)
+	StoreItemRandomValue( x, -1 ); // Magius(CHE) (2)
  
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- // LB's bugfix for values changed TO 0 on worldsaves not being restored correctly if their default values arnt 0//
- // If a value was 0 on worldsaves it didnt get saved and hence not loaded                                       //
- // This detects those and set them to 0, overwriting the default values                                         //
- // Members that arnt saved should not be here                                                                   //
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
- if (items[x].maxhp==0) items[x].maxhp=items[x].hp;
- // Tauriel adding region pointers
  
- if (items[x].contserial==-1)
- { 
-     da=mapRegions->AddItem(x); // it reurns 1 if inalid, if invalid it DOESNT get added !!!
-     if (items[x].x<0 || items[x].y<0 || items[x].x>6144 || items[x].y>4096)  // lord bianry
-	 {  
-		 //printf("item: %i on invalid location deleted\n",items[x].serial);
-		 Items->DeleItem(x);  //these are invalid locations, delete them!	    
-	 }
- }          
- da=0; 
+	//add item weight if item doesn't have it yet
+	if (items[x].weight<=0) // LB, changed from 29 to 0
+	{
+		items[x].weight=0;
+	}
+
+	if( items[x].maxhp == 0 ) 
+		items[x].maxhp = items[x].hp;
+    // Tauriel adding region pointers
+ 
+	if (items[x].contserial==-1)
+	{ 
+		da = mapRegions->AddItem(x);	// it returns 1 if inalid, if invalid it DOESNT get added !!!
+		if( items[x].x < 0 || items[x].y < 0 || items[x].x > 6144 || items[x].y > 4096 )
+		{  
+			Items->DeleItem( x );	//these are invalid locations, delete them!	    
+		}
+	}          
 }
 
 // lb, check for bugged items and autocorrect
@@ -1804,13 +1785,11 @@ void loadnewworld ( void )
 	cmem=0;
 	imem=0;
 	printf("Loading World, Building map Regions, checking Item weight...\n");
-	//	printf("This may take a moment...\n");
 	charcount=0;
 	itemcount=0;
 	charcount2=1;
 	itemcount2=0x40000000;
 	
-	//printf("\nWARNING: UOX3.WSC not found, trying chars.wsc & items.wsc...\n");
 	wscfile=fopen("chars.wsc","r");
 	if (wscfile==NULL)
 	{
@@ -1863,7 +1842,7 @@ void loadnewworld ( void )
 						percent = (int)(a*100)/(maxm-1); // Magius(CHE) (1)
 					if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
 						for( i = 1; i <= strlen( outper ) + 1; i++ ) printf("\b" );
-						*outper='\0';
+						outper[0] = 0;
 					}
 				}
 			}
@@ -1878,8 +1857,9 @@ void loadnewworld ( void )
 		fclose(wscfile);
 		wscfile = NULL;
 		if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
-			for( i = 1; i <= strlen( outper ) + 1; i++ ) printf( "\b" );
-			*outper = '\0';
+			for( i = 1; i <= strlen( outper ) + 1; i++ )
+				printf( "\b" );
+			outper[0] = 0;
 		}
 		printf("Done.\n");
 		wscfile=fopen("items.wsc", "r");
@@ -1932,7 +1912,8 @@ void loadnewworld ( void )
 					else
 						percent = (int)(a*100)/(maxm - 1); // Magius(CHE) (1)
 					if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
-						for( i = 1; i <= strlen( outper ) + 1; i++ ) printf("\b" );
+						for( i = 1; i <= strlen( outper ) + 1; i++ ) 
+							printf("\b" );
 						outper[0] = 0;
 					}
 				}
@@ -1948,7 +1929,8 @@ void loadnewworld ( void )
 			wscfile = NULL;
 		}
 		if( strlen( outper ) > 0 ) { // Magius(CHE) (1)
-			for( i = 1; i <= strlen( outper ) + 1; i++ ) printf( "\b" );
+			for( i = 1; i <= strlen( outper ) + 1; i++ ) 
+				printf( "\b" );
 			outper[0] = 0;
 		}
 		printf("Done.\n" ); // Magius(CHE)
@@ -3424,7 +3406,7 @@ void teleport2(int s) // used for /RESEND only - Morrolan, so people can find th
 		{
 			// Dupois - had to remove the && (k!=i)), doesn update the client
 			// Added Oct 08, 1998
-			if ((perm[i])&&(inrange1p(s, currchar[i])))// && (k!=i)) // If inrange, and a player
+			if ( perm[i] && inrange1p(s, currchar[i]) )// && (k!=i)) // If inrange, and a player
 			{
 				impowncreate(i, s, 1);
 			}
@@ -3663,12 +3645,15 @@ void explodeitem(int s, unsigned int nItem)
 	default:
 		printf("ERROR: Fallout of switch statement without default. uox3.cpp, explodeitem()\n"); //Morrolan
 		dmg = RandomNum(5,10);
+		break;
 	}
 	
-	if (dmg<5) dmg=RandomNum(5,10);  // 5 points minimum damage
-	if (len<2) len=2;  // 2 square min damage range
-	x=items[nItem].x;
-	y=items[nItem].y;//, z=chars[i].z;
+	if ( dmg < 5 ) 
+		dmg=RandomNum(5,10);  // 5 points minimum damage
+	if ( len < 2 ) 
+		len=2;  // 2 square min damage range
+	x = items[nItem].x;
+	y = items[nItem].y;
 	
 	//Char mapRegions
 	int getcell=mapRegions->GetCell(x,y);
@@ -3688,12 +3673,11 @@ void explodeitem(int s, unsigned int nItem)
 			dx=abs(chars[c].x-items[nItem].x);
 			dy=abs(chars[c].y-items[nItem].y);
 			dz=abs(chars[c].z-items[nItem].z);
-			if ((dx<=len)&&(dy<=len)&&(dz<=len))
+			if ( dx <= len && dy <= len && dz <= len )
 			{
 				if( !(chars[c].priv&0x01) && ( chars[c].npc || online( c ) ) )
 				{
-					//staticeffect(c, 0x36, 0xB0, 0x09, 0x09);
-					chars[c].hp-=dmg+(2-min(dx,dy));
+					chars[c].hp -= ( dmg + ( 2 - min( dx, dy ) ) );
 					updatestats(c, 0);
 					if (chars[c].hp<=0)
 					{
@@ -4070,7 +4054,6 @@ void dooruse( UOXSOCKET s, int item)
 	int i, db, x;
 	char changed = 0;
 	
-	//if (items[item].type!=12) return; // Fix locked doors moving
 	if ((iteminrange(s,item,2)==0)&& s>-1) 
 	{
 		sysmessage(s, "You cannot reach the handle from here");
@@ -4092,7 +4075,6 @@ void dooruse( UOXSOCKET s, int item)
 			}
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+1))
@@ -4105,7 +4087,6 @@ void dooruse( UOXSOCKET s, int item)
 			}
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+2))
@@ -4115,7 +4096,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+3))
@@ -4125,7 +4105,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+4))
@@ -4134,7 +4113,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].x--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+5))
@@ -4143,7 +4121,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].x++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+6))
@@ -4153,7 +4130,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+7))
@@ -4163,7 +4139,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+8))
@@ -4173,7 +4148,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+9))
@@ -4183,7 +4157,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+10))
@@ -4193,7 +4166,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+11))
@@ -4203,7 +4175,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} 
@@ -4212,7 +4183,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].id2++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+13))
@@ -4220,7 +4190,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].id2--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		} else if (x==(db+14))
@@ -4229,7 +4198,6 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y--;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xEA);
 			doorsfx(item, x, 0);
 			tempeffect2(0, item, 13, 0, 0, 0);
 		} else if (x==(db+15))
@@ -4238,12 +4206,12 @@ void dooruse( UOXSOCKET s, int item)
 			items[item].y++;
 			RefreshItem( item ); // AntiChrist
 			changed=1;
-			//   soundeffect3(item, 0x00, 0xF1);
 			doorsfx(item, x, 1);
 			items[item].dooropen=0;
 		}
  }
- if (changed==0 && s>-1) sysmessage(s, "This doesnt seem to be a valid door type. Contact a GM.");
+ if ( changed == 0 && s > -1 )
+	 sysmessage( s, "This doesnt seem to be a valid door type. Contact a GM." );
 }
 
 
@@ -4251,17 +4219,17 @@ void dooruse( UOXSOCKET s, int item)
 
 void get_item(int s) // Client grabs an item
 {
-	int i, x,  npc = -1, c, amount, packnum, update=0,serial;
+	int i, x,  npc = -1, c, amount, packnum, update = 0,serial;
 	tile_st tile;
 	int z;//antichrist for trade fix
 	
+	serial = calcserial( buffer[s][1], buffer[s][2], buffer[s][3], buffer[s][4] );
+	if( serial == -1 ) 
+		return;
+	i = calcItemFromSer( serial );
 	
-	serial=calcserial(buffer[s][1],buffer[s][2],buffer[s][3],buffer[s][4]);
-	if( serial == -1 ) return;
-	i=findbyserial(&itemsp[serial%HASHMAX], serial, 0);
-	
-	
-	if (i<=-1) return;
+	if( i <= -1 ) 
+		return;
 	breakConcentration( currchar[s], s );
 	
 	//Zippy's stealing changes  
@@ -4463,13 +4431,11 @@ void wear_item(int s) // Item is dropped on paperdoll
 	{
 		if( k == -1 ) 
 			return;
-
-		if (chars[currchar[s]].dead)
+		if( chars[currchar[s]].dead )
 		{
-			sysmessage (s, "You cant do much in your current state.");
+			sysmessage( s, "You can't do much in your current state." );
 			return;
 		}
-
 		if( Races->getArmorRestrict( chars[currchar[s]].race ) < Items->ArmorClass( i ) && Races->getArmorRestrict( chars[currchar[s]].race ) != 0 )
 		{
 			sysmessage(s, "You are unable to equip that due to your race." );
@@ -4554,15 +4520,15 @@ void wear_item(int s) // Item is dropped on paperdoll
 		// probably these next checks could be removed with the ITEMHAND thing - AntiChrist
 		
 		
-		if ( (!(Skills->GetShield(currchar[s])==-1)) && (buffer[s][5]==2) ) //Morrolan test
+		if ( (!(Skills->GetSecondHand(currchar[s])==-1)) && (buffer[s][5]==2) ) //Morrolan test
 		{
 			bounce[1]=5;
 			Network->xSend(s, bounce, 2, 0);
-			sysmessage(s, "You already have a shield equipped! You must unequip it to use this.");
+			sysmessage(s, "You are already holding something in your left hand.");
 			if (items[i].id1>=0x40) senditem(s, i);
 			return;
 		}
-		if ( Combat->GetWeapon(currchar[s]) !=-1  && ( (buffer[s][5]==1) || ( buffer[s][5] == 2 && !Items->isShieldType( i ) ) ) )//Morrolan test
+		if( Combat->GetWeapon( currchar[s] ) != -1 && ( (buffer[s][5] == 1) || ( buffer[s][5] == 2 && !Items->isLeftHandType( i ) ) ) )//Morrolan test
 		{
 			bounce[1]=5;
 			Network->xSend(s, bounce, 2, 0);
@@ -4800,7 +4766,7 @@ void dump_item(int s) // Item is dropped on ground
 					}
 					else // end of training stuff
 					{
-						j=tradestart(s, t); //trade-stuff
+						j = tradestart( s, t ); //trade-stuff
 						unsetserial( i, 1 );
 						setserial(i, j, 1);
 						items[i].x=30;
@@ -4944,7 +4910,7 @@ void pack_item(int s) // Item is put into container
 	int j, k, z, serial, serhash;
 	tile_st tile;
 	char bufftemp[50];
-	strncpy(bufftemp, (char *)buffer[s], 49);
+	strncpy( bufftemp, (char *)buffer[s], 49 );	// buffer is MUCH longer than bufftemp.  Be careful
 	bufftemp[50] = 0;
 	
 	serial=calcserial(buffer[s][10],buffer[s][11],buffer[s][12],buffer[s][13]);
@@ -5076,6 +5042,14 @@ void pack_item(int s) // Item is put into container
 			getname( nItem, temp2 );
 		else
 			strcpy( temp2, items[nItem].name );
+
+		if( items[nCont].more1 == 1 )	// Using more1 to "lock" a spellbook for RP purposes. Thunderstorm
+		{
+			sysmessage( s, "There are no empty pages left in your book" );
+			bounce[1] = 5;
+			Network->xSend( s, bounce, 2, 0 );
+			return;
+		}
 
 		if( !strcmp( temp2, "All-Spell Scroll" ) )
 		{
@@ -5439,9 +5413,9 @@ int validbeard(int a, int b) // Is selected beard type valid
 void charcreate(int s) // All the character creation stuff
 {
 	int i,n;
+
 	int totalstats,totalskills;
 	unsigned int c;
-
 	c = Npcs->MemCharFree ();
 	
 	Npcs->InitChar( c );
@@ -5449,7 +5423,6 @@ void charcreate(int s) // All the character creation stuff
 	
 	for (i=0;i<=strlen((char *)&buffer[s][10]);i++) 
 		chars[c].name[i]=buffer[s][10+i];
-
 	chars[c].account = acctno[s];
 	if( buffer[s][0x46] != 0x00 )
 	{
@@ -5486,9 +5459,9 @@ void charcreate(int s) // All the character creation stuff
 	
 	chars[c].dir=4;
 	// EviLDeD - January 29, 2000
-    // Fix for Eagles NameDeed Stuff. Kinda Q & D but here ya go Eagle.
-    chars[c].namedeed=5;
-    // EviLDeD - End
+  // Fix for Eagles NameDeed Stuff. Kinda Q & D but here ya go Eagle.
+  chars[c].namedeed=5;
+  // EviLDeD - End
 	chars[c].hp=chars[c].st=buffer[s][0x47];
 	if (chars[c].st>45) chars[c].st=45;          // fix for hack exploit
 	if (chars[c].st<10) chars[c].st=10;
@@ -5566,8 +5539,7 @@ void charcreate(int s) // All the character creation stuff
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0);
 	if( n == -1 ) return;
 
-
-	switch(rand()%2)
+	switch( rand()%2 )
 	{
 	case 0:
 		if( ( chars[c].id2== 0x90 ) && ( chars[c].xid2 == 0x90 ) )
@@ -5582,7 +5554,6 @@ void charcreate(int s) // All the character creation stuff
 			items[n].id2=0x16;
 			items[n].layer=23; // skirt
 		}
-
 		break;
 	case 1:
 		if( ( chars[c].id2 == 0x90 ) && ( chars[c].xid2 == 0x90 ) )
@@ -5599,35 +5570,23 @@ void charcreate(int s) // All the character creation stuff
 		}
 		break;
 	}
-
 	// pant/skirt color -> old client code, random colour
-#if CLIENTVERSION_M==26
 	items[n].color1 = buffer[s][102];
 	items[n].color2 = buffer[s][103];
-#endif
 	setserial(n, c, 4);
 	items[n].type=0;
 	items[n].dye=1;
 	
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0); // spawn pants
 	if( n == -1 ) return;
-
-	switch(rand()%2)
+	
+	switch( rand()%2 )
 	{
-	case 0:
-		items[n].id1=0x1E;
-		items[n].id2=0xFD;
-		break;
-	case 1:
-		items[n].id1=0x15;
-		items[n].id2=0x17;
-		break;
+	case 0:		items[n].id1 = 0x1E;		items[n].id2 = 0xFD;		break;
+	case 1:		items[n].id1 = 0x15;		items[n].id2 = 0x17;		break;
 	}
-
-#if CLIENTVERSION_M==26
 	items[n].color1 = buffer[s][100];
 	items[n].color2 = buffer[s][101];
-#endif
 	setserial(n, c, 4);
 	items[n].layer=0x05;
 	items[n].dye=1;
@@ -5649,39 +5608,16 @@ void charcreate(int s) // All the character creation stuff
 #ifdef SPECIAL
 	n=Items->SpawnItem(s, c, 1,"#",0,0x09,0x15,0,0,0,0);
 	if( n == -1 ) return;
-
-	switch(rand()%7)
+	switch( rand()%7 )
 	{
-	case 0:
-		items[n].id1=0x15;
-		items[n].id2=0x4b;
-		break;
-	case 1:
-		items[n].id1=0x15;
-		items[n].id2=0x45;
-		break;
-	case 2:
-		items[n].id1=0x15;
-		items[n].id2=0x47;
-		break;
-	case 3:
-		items[n].id1=0x15;
-		items[n].id2=0x49;
-		break;
-	case 4:
-		items[n].id1=0x17;
-		items[n].id2=0x1c;
-		break;
-	case 5:
-		items[n].id1=0x1f;
-		items[n].id2=0x0b;
-		break;
-	case 6:
-		items[n].id1=0x14;
-		items[n].id2=0x51;
-		break;
+	case 0:		items[n].id1 = 0x15;		items[n].id2 = 0x4b;		break;
+	case 1:		items[n].id1 = 0x15;		items[n].id2 = 0x45;		break;
+	case 2:		items[n].id1 = 0x15;		items[n].id2 = 0x47;		break;
+	case 3:		items[n].id1 = 0x15;		items[n].id2 = 0x49;		break;
+	case 4:		items[n].id1 = 0x17;		items[n].id2 = 0x1C;		break;
+	case 5:		items[n].id1 = 0x1f;		items[n].id2 = 0x0b;		break;
+	case 6:		items[n].id1 = 0x14;		items[n].id2 = 0x51;		break;
 	}
-
 	setserial(n, c, 4);
 	items[n].layer=0x06;
 #endif
@@ -5689,14 +5625,11 @@ void charcreate(int s) // All the character creation stuff
 	// Give the character some gold
 	n = Items->SpawnItem(s, c, goldamount,"#",1,0x0E,0xED,0,0,1,0);
 	if( n == -1 ) return;
-	items[n].layer=0x01;
-	items[n].att=5;
-	
-	newbieitems(c);
-	
-	perm[s]=1;
-	
-	startchar(s);
+	items[n].layer = 0x01;
+	items[n].att = 5;
+	newbieitems( c );
+	perm[s] = 1;
+	startchar( s );
 }
 
 void charplay (int s) // After hitting "Play Character" button //Instalog
@@ -5781,12 +5714,12 @@ int validtelepos(int s)
 	return z;
 }
 
-int unmounthorse(UOXSOCKET s) // Get off a horse (Remove horse item and spawn new horse)
+int unmounthorse( UOXSOCKET s ) // Get off a horse (Remove horse item and spawn new horse)
 {
 	int k,c,ci,serial,serhash;
 	
-	serial=chars[currchar[s]].serial;
-	serhash=serial%HASHMAX;
+	serial = chars[currchar[s]].serial;
+	serhash = serial%HASHMAX;
 	for (k=0;k<contsp[serhash].max;k++)
 	{
 		ci=contsp[serhash].pointer[k];
@@ -5801,33 +5734,16 @@ int unmounthorse(UOXSOCKET s) // Get off a horse (Remove horse item and spawn ne
 			chars[c].id1=0x00;
 			
 			// krazyglue 12 October, 1999 - if, if, if... is now if, else if, else if...
-
-			switch(items[ci].id2)
+			switch( items[ci].id2 )
 			{
-			case 0x9F:
-				chars[c].id2=0xC8;
-				break;
-			case 0xA0:
-				chars[c].id2=0xE2;
-				break;
-			case 0xA1:
-				chars[c].id2=0xE4;
-				break;
-			case 0xA2:
-				chars[c].id2=0xCC;
-				break;
-			case 0xA3:
-				chars[c].id2=0xD2; //desert
-				break;
-			case 0xA4:
-				chars[c].id2=0xDA; //Harp
-				break;
-			case 0xA5:
-				chars[c].id2=0xDB;//Another
-				break;
-			case 0xA6:
-				chars[c].id2=0xDC;//llama
-				break;
+			case 0x9F:	chars[c].id2 = 0xC8;	break;
+			case 0xA0:	chars[c].id2 = 0xE2;	break;
+			case 0xA1:	chars[c].id2 = 0xE4;	break;
+			case 0xA2:	chars[c].id2 = 0xCC;	break;
+			case 0xA3:	chars[c].id2 = 0xD2;	break;
+			case 0xA4:	chars[c].id2 = 0xDA;	break;
+			case 0xA5:	chars[c].id2 = 0xDB;	break;
+			case 0xA6:	chars[c].id2 = 0xDC;	break;
 			}
 			
 			chars[c].orgid1=chars[c].xid1=chars[c].id1;
@@ -6127,66 +6043,66 @@ void broadcast( UOXSOCKET s ) // GM Broadcast (Done if a GM yells something)
 	int i,tl;
 	char nonuni[512]; 
 	
-	if(chars[currchar[s]].unicode)
+	if( chars[currchar[s]].unicode )
 		for (i=13;i<(buffer[s][1]<<8)+buffer[s][2];i=i+2)
 		{
 			nonuni[(i-13)/2]=buffer[s][i];
 		} 
 		
-		if(!(chars[currchar[s]].unicode))
+	if(!(chars[currchar[s]].unicode))
+	{
+		tl=44+strlen((char *)&buffer[s][8])+1;
+		talk[1]=tl>>8;
+		talk[2]=tl%256;
+		talk[3]=chars[currchar[s]].ser1;
+		talk[4]=chars[currchar[s]].ser2;
+		talk[5]=chars[currchar[s]].ser3;
+		talk[6]=chars[currchar[s]].ser4;
+		talk[7]=chars[currchar[s]].id1;
+		talk[8]=chars[currchar[s]].id2;
+		talk[9]=1;
+		talk[10]=buffer[s][4];
+		talk[11]=buffer[s][5];
+		talk[12]=buffer[s][6];
+		talk[13]=chars[currchar[s]].fonttype;
+		for (i=0;i<now;i++)
 		{
-			tl=44+strlen((char *)&buffer[s][8])+1;
-			talk[1]=tl>>8;
-			talk[2]=tl%256;
-			talk[3]=chars[currchar[s]].ser1;
-			talk[4]=chars[currchar[s]].ser2;
-			talk[5]=chars[currchar[s]].ser3;
-			talk[6]=chars[currchar[s]].ser4;
-			talk[7]=chars[currchar[s]].id1;
-			talk[8]=chars[currchar[s]].id2;
-			talk[9]=1;
-			talk[10]=buffer[s][4];
-			talk[11]=buffer[s][5];
-			talk[12]=buffer[s][6];
-			talk[13]=chars[currchar[s]].fonttype;
-			for (i=0;i<now;i++)
+			if (perm[i])
 			{
-				if (perm[i])
-				{
-					Network->xSend(i, talk, 14, 0);
-					Network->xSend(i, chars[currchar[s]].name, 30, 0);   
-					Network->xSend(i, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);   
-				}
-			}
-		} // end unicode IF
-		else
-		{
-			tl=44+strlen(&nonuni[0])+1;
-			
-			talk[1]=tl>>8;
-			talk[2]=tl%256;
-			talk[3]=chars[currchar[s]].ser1;
-			talk[4]=chars[currchar[s]].ser2;
-			talk[5]=chars[currchar[s]].ser3;
-			talk[6]=chars[currchar[s]].ser4;
-			talk[7]=chars[currchar[s]].id1;
-			talk[8]=chars[currchar[s]].id2;
-			talk[9]=1;
-			talk[10]=buffer[s][4];
-			talk[11]=buffer[s][5];
-			talk[12]=buffer[s][6];
-			talk[13]=chars[currchar[s]].fonttype;
-			
-			for (i=0;i<now;i++)
-			{
-				if (perm[i])
-				{
-					Network->xSend(i, talk, 14, 0);
-					Network->xSend(i, chars[currchar[s]].name, 30, 0);     
-					Network->xSend(i, &nonuni[0], strlen(&nonuni[0])+1, 0);   
-				}
+				Network->xSend(i, talk, 14, 0);
+				Network->xSend(i, chars[currchar[s]].name, 30, 0);   
+				Network->xSend(i, &buffer[s][8], strlen((char *)&buffer[s][8])+1, 0);   
 			}
 		}
+	} // end unicode IF
+	else
+	{
+		tl=44+strlen(&nonuni[0])+1;
+		
+		talk[1]=tl>>8;
+		talk[2]=tl%256;
+		talk[3]=chars[currchar[s]].ser1;
+		talk[4]=chars[currchar[s]].ser2;
+		talk[5]=chars[currchar[s]].ser3;
+		talk[6]=chars[currchar[s]].ser4;
+		talk[7]=chars[currchar[s]].id1;
+		talk[8]=chars[currchar[s]].id2;
+		talk[9]=1;
+		talk[10]=buffer[s][4];
+		talk[11]=buffer[s][5];
+		talk[12]=buffer[s][6];
+		talk[13]=chars[currchar[s]].fonttype;
+		
+		for (i=0;i<now;i++)
+		{
+			if (perm[i])
+			{
+				Network->xSend(i, talk, 14, 0);
+				Network->xSend(i, chars[currchar[s]].name, 30, 0);     
+				Network->xSend(i, &nonuni[0], strlen(&nonuni[0])+1, 0);   
+			}
+		}
+	}
 }
 
 void itemtalk(int s, int item, char *txt) // Item "speech"
@@ -6253,23 +6169,21 @@ void callguards( int p )
 	}
 }
 
-void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse item
+void mounthorse( UOXSOCKET s, int x) // Remove horse char and give player a horse item
 {
 	int j,c;
 	static int count = 1;
 	
-	if(npcinrange(s,x,2) == 0) 
+	if(npcinrange(s,x,2)==0) 
 		return;
-
-	if (chars[currchar[s]].priv&0x01)
+	if( chars[currchar[s]].priv&0x01 )
 	{
-			setserial( x, currchar[s], 5 );
-			chars[x].npcWander=0;
-			chars[x].npcaitype=0;
-			chars[x].tamed = true;
+		setserial( x, currchar[s], 5 );
+		chars[x].npcWander = 0;
+		chars[x].npcaitype = 0;
+		chars[x].tamed = true;
 	}
-	
-	if (chars[x].ownserial==chars[currchar[s]].serial)
+	if( chars[x].ownserial == chars[currchar[s]].serial )
 	{
 		if (chars[currchar[s]].onhorse)
 		{
@@ -6282,38 +6196,19 @@ void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse
 		if( c == -1 )
 			return;
 		
-		items[c].id1=0x3E;
+		items[c].id1 = 0x3E;
 		// krazyglue 12 October, 1999 - if, if, if... is now if, else if, else if
-
-		switch(chars[x].id2)
+		switch( chars[x].id2 )
 		{
-		case 0xC8:
-			items[c].id2=0x9F;
-			break;
-		case 0xE2:
-			items[c].id2=0xA0;
-			break;
-		case 0xE4:
-			items[c].id2=0xA1;
-			break;
-		case 0xCC:
-			items[c].id2=0xA2;
-			break;
-		case 0xD2:
-			items[c].id2=0xA3; //desert
-			break;
-		case 0xDA:
-			items[c].id2=0xA4; //Harp
-			break;
-		case 0xDB:
-			items[c].id2=0xA5;//Another
-			break;
-		case 0xDC:
-			items[c].id2=0xA6;//llama
-			break;
-		}
-
-
+		case 0xC8:	items[c].id2 = 0x9F;	break;
+		case 0xE2:	items[c].id2 = 0xA0;	break;
+		case 0xE4:	items[c].id2 = 0xA1;	break;
+		case 0xCC:	items[c].id2 = 0xA2;	break;
+		case 0xD2:	items[c].id2 = 0xA3;	break;
+		case 0xDA:	items[c].id2 = 0xA4;	break;
+		case 0xDB:	items[c].id2 = 0xA5;	break;
+		case 0xDC:	items[c].id2 = 0xA6;	break;
+		}		
 		setserial(c,currchar[s], 4);
 		items[c].layer=0x19;
 		
@@ -6344,8 +6239,8 @@ void mounthorse(UOXSOCKET s, int x) // Remove horse char and give player a horse
 		wornitems(s, currchar[s]); // send update to current socket
 		for (j=0;j<now;j++) // and to all inrange sockets (without re-sending to current socket )
 		{
-			if ( perm[j] && ( s!=j ) && inrange1(s, j) ) 
-				wornitems(j, currchar[s]);
+			if( perm[j] && s != j && inrange1(s, j) ) 
+				wornitems( j, currchar[s] );
 		}
 		Npcs->DeleteChar(x);
 	}
@@ -6974,32 +6869,16 @@ void checkPC(int i, int currenttime, bool doWeather)// Char mapRegions
 			chars[i].smokedisplaytimer = currenttime + 5*CLOCKS_PER_SEC;
 			staticeffect(i, 0x37, 0x35, 0, 30);
 			soundeffect2(i, 0x00, 0x2B);
-			int j = rand()%14;
-			switch (j)
+			switch( rand()%14 )
 			{
-				case 0:		
-					npcemote(s, i, "*Drags in deep*", 1);
-					break;
-				case 1:		
-					npcemote(s, i, "*Coughs*", 1);
-					break;
-				case 2:		
-					npcemote(s, i, "*Retches*", 1);
-					break;
-				case 3:		
-					npcemote(s, i, "*Hacking cough*", 1);
-					break;
-				case 4:		
-					npcemote(s, i, "*Sighs in contentment*", 1);
-					break;
-				case 5:		
-					npcemote(s, i, "*Puff puff*", 1);
-					break;
-				case 6:		
-					npcemote(s, i, "Wheeeee!!! Xuri's smoking!", 1);
-					break;
-				default:	
-					break;
+			case 0:		npcemote( s, i, "*Drags in deep*", 1 ); break;
+			case 1:		npcemote( s, i, "*Coughs*", 1 ); break;
+			case 2:		npcemote( s, i, "*Retches*", 1 ); break;
+			case 3:		npcemote( s, i, "*Hacking cough*", 1 ); break;
+			case 4:		npcemote( s, i, "*Sighs in contentment*", 1 ); break;
+			case 5:		npcemote( s, i, "*Puff puff*", 1 ); break;
+			case 6:		npcemote( s, i, "Wheeeee!!! Xuri's smoking!", 1 ); break;
+			default:	break;
 			}
 		}
 	}
@@ -7865,9 +7744,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 				chardel(s);
 				break;
 			case 0x00:// Character Create
-#if CLIENTVERSION_M==26
 				Network->Receive( s, 104, 1 );
-#endif
 				charcreate(s);
 				break;
 			case 0x5D:// Character Select
@@ -7918,7 +7795,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 					sprintf(temp, "This item is now described as %s,",&buffer[s][8]);
 					sysmessage(s, temp);
 					return;
-				} else if(chars[currchar[s]].runenumb!=-1)
+				} else if(chars[currchar[s]].runenumb > -1)
 				{
 					sprintf(items[chars[currchar[s]].runenumb].name,"Rune to %s",buffer[s]+8);
 					sprintf(temp,"Rune renamed to: Rune to %s",buffer[s]+8);
@@ -8023,7 +7900,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 						myincrement = 1 ;
 						buffer[s][3] = buffer[s][3] & 0x0F ;  //set to normal to send it back
 
-						switch (buffer[s][13] & 0xf0)
+						switch (buffer[s][13] & 0xF0)
 						{
 							case 0x10:
 			
@@ -8100,7 +7977,7 @@ void cNetworkStuff::GetMsg(int s) // Receive message from client //Lag Fix -- Zi
 					sprintf(temp, "This item is now described as %s,",nonuni);
 					sysmessage(s, temp);
 					return;
-				} else if(chars[currchar[s]].runenumb!=-1)
+				} else if(chars[currchar[s]].runenumb > -1)
 				{
 					sprintf(items[chars[currchar[s]].runenumb].name,"Rune to %s",nonuni);
 					sprintf(temp,"Rune renamed to: Rune to %s",nonuni);
@@ -8926,14 +8803,6 @@ int __cdecl main(int argc, char *argv[])
 		
 		clearalltrades();
 		printf(" Done.\n");
-		//Repsys
-		//printf("Setting char highlight flags...\n");
-		//for(int a=0;a<charcount;a++) //Bug Fix -- Zippy (tempflag not needed)??
-		//{
-		//	chars[a].tempflag=-1;
-		//	chars[a].tempflagtime=-1;
-		//	setcharflag(a);
-		//}
 		
 		//Boats --Check the multi status of every item character at start up to get them set!
 		printf("Initializing multis...");
@@ -8945,7 +8814,6 @@ int __cdecl main(int argc, char *argv[])
 			{
 				multi=findmulti(chars[i].x,chars[i].y,chars[i].z);
 				if( multi != -1 )
-//					if (items[multi].type==117)
 					setserial(i,multi,8);
 				else
 					chars[i].multis=-1;
@@ -9800,7 +9668,7 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 {
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset (&effect[0], 0, 29);
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x03; // Static effect
@@ -9823,10 +9691,9 @@ void staticeffect(int player, unsigned char eff1, unsigned char eff2, char speed
 	effect[25] = 0; // This value is unknown
 	effect[26]=1; // LB client crashfix
 	effect[27]=0; // This value is used for moving effects that explode on impact.
-	// printf("CRASH2??\n");
 	for (j=0;j<now;j++)
 	{
-		if ((perm[j]) && (inrange1p(currchar[j],player)))
+		if ( perm[j] && inrange1p(currchar[j],player) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -9839,7 +9706,7 @@ void staticeffect3(UI16 x, UI16 y, SI08 z, unsigned char eff1, unsigned char eff
 {
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x02; // Static effect
@@ -9865,10 +9732,7 @@ void staticeffect3(UI16 x, UI16 y, SI08 z, unsigned char eff1, unsigned char eff
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{  // if inrange of effect and online send effect
-		//if (inrange2(j,nItem) && perm[j])
-		//{
 		Network->xSend(j, effect, 28, 0);
-		//}
 	}
 }
 
@@ -9877,7 +9741,7 @@ void staticeffect2(int nItem, unsigned char eff1, unsigned char eff2, char speed
 {
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x02; // Static effect
@@ -9922,7 +9786,7 @@ void bolteffect(int player)
 {
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x01; // Bolt effect
@@ -9942,7 +9806,7 @@ void bolteffect(int player)
 	effect[27] = 0;
 	for (j=0;j<now;j++)
 	{
-		if ((perm[j]) && (inrange1p(currchar[j],player)))
+		if ( perm[j] && inrange1p(currchar[j],player) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -9954,7 +9818,7 @@ void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
 {
 	char effect[29];
 	int j,x2,x,y2,y;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // effect from source to dest
@@ -9977,8 +9841,6 @@ void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
     if (x2>6144) x2=6144;
 	if (y2>4096) y2=4096;
 	
-	// printf("bolt: %i %i %i %i %i %i\n",x2,y2,chars[player].x,chars[player].y,x,y);
-	
 	effect[12]=chars[player].x>>8; // source coordinates
 	effect[13]=chars[player].x%256;
 	effect[14]=chars[player].y>>8;
@@ -9999,7 +9861,7 @@ void bolteffect2(int player,char a1,char a2)  // experimenatal, lb
 	
 	for (j=0;j<now;j++)
 	{
-		if ((perm[j]) && (inrange1p(currchar[j],player)))
+		if ( perm[j] && inrange1p(currchar[j],player) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10012,7 +9874,7 @@ void movingeffect(int source, int dest, unsigned char eff1, unsigned char eff2, 
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
@@ -10044,7 +9906,7 @@ void movingeffect(int source, int dest, unsigned char eff1, unsigned char eff2, 
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{
-		if ((inrange1p(currchar[j],source))&&(inrange1p(currchar[j],dest))&&(perm[j]))
+		if ( perm[j] && inrange1p(currchar[j],source) && inrange1p(currchar[j],dest) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10058,7 +9920,7 @@ void movingeffect2(int source, int dest, char eff1, char eff2, char speed, char 
 	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	char effect[29];
 	int j;
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
@@ -10090,7 +9952,7 @@ void movingeffect2(int source, int dest, char eff1, char eff2, char speed, char 
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{   // - If in range of source person or destination position and online send effect
-		if ((inrange1p(currchar[j],source) || inrange2(j,dest)) && (perm[j]))
+		if ( perm[j] && ( inrange1p(currchar[j], source) || inrange2(j, dest) ) )
 		{
 			Network->xSend(j, effect, 28, 0);
 		}
@@ -10105,7 +9967,7 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	char effect[29];
 	int j;
 
-	memset (&effect, 0, 29);
+	memset ( &effect[0], 0, 29 );
 	effect[0]=0x70; // Effect message
 	effect[1]=0x00; // Moving effect
 	effect[2]=chars[source].ser1;
@@ -10131,10 +9993,7 @@ void movingeffect3(CHARACTER source, unsigned short x, unsigned short y, signed 
 	effect[27]=explode; // This value is used for moving effects that explode on impact.
 	for (j=0;j<now;j++)
 	{   // - If in range of source person or destination position and online send effect
-		//if ((inrange1p(currchar[j],source) || inrange2(j,dest)) && (perm[j]))
-		//{
 		Network->xSend(j, effect, 28, 0);
-		//}
 	}
 }
 
@@ -10221,7 +10080,7 @@ void doworldlight(void)
 
 void telltime( UOXSOCKET s )
 {
-	char tstring[60];  //Won't even be 35.
+	char tstring[60]; 
 	char tstring2[60];
 	int lhour;
 	lhour=hour;
@@ -10236,7 +10095,8 @@ void telltime( UOXSOCKET s )
 		if (lhour==0) lhour=12;
 	}
 	
-	switch (lhour) {
+	switch (lhour) 
+	{
 	case 1:		sprintf(tstring2,"%s one o'clock",tstring);		break;
 	case 2:		sprintf(tstring2,"%s two o'clock",tstring);		break;
 	case 3:		sprintf(tstring2,"%s three o'clock",tstring);	break;
@@ -11211,43 +11071,40 @@ char tempeffect2(int source, int dest, int num, char more1, char more2, char mor
 char indungeon(int s)
 {
 	int x1;
-	if (chars[s].x<5119) return 0;
+	if (chars[s].x<5119) 
+		return 0;
 	x1 = (chars[s].x-5119)>>8;
 
-	switch((chars[s].y>>8))
+	switch( chars[s].y>>8 )
 	{
 	case 0:
 		return 1;
-		break;
 	case 1:
 		if (x1 != 0) 
 			return 1;
 		else
 			return 0;
-		break;
 	case 2:
 	case 3:
 		if (x1 < 3) 
 			return 1;
 		else
 			return 0;
-		break;
 	case 4:
-		if (x1==0) return 1;
+		if (x1 == 0) 
+			return 1;
 		return 0;
-		break;
 	case 5:
 		return 1;
-		break;
 	case 6:
 		if ( x1 == 0 )
 			return 1;
 		else
 			return 0;
 	case 7:
-		if (x1<2) return 1;
+		if (x1 < 2)
+			return 1;
 		return 0;
-		break;
 	}
 	return 0;
 }
@@ -11365,8 +11222,6 @@ void npcattacktarget( CHARACTER target, CHARACTER source )
 			npcemote( i, currchar[i], temp, 1 );
 		}
 	}
-//	updatechar( target );
-//	updatechar( source );
 }
 
 
@@ -12604,11 +12459,9 @@ int response(int s)
 			if (response1) //if follow
 			{
 				chars[currchar[s]].guarded = false;
-				//for (k=0;k<charcount;k++)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 )) // owner of the char || a GM
@@ -12654,7 +12507,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12690,7 +12542,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12726,7 +12577,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12759,7 +12609,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12813,7 +12662,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (k!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12846,7 +12694,6 @@ int response(int s)
 				for (i=0;i<cownsp[chars[currchar[s]].serial%HASHMAX].max;i++)
 				{
 					k=cownsp[chars[currchar[s]].serial%HASHMAX].pointer[i];
-					//printf("%i \n", k);
 					if (i!=-1)
 					{
 						if (chars[k].ownserial==chars[currchar[s]].serial || ( chars[currchar[s]].priv&0x01 ))
@@ -12926,25 +12773,57 @@ int response(int s)
 	return 0;
 }
 
-int GetPackOwner(int p)
+ITEM GetRootPack( ITEM p )
 {
-	int a=0,b;
-	int x=p;
-	
-	if (p==-1) return -1;
-	if (items[p].contserial==-1) return -1;
-	if (items[p].cont1<0x40) return findbyserial(&charsp[items[p].contserial%HASHMAX],items[p].contserial,1);
+	if( p == -1 || p >= imem )
+		return -1;
+	int a = 0;
+	ITEM x = p;
+	ITEM currentContainer = -1;
 	do 
 	{
-		if (a>=50) return -1;//Too many packs! must stop endless loop!
-		if (items[x].contserial==-1) return -1;
+		if( x == -1 )				// Non existent item
+			return currentContainer;
+		if( items[x].contserial == -1 )	// It's on the ground, so it MUST be the root pack
+			return x;
+		if( items[x].cont1 < 0x40 )		// It's a character
+			return currentContainer;	// Return current container
 		
-		if (items[x].cont1>=0x40)//inside an item
-			x=findbyserial(&itemsp[items[x].contserial%HASHMAX],items[x].contserial,0);
-		if (x!=-1) b=items[x].cont1; else b=0x42;
+		x = calcItemFromSer( items[x].contserial );
+		if( x != -1 )
+			currentContainer = x;
 		a++;
-	} while (b>=0x40);
-	return findbyserial(&charsp[items[x].contserial%HASHMAX],items[x].contserial,1);
+	} while( a < 50 );
+	return currentContainer;
+}
+
+int GetPackOwner( int p )
+{
+	int a = 0, b;
+	int x = p;
+	
+	if( p == -1 ) 
+		return -1;
+	if( items[p].contserial == -1 ) 
+		return -1;
+	if( items[p].cont1 < 0x40 ) 
+		return calcCharFromSer( items[p].contserial ); 
+	do 
+	{
+		if( a >= 50 ) 
+			return -1;//Too many packs! must stop endless loop!
+		if( items[x].contserial == -1 ) 
+			return -1;
+		
+		if( items[x].cont1 >= 0x40 )//inside an item
+			x = calcItemFromSer( items[x].contserial );
+		if( x != -1 ) 
+			b = items[x].cont1; 
+		else 
+			b = 0x42;
+		a++;
+	} while( b >= 0x40 );
+	return calcCharFromSer( items[x].contserial );
 }
 
 void PlVGetgold(int s, int v)//PlayerVendors
@@ -13220,7 +13099,6 @@ void sendshopinfo(int s, int c, int i)
 				m2[m2t+2]=value>>8; // Item value/price
 				m2[m2t+3]=value%256; // Item value/price
 				m2[m2t+4]=getname(j, itemname); // Item name length
-				//printf("[%x %x] %i - %s\n",items[j].id1, items[j].id2, items[j].amount, itemname);
 				for(k=0;k<m2[m2t+4];k++)
 				{
 					m2[m2t+5+k]=itemname[k];
@@ -13517,7 +13395,8 @@ void restock(int s)
 }
 
 
-void playmonstersound(int monster, int id1, int id2, int sfx)
+
+void playmonstersound( CHARACTER monster, int id1, int id2, MonsterSoundType sfx)
 // Slightly revised by Leafbeach in November-December 2000 (fixed combat sounds for soundflag 2 and 3)
 {
 	int basesound=0,x;
@@ -13532,8 +13411,7 @@ void playmonstersound(int monster, int id1, int id2, int sfx)
 	sf = creatures[x].soundflag;
 	offset = sfx;
 	
-	
-	if (basesound != 0)
+	if( basesound != 0 )
 	{
 		switch(sf)
 		{
@@ -13548,23 +13426,27 @@ void playmonstersound(int monster, int id1, int id2, int sfx)
 			}
 			break;
         case 3: // only start-attack, attack, defense & dying
-			if (sfx==1) offset=0; // idle -> play nothing
-			if (sfx==2) offset=1; // otherwise correct offsets
-			if (sfx==3) offset=2;
-			if (sfx==4) offset=3;
+			switch( sfx )
+			{
+			case 1: offset = 0;	break; // idle -> play nothing
+			case 2: offset = 1;	break; // otherwise correct offsets
+			case 3: offset = 2;	break;
+			case 4: offset = 3;	break;
+			}
             break;
 		case 4: // only a single sound
-			if (sfx!=0) offset=-1; else offset=0;
+			if( sfx != 0 ) 
+				offset = -1; 
+			else 
+				offset = 0;
 			break;
 		}
 		
-		basesound=basesound+offset;
+		basesound = basesound + offset;
 		
-		if (offset!=-1) soundeffect2(monster, basesound>>8, basesound%256);
-		
-		return;
+		if( offset != -1 ) 
+			soundeffect2( monster, basesound>>8, basesound%256 );
 	}
-	
 }
 
 // npc - npc vendor index into chars[]
@@ -14009,22 +13891,21 @@ void usepotion(int p, int i)//Reprogrammed by AntiChrist
 			sysmessage( s, "You can't use that in town!" );
 			return;
 		}
-		addid1[s]=items[i].ser1;
-		addid2[s]=items[i].ser2;
-		addid3[s]=items[i].ser3;
-		addid4[s]=items[i].ser4;
+		addid1[s] = items[i].ser1;
+		addid2[s] = items[i].ser2;
+		addid3[s] = items[i].ser3;
+		addid4[s] = items[i].ser4;
 		strcpy(temp, "Now would be a good time to throw it!");
-		sysmessage( s, temp); 
-		tempeffect(currchar[s], currchar[s], 16, 0, 1, 3);
-		tempeffect(currchar[s], currchar[s], 16, 0, 2, 2);
-		tempeffect(currchar[s], currchar[s], 16, 0, 3, 1);
-		tempeffect2(currchar[s], i, 17, 0, 4, 0);
-		target(s,0,1,0,207,"");
-		//target(s,0,1,0,207,"Where would you like to throw this potion?");
+		sysmessage( s, temp ); 
+		tempeffect( currchar[s], currchar[s], 16, 0, 1, 3 );
+		tempeffect( currchar[s], currchar[s], 16, 0, 2, 2 );
+		tempeffect( currchar[s], currchar[s], 16, 0, 3, 1 );
+		tempeffect2( currchar[s], i, 17, 0, 4, 0 );
+		target( s, 0, 1, 0, 207, "" );
 		return;
 		break;
 	case 4: // Heal Potion
-		switch(items[i].morez)
+		switch( items[i].morez )
 		{
 		case 1:
 			chars[p].hp=min(chars[p].hp+5+RandomNum(1,5)+chars[p].skill[17]/100,chars[p].st);
@@ -14323,113 +14204,112 @@ void StoreItemRandomValue( int i, int tmpreg )
 		items[i].rndvaluerate = (int) RandomNum( min, max );
 	}
 }
-
 int tradestart(int s, int i)
 {
-	int ps, pi, bps, bpi, s2, c;
+	int ps, pi, bps, bpi, s2,c;
 	char msg[90];
 	
-	bps = packitem(currchar[s]);
-	bpi = packitem(i);
-	s2 = calcSocketFromChar(i);
+	bps=packitem(currchar[s]);
+	bpi=packitem(i);
+	s2=calcSocketFromChar(i);
 	
-	if (bps==-1) // LB
+	if (bps==-1) //LB
 	{
-		sysmessage(s, "Time to buy a backpack!");
-		sprintf(temp, "%s doesnt have a backpack!", chars[currchar[s]].name);
-		sysmessage(s2, temp);
+		sysmessage(s,"Time to buy a backpack!");
+		sprintf(temp,"%s doesnt have a backpack!",chars[currchar[s]].name);
+		sysmessage(s2,temp);
 		return 0;
 	}
 	
 	if (bpi==-1)
 	{
-		sysmessage(s2, "Time to buy a backpack!");
-		sprintf(temp, "%s doesnt have a backpack!", chars[currchar[s2]].name);
-		sysmessage(s, temp);
+		sysmessage(s2,"Time to buy a backpack!");
+		sprintf(temp,"%s doesnt have a backpack!",chars[currchar[s2]].name);
+		sysmessage(s,temp);
 		return 0;
 	}
 	
 	
-	c = Items->SpawnItem(s2, 1, "#", 0, 0x1E, 0x5E, 0, 0, 0, 0);
-	if (c == -1)
+	c=Items->SpawnItem(s2,1,"#",0,0x1E,0x5E,0,0,0,0);
+	if( c == -1 ) 
 		return 0;
-	items[c].x = 26;
-	items[c].y = 0;
-	items[c].z = 0;
-	setserial(c, currchar[s], 4);
-	items[c].layer = 0;
-	items[c].type = 1;
-	items[c].dye = 0;
-	ps = c;
+	items[c].x=26;
+	items[c].y=0;
+	items[c].z=0;
+	setserial(c,currchar[s],4);
+	items[c].layer=0;
+	items[c].type=1;
+	items[c].dye=0;
+	ps=c;
 	sendbpitem(s, ps);
-	if (s2!=-1)
+	if (s2!=-1) 
 		sendbpitem(s2, ps);
 	
-	c = Items->SpawnItem(s2, 1, "#", 0, 0x1E, 0x5E, 0, 0, 0, 0);
-	if (c == -1)
+	c=Items->SpawnItem(s2,1,"#",0,0x1E,0x5E,0,0,0,0);
+	if( c == -1 ) 
 		return 0;
-	items[c].x = 26;
-	items[c].y = 0;
-	items[c].z = 0;
-	setserial(c, i, 4);
-	items[c].layer = 0;
-	items[c].type = 1;
-	items[c].dye = 0;
-	pi = c;
+	items[c].x=26;
+	items[c].y=0;
+	items[c].z=0;
+	setserial(c,i,4);
+	items[c].layer=0;
+	items[c].type=1;
+	items[c].dye=0;
+	pi=c;
 	sendbpitem(s, pi);
-	if (s2!=-1)
+	if (s2!=-1) 
 		sendbpitem(s2, pi);
 	
-	items[pi].moreb1 = items[ps].ser1;
-	items[pi].moreb2 = items[ps].ser2;
-	items[pi].moreb3 = items[ps].ser3;
-	items[pi].moreb4 = items[ps].ser4;
-	items[ps].moreb1 = items[pi].ser1;
-	items[ps].moreb2 = items[pi].ser2;
-	items[ps].moreb3 = items[pi].ser3;
-	items[ps].moreb4 = items[pi].ser4;
-	items[pi].morez = 0;
-	items[ps].morez = 0;
+	items[pi].moreb1=items[ps].ser1;
+	items[pi].moreb2=items[ps].ser2;
+	items[pi].moreb3=items[ps].ser3;
+	items[pi].moreb4=items[ps].ser4;
+	items[ps].moreb1=items[pi].ser1;
+	items[ps].moreb2=items[pi].ser2;
+	items[ps].moreb3=items[pi].ser3;
+	items[ps].moreb4=items[pi].ser4;
+	items[pi].morez=0;
+	items[ps].morez=0;
 	
-	msg[0] = 0x6F; // Header Byte
-	msg[1] = 0; // Size
-	msg[2] = 47; // Size
-	msg[3] = 0; // Initiate
-	msg[4] = chars[i].ser1;
-	msg[5] = chars[i].ser2;
-	msg[6] = chars[i].ser3;
-	msg[7] = chars[i].ser4;
-	msg[8] = items[ps].ser1;
-	msg[9] = items[ps].ser2;
-	msg[10] = items[ps].ser3;
-	msg[11] = items[ps].ser4;
-	msg[12] = items[pi].ser1;
-	msg[13] = items[pi].ser2;
-	msg[14] = items[pi].ser3;
-	msg[15] = items[pi].ser4;
-	msg[16] = 1;
+	msg[0]=0x6F; // Header Byte
+	msg[1]=0; // Size
+	msg[2]=47; // Size
+	msg[3]=0; // Initiate
+	msg[4]=chars[i].ser1;
+	msg[5]=chars[i].ser2;
+	msg[6]=chars[i].ser3;
+	msg[7]=chars[i].ser4;
+	msg[8]=items[ps].ser1;
+	msg[9]=items[ps].ser2;
+	msg[10]=items[ps].ser3;
+	msg[11]=items[ps].ser4;
+	msg[12]=items[pi].ser1;
+	msg[13]=items[pi].ser2;
+	msg[14]=items[pi].ser3;
+	msg[15]=items[pi].ser4;
+	msg[16]=1;
 	strcpy(&(msg[17]), chars[i].name);
 	Network->xSend(s, msg, 47, 0);
 	
-	msg[0] = 0x6F; // Header Byte
-	msg[1] = 0; // Size
-	msg[2] = 47; // Size
-	msg[3] = 0; // Initiate
-	msg[4] = chars[currchar[s]].ser1;
-	msg[5] = chars[currchar[s]].ser2;
-	msg[6] = chars[currchar[s]].ser3;
-	msg[7] = chars[currchar[s]].ser4;
-	msg[8] = items[pi].ser1;
-	msg[9] = items[pi].ser2;
-	msg[10] = items[pi].ser3;
-	msg[11] = items[pi].ser4;
-	msg[12] = items[ps].ser1;
-	msg[13] = items[ps].ser2;
-	msg[14] = items[ps].ser3;
-	msg[15] = items[ps].ser4;
-	msg[16] = 1;
+	msg[0]=0x6F; // Header Byte
+	msg[1]=0; // Size
+	msg[2]=47; // Size
+	msg[3]=0; // Initiate
+	msg[4]=chars[currchar[s]].ser1;
+	msg[5]=chars[currchar[s]].ser2;
+	msg[6]=chars[currchar[s]].ser3;
+	msg[7]=chars[currchar[s]].ser4;
+	msg[8]=items[pi].ser1;
+	msg[9]=items[pi].ser2;
+	msg[10]=items[pi].ser3;
+	msg[11]=items[pi].ser4;
+	msg[12]=items[ps].ser1;
+	msg[13]=items[ps].ser2;
+	msg[14]=items[ps].ser3;
+	msg[15]=items[ps].ser4;
+	msg[16]=1;
 	strcpy(&(msg[17]), chars[currchar[s]].name);
-	if (s2!=-1)
+	if (s2!=-1) 
 		Network->xSend(s2, msg, 47, 0);
 	
 	return ps;
@@ -14437,26 +14317,26 @@ int tradestart(int s, int i)
 
 void clearalltrades()
 {
-	int i, j, k, p, serial, serhash, ci;
-	for (i = 0; i < itemcount; i++)
+	int i, j, k, p,serial,serhash,ci;
+	for (i=0;i<itemcount;i++)
 	{
-		if (items[i].type == 1 && items[i].x == 26 && items[i].y == 0 && items[i].z == 0 &&
-			items[i].id1 == 0x1E && items[i].id2 == 0x5E)
+		if (items[i].type==1 && items[i].x==26 && items[i].y==0 && items[i].z==0 &&
+			items[i].id1==0x1E && items[i].id2==0x5E)
 		{
-			k = calcCharFromSer(items[i].contserial);
-			p = packitem(k);
-			serial = items[i].serial;
-			serhash = serial%HASHMAX;
-			for (ci = 0; ci < contsp[serhash].max; ci++)
+			k = calcCharFromSer( items[i].contserial );
+			p=packitem(k);
+			serial=items[i].serial;
+			serhash=serial%HASHMAX;
+			for (ci=0;ci<contsp[serhash].max;ci++)
 			{
-				j = contsp[serhash].pointer[ci];
-				if (j != -1)
-					if ((items[j].contserial == serial))
+				j=contsp[serhash].pointer[ci];
+				if (j!=-1)
+					if ((items[j].contserial==serial))
 					{
-						if (p > -1)
+						if( p > -1 )
 						{
-							unsetserial(j, 1);
-							setserial(j, p, 1);
+							unsetserial( j, 1 );
+							setserial(j,p,1);
 						}
 					}
 			}
@@ -14469,30 +14349,30 @@ void clearalltrades()
 void trademsg(int s)
 {
 	int cont1 = -1, cont2 = -1;
-	switch (buffer[s][3])
+	switch(buffer[s][3])
 	{
-		case 0:// Start trade - Never happens, sent out by the server only.
-			break;
-		case 1:// Cancel trade.  Send each person cancel messages, move items.
-			endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-			break;
-		case 2:// Change check marks.  Possibly conclude trade
-			cont1 = calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-			if (cont1 > -1)
-				cont2 = calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
-			if (cont2 > -1) // lb crashfix
+	case 0://Start trade - Never happens, sent out by the server only.
+		break;
+	case 1://Cancel trade.  Send each person cancel messages, move items.
+		endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+		break;
+	case 2://Change check marks.  Possibly conclude trade
+		cont1=calcItemFromSer(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
+		if( cont1 > -1 )
+			cont2=calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
+		if( cont2 > -1 ) // lb crashfix
+		{
+			items[cont1].morez=buffer[s][11];
+			sendtradestatus(cont1, cont2);
+			if (items[cont1].morez && items[cont2].morez)
 			{
-				items[cont1].morez = buffer[s][11];
-				sendtradestatus(cont1, cont2);
-				if (items[cont1].morez && items[cont2].morez)
-				{
-					dotrade(cont1, cont2);
-					endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
-				}
+				dotrade(cont1, cont2);
+				endtrade(buffer[s][4], buffer[s][5], buffer[s][6], buffer[s][7]);
 			}
-			break;
-		default:
-			printf("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); // Morrolan
+		}
+		break;
+	default:
+		printf("ERROR: Fallout of switch statement without default. uox3.cpp, trademsg()\n"); //Morrolan
 	}
 }
 
@@ -14501,15 +14381,15 @@ void sendtradestatus(int cont1, int cont2)
 	char msg[30];
 	int p1, p2, s1, s2;
 	
-	p1 = calcCharFromSer(items[cont1].contserial);
-	p2 = calcCharFromSer(items[cont2].contserial);
-	s1 = calcSocketFromChar(p1);
-	s2 = calcSocketFromChar(p2);
+	p1 = calcCharFromSer( items[cont1].contserial );
+	p2 = calcCharFromSer( items[cont2].contserial );
+	s1 = calcSocketFromChar( p1 );
+	s2 = calcSocketFromChar( p2 );
 	
-	msg[0] = 0x6F;// Header
-	msg[1] = 0x00;// Size
-	msg[2] = 0x11;// Size
-	msg[3] = 0x02;// State
+	msg[0] = 0x6F;//Header
+	msg[1] = 0x00;//Size
+	msg[2] = 0x11;//Size
+	msg[3] = 0x02;//State
 	msg[4] = items[cont1].ser1;
 	msg[5] = items[cont1].ser2;
 	msg[6] = items[cont1].ser3;
@@ -14523,7 +14403,7 @@ void sendtradestatus(int cont1, int cont2)
 	msg[14] = 0;
 	msg[15] = (unsigned char)(items[cont2].morez%256);
 	msg[16] = 0; // No name in this message
-	if (s1!=-1)
+	if (s1!=-1) 
 		Network->xSend(s1, msg, 17, 0);
 	
 	msg[4] = items[cont2].ser1;
@@ -14532,189 +14412,191 @@ void sendtradestatus(int cont1, int cont2)
 	msg[7] = items[cont2].ser4;
 	msg[11] = (unsigned char)(items[cont2].morez%256);
 	msg[15] = (unsigned char)(items[cont1].morez%256);
-	if (s2!=-1)
+	if (s2!=-1) 
 		Network->xSend(s2, msg, 17, 0);
 }
 
 void endtrade(int b1, int b2, int b3, int b4)
 {
 	int cont1, cont2, p1, p2, bp1, bp2, s1, s2, i;
-	int serial, serhash, ci;
+	int serial,serhash,ci;
 	char msg[30];
 	
 	cont1 = calcItemFromSer(b1, b2, b3, b4);
-	if (cont1 < 0)
+	if( cont1 < 0 )
 		return; // LB, crashfix
-	cont2 = calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
-	if (cont2 < 0)
+	cont2=calcItemFromSer(items[cont1].moreb1, items[cont1].moreb2, items[cont1].moreb3, items[cont1].moreb4);
+	if( cont2 < 0 )
 		return; // LB, crashfix
-	p1 = calcCharFromSer(items[cont1].cont1, items[cont1].cont2, items[cont1].cont3, items[cont1].cont4);
-	p2 = calcCharFromSer(items[cont2].cont1, items[cont2].cont2, items[cont2].cont3, items[cont2].cont4);
-	bp1 = packitem(p1);
-	if (bp1 < 0)
+	p1 = calcCharFromSer( items[cont1].contserial );
+	p2 = calcCharFromSer( items[cont2].contserial );
+	bp1=packitem(p1);
+	if( bp1 < 0 ) 
 		return;
-	bp2 = packitem(p2);
-	if (bp2 < 0)
+	bp2=packitem(p2);
+	if( bp2 < 0 ) 
 		return;
-	s1 = calcSocketFromChar(p1);
-	s2 = calcSocketFromChar(p2);
+	s1 = calcSocketFromChar( p1 );
+	s2 = calcSocketFromChar( p2 );
 	
-	msg[0] = 0x6F;// Header Byte
-	msg[1] = 0x00;// Size
-	msg[2] = 0x11;// Size
-	msg[3] = 0x01;// State byte
-	msg[4] = items[cont1].ser1;
-	msg[5] = items[cont1].ser2;
-	msg[6] = items[cont1].ser3;
-	msg[7] = items[cont1].ser4;
-	msg[8] = 0;
-	msg[9] = 0;
-	msg[10] = 0;
-	msg[11] = 0;
-	msg[12] = 0;
-	msg[13] = 0;
-	msg[14] = 0;
-	msg[15] = 0;
-	msg[16] = 0;
-	if (s1!=-1)
+	msg[0]=0x6F;//Header Byte
+	msg[1]=0x00;//Size
+	msg[2]=0x11;//Size
+	msg[3]=0x01;//State byte
+	msg[4]=items[cont1].ser1;
+	msg[5]=items[cont1].ser2;
+	msg[6]=items[cont1].ser3;
+	msg[7]=items[cont1].ser4;
+	msg[8]=0;
+	msg[9]=0;
+	msg[10]=0;
+	msg[11]=0;
+	msg[12]=0;
+	msg[13]=0;
+	msg[14]=0;
+	msg[15]=0;
+	msg[16]=0;
+	if (s1!=-1) 
 		Network->xSend(s1, msg, 17, 0);
 	
-	msg[0] = 0x6F;// Header Byte
-	msg[1] = 0x00;// Size
-	msg[2] = 0x11;// Size
-	msg[3] = 0x01;// State byte
-	msg[4] = items[cont2].ser1;
-	msg[5] = items[cont2].ser2;
-	msg[6] = items[cont2].ser3;
-	msg[7] = items[cont2].ser4;
-	msg[8] = 0;
-	msg[9] = 0;
-	msg[10] = 0;
-	msg[11] = 0;
-	msg[12] = 0;
-	msg[13] = 0;
-	msg[14] = 0;
-	msg[15] = 0;
-	msg[16] = 0;
-	if (s2!=-1)
+	msg[0]=0x6F;//Header Byte
+	msg[1]=0x00;//Size
+	msg[2]=0x11;//Size
+	msg[3]=0x01;//State byte
+	msg[4]=items[cont2].ser1;
+	msg[5]=items[cont2].ser2;
+	msg[6]=items[cont2].ser3;
+	msg[7]=items[cont2].ser4;
+	msg[8]=0;
+	msg[9]=0;
+	msg[10]=0;
+	msg[11]=0;
+	msg[12]=0;
+	msg[13]=0;
+	msg[14]=0;
+	msg[15]=0;
+	msg[16]=0;
+	if (s2!=-1) 
 		Network->xSend(s2, msg, 17, 0);
 	
-	serial = items[cont1].serial;
-	serhash = serial%HASHMAX;
-	for (ci = 0; ci < contsp[serhash].max; ci++)
+	serial=items[cont1].serial;
+	serhash=serial%HASHMAX;
+	for (ci=0;ci<contsp[serhash].max;ci++)
 	{
-		i = contsp[serhash].pointer[ci];
+		i=contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial == serial))
+			if ((items[i].contserial==serial))
 			{
-				if (items[i].glow > 0)
-					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB, glowing stuff
-				unsetserial(i, 1);
-				setserial(i, bp1, 1);
-				if (items[i].glow > 0)
-					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
-				items[i].x = 50 + (rand()%80);
-				items[i].y = 50 + (rand()%80);
-				items[i].z = 9;
+				if( items[i].glow > 0 ) 
+					removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB, glowing stuff
+				unsetserial( i, 1 );
+				setserial(i,bp1,1);
+				if( items[i].glow > 0 ) 
+					setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
+				items[i].x=50+(rand()%80);
+				items[i].y=50+(rand()%80);
+				items[i].z=9;
 				if (s1!=-1) 
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
 			}
 	}
-	serial = items[cont2].serial;
-	serhash = serial%HASHMAX;
-	for (ci = 0; ci < contsp[serhash].max; ci++)
+	serial=items[cont2].serial;
+	serhash=serial%HASHMAX;
+	for (ci=0;ci<contsp[serhash].max;ci++)
 	{
-		i = contsp[serhash].pointer[ci];
+		i=contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial == serial))
+			if ((items[i].contserial==serial))
 			{
-				if (items[i].glow > 0)
-					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB, glowing stuff
-				unsetserial(i, 1);
-				setserial(i, bp2, 1);  
-				if (items[i].glow > 0)
-					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
-				items[i].x = 50 + (rand()%80);
-				items[i].y = 50 + (rand()%80);
-				items[i].z = 9;
+				if( items[i].glow > 0 ) 
+					removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB, glowing stuff
+				unsetserial( i, 1 );
+				setserial(i,bp2,1);  
+				if( items[i].glow > 0 ) 
+					setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
+				items[i].x=50+(rand()%80);
+				items[i].y=50+(rand()%80);
+				items[i].z=9;
 				if (s2!=-1) 
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
 			}
 	}
 	Items->DeleItem(cont1);
 	Items->DeleItem(cont2);
-	Weight->NewCalc(p1);
-	Weight->NewCalc(p2);
+	Weight->NewCalc( p1 );
+	Weight->NewCalc( p2 );
 }
 
 void dotrade(int cont1, int cont2)
 {
 	int p1, p2, bp1, bp2, s1, s2, i;
-	int serial, serhash, ci;
+	int serial,serhash,ci;
 	
-	p1 = calcCharFromSer(items[cont1].contserial);
-	if (p1 < 0)
+	p1 = calcCharFromSer( items[cont1].contserial );
+	if( p1 < 0 ) 
 		return;
-	p2 = calcCharFromSer(items[cont2].contserial);
-	if (p2 < 0)
+	p2 = calcCharFromSer( items[cont2].contserial );
+	if( p2 < 0 ) 
 		return;
-	bp1 = packitem(p1);
-	if (bp1 < 0)
+	bp1=packitem(p1);
+	if( bp1 < 0 ) 
 		return;
-	bp2 = packitem(p2);
-	if (bp2 < 0)
+	bp2=packitem(p2);
+	if( bp2 < 0 ) 
 		return;
-	s1 = calcSocketFromChar(p1);
-	s2 = calcSocketFromChar(p2);
+	s1=calcSocketFromChar(p1);
+	s2=calcSocketFromChar(p2);
 	
-	serial = items[cont1].serial;
-	serhash = serial%HASHMAX;
-	for (ci = 0; ci < contsp[serhash].max; ci++)
+	serial=items[cont1].serial;
+	serhash=serial%HASHMAX;
+	for (ci=0;ci<contsp[serhash].max;ci++)
 	{
-		i = contsp[serhash].pointer[ci];
+		i=contsp[serhash].pointer[ci];
 		if (i!=-1)
-			if ((items[i].contserial == serial))
+			if ((items[i].contserial==serial))
 			{
-				unsetserial(i, 1);
-				if (items[i].glow > 0)
-					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB glowing stuff
-				setserial(i, bp2, 1);
-				if (items[i].glow > 0)
-					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
-				items[i].x = 50 + (rand()%80);
-				items[i].y = 50 + (rand()%80);
-				items[i].z = 9;
+				unsetserial( i, 1 );
+				if( items[i].glow > 0 ) 
+					removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB glowing stuff
+				setserial(i,bp2,1);
+				if( items[i].glow > 0 ) 
+					setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
+				items[i].x=50+(rand()%80);
+				items[i].y=50+(rand()%80);
+				items[i].z=9;
 				if (s1!=-1) 
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
 				if (s2!=-1) 
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
+				
 			}
 	}
-	serial = items[cont2].serial;
-	serhash = serial%HASHMAX;
-	for (ci = 0; ci < contsp[serhash].max; ci++)
+	serial=items[cont2].serial;
+	serhash=serial%HASHMAX;
+	for (ci=0;ci<contsp[serhash].max;ci++)
 	{
-		i = contsp[serhash].pointer[ci];
-		if (i != -1)
-			if ((items[i].contserial == serial))
+		i=contsp[serhash].pointer[ci];
+		if (i!=-1)
+			if ((items[i].contserial==serial))
 			{
-				unsetserial(i, 1);
-				if (items[i].glow > 0)
-					removefromptr(&glowsp[chars[currchar[s2]].serial%HASHMAX], i); // LB glowing stuff
-				setserial(i, bp1, 1);
-				if (items[i].glow > 0)
-					setptr(&glowsp[chars[currchar[s1]].serial%HASHMAX], i);
-				items[i].x = 50 + (rand()%80);
-				items[i].y = 50 + (rand()%80);
-				items[i].z = 9;
+				unsetserial( i, 1 );
+				if( items[i].glow > 0 ) 
+					removefromptr( &glowsp[chars[currchar[s2]].serial%HASHMAX], i ); // LB glowing stuff
+				setserial( i, bp1, 1 );
+				if( items[i].glow > 0 ) 
+					setptr( &glowsp[chars[currchar[s1]].serial%HASHMAX], i );
+				items[i].x=50+(rand()%80);
+				items[i].y=50+(rand()%80);
+				items[i].z=9;
 				if (s2!=-1)
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
 				if (s1!=-1)
-					RefreshItem(i); // AntiChrist
+					RefreshItem( i ); // AntiChrist
+				
 			}
 	}
-	Weight->NewCalc(p1);
-	Weight->NewCalc(p2);
+	Weight->NewCalc( p1 );
+	Weight->NewCalc( p2 );
 }
 
 //NEW RESPAWNREGIONS ZIPPY CODE STARTS HERE -- AntiChrist merging codes -- (26/4/99)
@@ -15494,6 +15376,7 @@ void saveserverscript(char x)
 	fprintf( file, "MURDER_DECAY %i\n", repsys.murderdecay);
 	fprintf( file, "MAXKILLS %i\n", repsys.maxkills);
 	fprintf( file, "CRIMINAL_TIME %i\n", repsys.crimtime);
+	fprintf( file, "SNOOP_IS_CRIME %i\n", server_data.snoopiscrime ? 1 : 0 );
 	fprintf( file, "}\n\n");
 	
 	fprintf( file, "SECTION TRACKING\n");
@@ -15888,10 +15771,11 @@ void loadtime_light()
 	while (strcmp(script1, "}"));
 }
 
-void loadserverdefaults(void)
+void loadserverdefaults( void )
 {
 	server_data.crashprotect = 1;
 	server_data.auto_a_create = 0;
+	server_data.snoopiscrime = false;
 	combat.wrestleSpeed = 8;
 	combat.maxDmg = 120;
 	combat.dToPoison = 2;
@@ -17749,9 +17633,9 @@ Look at uox3.h to see options. Works like npc magic.
 		1      \          |
 		2        \        |
 		c      b   x -->
-		             \    |   y  ^  
-		               \  |              |
-                         \|
+		\    |   y  ^  
+		\  |      |
+		\|
 		*
 		target
 		*/
@@ -18308,7 +18192,7 @@ void setcharflag(int c)//repsys
 	}
 }
 
-void loadrepsys() //Repsys
+void loadrepsys( void ) //Repsys
 {
 	do
 	{
@@ -18316,6 +18200,8 @@ void loadrepsys() //Repsys
 		if(!(strcmp(script1,"MURDER_DECAY"))) repsys.murderdecay=str2num(script2);
 		if(!(strcmp(script1,"MAXKILLS"))) repsys.maxkills=str2num(script2);
 		if(!(strcmp(script1,"CRIMINAL_TIME"))) repsys.crimtime=str2num(script2);
+		if( !strcmp( script1, "SNOOP_IS_CRIME" ) )
+			server_data.snoopiscrime = ( str2num( script2 ) != 0 );
 	}
 	while (strcmp(script1, "}"));
 	
@@ -18630,10 +18516,10 @@ void deathstuff(int i)
 	chars[i].xid2 = chars[i].id2;
 	chars[i].xskin1 = chars[i].skin1;
 	chars[i].xskin2 = chars[i].skin2;
-	if( ( chars[i].id1 == 0x00 ) && ( ( chars[i].id2 == 0x0C ) || ( chars[i].id2 >= 0x3b ) && ( chars[i].id2 <= 0x3d ) ) )
-	{
-		nType=1;
-	}
+//	if( ( chars[i].id1 == 0x00 ) && ( ( chars[i].id2 == 0x0C ) || ( chars[i].id2 >= 0x3b ) && ( chars[i].id2 <= 0x3d ) ) )
+//	{
+//		nType=1;
+//	}
 	
 
 	if( chars[i].attacker != -1 ) 
@@ -18690,9 +18576,8 @@ void deathstuff(int i)
 		items[c].layer = 0x16;
 		items[c].def = 1;
 	}
-	if (server_data.showdeathanim && !chars[i].summontimer) 
+	if (server_data.showdeathanim) 
 		deathaction( i, corpsenum );
-
 	if( chars[i].account != -1 )
 	{
 		teleport(i);
@@ -18711,7 +18596,7 @@ void deathstuff(int i)
 		items[corpsenum].corpse=0;
 	}
 
-	if (chars[i].summontimer)
+	if( chars[i].summontimer )
 	{
 		staticeffect( i, 0x37, 0x2A, 0x09, 0x06 );
 		soundeffect2( i, 0x01, 0xFE );
@@ -18719,15 +18604,13 @@ void deathstuff(int i)
 		teleport( i );
 		return;
 	}
-
-	
 	RefreshItem( corpsenum ); // AntiChrist
 	if( chars[i].npc ) 
 		Npcs->DeleteChar(i);
 	if( ele == 65535 )
 		Items->DeleItem( corpsenum );
-
 }
+
 
 
 void NeutralizeEnemies( CHARACTER i )
@@ -18745,7 +18628,6 @@ void NeutralizeEnemies( CHARACTER i )
 				npctalkall(t,"Thou have suffered thy punishment, scoundrel.", 0);
 			}
 			chars[t].targ=-1;
-//			chars[t].timeout=0;
 			if (chars[t].attacker>-1 && chars[t].attacker < cmem )
 			{
 				chars[chars[t].attacker].attackfirst=0;
@@ -18784,21 +18666,11 @@ void PlayDeathSound( CHARACTER i )
 		int a = rand() % 4;
 		switch( a ) // AntiChrist - uses all the sound effects
 		{
-		case 0:
-			soundeffect2( i, 0x01, 0x50 ); // Female Death
-			break;
-		case 1:
-			soundeffect2(i,0x01,0x51); // Female Death
-			break;
-		case 2:
-			soundeffect2( i, 0x01, 0x52 ); // Female Death
-			break;
-		case 3:
-			soundeffect2( i, 0x01, 0x53 ); // Female Death
-			break;
-		default:
-			soundeffect2( i, 0x01, 0x50 ); // Female Death
-			break;
+		case 0:		soundeffect2( i, 0x01, 0x50 );	break;// Female Death
+		case 1:		soundeffect2( i, 0x01, 0x51 );	break;// Female Death
+		case 2:		soundeffect2( i, 0x01, 0x52 );	break;// Female Death
+		case 3:		soundeffect2( i, 0x01, 0x53 );	break;// Female Death
+		default:	soundeffect2( i, 0x01, 0x50 );	break;// Female Death
 		}
 	}
 	if (chars[i].xid1==0x01 && chars[i].xid2==0x90)
@@ -18806,21 +18678,11 @@ void PlayDeathSound( CHARACTER i )
 		int a = rand() % 4;
 		switch( a ) // AntiChrist - uses all the sound effects
 		{
-		case 0:
-			soundeffect2( i, 0x01, 0x5A ); // Male Death
-			break;
-		case 1:
-			soundeffect2(i,0x01,0x5B); // Male Death
-			break;
-		case 2:
-			soundeffect2( i, 0x01, 0x5C ); // Male Death
-			break;
-		case 3:
-			soundeffect2( i, 0x01, 0x5D ); // Male Death
-			break;
-		default:
-			soundeffect2( i, 0x01, 0x5A ); // Male Death
-			break;
+		case 0:		soundeffect2( i, 0x01, 0x5A );	break;// Male Death
+		case 1:		soundeffect2( i, 0x01, 0x5B );	break;// Male Death
+		case 2:		soundeffect2( i, 0x01, 0x5C );	break;// Male Death
+		case 3:		soundeffect2( i, 0x01, 0x5D );	break;// Male Death
+		default:	soundeffect2( i, 0x01, 0x5A );	break;// Male Death
 		}
 	}
 	else
@@ -18908,7 +18770,6 @@ int GenerateCorpse( CHARACTER i, int nType, char *murderername )
 							{
 								if( items[k].contserial == serial1 && !( items[k].priv&0x02 ) && items[k].type != 9 )
 								{
-//									items[k].layer = 0;
 									// I think the lack of this line below is the source of some of the vendor sell issues
 									contsp[serhash1].pointer[ci1] = -1;	// it's no longer in this container, it's now on the corpse!
 									setserial( k, c, 1 );

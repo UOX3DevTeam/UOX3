@@ -233,11 +233,19 @@ typedef vector< string *>	stringList;
 #define BARE_HANDS_SPEED 8
 //////////////////
 // List of monster sounds
-#define SND_STARTATTACK 0
-#define SND_IDLE 1
-#define SND_ATTACK 2
-#define SND_DEFEND 3
-#define SND_DIE 4
+enum MonsterSoundType
+{
+	SND_STARTATTACK = 0,
+	SND_IDLE,
+	SND_ATTACK,
+	SND_DEFEND,
+	SND_DIE
+};
+/*const int SND_STARTATTACK = 0;
+const int SND_IDLE = 1;
+const int SND_ATTACK = 2;
+const int SND_DEFEND = 3;
+const int SND_DIE = 4;*/
 
 //////////////////
 // Skill & Stat cap - AntiChrist
@@ -356,7 +364,7 @@ enum Skills
 #define MAXTRACKINGTARGETS 20   // maximum number of trackable targets
 #define TRACKINGTIMER 30        // tracking last at least TRACKINGTIMER seconds, additional time is calculated by Skill,INT, & DEX
 #define TRACKINGDISPLAYTIME 30  // tracking will display above the character every TRACKINGDISPLAYTIME seconds
-#define POLYMORPHMENUOFFSET 8196 // polymorph spell menu offset - AntiChrist (9/99)
+#define POLYMORPHMENUOFFSET 8192 // polymorph spell menu offset - AntiChrist (9/99)
 #define NORTH 1
 #define NORTHEAST 2
 #define EAST 3

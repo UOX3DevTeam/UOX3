@@ -75,21 +75,21 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 		{//if monster
 			if (chars[x].id1==0x01&&(chars[x].id2==0x23||chars[x].id2==0x24))
 			{//if packhorse or packlhama added by JustMichael 8/31/99
-				y = packitem(x);
-				if (chars[x].ownserial==chars[currchar[s]].serial)
+				y = packitem( x );
+				if( chars[x].ownserial == chars[currchar[s]].serial )
 				{
 					if( y != -1 )
 					{
-						backpack(s,items[y].ser1,items[y].ser2,items[y].ser3,items[y].ser4);
+						backpack( s, items[y].ser1, items[y].ser2, items[y].ser3, items[y].ser4 );
 					}
 					else
 					{
 						printf( "Pack animal %i has no backpack!\n", chars[x].serial );
 					}
 				}
-				else // Snooping
+				else	// Snooping
 				{
-					Skills->Snooping(s, x, calcserial(items[y].ser1,items[y].ser2,items[y].ser3,items[y].ser4) );
+					Skills->Snooping( s, x, items[y].serial );
 				}
 				return;
 			}
@@ -379,45 +379,58 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			//End Boats --^ 
 		case 1: // bugfix for snooping not working, lb
 		case 63: 
-			if( items[x].moreb1 ) Magic->MagicTrap( currchar[s], x ); // added by AntiChrist
+			if( items[x].moreb1 ) 
+				Magic->MagicTrap( currchar[s], x ); // added by AntiChrist
 			// only 1 and 63 can be trapped, so pleaz leave it here :) - Anti
 		case 65:
 		case 87:  // <<- What is this people? Keep labeling things this is stupid.
-			int npc, contser;
+			int contser;
 			contser = items[x].contserial;
 
-			int packOwner;
-			packOwner = GetPackOwner( x );
-			
-			if (items[x].contserial != -1)   // It's inside another container, we need root container to calculate distance
+			int packOwner, rootContainer;
+			packOwner = -1;
+			rootContainer = -1;
+
+			bool packInRange, onGround;
+			packInRange = false;
+
+			if( items[x].contserial != -1 )	// It's inside another container, we need root container to calculate distance
 			{
-				int maxloops = 50; // Prevent endless loops
-				while (x >= 0 && items[x].contserial != -1 && maxloops > 0)
+				onGround = false;
+				packOwner = GetPackOwner( x );
+				if( packOwner == -1 )
 				{
-					x = findbyserial( &itemsp[items[x].contserial%HASHMAX], items[x].contserial, 0);
-					maxloops--;
+					rootContainer = GetRootPack( x );	// oh dear, not on an npc and not on the ground.  In a pack on the ground!
+					if( rootContainer == -1 )
+						printf( "ERROR: Pack with serial %li has an invalid container chain!\n", items[x].serial );
+					else
+					{
+						packInRange = ( iteminrange( s, rootContainer, 2 ) == 1 );
+						onGround = true;
+					}
 				}
-				if (x == -1) // Oh-oh, something did wrong, let's get back where we started to avoid crash
-					x = findbyserial( &itemsp[serial%HASHMAX], serial, 0);
+				else
+					packInRange = ( npcinrange( s, packOwner, 2 ) == 1 );	// It's in an NPC
+			}
+			else
+			{
+				packInRange = ( iteminrange( s, x, 2 ) == 1 );	// it's on the ground.  Is it within 2 paces?
+				onGround = true;
 			}
 
-			npc = calcCharFromSer( items[x].contserial );
-			if ( packOwner == currchar[s] || npcinrange(s,npc,2) || (chars[currchar[s]].priv&0x01) || iteminrange(s,x,2) )
-			{	
-				if ( npc == -1 || chars[currchar[s]].serial == chars[npc].serial || (chars[currchar[s]].priv&0x80) || (chars[currchar[s]].priv&0x01) ) // Lord Vader fix
-					backpack(s, a1, a2, a3, a4);
+			if( packInRange )	// is the pack in range
+			{
+				if( onGround || packOwner == currchar[s] || (chars[currchar[s]].priv&0x80) || (chars[currchar[s]].priv&0x01) )	// owner, counselor or GM
+					backpack( s, a1, a2, a3, a4 );
 				else
 				{
-					if( packOwner != currchar[s] && !( chars[currchar[s]].priv&0x01 ) )	// SNOOPING
-					{
-						Skills->Snooping(s, npc, serial);
-					}
+					Skills->Snooping( s, packOwner, serial );
 				} 
 				
 			}
 			else
 			{
-				sysmessage(s,"You are too far away!");
+				sysmessage( s, "You are too far away!" );
 			}
 			return;
 			
@@ -436,6 +449,7 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				{
 					items[j].morez=1;
 					items[j].z = items[j].z-17;
+					//								for (k=0;k<now;k++) if (perm[k]) senditem(k,j);
 					RefreshItem( j ); // AntiChrist
 					w=0;
 				}
@@ -518,42 +532,25 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				Books->openbook_new(s,x,0);
 		    return;//book
 		case 12: //door(unlocked)
-			dooruse(s, x);
-            chars[currchar[s]].objectdelay = (unsigned int) (( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2);
+			dooruse( s, x );
+			chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
 			return; //doors
 		case 13: //locked door
-			p=packitem(currchar[s]);
-			if (p>-1) //LB
+			p = packitem( currchar[s] );
+			if( p > -1 ) //LB
 			{
-				/*for (j=0;j<itemcount;j++) //Morrolan come back here and change this to search only backpack items 
+				SERIAL more1 = calcserial( items[x].more1, items[x].more2, items[x].more3, items[x].more4 );
+				for( j = 0; j < contsp[items[p].serial%HASHMAX].max; j++ )
 				{
-					if (items[j].type==7 && p!=-1)
+					k = contsp[items[p].serial%HASHMAX].pointer[j];
+					if( k > -1 && items[k].contserial == items[p].serial )
 					{
-						if	(((items[j].more1==items[x].more1)&&(items[j].more2==items[x].more2)&&
-							(items[j].more3==items[x].more3)&&(items[j].more4==items[x].more4))&&
-							((items[j].cont1==items[p].ser1)&&(items[j].cont2==items[p].ser2)&&
-							(items[j].cont3==items[p].ser3)&&(items[j].cont4==items[p].ser4)))
+						SERIAL more2 = calcserial( items[k].more1, items[k].more2, items[k].more3, items[k].more4 );
+						if( more1 == more2 )
 						{
-							npctalk(s,currchar[s],"You quickly unlock, use, and then relock the door.", 0);
-							dooruse(s, x);
-							return;
-						}//if
-						}
-				}//for
-				*/
-				for (j=0;j<contsp[items[p].serial%HASHMAX].max;j++)
-				{
-					k=contsp[items[p].serial%HASHMAX].pointer[j];
-					if (k > -1 && items[k].contserial==items[p].serial)
-					{
-						if	(((items[k].more1==items[x].more1)&&(items[k].more2==items[x].more2)&&
-							(items[k].more3==items[x].more3)&&(items[k].more4==items[x].more4))&&
-							((items[k].cont1==items[p].ser1)&&(items[k].cont2==items[p].ser2)&&
-							(items[k].cont3==items[p].ser3)&&(items[k].cont4==items[p].ser4)))
-						{
-							npctalk(s,currchar[s],"You quickly unlock, use, and then relock the door.", 0);
-							dooruse(s, x);
-							chars[currchar[s]].objectdelay = (unsigned int) (( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2);
+							npctalk( s, currchar[s], "You quickly unlock, use, and then relock the door.", 0 );
+							dooruse( s, x );
+							chars[currchar[s]].objectdelay = (unsigned int)(( server_data.objectdelay * CLOCKS_PER_SEC + uiCurrentTime ) / 2 );
 							return;
 						}//if
 					}
@@ -605,18 +602,11 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 				
 				if( ( items[x].poisoned ) && ( chars[currchar[s]].poisoned < items[x].poisoned ) )
 				{
-
-					switch(rand()%3)
+					switch( RandomNum( 0, 2 ) )
 					{
-					case 0:
-						sysmessage( s, "You feel disoriented and nauseous");
-						break;
-					case 1:
-						sysmessage( s, "That tasted funny");
-						break;
-					case 2:
-						sysmessage( s, "Your stomach turns over");
-						break;
+					case 0:	sysmessage( s, "You feel disoirented and nauseous" );	break;
+					case 1:	sysmessage( s, "That tasted funny" );					break;
+					case 2:	sysmessage( s, "Your stomach turns over" );				break;
 					}
 
 					soundeffect2( currchar[s], 0x02, 0x46 ); //poison sound - SpaceDog
@@ -658,40 +648,29 @@ void doubleclick(int s) // Completely redone by Morrolan 07.20.99
 			}
 			return; //case 15 (magic items)
 		case 18: //crystal ball?
-//			int a1, a2, a3, a4, j;
 			a1 = items[x].ser1;
 			a2 = items[x].ser2;
 			a3 = items[x].ser3;
 			a4 = items[x].ser4;
-			
-			switch(RandomNum(0, 9))
+
+			switch( RandomNum( 0, 9 ) )
 			{
-			case 0:  itemmessage(s,"Seek out the mystic llama herder.", a1, a2, a3, a4);
-				break;
-			case 1:  itemmessage(s,"Wherever you go, there you are.", a1, a2, a3, a4);
-				break;
-			case 2:  itemmessage(s,"Quick! Lord British is giving away gold at the castle!", a1, a2, a3, a4);
-				break;
-			case 3:  itemmessage(s,"Remember, change your underwear once a day.", a1, a2, a3, a4);
-				break;
-			case 4:  itemmessage(s,"The message appears to be too cloudy to make anything out of it.", a1, a2, a3, a4);
-				break;
-			case 5:  itemmessage(s,"You have just lost five strength.. not!", a1, a2, a3, a4);
-				break;
-			case 6:  itemmessage(s,"You're really playing a game you know", a1, a2, a3, a4);
-				break;
-			case 7:  itemmessage(s,"You will be successful in all you do.", a1, a2, a3, a4);
-				break;
-			case 8:  itemmessage(s,"You are a person of culture.", a1, a2, a3, a4);
-				break;
-			case 9:
-			default: itemmessage(s,"Give me a break! How much good fortune do you expect!", a1, a2, a3, a4);
-				break;
+			case 0:  itemmessage( s, "Seek out the mystic llama herder.", a1, a2, a3, a4 );									break;
+			case 1:  itemmessage( s, "Wherever you go, there you are.", a1, a2, a3, a4 );									break;
+			case 2:  itemmessage( s, "Quick! Lord British is giving away gold at the castle!", a1, a2, a3, a4 );			break;
+			case 3:  itemmessage( s, "Remember, change your underwear once a day.", a1, a2, a3, a4 );						break;
+			case 4:  itemmessage( s, "The message appears to be too cloudy to make anything out of it.", a1, a2, a3, a4 );	break;
+			case 5:  itemmessage( s, "You have just lost five strength.. not!", a1, a2, a3, a4 );							break;
+			case 6:  itemmessage( s, "You're really playing a game you know", a1, a2, a3, a4 );								break;
+			case 7:  itemmessage( s, "You will be successful in all you do.", a1, a2, a3, a4 );								break;
+			case 8:  itemmessage( s, "You are a person of culture.", a1, a2, a3, a4 );										break;
+			case 9:  
+			default: itemmessage( s, "Give me a break! How much good fortune do you expect!", a1, a2, a3, a4 );				break;
 			}//switch
 			soundeffect(s, 0x01, 0xEC);
 			return;//case 18 (crystal ball?)
 			case 19: //potions
-				if( chars[p].usepotion == 1 )
+				if( chars[currchar[s]].usepotion == 1 )
 					sysmessage( s, "You must wait a while before using another potion" );
 				else
 					usepotion( currchar[s], x );

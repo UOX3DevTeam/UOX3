@@ -106,10 +106,10 @@ void cTownStones::CalcNewMayor(int j)
 					c++; //c is the number of votes that chars[a] has.
 				}
 			}
-			if(c>d){ //if number of votes is higher then max then
-				d=c; //set new max votes
-//				e=((chars[a].ser1<<24)+(chars[a].ser2<<16)+(chars[a].ser3<<8)+(chars[a].ser4));
-				e = calcserial(chars[a].ser1, chars[a].ser2, chars[a].ser3, chars[a].ser4);
+			if( c > d )
+			{ //if number of votes is higher then max then
+				d = c; //set new max votes
+				e = chars[a].serial;
 			}
 		}
 	}
@@ -142,34 +142,44 @@ void cTownStones::CalcNewMayor(int j)
 const char *cTownStones::TownName(int x, int type)
 {
 	char *s;
-	const char checkword[]="of ";
-	int calcreg,len;
-	//checkword="of ";
+	const char checkword[4] = "of ";
+	int calcreg, len;
 	len = strlen(checkword);
-	if (type==1) { //GET TOWNNAME FROM THIS OBJECT.
-		calcreg=calcRegionFromXY(items[x].x, items[x].y);
-	} else
-		if (type==2) { //GET TOWNNAME FROM THIS CHARACTER (GM /townname COMMAND).
-			calcreg=calcRegionFromXY(chars[currchar[x]].x, chars[currchar[x]].y);
-		} else {
-			calcreg=x;    //GET TOWNNAME FROM THIS REGION (ALL OTHERS)
-		}
-		strcpy(temp, region[calcreg].name);
-		if ((s = strstr(temp,checkword))!= NULL) {
-			for (len=len;len > 0;len--) s++;
-		} else {
-			return "the wilderness";
-		}
-   return s;
+	if( type == 1 ) 
+	{ //GET TOWNNAME FROM THIS OBJECT.
+		calcreg = calcRegionFromXY( items[x].x, items[x].y );
+	} 
+	else if( type == 2 ) 
+	{ //GET TOWNNAME FROM THIS CHARACTER (GM /townname COMMAND).
+		calcreg = calcRegionFromXY( chars[currchar[x]].x, chars[currchar[x]].y );
+	} 
+	else 
+	{
+		calcreg = x;    //GET TOWNNAME FROM THIS REGION (ALL OTHERS)
+	}
+	strcpy( temp, region[calcreg].name );
+	if( ( s = strstr( temp, checkword ) ) != NULL) 
+	{
+		for( len = len; len > 0; len-- ) 
+			s++;
+	} 
+	else 
+	{
+		return "the wilderness";
+	}
+	return s;
 }
 
-const char *cTownStones::TownMayor(int j)
+const char *cTownStones::TownMayor( int j )
 {
 	const char *s = NULL;
 	int a;
-	if(items[j].morex==0) {
-		s= "unruled region";
-	} else {
+	if( items[j].morex == 0 ) 
+	{
+		s = "unruled region";
+	} 
+	else 
+	{
 		a = calcCharFromSer( items[j].morex );
 		if( a != -1 )
 			s = strstr( chars[a].name, chars[a].name );
@@ -177,7 +187,7 @@ const char *cTownStones::TownMayor(int j)
 	return s;
 }
 
-const char * cTownStones::MayorVote(int s)
+const char *cTownStones::MayorVote( int s )
 {
 	int i;
 	const char *t = "none";
@@ -188,29 +198,23 @@ const char * cTownStones::MayorVote(int s)
 	unsigned char s4 = chars[currchar[s]].townvote4;
 
     long int serial = calcserial( s1, s2, s3, s4 );
-	i = findbyserial(&charsp[serial%HASHMAX],serial,1); // lets find the new position of the old_serial in newly ordered array
+	i = calcCharFromSer( serial );
 
 	if( i != -1 )
 	{
 		t = chars[i].name;
 	}
-/*	for (i=0;i<charcount;i++) {
-		if ((chars[i].ser1==chars[currchar[s]].townvote1)&&
-      (chars[i].ser2==chars[currchar[s]].townvote2)&&
-      (chars[i].ser3==chars[currchar[s]].townvote3)&&
-      (chars[i].ser4==chars[currchar[s]].townvote4)) {
-			t=chars[i].name;
-		}
-	}*/
 	return t;
 }
 
-int cTownStones::Population(int j)
+int cTownStones::Population( int j )
 {
-	int b=0;
+	int b = 0;
 	unsigned int a;
-	for (a=0;a<charcount;a++) {
-		if(chars[a].town==j) b++;
+	for( a = 0; a < charcount; a++ ) 
+	{
+		if( chars[a].town == j ) 
+			b++;
 	}
 	if( !strcmp( Towns->TownName( j, 3 ), "the wilderness" ) )
 		b = -1;

@@ -2593,7 +2593,7 @@ void npcaction( CHARACTER npc, int x ) // NPC character does a certain action
 	doact[5] = x>>8;
 	doact[6] = x%256;
 	for( i = 0; i < now; i++ ) 
-		if( ( perm[i] ) && ( inrange1p( currchar[i], npc ) ) ) 
+		if( perm[i] && inrange1p( currchar[i], npc ) ) 
 			Network->xSend( i, doact, 14, 0 );
 }
 
@@ -2653,7 +2653,7 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 	
 	if (!chars[i].free) // bud
 	{
-		if ((chars[i].disabled>0) && ((chars[i].disabled <= currenttime) || (overflow)))
+		if ( chars[i].disabled>0  && ( chars[i].disabled <= currenttime || overflow ) )
 		{
 			chars[i].disabled = 0;
 		}
@@ -2682,10 +2682,10 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 		}
 	}
 	
-	if ((chars[i].fleeat == 0))
+	if ( chars[i].fleeat == 0 )
 		chars[i].fleeat = NPC_BASE_FLEEAT;
 
-	if ((chars[i].reattackat == 0))
+	if ( chars[i].reattackat == 0 )
 		chars[i].reattackat = NPC_BASE_REATTACKAT;
 	
 	if (!(chars[i].npcWander == 5)&&
@@ -2721,12 +2721,9 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks a bit nauseous *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
 							npcemoteall(i, t, 1);
 						}
-						// npctalkall(i,t);
 						chars[i].hp = chars[i].hp - RandomNum(1, 2);
 						updatestats(i, 0);
 						break;
@@ -2737,11 +2734,8 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks disoriented and nauseous! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
 							npcemoteall(i, t, 1);
-							// npctalkall(i,t);     
 						}
 						pcalc = (chars[i].hp*RandomNum(2, 5)/100) + RandomNum(0, 2); // damage: 1..2..5% of hp's+ 1..2 constant
 						chars[i].hp -= pcalc;
@@ -2754,11 +2748,8 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
 							sprintf(t, "* %s is in severe pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
 							npcemoteall(i, t, 1);
-							// npctalkall(i,t);
 						}
 						pcalc = (chars[i].hp/10) + RandomNum(1, 3); // damage: 5..10% of hp's+ 1..2 constant
 						chars[i].hp -= pcalc;
@@ -2771,9 +2762,7 @@ void checkNPC(int i, int currenttime)// Char mapRegions
 							chars[i].poisontxt = (unsigned int)(currenttime +(10 * CLOCKS_PER_SEC));
 							sprintf(t, "* %s looks extremely weak and is wrecked in pain! *", chars[i].name);
 							chars[i].emotecolor1 = 0x00;
-							// buffer[s][4];
 							chars[i].emotecolor2 = 0x26;
-							// buffer[s][5];
 							npcemoteall(i, t, 1);
 						}
 						pcalc = (chars[i].hp/5) + RandomNum(3, 6); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>

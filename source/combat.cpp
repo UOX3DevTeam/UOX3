@@ -40,7 +40,6 @@ const long	TOTALTARGETSPOTS = 6;
 
 const long LOCPERCENTAGES[TOTALTARGETSPOTS] = { 44, 14, 14, 14, 7, 7 };
 
-
 //#define __COMBATDEBUG__		// if this is defined, then the combat debug messages are printed
 
 int cCombat::GetSwingRate( int iNPC, int weapon )
@@ -393,6 +392,8 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 			{
 				if( Skills->CheckSkill( defend, PARRYING, 0, 1000 ) )// chance to block with shield
 				{
+					if( !chars[defend].npc && server_data.combathitmessage == 1 )
+						sysmessage( s2, "You parry the blow!" );
 					damage -= RandomNum( 0, items[x].def );  // damage absorbed by shield
 					if( RandomNum( 0, 1 ) == 0 ) 
 						items[x].hp--; //Take off a hit point
@@ -516,41 +517,41 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				sprintf(temp2,"%s %s",chars[attack].name, temp);//AntiChrist
 				if (!chars[defend].npc) sysmessage(s2, temp2); //kolours -- hit display
 			}
-			x=CalcDef(defend,x);
+			x = CalcDef( defend, x );
 			
-			maxabs=20; // there are monsters with DEF >20, this makes them undefeatable
-			maxnohabs=100;
-			if (server_data.maxabsorbtion>0) 
-				maxabs=server_data.maxabsorbtion;
+			maxabs = 20;	// there are monsters with DEF >20, this makes them undefeatable
+			maxnohabs = 100;
+			if( server_data.maxabsorbtion > 0 ) 
+				maxabs = server_data.maxabsorbtion;
 			else 
 			{
-				printf("SERVER.SCP:CombatHit() Error in MAX_ABSORBTION. Reset to Deafult (20).\n");
-				server_data.maxabsorbtion=maxabs;
+				printf( "SERVER.SCP:CombatHit() Error in MAX_ABSORBTION. Reset to Deafult (20).\n" );
+				server_data.maxabsorbtion = maxabs;
 			}
-			if (server_data.maxnohabsorbtion > 0) 
+			if( server_data.maxnohabsorbtion > 0 ) 
 				maxnohabs = server_data.maxnohabsorbtion;
 			else 
 			{
-				printf("SERVER.SCP:CombatHit() Error in MAX_NON_HUMAN_ABSORBTION. Reset to Deafult (100).\n");
-				server_data.maxnohabsorbtion=maxnohabs;
+				printf( "SERVER.SCP:CombatHit() Error in MAX_NON_HUMAN_ABSORBTION. Reset to Deafult (100).\n" );
+				server_data.maxnohabsorbtion = maxnohabs;
 			}
-			if ( !ishuman( defend ) ) 
-				maxabs=maxnohabs;
+			if( !ishuman( defend ) ) 
+				maxabs = maxnohabs;
 			//printf("Damage Before Abs: %i\n",damage);
-			tmpj = (int) ( ( damage * x ) / maxabs ); // Absorbtion by Magius(CHE)
+			tmpj = (int)( ( damage * x ) / maxabs ); // Absorbtion by Magius(CHE)
 			damage -= tmpj;
-			if (damage < 0) 
+			if( damage < 0 ) 
 				damage = 0;
 			//printf("MaxAbs: %i\nArmour: %i\nDamage: %i\nSubstract: %i\n",maxabs,x,damage,tmpj);
-			if ( chars[defend].npc == 0 ) 
+			if( chars[defend].npc == 0 ) 
 				damage /= server_data.npcdamage; // Rate damage against other players
 
-			if ( !chars[attack].npc )
-					ItemCastSpell(s1,defend,weapon);
+			if( !chars[attack].npc )
+					ItemCastSpell( s1, defend, weapon );
 
 			//AntiChrist - 26/10/99
 			//when hitten and damage >1, defender fails if casting a spell!
-			if(damage>1 && !chars[defend].npc)//only if damage>1 and against a player
+			if( damage > 1 && !chars[defend].npc )//only if damage>1 and against a player
 			{
 				if( chars[defend].casting > 0 && currentSpellType[s2] == 0 )
 				{//if casting a normal spell (scroll: no concentration loosen)
@@ -561,13 +562,13 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				}
 			}
 
-			if(damage > 0)
+			if( damage > 0 )
 			{
-				if (chars[defend].ra) // For reactive armor spell
+				if( chars[defend].ra ) // For reactive armor spell
 				{
-					int damage1 = (int) ( damage*(chars[defend].skill[MAGERY]/2000.0));
+					int damage1 = (int)( damage * ( chars[defend].skill[MAGERY] / 2000.0 ) );
 					chars[defend].hp -= (damage - damage1);
-					if (chars[defend].npc) 
+					if( chars[defend].npc ) 
 						damage1 *= server_data.npcdamage;
 					chars[attack].hp -= damage1;
 					staticeffect( defend, 0x37, 0x4A, 0, 15 );
@@ -575,23 +576,23 @@ void cCombat::CombatHit(int attack, int defend, unsigned int currenttime, signed
 				else 
 					chars[defend].hp -= damage;                 // Remove damage
 				/////////  For Splitting NPCs ///  McCleod
-				if ( chars[defend].split > 0 && chars[defend].hp >= 1 )
+				if( chars[defend].split > 0 && chars[defend].hp >= 1 )
 				{
-					if (RandomNum( 0, 100 ) <= chars[defend].splitchnc )
+					if( RandomNum( 0, 100 ) <= chars[defend].splitchnc )
 					{
-						if ( chars[defend].split == 1 )
+						if( chars[defend].split == 1 ) 
 							splitnum = 1;
 						else 
-							splitnum = RandomNum( 0, chars[defend].split+1 );
+							splitnum = RandomNum( 0, chars[defend].split + 1 );
 						
-						for (splitcount=0;splitcount<splitnum;splitcount++)
-							Npcs->Split(defend);
+						for( splitcount = 0; splitcount < splitnum; splitcount++ )
+							Npcs->Split( defend );
 					}
 				}
 				////////      End of spliting NPCs
 			}
-			if ( !chars[attack].npc )
-				if ( ( fightskill != ARCHERY ) || ( fightskill == ARCHERY && los ) )
+			if( !chars[attack].npc )
+				if( ( fightskill != ARCHERY )  || ( fightskill == ARCHERY && los ) )
 					doSoundEffect( attack, fightskill, weapon );
 			if( chars[defend].hp < 0 ) 
 				chars[defend].hp = 0;
@@ -612,7 +613,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 	int j, los;
 	int weapon = GetWeapon( attack );
 
-	if (attack < 0 || attack >= cmem)
+	if( attack < 0 || attack >= cmem )
 	{
 		LogMessage("combat() - bad attacker (%i)\n"_ attack);
 		return;
@@ -636,12 +637,12 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 	{	// invalidate attacker here!!!
 		if( chars[defend].npc && chars[defend].war && (chars[defend].priv&0x04) )
 			npcToggleCombat( defend );
-		if( chars[attack].npcaitype==4 )
+		if( chars[attack].npcaitype == 4 )
 		{
-			chars[attack].summontimer=(uiCurrentTime+(CLOCKS_PER_SEC*20));
-			chars[attack].npcWander=2;
-			chars[attack].npcmovetime=(unsigned int)((uiCurrentTime+double(NPCSPEED*CLOCKS_PER_SEC)));
-			npctalkall(attack,"Thou have suffered thy punishment, scoundrel.", 0);
+			chars[attack].summontimer = (uiCurrentTime + ( CLOCKS_PER_SEC * 20 ) );
+			chars[attack].npcWander = 2;
+			chars[attack].npcmovetime = (unsigned int)( ( uiCurrentTime + double( NPCSPEED * CLOCKS_PER_SEC ) ) );
+			npctalkall( attack, "Thou have suffered thy punishment, scoundrel.", 0 );
 		}
 		chars[attack].targ = -1;
 		if( chars[attack].attacker > -1 && chars[attack].attacker < cmem )
@@ -649,8 +650,8 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 			chars[chars[attack].attacker].attackfirst=0;
 			chars[chars[attack].attacker].attacker=-1;
 		}
-		chars[attack].attacker=-1;
-		chars[attack].attackfirst=0;
+		chars[attack].attacker = -1;
+		chars[attack].attackfirst = 0;
 		if( chars[attack].npc && !chars[attack].dead && chars[attack].npcaitype != 17 && chars[attack].war ) 
 			npcToggleCombat( attack );
 		return;
@@ -665,16 +666,16 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 
 		s2 = calcSocketFromChar( defend );
 		int playerDistance = chardist( attack, defend );
-		los = line_of_sight( -1, chars[attack].x, chars[attack].y, chars[attack].z, chars[defend].x,chars[defend].y,chars[defend].z,WALLS_CHIMNEYS+DOORS+FLOORS_FLAT_ROOFING);
+		los = line_of_sight( -1, chars[attack].x, chars[attack].y, chars[attack].z, chars[defend].x, chars[defend].y, chars[defend].z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
 		
 		if( los == 0 )
    		 return;
 		
-		if ( (chars[defend].npc && chars[defend].npcaitype!=17 ) || ( online( defend ) && !chars[defend].dead ) )
+		if( ( chars[defend].npc && chars[defend].npcaitype != 17 ) || ( online( defend ) && !chars[defend].dead ) )
 		{
 			if( playerDistance >= 20 )
 			{
-				if ( chars[attack].npcaitype == 4 && ( region[chars[attack].region].priv&1 ) )
+				if( chars[attack].npcaitype == 4 && ( region[chars[attack].region].priv&1 ) )
 				{
 					mapRegions->RemoveItem( attack + 1000000 );
 
@@ -687,13 +688,13 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 					teleport( attack );
 					soundeffect2( attack, 0x01, 0xFE );
 					staticeffect( attack, 0x37, 0x2A, 0x09, 0x06 );
-					npctalkall(attack,"Halt, scoundrel!", 1);
+					npctalkall( attack, "Halt, scoundrel!", 1 );
 					npcattacktarget( defend, attack );
 				}
 				else 
 				{
-					chars[attack].targ=-1;
-					if (chars[attack].attacker>=0 && chars[attack].attacker<cmem)
+					chars[attack].targ = -1;
+					if( chars[attack].attacker >= 0 && chars[attack].attacker < cmem )
 					{
 						chars[chars[attack].attacker].attackfirst = 0;
 						chars[chars[attack].attacker].attacker = -1;
@@ -710,16 +711,16 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 				{
 					npcsimpleattacktarget( attack, defend );
 					x = (int)( ( ( ( 100 - chars[attack].dx ) * CLOCKS_PER_SEC ) / 25 ) + ( 1 * CLOCKS_PER_SEC ) );
-					chars[attack].timeout=uiCurrentTime + x;
+					chars[attack].timeout = uiCurrentTime + x;
 					return;
 				}
-				if (TimerOk(attack))
+				if( TimerOk( attack ) )
 				{
 					fightskill = Skills->GetCombatSkill( attack );
 					x = 0;
 					if( fightskill == ARCHERY )
 					{
-						if (los)
+						if( los )
 						{
 							bowtype = GetBowType( attack );
 							if( bowtype == 1 ) 
@@ -739,9 +740,9 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 					{
 						if( server_data.attackstamina != 0 && !( chars[attack].priv&1 ) )
 						{
-							if((server_data.attackstamina<0)&&(chars[attack].stm<abs(server_data.attackstamina)))
+							if( ( server_data.attackstamina < 0 ) && ( chars[attack].stm < abs( server_data.attackstamina ) ) )
 							{
-       							sysmessage(s1,"You are too tired to attack.");
+       							sysmessage( s1, "You are too tired to attack." );
 								j = weapon; //Get the number of the weapon
 								if( j != -1 ) 
 								{ 
@@ -762,7 +763,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 										j = 50;
 									x = (int)( 15000 / ( ( chars[attack].dx + 100 ) * j ) * CLOCKS_PER_SEC );
 								}
-								chars[attack].timeout=uiCurrentTime+x;
+								chars[attack].timeout = uiCurrentTime + x;
        							return;
        						}
         					chars[attack].stm += server_data.attackstamina;
@@ -775,23 +776,23 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 							// --------ATTACK STAMINA END ------
 						}
 
-						x=(chars[attack].id1<<8)+chars[attack].id2;
-						int cc,aa,bb;
+						x = ( chars[attack].id1<<8 ) + chars[attack].id2;
+						int cc, aa, bb;
 						if( x < 0x0190 )
 						{
-							aa = 4+ RandomNum( 0, 2 ); // some creatures dont have animation #4
+							aa = 4 + RandomNum( 0, 2 ); // some creatures dont have animation #4
                             cc = ( creatures[x].who_am_i ) & 0x2; // anti blink bit set ?
-	                        if ( cc == 2)
+	                        if( cc == 2 )
 							{
                               aa++;
-							  if ( x == 5 ) // eagles need special treatment
+							  if( x == 5 ) // eagles need special treatment
 							  {
                                 bb = RandomNum( 0, 2 );
 								switch( bb )
 								{
-									case 0: aa=0x1;  break;
-									case 1: aa=0x14; break;
-									case 2: aa=0x4;  break;
+									case 0: aa = 0x1;  break;
+									case 1: aa = 0x14; break;
+									case 2: aa = 0x4;  break;
 								}
 							  }
 
@@ -824,7 +825,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 						// Formulas take from OSI's combat formulas
 						// attack speed should be determined here.
 						// attack speed = 15000 / ((DEX+100) * weapon speed)
-						if( ( playerDistance < 2 || fightskill == ARCHERY )  && chars[attack].npcaitype != 4 ) // changed from 0x40 to 4
+						if( ( playerDistance < 2 || fightskill == ARCHERY ) && chars[attack].npcaitype != 4 ) // changed from 0x40 to 4
                         {
 							if (los)
 							{
@@ -872,7 +873,7 @@ void cCombat::DoCombat( int attack, unsigned int currenttime )
 
 			if( !(chars[defend].priv&4) )
 			{
-				if( chars[attack].spatimer<=currenttime)
+				if( chars[attack].spatimer <= currenttime)
 				{
 					spattacks = numbitsset( chars[attack].spattack );
 					if ((!chars[defend].dead)&&(chardist(attack,defend)<combat.maxRangeSpell)&&( spattacks > 0 ))
@@ -1165,18 +1166,18 @@ int cCombat::GetWeapon(int i)
 {
 	int j,serial,serhash,ci;
 	
-	serial=chars[i].serial;
-	serhash=serial%HASHMAX;
-	for (ci=0;ci<contsp[serhash].max;ci++)
+	serial = chars[i].serial;
+	serhash = serial%HASHMAX;
+	for( ci = 0; ci < contsp[serhash].max; ci++ )
 	{
-		j=contsp[serhash].pointer[ci];
-		if (j!=-1)
-			if ( ( items[j].contserial == serial ) && ( (items[j].layer == 1) || (( items[j].layer == 2 ) && (Skills->GetShield( i ) == -1)) ) ) // Morrolan don't check for shields
+		j = contsp[serhash].pointer[ci];
+		if( j != -1 )
+			if( ( items[j].contserial == serial ) && ( (items[j].layer == 1) || (( items[j].layer == 2 ) && (Skills->GetSecondHand( i ) == -1)) ) ) // Morrolan don't check for shields
 			{
-				return (j);
+				return( j );
 			}
 	}
-	return(-1);
+	return( -1 );
 }
 
 //play animation for weapon in hand during combat on a horse //kolours - modularized (09/20/98)
@@ -1670,17 +1671,11 @@ void cCombat::doSoundEffect(CHARACTER p, int fightskill, ITEM weapon)
 //AntiChrist - do the "MISSED" sound effect
 void cCombat::doMissedSoundEffect(CHARACTER p)
 {
-	switch( RandomNum (0, 2 ) )
+	switch( RandomNum( 0, 2 ) )
 	{
-	case 0:
-		soundeffect2(p, 0x02, 0x38);
-		break;
-	case 1:
-		soundeffect2(p, 0x02, 0x39);
-		break;
-	case 2:
-		soundeffect2(p, 0x02, 0x3A);
-		break;
+	case 0:	soundeffect2( p, 0x02, 0x38 );		break;
+	case 1:	soundeffect2( p, 0x02, 0x39 );		break;
+	case 2:	soundeffect2( p, 0x02, 0x3A );		break;
 	}
 }
 
@@ -1858,7 +1853,7 @@ void PlayerAttack( UOXSOCKET s )
 		// Dupois pointed out the for loop was changing i which would drive stuff nuts later
 		for( j = 0; j < now; j++ )
 		{
-			if( perm[j] && s!=j && inrange1(s, j) )
+			if( perm[j] && s != j && inrange1( s, j ) )
 			{
 				npcemote(j, ourChar, temp, 1);
 			}

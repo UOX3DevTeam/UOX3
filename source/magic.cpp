@@ -912,75 +912,65 @@ void cMagic::PoisonDamage( CHARACTER p, int poison )
 // LB October 99
 //o---------------------------------------------------------------------------o
 
-void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char timecheck)// c=character (Not socket) //Lag fix -- Zippy
+void cMagic::CheckFieldEffects2(unsigned int currenttime, CHARACTER c, char timecheck )//c=character (Not socket) //Lag fix -- Zippy
 {
-	// - Tauriel's region stuff 3/6/99
-	// int getcell=mapRegions->GetCell(chars[c].x,chars[c].y);
-	
-	if (!(timecheck && nextfieldeffecttime <= currenttime))  // Is it time to check?
+	if( !( timecheck && nextfieldeffecttime <= currenttime ) )	// Is it time to check?
 		return;
-	
-	int i;
-	int StartGrid = mapRegions->StartGrid(chars[c].x, chars[c].y);
-	unsigned int increment = 0;
-
-	for (unsigned int checkgrid = StartGrid + (increment*mapRegions->GetColSize()); increment < 3; increment++, checkgrid = StartGrid + (increment*mapRegions->GetColSize()))
+	int StartGrid = mapRegions->StartGrid( chars[c].x, chars[c].y );
+	unsigned int increment=0;
+	for (unsigned int checkgrid=StartGrid+(increment*mapRegions->GetColSize());increment<3;increment++, checkgrid=StartGrid+(increment*mapRegions->GetColSize()))
 	{
-		for (i = 0; i < 3; i++)
+		for( int i = 0; i < 3; i++ )
 		{
 			int mapitem=-1;
 			int mapitemptr=-1;
-			do // check all items in this cell
+			do //check all items in this cell
 			{   
-				mapitemptr = mapRegions->GetNextItem(checkgrid + i, mapitemptr);
-				if (mapitemptr==-1)
+				mapitemptr = mapRegions->GetNextItem( checkgrid + i, mapitemptr );
+				if( mapitemptr == -1 ) 
 					break;
-				mapitem = mapRegions->GetItem(checkgrid + i, mapitemptr);
-				if (mapitem!=-1 && mapitem < 1000000)
+				mapitem = mapRegions->GetItem( checkgrid + i, mapitemptr );
+				if( mapitem != -1 && mapitem < 1000000 )
 				{
-					// printf("itemname: %s\n",items[mapitem].name);// perfect for mapregion debugging, LB
-					if ((items[mapitem].x == chars[c].x) && (items[mapitem].y == chars[c].y))  // lb
+					if( items[mapitem].x == chars[c].x && items[mapitem].y == chars[c].y )
 					{
-						// printf("firefield1\n");
-						if (items[mapitem].id1 == 0x39 &&(items[mapitem].id2 == 0x96 || items[mapitem].id2 == 0x8C))
+						unsigned short itemID = (items[mapitem].id1<<8) + items[mapitem].id2;
+						if( itemID == 0x3996 || itemID == 0x398C )
 						{
-							// printf("firefield\n");
-							
-							if (!CheckResist(-1, c, 4))
-								MagicDamage(c, items[mapitem].morex/100);
+							if( !CheckResist( -1, c, 4 ) )	
+								MagicDamage( c, items[mapitem].morex / 100 );
 							else 
-								MagicDamage(c, items[mapitem].morex/200);
+								MagicDamage( c, items[mapitem].morex / 200 );
 							
-							soundeffect2(c, 2, 8);
+							soundeffect2( c, 2, 8 );
 							return;
-						}
-						else if (items[mapitem].id1 == 0x39 &&(items[mapitem].id2 == 0x15 || items[mapitem].id2 == 0x20))
-						{// Poison Field
-							if (!CheckResist(-1, c, 5))
+						} 
+						else if( itemID == 0x3915 || itemID == 0x3920 )
+						{ // Poison Field
+							if( !CheckResist( -1, c, 5 ) )
 							{
-								if ((items[mapitem].morex < 997))
-									PoisonDamage(c, 2);
-								
+								if( items[mapitem].morex < 997 )
+									PoisonDamage( c, 2 );
 								else 
-									PoisonDamage(c, 3); // gm mages can cast greater poison field, LB
-							} else 
-								PoisonDamage(c, 1); // cant be completly resited
+									PoisonDamage( c, 3 ); // gm mages can cast greater poison field, LB
+							} 
+							else 
+								PoisonDamage( c, 1 ); // cant be completly resited
 							
-							soundeffect2(c, 2, 8);
+							soundeffect2( c, 2, 8 );
 							return;
-						}
-						else if (items[mapitem].id1 == 0x39 &&(items[mapitem].id2 == 0x79 || items[mapitem].id2 == 0x67))
-						{// Para Field
-							if (!CheckResist(-1, c, 6))
-								tempeffect(c, c, 1, 0, 0, 0);
-							
-							soundeffect2(c, 0x02, 0x04);     
+						} 
+						else if( itemID == 0x3979 || itemID == 0x3967 )
+						{	// Para Field
+							if( !CheckResist( -1, c, 6 ) )
+								tempeffect( c, c, 1, 0, 0, 0 );
+							soundeffect2( c, 0x02, 0x04 );
 							return;
 						} 
 						break;
 					}
 				}
-			} while (mapitem!=-1);
+			} while( mapitem != -1 );
 		} //- end of itemcount for loop
 	}
 }
@@ -1031,6 +1021,7 @@ void cMagic::MagicTrap( PLAYER s, int i)
 	items[i].moreb2=0;
 	items[i].moreb3=0;
 }
+
 
 //o---------------------------------------------------------------------------o
 //|     Class         :          ::CheckReagents( CHARACTER s, int ash, int drake, int garlic, int ginseng, int moss, int pearl, int shade, int silk )
@@ -2684,25 +2675,28 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 							sysmessage( s, "You can't teleport here!" );
 							return;
 						}
-						tile_st tile;
-						Map->SeekTile(((buffer[s][0x11]<<8)+buffer[s][0x12]), &tile);
-						if( !chars[currchar[s]].priv&0x01 && (!strcmp((char *)tile.name, "water")) || (tile.flag1&0x80) )
+						if( !(chars[currchar[s]].priv&0x01) )
 						{
-							sysmessage(s,"Give up wannabe Jesus !");
-							return;
-						}						
-						if( !chars[currchar[s]].priv&0x01 && (tile.flag4&0x10) == 0x10 || (tile.flag1&0x40) == 0x40 ) // slanted roof tile!!! naughty naught
-						{
-							sysmessage( s, "You cannot teleport there" );
-							return;
+							tile_st tile;
+							Map->SeekTile(((buffer[s][0x11]<<8)+buffer[s][0x12]), &tile);
+							if( (!strcmp((char *)tile.name, "water")) || (tile.flag1&0x80) )
+							{
+								sysmessage(s,"Give up wannabe Jesus !");
+								return;
+							}						
+							if( (tile.flag4&0x10) == 0x10 || (tile.flag1&0x40) == 0x40 ) // slanted roof tile!!! naughty naught
+							{
+								sysmessage( s, "You cannot teleport there" );
+								return;
+							}
 						}
-						mapRegions->RemoveItem(currchar[s]+1000000);
+						mapRegions->RemoveItem( currchar[s] + 1000000 );
 						
-						chars[currchar[s]].x=x;
-						chars[currchar[s]].y=y;
-						chars[currchar[s]].dispz=chars[currchar[s]].z=z;
+						chars[currchar[s]].x = x;
+						chars[currchar[s]].y = y;
+						chars[currchar[s]].dispz = chars[currchar[s]].z = z;
 						
-						mapRegions->AddItem(currchar[s]+1000000);
+						mapRegions->AddItem( currchar[s] + 1000000 );
 						teleport( currchar[s] );
 						doStaticEffect( src, curSpell );
 						break;
@@ -3441,9 +3435,11 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 				break;
 			case 57://Earthquake
 				dmg=(chars[currchar[s]].skill[MAGERY]/40)+(rand()%20-10);
-				printf("DEBUG: [NewCastSpell()] %s is being set to criminal\n", chars[currchar[s]].name );
 
-				criminal(currchar[s]);
+#ifdef _DEBUG
+				printf( "DEBUG: [NewCastSpell()] %s is being set to criminal\n", chars[currchar[s]].name );
+#endif
+				criminal( currchar[s] );
 				
 				//Char mapRegions
 				StartGrid=mapRegions->StartGrid(chars[currchar[s]].x,chars[currchar[s]].y);
@@ -3471,7 +3467,6 @@ void cMagic::NewCastSpell( UOXSOCKET s )
 								disty=abs(chars[ii].y-chars[currchar[s]].y);
 								if( distx <= 15 && disty <= 15 && !(chars[ii].priv&0x04) && ( chars[ii].npc || online(ii) ) )
 								{
-									
 									dmgmod = min(distx,disty);
 									dmgmod = -(dmgmod - 7);
 									chars[ii].hp -=  dmg+dmgmod;
@@ -3701,24 +3696,24 @@ bool cMagic::requireTarget( unsigned char num )
 	case 10:// Cunning
 	case 11:// Cure
 	case 12:// Harm
-	case 13:// Magic Trap
-	case 14:// Magic Untrap
-	case 15:// Protection
-	case 16:// Strength
+	case 13://Magic Trap
+	case 14://Magic Untrap
+	case 15: //Protection
+	case 16: // Strength
 	case 17:// Bless
 	case 18:// Fireball
-	case 19:// Magic Lock
+	case 19://Magic Lock
 	case 20:// Poison
 	case 22:// Teleport
 	case 23:// Unlock
 	case 24:// Wall of Stone
-	case 25:// Arch Cure
+	case 25://Arch Cure
 	case 26:// Arch protection
 	case 27:// Curse
 	case 28:// Fire Field
 	case 29:// Greater Heal
 	case 30:// Lightning
-	case 31:// Mana drain
+	case 31://Mana drain
 	case 32:// Recall
 	case 33:// Blade Spirits
 	case 34:// Dispel Field
@@ -3727,7 +3722,7 @@ bool cMagic::requireTarget( unsigned char num )
 	case 39:// Poison Field
 	case 41:// Dispel
 	case 42:// Energy Bolt
-	case 43:// Explosion
+	case 43://Explosion
 	case 44:// Invisibility
 	case 45:// Mark
 	case 46:// Mass curse
@@ -3737,18 +3732,18 @@ bool cMagic::requireTarget( unsigned char num )
 	case 50:// Energy Field
 	case 51:// Flamestrike
 	case 52:// Gate Travel
-	case 53:// Mana Vampire
-	case 54:// Mass Dispel
-	case 55:// Meteor Swarm
+	case 53://Mana Vampire
+	case 54://Mass Dispel
+	case 55://Meteor Swarm
 	case 58:// Energy Vortex
 	case 59:// Resurrection
-	case 66:// Cannon Firing
+	case 66://Cannon Firing
 		return true;
 		
 		
 	case 36:// Magic Reflection
-	case 56:// Polymorph
-	case 57:// Earthquake
+	case 56: // Polymorph
+	case 57://Earthquake
 	case 60:// Summon Air Elemental
 	case 61:// Summon Daemon
 	case 62:// Summon Earth Elemental
