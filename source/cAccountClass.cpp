@@ -30,10 +30,10 @@ extern cVersionClass CVC;
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-#ifndef __UOX3_DTL__
-cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
-#else
+#ifdef __UOX3_DTL__
 cAccountClass::cAccountClass():m_sAccountsDirectory("dsn:uox3db")
+#else
+cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 #endif
 {
 	m_wHighestAccount=0x0000;
@@ -358,11 +358,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				// Ok strip the name and store it. We need to make it all the same case for comparisons
 				strlwr(r);
-#ifdef __uox__
 				actb.dwLastIP=inet_addr(r);
-#else
-				actb.dwLastIP=cAccountClass::atol(r);
-#endif
 			}
 			else
 			{
@@ -582,11 +578,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			// Ok write out the characters and the charcter names if we know them
 			for(int i=0;i<5;i++)
 			{
-#ifdef __UOX__
 				fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (long)(actbTemp.dwCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetSerial() : (INVALIDSERIAL) ) << " [" << (char*)(actbTemp.dwCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName() : "INVALID" ) << "]\n"; 
-#else
-				fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << actbTemp.dwCharacters[i] << std::dec << " [UNKNOWN]\n"; 
-#endif
 			}
 			// Close the files since we dont need them anymore
 			fsOut.close();
@@ -883,11 +875,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	// Ok write out the characters and the charcter names if we know them
 	for(int i=0;i<5;i++)
 	{
-#ifdef __UOX__
 		fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetSerial() : (INVALIDSERIAL) ) << " [" << (char*)(actbTemp.dwCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName() : "INVALID" ) << "]\n"; 
-#else
-		fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << actbTemp.dwCharacters[i] << " [UNKNOWN]\n"; 
-#endif
 	}
 	// Close the files since we dont need them anymore
 	fsAccountsUAD.close();
@@ -1799,10 +1787,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 		if(actbID.dwCharacters[jj]!=0xffffffff&&actbID.dwCharacters[jj]!=(LONG)(-1))
 		{
 			// Ok build then write what we need to the file
-			fsOrphansADM << actbID.sUsername << "=0x" << std::hex << actbID.dwCharacters[jj]  << std::endl;
-#ifdef __uox__
 			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," actbID.lpCharacters[jj]->GetZ() << std::endl;
-#endif
 		}
 	}
 	fsOrphansADM.close();
@@ -1934,10 +1919,7 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 		cAccountClass::WriteOrphanHeader(fsOrphansADM);
 	}
 	// Ok build then write what we need to the file
-	fsOrphansADM << actbID.sUsername << "=" << std::hex << actbID.dwCharacters[nSlot];
-#ifdef __uox__
 	fsOrphansADM << actbID.lpCharacters[nSlot]->GetName() << "," << actbID.lpCharacters[nSlot]->GetX() << "," << actbID.lpCharacters[nSlot]->GetY() << "," actbID.lpCharacters[nSlot]->GetZ() << std::endl;
-#endif
 	fsOrphansADM.close();
 	// Ok there is something in this slot so we should remove it.
 	actbID.dwCharacters[nSlot]=actbName.dwCharacters[nSlot]=0xffffffff;
@@ -2114,11 +2096,7 @@ UI16 cAccountClass::Save(void)
 		fsAccountsADM << "CONTACT " << (actbID.sContact.length()?actbID.sContact:"NA") << std::endl;
 		for(int i=0;i<5;i++)
 		{
-#ifdef __uox__
 			fsAccountsADM << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << actbID.dwCharacters[i] << " [" << actbID.lpCharacters[i]->GetName() << "]" << std::endl;
-#else
-			fsAccountsADM << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << actbID.dwCharacters[i] << " [UNKNOWN]" << std::endl;
-#endif
 		}
 		fsAccountsADM << "}" << std::endl << std::endl;;
 		// update the Users UAD file. (this will be used later)
@@ -2137,11 +2115,7 @@ UI16 cAccountClass::Save(void)
 		// Ok write out the characters and the charcter names if we know them
 		for(int ii=0;ii<5;ii++)
 		{
-#ifdef __uox__
 			fsOut << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << actbID.dwCharacters[ii] << " [" << actbID.lpCharacters[i]->GetName() << "]" << std::endl;
-#else
-			fsOut << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << actbID.dwCharacters[ii] << " [UNKNOWN]" << std::endl;
-#endif
 		}
 		// Close the files since we dont need them anymore
 		fsOut.close();
