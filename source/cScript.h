@@ -69,7 +69,7 @@ enum ScriptEvent
 
 struct SEGump
 {
-	stringList *one, *two;
+	STRINGLIST *one, *two;
 	UI32 TextID;
 };
 
@@ -86,7 +86,7 @@ struct SEGump
 //o--------------------------------------------------------------------------o
 struct SEGumpData
 {
-	stringList			sEdits;
+	STRINGLIST			sEdits;
 	std::vector<int>	nButtons;
 	std::vector<short>	nIDs;
 };

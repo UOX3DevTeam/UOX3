@@ -580,7 +580,7 @@ enum ITEM_BINARY_TAGS
 
 };
 
-enum DefinitionCategories
+enum DEFINITIONCATEGORIES
 {
 	items_def		=	0,
 	npc_def,

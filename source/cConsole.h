@@ -16,6 +16,13 @@ class CEndL;
 #define vsnprintf _vsnprintf
 #endif
 
+const UI08 CNORMAL	= 0;
+const UI08 CBLUE	= 1;
+const UI08 CRED		= 2;
+const UI08 CGREEN	= 3;
+const UI08 CYELLOW	= 4;
+const UI08 CBWHITE	= 5;
+
 class CConsole
 {
 public:
@@ -85,17 +92,22 @@ public:
 	void	PrintBasedOnVal( bool value );
 	void	MoveTo( int x, int y = -1 );//y=-1 will move on the current line
 
+	bool	LogEcho(void);
+	void	LogEcho(bool value);	
+	void	PrintSpecial(UI08 color, const char *toPrint,...);
 protected:
 	UI16	left, top, height, width;	// for differing windows
 	UI16	curLeft, curTop;
 	UI16	filterSettings;
 	UI08	currentMode, currentLevel;
 	UI08	previousColour;
+	bool	logEcho;
 #ifndef __LINUX__
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
 #endif
 	void	PrintStartOfLine( void );
+	void	StartOfLineCheck(void);
 };
 
 class CEndL

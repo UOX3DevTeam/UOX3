@@ -302,28 +302,6 @@ r2Data readline( std::ifstream& toRead ) // Read line from script
 	return r2Data( ret1, ret2 );
 }
 
-void savelog( const char *msg, const char *logfile )
-{
-	if( msg == NULL || logfile == NULL )
-		return;
-	if( cwmWorldState->ServerData()->GetServerConsoleLogStatus() )
-	{
-		char realLogSpot[MAX_PATH];
-		sprintf( realLogSpot, "%s/%s", cwmWorldState->ServerData()->GetLogsDirectory(), logfile );
-		char time_str[256];
-		FILE *file = fopen( realLogSpot, "a" );
-		if( file != NULL )
-		{
-			fprintf( file, "[%s] %s", RealTime( time_str ), msg );
-			fclose( file );
-		}
-		else
-		{
-			Console.Error( 1, "Failed to open log file %s", realLogSpot );
-		}
-	}
-}
-
 // Load character and item data from load chars.wsc and items.wsc
 void loadnewworld( void )
 {
@@ -334,7 +312,7 @@ void loadnewworld( void )
 	charcount = 0;
 	itemcount = 0;
 	charcount2 = 1;
-	itemcount2 = 0x40000000;
+	itemcount2 = BASEITEMSERIAL;
 	//Reticulate();
 	MapRegion->Load();
 
@@ -460,7 +438,7 @@ void BinBuffer::SetType( UI08 newType )
 
 UI08 BinBuffer::GetByte( void )
 {
-	if( fp < Buff.size() )
+	if( fp < static_cast<int>(Buff.size()) )
 		return (UI08)Buff[fp++];
 	else
 		return 0;
@@ -562,7 +540,7 @@ void BinBuffer::Get( void *get, int len )
 
 bool BinBuffer::End( void )
 {
-	return ( fp >= Buff.size() ? true : false );
+	return ( fp >= static_cast<int>(Buff.size()) ? true : false );
 }
 
 int BinBuffer::Position( void )

@@ -32,6 +32,8 @@ public:
 	void			ShowList( void );
 	SI32			LoadDictionary( void );
 	SI32			NumberOfEntries( void );
+	void			SetValid( bool newVal );
+	bool			GetValid( void );
 
 private:
 	bool IsValid;

@@ -10,7 +10,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CDictionary::CDictionary()
+CDictionary::CDictionary() : IsValid( false )
 {
 	strcpy( Language, "ZRO" );
 	strcpy( PathToDictionary, "./dictionary.ZRO" );
@@ -48,6 +48,7 @@ SI32 CDictionary::LoadDictionary( void )
 	if( !ifsFile.is_open() )
 	{
 		Console.Warning( 2, "Failed to open dictionary.%s", Language );
+		IsValid = false;
 		return dictCANTOPEN;
 	}
 	bool isSection[3] = { false, false, false };
@@ -102,6 +103,7 @@ SI32 CDictionary::LoadDictionary( void )
 			break;	//	Done reading for now, as we only support one dictionary. I left the ability here though to add more if code requires it
 	}
 	ifsFile.close();
+	IsValid = true;
 	return count;
 }
 
@@ -121,6 +123,16 @@ const char *CDictionary::operator[]( SI32 Num )
 	return GetEntry( Num );
 }
 
+void CDictionary::SetValid( bool newVal )
+{
+	IsValid = newVal;
+}
+
+bool CDictionary::GetValid( void )
+{
+	return IsValid;
+}
+
 SI32 CDictionary::NumberOfEntries( void )
 {
 	return Text2.size();
@@ -128,6 +140,8 @@ SI32 CDictionary::NumberOfEntries( void )
 
 const char *CDictionary::GetEntry( SI32 Num )
 {
+	if(!IsValid)
+		return NULL;
 	std::map< long, std::string >::iterator toFind = Text2.find( Num );
 	if( toFind != Text2.end() )
 		return toFind->second.c_str();

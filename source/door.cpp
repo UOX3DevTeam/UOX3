@@ -15,14 +15,14 @@ void useDoor( cSocket *s, CItem *item )
 	if( s != NULL )
 	{
 		mChar = s->CurrcharObj();
-		if( itemInRange( mChar, item, 2 ) == 0 ) 
+		if( !objInRange( mChar, item, 2 ) ) 
 		{
 			sysmessage( s, 1183 );
 			return;
 		}
 	}
 
-	for( int i = 0; i < DOORTYPES; i++ )
+	for( UI08 i = 0; i < DOORTYPES; i++ )
 	{
 		db = doorbase[i];
 		
@@ -213,8 +213,7 @@ void DoorMacro( cSocket *s )
 	case 6 : xc--;				break;
 	case 7 : { xc--; yc--; }	break;
 	}
-	
-	CItem *pack = NULL, *packItem = NULL;
+
 	int xOffset = MapRegion->GetGridX( mChar->GetX() );
 	int yOffset = MapRegion->GetGridY( mChar->GetY() );
 	UI08 worldNumber = mChar->WorldNumber();
@@ -243,7 +242,12 @@ void DoorMacro( cSocket *s )
 						}
 						if( itemCheck->GetType() == 13 )
 						{
-							pack = getPack( mChar );
+							if( keyInPack( s, mChar, getPack( mChar ), itemCheck ) )
+							{
+								toCheck->PopItem();
+								return;
+							}
+/*							pack = getPack( mChar );
 							if( pack != NULL )
 							{
 								for( packItem = pack->FirstItemObj(); !pack->FinishedItems(); packItem = pack->NextItemObj() )
@@ -252,7 +256,7 @@ void DoorMacro( cSocket *s )
 									{
 										if( packItem->GetMore() == itemCheck->GetMore() )
 										{
-											npcTalk( s, mChar, 1607, false );
+											npcTalk( s, mChar, 405, false );
 											useDoor( s, itemCheck );
 											toCheck->PopItem();
 											return;
@@ -260,6 +264,7 @@ void DoorMacro( cSocket *s )
 									}
 								}
 							} 
+							*/
 							sysmessage( s, 1247 );
 							toCheck->PopItem();
 							return;
@@ -416,3 +421,30 @@ bool isDoorBlocked( CItem *door )
 	}
 	return false;
 }
+
+bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
+{
+	if( pack != NULL )
+	{
+		for( CItem *nItem = pack->FirstItemObj(); !pack->FinishedItems(); nItem = pack->NextItemObj() )
+		{
+			if( nItem != NULL )
+			{
+				if( nItem->GetMore() == x->GetMore() )
+				{
+					npcTalk( mSock, mChar, 405, false );
+					useDoor( mSock, x );
+					mChar->SetObjectDelay( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( OBJECT_USAGE )) ) );
+					return true;
+				} 
+				else if( nItem->GetType() == 1 )
+				{
+					if( keyInPack( mSock, mChar, nItem, x ) )
+						return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+

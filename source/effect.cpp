@@ -1,33 +1,34 @@
 #include "uox3.h"
 
-void movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode )
+void movingeffect( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( source == NULL || dest == NULL ) 
 		return;
 
-	CPGraphicalEffect toSend( 0, (*source), (*dest) );
+	CPGraphicalEffect2 toSend( 0, (*source), (*dest) );
 	toSend.Model( effect );
 	toSend.SourceLocation( (*source) );
 	toSend.TargetLocation( (*dest) );
 	toSend.Speed( speed );
 	toSend.Duration( loop );
 	toSend.ExplodeOnImpact( explode );
+	toSend.Hue( hue );
+	toSend.RenderMode( renderMode );
 	Network->PushConn();
 	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		CChar *socketTest = tSock->CurrcharObj();
-		if( objInRange( socketTest, source, 18 ) && objInRange( socketTest, dest, 18 ) )
+		if( objInRange( tSock, source, 18 ) && objInRange( tSock, dest, 18 ) )
 			tSock->Send( &toSend );
 	}
 	Network->PopConn();
 }
 
-void movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode )
+void movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( source == NULL ) 
 		return;
 
-	CPGraphicalEffect toSend( 0, (*source) );
+	CPGraphicalEffect2 toSend( 0, (*source) );
 	toSend.TargetSerial( INVALIDSERIAL );
 	toSend.Model( effect );
 	toSend.SourceLocation( (*source) );
@@ -35,14 +36,58 @@ void movingeffect( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI0
 	toSend.Speed( speed );
 	toSend.Duration( loop );
 	toSend.ExplodeOnImpact( explode );
+	toSend.Hue( hue );
+	toSend.RenderMode( renderMode );
 	Network->PushConn();
 	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		if( tSock != NULL )
+		if( objInRange( tSock, source, 18 ) )
 			tSock->Send( &toSend );
 	}
 	Network->PopConn();
 }
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void action( cSocket *s, SI16 x )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Character does a certain action
+//o---------------------------------------------------------------------------o
+void action( cSocket *s, SI16 x )
+{
+	CChar *mChar = s->CurrcharObj();
+	
+	CPCharacterAnimation toSend = (*mChar);
+	toSend.Action( x );
+	s->Send( &toSend );
+	Network->PushConn();
+	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	{
+		if( tSock != s && charInRange( mChar, tSock->CurrcharObj() ) )
+			tSock->Send( &toSend );
+	}
+	Network->PopConn();
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void impaction( cSocket *s, SI16 act )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Handles spellcasting action
+//o---------------------------------------------------------------------------o
+void impaction( cSocket *s, SI16 act )
+{
+	CChar *mChar = s->CurrcharObj();
+	if( mChar->IsOnHorse() && ( act == 0x10 || act == 0x11 ) )
+	{
+		action( s, 0x1B );
+		return;
+	}
+	if( ( mChar->IsOnHorse() || !isHuman( mChar ) ) && act == 0x22 )
+		return;
+	action( s, act );
+}
+
 
 void staticeffect( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
@@ -146,10 +191,10 @@ void tempeffectsoff( void )
 				s->SetUsingPotion( false );
 				break;
 			case 40:
-				cScript *tScript;
-				UI16 scpNum;
+			{
+				UI16 scpNum = 0xFFFF;
 	
-				if( Effect->Source() >= 0x40000000 )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				if( Effect->Source() >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 				{
 					myObj = calcItemObjFromSer( Effect->Source() );
 					scpNum = myObj->GetScriptTrigger();
@@ -158,20 +203,33 @@ void tempeffectsoff( void )
 				else
 				{
 					myObj = calcCharObjFromSer( Effect->Source() );
-					scpNum = myObj->GetScriptTrigger();
+					if( Effect->More2() != 0xFFFF )
+						scpNum = Effect->More2();
+					else
+						scpNum = myObj->GetScriptTrigger();
 					equipCheckNeeded = true;
 				}
-	
-				tScript = Trigger->GetScript( scpNum );
+				if( myObj == NULL )	// item no longer exists!
+					break;
+				cScript *tScript = Trigger->GetScript( scpNum );
+				if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
+				{
+					if( Trigger->CheckEnvoke( myObj->GetID() ) )
+					{
+						scpNum	= Trigger->GetScriptFromEnvoke( myObj->GetID() );
+						tScript	= Trigger->GetScript( scpNum );
+					}
+				}
 				if( tScript != NULL )
 				{	// script exists
-					tScript->OnTimer( myObj, Effect->More1() );
+					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
 					// do OnTimer stuff here
 				}
 				Effects->DelCurrent();
 				if( s != NULL && equipCheckNeeded )
 					Items->CheckEquipment( s ); // checks equipments for stat requirements
 				break;
+			}
 			default:
 				Console.Error( 2, "tempeffectsoff() Unknown effect %i on character serial %i", Effect->Number(), s->GetSerial() ); //Morrolan
 				break;
@@ -191,7 +249,7 @@ void tempeffectson( void )
 			switch( Effect->Number() )
 			{
 			case 1:	s->SetFrozen( true );						break;
-			case 2:	s->SetFixedLight( cwmWorldState->ServerData()->GetWorldLightBrightLevel() );	break;
+			case 2:	s->SetFixedLight( static_cast<UI08>(cwmWorldState->ServerData()->GetWorldLightBrightLevel() ));	break;
 			case 3:	s->IncDexterity2( -Effect->More1() );		break;
 			case 4:	s->IncIntelligence2( -Effect->More1() );	break;
 			case 5:	s->IncStrength2( -Effect->More1() );		break;
@@ -232,7 +290,7 @@ void HandleMakeItemEffect( teffect_st *tMake )
 	cSocket *sock = calcSocketObjFromChar( src );
 	// Create the item in our backpack
 	CItem *targItem = Items->SpawnItemToPack( sock, src, toMake->addItem, false );
-	for( SI32 skCounter = 0; skCounter < toMake->skillReqs.size(); skCounter++ )
+	for( UI32 skCounter = 0; skCounter < toMake->skillReqs.size(); skCounter++ )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
@@ -243,7 +301,7 @@ void HandleMakeItemEffect( teffect_st *tMake )
 	{
 		targItem->SetName2( targItem->GetName() );
 		SI32 rank = Skills->CalcRankAvg( src, (*toMake) );
-		Skills->ApplyRank( sock, targItem, rank );
+		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank) );
 		
 		// if we're not a GM, see if we should store our creator
 		if( !src->IsGM() && toMake->skillReqs.size() > 0 )
@@ -251,7 +309,7 @@ void HandleMakeItemEffect( teffect_st *tMake )
 			targItem->SetCreator( src->GetSerial() );
 			int avgSkill, sumSkill = 0;
 			// Find the average of our player's skills
-			for( SI32 resCounter = 0; resCounter < toMake->skillReqs.size(); resCounter++ )
+			for( UI32 resCounter = 0; resCounter < toMake->skillReqs.size(); resCounter++ )
 				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
 			avgSkill = sumSkill / toMake->skillReqs.size();
 			if( avgSkill > 950 ) 
@@ -277,7 +335,7 @@ void HandleMakeItemEffect( teffect_st *tMake )
 
 void checktempeffects( void )
 {
-	CItem *mortar = NULL, *i = NULL;
+	CItem *i = NULL;
 	CChar *s = NULL, *src = NULL, *targ = NULL;
 	cSocket *tSock = NULL;
 	cBaseObject *myObj = NULL;
@@ -291,9 +349,13 @@ void checktempeffects( void )
 		if( Effect->ExpireTime() > j )
 			continue;
 
-		s = calcCharObjFromSer( Effect->Destination() );
-		if( s != NULL )
+		if( Effect->Destination() < BASEITEMSERIAL )
+		{
+			s = calcCharObjFromSer( Effect->Destination() );
+			if( s == NULL )
+				continue;
 			tSock = calcSocketObjFromChar( s );
+		}
 
 		bool equipCheckNeeded = false;
 
@@ -303,93 +365,63 @@ void checktempeffects( void )
 			if( s->IsFrozen() )
 			{
 				s->SetFrozen( false );
-				if( tSock != NULL ) 
-					sysmessage( tSock, 700 );
+				sysmessage( tSock, 700 );
 			}
 			break;
 		case 2:
-			if( s == NULL )
-				continue;
-
 			s->SetFixedLight( 255 );
-			doLight( tSock, cwmWorldState->ServerData()->GetWorldLightCurrentLevel() );
+			doLight( tSock, static_cast<char>(cwmWorldState->ServerData()->GetWorldLightCurrentLevel() ));
 			break;
 		case 3:
-			if( s == NULL )
-				continue;
 			s->IncDexterity2( Effect->More1() );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
 		case 4:
-			if( s == NULL )
-				continue;
-
 			s->IncIntelligence2( Effect->More1() );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
 		case 5:
-			if( s == NULL )
-				continue;
-
 			s->IncStrength2( Effect->More1() );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
 		case 6:
-			if( s == NULL )
-				continue;
-
 			s->IncDexterity2( -Effect->More1() );
 			s->SetStamina( min( s->GetStamina(), s->GetMaxStam() ) );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
 		case 7:
-			if( s == NULL )
-				continue;
-
 			s->IncIntelligence2( -Effect->More1() );
 			s->SetMana( min( s->GetMana(), s->GetMaxMana() ) );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
 		case 8:
-			if( s == NULL )
-				continue;
-
 			s->IncStrength2( -Effect->More1() );
 			s->SetHP( min( s->GetHP(), s->GetMaxHP() ) );
 			statwindow( tSock, s );
 			equipCheckNeeded = true;
 			break;
-		case 9:
-			if( s == NULL )
-				continue;
-
+		case 9:	// Grind potion (also used for necro stuff)
 			switch( Effect->More1() )
 			{
 			case 0:
 				if( Effect->More2() != 0 )
-				{
-					sprintf( temp, Dictionary->GetEntry( 1270 ), s->GetName() );
-					npcEmoteAll( s, temp, true );
-				}
+					npcEmoteAll( s, 1270, true, s->GetName() );
 				soundeffect( s, 0x0242 );
 				break;
 			}
 			break;
-		case 10:
+/*		case 10:		// Pour potion into bottle
 			src = calcCharObjFromSer( Effect->Source() );
 			mortar = calcItemObjFromSer( Effect->Destination() );
 			Skills->CreatePotion( src, Effect->More1(), Effect->More2(), mortar );
 			src->SkillUsed( false, ALCHEMY );
 			break;
-		case 11:
-			if( s == NULL )
-				continue;
-
+*/		case 11:
 			s->IncStrength2( -Effect->More1() );
 			s->SetHP(  min( s->GetHP(), s->GetMaxHP()) );
 			s->IncDexterity2( -Effect->More2() );
@@ -400,9 +432,6 @@ void checktempeffects( void )
 			equipCheckNeeded = true;
 			break;
 		case 12:
-			if( s == NULL )
-				continue;
-
 			s->IncStrength2( Effect->More1() );
 			s->IncDexterity2( Effect->More2() );
 			s->IncIntelligence2( Effect->More3() );
@@ -410,51 +439,43 @@ void checktempeffects( void )
 			equipCheckNeeded = true;
 			break;
 		case 13: // door
-			mortar = calcItemObjFromSer( Effect->Destination() );
-			if( mortar == NULL )
+			i = calcItemObjFromSer( Effect->Destination() );
+			if( i == NULL )
 				continue;
 
-			if( !mortar->isDoorOpen() ) 
+			if( !i->isDoorOpen() ) 
 				break;
 
-			mortar->SetDoorOpen( false );
+			i->SetDoorOpen( false );
 
-			if( isDoorBlocked( mortar ) )
-				tempeffect( NULL, mortar, 13, 0, 0, 0 );
+			if( isDoorBlocked( i ) )
+				tempeffect( NULL, i, 13, 0, 0, 0 );
 			else
-				useDoor( NULL, mortar );
+				useDoor( NULL, i );
 			break;
 		case 14: //- training dummies Tauriel check to see if item moved or not before searching for it
-			i = &items[Effect->ItemPtr()];
+			i = (CItem *)Effect->ObjPtr();
 			SERIAL effectSerial;
 			effectSerial = Effect->Destination();
-			if( i->GetSerial() == effectSerial )
-				mortar = i;
-			else 
-				mortar = calcItemObjFromSer( effectSerial );
-			if( mortar->GetID() == 0x1071 )
+			if( i->GetSerial() != effectSerial )
+				i = calcItemObjFromSer( effectSerial );
+			if( i->GetID() == 0x1071 )
 			{
-				mortar->IncID( -1 );
-				mortar->SetGateTime( 0 );
-				RefreshItem( mortar );
+				i->IncID( -1 );
+				i->SetGateTime( 0 );
+				RefreshItem( i );
 			} 
-			else if( mortar->GetID() == 0x1075 )
+			else if( i->GetID() == 0x1075 )
 			{
-				mortar->IncID( -1 );
-				mortar->SetGateTime( 0 );
-				RefreshItem( mortar );
+				i->IncID( -1 );
+				i->SetGateTime( 0 );
+				RefreshItem( i );
 			} 
 			break;
 		case 15: //reactive armor
-			if( s == NULL )
-				continue;
-
 			s->SetReactiveArmour( false );
 			break;
 		case 16: //Explosion potion messages
-			if( s == NULL )
-				continue;
-
 			src = calcCharObjFromSer( Effect->Source() );
 			if( src->GetAntiSpamTimer() < uiCurrentTime )
 			{
@@ -465,47 +486,39 @@ void checktempeffects( void )
 			break;
 		case 17: //Explosion potion
 			src = calcCharObjFromSer( Effect->Source() );
-			explodeItem( calcSocketObjFromChar( src ), &items[Effect->ItemPtr()] ); //explode this item
+			explodeItem( calcSocketObjFromChar( src ), (CItem *)Effect->ObjPtr() ); //explode this item
 			break;
 		case 18: //Polymorph spell
-			if( s == NULL )
-				continue;
-
 			s->SetID( s->GetOrgID() );
 			s->Teleport();
 			s->IsPolymorphed( false );
 			break;
 		case 19: //Incognito spell
-			if( s == NULL )
-				continue;
-
 			s->SetID( s->GetOrgID() );
 			
 			// ------ NAME -----
 			s->SetName( s->GetOrgName() );
 			
-			i = FindItemOnLayer( s, 0x0B );
+			i = s->GetItemAtLayer( 0x0B );
 			if( i != NULL ) 
 			{
 				i->SetColour( s->GetHairColour() );
 				i->SetID( s->GetHairStyle() );
 			}
-			i = FindItemOnLayer( s, 0x10 );
+			i = s->GetItemAtLayer( 0x10 );
 			if( i != NULL && s->GetID( 2 ) == 0x90 )
 			{
 				i->SetColour( s->GetBeardColour() );
 				i->SetID( s->GetBeardStyle() );
 			}
-			wornItems( tSock, s );
+			if( tSock != NULL )
+				wornItems( tSock, s );
 			s->Teleport();
 			s->IsIncognito( false );
 			break;
 			
 	    case 21:
-			if( s == NULL )
-				continue;
-
-			int toDrop;
+			UI16 toDrop;
 			toDrop = Effect->More1();
 			if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
 				s->SetBaseSkill( 0, PARRYING );
@@ -519,16 +532,16 @@ void checktempeffects( void )
 			R32 newHealth;
 			src = calcCharObjFromSer( Effect->Source() );
 			targ = calcCharObjFromSer( Effect->Destination() );
-			i = &items[Effect->ItemPtr()];
+			i = (CItem *)Effect->ObjPtr();
 			if( src != NULL && targ != NULL )
 			{
-				if( src->SkillUsed( Effect->More1() ) )
+				if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
 				{
 					cSocket *srcSock = calcSocketObjFromChar( src );
 					cSocket *targSock = calcSocketObjFromChar( targ );
 					if( Effect->Number() == 22 )
 					{
-						newHealth = targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) );
+						newHealth = static_cast<R32>(targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
 						targ->SetHP( min( targ->GetMaxHP(), (SI16)newHealth ) );
 						updateStats( targ, 0 );
 						sysmessage( srcSock, 1271 );
@@ -552,22 +565,19 @@ void checktempeffects( void )
 							sysmessage( srcSock,  1274 );
 					}
 				}
-				src->SkillUsed( false, Effect->More1() );
+				src->SkillUsed( false, static_cast<UI08>(Effect->More1()) );
 
 			}
 			decItemAmount( i );
 			break;
 		case 25:
 			if( Effect->More2() == 0 )
-				items[Effect->ItemPtr()].SetDisabled( false );
+				Effect->ObjPtr()->SetDisabled( false );
 			else
-				chars[Effect->ItemPtr()].SetDisabled( false );
+				Effect->ObjPtr()->SetDisabled( false );
 			break;
 		case 26:
-			if( s == NULL )
-				continue;
 			s->SetUsingPotion( false );
-
 			break;
 		case 27:
 			src = calcCharObjFromSer( Effect->Source() );
@@ -580,31 +590,39 @@ void checktempeffects( void )
 			break;
 
 		case 40:
-			cScript *tScript;
-			UI16 scpNum;
+		{
+			UI16 scpNum = 0xFFFF;
 
-			if( Effect->Source() >= 0x40000000 )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+			if( Effect->Source() >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 			{
 				myObj = calcItemObjFromSer( Effect->Source() );
-				if( myObj != NULL )
-					scpNum = myObj->GetScriptTrigger();
+				scpNum = myObj->GetScriptTrigger();
 				equipCheckNeeded = false;
 			}
 			else
 			{
 				myObj = calcCharObjFromSer( Effect->Source() );
-				if( myObj != NULL )
+				if( Effect->More2() != 0xFFFF )
+					scpNum = Effect->More2();
+				else
 					scpNum = myObj->GetScriptTrigger();
 				equipCheckNeeded = true;
 			}
-
-			tScript = Trigger->GetScript( scpNum );
-			if( tScript != NULL )
-			{	// script exists
-				tScript->OnTimer( myObj, Effect->More1() );
-				// do OnTimer stuff here
+			if( myObj == NULL )	// item no longer exists!
+				break;
+			cScript *tScript = Trigger->GetScript( scpNum );
+			if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
+			{
+				if( Trigger->CheckEnvoke( myObj->GetID() ) )
+				{
+					scpNum	= Trigger->GetScriptFromEnvoke( myObj->GetID() );
+					tScript	= Trigger->GetScript( scpNum );
+				}
 			}
+			if( tScript != NULL )				// do OnTimer stuff here
+				tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
 			break;
+		}
 		case 41:	// Creating an item
 			HandleMakeItemEffect( Effect );
 			break;
@@ -624,13 +642,14 @@ void checktempeffects( void )
 			src = calcCharObjFromSer( Effect->Source() );
 			if( src != NULL && src->GetHunger() <= 0 )
 			{
-				src->SetOwner( INVALIDSERIAL );
+				src->SetOwner( NULL );
 				src->SetTamed( false );
 				src->SetNpcWander( 2 );
 			}
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			return;
+			Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
+			return;
 		}
 		Effects->DelCurrent();
 		if( s != NULL && equipCheckNeeded )
@@ -638,10 +657,8 @@ void checktempeffects( void )
 	}
 }
 
-void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, ITEM targItemPtr )
+void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
 {
-	int ic;
-	
 	teffect_st toAdd;
 	teffect_st *Effect = NULL;
 
@@ -653,6 +670,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 		targSer = dest->GetSerial();
 	toAdd.Destination( targSer );
 
+	UI16 ic;
 	for( Effect = Effects->First(), ic = 0; !Effects->AtEnd(); Effect = Effects->Next(), ic++ )
 	{
 		if( Effect->Destination() == targSer )
@@ -672,7 +690,7 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 				case 18:
 				case 19:
 				case 21:
-					reverse_effect( ic );
+					reverseEffect( ic );
 					break;
 				default:
 					break;
@@ -692,8 +710,8 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 	case 2:
 		SI16 worldbrightlevel;
 		worldbrightlevel = cwmWorldState->ServerData()->GetWorldLightBrightLevel();
-		dest->SetFixedLight( worldbrightlevel );
-		doLight( tSock, worldbrightlevel );
+		dest->SetFixedLight( static_cast<UI08>(worldbrightlevel) );
+		doLight( tSock, static_cast<char>(worldbrightlevel) );
 		toAdd.ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 2.0f ) );
 		toAdd.Dispellable( true );
 		break;
@@ -830,11 +848,9 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 	case 22:		// healing skill, normal heal
 	case 23:		// healing skill, resurrect
 	case 24:		// healing skill, cure
-		char temp[100];
 		teffect_st *Test;
-		long checkChar;
-		long oldTarg;
-		if( source->SkillUsed( more1 ) )
+		CHARACTER oldTarg;
+		if( source->SkillUsed( static_cast<UI08>(more1) ) )
 		{
 			for( Test = Effects->First(); !Effects->AtEnd(); Test = Effects->Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
 			{	// another option would be to do a bit set, to specify already healing
@@ -845,17 +861,15 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 				case 22:
 				case 23:
 				case 24:
-					checkChar = Test->Source();
-					if( checkChar == sourSer )
+					if( Test->Source() == sourSer )
 					{
 						oldTarg = calcCharFromSer( Test->Destination() );
 						if( Test->Number() == 22 )
-							sprintf( temp, Dictionary->GetEntry( 1275 ), source->GetName(), chars[oldTarg].GetName() );
+							npcEmoteAll( source, 1275, false, source->GetName(), chars[oldTarg].GetName() );
 						else if( Test->Number() == 23 )
-							sprintf( temp, Dictionary->GetEntry( 1276 ), source->GetName(), chars[oldTarg].GetName() );
+							npcEmoteAll( source, 1276, false, source->GetName(), chars[oldTarg].GetName() );
 						else if( Test->Number() == 24 )
-							sprintf( temp, Dictionary->GetEntry( 1277 ), source->GetName(), chars[oldTarg].GetName() );
-						npcEmoteAll( source, temp, false );
+							npcEmoteAll( source, 1277, false, source->GetName(), chars[oldTarg].GetName() );
 						Effects->DelCurrent();		// we're already involved in some form of healing, BREAK IT
 					}
 					break;
@@ -870,14 +884,12 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 				toAdd.ExpireTime( BuildTimeValue( 18.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 200.0f) ) ) );
 			else
 				toAdd.ExpireTime( BuildTimeValue( 7.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 333.0f) ) ) );
-			sprintf( temp, Dictionary->GetEntry( 1278 ), source->GetName(), dest->GetName() );
-			npcEmoteAll( source, temp, false );
+			npcEmoteAll( source, 1278, false, source->GetName(), dest->GetName() );
 		}
 		else if( num == 23 )
 		{
 			toAdd.ExpireTime( BuildTimeValue( 15.0f ) );
-			sprintf( temp, Dictionary->GetEntry( 1279 ), source->GetName(), dest->GetName() );
-			npcEmoteAll( source, temp, false );
+			npcEmoteAll( source, 1279, false, source->GetName(), dest->GetName() );
 		}
 		else if( num == 24 )
 		{
@@ -885,17 +897,16 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 				toAdd.ExpireTime( BuildTimeValue( (R32)RandomNum( 15000, 18000 ) / 1000.0f ) );
 			else
 				toAdd.ExpireTime( BuildTimeValue( 6.0f ) );
-			sprintf( temp, Dictionary->GetEntry( 1280 ), source->GetName(), dest->GetName() );
-			npcEmoteAll( source, temp, false );
+			npcEmoteAll( source, 1280, false, source->GetName(), dest->GetName() );
 		}
 		toAdd.Dispellable( false );
-		toAdd.ItemPtr( targItemPtr );	// the bandage we are using to achieve this
+		toAdd.ObjPtr( targItemPtr );	// the bandage we are using to achieve this
 		toAdd.More1( more1 );			// the skill we end up using (HEALING for players, VETERINARY for monsters)
-		source->SkillUsed( true, more1 );
+		source->SkillUsed( true, static_cast<UI08>(more1) );
 		break;
 	case 25:
 		toAdd.ExpireTime( BuildTimeValue( (R32)more1 ) );
-		toAdd.ItemPtr( calcCharFromSer( dest->GetSerial() ) );
+		toAdd.ObjPtr( dest );
 		dest->SetDisabled( true );
 		toAdd.More2( 1 );
 		break;
@@ -936,7 +947,8 @@ void tempeffect( CChar *source, CChar *dest, SI08 num, UI16 more1, UI16 more2, U
 	Effects->Add( toAdd );
 }
 
-void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3, ITEM targItemptr )
+#pragma note( "Param Warning: in tempeffect(), more3 is unrefrenced" )
+void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, UI16 more3 )
 {
 	teffect_st toAdd;
 	if( source != NULL )
@@ -971,19 +983,19 @@ void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, U
 	case 14: //training dummies swing for 5(?) seconds
 		toAdd.ExpireTime( BuildTimeValue( 5 ) );
 		toAdd.Dispellable( false );
-		toAdd.ItemPtr( calcItemFromSer( dest->GetSerial() ) ); //used to try and cut search time down
+		toAdd.ObjPtr( dest ); //used to try and cut search time down
 		toAdd.More2( 0 );
 		break;
 	case 17: //Explosion potion (explosion)  Tauriel (explode in 4 seconds)
 		toAdd.ExpireTime( BuildTimeValue( 4 ) );
 		toAdd.More1( more1 );
 		toAdd.More2( more2 );
-		toAdd.ItemPtr( calcItemFromSer( dest->GetSerial() ) );
+		toAdd.ObjPtr( dest );
 		toAdd.Dispellable( false );
 		break;
 	case 25:
 		toAdd.ExpireTime( BuildTimeValue( more1 ) );
-		toAdd.ItemPtr( calcItemFromSer( dest->GetSerial() ) );
+		toAdd.ObjPtr( dest );
 		dest->SetDisabled( true );
 		toAdd.More2( 0 );
 		break;
@@ -995,12 +1007,12 @@ void tempeffect( CChar *source, CItem *dest, SI08 num, UI16 more1, UI16 more2, U
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void reverse_effect( int i )
+//|	Function	-	void reverseEffect( UI16 i )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Reverse a temp effect
 //o---------------------------------------------------------------------------o
-void reverse_effect( int i )
+void reverseEffect( UI16 i )
 {
 	teffect_st *Effect = Effects->GrabSpecific( i );
 	CChar *s = calcCharObjFromSer( Effect->Destination() );
@@ -1015,8 +1027,8 @@ void reverse_effect( int i )
 			s->SetFixedLight( 255 );
 			break;
 		case 3:		s->IncDexterity2( Effect->More1() );		break;
-		case 4:		s->IncIntelligence2( Effect->More1() );	break;
-		case 5:		s->IncStrength2( Effect->More1() );		break;
+		case 4:		s->IncIntelligence2( Effect->More1() );		break;
+		case 5:		s->IncStrength2( Effect->More1() );			break;
 		case 6:		s->IncDexterity2( -Effect->More1() );		break;
 		case 7:		s->IncIntelligence2( -Effect->More1() );	break;
 		case 8:		s->IncStrength2( -Effect->More1() );		break;
@@ -1041,13 +1053,13 @@ void reverse_effect( int i )
 			// ------ SEX ------
 			s->SetID( s->GetOrgID( 2 ), 2 );
 			s->SetName( s->GetOrgName() );
-			j = FindItemOnLayer( s, 0x0B );
+			j = s->GetItemAtLayer( 0x0B );
 			if( j != NULL )
 			{
 				j->SetColour( s->GetHairColour() );
 				j->SetID( s->GetHairStyle() );
 			}
-			j = FindItemOnLayer( s, 0x10 );
+			j = s->GetItemAtLayer( 0x10 );
 			if( j != NULL && s->GetID( 2 ) == 0x90 )
 			{
 				j->SetColour( s->GetBeardColour() );
@@ -1072,7 +1084,7 @@ void reverse_effect( int i )
 			s->SetUsingPotion( false );
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, reverse_effect()");
+			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
 			return;
 		}
 	}
@@ -1096,6 +1108,7 @@ void SaveEffects( void )
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
 	const char binBlockDisc = (char)0xFF;
 
+#pragma note( "Param Warning: in SaveEffects(), Version is unrefrenced" )
 	const UI08 Version = 1;
 
 	int Mode = cwmWorldState->ServerData()->SaveMode();
@@ -1193,7 +1206,17 @@ void LoadEffects( void )
 				toLoad.More2( buff.GetShort() );
 				toLoad.More3( buff.GetShort() );
 				toLoad.Dispellable( ( (buff.GetByte() == 0) ? false : true ) );
-				toLoad.ItemPtr( buff.GetLong() );
+				SERIAL objSer;
+				objSer = buff.GetLong();
+				if( objSer != INVALIDSERIAL )
+				{
+					if( objSer < BASEITEMSERIAL )
+						toLoad.ObjPtr( calcCharObjFromSer( objSer ) );
+					else
+						toLoad.ObjPtr( calcItemObjFromSer( objSer ) );
+				}
+				else
+					toLoad.ObjPtr( NULL );
 				Effects->Add( toLoad );
 				break;
 			case 0xFF:
@@ -1257,7 +1280,18 @@ void LoadEffects( void )
 							break;
 						case 'I':
 							if( !strcmp( tag, "ItemPtr" ) )
-								toLoad.ItemPtr( atoi( data ) );
+							{
+								SERIAL objSer = atoi( data );
+								if( objSer != INVALIDSERIAL )
+								{
+									if( objSer < BASEITEMSERIAL )
+										toLoad.ObjPtr( calcCharObjFromSer( objSer ) );
+									else
+										toLoad.ObjPtr( calcItemObjFromSer( objSer ) );
+								}
+								else
+									toLoad.ObjPtr( NULL );
+							}
 							break;
 						case 'M':
 							if( !strcmp( tag, "More1" ) )
@@ -1271,6 +1305,20 @@ void LoadEffects( void )
 							if( !strcmp( tag, "Number" ) )
 								toLoad.Number( atoi(data) );
 							break;
+						case 'O':
+							if( !strcmp( tag, "ObjPtr" ) )
+							{
+								SERIAL objSer = atoi( data );
+								if( objSer != INVALIDSERIAL )
+								{
+									if( objSer < BASEITEMSERIAL )
+										toLoad.ObjPtr( calcCharObjFromSer( objSer ) );
+									else
+										toLoad.ObjPtr( calcItemObjFromSer( objSer ) );
+								}
+								else
+									toLoad.ObjPtr( NULL );
+							}
 						case 'S':
 							if( !strcmp( tag, "Source" ) )
 								toLoad.Source( atoi(data) );

@@ -63,7 +63,7 @@ void cCharStuff::CheckAI( CChar *i )
 					staticeffect( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 					npcTalkAll( i, ( 323 + RandomNum( 0, 4 ) ), false ); 
 				} 
-				else if( !realChar->IsMurderer() && realChar->IsDead() && InRange ) 
+				else if( !realChar->IsMurderer() && realChar->IsDead() && inRange ) 
 					npcTalkAll( i, 329, true );
 			}
 			Network->PopConn();
@@ -137,7 +137,7 @@ void cCharStuff::CheckAI( CChar *i )
 								continue;
 							if( tempChar == i )
 								continue;
-							if( objInRange( I, tempChar, combatRange ) && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() == 0x02 ) 
+							if( objInRange( i, tempChar, combatRange ) && !tempChar->IsInvulnerable() && !tempChar->IsDead() && tempChar->GetNPCAiType() == 0x02 ) 
 							{
 								npcAttackTarget( tempChar, i );
 								npcTalkAll( i, 313, true );

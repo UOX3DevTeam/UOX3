@@ -16,12 +16,12 @@ protected:
 private:
 	typedef std::vector< cDirectoryListing > DIRLIST;
 
-	bool			PushDir( DefinitionCategories toMove );
+	bool			PushDir( DEFINITIONCATEGORIES toMove );
 	bool			PushDir( std::string toMove );
 	void			PopDir( void );
 
-	stringList		filenameList, shortList;
-	stringList		flattenedShort, flattenedFull;
+	STRINGLIST		filenameList, shortList;
+	STRINGLIST		flattenedShort, flattenedFull;
 	dirList			dirs;
 	std::string		extension;
 	std::string		currentDir;
@@ -35,19 +35,19 @@ private:
 public:
 					cDirectoryListing( bool recurse = true );
 					cDirectoryListing( std::string dir, std::string extent, bool recurse = true );
-					cDirectoryListing( DefinitionCategories dir, std::string extent, bool recurse = true );
+					cDirectoryListing( DEFINITIONCATEGORIES dir, std::string extent, bool recurse = true );
 					~cDirectoryListing();
 
 	void			Extension( std::string extent );
 	void			Retrieve( std::string dir );
-	void			Retrieve( DefinitionCategories dir );
+	void			Retrieve( DEFINITIONCATEGORIES dir );
 	void			Flatten( bool isParent );
 	void			ClearFlatten( void );
 
-	stringList *	List( void );
-	stringList *	ShortList( void );
-	stringList *	FlattenedList( void );
-	stringList *	FlattenedShortList( void );
+	STRINGLIST *	List( void );
+	STRINGLIST *	ShortList( void );
+	STRINGLIST *	FlattenedList( void );
+	STRINGLIST *	FlattenedShortList( void );
 };
 
 class cServerDefinitions
@@ -59,7 +59,7 @@ private:
 	SI16							defaultPriority;
 
 	void				ReloadScriptObjects( void );
-	void				BuildPriorityMap( DefinitionCategories category, UI08& wasPrioritized );
+	void				BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized );
 	void				CleanPriorityMap( void );
 	void				DisplayPriorityMap( void );
 
@@ -70,11 +70,11 @@ public:
 	virtual				~cServerDefinitions();
 	bool				Reload( void );
 
-	ScriptSection	*	FindEntry( const char *toFind, DefinitionCategories typeToFind );
-	Script			*	FindScript( const char *toFind, DefinitionCategories typeToFind );
-	SI32				CountOfEntries( DefinitionCategories typeToFind );
-	SI32				CountOfFiles( DefinitionCategories typeToFind );
-	ScpList			*	GetFiles( DefinitionCategories typeToFind );
+	ScriptSection	*	FindEntry( const char *toFind, DEFINITIONCATEGORIES typeToFind );
+	Script			*	FindScript( const char *toFind, DEFINITIONCATEGORIES typeToFind );
+	SI32				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
+	SI32				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
+	ScpList			*	GetFiles( DEFINITIONCATEGORIES typeToFind );
 };
 
 #endif

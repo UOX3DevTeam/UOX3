@@ -1,12 +1,37 @@
+//o--------------------------------------------------------------------------o
+//|	File					-	cBaseObject.h
+//|	Date					-	
+//|	Developers		-	
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
 
-#include "tags.h"
+// Some helpers for iteators, and readability
+typedef std::map< std::string, jsval> TAGMAP;
+typedef std::map< std::string, jsval>::iterator TAGMAP_ITERATOR;
+typedef std::map< std::string, jsval>::const_iterator TAGMAP_CITERATOR;
 
+//o--------------------------------------------------------------------------o
+//|	Class/Struct	-	class cBaseObject
+//|	Date					-	
+//|	Developers		-	Abaddon/EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status				-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	
+//o--------------------------------------------------------------------------o
+//| Modifications	-	
+//o--------------------------------------------------------------------------o
 class cBaseObject
 {
 protected:
-	TAG*			firstTag;
+	TAGMAP		tags;
 	char			title[MAX_TITLE];
 	SI16			kills;
 	SI16			fame;

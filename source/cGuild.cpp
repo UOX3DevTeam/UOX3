@@ -933,7 +933,7 @@ void CGuildCollection::Menu( cSocket *s, SI16 menu, GuildID trgGuild, SERIAL plI
 		return;
 	if( trgGuild >= static_cast<SI32>(NumGuilds()) )
 		return;
-	stringList one, two;
+	STRINGLIST one, two;
 	char tempString[128];
 	one.push_back( "nomove" );
 	one.push_back( "noclose" );
