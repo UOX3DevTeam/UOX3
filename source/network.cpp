@@ -38,13 +38,13 @@ fd_set conn;
 fd_set all;
 fd_set errsock;
 
-void DoorMacro( cSocket *s );
+void DoorMacro( CSocket *s );
 UnicodeTypes FindLanguage( char *lang );
 void sysBroadcast( const std::string txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 {
-	SOCKLIST_ITERATOR toClear;
+	SOCKLIST_CITERATOR toClear;
 	for( toClear = connClients.begin(); toClear != connClients.end(); ++toClear )
 		(*toClear)->FlushBuffer();
 	for( toClear = loggedInClients.begin(); toClear != loggedInClients.end(); ++toClear )
@@ -54,7 +54,7 @@ void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 }
 
 // set the laston character member value to the current date/time
-void cNetworkStuff::setLastOn( cSocket *s )
+void cNetworkStuff::setLastOn( CSocket *s )
 {
 	assert( s != NULL );
 	
@@ -159,7 +159,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 //|
 //|	Modification	-	Date Unknown - Added multi checked to instalog processing
 //o--------------------------------------------------------------------------o
-void cNetworkStuff::LogOut( cSocket *s )
+void cNetworkStuff::LogOut( CSocket *s )
 {
 	// This would probably be a good place to do the disconnect
 	CChar *p = s->CurrcharObj();
@@ -292,7 +292,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 #else
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
 #endif
-		cSocket *toMake = new cSocket( newClient );
+		CSocket *toMake = new CSocket( newClient );
 		if( newClient < 0 )
 		{
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -452,15 +452,15 @@ cNetworkStuff::cNetworkStuff() : xgmRunning( false ), peakConnectionCount( 0 ) /
 	StartupXGM(32621);
 }
 
-cSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
+CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
 	if( s >= connClients.size() )
 		return NULL;
 	return connClients[s];
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID, cSocket *s );
-cPInputBuffer *WhichLoginPacket( UI08 packetID, cSocket *s );
+cPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
+cPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 {
 	if( s >= connClients.size() )
@@ -470,7 +470,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	SERIAL serial;
 	CItem *i = NULL;
 	char temp[1024];
-	cSocket *mSock = connClients[s];
+	CSocket *mSock = connClients[s];
 
 	if( mSock == NULL )
 		return;
@@ -1146,19 +1146,19 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	loggedInClients.erase( loggedInClients.begin() + s );
 }
 
-void cNetworkStuff::LoginDisconnect( cSocket *s ) // Force disconnection of player //Instalog
+void cNetworkStuff::LoginDisconnect( CSocket *s ) // Force disconnection of player //Instalog
 {
 	UOXSOCKET i = FindLoginPtr( s );
 	LoginDisconnect( i );
 }
 
-void cNetworkStuff::Disconnect( cSocket *s ) // Force disconnection of player //Instalog
+void cNetworkStuff::Disconnect( CSocket *s ) // Force disconnection of player //Instalog
 {
 	UOXSOCKET i = FindNetworkPtr( s );
 	Disconnect( i );
 }
 
-UOXSOCKET cNetworkStuff::FindLoginPtr( cSocket *s )
+UOXSOCKET cNetworkStuff::FindLoginPtr( CSocket *s )
 {
 	for( UOXSOCKET i = 0; i < loggedInClients.size(); ++i )
 	{
@@ -1172,7 +1172,7 @@ UOXSOCKET cNetworkStuff::FindLoginPtr( cSocket *s )
 // Transfers from the logged in queue to the in world queue
 // Takes something out of the logging in queue and places it in the in world queue
 // REQUIRES THREAD SAFETY
-void cNetworkStuff::Transfer( cSocket *mSock )
+void cNetworkStuff::Transfer( CSocket *mSock )
 {
 	UOXSOCKET s = FindLoginPtr( mSock );
 	if( s >= loggedInClients.size() )
@@ -1190,7 +1190,7 @@ void cNetworkStuff::Transfer( cSocket *mSock )
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 {
 	int count, ho, mi, se, total;
-	cSocket *mSock = loggedInClients[s];
+	CSocket *mSock = loggedInClients[s];
 	if( mSock == NULL )
 		return;
 	char temp[128];
@@ -1198,7 +1198,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	{
 		count = mSock->Receive( 4 );
 		// March 1, 2004 - EviLDeD - Implemented support for UOG request for client connection count and possibly other server values
-		if( memcmp(mSock->Buffer(),"UOG\0",sizeof(UI08)*4) == 0 && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in cSocket returns to fast and doesn't get the correct revieved byte count.
+		if( memcmp(mSock->Buffer(),"UOG\0",sizeof(UI08)*4) == 0 && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in CSocket returns to fast and doesn't get the correct revieved byte count.
 		{
 			// ok this is UOG calling for server info. Just return the current data count and be done with it.
 			UI08 szTBuf[512];
@@ -1319,7 +1319,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	}
 }
 
-UOXSOCKET cNetworkStuff::FindNetworkPtr( cSocket *toFind )
+UOXSOCKET cNetworkStuff::FindNetworkPtr( CSocket *toFind )
 {
 	for( UOXSOCKET i = 0; i < connClients.size(); ++i )
 	{
@@ -1329,17 +1329,17 @@ UOXSOCKET cNetworkStuff::FindNetworkPtr( cSocket *toFind )
 	return INVALID_SOCKET;
 }
 
-cSocket *cNetworkStuff::FirstSocket( void )
+CSocket *cNetworkStuff::FirstSocket( void )
 {
-	cSocket *retSock = NULL;
+	CSocket *retSock = NULL;
 	currConnIter = connClients.begin();
 	if( !FinishedSockets() )
 		retSock = (*currConnIter);
 	return retSock;
 }
-cSocket *cNetworkStuff::NextSocket( void )
+CSocket *cNetworkStuff::NextSocket( void )
 {
-	cSocket *retSock = NULL;
+	CSocket *retSock = NULL;
 	if( !FinishedSockets() )
 	{
 		++currConnIter;
@@ -1353,14 +1353,14 @@ bool cNetworkStuff::FinishedSockets( void )
 	return ( currConnIter == connClients.end() );
 }
 
-cSocket *cNetworkStuff::PrevSocket( void )
+CSocket *cNetworkStuff::PrevSocket( void )
 {
 	if( currConnIter == connClients.begin() )
 		return NULL;
 	--currConnIter;
 	return (*currConnIter);
 }
-cSocket *cNetworkStuff::LastSocket( void )
+CSocket *cNetworkStuff::LastSocket( void )
 {
 	currConnIter = connClients.end();
 	if( currConnIter != connClients.begin() )
@@ -1481,7 +1481,7 @@ void cNetworkStuff::CheckXGM( void )
 		size_t oldnow = xgmClients.size();
 		for( size_t i = 0; i < xgmClients.size(); ++i )
 		{
-			cSocket *mXGMSock = xgmClients[i];
+			CSocket *mXGMSock = xgmClients[i];
 			if( mXGMSock == NULL )
 			{
 				Console << "Lost XGM socket " << static_cast< UI32 >(i) << " is NULL!" << myendl;
@@ -1547,13 +1547,13 @@ void cNetworkStuff::XGMDisconnect( UOXSOCKET s )
 	xgmClients.erase( xgmClients.begin() + s );
 }
 
-void cNetworkStuff::XGMDisconnect( cSocket *s )
+void cNetworkStuff::XGMDisconnect( CSocket *s )
 {
 	UOXSOCKET i = FindXGMPtr( s );
 	XGMDisconnect( i );
 }
 
-UOXSOCKET cNetworkStuff::FindXGMPtr( cSocket *s )
+UOXSOCKET cNetworkStuff::FindXGMPtr( CSocket *s )
 {
 	for( UOXSOCKET i = 0; i < xgmClients.size(); ++i )
 	{
@@ -1563,11 +1563,11 @@ UOXSOCKET cNetworkStuff::FindXGMPtr( cSocket *s )
 	return INVALID_SOCKET;
 }
 
-cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s );
+cPInputBuffer *WhichXGMPacket( UI08 packetID, CSocket *s );
 
 void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
 {
-	cSocket *mSock = xgmClients[s];
+	CSocket *mSock = xgmClients[s];
 	if( mSock == NULL )
 		return;
 	mSock->InLength( 0 );
@@ -1627,7 +1627,7 @@ void cNetworkStuff::CheckXGMConn( void )
 #else
 		size_t newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
 #endif
-		cSocket *toMake = new cSocket( newClient );
+		CSocket *toMake = new CSocket( newClient );
 		if( newClient < 0 )
 		{
 			Console.Error( 0, "Error at client xGM connection!" );

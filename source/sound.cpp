@@ -13,13 +13,13 @@ namespace UOX
 cEffects *Effects;
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cEffects::PlaySound( cSocket *mSock, UI16 soundID, bool allHear )
+//|	Function		-	void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 //|	Date			-	Unknown
 //|	Developers		-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Plays sound effect for player, echo's to all players if allHear is true
 //o--------------------------------------------------------------------------o
-void cEffects::PlaySound( cSocket *mSock, UI16 soundID, bool allHear )
+void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 {
 	if( mSock == NULL ) 
 		return;
@@ -41,13 +41,13 @@ void cEffects::PlaySound( cSocket *mSock, UI16 soundID, bool allHear )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cEffects::PlaySound( cBaseObject *baseObj, UI16 soundID, bool allHear )
+//|	Function		-	void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 //|	Date			-	Unknown
 //|	Developers		-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Plays sound effect originating from object for all players nearby(default) or originator only
 //o--------------------------------------------------------------------------o
-void cEffects::PlaySound( cBaseObject *baseObj, UI16 soundID, bool allHear )
+void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 {
 	assert( baseObj );
 	if( !ValidateObject( baseObj ) )
@@ -66,7 +66,7 @@ void cEffects::PlaySound( cBaseObject *baseObj, UI16 soundID, bool allHear )
 	{
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
-			cSocket *mSock = calcSocketObjFromChar( (CChar *)baseObj );
+			CSocket *mSock = calcSocketObjFromChar( (CChar *)baseObj );
 			if( mSock != NULL )
 				mSock->Send( &toSend );
 		}
@@ -130,12 +130,12 @@ void cEffects::doorSound( CItem *item, UI16 id, bool isOpen )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::itemSound( cSocket *s, CItem *item, bool allHear )
+//|	Function	-	void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 //|	Programmer	-	Dupois
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
 //o---------------------------------------------------------------------------o
-void cEffects::itemSound( cSocket *s, CItem *item, bool allHear )
+void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 {
 	UI16 itemID = item->GetID();
 	if( itemID >= 0x0F0F && itemID <= 0x0F20 )		// Large Gem Stones
@@ -147,7 +147,7 @@ void cEffects::itemSound( cSocket *s, CItem *item, bool allHear )
 	else
 	{
 		UI16 effectID = 0x0042;
-		cBaseObject *getCont = item->GetCont();
+		CBaseObject *getCont = item->GetCont();
 		if( getCont != NULL )
 		{
 			if( getCont->GetObjType() == OT_ITEM )
@@ -172,12 +172,12 @@ void cEffects::itemSound( cSocket *s, CItem *item, bool allHear )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::goldSound( cSocket *s, UI32 goldtotal, bool allHear )
+//|	Function	-	void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 //|	Programmer	-	Dupois
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Play gold drop sound based on Amount
 //o---------------------------------------------------------------------------o
-void cEffects::goldSound( cSocket *s, UI32 goldtotal, bool allHear )
+void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 {
 	if( goldtotal <= 1 ) 
 		PlaySound( s, 0x0035, allHear );
@@ -271,12 +271,12 @@ void cEffects::playDeathSound( CChar *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playMidi( cSocket *s, UI16 number )
+//|	Function	-	void cEffects::playMidi( CSocket *s, UI16 number )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Plays midi in client
 //o---------------------------------------------------------------------------o
-void cEffects::playMidi( cSocket *s, UI16 number )
+void cEffects::playMidi( CSocket *s, UI16 number )
 {
 	CPPlayMusic toSend( number );
 	s->Send( &toSend );
@@ -288,18 +288,12 @@ void cEffects::playMidi( cSocket *s, UI16 number )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Play background sounds based on location
 //o---------------------------------------------------------------------------o
-void cEffects::bgsound( cSocket *mSock, CChar *mChar )
+void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 {
-	if( !ValidateObject( mChar ) )
-		return;
+	std::vector< CChar * > inrange;
+	inrange.reserve( 11 );
 
-	if( mSock == NULL )
-		return;
-
-	UI08 y = 0;
-	CChar *inrange[15];
-
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( (&mChar) );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		SubRegion *MapArea = (*rIter);
@@ -311,20 +305,20 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 		{
 			if( !ValidateObject( tempChar ) || tempChar->isFree() )
 				continue;
-			if( y <= 10 && tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( mChar, tempChar ) )
-			{ 
-				++y;
-				inrange[y] = tempChar;
-			} 
+			if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
+				inrange.push_back( tempChar );
+
+			if( inrange.size() == 11 )
+				break;
 		}
 		regChars->Pop();
 	}
 
 	UI16 basesound = 0;
-	if( y > 0 )
+	if( !inrange.empty() )
 	{
-		UI08 sound	= static_cast<UI08>( RandomNum( 0, y - 1 ) + 1 );
-		UI16 xx		= inrange[sound]->GetID();
+		CChar *soundSrc = inrange[RandomNum( static_cast<size_t>(0), inrange.size() - 1 )];
+		UI16 xx			= soundSrc->GetID();
 		if( xx > 2048 )
 			return;
 
@@ -342,14 +336,14 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 			
 			if( basesound != 0 ) // bugfix lb
 			{
-				CPPlaySoundEffect toSend = (*inrange[sound]);
+				CPPlaySoundEffect toSend = (*soundSrc);
 				toSend.Model( basesound );
-				mSock->Send( &toSend );
+				mSock.Send( &toSend );
 			}
 		}
 	}
-	// play random mystic-sounds also if no creature is in range ...
-	basesound = 0;
+	else // play random mystic-sounds also if no creature is in range
+	{
 	if( RandomNum( 0, 3332 ) == 33 ) 
 	{
 		switch( RandomNum( 0, 6 ) )
@@ -364,20 +358,21 @@ void cEffects::bgsound( cSocket *mSock, CChar *mChar )
 		}
 		if( basesound != 0 )
 		{ 
-			CPPlaySoundEffect toSend = (*mChar);
+				CPPlaySoundEffect toSend = mChar;
 			toSend.Model( basesound );
-			mSock->Send( &toSend );
+				mSock.Send( &toSend );
+			}
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::dosocketmidi( cSocket *s )
+//|	Function	-	void cEffects::dosocketmidi( CSocket *s )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Send midi to client
 //o---------------------------------------------------------------------------o
-void cEffects::dosocketmidi( cSocket *s )
+void cEffects::dosocketmidi( CSocket *s )
 {
 	int i = 0;
 	char midiarray[50];
@@ -385,12 +380,12 @@ void cEffects::dosocketmidi( cSocket *s )
 
 	CChar *mChar = s->CurrcharObj();
 
-	cTownRegion *mReg = mChar->GetRegion();
+	CTownRegion *mReg = mChar->GetRegion();
 	if( mReg == NULL )
 		return;
 
-	SI32 midiList = mReg->GetMidiList();
-	if( midiList != 0 )
+	UI16 midiList = mReg->GetMidiList();
+	if( midiList == 0 )
 		return;
 
 	if( mChar->IsAtWar() )
@@ -416,12 +411,12 @@ void cEffects::dosocketmidi( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playTileSound( cSocket *mSock )
+//|	Function	-	void cEffects::playTileSound( CSocket *mSock )
 //|	Programmer	-	Abaddon
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
 //o---------------------------------------------------------------------------o
-void cEffects::playTileSound( cSocket *mSock )
+void cEffects::playTileSound( CSocket *mSock )
 {
 	if( mSock == NULL )
 		return;

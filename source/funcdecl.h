@@ -17,27 +17,27 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 // Range check functions
 //o---------------------------------------------------------------------------o
-bool	objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance );
-bool	objInRange( cBaseObject *a, cBaseObject *b, UI16 distance );
-bool	objInOldRange( cBaseObject *a, cBaseObject *b, UI16 distance );
+bool	objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance );
+bool	objInRange( CBaseObject *a, CBaseObject *b, UI16 distance );
+bool	objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	charInRange( CChar *a, CChar *b );
-UI16	getDist( cBaseObject *a, cBaseObject *b );
-UI16	getOldDist( cBaseObject *a, cBaseObject *b );
-UI16	getDist3D( cBaseObject *a, cBaseObject *b );
-SOCKLIST	FindPlayersInVisrange( cBaseObject *myObj );
-SOCKLIST	FindPlayersInOldVisrange( cBaseObject *myObj );
-SOCKLIST	FindNearbyPlayers( cBaseObject *myObj, UI16 distance );
+UI16	getDist( CBaseObject *a, CBaseObject *b );
+UI16	getOldDist( CBaseObject *a, CBaseObject *b );
+UI16	getDist3D( CBaseObject *a, CBaseObject *b );
+SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );
+SOCKLIST	FindPlayersInOldVisrange( CBaseObject *myObj );
+SOCKLIST	FindNearbyPlayers( CBaseObject *myObj, UI16 distance );
 SOCKLIST	FindNearbyPlayers( CChar *mChar );
 //o---------------------------------------------------------------------------o
 // Multi functions
 //o---------------------------------------------------------------------------o
 CMultiObj *	findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
-CMultiObj *	findMulti( cBaseObject *i );
+CMultiObj *	findMulti( CBaseObject *i );
 
 //o---------------------------------------------------------------------------o
 // Calculation functions (socket, char, item and so forth)
 //o---------------------------------------------------------------------------o
-cSocket		*calcSocketObjFromChar( CChar *i );
+CSocket		*calcSocketObjFromChar( CChar *i );
 CItem *		calcItemObjFromSer( SERIAL targSerial );
 CChar *		calcCharObjFromSer( SERIAL targSerial );
 CMultiObj *	calcMultiFromSer( SERIAL targSerial );
@@ -49,14 +49,14 @@ inline UI32 calcserial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 //o---------------------------------------------------------------------------o
 // Socket stuff
 //o---------------------------------------------------------------------------o
-void	SendVecsAsGump( cSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial );
-void	SendMapChange( UI08 worldNumber, cSocket *sock, bool initialLogin = false );
+void	SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial );
+void	SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin = false );
 bool	isOnline( CChar *c );
 
 //o---------------------------------------------------------------------------o
 // Light related functions
 //o---------------------------------------------------------------------------o
-void	doLight( cSocket *s, UI08 level );
+void	doLight( CSocket *s, UI08 level );
 
 //o---------------------------------------------------------------------------o
 // Amount related
@@ -69,13 +69,13 @@ UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000 )
 //o---------------------------------------------------------------------------o
 // Region related
 //o---------------------------------------------------------------------------o
-cTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber );
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber );
 
 //o---------------------------------------------------------------------------o
 // Find functions
 //o---------------------------------------------------------------------------o
 CChar *			FindItemOwner( CItem *p );
-cBaseObject *	FindItemOwner( CItem *i, ObjectType &objType );
+CBaseObject *	FindItemOwner( CItem *i, ObjectType &objType );
 CItem *			FindItemOfType( CChar *toFind, ItemTypes type );
 CItem *			FindItem( CChar *toFind, UI16 itemID );
 
@@ -150,13 +150,13 @@ inline char *	RealTime( char *time_str )
 bool	FileExists( std::string filepath );
 void	DismountCreature( CChar *s );
 size_t	getTileName( CItem *i, std::string& itemname );
-bool	LineOfSight( cSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor );
+bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor );
 void	Shutdown( SI32 retCode );
-void	useDoor( cSocket *s, CItem *item );
+void	useDoor( CSocket *s, CItem *item );
 void	doDeathStuff( CChar *i );
 void	NpcResurrectTarget( CChar *s );
 
-inline bool ValidateObject( cBaseObject *toValidate )
+inline bool ValidateObject( CBaseObject *toValidate )
 {
 	bool rvalue = true;
 	try

@@ -20,7 +20,7 @@ struct GumpInfo
 	// 6 -> 2 byte decimal display
 };
 
-void MultiGumpCallback( cSocket *mySocket, SERIAL GumpSerial, UI32 Button );
+void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 
 class CGump
 {
@@ -36,8 +36,8 @@ public:
 	CGump( bool myNoMove, bool myNoClose );
 	~CGump();
 
-	void Add( std::string Tag, std::string Text );
-	void Send( cSocket *target );
+	void Add( const std::string Tag, const std::string Text );
+	void Send( CSocket *target );
 	
 	// Common add functions
 	void AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height );
@@ -58,15 +58,15 @@ class GumpDisplay
 private:
 	std::vector< GumpInfo * > gumpData;
 	UI16 width, height;	// gump width / height
-	cSocket *toSendTo;
+	CSocket *toSendTo;
 	STRINGLIST one, two;
 	std::string title;
 public:
 	void AddData( GumpInfo *toAdd );
 	void AddData( std::string toAdd, long int value, UI08 type = 0 );
 	void AddData( std::string toAdd, std::string toSet, UI08 type = 4 );
-	GumpDisplay( cSocket *target );
-	GumpDisplay( cSocket *target, UI16 gumpWidth, UI16 gumpHeight );
+	GumpDisplay( CSocket *target );
+	GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
 	~GumpDisplay();
 	void SetTitle( const std::string newTitle );
 	void Send( long gumpNum, bool isMenu, SERIAL serial );

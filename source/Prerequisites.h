@@ -99,7 +99,7 @@ namespace UOX {
 // so decreases dependencies between files
 	class BaseTile;
 	class cAccountClass;
-	class cBaseObject;
+	class CBaseObject;
 	class cBooks;
 	class CBoatObj;
 	class CChar;
@@ -139,9 +139,9 @@ namespace UOX {
 	class CServerProfile;
 	class cSkillClass;
 	class cSkills;
-	class cSocket;
+	class CSocket;
 	class CSpawnItem;
-	class cSpawnRegion;
+	class CSpawnRegion;
 	class CSpeechEntry;
 	class CSpeechQueue;
 	class CTEffect;
@@ -149,11 +149,11 @@ namespace UOX {
 	class CThreadQueue;
 	class CTile;
 	class CTileUni;
-	class cTownRegion;
-	class cVersionClass;
+	class CTownRegion;
+	class CVersionClass;
 	class CWeather;
 	class cWeatherAb;
-	class cWeight;
+	class CWeight;
 	class cWhoList;
 	class CWorldMain;
 	class GumpDisplay;

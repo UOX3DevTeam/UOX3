@@ -84,8 +84,8 @@ ObjectFactory *objFactory;
 //o---------------------------------------------------------------------------o
 // Weather Pre-Declarations
 //o---------------------------------------------------------------------------o
-bool		doWeatherEffect( cSocket& mSock, CChar& mChar, WeatherType element );
-bool		doLightEffect( cSocket& mSock, CChar& mChar );
+bool		doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element );
+bool		doLightEffect( CSocket& mSock, CChar& mChar );
 
 //o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -306,7 +306,7 @@ bool isOnline( CChar *c )
 			return true;
 	}
 	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( tSock->CurrcharObj() == c )
 		{
@@ -350,7 +350,7 @@ void CollectGarbage( void )
 	QUEUEMAP_CITERATOR delqIterEnd	= deletionQueue.end();
 	while( delqIter != delqIterEnd )
 	{
-		cBaseObject *mObj = delqIter->first;
+		CBaseObject *mObj = delqIter->first;
 		++delqIter;
 		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
 		{
@@ -375,7 +375,7 @@ void CollectGarbage( void )
 //o---------------------------------------------------------------------------o
 //|	Returns			- N/A
 //o--------------------------------------------------------------------------o	
-void MountCreature( cSocket *sockPtr, CChar *s, CChar *x )
+void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 {
 	if( !objInRange( s, x, DIST_NEXTTILE ) )
 		return;
@@ -709,7 +709,7 @@ void processkey( int c )
 	int indexcount = 0;
 	int j;
 	int keyresp;
-	cSocket *tSock;
+	CSocket *tSock;
 
 	if( c == '*' )
 	{
@@ -1052,7 +1052,7 @@ void processkey( int c )
 				// Display logged in chars
 				messageLoop << "CMD: Current Users in the World:";
 				j = 0;
-				cSocket *iSock;
+				CSocket *iSock;
 				Network->PushConn();
 				for( iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 				{
@@ -1145,7 +1145,7 @@ void processkey( int c )
 				// Log socket activity
 				Network->PushConn();
 				bool loggingEnabled = false;
-				cSocket *snSock = Network->FirstSocket();
+				CSocket *snSock = Network->FirstSocket();
 				if( snSock != NULL )
 					loggingEnabled = !snSock->Logging();
 				for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
@@ -1206,12 +1206,12 @@ void checkkey( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool genericCheck( cSocket *mSock, CChar *mChar )
+//|	Function	-	bool genericCheck( CSocket *mSock, CChar *mChar )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o---------------------------------------------------------------------------o
-bool genericCheck( cSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger )
+bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger )
 {
 	if( mChar.IsDead() )
 		return false;
@@ -1456,7 +1456,7 @@ bool genericCheck( cSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check a PC's status
 //o---------------------------------------------------------------------------o
-void checkPC( cSocket *mSock, CChar *mChar, bool doWeather )
+void checkPC( CSocket *mSock, CChar *mChar, bool doWeather )
 {
 	LIGHTLEVEL toShow;
 	Combat->CombatLoop( mSock, mChar );
@@ -1537,7 +1537,7 @@ void checkPC( cSocket *mSock, CChar *mChar, bool doWeather )
 			cwmWorldState->ServerData()->WorldAmbientSounds( 10 );
 		SI16 soundTimer = static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
 		if( !mChar->IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
-			Effects->bgsound( mSock, mChar ); // bgsound uses array positions not sockets!
+			Effects->PlayBGSound( (*mSock), (*mChar) ); // bgsound uses array positions not sockets!
 	}
 	
 	if( mSock->GetTimer( tPC_SPIRITSPEAK ) > 0 && mSock->GetTimer( tPC_SPIRITSPEAK) < cwmWorldState->GetUICurrentTime() )
@@ -1781,14 +1781,14 @@ void CWorldMain::CheckAutoTimers( void )
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
 			ACCOUNTSBLOCK& actbTemp = I->second;
-			if( actbTemp.wAccountIndex==AB_INVALID_ID)
+			if( actbTemp.wAccountIndex == AB_INVALID_ID)
 				continue;
 
 			if( actbTemp.wFlags&AB_FLAGS_ONLINE )
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				Network->PushConn();
-				for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+				for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 				{
 					CChar *tChar = tSock->CurrcharObj();
 					if( !ValidateObject( tChar ) )
@@ -1808,7 +1808,7 @@ void CWorldMain::CheckAutoTimers( void )
 	if( GetWorldSaveProgress() == SS_NOTSAVING )
 	{
 		Network->PushConn();
-		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+		for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
 			if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= GetUICurrentTime() )
 			{
@@ -1834,7 +1834,7 @@ void CWorldMain::CheckAutoTimers( void )
 	else if( GetWorldSaveProgress() == SS_JUSTSAVED )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
 		Network->PushConn();
-		for( cSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
+		for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 		{
 			if( wsSocket != NULL )
 			{
@@ -1851,10 +1851,10 @@ void CWorldMain::CheckAutoTimers( void )
 	Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
-		std::vector< cTownRegion *>::iterator regionCounter;
+		std::vector< CTownRegion *>::const_iterator regionCounter;
 		for( regionCounter = regions.begin(); regionCounter != regions.end(); ++regionCounter )
 		{
-			cTownRegion *myReg = (*regionCounter);
+			CTownRegion *myReg = (*regionCounter);
 			if( myReg != NULL )
 				myReg->PeriodicCheck();
 		}
@@ -1866,13 +1866,13 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
-		std::vector< cSpawnRegion * >::iterator spawnCounter;
+		std::vector< CSpawnRegion * >::const_iterator spawnCounter;
 		for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
 		{
-			cSpawnRegion *spawnReg = (*spawnCounter);
+			CSpawnRegion *spawnReg = (*spawnCounter);
 			if( spawnReg != NULL )
 			{
-				if( spawnReg->GetNextTime() <= (SI32)GetUICurrentTime() )
+				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
                     spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 			}
 		}
@@ -1942,7 +1942,7 @@ void CWorldMain::CheckAutoTimers( void )
 	}
 	std::set< SubRegion * > regionList;	// we'll get around our npc problem this way, hopefully
 	Network->PushConn();
-	for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
 		if( iSock == NULL )
 			continue;
@@ -1995,7 +1995,7 @@ void CWorldMain::CheckAutoTimers( void )
 		doRestock = true;
 	}
 
-	std::set< SubRegion * >::iterator tcCheck = regionList.begin();
+	std::set< SubRegion * >::const_iterator tcCheck = regionList.begin();
 	while( tcCheck != regionList.end() )
 	{
 		SubRegion *toCheck = (*tcCheck);
@@ -2055,7 +2055,7 @@ void CWorldMain::CheckAutoTimers( void )
 	QUEUEMAP_CITERATOR rqIterEnd		= refreshQueue.end();
 	while( rqIter != rqIterEnd )
 	{
-		cBaseObject *mObj = rqIter->first;
+		CBaseObject *mObj = rqIter->first;
 		if( ValidateObject( mObj ) )
 		{
 			if( mObj->GetObjType() == OT_CHAR )
@@ -2157,7 +2157,7 @@ void InitClasses( void )
 	if(( Map			= new cMapStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
 	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
 	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
-	if(( Weight			= new cWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
+	if(( Weight			= new CWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
 	if(( Network		= new cNetworkStuff )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 	if(( Magic			= new cMagic )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
 	if(( Races			= new cRaces )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
@@ -2227,7 +2227,7 @@ void ParseArgs( int argc, char *argv[] )
 	}
 }
 
-bool FindMultiFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
@@ -2281,7 +2281,7 @@ void DisplayBanner( void )
 	Console.PrintSectionBegin();
 
 	char idname[256];
-	sprintf( idname, "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", cVersionClass::GetProductName().c_str(), cVersionClass::GetVersion().c_str(), cVersionClass::GetBuild().c_str(), OS_STR, cVersionClass::GetName().c_str(), cVersionClass::GetProgrammers().c_str() );
+	sprintf( idname, "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
  
 	Console.TurnYellow();
 	Console << "Compiled on ";
@@ -2291,12 +2291,12 @@ void DisplayBanner( void )
 	Console.TurnYellow();
 	Console << "Compiled by ";
 	Console.TurnNormal();
-	Console << cVersionClass::GetName() << myendl;
+	Console << CVersionClass::GetName() << myendl;
 
 	Console.TurnYellow();
 	Console << "Contact: ";
 	Console.TurnNormal();
-	Console << cVersionClass::GetEmail() << myendl;
+	Console << CVersionClass::GetEmail() << myendl;
 	
 	Console.PrintSectionBegin();
 }
@@ -2453,7 +2453,7 @@ void Shutdown( SI32 retCode )
 	delete objFactory;
 
 	Console << "Server shutdown complete!" << myendl;
-	Console << "Thank you for supporting " << cVersionClass::GetName() << myendl;
+	Console << "Thank you for supporting " << CVersionClass::GetName() << myendl;
 	Console.TurnNormal();
 	Console.PrintSectionBegin();
 	
@@ -2640,7 +2640,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 	}
 	else
 	{
-		cSocket *sock = calcSocketObjFromChar( applyTo );
+		CSocket *sock = calcSocketObjFromChar( applyTo );
 		if( sock != NULL )
 			sock->sysmessage( 1366 );
 	}
@@ -2682,12 +2682,12 @@ UI32 getclock( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void doLight( cSocket *s, UI08 level )
+//|	Function	-	void doLight( CSocket *s, UI08 level )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Send light level to players client
 //o---------------------------------------------------------------------------o
-void doLight( cSocket *s, UI08 level )
+void doLight( CSocket *s, UI08 level )
 {
 	if( s == NULL )
 		return;
@@ -2702,7 +2702,7 @@ void doLight( cSocket *s, UI08 level )
 		return;
 	}
 
-	cTownRegion *curRegion	= mChar->GetRegion();
+	CTownRegion *curRegion	= mChar->GetRegion();
 	CWeather *wSys			=  Weather->Weather( curRegion->GetWeather() );
 	LIGHTLEVEL toShow;
 
@@ -2739,12 +2739,12 @@ void doLight( cSocket *s, UI08 level )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void telltime( cSocket *s )
+//|	Function	-	void telltime( CSocket *s )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get in-game time
 //o---------------------------------------------------------------------------o
-void telltime( cSocket *s )
+void telltime( CSocket *s )
 {
 	UI08 hour			= cwmWorldState->ServerData()->ServerTimeHours();
 	UI08 minute			= cwmWorldState->ServerData()->ServerTimeMinutes();
@@ -2856,12 +2856,12 @@ size_t getTileName( CItem *i, std::string& itemname )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check what region a character is in
 //o---------------------------------------------------------------------------o
-void checkRegion( cSocket *mSock, CChar *i )
+void checkRegion( CSocket *mSock, CChar *i )
 {
 	if( !ValidateObject( i ) )
 		return;
-	cTownRegion *iRegion	= i->GetRegion();
-	cTownRegion *calcReg	= calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() );
+	CTownRegion *iRegion	= i->GetRegion();
+	CTownRegion *calcReg	= calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() );
 	if( iRegion == NULL && calcReg != NULL )
 		i->SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
@@ -2915,7 +2915,7 @@ void checkRegion( cSocket *mSock, CChar *i )
 							{
 								if( toScan->GetType() == IT_TOWNSTONE )
 								{
-									cTownRegion *targRegion = regions[static_cast<UI08>(toScan->GetTempVar( CITV_MOREX ))];
+									CTownRegion *targRegion = regions[static_cast<UI08>(toScan->GetTempVar( CITV_MOREX ))];
 									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
@@ -2969,7 +2969,7 @@ void criminal( CChar *c )
 {
 	if( !c->IsCriminal() )
 	{
-		cSocket *cSock = calcSocketObjFromChar( c );
+		CSocket *cSock = calcSocketObjFromChar( c );
 		c->SetTimer( tCHAR_CRIMFLAG, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->RepCrimTime()) ) );
 		if( cSock != NULL )
 			cSock->sysmessage( 1379 );
@@ -3191,7 +3191,7 @@ void doDeathStuff( CChar *i )
 	if( !ValidateObject( i ) || i->IsDead() || i->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
 		return;
 
-	cSocket *pSock = NULL;
+	CSocket *pSock = NULL;
 	if( !i->IsNpc() )
 		pSock = calcSocketObjFromChar( i );
 
@@ -3252,7 +3252,7 @@ void doDeathStuff( CChar *i )
 		i->Delete();
 }
 
-void SendMapChange( UI08 worldNumber, cSocket *sock, bool initialLogin )
+void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 {
 	if( sock == NULL )
 		return;
@@ -3275,7 +3275,7 @@ void SendMapChange( UI08 worldNumber, cSocket *sock, bool initialLogin )
 		mChar->Teleport();
 }
 
-void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate )
+void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
 	if( !ValidateObject( gate ) || ( sock == NULL && !ValidateObject( charMoving ) ) )
 		return;
@@ -3427,7 +3427,7 @@ int main( int argc, char *argv[] )
 		const UI32 currentTime = 0;
 		
 #if UOX_PLATFORM == PLATFORM_WIN32
-		sprintf( temp, "%s v%s.%s", cVersionClass::GetProductName().c_str(), cVersionClass::GetVersion().c_str(), cVersionClass::GetBuild().c_str() );
+		sprintf( temp, "%s v%s.%s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str() );
 		Console.Start( temp );
 #else
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
@@ -3440,7 +3440,7 @@ int main( int argc, char *argv[] )
 #endif
 		
 		Console.PrintSectionBegin();
-		Console << "UOX Server start up!" << myendl << "Welcome to " << cVersionClass::GetProductName() << " v" << cVersionClass::GetVersion() << "." << cVersionClass::GetBuild() << myendl;
+		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << myendl;
 		Console.PrintSectionBegin();
 
 		LoadJSEngine();

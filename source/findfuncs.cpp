@@ -6,11 +6,11 @@
 namespace UOX
 {
 
-SOCKLIST FindPlayersInOldVisrange( cBaseObject *myObj )
+SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
 	Network->PushConn();
-	for( cSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
 		if( objInOldRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
@@ -20,11 +20,11 @@ SOCKLIST FindPlayersInOldVisrange( cBaseObject *myObj )
 	return nearbyChars;
 }
 
-SOCKLIST FindPlayersInVisrange( cBaseObject *myObj )
+SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
 	Network->PushConn();
-	for( cSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
 		if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
@@ -34,11 +34,11 @@ SOCKLIST FindPlayersInVisrange( cBaseObject *myObj )
 	return nearbyChars;
 }
 
-SOCKLIST FindNearbyPlayers( cBaseObject *myObj, UI16 distance )
+SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 {
 	SOCKLIST nearbyChars;
 	Network->PushConn();
-	for( cSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		if( objInRange( mSock->CurrcharObj(), myObj, distance ) )
 			nearbyChars.push_back( mSock );
@@ -53,13 +53,13 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	cBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
+//|	Function	-	CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Finds the root container object, returns it, and sets objType
 //|					to the objects type
 //o---------------------------------------------------------------------------o
-cBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
+CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 {
 	if( !ValidateObject( i ) || i->GetCont() == NULL )	// Item has no containing item
 		return NULL;
@@ -90,7 +90,7 @@ CChar *FindItemOwner( CItem *p )
 		return NULL;
 
 	ObjectType oType = OT_CBO;
-	cBaseObject *iOwner = FindItemOwner( p, oType );
+	CBaseObject *iOwner = FindItemOwner( p, oType );
 	if( oType == OT_CHAR )
 		return static_cast<CChar *>(iOwner);
 	return NULL;
@@ -235,7 +235,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a multi at x,y,z
 //o---------------------------------------------------------------------------o
-CMultiObj *findMulti( cBaseObject *i )
+CMultiObj *findMulti( CBaseObject *i )
 {
 	if( !ValidateObject( i ) )
 		return NULL;

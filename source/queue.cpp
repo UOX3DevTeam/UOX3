@@ -104,7 +104,7 @@ void PageVector::KillQueue( void )
 	Queue.clear();
 }
 
-void PageVector::SendAsGump( cSocket *toSendTo )
+void PageVector::SendAsGump( CSocket *toSendTo )
 {
 	GumpDisplay GQueue( toSendTo, 320, 340 );
 	GQueue.SetTitle( title );
@@ -175,7 +175,7 @@ HelpRequest *PageVector::Current( void )
 		return NULL;
 }
 
-bool PageVector::AnswerNextCall( cSocket *mSock, CChar *mChar )
+bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 {
 	bool retVal		= false;
 	CChar *isPaging = NULL;

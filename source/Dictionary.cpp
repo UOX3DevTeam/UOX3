@@ -90,7 +90,7 @@ SI32 CDictionary::LoadDictionary( void )
 void CDictionary::ShowList( void )
 {
 	Console << "[Testing]" << myendl;
-	std::map< long, std::string >::iterator toFind = Text2.begin();
+	std::map< long, std::string >::const_iterator toFind = Text2.begin();
 	while( toFind != Text2.end() )
 	{
 		Console << (SI32)(toFind->first) << ") " << toFind->second << myendl;
@@ -123,7 +123,7 @@ std::string CDictionary::GetEntry( SI32 Num )
 	std::string rvalue;
 	if( IsValid )
 	{
-		std::map< long, std::string >::iterator toFind = Text2.find( Num );
+		std::map< long, std::string >::const_iterator toFind = Text2.find( Num );
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else

@@ -72,11 +72,11 @@ namespace UOX
 //|
 //o--------------------------------------------------------------------------o
 
-cWeight *Weight = NULL;
+CWeight *Weight = NULL;
 
 const SI32 MAX_PACKWEIGHT = 40000;	// Lets have maximum weight of packs be 400 stones for now
 //o--------------------------------------------------------------------------o
-//|	Function		-	SI32 cWeight::calcWeight( CItem *pack )
+//|	Function		-	SI32 CWeight::calcWeight( CItem *pack )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -85,7 +85,7 @@ const SI32 MAX_PACKWEIGHT = 40000;	// Lets have maximum weight of packs be 400 s
 //|							their amounts, etc. This function should never need to be called
 //|							but is available for bruteforce weight updating
 //o--------------------------------------------------------------------------o
-SI32 cWeight::calcWeight( CItem *pack )
+SI32 CWeight::calcWeight( CItem *pack )
 {
 	SI32 totalWeight = 0;
 
@@ -114,7 +114,7 @@ SI32 cWeight::calcWeight( CItem *pack )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	SI32 cWeight::calcCharWeight( CChar *mChar )
+//|	Function		-	SI32 CWeight::calcCharWeight( CChar *mChar )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -123,7 +123,7 @@ SI32 cWeight::calcWeight( CItem *pack )
 //|							This function should never need to be called but is available for
 //|							bruteforce weight updating
 //o--------------------------------------------------------------------------o
-SI32 cWeight::calcCharWeight( CChar *mChar )
+SI32 CWeight::calcCharWeight( CChar *mChar )
 {
 	SI32 totalWeight = 0;
 
@@ -156,7 +156,7 @@ SI32 cWeight::calcCharWeight( CChar *mChar )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
+//|	Function		-	bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -164,7 +164,7 @@ SI32 cWeight::calcCharWeight( CChar *mChar )
 //|	Description		-	Calculate the total weight of adding an item to a container, returns
 //|							false if the item is over the max weight limit
 //o--------------------------------------------------------------------------o
-bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
+bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 {
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
@@ -185,7 +185,7 @@ bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
+//|	Function		-	bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -193,7 +193,7 @@ bool cWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 //|	Description		-	Calculate the total weight of removing an item from a container, returns
 //|							false if the item is over the max weight limit or less than 0
 //o--------------------------------------------------------------------------o
-bool cWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
+bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 {
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
@@ -214,14 +214,14 @@ bool cWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::addItemWeight( cBaseObject *getObj, Citem *item )
+//|	Function		-	void CWeight::addItemWeight( CBaseObject *getObj, Citem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Adds an items weight to the total weight of the object
 //o--------------------------------------------------------------------------o
-void cWeight::addItemWeight( cBaseObject *getObj, CItem *item )
+void CWeight::addItemWeight( CBaseObject *getObj, CItem *item )
 {
 	if( getObj->GetObjType() == OT_CHAR )
 		addItemWeight( (CChar *)getObj, item );
@@ -230,14 +230,14 @@ void cWeight::addItemWeight( cBaseObject *getObj, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::addItemWeight( CChar *mChar, CItem *item )
+//|	Function		-	void CWeight::addItemWeight( CChar *mChar, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Adds an items weight to the total weight of the character
 //o--------------------------------------------------------------------------o
-void cWeight::addItemWeight( CChar *mChar, CItem *item )
+void CWeight::addItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
@@ -248,7 +248,7 @@ void cWeight::addItemWeight( CChar *mChar, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::addItemWeight( CItem *pack, CItem *item )
+//|	Function		-	void CWeight::addItemWeight( CItem *pack, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -256,7 +256,7 @@ void cWeight::addItemWeight( CChar *mChar, CItem *item )
 //|	Description		-	Adds an items weight to the total weight of the pack updating
 //|							the packs container in the process
 //o--------------------------------------------------------------------------o
-void cWeight::addItemWeight( CItem *pack, CItem *item )
+void CWeight::addItemWeight( CItem *pack, CItem *item )
 {
 	SI32 totalWeight = pack->GetWeight();
 	
@@ -265,7 +265,7 @@ void cWeight::addItemWeight( CItem *pack, CItem *item )
 	else
 		pack->SetWeight( MAX_WEIGHT );
 
-	cBaseObject *pCont = pack->GetCont();
+	CBaseObject *pCont = pack->GetCont();
 	if( pCont != NULL )
 	{
 		if( pCont->GetObjType() == OT_ITEM )
@@ -284,14 +284,14 @@ void cWeight::addItemWeight( CItem *pack, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::subtractItemWeight( cBaseObject *getObj, Citem *item )
+//|	Function		-	void CWeight::subtractItemWeight( CBaseObject *getObj, Citem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Subtracts an items weight from the total weight of the object
 //o--------------------------------------------------------------------------o
-void cWeight::subtractItemWeight( cBaseObject *getObj, CItem *item )
+void CWeight::subtractItemWeight( CBaseObject *getObj, CItem *item )
 {
 	if( getObj->GetObjType() == OT_CHAR )
 		subtractItemWeight( (CChar *)getObj, item );
@@ -300,14 +300,14 @@ void cWeight::subtractItemWeight( cBaseObject *getObj, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::addItemWeight( CItem *pack, CItem *item )
+//|	Function		-	void CWeight::addItemWeight( CItem *pack, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Subtracts an items weight from the total weight of the character
 //o--------------------------------------------------------------------------o
-void cWeight::subtractItemWeight( CChar *mChar, CItem *item )
+void CWeight::subtractItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
@@ -318,7 +318,7 @@ void cWeight::subtractItemWeight( CChar *mChar, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cWeight::subtractItemWeight( CItem *pack, CItem *item )
+//|	Function		-	void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -326,7 +326,7 @@ void cWeight::subtractItemWeight( CChar *mChar, CItem *item )
 //|	Description		-	Subtracts an items weight from the total weight of the pack updating
 //|							the packs container in the process
 //o--------------------------------------------------------------------------o
-void cWeight::subtractItemWeight( CItem *pack, CItem *item )
+void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 {
 	SI32 totalWeight = pack->GetWeight();
 
@@ -335,7 +335,7 @@ void cWeight::subtractItemWeight( CItem *pack, CItem *item )
 	else
 		pack->SetWeight( 0 );
 
-	cBaseObject *pCont = pack->GetCont();
+	CBaseObject *pCont = pack->GetCont();
 	if( pCont != NULL )
 	{
 		if( pCont->GetObjType() == OT_ITEM )
@@ -354,14 +354,14 @@ void cWeight::subtractItemWeight( CItem *pack, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cWeight::isOverloaded( CChar *mChar )
+//|	Function		-	bool CWeight::isOverloaded( CChar *mChar )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Returns true if the character is overloaded based upon his strength
 //o--------------------------------------------------------------------------o
-bool cWeight::isOverloaded( CChar *mChar ) const
+bool CWeight::isOverloaded( CChar *mChar ) const
 {
 	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30) )
 		return true;
@@ -369,7 +369,7 @@ bool cWeight::isOverloaded( CChar *mChar ) const
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cWeight::checkPackWeight( CItem *pack, CItem *item )
+//|	Function		-	bool CWeight::checkPackWeight( CItem *pack, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -377,7 +377,7 @@ bool cWeight::isOverloaded( CChar *mChar ) const
 //|	Description		-	Returns false if a pack will be overloaded when items weight is added
 //|							or true if not based upon MAX_PACKWEIGHT
 //o--------------------------------------------------------------------------o
-bool cWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
+bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 {
 	if( !ValidateObject( pack ) )
 		return true;
@@ -400,7 +400,7 @@ bool cWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
+//|	Function		-	bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
 //|	Date			-	2/23/2003
 //|	Developers		-	Zane
 //|	Organization	-	UOX3 DevTeam
@@ -408,7 +408,7 @@ bool cWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 //|	Description		-	Returns false if a character will be overloaded when items weight is added
 //|							or true if not based upon MAX_CHARWEIGHT
 //o--------------------------------------------------------------------------o
-bool cWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
+bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
 {
 	if( !ValidateObject( mChar ) )
 		return true;

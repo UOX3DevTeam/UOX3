@@ -40,12 +40,12 @@ enum PostTypes
 
 
 // Function Prototypes 
-void    MsgBoardEvent( cSocket *s );
-void    MsgBoardSetPostType( cSocket *s, int nPostType );
-void    MsgBoardGetPostType( cSocket *s );
+void    MsgBoardEvent( CSocket *s );
+void    MsgBoardSetPostType( CSocket *s, int nPostType );
+void    MsgBoardGetPostType( CSocket *s );
 bool    MsgBoardPostQuest( SERIAL nSerial, int nQuestType );
 void    MsgBoardQuestEscortCreate( CChar *npcIndex );
-void    MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock );
+void    MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock );
 void    MsgBoardQuestEscortDelete( CChar *npcIndex );
 void    MsgBoardQuestEscortRemovePost( CChar *npcIndex );
 void    MsgBoardMaintenance( void );

@@ -451,10 +451,9 @@ void LoadSpawnRegions( void )
 	UI16 i					= 0;
 	ScriptSection *toScan	= NULL;
 	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( spawn_def );
-	VECSCRIPTLIST_ITERATOR lIter;
 	if( tScn == NULL )
 		return;
-	for( lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
 	{
 		Script *spnScp = (*lIter);
 		if( spnScp == NULL )
@@ -465,7 +464,7 @@ void LoadSpawnRegions( void )
 				continue;
 			if( "REGIONSPAWN" == spnScp->EntryName().substr( 0, 11 ) ) // Is it a region spawn entry?
 			{
-				spawnregions.push_back( new cSpawnRegion( i ) );
+				spawnregions.push_back( new CSpawnRegion( i ) );
 				spawnregions[i]->Load( toScan );
 				++i;
 			}
@@ -494,12 +493,11 @@ void LoadRegions( void )
 	UI08 i					= 0;
 	ScriptSection *toScan	= NULL;
 	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( regions_def );
-	VECSCRIPTLIST_ITERATOR lIter;
 	if( tScn == NULL )
 		return;
 
 	UString regEntry;
-	for( lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
 	{
 		Script *regScp = (*lIter);
 		if( regScp == NULL )
@@ -516,7 +514,7 @@ void LoadRegions( void )
 				i = regEntry.section( " ", 1, 1 ).toUByte();
 				if( i >= regions.size() )
 					regions.resize( i+1 );
-				regions[i] = new cTownRegion( i );
+				regions[i] = new CTownRegion( i );
 				regions[i]->InitFromScript( toScan );
 				if( performLoad )
 					regions[i]->Load( ourRegions );
@@ -723,10 +721,9 @@ void LoadPlaces( void )
 	UString data, UTag, entryName;
 	ScriptSection *toScan	= NULL;
 	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( location_def );
-	VECSCRIPTLIST_ITERATOR lIter;
 	if( tScn == NULL )
 		return;
-	for( lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
 	{
 		Script *locScp = (*lIter);
 		if( locScp == NULL )

@@ -571,10 +571,10 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static unsigned int save_counter = 0;
 
-	std::vector< cSpawnRegion * >::iterator spawnCounter;
+	std::vector< CSpawnRegion * >::const_iterator spawnCounter;
 	for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
 	{
-		cSpawnRegion *spawnReg = (*spawnCounter);
+		CSpawnRegion *spawnReg = (*spawnCounter);
 		if( spawnReg != NULL )
 			spawnReg->checkSpawned();
 	}
@@ -649,10 +649,10 @@ void CWorldMain::RegionSave( void )
 		Console.Error( 1, "Failed to open %s for writing", regionsFile.c_str() );
 		return;
 	}
-	std::vector< cTownRegion * >::iterator regionCounter;
+	std::vector< CTownRegion * >::const_iterator regionCounter;
 	for( regionCounter = regions.begin(); regionCounter != regions.end(); ++regionCounter )
 	{
-		cTownRegion *myReg = (*regionCounter);
+		CTownRegion *myReg = (*regionCounter);
 		if( myReg != NULL )
 			myReg->Save( regionsDestination );
 	}

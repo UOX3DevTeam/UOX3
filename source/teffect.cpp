@@ -120,7 +120,7 @@ bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
 	std::string destination; 
 	std::ostringstream dumping( destination ); 
-	cBaseObject *getPtr = NULL;
+	CBaseObject *getPtr = NULL;
 
 	effectDestination << "[EFFECT]" << std::endl;
 

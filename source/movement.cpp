@@ -236,8 +236,8 @@ void HandleTeleporters( CChar *s )
 	}
 }
 
-void checkRegion( cSocket *mSock, CChar *i );
-void cMovement::Walking( cSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
+void checkRegion( CSocket *mSock, CChar *i );
+void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 {
 	// sometimes the NPC movement code comes up with -1, for example, if we are following someone
 	// and we are directly on top of them
@@ -384,7 +384,7 @@ bool cMovement::isValidDirection( UI08 dir )
 // end of the spell cast. With this new check, we don't even need to set the frozen bit when
 // casting a spell!
 
-bool cMovement::isFrozen( CChar *c, cSocket *mSock, SI16 sequence )
+bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	if( c->IsCasting() )
 	{
@@ -427,7 +427,7 @@ bool cMovement::isFrozen( CChar *c, cSocket *mSock, SI16 sequence )
 
 // Rewrote to deny the client... We'll see if it works.
 
-bool cMovement::isOverloaded( CChar *c, cSocket *mSock, SI16 sequence )
+bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	// Who are we going to check for weight restrictions?
 	if( !c->IsDead() && !c->IsNpc() && ( !c->IsCounselor() && !c->IsGM() ) )
@@ -492,7 +492,7 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 
 // if we have a valid socket, see if we need to deny the movement request because of
 // something to do with the walk sequence being out of sync.
-bool cMovement::VerifySequence( CChar *c, cSocket *mSock, SI16 sequence )
+bool cMovement::VerifySequence( CChar *c, CSocket *mSock, SI16 sequence )
 {
     if( mSock != NULL )
     {
@@ -585,7 +585,7 @@ bool cMovement::CheckForStealth( CChar *c )
 }
 
 // see if a player has tried to move into a house they were banned from
-bool cMovement::CheckForHouseBan( CChar *c, cSocket *mSock )
+bool cMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
 {
 	CMultiObj *house = findMulti( c );
 	if( ValidateObject( house ) ) 
@@ -773,7 +773,7 @@ void cMovement::HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy )
 
 
 // actually send the walk command back to the player and increment the sequence
-void cMovement::SendWalkToPlayer( CChar *c, cSocket *mSock, SI16 sequence )
+void cMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	if( mSock != NULL )
 	{
@@ -806,7 +806,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 		toSend.Direction( dir|0x80 );
 
 	Network->PushConn();
-	for( cSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
+	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
 	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this
 		if( tSend == NULL )
 			continue;
@@ -845,7 +845,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 }
 
 // see if we should mention that we shove something out of the way
-void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
+void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 {
 	if( mSock == NULL )
 		return;
@@ -896,7 +896,7 @@ void cMovement::OutputShoveMessage( CChar *c, cSocket *mSock )
 	regChars->Pop();
 }
 
-bool UpdateItemsOnPlane( cSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld, UI16 visibleRange, bool isGM )
+bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld, UI16 visibleRange, bool isGM )
 {
 	if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
 	{
@@ -937,7 +937,7 @@ bool UpdateItemsOnPlane( cSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 	return false;
 }
 
-bool UpdateCharsOnPlane( cSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, UI16 dOld, UI16 visibleRange )
+bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, UI16 dOld, UI16 visibleRange )
 {
 	if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 	{
@@ -962,8 +962,8 @@ bool UpdateCharsOnPlane( cSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 
 void MonsterGate( CChar *s, std::string scriptEntry );
 void advanceObj( CChar *s, UI16 x, bool multiUse );
-void SocketMapChange( cSocket *sock, CChar *charMoving, CItem *gate );
-void HandleObjectCollisions( cSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
+void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
+void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
 {
 	switch( itemCheck->GetType() )
 	{
@@ -1014,7 +1014,7 @@ void HandleObjectCollisions( cSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 // handle item collisions, make items that appear on the edge of our sight because
 // visible, buildings when they get in range, and if the character steps on something
 // that might cause damage
-void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI16 oldy )
+void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI16 oldy )
 {
 	// lets cache these vars in advance
 	UI16 visibleRange	= static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ) );
@@ -1127,7 +1127,7 @@ void cMovement::HandleItemCollision( CChar *mChar, cSocket *mSock, SI16 oldx, SI
 }
 
 // start of LB's no rain & snow in buildings stuff 
-void cMovement::HandleWeatherChanges( CChar *c, cSocket *mSock )
+void cMovement::HandleWeatherChanges( CChar *c, CSocket *mSock )
 {
 //	if( !c->IsNpc() && isOnline( c ) ) // check for being in buildings (for weather) only for PC's
 //		return;
@@ -1769,7 +1769,7 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
     return false;
 }
 
-void cMovement::deny( cSocket *mSock, CChar *s, SI16 sequence )
+void cMovement::deny( CSocket *mSock, CChar *s, SI16 sequence )
 {
 	CPWalkDeny denPack;
 

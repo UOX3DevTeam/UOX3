@@ -41,7 +41,7 @@ void cEffects::deathAction( CChar *s, CItem *x )
 	}
 }
 
-void cEffects::PlayMovingAnimation( cBaseObject *source, cBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ) || !ValidateObject( dest ) ) 
 		return;
@@ -56,7 +56,7 @@ void cEffects::PlayMovingAnimation( cBaseObject *source, cBaseObject *dest, UI16
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( objInRange( tSock, source, DIST_SAMESCREEN ) && objInRange( tSock, dest, DIST_SAMESCREEN ) )
 			tSock->Send( &toSend );
@@ -64,7 +64,7 @@ void cEffects::PlayMovingAnimation( cBaseObject *source, cBaseObject *dest, UI16
 	Network->PopConn();
 }
 
-void cEffects::PlayMovingAnimation( cBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ) ) 
 		return;
@@ -123,7 +123,7 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 }
 
 
-void cEffects::PlayStaticAnimation( cBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
+void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
 	if( !ValidateObject( target ) ) 
 		return;
@@ -161,7 +161,7 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
 	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{  // if inrange of effect and online send effect
 		tSock->Send( &toSend );
 	}
@@ -185,12 +185,12 @@ void cEffects::bolteffect( CChar *player )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void explodeItem( cSocket *mSock, CItem *nItem )
+//|	Function	-	void explodeItem( CSocket *mSock, CItem *nItem )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Explode an item
 //o---------------------------------------------------------------------------o
-void explodeItem( cSocket *mSock, CItem *nItem )
+void explodeItem( CSocket *mSock, CItem *nItem )
 {
 	CChar *c = mSock->CurrcharObj();
 	UI32 dmg = 0;
@@ -280,7 +280,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	if( toMake == NULL )
 		return;
 
-	cSocket *sock = calcSocketObjFromChar( src );
+	CSocket *sock = calcSocketObjFromChar( src );
 	// Create the item in our backpack
 	CItem *targItem = Items->CreateScriptItem( sock, src, toMake->addItem, 1, OT_ITEM, true );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
@@ -330,8 +330,8 @@ void cEffects::checktempeffects( void )
 {
 	CItem *i = NULL;
 	CChar *s = NULL, *src = NULL, *targ = NULL;
-	cSocket *tSock = NULL;
-	cBaseObject *myObj = NULL;
+	CSocket *tSock = NULL;
+	CBaseObject *myObj = NULL;
 
 	UI32 j = cwmWorldState->GetUICurrentTime();
 	TEffects->StartQueue();
@@ -528,8 +528,8 @@ void cEffects::checktempeffects( void )
 				{
 					if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
 					{
-						cSocket *srcSock = calcSocketObjFromChar( src );
-						cSocket *targSock = calcSocketObjFromChar( targ );
+						CSocket *srcSock = calcSocketObjFromChar( src );
+						CSocket *targSock = calcSocketObjFromChar( targ );
 						if( Effect->Number() == 22 )
 						{
 							newHealth = static_cast<R32>(targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
@@ -706,7 +706,7 @@ void reverseEffect( CTEffect *Effect )
 					j->SetID( s->GetBeardStyle() );
 				}
 				// only refresh once
-				cSocket *tSock;
+				CSocket *tSock;
 				tSock = calcSocketObjFromChar( s );
 				s->SendWornItems( tSock );
 				s->IsIncognito( false );
@@ -772,7 +772,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		}
 	}
 	TEffects->Prune();
-	cSocket *tSock = calcSocketObjFromChar( dest );
+	CSocket *tSock = calcSocketObjFromChar( dest );
 	toAdd->Number( num );
 	switch( num )
 	{

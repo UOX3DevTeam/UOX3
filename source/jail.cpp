@@ -11,7 +11,7 @@ JailSystem *JailSys;
 
 bool JailCell::IsEmpty( void ) const		
 { 
-	return playersInJail.size() == 0; 
+	return playersInJail.empty(); 
 }
 size_t JailCell::JailedPlayers( void ) const 
 { 
@@ -97,7 +97,7 @@ void JailCell::PeriodicCheck( void )
 
 void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 {
-	std::vector< JailOccupant * >::iterator jIter;
+	std::vector< JailOccupant * >::const_iterator jIter;
 	for( jIter = playersInJail.begin(); jIter != playersInJail.end(); ++jIter )
 	{
 		JailOccupant *mOccupant = (*jIter);
@@ -164,7 +164,7 @@ void JailSystem::ReadSetup( void )
 }
 void JailSystem::ReadData( void )
 {
-	if( jails.size() == 0 )
+	if( jails.empty() )
 		return;
 	std::string temp	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
 	if( FileExists( temp ) )
@@ -265,7 +265,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 }
 bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 {
-	if( jails.size() == 0 || toJail == NULL )
+	if( jails.empty() || toJail == NULL )
 		return false;
 	size_t minCell = 0;
 	for( size_t i = 0; i < jails.size(); ++i )

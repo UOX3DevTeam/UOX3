@@ -344,7 +344,7 @@ namespace UOX
 				case CCP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 				case CCP_OWNER:
 					// The Item-thingy for characters as well (damn what possibiliteis we've got :)
-					cBaseObject *TempObj;
+					CBaseObject *TempObj;
 					TempObj = gPriv->GetOwnerObj();
 
 					if( !ValidateObject( TempObj ) )
@@ -481,7 +481,7 @@ namespace UOX
 				// Goal: myChar.target.textmessage( "Your target is a member of " + myChar.guild.name );
 				case CCP_REGION:
 					{
-						cTownRegion *myReg = gPriv->GetRegion();
+						CTownRegion *myReg = gPriv->GetRegion();
 						if( myReg == NULL )
 							*vp = JSVAL_NULL;
 						else
@@ -613,6 +613,7 @@ namespace UOX
 				case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
+				case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 				default:
 					break;
 			}
@@ -815,6 +816,7 @@ namespace UOX
 				case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
+				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
 			}
 		}
 		return JS_TRUE;
@@ -822,7 +824,7 @@ namespace UOX
 
 	JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		cTownRegion *gPriv = (cTownRegion *)JS_GetPrivate( cx, obj );
+		CTownRegion *gPriv = (CTownRegion *)JS_GetPrivate( cx, obj );
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSString *tString = NULL;
@@ -861,7 +863,7 @@ namespace UOX
 	}
 	JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		cTownRegion *gPriv = (cTownRegion *)JS_GetPrivate( cx, obj );
+		CTownRegion *gPriv = (CTownRegion *)JS_GetPrivate( cx, obj );
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1081,7 +1083,7 @@ namespace UOX
 				case CIP_CONTAINER:
 					if( *vp != JSVAL_NULL )
 					{
-						cBaseObject *myObj = (cBaseObject*)encaps.toObject();
+						CBaseObject *myObj = (CBaseObject*)encaps.toObject();
 						if( !ValidateObject( myObj ) )
 							break;
 						gPriv->SetCont( myObj );
@@ -1146,7 +1148,7 @@ namespace UOX
 
 	JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		cSocket *gPriv = (cSocket *)JS_GetPrivate( cx, obj );
+		CSocket *gPriv = (CSocket *)JS_GetPrivate( cx, obj );
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1171,7 +1173,7 @@ namespace UOX
 												if( *vp == JSVAL_NULL )
 													gPriv->TempObj( NULL );
 												else
-													gPriv->TempObj( (cBaseObject *)encaps.toObject() );		break;
+													gPriv->TempObj( (CBaseObject *)encaps.toObject() );		break;
 				case CSOCKP_BUFFER:
 					break;
 				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
@@ -1214,7 +1216,7 @@ namespace UOX
 
 	JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		cSocket *gPriv = (cSocket *)JS_GetPrivate( cx, obj );
+		CSocket *gPriv = (CSocket *)JS_GetPrivate( cx, obj );
 		CChar *myChar;
 		JSString *tString = NULL;
 		if( gPriv == NULL )
@@ -1245,7 +1247,7 @@ namespace UOX
 				case CSOCKP_TEMPOBJ:
 					{
 						cScript *myScript	= Trigger->GetAssociatedScript( JS_GetGlobalObject( cx ) );
-						cBaseObject *mObj	= gPriv->TempObj();
+						CBaseObject *mObj	= gPriv->TempObj();
 						if( !ValidateObject( mObj ) )
 							*vp = JSVAL_NULL;
 						else
@@ -1454,7 +1456,7 @@ namespace UOX
 
 		if( !myChar->IsNpc() )
 		{
-			cSocket *toFind = calcSocketObjFromChar( myChar );
+			CSocket *toFind = calcSocketObjFromChar( myChar );
 			if( toFind != NULL )
 			{
 				if( SkillID == ALLSKILLS )

@@ -70,11 +70,11 @@ public:
 	SI16		GetGridX( SI16 x );
 	SI16		GetGridY( SI16 y );
 
-	bool		Add( cBaseObject *toAdd );
-	bool		Remove( cBaseObject *toRemove );
+	bool		Add( CBaseObject *toAdd );
+	bool		Remove( CBaseObject *toRemove );
 
 	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-	REGIONLIST	PopulateList( cBaseObject *mObj );
+	REGIONLIST	PopulateList( CBaseObject *mObj );
 };
 
 extern cMapRegion *MapRegion;

@@ -27,13 +27,13 @@ void InitializeLookup( void )
 
 UnicodeTypes FindLanguage( char *lang )
 {
-	std::map< std::string, UnicodeTypes >::iterator p = codeLookup.find( lang );
+	std::map< std::string, UnicodeTypes >::const_iterator p = codeLookup.find( lang );
 	if( p != codeLookup.end() )
 		return p->second;
 	else
 		return TOTAL_LANGUAGES;
 }
-void UpdateLanguage( cSocket *s )
+void UpdateLanguage( CSocket *s )
 {
 	if( s == NULL )
 		return;
@@ -84,7 +84,7 @@ void sysBroadcast( const std::string txt )
 	}
 }
 
-void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
+void broadcast( CSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 {
 	CChar *mChar = mSock->CurrcharObj();
 	CPSpeech toSend( *mChar );
@@ -102,15 +102,15 @@ void broadcast( cSocket *mSock ) // GM Broadcast (Done if a GM yells something)
 	}
 
 	Network->PushConn();
-	for( cSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
+	for( CSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
 	{
 		bSock->Send( &toSend );
 	}
 	Network->PopConn();
 }
 
-void WhichResponse( cSocket *mSock, CChar *mChar, std::string text );
-bool response( cSocket *mSock, CChar *mChar, std::string text )
+void WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
+bool response( CSocket *mSock, CChar *mChar, std::string text )
 {
 	bool retVal					= false;
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( mChar );
@@ -240,7 +240,7 @@ bool CPITalkRequest::Handle( void )
 				GuildSys->Resign( tSock );
 			else if( text.find( "DEVTEAM033070" ) != std::string::npos )
 			{
-				std::string temp3 = "RBuild: " + cVersionClass::GetRealBuild() + " PBuild: " + cVersionClass::GetBuild() + " --> Version: " + cVersionClass::GetVersion();
+				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
 				tSock->sysmessage( temp3.c_str() );
 			}
 			else if( !mChar->IsDead() )	// this makes it so npcs do not respond to dead people
@@ -287,7 +287,7 @@ bool CPITalkRequest::Handle( void )
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
-				cSocket *tSock	= (*cIter);
+				CSocket *tSock	= (*cIter);
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
@@ -335,7 +335,7 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 	CPacketSpeech toSend	= (*toSay);
 	CChar *thisChar			= NULL;
 	CItem *thisItem			= NULL;
-	cBaseObject *thisObj	= NULL;
+	CBaseObject *thisObj	= NULL;
 	if( toSay->Speaker() > BASEITEMSERIAL )
 	{
 		thisItem	= calcItemObjFromSer( toSay->Speaker() );
@@ -347,7 +347,7 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 		thisObj		= thisChar;
 	}
 	CChar *sChar	= NULL;
-	cSocket *mSock	= NULL;
+	CSocket *mSock	= NULL;
 	switch( toSay->TargType() )
 	{
 		case SPTRG_INDIVIDUAL:		// aimed at individual person
@@ -419,13 +419,7 @@ bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returni
 		else	// We want to keep the entries that have been unsaid
 			toKeep.push_back( tempSpeechList );
 	}
-	speechList.clear();
-	// Copy back the unsaid speech for checking next time around
-	for( I = toKeep.begin(); I != toKeep.end(); ++I )
-	{
-		CSpeechEntry toCopy = (*I);
-		speechList.push_back( toCopy );
-	}
+	speechList.assign( toKeep.begin(), toKeep.end() );
 	toKeep.clear();
 	return retVal;
 }

@@ -18,13 +18,13 @@ bool checkItemRange( CChar *mChar, CItem *i )
 	if( mChar->IsGM() || mChar->IsCounselor() )
 		return true;
 
-	cBaseObject *itemOwner	= i;
+	CBaseObject *itemOwner	= i;
 	bool checkRange			= false;
 
 	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate distance
 	{
 		ObjectType objType	= OT_CBO;
-		cBaseObject *iOwner = FindItemOwner( i, objType );
+		CBaseObject *iOwner = FindItemOwner( i, objType );
 		if( iOwner != NULL )
 			itemOwner = iOwner;
 	}
@@ -37,38 +37,38 @@ bool checkItemRange( CChar *mChar, CItem *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance )
+//|	Function	-	bool objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance )
 //|	Date		-	2/12/2003
 //| Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if BaseObject obj is within a certain distance
 //o---------------------------------------------------------------------------o
-bool objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance )
+bool objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	return objInRange( mChar, obj, distance );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool objInRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+//|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another
 //|					object
 //o---------------------------------------------------------------------------o
-bool objInRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
 	return ( getDist( a, b ) <= distance );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool objInRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+//|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another
 //|					object
 //o---------------------------------------------------------------------------o
-bool objInOldRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+bool objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
 	return ( getOldDist( a, b ) <= distance );
 }
@@ -88,12 +88,12 @@ bool charInRange( CChar *a, CChar *b )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI16 getDist( cBaseObject *a, cBaseObject *b )
+//|	Function	-	UI16 getDist( CBaseObject *a, CBaseObject *b )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the distance between two objects
 //o---------------------------------------------------------------------------o
-UI16 getDist( cBaseObject *a, cBaseObject *b )
+UI16 getDist( CBaseObject *a, CBaseObject *b )
 {
 	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
 		return DIST_OUTOFRANGE;
@@ -105,7 +105,7 @@ UI16 getDist( cBaseObject *a, cBaseObject *b )
 	return static_cast<UI16>(difference.Mag());
 }
 
-UI16 getOldDist( cBaseObject *a, cBaseObject *b )
+UI16 getOldDist( CBaseObject *a, CBaseObject *b )
 {
 	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
 		return DIST_OUTOFRANGE;
@@ -127,7 +127,7 @@ UI16 getOldDist( cBaseObject *a, cBaseObject *b )
 	return static_cast<UI16>(difference.Mag());
 }
 
-UI16 getDist3D( cBaseObject *a, cBaseObject *b )
+UI16 getDist3D( CBaseObject *a, CBaseObject *b )
 {
 	if( !ValidateObject( a ) || !ValidateObject( b ) )
 		return DIST_OUTOFRANGE;

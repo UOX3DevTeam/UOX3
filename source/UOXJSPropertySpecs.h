@@ -212,6 +212,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
 	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO  },
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM },
+	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };

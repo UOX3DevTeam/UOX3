@@ -428,7 +428,7 @@ DFNTAGS FindDFNTagFromStr( UString strToFind )
 {
 	if( strToDFNTag.size() == 0 )	// if we haven't built our array yet
 		InitStrToDFN();
-	std::map< std::string, DFNTAGS >::iterator toFind = strToDFNTag.find( strToFind.upper() );
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strToFind.upper() );
 	if( toFind != strToDFNTag.end() )
 		return toFind->second;
 	return DFNTAG_COUNTOFTAGS;
@@ -926,10 +926,8 @@ void ScriptSection::createSection( std::fstream& input )
 		}
 	}
 	// Now some cleanup
-	if( data.size() == 0 && dataV2.size() == 0 )
-	{
+	if( data.empty() && dataV2.empty() )
 		currentPos = data.end();
-	}
 }
 
 }

@@ -53,7 +53,7 @@ private:
 
 	void	RegenerateOre( long grX, long grY );
 	void	RegenerateLog( long grX, long grY );
-	void	doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item );
+	void	doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
 	TargetFunc Hide;
@@ -63,11 +63,11 @@ private:
 	TargetFunc Meditation;
 
 	SI08 FindSkillPoint( UI08 sk, int value );
-	void AnvilTarget( cSocket *s, CItem& item, miningData *oreType );
+	void AnvilTarget( CSocket *s, CItem& item, miningData *oreType );
 	void Atrophy( CChar *c, UI08 sk );
-	void PlayInstrument( cSocket *s, CItem *i, bool wellPlayed );
-	CItem *GetInstrument( cSocket *s );
-	UI08 TrackingDirection( cSocket *s, CChar *i );
+	void PlayInstrument( CSocket *s, CItem *i, bool wellPlayed );
+	CItem *GetInstrument( CSocket *s );
+	UI08 TrackingDirection( CSocket *s, CChar *i );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );
@@ -127,26 +127,26 @@ public:
 	void Load( void );
 	void SaveResources( void );
 
-	void NewMakeMenu( cSocket *s, int menu, UI08 skill );
+	void NewMakeMenu( CSocket *s, int menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );
-	void MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 itemEntry );
-	void ApplyRank( cSocket *s, CItem *c, UI08 rank );
-	void HandleMakeMenu( cSocket *s, int button, int menu );
+	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry );
+	void ApplyRank( CSocket *s, CItem *c, UI08 rank );
+	void HandleMakeMenu( CSocket *s, int button, int menu );
 
-	void CreateTrackingMenu( cSocket *s, UI16 m );
-	void TrackingMenu( cSocket *s, UI16 gmindex );
+	void CreateTrackingMenu( CSocket *s, UI16 m );
+	void TrackingMenu( CSocket *s, UI16 gmindex );
 	void Track( CChar *i );
-	void Tracking( cSocket *s, int selection );
-	void MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID );
+	void Tracking( CSocket *s, int selection );
+	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
 	void Fish( CChar *i );
 
-	void Wheel( cSocket *s );
-	bool EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell );
-	void AButte( cSocket *s, CItem *x );
-	void Snooping( cSocket *s, CChar *target, CItem *pack );
+	void Wheel( CSocket *s );
+	bool EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell );
+	void AButte( CSocket *s, CItem *x );
+	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
-	void SkillUse( cSocket *s, UI08 x );
+	void SkillUse( CSocket *s, UI08 x );
 	void updateSkillLevel( CChar *c, UI08 s);
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
 
@@ -154,7 +154,7 @@ public:
 	miningData *GetOre( size_t number );
 	miningData *FindOre( std::string name );
 	miningData *FindOre( UI16 colour );
-	void		MakeOre( UI08 Region, CChar *actor, cSocket *s );
+	void		MakeOre( UI08 Region, CChar *actor, CSocket *s );
 };
 
 extern cSkills *Skills;

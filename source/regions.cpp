@@ -408,11 +408,11 @@ void cMapRegion::Save( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	int e_t = getclock();
+	UI32 e_t = getclock();
 	Console.Print( "World saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
 }
 
-bool PostLoadFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool PostLoadFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
@@ -545,7 +545,7 @@ void cMapRegion::LoadHouseMulti( std::ifstream &houseDestination )
 	}
 }
 
-bool cMapRegion::Add( cBaseObject *toAdd )
+bool cMapRegion::Add( CBaseObject *toAdd )
 {
 	if( !ValidateObject( toAdd ) )
 		return false;
@@ -554,7 +554,7 @@ bool cMapRegion::Add( cBaseObject *toAdd )
 	else
 		return AddItem( (CItem *)(toAdd) );
 }
-bool cMapRegion::Remove( cBaseObject *toRemove )
+bool cMapRegion::Remove( CBaseObject *toRemove )
 {
 	if( !ValidateObject( toRemove ) )
 		return false;
@@ -564,7 +564,7 @@ bool cMapRegion::Remove( cBaseObject *toRemove )
 		return RemoveItem( (CItem *)(toRemove) );
 }
 
-REGIONLIST cMapRegion::PopulateList( cBaseObject *mObj )
+REGIONLIST cMapRegion::PopulateList( CBaseObject *mObj )
 {
 	return PopulateList( mObj->GetX(), mObj->GetY(), mObj->WorldNumber() );
 }

@@ -76,9 +76,9 @@ bool validBeard( UI16 id )
 	return rvalue;
 }
 
-void startChar( cSocket *mSock, bool onCreate = false );
+void startChar( CSocket *mSock, bool onCreate = false );
 //o---------------------------------------------------------------------------o
-//|	Function	-	void playChar( cSocket *mSock )
+//|	Function	-	void playChar( CSocket *mSock )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Called when "Play Character" button is hit
@@ -184,7 +184,7 @@ bool CPIPlayCharacter::Handle( void )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void deleteChar( cSocket *s )
+//|	Function		-	void deleteChar( CSocket *s )
 //|	Date			-	
 //|	Developers		-	Unknown / EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -247,7 +247,7 @@ template< class T >
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void addNewbieItem( cSocket *socket, CChar *c, char* str)
+//|	Function		-	void addNewbieItem( CSocket *socket, CChar *c, char* str)
 //|	Date			-	
 //|	Developers		-	Thyme
 //|	Organization	-	UOX3 DevTeam
@@ -256,7 +256,7 @@ template< class T >
 //o--------------------------------------------------------------------------o
 //| Modifications	-	PACKITEM now supports item,amount - Zane
 //o--------------------------------------------------------------------------o
-void addNewbieItem( cSocket *socket, CChar *c, char* str)
+void addNewbieItem( CSocket *socket, CChar *c, char* str)
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
 	if( newbieData != NULL )
@@ -415,7 +415,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	addNewbieItem( tSock, mChar, "DEFAULT" );
 }
 //o---------------------------------------------------------------------------o
-//|	Function	-	void createChar( cSocket *mSock )
+//|	Function	-	void createChar( CSocket *mSock )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Character creation stuff
@@ -548,12 +548,12 @@ bool CPICreateCharacter::Handle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void updates( cSocket *s )
+//|	Function	-	void updates( CSocket *s )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Opens the Updates window
 //o---------------------------------------------------------------------------o
-void updates( cSocket *s )
+void updates( CSocket *s )
 {
 	if( s == NULL )
 		return;
@@ -578,13 +578,13 @@ void updates( cSocket *s )
 
 void sysBroadcast( const std::string txt );
 //o---------------------------------------------------------------------------o
-//|   Function    :  void startChar( cSocket *mSock, bool onCreate )
+//|   Function    :  void startChar( CSocket *mSock, bool onCreate )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Sends character startup stuff to player
 //o---------------------------------------------------------------------------o
-void startChar( cSocket *mSock, bool onCreate )
+void startChar( CSocket *mSock, bool onCreate )
 {
 	if( mSock != NULL )
 	{
@@ -654,9 +654,9 @@ void startChar( cSocket *mSock, bool onCreate )
 			CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 
 			char idname[256];
-			sprintf( idname, "%s v%s.%s [%s] Compiled by %s ", cVersionClass::GetProductName().c_str(), cVersionClass::GetVersion().c_str(), cVersionClass::GetBuild().c_str(), OS_STR, cVersionClass::GetName().c_str() );
+			sprintf( idname, "%s v%s.%s [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
 			mSock->sysmessage( idname );
-			sprintf( idname, "Programmed by: %s", cVersionClass::GetProgrammers().c_str() );
+			sprintf( idname, "Programmed by: %s", CVersionClass::GetProgrammers().c_str() );
 			mSock->sysmessage( idname );
 
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )

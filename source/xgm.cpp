@@ -44,7 +44,7 @@ cPIXGMLogin::cPIXGMLogin()
 	InternalReset();
 }
 
-cPIXGMLogin::cPIXGMLogin( cSocket *s ) : cPInputBuffer( s )
+cPIXGMLogin::cPIXGMLogin( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -181,7 +181,7 @@ cPIXGMServerStat::~cPIXGMServerStat()
 {
 }
 
-cPIXGMServerStat::cPIXGMServerStat( cSocket *s ) : cPInputBuffer( s )
+cPIXGMServerStat::cPIXGMServerStat( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -318,7 +318,7 @@ inline UI32 CharCountLoop( bool (*trgFunc)( CChar *toCheck ) )
 {
 	UI32 sumDead = 0;
 	Network->PushConn();
-	for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( tSock == NULL )
 			continue;
@@ -381,7 +381,7 @@ cPIXGMClientVer::cPIXGMClientVer()
 {
 	InternalReset();
 }
-cPIXGMClientVer::cPIXGMClientVer( cSocket *s ) : cPInputBuffer( s )
+cPIXGMClientVer::cPIXGMClientVer( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -399,7 +399,7 @@ bool cPIXGMClientVer::Handle( void )
 cPIXGMServerVer::cPIXGMServerVer()
 {
 }
-cPIXGMServerVer::cPIXGMServerVer( cSocket *s ) : cPInputBuffer( s )
+cPIXGMServerVer::cPIXGMServerVer( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -439,7 +439,7 @@ void cPXGMServerVerResponse::Version( UI32 generic )
 cPIXGMWhoOnline::cPIXGMWhoOnline()
 {
 }
-cPIXGMWhoOnline::cPIXGMWhoOnline( cSocket *s ) : cPInputBuffer( s )
+cPIXGMWhoOnline::cPIXGMWhoOnline( CSocket *s ) : cPInputBuffer( s )
 {
 	Receive();
 }
@@ -451,14 +451,14 @@ bool cPIXGMWhoOnline::Handle( void )
 {
 	cPXGMWhoResponse toSend;
 	toSend.StatusType( tSock->GetByte( 0 ) - 2 );
-	cSocket *toGet = NULL;
+	CSocket *toGet = NULL;
 	//
 	CHARLIST charListing;
 	size_t i = 0;
 	//
 	MAPUSERNAMEID_ITERATOR I;
 
-	cSocket *trgSock = NULL;
+	CSocket *trgSock = NULL;
 	switch( tSock->GetByte( 0 ) - 2 )
 	{
 		case 0:	// online
@@ -567,20 +567,20 @@ cPIXGMChangeLevel::cPIXGMChangeLevel()
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  cPIXGMChangeLevel( cSocket *s )
+//|   Function    :  cPIXGMChangeLevel( CSocket *s )
 //|   Date        :  21 August 2001
 //|   Programmer  :  JoeMC
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Constructor in which it does the receive it has to
 //o---------------------------------------------------------------------------o
-cPIXGMChangeLevel::cPIXGMChangeLevel( cSocket *s ) : cPInputBuffer( s )
+cPIXGMChangeLevel::cPIXGMChangeLevel( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void Receive( cSocket *s )
+//|   Function    :  void Receive( CSocket *s )
 //|   Date        :  21 August 2001
 //|   Programmer  :  JoeMC
 //o---------------------------------------------------------------------------o
@@ -636,7 +636,7 @@ cPIXGMShowQueueRequest::cPIXGMShowQueueRequest()
 {
 	InternalReset();
 }
-cPIXGMShowQueueRequest::cPIXGMShowQueueRequest( cSocket *s ) : cPInputBuffer( s )
+cPIXGMShowQueueRequest::cPIXGMShowQueueRequest( CSocket *s ) : cPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -769,14 +769,14 @@ void cPXGMChangeLevelResponse::Clearance( UI08 clearance )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s )
+//|   Function    :  cPInputBuffer *WhichXGMPacket( UI08 packetID, CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Returns an instance of a particular packet's handler, if
 //|					 a known handler exists.  Otherwise returns NULL
 //o---------------------------------------------------------------------------o
-cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s )
+cPInputBuffer *WhichXGMPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
 	{

@@ -31,7 +31,7 @@ cMagic *Magic = NULL;
 
 #define SPELL_MAX 68 //:Terrin: use define for now; can make autocount later
 
-MagicTable_s magic_table[] = {
+const MagicTable_s magic_table[] = {
 	{ 593, (MAGIC_DEFN)&splClumsy }, 
 	{ 594, (MAGIC_DEFN)&splCreateFood }, 
 	{ 595, (MAGIC_DEFN)&splFeeblemind },
@@ -186,7 +186,7 @@ bool splClumsy( CChar *caster, CChar *target, CChar *src )
 	Effects->tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
-bool splCreateFood( cSocket *sock, CChar *caster )
+bool splCreateFood( CSocket *sock, CChar *caster )
 {
 	CItem *j = Items->CreateItem( sock, caster, 0x09D3, 1, 0x0000, OT_ITEM, true );
 	if( j != NULL )
@@ -263,7 +263,7 @@ bool splHarm( CChar *caster, CChar *target, CChar *src )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/250+RandomNum( 1, 2 ), caster );
 	return true;
 }
-bool splMagicTrap( cSocket *sock, CChar *caster, CItem *target )
+bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() && target->GetID() != 0x0E75 )  
 	{
@@ -274,7 +274,7 @@ bool splMagicTrap( cSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 663 );
 	return true;
 }
-bool splMagicUntrap( cSocket *sock, CChar *caster, CItem *target )
+bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() )
 	{
@@ -326,7 +326,7 @@ bool splFireball( CChar *caster, CChar *target, CChar *src )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 140 + RandomNum( 1, 4 ), caster );
 	return true;
 }
-bool splMagicLock( cSocket *sock, CChar *caster, CItem *target )
+bool splMagicLock( CSocket *sock, CChar *caster, CItem *target )
 {
 	ItemTypes type = target->GetType();
 	if( ( type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT ) && ( target->GetID( 1 ) != 0x0E || target->GetID( 2 ) != 0x75 ) )
@@ -356,7 +356,7 @@ bool splPoison( CChar *caster, CChar *target, CChar *src )
 
 	return true;
 }
-bool splTelekinesis( cSocket *sock, CChar *caster, CItem *target )
+bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->IsContType() )
 	{
@@ -372,7 +372,7 @@ bool splTelekinesis( cSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 668 );
 	return true;
 }
-bool splTeleport( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber() );
 	if( ValidateObject( m ) && m->GetOwnerObj() != caster && !caster->IsNpc() )
@@ -409,7 +409,7 @@ bool splTeleport( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	Magic->doStaticEffect( caster, 22 );
 	return true;
 }
-bool splUnlock( cSocket *sock, CChar *caster, CItem *target )
+bool splUnlock( CSocket *sock, CChar *caster, CItem *target )
 {
 	if( target->isDevineLocked() )
 	{
@@ -434,7 +434,7 @@ bool splUnlock( cSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 678 );
 	return true;
 }
-bool splWallOfStone( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
 //	if( caster->GetSkill( MAGERY ) >= 800 )
 //		return FloodSpell( sock, caster, 0x0080, x, y, z, 4 );
@@ -454,7 +454,7 @@ void ArchCureStub( CChar *caster, CChar *target )
 		target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 //	}
 }
-bool splArchCure( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &ArchCureStub );
 	return true;
@@ -466,7 +466,7 @@ void ArchProtectionStub( CChar *caster, CChar *target )
 	Magic->doStaticEffect( target, 15 );	// protection
 	Effects->tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 }
-bool splArchProtection( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &ArchProtectionStub );
 	return true;
@@ -480,7 +480,7 @@ bool splCurse( CChar *caster, CChar *target, CChar *src )
 	}
 	return true;
 }
-bool splFireField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
 //	if( caster->GetSkill( MAGERY ) >= 600 )
 //		return DiamondSpell( sock, caster, 0x3996, x, y, z, 4 );
@@ -520,7 +520,7 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src )
 	}
 	return true;
 }
-bool splRecall( cSocket *sock, CChar *caster, CItem *i )
+bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
 	{
@@ -542,12 +542,12 @@ bool splRecall( cSocket *sock, CChar *caster, CItem *i )
 	}
 	return false;
 }
-bool splBladeSpirits( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	Magic->SummonMonster( sock, caster, 0x023E, "a blade spirit", 0x00, x, y, z );
 	return true;
 }
-bool splDispelField( cSocket *sock, CChar *caster )
+bool splDispelField( CSocket *sock, CChar *caster )
 {
 	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
 	if( ValidateObject( i ) )
@@ -571,7 +571,7 @@ bool splDispelField( cSocket *sock, CChar *caster )
 }
 void setRandomName( CChar *s, std::string namelist );
 
-bool splIncognito( cSocket *sock, CChar *caster )
+bool splIncognito( CSocket *sock, CChar *caster )
 {
 	if( caster->IsIncognito() )
 	{
@@ -651,7 +651,7 @@ bool splIncognito( cSocket *sock, CChar *caster )
 	caster->IsIncognito( true );
 	return true;
 }
-bool splMagicReflection( cSocket *sock, CChar *caster )
+bool splMagicReflection( CSocket *sock, CChar *caster )
 {
 	caster->SetPermReflected( true );
 	return true;
@@ -680,7 +680,7 @@ bool splParalyze( CChar *caster, CChar *target, CChar *src )
 		Effects->tempeffect( caster, target, 1, 0, 0, 0 );
 	return true;
 }
-bool splPoisonField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
 //	if( caster->GetSkill( MAGERY ) >= 800 )
 //		return FloodSpell( sock, caster, 0x3920, x, y, z, 4 );
@@ -694,7 +694,7 @@ bool splPoisonField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 			return FieldSpell( caster, 0x3915, x, y, z, fieldDir );
 //	}
 }
-bool splSummonCreature( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	if( caster->GetSkill( MAGERY ) <= 380 )
 		return false;
@@ -747,7 +747,7 @@ bool splInvisibility( CChar *caster, CChar *target, CChar *src )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	bool splMark( cSocket *sock, CChar *caster, CItem *i )
+//|	Function/Class-	bool splMark( CSocket *sock, CChar *caster, CItem *i )
 //|	Date					-	09/22/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
@@ -760,7 +760,7 @@ bool splInvisibility( CChar *caster, CChar *target, CChar *src )
 //o--------------------------------------------------------------------------o
 //|	Returns				-	[TRUE] If Successfull, [FALSE] otherwise
 //o--------------------------------------------------------------------------o	
-bool splMark( cSocket *sock, CChar *caster, CItem *i )
+bool splMark( CSocket *sock, CChar *caster, CItem *i )
 {
 	// Sept 22, 2002 - Xuri
 	if( i->IsLockedDown() )
@@ -802,12 +802,12 @@ void MassCurseStub( CChar *caster, CChar *target )
 	Effects->tempeffect( caster, target, 12, j, j, j );
 
 }
-bool splMassCurse( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &MassCurseStub );
 	return true;
 }
-bool splParalyzeField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
 //	if( caster->GetSkill( MAGERY ) >= 600 )
 //		return DiamondSpell( sock, caster, 0x3979, x, y, z, 4 );
@@ -819,7 +819,7 @@ bool splParalyzeField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16
 			return FieldSpell( caster, 0x3967, x, y, z, fieldDir );
 //	}
 }
-bool splReveal( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	if( LineOfSight( sock, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 	{ 
@@ -880,12 +880,12 @@ void ChainLightningStub( CChar *caster, CChar *target )
 	else 
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster );
 }
-bool splChainLightning( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &ChainLightningStub );
 	return true;
 }
-bool splEnergyField( cSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
 //	if( caster->GetSkill( MAGERY ) >= 600 )
 //		return DiamondSpell( sock, caster, 0x3956, x, y, z, 4 );
@@ -905,7 +905,7 @@ bool splFlameStrike( CChar *caster, CChar *target, CChar *src )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40+RandomNum(1,25), caster );
 	return true;
 }
-bool splGateTravel( cSocket *sock, CChar *caster, CItem *i )
+bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
 	{
@@ -960,7 +960,7 @@ void MassDispelStub( CChar *caster, CChar *target )
 	}
 }
 
-bool splMassDispel( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &MassDispelStub );
 	return true;
@@ -982,7 +982,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target )
 		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40, caster );
 }
 
-bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) )
+bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) )
 {
 	SI16 x1, x2, y1, y2;
 	SI08 z1, z2;
@@ -1027,12 +1027,12 @@ bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 
 	return true;
 }
-bool splMeteorSwarm( cSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
 	AreaAffectSpell( sock, caster, &MeteorSwarmStub );
 	return true;
 }
-bool splPolymorph( cSocket *sock, CChar *caster )
+bool splPolymorph( CSocket *sock, CChar *caster )
 {
 	if( caster->IsPolymorphed() )
 	{
@@ -1068,7 +1068,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 			if( Combat->WillResultInCriminal( caster, target ) )
 			{
 				caster->SetKills( caster->GetKills() + 1 );
-				cSocket *casterSock = calcSocketObjFromChar( caster );
+				CSocket *casterSock = calcSocketObjFromChar( caster );
 				if( casterSock != NULL )
 				{
 					casterSock->sysmessage( 689, caster->GetName().c_str(), caster->GetKills() );
@@ -1097,7 +1097,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 		}
 	} 
 }
-bool splEarthquake( cSocket *sock, CChar *caster )
+bool splEarthquake( CSocket *sock, CChar *caster )
 {
 	criminal( caster );
 	if( sock != NULL )
@@ -1109,7 +1109,7 @@ bool splEarthquake( cSocket *sock, CChar *caster )
 	AreaAffectSpell( sock, caster, &EarthquakeStub );
 	return true;
 }
-bool splEnergyVortex( cSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -1125,42 +1125,42 @@ bool splResurrection( CChar *caster, CChar *target, CChar *src )
 	}
 	return false;
 }
-bool splSummonAir( cSocket *sock, CChar *caster )
+bool splSummonAir( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 0x000D, "an Air Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonDaemon( cSocket *sock, CChar *caster )
+bool splSummonDaemon( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 0x000A, "a Daemon", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonEarth( cSocket *sock, CChar *caster )
+bool splSummonEarth( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 0x000E, "an Earth Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonFire( cSocket *sock, CChar *caster )
+bool splSummonFire( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 0x000F, "a Fire Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonWater( cSocket *sock, CChar *caster )
+bool splSummonWater( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 0x0010, "a Water Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splRandom( cSocket *sock, CChar *caster )
+bool splRandom( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -1171,7 +1171,7 @@ bool splNecro1( CChar *caster, CChar *target, CChar *src )
 {
 	return true;
 }
-bool splNecro2( cSocket *sock, CChar *caster )
+bool splNecro2( CSocket *sock, CChar *caster )
 {
 	Magic->SummonMonster( sock, caster, 0x000A, "Black Night", 5000, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
 	return true;
@@ -1189,7 +1189,7 @@ bool splNecro5( CChar *caster, CChar *target, CChar *src )
 	return true;
 }
 
-bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	int j;
 	SI16 fx[5], fy[5];
@@ -1244,7 +1244,7 @@ bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	return true;
 }
 
-bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 fx[5], fy[5];
 	SI16 yOffset = length;
@@ -1288,7 +1288,7 @@ bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 	return true;
 }
 
-bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 yOffset = length;
 	SI16 xOffset = length;
@@ -1401,14 +1401,14 @@ void cMagic::RemoveSpell( CItem *book, int spellNum )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellBook( cSocket *mSock )
+//|     Class         :          ::SpellBook( CSocket *mSock )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Opens the spellbook and displays all spells a
 //|								 character has in his book.
 //o---------------------------------------------------------------------------o
-void cMagic::SpellBook( cSocket *mSock )
+void cMagic::SpellBook( CSocket *mSock )
 {
 	UI08 i;
 	UI08 spellsList[70];
@@ -1506,7 +1506,7 @@ void cMagic::SpellBook( cSocket *mSock )
 //|                              to the other side of the gate-link.
 //o---------------------------------------------------------------------------o
 
-void cMagic::GateCollision( cSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
+void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
 {
 	if( type == IT_GATE || type == IT_ENDGATE )
 	{
@@ -1539,14 +1539,14 @@ void cMagic::GateCollision( cSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          SummonMonster( cSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 color, SI16 x, SI16 y, SI08 z )
+//|     Class         :          SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 color, SI16 x, SI16 y, SI08 z )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //|		Revision	  :			 May 4th, 2000 - made function general words PC's and NPC's - Hanse
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Summon a monster (dispellable with DISPEL).
 //o---------------------------------------------------------------------------o
-void cMagic::SummonMonster( cSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 colour, SI16 x, SI16 y, SI08 z )
+void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 colour, SI16 x, SI16 y, SI08 z )
 {
 	if( s != NULL )
 		caster = s->CurrcharObj();
@@ -1808,7 +1808,7 @@ bool cMagic::CheckMana( CChar *s, int num )
 		return true;
 	else
 	{
-		cSocket *p = calcSocketObjFromChar( s );
+		CSocket *p = calcSocketObjFromChar( s );
 		if( p != NULL ) 
 			p->sysmessage( 696 );
 	}
@@ -1825,7 +1825,7 @@ bool cMagic::CheckStamina( CChar *s, int num )
 		return true;
 	else
 	{
-		cSocket *p = calcSocketObjFromChar( s );
+		CSocket *p = calcSocketObjFromChar( s );
 		if( p != NULL ) 
 			p->sysmessage( 697 );
 	}
@@ -1847,7 +1847,7 @@ bool cMagic::CheckHealth( CChar *s, int num )
 	}
 	else
 		return true;
-	cSocket *p = calcSocketObjFromChar( s );
+	CSocket *p = calcSocketObjFromChar( s );
 	if( p != NULL ) 
 		p->sysmessage( 698 );
 	return false;
@@ -1929,7 +1929,7 @@ bool cMagic::CheckMagicReflect( CChar *i )
 bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 {
 	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
-	cSocket *s = NULL;
+	CSocket *s = NULL;
 	if( i )
 	{
 		if( ValidateObject( attacker ) )
@@ -1969,7 +1969,7 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
 		return;
 
-	cSocket *mSock = calcSocketObjFromChar( p ), *attSock = calcSocketObjFromChar( attacker );
+	CSocket *mSock = calcSocketObjFromChar( p ), *attSock = calcSocketObjFromChar( attacker );
 	if( Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 ) ) 
 		amount = UOX_MAX( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
 	if( p->IsFrozen() && p->GetDexterity() > 0 )
@@ -2013,7 +2013,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 	if( p->IsFrozen() )
 	{
 		p->SetFrozen( false );
-		cSocket *s = calcSocketObjFromChar( p );
+		CSocket *s = calcSocketObjFromChar( p );
 		if( s != NULL ) 
 			s->sysmessage( 700 );
 	}           
@@ -2128,7 +2128,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::BoxSpell( cSocket * s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2 )
+//|     Class         :          ::BoxSpell( CSocket * s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2 )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -2136,7 +2136,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 //|                              on character's magery skill.
 //o---------------------------------------------------------------------------o
 
-void cMagic::BoxSpell( cSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2)
+void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2)
 {
 	SI16 x, y;
 	SI08 z;
@@ -2276,7 +2276,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	
 	if( display )
 	{
-		cSocket *i = calcSocketObjFromChar( s );
+		CSocket *i = calcSocketObjFromChar( s );
 		if( i != NULL )
 			i->sysmessage( message );
 		return false;
@@ -2286,7 +2286,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellFail( cSocket *s )
+//|     Class         :          ::SpellFail( CSocket *s )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -2294,7 +2294,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 //|                              fails to cast a spell.
 //o---------------------------------------------------------------------------o
 
-void cMagic::SpellFail( cSocket *s )
+void cMagic::SpellFail( CSocket *s )
 {
 	// Use Reagents on failure ( if casting from a spellbook )
 	CChar *mChar = s->CurrcharObj();
@@ -2317,7 +2317,7 @@ bool cMagic::CheckParry( CChar *player, int circle )
 {
     if( Skills->CheckSkill( player, PARRYING, 80*circle, 800+( 80 * circle ) ) )
 	{
-		cSocket *s = calcSocketObjFromChar( player );
+		CSocket *s = calcSocketObjFromChar( player );
 		if( s != NULL )
 			s->sysmessage( 703 );
 		return true;
@@ -2332,14 +2332,14 @@ bool cMagic::CheckParry( CChar *player, int circle )
 
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::SelectSpell( cSocket *mSock, int num )
+//|     Class         :          ::SelectSpell( CSocket *mSock, int num )
 //|     Date          :          28 August 1999 / 10 September 1999
 //|     Programmer    :          Abaddon / AntiChrist
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Execute the selected spell to cast.
 //o---------------------------------------------------------------------------o
 
-bool cMagic::SelectSpell( cSocket *mSock, int num )
+bool cMagic::SelectSpell( CSocket *mSock, int num )
 // PRE:		s is a valid socket, num is a valid spell number
 // POST:	Spell selected to cast
 // Comments: Written by Abaddon (28 August 1999)
@@ -2409,7 +2409,7 @@ bool cMagic::SelectSpell( cSocket *mSock, int num )
 	}
 	
 	// (Abaddon) Region checks
-	cTownRegion *ourReg = mChar->GetRegion();
+	CTownRegion *ourReg = mChar->GetRegion();
 	if( (num == 45 && !ourReg->CanMark()) || (num == 52 && !ourReg->CanGate()) || (num == 32 && !ourReg->CanRecall()) )
 	{
 		mSock->sysmessage( 705 );
@@ -2625,7 +2625,7 @@ UI08 cMagic::getFieldDir( CChar *s, SI16 x, SI16 y )
 }
 
 
-void cMagic::CastSpell( cSocket *s, CChar *caster )
+void cMagic::CastSpell( CSocket *s, CChar *caster )
 {
 	// for LocationTarget spell like ArchCure, ArchProtection etc...
 	SI08 curSpell;
@@ -2682,7 +2682,7 @@ void cMagic::CastSpell( cSocket *s, CChar *caster )
 		if( validSocket && spells[curSpell].TravelSpell() )				// travel spells.... mark, recall and gate
 		{
 			// (Abaddon) Region checks
-			cTownRegion *ourReg = caster->GetRegion();
+			CTownRegion *ourReg = caster->GetRegion();
 			if( (curSpell == 45 && !ourReg->CanMark()) || (curSpell == 52 && !ourReg->CanGate()) || (curSpell == 32 && !ourReg->CanRecall()) )
 			{
 				if( validSocket )
@@ -3179,7 +3179,7 @@ void cMagic::doStaticEffect( CChar *source, int num )
 		Effects->PlayStaticAnimation( source, temp.Effect(), temp.Speed(), temp.Loop() );
 }
 
-void cMagic::doMoveEffect( int num, cBaseObject *target, CChar *source )
+void cMagic::doMoveEffect( int num, CBaseObject *target, CChar *source )
 {
 	CMagicMove temp = spells[num].MoveEffect();
 	
@@ -3187,8 +3187,8 @@ void cMagic::doMoveEffect( int num, cBaseObject *target, CChar *source )
 		Effects->PlayMovingAnimation( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ) );
 }
 
-void HandleCommonGump( cSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
-void cMagic::PolymorphMenu( cSocket *s, UI16 gmindex )
+void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
+void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
 	UString sect				= "POLYMORPHMENU " + UString::number( gmindex );
 	ScriptSection *polyStuff	= FileLookup->FindEntry( sect, menus_def );
@@ -3197,7 +3197,7 @@ void cMagic::PolymorphMenu( cSocket *s, UI16 gmindex )
 	HandleCommonGump( s, polyStuff, gmindex );
 }
 
-void cMagic::Polymorph( cSocket *s, UI16 polyID )
+void cMagic::Polymorph( CSocket *s, UI16 polyID )
 {
 	UI08 id1 = static_cast<UI08>(polyID>>8);
 	UI08 id2 = static_cast<UI08>(polyID%256);

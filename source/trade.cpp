@@ -10,7 +10,7 @@
 namespace UOX
 {
 
-CItem *startTrade( cSocket *mSock, CChar *i )
+CItem *startTrade( CSocket *mSock, CChar *i )
 {
 	if( mSock == NULL || !ValidateObject( i ) )
 		return NULL;
@@ -18,7 +18,7 @@ CItem *startTrade( cSocket *mSock, CChar *i )
 	CChar *mChar	= mSock->CurrcharObj();
 	CItem *bps		= mChar->GetPackItem();
 	CItem *bpi		= i->GetPackItem();
-	cSocket *nSock	= calcSocketObjFromChar( i );
+	CSocket *nSock	= calcSocketObjFromChar( i );
 
 	if( nSock == NULL )
 		return NULL;
@@ -76,7 +76,7 @@ CItem *startTrade( cSocket *mSock, CChar *i )
 	return ps;
 }
 
-bool clearTradesFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) && a->CanBeObjType( OT_ITEM ) )
@@ -130,8 +130,8 @@ void endTrade( SERIAL targSerial )
 	if( !ValidateObject( bp2 ) ) 
 		return;
 
-	cSocket *mSock = calcSocketObjFromChar( p1 );
-	cSocket *nSock = calcSocketObjFromChar( p2 );
+	CSocket *mSock = calcSocketObjFromChar( p1 );
+	CSocket *nSock = calcSocketObjFromChar( p2 );
 	
 	if( mSock != NULL ) 
 	{
@@ -257,8 +257,8 @@ void sendTradeStatus( CItem *cont1, CItem *cont2 )
 {
 	CChar *p1 = (CChar *)cont1->GetCont();
 	CChar *p2 = (CChar *)cont2->GetCont();
-	cSocket *s1 = calcSocketObjFromChar( p1 );
-	cSocket *s2 = calcSocketObjFromChar( p2 );
+	CSocket *s1 = calcSocketObjFromChar( p1 );
+	CSocket *s2 = calcSocketObjFromChar( p2 );
 
 	if( s1 != NULL )
 	{

@@ -28,13 +28,13 @@ namespace UOX
 cSkills *Skills = NULL;
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Tailoring( cSocket *s )
+//|   Function    :  void cSkills::Tailoring( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do Tailoring Skill Stuff
 //o---------------------------------------------------------------------------o
-void cSkills::Tailoring( cSocket *s )
+void cSkills::Tailoring( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -77,13 +77,13 @@ void cSkills::Tailoring( cSocket *s )
 }   
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Fletching( cSocket *s )
+//|   Function    :  void cSkills::Fletching( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do Fletching Skill Stuff
 //o---------------------------------------------------------------------------o
-void cSkills::Fletching( cSocket *s )
+void cSkills::Fletching( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -120,13 +120,13 @@ void cSkills::Fletching( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::BowCraft( cSocket *s )
+//|   Function    :  void cSkills::BowCraft( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do Bowcraft Skill Stuff
 //o---------------------------------------------------------------------------o
-void cSkills::BowCraft( cSocket *s )
+void cSkills::BowCraft( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -169,13 +169,13 @@ void cSkills::BowCraft( cSocket *s )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Carpentry( cSocket *s )
+//|   Function    :  void cSkills::Carpentry( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do Carpentry Skill Stuff
 //o---------------------------------------------------------------------------o
-void cSkills::Carpentry( cSocket *s )
+void cSkills::Carpentry( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -259,14 +259,14 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
+//|   Function    :  void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 //|   Date        :  24 August 1999
 //|   Programmer  :  Magius(CHE)
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Modify variables based on item's rank.
 //o---------------------------------------------------------------------------o
 
-void cSkills::ApplyRank( cSocket *s, CItem *c, UI08 rank )
+void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 {
 	char tmpmsg[512];
 	*tmpmsg='\0';
@@ -323,7 +323,7 @@ void cSkills::RegenerateOre( long grX, long grY )
 }
 
 //o--------------------------------------------------------------------------
-//| Function    - void cSkills::Mine( cSocket *s )
+//| Function    - void cSkills::Mine( CSocket *s )
 //| Date        - Unknown
 //| Programmer  - Unknown
 //| Modified    - Cork(Unknown)/Abaddon(February 19, 2000)
@@ -333,7 +333,7 @@ void cSkills::RegenerateOre( long grX, long grY )
 //|               unless you have the proper mining skill for each ore type. -Cork
 //|               Rewrote most of it to clear up some of the mess-Abaddon
 //o--------------------------------------------------------------------------
-void cSkills::Mine( cSocket *s )
+void cSkills::Mine( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	bool floor = false, mountain = false;
@@ -465,7 +465,7 @@ void cSkills::Mine( cSocket *s )
 		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() << "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
 		
-		cTownRegion *targRegion = mChar->GetRegion();
+		CTownRegion *targRegion = mChar->GetRegion();
 		if( mChar->GetSkill( MINING ) >= targRegion->GetMinColourSkill() && RandomNum( 0, 100 ) >= targRegion->GetChanceColourOre() )
 			MakeOre( mChar->GetRegionNum(), mChar, s );
 		else  //  We didn't find any colored ore, so grab some iron ore
@@ -482,7 +482,7 @@ void cSkills::Mine( cSocket *s )
 	}
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::GraveDig( cSocket *s )
+//|   Function    :  void cSkills::GraveDig( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -490,7 +490,7 @@ void cSkills::Mine( cSocket *s )
 //|											OSI-like Treasure Hunting System based off a Resource
 //|											System much like Ore and Logs)
 //o---------------------------------------------------------------------------o
-void cSkills::GraveDig( cSocket *s )
+void cSkills::GraveDig( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SI16	nFame;
@@ -581,7 +581,7 @@ void cSkills::GraveDig( cSocket *s )
 }
 
 //o--------------------------------------------------------------------------
-//| Function    - void cSkills::SmeltOre( cSocket *s );
+//| Function    - void cSkills::SmeltOre( CSocket *s );
 //| Date        - Unknown
 //| Programmer  - Unknown
 //| Modified    - Abaddon(February 19, 2000)
@@ -592,7 +592,7 @@ void cSkills::GraveDig( cSocket *s )
 //|               scripting the ore would probably be even simpler, requires 
 //|               less info
 //o--------------------------------------------------------------------------
-void cSkills::SmeltOre( cSocket *s )
+void cSkills::SmeltOre( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *chr			= s->CurrcharObj();
@@ -670,13 +670,13 @@ void cSkills::SmeltOre( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Wheel( cSocket *s, int mat )
+//|   Function    :  void cSkills::Wheel( CSocket *s, int mat )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when using Yarn or Thread on a Spinning Wheel
 //o---------------------------------------------------------------------------o
-void cSkills::Wheel( cSocket *s )
+void cSkills::Wheel( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -720,13 +720,13 @@ void cSkills::Wheel( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Loom( cSocket *s )
+//|   Function    :  void cSkills::Loom( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when using a loom to make cloth
 //o---------------------------------------------------------------------------o
-void cSkills::Loom( cSocket *s )
+void cSkills::Loom( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -766,13 +766,13 @@ void cSkills::Loom( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  cSkills::handleCooking( cSocket *s )
+//|   Function    :  cSkills::handleCooking( CSocket *s )
 //|   Date        :  January 30, 2003
 //|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handle baking/cooking in a single function
 //o---------------------------------------------------------------------------o
-void cSkills::handleCooking( cSocket *s )
+void cSkills::handleCooking( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -846,7 +846,7 @@ void cSkills::handleCooking( cSocket *s )
 	}
 }
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Hide( cSocket *s )
+//|   Function    :  void cSkills::Hide( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //|									
@@ -855,7 +855,7 @@ void cSkills::handleCooking( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses hiding skill
 //o---------------------------------------------------------------------------o
-void cSkills::Hide( cSocket *s )
+void cSkills::Hide( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -889,13 +889,13 @@ void cSkills::Hide( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Stealth( cSocket *s )
+//|   Function    :  void cSkills::Stealth( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses Stealth skill
 //o---------------------------------------------------------------------------o
-void cSkills::Stealth( cSocket *s )
+void cSkills::Stealth( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -926,7 +926,7 @@ void cSkills::Stealth( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TreeTarget( cSocket *s )
+//|   Function    :  void cSkills::TreeTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //|									
@@ -935,7 +935,7 @@ void cSkills::Stealth( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses an item and targets a tree
 //o---------------------------------------------------------------------------o
-void cSkills::TreeTarget( cSocket *s )
+void cSkills::TreeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1038,7 +1038,7 @@ void cSkills::RegenerateLog( long grX, long grY )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::DetectHidden( cSocket *s )
+//|   Function    :  void cSkills::DetectHidden( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1048,7 +1048,7 @@ void cSkills::RegenerateLog( long grX, long grY )
 //|					 are easier to detect, while hiders further from the center
 //|					 are more difficult to detect
 //o---------------------------------------------------------------------------o
-void cSkills::DetectHidden( cSocket *s )
+void cSkills::DetectHidden( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -1093,7 +1093,7 @@ void cSkills::DetectHidden( cSocket *s )
 				if( ( CheckSkill( mChar, DETECTINGHIDDEN, getSkill, 1000 ) ) && ( c <= range ) )
 				{
 					tempChar->ExposeToView();
-					cSocket *kSock = calcSocketObjFromChar( tempChar );
+					CSocket *kSock = calcSocketObjFromChar( tempChar );
 					if( kSock != NULL )
 						kSock->sysmessage( 1436 );
 				}
@@ -1106,14 +1106,14 @@ void cSkills::DetectHidden( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PeaceMaking( cSocket *s )
+//|   Function    :  void cSkills::PeaceMaking( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when using the PeaceMaking Skill, Also requires
 //|					 adequate Musicianship skill to succeed.
 //o---------------------------------------------------------------------------o
-void cSkills::PeaceMaking( cSocket *s )
+void cSkills::PeaceMaking( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *getInst = GetInstrument( s );
@@ -1144,7 +1144,7 @@ void cSkills::PeaceMaking( cSocket *s )
 					continue;
 				if( charInRange( tempChar, mChar ) && tempChar->IsAtWar() )
 				{
-					cSocket *jSock = calcSocketObjFromChar( tempChar );
+					CSocket *jSock = calcSocketObjFromChar( tempChar );
 					if( jSock != NULL )
 						jSock->sysmessage( 1440 );
 					if( tempChar->IsAtWar() ) 
@@ -1165,14 +1165,14 @@ void cSkills::PeaceMaking( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
+//|		Function    :	void cSkills::PlayInstrument( CSocket *s, CItem *i, bool wellPlayed )
 //|		Date        :	2/10/2003
 //|		Programmer  :	Zane
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Play an Instrument (plays "played well" sfx if wellPlayed == true
 //|						Otherwise plays "played poorly" sfx
 //o---------------------------------------------------------------------------o
-void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
+void cSkills::PlayInstrument( CSocket *s, CItem *i, bool wellPlayed )
 {
 	switch( i->GetID( 2 ) )
 	{
@@ -1210,14 +1210,14 @@ void cSkills::PlayInstrument( cSocket *s, CItem *i, bool wellPlayed )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  CItem *cSkills::GetInstrument( cSocket *s )
+//|   Function    :  CItem *cSkills::GetInstrument( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Used by Peacemaking, Provocation and Enticement to find
 //|					 the instrument in your pack (if any exist)
 //o---------------------------------------------------------------------------o
-CItem * cSkills::GetInstrument( cSocket *s )
+CItem * cSkills::GetInstrument( CSocket *s )
 {
 	if( s == NULL )
 	{
@@ -1252,7 +1252,7 @@ CItem * cSkills::GetInstrument( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ProvocationTarget1( cSocket *s )
+//|   Function    :  void cSkills::ProvocationTarget1( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1260,7 +1260,7 @@ CItem * cSkills::GetInstrument( cSocket *s )
 //|					 bring up a targeting cursor for player to select second
 //|					 Provoc Target
 //o---------------------------------------------------------------------------o
-void cSkills::ProvocationTarget1( cSocket *s )
+void cSkills::ProvocationTarget1( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SERIAL getSer = s->GetDWord( 7 );
@@ -1286,7 +1286,7 @@ void cSkills::ProvocationTarget1( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::EnticementTarget1( cSocket *s )
+//|   Function    :  void cSkills::EnticementTarget1( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1294,7 +1294,7 @@ void cSkills::ProvocationTarget1( cSocket *s )
 //|					 bring up a targeting cursor for player to select second
 //|					 Entice Target
 //o---------------------------------------------------------------------------o
-void cSkills::EnticementTarget1( cSocket *s )
+void cSkills::EnticementTarget1( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SERIAL getSer = s->GetDWord( 7 );
@@ -1320,14 +1320,14 @@ void cSkills::EnticementTarget1( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::EnticementTarget2( cSocket *s )
+//|   Function    :  void cSkills::EnticementTarget2( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Check 2nd Entice Target and players Entice and Musicianship
 //|					 skill then if checks pass flag the player criminal
 //o---------------------------------------------------------------------------o
-void cSkills::EnticementTarget2( cSocket *s )
+void cSkills::EnticementTarget2( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1365,14 +1365,14 @@ void cSkills::EnticementTarget2( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ProvocationTarget2( cSocket *s )
+//|   Function    :  void cSkills::ProvocationTarget2( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Check 2nd Provoc Target and players Provoc and Musicianship
 //|					 skill.  If either target is Innocent, flag the player criminal
 //o---------------------------------------------------------------------------o
-void cSkills::ProvocationTarget2( cSocket *s )
+void cSkills::ProvocationTarget2( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1457,7 +1457,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AlchemyTarget( cSocket *s )
+//|   Function    :  void cSkills::AlchemyTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1465,7 +1465,7 @@ void cSkills::ProvocationTarget2( cSocket *s )
 //|					 brings up a MakeMenu for player to select which potion
 //|					 to make
 //o---------------------------------------------------------------------------o
-void cSkills::AlchemyTarget( cSocket *s )
+void cSkills::AlchemyTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -1542,7 +1542,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 		if( s->IsDead() )
 		{
-			cSocket *sSock = calcSocketObjFromChar( s );
+			CSocket *sSock = calcSocketObjFromChar( s );
 			sSock->sysmessage( 1487 );
 			return false;
 		}
@@ -1559,7 +1559,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
 		skillCheck = ( chanceskillsuccess >= RandomNum( 0, 1000 ) );
 		
-		cSocket *mSock = calcSocketObjFromChar( s );
+		CSocket *mSock = calcSocketObjFromChar( s );
 		bool mageryUp = true;
 		if( mSock != NULL )
 		{
@@ -1602,7 +1602,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	UI16 atrop[ALLSKILLS+1];
 	SI16 toDec = -1;
 	UI08 counter = 0;
-	cSocket *mSock = calcSocketObjFromChar( c );
+	CSocket *mSock = calcSocketObjFromChar( c );
 	UI16 skillTrig = c->GetScriptTrigger();
 	cScript *scpSkill = Trigger->GetScript( skillTrig );
 		
@@ -1683,13 +1683,13 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CreateBandageTarget( cSocket *s )
+//|   Function    :  void cSkills::CreateBandageTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player cuts cloth into bandages
 //o---------------------------------------------------------------------------o
-void cSkills::CreateBandageTarget( cSocket *s )
+void cSkills::CreateBandageTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -1748,7 +1748,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::HealingSkillTarget( cSocket *s )
+//|   Function    :  void cSkills::HealingSkillTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1758,7 +1758,7 @@ void cSkills::CreateBandageTarget( cSocket *s )
 //|					 dependant on poison level), players with > 80 in both can
 //|					 resurrect players (once again, sometimes)
 //o---------------------------------------------------------------------------o
-void cSkills::HealingSkillTarget( cSocket *s )
+void cSkills::HealingSkillTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i		= calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1844,7 +1844,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SpiritSpeak( cSocket *s )
+//|   Function    :  void cSkills::SpiritSpeak( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1853,7 +1853,7 @@ void cSkills::HealingSkillTarget( cSocket *s )
 //|					 is actually saying), Operates on a timer based on settings
 //|					 in server.scp
 //o---------------------------------------------------------------------------o
-void cSkills::SpiritSpeak( cSocket *s )
+void cSkills::SpiritSpeak( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1871,14 +1871,14 @@ void cSkills::SpiritSpeak( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ArmsLoreTarget( cSocket *s )
+//|   Function    :  void cSkills::ArmsLoreTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses ArmsLore on an item (Only works for
 //|					 weapons and armor (Items with Defense or HiDamage/LoDamage
 //o---------------------------------------------------------------------------o
-void cSkills::ArmsLoreTarget( cSocket *s )
+void cSkills::ArmsLoreTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	UnicodeTypes sLang = s->Language();
@@ -1970,7 +1970,7 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ItemIDTarget( cSocket *s )
+//|   Function    :  void cSkills::ItemIDTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -1978,7 +1978,7 @@ void cSkills::ArmsLoreTarget( cSocket *s )
 //|					 give valuable information on items (Will reveal hidden
 //|					 magical names and charges on items as well)
 //o---------------------------------------------------------------------------o
-void cSkills::ItemIDTarget( cSocket *s )
+void cSkills::ItemIDTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -2051,14 +2051,14 @@ void cSkills::ItemIDTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::EvaluateIntTarget( cSocket *s )
+//|   Function    :  void cSkills::EvaluateIntTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses EvalInt on a PC/NPC, gives
 //|					 a text message based on their Intelligence
 //o---------------------------------------------------------------------------o
-void cSkills::EvaluateIntTarget( cSocket *s )
+void cSkills::EvaluateIntTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -2088,14 +2088,14 @@ void cSkills::EvaluateIntTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnatomyTarget( cSocket *s )
+//|   Function    :  void cSkills::AnatomyTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses Anatomy skill on a PC/NPC, gives
 //|					 a text message based on their Strength and Dexterity
 //o---------------------------------------------------------------------------o
-void cSkills::AnatomyTarget( cSocket *s )
+void cSkills::AnatomyTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -2147,7 +2147,7 @@ void cSkills::AnatomyTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TameTarget( cSocket *s )
+//|   Function    :  void cSkills::TameTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //|									
@@ -2158,7 +2158,7 @@ void cSkills::AnatomyTarget( cSocket *s )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player attempts to tame an NPC
 //o---------------------------------------------------------------------------o
-void cSkills::TameTarget( cSocket *s )
+void cSkills::TameTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetByte( 7 ) == 0xFF ) 
@@ -2229,13 +2229,13 @@ void cSkills::TameTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::FishTarget( cSocket *s )
+//|   Function    :  void cSkills::FishTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets an area with a fishing pole
 //o---------------------------------------------------------------------------o
-void cSkills::FishTarget( cSocket *s )
+void cSkills::FishTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -2317,7 +2317,7 @@ void cSkills::FishTarget( cSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::Fish( CChar *i )
 {
-	cSocket *s = calcSocketObjFromChar( i );
+	CSocket *s = calcSocketObjFromChar( i );
 	if( !CheckSkill( i, FISHING, 0, 1000 ) ) 
 	{
 		s->sysmessage( 847 );
@@ -2369,13 +2369,13 @@ void cSkills::Fish( CChar *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SkillUse( cSocket *s, UI08 x )
+//|   Function    :  void cSkills::SkillUse( CSocket *s, UI08 x )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses a skill from the skill list
 //o---------------------------------------------------------------------------o
-void cSkills::SkillUse( cSocket *s, UI08 x )
+void cSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -2443,14 +2443,14 @@ void cSkills::SkillUse( cSocket *s, UI08 x )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RandomSteal( cSocket *s )
+//|   Function    :  void cSkills::RandomSteal( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets a PC/NPC with stealing skill
 //|					 instead of an item (randomly pics an item in their pack)
 //o---------------------------------------------------------------------------o
-void cSkills::RandomSteal( cSocket *s )
+void cSkills::RandomSteal( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -2481,13 +2481,13 @@ void cSkills::RandomSteal( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::StealingTarget( cSocket *s )
+//|   Function    :  void cSkills::StealingTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets an item with stealing skill
 //o---------------------------------------------------------------------------o
-void cSkills::StealingTarget( cSocket *s )
+void cSkills::StealingTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -2513,14 +2513,14 @@ void cSkills::StealingTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
+//|   Function    :  void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 //|   Date        :  2/13/2003
 //|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do the bulk of stealing stuff rather than having the same
 //|						code twice in RandomSteal() and StealingTarget()
 //o---------------------------------------------------------------------------o
-void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
+void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 {
 	VALIDATESOCKET( s );
 	if( npc == mChar ) 
@@ -2610,14 +2610,14 @@ void cSkills::doStealing( cSocket *s, CChar *mChar, CChar *npc, CItem *item )
 				sprintf( temp2, Dictionary->GetEntry( 885 ).c_str(), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
 			}
 
-			cSocket *npcSock = calcSocketObjFromChar( npc );
+			CSocket *npcSock = calcSocketObjFromChar( npc );
 			if( npcSock != NULL )
 				npcSock->sysmessage( temp );
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
-				cSocket *iSock = (*cIter);
+				CSocket *iSock = (*cIter);
 				CChar *iChar = iSock->CurrcharObj();
 				if( iSock != s && ( RandomNum( 10, 20 ) == 17 || ( RandomNum( 0, 1 ) == 1 && iChar->GetIntelligence() >= mChar->GetIntelligence() ) ) )
 					iSock->sysmessage( temp2 );
@@ -2666,13 +2666,13 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Tracking( cSocket *s, int selection )
+//|   Function    :  void cSkills::Tracking( CSocket *s, int selection )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Start tracking selected NPC/PC
 //o---------------------------------------------------------------------------o
-void cSkills::Tracking( cSocket *s, int selection )
+void cSkills::Tracking( CSocket *s, int selection )
 {
 	VALIDATESOCKET( s );
 	CChar *i = s->CurrcharObj();
@@ -2685,13 +2685,13 @@ void cSkills::Tracking( cSocket *s, int selection )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CreateTrackingMenu( cSocket *s, int m )
+//|   Function    :  void cSkills::CreateTrackingMenu( CSocket *s, int m )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Brings up Tracking Menu, Called when player uses Tracking Skill
 //o---------------------------------------------------------------------------o
-void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
+void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
 	UString sect = "TRACKINGMENU " + UString::number( m );
@@ -2749,7 +2749,7 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 			if( !ValidateObject( tempChar ) )
 				continue;
 			id					= tempChar->GetID();
-			cSocket *tSock		= calcSocketObjFromChar( tempChar );
+			CSocket *tSock		= calcSocketObjFromChar( tempChar );
 			bool cmdLevelCheck	= isOnline( tempChar ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
 			if( objInRange( tempChar, c, static_cast<UI16>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
 			{
@@ -2789,15 +2789,15 @@ void cSkills::CreateTrackingMenu( cSocket *s, UI16 m )
 	s->Send( &toSend );
 }
 
-void HandleCommonGump( cSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
+void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TrackingMenu( cSocket *s, int gmindex )
+//|   Function    :  void cSkills::TrackingMenu( CSocket *s, int gmindex )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Unknown
 //o---------------------------------------------------------------------------o
-void cSkills::TrackingMenu( cSocket *s, UI16 gmindex )
+void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
 	UString sect				= "TRACKINGMENU " + UString::number( gmindex );
@@ -2816,7 +2816,7 @@ void cSkills::TrackingMenu( cSocket *s, UI16 gmindex )
 //o---------------------------------------------------------------------------o
 void cSkills::Track( CChar *i )
 {
-	cSocket *s = calcSocketObjFromChar( i );
+	CSocket *s = calcSocketObjFromChar( i );
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
 	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 ) 
@@ -2827,13 +2827,13 @@ void cSkills::Track( CChar *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  UI08 cSkills::TrackingDirection( cSocket *s, CChar *i )
+//|   Function    :  UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Get location of the tracking target based on your loc
 //o---------------------------------------------------------------------------o
-UI08 cSkills::TrackingDirection( cSocket *s, CChar *i )
+UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
 {
 	if( s == NULL )
 	{
@@ -2867,13 +2867,13 @@ UI08 cSkills::TrackingDirection( cSocket *s, CChar *i )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::BeggingTarget( cSocket *s )
+//|   Function    :  void cSkills::BeggingTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets PC/NPC with the begging skill
 //o---------------------------------------------------------------------------o
-void cSkills::BeggingTarget( cSocket *s )
+void cSkills::BeggingTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -2927,13 +2927,13 @@ void cSkills::BeggingTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnimalLoreTarget( cSocket *s )
+//|   Function    :  void cSkills::AnimalLoreTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets animal with Animal Lore skill
 //o---------------------------------------------------------------------------o
-void cSkills::AnimalLoreTarget( cSocket *s )
+void cSkills::AnimalLoreTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i		= calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -2957,7 +2957,7 @@ void cSkills::AnimalLoreTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ForensicsTarget( cSocket *s )
+//|   Function    :  void cSkills::ForensicsTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -2965,7 +2965,7 @@ void cSkills::AnimalLoreTarget( cSocket *s )
 //|					 (needs to be given more functionality so players can get
 //|					 more use out of the skill)
 //o---------------------------------------------------------------------------o
-void cSkills::ForensicsTarget( cSocket *s )
+void cSkills::ForensicsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -3029,13 +3029,13 @@ void cSkills::ForensicsTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PoisoningTarget( cSocket *s )
+//|   Function    :  void cSkills::PoisoningTarget( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player targets an item with PoisoningSkill
 //o---------------------------------------------------------------------------o
-void cSkills::PoisoningTarget( cSocket *s )
+void cSkills::PoisoningTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	bool canPoison	= false;
@@ -3096,14 +3096,14 @@ void cSkills::PoisoningTarget( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Inscribe( cSocket *s )
+//|   Function    :  void cSkills::Inscribe( CSocket *s )
 //|   Date        :  January 31, 2003
 //|   Programmer  :  Zane
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when a player attempts to inscribe a blank scroll
 //|					 Based upon inscribe.dfn
 //o---------------------------------------------------------------------------o
-void cSkills::Inscribe( cSocket *s )
+void cSkills::Inscribe( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -3146,13 +3146,13 @@ void cSkills::Inscribe( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
+//|   Function    :  bool cSkills::EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player starts engraving an item
 //o---------------------------------------------------------------------------o
-bool cSkills::EngraveAction( cSocket *s, CItem *i, int getCir, int getSpell )
+bool cSkills::EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell )
 {
 	if( s == NULL )
 	{
@@ -3374,13 +3374,13 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::LockPick( cSocket *s )
+//|   Function    :  void cSkills::LockPick( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses lockpics on a locked item
 //o---------------------------------------------------------------------------o
-void cSkills::LockPick( cSocket *s )
+void cSkills::LockPick( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i		= calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -3465,13 +3465,13 @@ void cSkills::LockPick( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TDummy( cSocket *s )
+//|   Function    :  void cSkills::TDummy( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses a training dummy
 //o---------------------------------------------------------------------------o
-void cSkills::TDummy( cSocket *s )
+void cSkills::TDummy( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -3516,13 +3516,13 @@ void cSkills::TDummy( cSocket *s )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Tinkering( cSocket *s )
+//|   Function    :  void cSkills::Tinkering( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses tinkering skill
 //o---------------------------------------------------------------------------o
-void cSkills::Tinkering( cSocket *s )
+void cSkills::Tinkering( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -3566,13 +3566,13 @@ void cSkills::Tinkering( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AButte( cSocket *s, CItem *x )
+//|   Function    :  void cSkills::AButte( CSocket *s, CItem *x )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses an Archery Butte
 //o---------------------------------------------------------------------------o
-void cSkills::AButte( cSocket *s, CItem *x )
+void cSkills::AButte( CSocket *s, CItem *x )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -3709,13 +3709,13 @@ void cSkills::AButte( cSocket *s, CItem *x )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TinkerAxel( cSocket *s )
+//|   Function    :  void cSkills::TinkerAxel( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Use tinkering on an Axel
 //o---------------------------------------------------------------------------o
-void cSkills::TinkerAxel( cSocket *s )
+void cSkills::TinkerAxel( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar		= s->CurrcharObj();
@@ -3774,13 +3774,13 @@ void cSkills::TinkerAxel( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TinkerAwg( cSocket *s )
+//|   Function    :  void cSkills::TinkerAwg( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Unknown : Tinkering
 //o---------------------------------------------------------------------------o
-void cSkills::TinkerAwg( cSocket *s )
+void cSkills::TinkerAwg( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -3842,13 +3842,13 @@ void cSkills::TinkerAwg( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TinkerClock( cSocket *s )
+//|   Function    :  void cSkills::TinkerClock( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Used when player Tinkers a clock
 //o---------------------------------------------------------------------------o
-void cSkills::TinkerClock( cSocket *s )
+void cSkills::TinkerClock( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -3880,13 +3880,13 @@ void cSkills::TinkerClock( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Meditation( cSocket *s )
+//|   Function    :  void cSkills::Meditation( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses meditation skill
 //o---------------------------------------------------------------------------o
-void cSkills::Meditation( cSocket *s )
+void cSkills::Meditation( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -3920,7 +3920,7 @@ void cSkills::Meditation( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Persecute( cSocket *s )
+//|   Function    :  void cSkills::Persecute( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -3928,7 +3928,7 @@ void cSkills::Meditation( cSocket *s )
 //|					 is enabled, players mana decreases each time you try to
 //|					 persecute him
 //o---------------------------------------------------------------------------o
-void cSkills::Persecute( cSocket *s )
+void cSkills::Persecute( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *c		= s->CurrcharObj();
@@ -3942,7 +3942,7 @@ void cSkills::Persecute( cSocket *s )
 	{
 		if( ( RandomNum( 0, 19 ) + c->GetIntelligence() ) > 45 ) // not always
 		{
-			cSocket *tSock = calcSocketObjFromChar( targChar );
+			CSocket *tSock = calcSocketObjFromChar( targChar );
 			targChar->SetMana( targChar->GetMana() - decrease ); // decrease mana
 			s->sysmessage( 972 );
 			if( tSock != NULL )
@@ -3958,13 +3958,13 @@ void cSkills::Persecute( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Smith( cSocket *s )
+//|   Function    :  void cSkills::Smith( CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player attempts to smith an item
 //o---------------------------------------------------------------------------o
-void cSkills::Smith( cSocket *s )
+void cSkills::Smith( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -4000,13 +4000,13 @@ void cSkills::Smith( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnvilTarget( cSocket *s, CItem& item, SI16 oreType )
+//|   Function    :  void cSkills::AnvilTarget( CSocket *s, CItem& item, SI16 oreType )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Unknown : Smithy
 //o---------------------------------------------------------------------------o
-void cSkills::AnvilTarget( cSocket *s, CItem& item, miningData *oreType )
+void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -4084,11 +4084,11 @@ bool cSkills::LoadMiningData( void )
 		UString UTag;
 		for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
 			oreNameList.push_back( tag );
-		if( oreNameList.size() != 0 )
+		if( !oreNameList.empty() )
 		{
 			rvalue = true;
 			ScriptSection *individualOre = NULL;
-			STRINGLIST_ITERATOR toCheck;
+			STRINGLIST_CITERATOR toCheck;
 			for( toCheck = oreNameList.begin(); toCheck != oreNameList.end(); ++toCheck )
 			{
 				std::string oreName = (*toCheck);
@@ -4323,15 +4323,15 @@ miningData *cSkills::FindOre( UI16 colour )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
+//|   Function    :  void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Spawn Ore in players pack when he successfully mines
 //o---------------------------------------------------------------------------o
-void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
+void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
 {
-	cTownRegion *targRegion = regions[Region];
+	CTownRegion *targRegion = regions[Region];
 	if( targRegion == NULL || !ValidateObject( actor ) )
 		return;
 	VALIDATESOCKET( s );
@@ -4405,7 +4405,6 @@ void cSkills::MakeOre( UI08 Region, CChar *actor, cSocket *s )
 void cSkills::LoadCreateMenus( void )
 {
 	VECSCRIPTLIST *toScan = FileLookup->GetFiles( create_def );
-	VECSCRIPTLIST_ITERATOR toCheck;
 	if( toScan == NULL )
 		return;
 	ScriptSection *toSearch = NULL;			// data in a particular section
@@ -4413,7 +4412,7 @@ void cSkills::LoadCreateMenus( void )
 	UString data;							// entry data
 	UString UTag;
 	UI16 ourEntry;							// our actual entry number
-	for( toCheck = toScan->begin(); toCheck != toScan->end(); ++toCheck )
+	for( VECSCRIPTLIST_CITERATOR toCheck = toScan->begin(); toCheck != toScan->end(); ++toCheck )
 	{
 		if( (*toCheck) == NULL )
 			continue;
@@ -4786,7 +4785,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 		}
 	}
 	
-	cSocket *jSock = calcSocketObjFromChar( s );
+	CSocket *jSock = calcSocketObjFromChar( s );
 	if( jSock != NULL )
 	{
 		jSock->statwindow( s );
@@ -4796,18 +4795,18 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
+//|   Function    :  void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  New make menu system, based on create.scp
 //o---------------------------------------------------------------------------o
-void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
+void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 {
 	VALIDATESOCKET( s );
 	CChar *ourChar = s->CurrcharObj();;
 	s->AddID( menu );
-	std::map< UI16, createMenu >::iterator p = actualMenus.find( menu );
+	std::map< UI16, createMenu >::const_iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
 		return;
 	UI16 background = cwmWorldState->ServerData()->BackgroundPic();
@@ -4952,24 +4951,24 @@ void cSkills::NewMakeMenu( cSocket *s, int menu, UI08 skill )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::HandleMakeMenu( cSocket *s, int button, int menu )
+//|   Function    :  void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles the button pressed in the new make menu
 //o---------------------------------------------------------------------------o
-void cSkills::HandleMakeMenu( cSocket *s, int button, int menu )
+void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 {
 	VALIDATESOCKET( s );
 	CChar *ourChar = s->CurrcharObj();
 	s->AddID( 0 );
-	std::map< UI16, createMenu >::iterator p = actualMenus.find( menu );
+	std::map< UI16, createMenu >::const_iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
 		return;
 	createMenu ourMenu = p->second;
 	if( button >= 100 )	// menu pressed
 	{
-		std::map< UI16, createMenuEntry >::iterator q = skillMenus.find( ourMenu.menuEntries[button-100] );
+		std::map< UI16, createMenuEntry >::const_iterator q = skillMenus.find( ourMenu.menuEntries[button-100] );
 		if( q == skillMenus.end() )
 			return;
 		NewMakeMenu( s, q->second.subMenu, 0 );
@@ -4999,13 +4998,13 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock )
+//|   Function    :  void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock )
 //|   Date        :  Unknown
 //|   Programmer  :  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Makes an item selected in the new make menu system
 //o---------------------------------------------------------------------------o
-void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 itemEntry )
+void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry )
 {
 	VALIDATESOCKET( sock );
 	bool canMake = true;
@@ -5079,7 +5078,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function	:	void cSkills::RepairMetal( cSocket *s )
+//|		Function	:	void cSkills::RepairMetal( CSocket *s )
 //|		Date		:	October 16, 2000
 //|		Programmer	:	Thaliq
 //|		Modified	:	November 13, 2001 - BelCMC, changed to a metal repair function
@@ -5087,7 +5086,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, cSocket *sock, UI16 
 //|		Purpose     :	Repair armor and weapons.
 //o---------------------------------------------------------------------------o
 
-void cSkills::RepairMetal( cSocket *s )
+void cSkills::RepairMetal( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;
 	CItem *j = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -5145,7 +5144,7 @@ void cSkills::RepairMetal( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function	:	void cSkills::RepairLeather( cSocket *s )
+//|		Function	:	void cSkills::RepairLeather( CSocket *s )
 //|		Date		:	October 16, 2000
 //|		Programmer	:	Thaliq
 //|		Modified	:	November 13, 2001 - BelCMC, changed to a metal repair function
@@ -5153,7 +5152,7 @@ void cSkills::RepairMetal( cSocket *s )
 //|		Purpose     :	Repair armor and weapons.
 //o---------------------------------------------------------------------------o
 
-void cSkills::RepairLeather( cSocket *s )
+void cSkills::RepairLeather( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;
 	CItem *j = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -5211,7 +5210,7 @@ void cSkills::RepairLeather( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function	:	void cSkills::RepairBow( cSocket *s )
+//|		Function	:	void cSkills::RepairBow( CSocket *s )
 //|		Date		:	October 16, 2000
 //|		Programmer	:	Thaliq
 //|		Modified	:	November 13, 2001 - BelCMC, changed to a metal repair function
@@ -5219,7 +5218,7 @@ void cSkills::RepairLeather( cSocket *s )
 //|		Purpose     :	Repair armor and weapons.
 //o---------------------------------------------------------------------------o
 
-void cSkills::RepairBow( cSocket *s )
+void cSkills::RepairBow( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;
 	CItem *j = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -5277,17 +5276,17 @@ void cSkills::RepairBow( cSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack )
+//|   Function    :  void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player snoops another PC/NPC's or a tamed animals pack
 //o---------------------------------------------------------------------------o
-void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack ) 
+void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack ) 
 {
 	CChar *mChar = s->CurrcharObj();
 
-	cSocket *tSock = calcSocketObjFromChar( target );
+	CSocket *tSock = calcSocketObjFromChar( target );
 
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{
@@ -5342,7 +5341,7 @@ void cSkills::Snooping( cSocket *s, CChar *target, CItem *pack )
 	}
 }
 
-void cSkills::MakeNecroReg( cSocket *nSocket, CItem *nItem, UI16 itemID )
+void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 {
 	CItem *iItem = NULL;
 	CChar *iCharID = nSocket->CurrcharObj();

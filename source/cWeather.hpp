@@ -157,8 +157,8 @@ class cWeatherAb
 		void	RainActive( weathID toCheck, bool value );
 		void	SnowActive( weathID toCheck, bool value );
 		bool	DoStuff( void );
-		bool	DoPlayerStuff( cSocket *mSock, CChar *p );
-		void	DoPlayerWeather( cSocket *s, UI08 weathType, SI08 currentTemp );
+		bool	DoPlayerStuff( CSocket *mSock, CChar *p );
+		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp );
 
 		CWeather *Weather( weathID toCheck );
 };

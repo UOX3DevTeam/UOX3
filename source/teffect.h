@@ -15,7 +15,7 @@ private:
 	UI16			more2;
 	UI16			more3;
 	bool			dispellable;
-	cBaseObject *	objptr;
+	CBaseObject *	objptr;
 	cScript *		assocScript;
 
 public:
@@ -23,7 +23,7 @@ public:
 	{
 		return assocScript;
 	}
-	cBaseObject *ObjPtr( void ) const
+	CBaseObject *ObjPtr( void ) const
 	{
 		return objptr;
 	}
@@ -92,7 +92,7 @@ public:
 	{
 		dispellable = value;
 	}
-	void	ObjPtr( cBaseObject *value )
+	void	ObjPtr( CBaseObject *value )
 	{
 		objptr = value;
 	}

@@ -340,13 +340,13 @@ public:
 
 
 #define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *
-#define MAGIC_ITEMTARG_LIST cSocket *, CChar *, CItem *
-#define MAGIC_LOCATION_LIST cSocket *, CChar *, SI16, SI16, SI08
-#define MAGIC_FIELD_LIST cSocket *, CChar *, UI08, SI16, SI16, SI08
+#define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *
+#define MAGIC_LOCATION_LIST CSocket *, CChar *, SI16, SI16, SI08
+#define MAGIC_FIELD_LIST CSocket *, CChar *, UI08, SI16, SI16, SI08
 #define MAGIC_AREA_STUB_LIST CChar *, CChar *
-#define MAGIC_NOTARG_LIST cSocket *, CChar *
+#define MAGIC_NOTARG_LIST CSocket *, CChar *
 
-#define MAGIC_TEST_LIST cSocket *, CChar *, CChar *, CChar *
+#define MAGIC_TEST_LIST CSocket *, CChar *, CChar *, CChar *
 
 #define MAGIC_TESTFUNC	bool (*)( MAGIC_TEST_LIST )
 #define MAGIC_CHARFUNC	bool (*)( MAGIC_CHARTARG_LIST )
@@ -373,13 +373,13 @@ struct MagicTable_s
 	bool			(*mag_extra) ();	// extra data - see above
 };
 
-bool AreaAffectSpell( cSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) );
-bool DiamondSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
+bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) );
+bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir );
-bool FloodSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
-bool SquareSpell( cSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
+bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
+bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 
-extern MagicTable_s						magic_table[];
+extern const MagicTable_s						magic_table[];
 
 MAG_CHARHANDLER( splClumsy );
 MAG_NOHANDLER( splCreateFood );

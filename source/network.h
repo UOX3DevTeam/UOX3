@@ -59,7 +59,7 @@ public:
 	virtual					~cPUOXBuffer();
 							cPUOXBuffer( cPBaseBuffer *initBuffer );
 	virtual UI32			Pack( void );
-	virtual bool			ClientCanReceive( cSocket *mSock );
+	virtual bool			ClientCanReceive( CSocket *mSock );
 };
 
 class cPXGMBuffer : public cPBaseBuffer
@@ -78,10 +78,10 @@ class cPInputBuffer
 {
 protected:
 	std::vector< UI08 > internalBuffer;
-	cSocket *			tSock;
+	CSocket *			tSock;
 public:
 							cPInputBuffer();
-							cPInputBuffer( cSocket *input );
+							cPInputBuffer( CSocket *input );
 	virtual void			Receive( void ) = 0;
 	UI08& operator[] ( size_t num );
 	virtual size_t			Length( void );
@@ -91,8 +91,8 @@ public:
 	SI32					Word( size_t offset );
 	UI08					Byte( size_t offset );
 	virtual bool			Handle( void );
-	virtual void			SetSocket( cSocket *toSet );
-	cSocket *				GetSocket( void ) const;
+	virtual void			SetSocket( CSocket *toSet );
+	CSocket *				GetSocket( void ) const;
 	virtual ~cPInputBuffer()
 	{
 	}
@@ -104,20 +104,20 @@ public:
 				cNetworkStuff();
 				~cNetworkStuff();
 	void		Disconnect( UOXSOCKET s );
-	void		Disconnect( cSocket *s );
+	void		Disconnect( CSocket *s );
 	void		ClearBuffers( void );
 	void		CheckLoginMessage( void );
 	void		CheckMessage( void );
 	void		CheckXGM( void );
 	void		SockClose( void );
-	void		setLastOn( cSocket *s );
-	cSocket *	GetSockPtr( UOXSOCKET s );
-	UOXSOCKET	FindNetworkPtr( cSocket *toFind );
+	void		setLastOn( CSocket *s );
+	CSocket *	GetSockPtr( UOXSOCKET s );
+	UOXSOCKET	FindNetworkPtr( CSocket *toFind );
 
-	cSocket *	FirstSocket( void );
-	cSocket *	NextSocket( void );
-	cSocket *	PrevSocket( void );
-	cSocket *	LastSocket( void );
+	CSocket *	FirstSocket( void );
+	CSocket *	NextSocket( void );
+	CSocket *	PrevSocket( void );
+	CSocket *	LastSocket( void );
 	bool		FinishedSockets( void );
 
 	void		CheckConnections( void );
@@ -131,7 +131,7 @@ public:
 	{
 		InternalControl.Off();
 	}
-	void		Transfer( cSocket *s );
+	void		Transfer( CSocket *s );
 
 	size_t		PeakConnectionCount( void ) const;
 
@@ -146,7 +146,7 @@ public:
 	
 	// Login Specific
 	void		LoginDisconnect(UOXSOCKET s);
-	void		LoginDisconnect(cSocket *s);
+	void		LoginDisconnect(CSocket *s);
 	
 private:
 	struct FirewallEntry
@@ -175,16 +175,16 @@ private:
 	void		GetMsg( UOXSOCKET s );
 	void		sockInit( void );
 	void		GetLoginMsg( UOXSOCKET s );
-	UOXSOCKET	FindLoginPtr( cSocket *s );
+	UOXSOCKET	FindLoginPtr( CSocket *s );
 
 	void		CheckConn( void );
-	void		LogOut( cSocket *s );
+	void		LogOut( CSocket *s );
 
 	void		StartupXGM( int nPortArg );
 	void		ShutdownXGM( void );
 	void		XGMDisconnect( UOXSOCKET s );
-	void		XGMDisconnect( cSocket *s );
-	UOXSOCKET	FindXGMPtr( cSocket *s );
+	void		XGMDisconnect( CSocket *s );
+	UOXSOCKET	FindXGMPtr( CSocket *s );
 	void		GetXGMMsg( UOXSOCKET s );
 	void		CheckXGMConn( void );
 	bool		IsFirewallBlocked( UI08 part[4] );

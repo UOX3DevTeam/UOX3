@@ -68,13 +68,13 @@ public:
 					PageVector();
 					PageVector( std::string newTitle );
 					~PageVector();
-	void			SendAsGump( cSocket *toSendTo );
+	void			SendAsGump( CSocket *toSendTo );
 	void			SetTitle( std::string newTitle );
 	bool			GotoPos( SI32 pos );
 	SI32			CurrentPos( void ) const;
 	SERIAL			GetCallNum( void ) const;
 	SI32			FindCallNum( SERIAL callNum );
-	bool			AnswerNextCall( cSocket *mSock, CChar *mChar );
+	bool			AnswerNextCall( CSocket *mSock, CChar *mChar );
 };
 
 extern PageVector	*GMQueue;

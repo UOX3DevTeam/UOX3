@@ -20,7 +20,7 @@ class cMovement
 {
 	// Function declarations
 public:
-	void	Walking( cSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
+	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
 	void	NpcMovement( CChar *i );
@@ -32,8 +32,8 @@ private:
 	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	isValidDirection( UI08 dir );
-	bool	isFrozen( CChar *c, cSocket *mSock, SI16 sequence );
-	bool	isOverloaded( CChar *c, cSocket *mSock, SI16 sequence );
+	bool	isFrozen( CChar *c, CSocket *mSock, SI16 sequence );
+	bool	isOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
 
 /*
 //	Currently all these functions are unreferenced (used only of themselves, never called by anything)
@@ -59,20 +59,20 @@ private:
 	SI16	GetXfromDir( UI08 dir, SI16 x );
 	SI16	GetYfromDir( UI08 dir, SI16 y );
 
-	bool	VerifySequence( CChar *c, cSocket *mSock, SI16 sequence);
+	bool	VerifySequence( CChar *c, CSocket *mSock, SI16 sequence);
 	bool	CheckForRunning( CChar *c, UI08 dir );
 	bool	CheckForStealth( CChar *c );
-	bool	CheckForHouseBan( CChar *c, cSocket *mSock );
+	bool	CheckForHouseBan( CChar *c, CSocket *mSock );
 	void	MoveCharForDirection( CChar *c, SI08 myz, UI08 dir );
 	void	HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy );
-	void	SendWalkToPlayer( CChar *c, cSocket *mSock, SI16 sequence );
+	void	SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence );
 	void	SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy );
-	void	OutputShoveMessage( CChar *c, cSocket *mSock );
-	void	HandleItemCollision( CChar *c, cSocket *mSock, SI16 oldx, SI16 oldy );
-	void	HandleWeatherChanges( CChar *c, cSocket *mSock );
+	void	OutputShoveMessage( CChar *c, CSocket *mSock );
+	void	HandleItemCollision( CChar *c, CSocket *mSock, SI16 oldx, SI16 oldy );
+	void	HandleWeatherChanges( CChar *c, CSocket *mSock );
 	bool	IsGMBody( CChar *c );
 
-	void	deny( cSocket *mSock, CChar *s, SI16 sequence );
+	void	deny( CSocket *mSock, CChar *s, SI16 sequence );
 };
 
 extern cMovement *Movement;

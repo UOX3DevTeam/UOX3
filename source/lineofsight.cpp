@@ -147,14 +147,14 @@ QUAD POLYGON CONSTRUCTION ALGORITHM
 */
 
 //o--------------------------------------------------------------------------
-//|	Function		-	bool LineOfSight( cSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
+//|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
 //|	Date			-	03 July, 2001
 //|	Programmer		-	Abaddon
 //|	Modified		-	18 March, 2002, sereg
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if there is line of sight between src and trg
 //o--------------------------------------------------------------------------
-bool LineOfSight( cSocket *mSock, CChar *mChar, SI16 koxn, SI16 koym, SI08 koz2, int checkfor )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 koxn, SI16 koym, SI08 koz2, int checkfor )
 {
 /*
 Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.

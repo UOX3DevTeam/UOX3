@@ -60,7 +60,7 @@ void Triggers::Cleanup()
 	toDestroy.resize( 0 );
 	magicScripts.clear();
 	commandScripts.clear();
-	for( std::map< UI16, cScript *>::iterator p = scriptTriggers.begin(); p != scriptTriggers.end(); ++p )
+	for( std::map< UI16, cScript *>::const_iterator p = scriptTriggers.begin(); p != scriptTriggers.end(); ++p )
 	{
 		cScript *pScript = p->second;
 		if( pScript != NULL )
@@ -296,7 +296,7 @@ void Triggers::ParseMagic( void )
 
 cScript *Triggers::GetScript( UI16 triggerNumber )
 {
-	std::map< UI16, cScript *>::iterator p = scriptTriggers.find( triggerNumber );
+	std::map< UI16, cScript *>::const_iterator p = scriptTriggers.find( triggerNumber );
 	if( p != scriptTriggers.end() )	//	Script was found
 		return p->second;
 	else	//	Account was not found
@@ -306,10 +306,10 @@ cScript *Triggers::GetScript( UI16 triggerNumber )
 
 cScript *Triggers::GetAssociatedScript( JSObject *toFind )
 {
-	std::map< JSObject *, UI16 >::iterator tFnd = scriptToTriggerMapping.find( toFind );
+	std::map< JSObject *, UI16 >::const_iterator tFnd = scriptToTriggerMapping.find( toFind );
 	if( tFnd != scriptToTriggerMapping.end() )
 	{
-		std::map< UI16, cScript *>::iterator p = scriptTriggers.find( tFnd->second );
+		std::map< UI16, cScript *>::const_iterator p = scriptTriggers.find( tFnd->second );
 		if( p != scriptTriggers.end() )	//	Script was found
 			return p->second;
 		else	//	Script was not found
@@ -318,12 +318,12 @@ cScript *Triggers::GetAssociatedScript( JSObject *toFind )
 	else
 	{
 		// Check command stuff here
-		std::map< JSObject *, cScript * >::iterator cFnd = commandScripts.find( toFind );
+		std::map< JSObject *, cScript * >::const_iterator cFnd = commandScripts.find( toFind );
 		if( cFnd != commandScripts.end() )
 			return cFnd->second;
 
 		// Check magic stuff here
-		std::map< JSObject *, cScript * >::iterator mFnd = magicScripts.find( toFind );
+		std::map< JSObject *, cScript * >::const_iterator mFnd = magicScripts.find( toFind );
 		if( mFnd != magicScripts.end() )
 			return mFnd->second;
 	}

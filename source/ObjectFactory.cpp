@@ -110,9 +110,9 @@ namespace UOX
 	//	We want to create a new object, with a serial number, and 
 	//	return this back to the creator.  From DFNs, or a PC, by and
 	//	large.
-	cBaseObject *ObjectFactory::CreateObject( ObjectType createType )
+	CBaseObject *ObjectFactory::CreateObject( ObjectType createType )
 	{
-		cBaseObject *created = NULL;
+		CBaseObject *created = NULL;
 		switch( createType )
 		{
 			default:													break;
@@ -131,9 +131,9 @@ namespace UOX
 
 	//	We want a blank object, which has NO serial number, and one we will
 	//	provide because it's from loading the world!
-	cBaseObject *ObjectFactory::CreateBlankObject( ObjectType createType )
+	CBaseObject *ObjectFactory::CreateBlankObject( ObjectType createType )
 	{
-		cBaseObject *created = NULL;
+		CBaseObject *created = NULL;
 		switch( createType )
 		{
 			default:													break;
@@ -147,10 +147,10 @@ namespace UOX
 	}
 
 	//	CalcObjFromSerial, basically
-	cBaseObject *ObjectFactory::FindObject( SERIAL toFind )
+	CBaseObject *ObjectFactory::FindObject( SERIAL toFind )
 	{
 		OBJECTMAP_ITERATOR fIter, fUpper, fEnd;
-		cBaseObject	*	retVal		= NULL;
+		CBaseObject	*	retVal		= NULL;
 		SERIAL			hashValue	= HashSerial( toFind );
 		if( toFind != INVALIDSERIAL )
 		{
@@ -210,7 +210,7 @@ namespace UOX
 	//	memory.  Essentially, it's either a server shutdown
 	//	or the object has been deleted, and is no longer
 	//	part of the world.
-	bool ObjectFactory::DestroyObject( cBaseObject *toDestroy )
+	bool ObjectFactory::DestroyObject( CBaseObject *toDestroy )
 	{
 		assert( toDestroy != NULL );
 		UnregisterObject( toDestroy );
@@ -220,7 +220,7 @@ namespace UOX
 
 	//	We want to register an object with the world, that previously
 	//	does not exist in our containers
-	bool ObjectFactory::RegisterObject( cBaseObject *toRegister )
+	bool ObjectFactory::RegisterObject( CBaseObject *toRegister )
 	{
 		assert( toRegister != NULL );
 		return RegisterObject( toRegister, toRegister->GetSerial() );
@@ -232,7 +232,7 @@ namespace UOX
 	//	and then Register it with the new serial.  HOWEVER, that does not guarantee
 	//	valid serial numbers and that it's not a duplicate!  By and large, we don't
 	//	want to call this from anywhere but a world loading routine.
-	bool ObjectFactory::RegisterObject( cBaseObject *toRegister, SERIAL toAttach )
+	bool ObjectFactory::RegisterObject( CBaseObject *toRegister, SERIAL toAttach )
 	{
 		assert( toRegister != NULL );
 		ObjectType reg = toRegister->GetObjType();
@@ -264,7 +264,7 @@ namespace UOX
 	//	We're done with an object, or want to detach it from the world
 	//	This function allows us to detach it, but not destroy it
 	//	in case we want to attach it elsewise
-	bool ObjectFactory::UnregisterObject( cBaseObject *toRemove )
+	bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 	{
 		assert( toRemove != NULL );
 		OBJECTMAP_ITERATOR rIter, rUpper, rEnd;

@@ -201,7 +201,7 @@ CChar *cCharStuff::CreateNPCxyz( std::string npc, SI16 x, SI16 y, SI08 z, UI08 w
 //o--------------------------------------------------------------------------o
 void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 {
-	cTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber() );
+	CTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber() );
 	cCreated->SetRegion( tReg->GetRegionNum() );
 
 	for( UI08 z = 0; z < ALLSKILLS; ++z )
@@ -387,31 +387,6 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, SI16 originX, SI16 originY, SI
 
 	cCreated->SetLocation( xos, yos, targZ, worldNumber );
 	InitializeWanderArea( cCreated, xAway, yAway );
-}
-
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCharStuff::Split( CChar *k )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Cause NPC to split during combat
-//o---------------------------------------------------------------------------o
-void cCharStuff::Split( CChar *k )
-{
-	CChar *c = k->Dupe();
-	if( c == NULL )
-		return;
-
-	c->SetFTarg( NULL );
-	c->SetLocation( k->GetX() + 1, k->GetY(), k->GetZ() );
-	c->SetKills( 0 );
-	c->SetHP( k->GetMaxHP() );
-	c->SetStamina( k->GetMaxStam() );
-	c->SetMana( k->GetMaxMana() );
-	if( RandomNum( 0, 34 ) == 5 )
-		c->SetSplit( 1 );
-	else
-		c->SetSplit( 0 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1016,12 +991,12 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CChar * cCharStuff::getGuardingPet( CChar *mChar, cBaseObject *guarded )
+//|	Function	-	CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the pet guarding an item / character
 //o---------------------------------------------------------------------------o
-CChar * cCharStuff::getGuardingPet( CChar *mChar, cBaseObject *guarded )
+CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
 		return NULL;
@@ -1066,7 +1041,7 @@ bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 //o---------------------------------------------------------------------------o
 void cCharStuff::stopPetGuarding( CChar *pet )
 {
-	cBaseObject *petGuarding = pet->GetGuarding();
+	CBaseObject *petGuarding = pet->GetGuarding();
 	if( !ValidateObject( petGuarding ) )
 		return;
 
@@ -1179,7 +1154,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
 	if( nChange == 0 )	// NPCs CAN gain/lose karma
 		return;
 
-	cSocket *mSock = calcSocketObjFromChar( nCharID );
+	CSocket *mSock = calcSocketObjFromChar( nCharID );
 	if( nCharID->IsNpc() || mSock == NULL )
 		return;
 	if( nChange <= 25 )
@@ -1240,7 +1215,7 @@ void Fame( CChar *nCharID, SI16 nFame )
 		return;	// current fame is greater than target fame, and we're not dead
 	if( nChange == 0 )
 		return;
-	cSocket *mSock = calcSocketObjFromChar( nCharID );
+	CSocket *mSock = calcSocketObjFromChar( nCharID );
 	if( mSock == NULL || nCharID->IsNpc() )
 		return;
 	if( nChange <= 25 )

@@ -62,9 +62,9 @@ typedef std::vector< SubRegion * >						REGIONLIST;
 typedef std::vector< SubRegion * >::iterator			REGIONLIST_ITERATOR;
 typedef std::vector< SubRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
-typedef std::vector< cSocket * >						SOCKLIST;
-typedef std::vector< cSocket * >::iterator				SOCKLIST_ITERATOR;
-typedef std::vector< cSocket * >::const_iterator		SOCKLIST_CITERATOR;
+typedef std::vector< CSocket * >						SOCKLIST;
+typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
+typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
 typedef std::vector< std::string >						STRINGLIST;
 typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
@@ -82,11 +82,11 @@ typedef std::vector< CItem* >							ITEMLIST;
 typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
 typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
 //
-typedef std::map< cBaseObject *, UI32 >					QUEUEMAP;
-typedef std::map< cBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
-typedef std::map< cBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
+typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
+typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
+typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
 
-typedef void (TargetFunc)( cSocket *s );
+typedef void (TargetFunc)( CSocket *s );
 
 // December 27, 2000
 typedef struct __STARTLOCATIONDATA__

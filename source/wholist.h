@@ -18,15 +18,15 @@ private:
 	void ResetUpdateFlag( void );
 	void AddSerial( SERIAL toAdd );
 	void Delete( void );
-	void Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed );
+	void Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed );
 public:
 			cWhoList( bool trulyOnline = true );
 			~cWhoList();
 	void	FlagUpdate( void );
-	void	SendSocket( cSocket *toSendTo );
+	void	SendSocket( CSocket *toSendTo );
 	void	GMEnter( void );
 	void	GMLeave( void );
-	void	ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type );
+	void	ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type );
 	void	ZeroWho( void );
 	void	SetOnline( bool newValue );
 };

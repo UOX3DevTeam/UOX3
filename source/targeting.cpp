@@ -26,12 +26,12 @@
 namespace UOX
 {
 
-void tweakItemMenu( cSocket *s, CItem *j );
-void tweakCharMenu( cSocket *s, CChar *c );
+void tweakItemMenu( CSocket *s, CItem *j );
+void tweakCharMenu( CSocket *s, CChar *c );
 void OpenPlank( CItem *p );
 void MakeShop( CChar *c );
 
-void PlVBuy( cSocket *s )//PlayerVendors
+void PlVBuy( CSocket *s )//PlayerVendors
 {
 	VALIDATESOCKET( s );
 
@@ -83,7 +83,7 @@ void PlVBuy( cSocket *s )//PlayerVendors
 	s->statwindow( mChar );
 }
 
-void HandleGuildTarget( cSocket *s )
+void HandleGuildTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *trgChar	= NULL;
@@ -167,7 +167,7 @@ void HandleGuildTarget( cSocket *s )
 
 }
 
-void HandleSetScpTrig( cSocket *s )
+void HandleSetScpTrig( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	UI16 targTrig		= (UI16)s->TempInt();
@@ -199,8 +199,8 @@ void HandleSetScpTrig( cSocket *s )
 	}
 }
 
-void BuildHouse( cSocket *s, UI08 houseEntry );
-void BuildHouseTarget( cSocket *s )
+void BuildHouse( CSocket *s, UI08 houseEntry );
+void BuildHouseTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -211,7 +211,7 @@ void BuildHouseTarget( cSocket *s )
 	s->AddID1( 0 );
 }
 
-void AddScriptNpc( cSocket *s )
+void AddScriptNpc( CSocket *s )
 // Abaddon 17th February, 2000
 // Need to return the character we've made, else summon creature at least will fail
 // We make the char, but never pass it back up the chain
@@ -227,7 +227,7 @@ void AddScriptNpc( cSocket *s )
 	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber() );
 }
 
-void TeleTarget( cSocket *s )
+void TeleTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -235,7 +235,7 @@ void TeleTarget( cSocket *s )
 
 	const SERIAL serial = s->GetDWord( 7 );
 
-	cBaseObject *mObj = NULL;
+	CBaseObject *mObj = NULL;
 	if( serial >= BASEITEMSERIAL )
 		mObj = calcItemObjFromSer( serial );
 	else
@@ -278,7 +278,7 @@ void TeleTarget( cSocket *s )
 	} 
 }
 
-void DyeTarget( cSocket *s )
+void DyeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	int b;
@@ -348,7 +348,7 @@ void DyeTarget( cSocket *s )
 	}
 }
 
-void KeyTarget( cSocket *s )
+void KeyTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -433,7 +433,7 @@ void KeyTarget( cSocket *s )
 	}
 }
 
-void WstatsTarget( cSocket *s )
+void WstatsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -460,7 +460,7 @@ void WstatsTarget( cSocket *s )
 	wStat.Send( 4, false, INVALIDSERIAL );
 }
 
-void ColorsTarget( cSocket *s )
+void ColorsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -475,7 +475,7 @@ void ColorsTarget( cSocket *s )
 		s->sysmessage( 1031 );
 }
 
-void DvatTarget( cSocket *s )
+void DvatTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SERIAL serial	= s->GetDWord( 7 );
@@ -502,7 +502,7 @@ void DvatTarget( cSocket *s )
 		s->sysmessage( 1033 );
 }
 
-void InfoTarget( cSocket *s )
+void InfoTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -564,7 +564,7 @@ void InfoTarget( cSocket *s )
 	s->sysmessage( 1034 );
 }
 
-void TweakTarget( cSocket *s )
+void TweakTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SERIAL serial	= s->GetDWord( 7 );
@@ -579,7 +579,7 @@ void TweakTarget( cSocket *s )
 	}
 }
 
-void LoadCannon( cSocket *s )
+void LoadCannon( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -603,7 +603,7 @@ void LoadCannon( cSocket *s )
 	}
 }
 
-void Tiling( cSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
+void Tiling( CSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -654,225 +654,8 @@ void Tiling( cSocket *s )  // Clicking the corners of tiling calls this function
 	s->AddID2( 0 );
 }
 
-enum AreaCommandTypes
-{
-	ACT_DYE = 0,
-	ACT_WIPE,
-	ACT_INCX,
-	ACT_INCY,
-	ACT_INCZ,
-	ACT_SETX,
-	ACT_SETY,
-	ACT_SETZ,
-	ACT_SETTYPE,
-	ACT_NEWBIE,
-	ACT_SETSCPTRIG,
-	ACT_MOVABLE,
-	INVALID_CMD,
-	ACT_CMDCOUNT
-};
-
-bool AreaCommandFunctor( cBaseObject *a, UI32 &b, void *extraData )
-{
-	UI32 *ourData = (UI32 *)extraData;
-	UI32 x1			= ourData[0];
-	UI32 x2			= ourData[1];
-	UI32 y1			= ourData[2];
-	UI32 y2			= ourData[3];
-	UString *value	= (UString *)(ourData[4]);
-	if( ValidateObject( a ) && a->CanBeObjType( OT_ITEM ) )
-	{
-		CItem *i = static_cast< CItem * >(a);
-		if( i->GetCont() != NULL )
-			return true;
-		if( i->GetX() >= x1 && i->GetX() <= x2 && i->GetY() >= y1 && i->GetY() <= y2 )
-		{
-			switch( b )
-			{
-				case ACT_DYE:			i->SetColour( value->toUShort() );							break;	// dye
-				case ACT_WIPE:			i->Delete();												break;	// wipe
-				case ACT_INCX:			i->IncLocation( value->toShort(), 0 );						break;	// incx
-				case ACT_INCY:			i->IncLocation( 0, value->toShort() );						break;	// incy
-				case ACT_INCZ:			i->IncZ( value->toByte() );									break;	// incz
-				case ACT_SETX:			i->SetLocation( value->toShort(), i->GetY(), i->GetZ() );	break;	// setx
-				case ACT_SETY:			i->SetLocation( i->GetX(), value->toShort(), i->GetZ() );	break;	// sety
-				case ACT_SETZ:			i->SetZ( value->toByte() );									break;	// setz
-				case ACT_SETTYPE:		i->SetType( static_cast< ItemTypes >(value->toUByte()) );	break;	// settype
-				case ACT_NEWBIE:		i->SetNewbie( value->toUShort() != 0 );						break;	// newbie
-				case ACT_SETSCPTRIG:	i->SetScriptTrigger( value->toUShort() );					break;	// set script #
-				case ACT_MOVABLE:		i->SetMovable( value->toByte() );							break;	// movable property
-				default:																			break;
-			}
-			// process command here!
-		}
-	}
-	return true;
-}
-void AreaCommand( cSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	if( s->ClickX() == -1 && s->ClickY() == -1 )
-	{
-		s->ClickX( s->GetWord( 11 ) );
-		s->ClickY( s->GetWord( 13 ) );
-		s->target( 0, TARGET_AREACOMMAND, 1040 );
-		return;
-	}
-	
-	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
-	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
-	
-	s->ClickX( -1 );
-	s->ClickY( -1 );
-	
-	SI16 c;
-	
-	if( x1 > x2 ) 
-	{ 
-		c = x1;
-		x1 = x2;
-		x2 = c;
-	}
-	if( y1 > y2 ) 
-	{ 
-		c = y1; 
-		y1 = y2; 
-		y2 = c;
-	}
-
-	const std::string areaCommandStrings[ACT_CMDCOUNT] =
-	{
-		"DYE",
-		"WIPE",
-		"INCX",
-		"INCY",
-		"INCZ",
-		"SETX",
-		"SETY",
-		"SETZ",
-		"SETTYPE",
-		"NEWBIE",
-		"SETSCPTRIG",
-		"MOVABLE",
-		""
-	};
-
-	AreaCommandTypes cmdType = INVALID_CMD;
-	UString orgString( s->XText() );
-	UString key, value;
-
-	if( orgString.sectionCount( " " ) != 0 )
-	{
-		key		= orgString.section( " ", 0, 0 ).stripWhiteSpace();
-		value	= orgString.section( " ", 1, 1 ).stripWhiteSpace();
-	}
-	else
-		key = orgString;
-
-	for( AreaCommandTypes k = ACT_DYE; k < INVALID_CMD; k = (AreaCommandTypes)((int)k + 1) )
-	{
-		if( key == areaCommandStrings[k] )
-		{
-			cmdType = k;
-			break;
-		}
-	}
-
-	if( cmdType == INVALID_CMD )
-	{
-		s->sysmessage( 1753 );
-		return;
-	}
-
-	UI32 toPass[5];
-	toPass[0]	= x1;
-	toPass[1]	= x2;
-	toPass[2]	= y1;
-	toPass[3]	= y2;
-	toPass[4]	= (UI32)&value;
-	UI32 b		= cmdType;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, toPass, &AreaCommandFunctor );
-}
-
-bool WipeFunctor( cBaseObject *a, UI32 &b, void *extraData )
-{
-	UI32 *ourData = (UI32 *)extraData;
-	UI32 x1			= ourData[0];
-	UI32 x2			= ourData[1];
-	UI32 y1			= ourData[2];
-	UI32 y2			= ourData[3];
-	bool wipeVal	= (ourData[4] == 1);
-	bool shouldWipe	= wipeVal;
-	if( ValidateObject( a ) && a->CanBeObjType( OT_ITEM ) )
-	{
-		CItem *i = static_cast< CItem * >(a);
-		if( i->isWipeable() && i->GetCont() == NULL )
-		{
-			UI16 iX = i->GetX();
-			UI16 iY = i->GetY();
-			if( iX >= x1 && iX <= x2 && iY >= y1 && iY <= y2 )
-				shouldWipe = !wipeVal;
-			if( shouldWipe )
-				i->Delete();
-		}
-	}
-	return true;
-}
-
-void Wiping( cSocket *s )  // Clicking the corners of wiping calls this function - Crwth 01/11/1999
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	if( s->ClickX() == -1 && s->ClickY() == -1 )
-	{
-		s->ClickX( s->GetWord( 11 ) );
-		s->ClickY( s->GetWord( 13 ) );
-		if( s->AddID1() ) 
-			s->target( 0, TARGET_WIPING, 1039 );
-		else 
-			s->target( 0, TARGET_WIPING, 1040 );
-		return;
-	}
-	
-	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
-	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
-	
-	SI16 c;
-	
-	if( x1 > x2 ) 
-	{ 
-		c = x1;
-		x1 = x2;
-		x2 = c;
-	}
-	if( y1 > y2 ) 
-	{ 
-		c = y1; 
-		y1 = y2; 
-		y2 = c;
-	}
-
-	bool iWipe = (s->AddID1() == 1);
-	UI32 toPass[5];
-	toPass[0]	= x1;
-	toPass[1]	= x2;
-	toPass[2]	= y1;
-	toPass[3]	= y2;
-	toPass[4]	= (iWipe ? 1 : 0);
-	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, toPass, &WipeFunctor );
-	s->ClickX( -1 );
-	s->ClickY( -1 );
-	s->AddID1( 0 );
-}
-
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	void newCarveTarget( cSocket *s, CItem *i )
+//|	Function/Class	-	void newCarveTarget( CSocket *s, CItem *i )
 //|	Date			-	09/22/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
@@ -887,7 +670,7 @@ void Wiping( cSocket *s )  // Clicking the corners of wiping calls this function
 //|									& made all body parts that are carved from human corpse	
 //|									lie in same direction.
 //o--------------------------------------------------------------------------o
-void newCarveTarget( cSocket *s, CItem *i )
+void newCarveTarget( CSocket *s, CItem *i )
 {
 	VALIDATESOCKET( s );
 	bool deletecorpse = false;
@@ -1007,7 +790,7 @@ void newCarveTarget( cSocket *s, CItem *i )
 	}
 }
 
-void CorpseTarget( cSocket *s )
+void CorpseTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -1030,7 +813,7 @@ void CorpseTarget( cSocket *s )
 		s->sysmessage( 393 );
 }
 
-void SwordTarget( cSocket *s )
+void SwordTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
@@ -1161,7 +944,7 @@ void SwordTarget( cSocket *s )
 	s->sysmessage( 1050 );
 }
 
-void MakeShopTarget( cSocket *s )
+void MakeShopTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1174,7 +957,7 @@ void MakeShopTarget( cSocket *s )
 	s->sysmessage( 1069 );
 }
 
-void AttackTarget( cSocket *s )
+void AttackTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *target	= static_cast<CChar *>(s->TempObj());
@@ -1197,7 +980,7 @@ void AttackTarget( cSocket *s )
 	}
 }
 
-void FollowTarget( cSocket *s )
+void FollowTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *char1	= static_cast<CChar *>(s->TempObj());
@@ -1210,7 +993,7 @@ void FollowTarget( cSocket *s )
 	char1->SetNpcWander( 1 );
 }
 
-void TransferTarget( cSocket *s )
+void TransferTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *char1 = static_cast<CChar *>(s->TempObj());
@@ -1242,7 +1025,7 @@ void TransferTarget( cSocket *s )
 	char1->SetNpcWander( 0 );
 }
 
-bool BuyShop( cSocket *s, CChar *c )
+bool BuyShop( CSocket *s, CChar *c )
 {
 	if( s == NULL )
 		return false;
@@ -1272,7 +1055,7 @@ bool BuyShop( cSocket *s, CChar *c )
 	return true;
 }
 
-void AxeTarget( cSocket *s )
+void AxeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -1314,7 +1097,7 @@ void NpcResurrectTarget( CChar *i )
 		Console.Error( 2, Dictionary->GetEntry( 1079 ).c_str(), i );
 		return;
 	}
-	cSocket *mSock = calcSocketObjFromChar( i );
+	CSocket *mSock = calcSocketObjFromChar( i );
 	// the char is a PC, but not logged in.....
 	if( mSock != NULL )
 	{
@@ -1373,7 +1156,7 @@ void NpcResurrectTarget( CChar *i )
 
 
 void killKeys( SERIAL targSerial );
-void HouseOwnerTarget( cSocket *s )
+void HouseOwnerTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1385,7 +1168,7 @@ void HouseOwnerTarget( cSocket *s )
 		return;
 
 	CChar *own		= calcCharObjFromSer( o_serial );
-	cSocket *oSock	= calcSocketObjFromChar( own );
+	CSocket *oSock	= calcSocketObjFromChar( own );
 	CItem *sign		= static_cast<CItem *>(s->TempObj());
 	CItem *house	= calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );
 	s->TempObj( NULL );
@@ -1407,7 +1190,7 @@ void HouseOwnerTarget( cSocket *s )
 	oSock->sysmessage( 1082, mChar->GetName().c_str() );
 }
 
-void HouseEjectTarget( cSocket *s )
+void HouseEjectTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1428,7 +1211,7 @@ void HouseEjectTarget( cSocket *s )
 }
 
 UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
-void HouseBanTarget( cSocket *s )
+void HouseBanTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	// first, eject the player
@@ -1448,7 +1231,7 @@ void HouseBanTarget( cSocket *s )
 	}
 }
 
-void HouseFriendTarget( cSocket *s )
+void HouseFriendTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1459,7 +1242,7 @@ void HouseFriendTarget( cSocket *s )
 		UI08 r = AddToHouse( h, c );
 		if( r == 1 ) 
 		{
-			cSocket *cSock = calcSocketObjFromChar( c );
+			CSocket *cSock = calcSocketObjFromChar( c );
 			if( cSock != NULL )
 				cSock->sysmessage( 1089 );
 			s->sysmessage( 1088, c->GetName().c_str() );
@@ -1472,7 +1255,7 @@ void HouseFriendTarget( cSocket *s )
 }
 
 bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode = 0 );
-void HouseUnlistTarget( cSocket *s )
+void HouseUnlistTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
@@ -1488,86 +1271,35 @@ void HouseUnlistTarget( cSocket *s )
 	}
 }
 
-void ShowSkillTarget( cSocket *s )
+void ShowSkillTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( p ) )
+	CChar *mChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( !ValidateObject( mChar ) )
 	{
 		s->sysmessage( 1103 );
 		return;
 	}
-	char spc[2]="\x20";
-	char temp[1024];
-	int j, k, zz, ges = 0;
-	char skill_info[(ALLSKILLS+1)*40];
-	UString sk;
 
-	SI32 z = s->TempInt();
-	if( z < 0 || z > 3 ) 
-		z = 0;
-	if( z == 2 || z == 3 ) 
-		sprintf( skill_info, "%s's skills:", p->GetName().c_str() ); 
-	else 
-		sprintf( skill_info, "%s's baseskills:", p->GetName().c_str() );
-	size_t b = p->GetName().size() + 11;
-	if( b > 23 ) 
-		b = 23;
+	SI32 dispType = s->TempInt();
+	UI16 skillVal;
 
-	UI08 c;
-	for( c = b; c <= 26; ++c )
-	{
-		strcpy( temp, spc );
-		strcpy( &skill_info[strlen( skill_info )], temp );
-	}
-
-	sk = UString::number( ges );
-	sprintf( temp, "sum: %s", sk.c_str() );
-	strcpy( &skill_info[strlen( skill_info )], temp );
-	for( UI08 a = 0; a < ALLSKILLS; ++a )
-	{
-		if( z == 0 || z == 1 ) 
-			k = p->GetBaseSkill( a ); 
-		else 
-			k = p->GetSkill( a );
-		if( z == 0 || z == 2 ) 
-			zz = 9; 
-		else 
-			zz = -1;
-
-		if( k > zz ) // show only if skills >= 1
+	GumpDisplay showSkills( s, 300, 300 );
+	showSkills.SetTitle( "Skills Info" );
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		{
-			if( z == 2 || z == 3 ) 
-				j = p->GetSkill( a )/10; 
+		if( dispType == 0 || dispType == 1 )
+			skillVal = mChar->GetBaseSkill( i );
 			else 
-				j = p->GetBaseSkill( a )/10; // get skill value
-			sk = UString::number( j );	// skill value string in sk
-			ges += j;
-			sprintf( temp, "%s%s%s", skillname[a], spc, sk.c_str() );
-			strcpy( &skill_info[strlen( skill_info )], temp );
+			skillVal = mChar->GetSkill( i );
 
-			b = strlen( skillname[a] ) + sk.length() + 1; // it doesn't like \n's, so insert spaces till end of line
-			if( b > 23 )
-				b = 23;
-			for( c = b; c <= 26; ++c )
-			{
-				strcpy( temp, spc );
-				strcpy( &skill_info[strlen( skill_info )], temp );
-			}
-		}
+		if( skillVal > 0 || dispType%2 == 0 )
+			showSkills.AddData( skillname[i], UString::number( (float)skillVal/10 ), 8 );
 	}
-
-	sk = UString::number( ges );
-	sprintf( temp, "sum: %s  ", sk.c_str() );
-	strcpy( &skill_info[ strlen( skill_info )], temp );
-
-	CPUpdScroll toSend( 2 );
-	toSend.AddString( skill_info );
-	toSend.Finalize();
-	s->Send( &toSend );
+	showSkills.Send( 4, false, INVALIDSERIAL );
 }
 
-void FriendTarget( cSocket *s )
+void FriendTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1608,12 +1340,12 @@ void FriendTarget( cSocket *s )
 	pet->AddFriend( targChar );
 	s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
 
-	cSocket *targSock = calcSocketObjFromChar( targChar );
+	CSocket *targSock = calcSocketObjFromChar( targChar );
 	if( targSock != NULL )
 		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
 }
 
-void GuardTarget( cSocket *s )
+void GuardTarget( CSocket *s )
 //PRE:	Pet has been commanded to guard
 //POST: Pet guards person, if owner currently
 //DEV:	Abaddon
@@ -1673,7 +1405,7 @@ void GuardTarget( cSocket *s )
 	}
 }
 
-void HouseLockdown( cSocket *s ) // Abaddon
+void HouseLockdown( CSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house
 // POST:	either locks down the item, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
@@ -1712,7 +1444,7 @@ void HouseLockdown( cSocket *s ) // Abaddon
 		s->sysmessage( 1108 );
 }
 
-void HouseRelease( cSocket *s ) // Abaddon
+void HouseRelease( CSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
 // POST:	either releases the item from lockdown, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
@@ -1745,7 +1477,7 @@ void HouseRelease( cSocket *s ) // Abaddon
 		s->sysmessage( 1108 );
 }
 
-void MakeTownAlly( cSocket *s )
+void MakeTownAlly( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1770,7 +1502,7 @@ void MakeTownAlly( cSocket *s )
 //	}
 }
 
-void MakeStatusTarget( cSocket *sock )
+void MakeStatusTarget( CSocket *sock )
 {
 	VALIDATESOCKET( sock );
 	CChar *targetChar = calcCharObjFromSer( sock->GetDWord( 7 ) );
@@ -1892,7 +1624,7 @@ void MakeStatusTarget( cSocket *sock )
 	delete [] playerName;
 }
 
-void SmeltTarget( cSocket *s )
+void SmeltTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
@@ -1940,7 +1672,7 @@ void SmeltTarget( cSocket *s )
 	i->Delete();
 }
 
-void VialTarget( cSocket *mSock )
+void VialTarget( CSocket *mSock )
 {
 	VALIDATESOCKET( mSock );
 	SERIAL targSerial = mSock->GetDWord( 7 );
@@ -2007,7 +1739,7 @@ void VialTarget( cSocket *mSock )
 				}
 				else
 				{
-					cSocket *nCharSocket = calcSocketObjFromChar( targChar );
+					CSocket *nCharSocket = calcSocketObjFromChar( targChar );
 					nCharSocket->sysmessage( 746, mChar->GetName().c_str() );
 				}
 				if( Combat->WillResultInCriminal( mChar, targChar ) )
@@ -2026,7 +1758,7 @@ void VialTarget( cSocket *mSock )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void MultiTarget( cSocket *s )
+//|	Function		-	void MultiTarget( CSocket *s )
 //|	Date			-	Unknown
 //|	Developers		-	Unknown
 //|	Organization	-	UOX3 DevTeam
@@ -2092,11 +1824,9 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SETSCPTRIG:		HandleSetScpTrig( tSock );				break;
 					case TARGET_AXE:			AxeTarget( tSock );						break;
 					case TARGET_SWORD:			SwordTarget( tSock );					break;
-					case TARGET_AREACOMMAND:	AreaCommand( tSock );					break;
 					case TARGET_LOADCANNON:		LoadCannon( tSock );					break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;
-					case TARGET_WIPING:			Wiping( tSock );						break;
 					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;
 					// Vendors
 					case TARGET_MAKESHOP:		MakeShopTarget( tSock );				break;

@@ -46,7 +46,7 @@ const UI08		DEFTOWN_FINDBIGORE			= 0;
 const UI08		DEFTOWN_FINDCOLOURORE		= 0;
 const UI16		DEFTOWN_NUMGUARDS			= 10;
 
-cTownRegion::cTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), priv( DEFTOWN_PRIV ), 
+CTownRegion::CTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), priv( DEFTOWN_PRIV ), 
 regionNum( region ), midilist( DEFTOWN_MIDILIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
 taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
@@ -68,7 +68,7 @@ numGuards( DEFTOWN_NUMGUARDS )
 	guardList	= "guard";
 }
 
-cTownRegion::~cTownRegion()
+CTownRegion::~CTownRegion()
 {
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
@@ -76,7 +76,7 @@ cTownRegion::~cTownRegion()
 	locations.resize( 0 );
 }
 
-bool cTownRegion::Load( Script *ss )
+bool CTownRegion::Load( Script *ss )
 // ss is a script section containing all the data!
 {
 	size_t location = 0xFFFFFFFF;
@@ -169,7 +169,7 @@ bool cTownRegion::Load( Script *ss )
 	}
 	return true;
 }
-bool cTownRegion::Save( std::ofstream &outStream )
+bool CTownRegion::Save( std::ofstream &outStream )
 // entry is the region #, fp is the file to save in
 {
 	outStream << "[TOWNREGION " << static_cast<UI16>(regionNum) << "]" << std::endl << "{" << std::endl;
@@ -191,13 +191,13 @@ bool cTownRegion::Save( std::ofstream &outStream )
 	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << std::endl;
 	outStream << "NUMGUARDS=" << numGuards << std::endl;
 
-	std::vector< townPers >::iterator mIter;
+	std::vector< townPers >::const_iterator mIter;
 	for( mIter = townMember.begin(); mIter != townMember.end(); ++mIter )
 	{
 		outStream << "MEMBER=" << std::hex << "0x" << (*mIter).townMember << std::endl;
 		outStream << "VOTE=" << "0x" << (*mIter).targVote << std::dec << std::endl;
 	}
-	std::vector< UI08 >::iterator aIter;
+	std::vector< UI08 >::const_iterator aIter;
 	for( aIter = alliedTowns.begin(); aIter != alliedTowns.end(); ++aIter )
 	{
 		outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << std::endl;
@@ -205,10 +205,10 @@ bool cTownRegion::Save( std::ofstream &outStream )
 	outStream << "}" << std::endl << std::endl;
 	return true;
 }
-void cTownRegion::CalcNewMayor( void )
+void CTownRegion::CalcNewMayor( void )
 // There has got to be a better way than this hideous O(n^2) algy
 {
-	if( townMember.size() == 0 )
+	if( townMember.empty() )
 		return;
 	// if there are no members, there are no new mayors
 	std::vector< int > votes;
@@ -232,7 +232,7 @@ void cTownRegion::CalcNewMayor( void )
 	CChar *oldMayor = GetMayor();
 	if( mayorSerial == townMember[maxIndex].townMember )
 	{
-		cSocket *targSock = calcSocketObjFromChar( calcCharObjFromSer( mayorSerial ) );
+		CSocket *targSock = calcSocketObjFromChar( calcCharObjFromSer( mayorSerial ) );
 		if( targSock != NULL )
 			targSock->sysmessage( 1119 );
 		// welcome the mayor back for another term
@@ -265,19 +265,19 @@ void cTownRegion::CalcNewMayor( void )
 	else
 		TellMembers( 1123 );
 }
-CChar * cTownRegion::GetMayor( void )
+CChar * CTownRegion::GetMayor( void )
 // returns the mayor character
 {
 	return calcCharObjFromSer( mayorSerial );
 }
 
-SERIAL cTownRegion::GetMayorSerial( void ) const
+SERIAL CTownRegion::GetMayorSerial( void ) const
 // returns the mayor's serial
 {
 	return mayorSerial;
 }
 
-bool cTownRegion::AddAsTownMember( CChar& toAdd )
+bool CTownRegion::AddAsTownMember( CChar& toAdd )
 // toAdd is the character to add
 {
 	if( Races->CompareByRace( toAdd.GetRace(), race ) == 1 )	// if we're racial enemies
@@ -296,7 +296,7 @@ bool cTownRegion::AddAsTownMember( CChar& toAdd )
 	toAdd.SetTownpriv( 1 );	// set as resident
 	return true;
 }
-bool cTownRegion::RemoveTownMember( CChar& toAdd )
+bool CTownRegion::RemoveTownMember( CChar& toAdd )
 {
 	if( toAdd.GetTown() != regionNum )
 		return false;	// not in our town
@@ -314,7 +314,7 @@ bool cTownRegion::RemoveTownMember( CChar& toAdd )
 	return false;	// we're not in our town
 }
 
-bool cTownRegion::InitFromScript( ScriptSection *toScan )
+bool CTownRegion::InitFromScript( ScriptSection *toScan )
 {
 	UString tag;
 	UString data;
@@ -402,7 +402,7 @@ bool cTownRegion::InitFromScript( ScriptSection *toScan )
 			case 'm':
 			case 'M':
 				if( UTag == "MIDILIST" )
-					midilist = data.toLong();
+					midilist = data.toUShort();
 				else if( UTag == "MAGICDAMAGE" )
 					CanCastAggressive( (data.toUByte() == 1) );
 				else if( UTag == "MARK" )
@@ -487,8 +487,8 @@ bool cTownRegion::InitFromScript( ScriptSection *toScan )
 					else
 					{
 						UI16 regNum				= static_cast<UI16>(spawnregions.size());
-						spawnregions.push_back( new cSpawnRegion( regNum ) );
-						cSpawnRegion *spawnReg	= spawnregions[regNum];
+						spawnregions.push_back( new CSpawnRegion( regNum ) );
+						CSpawnRegion *spawnReg	= spawnregions[regNum];
 						if( spawnReg != NULL )
 						{
 							spawnReg->SetX1( locations[locations.size() - 1].x1 );
@@ -540,75 +540,75 @@ bool cTownRegion::InitFromScript( ScriptSection *toScan )
 	return true;
 }
 
-bool cTownRegion::IsGuarded( void ) const
+bool CTownRegion::IsGuarded( void ) const
 {
 	return ( ( priv&0x01 ) == 0x01 );
 }
 
-bool cTownRegion::CanMark( void ) const
+bool CTownRegion::CanMark( void ) const
 {
 	return ( ( priv&0x02 ) == 0x02 );
 }
 
-bool cTownRegion::CanGate( void ) const
+bool CTownRegion::CanGate( void ) const
 {
 	return ( ( priv&0x04 ) == 0x04 );
 }
 
-bool cTownRegion::CanRecall( void ) const
+bool CTownRegion::CanRecall( void ) const
 {
 	return ( ( priv&0x08 ) == 0x08 );
 }
 
-bool cTownRegion::CanCastAggressive( void ) const
+bool CTownRegion::CanCastAggressive( void ) const
 {
 	return ( ( priv&0x40 ) == 0x40 );
 }
 
-std::string cTownRegion::GetName( void ) const
+std::string CTownRegion::GetName( void ) const
 {
 	return name;
 }
-std::string cTownRegion::GetOwner( void ) const
+std::string CTownRegion::GetOwner( void ) const
 {
 	return guardowner;
 }
 
-weathID cTownRegion::GetWeather( void ) const
+weathID CTownRegion::GetWeather( void ) const
 {
 	return weather;
 }
 
-SI32 cTownRegion::GetGoodSell( UI08 index ) const
+SI32 CTownRegion::GetGoodSell( UI08 index ) const
 {
 	return goodsell[index];
 }
-SI32 cTownRegion::GetGoodBuy( UI08 index ) const
+SI32 CTownRegion::GetGoodBuy( UI08 index ) const
 {
 	return goodbuy[index];
 }
-SI32 cTownRegion::GetGoodRnd1( UI08 index ) const
+SI32 CTownRegion::GetGoodRnd1( UI08 index ) const
 {
 	return goodrnd1[index];
 }
-SI32 cTownRegion::GetGoodRnd2( UI08 index ) const
+SI32 CTownRegion::GetGoodRnd2( UI08 index ) const
 {
 	return goodrnd2[index];
 }
 
-SI32 cTownRegion::GetMidiList( void ) const
+UI16 CTownRegion::GetMidiList( void ) const
 {
 	return midilist;
 }
 
-CChar * cTownRegion::GetRandomGuard( void )
+CChar * CTownRegion::GetRandomGuard( void )
 {
 	CChar *ourGuard = Npcs->CreateRandomNPC( guardList );
 	ourGuard->SetNPCAiType( aiGUARD );
 	return ourGuard;
 }
 
-bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
+bool CTownRegion::DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag )
 {
 	if( flag == MAYOR )
 	{
@@ -652,7 +652,7 @@ bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
 	return true;
 }
 
-bool cTownRegion::IsMemberOfTown( CChar *player ) const
+bool CTownRegion::IsMemberOfTown( CChar *player ) const
 {
 	if( !ValidateObject( player ) )
 		return false;
@@ -664,7 +664,7 @@ bool cTownRegion::IsMemberOfTown( CChar *player ) const
 	return false;
 }
 
-void cTownRegion::SendEnemyGump( cSocket *sock )
+void CTownRegion::SendEnemyGump( CSocket *sock )
 {
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
@@ -694,13 +694,13 @@ void cTownRegion::SendEnemyGump( cSocket *sock )
 	toSend.Finalize();
 	sock->Send( &toSend );
 }
-void cTownRegion::SendBasicInfo( cSocket *sock )
+void CTownRegion::SendBasicInfo( CSocket *sock )
 {
 	GumpDisplay BasicGump( sock );
 	BasicGump.SetTitle( "Basic Townstone gump" );
 	BasicGump.Send( 4, false, INVALIDSERIAL );
 }
-void cTownRegion::SendPotentialMember( cSocket *sock )
+void CTownRegion::SendPotentialMember( CSocket *sock )
 {
 	UnicodeTypes sLang	= sock->Language();
 	CPSendGumpMenu toSend;
@@ -734,7 +734,7 @@ void cTownRegion::SendPotentialMember( cSocket *sock )
 	sock->Send( &toSend );
 }
 
-void cTownRegion::SendMayorGump( cSocket *sock )
+void CTownRegion::SendMayorGump( CSocket *sock )
 {
 	UnicodeTypes sLang	= sock->Language();
 	CPSendGumpMenu toSend;
@@ -786,7 +786,7 @@ void cTownRegion::SendMayorGump( cSocket *sock )
 	sock->Send( &toSend );
 }
 
-void cTownRegion::SendDefaultGump( cSocket *sock )
+void CTownRegion::SendDefaultGump( CSocket *sock )
 {
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
@@ -844,12 +844,12 @@ void cTownRegion::SendDefaultGump( cSocket *sock )
 	toSend.Finalize();
 	sock->Send( &toSend );
 }
-size_t cTownRegion::GetPopulation( void ) const
+size_t CTownRegion::GetPopulation( void ) const
 {
 	return townMember.size();
 }
 
-void cTownRegion::DisplayTownMembers( cSocket *sock )
+void CTownRegion::DisplayTownMembers( CSocket *sock )
 {
 	GumpDisplay townListing( sock, 300, 300 );
 	townListing.SetTitle( Dictionary->GetEntry( 1149, sock->Language() ) );
@@ -873,7 +873,7 @@ void cTownRegion::DisplayTownMembers( cSocket *sock )
 	townListing.Send( 4, false, INVALIDSERIAL );
 }
 
-bool cTownRegion::VoteForMayor( cSocket *sock )
+bool CTownRegion::VoteForMayor( CSocket *sock )
 {
 	SERIAL serial	= sock->GetDWord( 7 );
 	CChar *srcChar	= sock->CurrcharObj();
@@ -907,7 +907,7 @@ bool cTownRegion::VoteForMayor( cSocket *sock )
 	}
 }
 
-SERIAL cTownRegion::FindPositionOf( CChar& toAdd )
+SERIAL CTownRegion::FindPositionOf( CChar& toAdd )
 {
 	for( SERIAL counter = 0; counter < townMember.size(); ++counter )
 	{
@@ -917,12 +917,12 @@ SERIAL cTownRegion::FindPositionOf( CChar& toAdd )
 	return INVALIDSERIAL;
 }
 
-UI16 cTownRegion::GetResourceID( void ) const
+UI16 CTownRegion::GetResourceID( void ) const
 {
 	return taxedResource;
 }
 
-bool cTownRegion::DonateResource( cSocket *s, SI32 amount )
+bool CTownRegion::DonateResource( CSocket *s, SI32 amount )
 {
 	goldReserved += amount;
 	CChar *tChar = s->CurrcharObj();
@@ -939,7 +939,7 @@ bool cTownRegion::DonateResource( cSocket *s, SI32 amount )
 	return true;
 }
 
-bool cTownRegion::PurchaseGuard( cSocket *sock, UI08 number )
+bool CTownRegion::PurchaseGuard( CSocket *sock, UI08 number )
 {
 	if( number * 10000 < goldReserved )	// if we don't have the cash
 	{
@@ -953,7 +953,7 @@ bool cTownRegion::PurchaseGuard( cSocket *sock, UI08 number )
 	return true;
 }
 
-bool cTownRegion::ViewBudget( cSocket *sock )
+bool CTownRegion::ViewBudget( CSocket *sock )
 {
 	UnicodeTypes sLang = sock->Language();
 	GumpDisplay Budget( sock, 300, 300 );
@@ -966,7 +966,7 @@ bool cTownRegion::ViewBudget( cSocket *sock )
 	return true;
 }
 
-bool cTownRegion::PeriodicCheck( void )
+bool CTownRegion::PeriodicCheck( void )
 {
 	time_t now;
 	time( &now );
@@ -1016,7 +1016,7 @@ bool cTownRegion::PeriodicCheck( void )
 		timeSinceGuardsPaid = now;
 	}
 
-	if( now > timeToNextPoll && townMember.size() != 0 )
+	if( now > timeToNextPoll && !townMember.empty() )
 	{
 		TellMembers( 1165 );
 		for( size_t counter = 0; counter < townMember.size(); ++counter )
@@ -1037,12 +1037,12 @@ bool cTownRegion::PeriodicCheck( void )
 	return true;
 }	
 
-WorldType cTownRegion::GetAppearance( void ) const
+WorldType CTownRegion::GetAppearance( void ) const
 {
 	return visualAppearance;
 }
 
-void cTownRegion::ViewTaxes( cSocket *sock )
+void CTownRegion::ViewTaxes( CSocket *sock )
 {
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
@@ -1071,12 +1071,12 @@ void cTownRegion::ViewTaxes( cSocket *sock )
 	sock->Send( &toSend );
 }
 
-SI16 cTownRegion::GetHealth( void ) const
+SI16 CTownRegion::GetHealth( void ) const
 {
 	return health;
 }
 
-void cTownRegion::DoDamage( SI16 reduction )
+void CTownRegion::DoDamage( SI16 reduction )
 {
 	health -= reduction;
 	if( health < 0 )
@@ -1092,7 +1092,7 @@ void cTownRegion::DoDamage( SI16 reduction )
 	
 }
 
-bool cTownRegion::IsAlliedTown( UI08 townToCheck ) const
+bool CTownRegion::IsAlliedTown( UI08 townToCheck ) const
 {
 	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
 	{
@@ -1102,7 +1102,7 @@ bool cTownRegion::IsAlliedTown( UI08 townToCheck ) const
 	return false;
 }
 
-bool cTownRegion::MakeAlliedTown( UI08 townToMake )
+bool CTownRegion::MakeAlliedTown( UI08 townToMake )
 {
 	if( regionNum == townToMake )
 		return false;
@@ -1123,7 +1123,7 @@ bool cTownRegion::MakeAlliedTown( UI08 townToMake )
 
 }
 
-void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower left corner)
+void CTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower left corner)
 {
 	char msg[512];
 	char tmpMsg[512];
@@ -1131,7 +1131,7 @@ void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 	for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 	{
 		CChar *targetChar = calcCharObjFromSer( townMember[memberCounter].townMember );
-		cSocket *targetSock = calcSocketObjFromChar( targetChar );
+		CSocket *targetSock = calcSocketObjFromChar( targetChar );
 		if( targetSock != NULL )
 		{
 			std::string txt = Dictionary->GetEntry( dictEntry, targetSock->Language() );
@@ -1156,12 +1156,12 @@ void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 	}
 }
 
-RACEID cTownRegion::GetRace( void ) const
+RACEID CTownRegion::GetRace( void ) const
 {
 	return race;
 }
 
-void cTownRegion::SendAlliedTowns( cSocket *sock )
+void CTownRegion::SendAlliedTowns( CSocket *sock )
 {
 	GumpDisplay Ally( sock, 300, 300 );
 	char temp[100];
@@ -1173,7 +1173,7 @@ void cTownRegion::SendAlliedTowns( cSocket *sock )
 	Ally.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTownRegion::ForceEarlyElection( void )
+void CTownRegion::ForceEarlyElection( void )
 {
 	time_t now;
 	time(&now);
@@ -1186,7 +1186,7 @@ void cTownRegion::ForceEarlyElection( void )
 		mayor->SetTownpriv( 1 );
 }
 
-void cTownRegion::SendEnemyTowns( cSocket *sock )
+void CTownRegion::SendEnemyTowns( CSocket *sock )
 {
 	GumpDisplay Enemy( sock, 300, 300 );
 	char temp[100];
@@ -1204,7 +1204,7 @@ void cTownRegion::SendEnemyTowns( cSocket *sock )
 	Enemy.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTownRegion::Possess( cTownRegion *possessorTown )
+void CTownRegion::Possess( CTownRegion *possessorTown )
 {
 	possessorTown->SetRace( race );
 	possessorTown->TellMembers( 1175 );
@@ -1229,55 +1229,55 @@ void cTownRegion::Possess( cTownRegion *possessorTown )
 	townMember.resize( 0 );
 }
 
-long cTownRegion::GetReserves( void ) const
+long CTownRegion::GetReserves( void ) const
 {
 	return resourceCollected;
 }
-long cTownRegion::GetTaxes( void ) const
+long CTownRegion::GetTaxes( void ) const
 {
 	return goldReserved;
 }
-void cTownRegion::SetTaxesLeft( long newValue )
+void CTownRegion::SetTaxesLeft( long newValue )
 {
 	goldReserved = newValue;
 }
-void cTownRegion::SetReserves( long newValue )
+void CTownRegion::SetReserves( long newValue )
 {
 	resourceCollected = newValue;
 }
-void cTownRegion::SetRace( RACEID newRace )
+void CTownRegion::SetRace( RACEID newRace )
 {
 	race = newRace;
 }
-SI16 cTownRegion::GetMinColourSkill( void ) const
+SI16 CTownRegion::GetMinColourSkill( void ) const
 {
 	return minColourSkill;
 }
-UI08 cTownRegion::GetChanceBigOre( void ) const
+UI08 CTownRegion::GetChanceBigOre( void ) const
 {
 	return chanceFindBigOre;
 }
-UI08 cTownRegion::GetChanceColourOre( void ) const
+UI08 CTownRegion::GetChanceColourOre( void ) const
 {
 	return chanceColourOre;
 }
-bool cTownRegion::RemoveCharacter( size_t position )
+bool CTownRegion::RemoveCharacter( size_t position )
 {
 	townMember.erase( townMember.begin() + position );
 	return true;
 }
-size_t cTownRegion::GetNumOrePreferences( void ) const
+size_t CTownRegion::GetNumOrePreferences( void ) const
 {
 	return orePreferences.size();
 }
-const orePref *cTownRegion::GetOrePreference( size_t targValue ) const
+const orePref *CTownRegion::GetOrePreference( size_t targValue ) const
 {
 	if( targValue >= orePreferences.size() )
 		return NULL;
 	return &orePreferences[targValue];
 }
 
-SI32 cTownRegion::GetOreChance( void ) const
+SI32 CTownRegion::GetOreChance( void ) const
 {
 	int sumReturn = 0;
 	std::vector< orePref >::const_iterator oIter;
@@ -1285,120 +1285,120 @@ SI32 cTownRegion::GetOreChance( void ) const
 		sumReturn += (*oIter).percentChance;
 	return sumReturn;
 }
-bool cTownRegion::IsDungeon( void ) const
+bool CTownRegion::IsDungeon( void ) const
 {
 	return ( (priv&0x80) == 0x80 );
 }
 
-UI16 cTownRegion::NumGuards( void ) const
+UI16 CTownRegion::NumGuards( void ) const
 {
 	return numGuards;
 }
 
-UI08 cTownRegion::WorldNumber( void ) const
+UI08 CTownRegion::WorldNumber( void ) const
 {
 	return worldNumber;
 }
 
-void cTownRegion::IsGuarded( bool value )
+void CTownRegion::IsGuarded( bool value )
 {
 	if( value )
 		priv |= 0x01;
 	else
 		priv &= 0xFE;
 }
-void cTownRegion::CanMark( bool value )
+void CTownRegion::CanMark( bool value )
 {
 	if( value )
 		priv |= 0x02;
 	else
 		priv &= 0xFD;
 }
-void cTownRegion::CanGate( bool value )
+void CTownRegion::CanGate( bool value )
 {
 	if( value )
 		priv |= 0x04;
 	else
 		priv &= 0xFB;
 }
-void cTownRegion::CanRecall( bool value )
+void CTownRegion::CanRecall( bool value )
 {
 	if( value )
 		priv |= 0x08;
 	else
 		priv &= 0xF7;
 }
-void cTownRegion::CanCastAggressive( bool value )
+void CTownRegion::CanCastAggressive( bool value )
 {
 	if( value )
 		priv |= 0x40;
 	else
 		priv &= 0xBF;
 }
-void cTownRegion::IsDungeon( bool value )
+void CTownRegion::IsDungeon( bool value )
 {
 	if( value )
 		priv |= 0x80;
 	else
 		priv &= 0x7F;
 }
-void cTownRegion::SetName( std::string toSet )
+void CTownRegion::SetName( std::string toSet )
 {
 	name = toSet.substr( 0, 49 );
 }
 
-void cTownRegion::TaxedAmount( UI16 amount )
+void CTownRegion::TaxedAmount( UI16 amount )
 {
 	taxedAmount = amount;
 }
 
-UI16 cTownRegion::TaxedAmount( void ) const
+UI16 CTownRegion::TaxedAmount( void ) const
 {
 	return taxedAmount;
 }
 
-void cTownRegion::SetResourceID( UI16 resID )
+void CTownRegion::SetResourceID( UI16 resID )
 {
 	taxedResource = resID;
 }
 
-void cTownRegion::SetHealth( SI16 newValue )
+void CTownRegion::SetHealth( SI16 newValue )
 {
 	health = newValue;
 }
 
-void cTownRegion::SetChanceBigOre( UI08 newValue )
+void CTownRegion::SetChanceBigOre( UI08 newValue )
 {
 	chanceFindBigOre = newValue;
 }
-void cTownRegion::SetChanceColourOre( UI08 newValue )
+void CTownRegion::SetChanceColourOre( UI08 newValue )
 {
 	chanceColourOre = newValue;
 }
 
-UI16 cTownRegion::GetScriptTrigger( void ) const
+UI16 CTownRegion::GetScriptTrigger( void ) const
 {
 	return jsScript;
 }
-void cTownRegion::SetScriptTrigger( UI16 newValue )
+void CTownRegion::SetScriptTrigger( UI16 newValue )
 {
 	jsScript = newValue;
 }
 
-UI08 cTownRegion::GetRegionNum( void ) const
+UI08 CTownRegion::GetRegionNum( void ) const
 {
 	return regionNum;
 }
-void cTownRegion::SetRegionNum( UI08 newVal )
+void CTownRegion::SetRegionNum( UI08 newVal )
 {
 	regionNum = newVal;
 }
 
-size_t cTownRegion::GetNumLocations( void ) const
+size_t CTownRegion::GetNumLocations( void ) const
 {
 	return locations.size();
 }
-const regLocs *cTownRegion::GetLocation( size_t locNum ) const
+const regLocs *CTownRegion::GetLocation( size_t locNum ) const
 {
 	if( locNum >= locations.size() )
 		return NULL;

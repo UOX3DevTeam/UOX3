@@ -15,12 +15,12 @@ const UI16 doorbase[DOORTYPES] = {
 };
 
 //o--------------------------------------------------------------------------
-//|	Function		-	void useDoor( cSocket *s, CItem *item )
+//|	Function		-	void useDoor( CSocket *s, CItem *item )
 //|	Date			-	Unknown
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Check if the door is a valid door and if so open / close it
 //o--------------------------------------------------------------------------
-void useDoor( cSocket *s, CItem *item )
+void useDoor( CSocket *s, CItem *item )
 {
 	UI16 x, db;
 	bool changed = false;
@@ -181,7 +181,7 @@ void useDoor( cSocket *s, CItem *item )
 		s->sysmessage( 1184 );
 }
 
-bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
+bool keyInPack( CSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 {
 	if( ValidateObject( pack ) )
 	{
@@ -209,14 +209,14 @@ bool keyInPack( cSocket *mSock, CChar *mChar, CItem *pack, CItem *x )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	DoorMacro( cSocket *s )
+//|	Function		-	DoorMacro( CSocket *s )
 //|	Date			-	11th October, 1999
 //|	Programmer		-	Zippy
-//|	Modified		-	Abaddon (support cSocket *s and door blocking)
+//|	Modified		-	Abaddon (support CSocket *s and door blocking)
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Door use macro support.
 //o--------------------------------------------------------------------------
-void DoorMacro( cSocket *s )
+void DoorMacro( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
 	SI16 xc = mChar->GetX(), yc = mChar->GetY();

@@ -11,7 +11,7 @@ namespace UOX
 cWhoList *WhoList;
 cWhoList *OffList;
 
-void	TweakTarget( cSocket *s );
+void	TweakTarget( CSocket *s );
 
 void cWhoList::ResetUpdateFlag( void )
 // PRE:		WhoList class is active
@@ -52,7 +52,7 @@ void cWhoList::FlagUpdate( void )
 {
 	needsUpdating = true;
 }
-void cWhoList::SendSocket( cSocket *toSendTo )
+void cWhoList::SendSocket( CSocket *toSendTo )
 // PRE:		WhoList class is active
 // POST:	Sends the wholist to the socket
 // CODER:	Abaddon
@@ -108,7 +108,7 @@ void cWhoList::AddSerial( SERIAL toAdd )
 	whoMenuData.push_back( toAdd );
 }
 
-void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
+void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 // PRE:		WhoList class is active
 // POST:	Does action based upon button selected
 // CODER:	Abaddon
@@ -140,7 +140,7 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		toSendTo->sysmessage( 1387 );
 		return;
 	}
-	cSocket *trgSock = NULL;
+	CSocket *trgSock = NULL;
 	switch( buttonPressed )
 	{
 		case 200://gochar
@@ -262,7 +262,7 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	}
 }
 
-void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
+void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 {
 	SERIAL serial = whoMenuData[buttonPressed];
 	CChar *targetChar = calcCharObjFromSer( serial ); // find selected char ...
@@ -375,7 +375,7 @@ void cWhoList::Update( void )
 	{
 		for( i = 0; i < k; ++i )
 		{
-			cSocket *tSock	= Network->GetSockPtr( i );
+			CSocket *tSock	= Network->GetSockPtr( i );
 			CChar *tChar	= tSock->CurrcharObj();
 			if( !ValidateObject( tChar ) )
 				continue;

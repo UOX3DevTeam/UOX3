@@ -11,18 +11,9 @@
 namespace UOX
 {
 
-#define MAXIMUM 128 // Maximum open connections to server
-#define MAXCLIENT MAXIMUM+1
-
 //////////////////////////////////////////////////////////////////////////////
 // LOCAL - GLOBAL DATA
 //////////////////////////////////////////////////////////////////////////////
-// List of message serial numbers ACK'd by client
-char postAcked[MAXCLIENT][MAXPOSTS][5];
-// Total number of posts sent to client
-int  postCount[MAXCLIENT];
-// Total number of ACK's received by client
-int  postAckCount[MAXCLIENT];
 
 // Char array for messages to client. Message body (when entering body of post)
 // can hold a maximum of 1975 chars (approx)
@@ -43,7 +34,7 @@ UI08 msg2Post[MAXBUFFER] = "\x71\xFF\xFF\x05\x40\x00\x00\x19\x00\x00\x00\x00";
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardGetPostType( cSocket *s )
+void MsgBoardGetPostType( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -89,7 +80,7 @@ void MsgBoardGetPostType( cSocket *s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardSetPostType( cSocket *s, int Type )
+void MsgBoardSetPostType( CSocket *s, int Type )
 {
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -128,7 +119,7 @@ void MsgBoardSetPostType( cSocket *s, int Type )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardOpen( cSocket *s )
+void MsgBoardOpen( CSocket *s )
 {
 	// In Response to a doubleclick() message from a client
 	// [SEND:5] 06 40 07 ba 3d 
@@ -189,7 +180,7 @@ void MsgBoardOpen( cSocket *s )
 	UString fileName1 = "global.bbi";
 	
 	// REGIONAL post file
-	cTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+	CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 	UString fileName2 = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbi";
 	
 	// LOCAL post file
@@ -318,7 +309,7 @@ void MsgBoardOpen( cSocket *s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardList( cSocket *s )
+void MsgBoardList( CSocket *s )
 {
 	// READ IN bbp FILE (for list on message board)
 	
@@ -354,7 +345,7 @@ void MsgBoardList( cSocket *s )
 	UString fileName1 = "global.bbp";
 
 	// REGIONAL post file
-	cTownRegion *mbRegion	= calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+	CTownRegion *mbRegion	= calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 	UString fileName2		= "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbp";
 	
 	// LOCAL post file
@@ -561,7 +552,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost = 0 )
 			else
 			{
 				CItem *msgBoard = calcItemObjFromSer( calcserial( msg2Post[4], msg2Post[5], msg2Post[6], msg2Post[7] ) );
-				cTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+				CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 				sprintf( temp, "region%d.bbi", mbRegion->GetRegionNum() );
 			}
 			break;
@@ -803,7 +794,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost = 0 )
 // RETURNS:     int         0 = Failed to post message
 //                          1 = Post successful
 //////////////////////////////////////////////////////////////////////////////
-bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
+bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 {
 	// WRITE FILE OUT (POST MESSAGE)
 	
@@ -881,7 +872,7 @@ bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
 			else
 			{
 				CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
-				cTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+				CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 				sprintf( temp, "region%d.bbp", mbRegion->GetRegionNum() );
 			}
 			break;
@@ -1066,7 +1057,7 @@ bool MsgBoardPost( cSocket *s, int msgType, int autoPost )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardOpenPost( cSocket *s )
+void MsgBoardOpenPost( CSocket *s )
 {
 	// READ IN bbp FILE  (Client dbl-clicked on posted message on message board list)
 	// Get Message Board serial number from message buffer
@@ -1113,7 +1104,7 @@ void MsgBoardOpenPost( cSocket *s )
 		s->sysmessage( "Opening REGIONAL.bbp posting" );
 #endif
 		CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
-		cTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+		CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 		sprintf( temp, "region%d.bbp", mbRegion->GetRegionNum() );
 		fileName	+= temp;
 		file		= fopen( fileName.c_str(), "rb" );
@@ -1310,7 +1301,7 @@ void MsgBoardOpenPost( cSocket *s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardRemovePost( cSocket *s )
+void MsgBoardRemovePost( CSocket *s )
 {
 	
 	// Sample REMOVE POST message from client
@@ -1345,7 +1336,7 @@ void MsgBoardRemovePost( cSocket *s )
 			break;
 		case 0x02:
 			// REGIONAL post file
-			cTownRegion *mbRegion;
+			CTownRegion *mbRegion;
 			mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
 			sprintf( temp, "region%d.bbi", mbRegion->GetRegionNum() );
 			break;
@@ -1439,7 +1430,7 @@ void MsgBoardRemovePost( cSocket *s )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardEvent( cSocket *s )
+void MsgBoardEvent( CSocket *s )
 {
 	// Message \x71 has numerous uses for the Bulletin Board
 	// so we need to get the type of message from the client first.
@@ -1760,7 +1751,7 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 	// Choose a random region as a destination for the escort quest (except for the same region as the NPC was spawned in)
 	do 
 	{
-		if( cwmWorldState->escortRegions.size() )
+		if( !cwmWorldState->escortRegions.empty() )
 		{
 			// If the number of escort regions is 1, check to make sure that the only 
 			// valid escort region is not the NPC's current location - if it is Abort
@@ -1822,7 +1813,7 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
-void MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock )
+void MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )

@@ -10,12 +10,12 @@ namespace UOX
 /** This class is responsible for the creation and destruction of ingame
 	objects and should mean that we can take chars[] and items[] out of scope
 */
-	#define OBJFUNCTOR( text )		bool (*text)( cBaseObject *, UI32 &, void * )
+	#define OBJFUNCTOR( text )		bool (*text)( CBaseObject *, UI32 &, void * )
 
 	class ObjectFactory : public Singleton< ObjectFactory >
 	{
 	protected:
-		typedef std::multimap< SERIAL, cBaseObject *>	OBJECTMAP;
+		typedef std::multimap< SERIAL, CBaseObject *>	OBJECTMAP;
 		typedef OBJECTMAP::iterator						OBJECTMAP_ITERATOR;
 		typedef OBJECTMAP::const_iterator				OBJECTMAP_CITERATOR;
 
@@ -31,13 +31,13 @@ namespace UOX
 
 		size_t			CountOfObjects( ObjectType toCount );
 		size_t			SizeOfObjects( ObjectType toCount );
-		cBaseObject *	CreateObject( ObjectType createType );
-		cBaseObject *	CreateBlankObject( ObjectType createType );
-		cBaseObject *	FindObject( SERIAL toFind );
-		bool			DestroyObject( cBaseObject *toDestroy );
-		bool			RegisterObject( cBaseObject *toRegister );
-		bool			RegisterObject( cBaseObject *toRegister, SERIAL toAttach );
-		bool			UnregisterObject( cBaseObject *toRemove );
+		CBaseObject *	CreateObject( ObjectType createType );
+		CBaseObject *	CreateBlankObject( ObjectType createType );
+		CBaseObject *	FindObject( SERIAL toFind );
+		bool			DestroyObject( CBaseObject *toDestroy );
+		bool			RegisterObject( CBaseObject *toRegister );
+		bool			RegisterObject( CBaseObject *toRegister, SERIAL toAttach );
+		bool			UnregisterObject( CBaseObject *toRemove );
 		void			GarbageCollect( void );
 
 		UI32			IterateOver( ObjectType toIterOver, UI32 &b, void *extraData, OBJFUNCTOR( text ) );

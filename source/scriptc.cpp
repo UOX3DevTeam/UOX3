@@ -145,7 +145,7 @@ Script::~Script()
 bool Script::isin( const std::string section )
 {
 	UString temp( section );
-	SSMAP::iterator iSearch = defEntries.find( temp.upper() );
+	SSMAP::const_iterator iSearch = defEntries.find( temp.upper() );
 	if( iSearch != defEntries.end() )
 		return true;
     return false;
@@ -163,8 +163,7 @@ bool Script::isin( const std::string section )
 ScriptSection *Script::FindEntry( const std::string section )
 {
 	ScriptSection *rvalue = NULL;
-	UString temp( section );
-	SSMAP::iterator iSearch = defEntries.find( temp.upper() );
+	SSMAP::const_iterator iSearch = defEntries.find( section );
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
     return rvalue;
@@ -181,11 +180,10 @@ ScriptSection *Script::FindEntry( const std::string section )
 //o--------------------------------------------------------------------------
 ScriptSection *Script::FindEntrySubStr( const std::string section )
 {
-	SSMAP::iterator iSearch;
 	ScriptSection *rvalue = NULL;
 	UString usection( section );
 	usection = usection.upper();
-	for( iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
+	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!
 		{
@@ -244,8 +242,7 @@ ScriptSection *Script::NextEntry( void )
 //o--------------------------------------------------------------------------
 void Script::deleteMap( void )
 {
-	SSMAP::iterator iTest;
-	for( iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest )
+	for( SSMAP::const_iterator iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest )
 		delete iTest->second;
 	defEntries.clear();
 }

@@ -17,10 +17,10 @@
 namespace UOX
 {
 
-bool CreateBoat( cSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
+bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void buildHouse( cSocket *s, UI08 i )
+//|   Function    -  void buildHouse( CSocket *s, UI08 i )
 //|   Date        -  UnKnown - Rewrite Date 1/24/99
 //|   Programmer  -  UnKnown - Rewrite by Zippy (onlynow@earthlink.net)
 //o---------------------------------------------------------------------------o
@@ -29,7 +29,7 @@ bool CreateBoat( cSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 //|						using HOUSE ITEM, (this includes all doors!) and locked "LOCK"
 //|						Space around the house with SPACEX/Y and CHAR offset CHARX/Y/Z
 //o---------------------------------------------------------------------------o
-void DoHouseTarget( cSocket *mSock, UI08 houseEntry )
+void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 {
 	UI16 houseID = 0;
 	UString tag, data;
@@ -57,7 +57,7 @@ void DoHouseTarget( cSocket *mSock, UI08 houseEntry )
 			mSock->target( 0, TARGET_BUILDHOUSE, 576 );
 	}
 }
-void CreateHouseKey( cSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
+void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
 {
 	//Key...
 	CItem *key = NULL;
@@ -94,7 +94,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 	UString tag, data, UTag;
 	ScriptSection *HouseItem = NULL;
 	CItem *hItem = NULL;
-	STRINGLIST_ITERATOR hiIter;
+	STRINGLIST_CITERATOR hiIter;
 	for( hiIter = houseItems.begin(); hiIter != houseItems.end(); ++hiIter )//Loop through the HOUSE_ITEMs
 	{
 		UString sect = "HOUSE ITEM " + (*hiIter);
@@ -149,7 +149,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 		}
 	}
 }
-void BuildHouse( cSocket *mSock, UI08 houseEntry )
+void BuildHouse( CSocket *mSock, UI08 houseEntry )
 {
 	if( mSock->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
@@ -277,7 +277,7 @@ void BuildHouse( cSocket *mSock, UI08 houseEntry )
 	mChar->SetLocation( x + cx, y + cy, z + cz );
 }
 
-bool KillKeysFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	UI32 *ourData		= (UI32 *)extraData;
 	SERIAL targSerial	= ourData[0];
@@ -303,7 +303,7 @@ void killKeys( SERIAL targSerial )
 // s = socket of player
 // i = house object
 // morex on the house item must be set to deed item # in items.scp.
-void deedHouse( cSocket *s, CMultiObj *i )
+void deedHouse( CSocket *s, CMultiObj *i )
 {
 	if( !ValidateObject( i ) )
 		return;

@@ -58,7 +58,7 @@ UI32 calcValue( CItem *i, UI32 value )
 //o---------------------------------------------------------------------------o
 UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
 {
-	cTownRegion *tReg	= calcRegionFromXY( npcnum2->GetX(), npcnum2->GetY(), npcnum2->WorldNumber() );
+	CTownRegion *tReg	= calcRegionFromXY( npcnum2->GetX(), npcnum2->GetY(), npcnum2->WorldNumber() );
 	SI16 good			= i->GetGood();
 	SI32 regvalue		= 0;
 
@@ -84,7 +84,7 @@ UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void buyItem( cSocket *mSock )
+//|   Function    :  void buyItem( CSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -261,7 +261,7 @@ bool CPIBuyItem::Handle( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void sellItem( cSocket *mSock )
+//|   Function    :  void sellItem( CSocket *mSock )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -389,7 +389,7 @@ void restockNPC( CChar& i, bool stockAll )
 				}
 				if( cwmWorldState->ServerData()->TradeSystemStatus() ) 
 				{
-					cTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber() );
+					CTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber() );
 					Items->StoreItemRandomValue( c, tReg );
 				}
 			}
@@ -397,7 +397,7 @@ void restockNPC( CChar& i, bool stockAll )
 	}
 }
 
-bool restockFunctor( cBaseObject *a, UI32 &b, void *extraData )
+bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) )

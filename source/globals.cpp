@@ -24,7 +24,7 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 // Item / Character Variables
 //o---------------------------------------------------------------------------o
-char skillname[SKILLS+1][20]={
+const char skillname[SKILLS+1][20]={
 "ALCHEMY", "ANATOMY", "ANIMALLORE", "ITEMID", "ARMSLORE", "PARRYING", "BEGGING", "BLACKSMITHING", "BOWCRAFT",
 "PEACEMAKING", "CAMPING", "CARPENTRY", "CARTOGRAPHY", "COOKING", "DETECTINGHIDDEN", "ENTICEMENT", "EVALUATINGINTEL",
 "HEALING", "FISHING", "FORENSICS", "HERDING", "HIDING", "PROVOCATION", "INSCRIPTION", "LOCKPICKING", "MAGERY",
@@ -43,8 +43,8 @@ char skillname[SKILLS+1][20]={
 //o---------------------------------------------------------------------------o
 QUEUEMAP						refreshQueue;
 QUEUEMAP						deletionQueue;
-std::vector< cTownRegion * >	regions;
-std::vector< cSpawnRegion *>	spawnregions;		// Regionspawns
+std::vector< CTownRegion * >	regions;
+std::vector< CSpawnRegion *>	spawnregions;		// Regionspawns
 
 //o---------------------------------------------------------------------------o
 // JS Stuff
@@ -66,13 +66,13 @@ JSClass uox_class = {
 #if UOX_PLATFORM != PLATFORM_WIN32
 char *strlwr( char *str ) 
 {
-	for( UI32 i = 0; i < strlen( str ); ++i )
+	for( size_t i = 0; i < strlen( str ); ++i )
 		str[i] = tolower( str[i] );
 	return str;
 }
 char *strupr( char *str )
 {
-	for( UI32 i = 0; i < strlen(str ); ++i )
+	for( size_t i = 0; i < strlen(str ); ++i )
 		str[i] = toupper( str[i] );
 	return str;
 }

@@ -205,7 +205,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, bool inPack )
+//|	Function		-	CItem *CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, bool inPack )
 //|	Date			-	10/12/2003
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
@@ -214,7 +214,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|							also will automatically look for an entry in harditems.dfn
 //|							and set its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, ObjectType itemType, bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -245,7 +245,7 @@ CItem * cItem::CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateScriptItem( cSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, bool inPack )
+//|	Function		-	CItem *CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, bool inPack )
 //|	Date			-	10/12/2003
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
@@ -253,7 +253,7 @@ CItem * cItem::CreateItem( cSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 //|	Description		-	Creates a script item, gives it an amount, and sets
 //|							 its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( cSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, ObjectType itemType, bool inPack )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -272,7 +272,7 @@ CItem * cItem::CreateScriptItem( cSocket *mSock, CChar *mChar, std::string item,
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateRandomItem( cSocket *mSock, DEFINITIONCATEGORIES sourceDFN, std::string itemList )
+//|	Function		-	CItem *CreateRandomItem( CSocket *mSock, DEFINITIONCATEGORIES sourceDFN, std::string itemList )
 //|	Date			-	10/12/2003
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
@@ -280,7 +280,7 @@ CItem * cItem::CreateScriptItem( cSocket *mSock, CChar *mChar, std::string item,
 //|	Description		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
 //o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( cSocket *mSock, std::string itemList )
+CItem *cItem::CreateRandomItem( CSocket *mSock, std::string itemList )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -439,16 +439,16 @@ void cItem::GetScriptItemSettings( CItem *iCreated )
 		ApplyItemSection( iCreated, toFind );
 }
 
-CItem *autoStack( cSocket *mSock, CItem *iToStack, CItem *iPack );
+CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
 //o--------------------------------------------------------------------------o
-//|	Function		-	CItem *PlaceItem( cSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
+//|	Function		-	CItem *PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
 //|	Date			-	10/12/2003
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Places an item that was just created
 //o--------------------------------------------------------------------------o
-CItem * cItem::PlaceItem( cSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
+CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
 {
 	if( inPack )
 	{
@@ -716,7 +716,7 @@ void cItem::GlowItem( CItem *i )
 
 		//j->SetLayer( i->GetLayer() ); // copy layer information of the glowing item to the invisible light emitting object
 
-		cBaseObject *getCont = i->GetCont();
+		CBaseObject *getCont = i->GetCont();
 		if( getCont == NULL ) // On the ground
 		{
 			j->SetCont( NULL );
@@ -759,7 +759,7 @@ void cItem::CheckEquipment( CChar *p )
 {
 	if( ValidateObject( p ) ) 
 	{
-		cSocket *pSock = calcSocketObjFromChar( p );
+		CSocket *pSock = calcSocketObjFromChar( p );
 		if( pSock == NULL ) 
 			return;
 
@@ -793,18 +793,18 @@ void cItem::CheckEquipment( CChar *p )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cItem::StoreItemRandomValue( CItem *i, cTownRegion *tReg )
+//|	Function	-	void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Remember an items value
 //o---------------------------------------------------------------------------o
-void cItem::StoreItemRandomValue( CItem *i, cTownRegion *tReg )
+void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 {
 	if( i->GetGood() < 0 ) 
 		return;
 	if( tReg == NULL )
 	{
-		cBaseObject *getLastCont = i->GetCont();
+		CBaseObject *getLastCont = i->GetCont();
 		if( getLastCont != NULL )
 			tReg = calcRegionFromXY( getLastCont->GetX(), getLastCont->GetY(), getLastCont->WorldNumber() );
 		if( tReg == NULL )
@@ -819,15 +819,15 @@ void cItem::StoreItemRandomValue( CItem *i, cTownRegion *tReg )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
+//|	Function	-	CItem *cCommands::DupeItem( CSocket *s, CItem *i, UI32 amount )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Dupe selected item
 //o---------------------------------------------------------------------------o
-CItem *cItem::DupeItem( cSocket *s, CItem *i, UI32 amount )
+CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 {
 	CChar *mChar		= s->CurrcharObj();
-	cBaseObject *iCont	= i->GetCont();
+	CBaseObject *iCont	= i->GetCont();
 	CItem *charPack		= mChar->GetPackItem();
 
 	if( !ValidateObject( mChar ) || i->isCorpse() || ( !ValidateObject( iCont ) && !ValidateObject( charPack ) ) )
