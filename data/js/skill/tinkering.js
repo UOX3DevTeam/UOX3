@@ -1,0 +1,52 @@
+function onUse( pUser, iUsed )
+{
+	var socket = pUser.socket;
+	if( socket && iUsed && iUsed.isItem )
+	{
+		socket.tempObj = iUsed;
+		var targMsg = GetDictionaryEntry( 484, socket.Language );
+		socket.CustomTarget( 1, targMsg );
+	}
+	return false;
+}
+
+function onCallback1( socket, ourObj )
+{
+	var bItem = socket.tempObj;
+	var mChar = socket.currentChar;
+
+	socket.tempObj = null;
+
+	if( mChar && mChar.isChar && bItem && bItem.isItem )
+	{
+		if( !ourObj || !ourObj.isItem )
+		{
+			socket.SysMessage( GetDictionaryEntry( 942, socket.Language ) );
+			return;
+		}
+
+		var resID = ourObj.id;
+		if( resID == 0x1BEF || resID == 0x1BF2 || resID == 0x1BDD || resID == 0x1BE0 )	// A valid tinker resource
+		{
+			var ownerObj = GetPackOwner( ourObj, 0 );
+			if( ownerObj && mChar.serial == ownerObj.serial )
+			{
+				var countResource = mChar.ResourceCount( resID );
+				if( countResource >= 2 )
+				{
+					if( countResource > 4 || ( resID != 0x1BDD && resID != 0x1BE0 ) )
+						socket.MakeMenu( 59, 37 );
+					else
+						socket.SysMessage( GetDictionaryEntry( 941, socket.Language ) );
+				}
+				else
+					socket.SysMessage( GetDictionaryEntry( 940, socket.Language ) );
+			}
+			else
+				socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
+		}
+		else
+			socket.SysMessage( "You can't make anything from that material." );
+	}
+}
+

@@ -122,8 +122,18 @@
 // pets from pet static end
 // ------------------------
 
-// Healing
+// General Skills
 4000=skill/healing.js
+4001=skill/repairbow.js
+4002=skill/repairleather.js
+4003=skill/tinkering.js
+4004=skill/tailoring.js
+4005=skill/fletching.js
+4006=skill/carpentry.js
+
+// Miscellaneous Item Types
+5000=item/teleportrune.js
+5001=item/food.js
 }
 
 [COMMAND_SCRIPTS]
