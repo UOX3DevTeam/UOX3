@@ -12,318 +12,49 @@
 	<h3>API and Event handling</h3>
 </center>
 
-<table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnCreateEvent">onCreate</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCreate( objMade, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or char is created.  Note that for PCs, this is triggered when they first enter the world.
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates a character<br>objType == 1 indicates an item
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Used for customization of players at creation, or tinkering items/chars when they're made.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnDeleteEvent">onDelete</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDelete( objDestroyed, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or character is deleted
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates a character<br>objType == 1 indicates an item
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSpeechEvent">onSpeech</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pTalking says strSaid to pTalkingTo.  pTalkingTo's script is activated
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Greatly improve the speech handling capabilities
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )
-<br>{
-<br>	TextMessage( pTalkingTo, strSaid );
-<br>}
-<br>// This is a simple mimic NPC.  Everything that someone says to it is quoted back verbatim
-</pre></table>
-
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="InRangeEvent">inRange</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( pCharacter, objInRange, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>objInRange comes into visible range of pCharacter.  pCharacter's script is activated
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objInRange is a character<br>objType == 1 indicates objInRange is an item
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objInRange is a character<br>objType == 1 indicates objInRange is an item<br><b><big>CURRENTLY BROKEN!!!</big></b>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Useful for when you want to do something when a certain thing comes into range.  You could yell out guards when a murderer comes into range, for instance, if you're in a guarded region.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function inRange( pCharacter, objInRange, objType )
-<br>{
-<br>	if( objType == 1 )	// An item came into range
-<br>	{
-<br>		DoStaticEffect( pCharacter, 0x376A, 9, 0, 0 );	// Make some sparkles!
-<br>		var iID;
-<br>		iID = GetID( objInRange, objType );	// What's the ID of the item?
-<br>		if( iID == 0x1416 )			// Ooh, it's a purty piece of armour
-<br>		{
-<br>			EmoteMessage( pCharacter, "*ooooooooooooo*" );
-<br>		}
-<br>	}
-<br>}
+{
+	if( objType == 1 )	// An item came into range
+	{
+		DoStaticEffect( pCharacter, 0x376A, 9, 0, 0 );	// Make some sparkles!
+		var iID;
+		iID = GetID( objInRange, objType );	// What's the ID of the item?
+		if( iID == 0x1416 )			// Ooh, it's a purty piece of armour
+		{
+			EmoteMessage( pCharacter, "*ooooooooooooo*" );
+		}
+	}	
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnCollideEvent">onCollide</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCollide( targSock, pColliding, objCollidedWith )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pColliding collides with objCollidedWith (stepped on basically)
-<tr><td valign="top" width="25%"><b>Notes</b><td>objCollidedWith is only an item currently.  targSock is -1 if pColliding is an NPC
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Replace of collision based triggers, increase teleporter abilities
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCollide( trgSock, srcChar, trgItem )
-<br>{
-<br>	var xLoc = GetX( srcChar, 0 );	// Let's get our current location
-<br>	var yLoc = GetY( srcChar, 0 );
-<br>	var zLoc = GetZ( srcChar, 0 );
-<br>	var txLoc = xLoc + 5;		// We want to move 5 paces away, on X
-<br>	var tyLoc = yLoc + 5;		// Same again on y
-<br>	var tzLoc = zLoc;
-<br>	SetLocation( srcChar, txLoc, tyLoc, tzLoc, 0 );	// Move us!
-<br>	EmoteMessage( srcChar, "*Eegads, I am teleported!*" );	// Emote something
-<br>	DoStaticEffect( srcChar, 0x376A, 9, 0, 0 );	// Make some sparkles!
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnStealEvent">onSteal</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSteal( thief, objStolen )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When thief steals objStolen.  objStolen's script is activated
+<tr><th colspan=2 bgcolor="maroon"><a name="OnAISliverEvent">onAISliver</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onAISliver( npcChar )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Every AI loop, during their AI slice
 <tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Specialization of stealing.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Great customization of AI on a per NPC basis.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
+function onAISliver( tChar )
+{
 
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnDispelEvent">onDispel</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDispel( objDispelled, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objDispelled is dispelled.  objDispelled's script is activated.
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates a character<br>objType == 1 indicates an item
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillEvent">onSkill</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkill( objUsing, skillUsed, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objUsing uses skill skillUsed.  objUsing's script is activated.
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objUsing is a character<br>objType == 1 indicates objUsing is an item
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Complements the use of current skill code.  Fires before any existing usage code kicks in.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+tChar.DoAction( 111 );
+}
+//The NPC tChar performs action 111 (dance-animation in 3D UO clients)
+//on every NPC ai check, essentially looping the animation =)
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnAttackEvent">onAttack</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onAttack( pAttacker, pDefender )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender
-<tr><td valign="top" width="25%"><b>Notes</b><td>pAttacker's script is activated, and pDefender's onDefense event is fired
+<tr><td valign="top" width="25%"><b>Notes</b><td>pAttacker's script is activated, and pDefender's onDefense event is fired<br><b><big>CURRENTLY BROKEN!!!</big></b>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnDefenseEvent">onDefense</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDefense( pAttacker, pDefender )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender
-<tr><td valign="top" width="25%"><b>Notes</b><td>pDefender's script fires, pAttacker's onAttack event is also fired
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillGainEvent">onSkillGain</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillGain( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when pPlayer gains in skill skill
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking actions when you gain skill.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillGain( pPlayer, skill )
-<br>{
-<br>	var iSkill = GetSkill( pPlayer, skill );
-<br>	iSkill = iSkill + 1;
-<br>	SetSkill( pPlayer, skill, iSkill );	// we always go up in 0.2 rather than 0.1
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillLossEvent">onSkillLoss</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillLoss( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in skill skill
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For doing something when you lose skill
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillLoss( pPlayer, skill )
-<br>{
-<br>	TextMessage( pPlayer, "Oh no, I've lost skill!" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillChangeEvent">onSkillChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillChange( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>This is fired if onSkillLoss isn't defined for skill loss, or onSkillGain isn't defined for skill gain.
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows you to take action when your skill level changes
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillChange( pPlayer, skill )
-{
-	TextMessage( pPlayer, "Oh dear, my skill's changed" );
-}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnStatGainEvent">onStatGain</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGain( pPlayer, stat )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer gains in stat stat
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person gains in a stat
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnStatLossEvent">onStatLoss</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatLoss( pPlayer, stat )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in stat stat
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person loses in a stat
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnStatChangeEvent">onStatChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatChange( pPlayer, stat )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>If onStatLoss isn't defined, and stat went down, or if onStatGain isn't defined and stat went up
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnDropEvent">onDrop</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDrop( iDropped, pDropper )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pDropper drops iDropped.
-<tr><td valign="top" width="25%"><b>Notes</b><td>iDropped's script is activated.
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnPickupEvent">onPickup</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPickup( iPickedUp, pGrabber )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pGrabber picks up iPickedUp
-<tr><td valign="top" width="25%"><b>Notes</b><td>iPickedUp's script is activated.
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSwingEvent">onSwing</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSwing( iSwung, pSwinging, pSwingAt )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSwinging swings iSwung at pSwingAt.
-<tr><td valign="top" width="25%"><b>Notes</b><td>iSwung's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnDecayEvent">onDecay</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDecay( iDecaying )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When iDecaying decays
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnTransferEvent">onTransfer</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTransfer( iTransferred, pSrc, pTrg )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSrc transfers iTransferred to pTrg
-<tr><td valign="top" width="25%"><b>Notes</b><td>iTransferred's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnLeavingEvent">onLeaving</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLeaving( iLeft, objLeaving, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objLeaving leaves the multi object iLeft
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objLeaving is a character<br>objType == 1 indicates objLeaving is an item<br>iLeft's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnEntranceEvent">onEntrance</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEntrance( iEntered, objEntering, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objEntering enters the multi object iEntered
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objEntering is a character<br>objType == 1 indicates objEntering is an item<br>iEntered's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnEquipEvent">onEquip</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEquip( pEquipper, iEquipped )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEquipper equips iEquipped
-<tr><td valign="top" width="25%"><b>Notes</b><td>iEquipped's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnUnequipEvent">onUnequip</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUnequip( pEquipper, iUnequipped )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEquipper unequips iUnequipped
-<tr><td valign="top" width="25%"><b>Notes</b><td>iUnequipped's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnUseEvent">onUse</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUse( pUser, iUsed )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  Replaces any code behaviour that may exist
-<tr><td valign="top" width="25%"><b>Notes</b><td>iUsed's script is activated
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onUse( pUser, iUsed )
-<br>{
-<br>	DoStaticEffect( pUser, 0x376A, 9, 0, 0 );	// Make some sparkles
-<br>	TextMessage( pUser, "That's the way the cookie crumbles!" );	// Say something
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OutOfRange">OutOfRange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function OutOfRange( pChar, objVanish, objType )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objVanish goes out of range of pChar
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objVanish is a character<br>objType == 1 indicates objVanish is an item
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To take actions based on when things go out of range.  For instance, if you ran out of range of your attacker, you might decide to automatically try and hide.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnLogin">onLogin</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLogin( sockPlayer, pChar )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pChar is logged in to the world
-<tr><td valign="top" width="25%"><b>Notes</b><td>sockPlayer is never -1
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow customization of what happens when a player logs in.  Could pop up custom gumps, or do certain things (say everyone ALWAYS starts in one spot, no matter where they logged in.  Diabloesque hall logins).
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onLogin( sockPlayer, pChar )
-<br>{
-<br>	SetLocation( pChar, 1000, 1000, 0, 0 );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnFall">onFall</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onFall( pFall, fallDistance )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pFall falls fallDistance
-<tr><td valign="top" width="25%"><b>Notes</b><td>pFall can be either an npc or pc
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSellEvent">onSell</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
 
@@ -337,93 +68,170 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnAISliverEvent">onAISliver</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onAISliver( npcChar )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Every AI loop, during their AI slice
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Great customization of AI on a per NPC basis.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
+<tr><th colspan=2 bgcolor="maroon"><a name="OnClick">onClick</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onClick( pUser, iUsed )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser single-clicks iUsed.  Replaces any code behaviour that may exist
+<tr><td valign="top" width="25%"><b>Notes</b><td>iUsed's script is activated
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on clicking on items.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onClick( pUser, iUsed )
+{
+	pUser.SysMessage("You have clicked on: "+iUsed.name );
+}</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnSystemSliceEvent">onSystemSlice</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+<tr><th colspan=2 bgcolor="maroon"><a name="OnCollideEvent">onCollide</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCollide( targSock, pColliding, objCollidedWith )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pColliding collides with objCollidedWith (stepped on basically)
+<tr><td valign="top" width="25%"><b>Notes</b><td>objCollidedWith is only an item currently.  targSock is -1 if pColliding is an NPC
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Replace of collision based triggers, increase teleporter abilities
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCollide( trgSock, srcChar, trgItem )
+{
+	srcChar.Teleport( srcChar.x + 5, srcChar.y +5, srcChar.z, 0 );
+	srcChar.EmoteMessage( "*Eegads, I am teleported!*" );
+	//srcChar.DoStaticEffect( 0x376A, 9, 0, 0 );
+}
 </pre></table>
 
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnUnknownTriggerEvent">onUnknownTrigger</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnLightChangeEvent">onLightChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnXYZEvent">onXYZEvent</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnPortalEvent">onPortal</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnTimerEvent">onTimer</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTimer( tChar, timerID )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When tempeffect 40 (StartTimer) duration has elapsed for timer timerID
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To be used for custom timer information for characters.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onTimer( tChar, timerID )
-<br>{
-<br>	if( timerID == 0 )
-<br>	{
-<br>		DoStaticEffect( pCharacter, 0x376A, 9, 0, 0 );	// Make some sparkles!
-<br>	}
-<br>}
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnCreateEvent">onCreate</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCreate( objMade, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or char is created.  Note that for PCs, this is triggered when they first enter the world.
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates an item<br>objType == 1 indicates a character
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Used for customization of players at creation, or tinkering items/chars when they're made.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCreate( objMade, objType )
+{
+	if( objType == 1 )
+		objMade.SysMessage( "Welcome to Our Unique World(TM)!" );
+}
+// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP, it will send the sysmessage to all NEW characters
+// that enters the world.
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeathEvent">onDeath</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the player or NPC pDead dies
-<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td><b><big>CURRENTLY BROKEN!!!</big></b>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Custom death sequence.  Can do things like an explosion anim and what not here, for impact's sake.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDeath( pDead )
+{
+	pDead.Teleport( 1000, 1000, 0 );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDecayEvent">onDecay</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDecay( iDecaying )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When iDecaying decays
+<tr><td valign="top" width="25%"><b>Notes</b><td><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDecay( iDecaying )
+{
+	onDecay.StaticEffect( 0x376A, 9, 6 );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDefenseEvent">onDefense</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDefense( pAttacker, pDefender )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender
+<tr><td valign="top" width="25%"><b>Notes</b><td>pDefender's script fires, pAttacker's onAttack event is also fired<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnResurrectEvent">onResurrect</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onRessurect( pAlive );
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player pAlive is resurrected.
-<tr><td valign="top" width="25%"><b>Notes</b><td>Only applies to PCs
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Control over what happens when a person comes alive once more
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onResurrect( pAlive )
-<br>{
-<br>	TextMessage( pAlive, "I'm alive again!" );
-<br>}
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDeleteEvent">onDelete</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDelete( objDestroyed, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or character is deleted
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates an item<br>objType == 1 indicates a character
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDelete( objDestroyed, objType )
+{
+	if( objType == 0 )
+		ConsoleMessage( objDestroyed.name+" has been deleted from the world." );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDispelEvent">onDispel</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDispel( objDispelled, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objDispelled is dispelled.  objDispelled's script is activated.
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates a character<br>objType == 1 indicates an item
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDispel( objDispelled, objType )
+{
+	ConsoleMessage( objDispelled.name+" has been dispelled." );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDropEvent">onDrop</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDrop( iDropped, pDropper )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pDropper drops iDropped.
+<tr><td valign="top" width="25%"><b>Notes</b><td>iDropped's script is activated.<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDropItemOnNPCEvent">onDropItemOnNpc</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When iDropped is dropped on pDroppedOn
+<tr><td valign="top" width="25%"><b>Notes</b><td>First iDropped's script is activated, and if it doesn't bounce, then same script is activated for pDroppedOn<br>Return Value Table:<br> 0 == bounce<br> 1 == don't bounce, use code<br> 2 == don't bounce, don't use code
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
+{
+	pDropper.TextMessage("Here, I offer you my this object as a gift of friendship.");
+	pDroppedOn.TextMessage("Fudge off!");
+	iDropped.colour =13;
+	return 0;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnEntranceEvent">onEntrance</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEntrance( iEntered, objEntering, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objEntering enters the multi object iEntered
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objEntering is a character<br>objType == 1 indicates objEntering is an item<br>iEntered's script is activated
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onEntrance( iEntered, objEntering, objType )
+{
+	if( objType == 0 )
+		objEntering.SysMessage("You have entered "+iEntered.name);
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnEquipEvent">onEquip</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEquip( pEquipper, iEquipped )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEquipper equips iEquipped
+<tr><td valign="top" width="25%"><b>Notes</b><td>iEquipped's script is activated
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onEquip( pEquipper, iEquipped )
+{
+	pEquipper.StaticEffect( 0x376A, 9, 6 );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnFall">onFall</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onFall( pFall, fallDistance )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pFall falls fallDistance
+<tr><td valign="top" width="25%"><b>Notes</b><td>pFall can be either an npc or pc<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onFall( pFall, fallDistance )
+{
+	if( fallDistance > 10 )
+		pFall.SysMessage("Ouch!");
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -433,6 +241,48 @@
 <tr><td valign="top" width="25%"><b>Notes</b><td>May not fire instantly when the action is made.  However, won't be long after change occurs will it be visible.
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnGumpPressEntry">onGumpPress</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onGumpPress( pSock, pButton, gumpData )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player presses a button in a Gump.
+<tr><td valign="top" width="25%"><b>Notes</b><td>pButton is the button-ids for normal gump-buttons, while gumpData handles radiobutton-ids, checkbox-ids, and text-entry-ids(and the text-entries).
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onGumpPress( pSock, pButton, gumpData )
+{
+	var pUser = pSock.currentChar;
+	switch(pButton)
+	{
+		case 0:
+			// abort and do nothing
+			break;
+		case 1:
+			var Text1 = gumpData.getEdit(0);
+			pUser.SysMessage( "The first TextEntry was: "+Text1 );
+			var Text2 = gumpData.getEdit(1);
+			pUser.SysMessage( "The second TextEntry was: "+Text2 )
+			var OtherButton = gumpData.getButton(0);
+			switch(RadioButton)
+			{ 
+				case 0:
+					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );
+					pUser.DoAction( 15 );
+					break;
+				case 1:
+					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );
+					pUser.DoAction( 11 );
+					break;
+				case 2:
+					pUser.SysMessage( "The Checkbox with ID "+OtherButton+" was checked." );
+					pUser.DoAction( 18 );
+					break;
+
+			}
+			break;
+	}
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -452,6 +302,180 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnLeavingEvent">onLeaving</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLeaving( iLeft, objLeaving, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objLeaving leaves the multi object iLeft
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objLeaving is a character<br>objType == 1 indicates objLeaving is an item<br>iLeft's script is activated
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onLeaving( iLeft, objLeaving, objType )
+{
+	if( objType == 0 )
+		objLeaving.SysMessage("You have left "+iLeft.name);
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnLightChangeEvent">onLightChange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnLogin">onLogin</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLogin( sockPlayer, pChar )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pChar is logged in to the world
+<tr><td valign="top" width="25%"><b>Notes</b><td>sockPlayer is never -1
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow customization of what happens when a player logs in.  Could pop up custom gumps, or do certain things (say everyone ALWAYS starts in one spot, no matter where they logged in.  Diabloesque hall logins).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onLogin( sockPlayer, pChar )
+<br>{
+<br>	pChar.Teleport( 1000, 1000, 0, 0 );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnLogout">onLogout</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLogout( sockPlayer, pChar )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pChar is logging out of the world
+<tr><td valign="top" width="25%"><b>Notes</b><td>sockPlayer is never -1
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow customization of what happens when a player logs out.  Could pop up custom gumps, or do certain things to the character.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onLogin( sockPlayer, pChar )
+<br>{
+<br>	sockPlayer.SysMessage ( "Farewell! Come back soon." );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPickupEvent">onPickup</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPickup( iPickedUp, pGrabber )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pGrabber picks up iPickedUp
+<tr><td valign="top" width="25%"><b>Notes</b><td>iPickedUp's script is activated.<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPortalEvent">onPortal</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnResurrectEvent">onResurrect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onRessurect( pAlive );
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player pAlive is resurrected.
+<tr><td valign="top" width="25%"><b>Notes</b><td>Only applies to PCs<br>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Control over what happens when a person comes alive once more
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onResurrect( pAlive )
+{
+	pAlive.Teleport( 1000, 1000, 0 );
+}
+<b><big>CURRENTLY BROKEN!!!</big></b
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onScrollCast">onScrollCast</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onScrollCast( pUser, spellID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a spell is cast using a magic scroll
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return value table:<br>-2: use NORMAL non-JS casting<br>-1: CANCEL normal spellcasting<br>0->inf: Spell delay in ms
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow overriding spellcasting from magic scrolls
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onScrollCast( pUser, spellID )
+{
+	if( spellID == 18 )
+	{
+		pUser.TextMessage( "I'm casting a fireball from a fireball-scroll!" );
+		return -1;
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSellEvent">onSell</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillEvent">onSkill</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkill( objUsing, skillUsed, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objUsing uses skill skillUsed.  objUsing's script is activated.
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objUsing is a character<br>objType == 1 indicates objUsing is an item
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Complements the use of current skill code.  Fires before any existing usage code kicks in.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSkill( objUsing, skillUsed, objType )
+{
+	switch( skillUsed )
+	{
+	case 0:
+		objUsing.TextMessage("Time to do some alchemy work!");
+		break;
+	case 1:
+		objUsing.TextMessage("Now using Anatomy skill!");
+		break;
+	case 2:
+		objUsing.TextMessage("Animal Lore usage Enabled!");
+		break;
+	//case etc.:
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillChangeEvent">onSkillChange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillChange( pPlayer, skill )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>This is fired if onSkillLoss isn't defined for skill loss, or onSkillGain isn't defined for skill gain.
+<tr><td valign="top" width="25%"><b>Notes</b><td> 
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows you to take action when your skill level changes
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillChange( pPlayer, skill )
+{
+	pPlayer.TextMessage( pPlayer, "Oh dear, my skill's changed" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onSkillCheck">onSkillCheck</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillCheck( pUser, skillID, lowSkill, highSkill )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td> 
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillGainEvent">onSkillGain</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillGain( pPlayer, skill )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when pPlayer gains in skill skill
+<tr><td valign="top" width="25%"><b>Notes</b><td> 
+<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking actions when you gain skill.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillGain( pPlayer, skill )
+{
+	pPlayer.TextMessage("Wheee! I've gained some skill!");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSkillLossEvent">onSkillLoss</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillLoss( pPlayer, skill )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in skill skill
+<tr><td valign="top" width="25%"><b>Notes</b><td> 
+<tr><td valign="top" width="25%"><b>Purpose</b><td>For doing something when you lose skill
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillLoss( pPlayer, skill )
+{
+	pPlayer.TextMessage( "Oh no, I've lost skill!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSnoopedEvent">onSnooped</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSnooped( pSnooped, pSnooping, bSuccess );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSnooped snoops into pSnooping's pack.
@@ -461,6 +485,152 @@
 <br>{
 <br>	TextMessage( pSnooped, "Oi! You! Stop snooping!" );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSpeechEvent">onSpeech</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pTalking says strSaid to pTalkingTo.  pTalkingTo's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Greatly improve the speech handling capabilities
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )
+{
+	pTalkingTo.TextMessage( strSaid );
+}
+// This is a simple mimic NPC.  Everything that someone says to it is quoted back verbatim
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSpeechInputEvent">onSpeechInput</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpeechInput(pUser, pItem, pSpeech, pSpeechID)
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the SpeechInput method is executed
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow action after speech-input has been requested.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUse( pUser, iUsed)
+{
+	pUser.SysMessage( "What do you want to rename this item to:" );
+	pUserr.SpeechInput(1, iUsed);
+}
+
+function onSpeechInput(pUser, iUsed, pSpeech, pSpeechID)
+{
+	if(pSpeech == null || pSpeech == " ")
+	{
+		pUser.SysMessage( "You didn't type anything!" );
+		return;
+	}
+    	switch(pSpeechID)
+    	{
+	case 1: 
+		pUser.SysMessage( "You rename the item to: "+pSpeech );
+		iUsed.name = pSpeech;
+		break;
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onSpellCast">onSpellCast</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellCast( pUser, spellID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When any spell is cast
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return value table:<br>-2: use NORMAL non-JS casting<br>-1: CANCEL normal spellcasting<br>0->inf: Spell delay in ms
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow overriding spellcasting on a spell-per-spell basis
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSpellCast( pUser, spellID )
+{
+	if( spellID == 18 )
+	{
+		pUser.CustomTarget( 0, "What do you want to target with your fireball?" );
+	        return -1;
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onSpellTarget">onSpellTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellTarget( myTarget, pUser, spellID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When targeting something/someone with a spell
+<tr><td valign="top" width="25%"><b>Notes</b><td>myTarget can be both items and characters
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSpellTarget( myTarget, pUser, spellID )
+{
+	if( spellID == 18 )
+	{
+		myTarget.TextMessage( "AAAAAAaaaaaaa! I've been hit by a fireball!" );
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onSpellSuccess">onSpellSuccess</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellSuccess( pUser, spellID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When successfully castin a spell
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSpellSuccess( pUser, spellID )
+{
+	if( spellID == 18 )
+	{
+		pUser.TextMessage( "Yes! I managed to cast a fireball!" );
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnStatChangeEvent">onStatChange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatChange( pPlayer, stat )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>If onStatLoss isn't defined, and stat went down, or if onStatGain isn't defined and stat went up
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onStatChange( pPlayer, stat )
+{
+	pPlayer.TextMessage("Whee my stats changed!");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnStatGainEvent">onStatGain</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGain( pPlayer, stat )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer gains in stat stat
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person gains in a stat
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onStatGain( pPlayer, stat )
+{
+	pPlayer.TextMessage("Whee I gained some stat!");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnStatLossEvent">onStatLoss</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatLoss( pPlayer, stat )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in stat stat
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person loses in a stat
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onStatLoss( pPlayer, stat )
+{
+	pPlayer.TextMessage("Awww I lost some stats.");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnStealEvent">onSteal</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSteal( thief, objStolen )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objStolen is stolen, objStolen's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>Works, but gives a console error: <i>ERROR: Chars[-1] referenced is invalid. Crash averted!</i>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Specialization of stealing.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSteal( thief, objStolen )
+{
+	thief.SysMessage( "You attempt to steal the "+objStolen.name );
+	ConsoleMessage( objStolen.name+" has been attempted stolen!" );
+	
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -475,6 +645,155 @@
 <br>	Attack( pVictim, pThief );
 <br>	YellMessage( pVictim, "GUARDS!!!!!!!" );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSwingEvent">onSwing</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSwing( iSwung, pSwinging, pSwingAt )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSwinging swings iSwung at pSwingAt.
+<tr><td valign="top" width="25%"><b>Notes</b><td>iSwung's script is activated<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSwing( iSwung, pSwinging, pSwingAt )
+{
+	pSwinging.TextMessage("Have at thee, knave!");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSystemSliceEvent">onSystemSlice</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnTalkEvent">onTalk</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTalk( pTalking, strSaid )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pTalking says strSaid.  pTalking's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Greatly improve the speech handling capabilities
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onTalk( myChar, mySpeech )
+{
+	if( mySpeech == "'dig")
+		myChar.DoAction(11);
+	else
+		return true;
+}
+// This is a simple script that will make the character talking perform the digging animation upon saying "'dig".
+// (Note: 'DIG won't be displayed as speech, since script intercepts the text before it is spoken out loud)
+// If anything else is said, the script returns true so speech can proceed as normal.
+</pre></table> 
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnTimerEvent">onTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTimer( tChar, timerID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When tempeffect 40 (StartTimer) duration has elapsed for timer timerID
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To be used for custom timer information for characters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onTimer( tChar, timerID )
+<br>{
+<br>	if( timerID == 0 )
+<br>	{
+<br>		DoStaticEffect( pCharacter, 0x376A, 9, 0, 0 );	// Make some sparkles!
+<br>	}
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnTransferEvent">onTransfer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTransfer( iTransferred, pSrc, pTrg )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSrc transfers iTransferred to pTrg
+<tr><td valign="top" width="25%"><b>Notes</b><td>iTransferred's script is activated<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onTransfer( iTransferred, pSrc, pTrg )
+{
+	pSrc.TextMessage("Whee I'm transferring this item to you, "+pTrg.name+"!");
+	pTrg.TextMessage("Thank you, "+pSrc.name+"!");
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUnequipEvent">onUnequip</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUnequip( pEquipper, iUnequipped )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEquipper unequips iUnequipped
+<tr><td valign="top" width="25%"><b>Notes</b><td>iUnequipped's script is activated
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUnequip( pUnequipper, iUnequipped )
+{
+	pUnequipper.StaticEffect( 0x376A, 9, 6 );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUnknownTriggerEvent">onUnknownTrigger</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUseEvent">onUse</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUse( pUser, iUsed )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  
+<tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on executing with hard coded implementation<br>if return value is false, then no hard code is executed
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUse( pUser, iUsed )
+{
+	var trgSock = pUser.socket;
+	if(pUser.InRange( iUsed, 8 ));
+	pUser.OpenBank(trgSock);
+	return false;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnXYZEvent">onXYZEvent</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OutOfRange">OutOfRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function OutOfRange( pChar, objVanish, objType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objVanish goes out of range of pChar
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objVanish is a character<br>objType == 1 indicates objVanish is an item
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To take actions based on when things go out of range.  For instance, if you ran out of range of your attacker, you might decide to automatically try and hide.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnIterateEvent">onIterate</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onIterate( object )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>On every object our iterator comes across.  
+<tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on running the loop<br>if return value is false, then the loop is halted
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow JS to loop through all world objects.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function doStuff( socket, pUser )
+{
+	socket.SysMessage( "Killing all NPCs" );
+	var numKilled = IterateOver( "CHARACTER" );
+	socket.SysMessage( "Killed " + NumToString( numKilled ) + " NPCs " );
+}
+
+function onIterate( charCheck )
+{
+	if( !charCheck )
+		return false;
+	if( charCheck.npc )
+		charCheck.Kill();
+	return true;		
+}
 </pre></table>
 
 <center>

@@ -11,66 +11,76 @@
 	<h1>UOX3 Script Engine</h1>
 	<h3>API and Event handling</h3>
 </center>
-<h3><a name="SpeechFuncs">Speech Related Functions</a></h3>
+<h3><a name="SpeechFuncs">Speech Related Methods</a></h3>
 
 <table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_SysMessage">SysMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SysMessage( UOXSOCKET toSendTo, string toSend );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends a string as a sysmessage to toSendTo
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SysMessage( 0, "Isn't the world great?" );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SysMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends a string as a sysmessage
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.SysMessage( "Isn't the world great?" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_TextMessage">TextMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>TextMessage( int srcChar, string message );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to say message.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>TextMessage( srcChar, "Shiver me timbers!" );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TextMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes the object to say message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myChar.TextMessage( "The world is great!" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_EmoteMessage">EmoteMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>EmoteMessage( int srcChar, string message );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to emote message.  Note that you need to manually put in the start and end *
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>EmoteMessage( srcChar, "Shiver me timbers!" );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void EmoteMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes  a Char to emote message.  Note that you need to manually put in the start and end *
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myChar.EmoteMessage( "*look around*" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_YellMessage">YellMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void YellMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes the char to yell message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myChar.YellMessage( "Yeehaa!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_WhisperMessage">WhisperMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void WhisperMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes the Char to whisper message.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myChar.WhisperMessage( "He you, i've got something for you!" );
+</pre></table><p>&nbsp;</p>
+
+<h3><a name="SpeechFuncs">Speech Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetDictionaryEntry">GetDictionaryEntry</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetDictionaryEntry( entryNum [, language ] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Pulls entry from the dictionary file based on language (or default).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var textString = GetDictionaryEntry( 1, socket.Language );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_BroadcastMessage">BroadcastMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>BroadcastMessage( string toSend );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void BroadcastMessage( string toSend );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends toSend to every client in the world
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>BroadcastMessage( "You're all going to die a hideous and painful death" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_ConsoleMessage">ConsoleMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ConsoleMessage( string toSend );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void ConsoleMessage( string toSend );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Prints out a string to the server console
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>ConsoleMessage( "Isn't the world great?" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_YellMessage">YellMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>YellMessage( int srcChar, string message );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to yell message.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>YellMessage( srcChar, "Shiver me timbers!" );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_WhisperMessage">WhisperMessage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>WhisperMessage( int srcChar, string message );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes srcChar to whisper message.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>WhisperMessage( srcChar, "Shiver me timbers!" );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_SubStringSearch">SubStringSearch</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SubStringSearch( strToSearch, searchString );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the string searchString is to be found inside strToSearch.  Case insensitive search.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var bFound = SubStringSearch( strSaid, "HELP" );
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Yell">Yell</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Yell( socket, string message, commandlevel );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Globally sends the message to anyone matching the provided commandlevel
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Yell( pSock, "Isn't the world great?", 2 );
 </pre></table>
 
 <center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+
 </center>
 
 </body>

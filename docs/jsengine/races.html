@@ -15,46 +15,20 @@
 <h3><a name="Race">Race Related Functions</a><br>
   <br>
 </h3>
+
 <table border="1" width="100%" cellspacing="0">
-  <tr>
-    <th colspan=3 bgcolor="maroon"><a name="SE_GetRaceCount">GetRaceCount</a>
-  
-  <tr>
-    <td valign="top" width="25%"><b>Prototype</b>
-    <td>
-      <pre>int GetRaceCount();
-</pre>
-    
-  <tr>
-    <td valign="top" width="25%"><b>Purpose</b>
-    <td>Counts all Races available on the Server.
-  
-  <tr>
-    <td valign="top" width="25%"><b>Example of Usage</b>
-    <td> Could be used for a RaceSelector using a Gump... <br>
-  
-      <pre>for (var i = 0; i &lt; GetRaceCount(); i++) {
-      	if (IsPlayerRace(i)) {
-      			// Display the race on the gump
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceCount">GetRaceCount</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetRaceCount();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Counts all Races available on the Server.
+<tr><td valign="top" width="25%"><b>Example of Usage</b>
+<td> Could be used for a RaceSelector using a Gump... <br>
+<pre>
+for (var i = 0; i &lt; GetRaceCount(); i++) {
+	if (IsPlayerRace(i)) {
+      		// Display the race on the gump
       	}
 } </pre>
-  
 </table>
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceName">GetRaceName</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetRaceName( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the name of the race raceID
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>TextMessage( pTalkingTo, "Oh my god, it's an " );
-<br>TextMessage( pTalkingTo, GetRaceName( GetRace( pTalking ) ) );
-<br>TextMessage( pTalkingTo, "!!!" );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetRaceName">SetRaceName</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetRaceName( trgRace, newName );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets trgRace's name to newName.  NOTE: This is NOT permanent, will only last till next server start.  If you want permanency, adjust the script files.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetRaceName( 0, "Subhuman" ); // Sets race 0's name to subhuman
-</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_IsRaceWeakToWeather">IsRaceWeakToWeather</a>
@@ -88,42 +62,6 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsPlayerRace">IsPlayerRace</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsPlayerRace( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if raceID is a player race
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( !IsPlayerRace( GetRace( pTalkingTo ) ) )
-<br>{
-<br>	if( !IsNPC( pTalkingTo ) )
-<br>	{
-<br>		TextMessage( pTalking, "Cheat! Cheat!" );
-<br>	}
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRacialGenderRestrict">GetRacialGenderRestrict</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>GENDER GetRacialGenderRestrict( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the gender that raceID is restricted to (if any).Values are:<br>0 - no restriction<br>1 - males<br>2 - females
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRacialGenderRestrict( GetRace( pTalking ) ) == 2 )
-<br>{
-<br>	if( GetGender( pTalking ) == 0 ) // for GetGender, 0 == males, 1 == females
-<br>	{
-<br>		TextMessage( pTalkingTo, "You're a cheat too!  Did you get a sex change?" );
-<br>	}
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRacialArmourClass">GetRacialArmourClass</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned char GetRacialArmourClass( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the armour class associated with the race.  Value of 0 means no restrictions.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRacialArmourClass( GetRace( pTalking ) ) )
-<br>{
-<br>	TextMessage( pTalkingTo, "Crikey, you can't wear all armour can you?" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_CanRaceWearArmour">CanRaceWearArmour</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanRaceWearArmour( raceID, tItem );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the race raceID can equip the item tItem.
@@ -134,62 +72,12 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceLanguageSkill">GetRaceLanguageSkill</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SKILLVAL GetRaceLanguageSkill( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the skill level required to understand the speech of raceID.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceLanguageSkill( GetRace( pTalking ) ) > GetSkill( pTalkingTo, 32 ) ) //  32 is spirit speak
-<br>{
-<br>	TextMessage( pTalkingTo, "What good sir?  I cannot hear you" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceSkillAdjustment">GetRaceSkillAdjustment</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed char GetRaceSkillAdjustment( raceID, skillNum );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the % increase that raceID gets for skillNum.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceSkillAdjustment( GetRace( pTalking ), 32 ) > 10 )
 <br>{
 <br>	TextMessage( pTalkingTo, "Wow, that's a big increase in spirit speak you get there" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRacePoisonResistance">GetRacePoisonResistance</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>float GetRacePoisonResistance( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the % resistance of raceID from poison damage.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRacePoisonResistance( GetRace( pTalking ) ) > 50.0 )
-<br>{
-<br>	TextMessage( pTalkingTo, "Wow, you really can resist poison can't you?" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceMagicResistance">GetRaceMagicResistance</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>float GetRaceMagicResistance( raceID );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the % resistance of raceID from magic damage.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceMagicResistance( GetRace( pTalking ) ) > 50.0 )
-<br>{
-<br>	TextMessage( pTalkingTo, "Wow, magic doesn't harm you does it?" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceVisibleDistance">GetRaceVisibleDistance</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetRaceVisibleDistance( trgRace );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the visible distance associated with trgRace.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceVisibleDistance( GetRace( pChar ) ) > 18 )
-<br>{
-<br>	TextMessage( pChar, "Wow, I can see a long way" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceNightVision">GetRaceNightVision</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetRaceNightVision( trgRace );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the light level bonus due to night vision for trgRace.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceNightVision( GetRace( pTalking ) ) > 10 )
-<br>{
-<br>	TextMessage( pTalkingTo, "Christ, you can really see in the dark!" );
 <br>}
 </pre></table>
 
@@ -241,6 +129,13 @@
 <br>{
 <br>	TextMessage( pTalkingTo, "Oh my god, get away from me!" );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceGate">RaceGate</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void RaceGate( socket, character, raceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the characters race.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>RaceGate( mSock, mChar, newRace );
 </pre></table>
 
 <center>

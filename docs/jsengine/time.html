@@ -12,7 +12,7 @@
 	<h3>API and Event handling</h3>
 </center>
 
-<h3>Time Related Functions</h3>
+<h3><a name="TimeFuncs">Time Related Functions</a></h3>
 
 <table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_GetHour">GetHour</a>
@@ -36,10 +36,11 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetSecondsPerUOMinute">GetSecondsPerUOMinute</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetSecondsPerUOMinute();
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the number of real seconds which equal a UO minute
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iNumSecs = GetSecondsPerUOMinute();
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SecondsPerUOMinute">SecondsPerUOMinute</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int SecondsPerUOMinute( [numSecs] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets and Returns the number of real seconds which equal a UO minute
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iNumSecs = SecondsPerUOMinute();
+SecondsPerUOMinute( newNumSecs );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
