@@ -59,7 +59,7 @@ enum __ACCOUNTBBLOCK_FLAGS__
 //
 enum __ACCOUNTBLOCK_ERRORS__
 {
-	AB_INVALID_ID=0xffff
+	AB_INVALID_ID = 0xFFFF
 };
 //
 enum __ACCOUNTBLOCK_FLAGS__
@@ -111,6 +111,39 @@ enum __ACCOUNTBLOCK_FLAGS__
 //o--------------------------------------------------------------------------o
 typedef struct __ACCOUNTSADM_BLOCK__
 {
+	__ACCOUNTSADM_BLOCK__(void) {
+		sUsername="";
+		sPassword="";
+		sPath="";
+		sContact="";
+		wAccountIndex=0xFFFF;
+		wFlags=0x0000;
+		wTimeBan=0x0000;
+		dwInGame=0xFFFFFFFF;
+		dwLastIP=0x00000000;
+		for(int i=0;i<5;i++)
+		{
+			dwCharacters[i]=0xFFFFFFFF;
+			lpCharacters[i]=NULL;
+		}
+	};
+	void reset(void)
+	{
+		sUsername="";
+		sPassword="";
+		sContact="";
+		sPath="";
+		wAccountIndex=0xFFFF;
+		wFlags=0x0000;
+		wTimeBan=0x0000;
+		dwInGame=0xFFFFFFFF;
+		dwLastIP=0x00000000;
+		for(int i=0;i<5;i++)
+		{
+			dwCharacters[i]=0xFFFFFFFF;
+			lpCharacters[i]=NULL;
+		}
+	};
 	std::string sUsername;
 	std::string sPassword;
 	std::string sPath;
@@ -163,8 +196,9 @@ public:
 	bool ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
 	bool SetPath(std::string sPath);
 	std::string GetPath(void);
-	UI16 Save(void);
+	UI16 Save(bool bForceLoad=false);
 	UI16 Load(void);
+	void Reset(ACCOUNTSBLOCK &actbValue);
 	UI16 size(void);
 	bool clear(void);
 	bool isUser(std::string sUsername);
