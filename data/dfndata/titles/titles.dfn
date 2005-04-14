@@ -7,155 +7,155 @@
 
 [SKILL]
 {
-//No Title
-NO=TITLE
+//No Title (-1)
+SKILLTITLE=
 
-//Alchemy
-Alchemist
+//Alchemy (0)
+SKILLTITLE=Alchemist
 
-//Anatomy
-Healer
+//Anatomy (1)
+SKILLTITLE=Healer
 
-//Animal Lore
-Vet
+//Animal Lore (2)
+SKILLTITLE=Vet
 
-//Item Identification
-Merchant
+//Item Identification (3)
+SKILLTITLE=Merchant
 
-//Arms Lore
-Blacksmith
+//Arms Lore (4)
+SKILLTITLE=Blacksmith
 
-//Parrying
-Warrior
+//Parrying (5)
+SKILLTITLE=Warrior
 
-//Begging
-Beggar
+//Begging (6)
+SKILLTITLE=Beggar
 
-//Blacksmithing
-Blacksmith
+//Blacksmithing (7)
+SKILLTITLE=Blacksmith
 
-//Bowcrafting
-Bowyer
+//Bowcrafting (8)
+SKILLTITLE=Bowyer
 
-//Peacemaking
-Bard
+//Peacemaking (9)
+SKILLTITLE=Bard
 
-//Camping
-Ranger
+//Camping (10)
+SKILLTITLE=Ranger
 
-//Carpentry
-Carpenter
+//Carpentry (11)
+SKILLTITLE=Carpenter
 
-//Cartography
-Cartographer
+//Cartography (12)
+SKILLTITLE=Cartographer
 
-//Cooking
-Cook
+//Cooking (13)
+SKILLTITLE=Cook
 
-//Detect Hidden
-Detective
+//Detect Hidden (14)
+SKILLTITLE=Detective
 
-//Enticement
-Bard
+//Enticement (15)
+SKILLTITLE=Bard
 
-//Evaluating Intelligence
-Scholar
+//Evaluating Intelligence (16)
+SKILLTITLE=Scholar
 
-//Healing
-Healer
+//Healing (17)
+SKILLTITLE=Healer
 
-//Fishing
-Fisherman
+//Fishing (18)
+SKILLTITLE=Fisherman
 
-//Forensics
-Criminologist
+//Forensics (19)
+SKILLTITLE=Criminologist
 
-//Herding
-Shepherd
+//Herding (20)
+SKILLTITLE=Shepherd
 
-//Hiding
-Rogue
+//Hiding (21)
+SKILLTITLE=Rogue
 
-//Provocation
-Bard
+//Provocation (22)
+SKILLTITLE=Bard
 
-//Inscription
-Scribe
+//Inscription (23)
+SKILLTITLE=Scribe
 
-//Lockpicking
-Locksmith
+//Lockpicking (24)
+SKILLTITLE=Locksmith
 
-//Magery
-Mage
+//Magery (25)
+SKILLTITLE=Mage
 
-//Magic Resist
-Mage
+//Magic Resist (26)
+SKILLTITLE=Mage
 
-//Tactics
-Warrior
+//Tactics (27)
+SKILLTITLE=Warrior
 
-//Snooping
-Snoop
+//Snooping (28)
+SKILLTITLE=Snoop
 
-//Musicianship
-Bard
+//Musicianship (29)
+SKILLTITLE=Bard
 
-//Poisoning
-Assassin
+//Poisoning (30)
+SKILLTITLE=Assassin
 
-//Archery
-Archer
+//Archery (31)
+SKILLTITLE=Archer
 
-//Spirit Speak
-Medium
+//Spirit Speak (32)
+SKILLTITLE=Medium
 
-//Stealing
-Pickpocket
+//Stealing (33)
+SKILLTITLE=Pickpocket
 
-//Tailoring
-Tailor
+//Tailoring (34)
+SKILLTITLE=Tailor
 
-//Taming
-Tamer
+//Taming (35)
+SKILLTITLE=Tamer
 
-//Taste Identification
-Detective
+//Taste Identification (36)
+SKILLTITLE=Detective
 
-//Tinkering
-Tinker
+//Tinkering (37)
+SKILLTITLE=Tinker
 
-//Tracking
-Ranger
+//Tracking (38)
+SKILLTITLE=Ranger
 
-//Veterinary
-Vet
+//Veterinary (39)
+SKILLTITLE=Vet
 
-//Swordsmanship
-Swordsman
+//Swordsmanship (40)
+SKILLTITLE=Swordsman
 
-//Mace Fighting
-Armsman
+//Mace Fighting (41)
+SKILLTITLE=Armsman
 
-//Fencing
-Fencer
+//Fencing (42)
+SKILLTITLE=Fencer
 
-//Wrestling
-Boxer
+//Wrestling (43)
+SKILLTITLE=Boxer
 
-//Lumberjacking
-Lumberjack
+//Lumberjacking (44)
+SKILLTITLE=Lumberjack
 
-//Mining
-Miner
+//Mining (45)
+SKILLTITLE=Miner
 
-//Meditation
-Monk
+//Meditation (46)
+SKILLTITLE=Monk
 
-//Stealth
-Burglar
+//Stealth (47)
+SKILLTITLE=Burglar
 
-//Remove Trap
-Locksmith
+//Remove Trap (48)
+SKILLTITLE=Locksmith
 }
 
 [PROWESS]
@@ -173,51 +173,52 @@ Locksmith
 //Goes in order of BEST fame title to WORST fame title
 [FAME]
 {
-Glorious
-Great
-Estimable
-Trustworthy
-Illustrious
-Famed
-Commendable
-Honest
-Noble
-Admirable
-Honorable
-Good
-Eminent
-Proper
-Respectable
-Kind
-Distinguished
-Reputable
-Upstanding
-Fair
-Renowned
-Prominent
-Notable
-Rude
-Disreputable
-Notorious
-Imfamous
-Dishonored
-Unsavory
-Dishonorable
-Ignoble
-Sinister
-Scoundrel
-Malicious
-Vile
-Villainous
-Dark
-Despicable
-Dastardly
-Wicked
-Evil
-Outcast
-Wretched
-Nefarious
-Dread
+FAMETITLE=Glorious
+FAMETITLE=Great
+FAMETITLE=Estimable
+FAMETITLE=Trustworthy
+FAMETITLE=Illustrious
+FAMETITLE=Famed
+FAMETITLE=Commendable
+FAMETITLE=Honest
+FAMETITLE=Noble
+FAMETITLE=Admirable
+FAMETITLE=Honorable
+FAMETITLE=Good
+FAMETITLE=Eminent
+FAMETITLE=Proper
+FAMETITLE=Respectable
+FAMETITLE=Kind
+FAMETITLE=Distinguished
+FAMETITLE=Reputable
+FAMETITLE=Upstanding
+FAMETITLE=Fair
+FAMETITLE=Renowned
+FAMETITLE=Prominent
+FAMETITLE=Notable
+FAMETITLE=
+FAMETITLE=Rude
+FAMETITLE=Disreputable
+FAMETITLE=Notorious
+FAMETITLE=Imfamous
+FAMETITLE=Dishonored
+FAMETITLE=Unsavory
+FAMETITLE=Dishonorable
+FAMETITLE=Ignoble
+FAMETITLE=Sinister
+FAMETITLE=Scoundrel
+FAMETITLE=Malicious
+FAMETITLE=Vile
+FAMETITLE=Villainous
+FAMETITLE=Dark
+FAMETITLE=Despicable
+FAMETITLE=Dastardly
+FAMETITLE=Wicked
+FAMETITLE=Evil
+FAMETITLE=Outcast
+FAMETITLE=Wretched
+FAMETITLE=Nefarious
+FAMETITLE=Dread
 }
 
 [MURDERER]
