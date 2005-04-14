@@ -399,38 +399,40 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	if( sItems.empty() )
 		maxispawn = 0;
 
-	bool shouldSpawnChars	= ( !sNpcs.empty() && maxcspawn >= spawnedChars.Num() );
-	bool shouldSpawnItems	= ( !sItems.empty() && maxispawn >= spawnedItems.Num() );
-	CChar *spawnChar		= NULL;
-	CItem *spawnItem		= NULL;
-
-	const UI08 spawnChars = (shouldSpawnChars?0:1);
-	const UI08 spawnItems = (shouldSpawnItems?1:0);
-	for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
+	bool shouldSpawnChars = ( !sNpcs.empty() && maxcspawn >= spawnedChars.Num() );
+	bool shouldSpawnItems = ( !sItems.empty() && maxispawn >= spawnedItems.Num() );
+	if( shouldSpawnChars || shouldSpawnItems )
 	{
-		if( RandomNum( spawnChars, spawnItems ) )
+		CChar *spawnChar		= NULL;
+		CItem *spawnItem		= NULL;
+		const UI08 spawnChars	= (shouldSpawnChars?0:50);
+		const UI08 spawnItems	= (shouldSpawnItems?100:49);
+		for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
 		{
-			if( shouldSpawnItems )
+			if( RandomNum( spawnChars, spawnItems ) > 49 )
 			{
-				spawnItem = RegionSpawnItem();
-				if( ValidateObject( spawnItem ) )
+				if( shouldSpawnItems )
 				{
-					spawnedItems.Add( spawnItem );
-					++itemsSpawned;
-					shouldSpawnItems = (spawnedItems.Num() < maxispawn);
+					spawnItem = RegionSpawnItem();
+					if( ValidateObject( spawnItem ) )
+					{
+						spawnedItems.Add( spawnItem );
+						++itemsSpawned;
+						shouldSpawnItems = (spawnedItems.Num() < maxispawn);
+					}
 				}
 			}
-		}
-		else
-		{
-			if( shouldSpawnChars )
+			else
 			{
-				spawnChar = RegionSpawnChar();
-				if( ValidateObject( spawnChar ) )
+				if( shouldSpawnChars )
 				{
-					spawnedChars.Add( spawnChar );
-					++npcsSpawned;
-					shouldSpawnChars = (spawnedChars.Num() < maxcspawn);
+					spawnChar = RegionSpawnChar();
+					if( ValidateObject( spawnChar ) )
+					{
+						spawnedChars.Add( spawnChar );
+						++npcsSpawned;
+						shouldSpawnChars = (spawnedChars.Num() < maxcspawn);
+					}
 				}
 			}
 		}

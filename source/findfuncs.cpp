@@ -220,7 +220,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	UI16 multiID = (UI16)(( m->GetID() ) - 0x4000);
 	Map->SeekMulti( multiID, &length );
 
-	if( length == -1 || length >= 17000000)
+	if( length == -1 || length >= 17000000 )
 	{
 		// the length associated with the multi means one thing
 		// the multi it's trying to reference is NOT in the multis.mul file

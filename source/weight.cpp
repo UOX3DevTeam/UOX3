@@ -278,7 +278,20 @@ void CWeight::addItemWeight( CItem *pack, CItem *item )
 		{
 			CChar *packOwner = (CChar *)pCont;
 			if( packOwner != NULL )
-				addItemWeight( packOwner, item );
+			{
+				switch( pack->GetLayer() )
+				{
+					case IL_NONE:
+					case IL_HAIR:		// hair
+					case IL_FACIALHAIR:	// beard
+					case IL_MOUNT:		// steed
+					case IL_BANKBOX:	// bank box
+						break;	// no weight for any of these
+					default:
+						addItemWeight( packOwner, item );	// Normal item, just add its weight
+						break;
+				}
+			}
 		}
 	}
 }
@@ -348,7 +361,20 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 		{
 			CChar *packOwner = (CChar *)pCont;
 			if( packOwner != NULL )
-				subtractItemWeight( packOwner, item );
+			{
+				switch( pack->GetLayer() )
+				{
+					case IL_NONE:
+					case IL_HAIR:		// hair
+					case IL_FACIALHAIR:	// beard
+					case IL_MOUNT:		// steed
+					case IL_BANKBOX:	// bank box
+						break;	// no weight for any of these
+					default:
+						subtractItemWeight( packOwner, item );	// Normal item
+						break;
+				}
+			}
 		}
 	}
 }

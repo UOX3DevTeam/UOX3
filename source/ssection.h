@@ -243,6 +243,9 @@ private:
 	{
 		UString tag;
 		UString data;
+		sectData() : tag( "" ), data( "" )
+		{
+		}
 	};
 	struct sectDataV2
 	{
@@ -250,7 +253,7 @@ private:
 		UString	cdata;
 		UI32	ndata;
 		UI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), ndata( INVALIDSERIAL ), odata( INVALIDSERIAL )
+		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( INVALIDSERIAL ), odata( INVALIDSERIAL )
 		{
 		}
 	};

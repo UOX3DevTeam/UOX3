@@ -351,10 +351,11 @@ void LoadCustomTitle( void )
 	ScriptSection *CustomTitle = FileLookup->FindEntry( "SKILL", titles_def );
 	if( CustomTitle == NULL )
 		return;
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
+	for( tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS; tag = CustomTitle->Next() )
 	{
-		data										= CustomTitle->GrabData();
-		cwmWorldState->title[titlecount++].skill	= tag + " " + data;
+		data = CustomTitle->GrabData();
+		cwmWorldState->title[titlecount].skill	= data;
+		++titlecount;
 	}
 	CustomTitle = FileLookup->FindEntry( "PROWESS", titles_def );
 	if( CustomTitle == NULL )
@@ -368,14 +369,10 @@ void LoadCustomTitle( void )
 	CustomTitle = FileLookup->FindEntry( "FAME", titles_def );
 	titlecount	= 0;
 
-	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
+	for( tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS; tag = CustomTitle->Next() )
 	{
-		cwmWorldState->title[titlecount].fame = tag;
-		if( titlecount == 23 )
-		{
-			cwmWorldState->title[titlecount].fame	= "";
-			cwmWorldState->title[++titlecount].fame	= tag;
-		}
+		data = CustomTitle->GrabData();
+		cwmWorldState->title[titlecount].fame = data;
 		++titlecount;
 	}
 
