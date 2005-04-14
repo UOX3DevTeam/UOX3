@@ -167,26 +167,20 @@ namespace UOX
 				case CIP_OWNER:		
 					// The owner property is not the pack's owner, but the item's owner.
 					// If you want the container's owner, look that up instead
-					if(*vp!=JSVAL_NULL)
-					{
-						CChar *pOwner = gPriv->GetOwnerObj();
+					CChar *pOwner;
+					pOwner = gPriv->GetOwnerObj();
 
-						if( !ValidateObject( pOwner ) )
-						{
-							*vp = JSVAL_NULL;
-						}
-						else
-						{
-							// Otherwise Acquire an object
-							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-							JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-							JS_SetPrivate( cx, myObj, pOwner );
-							*vp = OBJECT_TO_JSVAL( myObj );
-						}
+					if( !ValidateObject( pOwner ) )
+					{
+						*vp = JSVAL_NULL;
 					}
 					else
 					{
-							gPriv->SetOwner( NULL );
+						// Otherwise Acquire an object
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+						JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
+						JS_SetPrivate( cx, myObj, pOwner );
+						*vp = OBJECT_TO_JSVAL( myObj );
 					}
 					break;
 				case CIP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
@@ -1066,7 +1060,7 @@ namespace UOX
 				case CIP_ID:		gPriv->SetID( (UI16)encaps.toInt() );		break;
 				case CIP_COLOUR:	gPriv->SetColour( (UI16)encaps.toInt() );	break;
 				case CIP_OWNER:		
-					if( *vp == JSVAL_NULL ) 
+					if( *vp != JSVAL_NULL ) 
 					{	 
 						CChar *myChar = (CChar*)encaps.toObject(); 
 						if( !ValidateObject( myChar ) ) 

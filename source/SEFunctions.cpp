@@ -430,6 +430,13 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
  	UI08 execLevel			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+
+	if( scriptID == 0xFFFF )
+	{
+		DoSEErrorMessage( " RegisterCommand: JS Script has an Invalid ScriptID" );
+		return JS_FALSE;
+	}	
 
 	Commands->Register( toRegister, JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ), execLevel, isEnabled );
  	return JS_TRUE;

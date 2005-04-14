@@ -215,16 +215,12 @@ CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 UI16 CJSMapping::GetScriptID( JSObject *toFind )
 {
 	UI16 retVal		= 0xFFFF;
-	UI16 toCheck	= 0;
 
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		toCheck = mapSection[i]->GetScriptID( toFind );
-		if( toCheck > 0 )
-		{
-			retVal = toCheck;
+		retVal = mapSection[i]->GetScriptID( toFind );
+		if( retVal != 0xFFFF )
 			break;
-		}
 	}
 	return retVal;
 }
@@ -491,7 +487,7 @@ bool CJSMappingSection::IsInMap( UI16 scriptID )
 //o--------------------------------------------------------------------------o
 UI16 CJSMappingSection::GetScriptID( JSObject *toFind )
 {
-	UI16 retVal = 0;
+	UI16 retVal = 0xFFFF;
 
 	std::map< JSObject *, UI16 >::const_iterator sIter = scriptJSMap.find( toFind );
 	if( sIter != scriptJSMap.end() )

@@ -1,3 +1,7 @@
+4/14/2005 - giwo (0.98-2.8f)
+	Fixed an issue causing '0' to be an invalid JS ScriptID.
+	Fixed an issue causing item prop "owner" to not function properly.
+
 4/2/2005 - giwo (0.98-2.8e)
 	Moved Begging skill out to JS.
 	Moved Detecting Hidden skill out to JS.
