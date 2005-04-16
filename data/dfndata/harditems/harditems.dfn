@@ -17,9 +17,24 @@
 //*    etc .......                                                *
 //*                                                               *
 //* NOTE : these settings only work if you add the item via       *
-//*        /add 0x#### NOT /additem <item_number>                 *
+//*        /add 0x#### NOT /add item <item_number>                *
 //*                                                               *
 //*****************************************************************
+
+//Gold
+[x0eed]
+{
+pileable=1
+decay=1
+}
+
+// Ingots
+[x1befx1BF2]
+{
+pileable=1
+decay=1
+weight=10
+}
 
 // Logs
 [x1be0]

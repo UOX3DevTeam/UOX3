@@ -79,7 +79,7 @@ function onUse( pUser, iUsed )
 					DoTempEffect( 0, pUser, pUser, 16, 0, 1, 3 );
 					DoTempEffect( 0, pUser, pUser, 16, 0, 2, 2 );
 					DoTempEffect( 0, pUser, pUser, 16, 0, 3, 1 );
-					DoTempEffect( 0, pUser, iUsed, 17, 0, 4, 0 );
+					DoTempEffect( 1, pUser, iUsed, 17, 0, 4, 0 );
 					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.Language ) ); //Now would be a good time to throw it!
 				}
 				break;
@@ -171,15 +171,18 @@ function onUse( pUser, iUsed )
 				break;
 		}
 
-		pUser.SoundEffect( 0x0030, true );
-		if( pUser.id > 0x0189 && !pUser.isonhorse )
-			pUser.DoAction( 0x22 );
+		if( iUsed.morey != 3 )
+		{
+			pUser.SoundEffect( 0x0030, true );
+			if( pUser.id > 0x0189 && !pUser.isonhorse )
+				pUser.DoAction( 0x22 );
 
-		iUsed.Delete();
+			iUsed.Delete();
 
-		var eBottle = CreateBlankItem( socket, pUser, 1, "#", 0x0F0E, 0, "ITEM", true );
-		if( eBottle && eBottle.isItem )
-			eBottle.decay = true;
+			var eBottle = CreateBlankItem( socket, pUser, 1, "#", 0x0F0E, 0, "ITEM", true );
+			if( eBottle && eBottle.isItem )
+				eBottle.decay = true;
+		}
 	}
 	return false;
 }
@@ -190,6 +193,7 @@ function onCallback0( socket, ourObj )
 	var iUsed = socket.tempObj;
 	if( mChar && mChar.isChar && iUsed && iUsed.isItem )
 	{
+		iUsed.container = null;
 		// We need a LineOfSight check
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
