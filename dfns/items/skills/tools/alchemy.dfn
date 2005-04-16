@@ -9,6 +9,7 @@ weight=100
 value=9,4
 restock=20
 decay=1
+script=4007
 }
 
 [0x0f0e]
