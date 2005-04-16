@@ -679,7 +679,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			{
 				cScript *onCreateScp = JSMapping->GetScript( (UI16)0 );	// 0 == global script
 				if( onCreateScp != NULL )
-					onCreateScp->OnCreate( mChar );
+					onCreateScp->OnCreate( mChar, true );
 			}
 
 			cScript *onLoginScp = JSMapping->GetScript( mChar->GetScriptTrigger() );

@@ -1259,6 +1259,8 @@ public:
 class CPSellList : public cPUOXBuffer
 {
 protected:
+	UI16			numItems;
+
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CChar& mChar, CChar& vendor );
 public:
@@ -1266,9 +1268,9 @@ public:
 	{
 	}
 					CPSellList();
-					CPSellList( CChar& mChar, CChar& vendor );
-	void			AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen );
+	void			AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen );
 	void			AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_t &packetLen );
+	bool			CanSellItems( CChar &mChar, CChar &vendor );
 };
 
 }

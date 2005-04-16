@@ -511,9 +511,12 @@ void cSkills::SmeltOre( CSocket *s )
 					}
 					UI16 ingotNum = smeltedItem->GetAmount() * 2;	// 2 Ingots per ore pile.... shouldn't this be variable based on quality of ore?
 					sprintf( ingotString, "%s Ingot", oreType->name.c_str() );
-					CItem *ingot = Items->CreateItem( s, chr, 0x1BF2, ingotNum, oreType->colour, OT_ITEM, true );
+					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true );
 					if( ingot != NULL )
+					{
 						ingot->SetName( ingotString );
+						ingot->SetColour( oreType->colour );
+					}
 					s->sysmessage( 818 );
 					s->sysmessage( 819, oreType->name.c_str() );
 					smeltedItem->Delete();	// delete the ore

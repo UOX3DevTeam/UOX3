@@ -126,6 +126,8 @@ void CJSMapping::Reload( UI16 scriptID )
 		Console.Print( "CMD: Loading JSE Scripts... \n" );
 		Cleanup();
 		ResetDefaults();
+		envokeByID->Parse();
+		envokeByType->Parse();
 	}
 }
 

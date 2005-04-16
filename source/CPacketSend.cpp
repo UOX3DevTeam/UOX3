@@ -5040,13 +5040,14 @@ void CPSellList::InternalReset( void )
 {
 	internalBuffer.resize( 9 );
 	internalBuffer[0] = 0x9E;
+	numItems = 0;
 }
 void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 {
 	CItem *sellPack = vendorID.GetItemAtLayer( IL_SELLCONTAINER );
 	CItem *ourPack	= mChar.GetPackItem();
 
-	UI16 numItems		= 0;
+	numItems			= 0;
 	size_t packetLen	= 9;
 
 	if( ValidateObject( sellPack ) && ValidateObject( ourPack ) )
@@ -5058,7 +5059,7 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
 		{
 			if( ValidateObject( spItem ) )
-				AddContainer( tReg, spItem, ourPack, numItems, packetLen );
+				AddContainer( tReg, spItem, ourPack, packetLen );
 		}
 	}
 
@@ -5067,7 +5068,7 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 	PackShort( &internalBuffer[0], 7, numItems );
 }
 
-void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, UI16 &numItems, size_t &packetLen )
+void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )
 {
 	CDataList< CItem * > *opCont = ourPack->GetContainsList();
 	for( CItem *opItem = opCont->First(); !opCont->Finished(); opItem = opCont->Next() )
@@ -5075,7 +5076,7 @@ void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 		if( ValidateObject( opItem ) )
 		{
 			if( opItem->GetType() == IT_CONTAINER )
-				AddContainer( tReg, spItem, opItem, numItems, packetLen );
+				AddContainer( tReg, spItem, opItem, packetLen );
 			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
 				( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
 			{
@@ -5114,10 +5115,11 @@ CPSellList::CPSellList()
 {
 	InternalReset();
 }
-CPSellList::CPSellList( CChar& mChar, CChar& vendor )
+
+bool CPSellList::CanSellItems( CChar &mChar, CChar &vendor )
 {
-	InternalReset();
 	CopyData( mChar, vendor );
+	return (numItems != 0);
 }
 
 }

@@ -1,3 +1,17 @@
+4/16/2005 - giwo (0.98-2.8g)
+	Fixed an issue causing envoke (object and type associations) not to function after a JS Reload.
+	Fixed an issue causing accounts to erroneously report that it is already in use.
+	Fixed a possible issue caused by dropping a pilable item directly onto another pilable item.
+	Fixed an issue allowing a ghost to snoop the pack of a pack animal.
+	Fixed an issue causing Ghosts to "collide" with other players.
+	Fixed an issue causing exploding potions to not function properly.
+	Fixed an issue causing smelted ingots to not be stackable.
+	Added ingots and gold to harditems.dfn to safeguard against stacking issues.
+	Changed JS event onCreate() to onCreateTile() and onCreateDFN()
+		Note that onCreateDFN() will be the default, only items added directly
+		from the tile will use onCreateTile(). These scripts can be either scriptID 0
+		or specified in harditems.dfn.
+
 4/14/2005 - giwo (0.98-2.8f)
 	Fixed an issue causing banks to add to the characters total weight.
 	Fixed an issue causing SpawnRegions to not spawn anything under certain conditions.

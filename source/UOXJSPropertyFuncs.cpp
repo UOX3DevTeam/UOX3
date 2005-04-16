@@ -644,7 +644,7 @@ namespace UOX
 					gPriv->SetOrgID( (UI16)encaps.toInt() );
 					break;
 				case CCP_COLOUR:	
-					gPriv->SetColour( (UI16)encaps.toInt() );
+					gPriv->SetSkin( (UI16)encaps.toInt() );
 					gPriv->SetOrgSkin( (UI16)encaps.toInt() );
 					break;
 				case CCP_OWNER:		
@@ -820,6 +820,8 @@ namespace UOX
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
+				default:
+					break;
 			}
 		}
 		return JS_TRUE;

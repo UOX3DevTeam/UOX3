@@ -1806,7 +1806,10 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
-					actbTemp.wFlags&=0xFFF7;
+				{
+					actbTemp.wFlags &= 0xFFF7;
+					Accounts->ModAccount( actbTemp.sUsername, AB_FLAGS, actbTemp );
+				}
 			}
 		}
 		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() * 60 );

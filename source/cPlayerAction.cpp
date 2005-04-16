@@ -920,7 +920,7 @@ void DropOnItem( CSocket *mSock )
 		}
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
-		nItem->SetCont( nCont );
+		nItem->SetCont( nCont->GetCont() );
 		stackDeleted = ( doStacking( mSock, mChar, nItem, nCont ) != nItem );
 		if( !stackDeleted )	// if the item didn't stack or the stack was full
 		{
@@ -1377,7 +1377,9 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 		{
 			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
 			{
-				if( !objInRange( mChar, c, DIST_NEARBY ) )
+				if( mChar->IsDead() )
+					mSock->sysmessage( 392 );
+				else if( !objInRange( mChar, c, DIST_NEARBY ) )
 					mSock->sysmessage( 382 );
 				else
 				{

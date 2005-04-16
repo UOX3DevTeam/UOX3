@@ -199,7 +199,7 @@ public:
 	bool		OnStop( void );
 	//
 	bool		OnIterate( CBaseObject *a, UI32 &b );
-	bool		OnCreate( CBaseObject *thingCreated );
+	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
 	bool		OnCommand( CSocket *mSock ); 
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );

@@ -241,6 +241,10 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 		iCreated->SetAmount( iAmount );
 	}
 
+	cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( iCreated, false );
+
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
 
@@ -418,7 +422,7 @@ CItem * cItem::CreateBaseScriptItem( std::string item, UI08 worldNum, ObjectType
 
 		cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
 		if( toGrab != NULL )
-			toGrab->OnCreate( iCreated );
+			toGrab->OnCreate( iCreated, true );
 	}
 	return iCreated;
 }

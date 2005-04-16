@@ -248,7 +248,7 @@ function HandleSetChar( socket, ourChar, uKey, value )
 		okMsg( socket );
 		break;
 	case "NPCWANDER":
-		ourChar.wantertype = StringToNum( value );
+		ourChar.wandertype = StringToNum( value );
 		okMsg( socket );
 		break;
 	case "DIR":

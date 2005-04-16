@@ -325,11 +325,16 @@ bool cScript::OnStop( void )
 	return false;
 }
 
-bool cScript::OnCreate( CBaseObject *thingCreated )
+bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 {
 	if( !ValidateObject( thingCreated ) )
 		return false;
-	if( !ExistAndVerify( seOnCreate, "onCreate" ) )
+
+	std::string functionName = "onCreateDFN";
+	if( !dfnCreated )
+		functionName = "onCreateTile";
+
+	if( !ExistAndVerify( seOnCreate, functionName ) )
 		return false;
 	
 	jsval rval, params[2];
@@ -346,7 +351,7 @@ bool cScript::OnCreate( CBaseObject *thingCreated )
 		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
 	}
 	params[1] = INT_TO_JSVAL( paramType );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCreate", 2, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnCreate, false );
 	if( thingCreated->GetObjType() != OT_CHAR )

@@ -94,7 +94,7 @@ CChar *cCharStuff::CreateBaseNPC( std::string npc )
 
 		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
 		if( toGrab != NULL )
-			toGrab->OnCreate( cCreated );
+			toGrab->OnCreate( cCreated, true );
 	}
 	return cCreated;
 }

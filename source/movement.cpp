@@ -879,15 +879,19 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				cScript *tExec	= JSMapping->GetScript( tTrig );
 				if( tExec != NULL )
 					tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
-				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+
+				if( !ourChar->IsDead() && !c->IsDead() )
 				{
-					mSock->sysmessage( 1383, ourChar->GetName().c_str() );
-					c->SetStamina( UOX_MAX( c->GetStamina() - 4, 0 ) );
-				}
-				else if( ourChar->GetCommandLevel() < CNS_CMDLEVEL )
-				{
-					mSock->sysmessage( 1384 );
-					c->SetStamina( UOX_MAX( c->GetStamina() - 4, 0 ) );
+					if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+					{
+						mSock->sysmessage( 1383, ourChar->GetName().c_str() );
+						c->SetStamina( UOX_MAX( c->GetStamina() - 4, 0 ) );
+					}
+					else if( ourChar->GetCommandLevel() < CNS_CMDLEVEL )
+					{
+						mSock->sysmessage( 1384 );
+						c->SetStamina( UOX_MAX( c->GetStamina() - 4, 0 ) );
+					}
 				}
 			}
 		}

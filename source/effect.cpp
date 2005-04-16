@@ -194,12 +194,12 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	{
 		Effects->PlayStaticAnimation( c, 0x36B0, 0x00, 0x09 );
 		nItem->SetCont( NULL );
-		nItem->SetLocation(  c );
+		nItem->SetLocation( c );
 		Effects->PlaySound( c, 0x0207 );
 	}
 	else
 	{
-		Effects->PlayStaticAnimation( nItem, 0x36B0, 0x00, 0x09, 0x00);
+		Effects->PlayStaticAnimation( nItem, 0x36B0, 0x00, 0x09, 0x00 );
 		Effects->PlaySound( nItem, 0x0207 );
 	}
 	UI32 len	= nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
@@ -526,28 +526,31 @@ void cEffects::checktempeffects( void )
 					{
 						CSocket *srcSock = calcSocketObjFromChar( src );
 						CSocket *targSock = calcSocketObjFromChar( targ );
-						if( Effect->Number() == 22 )
+						if( objInRange( srcSock, targ, 2 ) && LineOfSight( srcSock, targ, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 						{
-							newHealth = static_cast<R32>(targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
-							targ->SetHP( UOX_MIN( static_cast<SI16>(targ->GetMaxHP()), (SI16)newHealth ) );
-							srcSock->sysmessage( 1271 );
-						}
-						else if( Effect->Number() == 23 )
-						{
-							NpcResurrectTarget( targ );
-							srcSock->sysmessage( 1272 );
-						}
-						else
-						{
-							targ->SetPoisoned( 0 );
-							if( targSock != NULL )
+							if( Effect->Number() == 22 )
 							{
-								PlayStaticAnimation( targ, 0x373A, 0, 15 );
-								PlaySound( targSock, 0x01E0, false );
-								targSock->sysmessage( 1273 );
+								newHealth = static_cast<R32>(targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
+								targ->SetHP( UOX_MIN( static_cast<SI16>(targ->GetMaxHP()), (SI16)newHealth ) );
+								srcSock->sysmessage( 1271 );
 							}
-							if( srcSock != NULL )
-								srcSock->sysmessage( 1274 );
+							else if( Effect->Number() == 23 )
+							{
+								NpcResurrectTarget( targ );
+								srcSock->sysmessage( 1272 );
+							}
+							else
+							{
+								targ->SetPoisoned( 0 );
+								if( targSock != NULL )
+								{
+									PlayStaticAnimation( targ, 0x373A, 0, 15 );
+									PlaySound( targSock, 0x01E0, false );
+									targSock->sysmessage( 1273 );
+								}
+								if( srcSock != NULL )
+									srcSock->sysmessage( 1274 );
+							}
 						}
 					}
 					src->SkillUsed( false, static_cast<UI08>(Effect->More1()) );

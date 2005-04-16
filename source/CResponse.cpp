@@ -540,8 +540,12 @@ CVendorSellResponse::CVendorSellResponse( bool vendVal, std::string text ) : CBa
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-	CPSellList toSend( (*mChar), (*Npc) );
-	mSock->Send( &toSend );
+	CPSellList toSend;
+	if( toSend.CanSellItems( (*mChar), (*Npc) ) )
+		mSock->Send( &toSend );
+	else
+		mSock->sysmessage( 1341 );
+
 	return false;
 }
 

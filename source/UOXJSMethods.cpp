@@ -1483,6 +1483,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
+	*rval = JSVAL_FALSE;
 	if( argc != 1 )
 	{
 		MethodError( "SellTo: Invalid Number of Arguments: %d", argc );
@@ -1497,6 +1498,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 
+	CPSellList toSend;
 	if( !strcmp( myClass->name, "UOXSocket" ) )
 	{
 		CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
@@ -1510,8 +1512,11 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( ValidateObject( mChar ) )
 		{
 			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
-			CPSellList toSend( (*mChar), (*myNPC) );
-			mySock->Send( &toSend );
+			if( toSend.CanSellItems( (*mChar), (*myNPC) ) )
+			{
+				mySock->Send( &toSend );
+				*rval = JSVAL_TRUE;
+			}
 		}
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) )
@@ -1525,8 +1530,11 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
 		CSocket *mSock = calcSocketObjFromChar( myChar );
-		CPSellList toSend( (*myChar), (*myNPC) );
-		mSock->Send( &toSend );
+		if( toSend.CanSellItems( (*myChar), (*myNPC) ) )
+		{
+				mSock->Send( &toSend );
+				*rval = JSVAL_TRUE;
+		}
 	}
 
 	return JS_TRUE;
