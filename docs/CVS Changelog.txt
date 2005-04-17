@@ -1,12 +1,458 @@
-7/24/2004 - giwo
+4/14/2005 - giwo (0.98-2.8f)
+	Fixed an issue causing banks to add to the characters total weight.
+	Fixed an issue causing SpawnRegions to not spawn anything under certain conditions.
+	Fixed an issue causing '0' to be an invalid JS ScriptID.
+	Fixed an issue causing item prop "owner" to not function properly.
+	Fixed some possible issues with member variables not being initialized.
+	Updated titles.dfn to read in much the same way the rest of the scripts do (tag=data).
+
+4/2/2005 - giwo (0.98-2.8e)
+	Moved Begging skill out to JS.
+	Moved Detecting Hidden skill out to JS.
+	Fixed an issue causing JS Character method SetSkillByName() to always return false.
+	Fixed an issue causing AreaCharacterFunction() to invalidate any characters and sockets in the function that called it.
+	Fixed a similar issue causing IterateOver() to invalidate any characters and items in the function that called it.
+	Fixed an issue that would set FD_SETSIZE to a much lower value than it should be on some *nix systems. (punt)
+	Replaced instances of strupr and strlwr with their UString counterparts. (punt)
+	Fixed an issue causing NPC's to hunger (and die quite quickly).
+	Removed many superfluous entries from uox.ini (BEGGINGTIMER, HUNGERDAMAGERATE, HUNGERTHRESHOLD, BEGGINGRANGE).
+	Modified the enum cSD_TID in CServerData.h to standardize naming habits.
+	Moved many timers from individual entries in CServerData into the serverTimers[] array.
+
+3/11/2005 - giwo (0.98-2.8d)
+	Included jr's fixes for cygwin compatability.
+	Began work on allowing UOX to compile under MinGW.
+	Many minor gcc warning fixes.
+	
+3/5/2005 - giwo (0.98-2.8c)
+	Fixed a couple memory leaks.
+	Fixed a couple areas where we were attempting to free memory that had already been freed.
+	Bumped the rate of stamina loss on an overweight player to 5 per-step (This should be configurable in the future).
+
+March 4 2005 - Maarc
+	Updated 'validcmd so that it dumps out information about JS based commands as well
+
+3/1/2005 - Xuri (giwo)
+	Fixed a bug in HandleGuardAI() causing guards to kill cute, innocent "grey" kittens (and other animals) after taking care of any real criminals present
+
+2/28/2005 - giwo (0.98-2.8b)
+	Removed some duplication in the callGuards() routine.
+	Fixed a possible issue that could cause Timer events to crash after reloading the JS engine.
+	Fixed a possible issue that could cause Magic scripts to crash after reloading the JS engine.
+	Fixed an issue causing some newbie clothing to be destroyed in combat.
+	Fixed an issue on loading teleport.scp causing some locations to not function properly.
+	Added the ability to reload entire sections of the JS Scripts.
+	JS Commands will now properly reload when reloading the Commands.
+	JS Commands will now properly register when reloading the JS Scripts.
+
+2/27/2005 - giwo (0.98-2.8a)
+	Fixed an issue causing 'GO PLACE to reach an invalid location after about 140.
+	Fixed an issue causing teleport locations to not function properly.
+	Fixed characters attempting to mount a creature when already on a mount.
+	Fixed an issue causing dropping a stack of scrolls onto a spellbook to delete all of them.
+	Fixed an issue causing items equipped to an NPC on creation or newbie at creation to be deleted.
+
+2/26/2005 - giwo (0.98-2.8)
+	Added support for "EQUIPITEM" tag in newbie.dfn.
+	Added JS Character Prop skillToTame.
+	Added JS Item Prop murdertime.
+	Moved the following skill functionality out to JavaScript:
+		Animal Taming
+		Anatomy
+		Arms Lore
+		Forensics
+
+2/18/2005 - giwo (0.98-2.7d)
+	Changed all the miscellaneous #ifdef DEBUG statements to #if defined( UOX_DEBUG_MODE ) for uniformity.
+	Fixed a few minor issues in cScript.cpp.
+	Removed cScript::RemoveFromRoot().
+	Fixed some areas where structures were not initializing variables with default values.
+	Fixed an issue with a couple of the JS Scripts:
+		commands/misc/repeatingcmds.js and server/resource/pitchers.js using "var" keyword
+		for initializing a global variables, was causing a crash with the newer js32.dll's.
+
+2/15/2005 - giwo (0.98-2.7c)
+	Made some structures private members of their only calling class.
+	Removed unused InUseEntry2()
+	Moved Spirit Speak skill out to JS.
+	Moved Animal Lore skill out to JS, and re-wrote it to use a gump interface.
+
+2/10/2005 - giwo (0.98-2.7b)
+	Moved Hiding Skill out to JS.
+	Moved Stealth Skill out to JS.
+	Moved Evaluate Intelligence skill out to JS.
+	Added RegisterSkill() JS Function.
+	Added .steath prop to JS Characters.
+	Fixed an issue with .attacker prop causing it to return the Characters target.
+
+2/8/2005 - giwo (0.98-2.7a)
+	Added the ability to reload a single JS file to CJSMapping.
+	Added SE Function ReloadJSFile, along with a new command in js, RELOADJSFILE
+
+2/7/2005 - giwo (0.98-2.7)
+	Replaced trigger.cpp/.h with CJSMapping.cpp/.h Fixing several issues with JS Scripts.
+	Added .desc prop to JS Items
+
+2/6/2005 - giwo
+	Fixed an issue causing JS commands to not function or crash the server
+	Fixed an issue causing findMulti() to return items that were not Multis.
+
+February 5 2005 - Maarc
+	Probable fix for Polymorph not returning to the right body (can't test)
+	The newbie dagger is no longer made on new character creation - use newbie.dfn people! (Not entirely complete, as not all references to EXTRA3 were removed)
+	SaveStatistics() added to CWorldMain, which only really writes out the total of characters and items, but using it to help with a fix for WorldBuilder
+
+2/3/2005 - EviLDeD
+	Fixed a small problem with VC6 not liking the initializer list for the TAGMAPOBJECT structure. 
+
+2/3/2005 - EviLDeD
+	Fixed the Crash on save bug after reloading the JS. 
+	Moved the TAGMAP system from jsval to TAGMAPOBJECT(See source)
+	Removed some of the console spam used for testing purposes
+
+1/30/2005 - EviLDeD (Contrib: Rynet)
+	Corrected a display problem with boats. This has been commented out due to being a work around for teh SetZ/SetDispZ bug which has been fixed I believe
+	Corrected some copy/referance issues in cSocket
+ 
+1/28/2005 - EviLDeD
+	Removed CTriggerScript class as it was redundant. Moved functionality into CTrigger class
+	Improved the command load process by having CommandRegistration() send in the contextID responsible for command RegisterCommand()
+	Increased amount of console spam looking for the full JS reload IE: console '8' that will crash the server on the next world save
+	NOTE: Currently the console '6' Reload commands appears to operate correctly with no crash upon save. At this point it is recomended that any object/item/char script changes that are NOT magic or command related be done while the server is shut down until a solution can be found for this.
+	NOTE: When solutio is found all console spam and comments will be removed internally.
+
+1/16/2005 - EviLDeD
+	Increased the JS global context stack size to 32kb from 8kb just to be safer
+	Added cCommand::UnRegister(string,cScript*) function to facilitate removal of named command objects. Currently not in use.
+	Added some console spam to help diagnose the AddMenu/PolyMorph gump issues not displaying correctly
+	Fixed(Partially) the JS Command reloading. Now commands are correctly loaded, however side effect is that the server will
+	 crash at save time. Once this last issue is sorted out then this bug will be fixed.
+
+January 15 2005 - Maarc
+	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system 
+	Explicitly setting some pointers NULL after they have been destroyed
+	Removed call to StoreRandomItemValue() in CMultiObj::LoadRemnants() - not really necessary, and the function call needs to be after world load, not during (ie candidate for PostLoad, if any)
+
+1/12/2005 - giwo
+	Moved Alchemy functionality out to JS.
+	Moved the following use functionality out to JS.
+		Scissors
+		Potions
+		Moongates
+		Spun Fabric
+		Unspun Fabric
+		Cotton Plant
+	Removed unused XGM code from the source.
+
+1/9/2005 - giwo
+	Moved the following Skill Functions to JS.
+		RepairBow
+		RepairLeather
+		Tinkering
+		Tailoring
+		Fletching
+		Carpentry
+	Moved Food consumption functionality out to JS
+	Moved teleport rune functionality out to JS.
+	JS Changes
+		Changed CChar_MakeMenu to CMisc_MakeMenu to allow access to sockets.
+		Modified CMisc_MakeMenu to allow passing the skill number.
+		Removed old style MakeMenu() function.
+		Added CChar_FindItemType( itemType ) to allow searching for items by type.
+
+1/8/2005 - giwo
+	Fixed some minor issues with the new jse_typeassociations.scp handling.
+	Included skills/healing.js in a first step toward putting skills in JS.
+	Removed Skills::HealingSkillTarget
+
+1/7/2005 - giwo
+	Made some adjustments to the Client update range.
+	Converted many functions to use references rather than pointers.
+	Fixed Mark, Recall, and Gate Spells and Commands to handle different worlds.
+	Added js/jse_typeassociations.scp
+	Added CEnvoke to handle all envoke functions.
+	Added CTriggerScripts to simplify script handling in CTrigger class.
+	Renamed the class Triggers to CTrigger to conform to proper class naming standards.
+
+1/2/2005 - EviLDeD
+	Fixed the issue of client crash on the 3D client when access the 'add menu
+
+1/1/2005 - giwo
+	Fixed an issue causing corpses to not display to their "owner".
+	Changed how we play the Death Animation to stop corpses from "moving".
+	Altered corpses update to send a few less unneeded QueryToolTip packets.
+
+12/31/2004 - giwo
+	More cleanups in CPacketSend.cpp
+	Renamed doDeathStuff() to HandleDeath() and moved it into pcmanage.cpp.
+	Cleaned up the code a bit in HandleDeath() and its sub-functions.
+	Fixed an issue causing starting skin color to disregard the players selection.
+	Brought down the range at which items in containers were sent to other players.
+	Added a GM check before updating a buy, sell, or bought layer to a character.
+	Fixed an issue causing GOLD tag on NPC's not to be read in properly.
+	JS Fixes
+		Fixed an issue causing 'deletechar not to function (thanks Xuri).
+		Fixed an issue causing 'wholist off not to function properly.
+
+12/31/2004 - EviLDeD
+	Updated the version to 0.98-2.5b
+	Added, and fixed all the doors. Now they all should work properly including the new expansion
+	Added all door ID's to harditems.dfn to ensure that all doors get type=12 including the new doors.
+
+12/30/2004 - EviLDeD
+	Updated the version to 0.98-2.5a this includes the changes that Giwo has commited. Remember to increment the version please.
+	Fixed a small bug with accounts allowing more than one client to log in under a single account and manipulate the character.
+	Fixed some logistics with the new doors, they all should work now, as long as they are set to type 12.
+
+12/30/2004 - Xuri
+	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
+		
+12/29/2004 - giwo
+	Removed CChar::dispz as it served no purpose.
+	Fixed an issue causing the Buy Window to not display prices and display items only after scrolling.
+	Fixed an issue causing the server to send extra unnecesarry QueryToolTip packets.
+	Fixed packet issues causing Dir and Z not to function properly on Items.
+	Fixed a packet issue causing combat targets not to remaing highlighted.
+	Fixed a crash on login casued by FindPlayersInVisrange().
+	Minor cleanups in CPacketSend.cpp
+
+12/27/2004 - evilded
+	Added code for until now unsupported doors, including new SE doors (experimental!).
+	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if they are not, and there are multiple servers listed that do not share the same listening port 2593.
+
+11/24/2004 - giwo
+	Removed unnecesarry Constructors/Destructors and did some minor updates.
+
+11/21/2004 - giwo
+	Fixed an issue causing the first item in a list not to be deleted when the list was cleared.
+
+8/22/2004 - giwo
+	Began enforcing stricter class naming rules in an effort to standardize the code (IE CSocket not cSocket).
+	Removed some unneeded global variables.
+	Rewrote ShowSkillTarget().
+	Sized down CTownRegion::midilist to a UI16.
+	Sized down some variables in the CSpawnRegion class.
+	Fixed an issue causing all characters to be created with at least 1.0 base skill level.
+	Minor cleanups.
+	Moved 'wipe' and 'iwipe' out to JS.
+	JS Changes:
+		Fixed an issue with CChar_SetSkillByName().
+		Added Character prop .tamed.
+
+8/20/2004 - giwo
+	More use of const_iterators where applicable.
+	Changed some vector.size() comparisons to vector.empty().
+	Minor fixes with a couple packets.
+	Moved 'areacommand' out to JS.
+	
+8/13/2004 - giwo
+	Converted a few areas of code to using refrences rather than pointers.
+	Consolidated some code in cWeather.cpp and cRaces.cpp.
+	Fixed a couple areas where an ACCOUNTSBLOCK was being copied and altered, but not set back on the object it was copied from.
+	Implemented a temporary fix for multiple users on one account and other related issues.
+	Modified CChar::petsControlled to make use of CDataList.
+	Made use of const_iterators in place of iterators in many places.
+	Modified a few more instances of CDataList to be handled by an accessor that would return a pointer.
+	Removed MOREB (MORE2) from CItem.
+	Modified Monster Gates (polymorph gates) to make use of items description tag in order to use string-type script entries.
+	Minor fixes and updates.
+	JS Changes:
+		commands/targeting/set.js:  Fixed an issue causing 'set owner to not function properly.
+
+8/6/2004 - giwo
+	Fixed an issue causing extra invalid servers to appear in the server list.
+	Added CPSellList to handle sending the vendor "sell" gump.
+	Fixed weight adding twice every time a player picked an item up.
+	Merged in some linux warning fixes.
+	Removed some superfluous includes.
+	Moved 'where' command out to JS.
+
+8/4/2004 - giwo
+	Fixed some Level 4 Warnings.
+	JS Changes:
+		CChar_Gate now supports passing a locations.dfn entry number (IE mChar.Gate( 1 ); ).
+		CBase_Teleport now supports passing a locations.dfn entry number (IE mchar.SetLocation( 1 ); ).
+		Added CSocket_SendAddMenu( menuNum ).
+	Command Updates:
+		Moved 'addx' out to JS.
+		Moved 'add' out to JS.
+		Moved 'xgo' out to JS.
+		Combined 'xgoplace' with 'xgo'.
+		Moved 'xgate' out to JS.
+		Moved 'go' out to JS.
+		Moved 'itemmenu' out to JS.
+
+8/3/2004 - giwo
+	JS Changes:
+		Modified SoundEffect() as it was playing a sound one less than specified.
+		Updated CChar_SetSkillByName() to return true if it successfully set, false otherwise.
+		Updated many of the JS commands to fix some minor issues and improve output.
+		Added GetSocketFromIndex()
+	Command Updates:
+		Moved 'fix' out to JS.
+		Moved 'tele' out to JS.
+		Moved 'xteleport' out to JS.
+
+8/1/2004 - giwo
+	Changed some variable sizes in order to reduce type mismatches and memory waste.
+	Created a new class, CDataList, this is basically a safe wrapper for deque, where one can specify what they are storing.
+	This allows us to consolidate quite a bit of code from several different classes by simply making our lists CDataList< objtype * >
+	rather than using DCHARLIST or DITEMLIST, etc.
+
+	Old style listings:
+	------------------
+private:
+	DCHARLIST chars;
+	DITEMLIST items;
+	DCHARLIST_ITERATOR charsIter;
+	DITEMLIST_ITERATOR itemsIter;
+public:
+	FirstChar();
+	NextChar();
+	FinishedChars();
+	NumChars();
+
+	FirstItem();
+	NextItem();
+	FinishedItems();
+	NumItems();
+	
+	AddChar();
+	RemoveChar();
+
+	AddItem();
+	RemoveItem();
+	------------------
+
+	New Style:
+	------------------
+public:
+	CDataList< CChar * >	chars;
+	CDataList< CItem * >	items;
+	------------------
+
+	Everything else is handled internally (and thus any bugs that arise can be fixed in one place, not half a dozen).
+	
+	JS Changes:
+		New character prop: magicReflect, sets and returns if they have magic reflect on
+		New character methods:
+			SpellMoveEffect( target, spell )
+			SpellStaticEffect( spell )
+			BreakConcentration( [socket] )
+		Wrote clumsy.js, the first UOX3 spell to be put in JS. This script is mostly working, but there are
+		some issues that need to be worked out before the entire spell system is put out to the JS engine.
+
+		Currently known issues:
+			No way to cause one target to attack another in JS.
+			No Line of Sight checks in JS.
+
+August 2 2004
+	Changed __unix__ references to UOX_PLATFORM != PLATFORM_WIN32
+
+July 31 2004
+	Increased JS context stack size from 0x2000 to 0x4000 (we may need the extra space)
+	Updated JSEncapsulate for delayed initialisation (useful for optional parameters to methods)
+	Implemented Console object in JS
+		Methods
+			Print			1 (text to print, include \n at the end unless you're sending multiple mesesages)
+			Log			1 (text to print, same as above.  Optional second parameter is the name of the file to log it into)
+			Error			2 (error level, text to print)
+			Warning			2 (warning level, text to print)
+			PrintSectionBegin	0
+			TurnYellow		0
+			TurnRed			0
+			TurnGreen		0
+			TurnBlue		0 
+			TurnNormal		0
+			TurnBrightWhite		0
+			PrintDone		0
+			PrintFailed		0
+			PrintPassed		0
+			ClearScreen		0
+			PrintBasedOnVal		1 (pass true or false, it will say pass/fail based on this)
+			MoveTo			2 (x coord, y coord - if you want the same line, y == -1)
+			PrintSpecial		2 (colour of text, text to print)
+		Properties	(most of these can be ignored, as they do very little eg boundaries)
+			left			left (always 0)
+			top			top (always 0)
+			height			height (always 0)
+			width			width (always 0)
+			filter			filter setting
+			mode			filter mode
+			level			filter level, integer
+			logEcho			boolean - determines if log calls get echo'd to screen
+		
+	Wrote a console test driver script (command consoletest)
+	Posix compliance fix from xir
+	Added MSVC7.1 project files
+
+July 29 2004
+	Note: We need to change references to __unix__ to something more like UOX_PLATFORM != PLATFORM_WINDOWS or UOX_PLATFORM == PLATFORM_LINUX
+	Some of che's fixes were not fixes (ie commenting out the throws) or improperly done (platform specific decls don't go in uox3.h)
+
+7/28/2004 - giwo
+	Minor fixes, cleanups
+	Included che's linux fixes
+
+July 28 2004 - Maarc
+	Possible crash in _add avoided
+	GetAmount() returns a UI16 and we were comparing to 0xFFFF, no longer needed
+	Three possible crashes in ShowCName stepped around
+	Called GetWord rather than GetDWord for magic targeting
+	Possible crash in addRandomColor avoided (only if colorlist didn't exist)
+	Possible crash in LoadFromScript (townregions) avoided
+	Fixed an issue that VC7.1 finds.  We clear() a list, and then reference the first item, in processing the INI, which crashes
+	Modified some changes from che
+	Fixed some typo declarations
+	Moved stdexcept into UOXStdHeaders, so that exceptions can be used wherever needed
+	for loop problem declaration (using var outside loop)
+
+
+7/25/2004 - giwo
+	Removed several vtables from classes that were not subclassed
+	Added struct GoPlace_st and CWorldMain::goPlaces map to replace re-reading entries every time we use GoPlace.
+	Removed MakePlace()
+	Removed cSocket::AddX & AddY and renamed AddZ to ClickZ
+	Fixed an issue causing invalid entries to exist in the ObjectFactory (causing a crash on WIPE ALL)
+	Once again merged deletionIQueue and deletionCQueue back together as a QUEUEMAP (as ObjectFactory fixed the original problem).
+	Combined CBO::Visible(), CChar::Hidden(), and CChar::PermHidden() into a single CBO::Visible() using enum VisibleTypes
+		0 = Visible
+		1 = Temporary Hidden (Skill, Item visible to owner)
+		2 = Invisible (Magic Invis)
+		3 = Permanent Hidden (GM Hide)
+	Moved all of the remaining targeting functions out of cTargets and removed the class along with targeting.h
+	Converted CWM::creatures[] into a map and creat_st into class CCreatures.
+	Converted TeleLocationEntry into class CTeleLocationEntry.
 	Fixed an issue with UString::number() causing it to only return decimal values.
 	JS Updates:
+		Changed SetSecondsPerUOMinute() to SecondsPerUOMinute() used to Set and Return the value.
+		Converted ReadBytes( socket, offset ) to CSocket_ReadBytes( offset )
+		Converted Get DWord/String( socket, offset ) to CSocket_Get DWord/String( offset )
+		Converted Set Byte/Word/DWord/String( socket, offset, newVal ) to CSocket_Set Byte/Word/DWord/String( offset, newVal )
+		Renamed CChar_WanderBox() to Wander() and allowed it to handle a circle (3 values) or box (4 vals).
+		Modified Get/Set Timer() to work for both Sockets and Characers (Perhaps need this for Items as well).
+		Added CItem_Dupe() to allow duping of items in JS.
+		Added CChar_Jail( numSecs ) and CChar_Release() to Jail and Release characters
+		Added IterateOver( objectType ) and onIterate( object ) to allow looping through world objects.
+		Added CChar_Kill() method to kill a character.
 		Added SendStaticStats() to build an info gump for statics and map tiles.
 		Added Gump.AddPageButton() to allow Next/Last page buttons.
 		Added NumToHexString() to allow converting a number to a hex string.
 		Added SetSkillByName() method to CChar to simplify setting skill by name.
+
+		Added a map to map strings to objectTypes;
+		Currently this is used in CreateBlankItem(), CreateDFNItem() and IterateOver()
+			"BASEOBJ" 	= OT_CBO
+			"CHARACTER" 	= OT_CHAR
+			"ITEM" 		= OT_ITEM
+			"SPAWNER" 	= OT_SPAWNER
+			"MULTI 		= OT_MULTI
+			"BOAT" 		= OT_BOAT
+
 		Properties:
 			Characters:
+			Added isJailed prop to check if a character is in jail
+			Added squelch prop to toggle Characters squelched status.
 			Added spattack prop to set NPC's Spell Attack value.
 			Added spdelay prop to set NPC's Spell Delay value.
 			Added aitype prop to set NPC's AI Type.
@@ -14,6 +460,7 @@
 			Added splitchance prop to set NPC's chance of splitting on hit.
 			Added trainer prop to toggle NPC's ability to train skills.
 			Items:
+			Added corpse prop to toggle whether or not an item is a corpse.
 			Added strength prop to set items str-to-wear value.
 			Added wipable prop to toggle items ability to be wiped.
 			Added buyvalue and sellvalue props to set items value.
@@ -24,10 +471,29 @@
 			Added sectionalist prop to toggle whether or not the above section is a list.
 			Added mininterval and maxinterval to set how many of an item to respawn per call.
 			Misc:
+			Renamed CSocket_addz to CSocket_clickZ
 			Added weight prop to Characters and Items to get and set the weight value.
 			Added isSpawner prop to Characters and Items to identify a SpawnItem.
 			Added allskills prop to Skills class to set all skills at once.
 	Command Updates:
+		Moved RESURRECT out to JS.
+		Moved NACCT out to JS.
+		Moved GUMPMENU out to JS.
+		Moved JAIL and RELEASE out to JS.
+		Moved HIDE and UNHIDE out to JS.
+		Moved SECONDSPERUOMINUTE out to JS.
+		Moved NPCBOUND to JS and Split it into NPCRECT & NPCCIRCLE.
+		Moved SQUELCH and MUTE out to JS.
+		Moved DUPE out to JS.
+		Moved SHOWDETAIL out to JS.
+		Moved KILLALL out to JS.
+		Moved DELID out to JS.
+		Moved CLEANUP out to JS.
+		Moved ZEROKILLS out to JS.
+		Moved TELESTUFF out to JS.
+		Moved KICK out to JS.
+		Moved DELETECHAR out to JS.
+		Moved KILL out to JS.
 		Moved ISTATS out to JS.
 		Moved CSTATS out to JS.
 		Moved SET out to JS.

@@ -5,7 +5,7 @@
 <body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
 <center>
 <font size=3><b>The UOX3 Command List</b></font><br>
-as of Tuesday, July 27, 2004
+as of Tuesday, December 28, 2004
 
 <p>
 <table bgcolor=#333333 width=55% cellspacing=0 cellpadding=0>
@@ -824,6 +824,14 @@ as of Tuesday, July 27, 2004
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
+	<td valign="top">RELOADJSFILE</td>
+	<td>( d ) Reloads a specified JScript, based on the scriptID from jse_fileassociations.scp.</td>
+    </tr>
+    <tr>
+	<td colspan=1 bgcolor=#000000></td>
+	<td colspan=1 bgcolor=#000000></td>
+    </tr>
+    <tr>
 	<td valign="top">RESTOCK</td>
 	<td>
 	(s / nothing) Forces a manual vendor restock.
@@ -977,7 +985,7 @@ as of Tuesday, July 27, 2004
 	<b>COMMANDLEVEL</b> (d): Set the command level of the character.<br>
 	<b>CANTRAIN</b> (d): Toggle characters ability to train (0: can't train, 1: can train).<br>
 	<b>FROZEN</b> (d): Toggle characters ability to move (0: not frozen, 1: frozen).<br>
-	(s d) If a valid skill name is used, sets the specified skill.
+	<strong>&lt;SKILLNAME&gt; </strong>(d) If a valid skill name is used, sets the specified skill.
 	</ul>
 	Items:
 	<ul>
@@ -1144,17 +1152,16 @@ as of Tuesday, July 27, 2004
     <tr>
 	<td colspan=3 bgcolor=#501010><font color=#CCCCCC><b>T</b></font></td>
     </tr>
-    <tr>
-	<td valign="top">TEMP</td>
-	<td>Displays the current temperature</td>
+	<td valign="top">TELE</td>
+	<td>(Target Command) Teleports you to the targeted location.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-	<td valign="top">TIME</td>
-	<td>Displays the current im-game time</td>
+	<td valign="top">TELESTUFF</td>
+	<td>(Target Command) Moves targeted object to location specified with a targeting cursor.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -1163,6 +1170,14 @@ as of Tuesday, July 27, 2004
     <tr>
 	<td valign="top">TELL</td>
 	<td>(d text) Sends a message to the user logged into the specified slot</td>
+    </tr>
+    <tr>
+	<td colspan=1 bgcolor=#000000></td>
+	<td colspan=1 bgcolor=#000000></td>
+    </tr>
+    <tr>
+	<td valign="top">TEMP</td>
+	<td>Displays the current temperature</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -1183,24 +1198,23 @@ as of Tuesday, July 27, 2004
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
-	<td valign="top">TELESTUFF</td>
-	<td>(Target Command) Moves targeted object to location specified with a targeting cursor.</td>
+	<td valign="top">TIME</td>
+	<td>Displays the current im-game time</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
 	<td colspan=1 bgcolor=#000000></td>
     </tr>
     <tr>
+	<td valign="top">TRAVEL</td>
+	<td>Shortcut for opening ITEMMENU 6000 - which is the GM Travel-Menu</td>
+    </tr>
+    <tr>
+	<td colspan=1 bgcolor=#000000></td>
+	<td colspan=1 bgcolor=#000000></td>
+    </tr>
 	<td valign="top">TWEAK</td>
 	<td>(Target Command) Opens the "tweak" menu allowing you to modify many settings on an object.</td>
-    </tr>
-    <tr>
-	<td colspan=1 bgcolor=#000000></td>
-	<td colspan=1 bgcolor=#000000></td>
-    </tr>
-    <tr>
-	<td valign="top">TELE</td>
-	<td>(Target Command) Teleports you to the targeted location.</td>
     </tr>
     <tr>
 	<td colspan=1 bgcolor=#000000></td>
@@ -1358,5 +1372,5 @@ as of Tuesday, July 27, 2004
     <tr>
 	<td colspan=3 bgcolor=#000000>&nbsp;</td>
 </table>
-</head>
-</html>
+
+</center></html>

@@ -1,0 +1,47 @@
+UOX3 Changelog
+------------------------
+-=======================-
+-= 16/04/2005 - UOX3 0.98-2.8g =-
+-=======================-
+Source Fixes:
+	Fixed an issue causing envoke (object and type associations) not to function after a JS Reload.
+	Fixed an issue causing accounts to erroneously report that it is already in use.
+	Fixed a possible issue caused by dropping a pilable item directly onto another pilable item.
+	Fixed an issue allowing a ghost to snoop the pack of a pack animal.
+	Fixed an issue causing Ghosts to "collide" with other players.
+	Fixed an issue causing smelted ingots to not be stackable.
+	Changed JS event onCreate() to onCreateTile() and onCreateDFN()
+		Note that onCreateDFN() will be the default, only items added directly
+		from the tile will use onCreateTile(). These scripts can be either scriptID 0
+		or specified in harditems.dfn.
+
+JScript Fixes:
+	Fixed an issue causing exploding potions to not function properly.
+
+DFN Fixes:
+	Instead of 21 location-dfn files, we now have only one; location.dfn.
+	Added ingots and gold to harditems.dfn to safeguard against stacking issues.
+
+
+-=======================-
+-= 15/04/2005 - UOX3 0.98-2.8f =-
+-=======================-
+Source Fixes:
+	Fixed an issue causing banks to add to the characters total weight.
+	Fixed an issue causing SpawnRegions to not spawn anything under certain conditions.
+	Fixed an issue causing '0' to be an invalid JS ScriptID.
+	Fixed an issue causing item prop "owner" to not function properly.
+	Fixed some possible issues with member variables not being initialized.
+	Updated titles.dfn to read in much the same way the rest of the scripts do (tag=data).
+
+JScript Fixes:
+	(set.js) SET OWNER command no longer requires additional arguments. (Target owner, target object to be owned.)
+	(set.js) Fixed a spelling error which caused SET NPCWANDER # to have no effect.
+	(healing.js) Added 0x0192 and 0x0193 (ghosts) as valid targets for healing with bandages.
+	(travel.js) Added a new command, 'TRAVEL, as a shortcut to itemmenu 6000 - which is the GM Travel-menu.
+	(jse_fileassociations.scp) Added 400=commands/custom/travel.js
+	(jse_objectassociations.scp) Added 0xf6b=509 to make the second unlit torch work.
+	(server/light/*.js) Fixed sound-effects for lighting various lightsources.
+
+DFN Fixes:
+	(titles.dfn) Now follows the tag=data pattern that the other dfns uses.
