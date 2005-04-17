@@ -3,7 +3,7 @@
 
 function onUse( pUser, iUsed ) 
 { 
-    pUser.SoundEffect( 0x0048, true );
+    pUser.SoundEffect( 0x0047, true );
     iUsed.id = 0x0A1A;
     return false;
 }

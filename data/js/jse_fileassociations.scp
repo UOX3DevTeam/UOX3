@@ -164,6 +164,7 @@
 //-------------------------------------------
 [COMMAND_SCRIPTS]
 {
+400=commands/custom/travel.js
 401=commands/custom/repeatingcmds.js
 402=commands/custom/misc-cmd.js
 403=commands/reload.js

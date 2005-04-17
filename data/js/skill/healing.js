@@ -29,7 +29,7 @@ function onCallback1( socket, ourObj )
 		{
 			var healSkill;
 			var skillNum;
-			if( ourObj.id == 0x0190 || ourObj.id == 0x0191 )
+			if( ourObj.id == 0x0190 || ourObj.id == 0x0191 || ourObj.id == 0x0192 || ourObj.id == 0x0193 )
 			{
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 21;
@@ -44,7 +44,19 @@ function onCallback1( socket, ourObj )
 				socket.SysMessage( "You can't heal that!" );
 				return;
 			}
-				
+/*			// Commented out until the multi-functions actually work.
+			var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, 0 );
+			if( iMulti )
+			{
+				if( iMulti.IsInMulti( ourObj ) )
+				{
+					if( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnOwnerList( mChar ) )
+					{
+						socket.SysMessage( "Your target is in another character's house, healing attempt aborted." );
+						return;
+					}
+				}
+			}*/
 			var anatSkill = mChar.baseskills.anatomy;
 			if( ourObj.dead )
 			{

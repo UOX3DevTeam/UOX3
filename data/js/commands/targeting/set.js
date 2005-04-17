@@ -6,18 +6,19 @@ function CommandRegistration()
 
 function command_SET( socket, cmdString )
 {
-	if( cmdString )
+	var splitString = cmdString.split( " ", 2 );
+	if( !splitString[1] )
 	{
-		var splitString = cmdString.split( " ", 2 );
-		if( !splitString[1] )
+		var uKey = splitString[0].toUpperCase();
+		if( !uKey == "OWNER" ) // SET OWNER requires no additional arguments
 		{
 			socket.SysMessage( GetDictionaryEntry( 1755, socket.Language )); //Additional arguments required
 			return;
 		}
-		var targMsg = GetDictionaryEntry( 1741, socket.Language );
-		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
 	}
+	var targMsg = GetDictionaryEntry( 1741, socket.Language );
+	socket.xText = cmdString;
+	socket.CustomTarget( 0, "Choose target to set: " + cmdString );
 }
 
 function onCallback0( socket, ourObj )

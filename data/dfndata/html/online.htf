@@ -1,12 +1,33 @@
-<html><head><title>Ultima Offline eXperiment - ServerStatus</title></head>
-<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-<div align="center"><br>
-  <br>
-  <table width="600" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td> 
-        <p><font size="4" face="Arial, Helvetica, sans-serif"><b><font color="#000099">U 
-          O X</font></b> - <font color="#666666">ServerStatus</font><br>
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head><title>UOX3.org</title>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK href="uox3org.css" type="text/css" rel=stylesheet>
+<STYLE type="text/css">
+  TD { font-size: 10pt }
+ </STYLE>
+</head>
+<body bgcolor="#000000" text="#DFDFFF" link="#CFCFFF" vlink="#CFCFFF" alink="#CFCFFF">
+
+<center>
+<table border=1 cellpadding=0 cellspacing=0 width="25%" align=center>
+	<tr>
+       	    <td colspan=2 bgcolor="#082044" height=1>
+		<center>-= <b>U O X 3 - Server Status</b> =-</center>
+	    </td>
+	</tr>
+</table>
+<table border=0 cellpadding=0 cellspacing=13 width="75%" align=center>
+	<tr>	
+		<td colspan=2 bgcolor="#082044" height=1 valign=top align=left>
+			<b> August 4, 2004</b><br>
+		</td>
+	</tr>
+	<tr>
+              	<td>
+			<BLOCKQUOTE><p><b><u>Another Test Version</u></b><br>
+
+<font color="#000099">U O X 3</font></b> - <font color="#666666">ServerStatus</font><br>
           </font><font size="1"><font face="Arial, Helvetica, sans-serif">Build: 
           %version</font></font><i> </i><font size="1" face="Arial, Helvetica, sans-serif">| 
           %time | This page will be updated every %updatetime sec.</font><i><br>
@@ -17,6 +38,8 @@
           <b>Accounts:</b> %accounts<br>
           <b>NPCs:</b> %npcs<br>
           <b>Time:</b> %time</font><br>
+          <br>
+          <b>Uptime:</b> %uptime<br>
           <br>
           <font face="Arial, Helvetica, sans-serif"><b>Online (%online_all):</b><br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Player:</i> %online_player<br>
@@ -34,9 +57,9 @@
           %guildlist%<br>
           %guildid. <a href="%guildid.html">%guildname</a><br>
           %guildlist%</font></font></p>
-        </td>
-    </tr>
+		</td>
+        </tr>
   </table>
-</div>
+</center>
 </body>
 </html>

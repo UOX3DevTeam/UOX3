@@ -176,6 +176,7 @@
 0xa0c=508
 // 0f64 <> 0a12, player carryable torch
 0xf64=509
+0xf6b=509
 0xa12=510
 // 0a18 <> 0a15, E, hanging lantern
 0xa18=511
