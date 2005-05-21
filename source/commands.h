@@ -15,7 +15,11 @@ struct commandLevel_st
 	UI16 allSkillVals;	// if 0, skills left same, if not, all skills set to this value
 	UI16 targBody;		// target body value
 	UI16 bodyColour;	// target body colour
-	bool stripOff;		// strips off hair, beard and clothes
+	UI08 stripOff;		// strips off hair, beard and clothes
+	commandLevel_st() : name( "" ), commandLevel( 0 ), defaultPriv( 0 ), nickColour( 0 ),
+		allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 ), stripOff( 0 )
+	{
+	}
 };
 
 class cCommands

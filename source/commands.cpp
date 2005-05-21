@@ -310,8 +310,10 @@ void cCommands::Load( void )
 					ourClear->allSkillVals = data.toUShort();
 				else if( UTag == "BODYCOLOUR" )
 					ourClear->bodyColour = data.toUShort();
-				else if( UTag == "STRIPOFF" )
-					ourClear->stripOff = ( data.toUShort() != 0 );
+				else if( UTag == "STRIPHAIR" )
+					ourClear->stripOff |= 0x02;
+				else if( UTag == "STRIPITEMS" )
+					ourClear->stripOff |= 0x04;
 				else
 					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
 			}
@@ -437,8 +439,8 @@ void cCommands::InitClearance( void )
 	clearance[1]->allSkillVals = 0;
 	clearance[2]->allSkillVals = 0;
 
-	clearance[0]->stripOff = true;
-	clearance[1]->stripOff = true;
+	clearance[0]->stripOff |= 0x06;	// Strip Everything
+	clearance[1]->stripOff |= 0x06;	// Strip Everything
 }
 
 //o---------------------------------------------------------------------------o

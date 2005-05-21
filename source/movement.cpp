@@ -204,8 +204,9 @@ void HandleTeleporters( CChar *s )
 {
 	if( !ValidateObject( s ) )
 		return;
-	UI08 charWorld						= s->WorldNumber();
-	CTeleLocationEntry *getTeleLoc = NULL;
+	R32 teleLoc, ourLoc;
+	UI08 charWorld					= s->WorldNumber();
+	CTeleLocationEntry *getTeleLoc	= NULL;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
 	{
@@ -216,9 +217,17 @@ void HandleTeleporters( CChar *s )
 		if( getTeleLoc->SourceWorld() == 0xFF || getTeleLoc->SourceWorld() == charWorld )
 		{
 			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
-				isOnTeleporter = ( getTeleLoc->SourceLocation().Mag3D() == s->GetLocation().Mag3D() );
+			{
+				teleLoc = getTeleLoc->SourceLocation().Mag3D();
+				ourLoc	= s->GetLocation().Mag3D();
+				isOnTeleporter = ( teleLoc == ourLoc );
+			}
 			else
-				isOnTeleporter = ( getTeleLoc->SourceLocation().Mag() == s->GetLocation().Mag() );
+			{
+				teleLoc = getTeleLoc->SourceLocation().Mag();
+				ourLoc	= s->GetLocation().Mag();
+				isOnTeleporter = ( teleLoc == ourLoc );
+			}
 			if( isOnTeleporter )
 			{
 				if( getTeleLoc->TargetWorld() != charWorld )

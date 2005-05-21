@@ -203,7 +203,7 @@ bool CPIGetItem::Handle( void )
 				else
 					tSock->PickupSpot( PL_OWNPACK );
 			}
-			if( !ourChar->IsGM() && iOwner != ourChar && iOwner->GetOwnerObj() != ourChar )
+			if( iOwner != ourChar || !objInRange( ourChar, iOwner, DIST_NEARBY ) || ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) )
 			{
 				tSock->Send( &bounce );
 				return true;
@@ -211,7 +211,14 @@ bool CPIGetItem::Handle( void )
 		}
 		else if( oType == OT_ITEM )
 		{
+			tSock->PickupSpot( PL_OTHERPACK );
 			CItem *x = static_cast<CItem *>(iOwner);
+			if( !objInRange( ourChar, x, DIST_NEARBY ) )
+			{
+				tSock->Send( &bounce );
+				return true;
+			}
+
 			if( x->isCorpse() )
 			{
 				CChar *corpseTargChar = x->GetOwnerObj();
@@ -249,6 +256,11 @@ bool CPIGetItem::Handle( void )
 	{
 		tSock->PickupSpot( PL_GROUND );
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
+		if( !objInRange( ourChar, i, DIST_NEARBY ) )
+		{
+			tSock->Send( &bounce );
+			return true;
+		}
 	}
 
 	if( i->isCorpse() || !checkItemRange( ourChar, x ) )
@@ -269,7 +281,7 @@ bool CPIGetItem::Handle( void )
 
 	if( i->isDecayable() )
 		i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-
+/*
 	if( iCont != NULL )
 	{
 		if( iCont->GetObjType() == OT_CHAR )
@@ -285,7 +297,7 @@ bool CPIGetItem::Handle( void )
 				pItem->GetContainsList()->Remove( i );
 		}
 	}
-
+*/
 	if( i->isGuarded() )
 	{
 		if( oType == OT_CHAR && tSock->PickupSpot() == PL_OTHERPACK )
@@ -369,6 +381,38 @@ bool CPIEquipItem::Handle( void )
 	CChar *k = calcCharObjFromSer( cserial );
 	if( !ValidateObject( i ) )
 		return true;
+
+	if( tSock->PickupSpot() == PL_OTHERPACK )
+	{
+		ObjectType pOType;
+		CBaseObject *pOwner	= FindItemOwner( i, pOType );
+		if( pOType == OT_CHAR )
+		{
+			CChar *pOChar = static_cast<CChar *>(pOwner);
+			if( pOChar != ourChar || !objInRange( ourChar, pOwner, DIST_NEARBY ) || ( !ourChar->IsGM() && pOChar->GetOwnerObj() != ourChar ) )
+			{
+				Bounce( tSock, i );
+				return true;
+			}
+		}
+		else if( pOType == OT_ITEM )
+		{
+			if( !objInRange( ourChar, pOwner, DIST_NEARBY ) )
+			{
+				Bounce( tSock, i );
+				return true;
+			}
+		}
+
+	}
+	else if( tSock->PickupSpot() == PL_GROUND )
+	{
+		if( !objInRange( ourChar, i, DIST_NEARBY ) )
+		{
+			Bounce( tSock, i );
+			return true;
+		}
+	}
 
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->subtractItemWeight( ourChar, i ); // SetCont() adds the weight for us (But we also had to add the weight in grabItem() since it sets cont as INVALIDSERIAL

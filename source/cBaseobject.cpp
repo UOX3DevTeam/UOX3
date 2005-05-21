@@ -702,6 +702,7 @@ std::string CBaseObject::GetName( void ) const
 void CBaseObject::SetName( std::string newName )
 {
 	name = newName.substr( 0, MAX_NAME - 1 );
+	Dirty( UT_UPDATE );
 }
 
 //o--------------------------------------------------------------------------

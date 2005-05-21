@@ -1,3 +1,14 @@
+4/22/2005 - giwo (0.98-2.8h)
+	Fixed an issue breaking teleport locations in Debug mode.
+	Fixed an exploit allowing one to equip items from great distances.
+	Caused houses to boot non-owners who log out inside.
+	Fixed several issues with create menus.
+	Modified BODYCOLOUR in commands.dfn to not change the color if it is set to 0.
+	Added STRIPHAIR and STRIPITEMS in place of STRIPOFF in the commands.dfn.
+	Caused SetName() to call Dirty() in order to update an object.
+	Fixed a minor issue with SET commands.
+	Added SET command MOREXYZ.
+
 4/16/2005 - giwo (0.98-2.8g)
 	Fixed an issue causing envoke (object and type associations) not to function after a JS Reload.
 	Fixed an issue causing accounts to erroneously report that it is already in use.

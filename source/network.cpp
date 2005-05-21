@@ -17,6 +17,7 @@
 #include "ssection.h"
 #include "cServerDefinitions.h"
 #include "Dictionary.h"
+#include "mapstuff.h"
 
 #include "ObjectFactory.h"
 
@@ -184,8 +185,17 @@ void cNetworkStuff::LogOut( CSocket *s )
 			multi = findMulti( p );
 		else
 			multi = static_cast< CMultiObj * >(p->GetMultiObj() );
-		if( ValidateObject( multi ) && multi->IsOwner( p ) )
-			valid = true;
+		if( ValidateObject( multi ) )
+		{
+			if( multi->IsOwner( p ) )
+				valid = true;
+			else if( !p->IsGM() )
+			{
+				SI16 sx, sy, ex, ey;
+				Map->MultiArea( multi, sx, sy, ex, ey );
+				p->SetLocation( ex, ey + 1, p->GetZ() );
+			}
+		}
 	}
 	
 	ACCOUNTSBLOCK& actbAccount = p->GetAccount();

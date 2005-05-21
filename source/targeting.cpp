@@ -334,9 +334,8 @@ void DyeTarget( CSocket *s )
 				return;
 			UI16 body = c->GetID();
 			k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
-			
-			b = k&0x4000; 
-			if( b == 16384 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
+
+			if( (k&0x4000) == 0x4000 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
 				k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
 			
 			if( k != 0x8000 ) // 0x8000 also crashes client ...
@@ -1532,8 +1531,11 @@ void MakeStatusTarget( CSocket *sock )
 	if( targLevel->targBody != 0 )
 	{
 		targetChar->SetID( targLevel->targBody );
-		targetChar->SetSkin( targLevel->bodyColour );
 		targetChar->SetOrgID( targLevel->targBody );
+	}
+	if( targLevel->bodyColour != 0 )
+	{
+		targetChar->SetSkin( targLevel->bodyColour );
 		targetChar->SetOrgSkin( targLevel->bodyColour );
 	}
 
@@ -1580,7 +1582,7 @@ void MakeStatusTarget( CSocket *sock )
 	CItem *retitem	= NULL;
 	CItem *mypack	= targetChar->GetPackItem();
 
-	if( targLevel->stripOff )
+	if( targLevel->stripOff != 0 )
 	{
 		for( CItem *z = targetChar->FirstItem(); !targetChar->FinishedItems(); z = targetChar->NextItem() )
 		{
@@ -1590,31 +1592,35 @@ void MakeStatusTarget( CSocket *sock )
 				{
 					case IL_HAIR:
 					case IL_FACIALHAIR:
-						z->Delete();
+						if( (targLevel->stripOff&0x02) == 0x02 )
+							z->Delete();
 						break;
 					case IL_PACKITEM:
 					case IL_BANKBOX:
 						break;
 					default:
-						if( !ValidateObject( mypack ) )
-							mypack = targetChar->GetPackItem();
-						if( !ValidateObject( mypack ) )
+						if( (targLevel->stripOff&0x04) == 0x04 )
 						{
-							CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
-							targetChar->SetPackItem( iMade );
-							if( iMade == NULL ) 
-								return;
-							iMade->SetLayer( IL_PACKITEM );
-							if( iMade->SetCont( targetChar ) )
+							if( !ValidateObject( mypack ) )
+								mypack = targetChar->GetPackItem();
+							if( !ValidateObject( mypack ) )
 							{
-								iMade->SetType( IT_CONTAINER );
-								iMade->SetDye( true );
-								mypack = iMade;
-								retitem = iMade;
+								CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
+								targetChar->SetPackItem( iMade );
+								if( iMade == NULL ) 
+									return;
+								iMade->SetLayer( IL_PACKITEM );
+								if( iMade->SetCont( targetChar ) )
+								{
+									iMade->SetType( IT_CONTAINER );
+									iMade->SetDye( true );
+									mypack = iMade;
+									retitem = iMade;
+								}
 							}
+							z->SetCont( mypack );
+							z->PlaceInPack();
 						}
-						z->SetCont( mypack );
-						z->PlaceInPack();
 						break;
 				}
 			}

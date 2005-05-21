@@ -3346,7 +3346,7 @@ void cSkills::LoadCreateMenus( void )
 				tmpEntry.maxRank		= 10;
 				tmpEntry.colour			= 0;
 				tmpEntry.targID			= 1;
-				tmpEntry.soundPlayed	= 1;
+				tmpEntry.soundPlayed	= 0;
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
@@ -3782,7 +3782,7 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 	UI16 xLoc = 60, yLoc = 40;
 	std::map< UI16, createEntry >::iterator imIter;
 	std::map< UI16, createMenuEntry >::iterator smIter;
-	int actualItems = 0, iCounter = 0;
+	int actualItems = 0;
 //	for( iCounter = 0; iCounter < ourMenu.itemEntries.size(); ++iCounter )
 	for( ourMenu.iIter = ourMenu.itemEntries.begin(); ourMenu.iIter != ourMenu.itemEntries.end(); ++ourMenu.iIter )
 	{
@@ -3822,17 +3822,17 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 			}
 			if( canMake )
 			{
-				toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 10 + ++iCounter );
+				toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter) );
 				toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID );
-				toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, ++textCounter );
+				toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
 				toSend.AddText( iItem.name );
 				yLoc += 40;
 				++actualItems;
 			}
 		}
-		++iCounter;
 	}
 
+	actualItems = 0;
 	for( ourMenu.mIter = ourMenu.menuEntries.begin(); ourMenu.mIter != ourMenu.menuEntries.end(); ++ourMenu.mIter )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
@@ -3844,7 +3844,7 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 		if( smIter != skillMenus.end() )
 		{
 			createMenuEntry iMenu = smIter->second;
-			toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 100 + iCounter );
+			toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 1000 + (*ourMenu.mIter) );
 			toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID );
 			toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
 			toSend.AddText( iMenu.name );
@@ -3872,19 +3872,19 @@ void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 	if( p == actualMenus.end() )
 		return;
 	createMenu ourMenu = p->second;
-	if( button >= 100 )	// menu pressed
+	if( button >= 1000 )	// menu pressed
 	{
-		std::map< UI16, createMenuEntry >::const_iterator q = skillMenus.find( ourMenu.menuEntries[button-100] );
+		std::map< UI16, createMenuEntry >::const_iterator q = skillMenus.find( button-1000 );
 		if( q == skillMenus.end() )
 			return;
 		NewMakeMenu( s, q->second.subMenu, 0 );
 	}
 	else				// item to make
 	{
-		std::map< UI16, createEntry >::iterator r = itemsForMenus.find( ourMenu.itemEntries[button-10] );
+		std::map< UI16, createEntry >::iterator r = itemsForMenus.find( button );
 		if( r == itemsForMenus.end() )
 			return;
-		MakeItem( r->second, ourChar, s, ourMenu.itemEntries[button - 10] );
+		MakeItem( r->second, ourChar, s, button );
 	}
 }
 
@@ -3937,7 +3937,8 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			targID = toMake.resourceNeeded[resCounter].itemID;
 			DeleteItemAmount( player, toDelete, targID, targColour );
 		}
-		Effects->PlaySound( sock, toMake.soundPlayed, true );
+		if( toMake.soundPlayed )
+			Effects->PlaySound( sock, toMake.soundPlayed, true );
 		sock->sysmessage( 984 );
 	}
 	else
@@ -3975,10 +3976,13 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		for( resCounter = 0; resCounter < toMake.skillReqs.size(); ++resCounter )
 			player->SkillUsed( true, toMake.skillReqs[resCounter].skillNumber );
 		Effects->tempeffect( player, player, 41, toMake.delay, itemEntry, 0 );
-		if( toMake.delay > 300 )
+		if( toMake.soundPlayed )
 		{
-			for( SI16 i = 0; i < ( toMake.delay / 300 ); ++i )
-				Effects->tempeffect( player, player, 42, 300 * i, toMake.soundPlayed, 0 );
+			if( toMake.delay > 300 )
+			{
+				for( SI16 i = 0; i < ( toMake.delay / 300 ); ++i )
+					Effects->tempeffect( player, player, 42, 300 * i, toMake.soundPlayed, 0 );
+			}
 		}
 	}
 }

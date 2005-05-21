@@ -316,7 +316,8 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 
 	// Make sure it's movable
 	targItem->SetMovable( 1 );
-	PlaySound( sock, toMake->soundPlayed, true );
+	if( toMake->soundPlayed )
+		PlaySound( sock, toMake->soundPlayed, true );
 
 	sock->sysmessage( 985 );
 	sock->statwindow( src );
