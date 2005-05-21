@@ -9666,19 +9666,19 @@ ADDITEM=0x13fc
 ADDITEM=0x13fd
 0x0f3f=arrow
 ADDITEM=0x0f3f
-0x0f3f=arrow
+0x0f3f=5 arrows
 ADDITEM=0x0f3f-5
-0x0f3f=arrow
+0x0f3f=20 arrows
 ADDITEM=0x0f3f-20
-0x0f3f=arrow
+0x0f3f=50 arrows
 ADDITEM=0x0f3f-50
 0x1bfb=crossbow bolt
 ADDITEM=0x1bfb
-0x1bfb=crossbow bolt
+0x1bfb=5 crossbow bolts
 ADDITEM=0x1bfb-5
-0x1bfb=crossbow bolt
+0x1bfb=20 crossbow bolts
 ADDITEM=0x1bfb-20
-0x1bfb=crossbow bolt
+0x1bfb=50 crossbow bolts
 ADDITEM=0x1bfb-50
 <=Previous Menu
 ITEMMENU=74
@@ -11841,6 +11841,8 @@ ITEMMENU=8
 [ITEMMENU 116]
 {
 scrolls.dfn
+0x1f6d=All-Spell Scroll
+ADDITEM=0x1f6d
 0x1F2E=clumsy scroll
 ADDITEM=0x1F2E
 0x1F2F=create food scroll
@@ -11969,8 +11971,6 @@ ADDITEM=0x1F6A
 ADDITEM=0x1F6B
 0x1F6C=summon water elemental scroll
 ADDITEM=0x1F6C
-0x1f6d=All-Spell Scroll
-ADDITEM=0x1f6d
 <=Previous Menu
 ITEMMENU=8
 }
@@ -12713,15 +12713,13 @@ fletching.dfn
 0x1bd1=feather
 ADDITEM=0x1bd1
 0x1bd4=shaft
-ADDITEM=0x1BD4
-0x1022=arrow fletching
-ADDITEM=0x1022
-0x1023=arrow fletching
-ADDITEM=0x1023
-0x1024=arrow shafts
-ADDITEM=0x1024
-0x1025=arrow shafts
-ADDITEM=0x1025
+ADDITEM=0x1bd1
+0x1bd4=5 shafts
+ADDITEM=0x1bd4-5
+0x1bd4=20 shafts
+ADDITEM=0x1bd4-20
+0x1bd4=50 shafts
+ADDITEM=0x1bd4-50
 <=Previous Menu
 ITEMMENU=125
 }
