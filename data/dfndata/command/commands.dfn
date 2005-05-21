@@ -32,11 +32,13 @@ PLAYER=0
 
 [GM]
 {
-NICKCOLOUR=0x0000	// colour of person's nick (hex)
+NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
 DEFAULTPRIV=0xff	// default privs assigned (hex)
-BODYID=0x03DB		// default body ID assigned
+BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
-BODYCOLOUR=0x0000	// colour of body person turns
+BODYCOLOUR=0x8021	// colour of body person turns
+STRIPITEMS	//Strip off equipped items and place them in backpack
+STRIPHAIR	//Strips off hair & beard
 }
 
 [CNS]
@@ -54,7 +56,7 @@ NICKCOLOUR=0x0000	// colour of person's nick (hex)
 DEFAULTPRIV=0x0000	// default privs assigned (hex)
 BODYID=0x0190		// default body ID assigned
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
-BODYCOLOUR=0x0000	// colour of body person turns
+BODYCOLOUR=0x83ea	// colour of body person turns
 }
 
 [COMMAND_OVERRIDE]

@@ -6,19 +6,24 @@ function CommandRegistration()
 
 function command_SET( socket, cmdString )
 {
-	var splitString = cmdString.split( " ", 2 );
-	if( !splitString[1] )
+	if( cmdString )
 	{
-		var uKey = splitString[0].toUpperCase();
-		if( !uKey == "OWNER" ) // SET OWNER requires no additional arguments
+		var splitString = cmdString.split( " ", 2 );
+		if( !splitString[1] )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1755, socket.Language )); //Additional arguments required
-			return;
+			var uKey = splitString[0].toUpperCase();
+			if( uKey != "OWNER" ) // SET OWNER requires no additional arguments
+			{
+				socket.SysMessage( GetDictionaryEntry( 1755, socket.Language )); //Additional arguments required
+				return;
+			}
 		}
+		var targMsg = GetDictionaryEntry( 1741, socket.Language );
+		socket.xText = cmdString;
+		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
 	}
-	var targMsg = GetDictionaryEntry( 1741, socket.Language );
-	socket.xText = cmdString;
-	socket.CustomTarget( 0, "Choose target to set: " + cmdString );
+	else
+		socket.SysMessage( "No property was specified for the SET command." );
 }
 
 function onCallback0( socket, ourObj )
@@ -30,7 +35,8 @@ function onCallback0( socket, ourObj )
 	}
 
 	var splitString = socket.xText.split( " ", 2 );
-	uKey = splitString[0].toUpperCase();
+	var uKey 	= splitString[0].toUpperCase();
+	var nVal 	= StringToNum( splitString[1] );
 	switch( uKey )
 	{
 	case "NAME":
@@ -39,34 +45,34 @@ function onCallback0( socket, ourObj )
 		break;
 	case "STR":
 	case "STRENGTH":
-		ourObj.strength = StringToNum( splitString[1] );
+		ourObj.strength = nVal;
 		okMsg( socket );
 		break;
 	case "DEX":
 	case "DEXTERITY":
-		ourObj.dexterity = StringToNum( splitString[1] );
+		ourObj.dexterity = nVal;
 		okMsg( socket );
 		break;
 	case "INT":
 	case "INTELLIGENCE":
-		ourObj.intelligence = StringToNum( splitString[1] );
+		ourObj.intelligence = nVal;
 		okMsg( socket );
 		break;
 	case "FAME":
-		ourObj.fame = StringToNum( splitString[1] );
+		ourObj.fame = nVal;
 		okMsg( socket );
 		break;
 	case "KARMA":
-		ourObj.karma = StringToNum( splitString[1] );
+		ourObj.karma = nVal;
 		okMsg( socket );
 		break;
 	case "KILLS":
-		ourObj.murdercount = StringToNum( splitString[1] );
+		ourObj.murdercount = nVal;
 		okMsg( socket );
 		break;
 	case "COLOR":
 	case "COLOUR":
-		ourObj.colour = StringToNum( splitString[1] );
+		ourObj.colour = nVal;
 		okMsg( socket );
 		break;
 	case "OWNER":
@@ -74,78 +80,88 @@ function onCallback0( socket, ourObj )
 		socket.CustomTarget( 1, "Choose character to own this object" );
 		break;
 	case "X":
-		ourObj.x = StringToNum( splitString[1] );
+		ourObj.x = nVal;
 		okMsg( socket );
 		break;
 	case "Y":
-		ourObj.y = StringToNum( splitString[1] );
+		ourObj.y = nVal;
 		okMsg( socket );
 		break;
 	default:
 		if( ourObj.isChar )
-			HandleSetChar( socket, ourObj, uKey, splitString[1] );
+			HandleSetChar( socket, ourObj, uKey, nVal );
 		else if( ourObj.isItem )
-			HandleSetItem( socket, ourObj, uKey, splitString[1] );
+			HandleSetItem( socket, ourObj, uKey, nVal );
 		else
 			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
 
-function HandleSetItem( socket, ourItem, uKey, value )
+function HandleSetItem( socket, ourItem, uKey, nVal )
 {
 	switch( uKey )
 	{
 	case "ID":
-		ourItem.id = StringToNum( value );
+		ourItem.id = nVal;
 		okMsg( socket );
 		break;
 	case "AMOUNT":
-		ourItem.amount = StringToNum( value );
+		ourItem.amount = nVal;
 		okMsg( socket );
 		break;
 	case "MOVABLE":
-		ourItem.movable = StringToNum( value );
+		ourItem.movable = nVal;
 		okMsg( socket );
 		break;
 	case "WIPABLE":
-		ourItem.wipable = (StringToNum( value ) == 1);
+		ourItem.wipable = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "BUYVALUE":
-		ourItem.buyvalue = StringToNum( value );
+		ourItem.buyvalue = nVal;
 		okMsg( socket );
 		break;
 	case "SELLVALUE":
-		ourItem.sellvalue = StringToNum( value );
+		ourItem.sellvalue = nVal;
 		okMsg( socket );
 		break;
 	case "RESTOCK":
-		ourItem.restock = StringToNum( value );
+		ourItem.restock = nVal;
 		okMsg( socket );
 		break;
 	case "MORE":
-		ourItem.more = StringToNum( value );
+		ourItem.more = nVal;
 		okMsg( socket );
 		break;
 	case "MOREX":
-		ourItem.morex = StringToNum( value );
+		ourItem.morex = nVal;
 		okMsg( socket );
 		break;
 	case "MOREY":
-		ourItem.morey = StringToNum( value );
+		ourItem.morey = nVal;
 		okMsg( socket );
 		break;
 	case "MOREZ":
-		ourItem.morez = StringToNum( value );
+		ourItem.morez = nVal;
 		okMsg( socket );
 		break;
+	case "MOREXYZ":
+		var splitValues = socket.xText.split( " " )
+		if( splitValues[3] )
+		{
+			ourItem.morex = StringToNum( splitValues[1] );
+			ourItem.morey = StringToNum( splitValues[2] );
+			ourItem.morez = StringToNum( splitValues[3] );
+			okMsg( socket );
+		}
+		break;
 	case "DEVINELOCK":
-		ourItem.devinelock = (StringToNum( value ) == 1);
+		ourItem.devinelock = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "DIR":
-		ourItem.dir = StringToNum( value );
+		ourItem.dir = nVal;
 		okMsg( socket );
 		break;
 	case "NAME2":
@@ -153,40 +169,40 @@ function HandleSetItem( socket, ourItem, uKey, value )
 		okMsg( socket );
 		break;
 	case "TYPE":
-		ourItem.type = StringToNum( value );
+		ourItem.type = nVal;
 		okMsg( socket );
 		break;
 	case "Z":
-		ourItem.z = StringToNum( value );
+		ourItem.z = nVal;
 		okMsg( socket );
 		break;
 	case "DECAYABLE":
-		ourItem.decayable = (StringToNum( value ) == 1);
+		ourItem.decayable = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "VISIBLE":
-		ourItem.visible = StringToNum( value );
+		ourItem.visible = nVal;
 		okMsg( socket );
 		break;
 	case "DESC":
-		ourItem.desc = StringToNum( value );
+		ourItem.desc = nVal;
 		okMsg( socket );
 		break;
 	default:
 		if( ourItem.isSpawner )
-			HandleSetSpawner( socket, ourItem, uKey, splitString[1] );
+			HandleSetSpawner( socket, ourItem, uKey, nVal );
 		else
 			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
 
-function HandleSetSpawner( socket, ourSpawn, uKey, value )
+function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
 {
 	switch( uKey )
 	{
 	case "SPAWNSECTION":
-		splitValues = socket.xText.split( " " )
+		var splitValues = socket.xText.split( " " )
 		if( splitValues[2] )
 		{
 			ourSpawn.spawnsection = splitValues[1];
@@ -200,11 +216,11 @@ function HandleSetSpawner( socket, ourSpawn, uKey, value )
 		okMsg( socket );
 		break;
 	case "MININTERVAL":
-		ourSpawn.mininterval = StringToNum( value );
+		ourSpawn.mininterval = nVal;
 		okMsg( socket );
 		break;
 	case "MAXINTERVAL":
-		ourSpawn.maxinterval = StringToNum( value );
+		ourSpawn.maxinterval = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -212,36 +228,35 @@ function HandleSetSpawner( socket, ourSpawn, uKey, value )
 	}
 }
 
-function HandleSetChar( socket, ourChar, uKey, value )
+function HandleSetChar( socket, ourChar, uKey, nVal )
 {
 	switch( uKey )
 	{
 	case "ALLSKILLS":
-		ourChar.baseskills.allskills = StringToNum( value );
+		ourChar.baseskills.allskills = nVal;
 		okMsg( socket );
 		break;
 	case "ID":
-		var idVal = StringToNum( value );
-		if( idVal <= 0x7CF )
+		if( nVal <= 0x7CF )
 		{
-			ourChar.id = idVal;
+			ourChar.id = nVal;
 			okMsg( socket );
 		}
 		break;
 	case "FONT":
-		ourChar.font = StringToNum( value );
+		ourChar.font = nVal;
 		okMsg( socket );
 		break;
 	case "SPATTACK":
-		ourChar.spattack = StringToNum( value );
+		ourChar.spattack = nVal;
 		okMsg( socket );
 		break;
 	case "SPDELAY":
-		ourChar.spdelay = StringToNum( value );
+		ourChar.spdelay = nVal;
 		okMsg( socket );
 		break;
 	case "POISON":
-		ourChar.poison = StringToNum( value );
+		ourChar.poison = nVal;
 		okMsg( socket );
 		break;
 	case "TITLE":
@@ -249,54 +264,54 @@ function HandleSetChar( socket, ourChar, uKey, value )
 		okMsg( socket );
 		break;
 	case "NPCWANDER":
-		ourChar.wandertype = StringToNum( value );
+		ourChar.wandertype = nVal;
 		okMsg( socket );
 		break;
 	case "DIR":
-		ourChar.dir = StringToNum( value );
+		ourChar.dir = nVal;
 		okMsg( socket );
 		break;
 	case "NPCAI":
-		ourChar.aitype = StringToNum( value );
+		ourChar.aitype = nVal;
 		okMsg( socket );
 		break;
 	case "VULNERABLE":
-		ourChar.vulnerable = (StringToNum( value ) == 1);
+		ourChar.vulnerable = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "SPLIT":
-		ourChar.split = StringToNum( value );
+		ourChar.split = nVal;
 		okMsg( socket );
 		break;
 	case "SPLITCHANCE":
-		ourChar.splitchance = StringToNum( value );
+		ourChar.splitchance = nVal;
 		okMsg( socket );
 		break;
 	case "COMMANDLEVEL":
-		ourChar.commandlevel = StringToNum( value );
+		ourChar.commandlevel = nVal;
 		okMsg( socket );
 		break;
 	case "Z":
-		ourChar.z = StringToNum( value );
+		ourChar.z = nVal;
 		okMsg( socket );
 		break;
 	case "CANTRAIN":
 		if( ourChar.npc )
 		{
-			ourChar.trainer = (StringToNum( value ) == 1);
+			ourChar.trainer = (nVal == 1);
 			okMsg( socket );
 		}
 		break;
 	case "FROZEN":
-		ourChar.frozen = (StringToNum( value ) == 1);
+		ourChar.frozen = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "VISIBLE":
-		ourChar.visible = StringToNum( value );
+		ourChar.visible = nVal;
 		okMsg( socket );
 		break;
 	default:
-		if( ourChar.SetSkillByName( uKey, StringToNum( value ) ) )
+		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
 		else
 			socket.SysMessage( "Invalid set command " + uKey );

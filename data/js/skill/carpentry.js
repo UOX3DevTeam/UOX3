@@ -26,7 +26,7 @@ function onCallback1( socket, ourObj )
 		}
 
 		var resID = ourObj.id;
-		if( resID >= 0x1BD7 && resID <= 0x1BE2 ) 	// Is it a valid carpentry resource?
+		if( resID == 0x1be0 || ( resID >= 0x1BD7 && resID <= 0x1BE2 ) ) 	// Is it a valid carpentry resource?
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
