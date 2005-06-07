@@ -399,8 +399,8 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	if( sItems.empty() )
 		maxispawn = 0;
 
-	bool shouldSpawnChars = ( !sNpcs.empty() && maxcspawn >= spawnedChars.Num() );
-	bool shouldSpawnItems = ( !sItems.empty() && maxispawn >= spawnedItems.Num() );
+	bool shouldSpawnChars = ( !sNpcs.empty() && maxcspawn > spawnedChars.Num() );
+	bool shouldSpawnItems = ( !sItems.empty() && maxispawn > spawnedItems.Num() );
 	if( shouldSpawnChars || shouldSpawnItems )
 	{
 		CChar *spawnChar		= NULL;
