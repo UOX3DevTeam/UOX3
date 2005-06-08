@@ -175,7 +175,7 @@ void CServerData::ResetDefaults( void )
 	
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCSpeed( 1.0 );
+	NPCSpeed( 0.7 );
 	AccountFlushTimer( 0.0 );
 	
 	ResLogs( 3 );
