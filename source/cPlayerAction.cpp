@@ -219,7 +219,7 @@ bool CPIGetItem::Handle( void )
 				return true;
 			}
 
-			if( x->isLockedDown() )
+			if( x->IsLockedDown() )
 			{
 				CMultiObj *ourMulti = x->GetMultiObj();
 				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
