@@ -203,7 +203,7 @@ bool CPIGetItem::Handle( void )
 				else
 					tSock->PickupSpot( PL_OWNPACK );
 			}
-			if( iOwner != ourChar || !objInRange( ourChar, iOwner, DIST_NEARBY ) || ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) )
+			if( iOwner != ourChar && ( ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			{
 				tSock->Send( &bounce );
 				return true;
@@ -217,6 +217,16 @@ bool CPIGetItem::Handle( void )
 			{
 				tSock->Send( &bounce );
 				return true;
+			}
+
+			if( x->isLockedDown() )
+			{
+				CMultiObj *ourMulti = x->GetMultiObj();
+				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
+				{
+					tSock->Send( &bounce );
+					return true;
+				}
 			}
 
 			if( x->isCorpse() )
@@ -382,14 +392,14 @@ bool CPIEquipItem::Handle( void )
 	if( !ValidateObject( i ) )
 		return true;
 
-	if( tSock->PickupSpot() == PL_OTHERPACK )
+	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_PAPERDOLL )
 	{
 		ObjectType pOType;
 		CBaseObject *pOwner	= FindItemOwner( i, pOType );
 		if( pOType == OT_CHAR )
 		{
 			CChar *pOChar = static_cast<CChar *>(pOwner);
-			if( pOChar != ourChar || !objInRange( ourChar, pOwner, DIST_NEARBY ) || ( !ourChar->IsGM() && pOChar->GetOwnerObj() != ourChar ) )
+			if( pOChar != ourChar && ( ( !ourChar->IsGM() && pOChar->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
 			{
 				Bounce( tSock, i );
 				return true;
@@ -401,6 +411,16 @@ bool CPIEquipItem::Handle( void )
 			{
 				Bounce( tSock, i );
 				return true;
+			}
+			CItem *pOItem = static_cast<CItem *>(pOwner);
+			if( pOItem->IsLockedDown() )
+			{
+				CMultiObj *ourMulti = pOwner->GetMultiObj();
+				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
+				{
+					Bounce( tSock, i );
+					return true;
+				}
 			}
 		}
 
