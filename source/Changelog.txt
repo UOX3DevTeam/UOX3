@@ -1,3 +1,12 @@
+6/9/2005 - giwo 
+   	Fixed a bug causing items not to be able to be picked up 
+
+6/8/2005 - Xuri 
+   	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed. 
+
+6/7/2005 - Grimson 
+   	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn
+
 4/22/2005 - giwo (0.98-2.8h)
 	Fixed an issue breaking teleport locations in Debug mode.
 	Fixed an exploit allowing one to equip items from great distances.
