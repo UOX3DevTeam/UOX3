@@ -472,7 +472,7 @@ bool CPICreateCharacter::Handle( void )
 			}
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
 			if( toGo == NULL )
-				mChar->SetLocation( 1000, 1000, 0 );
+				mChar->SetLocation( 1495, 1629, 10 ); //Send character to the sweet dreams inn in Britain!
 			else
 				mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
 			mChar->SetDir( 4 );
