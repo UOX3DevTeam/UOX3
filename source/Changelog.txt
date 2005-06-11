@@ -1,3 +1,6 @@
+6/11/2005 - ShadowBranch
+	Changed the hardcoded default starting location from 1000, 1000, 0 to 1495, 1629, 10 - which is the Sweet Dreams Inn in Britain.
+
 6/9/2005 - giwo 
    	Fixed a bug causing items not to be able to be picked up 
 
