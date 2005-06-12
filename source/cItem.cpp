@@ -1873,7 +1873,7 @@ void CItem::Cleanup( void )
 		{
 			if( GetSpawn() < BASEITEMSERIAL )
 			{
-				UI16 spawnRegNum = (UI16)((GetSpawn()>>16) + (GetSpawn()>>8));
+				UI16 spawnRegNum = static_cast<UI16>(GetSpawn());
 				if( spawnRegNum < spawnregions.size() )
 				{
 					CSpawnRegion *spawnReg = spawnregions[spawnRegNum];

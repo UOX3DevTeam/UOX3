@@ -323,9 +323,9 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 	// setting fz1 actually makes it check against the height and slows the system down a lot
 	// does anyone really need to constrain the height at which a monster can move?? - fur
 	
-#if defined( UOX_DEBUG_MODE )
-	Console.Print( "Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", c->GetFx( 0 ), c->GetFx( 1 ), c->GetFy( 0 ), c->GetFy( 1 ) );
-#endif
+//#if defined( UOX_DEBUG_MODE )
+//	Console.Print( "Bounding area for this monster is fx1: %d, fx2: %d, fy1: %d, fy2: %d\n", c->GetFx( 0 ), c->GetFx( 1 ), c->GetFy( 0 ), c->GetFy( 1 ) );
+//#endif
 }
 
 //o---------------------------------------------------------------------------o

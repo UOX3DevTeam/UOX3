@@ -101,20 +101,11 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 		return;
 	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
 
-#if defined( UOX_DEBUG_MODE )
-	Console.Print( "Command search for %s -", command.c_str() );
-#endif
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
 	{
-#if defined( UOX_DEBUG_MODE )
-		Console.Print( " FOUND - ", command.c_str() );
-#endif
 		if( toFind->second.isEnabled )
 		{
-#if defined( UOX_DEBUG_MODE )
-			Console.Print( "Enabled\n", command.c_str() );
-#endif
 			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )

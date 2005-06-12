@@ -456,7 +456,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 		{
             CSpawn->SetSpawned( true );
 			CSpawn->ShouldSave( false );
-			CSpawn->SetSpawn( calcserial( 0, static_cast<UI08>(regionnum<<8), static_cast<UI08>(regionnum%256), 0 ) );
+			CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
 			InitializeWanderArea( CSpawn, 10, 10 );
 			Npcs->PostSpawnUpdate( CSpawn );
 			IncCurrentCharAmt();
@@ -483,7 +483,7 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 	{
 		if( FindSpotToSpawn( ISpawn ) )
 		{
-			ISpawn->SetSpawn( calcserial( 0, static_cast<UI08>(regionnum<<8), static_cast<UI08>(regionnum%256), 0 ) );
+			ISpawn->SetSpawn( static_cast<UI32>(regionnum) );
             ISpawn->SetSpawned( true );
 			ISpawn->ShouldSave( false );
 			IncCurrentItemAmt();
@@ -543,6 +543,11 @@ void CSpawnRegion::checkSpawned( void )
 				spawnedChars.Remove( cCheck );
 			}
 		}
+		else
+		{
+			Console.Warning( 2, "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
+			spawnedChars.Remove( cCheck );
+		}
 	}
 	
 	for( CItem *iCheck = spawnedItems.First(); !spawnedItems.Finished(); iCheck = spawnedItems.Next() )
@@ -554,6 +559,11 @@ void CSpawnRegion::checkSpawned( void )
 				iCheck->ShouldSave( true );
 				spawnedItems.Remove( iCheck );
 			}
+		}
+		else
+		{
+			Console.Warning( 2, "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
+			spawnedItems.Remove( iCheck );
 		}
 	}
 }
