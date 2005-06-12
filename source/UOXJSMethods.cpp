@@ -989,7 +989,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			MethodError( "TextMessage: Invalid Item" );
 			return JS_FALSE;
 		}
-		MethodSpeech( *myItem, trgMessage, OBJ, 0x0026, FNT_SMALL_LIGHT );
+		MethodSpeech( *myItem, trgMessage, OBJ, 0x047F, FNT_NORMAL );
 	}
 	else if( !strcmp( myClass->name, "UOXChar" ) ) 
 	{

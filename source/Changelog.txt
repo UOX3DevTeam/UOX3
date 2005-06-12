@@ -1,3 +1,6 @@
+6/12/2005 - Xuri
+	Changed font-type and colour displayed for item-based TextMessages.
+
 6/11/2005 - ShadowBranch
 	Changed the hardcoded default starting location from 1000, 1000, 0 to 1495, 1629, 10 - which is the Sweet Dreams Inn in Britain.
 
