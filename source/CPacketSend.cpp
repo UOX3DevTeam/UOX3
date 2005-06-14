@@ -4550,7 +4550,7 @@ void CPSendGumpMenu::AddText( const std::string actualText, ... )
 		throw new std::runtime_error( "Blank text field added!" );
 
 #if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;;
+	Console << msg << myendl;
 #endif
 
 	text.push_back( msg );
