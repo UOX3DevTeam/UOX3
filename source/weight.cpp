@@ -241,10 +241,21 @@ void CWeight::addItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
-	if( calcAddWeight( item, totalWeight ) )
-		mChar->SetWeight( totalWeight );
-	else
-		mChar->SetWeight( MAX_WEIGHT );
+	switch( item->GetLayer() )
+	{
+		case IL_NONE:
+		case IL_HAIR:		// hair
+		case IL_FACIALHAIR:	// beard
+		case IL_MOUNT:		// steed
+		case IL_BANKBOX:	// bank box
+			break;	// no weight for any of these
+		default:
+			if( calcAddWeight( item, totalWeight ) )
+				mChar->SetWeight( totalWeight );
+			else
+				mChar->SetWeight( MAX_WEIGHT );
+			break;
+	}
 }
 
 //o--------------------------------------------------------------------------o

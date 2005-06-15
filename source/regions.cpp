@@ -357,7 +357,7 @@ void cMapRegion::Save( void )
 		for( SI32 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
 			long baseY	= counter2 * 8;								// calculate x grid offset
-			filename	= basePath + UString::number( counter1 ) + "." + UString::number( counter2 ) + ".wsc";;	// let's name our file
+			filename	= basePath + UString::number( counter1 ) + "." + UString::number( counter2 ) + ".wsc";	// let's name our file
 			writeDestination.open( filename.c_str() );
 
 			if( !writeDestination ) 

@@ -1,3 +1,10 @@
+6/14/2005 - giwo (0.98-3.0a)
+	Fixed an issue causing characters to ghost after being teleported off screen.
+	Fixed an issue causing mounts and other various items to add weight to characters.
+	Fixed an issue causing display distortion on the Server Status gump.
+	Fixed an issue causing JS onCollide event not to function for characters.
+	Minor code cleanups.
+
 6/14/2005 - Xuri
 	Fixed server crash when clicking on server status button in help menu.
 

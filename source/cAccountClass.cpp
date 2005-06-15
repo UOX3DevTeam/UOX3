@@ -1954,7 +1954,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		{
 			fsAccountsADM << "CHARACTER-" << std::dec << i+1 << " 0x" << std::hex << (actbID.dwCharacters[i]!=INVALIDSERIAL&&actbID.lpCharacters[i]!=NULL?actbID.dwCharacters[i]:0xffffffff) << " [" << (actbID.lpCharacters[i]!=NULL?actbID.lpCharacters[i]->GetName().c_str():"UNKNOWN") << "]" << std::endl;
 		}
-		fsAccountsADM << "}" << std::endl << std::endl;;
+		fsAccountsADM << "}" << std::endl << std::endl;
 		// Need to check to see if the path is valid.
 		std::fstream fsTest(actbID.sPath.c_str(),std::ios::in);
 		bool bPathExists=fsTest.is_open();

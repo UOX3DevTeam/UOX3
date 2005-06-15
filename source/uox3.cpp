@@ -387,9 +387,8 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		s->SetOnHorse( true );
 		CItem *c = Items->CreateItem( NULL, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
 		c->SetName( x->GetName() );
+		c->SetLayer( IL_MOUNT );
 
-		// Weazel 12 July, 2001 - Not all 3rd dawn creature mount id's are correct still missing a faction horse/dragon horse and
-		// the ethereal llama and ostards.
 		switch( x->GetID() )
 		{
 			case 0x72:	c->SetID( 0x3EA9 );	break;	// Dark Steed
@@ -430,15 +429,14 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			case 0x3E6:	c->SetID( 0x3EAD );	break;	// Kirin
 			default:	c->SetID( 0x3E00 );	break;	// Bad
 		}
-		
-		c->SetLayer( IL_MOUNT );
 
 		if( !c->SetCont( s ) )
 		{
 			s->SetOnHorse( false );	// let's get off our horse again
+			c->Delete();
 			return;
 		}
-		//s->WearItem( c );
+
 		SOCKLIST nearbyChars = FindNearbyPlayers( s );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{

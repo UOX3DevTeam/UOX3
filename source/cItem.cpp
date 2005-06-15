@@ -868,7 +868,7 @@ void CItem::RemoveSelfFromCont( void )
 			}
 			else
 			{
-				CItem *targItem = (CItem *)contObj;;
+				CItem *targItem = (CItem *)contObj;
 				if( targItem != NULL )
 				{
 					Weight->subtractItemWeight( targItem, this );

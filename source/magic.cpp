@@ -2384,7 +2384,8 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 		//	*	If target, create onCallback function
 		//	*	On callback, do stuff
 		//	* NOTE * For area affect spells, use an AreaCharacterFunction
-		return jsScript->MagicSpellCast( mSock, mChar, false, num );
+		if( jsScript->MagicSpellCast( mSock, mChar, false, num ) )
+			return true;
 	}
 
 	int type = mSock->CurrentSpellType();
@@ -2642,8 +2643,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	cScript *jsScript	= JSMapping->GetScript( spells[curSpell].JSScript() );
 	if( jsScript != NULL )
 	{
-		jsScript->MagicSpellCast( s, caster, true, curSpell );
-		return;
+		if( jsScript->MagicSpellCast( s, caster, true, curSpell ) )
+			return;
 	}
 
 	if( caster->IsCasting() )

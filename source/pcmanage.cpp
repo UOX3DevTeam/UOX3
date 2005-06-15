@@ -733,6 +733,7 @@ CItem *CreateCorpseItem( CChar &mChar, bool createPack )
 	if( mChar.GetID( 1 ) == 0x00 && ( mChar.GetID( 2 ) == 0x0C || ( mChar.GetID( 2 ) >= 0x3B && mChar.GetID( 2 ) <= 0x3D ) ) ) // If it's a dragon, 50/50 chance you can carve it
 		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
 
+	iCorpse->SetDecayable( true );
 	iCorpse->SetName2( mChar.GetName().c_str() );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetTempVar( CITV_MOREY, canCarve, 1 );

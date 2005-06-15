@@ -1315,7 +1315,7 @@ void CRace::PoisonResistance( R32 value )
 CRace& CRace::operator =( CRace& trgRace )
 {
 	memcpy( iSkills, trgRace.iSkills, sizeof( SKILLVAL ) * SKILLS );
-	raceName = trgRace.raceName;;
+	raceName = trgRace.raceName;
 
 	beardColours.resize( trgRace.beardColours.size() );
 	for( size_t bCtr = 0; bCtr < beardColours.size(); ++bCtr )

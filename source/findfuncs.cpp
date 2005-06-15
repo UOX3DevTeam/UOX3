@@ -15,7 +15,7 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ) )
 		{
-			if( objInOldRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+			if( objInOldRange( myObj, mChar, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
 				nearbyChars.push_back( mSock );
 		}
 	}

@@ -4294,7 +4294,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	CItem *glowItem = Items->CreateItem( mySock, mChar, 0x1647, 1, 0, OT_ITEM ); // spawn light emitting object
 	if( glowItem == NULL )
 		return JS_FALSE;
-	glowItem->SetName( "glower" );;
+	glowItem->SetName( "glower" );
 	glowItem->SetMovable( 2 );
 
 	mItem->SetGlow( glowItem->GetSerial() );

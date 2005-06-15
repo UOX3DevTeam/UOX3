@@ -1160,7 +1160,6 @@ void GMPage( CSocket *s, const std::string reason )
 void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 {
 	CChar *mChar = s->CurrcharObj();
-	char idname[256];
 	if( !s || cmd.empty() )
 		return;
 
@@ -1233,15 +1232,15 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			else if( cmd == "GUIINFORMATION" )
 			{
 				GumpDisplay guiInfo( s, 400, 300 );
-				guiInfo.SetTitle( "Server status" );
+				guiInfo.SetTitle( CVersionClass::GetProductName() + " Status" );
 				builtString = GetUptime();
+				guiInfo.AddData( "Version", CVersionClass::GetVersion() + "(" + CVersionClass::GetBuild() + ") [" + OS_STR + "]" );
+				guiInfo.AddData( "Compiled By", CVersionClass::GetName() );
 				guiInfo.AddData( "Uptime", builtString );
 				guiInfo.AddData( "Accounts", Accounts->size() );
 				guiInfo.AddData( "Items", ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 				guiInfo.AddData( "Chars", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 				guiInfo.AddData( "Players in world", cwmWorldState->GetPlayersOnline() );
-				sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
-				guiInfo.AddData( idname, idname, 7 );
 				guiInfo.Send( 0, false, INVALIDSERIAL );
 			}
 			break;
@@ -1303,10 +1302,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			break;
 		case 'V':
 			if( cmd == "VERSION" )
-			{
-				sprintf( idname, "%s v%s(%s) [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
-				s->sysmessage( idname );
-			}
+				s->sysmessage( "%s v%s(%s) [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
 			break;
 		case 'W':
 			if( cmd == "WEBLINK" )

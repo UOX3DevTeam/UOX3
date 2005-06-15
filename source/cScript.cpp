@@ -525,7 +525,10 @@ bool cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 
 	params[0] = OBJECT_TO_JSVAL( sockObjects[0].toUse );
 	params[1] = OBJECT_TO_JSVAL( charObjects[0].toUse );
-	params[2] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+	if( objCollideWith->GetObjType() == OT_CHAR )
+		params[2] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+	else
+		params[2] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
 	
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCollide", 3, params, &rval );
 

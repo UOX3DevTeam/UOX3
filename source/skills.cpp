@@ -3709,7 +3709,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 {
 	VALIDATESOCKET( s );
-	CChar *ourChar = s->CurrcharObj();;
+	CChar *ourChar = s->CurrcharObj();
 	s->AddID( menu );
 	std::map< UI16, createMenu >::const_iterator p = actualMenus.find( menu );
 	if( p == actualMenus.end() )
