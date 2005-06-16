@@ -3005,6 +3005,7 @@ void setcharflag( CChar *c )
 			case aiPLAYERVENDOR:// Player Vendor
 			case aiGUARD:		// Guard
 			case aiBANKER:		// Banker
+			case aiFIGHTER:		// Fighter
 				c->SetFlagBlue();
 				break;
 			default:
