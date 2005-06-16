@@ -136,7 +136,6 @@ void HandleFighterAI( CChar& mChar )
 						tempChar->GetNPCAiType() == aiHEALER_E ) ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
-						mChar.talkAll( 313, true );
 						regChars->Pop();
 						return;
 					}
