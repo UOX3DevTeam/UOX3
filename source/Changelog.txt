@@ -1,3 +1,6 @@
+6/16/2005 - Xuri
+	Added new NPCAI (5) for NPC fighters. Same as guard-ai (attacks monsters/criminals), only without the extra guard-functions.
+
 6/14/2005 - giwo (0.98-3.0a)
 	Fixed an issue causing characters to ghost after being teleported off screen.
 	Fixed an issue causing mounts and other various items to add weight to characters.

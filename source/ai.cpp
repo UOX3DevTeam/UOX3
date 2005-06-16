@@ -108,6 +108,46 @@ void HandleGuardAI( CChar& mChar )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	void HandleFighterAI( CChar& mChar )
+//|	Date			-	06/15/2005
+//|	Developers		-	Xuri
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Handles Fighter AI Type
+//o--------------------------------------------------------------------------o
+void HandleFighterAI( CChar& mChar )
+{
+	if( !mChar.IsAtWar() )
+	{
+		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		{
+			SubRegion *MapArea = (*rIter);
+			if( MapArea == NULL )	// no valid region
+				continue;
+			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( isValidAttackTarget( mChar, tempChar ) )
+				{
+					if( ( tempChar->IsCriminal() || tempChar->IsMurderer() ) && ( !tempChar->IsNpc() || 
+						( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC || 
+						tempChar->GetNPCAiType() == aiHEALER_E ) ) )
+					{
+						Combat->AttackTarget( &mChar, tempChar );
+						mChar.talkAll( 313, true );
+						regChars->Pop();
+						return;
+					}
+				}
+			}
+			regChars->Pop();
+		}
+	}
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	void HandleHealerAI( CChar& mChar )
 //|	Date			-	12/30/2003
 //|	Developers		-	Zane
@@ -262,6 +302,7 @@ void CheckAI( CChar& mChar )
 	case aiHEALER_G:		HandleHealerAI( mChar );	break;	// Good Healers
 	case aiEVIL:			HandleEvilAI( mChar );		break;	// Evil NPC's
 	case aiGUARD:			HandleGuardAI( mChar );		break;	// Guard
+	case aiFIGHTER:			HandleFighterAI( mChar );	break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
 	case aiBANKER:										break;  // Banker
 	case aiPLAYERVENDOR:								break;  // Player Vendors.
 	case aiPET_GUARD:										// Pet Guarding AI
