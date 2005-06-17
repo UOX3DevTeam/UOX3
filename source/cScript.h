@@ -203,8 +203,7 @@ public:
 	bool		OnCommand( CSocket *mSock ); 
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );
-	bool		InRange( CChar *person, CChar *targPlayer );
-	bool		InRange( CChar *person, CItem *targItem   );
+	bool		InRange( CChar *person, CBaseObject *objInRange );
 	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
 	bool		OnDispel( CBaseObject *dispelled );

@@ -50,74 +50,78 @@ void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 {
 	CBaseResponse *tResp	= NULL;
 
-	switch( mSock->TriggerWord() )
+	for( UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords(); trigWord = mSock->NextTrigWord() )
 	{
-	case TW_COUNT:																						break;
-	case TW_GUARDS:				callGuards( mChar );													break;
-	case TW_KILLS:				tResp = new CKillsResponse();											break;
-	case TW_BANK:				tResp = new CBankResponse();											break;
-	case TW_BALANCE:			tResp = new CBankResponse( true );										break;
-	case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
-	case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
-	case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
-	case TW_FOLLOW:
-	case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
-	case TW_COME:
-	case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
-	case TW_ALLCOME:
-	case TW_ALLFOLLOW:
-	case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
-	case TW_KILL:
-	case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
-	case TW_ALLKILL:
-	case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
-	case TW_FETCH:
-	case TW_GET:
-	case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
-	case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
-	case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
-	case TW_ALLGUARD:
-	case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
-	case TW_STOP:
-	case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
-	case TW_ALLSTOP:
-	case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
-	case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
-	case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
-	case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
-	case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
-	case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
-	case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
-	case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
-	case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
-	case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
-	case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
-	case TW_HOUSERELEASE:		tResp = new CHouseMultiResponse( TARGET_HOUSERELEASE, 591 );			break;
-	case TW_BOATFORWARD:
-	case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
-	case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
-	case TW_BOATSTOP:
-	case TW_STOP2:
-	case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
-	case TW_BOATTURNRIGHT:
-	case TW_BOATSTARBOARD:
-	case TW_BOATTURNLEFT:
-	case TW_BOATPORT:
-	case TW_BOATTURNAROUND:
-	case TW_BOATLEFT:
-	case TW_BOATRIGHT:
-	case TW_SETNAME:			tResp = new CBoatResponse( text );										break;
-	default:
-#if defined( UOX_DEBUG_MODE )
-		Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n",mSock->TriggerWord() );
-#endif
-		break;
-	}
+		switch( trigWord )
+		{
+		case TW_COUNT:																						break;
+		case TW_GUARDS:				callGuards( mChar );													break;
+		case TW_KILLS:				tResp = new CKillsResponse();											break;
+		case TW_BANK:				tResp = new CBankResponse();											break;
+		case TW_BALANCE:			tResp = new CBankResponse( true );										break;
+		case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
+		case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
+		case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
+		case TW_FOLLOW:
+		case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
+		case TW_COME:
+		case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
+		case TW_ALLCOME:
+		case TW_ALLFOLLOW:
+		case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
+		case TW_KILL:
+		case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
+		case TW_ALLKILL:
+		case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
+		case TW_FETCH:
+		case TW_GET:
+		case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
+		case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
+		case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
+		case TW_ALLGUARD:
+		case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
+		case TW_STOP:
+		case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
+		case TW_ALLSTOP:
+		case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
+		case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
+		case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
+		case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
+		case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
+		case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
+		case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
+		case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+		case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
+		case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
+		case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
+		case TW_HOUSERELEASE:		tResp = new CHouseMultiResponse( TARGET_HOUSERELEASE, 591 );			break;
+		case TW_BOATFORWARD:
+		case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
+		case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
+		case TW_BOATSTOP:
+		case TW_STOP2:
+		case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
+		case TW_BOATTURNRIGHT:
+		case TW_BOATSTARBOARD:
+		case TW_BOATTURNLEFT:
+		case TW_BOATPORT:
+		case TW_BOATTURNAROUND:
+		case TW_BOATLEFT:
+		case TW_BOATRIGHT:
+		case TW_SETNAME:			tResp = new CBoatResponse( text );										break;
+		default:
+	#if defined( UOX_DEBUG_MODE )
+			Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n", trigWord );
+	#endif
+			break;
+		}
 
-	if( tResp != NULL )
-	{
-		tResp->Handle( mSock, mChar );
-		delete tResp;
+		if( tResp != NULL )
+		{
+			tResp->Handle( mSock, mChar );
+			delete tResp;
+			tResp = NULL;
+		}
 	}
 }
 
@@ -254,6 +258,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		char temp[512];
 		char temp2[512];
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
+		UString UText = UString( ourText ).upper();
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
@@ -265,7 +270,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				SI16 skill = -1;
 				for( UI08 i = 0; i < ALLSKILLS; ++i )
 				{
-					if( findString( ourText, skillname[i] ) )
+					if( findString( UText, skillname[i] ) )
 					{
 						skill = i;  //Leviathan fix
 						break;

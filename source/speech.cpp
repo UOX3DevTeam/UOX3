@@ -237,10 +237,16 @@ bool CPITalkRequest::Handle( void )
 				sprintf( temp, "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
 				Console.Log( temp, temp2 );
 			}
-			
-			if( tSock->TriggerWord() == TW_RESIGN )
-				GuildSys->Resign( tSock );
-			else if( text.find( "DEVTEAM033070" ) != std::string::npos )
+
+			for( UI16 trigWord = tSock->FirstTrigWord(); !tSock->FinishedTrigWords(); trigWord = tSock->NextTrigWord() )
+			{
+				if( trigWord == TW_RESIGN )
+				{
+					GuildSys->Resign( tSock );
+					break;
+				}
+			}
+			if( text.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
 				tSock->sysmessage( temp3.c_str() );

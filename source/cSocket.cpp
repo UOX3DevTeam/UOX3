@@ -455,13 +455,41 @@ void CSocket::WalkSequence( SI16 newValue )
 	walkSequence = newValue;
 }
 
-void CSocket::TriggerWord( UI16 newValue )
+void CSocket::AddTrigWord( UI16 toAdd )
 {
-	triggerWord = newValue;
+	trigWords.push_back( toAdd );
 }
-UI16 CSocket::TriggerWord( void ) const
+
+UI16 CSocket::FirstTrigWord( void )
 {
-	return triggerWord;
+	UI16 retVal	= 0xFFFF;
+	twIter		= trigWords.begin();
+	if( !FinishedTrigWords() )
+		retVal = (*twIter);
+	return retVal;
+}
+
+UI16 CSocket::NextTrigWord( void )
+{
+	UI16 retVal = 0xFFFF;
+	if( !FinishedTrigWords() )
+	{
+		++twIter;
+		if( !FinishedTrigWords() )
+			retVal = (*twIter);
+	}
+	return retVal;
+}
+
+bool CSocket::FinishedTrigWords( void )
+{
+	return ( twIter == trigWords.end() );
+}
+
+void CSocket::ClearTrigWords( void )
+{
+	trigWords.resize( 0 );
+	twIter = trigWords.end();
 }
 
 CChar *					DEFSOCK_CURRCHAROBJ				= NULL;
@@ -494,7 +522,6 @@ const UI32				DEFSOCK_BYTESSENT				= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 CBaseObject *			DEFSOCK_TMPOBJ					= NULL;
-const UI16				DEFSOCK_TRIGGERWORD				= 0xFFFF;
 
 CSocket::CSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
@@ -502,7 +529,7 @@ range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum )
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postCount( DEFSOCK_POSTCOUNT ), postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ ), triggerWord( DEFSOCK_TRIGGERWORD )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ )
 {
 	InternalReset();
 }
@@ -528,6 +555,8 @@ void CSocket::InternalReset( void )
 	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
 		pcTimers[mTID] = 0;
 	actbAccount.wAccountIndex = AB_INVALID_ID;
+	trigWords.resize( 0 );
+	twIter = trigWords.end();
 }
 
 //o---------------------------------------------------------------------------o

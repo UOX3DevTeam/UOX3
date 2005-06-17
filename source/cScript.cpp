@@ -461,48 +461,43 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talking
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::InRange( CChar *person, CChar *targPlayer )
+bool cScript::InRange( CChar *person, CBaseObject *objInRange )
 {
-	if( !ValidateObject( person ) || !ValidateObject( targPlayer ) )
+	if( !ValidateObject( person ) || !ValidateObject( objInRange ) )
 		return false;
 	if( !ExistAndVerify( seInRange, "inRange" ) )
 		return false;
 
 	jsval params[3], rval;
 	JS_SetPrivate( targContext, charObjects[0].toUse, person );
-	JS_SetPrivate( targContext, charObjects[1].toUse, targPlayer );
+
+	if( objInRange->CanBeObjType( OT_CHAR ) )
+		JS_SetPrivate( targContext, charObjects[1].toUse, objInRange );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, objInRange );
 	
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
-	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
-	params[2] = INT_TO_JSVAL( 0 );
+
+	if( objInRange->CanBeObjType( OT_CHAR ) )
+	{
+		params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+		params[2] = INT_TO_JSVAL( 0 );
+	}
+	else
+	{
+		params[1] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+		params[2] = INT_TO_JSVAL( 1 );
+	}
+
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 3, params, &rval );
 
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
-	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+
+	if( objInRange->CanBeObjType( OT_CHAR ) )
+		JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, objInRange );
 	
-	if( retVal == JS_FALSE )
-		SetEventExists( seInRange, false );
-	return ( retVal == JS_TRUE );
-}
-bool cScript::InRange( CChar *person, CItem *targItem )
-{
-	if( !ValidateObject( person ) || !ValidateObject( targItem ) )
-		return false;
-	if( !ExistAndVerify( seInRange, "inRange" ) )
-		return false;
-
-	jsval params[3], rval;
-	JS_SetPrivate( targContext, charObjects[0].toUse, person );
-	JS_SetPrivate( targContext, itemObjects[0].toUse, targItem );
-	
-	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
-	params[1] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
-	params[2] = INT_TO_JSVAL( 1 );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 3, params, &rval );
-
-	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
-	JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
-
 	if( retVal == JS_FALSE )
 		SetEventExists( seInRange, false );
 	return ( retVal == JS_TRUE );

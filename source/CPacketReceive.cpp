@@ -1494,6 +1494,7 @@ void CPITalkRequestUnicode::Receive( void )
 	tSock->Receive( 3, false );
 	UI16 blockLen	= tSock->GetWord( 1 );
 	tSock->Receive( blockLen, false );
+	tSock->ClearTrigWords();
 
 //	strLen			= blockLen - 8;
 	typeUsed		= (SpeechType)tSock->GetByte( 3 );
@@ -1508,7 +1509,7 @@ void CPITalkRequestUnicode::Receive( void )
 	// Check for command word versions of this packet
 	int myoffset		= 13;
 	int myj				= 12;
-	int numTrigWords	= 0;
+	size_t numTrigWords	= 0;
 	int triggerWord		= 0xFFFF;
 	UI08 *buffer		= tSock->Buffer();
 	UI16 j				= 0;
@@ -1518,7 +1519,43 @@ void CPITalkRequestUnicode::Receive( void )
 
 	langCode[3] = 0;
 
-	if( typeUsed == 0xC0 || typeUsed == 0xC9 || typeUsed == 0xC1 || typeUsed == 0xC2 || typeUsed == 0xC6 || typeUsed == 0xC8 )
+	if( (typeUsed&0xC0) == 0xC0 )
+	{
+		// numbwe of distinct trigger words
+		numTrigWords = (tSock->GetByte( 12 )<<4) + (tSock->GetByte( 13 )>>4);
+
+		size_t byteNum = 13;
+		for( size_t tWord = 0; tWord < numTrigWords; )
+		{
+			tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord )%0x10<<8) + tSock->GetByte( byteNum+tWord+1 ) );
+			if( tWord+2 <= numTrigWords )
+				tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord+2 )<<8) + (tSock->GetByte( byteNum+tWord+3 )>>4));
+			tWord += 2;
+			byteNum++;
+		}
+
+		myoffset = 15;
+		if( (numTrigWords % 2) == 1 )	// odd number ?
+			myoffset += ( numTrigWords / 2 ) * 3;
+		else
+			myoffset += ( ( numTrigWords / 2 ) * 3 ) - 1;
+
+		myj = 12;
+		int mysize = blockLen - myoffset;
+		for( j = 0; j < mysize; ++j )
+			unicodeTxt[j] = buffer[j + myoffset];
+		for( j = 0; j < mysize; ++j )
+		{	// we would overwrite our buffer, so we need to catch it before we do that.
+			buffer[myj++] = 0;
+			buffer[myj++] = unicodeTxt[j];
+		}
+		buffer[myj-1] = 0;
+		blockLen = ((blockLen - myoffset) * 2) + 12;
+		PackShort( tSock->Buffer(), 1, blockLen );
+		// update our unicode text
+		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
+	}
+/*	if( typeUsed == 0xC0 || typeUsed == 0xC9 || typeUsed == 0xC1 || typeUsed == 0xC2 || typeUsed == 0xC6 || typeUsed == 0xC8 )
 	{
 		// number of distinct trigger words
 		numTrigWords = ( tSock->GetByte( 12 ) << 24 ) + ( tSock->GetByte( 13 ) << 16 );
@@ -1537,15 +1574,7 @@ void CPITalkRequestUnicode::Receive( void )
 		else
 			myoffset += ( ( numTrigWords / 2 ) * 3 ) - 1;
 //		buffer[3] &= 0x0F;	// set to normal to send it back
-		/*
-		switch( tSock->GetByte( 13 ) & 0xF0 )
-		{		// Copy the buffer up, and convert it to unicode
-			case 0x10:	myoffset = 15;		break;
-			case 0x20:	myoffset = 17;		break;
-			case 0x30:	myoffset = 18;		break;
-			case 0x40:	myoffset = 20;		break;
-		}
-		*/
+
 		myj = 12;
 		int mysize = blockLen - myoffset;
 		for( j = 0; j < mysize; ++j )
@@ -1561,12 +1590,11 @@ void CPITalkRequestUnicode::Receive( void )
 		// update our unicode text
 		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
 	}
-	else		// NOT a weird configuration, it is unicode however!
+*/	else		// NOT a weird configuration, it is unicode however!
 	{
 		// starts at 12
 		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
 	}
-	tSock->TriggerWord( static_cast<UI16>(triggerWord) );	// Moved down here to ensure it would always be reset - giwo
 	strLen = 0;
 	for( j = 13; j < blockLen; j += 2 )
 	{

@@ -1,3 +1,8 @@
+6/16/2005 - giwo (0.98-3.0b)
+	Added support for multiple TriggerWords in a string of speech.
+	Fixed JS event inRange() so it will function as expected.
+	Fixed a minor issue that caused the wrong code to be executed when updating nearby objects.
+
 6/16/2005 - Xuri
 	Added new NPCAI (5) for NPC fighters. Same as guard-ai (attacks monsters/criminals), only without the extra guard-functions.
 

@@ -38,6 +38,8 @@ public:
 	void			InternalReset( void );
 
 private:
+	std::vector< UI16 >				trigWords;
+	std::vector< UI16 >::iterator	twIter;
 	ACCOUNTSBLOCK	actbAccount;
 
 	CChar *			currCharObj;
@@ -47,7 +49,6 @@ private:
 	UI08			buffer[MAXBUFFER];
 	UI08			outbuffer[MAXBUFFER];
 	std::string		xtext;
-	UI16			triggerWord;
 
 	//	Temporary variables (For targeting commands, etc)
 	CBaseObject *	tmpObj;
@@ -128,7 +129,7 @@ public:
 	void			ClearAuthor( void );
 	void			ClearTitle( void );
 	void			ClearPage( void );
-	void			TriggerWord( UI16 newVal );
+	void			AddTrigWord( UI16 );
 	// Accessors
 
 	char *			AuthorBuffer( void );
@@ -161,7 +162,10 @@ public:
 	UI08			ClientIP4( void ) const;
 	bool			NewClient( void ) const;
 	bool			TargetOK( void ) const;
-	UI16			TriggerWord( void ) const;
+	UI16			FirstTrigWord( void );
+	UI16			NextTrigWord( void );
+	bool			FinishedTrigWords( void );
+	void			ClearTrigWords( void );
 
 	// Temporary Variables
 	CBaseObject *	TempObj( void ) const;
