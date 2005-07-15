@@ -43,7 +43,7 @@ enum PostTypes
 void    MsgBoardEvent( CSocket *s );
 void    MsgBoardSetPostType( CSocket *s, int nPostType );
 void    MsgBoardGetPostType( CSocket *s );
-bool    MsgBoardPostQuest( SERIAL nSerial, int nQuestType );
+bool    MsgBoardPostQuest( CChar *mChar, int nQuestType );
 void    MsgBoardQuestEscortCreate( CChar *npcIndex );
 void    MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock );
 void    MsgBoardQuestEscortDelete( CChar *npcIndex );

@@ -559,7 +559,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 		if( isOnline( (*targPlayer) ) )
 		{
 			CItem *j = startTrade( mSock, targPlayer );
-			if( j )
+			if( ValidateObject( j ) )
 			{
 				i->SetCont( j );
 				i->SetX( 30 );

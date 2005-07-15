@@ -1118,6 +1118,7 @@ namespace UOX
 				case CIP_RACE:		gPriv->SetRace( (RACEID)encaps.toInt() );						break;
 				case CIP_MAXHP:		gPriv->SetMaxHP( (SI16)encaps.toInt() );						break;
 				case CIP_RANK:		gPriv->SetRank( (SI08)encaps.toInt() );							break;
+				case CIP_POISON:	gPriv->SetPoisoned( (UI08)encaps.toInt() );						break;
 				case CIP_DIR:		gPriv->SetDir( (SI16)encaps.toInt() );							break;
 				case CIP_WIPABLE:	gPriv->SetWipeable( encaps.toBool() );							break;
 				case CIP_BUYVALUE:	gPriv->SetBuyValue( (UI32)encaps.toInt() );						break;

@@ -3867,7 +3867,13 @@ void CChar::Cleanup( void )
 		if( ValidateObject( tempChar ) )
 		{
 			if( tempChar->GetTarg() == this )
+			{
 				tempChar->SetTarg( NULL );
+				tempChar->SetAttacker( NULL );
+				tempChar->SetAttackFirst( false );
+				if( tempChar->IsAtWar() )
+					tempChar->ToggleCombat();
+			}
 			SetTarg( NULL );
 		}
 		tempChar = GetAttacker();

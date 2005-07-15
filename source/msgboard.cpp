@@ -119,13 +119,19 @@ void MsgBoardSetPostType( CSocket *s, int Type )
 //
 // RETURNS:     void
 //////////////////////////////////////////////////////////////////////////////
+
 void MsgBoardOpen( CSocket *s )
 {
+	CPOpenMessageBoard mbPost( s );
+	s->Send( &mbPost );
+
+	CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 1 ) );
+/*
 	// In Response to a doubleclick() message from a client
 	// [SEND:5] 06 40 07 ba 3d 
 	// Message to client     |Pak|sz1|sz2|mTy|sn1|sn2|sn3|sn4| b | u | l | l | e | t | i | n |   | b | o | a | r | d |<------------  Unknown, don't care right now ----------------->|                                                     
-	char msgBoardHeader[] = "\x71\x00\x26\x00\xFF\xFF\xFF\xFF\x62\x75\x6c\x6c\x65\x74\x69\x6e\x20\x62\x6f\x61\x72\x64\x00\x00\x00\x00\x00\x00\x00\x00\x40\x20\x00\xff\x00\x00\x00\x00";
-	
+	char msgBoardHeader[39] = "\x71\x00\x38\x00\xFF\xFF\xFF\xFF\x62\x75\x6c\x6c\x65\x74\x69\x6e\x20\x62\x6f\x61\x72\x64\x00\x00\x00\x00\x00\x00\x00\x00\x40\x20\x00\xff\x00\x00\x00\x00";
+
 	// Extract the Bulletin Board serial number from client buffer and update msgBoardHeader
 	msgBoardHeader[4]     = s->GetByte( 1 ); // From doubleclick() buffer[s]
 	msgBoardHeader[5]     = s->GetByte( 2 );
@@ -139,11 +145,11 @@ void MsgBoardOpen( CSocket *s )
 	// If the name the item (Bulletin Board) has been defined, display it
 	// instead of the default "Bulletin Board" title.
 	if( msgBoard->GetName() != "#" )
-		strncpy( &msgBoardHeader[8], msgBoard->GetName().c_str(), 20);
+		strncpy( &msgBoardHeader[8], msgBoard->GetName().c_str(), 20 );
 	
 	// Send Message Board header to client
 	s->Send( msgBoardHeader, (sizeof(msgBoardHeader)-1) );
-	
+*/	
 	
 	// Send draw item message to client with required info to draw the message board
 	// Base size plus however many messages are in the list
@@ -159,7 +165,7 @@ void MsgBoardOpen( CSocket *s )
 	FILE *file = NULL;
 	// 50 chars for prefix and 4 for the extension plus the ending NULL
 	UString fileName;
-	
+
 	msg[0] = 0x3c;  // Packet type (Items in Container)
 	msg[1] = 0x00;  // High byte of packet size
 	msg[2] = 0x00;  // Low byte of packet size
@@ -184,7 +190,7 @@ void MsgBoardOpen( CSocket *s )
 	UString fileName2 = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbi";
 	
 	// LOCAL post file
-	UString fileName3 = UString::number( s->GetByte( 1 ), 16 ) + UString::number( s->GetByte( 2 ), 16 ) + UString::number( s->GetByte( 3 ), 16 ) + UString::number( s->GetByte( 4 ), 16 ) + ".bbi";
+	UString fileName3 = UString::number( s->GetDWord( 1 ), 16 ) + ".bbi";
 	
 	while( currentFile <= 3 )
 	{
@@ -254,10 +260,7 @@ void MsgBoardOpen( CSocket *s )
 					msg[offset+16] = s->GetByte( 4 );
 					
 					// Store message ID into array for later acknowledgement
-					s->PostAcked( count, 0, msg[offset] );
-					s->PostAcked( count, 1, msg[offset+1] );
-					s->PostAcked( count, 2, msg[offset+2] );
-					s->PostAcked( count, 3, msg[offset+3] );
+					s->PostAcked( calcserial( msg[offset], msg[offset+1], msg[offset+2], msg[offset+3] ) );
 					
 					// Increment the offset by 19 bytes for next message index
 					offset += 19;
@@ -279,12 +282,11 @@ void MsgBoardOpen( CSocket *s )
 	// Update size fields of message with new values
 	msg[1] = (UI08)(offset>>8);
 	msg[2] = (UI08)(offset%256);
-	msg[3] = (UI08)(count>>8);
-	msg[4] = (UI08)(count%256);
+	msg[3] = (UI08)(s->PostCount()>>8);
+	msg[4] = (UI08)(s->PostCount()%256);
 	
 	// Set global variable that holds the count of the number of posts being sent 
 	// to this particular client
-	s->PostCount( count );
 	
 	// Set the postAckCount to zero in preparation of the client ACKing the message
 	// about to be sent
@@ -329,8 +331,7 @@ void MsgBoardList( CSocket *s )
 	UI32		segmentSize  = 0;  // Size of a segment (Author, Subject, Date)
 	int			foundMsg     = 0;  // Flag when message has been found
 	SI32		currentFile  = 1;  // Starting file to open and iterate through (1=GLOBAL.bbp, 2=REGIONAL.bbp, 3=LOCAL.bbp)
-	int			w            = 0;  // Counter
-	SI32		x            = 0;  // Counter
+	size_t		x            = 0;  // Counter
 	
 	// Determine what type of message this is in order to determine which file to open
 	// GLOBAL   Posts start at 01 00 00 00 -> 01 FF FF FF
@@ -349,7 +350,7 @@ void MsgBoardList( CSocket *s )
 	UString fileName2		= "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbp";
 	
 	// LOCAL post file
-	UString fileName3 = UString::number( s->GetByte( 4 ), 16 ) + UString::number( s->GetByte( 5 ), 16 ) + UString::number( s->GetByte( 6 ), 16 ) + UString::number( s->GetByte( 7 ), 16 ) + ".bbp";
+	UString fileName3 = UString::number( s->GetDWord( 4 ), 16 ) + ".bbp";
 	
 	while( currentFile <= 3 )
 	{
@@ -387,7 +388,9 @@ void MsgBoardList( CSocket *s )
 		// If the file doesn't exist, increment the currenFile count and move onto the next file
 		if( file != NULL )
 		{
-			while( w < s->PostCount() )
+			SERIAL postToAck = s->FirstPostAck();
+//			if( !s->FinishedPostAck() )
+			while( !s->FinishedPostAck() )
 			{
 				foundMsg = 0;
 				
@@ -397,7 +400,7 @@ void MsgBoardList( CSocket *s )
 					x = 0;
 					//                                0       1     2      3      4   5   6      7   8    9    10   11   12   13   14   15
 					// Read In the first 12 bytes |PacketID|Size1|Size2|MsgType|bSn1|bSn2|bSn3|bSn4|mSn1|mSn2|mSn3|mSn4|pmSN|pmSN|pmSN|pmSN|
-					fread( &msg[x], sizeof(char), 16, file );
+					fread( &msg[x], sizeof(UI08), 16, file );
 					msgBytes = 16;
 					
 					// If we have reached the EOF then stop searching
@@ -405,16 +408,13 @@ void MsgBoardList( CSocket *s )
 						break;
 					
 					// Check buffered message SN with currently read message SN
-					if( ( msg[8]  == s->PostAcked( w, 0 ) ) &&
-						( msg[9]  == s->PostAcked( w, 1 ) ) &&
-						( msg[10] == s->PostAcked( w, 2 ) ) &&
-						( msg[11] == s->PostAcked( w, 3 ) ) )
+					if( postToAck == calcserial( msg[8], msg[9], msg[10], msg[11] ) )
 					{
 						// Don't forget to set the flag to stop searching for the message when we find it
 						foundMsg = 1;
 						
 						// Increment While loop counter tracking the number of posts we have replied too
-						++w;
+						postToAck = s->NextPostAck();
 						
 						// Set the board SN values to the board that was just double-clicked on
 						msg[4] = s->GetByte( 4 );
@@ -443,7 +443,7 @@ void MsgBoardList( CSocket *s )
 							++msgBytes;
 							
 							// Read in the number of bytes give by the segment size
-							if( segmentSize != fread( &msg[msgBytes], sizeof( char ), segmentSize, file ) )
+							if( segmentSize != fread( &msg[msgBytes], sizeof( UI08 ), segmentSize, file ) )
 							{
 								// If we are unable to read in the number of bytes specified by the segmentSize, ABORT!
 								Console << "MsgBoardList() couldn't read in entire segment(" << x << ")" << myendl;
@@ -794,7 +794,7 @@ int MsgBoardGetMaxMsgSN( int msgType, int autoPost = 0 )
 // RETURNS:     int         0 = Failed to post message
 //                          1 = Post successful
 //////////////////////////////////////////////////////////////////////////////
-bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
+bool MsgBoardPost( CSocket *s, CChar *mChar, int msgType, int autoPost )
 {
 	// WRITE FILE OUT (POST MESSAGE)
 	
@@ -812,14 +812,13 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 	char        msgBody[MAXBUFFER]    = "";
 	char        msgAuthor[52]         = "";   // Maximum name size from char_st (Size + Name)
 	char        msgDate[17]           = "";   // Maximum date size based on Size + "Day ### @ hh:mm" format
-	CChar *		mChar				  = s->CurrcharObj();
 	
 	struct tm   timeOfPost;
 	time_t      now;
 	char		temp[1024];
 	
 	// If this is a users post (done from the client) then copy the client buffer[s] into our buffer
-	if( !autoPost )
+	if( !autoPost && s != NULL )
 	{
 		memcpy( msg2Post, s->Buffer(), s->GetWord( 1 ) );
 		
@@ -849,7 +848,8 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 	if( maxMsgSN == 0 )
 	{
 		Console.Error( 1, "MsgBoardPost() Could not retrieve a valid message serial number" );
-		s->sysmessage( 730 );
+		if( s != NULL )
+			s->sysmessage( 730 );
 		return false;
 	}
 	
@@ -868,8 +868,8 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 		case REGIONALPOST:
 			// set the Message Board fileName to the proper region number
 			if( autoPost )
-				sprintf( temp, "region%d.bbp", calcCharObjFromSer( s->GetDWord( 4 ) )->GetRegionNum() );
-			else
+				sprintf( temp, "region%d.bbp", mChar->GetRegionNum() );
+			else if( s != NULL )
 			{
 				CItem *msgBoard = calcItemObjFromSer( s->GetDWord( 4 ) );
 				CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
@@ -881,7 +881,8 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 			break;
 		default:
 			Console.Error( 1, "MsgBoardPost() Invalid post type, aborting post" );
-			s->sysmessage( 725 );
+			if( s != NULL )
+				s->sysmessage( 725 );
 			return false;
 	}
 	
@@ -899,7 +900,10 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 	}
 	
 	// Calculate original size of the message that the client sent to us
-	UI16 origMsgSize = s->GetWord( 1 );
+	UI16 origMsgSize = 0;
+	
+	if( s != NULL )
+		origMsgSize = s->GetWord( 1 );
 	
 	// Get the messages header info (packet type, size, type, board S/N, parent msg S/N(replies only))
 	for( x = 0; x < 12; ++x )
@@ -914,7 +918,8 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 	
 	// Get the new messages serial number (which is its post position on the board- anything other than 00 00 00 00 
 	// (base post) is a reply to a specific message ID )
-	newMsgSN = s->GetDWord( 8 ); // (buffer[s][8]<<24) + (buffer[s][9]<<16) + (buffer[s][10]<<8) + buffer[s][11];
+	if( s != NULL )
+		newMsgSN = s->GetDWord( 8 ); // (buffer[s][8]<<24) + (buffer[s][9]<<16) + (buffer[s][10]<<8) + buffer[s][11];
 	
 	// If the newMsgSN is 0 then it is a base post, other wise it is a reply to a previous post
 	if( newMsgSN )
@@ -1027,19 +1032,16 @@ bool MsgBoardPost( CSocket *s, int msgType, int autoPost )
 	fclose( pFile );
 	
 	// if this was a user post, then immediately update the message board with the newly created message
-	if( !autoPost )
+	if( !autoPost && s != NULL )
 	{
 		CPAddItemToCont toAdd;
 		toAdd.Serial( calcserial( msgHeader[8], msgHeader[9], msgHeader[10], msgHeader[11] ) );
 		toAdd.Container( calcserial( msgHeader[4], msgHeader[5], msgHeader[6], msgHeader[7] ) );
 		
 		// Setup buffer to expect to receive an ACK from the client for this posting
-		s->PostCount( 1 );
+		s->PostClear();
 		s->PostAckCount( 0 );
-		s->PostAcked( 0, 0, msgHeader[8] );
-		s->PostAcked( 0, 1, msgHeader[9] );
-		s->PostAcked( 0, 2, msgHeader[10] );
-		s->PostAcked( 0, 3, msgHeader[11] );
+		s->PostAcked( calcserial( msgHeader[8], msgHeader[9], msgHeader[10], msgHeader[11] ) );
 		
 		// Send "Add Item to Container" message to client
 		s->Send( &toAdd );
@@ -1478,7 +1480,7 @@ void MsgBoardEvent( CSocket *s )
 				
 				// Check privledge level against server.scp msgpostaccess
 				if( mChar->IsGM() || cwmWorldState->ServerData()->MsgBoardPostingLevel() )
-					MsgBoardPost( s, mChar->GetPostType(), 0 );
+					MsgBoardPost( s, mChar, mChar->GetPostType(), 0 );
 				else
 					s->sysmessage( 1640 );
 				
@@ -1518,7 +1520,7 @@ void MsgBoardEvent( CSocket *s )
 // NOTES:       Currently only escort quests work so this function us still
 //              in its early stages in regards to the questType parameter.
 //////////////////////////////////////////////////////////////////////////////
-bool MsgBoardPostQuest( SERIAL serial, int questType )
+bool MsgBoardPostQuest( CChar *mChar, int questType )
 {
 	std::string subjectEscort		= Dictionary->GetEntry( 735 );  // Default escort message 
 	std::string subjectBounty		= Dictionary->GetEntry( 736 );  // Default bounty message 
@@ -1534,6 +1536,7 @@ bool MsgBoardPostQuest( SERIAL serial, int questType )
 	int         offset              = 0;  // Offset to next line in buffer
 	int         numLinesOffset      = 0;  // Offset to the number of lines in body field
 	UString		sect;
+	SERIAL		serial				= mChar->GetSerial();
 	
 	// msg2Post[] Buffer initialization
 	msg2Post[0]   = 0x71;   // Packet ID
@@ -1730,7 +1733,7 @@ bool MsgBoardPostQuest( SERIAL serial, int questType )
 	
 	// If the message is posted to the message board successfully
 	// RETURN 1 otherwise RETURN 0 to indicate a failure of some sort
-	if( MsgBoardPost( 0, REGIONALPOST, 1 ) )
+	if( MsgBoardPost( NULL, mChar, REGIONALPOST, 1 ) )
 		return true;  // Post succeeded
 
 	return false;
@@ -1790,7 +1793,7 @@ void MsgBoardQuestEscortCreate( CChar *npcIndex )
 	}
 	
 	// Post the message to the message board in the same REGION as the NPC
-	if( !MsgBoardPostQuest( npcIndex->GetSerial(), ESCORTQUEST) )
+	if( !MsgBoardPostQuest( npcIndex, ESCORTQUEST ) )
 	{
 		Console.Error( 3, "MsgBoardQuestEscortCreate() Failed to add quest post for %s", npcIndex->GetName().c_str() );
 		Console.Error( 3, "MsgBoardQuestEscortCreate() Deleting NPC %s", npcIndex->GetName().c_str() );

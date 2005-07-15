@@ -1,79 +1,75 @@
 #include "uox3.h"
 #include "classes.h"
 #include "CPacketSend.h"
+#include "ObjectFactory.h"
 
 #undef DBGFILE
 #define DBGFILE "trade.cpp"
 
-#include "ObjectFactory.h"
-
 namespace UOX
 {
 
-CItem *startTrade( CSocket *mSock, CChar *i )
+CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar, CChar *nChar )
 {
-	if( mSock == NULL || !ValidateObject( i ) )
-		return NULL;
-
-	CChar *mChar	= mSock->CurrcharObj();
-	CItem *bps		= mChar->GetPackItem();
-	CItem *bpi		= i->GetPackItem();
-	CSocket *nSock	= calcSocketObjFromChar( i );
-
-	if( nSock == NULL )
-		return NULL;
-
-	if( !ValidateObject( bps ) )
+	CItem *mPack = mChar->GetPackItem();
+	if( !ValidateObject( mPack ) )
 	{
 		mSock->sysmessage( 773 );
 		nSock->sysmessage( 1357, mChar->GetName().c_str() );
 		return NULL;
 	}
-	
-	if( !ValidateObject( bpi ) )
+
+	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, true );
+	if( !ValidateObject( tradeWindow ) )
+		return NULL;
+
+	tradeWindow->SetX( 26 );
+	tradeWindow->SetY( 0 );
+	tradeWindow->SetZ( 0 );
+	tradeWindow->SetLayer( IL_NONE );
+	tradeWindow->SetType( IT_CONTAINER );
+	tradeWindow->SetDye( false );
+	tradeWindow->SetTempVar( CITV_MOREZ, 0 );
+	tradeWindow->SendPackItemToSocket( mSock );
+	tradeWindow->SendPackItemToSocket( nSock );
+
+	return tradeWindow;
+}
+
+CItem *startTrade( CSocket *mSock, CChar *nChar )
+{
+	if( mSock == NULL || !ValidateObject( nChar ) )
+		return NULL;
+
+	CChar *mChar	= mSock->CurrcharObj();
+	CSocket *nSock	= calcSocketObjFromChar( nChar );
+
+	if( !ValidateObject( mChar ) || nSock == NULL )
+		return NULL;
+
+	CItem *tradeWindowOne = CreateTradeWindow( mSock, nSock, mChar, nChar );
+	if( !ValidateObject( tradeWindowOne ) )
+		return NULL;
+
+	CItem *tradeWindowTwo = CreateTradeWindow( nSock, mSock, nChar, mChar );
+	if( !ValidateObject( tradeWindowTwo ) )
 	{
-		nSock->sysmessage( 773 );
-		mSock->sysmessage( 1357, i->GetName().c_str() );
+		tradeWindowOne->Delete();
 		return NULL;
 	}
-
-	CItem *ps = Items->CreateItem( NULL, i, 0x1E5E, 1, 0, OT_ITEM );
-	if( ps == NULL || !ps->SetCont( mChar ) ) 
-		return NULL;
-	ps->SetX( 26 );
-	ps->SetY( 0 );
-	ps->SetZ( 0 );
-	ps->SetLayer( IL_NONE );
-	ps->SetType( IT_CONTAINER );
-	ps->SetDye( false );
-	ps->SendPackItemToSocket( mSock );
-	ps->SendPackItemToSocket( nSock );
-	CItem *pi = Items->CreateItem( NULL, i, 0x1E5E, 1, 0, OT_ITEM );
-	if( pi == NULL || !pi->SetCont( i ) ) 
-		return NULL;
-	pi->SetX( 26 );
-	pi->SetY( 0 );
-	pi->SetZ( 0 );
-	pi->SetLayer( IL_NONE );
-	pi->SetType( IT_CONTAINER );
-	pi->SetDye( false );
-	pi->SendPackItemToSocket( mSock );
-	pi->SendPackItemToSocket( nSock );
 	
-	pi->SetTempVar( CITV_MOREX, ps->GetSerial() );
-	ps->SetTempVar( CITV_MOREX, pi->GetSerial() );
-	pi->SetTempVar( CITV_MOREZ, 0 );
-	ps->SetTempVar( CITV_MOREZ, 0 );
+	tradeWindowOne->SetTempVar( CITV_MOREX, tradeWindowTwo->GetSerial() );
+	tradeWindowTwo->SetTempVar( CITV_MOREX, tradeWindowOne->GetSerial() );
 	
-	CPSecureTrading cpstOne( (*i), (*ps), (*pi) );
-	cpstOne.Name( i->GetName() );
+	CPSecureTrading cpstOne( (*nChar), (*tradeWindowOne), (*tradeWindowTwo) );
+	cpstOne.Name( nChar->GetName() );
 	mSock->Send( &cpstOne );
 	
-	CPSecureTrading cpstTwo( (*mChar), (*pi), (*ps) );
+	CPSecureTrading cpstTwo( (*mChar), (*tradeWindowTwo), (*tradeWindowOne) );
 	cpstTwo.Name( mChar->GetName() );
 	nSock->Send( &cpstTwo );
 
-	return ps;
+	return tradeWindowOne;
 }
 
 bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )

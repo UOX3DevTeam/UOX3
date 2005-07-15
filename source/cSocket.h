@@ -77,9 +77,9 @@ private:
 
 	bool			targetok;
 
-	char			postAcked[MAXPOSTS][5];
-	int				postCount;
-	int				postAckCount;
+	std::vector< SERIAL >				postAcked;
+	std::vector< SERIAL >::iterator		ackIter;
+	size_t			postAckCount;
 
 	SI16			clickx;
 	SI16			clicky;
@@ -178,9 +178,12 @@ public:
 	UI08			DyeAll( void ) const;
 	SI08			ClickZ( void ) const;
 
-	char			PostAcked( int x, int y ) const;
-	int				PostCount( void ) const;
-	int				PostAckCount( void ) const;
+	SERIAL			FirstPostAck( void );
+	SERIAL			NextPostAck( void );
+	bool			FinishedPostAck( void );
+
+	size_t			PostCount( void ) const;
+	size_t			PostAckCount( void ) const;
 
 	SI16			ClickX( void ) const;
 	SI16			ClickY( void ) const;
@@ -244,9 +247,9 @@ public:
 	void			TargetOK( bool newValue );
 	void			ClickX( SI16 newValue );
 	void			ClickY( SI16 newValue );
-	void			PostAcked( int x, int y, char newValue );
-	void			PostCount( int newValue );
-	void			PostAckCount( int newValue );
+	void			PostAcked( SERIAL newValue );
+	void			PostAckCount( size_t newValue );
+	void			PostClear();
 	void			XText( std::string newValue );
 
 	void			AuthorBuffer( const char *newValue );

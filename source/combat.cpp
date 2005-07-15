@@ -1654,7 +1654,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	}
 	mChar->SetAttacker( NULL );
 	mChar->SetAttackFirst( false );
-	if( mChar->IsAtWar() && mChar->IsNpc() && !mChar->IsDead() && mChar->GetNPCAiType() != aiPLAYERVENDOR )
+	if( mChar->IsAtWar() && mChar->IsNpc() )
 		mChar->ToggleCombat();
 }
 
@@ -1736,10 +1736,11 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		}
 		if( !validTarg )
 		{
-			mChar.ToggleCombat();
 			mChar.SetTarg( NULL );
 			mChar.SetAttacker( NULL );
 			mChar.SetAttackFirst( false );
+			if( mChar.IsAtWar() )
+				mChar.ToggleCombat();
 		}
 		else
 		{

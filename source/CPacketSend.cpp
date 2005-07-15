@@ -4260,9 +4260,9 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 //	BYTE[?] charName 
 void CPSecureTrading::InternalReset( void )
 {
-	internalBuffer.resize( 17 );
+	internalBuffer.resize( 47 );
 	internalBuffer[0] = 0x6F;
-	internalBuffer[2] = 17;
+	internalBuffer[2] = 47;
 }
 void CPSecureTrading::CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
@@ -5120,6 +5120,53 @@ bool CPSellList::CanSellItems( CChar &mChar, CChar &vendor )
 {
 	CopyData( mChar, vendor );
 	return (numItems != 0);
+}
+
+//0x71 Packet
+//
+//Last Modified on Wednesday, 24-May-2000
+//
+//Bulletin Board Message (Variable # of bytes)
+//
+//  BYTE cmd
+//  BYTE[2] len
+//  BYTE subcmd
+//  BYTE submessage
+//		Submessage 0 – Display Bulletin Board
+//		BYTE[4] BoardID
+//		BYTE[22] board name (default is “bulletin board”, the rest nulls)
+//		BYTE[4] ID (0x402000FF)
+//		BYTE[4] zero (0)
+
+void CPOpenMessageBoard::InternalReset( void )
+{
+	internalBuffer.resize( 37 );
+	internalBuffer[0] = 0x71;
+	PackShort( &internalBuffer[0], 1, 37 );
+	internalBuffer[3] = 0;
+	std::string boardName = "Bulletin Board";
+	strncpy( (char *)&internalBuffer[8], boardName.c_str(), 15 );
+	PackLong( &internalBuffer[0], 29, (SERIAL)0x4020000FF );
+}
+
+void CPOpenMessageBoard::CopyData( CSocket *mSock )
+{
+	CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 1 ) );
+
+	if( ValidateObject( msgBoard ) )
+	{
+		PackLong( &internalBuffer[0], 4, msgBoard->GetSerial() );
+		// If the name the item (Bulletin Board) has been defined, display it
+		// instead of the default "Bulletin Board" title.
+		if( msgBoard->GetName() != "#" )
+			strncpy( (char *)&internalBuffer[8], msgBoard->GetName().c_str(), 21 );
+	}
+}
+
+CPOpenMessageBoard::CPOpenMessageBoard( CSocket *mSock )
+{
+	InternalReset();
+	CopyData( mSock );
 }
 
 }

@@ -21,7 +21,7 @@
 #endif
 
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <sys/socket.h>
 	#include <netdb.h>
 	#include <netinet/in.h>
@@ -34,7 +34,7 @@
 	#define INVALID_SOCKET        0xFFFFFFFF
 	#define SOCKET_ERROR          -1
 	#define SOCKADDR_IN           struct sockaddr_in
-	#if !defined(__unix__)
+	#if UOX_PLATFORM == PLATFORM_LINUX
 		#define INADDR_NONE           -1
 		#define HTHREAD               thread_t
 	#else

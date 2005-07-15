@@ -446,7 +446,8 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		if( x->GetTarg() != NULL )	// zero out target, under all circumstances
 		{
 			x->SetTarg( NULL );
-			x->SetWar( false );
+			if( x->IsAtWar() )
+				x->ToggleCombat();
 		}
 		if( ValidateObject( x->GetAttacker() ) )
 			x->GetAttacker()->SetTarg( NULL );

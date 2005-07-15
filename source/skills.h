@@ -106,7 +106,6 @@ public:
 	TargetFunc handleCooking;
 	TargetFunc Mine;
 	TargetFunc Persecute;
-	TargetFunc PoisoningTarget;
 	TargetFunc ProvocationTarget1;
 	TargetFunc ProvocationTarget2;
 	TargetFunc RepairMetal;

@@ -39,8 +39,8 @@ public:
 	void		StoreItemRandomValue( CItem *i, CTownRegion *tReg );
 	PackTypes	getPackType( CItem *i );
 
-	CItem *		CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, ObjectType itemType, bool inPack = false );
-	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, ObjectType itemType, bool inPack = false );
+	CItem *		CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount, UI16 iColour, ObjectType itemType, bool inPack = false );
+	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI16 iAmount, ObjectType itemType, bool inPack = false );
 	CItem *		CreateBaseScriptItem( std::string name, UI08 worldNumber, ObjectType itemType = OT_ITEM );
 	CMultiObj *	CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool isBoat ); 
 	CItem *		CreateRandomItem( CSocket *mSock, std::string itemList );

@@ -348,8 +348,15 @@ bool CPISellItem::Handle( void )
 				}
 			} 
 		}
-		Items->CreateItem( tSock, mChar, 0x0EED, totgold, 0, OT_ITEM, true );
+
 		Effects->goldSound( tSock, totgold );
+		while( totgold > MAX_STACK )
+		{
+			Items->CreateItem( tSock, mChar, 0x0EED, MAX_STACK, 0, OT_ITEM, true );
+			totgold -= MAX_STACK;
+		}
+		if( totgold > 0 )
+			Items->CreateItem( tSock, mChar, 0x0EED, totgold, 0, OT_ITEM, true );
 	}
 	
 	CPBuyItem clrSend;

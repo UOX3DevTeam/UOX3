@@ -103,16 +103,15 @@ typedef struct __STARTLOCATIONDATA__
 } STARTLOCATION, *LPSTARTLOCATION;
 //	EviLDeD	-	End
 
-#define MAX_NAME			60		// We have the space. Character packet comes with unuess password space that is never used. So why dont we use it?
-#define MAX_TITLE			60
-#define MAX_STACK			0xFFFF
-#define MAX_VISRANGE		15
-#define MAX_Z_STEP			9
-#define MAXBUFFER			2560	// Buffer Size (For socket operations)
-#define MAXPOSTS			128
-
-const SI08 ILLEGAL_Z = -128;
-const UI08 MAXLAYERS = 30;			// Maximum number of Layers in paperdolls (max seems to be 0x1D)
+const UI08 MAX_NAME		= 60;		// We have the space. Character packet comes with unuess password space that is never used. So why dont we use it?
+const UI08 MAX_TITLE	= 60;
+const UI16 MAX_STACK	= 0xFFFF;
+const UI08 MAX_VISRANGE	= 15;
+const UI08 MAX_Z_STEP	= 9;
+const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
+const UI08 MAXPOSTS		= 128;
+const SI08 ILLEGAL_Z	= -128;
+const UI08 MAXLAYERS	= 30;			// Maximum number of Layers in paperdolls (max seems to be 0x1D)
 
 #define ITEMMENUOFFSET		256
 #define TRACKINGMENUOFFSET	4096

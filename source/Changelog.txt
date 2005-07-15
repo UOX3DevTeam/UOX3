@@ -1,3 +1,12 @@
+7/14/2005 - giwo (0.98-3.0c)
+	Moved Poisoning skill out to JS.
+	Fixed an issue causing "eternal" gold from a vendor.
+	Included a fix for Trade Windows locking the client (ShadowBranch).
+	Minor cleanups in trade.cpp
+	Included a possible fix for an issue causing NPC's not to exit combat properly.
+	Fixed an issue causing items with an amount to be created as 1 item in some situations.
+	Began rewriting messageboards, meanwhile fixing a few issues causing them not to function.
+
 6/16/2005 - giwo (0.98-3.0b)
 	Added support for multiple TriggerWords in a string of speech.
 	Fixed JS event inRange() so it will function as expected.

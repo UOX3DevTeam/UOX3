@@ -509,7 +509,6 @@ const int				DEFSOCK_OUTLENGTH				= 0;
 const int				DEFSOCK_INLENGTH				= 0;
 const bool				DEFSOCK_LOGGING					= LOGDEFAULT;
 const int				DEFSOCK_POSTACKCOUNT			= 0;
-const int				DEFSOCK_POSTCOUNT				= 0;
 const PickupLocations	DEFSOCK_PSPOT					= PL_NOWHERE;
 const SERIAL			DEFSOCK_PFROM					= INVALIDSERIAL;
 const SI16				DEFSOCK_PX						= 0;
@@ -527,7 +526,7 @@ CSocket::CSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbA
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
-postCount( DEFSOCK_POSTCOUNT ), postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
+postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
 bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ )
 {
@@ -557,6 +556,8 @@ void CSocket::InternalReset( void )
 	actbAccount.wAccountIndex = AB_INVALID_ID;
 	trigWords.resize( 0 );
 	twIter = trigWords.end();
+	postAcked.clear();
+	ackIter = postAcked.end();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1103,28 +1104,73 @@ SI16 CSocket::ClickY( void ) const
 	return clicky;
 }
 
-char CSocket::PostAcked( int x, int y ) const
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL FirstPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Moves to the start of the post ack list
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::FirstPostAck( void )
 {
-	return postAcked[x][y];
+	SERIAL retVal = INVALIDSERIAL;
+	ackIter = postAcked.begin();
+	if( !FinishedPostAck() )
+		retVal = (*ackIter);
+	return retVal;
 }
-int CSocket::PostCount( void ) const
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL NextPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Moves to the next post to ack in the list
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::NextPostAck( void )
 {
-	return postCount;
+	SERIAL retVal = INVALIDSERIAL;
+	if( !FinishedPostAck() )
+	{
+		++ackIter;
+		if( !FinishedPostAck() )
+			retVal = (*ackIter);
+	}
+	return retVal;
 }
-int CSocket::PostAckCount( void ) const
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool FinishedPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the iterator is at the end of the list
+//o---------------------------------------------------------------------------o
+bool CSocket::FinishedPostAck( void )
+{
+	return (ackIter == postAcked.end() );
+}
+
+size_t CSocket::PostCount( void ) const
+{
+	return postAcked.size();
+}
+size_t CSocket::PostAckCount( void ) const
 {
 	return postAckCount;
 }
 
-void CSocket::PostAcked( int x, int y, char newValue )
+void CSocket::PostClear( void )
 {
-	postAcked[x][y] = newValue;
+	postAcked.clear();
 }
-void CSocket::PostCount( int newValue )
+
+void CSocket::PostAcked( SERIAL newValue )
 {
-	postCount = newValue;
+	postAcked.push_back( newValue );
 }
-void CSocket::PostAckCount( int newValue )
+
+void CSocket::PostAckCount( size_t newValue )
 {
 	postAckCount = newValue;
 }

@@ -1273,6 +1273,18 @@ public:
 	bool			CanSellItems( CChar &mChar, CChar &vendor );
 };
 
+class CPOpenMessageBoard : public cPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+	virtual void	CopyData( CSocket *mSock );
+public:
+	virtual			~CPOpenMessageBoard()
+	{
+	}
+					CPOpenMessageBoard( CSocket *mSock );
+};
+
 }
 
 #endif

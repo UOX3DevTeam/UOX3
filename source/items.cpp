@@ -214,7 +214,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|							also will automatically look for an entry in harditems.dfn
 //|							and set its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, ObjectType itemType, bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount, UI16 iColour, ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -257,7 +257,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount,
 //|	Description		-	Creates a script item, gives it an amount, and sets
 //|							 its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, ObjectType itemType, bool inPack )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI16 iAmount, ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -269,7 +269,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item,
 	if( iCreated == NULL )
 		return NULL;
 
-	if( iAmount > 0 && iCreated->isPileable() )
+	if( iAmount > 1 && iCreated->isPileable() )
 		iCreated->SetAmount( iAmount );
 
 	return PlaceItem( mSock, mChar, iCreated, inPack );

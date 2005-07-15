@@ -1536,7 +1536,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 					break;
 				case INSCRIPTION:		s->target( 0, TARGET_INSCRIBE, 865 );		break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
-				case POISONING:			s->target( 0, TARGET_APPLYPOISON, 869 );	break;
 				case MEDITATION:
 					if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
 						Meditation( s );
@@ -1975,73 +1974,6 @@ UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
 		return EAST;
 	else 
 		return NORTH;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::PoisoningTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets an item with PoisoningSkill
-//o---------------------------------------------------------------------------o
-void cSkills::PoisoningTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	bool canPoison	= false;
-	CChar *mChar	= s->CurrcharObj();
-	CItem *poison	= static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
-	if( !ValidateObject( poison ) )
-		return;
-
-	if( poison->GetType() != IT_POTION || poison->GetTempVar( CITV_MOREY ) != 6 ) 
-	{
-		s->sysmessage( 918 );
-		return;
-	}
-
-	CItem *toPoison = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( toPoison ) )
-	{
-		s->sysmessage( 920 );
-		return;
-	}
-	UI16 realID = toPoison->GetID();
-	if( ( realID >= 0x0F4F && realID <= 0x0F50 ) || ( realID >= 0x13B1 && realID <= 0x13B2 ) || ( realID >= 0x13FC && realID <= 0x13FD ) )
-	{
-		s->sysmessage( 1647 );
-		return;
-	}
-	if( toPoison->GetHiDamage() <= 0 )
-	{
-		s->sysmessage( 1648 );
-		return;
-	}		
-	switch( poison->GetTempVar( CITV_MOREZ ) ) 
-	{
-		case 1:	canPoison = CheckSkill( mChar, POISONING, 0, 500 );		break;	// lesser poison
-		case 2:	canPoison = CheckSkill( mChar, POISONING, 151, 651 );		break;	// poison
-		case 3:	canPoison = CheckSkill( mChar, POISONING, 551, 1051 );	break;	// greater poison
-		case 4:	canPoison = CheckSkill( mChar, POISONING, 901, 1401 );	break;	// deadly poison
-		default:	Console.Error( 2, "cSkills::PoisoningTarget -> Fallout of switch statement without default" );	return;
-	}
-	if( canPoison ) 
-	{
-		Effects->PlaySound( mChar, 0x0247 );	// poisoning effect
-		if( toPoison->GetPoisoned() < poison->GetTempVar( CITV_MOREZ ) ) 
-			toPoison->SetPoisoned( static_cast<UI08>(poison->GetTempVar( CITV_MOREZ ) ));
-		s->sysmessage( 919 );
-	} 
-	else 
-	{
-		Effects->PlaySound( mChar, 0x0247 ); // poisoning effect
-		s->sysmessage( 1649 );
-	}
-
-	poison->IncAmount( -1 );
-	CItem *bPotion = Items->CreateItem( s, mChar, 0x0F0E, 1, 0, OT_ITEM, true );
-	if( bPotion != NULL )
-		bPotion->SetDecayable( true );
 }
 
 //o---------------------------------------------------------------------------o
