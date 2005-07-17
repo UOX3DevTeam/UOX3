@@ -34,16 +34,15 @@ enum PostTypes
 // for a user post is 0x05 and I also use this field to determine whether the
 // post is marked for deletion (0x00).  In order to allow for the maximum number
 // of different quest types, I opted to start high and count down.
-#define ESCORTQUEST 0xFF
-#define BOUNTYQUEST 0xFE
-#define ITEMQUEST   0xFD
+const UI08 ESCORTQUEST = 0xFF;
+const UI08 BOUNTYQUEST = 0xFE;
+const UI08 ITEMQUEST = 0xFD;
 
 
 // Function Prototypes 
 void    MsgBoardEvent( CSocket *s );
-void    MsgBoardSetPostType( CSocket *s, int nPostType );
+void    MsgBoardSetPostType( CSocket *s, UI08 nPostType );
 void    MsgBoardGetPostType( CSocket *s );
-bool    MsgBoardPostQuest( CChar *mChar, int nQuestType );
 void    MsgBoardQuestEscortCreate( CChar *npcIndex );
 void    MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock );
 void    MsgBoardQuestEscortDelete( CChar *npcIndex );

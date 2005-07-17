@@ -1151,6 +1151,25 @@ bool CSocket::FinishedPostAck( void )
 	return (ackIter == postAcked.end() );
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  void RemovePostAck( void )
+//|   Date        -  July 16, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Removes post from the queue
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::RemovePostAck( void )
+{
+	SERIAL retVal = INVALIDSERIAL;
+	if( !FinishedPostAck() )
+	{
+		postAcked.erase( ackIter );
+		if( !FinishedPostAck() )
+			retVal = (*ackIter);
+	}
+	return retVal;
+}
+
 size_t CSocket::PostCount( void ) const
 {
 	return postAcked.size();

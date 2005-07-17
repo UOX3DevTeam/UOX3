@@ -181,6 +181,7 @@ public:
 	SERIAL			FirstPostAck( void );
 	SERIAL			NextPostAck( void );
 	bool			FinishedPostAck( void );
+	SERIAL			RemovePostAck( void );
 
 	size_t			PostCount( void ) const;
 	size_t			PostAckCount( void ) const;

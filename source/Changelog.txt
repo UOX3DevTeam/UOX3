@@ -1,3 +1,7 @@
+7/16/2005 - giwo (0.98-3.0d)
+	Continued work on a complete rewrite of the Messageboard system.
+	Removed some unnecesarry debug code from Walking functions.
+
 7/14/2005 - giwo (0.98-3.0c)
 	Moved Poisoning skill out to JS.
 	Fixed an issue causing "eternal" gold from a vendor.

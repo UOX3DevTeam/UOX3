@@ -5169,4 +5169,149 @@ CPOpenMessageBoard::CPOpenMessageBoard( CSocket *mSock )
 	CopyData( mSock );
 }
 
+//	Submessage 1 – Message Summary
+//		BYTE[4] BoardID
+//		BYTE[4] MessageID
+//		BYTE[4] ParentID (0 if top level)
+//		BYTE posterLen
+//		BYTE[posterLen] poster (null terminated string)
+//		BYTE subjectLen
+//		BYTE[subjectLen] subject (null terminated string)
+//		BYTE timeLen
+//		BYTE[timeLen] time (null terminated string with time of posting) (“Day 1 @ 11:28”)
+
+//	Submessage 2 – Message
+//		BYTE[4] BoardID
+//		BYTE[4] MessageID
+//		BYTE posterLen
+//		BYTE[posterLen] poster (null terminated string)
+//		BYTE subjectLen
+//		BYTE[subjectLen] subject (null terminated string)
+//		BYTE timeLen
+//		BYTE[timeLen] time (null terminated string with time of posting) (“Day 1 @ 11:28”)
+//		BYTE[29] constant: (01 91 84 0A 06 1E FD 01 0B 15 2E 01 0B 17 0B 01 BB 20 46 04 66 13 F8 00 00 0E 75 00 00)
+//		BYTE numlines
+//		For each line:
+//			BYTE linelen
+//			BYTE[linelen] body (null terminated)
+
+void CPOpenMsgBoardPost::InternalReset( void )
+{
+	internalBuffer.resize( 37 );
+	internalBuffer[0] = 0x71;
+	if( bFullPost )
+		internalBuffer[3] = 2;
+	else
+		internalBuffer[3] = 1;
+}
+
+void CPOpenMsgBoardPost::CopyData( CSocket *mSock, msgBoardPost_st mbPost )
+{
+	size_t totSize = 16;
+	std::vector< msgBoardLine_st >::iterator pIter;
+
+	totSize += mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
+
+	if( bFullPost )
+	{
+		totSize += 9;
+		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
+			totSize += (*pIter).lineNum+2;
+	}
+	else
+		totSize += 4;
+
+	internalBuffer.resize( totSize );
+	PackShort( &internalBuffer[0], 1, totSize );
+	if( bFullPost )
+		PackLong( &internalBuffer[0], 4, mSock->GetDWord( 1 ) );
+	else
+		PackLong( &internalBuffer[0], 4, mSock->GetDWord( 4 ) );
+	PackLong( &internalBuffer[0], 8, mbPost.Serial );
+
+	size_t offset = 12;
+
+	if( !bFullPost )
+	{
+		PackLong( &internalBuffer[0], offset, mbPost.ParentSerial );
+		offset += 4;
+	}
+
+	internalBuffer[offset] = mbPost.PosterLen;
+	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Poster, mbPost.PosterLen );
+	offset += mbPost.PosterLen;
+
+	internalBuffer[offset] = mbPost.SubjectLen;
+	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Subject, mbPost.SubjectLen );
+	offset += mbPost.SubjectLen;
+
+	internalBuffer[offset] = mbPost.DateLen;
+	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Date, mbPost.DateLen );
+	offset += mbPost.DateLen;
+
+	if( bFullPost )
+	{
+		PackShort( &internalBuffer[0], offset, 0x0190 );
+		PackShort( &internalBuffer[0], offset+=2, 0x83EA );
+		internalBuffer[offset+=2] = 0x01;
+		PackShort( &internalBuffer[0], ++offset, 0x0E75 );
+		PackShort( &internalBuffer[0], offset+=2, 0x0000 );
+
+		internalBuffer[offset+=2] = mbPost.Lines;
+		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
+		{
+			internalBuffer[++offset] = (*pIter).lineNum+1;
+			strncpy( (char *)&internalBuffer[++offset], (*pIter).line.c_str(), (*pIter).lineNum );
+			offset += (*pIter).lineNum;
+			internalBuffer[offset] = 0x32;
+		}
+	}
+}
+
+CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, msgBoardPost_st mbPost, bool fullPost )
+{
+	bFullPost = fullPost;
+	InternalReset();
+	CopyData( mSock, mbPost );
+}
+
+void CPSendMsgBoardPosts::InternalReset( void )
+{
+	size_t offset = (5 + (MAXPOSTS * 19));
+	internalBuffer.resize( offset );
+	internalBuffer[0] = 0x3c;
+	PackShort( &internalBuffer[0], 1, offset );
+	internalBuffer[3] = 0x00;
+	internalBuffer[4] = 0x00;
+}
+
+void CPSendMsgBoardPosts::CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
+{
+	size_t offset = (5 + (postCount*19) );
+	PackLong( &internalBuffer[0], offset, mSerial );
+	PackShort( &internalBuffer[0], offset+4, 0x0E0B );
+	internalBuffer[offset+6] = pToggle;
+	PackShort( &internalBuffer[0], offset+7, 0x00C5 );
+	PackShort( &internalBuffer[0], offset+9, 0x0000 );
+	PackShort( &internalBuffer[0], offset+11, 0x0000 );
+	PackLong( &internalBuffer[0], offset+13, oSerial );
+	PackShort( &internalBuffer[0], offset+17, 0x0000 );
+
+	++postCount;
+}
+
+void CPSendMsgBoardPosts::Finalize( void )
+{
+	size_t offset = (5 + (postCount * 19) );
+	internalBuffer.resize( offset );
+	PackShort( &internalBuffer[0], 1, offset );
+	PackShort( &internalBuffer[0], 3, postCount );
+}
+
+CPSendMsgBoardPosts::CPSendMsgBoardPosts()
+{
+	postCount = 0;
+	InternalReset();
+}
+
 }

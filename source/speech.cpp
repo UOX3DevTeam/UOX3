@@ -330,7 +330,7 @@ bool CPITalkRequest::Handle( void )
 
 CSpeechQueue::CSpeechQueue( void ) : pollTime( 100 ), runAsThread( false )
 {
-	speechList.resize( 0 );
+	speechList.clear();
 	InitializeLookup();
 }
 CSpeechQueue::~CSpeechQueue()

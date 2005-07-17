@@ -1025,7 +1025,6 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 			break;
 	}
 }
-//#define DEBUG_UPDATERANGE
 // handle item collisions, make items that appear on the edge of our sight because
 // visible, buildings when they get in range, and if the character steps on something
 // that might cause damage
@@ -1042,14 +1041,9 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	bool EffRange;
 	
 	bool isGM			= mChar->IsGM();
-#ifdef DEBUG_UPDATERANGE
-	UI16 nDist	= 0;
-	UI16 oDist	= 0;
-#else
 	UI16 dxNew, dyNew, dxOld, dyOld;
 	const bool checkX	= (oldx != newx);
 	const bool checkY	= (oldy != newy);
-#endif
 	/*
 	A note to future people (from Zippy on 2/10/02)
 
@@ -1080,24 +1074,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				// Character Send Stuff
 				if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowHiddenNpcStatus() ) )
 				{
-#ifdef DEBUG_UPDATERANGE
-					nDist	= getDist( mChar, tempChar );
-					oDist	= getOldDist( mChar, tempChar );
-					if( nDist == visibleRange && oDist > visibleRange )	// Just came into range
-					{
-						tempChar->SendToSocket( mSock );
-						DoJSInRange( mChar, tempChar );
-						DoJSInRange( tempChar, mChar );
-					}
-					else if( nDist > (visibleRange+1) && oDist == (visibleRange+1) )	// Just went out of range
-					{
-						tempChar->RemoveFromSight( mSock );
-						UI16 targTrig		= tempChar->GetScriptTrigger();
-						cScript *toExecute	= JSMapping->GetScript( targTrig );
-						if( toExecute != NULL )
-							toExecute->OutOfRange( tempChar, mChar );
-					}
-#else
 					if( checkX )	// Only update on x plane if our x changed
 					{
 						dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
@@ -1113,7 +1089,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						if( UpdateCharsOnPlane( mSock, mChar, tempChar, dyNew, dyOld, visibleRange ) )
 							continue;
 					}
-#endif
 				}
 			}
 			regChars->Pop();
@@ -1143,38 +1118,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				HandleObjectCollisions( mSock, mChar, tItem, type );
 				Magic->GateCollision( mSock, mChar, tItem, type );
 			}
-#ifdef DEBUG_UPDATERANGE
-			nDist	= getDist( mChar, tItem );
-			oDist	= getOldDist( mChar, tItem );
-			if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
-			{
-				if( nDist == DIST_BUILDRANGE && oDist > DIST_BUILDRANGE )	// It's a building
-					tItem->SendToSocket( mSock );
-				else if( oDist == DIST_BUILDRANGE && nDist > DIST_BUILDRANGE )
-					tItem->RemoveFromSight( mSock );
-			}
-			else
-			{
-				if( nDist == visibleRange && oDist > visibleRange )	// Just came into range
-				{
-					if( tItem->GetVisible() != VT_PERMHIDDEN || isGM )
-					{
-						if( mSock != NULL )
-							tItem->SendToSocket( mSock );
-						DoJSInRange( mChar, tItem );
-					}
-				}
-				else if( nDist > (visibleRange+1) && oDist == (visibleRange+1) )	// Just went out of range
-				{
-					UI16 targTrig		= mChar->GetScriptTrigger();
-					cScript *toExecute	= JSMapping->GetScript( targTrig );
-					if( toExecute != NULL )
-						toExecute->OutOfRange( mChar, tItem );
-					if( mSock != NULL )
-						tItem->RemoveFromSight( mSock );
-				}
-			}
-#else
 			if( checkX )	// Only update items on furthest x plane if our x changed
 			{
 				dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
@@ -1190,7 +1133,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM ) )
 					continue;
 			}
-#endif
 		}
 		regItems->Pop();
 	}
