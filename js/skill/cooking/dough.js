@@ -1,6 +1,7 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/rewrote the script
+// 14/06/2005 Xuri; Fixed the script :P
 // use flour : target water pitcher : get dough
 
 function onUse ( pUser, iUsed ) 
@@ -12,18 +13,23 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return;
+			return false;
 		}
 		else
+		{
+			srcSock.tempObj = iUsed;
 			srcSock.CustomTarget( 0, "Which pitcher of water to use?" );// let the user target the heat source
+		}
 	}
 	else
 		pUser.SysMessage( "This has to be in your backpack!" );
+	return false;
 }
 
 function onCallback0( tSock, targSerial )
 {
 	var pUser = tSock.currentChar;
+	var iUsed = tSock.tempObj;	
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
@@ -98,11 +104,10 @@ function onCallback0( tSock, targSerial )
 			targSerial.id = 0x0FF7;
 		if( targSerial.id == 0x0ff9 || targSerial.id == 0x1f9d )
 			targSerial.id = 0x0FF6;
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x103d", 1, "ITEM", false ); // makes a dough
+		var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "apple", 0x103D, 0x0, "ITEM", true ); // makes a dough
 		pUser.SysMessage( "You make some dough." );
 		return;
 	}
 	else // Target is a static item
 		pUser.SysMessage( "You cannot use that for making dough." );
 }
-	

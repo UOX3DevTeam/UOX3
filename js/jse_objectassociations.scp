@@ -364,4 +364,19 @@
 0x2127=3104
 // pets from pet static end
 // ------------------------
+
+//Training Dummies
+0x1070=5005
+0x1074=5005
+//Pickpocket Dips
+0x1EC0=5006
+0x1EC3=5006
+
+//Kindling -> Campfires
+0x0DE1=5008
+0x0DE2=5008
+
+//Fletching Tool
+0x1022=4005
+0x1023=4006
 }

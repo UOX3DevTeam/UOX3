@@ -125,7 +125,9 @@
 2101=server/resource/fill_water_pitcher.js
 2102=server/resource/fill_milk_pitcher.js
 //-------------------------------------------
-
+// Server Data
+2500=server/data/weapontypes.js
+2501=server/data/combatanims.js
 
 //-------------------------------------------
 // NPC, and AI[3000-5999]
@@ -157,6 +159,10 @@
 5001=item/food.js
 5003=item/potion.js
 5004=item/moongate.js
+5005=item/trainingdummy.js
+5006=item/pickpocketdip.js
+5007=item/archerybutte.js
+5008=item/kindling.js
 }
 
 //-------------------------------------------

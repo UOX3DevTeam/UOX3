@@ -1,24 +1,29 @@
 // Miscellaneous Custom Commands || by Xuri (xuri at sensewave.com)
-// v1.05
-// Last Updated: 26. July 2004
+// v1.07
+// Last Updated: 21. June 2005
 //
 // This script contains some commands I scripted after the command-reorganization in the UOX3 source code,
 // as well as some I've "invented" on my own.
 // Updates:
-// 10. July - added SETTAG and GETTAG commands
-// 11. July - Allowed setting tags with value "null" to delete tags.
+// 10. July 2004 - added SETTAG and GETTAG commands
+// 11. July 2004 - Allowed setting tags with value "null" to delete tags.
+// 5. June 2005 - Added DECAY and NODECAY commands
+// 21. June 2005 - Added XSAY command
 
 function CommandRegistration()
 {
 	RegisterCommand( "rename", 2, true ); //Lets GMs rename items/characters.
 	RegisterCommand( "refresh", 0, true ); //Lets players refresh their screen to resend items/chars that have vanished from view.
 	RegisterCommand( "freeze", 2, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
-	RegisterCommand( "unfreeze", 2, true );
+	RegisterCommand( "unfreeze", 2, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
 	RegisterCommand( "browse", 0, true ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
 	RegisterCommand( "invul", 2, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
 	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
 	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
 	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "nodecay", 2, true ); //Will turn off decay for the targeted item.
+	RegisterCommand( "decay", 2, true ); //Will turn on decay for the targeted item.
+	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
 }
 
 function command_RENAME( pSock, execString )
@@ -130,6 +135,30 @@ function command_GETTAG( pSock, execString )
 	}
 	pUser.SetTag( "TempTag", execString );
 	pUser.CustomTarget( 9, "Retrieve tag from which object?" );
+}
+
+function command_NODECAY( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	pUser.CustomTarget( 10, "Select an item to set as NOT decayable:" );	
+}
+
+function command_DECAY( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	pUser.CustomTarget( 11, "Select an item to set as decayable:" );
+}
+
+function command_XSAY( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	if( execString )
+	{
+		pSock.xText = execString;		
+		pUser.CustomTarget( 12, "Select object for remote speech:" );
+	}
+	else
+		pUser.SysMessage( "You forgot to write some text to go with this command." );
 }
 
 //Rename
@@ -344,4 +373,56 @@ function onCallback9( pSock, myTarget )
 		pUser.SysMessage( "You need to target a dynamic object (item or character)." );	
 	}
 	pUser.SetTag( "TempTag", null );
+}
+
+// Nodecay
+function onCallback10( pSock, myTarget )
+{
+	var pUser = pSock.currentChar; 
+	var StrangeByte = pSock.GetWord( 1 );
+	if( StrangeByte == 0 )
+	{
+		if( myTarget.isItem )
+		{
+			myTarget.decayable = false;
+			pUser.SysMessage( "Item successfully set as NOT decayable." );
+		}
+		else
+			pUser.SysMessage( "This command can only be applied to items." );
+	}
+	else
+		pUser.SysMessage( "You need to target a dynamic item." );	
+}
+
+// Decay
+function onCallback11( pSock, myTarget )
+{
+	var pUser = pSock.currentChar; 
+	var StrangeByte = pSock.GetWord( 1 );
+	if( StrangeByte == 0 )
+	{
+		if( myTarget.isItem )
+		{
+			myTarget.decayable = true;
+			pUser.SysMessage( "Item successfully set as decayable." );
+		}
+		else
+			pUser.SysMessage( "This command can only be applied to items." );
+	}
+	else
+		pUser.SysMessage( "You need to target a dynamic item." );	
+}
+
+// XSAY
+function onCallback12( pSock, myTarget ) 
+{
+	var pUser = pSock.currentChar; 
+	var StrangeByte   = pSock.GetWord( 1 );
+	if( StrangeByte == 0 && ( myTarget.isChar || myTarget.isItem ))
+	{
+		myTarget.sayColour = pUser.sayColour;
+		myTarget.TextMessage( pSock.xText );
+	}
+	else
+		pUser.SysMessage( "You must target either a character or a dynamic item." );
 }
