@@ -55,13 +55,17 @@
     <td>The actual health of this item.
   <tr>
     <td>scripttrigger
-    <td>
+    <td>The JavaScript-ID assigned to this item.
   <tr>
     <td>privateword
     <td>
   <tr>
     <td>worldnumber
     <td>The world in which this item is.
+		<blockquote>0=Felucca<br>
+		1=Trammel<br>
+		2=Ilshenar<br>
+		3=Malas</blockquote>
   <tr>
     <td>amount
     <td>The amount of the item (for pileables).
@@ -85,7 +89,11 @@
     <td>Temporary value for this item.
   <tr>
     <td>movable
-    <td>Toggles this items' ability for any character to move this item.
+    <td>Toggles the "movable" status for this item. <blockquote>
+		0=default movable status for this item<br>
+		1=movable<br>
+		2=not movable<br>
+		3=locked down</blockquote>
   <tr>
     <td>att
     <td>The damage property of this item.
@@ -100,7 +108,7 @@
     <td>The number of items this item contains.
   <tr>
     <td>decayable
-    <td>Toggles this items' ability to decay over time.
+    <td>Toggles this items' ability to decay over time. (true/false or 1/0)
   <tr>
     <td>decaytime
     <td>The amount of time it takes for this item to decay.
@@ -124,22 +132,22 @@
     <td>Returns true if this object is a spawn item.
   <tr>
     <td>raceID
-    <td>
+    <td>Returns the race-id of this item.
   <tr>
     <td>race
-    <td>
+    <td>Returns the race of this item as a JS object.
   <tr>
     <td>maxhp
     <td>the maximum hitpoints of this item (for damage and repair).
   <tr>
     <td>rank
-    <td>
+    <td>The quality-rank of this item (used in item-creation, for instance). From 1-10.
   <tr>
     <td>poison
     <td>
   <tr>
     <td>dir
-    <td>The direction in which this item is facing.
+    <td>The direction in which this item is facing. For lightsources, this determines the light radius instead.
   <tr>
     <td>wipable
     <td>Toggles whether or not this item will be removed by the 'wipe commands.
@@ -157,13 +165,23 @@
     <td>The devinelock status of this item.
   <tr>
     <td>weight
-    <td>The total weight of this item.
+    <td>The total weight of this item. 1000 = 10.00 stones, 100 = 1.00 stones, 10 = 0.1 stones, 1 = 0.01 stones
   <tr>
     <td>strength
     <td>The amount of strength it takes to weild this item.
   <tr>
     <td>corpse
-    <td>Is this item a corpse?
+    <td>Returns true if item is a corpse.
+  <tr>
+    <td>desc
+    <td>Description of item (For instance used on player vendors.)
+  </table>
+
+<h2>Item Spawner Properties</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Property
+    <th bgcolor="maroon">Purpose
   <tr>
     <td>spawnsection
     <td>The script section for this item to spawn from.
@@ -176,7 +194,7 @@
   <tr>
     <td>maxinterval
     <td>The maximum amount of time for this item to respawn.
-  </table>
+</table>
 
 <center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||

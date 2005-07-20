@@ -184,9 +184,38 @@ function onDispel( objDispelled, objType )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDropEvent">onDrop</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDrop( iDropped, pDropper )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pDropper drops iDropped.
-<tr><td valign="top" width="25%"><b>Notes</b><td>iDropped's script is activated.<br><b><big>CURRENTLY BROKEN!!!</big></b>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>iDropped's script is activated.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allowing control over dropping items from cursor
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDrop( iDropped, pDropper )
+{
+	var pSock = pDropper.socket;
+	
+	//Lets fetch the serial of the target-location
+	var temp1 = pSock.GetByte( 10 );
+	var temp2 = pSock.GetByte( 11 );
+	var temp3 = pSock.GetByte( 12 );
+	var temp4 = pSock.GetByte( 13 );
+
+	//Check the value of Byte 10 to determine if the target is ground, character or container
+	if( temp1 == 0 ) //Target is a character
+	{
+		var targetChar = CalcCharFromSer( temp1, temp2, temp3, temp4 )
+		pDropper.TextMessage( "I've dropped this item on a character named "+targetChar.name+", let's bounce it back." );
+		return false;
+	}
+	if( temp1 == 0xFF ) //Target is ground or another item
+	{
+		pDropper.TextMessage( "I've dropped this item on the ground or on another item." );
+		return;
+	}
+	if( temp1 <= 0x40 ) //Target is a container
+	{
+		var targetItem = CalcItemFromItem( temp1, temp2, temp3, temp4 );
+		pDropper.TextMessage( "I've dropped this item in/on a container with ID "+targetItem.id+"." );
+		return;
+	}
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

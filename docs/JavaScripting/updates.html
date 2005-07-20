@@ -11,14 +11,22 @@
 	<h1>UOX3 Script Engine</h1>
 	<h3>Functions, Methods, Properties and Event handling</h3>
 </center>
-<h2>Revision History - Last Update: 28 July 2004</h2>
+<h2>Revision History - Last Update: 22 May 2005</h2>
 <table border="1" width="100%" cellspacing="0" cellpadding="2">
   <tr>
     <th bgcolor="maroon">Version
     <th bgcolor="maroon">Change 
   <tr>
     <td>0.41</td>
-    <td><b>Events Changed/Added:</b> onCreateDFN, onCreateTile instead of onCreate<br>
+    <td><b>Events Changed:</b> onCreateDFN &amp; onCreateTile instead of onCreate, onDrop<br>
+	<b>Socket Properties Updated:</b> wasIdleWarned, firstPacket, cryptClient, walkSequence, currentSpellType, pickupX, pickupY, pickupZ, pickupSpot, language, target<br>
+	<b>Item Properties Updated:</b> scripttrigger, worldnumber, movable, raceID, race, rank, desc, <br>
+	<b>Character Properties Updated:</b> scripttrigger, worldnumber, charpack, hunger, race, criminal, murderer, innocent, gender, region, town, guild, socket, raceID, magicReflect, tamed, isUsingPotion, stealth, skillToTame<br>
+	<b>Guild Properties Updated:</b> name, type, numMembers, numRecruits, charter, abbreviation, webpage<br>
+	<b>Race Properties Added:</b> id, name, weakToWeather, requiresBeard, requiresNoBeard, isPlayerRace, genderRestrict, armourClass, languageSkillMin, skillAdjustment, poisonReistance, magicResistance, visibleDistance, nightVision<br>
+	<b>Region Properties Added:</b> name, mayor, race, tax, taxResource, canMark, canRecall, canGate, isGuarded, canCastAggressive, health, isDungeon, chanceBigOre, chanceColourOre, numOrePrefs, orePrefs, population, members<br>
+	<b>Spell Properties Added:</b> id, action, delay, health, stamina, mana, mantra, strToSay, scrollLow, scrollHigh, circle, loSkill, highSkill, ginseng, moss, drake, pearl, silk, ash, shade, garlic, requireTarget, requireItem, requireLocation, requireChar, travelSpell, fieldSpell, reflectable, agressiveSpell, resistable, soundEffect, enabled<br>
+	<b>Account Properties Added:</b> username, password, flags, path, comment, character1, character2, character3, character4, character5, character6
     </td>
   </tr>
 

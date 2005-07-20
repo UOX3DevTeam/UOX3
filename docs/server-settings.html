@@ -1,0 +1,787 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>UOX3 Server Settings</title>
+<!-- Meta Information -->
+<meta name="author" content="Geir Ove Alnes aka Xuri">
+<style type="text/css">
+BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-serif; background-color:#082044;color:#000000;}
+#main{padding-bottom:20px;width:85%;margin:10px 0% 0px 5%;border:1px solid #000;background-color:#FFF;}
+.header{height:75px;width:100%;margin:5px 0% 0px 0px;background-color:#000; }
+.PageHeader{ margin: 5px 0px 5px 0px; text-align: center; border: 2px solid black; border-left:0px;border-right:0px;font-weight: bold; font-size: 18px; background-color:#84B0FB; width:100%;}
+.SectionHeader{margin: 20px 0px 0px 20px;border:2px solid black;text-align: center;background-color: #84B0FB; font-size:16px;width:250px;font-weight:bold}
+.SectionHeader2{margin: 20px 0px 0px 20px;font-size:16px;width:auto;font-weight:bold;text-decoration:underline;}
+.Section{ margin: 15px 20px 15px 40px; font-size:12px;}
+.blockSection{ margin: 15px 20px 15px 70px; font-size:12px;}
+.extraInfo{ margin: 0px 20px 10px 50px;border:1px solid black; }
+a.indexLink{ line-height:20px;}
+a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
+.myTable{ font-size: 12px; width:90%; border:1px solid black;}
+.left{ width:40%;font-weight:bold; border-bottom: 1px solid black; }
+.right{ width:60%; font-style: italic; border-bottom:1px solid black; border-left:1px solid black;}
+</style>
+</head>
+<body>
+<a name="top"></a>
+
+<div id="main">
+	<div class="header"><img src="logo.gif" alt="UOX3 logo" height="75px" align="right"></div>
+	<div class="PageHeader"> -= UOX3 Server-Settings =- </div>
+	<div class="SectionHeader">Index of Contents</div>
+  <div class="Section">
+  <table width="90%"><tr><td width="50%">
+		[<a class="indexLink" href="#system">system</a>]<br>
+	    [<a class="indexLink" href="#system">facet</a>]<br>
+    	[<a class="indexLink" href="#playserverlist">play server list</a>]<br>
+	    [<a class="indexLink" href="#networkserverlist">network server list</a>]<br>
+	    [<a class="indexLink" href="#xftpd">xftpd</a>]<br>
+	    [<a class="indexLink" href="#xftpc">xftpc</a>]<br>
+    	[<a class="indexLink" href="#skillstats">skill &amp; stats</a>]<br>
+	    [<a class="indexLink" href="#timers">timers</a>]<br>
+	    [<a class="indexLink" href="#directories">directories</a>]<br>
+	    [<a class="indexLink" href="#settings">settings</a>]<br>
+	    [<a class="indexLink" href="#speedup">speedup</a>]<br>
+	    [<a class="indexLink" href="#messageboards">message boards</a>]</td><td width="50%">
+	    [<a class="indexLink" href="#escorts">escorts</a>]<br>
+	    [<a class="indexLink" href="#worldlight">worldlight</a>]<br>
+	    [<a class="indexLink" href="#tracking">tracking</a>]<br>
+	    [<a class="indexLink" href="#reputation">reputation</a>]<br>
+	    [<a class="indexLink" href="#resource">resources</a>]<br>
+	    [<a class="indexLink" href="#hunger">hunger</a>]<br>
+	    [<a class="indexLink" href="#hunger">combat</a>]<br>
+	    [<a class="indexLink" href="#startlocations">start locations</a>]<br>
+	    [<a class="indexLink" href="#startup">startup</a>]<br>
+	    [<a class="indexLink" href="#gumps">gumps</a>]<br>
+    	[<a class="indexLink" href="#towns">towns</a>]</td></tr>
+  </table>
+		</div>
+		<div class="Section">Click on a section from the index above to see detailed information about all entries belonging to that section of <strong>UOX.INI</strong>. </div>
+		<hr align="center" width="95%">
+	<a name="system"></a>
+	    <div class="SectionHeader">[system]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">SERVERNAME</td>
+            <td class="right">Servername used to support UOG Info Request.</td>
+          </tr>
+          <tr>
+            <td class="left">PORT</td>
+            <td class="right">Port number that server listens on for connections.</td>
+          </tr>
+          <tr>
+            <td class="left">NETRCVTIMEOUT</td>
+            <td class="right">The time it takes for a connection to be dropped if no packets are received.</td>
+          </tr>
+          <tr>
+            <td class="left">NETSNDTIMEOUT</td>
+            <td class="right">Not in use.</td>
+          </tr>
+          <tr>
+            <td class="left">NETRETRYCOUNT</td>
+            <td class="right">The number of times a network recieve will be attempted before it throws an error.</td>
+          </tr>
+          <tr>
+            <td class="left">CONSOLELOG</td>
+            <td class="right">Allows various levels of logging; 0 = none, 1 = errors/warnings, 2 = errors/warnings + all speech</td>
+          </tr>
+          <tr>
+            <td class="left">CRASHPROTECTION</td>
+            <td class="right">Number of crash restart attempts before stopping - Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">COMMANDPREFIX</td>
+            <td class="right">Character that acts as the command prefix. </td>
+          </tr>
+          <tr>
+            <td class="left">ANNOUNCE<wbr>WORLDSAVES</td>
+            <td class="right">Determines if world-saves are announced.</td>
+          </tr>
+          <tr>
+            <td class="left">JOINPARTMSGS</td>
+            <td class="right">Determines if player join/part messages are enabled. </td>
+          </tr>
+          <tr>
+            <td class="left">MULCACHING</td>
+            <td class="right">Determines if the MULs are cached in memory. </td>
+          </tr>
+          <tr>
+            <td class="left">BACKUPSENABLED</td>
+            <td class="right">Determines if backups are enabled. </td>
+          </tr>
+          <tr>
+            <td class="left">BACKUPSAVERATIO</td>
+            <td class="right">Number of saves before a backup occurs. </td>
+          </tr>
+          <tr>
+            <td class="left">SAVESTIMER</td>
+            <td class="right">Number of seconds between world saves. </td>
+          </tr>
+          <tr>
+            <td class="left">ACCOUNTISOLATION</td>
+            <td class="right">Not in use? </td>
+          </tr>
+          <tr>
+            <td class="left">UOGENABLED</td>
+            <td class="right">Determines if support for the UOGateway Info Request Service is enabled. </td>
+          </tr>
+        </table></div>
+		<a class="topLink" href="#top">(Back to top)</a>
+	<a name="facet"></a>
+	    <div class="SectionHeader">[facet]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">USEFACETSAVES</td>
+            <td class="right">Determines if seperate facet data is enabled. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="playserverlist"></a>
+	    <div class="SectionHeader">[play server list]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">SERVERLIST</td>
+            <td class="right">Series of server entries for shard list.</td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="networkserverlist"></a>
+	    <div class="SectionHeader">[network server list]</div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="xftpd"></a>
+	    <div class="SectionHeader">[xftpd]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">FTPDENABLED</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPDUSERLIMIT</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPDBIND</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPDPORT</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPDROOT</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPDUSER</td>
+            <td class="right">Not in use. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="xftpc"></a>
+	    <div class="SectionHeader">[xftpc]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">FTPCENABLED</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPCEVENT</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPCHOST</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPCPORT</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPCUSER</td>
+            <td class="right">Not in use. </td>
+          </tr>
+          <tr>
+            <td class="left">FTPCFLAGS</td>
+            <td class="right">Not in use. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+    <a name="skillstats"></a>
+	    <div class="SectionHeader">[skill &amp; stats]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">SKILLLEVEL</td>
+            <td class="right">Global difficulty level for crafting items. 1=Easiest, 5=Default, 10=Difficult. </td>
+          </tr>
+          <tr>
+            <td class="left">SKILLCAP</td>
+            <td class="right">Total number of skillpoints available for each player.</td>
+          </tr>
+          <tr>
+            <td class="left">SKILLDELAY</td>
+            <td class="right">Number of seconds that must pass after a skill is used, before another skill can be used. </td>
+          </tr>
+          <tr>
+            <td class="left">STATCAP</td>
+            <td class="right">Total number of statpoints available for each player. </td>
+          </tr>
+          <tr>
+            <td class="left">MAXSTEALTH<wbr>MOVEMENT</td>
+            <td class="right">Max number of steps allowed with stealth skill at 100.0</td>
+          </tr>
+          <tr>
+            <td class="left">MAXSTAMINA<wbr>MOVEMENTS</td>
+            <td class="right">Max number of steps allowed while running before stamina is reduced. </td>
+          </tr>
+          <tr>
+            <td class="left">SNOOPISCRIME</td>
+            <td class="right">Determines if snooping is a crime or not. </td>
+          </tr>
+          <tr>
+            <td class="left">ARMORAFFECT<wbr>MANAREGEN</td>
+            <td class="right">Toggles whether or not armor affects mana regeneration rate </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="timers"></a>
+	    <div class="SectionHeader">[timers]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">CORPSEDECAYTIMER</td>
+            <td class="right">Amount of time for a corpse to decay. </td>
+          </tr>
+          <tr>
+            <td class="left">WEATHERTIMER</td>
+            <td class="right">Amount of time between changing light levels (day cycles). </td>
+          </tr>
+          <tr>
+            <td class="left">SHOPSPAWNTIMER</td>
+            <td class="right">Amount of time between shopkeeper restocks. </td>
+          </tr>
+          <tr>
+            <td class="left">DECAYTIMER</td>
+            <td class="right">AMount of time a decayable item will remain on the ground before disappearing. </td>
+          </tr>
+          <tr>
+            <td class="left">INVISIBILITYTIMER</td>
+            <td class="right">Duration of the invisibility spell. </td>
+          </tr>
+          <tr>
+            <td class="left">OBJECTUSETIMER</td>
+            <td class="right">Amount of time a player must wait between using objects.</td>
+          </tr>
+          <tr>
+            <td class="left">GATETIMER</td>
+            <td class="right">Duration of a summoned moongate. </td>
+          </tr>
+          <tr>
+            <td class="left">POISONTIMER</td>
+            <td class="right">Duration of the poison effect on a character. </td>
+          </tr>
+          <tr>
+            <td class="left">LOGINTIMEOUT</td>
+            <td class="right">Amount of time for an idle connection to time out. </td>
+          </tr>
+          <tr>
+            <td class="left">HITPOINT<wbr>REGENTIMER</td>
+            <td class="right">Amount of time required to regenerate a single point of health. </td>
+          </tr>
+          <tr>
+            <td class="left">STAMINA<wbr>REGENTIMER</td>
+            <td class="right">Amount of time required to regenerate a single point of stamina. </td>
+          </tr>
+          <tr>
+            <td class="left">MANAREGEN<wbr>TIMER</td>
+            <td class="right">Amount of time required to regenerate a single point of mana. </td>
+          </tr>
+          <tr>
+            <td class="left">BASEFISHINGTIMER</td>
+            <td class="right">Base time for fishing skill to complete an attempt at fishing. </td>
+          </tr>
+          <tr>
+            <td class="left">SPIRITSPEAKTIMER</td>
+            <td class="right">Duration of the spirit speak skill. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="directories"></a>
+	    <div class="SectionHeader">[directories]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">DIRECTORY</td>
+            <td class="right">Root UOX3 directory </td>
+          </tr>
+          <tr>
+            <td class="left">DATADIRECTORY</td>
+            <td class="right">Where UOX3 looks for the UO .MUL files. </td>
+          </tr>
+          <tr>
+            <td class="left">DEFSDIRECTORY</td>
+            <td class="right">Where UOX3 looks for the DFN-files.</td>
+          </tr>
+          <tr>
+            <td class="left">BOOKSDIRECTORY</td>
+            <td class="right">Where UOX3 saves the .bok files for books. </td>
+          </tr>
+          <tr>
+            <td class="left">ACTSDIRECTORY</td>
+            <td class="right">Where UOX3 looks for/saves account files. </td>
+          </tr>
+          <tr>
+            <td class="left">SCRIPTSDIRECTORY</td>
+            <td class="right">Where UOX3 looks for Javascripts</td>
+          </tr>
+          <tr>
+            <td class="left">BACKUPDIRECTORY</td>
+            <td class="right">Where UOX3 backs up worldsaves. </td>
+          </tr>
+          <tr>
+            <td class="left">MSGBOARDDIRECTORY</td>
+            <td class="right">Where UOX3 stores bulletin-board messages. </td>
+          </tr>
+          <tr>
+            <td class="left">SHAREDDIRECTORY</td>
+            <td class="right">Where UOX3 stores the worldfiles. </td>
+          </tr>
+          <tr>
+            <td class="left">ACCESSDIRECTORY</td>
+            <td class="right">Where UOX3 looks for/saves account files. </td>
+          </tr>
+          <tr>
+            <td class="left">HTMLDIRECTORY</td>
+            <td class="right">Where UOX3 generates serverstatus-HTML-files </td>
+          </tr>
+          <tr>
+            <td class="left">LOGSDIRECTORY</td>
+            <td class="right">Where UOX3 saves server logs. </td>
+          </tr>
+          <tr>
+            <td class="left">DICTIONARY<wbr>DIRECTORY</td>
+            <td class="right">Where UOX3 looks for dictionary-files.</td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="settings"></a>
+	    <div class="SectionHeader">[settings]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">LOOTDECAYS<wbr>WITHCORPSE</td>
+            <td class="right">Determines if loot decays along with corpses or not. </td>
+          </tr>
+          <tr>
+            <td class="left">GUARDSACTIVE</td>
+            <td class="right">Determines if guards are enabled globally or not. </td>
+          </tr>
+          <tr>
+            <td class="left">DEATHANIMATION</td>
+            <td class="right">Determines if the Deathanimation is played when a player dies. </td>
+          </tr>
+          <tr>
+            <td class="left">AMBIENTSOUNDS</td>
+            <td class="right">Ambient sounds, from 1 - 10. Higher value means ambient sounds are played less often. </td>
+          </tr>
+          <tr>
+            <td class="left">AMBIENTFOOTSTEPS</td>
+            <td class="right">Determines if the footstep-sounds hardcoded in UOX3 are used or not (different sounds on different tiles). </td>
+          </tr>
+          <tr>
+            <td class="left">INTERNAL<wbr>ACCOUNTCREATION</td>
+            <td class="right">If enabled, new accounts are created automatically when someone logs in with an unknown username. </td>
+          </tr>
+          <tr>
+            <td class="left">SHOWHIDDENNPCS</td>
+            <td class="right">If enabled, hidden NPCs will be viewable by GMs. </td>
+          </tr>
+          <tr>
+            <td class="left">ROGUESENABLED</td>
+            <td class="right">If 1, then the stealing skill is enabled. </td>
+          </tr>
+          <tr>
+            <td class="left">PLAYERPERSECUTION</td>
+            <td class="right">If enabled, dead players can attack living ones, and thus drain their mana. </td>
+          </tr>
+          <tr>
+            <td class="left">ACCOUNTFLUSH</td>
+            <td class="right">How often (in minutes) online accounts are checked to see if they really ARE online. </td>
+          </tr>
+          <tr>
+            <td class="left">HTMLSTATUSENABLED</td>
+            <td class="right">If > 0 then UOX3 generates server-status pages in the HTML directory. </td>
+          </tr>
+          <tr>
+            <td class="left">SELLBYNAME</td>
+            <td class="right">Determines if items are sold by their name, not just ID/Colour. </td>
+          </tr>
+          <tr>
+            <td class="left">SELLMAXITEMS</td>
+            <td class="right">Maximum number of items that can be sold to a vendor at a time. </td>
+          </tr>
+          <tr>
+            <td class="left">TRADESYSTEM</td>
+            <td class="right">Determines if the Tradesystem is enabled or not. (fluctuation of vendor prices depending on availability - check tradesystem documentation.) </td>
+          </tr>
+          <tr>
+            <td class="left">RANKSYSTEM</td>
+            <td class="right">If 1, item creation allows for variable quality of items. </td>
+          </tr>
+          <tr>
+            <td class="left">CUTSCROLL<wbr>REQUIREMENTS</td>
+            <td class="right">If 1, there is no skill requirements for casting spells from scrolls. </td>
+          </tr>
+          <tr>
+            <td class="left">NPCTRAINING<wbr>ENABLED</td>
+            <td class="right">If 1, NPCs can train player-characters. </td>
+          </tr>
+          <tr>
+            <td class="left">HIDEWILEMOUNTED</td>
+            <td class="right">If 1, a character can hide/stealth while mounted. </td>
+          </tr>
+          <tr>
+            <td class="left">WEIGHTPERSTR</td>
+            <td class="right">How much weight per point of STR a character can hold. </td>
+          </tr>
+          <tr>
+            <td class="left">POLYDURATION</td>
+            <td class="right">Duration of the polymorph spell. </td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT</td>
+            <td class="right">Flags that represent the supported clients. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="speedup"></a>
+	    <div class="SectionHeader">[speedup]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">SPEEDCHECKITEMS</td>
+            <td class="right">How often (in seconds) items are checked for decay and other things. </td>
+          </tr>
+          <tr>
+            <td class="left">SPEEDCHECKBOATS</td>
+            <td class="right">How often (in seconds) boats are checked for motion and so forth. </td>
+          </tr>
+          <tr>
+            <td class="left">SPEEDCHECKNPCACI</td>
+            <td class="right">How often (in seconds) NPCs can execute an AI routine. </td>
+          </tr>
+          <tr>
+            <td class="left">SPEEDCHECK<wbr>SPAWNREGIONS</td>
+            <td class="right">How often (in seconds) spawn regions are checked for new spawns. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="messageboards"></a>
+	    <div class="SectionHeader">[message boards]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">MSGBOARD<wbr>POSTINGLEVEL</td>
+            <td class="right">If 0, only GMs can post on Bulletin Boards, otherwise free for all. </td>
+          </tr>
+          <tr>
+            <td class="left">MSGBOARD<wbr>REMOVALLEVEL</td>
+            <td class="right">If 0, only GMs can remove posts on Bulletin Boards, otherwise free for all. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="escorts"></a>
+	    <div class="SectionHeader">[escorts]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">ESCORTENABLED</td>
+            <td class="right">If 1, NPC escorting is enabled. </td>
+          </tr>
+          <tr>
+            <td class="left">ESCORTINITEXPIRE</td>
+            <td class="right">Amount of time until an escort-NPC will vanish while waiting for someone to start escorting it. </td>
+          </tr>
+          <tr>
+            <td class="left">ESCORTACTIVE<wbr>EXPIRE</td>
+            <td class="right">Amount of time until an escort NPC will vanish while a player is escorting it. </td>
+          </tr>
+          <tr>
+            <td class="left">ESCORTDONE<wbr>EXPIRE</td>
+            <td class="right">Amount of time until an escort NPC will vanish when it has reached it's destination. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="worldlight"></a>
+	    <div class="SectionHeader">[worldlight]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">LIGHTMOON1</td>
+            <td class="right">Unknown</td>
+          </tr>
+          <tr>
+            <td class="left">LIGHTMOON2</td>
+            <td class="right">Unknown</td>
+          </tr>
+          <tr>
+            <td class="left">LIGHTDUNGEONLEVEL</td>
+            <td class="right">Specifies the light-level of Dungeon-areas. </td>
+          </tr>
+          <tr>
+            <td class="left">LIGHTCURRENTLEVEL</td>
+            <td class="right">Specifies the current ingame light-level.</td>
+          </tr>
+          <tr>
+            <td class="left">LIGHTBRIGHTLEVEL</td>
+            <td class="right">Specifies the brightest light-level in the day/night cycles. </td>
+          </tr>
+          <tr>
+            <td class="left">LIGHTDARKLEVEL</td>
+            <td class="right">Specifies the darkest light-level in the day/night cycles. </td>
+          </tr>
+          <tr>
+            <td class="left">DAY</td>
+            <td class="right">Number of days the shard has been running (persistent)</td>
+          </tr>
+          <tr>
+            <td class="left">HOUR</td>
+            <td class="right">Number of hours the shard has been running (persistent) </td>
+          </tr>
+          <tr>
+            <td class="left">MINUTE</td>
+            <td class="right">Number of minutes the shard has been running (persistent) </td>
+          </tr>
+          <tr>
+            <td class="left">AMPM</td>
+            <td class="right">If 0 it's AM, if 1 it's PM? </td>
+          </tr>
+          <tr>
+            <td class="left">SECONDSPER<wbr>UOMINUTE</td>
+            <td class="right">Number of real seconds per UOX3 minute. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="tracking"></a>
+	    <div class="SectionHeader">[tracking]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">TRACKING<wbr>BASERANGE</td>
+            <td class="right">Minimum range even a novice can track from. </td>
+          </tr>
+          <tr>
+            <td class="left">TRACKING<wbr>BASETIMER</td>
+            <td class="right">Tracking timer - maximum time a GrandMaster can track someone. </td>
+          </tr>
+          <tr>
+            <td class="left">TRACKINGMAX<wbr>TARGETS</td>
+            <td class="right">Maximum number of targets that can be tracked. </td>
+          </tr>
+          <tr>
+            <td class="left">TRACKINGMSG<wbr>REDISPLAYTIME</td>
+            <td class="right">How often (in seconds) the tracking message is redisplayed. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="reputation"></a>
+	    <div class="SectionHeader">[reputation]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">REPSYSMURDER<wbr>DECAYTIMER</td>
+            <td class="right">Amount of time before a permanent murder count will decay. </td>
+          </tr>
+          <tr>
+            <td class="left">REPSYSMAXKILLS</td>
+            <td class="right">Maximum number of kills before turning red. </td>
+          </tr>
+          <tr>
+            <td class="left">REPSYSCRIMINA<wbr>LTIMER</td>
+            <td class="right">Amount of time a character remains criminal after committing a criminal act. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="resources"></a>
+	    <div class="SectionHeader">[resources]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">RESOURCE<wbr>MINECHECK</td>
+            <td class="right">Type of mining check performed - 0=anywhere, 1=mountains/cavefloors, 2=region based(not working) </td>
+          </tr>
+          <tr>
+            <td class="left">RESOURCEORE<wbr>PERAREA</td>
+            <td class="right">Maximum number of ores in a given resource area. </td>
+          </tr>
+          <tr>
+            <td class="left">RESOURCEORE<wbr>RESPAWNTIMER</td>
+            <td class="right">Amount of time it takes for 1 single ore to respawn in a resource area. </td>
+          </tr>
+          <tr>
+            <td class="left">RESOURCEORE<wbr>RESPAWNAREA</td>
+            <td class="right">Number of ore-areas to split the world into. </td>
+          </tr>
+          <tr>
+            <td class="left">RESOURCELOGS<wbr>PERAREA</td>
+            <td class="right">Maximum number of logs in a given resource area. </td>
+          </tr>
+          <tr>
+            <td class="left">RESOURCELOGS<wbr>RESPAWNTIMER</td>
+            <td class="right">Amount of time it takes for 1 single log to respawn in a resource area. </td>
+          </tr>
+          <tr>
+            <td class="left">RESPAWNLOG<wbr>RESPAWNAREA</td>
+            <td class="right">Number of log-areas to split the world into. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="hunger"></a>
+	    <div class="SectionHeader">[hunger]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">HUNGERRATE</td>
+            <td class="right">Amount of time a player has before his hunger level decreases. </td>
+          </tr>
+          <tr>
+            <td class="left">HUNGERDMGVAL</td>
+            <td class="right">Amount of damage applied if hungry and below threshold. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="combat"></a>
+	    <div class="SectionHeader">[combat]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">COMBATMAXRANGE</td>
+            <td class="right">Maximum range (in tiles) at which combat can occur. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATSPELL<wbr>MAXRANGE</td>
+            <td class="right">Maximum range (in tiles) at which spells can be cast. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATDISPLAY<wbr>HITMSG</td>
+            <td class="right">If 1, hit messages are displayed in combat. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATMONSTERS<wbr>VSANIMALS</td>
+            <td class="right">If 1, monsters can attack animals. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATANIMAL<wbr>ATTACKCHANCE</td>
+            <td class="right">The chance of animals being attacked by monsters (0-100) </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATANIMALS<wbr>GUARDED</td>
+            <td class="right">If 1, animals are under the protection of town guards. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATNPC<wbr>DAMAGERATE</td>
+            <td class="right">NPC Damage divisor - PCs sustain less than NPCs. If a PC, damage is 1/value. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATNPC<wbr>BASEFLEEAT</td>
+            <td class="right">% of HP where an NPC will flee from combat, if it's not defined for it already in the DFNs. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATNPC<wbr>BASEREATTACKAT</td>
+            <td class="right">% of HP where an NPC will resume attacking, if it's not defined for it already in the DFNs. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBATATTACK<wbr>STAMINA</td>
+            <td class="right">Amount of stamina lost when hitting an opponent. </td>
+          </tr>
+          <tr>
+            <td class="left">SHOOTON<wbr>ANIMALBACK</td>
+            <td class="right">If 1, archery from horseback is possible. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="startlocations"></a>
+	    <div class="SectionHeader">[start locations]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">LOCATION</td>
+            <td class="right">Startlocations (not working) </td>
+          </tr>
+        </table>
+		</div>	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="startup"></a>
+	    <div class="SectionHeader">[startup]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">STARTGOLD</td>
+            <td class="right">Amount of gold a new PC starts with. </td>
+          </tr>
+          <tr>
+            <td class="left">STARTPRIVS</td>
+            <td class="right">Starting privileges of new characters. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="gumps"></a>
+	    <div class="SectionHeader">[gumps]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">TITLECOLOUR</td>
+            <td class="right">Default text colour for titles in gumps.</td>
+          </tr>
+          <tr>
+            <td class="left">LEFTTEXTCOLOUR</td>
+            <td class="right">Default text colour for left text in gumps (2 column ones). </td>
+          </tr>
+          <tr>
+            <td class="left">RIGHTTEXTCOLOUR</td>
+            <td class="right">Default text colour for right text in gumps (2 column ones). </td>
+          </tr>
+          <tr>
+            <td class="left">BUTTONCANCEL</td>
+            <td class="right">Default Button ID for cancel button in gumps. </td>
+          </tr>
+          <tr>
+            <td class="left">BUTTONLEFT</td>
+            <td class="right">Default Button ID for left button (navigation) in gumps.</td>
+          </tr>
+          <tr>
+            <td class="left">BUTTONRIGHT</td>
+            <td class="right">Default Button ID for right button (navigation) in gumps. </td>
+          </tr>
+          <tr>
+            <td class="left">BACKGROUNDPIC</td>
+            <td class="right">Default Gump ID for background gump. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+	<a name="towns"></a>
+	    <div class="SectionHeader">[towns]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">POLLTIME</td>
+            <td class="right">Time (in seconds) for which a town voting poll is open.</td>
+          </tr>
+          <tr>
+            <td class="left">MAYORTIME</td>
+            <td class="right">Time (in seconds) that a PC would be a mayor. </td>
+          </tr>
+          <tr>
+            <td class="left">TAXPERIOD</td>
+            <td class="right">Time (in seconds) between periods of taxes for PCs. </td>
+          </tr>
+          <tr>
+            <td class="left">GUARDSPAID</td>
+            <td class="right">Time (in seconds) between payments for guards. </td>
+          </tr>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>
+</div>
+</body>
+</html>

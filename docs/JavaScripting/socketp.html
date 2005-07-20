@@ -21,30 +21,30 @@
     <td>The account attached to this socket.
   <tr>
     <td>currentChar
-    <td>The player this socket is currently logged in as.
+    <td>Returns the character this socket is currently logged in with as a JS-object.
   <tr>
     <td>idleTimeout
-    <td>
+    <td><i>Currently unused.</i>
   <tr>
     <td>wasIdleWarned
-    <td>
+    <td>Returns true if character was warned before being disconnected, false if not.
   <tr>
     <td>tempInt
     <td>Temporary variable to store larger numbers (supports negatives). 
   <tr>
     <td>buffer
-    <td>
+    <td><i>Currently unused.</i>
   <tr>
     <td>xText
     <td>Temporary variable to store strings of text.
   <tr>
-    <td>ClickX
+    <td>clickX
     <td>Temporary variable to store small numbers (supports negatives).
   <tr>
-    <td>ClickY
+    <td>clickY
     <td>Temporary variable to store small numbers (supports negatives).
   <tr>
-    <td>ClickZ
+    <td>clickZ
     <td>Temporary variables to store very small numbers (-128 to 128).
   <tr>
     <td>tempObj
@@ -54,19 +54,19 @@
     <td>
   <tr>
     <td>firstPacket
-    <td>
+    <td>Returns true if it's the first packet received.
   <tr>
     <td>cryptClient
-    <td>
+    <td>Returns true if client is set to crypt-mode, false if not.
   <tr>
     <td>clientIP
-    <td>
+    <td><i>Currently unused.</i>
   <tr>
     <td>walkSequence
-    <td>
+    <td>Returns/Sets the point in the walk sequence of the socket.
   <tr>
     <td>currentSpellType
-    <td> 
+    <td>Returns/Sets the current spell type of the socket.
   <tr>
     <td>logging
     <td> 
@@ -81,22 +81,29 @@
     <td>
   <tr>
     <td>pickupX
-    <td>
+    <td>The X coordinate of the item picked up by socket.
   <tr>
     <td>pickupY
-    <td>
+    <td>The Y coordinate of the item picked up by socket.
   <tr>
     <td>pickupZ
-    <td>
+    <td>The Z coordinate of the item picked up by socket.
   <tr>
     <td>pickupSpot
-    <td> 
+    <td>The locationtype the socket picked up an item from. 
+		<blockquote>
+			nowhere = 0<br>
+			ground = 1<br>
+			ownpack = 2<br>
+			otherpack = 3<br>
+			paperdoll = 4<br>
+			bank = 5
   <tr>
     <td>pickupSerial
-    <td>
+    <td><i>Currently unused</i>.
   <tr>
     <td>language
-    <td>
+    <td>Returns the unicode ID for the language used by client(?).
   <tr>
     <td>clientMajorVer
     <td>
@@ -114,7 +121,7 @@
     <td>
   <tr>
     <td>target
-    <td>
+    <td>Returns the current/previous(?) target of the socket as a JS-object.
 
   
   </table>
