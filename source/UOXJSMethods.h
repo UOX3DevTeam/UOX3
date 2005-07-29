@@ -122,6 +122,7 @@ JSMethodFunc CItem_Glow;
 JSMethodFunc CItem_UnGlow;
 JSMethodFunc CItem_PlaceInPack;
 JSMethodFunc CItem_Dupe;
+JSMethodFunc CItem_LockDown;
 
 
 // BaseObject Methods
@@ -358,6 +359,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "UnGlow",				CItem_UnGlow,				1, 0, 0 },
 	{ "PlaceInPack",		CItem_PlaceInPack,			0, 0, 0 },
 	{ "Dupe",				CItem_Dupe,					1, 0, 0 },
+	{ "LockDown",			CItem_LockDown,				0, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 

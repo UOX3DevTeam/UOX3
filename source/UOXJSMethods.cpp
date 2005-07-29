@@ -4936,5 +4936,26 @@ JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "LockDown: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	CItem *mItem = (CItem *)JS_GetPrivate( cx, obj );
+	if( mItem == NULL )
+	{
+		MethodError( "LockDown: Invalid item" );
+		return JS_FALSE;
+	}
+
+	mItem->LockDown();
+	return JS_TRUE;
+}
+
+
+
 }
 

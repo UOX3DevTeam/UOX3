@@ -303,6 +303,20 @@ static JSClass UOXConsole_class =
 	JS_FinalizeStub
 };
 
+static JSClass UOXScriptSection_class =
+{
+	"UOXScriptSection",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CScriptSectionProps_getProperty,
+	CScriptSectionProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub 
+}; 
+
 }
 
 #endif

@@ -28,6 +28,8 @@
 #include "regions.h"
 #include "magic.h"
 #include "cMagic.h"
+#include "scriptc.h"
+#include "ssection.h"
 
 namespace UOX
 {
@@ -283,7 +285,23 @@ namespace UOX
 					tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 					break;
-				case CIP_MURDERTIME:	*vp = INT_TO_JSVAL( gPriv->GetMurderTime() );		break;
+				case CIP_MURDERTIME:	*vp = INT_TO_JSVAL( gPriv->GetMurderTime() );			break;
+				case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isNewbie() );			break;
+				case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDispellable() );		break;
+				case CIP_MADEWITH:		*vp = INT_TO_JSVAL( gPriv->GetMadeWith() );				break;
+				case CIP_ENTRYMADEFROM:	*vp = INT_TO_JSVAL( gPriv->EntryMadeFrom() );			break;
+				case CIP_ISPILEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isPileable() );			break;
+				case CIP_ISDYEABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDyeable() );			break;
+				case CIP_ISWIPEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isWipeable() );			break;
+				case CIP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->isGuarded() );			break;
+				case CIP_ISDOOROPEN:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDoorOpen() );			break;
+				case CIP_ISFIELDSPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsFieldSpell() );		break;
+				case CIP_ISLOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLockedDown() );		break;
+				case CIP_ISSHIELDTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsShieldType() );		break;
+				case CIP_ISMETALTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMetalType() );			break;
+				case CIP_ISLEATHERTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLeatherType() );		break;
+				case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
+				case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -615,6 +633,20 @@ namespace UOX
 				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
 				case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
 				case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
+				case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
+				case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
+				case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
+				case CCP_ISMEDITATING:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMeditating() );			break;
+				case CCP_ISGM:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGM() );					break;
+				case CCP_CANBROADCAST:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBroadcast() );			break;
+				case CCP_SINGCLICKSER:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetSingClickSer() );			break;
+				case CCP_NOSKILLTITLES:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoSkillTitles() );			break;
+				case CCP_ISGMPAGEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsGMPageable() );			break;
+				case CCP_CANSNOOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanSnoop() );				break;
+				case CCP_ISCOUNSELOR:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsCounselor() );				break;
+				case CCP_NONEEDMANA:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedMana() );				break;
+				case CCP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );			break;
+				case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
 				default:
 					break;
 			}
@@ -820,6 +852,20 @@ namespace UOX
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
+				case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );			break;
+				case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );				break;
+				case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );					break;
+				case CCP_ISMEDITATING:	gPriv->SetMeditating( encaps.toBool() );			break;
+				case CCP_ISGM:			gPriv->SetGM( encaps.toBool() );					break;
+				case CCP_CANBROADCAST:	gPriv->SetBroadcast( encaps.toBool() );				break;
+				case CCP_SINGCLICKSER:	gPriv->SetSingClickSer( encaps.toBool() );			break;
+				case CCP_NOSKILLTITLES:	gPriv->SetSkillTitles( encaps.toBool() );			break;
+				case CCP_ISGMPAGEABLE:	gPriv->SetGMPageable( encaps.toBool() );			break;
+				case CCP_CANSNOOP:		gPriv->SetSnoop( encaps.toBool() );					break;
+				case CCP_ISCOUNSELOR:	gPriv->SetCounselor( encaps.toBool() );				break;
+				case CCP_NONEEDMANA:	gPriv->SetNoNeedMana( encaps.toBool() );			break;
+				case CCP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );			break;
+				case CCP_NONEEDREAGS:	gPriv->SetNoNeedReags( encaps.toBool() );			break;
 				default:
 					break;
 			}
@@ -1130,6 +1176,15 @@ namespace UOX
 				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
 				case CIP_DESC:		gPriv->SetDesc( encaps.toString() );							break;
 				case CIP_MURDERTIME:gPriv->SetMurderTime( encaps.toInt() );							break;
+				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
+				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
+				case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;
+				case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( (UI16)encaps.toInt() );				break;
+				case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
+				case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
+				case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
+				case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
+				case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -1607,6 +1662,39 @@ namespace UOX
 				break;
 			}
 		}
+		return JS_TRUE;
+	}
+
+	JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		ScriptSection *gPriv = (ScriptSection *)JS_GetPrivate( cx, obj );
+		if( gPriv == NULL )
+			return JS_FALSE;
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CSS_NUMTAGS:		*vp = INT_TO_JSVAL( gPriv->NumEntries() );			break;
+			case CSS_ATEND:			*vp = BOOLEAN_TO_JSVAL( gPriv->AtEnd() );			break;
+			case CSS_ATENDTAGS:		*vp = BOOLEAN_TO_JSVAL( gPriv->AtEndTags() );		break;
+			default:
+				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CScriptSectionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+/*		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			default:
+				break;
+			}
+		}*/
 		return JS_TRUE;
 	}
 
