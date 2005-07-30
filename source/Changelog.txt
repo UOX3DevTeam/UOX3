@@ -1,3 +1,6 @@
+7/29/2005 - Maarc
+	Several character/item properties and one item-method added to JS (check JS Docs, 0.42)
+
 7/16/2005 - giwo (0.98-3.0d)
 	Continued work on a complete rewrite of the Messageboard system.
 	Removed some unnecesarry debug code from Walking functions.
