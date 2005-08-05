@@ -247,7 +247,7 @@ void cMapStuff::Load( )
 	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in the uox3.ini)" << myendl;
 
 	UString lName;
-	UI08 i;
+	UI16 i;
 	UString basePath = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
 	for( i = 0; i < NumberOfWorlds; ++i )
 	{
@@ -325,7 +325,7 @@ void cMapStuff::Load( )
 	TileMem = TILEDATA_SIZE * sizeof(CLand);
 	landTile = new CLand[TILEDATA_SIZE];
 	CLand *landPtr = landTile;
-	for (int i = 0; i < 512; ++i)	
+	for( i = 0; i < 512; ++i )	
 	{
 		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
 		tilefile.get_land_st(landPtr, 32);
@@ -335,7 +335,7 @@ void cMapStuff::Load( )
 	TileMem += TILEDATA_SIZE * sizeof(CTile);
 	staticTile = new CTile[TILEDATA_SIZE];
 	CTile *tilePtr = staticTile;
-	for (int i = 0; i < 512; ++i)
+	for( i = 0; i < 512; ++i )
 	{
 		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
 		tilefile.get_tile_st(tilePtr, 32);
