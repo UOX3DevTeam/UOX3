@@ -99,7 +99,7 @@ hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), def( DEFBASE_DEF ), hidamag
 lodamage( DEFBASE_LODAMAGE ), kills( DEFBASE_KILLS ), karma( DEFBASE_KARMA ), fame( DEFBASE_FAME ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), isDirty( DEFBASE_ISDIRTY ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
-poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES )
+poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
 {
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
@@ -249,7 +249,8 @@ SI08 CBaseObject::GetZ( void ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::SetX( SI16 newValue )
 {
-	x = newValue;
+	oldLocX = x;
+	x		= newValue;
 	Dirty( UT_LOCATION );
 }
 
@@ -263,7 +264,8 @@ void CBaseObject::SetX( SI16 newValue )
 //o--------------------------------------------------------------------------
 void CBaseObject::SetY( SI16 newValue )
 {
-	y = newValue;
+	oldLocY = y;
+	y		= newValue;
 	Dirty( UT_LOCATION );
 }
 
@@ -277,7 +279,8 @@ void CBaseObject::SetY( SI16 newValue )
 //o--------------------------------------------------------------------------
 void CBaseObject::SetZ( SI08 newValue )
 {
-	z = newValue;
+	oldLocZ = z;
+	z		= newValue;
 	Dirty( UT_LOCATION );
 }
 
@@ -2043,6 +2046,10 @@ void CBaseObject::PostLoadProcessing( void )
 		owner			= NULL;
 		SetOwner( calcCharObjFromSer( tmpSerial ) );
 	}
+
+	oldLocX = x;
+	oldLocY = y;
+	oldLocZ = z;
 }
 
 //o--------------------------------------------------------------------------
@@ -2185,6 +2192,10 @@ void CBaseObject::SetDisabled( bool newVal )
 //o---------------------------------------------------------------------------o
 void CBaseObject::Cleanup( void )
 {
+	SetX( 7000 );
+	SetY( 7000 );
+	SetZ( 0 );
+
 	UI16 scpNum			= GetScriptTrigger();
 	cScript *tScript	= JSMapping->GetScript( scpNum );
 	if( tScript != NULL )
@@ -2282,6 +2293,11 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetIntelligence2( GetIntelligence2() );
 	target->SetPoisoned( GetPoisoned() );
 	target->SetWeight( GetWeight() );
+}
+
+point3 CBaseObject::GetOldLocation( void )
+{
+	return point3( oldLocX, oldLocY, oldLocZ );
 }
 
 }

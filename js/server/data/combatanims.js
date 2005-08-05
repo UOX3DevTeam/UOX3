@@ -9,7 +9,6 @@
 
 function getFootCombatAnim( pUser, weaponType )
 {
-	var combatAnim = 0;
 	switch( weaponType )
 	{
 		case "BOWS": pUser.SetTag( "combatAnim", "0x12" ); break;
@@ -54,25 +53,18 @@ function getFootCombatAnim( pUser, weaponType )
 		case "TWOHND_FENCING": pUser.SetTag( "combatAnim", "0x0E" ); break;
 		case "WRESTLING":
 		default:
-			pUser.SysMessage( "DEBUGMESSAGE!!!!" );
 			switch( RandomNumber( 0, 2 ) )
 			{
-				
-				//case 0:	combatAnim = 0x0A; break;  //fist straight-punch
-				//case 1:	combatAnim = 0x09; break;  //fist top-down
-				//default: combatAnim = 0x1F; break;  //fist over-head
 				case 0:	pUser.SetTag( "combatAnim", "0x0A" ); break;  //fist straight-punch
 				case 1:	pUser.SetTag( "combatAnim", "0x09" ); break;  //fist top-down
 				default: pUser.SetTag( "combatAnim", "0x1F" ); break;  //fist over-head
 			}
 			break;
 	}
-	return combatAnim;
 }
 
 function getHorseCombatAnim( pUser, weaponType )
 {
-	var combatAnim = 0;
 	switch( weaponType )
 	{
 		case "BOWS": pUser.SetTag( "combatAnim", "0x1B" ); break;
@@ -95,5 +87,4 @@ function getHorseCombatAnim( pUser, weaponType )
 		default:
 			pUser.SetTag( "combatAnim", "0x1A" ); break;
 	}
-	return combatAnim;
 }

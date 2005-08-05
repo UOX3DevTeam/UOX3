@@ -167,9 +167,9 @@ void CServerData::ResetDefaults( void )
 	MsgBoardPostRemovalLevel( 0 );
 	// No replacement I can see
 	EscortsEnabled( true );
-	SystemTimer( tSERVER_ESCORTWAIT, 10 );
-	SystemTimer( tSERVER_ESCORTACTIVE, 20 );
-	SystemTimer( tSERVER_ESCORTDONE, 1800 );
+	SystemTimer( tSERVER_ESCORTWAIT, 900 );
+	SystemTimer( tSERVER_ESCORTACTIVE, 600 );
+	SystemTimer( tSERVER_ESCORTDONE, 600 );
 	AmbientFootsteps( false );
 	ServerCommandPrefix( '\'' );
 	
@@ -225,6 +225,26 @@ CServerData::CServerData( void )
 }
 CServerData::~CServerData()
 {
+}
+
+void CServerData::RefreshIPs( void )
+{
+	struct hostent *lpHostEntry = NULL;
+
+	std::vector< physicalServer >::iterator slIter;
+	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
+	{
+		if( slIter->getDomain().empty() )
+		{
+			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
+			if( lpHostEntry != NULL )
+			{
+				struct in_addr *pinaddr;
+				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+				slIter->setIP( inet_ntoa(*pinaddr) );
+			}
+		}
+	} 
 }
 
 void CServerData::ServerName( std::string setname )
@@ -1312,14 +1332,15 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << std::endl << "[play server list]" << std::endl << "{" << std::endl;
 
-		for( size_t cnt = 0; cnt < serverList.size(); ++cnt )
+		std::vector< physicalServer >::iterator slIter;
+		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
 		{
-			ofsOutput << "SERVERLIST=" << serverList[cnt].getName() << ",";
-			if( !serverList[cnt].getDomain().empty() )
-				ofsOutput << serverList[cnt].getDomain() << ",";
+			ofsOutput << "SERVERLIST=" << slIter->getName() << ",";
+			if( !slIter->getDomain().empty() )
+				ofsOutput << slIter->getDomain() << ",";
 			else
-				ofsOutput << serverList[cnt].getIP() << ",";
-			ofsOutput << serverList[cnt].getPort() << std::endl;
+				ofsOutput << slIter->getIP() << ",";
+			ofsOutput << slIter->getPort() << std::endl;
 		}
 		ofsOutput << "}" << std::endl;
 

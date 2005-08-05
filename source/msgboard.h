@@ -3,28 +3,12 @@
 
 namespace UOX
 {
-
-// msgboard.h
-//
-
-// Maximum number of posts per board
-// BUFFER SIZE = 2560 
-// Therefore 0x3c max size = 2560 - 5 ( 0x3c header info ) 
-//                         = 2550 
-//
-//                           2550 / 19 ( item segment size per msg ) 
-//                         = 134 
-// Round down to 128 Messages allowable on a message board (better safe than sorry)
-
-// Maximum number of entries in a ESCORTS list in the MSGBOARD.SCP file
-#define MAXENTRIES      256
-
 // Different types of user posts
 enum PostTypes
 {
-	LOCALPOST =		0,
-	REGIONALPOST,
-	GLOBALPOST
+	PT_LOCAL =		0,
+	PT_REGIONAL,
+	PT_GLOBAL
 };
 
 // Different types of QUESTS (nQuestType)
@@ -34,19 +18,55 @@ enum PostTypes
 // for a user post is 0x05 and I also use this field to determine whether the
 // post is marked for deletion (0x00).  In order to allow for the maximum number
 // of different quest types, I opted to start high and count down.
-const UI08 ESCORTQUEST = 0xFF;
-const UI08 BOUNTYQUEST = 0xFE;
-const UI08 ITEMQUEST = 0xFD;
+enum QuestTypes
+{
+	QT_NOQUEST		= 0x00,
+	QT_ITEMQUEST	= 0xFD,
+	QT_BOUNTYQUEST	= 0xFE,
+	QT_ESCORTQUEST	= 0xFF
+};
 
+struct msgBoardPost_st
+{
+	UI32 Serial;
+	UI16 Size;
+	UI08 PosterLen;
+	char Poster[MAX_NAME];
+	UI08 SubjectLen;
+	char Subject[256];
+	UI08 DateLen;
+	char Date[256];
+	UI08 Lines;
+	UI32 ParentSerial;
 
-// Function Prototypes 
-void    MsgBoardEvent( CSocket *s );
-void    MsgBoardSetPostType( CSocket *s, UI08 nPostType );
-void    MsgBoardGetPostType( CSocket *s );
-void    MsgBoardQuestEscortCreate( CChar *npcIndex );
-void    MsgBoardQuestEscortArrive( CChar *npcIndex, CSocket *mSock );
-void    MsgBoardQuestEscortDelete( CChar *npcIndex );
-void    MsgBoardQuestEscortRemovePost( CChar *npcIndex );
+	std::vector< std::string > msgBoardLine;
+
+	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 )
+	{
+		msgBoardLine.resize( 0 );
+	}
+};
+
+struct msgBoardNewPost_st
+{
+	UI08 toggle;
+	UI08 assocID[4];
+	std::string poster;
+	std::string subject;
+
+	std::vector< std::string > msgBoardLine;
+
+	msgBoardNewPost_st() : toggle( 0 ), poster( "" ), subject( "" )
+	{
+		msgBoardLine.resize( 0 );
+		memset( assocID, 0x00, 4 );
+	}
+};
+
+// Function Prototypes
+void    MsgBoardQuestEscortCreate( CChar *mNPC );
+void    MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
+void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
 void    MsgBoardMaintenance( void );
 
 }

@@ -4,6 +4,7 @@
 #include "combat.h"
 #include "cMagic.h"
 #include "power.h"
+#include "msgboard.h"
 
 namespace UOX
 {
@@ -820,6 +821,7 @@ CPWornItem &CPWornItem::operator=( CItem &toCopy )
 void CPCharacterAnimation::CopyData( CChar &toCopy )
 {
 	Serial( toCopy.GetSerial() );
+	Direction( toCopy.GetDir() );
 }
 CPCharacterAnimation::CPCharacterAnimation()
 {
@@ -3824,12 +3826,12 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
 	if( isInvisible || isMovable )
 	{
-		PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0xC000 );
+		PackShort( &internalBuffer[0], byteNum+=2, (mItem.GetY() | 0xC000) );
 		internalBuffer.resize( internalBuffer.size()+1 );
 		++internalBuffer[2];
 	}
 	else
-		PackShort( &internalBuffer[0], byteNum+=2, mItem.GetY() + 0x4000 );
+		PackShort( &internalBuffer[0], byteNum+=2, (mItem.GetY() | 0x8000) );
 	if( mItem.GetDir() )
 	{
 		internalBuffer.resize( internalBuffer.size()+1 );
@@ -3870,12 +3872,12 @@ void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 	PackShort( &internalBuffer[0], 9, mMulti.GetX() );
 	if( isInvisible || isMovable )
 	{
-		PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0xC000 );
+		PackShort( &internalBuffer[0], 11, (mMulti.GetY() | 0xC000) );
 		internalBuffer.resize( internalBuffer.size()+1 );
 		++internalBuffer[2];
 	}
 	else
-		PackShort( &internalBuffer[0], 11, mMulti.GetY() + 0x4000 );
+		PackShort( &internalBuffer[0], 11, (mMulti.GetY() | 0x8000) );
 	UI08 byteNum = 12;
 	if( mMulti.GetDir() )
 	{
@@ -5205,10 +5207,10 @@ void CPOpenMsgBoardPost::InternalReset( void )
 		internalBuffer[3] = 1;
 }
 
-void CPOpenMsgBoardPost::CopyData( CSocket *mSock, msgBoardPost_st mbPost )
+void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost )
 {
 	size_t totSize = 16;
-	std::vector< msgBoardLine_st >::iterator pIter;
+	std::vector< std::string >::const_iterator pIter;
 
 	totSize += mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
 
@@ -5216,7 +5218,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, msgBoardPost_st mbPost )
 	{
 		totSize += 9;
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
-			totSize += (*pIter).lineNum+2;
+			totSize += (*pIter).size()+3;
 	}
 	else
 		totSize += 4;
@@ -5260,15 +5262,16 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, msgBoardPost_st mbPost )
 		internalBuffer[offset+=2] = mbPost.Lines;
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
 		{
-			internalBuffer[++offset] = (*pIter).lineNum+1;
-			strncpy( (char *)&internalBuffer[++offset], (*pIter).line.c_str(), (*pIter).lineNum );
-			offset += (*pIter).lineNum;
+			internalBuffer[++offset] = (*pIter).size()+2;
+			strncpy( (char *)&internalBuffer[++offset], (*pIter).c_str(), (*pIter).size() );
+			offset += (*pIter).size();
 			internalBuffer[offset] = 0x32;
+			internalBuffer[++offset] = 0x00;
 		}
 	}
 }
 
-CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, msgBoardPost_st mbPost, bool fullPost )
+CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& mbPost, bool fullPost )
 {
 	bFullPost = fullPost;
 	InternalReset();
@@ -5277,17 +5280,18 @@ CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, msgBoardPost_st mbPost, 
 
 void CPSendMsgBoardPosts::InternalReset( void )
 {
-	size_t offset = (5 + (MAXPOSTS * 19));
-	internalBuffer.resize( offset );
+	internalBuffer.resize( 5 );
 	internalBuffer[0] = 0x3c;
-	PackShort( &internalBuffer[0], 1, offset );
+	PackShort( &internalBuffer[0], 1, 5 );
 	internalBuffer[3] = 0x00;
 	internalBuffer[4] = 0x00;
 }
 
 void CPSendMsgBoardPosts::CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
 {
-	size_t offset = (5 + (postCount*19) );
+	size_t offset = internalBuffer.size();
+	internalBuffer.resize( offset+19 );
+
 	PackLong( &internalBuffer[0], offset, mSerial );
 	PackShort( &internalBuffer[0], offset+4, 0x0E0B );
 	internalBuffer[offset+6] = pToggle;
@@ -5302,9 +5306,7 @@ void CPSendMsgBoardPosts::CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial
 
 void CPSendMsgBoardPosts::Finalize( void )
 {
-	size_t offset = (5 + (postCount * 19) );
-	internalBuffer.resize( offset );
-	PackShort( &internalBuffer[0], 1, offset );
+	PackShort( &internalBuffer[0], 1, internalBuffer.size() );
 	PackShort( &internalBuffer[0], 3, postCount );
 }
 

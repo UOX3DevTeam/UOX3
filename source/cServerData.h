@@ -250,6 +250,8 @@ public:
 
 	void		ResetDefaults( void );
 
+	void		RefreshIPs( void );
+
 				CServerData( void );
 				~CServerData();
 	void		ServerName( std::string setname );

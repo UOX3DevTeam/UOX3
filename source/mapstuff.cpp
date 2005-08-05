@@ -29,11 +29,11 @@ const SI32 VERFILE_SKILLSIDX	= 0x0F;
 const SI32 VERFILE_SKILLS		= 0x10;
 const SI32 VERFILE_TILEDATA		= 0x1E;
 const SI32 VERFILE_ANIMDATA		= 0x1F;
+const SI32 TILEDATA_SIZE		= 512 * 32;
 
-const SI32 TILEDATA_TILES		= 0x68800;
 
-// these are the fixed record lengths as determined by the .mul files from OSI
-// i made them longs because they are used to calculate offsets into the files
+//! these are the fixed record lengths as determined by the .mul files from OSI
+//! i made them longs because they are used to calculate offsets into the files
 const UI32 VersionRecordSize	= 20L;
 const UI32 MultiRecordSize		= 12L;
 const UI32 LandRecordSize		= 26L;
@@ -42,7 +42,7 @@ const UI32 MapRecordSize		= 3L;
 const UI32 MultiIndexRecordSize = 12L;
 const UI32 StaticRecordSize		= 7L;
 
-/*
+/*!
 ** Hey, its me fur again. I'm going to tear through this file next
 ** so I can get a better understanding of the map/tile stuff and
 ** especially the z values so we can nail down the walking bugs once
@@ -50,15 +50,14 @@ const UI32 StaticRecordSize		= 7L;
 ** Crocodile Hunter these days..  C'mon mate, lets go squish some bugs!
 */
 
-/*
-** New Notes: 11/3/1999
+/*! New Notes: 11/3/1999
 ** I changed all of the places where z was handled as a signed char and
 ** upped them to an int. While the basic terrain never goes above 127, 
 ** calculations sure can. For example, if you are at a piece of land at 100
 ** and put a 50 high static object, its going to roll over. - fur
 */
 
-/*
+/*!
 ** Tile Flags Bit Definitions - Please fill in if you know what something does!!
 ** I updated some of these with what LB knew 11/17/1999
 **
@@ -72,7 +71,14 @@ const UI32 StaticRecordSize		= 7L;
 ** (tile.flag1&0x80)		1 = IsWet, Maybe Water or Blood
 **
 ** (tile.flag2&0x01)		Nothing Uses This Bit
-** (tile.flag2&0x02)		Standable, Mostly Flat Surfaces(?)
+** (tile.flag2&0x02)		Standable, Mostly#ifdef UOX_PLATFORM != PLATFORM_WIN32
+#  include <sys/types.h> // open, stat, mmap, munmap
+#  include <sys/stat.h>  // stat
+#  include <fcntl.h>     // open
+#  include <unistd.h>    // stat, mmap, munmap
+#  include <sys/mman.h>  // mmap, mmunmap
+#endif
+ Flat Surfaces(?)
 ** (tile.flag2&0x04)		Climbable, eg. Stairs/Ladders(?)
 ** (tile.flag2&0x08)		Pileable
 ** (tile.flag2&0x10)		Windows/Doors(?)
@@ -119,7 +125,7 @@ const UI32 StaticRecordSize		= 7L;
 ** -fur
 */
 
-/*
+/*!
 ** 12/08/1999 New Info
 **
 ** OK, Zippy had taken a shot at the circular cache for the map0. He was close, but I had to
@@ -135,7 +141,7 @@ const UI32 StaticRecordSize		= 7L;
 ** -fur
 */
 
-/*
+/*!
 ** I thought it might be helpful to others to include a quick guide to what things
 ** meant in this code.
 ** Tile - a single item in the game, maybe static or dynamic
@@ -149,50 +155,47 @@ const UI32 StaticRecordSize		= 7L;
 **
 */
 
-#ifdef DEBUG_MAP_STUFF
-void bitprint(FILE *fp, UI08 x )
+
+void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 {
-	for( SI32 i = 7; i >= 0; --i )
-	{
-		if( ( x & 0x80 ) == 0 )
-			fprintf( fp, "0" );
-		else
-			fprintf( fp, "1" );
-		if( 4 == i )
-			fprintf( fp, " " );
-		x = x << 1;
-	}
+	// compute new bounding box, by include the new point
+	if( x < lx ) 
+		lx = x;
+	if( x > hx ) 
+		hx = x;
+	if( y < ly ) 
+		ly = y;
+	if( y > hy )
+		hy = y;
+	if( z < z )
+		lz = z;
+	if( z > hz )
+		hz = z;
 }
-#endif
 
 
-cMapStuff::cMapStuff() : versionCache( NULL ), versionRecordCount( 0 ), versionMemory( 0 ), StaMem( 0 ), TileMem( 0 ),
-Cache( false ), Map0CacheHit( 0 ), Map0CacheMiss( 0 ), StaticBlocks( 0 ), verfile( NULL ), tilefile( NULL ), multifile( NULL ), midxfile( NULL )
+/*! Use Memory-Mapped file to do caching instead
+** 'verdata.mul', 'tiledata.mul', 'multis.mul' and 'multi.idx' is changed so
+**  it will reads into main memory and access directly.  'map*.mul', 'statics*.mul' and
+**  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching 
+**  and less susceptible to bugs.
+** -lingo
+*/
+cMapStuff::cMapStuff()
+:landTile(0), staticTile(0), multiItems(0), multiIndex(0), multiIndexSize(0),
+ TileMem( 0 ), MultisMem( 0 )
 {
-	// after a mess of bugs with the structures not matching the physical record sizes
-	// i've gotten paranoid...
-	assert( sizeof( versionrecord ) >= VersionRecordSize );
-	assert( sizeof( st_multi ) >= MultiRecordSize );
-	assert( sizeof( map_st ) >= MapRecordSize );
-	assert( sizeof( st_multiidx ) >= MultiIndexRecordSize );
-	// staticrecord is not listed here because we explicitly don't read in some
-	// unknown bytes to save memory
-	
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
 		mapArrays[i] = NULL;
 		statArrays[i] = NULL;
 		sidxArrays[i] = NULL;
 	}
-	mapname[0] = sidxname[0] = statname[0] = vername[0] = tilename[0] = multiname[0] = midxname[0] = '\0';
-	
-	//memset( tilecache, 0x00, sizeof( tilecache ) );
 }
+
 
 cMapStuff::~cMapStuff()
 {
-	if( versionCache ) 
-		delete [] versionCache;
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
 		if( mapArrays[i] != NULL )
@@ -211,38 +214,34 @@ cMapStuff::~cMapStuff()
 			sidxArrays[i] = NULL;
 		}
 	}
-	
-	if( verfile )   
-		delete verfile;
-	if( tilefile )  
-		delete tilefile;
-	if( multifile ) 
-		delete multifile;
-	if( midxfile )  
-		delete midxfile;
-	for( size_t j = 0; j < multiCache.size(); ++j )
-	{
-		delete[] multiCache[j]->cache;
-		delete multiCache[j];
-	}
-	multiCache.clear();
+
+//	if ( verData )
+//		delete verData;
+	if ( landTile )
+		delete[] landTile;
+	if ( staticTile )   
+		delete[] staticTile;
+	if ( multiItems )  
+		delete[] multiItems;
+	if ( multiIndex )
+		delete[] multiIndex;
 }
 
 
-//o--------------------------------------------------------------------------o
+//!--------------------------------------------------------------------------o
 //|	Function/Class	-	void cMapStuff::Load( void )
 //|	Date			-	03/12/2002
 //|	Developer(s)	-	Unknown / EviLDeD 
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status			-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Prepare access streams to the server required mul files. 
+//|	Description		-	Prepare access streamultidxms to the server required mul files. 
 //|									This function basicaly just opens the streams and validates
 //|									that the file is open and available
 //o--------------------------------------------------------------------------o
 //|	Returns				-	N/A
 //o--------------------------------------------------------------------------o	
-void cMapStuff::Load( void )
+void cMapStuff::Load( )
 {
 	Console.PrintSectionBegin();
 	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in the uox3.ini)" << myendl;
@@ -313,64 +312,104 @@ void cMapStuff::Load( void )
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
 	}
 
-	lName = basePath + "verdata.mul";
-	Console << "\t" << lName << "\t";
-	verfile = new UOXFile( lName.c_str(), "rb" );
-	if( verfile == NULL || !verfile->ready() )
-		Console.PrintPassed();
-	else
-		Console.PrintDone();
-	
-
+	// tiledata.mul is to be cached.
 	lName = basePath + "tiledata.mul";
 	Console << "\t" << lName << "\t";
-	tilefile = new UOXFile( lName.c_str(), "rb" );
-	if( tilefile == NULL || !tilefile->ready() )
-    {
+	UOXFile tilefile( lName.c_str(), "rb" );
+	if( !tilefile.ready() )
+	{
 		Console.PrintFailed();
 		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
-    }
-	Console.PrintDone();
-
-	lName = basePath + "multi.mul";
-	Console << "\t" << lName << "\t\t";
-	multifile = new UOXFile( lName.c_str(), "rb" );
-	if( multifile == NULL || !multifile->ready() )
+	}
+	// first we have 512*32 pieces of land tile
+	TileMem = TILEDATA_SIZE * sizeof(CLand);
+	landTile = new CLand[TILEDATA_SIZE];
+	CLand *landPtr = landTile;
+	for (int i = 0; i < 512; ++i)	
 	{
-		Console.PrintFailed();
-		Shutdown( FATAL_UOX3_MULTI_DATA_NOT_FOUND );
+		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
+		tilefile.get_land_st(landPtr, 32);
+		landPtr += 32;
+	}
+	// now get the 512*32 static tile pieces,
+	TileMem += TILEDATA_SIZE * sizeof(CTile);
+	staticTile = new CTile[TILEDATA_SIZE];
+	CTile *tilePtr = staticTile;
+	for (int i = 0; i < 512; ++i)
+	{
+		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
+		tilefile.get_tile_st(tilePtr, 32);
+		tilePtr += 32;
 	}
 	Console.PrintDone();
 
-	lName = basePath + "multi.idx";
-	Console << "\t" << lName << "\t\t";
-	midxfile = new UOXFile( lName.c_str(), "rb" );
-	if( midxfile == NULL || !midxfile->ready() )
-	{
-		Console.PrintFailed();
-		Shutdown( FATAL_UOX3_MULTI_INDEX_NOT_FOUND );
-	}
-	Console.PrintDone();
 
-	Console << "MUL files successfully opened (but not yet loaded.)" << myendl;
-	Console.PrintSectionBegin();
-	
-	CacheVersion();
-	CacheMultis();
-	if( Cache )
-	{
-		CacheTiles(); // has to be exactly here, or loadnewlorld cant access correct tiles
-		CacheStatics();
-	}
+	LoadMultis(basePath);
+//	CacheVersion();
 
 	Console.PrintSectionBegin();
 }
+
+
+void cMapStuff::LoadMultis(const UString &basePath)
+{
+	// now main memory multiItems
+	Console << "Caching Multis....  "; 
+
+	// only turn it off for now because we are trying to fill the cache.
+	UString lName		= basePath + "multi.idx";
+
+	UOXFile multiIDX( lName.c_str(), "rb" );
+	if( !multiIDX.ready() )
+	{
+		Console.PrintFailed();
+		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
+		return;
+	}
+	lName			= basePath + "multi.mul";
+	UOXFile multis( lName.c_str(), "rb" );
+	if( !multis.ready() )
+	{
+		Console.PrintFailed();
+		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
+		return;
+	}
+
+	//! first reads in st_multi completely
+	int multiSize = multis.getLength() / MultiRecordSize;
+	multiItems = new st_multi[multiSize];
+	multis.get_st_multi( multiItems, multiSize );
+	MultisMem = multis.getLength();
+
+	multiIndexSize = multiIDX.getLength() / MultiIndexRecordSize;
+	multiIndex = new MultiItemsIndex[multiIndexSize];
+	MultisMem = multiIndexSize * sizeof(MultiItemsIndex);
+
+	// now rejig the multiIDX to point to the cache directly, and calculate the size
+	for(MultiItemsIndex *ptr=multiIndex; ptr != (multiIndex+multiIndexSize); ++ptr )
+	{
+		st_multiidx multiidx;
+		multiIDX.get_st_multiidx( &multiidx );
+		ptr->size = multiidx.length;
+		if( ptr->size != -1 )
+		{
+			ptr->size /= MultiRecordSize;		// convert byte size to record size
+			ptr->items = (st_multi*)((char*)multiItems + multiidx.start);
+			for( st_multi* items = ptr->items; items != (ptr->items+ptr->size); ++items )
+			{	
+				ptr->Include( items->x, items->y, items->z );
+			}
+		}
+	}
+	// reenable the caching now that its filled
+	Console.PrintDone();
+}
+
 
 // this stuff is rather buggy thats why I separted it from uox3.cpp
 // feel free to correct it, but be carefull
 // bugfixing this stuff often has a domino-effect with walking etc.
 // LB 24/7/99
-
 // oh yah, well that's encouraging.. NOT! at least LB was kind enough to
 // move this out into a separate file. he gets kudos for that!
 SI08 cMapStuff::TileHeight( UI16 tilenum )
@@ -384,6 +423,7 @@ SI08 cMapStuff::TileHeight( UI16 tilenum )
 	return tile.Height();
 }
 
+
 //o-------------------------------------------------------------o
 //|   Function    :  SI08 StaticTop( SI16, SI16 y, SI08 oldz);
 //|   Date        :  Unknown     Touched: Dec 21, 1998
@@ -396,7 +436,7 @@ SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	SI08 top = ILLEGAL_Z;
 
 	MapStaticIterator msi( x, y, worldNumber );
-	staticrecord *stat = NULL;
+	staticrecord *stat;
 	while( stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
@@ -407,7 +447,6 @@ SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 }	
 
 
-//
 // i guess this function returns where the tile is a 'blocker' meaning you can't pass through it
 bool cMapStuff::DoesTileBlock(int tilenum)
 {
@@ -417,6 +456,7 @@ bool cMapStuff::DoesTileBlock(int tilenum)
 	
 	return tile.Blocking();
 }
+
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
@@ -428,11 +468,32 @@ bool cMapStuff::DoesTileBlock(int tilenum)
 //o--------------------------------------------------------------------------
 void cMapStuff::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
 {
-	x1 = multiCache[multiNum]->lx;
-	x2 = multiCache[multiNum]->ly;
-	y1 = multiCache[multiNum]->hx;
-	y2 = multiCache[multiNum]->hy;
+	x1 = multiIndex[multiNum].lx;		// originally lx 
+	x2 = multiIndex[multiNum].hx;		// originally ly presumablely bugs?
+	y1 = multiIndex[multiNum].ly;		// originally ly 
+	y2 = multiIndex[multiNum].hy;		// originally hy presumablely bugs?
 }
+
+
+// multinum is also the index into the array!!!  Makes our life MUCH easier, doesn't it?
+// TODO: Make it verseek compliant!!!!!!!!!
+// Currently, there is no hit on either of the multi files, so we're fairly safe
+// But we probably want to not rely on this being always true
+// especially with the extra land patch coming up!
+void cMapStuff::SeekMulti( UI32 multinum, SI32 *length )
+{
+	if( multinum >= multiIndexSize )
+		*length = -1;
+	else
+		*length = multiIndex[multinum].size;
+}
+
+
+st_multi *cMapStuff::SeekIntoMulti( int multinum, int number )
+{
+	return multiIndex[multinum].items + number;
+}
+
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
@@ -456,6 +517,7 @@ void cMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 
 	y1 += yAdd;
 	y2 += yAdd;
 }
+
 
 // return the height of a multi item at the given x,y. this seems to actually return a height
 SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
@@ -488,6 +550,7 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
 	return 0;                                                                                                                     
 } 
 
+
 // This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
 SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
@@ -518,6 +581,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	return z;
 }
 
+
 int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 {
 	SI32 length = 0;
@@ -541,6 +605,7 @@ int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 	}
 	return 0;
 }
+
 
 // returns which dynamic tile is present at (x,y) or -1 if no tile exists
 int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
@@ -569,6 +634,7 @@ int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	return -1;
 }
 
+
 // return the elevation of MAP0.MUL at given coordinates, we'll assume since its land
 // the height is inherently 0
 SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
@@ -580,6 +646,7 @@ SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 		return ILLEGAL_Z;
 	return map.z;
 }
+
 
 // compute the 'average' map height by looking at three adjacent cells
 SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber )
@@ -625,293 +692,45 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 	return ILLEGAL_Z;
 }
 
-// since the version data will potentiall affect every map related operation
-// we are always going to cache it.   we are going to allocate maxRecordCount as
-// given by the file, but actually we aren't going to use all of them, since we
-// only care about the patches made to the 6 files the server needs.  so the
-// versionRecordCount hold how many we actually saved
-void cMapStuff::CacheVersion( void )
-{
-	if( verfile == NULL || !verfile->ready() )
-	{
-		return;
-	}
-
-	verfile->seek( 0, SEEK_SET );
-	UI32 maxRecordCount = 0;
-	verfile->getULong( &maxRecordCount );
-	
-	if( 0 == maxRecordCount )
-		return;
-	if( NULL == ( versionCache = new versionrecord[maxRecordCount] ) )
-		return;
-	
-	Console << "Caching version data...";
-	versionMemory = maxRecordCount * sizeof( versionrecord );
-	for( UI32 i = 0; i < maxRecordCount; ++i )
-    {
-		if( verfile->eof() )
-		{
-			Console.Error( 1, " Avoiding bad read crash with verdata.mul." );
-			return;
-		}
-		versionrecord *ver = versionCache + versionRecordCount;
-		assert( ver );
-		verfile->get_versionrecord( ver );
-		
-		// see if its a record we care about
-		switch( ver->file )
-		{
-			case VERFILE_MULTIIDX:
-			case VERFILE_MULTI:
-				Console << "Hit on Multi file!" << myendl;
-			case VERFILE_TILEDATA:
-				++versionRecordCount;
-				break;
-			case VERFILE_MAP:
-			case VERFILE_STAIDX:
-			case VERFILE_STATICS:
-				// at some point we may need to handle these cases, but OSI hasn't patched them as of
-				// yet, so no need slowing things down processing them
-	//			Console.Error( "Eeek! OSI has patched the static data and I don't know what to do!" );
-				break;
-			default:
-				// otherwise its for a file we don't care about
-				break;
-		}
-    }
-	Console << "Done (Cached " << versionRecordCount << "/" << maxRecordCount << " patches)" << myendl;
-}
-
-SI32 cMapStuff::VerSeek( SI32 file, SI32 block )
-{
-	for( UI32 i = 0; i < versionRecordCount; ++i )
-	{
-		if( versionCache[i].file == file && versionCache[i].block == block )
-		{
-			verfile->seek( versionCache[i].filepos, SEEK_SET );
-			return versionCache[i].length;
-		}
-	}
-	return 0;
-}
-
-bool cMapStuff::VerTile(int tilenum, CTile *tile)
-{
-	if( tilenum == -1 )
-		return false;
-	
-	const SI32 block=(tilenum/32);
-	if( VerSeek( VERFILE_TILEDATA, block + 0x200 ) == 0 )
-		return false;
-	else
-	{
-		const SI32 pos=4+(TileRecordSize*(tilenum%32)); // correct
-		verfile->seek(pos, SEEK_CUR);
-		verfile->get_tile_st(tile);
-		return true;
-	}
-}
 
 void cMapStuff::SeekTile(int tilenum, CTile *tile)
 {
-//	assert(tilenum >= 0);
-	assert(tile);
-	if( tilenum < 0 )
-	{
-		tile->Flag1( 0 );
-		tile->Flag2( 0 );
-		tile->Flag3( 0 );
-		tile->Flag4( 0 );
-		tile->Weight( 255 );
-		tile->Height( 0 );
-		tile->Name( "bad tile" );
-		return;
-	}
-	if( tilenum >= 0x4000 )
-	{
-		tile->Name( "multi" );
-		tile->Flag1( 0 );
-		tile->Flag2( 0 );
-		tile->Flag3( 0 );
-		tile->Flag4( 0 );
-		tile->Weight( 255 );
-		tile->Height( 0 );
-		return;
-	}
-	
-	if( Cache )
-	{
-		// fill it up straight from the cache
-		memcpy(tile, tilecache + tilenum, sizeof( CTile ));
-#ifdef DEBUG_MAP_STUFF
-		Console << "SeekTile - cache hit!" << myendl;
-#endif
+	if ( (tilenum < 0) || (tilenum >= TILEDATA_SIZE) )
+	{	// report the invalid access, but keep running
+		Console << "invalid tile access the offending tile num is " << UI32(tilenum) << myendl;
+		const static CTile emptyTile;
+		*tile = emptyTile;			// arbitrary choice, default constructor
 	}
 	else
-	{
-		if( VerTile( tilenum, tile ) )
-		{
-#ifdef DEBUG_MAP_STUFF
-			Console << "Loaded tile " << tilenum << " from verdata.mul" << myendl;
-#endif
-		}
-		else
-		{
-			// TILEDATA_TILE is the amount to skip past all of the land_st's
-			// plus skip 4 bytes per block for the long separating them
-			const SI32 block = ( tilenum / 32 );
-			const SI32 pos = TILEDATA_TILES + ( ( block + 1 ) * 4 ) + ( TileRecordSize * tilenum ); // correct
-			tilefile->seek( pos, SEEK_SET );
-			tilefile->get_tile_st( tile );
-		}
-		
-#ifdef DEBUG_MAP_STUFF
-		printf("Tile #%d is '%s' ", tilenum, tile->name);
-		printf("flag1: "); bitprint(stdout, tile->flag1);
-		printf("flag2: "); bitprint(stdout, tile->flag2);
-		printf("flag3: "); bitprint(stdout, tile->flag3);
-		printf("flag4: "); bitprint(stdout, tile->flag4);
-		printf("\n");
-#endif
-	}
+		*tile = staticTile[tilenum];
 }
 
-void cMapStuff::CacheTiles( void )
-{
-	// temp disable caching so we can fill the cache
-	Cache = false;
-	
-	Console << "Caching tiledata...  ";
-	Console.TurnYellow();
-	Console << " 0%";
-
-	TileMem = 0x4000 * sizeof( CTile );
-	memset(tilecache, 0, TileMem);
-	
-	const int tenPercent = 0x4000 / 10;
-	for( UI32 i = 0; i < 0x4000; ++i )
-    {
-		SeekTile(i, tilecache + i);
-		
-		if( i % tenPercent == 0 )
-		{
-			if( i/tenPercent < 2 )
-				Console << "\b\b" << (SI16)( i / tenPercent * 10 ) << "%";
-			else 
-				Console << "\b\b\b" << (SI16)( i / tenPercent * 10 ) << "%";
-		}
-			//Console.Print( "\b\b%d0%%\n", 1 + (i / tenPercent));
-    }
-	Console << "\b\b\b\b";
-	Console.PrintDone();
-	Cache = true;
-	
-#ifdef DEBUG_TILE_BITS
-	for( int bit = 0x01; bit <= 0x0080; bit = bit << 1 )
-	{
-		char buf[30];
-		sprintf( buf, "static1-%d.txt", bit );
-		FILE *fp = fopen( buf, "w" );
-		for( int i = 0; i < 0x4000; ++i )
-		{
-			CTile *tile = tilecache + i;
-			if( ( tile->flag1 & bit ) == bit)
-			{
-				fprintf( fp, "%04x tile '%-20.20s'\t", i, tile->name );
-				fprintf( fp, "flag1: "); bitprint( fp, tile->flag1 );
-				fprintf( fp, " flag2: "); bitprint( fp, tile->flag2 );
-				fprintf( fp, " flag3: "); bitprint( fp, tile->flag3 );
-				fprintf( fp, " flag4: "); bitprint( fp, tile->flag4 );
-				fprintf( fp, "\n");
-			}
-		}
-		fclose(fp);
-		sprintf(buf, "static2-%d.txt", bit);
-		fp = fopen(buf, "w");
-		for( int i = 0; i < 0x4000; ++i )
-		{
-			CTile *tile = tilecache + i;
-			if( ( tile->flag2 & bit ) == bit )
-			{
-				fprintf( fp, "%04x tile '%-20.20s'\t", i, tile->name );
-				fprintf( fp, "flag1: "); bitprint( fp, tile->flag1 );
-				fprintf( fp, " flag2: "); bitprint( fp, tile->flag2 );
-				fprintf( fp, " flag3: "); bitprint( fp, tile->flag3 );
-				fprintf( fp, " flag4: "); bitprint( fp, tile->flag4 );
-				fprintf( fp, "\n");
-			}
-		}
-		fclose( fp );
-		sprintf( buf, "static3-%d.txt", bit );
-		fp = fopen( buf, "w" );
-		for( int i = 0; i < 0x4000; ++i )
-		{
-			CTile *tile = tilecache + i;
-			if( ( tile->flag3 & bit ) == bit )
-			{
-				fprintf( fp, "%04x tile '%-20.20s'\t", i, tile->name );
-				fprintf( fp, "flag1: "); bitprint( fp, tile->flag1 );
-				fprintf( fp, " flag2: "); bitprint( fp, tile->flag2 );
-				fprintf( fp, " flag3: "); bitprint( fp, tile->flag3 );
-				fprintf( fp, " flag4: "); bitprint( fp, tile->flag4 );
-				fprintf( fp, "\n");
-			}
-		}
-		fclose(fp);
-		sprintf(buf, "static4-%d.txt", bit);
-		fp = fopen(buf, "w");
-		for( int i = 0; i < 0x4000; ++i )
-		{
-			CTile *tile = tilecache + i;
-			if( ( tile->flag4 & bit ) == bit )
-			{
-				fprintf( fp, "%04x tile '%-20.20s'\t", i, tile->name );
-				fprintf( fp, "flag1: "); bitprint( fp, tile->flag1 );
-				fprintf( fp, " flag2: "); bitprint( fp, tile->flag2 );
-				fprintf( fp, " flag3: "); bitprint( fp, tile->flag3 );
-				fprintf( fp, " flag4: "); bitprint( fp, tile->flag4 );
-				fprintf( fp, "\n" );
-			}
-		}
-		fclose( fp );
-	}
-#endif
-}
-
-bool cMapStuff::VerLand(int landnum, CLand *land)
-{
-	const SI32 block=(landnum/32);
-	if( VerSeek( VERFILE_TILEDATA, block ) == 0 )
-		return false;
-	const SI32 pos = 4 + ( LandRecordSize * ( landnum % 32 ) ); // correct
-	verfile->seek( pos, SEEK_CUR );
-	verfile->get_land_st( land );
-	return true;
-}
 
 void cMapStuff::SeekLand( int landnum, CLand *land)
 {
-	const SI32 block = ( landnum / 32 );
-	if( !VerLand( landnum, land ) )
-	{
-		const SI32 pos = ( ( block + 1 ) * 4 ) + ( LandRecordSize * landnum ); // correct
-		tilefile->seek( pos, SEEK_SET );
-		tilefile->get_land_st( land );
+
+	if ( (landnum < 0) || (landnum >= TILEDATA_SIZE) )
+	{	// report the invalid access, but keep running
+		Console << "invalid Land tile access the offending land num is " << UI32(landnum) << myendl;
+		const static CLand emptyTile;
+		*land = emptyTile;			// arbitray empty choice
 	}
+	else
+		*land = landTile[landnum];
 }
+
 
 bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
-	if( x < 0 || y < 0 )
+	if( x < 0 || y < 0 || (worldNumber >= NumberOfWorlds) )
 		return false;
-	if( worldNumber >= NumberOfWorlds )
-		return false;
+
 	UOMapType toGet = GetMapType( worldNumber );
 	return ( x >= 0 && x < MapTileWidths[toGet] && y >= 0 && y < MapTileHeights[toGet] );
 }
 
-/*
+
+/*!
 ** Use this iterator class anywhere you would have used SeekInit() and SeekStatic()
 ** Unlike those functions however, it will only return the location of tiles that match your
 ** (x,y) EXACTLY.  They also should be significantly faster since the iterator saves
@@ -940,34 +759,24 @@ MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) :
 		Console.Error( 3, "ASSERT: MapStaticIterator(); Not inside a valid world" );
 		return;
 	}
-	if( Map->Cache )
+
+	UOXFile *reading = Map->sidxArrays[world];
+	if( reading == NULL )
 	{
-		StaCache_st *cacheEntry = Map->GrabCacheEntry( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world );
-		if( cacheEntry == NULL )
-			length = 0;
-		else
-			length = cacheEntry->CacheLen;
+		length = 0;
+		return;
 	}
-	else
+	UOMapType gMap = Map->GetMapType( world );
+	const SI16 TileHeight = MapTileHeights[gMap];
+	const SI32 indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
+	reading->seek( indexPos, SEEK_SET );
+	if( !reading->eof() )
 	{
-		UOXFile *reading = Map->sidxArrays[world];
-		if( reading == NULL )
+		reading->getLong( &pos );
+		if( pos != -1 )
 		{
-			length = 0;
-			return;
-		}
-		UOMapType gMap = Map->GetMapType( world );
-		const SI16 TileHeight = MapTileHeights[gMap];
-		const SI32 indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
-		reading->seek( indexPos, SEEK_SET );
-		if( !reading->eof() )
-		{
-			reading->getLong( &pos );
-			if( pos != -1 )
-			{
-				reading->getULong( &length );
-				length /= StaticRecordSize;
-			}
+			reading->getULong( &length );
+			length /= StaticRecordSize;
 		}
 	}
 }
@@ -983,46 +792,6 @@ staticrecord *MapStaticIterator::Next( void )
 	tileid = 0;
 	if( index >= length )
 		return NULL;
-	if( Map->Cache )
-	{
-#ifdef MAP_CACHE_DEBUG
-		// turn this on for debugging z-level stuff where you want to see where
-		// the characters are in relation to their cell, and which places in the 8x8
-		// cell have static tiles defined.
-		if( index == 0 )
-		{
-			Console << "baseX: " << baseX << ", baseY: " << baseY << ", remX: " << (int)remainX << ", remY: " << (int)remainY << myendl;
-			Console << " 01234567" << myendl;
-			char testmap[9][9];
-			memset(testmap, ' ', 9*9);
-			for( int tmp = 0; tmp < length; ++tmp )
-			{
-				staticrecord *ptr = Map->StaticCache[baseX][baseY].Cache + tmp;
-				testmap[ptr->yoff][ptr->xoff] = 'X';
-			}
-			testmap[remainY][remainX] = 'O';
-			for( int foo = 0; foo < 8; ++foo )
-			{
-				testmap[foo][8] = '\0';
-				Console << foo << testmap[foo] << myendl;
-			}
-		}
-#endif
-		StaCache_st *mCache = Map->GrabCacheEntry( static_cast<SI16>(baseX), static_cast<SI16>(baseY), worldNumber );
-		if( mCache != NULL )
-		{
-			do
-			{
-				staticrecord *ptr = (mCache->Cache) + index++;
-				if( !exactCoords || ( ptr->xoff == remainX && ptr->yoff == remainY ) )
-				{
-					tileid = ptr->itemid;
-					return ptr;
-				}
-			} while( index < length );
-		}
-		return NULL;
-	}
 	
 	UOXFile *mFile = Map->statArrays[worldNumber];
 	if( mFile == NULL )
@@ -1064,157 +833,28 @@ void MapStaticIterator::GetTile( CTile *tile ) const
 	Map->SeekTile( tileid, tile );
 }
 
-//	
-//	 some clean up to the caching and it wasn't reporting all the memory actually
-//	 used by the StaticCache[][] in cMapStuff
-//	
-void cMapStuff::CacheStatics( void )
-{
-	// we must be in caching mode, only turn it off for now because we are
-	// trying to fill the cache.
-	assert( Cache );
-	Cache = false;
-	
-	UI32 tableMemory = 0; // StaticBlocks * sizeof( staticrecord );
-	UI32 indexMemory = 0; // StaticBlocks * sizeof( StaCache_st );
-	UI32 tenPercent = StaticBlocks / 10;
-	UI32 currentBlock = 0;
-	for( UI08 wCtr = 0; wCtr < NumberOfWorlds; ++wCtr )
-	{
-		Console << "Caching Statics for World " << (SI16)wCtr << "...   ";
-		Console.TurnYellow();
-		Console << "0%";
-	
-		currentBlock = 0;
-		if( statArrays[wCtr] == NULL )
-		{
-			Console << "\b";
-			Console.PrintPassed();
-			continue;
-		}
-		UI08 wrldCtr = uomapTypes[wCtr];
-		if( wrldCtr == 0xFF )
-		{
-			Console << "\b\b";
-			Console.PrintFailed();
-			Console.TurnRed();
-			Console << "Unknown world type found, please verify the map file is correct" << myendl;
-			Console.TurnNormal();
-			continue;
-		}
-		if( !statArrays[wCtr]->ready() )
-			continue;
-		SI16 maxX = MapTileWidths[wrldCtr];
-		SI16 maxY = MapTileHeights[wrldCtr];
-		StaticBlocks = ( maxX * maxY );
-
-		tableMemory += StaticBlocks * sizeof( staticrecord );
-		indexMemory += StaticBlocks * sizeof( StaCache_st );
-		tenPercent = StaticBlocks / 10;
-
-		StaticCache[wCtr].Resize( maxX, maxY );
-		for( SI16 x = 0; x < maxX; ++x )
-		{
-			for( SI16 y = 0; y < maxY; ++y )
-			{
-				StaCache_st *mCache = GrabCacheEntry( x, y, wCtr );
-				if( mCache == NULL )
-					continue;
-				mCache->Cache = NULL;
-				mCache->CacheLen = 0;
-				
-				MapStaticIterator msi( x * 8, y * 8, wrldCtr, false );
-				UI32 length = msi.GetLength();
-				if( length )
-				{
-					mCache->CacheLen = static_cast<UI16>(length);
-					mCache->Cache = new staticrecord[length];
-					// read them all in at once!
-					statArrays[wrldCtr]->seek( msi.GetPos(), SEEK_SET );
-					statArrays[wrldCtr]->get_staticrecord( mCache->Cache, length );
-				}
-				if( currentBlock++ % tenPercent == 0 )
-				{
-					if( currentBlock/tenPercent < 2 )
-						Console << "\b\b" << (SI16)(currentBlock/tenPercent*10) << "%";
-					else
-						Console << "\b\b\b" << (SI16)(currentBlock/tenPercent*10) << "%";
-				}
-			}
-		} 
-		Console << "\b\b\b\b";
-		Console.PrintDone();
-	}	
-	// reenable the caching now that its filled
-	Cache = true;
-	StaMem = tableMemory + indexMemory;
-	Console << "Used " << tableMemory << " table bytes + " << indexMemory << " index bytes = " << StaMem << " total bytes to cache statics..." << myendl;
-}
 
 map_st cMapStuff::SeekMap0( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const SI16 x1 = x / 8, y1 = y / 8;
 	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);
-	static SI16 CurCachePos = 0;
-	map_st map;
-	memset( &map, 0, sizeof( map_st ) );
+	map_st map = {0, 0};
 	if( worldNumber >= NumberOfWorlds )
 		return map;
 
 	UOMapType gMap = GetMapType( worldNumber );
 	if( gMap == UOMT_UNKNOWN )
 		return map;
-	if( !Cache ) 
-	{
-		const SI32 pos = ( x1 * MapTileHeights[gMap] * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
-		mapArrays[worldNumber]->seek( pos, SEEK_SET );
-		mapArrays[worldNumber]->get_map_st( &map );
-		return map;
-    }
-	
-	SI16 i;
-	// sorry zip, but these loops should have been checking the newest stuff in the
-	// cache first, so its more likely to find a hit faster - fur
-	MapCache *mapCache = Map0Cache[worldNumber];
-	for( i = CurCachePos; i >= 0; --i )
-	{
-		if( ( mapCache[i].xb == x1 && mapCache[i].yb == y1 ) && ( mapCache[i].xo == x2 && mapCache[i].yo == y2 ) )
-		{
-			++Map0CacheHit;
-			return mapCache[i].Cache;
-		}
-	}
-	// if still not found, start at the end where the newer items are
-	for( i = MAP0CACHE - 1; i > CurCachePos; --i )
-	{
-		if( ( mapCache[i].xb == x1 && mapCache[i].yb == y1 ) && ( mapCache[i].xo == x2 && mapCache[i].yo == y2 ) )
-		{
-			++Map0CacheHit;
-			return mapCache[i].Cache;
-		}
-	}
 
-	++Map0CacheMiss;
-
+	// index to the world
 	const SI32 pos = ( x1 * MapTileHeights[gMap] * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
 	mapArrays[worldNumber]->seek( pos, SEEK_SET );
-	map_st *ptr = &(Map0Cache[worldNumber][CurCachePos].Cache);
-	mapArrays[worldNumber]->get_map_st( ptr );
-
-	Map0Cache[worldNumber][CurCachePos].xb = x1;
-	Map0Cache[worldNumber][CurCachePos].yb = y1;
-	Map0Cache[worldNumber][CurCachePos].xo = x2;
-	Map0Cache[worldNumber][CurCachePos].yo = y2;
-
-	// don't increment this until AFTER we have loaded everything, i had to fix what zippy did
-	++CurCachePos;
-	if( CurCachePos >= MAP0CACHE )
-		CurCachePos = 0;
-
-	return *ptr;
+	mapArrays[worldNumber]->get_map_st( &map );
+	return map;
 }
 
-// these two functions don't look like they are actually used by anything
+
+// these function don't look like they are actually used by anything
 // anymore, at least we know which bit means wet
 bool cMapStuff::IsTileWet(int tilenum)   // lord binary
 {
@@ -1223,15 +863,6 @@ bool cMapStuff::IsTileWet(int tilenum)   // lord binary
 	return tile.LiquidWet();
 }
 
-// i don't know what this bit means exactly, its a walkway? or you are allowed
-// to walk?
-bool cMapStuff::TileWalk(int tilenum)
-{
-	CTile tile;
-	SeekTile( tilenum, &tile );
-	
-	return tile.Walk();
-}
 
 // Blocking statics at/above given coordinates?
 bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
@@ -1242,15 +873,14 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	while( stat = msi.Next() )
 	{
 		const int elev = stat->zoff + TileHeight( stat->itemid );
-		if( (elev > oldz) && (stat->zoff <= oldz ) )
+		if( (elev > oldz) && (stat->zoff <= oldz ) && DoesTileBlock( stat->itemid ) )
 		{
-			bool btemp = DoesTileBlock( stat->itemid );
-			if( btemp )
 				return true;
 		}
 	}
 	return false;
 }
+
 
 // Return new height of player who walked to X/Y but from OLDZ
 SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
@@ -1266,6 +896,7 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 
 	return MapElevation( x, y, worldNumber );
 }
+
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
@@ -1303,170 +934,6 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber 
     return true;
 }
 
-bool cMapStuff::IsRoofOrFloorTile( CTile *tile )
-// checks to see if the tile is either a roof or floor tile
-{
-	if( tile->AtFloorLevel() )
-		return true; // check the floor bit
-	
-	if( strstr( "roof", tile->Name()) || strstr( "shingle", tile->Name() ) )
-		return true;
-
-	if( strstr( "floor", tile->Name() ) )
-		return true;
-	// now why would not want to check the z value of wooden boards first??
-	// this was after the if( .. > z ), i'm moving this up inside of it
-	if( !strcmp( tile->Name(), "wooden boards" ) )
-		return true;
-	// i'll stick these back in. even if these were bogus tile names it can't hurt
-	if( !strcmp( tile->Name(), "wooden board" ) ||
-		!strcmp( tile->Name(), "stone pavern" ) ||
-		!strcmp( tile->Name(), "stone pavers" ) )
-		return true;
-
-	return false;
-}
-
-bool cMapStuff::IsRoofOrFloorTile( CTileUni *tile )
-// checks to see if the tile is either a roof or floor tile
-{
-	CTile newTile;
-	SeekTile( tile->ID(), &newTile );
-	return IsRoofOrFloorTile( &newTile );
-}
-
-void cMapStuff::CalculateMultiSizes( void )
-{
-	for( size_t i = 0; i < multiCache.size(); ++i )
-	{
-		if( multiCache[i] == NULL )
-			continue;
-		st_multi *multi = multiCache[i]->cache;
-		if( multi == NULL )
-			continue;
-		SI16 lx = 0, ly = 0, hx = 0, hy = 0;
-		for( int j = 0; j < multiCache[i]->length; ++j )
-		{
-			if( multi[j].x < lx ) 
-				lx = multi[j].x;
-			if( multi[j].x > hx ) 
-				hx = multi[j].x;
-			if( multi[j].y < ly ) 
-				ly = multi[j].y;
-			if( multi[j].y > hy ) 
-				hy = multi[j].y;
-		}
-		multiCache[i]->lx = lx;
-		multiCache[i]->ly = ly;
-		multiCache[i]->hx = hx;
-		multiCache[i]->hy = hy;
-	}
-}
-
-void cMapStuff::CacheMultis( void )
-{
-	UI32 indexMemoryUsed = 0;
-	UI32 multiMemoryUsed = 0;
-
-	Console << "Caching Multis....  "; 
-
-	// we must be in caching mode, only turn it off for now because we are
-	// trying to fill the cache.
-	UString basePath	= cwmWorldState->ServerData()->Directory( CSDDP_DATA );
-	UString lName		= basePath + "multi.idx";
-	FILE *multiIDXRec	= fopen( lName.c_str(), "rb" );
-	if( multiIDXRec == NULL )
-	{
-		Console.PrintFailed();
-		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
-		return;
-	}
-	lName			= basePath + "multi.mul";
-	UOXFile *multis = new UOXFile( lName.c_str(), "rb" );
-	if( multis == NULL || !multis->ready() )
-	{
-		Console.PrintFailed();
-		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
-		fclose(multiIDXRec);
-		return;
-	}
-
-	fseek( multiIDXRec, 0, SEEK_END );
-	SI32 fileLen = ftell( multiIDXRec );
-	fclose( multiIDXRec );
-
-	UI32 numRecords = fileLen / MultiIndexRecordSize;
-
-	lName				= basePath + "multi.idx";
-	UOXFile *multiIDX	= new UOXFile( lName.c_str(), "rb" );
-	if( multiIDX == NULL || !multiIDX->ready() )
-	{
-		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
-		return;
-	}
-
-	multiCache.resize( numRecords );					// do one big resize here
-	indexMemoryUsed = static_cast< UI32 >(multiCache.size()) * sizeof( MultiCache );
-
-	const UI32 tenPercent = numRecords / 10;
-
-	st_multiidx multiidx;
-
-	Console.TurnYellow();
-	Console << " 0%";
-	for( UI32 counter = 0; counter < numRecords; ++counter )
-	{
-		multiCache[counter] = new MultiCache;
-
-        multiIDX->seek( counter * MultiIndexRecordSize, SEEK_SET );
-		multiIDX->get_st_multiidx( &multiidx );
-
-		multiCache[counter]->length = multiidx.length;
-		if( multiCache[counter]->length != -1 )
-		{
-			multiCache[counter]->length /= MultiRecordSize;
-			multiCache[counter]->cache = new st_multi[multiCache[counter]->length];
-			multiMemoryUsed += ( multiCache[counter]->length * sizeof( st_multi ) );
-			multis->seek( multiidx.start, SEEK_SET );
-			
-			for( int multiCounter = 0; multiCounter < multiCache[counter]->length; ++multiCounter )
-				multis->get_st_multi( &multiCache[counter]->cache[multiCounter] );
-		}
-		if( counter % tenPercent == 0 )
-		{
-			if( counter/tenPercent < 2 )
-				Console << "\b\b" << (SI16)(counter/tenPercent*10) << "%";
-			else
-				Console << "\b\b\b" << (SI16)(counter/tenPercent*10) << "%";
-		}
-	}
-	Console << "\b\b\b\b";
-	Console.TurnNormal();
-	CalculateMultiSizes();
-	// reenable the caching now that its filled
-	Console.PrintDone();
-	Console << "Multi caching taking up " << indexMemoryUsed + multiMemoryUsed << " bytes, " << indexMemoryUsed << " in index, " << multiMemoryUsed << " in data..." << myendl;
-	delete multiIDX;
-	delete multis;
-}
-
-void cMapStuff::SeekMulti( UI32 multinum, SI32 *length )
-// multinum is also the index into the array!!!  Makes our life MUCH easier, doesn't it?
-// TODO: Make it verseek compliant!!!!!!!!!
-// Currently, there is no hit on either of the multi files, so we're fairly safe
-// But we probably want to not rely on this being always true
-// especially with the extra land patch coming up!
-{
-	if( multinum >= multiCache.size() )
-		*length = -1;
-	else
-		*length = multiCache[multinum]->length;
-}
-
-st_multi *cMapStuff::SeekIntoMulti( int multinum, int number )
-{
-	return &multiCache[multinum]->cache[number];
-}
 
 
 UOMapType cMapStuff::GetMapType( UI08 worldNumber )
@@ -1475,6 +942,48 @@ UOMapType cMapStuff::GetMapType( UI08 worldNumber )
 		return UOMT_BRITANNIA;
 	return uomapTypes[worldNumber];
 }
+
+
+//o--------------------------------------------------------------------------
+//|	Function		-	UOMapType CalcFromFileLength( UOXFile *toCalcFrom )
+//|	Date			-	26th September, 2001
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	It returns the map type, based on the map's file size
+//o--------------------------------------------------------------------------
+UOMapType cMapStuff::CalcFromFileLength( UOXFile *toCalcFrom )
+{
+	if( toCalcFrom == NULL )
+	{
+		Console << "Invalid file in cMapStuff:CaclFromFileLength";
+		return UOMT_UNKNOWN;
+	}
+	SI32 fLength = toCalcFrom->getLength();
+	for( UI32 i = 0; i < UOMT_COUNT; ++i )
+	{
+		if( MapFileLengths[i] == fLength )
+			return (UOMapType)i;
+	}
+	Console << "Incorrect map Length " << fLength;
+	return UOMT_UNKNOWN;
+}
+
+
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool MapExists( UI08 worldNumber )
+//|	Date			-	27th September, 2001
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Returns true if the server has that map in memory
+//o--------------------------------------------------------------------------
+bool cMapStuff::MapExists( UI08 worldNumber )
+{
+	return ( (worldNumber < NumberOfWorlds) && (mapArrays[worldNumber] != NULL) );
+}
+
 
 void CTile::Read( UOXFile *toRead )
 {
@@ -1504,6 +1013,8 @@ void CTile::Read( UOXFile *toRead )
 	toRead->getChar(  name, 20 );
 
 }
+
+
 void CLand::Read( UOXFile *toRead )
 {
 	toRead->getUChar( &flag1 );
@@ -1514,113 +1025,5 @@ void CLand::Read( UOXFile *toRead )
 	toRead->getChar( name, 20 );
 }
 
-StaWorldCache::StaWorldCache( SI16 maxX, SI16 maxY )
-{
-	Resize( maxX, maxY );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	~StaWorldCache()
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Deallocates any memory associated with the world cache
-//o--------------------------------------------------------------------------
-StaWorldCache::~StaWorldCache()
-{
-}
-//o--------------------------------------------------------------------------
-//|	Function		-	StaCacheLine *GrabCacheLine( SI16 x )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the cache line associated with line x
-//o--------------------------------------------------------------------------
-StaCacheLine *StaWorldCache::GrabCacheLine( SI16 trgX )
-{
-	if( trgX >= (SI16)CacheList.size() || trgX < 0 )
-		return NULL;
-	return &(CacheList[trgX]);
-}
-
-StaWorldCache::StaWorldCache( void )
-{
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	Resize( SI16 maxX, SI16 maxY )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Resizes the world cache to a grid size of maxX, maxY
-//o--------------------------------------------------------------------------
-void StaWorldCache::Resize( SI16 maxX, SI16 maxY )
-{
-	CacheList.resize( maxX );
-	for( SI16 i = 0; i < maxX; ++i )
-		CacheList[i].resize( maxY );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	StaCache_st *GrabCacheEntry( SI16 x, SI16 y, UI08 worldNumber )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns a pointer to the static cache entry for the 
-//|						grid x,y in worldNumber
-//o--------------------------------------------------------------------------
-StaCache_st *cMapStuff::GrabCacheEntry( SI16 x, SI16 y, UI08 worldNumber )
-{
-	if( worldNumber >= NumberOfWorlds )
-		return NULL;
-	StaCacheLine *line = StaticCache[worldNumber].GrabCacheLine( x );
-	if( line == NULL )
-		return NULL;
-	return &((*line)[y]);
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	UOMapType CalcFromFileLength( UOXFile *toCalcFrom )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	It returns the map type, based on the map's file size
-//o--------------------------------------------------------------------------
-UOMapType cMapStuff::CalcFromFileLength( UOXFile *toCalcFrom )
-{
-	if( toCalcFrom == NULL )
-	{
-		Console << "Invalid file in cMapStuff:CaclFromFileLength";
-		return UOMT_UNKNOWN;
-	}
-	SI32 fLength = toCalcFrom->getLength();
-	for( UI32 i = 0; i < UOMT_COUNT; ++i )
-	{
-		if( MapFileLengths[i] == fLength )
-			return (UOMapType)i;
-	}
-	Console << "Incorrect map Length " << fLength;
-	return UOMT_UNKNOWN;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	bool MapExists( UI08 worldNumber )
-//|	Date			-	27th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if the server has that map in memory
-//o--------------------------------------------------------------------------
-bool cMapStuff::MapExists( UI08 worldNumber )
-{
-	if( worldNumber >= NumberOfWorlds )
-		return false;
-	return (mapArrays[worldNumber] != NULL);
-}
 
 }

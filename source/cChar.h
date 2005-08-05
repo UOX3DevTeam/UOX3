@@ -104,13 +104,8 @@ protected:
 
 	void		CopyData( CChar *target );
 
-	SI16		oldLocX;
-	SI16		oldLocY;
-	SI08		oldLocZ;
-
 public:
 
-	point3		GetOldLocation( void );
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 

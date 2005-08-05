@@ -1,3 +1,15 @@
+8/4/2005 - giwo (0.98-3.0e)
+	Finished the rewrite to the messageboard system. Currently it should be fully functional with
+		the exception of a maintenance routine to clean up the files which will be added later.
+	Incorporated Grimson's Automatic-IP Updating feature.
+	Added a few fixes for NPC's staying in combat after the death of their opponent. (Grimson)
+	Incorporated lingo's rewrite to the CMapstuff code, this seems to have fixed the
+		bug causing players to fall through the floor of their house.
+	Fixed an issue causing dyed items to appear undyed when dropped on the ground.
+	Fixed a possible issue with BoatSpeech.
+	Fixed an issue causing quest regions not to function properly.
+	Fixed some issues causing items and characters to leave "ghosts" behind.
+
 7/29/2005 - Maarc
 	Several character/item properties and one item-method added to JS (check JS Docs, 0.42)
 

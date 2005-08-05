@@ -66,7 +66,7 @@ cPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0x69:	return NULL;								// Client text change
 		case 0x6C:	return ( new CPITargetCursor( s )		);
 		case 0x6F:	return ( new CPITradeMessage( s )		);
-		case 0x71:	return NULL;								// Message Board Item
+		case 0x71:	return ( new CPIMsgBoardEvent( s )		);	// Message Board Item
 		case 0x72:	return NULL;								// Combat mode
 		case 0x73:	return ( new CPIKeepAlive( s )			);
 		case 0x75:	return ( new CPIRename( s )				);
@@ -2108,5 +2108,32 @@ bool CPIDyeWindow::Handle( void )
 	Effects->PlaySound( tSock, 0x023E, true );
 	return true;
 }
+
+//0x71 Packet
+//Last Modified on Wednesday, 24-May-2000
+//Bulletin Board Message (Variable # of bytes)
+//	BYTE cmd
+//	BYTE[2] len
+//	BYTE subcmd
+//	BYTE[len-4] submessage
+
+CPIMsgBoardEvent::CPIMsgBoardEvent()
+{
+}
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s ) : cPInputBuffer( s )
+{
+	Receive();
+}
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool receive ) : cPInputBuffer( s )
+{
+}
+
+void CPIMsgBoardEvent::Receive( void )
+{
+	tSock->Receive( 3, false );
+	tSock->Receive( tSock->GetWord( 1 ), false );
+}
+
+// void CPIMsgBoardEvent::Handle() implimented in msgboard.cpp
 
 }

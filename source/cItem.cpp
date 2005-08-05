@@ -470,6 +470,9 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
 	if( GetCont() == NULL )
 		MapRegion->RemoveItem( this );
+	oldLocX = x;
+	oldLocY = y;
+	oldLocZ = z;
 	x = newX;
 	y = newY;
 	z = newZ;
@@ -1716,8 +1719,11 @@ void CItem::SendToSocket( CSocket *mSock )
 			CPItemsInContainer itemsIn( NULL, this, 0x01 );
 			mSock->Send( &itemsIn );
 		}
-		CPQueryToolTip pSend( (*this) );
-		mSock->Send( &pSend );
+		if( !CanBeObjType( OT_MULTI ) )
+		{
+			CPQueryToolTip pSend( (*this) );
+			mSock->Send( &pSend );
+		}
 	}
 }
 
@@ -1759,6 +1765,7 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 //o---------------------------------------------------------------------------o
 void CItem::RemoveFromSight( CSocket *mSock )
 {
+	CChar *tChar			= NULL;
 	CPRemoveItem toRemove	= (*this);
 	CBaseObject *iCont		= GetCont();
 
@@ -1778,10 +1785,12 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				mSock->Send( &toRemove );
 			else
 			{
-				SOCKLIST nearbyChars = FindPlayersInVisrange( this );
+				SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
 				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
-					(*cIter)->Send( &toRemove );
+					tChar = (*cIter)->CurrcharObj();
+					if( ValidateObject( tChar ) && !objInRange( tChar, this, static_cast<UI16>((*cIter)->Range() + Races->VisRange( tChar->GetRace() )) ) )
+						(*cIter)->Send( &toRemove );
 				}
 			}
 		}
@@ -1861,6 +1870,8 @@ void CItem::Cleanup( void )
 	if( !isFree() )	// We're not the default item in the handler
 	{
 		CBaseObject::Cleanup();
+
+		RemoveFromSight();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
 		{

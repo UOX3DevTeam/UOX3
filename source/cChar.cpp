@@ -103,7 +103,7 @@ const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
 const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
 const UI08			DEFPLAYER_SQUELCHED			= 0;
 const UI08			DEFPLAYER_COMMANDLEVEL 		= PLAYER_CMDLEVEL;
-const UI08			DEFPLAYER_POSTTYPE 			= LOCALPOST;
+const UI08			DEFPLAYER_POSTTYPE 			= PT_LOCAL;
 const UI16			DEFPLAYER_HAIRSTYLE			= INVALIDID;
 const UI16			DEFPLAYER_BEARDSTYLE 		= INVALIDID;
 const COLOUR		DEFPLAYER_HAIRCOLOUR 		= INVALIDCOLOUR;
@@ -149,8 +149,7 @@ commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), questTyp
 questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ), ourAccount(), step( DEFCHAR_STEP ), hairstyle( DEFPLAYER_HAIRSTYLE ), 
 beardstyle( DEFPLAYER_BEARDSTYLE ), haircolor( DEFPLAYER_HAIRCOLOUR ), beardcolour( DEFPLAYER_BEARDCOLOUR ), origSkin( colour ), priv( DEFCHAR_PRIV ),
 petguarding( DEFNPC_PETGUARDING ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ),
-speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLBACK ), PoisonStrength( DEFCHAR_POISONSTRENGTH ),
-oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
+speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLBACK ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
 	id		= 0x0190;
 	origID	= id;
@@ -1348,11 +1347,11 @@ UI08 CChar::GetQuestType( void ) const
 }
 UI08 CChar::GetQuestOrigRegion( void ) const
 {
-	return questDestRegion;
+	return questOrigRegion;
 }
 UI08 CChar::GetQuestDestRegion( void ) const
 {
-	return questOrigRegion;
+	return questDestRegion;
 }
 
 void CChar::SetQuestDestRegion( UI08 newValue )
@@ -1845,7 +1844,8 @@ void CChar::RemoveFromSight( CSocket *mSock )
 		SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
-			(*cIter)->Send( &toSend );
+			if( (*cIter)->CurrcharObj() != this )
+				(*cIter)->Send( &toSend );
 		}
 	}
 }
@@ -3438,9 +3438,6 @@ void CChar::PostLoadProcessing( void )
 		SetWeight( Weight->calcCharWeight( this ) );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		Skills->updateSkillLevel( this, i );
-	oldLocX = x;
-	oldLocY = y;
-	oldLocZ = z;
 	// We need to add things to petlists, so we can cleanup after ourselves properly - Zane
 	SetPostLoaded( true );
 }
@@ -3854,8 +3851,9 @@ void CChar::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
-		RemoveFromSight();
 		CBaseObject::Cleanup();
+
+		RemoveFromSight();
 
 		for( CItem *tItem = FirstItem(); !FinishedItems(); tItem = NextItem() )
 		{
@@ -3881,6 +3879,14 @@ void CChar::Cleanup( void )
 		{
 			if( tempChar->GetAttacker() == this )
 				tempChar->SetAttacker( NULL );
+
+			if( tempChar->GetTarg() == this )
+			{
+				tempChar->SetTarg( NULL );
+				tempChar->SetAttackFirst( false );
+				if( tempChar->IsAtWar() )
+					tempChar->ToggleCombat();
+			}
 			SetAttacker( NULL );
 		}
 		MapRegion->RemoveChar( this );
@@ -4062,11 +4068,6 @@ void CChar::Delete( void )
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );
-}
-
-point3 CChar::GetOldLocation( void )
-{
-	return point3( oldLocX, oldLocY, oldLocZ );
 }
 
 }

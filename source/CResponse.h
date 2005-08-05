@@ -274,8 +274,9 @@ class CBoatResponse : public CBaseResponse
 {
 protected:
 	std::string		ourText;
+	UI16			trigWord;
 public:
-					CBoatResponse( std::string text );
+					CBoatResponse( std::string text, UI16 tW );
 	virtual			~CBoatResponse()
 					{
 					}

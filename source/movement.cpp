@@ -1419,7 +1419,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						// Has the Escortee reached the destination ??
 						// no need for -1 check on k, as we wouldn't be here if that were true
 						if( !kChar->IsDead() && mChar.GetQuestDestRegion() == mChar.GetRegionNum() )	// Pay the Escortee and free the NPC
-							MsgBoardQuestEscortArrive( &mChar, calcSocketObjFromChar( kChar ) );
+							MsgBoardQuestEscortArrive( calcSocketObjFromChar( kChar ), &mChar );
 					}
 					break;
 				case 2: // Wander freely, avoiding obstacles.

@@ -1674,7 +1674,8 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		Effects->playDeathSound( ourTarg );
 
 		ourTarg->Delete(); // Guards, don't give body
-		mChar->ToggleCombat();
+		if( mChar->IsAtWar() )
+			mChar->ToggleCombat();
 		return;
 	}
 

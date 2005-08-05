@@ -1078,11 +1078,7 @@ void processkey( int c )
 				messageLoop << "     Cache:";
 				sprintf( temp, "        Tiles: %lu bytes", Map->TileMem );
 				messageLoop << temp;
-				sprintf( temp, "        Statics: %lu bytes", Map->StaMem );
-				messageLoop << temp;
-				sprintf( temp, "        Version: %lu bytes", Map->versionMemory );
-				messageLoop << temp;
-				sprintf( temp, "        Map0: %i bytes [%lu Hits - %lu Misses]", 9*MAP0CACHE, Map->Map0CacheHit, Map->Map0CacheMiss );
+				sprintf( temp, "        Multis: %lu bytes", Map->MultisMem );
 				messageLoop << temp;
 				size_t m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
@@ -1103,7 +1099,7 @@ void processkey( int c )
 				messageLoop << temp;
 				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * TEffects->Count() );
 				messageLoop << temp;
-				total += tmp = Map->TileMem + Map->StaMem + Map->versionMemory;
+				total += tmp = Map->TileMem + Map->MultisMem;
 				sprintf( temp, "        Approximate Total: %i bytes", total );
 				messageLoop << temp;
 				break;
@@ -1637,10 +1633,10 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 			// too long without every having its quest accepted by a player so we have to remove 
 			// its posting from the messageboard before icing the NPC
 			// Only need to remove the post if the NPC does not have a follow target set
-			if( mChar.GetQuestType() == ESCORTQUEST && !ValidateObject( mChar.GetFTarg() ) )
+			if( mChar.GetQuestType() == QT_ESCORTQUEST && !ValidateObject( mChar.GetFTarg() ) )
 			{
 				MsgBoardQuestEscortRemovePost( &mChar );
-				MsgBoardQuestEscortDelete( &mChar );
+				mChar.Delete();
 				return;
 			}
 			// Dupois - End
@@ -1923,6 +1919,23 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 	}
 	
+	UI32 oldIPTime = GetOldIPTime();
+	if( !GetIPUpdated() )
+	{
+		SetIPUpdated( true );
+		time((time_t *)&oldIPTime);
+		SetOldIPTime( oldIPTime );
+	}
+	UI32 newIPTime = GetNewIPTime();
+	time((time_t *)&newIPTime);
+	SetNewIPTime( newIPTime );
+	
+	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
+	{
+		ServerData()->RefreshIPs();
+		SetIPUpdated( false );
+	}
+	
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
 	{
@@ -2184,7 +2197,6 @@ void InitClasses( void )
 	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
 	if(( FileLookup		= new cServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
 	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );
-	Map->Cache			= cwmWorldState->ServerData()->ServerMulCachingStatus();	
 }
 
 //o---------------------------------------------------------------------------o

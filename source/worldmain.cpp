@@ -517,6 +517,51 @@ void CWorldMain::CheckTimers( void )
 	SetLClock( GetUICurrentTime() );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function	-	UI32 NewIPTime()
+//|	Programmer	-	Grimson
+//o--------------------------------------------------------------------------o
+//|	Purpose		-	Time for next auto IP update
+//o--------------------------------------------------------------------------o
+UI32 CWorldMain::GetNewIPTime( void ) const
+{
+	return newIPtime;
+}
+void CWorldMain::SetNewIPTime( UI32 newVal )
+{
+	newIPtime = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function	-	UI32 OldIPTime()
+//|	Programmer	-	Grimson
+//o--------------------------------------------------------------------------o
+//|	Purpose		-	Time of last auto IP update
+//o--------------------------------------------------------------------------o
+UI32 CWorldMain::GetOldIPTime( void ) const
+{
+	return oldIPtime;
+}
+void CWorldMain::SetOldIPTime( UI32 newVal )
+{
+	oldIPtime = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function	-	bool IPUpdated()
+//|	Programmer	-	Grimson
+//o--------------------------------------------------------------------------o
+//|	Purpose		-	have IPs been updated
+//o--------------------------------------------------------------------------o
+bool CWorldMain::GetIPUpdated( void ) const
+{
+	return ipupdated;
+}
+void CWorldMain::SetIPUpdated( bool newVal )
+{
+	ipupdated = newVal;
+}
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	void CWorldMain::doWorldLight( void )
 //|	Programmer	-	Unknown

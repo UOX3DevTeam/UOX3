@@ -13,7 +13,7 @@
 // Targeting the ground when pouring will empty the pitcher/bottle/jug.
 //
 // Todo: Descriptions for how full a liquid container is
-var scriptID = 2100;
+scriptID = 2100;
 
 function onUse( pUser, iUsed )
 {

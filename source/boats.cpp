@@ -731,71 +731,68 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 
 	UnicodeTypes mLang = mSock->Language();
-	for( UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords(); trigWord = mSock->NextTrigWord() )
+	switch( trigWord )
 	{
-			switch( trigWord )
-			{
-		case TW_BOATTURNRIGHT:
-		case TW_BOATSTARBOARD:
-			if( dir >= 2 )
-				dir -= 2;
-			else
-				dir	+= 6;
-			TurnBoat( mSock, boat, tiller, dir, true );
-			break;
-		case TW_BOATTURNLEFT:
-		case TW_BOATPORT:
-			dir += 2;
-			if( dir > 7 )
-				dir -= 8;
-			TurnBoat( mSock, boat, tiller, dir, false );
-			break;
-		case TW_BOATTURNAROUND:
-			tiller->itemTalk( mSock, 10 );
-			TurnBoat( boat, true );
-			TurnBoat( boat, true );
-			break;
-		case TW_BOATLEFT:
-			if( dir >= 2 )
-				dir -= 2;
-			else
-				dir	+= 6;
-			tiller->itemTalk( mSock, 10 );
-			MoveBoat( dir, boat );
-			break;
-		case TW_BOATRIGHT:
-			dir += 2;
-			if( dir > 7 )
-				dir -= 8;
-			tiller->itemTalk( mSock, 10 );
-			MoveBoat( dir, boat );
-			break;
-		case TW_SETNAME:
-			char msg[512];
-			strcpy( msg, UString( ourText ).upper().c_str() );
-			char *cmd; 
-			cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
-			if( !cmd )
-			{
-				tiller->itemTalk( mSock, 11 );
-				return;
-			}
-			cmd += 9;
-			while( *cmd && *cmd == ' ' )
-				++cmd; // remove any extra spaces
-			if( !(*cmd) )
-			{
-				tiller->itemTalk( mSock, 12 );
-				return;
-			}
-
-			char tempname[512];
-			sprintf( tempname, Dictionary->GetEntry( 1426, mLang ).c_str(), &ourText[msg - cmd] );
-			tiller->SetName( tempname );
-			break;
-		default:
-			break;
+	case TW_BOATTURNRIGHT:
+	case TW_BOATSTARBOARD:
+		if( dir >= 2 )
+			dir -= 2;
+		else
+			dir	+= 6;
+		TurnBoat( mSock, boat, tiller, dir, true );
+		break;
+	case TW_BOATTURNLEFT:
+	case TW_BOATPORT:
+		dir += 2;
+		if( dir > 7 )
+			dir -= 8;
+		TurnBoat( mSock, boat, tiller, dir, false );
+		break;
+	case TW_BOATTURNAROUND:
+		tiller->itemTalk( mSock, 10 );
+		TurnBoat( boat, true );
+		TurnBoat( boat, true );
+		break;
+	case TW_BOATLEFT:
+		if( dir >= 2 )
+			dir -= 2;
+		else
+			dir	+= 6;
+		tiller->itemTalk( mSock, 10 );
+		MoveBoat( dir, boat );
+		break;
+	case TW_BOATRIGHT:
+		dir += 2;
+		if( dir > 7 )
+			dir -= 8;
+		tiller->itemTalk( mSock, 10 );
+		MoveBoat( dir, boat );
+		break;
+	case TW_SETNAME:
+		char msg[512];
+		strcpy( msg, UString( ourText ).upper().c_str() );
+		char *cmd; 
+		cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
+		if( !cmd )
+		{
+			tiller->itemTalk( mSock, 11 );
+			return;
 		}
+		cmd += 9;
+		while( *cmd && *cmd == ' ' )
+			++cmd; // remove any extra spaces
+		if( !(*cmd) )
+		{
+			tiller->itemTalk( mSock, 12 );
+			return;
+		}
+
+		char tempname[512];
+		sprintf( tempname, Dictionary->GetEntry( 1426, mLang ).c_str(), &ourText[msg - cmd] );
+		tiller->SetName( tempname );
+		break;
+	default:
+		break;
 	}
 }
 

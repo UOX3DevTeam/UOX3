@@ -1,43 +1,33 @@
-
 #ifndef __FILEIO_H
 #define __FILEIO_H
+
 
 namespace UOX
 {
 
 class UOXFile
 {
-private:
-
-	int			fmode, bSize, bIndex;
-	bool		ok;
-	UI08 *		ioBuff;
-	FILE *		theFile;
-
 public:
+	UOXFile( const char* const, const char* const);
+	~UOXFile();
 
-				UOXFile( const char *, char * );
-				~UOXFile();
-
-	inline int	qRefill( void )
-	{
-		return ( bIndex >= bSize );
-	};
 	inline int	ready( void )
 	{
-		return ( ok );
+		return ( memPtr != NULL );
 	};
-	void		rewind( void );
-	void		seek( long, int );
-	inline int	eof( void )
+	void		rewind( void )
 	{
-		return ( feof( theFile ) );
+		bIndex = 0;
+	}
+	void		seek( long, int );
+	int		eof( void )
+	{
+		return ( bIndex >=  fileSize );
 	};
-	int			getch( void );
-	void		refill( void );
+	int		getch( void );
 
-	char *		gets( char *, int );
-	int			puts( char * );
+//	char*		gets( char *, int );		// deprecated, never used
+//	int		puts( char * );				// deprecated, never used
 	
 	void		getUChar( UI08 *, UI32 );
 	void		getUChar( UI08 *c )
@@ -64,7 +54,19 @@ public:
 	void		get_st_multiidx( struct st_multiidx *, UI32 = 1 );
 	void		get_staticrecord( struct staticrecord *, UI32 = 1 );
 
-	int			getLength( void );
+	int		getPosition()
+	{
+		return bIndex;
+	}
+	int		getLength( void )
+	{
+		return fileSize;
+	}
+
+private:
+	char		*memPtr;		// ptr to the beginning of the files
+	size_t	fileSize;	// file size
+	int		bIndex;		// current position
 };
 
 }

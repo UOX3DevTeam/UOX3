@@ -110,9 +110,16 @@ protected:
 	UI08			updateTypes;
 	UI08			objSettings;
 
+
+	SI16			oldLocX;
+	SI16			oldLocY;
+	SI08			oldLocZ;
+
 	void			CopyData( CBaseObject *target );
 
 public:
+
+	point3					GetOldLocation( void );
 
 	size_t 					GetNumTags( void ) const;
 	

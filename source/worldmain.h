@@ -130,6 +130,10 @@ private:
 	UI32		oldtime, newtime;
 	bool		autosaved;
 	SaveStatus	worldSaveProgress;
+	
+	// IP Update
+	UI32		oldIPtime, newIPtime;
+	bool		ipupdated;
 
 	// Misc
 	size_t		playersOnline;					// Players online
@@ -189,6 +193,14 @@ public:
 	bool		GetAutoSaved( void ) const;
 	void		SetWorldSaveProgress( SaveStatus newVal );
 	SaveStatus	GetWorldSaveProgress( void ) const;
+	
+	// IP update
+	UI32		GetNewIPTime( void ) const;
+	void		SetNewIPTime( UI32 newVal );
+	UI32		GetOldIPTime( void ) const;
+	void		SetOldIPTime( UI32 newVal );
+	void		SetIPUpdated( bool newVal );
+	bool		GetIPUpdated( void ) const;
 
 	// Misc
 	void		SetPlayersOnline( size_t newVal );

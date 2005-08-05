@@ -1,7 +1,6 @@
 #include "uox3.h"
 #include "network.h"
 #include "books.h"
-#include "msgboard.h"
 #include "movement.h"
 #include "wholist.h"
 #include "skills.h"
@@ -802,14 +801,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							}
 						}
 						break;
-						// Dupois
-					case 0x71:// Message Board Item
-						mSock->Receive( 3 );
-						mSock->Receive( mSock->GetWord( 1 ) );
-						MsgBoardEvent( mSock );
-						break;
-						// Dupois - End
-						
 					case 0xBB:
 						//	Ultima Messenger (9 bytes)
 						//	BYTE cmd
@@ -883,7 +874,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								break;
 							case 0x0E:	// UOTD actions
 								// 9 bytes long
-								Effects->PlayCharacterAnimation( ourChar, mSock->GetWord( 7 ) );
+								Effects->PlayCharacterAnimation( ourChar, mSock->GetWord( 7 ), 1 );
 								break;
 							case 0x10:	// Request for tooltip data
 								SERIAL getSer;

@@ -1135,8 +1135,8 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	UI08 targAction = (UI08)JSVAL_TO_INT( argv[0] );
-	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
+	UI16 targAction = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ) )
 	{

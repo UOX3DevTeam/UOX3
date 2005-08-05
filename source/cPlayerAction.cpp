@@ -16,7 +16,6 @@
 #include "townregion.h"
 #include "gump.h"
 #include "cGuild.h"
-#include "msgboard.h"
 #include "ssection.h"
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
@@ -1823,9 +1822,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				DoHouseTarget( mSock, static_cast<UI08>(x->GetTempVar( CITV_MOREX )) );
 			}
 			return true;
-		case IT_ARCHERYBUTTE:	// Archery buttle
-			Skills->AButte( mSock, x );
-			return true;
 		case IT_DRUM:	// Drum
 			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
 				Effects->PlaySound( mChar, 0x0038 );
@@ -1916,37 +1912,15 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return true;
 		case IT_MESSAGEBOARD:	// Message board opening
 			if( objInRange( mChar, x, DIST_NEARBY ) )
-				MsgBoardEvent( mSock );
+			{
+				CPIMsgBoardEvent *mbEvent = new CPIMsgBoardEvent( mSock, false );
+				mbEvent->Handle();
+			}
 			else
 				mSock->sysmessage( 461 );
 			return true;
 		case IT_SWORD:	// skinning
 			mSock->target( 0, TARGET_SWORD, 462 );
-			return true;
-		case IT_CAMPING:	// camping
-			if( objInRange( mChar, x, DIST_INRANGE ) )
-			{
-				if( Skills->CheckSkill( mChar, CAMPING, 0, 500 ) ) // Morrolan TODO: insert logout code for campfires here
-				{
-					i = Items->CreateItem( NULL, mChar, 0x0DE3, 1, 0, OT_ITEM );
-					if( i == NULL )
-						return true;
-					i->SetDir( 2 );
-					i->SetHP( 1 );		// only want 1 HP to decay straight away
-
-					if( x->GetCont() == NULL )
-						i->SetLocation( x );
-					else
-						i->SetLocation( mChar );
-					i->SetDecayable( true );
-					i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-					x->IncAmount( -1 );
-				}
-				else
-					mSock->sysmessage( 463 );
-			}
-			else
-				mSock->sysmessage( 393 );
 			return true;
 		case IT_MAGICSTATUE:
 			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
@@ -2033,18 +2007,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			else
 				mSock->sysmessage( 481 );
-			return true;
-		case IT_TRAININGDUMMY:	// training dummies
-		case IT_TRAININGDUMMYANIM:	// swinging training dummy
-			if( itemID == 0x1070 || itemID == 0x1074 )
-			{
-				if( objInRange( mChar, x, DIST_NEXTTILE ) )
-					Skills->TDummy( mSock );
-				else
-					mSock->sysmessage( 482 );
-			}
-			else
-				mSock->sysmessage( 483 );
 			return true;
 		default:
 			if( iType )

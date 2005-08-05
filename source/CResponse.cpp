@@ -108,7 +108,7 @@ void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 		case TW_BOATTURNAROUND:
 		case TW_BOATLEFT:
 		case TW_BOATRIGHT:
-		case TW_SETNAME:			tResp = new CBoatResponse( text );										break;
+		case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );										break;
 		default:
 	#if defined( UOX_DEBUG_MODE )
 			Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n", trigWord );
@@ -162,7 +162,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
-		if( Npc->GetQuestType() == ESCORTQUEST )
+		if( Npc->GetQuestType() == QT_ESCORTQUEST )
 		{
 			// I WILL TAKE THEE
 			// If this is a request for hire and the PC is within range of the NPC and the NPC is waiting for an ESCORT
@@ -624,9 +624,10 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CBoatResponse::CBoatResponse( std::string text )
+CBoatResponse::CBoatResponse( std::string text, UI16 tW )
 {
-	ourText = text;
+	ourText		= text;
+	trigWord	= tW;
 }
 // void CBoatResponse::Handle( CSocket *mSock, CChar *mChar ) in Boats.cpp
 

@@ -585,6 +585,20 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
+class CPIMsgBoardEvent : public cPInputBuffer
+{
+public:
+	virtual			~CPIMsgBoardEvent()
+	{
+	}
+					CPIMsgBoardEvent();
+					CPIMsgBoardEvent( CSocket *s );
+					CPIMsgBoardEvent( CSocket *s, bool receive );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
 }
 
 #endif

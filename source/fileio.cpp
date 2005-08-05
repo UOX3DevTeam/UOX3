@@ -8,84 +8,144 @@
 #include "townregion.h"
 #include "regions.h"
 
+#if UOX_PLATFORM != PLATFORM_WIN32
+#  include <sys/types.h> // open, stat, mmap, munmap
+#  include <sys/stat.h>  // stat
+#  include <fcntl.h>     // open
+#  include <unistd.h>    // stat, mmap, munmap
+#  include <sys/mman.h>  // mmap, mmunmap
+#endif
+
+
+
 namespace UOX
 {
 
-const UI16 IOBUFFLEN = 2048;
-
-UOXFile::UOXFile( const char *fileName, char *mode )
+//
+// support read-only binary mode.
+//
+UOXFile::UOXFile( const char* const fileName, const char * const)
+:memPtr(0), bIndex(0), fileSize(0)
 {
-	char  localMode[16];
-	fmode = -1, ok = false;
+#if UOX_PLATFORM == PLATFORM_WIN32
+	HANDLE hFile = ::CreateFileA(
+				fileName,
+				GENERIC_READ,
+				FILE_SHARE_READ,
+				NULL,
+				OPEN_EXISTING,
+				FILE_FLAG_SEQUENTIAL_SCAN,
+				NULL
+			);
 
-	ioBuff = new UI08[IOBUFFLEN];
+	if (hFile == INVALID_HANDLE_VALUE)
+		return;
 
-	memset( ioBuff, 0x00, sizeof( UI08 ) * IOBUFFLEN );
+	// Store the size of the file, it's used to construct
+	//  the end iterator
+	fileSize = ::GetFileSize(hFile, NULL);
 
-	if( ioBuff != NULL )
+	HANDLE hMap = ::CreateFileMapping(
+				hFile,
+				NULL,
+				PAGE_READONLY,
+				0, 0,
+				NULL
+			);
+
+	if (hMap == NULL)
 	{
-		strcpy( localMode, mode );
-
-		if( *mode == 'r' ) 
-			fmode = 0;
-		else if( *mode == 'w' ) 
-			fmode = 1;
-
-		theFile = fopen( fileName, localMode );
-
-		if( theFile == NULL ) 
-		{ 
-			ok = false; 
-			return; 
-		}
-		else
-		{
-			bSize = bIndex = IOBUFFLEN;
-			ok = true;
-		}
+		::CloseHandle(hFile);
+		return;
 	}
+
+	memPtr = (char*)::MapViewOfFile(
+						hMap,
+						FILE_MAP_READ,
+						0, 0, 0
+					);
+
+	// We hold both the file handle and the memory pointer.
+	// We can close the hMap handle now because Windows holds internally
+	//  a reference to it since there is a view mapped.
+	::CloseHandle(hMap);
+
+	// It seems like we can close the file handle as well (because
+	//  a reference is hold by the filemap object).
+	::CloseHandle(hFile);
+
+#else
+	// postfix version
+        // open the file
+	int fd = open(fileName,
+#ifdef O_NOCTTY
+				O_NOCTTY | // if stdin was closed then opening a file
+								// would cause the file to become the controlling
+								// terminal if the filename refers to a tty. Setting
+								// O_NOCTTY inhibits this.
+#endif
+				O_RDONLY);
+
+	if (fd == -1)
+		return;
+
+	// call fstat to find get information about the file just
+	// opened (size and file type)
+	struct stat stat_buf;
+	if ((fstat(fd, &stat_buf) != 0) || !S_ISREG(stat_buf.st_mode))
+	{	// if fstat returns an error or if the file isn't a
+		// regular file we give up.
+		close(fd);
+		return;
+	}
+
+	fileSize = stat_buf.st_size;
+	// perform the actual mapping
+	memPtr = (char*)mmap(0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	// it is safe to close() here. POSIX requires that the OS keeps a
+	// second handle to the file while the file is mmapped.
+	close(fd);
+#endif
 }
+
 
 UOXFile::~UOXFile()
 {
-	if( ioBuff != NULL ) 
-		delete[] ioBuff;
-	if( theFile ) 
-		fclose( theFile );
-}
-
-void UOXFile::rewind( void )
-{
-	fseek( theFile, 0, SEEK_SET );
-	bSize = bIndex = IOBUFFLEN;
-}
-
-void UOXFile::seek( long offset, int whence )
-{
-	if( whence == SEEK_SET || whence == SEEK_CUR || whence == SEEK_END )
-	{
-		fseek( theFile, offset, whence );
-		bSize = bIndex = IOBUFFLEN;
+	if( memPtr )
+	{ 
+#if UOX_PLATFORM == PLATFORM_WIN32
+		UnmapViewOfFile( memPtr );
+#else
+		munmap(memPtr, fileSize);
+#endif
 	}
 }
 
+
+void UOXFile::seek( long offset, int whence )
+{
+	if( whence == SEEK_SET )
+	{	// seek from beginnng
+		bIndex = offset;
+	} else if ( whence == SEEK_CUR )
+	{	// seek from current
+		bIndex += offset;
+	}	else if ( whence == SEEK_END )
+	{	// seek from end
+		bIndex = fileSize + offset;
+	}
+}
+
+
 int UOXFile::getch(void)
 {
-	if( qRefill() ) 
-		refill();
-
-	if( bSize != 0 ) 
-		return ioBuff[(int)bIndex++];
-	else 
-		return -1;
+	return *(memPtr + bIndex++);
 }
 
-void UOXFile::refill( void )
-{
-	bSize = fread( ioBuff, sizeof(char), IOBUFFLEN, theFile );
-	bIndex = 0;
-}
 
+//
+// never used deprecated
+/*
 char *UOXFile::gets( char *lnBuff, int lnSize )
 {
 	if( fmode == 0 )
@@ -130,74 +190,65 @@ char *UOXFile::gets( char *lnBuff, int lnSize )
 	}
 	else 
 		return NULL;
-}
+}*/
 
-int UOXFile::puts( char *lnBuff )
-{
-	if( fmode == 1 && lnBuff )
-		return fwrite( lnBuff, sizeof( char ), strlen( lnBuff ), theFile );
 
-	return -1;
-}
+//
+// deprectated, never used.  Since memory-mapped file cannot be appended,
+// so there could be surprised, and since we are not using it, we might 
+// as well deprecated it.
+//
+//int UOXFile::puts( char *lnBuff )
+//{
+//	if( fmode == 1 && lnBuff )
+//		return fwrite( lnBuff, sizeof( char ), strlen( lnBuff ), theFile );
+//
+//	return -1;
+//}
+
 
 void UOXFile::getUChar( UI08 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-		buff[i] = this->getch();
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
+
 
 void UOXFile::getChar( SI08 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-		buff[i] = this->getch();
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
+
 
 void UOXFile::getUShort( UI16 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-	{
-		buff[i] = this->getch();
-		buff[i] |= this->getch() << 8;
-	}
+	number *= sizeof(UI16);
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
+
 
 void UOXFile::getShort( SI16 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-	{
-		buff[i] = this->getch();
-		buff[i] |= this->getch() << 8;
-	}
+	number *= sizeof(SI16);        
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
+
 
 void UOXFile::getULong( UI32 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-	{
-		buff[i] = this->getch();
-		buff[i] |= this->getch() << 8;
-		buff[i] |= this->getch() << 16;
-		buff[i] |= this->getch() << 24;
-	}
+	number *= sizeof(UI32);
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
 
 void UOXFile::getLong( SI32 *buff, UI32 number )
 {
-	for( UI32 i = 0; i < number; ++i )
-	{
-		buff[i] = this->getch();
-		buff[i] |= this->getch() << 8;
-		buff[i] |= this->getch() << 16;
-		buff[i] |= this->getch() << 24;
-	}
-}
-int UOXFile::getLength( void )
-{
-	long currentPos = ftell( theFile );
-	fseek( theFile, 0L, SEEK_END );
-	long pos = ftell( theFile );
-	fseek( theFile, currentPos, SEEK_SET );
-	return pos;
+	number *= sizeof(UI32);
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
 
 
@@ -212,6 +263,9 @@ void UOXFile::get_versionrecord( struct versionrecord *buff, UI32 number )
 		getLong( &buff[i].unknown );
 	}
 }
+
+
+
 /*
 ** More info from Alazane & Circonian on this...
 **
@@ -252,17 +306,20 @@ void UOXFile::get_st_multi( struct st_multi *buff, UI32 number )
 	}
 }
 
+
 void UOXFile::get_land_st( CLand *buff, UI32 number)
 {
 	for( UI32 i = 0; i < number; ++i )
 		buff[i].Read( this );
 }
 
+
 void UOXFile::get_tile_st( CTile *buff, UI32 number)
 {
 	for( UI32 i = 0; i < number; ++i )
 		buff[i].Read( this );
 }
+
 
 void UOXFile::get_map_st(struct map_st *buff, UI32 number)
 {
@@ -273,6 +330,7 @@ void UOXFile::get_map_st(struct map_st *buff, UI32 number)
 	}
 }
 
+
 void UOXFile::get_st_multiidx(struct st_multiidx *buff, UI32 number )
 {
 	for( UI32 i = 0; i < number; ++i)
@@ -282,6 +340,7 @@ void UOXFile::get_st_multiidx(struct st_multiidx *buff, UI32 number )
 		getLong(&buff[i].unknown);
 	}
 }
+
 
 void UOXFile::get_staticrecord( struct staticrecord *buff, UI32 number )
 {

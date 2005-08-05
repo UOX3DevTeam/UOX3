@@ -229,16 +229,45 @@ void command_setpost( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
-	UI08 type = LOCALPOST;
+	CChar *mChar = s->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	PostTypes type = PT_LOCAL;
 	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
 	if( upperCommand == "GLOBAL" )
-		type = GLOBALPOST;
+		type = PT_GLOBAL;
 	else if( upperCommand == "REGIONAL" )
-		type = REGIONALPOST;
+		type = PT_REGIONAL;
 	else if( upperCommand == "LOCAL" )
-		type = LOCALPOST;
+		type = PT_LOCAL;
 
-	MsgBoardSetPostType( s, type );
+	mChar->SetPostType( static_cast<UI08>(type) );
+	
+	switch ( type )
+	{
+	case PT_LOCAL:				s->sysmessage( 726 );			break;
+	case PT_REGIONAL:			s->sysmessage( 727 );			break;
+	case PT_GLOBAL:				s->sysmessage( 728 );			break;
+	default:					s->sysmessage( 725 );			break;
+	}
+}
+
+void command_getpost( CSocket *s )
+{
+	VALIDATESOCKET( s );
+
+	CChar *mChar = s->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	switch( mChar->GetPostType() )
+	{
+	case PT_LOCAL:				s->sysmessage( 722 );			break;
+	case PT_REGIONAL:			s->sysmessage( 723 );			break;
+	case PT_GLOBAL:				s->sysmessage( 724 );			break;
+	default:					s->sysmessage( 725 );			break;
+	}
 }
 
 void command_showids( CSocket *s )
@@ -418,7 +447,7 @@ void command_memstats( CSocket *s )
 // Display some information about the cache.
 {
 	VALIDATESOCKET( s );
-	size_t cacheSize		= Map->TileMem + Map->StaMem + Map->versionMemory + 9*MAP0CACHE;
+	size_t cacheSize		= Map->TileMem + Map->MultisMem;
 	size_t charsSize		= ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) * 4;
 	size_t itemsSize		= ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) * 4;
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
@@ -431,11 +460,7 @@ void command_memstats( CSocket *s )
 	cacheStats.AddData( "Total Memory Usage: ", total );
 	cacheStats.AddData( " Cache Size: ", cacheSize );
 	cacheStats.AddData( "  Tiles: ", Map->TileMem );
-	cacheStats.AddData( "  Statics: ", Map->StaMem );
-	cacheStats.AddData( "  Version: ", Map->versionMemory );
-	cacheStats.AddData( "  Map0: ", 9*MAP0CACHE );
-	cacheStats.AddData( "   Hits: ", Map->Map0CacheHit );
-	cacheStats.AddData( "   Misses: ", Map->Map0CacheMiss );
+	cacheStats.AddData( "  Multis: ", Map->MultisMem );
 	cacheStats.AddData( " Characters Size: ", charsSize );
 	cacheStats.AddData( "  Actual Characters: ", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	cacheStats.AddData( "  Allocated Memory: ", ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ) );
@@ -1064,7 +1089,7 @@ void cCommands::CommandReset( void )
 	//O
 	//P
 	CommandMap["PDUMP"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_pdump);
-	CommandMap["POST"]    			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&MsgBoardGetPostType);
+	CommandMap["POST"]    			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_getpost);
 	//Q
 	//R
 	CommandMap["RESTOCK"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_restock);

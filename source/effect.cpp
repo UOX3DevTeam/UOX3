@@ -87,10 +87,11 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Character does a certain action
 //o---------------------------------------------------------------------------o
-void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID )
+void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
 {
 	CPCharacterAnimation toSend = (*mChar);
 	toSend.Action( actionID );
+	toSend.FrameDelay( frameDelay );
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{

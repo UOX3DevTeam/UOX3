@@ -112,7 +112,6 @@ public:
 	TargetFunc SmeltOre;
 	TargetFunc Smith;
 	TargetFunc StealingTarget;
-	TargetFunc TDummy;
 	TargetFunc TinkerAwg;
 	TargetFunc TinkerAxel;
 	TargetFunc TinkerClock;
@@ -136,7 +135,6 @@ public:
 	void Fish( CChar *i );
 
 	bool EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell );
-	void AButte( CSocket *s, CItem *x );
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );

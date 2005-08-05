@@ -1273,41 +1273,6 @@ public:
 	bool			CanSellItems( CChar &mChar, CChar &vendor );
 };
 
-struct msgBoardLine_st
-{
-	UI08 lineNum;
-	std::string line;
-
-	msgBoardLine_st( UI08 lnNum, const char *ln ) : lineNum( lnNum ), line( ln )
-	{
-	}
-
-	msgBoardLine_st() : lineNum( 0 ), line( "" )
-	{
-	}
-};
-
-struct msgBoardPost_st
-{
-	UI32 Serial;
-	UI16 Size;
-	UI08 PosterLen;
-	char Poster[MAX_NAME];
-	UI08 SubjectLen;
-	char Subject[256];
-	UI08 DateLen;
-	char Date[256];
-	UI08 Lines;
-	UI32 ParentSerial;
-
-	std::vector< msgBoardLine_st > msgBoardLine;
-
-	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 )
-	{
-		msgBoardLine.resize( 0 );
-	}
-};
-
 class CPOpenMessageBoard : public cPUOXBuffer
 {
 protected:
@@ -1320,18 +1285,20 @@ public:
 					CPOpenMessageBoard( CSocket *mSock );
 };
 
+struct msgBoardPost_st;
+
 class CPOpenMsgBoardPost : public cPUOXBuffer
 {
 protected:
 	bool			bFullPost;
 
 	virtual void	InternalReset( void );
-	virtual void	CopyData( CSocket *mSock, msgBoardPost_st mbPost );
+	virtual void	CopyData( CSocket *mSock, const msgBoardPost_st &mbPost );
 public:
 	virtual			~CPOpenMsgBoardPost()
 	{
 	}
-					CPOpenMsgBoardPost( CSocket *mSock, msgBoardPost_st mbPost, bool fullPost );
+					CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& mbPost, bool fullPost );
 };
 
 class CPSendMsgBoardPosts : public cPUOXBuffer
