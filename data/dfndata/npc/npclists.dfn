@@ -1,3 +1,84 @@
+[NPCLIST destard1]
+{
+NPCLIST=alldragonlist
+snake
+}
+
+[NPCLIST covetous2]
+{
+NPCLIST=allettin
+snake
+}
+
+[NPCLIST wrong2]
+{
+NPCLIST=murderer-archmage
+m_brigand
+}
+
+[NPCLIST hyth1]
+{
+imp
+hellhound
+gargoyle
+firegargoyle
+}
+
+[NPCLIST hyth2]
+{
+NPCLIST=alldaemonlist
+gargoyle
+imp
+hellhound
+wisp
+}
+
+[NPCLIST hyth3]
+{
+NPCLIST=alldaemonlist
+imp
+gargoyle
+balron
+}
+
+[NPCLIST hyth4]
+{
+NPCLIST=allettin
+NPCLIST=alldaemonlist
+gargoyle
+hellhound
+firegargoyle
+}
+
+[NPCLIST shame1]
+{
+npclist=allettin
+scorpion
+}
+
+[NPCLIST shame2]
+{
+npclist=allettin
+airele
+}
+
+[NPCLIST shame3]
+{
+npclist=allettin
+npclist=murderer-archmage
+scorpion
+airele
+}
+
+[NPCLIST shame5]
+{
+npclist=allelementals
+npclist=murderer-archmage
+scorpion
+eldergazer
+scorpion
+}
+
 [NPCLIST arcticlist]
 {
 polarbear
@@ -288,18 +369,12 @@ npclist=allorc
 {
 bull
 bull
-cat
 chicken
 cow
 cow
-dog
-dog
-dog
-dog
 goat
 npclist=allhorselist
 pig
-sewerrat
 sheep
 sheep
 }
@@ -556,7 +631,7 @@ giantrat
 mongbat
 wisp
 giantspider
-giantscorpion
+scorpion
 npclist=alllizardmen
 npclist=allratmen
 }
@@ -658,12 +733,13 @@ raven
 
 [NPCLIST farmlist]
 {
-bull
+npclist=allbirdlist
 chicken
-cow
 goat
 pig
 sheep
+rabbit
+jackrabbit
 }
 
 [NPCLIST randompeople]
@@ -704,6 +780,20 @@ horse
 darkhorse
 }
 
+[NPCLIST insects] 
+{ 
+giantspider 
+frostspider 
+dreadspider 
+scorpion 
+} 
+
+[NPCLIST flails] 
+{ 
+reaper 
+corpser 
+swamptentacle 
+}
 
 //NPCLists for Uni-sex vendor-spawners =)
 [NPCLIST banker]
@@ -983,6 +1073,41 @@ f_towncrier
 m_artist
 f_artist
 }
+
+[NPCLIST poorfolk]
+{
+m_whealer
+f_whealer
+m_sailor
+f_sailor
+m_beggar
+f_beggar
+m_peasant
+f_peasant
+m_gypsy
+f_gypsy
+m_seeker
+f_seeker
+}
+
+[NPCLIST richfolk]
+{
+m_fighter
+f_fighter
+m_noble
+f_noble
+m_thief
+f_thief
+m_peasant
+f_peasant
+}
+
+[NPCLIST alltownfolk]
+{
+npclist=poorfolk
+npclist=richfolk
+}
+
 // NPCLIST 10000 is the list used by the Summon Creature spell!!!!
 [NPCLIST 10000]
 {

@@ -104,6 +104,7 @@ function onUse( pUser, iUsed )
 		pUser.CustomTarget( 0, "Fill from what?" );
 		return false;
 	}
+	return false;
 }
 
 function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs

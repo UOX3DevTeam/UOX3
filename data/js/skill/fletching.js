@@ -3,6 +3,11 @@ function onUse( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		if( iUsed.id == 0x1022 || iUsed.id == 0x1023 )
+		{
+			socket.MakeMenu( 51, 8 );
+			return false;
+		}
 		socket.tempObj = iUsed;
 		var targMsg = GetDictionaryEntry( 454, socket.Language );
 		socket.CustomTarget( 1, targMsg );

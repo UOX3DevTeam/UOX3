@@ -210,7 +210,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
 		}
 		else
 		{
-			ourSpawn.spawnsection = value;
+			ourSpawn.spawnsection = splitValues[1];
 			ourSpawn.sectionalist = false;
 		}
 		okMsg( socket );

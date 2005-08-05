@@ -22,28 +22,6 @@ restock=20
 decay=1
 }
 
-[0x13e3]
-{
-get=base_item
-name=smith's hammer
-id=0x13e3
-weight=800
-value=30,15
-restock=20
-decay=1
-}
-
-[0x13e4]
-{
-get=base_item
-name=smith's hammer
-id=0x13e4
-weight=800
-value=30,15
-restock=20
-decay=1
-}
-
 [0x0faf]
 {
 get=base_item

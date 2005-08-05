@@ -216,6 +216,25 @@ movable=1
 decay=1
 }
 
+[guardhalberd]
+{ facing North
+get=base_item
+name=a guard's halberd
+id=0x143f
+weight=1600
+value=40,20
+layer=2
+lodamage=75
+hidamage=150
+hp=80
+spd=60
+str=120
+restock=10
+movable=1
+decay=1
+newbie
+}
+
 [0x0f4d]
 { facing North
 get=base_item

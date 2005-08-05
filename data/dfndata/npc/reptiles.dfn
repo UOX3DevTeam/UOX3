@@ -61,7 +61,7 @@ CARVE=17
 RACE=5
 }
 
-[icenake]
+[icesnake]
 {
 NAME=an ice snake
 ID=0x0345

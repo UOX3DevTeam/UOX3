@@ -80,6 +80,7 @@ RUNS
 }
 
 [enslavedgargoyle]
+{
 name=an enslaved gargoyle
 title=the enslaved gargoyle
 id=0x02f1
@@ -108,6 +109,7 @@ runs
 }
 
 [firegargoyle]
+{
 name=a fire gargoyle
 namelist=13
 id=0x0082
@@ -145,6 +147,7 @@ runs
 }
 
 [gargoyledestroyer]
+{
 name=a gargoyle destroyer
 title=the gargoyle destroyer
 id=0x02f3
@@ -182,6 +185,7 @@ runs
 }
 
 [gargoyleenforcer]
+{
 name=a gargoyle enforcer
 title=the gargoyle enforcer
 id=0x02f2
@@ -219,6 +223,7 @@ runs
 // gargoyle names need to be included for shopkeepers.
 
 [gargoylealchemist]
+{
 name=a gargoyle alchemist
 namelist=12
 title=the gargoyle alchemist
@@ -251,6 +256,7 @@ runs
 }
 
 [gargoylemason]
+{
 name=a gargoyle stone worker
 namelist=12
 title=the gargoyle stone worker
