@@ -12,6 +12,33 @@ namespace UOX
 {
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
+//|	Date			-	8/6/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Creates the proper MessageBoard filename based on the messageType and Borad Serial
+//o--------------------------------------------------------------------------o
+std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
+{
+	std::string fileName;
+	switch( msgType )
+	{
+		case PT_GLOBAL:			fileName = "global.bbf";												break;
+		case PT_REGIONAL:		CItem *msgBoard;
+								CTownRegion *mbRegion;
+								msgBoard = calcItemObjFromSer( msgBoardSer );
+								mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
+								fileName = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
+																										break;
+		case PT_LOCAL:			fileName = UString::number( msgBoardSer, 16 ) + ".bbf";					break;
+		default:				Console.Error( 1, "GetMsgBoardFile() Invalid post type, aborting" );
+																										break;
+	}
+	return fileName;
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	MsgBoardOpen( CSocket *mSock )
 //|	Date			-	7/16/2005
 //|	Developers		-	giwo
@@ -28,33 +55,23 @@ void MsgBoardOpen( CSocket *mSock )
 		return;
 
 	char buffer[4];
-	UString fileName, dirPath;
+	std::string fileName, dirPath;
 	UI16 postCount = 0;
+
+	mSock->PostClear();
 
 	CPOpenMessageBoard mbPost( mSock );
 	mSock->Send( &mbPost );
 
 	CPSendMsgBoardPosts mbSend;
 
-	CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		dirPath = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 
-	for( UI08 currentFile = 0; currentFile < 3 && mSock->PostCount() < MAXPOSTS; ++currentFile )
+
+	for( UI08 currentFile = 1; currentFile < 4 && mSock->PostCount() < MAXPOSTS; ++currentFile )
 	{
-		switch( currentFile )
-		{
-		case 0:							// Start with the GLOBAL.bbf file first
-			fileName = dirPath + "global.bbf";
-			break;
-		case 1:							// Set fileName to REGIONAL.bbf
-			fileName = dirPath + "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-			break;
-		case 2:							// Set fileName to LOCAL.bbf
-			fileName = dirPath + UString::number( boardSer, 16 ) + ".bbf";
-			break;
-		}
+		fileName = dirPath + GetMsgBoardFile( boardSer, currentFile );
 
 		std::ifstream file ( fileName.c_str(), std::ios::in | std::ios::binary );
 		if( file.is_open() )
@@ -110,31 +127,18 @@ void MsgBoardOpen( CSocket *mSock )
 void MsgBoardList( CSocket *mSock )
 {
 	char buffer[4];
-	UString fileName, dirPath;
+	std::string fileName, dirPath;
 
 	CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 4 ) );
 	if( !ValidateObject( msgBoard ) )
 		return;
 
-	CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		dirPath = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 
-	for( UI08 currentFile = 0; currentFile < 3 && mSock->PostCount() > 0; ++currentFile )
+	for( UI08 currentFile = 1; currentFile < 4 && mSock->PostCount() > 0; ++currentFile )
 	{
-		switch( currentFile )
-		{
-		case 0:							// Start with the GLOBAL.bbf file first
-			fileName = dirPath + "global.bbf";
-			break;
-		case 1:							// Set fileName to REGIONAL.bbf
-			fileName = dirPath + "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-			break;
-		case 2:							// Set fileName to LOCAL.bbf
-			fileName = dirPath + UString::number( mSock->GetDWord( 4 ), 16 ) + ".bbf";
-			break;
-		}
+		fileName = dirPath + GetMsgBoardFile( msgBoard->GetSerial(), currentFile );
 
 		std::ifstream file ( fileName.c_str(), std::ios::in | std::ios::binary );
 		if( file.is_open() )
@@ -226,9 +230,9 @@ bool GetMaxSerial( const std::string fileName, UI08 *nextMsgID, PostTypes msgTyp
 	{
 		switch( msgType )
 		{
-		case PT_GLOBAL:		msgIDSer = 0x01000000;		break;
-		case PT_REGIONAL:	msgIDSer = 0x02000000;		break;
-		case PT_LOCAL:		msgIDSer = 0x03000000;		break;
+		case PT_GLOBAL:		msgIDSer = BASEGLOBALPOST;		break;
+		case PT_REGIONAL:	msgIDSer = BASEREGIONPOST;		break;
+		case PT_LOCAL:		msgIDSer = BASELOCALPOST;		break;
 		}
 	}
 	else
@@ -272,17 +276,13 @@ SERIAL MsgBoardWritePost( const msgBoardNewPost_st& mbNewPost, const std::string
 	{
 		file.seekg( -4, std::ios::cur );
 		file.read( (char *)&nextMsgID, 4 );
+		file.close();
 	}
 
 	if( !GetMaxSerial( fileName, &nextMsgID[0], msgType ) )
-	{
-		file.close();
 		return msgID;
-	}
 	else
 		msgID = calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] );
-
-	file.close();
 
 	time_t now;
 	time( &now );
@@ -352,27 +352,18 @@ void MsgBoardPost( CSocket *tSock )
 		return;
 	}
 
-	SERIAL repliedTo = tSock->GetDWord( 8 );
-	if( repliedTo > 0 && repliedTo < 0x03000000 )
+	SERIAL repliedTo = (tSock->GetDWord( 8 ) - BASEITEMSERIAL);
+	if( repliedTo != 0 && repliedTo < BASELOCALPOST )
 	{
 		tSock->sysmessage( 729 );
 		return;
 	}
 
-	UString fileName;
-	switch( msgType )
+	std::string fileName = GetMsgBoardFile( tSock->GetDWord( 4 ), msgType );
+	if( fileName.empty() )
 	{
-		case PT_GLOBAL:			fileName = "global.bbf";												break;
-		case PT_REGIONAL:		CItem *msgBoard;
-								CTownRegion *mbRegion;
-								msgBoard = calcItemObjFromSer( tSock->GetDWord( 4 ) );
-								mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-								fileName = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-																										break;
-		case PT_LOCAL:			fileName = UString::number( tSock->GetDWord( 4 ), 16 ) + ".bbf";		break;
-		default:				Console.Error( 1, "MsgBoardPost() Invalid post type, aborting post" );
-								tSock->sysmessage( 725 );
-																										return;
+		tSock->sysmessage( 725 );
+		return;
 	}
 
 	std::vector< UI08 > internalBuffer;
@@ -386,6 +377,9 @@ void MsgBoardPost( CSocket *tSock )
 	mbNewPost.toggle = 0x05;
 
 	memcpy( mbNewPost.assocID, &internalBuffer[8], 4 );
+
+	if( (mbNewPost.assocID[0]&0x40) == 0x40 )
+		mbNewPost.assocID[0] -= 0x40;
 
 	UI08 i		= 0;
 	UI16 offset = 11;
@@ -411,12 +405,11 @@ void MsgBoardPost( CSocket *tSock )
 	if( msgID != INVALIDSERIAL )
 	{
 		CPAddItemToCont toAdd;
-		toAdd.Serial( msgID );
+		toAdd.Serial( (msgID | BASEITEMSERIAL) );
 		toAdd.Container( tSock->GetDWord( 4 ) );
 		tSock->Send( &toAdd );
 
 		// Setup buffer to expect to receive an ACK from the client for this posting
-		tSock->PostAckCount( 0 );
 		tSock->PostAcked( msgID );
 	}
 }
@@ -431,34 +424,23 @@ void MsgBoardPost( CSocket *tSock )
 //o--------------------------------------------------------------------------o
 void MsgBoardOpenPost( CSocket *mSock )
 {
-	std::string fileName;
 	msgBoardPost_st msgBoardPost;
 	char buffer[4];
 	char tmpLine[256];
 	size_t totalSize	= 0;
 	bool foundEntry		= false;
 
-	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
-		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
-
-	SERIAL msgSerial = mSock->GetDWord( 8 );
-	if( msgSerial >= 0x01000000 && msgSerial <= 0x01FFFFFF )
-		fileName += "global.bbf";
-	else if( msgSerial >= 0x02000000 && msgSerial <= 0x02FFFFFF )
+	std::string fileName = GetMsgBoardFile( mSock->GetDWord( 4 ), (mSock->GetByte( 8 ) - 0x40) );
+	if( fileName.empty() )
 	{
-		CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 4 ) );
-		CTownRegion *mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-		fileName += "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-	}
-	else if( msgSerial >= 0x03000000 && msgSerial <= 0xFFFFFFFF )
-		fileName += UString::number( mSock->GetDWord( 4 ), 16 ) + ".bbf";
-	else
-	{
-		Console.Error( 1, "MsgBoardOpenPost() Invalid message SN: 0x%X", mSock->GetDWord( 8 ) );
 		mSock->sysmessage( 732 );
 		return;
 	}
 
+	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
+		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) + fileName;
+
+	SERIAL msgSerial = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
 	std::ifstream file ( fileName.c_str(), std::ios::in | std::ios::binary );
 	if( file.is_open() )
 	{
@@ -472,7 +454,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 
 			file.read( buffer, 4 );
 			msgBoardPost.Serial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
-			if( msgBoardPost.Serial == mSock->GetDWord( 8 ) )
+			if( msgBoardPost.Serial == msgSerial )
 			{
 				foundEntry = true;
 
@@ -541,63 +523,79 @@ void MsgBoardOpenPost( CSocket *mSock )
 //o--------------------------------------------------------------------------o
 void MsgBoardRemovePost( CSocket *mSock )
 {
+	CChar *mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) || !mChar->IsGM() )
+	{
+		mSock->sysmessage( "Only GM's may delete posts!" );
+		return;
+	}
+
 	CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 4 ) );
 	if( !ValidateObject( msgBoard ) )
 		return;
 
-	UString fileName;
+	std::string fileName = GetMsgBoardFile( msgBoard->GetSerial(), (mSock->GetByte( 8 ) - 0x40 ) );
+	if( fileName.empty() )
+		return;
 
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
-		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
-
-	switch( mSock->GetByte( 8 ) )
-	{
-	case 0x01:
-		fileName += "global.bbf";
-		break;
-	case 0x02:
-		CTownRegion *mbRegion;
-		mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-		fileName += "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-		break;
-	default:
-		fileName += UString::number( mSock->GetDWord( 4 ), 16 ) + ".bbf";
-		break;
-	}
+		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) + fileName;
 
 	SERIAL tmpSerial	= 0;
 	size_t totalSize	= 0;
 	UI16 tmpSize		= 0;
 	char rBuffer[4];
-	bool foundPost = false;
+	bool foundPost		= false;
+	bool removeReply	= true;
 
-	std::fstream file;
-	file.open( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
+	SERIAL msgSer = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
+
+	std::fstream file ( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 	if( file.is_open() )
 	{
 		while( !file.eof() )
 		{
+			removeReply = false;
+
 			file.read( rBuffer, 2 );
 			tmpSize = ( (rBuffer[0]<<8) + rBuffer[1] );
 
-			file.seekg( tmpSize-6, std::ios::cur );
+			file.seekg( 1, std::ios::cur );
 
 			file.read( rBuffer, 4 );
 			tmpSerial = calcserial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
-			if( tmpSerial == mSock->GetDWord( 8 ) )
+			if( tmpSerial == msgSer )	// We need to remove any replies to a thread
 			{
-				foundPost = true;
-
+				removeReply = true;
 				file.seekp( totalSize+2, std::ios::beg );
 				file.put( 0x00 );
+			}
 
-				mSock->sysmessage( 734 );
-			}
-			else
+			if( removeReply || !foundPost )
 			{
-				totalSize += tmpSize;
-				file.seekg( totalSize, std::ios::beg );
+				file.seekg( tmpSize-11, std::ios::cur );
+
+				file.read( rBuffer, 4 );
+				tmpSerial = calcserial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
+				if( removeReply )
+				{
+					CPRemoveItem toRemove;
+					toRemove.Serial( (tmpSerial + BASEITEMSERIAL) );
+					mSock->Send( &toRemove );
+				}
+				else if( tmpSerial == msgSer )	// Mark it found, but don't break out of the loop, in order to get all replies
+				{
+					foundPost = true;
+
+					file.seekp( totalSize+2, std::ios::beg );
+					file.put( 0x00 );
+
+					mSock->sysmessage( 734 );
+				}
 			}
+
+			totalSize += tmpSize;
+			file.seekg( totalSize, std::ios::beg );
 		}
 		file.close();
 	}

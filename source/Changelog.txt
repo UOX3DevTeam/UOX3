@@ -1,3 +1,10 @@
+8/7/2005 - giwo (0.98-3.0f)
+	Fixed an issue causing improper reporting on the state of a stream in UString. (punt)
+	Fixed an issue causing messageboards not to display on an empty world.
+	Fixed an issue causing UOX3 to lock up when posting a reply with the 3D client.
+	Modified the post removal function to delete any replies to the post.
+	Modified CChar::PostType to stop it from being saved (this should be on a per-session basis).
+
 8/4/2005 - giwo (0.98-3.0e)
 	Finished the rewrite to the messageboard system. Currently it should be fully functional with
 		the exception of a maintenance routine to clean up the files which will be added later.

@@ -6,10 +6,14 @@ namespace UOX
 // Different types of user posts
 enum PostTypes
 {
-	PT_LOCAL =		0,
+	PT_GLOBAL =		1,
 	PT_REGIONAL,
-	PT_GLOBAL
+	PT_LOCAL
 };
+
+const UI32 BASEGLOBALPOST	= 0x01000000;
+const UI32 BASEREGIONPOST	= 0x02000000;
+const UI32 BASELOCALPOST	= 0x03000000;
 
 // Different types of QUESTS (nQuestType)
 // Added for Quests (ESCORTS)

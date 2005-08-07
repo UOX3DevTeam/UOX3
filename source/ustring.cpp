@@ -440,7 +440,7 @@ float UString::toFloat(bool * ok) const
 	input << *this ;
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -451,7 +451,7 @@ double UString::toDouble(bool * ok)  const
 	input << *this ;
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -496,7 +496,7 @@ short UString::toShort ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -533,7 +533,7 @@ unsigned short UString::toUShort ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 
 	return ( data );
@@ -570,7 +570,7 @@ int UString::toInt ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -607,7 +607,7 @@ unsigned int UString::toUInt ( bool * ok , int base ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 
 	return ( data );
@@ -644,7 +644,7 @@ long UString::toLong ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -681,7 +681,7 @@ unsigned long UString::toULong ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 

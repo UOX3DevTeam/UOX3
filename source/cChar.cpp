@@ -2307,7 +2307,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "ReAttackAt=" << GetReattackAt() << std::endl;
 	dumping << "Privileges=" << (SI16)GetPriv() << std::endl;
 	dumping << "CommandLevel=" << (SI16)GetCommandLevel() << std::endl;	// command level
-	dumping << "PostType=" << (SI16)GetPostType() << std::endl;
 	dumping << "TownPrivileges=" << (SI16)GetTownPriv() << std::endl;
 
 	// Write out the BaseSkills and the SkillLocks here
@@ -3093,10 +3092,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					rvalue = true;
 				}
 				else if( UTag == "POSTTYPE" )
-				{
-					SetPostType( data.toUByte() );
 					rvalue = true;
-				}
 				else if( UTag == "PACKITEM" )
 				{
 					packitem = (CItem *)data.toULong();
