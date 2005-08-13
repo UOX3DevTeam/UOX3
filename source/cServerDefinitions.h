@@ -51,33 +51,37 @@ public:
 	STRINGLIST *	FlattenedShortList( void );
 };
 
-class cServerDefinitions
+class CServerDefinitions
 {
 private:
 	std::vector< VECSCRIPTLIST >			ScriptListings;
 	std::map< std::string, SI16 >	priorityMap;
 	SI16							defaultPriority;
 
+	void				LoadDFNCategory( DEFINITIONCATEGORIES toLoad );
 	void				ReloadScriptObjects( void );
 	void				BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized );
 	void				CleanPriorityMap( void );
 
 	SI16				GetPriority( const char *file );
+
+	void				Cleanup( void );
 public:
-						cServerDefinitions();
-						cServerDefinitions( const char *indexfilename );
-						~cServerDefinitions();
+						CServerDefinitions();
+						CServerDefinitions( const char *indexfilename );
+						~CServerDefinitions();
 	bool				Reload( void );
+	bool				Dispose( DEFINITIONCATEGORIES toDispose );
 
 	ScriptSection	*	FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind );
 	ScriptSection	*	FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind );
 	size_t				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
 	size_t				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
-	VECSCRIPTLIST	*	GetFiles( DEFINITIONCATEGORIES typeToFind );
+	VECSCRIPTLIST&		GetFiles( DEFINITIONCATEGORIES typeToFind );
 	void				DisplayPriorityMap( void );
 };
 
-extern cServerDefinitions *FileLookup;
+extern CServerDefinitions *FileLookup;
 
 }
 

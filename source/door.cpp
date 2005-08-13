@@ -576,7 +576,8 @@ bool isDoorBlocked( CItem *door )
 		regChars->Push();
 		for( CChar *mCheck = regChars->First(); !regChars->Finished(); mCheck = regChars->Next() )
 		{
-			if( ValidateObject( mCheck ) && mCheck->GetX() == targX && mCheck->GetY() == targY && ( mCheck->IsNpc() || isOnline( (*mCheck) ) ) )
+			if( ( ValidateObject( mCheck ) && mCheck->GetX() == targX && mCheck->GetY() == targY )
+				&& ( !mCheck->IsDead() && ( mCheck->IsNpc() || isOnline( (*mCheck) ) ) ) )
 			{
 				regChars->Pop();
 				return true;

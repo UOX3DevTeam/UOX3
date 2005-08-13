@@ -72,17 +72,17 @@ void sysBroadcast( const std::string txt )
 {
 	if( !txt.empty() )
 	{
-		CSpeechEntry *toAdd = SpeechSys->Add();
-		toAdd->Speech( txt );
-		toAdd->Font( FNT_NORMAL );
-		toAdd->Speaker( INVALIDSERIAL );
-		toAdd->SpokenTo( INVALIDSERIAL );
-		toAdd->Type( SYSTEM );
-		toAdd->At( cwmWorldState->GetUICurrentTime() );
-		toAdd->TargType( SPTRG_BROADCASTPC );
-		toAdd->Colour( 0x084D );
-		toAdd->Font( FNT_BOLD );
-		toAdd->SpeakerName( "System: " );
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( txt );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( INVALIDSERIAL );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_BROADCASTPC );
+		toAdd.Colour( 0x084D );
+		toAdd.Font( FNT_BOLD );
+		toAdd.SpeakerName( "System: " );
 	}
 }
 
@@ -338,28 +338,35 @@ CSpeechQueue::~CSpeechQueue()
 	speechList.clear();
 }
 
-void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
+//o--------------------------------------------------------------------------o
+//|	Function		-	CSpeechQueue::SayIt( CSpeechEntry& toSay )
+//|	Date			-	Unknown
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Sends out specified speech entry to users
+//o--------------------------------------------------------------------------o
+void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 {
-	CPacketSpeech toSend	= (*toSay);
+	CPacketSpeech toSend	= toSay;
 	CChar *thisChar			= NULL;
 	CItem *thisItem			= NULL;
 	CBaseObject *thisObj	= NULL;
-	if( toSay->Speaker() > BASEITEMSERIAL )
+	if( toSay.Speaker() > BASEITEMSERIAL )
 	{
-		thisItem	= calcItemObjFromSer( toSay->Speaker() );
+		thisItem	= calcItemObjFromSer( toSay.Speaker() );
 		thisObj		= thisItem;
 	}
 	else
 	{
-		thisChar	= calcCharObjFromSer( toSay->Speaker() );
+		thisChar	= calcCharObjFromSer( toSay.Speaker() );
 		thisObj		= thisChar;
 	}
 	CChar *sChar	= NULL;
 	CSocket *mSock	= NULL;
-	switch( toSay->TargType() )
+	switch( toSay.TargType() )
 	{
 		case SPTRG_INDIVIDUAL:		// aimed at individual person
-			sChar = calcCharObjFromSer( toSay->SpokenTo() );
+			sChar = calcCharObjFromSer( toSay.SpokenTo() );
 			if( ValidateObject( sChar ) )
 			{
 				mSock = calcSocketObjFromChar( sChar );
@@ -381,7 +388,7 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 				CChar *mChar = mSock->CurrcharObj();
 				if( ValidateObject( mChar ) )
 				{
-					if( mChar->GetCommandLevel() >= toSay->CmdLevel() )
+					if( mChar->GetCommandLevel() >= toSay.CmdLevel() )
 						mSock->Send( &toSend );
 				}
 			}
@@ -397,7 +404,7 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 					CChar *mChar = mSock->CurrcharObj();
 					if( ValidateObject( mChar ) )
 					{
-						if( mChar->GetCommandLevel() >= toSay->CmdLevel() )
+						if( mChar->GetCommandLevel() >= toSay.CmdLevel() )
 							mSock->Send( &toSend );
 					}
 				}
@@ -407,28 +414,32 @@ void CSpeechQueue::SayIt( SPEECHLIST_ITERATOR toSay )
 	};
 }
 
-//okay.. we cannot use iterators for this, because any time something is erased from the vector, the iterator will no onger be valid... which could cause crashes and will cause weird things to happen.
-bool CSpeechQueue::InternalPoll( void )		// Send out any pending speech, returning true if entries were sent
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool CSpeechQueue::InternalPoll()
+//|	Date			-	Unknown
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Send out any pending speech, returning true if entries were sent
+//o--------------------------------------------------------------------------o
+bool CSpeechQueue::InternalPoll( void )
 {
 	bool retVal = false;
-	SPEECHLIST toKeep;
+	CSpeechEntry *toCheck = NULL;
 
-	// Iterators work just great, just make sure to test them for valididty, and stop using []access vectors wont sort.
-	SPEECHLIST_ITERATOR I;
-	for( I = speechList.begin(); I != speechList.end(); ++I )
+	SPEECHLIST_ITERATOR slIter = speechList.begin();
+	while( slIter != speechList.end() )
 	{
-		CSpeechEntry tempSpeechList = (*I);
-		if( tempSpeechList.At() == -1 || static_cast<UI32>(tempSpeechList.At()) <= cwmWorldState->GetUICurrentTime() )
+		toCheck = &(*slIter);
+
+		if( toCheck->At() == -1 || static_cast<UI32>(toCheck->At()) <= cwmWorldState->GetUICurrentTime() )
 		{
 			retVal = true;
-			// 1/13/2003 - Maarc - Quick fix for more strict gcc 3.2 compliance.
-			SayIt( (SPEECHLIST_ITERATOR) (&tempSpeechList) );
+			SayIt( (*toCheck) );
+			speechList.erase( slIter );
 		}
-		else	// We want to keep the entries that have been unsaid
-			toKeep.push_back( tempSpeechList );
+		else
+			++slIter;
 	}
-	speechList.assign( toKeep.begin(), toKeep.end() );
-	toKeep.clear();
 	return retVal;
 }
 
@@ -447,11 +458,11 @@ bool CSpeechQueue::Poll( void )
 		return InternalPoll();
 }
 
-CSpeechEntry * CSpeechQueue::Add( void )		// Make space in queue, and return pointer to new entry
+CSpeechEntry& CSpeechQueue::Add( void )		// Make space in queue, and return pointer to new entry
 {
 	size_t iSize = speechList.size();
 	speechList.resize( iSize + 1 );
-	return &speechList[iSize];
+	return speechList[iSize];
 }
 
 int CSpeechQueue::PollTime( void ) const

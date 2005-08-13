@@ -271,20 +271,28 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 {
 	if( tMake == NULL )
 		return;
-	CChar *src = calcCharObjFromSer( tMake->Source() );
-	UI16 iMaking = tMake->More2();
+
+	CChar *src			= calcCharObjFromSer( tMake->Source() );
+	UI16 iMaking		= tMake->More2();
 	createEntry *toMake = Skills->FindItem( iMaking );
 	if( toMake == NULL )
 		return;
 
-	CSocket *sock = calcSocketObjFromChar( src );
-	// Create the item in our backpack
-	CItem *targItem = Items->CreateScriptItem( sock, src, toMake->addItem, 1, OT_ITEM, true );
+	CSocket *sock	= calcSocketObjFromChar( src );
+	UString addItem = toMake->addItem;
+	UI16 amount		= 1;
+	if( addItem.sectionCount( "," ) != 0 )
+	{
+		amount		= addItem.section( ",", 1, 1 ).toUShort();
+		addItem		= addItem.section( ",", 0, 0 );
+	}
+
+	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
-		Console.Error( 2, "cSkills::MakeItem() bad script item # %s, made by player 0x%X", toMake->addItem.c_str(), src->GetSerial() );
+		Console.Error( 2, "cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() );
 		return;
 	}
 	else
@@ -438,12 +446,13 @@ void cEffects::checktempeffects( void )
 				if( !i->isDoorOpen() ) 
 					break;
 
-				i->SetDoorOpen( false );
-
 				if( isDoorBlocked( i ) )
 					tempeffect( NULL, i, 13, 0, 0, 0 );
 				else
+				{
 					useDoor( NULL, i );
+					i->SetDoorOpen( false );
+				}
 				break;
 			case 14: //- training dummies Tauriel check to see if item moved or not before searching for it
 				i = (CItem *)Effect->ObjPtr();
@@ -1024,11 +1033,16 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 
 void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 )
 {
-	if( !ValidateObject( source ) || !ValidateObject( dest ) )
+	if( !ValidateObject( dest ) )
 		return;
 
 	CTEffect *toAdd = TEffects->CreateEffect();
-	toAdd->Source( source->GetSerial() );
+
+	if( ValidateObject( source ) )
+		toAdd->Source( source->GetSerial() );
+	else
+		toAdd->Source( INVALIDSERIAL );
+
 	toAdd->Destination( dest->GetSerial() );
 	toAdd->Number( num );
 	switch( num )
@@ -1041,14 +1055,11 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			source->SkillUsed( true, ALCHEMY );
 			break;
 		case 13:
-			if( dest->isDoorOpen() )
-			{
-				dest->SetDoorOpen( false );
-				return;
-			}
+			if( !dest->isDoorOpen() )
+				dest->SetDoorOpen( true );
+
 			toAdd->ExpireTime( BuildTimeValue( 10 ) );
 			toAdd->Dispellable( false );
-			dest->SetDoorOpen( true );
 			break;
 		case 14: //training dummies swing for 5(?) seconds
 			toAdd->ExpireTime( BuildTimeValue( 5 ) );

@@ -788,15 +788,15 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 			vsprintf( tmpMsg, txt.c_str(), argptr );
 			va_end( argptr );
 
-			CSpeechEntry *toAdd = SpeechSys->Add();
-			toAdd->Speech( tmpMsg );
-			toAdd->Font( FNT_NORMAL );
-			toAdd->Speaker( INVALIDSERIAL );
-			toAdd->SpokenTo( (*cIter) );
-			toAdd->Colour( 0x000B );
-			toAdd->Type( SYSTEM );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_INDIVIDUAL );
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( tmpMsg );
+			toAdd.Font( FNT_NORMAL );
+			toAdd.Speaker( INVALIDSERIAL );
+			toAdd.SpokenTo( (*cIter) );
+			toAdd.Colour( 0x000B );
+			toAdd.Type( SYSTEM );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
 		}
 	}
 }

@@ -3048,15 +3048,15 @@ void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
-	VECSCRIPTLIST *toScan = FileLookup->GetFiles( create_def );
-	if( toScan == NULL )
+	VECSCRIPTLIST& toScan = FileLookup->GetFiles( create_def );
+	if( toScan.empty() )
 		return;
 	ScriptSection *toSearch = NULL;			// data in a particular section
 	UString tag;							// entry tag
 	UString data;							// entry data
 	UString UTag;
 	UI16 ourEntry;							// our actual entry number
-	for( VECSCRIPTLIST_CITERATOR toCheck = toScan->begin(); toCheck != toScan->end(); ++toCheck )
+	for( VECSCRIPTLIST_CITERATOR toCheck = toScan.begin(); toCheck != toScan.end(); ++toCheck )
 	{
 		if( (*toCheck) == NULL )
 			continue;

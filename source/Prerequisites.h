@@ -138,7 +138,7 @@ namespace UOX {
 	class CRace;
 	class cScript;
 	class CServerData;
-	class cServerDefinitions;
+	class CServerDefinitions;
 	class CServerProfile;
 	class cSkillClass;
 	class cSkills;

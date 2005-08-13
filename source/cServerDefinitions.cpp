@@ -16,7 +16,7 @@
 namespace UOX
 {
 
-cServerDefinitions *FileLookup;
+CServerDefinitions *FileLookup;
 
 std::string CurrentWorkingDir( void )
 {
@@ -84,7 +84,7 @@ const std::string dirnames[NUM_DEFS] =
 
 std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
 
-cServerDefinitions::cServerDefinitions() : defaultPriority( 0 )
+CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
@@ -95,7 +95,7 @@ cServerDefinitions::cServerDefinitions() : defaultPriority( 0 )
 	Console.PrintSectionBegin();
 }
 
-cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
+CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
 {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts...." << myendl;
@@ -108,7 +108,7 @@ cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPri
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool cServerDefinitions::Reload( void )
+//|	Function/Class	-	bool CServerDefinitions::Reload( void )
 //|	Date			-	04/17/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
@@ -121,33 +121,61 @@ cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPri
 //o--------------------------------------------------------------------------o
 //|	Returns				-	[TRUE] if succesfull
 //o--------------------------------------------------------------------------o	
-bool cServerDefinitions::Reload( void )
+bool CServerDefinitions::Reload( void )
 {
 	// We need to clear out the AddMenuItem Map
 	g_mmapAddMenuMap.clear();
 	//
+	Cleanup();
 	ScriptListings.clear();
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
 	return true;
 }
 
-cServerDefinitions::~cServerDefinitions()
+void CServerDefinitions::Cleanup( void )
 {
-	for( size_t i = 0; i < ScriptListings.size(); ++i )
+	std::vector< VECSCRIPTLIST >::iterator slIter;
+	for( slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter )
 	{
-		for( size_t j = 0; j < ScriptListings[i].size(); ++j )
+		VECSCRIPTLIST& toDel = (*slIter);
+		for( size_t j = 0; j < toDel.size(); ++j )
 		{
-			VECSCRIPTLIST *toDel = &(ScriptListings[i]);
-			if( toDel == NULL )
+			if( toDel[j] == NULL )
 				continue;
-			delete (*toDel)[j];
-			(*toDel)[j] = NULL;
+
+			delete toDel[j];
+			toDel[j] = NULL;
 		}
 	}
 }
 
-ScriptSection *cServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
+CServerDefinitions::~CServerDefinitions()
+{
+	Cleanup();
+}
+
+bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
+{
+	bool retVal = false;
+	if( toDispose != NUM_DEFS )
+	{
+		VECSCRIPTLIST& toDel = ScriptListings[toDispose];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
+		{
+			Script *toDelete = (*dIter);
+			if( toDelete != NULL )
+			{
+				retVal = true;
+				delete toDelete;
+			}
+		}
+		toDel.clear();
+	}
+	return retVal;
+}
+
+ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
 	UString tUFind( toFind );
 	tUFind = tUFind.upper();
@@ -155,47 +183,35 @@ ScriptSection *cServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 	ScriptSection *rvalue = NULL;
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-		if( toDel != NULL )
+		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
-			for( VECSCRIPTLIST_CITERATOR dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
+			Script *toCheck = (*dIter);
+			if( toCheck != NULL )
 			{
-				if( (*dIter) != NULL )
-				{
-					Script *toCheck = (*dIter);
-					if( toCheck != NULL )
-					{
-						rvalue = toCheck->FindEntry( tUFind );
-						if( rvalue != NULL )
-							break;
-					}
-				}
+				rvalue = toCheck->FindEntry( tUFind );
+				if( rvalue != NULL )
+					break;
 			}
 		}
 	}
 	return rvalue;
 }
 
-ScriptSection *cServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
+ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
 	ScriptSection *rvalue = NULL;
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-		if( toDel != NULL )
+		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
-			for( VECSCRIPTLIST_CITERATOR dIter = toDel->begin(); dIter != toDel->end(); ++dIter )
+			Script *toCheck = (*dIter);
+			if( toCheck != NULL )
 			{
-				if( (*dIter) != NULL )
-				{
-					Script *toCheck = (*dIter);
-					if( toCheck != NULL )
-					{
-						rvalue = toCheck->FindEntrySubStr( toFind );
-						if( rvalue != NULL )
-							break;
-					}
-				}
+				rvalue = toCheck->FindEntrySubStr( toFind );
+				if( rvalue != NULL )
+					break;
 			}
 		}
 	}
@@ -231,62 +247,70 @@ inline bool operator>( const PrioScan& x, const PrioScan& y )
 	return ( x.priority > y.priority );
 }
 
-void cServerDefinitions::ReloadScriptObjects( void )
+void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
+{
+	CleanPriorityMap();
+	defaultPriority = 0;
+	UI08 wasPriod = 2;
+	BuildPriorityMap( toLoad, wasPriod );
+
+	cDirectoryListing fileList( toLoad, defExt );
+	fileList.Flatten( true );
+	STRINGLIST *shortListing	= fileList.FlattenedShortList();
+	STRINGLIST *longListing		= fileList.FlattenedList();
+
+	std::vector< PrioScan >	mSort;
+	for( size_t i = 0; i < shortListing->size(); ++i )
+	{
+		mSort.push_back( PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
+	}
+	if( !mSort.empty() )
+	{
+		std::sort( mSort.begin(), mSort.end() );
+		Console.Print( "Section %20s : %6i", dirnames[toLoad].c_str(), 0 );
+		size_t iTotal = 0;
+		Console.TurnYellow();
+
+		std::vector< PrioScan >::const_iterator mIter;
+		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter )
+		{
+			Console.Print( "\b\b\b\b\b\b" );
+			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
+			iTotal += ScriptListings[toLoad].back()->NumEntries();
+			Console.Print( "%6i", iTotal );
+		}
+
+		Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad ) );
+		Console.TurnNormal();
+		Console.Print( " entries" );
+		switch( wasPriod )
+		{
+			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
+			case 1:	
+				//Console.PrintSpecial( CRED,		"unprioritized - no section" );		
+				Console.PrintSpecial( CGREEN,		"done" );		
+				break;	// file exist, no section
+			default:
+			case 2:	
+				//Console.PrintSpecial( CBLUE,	"unprioritized - no file" );		
+				Console.PrintSpecial( CBLUE,	"done" );		
+				break;	// no file
+		};
+	}
+}
+
+void CServerDefinitions::ReloadScriptObjects( void )
 {
 	Console << myendl;
 
 	for( int sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
 	{
-		CleanPriorityMap();
-		defaultPriority = 0;
-		UI08 wasPriod = 2;
-		BuildPriorityMap( (DEFINITIONCATEGORIES)sCtr, wasPriod );
-		cDirectoryListing fileList( (DEFINITIONCATEGORIES)sCtr, defExt );
-		fileList.Flatten( true );
-		std::vector< PrioScan * >	mSort;
-		STRINGLIST *shortListing	= fileList.FlattenedShortList();
-		STRINGLIST *longListing		= fileList.FlattenedList();
-		for( size_t i = 0; i < shortListing->size(); ++i )
-		{
-			mSort.push_back( new PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
-		}
-		if( !mSort.empty() )
-		{
-			std::sort( mSort.begin(), mSort.end() );
-			Console.Print( "Section %20s : %6i", dirnames[sCtr].c_str(), 0 );
-			size_t iTotal = 0;
-			Console.TurnYellow();
-			for( size_t iFile = 0; iFile < mSort.size(); ++iFile )
-			{
-				Console.Print( "\b\b\b\b\b\b" );
-				ScriptListings[sCtr].push_back( new Script( mSort[iFile]->filename, (DEFINITIONCATEGORIES)sCtr, false ) );
-				iTotal += (ScriptListings[sCtr])[iFile]->NumEntries();
-				Console.Print( "%6i", iTotal );
-				delete mSort[iFile];
-				mSort[iFile] = NULL;
-			}
-			Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( (DEFINITIONCATEGORIES)sCtr ) );
-			Console.TurnNormal();
-			Console.Print( " entries" );
-			switch( wasPriod )
-			{
-				case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
-				case 1:	
-					//Console.PrintSpecial( CRED,		"unprioritized - no section" );		
-					Console.PrintSpecial( CGREEN,		"done" );		
-					break;	// file exist, no section
-				default:
-				case 2:	
-					//Console.PrintSpecial( CBLUE,	"unprioritized - no file" );		
-					Console.PrintSpecial( CBLUE,	"done" );		
-					break;	// no file
-			};
-		}
+		LoadDFNCategory( (DEFINITIONCATEGORIES)sCtr );
 	}
 	CleanPriorityMap();
 }
 
-size_t cServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
+size_t CServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 {
 	size_t sumEntries = 0;
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
@@ -298,21 +322,21 @@ size_t cServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 	return sumEntries;
 }
 
-size_t cServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
+size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 {
 	return ScriptListings[typeToFind].size();
 }
 
-VECSCRIPTLIST *cServerDefinitions::GetFiles( DEFINITIONCATEGORIES typeToFind )
+VECSCRIPTLIST& CServerDefinitions::GetFiles( DEFINITIONCATEGORIES typeToFind )
 {
-	return &(ScriptListings[typeToFind]);
+	return ScriptListings[typeToFind];
 }
 
-void cServerDefinitions::CleanPriorityMap( void )
+void CServerDefinitions::CleanPriorityMap( void )
 {
 	priorityMap.clear();
 }
-void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
+void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
 {
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
 	STRINGLIST *longList = priorityFile.List();
@@ -359,7 +383,7 @@ void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 	wasPrioritized = 2;
 }
 
-void cServerDefinitions::DisplayPriorityMap( void )
+void CServerDefinitions::DisplayPriorityMap( void )
 {
 	Console << "Dumping map... " << myendl;
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.begin();
@@ -371,7 +395,7 @@ void cServerDefinitions::DisplayPriorityMap( void )
 	Console << "Dumped" << myendl;
 }
 
-SI16 cServerDefinitions::GetPriority( const char *file )
+SI16 CServerDefinitions::GetPriority( const char *file )
 {
 	SI16 retVal = defaultPriority;
 	UString lowername = UString( file ).lower();
@@ -583,9 +607,10 @@ void cDirectoryListing::Flatten( bool isParent )
 {
 	ClearFlatten();
 	std::string temp;
-	for( size_t j = 0; j < filenameList.size(); ++j )
+	STRINGLIST_ITERATOR sIter;
+	for( sIter = filenameList.begin(); sIter != filenameList.end(); ++sIter )
 	{
-		flattenedFull.push_back( filenameList[j] );
+		flattenedFull.push_back( (*sIter) );
 		if( isParent )
 			temp = "";
 		else
@@ -593,7 +618,7 @@ void cDirectoryListing::Flatten( bool isParent )
 			temp = shortCurrentDir;
 			temp += "/";
 		}
-		temp += shortList[j];
+		temp += (*sIter);
 		flattenedShort.push_back( temp );
 	}
 	DIRLIST_ITERATOR dIter;

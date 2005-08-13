@@ -322,7 +322,7 @@ void cHTMLTemplate::Process( void )
 						sPos = parsedInline.find( "%playeraccount" ); 
 						while( sPos != std::string::npos )
 						{
-							ACCOUNTSBLOCK toScan = tChar->GetAccount();
+							ACCOUNTSBLOCK& toScan = tChar->GetAccount();
 							if( toScan.wAccountIndex != AB_INVALID_ID )
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
 							sPos = parsedInline.find( "%playeraccount" );
@@ -682,12 +682,12 @@ cHTMLTemplates::~cHTMLTemplates()
 //o---------------------------------------------------------------------------o
 void cHTMLTemplates::Load( void )
 {
-	VECSCRIPTLIST *toWalk = FileLookup->GetFiles( html_def );
+	VECSCRIPTLIST& toWalk = FileLookup->GetFiles( html_def );
 	VECSCRIPTLIST_CITERATOR tIter;
-	if( toWalk == NULL )
+	if( toWalk.empty() )
 		return;
 
-	for( tIter = toWalk->begin(); tIter != toWalk->end(); ++tIter )
+	for( tIter = toWalk.begin(); tIter != toWalk.end(); ++tIter )
 	{
 		Script *toCheck = (*tIter);
 		if( toCheck != NULL )

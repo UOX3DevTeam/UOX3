@@ -563,14 +563,10 @@ void callGuards( CChar *mChar )
 
 		if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 		{
-			SI16 aiType = tempChar->GetNPCAiType();
-			if( !tempChar->IsNpc() || ( aiType == aiEVIL || aiType == aiCHAOTIC || aiType == aiHEALER_E ) )
+			if( charInRange( tempChar, mChar ) )
 			{
-				if( charInRange( tempChar, mChar ) )
-				{
-					Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
-					break;
-				}
+				Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
+				break;
 			}
 		}
 	}
@@ -921,6 +917,10 @@ void processkey( int c )
 					messageLoop << "CMD: Loading Server DFN... ";
 					cwmWorldState->SetReloadingScripts( true );
 					FileLookup->Reload();
+					LoadCreatures();
+					LoadCustomTitle();
+					LoadSkills();
+					LoadPlaces();
 					cwmWorldState->SetReloadingScripts( false );
 					messageLoop << MSG_PRINTDONE;
 				}
@@ -1435,6 +1435,27 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		}
 	}
 
+	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	{
+		if( mSock != NULL )
+			mSock->sysmessage( 1238 );
+		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
+		setcharflag( &mChar );
+	}
+	if( mChar.GetTimer( tCHAR_MURDERRATE ) && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	{
+		mChar.SetTimer( tCHAR_MURDERRATE, 0 );
+		if( mChar.GetKills() )
+			mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
+		if( mChar.GetKills() )
+			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
+		else
+			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
+		if( mSock != NULL && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
+			mSock->sysmessage( 1239 );
+		setcharflag( &mChar );
+	}
+
 	if( !mChar.IsNpc() && mSock != NULL )
 	{
 		doLightEffect( (*mSock), mChar );
@@ -1488,28 +1509,7 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 			mSock->sysmessage( 1237 );
 		}
 	}
-	
-	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
-	{
-		if( mSock != NULL )
-			mSock->sysmessage( 1238 );
-		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
-		setcharflag( &mChar );
-	}
-	if( mChar.GetTimer( tCHAR_MURDERRATE ) && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
-	{
-		mChar.SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mChar.GetKills() )
-			mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
-		if( mChar.GetKills() )
-			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
-		else
-			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
-			mSock->sysmessage( 1239 );
-		setcharflag( &mChar );
-	}
-	
+
 	if( mChar.IsCasting() && !mChar.IsJSCasting() )	// Casting a spell
 	{
 		mChar.SetNextAct( mChar.GetNextAct() - 1 );
@@ -2195,7 +2195,7 @@ void InitClasses( void )
 	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
 	if(( SpeechSys		= new CSpeechQueue()	)				== NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
 	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( FileLookup		= new cServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
+	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
 	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );
 }
 
@@ -2995,60 +2995,43 @@ void setcharflag( CChar *c )
 {
 	if( !ValidateObject( c ) )
 		return;
+
 	UI08 oldFlag = c->GetFlag();
-	if( !c->IsNpc() )
+	bool blueAnimals = false;
+
+	if( c->IsTamed() )
+	{
+		CChar *i = c->GetOwnerObj();
+		if( ValidateObject( i ) )
+			c->SetFlag( i->GetFlag() );
+		else
+		{
+			c->SetFlagBlue();
+			Console.Warning( 2, "Tamed Creature has an invalid owner, Serial: 0x%X", c->GetSerial() );
+		}
+	}
+	else
 	{
 		if( c->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 			c->SetFlagRed();
 		else if( c->GetTimer( tCHAR_CRIMFLAG ) != 0 )
 			c->SetFlagGray();
-		else 
-			c->SetFlagBlue();
-	} 
-	else 
-	{
-		switch( c->GetNPCAiType() )
+		else
 		{
-			case aiEVIL:		// Evil
-			case aiHEALER_E:	// Evil healer
-			case aiCHAOTIC:		// BS/EV
-				c->SetFlagRed();
-				break;
-			case aiHEALER_G:	// Good Healer
-			case aiPLAYERVENDOR:// Player Vendor
-			case aiGUARD:		// Guard
-			case aiBANKER:		// Banker
-			case aiFIGHTER:		// Fighter
-				c->SetFlagBlue();
-				break;
-			default:
-				if( c->GetID() == 0x0190 || c->GetID() == 0x0191 )
-				{
+			if( cwmWorldState->creatures[c->GetID()].IsAnimal() )
+			{
+				if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && c->GetRegion()->IsGuarded() )
 					c->SetFlagBlue();
-					break;
-				}
-				else if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && cwmWorldState->creatures[c->GetID()].IsAnimal() )
-				{
-					if( c->GetRegion()->IsGuarded() )	// in a guarded region, with guarded animals, animals == blue
-						c->SetFlagBlue();
-					else
-						c->SetFlagGray();
-				}
-				else	// if it's not a human form, and animal's aren't guarded, then they're gray
-					c->SetFlagGray();
-				if( ValidateObject( c->GetOwnerObj() ) && c->IsTamed() )
-				{
-					CChar *i = c->GetOwnerObj();
-					if( ValidateObject( i ) )
-						c->SetFlag( i->GetFlag() );
-					else
-						c->SetFlagBlue();
-					if( c->IsInnocent() && !cwmWorldState->ServerData()->CombatAnimalsGuarded() )
-						c->SetFlagBlue();
-				}
-				break;
+				else
+					c->SetFlagNeutral();
+			}
+			else if( c->IsNeutral() )
+				c->SetFlagNeutral();
+			else
+				c->SetFlagBlue();	
 		}
 	}
+
 	UI08 newFlag = c->GetFlag();
 	if( oldFlag != newFlag )
 	{
@@ -3057,7 +3040,7 @@ void setcharflag( CChar *c )
 		if( toExecute != NULL )
 			toExecute->OnFlagChange( c, newFlag, oldFlag );
 	}
-}
+} 
 
 void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 {

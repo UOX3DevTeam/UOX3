@@ -91,9 +91,7 @@ void HandleGuardAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) )
 				{
-					if( ( tempChar->IsCriminal() || tempChar->IsMurderer() ) && ( !tempChar->IsNpc() || 
-						( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC || 
-						tempChar->GetNPCAiType() == aiHEALER_E ) ) )
+					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
 						mChar.talkAll( 313, true );
@@ -131,9 +129,7 @@ void HandleFighterAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) )
 				{
-					if( ( tempChar->IsCriminal() || tempChar->IsMurderer() ) && ( !tempChar->IsNpc() || 
-						( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiCHAOTIC || 
-						tempChar->GetNPCAiType() == aiHEALER_E ) ) )
+					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
 						regChars->Pop();

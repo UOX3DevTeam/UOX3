@@ -412,15 +412,15 @@ void command_tell( CSocket *s )
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
 		std::string temp	= mChar->GetName() + " tells " + tChar->GetName() + ": " + txt;
-		CSpeechEntry *toAdd	= SpeechSys->Add();
-		toAdd->Font( (FontType)mChar->GetFontType() );
-		toAdd->Speech( temp );
-		toAdd->Speaker( mChar->GetSerial() );
-		toAdd->SpokenTo( tChar->GetSerial() );
-		toAdd->Type( TALK );
-		toAdd->At( cwmWorldState->GetUICurrentTime() );
-		toAdd->TargType( SPTRG_INDIVIDUAL );
-		toAdd->Colour( mChar->GetSayColour() );
+		CSpeechEntry& toAdd	= SpeechSys->Add();
+		toAdd.Font( (FontType)mChar->GetFontType() );
+		toAdd.Speech( temp );
+		toAdd.Speaker( mChar->GetSerial() );
+		toAdd.SpokenTo( tChar->GetSerial() );
+		toAdd.Type( TALK );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+		toAdd.Colour( mChar->GetSayColour() );
 	}
 }
 

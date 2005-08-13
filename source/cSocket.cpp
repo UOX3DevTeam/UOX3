@@ -1659,15 +1659,15 @@ void CSocket::sysmessage( const char *txt, ...) // System message (In lower left
 	vsprintf( msg, txt, argptr );
 	va_end( argptr );
 	
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( msg );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( INVALIDSERIAL );
-	toAdd->SpokenTo( mChar->GetSerial() );
-	toAdd->Colour( 0x0040 );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_INDIVIDUAL );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( msg );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( 0x0040 );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
 void CSocket::sysmessage( SI32 dictEntry, ... )	// System message (based on dictionary entry)
@@ -1685,15 +1685,15 @@ void CSocket::sysmessage( SI32 dictEntry, ... )	// System message (based on dict
 	vsprintf( msg, txt.c_str(), argptr );
 	va_end( argptr );
 
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( msg );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( INVALIDSERIAL );
-	toAdd->SpokenTo( mChar->GetSerial() );
-	toAdd->Colour( 0x0040 );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_INDIVIDUAL );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( msg );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( 0x0040 );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1733,14 +1733,14 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 	if( txt == NULL )
 		return;
 	CChar *mChar		= CurrcharObj();
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( txt );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( getObj->GetSerial() );
-	toAdd->SpokenTo( mChar->GetSerial() );
-	toAdd->Type( SYSTEM );
-	toAdd->At( BuildTimeValue( secsFromNow ) );
-	toAdd->TargType( SPTRG_INDIVIDUAL );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( txt );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( getObj->GetSerial() );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Type( SYSTEM );
+	toAdd.At( BuildTimeValue( secsFromNow ) );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
 
 	if( getObj->GetObjType() == OT_ITEM )
 	{
@@ -1763,13 +1763,13 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 					case 0x04:	targColour = 0x005A;	break;	// blue
 				}
 			}
-			toAdd->Colour( targColour );
+			toAdd.Colour( targColour );
 		}
 	}
 	else
-		toAdd->Colour( Colour );
-	if( toAdd->Colour() == 0 )
-		toAdd->Colour( 0x03B2 );
+		toAdd.Colour( Colour );
+	if( toAdd.Colour() == 0 )
+		toAdd.Colour( 0x03B2 );
 }
 
 void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a character
@@ -1820,15 +1820,15 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
 	
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( newName );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( i->GetSerial() );
-	toAdd->SpokenTo( mChar->GetSerial() );
-	toAdd->Colour( GetFlagColour( mChar, i ) );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_INDIVIDUAL );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( newName );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( i->GetSerial() );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( GetFlagColour( mChar, i ) );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
@@ -1849,7 +1849,7 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 		retVal = 0x0043;//Same guild (Green)
 	else if( gRel == GR_WAR || race < 0 )
 		retVal = 0x0030;//enemy guild (orange)
-	else if( trg->IsCriminal() )
+	else if( trg->IsCriminal() || trg->IsNeutral() )
 		retVal = 0x03B2;//grey
 
 	return retVal;

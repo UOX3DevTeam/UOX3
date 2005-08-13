@@ -468,14 +468,14 @@ private:
 	SPEECHLIST		speechList;
 	bool			runAsThread;
 
-	void			SayIt( SPEECHLIST_ITERATOR toSay );
+	void			SayIt( CSpeechEntry& toSay );
 	bool			InternalPoll( void );
 public:
 					CSpeechQueue( void );
 					~CSpeechQueue();
 
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
-	CSpeechEntry *	Add( void );		// Make space in queue, and return pointer to new entry
+	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
 	int				PollTime( void ) const;
 	void			PollTime( int value );
 	void			RunAsThread( bool newValue );

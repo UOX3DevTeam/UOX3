@@ -1,3 +1,15 @@
+8/13/2005 - giwo (0.98-3.0g)
+	Added automatic removal of messageboard files when the board item is removed.
+	Added in the MessageBoardMaintenance routine to automatically clean out deleted posts.
+	Incorporated Grimsons fixes to call guards when a player attacks an NPC.
+	Incorporated Grimsons changes to allow NPC's to become criminal and murderers.
+	Fixed some possible issues in speech.cpp, hopefully correcting the elusive Speech crash bug.
+	Fixed an issue causing creatures and a few other scripts not to be properly updated when reloading DFN's.
+	Added a very simple Dispose() feature to CServerDefinitions, allowing for automatic cleanup of unused DFN's.
+	Fixed an issue causing doors to never close if a player or ghost was standing in them.
+	Fixed some possibile issues with item visibility.
+	Added the ability to specify an amount with ADDITEM in create.dfn (example ADDITEM=0x1E43,15).
+
 8/7/2005 - giwo (0.98-3.0f)
 	Fixed an issue causing improper reporting on the state of a stream in UString. (punt)
 	Fixed an issue causing messageboards not to display on an empty world.

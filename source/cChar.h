@@ -74,7 +74,7 @@ protected:
 	UI08		lockState[ALLSKILLS+1];	// state of the skill locks
 
 	UI16		deaths;
-	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
+	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange 20=Neutral	// should it not be 0x10??? sounds like we're trying to do
 		
 	bool		Saved;
 	long		SavedAt;
@@ -284,6 +284,7 @@ public:
 	void		SetFlagRed( void );
 	void		SetFlagBlue( void );
 	void		SetFlagGray( void );
+	void		SetFlagNeutral( void );
 	void		SetGuildNumber( SI16 newValue );
 
 	SI08		GetFontType( void ) const;
@@ -329,6 +330,7 @@ public:
 	bool	IsMurderer( void ) const;
 	bool	IsCriminal( void ) const;
 	bool	IsInnocent( void ) const;
+	bool	IsNeutral( void ) const;
 
 	void	StopSpell( void );
 	bool	SkillUsed( UI08 skillNum ) const;

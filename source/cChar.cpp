@@ -1885,12 +1885,16 @@ void CChar::SendToSocket( CSocket *s )
 			rFlag = 2;
 		else if( guild == GR_WAR || raceCmp < 0 ) // Enemy guild.. set to orange
 			rFlag = 5;
+		else if( DidAttackFirst() && GetTarg() == mCharObj ) // If char did attack first
+			rFlag = 5;
 		else
 		{
 			if( IsMurderer() )		// Murderer
 				rFlag = 6;
 			else if( IsCriminal() )	// Criminal
-				rFlag = 3;
+				rFlag = 4;
+			else if( IsNeutral() )	// Neutral
+ 				rFlag = 3;
 		}
 		toSend.SetRepFlag( rFlag );
 		
@@ -2413,7 +2417,7 @@ bool CChar::Save( std::ofstream &outStream )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK &CChar::GetAccount(void) 
+ACCOUNTSBLOCK& CChar::GetAccount( void ) 
 {
 	if( IsNpc() || ourAccount.wAccountIndex == AB_INVALID_ID )
 	{
@@ -2424,7 +2428,7 @@ ACCOUNTSBLOCK &CChar::GetAccount(void)
 	return ourAccount;
 }
 //
-const ACCOUNTSBLOCK &CChar::GetConstAccount( void ) const
+const ACCOUNTSBLOCK& CChar::GetConstAccount( void ) const
 {
 	return ourAccount;
 }
@@ -2815,6 +2819,18 @@ bool CChar::IsCriminal( void ) const
 bool CChar::IsInnocent( void ) const
 {
 	return ( (GetFlag()&0x04) == 0x04 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool IsNeutral( void ) const
+//|   Date        -  18 July 2005
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the character is neutral
+//o---------------------------------------------------------------------------o
+bool CChar::IsNeutral( void ) const
+{
+	return ( (GetFlag()&0x20) == 0x20 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -3502,6 +3518,19 @@ void CChar::SetFlagGray( void )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  void SetFlagNeutral( void )
+//|   Date        -  18th July, 2005
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Updates the character's flag to reflect neutrality
+//o---------------------------------------------------------------------------o
+void CChar::SetFlagNeutral( void )
+{
+	flag |= 0x20;
+	flag &= 0x38;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  void CChar::SetSpeechID
 //|   Date        -  January 20th, 2002
 //|   Programmer  -  Dark-Storm
@@ -3626,21 +3655,21 @@ void CChar::talk( CSocket *s, std::string txt, bool antispam )
 		if( cont )
 		{
 			CChar *mChar		= s->CurrcharObj();
-			CSpeechEntry *toAdd = SpeechSys->Add();
+			CSpeechEntry& toAdd = SpeechSys->Add();
 
-			toAdd->Font( (FontType)GetFontType() );
-			toAdd->Speech( txt );
-			toAdd->Speaker( GetSerial() );
-			toAdd->SpokenTo( mChar->GetSerial() );
-			toAdd->Type( TALK );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_INDIVIDUAL );
+			toAdd.Font( (FontType)GetFontType() );
+			toAdd.Speech( txt );
+			toAdd.Speaker( GetSerial() );
+			toAdd.SpokenTo( mChar->GetSerial() );
+			toAdd.Type( TALK );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
 			if( GetNPCAiType() == aiEVIL )
-				toAdd->Colour( 0x0026 );
+				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
-				toAdd->Colour( 0x5A );
+				toAdd.Colour( 0x5A );
 			else
-				toAdd->Colour( GetSayColour() );
+				toAdd.Colour( GetSayColour() );
 		}
 	}
 }
@@ -3667,21 +3696,21 @@ void CChar::talkAll( std::string txt, bool antispam )
 		}
 		if( cont )
 		{
-			CSpeechEntry *toAdd = SpeechSys->Add();
+			CSpeechEntry& toAdd = SpeechSys->Add();
 
-			toAdd->Font( (FontType)GetFontType() );
-			toAdd->Speech( txt );
-			toAdd->Speaker( GetSerial() );
-			toAdd->SpokenTo( INVALIDSERIAL );
-			toAdd->Type( TALK );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_PCNPC );
+			toAdd.Font( (FontType)GetFontType() );
+			toAdd.Speech( txt );
+			toAdd.Speaker( GetSerial() );
+			toAdd.SpokenTo( INVALIDSERIAL );
+			toAdd.Type( TALK );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_PCNPC );
 			if( GetNPCAiType() == aiEVIL )
-				toAdd->Colour( 0x0026 );
+				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
-				toAdd->Colour( 0x5A );
+				toAdd.Colour( 0x5A );
 			else
-				toAdd->Colour( GetSayColour() );
+				toAdd.Colour( GetSayColour() );
 		}
 	}
 }
@@ -3735,17 +3764,17 @@ void CChar::emote( CSocket *s, std::string txt, bool antispam )
 		if( cont )
 		{
 			CChar *mChar		= s->CurrcharObj();
-			CSpeechEntry *toAdd = SpeechSys->Add();
+			CSpeechEntry& toAdd = SpeechSys->Add();
 
-			toAdd->Font( (FontType)GetFontType() );
+			toAdd.Font( (FontType)GetFontType() );
 
-			toAdd->Speech( txt );
-			toAdd->Speaker( GetSerial() );
-			toAdd->SpokenTo( mChar->GetSerial() );
-			toAdd->Type( EMOTE );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_INDIVIDUAL );
-			toAdd->Colour( GetEmoteColour() );
+			toAdd.Speech( txt );
+			toAdd.Speaker( GetSerial() );
+			toAdd.SpokenTo( mChar->GetSerial() );
+			toAdd.Type( EMOTE );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
+			toAdd.Colour( GetEmoteColour() );
 		}
 	}
 }
@@ -3914,7 +3943,7 @@ void CChar::Cleanup( void )
 		
 		if( !IsNpc() )
 		{
-			ACCOUNTSBLOCK mAcct = GetAccount();
+			ACCOUNTSBLOCK& mAcct = GetAccount();
 			if( mAcct.wAccountIndex != AB_INVALID_ID )
 			{
 				for( UI08 actr = 0; actr < 6; ++actr )

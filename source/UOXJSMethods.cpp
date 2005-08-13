@@ -70,20 +70,20 @@ void MethodError( const char *txt, ... )
 //
 void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC )
 {
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Font( fType );
-	toAdd->Speech( message );
-	toAdd->Speaker( speaker.GetSerial() );
-	toAdd->Type( sType );
-	toAdd->TargType( spTrg );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Font( fType );
+	toAdd.Speech( message );
+	toAdd.Speaker( speaker.GetSerial() );
+	toAdd.Type( sType );
+	toAdd.TargType( spTrg );
 
 	// Added that because transparent text could cause trouble
 	if( sColour != 0x1700 )
-		toAdd->Colour( sColour );
+		toAdd.Colour( sColour );
 	else
-		toAdd->Colour( 0x0058 );
+		toAdd.Colour( 0x0058 );
 
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
 }
 
 // JSGump constructor !

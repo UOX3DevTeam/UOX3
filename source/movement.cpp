@@ -161,12 +161,19 @@ UI08 FlagColour( CChar *a, CChar *b )
 			return 5;
 	}
 
+	if( ValidateObject( b ) )
+	{
+		if( a->DidAttackFirst() && a->GetTarg() == b )
+			return 5;
+	}
 	if( a->IsMurderer() )
 		return 6;		// If a bad, show as red.
 	else if( a->IsInnocent() )
 		return 1;		// If a good, show as blue.
-	else 
-		return 3;		// grey
+	else if( a->IsCriminal() )
+		return 4;		// Criminal gray
+	else
+		return 3;		// Neutral gray
 }
 
 /*
@@ -918,38 +925,38 @@ void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
 
 bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld, UI16 visibleRange, bool isGM )
 {
-	if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
+	if( isGM || tItem->GetVisible() == VT_VISIBLE || ( tItem->GetVisible() == VT_TEMPHIDDEN && tItem->GetOwnerObj() == mChar ) )
 	{
-		if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a building
+		if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
 		{
-			tItem->SendToSocket( mSock );
-			return true;
+			if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a building
+			{
+				tItem->SendToSocket( mSock );
+				return true;
+			}
+			else if( dOld == DIST_BUILDRANGE && dNew > DIST_BUILDRANGE )
+			{
+				tItem->RemoveFromSight( mSock );
+				return true;
+			}
 		}
-		else if( dOld == DIST_BUILDRANGE && dNew > DIST_BUILDRANGE )
-		{
-			tItem->RemoveFromSight( mSock );
-			return true;
-		}
-	}
-	else if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
-	{
-		if( tItem->GetVisible() != VT_PERMHIDDEN || isGM )
+		else if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 		{
 			if( mSock != NULL )
 				tItem->SendToSocket( mSock );
 			DoJSInRange( mChar, tItem );
 			return true;
 		}
-	}
-	else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
-	{
-		UI16 targTrig		= mChar->GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( targTrig );
-		if( toExecute != NULL )
-			toExecute->OutOfRange( mChar, tItem );
-		if( mSock != NULL )
-			tItem->RemoveFromSight( mSock );
-		return true;
+		else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
+		{
+			UI16 targTrig		= mChar->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
+			if( toExecute != NULL )
+				toExecute->OutOfRange( mChar, tItem );
+			if( mSock != NULL )
+				tItem->RemoveFromSight( mSock );
+			return true;
+		}
 	}
 	return false;
 }
@@ -1039,6 +1046,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	UI16 id;
 	ItemTypes type;
 	bool EffRange;
+	UI16 envTrig;
 	
 	bool isGM			= mChar->IsGM();
 	UI16 dxNew, dyNew, dxOld, dyOld;
@@ -1113,6 +1121,18 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						cScript *toExecute	= JSMapping->GetScript( targTrig );
 						if( toExecute != NULL )
 							toExecute->OnCollide( mSock, mChar, tItem );
+						else if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) )
+						{
+							envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
+							cScript *envExecute = JSMapping->GetScript( envTrig );
+							envExecute->OnCollide( mSock, mChar, tItem );
+						}
+						else if( JSMapping->GetEnvokeByID()->Check( id ) )
+						{
+							envTrig = JSMapping->GetEnvokeByID()->GetScript( id );
+							cScript *envExecute = JSMapping->GetScript( envTrig );
+							envExecute->OnCollide( mSock, mChar, tItem );
+						}
 					}
 				}
 				HandleObjectCollisions( mSock, mChar, tItem, type );

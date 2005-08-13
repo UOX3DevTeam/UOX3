@@ -1516,15 +1516,15 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 
 	UString tmpString = myChar->GetName() + yellTo + textToYell;
 
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( tmpString );
-	toAdd->Font( (FontType)myChar->GetFontType() );
-	toAdd->Speaker( INVALIDSERIAL );
-	toAdd->Colour( mySock->GetWord( 4 ) );
-	toAdd->Type( SYSTEM );
-	toAdd->At( cwmWorldState->GetUICurrentTime() );
-	toAdd->TargType( SPTRG_BROADCASTALL );
-	toAdd->CmdLevel( commandLevel );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( tmpString );
+	toAdd.Font( (FontType)myChar->GetFontType() );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.Colour( mySock->GetWord( 4 ) );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_BROADCASTALL );
+	toAdd.CmdLevel( commandLevel );
 	return JS_TRUE;
 }
 

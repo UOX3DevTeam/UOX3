@@ -45,6 +45,7 @@
 #include "cScript.h"
 #include "CJSMapping.h"
 #include "Dictionary.h"
+#include "msgboard.h"
 
 namespace UOX
 {
@@ -1619,15 +1620,15 @@ void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 	if( txt.empty() )
 		return;
 
-	CSpeechEntry *toAdd = SpeechSys->Add();
-	toAdd->Speech( txt );
-	toAdd->Font( FNT_NORMAL );
-	toAdd->Speaker( GetSerial() );
-	toAdd->SpokenTo( INVALIDSERIAL );
-	toAdd->Type( TALK );
-	toAdd->At( BuildTimeValue( secsFromNow ) );
-	toAdd->TargType( SPTRG_BROADCASTPC );
-	toAdd->Colour( Colour );
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( txt );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( GetSerial() );
+	toAdd.SpokenTo( INVALIDSERIAL );
+	toAdd.Type( TALK );
+	toAdd.At( BuildTimeValue( secsFromNow ) );
+	toAdd.TargType( SPTRG_BROADCASTPC );
+	toAdd.Colour( Colour );
 }
 
 
@@ -1707,7 +1708,7 @@ void CItem::SendToSocket( CSocket *mSock )
 	{
 		if( !mChar->IsGM() )
 		{
-			if( GetVisible() == VT_PERMHIDDEN || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ) )	// Not a GM, and not the Owner
+			if( GetVisible() != VT_VISIBLE || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ) )	// Not a GM, and not the Owner
 				return;
 		}
 		CPObjectInfo toSend( (*this), (*mChar) );
@@ -1919,6 +1920,9 @@ void CItem::Cleanup( void )
 				SetGuarded( false );
 			}
 		}
+
+		if( GetType() == IT_MESSAGEBOARD )
+			MsgBoardRemoveFile( GetSerial() );
 
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();

@@ -805,6 +805,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 	#ifdef __NEW_SKILLS__
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
 	#endif
+			case DFNTAG_NEUTRAL:				
+											if( !isGate )
+												applyTo->SetFlagNeutral();
+											break;
 			case DFNTAG_NPCWANDER:			
 											if( !isGate )
 												applyTo->SetNpcWander( static_cast<SI08>(ndata) );

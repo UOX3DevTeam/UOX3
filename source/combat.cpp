@@ -95,6 +95,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	return true;
 }
 
+void callGuards( CChar *mChar, CChar *targChar );
 //o---------------------------------------------------------------------------o
 //|	Function	-	PlayerAttack( CSocket *s )
 //|	Programmer	-	UOX DevTeam
@@ -205,10 +206,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		//flag them FIRST so that anything attacking them as a result of this is not flagged.
 		if( WillResultInCriminal( ourChar, i ) ) //REPSYS
 		{
+			criminal( ourChar );
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
 			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != aiGUARD && i->isHuman() )
+			{
 				i->talkAll( 335, true );
-			criminal( ourChar );
+				callGuards( i, ourChar );
+			}
 		}
 
 		if( i->IsGuarded() )
@@ -247,12 +251,15 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	// and, of course, call the guards ;>
 	if( WillResultInCriminal( cAttack, cTarget ) )
 	{
+		criminal( cAttack );
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded )
 		{
 			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD && cTarget->isHuman() )
+			{
 				cTarget->talkAll( 1282, true );
-			criminal( cAttack );
+				callGuards( cTarget, cAttack );
+			}
 		}
 	}
 	if( cAttack->DidAttackFirst() )
@@ -1680,11 +1687,12 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	}
 
 	// Add murder counts
-	if( !mChar->IsNpc() && !ourTarg->IsNpc() )
+	if( mChar->DidAttackFirst() && WillResultInCriminal( mChar, ourTarg ) )
 	{
-		if( mChar->DidAttackFirst() && WillResultInCriminal( mChar, ourTarg ) )
+		mChar->SetKills( mChar->GetKills() + 1 );
+		mChar->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
+		if( !mChar->IsNpc() )
 		{
-			mChar->SetKills( mChar->GetKills() + 1 );
 			CSocket *aSock = calcSocketObjFromChar( mChar );
 			if( aSock != NULL )
 			{
@@ -1693,8 +1701,12 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 					aSock->sysmessage( 315 );
 			}
 		}
-		Console.Log( Dictionary->GetEntry( 1617 ).c_str(), "PvP.log", ourTarg->GetName().c_str(), mChar->GetName().c_str() );
+		setcharflag( mChar );
 	}
+
+	if( !mChar->IsNpc() && !ourTarg->IsNpc() )
+		Console.Log( Dictionary->GetEntry( 1617 ).c_str(), "PvP.log", ourTarg->GetName().c_str(), mChar->GetName().c_str() );
+
 	InvalidateAttacker( mChar );
 	HandleDeath( ourTarg );
 }
@@ -1850,6 +1862,8 @@ bool CHandleCombat::WillResultInCriminal( CChar *mChar, CChar *targ )
 	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
 		return false;
 	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) != 0 ) 
+		return false;
+	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
 		return false;
 	else if( targ->IsInnocent() )
 		return true;

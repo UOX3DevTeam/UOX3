@@ -444,6 +444,8 @@ void LoadCustomTitle( void )
 		data = CustomTitle->GrabData();
 		cwmWorldState->murdererTags.push_back( MurderPair( tag.toShort(), data ) );
 	}
+
+	FileLookup->Dispose( titles_def );
 }
 
 //o---------------------------------------------------------------------------o
@@ -493,6 +495,8 @@ void LoadSkills( void )
 			}
 		}
 	}
+
+	FileLookup->Dispose( skills_def );
 }
 
 //o---------------------------------------------------------------------------o
@@ -506,10 +510,10 @@ void LoadSpawnRegions( void )
 	spawnregions.resize( 0 );
 	UI16 i					= 0;
 	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( spawn_def );
-	if( tScn == NULL )
+	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( spawn_def );
+	if( tScn.empty() )
 		return;
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
 	{
 		Script *spnScp = (*lIter);
 		if( spnScp == NULL )
@@ -548,12 +552,12 @@ void LoadRegions( void )
 
 	UI08 i					= 0;
 	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( regions_def );
-	if( tScn == NULL )
+	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( regions_def );
+	if( tScn.empty() )
 		return;
 
 	UString regEntry;
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
 	{
 		Script *regScp = (*lIter);
 		if( regScp == NULL )
@@ -735,6 +739,8 @@ void LoadCreatures( void )
 			}
 		}
 	}
+
+	FileLookup->Dispose( creatures_def );
 }
 
 
@@ -778,10 +784,11 @@ void LoadPlaces( void )
 
 	GoPlaces_st *toAdd		= NULL;
 	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST *tScn		= FileLookup->GetFiles( location_def );
-	if( tScn == NULL )
+	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( location_def );
+	if( tScn.empty() )
 		return;
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn->begin(); lIter != tScn->end(); ++lIter )
+
+	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
 	{
 		Script *locScp = (*lIter);
 		if( locScp == NULL )
@@ -816,6 +823,8 @@ void LoadPlaces( void )
 			}
 		}
 	}
+
+	FileLookup->Dispose( location_def );
 }
 
 bool FileExists( std::string filepath )

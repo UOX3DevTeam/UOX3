@@ -42,10 +42,11 @@ struct msgBoardPost_st
 	char Date[256];
 	UI08 Lines;
 	UI32 ParentSerial;
+	UI08 Toggle;
 
-	std::vector< std::string > msgBoardLine;
+	STRINGLIST msgBoardLine;
 
-	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 )
+	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 ), Toggle( 0 )
 	{
 		msgBoardLine.resize( 0 );
 	}
@@ -71,6 +72,7 @@ struct msgBoardNewPost_st
 void    MsgBoardQuestEscortCreate( CChar *mNPC );
 void    MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
 void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
+void	MsgBoardRemoveFile( SERIAL msgBoardSer );
 void    MsgBoardMaintenance( void );
 
 }

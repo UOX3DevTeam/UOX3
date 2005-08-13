@@ -1143,15 +1143,15 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 			va_end( argptr );
 			strcat( msg, tmpMsg );
 
-			CSpeechEntry *toAdd = SpeechSys->Add();
-			toAdd->Speech( msg );
-			toAdd->Font( FNT_NORMAL );
-			toAdd->Speaker( INVALIDSERIAL );
-			toAdd->SpokenTo( townMember[memberCounter].townMember );
-			toAdd->Colour( 0x000B );
-			toAdd->Type( SYSTEM );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_INDIVIDUAL );
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( msg );
+			toAdd.Font( FNT_NORMAL );
+			toAdd.Speaker( INVALIDSERIAL );
+			toAdd.SpokenTo( townMember[memberCounter].townMember );
+			toAdd.Colour( 0x000B );
+			toAdd.Type( SYSTEM );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
 		}
 	}
 }
