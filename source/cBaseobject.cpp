@@ -888,12 +888,12 @@ VisibleTypes CBaseObject::GetVisible( void ) const
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	string GetObjType()
+//|	Function		-	ObjcetType GetObjType()
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
-//|	Purpose			-	Returns a string that indicates the item's type
+//|	Purpose			-	Returns an ObjectType that indicates the item's type
 //o--------------------------------------------------------------------------
 ObjectType CBaseObject::GetObjType( void ) const
 {

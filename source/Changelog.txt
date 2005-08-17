@@ -1,3 +1,9 @@
+August 17 2005 - Maarc
+	Altered AreaCharFunc code in cScript to also support Items
+	Added "AreaItemFunction" as an equivalent to AreaCharacterFunction - perhaps break this into something a little more specific?  eg Items / Multis?
+	Added JS StaticAt function - takes 4 parameters - x, y, world, [tileID] (tileID is optional - if not specified, ANY static at that location will match)
+	Added JS StaticInRange function - takes 5 parameters - x, y, world, radius, tileID
+
 8/13/2005 - giwo (0.98-3.0g)
 	Added automatic removal of messageboard files when the board item is removed.
 	Added in the MessageBoardMaintenance routine to automatically clean out deleted posts.

@@ -134,6 +134,7 @@ SEngineFunc SE_NumToHexString;
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
+SEngineFunc SE_AreaItemFunction;
 SEngineFunc SE_Reload;
 
 SEngineFunc SE_GetDictionaryEntry;
@@ -148,6 +149,8 @@ SEngineFunc SE_WorldDungeonLevel;
 SEngineFunc SE_GetSocketFromIndex;
 
 SEngineFunc SE_ReloadJSFile;
+SEngineFunc SE_StaticInRange;
+SEngineFunc SE_StaticAt;
 
 #endif
 

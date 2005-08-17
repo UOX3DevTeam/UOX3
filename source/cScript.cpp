@@ -99,12 +99,15 @@ static JSFunctionSpec my_functions[] =
 	{ "WorldDarkLevel",				SE_WorldDarkLevel,			0, 0, 0 },
 	{ "WorldDungeonLevel",			SE_WorldDungeonLevel,		0, 0, 0 },
 	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
+	{ "AreaItemFunction",			SE_AreaItemFunction,		3, 0, 0 },
 	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },
 	{ "Reload",						SE_Reload,					1, 0, 0 },
 	{ "SendStaticStats",			SE_SendStaticStats,			1, 0, 0 },
 	{ "GetTileHeight",				SE_GetTileHeight,			1, 0, 0 },
 	{ "IterateOver",				SE_IterateOver,				1, 0, 0 },
 	{ "GetSocketFromIndex",			SE_GetSocketFromIndex,		1, 0, 0 },
+	{ "StaticAt",					SE_StaticAt,				4, 0, 0 },
+	{ "StaticInRange",				SE_StaticInRange,			5, 0, 0 },
  	
 	{ "RegisterCommand",			SE_RegisterCommand,			3, 0, 0 },
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },
@@ -2345,6 +2348,62 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 }
 
 //o--------------------------------------------------------------------------
+//|	Function	-	bool AreaObjFunc( char *funcName, CChar *srcChar, CBaseObject *tmpObject, CSocket *s )
+//|	Date		-	January 27, 2003
+//|	Programmer	-	Maarc
+//|	Modified	-	August 17 2005 (Maarc)
+//|						Renamed to AreaObjFunc from AreaCharFunc
+//|						Added support for other object types
+//o--------------------------------------------------------------------------
+//|	Purpose		-	Calls the function represented in funcName for the script
+//|				-	passing in two character parameters
+//o--------------------------------------------------------------------------
+bool cScript::AreaObjFunc( char *funcName, CChar *srcChar, CBaseObject *tmpObject, CSocket *s )
+{
+	if( !ValidateObject( srcChar ) || !ValidateObject( tmpObject ) || funcName == NULL )
+		return false;
+
+	jsval params[3], rval;
+	JSObject *srcObj	= AcquireObject( IUE_CHAR );
+	JSObject *tmpObj	= NULL;
+	
+	ObjectType oType	= tmpObject->GetObjType();
+	switch( oType )
+	{
+	case OT_CHAR:	tmpObj	=	AcquireObject( IUE_CHAR );		break;
+	default:		tmpObj	=	AcquireObject( IUE_ITEM );		break;
+	}
+
+	JS_SetPrivate( targContext, srcObj, srcChar );
+	JS_SetPrivate( targContext, tmpObj, tmpObject );
+
+	params[0]			= OBJECT_TO_JSVAL( srcObj );
+	params[1]			= OBJECT_TO_JSVAL( tmpObj );
+	JSObject *sockObj	= NULL;
+
+	if( s != NULL )
+	{
+		sockObj		= AcquireObject( IUE_SOCK );
+		JS_SetPrivate( targContext, sockObj, s );
+		params[2]	= OBJECT_TO_JSVAL( sockObj );
+	}
+	else
+	{
+		params[2]	= JSVAL_NULL;
+	}
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	ReleaseObject( srcObj, IUE_CHAR );
+	if( oType == OT_CHAR )
+		ReleaseObject( tmpObj, IUE_CHAR );
+	else
+		ReleaseObject( tmpObj, IUE_ITEM );
+	if( s != NULL )
+		ReleaseObject( sockObj, IUE_SOCK );
+	return ( retVal == JS_TRUE );
+}
+
+/*//o--------------------------------------------------------------------------
 //|	Function	-	bool AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar )
 //|	Date		-	January 27, 2003
 //|	Programmer	-	Maarc
@@ -2384,7 +2443,7 @@ bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSoc
 		ReleaseObject( sockObj, IUE_SOCK );
 	return ( retVal == JS_TRUE );
 }
-
+*/
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool cScript::OnCommand( CSocket *CSocket )
 //|	Date			-	1/13/2003 11:17:48 PM

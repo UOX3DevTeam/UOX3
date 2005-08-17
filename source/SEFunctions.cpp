@@ -1254,16 +1254,84 @@ JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *
 {
 	if( argc != 3 )
 	{
-		DoSEErrorMessage( "GetTileIDAtMapCoord: Invalid number of arguments (takes 2)" );
+		DoSEErrorMessage( "GetTileIDAtMapCoord: Invalid number of arguments (takes 3)" );
 		return JS_FALSE;
 	}
 
-	UI16 xLoc = (UI16)JSVAL_TO_INT( argv[0] );
-	UI16 yLoc = (UI16)JSVAL_TO_INT( argv[1] );
+	UI16 xLoc		= (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 yLoc		= (UI16)JSVAL_TO_INT( argv[1] );
 	UI08 wrldNumber = (UI08)JSVAL_TO_INT( argv[2] );
+	map_st mMap		= Map->SeekMap0( xLoc, yLoc, wrldNumber );
+	*rval			= INT_TO_JSVAL( mMap.id );
+	return JS_TRUE;
+}
 
-	map_st mMap = Map->SeekMap0( xLoc, yLoc, wrldNumber );
-	*rval = INT_TO_JSVAL( mMap.id );
+JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		DoSEErrorMessage( "StaticInRange: Invalid number of arguments (takes 5, x, y, world, radius, tile)" );
+		return JS_FALSE;
+	}
+
+	UI16 xLoc		= (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 yLoc		= (UI16)JSVAL_TO_INT( argv[1] );
+	UI08 wrldNumber = (UI08)JSVAL_TO_INT( argv[2] );
+	UI16 radius		= (UI16)JSVAL_TO_INT( argv[3] );
+	UI16 tileID		= (UI16)JSVAL_TO_INT( argv[4] );
+	bool tileFound	= false;
+
+	for( int i = xLoc - radius; i <= (xLoc + radius); ++i )
+	{
+		for( int j = yLoc - radius; j <= (yLoc + radius); ++j )
+		{
+			MapStaticIterator msi( xLoc, yLoc, wrldNumber );
+			for( staticrecord *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
+			{
+				if( mRec != NULL && mRec->itemid == tileID )
+				{
+					tileFound = true;
+					break;
+				}
+			}
+		}
+	}
+
+	*rval			= BOOLEAN_TO_JSVAL( tileFound );
+	return JS_TRUE;
+}
+
+JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 && argc != 3 )
+	{
+		DoSEErrorMessage( "StaticAt: Invalid number of arguments (takes 4, x, y, world, tile)" );
+		return JS_FALSE;
+	}
+
+	UI16 xLoc		= (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 yLoc		= (UI16)JSVAL_TO_INT( argv[1] );
+	UI08 wrldNumber = (UI08)JSVAL_TO_INT( argv[2] );
+	UI16 tileID		= 0xFFFF;
+	bool tileMatch	= false;
+	if( argc == 4 )
+	{
+		tileID		= (UI16)JSVAL_TO_INT( argv[3] );
+		tileMatch	= true;
+	}
+	bool tileFound	= false;
+
+	MapStaticIterator msi( xLoc, yLoc, wrldNumber );
+
+	for( staticrecord *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
+	{
+		if( mRec != NULL && (!tileMatch || (tileMatch && mRec->itemid == tileID) ) )
+		{
+			tileFound = true;
+			break;
+		}
+	}
+	*rval			= BOOLEAN_TO_JSVAL( tileFound );
 	return JS_TRUE;
 }
 
@@ -1387,7 +1455,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 				continue;
 			if( objInRange( srcChar, tempChar, (UI16)distance ) )
 			{
-				if( myScript->AreaCharFunc( trgFunc, srcChar, tempChar, srcSocket ) )
+				if( myScript->AreaObjFunc( trgFunc, srcChar, tempChar, srcSocket ) )
 					++retCounter;
 			}
 		}
@@ -1396,6 +1464,67 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
 }
+
+JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 && argc != 4 )
+	{
+		// function name, source character, range
+		DoSEErrorMessage( "AreaItemFunction: Invalid number of arguments (takes 3/4, function name, source character, range, optional socket)" );
+		return JS_FALSE;
+	}
+
+	// Do parameter validation here
+	JSObject *srcSocketObj		= NULL;
+	CSocket *srcSocket			= NULL;
+ 	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( trgFunc == NULL )
+	{
+		DoSEErrorMessage( "AreaItemFunction: Argument 0 not a valid string" );
+		return JS_FALSE;
+	}
+
+	JSObject *srcCharacterObj	= JSVAL_TO_OBJECT( argv[1] );
+	CChar *srcChar				= (CChar *)JS_GetPrivate( cx, srcCharacterObj );
+
+	if( !ValidateObject( srcChar ) )
+	{
+		DoSEErrorMessage( "AreaItemFunction: Argument 1 not a valid character" );
+		return JS_FALSE;
+	}
+	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
+	if( argc == 4 )
+	{
+		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
+		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcCharacterObj );
+	}
+	
+	UI16 retCounter					= 0;
+	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcChar );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		SubRegion *MapArea = (*rIter);
+		if( MapArea == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		regItems->Push();
+		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+		{
+			if( !ValidateObject( tempItem ) )
+				continue;
+			if( objInRange( srcChar, tempItem, (UI16)distance ) )
+			{
+				if( myScript->AreaObjFunc( trgFunc, srcChar, tempItem, srcSocket ) )
+					++retCounter;
+			}
+		}
+		regItems->Pop();
+	}
+	*rval = INT_TO_JSVAL( retCounter );
+	return JS_TRUE;
+}
+
 //o--------------------------------------------------------------------------o
 //|	Function		-	JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date			-	1/13/2003 11:09:39 PM
