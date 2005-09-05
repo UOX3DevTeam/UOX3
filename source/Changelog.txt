@@ -1,3 +1,7 @@
+9/05/2005 - Xuri
+	Fixed superfluous empty spaces after reputation titles and race names in paperdolls.
+	Removed [murderer] appearing behind the character names hovering over the head of characters.
+
 August 17 2005 - Maarc
 	Altered AreaCharFunc code in cScript to also support Items
 	Added "AreaItemFunction" as an equivalent to AreaCharacterFunction - perhaps break this into something a little more specific?  eg Items / Multis?
