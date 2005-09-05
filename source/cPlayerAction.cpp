@@ -1283,10 +1283,10 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 				titlenum = 42;
 		}
 		if( !cwmWorldState->title[titlenum].fame.empty() )
-			thetitle = cwmWorldState->title[titlenum].fame + " ";
+			thetitle = cwmWorldState->title[titlenum].fame + "";
 
 		if( p->GetRace() != 0 && p->GetRace() != 65535 )
-			thetitle = thetitle + Races->Name( p->GetRace() ) + " ";
+			thetitle = thetitle + Races->Name( p->GetRace() ) + "";
 
 		if( f >= 10000 ) // Morollans bugfix for repsys
 		{

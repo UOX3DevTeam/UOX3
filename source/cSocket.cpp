@@ -1815,8 +1815,8 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 		newName += " (frozen) ";
 	if( i->IsGuarded() )
 		newName += " (guarded)";
-	if( i->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-		newName += " [Murderer]";
+//	if( i->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+//		newName += " [Murderer]";
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
 	
