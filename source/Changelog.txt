@@ -1,3 +1,6 @@
+9/06/2005 - Xuri
+	Check to see if animals have NPCAI 2 before guarding them in town when COMBATANIMALSGUARDED=1 in uox.ini
+
 9/05/2005 - Xuri
 	Fixed superfluous empty spaces after reputation titles and race names in paperdolls.
 	Removed [murderer] appearing behind the character names hovering over the head of characters.
