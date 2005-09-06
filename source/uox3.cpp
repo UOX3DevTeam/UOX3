@@ -3018,7 +3018,7 @@ void setcharflag( CChar *c )
 			c->SetFlagGray();
 		else
 		{
-			if( cwmWorldState->creatures[c->GetID()].IsAnimal() )
+			if( cwmWorldState->creatures[c->GetID()].IsAnimal() && c->GetNPCAiType() != aiEVIL )
 			{
 				if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && c->GetRegion()->IsGuarded() )
 					c->SetFlagBlue();
