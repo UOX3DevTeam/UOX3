@@ -1,5 +1,3 @@
-EXTRA_DIST = autogen.sh
-
 bin_PROGRAMS = uox3
 
 uox3_SOURCES = \
@@ -79,4 +77,4 @@ uox3_SOURCES = \
 	wholist.cpp \
 	worldmain.cpp
 
-uox3_LDADD = js32.a -lpthread
+uox3_LDADD = @UOX3_LIBS@
