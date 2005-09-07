@@ -402,6 +402,7 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			case 0x7A:	c->SetID( 0x3EB4 );	break;	// Unicorn
 			case 0x84:	c->SetID( 0x3EAD );	break;	// Kirin
 			case 0x90:	c->SetID( 0x3EB3 );	break;	// Sea Horse
+			case 0xA9:	c->SetID( 0x3E95 );	break;  // Giant Fire Beetle  
 			case 0xAA:	c->SetID( 0x3EAB );	break;	// Etheral Llama
 			case 0xAB:	c->SetID( 0x3EAC );	break;	// Etheral Ostard
 			case 0xB1:	c->SetID( 0x3EA7 );	break;	// Nightmare
@@ -422,6 +423,10 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			case 0xDC:	c->SetID( 0x3EA6 );	break;	// llama
 			case 0xE2:	c->SetID( 0x3EA0 );	break;	// horse
 			case 0xE4:	c->SetID( 0x3EA1 );	break;	// horse
+			case 0xF3:	c->SetID( 0x3E94 );	break;	// Hai Riyo
+			case 0x114:	c->SetID( 0x3E90 );	break;	// Chimera
+			case 0x115:	c->SetID( 0x3E91 );	break;	// Cu Sidhe
+			case 0x11c:	c->SetID( 0x3E92 );	break;	// Mondain's Steed
 			case 0x319:	c->SetID( 0x3EBB );	break;  // Skeletal Mount 
 			case 0x317:	c->SetID( 0x3EBC );	break;  // Giant Beetle  
 			case 0x31A:	c->SetID( 0x3EBD );	break;  // Swamp Dragon  

@@ -2241,6 +2241,13 @@ bool CChar::IsValidMount( void ) const
 		case 0x31A:		// Swamp Dragon
 		case 0x31F:		// Armored Swamp Dragon
 		case 0x3E6:		// Kirin
+			//Samurai Empire Ridables
+		case 0xA9:		// Giant Fire Beetle
+		case 0xF3:		// Hai Riyo
+			//Mondain's Legacy Ridables
+		case 0x114:		// Chimera
+		case 0x115:		// Cu Sidhe
+		case 0x11C:		// Mondain's Steed
 			retVal = true;
 			break;
 		default:

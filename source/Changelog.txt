@@ -1,4 +1,7 @@
 9/07/2005 - Xuri
+	Added support for new mounts: giant fire beetle, hiryu, chimera, cu sidhe, mondain's steed
+
+9/07/2005 - Xuri
 	Fixed an error in a debug message that would stop UOX3 from compiling if DEBUG_WALKING was enabled.
 	Fixed; UOX3 didn't retrieve the correct FY2 value for spawned NPCs using wandermode 3 (shopkeepers, for instance).
 	Added JS InitWanderArea function - allows wanderareas to be dynamically reset through JS.
