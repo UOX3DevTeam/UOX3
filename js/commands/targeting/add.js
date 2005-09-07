@@ -72,6 +72,7 @@ function onCallback0( socket, ourObj )
 		var npcSection 	= socket.xText;
 
 		var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber );
+		newChar.InitWanderArea();
 	}
 }
 
