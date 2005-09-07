@@ -1,3 +1,8 @@
+9/07/2005 - Xuri
+	Fixed an error in a debug message that would stop UOX3 from compiling if DEBUG_WALKING was enabled.
+	Fixed; UOX3 didn't retrieve the correct FY2 value for spawned NPCs using wandermode 3 (shopkeepers, for instance).
+	Added JS InitWanderArea function - allows wanderareas to be dynamically reset through JS.
+
 9/06/2005 - Xuri
 	Check to see if animals have NPCAI 2 before guarding them in town when COMBATANIMALSGUARDED=1 in uox.ini
 

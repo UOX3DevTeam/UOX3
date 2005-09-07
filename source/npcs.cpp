@@ -295,7 +295,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 			c->SetFx( c->GetX() - xAway, 0 );
 			c->SetFy( c->GetY() - yAway, 0 );
 			c->SetFx( c->GetX() + xAway, 1 );
-			c->SetFy( c->GetX() + yAway, 1 );
+			c->SetFy( c->GetY() + yAway, 1 );
 		}
 	}
 	else if( 4 == c->GetNpcWander() )

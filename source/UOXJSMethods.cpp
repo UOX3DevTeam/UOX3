@@ -53,6 +53,7 @@ namespace UOX
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
 bool BuyShop( CSocket *s, CChar *c );
+void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 
 void MethodError( const char *txt, ... )
 {
@@ -4955,7 +4956,17 @@ JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
-
+JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	CChar *mChar = static_cast<CChar *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
+	{
+		MethodError( "InitWanderArea: Invalid character" );
+		return JS_FALSE;
+	}
+	InitializeWanderArea( mChar, 10, 10 );
+	return JS_TRUE;
+}
 
 }
 

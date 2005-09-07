@@ -103,6 +103,7 @@ JSMethodFunc CChar_SpellMoveEffect;
 JSMethodFunc CChar_SpellStaticEffect;
 JSMethodFunc CChar_BreakConcentration;
 JSMethodFunc CChar_FindItemType;
+JSMethodFunc CChar_InitWanderArea;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
@@ -316,7 +317,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "SpellStaticEffect",	CChar_SpellStaticEffect,1, 0, 0 },
 	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
 	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
-
+	{ "InitWanderArea",		CChar_InitWanderArea,	0, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 

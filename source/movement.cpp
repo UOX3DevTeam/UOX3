@@ -423,7 +423,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			deny( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		Console..Print( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() );
+		Console.Print( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() );
 #endif
 		return true;
 	} 
