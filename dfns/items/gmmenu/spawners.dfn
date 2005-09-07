@@ -203,7 +203,7 @@ get=base_spawner
 name=Giant Scorpion Spawner
 id=0x1F14
 type=62
-spawnobj=giantscorpion
+spawnobj=scorpion
 amount=2
 }
 
@@ -655,7 +655,7 @@ name=Banker Spawn
 spawnobjlist=banker
 id=0x1397
 type=62
-amount=100
+amount=2
 }
 
 [bard-spawn]
