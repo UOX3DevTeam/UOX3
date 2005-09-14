@@ -11,72 +11,90 @@
 namespace UOX
 {
 
-class SubRegion
-{
-private:
-	CDataList< CItem * >		itemData;
-	CDataList< CChar * >		charData;
-
-public:
-			CDataList< CItem * > *	GetItemList( void );
-			CDataList< CChar * > *	GetCharList( void );
-
-			SubRegion()
-			{
-			};
-			~SubRegion()
-			{
-			};
-
-	void	SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
-	void	LoadFromDisk( std::ifstream& readDestination );
-};
-
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
 
-const SI16 UpperX = static_cast<SI16>(6144 / MapColSize);
+const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
 const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
-class cMapRegion
-{
-private:
-	SI16			upperArrayX[UOMT_COUNT];
-	SI16			upperArrayY[UOMT_COUNT];
-	SubRegion		internalRegions[UpperX][UpperY][NumberOfWorlds];
-	SubRegion		overFlow;
-	void			LoadHouseMulti( std::ifstream &houseDestination );
+	class CMapRegion
+	{
+	private:
+		CDataList< CItem * >	itemData;
+		CDataList< CChar * >	charData;
+	public:
+		CDataList< CItem * > *	GetItemList( void );
+		CDataList< CChar * > *	GetCharList( void );
 
-public:
-				cMapRegion(); //constructor
-				~cMapRegion(); //destructor
+								CMapRegion()
+								{
+								};
+								~CMapRegion()
+								{
+								};
 
-	SubRegion *	GetCell( SI16 x, SI16 y, UI08 worldNumber );
+		void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
+	};
 
-	bool		AddItem( CItem *nItem );
-	bool		RemoveItem( CItem *nItem );
+	class CMapWorld
+	{
+	private:
+		SI16			upperArrayX;
+		SI16			upperArrayY;
+		CMapRegion		mapRegions[UpperX][UpperY];
+	public:
+						CMapWorld( void )
+						{
+						};
+						~CMapWorld( void )
+						{
+						};
 
-	bool		AddChar( CChar *toAdd );
-	bool		RemoveChar( CChar *toRemove );
+		CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
 
-	void		Save( void );
-	void		Load( void );
+		void			SetUpperX( SI16 newVal );
+		void			SetUpperY( SI16 newVal );
 
-	int			GetGridIndex( SI16 x, SI16 y );
-//	SubRegion *	GetGrid( int gridIndex, UI08 worldNumber );
-	SubRegion *	GetGrid( int xOffset, int yOffset, UI08 worldNumber );
+		SI16			GetUpperX( void ) const;
+		SI16			GetUpperY( void ) const;
+	};
 
-	SI16		GetGridX( SI16 x );
-	SI16		GetGridY( SI16 y );
+	class CMapHandler
+	{
+	private:
+		std::vector< CMapWorld * >	mapWorlds;
+		CMapRegion					overFlow;
 
-	bool		Add( CBaseObject *toAdd );
-	bool		Remove( CBaseObject *toRemove );
+		void		LoadFromDisk( std::ifstream& readDestination );
+	public:
+					CMapHandler();
+					~CMapHandler();
 
-	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-	REGIONLIST	PopulateList( CBaseObject *mObj );
-};
+		void		Save( void );
+		void		Load( void );
 
-extern cMapRegion *MapRegion;
+		bool		AddItem( CItem *nItem );
+		bool		RemoveItem( CItem *nItem );
+
+		bool		AddChar( CChar *toAdd );
+		bool		RemoveChar( CChar *toRemove );
+
+		CMapRegion *GetMapRegion( CBaseObject *mObj );
+		CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber );
+
+		SI16		GetGridX( SI16 x );
+		SI16		GetGridY( SI16 y );
+
+		bool		Add( CBaseObject *toAdd );
+		bool		Remove( CBaseObject *toRemove );
+
+		REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
+		REGIONLIST	PopulateList( CBaseObject *mObj );
+
+		CMapWorld *	GetMapWorld( UI08 worldNum );
+	};
+
+	extern CMapHandler *MapRegion;
 
 }
 

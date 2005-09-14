@@ -20,70 +20,156 @@ public:
 	const char *what( void ) const throw();
 };
 
-class cPBaseBuffer
+class CPacketStream
 {
-protected:
+private:
 	std::vector< UI08 >		internalBuffer;
+
+public:
+	CPacketStream::CPacketStream()
+	{
+		internalBuffer.resize( 0 );
+	}
+	CPacketStream::~CPacketStream()
+	{
+		internalBuffer.clear();
+	}
+
+	void	ReserveSize( size_t len )
+	{
+		internalBuffer.resize( len );
+	}
+	void	WriteByte( size_t pos, UI08 toWrite )
+	{
+		if( pos >= internalBuffer.size() )
+			internalBuffer.resize( pos+1 );
+
+		internalBuffer[pos] = toWrite;
+	}
+	void	WriteShort( size_t pos, SI32 toWrite )
+	{
+		if( (pos+1) >= internalBuffer.size() )
+			internalBuffer.resize( pos+2 );
+
+		internalBuffer[pos+0] = static_cast<UI08>((toWrite&0xFF00)>>8);
+		internalBuffer[pos+1] = static_cast<UI08>((toWrite&0x00FF)%256);
+	}
+	void	WriteLong( size_t pos, UI32 toWrite )
+	{
+		if( (pos+3) >= internalBuffer.size() )
+			internalBuffer.resize( pos+4 );
+
+		internalBuffer[pos+0] = static_cast<UI08>((toWrite&0xFF000000)>>24);
+		internalBuffer[pos+1] = static_cast<UI08>((toWrite&0x00FF0000)>>16);
+		internalBuffer[pos+2] = static_cast<UI08>((toWrite&0x0000FF00)>>8);
+		internalBuffer[pos+3] = static_cast<UI08>((toWrite&0x000000FF)%256);
+	}
+	void	WriteString( size_t pos, const std::string toWrite, size_t len )
+	{
+		if( (pos+len) >= internalBuffer.size() )
+			internalBuffer.resize( pos+len );
+
+		strncpy( (char *)&internalBuffer[pos], toWrite.c_str(), len );
+	}
+	void	WriteArray( size_t pos, const UI08 *toWrite, size_t len )
+	{
+		if( (pos+len) >= internalBuffer.size() )
+			internalBuffer.resize( pos+len );
+
+		memcpy( &internalBuffer[pos], toWrite, len );
+	}
+	UI08	GetByte( size_t pos ) const
+	{
+		UI08 retVal = 0;
+		if( pos < internalBuffer.size() )
+			retVal = internalBuffer[pos];
+		return retVal;
+	}
+	SI16	GetShort( size_t pos ) const
+	{
+		SI16 retVal = 0;
+		if( pos < internalBuffer.size()+1 )
+			retVal = static_cast<SI16>((internalBuffer[pos+0]<<8) + internalBuffer[pos+1]);
+		return retVal;
+	}
+	UI16	GetUShort( size_t pos ) const
+	{
+		UI16 retVal = 0;
+		if( pos < internalBuffer.size()+1 )
+			retVal = static_cast<UI16>((internalBuffer[pos+0]<<8) + internalBuffer[pos+1]);
+		return retVal;
+	}
+	SI32	GetLong( size_t pos ) const
+	{
+		SI32 retVal = 0;
+		if( pos < internalBuffer.size()+3 )
+			retVal = (internalBuffer[pos+0]<<24) + (internalBuffer[pos+1]<<16) + (internalBuffer[pos+2]<<8) + internalBuffer[pos+3];
+		return retVal;
+	}
+	UI32	GetULong( size_t pos ) const
+	{
+		UI32 retVal = 0;
+		if( pos < internalBuffer.size()+3 )
+			retVal = static_cast<UI32>(internalBuffer[pos+0]<<24) + (internalBuffer[pos+1]<<16) + (internalBuffer[pos+2]<<8) + internalBuffer[pos+3];
+		return retVal;
+	}
+
+	const UI08 *GetBuffer( void ) const
+	{
+		return (const UI08 *)&internalBuffer[0];
+	}
+
+	size_t GetSize( void ) const
+	{
+		return internalBuffer.size();
+	}
+};
+
+class CPUOXBuffer
+{
+private:
 	std::vector< UI08 >		packedBuffer;
 	bool					isPacked;
 	UI32					packedLength;
-	void					InternalReset( void );
-	size_t					internalBufferOffset;		// this is to track offsets for operator overloading
-public:
-							cPBaseBuffer();
-							cPBaseBuffer( char *initBuffer, size_t len );
-	virtual					~cPBaseBuffer();
-							cPBaseBuffer( cPBaseBuffer *initBuffer );
-	UI08& operator[] ( size_t Num );
-	virtual size_t			Length( void ) const;
-	virtual UI32			PackedLength( void ) const;
-	virtual void			Resize( size_t newLen );
-	virtual const UI08 *	Pointer( void ) const;
-	virtual const UI08 *	PackedPointer( void ) const;
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
-	virtual UI32			Pack( void ) = 0;
-	cPBaseBuffer&			operator<<( const UI08 value );
-	cPBaseBuffer&			operator<<( const UI16 value );
-	cPBaseBuffer&			operator<<( const UI32 value );
-	cPBaseBuffer&			operator<<( const SI08 value );
-	cPBaseBuffer&			operator<<( const SI16 value );
-	cPBaseBuffer&			operator<<( const SI32 value );
-	cPBaseBuffer&			operator<<( const std::string& value );
-};
 
-class cPUOXBuffer : public cPBaseBuffer
-{
+protected:
+	CPacketStream			pStream;
+
+	virtual void			InternalReset( void );
+
 public:
-							cPUOXBuffer();
-							cPUOXBuffer( char *initBuffer, size_t len );
-	virtual					~cPUOXBuffer();
-							cPUOXBuffer( cPBaseBuffer *initBuffer );
-	virtual UI32			Pack( void );
+							CPUOXBuffer();
+	virtual					~CPUOXBuffer();
+							CPUOXBuffer( CPUOXBuffer *initBuffer );
+	CPUOXBuffer &operator=( CPUOXBuffer &copyFrom );
+
+	UI32					Pack( void );
 	virtual bool			ClientCanReceive( CSocket *mSock );
+	const CPacketStream&	GetPacketStream( void ) const;
+
+	UI32					PackedLength( void ) const;
+	const UI08 *			PackedPointer( void ) const;
+
+	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class cPInputBuffer
+class CPInputBuffer
 {
 protected:
-	std::vector< UI08 > internalBuffer;
-	CSocket *			tSock;
+	CSocket *				tSock;
+
 public:
-							cPInputBuffer();
-							cPInputBuffer( CSocket *input );
-	virtual void			Receive( void ) = 0;
-	UI08& operator[] ( size_t num );
-	virtual size_t			Length( void );
-	virtual UI08 *			Pointer( void );
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
-	long					DWord( size_t offset );
-	SI32					Word( size_t offset );
-	UI08					Byte( size_t offset );
-	virtual bool			Handle( void );
-	virtual void			SetSocket( CSocket *toSet );
-	CSocket *				GetSocket( void ) const;
-	virtual ~cPInputBuffer()
+							CPInputBuffer();
+							CPInputBuffer( CSocket *input );
+	virtual					~CPInputBuffer()
 	{
 	}
+
+	virtual void			Receive( void ) = 0;
+	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual bool			Handle( void );
+	void					SetSocket( CSocket *toSet );
+	CSocket *				GetSocket( void ) const;
 };
 
 class cNetworkStuff

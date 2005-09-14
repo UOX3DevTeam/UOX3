@@ -82,7 +82,7 @@ void HandleGuardAI( CChar& mChar )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -120,7 +120,7 @@ void HandleFighterAI( CChar& mChar )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -216,7 +216,7 @@ void HandleEvilAI( CChar& mChar )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -227,10 +227,13 @@ void HandleEvilAI( CChar& mChar )
 				{
 					if( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiHEALER_G )
 						continue;
-					if( !cwmWorldState->ServerData()->CombatMonstersVsAnimals() && cwmWorldState->creatures[tempChar->GetID()].IsAnimal() )
-						continue;
-					if( cwmWorldState->ServerData()->CombatMonstersVsAnimals() && cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && RandomNum( 1, 100 ) > cwmWorldState->ServerData()->CombatAnimalsAttackChance() )
-						continue;
+					if( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() )
+					{
+						if( !cwmWorldState->ServerData()->CombatMonstersVsAnimals() )
+							continue;
+						else if( cwmWorldState->ServerData()->CombatAnimalsAttackChance() < RandomNum( 1, 100 ) )
+							continue;
+					}
 					if( mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 0, 100 ) >= 10 )	// 10% chance of turning on own race
 						continue;
 					SI08 raceComp = Races->Compare( tempChar, &mChar );
@@ -261,7 +264,7 @@ void HandleChaoticAI( CChar& mChar )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();

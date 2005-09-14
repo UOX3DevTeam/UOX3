@@ -6,7 +6,7 @@
 namespace UOX
 {
 
-
+/*
 enum UOMapType
 {
 	UOMT_BRITANNIA	= 0,
@@ -16,14 +16,32 @@ enum UOMapType
 	UOMT_COUNT		= 4,
 	UOMT_UNKNOWN	= 0xFF
 };
+*/
 
-const UI08 NumberOfWorlds				= UOMT_COUNT;
-const SI16 MapWidths[UOMT_COUNT]		= { 6144, 0, 2304, 2560 };
+struct MapData_st
+{
+	std::string		mapFile;
+	std::string		staticsFile;
+	std::string		staidxFile;
+	UI16			xBlock;
+	UI16			yBlock;
+	SI32			fileSize;
+	UOXFile	*		mapObj;
+	UOXFile *		staticsObj;
+	UOXFile *		staidxObj;
+
+	MapData_st() : mapFile( "" ), staticsFile( "" ), staidxFile( "" ), xBlock( 0 ), yBlock( 0 ), fileSize( -1 ), mapObj( NULL ), staticsObj( NULL ), staidxObj( NULL )
+	{
+	}
+	~MapData_st();
+};
+
+/*const SI16 MapWidths[UOMT_COUNT]		= { 6144, 0, 2304, 2560 };
 const SI16 MapHeights[UOMT_COUNT]		= { 4096, 0, 1600, 2048 };
 const SI16 MapTileWidths[UOMT_COUNT]	= { 768,  0, 288,  320 };
 const SI16 MapTileHeights[UOMT_COUNT]	= { 512,  0, 200,  256 };
-const SI32 MapFileLengths[UOMT_COUNT]	= { 77070336, 0, 11289600, 16056320 };
-
+const SI32 MapFileLengths[UOMT_COUNT]	= { 89915392, 0, 11289600, 16056320 };
+*/
 // full comments on this class are available in mapstuff.cpp
 class MapStaticIterator
 {
@@ -58,78 +76,77 @@ private:
 class cMapStuff
 {
 public:
-	cMapStuff();
-	~cMapStuff();
+					cMapStuff();
+					~cMapStuff();
 
-	void	Load( void );
-
-	UOMapType	GetMapType( UI08 worldNumber );
+	void			Load( void );
 
 	// height functions
-	SI08	StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	SI08	DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	SI08	MapElevation( SI16 x, SI16 y, UI08 worldNumber );
-	SI08	AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
-	SI08	TileHeight( UI16 tilenum );
-	SI08	Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool	IsTileWet( int tilenum );
+	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	SI08			MapElevation( SI16 x, SI16 y, UI08 worldNumber );
+	SI08			AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
+	SI08			TileHeight( UI16 tilenum );
+	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			IsTileWet( int tilenum );
 
 	// look at tile functions
-	void	MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	void	SeekMulti( UI32 multinum, SI32 *length );
-	st_multi *SeekIntoMulti( int multinum, int number );
-	void	SeekTile( int tilenum, CTile *tile );
-	void	SeekLand( int landnum, CLand *land );
-	map_st SeekMap0( SI16 x, SI16 y, UI08 worldNumber );
+	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
+	void			SeekMulti( UI32 multinum, SI32 *length );
+	st_multi *		SeekIntoMulti( int multinum, int number );
+	void			SeekTile( int tilenum, CTile *tile );
+	void			SeekLand( int landnum, CLand *land );
+	map_st			SeekMap0( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
-	bool	CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
-	bool	MapExists( UI08 worldNumber );
+	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	bool			MapExists( UI08 worldNumber );
 
+	MapData_st&		GetMapData( UI08 mapNum );
 public:
-	int TileMem, MultisMem;
+	int				TileMem, MultisMem;
 
 // Functions
 private:
-	SI08	MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz );
-	int	MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
+	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz );
+	int				MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
 
-	int	DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool	DoesTileBlock( int tilenum );
-	bool	DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	int				DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			DoesTileBlock( int tilenum );
+	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 
-	bool	InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
+	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
-	UOMapType	CalcFromFileLength( UOXFile *toCalcFrom );
 	// caching functions
 	void	SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
 	void	LoadMultis(const UString &basePath);
 
 //Variables
 private:
-struct MultiItemsIndex
-{
-	st_multi *items;		// point into where the items begin.
-	SI32	size;				// # of items.
-	SI16	lx, ly, lz;
-	SI16	hx, hy, hz;
-	MultiItemsIndex() :size(-1), items(NULL), lx(SHRT_MAX), ly(SHRT_MAX), lz(SHRT_MAX), hx(SHRT_MIN), hy(SHRT_MIN), hz(SHRT_MIN)
-	{}
-	void Include(SI16 x, SI16 y, SI16 z);	
-};
+	typedef std::map< UI08, MapData_st >					MAPLIST;
+	typedef std::map< UI08, MapData_st >::iterator			MAPLIST_ITERATOR;
+
+	struct MultiItemsIndex
+	{
+		st_multi *	items;		// point into where the items begin.
+		SI32		size;				// # of items.
+		SI16		lx, ly, lz;
+		SI16		hx, hy, hz;
+					MultiItemsIndex() :size(-1), items(NULL), lx(SHRT_MAX), ly(SHRT_MAX), lz(SHRT_MAX), hx(SHRT_MIN), hy(SHRT_MIN), hz(SHRT_MIN)
+					{}
+		void		Include(SI16 x, SI16 y, SI16 z);	
+	};
 	friend class MapStaticIterator;
 	// all the world's map and static Items.
-	UOXFile	*	mapArrays[NumberOfWorlds];
-	UOXFile	*	statArrays[NumberOfWorlds];
-	UOXFile	*	sidxArrays[NumberOfWorlds];
-	UOMapType	uomapTypes[NumberOfWorlds];
 	// multiItem, tileSet, and verdata(patches really)
-//	char     *verData;				// patches really, which don't exist anymore
-	CLand    *landTile;			// the 512*32 pieces of land tile
-	CTile    *staticTile;			// the 512*32 pieces of static tile set
-	st_multi *multiItems;			// the multis cache(shadow) from files
-	MultiItemsIndex *multiIndex;	// here's our index to multiItems
-	int	multiIndexSize;			// the length of index
+//	char     *			verData;				// patches really, which don't exist anymore
+	CLand    *			landTile;			// the 512*32 pieces of land tile
+	CTile    *			staticTile;			// the 512*32 pieces of static tile set
+	st_multi *			multiItems;			// the multis cache(shadow) from files
+	MultiItemsIndex *	multiIndex;	// here's our index to multiItems
+	int					multiIndexSize;			// the length of index
+
+	MAPLIST				MapList;
 };
 
 extern cMapStuff *Map;

@@ -117,7 +117,7 @@ public:
 		wAccountIndex( 0xFFFF ), wFlags( 0x0000 ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
 		dwLastIP( 0x00000000 ), bChanged( false )
 	{
-		for( int i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 6; ++i )
 		{
 			dwCharacters[i]=0xFFFFFFFF;
 			lpCharacters[i]=NULL;
@@ -135,7 +135,7 @@ public:
 		dwInGame=0xFFFFFFFF;
 		dwLastIP=0x00000000;
 		bChanged = false;
-		for( int i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 6; ++i )
 		{
 			dwCharacters[i]=0xFFFFFFFF;
 			lpCharacters[i]=NULL;
@@ -156,10 +156,10 @@ public:
 } ACCOUNTSBLOCK,*LPACCOUNTSBLOCK;
 
 // Class typdefs to help simplify the use of map STL
-typedef std::map<std::string,ACCOUNTSBLOCK> MAPUSERNAME;
+typedef std::map<std::string,ACCOUNTSBLOCK*> MAPUSERNAME;
 typedef std::map<UI16,ACCOUNTSBLOCK> MAPUSERNAMEID;
-typedef std::map<std::string,ACCOUNTSBLOCK>::iterator MAPUSERNAME_ITERATOR;
-typedef std::map<std::string,ACCOUNTSBLOCK>::const_iterator MAPUSERNAME_CITERATOR;
+typedef std::map<std::string,ACCOUNTSBLOCK*>::iterator MAPUSERNAME_ITERATOR;
+typedef std::map<std::string,ACCOUNTSBLOCK*>::const_iterator MAPUSERNAME_CITERATOR;
 typedef std::map<UI16,ACCOUNTSBLOCK>::iterator MAPUSERNAMEID_ITERATOR;
 typedef std::map<UI16,ACCOUNTSBLOCK>::const_iterator MAPUSERNAMEID_CITERATOR;
 //o--------------------------------------------------------------------------o
@@ -205,16 +205,12 @@ public:
 	bool	AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject);
 	bool	DelCharacter(UI16 wAccountID, int nSlot);
 	bool	TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID);
-	bool	GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock);
-	bool	GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock);
+	ACCOUNTSBLOCK &	GetAccountByName( std::string sUsername );
+	ACCOUNTSBLOCK &	GetAccountByID( UI16 wAccountID );
 	MAPUSERNAMEID_ITERATOR& begin(void);
 	MAPUSERNAMEID_ITERATOR& end(void);
 	MAPUSERNAMEID_ITERATOR& last(void);
 	// Member variables
-	UI16 m_wHighestAccount;
-	std::string m_sAccountsDirectory;
-	MAPUSERNAME m_mapUsernameMap;
-	MAPUSERNAMEID m_mapUsernameIDMap;
 	MAPUSERNAMEID_ITERATOR I;
 private:
 	// Member Functions
@@ -223,6 +219,12 @@ private:
 	void WriteOrphanHeader(std::fstream &fsOut);
 	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
 	void WriteImportHeader(std::fstream &fsOut);
+
+	ACCOUNTSBLOCK actbInvalid;
+	MAPUSERNAME m_mapUsernameMap;
+	MAPUSERNAMEID m_mapUsernameIDMap;
+	UI16 m_wHighestAccount;
+	std::string m_sAccountsDirectory;
 };
 
 extern cAccountClass *Accounts;

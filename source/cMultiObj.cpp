@@ -71,7 +71,10 @@ void CMultiObj::RemoveFromBanList( CChar *toRemove )
 	for( CHARLIST_ITERATOR rIter = banList.begin(); rIter != banList.end(); ++rIter )
 	{
 		if( toRemove == (*rIter) )
+		{
 			banList.erase( rIter );
+			break;
+		}
 	}
 }
 
@@ -103,7 +106,10 @@ void CMultiObj::RemoveAsOwner( CChar *toRemove )
 	for( CHARLIST_ITERATOR rIter = owners.begin(); rIter != owners.end(); ++rIter )
 	{
 		if( toRemove == (*rIter) )
+		{
 			owners.erase( rIter );
+			break;
+		}
 	}
 }
 
@@ -274,7 +280,8 @@ bool CMultiObj::Save( std::ofstream &outStream )
 	if( !isFree() )
 	{
 		rvalue = true;
-		if( GetCont() != NULL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
+		MapData_st& mMap = Map->GetMapData( worldNumber );
+		if( GetCont() != NULL || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
 		{
 			DumpHeader( outStream );
 			DumpBody( outStream );

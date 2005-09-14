@@ -392,6 +392,7 @@ enum DEFINITIONCATEGORIES
 	msgboard_def,
 	carve_def,
 	creatures_def,
+	maps_def,
 	NUM_DEFS
 };
 

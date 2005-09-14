@@ -127,13 +127,14 @@ namespace UOX {
 	class CMagicMove;
 	class CMagicSound;
 	class CMagicStat;
-	class cMapRegion;
+	class CMapHandler;
+	class CMapRegion;
 	class cMapStuff;
 	class cMovement;
 	class CMultiObj;
 	class cNetworkStuff;
-	class cPBaseBuffer;
-	class cPInputBuffer;
+	class CPUOXBuffer;
+	class CPInputBuffer;
 	class cRaces;
 	class CRace;
 	class cScript;
@@ -167,7 +168,6 @@ namespace UOX {
 	class Script;
 	class ScriptSection;
 	class SpellInfo;
-	class SubRegion;
 	class UOXFile;
 	class UString;
 

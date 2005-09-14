@@ -58,9 +58,9 @@ const UI16 INVALIDID			= 0xFFFF;
 const UI16 INVALIDCOLOUR		= 0xFFFF;
 const SERIAL BASEITEMSERIAL		= 0x40000000;
 
-typedef std::vector< SubRegion * >						REGIONLIST;
-typedef std::vector< SubRegion * >::iterator			REGIONLIST_ITERATOR;
-typedef std::vector< SubRegion * >::const_iterator		REGIONLIST_CITERATOR;
+typedef std::vector< CMapRegion * >						REGIONLIST;
+typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
+typedef std::vector< CMapRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
 typedef std::vector< CSocket * >						SOCKLIST;
 typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;

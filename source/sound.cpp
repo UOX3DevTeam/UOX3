@@ -296,7 +296,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( (&mChar) );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();

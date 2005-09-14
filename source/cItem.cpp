@@ -821,7 +821,8 @@ bool CItem::Save( std::ofstream &outStream )
 {
 	if( isFree() )
 		return false;
-	if( GetCont() != NULL || ( GetX() > 0 && GetX() < 6144 && GetY() < 4096 ) )
+	MapData_st& mMap = Map->GetMapData( worldNumber );
+	if( GetCont() != NULL || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
@@ -1367,7 +1368,8 @@ bool CItem::LoadRemnants( void )
 	// Tauriel adding region pointers
 	if( (SERIAL)contObj == INVALIDSERIAL )
 	{
-		if( GetX() < 0 || GetY() < 0 || GetX() > 6144 || GetY() > 4096 )
+		MapData_st& mMap = Map->GetMapData( worldNumber );
+		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
 			return false;
 		else
 			MapRegion->AddItem( this );
@@ -1667,12 +1669,14 @@ void CItem::Update( CSocket *mSock )
 		if( charCont != NULL )
 		{
 			CPWornItem toWear = (*this);
-			CPQueryToolTip pSend( (*this) );
+			//CPQueryToolTip pSend( (*this) );
 			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
+				if( !(*cIter)->LoginComplete() )
+					continue;
 				(*cIter)->Send( &toWear );
-				(*cIter)->Send( &pSend );
+				//(*cIter)->Send( &pSend );
 			}
 			return;
 		}
@@ -1686,6 +1690,8 @@ void CItem::Update( CSocket *mSock )
 			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
+				if( !(*cIter)->LoginComplete() )
+					continue;
 				SendPackItemToSocket( (*cIter) );
 			}
 			return;
@@ -1703,6 +1709,9 @@ void CItem::Update( CSocket *mSock )
 //o---------------------------------------------------------------------------o
 void CItem::SendToSocket( CSocket *mSock )
 {
+	if( !mSock->LoginComplete() )
+		return;
+
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != NULL )
 	{
@@ -1720,12 +1729,12 @@ void CItem::SendToSocket( CSocket *mSock )
 			CPItemsInContainer itemsIn( NULL, this, 0x01 );
 			mSock->Send( &itemsIn );
 		}
-		if( !CanBeObjType( OT_MULTI ) )
+/*		if( !CanBeObjType( OT_MULTI ) )
 		{
 			CPQueryToolTip pSend( (*this) );
 			mSock->Send( &pSend );
 		}
-	}
+*/	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -1752,8 +1761,8 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 			itemSend.Colour( 0x00C6 );
 		}
 		mSock->Send( &itemSend );
-		CPQueryToolTip pSend( (*this) );
-		mSock->Send( &pSend );
+		//CPQueryToolTip pSend( (*this) );
+		//mSock->Send( &pSend );
 	}
 }
 
@@ -1789,6 +1798,9 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
 				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
+					if( !(*cIter)->LoginComplete() )
+						continue;
+
 					tChar = (*cIter)->CurrcharObj();
 					if( ValidateObject( tChar ) && !objInRange( tChar, this, static_cast<UI16>((*cIter)->Range() + Races->VisRange( tChar->GetRace() )) ) )
 						(*cIter)->Send( &toRemove );
@@ -1812,6 +1824,8 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				SOCKLIST nearbyChars = FindNearbyPlayers( rChar );
 				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
+					if( !(*cIter)->LoginComplete() )
+						continue;
 					(*cIter)->Send( &toRemove );
 				}
 			}
@@ -1824,8 +1838,12 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		else
 		{
 			Network->PushConn();
-			for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-				mSock->Send( &toRemove );
+			for( CSocket *nSock = Network->FirstSocket(); !Network->FinishedSockets(); nSock = Network->NextSocket() )
+			{
+				if( !nSock->LoginComplete() )
+					continue;
+				nSock->Send( &toRemove );
+			}
 			Network->PopConn();
 		}
 	}

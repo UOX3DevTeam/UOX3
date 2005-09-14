@@ -93,13 +93,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	{
 		ACCOUNTSBLOCK &actbAccount = connClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
-		{
-			if( actbAccount.wAccountIndex != AB_INVALID_ID )
-			{
-				actbAccount.wFlags &= 0xFFFFFFF7;
-				connClients[s]->SetAccount( actbAccount );
-			}
-		}
+			actbAccount.wFlags &= 0xFFF7;
 	}
 	//Instalog
 	if( currChar != NULL )
@@ -197,7 +191,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 		}
 	}
 	
-	ACCOUNTSBLOCK& actbAccount = p->GetAccount();
+	ACCOUNTSBLOCK& actbAccount = s->GetAccount();
 	if( valid )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
@@ -211,11 +205,10 @@ void cNetworkStuff::LogOut( CSocket *s )
 			actbAccount.dwInGame = p->GetSerial();
 		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
 	}
+	s->LoginComplete( false );
 	actbAccount.wFlags &= 0xFFF7;
-	p->SetAccount( actbAccount );
-	s->SetAccount( actbAccount );
 	// We have to make sure to update the Account map
-	Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
+	//Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
 	p->Teleport();
 }
 
@@ -485,8 +478,8 @@ CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 	return connClients[s];
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
-cPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
+CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
+CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 {
 	if( s >= connClients.size() )
@@ -549,7 +542,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
 				mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
-			cPInputBuffer *test	= WhichPacket( packetID, mSock );
+			CPInputBuffer *test	= WhichPacket( packetID, mSock );
 			bool doSwitch		= true;
 			if( test != NULL )
 			{
@@ -680,53 +673,43 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								Books->ReadPreDefBook( mSock, i, mSock->GetWord( 9 ) );  // call old books read-method
 							if( i->GetTempVar( CITV_MOREX ) == 666 ) // writeable book -> copy page data send by client to the class-page buffer
 							{
-								char *pagebuffer = mSock->PageBuffer();
-								for( j = 13; j <= size; ++j ) // copy (written) page data in class-page buffer
+								char pagebuffer[512];
+								for( j = 13; j <= size && j < 524; ++j ) // copy (written) page data in class-page buffer
 									pagebuffer[j-13] = buffer[j];
+								mSock->PageBuffer( pagebuffer );
 								Books->ReadWritableBook( mSock, i, mSock->GetWord( 9 ), mSock->GetWord( 11 ) ); 
 							}
 							if( i->GetTempVar( CITV_MOREX ) == 999 ) 
 								Books->ReadNonWritableBook( mSock, i, mSock->GetWord( 9 ) ); // new books readonly
 						}
 						break;
-
-					// client sends them out if the titel and/or author gets changed on a writable book
+					// client sends them out if the title and/or author gets changed on a writeable book
 					// its NOT send (anymore?) when a book is closed as many packet docus state.
 					// LB 7-dec 1999
 					case 0x93:
-						char author[31], title[61], ch;
-
 						mSock->Receive( 99 );
 						serial = mSock->GetDWord( 1 );
 						i = calcItemObjFromSer( serial );
 						if( !ValidateObject( i ) ) 
 							return;
+
 						Books->changeAT = true;
 
-						j = 9; ch = 1;
-						char *titlebuffer;
-						titlebuffer = mSock->TitleBuffer();
-						while( ch != 0 )
+						char titlebuffer[62];
+						for( j = 9; (buffer[j] != 0) && (j < 70); ++j )
 						{
-							ch = buffer[j];
-							title[j-9] = ch;
-							titlebuffer[j-9] = ch;
-							++j;
-							if( j > 69 ) 
-								ch=0;
+							titlebuffer[j-9] = buffer[j];
 						}
-						j = 69; ch = 1;
-						char *authorbuffer;
-						authorbuffer = mSock->AuthorBuffer();
-						while( ch != 0 )
+						titlebuffer[61] = '\n';
+						mSock->TitleBuffer( titlebuffer );
+
+						char authorbuffer[32];
+						for( j = 69; (buffer[j] != 0) && (j < 100); ++j )
 						{
-							ch = buffer[j];
-							author[j-69] = ch;
-							authorbuffer[j-69] = ch;
-							++j;
-							if( j > 99 )
-								ch = 0;
+							authorbuffer[j-69] = buffer[j];
 						}
+						authorbuffer[31] = '\n';
+						mSock->AuthorBuffer( authorbuffer );
 						break;
 					case 0x69:// Client text change
 						mSock->Receive( 3 );// What a STUPID message...  It would be useful if
@@ -997,6 +980,12 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 									mSock->FlushBuffer();
 								}
 								break;
+							case 0x1A:	// Extended Stats
+								UI08 statToSet, value;
+								statToSet		= mSock->GetByte( 5 ) + (ALLSKILLS+1);
+								value			= mSock->GetByte( 6 );
+								ourChar->SetSkillLock( value, statToSet );
+								break;
 							case 0x1B:	// New Spellbook
 								Console << "cNetworkStuff.GetMsg():: Cmd: $BF Sub: $0F" << myendl;
 								break;
@@ -1047,6 +1036,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						// Configuration file
 						mSock->Receive( 3 );
 						mSock->Receive( mSock->GetWord( 1 ) );
+						break;
+					case 0xD9:
 						break;
 					default:
 						FD_ZERO( &all );
@@ -1149,10 +1140,7 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	{
 		ACCOUNTSBLOCK& actbAccount = loggedInClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
-		{
-			actbAccount.wFlags&=0xFFFFFFF7;
-			loggedInClients[s]->SetAccount( actbAccount );
-		}
+			actbAccount.wFlags &= 0xFFF7;
 	}
 
 	for( size_t q = 0; q < loggIteratorBackup.size(); ++q )
@@ -1273,7 +1261,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				LoginDisconnect( s );
 				return;
 			}
-			cPInputBuffer *test = NULL;
+			CPInputBuffer *test = NULL;
 			try
 			{
 				test = WhichLoginPacket( packetID, mSock );

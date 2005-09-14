@@ -58,6 +58,7 @@
 #include "cEffects.h"
 #include "CPacketSend.h"
 #include "regions.h"
+#include "cServerDefinitions.h"
 
 namespace UOX
 {
@@ -485,7 +486,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 // If not, return false.  Used for the npc stacking problem
 bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 {
-	SubRegion *MapArea = MapRegion->GetCell( cx, cy, c->WorldNumber() );	// check 3 cols... do we really NEED to?
+	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( cx ), MapRegion->GetGridY( cy ), c->WorldNumber() );	// check 3 cols... do we really NEED to?
 	if( MapArea == NULL )	// no valid region
 		return false;
 	CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -696,7 +697,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
-	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
+	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return;
 	CDataList< CItem * > *regItems = MapArea->GetItemList();
@@ -774,8 +775,8 @@ void cMovement::HandleRegionStuffAfterMove( CChar *c, SI16 oldx, SI16 oldy )
 	// as we started, i'm sure there's no real reason to remove and readd back
 	// to the same spot..
 	UI08 worldNumber = c->WorldNumber();
-	SubRegion *cell1 = MapRegion->GetCell( oldx, oldy, worldNumber );
-	SubRegion *cell2 = MapRegion->GetCell( nowx, nowy, worldNumber );
+	CMapRegion *cell1 = MapRegion->GetMapRegion( MapRegion->GetGridX( oldx ), MapRegion->GetGridY( oldy ), worldNumber );
+	CMapRegion *cell2 = MapRegion->GetMapRegion( MapRegion->GetGridX( nowx ), MapRegion->GetGridY( nowy ), worldNumber );
 	if( cell1 != cell2 )
 	{
 		cell1->GetCharList()->Remove( c );
@@ -870,7 +871,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 		return;
 	// lets cache these vars in advance
 	UI08 worldNumber	= c->WorldNumber();
-	SubRegion *grid		= MapRegion->GetCell( c->GetX(), c->GetY(), worldNumber );
+	CMapRegion *grid		= MapRegion->GetMapRegion( c );
 	if( grid == NULL )
 		return;
 	CChar *ourChar		= NULL;
@@ -1068,7 +1069,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( newx, newy, mChar->WorldNumber() );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		if( mSock != NULL )		// Only send char stuff if we have a valid socket
@@ -1752,7 +1753,7 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 {
 	UI08 worldNumber = s->WorldNumber();
-    SubRegion *cell = MapRegion->GetCell( x, y, worldNumber );
+    CMapRegion *cell = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( cell == NULL )
 		return true;
 	CDataList< CItem * > *regItems = cell->GetItemList();

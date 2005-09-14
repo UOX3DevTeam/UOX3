@@ -156,17 +156,17 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RegenerateOre( long grX, long grY )
+//|   Function    :  void cSkills::RegenerateOre( SI16 grX, SI16 grY )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Regenerate Ore based on Server.scp Ore respawn settings
 //o---------------------------------------------------------------------------o
-void cSkills::RegenerateOre( long grX, long grY )
+void cSkills::RegenerateOre( SI16 grX, SI16 grY )
 {
 	resourceEntry *orePart	= &resources[grX][grY];
 	SI16 oreCeiling			= cwmWorldState->ServerData()->ResOre();
-	SI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
+	UI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
 	if( static_cast<UI32>(orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
 	{
 		for( SI16 counter = 0; counter < oreCeiling; ++counter )	// keep regenerating ore
@@ -529,7 +529,7 @@ void cSkills::SmeltOre( CSocket *s )
 	} 
 
 	s->TempObj( NULL );
-	s->statwindow( chr );
+	chr->Dirty( UT_STATWINDOW );
 }
 
 //o---------------------------------------------------------------------------o
@@ -695,13 +695,13 @@ void cSkills::TreeTarget( CSocket *s )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RegenerateLog( long grX, long grY )
+//|   Function    :  void cSkills::RegenerateLog( SI16 grX, SI16 grY )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Used by logging system to respawn the log resource
 //o---------------------------------------------------------------------------o
-void cSkills::RegenerateLog( long grX, long grY )
+void cSkills::RegenerateLog( SI16 grX, SI16 grY )
 {
 	SI16 logCeiling			= cwmWorldState->ServerData()->ResLogs();
 	UI16 logTimer			= cwmWorldState->ServerData()->ResLogTime();
@@ -751,7 +751,7 @@ void cSkills::PeaceMaking( CSocket *s )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -1849,7 +1849,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( c );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -2651,7 +2651,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CItem * > *regItems = MapArea->GetItemList();
@@ -2847,16 +2847,25 @@ void cSkills::Load( void )
 //o---------------------------------------------------------------------------o
 void cSkills::SaveResources( void )
 {
+	char wBuffer[2];
 	std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource.bin";
-	FILE *toWrite				= fopen( resourceFile.c_str(), "wb" );
-	if( toWrite != NULL )
+	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
+	if( toWrite )
 	{
 		for( UI16 gridX = 0; gridX < 610; ++gridX )
 		{
 			for( UI16 gridY = 0; gridY < 410; ++gridY )
-				fwrite( &resources[gridX][gridY], sizeof( resourceEntry ), 1, toWrite );
+			{
+				wBuffer[0] = static_cast<char>(resources[gridX][gridY].oreAmt>>8);
+				wBuffer[1] = static_cast<char>(resources[gridX][gridY].oreAmt%256);
+				toWrite.write( (const char *)&wBuffer, 2 );
+
+				wBuffer[0] = static_cast<char>(resources[gridX][gridY].logAmt>>8);
+				wBuffer[1] = static_cast<char>(resources[gridX][gridY].logAmt%256);
+				toWrite.write( (const char *)&wBuffer, 2 );
+			}
 		}
-		fclose( toWrite );
+		toWrite.close();
 	}
 	else // Can't save resources
 		Console.Error( 1, "Failed to open resource.bin for writing" );
@@ -2876,19 +2885,26 @@ void cSkills::LoadResourceData( void )
 	UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime() ));
 	UI32 logTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResLogTime()) );
 	std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource.bin";
-	FILE *binData				= fopen( resourceFile.c_str(), "rb" );
-	bool fileExists				= ( binData != NULL );
 
-	resourceEntry toRead;
-	for( SI16 gridX = 0; gridX < 610; ++gridX )
+	char rBuffer[2];
+	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
+
+	bool fileExists				= ( toRead.is_open() );
+
+	if( fileExists )
+		toRead.seekg( 0, std::ios::beg );
+
+	for( UI16 gridX = 0; gridX < 610; ++gridX )
 	{
-		for( SI16 gridY = 0; gridY < 410; ++gridY )
+		for( UI16 gridY = 0; gridY < 410; ++gridY )
 		{
 			if( fileExists )
 			{
-				fread( &toRead, sizeof( resourceEntry ), 1, binData );
-				resources[gridX][gridY].oreAmt = toRead.oreAmt;
-				resources[gridX][gridY].logAmt = toRead.logAmt;
+				toRead.read( rBuffer, 2 );
+				resources[gridX][gridY].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+
+				toRead.read( rBuffer, 2 );
+				resources[gridX][gridY].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 			}
 			else
 			{
@@ -2901,7 +2917,7 @@ void cSkills::LoadResourceData( void )
 		}
 	}
 	if( fileExists )
-		fclose( binData );
+		toRead.close();
 }
 
 //o---------------------------------------------------------------------------o
@@ -3428,14 +3444,10 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 			}
 		}
 	}
-	
-	CSocket *jSock = calcSocketObjFromChar( s );
-	if( jSock != NULL )
-	{
-		jSock->statwindow( s );
-		for( UI08 i = 0; i < ALLSKILLS; ++i )
-			updateSkillLevel( s, i );
-	}
+
+	s->Dirty( UT_STATWINDOW );
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
+		updateSkillLevel( s, i );
 }
 
 //o---------------------------------------------------------------------------o

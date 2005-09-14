@@ -403,7 +403,7 @@ void DoorMacro( CSocket *s )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *toCheck = (*rIter);
+		CMapRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
 		CDataList< CItem * > *regItems = toCheck->GetItemList();
@@ -569,7 +569,7 @@ bool isDoorBlocked( CItem *door )
 	DoorNewLocation( door, targX, targY );
 
 	UI08 worldNumber = door->WorldNumber();
-	SubRegion *Cell = MapRegion->GetCell( targX, targY, worldNumber );
+	CMapRegion *Cell = MapRegion->GetMapRegion( door );
 	if( Cell != NULL )
 	{
 		CDataList< CChar * > *regChars = Cell->GetCharList();

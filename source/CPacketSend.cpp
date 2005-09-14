@@ -9,53 +9,6 @@
 namespace UOX
 {
 
-void PackString( UI08 *toPack, int offset, std::string value, UI32 maxLen )
-{
-	int toWrite	= UOX_MIN( maxLen, static_cast<UI32>(value.length()) );
-	for( int i = 0; i < toWrite; ++i )
-		toPack[offset+i] = (UI08)value[i];
-}
-std::string UnpackString( UI08 *toPack, int offset, std::string &value, UI32 maxLen )
-{
-	value = "";
-	for( UI32 i = 0; i < maxLen; ++i )
-	{
-		if( toPack[offset + i] != 0 )
-			value += (char)(toPack[offset + i]);
-	}
-	return value;
-}
-void PackLong( UI08 *toPack, int offset, SI32 value )
-{
-	toPack[offset+0] = (UI08)(value>>24);
-	toPack[offset+1] = (UI08)(value>>16);
-	toPack[offset+2] = (UI08)(value>>8);
-	toPack[offset+3] = (UI08)(value%256);
-}
-SI32 UnpackSLong( UI08 *toPack, int offset )
-{
-	return (toPack[offset+0]<<24) + (toPack[offset+1]<<16) + (toPack[offset+2]<<8) + toPack[offset+3];
-}
-UI32 UnpackULong( UI08 *toPack, int offset )
-{
-	return (UI32)((toPack[offset+0]<<24) + (toPack[offset+1]<<16) + (toPack[offset+2]<<8) + toPack[offset+3]);
-}
-UI16 UnpackUShort( UI08 *toPack, int offset )
-{
-	return (UI16)((toPack[offset+0]<<8) + toPack[offset+1]);
-}
-SI16 UnpackSShort( UI08 *toPack, int offset )
-{
-	return (SI16)((toPack[offset+0]<<8) + toPack[offset+1]);
-}
-void PackLong( UI08 *toPack, int offset, UI32 value )
-{
-	toPack[offset+0] = (UI08)((value&0xFF000000)>>24);
-	toPack[offset+1] = (UI08)((value&0x00FF0000)>>16);
-	toPack[offset+2] = (UI08)((value&0x0000FF00)>>8);
-	toPack[offset+3] = (UI08)((value&0x000000FF)%256);
-}
-
 void PackShort( UI08 *toPack, int offset, UI16 value )
 {
 	toPack[offset+0] = (UI08)((value&0xFF00)>>8);
@@ -102,33 +55,34 @@ void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 ) /
 void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "PlayerID         : " << std::hex << UnpackULong(  &internalBuffer[0], 1  ) << std::endl;
-	outStream << "Unknown1         : " << std::dec << UnpackULong(  &internalBuffer[0], 5  ) << std::endl;
-	outStream << "BodyType         : " << std::hex << UnpackUShort( &internalBuffer[0], 9  ) << std::endl;
-	outStream << "X Loc            : " << std::dec << UnpackUShort( &internalBuffer[0], 11 ) << std::endl;
-	outStream << "Y Loc            : " << UnpackUShort( &internalBuffer[0], 13 ) << std::endl;
-	outStream << "Z Loc            : " << UnpackUShort( &internalBuffer[0], 15 ) << std::endl;
-	outStream << "Direction        : " << internalBuffer[17] << std::endl;
-	outStream << "Unknown2         : " << UnpackUShort( &internalBuffer[0], 18 ) << std::endl;
-	outStream << "Unknown3         : " << UnpackULong(  &internalBuffer[0], 20 ) << std::endl;
-	outStream << "Unknown4         : " << UnpackULong(  &internalBuffer[0], 24 ) << std::endl;
-	outStream << "Flag Byte        : " << internalBuffer[28] << std::endl;
-	outStream << "Highlight Colour : " << internalBuffer[29] << std::endl;
+		outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "PlayerID         : " << std::hex << pStream.GetULong( 1 ) << std::endl;
+	outStream << "Unknown1         : " << std::dec << pStream.GetULong( 5 ) << std::endl;
+	outStream << "BodyType         : " << std::hex << pStream.GetUShort( 9 ) << std::endl;
+	outStream << "X Loc            : " << std::dec << pStream.GetUShort( 11 ) << std::endl;
+	outStream << "Y Loc            : " << pStream.GetUShort( 13 ) << std::endl;
+	outStream << "Z Loc            : " << pStream.GetUShort( 15 ) << std::endl;
+	outStream << "Direction        : " << (UI16)pStream.GetByte( 17 ) << std::endl;
+	outStream << "Unknown2         : " << pStream.GetUShort( 18 ) << std::endl;
+	outStream << "Unknown3         : " << pStream.GetULong( 20 ) << std::endl;
+	outStream << "Unknown4         : " << pStream.GetULong( 24 ) << std::endl;
+	outStream << "Flag Byte        : " << (UI16)pStream.GetByte( 28 ) << std::endl;
+	outStream << "Highlight Colour : " << (UI16)pStream.GetByte( 29 ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 
 void CPCharLocBody::InternalReset( void )
 {
-	internalBuffer.resize( 37 );
-	internalBuffer[0] = 0x1B;
+	pStream.ReserveSize( 37 );
+	pStream.WriteByte( 0, 0x1B );
+
 	for( UI08 k = 5; k < 9; ++k )
-		internalBuffer[k] = 0;
+		pStream.WriteByte( k, 0x00 );
 	for( UI08 i = 18; i < 28; ++i )
-		internalBuffer[i] = 0;
+		pStream.WriteByte( i, 0x00 );
 	for( UI08 j = 30; j < 37; ++j )
-		internalBuffer[j] = 0;
+		pStream.WriteByte( j, 0x00 );
 	HighlightColour( 0 );
 }
 CPCharLocBody::CPCharLocBody()
@@ -144,12 +98,12 @@ CPCharLocBody::CPCharLocBody( CChar &toCopy )
 
 void CPCharLocBody::CopyData( CChar &toCopy )
 {
-	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
-	PackShort( &internalBuffer[0], 9, toCopy.GetID() );
-	PackShort( &internalBuffer[0], 11, toCopy.GetX() );
-	PackShort( &internalBuffer[0], 13, toCopy.GetY() );
-	internalBuffer[16] = toCopy.GetZ();
-	internalBuffer[17] = toCopy.GetDir();
+	pStream.WriteLong(  1, toCopy.GetSerial() );
+	pStream.WriteShort( 9, toCopy.GetID() );
+	pStream.WriteShort( 11, toCopy.GetX() );
+	pStream.WriteShort( 13, toCopy.GetY() );
+	pStream.WriteByte(  16, toCopy.GetZ() );
+	pStream.WriteByte(  17, toCopy.GetDir() );
 }
 
 CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
@@ -160,11 +114,11 @@ CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
 
 void CPCharLocBody::Flag( UI08 toPut )
 {
-	internalBuffer[28] = toPut;
+	pStream.WriteByte( 28, toPut );
 }
 void CPCharLocBody::HighlightColour( UI08 color )
 {
-	internalBuffer[29] = color;
+	pStream.WriteByte( 29, color );
 }
 
 //0x1C Packet
@@ -182,8 +136,8 @@ void CPCharLocBody::HighlightColour( UI08 color )
 
 CPacketSpeech::CPacketSpeech( CSpeechEntry &toCopy )
 {
-	internalBuffer.resize( 44 );
-	internalBuffer[0] = 0x1C;
+	pStream.ReserveSize( 44 );
+	pStream.WriteByte( 0, 0x1C );
 	CopyData( toCopy );
 }
 
@@ -238,34 +192,15 @@ CPacketSpeech &CPacketSpeech::operator=( CSpeechEntry &toCopy )
 	return (*this);
 }
 
-CPacketSpeech &CPacketSpeech::operator=( CPacketSpeech &toCopy )
-{
-	internalBuffer.resize( toCopy.Length() );
-	for( size_t i = 0; i < internalBuffer.size(); ++i )
-		internalBuffer[i] = toCopy[i];
-	return (*this);
-}
-
 CPacketSpeech::CPacketSpeech() : isUnicode( false )
 {
-	internalBuffer.resize( 44 );	// Minimum packet size
-	internalBuffer[0] = 0x1C;
-	internalBuffer[1] = 0;
-	internalBuffer[2] = 44;
-	internalBuffer[3] = 0xFF;
-	internalBuffer[4] = 0xFF;
-	internalBuffer[5] = 0xFF;
-	internalBuffer[6] = 0xFF;
-	internalBuffer[7] = 0xFF;
-	internalBuffer[8] = 0xFF;
-
-	internalBuffer[14] = 'S';
-	internalBuffer[15] = 'y';
-	internalBuffer[16] = 's';
-	internalBuffer[17] = 't';
-	internalBuffer[18] = 'e';
-	internalBuffer[19] = 'm';
-	internalBuffer[20] = 0;
+	pStream.ReserveSize( 44 );
+	pStream.WriteByte(   0, 0x1C );
+	pStream.WriteShort(  1, 44 );
+	pStream.WriteLong(   3, 0xFFFFFFFF );
+	pStream.WriteShort(  7, 0xFFFF );
+	pStream.WriteString( 14, "System", 6 );
+	pStream.WriteByte(   20, 0 );
 }
 
 void CPacketSpeech::SpeakerName( const std::string toPut )
@@ -273,30 +208,27 @@ void CPacketSpeech::SpeakerName( const std::string toPut )
 	size_t len = toPut.length();
 	if( len >= 30 )
 	{
-		strncpy( (char *)&internalBuffer[14], toPut.c_str(), 29 );
-		internalBuffer[43] = 0;
+		pStream.WriteString( 14, toPut, 29 );
+		pStream.WriteByte(   43, 0 );
 	}
 	else
-	{
-		strcpy( (char *)&internalBuffer[14], toPut.c_str() );
-	}
+		pStream.WriteString( 14, toPut, toPut.length() );
 }
 void CPacketSpeech::SpeakerSerial( SERIAL toPut )
 {
-	PackLong( &internalBuffer[0], 3, toPut );
+	pStream.WriteLong( 3, toPut );
 }
 void CPacketSpeech::SpeakerModel( UI16 toPut )
 {
-	PackShort( &internalBuffer[0], 7, toPut );
+	pStream.WriteShort( 7, toPut );
 }
 void CPacketSpeech::Colour( COLOUR toPut )
 {
-	PackShort( &internalBuffer[0], 10, toPut );
+	pStream.WriteShort( 10, toPut );
 }
 void CPacketSpeech::Font( FontType toPut )
 {
-	internalBuffer[12] = 0;
-	internalBuffer[13] = (UI08)toPut;
+	pStream.WriteShort( 12, toPut );
 }
 #if defined( _MSC_VER )
 #pragma note( "Function Warning: CPacketSpeech::Language(), does nothing" )
@@ -311,15 +243,16 @@ void CPacketSpeech::Unicode( bool toPut )
 }
 void CPacketSpeech::Type( SpeechType toPut )
 {
-	internalBuffer[9] = (UI08)toPut;
+	pStream.WriteByte( 9, static_cast<UI08>(toPut) );
 }
 void CPacketSpeech::Speech( const std::string toPut )
 {
 	size_t len			= toPut.length();
 	const size_t newLen	= 44 + len + 1;
-	internalBuffer.resize( newLen );
-	strcpy( (char *)&internalBuffer[44], toPut.c_str() );
-	PackShort( &internalBuffer[0], 1, static_cast<UI16>(newLen) );
+
+	pStream.ReserveSize( newLen );
+	pStream.WriteString( 44, toPut, toPut.length() );
+	pStream.WriteShort( 1, static_cast<UI16>(newLen) );
 }
 
 //0x21 Packet
@@ -334,28 +267,28 @@ void CPacketSpeech::Speech( const std::string toPut )
 
 CPWalkDeny::CPWalkDeny()
 {
-	internalBuffer.resize( 8 );
-	internalBuffer[0] = 0x21;
+	pStream.ReserveSize( 8 );
+	pStream.WriteByte( 0, 0x21 );
 }
 void CPWalkDeny::SequenceNumber( char newValue )
 {
-	internalBuffer[1] = newValue;
+	pStream.WriteByte( 1, newValue );
 }
 void CPWalkDeny::X( SI16 newValue )
 {
-	PackShort( &internalBuffer[0], 2, newValue );
+	pStream.WriteShort( 2, newValue );
 }
 void CPWalkDeny::Y( SI16 newValue )
 {
-	PackShort( &internalBuffer[0], 4, newValue );
+	pStream.WriteShort( 4, newValue );
 }
 void CPWalkDeny::Z( SI08 newValue )
 {
-	internalBuffer[7] = newValue;
+	pStream.WriteByte( 7, newValue );
 }
 void CPWalkDeny::Direction( char newValue )
 {
-	internalBuffer[6] = newValue;
+	pStream.WriteByte( 6, newValue );
 }
 
 //0x22 Packet
@@ -367,16 +300,16 @@ void CPWalkDeny::Direction( char newValue )
 
 CPWalkOK::CPWalkOK()
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0x22;
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0x22 );
 }
 void CPWalkOK::SequenceNumber( char newValue )
 {
-	internalBuffer[1] = newValue;
+	pStream.WriteByte( 1, newValue );
 }
 void CPWalkOK::OtherByte( char newValue )
 {
-	internalBuffer[2] = newValue;
+	pStream.WriteByte( 2, newValue );
 }
 
 //0x77 Packet
@@ -395,14 +328,14 @@ void CPWalkOK::OtherByte( char newValue )
 
 CPExtMove::CPExtMove()
 {
-	internalBuffer.resize( 17 );
-	internalBuffer[0] = 0x77;
+	pStream.ReserveSize( 17 );
+	pStream.WriteByte( 0, 0x77 );
 }
 
 CPExtMove::CPExtMove( CChar &toCopy )
 {
-	internalBuffer.resize( 17 );
-	internalBuffer[0] = 0x77;
+	pStream.ReserveSize( 17 );
+	pStream.WriteByte( 0, 0x77 );
 	CopyData( toCopy );
 }
 
@@ -414,22 +347,22 @@ CPExtMove &CPExtMove::operator=( CChar &toCopy )
 
 void CPExtMove::FlagColour( UI08 newValue )
 {
-	internalBuffer[16] = newValue;
+	pStream.WriteByte( 16, newValue );
 }
 
 void CPExtMove::CopyData( CChar &toCopy )
 {
-	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
-	PackShort( &internalBuffer[0], 5, toCopy.GetID() );
-	PackShort( &internalBuffer[0], 7, toCopy.GetX() );
-	PackShort( &internalBuffer[0], 9, toCopy.GetY() );
-	internalBuffer[11] = toCopy.GetZ();
+	pStream.WriteLong(  1, toCopy.GetSerial() );
+	pStream.WriteShort( 5, toCopy.GetID() );
+	pStream.WriteShort( 7, toCopy.GetX() );
+	pStream.WriteShort( 9, toCopy.GetY() );
+	pStream.WriteByte( 11, toCopy.GetZ() );
 
 	UI08 dir = toCopy.GetDir();
 	if( toCopy.IsNpc() && toCopy.CanRun() && toCopy.IsAtWar() )
 		dir |= 0x80;
-	internalBuffer[12] = dir;
-	PackShort( &internalBuffer[0], 13, toCopy.GetSkin() );
+	pStream.WriteByte( 12, dir );
+	pStream.WriteShort( 13, toCopy.GetSkin() );
 
 	UI08 flag = 0;
 	if( toCopy.IsAtWar() ) 
@@ -448,7 +381,7 @@ void CPExtMove::CopyData( CChar &toCopy )
 	// turn it yellow on full health?
 	if( toCopy.GetHP() == toCopy.GetMaxHP() )
 		flag |= 0x08;
-	internalBuffer[15] = flag;
+	pStream.WriteByte( 15, flag );
 }
 
 //0xAA Packet
@@ -464,18 +397,18 @@ void CPAttackOK::CopyData( CChar &toCopy )
 }
 CPAttackOK::CPAttackOK()
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0xAA;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0xAA );
 }
 CPAttackOK::CPAttackOK( CChar &toCopy )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0xAA;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0xAA );
 	CopyData( toCopy );
 }
 void CPAttackOK::Serial( SERIAL newSerial )
 {
-	PackLong( &internalBuffer[0], 1, newSerial );
+	pStream.WriteLong( 1, newSerial );
 }
 CPAttackOK &CPAttackOK::operator=( CChar &toCopy )
 {
@@ -494,18 +427,18 @@ void CPRemoveItem::CopyData( CBaseObject &toCopy )
 }
 CPRemoveItem::CPRemoveItem()
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0x1D;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x1D );
 }
 CPRemoveItem::CPRemoveItem( CBaseObject &toCopy )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0x1D;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x1D );
 	CopyData( toCopy );
 }
 void CPRemoveItem::Serial( SERIAL newSerial )
 {
-	PackLong( &internalBuffer[0], 1, newSerial );
+	pStream.WriteLong( 1, newSerial );
 }
 CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 {
@@ -525,23 +458,23 @@ CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 //Note: if season change, then id1 = (0=spring, 1=summer, 2=fall, 3=winter, 4 = desolation)
 CPWorldChange::CPWorldChange()
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0xBC;
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0xBC );
 }
 CPWorldChange::CPWorldChange( WorldType newSeason, UI08 newCursor )
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0xBC;
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0xBC );
 	Season( newSeason );
 	Cursor( newCursor );
 }
 void CPWorldChange::Season( WorldType newSeason )
 {
-	internalBuffer[1] = (UI08)newSeason;
+	pStream.WriteByte( 1, (UI08)newSeason );
 }
 void CPWorldChange::Cursor( UI08 newCursor )
 {
-	internalBuffer[2] = newCursor;
+	pStream.WriteByte( 2, newCursor );
 }
 
 
@@ -556,29 +489,27 @@ void CPWorldChange::Cursor( UI08 newCursor )
 //		Max normal val = 0x1F 
 CPLightLevel::CPLightLevel()
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x4F;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x4F );
 }
 CPLightLevel::CPLightLevel( LIGHTLEVEL level )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x4F;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x4F );
 	Level( level );
 }
 
 void CPLightLevel::Level( LIGHTLEVEL level )
 {
-	internalBuffer[1] = level;
+	pStream.WriteByte( 1, level );
 }
 
 void CPUpdIndSkill::InternalReset( void )
 {
-	internalBuffer.resize( 11 );
-	internalBuffer[0] = 0x3A;
-	internalBuffer[1] = 0x00; // Length of message
-	internalBuffer[2] = 0x0B; // Length of message
-	internalBuffer[3] = 0xFF; // single entry
-	internalBuffer[4] = 0x00;
+	pStream.ReserveSize( 11 );
+	pStream.WriteByte(  0, 0x3A );
+	pStream.WriteShort( 1, 0x000B ); // Length of message
+	pStream.WriteByte(  3, 0xFF); // single entry
 }
 void CPUpdIndSkill::CopyData( CChar& i, UI08 sNum )
 {
@@ -602,19 +533,19 @@ void CPUpdIndSkill::Character( CChar& i, UI08 sNum )
 }
 void CPUpdIndSkill::SkillNum( UI08 sNum )
 {
-	internalBuffer[5] = sNum;
+	pStream.WriteByte( 5, sNum );
 }
 void CPUpdIndSkill::Skill( SI16 skillval )
 {
-	PackShort( &internalBuffer[0], 6, skillval );
+	pStream.WriteShort( 6, skillval );
 }
 void CPUpdIndSkill::BaseSkill( SI16 skillval )
 {
-	PackShort( &internalBuffer[0], 8, skillval );
+	pStream.WriteShort( 8, skillval );
 }
 void CPUpdIndSkill::Lock( UI08 lockVal )
 {
-	internalBuffer[10] = lockVal;
+	pStream.WriteByte( 10, lockVal );
 }
 
 //0x3B Packet
@@ -651,16 +582,15 @@ CPBuyItem &CPBuyItem::operator=( CBaseObject &toCopy )
 }
 void CPBuyItem::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 3, toSet );
+	pStream.WriteLong( 3, toSet );
 }
 
 void CPBuyItem::InternalReset( void )
 {
-	internalBuffer.resize( 8 );
-	internalBuffer[0] = 0x3B;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x08;
-	internalBuffer[7] = 0x00;
+	pStream.ReserveSize( 8 );
+	pStream.WriteByte(  0, 0x3B );
+	pStream.WriteShort( 1, 0x0008 );
+	pStream.WriteByte(  7, 0x00 );
 }
 
 const long loopbackIP = (127<<24) + 1;
@@ -690,20 +620,20 @@ CPRelay::CPRelay( long newIP, UI16 newPort )
 }
 void CPRelay::ServerIP( long newIP )
 {
-	PackLong( &internalBuffer[0], 1, newIP );
+	pStream.WriteLong( 1, newIP );
 }
 void CPRelay::Port( UI16 newPort )
 {
-	PackShort( &internalBuffer[0], 5, newPort );
+	pStream.WriteShort( 5, newPort );
 }
 void CPRelay::SeedIP( long newIP )
 {
-	PackLong( &internalBuffer[0], 7, newIP );
+	pStream.WriteLong( 7, newIP );
 }
 void CPRelay::InternalReset( void )
 {
-	internalBuffer.resize( 11 );
-	internalBuffer[0] = 0x8C;
+	pStream.ReserveSize( 11 );
+	pStream.WriteByte( 0, 0x8C );
 	SeedIP( loopbackIP );
 }
 
@@ -721,36 +651,36 @@ void CPRelay::InternalReset( void )
 
 CPWornItem::CPWornItem()
 {
-	internalBuffer.resize( 15 );
-	internalBuffer[0] = 0x2E;
-	internalBuffer[7] = 0x00;
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0x2E );
+	pStream.WriteByte( 7, 0x00 );
 }
 void CPWornItem::ItemSerial( SERIAL itemSer )
 {
-	PackLong( &internalBuffer[0], 1, itemSer );
+	pStream.WriteLong( 1, itemSer );
 }
 void CPWornItem::Model( SI16 newModel )
 {
-	PackShort( &internalBuffer[0], 5, newModel );
+	pStream.WriteShort( 5, newModel );
 }
 void CPWornItem::Layer( UI08 layer )
 {
-	internalBuffer[8] = layer;
+	pStream.WriteByte( 8, layer );
 }
 void CPWornItem::CharSerial( SERIAL chSer )
 {
-	PackLong( &internalBuffer[0], 9, chSer );
+	pStream.WriteLong( 9, chSer );
 }
 void CPWornItem::Colour( SI16 newColour )
 {
-	PackShort( &internalBuffer[0], 13, newColour );
+	pStream.WriteShort( 13, newColour );
 }
 
 CPWornItem::CPWornItem( CItem &toCopy )
 {
-	internalBuffer.resize( 15 );
-	internalBuffer[0] = 0x2E;
-	internalBuffer[7] = 0x00;
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0x2E );
+	pStream.WriteByte( 7, 0x00 );
 	CopyData( toCopy );
 }
 
@@ -834,31 +764,31 @@ CPCharacterAnimation::CPCharacterAnimation( CChar &toCopy )
 }
 void CPCharacterAnimation::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 1, toSet );
+	pStream.WriteLong( 1, toSet );
 }
 void CPCharacterAnimation::Action( UI16 model )
 {
-	PackShort( &internalBuffer[0], 5, model );
+	pStream.WriteShort( 5, model );
 }
 void CPCharacterAnimation::Direction( UI08 dir )
 {
-	internalBuffer[8] = dir;
+	pStream.WriteByte( 8, dir );
 }
 void CPCharacterAnimation::Repeat( SI16 repeatValue )
 {
-	PackShort( &internalBuffer[0], 9, repeatValue );
+	pStream.WriteShort( 9, repeatValue );
 }
 void CPCharacterAnimation::DoBackwards( bool newValue )
 {
-	internalBuffer[11] = (UI08)((newValue?1:0));
+	pStream.WriteByte( 11, (UI08)((newValue?1:0)) );
 }
 void CPCharacterAnimation::RepeatFlag( bool newValue )
 {
-	internalBuffer[12] = (UI08)((newValue?1:0));
+	pStream.WriteByte( 12, (UI08)((newValue?1:0)) );
 }
 void CPCharacterAnimation::FrameDelay( UI08 delay )
 {
-	internalBuffer[13] = delay;
+	pStream.WriteByte( 13, delay );
 }
 CPCharacterAnimation &CPCharacterAnimation::operator=( CChar &toCopy )
 {
@@ -867,9 +797,9 @@ CPCharacterAnimation &CPCharacterAnimation::operator=( CChar &toCopy )
 }
 void CPCharacterAnimation::InternalReset( void )
 {
-	internalBuffer.resize( 14 );
-	internalBuffer[0] = 0x6E;
-	internalBuffer[7] = 0;
+	pStream.ReserveSize( 14 );
+	pStream.WriteByte( 0, 0x6E );
+	pStream.WriteByte( 7, 0x00 );
 	Repeat( 1 );
 	DoBackwards( false );
 	RepeatFlag( false );
@@ -899,13 +829,13 @@ CPDrawGamePlayer::CPDrawGamePlayer( CChar &toCopy )
 
 void CPDrawGamePlayer::CopyData( CChar &toCopy )
 {
-	PackLong( &internalBuffer[0], 1, toCopy.GetSerial() );
-	PackShort( &internalBuffer[0], 5, toCopy.GetID() );
-	PackShort( &internalBuffer[0], 8, toCopy.GetColour() );
-	PackShort( &internalBuffer[0], 11, toCopy.GetX() );
-	PackShort( &internalBuffer[0], 13, toCopy.GetY() );
-	internalBuffer[17] = toCopy.GetDir();
-	internalBuffer[18] = toCopy.GetZ();
+	pStream.WriteLong( 1, toCopy.GetSerial() );
+	pStream.WriteShort( 5, toCopy.GetID() );
+	pStream.WriteShort( 8, toCopy.GetColour() );
+	pStream.WriteShort( 11, toCopy.GetX() );
+	pStream.WriteShort( 13, toCopy.GetY() );
+	pStream.WriteByte(  17, toCopy.GetDir() );
+	pStream.WriteByte(  18, toCopy.GetZ() );
 	UI08 flag = 0;
 	if( toCopy.IsInvulnerable() )
 		flag |= 0x01;
@@ -917,15 +847,14 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		flag |= 0x40;
 	if( toCopy.GetVisible() != VT_VISIBLE )
 		flag |= 0x80;
-	internalBuffer[10] = flag;
+	pStream.WriteByte( 10, flag );
 }
 void CPDrawGamePlayer::InternalReset( void )
 {
-	internalBuffer.resize( 19 );
-	internalBuffer[0] = 0x20;
-	internalBuffer[7] = 0;
-	internalBuffer[15] = 0;
-	internalBuffer[16] = 0;
+	pStream.ReserveSize( 19 );
+	pStream.WriteByte( 0, 0x20 );
+	pStream.WriteByte( 7, 0x00 );
+	pStream.WriteShort( 15, 0x0000 );
 }
 CPDrawGamePlayer::CPDrawGamePlayer()
 {
@@ -945,8 +874,8 @@ void CPPersonalLightLevel::CopyData( CChar &toCopy )
 }
 void CPPersonalLightLevel::InternalReset( void )
 {
-	internalBuffer.resize( 6 );
-	internalBuffer[0] = 0x4E;
+	pStream.ReserveSize( 6 );
+	pStream.WriteByte( 0, 0x4E );
 }
 CPPersonalLightLevel::CPPersonalLightLevel()
 {
@@ -959,11 +888,11 @@ CPPersonalLightLevel::CPPersonalLightLevel( CChar &toCopy )
 }
 void CPPersonalLightLevel::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 1, toSet );
+	pStream.WriteLong( 1, toSet );
 }
 void CPPersonalLightLevel::Level( LIGHTLEVEL lightLevel )
 {
-	internalBuffer[5] = lightLevel;
+	pStream.WriteByte( 5, lightLevel );
 }
 
 CPPersonalLightLevel &CPPersonalLightLevel::operator=( CChar &toCopy )
@@ -989,31 +918,30 @@ CPPlaySoundEffect::CPPlaySoundEffect()
 
 void CPPlaySoundEffect::Mode( UI08 mode )
 {
-	internalBuffer[1] = mode;
+	pStream.WriteByte( 1, mode );
 }
 void CPPlaySoundEffect::Model( UI16 newModel )
 {
-	PackShort( &internalBuffer[0], 2, newModel );
+	pStream.WriteShort( 2, newModel );
 }
 void CPPlaySoundEffect::X( SI16 xLoc )
 {
-	PackShort( &internalBuffer[0], 6, xLoc );
+	pStream.WriteShort( 6, xLoc );
 }
 void CPPlaySoundEffect::Y( SI16 yLoc )
 {
-	PackShort( &internalBuffer[0], 8, yLoc );
+	pStream.WriteShort( 8, yLoc );
 }
 void CPPlaySoundEffect::Z( SI16 zLoc )
 {
-	PackShort( &internalBuffer[0], 10, zLoc );
+	pStream.WriteShort( 10, zLoc );
 }
 void CPPlaySoundEffect::InternalReset( void )
 {
-	internalBuffer.resize( 12 );
-	internalBuffer[0] = 0x54;
-	internalBuffer[1] = 1;
-	internalBuffer[4] = 0;
-	internalBuffer[5] = 0;
+	pStream.ReserveSize( 12 );
+	pStream.WriteByte( 0, 0x54 );
+	pStream.WriteByte(  1, 1 );
+	pStream.WriteShort( 4, 0x00 );
 }
 CPPlaySoundEffect &CPPlaySoundEffect::operator=( CBaseObject &toCopy )
 {
@@ -1047,8 +975,8 @@ void CPPaperdoll::CopyData( CChar &toCopy )
 }
 void CPPaperdoll::InternalReset( void )
 {
-	internalBuffer.resize( 66 );
-	internalBuffer[0] = 0x88;
+	pStream.ReserveSize( 66 );
+	pStream.WriteByte( 0, 0x88 );
 }
 CPPaperdoll::CPPaperdoll()
 {
@@ -1061,21 +989,21 @@ CPPaperdoll::CPPaperdoll( CChar &toCopy )
 }
 void CPPaperdoll::Serial( SERIAL tSerial )
 {
-	PackLong( &internalBuffer[0], 1, tSerial );
+	pStream.WriteLong( 1, tSerial );
 }
 void CPPaperdoll::FlagByte( UI08 fVal )
 {
-	internalBuffer[65] = fVal;
+	pStream.WriteByte( 65, fVal );
 }
 void CPPaperdoll::Text( const std::string toPut )
 {
 	if( toPut.length() > 60 )
 	{
-		strncpy( (char *)&internalBuffer[5], toPut.c_str(), 59 );
-		internalBuffer[64] = 0;
+		pStream.WriteString( 5, toPut, 59 );
+		pStream.WriteByte(  64, 0x00 );
 	}
 	else
-		strcpy( (char *)&internalBuffer[5], toPut.c_str() );
+		pStream.WriteString( 5, toPut, toPut.size() );
 }
 CPPaperdoll &CPPaperdoll::operator=( CChar &toCopy )
 {
@@ -1099,11 +1027,11 @@ CPPaperdoll &CPPaperdoll::operator=( CChar &toCopy )
 //Note: You can totally end weather (to display a new message) by teleporting.  I think it’s either the 0x78 or 0x20 messages that reset it, though I haven’t checked to be sure (other possibilities, 0x4F or 0x4E)
 void CPWeather::InternalReset( void )
 {
-	internalBuffer.resize( 4 );
-	internalBuffer[0] = 0x65;
-	internalBuffer[1] = 0xFF;
-	internalBuffer[2] = 0x40;
-	internalBuffer[3] = 0x10;
+	pStream.ReserveSize( 4 );
+	pStream.WriteByte( 0, 0x65 );
+	pStream.WriteByte( 1, 0xFF );
+	pStream.WriteByte( 2, 0x40 );
+	pStream.WriteByte( 3, 0x10 );
 }
 CPWeather::CPWeather()
 {
@@ -1129,15 +1057,15 @@ CPWeather::CPWeather( UI08 nType, UI08 nParts, UI08 nTemp )
 }
 void CPWeather::Type( UI08 nType )
 {
-	internalBuffer[1] = nType;
+	pStream.WriteByte( 1, nType );
 }
 void CPWeather::Particles( UI08 nParts )
 {
-	internalBuffer[2] = nParts;
+	pStream.WriteByte( 2, nParts );
 }
 void CPWeather::Temperature( UI08 nTemp )
 {
-	internalBuffer[3] = nTemp;
+	pStream.WriteByte( 3, nTemp );
 }
 
 //0x70 Packet
@@ -1165,10 +1093,9 @@ void CPWeather::Temperature( UI08 nTemp )
 //	BYTE explode on impact  
 void CPGraphicalEffect::InternalReset( void )
 {
-	internalBuffer.resize( 28 );
-	internalBuffer[0] = 0x70;
-	internalBuffer[24] = 0;
-	internalBuffer[25] = 0;
+	pStream.ReserveSize( 28 );
+	pStream.WriteByte(  0, 0x70 );
+	pStream.WriteShort( 24, 0x0000 );
 }
 CPGraphicalEffect::CPGraphicalEffect( UI08 effectType )
 {
@@ -1177,7 +1104,7 @@ CPGraphicalEffect::CPGraphicalEffect( UI08 effectType )
 }
 void CPGraphicalEffect::Effect( UI08 effectType )
 {
-	internalBuffer[1] = effectType;
+	pStream.WriteByte( 1, effectType );
 }
 void CPGraphicalEffect::SourceSerial( CBaseObject &toSet )
 {
@@ -1185,7 +1112,7 @@ void CPGraphicalEffect::SourceSerial( CBaseObject &toSet )
 }
 void CPGraphicalEffect::SourceSerial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 2, toSet );
+	pStream.WriteLong( 2, toSet );
 }
 void CPGraphicalEffect::TargetSerial( CBaseObject &toSet )
 {
@@ -1193,51 +1120,51 @@ void CPGraphicalEffect::TargetSerial( CBaseObject &toSet )
 }
 void CPGraphicalEffect::TargetSerial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 6, toSet );
+	pStream.WriteLong( 6, toSet );
 }
 void CPGraphicalEffect::Model( SI16 nModel )
 {
-	PackShort( &internalBuffer[0], 10, nModel );
+	pStream.WriteShort( 10, nModel );
 }
 void CPGraphicalEffect::X( SI16 nX )
 {
-	PackShort( &internalBuffer[0], 12, nX );
+	pStream.WriteShort( 12, nX );
 }
 void CPGraphicalEffect::Y( SI16 nY )
 {
-	PackShort( &internalBuffer[0], 14, nY );
+	pStream.WriteShort( 14, nY );
 }
 void CPGraphicalEffect::Z( SI08 nZ )
 {
-	internalBuffer[16] = nZ;
+	pStream.WriteByte( 16, nZ );
 }
 void CPGraphicalEffect::XTrg( SI16 nX )
 {
-	PackShort( &internalBuffer[0], 17, nX );
+	pStream.WriteShort( 17, nX );
 }
 void CPGraphicalEffect::YTrg( SI16 nY )
 {
-	PackShort( &internalBuffer[0], 19, nY );
+	pStream.WriteShort( 19, nY );
 }
 void CPGraphicalEffect::ZTrg( SI08 nZ )
 {
-	internalBuffer[21] = nZ;
+	pStream.WriteByte( 21, nZ );
 }
 void CPGraphicalEffect::Speed( UI08 nSpeed )
 {
-	internalBuffer[22] = nSpeed;
+	pStream.WriteByte( 22, nSpeed );
 }
 void CPGraphicalEffect::Duration( UI08 nDuration )
 {
-	internalBuffer[23] = nDuration;
+	pStream.WriteByte( 23, nDuration );
 }
 void CPGraphicalEffect::AdjustDir( bool nValue )
 {
-	internalBuffer[26] = (UI08)((nValue?0:1));
+	pStream.WriteByte( 26, (UI08)((nValue?0:1)) );
 }
 void CPGraphicalEffect::ExplodeOnImpact( bool nValue )
 {
-	internalBuffer[27] = (UI08)((nValue?1:0));
+	pStream.WriteByte( 27, (UI08)((nValue?1:0)) );
 }
 
 CPGraphicalEffect::CPGraphicalEffect( UI08 effectType, CBaseObject &src, CBaseObject &trg )
@@ -1300,8 +1227,8 @@ void CPGraphicalEffect::TargetLocation( SI16 x, SI16 y, SI08 z )
 //	BYTE[2] currentStamina 
 void CPUpdateStat::InternalReset( void )
 {
-	internalBuffer.resize( 9 );
-	internalBuffer[0] = 0xA1;
+	pStream.ReserveSize( 9 );
+	pStream.WriteByte( 0, 0xA1 );
 }
 CPUpdateStat::CPUpdateStat( CChar &toUpdate, UI08 statNum )
 {
@@ -1319,19 +1246,19 @@ CPUpdateStat::CPUpdateStat( CChar &toUpdate, UI08 statNum )
 				CurVal( toUpdate.GetMana() );
 				break;
 	}
-	internalBuffer[0] += (UI08)(statNum);
+	pStream.WriteByte( 0, (pStream.GetByte( 0 ) + statNum) );
 }
 void CPUpdateStat::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 1, toSet );
+	pStream.WriteLong( 1, toSet );
 }
 void CPUpdateStat::MaxVal( SI16 maxVal )
 {
-	PackShort( &internalBuffer[0], 5, maxVal );
+	pStream.WriteShort( 5, maxVal );
 }
 void CPUpdateStat::CurVal( SI16 curVal )
 {
-	PackShort( &internalBuffer[0], 7, curVal );
+	pStream.WriteShort( 7, curVal );
 }
 
 //0xAF Packet
@@ -1343,11 +1270,11 @@ void CPUpdateStat::CurVal( SI16 curVal )
 //	BYTE[4] unknown (all 0)
 void CPDeathAction::InternalReset( void )
 {
-	internalBuffer.resize( 13 );
-	internalBuffer[0] = 0xAF;
-	internalBuffer[9] = 0;
-	internalBuffer[10] = 0;
-	internalBuffer[11] = 0;
+	pStream.ReserveSize( 13 );
+	pStream.WriteByte( 0, 0xAF );
+	pStream.WriteByte( 9, 0x00 );
+	pStream.WriteByte( 10, 0x00 );
+	pStream.WriteByte( 11, 0x00 );
 }
 CPDeathAction::CPDeathAction( CChar &dying, CItem &corpse )
 {
@@ -1361,15 +1288,15 @@ CPDeathAction::CPDeathAction()
 }
 void CPDeathAction::Player( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 1, toSet );
+	pStream.WriteLong( 1, toSet );
 }
 void CPDeathAction::Corpse( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 5, toSet );
+	pStream.WriteLong( 5, toSet );
 }
 void CPDeathAction::FallDirection( UI08 toFall )
 {
-	internalBuffer[12] = toFall;
+	pStream.WriteByte( 12, toFall );
 }
 CPDeathAction &CPDeathAction::operator=( CChar &dying )
 {
@@ -1389,8 +1316,8 @@ CPDeathAction &CPDeathAction::operator=( CItem &corpse )
 //	BYTE[2] musicID 
 void CPPlayMusic::InternalReset( void )
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0x6D;
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0x6D );
 }
 CPPlayMusic::CPPlayMusic( SI16 musicID )
 {
@@ -1403,8 +1330,7 @@ CPPlayMusic::CPPlayMusic()
 }
 void CPPlayMusic::MusicID( SI16 musicID )
 {
-	internalBuffer[1] = (UI08)(musicID>>8);
-	internalBuffer[2] = (UI08)(musicID%256);
+	pStream.WriteShort( 1, musicID );
 }
 
 //0x24 Packet
@@ -1416,8 +1342,8 @@ void CPPlayMusic::MusicID( SI16 musicID )
 //		0x003c = backpack 
 void CPDrawContainer::InternalReset( void )
 {
-	internalBuffer.resize( 7 );
-	internalBuffer[0] = 0x24;
+	pStream.ReserveSize( 7 );
+	pStream.WriteByte( 0, 0x24 );
 }
 CPDrawContainer::CPDrawContainer()
 {
@@ -1430,7 +1356,7 @@ CPDrawContainer::CPDrawContainer( CItem &toCopy )
 }
 void CPDrawContainer::Model( UI16 newModel )
 {
-	PackShort( &internalBuffer[0], 5, newModel );
+	pStream.WriteShort( 5, newModel );
 }
 CPDrawContainer &CPDrawContainer::operator=( CItem &toCopy )
 {
@@ -1443,7 +1369,7 @@ void CPDrawContainer::CopyData( CItem &toCopy )
 }
 void CPDrawContainer::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 1, toSet );
+	pStream.WriteLong( 1, toSet );
 }
 
 //	0x7C Packet
@@ -1465,80 +1391,77 @@ void CPDrawContainer::Serial( SERIAL toSet )
 void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPOpenGump 0x7C --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "DialogID         : " << std::hex << UnpackULong(  &internalBuffer[0], 3  ) << std::endl;
-	outStream << "MenuID           : " << UnpackUShort( &internalBuffer[0], 7  ) << std::endl;
-	outStream << "Question Length  : " << std::dec << internalBuffer[9] << std::endl;
+		outStream << "[SEND]Packet     : CPOpenGump 0x7C --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "DialogID         : " << std::hex << pStream.GetULong( 3 ) << std::endl;
+	outStream << "MenuID           : " << pStream.GetUShort( 7 ) << std::endl;
+	outStream << "Question Length  : " << std::dec << (SI16)pStream.GetByte( 9 ) << std::endl;
 	outStream << "Question         : ";
 
-	for( UI32 i = 0; i < internalBuffer[9]; ++i )
-		outStream << internalBuffer[10+i];
+	for( UI32 i = 0; i < pStream.GetByte( 9 ); ++i )
+		outStream << pStream.GetByte( 10+i );
 	outStream << std::endl;
 
-	outStream << "# Responses      : " << internalBuffer[responseBaseOffset] << std::endl;
+	outStream << "# Responses      : " << pStream.GetByte( responseBaseOffset ) << std::endl;
 	size_t offsetCount = responseBaseOffset + 1;
-	for( UI32 j = 0; j < internalBuffer[responseBaseOffset]; ++j )
+	for( UI32 j = 0; j < pStream.GetByte( responseBaseOffset ); ++j )
 	{
 		outStream << "    Response " << j << std::endl;
-		outStream << "      Model  : " << std::hex << UnpackUShort( &internalBuffer[0], static_cast< UI32 >(offsetCount + 0) ) << std::endl;
-		outStream << "      Colour : " << UnpackUShort( &internalBuffer[0], static_cast< UI32 >(offsetCount + 2) ) << std::endl;
-		outStream << "      Length : " << std::dec << internalBuffer[offsetCount + 4] << std::endl;
+		outStream << "      Model  : " << std::hex << pStream.GetUShort( offsetCount + 0 ) << std::endl;
+		outStream << "      Colour : " << pStream.GetUShort( offsetCount + 2 ) << std::endl;
+		outStream << "      Length : " << std::dec << pStream.GetByte( offsetCount + 4 ) << std::endl;
 		outStream << "      Text   : ";
 
-		for( UI32 k = 0; k < internalBuffer[offsetCount + 4]; ++k )
-			outStream << internalBuffer[offsetCount + 5 + k];
+		for( UI32 k = 0; k < pStream.GetByte( offsetCount + 4 ); ++k )
+			outStream << pStream.GetByte( offsetCount + 5 + k );
 		outStream << std::endl;
-		offsetCount += ( 5 + internalBuffer[offsetCount + 4] );
+		offsetCount += ( 5 + pStream.GetByte( offsetCount + 4 ) );
 	}
 	outStream << "  Raw dump     :" << std::endl;
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 void CPOpenGump::Question( std::string toAdd )
 {
-	internalBuffer.resize( 10 + toAdd.length() + 2 );	// 10 for start of string, length of string + NULL, plus spot for # responses
-	for( UI32 i = 0; i < toAdd.length(); ++i )
-		internalBuffer[10 + i] = toAdd[i];
+	pStream.ReserveSize( 10 + toAdd.length() + 2 );	// 10 for start of string, length of string + NULL, plus spot for # responses
+	pStream.WriteString( 10, toAdd, toAdd.length() );
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
 		Console.Error( 1, "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() );
 #endif
-	internalBuffer[9]	= static_cast< UI08 >(toAdd.length() + 1);
-	responseBaseOffset	= (internalBuffer.size() - 1);
+	pStream.WriteByte( 9, static_cast< UI08 >(toAdd.length() + 1) );
+	responseBaseOffset	= (pStream.GetSize() - 1);
 	responseOffset		= responseBaseOffset + 1;
 }
 void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseText )
 {
-	++internalBuffer[responseBaseOffset]; // increment number of responses
+	pStream.WriteByte( responseBaseOffset, pStream.GetByte( responseBaseOffset ) + 1 ); // increment number of responses
 #if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
 		Console.Error( 1, "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() );
 #endif
 	UI16 toAdd = static_cast< UI16 >(5 + responseText.length());
-	internalBuffer.resize( internalBuffer.size() + toAdd );
-	PackShort(  &internalBuffer[0], static_cast< UI32 >(responseOffset + 0), modelNum );
-	PackShort(  &internalBuffer[0], static_cast< UI32 >(responseOffset + 2), colour   );
-	internalBuffer[responseOffset + 4] = static_cast< UI08 >(responseText.length());
-	PackString( &internalBuffer[0], static_cast< UI32 >(responseOffset + 5), responseText, static_cast< UI32 >(responseText.length()) );
+	pStream.ReserveSize( pStream.GetSize() + toAdd );
+	pStream.WriteShort(  (responseOffset + 0), modelNum );
+	pStream.WriteShort(  (responseOffset + 2), colour   );
+	pStream.WriteByte(   (responseOffset + 4), static_cast< UI08 >(responseText.length()) );
+	pStream.WriteString( (responseOffset + 5), responseText, responseText.length() );
 	responseOffset += toAdd;
 }
 void CPOpenGump::Finalize( void )
 {
-	PackShort( &internalBuffer[0], 1, static_cast< UI16 >(internalBuffer.size()) );
+	pStream.WriteShort( 1, static_cast< UI16 >(pStream.GetSize()) );
 }
 void CPOpenGump::InternalReset( void )
 {
 	responseOffset		= 0xFFFFFFFF;
 	responseBaseOffset	= 0xFFFFFFFF;
-	internalBuffer.resize( 9 );
-	internalBuffer[0] = 0x7C;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x00;
-	internalBuffer[3] = 0x01;
-	internalBuffer[4] = 0x02;
-	internalBuffer[5] = 0x03;
-	internalBuffer[6] = 0x04;
-	internalBuffer[7] = 0x00;
-	internalBuffer[8] = 0x64;
+	pStream.ReserveSize( 9 );
+	pStream.WriteByte(  0, 0x7C );
+	pStream.WriteShort( 1, 0x0000 );
+	pStream.WriteByte(  3, 0x01 );
+	pStream.WriteByte(  4, 0x02 );
+	pStream.WriteByte(  5, 0x03 );
+	pStream.WriteByte(  6, 0x04 );
+	pStream.WriteShort( 7, 0x0064 );
 }
 CPOpenGump::CPOpenGump()
 {
@@ -1551,11 +1474,11 @@ CPOpenGump::CPOpenGump( CChar &toCopy )
 }
 void CPOpenGump::Length( int totalLines )
 {
-	PackShort( &internalBuffer[0], 1, totalLines );
+	pStream.WriteShort( 1, totalLines );
 }
 void CPOpenGump::GumpIndex( int index )
 {
-	PackShort( &internalBuffer[0], 7, index );
+	pStream.WriteShort( 7, index );
 }
 CPOpenGump &CPOpenGump::operator=( CChar &toCopy )
 {
@@ -1568,11 +1491,8 @@ void CPOpenGump::CopyData( CChar &toCopy )
 }
 void CPOpenGump::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 3, toSet );
+	pStream.WriteLong( 3, toSet );
 }
-
-
-
 
 //0x6C Packet
 //Last Modified on Sunday, 13-Feb-2000 
@@ -1594,24 +1514,21 @@ void CPOpenGump::Serial( SERIAL toSet )
 //Note: the model # shouldn’t be trusted.
 CPTargetCursor::CPTargetCursor()
 {
-	internalBuffer.resize( 19 );
-	internalBuffer[0] = 0x6C;
+	pStream.ReserveSize( 19 );
+	pStream.WriteByte( 0, 0x6C );
 	CursorType( 0 );
 }
 void CPTargetCursor::Type( UI08 nType )
 {
-	internalBuffer[1] = nType;
+	pStream.WriteByte( 1, nType );
 }
 void CPTargetCursor::ID( SERIAL toSet )
 {
-	internalBuffer[2] = (UI08)(toSet>>24);
-	internalBuffer[3] = (UI08)(toSet>>16);
-	internalBuffer[4] = (UI08)(toSet>>8);
-	internalBuffer[5] = (UI08)(toSet%256);
+	pStream.WriteLong( 2, toSet );
 }
 void CPTargetCursor::CursorType( UI08 nType )
 {
-	internalBuffer[6] = nType;
+	pStream.WriteByte( 6, nType );
 }
 
 //0x11 Packet
@@ -1663,15 +1580,15 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		{
 			extended3 = true;
 			extended4 = true;
-			internalBuffer.resize( 88 );
-			internalBuffer[2] = 88;
+			pStream.ReserveSize( 88 );
+			pStream.WriteByte( 2, 88 );
 			Flag( 4 );
 		}
 		else if( target.ClientVersionMajor() >= 3 )
 		{
 			extended3 = true;
-			internalBuffer.resize( 70 );
-			internalBuffer[2] = 70;
+			pStream.ReserveSize( 70 );
+			pStream.WriteByte( 2, 70 );
 			Flag( 3 );
 		}
 	}
@@ -1735,10 +1652,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 }
 void CPStatWindow::InternalReset( void )
 {
-	internalBuffer.resize( 66 );
-	internalBuffer[0] = 0x11;
-	internalBuffer[1] = 0;
-	internalBuffer[2] = 66;
+	pStream.ReserveSize( 66 );
+	pStream.WriteByte( 0, 0x11 );
+	pStream.WriteByte( 1, 0x00 );
+	pStream.WriteByte( 2, 66 );
 	extended3 = false;
 	extended4 = false;
 	Flag( 0 );
@@ -1754,183 +1671,133 @@ CPStatWindow::CPStatWindow( CChar &toCopy, CSocket &target )
 }
 void CPStatWindow::Serial( SERIAL toSet )
 {
-	internalBuffer[3] = (UI08)(toSet>>24);
-	internalBuffer[4] = (UI08)(toSet>>16);
-	internalBuffer[5] = (UI08)(toSet>>8);
-	internalBuffer[6] = (UI08)(toSet%256);
+	pStream.WriteLong( 3, toSet );
 }
 void CPStatWindow::Name( const std::string nName )
 {
 	if( nName.length() >= 30 )
 	{
-		strncpy( (char *)&internalBuffer[7], nName.c_str(), 29 );
-		internalBuffer[36] = 0;
+		pStream.WriteString( 7, nName, 29 );
+		pStream.WriteByte(   36, 0x00 );
 	}
 	else
-		strcpy( (char*)&internalBuffer[7], nName.c_str() );
+		pStream.WriteString( 7, nName, nName.size() );
 }
 void CPStatWindow::CurrentHP( SI16 nValue )
 {
-	internalBuffer[37] = (UI08)(nValue>>8);
-	internalBuffer[38] = (UI08)(nValue%256);
+	pStream.WriteShort( 37, nValue );
 }
 void CPStatWindow::MaxHP( SI16 nValue )
 {
-	internalBuffer[39] = (UI08)(nValue>>8);
-	internalBuffer[40] = (UI08)(nValue%256);
+	pStream.WriteShort( 39, nValue );
 }
 void CPStatWindow::NameChange( bool nValue )
 {
-	internalBuffer[41] = (UI08)((nValue?0xFF:0));
+	pStream.WriteByte( 41, (UI08)((nValue?0xFF:0)) );
 }
 void CPStatWindow::Flag( UI08 nValue )
 {
-	internalBuffer[42] = nValue;
+	pStream.WriteByte( 42, nValue );
 }
 void CPStatWindow::Sex( UI08 nValue )
 {
-	internalBuffer[43] = nValue;
+	pStream.WriteByte( 43, nValue );
 }
 void CPStatWindow::Strength( SI16 nValue )
 {
-	internalBuffer[44] = (UI08)(nValue>>8);
-	internalBuffer[45] = (UI08)(nValue%256);
+	pStream.WriteShort( 44, nValue );
 }
 void CPStatWindow::Dexterity( SI16 nValue )
 {
-	internalBuffer[46] = (UI08)(nValue>>8);
-	internalBuffer[47] = (UI08)(nValue%256);
+	pStream.WriteShort( 46, nValue );
 }
 void CPStatWindow::Intelligence( SI16 nValue )
 {
-	internalBuffer[48] = (UI08)(nValue>>8);
-	internalBuffer[49] = (UI08)(nValue%256);
+	pStream.WriteShort( 48, nValue );
 }
 void CPStatWindow::Stamina( SI16 nValue )
 {
-	internalBuffer[50] = (UI08)(nValue>>8);
-	internalBuffer[51] = (UI08)(nValue%256);
+	pStream.WriteShort( 50, nValue );
 }
 void CPStatWindow::MaxStamina( SI16 nValue )
 {
-	internalBuffer[52] = (UI08)(nValue>>8);
-	internalBuffer[53] = (UI08)(nValue%256);
+	pStream.WriteShort( 52, nValue );
 }
 void CPStatWindow::Mana( SI16 nValue )
 {
-	internalBuffer[54] = (UI08)(nValue>>8);
-	internalBuffer[55] = (UI08)(nValue%256);
+	pStream.WriteShort( 54, nValue );
 }
 void CPStatWindow::MaxMana( SI16 nValue )
 {
-	internalBuffer[56] = (UI08)(nValue>>8);
-	internalBuffer[57] = (UI08)(nValue%256);
+	pStream.WriteShort( 56, nValue );
 }
 void CPStatWindow::Gold( UI32 gValue )
 {
-	internalBuffer[58] = (UI08)(gValue>>24);
-	internalBuffer[59] = (UI08)(gValue>>16);
-	internalBuffer[60] = (UI08)(gValue>>8);
-	internalBuffer[61] = (UI08)(gValue%256);
+	pStream.WriteLong( 58, gValue );
 }
 void CPStatWindow::AC( UI16 nValue )
 {
-	internalBuffer[62] = (UI08)(nValue>>8);
-	internalBuffer[63] = (UI08)(nValue%256);
+	pStream.WriteShort( 62, nValue );
 }
 void CPStatWindow::Weight( UI16 nValue )
 {
-	internalBuffer[64] = (UI08)(nValue>>8);
-	internalBuffer[65] = (UI08)(nValue%256);
+	pStream.WriteShort( 64, nValue );
 }
 
 void CPStatWindow::StatCap( UI16 value )
 {
 	if( extended3 )
-	{
-		internalBuffer[66] = (UI08)(value>>8);
-		internalBuffer[67] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 66, value );
 }
 void CPStatWindow::CurrentPets( UI08 value )
 {
 	if( extended3 )
-	{
-		internalBuffer[68] = value;
-	}
+		pStream.WriteByte( 68, value );
 }
 void CPStatWindow::MaxPets( UI08 value )
 {
 	if( extended3 )
-	{
-		internalBuffer[69] = value;
-	}
+		pStream.WriteByte( 69, value );
 }
 void CPStatWindow::FireResist( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[70] = (UI08)(value>>8);
-		internalBuffer[71] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 70, value );
 }
 void CPStatWindow::ColdResist( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[72] = (UI08)(value>>8);
-		internalBuffer[73] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 72, value );
 }
 void CPStatWindow::PoisonResist( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[74] = (UI08)(value>>8);
-		internalBuffer[75] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 74, value );
 }
 void CPStatWindow::EnergyResist( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[76] = (UI08)(value>>8);
-		internalBuffer[77] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 76, value );
 }
 void CPStatWindow::Luck( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[78] = (UI08)(value>>8);
-		internalBuffer[79] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 78, value );
 }
 void CPStatWindow::DamageMax( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[80] = (UI08)(value>>8);
-		internalBuffer[81] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 80, value );
 }
 void CPStatWindow::DamageMin( UI16 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[82] = (UI08)(value>>8);
-		internalBuffer[83] = (UI08)(value%256);
-	}
+		pStream.WriteShort( 82, value );
 }
 void CPStatWindow::Unknown( UI32 value )
 {
 	if( extended4 )
-	{
-		internalBuffer[84] = (UI08)(value>>24);
-		internalBuffer[85] = (UI08)(value>>16);
-		internalBuffer[86] = (UI08)(value>>8);
-		internalBuffer[87] = (UI08)(value%256);
-	}
+		pStream.WriteLong( 84, value );
 }
 
 //0x53 Packet
@@ -1944,8 +1811,8 @@ void CPStatWindow::Unknown( UI32 value )
 
 void CPIdleWarning::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x53;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x53 );
 }
 CPIdleWarning::CPIdleWarning()
 {
@@ -1958,7 +1825,7 @@ CPIdleWarning::CPIdleWarning( UI08 errorNum )
 }
 void CPIdleWarning::Error( UI08 errorNum )
 {
-	internalBuffer[1] = errorNum;
+	pStream.WriteByte( 1, errorNum );
 }
 
 
@@ -1975,20 +1842,20 @@ CPTime::CPTime()
 }
 void CPTime::Hour( UI08 hour )
 {
-	internalBuffer[1] = hour;
+	pStream.WriteByte( 1, hour );
 }
 void CPTime::Minute( UI08 minute )
 {
-	internalBuffer[2] = minute;
+	pStream.WriteByte( 2, minute );
 }
 void CPTime::Second( UI08 second )
 {
-	internalBuffer[3] = second;
+	pStream.WriteByte( 3, second );
 }
 void CPTime::InternalReset( void )
 {
-	internalBuffer.resize( 4 );
-	internalBuffer[0] = 0x5B;
+	pStream.ReserveSize( 4 );
+	pStream.WriteByte( 0, 0x5B );
 }
 CPTime::CPTime( UI08 hour, UI08 minute, UI08 second )
 {
@@ -2004,8 +1871,8 @@ CPTime::CPTime( UI08 hour, UI08 minute, UI08 second )
 //	BYTE cmd 
 CPLoginComplete::CPLoginComplete()
 {
-	internalBuffer.resize( 1 );
-	internalBuffer[0] = 0x55;
+	pStream.ReserveSize( 1 );
+	pStream.WriteByte( 0, 0x55 );
 }
 
 
@@ -2023,15 +1890,13 @@ CPTextEmoteColour::CPTextEmoteColour()
 }
 void CPTextEmoteColour::BlockSize( SI16 newValue )
 {
-	internalBuffer.resize( newValue );
-	internalBuffer[0] = 0x69;
-	internalBuffer[1] = (UI08)(newValue>>8);
-	internalBuffer[2] = (UI08)(newValue%256);
+	pStream.ReserveSize( newValue );
+	pStream.WriteByte(  0, 0x69 );
+	pStream.WriteShort( 1, newValue );
 }
 void CPTextEmoteColour::Unknown( SI16 newValue )
 {
-	internalBuffer[3] = (UI08)(newValue>>8);
-	internalBuffer[4] = (UI08)(newValue%256);
+	pStream.WriteShort( 3, newValue );
 }
 
 
@@ -2051,15 +1916,15 @@ CPWarMode::CPWarMode()
 
 void CPWarMode::Flag( UI08 nFlag )
 {
-	internalBuffer[1] = nFlag;
+	pStream.WriteByte( 1, nFlag );
 }
 void CPWarMode::InternalReset( void )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0x72;
-	internalBuffer[2] = 0x00;
-	internalBuffer[3] = 0x32;
-	internalBuffer[4] = 0x00;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x72 );
+	pStream.WriteByte( 2, 0x00 );
+	pStream.WriteByte( 3, 0x32 );
+	pStream.WriteByte( 4, 0x00 );
 }
 CPWarMode::CPWarMode( UI08 nFlag )
 {
@@ -2074,8 +1939,8 @@ CPWarMode::CPWarMode( UI08 nFlag )
 //	BYTE pause/resume (0=pause, 1=resume)
 void CPPauseResume::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x33;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x33 );
 }
 CPPauseResume::CPPauseResume()
 {
@@ -2088,7 +1953,7 @@ CPPauseResume::CPPauseResume( UI08 mode )
 }
 void CPPauseResume::Mode( UI08 mode )
 {
-	internalBuffer[1] = mode;
+	pStream.WriteByte( 1, mode );
 }
 
 bool CPPauseResume::ClientCanReceive( CSocket *mSock )
@@ -2117,8 +1982,8 @@ bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 //	BYTE[blockSize-3] null terminated full web address 
 void CPWebLaunch::InternalReset( void )
 {
-	internalBuffer.resize( 4 );
-	internalBuffer[0] = 0xA5;
+	pStream.ReserveSize( 4 );
+	pStream.WriteByte( 0, 0xA5 );
 }
 CPWebLaunch::CPWebLaunch()
 {
@@ -2133,14 +1998,13 @@ void CPWebLaunch::Text( const std::string txt )
 {
 	const SI16 tLen = (SI16)txt.length() + 4;
 	SetSize( tLen );
-	strcpy( (char *)&internalBuffer[3], txt.c_str() );
+	pStream.WriteString( 3, txt, txt.size() );
 }
 
 void CPWebLaunch::SetSize( SI16 newSize )
 {
-	internalBuffer.resize( newSize );
-	internalBuffer[1] = (UI08)(newSize>>8);
-	internalBuffer[2] = (UI08)(newSize%256);
+	pStream.ReserveSize( newSize );
+	pStream.WriteShort( 1, newSize );
 }
 
 //0xBA Packet
@@ -2153,8 +2017,8 @@ void CPWebLaunch::SetSize( SI16 newSize )
 //Server Message
 void CPTrackingArrow::InternalReset( void )
 {
-	internalBuffer.resize( 6 );
-	internalBuffer[0] = 0xBA;
+	pStream.ReserveSize( 6 );
+	pStream.WriteByte( 0, 0xBA );
 }
 CPTrackingArrow::CPTrackingArrow()
 {
@@ -2167,10 +2031,8 @@ CPTrackingArrow::CPTrackingArrow( SI16 x, SI16 y )
 }
 void CPTrackingArrow::Location( SI16 x, SI16 y )
 {
-	internalBuffer[2] = (UI08)(x>>8);
-	internalBuffer[3] = (UI08)(x%256);
-	internalBuffer[4] = (UI08)(y>>8);
-	internalBuffer[5] = (UI08)(y%256);
+	pStream.WriteShort( 2, x );
+	pStream.WriteShort( 4, y );
 }
 CPTrackingArrow &CPTrackingArrow::operator=( CBaseObject &toCopy )
 {
@@ -2179,7 +2041,7 @@ CPTrackingArrow &CPTrackingArrow::operator=( CBaseObject &toCopy )
 }
 void CPTrackingArrow::Active( UI08 value )
 {
-	internalBuffer[1] = value;
+	pStream.WriteByte( 1, value );
 }
 
 CPTrackingArrow::CPTrackingArrow( CBaseObject &toCopy )
@@ -2196,8 +2058,8 @@ CPTrackingArrow::CPTrackingArrow( CBaseObject &toCopy )
 //Note: Server Message
 void CPBounce::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x27;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x27 );
 }
 CPBounce::CPBounce()
 {
@@ -2210,7 +2072,7 @@ CPBounce::CPBounce( UI08 mode )
 }
 void CPBounce::Mode( UI08 mode )
 {
-	internalBuffer[1] = mode;
+	pStream.WriteByte( 1, mode );
 }
 
 //0x95 Packet
@@ -2223,10 +2085,8 @@ void CPBounce::Mode( UI08 mode )
 //NOTE: This packet is sent by both the server and client
 void CPDyeVat::InternalReset( void )
 {
-	internalBuffer.resize( 9 );
-	internalBuffer[0] = 0x95;
-	internalBuffer[5] = 0;
-	internalBuffer[6] = 0;
+	pStream.ReserveSize( 9 );
+	pStream.WriteByte( 0, 0x95 );
 }
 void CPDyeVat::CopyData( CBaseObject &target )
 {
@@ -2244,15 +2104,11 @@ CPDyeVat::CPDyeVat( CBaseObject &target )
 }
 void CPDyeVat::Serial( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	pStream.WriteLong( 1, toSet );
 }
 void CPDyeVat::Model( SI16 toSet )
 {
-	internalBuffer[7] = (UI08)(toSet>>8);
-	internalBuffer[8] = (UI08)(toSet%256);
+	pStream.WriteShort( 7, toSet );
 }
 CPDyeVat &CPDyeVat::operator=( CBaseObject &target )
 {
@@ -2271,12 +2127,12 @@ CPDyeVat &CPDyeVat::operator=( CBaseObject &target )
 //	BYTE[6] unknown (all 0)
 void CPMultiPlacementView::InternalReset( void )
 {
-	internalBuffer.resize( 26 );
-	internalBuffer[0] = 0x99;
+	pStream.ReserveSize( 26 );
+	pStream.WriteByte( 0, 0x99 );
 	for( UI08 i = 6; i < 18; ++i )
-		internalBuffer[i] = 0;
+		pStream.WriteByte( i, 0 );
 	for( UI08 k = 20; k < 26; ++k )
-		internalBuffer[k] = 0;
+		pStream.WriteByte( k, 0 );
 }
 void CPMultiPlacementView::CopyData( CItem &target )
 {
@@ -2293,19 +2149,15 @@ CPMultiPlacementView::CPMultiPlacementView( CItem &target )
 }
 void CPMultiPlacementView::RequestType( UI08 rType )
 {
-	internalBuffer[1] = rType;
+	pStream.WriteByte( 1, rType );
 }
 void CPMultiPlacementView::DeedSerial( SERIAL toSet )
 {
-	internalBuffer[2] = (UI08)(toSet>>24);
-	internalBuffer[3] = (UI08)(toSet>>16);
-	internalBuffer[4] = (UI08)(toSet>>8);
-	internalBuffer[5] = (UI08)(toSet%256);
+	pStream.WriteLong( 2, toSet );
 }
 void CPMultiPlacementView::MultiModel( SI16 toSet )
 {
-	internalBuffer[18] = (UI08)(toSet>>8);
-	internalBuffer[19] = (UI08)(toSet%256);
+	pStream.WriteShort( 18, toSet );
 }
 CPMultiPlacementView &CPMultiPlacementView::operator=( CItem &target )
 {
@@ -2340,13 +2192,13 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 //Note2: on OSI  servers this controls features OSI enables/disables via “upgrade codes.”
 //Note3: a 3 doesn’t seem to “hurt” older (NON LBR) clients.
 
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0xB9;
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0xB9 );
 #if defined( _MSC_VER )
 #pragma todo( "Currently all client support is hardcoded. Move this into the ini when possible." )
 #endif
-	internalBuffer[1] = 0x80;		// 0x00
-	internalBuffer[2] = 0x3F;		// New chars enabled(shh they prolly wont work) and Enable 6th slot
+	pStream.WriteByte( 1, 0x80 );		// 0x00
+	pStream.WriteByte( 2, 0x3F );		// New chars enabled(shh they prolly wont work) and Enable 6th slot
 }
 
 //0x25 Packet
@@ -2363,9 +2215,9 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 //	BYTE[2] color 
 void CPAddItemToCont::InternalReset( void )
 {
-	internalBuffer.resize( 20 );
-	internalBuffer[0] = 0x25;
-	internalBuffer[7] = 0;
+	pStream.ReserveSize( 20 );
+	pStream.WriteByte( 0, 0x25 );
+	pStream.WriteByte( 7, 0 );
 }
 void CPAddItemToCont::CopyData( CItem &toCopy )
 {
@@ -2388,42 +2240,31 @@ CPAddItemToCont::CPAddItemToCont( CItem &toAdd )
 }
 void CPAddItemToCont::Serial( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	pStream.WriteLong( 1, toSet );
 }
 void CPAddItemToCont::Model( SI16 toSet )
 {
-	internalBuffer[5] = (UI08)(toSet>>8);
-	internalBuffer[6] = (UI08)(toSet%256);
+	pStream.WriteShort( 5, toSet );
 }
 void CPAddItemToCont::NumItems( SI16 toSet )
 {
-	internalBuffer[8] = (UI08)(toSet>>8);
-	internalBuffer[9] = (UI08)(toSet%256);
+	pStream.WriteShort( 8, toSet );
 }
 void CPAddItemToCont::X( SI16 x )
 {
-	internalBuffer[10] = (UI08)(x>>8);
-	internalBuffer[11] = (UI08)(x%256);
+	pStream.WriteShort( 10, x );
 }
 void CPAddItemToCont::Y( SI16 y )
 {
-	internalBuffer[12] = (UI08)(y>>8);
-	internalBuffer[13] = (UI08)(y%256);
+	pStream.WriteShort( 12, y );
 }
 void CPAddItemToCont::Container( SERIAL toAdd )
 {
-	internalBuffer[14] = (UI08)(toAdd>>24);
-	internalBuffer[15] = (UI08)(toAdd>>16);
-	internalBuffer[16] = (UI08)(toAdd>>8);
-	internalBuffer[17] = (UI08)(toAdd%256);
+	pStream.WriteLong( 14, toAdd );
 }
 void CPAddItemToCont::Colour( SI16 toSet )
 {
-	internalBuffer[18] = (UI08)(toSet>>8);
-	internalBuffer[19] = (UI08)(toSet%256);
+	pStream.WriteShort( 18, toSet );
 }
 CPAddItemToCont &CPAddItemToCont::operator=( CItem &toAdd )
 {
@@ -2439,8 +2280,8 @@ CPAddItemToCont &CPAddItemToCont::operator=( CItem &toAdd )
 //Note: Server Message
 void CPKickPlayer::InternalReset( void )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0x26;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x26 );
 }
 void CPKickPlayer::CopyData( CChar &toCopy )
 {
@@ -2457,10 +2298,7 @@ CPKickPlayer::CPKickPlayer( CChar &toCopy )
 }
 void CPKickPlayer::Serial( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	pStream.WriteLong( 1, toSet );
 }
 CPKickPlayer &CPKickPlayer::operator=( CChar &toCopy )
 {
@@ -2477,8 +2315,8 @@ CPKickPlayer &CPKickPlayer::operator=( CChar &toCopy )
 //Note: Resurrection menu has been removed from UO.
 void CPResurrectMenu::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x2C;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x2C );
 }
 CPResurrectMenu::CPResurrectMenu()
 {
@@ -2491,7 +2329,7 @@ CPResurrectMenu::CPResurrectMenu( UI08 action )
 }
 void CPResurrectMenu::Action( UI08 action )
 {	// valid values 0 == from server, 1 == resurrect, 2 == ghost (server/client job)
-	internalBuffer[1] = action;
+	pStream.WriteByte( 1, action );
 }
 
 //0x2F Packet
@@ -2504,9 +2342,9 @@ void CPResurrectMenu::Action( UI08 action )
 //This packet is sent when there is a fight going on somewhere on screen.
 void CPFightOccurring::InternalReset( void )
 {
-	internalBuffer.resize( 10 );
-	internalBuffer[0] = 0x2F;
-	internalBuffer[1] = 0;
+	pStream.ReserveSize( 10 );
+	pStream.WriteByte( 0, 0x2F );
+	pStream.WriteByte( 1, 0 );
 }
 // Sent when fight occuring somewhere on the screen
 CPFightOccurring::CPFightOccurring()
@@ -2519,10 +2357,7 @@ CPFightOccurring::CPFightOccurring( CChar &attacker, CChar &defender )
 }
 void CPFightOccurring::Attacker( SERIAL toSet )
 {
-	internalBuffer[2] = (UI08)(toSet>>24);
-	internalBuffer[3] = (UI08)(toSet>>16);
-	internalBuffer[4] = (UI08)(toSet>>8);
-	internalBuffer[5] = (UI08)(toSet%256);
+	pStream.WriteLong( 2, toSet );
 }
 void CPFightOccurring::Attacker( CChar &attacker )
 {
@@ -2530,10 +2365,7 @@ void CPFightOccurring::Attacker( CChar &attacker )
 }
 void CPFightOccurring::Defender( SERIAL toSet )
 {
-	internalBuffer[6] = (UI08)(toSet>>24);
-	internalBuffer[7] = (UI08)(toSet>>16);
-	internalBuffer[8] = (UI08)(toSet>>8);
-	internalBuffer[9] = (UI08)(toSet%256);
+	pStream.WriteLong( 6, toSet );
 }
 void CPFightOccurring::Defender( CChar &defender )
 {
@@ -2542,8 +2374,8 @@ void CPFightOccurring::Defender( CChar &defender )
 
 void CPSkillsValues::InternalReset( void )
 {
-	internalBuffer.resize( 1 );
-	internalBuffer[0] = 0x3A;
+	pStream.ReserveSize( 1 );
+	pStream.WriteByte( 0, 0x3A );
 }
 void CPSkillsValues::CopyData( CChar &toCopy )
 {
@@ -2559,13 +2391,12 @@ void CPSkillsValues::SetCharacter( CChar &toCopy )
 
 void CPSkillsValues::BlockSize( SI16 newValue )
 {
-	internalBuffer.resize( newValue );
-	internalBuffer[1] = (UI08)(newValue>>8);
-	internalBuffer[2] = (UI08)(newValue%256);
-	internalBuffer[3] = 0;	// full list
-	internalBuffer[4] = 0x00;
-	internalBuffer[newValue-1] = 0;	// finish off with a double NULL
-	internalBuffer[newValue-2] = 0;
+	pStream.ReserveSize( newValue );
+	pStream.WriteShort( 1, newValue );
+	pStream.WriteByte(  3, 0x00 );	// full list
+	pStream.WriteByte(  4, 0x00 );
+	pStream.WriteByte(  newValue-1, 0x00 );	// finish off with a double NULL
+	pStream.WriteByte(  newValue-2, 0x00 );
 }
 CPSkillsValues::CPSkillsValues()
 {
@@ -2582,7 +2413,7 @@ void CPSkillsValues::NumSkills( UI08 numSkills )
 }
 UI08 CPSkillsValues::NumSkills( void )
 {
-	int size = ( (internalBuffer[1]) << 8 ) + internalBuffer[2];
+	int size = pStream.GetShort( 1 );
 	size -= 6;
 	size /= 7;
 	return (UI08)size;
@@ -2591,21 +2422,15 @@ UI08 CPSkillsValues::NumSkills( void )
 void CPSkillsValues::SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, UI08 skillLock )
 {
 	int offset = skillID * 7 + 5;
-	internalBuffer[offset] = skillID + 1;
-	WriteShort( offset + 1, skillVal );
-	WriteShort( offset + 3, baseSkillVal );
-	internalBuffer[offset + 5] = skillLock;
+	pStream.WriteByte(  offset, skillID + 1 );
+	pStream.WriteShort( offset + 1, skillVal );
+	pStream.WriteShort( offset + 3, baseSkillVal );
+	pStream.WriteByte(  offset + 5, skillLock ); 
 }
 CPSkillsValues &CPSkillsValues::operator=( CChar &toCopy )
 {
 	CopyData( toCopy );
 	return (*this);
-}
-
-void CPSkillsValues::WriteShort( SI16 offset, SI16 value )
-{
-	internalBuffer[offset] = (UI08)(value>>8);
-	internalBuffer[offset+1] = (UI08)(value%256);
 }
 
 //0x90 Packet
@@ -2622,42 +2447,32 @@ void CPSkillsValues::WriteShort( SI16 offset, SI16 value )
 //	BYTE[2] gump height in pixels 
 CPMapMessage::CPMapMessage()
 {
-	internalBuffer.resize( 19 );
-	internalBuffer[0] = 0x90;
+	pStream.ReserveSize( 19 );
+	pStream.WriteByte( 0, 0x90 );
 	GumpArt( 0x139D );
 }
 void CPMapMessage::UpperLeft( SI16 x, SI16 y )
 {
-	internalBuffer[7] = (UI08)(x>>8);
-	internalBuffer[8] = (UI08)(x%256);
-	internalBuffer[9] = (UI08)(y>>8);
-	internalBuffer[10] = (UI08)(y%256);
+	pStream.WriteShort( 7, x );
+	pStream.WriteShort( 9, y );
 }
 void CPMapMessage::LowerRight( SI16 x, SI16 y )
 {
-	internalBuffer[11] = (UI08)(x>>8);
-	internalBuffer[12] = (UI08)(x%256);
-	internalBuffer[13] = (UI08)(y>>8);
-	internalBuffer[14] = (UI08)(y%256);
+	pStream.WriteShort( 11, x );
+	pStream.WriteShort( 13, y );
 }
 void CPMapMessage::Dimensions( SI16 width, SI16 height )
 {
-	internalBuffer[15] = (UI08)(width>>8);
-	internalBuffer[16] = (UI08)(width%256);
-	internalBuffer[17] = (UI08)(height>>8);
-	internalBuffer[18] = (UI08)(height%256);
+	pStream.WriteShort( 15, width );
+	pStream.WriteShort( 17, height );
 }
 void CPMapMessage::GumpArt( SI16 newArt )
 {
-	internalBuffer[5] = (UI08)(newArt>>8);
-	internalBuffer[6] = (UI08)(newArt%256);
+	pStream.WriteShort( 5, newArt );
 }
 void CPMapMessage::KeyUsed( long key )
 {
-	internalBuffer[1] = (UI08)(key>>24);
-	internalBuffer[2] = (UI08)(key>>16);
-	internalBuffer[3] = (UI08)(key>>8);
-	internalBuffer[4] = (UI08)(key%256);
+	pStream.WriteLong( 1, key );
 }
 
 
@@ -2683,48 +2498,44 @@ void CPMapMessage::KeyUsed( long key )
 //	BYTE[30] author (zero terminated, garbage after terminator)
 CPBookTitlePage::CPBookTitlePage()
 {
-	internalBuffer.resize( 99 );
-	internalBuffer[0] = 0x93;
+	pStream.ReserveSize( 99 );
+	pStream.WriteByte( 0, 0x93 );
 }
 void CPBookTitlePage::Serial( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	pStream.WriteLong( 1, toSet );
 }
 void CPBookTitlePage::WriteFlag( UI08 flag )
 {
-	internalBuffer[5] = flag;
+	pStream.WriteByte( 5, flag );
 }
 void CPBookTitlePage::NewFlag( UI08 flag )
 {
-	internalBuffer[6] = flag;
+	pStream.WriteByte( 6, flag );
 }
 void CPBookTitlePage::Pages( SI16 pages )
 {
-	internalBuffer[7] = (UI08)(pages>>8);
-	internalBuffer[8] = (UI08)(pages%256);
+	pStream.WriteShort( 7, pages );
 }
 void CPBookTitlePage::Title( const std::string txt )
 {
 	if( txt.length() >= 60 )
 	{
-		strncpy( (char *)&internalBuffer[9], txt.c_str(), 59 );
-		internalBuffer[68] = 0;
+		pStream.WriteString( 9, txt, 59 );
+		pStream.WriteByte( 68, 0x00 );
 	}
 	else
-		strcpy( (char *)&internalBuffer[9], txt.c_str() );
+		pStream.WriteString( 9, txt, txt.size() );
 }
 void CPBookTitlePage::Author( const std::string txt )
 {
 	if( txt.length() >= 30 )
 	{
-		strncpy( (char *)&internalBuffer[69], txt.c_str(), 29 );
-		internalBuffer[98] = 0;
+		pStream.WriteString( 69, txt, 29 );
+		pStream.WriteByte( 98, 0x00 );
 	}
 	else
-		strcpy( (char *)&internalBuffer[69], txt.c_str() );
+		pStream.WriteString( 69, txt, txt.size() );
 }
 
 
@@ -2737,28 +2548,22 @@ void CPBookTitlePage::Author( const std::string txt )
 //Note: This is both a client and server message.
 CPUltimaMessenger::CPUltimaMessenger()
 {
-	internalBuffer.resize( 9 );
-	internalBuffer[0] = 0xBB;
+	pStream.ReserveSize( 9 );
+	pStream.WriteByte( 0, 0xBB );
 }
 void CPUltimaMessenger::ID1( SERIAL toSet )
 {
-	internalBuffer[1] = (UI08)(toSet>>24);
-	internalBuffer[2] = (UI08)(toSet>>16);
-	internalBuffer[3] = (UI08)(toSet>>8);
-	internalBuffer[4] = (UI08)(toSet%256);
+	pStream.WriteLong( 1, toSet );
 }
 void CPUltimaMessenger::ID2( SERIAL toSet )
 {
-	internalBuffer[5] = (UI08)(toSet>>24);
-	internalBuffer[6] = (UI08)(toSet>>16);
-	internalBuffer[7] = (UI08)(toSet>>8);
-	internalBuffer[8] = (UI08)(toSet%256);
+	pStream.WriteLong( 5, toSet );
 }
 
 void CPGumpTextEntry::InternalReset( void )
 {
 	BlockSize( 3 );
-	internalBuffer[0] = 0xAB;
+	pStream.WriteByte( 0, 0xAB );
 }
 CPGumpTextEntry::CPGumpTextEntry()
 {
@@ -2777,43 +2582,37 @@ CPGumpTextEntry::CPGumpTextEntry( const std::string text1, const std::string tex
 }
 void CPGumpTextEntry::Serial( SERIAL id )
 {
-	internalBuffer[3] = (UI08)(id>>24);
-	internalBuffer[4] = (UI08)(id>>16);
-	internalBuffer[5] = (UI08)(id>>8);
-	internalBuffer[6] = (UI08)(id%256);
+	pStream.WriteLong( 3, id );
 }
 void CPGumpTextEntry::ParentID( UI08 newVal )
 {
-	internalBuffer[7] = newVal;
+	pStream.WriteByte( 7, newVal );
 }
 void CPGumpTextEntry::ButtonID( UI08 newVal )
 {
-	internalBuffer[8] = newVal;
+	pStream.WriteByte( 8, newVal );
 }
 void CPGumpTextEntry::Cancel( UI08 newVal )
 {
 	SI16 t1Len = Text1Len();
-	internalBuffer[t1Len + 11] = newVal;
+	pStream.WriteByte( t1Len + 11, newVal );
 }
 void CPGumpTextEntry::Style( UI08 newVal )
 {
 	SI16 t1Len = Text1Len();
-	internalBuffer[t1Len + 12] = newVal;
+	pStream.WriteByte( t1Len + 12, newVal );
 }
 void CPGumpTextEntry::Format( SERIAL id )
 {
 	SI16 t1Len = Text1Len();
-	internalBuffer[t1Len + 13] = (UI08)(id>>24);
-	internalBuffer[t1Len + 14] = (UI08)(id>>16);
-	internalBuffer[t1Len + 15] = (UI08)(id>>8);
-	internalBuffer[t1Len + 16] = (UI08)(id%256);
+	pStream.WriteLong( t1Len + 13, id );
 }
 void CPGumpTextEntry::Text1( const std::string txt )
 {
 	size_t sLen = txt.length();
 	BlockSize( 20 + sLen );	// 11 + 1 + 8
 	Text1Len( sLen + 1 );
-	strcpy( (char *)&internalBuffer[11], txt.c_str() );
+	pStream.WriteString( 11, txt, sLen );
 }
 void CPGumpTextEntry::Text2( const std::string txt )
 {
@@ -2821,43 +2620,40 @@ void CPGumpTextEntry::Text2( const std::string txt )
 	SI16 currentSize	= CurrentSize();
 	BlockSize( static_cast< UI16 >(currentSize + sLen + 1) );
 	Text2Len( static_cast< SI16 >(sLen + 1) );
-	strcpy( (char *)&internalBuffer[currentSize], txt.c_str() );
+	pStream.WriteString( currentSize, txt, sLen );
 }
 void CPGumpTextEntry::BlockSize( SI16 newVal )
 {
-	internalBuffer.resize( newVal );
-	internalBuffer[0] = 0xAB;
-	internalBuffer[1] = (UI08)(newVal>>8);
-	internalBuffer[2] = (UI08)(newVal%256);
+	pStream.ReserveSize( newVal );
+	pStream.WriteByte(  0, 0xAB );
+	pStream.WriteShort( 1, newVal );
 }
 
 SI16 CPGumpTextEntry::CurrentSize( void )
 {
-	return (SI16)((internalBuffer[1]<<8) + internalBuffer[2]);
+	return pStream.GetShort( 1 );
 }
 
 SI16 CPGumpTextEntry::Text1Len( void )
 {
-	return (SI16)((internalBuffer[9]<<8) + internalBuffer[10]);
+	return pStream.GetShort( 9 );
 }
 
 void CPGumpTextEntry::Text1Len( SI16 newVal )
 {
-	internalBuffer[9] = (UI08)(newVal>>8);
-	internalBuffer[10] = (UI08)(newVal%256);
+	pStream.WriteShort( 9, newVal );
 }
 
 SI16 CPGumpTextEntry::Text2Len( void )
 {
 	SI16 t1Len = Text1Len();
-	return (SI16)(( internalBuffer[t1Len + 17]<<8 ) + internalBuffer[t1Len + 18]);
+	return pStream.GetShort( t1Len + 17 );
 }
 
 void CPGumpTextEntry::Text2Len( SI16 newVal )
 {
 	SI16 t1Len = Text1Len();
-	internalBuffer[t1Len + 17] = (UI08)(newVal>>8);
-	internalBuffer[t1Len + 18] = (UI08)(newVal%256);
+	pStream.WriteShort( t1Len + 17, newVal );
 }
 
 CPGodModeToggle::CPGodModeToggle()
@@ -2866,13 +2662,13 @@ CPGodModeToggle::CPGodModeToggle()
 }
 void CPGodModeToggle::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x2B;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x2B );
 }
 
 void CPGodModeToggle::CopyData( CSocket *s )
 {
-	internalBuffer[1] = s->GetByte( 1 );
+	pStream.WriteByte( 1, s->GetByte( 1 ) );
 }
 
 CPGodModeToggle::CPGodModeToggle( CSocket *s )
@@ -2890,15 +2686,15 @@ CPGodModeToggle& CPGodModeToggle::operator=( CSocket *s )
 void CPGodModeToggle::ToggleStatus( bool toSet )
 {
 	if( toSet )
-		internalBuffer[1] = 1;
+		pStream.WriteByte( 1, 1 );
 	else
-		internalBuffer[1] = 0;
+		pStream.WriteByte( 1, 0 );
 }
 
 void CPLoginDeny::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
-	internalBuffer[0] = 0x82;
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x82 );
 }
 CPLoginDeny::CPLoginDeny()
 {
@@ -2911,7 +2707,7 @@ CPLoginDeny::CPLoginDeny( LoginDenyReason reason )
 }
 void CPLoginDeny::DenyReason( LoginDenyReason reason )
 {
-	internalBuffer[1] = reason;
+	pStream.WriteByte( 1, reason );
 }
 
 //	Subcommand 8: Set cursor hue / Set MAP 
@@ -2921,9 +2717,9 @@ void CPLoginDeny::DenyReason( LoginDenyReason reason )
 void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPMapChange 0xBF Subcommand 8 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "Hue            : " << internalBuffer[5] << std::endl;
-	switch( internalBuffer[5] )
+		outStream << "[SEND]Packet   : CPMapChange 0xBF Subcommand 8 --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "Hue            : " << (SI16)pStream.GetByte( 5 ) << std::endl;
+	switch( pStream.GetByte( 5 ) )
 	{
 		case 0:		outStream << " (Felucca)" << std::endl;		break;
 		case 1:		outStream << " (Trammel)" << std::endl;		break;
@@ -2932,16 +2728,14 @@ void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
 		default:	outStream << " (Unknown)" << std::endl;		break;
 	}
 	outStream << "  Raw dump     :" << std::endl;
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 void CPMapChange::InternalReset( void )
 {
-	internalBuffer.resize( 6 );
-	internalBuffer[0] = 0xBF;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x06;
-	internalBuffer[3] = 0x00;
-	internalBuffer[4] = 0x08;	// set client hue
+	pStream.ReserveSize( 6 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 0x0006 );
+	pStream.WriteShort( 3, 0x0008 );	// set client hue
 }
 CPMapChange::CPMapChange()
 {
@@ -2961,7 +2755,7 @@ CPMapChange::CPMapChange( CBaseObject *moving )
 
 void CPMapChange::SetMap( UI08 newMap )
 {
-	internalBuffer[5] = newMap;
+	pStream.WriteByte( 5, newMap );
 }
 CPMapChange& CPMapChange::operator=( CBaseObject& moving )
 {
@@ -2985,8 +2779,8 @@ CPMapChange& CPMapChange::operator=( CBaseObject& moving )
 //    BYTE[2] color
 void CPItemsInContainer::InternalReset( void )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0]	= 0x3C;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x3C );
 	isVendor			= false;
 	vendorSerial		= INVALIDSERIAL;
 	isCorpse			= false;
@@ -3014,42 +2808,42 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 
 UI16 CPItemsInContainer::NumberOfItems( void ) const
 {
-	return static_cast<UI16>( (internalBuffer[3]<<8) + internalBuffer[4] );
+	return pStream.GetUShort( 3 );
 }
 
 void CPItemsInContainer::NumberOfItems( UI16 numItems )
 {
 	UI16 packetSize		= (UI16)((numItems * 19) + 5);
-	internalBuffer.resize( packetSize );
-	PackShort( &internalBuffer[0], 1, packetSize );
-	PackShort( &internalBuffer[0], 3, numItems );
+	pStream.ReserveSize( packetSize );
+	pStream.WriteShort( 1, packetSize );
+	pStream.WriteShort( 3, numItems );
 }
 void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum )
 {
 	UI16 baseOffset = (UI16)(5 + itemNum * 19);
-	PackLong(  &internalBuffer[0], baseOffset +  0, toAdd->GetSerial() );
-	PackShort( &internalBuffer[0], baseOffset +  4, toAdd->GetID() );
-	PackShort( &internalBuffer[0], baseOffset +  7, toAdd->GetAmount() );
-	PackShort( &internalBuffer[0], baseOffset +  9, toAdd->GetX() );
-	PackShort( &internalBuffer[0], baseOffset + 11, toAdd->GetY() );
+	pStream.WriteLong(  baseOffset +  0, toAdd->GetSerial() );
+	pStream.WriteShort( baseOffset +  4, toAdd->GetID() );
+	pStream.WriteShort( baseOffset +  7, toAdd->GetAmount() );
+	pStream.WriteShort( baseOffset +  9, toAdd->GetX() );
+	pStream.WriteShort( baseOffset + 11, toAdd->GetY() );
 
 	if( isVendor )
-		PackLong( &internalBuffer[0], baseOffset + 13, vendorSerial );
+		pStream.WriteLong( baseOffset + 13, vendorSerial );
 	else
-		PackLong( &internalBuffer[0], baseOffset + 13, toAdd->GetContSerial() );
+		pStream.WriteLong( baseOffset + 13, toAdd->GetContSerial() );
 
-	PackShort( &internalBuffer[0], baseOffset + 17, toAdd->GetColour() );
+	pStream.WriteShort( baseOffset + 17, toAdd->GetColour() );
 
 	toAdd->SetDecayTime( 0 );
 }
 
 void CPItemsInContainer::Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount )
 {
-	UI16 baseOffset = (UI16)(5 + itemNum * 19);
+	UI16 baseOffset = (UI16)(5 + (itemNum * 19));
 
-	PackLong(  &internalBuffer[0], baseOffset,		toAdd );
-	PackShort( &internalBuffer[0], baseOffset + 7,	amount );
-	PackLong(  &internalBuffer[0], baseOffset + 13, cont );
+	pStream.WriteLong(  baseOffset + 0, toAdd );
+	pStream.WriteShort( baseOffset + 7,	amount );
+	pStream.WriteLong(  baseOffset + 13, cont );
 }
 
 void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
@@ -3064,14 +2858,14 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 		{
 			if( !ctr->isFree() )
 			{
-				internalBuffer.resize( internalBuffer.size() + 19 );
+				pStream.ReserveSize( pStream.GetSize() + 19 );
 				AddItem( ctr, itemCount );
-				if( !isVendor && mSock != NULL )
+/*				if( !isVendor && mSock != NULL )
 				{
 					CPQueryToolTip pSend( (*ctr) );
 					mSock->Send( &pSend );
 				}
-				++itemCount;
+*/				++itemCount;
 			}
 		}
 	}
@@ -3081,25 +2875,25 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 
 void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 {
-	size_t numItems = UnpackUShort( &internalBuffer[0], 3 );
+	size_t numItems = pStream.GetUShort( 3 );
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "Block size     : " << UnpackUShort( &internalBuffer[0], 1 ) << std::endl;
+		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << numItems << std::endl;
 	int baseOffset = 5;
 	for( size_t x = 0; x < numItems; ++x )
 	{
-		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << UnpackULong( &internalBuffer[0], baseOffset ) << std::endl;
-		outStream << "      Model     : " << "0x" << UnpackUShort( &internalBuffer[0], baseOffset+=4 ) << std::endl;
-		outStream << "      Amount    : " << std::dec << UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << std::endl;
-		outStream << "      XYZ       : " << UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << "," <<
-			UnpackUShort( &internalBuffer[0], baseOffset+=2 ) << "," << static_cast<UI16>(internalBuffer[baseOffset+=2] ) << std::endl;
-		outStream << "      Container : " << "0x" << std::hex << UnpackULong( &internalBuffer[0], ++baseOffset) << std::endl;
-		outStream << "      Color     : " << std::dec << UnpackUShort( &internalBuffer[0], baseOffset+=2) << std::endl;
+		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << pStream.GetULong( baseOffset ) << std::endl;
+		outStream << "      Model     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
+		outStream << "      Amount    : " << std::dec << pStream.GetUShort( baseOffset+=2 ) << std::endl;
+		outStream << "      XYZ       : " << pStream.GetUShort( baseOffset+=2 ) << "," <<
+			pStream.GetUShort( baseOffset+=2 ) << "," << (SI16)pStream.GetByte( baseOffset+=2 ) << std::endl;
+		outStream << "      Container : " << "0x" << std::hex << pStream.GetULong( ++baseOffset) << std::endl;
+		outStream << "      Color     : " << std::dec << pStream.GetUShort( baseOffset+=2) << std::endl;
 	}
 	outStream << "  Raw dump      :" << std::endl;
 
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 
 //0x74 Packet
@@ -3116,8 +2910,8 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 //NOTE: This packet is always preceded by a describe contents packet (0x3c) with the container id as the (vendorID | 0x40000000) and then an open container packet (0x24?) with the vendorID only and a model number of 0x0030 (probably the model # for the buy screen)
 void CPOpenBuyWindow::InternalReset( void )
 {
-	internalBuffer.resize( 8 );	// start big, and work back down
-	internalBuffer[0] = 0x74;
+	pStream.ReserveSize( 8 );	// start big, and work back down
+	pStream.WriteByte( 0, 0x74 );
 }
 CPOpenBuyWindow::CPOpenBuyWindow()
 {
@@ -3128,20 +2922,20 @@ CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID )
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
-		PackLong( &internalBuffer[0], 3, container->GetSerial() );
+		pStream.WriteLong( 3, container->GetSerial() );
 		CopyData( (*container), vendorID );
 	}
 }
 
 UI08 CPOpenBuyWindow::NumberOfItems( void ) const
 {
-	return internalBuffer[7];
+	return pStream.GetByte( 7 );
 }
 
 void CPOpenBuyWindow::NumberOfItems( UI08 numItems )
 {
 	// set the number of items
-	internalBuffer[7] = numItems;
+	pStream.WriteByte( 7, numItems );
 }
 
 UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling );
@@ -3165,13 +2959,11 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	else
 		sLen = static_cast<UI08>(getTileName( (*toAdd), itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
 
-	internalBuffer.resize( baseOffset + 5 + sLen );
-	PackLong( &internalBuffer[0], baseOffset, value );
-	internalBuffer[baseOffset += 4] = sLen;
-
-	for( UI08 k = 0; k < sLen; ++k )
-		internalBuffer[++baseOffset] = itemname[k];
-	++baseOffset;
+	pStream.ReserveSize( baseOffset + 5 + sLen );
+	pStream.WriteLong(   baseOffset, value );
+	pStream.WriteByte(   baseOffset += 4, sLen );
+	pStream.WriteString( baseOffset + 1, itemname, sLen );
+	baseOffset += sLen;
 }
 
 void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
@@ -3194,33 +2986,33 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
 		}
 	}
 	NumberOfItems( itemCount );
-	internalBuffer.resize( length );
-	PackShort( &internalBuffer[0], 1, length );
+	pStream.ReserveSize( length );
+	pStream.WriteShort( 1, length );
 }
 
 void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "Block size     : " << UnpackUShort( &internalBuffer[0], 1 ) << std::endl;
-	outStream << "Vendor ID      : " << std::hex << UnpackULong( &internalBuffer[0], 3 ) << std::endl;
-	outStream << "Number of Items: " << std::dec << static_cast<UI16>(internalBuffer[7]) << std::endl;
+		outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
+	outStream << "Vendor ID      : " << std::hex << pStream.GetULong( 3 ) << std::endl;
+	outStream << "Number of Items: " << std::dec << (SI16)pStream.GetByte( 7 ) << std::endl;
 	int baseOffset = 8;
-	for( UI32 x = 0; x < internalBuffer[7]; ++x )
+	for( UI32 x = 0; x < pStream.GetByte( 7 ); ++x )
 	{
-		outStream << "  ITEM " << x << "      Price: " << UnpackULong( &internalBuffer[0], baseOffset ) << std::endl;
+		outStream << "  ITEM " << x << "      Price: " << pStream.GetULong( baseOffset ) << std::endl;
 		baseOffset += 4;
-		outStream << "      Len  : " << static_cast<UI16>(internalBuffer[baseOffset]) << std::endl;
+		outStream << "      Len  : " << (SI16)pStream.GetByte( baseOffset ) << std::endl;
 		outStream << "      Name : ";
-		for( UI08 y = 0; y < internalBuffer[baseOffset]; ++y )
-			outStream << internalBuffer[baseOffset + 1 + y];
-		baseOffset += internalBuffer[baseOffset] + 1;
+		for( UI08 y = 0; y < pStream.GetByte( baseOffset ); ++y )
+			outStream << pStream.GetByte( baseOffset + 1 + y );
+		baseOffset += pStream.GetByte( baseOffset ) + 1;
 		outStream << std::endl;
 	}
 
 	outStream << "  Raw dump       :" << std::endl;
 
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 
 //0xA9 Packet
@@ -3246,8 +3038,8 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "# Chars		 : " << (UI16)internalBuffer[3] << std::endl;
+		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "# Chars		 : " << (SI16)pStream.GetByte( 3 ) << std::endl;
 	outStream << "Characters --" << std::endl;
 	for( UI08 i = 0; i < 6; ++i )
 	{
@@ -3256,34 +3048,34 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "      Name: ";
 		for( UI08 j = 0; j < 30; ++j )
 		{
-			if( internalBuffer[baseOffset+j] != 0 )
-				outStream << internalBuffer[baseOffset+j];
+			if( pStream.GetByte( baseOffset+j ) != 0 )
+				outStream << (SI16)pStream.GetByte( baseOffset+j );
 			else
 				break;
 		}
 		outStream << std::endl << "      Pass: ";
 		for( UI08 k = 0; k < 30; ++k )
 		{
-			if( internalBuffer[baseOffset+k+30] != 0 )
-				outStream << internalBuffer[baseOffset+k+30];
+			if( pStream.GetByte( baseOffset+k+30 ) != 0 )
+				outStream << (SI16)pStream.GetByte( baseOffset+k+30 );
 			else
 				break;
 		}
 		outStream << std::endl;
 	}
-	outStream << "# Starts       : " << (UI16)internalBuffer[364] << std::endl;
+	outStream << "# Starts       : " << (SI16)pStream.GetByte( 364 ) << std::endl;
 	outStream << "Starting locations --" << std::endl;
-	for( UI32 l = 0; l < internalBuffer[364]; ++l )
+	for( UI08 l = 0; l < pStream.GetByte( 364 ); ++l )
 	{
 		UI32 baseOffset = 366 + l * 63;
 		outStream << "    Start " << l << std::endl;
-		outStream << "      Index : " << (int)internalBuffer[baseOffset] << std::endl;
+		outStream << "      Index : " << (SI16)pStream.GetByte( baseOffset ) << std::endl;
 		outStream << "      General Name: ";
 		++baseOffset;
 		for( UI08 m = 0; m < 31; ++m )
 		{
-			if( internalBuffer[baseOffset+m] != 0 )
-				outStream << internalBuffer[baseOffset+m];
+			if( pStream.GetByte( baseOffset+m ) != 0 )
+				outStream << (SI16)pStream.GetByte( baseOffset+m );
 			else
 				break;
 		}
@@ -3291,14 +3083,14 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		baseOffset += 31;
 		for( UI08 n = 0; n < 31; ++n )
 		{
-			if( internalBuffer[baseOffset+n] != 0 )
-				outStream << internalBuffer[baseOffset+n];
+			if( pStream.GetByte( baseOffset+n ) != 0 )
+				outStream << (SI16)pStream.GetByte( baseOffset+n );
 			else
 				break;
 		}
 		outStream << std::endl;
 	}
-	UI32 lastByte = internalBuffer[internalBuffer.size() - 1];
+	UI08 lastByte = pStream.GetByte( pStream.GetSize() - 1 );
 	outStream << "Flags  		 : " << lastByte << std::endl;
 	if( (lastByte&0x02) == 0x02 )
 		outStream << "       		 : Send config/request logout" << std::endl;
@@ -3311,13 +3103,13 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 	if( (lastByte&0x20) == 0x20 )
 		outStream << "       		 : Enable Common AoS features" << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 
 void CPCharAndStartLoc::InternalReset( void )
 {
-	internalBuffer.resize( 4 );
-	internalBuffer[0] = 0xA9;
+	pStream.ReserveSize( 4 );
+	pStream.WriteByte( 0, 0xA9 );
 }
 
 void CPCharAndStartLoc::CopyData(ACCOUNTSBLOCK& toCopy )
@@ -3344,24 +3136,23 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 {
 	// was 305 +, now 309 +
 	UI16 packetSize;
-	if( internalBuffer[3] > 5 )
+	if( pStream.GetByte( 3 ) > 5 )
 		packetSize = (UI16)(369 + 63 * numLocations);
 	else
 		packetSize = (UI16)(309 + 63 * numLocations);
-	internalBuffer.resize( packetSize );
-	internalBuffer[1] = (UI08)(packetSize>>8);
-	internalBuffer[2] = (UI08)(packetSize%256);
+	pStream.ReserveSize( packetSize );
+	pStream.WriteShort( 1, packetSize );
 	// If we are going to support the 6char client flag then we need to make sure we push this offset furtner down.
-	if( internalBuffer[3] > 5 )
-		internalBuffer[364] = numLocations;
+	if( pStream.GetByte( 3 ) > 5 )
+		pStream.WriteByte( 364, numLocations );
 	else
-		internalBuffer[304] = numLocations;
+		pStream.WriteByte( 304, numLocations );
 	// turn on /*send config,*/ npcpopup menus and common AOS features
-	internalBuffer[packetSize - 1] = ( 0x08 | 0x20 | 0x40 );
+	pStream.WriteByte( packetSize - 1, ( 0x08 | 0x20 | 0x40 ) );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
 {
-	internalBuffer[3] = numCharacters;
+	pStream.WriteByte( 3, numCharacters );
 }
 
 void CPCharAndStartLoc::AddCharacter( CChar *toAdd, UI08 charOffset )
@@ -3369,7 +3160,7 @@ void CPCharAndStartLoc::AddCharacter( CChar *toAdd, UI08 charOffset )
 	if( !ValidateObject( toAdd ) )
 		return;
 	UI16 baseOffset = (UI16)(4 + charOffset * 60);
-	strncpy( (char *)&internalBuffer[baseOffset], toAdd->GetName().c_str(), 59 );
+	pStream.WriteString( baseOffset, toAdd->GetName(), 59 );
 	// extra 30 bytes unused, as we don't use a character password
 }
 
@@ -3378,17 +3169,15 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 	if( sLoc == NULL )
 		return;
 	UI16 baseOffset;
-	if( internalBuffer[3] > 5 )
+	if( pStream.GetByte( 3 ) > 5 )
 			baseOffset = (UI16)(365 + locOffset * 63);
 	else
 			baseOffset = (UI16)(305 + locOffset * 63);
-	internalBuffer[baseOffset]	= locOffset;
+	pStream.WriteByte( baseOffset, locOffset );
 	size_t townLen				= strlen( sLoc->town );
 	size_t descLen				= strlen( sLoc->description );
-	for( size_t i = 0; i < townLen; ++i )
-		internalBuffer[baseOffset+i+1] = sLoc->town[i];
-	for( size_t j = 0; j < descLen; ++j )
-		internalBuffer[baseOffset+j+32] = sLoc->description[j];
+	pStream.WriteString( baseOffset+1, sLoc->town, townLen );
+	pStream.WriteString( baseOffset+32, sLoc->description, descLen );
 }
 
 CPCharAndStartLoc& CPCharAndStartLoc::operator=(ACCOUNTSBLOCK& actbBlock )
@@ -3412,14 +3201,11 @@ CPCharAndStartLoc& CPCharAndStartLoc::operator=(ACCOUNTSBLOCK& actbBlock )
 
 CPKAccept::CPKAccept( UI08 Response )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0xF0;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x05; // Length... 5 bytes
-	internalBuffer[3] = 0x00; // Client response
-
-	// Ack
-	internalBuffer[4] = Response;
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte(  0, 0xF0 );
+	pStream.WriteShort( 1, 0x0005 );
+	pStream.WriteByte(  3, 0x00 );
+	pStream.WriteByte(  4, Response );
 }
 
 //0xA6 Packet
@@ -3437,17 +3223,17 @@ CPKAccept::CPKAccept( UI08 Response )
 //*Null terminated I think (Gimli)
 void CPUpdScroll::InternalReset( void )
 {
-	internalBuffer.resize( 10 );	// 10, not 11
-	internalBuffer[0] = 0xA6;
-	internalBuffer[1] = 0x01;
-	internalBuffer[2] = 0x02;
-	internalBuffer[3] = 0x02;
-	internalBuffer[4] = 0x00;
-	internalBuffer[5] = 0x00;
-	internalBuffer[6] = 0x00;
-	internalBuffer[7] = 0x00;
-	internalBuffer[8] = 0x01;
-	internalBuffer[9] = 0x02;
+	pStream.ReserveSize( 10 );	// 10, not 11
+	pStream.WriteByte( 0, 0xA6 );
+	pStream.WriteByte( 1, 0x01 );
+	pStream.WriteByte( 2, 0x02 );
+	pStream.WriteByte( 3, 0x02 );
+	pStream.WriteByte( 4, 0x00 );
+	pStream.WriteByte( 5, 0x00 );
+	pStream.WriteByte( 6, 0x00 );
+	pStream.WriteByte( 7, 0x00 );
+	pStream.WriteByte( 8, 0x01 );
+	pStream.WriteByte( 9, 0x02 );
 	memset( tipData, 0, 2048 );
 }
 CPUpdScroll::CPUpdScroll()
@@ -3478,26 +3264,24 @@ void CPUpdScroll::AddStrings( const char *tag, const char *data )
 }
 void CPUpdScroll::TipType( UI08 tType )
 {
-	internalBuffer[3] = tType;
+	pStream.WriteByte( 3, tType );
 }
 void CPUpdScroll::TipNumber( UI08 tipNum )
 {
-	internalBuffer[7] = tipNum;
+	pStream.WriteByte( 7, tipNum );
 }
 void CPUpdScroll::Finalize( void )
 {
 	size_t y = strlen( tipData ) + 10;
 	SetLength( static_cast< UI16 >(y) );
-	memcpy( &internalBuffer[10], tipData, y - 10 );
+	pStream.WriteString( 10, tipData, y-10 );
 }
 
 void CPUpdScroll::SetLength( UI16 len )
 {
-	internalBuffer.resize( len );
-	internalBuffer[1] = (UI08)(len>>8);
-	internalBuffer[2] = (UI08)(len%256);
-	internalBuffer[8] = (UI08)((len - 10)>>8);
-	internalBuffer[9] = (UI08)((len - 10)%256);
+	pStream.ReserveSize( len );
+	pStream.WriteShort( 1, len );
+	pStream.WriteShort( 8, (len - 10) );
 }
 
 //0xC0 Packet
@@ -3524,10 +3308,9 @@ void CPUpdScroll::SetLength( UI16 len )
 //Server message
 void CPGraphicalEffect2::InternalReset( void )
 {
-	internalBuffer.resize( 36 );
-	internalBuffer[0] = 0xC0;
-	internalBuffer[24] = 0;
-	internalBuffer[25] = 0;
+	pStream.ReserveSize( 36 );
+	pStream.WriteByte(  0, 0xC0 );
+	pStream.WriteShort( 24, 0x0000 );
 }
 CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType ) : CPGraphicalEffect( effectType )
 {
@@ -3548,11 +3331,11 @@ CPGraphicalEffect2::CPGraphicalEffect2( UI08 effectType, CBaseObject &src ) : CP
 }
 void CPGraphicalEffect2::Hue( UI32 hue )
 {
-	PackLong( &internalBuffer[0], 28, hue );
+	pStream.WriteLong( 28, hue );
 }
 void CPGraphicalEffect2::RenderMode( UI32 mode )
 {
-	PackLong( &internalBuffer[0], 32, mode );
+	pStream.WriteLong( 32, mode );
 }
 
 //0x56 Packet
@@ -3573,25 +3356,25 @@ void CPGraphicalEffect2::RenderMode( UI32 mode )
 //	BYTE[2] y location (relative to upper left corner of the map, in pixels, for points)	9
 CPMapRelated::CPMapRelated()
 {
-	internalBuffer.resize( 11 );
-	internalBuffer[0] = 0x56;
+	pStream.ReserveSize( 11 );
+	pStream.WriteByte( 0, 0x56 );
 }
 void CPMapRelated::PlotState( UI08 pState )
 {
-	internalBuffer[6] = pState;
+	pStream.WriteByte( 6, pState );
 }
 void CPMapRelated::Location( SI16 x, SI16 y )
 {
-	PackShort( &internalBuffer[0], 7, x );
-	PackShort( &internalBuffer[0], 9, y );
+	pStream.WriteShort( 7, x );
+	pStream.WriteShort( 9, y );
 }
 void CPMapRelated::Command( UI08 cmd )
 {
-	internalBuffer[5] = cmd;
+	pStream.WriteByte( 5, cmd );
 }
 void CPMapRelated::ID( SERIAL key )
 {
-	PackLong( &internalBuffer[0], 1, key );
+	pStream.WriteLong( 1, key );
 }
 
 //0x78 Packet
@@ -3634,13 +3417,13 @@ CPDrawObject::CPDrawObject( CChar &mChar )
 void CPDrawObject::InternalReset( void )
 {
 	SetLength( 19 );
-	internalBuffer[0] = 0x78;
+	pStream.WriteByte( 0, 0x78 );
 }
 
 void CPDrawObject::SetLength( UI16 len )
 {
-	internalBuffer.resize( len );
-	PackShort( &internalBuffer[0], 1, len );
+	pStream.ReserveSize( len );
+	pStream.WriteShort( 1, len );
 	curLen = len;
 }
 
@@ -3648,7 +3431,7 @@ void CPDrawObject::Finalize( void )
 {
 	UI16 cPos = curLen;
 	SetLength( curLen + 4 );
-	PackLong( &internalBuffer[0], cPos, static_cast<UI32>(0) );
+	pStream.WriteLong( cPos, static_cast<UI32>(0) );
 }
 
 void CPDrawObject::AddItem( CItem *toAdd )
@@ -3660,31 +3443,31 @@ void CPDrawObject::AddItem( CItem *toAdd )
 	else
 		SetLength( curLen + 7 );
 
-	PackLong(  &internalBuffer[0], cPos, toAdd->GetSerial() );
-	PackShort( &internalBuffer[0], cPos+=4, toAdd->GetID() );
-	internalBuffer[cPos+=2] = toAdd->GetLayer();
+	pStream.WriteLong(  cPos, toAdd->GetSerial() );
+	pStream.WriteShort( cPos+=4, toAdd->GetID() );
+	pStream.WriteByte(  cPos+=2, toAdd->GetLayer() );
 
 	if( bColour )
 	{
-		internalBuffer[cPos-2] |= 0x80;
-		PackShort( &internalBuffer[0], ++cPos, toAdd->GetColour() );
+		pStream.WriteByte( cPos-2, pStream.GetByte( cPos-2 ) | 0x80 );
+		pStream.WriteShort( ++cPos, toAdd->GetColour() );
 	}
 }
 
 void CPDrawObject::SetRepFlag( UI08 value )
 {
-	internalBuffer[18] = value;
+	pStream.WriteByte( 18, value );
 }
 
 void CPDrawObject::CopyData( CChar& mChar )
 {
-	PackLong(  &internalBuffer[0],  3, mChar.GetSerial() );
-	PackShort( &internalBuffer[0],  7, mChar.GetID() );
-	PackShort( &internalBuffer[0],  9, mChar.GetX() );
-	PackShort( &internalBuffer[0], 11, mChar.GetY() );
-	internalBuffer[13] = mChar.GetZ();
-	internalBuffer[14] = mChar.GetDir();
-	PackShort( &internalBuffer[0], 15, mChar.GetSkin() );
+	pStream.WriteLong(   3, mChar.GetSerial() );
+	pStream.WriteShort(  7, mChar.GetID() );
+	pStream.WriteShort(  9, mChar.GetX() );
+	pStream.WriteShort( 11, mChar.GetY() );
+	pStream.WriteByte(  13, mChar.GetZ() );
+	pStream.WriteByte(  14, mChar.GetDir() );
+	pStream.WriteShort( 15, mChar.GetSkin() );
 
 	UI08 cFlag = 0;
 	if( mChar.GetPoisoned() )
@@ -3693,7 +3476,7 @@ void CPDrawObject::CopyData( CChar& mChar )
 		cFlag |= 0x80;
 	if( mChar.IsAtWar() )
 		cFlag |= 0x40;
-	internalBuffer[17] = cFlag;
+	pStream.WriteByte( 17, cFlag );
 }
 
 //0x89 Packet
@@ -3708,8 +3491,8 @@ void CPDrawObject::CopyData( CChar& mChar )
 
 void CPCorpseClothing::InternalReset( void )
 {
-	internalBuffer.resize( 7 );
-	internalBuffer[0] = 0x89;
+	pStream.ReserveSize( 7 );
+	pStream.WriteByte( 0, 0x89 );
 }
 CPCorpseClothing::CPCorpseClothing()
 {
@@ -3726,16 +3509,15 @@ void CPCorpseClothing::NumberOfItems( UI16 numItems )
 {
 	// knowing the number of items, set the packet size
 	UI16 packetSize = (UI16)((numItems * 5) + 8);		// 7 for lead in, 1 for lead out
-	internalBuffer.resize( packetSize );
-	internalBuffer[1] = (UI08)(packetSize>>8);
-	internalBuffer[2] = (UI08)(packetSize%256);
-	internalBuffer[packetSize - 1] = 0;
+	pStream.ReserveSize( packetSize );
+	pStream.WriteShort( 1, packetSize );
+	pStream.WriteByte(  packetSize - 1, 0x00 );
 }
 void CPCorpseClothing::AddItem( CItem *toAdd, UI16 itemNum )
 {
 	UI16 baseOffset = (UI16)(7 + itemNum * 5);
-	internalBuffer[baseOffset]	= toAdd->GetLayer();
-	PackLong( &internalBuffer[0], baseOffset + 1, toAdd->GetSerial() );
+	pStream.WriteByte( baseOffset, toAdd->GetLayer() );
+	pStream.WriteLong( baseOffset + 1, toAdd->GetSerial() );
 }
 CPCorpseClothing& CPCorpseClothing::operator=( CItem& corpse )
 {
@@ -3745,7 +3527,7 @@ CPCorpseClothing& CPCorpseClothing::operator=( CItem& corpse )
 
 void CPCorpseClothing::CopyData( CItem& toCopy )
 {
-	PackLong( &internalBuffer[0], 3, toCopy.GetSerial() );
+	pStream.WriteLong( 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
 	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
@@ -3754,7 +3536,7 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 		{
 			if( !ctr->isFree() && ctr->GetLayer() )
 			{
-				internalBuffer.resize( internalBuffer.size() + 5 );
+				pStream.ReserveSize( pStream.GetSize() + 5 );
 				AddItem( ctr, itemCount );
 				++itemCount;
 			}
@@ -3785,13 +3567,13 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 //		BYTE flag byte (See top)
 void CPObjectInfo::InternalReset( void )
 {
-	internalBuffer.resize( 16 );
-	internalBuffer[0] = 0x1A;
-	internalBuffer[2] = 16;
+	pStream.ReserveSize( 16 );
+	pStream.WriteByte( 0, 0x1A );
+	pStream.WriteByte( 2, 16 );
 }
 void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 {
-	PackLong( &internalBuffer[0], 3, mItem.GetSerial() );
+	pStream.WriteLong( 3, mItem.GetSerial() );
 
 	if( mItem.CanBeObjType( OT_MULTI ) )
 		CopyMultiData( static_cast<CMultiObj&>(mItem), mChar );
@@ -3803,9 +3585,9 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 {
 	if( mItem.isPileable() || mItem.isCorpse() )
 	{
-		internalBuffer.resize( 18 );
-		internalBuffer[2] = 18;
-		internalBuffer[3] |= 0x80;	// Enable piles
+		pStream.ReserveSize( 18 );
+		pStream.WriteByte( 2, 18 );
+		pStream.WriteByte( 3, (pStream.GetByte( 3 ) | 0x80) );	// Enable piles
 	}
 
 	bool isInvisible	= (mItem.GetVisible() != VT_VISIBLE);
@@ -3815,47 +3597,47 @@ void CPObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 	// ....if not, the item is a normal
 	// invisible light source!
 	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
-		PackShort( &internalBuffer[0], 7, 0x0A0F );
+		pStream.WriteShort( 7, 0x0A0F );
 	else
-		PackShort( &internalBuffer[0], 7, mItem.GetID() );
+		pStream.WriteShort( 7, mItem.GetID() );
 
 	UI08 byteNum = 7;
 	if( mItem.isPileable() || mItem.isCorpse() )
-		PackShort( &internalBuffer[0],  byteNum+=2, mItem.GetAmount() );
+		pStream.WriteShort(  byteNum+=2, mItem.GetAmount() );
 
-	PackShort( &internalBuffer[0], byteNum+=2, mItem.GetX() );
+	pStream.WriteShort( byteNum+=2, mItem.GetX() );
 	if( isInvisible || isMovable )
 	{
-		PackShort( &internalBuffer[0], byteNum+=2, (mItem.GetY() | 0xC000) );
-		internalBuffer.resize( internalBuffer.size()+1 );
-		++internalBuffer[2];
+		pStream.WriteShort( byteNum+=2, (mItem.GetY() | 0xC000) );
+		pStream.ReserveSize( pStream.GetSize()+1 );
+		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 	}
 	else
-		PackShort( &internalBuffer[0], byteNum+=2, (mItem.GetY() | 0x8000) );
+		pStream.WriteShort( byteNum+=2, (mItem.GetY() | 0x8000) );
 	if( mItem.GetDir() )
 	{
-		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[byteNum-2]	|= 0x80;	// Enable direction
-		internalBuffer[byteNum+=2]	= mItem.GetDir();
-		internalBuffer[++byteNum]	= mItem.GetZ();
-		++internalBuffer[2];
+		pStream.ReserveSize( pStream.GetSize()+1 );
+		pStream.WriteByte( byteNum-2, (pStream.GetByte( byteNum-2 ) | 0x80) );	// Enable direction
+		pStream.WriteByte( byteNum+=2, mItem.GetDir() );
+		pStream.WriteByte( ++byteNum, mItem.GetZ() );
+		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 	}
 	else
-		internalBuffer[byteNum+=2] = mItem.GetZ();
+		pStream.WriteByte( byteNum+=2, mItem.GetZ() );
 
 	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
-		PackShort( &internalBuffer[0], ++byteNum, 0x00C6 );
+		pStream.WriteShort( ++byteNum, 0x00C6 );
 	else
-		PackShort( &internalBuffer[0], ++byteNum, mItem.GetColour() );
+		pStream.WriteShort( ++byteNum, mItem.GetColour() );
 
 	if( isInvisible || isMovable )
 	{
-		internalBuffer[byteNum+=2] = 0;
+		pStream.WriteByte( byteNum+=2, 0x00 );
 		if( isInvisible )
-			internalBuffer[byteNum] |= 0x80;
+			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x80) );
 
-		if( isMovable ) 
-			internalBuffer[byteNum] |= 0x20;
+		if( isMovable )
+			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x20) );
 	}
 }
 
@@ -3865,38 +3647,38 @@ void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 	bool isMovable		= (mChar.AllMove());
 
 	if( mChar.ViewHouseAsIcon() && mMulti.GetID() >= 0x4000 )
-		PackShort( &internalBuffer[0], 7, 0x14F0 );
+		pStream.WriteShort( 7, 0x14F0 );
 	else
-		PackShort( &internalBuffer[0], 7, mMulti.GetID() );
+		pStream.WriteShort( 7, mMulti.GetID() );
 
-	PackShort( &internalBuffer[0], 9, mMulti.GetX() );
+	pStream.WriteShort( 9, mMulti.GetX() );
 	if( isInvisible || isMovable )
 	{
-		PackShort( &internalBuffer[0], 11, (mMulti.GetY() | 0xC000) );
-		internalBuffer.resize( internalBuffer.size()+1 );
-		++internalBuffer[2];
+		pStream.WriteShort( 11, (mMulti.GetY() | 0xC000) );
+		pStream.ReserveSize( pStream.GetSize()+1 );
+		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 	}
 	else
-		PackShort( &internalBuffer[0], 11, (mMulti.GetY() | 0x8000) );
+		pStream.WriteShort( 11, (mMulti.GetY() | 0x8000) );
 	UI08 byteNum = 12;
 	if( mMulti.GetDir() )
 	{
-		internalBuffer.resize( internalBuffer.size()+1 );
-		internalBuffer[9]			|= 0x80;	// Enable direction
-		internalBuffer[++byteNum]	= mMulti.GetDir();
-		++internalBuffer[2];
+		pStream.ReserveSize( pStream.GetSize()+1 );
+		pStream.WriteByte( 9, (pStream.GetByte( 9 ) | 0x80) );	// Enable direction
+		pStream.WriteByte( ++byteNum, mMulti.GetDir() );
+		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 	}
-	internalBuffer[++byteNum] = mMulti.GetZ();
+	pStream.WriteByte( ++byteNum, mMulti.GetZ() );
 
-	PackShort( &internalBuffer[0], ++byteNum, mMulti.GetColour() );
+	pStream.WriteShort( ++byteNum, mMulti.GetColour() );
 	if( isInvisible || isMovable )
 	{
-		internalBuffer[++byteNum] = 0;
+		pStream.WriteByte( ++byteNum, 0x00 );
 		if( isInvisible )
-			internalBuffer[byteNum] |= 0x80;
+			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x80) );
 
 		if( isMovable ) 
-			internalBuffer[byteNum] |= 0x20;
+			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x20) );
 	}
 }
 
@@ -3938,7 +3720,7 @@ void CPSpeech::Object( CPITalkRequest &tSaid )
 }
 void CPSpeech::Type( UI08 value )
 {
-	internalBuffer[9] = value;
+	pStream.WriteByte( 9, value );
 }
 void CPSpeech::Colour( COLOUR value )
 {
@@ -3948,32 +3730,32 @@ void CPSpeech::Colour( COLOUR value )
 	{
 		value = 0x3B2;
 	}
-	PackShort( &internalBuffer[0], 10, value );
+	pStream.WriteShort( 10, value );
 }
 void CPSpeech::Font( UI16 value )
 {
-	PackShort( &internalBuffer[0], 12, value );
+	pStream.WriteShort( 12, value );
 }
 void CPSpeech::Name( std::string value )
 {
-	strncpy( (char *)&internalBuffer[14], value.c_str(), 30 );
+	pStream.WriteString( 14, value, 30 );
 }
 void CPSpeech::Message( char *value )
 {
 	size_t length = strlen( value );
 	SetLength( static_cast< UI16 >(44 + length + 1) );
-	strncpy( (char *)&internalBuffer[44], value, length );
+	pStream.WriteString( 44, value, length );
 }
 void CPSpeech::SetLength( UI16 value )
 {
-	internalBuffer.resize( value );
-	PackShort( &internalBuffer[0], 1, value );
+	pStream.ReserveSize( value );
+	pStream.WriteShort( 1, value );
 }
 
 void CPSpeech::InternalReset( void )
 {
 	SetLength( 44 );
-	internalBuffer[0] = 0x1C;
+	pStream.WriteByte( 0, 0x1C );
 	Colour( 0x3B2 );
 }
 
@@ -4001,7 +3783,7 @@ void CPSpeech::CopyData( CBaseObject &toCopy )
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
 	Name( toCopy.GetName() );
-//	internalBuffer[9] = 1;
+//	pStream.WriteByte( 9, 1 );
 }
 void CPSpeech::CopyData( CPITalkRequest &talking )
 {
@@ -4012,18 +3794,18 @@ void CPSpeech::CopyData( CPITalkRequest &talking )
 }
 void CPSpeech::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 3, toSet );
+	pStream.WriteLong( 3, toSet );
 }
 void CPSpeech::ID( UI16 toSet )
 {
-	PackShort( &internalBuffer[0], 7, toSet );
+	pStream.WriteShort( 7, toSet );
 }
 void CPSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
 {
-	internalBuffer[10] = mSock->GetByte( 4 );
-	internalBuffer[11] = mSock->GetByte( 5 );
-	internalBuffer[12] = mSock->GetByte( 6 );
-	internalBuffer[13] = mChar->GetFontType();
+	pStream.WriteByte( 10, mSock->GetByte( 4 ) );
+	pStream.WriteByte( 11, mSock->GetByte( 5 ) );
+	pStream.WriteByte( 12, mSock->GetByte( 6 ) );
+	pStream.WriteByte( 13, mChar->GetFontType() );
 }
 
 void CPSpeech::GhostIt( UI08 method )
@@ -4031,18 +3813,11 @@ void CPSpeech::GhostIt( UI08 method )
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
 	// eg 0 == ghost, 1 == racial, 2 == magical, etc etc
-	for( UI16 j = 44; j < internalBuffer.size() - 1; ++j )
+	for( UI16 j = 44; j < pStream.GetSize() - 1; ++j )
 	{
-		if( internalBuffer[j] != 32 )
-			internalBuffer[j] = ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' );
+		if( pStream.GetByte( j ) != 32 )
+			pStream.WriteByte( j, ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' ) );
 	}
-}
-CPSpeech &CPSpeech::operator=( CPSpeech &copyFrom )
-{
-	internalBuffer.resize( copyFrom.internalBuffer.size() );
-	for( size_t i = 0; i < copyFrom.internalBuffer.size(); ++i )
-		internalBuffer[i] = copyFrom.internalBuffer[i];
-	return (*this);
 }
 
 //	0xAE Packet
@@ -4073,41 +3848,41 @@ void CPUnicodeSpeech::Object( CPITalkRequestUnicode &tSaid )
 }
 void CPUnicodeSpeech::Type( UI08 value )
 {
-	internalBuffer[9] = ( value & 0x0F );
+	pStream.WriteByte( 9, ( value & 0x0F ) );
 }
 void CPUnicodeSpeech::Colour( COLOUR value )
 {
-	PackShort( &internalBuffer[0], 10, value );
+	pStream.WriteShort( 10, value );
 }
 void CPUnicodeSpeech::Font( UI16 value )
 {
-	PackShort( &internalBuffer[0], 12, value );
+	pStream.WriteShort( 12, value );
 }
 void CPUnicodeSpeech::Language( char *value )
 {
-	strncpy( (char *)&internalBuffer[14], value, 4 );
+	pStream.WriteString( 14, value, 4 );
 }
 void CPUnicodeSpeech::Name( std::string value )
 {
-	strncpy( (char *)&internalBuffer[18], value.c_str(), 30 );
+	pStream.WriteString( 18, value, 30 );
 }
 void CPUnicodeSpeech::Message( char *value )
 {
 	size_t length = strlen( value );
-	SetLength( static_cast< UI16 >(48 + 2 * length + 2) );
-	for( UI16 i = 0; i < length; ++i )
-		internalBuffer[49 + i * 2] = value[i];
+	SetLength( static_cast< UI16 >(48 + (2 * length) + 2) );
+	for( size_t i = 0; i < length; ++i )
+		pStream.WriteByte( 48 + i * 2, value[i] );
 }
 void CPUnicodeSpeech::SetLength( UI16 value )
 {
-	internalBuffer.resize( value );
-	PackShort( &internalBuffer[0], 1, value );
+	pStream.ReserveSize( value );
+	pStream.WriteShort( 1, value );
 }
 
 void CPUnicodeSpeech::InternalReset( void )
 {
 	SetLength( 48 );
-	internalBuffer[0] = 0xAE;
+	pStream.WriteByte( 0, 0xAE );
 	Language( "ENU" );
 }
 
@@ -4140,7 +3915,7 @@ void CPUnicodeSpeech::CopyData( CBaseObject &toCopy )
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
 	Name( toCopy.GetName() );
-//	internalBuffer[9] = 1;
+//	pStream.WriteByte( 9, 1 );
 }
 void CPUnicodeSpeech::CopyData( CPITalkRequestAscii &talking )
 {
@@ -4160,25 +3935,24 @@ void CPUnicodeSpeech::CopyData( CPITalkRequestUnicode &talking )
 
 	UI16 length = talking.Length();
 	char *uniTxt = talking.UnicodeText();
-	
-	SetLength( 48 + 2 * length + 2 );
-	for( UI16 i = 0; i < (2 * length); ++i )
-		internalBuffer[48 + i] = uniTxt[i];
+
+	SetLength( 48 + (2 * length) );
+	pStream.WriteArray( 48, (UI08 *)uniTxt, (2 * length) );
 }
 void CPUnicodeSpeech::Serial( SERIAL toSet )
 {
-	PackLong( &internalBuffer[0], 3, toSet );
+	pStream.WriteLong( 3, toSet );
 }
 void CPUnicodeSpeech::ID( UI16 toSet )
 {
-	PackShort( &internalBuffer[0], 7, toSet );
+	pStream.WriteShort( 7, toSet );
 }
 void CPUnicodeSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
 {
-	internalBuffer[10] = mSock->GetByte( 4 );
-	internalBuffer[11] = mSock->GetByte( 5 );
-	internalBuffer[12] = mSock->GetByte( 6 );
-	internalBuffer[13] = mChar->GetFontType();
+	pStream.WriteByte( 10, mSock->GetByte( 4 ) );
+	pStream.WriteByte( 11, mSock->GetByte( 5 ) );
+	pStream.WriteByte( 12, mSock->GetByte( 6 ) );
+	pStream.WriteByte( 13, mChar->GetFontType() );
 }
 
 void CPUnicodeSpeech::GhostIt( UI08 method )
@@ -4186,18 +3960,11 @@ void CPUnicodeSpeech::GhostIt( UI08 method )
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
 	// eg 0 == ghost, 1 == racial, 2 == magical, etc etc
-	for( UI16 j = 49; j < internalBuffer.size() - 1; j += 2 )
+	for( UI16 j = 49; j < pStream.GetSize() - 1; j += 2 )
 	{
-		if( internalBuffer[j] != 32 )
-			internalBuffer[j] = ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' );
+		if( pStream.GetByte( j ) != 32 )
+			pStream.WriteByte( j, ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' ) );
 	}
-}
-CPUnicodeSpeech &CPUnicodeSpeech::operator=( CPUnicodeSpeech &copyFrom )
-{
-	internalBuffer.resize( copyFrom.internalBuffer.size() );
-	for( size_t i = 0; i < copyFrom.internalBuffer.size(); ++i )
-		internalBuffer[i] = copyFrom.internalBuffer[i];
-	return (*this);
 }
 
 //	0xA8 Packet
@@ -4218,10 +3985,10 @@ CPUnicodeSpeech &CPUnicodeSpeech::operator=( CPUnicodeSpeech &copyFrom )
 //		BYTE[4] pingIP 
 void CPGameServerList::InternalReset( void )
 {
-	internalBuffer.resize( 6 );
-	internalBuffer[0] = 0xA8;
-	internalBuffer[2] = 6;
-	internalBuffer[3] = 0xFF;
+	pStream.ReserveSize( 6 );
+	pStream.WriteByte( 0, 0xA8 );
+	pStream.WriteByte( 2, 6 );
+	pStream.WriteByte( 3, 0xFF );
 }
 CPGameServerList::CPGameServerList()
 {
@@ -4235,17 +4002,17 @@ CPGameServerList::CPGameServerList( UI16 numServers )
 void CPGameServerList::NumberOfServers( UI16 numItems )
 {
 	UI32 tlen = 6 + ( numItems * 40 );
-	internalBuffer.resize( tlen );
-	PackShort( &internalBuffer[0], 1, static_cast< UI16 >(tlen) );
-	PackShort( &internalBuffer[0], 4, numItems );
+	pStream.ReserveSize( tlen );
+	pStream.WriteShort( 1, static_cast< UI16 >(tlen) );
+	pStream.WriteShort( 4, numItems );
 }
 void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 {
 	UI32 baseOffset = 6 + servNum * 40;
-	PackShort( &internalBuffer[0], baseOffset, servNum + 1 );
-	strcpy( (char *)&internalBuffer[baseOffset + 2], data->getName().c_str() );
+	pStream.WriteShort(  baseOffset, servNum + 1 );
+	pStream.WriteString( baseOffset + 2, data->getName(), data->getName().length() );
 	UI32 ip = htonl( inet_addr( data->getIP().c_str() ) );
-	PackLong( &internalBuffer[0], baseOffset + 36, ip );
+	pStream.WriteLong(  baseOffset + 36, ip );
 }
 
 //	0x6F Packet
@@ -4262,21 +4029,21 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 //	BYTE[?] charName 
 void CPSecureTrading::InternalReset( void )
 {
-	internalBuffer.resize( 47 );
-	internalBuffer[0] = 0x6F;
-	internalBuffer[2] = 47;
+	pStream.ReserveSize( 47 );
+	pStream.WriteByte( 0, 0x6F );
+	pStream.WriteByte( 2, 47 );
 }
 void CPSecureTrading::CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
 {
-	PackLong( &internalBuffer[0], 4,  mItem.GetSerial()  );
-	PackLong( &internalBuffer[0], 8,  mItem2.GetSerial() );
-	PackLong( &internalBuffer[0], 12, mItem3.GetSerial() );
+	pStream.WriteLong( 4,  mItem.GetSerial()  );
+	pStream.WriteLong( 8,  mItem2.GetSerial() );
+	pStream.WriteLong( 12, mItem3.GetSerial() );
 }
 void CPSecureTrading::CopyData( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
-	PackLong( &internalBuffer[0], 4,  mItem.GetSerial() );
-	PackLong( &internalBuffer[0], 8,  mItem2			);
-	PackLong( &internalBuffer[0], 12, mItem3			);
+	pStream.WriteLong( 4,  mItem.GetSerial() );
+	pStream.WriteLong( 8,  mItem2			);
+	pStream.WriteLong( 12, mItem3			);
 }
 CPSecureTrading::CPSecureTrading()
 {
@@ -4303,13 +4070,13 @@ void CPSecureTrading::Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 
 }
 void CPSecureTrading::Action( UI08 value )
 {
-	internalBuffer[3] = value;
+	pStream.WriteByte( 3, value );
 }
 void CPSecureTrading::Name( const std::string nameFollowing )
 {
-	internalBuffer.resize( 47 );
-	internalBuffer[16] = 1;
-	strcpy( (char *)&internalBuffer[17], nameFollowing.c_str() );
+	pStream.ReserveSize( 47 );
+	pStream.WriteByte(   16, 1 );
+	pStream.WriteString( 17, nameFollowing, nameFollowing.length() );
 }
 
 //	0x98 Packet
@@ -4332,14 +4099,14 @@ void CPSecureTrading::Name( const std::string nameFollowing )
 //	Triggered by Crtl + Shift. 
 void CPAllNames3D::InternalReset( void )
 {
-	internalBuffer.resize( 37 );
-	internalBuffer[0] = 0x98;
-	internalBuffer[2] = 37;
+	pStream.ReserveSize( 37 );
+	pStream.WriteByte( 0, 0x98 );
+	pStream.WriteByte( 2, 37 );
 }
 void CPAllNames3D::CopyData( CBaseObject& obj )
 {
-	PackLong( &internalBuffer[0], 3, obj.GetSerial() );
-	strcpy( (char *)&internalBuffer[7], obj.GetName().c_str() );
+	pStream.WriteLong(   3, obj.GetSerial() );
+	pStream.WriteString( 7, obj.GetName(), obj.GetName().length() );
 }
 CPAllNames3D::CPAllNames3D()
 {
@@ -4375,14 +4142,14 @@ void CPAllNames3D::Object( CBaseObject& obj )
 void CPBookPage::IncLength( UI08 amount )
 {
 	bookLength += amount;
-	internalBuffer.resize( bookLength );
+	pStream.ReserveSize( bookLength );
 }
 void CPBookPage::InternalReset( void )
 {
-	internalBuffer.resize( 9 );
+	pStream.ReserveSize( 9 );
 	bookLength			= 9;
 	pageCount			= 0;
-	internalBuffer[0]	= 0x66;
+	pStream.WriteByte( 0, 0x66 );
 }
 void CPBookPage::CopyData( CItem& obj )
 {
@@ -4407,26 +4174,26 @@ void CPBookPage::NewPage( SI16 pNum )
 	UI16 baseOffset = bookLength;
 	IncLength( 4 );
 	if( pNum == -1 )
-		PackShort( &internalBuffer[0], baseOffset, pageCount );
+		pStream.WriteShort( baseOffset, pageCount );
 	else
-		PackShort( &internalBuffer[0], baseOffset, pNum );
-	internalBuffer[baseOffset + 3] = 8;	// 8 lines per page
+		pStream.WriteShort( baseOffset, pNum );
+	pStream.WriteByte( baseOffset + 3, 8 );	// 8 lines per page
 }
 void CPBookPage::AddLine( const std::string line )
 {
 	UI16 baseOffset = bookLength;
 	size_t strLen	= line.length() + 1;
 	IncLength( static_cast< UI08 >(strLen) );
-	strcpy( (char *)&internalBuffer[baseOffset], line.c_str() );
+	pStream.WriteString( baseOffset, line, line.length() );
 }
 void CPBookPage::Finalize( void )
 {
-	PackShort( &internalBuffer[0], 1, bookLength );
-	PackShort( &internalBuffer[0], 7, pageCount );
+	pStream.WriteShort( 1, bookLength );
+	pStream.WriteShort( 7, pageCount );
 }
 void CPBookPage::Serial( SERIAL value )
 {
-	PackLong( &internalBuffer[0], 3, value );
+	pStream.WriteLong( 3, value );
 }
 
 //	0xB0 Packet
@@ -4447,26 +4214,26 @@ void CPBookPage::Serial( SERIAL value )
 //	STRINGLIST		commands, text;
 CPSendGumpMenu::CPSendGumpMenu()
 {
-	internalBuffer.resize( 21 );
-	internalBuffer[0] = 0xB0;		// command byte
-	internalBuffer[14] = 0x6E;		// default x
-	internalBuffer[18] = 0x46;		// default y
+	pStream.ReserveSize( 21 );
+	pStream.WriteByte( 0, 0xB0 );		// command byte
+	pStream.WriteByte( 14, 0x6E );		// default x
+	pStream.WriteByte( 18, 0x46 );		// default y
 }
 void CPSendGumpMenu::UserID( SERIAL value )
 {
-	PackLong( &internalBuffer[0], 3, value );
+	pStream.WriteLong( 3, value );
 }
 void CPSendGumpMenu::GumpID( SERIAL value )
 {
-	PackLong( &internalBuffer[0], 7, value );
+	pStream.WriteLong( 7, value );
 }
 void CPSendGumpMenu::X( UI32 value )
 {
-	PackLong( &internalBuffer[0], 11, value );
+	pStream.WriteLong( 11, value );
 }
 void CPSendGumpMenu::Y( UI32 value )
 {
-	PackLong( &internalBuffer[0], 15, value );
+	pStream.WriteLong( 15, value );
 }
 void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
 {
@@ -4561,48 +4328,59 @@ void CPSendGumpMenu::AddText( const std::string actualText, ... )
 void CPSendGumpMenu::Finalize( void )
 {
 	UI32 length		= 21;
-	UI32 length2	= 1;
 	UI16 increment	= 0;
 	size_t line		= 0;
+	UI16 lineLen	= 0;
 
 	std::string cmdString;
 
-	for( line = 0; line < commands.size(); ++line )
+	for( STRINGLIST_CITERATOR cIter = commands.begin(); cIter != commands.end(); ++cIter )
 	{
-		if( commands[line].length() == 0 )
+		lineLen = static_cast<UI16>((*cIter).length());
+		if( lineLen == 0 )
 			break;
-		increment = static_cast< UI16 >(commands[line].length() + 4);
-		internalBuffer.resize( length + increment );
-		cmdString = "{ " + commands[line] + " }";
-		PackString( &internalBuffer[0], length, cmdString, increment );
+		increment = static_cast<UI16>(lineLen + 4);
+		if( (length + increment) >= 0xFFFF )
+		{
+			Console.Warning( 2, "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			break;
+		}
+
+		pStream.ReserveSize( length + increment );
+		cmdString = "{ " + (*cIter) + " }";
+		pStream.WriteString( length, cmdString, increment );
 		length	+= increment;
-		length2	+= increment;
 	}
 
-	if( length2 > 65536 )
+	if( length > 65536 )
 		throw std::runtime_error( "Packet 0xB0 is far too large" );
 
-	PackShort( &internalBuffer[0], 19, static_cast<UI16>(length2) );
+	pStream.WriteShort( 19, static_cast<UI16>(length-20) );
 
 	UI32 tlOff	= length + 1;
 	length		+= 3;
 	UI32 tlines = 0;
 
-	internalBuffer.resize( length );	// match the 3 byte increase
-	UI16 lineLen = 0;
+	pStream.ReserveSize( length );	// match the 3 byte increase
 
-	for( line = 0; line < text.size(); ++line )
+	for( STRINGLIST_CITERATOR tIter = text.begin(); tIter != text.end(); ++tIter )
 	{
-		if( text[line].length() == 0 )
+		lineLen = static_cast<UI16>((*tIter).length());
+		if( lineLen == 0 )
 			break;
 		// Unfortunately, unicode strings are... different
 		// so we can't use PackString
-		lineLen		= static_cast< UI16 >(text[line].length());
 		increment	= lineLen * 2 + 2;
-		internalBuffer.resize( length + increment );
-		PackShort( &internalBuffer[0], length, lineLen );
-		for( UI32 i = 0; i < lineLen; ++i )
-			internalBuffer[length + 3 + i*2] = (text[line])[i];
+		if( (length + increment) >= 0xFFFF )
+		{
+			Console.Warning( 2, "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			break;
+		}
+
+		pStream.ReserveSize( length + increment );
+		pStream.WriteShort( length, lineLen );
+		for( UI16 i = 0; i < lineLen; ++i )
+			pStream.WriteByte( length + 3 + i*2, (*tIter)[i] );
 		length += increment;
 		++tlines;
 	}
@@ -4610,8 +4388,8 @@ void CPSendGumpMenu::Finalize( void )
 	if( length > 65536 )
 		throw std::runtime_error( "Packet 0xB0 is far too large" );
 
-	PackShort( &internalBuffer[0], 1, static_cast< UI16 >(length) );
-	PackShort( &internalBuffer[0], tlOff, static_cast< UI16 >(tlines) );
+	pStream.WriteShort( 1, static_cast< UI16 >(length) );
+	pStream.WriteShort( tlOff, static_cast< UI16 >(tlines) );
 }
 
 //	0xB0 Packet
@@ -4632,14 +4410,14 @@ void CPSendGumpMenu::Finalize( void )
 void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPSendGumpMenu 0xB0 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "ID               : " << std::hex << UnpackULong(  &internalBuffer[0], 3  ) << std::endl;
-	outStream << "GumpID           : " << std::hex << UnpackULong(  &internalBuffer[0], 7  ) << std::endl;
-	outStream << "X                : " << std::hex << UnpackUShort( &internalBuffer[0], 11  ) << std::endl;
-	outStream << "Y                : " << std::hex << UnpackUShort( &internalBuffer[0], 15 ) << std::endl;
-	outStream << "Command Sec Len  : " << std::dec << UnpackUShort( &internalBuffer[0], 19 ) << std::endl;
-//	outStream << "Num text lines   : " << UnpackUShort( &internalBuffer[0], 15 ) << std::endl;
-//	outStream << "Text Sec Len     : " << internalBuffer[17] << std::endl;
+		outStream << "[SEND]Packet     : CPSendGumpMenu 0xB0 --> Length: " << pStream.GetSize() << std::endl;
+	outStream << "ID               : " << std::hex << pStream.GetULong( 3 ) << std::endl;
+	outStream << "GumpID           : " << std::hex << pStream.GetULong( 7 ) << std::endl;
+	outStream << "X                : " << std::hex << pStream.GetUShort( 11 ) << std::endl;
+	outStream << "Y                : " << std::hex << pStream.GetUShort( 15 ) << std::endl;
+	outStream << "Command Sec Len  : " << std::dec << pStream.GetUShort( 19 ) << std::endl;
+//	outStream << "Num text lines   : " << pStream.GetUShort( 15 ) << std::endl;
+//	outStream << "Text Sec Len     : " << pStream.GetByte( 17 ) << std::endl;
 	outStream << "Commands         : " << std::endl;
 	for( size_t x = 0; x < commands.size(); ++x )
 		outStream << "     " << commands[x] << std::endl;
@@ -4648,7 +4426,7 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "     " << text[y] << std::endl;
 
 	outStream << "  Raw dump     :" << std::endl;
-	cPUOXBuffer::Log( outStream, false );
+	CPUOXBuffer::Log( outStream, false );
 }
 
 //Subcommand 0x1b: New Spellbook
@@ -4661,24 +4439,24 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 
 void CPNewSpellBook::InternalReset( void )
 {
-	internalBuffer.resize( 23 );
-	internalBuffer[0] = 0xBF;
-	PackShort( &internalBuffer[0], 1, 23 );
-	PackShort( &internalBuffer[0], 3, 0x1B );
-	PackShort( &internalBuffer[0], 5, 0x01 );
-	internalBuffer[11] = 0x0E;
-	internalBuffer[12] = 0xFA;
-	PackShort( &internalBuffer[0], 13, 1 );
+	pStream.ReserveSize( 23 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 23 );
+	pStream.WriteShort( 3, 0x1B );
+	pStream.WriteShort( 5, 0x01 );
+	pStream.WriteByte( 11, 0x0E );
+	pStream.WriteByte( 12, 0xFA );
+	pStream.WriteShort( 13, 1 );
 }
 void CPNewSpellBook::CopyData( CItem& obj )
 {
-	PackLong( &internalBuffer[0], 7, obj.GetSerial() );
+	pStream.WriteLong( 7, obj.GetSerial() );
 	for( UI08 i = 0 ; i < 64 ; ++i )
 	{
 		int y = (i % 8);
 		int x = 15 + (int)(i / 8);
 		if( Magic->HasSpell( &obj, i+1 ) )
-			internalBuffer[x] |= static_cast<UI08>(power( 2, y ));
+			pStream.WriteByte( x, (pStream.GetByte( x ) | static_cast<UI08>(power( 2, y ))) );
 	}
 }
 CPNewSpellBook::CPNewSpellBook()
@@ -4719,18 +4497,18 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 
 void CPDisplayDamage::InternalReset( void )
 {
-	internalBuffer.resize( 11 );
-	internalBuffer[0] = 0xBF;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x0B;
-	internalBuffer[3] = 0x00;
-	internalBuffer[4] = 0x22;
-	internalBuffer[5] = 0x01;
+	pStream.ReserveSize( 11 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteByte( 1, 0x00 );
+	pStream.WriteByte( 2, 0x0B );
+	pStream.WriteByte( 3, 0x00 );
+	pStream.WriteByte( 4, 0x22 );
+	pStream.WriteByte( 5, 0x01 );
 }
 void CPDisplayDamage::CopyData( CChar& ourTarg, UI16 ourDamage )
 {
-	PackLong( &internalBuffer[0], 6, ourTarg.GetSerial() );
-	internalBuffer[10] = (ourDamage>>8) + (ourDamage%256);
+	pStream.WriteLong( 6, ourTarg.GetSerial() );
+	pStream.WriteByte( 10, (ourDamage>>8) + (ourDamage%256) );
 }
 CPDisplayDamage::CPDisplayDamage()
 {
@@ -4768,20 +4546,20 @@ bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 
 void CPQueryToolTip::InternalReset( void )
 {
-	internalBuffer.resize( 13 );
-	internalBuffer[0] = 0xBF;
-	internalBuffer[1] = 0x00;
-	internalBuffer[2] = 0x0D;
-	internalBuffer[3] = 0x00;
-	internalBuffer[4] = 0x10;
-	internalBuffer[9] = 0x78;
-	internalBuffer[10] = 0xA1;
-	internalBuffer[11] = 0xBA;
-	internalBuffer[12] = 0x2B;
+	pStream.ReserveSize( 13 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteByte( 1, 0x00 );
+	pStream.WriteByte( 2, 0x0D );
+	pStream.WriteByte( 3, 0x00 );
+	pStream.WriteByte( 4, 0x10 );
+	pStream.WriteByte( 9, 0x78 );
+	pStream.WriteByte( 10, 0xA1 );
+	pStream.WriteByte( 11, 0xBA );
+	pStream.WriteByte( 12, 0x2B );
 }
 void CPQueryToolTip::CopyData( CBaseObject& mObj )
 {
-	PackLong( &internalBuffer[0], 5, mObj.GetSerial() );
+	pStream.WriteLong( 5, mObj.GetSerial() );
 }
 CPQueryToolTip::CPQueryToolTip()
 {
@@ -4831,16 +4609,16 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 //    BYTE[text length]  little endian Unicode text, not 0 terminated 
 void CPToolTip::InternalReset( void )
 {
-	internalBuffer.resize( 15 );
-	internalBuffer[0] = 0xD6;
-	internalBuffer[3] = 0x00;
-	internalBuffer[4] = 0x01;
-	internalBuffer[9] = 0x00;
-	internalBuffer[10] = 0x00;
-	internalBuffer[11] = 0x78;
-	internalBuffer[12] = 0xA1;
-	internalBuffer[13] = 0xBA;
-	internalBuffer[14] = 0x2B;
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0xD6 );
+	pStream.WriteByte( 3, 0x00 );
+	pStream.WriteByte( 4, 0x01 );
+	pStream.WriteByte( 9, 0x00 );
+	pStream.WriteByte( 10, 0x00 );
+	pStream.WriteByte( 11, 0x78 );
+	pStream.WriteByte( 12, 0xA1 );
+	pStream.WriteByte( 13, 0xBA );
+	pStream.WriteByte( 14, 0x2B );
 }
 
 void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )
@@ -4977,35 +4755,29 @@ void CPToolTip::CopyData( SERIAL objSer )
 	}
 
 	size_t packetLen = 14 + totalStringLen + 5;
-	internalBuffer.resize( packetLen );
-	internalBuffer[1] = static_cast<UI08>(packetLen>>8);
-	internalBuffer[2] = static_cast<UI08>(packetLen%256);
-	PackLong( &internalBuffer[0], 5, objSer );
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
+	pStream.WriteLong(  5, objSer );
 
 	size_t modifier = 14;
 	//loop through all lines
 	for( size_t i = 0; i < ourEntries.size(); ++i )
 	{
 		size_t stringLen = ourEntries[i].stringLen;
-		internalBuffer[++modifier] = static_cast<UI08>(ourEntries[i].stringNum>>24);
-		internalBuffer[++modifier] = static_cast<UI08>(ourEntries[i].stringNum>>16);
-		internalBuffer[++modifier] = static_cast<UI08>(ourEntries[i].stringNum>>8);
-		internalBuffer[++modifier] = static_cast<UI08>(ourEntries[i].stringNum%256);
-		internalBuffer[++modifier] = static_cast<UI08>(stringLen>>8);
-		internalBuffer[++modifier] = static_cast<UI08>(stringLen%256);
+		pStream.WriteLong( ++modifier, ourEntries[i].stringNum );
+		modifier += 4;
+		pStream.WriteShort( modifier, stringLen );
+		modifier += 1;
 
 		//convert to uni character
 		for( size_t j = 0; j < stringLen; j += 2 )
-		{	
-			internalBuffer[++modifier] = ourEntries[i].ourText[j/2];
-			internalBuffer[++modifier] = 0x00;
+		{
+			pStream.WriteByte( ++modifier, ourEntries[i].ourText[j/2] );
+			pStream.WriteByte( ++modifier, 0x00 );
 		}
 	}
 
-	internalBuffer[packetLen-4] = 0x00;
-	internalBuffer[packetLen-3] = 0x00;
-	internalBuffer[packetLen-2] = 0x00;
-	internalBuffer[packetLen-1] = 0x00;
+	pStream.WriteLong( packetLen-4, 0x00000000 );
 }
 
 
@@ -5040,8 +4812,8 @@ CPToolTip::CPToolTip( SERIAL objSer )
 
 void CPSellList::InternalReset( void )
 {
-	internalBuffer.resize( 9 );
-	internalBuffer[0] = 0x9E;
+	pStream.ReserveSize( 9 );
+	pStream.WriteByte( 0, 0x9E );
 	numItems = 0;
 }
 void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
@@ -5065,9 +4837,9 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 		}
 	}
 
-	PackShort( &internalBuffer[0], 1, (UI16)packetLen );
-	PackLong( &internalBuffer[0], 3, vendorID.GetSerial() );
-	PackShort( &internalBuffer[0], 7, numItems );
+	pStream.WriteShort( 1, (UI16)packetLen );
+	pStream.WriteLong( 3, vendorID.GetSerial() );
+	pStream.WriteShort( 7, numItems );
 }
 
 void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )
@@ -5096,20 +4868,17 @@ void CPSellList::AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_
 	std::string itemname;
 	size_t stringLen	= getTileName( (*opItem), itemname );
 	size_t newLen		= (packetLen + 14 + stringLen);
-	internalBuffer.resize( newLen );
-	PackLong( &internalBuffer[0], packetLen, opItem->GetSerial() );
-	PackShort( &internalBuffer[0], packetLen+4, opItem->GetID() );
-	PackShort( &internalBuffer[0], packetLen+6, opItem->GetColour() );
-	PackShort( &internalBuffer[0], packetLen+8, opItem->GetAmount() );
+	pStream.ReserveSize( newLen );
+	pStream.WriteLong( packetLen, opItem->GetSerial() );
+	pStream.WriteShort(  packetLen+4, opItem->GetID() );
+	pStream.WriteShort(  packetLen+6, opItem->GetColour() );
+	pStream.WriteShort(  packetLen+8, opItem->GetAmount() );
 	UI32 value = calcValue( opItem, spItem->GetSellValue() );
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
 		value = calcGoodValue( tReg, spItem, value, true );
-	PackShort( &internalBuffer[0], packetLen+10, value );
-	PackShort( &internalBuffer[0], packetLen+12, stringLen );
-	for( size_t i = 0; i < stringLen; ++i )
-	{
-		internalBuffer[packetLen+14+i] = itemname[i];
-	}
+	pStream.WriteShort(  packetLen+10, value );
+	pStream.WriteShort(  packetLen+12, stringLen );
+	pStream.WriteString( packetLen+14, itemname, stringLen );
 	packetLen = newLen;
 }
 
@@ -5142,11 +4911,10 @@ bool CPSellList::CanSellItems( CChar &mChar, CChar &vendor )
 
 void CPOpenMessageBoard::InternalReset( void )
 {
-	internalBuffer.resize( 38 );
-	internalBuffer[0] = 0x71;
-	internalBuffer[2] = 38;
-	std::string boardName = "Bulletin Board";
-	strncpy( (char *)&internalBuffer[8], boardName.c_str(), 15 );
+	pStream.ReserveSize( 38 );
+	pStream.WriteByte(   0, 0x71 );
+	pStream.WriteByte(   2, 38 );
+	pStream.WriteString( 8, "Bulletin Board", 15 );
 }
 
 void CPOpenMessageBoard::CopyData( CSocket *mSock )
@@ -5155,11 +4923,11 @@ void CPOpenMessageBoard::CopyData( CSocket *mSock )
 
 	if( ValidateObject( msgBoard ) )
 	{
-		PackLong( &internalBuffer[0], 4, msgBoard->GetSerial() );
+		pStream.WriteLong( 4, msgBoard->GetSerial() );
 		// If the name the item (Bulletin Board) has been defined, display it
 		// instead of the default "Bulletin Board" title.
 		if( msgBoard->GetName() != "#" )
-			strncpy( (char *)&internalBuffer[8], msgBoard->GetName().c_str(), 21 );
+			pStream.WriteString( 8, msgBoard->GetName(), 21 );
 	}
 }
 
@@ -5197,12 +4965,12 @@ CPOpenMessageBoard::CPOpenMessageBoard( CSocket *mSock )
 
 void CPOpenMsgBoardPost::InternalReset( void )
 {
-	internalBuffer.resize( 4 );
-	internalBuffer[0] = 0x71;
+	pStream.ReserveSize( 4 );
+	pStream.WriteByte( 0, 0x71 );
 	if( bFullPost )
-		internalBuffer[3] = 2;
+		pStream.WriteByte( 3, 2 );
 	else
-		internalBuffer[3] = 1;
+		pStream.WriteByte( 3, 1 );
 }
 
 void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost )
@@ -5219,15 +4987,15 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 	else
 		totSize += 12;
 
-	internalBuffer.resize( totSize );
-	PackShort( &internalBuffer[0], 1, static_cast<UI16>(totSize) );
+	pStream.ReserveSize( totSize );
+	pStream.WriteShort( 1, static_cast<UI16>(totSize) );
 
 	if( bFullPost )
-		PackLong( &internalBuffer[0], 4, mSock->GetDWord( 1 ) );
+		pStream.WriteLong( 4, mSock->GetDWord( 1 ) );
 	else
-		PackLong( &internalBuffer[0], 4, mSock->GetDWord( 4 ) );
+		pStream.WriteLong( 4, mSock->GetDWord( 4 ) );
 
-	PackLong( &internalBuffer[0], 8, (mbPost.Serial + BASEITEMSERIAL) );
+	pStream.WriteLong( 8, (mbPost.Serial + BASEITEMSERIAL) );
 
 	size_t offset = 12;
 
@@ -5238,36 +5006,36 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 			pSerial += BASEITEMSERIAL;
 		else
 			pSerial += 0x80000000;
-		PackLong( &internalBuffer[0], offset, pSerial );
+		pStream.WriteLong( offset, pSerial );
 		offset += 4;
 	}
 
-	internalBuffer[offset] = mbPost.PosterLen;
-	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Poster, mbPost.PosterLen );
+	pStream.WriteByte( offset, mbPost.PosterLen );
+	pStream.WriteString( ++offset, (char *)mbPost.Poster, mbPost.PosterLen );
 	offset += mbPost.PosterLen;
 
-	internalBuffer[offset] = mbPost.SubjectLen;
-	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Subject, mbPost.SubjectLen );
+	pStream.WriteByte( offset, mbPost.SubjectLen );
+	pStream.WriteString( ++offset, (char *)mbPost.Subject, mbPost.SubjectLen );
 	offset += mbPost.SubjectLen;
 
-	internalBuffer[offset] = mbPost.DateLen;
-	strncpy( (char *)&internalBuffer[++offset], (char *)mbPost.Date, mbPost.DateLen );
+	pStream.WriteByte( offset, mbPost.DateLen );
+	pStream.WriteString( ++offset, (char *)mbPost.Date, mbPost.DateLen );
 	offset += mbPost.DateLen;
 
 	if( bFullPost )
 	{
-		PackShort( &internalBuffer[0], offset, 0x0190 );
-		PackShort( &internalBuffer[0], offset+=2, 0x03F7 );
-		internalBuffer[offset+=2] = 0x00;
+		pStream.WriteShort( offset, 0x0190 );
+		pStream.WriteShort( offset+=2, 0x03F7 );
+		pStream.WriteByte(  offset+=2, 0x00 );
 
-		internalBuffer[++offset] = mbPost.Lines;
+		pStream.WriteByte( ++offset, mbPost.Lines );
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
 		{
-			internalBuffer[++offset] = (*pIter).size()+2;
-			strncpy( (char *)&internalBuffer[++offset], (*pIter).c_str(), (*pIter).size() );
+			pStream.WriteByte( ++offset, (*pIter).size()+2 );
+			pStream.WriteString( ++offset, (*pIter), (*pIter).size() );
 			offset += (*pIter).size();
-			internalBuffer[offset] = 0x32;
-			internalBuffer[++offset] = 0x00;
+			pStream.WriteByte( offset, 0x32 );
+			pStream.WriteByte( ++offset, 0x00 );
 		}
 	}
 }
@@ -5281,38 +5049,69 @@ CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& m
 
 void CPSendMsgBoardPosts::InternalReset( void )
 {
-	internalBuffer.resize( 5 );
-	internalBuffer[0] = 0x3c;
-	PackShort( &internalBuffer[0], 1, 5 );
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0x3c );
+	pStream.WriteShort( 1, 5 );
 }
 
 void CPSendMsgBoardPosts::CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
 {
-	size_t offset = internalBuffer.size();
-	internalBuffer.resize( offset+19 );
+	size_t offset = pStream.GetSize();
+	pStream.ReserveSize( offset+19 );
 
-	PackLong( &internalBuffer[0], offset, (mSerial + BASEITEMSERIAL) );
-	PackShort( &internalBuffer[0], offset+4, 0x0EB0 );
-	internalBuffer[offset+6] = 0;
-	PackShort( &internalBuffer[0], offset+7, 0x0001 );
-	PackShort( &internalBuffer[0], offset+9, 0x0000 );
-	PackShort( &internalBuffer[0], offset+11, 0x0000 );
-	PackLong( &internalBuffer[0], offset+13, oSerial );
-	PackShort( &internalBuffer[0], offset+17, 0x0000 );
+	pStream.WriteLong(  offset, (mSerial + BASEITEMSERIAL) );
+	pStream.WriteShort( offset+4, 0x0EB0 );
+	pStream.WriteByte(  offset+6, 0x00 );
+	pStream.WriteShort( offset+7, 0x0001 );
+	pStream.WriteShort( offset+9, 0x0000 );
+	pStream.WriteShort( offset+11, 0x0000 );
+	pStream.WriteLong(  offset+13, oSerial );
+	pStream.WriteShort( offset+17, 0x0000 );
 
 	++postCount;
 }
 
 void CPSendMsgBoardPosts::Finalize( void )
 {
-	PackShort( &internalBuffer[0], 1, internalBuffer.size() );
-	PackShort( &internalBuffer[0], 3, postCount );
+	pStream.WriteShort( 1, pStream.GetSize() );
+	pStream.WriteShort( 3, postCount );
 }
 
 CPSendMsgBoardPosts::CPSendMsgBoardPosts()
 {
 	postCount = 0;
 	InternalReset();
+}
+
+CPExtendedStats::CPExtendedStats()
+{
+	InternalReset();
+}
+
+CPExtendedStats::CPExtendedStats( CChar& mChar )
+{
+	InternalReset();
+	CopyData( mChar );
+}
+
+void CPExtendedStats::InternalReset( void )
+{
+	pStream.ReserveSize( 12 );
+	pStream.WriteByte(  0, 0xBF );
+	pStream.WriteShort( 1, 12 );
+	pStream.WriteShort( 3, 0x19 );
+	pStream.WriteByte(  6, 2 );
+}
+
+void CPExtendedStats::CopyData( CChar& mChar )
+{
+	pStream.WriteLong( 7, mChar.GetSerial() );
+
+	UI08 strength		= mChar.GetSkillLock( STRENGTH );
+	UI08 dexterity		= mChar.GetSkillLock( DEXTERITY );
+	UI08 intelligence	= mChar.GetSkillLock( INTELLECT );
+
+	pStream.WriteByte( 11, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
 }
 
 }

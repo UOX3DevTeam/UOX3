@@ -35,7 +35,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|USEFACETSAVES|MAP0|MAP1|MAP2|MAP3|USERMAP|CLIENTSUPPORT|"
-	"FTPDENABLED|FTPDUSER|FTPDUSERLIMIT|FTPDBIND|FTPDROOT|FTPCENABLED|FTPCHOST|FTPCPORT|FTPCUSER|FTPCULFLAGS"
+	"FTPDENABLED|FTPDUSER|FTPDUSERLIMIT|FTPDBIND|FTPDROOT|FTPCENABLED|FTPCHOST|FTPCPORT|FTPCUSER|FTPCULFLAGS|MAPCOUNT"
 );
 
 void CServerData::ResetDefaults( void )
@@ -100,6 +100,7 @@ void CServerData::ResetDefaults( void )
 	CharHideWhileMounted( true );
 	WeightPerStr( 5 );
 	SystemTimer( tSERVER_POLYMORPH, 90 );
+	ServerMapCount( 5 );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 15 );
@@ -898,11 +899,13 @@ bool CServerData::CombatMonstersVsAnimals( void ) const
 	return combatmonstersvsanimals;
 }
 
-void CServerData::CombatAnimalsAttackChance( SI16 value )
+void CServerData::CombatAnimalsAttackChance( UI08 value )
 {
+	if( value > 100 )
+		value = 100;
 	combatanimalattackchance = value;
 }
-SI16 CServerData::CombatAnimalsAttackChance( void ) const
+UI08 CServerData::CombatAnimalsAttackChance( void ) const
 {
 	return combatanimalattackchance;
 }
@@ -958,6 +961,23 @@ UI08 CServerData::WeightPerStr( void ) const
 void CServerData::WeightPerStr( UI08 newVal )
 {
 	weightPerSTR = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	UI08 ServerMapCount()
+//|	Date			-	9/10/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Total number of maps available to the server
+//o--------------------------------------------------------------------------o
+UI08 CServerData::ServerMapCount( void ) const
+{
+	return mapCount;
+}
+void CServerData::ServerMapCount( UI08 newVal )
+{
+	mapCount = newVal;
 }
 
 //o--------------------------------------------------------------------------o
@@ -1433,6 +1453,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
+		ofsOutput << "MAPCOUNT=" << static_cast<UI16>(ServerMapCount()) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -1501,7 +1522,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "COMBATSPELLMAXRANGE=" << CombatMaxSpellRange() << std::endl;
 		ofsOutput << "COMBATDISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << std::endl;
 		ofsOutput << "COMBATMONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << std::endl;
-		ofsOutput << "COMBATANIMALATTACKCHANCE=" << CombatAnimalsAttackChance() << std::endl;
+		ofsOutput << "COMBATANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << std::endl;
 		ofsOutput << "COMBATANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << std::endl;
 		ofsOutput << "COMBATNPCDAMAGERATE=" << CombatNPCDamageRate() << std::endl;
 		ofsOutput << "COMBATNPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << std::endl;
@@ -1967,7 +1988,7 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							CombatMonstersVsAnimals( value.toUShort() == 1 );
 							break;
 						case 0x05AD:	 // COMBATANIMALATTACKCHANCE[0090]
-							CombatAnimalsAttackChance( value.toShort() );
+							CombatAnimalsAttackChance( value.toUByte() );
 							break;
 						case 0x05C6:	 // COMBATANIMALSGUARDED[0091]
 							CombatAnimalsGuarded( value.toUShort() == 1 );
@@ -2190,6 +2211,9 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 						case 0x08CB:	 // FTPCUSER[0153]
 							break;
 						case 0x08D4:	 // FTPCULFLAGS[0154]
+							break;
+						case 0x08E0:	 // MAPCOUNT[0155]
+							ServerMapCount( value.toByte() );
 							break;
 						default:
 							//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;

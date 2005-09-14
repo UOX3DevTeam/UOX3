@@ -218,7 +218,7 @@ void cBooks::ReadWritableBook( CSocket *s, CItem *i, UI16 p, UI16 l )
 
 	if( s != NULL )
 	{
-		char *pagebuffer = s->PageBuffer();
+		const char *pagebuffer = s->PageBuffer();
 		UI16 lines_processed = 0, ii = 0, lin = 0;
 		while( lines_processed < l )
 		{
@@ -265,12 +265,11 @@ void cBooks::WriteAuthor( CItem *id, CSocket *s )
 		}
 		if( file.is_open() )	// If it isn't open now, our create and open failed
 		{
-			char *authorbuffer = s->AuthorBuffer();
+			const char *authorbuffer = s->AuthorBuffer();
 
 			file.seekp( 62, std::ios_base::beg );
 			if( !file.fail() )
 			{
-				authorbuffer[31] = '\n';
 				file.write( authorbuffer, 32 );
 				if( file.fail() )
 					Console.Error( 1, "Couldn't write to book file %s", fileName.c_str() );
@@ -304,8 +303,7 @@ void cBooks::WriteTitle( CItem *id, CSocket *s )
 			file.seekp( 0, std::ios_base::beg );
 			if( !file.fail() )
 			{
-				char *titlebuffer = s->TitleBuffer();
-				titlebuffer[61] = '\n';
+				const char *titlebuffer = s->TitleBuffer();
 				file.write( titlebuffer, 62 );
 				if( file.fail() )
 					Console.Error( 1, "Couldn't write to book file %s for book 0x%X", fileName.c_str(), id->GetSerial() );

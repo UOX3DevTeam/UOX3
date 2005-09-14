@@ -2235,6 +2235,7 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 	case UT_STAMINA:		updateTypes |= 0x08;	break;
 	case UT_MANA:			updateTypes |= 0x10;	break;
 	case UT_HIDE:			updateTypes |= 0x20;	break;
+	case UT_STATWINDOW:		updateTypes |= 0x40;	break;
 	default:										break;
 	}
 	if( isPostLoaded() )

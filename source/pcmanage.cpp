@@ -91,7 +91,7 @@ bool CPIPlayCharacter::Handle( void )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
-			ACCOUNTSBLOCK& actbRec	= tSock->GetAccount();
+			ACCOUNTSBLOCK&  actbRec	= tSock->GetAccount();
 			CChar *kChar			= NULL;
 			CChar *ourChar			= NULL;
 			if( actbRec.wAccountIndex == AB_INVALID_ID )
@@ -154,7 +154,6 @@ bool CPIPlayCharacter::Handle( void )
 					{
 						actbRec.dwInGame = kChar->GetSerial();
 						kChar->SetTimer( tPC_LOGOUT, 0 );
-						tSock->SetAccount( actbRec );
 						kChar->SetAccount( actbRec );
 						tSock->CurrcharObj( kChar );
 						startChar( tSock );
@@ -200,40 +199,39 @@ bool CPIDeleteCharacter::Handle( void )
 {
 	if( tSock != NULL )
 	{
-		if( tSock->AcctNo() != AB_INVALID_ID )
+		ACCOUNTSBLOCK * actbTemp = &tSock->GetAccount();
+		UI08 slot = tSock->GetByte( 0x22 );
+		if( actbTemp->wAccountIndex != AB_INVALID_ID )
 		{
-			UI08 slot = tSock->GetByte( 0x22 );
-			ACCOUNTSBLOCK& actbTemp = tSock->GetAccount();
-			if( actbTemp.wAccountIndex!=AB_INVALID_ID )
+			CChar *ourObj = actbTemp->lpCharacters[slot];
+			if( ValidateObject( ourObj ) )	// we have a char
 			{
-				CChar *ourObj = actbTemp.lpCharacters[slot];
-				if( ValidateObject( ourObj ) )	// we have a char
-				{
-					Accounts->DelCharacter(actbTemp.wAccountIndex , slot );
-					ourObj->Delete();
-				}
+				Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
+				ourObj->Delete();
+			}
 
-			}
-			// Support for accounts. The current copy of the account isn't correct. So get a new copy to work with.
-			ACCOUNTSBLOCK actbScratch;
-			Accounts->Load();
-			Accounts->GetAccountByID( actbTemp.wAccountIndex, actbScratch );
-			UI08 charCount = 0;
-			for( UI08 i = 0; i < 6; ++i )
-			{
-				if( ValidateObject( actbScratch.lpCharacters[i] ) )
-					++charCount;
-			}
-			CServerData *sd		= cwmWorldState->ServerData();
-			UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
-			CPCharAndStartLoc toSend( actbScratch, charCount, serverCount );
-			tSock->SetAccount( actbScratch );
-			for( UI08 j = 0; j < serverCount; ++j )
-			{
-				toSend.AddStartLocation( sd->ServerLocation( j ), j );
-			}
-			tSock->Send( &toSend );
 		}
+		else
+		{
+			// Support for accounts. The current copy of the account isn't correct. So get a new copy to work with.
+			Accounts->Load();
+			actbTemp = &Accounts->GetAccountByID( actbTemp->wAccountIndex );
+		}
+
+		UI08 charCount = 0;
+		for( UI08 i = 0; i < 6; ++i )
+		{
+			if( ValidateObject( actbTemp->lpCharacters[i] ) )
+				++charCount;
+		}
+		CServerData *sd		= cwmWorldState->ServerData();
+		UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
+		CPCharAndStartLoc toSend( (*actbTemp), charCount, serverCount );
+		for( UI08 j = 0; j < serverCount; ++j )
+		{
+			toSend.AddStartLocation( sd->ServerLocation( j ), j );
+		}
+		tSock->Send( &toSend );
 	}
 	return true;
 }
@@ -447,7 +445,6 @@ bool CPICreateCharacter::Handle( void )
 			if( actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == mChar->GetSerial() )
 			{
 				actbRec.dwInGame = mChar->GetSerial();
-				tSock->SetAccount( actbRec );
 				mChar->SetAccount( actbRec );
 			}
 			UI16 pGenderID = 0x190;
@@ -611,6 +608,10 @@ void startChar( CSocket *mSock, bool onCreate )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ) )
 		{
+			ACCOUNTSBLOCK& actbTemp = mSock->GetAccount();
+			if( actbTemp.wAccountIndex != AB_INVALID_ID )
+				actbTemp.wFlags |= AB_FLAGS_ONLINE;
+
 			mSock->TargetOK( false );
 
 			CPCharLocBody startup = (*mChar);
@@ -630,22 +631,22 @@ void startChar( CSocket *mSock, bool onCreate )
 			CPWorldChange wrldChange( mChar->GetRegion()->GetAppearance(), 1 );
 			mSock->Send( &wrldChange );	// need to add this?
 
-//			CPDrawGamePlayer gpToSend = (*mChar);		// need to add this?
-//			mSock->Send( &gpToSend );
-
 			CPPersonalLightLevel pllToSend = (*mChar);		// need to add this?
 			pllToSend.Level( 0 );
 			mSock->Send( &pllToSend );
 
-			mChar->SendWornItems( mSock );
-			
 			CPWarMode wMode( 0 );				mSock->Send( &wMode );
 
 			CItem *nItem = mChar->GetItemAtLayer( IL_PACKITEM );
 			mChar->SetPackItem( nItem );
 
-			mChar->SetRegion( 0xFF );
-			mChar->Teleport();					// implicit checkRegion in Teleport()
+			if( mChar->IsDead() )
+			{
+				CPResurrectMenu toSend( 0 );
+				mSock->Send( &toSend );
+			}
+
+			mChar->Dirty( UT_LOCATION );
 			mChar->SetStep( 1 );
 
 			CPLoginComplete lc;					mSock->Send( &lc );
@@ -692,6 +693,7 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
+			mSock->LoginComplete( true );
 		}
 	}
 }
@@ -702,7 +704,7 @@ void startChar( CSocket *mSock, bool onCreate )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 //o---------------------------------------------------------------------------o
-CItem *CreateCorpseItem( CChar &mChar, bool createPack )
+CItem *CreateCorpseItem( CChar& mChar, bool createPack )
 {
 	CItem *iCorpse = NULL;
 	if( !createPack )
@@ -843,11 +845,10 @@ void HandleDeath( CChar *mChar )
 	if( !mChar->IsNpc() )
 		pSock = calcSocketObjFromChar( mChar );
 
+	DismountCreature( mChar );
+
 	if( pSock != NULL )
-	{
-		DismountCreature( mChar );
 		killTrades( (*mChar) );
-	}
 
 	if( mChar->GetID() != mChar->GetOrgID() )
 		mChar->SetID( mChar->GetOrgID() );

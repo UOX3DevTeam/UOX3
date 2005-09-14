@@ -258,7 +258,7 @@ bool CPIBuyItem::Handle( void )
 		clrSend.Serial( tSock->GetDWord( 3 ) );
 		tSock->Send( &clrSend );
 	}
-	tSock->statwindow( mChar );
+	mChar->Dirty( UT_STATWINDOW );
 	return true;
 }
 

@@ -16,7 +16,7 @@ namespace UOX
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 );
 void PackShort( UI08 *toPack, int offset, UI16 value );
 
-cPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
+CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
 	{
@@ -40,7 +40,7 @@ cPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 	return NULL;
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
+CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
 	{
@@ -115,19 +115,19 @@ void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Password       : " << Pass() << std::endl;
 	outStream << "Unknown        : " << Unknown() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 bool CPIFirstLogin::Handle( void )
 {
 	tSock->AcctNo( AB_INVALID_ID );
 	LoginDenyReason t = LDR_NODENY;
-	ACCOUNTSBLOCK actbTemp;
 
 	std::string username = Name();
 
-	if( Accounts->GetAccountByName( username, actbTemp ) )
-		tSock->SetAccount( actbTemp );
+	ACCOUNTSBLOCK * actbTemp = &Accounts->GetAccountByName( username );
+	if( actbTemp->wAccountIndex != AB_INVALID_ID )
+		tSock->SetAccount( (*actbTemp) );
 
 	std::string pass0, pass1, pass2;
 	pass0 = Pass();
@@ -139,20 +139,21 @@ bool CPIFirstLogin::Handle( void )
 		if( cwmWorldState->ServerData()->InternalAccountStatus() )
 		{
 			Accounts->AddAccount( username, pass1, "" );
-			if( Accounts->GetAccountByName( username, actbTemp ) )	// grab our account number
-				tSock->SetAccount( actbTemp );
+			actbTemp = &Accounts->GetAccountByName( username );
+			if( actbTemp->wAccountIndex != AB_INVALID_ID )	// grab our account number
+				tSock->SetAccount( (*actbTemp) );
 		}
 	}
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
-		if( actbTemp.wFlags&AB_FLAGS_BANNED )
+		if( actbTemp->wFlags&AB_FLAGS_BANNED )
 			t = LDR_ACCOUNTDISABLED;
-		else if( actbTemp.sPassword != pass1 )
+		else if( actbTemp->sPassword != pass1 )
 			t = LDR_BADPASSWORD;
 	}
 	else
 		t = LDR_UNKNOWNUSER;
-	if( t == LDR_NODENY && ( actbTemp.wFlags&AB_FLAGS_ONLINE ) )
+	if( t == LDR_NODENY && ( actbTemp->wFlags&AB_FLAGS_ONLINE ) )
 		t = LDR_ACCOUNTINUSE;
 	if( t != LDR_NODENY )
 	{
@@ -165,13 +166,13 @@ bool CPIFirstLogin::Handle( void )
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
 		char temp[1024];
-		actbTemp.dwLastIP = calcserial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+		actbTemp->dwLastIP = calcserial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
 		sprintf( temp, "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
 		Console.Log( temp, "server.log" );
 		messageLoop << temp;
 
-		actbTemp.wFlags |= AB_FLAGS_ONLINE;
-		Accounts->ModAccount(actbTemp.sUsername,AB_FLAGS,actbTemp);
+		actbTemp->wFlags |= AB_FLAGS_ONLINE;
+//		Accounts->ModAccount( actbTemp->sUsername, AB_FLAGS, (*actbTemp) );
 
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );
@@ -191,7 +192,7 @@ CPIFirstLogin::CPIFirstLogin()
 {
 	InternalReset();
 }
-CPIFirstLogin::CPIFirstLogin( CSocket *s ) : cPInputBuffer( s )
+CPIFirstLogin::CPIFirstLogin( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -200,26 +201,22 @@ void CPIFirstLogin::Receive( void )
 {
 	tSock->FirstPacket( false );
 	tSock->Receive( 62, false );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 62 );
 
 	// Copy data over into internal variables
 	char temp[30];
 	// Grab our username
-	memcpy( temp, &internalBuffer[1], 30 );
+	memcpy( temp, &tSock->Buffer()[1], 30 );
 	userID = temp;
 
 	// Grab our password
-	memcpy( temp, &internalBuffer[31], 30 );
+	memcpy( temp, &tSock->Buffer()[31], 30 );
 	password = temp;
 
-	unknown = internalBuffer[61];
+	unknown = tSock->GetByte( 61 );
 	// Done with our buffer, we can clear it out now
-	internalBuffer.clear();
 }
 void CPIFirstLogin::InternalReset( void )
 {
-	internalBuffer.resize( 62 );
-	internalBuffer[0] = 0x80;
 	userID.reserve( 30 );
 	password.reserve( 30 );
 }
@@ -249,19 +246,17 @@ void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIServerSelect 0xA0 --> Length: 03" << std::endl;
 	outStream << "Server         : " << ServerNum() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 void CPIServerSelect::InternalReset( void )
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0xA0;
 }
 CPIServerSelect::CPIServerSelect()
 {
 	InternalReset();
 }
-CPIServerSelect::CPIServerSelect( CSocket *s ) : cPInputBuffer( s )
+CPIServerSelect::CPIServerSelect( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -269,13 +264,12 @@ CPIServerSelect::CPIServerSelect( CSocket *s ) : cPInputBuffer( s )
 void CPIServerSelect::Receive( void )
 {
 	tSock->Receive( 3, false );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 3 );
 }
 SI16 CPIServerSelect::ServerNum( void )
 {
 	// EviLDeD - Sept 19, 2002
 	// Someone said that there was an issue with False logins that request server 0. Default to server 1.
-	SI16 temp = ( (internalBuffer[1]<<8) + internalBuffer[2] );
+	SI16 temp = tSock->GetWord( 1 );
 	if( temp == 0 )
 		return 1;
 	else
@@ -309,12 +303,10 @@ void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "SID            : " << Name() << std::endl;
 	outStream << "Password       : " << Pass() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 void CPISecondLogin::InternalReset( void )
 {
-	internalBuffer.resize( 65 );
-	internalBuffer[0] = 0x91;
 	sid.reserve( 30 );
 	password.reserve( 30 );
 }
@@ -322,7 +314,7 @@ CPISecondLogin::CPISecondLogin()
 {
 	InternalReset();
 }
-CPISecondLogin::CPISecondLogin( CSocket *s ) : cPInputBuffer( s )
+CPISecondLogin::CPISecondLogin( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -332,22 +324,20 @@ void CPISecondLogin::Receive( void )
 	tSock->FirstPacket( false );
 	tSock->Receive( 65, false );
 	tSock->CryptClient( true );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 65 );
 	
 	// Copy data over into internal variables
 	char temp[30];
-	keyUsed = DWord( 1 );
+	keyUsed = tSock->GetDWord( 1 );
 
 	// Grab our username
-	memcpy( temp, &internalBuffer[5], 30 );
+	memcpy( temp, &tSock->Buffer()[5], 30 );
 	sid = temp;
 
 	// Grab our password
-	memcpy( temp, &internalBuffer[35], 30 );
+	memcpy( temp, &tSock->Buffer()[35], 30 );
 	password = temp;
 
 	// Done with our buffer, we can clear it out now
-	internalBuffer.clear();
 }
 UI32 CPISecondLogin::Account( void )
 {
@@ -366,8 +356,8 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
-	ACCOUNTSBLOCK actbTemp;
-	if( Accounts->GetAccountByName( Name(), actbTemp ) )
+	ACCOUNTSBLOCK& actbTemp = Accounts->GetAccountByName( Name() );
+	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 		tSock->SetAccount( actbTemp );
 
 	std::string pass0, pass1, pass2;
@@ -430,19 +420,17 @@ void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIClientVersion 0xBD --> Length: " << std::dec << tSock->GetWord( 1 ) << std::endl;
 	outStream << "Version        : " << Offset() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 void CPIClientVersion::InternalReset( void )
 {
-	internalBuffer.resize( 3 );
-	internalBuffer[0] = 0xBD;
 	len = 0;
 }
 CPIClientVersion::CPIClientVersion()
 {
 	InternalReset();
 }
-CPIClientVersion::CPIClientVersion( CSocket *s ) : cPInputBuffer( s )
+CPIClientVersion::CPIClientVersion( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -526,20 +514,19 @@ bool CPIClientVersion::Handle( void )
 void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: " << internalBuffer.size() << std::endl;
-	outStream << "Range			 : " << (int)internalBuffer[1] << std::endl;
+		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: " << 2 << std::endl;
+	outStream << "Range			 : " << (int)tSock->GetByte( 1 ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 void CPIUpdateRangeChange::InternalReset( void )
 {
-	internalBuffer.resize( 2 );
 }
 CPIUpdateRangeChange::CPIUpdateRangeChange()
 {
 	InternalReset();
 }
-CPIUpdateRangeChange::CPIUpdateRangeChange( CSocket *s ) : cPInputBuffer( s )
+CPIUpdateRangeChange::CPIUpdateRangeChange( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -547,8 +534,6 @@ CPIUpdateRangeChange::CPIUpdateRangeChange( CSocket *s ) : cPInputBuffer( s )
 void CPIUpdateRangeChange::Receive( void )
 {
 	tSock->Receive( 2, false );
-	internalBuffer[0] = tSock->GetByte( 0 );
-	internalBuffer[1] = tSock->GetByte( 1 );
 }
 bool CPIUpdateRangeChange::Handle( void )
 {
@@ -568,7 +553,7 @@ bool CPIUpdateRangeChange::Handle( void )
 			tSock->Range( tSock->GetByte( 1 ) );
 			break;
 	}
-	tSock->Send( &(internalBuffer[0]), 2 );	// we want to echo it back to the client
+	tSock->Send( tSock->Buffer(), 2 );	// we want to echo it back to the client
 #if defined( _MSC_VER )
 #pragma note( "Flush location" )
 #endif
@@ -591,7 +576,7 @@ CPITips::CPITips()
 {
 	InternalReset();
 }
-CPITips::CPITips( CSocket *s ) : cPInputBuffer( s )
+CPITips::CPITips( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -661,7 +646,7 @@ CPIRename::CPIRename()
 {
 	InternalReset();
 }
-CPIRename::CPIRename( CSocket *s ) : cPInputBuffer( s )
+CPIRename::CPIRename( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 	Receive();
@@ -689,7 +674,7 @@ bool CPIRename::Handle( void )
 CPIKeepAlive::CPIKeepAlive()
 {
 }
-CPIKeepAlive::CPIKeepAlive( CSocket *s ) : cPInputBuffer( s )
+CPIKeepAlive::CPIKeepAlive( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -719,21 +704,17 @@ bool CPIKeepAlive::Handle( void )
 CPIStatusRequest::CPIStatusRequest()
 {
 }
-CPIStatusRequest::CPIStatusRequest( CSocket *s ) : cPInputBuffer( s )
+CPIStatusRequest::CPIStatusRequest( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
 void CPIStatusRequest::Receive( void )
 {
 	tSock->Receive( 10, false );
-	internalBuffer.resize( 10 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 10 );
 
-	pattern		= DWord( 1 );
-	getType		= internalBuffer[5];
-	playerID	= DWord( 6 );
-
-	internalBuffer.clear();
+	pattern		= tSock->GetDWord( 1 );
+	getType		= tSock->GetByte(  5 );
+	playerID	= tSock->GetDWord( 6 );
 }
 
 void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
@@ -744,7 +725,7 @@ void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Request Type   : " << (int)getType << std::endl;
 	outStream << "PlayerID       : " << playerID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 bool CPIStatusRequest::Handle( void )
@@ -775,7 +756,7 @@ bool CPIStatusRequest::Handle( void )
 CPISpy::CPISpy()
 {
 }
-CPISpy::CPISpy( CSocket *s ) : cPInputBuffer( s )
+CPISpy::CPISpy( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -797,7 +778,7 @@ bool CPISpy::Handle( void )
 CPIGodModeToggle::CPIGodModeToggle()
 {
 }
-CPIGodModeToggle::CPIGodModeToggle( CSocket *s ) : cPInputBuffer( s )
+CPIGodModeToggle::CPIGodModeToggle( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -831,18 +812,15 @@ bool CPIGodModeToggle::Handle( void )
 CPIDblClick::CPIDblClick()
 {
 }
-CPIDblClick::CPIDblClick( CSocket *s ) : cPInputBuffer( s )
+CPIDblClick::CPIDblClick( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
 void CPIDblClick::Receive( void )
 {
 	tSock->Receive( 5, false );
-	internalBuffer.resize( 5 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 5 );
 
-	objectID	= DWord( 1 );
-	internalBuffer.clear();
+	objectID	= tSock->GetDWord( 1 );
 }
 
 void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
@@ -851,7 +829,7 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << std::endl;
 	outStream << "ClickedID      : " << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 // bool CPIDblClick::Handle() is implemented in cplayeraction.cpp
@@ -866,18 +844,15 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 CPISingleClick::CPISingleClick()
 {
 }
-CPISingleClick::CPISingleClick( CSocket *s ) : cPInputBuffer( s )
+CPISingleClick::CPISingleClick( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
 void CPISingleClick::Receive( void )
 {
 	tSock->Receive( 5, false );
-	internalBuffer.resize( 5 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 5 );
 
-	objectID	= DWord( 1 );
-	internalBuffer.clear();
+	objectID	= tSock->GetDWord( 1 );
 }
 
 void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
@@ -886,7 +861,7 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << std::endl;
 	outStream << "ClickedID      : " << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 // bool CPISingleClick::Handle() is implemented in cplayeraction.cpp
@@ -911,7 +886,7 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 CPIMoveRequest::CPIMoveRequest()
 {
 }
-CPIMoveRequest::CPIMoveRequest( CSocket *s ) : cPInputBuffer( s )
+CPIMoveRequest::CPIMoveRequest( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -936,7 +911,7 @@ bool CPIMoveRequest::Handle( void )
 CPIResyncReq::CPIResyncReq()
 {
 }
-CPIResyncReq::CPIResyncReq( CSocket *s ) : cPInputBuffer( s )
+CPIResyncReq::CPIResyncReq( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -959,7 +934,7 @@ bool CPIResyncReq::Handle( void )
 CPIResMenuChoice::CPIResMenuChoice()
 {
 }
-CPIResMenuChoice::CPIResMenuChoice( CSocket *s ) : cPInputBuffer( s )
+CPIResMenuChoice::CPIResMenuChoice( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -986,7 +961,7 @@ bool CPIResMenuChoice::Handle( void )
 CPIAttack::CPIAttack()
 {
 }
-CPIAttack::CPIAttack( CSocket *s ) : cPInputBuffer( s )
+CPIAttack::CPIAttack( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1023,7 +998,7 @@ bool CPIAttack::Handle( void )
 CPITargetCursor::CPITargetCursor()
 {
 }
-CPITargetCursor::CPITargetCursor( CSocket *s ) : cPInputBuffer( s )
+CPITargetCursor::CPITargetCursor( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1044,7 +1019,7 @@ void CPITargetCursor::Receive( void )
 CPIEquipItem::CPIEquipItem()
 {
 }
-CPIEquipItem::CPIEquipItem( CSocket *s ) : cPInputBuffer( s )
+CPIEquipItem::CPIEquipItem( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1065,7 +1040,7 @@ void CPIEquipItem::Receive( void )
 CPIGetItem::CPIGetItem()
 {
 }
-CPIGetItem::CPIGetItem( CSocket *s ) : cPInputBuffer( s )
+CPIGetItem::CPIGetItem( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1092,7 +1067,7 @@ void CPIGetItem::Receive( void )
 CPIDropItem::CPIDropItem()
 {
 }
-CPIDropItem::CPIDropItem( CSocket *s ) : cPInputBuffer( s )
+CPIDropItem::CPIDropItem( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1122,7 +1097,7 @@ void CPIDropItem::Receive( void )
 CPIGumpMenuSelect::CPIGumpMenuSelect()
 {
 }
-CPIGumpMenuSelect::CPIGumpMenuSelect( CSocket *s ) : cPInputBuffer( s )
+CPIGumpMenuSelect::CPIGumpMenuSelect( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1219,7 +1194,7 @@ CPITalkRequest::CPITalkRequest()
 {
 	InternalReset();
 }
-CPITalkRequest::CPITalkRequest( CSocket *s ) : cPInputBuffer( s )
+CPITalkRequest::CPITalkRequest( CSocket *s ) : CPInputBuffer( s )
 {
 	InternalReset();
 }
@@ -1617,10 +1592,10 @@ char * CPITalkRequestUnicode::Language( void ) const
 	return (char *)langCode;
 }
 
-CPIAllNames3D::CPIAllNames3D() : cPInputBuffer()
+CPIAllNames3D::CPIAllNames3D() : CPInputBuffer()
 {
 }
-CPIAllNames3D::CPIAllNames3D( CSocket *s ) : cPInputBuffer( s )
+CPIAllNames3D::CPIAllNames3D( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1660,7 +1635,7 @@ bool CPIAllNames3D::Handle( void )
 CPIGumpChoice::CPIGumpChoice()
 {
 }
-CPIGumpChoice::CPIGumpChoice( CSocket *s ) : cPInputBuffer( s )
+CPIGumpChoice::CPIGumpChoice( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1687,7 +1662,7 @@ void CPIGumpChoice::Receive( void )
 CPIBuyItem::CPIBuyItem()
 {
 }
-CPIBuyItem::CPIBuyItem( CSocket *s ) : cPInputBuffer( s )
+CPIBuyItem::CPIBuyItem( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1713,7 +1688,7 @@ void CPIBuyItem::Receive( void )
 CPISellItem::CPISellItem()
 {
 }
-CPISellItem::CPISellItem( CSocket *s ) : cPInputBuffer( s )
+CPISellItem::CPISellItem( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1735,7 +1710,7 @@ void CPISellItem::Receive( void )
 CPIDeleteCharacter::CPIDeleteCharacter()
 {
 }
-CPIDeleteCharacter::CPIDeleteCharacter( CSocket *s ) : cPInputBuffer( s )
+CPIDeleteCharacter::CPIDeleteCharacter( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1779,7 +1754,7 @@ void CPIDeleteCharacter::Receive( void )
 CPICreateCharacter::CPICreateCharacter()
 {
 }
-CPICreateCharacter::CPICreateCharacter( CSocket *s ) : cPInputBuffer( s )
+CPICreateCharacter::CPICreateCharacter( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1787,36 +1762,33 @@ void CPICreateCharacter::Receive( void )
 {
 	tSock->Receive( 104, false );
 	Network->Transfer( tSock );
-	internalBuffer.resize( 104 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 104 );
-	pattern1		= DWord( 1 );
-	pattern2		= DWord( 5 );
-	pattern3		= internalBuffer[9];
-	sex				= internalBuffer[70];
-	str				= internalBuffer[71];
-	dex				= internalBuffer[72];
-	intel			= internalBuffer[73];
-	skill[0]		= internalBuffer[74];
-	skillValue[0]	= internalBuffer[75];
-	skill[1]		= internalBuffer[76];
-	skillValue[1]	= internalBuffer[77];
-	skill[2]		= internalBuffer[78];
-	skillValue[2]	= internalBuffer[79];
-	skinColour		= Word( 80 );
-	hairStyle		= Word( 82 );
-	hairColour		= Word( 84 );
-	facialHair		= Word( 86 );
-	facialHairColour= Word( 88 );
-	locationNumber	= Word( 90 );
-	unknown			= Word( 92 );
-	slot			= Word( 94 );
-	ipAddress		= DWord( 96 );
-	shirtColour		= Word( 100 );
-	pantsColour		= Word( 102 );
-	memcpy( charName, &internalBuffer[10], 30 );
-	memcpy( password, &internalBuffer[40], 30 );
 
-	internalBuffer.clear();
+	pattern1		= tSock->GetDWord( 1 );
+	pattern2		= tSock->GetDWord( 5 );
+	pattern3		= tSock->GetByte( 9 );
+	sex				= tSock->GetByte( 70 );
+	str				= tSock->GetByte( 71 );
+	dex				= tSock->GetByte( 72 );
+	intel			= tSock->GetByte( 73 );
+	skill[0]		= tSock->GetByte( 74 );
+	skillValue[0]	= tSock->GetByte( 75 );
+	skill[1]		= tSock->GetByte( 76 );
+	skillValue[1]	= tSock->GetByte( 77 );
+	skill[2]		= tSock->GetByte( 78 );
+	skillValue[2]	= tSock->GetByte( 79 );
+	skinColour		= tSock->GetWord( 80 );
+	hairStyle		= tSock->GetWord( 82 );
+	hairColour		= tSock->GetWord( 84 );
+	facialHair		= tSock->GetWord( 86 );
+	facialHairColour= tSock->GetWord( 88 );
+	locationNumber	= tSock->GetWord( 90 );
+	unknown			= tSock->GetWord( 92 );
+	slot			= tSock->GetWord( 94 );
+	ipAddress		= tSock->GetDWord( 96 );
+	shirtColour		= tSock->GetWord( 100 );
+	pantsColour		= tSock->GetWord( 102 );
+	memcpy( charName, &tSock->Buffer()[10], 30 );
+	memcpy( password, &tSock->Buffer()[40], 30 );
 }
 
 void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
@@ -1847,7 +1819,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Shirt Colour   : " << shirtColour << std::endl;
 	outStream << "Pants Colour   : " << pantsColour << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 
@@ -1866,7 +1838,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 CPIPlayCharacter::CPIPlayCharacter()
 {
 }
-CPIPlayCharacter::CPIPlayCharacter( CSocket *s ) : cPInputBuffer( s )
+CPIPlayCharacter::CPIPlayCharacter( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1876,18 +1848,13 @@ void CPIPlayCharacter::Receive( void )
 	Network->Transfer( tSock );
 	messageLoop << "Activating Chat, LBR, AOS, 6Char support on connected client.";
 
-	internalBuffer.resize( 73 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 73 );
-
 	// Let's store our data more meaningfully
 
-	pattern		= DWord( 1 );
-	slotChosen	= internalBuffer[68];
-	ipAddress	= DWord( 69 );
-	memcpy( charName, &internalBuffer[5], 30 );
-	memcpy( unknown, &internalBuffer[35], 33 );
-
-	internalBuffer.clear();
+	pattern		= tSock->GetDWord( 1 );
+	slotChosen	= tSock->GetByte( 68 );
+	ipAddress	= tSock->GetDWord( 69 );
+	memcpy( charName, &tSock->Buffer()[5], 30 );
+	memcpy( unknown, &tSock->Buffer()[35], 33 );
 }
 
 void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
@@ -1899,7 +1866,7 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Slot chosen    : " << (int)slotChosen << std::endl;
 	outStream << "Client IP      : " << ipAddress << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 // void CPIPlayCharacter::Handle() implimented in pcmanage.cpp
@@ -1918,7 +1885,7 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 CPIGumpInput::CPIGumpInput()
 {
 }
-CPIGumpInput::CPIGumpInput( CSocket *s ) : cPInputBuffer( s )
+CPIGumpInput::CPIGumpInput( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -1927,18 +1894,14 @@ void CPIGumpInput::Receive( void )
 	tSock->Receive( 3, false );
 	UI16 length = tSock->GetWord( 1 );
 	tSock->Receive( length, false );
-	internalBuffer.resize( length );
-	memcpy( &internalBuffer[0], tSock->Buffer(), length );
 
-	id		= DWord( 3 );
-	type	= internalBuffer[7];
-	index	= internalBuffer[8];
-	unk[0]	= internalBuffer[9];
-	unk[1]	= internalBuffer[10];
-	unk[2]	= internalBuffer[11];
-	reply	= (char *)&(internalBuffer[12]);
-
-	internalBuffer.clear();
+	id		= tSock->GetDWord( 3 );
+	type	= tSock->GetByte( 7 );
+	index	= tSock->GetByte( 8 );
+	unk[0]	= tSock->GetByte( 9 );
+	unk[1]	= tSock->GetByte( 10 );
+	unk[2]	= tSock->GetByte( 11 );
+	reply	= (char *)&(tSock->Buffer()[12]);
 }
 
 UI32 CPIGumpInput::ID( void ) const
@@ -1973,7 +1936,7 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Unknown        : " << (int)unk[0] << " " << (int)unk[1] << " " << (int)unk[2] << std::endl;
 	outStream << "Reply          : " << reply << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 // void CPIGumpInput::Handle() implimented in gumps.cpp
@@ -1984,11 +1947,11 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 //	BYTE cmd 
 //	BYTE[257] (0x00)
 
-CPIHelpRequest::CPIHelpRequest( CSocket *s, UI16 menuVal ) : cPInputBuffer( s )
+CPIHelpRequest::CPIHelpRequest( CSocket *s, UI16 menuVal ) : CPInputBuffer( s )
 {
 	menuNum = menuVal;
 }
-CPIHelpRequest::CPIHelpRequest( CSocket *s ) : cPInputBuffer( s )
+CPIHelpRequest::CPIHelpRequest( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -2016,7 +1979,7 @@ void CPIHelpRequest::Receive( void )
 CPITradeMessage::CPITradeMessage()
 {
 }
-CPITradeMessage::CPITradeMessage( CSocket *s ) : cPInputBuffer( s )
+CPITradeMessage::CPITradeMessage( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -2039,19 +2002,17 @@ void CPITradeMessage::Receive( void )
 CPIDyeWindow::CPIDyeWindow()
 {
 }
-CPIDyeWindow::CPIDyeWindow( CSocket *s ) : cPInputBuffer( s )
+CPIDyeWindow::CPIDyeWindow( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
 void CPIDyeWindow::Receive( void )
 {
 	tSock->Receive( 9, false );
-	internalBuffer.resize( 9 );
-	memcpy( &internalBuffer[0], tSock->Buffer(), 9 );
-	changing	= DWord( 1 );
-	modelID		= Word( 5 );
-	newValue	= Word( 7 );
-	internalBuffer.clear();
+
+	changing	= tSock->GetDWord( 1 );
+	modelID		= tSock->GetWord( 5 );
+	newValue	= tSock->GetWord( 7 );
 }
 
 void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
@@ -2062,7 +2023,7 @@ void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Model          : " << modelID << std::endl;
 	outStream << "Colour         : " << newValue << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
-	cPInputBuffer::Log( outStream, false );
+	CPInputBuffer::Log( outStream, false );
 }
 
 bool CPIDyeWindow::Handle( void )
@@ -2120,11 +2081,11 @@ bool CPIDyeWindow::Handle( void )
 CPIMsgBoardEvent::CPIMsgBoardEvent()
 {
 }
-CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s ) : cPInputBuffer( s )
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
-CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool receive ) : cPInputBuffer( s )
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool receive ) : CPInputBuffer( s )
 {
 }
 

@@ -1,3 +1,30 @@
+9/13/2005 - giwo (0.98-3.0h [3.1 BETA])
+	Modified MapRegions to allow handling of a variable number of words.
+	Added maps.dfn to allow customizing UOX3's map handling.
+	Added MAPCOUNT to the uox.ini to specify the number of maps UOX3 uses.
+	Several major internal changes to the packet handling classes.
+	Fixed several integral problems with the account system causing data corruption.
+	Fixed some issues causing client crashes in the 5.0.x clients.
+	Fixed an issue causing a crash when attempting to add an invalid script item.
+	Fixed an issue causing wierdness for players who log in as a Ghost.
+	Fixed an issue causing a character to continue firing a ranged weapon when out of ammunition.
+	Fixed a possible issue causing monsters to constantly attack animals.
+	Modified character flagging so anything that is not a Human or Animal will never show up as blue.
+	Modified the "isHuman" check to consider a GM body as human.
+	Fixed an issue causing character privledges not to save properly.
+	Modified CSocket pagebuffer, titlebuffer, and authorbuffer to be const correct.
+	Greatly reduced the size of resource.bin (please ensure you delete your old /shared/resource.bin file).
+	Made some minor modifications to reduce the worldfile size:
+	(Note UOX3 is backwards compatible with previous worldfiles and will make these changes automatically)
+		BEARDCOLOUR and BEARDSTYLE is now BEARD=STYLE,COLOUR and is stored in hex.
+		HAIRCOLOUR and HAIRSTYLE is now HAIR=STYLE,COLOUR and is stored in hex.
+		ORIGINALBODYID and ORIGINALSKINID is now ORIGINALID=BODY,SKIN and is stored in hex.
+		SPLIT and SPLITCHANCE is now SPLIT=SPLIT,SPLITCHANCE.
+		QUESTORIGINALREGION and QUESTDESTINATIONREGION is now QUESTREGIONS=ORIGINAL,DESTINATION.
+		NPCWANDER and XNPCWANDER is now NPCWANDER=NPCWANDER,XNPCWANDER.
+		SPATTACK and SpecialAttackDelay is now SPATTACK=SPATTACK,DELAY.
+		PACKITEM, ROBESERIAL, TOWNVOTE, PRIVILEGES, and GUILDFEALTY are all stored in hex.
+
 9/07/2005 - Xuri
 	Added support for new mounts: giant fire beetle, hiryu, chimera, cu sidhe, mondain's steed
 

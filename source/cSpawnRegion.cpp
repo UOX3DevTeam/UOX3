@@ -505,14 +505,15 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 //o---------------------------------------------------------------------------o
 bool CSpawnRegion::FindSpotToSpawn( CBaseObject *mObj )
 {
-	SI16 x, y, z;
+	SI16 x, y;
+	SI08 z;
 	bool rvalue = false;
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
-		x = static_cast<SI16>(RandomNum( x1, x2 ));
-		y = static_cast<SI16>(RandomNum( y1, y2 ));
+		x = RandomNum( x1, x2 );
+		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
-		
+
 		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
 		{
 			mObj->SetLocation( x, y, z );

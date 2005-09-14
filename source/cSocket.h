@@ -40,7 +40,7 @@ public:
 private:
 	std::vector< UI16 >				trigWords;
 	std::vector< UI16 >::iterator	twIter;
-	ACCOUNTSBLOCK	actbAccount;
+	UI16			accountNum;
 
 	CChar *			currCharObj;
 	SI32			idleTimeout;
@@ -102,6 +102,7 @@ private:
 	UI08			range;
 
 	bool			receivedVersion;
+	bool			loginComplete;
 
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];
@@ -132,9 +133,11 @@ public:
 	void			AddTrigWord( UI16 );
 	// Accessors
 
-	char *			AuthorBuffer( void );
-	char *			TitleBuffer( void );
-	char *			PageBuffer( void );
+	bool			LoginComplete( void ) const;
+
+	const char *	AuthorBuffer( void ) const;
+	const char *	TitleBuffer( void ) const;
+	const char *	PageBuffer( void ) const;
 
 	SI16			PickupX( void ) const;
 	SI16			PickupY( void ) const;
@@ -194,6 +197,8 @@ public:
 
 	// Mutators
 
+	void			LoginComplete( bool newVal );
+
 	void			PickupLocation( SI16 x, SI16 y, SI08 z );
 	void			PickupX( SI16 x );
 	void			PickupY( SI16 y );
@@ -235,7 +240,7 @@ public:
 	void			FlushIncoming( void );
 	void			Send( const void *point, int length );
 	int				Receive( int x, bool doLog = true );
-	void			ReceiveLogging( cPInputBuffer *toLog );
+	void			ReceiveLogging( CPInputBuffer *toLog );
 
 	UI32			GetDWord( size_t offset );
 	UI16			GetWord( size_t offset );
@@ -257,7 +262,7 @@ public:
 	void			PageBuffer( const char *newValue );
 	void			TitleBuffer( const char *newValue );
 
-	void			Send( cPBaseBuffer *toSend );
+	void			Send( CPUOXBuffer *toSend );
 
 	UnicodeTypes	Language( void ) const;
 	void			Language( UnicodeTypes newVal );

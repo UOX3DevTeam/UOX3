@@ -822,7 +822,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 					std::string name;
 					getTileName( (*defendItem), name );
 					mSock->sysmessage( 311, name.c_str() );
-					mSock->statwindow( mChar );
+					mChar->Dirty( UT_STATWINDOW );
 				}
 				defendItem->Delete();
 			}
@@ -1309,15 +1309,23 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 		}
 
-		PlaySwingAnimations( &mChar );
 		if( getFightSkill == ARCHERY )
 		{
 			bowType = getBowType( mWeapon );
 			if( mChar.IsNpc() || DeleteItemAmount( &mChar, 1, ((bowType == BOWS) ? 0x0F3F : 0x1BFB) ) == 1 )
+			{
+				PlaySwingAnimations( &mChar );
 				Effects->PlayMovingAnimation( &mChar, ourTarg, ((bowType == BOWS) ? 0x0F42 : 0x1BFE), 0x08, 0x00, 0x00 );
+			}
 			else
+			{
+				if( mSock != NULL )
+					mSock->sysmessage( 309 );
 				return;
+			}
 		}
+		else
+			PlaySwingAnimations( &mChar );
 
 		SI16 staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
 		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ) )
@@ -1786,7 +1794,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 
 	bool reUseGuard		= false;
 	CChar *getGuard		= NULL;
-	SubRegion *toCheck	= MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+	CMapRegion *toCheck	= MapRegion->GetMapRegion( mChar );
 
 	if( toCheck != NULL )
 	{

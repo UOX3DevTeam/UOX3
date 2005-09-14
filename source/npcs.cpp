@@ -238,7 +238,7 @@ SI16 getRadius( CChar *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding box
 //o---------------------------------------------------------------------------o
-bool checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2, UI08 worldNumber )
+bool checkBoundingBox( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, const SI16 fx2, const SI16 fy2, const UI08 worldNumber )
 {
 	if( xPos >= ( ( fx1 < fx2 ) ? fx1 : fx2 ) && xPos <= ( ( fx1 < fx2 ) ? fx2 : fx1 ) )
 	{
@@ -257,7 +257,7 @@ bool checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding circle
 //o---------------------------------------------------------------------------o
-bool checkBoundingCircle( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 radius, UI08 worldNumber )
+bool checkBoundingCircle( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, const SI16 radius, const UI08 worldNumber )
 {
 	if( ( xPos - fx1 ) * ( xPos - fx1 ) + ( yPos - fy1 ) * ( yPos - fy1 ) <= radius * radius )
 	{
@@ -284,7 +284,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 		if( c->GetFx( 0 ) >= 0 && c->GetFy( 0 ) >= 0 && c->GetFy( 1 ) >= 0 && c->GetFx( 1 ) >= 0 &&
 			checkBoundingBox( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->GetFy( 1 ), c->WorldNumber() ) )
 		{
-			// don't do anything to use what they specified in npc.scp		
+			return;// don't do anything to use what they specified in npc.scp		
 		}
 		else
 		{
@@ -306,7 +306,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 		if( c->GetFx( 0 ) >= 0 && c->GetFy( 0 ) >= 0 && c->GetFx( 1 ) >= 0 &&
 			checkBoundingCircle( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->WorldNumber() ) )
 		{
-			// don't do anything to use what they specified in npc.scp		
+			return;// don't do anything to use what they specified in npc.scp		
 		}
 		else
 		{

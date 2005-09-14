@@ -327,6 +327,8 @@ void updateStats( CChar *mChar, UI08 x )
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
+		if( !(*cIter)->LoginComplete() )
+			continue;
 		(*cIter)->Send( &toSend );
 		if( (*cIter)->CurrcharObj() == mChar )
 			(*cIter)->statwindow( mChar );
@@ -556,7 +558,7 @@ void callGuards( CChar *mChar )
 		}
 	}
 
-	SubRegion *toCheck = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+	CMapRegion *toCheck = MapRegion->GetMapRegion( mChar );
 	if( toCheck == NULL )
 		return;
 	CDataList< CChar * > *regChars = toCheck->GetCharList();
@@ -1677,7 +1679,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 	Combat->CombatLoop( NULL, mChar );
 }
 
-void checkItem( SubRegion *toCheck, bool checkItems, UI32 nextDecayItems )
+void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 {
 	CDataList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
@@ -1808,7 +1810,7 @@ void CWorldMain::CheckAutoTimers( void )
 				if( !reallyOn )	// no one's really on, let's set that
 				{
 					actbTemp.wFlags &= 0xFFF7;
-					Accounts->ModAccount( actbTemp.sUsername, AB_FLAGS, actbTemp );
+					//Accounts->ModAccount( actbTemp.sUsername, AB_FLAGS, actbTemp );
 				}
 			}
 		}
@@ -1963,7 +1965,7 @@ void CWorldMain::CheckAutoTimers( void )
 		checkFieldEffects = true;
 		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
 	}
-	std::set< SubRegion * > regionList;	// we'll get around our npc problem this way, hopefully
+	std::set< CMapRegion * > regionList;	// we'll get around our npc problem this way, hopefully
 	Network->PushConn();
 	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
@@ -1984,7 +1986,7 @@ void CWorldMain::CheckAutoTimers( void )
 			{
 				for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
 				{
-					SubRegion *tC = MapRegion->GetGrid( xOffset + counter, yOffset + ctr2, worldNumber );
+					CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
 					if( tC == NULL )
 						continue;
 					regionList.insert( tC );
@@ -2018,10 +2020,10 @@ void CWorldMain::CheckAutoTimers( void )
 		doRestock = true;
 	}
 
-	std::set< SubRegion * >::const_iterator tcCheck = regionList.begin();
+	std::set< CMapRegion * >::const_iterator tcCheck = regionList.begin();
 	while( tcCheck != regionList.end() )
 	{
-		SubRegion *toCheck = (*tcCheck);
+		CMapRegion *toCheck = (*tcCheck);
 		CDataList< CChar * > *regChars = toCheck->GetCharList();
 		regChars->Push();
 		for( CChar *charCheck = regChars->First(); !regChars->Finished(); charCheck = regChars->Next() )
@@ -2051,7 +2053,6 @@ void CWorldMain::CheckAutoTimers( void )
 					else if( oaiw == charCheck->GetSerial() && ( charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() || GetOverflow() ) )
 					{
 						actbTemp.dwInGame = INVALIDSERIAL;
-						charCheck->SetAccount( actbTemp );
 						charCheck->SetTimer( tPC_LOGOUT, 0 );
 						charCheck->Update();
 					}
@@ -2086,6 +2087,12 @@ void CWorldMain::CheckAutoTimers( void )
 					updateStats( uChar, 2 );
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
+				else if( uChar->GetUpdate( UT_STATWINDOW ) )
+				{
+					CSocket *uSock = calcSocketObjFromChar( uChar );
+					if( uSock != NULL )
+						uSock->statwindow( uChar );
+				}
 				else if( uChar->GetUpdate( UT_HIDE ) )
 				{
 					uChar->RemoveFromSight();
@@ -2172,6 +2179,7 @@ void InitClasses( void )
 	objFactory = new ObjectFactory;
 
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
+	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
 	if(( Dictionary		= new CDictionaryContainer )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
 	if(( Combat			= new CHandleCombat )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
 	if(( Commands		= new cCommands )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
@@ -2194,13 +2202,12 @@ void InitClasses( void )
 	if(( JSMapping		= new CJSMapping )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
-	if(( MapRegion		= new cMapRegion )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
+	if(( MapRegion		= new CMapHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
 	if(( Effects		= new cEffects )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
 	if(( HTMLTemplates	= new cHTMLTemplates )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
 	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
 	if(( SpeechSys		= new CSpeechQueue()	)				== NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
 	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
 	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );
 }
 
@@ -3002,7 +3009,6 @@ void setcharflag( CChar *c )
 		return;
 
 	UI08 oldFlag = c->GetFlag();
-	bool blueAnimals = false;
 
 	if( c->IsTamed() )
 	{

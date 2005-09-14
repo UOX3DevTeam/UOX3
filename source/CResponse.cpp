@@ -131,7 +131,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *CellResponse = (*rIter);
+		CMapRegion *CellResponse = (*rIter);
 		if( CellResponse == NULL )
 			continue;
 

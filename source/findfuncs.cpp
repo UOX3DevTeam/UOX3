@@ -274,7 +274,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *toCheck = (*rIter);
+		CMapRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
 		CDataList< CItem * > *regItems = toCheck->GetItemList();

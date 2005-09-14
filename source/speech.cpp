@@ -118,7 +118,7 @@ bool response( CSocket *mSock, CChar *mChar, std::string text )
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( mChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *CellResponse = (*rIter);
+		CMapRegion *CellResponse = (*rIter);
 		if( CellResponse == NULL )
 			return false;
 
@@ -257,8 +257,8 @@ bool CPITalkRequest::Handle( void )
 					return true;
 			}
 
-			cPUOXBuffer *txtToSend			= NULL;
-			cPUOXBuffer *ghostedText		= NULL;
+			CPUOXBuffer *txtToSend			= NULL;
+			CPUOXBuffer *ghostedText		= NULL;
 			CPUnicodeSpeech *uniTxtToSend	= NULL;
 			CPUnicodeSpeech *uniGhostedText = NULL;
 			CPSpeech *asciiTxtToSend		= NULL;
@@ -328,13 +328,18 @@ bool CPITalkRequest::Handle( void )
 }
 
 
-CSpeechQueue::CSpeechQueue( void ) : pollTime( 100 ), runAsThread( false )
+CSpeechQueue::CSpeechQueue() : pollTime( 100 ), runAsThread( false )
 {
-	speechList.clear();
+	speechList.resize( 0 );
 	InitializeLookup();
 }
 CSpeechQueue::~CSpeechQueue()
 {
+	for( SPEECHLIST_ITERATOR slIter = speechList.begin(); slIter != speechList.end(); ++slIter )
+	{
+		delete (*slIter);
+		(*slIter) = NULL;
+	}
 	speechList.clear();
 }
 
@@ -429,13 +434,17 @@ bool CSpeechQueue::InternalPoll( void )
 	SPEECHLIST_ITERATOR slIter = speechList.begin();
 	while( slIter != speechList.end() )
 	{
-		toCheck = &(*slIter);
+		toCheck = (*slIter);
 
 		if( toCheck->At() == -1 || static_cast<UI32>(toCheck->At()) <= cwmWorldState->GetUICurrentTime() )
 		{
 			retVal = true;
 			SayIt( (*toCheck) );
-			speechList.erase( slIter );
+
+			delete (*slIter);
+			(*slIter) = NULL;
+
+			slIter = speechList.erase( slIter );
 		}
 		else
 			++slIter;
@@ -461,8 +470,8 @@ bool CSpeechQueue::Poll( void )
 CSpeechEntry& CSpeechQueue::Add( void )		// Make space in queue, and return pointer to new entry
 {
 	size_t iSize = speechList.size();
-	speechList.resize( iSize + 1 );
-	return speechList[iSize];
+	speechList.push_back( new CSpeechEntry );
+	return (*speechList[iSize]);
 }
 
 int CSpeechQueue::PollTime( void ) const
@@ -497,12 +506,12 @@ void CSpeechQueue::DumpInFile( void )
 	SPEECHLIST_ITERATOR toWrite;
 	for( toWrite = speechList.begin(); toWrite != speechList.end(); ++toWrite )
 	{
-		speechDestination << "Time: " << toWrite->At() << std::endl;
-		speechDestination << "nColour: " << toWrite->Colour() << std::endl;
-		speechDestination << "nFont: " << toWrite->Font()<< std::endl;
-		speechDestination << "nLanguage: " << toWrite->Language() << std::endl;
-		speechDestination << "nSpeech: " << toWrite->Speech() << std::endl;
-		speechDestination << "nSpeaker: " << toWrite->SpeakerName() << std::endl << std::endl;
+		speechDestination << "Time: " << (*toWrite)->At() << std::endl;
+		speechDestination << "nColour: " << (*toWrite)->Colour() << std::endl;
+		speechDestination << "nFont: " << (*toWrite)->Font()<< std::endl;
+		speechDestination << "nLanguage: " << (*toWrite)->Language() << std::endl;
+		speechDestination << "nSpeech: " << (*toWrite)->Speech() << std::endl;
+		speechDestination << "nSpeaker: " << (*toWrite)->SpeakerName() << std::endl << std::endl;
 	}
 	speechDestination.close();
 }

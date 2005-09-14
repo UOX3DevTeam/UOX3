@@ -146,7 +146,7 @@ trainingplayerin( DEFNPC_TRAININGPLAYERIN ), guildfealty( DEFCHAR_GUILDFEALTY ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), squelched( DEFPLAYER_SQUELCHED ), layerCtr( DEFCHAR_LAYERCTR ),
 stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), holdg( DEFNPC_HOLDG ), raceGate( DEFCHAR_RACEGATE ), 
 commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), questType( DEFNPC_QUESTTYPE ), 
-questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ), ourAccount(), step( DEFCHAR_STEP ), hairstyle( DEFPLAYER_HAIRSTYLE ), 
+questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ), step( DEFCHAR_STEP ), hairstyle( DEFPLAYER_HAIRSTYLE ), 
 beardstyle( DEFPLAYER_BEARDSTYLE ), haircolor( DEFPLAYER_HAIRCOLOUR ), beardcolour( DEFPLAYER_BEARDCOLOUR ), origSkin( colour ), priv( DEFCHAR_PRIV ),
 petguarding( DEFNPC_PETGUARDING ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ),
 speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLBACK ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
@@ -159,8 +159,8 @@ speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLB
 	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
 	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
 	memset( baseskill, 0, sizeof( baseskill[0] ) * (ALLSKILLS+1) );
-	memset( skill, 0, sizeof( skill[0] ) * (ALLSKILLS+1) );
-	memset( lockState, 0, sizeof( lockState[0] ) * (ALLSKILLS+1) );
+	memset( skill, 0, sizeof( skill[0] ) * (INTELLECT+1) );
+	memset( lockState, 0, sizeof( lockState[0] ) * (INTELLECT+1) );
 	for( UI08 j = 0; j <= ALLSKILLS; ++j )
 		atrophy[j] = j;
 	if( cwmWorldState != NULL )
@@ -171,7 +171,7 @@ speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLB
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
 	memset( regen, 0, sizeof( UI32 ) * 3 );
-	ourAccount.wAccountIndex = AB_INVALID_ID;
+	accountNum = AB_INVALID_ID;
 	fx[0] = fx[1] = fy[0] = fy[1] = -1;
 
 	strength = dexterity = intelligence = 1;
@@ -326,14 +326,15 @@ void CChar::SetHoldG( UI32 newValue )
 //o--------------------------------------------------------------------------o
 void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
 {
-	if( actbAccount.wAccountIndex == AB_INVALID_ID )
+	accountNum = actbAccount.wAccountIndex;
+/*	if( actbAccount.wAccountIndex == AB_INVALID_ID )
 		ourAccount.wAccountIndex = AB_INVALID_ID;
 	else
 	{
 		ourAccount = actbAccount;
 		Accounts->ModAccount( ourAccount.wAccountIndex, AB_ALL, actbAccount );
 	}
-}
+*/}
 //
 
 //o---------------------------------------------------------------------------o
@@ -1745,6 +1746,12 @@ void CChar::CopyData( CChar *target )
 			target->SetSkillLock( lockState[i], i );
 		}
 
+		for( UI08 j = STRENGTH; j <= INTELLECT+1; ++j )
+		{
+			target->SetAtrophy( atrophy[i], i );
+			target->SetSkillLock( lockState[i], i );
+		}
+
 		target->SetCell( cell );
 		target->SetKarma( karma );
 		target->SetFame( fame );
@@ -1844,6 +1851,8 @@ void CChar::RemoveFromSight( CSocket *mSock )
 		SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
+			if( !(*cIter)->LoginComplete() )
+				continue;
 			if( (*cIter)->CurrcharObj() != this )
 				(*cIter)->Send( &toSend );
 		}
@@ -1863,13 +1872,15 @@ void CChar::RemoveFromSight( CSocket *mSock )
 
 void CChar::SendToSocket( CSocket *s )
 {
-	if( s != NULL )
+	if( s != NULL && s->LoginComplete() )
 	{
 		CChar *mCharObj = s->CurrcharObj();
 		if( mCharObj == this )
 		{
 			CPDrawGamePlayer gpToSend( (*this) );
 			s->Send( &gpToSend );
+
+			SendWornItems( s );
 		}
 		else if( GetVisible() == VT_PERMHIDDEN && GetCommandLevel() > mCharObj->GetCommandLevel() )
 			return;
@@ -1928,7 +1939,7 @@ void CChar::Teleport( void )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -2045,6 +2056,8 @@ void CChar::Update( CSocket *mSock )
 		SOCKLIST nearbyChars = FindNearbyPlayers( this );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
+			if( !(*cIter)->LoginComplete() )
+				continue;
 			SendToSocket( (*cIter) );
 		}
 	}
@@ -2269,7 +2282,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
-	dumping << "Account=" << GetConstAccount().wAccountIndex << std::endl;
+	dumping << "Account=" << GetAccountNum() << std::endl;
 	dumping << "LastOn=" << GetLastOn() << std::endl;
 	dumping << "OrgName=" << GetOrgName() << std::endl;
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
@@ -2280,44 +2293,36 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "FixedLight=" << (SI16)GetFixedLight() << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "HoldG=" << GetHoldG() << std::endl;
-	dumping << "Split=" << (SI16)GetSplit() << std::endl;
-	dumping << "SplitChance=" << (SI16)GetSplitChance() << std::endl;
-	dumping << "RobeSerial=" << GetRobe() << std::endl;
-	dumping << "TownVote=" << GetTownVote() << std::endl;
-	dumping << "GuildFealty=" << GetGuildFealty() << std::endl;  
-	dumping << "SummonTimer=" << GetTimer( tNPC_SUMMONTIME ) << std::endl;
-	dumping << "OriginalBodyID=" << GetOrgID() << std::endl;
-	dumping << "HairStyle=" << GetHairStyle() << std::endl;
-	dumping << "BeardStyle=" << GetBeardStyle() << std::endl;
-	dumping << "OriginalSkinID=" << GetOrgSkin() << std::endl;
-	dumping << "HairColour=" << GetHairColour() << std::endl;
-	dumping << "BeardColour=" << GetBeardColour() << std::endl;
-	dumping << "Say=" << GetSayColour() << std::endl;
-	dumping << "Emotion=" << GetEmoteColour() << std::endl;
+	dumping << "Split=" << (SI16)GetSplit() << "," << (SI16)GetSplitChance() << std::endl;
+	dumping << "RobeSerial=" << std::hex << "0x" << GetRobe() << std::endl;
+	dumping << "TownVote=" << "0x" << GetTownVote() << std::endl;
+	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
+	dumping << "OriginalID=" << "0x" << GetOrgID() << ",0x" << GetOrgSkin() << std::endl;
+	dumping << "Hair=" << "0x" << GetHairStyle() << ",0x" << GetHairColour() << std::endl;
+	dumping << "Beard=" << "0x" << GetBeardStyle() << ",0x" << GetBeardColour() << std::endl;
+	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
+	dumping << "SummonTimer=" << std::dec << GetTimer( tNPC_SUMMONTIME ) << std::endl;
 	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
 	dumping << "WanderArea=" << GetFx( 0 ) << "," << GetFy( 0 ) << "," << GetFx( 1 ) << "," << GetFy( 1 ) << "," << (SI16)GetFz() << std::endl;
 	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
-	dumping << "NpcWander=" << (SI16)GetNpcWander() << std::endl;
-	dumping << "XNpcWander=" << (SI16)GetOldNpcWander() << std::endl;
+	dumping << "NpcWander=" << (SI16)GetNpcWander() << "," << (SI16)GetOldNpcWander() << std::endl;
 	dumping << "Running=" << (SI16)GetRunning() << std::endl;
 	dumping << "Step=" << (SI16)GetStep() << std::endl;
 	dumping << "Region=" << (SI16)GetRegionNum() << std::endl;
 	if( ValidateObject( packitem ) )
-		dumping << "PackItem=" << packitem->GetSerial() << std::endl;	// store something meaningful
+		dumping << "PackItem=" << std::hex << "0x" << packitem->GetSerial() << std::endl;	// store something meaningful
 	else
-		dumping << "PackItem=" << INVALIDSERIAL << std::endl;
-	dumping << "AdvanceObject=" << GetAdvObj() << std::endl;
+		dumping << "PackItem=" << std::hex << "0x" << INVALIDSERIAL << std::endl;
+	dumping << "AdvanceObject=" << std::dec << GetAdvObj() << std::endl;
 	dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
-	dumping << "SPAttack=" << GetSpAttack() << std::endl;
-	dumping << "SpecialAttackDelay=" << (SI16)GetSpDelay() << std::endl;
+	dumping << "SPAttack=" << GetSpAttack() << "," << (SI16)GetSpDelay() << std::endl;
 	dumping << "QuestType=" << (SI16)GetQuestType() << std::endl;
-	dumping << "QuestDestinationRegion=" << (SI16)GetQuestDestRegion() << std::endl;
-	dumping << "QuestOriginalRegion=" << (SI16)GetQuestOrigRegion() << std::endl;
+	dumping << "QuestRegions=" << (SI16)GetQuestOrigRegion() << "," << (SI16)GetQuestDestRegion() << std::endl;
 	dumping << "FleeAt=" << GetFleeAt() << std::endl;
 	dumping << "ReAttackAt=" << GetReattackAt() << std::endl;
-	dumping << "Privileges=" << (SI16)GetPriv() << std::endl;
-	dumping << "CommandLevel=" << (SI16)GetCommandLevel() << std::endl;	// command level
+	dumping << "Privileges=" << std::hex << "0x" << GetPriv() << std::endl;
+	dumping << "CommandLevel=" << std::dec << (SI16)GetCommandLevel() << std::endl;	// command level
 	dumping << "TownPrivileges=" << (SI16)GetTownPriv() << std::endl;
 
 	// Write out the BaseSkills and the SkillLocks here
@@ -2390,9 +2395,10 @@ bool CChar::Save( std::ofstream &outStream )
 	{
 		SI16 mX = GetX();
 		SI16 mY = GetY();
-		if( mX >= 0 && ( mX < 6144 || mX >= 7000 ) )
+		MapData_st& mMap = Map->GetMapData( worldNumber );
+		if( mX >= 0 && ( mX < mMap.xBlock || mX >= 7000 ) )
 		{
-			if( mY >= 0 && ( mY < 4096 || mY >= 7000 ) )
+			if( mY >= 0 && ( mY < mMap.yBlock || mY >= 7000 ) )
 			{
 				DumpHeader( outStream );
 				DumpBody( outStream );
@@ -2426,23 +2432,13 @@ bool CChar::Save( std::ofstream &outStream )
 //o--------------------------------------------------------------------------o
 ACCOUNTSBLOCK& CChar::GetAccount( void ) 
 {
-	if( IsNpc() || ourAccount.wAccountIndex == AB_INVALID_ID )
-	{
-		// Set this just in case that this is an NPC.
-		ourAccount.wAccountIndex=AB_INVALID_ID;
-	}
-	//
-	return ourAccount;
+	return Accounts->GetAccountByID( accountNum );
 }
 //
-const ACCOUNTSBLOCK& CChar::GetConstAccount( void ) const
-{
-	return ourAccount;
-}
 
 UI16 CChar::GetAccountNum( void ) const
 {
-	return ourAccount.wAccountIndex;
+	return accountNum;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2870,7 +2866,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				if( UTag == "ACCOUNT" )
 				{
 					//SetAccount( makeNum( data ) );
-					ourAccount.wAccountIndex = data.toUShort();
+					accountNum = data.toUShort();
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
@@ -2897,7 +2893,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					rvalue = true;
 				}
 				break;
-
 			case 'B':
 				if( UTag == "BEARDSTYLE" )
 				{
@@ -2919,6 +2914,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 						UString tempnum		= tempdata.section( ",", 0, 0 ).substr( 1 );
 						SetBaseSkill( tempval.toUShort(), tempnum.toUByte() );
 					}
+					rvalue = true;
+				}
+				else if( UTag == "BEARD" )
+				{
+					SetBeardStyle( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+					SetBeardColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
 					rvalue = true;
 				}
 				break;
@@ -2949,7 +2950,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "DEAD" )
 				{
-					SetDead( data.toUByte() == 1 );
+					SetDead( (data.toUByte() == 1) );
 					rvalue = true;
 				}
 				break;
@@ -3045,6 +3046,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetHairColour( data.toUShort() );
 					rvalue = true;
 				}
+				else if( UTag == "HAIR" )
+				{
+					SetHairStyle( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+					SetHairColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					rvalue = true;
+				}
 				break;
 			case 'I':
 				if( UTag == "ISNPC" )
@@ -3087,7 +3094,13 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "NPCWANDER" )
 				{
-					SetNpcWander( data.toByte() );
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetNpcWander( data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+						SetOldNpcWander( data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+					}
+					else
+						SetNpcWander( data.toByte() );
 					rvalue = true;
 				}
 				break;
@@ -3105,6 +3118,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "ORIGINALSKINID" )
 				{
 					SetOrgSkin( data.toUShort() );
+					rvalue = true;
+				}
+				else if( UTag == "ORIGINALID" )
+				{
+					SetOrgID( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+					SetOrgSkin( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
 					rvalue = true;
 				}
 				break;
@@ -3150,6 +3169,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetQuestOrigRegion( data.toUByte() );
 					rvalue = true;
 				}
+				else if( UTag == "QUESTREGIONS" )
+				{
+					SetQuestOrigRegion( data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
+					SetQuestDestRegion( data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+					rvalue = true;
+				}
 				break;
 			case 'R':
 				if( UTag == "ROBESERIAL" )
@@ -3181,7 +3206,13 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'S':
 				if( UTag == "SPLIT" )
 				{
-					SetSplit( data.toUByte() );
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetSplit( data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
+						SetSplitChance( data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+					}
+					else
+						SetSplit( data.toUByte() );
 					rvalue = true;
 				}
 				else if( UTag == "SPLITCHANCE" )
@@ -3211,7 +3242,13 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "SPATTACK" )
 				{
-					SetSpAttack( data.toShort() );
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetSpAttack( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
+						SetSpDelay( data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+					}
+					else
+						SetSpAttack( data.toShort() );
 					rvalue = true;
 				}
 				else if( UTag == "SPECIALATTACKDELAY" )
@@ -3234,6 +3271,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 						UString tempnum = tempdata.section( ",", 0, 0 ).substr( 1 );
 						SetSkillLock( tempval.toUByte(), tempnum.toUByte() );
 					}
+					rvalue = true;
+				}
+				else if( UTag == "SPEECH" )
+				{
+					SetSayColour( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+					SetEmoteColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
 					rvalue = true;
 				}
 				break;
@@ -3353,8 +3396,9 @@ bool CChar::LoadRemnants( void )
 		SI16 my = GetY();
 		UI16 acct = GetAccount().wAccountIndex;
 
-		bool overRight = ( mx > MapWidths[worldNumber] );
-		bool overBottom = ( my > MapHeights[worldNumber] );
+		MapData_st& mMap = Map->GetMapData( worldNumber );
+		bool overRight = ( mx > mMap.xBlock );
+		bool overBottom = ( my > mMap.yBlock );
 
 		if( acct == AB_INVALID_ID && ( ( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ) )
 		{
@@ -3590,12 +3634,12 @@ cScript *CChar::GetSpeechCallback( void ) const
 //|	Function	-	bool CChar::isHuman( void )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Check if character is Human or NPC
+//|	Purpose		-	Check if character is Human or Creature
 //o---------------------------------------------------------------------------o
 bool CChar::isHuman( void )
 {
 	bool rvalue = false;
-	if( GetOrgID() == 0x0190 || GetOrgID() == 0x0191 )
+	if( GetOrgID() == 0x0190 || GetOrgID() == 0x0191 || GetOrgID() == 0x03DB )	// GM's should be considered "Human" as well
 		rvalue = true;
 	return rvalue;
 }

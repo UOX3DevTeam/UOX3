@@ -1,0 +1,45 @@
+[MAP 0]	// Felucca
+{
+MAP=map0.mul
+STATICS=statics0.mul
+STAIDX=staidx0.mul
+X=7168
+Y=4096
+}
+
+[MAP 1]	// Trammel
+{
+MAP=map0.mul
+STATICS=statics0.mul
+STAIDX=staidx0.mul
+X=7168
+Y=4096
+}
+
+[MAP 2]	// Ilshenar
+{
+MAP=map2.mul
+STATICS=statics2.mul
+STAIDX=staidx2.mul
+X=2304
+Y=1600
+}
+
+[MAP 3]	// Malas
+{
+MAP=map3.mul
+STATICS=statics3.mul
+STAIDX=staidx3.mul
+X=2560
+Y=2048
+}
+
+[MAP 4]	// Mondains Legacy
+{
+MAP=map4.mul
+STATICS=statics4.mul
+STAIDX=staidx4.mul
+X=1448
+Y=1448
+}
+

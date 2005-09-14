@@ -194,7 +194,8 @@ void command_addaccount( CSocket *s)
 		if( szPrivs!=NULL )
 			nFlags=atoi(szPrivs);
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		if( Accounts->GetAccountByName( szUsername, actbTemp ) )
+		ACCOUNTSBLOCK &actbTemp = Accounts->GetAccountByName( szUsername );
+		if( actbTemp.wAccountIndex != AB_INVALID_ID )
 		{
 			Accounts->AddAccount(szUsername,szPassword,"NA",nFlags);
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
@@ -275,7 +276,7 @@ void command_showids( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
-	SubRegion *Cell = MapRegion->GetCell( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+	CMapRegion *Cell = MapRegion->GetMapRegion( mChar );
 	if( Cell == NULL )	// nothing to show
 		return;
 	CDataList< CChar * > *regChars = Cell->GetCharList();

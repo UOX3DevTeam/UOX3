@@ -102,16 +102,16 @@ void fileArchive( void )
 		// effect backups
 		backupFile( "effects.wsc", backupRoot );
 
-		const SI32 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
-		const SI32 AreaY = UpperY / 8;
+		const SI16 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
+		const SI16 AreaY = UpperY / 8;
 		char backupPath[MAX_PATH + 1];
 		char filename1[MAX_PATH];
 
 		sprintf( backupPath, "%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timebuffer );
 
-		for( SI32 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
+		for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 		{
-			for( SI32 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
+			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 			{
 				sprintf( filename1, "%li.%li.wsc", counter1, counter2 );
 				backupFile( filename1, backupRoot );

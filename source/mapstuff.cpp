@@ -1,6 +1,8 @@
 #include "uox3.h"
 #include "regions.h"
 #include "fileio.h"
+#include "cServerDefinitions.h"
+#include "ssection.h"
 
 #undef DBGFILE
 #define DBGFILE "mapstuff.cpp"
@@ -155,6 +157,24 @@ const UI32 StaticRecordSize		= 7L;
 **
 */
 
+MapData_st::~MapData_st()
+{
+	if( mapObj != NULL )
+	{
+		delete mapObj;
+		mapObj = NULL;
+	}
+	if( staticsObj != NULL )
+	{
+		delete staticsObj;
+		staticsObj = NULL;
+	}
+	if( staidxObj != NULL )
+	{
+		delete staidxObj;
+		staidxObj = NULL;
+	}
+}
 
 void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 {
@@ -181,40 +201,37 @@ void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 **  and less susceptible to bugs.
 ** -lingo
 */
-cMapStuff::cMapStuff()
-:landTile(0), staticTile(0), multiItems(0), multiIndex(0), multiIndexSize(0),
- TileMem( 0 ), MultisMem( 0 )
+cMapStuff::cMapStuff() : landTile(0), staticTile(0), multiItems(0), multiIndex(0), multiIndexSize(0), TileMem( 0 ), MultisMem( 0 )
 {
+	UString tag, data, UTag;
+	UI08 NumberOfWorlds = cwmWorldState->ServerData()->ServerMapCount();
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
-		mapArrays[i] = NULL;
-		statArrays[i] = NULL;
-		sidxArrays[i] = NULL;
-	}
-}
+		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + UString::number( i ), maps_def );
+		if( toFind == NULL )
+			break;
 
+		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
+		{
+			UTag = tag.upper();
+			data = toFind->GrabData();
+			if( UTag == "MAP" )
+				MapList[i].mapFile = data;
+			else if( UTag == "STATICS" )
+				MapList[i].staticsFile = data;
+			else if( UTag == "STAIDX" )
+				MapList[i].staidxFile = data;
+			else if( UTag == "X" )
+				MapList[i].xBlock = data.toUShort();
+			else if( UTag == "Y" )
+				MapList[i].yBlock = data.toUShort();
+		}
+	}
+	FileLookup->Dispose( maps_def );
+}
 
 cMapStuff::~cMapStuff()
 {
-	for( UI08 i = 0; i < NumberOfWorlds; ++i )
-	{
-		if( mapArrays[i] != NULL )
-		{
-			delete mapArrays[i];
-			mapArrays[i] = NULL;
-		}
-		if( statArrays[i] != NULL )
-		{
-			delete statArrays[i];
-			statArrays[i] = NULL;
-		}
-		if( sidxArrays[i] != NULL )
-		{
-			delete sidxArrays[i];
-			sidxArrays[i] = NULL;
-		}
-	}
-
 //	if ( verData )
 //		delete verData;
 	if ( landTile )
@@ -248,63 +265,57 @@ void cMapStuff::Load( )
 
 	UString lName;
 	UI16 i;
+
 	UString basePath = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
-	for( i = 0; i < NumberOfWorlds; ++i )
+
+	MAPLIST_ITERATOR mlIter		= MapList.begin();
+	MAPLIST_ITERATOR mlEnd		= MapList.end();
+	UI08 totalMaps = 0;
+	while( mlIter != mlEnd )
 	{
-		// Don't even bother to load unknown maps
-		if( uomapTypes[i] != UOMT_UNKNOWN )
+		MapData_st& mMap	= mlIter->second;
+		lName				= basePath + mMap.mapFile;
+		mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
+		Console << "\t" << lName << "\t\t";
+
+		if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 		{
-			lName			= basePath + "map" + UString::number( i ) + ".mul";
-			mapArrays[i]	= new UOXFile( lName.c_str(), "rb" );
-			Console << "\t" << lName << "\t\t";
-			if( mapArrays[i] != NULL && mapArrays[i]->ready() )
+			mMap.fileSize = mMap.mapObj->getLength();
+
+			SI32 checkSize = (mMap.fileSize / 196);
+			if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
 			{
-				uomapTypes[i] = CalcFromFileLength( mapArrays[i] );
-				if( uomapTypes[i] == UOMT_UNKNOWN )
-				        Console.PrintFailed();
-				else
-				        Console.PrintDone();
-			}
-			else
-			{
-				Console.PrintPassed();
-				// If the map file doesn't exist, there's no reason to keep looking for the other files
-				uomapTypes[i] = UOMT_UNKNOWN;
-				continue;
-			}
-			lName			= basePath + "staidx" + UString::number( i ) + ".mul";
-			sidxArrays[i]	= new UOXFile( lName.c_str(), "rb" );
-			Console << "\t" << lName << "\t";
-			if( sidxArrays[i] != NULL && sidxArrays[i]->ready() )
-			{
+				++totalMaps;
 				Console.PrintDone();
 			}
 			else
-			{
-				uomapTypes[i] = UOMT_UNKNOWN;
-				Console.PrintFailed();				
-			}
-			
-			lName			= basePath + "statics" + UString::number( i ) + ".mul";
-			statArrays[i]	= new UOXFile( lName.c_str(), "rb" );
-			Console << "\t" << lName << "\t";
-			if( statArrays[i] != NULL && statArrays[i]->ready() )
-			{
-				Console.PrintDone();
-			}
-			else
-			{
 				Console.PrintFailed();
-				uomapTypes[i] = UOMT_UNKNOWN;
-			}
 		}
+		else
+			Console.PrintFailed();
+
+		lName				= basePath + mMap.staticsFile;
+		mMap.staticsObj		= new UOXFile( lName.c_str(), "rb" );
+		Console << "\t" << lName << "\t\t";
+
+		if( mMap.staticsObj != NULL && mMap.staticsObj->ready() )
+			Console.PrintDone();
+		else
+			Console.PrintFailed();
+
+		lName				= basePath + mMap.staidxFile;
+		mMap.staidxObj		= new UOXFile( lName.c_str(), "rb" );
+		Console << "\t" << lName << "\t\t";
+
+		if( mMap.staidxObj != NULL && mMap.staidxObj->ready() )
+			Console.PrintDone();
+		else
+			Console.PrintFailed();
+
+		++mlIter;
 	}
-	for( i = 0; i < NumberOfWorlds; ++i )
-	{
-		if( uomapTypes[i] != UOMT_UNKNOWN )
-			break;
-	}
-	if( i == NumberOfWorlds )
+
+	if( totalMaps == 0 )
 	{
 		// Hmm, no maps were valid, so not much sense in continuing
 		Console.Error( 1, " Fatal Error: No maps found" );
@@ -556,7 +567,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	SI08 z = ILLEGAL_Z;
 	
-	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
+	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return z;
 	CDataList< CItem * > *regItems = MapArea->GetItemList();
@@ -610,7 +621,7 @@ int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 // returns which dynamic tile is present at (x,y) or -1 if no tile exists
 int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
-	SubRegion *MapArea = MapRegion->GetCell( x, y, worldNumber );
+	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return -1;
 	CDataList< CItem * > *regItems = MapArea->GetItemList();
@@ -722,11 +733,10 @@ void cMapStuff::SeekLand( int landnum, CLand *land)
 
 bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
-	if( x < 0 || y < 0 || (worldNumber >= NumberOfWorlds) )
+	if( worldNumber >= cwmWorldState->ServerData()->ServerMapCount() )
 		return false;
 
-	UOMapType toGet = GetMapType( worldNumber );
-	return ( x >= 0 && x < MapTileWidths[toGet] && y >= 0 && y < MapTileHeights[toGet] );
+	return ( ( x >= 0 && x < (MapList[worldNumber].xBlock/8) ) && ( y >= 0 && y < (MapList[worldNumber].yBlock/8) ) );
 }
 
 
@@ -752,7 +762,7 @@ bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 **  		    ... your code here...
 **	  	}
 */
-MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : worldNumber( world ), baseX( static_cast<SI32>(x / 8 )), baseY( static_cast<SI32>(y / 8) ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), length( 0 ), index( 0 ), pos( 0 ), exactCoords( exact ), tileid( 0 )
+MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : worldNumber( world ), baseX( static_cast<SI32>(x / 8) ), baseY( static_cast<SI32>(y / 8) ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), length( 0 ), index( 0 ), pos( 0 ), exactCoords( exact ), tileid( 0 )
 {
 	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
 	{
@@ -760,22 +770,24 @@ MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) :
 		return;
 	}
 
-	UOXFile *reading = Map->sidxArrays[world];
-	if( reading == NULL )
+	MapData_st& mMap = Map->GetMapData( world );
+	
+	UOXFile *toRead = mMap.staidxObj;
+	if( toRead == NULL )
 	{
 		length = 0;
 		return;
 	}
-	UOMapType gMap = Map->GetMapType( world );
-	const SI16 TileHeight = MapTileHeights[gMap];
+
+	const SI16 TileHeight = (mMap.yBlock/8);
 	const SI32 indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
-	reading->seek( indexPos, SEEK_SET );
-	if( !reading->eof() )
+	toRead->seek( indexPos, SEEK_SET );
+	if( !toRead->eof() )
 	{
-		reading->getLong( &pos );
+		toRead->getLong( &pos );
 		if( pos != -1 )
 		{
-			reading->getULong( &length );
+			toRead->getULong( &length );
 			length /= StaticRecordSize;
 		}
 	}
@@ -793,7 +805,8 @@ staticrecord *MapStaticIterator::Next( void )
 	if( index >= length )
 		return NULL;
 	
-	UOXFile *mFile = Map->statArrays[worldNumber];
+	MapData_st& mMap = Map->GetMapData( worldNumber );
+	UOXFile *mFile = mMap.staticsObj;
 	if( mFile == NULL )
 		return NULL;
 	
@@ -839,17 +852,14 @@ map_st cMapStuff::SeekMap0( SI16 x, SI16 y, UI08 worldNumber )
 	const SI16 x1 = x / 8, y1 = y / 8;
 	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);
 	map_st map = {0, 0};
-	if( worldNumber >= NumberOfWorlds )
+	if( worldNumber >= cwmWorldState->ServerData()->ServerMapCount() )
 		return map;
 
-	UOMapType gMap = GetMapType( worldNumber );
-	if( gMap == UOMT_UNKNOWN )
-		return map;
-
+	MapData_st& mMap = MapList[worldNumber];
 	// index to the world
-	const SI32 pos = ( x1 * MapTileHeights[gMap] * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
-	mapArrays[worldNumber]->seek( pos, SEEK_SET );
-	mapArrays[worldNumber]->get_map_st( &map );
+	const SI32 pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
+	mMap.mapObj->seek( pos, SEEK_SET );
+	mMap.mapObj->get_map_st( &map );
 	return map;
 }
 
@@ -902,8 +912,8 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 // use illegal_z if they are teleporting from an unknown z
 bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
-	UOMapType gMap = GetMapType( worldNumber );
-	if( x < 0 || y < 0 || x >= MapWidths[gMap] || y >= MapHeights[gMap]  )
+	MapData_st& mMap = MapList[worldNumber];
+	if( x < 0 || y < 0 || x >= mMap.xBlock || y >= mMap.yBlock  )
 		return false;
     const SI08 elev = Height( x, y, oldz, worldNumber );
 	if( ILLEGAL_Z == elev )
@@ -934,43 +944,6 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber 
     return true;
 }
 
-
-
-UOMapType cMapStuff::GetMapType( UI08 worldNumber )
-{
-	if( worldNumber >= NumberOfWorlds )
-		return UOMT_BRITANNIA;
-	return uomapTypes[worldNumber];
-}
-
-
-//o--------------------------------------------------------------------------
-//|	Function		-	UOMapType CalcFromFileLength( UOXFile *toCalcFrom )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	It returns the map type, based on the map's file size
-//o--------------------------------------------------------------------------
-UOMapType cMapStuff::CalcFromFileLength( UOXFile *toCalcFrom )
-{
-	if( toCalcFrom == NULL )
-	{
-		Console << "Invalid file in cMapStuff:CaclFromFileLength";
-		return UOMT_UNKNOWN;
-	}
-	SI32 fLength = toCalcFrom->getLength();
-	for( UI32 i = 0; i < UOMT_COUNT; ++i )
-	{
-		if( MapFileLengths[i] == fLength )
-			return (UOMapType)i;
-	}
-	Console << "Incorrect map Length " << fLength;
-	return UOMT_UNKNOWN;
-}
-
-
-
 //o--------------------------------------------------------------------------
 //|	Function		-	bool MapExists( UI08 worldNumber )
 //|	Date			-	27th September, 2001
@@ -981,9 +954,13 @@ UOMapType cMapStuff::CalcFromFileLength( UOXFile *toCalcFrom )
 //o--------------------------------------------------------------------------
 bool cMapStuff::MapExists( UI08 worldNumber )
 {
-	return ( (worldNumber < NumberOfWorlds) && (mapArrays[worldNumber] != NULL) );
+	return ( (worldNumber < cwmWorldState->ServerData()->ServerMapCount()) && (MapList[worldNumber].mapObj != NULL) );
 }
 
+MapData_st& cMapStuff::GetMapData( UI08 worldNumber )
+{
+	return MapList[worldNumber];
+}
 
 void CTile::Read( UOXFile *toRead )
 {

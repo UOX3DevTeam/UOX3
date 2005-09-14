@@ -51,7 +51,7 @@ void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 	outStream << std::endl;
 }
 
-void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 > myBuffer )
+void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 >& myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -521,6 +521,7 @@ const UI32				DEFSOCK_BYTESSENT				= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 CBaseObject *			DEFSOCK_TMPOBJ					= NULL;
+const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
 CSocket::CSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
@@ -528,7 +529,7 @@ range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum )
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ ), loginComplete( DEFSOCK_LOGINCOMPLETE )
 {
 	InternalReset();
 }
@@ -553,11 +554,27 @@ void CSocket::InternalReset( void )
 	ioctlsocket( cliSocket, FIONBIO, &mode );
 	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
 		pcTimers[mTID] = 0;
-	actbAccount.wAccountIndex = AB_INVALID_ID;
+	accountNum = AB_INVALID_ID;
 	trigWords.resize( 0 );
 	twIter = trigWords.end();
 	postAcked.clear();
 	ackIter = postAcked.end();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool LoginComplete()
+//|   Date        -  August 26th, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns whether this socket has fully logged in
+//o---------------------------------------------------------------------------o
+bool CSocket::LoginComplete( void ) const
+{
+	return loginComplete;
+}
+void CSocket::LoginComplete( bool newVal )
+{
+	loginComplete = newVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -800,7 +817,7 @@ void CSocket::FlushIncoming( void )
 	} while( count > 0 );
 }
 
-void CSocket::ReceiveLogging( cPInputBuffer *toLog )
+void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 {
 	if( Logging() )
 	{
@@ -930,9 +947,9 @@ void CSocket::CurrcharObj( CChar *newValue )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK &CSocket::GetAccount( void )
+ACCOUNTSBLOCK & CSocket::GetAccount( void )
 {
-	return actbAccount;
+	return Accounts->GetAccountByID( accountNum );
 }
 
 //o--------------------------------------------------------------------------o
@@ -948,14 +965,7 @@ ACCOUNTSBLOCK &CSocket::GetAccount( void )
 //o--------------------------------------------------------------------------o
 void CSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
 {
-
-	if( actbBlock.wAccountIndex == AB_INVALID_ID )
-	{
-		actbAccount.wAccountIndex = AB_INVALID_ID;
-		return;
-	}
-	actbAccount	= actbBlock;
-	Accounts->ModAccount( actbAccount.wAccountIndex, AB_ALL, actbBlock );
+	accountNum = actbBlock.wAccountIndex;
 }
 
 //o---------------------------------------------------------------------------o
@@ -969,7 +979,7 @@ void CSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
 //o---------------------------------------------------------------------------o
 UI16 CSocket::AcctNo( void ) const
 {
-	return actbAccount.wAccountIndex;
+	return accountNum;
 }
 
 //o---------------------------------------------------------------------------o
@@ -983,14 +993,7 @@ UI16 CSocket::AcctNo( void ) const
 //o---------------------------------------------------------------------------o
 void CSocket::AcctNo( UI16 newValue )
 {
-	ACCOUNTSBLOCK actbBlock;
-	if( !Accounts->GetAccountByID( newValue, actbBlock ) )
-	{
-		actbAccount.wAccountIndex	= AB_INVALID_ID;
-		return;
-	}
-	actbAccount	= actbBlock;
-	Accounts->ModAccount( actbAccount.wAccountIndex, AB_ALL, actbBlock );
+	accountNum = newValue;
 }
 
 UI08 CSocket::ClientIP1( void ) const
@@ -1163,7 +1166,7 @@ SERIAL CSocket::RemovePostAck( void )
 	SERIAL retVal = INVALIDSERIAL;
 	if( !FinishedPostAck() )
 	{
-		postAcked.erase( ackIter );
+		ackIter = postAcked.erase( ackIter );
 		if( !FinishedPostAck() )
 			retVal = (*ackIter);
 	}
@@ -1194,13 +1197,13 @@ void CSocket::PostAckCount( size_t newValue )
 	postAckCount = newValue;
 }
 
-void CSocket::Send( cPBaseBuffer *toSend )
+void CSocket::Send( CPUOXBuffer *toSend )
 {
 	if( toSend == NULL )
 		return;
 
 	// If the client cannot receive it validly, abort, abort!
-	if( !( ((cPUOXBuffer *)toSend)->ClientCanReceive( this ) ) )
+	if( !( ((CPUOXBuffer *)toSend)->ClientCanReceive( this ) ) )
 		return;
 
 	UI32 len = 0;
@@ -1211,8 +1214,8 @@ void CSocket::Send( cPBaseBuffer *toSend )
 	}
 	else
 	{
-		len = toSend->Length();
-		send( cliSocket, (char *)toSend->Pointer(), len, 0 );
+		len = toSend->GetPacketStream().GetSize();
+		send( cliSocket, (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
 	}
 
 	bytesSent += len;
@@ -1291,15 +1294,15 @@ void CSocket::PickupZ( SI08 z )
 	pZ = z;
 }
 
-char *CSocket::AuthorBuffer( void )
+const char *CSocket::AuthorBuffer( void ) const
 {
 	return authorbuffer;
 }
-char *CSocket::TitleBuffer( void )
+const char *CSocket::TitleBuffer( void ) const
 {
 	return titlebuffer;
 }
-char *CSocket::PageBuffer( void )
+const char *CSocket::PageBuffer( void ) const
 {
 	return pagebuffer;
 }
@@ -1316,247 +1319,7 @@ void CSocket::TitleBuffer( const char *newValue )
 	strcpy( titlebuffer, newValue );
 }
 
-
-// Helper function to help us packet data into an array
-template< class T >
-void PackInto( UI08 *toPack, size_t offset, T& value )
-{
-	size_t sizeVal		= sizeof( T );
-	UI08 *recastedPtr	= reinterpret_cast< UI08 * >(&value);
-	for( size_t i = 0; i < sizeVal; ++i )
-	{
-		toPack[offset + i] = recastedPtr[i];
-	}
-}
-
-
-// cPBaseBuffer class implementation
-size_t cPBaseBuffer::Length( void ) const
-{
-	return internalBuffer.size();
-}
-
-UI32 cPBaseBuffer::PackedLength( void ) const
-{
-	return packedLength;
-}
-
-void cPBaseBuffer::Log( std::ofstream &outStream, bool fullHeader )
-{
-	if( fullHeader )
-		outStream << "[SEND]Packet: 0x" << (internalBuffer[0] < 10?"0":"") << std::hex << (UI16)internalBuffer[0] << "--> Length:" << std::dec << internalBuffer.size() << std::endl;
-	doPacketLogging( outStream, internalBuffer.size(), internalBuffer );
-}
-
-UI08& cPBaseBuffer::operator [] ( size_t Num )
-{
-	if( Num > Length() )
-		throw std::runtime_error( "out of bounds" );
-	return internalBuffer[Num];
-}
-
-void cPBaseBuffer::InternalReset( void )
-{
-	internalBuffer.resize( 0 );
-	packedBuffer.resize( 0 );
-	isPacked		=	false;
-	packedLength	=	0;
-	internalBufferOffset = 0xFFFFFFFF;	// we aren't positioned yet
-}
-cPBaseBuffer::cPBaseBuffer()
-{
-	InternalReset();
-}
-
-cPBaseBuffer::cPBaseBuffer( char *initBuffer, size_t len )
-{
-	InternalReset();
-	internalBuffer.resize( len );
-	for( size_t i = 0; i < len; ++i )
-		internalBuffer[i] = initBuffer[i];
-	internalBufferOffset = len;
-}
-
-cPBaseBuffer::cPBaseBuffer( cPBaseBuffer *initBuffer )
-{
-	InternalReset();
-	internalBuffer.resize( initBuffer->Length() );
-	for( size_t i = 0; i < initBuffer->Length(); ++i )
-		internalBuffer[i] = (*initBuffer)[i];
-}
-
-cPBaseBuffer::~cPBaseBuffer()
-{
-	internalBuffer.resize( 0 );
-	packedBuffer.resize( 0 );
-}
-
-void cPBaseBuffer::Resize( size_t newLen )
-{
-	internalBuffer.resize( newLen );
-}
-
-const UI08 *cPBaseBuffer::Pointer( void ) const
-{
-	return (const UI08 *)&internalBuffer[0];
-}
-
-const UI08 *cPBaseBuffer::PackedPointer( void ) const
-{
-	return (const UI08 *)&packedBuffer[0];
-}
-
-cPBaseBuffer& cPBaseBuffer::operator<<( const UI08 value )
-{
-	if( internalBufferOffset == 0xFFFFFFFF )
-	{
-		internalBuffer.resize( 1 );
-		internalBufferOffset = 0;
-	}
-	else
-		internalBuffer.resize( internalBufferOffset + 1 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI08&)value );
-	return (*this);
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const UI16 value )
-{
-	if( internalBufferOffset == 0xFFFFFFFF )
-	{
-		internalBuffer.resize( 2 );
-		internalBufferOffset = 0;
-	}
-	else
-		internalBuffer.resize( internalBufferOffset + 2 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI16&)value );
-	return (*this);
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const UI32 value )
-{
-	if( internalBufferOffset == 0xFFFFFFFF )
-	{
-		internalBuffer.resize( 4 );
-		internalBufferOffset = 0;
-	}
-	else
-		internalBuffer.resize( internalBufferOffset + 4 );
-	PackInto( &internalBuffer[0], internalBufferOffset, (UI32&)value );
-	return (*this);
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const SI08 value )
-{
-	return ( (*this) << static_cast< UI08 >(value) );
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const SI16 value )
-{
-	return ( (*this) << static_cast< UI16 >(value) );
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const SI32 value )
-{
-	return ( (*this) << static_cast< UI32 >(value) );
-}
-cPBaseBuffer& cPBaseBuffer::operator<<( const std::string& value )
-{
-	std::string::const_iterator i = value.begin();
-	while( i != value.end() )
-	{
-		(*this) << static_cast< UI08 >(*i);
-		++i;
-	}
-	return (*this);
-}
-
-cPUOXBuffer::cPUOXBuffer() : cPBaseBuffer()
-{
-}
-cPUOXBuffer::cPUOXBuffer( char *initBuffer, size_t len ) : cPBaseBuffer( initBuffer, len )
-{
-}
-cPUOXBuffer::~cPUOXBuffer()
-{
-}
-cPUOXBuffer::cPUOXBuffer( cPBaseBuffer *initBuffer ) : cPBaseBuffer( initBuffer )
-{
-}
-bool cPUOXBuffer::ClientCanReceive( CSocket *mSock )
-{
-	// Default implementation, all clients can receive all packets
-	return true;
-}
-UI32 cPUOXBuffer::Pack( void )
-{
-	if( isPacked )
-		return packedLength;
-
-	packedBuffer.resize( internalBuffer.size() * 2 );
-	size_t len	= Length();
-	UI08 *pIn	= (UI08 *)&internalBuffer[0];
-	UI08 *pOut	= (UI08 *)&packedBuffer[0];
-
-	isPacked	= true;
-
-	packedLength = DoPack( pIn, pOut, len );
-	return packedLength;
-}
-
-
-cPInputBuffer::cPInputBuffer() : tSock( NULL )
-{
-}
-cPInputBuffer::cPInputBuffer( CSocket *input )
-{
-	SetSocket( input );
-}
-void cPInputBuffer::Receive( void )
-{
-}
-UI08& cPInputBuffer::operator[] ( size_t num )
-{
-	return internalBuffer[num];
-}
-size_t cPInputBuffer::Length( void )
-{
-	return internalBuffer.size();
-}
-UI08 *cPInputBuffer::Pointer( void )
-{
-	return &internalBuffer[0];
-}
-void cPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
-{
-	UI08 *buffer	= tSock->Buffer();
-	const UI32 len	= tSock->InLength();
-	if( fullHeader )
-		outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << len << std::endl;
-	doPacketLogging( outStream, len, (char *)buffer );
-}
-
-long cPInputBuffer::DWord( size_t offset )
-{
-	return ( (internalBuffer[offset]<<24) + (internalBuffer[offset+1]<<16) + (internalBuffer[offset+2]<<8) + internalBuffer[offset+3] );
-}
-
-SI32 cPInputBuffer::Word( size_t offset )
-{
-	return ( (internalBuffer[offset]<<8) + internalBuffer[offset+1] );
-}
-
-UI08 cPInputBuffer::Byte( size_t offset )
-{
-	return internalBuffer[offset];
-}
-
-
-bool cPInputBuffer::Handle( void )
-{
-	return false;
-}
-
-void cPInputBuffer::SetSocket( CSocket *toSet )
-{
-	tSock = toSet;
-}
-
-CSocket *cPInputBuffer::GetSocket( void ) const
+CSocket *CPInputBuffer::GetSocket( void ) const
 {
 	return tSock;
 }
@@ -1930,6 +1693,9 @@ void CSocket::statwindow( CChar *i )
 	if( !ValidateObject( i ) )
 		return;
 
+	if( !LoginComplete() )
+		return;
+
 	CPStatWindow toSend( (*i), (*this) );
 	
 	CChar *mChar = CurrcharObj();
@@ -1939,6 +1705,9 @@ void CSocket::statwindow( CChar *i )
 	toSend.AC( Combat->calcDef( i, 0, false ) );
 	toSend.Weight( (UI16)(i->GetWeight() / 100) );
 	Send( &toSend );
+
+	CPExtendedStats exStats( (*i) );
+	Send( &exStats );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2128,6 +1897,113 @@ void CSocket::OpenURL( const std::string txt )
 	sysmessage( 1210 );
 	CPWebLaunch toSend( txt );
 	Send( &toSend );
+}
+
+CPUOXBuffer::CPUOXBuffer()
+{
+	InternalReset();
+}
+
+CPUOXBuffer::CPUOXBuffer( CPUOXBuffer *initBuffer )
+{
+	InternalReset();
+	pStream.ReserveSize( initBuffer->GetPacketStream().GetSize() );
+	pStream.WriteArray( 0, initBuffer->GetPacketStream().GetBuffer(), initBuffer->GetPacketStream().GetSize() );
+}
+
+CPUOXBuffer::~CPUOXBuffer()
+{
+	packedBuffer.resize( 0 );
+}
+
+CPUOXBuffer &CPUOXBuffer::operator=( CPUOXBuffer &copyFrom )
+{
+	size_t packetSize = copyFrom.GetPacketStream().GetSize();
+	pStream.ReserveSize( packetSize );
+	pStream.WriteArray( 0, copyFrom.GetPacketStream().GetBuffer(), packetSize );
+	return (*this);
+}
+
+void CPUOXBuffer::InternalReset( void )
+{
+	packedBuffer.resize( 0 );
+	isPacked				=	false;
+	packedLength			=	0;
+}
+
+const UI08 *CPUOXBuffer::PackedPointer( void ) const
+{
+	return (const UI08 *)&packedBuffer[0];
+}
+
+bool CPUOXBuffer::ClientCanReceive( CSocket *mSock )
+{
+	// Default implementation, all clients can receive all packets
+	return true;
+}
+
+UI32 CPUOXBuffer::Pack( void )
+{
+	if( isPacked )
+		return packedLength;
+
+	packedBuffer.resize( pStream.GetSize() * 2 );
+
+	size_t len	= pStream.GetSize();
+
+	UI08 *pIn	= (UI08 *)pStream.GetBuffer();
+	UI08 *pOut	= (UI08 *)&packedBuffer[0];
+
+	isPacked	= true;
+
+	packedLength = DoPack( pIn, pOut, len );
+	return packedLength;
+}
+
+const CPacketStream& CPUOXBuffer::GetPacketStream( void ) const
+{
+	return pStream;
+}
+
+UI32 CPUOXBuffer::PackedLength( void ) const
+{
+	return packedLength;
+}
+
+void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet: 0x" << (pStream.GetByte( 0 ) < 10?"0":"") << std::hex << (UI16)pStream.GetByte( 0 ) << "--> Length:" << std::dec << pStream.GetSize() << std::endl;
+	doPacketLogging( outStream, pStream.GetSize(), (char *)pStream.GetBuffer() );
+}
+
+CPInputBuffer::CPInputBuffer() : tSock( NULL )
+{
+}
+CPInputBuffer::CPInputBuffer( CSocket *input )
+{
+	SetSocket( input );
+}
+void CPInputBuffer::Receive( void )
+{
+}
+void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
+{
+	UI08 *buffer	= tSock->Buffer();
+	const UI32 len	= tSock->InLength();
+	if( fullHeader )
+		outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << len << std::endl;
+	doPacketLogging( outStream, len, (char *)buffer );
+}
+
+bool CPInputBuffer::Handle( void )
+{
+	return false;
+}
+
+void CPInputBuffer::SetSocket( CSocket *toSet )
+{
+	tSock = toSet;
 }
 
 }

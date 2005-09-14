@@ -40,6 +40,7 @@ cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 {
 	m_wHighestAccount = 0x0000;
 	I = m_mapUsernameIDMap.end();
+	actbInvalid.wAccountIndex = AB_INVALID_ID;
 }
 //
 cAccountClass::cAccountClass(std::string sAccountsPath)
@@ -187,8 +188,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		if( sLine[0] == '}' && bBraces[0] && !bBraces[1] )
 		{
 			// Ok we shoud shove this into the map(s) for use later
-			m_mapUsernameMap[actb.sUsername] = actb;
 			m_mapUsernameIDMap[actb.wAccountIndex] = actb;
+			m_mapUsernameMap[actb.sUsername] = &m_mapUsernameIDMap[actb.wAccountIndex];
 			// Ok we have finished with this access block clean up and continue processing
 			bBraces[0] = false;
 			bBraces[1] = false;
@@ -810,7 +811,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	fsAccountsADM.close();
 	// Ok might be a good thing to add this account to the map(s) now.
 	m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
-	m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
+	m_mapUsernameMap[actbTemp.sUsername]=&m_mapUsernameIDMap[actbTemp.wAccountIndex];
 	m_wHighestAccount=actbTemp.wAccountIndex;
 	// Return to the calling function
 	return (UI16)m_mapUsernameIDMap.size();
@@ -997,7 +998,7 @@ UI16 cAccountClass::Load(void)
 				// OK there is an id in memory so we should check to see if its the same.
 				actbTemp=I->second;
 				J=m_mapUsernameMap.find(actbTemp.sUsername);
-				actbTempName=J->second;
+				actbTempName=(*J->second);
 				for( int ii = 0; ii < CHARACTERCOUNT; ++ii )
 				{
 					// Doesn't matter, at all times the accounts.adm file will be valid over memory
@@ -1031,8 +1032,8 @@ UI16 cAccountClass::Load(void)
 			actb.wAccountIndex=actbTemp.wAccountIndex=wAccountID;
 			actbTempName.wAccountIndex=wAccountID;
 			// Ok we shoud shove this into the map(s) for use later
-			m_mapUsernameMap[actb.sUsername]=actbTempName;
 			m_mapUsernameIDMap[wAccountID]=actbTemp;
+			m_mapUsernameMap[actb.sUsername]=&m_mapUsernameIDMap[wAccountID];
 			Reset( &actb );
 			// memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
 			// Ok we have finished with this access block clean up and continue processing
@@ -1304,7 +1305,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbName = J->second;
+	ACCOUNTSBLOCK& actbName = (*J->second);
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
 	bool bExit=false;
 	for( int i = 0; i < CHARACTERCOUNT; ++i )
@@ -1326,7 +1327,6 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	{
 		// make sure to put the values back into the maps corrected.
 		m_mapUsernameIDMap[actbID.wAccountIndex] = actbID;
-		m_mapUsernameMap[actbName.sUsername] = actbName;
 		//Save();
 		return true;
 	}
@@ -1356,7 +1356,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbName = J->second;
+	ACCOUNTSBLOCK& actbName = (*J->second);
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
 	bool bExit=false;
 	for( int i = 0; i < CHARACTERCOUNT; ++i )
@@ -1378,7 +1378,6 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	{
 		// make sure to put the values back into the maps corrected.
 		m_mapUsernameIDMap[actbID.wAccountIndex]=actbID;
-		m_mapUsernameMap[actbName.sUsername]=actbName;
 		Save(false);
 		return true;
 	}
@@ -1428,7 +1427,7 @@ bool cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK 
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbName=J->second;
+	ACCOUNTSBLOCK& actbName=(*J->second);
 	// Ok we have the id, so call the actual function to do the work
 	return ModAccount( actbName.wAccountIndex, dwFlags, actbBlock );
 }
@@ -1444,7 +1443,7 @@ bool cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbB
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbName=J->second;
+	ACCOUNTSBLOCK& actbName=(*J->second);
 	// Ok find out which fields are valid and make the changes.
 	for( int i = 0; i < 11; ++i )
 	{
@@ -1523,7 +1522,6 @@ bool cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbB
 	}
 	// Ok put the data back into the map(s)
 	m_mapUsernameIDMap[actbID.wAccountIndex]=actbID;
-	m_mapUsernameMap[actbName.sUsername]=actbName;
 	Save( false );
 	return true;
 }
@@ -1582,7 +1580,7 @@ bool cAccountClass::DelAccount(std::string sUsername)
 	MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
 	if( I==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbTemp = I->second;
+	ACCOUNTSBLOCK& actbTemp = (*I->second);
 	// Ok lets do the work now
 	return DelAccount( actbTemp.wAccountIndex );
 }
@@ -1729,12 +1727,11 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	MAPUSERNAME_ITERATOR J=m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbName=J->second;
+	ACCOUNTSBLOCK& actbName=(*J->second);
 	// Check to see if this record has been flagged changed
 	if( actbID.bChanged )
 	{
 		I->second.bChanged = false;
-		J->second.bChanged = false;
 		return false;
 	}
 	// We have both blocks now. We should validate the slot, and make the changes
@@ -1801,7 +1798,6 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	try
 	{
 		I->second = actbID;
-		J->second = actbName;
 		MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
 		ACCOUNTSBLOCK& A = Q->second;
 		Save(false);
@@ -1826,32 +1822,24 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-bool cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
+ACCOUNTSBLOCK& cAccountClass::GetAccountByName( std::string sUsername )
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
-	if( I==m_mapUsernameMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbName=I->second;
-	// Get the block from the ID map, so we can check that they are the same.
-	MAPUSERNAMEID_ITERATOR J;
-	J = m_mapUsernameIDMap.find(actbName.wAccountIndex);
-	if( J==m_mapUsernameIDMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbID = J->second;
-	// Check to see that these both are equal where it counts.
-	if( actbID.sUsername!=actbName.sUsername||actbID.sPassword!=actbName.sPassword )
-		return false;
-	try
+	if( I != m_mapUsernameMap.end() )
 	{
-		// Ok we need to copy this to the actbBlock referance from the calling function
-		actbBlock = actbName;
-		return true;
+		ACCOUNTSBLOCK &actbName = (*I->second);
+		// Get the block from the ID map, so we can check that they are the same.
+		MAPUSERNAMEID_ITERATOR J = m_mapUsernameIDMap.find( actbName.wAccountIndex );
+		if( J != m_mapUsernameIDMap.end() )
+		{
+			ACCOUNTSBLOCK& actbID = J->second;
+			// Check to see that these both are equal where it counts.
+			if( actbID.sUsername == actbName.sUsername || actbID.sPassword == actbName.sPassword )
+				return actbName;
+		}
 	}
-	catch( ... )
-	{
-		return false;
-	}
+	return actbInvalid;
 }
 
 //o--------------------------------------------------------------------------o
@@ -1866,31 +1854,24 @@ bool cAccountClass::GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBl
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-bool cAccountClass::GetAccountByID(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock)
+ACCOUNTSBLOCK& cAccountClass::GetAccountByID( UI16 wAccountID )
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
-	if( I == m_mapUsernameIDMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbID = I->second;
-	// Get the block from the ID map, so we can check that they are the same.
-	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find( actbID.sUsername );
-	if( J == m_mapUsernameMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbName = J->second;
-	// Check to see that these both are equal where it counts.
-	if( actbID.sUsername!=actbName.sUsername||actbID.sPassword!=actbName.sPassword )
-		return false;
-	try
+	if( I != m_mapUsernameIDMap.end() )
 	{
-		// Ok we need to copy this to the actbBlock referance from the calling function
-		actbBlock = actbID;//I->second;
-		return true;
+		ACCOUNTSBLOCK &actbID = I->second;
+		// Get the block from the ID map, so we can check that they are the same.
+		MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find( actbID.sUsername );
+		if( J != m_mapUsernameMap.end() )
+		{
+			ACCOUNTSBLOCK& actbName = (*J->second);
+			// Check to see that these both are equal where it counts.
+			if( actbID.sUsername == actbName.sUsername || actbID.sPassword == actbName.sPassword )
+				return actbID;
+		}
 	}
-	catch( ... )
-	{
-		return false;
-	}
+	return actbInvalid;
 }
 
 //o--------------------------------------------------------------------------o
@@ -1932,7 +1913,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		ACCOUNTSBLOCK& actbID		= CI->second;
 		// Ok we are going to load up each username block from that map too for checking
 		MAPUSERNAME_ITERATOR JI	= m_mapUsernameMap.find( actbID.sUsername );
-		ACCOUNTSBLOCK& actbName		= JI->second;
+		ACCOUNTSBLOCK& actbName		= (*JI->second);
 		// Check to make sure at least that the username and passwords match
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
@@ -1946,7 +1927,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		UString szTempBuff = UString( actbID.sUsername ).lower();
 		fsAccountsADM << "NAME " << szTempBuff << std::endl;
 		fsAccountsADM << "PASS " << actbID.sPassword << std::endl;
-		fsAccountsADM << "FLAGS 0x" << std::hex << actbID.wFlags << std::endl;
+		fsAccountsADM << "FLAGS 0x" << std::hex << (actbID.wFlags&0xFFF7) << std::endl;
 		fsAccountsADM << "PATH " << (actbID.sPath.length()?actbID.sPath:"ERROR") << std::endl;
 		fsAccountsADM << "TIMEBAN 0x" << actbID.wTimeBan << std::endl;
 		fsAccountsADM << "CONTACT " << (actbID.sContact.length()?actbID.sContact:"NA") << std::endl;

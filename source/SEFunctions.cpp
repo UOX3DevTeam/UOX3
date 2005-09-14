@@ -1444,7 +1444,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -1504,7 +1504,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CItem * > *regItems = MapArea->GetItemList();

@@ -330,8 +330,6 @@ private:
 public:
 	CSpeechEntry() : typeOfSpeech( TALK ), antiSpam( true ), unicode( true ), speechColour( 0 ), speaker( INVALIDSERIAL ), spokenTo( INVALIDSERIAL ), targType( SPTRG_PCS ), targFont( FNT_NORMAL ), targLanguage( UT_ENU ), timeToSayAt( -1 ), minCmdLevelToReceive( 0 )
 	{
-		toSay = "";
-		sName = "";
 		toSay.reserve( MAX_SPEECH );
 		sName.reserve( MAX_NAME );
 	}
@@ -339,55 +337,55 @@ public:
 	{
 	}
 
-	SpeechType Type( void )
+	SpeechType Type( void ) const
 	{
 		return typeOfSpeech;
 	}
-	bool AntiSpam( void )
+	bool AntiSpam( void ) const
 	{
 		return antiSpam;
 	}
-	bool Unicode( void )
+	bool Unicode( void ) const
 	{
 		return unicode;
 	}
-	COLOUR Colour( void )
+	COLOUR Colour( void ) const
 	{
 		return speechColour;
 	}
-	SERIAL Speaker( void )
+	SERIAL Speaker( void ) const
 	{
 		return speaker;
 	}
-	SERIAL SpokenTo( void )
+	SERIAL SpokenTo( void ) const
 	{
 		return spokenTo;
 	}
-	SpeechTarget	TargType( void )
+	SpeechTarget	TargType( void ) const
 	{
 		return targType;
 	}
-	FontType Font( void )
+	FontType Font( void ) const
 	{
 		return targFont;
 	}
-	UnicodeTypes	Language( void )
+	UnicodeTypes	Language( void ) const
 	{
 		return targLanguage;
 	}
-	long At( void )
+	long At( void ) const
 	{
 		return timeToSayAt;
 	}
-	const std::string Speech( void )
+	const std::string Speech( void ) const
 	{
 		return toSay;
 	}
-	const std::string SpeakerName( void )
+	const std::string SpeakerName( void ) const
 	{
 		return sName;
 	}
-	UI08 CmdLevel( void )
+	UI08 CmdLevel( void ) const
 	{
 		return minCmdLevelToReceive;
 	}
@@ -434,18 +432,18 @@ public:
 	}
 	void Speech( const std::string said )
 	{
-		toSay = said;
+		toSay = said.substr( 0, MAX_SPEECH - 1 );
 	}
 	void SpeakerName( const std::string spkName )
 	{
-		sName = spkName;
+		sName = spkName.substr( 0, MAX_NAME - 1 );;
 	}
 	void CmdLevel( UI08 nLevel )
 	{
 		minCmdLevelToReceive = nLevel;
 	}
 
-	SpeakerType	SpkrType( void )
+	SpeakerType	SpkrType( void ) const
 	{
 		if( speaker == INVALIDSERIAL )
 			return SPK_SYSTEM;
@@ -456,10 +454,10 @@ public:
 	}
 };
 
-typedef std::vector< CSpeechEntry >	SPEECHLIST;
-typedef std::vector< CSpeechEntry >::iterator SPEECHLIST_ITERATOR;
-typedef std::vector< CSpeechEntry >::reverse_iterator SPEECHLIST_RITERATOR;
-typedef std::vector< CSpeechEntry >::const_iterator SPEECHLIST_CITERATOR;
+typedef std::vector< CSpeechEntry * >	SPEECHLIST;
+typedef std::vector< CSpeechEntry * >::iterator SPEECHLIST_ITERATOR;
+typedef std::vector< CSpeechEntry * >::reverse_iterator SPEECHLIST_RITERATOR;
+typedef std::vector< CSpeechEntry * >::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue
 {

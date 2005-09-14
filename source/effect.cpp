@@ -214,7 +214,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *Cell = (*rIter);
+		CMapRegion *Cell = (*rIter);
 		bool chain = false;
 	
 		CDataList< CChar * > *regChars = Cell->GetCharList();
@@ -329,7 +329,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		PlaySound( sock, toMake->soundPlayed, true );
 
 	sock->sysmessage( 985 );
-	sock->statwindow( src );
+	src->Dirty( UT_STATWINDOW );
 }
 
 void cEffects::checktempeffects( void )

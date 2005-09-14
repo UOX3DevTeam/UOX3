@@ -79,7 +79,8 @@ const std::string dirnames[NUM_DEFS] =
 	"command",
 	"msgboard",
 	"carve",
-	"creatures"
+	"creatures",
+	"maps"
 };
 
 std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;

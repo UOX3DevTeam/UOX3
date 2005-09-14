@@ -116,8 +116,8 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 	if( !ValidateObject( j ) )
 		return;
 	CChar *mChar = s->CurrcharObj();
-	ACCOUNTSBLOCK actbTemp;
-	if( !Accounts->GetAccountByID( j->GetAccount().wAccountIndex, actbTemp ) )
+	ACCOUNTSBLOCK& actbTemp = Accounts->GetAccountByID( j->GetAccount().wAccountIndex );
+	if( actbTemp.wAccountIndex == AB_INVALID_ID )
 		return;
 	//
 	CSocket *targSocket = calcSocketObjFromChar( j );
@@ -359,7 +359,7 @@ void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
 						REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 						for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 						{
-							SubRegion *toCheck = (*rIter);
+							CMapRegion *toCheck = (*rIter);
 							if( toCheck == NULL )	// no valid region
 								continue;
 							CDataList< CItem * > *regItems = toCheck->GetItemList();
@@ -462,8 +462,8 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		}
 	}
 
-	ACCOUNTSBLOCK actbAccountFind;
-	if( Accounts->GetAccountByName( username, actbAccountFind ) )
+	ACCOUNTSBLOCK& actbAccountFind = Accounts->GetAccountByName( username );
+	if( actbAccountFind.wAccountIndex != AB_INVALID_ID )
 	{
 		s->sysmessage( 555 );
 		return;

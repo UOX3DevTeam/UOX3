@@ -45,7 +45,8 @@ enum UpdateTypes
 	UT_HITPOINTS,
 	UT_STAMINA,
 	UT_MANA,
-	UT_HIDE
+	UT_HIDE,
+	UT_STATWINDOW
 };
 
 //o--------------------------------------------------------------------------o

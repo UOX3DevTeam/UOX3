@@ -80,7 +80,7 @@ void PlVBuy( CSocket *s )//PlayerVendors
 	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
 
 	i->SetCont( p );	// move containers
-	s->statwindow( mChar );
+	mChar->Dirty( UT_STATWINDOW );
 }
 
 void HandleGuildTarget( CSocket *s )

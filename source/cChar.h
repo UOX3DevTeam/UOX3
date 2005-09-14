@@ -70,8 +70,8 @@ protected:
 
 	SKILLVAL	baseskill[ALLSKILLS+1]; // Base skills without stat modifiers
 	SKILLVAL	skill[ALLSKILLS+1]; // List of skills (with stat modifiers)
-	UI16		atrophy[ALLSKILLS+1];
-	UI08		lockState[ALLSKILLS+1];	// state of the skill locks
+	UI16		atrophy[INTELLECT+1];
+	UI08		lockState[INTELLECT+1];	// state of the skill locks
 
 	UI16		deaths;
 	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange 20=Neutral	// should it not be 0x10??? sounds like we're trying to do
@@ -488,7 +488,7 @@ protected:
 	SERIAL		trackingtarget; // Tracking target ID
 	CHARLIST	trackingtargets;
 
-	ACCOUNTSBLOCK ourAccount;
+	UI16		accountNum;
 
 	UI16		origID; // Backup of body type for polymorph
 	UI16		origSkin;
@@ -526,7 +526,6 @@ protected:
 public:
 	void					SetAccount( ACCOUNTSBLOCK& actbAccount );
 	ACCOUNTSBLOCK &			GetAccount(void);
-	const ACCOUNTSBLOCK &	GetConstAccount( void ) const;
 	UI16					GetAccountNum( void ) const;
 
 	void		SetRobe( SERIAL newValue );

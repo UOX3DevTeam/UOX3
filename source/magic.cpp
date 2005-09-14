@@ -531,7 +531,7 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 	{
 		sock->sysmessage( 680 );
 		sock->sysmessage( 681 );
-		sock->statwindow( caster );
+		caster->Dirty( UT_STATWINDOW );
 		return false;
 	}
 	else
@@ -835,7 +835,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			SubRegion *MapArea = (*rIter);
+			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
 			CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -1000,7 +1000,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();
@@ -2055,7 +2055,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 
 void cMagic::CheckFieldEffects( CChar& mChar )
 {
-	SubRegion *toCheck = MapRegion->GetCell( mChar.GetX(), mChar.GetY(), mChar.WorldNumber() );
+	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
 	if( toCheck == NULL )	// no valid region
 		return;
 	CDataList< CItem * > *regItems = toCheck->GetItemList();

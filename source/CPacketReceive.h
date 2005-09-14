@@ -6,7 +6,7 @@
 namespace UOX
 {
 
-class CPIFirstLogin : public cPInputBuffer
+class CPIFirstLogin : public CPInputBuffer
 {
 protected:
 	virtual void		InternalReset( void );
@@ -27,7 +27,7 @@ public:
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIServerSelect : public cPInputBuffer
+class CPIServerSelect : public CPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
@@ -43,7 +43,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPISecondLogin : public cPInputBuffer
+class CPISecondLogin : public CPInputBuffer
 {
 protected:
 	virtual void		InternalReset( void );
@@ -64,7 +64,7 @@ public:
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIClientVersion : public cPInputBuffer
+class CPIClientVersion : public CPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
@@ -81,7 +81,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIUpdateRangeChange : public cPInputBuffer
+class CPIUpdateRangeChange : public CPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
@@ -96,7 +96,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPITips : public cPInputBuffer
+class CPITips : public CPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
@@ -110,7 +110,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIRename : public cPInputBuffer
+class CPIRename : public CPInputBuffer
 {
 protected:
 	virtual void	InternalReset( void );
@@ -124,7 +124,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIKeepAlive : public cPInputBuffer
+class CPIKeepAlive : public CPInputBuffer
 {
 public:
 	virtual			~CPIKeepAlive()
@@ -136,7 +136,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIStatusRequest : public cPInputBuffer
+class CPIStatusRequest : public CPInputBuffer
 {
 	UI32			pattern;
 	UI08			getType;
@@ -152,7 +152,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPISpy : public cPInputBuffer
+class CPISpy : public CPInputBuffer
 {
 public:
 	virtual			~CPISpy()
@@ -164,7 +164,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIGodModeToggle : public cPInputBuffer
+class CPIGodModeToggle : public CPInputBuffer
 {
 public:
 	virtual			~CPIGodModeToggle()
@@ -176,7 +176,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIDblClick : public cPInputBuffer
+class CPIDblClick : public CPInputBuffer
 {
 protected:
 	SERIAL			objectID;
@@ -191,7 +191,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPISingleClick : public cPInputBuffer
+class CPISingleClick : public CPInputBuffer
 {
 protected:
 	SERIAL			objectID;
@@ -206,7 +206,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIMoveRequest : public cPInputBuffer
+class CPIMoveRequest : public CPInputBuffer
 {
 public:
 	virtual			~CPIMoveRequest()
@@ -218,7 +218,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIResyncReq : public cPInputBuffer
+class CPIResyncReq : public CPInputBuffer
 {
 public:
 	virtual			~CPIResyncReq()
@@ -230,7 +230,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIResMenuChoice : public cPInputBuffer
+class CPIResMenuChoice : public CPInputBuffer
 {
 public:
 	virtual			~CPIResMenuChoice()
@@ -242,7 +242,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIAttack : public cPInputBuffer
+class CPIAttack : public CPInputBuffer
 {
 public:
 	virtual			~CPIAttack()
@@ -254,7 +254,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPITargetCursor : public cPInputBuffer
+class CPITargetCursor : public CPInputBuffer
 {
 public:
 	virtual			~CPITargetCursor()
@@ -266,7 +266,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIEquipItem : public cPInputBuffer
+class CPIEquipItem : public CPInputBuffer
 {
 public:
 	virtual			~CPIEquipItem()
@@ -278,7 +278,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIGetItem : public cPInputBuffer
+class CPIGetItem : public CPInputBuffer
 {
 public:
 	virtual			~CPIGetItem()
@@ -290,7 +290,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIDropItem : public cPInputBuffer
+class CPIDropItem : public CPInputBuffer
 {
 public:
 	virtual			~CPIDropItem()
@@ -302,7 +302,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIGumpMenuSelect : public cPInputBuffer
+class CPIGumpMenuSelect : public CPInputBuffer
 {
 public:
 					CPIGumpMenuSelect();
@@ -336,7 +336,7 @@ protected:
 };
 
 
-class CPITalkRequest : public cPInputBuffer
+class CPITalkRequest : public CPInputBuffer
 {
 protected:
 	COLOUR				textColour;
@@ -396,7 +396,7 @@ public:
 
 };
 
-class CPIAllNames3D : public cPInputBuffer
+class CPIAllNames3D : public CPInputBuffer
 {
 public:
 	virtual			~CPIAllNames3D()
@@ -408,7 +408,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIGumpChoice : public cPInputBuffer
+class CPIGumpChoice : public CPInputBuffer
 {
 public:
 	virtual			~CPIGumpChoice()
@@ -420,7 +420,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIBuyItem : public cPInputBuffer
+class CPIBuyItem : public CPInputBuffer
 {
 public:
 	virtual			~CPIBuyItem()
@@ -432,7 +432,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPISellItem : public cPInputBuffer
+class CPISellItem : public CPInputBuffer
 {
 public:
 	virtual			~CPISellItem()
@@ -444,7 +444,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIDeleteCharacter : public cPInputBuffer
+class CPIDeleteCharacter : public CPInputBuffer
 {
 public:
 	virtual			~CPIDeleteCharacter()
@@ -456,7 +456,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPICreateCharacter : public cPInputBuffer
+class CPICreateCharacter : public CPInputBuffer
 {
 protected:
 	UI32	pattern1;
@@ -494,7 +494,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIPlayCharacter : public cPInputBuffer
+class CPIPlayCharacter : public CPInputBuffer
 {
 protected:
 	UI32			pattern;
@@ -513,7 +513,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIGumpInput : public cPInputBuffer
+class CPIGumpInput : public CPInputBuffer
 {
 protected:
 	UI32			id;
@@ -542,7 +542,7 @@ public:
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIHelpRequest : public cPInputBuffer
+class CPIHelpRequest : public CPInputBuffer
 {
 protected:
 	UI16			menuNum;
@@ -556,7 +556,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPITradeMessage : public cPInputBuffer
+class CPITradeMessage : public CPInputBuffer
 {
 public:
 	virtual			~CPITradeMessage()
@@ -568,7 +568,7 @@ public:
 	virtual bool	Handle( void );
 };
 
-class CPIDyeWindow : public cPInputBuffer
+class CPIDyeWindow : public CPInputBuffer
 {
 protected:
 	SERIAL			changing;
@@ -585,7 +585,7 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
-class CPIMsgBoardEvent : public cPInputBuffer
+class CPIMsgBoardEvent : public CPInputBuffer
 {
 public:
 	virtual			~CPIMsgBoardEvent()

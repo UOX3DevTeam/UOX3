@@ -344,7 +344,7 @@ Look at uox3.h to see options. Works like npc magic.
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( kox1, koy1, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		SubRegion *MapArea = (*rIter);
+		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
 		CDataList< CItem * > *regItems = MapArea->GetItemList();

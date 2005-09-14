@@ -133,6 +133,7 @@ private:
 	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
 	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
 	UI08		playerCorpseDecayMultiplier;	//  Multiplier for player corpse decay.
+	UI08		mapCount;
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -190,7 +191,7 @@ private:
 	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
 	bool		combatdisplayhitmessage;		//	True if hit messages are displayed in combat
 	bool		combatmonstersvsanimals;		//	True if monsters can attack animals
-	SI16		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
+	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
 	bool		combatanimalsguarded;			//	True if animals are guarded from attack
 	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
 	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
@@ -403,8 +404,8 @@ public:
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;
 
-	void		CombatAnimalsAttackChance( SI16 value );
-	SI16		CombatAnimalsAttackChance( void ) const;
+	void		CombatAnimalsAttackChance( UI08 value );
+	UI08		CombatAnimalsAttackChance( void ) const;
 
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
@@ -514,6 +515,9 @@ public:
 
 	void		WeightPerStr( UI08 newVal );
 	UI08		WeightPerStr( void ) const;
+
+	void		ServerMapCount( UI08 newVal );
+	UI08		ServerMapCount( void ) const;
 
 	void		ArmorAffectManaRegen( bool newVal );
 	bool		ArmorAffectManaRegen( void ) const;

@@ -52,27 +52,11 @@ struct msgBoardPost_st
 	}
 };
 
-struct msgBoardNewPost_st
-{
-	UI08 toggle;
-	UI08 assocID[4];
-	std::string poster;
-	std::string subject;
-
-	std::vector< std::string > msgBoardLine;
-
-	msgBoardNewPost_st() : toggle( 0 ), poster( "" ), subject( "" )
-	{
-		msgBoardLine.resize( 0 );
-		memset( assocID, 0x00, 4 );
-	}
-};
-
 // Function Prototypes
 void    MsgBoardQuestEscortCreate( CChar *mNPC );
 void    MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
 void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
-void	MsgBoardRemoveFile( SERIAL msgBoardSer );
+void	MsgBoardRemoveFile( const SERIAL msgBoardSer );
 void    MsgBoardMaintenance( void );
 
 }

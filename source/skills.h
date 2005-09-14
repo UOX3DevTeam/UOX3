@@ -68,8 +68,8 @@ private:
 	resourceEntry						resources[610][410];
 private:
 
-	void	RegenerateOre( long grX, long grY );
-	void	RegenerateLog( long grX, long grY );
+	void	RegenerateOre( SI16 grX, SI16 grY );
+	void	RegenerateLog( SI16 grX, SI16 grY );
 	void	doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 

@@ -102,7 +102,7 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 		i->Delete();
 		if( mSock != NULL )
 		{
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 			Effects->itemSound( mSock, stack, false );
 		}
 		return stack;
@@ -156,7 +156,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	iToStack->PlaceInPack();
 	if( mSock != NULL )
 	{
-		mSock->statwindow( mChar );
+		mChar->Dirty( UT_STATWINDOW );
 		Effects->itemSound( mSock, iToStack, false );
 	}
 	return iToStack;
@@ -346,7 +346,7 @@ bool CPIGetItem::Handle( void )
 		if( i->GetID() == 0x0EED )
 		{
 			if( tSock->PickupSpot() == PL_OWNPACK )
-				tSock->statwindow( ourChar );
+				ourChar->Dirty( UT_STATWINDOW );
 		}
 	}
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
@@ -364,7 +364,7 @@ bool CPIGetItem::Handle( void )
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 	{
 		Weight->addItemWeight( ourChar, i );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 	}
 	return true;
 }
@@ -440,7 +440,7 @@ bool CPIEquipItem::Handle( void )
 	{
 		Bounce( tSock, i );
 		tSock->sysmessage( 1186 );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 
@@ -459,7 +459,7 @@ bool CPIEquipItem::Handle( void )
 	{
 		tSock->sysmessage( 1187 );
 		Bounce( tSock, i );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 	if( k == ourChar )
@@ -479,7 +479,7 @@ bool CPIEquipItem::Handle( void )
 
 			if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 			{
-				tSock->statwindow( ourChar );
+				ourChar->Dirty( UT_STATWINDOW );
 				Effects->itemSound( tSock, i, true );
 			}
 			else
@@ -493,7 +493,7 @@ bool CPIEquipItem::Handle( void )
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		Bounce( tSock, i );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 
@@ -505,7 +505,7 @@ bool CPIEquipItem::Handle( void )
 	if( ValidateObject( j ) )
 	{
 		tSock->sysmessage( 1744 );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 		Bounce( tSock, i );
 		return true;
 	}
@@ -513,7 +513,7 @@ bool CPIEquipItem::Handle( void )
 	if( !Weight->checkCharWeight( ourChar, k, i ) )
 	{
 		tSock->sysmessage( 1743 );
-		tSock->statwindow( ourChar );
+		ourChar->Dirty( UT_STATWINDOW );
 		Bounce( tSock, i );
 		return true;
 	}
@@ -523,7 +523,7 @@ bool CPIEquipItem::Handle( void )
 	//Console << "Item equipped on layer " << i->GetLayer() << myendl;
 
 	Effects->PlaySound( tSock, 0x0057, false );
-	tSock->statwindow( ourChar );
+	ourChar->Dirty( UT_STATWINDOW );
 	return true;
 }
 
@@ -729,7 +729,7 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, i );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		Bounce( mSock, i );
 		return false;
@@ -793,7 +793,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 			//Bounces items dropped in illegal locations in 3D UO client!!!
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
-			mSock->statwindow( nChar );
+			nChar->Dirty( UT_STATWINDOW );
 			Bounce( mSock, i );
 			return;
 		}
@@ -815,7 +815,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		}
 		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
-	mSock->statwindow( nChar );
+	nChar->Dirty( UT_STATWINDOW );
 }
 
 //o---------------------------------------------------------------------------o
@@ -847,7 +847,7 @@ void DropOnItem( CSocket *mSock )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		nItem->SetCont( mChar );
 		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREX ) );
@@ -874,7 +874,7 @@ void DropOnItem( CSocket *mSock )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		Bounce( mSock, nItem );
 		return;
@@ -886,7 +886,7 @@ void DropOnItem( CSocket *mSock )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		nItem->Delete();
 		mSock->sysmessage( 1201 );
@@ -897,7 +897,7 @@ void DropOnItem( CSocket *mSock )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		if( nItem->GetID( 1 ) != 0x1F || nItem->GetID( 2 ) < 0x2D || nItem->GetID( 2 ) > 0x72 )
 		{
@@ -976,7 +976,7 @@ void DropOnItem( CSocket *mSock )
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
 				Weight->subtractItemWeight( mChar, nItem );
-				mSock->statwindow( mChar );
+				mChar->Dirty( UT_STATWINDOW );
 			}
 			Bounce( mSock, nItem );
 			return;
@@ -989,7 +989,7 @@ void DropOnItem( CSocket *mSock )
 		{
 			Bounce( mSock, nItem );
 		}
-		mSock->statwindow( mChar );
+		mChar->Dirty( UT_STATWINDOW );
 	}
 	else if( nCont->GetType() == IT_CONTAINER )
 	{
@@ -1007,7 +1007,7 @@ void DropOnItem( CSocket *mSock )
 				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				{
 					Weight->subtractItemWeight( mChar, nItem );
-					mSock->statwindow( mChar );
+					mChar->Dirty( UT_STATWINDOW );
 				}
 				mSock->sysmessage( 1630 );
 				Bounce( mSock, nItem );
@@ -1023,14 +1023,14 @@ void DropOnItem( CSocket *mSock )
 			{
 				mSock->sysmessage( 1385 );
 				Bounce( mSock, nItem );
-				mSock->statwindow( mChar );
+				mChar->Dirty( UT_STATWINDOW );
 				return;
 			}
 			nItem->SetCont( nCont );
 			nItem->SetX( mSock->GetWord( 5 ) );
 			nItem->SetY( mSock->GetWord( 7 ) );
 			nItem->SetZ( 9 );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 		else
 		{
@@ -1039,7 +1039,7 @@ void DropOnItem( CSocket *mSock )
 				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				{
 					Weight->subtractItemWeight( mChar, nItem );
-					mSock->statwindow( mChar );
+					mChar->Dirty( UT_STATWINDOW );
 				}
 				mSock->sysmessage( 1385 );
 				Bounce( mSock, nItem );
@@ -1052,7 +1052,7 @@ void DropOnItem( CSocket *mSock )
 				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 					Weight->subtractItemWeight( mChar, nItem );
 			}
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 	}
 	else
@@ -1071,7 +1071,7 @@ void DropOnItem( CSocket *mSock )
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 		}
 	}
 	if( !stackDeleted )
@@ -1383,9 +1383,13 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 	}
 	pd.Text( tempstr );
+
+	CChar *mChar = s->CurrcharObj();
+	if( ValidateObject( mChar ) && ( mChar == pdoll ) || ( mChar->IsGM() ) )
+		pd.FlagByte( 0x02 );
 	s->Send( &pd );
 
-	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
+/*	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
 	{
 		if( ValidateObject( wearItem ) )
 		{
@@ -1393,7 +1397,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			s->Send( &pSend );
 		}
 	}
-}
+*/}
 
 void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 //o---------------------------------------------------------------------------o

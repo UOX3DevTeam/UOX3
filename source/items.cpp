@@ -291,16 +291,17 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, std::string itemList )
 		return NULL;
 
 	CItem *iCreated = CreateRandomItem( itemList, mChar->WorldNumber() );
-	if( iCreated != NULL )
+	if( iCreated == NULL )
+		return NULL;
+
+	if( iCreated->GetBuyValue() != 0 )
 	{
-		if( iCreated->GetBuyValue() != 0 )
-		{
-			iCreated->SetBuyValue( RandomNum( static_cast<UI32>(1), iCreated->GetBuyValue() ) );
-			iCreated->SetSellValue( static_cast<UI32>(iCreated->GetBuyValue() / 2) );
-		}
-		if( iCreated->GetHP() != 0 ) 
-			iCreated->SetHP( static_cast<SI16>(RandomNum( static_cast<SI16>(1), iCreated->GetHP() )) );
+		iCreated->SetBuyValue( RandomNum( static_cast<UI32>(1), iCreated->GetBuyValue() ) );
+		iCreated->SetSellValue( static_cast<UI32>(iCreated->GetBuyValue() / 2) );
 	}
+	if( iCreated->GetHP() != 0 ) 
+		iCreated->SetHP( static_cast<SI16>(RandomNum( static_cast<SI16>(1), iCreated->GetHP() )) );
+
 	return PlaceItem( mSock, mChar, iCreated, true );
 }
 
@@ -464,7 +465,7 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool in
 			iCreated->PlaceInPack();
 		}
 		if( mSock != NULL )
-			mSock->statwindow( mChar );
+			mChar->Dirty( UT_STATWINDOW );
 	}
 	else
 		iCreated->SetLocation( mChar );
