@@ -18,7 +18,7 @@ Y=4096
 MAP=map0.mul
 STATICS=statics0.mul
 STAIDX=staidx0.mul
-X=7168
+X=6144
 Y=4096
 }
 
