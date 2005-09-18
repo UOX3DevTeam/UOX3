@@ -147,7 +147,7 @@ public:
 	UI32			GetTempVar( CITempVars whichVar ) const;
 	void			SetTempVar( CITempVars whichVar, UI32 newVal );
 	UI08			GetTempVar( CITempVars whichVar, UI08 part ) const;
-	void			SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal );
+	void			SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal );
 
 	UI16			GetAmount(  void ) const;
 	void			SetAmount(  UI32 newValue );

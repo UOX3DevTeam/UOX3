@@ -305,6 +305,7 @@ static JSPropertySpec CItemProps[] =
 	{ "isLeatherType",	CIP_ISLEATHERTYPE,	JSPROP_ENUMPERMRO },
 	{ "canBeLockedDown",CIP_CANBELOCKEDDOWN,JSPROP_ENUMPERMRO },
 	{ "isContType",		CIP_ISCONTTYPE,		JSPROP_ENUMPERMRO },
+	{ "carveSection",	CIP_CARVESECTION,	JSPROP_ENUMANDPERM },
 
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM },
@@ -458,6 +459,15 @@ static JSPropertySpec CScriptSectionProperties[] =
 	{ "numTags",	CSS_NUMTAGS,		JSPROP_ENUMANDPERM },
 	{ "atEnd",		CSS_ATEND,			JSPROP_ENUMANDPERM },
 	{ "atEndTags",	CSS_ATENDTAGS,		JSPROP_ENUMANDPERM },
+	{	NULL,		(SI08)NULL,			(UI08)0				}
+};
+
+static JSPropertySpec CResourceProperties[] =
+{
+	{ "logAmount",	CRESP_LOGAMT,		JSPROP_ENUMANDPERM },
+	{ "logTime",	CRESP_LOGTIME,		JSPROP_ENUMANDPERM },
+	{ "oreAmount",	CRESP_OREAMT,		JSPROP_ENUMANDPERM },
+	{ "oreTime",	CRESP_ORETIME,		JSPROP_ENUMANDPERM },
 	{	NULL,		(SI08)NULL,			(UI08)0				}
 };
 

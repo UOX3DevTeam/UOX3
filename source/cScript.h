@@ -146,6 +146,7 @@ private:
 	JSObject	*RegionProto;
 	JSObject	*RegionsProto;
 	JSObject	*UOXCFileProto;
+	JSObject	*ResourceProto;
 
 	//|	Modification	-	08162003 - EviLDeD - Expose the CAccountClass to the JSE.
 	JSObject	*CAccountProto;

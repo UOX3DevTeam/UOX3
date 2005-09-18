@@ -17,6 +17,18 @@ const SI16 MapRowSize = 128;
 const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
 const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
+	struct MapResource_st
+	{
+		SI16	oreAmt;
+		UI32	oreTime;
+		SI16	logAmt;
+		UI32	logTime;
+
+		MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+		{
+		}
+	};
+
 	class CMapRegion
 	{
 	private:
@@ -39,9 +51,12 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 	class CMapWorld
 	{
 	private:
-		SI16			upperArrayX;
-		SI16			upperArrayY;
-		CMapRegion		mapRegions[UpperX][UpperY];
+		SI16								upperArrayX;
+		SI16								upperArrayY;
+		UI16								resourceX;
+		UI16								resourceY;
+		CMapRegion							mapRegions[UpperX][UpperY];
+		std::map< UI32, MapResource_st >	mapResources;
 	public:
 						CMapWorld( void )
 						{
@@ -54,16 +69,28 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
 		void			SetUpperX( SI16 newVal );
 		void			SetUpperY( SI16 newVal );
+		void			SetResourceX( UI16 newVal );
+		void			SetResourceY( UI16 newVal );
 
 		SI16			GetUpperX( void ) const;
 		SI16			GetUpperY( void ) const;
+		UI16			GetResourceX( void ) const;
+		UI16			GetResourceY( void ) const;
+
+		MapResource_st&	GetResource( SI16 x, SI16 y );
+
+		void			LoadResources( UI08 worldNum );
+		void			SaveResources( UI08 worldNUm );
 	};
 
 	class CMapHandler
 	{
 	private:
-		std::vector< CMapWorld * >	mapWorlds;
-		CMapRegion					overFlow;
+		typedef std::vector< CMapWorld * >				WORLDLIST;
+		typedef std::vector< CMapWorld * >::iterator	WORLDLIST_ITERATOR;
+
+		WORLDLIST		mapWorlds;
+		CMapRegion		overFlow;
 
 		void		LoadFromDisk( std::ifstream& readDestination );
 	public:
@@ -92,6 +119,8 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 		REGIONLIST	PopulateList( CBaseObject *mObj );
 
 		CMapWorld *	GetMapWorld( UI08 worldNum );
+
+		MapResource_st * GetResource( SI16 x, SI16 y, UI08 worldNum );
 	};
 
 	extern CMapHandler *MapRegion;

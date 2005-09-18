@@ -26,6 +26,8 @@
 #include "gump.h"
 #include "ObjectFactory.h"
 #include "network.h"
+#include "UOXJSClasses.h"
+#include "UOXJSPropertySpecs.h"
 
 namespace UOX
 {
@@ -1832,7 +1834,7 @@ JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage( "WorldBrightLevel: Unknown Count of Arguments: %d", argc );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -1848,7 +1850,7 @@ JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage( "WorldDarkLevel: Unknown Count of Arguments: %d", argc );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -1864,7 +1866,7 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -1918,6 +1920,110 @@ JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	JSMapping->Reload( scriptID );
+
+ 	return JS_TRUE;
+}
+
+JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 2 || argc == 0 )
+	{
+		DoSEErrorMessage( "ResourceArea: Invalid Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+
+	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
+	if( argc == 2 )
+	{
+		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+		if( resType == "LOGS" )	// Logs
+			cwmWorldState->ServerData()->ResLogArea( newVal );
+		else if( resType == "ORE" )	// Ore
+			cwmWorldState->ServerData()->ResOreArea( newVal );
+	}
+
+	if( resType == "LOGS" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogArea() );
+	else if( resType == "ORE" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreArea() );
+
+	return JS_TRUE;
+}
+
+JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 2 || argc == 0 )
+	{
+		DoSEErrorMessage( "ResourceAmount: Invalid Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+
+	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
+	if( argc == 2 )
+	{
+		SI16 newVal = static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+		if( resType == "LOGS" )
+			cwmWorldState->ServerData()->ResLogs( newVal );
+		else if( resType == "ORE" )
+			cwmWorldState->ServerData()->ResOre( newVal );
+	}
+
+	if( resType == "LOGS" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogs() );
+	else if( resType == "ORE" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOre() );
+
+	return JS_TRUE;
+}
+
+JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 2 || argc == 0 )
+	{
+		DoSEErrorMessage( "ResourceTime: Invalid Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+
+	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
+	if( argc == 2 )
+	{
+		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+		if( resType == "LOGS" )
+			cwmWorldState->ServerData()->ResLogTime( newVal );
+		else if( resType == "ORE" )
+			cwmWorldState->ServerData()->ResOreTime( newVal );
+	}
+
+	if( resType == "LOGS" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogTime() );
+	else if( resType == "ORE" )
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreTime() );
+
+	return JS_TRUE;
+}
+
+JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "ResourceRegion: Invalid number of arguments (takes 3)" );
+ 		return JS_FALSE;
+	}
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[2] ));
+	MapResource_st *mRes = MapRegion->GetResource( x, y, worldNum );
+	if( mRes == NULL )
+	{
+		DoSEErrorMessage( "ResourceRegion: Invalid Resource Region" );
+		return JS_FALSE;
+	}
+
+	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class, NULL, obj );
+	JS_DefineProperties( cx, jsResource, CResourceProperties );
+	JS_SetPrivate( cx, jsResource, mRes );
+
+	*rval = OBJECT_TO_JSVAL( jsResource );
 
  	return JS_TRUE;
 }

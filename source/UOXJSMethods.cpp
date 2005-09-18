@@ -4494,7 +4494,7 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		mSock = calcSocketObjFromChar( mChar );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 	{
-		if( skillName == skillname[i] )
+		if( skillName == cwmWorldState->skill[i].name )
 		{
 			mChar->SetBaseSkill( value, i );
 			Skills->updateSkillLevel( mChar, i );
@@ -4965,6 +4965,34 @@ JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 	InitializeWanderArea( mChar, 10, 10 );
+	return JS_TRUE;
+}
+
+void newCarveTarget( CSocket *s, CItem *i );
+JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Carve: Invalid number of arguments (1)" );
+		return JS_FALSE;
+	}
+
+	CItem *toCarve = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( toCarve ) )
+	{
+		MethodError( "Carve: Invalid item" );
+		return JS_FALSE;
+	}
+
+	CSocket *mSock = static_cast<CSocket *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+	if( mSock == NULL )
+	{
+		MethodError( "Carve: Invalid socket" );
+		return JS_FALSE;
+	}
+
+	newCarveTarget( mSock, toCarve );
+
 	return JS_TRUE;
 }
 

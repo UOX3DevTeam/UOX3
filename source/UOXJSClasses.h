@@ -315,7 +315,21 @@ static JSClass UOXScriptSection_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub 
-}; 
+};
+
+static JSClass UOXResource_class =
+{
+	"UOXResource",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CResourceProps_getProperty,
+	CResourceProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub 
+};
 
 }
 

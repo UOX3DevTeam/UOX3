@@ -682,14 +682,8 @@ cHTMLTemplates::~cHTMLTemplates()
 //o---------------------------------------------------------------------------o
 void cHTMLTemplates::Load( void )
 {
-	VECSCRIPTLIST& toWalk = FileLookup->GetFiles( html_def );
-	VECSCRIPTLIST_CITERATOR tIter;
-	if( toWalk.empty() )
-		return;
-
-	for( tIter = toWalk.begin(); tIter != toWalk.end(); ++tIter )
+	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
 	{
-		Script *toCheck = (*tIter);
 		if( toCheck != NULL )
 		{
 			size_t NumEntries = toCheck->NumEntries();

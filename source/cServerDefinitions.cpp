@@ -328,9 +328,28 @@ size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 	return ScriptListings[typeToFind].size();
 }
 
-VECSCRIPTLIST& CServerDefinitions::GetFiles( DEFINITIONCATEGORIES typeToFind )
+Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 {
-	return ScriptListings[typeToFind];
+	Script *retScript = NULL;
+	slIter = ScriptListings[typeToFind].begin();
+	if( !FinishedScripts( typeToFind ) )
+		retScript = (*slIter);
+	return retScript;
+}
+Script * CServerDefinitions::NextScript( DEFINITIONCATEGORIES typeToFind )
+{
+	Script *retScript = NULL;
+	if( !FinishedScripts( typeToFind ) )
+	{
+		++slIter;
+		if( !FinishedScripts( typeToFind ) )
+			retScript = (*slIter);
+	}
+	return retScript;
+}
+bool CServerDefinitions::FinishedScripts( DEFINITIONCATEGORIES typeToFind )
+{
+	return ( slIter == ScriptListings[typeToFind].end() );
 }
 
 void CServerDefinitions::CleanPriorityMap( void )

@@ -341,11 +341,11 @@ enum Skills
 	MEDITATION  ,
 	STEALTH  ,
 	REMOVETRAPS ,
-#ifdef __NEW_SKILLS__
 	NECROMANCY,
 	FOCUS,
 	CHIVALRY,
-#endif
+	BUSHIDO,
+	NINJITSU,
 
 	ALLSKILLS , // #skills+1
 
@@ -599,12 +599,10 @@ enum TargetIDs
 	TARGET_TWEAK,
 	TARGET_MAKESTATUS,
 	TARGET_SETSCPTRIG,
-	TARGET_AXE,
 	TARGET_PROVOCATION,
 	TARGET_PROVOCATION2,
 	TARGET_ENTICEMENT,
 	TARGET_ENTICEMENT2,
-	TARGET_SWORD,
 	TARGET_CASTSPELL,
 	TARGET_MAKESHOP,
 	TARGET_FOLLOW,
@@ -644,6 +642,16 @@ enum VisibleTypes
 	VT_TEMPHIDDEN,				// Hidden (With Skill) / Visible To Item Owner
 	VT_INVISIBLE,				// Magically Hidden
 	VT_PERMHIDDEN				// Permanent Hidden (GM Hidden)
+};
+
+enum monsterSound
+{
+	SND_STARTATTACK = 0,
+	SND_IDLE,
+	SND_ATTACK,
+	SND_DEFEND,
+	SND_DIE,
+	SND_COUNT
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "ssection.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
+#include "scriptc.h"
 
 namespace UOX
 {
@@ -851,90 +852,84 @@ size_t cWeatherAb::Count( void ) const
 //o---------------------------------------------------------------------------o
 bool cWeatherAb::Load( void )
 {
-	weathID wthCount = 0;
-	bool done = false;
-	UString sect;
-	while( !done )
+	weather.resize( FileLookup->CountOfEntries( weathab_def ) );
+	UString tag, data, UTag;
+	UString entryName;
+	size_t i = 0;
+	for( Script *weathScp = FileLookup->FirstScript( weathab_def ); !FileLookup->FinishedScripts( weathab_def ); weathScp = FileLookup->NextScript( weathab_def ) )
 	{
-		sect = "WEATHERAB " + UString::number( wthCount );
-		ScriptSection *tempSect = FileLookup->FindEntry( sect, weathab_def );
-		if( tempSect == NULL )
-			done = true;
-		else
-			++wthCount;
-	}
-	ScriptSection *WeatherStuff = NULL;
-	weather.resize( wthCount );
-
-	UString tag;
-	UString data;
-	UString UTag;
-
-	for( UI16 i = 0; i < weather.size(); ++i )
-	{
-		sect = "WEATHERAB " + UString::number( i );
-		WeatherStuff = FileLookup->FindEntry( sect, weathab_def );
-		if( WeatherStuff == NULL )
+		if( weathScp == NULL )
 			continue;
 
-		for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
+		for( ScriptSection *WeatherStuff = weathScp->FirstEntry(); WeatherStuff != NULL; WeatherStuff = weathScp->NextEntry() )
 		{
-			UTag = tag.upper();
-			data = WeatherStuff->GrabData();
-			switch( tag[0] )
+			if( WeatherStuff == NULL )
+				continue;
+
+			entryName			= weathScp->EntryName();
+			i					= entryName.section( " ", 1, 1 ).toULong();
+			if( i >= weather.size() )
+				weather.resize( i+1 );
+
+			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
-				case 'c':
-				case 'C':
-					if( UTag == "COLDCHANCE" )			// chance for a cold day
-						ColdChance( static_cast<weathID>(i), data.toByte() );
-					else if( UTag == "COLDINTENSITY" )	// cold intensity
-						ColdIntensity( static_cast<weathID>(i), data.toByte() );
-					break;
+				UTag = tag.upper();
+				data = WeatherStuff->GrabData();
+				switch( tag[0] )
+				{
+					case 'c':
+					case 'C':
+						if( UTag == "COLDCHANCE" )			// chance for a cold day
+							ColdChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "COLDINTENSITY" )	// cold intensity
+							ColdIntensity( static_cast<weathID>(i), data.toByte() );
+						break;
 
-				case 'h':
-				case 'H':
-					if( UTag == "HEATCHANCE" )			// chance for a hot day
-						HeatChance( static_cast<weathID>(i), data.toByte() );
-					else if( UTag == "HEATINTENSITY" )	// heat intensity
-						HeatIntensity( static_cast<weathID>(i), data.toByte() );
-					break;
+					case 'h':
+					case 'H':
+						if( UTag == "HEATCHANCE" )			// chance for a hot day
+							HeatChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "HEATINTENSITY" )	// heat intensity
+							HeatIntensity( static_cast<weathID>(i), data.toByte() );
+						break;
 
-				case 'l':
-				case 'L':
-					if( UTag == "LIGHTMIN" )			// minimum light level
-						LightMin( static_cast<weathID>(i), data.toFloat() );
-					else if( UTag == "LIGHTMAX" )		// maximum light level
-						LightMax( static_cast<weathID>(i), data.toFloat() );
-					break;
+					case 'l':
+					case 'L':
+						if( UTag == "LIGHTMIN" )			// minimum light level
+							LightMin( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "LIGHTMAX" )		// maximum light level
+							LightMax( static_cast<weathID>(i), data.toFloat() );
+						break;
 
-				case 'm':
-				case 'M':
-					if( UTag == "MAXTEMP" )				// maximum temperature
-						MaxTemp( static_cast<weathID>(i), data.toFloat() );
-					else if( UTag == "MINTEMP" )		// minimum temperature
-						MinTemp( static_cast<weathID>(i), data.toFloat() );
-					else if( UTag == "MAXWIND" )		// maximum wind speed
-						MaxWindSpeed( static_cast<weathID>(i), data.toFloat() );
-					else if( UTag == "MINWIND" )		// minimum wind speed
-						MinWindSpeed( static_cast<weathID>(i), data.toFloat() );
-					break;
+					case 'm':
+					case 'M':
+						if( UTag == "MAXTEMP" )				// maximum temperature
+							MaxTemp( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MINTEMP" )		// minimum temperature
+							MinTemp( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MAXWIND" )		// maximum wind speed
+							MaxWindSpeed( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MINWIND" )		// minimum wind speed
+							MinWindSpeed( static_cast<weathID>(i), data.toFloat() );
+						break;
 
-				case 'r':
-				case 'R':
-					if( UTag == "RAINCHANCE" )			// chance of rain
-						RainChance( static_cast<weathID>(i), data.toByte() );
-					else if( UTag == "RAININTENSITY" )	// intensity of rain
-						RainIntensity( static_cast<weathID>(i), data.toByte() );
-					break;
-				case 's':
-				case 'S':
-					if( UTag == "SNOWCHANCE" )			// chance of snow
-						SnowChance( static_cast<weathID>(i), data.toByte() );
-					else if( UTag == "SNOWINTENSITY" )	// intensity of snow
-						SnowIntensity( static_cast<weathID>(i), data.toByte() );
-					else if( UTag == "SNOWTHRESHOLD" )	// temperature at which snow kicks in
-						SnowThreshold( static_cast<weathID>(i), data.toFloat() );
-					break;
+					case 'r':
+					case 'R':
+						if( UTag == "RAINCHANCE" )			// chance of rain
+							RainChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "RAININTENSITY" )	// intensity of rain
+							RainIntensity( static_cast<weathID>(i), data.toByte() );
+						break;
+					case 's':
+					case 'S':
+						if( UTag == "SNOWCHANCE" )			// chance of snow
+							SnowChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "SNOWINTENSITY" )	// intensity of snow
+							SnowIntensity( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "SNOWTHRESHOLD" )	// temperature at which snow kicks in
+							SnowThreshold( static_cast<weathID>(i), data.toFloat() );
+						break;
+				}
 			}
 		}
 	}

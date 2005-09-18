@@ -1274,13 +1274,13 @@ void CRace::Load( size_t sectNum, int modCount )
 
 		for( int iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
-			UString skillthing = skillname[iCountA];
+			UString skillthing = cwmWorldState->skill[iCountA].name;
 			skillthing += "G";
 			if( skillthing == tag )
 				Skill( data.toUShort(), iCountA );
 			else
 			{
-				skillthing = skillname[iCountA];
+				skillthing = cwmWorldState->skill[iCountA].name;
 				skillthing += "L";
 				if( skillthing == tag )
 					Skill( modCount + data.toUShort(), iCountA );

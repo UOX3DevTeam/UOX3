@@ -124,6 +124,7 @@ JSMethodFunc CItem_UnGlow;
 JSMethodFunc CItem_PlaceInPack;
 JSMethodFunc CItem_Dupe;
 JSMethodFunc CItem_LockDown;
+JSMethodFunc CItem_Carve;
 
 
 // BaseObject Methods
@@ -273,7 +274,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "UseResource",		CChar_UseResource,		3, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget,		1, 0, 0 },
 	{ "PopUpTarget",		CMisc_PopUpTarget,		1, 0, 0 },
-	{ "InRange",			CBase_InRange,			1, 0, 0 },
+	{ "InRange",			CBase_InRange,			2, 0, 0 },
 	{ "FindItemLayer",		CChar_FindItemLayer,	1, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
 	{ "CheckSkill",			CChar_CheckSkill,		3, 0, 0 },
@@ -335,7 +336,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "GetTag",				CBase_GetTag,				1, 0, 0 },
 	{ "SetTag",				CBase_SetTag,				1, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,			0, 0, 0 },
-	{ "InRange",			CBase_InRange,				1, 0, 0 },
+	{ "InRange",			CBase_InRange,				2, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,			2, 0, 0 },
 	{ "OpenPlank",			CItem_OpenPlank,			0, 0, 0 },
 	{ "IsMulti",			CItem_IsMulti,				0, 0, 0 },
@@ -361,6 +362,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "PlaceInPack",		CItem_PlaceInPack,			0, 0, 0 },
 	{ "Dupe",				CItem_Dupe,					1, 0, 0 },
 	{ "LockDown",			CItem_LockDown,				0, 0, 0 },
+	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 

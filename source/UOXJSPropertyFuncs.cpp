@@ -302,6 +302,7 @@ namespace UOX
 				case CIP_ISLEATHERTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLeatherType() );		break;
 				case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
 				case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
+				case CIP_CARVESECTION:	*vp = INT_TO_JSVAL( gPriv->GetCarve() );				break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -1199,6 +1200,7 @@ namespace UOX
 				case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
 				case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
 				case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
+				case CIP_CARVESECTION:	gPriv->SetCarve( encaps.toInt() );							break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -1709,6 +1711,47 @@ namespace UOX
 				break;
 			}
 		}*/
+		return JS_TRUE;
+	}
+
+	JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		MapResource_st *gPriv = (MapResource_st*)JS_GetPrivate( cx, obj );
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();						break;
+			case CRESP_LOGTIME:				gPriv->logTime	= encaps.toInt();						break;
+			case CRESP_OREAMT:				gPriv->oreAmt	= encaps.toInt();						break;
+			case CRESP_ORETIME:				gPriv->oreTime	= encaps.toInt();						break;
+			default:																				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		MapResource_st *gPriv = (MapResource_st*)JS_GetPrivate( cx, obj );
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );					break;
+			case CRESP_LOGTIME:				*vp = INT_TO_JSVAL( gPriv->logTime );					break;
+			case CRESP_OREAMT:				*vp = INT_TO_JSVAL( gPriv->oreAmt );					break;
+			case CRESP_ORETIME:				*vp = INT_TO_JSVAL( gPriv->oreTime );					break;
+			default:																				break;
+			}
+		}
 		return JS_TRUE;
 	}
 

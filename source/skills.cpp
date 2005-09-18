@@ -162,9 +162,9 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Regenerate Ore based on Server.scp Ore respawn settings
 //o---------------------------------------------------------------------------o
-void cSkills::RegenerateOre( SI16 grX, SI16 grY )
+void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 {
-	resourceEntry *orePart	= &resources[grX][grY];
+	MapResource_st *orePart	= MapRegion->GetResource( grX, grY, worldNum );
 	SI16 oreCeiling			= cwmWorldState->ServerData()->ResOre();
 	UI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
 	if( static_cast<UI32>(orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
@@ -197,7 +197,6 @@ void cSkills::Mine( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	bool floor = false, mountain = false;
-	SI16 oreX, oreY;
 	
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;	// did we cancel the target?
@@ -289,16 +288,14 @@ void cSkills::Mine( CSocket *s )
 			return;
 	}
 
-	oreX = static_cast<SI16>(targetX / cwmWorldState->ServerData()->ResOreArea());	// we want the area where we targetted, not where we are
-	oreY = static_cast<SI16>(targetY / cwmWorldState->ServerData()->ResOreArea());
-	if( (!floor && !mountain) || (oreX >= 610 || oreY >= 410) )		// if we can't mine here or if for some reason it's invalid, clear out
+	if( (!floor && !mountain) )		// if we can't mine here or if for some reason it's invalid, clear out
 	{
 		s->sysmessage( 801 );
 		return;
 	}
 
-	RegenerateOre( oreX, oreY );
-	resourceEntry *orePart = &resources[oreX][oreY];
+	RegenerateOre( targetX, targetY, mChar->WorldNumber() );
+	MapResource_st *orePart = MapRegion->GetResource( targetX, targetY, mChar->WorldNumber() );
 	if( orePart->oreAmt <= 0 )
 	{
 		s->sysmessage( 802 );
@@ -611,116 +608,6 @@ void cSkills::handleCooking( CSocket *s )
 		else
 			s->sysmessage( 830 );
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TreeTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Changed default minimum range for 
-//|									chopping trees from unrealistic 5 to logical 2 :)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses an item and targets a tree
-//o---------------------------------------------------------------------------o
-void cSkills::TreeTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( cwmWorldState->ServerData()->ResLogArea() < 10 ) 
-		cwmWorldState->ServerData()->ResLogArea( 10 );
-	
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	SI16 px = s->GetWord( 0x0B );
-	SI16 py = s->GetWord( 0x0D );
-	SI16 cx = abs( mChar->GetX() - px );
-	SI16 cy = abs( mChar->GetY() - py );
-
-	UI08 dir = Movement->Direction( mChar, px, py );
-	if( dir != 0xFF && mChar->GetDir() != dir )
-		mChar->SetDir( dir );
-	if( cx > 2 || cy > 2 )
-	{
-		s->sysmessage( 393 );
-		return;
-	}
-
-	SI16 a = static_cast<SI16>(mChar->GetX() / cwmWorldState->ServerData()->ResLogArea());
-	SI16 b = static_cast<SI16>(mChar->GetY() / cwmWorldState->ServerData()->ResLogArea());
-
-	if( a >= 610 || b >= 410 ) 
-		return; // wih the previous a < 20 || b < 20, wind may not have worked right, as well as some dungeons
-	
-	RegenerateLog( a, b );
-	resourceEntry *logPart = &resources[a][b];
-	if( logPart->logAmt <= 0 )
-	{
-		s->sysmessage( 840 );
-		return;
-	}
-	
-	CItem *packnum = mChar->GetPackItem();
-	if( !ValidateObject( packnum ) ) 
-	{ 
-		s->sysmessage( 841 ); 
-		return; 
-	}
-	
-	if( mChar->IsOnHorse() ) 
-		Effects->PlayCharacterAnimation( mChar, 0x1C );
-	else 
-		Effects->PlayCharacterAnimation( mChar, 0x0D );
-	Effects->PlaySound( s, 0x013E, true );
-	
-	if( !CheckSkill( mChar, LUMBERJACKING, 0, 1000 ) ) 
-	{
-		s->sysmessage( 842 );
-		if( logPart->logAmt > 0 && RandomNum( 1, 2 ) == 1 ) 
-			--logPart->logAmt;//Randomly deplete resources even when they fail 1/2 chance you'll loose wood.
-		return;
-	}
-	
-	if( logPart->logAmt > 0 ) 
-		--logPart->logAmt;
-
-	CItem *c = Items->CreateItem( s, mChar, 0x1BE0, 10, 0, OT_ITEM, true );
-	if( c == NULL )
-		return;
-	if( c->GetAmount() > 10 ) 
-		s->sysmessage( 1434 );
-	else 
-		s->sysmessage( 1435 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RegenerateLog( SI16 grX, SI16 grY )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Used by logging system to respawn the log resource
-//o---------------------------------------------------------------------------o
-void cSkills::RegenerateLog( SI16 grX, SI16 grY )
-{
-	SI16 logCeiling			= cwmWorldState->ServerData()->ResLogs();
-	UI16 logTimer			= cwmWorldState->ServerData()->ResLogTime();
-	resourceEntry *logPart	= &resources[grX][grY];
-	if( static_cast<UI32>(logPart->logTime) <= cwmWorldState->GetUICurrentTime() )
-	{
-		for( SI16 c = 0; c < logCeiling; ++c )
-		{
-			if( static_cast<UI32>(( logPart->logTime + ( c * logTimer * 1000 ) )) <= cwmWorldState->GetUICurrentTime() && logPart->logAmt < logCeiling )
-				++logPart->logAmt;
-			else 
-				break;
-		}
-		logPart->logTime = BuildTimeValue( static_cast<R32>(logTimer ));//10 more mins
-	}
-	
-	if( logPart->logAmt > logCeiling ) 
-		logPart->logAmt = logCeiling;
-	
 }
 
 //o---------------------------------------------------------------------------o
@@ -1307,7 +1194,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 				if( i->GetMadeWith() > 0 ) 
 					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 				else if( i->GetMadeWith() < 0 )
-					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith() - 1].madeword.c_str(), mCreater->GetName().c_str() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 				else
 					sprintf( temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() );
 		}
@@ -2824,10 +2711,6 @@ void cSkills::Load( void )
 	LoadCreateMenus();
 	Console.PrintDone();
 
-	Console << "Loading/initializing resources ";
-	LoadResourceData();
-	Console.PrintDone();
-
 	CJSMappingSection *skillSection = JSMapping->GetSection( SCPT_SKILLUSE );
 	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
 	{
@@ -2836,88 +2719,6 @@ void cSkills::Load( void )
 	}
 
 	Console.PrintSectionBegin();
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SaveResources( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Saves resource system info
-//o---------------------------------------------------------------------------o
-void cSkills::SaveResources( void )
-{
-	char wBuffer[2];
-	std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource.bin";
-	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
-	if( toWrite )
-	{
-		for( UI16 gridX = 0; gridX < 610; ++gridX )
-		{
-			for( UI16 gridY = 0; gridY < 410; ++gridY )
-			{
-				wBuffer[0] = static_cast<char>(resources[gridX][gridY].oreAmt>>8);
-				wBuffer[1] = static_cast<char>(resources[gridX][gridY].oreAmt%256);
-				toWrite.write( (const char *)&wBuffer, 2 );
-
-				wBuffer[0] = static_cast<char>(resources[gridX][gridY].logAmt>>8);
-				wBuffer[1] = static_cast<char>(resources[gridX][gridY].logAmt%256);
-				toWrite.write( (const char *)&wBuffer, 2 );
-			}
-		}
-		toWrite.close();
-	}
-	else // Can't save resources
-		Console.Error( 1, "Failed to open resource.bin for writing" );
-} 
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::LoadResourceData( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Loads resource system info
-//o---------------------------------------------------------------------------o
-void cSkills::LoadResourceData( void )
-{
-	SI16 resOre					= cwmWorldState->ServerData()->ResOre();
-	SI16 resLog					= cwmWorldState->ServerData()->ResLogs();
-	UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime() ));
-	UI32 logTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResLogTime()) );
-	std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource.bin";
-
-	char rBuffer[2];
-	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
-
-	bool fileExists				= ( toRead.is_open() );
-
-	if( fileExists )
-		toRead.seekg( 0, std::ios::beg );
-
-	for( UI16 gridX = 0; gridX < 610; ++gridX )
-	{
-		for( UI16 gridY = 0; gridY < 410; ++gridY )
-		{
-			if( fileExists )
-			{
-				toRead.read( rBuffer, 2 );
-				resources[gridX][gridY].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
-
-				toRead.read( rBuffer, 2 );
-				resources[gridX][gridY].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
-			}
-			else
-			{
-				resources[gridX][gridY].oreAmt  = resOre;
-				resources[gridX][gridY].logAmt  = resLog;
-			}
-			// No need to preserve time.  Do a refresh automatically
-			resources[gridX][gridY].oreTime = oreTime;
-			resources[gridX][gridY].logTime = logTime;
-		}
-	}
-	if( fileExists )
-		toRead.close();
 }
 
 //o---------------------------------------------------------------------------o
@@ -3064,20 +2865,14 @@ void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
-	VECSCRIPTLIST& toScan = FileLookup->GetFiles( create_def );
-	if( toScan.empty() )
-		return;
-	ScriptSection *toSearch = NULL;			// data in a particular section
-	UString tag;							// entry tag
-	UString data;							// entry data
-	UString UTag;
+	UString tag, data, UTag;
 	UI16 ourEntry;							// our actual entry number
-	for( VECSCRIPTLIST_CITERATOR toCheck = toScan.begin(); toCheck != toScan.end(); ++toCheck )
+	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
-		if( (*toCheck) == NULL )
+		if( ourScript == NULL )
 			continue;
-		Script *ourScript = (*toCheck);
-		for( toSearch = ourScript->FirstEntry(); toSearch != NULL; toSearch = ourScript->NextEntry() )
+
+		for( ScriptSection *toSearch = ourScript->FirstEntry(); toSearch != NULL; toSearch = ourScript->NextEntry() )
 		{
 			UString eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
@@ -3856,7 +3651,11 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 					}
 				}
 				else
-					Effects->playMonsterSound( target, target->GetID(), SND_IDLE );	// Play idle sound, if not human
+				{
+					UI16 toPlay = cwmWorldState->creatures[target->GetID()].GetSound( SND_IDLE );
+					if( toPlay != 0x00 )
+						Effects->PlaySound( target, toPlay );
+				}
 			}
 			else if( tSock != NULL )
 				tSock->sysmessage( 997, mChar->GetName().c_str() );

@@ -1,3 +1,35 @@
+9/18/2005 - giwo (0.98-3.0i [3.1 BETA])
+	Fixed an issue causing RESOURCELOGSRESPAWNTIMER to always use default setting.
+	Moved cSkills::resources into CMapWorlds() allowing it support for multiple worlds.
+	Fixed an issue with SetTempVar() when setting in parts.
+	Made skillnames scriptable via skills.dfn
+	Fixed a crash caused by increasing the total number of skills then loading a previous world.
+	Added support for BUSHIDO and NINJITSU skills (note these are not implemented yet).
+	Enabled support for NECROMANCY, FOCUS, and CHIVALRY (note these are not implemented yet).
+	Removed some superfluous code in uoxstruct.h
+	Added First/Next/Finished wrappers for iterating through lists of Script files.
+	Optimizations to the weather.dfn loading code
+	Optimizations to the skills.dfn loading code.
+	Optimizations to the spells.dfn loading code.
+	Modified loading of creatures.dfn to load entries beyond 2048.
+	Added 5 tags to creatures.dfn in place of BASESOUND and SOUNDFLAGS
+		SOUND_IDLE 		- The sound the creature makes while standing around
+		SOUND_STARTATTACK 	- The sound the creature makes when it enters combat
+		SOUND_ATTACK 		- The sound the creature makes when attacking
+		SOUND_DEFEND 		- The sound the creature makes when defending
+		SOUND_DIE 		- THe sound the creature makes upon death
+	Moved Sword use functionality out to JS (for carving kindling, corpses, etc )
+	Moved Axe use functionality out to JS (for chopping trees, carving corpses, etc )
+	Added JS item property "carveSection" and method Carve().
+	Added JS Functions ResourceArea(), ResourceTime(), ResourceAmount() and ResourceRegion()
+		The first 3 can be used to Get/Set system settings, using the options "LOGS" or "ORE"
+		ResourceRegion() returns a resource object allowing JS to modify resource data.
+	Exposed the resource data to the JS engine for modification, props are:
+		logAmount
+		logTime
+		oreAmount
+		oreTime
+
 9/13/2005 - giwo (0.98-3.0h [3.1 BETA])
 	Modified MapRegions to allow handling of a variable number of words.
 	Added maps.dfn to allow customizing UOX3's map handling.

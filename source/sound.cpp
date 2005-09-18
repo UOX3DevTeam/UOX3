@@ -188,55 +188,6 @@ void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playMonsterSound( CChar *monster, UI16 id, monsterSound sfx )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Play proper sound effect based on monsters skin
-//o---------------------------------------------------------------------------o
-void cEffects::playMonsterSound( CChar *monster, UI16 id, monsterSound sfx )
-{
-	UI16 basesound	= cwmWorldState->creatures[id].BaseSound();
-	UI08 offset		= sfx;
-	if( basesound != 0 )
-	{
-		switch( cwmWorldState->creatures[id].SoundFlag() )
-		{
-			case 0: break; // in normal case the offset is correct
-			case 1: break; // birds sounds will be implmented later
-			case 2:  // only start-attack, attack & dýing sounds available
-				switch( sfx )
-				{
-					case SND_IDLE:
-					case SND_DEFEND:	offset = 0xFF;		break;	// idle, defend
-					case SND_ATTACK:	offset = 1;			break; // correct offset
-					case SND_DIE:		offset = 2;			break;
-				}
-				break;
-			case 3: // only start-attack, attack, defense & dying
-				switch( sfx )
-				{
-					case SND_IDLE:		offset = 0xFF;		break;
-					case SND_ATTACK:
-					case SND_DEFEND:
-					case SND_DIE:		offset = sfx - 1;	break;
-				}
-				break;
-			case 4: // only a single sound
-				if( sfx != SND_STARTATTACK ) 
-					offset = 0xFF; 
-				else 
-					offset = 0;
-				break;
-		}
-		
-		basesound += offset;
-		
-		if( offset != 0xFF ) 
-			PlaySound( monster, basesound );
-	}
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void cEffects::playDeathSound( CChar *i )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -267,7 +218,11 @@ void cEffects::playDeathSound( CChar *i )
 		}
 	}
 	else
-		playMonsterSound( i, i->GetOrgID(), SND_DIE );
+	{
+		UI16 toPlay = cwmWorldState->creatures[i->GetOrgID()].GetSound( SND_DIE );
+		if( toPlay != 0x00 )
+			Effects->PlaySound( i, toPlay );
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -322,10 +277,10 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 		if( xx > 2048 )
 			return;
 
-		basesound = cwmWorldState->creatures[xx].BaseSound();
-		if( basesound != 0 )
+		basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
+		if( basesound != 0x00 )
 		{
-			switch( cwmWorldState->creatures[xx].SoundFlag() ) // play only idle sounds, if there arnt any, dont play them !
+/*			switch( cwmWorldState->creatures[xx].SoundFlag() ) // play only idle sounds, if there arnt any, dont play them !
 			{
 				case 0:	++basesound;	break;	// normal case -> play idle sound
 				case 1:	++basesound;	break;	// birds sounds will be implmented later
@@ -336,10 +291,11 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 			
 			if( basesound != 0 ) // bugfix lb
 			{
-				CPPlaySoundEffect toSend = (*soundSrc);
-				toSend.Model( basesound );
-				mSock.Send( &toSend );
-			}
+*/
+			CPPlaySoundEffect toSend = (*soundSrc);
+			toSend.Model( basesound );
+			mSock.Send( &toSend );
+//			}
 		}
 	}
 	else // play random mystic-sounds also if no creature is in range

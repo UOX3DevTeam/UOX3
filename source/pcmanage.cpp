@@ -738,8 +738,8 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack )
 	iCorpse->SetDecayable( true );
 	iCorpse->SetName2( mChar.GetName().c_str() );
 	iCorpse->SetType( IT_CONTAINER );
-	iCorpse->SetTempVar( CITV_MOREY, canCarve, 1 );
-	iCorpse->SetTempVar( CITV_MOREY, mChar.isHuman(), 2 );
+	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
+	iCorpse->SetTempVar( CITV_MOREY, 2, mChar.isHuman() );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
 	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
 	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ));

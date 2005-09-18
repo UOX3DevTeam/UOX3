@@ -270,7 +270,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				SI16 skill = -1;
 				for( UI08 i = 0; i < ALLSKILLS; ++i )
 				{
-					if( findString( UText, skillname[i] ) )
+					if( findString( UText, cwmWorldState->skill[i].name ) )
 					{
 						skill = i;  //Leviathan fix
 						break;
@@ -290,7 +290,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							sprintf( temp2, "%s, ", UString( skillname[j] ).lower().c_str() );
+							sprintf( temp2, "%s, ", UString( cwmWorldState->skill[j].name ).lower().c_str() );
 							if( !skillsToTrainIn ) 
 								temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it.
 							strcat( temp, temp2 );
@@ -314,7 +314,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					}
 					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
 					{
-						sprintf( temp, Dictionary->GetEntry( 1304 ).c_str(), UString( skillname[skill] ).lower().c_str() );
+						sprintf( temp, Dictionary->GetEntry( 1304 ).c_str(), UString( cwmWorldState->skill[skill].name ).lower().c_str() );
 						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 )
 							strcat( temp, Dictionary->GetEntry( 1305 ).c_str() );
 						else

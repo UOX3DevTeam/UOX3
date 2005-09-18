@@ -2542,12 +2542,11 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_BEGGING:			skillToSet = BEGGING;							break;
 				case DFNTAG_BLACKSMITHING:		skillToSet = BLACKSMITHING;						break;
 				case DFNTAG_BOWCRAFT:			skillToSet = BOWCRAFT;							break;
+				case DFNTAG_BUSHIDO:			skillToSet = BUSHIDO;							break;
 				case DFNTAG_CAMPING:			skillToSet = CAMPING;							break;
 				case DFNTAG_CARPENTRY:			skillToSet = CARPENTRY;							break;
 				case DFNTAG_CARTOGRAPHY:		skillToSet = CARTOGRAPHY;						break;
-#ifdef __NEW_SKILLS__
 				case DFNTAG_CHIVALRY:			skillToSet = CHIVALRY;							break;
-#endif
 				case DFNTAG_COOKING:			skillToSet = COOKING;							break;
 				case DFNTAG_DEX:				applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 				case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;					break;
@@ -2575,9 +2574,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_FAME:				applyTo->SetFame( static_cast<SI16>(ndata) );	break;
 				case DFNTAG_FENCING:			skillToSet = FENCING;							break;
 				case DFNTAG_FISHING:			skillToSet = FISHING;							break;
-#ifdef __NEW_SKILLS__
 				case DFNTAG_FOCUS:				skillToSet = FOCUS;								break;
-#endif
 				case DFNTAG_FORENSICS:			skillToSet = FORENSICS;							break;
 				case DFNTAG_HEALING:			skillToSet = HEALING;							break;
 				case DFNTAG_HERDING:			skillToSet = HERDING;							break;
@@ -2609,9 +2606,8 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_MEDITATION:			skillToSet = MEDITATION;					break;
 				case DFNTAG_MINING:				skillToSet = MINING;						break;
 				case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;					break;
-#ifdef __NEW_SKILLS__
 				case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;					break;
-#endif
+				case DFNTAG_NINJITSU:			skillToSet = NINJITSU;						break;
 				case DFNTAG_PARRYING:			skillToSet = PARRYING;						break;
 				case DFNTAG_PEACEMAKING:		skillToSet = PEACEMAKING;					break;
 				case DFNTAG_POISONING:			skillToSet = POISONING;						break;

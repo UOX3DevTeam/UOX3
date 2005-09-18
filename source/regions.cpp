@@ -121,7 +121,6 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 //|	Function		-	CDataList< CItem * > * GetItemList( void )
 //|	Date			-	Unknown
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the Item DataList for iteration
 //o--------------------------------------------------------------------------o
@@ -134,7 +133,6 @@ CDataList< CItem * > * CMapRegion::GetItemList( void )
 //|	Function		-	CDataList< CChar * > * GetCharList( void )
 //|	Date			-	Unknown
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the Character DataList for iteration
 //o--------------------------------------------------------------------------o
@@ -147,7 +145,6 @@ CDataList< CChar * > * CMapRegion::GetCharList( void )
 //|	Function		-	CMapRegion * GetMapRegion( SI16 xOffset, SI16 yOffset )
 //|	Date			-	9/13/2005
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the MapRegion based on its x and y offsets
 //o--------------------------------------------------------------------------o
@@ -160,10 +157,9 @@ CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	SI16 CMapWorld::UpperX()
+//|	Function		-	SI16 UpperX()
 //|	Date			-	9/13/2005
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Gets/Sets the upper X boundry of the array
 //o--------------------------------------------------------------------------o
@@ -177,10 +173,9 @@ void CMapWorld::SetUpperX( SI16 newVal )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	SI16 CMapWorld::UpperY()
+//|	Function		-	SI16 UpperY()
 //|	Date			-	9/13/2005
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Gets/Sets the upper Y boundry of the array
 //o--------------------------------------------------------------------------o
@@ -194,10 +189,146 @@ void CMapWorld::SetUpperY( SI16 newVal )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	UI16 ResourceX()
+//|	Date			-	9/17/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Gets/Sets the resource X boundry of the array
+//o--------------------------------------------------------------------------o
+UI16 CMapWorld::GetResourceX( void ) const
+{
+	return resourceX;
+}
+void CMapWorld::SetResourceX( UI16 newVal )
+{
+	resourceX = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	UI16 ResourceY()
+//|	Date			-	9/17/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Gets/Sets the resource Y boundry of the array
+//o--------------------------------------------------------------------------o
+UI16 CMapWorld::GetResourceY( void ) const
+{
+	return resourceY;
+}
+void CMapWorld::SetResourceY( UI16 newVal )
+{
+	resourceY = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	Resource_st& GetResource( SI16 x, SI16 y )
+//|	Date			-	9/17/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Returns the Resource region x and y is.
+//o--------------------------------------------------------------------------o
+MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
+{
+	const UI16 gridX = (x / cwmWorldState->ServerData()->ResOreArea());
+	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
+
+	const UI32 resIndex = ((gridX * resourceX) + gridY);
+	return mapResources[resIndex];
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void SaveResources( UI08 worldNum )
+//|	Date			-	9/17/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Saves the Resource data to disk
+//o--------------------------------------------------------------------------o
+void CMapWorld::SaveResources( UI08 worldNum )
+{
+	char wBuffer[2];
+	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + UString::number( worldNum ) + "].bin";
+	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
+
+	UI32 resIndex = 0;
+	if( toWrite )
+	{
+		for( UI16 gridX = 0; gridX < resourceX; ++gridX )
+		{
+			for( UI16 gridY = 0; gridY < resourceY; ++gridY )
+			{
+				wBuffer[0] = static_cast<char>(mapResources[resIndex].oreAmt>>8);
+				wBuffer[1] = static_cast<char>(mapResources[resIndex].oreAmt%256);
+				toWrite.write( (const char *)&wBuffer, 2 );
+
+				wBuffer[0] = static_cast<char>(mapResources[resIndex].logAmt>>8);
+				wBuffer[1] = static_cast<char>(mapResources[resIndex].logAmt%256);
+				toWrite.write( (const char *)&wBuffer, 2 );
+				++resIndex;
+			}
+		}
+		toWrite.close();
+	}
+	else // Can't save resources
+		Console.Error( 1, "Failed to open resource.bin for writing" );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void LoadResources( UI08 worldNum )
+//|	Date			-	9/17/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Loads the Resource data from the disk
+//o--------------------------------------------------------------------------o
+void CMapWorld::LoadResources( UI08 worldNum )
+{
+	const SI16 resOre				= cwmWorldState->ServerData()->ResOre();
+	const SI16 resLog				= cwmWorldState->ServerData()->ResLogs();
+	const UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime() ));
+	const UI32 logTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResLogTime()) );
+	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + UString::number( worldNum ) + "].bin";
+
+	char rBuffer[2];
+	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
+
+	bool fileExists				= ( toRead.is_open() );
+
+	if( fileExists )
+		toRead.seekg( 0, std::ios::beg );
+
+	UI32 resIndex = 0;
+	for( UI16 gridX = 0; gridX < resourceX; ++gridX )
+	{
+		for( UI16 gridY = 0; gridY < resourceY; ++gridY )
+		{
+			if( fileExists )
+			{
+				toRead.read( rBuffer, 2 );
+				mapResources[resIndex].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+
+				toRead.read( rBuffer, 2 );
+				mapResources[resIndex].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+
+				fileExists = toRead.eof();
+			}
+			else
+			{
+				mapResources[resIndex].oreAmt  = resOre;
+				mapResources[resIndex].logAmt  = resLog;
+			}
+			// No need to preserve time.  Do a refresh automatically
+			mapResources[resIndex].oreTime = oreTime;
+			mapResources[resIndex].logTime = logTime;
+			++resIndex;
+		}
+	}
+	if( fileExists )
+		toRead.close();
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	CMapHandler Constructor/Destructor
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Initializes / Clears the MapWorld data
 //o--------------------------------------------------------------------------o
@@ -212,6 +343,8 @@ CMapHandler::CMapHandler()
 		MapData_st& mMap = Map->GetMapData( i );
 		mWorld->SetUpperX( mMap.xBlock / MapColSize );
 		mWorld->SetUpperY( mMap.yBlock / MapRowSize );
+		mWorld->SetResourceX( mMap.xBlock / cwmWorldState->ServerData()->ResOreArea() );
+		mWorld->SetResourceY( mMap.yBlock / cwmWorldState->ServerData()->ResOreArea() );
 		mapWorlds.push_back( mWorld );
 	}
 }
@@ -228,7 +361,6 @@ CMapHandler::~CMapHandler()
 //|	Function		-	bool Add( CBaseObject *toAdd )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Adds specified object to the MapRegion
 //o--------------------------------------------------------------------------o
@@ -246,7 +378,6 @@ bool CMapHandler::Add( CBaseObject *toAdd )
 //|	Function		-	bool Remove( CBaseObject *toRemove )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Removes specified object to the MapRegion
 //o--------------------------------------------------------------------------o
@@ -264,7 +395,6 @@ bool CMapHandler::Remove( CBaseObject *toRemove )
 //|	Function		-	bool AddItem( CItem *nItem )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Adds nItem to the proper SubRegion
 //o--------------------------------------------------------------------------o
@@ -285,7 +415,6 @@ bool CMapHandler::AddItem( CItem *nItem )
 //|	Function		-	bool RemoveItem( CItem *nItem )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Removes nItem from it's CURRENT SubRegion
 //|					-	Do this before adjusting the location
@@ -307,7 +436,6 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 //|	Function		-	bool AddChar( CChar *toAdd )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Adds toAdd to the proper SubRegion
 //o--------------------------------------------------------------------------o
@@ -328,7 +456,6 @@ bool CMapHandler::AddChar( CChar *toAdd )
 //|	Function		-	bool RemoveChar( CChar *toRemove )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Removes toRemove from it's CURRENT SubRegion
 //|					-	Do this before adjusting the location
@@ -350,7 +477,6 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 //|	Function		-	SI16 GetGridX( SI16 x )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Find the Column of SubRegion we want based on location
 //o--------------------------------------------------------------------------o
@@ -363,7 +489,6 @@ SI16 CMapHandler::GetGridX( SI16 x )
 //|	Function		-	SI16 GetGridY( SI16 y )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Finds the Row of SubRegion we want based on location
 //o--------------------------------------------------------------------------o
@@ -376,7 +501,6 @@ SI16 CMapHandler::GetGridY( SI16 y )
 //|	Function		-	CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the MapRegion based on the offsets
 //o--------------------------------------------------------------------------o
@@ -393,7 +517,6 @@ CMapRegion *CMapHandler::GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNum
 //|	Function		-	CMapRegion *GetMapRegion( SI16 x, SI16 y )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the subregion that x,y is in
 //o--------------------------------------------------------------------------o
@@ -406,7 +529,6 @@ CMapRegion *CMapHandler::GetMapRegion( CBaseObject *mObj )
 //|	Function		-	CMapWorld *	GetMapWorld( UI08 worldNum )
 //|	Date			-	9/13/2005
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Returns the MapWorld object associated with the worldNumber
 //o--------------------------------------------------------------------------o
@@ -419,10 +541,24 @@ CMapWorld *	CMapHandler::GetMapWorld( UI08 worldNum )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	CMapWorld *	GetMapWorld( UI08 worldNum )
+//|	Date			-	9/13/2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Returns the MapWorld object associated with the worldNumber
+//o--------------------------------------------------------------------------o
+MapResource_st * CMapHandler::GetResource( SI16 x, SI16 y, UI08 worldNum )
+{
+	MapResource_st *resData = NULL;
+	if( worldNum < mapWorlds.size() )
+		resData = &mapWorlds[worldNum]->GetResource( x, y );
+	return resData;
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	REGIONLIST PopulateList( CBaseObject *mObj )
 //|	Date			-	Unknown
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Creates a list of nearby MapRegions based on the object provided
 //o--------------------------------------------------------------------------o
@@ -435,7 +571,6 @@ REGIONLIST CMapHandler::PopulateList( CBaseObject *mObj )
 //|	Function		-	REGIONLIST PopulateList( SI16 x, SI16 y, UI08 worldNumber )
 //|	Date			-	Unknown
 //|	Programmer		-	giwo
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Creates a list of nearby MapRegions based on the coordinates provided
 //o--------------------------------------------------------------------------o
@@ -463,7 +598,6 @@ REGIONLIST CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber )
 //|	Function		-	Save()
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
-//|	Modified		-
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Saves out the MapRegions
 //o--------------------------------------------------------------------------o
@@ -505,7 +639,7 @@ void CMapHandler::Save( void )
 			{
 				for( UI08 yCnt = 0; yCnt < 8; ++yCnt )				// walk the row
 				{
-					for( std::vector< CMapWorld * >::iterator mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
+					for( WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
 					{
 						++count;
 						if( count%onePercent == 0 )
@@ -547,6 +681,13 @@ void CMapHandler::Save( void )
 
 	const UI32 e_t = getclock();
 	Console.Print( "World saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
+
+	UI08 i = 0;
+	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
+	{
+		(*wIter)->SaveResources( i );
+		++i;
+	}
 }
 
 bool PostLoadFunctor( CBaseObject *a, UI32 &b, void *extraData )
@@ -632,6 +773,13 @@ void CMapHandler::Load( void )
 
 	UI32 e_t = getclock();
 	Console.Print( "ASCII world loaded in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
+
+	UI08 i = 0;
+	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
+	{
+		(*wIter)->LoadResources( i );
+		++i;
+	}
 }
 
 //o--------------------------------------------------------------------------o

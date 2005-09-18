@@ -16,27 +16,9 @@
 //o---------------------------------------------------------------------------o
 
 #include "uox3.h"
-#include "cThreadQueue.h"
 
 namespace UOX
 {
-
-//o---------------------------------------------------------------------------o
-// Item / Character Variables
-//o---------------------------------------------------------------------------o
-const char skillname[SKILLS+1][20]={
-"ALCHEMY", "ANATOMY", "ANIMALLORE", "ITEMID", "ARMSLORE", "PARRYING", "BEGGING", "BLACKSMITHING", "BOWCRAFT",
-"PEACEMAKING", "CAMPING", "CARPENTRY", "CARTOGRAPHY", "COOKING", "DETECTINGHIDDEN", "ENTICEMENT", "EVALUATINGINTEL",
-"HEALING", "FISHING", "FORENSICS", "HERDING", "HIDING", "PROVOCATION", "INSCRIPTION", "LOCKPICKING", "MAGERY",
-"MAGICRESISTANCE", "TACTICS", "SNOOPING", "MUSICIANSHIP", "POISONING", "ARCHERY", "SPIRITSPEAK", "STEALING",
-"TAILORING", "TAMING", "TASTEID", "TINKERING", "TRACKING", "VETERINARY", "SWORDSMANSHIP", "MACEFIGHTING", "FENCING",
-#ifdef __NEW_SKILLS__
-"WRESTLING", "LUMBERJACKING", "MINING", "MEDITATION", "STEALTH", "REMOVETRAPS", "NECROMANCY", "FOCUS", "CHIVALRY",
-#else
-"WRESTLING", "LUMBERJACKING", "MINING", "MEDITATION", "STEALTH", "REMOVETRAPS",
-#endif
-"ALLSKILLS", "STR", "DEX", "INT", "FAME", "KARMA"
-};
 
 //o---------------------------------------------------------------------------o
 // Classes Definitions

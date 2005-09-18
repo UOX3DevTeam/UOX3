@@ -154,20 +154,23 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 //o--------------------------------------------------------------------------
 UI08 CItem::GetTempVar( CITempVars whichVar, UI08 part ) const
 {
-	if( whichVar == CITV_COUNT )
-		return 0;
+	UI08 rVal = 0;
 
-	switch( part )
+	if( whichVar != CITV_COUNT )
 	{
-		default:
-		case 1:		return static_cast<UI08>(tempVars[whichVar]>>24);
-		case 2:		return static_cast<UI08>(tempVars[whichVar]>>16);
-		case 3:		return static_cast<UI08>(tempVars[whichVar]>>8);
-		case 4:		return static_cast<UI08>(tempVars[whichVar]%256);
+
+		switch( part )
+		{
+			default:
+			case 1:		rVal = static_cast<UI08>(tempVars[whichVar]>>24);	break;
+			case 2:		rVal = static_cast<UI08>(tempVars[whichVar]>>16);	break;
+			case 3:		rVal = static_cast<UI08>(tempVars[whichVar]>>8);	break;
+			case 4:		rVal = static_cast<UI08>(tempVars[whichVar]%256);	break;
+		}
 	}
-	return static_cast<UI08>(tempVars[whichVar]>>24);
+	return rVal;
 }
-void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal )
+void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 {
 	if( whichVar == CITV_COUNT )
 		return;
@@ -176,13 +179,14 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI32 newVal )
 	UI08 part2 = static_cast<UI08>(tempVars[whichVar]>>16);
 	UI08 part3 = static_cast<UI08>(tempVars[whichVar]>>8);
 	UI08 part4 = static_cast<UI08>(tempVars[whichVar]%256);
+
 	switch( part )
 	{
 		default:
-		case 1:		part1 = (newVal>>24);		break;
-		case 2:		part2 = (newVal>>16);		break;
-		case 3:		part3 = (newVal>>8);		break;
-		case 4:		part4 = (newVal%256);		break;
+		case 1:		part1 = newVal;		break;
+		case 2:		part2 = newVal;		break;
+		case 3:		part3 = newVal;		break;
+		case 4:		part4 = newVal;		break;
 	}
 	tempVars[whichVar] = (part1<<24) + (part2<<16) + (part3<<8) + part4;
 }

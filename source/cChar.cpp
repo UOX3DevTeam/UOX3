@@ -2910,6 +2910,9 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					for( UI08 skillCtr = 0; skillCtr < ALLSKILLS; ++skillCtr )
 					{
 						UString tempdata	= data.section( "-", skillCtr, skillCtr ).stripWhiteSpace();
+						if( tempdata.empty() )
+							break;
+
 						UString tempval		= tempdata.section( ",", 1, 1 ).substr( 0, tempdata.section( ",", 1, 1 ).size() - 1 );
 						UString tempnum		= tempdata.section( ",", 0, 0 ).substr( 1 );
 						SetBaseSkill( tempval.toUShort(), tempnum.toUByte() );
@@ -3267,6 +3270,9 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					for( UI08 lockCtr = 0; lockCtr < ALLSKILLS; ++lockCtr )
 					{
 						UString tempdata = data.section( "-", lockCtr, lockCtr ).stripWhiteSpace();
+						if( tempdata.empty() )
+							break;
+
 						UString tempval = tempdata.section( ",", 1, 1 ).substr( 0, tempdata.section( ",", 1, 1 ).size() - 1 );
 						UString tempnum = tempdata.section( ",", 0, 0 ).substr( 1 );
 						SetSkillLock( tempval.toUByte(), tempnum.toUByte() );

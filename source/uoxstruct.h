@@ -7,7 +7,7 @@ namespace UOX
 class CCreatures
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying, see uox.h)
+	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying)
     //             1: birds .. only one "bird-shape" and zillions of sounds ...
 	//             2: only 3 sounds ->  (attack,defence,dying)    
 	//             3: only 4 sounds ->   (attack-started,attack,defnce,dying)
@@ -21,42 +21,34 @@ class CCreatures
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-	UI16 basesound;
-	UI08 soundflag;
+	UI16 soundList[SND_COUNT];
 	UI08 who_am_i; 
 	UI16 icon;
 public:
-			CCreatures() : basesound( 0 ), soundflag( 0 ), who_am_i( 0 ), icon( 0 )
+			CCreatures() : who_am_i( 0 ), icon( 0 )
 			{
+				memset( soundList, 0x00, SND_COUNT );
 			}
-	UI16	BaseSound( void ) const
+	UI16	GetSound( monsterSound soundType ) const
 	{
-		return basesound;
+		return soundList[static_cast<UI08>(soundType)];
+	}
+	void	SetSound( monsterSound soundType, UI16 newVal )
+	{
+		soundList[static_cast<UI08>(soundType)] = newVal;
 	}
 	UI16	Icon( void ) const
 	{
 		return icon;
-	}
-	UI08	SoundFlag( void ) const
-	{
-		return soundflag;
 	}
 	UI08	WhoAmI( void ) const
 	{
 		return who_am_i;
 	}
 
-	void	BaseSound( UI16 value )
-	{
-		basesound = value;
-	}
 	void	Icon( UI16 value )
 	{
 		icon = value;
-	}
-	void	SoundFlag( UI08 value )
-	{
-		soundflag = value;
 	}
 	void	WhoAmI( UI08 value )
 	{
@@ -429,28 +421,14 @@ struct advance_st
 	UI16 failure;
 };
 
-// Scriptable Murder Tags - Zane
-struct MurderPair
+struct TitlePair_st
 {
-	SI16 loBound;
+	SI16 lowBound;
 	std::string toDisplay;
-	MurderPair() : loBound( 0 )
+	TitlePair_st() : lowBound( 0 ), toDisplay( "" )
 	{
 	}
-	MurderPair( SI16 lB, const std::string toDisp ) : loBound( lB )
-	{
-		toDisplay = toDisp;
-	}
-};
-
-struct ProwessTitle
-{
-	SI16 minBaseSkill;
-	std::string toDisplay;
-	ProwessTitle() : minBaseSkill( 0 )
-	{
-	}
-	ProwessTitle( SI16 mBS, const std::string toDisp ) : minBaseSkill( mBS )
+	TitlePair_st( SI16 lB, const std::string toDisp ) : lowBound( lB )
 	{
 		toDisplay = toDisp;
 	}

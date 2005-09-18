@@ -46,6 +46,8 @@ JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CScriptSectionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
 }
 

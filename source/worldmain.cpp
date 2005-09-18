@@ -641,7 +641,6 @@ void CWorldMain::SaveNewWorld( bool x )
 		MapRegion->Save(); 
 		GuildSys->Save();
 		JailSys->WriteData();
-		Skills->SaveResources();
 		Effects->SaveEffects();
 		SaveStatistics();
 

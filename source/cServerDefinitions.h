@@ -55,8 +55,10 @@ class CServerDefinitions
 {
 private:
 	std::vector< VECSCRIPTLIST >			ScriptListings;
-	std::map< std::string, SI16 >	priorityMap;
-	SI16							defaultPriority;
+	VECSCRIPTLIST_ITERATOR					slIter;
+
+	std::map< std::string, SI16 >			priorityMap;
+	SI16									defaultPriority;
 
 	void				LoadDFNCategory( DEFINITIONCATEGORIES toLoad );
 	void				ReloadScriptObjects( void );
@@ -77,8 +79,11 @@ public:
 	ScriptSection	*	FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind );
 	size_t				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
 	size_t				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
-	VECSCRIPTLIST&		GetFiles( DEFINITIONCATEGORIES typeToFind );
 	void				DisplayPriorityMap( void );
+
+	Script			*	FirstScript( DEFINITIONCATEGORIES typeToFind );
+	Script			*	NextScript( DEFINITIONCATEGORIES typeToFind );
+	bool				FinishedScripts( DEFINITIONCATEGORIES typeToFind );
 };
 
 extern CServerDefinitions *FileLookup;

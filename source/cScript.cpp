@@ -108,6 +108,10 @@ static JSFunctionSpec my_functions[] =
 	{ "GetSocketFromIndex",			SE_GetSocketFromIndex,		1, 0, 0 },
 	{ "StaticAt",					SE_StaticAt,				4, 0, 0 },
 	{ "StaticInRange",				SE_StaticInRange,			5, 0, 0 },
+	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
+	{ "ResourceAmount",				SE_ResourceAmount,			2, 0, 0 },
+	{ "ResourceTime",				SE_ResourceTime,			2, 0, 0 },
+	{ "ResourceRegion",				SE_ResourceRegion,			3, 0, 0 },
  	
 	{ "RegisterCommand",			SE_RegisterCommand,			3, 0, 0 },
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },
@@ -196,6 +200,7 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 	CAccountProto		=	JS_InitClass( targContext, targObject, targObject, &UOXAccount_class, NULL, 0, CAccountProperties, CAccount_Methods, CAccountProperties, CAccount_Methods );
 	CConsoleProto		=	JS_InitClass( targContext, targObject, targObject, &UOXConsole_class, NULL, 0, CConsoleProperties, CConsole_Methods, CConsoleProperties, CConsole_Methods );
 	RegionProto			=	JS_InitClass( targContext, targObject, targObject, &UOXRegion_class, NULL, 0, CRegionProperties, NULL, CRegionProperties, NULL );
+	ResourceProto		=	JS_InitClass( targContext, targObject, targObject, &UOXResource_class, NULL, 0, CResourceProperties, NULL, CResourceProperties, NULL );
 	// Init the global Spells[] object
 	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 	JS_DefineObject( targContext, targObject, "Accounts", &UOXAccount_class, CAccountProto, 0 );

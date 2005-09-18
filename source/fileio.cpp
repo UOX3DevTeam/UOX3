@@ -422,7 +422,7 @@ void LoadCustomTitle( void )
 	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
 	{
 		data = CustomTitle->GrabData();
-		cwmWorldState->prowessTitles.push_back( ProwessTitle( tag.toShort(), data ) );
+		cwmWorldState->prowessTitles.push_back( TitlePair_st( tag.toShort(), data ) );
 	}
 
 	CustomTitle = FileLookup->FindEntry( "FAME", titles_def );
@@ -442,7 +442,7 @@ void LoadCustomTitle( void )
 	for( tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next() )
 	{
 		data = CustomTitle->GrabData();
-		cwmWorldState->murdererTags.push_back( MurderPair( tag.toShort(), data ) );
+		cwmWorldState->murdererTags.push_back( TitlePair_st( tag.toShort(), data ) );
 	}
 
 	FileLookup->Dispose( titles_def );
@@ -456,46 +456,57 @@ void LoadCustomTitle( void )
 //o---------------------------------------------------------------------------o
 void LoadSkills( void )
 {
-	UString sect;
-	ScriptSection *SkillList = NULL;
-	UString tag;
-	UString data;
-	UString UTag;
-	for( UI08 i = 0; i <= ALLSKILLS + 3; ++i)
+
+	UString skEntry;
+	UString tag, data, UTag;
+	UI08 i = 0;
+	for( Script *creatScp = FileLookup->FirstScript( skills_def ); !FileLookup->FinishedScripts( skills_def ); creatScp = FileLookup->NextScript( skills_def ) )
 	{
-		cwmWorldState->skill[i].strength		= 0;
-		cwmWorldState->skill[i].dexterity		= 0;
-		cwmWorldState->skill[i].intelligence	= 0;
-		cwmWorldState->skill[i].madeword		= "made";
-		sect = "SKILL " + UString::number( i );
-		SkillList = FileLookup->FindEntry( sect, skills_def );
-		if( SkillList != NULL )
+		if( creatScp == NULL )
+			continue;
+
+		for( ScriptSection *SkillList = creatScp->FirstEntry(); SkillList != NULL; SkillList = creatScp->NextEntry() )
 		{
-			for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )
+			if( SkillList == NULL )
+				continue;
+
+			skEntry = creatScp->EntryName();
+			if( skEntry.section( " ", 0, 0 ) == "SKILL" )
 			{
-				UTag = tag.upper();
-				data = SkillList->GrabData();
-				if( UTag == "STR" )
-					cwmWorldState->skill[i].strength = data.toUShort();
-				else if( UTag == "DEX" )
-					cwmWorldState->skill[i].dexterity = data.toUShort();
-				else if( UTag == "INT" )
-					cwmWorldState->skill[i].intelligence = data.toUShort();
-				else if( UTag == "SKILLPOINT" )
+				i = skEntry.section( " ", 1, 1 ).toUByte();
+				if( i <= ALLSKILLS+3 )
 				{
-					advance_st tempAdvance;
-					data = data.simplifyWhiteSpace();
-					tempAdvance.base	= data.section( " ", 0, 0 ).toUShort();
-					tempAdvance.success = data.section( " ", 1, 1 ).toUShort();
-					tempAdvance.failure = data.section( " ", 2, 2 ).toUShort();
-					cwmWorldState->skill[i].advancement.push_back( tempAdvance );
+					cwmWorldState->skill[i].ResetDefaults();
+					for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )
+					{
+						UTag = tag.upper();
+						data = SkillList->GrabData();
+						if( UTag == "STR" )
+							cwmWorldState->skill[i].strength = data.toUShort();
+						else if( UTag == "DEX" )
+							cwmWorldState->skill[i].dexterity = data.toUShort();
+						else if( UTag == "INT" )
+							cwmWorldState->skill[i].intelligence = data.toUShort();
+						else if( UTag == "SKILLPOINT" )
+						{
+							advance_st tempAdvance;
+							data = data.simplifyWhiteSpace();
+							tempAdvance.base	= data.section( " ", 0, 0 ).toUShort();
+							tempAdvance.success = data.section( " ", 1, 1 ).toUShort();
+							tempAdvance.failure = data.section( " ", 2, 2 ).toUShort();
+							cwmWorldState->skill[i].advancement.push_back( tempAdvance );
+						}
+						else if( UTag == "MADEWORD" )
+							cwmWorldState->skill[i].madeword = data.stripWhiteSpace();
+						else if( UTag == "NAME" )
+							cwmWorldState->skill[i].name = data.stripWhiteSpace();
+						else
+							Console.Warning( 2, "Unknown tag in skills.dfn: %s", data.stripWhiteSpace() );
+					}
 				}
-				else if( UTag == "MADEWORD" )
-					cwmWorldState->skill[i].madeword = data.stripWhiteSpace();
 			}
 		}
 	}
-
 	FileLookup->Dispose( skills_def );
 }
 
@@ -509,16 +520,11 @@ void LoadSpawnRegions( void )
 {
 	spawnregions.resize( 0 );
 	UI16 i					= 0;
-	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( spawn_def );
-	if( tScn.empty() )
-		return;
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
+	for( Script *spnScp = FileLookup->FirstScript( spawn_def ); !FileLookup->FinishedScripts( spawn_def ); spnScp = FileLookup->NextScript( spawn_def ) )
 	{
-		Script *spnScp = (*lIter);
 		if( spnScp == NULL )
 			continue;
-		for( toScan = spnScp->FirstEntry(); toScan != NULL; toScan = spnScp->NextEntry() )
+		for( ScriptSection *toScan = spnScp->FirstEntry(); toScan != NULL; toScan = spnScp->NextEntry() )
 		{
 			if( toScan == NULL )
 				continue;
@@ -550,20 +556,14 @@ void LoadRegions( void )
 		ourRegions = new Script( regionsFile, NUM_DEFS, false );
 	}
 
-	UI08 i					= 0;
-	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( regions_def );
-	if( tScn.empty() )
-		return;
-
+	UI08 i = 0;
 	UString regEntry;
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
+	for( Script *regScp = FileLookup->FirstScript( regions_def ); !FileLookup->FinishedScripts( regions_def ); regScp = FileLookup->NextScript( regions_def ) )
 	{
-		Script *regScp = (*lIter);
 		if( regScp == NULL )
 			continue;
 
-		for( toScan = regScp->FirstEntry(); toScan != NULL; toScan = regScp->NextEntry() )
+		for( ScriptSection *toScan = regScp->FirstEntry(); toScan != NULL; toScan = regScp->NextEntry() )
 		{
 			if( toScan == NULL )
 				continue;
@@ -691,50 +691,69 @@ void LoadTeleportLocations( void )
 //o---------------------------------------------------------------------------o
 void LoadCreatures( void )
 {
-	char sect[128];
-	UString tag;
-	UString data;
-	UString UTag;
-	for( UI16 iCounter = 0; iCounter < 2048; ++iCounter )
+	UString cEntry;
+	UString tag, data, UTag;
+	UI16 i = 0;
+	for( Script *creatScp = FileLookup->FirstScript( creatures_def ); !FileLookup->FinishedScripts( creatures_def ); creatScp = FileLookup->NextScript( creatures_def ) )
 	{
-		sprintf( sect, "CREATURE 0x%x", iCounter );
-		ScriptSection *creatureData = FileLookup->FindEntry( sect, creatures_def );
-		if( creatureData != NULL )
+		if( creatScp == NULL )
+			continue;
+
+		for( ScriptSection *creatureData = creatScp->FirstEntry(); creatureData != NULL; creatureData = creatScp->NextEntry() )
 		{
-			for( tag = creatureData->First(); !creatureData->AtEnd(); tag = creatureData->Next() )
+			if( creatureData == NULL )
+				continue;
+
+			cEntry = creatScp->EntryName();
+			if( cEntry.section( " ", 0, 0 ) == "CREATURE" )
 			{
-				if( tag.empty() )
-					continue;
-				data = creatureData->GrabData();
-				UTag = tag.upper();
-				switch( (tag.data()[0]) )
+				i = cEntry.section( " ", 1, 1 ).toUShort();
+
+				for( tag = creatureData->First(); !creatureData->AtEnd(); tag = creatureData->Next() )
 				{
-					case 'A':
-						if( UTag == "ANTIBLINK" )
-							cwmWorldState->creatures[iCounter].AntiBlink( true );
-						else if( UTag == "ANIMAL" )
-							cwmWorldState->creatures[iCounter].IsAnimal( true );
-						break;
-					case 'B':
-						if( UTag == "BASESOUND" )
-							cwmWorldState->creatures[iCounter].BaseSound( data.toUShort() );
-						break;
-					case 'F':
-						if( UTag == "FLIES" )
-							cwmWorldState->creatures[iCounter].CanFly( true );
-						break;
-					case 'I':
-						if( UTag == "ICON" )
-							cwmWorldState->creatures[iCounter].Icon( data.toUShort() );
-						break;
-					case 'S':
-						if( UTag == "SOUNDFLAG" )
-							cwmWorldState->creatures[iCounter].SoundFlag( data.toUByte() );
-						break;
-					case 'W':
-						if( UTag == "WATERCREATURE" )
-							cwmWorldState->creatures[iCounter].IsWater( true );
-						break;
+					if( tag.empty() )
+						continue;
+					data = creatureData->GrabData();
+					UTag = tag.upper();
+					switch( (tag.data()[0]) )
+					{
+						case 'A':
+							if( UTag == "ANTIBLINK" )
+								cwmWorldState->creatures[i].AntiBlink( true );
+							else if( UTag == "ANIMAL" )
+								cwmWorldState->creatures[i].IsAnimal( true );
+							break;
+						case 'B':
+							if( UTag == "BASESOUND" )
+								break;
+							break;
+						case 'F':
+							if( UTag == "FLIES" )
+								cwmWorldState->creatures[i].CanFly( true );
+							break;
+						case 'I':
+							if( UTag == "ICON" )
+								cwmWorldState->creatures[i].Icon( data.toUShort() );
+							break;
+						case 'S':
+							if( UTag == "SOUNDFLAG" )
+								break;
+							else if( UTag == "SOUND_IDLE" )
+								cwmWorldState->creatures[i].SetSound( SND_IDLE, data.toUShort() );
+							else if( UTag == "SOUND_STARTATTACK" )
+								cwmWorldState->creatures[i].SetSound( SND_STARTATTACK, data.toUShort() );
+							else if( UTag == "SOUND_ATTACK" )
+								cwmWorldState->creatures[i].SetSound( SND_ATTACK, data.toUShort() );
+							else if( UTag == "SOUND_DEFEND" )
+								cwmWorldState->creatures[i].SetSound( SND_DEFEND, data.toUShort() );
+							else if( UTag == "SOUND_DIE" )
+								cwmWorldState->creatures[i].SetSound( SND_DIE, data.toUShort() );
+							break;
+						case 'W':
+							if( UTag == "WATERCREATURE" )
+								cwmWorldState->creatures[i].IsWater( true );
+							break;
+					}
 				}
 			}
 		}
@@ -781,19 +800,13 @@ void LoadPlaces( void )
 {
 	cwmWorldState->goPlaces.clear();
 	UString data, UTag, entryName;
-
 	GoPlaces_st *toAdd		= NULL;
-	ScriptSection *toScan	= NULL;
-	VECSCRIPTLIST& tScn		= FileLookup->GetFiles( location_def );
-	if( tScn.empty() )
-		return;
 
-	for( VECSCRIPTLIST_CITERATOR lIter = tScn.begin(); lIter != tScn.end(); ++lIter )
+	for( Script *locScp = FileLookup->FirstScript( location_def ); !FileLookup->FinishedScripts( location_def ); locScp = FileLookup->NextScript( location_def ) )
 	{
-		Script *locScp = (*lIter);
 		if( locScp == NULL )
 			continue;
-		for( toScan = locScp->FirstEntry(); toScan != NULL; toScan = locScp->NextEntry() )
+		for( ScriptSection *toScan = locScp->FirstEntry(); toScan != NULL; toScan = locScp->NextEntry() )
 		{
 			if( toScan == NULL )
 				continue;

@@ -49,27 +49,13 @@ private:
 		}
 	};
 
-	struct resourceEntry
-	{
-		SI16	oreAmt;
-		UI32	oreTime;
-		SI16	logAmt;
-		UI32	logTime;
-
-		resourceEntry() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
-		{
-		}
-	};
-
 	std::vector< miningData >			ores;
 	std::map< UI16, createMenu >		actualMenus;
 	std::map< UI16, createMenuEntry >	skillMenus;
 	std::map< UI16, createEntry >		itemsForMenus;
-	resourceEntry						resources[610][410];
 private:
 
-	void	RegenerateOre( SI16 grX, SI16 grY );
-	void	RegenerateLog( SI16 grX, SI16 grY );
+	void	RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum );
 	void	doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
@@ -86,7 +72,6 @@ private:
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );
-	void LoadResourceData( void );
 	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
@@ -115,11 +100,9 @@ public:
 	TargetFunc TinkerAwg;
 	TargetFunc TinkerAxel;
 	TargetFunc TinkerClock;
-	TargetFunc TreeTarget;
 	TargetFunc Inscribe;
 
 	void Load( void );
-	void SaveResources( void );
 
 	void NewMakeMenu( CSocket *s, int menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );

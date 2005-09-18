@@ -633,6 +633,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_BEGGING:			skillToSet = BEGGING;				break;
 			case DFNTAG_BLACKSMITHING:		skillToSet = BLACKSMITHING;			break;
 			case DFNTAG_BOWCRAFT:			skillToSet = BOWCRAFT;				break;
+			case DFNTAG_BUSHIDO:			skillToSet = BUSHIDO;				break;
 			case DFNTAG_CAMPING:			skillToSet = CAMPING;				break;
 			case DFNTAG_CARPENTRY:			skillToSet = CARPENTRY;				break;
 			case DFNTAG_CARTOGRAPHY:		skillToSet = CARTOGRAPHY;			break;
@@ -640,9 +641,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetCarve( static_cast<SI16>(ndata) );
 											break;
-	#ifdef __NEW_SKILLS__
 			case DFNTAG_CHIVALRY:			skillToSet = CHIVALRY;				break;
-	#endif
 			case DFNTAG_COOKING:			skillToSet = COOKING;				break;
 			case DFNTAG_COLOUR:
 											if( retitem != NULL )
@@ -714,9 +713,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												applyTo->SetFleeAt( static_cast<SI16>(ndata) );
 											break;
 			case DFNTAG_FORENSICS:			skillToSet = FORENSICS;					break;
-	#ifdef __NEW_SKILLS__
 			case DFNTAG_FOCUS:				skillToSet = FOCUS;						break;
-	#endif
 			case DFNTAG_FX1:								
 											if( !isGate )
 												applyTo->SetFx( static_cast<SI16>(ndata), 0 );
@@ -802,13 +799,12 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;				break;
 			case DFNTAG_NAME:				applyTo->SetName( cdata );				break;
 			case DFNTAG_NAMELIST:			setRandomName( applyTo, cdata );		break;
-	#ifdef __NEW_SKILLS__
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
-	#endif
 			case DFNTAG_NEUTRAL:				
 											if( !isGate )
 												applyTo->SetFlagNeutral();
 											break;
+			case DFNTAG_NINJITSU:			skillToSet = NINJITSU;					break;
 			case DFNTAG_NPCWANDER:			
 											if( !isGate )
 												applyTo->SetNpcWander( static_cast<SI08>(ndata) );

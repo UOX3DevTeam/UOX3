@@ -812,137 +812,6 @@ void CorpseTarget( CSocket *s )
 		s->sysmessage( 393 );
 }
 
-void SwordTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-
-	CChar *p		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar	= s->CurrcharObj();
-
-	if( !ValidateObject( mChar ) )
-		return;
-
-	if( ValidateObject( p ) )
-	{
-		if( p->GetID() == 0xCF )
-		{
-			// Unshorn sheep
-			// -> Add Wool and change id of the Sheep
-			CItem *c = Items->CreateItem( s, mChar, 0x0DF8, 1, 0, OT_ITEM, true );
-
-			p->SetID( 0xDF );			
-
-			// Add an effect so the sheep can regain it's wool
-			cDice myDice( 2, 3, 0 );
-			UI32 Delay = myDice.roll();
-
-			Effects->tempeffect( p, p, 43, static_cast<UI16>(Delay*300), 0, 0 );
-		}
-		else
-		{
-			// Already sheered
-			//s->sysmessage( "" );
-		}
-
-		return;
-	}
-	
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	UI16 targetID = s->GetWord( 0x11 );
-
-	switch( targetID )
-	{
-		case 0x0CD0:
-		case 0x0CD3:
-		case 0x0CD6:
-		case 0x0CD8:
-		case 0x0CDA:
-		case 0x0CDD:
-		case 0x0CE0:
-		case 0x0CE3:
-		case 0x0CE6:
-		case 0x0CCA:
-		case 0x0CCB:
-		case 0x0CCC:
-		case 0x0CCD:
-		case 0x0C12:
-		case 0x0CB8:
-		case 0x0CB9:
-		case 0x0CBA:
-		case 0x0CBB:
-		{
-			SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
-			SI16 targetY = s->GetWord( 0x0D );
-			SI08 targetZ = s->GetByte( 0x10 );
-
-			SI08 distZ = abs( targetZ - mChar->GetZ() );
-			SI16 distY = abs( targetY - mChar->GetY() );
-			SI16 distX = abs( targetX - mChar->GetX() );
-
-			if( distY > 5 || distX > 5 || distZ > 9 )
-			{
-				s->sysmessage( 393 );
-				return;
-			}
-			if( !mChar->IsOnHorse() )
-				Effects->PlayCharacterAnimation( mChar, 0x0D );
-			else 
-				Effects->PlayCharacterAnimation( mChar, 0x1D );
-			Effects->PlaySound( s, 0x013E, true );
-			CItem *c = Items->CreateItem( s, mChar, 0x0DE1, 1, 0, OT_ITEM, true ); //Kindling
-			if( c == NULL ) 
-				return;
-			s->sysmessage( 1049 );
-			return;
-		}
-		case 0x09CC: 
-		case 0x09CD: 
-		case 0x09CE: 
-		case 0x09CF: 
-		{	
-			CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) ); 
-			if( !ValidateObject( i ) ) 
-				return;		
-			if( FindItemOwner( i ) != mChar ) 
-			{ 
-				s->sysmessage( 775 ); 
-				return; 
-			} 
-			else 
-			{ 
-				UI32 getAmt = GetItemAmount( mChar, i->GetID() ); 
-				if( getAmt < 1 ) 
-				{ 
-					s->sysmessage( 776 ); 
-					return; 
-				} 
-				Effects->PlaySound( s, 0x013E, true); // I'm not sure 
-				CItem *c = Items->CreateItem( s, mChar, 0x097A, 4, 0, OT_ITEM, true ); 
-				if( ValidateObject( c ) ) 
-				{
-					c->SetName( "raw fish steak" );
-					i->IncAmount( -1 );
-				}
-				return; 
-			} 
-		}
-		case 0x1BDD:
-		case 0x1BE0:
-		{
-			Skills->BowCraft( s );
-			return;
-		}
-		case 0x2006:
-		{
-			CorpseTarget( s );
-			return;
-		}
-	}
-	s->sysmessage( 1050 );
-}
-
 void MakeShopTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1051,28 +920,6 @@ bool BuyShop( CSocket *s, CChar *c )
 
 	s->statwindow( s->CurrcharObj() ); // Make sure the gold total has been sent.
 	return true;
-}
-
-void AxeTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	UI16 realID = s->GetWord( 0x11 );
-    // [krazyglue] it may take more lines, but at least its readable and easier to debug =)
-	if( realID == 0x0CD0 || realID == 0x0CD3 || realID == 0x0CD6 || realID == 0x0CD8 || realID == 0x0CDA || 
-		realID == 0x0CDD || realID == 0x0CE0 || realID == 0x0CE3 || realID == 0x0CE6 || realID == 0x0D58 || 
-		realID >= 0x0CCA && realID <= 0x0CCE || realID >= 0x12B8 && realID <= 0x12BB || realID == 0x0D42 ||
-		realID == 0x0D43 || realID == 0x0D58 || realID == 0x0D59 || realID == 0x0D70 || realID == 0x0D85 || 
-		realID == 0x0D94 || realID == 0x0D95 || realID == 0x0D98 || realID == 0x0DA4 || realID == 0x0DA8 )
-	{
-		Skills->TreeTarget( s );
-	}
-	else if( realID == 0x2006 )
-		CorpseTarget( s );
-    else 
-		Skills->BowCraft( s );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1292,7 +1139,7 @@ void ShowSkillTarget( CSocket *s )
 			skillVal = mChar->GetSkill( i );
 
 		if( skillVal > 0 || dispType%2 == 0 )
-			showSkills.AddData( skillname[i], UString::number( (float)skillVal/10 ), 8 );
+			showSkills.AddData( cwmWorldState->skill[i].name, UString::number( (float)skillVal/10 ), 8 );
 	}
 	showSkills.Send( 4, false, INVALIDSERIAL );
 }
@@ -1704,7 +1551,7 @@ void VialTarget( CSocket *mSock )
 			return;
 		}
 
-		nVialID->SetTempVar( CITV_MORE, 0, 1 );
+		nVialID->SetTempVar( CITV_MORE, 1, 0 );
 		if( targSerial >= BASEITEMSERIAL )
 		{	// it's an item
 			CItem *targItem = calcItemObjFromSer( targSerial );
@@ -1712,13 +1559,13 @@ void VialTarget( CSocket *mSock )
 				mSock->sysmessage( 749 );
 			else
 			{
-				nVialID->SetTempVar( CITV_MORE, targItem->GetTempVar( CITV_MORE, 1 ), 1 );
+				nVialID->SetTempVar( CITV_MORE, 1, targItem->GetTempVar( CITV_MORE, 1 ) );
 				Karma( mChar, NULL, -1000 );
 				if( targItem->GetTempVar( CITV_MORE, 2 ) < 4 )
 				{
 					mSock->sysmessage( 750 );
 					Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
-					targItem->SetTempVar( CITV_MORE, targItem->GetTempVar( CITV_MORE, 2 ) + 1, 2 );
+					targItem->SetTempVar( CITV_MORE, 2, targItem->GetTempVar( CITV_MORE, 2 ) + 1 );
 				}
 				else 
 					mSock->sysmessage( 751 );
@@ -1827,8 +1674,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_TWEAK:			TweakTarget( tSock );					break;
 					case TARGET_MAKESTATUS:		MakeStatusTarget( tSock );				break;
 					case TARGET_SETSCPTRIG:		HandleSetScpTrig( tSock );				break;
-					case TARGET_AXE:			AxeTarget( tSock );						break;
-					case TARGET_SWORD:			SwordTarget( tSock );					break;
 					case TARGET_LOADCANNON:		LoadCannon( tSock );					break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;

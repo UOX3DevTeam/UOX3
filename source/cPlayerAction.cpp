@@ -1126,14 +1126,14 @@ void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 		return;
 	SKILLVAL skillLevel = 0;
 	UI08 bestSkill = BestSkill( mChar, skillLevel );
-	if( skillLevel <= cwmWorldState->prowessTitles[0].minBaseSkill )
+	if( skillLevel <= cwmWorldState->prowessTitles[0].lowBound )
 		SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
 	else
 	{
 		size_t pEntry = 0;
 		for( pEntry = 0; pEntry < cwmWorldState->prowessTitles.size() - 1; ++pEntry )
 		{
-			if( skillLevel >= cwmWorldState->prowessTitles[pEntry].minBaseSkill && skillLevel < cwmWorldState->prowessTitles[pEntry+1].minBaseSkill )
+			if( skillLevel >= cwmWorldState->prowessTitles[pEntry].lowBound && skillLevel < cwmWorldState->prowessTitles[pEntry+1].lowBound )
 				break;
 		}
 		SkillProwessTitle = cwmWorldState->prowessTitles[pEntry].toDisplay;
@@ -1343,7 +1343,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	{
 		if( cwmWorldState->murdererTags.empty() )
 			tempstr = UString::sprintf( Dictionary->GetEntry( 374, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
-		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].loBound )	// not a real murderer
+		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 			bContinue = true;
 		else
 		{
@@ -1351,7 +1351,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			size_t kCtr;
 			for( kCtr = 0; kCtr < cwmWorldState->murdererTags.size() - 1; ++kCtr )
 			{
-				if( mKills >= cwmWorldState->murdererTags[kCtr].loBound && mKills < cwmWorldState->murdererTags[kCtr+1].loBound )
+				if( mKills >= cwmWorldState->murdererTags[kCtr].lowBound && mKills < cwmWorldState->murdererTags[kCtr+1].lowBound )
 					break;
 			}
 			if( kCtr >= cwmWorldState->murdererTags.size() )
@@ -1856,9 +1856,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			else
 				Effects->PlaySound( mChar, 0x004D );
 			return true;
-		case IT_AXE:	// Axes
-			mSock->target( 0, TARGET_AXE, 443 );
-			return true;
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
 			CChar *m;
 			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
@@ -1922,9 +1919,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			else
 				mSock->sysmessage( 461 );
-			return true;
-		case IT_SWORD:	// skinning
-			mSock->target( 0, TARGET_SWORD, 462 );
 			return true;
 		case IT_MAGICSTATUE:
 			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
@@ -2084,7 +2078,6 @@ void InitTagToItemType( void )
 	tagToItemType["TAMBOURINE"]				= IT_TAMBOURINE;
 	tagToItemType["HARP"]					= IT_HARP;
 	tagToItemType["LUTE"]					= IT_LUTE;
-	tagToItemType["AXE"]					= IT_AXE;
 	tagToItemType["PLAYERVENDORDEED"]		= IT_PLAYERVENDORDEED;
 	tagToItemType["SMITHYTOOL"]				= IT_SMITHYTOOL;
 	tagToItemType["CARPENTRYTOOL"]			= IT_CARPENTRYTOOL;
@@ -2101,7 +2094,6 @@ void InitTagToItemType( void )
 	tagToItemType["SEWINGKIT"]				= IT_SEWINGKIT;
 	tagToItemType["ORE"]					= IT_ORE;
 	tagToItemType["MESSAGEBOARD"]			= IT_MESSAGEBOARD;
-	tagToItemType["SWORD"]					= IT_SWORD;
 	tagToItemType["CAMPING"]				= IT_CAMPING;
 	tagToItemType["MAGICSTATUE"]			= IT_MAGICSTATUE;
 	tagToItemType["GUILLOTINE"]				= IT_GUILLOTINE;
@@ -2350,25 +2342,6 @@ bool CPIDblClick::Handle( void )
 	}
 	if( handleDoubleClickTypes( tSock, ourChar, x, iType ) )
 		return true;
-
-	switch( Combat->getWeaponType( x ) )	// Check weapon-types (For carving/chopping)
-	{
-		case DEF_SWORDS:
-		case SLASH_SWORDS:
-		case ONEHND_LG_SWORDS:
-		case ONEHND_AXES:
-			tSock->target( 0, TARGET_SWORD, 462 );
-			return true;
-		case DEF_FENCING:
-			if( itemID == 0x0F51 || itemID == 0x0F52 ) //dagger
-				tSock->target( 0, TARGET_SWORD, 462 );
-			return true;
-		case TWOHND_LG_SWORDS:
-		case BARDICHE:
-		case TWOHND_AXES:
-			tSock->target( 0, TARGET_SWORD, 443 );
-			return true;
-	}
 
 	//	Begin Scrolls check
 	if( x->GetID( 1 ) == 0x1F && ( x->GetID( 2 ) > 0x2C && x->GetID( 2 ) < 0x6D ) )

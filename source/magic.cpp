@@ -18,6 +18,7 @@
 #include "combat.h"
 #include "Dictionary.h"
 #include "movement.h"
+#include "scriptc.h"
 
 #include "ObjectFactory.h"
 
@@ -3006,143 +3007,152 @@ void cMagic::LoadScript( void )
     // apparently index 0 is left unused - fur 
 	spells.resize( SPELL_MAX + 1 );
 
-	UString sect;
-	UString tag;
-	UString data;
-	UString UTag;
-
-	ScriptSection *SpellLoad = NULL;
-	
-	for( spellCount = 1; spellCount <= SPELL_MAX; ++spellCount )
+	UString spEntry;
+	UString tag, data, UTag;
+	UI08 i = 0;
+	for( Script *spellScp = FileLookup->FirstScript( spells_def ); !FileLookup->FinishedScripts( spells_def ); spellScp = FileLookup->NextScript( spells_def ) )
 	{
-		sect		= "SPELL " + UString::number( spellCount );
-		SpellLoad	= FileLookup->FindEntry( sect, spells_def );
-		if( SpellLoad == NULL )
+		if( spellScp == NULL )
 			continue;
-		spells[spellCount].Enabled( false );
-		reag_st *mRegs = spells[spellCount].ReagantsPtr();
 
-		Console.Log( "Spell number: %i", "spell.log", spellCount );
-
-		for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
+		for( ScriptSection *SpellLoad = spellScp->FirstEntry(); SpellLoad != NULL; SpellLoad = spellScp->NextEntry() )
 		{
-			UTag = tag.upper();
-			data = SpellLoad->GrabData();
-			Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() );
-			switch( (tag.data()[0]) )
+			if( SpellLoad == NULL )
+				continue;
+
+			spEntry = spellScp->EntryName();
+			if( spEntry.section( " ", 0, 0 ) == "SKILL" )
 			{
-				case 'a':
-				case 'A':
-					if( UTag == "ACTION" ) 
-						spells[spellCount].Action( data.toUShort() );
-					else if( UTag == "ASH" ) 
-						mRegs->ash = data.toUByte();
-					break;
-				case 'c':
-				case 'C':
-					if( UTag == "CIRCLE" )
-						spells[spellCount].Circle( data.toUByte() );
-					break;
-				case 'd':
-				case 'D':
-					if( UTag == "DELAY" )
-						spells[spellCount].Delay( data.toLong() );
-					else if( UTag == "DRAKE" )
-						mRegs->drake = data.toUByte();
-					break;
-				case 'e':
-				case 'E':
-					if( UTag == "ENABLE" )   // presence of enable is enough to enable it
-						spells[spellCount].Enabled( data.toUShort() != 0 );
-					break;
-				case 'f':
-				case 'F':
-					if( UTag == "FLAGS" )
+				i = spEntry.section( " ", 1, 1 ).toUByte();
+				if( spellCount <= SPELL_MAX )
+				{
+					spells[spellCount].Enabled( false );
+					reag_st *mRegs = spells[spellCount].ReagantsPtr();
+
+					Console.Log( "Spell number: %i", "spell.log", spellCount );
+
+					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
-						if( data.sectionCount( " " ) != 0 )
-							spells[spellCount].Flags( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-					}
-					break;
-				case 'g':
-				case 'G':
-					if( UTag == "GARLIC" )
-						mRegs->garlic  = data.toUByte();
-					else if( UTag == "GINSENG" )
-						mRegs->ginseng = data.toUByte();
-					break;
-				case 'h':
-				case 'H':
-					if( UTag == "HISKILL" )
-						spells[spellCount].HighSkill( data.toShort() );
-					else if( UTag == "HEALTH" )
-						spells[spellCount].Health( data.toShort() );
-					break;
-				case 'l':
-				case 'L':
-					if( UTag == "LOSKILL" )
-						spells[spellCount].LowSkill( data.toShort() );
-					break;
-				case 'm':
-				case 'M':
-					if( UTag == "MANA" )
-						spells[spellCount].Mana( data.toShort() );
-					else if( UTag == "MANTRA" )
-						spells[spellCount].Mantra( data );
-					else if( UTag == "MOSS" )
-						mRegs->moss = data.toUByte();
-					else if( UTag == "MOVEFX" )
-					{
-						if( data.sectionCount( " " ) != 0 )
+						UTag = tag.upper();
+						data = SpellLoad->GrabData();
+						Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() );
+						switch( (tag.data()[0]) )
 						{
-							CMagicMove *mv = spells[spellCount].MoveEffectPtr();
-							mv->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-							mv->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
-							mv->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
-							mv->Explode( data.section( " ", 4, 4 ).stripWhiteSpace().toUByte( 0, 16 ) );
+							case 'a':
+							case 'A':
+								if( UTag == "ACTION" ) 
+									spells[spellCount].Action( data.toUShort() );
+								else if( UTag == "ASH" ) 
+									mRegs->ash = data.toUByte();
+								break;
+							case 'c':
+							case 'C':
+								if( UTag == "CIRCLE" )
+									spells[spellCount].Circle( data.toUByte() );
+								break;
+							case 'd':
+							case 'D':
+								if( UTag == "DELAY" )
+									spells[spellCount].Delay( data.toLong() );
+								else if( UTag == "DRAKE" )
+									mRegs->drake = data.toUByte();
+								break;
+							case 'e':
+							case 'E':
+								if( UTag == "ENABLE" )   // presence of enable is enough to enable it
+									spells[spellCount].Enabled( data.toUShort() != 0 );
+								break;
+							case 'f':
+							case 'F':
+								if( UTag == "FLAGS" )
+								{
+									if( data.sectionCount( " " ) != 0 )
+										spells[spellCount].Flags( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+								}
+								break;
+							case 'g':
+							case 'G':
+								if( UTag == "GARLIC" )
+									mRegs->garlic  = data.toUByte();
+								else if( UTag == "GINSENG" )
+									mRegs->ginseng = data.toUByte();
+								break;
+							case 'h':
+							case 'H':
+								if( UTag == "HISKILL" )
+									spells[spellCount].HighSkill( data.toShort() );
+								else if( UTag == "HEALTH" )
+									spells[spellCount].Health( data.toShort() );
+								break;
+							case 'l':
+							case 'L':
+								if( UTag == "LOSKILL" )
+									spells[spellCount].LowSkill( data.toShort() );
+								break;
+							case 'm':
+							case 'M':
+								if( UTag == "MANA" )
+									spells[spellCount].Mana( data.toShort() );
+								else if( UTag == "MANTRA" )
+									spells[spellCount].Mantra( data );
+								else if( UTag == "MOSS" )
+									mRegs->moss = data.toUByte();
+								else if( UTag == "MOVEFX" )
+								{
+									if( data.sectionCount( " " ) != 0 )
+									{
+										CMagicMove *mv = spells[spellCount].MoveEffectPtr();
+										mv->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										mv->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										mv->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										mv->Explode( data.section( " ", 4, 4 ).stripWhiteSpace().toUByte( 0, 16 ) );
+									}
+								}
+								break;
+							case 'p':
+							case 'P':
+								if( UTag == "PEARL" ) 
+									mRegs->pearl = data.toUByte();
+								break;
+							case 's':
+							case 'S':
+								if( UTag == "SHADE" )
+									mRegs->shade = data.toUByte();
+								else if( UTag == "SILK" )
+									mRegs->silk = data.toUByte();
+								else if( UTag == "SOUNDFX" )
+								{
+									if( data.sectionCount( " " ) != 0 )
+									{
+										CMagicSound *snd = spells[spellCount].SoundEffectPtr();
+										snd->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+									}
+								}
+								else if( UTag == "STATFX" )
+								{
+									if( data.sectionCount( " " ) != 0 )
+									{
+										CMagicStat *stat = spells[spellCount].StaticEffectPtr();
+										stat->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										stat->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										stat->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
+									}
+								}
+								else if( UTag == "SCLO" )
+									spells[spellCount].ScrollLow( data.toShort() );
+								else if( UTag == "SCHI" )
+									spells[spellCount].ScrollHigh( data.toShort() );
+								else if( UTag == "STAMINA" )
+									spells[spellCount].Stamina( data.toShort() );
+								break;
+							case 't':
+							case 'T':
+								if( UTag == "TARG" )
+									spells[spellCount].StringToSay( data );
+								break;
 						}
-					}
-					break;
-				case 'p':
-				case 'P':
-					if( UTag == "PEARL" ) 
-						mRegs->pearl = data.toUByte();
-					break;
-				case 's':
-				case 'S':
-					if( UTag == "SHADE" )
-						mRegs->shade = data.toUByte();
-					else if( UTag == "SILK" )
-						mRegs->silk = data.toUByte();
-					else if( UTag == "SOUNDFX" )
-					{
-						if( data.sectionCount( " " ) != 0 )
-						{
-							CMagicSound *snd = spells[spellCount].SoundEffectPtr();
-							snd->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-						}
-					}
-					else if( UTag == "STATFX" )
-					{
-						if( data.sectionCount( " " ) != 0 )
-						{
-							CMagicStat *stat = spells[spellCount].StaticEffectPtr();
-							stat->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-							stat->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
-							stat->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
-						}
-					}
-					else if( UTag == "SCLO" )
-						spells[spellCount].ScrollLow( data.toShort() );
-					else if( UTag == "SCHI" )
-						spells[spellCount].ScrollHigh( data.toShort() );
-					else if( UTag == "STAMINA" )
-						spells[spellCount].Stamina( data.toShort() );
-					break;
-				case 't':
-				case 'T':
-					if( UTag == "TARG" )
-						spells[spellCount].StringToSay( data );
-					break;
+					}			
+				}
 			}
 		}
 	}

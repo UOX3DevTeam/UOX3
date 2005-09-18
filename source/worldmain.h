@@ -90,8 +90,19 @@ private:
 		std::string madeword;
 		std::vector< advance_st > advancement;
 		UI16 jsScript;
-		skill_st() : strength( 0 ), dexterity( 0 ), intelligence( 0 ), madeword( "" ), jsScript( 0xFFFF )
+		std::string name;
+		skill_st()
 		{
+			ResetDefaults();
+		}
+		void ResetDefaults( void )
+		{
+			strength		= 0;
+			dexterity		= 0;
+			intelligence	= 0;
+			jsScript		= 0xFFFF;
+			madeword		= "made";
+			name			= "";
 			advancement.resize( 0 );
 		}
 	};
@@ -214,10 +225,10 @@ public:
 	// Structs
 	std::map< UI16, CCreatures >		creatures;
 	timeval								uoxtimeout;
-	skill_st							skill[SKILLS+1];				// Skill data
+	skill_st							skill[ALLSKILLS+4];				// Skill data
 	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
-	std::vector< ProwessTitle >			prowessTitles;
-	std::vector< MurderPair >			murdererTags;
+	std::vector< TitlePair_st >			prowessTitles;
+	std::vector< TitlePair_st >			murdererTags;
 	std::vector< CTeleLocationEntry >	teleLocs;
 	std::vector< LogoutLocationEntry >	logoutLocs;
 	std::vector< UI08 >					escortRegions;

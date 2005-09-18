@@ -66,7 +66,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		cAttack->BreakConcentration( calcSocketObjFromChar( cAttack ) );
 	else
 	{
-		Effects->playMonsterSound( cAttack, cAttack->GetID(), SND_STARTATTACK );
+		UI16 toPlay = cwmWorldState->creatures[cAttack->GetID()].GetSound( SND_STARTATTACK );
+		if( toPlay != 0x00 )
+			Effects->PlaySound( cAttack, toPlay );
 
 		// if the source is an npc, make sure they're in war mode and reset their movement time
 		if( !cAttack->IsAtWar() ) 
@@ -935,8 +937,12 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 			}
 		}
 		Effects->PlayCharacterAnimation( mChar, aa ); 
-		if( RandomNum( 0, 4 ) ) 
-			Effects->playMonsterSound( mChar, charID, SND_ATTACK );
+		if( RandomNum( 0, 4 ) )
+		{
+			UI16 toPlay = cwmWorldState->creatures[charID].GetSound( SND_ATTACK );
+			if( toPlay != 0x00 )
+				Effects->PlaySound( mChar, toPlay );
+		}
 	}
 	else if( mChar->IsOnHorse() )
 		CombatOnHorse( mChar );
@@ -1355,7 +1361,13 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 			case 0x0191:	Effects->PlaySound( ourTarg, 0x014B );									break;
 			case 0x0190:	Effects->PlaySound( ourTarg, 0x0156 );									break;
-			default:		Effects->playMonsterSound( ourTarg, ourTarg->GetID(), SND_DEFEND );		break;
+			default:
+				{
+					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetID()].GetSound( SND_DEFEND );
+					if( toPlay != 0x00 )
+						Effects->PlaySound( ourTarg, toPlay );
+					break;
+				}
 			}
 
 			if( mChar.GetPoisonStrength() && ourTarg->GetPoisoned() < mChar.GetPoisonStrength() )

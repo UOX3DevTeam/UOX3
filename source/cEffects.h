@@ -4,15 +4,6 @@
 namespace UOX
 {
 
-enum monsterSound
-{
-	SND_STARTATTACK = 0,
-	SND_IDLE,
-	SND_ATTACK,
-	SND_DEFEND,
-	SND_DIE
-};
-
 class cEffects
 {
 private:
@@ -41,7 +32,6 @@ public:
 	void	itemSound( CSocket *s, CItem *item, bool bAllHear = false );
 	void	doorSound( CItem *item, UI16 id, bool isOpen );
 	void	goldSound( CSocket *s, UI32 goldtotal, bool bAllHear = false);
-	void	playMonsterSound( CChar *monster, UI16 id, monsterSound sfx );
 	void	playTileSound( CSocket *mSock );
 	void	playDeathSound( CChar *i );
 	void	playMidi( CSocket *s, UI16 number );
