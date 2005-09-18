@@ -3,6 +3,12 @@ function onUse( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		var itemOwner = GetPackOwner( iUsed, 0 );
+		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			return false;
+		}
 		var targMsg = GetDictionaryEntry( 462, socket.Language );
 		socket.CustomTarget( 1, targMsg );
 	}
@@ -22,15 +28,8 @@ function onCallback1( socket, ourObj )
 			tileID = ourObj.id;
 		else if( ourObj.isChar )
 		{
-			if( ourObj.id == 0x00CF )	// Unshorn Sheep
-			{
-				CreateBlankItem( socket, mChar, 1, "#", 0x0DF8, 0x0000, "ITEM", true );
-				ourObj.id = 0x00DF;
-				var delay = RollDice( 2, 3, 0 );
-				DoTempEffect( 0, mChar, mChar, 43, delay*300, 0, 0 );
-			}
-			else
-				socket.SysMessage( "You should probably kill that before you attempt to skin it." );
+			if( tileID == 0x00df || tileID == 0x00cf )
+				TriggerEvent( 2012, "shearSheep", pUser, myTarget );
 			return;
 		}
 

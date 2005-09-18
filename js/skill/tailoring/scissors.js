@@ -36,23 +36,14 @@ function onCallback0( pSock, myTarget )
 		var isInRange = pUser.InRange( myTarget, 3 );
 		if( !isInRange )
 	 	{
-			pUser.SysMessage( "You are too far away to reach that." );
+			pSock.SysMessage( GetDictionaryEntry( 461, socket.Language ) ); // You are too far away.
 			return;
 		}
-		if( tileID == 0x00df )
-		{
-			pUser.SysMessage( "This sheep is not yet ready to be shorn." );
-			return;
-		}
-		if( tileID == 0x00cf )
-		{ //If target is a Sheep
-			pSock.SysMessage( "You shear some wool from the sheep." );
-			myTarget.SoundEffect( 0x0248, true );
-			myTarget.id = 0x00DF; // remove sheep's wool
-			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df8", 1, "ITEM", true ); //give the player some wool
-			myTarget.StartTimer( 60000, 1, true ); //respawn wool on sheep in 60 seconds
-			return;
-		}
+		else if( tileID == 0x00df || tileID == 0x00cf )
+			TriggerEvent( 2012, "shearSheep", pUser, myTarget );
+		else
+			pSock.SysMessage( "You can't use the scissors on that." );
+		return;
 	}
 	else if( StrangeByte == 0 )
 	{ //Target is a Dynamic Item
@@ -98,12 +89,4 @@ function onCallback0( pSock, myTarget )
 		}
 	}
 	pUser.SysMessage( "Scissors cannot be used on that to produce anything." );
-}
-
-function onTimer( sheep, timerID )
-{
-	if( timerID == 1 )
-	{
-		sheep.id = 0x00cf; // give sheep wool again
-	}
 }

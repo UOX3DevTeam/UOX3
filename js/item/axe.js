@@ -3,6 +3,12 @@ function onUse( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		var itemOwner = GetPackOwner( iUsed, 0 );
+		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			return false;
+		}
 		var targMsg = GetDictionaryEntry( 443, socket.Language );
 		socket.CustomTarget( 1, targMsg );
 	}
