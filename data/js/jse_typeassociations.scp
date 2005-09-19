@@ -67,7 +67,7 @@
 //	IT_TAMBOURINE			= 213,
 //	IT_HARP				= 214,
 //	IT_LUTE				= 215,
-//	IT_AXE				= 216,
+216=5010	// AXE (Chop Trees, Carve Corpse, Bowcraft)
 //	IT_PLAYERVENDORDEED		= 217,
 //	IT_SMITHYTOOL			= 218,
 219=4006	// CARPENTRYTOOL
@@ -84,7 +84,7 @@
 230=4004	// SEWINGKIT
 //	IT_ORE				= 231,
 //	IT_MESSAGEBOARD			= 232,
-//	IT_SWORD			= 233,
+233=5009	// SWORD (Bowcraft, Make Kindling, Make FishSteaks )
 234=5008 	// CAMPING (KINDLING)
 //	IT_MAGICSTATUE			= 235,
 //	IT_GUILLOTINE			= 236,

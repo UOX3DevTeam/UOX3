@@ -107,7 +107,7 @@
 542=server/light/candle09_on.js
 546=server/light/candle09_off.js
 //-------------------------------------------
-// Fruit Picking[2000-2099]
+// Resource Harvesting[2000-2099]
 2001=server/resource/apples.js
 2002=server/resource/peaches.js
 2003=server/resource/pears.js
@@ -119,6 +119,7 @@
 2009=server/resource/cotton.js
 2010=server/resource/flax.js
 2011=server/resource/bee_hives.js
+2012=server/resource/sheepshearing.js
 //-------------------------------------------
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
@@ -163,6 +164,8 @@
 5006=item/pickpocketdip.js
 5007=item/archerybutte.js
 5008=item/kindling.js
+5009=item/sword.js
+5010=item/axe.js
 }
 
 //-------------------------------------------

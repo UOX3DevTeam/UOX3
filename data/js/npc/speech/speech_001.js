@@ -11,10 +11,9 @@
 // word "hello" and leaves off any preceeding or trailing letters/numbers/symbols, enclose the trigger-word in \b \b. Example: /\bhello\b/
 // By adding an additional "i" behind the last forward slash, you specify that the search is case-insensitive, example: /\bhello\b/i
 
-
 function onSpeech( myString, myPlayer, myNPC )
 {
-	if( !myNPC.InRange( myPlayer, 2 ))
+	if( !myNPC.InRange( myPlayer, 2 ) )
 		return;
 	var Speech_Array = myString.split(" ");
 	var i = 0, currObj = 0;

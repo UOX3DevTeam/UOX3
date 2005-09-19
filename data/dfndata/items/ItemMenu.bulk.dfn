@@ -13446,3 +13446,36 @@ ADDITEM=0x1ec4
 <=Previous Menu
 ITEMMENU=127
 }
+
+[ITEMMENU 163]
+{
+se_weapons.dfn
+0x27ed=no-dachi
+ADDITEM=0x27ed
+0x27ee=tessen
+ADDITEM=0x27ee
+0x27ef=wakizashi
+ADDITEM=0x27ef
+0x27f0=yumi
+ADDITEM=0x27f0
+0x27f1=tetsubo
+ADDITEM=0x27f1
+0x27f2=lajatang
+ADDITEM=0x27f2
+0x27f3=bokuto
+ADDITEM=0x27f3
+0x27f4=daisho
+ADDITEM=0x27f4
+0x27f5=fukiya
+ADDITEM=0x27f5
+0x27f6=tekagi
+ADDITEM=0x27f6
+0x27f8=kama
+ADDITEM=0x27f8
+0x27f9=nunchaku
+ADDITEM=0x27f9
+0x27fa=sai
+ADDITEM=0x27fa
+<=Previous Menu
+ITEMMENU=74
+}
