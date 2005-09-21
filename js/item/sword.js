@@ -30,7 +30,8 @@ function onCallback1( socket, ourObj )
 		{
 			if( tileID == 0x00df || tileID == 0x00cf )
 				TriggerEvent( 2012, "shearSheep", pUser, myTarget );
-			return;
+			else
+				tileID = socket.GetWord( 17 );
 		}
 
 		if( tileID != 0 )
