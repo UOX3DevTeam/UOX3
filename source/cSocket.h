@@ -48,6 +48,13 @@ private:
 
 	UI08			buffer[MAXBUFFER];
 	UI08			outbuffer[MAXBUFFER];
+	// These vectors are for dealing with packets that are larger than the buffer size
+	// While admittedly not thread friendly, the number of times these buffers are used
+	// should be very small and right now, is an implementation that will increase clieht
+	// compatability
+	std::vector< UI08 >	largeBuffer;
+	std::vector< UI08 >	largePackBuffer;
+
 	std::string		xtext;
 
 	//	Temporary variables (For targeting commands, etc)

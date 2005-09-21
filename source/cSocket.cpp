@@ -15,17 +15,6 @@
 namespace UOX
 {
 
-const UI32 DefaultClientVersion		= calcserial( 2, 0, 0, 0 );
-const ClientTypes DefaultClientType = CV_NORMAL;
-
-
-// These vectors are for dealing with packets that are larger than the buffer size
-// While admittedly not thread friendly, the number of times these buffers are used
-// should be very small and right now, is an implementation that will increase clieht
-// compatability
-std::vector< UI08 >	largeBuffer;
-std::vector< UI08 >	largePackBuffer;
-
 //	1.0		Abaddon		29th November, 2000
 //			Initial implementation
 //			Stores almost all information currently separated into different vars
@@ -515,8 +504,8 @@ const SI16				DEFSOCK_PX						= 0;
 const SI16				DEFSOCK_PY						= 0;
 const SI08				DEFSOCK_PZ						= 0;
 const UnicodeTypes		DEFSOCK_LANG					= UT_ENU;
-const ClientTypes		DEFSOCK_CLITYPE					= DefaultClientType;
-const UI32				DEFSOCK_CLIENTVERSION			= DefaultClientVersion;
+const ClientTypes		DEFSOCK_CLITYPE					= CV_NORMAL;
+const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
 const UI32				DEFSOCK_BYTESSENT				= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
@@ -559,6 +548,8 @@ void CSocket::InternalReset( void )
 	twIter = trigWords.end();
 	postAcked.clear();
 	ackIter = postAcked.end();
+	largeBuffer.resize( 0 );
+	largePackBuffer.resize( 0 );
 }
 
 //o---------------------------------------------------------------------------o

@@ -28,54 +28,6 @@ namespace UOX
 cSkills *Skills = NULL;
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::BowCraft( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Do Bowcraft Skill Stuff
-//o---------------------------------------------------------------------------o
-void cSkills::BowCraft( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar	= s->CurrcharObj();
-	CItem *packnum	= mChar->GetPackItem();
-	if( !ValidateObject( packnum ) ) 
-	{
-		s->sysmessage( 773 ); 
-		return; 
-	}
-
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	if( i->IsLockedDown() )
-	{
-		s->sysmessage( 774 );
-		return;
-	}
-	if( i->GetID() == 0x1BDD || i->GetID() == 0x1BE0 )
-	{
-		if( FindItemOwner( i ) != mChar )
-		{
-			s->sysmessage( 780 );
-			return;
-		}           
-		UI32 getAmt = GetItemAmount(mChar, i->GetID() );
-		if( getAmt < 2 )
-		{
-			s->sysmessage( 776 );
-			return;
-		}
-		if( mChar->IsOnHorse() )
-			Effects->PlayCharacterAnimation( mChar, 0x1C );	// moved here rather then the top of fun
-		else 
-			Effects->PlayCharacterAnimation( mChar, 0x0D );	// so that we don't make a motion if invalid target!
-
-		NewMakeMenu( s, 49, BOWCRAFT );
-	} 
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown

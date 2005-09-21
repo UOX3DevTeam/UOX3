@@ -436,7 +436,7 @@ public:
 	}
 	void SpeakerName( const std::string spkName )
 	{
-		sName = spkName.substr( 0, MAX_NAME - 1 );;
+		sName = spkName.substr( 0, MAX_NAME - 1 );
 	}
 	void CmdLevel( UI08 nLevel )
 	{

@@ -1,3 +1,8 @@
+9/20/2005 - giwo (0.98-3.0j [3.1 BETA])
+	Fixed a minor issue with resource regions.
+	Removed cSkills::BowCraft() as it was unused.
+	Moved largeBuffer and largePackBuffer from local declares into CSocket.
+
 9/18/2005 - giwo (0.98-3.0i [3.1 BETA])
 	Fixed an issue causing RESOURCELOGSRESPAWNTIMER to always use default setting.
 	Moved cSkills::resources into CMapWorlds() allowing it support for multiple worlds.

@@ -232,7 +232,7 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 	const UI16 gridX = (x / cwmWorldState->ServerData()->ResOreArea());
 	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
 
-	const UI32 resIndex = ((gridX * resourceX) + gridY);
+	const UI32 resIndex = ((gridX * resourceY) + gridY);
 	return mapResources[resIndex];
 }
 
@@ -249,22 +249,18 @@ void CMapWorld::SaveResources( UI08 worldNum )
 	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + UString::number( worldNum ) + "].bin";
 	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
 
-	UI32 resIndex = 0;
 	if( toWrite )
 	{
-		for( UI16 gridX = 0; gridX < resourceX; ++gridX )
+		const UI32 resCap = (resourceX * resourceY);
+		for( UI32 resIndex = 0; resIndex < resCap; ++resIndex )
 		{
-			for( UI16 gridY = 0; gridY < resourceY; ++gridY )
-			{
-				wBuffer[0] = static_cast<char>(mapResources[resIndex].oreAmt>>8);
-				wBuffer[1] = static_cast<char>(mapResources[resIndex].oreAmt%256);
-				toWrite.write( (const char *)&wBuffer, 2 );
+			wBuffer[0] = static_cast<char>(mapResources[resIndex].oreAmt>>8);
+			wBuffer[1] = static_cast<char>(mapResources[resIndex].oreAmt%256);
+			toWrite.write( (const char *)&wBuffer, 2 );
 
-				wBuffer[0] = static_cast<char>(mapResources[resIndex].logAmt>>8);
-				wBuffer[1] = static_cast<char>(mapResources[resIndex].logAmt%256);
-				toWrite.write( (const char *)&wBuffer, 2 );
-				++resIndex;
-			}
+			wBuffer[0] = static_cast<char>(mapResources[resIndex].logAmt>>8);
+			wBuffer[1] = static_cast<char>(mapResources[resIndex].logAmt%256);
+			toWrite.write( (const char *)&wBuffer, 2 );
 		}
 		toWrite.close();
 	}
@@ -295,31 +291,27 @@ void CMapWorld::LoadResources( UI08 worldNum )
 	if( fileExists )
 		toRead.seekg( 0, std::ios::beg );
 
-	UI32 resIndex = 0;
-	for( UI16 gridX = 0; gridX < resourceX; ++gridX )
+	const UI32 resCap = (resourceX * resourceY);
+	for( UI32 resIndex = 0; resIndex < resCap; ++resIndex )
 	{
-		for( UI16 gridY = 0; gridY < resourceY; ++gridY )
+		if( fileExists )
 		{
-			if( fileExists )
-			{
-				toRead.read( rBuffer, 2 );
-				mapResources[resIndex].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+			toRead.read( rBuffer, 2 );
+			mapResources[resIndex].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 
-				toRead.read( rBuffer, 2 );
-				mapResources[resIndex].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+			toRead.read( rBuffer, 2 );
+			mapResources[resIndex].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 
-				fileExists = toRead.eof();
-			}
-			else
-			{
-				mapResources[resIndex].oreAmt  = resOre;
-				mapResources[resIndex].logAmt  = resLog;
-			}
-			// No need to preserve time.  Do a refresh automatically
-			mapResources[resIndex].oreTime = oreTime;
-			mapResources[resIndex].logTime = logTime;
-			++resIndex;
+			fileExists = toRead.eof();
 		}
+		else
+		{
+			mapResources[resIndex].oreAmt  = resOre;
+			mapResources[resIndex].logAmt  = resLog;
+		}
+		// No need to preserve time.  Do a refresh automatically
+		mapResources[resIndex].oreTime = oreTime;
+		mapResources[resIndex].logTime = logTime;
 	}
 	if( fileExists )
 		toRead.close();
