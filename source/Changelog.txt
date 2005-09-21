@@ -2,6 +2,7 @@
 	Fixed a minor issue with resource regions.
 	Removed cSkills::BowCraft() as it was unused.
 	Moved largeBuffer and largePackBuffer from local declares into CSocket.
+	Updated sword.js and axe.js to work properly with 5.0.x clients.
 
 9/18/2005 - giwo (0.98-3.0i [3.1 BETA])
 	Fixed an issue causing RESOURCELOGSRESPAWNTIMER to always use default setting.
