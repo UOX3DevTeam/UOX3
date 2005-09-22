@@ -1,0 +1,336 @@
+// The items in this file are used for creating NPCs on horseback,
+// by equipping the items on the NPCs through the DFNs.
+// Adding them ingame will only produce pieces of.. boat.
+//
+// Example:
+// EQUIPITEM=skeletalmount
+// ...would make the NPC mount a skeletalmount (if the [skeletalmount] item
+// is using the correct ID.)
+
+[skeletalmount]
+{
+NAME=a skeletal mount
+ID=0x3EBB
+LAYER=25
+NEWBIE
+}
+
+[darksteed]
+{
+NAME=a dark steed
+ID=0x3EA9
+LAYER=25
+NEWBIE
+}
+
+[etherealhorse]
+{
+NAME=an ethereal horse
+ID=0x3EAA
+LAYER=25
+NEWBIE
+}
+
+[nightmare]
+{
+NAME=a nightmare
+ID=0x3EB5
+LAYER=25
+NEWBIE
+}
+
+[silversteed]
+{
+NAME=a silver steed
+ID=0x3EA8
+LAYER=25
+NEWBIE
+}
+
+[britwarhorse]
+{
+NAME=a war horse
+ID=0x3EB2
+LAYER=25
+NEWBIE
+}
+
+[comwarhorse]
+{
+NAME=a war horse
+ID=0x3EB1
+LAYER=25
+NEWBIE
+}
+
+[minaxwarhorse]
+{
+NAME=a war horse
+ID=0x3EAF
+LAYER=25
+NEWBIE
+}
+
+[slwarhorse]
+{
+NAME=a war horse
+ID=0x3EB0
+LAYER=25
+NEWBIE
+}
+
+[unicorn]
+{
+NAME=a unicorn
+ID=0x3EB4
+LAYER=25
+NEWBIE
+}
+
+[kirin]
+{
+NAME=a kirin
+ID=0x3EAD
+LAYER=25
+NEWBIE
+}
+
+[seahorse]
+{
+NAME=a sea horse
+ID=0x3EB3
+LAYER=25
+NEWBIE
+}
+
+[giantfirebeetle]
+{
+NAME=a giant fire beetle
+ID=0x3E95
+LAYER=25
+NEWBIE
+}
+
+[ethereal_llama]
+{
+NAME=an ethereal llama
+ID=0x3EAB
+LAYER=25
+NEWBIE
+}
+
+[etherealostard]
+{
+NAME=an ethereal ostard
+ID=0x3EAC
+LAYER=25
+NEWBIE
+}
+
+[nightmare2]
+{
+NAME=a nightmare
+ID=0x3EA7
+LAYER=25
+NEWBIE
+}
+
+[nightmare3]
+{
+NAME=a nightmare
+ID=0x3EA9
+LAYER=25
+NEWBIE
+}
+
+[tdnightmare]
+{
+NAME=a nightmare
+ID=0x3EB7
+LAYER=25
+NEWBIE
+}
+
+[ridgeback]
+{
+NAME=a ridgeback
+ID=0x3EB8
+LAYER=25
+NEWBIE
+}
+
+[firesteed]
+{
+NAME=a fire steed
+ID=0x3E9E
+LAYER=25
+NEWBIE
+}
+
+[etherealkirin]
+{
+NAME=an ethereal kirin
+ID=0x3E9C
+LAYER=25
+NEWBIE
+}
+
+[horse1]
+{
+NAME=a horse
+ID=0x3EA2
+LAYER=25
+NEWBIE
+}
+
+[etherealunicorn]
+{
+NAME=an ethereal unicorn
+ID=0x3EB4
+LAYER=25
+NEWBIE
+}
+
+[etherealridgeback]
+{
+NAME=an ethereal ridgeback
+ID=0x3E9A
+LAYER=25
+NEWBIE
+}
+
+[etherealswampdragon]
+{
+NAME=an ethereal swampdragon
+ID=0x3E98
+LAYER=25
+NEWBIE
+}
+
+[etherealbeetle]
+{
+NAME=an ethereal beetle
+ID=0x3E97
+LAYER=25
+NEWBIE
+}
+
+[horse2]
+{
+NAME=a horse
+ID=0x3E9F
+LAYER=25
+NEWBIE
+}
+
+[desertostard]
+{
+NAME=a desert ostard
+ID=0x3EA3
+LAYER=25
+NEWBIE
+}
+
+[frenziedostard]
+{
+NAME=a frenzied ostard
+ID=0x3EA4
+LAYER=25
+NEWBIE
+}
+
+[forestostard]
+{
+NAME=a forest ostard
+ID=0x3EA5
+LAYER=25
+NEWBIE
+}
+
+[llama]
+{
+NAME=a llama
+ID=0x3EA6
+LAYER=25
+NEWBIE
+}
+
+[horse3]
+{
+NAME=a horse
+ID=0x3EA0
+LAYER=25
+NEWBIE
+}
+
+[horse4]
+{
+NAME=a horse
+ID=0x3EA1
+LAYER=25
+NEWBIE
+}
+
+[hiryu]
+{
+NAME=a hiryu
+ID=0x3E94
+LAYER=25
+NEWBIE
+}
+
+[chimera]
+{
+NAME=a chimera
+ID=0x3E90
+LAYER=25
+NEWBIE
+}
+
+[cusidhe]
+{
+NAME=a cusidhe
+ID=0x3E91
+LAYER=25
+NEWBIE
+}
+
+[mondainsteed]
+{
+NAME=mondain's steed
+ID=0x3E92
+LAYER=25
+NEWBIE
+}
+
+[giantbeetle]
+{
+NAME=a giant beetle
+ID=0x3EBC
+LAYER=25
+NEWBIE
+}
+
+[swampdragon]
+{
+NAME=a swampdragon
+ID=0x3EBD
+LAYER=25
+NEWBIE
+}
+
+[armorswampdragon]
+{
+NAME=an armored swampdragon
+ID=0x3EBE
+LAYER=25
+NEWBIE
+}
+
+[kirin]
+{
+NAME=a kirin
+ID=0x3EAD
+LAYER=25
+NEWBIE
+}
