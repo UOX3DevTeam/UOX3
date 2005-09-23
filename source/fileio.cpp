@@ -834,7 +834,7 @@ void LoadPlaces( void )
 						else if( UTag == "LOCATION" )
 						{
 							size_t sectionCount = data.sectionCount( "," );
-							if( sectionCount > 3 )
+							if( sectionCount == 3 )
 							{
 								toAdd->x		= data.section( ",", 0, 0 ).toShort();
 								toAdd->y		= data.section( ",", 1, 1 ).toShort();
