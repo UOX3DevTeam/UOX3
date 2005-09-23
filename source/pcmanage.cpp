@@ -693,6 +693,10 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
+
+			CPEnableMapDiffs mDiff;
+			mSock->Send( &mDiff );
+
 			mSock->LoginComplete( true );
 		}
 	}

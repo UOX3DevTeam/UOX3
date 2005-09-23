@@ -174,6 +174,16 @@ MapData_st::~MapData_st()
 		delete staidxObj;
 		staidxObj = NULL;
 	}
+	if( mapDiffObj != NULL )
+	{
+		delete mapDiffObj;
+		mapDiffObj = NULL;
+	}
+	if( staticsDiffObj != NULL )
+	{
+		delete staticsDiffObj;
+		staticsDiffObj = NULL;
+	}
 }
 
 void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
@@ -215,16 +225,37 @@ cMapStuff::cMapStuff() : landTile(0), staticTile(0), multiItems(0), multiIndex(0
 		{
 			UTag = tag.upper();
 			data = toFind->GrabData();
-			if( UTag == "MAP" )
-				MapList[i].mapFile = data;
-			else if( UTag == "STATICS" )
-				MapList[i].staticsFile = data;
-			else if( UTag == "STAIDX" )
-				MapList[i].staidxFile = data;
-			else if( UTag == "X" )
-				MapList[i].xBlock = data.toUShort();
-			else if( UTag == "Y" )
-				MapList[i].yBlock = data.toUShort();
+			switch( (tag.data()[0]) )
+			{
+			case 'M':
+				if( UTag == "MAP" )
+					MapList[i].mapFile = data;
+				else if( UTag == "MAPDIFF" )
+					MapList[i].mapDiffFile = data;
+				else if( UTag == "MAPDIFFLIST" )
+					MapList[i].mapDiffListFile = data;
+				break;
+			case 'S':
+				if( UTag == "STATICS" )
+					MapList[i].staticsFile = data;
+				else if( UTag == "STAIDX" )
+					MapList[i].staidxFile = data;
+				else if( UTag == "STATICSDIFF" )
+					MapList[i].staticsDiffFile = data;
+				else if( UTag == "STATICSDIFFLIST" )
+					MapList[i].staticsDiffListFile = data;
+				else if( UTag == "STATICSDIFFINDEX" )
+					MapList[i].staticsDiffIndexFile = data;
+				break;
+			case 'X':
+				if( UTag == "X" )
+					MapList[i].xBlock = data.toUShort();
+				break;
+			case 'Y':
+				if( UTag == "Y" )
+					MapList[i].yBlock = data.toUShort();
+				break;
+			}
 		}
 	}
 	FileLookup->Dispose( maps_def );
@@ -257,7 +288,20 @@ cMapStuff::~cMapStuff()
 //|									that the file is open and available
 //o--------------------------------------------------------------------------o
 //|	Returns				-	N/A
-//o--------------------------------------------------------------------------o	
+//o--------------------------------------------------------------------------o
+UOXFile * loadFile( const std::string fullName )
+{
+	UOXFile *toLoad = new UOXFile( fullName.c_str(), "rb" );
+	Console << "\t" << fullName << "\t\t";
+
+	if( toLoad != NULL && toLoad->ready() )
+		Console.PrintDone();
+	else
+		Console.PrintSpecial( CBLUE, "not found" );
+
+	return toLoad;
+}
+
 void cMapStuff::Load( )
 {
 	Console.PrintSectionBegin();
@@ -274,6 +318,7 @@ void cMapStuff::Load( )
 	while( mlIter != mlEnd )
 	{
 		MapData_st& mMap	= mlIter->second;
+
 		lName				= basePath + mMap.mapFile;
 		mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
 		Console << "\t" << lName << "\t\t";
@@ -292,25 +337,77 @@ void cMapStuff::Load( )
 				Console.PrintFailed();
 		}
 		else
-			Console.PrintFailed();
+			Console.PrintSpecial( CRED, "not found" );
 
-		lName				= basePath + mMap.staticsFile;
-		mMap.staticsObj		= new UOXFile( lName.c_str(), "rb" );
-		Console << "\t" << lName << "\t\t";
+		mMap.staticsObj				= loadFile( basePath + mMap.staticsFile );
+		mMap.staidxObj				= loadFile( basePath + mMap.staidxFile );
 
-		if( mMap.staticsObj != NULL && mMap.staticsObj->ready() )
-			Console.PrintDone();
-		else
-			Console.PrintFailed();
+		if( !mMap.mapDiffFile.empty() )
+			mMap.mapDiffObj			= loadFile( basePath + mMap.mapDiffFile );
 
-		lName				= basePath + mMap.staidxFile;
-		mMap.staidxObj		= new UOXFile( lName.c_str(), "rb" );
-		Console << "\t" << lName << "\t\t";
+		if( !mMap.staticsDiffFile.empty() )
+			mMap.staticsDiffObj		= loadFile( basePath + mMap.staticsDiffFile );
 
-		if( mMap.staidxObj != NULL && mMap.staidxObj->ready() )
-			Console.PrintDone();
-		else
-			Console.PrintFailed();
+		if( !mMap.mapDiffListFile.empty() )
+		{
+			lName = basePath + mMap.mapDiffListFile;
+			Console << "\t" << lName << "\t\t";
+
+			std::ifstream mdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
+			if( mdlFile.is_open() )
+			{
+				size_t offset = 0;
+				size_t blockID = 0;
+				mdlFile.seekg( 0, std::ios::beg );
+				while( !mdlFile.fail() )
+				{
+					mdlFile.read( (char *)&blockID, 4 );
+					if( !mdlFile.fail() )
+						mMap.mapDiffList[blockID] = offset+4;
+					offset += 196;
+				}
+				mdlFile.close();
+				Console.PrintDone();
+			}
+			else
+				Console.PrintSpecial( CBLUE, "not found" );
+		}
+
+		if( !mMap.staticsDiffIndexFile.empty() && !mMap.staticsDiffListFile.empty() )
+		{
+			lName = basePath + mMap.staticsDiffIndexFile;
+			Console << "\t" << lName << "\t\t";
+
+			std::ifstream sdiFile ( lName.c_str(), std::ios::in | std::ios::binary );
+			std::ifstream sdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
+			if( sdiFile.is_open() && sdlFile.is_open() )
+			{
+				size_t blockID = 0;
+				sdiFile.seekg( 0, std::ios::beg );
+				sdlFile.seekg( 0, std::ios::beg );
+				while( !sdiFile.fail() && !sdlFile.fail() )
+				{
+					sdlFile.read( (char *)&blockID, 4 );
+					StaticsIndex_st &sdiRecord = mMap.staticsDiffIndex[blockID];
+					sdiFile.read( (char *)&sdiRecord.offset, 4 );
+					sdiFile.read( (char *)&sdiRecord.length, 4 );
+					sdiFile.read( (char *)&sdiRecord.unknown, 4 );
+				}
+				sdiFile.close();
+				sdlFile.close();
+				Console.PrintDone();
+			}
+			else
+				Console.PrintSpecial( CBLUE, "not found" );
+
+			lName = basePath + mMap.staticsDiffListFile;
+			Console << "\t" << lName << "\t\t";
+
+			if( FileExists( lName ) )
+				Console.PrintDone();
+			else
+				Console.PrintSpecial( CBLUE, "not found" );
+		}
 
 		++mlIter;
 	}
@@ -771,24 +868,43 @@ MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) :
 	}
 
 	MapData_st& mMap = Map->GetMapData( world );
-	
-	UOXFile *toRead = mMap.staidxObj;
-	if( toRead == NULL )
-	{
-		length = 0;
-		return;
-	}
 
 	const SI16 TileHeight = (mMap.yBlock/8);
 	const SI32 indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
-	toRead->seek( indexPos, SEEK_SET );
-	if( !toRead->eof() )
+
+	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos/12 );
+	if( diffIter != mMap.staticsDiffIndex.end() )
 	{
-		toRead->getLong( &pos );
-		if( pos != -1 )
+		const StaticsIndex_st &sdiRecord = diffIter->second;
+		
+		if( sdiRecord.offset == 0xFFFFFFFF )
 		{
-			toRead->getULong( &length );
-			length /= StaticRecordSize;
+			length = 0;
+			return;
+		}
+
+		useDiffs = true;
+		length = sdiRecord.length;
+	}
+	else
+	{
+		UOXFile *toRead = mMap.staidxObj;
+		if( toRead == NULL )
+		{
+			length = 0;
+			return;
+		}
+
+		toRead->seek( indexPos, SEEK_SET );
+		if( !toRead->eof() )
+		{
+			toRead->getLong( &pos );
+			if( pos != -1 )
+			{
+				toRead->getULong( &length );
+				length /= StaticRecordSize;
+				useDiffs = false;
+			}
 		}
 	}
 }
@@ -804,9 +920,15 @@ staticrecord *MapStaticIterator::Next( void )
 	tileid = 0;
 	if( index >= length )
 		return NULL;
-	
+
 	MapData_st& mMap = Map->GetMapData( worldNumber );
-	UOXFile *mFile = mMap.staticsObj;
+	UOXFile *mFile = NULL;
+	
+	if( useDiffs )
+		mFile = mMap.staticsDiffObj;
+	else
+		mFile = mMap.staticsObj;
+
 	if( mFile == NULL )
 		return NULL;
 	
@@ -857,9 +979,19 @@ map_st cMapStuff::SeekMap0( SI16 x, SI16 y, UI08 worldNumber )
 
 	MapData_st& mMap = MapList[worldNumber];
 	// index to the world
-	const SI32 pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
-	mMap.mapObj->seek( pos, SEEK_SET );
-	mMap.mapObj->get_map_st( &map );
+	const size_t blockID = x / 8 * (mMap.yBlock/8) + y / 8;
+	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( blockID );
+	if( diffIter != mMap.mapDiffList.end() )
+	{
+		mMap.mapDiffObj->seek( diffIter->second, SEEK_SET );
+		mMap.mapDiffObj->get_map_st( &map );
+	}
+	else
+	{
+		const SI32 pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
+		mMap.mapObj->seek( pos, SEEK_SET );
+		mMap.mapObj->get_map_st( &map );
+	}
 	return map;
 }
 

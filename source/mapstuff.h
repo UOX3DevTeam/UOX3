@@ -18,20 +18,44 @@ enum UOMapType
 };
 */
 
+struct StaticsIndex_st
+{
+	UI32 offset;
+	UI32 length;
+	UI32 unknown;
+	StaticsIndex_st() : offset( 0 ), length( 0 ), unknown( 0 )
+	{
+	}
+};
+
 struct MapData_st
 {
 	std::string		mapFile;
 	std::string		staticsFile;
 	std::string		staidxFile;
+	std::string		mapDiffFile;
+	std::string		mapDiffListFile;
+	std::string		staticsDiffFile;
+	std::string		staticsDiffListFile;
+	std::string		staticsDiffIndexFile;
 	UI16			xBlock;
 	UI16			yBlock;
 	SI32			fileSize;
 	UOXFile	*		mapObj;
 	UOXFile *		staticsObj;
 	UOXFile *		staidxObj;
+	UOXFile *		mapDiffObj;
+	UOXFile *		staticsDiffObj;
 
-	MapData_st() : mapFile( "" ), staticsFile( "" ), staidxFile( "" ), xBlock( 0 ), yBlock( 0 ), fileSize( -1 ), mapObj( NULL ), staticsObj( NULL ), staidxObj( NULL )
+	std::map< UI32, UI32 > mapDiffList;
+	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
+
+	MapData_st() : mapFile( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ), 
+		staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), fileSize( -1 ), mapObj( NULL ), staticsObj( NULL ), 
+		staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
 	{
+		mapDiffList.clear();
+		staticsDiffIndex.clear();
 	}
 	~MapData_st();
 };
@@ -69,6 +93,7 @@ private:
 	UI32 index, length, tileid;
 	bool exactCoords;
 	UI08 worldNumber;
+	bool useDiffs;
 };
 
 

@@ -1,3 +1,9 @@
+9/23/2005 - giwo (0.98-3.0k [3.1 BETA])
+	Added support for MapDiffs/StaticDiffs
+	Added mapdiff entries to maps.dfn to allow customizing filenames.
+	Added CPEnableMapDiffs to advise the clients of MapDiffs.
+	Updated go.js to support passing a world number
+
 9/20/2005 - giwo (0.98-3.0j [3.1 BETA])
 	Fixed a minor issue with resource regions.
 	Removed cSkills::BowCraft() as it was unused.

@@ -5,6 +5,7 @@
 #include "cMagic.h"
 #include "power.h"
 #include "msgboard.h"
+#include "mapstuff.h"
 
 namespace UOX
 {
@@ -5112,6 +5113,36 @@ void CPExtendedStats::CopyData( CChar& mChar )
 	UI08 intelligence	= mChar.GetSkillLock( INTELLECT );
 
 	pStream.WriteByte( 11, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
+}
+
+void CPEnableMapDiffs::InternalReset( void )
+{
+	pStream.ReserveSize( 6 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 0x0006 );
+	pStream.WriteShort( 3, 0x0018 );
+}
+CPEnableMapDiffs::CPEnableMapDiffs()
+{
+	InternalReset();
+	CopyData();
+}
+
+void CPEnableMapDiffs::CopyData( void )
+{
+	UI08 mapCount	= cwmWorldState->ServerData()->ServerMapCount();
+	size_t pSize	= ((mapCount+1)*8)+9;
+
+	pStream.ReserveSize( pSize );
+	pStream.WriteShort( 1, pSize );
+	pStream.WriteLong( 5, mapCount+1 );
+
+	for( UI08 i = 0; i < mapCount; ++i )
+	{
+		MapData_st &mMap = Map->GetMapData( i );
+		pStream.WriteLong( 9+(i*8), mMap.mapDiffList.size() );
+		pStream.WriteLong( 13+(i*8), mMap.staticsDiffIndex.size() );
+	}
 }
 
 }

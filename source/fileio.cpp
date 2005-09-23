@@ -831,6 +831,17 @@ void LoadPlaces( void )
 							toAdd->z = data.toByte();
 						else if( UTag == "WORLD" )
 							toAdd->worldNum = data.toUByte();
+						else if( UTag == "LOCATION" )
+						{
+							size_t sectionCount = data.sectionCount( "," );
+							if( sectionCount > 3 )
+							{
+								toAdd->x		= data.section( ",", 0, 0 ).toShort();
+								toAdd->y		= data.section( ",", 1, 1 ).toShort();
+								toAdd->z		= data.section( ",", 2, 2 ).toByte();
+								toAdd->worldNum = data.section( ",", 3, 3 ).toUByte();
+							}
+						}
 					}
 				}
 			}

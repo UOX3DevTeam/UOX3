@@ -81,7 +81,6 @@ public:
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
 	TargetFunc BottleTarget;
-	TargetFunc BowCraft;
 	TargetFunc EnticementTarget1;
 	TargetFunc EnticementTarget2;
 	TargetFunc FishTarget;

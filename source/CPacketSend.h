@@ -1326,6 +1326,18 @@ public:
 	virtual void	CopyData( CChar& mChar );
 };
 
+class CPEnableMapDiffs : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPEnableMapDiffs();
+	virtual			~CPEnableMapDiffs()
+					{
+					}
+	virtual void	CopyData( void );
+};
+
 }
 
 #endif
