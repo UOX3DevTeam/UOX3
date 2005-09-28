@@ -507,7 +507,6 @@ void LoadSkills( void )
 			}
 		}
 	}
-	FileLookup->Dispose( skills_def );
 }
 
 //o---------------------------------------------------------------------------o

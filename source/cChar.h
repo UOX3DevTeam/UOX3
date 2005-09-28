@@ -28,8 +28,95 @@ enum cC_TID
 
 class CChar : public CBaseObject
 {
+private:
+	struct NPCValues_st
+	{
+						NPCValues_st();
+		void			DumpBody( std::ofstream& outStream );
+
+		SI16			aiType;
+		CBaseObject *	petGuarding;
+		SI16			taming;
+		UI08			trainingPlayerIn;
+		UI32			goldOnHand;
+
+		UI08			splitSection;
+		UI08			splitChance;
+
+		SI16			fx[2]; //NPC Wander Point x
+		SI16			fy[2]; //NPC Wander Point y
+		SI08			fz; //NPC Wander Point z
+
+		SI08			wanderMode; // NPC Wander Mode
+		SI08			oldWanderMode; // Used for fleeing npcs
+		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
+
+		SI16			spellAttack;
+		SI08			spellDelay;	// won't time out for more than 255 seconds!
+
+		UI08			questType;
+		UI08			questDestRegion;
+		UI08			questOrigRegion;
+			
+		SI16			fleeAt;		// HP Level to flee at
+		SI16			reAttackAt;	// HP Level to re-Attack at
+
+		CHARLIST		petFriends;
+
+		SERIAL			fTarg; // NPC Follow Target
+	};
+
+	struct PlayerValues_st
+	{
+					PlayerValues_st();
+		void		DumpBody( std::ofstream& outStream );
+
+		SERIAL		robe;
+
+		SERIAL		trackingTarget; // Tracking target ID
+		CHARLIST	trackingTargets;
+
+		UI16		accountNum;
+
+		UI16		origID; // Backup of body type for polymorph
+		UI16		origSkin;
+		std::string	origName; // original name - for Incognito
+
+		UI16		hairStyle;
+		UI16		beardStyle;
+		COLOUR		hairColour;
+		COLOUR		beardColour;
+
+		std::string	lastOn; //Last time a character was on
+
+		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
+		UI08		postType;
+		SI16		callNum;		// Callnum GM or Counsellor is on
+		SI16		playerCallNum;	// Players call number in GM or Counsellor Queue
+
+		UI08		squelched; // zippy  - squelching
+
+		CItem *		speechItem;
+		UI08		speechMode;
+		UI08		speechID;
+		cScript *	speechCallback;
+		// speechMode valid values
+		// 0 normal speech
+		// 1 GM page
+		// 2 Counselor page
+		// 3 Player Vendor item pricing
+		// 4 Player Vendor item describing
+		// 5 Key renaming
+		// 6 Name deed
+		// 7 Rune renaming
+		// 8 Sign renaming
+		// 9 JavaScript speech
+	};
 // Base Characters
 protected:
+	NPCValues_st	*	mNPC;
+	PlayerValues_st	*	mPlayer;
+
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	UI08		fixedlight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 	UI08		town;       // Matches Region number in regions.scp
@@ -104,6 +191,11 @@ protected:
 
 	void		CopyData( CChar *target );
 
+	void		CreateNPC( void );
+	void		CreatePlayer( void );
+
+	bool		IsValidNPC( void ) const;
+	bool		IsValidPlayer( void ) const;
 public:
 
 	void		SetPoisonStrength( UI08 value );
@@ -381,37 +473,6 @@ public:
 	virtual bool	CanBeObjType( ObjectType toCompare ) const;
 // NPC Characters
 protected:
-	SI16			npcaitype;
-	CBaseObject *	petguarding;
-	SI16			taming;
-	UI08			trainingplayerin;
-	UI32			holdg;
-
-	UI08		split;
-	UI08		splitchance;
-
-	SI16		fx[2]; //NPC Wander Point x
-	SI16		fy[2]; //NPC Wander Point y
-	SI08		fz; //NPC Wander Point z
-
-	SI08		npcWander; // NPC Wander Mode
-	SI08		oldnpcWander; // Used for fleeing npcs
-	std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
-
-	SI16		spattack;
-	SI08		spadelay;	// won't time out for more than 255 seconds!
-
-	UI08		questType;
-	UI08		questDestRegion;
-	UI08		questOrigRegion;
-		
-	SI16		fleeat;		// HP Level to flee at
-	SI16		reattackat;	// HP Level to re-Attack at
-
-	CHARLIST	petFriends;
-
-	SERIAL		ftarg; // NPC Follow Target
-
 	virtual void	RemoveSelfFromOwner( void );
 	virtual void	AddSelfToOwner( void );
 public:
@@ -482,51 +543,11 @@ public:
 	void		FlushPath( void );
 
 // Player Characters
-protected:
-	SERIAL		robe;
-
-	SERIAL		trackingtarget; // Tracking target ID
-	CHARLIST	trackingtargets;
-
-	UI16		accountNum;
-
-	UI16		origID; // Backup of body type for polymorph
-	UI16		origSkin;
-	std::string	origName; // original name - for Incognito
-
-	UI16		hairstyle;
-	UI16		beardstyle;
-	COLOUR		haircolor;
-	COLOUR		beardcolour;
-
-	std::string	laston; //Last time a character was on
-
-	UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
-	UI08		postType;
-	SI16		callnum;		// Callnum GM or Counsellor is on
-	SI16		playercallnum;	// Players call number in GM or Counsellor Queue
-
-	UI08		squelched; // zippy  - squelching
-
-	CItem *		speechItem;
-	UI08		speechMode;
-	UI08		speechID;
-	cScript *	speechCallback;
-	// speechMode valid values
-	// 0 normal speech
-	// 1 GM page
-	// 2 Counselor page
-	// 3 Player Vendor item pricing
-	// 4 Player Vendor item describing
-	// 5 Key renaming
-	// 6 Name deed
-	// 7 Rune renaming
-	// 8 Sign renaming
-	// 9 JavaScript speech
 public:
 	void					SetAccount( ACCOUNTSBLOCK& actbAccount );
 	ACCOUNTSBLOCK &			GetAccount(void);
 	UI16					GetAccountNum( void ) const;
+	void					SetAccountNum( UI16 newVal );
 
 	void		SetRobe( SERIAL newValue );
 	SERIAL		GetRobe( void ) const;

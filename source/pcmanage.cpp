@@ -628,6 +628,10 @@ void startChar( CSocket *mSock, bool onCreate )
 			mChar->SetWar( false );
 
 			SendMapChange( mChar->WorldNumber(), mSock, true );
+
+			CPEnableMapDiffs mDiff;
+			mSock->Send( &mDiff );
+
 			CPWorldChange wrldChange( mChar->GetRegion()->GetAppearance(), 1 );
 			mSock->Send( &wrldChange );	// need to add this?
 
@@ -693,10 +697,6 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
-
-			CPEnableMapDiffs mDiff;
-			mSock->Send( &mDiff );
-
 			mSock->LoginComplete( true );
 		}
 	}

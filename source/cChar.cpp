@@ -55,7 +55,64 @@
 namespace UOX
 {
 
-const SERIAL		DEFCHAR_ROBE 				= INVALIDSERIAL;
+const SI16			DEFPLAYER_CALLNUM 			= -1;
+const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
+const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
+const UI08			DEFPLAYER_SQUELCHED			= 0;
+const UI08			DEFPLAYER_COMMANDLEVEL 		= PLAYER_CMDLEVEL;
+const UI08			DEFPLAYER_POSTTYPE 			= PT_LOCAL;
+const UI16			DEFPLAYER_HAIRSTYLE			= INVALIDID;
+const UI16			DEFPLAYER_BEARDSTYLE 		= INVALIDID;
+const COLOUR		DEFPLAYER_HAIRCOLOUR 		= INVALIDCOLOUR;
+const COLOUR		DEFPLAYER_BEARDCOLOUR 		= INVALIDCOLOUR;
+CItem *				DEFPLAYER_SPEECHITEM		= NULL;
+const UI08			DEFPLAYER_SPEECHMODE 		= 0;
+const UI08			DEFPLAYER_SPEECHID 			= 0;
+cScript *			DEFPLAYER_SPEECHCALLBACK 	= NULL;
+const SERIAL		DEFPLAYER_ROBE 				= INVALIDSERIAL;
+const UI16			DEFPLAYER_ACCOUNTNUM		= AB_INVALID_ID;
+const UI16			DEFPLAYER_ORIGSKIN			= 0;
+const UI16			DEFPLAYER_ORIGID			= 0x0190;
+
+CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
+squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
+hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
+speechCallback( DEFPLAYER_SPEECHCALLBACK ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID )
+{
+	if( cwmWorldState != NULL )
+		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
+}
+
+const SI08			DEFNPC_WANDER 				= 0;
+const SI08			DEFNPC_OLDWANDER 			= 0;
+const SERIAL		DEFNPC_FTARG				= INVALIDSERIAL;
+const SI08			DEFNPC_FZ1 					= -1;
+const SI16			DEFNPC_AITYPE 				= 0;
+const SI16			DEFNPC_SPATTACK				= 0;
+const SI08			DEFNPC_SPADELAY				= 0;
+const SI16			DEFNPC_TAMING 				= 0;
+const SI16			DEFNPC_FLEEAT 				= 0;
+const SI16			DEFNPC_REATTACKAT 			= 0;
+const UI08			DEFNPC_SPLIT 				= 0;
+const UI08			DEFNPC_SPLITCHANCE 			= 0;
+const UI08			DEFNPC_TRAININGPLAYERIN		= 0;
+const UI32			DEFNPC_HOLDG 				= 0;
+const UI08			DEFNPC_QUESTTYPE			= 0;
+const UI08			DEFNPC_QUESTDESTREGION 		= 0;
+const UI08			DEFNPC_QUESTORIGREGION		= 0;
+CBaseObject *		DEFNPC_PETGUARDING 			= NULL;
+const SI16			DEFNPC_WANDERAREA			= -1;
+
+CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
+aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
+reAttackAt( DEFNPC_REATTACKAT ), splitSection( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
+goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
+petGuarding( DEFNPC_PETGUARDING )
+{
+	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
+	petFriends.resize( 0 );
+}
+
 const SERIAL		DEFCHAR_TOWNVOTE 			= INVALIDSERIAL;
 const UI32			DEFCHAR_BOOLS 				= 0;
 const SI08			DEFCHAR_DISPZ 				= 0;
@@ -98,64 +155,20 @@ const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const UI08			DEFCHAR_LAYERCTR			= 0;
 
-const SI16			DEFPLAYER_CALLNUM 			= -1;
-const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
-const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
-const UI08			DEFPLAYER_SQUELCHED			= 0;
-const UI08			DEFPLAYER_COMMANDLEVEL 		= PLAYER_CMDLEVEL;
-const UI08			DEFPLAYER_POSTTYPE 			= PT_LOCAL;
-const UI16			DEFPLAYER_HAIRSTYLE			= INVALIDID;
-const UI16			DEFPLAYER_BEARDSTYLE 		= INVALIDID;
-const COLOUR		DEFPLAYER_HAIRCOLOUR 		= INVALIDCOLOUR;
-const COLOUR		DEFPLAYER_BEARDCOLOUR 		= INVALIDCOLOUR;
-CItem *				DEFPLAYER_SPEECHITEM		= NULL;
-const UI08			DEFPLAYER_SPEECHMODE 		= 0;
-const UI08			DEFPLAYER_SPEECHID 			= 0;
-const cScript *		DEFPLAYER_SPEECHCALLBACK 	= NULL;
-
-const SI08			DEFNPC_WANDER 				= 0;
-const SI08			DEFNPC_OLDWANDER 			= 0;
-const SERIAL		DEFNPC_FTARG				= INVALIDSERIAL;
-const SI08			DEFNPC_FZ1 					= -1;
-const SI16			DEFNPC_AITYPE 				= 0;
-const SI16			DEFNPC_SPATTACK				= 0;
-const SI08			DEFNPC_SPADELAY				= 0;
-const SI16			DEFNPC_TAMING 				= 0;
-const SI16			DEFNPC_FLEEAT 				= 0;
-const SI16			DEFNPC_REATTACKAT 			= 0;
-const UI08			DEFNPC_SPLIT 				= 0;
-const UI08			DEFNPC_SPLITCHANCE 			= 0;
-const UI08			DEFNPC_TRAININGPLAYERIN		= 0;
-const UI32			DEFNPC_HOLDG 				= 0;
-const UI08			DEFNPC_QUESTTYPE			= 0;
-const UI08			DEFNPC_QUESTDESTREGION 		= 0;
-const UI08			DEFNPC_QUESTORIGREGION		= 0;
-CBaseObject *		DEFNPC_PETGUARDING 			= NULL;
-
 CChar::CChar() : CBaseObject(),
-robe( DEFCHAR_ROBE ), townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
+townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), deaths( DEFCHAR_DEATHS ), packitem( DEFCHAR_PACKITEM ), fixedlight( DEFCHAR_FIXEDLIGHT ), 
-targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), npcWander( DEFNPC_WANDER ), oldnpcWander( DEFNPC_OLDWANDER ), ftarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ), 
-hunger( DEFCHAR_HUNGER ), npcaitype( DEFNPC_AITYPE ), callnum( DEFPLAYER_CALLNUM ), playercallnum( DEFPLAYER_PLAYERCALLNUM ), regionNum( DEFCHAR_REGIONNUM ), 
-spattack( DEFNPC_SPATTACK ), spadelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), trackingtarget( DEFPLAYER_TRACKINGTARGET ), town( DEFCHAR_TOWN ), 
-townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), fleeat( DEFNPC_FLEEAT ), reattackat( DEFNPC_REATTACKAT ), split( DEFNPC_SPLIT ), splitchance( DEFNPC_SPLITCHANCE ), 
-trainingplayerin( DEFNPC_TRAININGPLAYERIN ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
-spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), squelched( DEFPLAYER_SQUELCHED ), layerCtr( DEFCHAR_LAYERCTR ),
-stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), holdg( DEFNPC_HOLDG ), raceGate( DEFCHAR_RACEGATE ), 
-commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), questType( DEFNPC_QUESTTYPE ), 
-questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ), step( DEFCHAR_STEP ), hairstyle( DEFPLAYER_HAIRSTYLE ), 
-beardstyle( DEFPLAYER_BEARDSTYLE ), haircolor( DEFPLAYER_HAIRCOLOUR ), beardcolour( DEFPLAYER_BEARDCOLOUR ), origSkin( colour ), priv( DEFCHAR_PRIV ),
-petguarding( DEFNPC_PETGUARDING ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ),
-speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLBACK ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
+targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
+townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
+spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), layerCtr( DEFCHAR_LAYERCTR ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
 	id		= 0x0190;
-	origID	= id;
 	objType = OT_CHAR;
 	name	= "Mr. noname";
-	petFriends.resize( 0 );
 	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
 	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
 	memset( baseskill, 0, sizeof( baseskill[0] ) * (ALLSKILLS+1) );
@@ -163,22 +176,54 @@ speechID( DEFPLAYER_SPEECHID ), speechCallback( (cScript *)DEFPLAYER_SPEECHCALLB
 	memset( lockState, 0, sizeof( lockState[0] ) * (INTELLECT+1) );
 	for( UI08 j = 0; j <= ALLSKILLS; ++j )
 		atrophy[j] = j;
-	if( cwmWorldState != NULL )
-		trackingtargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
 	SetCanTrain( true );
 	SetHungerStatus( true );
 
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
 	memset( regen, 0, sizeof( UI32 ) * 3 );
-	accountNum = AB_INVALID_ID;
-	fx[0] = fx[1] = fy[0] = fy[1] = -1;
 
 	strength = dexterity = intelligence = 1;
+
+	mPlayer	= NULL;
+	mNPC	= NULL;
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
 {
+	if( IsValidNPC() )
+	{
+		delete mNPC;
+		mNPC = NULL;
+	}
+
+	if( IsValidPlayer() )
+	{
+		delete mPlayer;
+		mPlayer = NULL;
+	}
+}
+
+void CChar::CreateNPC( void )
+{
+	if( !IsValidNPC() )
+		mNPC = new NPCValues_st();
+}
+
+void CChar::CreatePlayer( void )
+{
+	if( !IsValidPlayer() )
+		mPlayer = new PlayerValues_st();
+}
+
+bool CChar::IsValidNPC( void ) const
+{
+	return ( mNPC != NULL );
+}
+
+bool CChar::IsValidPlayer( void ) const
+{
+	return ( mPlayer != NULL );
 }
 
 //o---------------------------------------------------------------------------o
@@ -190,11 +235,20 @@ CChar::~CChar()	// Destructor to clean things up when deleted
 //o---------------------------------------------------------------------------o
 SI16 CChar::GetNPCAiType( void ) const
 {
-	return npcaitype;
+	SI16 rVal = DEFNPC_AITYPE;
+	if( IsValidNPC() )
+		rVal = mNPC->aiType;
+	return rVal;
 }
 void CChar::SetNPCAiType( SI16 newValue )
 {
-	npcaitype = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_AITYPE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->aiType = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -206,11 +260,20 @@ void CChar::SetNPCAiType( SI16 newValue )
 //o---------------------------------------------------------------------------o
 CBaseObject *CChar::GetGuarding( void ) const
 {
-	return petguarding;
+	CBaseObject *rVal = DEFNPC_PETGUARDING;
+	if( IsValidNPC() )
+		rVal = mNPC->petGuarding;
+	return rVal;
 }
 void CChar::SetGuarding( CBaseObject *newValue )
 {
-	petguarding = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_PETGUARDING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->petGuarding = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -222,11 +285,20 @@ void CChar::SetGuarding( CBaseObject *newValue )
 //o---------------------------------------------------------------------------o
 SI16 CChar::GetTaming( void ) const
 {
-	return taming;
+	SI16 rVal = DEFNPC_TAMING;
+	if( IsValidNPC() )
+		rVal = mNPC->taming;
+	return rVal;
 }
 void CChar::SetTaming( SI16 newValue )
 {
-	taming = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_TAMING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->taming = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -287,11 +359,20 @@ void CChar::SetTown( UI08 newValue )
 //o---------------------------------------------------------------------------o
 UI08 CChar::GetTrainingPlayerIn( void ) const
 {
-	return trainingplayerin;
+	UI08 rVal = DEFNPC_TRAININGPLAYERIN;
+	if( IsValidNPC() )
+		rVal = mNPC->trainingPlayerIn;
+	return rVal;
 }
 void CChar::SetTrainingPlayerIn( UI08 newValue )
 {
-	trainingplayerin = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_TRAININGPLAYERIN )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->trainingPlayerIn = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -303,13 +384,21 @@ void CChar::SetTrainingPlayerIn( UI08 newValue )
 //o---------------------------------------------------------------------------o
 UI32 CChar::GetHoldG( void ) const
 {
-	return holdg;
+	UI32 rVal = DEFNPC_HOLDG;
+	if( IsValidNPC() )
+		rVal = mNPC->goldOnHand;
+	return rVal;
 }
 void CChar::SetHoldG( UI32 newValue )
 {
-	holdg = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_HOLDG )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->goldOnHand = newValue;
 }
-
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	void CChar::SetAccount( UI16 newVal )
@@ -326,16 +415,14 @@ void CChar::SetHoldG( UI32 newValue )
 //o--------------------------------------------------------------------------o
 void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
 {
-	accountNum = actbAccount.wAccountIndex;
-/*	if( actbAccount.wAccountIndex == AB_INVALID_ID )
-		ourAccount.wAccountIndex = AB_INVALID_ID;
-	else
+	if( !IsValidPlayer() )
 	{
-		ourAccount = actbAccount;
-		Accounts->ModAccount( ourAccount.wAccountIndex, AB_ALL, actbAccount );
+		if( actbAccount.wAccountIndex != DEFPLAYER_ACCOUNTNUM )
+			CreatePlayer();
 	}
-*/}
-//
+	if( IsValidPlayer() )
+		mPlayer->accountNum = actbAccount.wAccountIndex;
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  UI08 Split()
@@ -346,11 +433,20 @@ void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
 //o---------------------------------------------------------------------------o
 UI08 CChar::GetSplit( void ) const
 {
-	return split;
+	UI08 rVal = DEFNPC_SPLIT;
+	if( IsValidNPC() )
+		rVal = mNPC->splitSection;
+	return rVal;
 }
 void CChar::SetSplit( UI08 newValue )
 {
-	split = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPLIT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->splitSection = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -362,11 +458,20 @@ void CChar::SetSplit( UI08 newValue )
 //o---------------------------------------------------------------------------o
 UI08 CChar::GetSplitChance( void ) const
 {
-	return splitchance;
+	UI08 rVal = DEFNPC_SPLITCHANCE;
+	if( IsValidNPC() )
+		rVal = mNPC->splitChance;
+	return rVal;
 }
 void CChar::SetSplitChance( UI08 newValue )
 {
-	splitchance = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPLITCHANCE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->splitChance = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -872,11 +977,20 @@ void CChar::SetJSCasting( bool newValue )
 //o---------------------------------------------------------------------------o
 SERIAL CChar::GetRobe( void ) const
 {
-	return robe;
+	SERIAL rVal = DEFPLAYER_ROBE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->robe;
+	return rVal;
 }
 void CChar::SetRobe( SERIAL newValue )
 {
-	robe = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_ROBE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->robe = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -932,20 +1046,38 @@ void CChar::SetGuildFealty( UI32 newValue )
 
 std::string CChar::GetOrgName( void ) const
 {
-	return origName;
+	std::string rVal = "";
+	if( IsValidPlayer() )
+		rVal = mPlayer->origName;
+	return rVal;
 }
 void CChar::SetOrgName( std::string newName )
 {
-	origName = newName;
+	if( !IsValidPlayer() )
+	{
+		if( !newName.empty() )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->origName = newName;
 }
 
 std::string CChar::GetLastOn( void ) const
 {
-	return laston;
+	std::string rVal = "";
+	if( IsValidPlayer() )
+		rVal = mPlayer->lastOn;
+	return rVal;
 }
 void CChar::SetLastOn( std::string newValue )
 {
-	laston = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( !newValue.empty() )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->lastOn = newValue;
 }
 
 std::string CChar::GetGuildTitle( void ) const
@@ -1025,29 +1157,51 @@ void CChar::SetPoisonStrength( UI08 value )
 
 UI16 CChar::GetOrgID( void ) const
 {
-	return origID;
+	UI16 rVal = GetID();
+	if( IsValidPlayer() )
+		rVal = mPlayer->origID;
+	return rVal;
 }
 void CChar::SetOrgID( UI16 value )
 {
-	origID = value;
+	if( IsValidPlayer() )
+		mPlayer->origID = value;
 }
 
 UI16 CChar::GetHairStyle( void ) const
 {
-	return hairstyle;
+	UI16 rVal = DEFPLAYER_HAIRSTYLE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->hairStyle;
+	return rVal;
 }
 void CChar::SetHairStyle( UI16 value )
 {
-	hairstyle = value;
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_HAIRSTYLE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->hairStyle = value;
 }
 
 UI16 CChar::GetBeardStyle( void ) const
 {
-	return beardstyle;
+	UI16 rVal = DEFPLAYER_BEARDSTYLE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->beardStyle;
+	return rVal;
 }
 void CChar::SetBeardStyle( UI16 value )
 {
-	beardstyle = value;
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_BEARDSTYLE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->beardStyle = value;
 }
 
 COLOUR CChar::GetEmoteColour( void ) const
@@ -1070,20 +1224,38 @@ void CChar::SetSayColour( COLOUR newValue )
 
 COLOUR CChar::GetHairColour( void ) const
 {
-	return haircolor;
+	COLOUR rVal = DEFPLAYER_HAIRCOLOUR;
+	if( IsValidPlayer() )
+		rVal = mPlayer->hairColour;
+	return rVal;
 }
 void CChar::SetHairColour( COLOUR value )
 {
-	haircolor = value;
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_HAIRCOLOUR )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->hairColour = value;
 }
 
 COLOUR CChar::GetBeardColour( void ) const
 {
-	return beardcolour;
+	COLOUR rVal = DEFPLAYER_BEARDCOLOUR;
+	if( IsValidPlayer() )
+		rVal = mPlayer->beardColour;
+	return rVal;
 }
 void CChar::SetBeardColour( COLOUR value )
 {
-	beardcolour = value;
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_BEARDCOLOUR )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->beardColour = value;
 }
 
 UI16 CChar::GetSkin( void ) const
@@ -1097,46 +1269,81 @@ void CChar::SetSkin( UI16 value )
 
 UI16 CChar::GetOrgSkin( void ) const
 {
-	return origSkin;
+	UI16 rVal = GetSkin();
+	if( IsValidPlayer() )
+		rVal = mPlayer->origSkin;
+	return rVal;
 }
 void CChar::SetOrgSkin( UI16 value )
 {
-	origSkin = value;
+	if( IsValidPlayer() )
+		mPlayer->origSkin = value;
 }
 
 SI16 CChar::GetFx( UI08 part ) const
 {
-	SI16 rvalue = 0;
-	if( part < 2 )
-		rvalue = fx[part];
-	return rvalue;
+	SI16 rVal = DEFNPC_WANDERAREA;
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			rVal = mNPC->fx[part];
+	}
+	return rVal;
 }
 void CChar::SetFx( SI16 newVal, UI08 part )
 {
-	if( part < 2 )
-		fx[part] = newVal;
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_WANDERAREA )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			mNPC->fx[part] = newVal;
+	}
 }
 
 SI16 CChar::GetFy( UI08 part ) const
 {
-	SI16 rvalue = 0;
-	if( part < 2 )
-		rvalue = fy[part];
-	return rvalue;
+	SI16 rVal = DEFNPC_WANDERAREA;
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			rVal = mNPC->fy[part];
+	}
+	return rVal;
 }
 void CChar::SetFy( SI16 newVal, UI08 part )
 {
-	if( part < 2 )
-		fy[part] = newVal;
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_WANDERAREA )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			mNPC->fy[part] = newVal;
+	}
 }
 
 SI08 CChar::GetFz( void ) const
 {
-	return fz;
+	SI08 rVal = DEFNPC_FZ1;
+	if( IsValidNPC() )
+		rVal = mNPC->fz;
+	return rVal;
 }
 void CChar::SetFz( SI08 newVal )
 {
-	fz = newVal;
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_FZ1 )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fz = newVal;
 }
 
 SI08 CChar::GetStealth( void ) const
@@ -1159,20 +1366,38 @@ void CChar::SetCell( SI08 newVal )
 
 SI08 CChar::GetNpcWander( void ) const
 {
-	return npcWander;
+	SI08 rVal = DEFNPC_WANDER;
+	if( IsValidNPC() )
+		rVal = mNPC->wanderMode;
+	return rVal;
 }
 void CChar::SetNpcWander( SI08 newValue )
 {
-	npcWander = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_WANDER )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->wanderMode = newValue;
 }
 
 SI08 CChar::GetOldNpcWander( void ) const
 {
-	return oldnpcWander;
+	SI08 rVal = DEFNPC_OLDWANDER;
+	if( IsValidNPC() )
+		rVal = mNPC->oldWanderMode;
+	return rVal;
 }
 void CChar::SetOldNpcWander( SI08 newValue )
 {
-	oldnpcWander = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_OLDWANDER )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->oldWanderMode = newValue;
 }
 
 UI08 CChar::GetRunning( void ) const
@@ -1253,7 +1478,10 @@ CChar *CChar::GetAttacker( void ) const
 }
 CChar *CChar::GetFTarg( void ) const
 {
-	return calcCharObjFromSer( ftarg );
+	CChar *rVal = NULL;
+	if( IsValidNPC() )
+		rVal = calcCharObjFromSer( mNPC->fTarg );
+	return rVal;
 }
 
 UI16 CChar::GetAdvObj( void ) const
@@ -1263,11 +1491,20 @@ UI16 CChar::GetAdvObj( void ) const
 
 CChar *CChar::GetTrackingTarget( void ) const
 {
-	return calcCharObjFromSer( trackingtarget );
+	CChar *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = calcCharObjFromSer( mPlayer->trackingTarget );
+	return rVal;
 }
 CChar *CChar::GetTrackingTargets( UI08 targetNum ) const
 {
-	return trackingtargets[targetNum];
+	CChar *rVal = NULL;
+	if( IsValidPlayer() )
+	{
+		if( targetNum < mPlayer->trackingTargets.size() )
+			rVal = mPlayer->trackingTargets[targetNum];
+	}
+	return rVal;
 }
 RACEID CChar::GetRaceGate( void ) const
 {
@@ -1296,7 +1533,13 @@ void CChar::SetAttacker( CChar *newValue )
 }
 void CChar::SetFTarg( CChar *newTarg )
 {
-	ftarg = calcSerFromObj( newTarg );
+	if( !IsValidNPC() )
+	{
+		if( newTarg != NULL )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fTarg = calcSerFromObj( newTarg );
 }
 void CChar::SetAdvObj( UI16 newValue )
 {
@@ -1305,7 +1548,13 @@ void CChar::SetAdvObj( UI16 newValue )
 
 void CChar::SetTrackingTarget( CChar *newValue )
 {
-	trackingtarget = calcSerFromObj( newValue );
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->trackingTarget = calcSerFromObj( newValue );
 }
 void CChar::SetRaceGate( RACEID newValue )
 {
@@ -1313,7 +1562,16 @@ void CChar::SetRaceGate( RACEID newValue )
 }
 void CChar::SetTrackingTargets( CChar *newValue, UI08 targetNum )
 {
-	trackingtargets[targetNum] = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+	{
+		if( targetNum < mPlayer->trackingTargets.size() )
+			mPlayer->trackingTargets[targetNum] = newValue;
+	}
 }
 
 SI08 CChar::GetSpellCast( void ) const
@@ -1322,11 +1580,17 @@ SI08 CChar::GetSpellCast( void ) const
 }
 SI16 CChar::GetSpAttack( void ) const
 {
-	return spattack;
+	SI16 rVal = DEFNPC_SPATTACK;
+	if( IsValidNPC() )
+		rVal = mNPC->spellAttack;
+	return rVal;
 }
 SI08 CChar::GetSpDelay( void ) const
 {
-	return spadelay;
+	SI08 rVal = DEFNPC_SPADELAY;
+	if( IsValidNPC() )
+		rVal = mNPC->spellDelay;
+	return rVal;
 }
 
 void CChar::SetSpellCast( SI08 newValue )
@@ -1335,64 +1599,127 @@ void CChar::SetSpellCast( SI08 newValue )
 }
 void CChar::SetSpAttack( SI16 newValue )
 {
-	spattack = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPATTACK )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->spellAttack = newValue;
 }
 void CChar::SetSpDelay( SI08 newValue )
 {
-	spadelay = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPADELAY )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->spellDelay = newValue;
 }
 
 UI08 CChar::GetQuestType( void ) const
 {
-	return questType;
+	UI08 rVal = DEFNPC_QUESTTYPE;
+	if( IsValidNPC() )
+		rVal = mNPC->questType;
+	return rVal;
 }
 UI08 CChar::GetQuestOrigRegion( void ) const
 {
-	return questOrigRegion;
+	UI08 rVal = DEFNPC_QUESTORIGREGION;
+	if( IsValidNPC() )
+		rVal = mNPC->questOrigRegion;
+	return rVal;
 }
 UI08 CChar::GetQuestDestRegion( void ) const
 {
-	return questDestRegion;
+	UI08 rVal = DEFNPC_QUESTDESTREGION;
+	if( IsValidNPC() )
+		rVal = mNPC->questDestRegion;
+	return rVal;
 }
 
 void CChar::SetQuestDestRegion( UI08 newValue )
 {
-	questDestRegion = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTDESTREGION )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questDestRegion = newValue;
 }
 void CChar::SetQuestType( UI08 newValue )
 {
-	questType = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTTYPE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questType = newValue;
 }
 void CChar::SetQuestOrigRegion( UI08 newValue )
 {
-	questOrigRegion = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTORIGREGION )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questOrigRegion = newValue;
 }
 
 SI16 CChar::GetFleeAt( void ) const
 {
-	return fleeat;
+	SI16 rVal = DEFNPC_FLEEAT;
+	if( IsValidNPC() )
+		rVal = mNPC->fleeAt;
+	return rVal;
 }
 SI16 CChar::GetReattackAt( void ) const
 {
-	return reattackat;
+	SI16 rVal = DEFNPC_REATTACKAT;
+	if( IsValidNPC() )
+		rVal = mNPC->reAttackAt;
+	return rVal;
 }
 
 void CChar::SetFleeAt( SI16 newValue )
 {
-	fleeat = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_FLEEAT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fleeAt = newValue;
 }
 void CChar::SetReattackAt( SI16 newValue )
 {
-	reattackat = newValue;
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_REATTACKAT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->reAttackAt = newValue;
 }
 
 UI08 CChar::GetCommandLevel( void ) const
 {
-	return commandLevel;
+	UI08 rVal = DEFPLAYER_COMMANDLEVEL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->commandLevel;
+	return rVal;
 }
 UI08 CChar::GetPostType( void ) const
 {
-	return postType;
+	UI08 rVal = DEFPLAYER_POSTTYPE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->postType;
+	return rVal;
 }
 UI16 CChar::GetPriv( void ) const
 {
@@ -1408,11 +1735,23 @@ void CChar::SetPriv( UI16 newValue )
 }
 void CChar::SetPostType( UI08 newValue )
 {
-	postType = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_POSTTYPE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->postType = newValue;
 }
 void CChar::SetCommandLevel( UI08 newValue )
 {
-	commandLevel = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_COMMANDLEVEL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->commandLevel = newValue;
 }
 void CChar::SetTownpriv( SI08 newValue )
 {
@@ -1488,20 +1827,38 @@ void CChar::SetGuildNumber( SI16 newValue )
 
 SI16 CChar::GetCallNum( void ) const
 {
-	return callnum;
+	SI16 rVal = DEFPLAYER_CALLNUM;
+	if( IsValidPlayer() )
+		rVal = mPlayer->callNum;
+	return rVal;
 }
 SI16 CChar::GetPlayerCallNum( void ) const
 {
-	return playercallnum;
+	SI16 rVal = DEFPLAYER_PLAYERCALLNUM;
+	if( IsValidPlayer() )
+		rVal = mPlayer->playerCallNum;
+	return rVal;
 }
 
 void CChar::SetPlayerCallNum( SI16 newValue )
 {
-	playercallnum = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_PLAYERCALLNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->playerCallNum = newValue;
 }
 void CChar::SetCallNum( SI16 newValue )
 {
-	callnum = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_CALLNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->callNum = newValue;
 }
 SI08 CChar::GetFontType( void ) const
 {
@@ -1509,7 +1866,10 @@ SI08 CChar::GetFontType( void ) const
 }
 UI08 CChar::GetSquelched( void ) const
 {
-	return squelched;
+	UI08 rVal = DEFPLAYER_SQUELCHED;
+	if( IsValidPlayer() )
+		rVal = mPlayer->squelched;
+	return rVal;
 }
 
 void CChar::SetFontType( SI08 newType )
@@ -1518,7 +1878,13 @@ void CChar::SetFontType( SI08 newType )
 }
 void CChar::SetSquelched( UI08 newValue )
 {
-	squelched = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SQUELCHED )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->squelched = newValue;
 }
 
 bool CChar::IsGM( void ) const
@@ -1708,18 +2074,14 @@ void CChar::CopyData( CChar *target )
 {
 		target->SetMulti( GetMultiObj() );
 		target->SetOwner( GetOwnerObj() );
-		target->SetRobe( robe );
 		target->SetSpawn( GetSpawn() );
 		target->SetTownVote( townvote );
 		target->SetPriv( GetPriv() );
 		target->SetName( name );
 		target->SetTitle( title );
-		target->SetOrgName( origName );
-		target->SetAccount( GetAccount() );
 		target->SetLocation( this );
 		target->SetDir( dir );
 		target->SetID( id );
-		target->SetOrgID( origID );
 		target->SetSkin( GetColour() );
 		target->SetFontType( fonttype );
 		target->SetSayColour( saycolor );
@@ -1766,44 +2128,18 @@ void CChar::CopyData( CChar *target )
 		target->SetRegen( regen[1], 1 );
 		target->SetRegen( regen[2], 2 );
 		target->SetAttacker( GetAttacker() );
-		target->SetNpcWander( npcWander );
-		target->SetOldNpcWander( oldnpcWander );
-		target->SetFTarg( GetFTarg() );
-		target->SetFx( fx[0], 0 );
-		target->SetFx( fx[1], 1 );
-		target->SetFy( fy[0], 0 );
-		target->SetFy( fy[1], 1 );
-		target->SetFz( fz );
 		target->SetVisible( GetVisible() );
 
 		for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
 			target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
 		target->SetHunger( hunger );
-		target->SetNPCAiType( npcaitype );
-		target->SetGuarding( petguarding );
-		target->SetCallNum( callnum );
-		target->SetPlayerCallNum( playercallnum );
 		target->SetRegion( regionNum );
-		target->SetSpAttack( spattack );
-		target->SetSpDelay( spadelay );
-		target->SetTaming( taming );
-		target->SetTrackingTarget( GetTrackingTarget() );
-		for( UI08 counter = 0; counter < trackingtargets.size(); ++counter )
-		{
-			target->SetTrackingTargets( trackingtargets[counter], counter );
-		}
 		target->SetTown( town );
 		target->SetTownpriv( townpriv );
 		target->SetAdvObj( advobj );
-
-		target->SetFleeAt( fleeat );
-		target->SetReattackAt( reattackat );
 		target->SetDisabled( isDisabled() );
-		target->SetSplit( split );
-		target->SetSplitChance( splitchance );
-		target->SetTrainingPlayerIn( trainingplayerin );
 		target->SetCanTrain( CanTrain() );
-		target->SetLastOn( laston );
+		target->SetLastOn( GetLastOn() );
 		target->SetGuildTitle( guildtitle );
 		target->SetGuildFealty( guildfealty );
 		target->SetGuildNumber( guildnumber );
@@ -1816,21 +2152,56 @@ void CChar::CopyData( CChar *target )
 		target->SetMeditating( IsMeditating() );
 		target->SetStealth( stealth );
 		target->SetRunning( running );
-		target->SetHoldG( holdg );
 		target->SetRace( GetRace() );
 		target->SetRaceGate( raceGate );
 		target->SetCarve( carve );
-		target->SetCommandLevel( commandLevel );
-		target->SetPostType( postType );
-		target->SetQuestType( questType );
-		target->SetQuestDestRegion( questDestRegion );
-		target->SetQuestOrigRegion( questOrigRegion );
 		for( UI08 counter2 = 0; counter2 < WEATHNUM; ++counter2 )
 		{
 			target->SetWeathDamage( weathDamage[counter2], counter2 );
 		}
 //		target->SetMaxHP( maxHP, maxHP_oldstr, maxHP_oldrace );
 //		target->SetMaxMana( maxMana, maxMana_oldint, maxMana_oldrace );
+		if( IsValidNPC() )
+		{
+			target->SetFleeAt( GetFleeAt() );
+			target->SetReattackAt( GetReattackAt() );
+			target->SetNpcWander( GetNpcWander() );
+			target->SetOldNpcWander( GetOldNpcWander() );
+			target->SetFTarg( GetFTarg() );
+			target->SetFx( GetFx( 0 ), 0 );
+			target->SetFx( GetFx( 1 ), 1 );
+			target->SetFy( GetFy( 0 ), 0 );
+			target->SetFy( GetFy( 1 ), 1 );
+			target->SetFz( GetFz() );
+			target->SetTaming( GetTaming() );
+			target->SetNPCAiType( GetNPCAiType() );
+			target->SetSpAttack( GetSpAttack() );
+			target->SetSpDelay( GetSpDelay() );
+			target->SetSplit( GetSplit() );
+			target->SetSplitChance( GetSplitChance() );
+			target->SetTrainingPlayerIn( GetTrainingPlayerIn() );
+			target->SetHoldG( GetHoldG() );
+			target->SetQuestType( GetQuestType() );
+			target->SetQuestDestRegion( GetQuestDestRegion() );
+			target->SetQuestOrigRegion( GetQuestOrigRegion() );
+		}
+		if( IsValidPlayer() )
+		{
+			target->SetGuarding( GetGuarding() );
+			target->SetOrgName( GetOrgName() );
+			target->SetRobe( GetRobe() );
+			target->SetAccount( GetAccount() );
+			target->SetOrgID( GetOrgID() );
+			target->SetCallNum( GetCallNum() );
+			target->SetPlayerCallNum( GetPlayerCallNum() );
+			target->SetCommandLevel( GetCommandLevel() );
+			target->SetPostType( GetPostType() );
+			target->SetTrackingTarget( GetTrackingTarget() );
+			for( UI08 counter = 0; counter < mPlayer->trackingTargets.size(); ++counter )
+			{
+				target->SetTrackingTargets( mPlayer->trackingTargets[counter], counter );
+			}
+		}
 }
 
 //o---------------------------------------------------------------------------o
@@ -1991,7 +2362,10 @@ void CChar::ExposeToView( void )
 //o---------------------------------------------------------------------------o
 CItem *CChar::GetSpeechItem( void ) const
 {
-	return speechItem;
+	CItem *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechItem;
+	return rVal;
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void CChar::GetSpeechMode
@@ -2013,7 +2387,10 @@ CItem *CChar::GetSpeechItem( void ) const
 //o---------------------------------------------------------------------------o
 UI08 CChar::GetSpeechMode( void ) const
 {
-	return speechMode;
+	UI08 rVal = DEFPLAYER_SPEECHMODE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechMode;
+	return rVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2026,7 +2403,13 @@ UI08 CChar::GetSpeechMode( void ) const
 //o---------------------------------------------------------------------------o
 void CChar::SetSpeechItem( CItem *newValue )
 {
-	speechItem = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechItem = newValue;
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void CChar::SetSpeechMode
@@ -2037,7 +2420,13 @@ void CChar::SetSpeechItem( CItem *newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetSpeechMode( UI08 newValue )
 {
-	speechMode = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SPEECHMODE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechMode = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2282,31 +2671,18 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
-	dumping << "Account=" << GetAccountNum() << std::endl;
-	dumping << "LastOn=" << GetLastOn() << std::endl;
-	dumping << "OrgName=" << GetOrgName() << std::endl;
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
-	dumping << "NpcAIType=" << GetNPCAiType() << std::endl;
-	dumping << "Taming=" << GetTaming() << std::endl;
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "FixedLight=" << (SI16)GetFixedLight() << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
-	dumping << "HoldG=" << GetHoldG() << std::endl;
-	dumping << "Split=" << (SI16)GetSplit() << "," << (SI16)GetSplitChance() << std::endl;
-	dumping << "RobeSerial=" << std::hex << "0x" << GetRobe() << std::endl;
-	dumping << "TownVote=" << "0x" << GetTownVote() << std::endl;
+	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
-	dumping << "OriginalID=" << "0x" << GetOrgID() << ",0x" << GetOrgSkin() << std::endl;
-	dumping << "Hair=" << "0x" << GetHairStyle() << ",0x" << GetHairColour() << std::endl;
-	dumping << "Beard=" << "0x" << GetBeardStyle() << ",0x" << GetBeardColour() << std::endl;
 	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
 	dumping << "SummonTimer=" << std::dec << GetTimer( tNPC_SUMMONTIME ) << std::endl;
 	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
-	dumping << "WanderArea=" << GetFx( 0 ) << "," << GetFy( 0 ) << "," << GetFx( 1 ) << "," << GetFy( 1 ) << "," << (SI16)GetFz() << std::endl;
 	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
-	dumping << "NpcWander=" << (SI16)GetNpcWander() << "," << (SI16)GetOldNpcWander() << std::endl;
 	dumping << "Running=" << (SI16)GetRunning() << std::endl;
 	dumping << "Step=" << (SI16)GetStep() << std::endl;
 	dumping << "Region=" << (SI16)GetRegionNum() << std::endl;
@@ -2316,14 +2692,8 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 		dumping << "PackItem=" << std::hex << "0x" << INVALIDSERIAL << std::endl;
 	dumping << "AdvanceObject=" << std::dec << GetAdvObj() << std::endl;
 	dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
-	dumping << "SPAttack=" << GetSpAttack() << "," << (SI16)GetSpDelay() << std::endl;
-	dumping << "QuestType=" << (SI16)GetQuestType() << std::endl;
-	dumping << "QuestRegions=" << (SI16)GetQuestOrigRegion() << "," << (SI16)GetQuestDestRegion() << std::endl;
-	dumping << "FleeAt=" << GetFleeAt() << std::endl;
-	dumping << "ReAttackAt=" << GetReattackAt() << std::endl;
 	dumping << "Privileges=" << std::hex << "0x" << GetPriv() << std::endl;
-	dumping << "CommandLevel=" << std::dec << (SI16)GetCommandLevel() << std::endl;	// command level
-	dumping << "TownPrivileges=" << (SI16)GetTownPriv() << std::endl;
+	dumping << "TownPrivileges=" << std::dec << (SI16)GetTownPriv() << std::endl;
 
 	// Write out the BaseSkills and the SkillLocks here
 	// Format: BaseSkills=[0,34]-[1,255]-[END]
@@ -2363,7 +2733,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;  
 	dumping << "Deaths=" << GetDeaths() << std::endl;
 	dumping << "FontType=" << (SI16)GetFontType() << std::endl;
-	dumping << "Squelched=" << (SI16)GetSquelched() << std::endl;
 	dumping << "TownTitle=" << (GetTownTitle()?1:0) << std::endl;
 	//-------------------------------------------------------------------------------------------
 	dumping << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << std::endl;
@@ -2378,7 +2747,50 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "WillHunger=" << (SI16)(WillHunger()?1:0) << std::endl;
 
 	outStream << dumping.str();
+
+	if( IsValidPlayer() )
+		mPlayer->DumpBody( outStream );
+	if( IsValidNPC() )
+		mNPC->DumpBody( outStream );
 	return true;
+}
+
+void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
+{
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
+
+	dumping << "NpcAIType=" << aiType << std::endl;
+	dumping << "Taming=" << taming << std::endl;
+	dumping << "HoldG=" << goldOnHand << std::endl;
+	dumping << "Split=" << (SI16)splitSection << "," << (SI16)splitChance << std::endl;
+	dumping << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << std::endl;
+	dumping << "NpcWander=" << (SI16)wanderMode << "," << (SI16)oldWanderMode << std::endl;
+	dumping << "SPAttack=" << spellAttack << "," << (SI16)spellDelay << std::endl;
+	dumping << "QuestType=" << (SI16)questType << std::endl;
+	dumping << "QuestRegions=" << (SI16)questOrigRegion << "," << (SI16)questDestRegion << std::endl;
+	dumping << "FleeAt=" << fleeAt << std::endl;
+	dumping << "ReAttackAt=" << reAttackAt << std::endl;
+
+	outStream << dumping.str();
+}
+
+void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
+{
+	std::string destination;
+	std::ostringstream dumping( destination );
+
+	dumping << "Account=" << accountNum << std::endl;
+	dumping << "LastOn=" << lastOn << std::endl;
+	dumping << "OrgName=" << origName << std::endl;
+	dumping << "RobeSerial=" << std::hex << "0x" << robe << std::endl;
+	dumping << "OriginalID=" << "0x" << origID << ",0x" << origSkin << std::endl;
+	dumping << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << std::endl;
+	dumping << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << std::endl;
+	dumping << "CommandLevel=" << std::dec << (SI16)commandLevel << std::endl;	// command level
+	dumping << "Squelched=" << (SI16)squelched << std::endl;
+
+	outStream << dumping.str();
 }
 
 //o-----------------------------------------------------------------------o
@@ -2432,13 +2844,31 @@ bool CChar::Save( std::ofstream &outStream )
 //o--------------------------------------------------------------------------o
 ACCOUNTSBLOCK& CChar::GetAccount( void ) 
 {
-	return Accounts->GetAccountByID( accountNum );
+	UI16 rVal = AB_INVALID_ID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->accountNum;
+
+	return Accounts->GetAccountByID( rVal );
 }
 //
 
 UI16 CChar::GetAccountNum( void ) const
 {
-	return accountNum;
+	UI16 rVal = AB_INVALID_ID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->accountNum;
+	return rVal;
+}
+
+void CChar::SetAccountNum( UI16 newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != DEFPLAYER_ACCOUNTNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->accountNum = newVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2480,7 +2910,10 @@ CDataList< CChar * > *CChar::GetPetList( void )
 //o---------------------------------------------------------------------------o
 CHARLIST *CChar::GetFriendList( void )
 {
-	return &petFriends;
+	CHARLIST *rVal = NULL;
+	if( IsValidNPC() )
+		rVal = &mNPC->petFriends;
+	return rVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2505,14 +2938,23 @@ ITEMLIST *CChar::GetOwnedItems( void )
 //o---------------------------------------------------------------------------o
 void CChar::AddFriend( CChar *toAdd )
 {
-	CHARLIST_CITERATOR i;
-	for( i = petFriends.begin(); i != petFriends.end(); ++i )
+	if( !IsValidNPC() )
 	{
-		if( (*i) == toAdd )
-			break;
+		if( toAdd != NULL )
+			CreateNPC();
 	}
-	if( i == petFriends.end() )
-		petFriends.push_back( toAdd );
+	if( IsValidNPC() )
+	{
+		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
+		while( i != mNPC->petFriends.end() )
+		{
+			if( (*i) == toAdd )
+				break;
+			++i;
+		}
+		if( i == mNPC->petFriends.end() )
+			mNPC->petFriends.push_back( toAdd );
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -2524,12 +2966,15 @@ void CChar::AddFriend( CChar *toAdd )
 //o---------------------------------------------------------------------------o
 void CChar::RemoveFriend( CChar *toRemove )
 {
-	for( CHARLIST_ITERATOR rIter = petFriends.begin(); rIter != petFriends.end(); ++rIter )
+	if( IsValidNPC() )
 	{
-		if( (*rIter) == toRemove )
+		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
 		{
-			petFriends.erase( rIter );
-			break;
+			if( (*rIter) == toRemove )
+			{
+				mNPC->petFriends.erase( rIter );
+				break;
+			}
 		}
 	}
 }
@@ -2865,8 +3310,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'A':
 				if( UTag == "ACCOUNT" )
 				{
-					//SetAccount( makeNum( data ) );
-					accountNum = data.toUShort();
+					SetAccountNum( data.toUShort() );
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
@@ -3471,28 +3915,40 @@ void CChar::SkillUsed( bool value, UI08 skillNum )
 
 UI08 CChar::PopDirection( void )
 {
-	UI08 rvalue = 0;
-	if( !pathToFollow.empty() )
+	UI08 rVal = 0;
+	if( IsValidNPC() )
 	{
-		rvalue = pathToFollow.front();
-		pathToFollow.pop();
+		if( !mNPC->pathToFollow.empty() )
+		{
+			rVal = mNPC->pathToFollow.front();
+			mNPC->pathToFollow.pop();
+		}
 	}
-	return rvalue;
+	return rVal;
 }
 void CChar::PushDirection( UI08 newDir )
 {
-	pathToFollow.push( newDir );
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	mNPC->pathToFollow.push( newDir );
 }
 
 bool CChar::StillGotDirs( void ) const
 {
-	return !pathToFollow.empty();
+	bool rVal = false;
+	if( IsValidNPC() )
+		rVal = !mNPC->pathToFollow.empty();
+	return rVal;
 }
 
 void CChar::FlushPath( void )
 {
-	while( StillGotDirs() )
-		PopDirection();
+	if( IsValidNPC() )
+	{
+		while( StillGotDirs() )
+			PopDirection();
+	}
 }
 
 void CChar::PostLoadProcessing( void )
@@ -3596,7 +4052,13 @@ void CChar::SetFlagNeutral( void )
 //o---------------------------------------------------------------------------o
 void CChar::SetSpeechID( UI08 newValue )
 {
-	speechID = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SPEECHID )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechID = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3608,7 +4070,13 @@ void CChar::SetSpeechID( UI08 newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetSpeechCallback( cScript *newValue )
 {
-	speechCallback = newValue;
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechCallback = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3620,7 +4088,10 @@ void CChar::SetSpeechCallback( cScript *newValue )
 //o---------------------------------------------------------------------------o
 UI08 CChar::GetSpeechID( void ) const
 {
-	return speechID;
+	UI08 rVal = DEFPLAYER_SPEECHID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechID;
+	return rVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3632,7 +4103,10 @@ UI08 CChar::GetSpeechID( void ) const
 //o---------------------------------------------------------------------------o
 cScript *CChar::GetSpeechCallback( void ) const
 {
-	return speechCallback;
+	cScript *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechCallback;
+	return rVal;
 }
 
 
